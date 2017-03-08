@@ -1,25 +1,26 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: f2fs_bug_on in init_dirty_segmap
-Date: Wed, 8 Mar 2017 13:52:03 -0800
-Message-ID: <20170308215203.GE5483@jaegeuk.local>
-References: <20170308142432.GA31333@frolo.macqel>
+Subject: Re: [PATCH] f2fs: adjust the way of calculating nat block
+Date: Wed, 8 Mar 2017 13:56:00 -0800
+Message-ID: <20170308215600.GF5483@jaegeuk.local>
+References: <CGME20170308054010epcas5p1873bf561bd7ceac17a63a6e6cebb8365@epcas5p1.samsung.com>
+	<000801d297ce$735eb750$5a1c25f0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cljVH-0004eV-Rg
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cljZ4-00025b-OG
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 08 Mar 2017 21:52:15 +0000
+	Wed, 08 Mar 2017 21:56:10 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cljVG-0006qq-QK
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cljZ3-0002zE-SC
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 08 Mar 2017 21:52:15 +0000
+	Wed, 08 Mar 2017 21:56:10 +0000
 Content-Disposition: inline
-In-Reply-To: <20170308142432.GA31333@frolo.macqel>
+In-Reply-To: <000801d297ce$735eb750$5a1c25f0$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,63 +30,43 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Philippe De Muyter <phdm@macq.eu>
+To: Fan Li <fanofcode.li@samsung.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi,
-
-On 03/08, Philippe De Muyter wrote:
-> Hi f2fs developpers,
+On 03/08, Fan Li wrote:
+> use a slightly simpler expression to calculate nat block with nid.
 > 
-> Please excuse my maybe dumb question.
+> Signed-off-by: Fan Li <fanofcode.li@samsung.com>
+> ---
+>  fs/f2fs/node.h | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> I recently encountered a kernel panic at root mount time (thus making my
-> system unusable, as my root partition is formatted as f2fs) due to the
-> following segment in fs/f2fs/segment.c:init_dirty_segmap
+> diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+> index 2f9603f..f9fb5b8 100644
+> --- a/fs/f2fs/node.h
+> +++ b/fs/f2fs/node.h
+> @@ -200,13 +200,11 @@ static inline pgoff_t current_nat_addr(struct f2fs_sb_info *sbi, nid_t start)
+>         struct f2fs_nm_info *nm_i = NM_I(sbi);
+>         pgoff_t block_off;
+>         pgoff_t block_addr;
+> -       int seg_off;
 > 
-> 		if (valid_blocks > sbi->blocks_per_seg) {
->                         f2fs_bug_on(sbi, 1); <<<<<<<<<<<<<<<<<<<<
-> 			continue;
-> 		}
+>         block_off = NAT_BLOCK_OFFSET(start);
+> -       seg_off = block_off >> sbi->log_blocks_per_seg;
 > 
-> Is that really a condition requiring a kernel panic, or could a read-only
-> mount be allowed ?
+>         block_addr = (pgoff_t)(nm_i->nat_blkaddr +
+> -               (seg_off << sbi->log_blocks_per_seg << 1) +
+> +               (block_off << 1) -
 
-It would be helpful that you can remain your kernel and f2fs-tools version
-information, as well as fsck.f2fs result.
-
-You can get the latest f2fs-tools from
-http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.git/log/?h=dev-test
-
-Anyway, if you don't have time, you may have some options like:
-
-1. disable F2FS_CHECK_FS in Kconfig
- : bypass BUG_ON here, so mount-ro would be preferable.
-
-2. run fsck.f2fs
- : fix some inconsistency and let you mount your system again.
-
-So, I think you'd better try #1 to retrieve your important data, and then
-#2 to fix something wrong.
+NAK. This breaks the behavior.
 
 Thanks,
 
+>                 (block_off & (sbi->blocks_per_seg - 1)));
 > 
-> Philippe
-> 
-> -- 
-> Philippe De Muyter +32 2 6101532 Macq SA rue de l'Aeronef 2 B-1140 Bruxelles
-> 
-> ------------------------------------------------------------------------------
-> Announcing the Oxford Dictionaries API! The API offers world-renowned
-> dictionary content that is easy and intuitive to access. Sign up for an
-> account today to start using our lexical data to power your apps and
-> projects. Get started today and enter our developer competition.
-> http://sdm.link/oxford
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>         if (f2fs_test_bit(block_off, nm_i->nat_bitmap))
+> --
+> 2.7.4
 
 ------------------------------------------------------------------------------
 Announcing the Oxford Dictionaries API! The API offers world-renowned
