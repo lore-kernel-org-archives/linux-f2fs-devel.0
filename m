@@ -1,27 +1,25 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: fix the fault of calculating blkstart
-	twice
-Date: Thu, 9 Mar 2017 14:53:01 +0800
-Message-ID: <6dd9d34f-0fe4-6956-ca5c-e37ce059a29b@huawei.com>
-References: <9f3a4202-11cb-5861-838c-ebbc94b71554@gmail.com>
-	<20170308011113.GC2499@jaegeuk.local>
-	<6d4a74e7-cbbb-21d6-7ee6-045c3db46f31@gmail.com>
+From: Philippe De Muyter <phdm@macq.eu>
+Subject: Re: f2fs_bug_on in init_dirty_segmap
+Date: Thu, 9 Mar 2017 09:42:28 +0100
+Message-ID: <20170309084227.GA11085@frolo.macqel>
+References: <20170308142432.GA31333@frolo.macqel>
+	<20170308215203.GE5483@jaegeuk.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1clryk-0006Kx-6w
+	(envelope-from <phdm@macqel.be>) id 1cltem-0002QD-I3
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 09 Mar 2017 06:55:14 +0000
-Received: from [45.249.212.188] (helo=dggrg02-dlp.huawei.com)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1clryh-0007gr-24
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 09 Mar 2017 06:55:14 +0000
-In-Reply-To: <6d4a74e7-cbbb-21d6-7ee6-045c3db46f31@gmail.com>
+	Thu, 09 Mar 2017 08:42:44 +0000
+Received: from smtp2.macqel.be ([109.135.2.61])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1cltek-0004yH-21 for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 09 Mar 2017 08:42:44 +0000
+Content-Disposition: inline
+In-Reply-To: <20170308215203.GE5483@jaegeuk.local>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,87 +29,72 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Kinglong Mee <kinglongmee@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/3/8 9:53, Kinglong Mee wrote:
-> On 3/8/2017 09:11, Jaegeuk Kim wrote:
->> Hi,
->>
->> On 03/04, Kinglong Mee wrote:
->>> When the zone type is BLK_ZONE_TYPE_CONVENTIONAL, the blkstart is 
->>> calculated twice.
->>>
->>> Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
->>> ---
->>>  fs/f2fs/segment.c | 22 +++++++++-------------
->>>  1 file changed, 9 insertions(+), 13 deletions(-)
->>>
->>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>> index 4bd7a8b..ed181d1 100644
->>> --- a/fs/f2fs/segment.c
->>> +++ b/fs/f2fs/segment.c
->>> @@ -772,11 +772,6 @@ static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
->>>  
->>>  	trace_f2fs_issue_discard(bdev, blkstart, blklen);
->>>  
->>> -	if (sbi->s_ndevs) {
->>> -		int devi = f2fs_target_device_index(sbi, blkstart);
->>> -
->>> -		blkstart -= FDEV(devi).start_blk;
->>> -	}
->>
->> No, you can't do this, since the blkstart will be used for dc->lstart.
->> So, it needs to do like this?
-> 
-> Sorry, I miss that.
-> 
-> But, get_blkz_type() needs the new blkaddr for blkz_type as
-> "FDEV(i).blkz_type[zno]", so that, the blkaddr must be calculated
-> in front of __f2fs_issue_discard_zone, just like this?
-> 
->>From efd182428830898cc31d49f74d4bd2ab7455cec4 Mon Sep 17 00:00:00 2001
-> From: Kinglong Mee <kinglongmee@gmail.com>
-> Date: Wed, 8 Mar 2017 09:49:53 +0800
-> Subject: [PATCH] f2fs: fix the fault of calculating blkstart twice
-> 
-> When the zone type is BLK_ZONE_TYPE_CONVENTIONAL, the blkstart is
-> calculated twice.
-> 
-> Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Hi,
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+thanks for your quick answer
 
-Thanks,
-
-> ---
->  fs/f2fs/segment.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+On Wed, Mar 08, 2017 at 01:52:03PM -0800, Jaegeuk Kim wrote:
+> Hi,
 > 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 401f25d..dbd2e7a 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -816,6 +816,7 @@ static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
->  		struct block_device *bdev, block_t blkstart, block_t blklen)
->  {
->  	sector_t sector, nr_sects;
-> +	block_t lblkstart = blkstart;
->  	int devi = 0;
->  
->  	if (sbi->s_ndevs) {
-> @@ -833,7 +834,7 @@ static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
->  	case BLK_ZONE_TYPE_CONVENTIONAL:
->  		if (!blk_queue_discard(bdev_get_queue(bdev)))
->  			return 0;
-> -		return __f2fs_issue_discard_async(sbi, bdev, blkstart, blklen);
-> +		return __f2fs_issue_discard_async(sbi, bdev, lblkstart, blklen);
->  	case BLK_ZONE_TYPE_SEQWRITE_REQ:
->  	case BLK_ZONE_TYPE_SEQWRITE_PREF:
->  		sector = SECTOR_FROM_BLOCK(blkstart);
+> On 03/08, Philippe De Muyter wrote:
+> > Hi f2fs developpers,
+> > 
+> > Please excuse my maybe dumb question.
+> > 
+> > I recently encountered a kernel panic at root mount time (thus making my
+> > system unusable, as my root partition is formatted as f2fs) due to the
+> > following segment in fs/f2fs/segment.c:init_dirty_segmap
+> > 
+> > 		if (valid_blocks > sbi->blocks_per_seg) {
+> >                         f2fs_bug_on(sbi, 1); <<<<<<<<<<<<<<<<<<<<
+> > 			continue;
+> > 		}
+> > 
+> > Is that really a condition requiring a kernel panic, or could a read-only
+> > mount be allowed ?
 > 
+> It would be helpful that you can remain your kernel and f2fs-tools version
+> information, as well as fsck.f2fs result.
 
+It is actually a Freescale (now NXP) provided kernel tagged rel_imx_4.1.15_1.2.0_ga
+available at git://git.freescale.com/imx/linux-2.6-imx.git 
+
+I surmise that the f2fs driver is the one from the linux-4.1 version.
+
+> 
+> You can get the latest f2fs-tools from
+> http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.git/log/?h=dev-test
+> 
+> Anyway, if you don't have time, you may have some options like:
+> 
+> 1. disable F2FS_CHECK_FS in Kconfig
+>  : bypass BUG_ON here, so mount-ro would be preferable.
+
+Actually F2FS_CHECK_FS was disabled, but kernel panic'ed.
+
+> 
+> 2. run fsck.f2fs
+>  : fix some inconsistency and let you mount your system again.
+> 
+> So, I think you'd better try #1 to retrieve your important data, and then
+> #2 to fix something wrong.
+
+There wasn't a need to retrieve important data, as it is an unattended device
+in the wild.  The problem was that boot did not succeed anymore and the device
+needed a return to our aftersales department for reflashing.  Without the 'panic',
+and with a read-only mount we could probably fix it without reflashing
+and without return.
+
+If that happens again, I'll try to provide more information.
+> 
+> > 
+> > Philippe
+
+-- 
+Philippe De Muyter +32 2 6101532 Macq SA rue de l'Aeronef 2 B-1140 Bruxelles
 
 ------------------------------------------------------------------------------
 Announcing the Oxford Dictionaries API! The API offers world-renowned
