@@ -1,104 +1,75 @@
-From: Philippe De Muyter <phdm@macq.eu>
-Subject: Re: f2fs_bug_on in init_dirty_segmap
-Date: Thu, 9 Mar 2017 09:42:28 +0100
-Message-ID: <20170309084227.GA11085@frolo.macqel>
-References: <20170308142432.GA31333@frolo.macqel>
-	<20170308215203.GE5483@jaegeuk.local>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH 1/4] f2fs: fix wrong error injection for
+ evict_inode
+Date: Thu, 9 Mar 2017 16:53:29 +0800
+Message-ID: <231281e5-15b5-6214-4e73-8008b49a0fd8@huawei.com>
+References: <20170307221303.6757-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <phdm@macqel.be>) id 1cltem-0002QD-I3
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 09 Mar 2017 08:42:44 +0000
-Received: from smtp2.macqel.be ([109.135.2.61])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1cltek-0004yH-21 for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 09 Mar 2017 08:42:44 +0000
-Content-Disposition: inline
-In-Reply-To: <20170308215203.GE5483@jaegeuk.local>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170307221303.6757-1-jaegeuk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi,
+Hi Jaegeuk,
 
-thanks for your quick answer
-
-On Wed, Mar 08, 2017 at 01:52:03PM -0800, Jaegeuk Kim wrote:
-> Hi,
+On 2017/3/8 6:13, Jaegeuk Kim wrote:
+> The previous one was not a proper location to inject an error, since there
+> is no point to get errors. Instead, we can emulate EIO during truncation,
+> and the below logic should handle it correctly.
 > 
-> On 03/08, Philippe De Muyter wrote:
-> > Hi f2fs developpers,
-> > 
-> > Please excuse my maybe dumb question.
-> > 
-> > I recently encountered a kernel panic at root mount time (thus making my
-> > system unusable, as my root partition is formatted as f2fs) due to the
-> > following segment in fs/f2fs/segment.c:init_dirty_segmap
-> > 
-> > 		if (valid_blocks > sbi->blocks_per_seg) {
-> >                         f2fs_bug_on(sbi, 1); <<<<<<<<<<<<<<<<<<<<
-> > 			continue;
-> > 		}
-> > 
-> > Is that really a condition requiring a kernel panic, or could a read-only
-> > mount be allowed ?
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/inode.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
 > 
-> It would be helpful that you can remain your kernel and f2fs-tools version
-> information, as well as fsck.f2fs result.
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index ef8610bf950f..2520fa72b23f 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -372,13 +372,6 @@ void f2fs_evict_inode(struct inode *inode)
+>  	if (inode->i_nlink || is_bad_inode(inode))
+>  		goto no_delete;
+>  
+> -#ifdef CONFIG_F2FS_FAULT_INJECTION
+> -	if (time_to_inject(sbi, FAULT_EVICT_INODE)) {
+> -		f2fs_show_injection_info(FAULT_EVICT_INODE);
+> -		goto no_delete;
+> -	}
+> -#endif
+> -
+>  	remove_ino_entry(sbi, inode->i_ino, APPEND_INO);
+>  	remove_ino_entry(sbi, inode->i_ino, UPDATE_INO);
+>  
+> @@ -389,6 +382,12 @@ void f2fs_evict_inode(struct inode *inode)
+>  	if (F2FS_HAS_BLOCKS(inode))
 
-It is actually a Freescale (now NXP) provided kernel tagged rel_imx_4.1.15_1.2.0_ga
-available at git://git.freescale.com/imx/linux-2.6-imx.git 
+In addition, how about add below code to emulate error came from f2fs_truncate?
 
-I surmise that the f2fs driver is the one from the linux-4.1 version.
+	if (F2FS_HAS_BLOCKS(inode)) {
+#ifdef CONFIG_F2FS_FAULT_INJECTION
+		if (time_to_inject(sbi, FAULT_EVICT_INODE)) {
+			f2fs_show_injection_info(FAULT_EVICT_INODE);
+			err = -EIO;
+		}
+#endif
+		if (!err)
+			err = f2fs_truncate(inode);
+	}
 
+Thanks,
+
+>  		err = f2fs_truncate(inode);
+>  
+> +#ifdef CONFIG_F2FS_FAULT_INJECTION
+> +	if (time_to_inject(sbi, FAULT_EVICT_INODE)) {
+> +		f2fs_show_injection_info(FAULT_EVICT_INODE);
+> +		err = -EIO;
+> +	}
+> +#endif
+>  	if (!err) {
+>  		f2fs_lock_op(sbi);
+>  		err = remove_inode_page(inode);
 > 
-> You can get the latest f2fs-tools from
-> http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.git/log/?h=dev-test
-> 
-> Anyway, if you don't have time, you may have some options like:
-> 
-> 1. disable F2FS_CHECK_FS in Kconfig
->  : bypass BUG_ON here, so mount-ro would be preferable.
-
-Actually F2FS_CHECK_FS was disabled, but kernel panic'ed.
-
-> 
-> 2. run fsck.f2fs
->  : fix some inconsistency and let you mount your system again.
-> 
-> So, I think you'd better try #1 to retrieve your important data, and then
-> #2 to fix something wrong.
-
-There wasn't a need to retrieve important data, as it is an unattended device
-in the wild.  The problem was that boot did not succeed anymore and the device
-needed a return to our aftersales department for reflashing.  Without the 'panic',
-and with a read-only mount we could probably fix it without reflashing
-and without return.
-
-If that happens again, I'll try to provide more information.
-> 
-> > 
-> > Philippe
-
--- 
-Philippe De Muyter +32 2 6101532 Macq SA rue de l'Aeronef 2 B-1140 Bruxelles
-
-------------------------------------------------------------------------------
-Announcing the Oxford Dictionaries API! The API offers world-renowned
-dictionary content that is easy and intuitive to access. Sign up for an
-account today to start using our lexical data to power your apps and
-projects. Get started today and enter our developer competition.
-http://sdm.link/oxford
