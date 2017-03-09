@@ -1,200 +1,267 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: allow write page cache when writting cp
-Date: Thu, 9 Mar 2017 13:28:06 -0800
-Message-ID: <20170309212806.GA4125@jaegeuk.local>
-References: <20170307124414.20522-1-heyunlei@huawei.com>
+Subject: Re: [PATCH v2] f2fs: allocate a bio for discarding when actually
+ issuing it
+Date: Thu, 9 Mar 2017 14:49:37 -0800
+Message-ID: <20170309224937.GB4125@jaegeuk.local>
+References: <20170308023333.15034-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cm5bd-0004fA-DV
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 09 Mar 2017 21:28:17 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cm5bb-0006A6-5K
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 09 Mar 2017 21:28:17 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170307124414.20522-1-heyunlei@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <20170308023333.15034-1-jaegeuk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Yunlei,
+Change log from v1:
+ o change error handling flows
 
-On 03/07, Yunlei He wrote:
-> This patch allow write data to normal file when writting
-> new checkpoint.
-> 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> ---
->  fs/f2fs/checkpoint.c |  4 +++-
->  fs/f2fs/data.c       | 23 ++++++++++++++++-------
->  fs/f2fs/f2fs.h       |  1 +
->  fs/f2fs/super.c      |  1 +
->  4 files changed, 21 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index 0339daf..1d86171 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -979,9 +979,10 @@ static int block_operations(struct f2fs_sb_info *sbi)
->  	 * POR: we should ensure that there are no dirty node pages
->  	 * until finishing nat/sit flush.
->  	 */
-> +
-> +	down_write(&sbi->node_change);
->  retry_flush_nodes:
->  	down_write(&sbi->node_write);
-> -
->  	if (get_pages(sbi, F2FS_DIRTY_NODES)) {
->  		up_write(&sbi->node_write);
->  		err = sync_node_pages(sbi, &wbc);
-> @@ -992,6 +993,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
->  		goto retry_flush_nodes;
->  	}
->  out:
-> +	up_write(&sbi->node_change);
+>From 58bb056dfa207a0dc9b9432dcf78758a7784144a Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Tue, 7 Mar 2017 18:02:02 -0800
+Subject: [PATCH] f2fs: allocate a bio for discarding when actually issuing it
 
-After block_operation, block allocator updates some block counters in terms of
-node or data blocks which will be written in checkpoint.
+Let's allocate a bio when issuing discard commands later.
 
-Thanks,
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/f2fs.h    |   4 +-
+ fs/f2fs/segment.c | 136 +++++++++++++++++++++++++++++-------------------------
+ 2 files changed, 76 insertions(+), 64 deletions(-)
 
->  	blk_finish_plug(&plug);
->  	return err;
->  }
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 1375fef..c7eccb0 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -827,7 +827,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->  	}
->  
->  next_dnode:
-> -	if (create)
-> +	if (create && flag == F2FS_GET_BLOCK_PRE_AIO)
-> +		down_read(&sbi->node_change);
-> +	else if (create)
->  		f2fs_lock_op(sbi);
->  
->  	/* When reading holes, we need its node page */
-> @@ -936,17 +938,23 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->  		goto next_block;
->  
->  	f2fs_put_dnode(&dn);
-> -
-> -	if (create) {
-> +	if (create && flag == F2FS_GET_BLOCK_PRE_AIO) {
-> +		up_read(&sbi->node_change);
-> +		f2fs_balance_fs(sbi, dn.node_changed);
-> +	} else if (create) {
->  		f2fs_unlock_op(sbi);
->  		f2fs_balance_fs(sbi, dn.node_changed);
->  	}
-> +
->  	goto next_dnode;
->  
->  sync_out:
->  	f2fs_put_dnode(&dn);
->  unlock_out:
-> -	if (create) {
-> +	if (create && flag == F2FS_GET_BLOCK_PRE_AIO) {
-> +		up_read(&sbi->node_change);
-> +		f2fs_balance_fs(sbi, dn.node_changed);
-> +	} else if (create) {
->  		f2fs_unlock_op(sbi);
->  		f2fs_balance_fs(sbi, dn.node_changed);
->  	}
-> @@ -1686,7 +1694,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
->  
->  	if (f2fs_has_inline_data(inode) ||
->  			(pos & PAGE_MASK) >= i_size_read(inode)) {
-> -		f2fs_lock_op(sbi);
-> +		down_read(&sbi->node_change);
->  		locked = true;
->  	}
->  restart:
-> @@ -1703,6 +1711,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
->  		if (pos + len <= MAX_INLINE_DATA) {
->  			read_inline_data(page, ipage);
->  			set_inode_flag(inode, FI_DATA_EXIST);
-> +			dn.node_changed = true;
->  			if (inode->i_nlink)
->  				set_inline_node(ipage);
->  		} else {
-> @@ -1722,7 +1731,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
->  			err = get_dnode_of_data(&dn, index, LOOKUP_NODE);
->  			if (err || dn.data_blkaddr == NULL_ADDR) {
->  				f2fs_put_dnode(&dn);
-> -				f2fs_lock_op(sbi);
-> +				down_read(&sbi->node_change);
->  				locked = true;
->  				goto restart;
->  			}
-> @@ -1736,7 +1745,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
->  	f2fs_put_dnode(&dn);
->  unlock_out:
->  	if (locked)
-> -		f2fs_unlock_op(sbi);
-> +		up_read(&sbi->node_change);
->  	return err;
->  }
->  
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 7e29249..0568f78 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -830,6 +830,7 @@ struct f2fs_sb_info {
->  	struct mutex cp_mutex;			/* checkpoint procedure lock */
->  	struct rw_semaphore cp_rwsem;		/* blocking FS operations */
->  	struct rw_semaphore node_write;		/* locking node writes */
-> +	struct rw_semaphore node_change;		/* locking node change */
->  	wait_queue_head_t cp_wait;
->  	unsigned long last_time[MAX_TIME];	/* to store time in jiffies */
->  	long interval_time[MAX_TIME];		/* to store thresholds */
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 2d494d5..d217114 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1929,6 +1929,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->  	mutex_init(&sbi->gc_mutex);
->  	mutex_init(&sbi->cp_mutex);
->  	init_rwsem(&sbi->node_write);
-> +	init_rwsem(&sbi->node_change);
->  
->  	/* disallow all the data/node/meta page writes */
->  	set_sbi_flag(sbi, SBI_POR_DOING);
-> -- 
-> 2.10.1
-> 
-> 
-> ------------------------------------------------------------------------------
-> Announcing the Oxford Dictionaries API! The API offers world-renowned
-> dictionary content that is easy and intuitive to access. Sign up for an
-> account today to start using our lexical data to power your apps and
-> projects. Get started today and enter our developer competition.
-> http://sdm.link/oxford
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-------------------------------------------------------------------------------
-Announcing the Oxford Dictionaries API! The API offers world-renowned
-dictionary content that is easy and intuitive to access. Sign up for an
-account today to start using our lexical data to power your apps and
-projects. Get started today and enter our developer competition.
-http://sdm.link/oxford
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index a58c2e43bd2a..870bb4d9bc65 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -197,10 +197,12 @@ enum {
+ struct discard_cmd {
+ 	struct list_head list;		/* command list */
+ 	struct completion wait;		/* compleation */
++	struct block_device *bdev;	/* bdev */
+ 	block_t lstart;			/* logical start address */
++	block_t start;			/* actual start address in dev */
+ 	block_t len;			/* length */
+-	struct bio *bio;		/* bio */
+ 	int state;			/* state */
++	int error;			/* bio error */
+ };
+ 
+ struct discard_cmd_control {
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 50c65cc4645a..2d99fb0d44c9 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -636,7 +636,8 @@ static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
+ }
+ 
+ static void __add_discard_cmd(struct f2fs_sb_info *sbi,
+-			struct bio *bio, block_t lstart, block_t len)
++		struct block_device *bdev, block_t lstart,
++		block_t start, block_t len)
+ {
+ 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+ 	struct list_head *cmd_list = &(dcc->discard_cmd_list);
+@@ -644,11 +645,12 @@ static void __add_discard_cmd(struct f2fs_sb_info *sbi,
+ 
+ 	dc = f2fs_kmem_cache_alloc(discard_cmd_slab, GFP_NOFS);
+ 	INIT_LIST_HEAD(&dc->list);
+-	dc->bio = bio;
+-	bio->bi_private = dc;
++	dc->bdev = bdev;
+ 	dc->lstart = lstart;
++	dc->start = start;
+ 	dc->len = len;
+ 	dc->state = D_PREP;
++	dc->error = 0;
+ 	init_completion(&dc->wait);
+ 
+ 	mutex_lock(&dcc->cmd_lock);
+@@ -658,22 +660,74 @@ static void __add_discard_cmd(struct f2fs_sb_info *sbi,
+ 
+ static void __remove_discard_cmd(struct f2fs_sb_info *sbi, struct discard_cmd *dc)
+ {
+-	int err = dc->bio->bi_error;
+-
+ 	if (dc->state == D_DONE)
+ 		atomic_dec(&(SM_I(sbi)->dcc_info->submit_discard));
+ 
+-	if (err == -EOPNOTSUPP)
+-		err = 0;
++	if (dc->error == -EOPNOTSUPP)
++		dc->error = 0;
+ 
+-	if (err)
++	if (dc->error)
+ 		f2fs_msg(sbi->sb, KERN_INFO,
+-				"Issue discard failed, ret: %d", err);
+-	bio_put(dc->bio);
++				"Issue discard failed, ret: %d", dc->error);
+ 	list_del(&dc->list);
+ 	kmem_cache_free(discard_cmd_slab, dc);
+ }
+ 
++static void f2fs_submit_discard_endio(struct bio *bio)
++{
++	struct discard_cmd *dc = (struct discard_cmd *)bio->bi_private;
++
++	complete(&dc->wait);
++	dc->error = bio->bi_error;
++	dc->state = D_DONE;
++	bio_put(bio);
++}
++
++/* this function is copied from blkdev_issue_discard from block/blk-lib.c */
++static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
++				struct discard_cmd *dc)
++{
++	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
++	struct bio *bio = NULL;
++
++	if (dc->state != D_PREP)
++		return;
++
++	dc->error = __blkdev_issue_discard(dc->bdev,
++				SECTOR_FROM_BLOCK(dc->start),
++				SECTOR_FROM_BLOCK(dc->len),
++				GFP_NOFS, 0, &bio);
++	if (!dc->error) {
++		if (bio) {
++			bio->bi_private = dc;
++			bio->bi_end_io = f2fs_submit_discard_endio;
++			bio->bi_opf |= REQ_SYNC;
++			submit_bio(bio);
++		}
++		dc->state = D_SUBMIT;
++		atomic_inc(&dcc->submit_discard);
++	} else {
++		__remove_discard_cmd(sbi, dc);
++	}
++}
++
++static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
++		struct block_device *bdev, block_t blkstart, block_t blklen)
++{
++	block_t lblkstart = blkstart;
++
++	trace_f2fs_issue_discard(bdev, blkstart, blklen);
++
++	if (sbi->s_ndevs) {
++		int devi = f2fs_target_device_index(sbi, blkstart);
++
++		blkstart -= FDEV(devi).start_blk;
++	}
++	__add_discard_cmd(sbi, bdev, lblkstart, blkstart, blklen);
++	wake_up(&SM_I(sbi)->dcc_info->discard_wait_queue);
++	return 0;
++}
++
+ /* This should be covered by global mutex, &sit_i->sentry_lock */
+ void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
+ {
+@@ -689,11 +743,7 @@ void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
+ 	list_for_each_entry_safe(dc, tmp, wait_list, list) {
+ 
+ 		if (blkaddr == NULL_ADDR) {
+-			if (dc->state == D_PREP) {
+-				dc->state = D_SUBMIT;
+-				submit_bio(dc->bio);
+-				atomic_inc(&dcc->submit_discard);
+-			}
++			__submit_discard_cmd(sbi, dc);
+ 			continue;
+ 		}
+ 
+@@ -716,14 +766,6 @@ void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
+ 	mutex_unlock(&dcc->cmd_lock);
+ }
+ 
+-static void f2fs_submit_discard_endio(struct bio *bio)
+-{
+-	struct discard_cmd *dc = (struct discard_cmd *)bio->bi_private;
+-
+-	complete(&dc->wait);
+-	dc->state = D_DONE;
+-}
+-
+ static int issue_discard_thread(void *data)
+ {
+ 	struct f2fs_sb_info *sbi = data;
+@@ -741,15 +783,13 @@ static int issue_discard_thread(void *data)
+ 
+ 	mutex_lock(&dcc->cmd_lock);
+ 	list_for_each_entry_safe(dc, tmp, cmd_list, list) {
+-		if (dc->state == D_PREP) {
+-			dc->state = D_SUBMIT;
+-			submit_bio(dc->bio);
+-			atomic_inc(&dcc->submit_discard);
+-			if (iter++ > DISCARD_ISSUE_RATE)
+-				break;
+-		} else if (dc->state == D_DONE) {
++
++		__submit_discard_cmd(sbi, dc);
++
++		if (dc->state == D_PREP && iter++ > DISCARD_ISSUE_RATE)
++			break;
++		if (dc->state == D_DONE)
+ 			__remove_discard_cmd(sbi, dc);
+-		}
+ 	}
+ 	mutex_unlock(&dcc->cmd_lock);
+ 
+@@ -763,36 +803,6 @@ static int issue_discard_thread(void *data)
+ 	goto repeat;
+ }
+ 
+-
+-/* this function is copied from blkdev_issue_discard from block/blk-lib.c */
+-static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
+-		struct block_device *bdev, block_t blkstart, block_t blklen)
+-{
+-	struct bio *bio = NULL;
+-	block_t lblkstart = blkstart;
+-	int err;
+-
+-	trace_f2fs_issue_discard(bdev, blkstart, blklen);
+-
+-	if (sbi->s_ndevs) {
+-		int devi = f2fs_target_device_index(sbi, blkstart);
+-
+-		blkstart -= FDEV(devi).start_blk;
+-	}
+-	err = __blkdev_issue_discard(bdev,
+-				SECTOR_FROM_BLOCK(blkstart),
+-				SECTOR_FROM_BLOCK(blklen),
+-				GFP_NOFS, 0, &bio);
+-	if (!err && bio) {
+-		bio->bi_end_io = f2fs_submit_discard_endio;
+-		bio->bi_opf |= REQ_SYNC;
+-
+-		__add_discard_cmd(sbi, bio, lblkstart, blklen);
+-		wake_up(&SM_I(sbi)->dcc_info->discard_wait_queue);
+-	}
+-	return err;
+-}
+-
+ #ifdef CONFIG_BLK_DEV_ZONED
+ static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
+ 		struct block_device *bdev, block_t blkstart, block_t blklen)
+@@ -816,7 +826,7 @@ static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
+ 	case BLK_ZONE_TYPE_CONVENTIONAL:
+ 		if (!blk_queue_discard(bdev_get_queue(bdev)))
+ 			return 0;
+-		return __f2fs_issue_discard_async(sbi, bdev, lblkstart, blklen);
++		return __queue_discard_cmd(sbi, bdev, lblkstart, blklen);
+ 	case BLK_ZONE_TYPE_SEQWRITE_REQ:
+ 	case BLK_ZONE_TYPE_SEQWRITE_PREF:
+ 		sector = SECTOR_FROM_BLOCK(blkstart);
+@@ -848,7 +858,7 @@ static int __issue_discard_async(struct f2fs_sb_info *sbi,
+ 				bdev_zoned_model(bdev) != BLK_ZONED_NONE)
+ 		return __f2fs_issue_discard_zone(sbi, bdev, blkstart, blklen);
+ #endif
+-	return __f2fs_issue_discard_async(sbi, bdev, blkstart, blklen);
++	return __queue_discard_cmd(sbi, bdev, blkstart, blklen);
+ }
+ 
+ static int f2fs_issue_discard(struct f2fs_sb_info *sbi,
+-- 
+2.11.0
