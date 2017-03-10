@@ -1,28 +1,26 @@
 From: Kinglong Mee <kinglongmee@gmail.com>
-Subject: [PATCH 1/4] f2fs: drop duplicate new_size assign in
-	f2fs_zero_range
-Date: Fri, 10 Mar 2017 17:54:03 +0800
-Message-ID: <74a33c86-dfcf-9e37-4eb2-e57761e6a32c@gmail.com>
-References: <504f870a-7012-fa63-c4c3-a9a8713d5a8a@gmail.com>
+Subject: [PATCH 2/4] f2fs: avoid copy date to user-space if move
+ file range fail
+Date: Fri, 10 Mar 2017 17:54:26 +0800
+Message-ID: <e86d08e6-ef2f-4afc-e3f4-c5d1ba0aa6a0@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <kinglongmee@gmail.com>) id 1cmHFY-0004iz-AN
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kinglongmee@gmail.com>) id 1cmHFs-0007Ec-TL
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Mar 2017 09:54:16 +0000
-Received: from mail-io0-f194.google.com ([209.85.223.194])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1cmHFX-0007qw-Ma
+	Fri, 10 Mar 2017 09:54:36 +0000
+Received: from mail-it0-f66.google.com ([209.85.214.66])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1cmHFs-0001xl-96
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Mar 2017 09:54:16 +0000
-Received: by mail-io0-f194.google.com with SMTP id f103so6487477ioi.2
+	Fri, 10 Mar 2017 09:54:36 +0000
+Received: by mail-it0-f66.google.com with SMTP id r141so832376ita.1
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Fri, 10 Mar 2017 01:54:15 -0800 (PST)
-In-Reply-To: <504f870a-7012-fa63-c4c3-a9a8713d5a8a@gmail.com>
+	Fri, 10 Mar 2017 01:54:36 -0800 (PST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,24 +32,26 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
+If move file range return error, the data copied to user-space is duplicate.
+
 Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
 ---
- fs/f2fs/file.c | 2 --
- 1 file changed, 2 deletions(-)
+ fs/f2fs/file.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 8c7923f..5f8d600 100644
+index 5f8d600..88afe0f 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -1189,8 +1189,6 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- 		if (ret)
- 			return ret;
+@@ -2194,6 +2194,8 @@ static int f2fs_ioc_move_range(struct file *filp, unsigned long arg)
+ 					range.pos_out, range.len);
  
--		if (offset + len > new_size)
--			new_size = offset + len;
- 		new_size = max_t(loff_t, new_size, offset + len);
- 	} else {
- 		if (off_start) {
+ 	mnt_drop_write_file(filp);
++	if (err)
++		goto err_out;
+ 
+ 	if (copy_to_user((struct f2fs_move_range __user *)arg,
+ 						&range, sizeof(range)))
 -- 
 2.9.3
 
