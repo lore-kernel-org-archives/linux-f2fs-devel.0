@@ -1,28 +1,34 @@
 From: Kinglong Mee <kinglongmee@gmail.com>
-Subject: Re: [PATCH] f2fs: skip scanning free nid bitmap of full
- NAT blocks
-Date: Fri, 10 Mar 2017 11:23:57 +0800
-Message-ID: <4ac60332-bc04-f398-3746-4ff5dbe53887@gmail.com>
-References: <20170301090907.82629-1-yuchao0@huawei.com>
+Subject: [PATCH v3] f2fs: cleanup the disk level filename updating
+Date: Fri, 10 Mar 2017 16:28:46 +0800
+Message-ID: <89421365-280c-1659-e467-e5f736f55ab7@gmail.com>
+References: <fdfcad9e-36e6-a163-e42b-abe414c2ca9d@gmail.com>
+	<eda73163-e95f-6c40-05e1-673eba87a530@gmail.com>
+	<7b158dd2-9b72-bf75-e0c0-29cb364d24ea@gmail.com>
+	<f3794fb1-256b-049a-1146-cdffa5e8c5d5@gmail.com>
+	<20170307193029.GA2499@jaegeuk.local>
+	<71b63777-c504-30d2-014b-718eb31b62c3@gmail.com>
+	<481d729a-c82f-0542-c73f-93c73fa9a3a8@gmail.com>
+	<20170310022330.GA17988@jaegeuk.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <kinglongmee@gmail.com>) id 1cmBA4-0002OK-RE
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kinglongmee@gmail.com>) id 1cmFv4-0005B3-RD
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Mar 2017 03:24:12 +0000
-Received: from mail-io0-f196.google.com ([209.85.223.196])
+	Fri, 10 Mar 2017 08:29:02 +0000
+Received: from mail-it0-f68.google.com ([209.85.214.68])
 	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1cmBA2-0000Un-T7
+	(Exim 4.76) id 1cmFv3-0006kW-Ef
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Mar 2017 03:24:12 +0000
-Received: by mail-io0-f196.google.com with SMTP id 68so5855212ioh.3
+	Fri, 10 Mar 2017 08:29:02 +0000
+Received: by mail-it0-f68.google.com with SMTP id r141so680306ita.1
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Thu, 09 Mar 2017 19:24:10 -0800 (PST)
-In-Reply-To: <20170301090907.82629-1-yuchao0@huawei.com>
+	Fri, 10 Mar 2017 00:29:01 -0800 (PST)
+In-Reply-To: <20170310022330.GA17988@jaegeuk.local>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,171 +38,202 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 3/1/2017 17:09, Chao Yu wrote:
-> This patch adds to account free nids for each NAT blocks, and while
-> scanning all free nid bitmap, do check count and skip lookuping in
-> full NAT block.
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/debug.c |  1 +
->  fs/f2fs/f2fs.h  |  2 ++
->  fs/f2fs/node.c  | 34 ++++++++++++++++++++++++++++------
->  3 files changed, 31 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-> index a77df377e2e8..ee2d0a485fc3 100644
-> --- a/fs/f2fs/debug.c
-> +++ b/fs/f2fs/debug.c
-> @@ -196,6 +196,7 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
->  	si->base_mem += (NM_I(sbi)->nat_bits_blocks << F2FS_BLKSIZE_BITS);
->  	si->base_mem += NM_I(sbi)->nat_blocks * NAT_ENTRY_BITMAP_SIZE;
->  	si->base_mem += NM_I(sbi)->nat_blocks / 8;
-> +	si->base_mem += NM_I(sbi)->nat_blocks * sizeof(unsigned short);
->  
->  get_cache:
->  	si->cache_mem = 0;
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 7e2924981eeb..c0b33719dfa9 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -557,6 +557,8 @@ struct f2fs_nm_info {
->  	struct mutex build_lock;	/* lock for build free nids */
->  	unsigned char (*free_nid_bitmap)[NAT_ENTRY_BITMAP_SIZE];
->  	unsigned char *nat_block_bitmap;
-> +	unsigned short *free_nid_count;	/* free nid count of NAT block */
-> +	spinlock_t free_nid_lock;	/* protect updating of nid count */
->  
+As discuss with Jaegeuk and Chao,
+"Once checkpoint is done, f2fs doesn't need to update there-in filename at all."
 
-Sorry for my reply so late.
+The disk-level filename is used only one case,
+1. create a file A under a dir
+2. sync A
+3. godown
+4. umount
+5. mount (roll_forward)
 
-Is the free_nid_lock needed here?
-The free_nid_count should be protected as free_nid_bitmap,
-but there isn't any lock for free_nid_bitmap.
+Only the rename/cross_rename changes the filename, if it happens,
+a. between step 1 and 2, the sync A will caused checkpoint, so that,
+   the roll_forward at step 5 never happens.
+b. after step 2, the roll_forward happens, file A will roll forward
+   to the result as after step 1.
 
-How about atomic? 
-The free node ids management seems a little complex now.
+So that, any updating the disk filename is useless, just cleanup it.
 
-thanks,
-Kinglong Mee
+Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
+---
+ fs/f2fs/dir.c    | 25 ++++---------------------
+ fs/f2fs/f2fs.h   |  2 --
+ fs/f2fs/file.c   |  8 --------
+ fs/f2fs/inline.c |  2 --
+ fs/f2fs/namei.c  | 29 -----------------------------
+ 5 files changed, 4 insertions(+), 62 deletions(-)
 
->  	/* for checkpoint */
->  	char *nat_bitmap;		/* NAT bitmap pointer */
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index 94967171dee8..1a759d45b7e4 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1823,7 +1823,8 @@ static void remove_free_nid(struct f2fs_sb_info *sbi, nid_t nid)
->  		kmem_cache_free(free_nid_slab, i);
->  }
->  
-> -void update_free_nid_bitmap(struct f2fs_sb_info *sbi, nid_t nid, bool set)
-> +void update_free_nid_bitmap(struct f2fs_sb_info *sbi, nid_t nid,
-> +							bool set, bool build)
->  {
->  	struct f2fs_nm_info *nm_i = NM_I(sbi);
->  	unsigned int nat_ofs = NAT_BLOCK_OFFSET(nid);
-> @@ -1836,6 +1837,13 @@ void update_free_nid_bitmap(struct f2fs_sb_info *sbi, nid_t nid, bool set)
->  		set_bit_le(nid_ofs, nm_i->free_nid_bitmap[nat_ofs]);
->  	else
->  		clear_bit_le(nid_ofs, nm_i->free_nid_bitmap[nat_ofs]);
-> +
-> +	spin_lock(&nm_i->free_nid_lock);
-> +	if (set)
-> +		nm_i->free_nid_count[nat_ofs]++;
-> +	else if (!build)
-> +		nm_i->free_nid_count[nat_ofs]--;
-> +	spin_unlock(&nm_i->free_nid_lock);
->  }
->  
->  static void scan_nat_page(struct f2fs_sb_info *sbi,
-> @@ -1847,6 +1855,9 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
->  	unsigned int nat_ofs = NAT_BLOCK_OFFSET(start_nid);
->  	int i;
->  
-> +	if (test_bit_le(nat_ofs, nm_i->nat_block_bitmap))
-> +		return;
-> +
->  	set_bit_le(nat_ofs, nm_i->nat_block_bitmap);
->  
->  	i = start_nid % NAT_ENTRY_PER_BLOCK;
-> @@ -1861,7 +1872,7 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
->  		f2fs_bug_on(sbi, blk_addr == NEW_ADDR);
->  		if (blk_addr == NULL_ADDR)
->  			freed = add_free_nid(sbi, start_nid, true);
-> -		update_free_nid_bitmap(sbi, start_nid, freed);
-> +		update_free_nid_bitmap(sbi, start_nid, freed, true);
->  	}
->  }
->  
-> @@ -1877,6 +1888,8 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
->  	for (i = 0; i < nm_i->nat_blocks; i++) {
->  		if (!test_bit_le(i, nm_i->nat_block_bitmap))
->  			continue;
-> +		if (!nm_i->free_nid_count[i])
-> +			continue;
->  		for (idx = 0; idx < NAT_ENTRY_PER_BLOCK; idx++) {
->  			nid_t nid;
->  
-> @@ -2081,7 +2094,7 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
->  		__insert_nid_to_list(sbi, i, ALLOC_NID_LIST, false);
->  		nm_i->available_nids--;
->  
-> -		update_free_nid_bitmap(sbi, *nid, false);
-> +		update_free_nid_bitmap(sbi, *nid, false, false);
->  
->  		spin_unlock(&nm_i->nid_list_lock);
->  		return true;
-> @@ -2137,7 +2150,7 @@ void alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid)
->  
->  	nm_i->available_nids++;
->  
-> -	update_free_nid_bitmap(sbi, nid, true);
-> +	update_free_nid_bitmap(sbi, nid, true, false);
->  
->  	spin_unlock(&nm_i->nid_list_lock);
->  
-> @@ -2467,11 +2480,11 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
->  			add_free_nid(sbi, nid, false);
->  			spin_lock(&NM_I(sbi)->nid_list_lock);
->  			NM_I(sbi)->available_nids++;
-> -			update_free_nid_bitmap(sbi, nid, true);
-> +			update_free_nid_bitmap(sbi, nid, true, false);
->  			spin_unlock(&NM_I(sbi)->nid_list_lock);
->  		} else {
->  			spin_lock(&NM_I(sbi)->nid_list_lock);
-> -			update_free_nid_bitmap(sbi, nid, false);
-> +			update_free_nid_bitmap(sbi, nid, false, false);
->  			spin_unlock(&NM_I(sbi)->nid_list_lock);
->  		}
->  	}
-> @@ -2651,6 +2664,14 @@ int init_free_nid_cache(struct f2fs_sb_info *sbi)
->  								GFP_KERNEL);
->  	if (!nm_i->nat_block_bitmap)
->  		return -ENOMEM;
-> +
-> +	nm_i->free_nid_count = f2fs_kvzalloc(nm_i->nat_blocks *
-> +					sizeof(unsigned short), GFP_KERNEL);
-> +	if (!nm_i->free_nid_count)
-> +		return -ENOMEM;
-> +
-> +	spin_lock_init(&nm_i->free_nid_lock);
-> +
->  	return 0;
->  }
->  
-> @@ -2730,6 +2751,7 @@ void destroy_node_manager(struct f2fs_sb_info *sbi)
->  
->  	kvfree(nm_i->nat_block_bitmap);
->  	kvfree(nm_i->free_nid_bitmap);
-> +	kvfree(nm_i->free_nid_count);
->  
->  	kfree(nm_i->nat_bitmap);
->  	kfree(nm_i->nat_bits);
-> 
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 8d5c62b..058c4f3 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -337,24 +337,6 @@ static void init_dent_inode(const struct qstr *name, struct page *ipage)
+ 	set_page_dirty(ipage);
+ }
+ 
+-int update_dent_inode(struct inode *inode, struct inode *to,
+-					const struct qstr *name)
+-{
+-	struct page *page;
+-
+-	if (file_enc_name(to))
+-		return 0;
+-
+-	page = get_node_page(F2FS_I_SB(inode), inode->i_ino);
+-	if (IS_ERR(page))
+-		return PTR_ERR(page);
+-
+-	init_dent_inode(name, page);
+-	f2fs_put_page(page, 1);
+-
+-	return 0;
+-}
+-
+ void do_make_empty_dir(struct inode *inode, struct inode *parent,
+ 					struct f2fs_dentry_ptr *d)
+ {
+@@ -438,8 +420,11 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
+ 		set_cold_node(inode, page);
+ 	}
+ 
+-	if (new_name)
++	if (new_name) {
+ 		init_dent_inode(new_name, page);
++		if (f2fs_encrypted_inode(dir))
++			file_set_enc_name(inode);
++	}
+ 
+ 	/*
+ 	 * This file should be checkpointed during fsync.
+@@ -599,8 +584,6 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
+ 			err = PTR_ERR(page);
+ 			goto fail;
+ 		}
+-		if (f2fs_encrypted_inode(dir))
+-			file_set_enc_name(inode);
+ 	}
+ 
+ 	make_dentry_ptr(NULL, &d, (void *)dentry_blk, 1);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 7edb3be..5dbc0c0 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2093,8 +2093,6 @@ ino_t f2fs_inode_by_name(struct inode *dir, const struct qstr *qstr,
+ 			struct page **page);
+ void f2fs_set_link(struct inode *dir, struct f2fs_dir_entry *de,
+ 			struct page *page, struct inode *inode);
+-int update_dent_inode(struct inode *inode, struct inode *to,
+-			const struct qstr *name);
+ void f2fs_update_dentry(nid_t ino, umode_t mode, struct f2fs_dentry_ptr *d,
+ 			const struct qstr *name, f2fs_hash_t name_hash,
+ 			unsigned int bit_pos);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 4ec764e..8c7923f 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -110,20 +110,12 @@ static int get_parent_ino(struct inode *inode, nid_t *pino)
+ {
+ 	struct dentry *dentry;
+ 
+-	if (file_enc_name(inode))
+-		return 0;
+-
+ 	inode = igrab(inode);
+ 	dentry = d_find_any_alias(inode);
+ 	iput(inode);
+ 	if (!dentry)
+ 		return 0;
+ 
+-	if (update_dent_inode(inode, inode, &dentry->d_name)) {
+-		dput(dentry);
+-		return 0;
+-	}
+-
+ 	*pino = parent_ino(dentry);
+ 	dput(dentry);
+ 	return 1;
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index e32a9e5..41fe27d 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -527,8 +527,6 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *new_name,
+ 			err = PTR_ERR(page);
+ 			goto fail;
+ 		}
+-		if (f2fs_encrypted_inode(dir))
+-			file_set_enc_name(inode);
+ 	}
+ 
+ 	f2fs_wait_on_page_writeback(ipage, NODE, true);
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 25c073f..8906c9f 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -720,13 +720,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 		if (err)
+ 			goto put_out_dir;
+ 
+-		err = update_dent_inode(old_inode, new_inode,
+-						&new_dentry->d_name);
+-		if (err) {
+-			release_orphan_inode(sbi);
+-			goto put_out_dir;
+-		}
+-
+ 		f2fs_set_link(new_dir, new_entry, new_page, old_inode);
+ 
+ 		new_inode->i_ctime = current_time(new_inode);
+@@ -779,8 +772,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 
+ 	down_write(&F2FS_I(old_inode)->i_sem);
+ 	file_lost_pino(old_inode);
+-	if (new_inode && file_enc_name(new_inode))
+-		file_set_enc_name(old_inode);
+ 	up_write(&F2FS_I(old_inode)->i_sem);
+ 
+ 	old_inode->i_ctime = current_time(old_inode);
+@@ -917,18 +908,6 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 
+ 	f2fs_lock_op(sbi);
+ 
+-	err = update_dent_inode(old_inode, new_inode, &new_dentry->d_name);
+-	if (err)
+-		goto out_unlock;
+-	if (file_enc_name(new_inode))
+-		file_set_enc_name(old_inode);
+-
+-	err = update_dent_inode(new_inode, old_inode, &old_dentry->d_name);
+-	if (err)
+-		goto out_undo;
+-	if (file_enc_name(old_inode))
+-		file_set_enc_name(new_inode);
+-
+ 	/* update ".." directory entry info of old dentry */
+ 	if (old_dir_entry)
+ 		f2fs_set_link(old_inode, old_dir_entry, old_dir_page, new_dir);
+@@ -972,14 +951,6 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir))
+ 		f2fs_sync_fs(sbi->sb, 1);
+ 	return 0;
+-out_undo:
+-	/*
+-	 * Still we may fail to recover name info of f2fs_inode here
+-	 * Drop it, once its name is set as encrypted
+-	 */
+-	update_dent_inode(old_inode, old_inode, &old_dentry->d_name);
+-out_unlock:
+-	f2fs_unlock_op(sbi);
+ out_new_dir:
+ 	if (new_dir_entry) {
+ 		f2fs_dentry_kunmap(new_inode, new_dir_page);
+-- 
+2.9.3
+
 
 ------------------------------------------------------------------------------
 Announcing the Oxford Dictionaries API! The API offers world-renowned
