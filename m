@@ -1,25 +1,26 @@
-From: heyunlei <heyunlei@huawei.com>
-Subject: Re: [PATCH] f2fs: allow write page cache when writting cp
-Date: Fri, 10 Mar 2017 18:09:36 +0800
-Message-ID: <fdd94a66-8cc2-a6af-af11-1e6d4be9fd31@huawei.com>
-References: <20170307124414.20522-1-heyunlei@huawei.com>
-	<20170309212806.GA4125@jaegeuk.local>
+From: Kinglong Mee <kinglongmee@gmail.com>
+Subject: [PATCH] f2fs: clear FI_DATA_EXIST flag in
+	truncate_inline_inode
+Date: Fri, 10 Mar 2017 20:43:20 +0800
+Message-ID: <334a8de3-5119-37b5-08ac-f7843d1fe4b2@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1cmHWL-0000zX-BO
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kinglongmee@gmail.com>) id 1cmJtP-0007oF-4v
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Mar 2017 10:11:37 +0000
-Received: from [45.249.212.191] (helo=dggrg05-dlp.huawei.com)
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cmHWJ-0003Hu-Dv
+	Fri, 10 Mar 2017 12:43:35 +0000
+Received: from mail-io0-f195.google.com ([209.85.223.195])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1cmJtO-00085H-9l
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Mar 2017 10:11:37 +0000
-In-Reply-To: <20170309212806.GA4125@jaegeuk.local>
+	Fri, 10 Mar 2017 12:43:35 +0000
+Received: by mail-io0-f195.google.com with SMTP id n76so6794501ioe.1
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Fri, 10 Mar 2017 04:43:34 -0800 (PST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,180 +30,134 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-Hi, Jaegeuk
+Clear FI_DATA_EXIST flag atomically in truncate_inline_inode, and
+the return value from truncate_inline_inode isn't used, remove it.
 
-On 2017/3/10 5:28, Jaegeuk Kim wrote:
-> Hi Yunlei,
->
-> On 03/07, Yunlei He wrote:
->> This patch allow write data to normal file when writting
->> new checkpoint.
->>
->> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->> ---
->>  fs/f2fs/checkpoint.c |  4 +++-
->>  fs/f2fs/data.c       | 23 ++++++++++++++++-------
->>  fs/f2fs/f2fs.h       |  1 +
->>  fs/f2fs/super.c      |  1 +
->>  4 files changed, 21 insertions(+), 8 deletions(-)
->>
->> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->> index 0339daf..1d86171 100644
->> --- a/fs/f2fs/checkpoint.c
->> +++ b/fs/f2fs/checkpoint.c
->> @@ -979,9 +979,10 @@ static int block_operations(struct f2fs_sb_info *sbi)
->>  	 * POR: we should ensure that there are no dirty node pages
->>  	 * until finishing nat/sit flush.
->>  	 */
->> +
->> +	down_write(&sbi->node_change);
->>  retry_flush_nodes:
->>  	down_write(&sbi->node_write);
->> -
->>  	if (get_pages(sbi, F2FS_DIRTY_NODES)) {
->>  		up_write(&sbi->node_write);
->>  		err = sync_node_pages(sbi, &wbc);
->> @@ -992,6 +993,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
->>  		goto retry_flush_nodes;
->>  	}
->>  out:
->> +	up_write(&sbi->node_change);
->
-> After block_operation, block allocator updates some block counters in terms of
-> node or data blocks which will be written in checkpoint.
+Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
+---
+ fs/f2fs/f2fs.h   |  8 +-------
+ fs/f2fs/file.c   |  4 +---
+ fs/f2fs/inline.c | 21 +++++++++++----------
+ 3 files changed, 13 insertions(+), 20 deletions(-)
 
-Yes, you are right! Can we prepare the checkpoint pack before we allow write
-page cache?
-
-Thanks
-
->
-> Thanks,
->
->>  	blk_finish_plug(&plug);
->>  	return err;
->>  }
->> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->> index 1375fef..c7eccb0 100644
->> --- a/fs/f2fs/data.c
->> +++ b/fs/f2fs/data.c
->> @@ -827,7 +827,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->>  	}
->>
->>  next_dnode:
->> -	if (create)
->> +	if (create && flag == F2FS_GET_BLOCK_PRE_AIO)
->> +		down_read(&sbi->node_change);
->> +	else if (create)
->>  		f2fs_lock_op(sbi);
->>
->>  	/* When reading holes, we need its node page */
->> @@ -936,17 +938,23 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->>  		goto next_block;
->>
->>  	f2fs_put_dnode(&dn);
->> -
->> -	if (create) {
->> +	if (create && flag == F2FS_GET_BLOCK_PRE_AIO) {
->> +		up_read(&sbi->node_change);
->> +		f2fs_balance_fs(sbi, dn.node_changed);
->> +	} else if (create) {
->>  		f2fs_unlock_op(sbi);
->>  		f2fs_balance_fs(sbi, dn.node_changed);
->>  	}
->> +
->>  	goto next_dnode;
->>
->>  sync_out:
->>  	f2fs_put_dnode(&dn);
->>  unlock_out:
->> -	if (create) {
->> +	if (create && flag == F2FS_GET_BLOCK_PRE_AIO) {
->> +		up_read(&sbi->node_change);
->> +		f2fs_balance_fs(sbi, dn.node_changed);
->> +	} else if (create) {
->>  		f2fs_unlock_op(sbi);
->>  		f2fs_balance_fs(sbi, dn.node_changed);
->>  	}
->> @@ -1686,7 +1694,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
->>
->>  	if (f2fs_has_inline_data(inode) ||
->>  			(pos & PAGE_MASK) >= i_size_read(inode)) {
->> -		f2fs_lock_op(sbi);
->> +		down_read(&sbi->node_change);
->>  		locked = true;
->>  	}
->>  restart:
->> @@ -1703,6 +1711,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
->>  		if (pos + len <= MAX_INLINE_DATA) {
->>  			read_inline_data(page, ipage);
->>  			set_inode_flag(inode, FI_DATA_EXIST);
->> +			dn.node_changed = true;
->>  			if (inode->i_nlink)
->>  				set_inline_node(ipage);
->>  		} else {
->> @@ -1722,7 +1731,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
->>  			err = get_dnode_of_data(&dn, index, LOOKUP_NODE);
->>  			if (err || dn.data_blkaddr == NULL_ADDR) {
->>  				f2fs_put_dnode(&dn);
->> -				f2fs_lock_op(sbi);
->> +				down_read(&sbi->node_change);
->>  				locked = true;
->>  				goto restart;
->>  			}
->> @@ -1736,7 +1745,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
->>  	f2fs_put_dnode(&dn);
->>  unlock_out:
->>  	if (locked)
->> -		f2fs_unlock_op(sbi);
->> +		up_read(&sbi->node_change);
->>  	return err;
->>  }
->>
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index 7e29249..0568f78 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -830,6 +830,7 @@ struct f2fs_sb_info {
->>  	struct mutex cp_mutex;			/* checkpoint procedure lock */
->>  	struct rw_semaphore cp_rwsem;		/* blocking FS operations */
->>  	struct rw_semaphore node_write;		/* locking node writes */
->> +	struct rw_semaphore node_change;		/* locking node change */
->>  	wait_queue_head_t cp_wait;
->>  	unsigned long last_time[MAX_TIME];	/* to store time in jiffies */
->>  	long interval_time[MAX_TIME];		/* to store thresholds */
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index 2d494d5..d217114 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -1929,6 +1929,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>  	mutex_init(&sbi->gc_mutex);
->>  	mutex_init(&sbi->cp_mutex);
->>  	init_rwsem(&sbi->node_write);
->> +	init_rwsem(&sbi->node_change);
->>
->>  	/* disallow all the data/node/meta page writes */
->>  	set_sbi_flag(sbi, SBI_POR_DOING);
->> --
->> 2.10.1
->>
->>
->> ------------------------------------------------------------------------------
->> Announcing the Oxford Dictionaries API! The API offers world-renowned
->> dictionary content that is easy and intuitive to access. Sign up for an
->> account today to start using our lexical data to power your apps and
->> projects. Get started today and enter our developer competition.
->> http://sdm.link/oxford
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->
-> .
->
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 5dbc0c0..ee68144 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1872,12 +1872,6 @@ static inline int f2fs_has_inline_data(struct inode *inode)
+ 	return is_inode_flag_set(inode, FI_INLINE_DATA);
+ }
+ 
+-static inline void f2fs_clear_inline_inode(struct inode *inode)
+-{
+-	clear_inode_flag(inode, FI_INLINE_DATA);
+-	clear_inode_flag(inode, FI_DATA_EXIST);
+-}
+-
+ static inline int f2fs_exist_data(struct inode *inode)
+ {
+ 	return is_inode_flag_set(inode, FI_DATA_EXIST);
+@@ -2504,7 +2498,7 @@ extern struct kmem_cache *inode_entry_slab;
+ bool f2fs_may_inline_data(struct inode *inode);
+ bool f2fs_may_inline_dentry(struct inode *inode);
+ void read_inline_data(struct page *page, struct page *ipage);
+-bool truncate_inline_inode(struct page *ipage, u64 from);
++void truncate_inline_inode(struct inode *inode, struct page *ipage, u64 from);
+ int f2fs_read_inline_data(struct inode *inode, struct page *page);
+ int f2fs_convert_inline_page(struct dnode_of_data *dn, struct page *page);
+ int f2fs_convert_inline_inode(struct inode *inode);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index c407fa6..da6d33d1 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -561,9 +561,7 @@ int truncate_blocks(struct inode *inode, u64 from, bool lock)
+ 	}
+ 
+ 	if (f2fs_has_inline_data(inode)) {
+-		truncate_inline_inode(ipage, from);
+-		if (from == 0)
+-			clear_inode_flag(inode, FI_DATA_EXIST);
++		truncate_inline_inode(inode, ipage, from);
+ 		f2fs_put_page(ipage, 1);
+ 		truncate_page = true;
+ 		goto out;
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 41fe27d..701bbd8 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -63,19 +63,21 @@ void read_inline_data(struct page *page, struct page *ipage)
+ 		SetPageUptodate(page);
+ }
+ 
+-bool truncate_inline_inode(struct page *ipage, u64 from)
++void truncate_inline_inode(struct inode *inode, struct page *ipage, u64 from)
+ {
+ 	void *addr;
+ 
+ 	if (from >= MAX_INLINE_DATA)
+-		return false;
++		return;
+ 
+ 	addr = inline_data_addr(ipage);
+ 
+ 	f2fs_wait_on_page_writeback(ipage, NODE, true);
+ 	memset(addr + from, 0, MAX_INLINE_DATA - from);
+ 	set_page_dirty(ipage);
+-	return true;
++
++	if (from == 0)
++		clear_inode_flag(inode, FI_DATA_EXIST);
+ }
+ 
+ int f2fs_read_inline_data(struct inode *inode, struct page *page)
+@@ -146,11 +148,11 @@ int f2fs_convert_inline_page(struct dnode_of_data *dn, struct page *page)
+ 	set_inode_flag(dn->inode, FI_APPEND_WRITE);
+ 
+ 	/* clear inline data and flag after data writeback */
+-	truncate_inline_inode(dn->inode_page, 0);
++	truncate_inline_inode(dn->inode, dn->inode_page, 0);
+ 	clear_inline_node(dn->inode_page);
+ clear_out:
+ 	stat_dec_inline_inode(dn->inode);
+-	f2fs_clear_inline_inode(dn->inode);
++	clear_inode_flag(dn->inode, FI_INLINE_DATA);
+ 	f2fs_put_dnode(dn);
+ 	return 0;
+ }
+@@ -267,9 +269,8 @@ bool recover_inline_data(struct inode *inode, struct page *npage)
+ 	if (f2fs_has_inline_data(inode)) {
+ 		ipage = get_node_page(sbi, inode->i_ino);
+ 		f2fs_bug_on(sbi, IS_ERR(ipage));
+-		if (!truncate_inline_inode(ipage, 0))
+-			return false;
+-		f2fs_clear_inline_inode(inode);
++		truncate_inline_inode(inode, ipage, 0);
++		clear_inode_flag(inode, FI_INLINE_DATA);
+ 		f2fs_put_page(ipage, 1);
+ 	} else if (ri && (ri->i_inline & F2FS_INLINE_DATA)) {
+ 		if (truncate_blocks(inode, 0, false))
+@@ -380,7 +381,7 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
+ 	set_page_dirty(page);
+ 
+ 	/* clear inline dir and flag after data writeback */
+-	truncate_inline_inode(ipage, 0);
++	truncate_inline_inode(dir, ipage, 0);
+ 
+ 	stat_dec_inline_dir(dir);
+ 	clear_inode_flag(dir, FI_INLINE_DENTRY);
+@@ -455,7 +456,7 @@ static int f2fs_move_rehashed_dirents(struct inode *dir, struct page *ipage,
+ 	}
+ 
+ 	memcpy(backup_dentry, inline_dentry, MAX_INLINE_DATA);
+-	truncate_inline_inode(ipage, 0);
++	truncate_inline_inode(dir, ipage, 0);
+ 
+ 	unlock_page(ipage);
+ 
+-- 
+2.9.3
 
 
 ------------------------------------------------------------------------------
