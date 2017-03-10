@@ -1,34 +1,27 @@
-From: Kinglong Mee <kinglongmee@gmail.com>
-Subject: [PATCH v3] f2fs: cleanup the disk level filename updating
-Date: Fri, 10 Mar 2017 16:28:46 +0800
-Message-ID: <89421365-280c-1659-e467-e5f736f55ab7@gmail.com>
-References: <fdfcad9e-36e6-a163-e42b-abe414c2ca9d@gmail.com>
-	<eda73163-e95f-6c40-05e1-673eba87a530@gmail.com>
-	<7b158dd2-9b72-bf75-e0c0-29cb364d24ea@gmail.com>
-	<f3794fb1-256b-049a-1146-cdffa5e8c5d5@gmail.com>
-	<20170307193029.GA2499@jaegeuk.local>
-	<71b63777-c504-30d2-014b-718eb31b62c3@gmail.com>
-	<481d729a-c82f-0542-c73f-93c73fa9a3a8@gmail.com>
-	<20170310022330.GA17988@jaegeuk.local>
+From: Philippe De Muyter <phdm@macq.eu>
+Subject: Re: f2fs_bug_on in init_dirty_segmap
+Date: Fri, 10 Mar 2017 10:28:10 +0100
+Message-ID: <20170310092810.GA28970@frolo.macqel>
+References: <20170308142432.GA31333@frolo.macqel>
+	<20170308215203.GE5483@jaegeuk.local>
+	<20170309084227.GA11085@frolo.macqel>
+	<20170309231146.GC4125@jaegeuk.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <kinglongmee@gmail.com>) id 1cmFv4-0005B3-RD
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <phdm@macqel.be>) id 1cmGqY-0006Ad-Oj
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Mar 2017 08:29:02 +0000
-Received: from mail-it0-f68.google.com ([209.85.214.68])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1cmFv3-0006kW-Ef
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Mar 2017 08:29:02 +0000
-Received: by mail-it0-f68.google.com with SMTP id r141so680306ita.1
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Fri, 10 Mar 2017 00:29:01 -0800 (PST)
-In-Reply-To: <20170310022330.GA17988@jaegeuk.local>
+	Fri, 10 Mar 2017 09:28:26 +0000
+Received: from smtp2.macqel.be ([109.135.2.61])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1cmGqW-00047h-Q2 for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 10 Mar 2017 09:28:26 +0000
+Content-Disposition: inline
+In-Reply-To: <20170309231146.GC4125@jaegeuk.local>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -41,199 +34,107 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-As discuss with Jaegeuk and Chao,
-"Once checkpoint is done, f2fs doesn't need to update there-in filename at all."
+On Thu, Mar 09, 2017 at 03:11:46PM -0800, Jaegeuk Kim wrote:
+> On 03/09, Philippe De Muyter wrote:
+> > Hi,
+> > 
+> > thanks for your quick answer
+> > 
+> > On Wed, Mar 08, 2017 at 01:52:03PM -0800, Jaegeuk Kim wrote:
+> > > Hi,
+> > > 
+> > > On 03/08, Philippe De Muyter wrote:
+> > > > Hi f2fs developpers,
+> > > > 
+> > > > Please excuse my maybe dumb question.
+> > > > 
+> > > > I recently encountered a kernel panic at root mount time (thus making my
+> > > > system unusable, as my root partition is formatted as f2fs) due to the
+> > > > following segment in fs/f2fs/segment.c:init_dirty_segmap
+> > > > 
+> > > > 		if (valid_blocks > sbi->blocks_per_seg) {
+> > > >                         f2fs_bug_on(sbi, 1); <<<<<<<<<<<<<<<<<<<<
+> > > > 			continue;
+> > > > 		}
+> > > > 
+> > > > Is that really a condition requiring a kernel panic, or could a read-only
+> > > > mount be allowed ?
+> > > 
+> > > It would be helpful that you can remain your kernel and f2fs-tools version
+> > > information, as well as fsck.f2fs result.
+> > 
+> > It is actually a Freescale (now NXP) provided kernel tagged rel_imx_4.1.15_1.2.0_ga
+> > available at git://git.freescale.com/imx/linux-2.6-imx.git 
+> > 
+> > I surmise that the f2fs driver is the one from the linux-4.1 version.
+> > 
+> > > 
+> > > You can get the latest f2fs-tools from
+> > > http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.git/log/?h=dev-test
+> > > 
+> > > Anyway, if you don't have time, you may have some options like:
+> > > 
+> > > 1. disable F2FS_CHECK_FS in Kconfig
+> > >  : bypass BUG_ON here, so mount-ro would be preferable.
+> > 
+> > Actually F2FS_CHECK_FS was disabled, but kernel panic'ed.
+> 
+> So, you got a warning message from there?
+> 
+> #ifdef CONFIG_F2FS_CHECK_FS
+> #define f2fs_bug_on(sbi, condition)	BUG_ON(condition)
+> #define f2fs_down_write(x, y)	down_write_nest_lock(x, y)
+> #else
+> #define f2fs_bug_on(sbi, condition)					\
+> 	do {								\
+> 		if (unlikely(condition)) {				\
+> 			WARN_ON(1);					\
+> 			set_sbi_flag(sbi, SBI_NEED_FSCK);		\
+> 		}							\
+> 	} while (0)
+> #define f2fs_down_write(x, y)	down_write(x)
+> #endif
 
-The disk-level filename is used only one case,
-1. create a file A under a dir
-2. sync A
-3. godown
-4. umount
-5. mount (roll_forward)
+Yes, I got a 'panic'.  I'll look deeper into that and let you know.
 
-Only the rename/cross_rename changes the filename, if it happens,
-a. between step 1 and 2, the sync A will caused checkpoint, so that,
-   the roll_forward at step 5 never happens.
-b. after step 2, the roll_forward happens, file A will roll forward
-   to the result as after step 1.
+> 
+> > > 
+> > > 2. run fsck.f2fs
+> > >  : fix some inconsistency and let you mount your system again.
+> > > 
+> > > So, I think you'd better try #1 to retrieve your important data, and then
+> > > #2 to fix something wrong.
+> > 
+> > There wasn't a need to retrieve important data, as it is an unattended device
+> > in the wild.  The problem was that boot did not succeed anymore and the device
+> > needed a return to our aftersales department for reflashing.  Without the 'panic',
+> > and with a read-only mount we could probably fix it without reflashing
+> > and without return.
+> 
+> So, there is no fscking before mounting any filesystem during boot-up, right?
+> Most of distros and android do that and provide a recovery mode tho.
 
-So that, any updating the disk filename is useless, just cleanup it.
+No, there is no fsck before mounting the root filesystem during boot-up.
+But I do my best to avoid writing in the root partition.  It's not read-only,
+but all log, lock, run, cache and tmp files are in tmpfs partitions.  I have
+just noticed though that the partition is mounted with 'relatime', not 'noatime'
+as I would like, but I do not know where this 'relatime' option comes from.
+Is 'relatime' a default mount option for f2fs ?
 
-Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
----
- fs/f2fs/dir.c    | 25 ++++---------------------
- fs/f2fs/f2fs.h   |  2 --
- fs/f2fs/file.c   |  8 --------
- fs/f2fs/inline.c |  2 --
- fs/f2fs/namei.c  | 29 -----------------------------
- 5 files changed, 4 insertions(+), 62 deletions(-)
+> 
+> I think there is a way to mount with ro without loading in-memory structures
+> which results in potential panics. Will cosider about that. ;)
+> 
+> Note, there is a backported f2fs for v4.1 which I've been maintaining.
+> 
+> http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-stable.git/log/?h=linux-4.1.y
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 8d5c62b..058c4f3 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -337,24 +337,6 @@ static void init_dent_inode(const struct qstr *name, struct page *ipage)
- 	set_page_dirty(ipage);
- }
- 
--int update_dent_inode(struct inode *inode, struct inode *to,
--					const struct qstr *name)
--{
--	struct page *page;
--
--	if (file_enc_name(to))
--		return 0;
--
--	page = get_node_page(F2FS_I_SB(inode), inode->i_ino);
--	if (IS_ERR(page))
--		return PTR_ERR(page);
--
--	init_dent_inode(name, page);
--	f2fs_put_page(page, 1);
--
--	return 0;
--}
--
- void do_make_empty_dir(struct inode *inode, struct inode *parent,
- 					struct f2fs_dentry_ptr *d)
- {
-@@ -438,8 +420,11 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
- 		set_cold_node(inode, page);
- 	}
- 
--	if (new_name)
-+	if (new_name) {
- 		init_dent_inode(new_name, page);
-+		if (f2fs_encrypted_inode(dir))
-+			file_set_enc_name(inode);
-+	}
- 
- 	/*
- 	 * This file should be checkpointed during fsync.
-@@ -599,8 +584,6 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
- 			err = PTR_ERR(page);
- 			goto fail;
- 		}
--		if (f2fs_encrypted_inode(dir))
--			file_set_enc_name(inode);
- 	}
- 
- 	make_dentry_ptr(NULL, &d, (void *)dentry_blk, 1);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 7edb3be..5dbc0c0 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2093,8 +2093,6 @@ ino_t f2fs_inode_by_name(struct inode *dir, const struct qstr *qstr,
- 			struct page **page);
- void f2fs_set_link(struct inode *dir, struct f2fs_dir_entry *de,
- 			struct page *page, struct inode *inode);
--int update_dent_inode(struct inode *inode, struct inode *to,
--			const struct qstr *name);
- void f2fs_update_dentry(nid_t ino, umode_t mode, struct f2fs_dentry_ptr *d,
- 			const struct qstr *name, f2fs_hash_t name_hash,
- 			unsigned int bit_pos);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 4ec764e..8c7923f 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -110,20 +110,12 @@ static int get_parent_ino(struct inode *inode, nid_t *pino)
- {
- 	struct dentry *dentry;
- 
--	if (file_enc_name(inode))
--		return 0;
--
- 	inode = igrab(inode);
- 	dentry = d_find_any_alias(inode);
- 	iput(inode);
- 	if (!dentry)
- 		return 0;
- 
--	if (update_dent_inode(inode, inode, &dentry->d_name)) {
--		dput(dentry);
--		return 0;
--	}
--
- 	*pino = parent_ino(dentry);
- 	dput(dentry);
- 	return 1;
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index e32a9e5..41fe27d 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -527,8 +527,6 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *new_name,
- 			err = PTR_ERR(page);
- 			goto fail;
- 		}
--		if (f2fs_encrypted_inode(dir))
--			file_set_enc_name(inode);
- 	}
- 
- 	f2fs_wait_on_page_writeback(ipage, NODE, true);
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 25c073f..8906c9f 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -720,13 +720,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		if (err)
- 			goto put_out_dir;
- 
--		err = update_dent_inode(old_inode, new_inode,
--						&new_dentry->d_name);
--		if (err) {
--			release_orphan_inode(sbi);
--			goto put_out_dir;
--		}
--
- 		f2fs_set_link(new_dir, new_entry, new_page, old_inode);
- 
- 		new_inode->i_ctime = current_time(new_inode);
-@@ -779,8 +772,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 
- 	down_write(&F2FS_I(old_inode)->i_sem);
- 	file_lost_pino(old_inode);
--	if (new_inode && file_enc_name(new_inode))
--		file_set_enc_name(old_inode);
- 	up_write(&F2FS_I(old_inode)->i_sem);
- 
- 	old_inode->i_ctime = current_time(old_inode);
-@@ -917,18 +908,6 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
- 
- 	f2fs_lock_op(sbi);
- 
--	err = update_dent_inode(old_inode, new_inode, &new_dentry->d_name);
--	if (err)
--		goto out_unlock;
--	if (file_enc_name(new_inode))
--		file_set_enc_name(old_inode);
--
--	err = update_dent_inode(new_inode, old_inode, &old_dentry->d_name);
--	if (err)
--		goto out_undo;
--	if (file_enc_name(old_inode))
--		file_set_enc_name(new_inode);
--
- 	/* update ".." directory entry info of old dentry */
- 	if (old_dir_entry)
- 		f2fs_set_link(old_inode, old_dir_entry, old_dir_page, new_dir);
-@@ -972,14 +951,6 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir))
- 		f2fs_sync_fs(sbi->sb, 1);
- 	return 0;
--out_undo:
--	/*
--	 * Still we may fail to recover name info of f2fs_inode here
--	 * Drop it, once its name is set as encrypted
--	 */
--	update_dent_inode(old_inode, old_inode, &old_dentry->d_name);
--out_unlock:
--	f2fs_unlock_op(sbi);
- out_new_dir:
- 	if (new_dir_entry) {
- 		f2fs_dentry_kunmap(new_inode, new_dir_page);
+Thank you. I will apply it
+
+Philippe
+
 -- 
-2.9.3
-
+Philippe De Muyter +32 2 6101532 Macq SA rue de l'Aeronef 2 B-1140 Bruxelles
 
 ------------------------------------------------------------------------------
 Announcing the Oxford Dictionaries API! The API offers world-renowned
