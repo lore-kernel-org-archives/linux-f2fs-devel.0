@@ -1,22 +1,24 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/2] f2fs: le16_to_cpu for xattr->e_value_size
-Date: Fri, 10 Mar 2017 09:53:34 -0800
-Message-ID: <20170310175335.26013-1-jaegeuk@kernel.org>
+Subject: [PATCH 2/2] f2fs: declare static functions
+Date: Fri, 10 Mar 2017 09:53:35 -0800
+Message-ID: <20170310175335.26013-2-jaegeuk@kernel.org>
+References: <20170310175335.26013-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cmOjb-0002mI-1B
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cmOjc-0004qW-4a
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Mar 2017 17:53:47 +0000
+	Fri, 10 Mar 2017 17:53:48 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cmOja-0005Tp-6U
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cmOjb-0000cr-Dc
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Mar 2017 17:53:46 +0000
+	Fri, 10 Mar 2017 17:53:48 +0000
+In-Reply-To: <20170310175335.26013-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,31 +29,48 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Fengguang Wu <fengguang.wu@intel.com>
 
-This patch fixes missing le16 conversion, reported by kbuild test robot.
+This is to avoid build warning reported by kbuild test robot.
 
-Fixes: 5f35a2cd5 ("f2fs: Don't update the xattr data that same as the exist")
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/xattr.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/f2fs/node.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-index 7298a4488f7f..aff7619e3f96 100644
---- a/fs/f2fs/xattr.c
-+++ b/fs/f2fs/xattr.c
-@@ -546,7 +546,9 @@ static bool f2fs_xattr_value_same(struct f2fs_xattr_entry *entry,
- 					const void *value, size_t size)
- {
- 	void *pval = entry->e_name + entry->e_name_len;
--	return (entry->e_value_size == size) && !memcmp(pval, value, size);
-+
-+	return (le16_to_cpu(entry->e_value_size) == size) &&
-+					!memcmp(pval, value, size);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 94967171dee8..a0a060c2979b 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1823,7 +1823,8 @@ static void remove_free_nid(struct f2fs_sb_info *sbi, nid_t nid)
+ 		kmem_cache_free(free_nid_slab, i);
  }
  
- static int __f2fs_setxattr(struct inode *inode, int index,
+-void update_free_nid_bitmap(struct f2fs_sb_info *sbi, nid_t nid, bool set)
++static void update_free_nid_bitmap(struct f2fs_sb_info *sbi, nid_t nid,
++					bool set)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	unsigned int nat_ofs = NAT_BLOCK_OFFSET(nid);
+@@ -2383,7 +2384,7 @@ static void __adjust_nat_entry_set(struct nat_entry_set *nes,
+ 	list_add_tail(&nes->set_list, head);
+ }
+ 
+-void __update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
++static void __update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
+ 						struct page *page)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+@@ -2638,7 +2639,7 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
+ 	return 0;
+ }
+ 
+-int init_free_nid_cache(struct f2fs_sb_info *sbi)
++static int init_free_nid_cache(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 
 -- 
 2.11.0
 
