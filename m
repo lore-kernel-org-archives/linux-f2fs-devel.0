@@ -1,22 +1,28 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v2] f2fs: allow write page cache when writting cp
-Date: Mon, 13 Mar 2017 20:22:18 +0800
-Message-ID: <20170313122218.26532-1-heyunlei@huawei.com>
+From: Kinglong Mee <kinglongmee@gmail.com>
+Subject: Re: [PATCH] f2fs: cover update_free_nid_bitmap with
+ free_list_lock
+Date: Mon, 13 Mar 2017 20:22:34 +0800
+Message-ID: <5cd19a42-0941-2dbd-fbae-b885b79cb227@gmail.com>
+References: <20170313121041.121407-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1cnOvw-0001qP-Nb
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kinglongmee@gmail.com>) id 1cnOzz-0001yw-1U
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 13 Mar 2017 12:18:40 +0000
-Received: from [45.249.212.189] (helo=dggrg03-dlp.huawei.com)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cnOvu-0002Vy-SG
+	Mon, 13 Mar 2017 12:22:51 +0000
+Received: from mail-it0-f68.google.com ([209.85.214.68])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1cnOzw-0003I5-U8
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 13 Mar 2017 12:18:40 +0000
+	Mon, 13 Mar 2017 12:22:51 +0000
+Received: by mail-it0-f68.google.com with SMTP id g138so5741819itb.0
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Mon, 13 Mar 2017 05:22:48 -0700 (PDT)
+In-Reply-To: <20170313121041.121407-1-yuchao0@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,202 +32,133 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch allow write data to normal file when writting
-new checkpoint.
+On 3/13/2017 20:10, Chao Yu wrote:
+> free_nid_bitmap and free_nid_count in update_free_nid_bitmap should be
+> updated atomically, use free_list_lock cover them to avoid race in
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fs/f2fs/checkpoint.c | 26 +++++++++++++++++---------
- fs/f2fs/data.c       | 23 ++++++++++++++++-------
- fs/f2fs/f2fs.h       |  1 +
- fs/f2fs/super.c      |  1 +
- 4 files changed, 35 insertions(+), 16 deletions(-)
+nid_list_lock?
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 22348c7..3671c5e 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -942,6 +942,19 @@ int f2fs_sync_inode_meta(struct f2fs_sb_info *sbi)
- 	return 0;
- }
- 
-+void prepare_cp_block(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
-+	struct f2fs_nm_info *nm_i = NM_I(sbi);
-+	nid_t last_nid = nm_i->next_scan_nid;
-+
-+	next_free_nid(sbi, &last_nid);
-+	ckpt->valid_block_count = cpu_to_le64(valid_user_blocks(sbi));
-+	ckpt->valid_node_count = cpu_to_le32(valid_node_count(sbi));
-+	ckpt->valid_inode_count = cpu_to_le32(valid_inode_count(sbi));
-+	ckpt->next_free_nid = cpu_to_le32(last_nid);
-+}
-+
- /*
-  * Freeze all the FS-operations for checkpoint.
-  */
-@@ -980,9 +993,10 @@ static int block_operations(struct f2fs_sb_info *sbi)
- 	 * POR: we should ensure that there are no dirty node pages
- 	 * until finishing nat/sit flush.
- 	 */
-+
-+	down_write(&sbi->node_change);
- retry_flush_nodes:
- 	down_write(&sbi->node_write);
--
- 	if (get_pages(sbi, F2FS_DIRTY_NODES)) {
- 		up_write(&sbi->node_write);
- 		err = sync_node_pages(sbi, &wbc);
-@@ -993,6 +1007,8 @@ static int block_operations(struct f2fs_sb_info *sbi)
- 		goto retry_flush_nodes;
- 	}
- out:
-+	prepare_cp_block(sbi);
-+	up_write(&sbi->node_change);
- 	blk_finish_plug(&plug);
- 	return err;
- }
-@@ -1059,7 +1075,6 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	unsigned long orphan_num = sbi->im[ORPHAN_INO].ino_num;
--	nid_t last_nid = nm_i->next_scan_nid;
- 	block_t start_blk;
- 	unsigned int data_sum_blocks, orphan_blocks;
- 	__u32 crc32 = 0;
-@@ -1076,14 +1091,11 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 			return -EIO;
- 	}
- 
--	next_free_nid(sbi, &last_nid);
--
- 	/*
- 	 * modify checkpoint
- 	 * version number is already updated
- 	 */
- 	ckpt->elapsed_time = cpu_to_le64(get_mtime(sbi));
--	ckpt->valid_block_count = cpu_to_le64(valid_user_blocks(sbi));
- 	ckpt->free_segment_count = cpu_to_le32(free_segments(sbi));
- 	for (i = 0; i < NR_CURSEG_NODE_TYPE; i++) {
- 		ckpt->cur_node_segno[i] =
-@@ -1102,10 +1114,6 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 				curseg_alloc_type(sbi, i + CURSEG_HOT_DATA);
- 	}
- 
--	ckpt->valid_node_count = cpu_to_le32(valid_node_count(sbi));
--	ckpt->valid_inode_count = cpu_to_le32(valid_inode_count(sbi));
--	ckpt->next_free_nid = cpu_to_le32(last_nid);
--
- 	/* 2 cp  + n data seg summary + orphan inode blocks */
- 	data_sum_blocks = npages_for_summary_flush(sbi, false);
- 	spin_lock(&sbi->cp_lock);
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 1375fef..c7eccb0 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -827,7 +827,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 	}
- 
- next_dnode:
--	if (create)
-+	if (create && flag == F2FS_GET_BLOCK_PRE_AIO)
-+		down_read(&sbi->node_change);
-+	else if (create)
- 		f2fs_lock_op(sbi);
- 
- 	/* When reading holes, we need its node page */
-@@ -936,17 +938,23 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 		goto next_block;
- 
- 	f2fs_put_dnode(&dn);
--
--	if (create) {
-+	if (create && flag == F2FS_GET_BLOCK_PRE_AIO) {
-+		up_read(&sbi->node_change);
-+		f2fs_balance_fs(sbi, dn.node_changed);
-+	} else if (create) {
- 		f2fs_unlock_op(sbi);
- 		f2fs_balance_fs(sbi, dn.node_changed);
- 	}
-+
- 	goto next_dnode;
- 
- sync_out:
- 	f2fs_put_dnode(&dn);
- unlock_out:
--	if (create) {
-+	if (create && flag == F2FS_GET_BLOCK_PRE_AIO) {
-+		up_read(&sbi->node_change);
-+		f2fs_balance_fs(sbi, dn.node_changed);
-+	} else if (create) {
- 		f2fs_unlock_op(sbi);
- 		f2fs_balance_fs(sbi, dn.node_changed);
- 	}
-@@ -1686,7 +1694,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
- 
- 	if (f2fs_has_inline_data(inode) ||
- 			(pos & PAGE_MASK) >= i_size_read(inode)) {
--		f2fs_lock_op(sbi);
-+		down_read(&sbi->node_change);
- 		locked = true;
- 	}
- restart:
-@@ -1703,6 +1711,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
- 		if (pos + len <= MAX_INLINE_DATA) {
- 			read_inline_data(page, ipage);
- 			set_inode_flag(inode, FI_DATA_EXIST);
-+			dn.node_changed = true;
- 			if (inode->i_nlink)
- 				set_inline_node(ipage);
- 		} else {
-@@ -1722,7 +1731,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
- 			err = get_dnode_of_data(&dn, index, LOOKUP_NODE);
- 			if (err || dn.data_blkaddr == NULL_ADDR) {
- 				f2fs_put_dnode(&dn);
--				f2fs_lock_op(sbi);
-+				down_read(&sbi->node_change);
- 				locked = true;
- 				goto restart;
- 			}
-@@ -1736,7 +1745,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
- 	f2fs_put_dnode(&dn);
- unlock_out:
- 	if (locked)
--		f2fs_unlock_op(sbi);
-+		up_read(&sbi->node_change);
- 	return err;
- }
- 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 7edb3be..0c3b148 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -830,6 +830,7 @@ struct f2fs_sb_info {
- 	struct mutex cp_mutex;			/* checkpoint procedure lock */
- 	struct rw_semaphore cp_rwsem;		/* blocking FS operations */
- 	struct rw_semaphore node_write;		/* locking node writes */
-+	struct rw_semaphore node_change;		/* locking node change */
- 	wait_queue_head_t cp_wait;
- 	unsigned long last_time[MAX_TIME];	/* to store time in jiffies */
- 	long interval_time[MAX_TIME];		/* to store thresholds */
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 17126a2..49434f9 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1918,6 +1918,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	mutex_init(&sbi->gc_mutex);
- 	mutex_init(&sbi->cp_mutex);
- 	init_rwsem(&sbi->node_write);
-+	init_rwsem(&sbi->node_change);
- 
- 	/* disallow all the data/node/meta page writes */
- 	set_sbi_flag(sbi, SBI_POR_DOING);
--- 
-2.10.1
+Reviewed-by: Kinglong Mee <kinglongmee@gmail.com>
 
+> concurrent scenario.
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/f2fs.h |  1 -
+>  fs/f2fs/node.c | 27 +++++++++++----------------
+>  2 files changed, 11 insertions(+), 17 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 843ce39502bc..d905e53ba524 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -561,7 +561,6 @@ struct f2fs_nm_info {
+>  	unsigned char (*free_nid_bitmap)[NAT_ENTRY_BITMAP_SIZE];
+>  	unsigned char *nat_block_bitmap;
+>  	unsigned short *free_nid_count;	/* free nid count of NAT block */
+> -	spinlock_t free_nid_lock;	/* protect updating of nid count */
+>  
+>  	/* for checkpoint */
+>  	char *nat_bitmap;		/* NAT bitmap pointer */
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 11df8ab32478..3bfffd744f87 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1815,7 +1815,7 @@ static void remove_free_nid(struct f2fs_sb_info *sbi, nid_t nid)
+>  }
+>  
+>  static void update_free_nid_bitmap(struct f2fs_sb_info *sbi, nid_t nid,
+> -			bool set, bool build, bool locked)
+> +							bool set, bool build)
+>  {
+>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+>  	unsigned int nat_ofs = NAT_BLOCK_OFFSET(nid);
+> @@ -1829,14 +1829,10 @@ static void update_free_nid_bitmap(struct f2fs_sb_info *sbi, nid_t nid,
+>  	else
+>  		__clear_bit_le(nid_ofs, nm_i->free_nid_bitmap[nat_ofs]);
+>  
+> -	if (!locked)
+> -		spin_lock(&nm_i->free_nid_lock);
+>  	if (set)
+>  		nm_i->free_nid_count[nat_ofs]++;
+>  	else if (!build)
+>  		nm_i->free_nid_count[nat_ofs]--;
+> -	if (!locked)
+> -		spin_unlock(&nm_i->free_nid_lock);
+>  }
+>  
+>  static void scan_nat_page(struct f2fs_sb_info *sbi,
+> @@ -1865,7 +1861,9 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
+>  		f2fs_bug_on(sbi, blk_addr == NEW_ADDR);
+>  		if (blk_addr == NULL_ADDR)
+>  			freed = add_free_nid(sbi, start_nid, true);
+> -		update_free_nid_bitmap(sbi, start_nid, freed, true, false);
+> +		spin_lock(&NM_I(sbi)->nid_list_lock);
+> +		update_free_nid_bitmap(sbi, start_nid, freed, true);
+> +		spin_unlock(&NM_I(sbi)->nid_list_lock);
+>  	}
+>  }
+>  
+> @@ -2020,7 +2018,7 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
+>  		__insert_nid_to_list(sbi, i, ALLOC_NID_LIST, false);
+>  		nm_i->available_nids--;
+>  
+> -		update_free_nid_bitmap(sbi, *nid, false, false, false);
+> +		update_free_nid_bitmap(sbi, *nid, false, false);
+>  
+>  		spin_unlock(&nm_i->nid_list_lock);
+>  		return true;
+> @@ -2076,7 +2074,7 @@ void alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid)
+>  
+>  	nm_i->available_nids++;
+>  
+> -	update_free_nid_bitmap(sbi, nid, true, false, false);
+> +	update_free_nid_bitmap(sbi, nid, true, false);
+>  
+>  	spin_unlock(&nm_i->nid_list_lock);
+>  
+> @@ -2406,11 +2404,11 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+>  			add_free_nid(sbi, nid, false);
+>  			spin_lock(&NM_I(sbi)->nid_list_lock);
+>  			NM_I(sbi)->available_nids++;
+> -			update_free_nid_bitmap(sbi, nid, true, false, false);
+> +			update_free_nid_bitmap(sbi, nid, true, false);
+>  			spin_unlock(&NM_I(sbi)->nid_list_lock);
+>  		} else {
+>  			spin_lock(&NM_I(sbi)->nid_list_lock);
+> -			update_free_nid_bitmap(sbi, nid, false, false, false);
+> +			update_free_nid_bitmap(sbi, nid, false, false);
+>  			spin_unlock(&NM_I(sbi)->nid_list_lock);
+>  		}
+>  	}
+> @@ -2535,10 +2533,10 @@ inline void load_free_nid_bitmap(struct f2fs_sb_info *sbi)
+>  		nid = i * NAT_ENTRY_PER_BLOCK;
+>  		last_nid = (i + 1) * NAT_ENTRY_PER_BLOCK;
+>  
+> -		spin_lock(&nm_i->free_nid_lock);
+> +		spin_lock(&NM_I(sbi)->nid_list_lock);
+>  		for (; nid < last_nid; nid++)
+> -			update_free_nid_bitmap(sbi, nid, true, true, true);
+> -		spin_unlock(&nm_i->free_nid_lock);
+> +			update_free_nid_bitmap(sbi, nid, true, true);
+> +		spin_unlock(&NM_I(sbi)->nid_list_lock);
+>  	}
+>  
+>  	for (i = 0; i < nm_i->nat_blocks; i++) {
+> @@ -2629,9 +2627,6 @@ static int init_free_nid_cache(struct f2fs_sb_info *sbi)
+>  					sizeof(unsigned short), GFP_KERNEL);
+>  	if (!nm_i->free_nid_count)
+>  		return -ENOMEM;
+> -
+> -	spin_lock_init(&nm_i->free_nid_lock);
+> -
+>  	return 0;
+>  }
+>  
+> 
 
 ------------------------------------------------------------------------------
 Announcing the Oxford Dictionaries API! The API offers world-renowned
