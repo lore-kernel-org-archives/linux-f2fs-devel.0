@@ -1,275 +1,106 @@
-From: Michael Halcrow <mhalcrow@google.com>
-Subject: Re: [PATCH] fscrypt: remove broken support for detecting keyring key
- revocation
-Date: Mon, 13 Mar 2017 20:45:51 -0700
-Message-ID: <20170314034551.GA7522@google.com>
-References: <20170221230711.85222-1-ebiggers3@gmail.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v2] f2fs: restrict write IO alignment
+	condition
+Date: Tue, 14 Mar 2017 19:32:16 +0800
+Message-ID: <07e43857-1387-eb9b-478d-57d2f14d81e4@huawei.com>
+References: <20170313130216.108395-1-yuchao0@huawei.com>
+	<20170313200544.GE41055@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170221230711.85222-1-ebiggers3@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Richard Weinberger <richard@nod.at>, Anand Jain <anand.jain@oracle.com>, Eric Biggers <ebiggers@google.com>, stable@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1cnkgw-00089H-L2
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 14 Mar 2017 11:32:38 +0000
+Received: from [45.249.212.187] (helo=dggrg01-dlp.huawei.com)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cnkgt-0002Jh-If
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 14 Mar 2017 11:32:38 +0000
+In-Reply-To: <20170313200544.GE41055@jaegeuk.local>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Tue, Feb 21, 2017 at 03:07:11PM -0800, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On 2017/3/14 4:05, Jaegeuk Kim wrote:
+> On 03/13, Chao Yu wrote:
+>> We should only align start offset of bio with defined IO_SIZE for below
+>> conditions:
+>> a. mode=lfs mount option
+>> b. write IOs
+>> c. Out-place-update
+>> d. non-meta pages
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/data.c | 10 +++++++---
+>>  1 file changed, 7 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>> index 1375fef11146..53fe79c70406 100644
+>> --- a/fs/f2fs/data.c
+>> +++ b/fs/f2fs/data.c
+>> @@ -190,6 +190,9 @@ static inline void __submit_bio(struct f2fs_sb_info *sbi,
+>>  			current->plug && (type == DATA || type == NODE))
+>>  			blk_finish_plug(current->plug);
+>>  
+>> +		if (!test_opt(sbi, LFS))
+>> +			goto submit_io;
 > 
-> Filesystem encryption ostensibly supported revoking a keyring key
-> that had been used to "unlock" encrypted files, causing those files
-> to become "locked" again. This was, however, buggy for several
-> reasons, the most severe of which was that when key revocation
-> happened to be detected for an inode, its fscrypt_info was
-> immediately freed, even while other threads could be using it for
-> encryption or decryption concurrently.  This could be exploited to
-> crash the kernel or worse.
+> The parse_options in fill_super checks this.
 
-Removing the attempt at that functionality seems like the right
-approach.
+You're right, I missed that one...
 
-> This patch fixes the use-after-free by removing the code which
-> detects the keyring key having been revoked, invalidated, or
-> expired.  Instead, an encrypted inode that is "unlocked" now simply
-> remains unlocked until it is evicted from memory.  Note that this is
-> no worse than the case for block device-level encryption,
-> e.g. dm-crypt, and it still remains possible for a privileged user
-> to evict unused pages, inodes, and dentries by running 'sync; echo 3
-> > /proc/sys/vm/drop_caches', or by simply unmounting the filesystem.
-> In fact, one of those actions was already needed anyway for key
-> revocation to work even somewhat sanely.  This change is not
-> expected to break any applications.
-
-I don't see any problem with this reasoning.
-
-> In the future I'd like to implement a real API for fscrypt key
-> revocation that interacts sanely with ongoing filesystem operations ---
-> waiting for existing operations to complete and blocking new operations,
-> and invalidating and sanitizing key material and plaintext from the VFS
-> caches.  But this is a hard problem, and for now this bug must be fixed.
 > 
-> This bug affected almost all versions of ext4, f2fs, and ubifs
-> encryption, and it was potentially reachable in any kernel configured
-> with encryption support (CONFIG_EXT4_ENCRYPTION=y,
-> CONFIG_EXT4_FS_ENCRYPTION=y, CONFIG_F2FS_FS_ENCRYPTION=y, or
-> CONFIG_UBIFS_FS_ENCRYPTION=y).  Note that older kernels did not use the
-> shared fs/crypto/ code, but due to the potential security implications
-> of this bug, it may still be worthwhile to backport this fix to them.
-
-Agreed.
-
-> Fixes: b7236e21d55f ("ext4 crypto: reorganize how we store keys in the inode")
-> Cc: stable@vger.kernel.org # v4.2+
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-
-Acked-by: Michael Halcrow <mhalcrow@google.com>
-
-> ---
->  fs/crypto/crypto.c          | 10 +--------
->  fs/crypto/fname.c           |  2 +-
->  fs/crypto/fscrypt_private.h |  4 ----
->  fs/crypto/keyinfo.c         | 52 ++++++++-------------------------------------
->  4 files changed, 11 insertions(+), 57 deletions(-)
+>> +
+>>  		if (type != DATA && type != NODE)
+>>  			goto submit_io;
+>>  
+>> @@ -395,11 +398,12 @@ int f2fs_submit_page_mbio(struct f2fs_io_info *fio)
+>>  		__submit_merged_bio(io);
+>>  alloc_new:
+>>  	if (io->bio == NULL) {
+>> -		if ((fio->type == DATA || fio->type == NODE) &&
+>> +		if (test_opt(sbi, LFS) &&
+>> +			!is_read && (fio->type == DATA || fio->type == NODE) &&
 > 
-> diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
-> index 02a7a9286449..6d6eca394d4d 100644
-> --- a/fs/crypto/crypto.c
-> +++ b/fs/crypto/crypto.c
-> @@ -327,7 +327,6 @@ EXPORT_SYMBOL(fscrypt_decrypt_page);
->  static int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
->  {
->  	struct dentry *dir;
-> -	struct fscrypt_info *ci;
->  	int dir_has_key, cached_with_key;
->  
->  	if (flags & LOOKUP_RCU)
-> @@ -339,18 +338,11 @@ static int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
->  		return 0;
->  	}
->  
-> -	ci = d_inode(dir)->i_crypt_info;
-> -	if (ci && ci->ci_keyring_key &&
-> -	    (ci->ci_keyring_key->flags & ((1 << KEY_FLAG_INVALIDATED) |
-> -					  (1 << KEY_FLAG_REVOKED) |
-> -					  (1 << KEY_FLAG_DEAD))))
-> -		ci = NULL;
-> -
->  	/* this should eventually be an flag in d_flags */
->  	spin_lock(&dentry->d_lock);
->  	cached_with_key = dentry->d_flags & DCACHE_ENCRYPTED_WITH_KEY;
->  	spin_unlock(&dentry->d_lock);
-> -	dir_has_key = (ci != NULL);
-> +	dir_has_key = (d_inode(dir)->i_crypt_info != NULL);
->  	dput(dir);
->  
->  	/*
-> diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-> index 13052b85c393..37b49894c762 100644
-> --- a/fs/crypto/fname.c
-> +++ b/fs/crypto/fname.c
-> @@ -350,7 +350,7 @@ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
->  		fname->disk_name.len = iname->len;
->  		return 0;
->  	}
-> -	ret = fscrypt_get_crypt_info(dir);
-> +	ret = fscrypt_get_encryption_info(dir);
->  	if (ret && ret != -EOPNOTSUPP)
->  		return ret;
->  
-> diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-> index fdbb8af32eaf..e39696e64494 100644
-> --- a/fs/crypto/fscrypt_private.h
-> +++ b/fs/crypto/fscrypt_private.h
-> @@ -67,7 +67,6 @@ struct fscrypt_info {
->  	u8 ci_filename_mode;
->  	u8 ci_flags;
->  	struct crypto_skcipher *ci_ctfm;
-> -	struct key *ci_keyring_key;
->  	u8 ci_master_key[FS_KEY_DESCRIPTOR_SIZE];
->  };
->  
-> @@ -101,7 +100,4 @@ extern int fscrypt_do_page_crypto(const struct inode *inode,
->  extern struct page *fscrypt_alloc_bounce_page(struct fscrypt_ctx *ctx,
->  					      gfp_t gfp_flags);
->  
-> -/* keyinfo.c */
-> -extern int fscrypt_get_crypt_info(struct inode *);
-> -
->  #endif /* _FSCRYPT_PRIVATE_H */
-> diff --git a/fs/crypto/keyinfo.c b/fs/crypto/keyinfo.c
-> index 02eb6b9e4438..cb3e82abf034 100644
-> --- a/fs/crypto/keyinfo.c
-> +++ b/fs/crypto/keyinfo.c
-> @@ -95,6 +95,7 @@ static int validate_user_key(struct fscrypt_info *crypt_info,
->  	kfree(description);
->  	if (IS_ERR(keyring_key))
->  		return PTR_ERR(keyring_key);
-> +	down_read(&keyring_key->sem);
->  
->  	if (keyring_key->type != &key_type_logon) {
->  		printk_once(KERN_WARNING
-> @@ -102,11 +103,9 @@ static int validate_user_key(struct fscrypt_info *crypt_info,
->  		res = -ENOKEY;
->  		goto out;
->  	}
-> -	down_read(&keyring_key->sem);
->  	ukp = user_key_payload(keyring_key);
->  	if (ukp->datalen != sizeof(struct fscrypt_key)) {
->  		res = -EINVAL;
-> -		up_read(&keyring_key->sem);
->  		goto out;
->  	}
->  	master_key = (struct fscrypt_key *)ukp->data;
-> @@ -117,17 +116,11 @@ static int validate_user_key(struct fscrypt_info *crypt_info,
->  				"%s: key size incorrect: %d\n",
->  				__func__, master_key->size);
->  		res = -ENOKEY;
-> -		up_read(&keyring_key->sem);
->  		goto out;
->  	}
->  	res = derive_key_aes(ctx->nonce, master_key->raw, raw_key);
-> -	up_read(&keyring_key->sem);
-> -	if (res)
-> -		goto out;
-> -
-> -	crypt_info->ci_keyring_key = keyring_key;
-> -	return 0;
->  out:
-> +	up_read(&keyring_key->sem);
->  	key_put(keyring_key);
->  	return res;
->  }
-> @@ -169,12 +162,11 @@ static void put_crypt_info(struct fscrypt_info *ci)
->  	if (!ci)
->  		return;
->  
-> -	key_put(ci->ci_keyring_key);
->  	crypto_free_skcipher(ci->ci_ctfm);
->  	kmem_cache_free(fscrypt_info_cachep, ci);
->  }
->  
-> -int fscrypt_get_crypt_info(struct inode *inode)
-> +int fscrypt_get_encryption_info(struct inode *inode)
->  {
->  	struct fscrypt_info *crypt_info;
->  	struct fscrypt_context ctx;
-> @@ -184,21 +176,15 @@ int fscrypt_get_crypt_info(struct inode *inode)
->  	u8 *raw_key = NULL;
->  	int res;
->  
-> +	if (inode->i_crypt_info)
-> +		return 0;
-> +
->  	res = fscrypt_initialize(inode->i_sb->s_cop->flags);
->  	if (res)
->  		return res;
->  
->  	if (!inode->i_sb->s_cop->get_context)
->  		return -EOPNOTSUPP;
-> -retry:
-> -	crypt_info = ACCESS_ONCE(inode->i_crypt_info);
-> -	if (crypt_info) {
-> -		if (!crypt_info->ci_keyring_key ||
-> -				key_validate(crypt_info->ci_keyring_key) == 0)
-> -			return 0;
-> -		fscrypt_put_encryption_info(inode, crypt_info);
-> -		goto retry;
-> -	}
->  
->  	res = inode->i_sb->s_cop->get_context(inode, &ctx, sizeof(ctx));
->  	if (res < 0) {
-> @@ -229,7 +215,6 @@ int fscrypt_get_crypt_info(struct inode *inode)
->  	crypt_info->ci_data_mode = ctx.contents_encryption_mode;
->  	crypt_info->ci_filename_mode = ctx.filenames_encryption_mode;
->  	crypt_info->ci_ctfm = NULL;
-> -	crypt_info->ci_keyring_key = NULL;
->  	memcpy(crypt_info->ci_master_key, ctx.master_key_descriptor,
->  				sizeof(crypt_info->ci_master_key));
->  
-> @@ -273,14 +258,8 @@ int fscrypt_get_crypt_info(struct inode *inode)
->  	if (res)
->  		goto out;
->  
-> -	kzfree(raw_key);
-> -	raw_key = NULL;
-> -	if (cmpxchg(&inode->i_crypt_info, NULL, crypt_info) != NULL) {
-> -		put_crypt_info(crypt_info);
-> -		goto retry;
-> -	}
-> -	return 0;
-> -
-> +	if (cmpxchg(&inode->i_crypt_info, NULL, crypt_info) == NULL)
-> +		crypt_info = NULL;
->  out:
->  	if (res == -ENOKEY)
->  		res = 0;
-> @@ -288,6 +267,7 @@ int fscrypt_get_crypt_info(struct inode *inode)
->  	kzfree(raw_key);
->  	return res;
->  }
-> +EXPORT_SYMBOL(fscrypt_get_encryption_info);
->  
->  void fscrypt_put_encryption_info(struct inode *inode, struct fscrypt_info *ci)
->  {
-> @@ -305,17 +285,3 @@ void fscrypt_put_encryption_info(struct inode *inode, struct fscrypt_info *ci)
->  	put_crypt_info(ci);
->  }
->  EXPORT_SYMBOL(fscrypt_put_encryption_info);
-> -
-> -int fscrypt_get_encryption_info(struct inode *inode)
-> -{
-> -	struct fscrypt_info *ci = inode->i_crypt_info;
-> -
-> -	if (!ci ||
-> -		(ci->ci_keyring_key &&
-> -		 (ci->ci_keyring_key->flags & ((1 << KEY_FLAG_INVALIDATED) |
-> -					       (1 << KEY_FLAG_REVOKED) |
-> -					       (1 << KEY_FLAG_DEAD)))))
-> -		return fscrypt_get_crypt_info(inode);
-> -	return 0;
-> -}
-> -EXPORT_SYMBOL(fscrypt_get_encryption_info);
-> -- 
-> 2.11.0.483.g087da7b7c-goog
+> The missing case is !is_read, here?
+> But, actually, DATA and NODE don't issue any read commands at all.
+
+Correct, let me add BUG_ON here. :)
+
+Thanks,
+
 > 
+> Thanks,
+> 
+>>  				fio->new_blkaddr & F2FS_IO_SIZE_MASK(sbi)) {
+>>  			err = -EAGAIN;
+>> -			if (!is_read)
+>> -				dec_page_count(sbi, WB_DATA_TYPE(bio_page));
+>> +			f2fs_bug_on(sbi, fio->new_blkaddr == fio->old_blkaddr);
+>> +			dec_page_count(sbi, WB_DATA_TYPE(bio_page));
+>>  			goto out_fail;
+>>  		}
+>>  		io->bio = __bio_alloc(sbi, fio->new_blkaddr,
+>> -- 
+>> 2.8.2.295.g3f1c1d0
+> 
+> .
+> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
