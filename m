@@ -1,61 +1,101 @@
-From: Eric Biggers <ebiggers3@gmail.com>
-Subject: Re: [PATCH] fscrypt: remove broken support for detecting keyring key
- revocation
-Date: Tue, 14 Mar 2017 16:48:42 -0700
-Message-ID: <20170314234842.GB127087@gmail.com>
-References: <20170221230711.85222-1-ebiggers3@gmail.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH] f2fs: fix a problem of a truncated inmem page
+Date: Wed, 15 Mar 2017 20:45:45 +0800
+Message-ID: <20170315124545.9777-1-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170221230711.85222-1-ebiggers3@gmail.com>
-Sender: stable-owner@vger.kernel.org
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Richard Weinberger <richard@nod.at>, Anand Jain <anand.jain@oracle.com>, Eric Biggers <ebiggers@google.com>, stable@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1co8Fv-00037Q-8X
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 15 Mar 2017 12:42:19 +0000
+Received: from [45.249.212.187] (helo=dggrg01-dlp.huawei.com)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1co8Fs-0004u2-44
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 15 Mar 2017 12:42:19 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On Tue, Feb 21, 2017 at 03:07:11PM -0800, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> Filesystem encryption ostensibly supported revoking a keyring key that
-> had been used to "unlock" encrypted files, causing those files to become
-> "locked" again.  This was, however, buggy for several reasons, the most
-> severe of which was that when key revocation happened to be detected for
-> an inode, its fscrypt_info was immediately freed, even while other
-> threads could be using it for encryption or decryption concurrently.
-> This could be exploited to crash the kernel or worse.
-> 
-> This patch fixes the use-after-free by removing the code which detects
-> the keyring key having been revoked, invalidated, or expired.  Instead,
-> an encrypted inode that is "unlocked" now simply remains unlocked until
-> it is evicted from memory.  Note that this is no worse than the case for
-> block device-level encryption, e.g. dm-crypt, and it still remains
-> possible for a privileged user to evict unused pages, inodes, and
-> dentries by running 'sync; echo 3 > /proc/sys/vm/drop_caches', or by
-> simply unmounting the filesystem.  In fact, one of those actions was
-> already needed anyway for key revocation to work even somewhat sanely.
-> This change is not expected to break any applications.
-> 
-> In the future I'd like to implement a real API for fscrypt key
-> revocation that interacts sanely with ongoing filesystem operations ---
-> waiting for existing operations to complete and blocking new operations,
-> and invalidating and sanitizing key material and plaintext from the VFS
-> caches.  But this is a hard problem, and for now this bug must be fixed.
-> 
-> This bug affected almost all versions of ext4, f2fs, and ubifs
-> encryption, and it was potentially reachable in any kernel configured
-> with encryption support (CONFIG_EXT4_ENCRYPTION=y,
-> CONFIG_EXT4_FS_ENCRYPTION=y, CONFIG_F2FS_FS_ENCRYPTION=y, or
-> CONFIG_UBIFS_FS_ENCRYPTION=y).  Note that older kernels did not use the
-> shared fs/crypto/ code, but due to the potential security implications
-> of this bug, it may still be worthwhile to backport this fix to them.
-> 
-> Fixes: b7236e21d55f ("ext4 crypto: reorganize how we store keys in the inode")
-> Cc: stable@vger.kernel.org # v4.2+
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+-start atomic write
+   -set_page_dirty
+      -register_inmem_page
+				<--- truncate or punch hole
+	  -commit atomic write
+
+Here, may cause memory reclaim painc for page->mapping is null,
+but private is -1.
+
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fs/f2fs/data.c    | 8 --------
+ fs/f2fs/segment.c | 5 ++++-
+ 2 files changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 1375fef..a91e479 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1948,10 +1948,6 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
+ 		}
+ 	}
+ 
+-	/* This is atomic written page, keep Private */
+-	if (IS_ATOMIC_WRITTEN_PAGE(page))
+-		return;
+-
+ 	set_page_private(page, 0);
+ 	ClearPagePrivate(page);
+ }
+@@ -1962,10 +1958,6 @@ int f2fs_release_page(struct page *page, gfp_t wait)
+ 	if (PageDirty(page))
+ 		return 0;
+ 
+-	/* This is atomic written page, keep Private */
+-	if (IS_ATOMIC_WRITTEN_PAGE(page))
+-		return 0;
+-
+ 	set_page_private(page, 0);
+ 	ClearPagePrivate(page);
+ 	return 1;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 42727e4..bebac9a 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -207,6 +207,9 @@ static int __revoke_inmem_pages(struct inode *inode,
+ 
+ 		lock_page(page);
+ 
++		if (page->mapping != inode->i_mapping)
++			goto delete;
++
+ 		if (recover) {
+ 			struct dnode_of_data dn;
+ 			struct node_info ni;
+@@ -230,7 +233,7 @@ static int __revoke_inmem_pages(struct inode *inode,
+ 		set_page_private(page, 0);
+ 		ClearPagePrivate(page);
+ 		f2fs_put_page(page, 1);
+-
++delete:
+ 		list_del(&cur->list);
+ 		kmem_cache_free(inmem_entry_slab, cur);
+ 		dec_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
+-- 
+2.10.1
 
 
-Ted, can this be sent to Linus soon?  This needs to be fixed as it's a security
-vulnerability on some systems.
-
-Eric
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
