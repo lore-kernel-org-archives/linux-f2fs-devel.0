@@ -1,26 +1,26 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: heyunlei <heyunlei@huawei.com>
 Subject: Re: [PATCH] f2fs: fix a problem of a truncated inmem page
-Date: Fri, 17 Mar 2017 10:11:05 +0800
-Message-ID: <20170317021105.GA28214@jaegeuk.local>
+Date: Fri, 17 Mar 2017 10:36:25 +0800
+Message-ID: <c510b9a4-5c6c-e2f5-e17a-576eb490da3d@huawei.com>
 References: <20170315124545.9777-1-heyunlei@huawei.com>
 	<20170316001324.GC18240@jaegeuk.local>
+	<20170317021105.GA28214@jaegeuk.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cohML-0004Vv-TH
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1cohm6-00015S-EM
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 17 Mar 2017 02:11:17 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cohMK-0005ct-Pu
+	Fri, 17 Mar 2017 02:37:54 +0000
+Received: from [45.249.212.190] (helo=dggrg04-dlp.huawei.com)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cohm4-0000gW-PU
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 17 Mar 2017 02:11:17 +0000
-Content-Disposition: inline
-In-Reply-To: <20170316001324.GC18240@jaegeuk.local>
+	Fri, 17 Mar 2017 02:37:54 +0000
+In-Reply-To: <20170317021105.GA28214@jaegeuk.local>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,113 +30,124 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Yunlei,
+Hi Jaegeuk,
 
-I could reproduce this. Could you check the patches that I sent just ago?
+On 2017/3/17 10:11, Jaegeuk Kim wrote:
+> Hi Yunlei,
+>
+> I could reproduce this. Could you check the patches that I sent just ago?
+
+I have test it with my test case, it's OK.
 
 Thanks,
-
-On 03/16, Jaegeuk Kim wrote:
-> On 03/15, Yunlei He wrote:
-> > -start atomic write
-> >    -set_page_dirty
-> >       -register_inmem_page
-> > 				<--- truncate or punch hole
-> 
-> SQLite bug?
-> 
-> > 	  -commit atomic write
-> > 
-> > Here, may cause memory reclaim painc for page->mapping is null,
-> > but private is -1.
-> > 
-> > Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> > ---
-> >  fs/f2fs/data.c    | 8 --------
-> >  fs/f2fs/segment.c | 5 ++++-
-> >  2 files changed, 4 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > index 1375fef..a91e479 100644
-> > --- a/fs/f2fs/data.c
-> > +++ b/fs/f2fs/data.c
-> > @@ -1948,10 +1948,6 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
-> >  		}
-> >  	}
-> >  
-> > -	/* This is atomic written page, keep Private */
-> > -	if (IS_ATOMIC_WRITTEN_PAGE(page))
-> > -		return;
-> > -
-> 
-> We need to give a kernel message like "atomic writes were broken", and
-> unresitering the page from the inmem page list here to keep consistency
-> between IS_ATOMIC_WRITTEN_PAGE(page) and its link to the inmem list.
-> 
-> >  	set_page_private(page, 0);
-> >  	ClearPagePrivate(page);
-> >  }
-> > @@ -1962,10 +1958,6 @@ int f2fs_release_page(struct page *page, gfp_t wait)
-> >  	if (PageDirty(page))
-> >  		return 0;
-> >  
-> > -	/* This is atomic written page, keep Private */
-> > -	if (IS_ATOMIC_WRITTEN_PAGE(page))
-> > -		return 0;
-> 
-> We should keep this in order not to be invalidated by someone.
-> 
+>
 > Thanks,
-> 
-> > -
-> >  	set_page_private(page, 0);
-> >  	ClearPagePrivate(page);
-> >  	return 1;
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index 42727e4..bebac9a 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -207,6 +207,9 @@ static int __revoke_inmem_pages(struct inode *inode,
-> >  
-> >  		lock_page(page);
-> >  
-> > +		if (page->mapping != inode->i_mapping)
-> > +			goto delete;
-> > +
-> >  		if (recover) {
-> >  			struct dnode_of_data dn;
-> >  			struct node_info ni;
-> > @@ -230,7 +233,7 @@ static int __revoke_inmem_pages(struct inode *inode,
-> >  		set_page_private(page, 0);
-> >  		ClearPagePrivate(page);
-> >  		f2fs_put_page(page, 1);
-> > -
-> > +delete:
-> >  		list_del(&cur->list);
-> >  		kmem_cache_free(inmem_entry_slab, cur);
-> >  		dec_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
-> > -- 
-> > 2.10.1
-> > 
-> > 
-> > ------------------------------------------------------------------------------
-> > Check out the vibrant tech community on one of the world's most
-> > engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> ------------------------------------------------------------------------------
-> Check out the vibrant tech community on one of the world's most
-> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>
+> On 03/16, Jaegeuk Kim wrote:
+>> On 03/15, Yunlei He wrote:
+>>> -start atomic write
+>>>    -set_page_dirty
+>>>       -register_inmem_page
+>>> 				<--- truncate or punch hole
+>>
+>> SQLite bug?
+>>
+>>> 	  -commit atomic write
+>>>
+>>> Here, may cause memory reclaim painc for page->mapping is null,
+>>> but private is -1.
+>>>
+>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+>>> ---
+>>>  fs/f2fs/data.c    | 8 --------
+>>>  fs/f2fs/segment.c | 5 ++++-
+>>>  2 files changed, 4 insertions(+), 9 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>> index 1375fef..a91e479 100644
+>>> --- a/fs/f2fs/data.c
+>>> +++ b/fs/f2fs/data.c
+>>> @@ -1948,10 +1948,6 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
+>>>  		}
+>>>  	}
+>>>
+>>> -	/* This is atomic written page, keep Private */
+>>> -	if (IS_ATOMIC_WRITTEN_PAGE(page))
+>>> -		return;
+>>> -
+>>
+>> We need to give a kernel message like "atomic writes were broken", and
+>> unresitering the page from the inmem page list here to keep consistency
+>> between IS_ATOMIC_WRITTEN_PAGE(page) and its link to the inmem list.
+>>
+>>>  	set_page_private(page, 0);
+>>>  	ClearPagePrivate(page);
+>>>  }
+>>> @@ -1962,10 +1958,6 @@ int f2fs_release_page(struct page *page, gfp_t wait)
+>>>  	if (PageDirty(page))
+>>>  		return 0;
+>>>
+>>> -	/* This is atomic written page, keep Private */
+>>> -	if (IS_ATOMIC_WRITTEN_PAGE(page))
+>>> -		return 0;
+>>
+>> We should keep this in order not to be invalidated by someone.
+>>
+>> Thanks,
+>>
+>>> -
+>>>  	set_page_private(page, 0);
+>>>  	ClearPagePrivate(page);
+>>>  	return 1;
+>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>> index 42727e4..bebac9a 100644
+>>> --- a/fs/f2fs/segment.c
+>>> +++ b/fs/f2fs/segment.c
+>>> @@ -207,6 +207,9 @@ static int __revoke_inmem_pages(struct inode *inode,
+>>>
+>>>  		lock_page(page);
+>>>
+>>> +		if (page->mapping != inode->i_mapping)
+>>> +			goto delete;
+>>> +
+>>>  		if (recover) {
+>>>  			struct dnode_of_data dn;
+>>>  			struct node_info ni;
+>>> @@ -230,7 +233,7 @@ static int __revoke_inmem_pages(struct inode *inode,
+>>>  		set_page_private(page, 0);
+>>>  		ClearPagePrivate(page);
+>>>  		f2fs_put_page(page, 1);
+>>> -
+>>> +delete:
+>>>  		list_del(&cur->list);
+>>>  		kmem_cache_free(inmem_entry_slab, cur);
+>>>  		dec_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
+>>> --
+>>> 2.10.1
+>>>
+>>>
+>>> ------------------------------------------------------------------------------
+>>> Check out the vibrant tech community on one of the world's most
+>>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+>>> _______________________________________________
+>>> Linux-f2fs-devel mailing list
+>>> Linux-f2fs-devel@lists.sourceforge.net
+>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>>
+>> ------------------------------------------------------------------------------
+>> Check out the vibrant tech community on one of the world's most
+>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+>> _______________________________________________
+>> Linux-f2fs-devel mailing list
+>> Linux-f2fs-devel@lists.sourceforge.net
+>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>
+> .
+>
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
