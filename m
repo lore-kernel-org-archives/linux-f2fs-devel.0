@@ -1,26 +1,26 @@
 From: Kinglong Mee <kinglongmee@gmail.com>
-Subject: [PATCH 2/2] sload.f2fs: support sload files into
- directory includes inline dentry
-Date: Fri, 17 Mar 2017 22:01:12 +0800
-Message-ID: <447e5f92-fef4-7b02-196b-707d7c18fef4@gmail.com>
+Subject: [PATCH 1/2] sload.f2fs: let dir_buckets/dir_block_index
+ supports dir_level
+Date: Fri, 17 Mar 2017 22:01:04 +0800
+Message-ID: <ac6d4e19-6d7a-77be-9469-6b06369e63d0@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <kinglongmee@gmail.com>) id 1cosRZ-00075A-Ce
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kinglongmee@gmail.com>) id 1cosRV-0003kW-0t
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 17 Mar 2017 14:01:25 +0000
-Received: from mail-it0-f67.google.com ([209.85.214.67])
+	Fri, 17 Mar 2017 14:01:21 +0000
+Received: from mail-it0-f65.google.com ([209.85.214.65])
 	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1cosRX-0007UU-EK
+	(Exim 4.76) id 1cosRP-0007UI-2v
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 17 Mar 2017 14:01:25 +0000
-Received: by mail-it0-f67.google.com with SMTP id g138so4126055itb.0
+	Fri, 17 Mar 2017 14:01:21 +0000
+Received: by mail-it0-f65.google.com with SMTP id u69so4114929ita.3
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Fri, 17 Mar 2017 07:01:23 -0700 (PDT)
+	Fri, 17 Mar 2017 07:01:15 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,256 +32,177 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-It seems the new created directory always includes inline dentries,
-let sload.f2fs supporting it. 
+The dir_level in the filesystem maybe larger than zero,
+supports it.
 
 Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
 ---
- fsck/dir.c  | 139 +++++++++++++++++++++++++++++++++++++++++++++++++-----------
- fsck/f2fs.h |   4 +-
- 2 files changed, 117 insertions(+), 26 deletions(-)
+ fsck/dir.c  | 38 ++++++--------------------------------
+ fsck/f2fs.h | 37 +++++++++++++++++++++++++++++++++++++
+ fsck/fsck.c | 27 ---------------------------
+ 3 files changed, 43 insertions(+), 59 deletions(-)
 
 diff --git a/fsck/dir.c b/fsck/dir.c
-index d684b5d..57b7f9b 100644
+index d817d27..d684b5d 100644
 --- a/fsck/dir.c
 +++ b/fsck/dir.c
-@@ -158,12 +158,6 @@ static int f2fs_find_entry(struct f2fs_sb_info *sbi,
- 	unsigned int max_depth;
- 	unsigned int level;
+@@ -16,34 +16,6 @@
+ #include "fsck.h"
+ #include "node.h"
  
--	if (dir->i.i_inline & F2FS_INLINE_DENTRY) {
--		ERR_MSG("Not support to find \"%s\" in inline_dir pino=%x\n",
--				de->name, de->pino);
--		return 0;
--	}
+-static unsigned int dir_buckets(unsigned int level)
+-{
+-	if (level < MAX_DIR_HASH_DEPTH / 2)
+-		return 1 << level;
+-	else
+-		return MAX_DIR_BUCKETS;
+-}
 -
- 	max_depth = le32_to_cpu(dir->i.i_current_depth);
- 	for (level = 0; level < max_depth; level ++) {
- 		if (find_in_level(sbi, dir, level, de))
-@@ -172,7 +166,7 @@ static int f2fs_find_entry(struct f2fs_sb_info *sbi,
- 	return 0;
- }
- 
--static void f2fs_update_dentry(nid_t ino, umode_t mode,
-+static void f2fs_update_dentry(nid_t ino, int file_type,
- 		struct f2fs_dentry_ptr *d,
- 		const unsigned char *name, int len, f2fs_hash_t name_hash,
- 		unsigned int bit_pos)
-@@ -187,7 +181,7 @@ static void f2fs_update_dentry(nid_t ino, umode_t mode,
- 	memcpy(d->filename[bit_pos], name, len);
- 	d->filename[bit_pos][len] = 0;
- 	de->ino = cpu_to_le32(ino);
--	set_de_type(de, mode);
-+	de->file_type = file_type;
- 	for (i = 0; i < slots; i++)
- 		test_and_set_bit_le(bit_pos + i, d->bitmap);
- }
-@@ -196,24 +190,21 @@ static void f2fs_update_dentry(nid_t ino, umode_t mode,
-  * f2fs_add_link - Add a new file(dir) to parent dir.
-  */
- static int f2fs_add_link(struct f2fs_sb_info *sbi, struct f2fs_node *parent,
--			struct f2fs_node *child, block_t p_blkaddr)
-+			const unsigned char *name, int name_len, nid_t ino,
-+			int file_type, block_t p_blkaddr, int inc_link)
+-static unsigned int bucket_blocks(unsigned int level)
+-{
+-	if (level < MAX_DIR_HASH_DEPTH / 2)
+-		return 2;
+-	else
+-		return 4;
+-}
+-
+-static unsigned long dir_block_index(unsigned int level,
+-		int dir_level, unsigned int idx)
+-{
+-	unsigned long i;
+-	unsigned long bidx = 0;
+-
+-	for (i = 0; i < level; i++)
+-		bidx += dir_buckets(i + dir_level) * bucket_blocks(i);
+-	bidx += idx * bucket_blocks(level);
+-	return bidx;
+-}
+-
+ static int room_for_filename(const u8 *bitmap, int slots, int max_slots)
  {
- 	int level = 0, current_depth, bit_pos;
- 	int nbucket, nblock, bidx, block;
--	const unsigned char *name = child->i.i_name;
--	int name_len = le32_to_cpu(child->i.i_namelen);
- 	int slots = GET_DENTRY_SLOTS(name_len);
- 	f2fs_hash_t dentry_hash = f2fs_dentry_hash(name, name_len);
- 	struct f2fs_dentry_block *dentry_blk;
- 	struct f2fs_dentry_ptr d;
- 	struct dnode_of_data dn = {0};
+ 	int bit_start = 0;
+@@ -136,14 +108,15 @@ static int find_in_level(struct f2fs_sb_info *sbi,struct f2fs_node *dir,
+ 	int max_slots = 214;
+ 	nid_t ino = le32_to_cpu(dir->footer.ino);
+ 	f2fs_hash_t namehash;
++	unsigned int dir_level = dir->i.i_dir_level;
+ 	int ret = 0;
+ 
+ 	namehash = f2fs_dentry_hash(de->name, de->len);
+ 
+-	nbucket = dir_buckets(level);
++	nbucket = dir_buckets(level, dir_level);
+ 	nblock = bucket_blocks(level);
+ 
+-	bidx = dir_block_index(level, 0, le32_to_cpu(namehash) % nbucket);
++	bidx = dir_block_index(level, dir_level, le32_to_cpu(namehash) % nbucket);
+ 	end_block = bidx + nblock;
+ 
+ 	dentry_blk = calloc(BLOCK_SZ, 1);
+@@ -237,6 +210,7 @@ static int f2fs_add_link(struct f2fs_sb_info *sbi, struct f2fs_node *parent,
  	nid_t pino = le32_to_cpu(parent->footer.ino);
--	nid_t ino = le32_to_cpu(child->footer.ino);
--	umode_t mode = le16_to_cpu(child->i.i_mode);
- 	unsigned int dir_level = parent->i.i_dir_level;
+ 	nid_t ino = le32_to_cpu(child->footer.ino);
+ 	umode_t mode = le16_to_cpu(child->i.i_mode);
++	unsigned int dir_level = parent->i.i_dir_level;
  	int ret;
  
--	if (parent == NULL || child == NULL)
-+	if (parent == NULL)
- 		return -EINVAL;
+ 	if (parent == NULL || child == NULL)
+@@ -262,9 +236,9 @@ start:
+ 	if (level == current_depth)
+ 		++current_depth;
  
- 	if (!pino) {
-@@ -266,7 +257,7 @@ start:
+-	nbucket = dir_buckets(level);
++	nbucket = dir_buckets(level, dir_level);
+ 	nblock = bucket_blocks(level);
+-	bidx = dir_block_index(level, 0, le32_to_cpu(dentry_hash) % nbucket);
++	bidx = dir_block_index(level, dir_level, le32_to_cpu(dentry_hash) % nbucket);
  
- add_dentry:
- 	make_dentry_ptr(&d, (void *)dentry_blk, 1);
--	f2fs_update_dentry(ino, mode, &d, name, name_len, dentry_hash, bit_pos);
-+	f2fs_update_dentry(ino, file_type, &d, name, name_len, dentry_hash, bit_pos);
+ 	for (block = bidx; block <= (bidx + nblock - 1); block++) {
  
- 	ret = dev_write_block(dentry_blk, dn.data_blkaddr);
- 	ASSERT(ret >= 0);
-@@ -281,7 +272,7 @@ add_dentry:
- 	}
+diff --git a/fsck/f2fs.h b/fsck/f2fs.h
+index 5c8eea5..b621912 100644
+--- a/fsck/f2fs.h
++++ b/fsck/f2fs.h
+@@ -465,4 +465,41 @@ extern int lookup_nat_in_journal(struct f2fs_sb_info *sbi, u32 nid, struct f2fs_
+ #define IS_SUM_NODE_SEG(footer)		(footer.entry_type == SUM_TYPE_NODE)
+ #define IS_SUM_DATA_SEG(footer)		(footer.entry_type == SUM_TYPE_DATA)
  
- 	/* Update parent's i_links info*/
--	if (S_ISDIR(mode)) {
-+	if (inc_link && (file_type == F2FS_FT_DIR)){
- 		u32 links = le32_to_cpu(parent->i.i_links);
- 		parent->i.i_links = cpu_to_le32(links + 1);
- 		dn.idirty = 1;
-@@ -445,6 +436,102 @@ static void init_inode_block(struct f2fs_sb_info *sbi,
- 		page_symlink(sbi, node_blk, de->link, size);
- }
- 
-+int convert_inline_dentry(struct f2fs_sb_info *sbi, struct f2fs_node *node,
-+							block_t p_blkaddr)
++static inline unsigned int dir_buckets(unsigned int level, int dir_level)
 +{
-+	struct f2fs_inode *inode = &(node->i);
-+	unsigned int dir_level = node->i.i_dir_level;
-+	nid_t ino = le32_to_cpu(node->footer.ino);
-+	char inline_data[MAX_INLINE_DATA];
-+	struct dnode_of_data dn = {0};
-+	struct f2fs_dentry_ptr d;
-+	unsigned long bit_pos = 0;
-+	int ret = 0;
++	if (level + dir_level < MAX_DIR_HASH_DEPTH / 2)
++		return 1 << (level + dir_level);
++	else
++		return MAX_DIR_BUCKETS;
++}
 +
-+	if (!(inode->i_inline & F2FS_INLINE_DENTRY))
-+		return 0;
++static inline unsigned int bucket_blocks(unsigned int level)
++{
++	if (level < MAX_DIR_HASH_DEPTH / 2)
++		return 2;
++	else
++		return 4;
++}
 +
-+	memcpy(inline_data, inline_data_addr(node), MAX_INLINE_DATA);
-+	memset(inline_data_addr(node), 0, MAX_INLINE_DATA);
-+	inode->i_inline &= ~F2FS_INLINE_DENTRY;
++static inline unsigned long dir_block_index(unsigned int level,
++				int dir_level, unsigned int idx)
++{
++	unsigned long i;
++	unsigned long bidx = 0;
 +
-+	ret = dev_write_block(node, p_blkaddr);
-+	ASSERT(ret >= 0);
++	for (i = 0; i < level; i++)
++		bidx += dir_buckets(i, dir_level) * bucket_blocks(i);
++	bidx += idx * bucket_blocks(level);
++	return bidx;
++}
 +
-+	if (!dir_level) {
-+		struct f2fs_inline_dentry *inline_dentry;
-+		struct f2fs_dentry_block *dentry_blk;
-+
-+		dentry_blk = calloc(BLOCK_SZ, 1);
-+		ASSERT(dentry_blk);
-+
-+		set_new_dnode(&dn, node, NULL, ino);
-+		get_dnode_of_data(sbi, &dn, 0, ALLOC_NODE);
-+		if (dn.data_blkaddr == NULL_ADDR)
-+			new_data_block(sbi, dentry_blk, &dn, CURSEG_HOT_DATA);
-+
-+		inline_dentry = (struct f2fs_inline_dentry *)inline_data;
-+		 /* copy data from inline dentry block to new dentry block */
-+		memcpy(dentry_blk->dentry_bitmap, inline_dentry->dentry_bitmap,
-+				INLINE_DENTRY_BITMAP_SIZE);
-+		memset(dentry_blk->dentry_bitmap + INLINE_DENTRY_BITMAP_SIZE, 0,
-+			SIZE_OF_DENTRY_BITMAP - INLINE_DENTRY_BITMAP_SIZE);
-+
-+		memcpy(dentry_blk->dentry, inline_dentry->dentry,
-+			sizeof(struct f2fs_dir_entry) * NR_INLINE_DENTRY);
-+		memcpy(dentry_blk->filename, inline_dentry->filename,
-+				NR_INLINE_DENTRY * F2FS_SLOT_LEN);
-+
-+		ret = dev_write_block(dentry_blk, dn.data_blkaddr);
-+		ASSERT(ret >= 0);
-+
-+		MSG(1, "%s: copy inline entry to block\n", __func__);
-+
-+		free(dentry_blk);
-+		return ret;
-+	}
-+
-+	make_empty_dir(sbi, node);
-+	make_dentry_ptr(&d, (void *)inline_data, 2);
-+
-+	while (bit_pos < d.max) {
-+		struct f2fs_dir_entry *de;
-+		const unsigned char *filename;
-+		int namelen;
-+
-+		if (!test_bit_le(bit_pos, d.bitmap)) {
-+			bit_pos++;
-+			continue;
-+		}
-+
-+		de = &d.dentry[bit_pos];
-+		if (!de->name_len) {
-+			bit_pos++;
-+			continue;
-+		}
-+
-+		filename = d.filename[bit_pos];
-+		namelen = le32_to_cpu(de->name_len);
-+
-+		if (is_dot_dotdot(filename, namelen)) {
-+			bit_pos += GET_DENTRY_SLOTS(namelen);
-+			continue;
-+		}
-+
-+		ret = f2fs_add_link(sbi, node, filename, namelen,
-+				le32_to_cpu(de->ino),
-+				de->file_type, p_blkaddr, 0);
-+		if (ret)
-+			MSG(0, "Convert file \"%s\" ERR=%d\n", filename, ret);
-+		else
-+			MSG(1, "%s: add inline entry to block\n", __func__);
-+
-+		bit_pos += GET_DENTRY_SLOTS(namelen);
-+	}
-+
++static inline int is_dot_dotdot(const unsigned char *name, const int len)
++{
++	if (len == 1 && name[0] == '.')
++		return 1;
++	if (len == 2 && name[0] == '.' && name[1] == '.')
++		return 1;
 +	return 0;
 +}
 +
- int f2fs_create(struct f2fs_sb_info *sbi, struct dentry *de)
- {
- 	struct f2fs_node *parent, *child;
-@@ -466,6 +553,13 @@ int f2fs_create(struct f2fs_sb_info *sbi, struct dentry *de)
- 	ret = dev_read_block(parent, ni.blk_addr);
- 	ASSERT(ret >= 0);
- 
-+	/* Must convert inline dentry before the following opertions */
-+	ret = convert_inline_dentry(sbi, parent, ni.blk_addr);
-+	if (ret) {
-+		MSG(0, "Convert inline dentry for pino=%x failed.\n", de->pino);
-+		return -1;
-+	}
-+
- 	ret = f2fs_find_entry(sbi, parent, de);
- 	if (ret) {
- 		MSG(0, "Skip the existing \"%s\" pino=%x ERR=%d\n",
-@@ -474,13 +568,6 @@ int f2fs_create(struct f2fs_sb_info *sbi, struct dentry *de)
- 			de->ino = 0;
- 		goto free_parent_dir;
- 	}
--	if (parent->i.i_inline & F2FS_INLINE_DENTRY) {
--		ERR_MSG("Not support adding \"%s\" in inline_dir pino=%x\n",
--					de->name, de->pino);
--		if (de->file_type == F2FS_FT_REG_FILE)
--			de->ino = 0;
--		goto free_parent_dir;
--	}
- 
- 	child = calloc(BLOCK_SZ, 1);
- 	ASSERT(child);
-@@ -489,7 +576,11 @@ int f2fs_create(struct f2fs_sb_info *sbi, struct dentry *de)
- 
- 	init_inode_block(sbi, child, de);
- 
--	ret = f2fs_add_link(sbi, parent, child, ni.blk_addr);
-+	ret = f2fs_add_link(sbi, parent, child->i.i_name,
-+				le32_to_cpu(child->i.i_namelen),
-+				le32_to_cpu(child->footer.ino),
-+				map_de_type(le16_to_cpu(child->i.i_mode)),
-+				ni.blk_addr, 1);
- 	if (ret) {
- 		MSG(0, "Skip the existing \"%s\" pino=%x ERR=%d\n",
- 					de->name, de->pino, ret);
-diff --git a/fsck/f2fs.h b/fsck/f2fs.h
-index b621912..efc43f6 100644
---- a/fsck/f2fs.h
-+++ b/fsck/f2fs.h
-@@ -444,9 +444,9 @@ static unsigned char f2fs_type_by_mode[S_IFMT >> S_SHIFT] = {
- 	[S_IFLNK >> S_SHIFT]    = F2FS_FT_SYMLINK,
- };
- 
--static inline void set_de_type(struct f2fs_dir_entry *de, umode_t mode)
-+static inline int map_de_type(umode_t mode)
- {
--	de->file_type = f2fs_type_by_mode[(mode & S_IFMT) >> S_SHIFT];
-+       return f2fs_type_by_mode[(mode & S_IFMT) >> S_SHIFT];
+ #endif /* _F2FS_H_ */
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index cbd29cc..afd83e5 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -1084,33 +1084,6 @@ static int f2fs_check_hash_code(struct f2fs_dir_entry *dentry,
+ 	return 0;
  }
  
- static inline void *inline_xattr_addr(struct f2fs_inode *inode)
+-static unsigned int dir_buckets(unsigned int level, int dir_level)
+-{
+-	if (level + dir_level < MAX_DIR_HASH_DEPTH / 2)
+-		return 1 << (level + dir_level);
+-	else
+-		return MAX_DIR_BUCKETS;
+-}
+-
+-static unsigned int bucket_blocks(unsigned int level)
+-{
+-	if (level < MAX_DIR_HASH_DEPTH / 2)
+-		return 2;
+-	else
+-		return 4;
+-}
+-
+-static unsigned long dir_block_index(unsigned int level,
+-				int dir_level, unsigned int idx)
+-{
+-	unsigned long i;
+-	unsigned long bidx = 0;
+-
+-	for (i = 0; i < level; i++)
+-		bidx += dir_buckets(i, dir_level) * bucket_blocks(i);
+-	bidx += idx * bucket_blocks(level);
+-	return bidx;
+-}
+ 
+ static int __get_current_level(int dir_level, u32 pgofs)
+ {
 -- 
 2.9.3
 
