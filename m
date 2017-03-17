@@ -1,25 +1,27 @@
 From: Kinglong Mee <kinglongmee@gmail.com>
-Subject: [PATCH] sload.f2fs: fix missing SSA updates
-Date: Fri, 17 Mar 2017 19:00:55 +0800
-Message-ID: <2acc4963-015d-83f0-f89a-83227dfb461d@gmail.com>
+Subject: [PATCH v2] sload.f2fs: fix missing SSA updates
+Date: Fri, 17 Mar 2017 19:08:21 +0800
+Message-ID: <5f90a87e-fbcf-39df-91b1-d9e480716a92@gmail.com>
+References: <2acc4963-015d-83f0-f89a-83227dfb461d@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <kinglongmee@gmail.com>) id 1copd7-00043g-7k
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kinglongmee@gmail.com>) id 1copkJ-0008CI-Ij
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 17 Mar 2017 11:01:09 +0000
-Received: from mail-it0-f66.google.com ([209.85.214.66])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1copd5-00068p-9Y
+	Fri, 17 Mar 2017 11:08:35 +0000
+Received: from mail-it0-f67.google.com ([209.85.214.67])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1copkI-00019J-DT
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 17 Mar 2017 11:01:09 +0000
-Received: by mail-it0-f66.google.com with SMTP id g138so3259802itb.0
+	Fri, 17 Mar 2017 11:08:35 +0000
+Received: by mail-it0-f67.google.com with SMTP id y18so3308829itc.2
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Fri, 17 Mar 2017 04:01:07 -0700 (PDT)
+	Fri, 17 Mar 2017 04:08:34 -0700 (PDT)
+In-Reply-To: <2acc4963-015d-83f0-f89a-83227dfb461d@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -68,22 +70,27 @@ Mar 17 12:04:39 localhost kernel: ---[ end trace 926d61b064ed1f2d ]---
 Fixes: 767a93ea8b ("defrag.f2fs: fix missing SSA updates")
 Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
 ---
- fsck/mount.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fsck/mount.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
 diff --git a/fsck/mount.c b/fsck/mount.c
-index c54bb95..b19b91a 100644
+index c54bb95..e5b0ddf 100644
 --- a/fsck/mount.c
 +++ b/fsck/mount.c
-@@ -1076,7 +1076,7 @@ void update_sum_entry(struct f2fs_sb_info *sbi, block_t blk_addr,
+@@ -1076,11 +1076,8 @@ void update_sum_entry(struct f2fs_sb_info *sbi, block_t blk_addr,
  							SUM_TYPE_DATA;
  
  	/* write SSA all the time */
 -	if (type < SEG_TYPE_MAX) {
-+	if (type <= SEG_TYPE_MAX) {
- 		u64 ssa_blk = GET_SUM_BLKADDR(sbi, segno);
- 		ret = dev_write_block(sum_blk, ssa_blk);
- 		ASSERT(ret >= 0);
+-		u64 ssa_blk = GET_SUM_BLKADDR(sbi, segno);
+-		ret = dev_write_block(sum_blk, ssa_blk);
+-		ASSERT(ret >= 0);
+-	}
++	ret = dev_write_block(sum_blk, GET_SUM_BLKADDR(sbi, segno));
++	ASSERT(ret >= 0);
+ 
+ 	if (type == SEG_TYPE_NODE || type == SEG_TYPE_DATA ||
+ 					type == SEG_TYPE_MAX)
 -- 
 2.9.3
 
