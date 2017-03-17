@@ -1,26 +1,26 @@
 From: Kinglong Mee <kinglongmee@gmail.com>
-Subject: [PATCH 2/2] fsck.f2fs: check encrypted filename depends
- FADVISE_ENC_NAME_BIT
-Date: Fri, 17 Mar 2017 21:56:19 +0800
-Message-ID: <76b23f5e-34d8-d5d7-53f7-75a76accaa53@gmail.com>
+Subject: [PATCH 2/2] sload.f2fs: support sload files into
+ directory includes inline dentry
+Date: Fri, 17 Mar 2017 22:01:12 +0800
+Message-ID: <447e5f92-fef4-7b02-196b-707d7c18fef4@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <kinglongmee@gmail.com>) id 1cosMq-0005uF-40
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kinglongmee@gmail.com>) id 1cosRZ-00075A-Ce
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 17 Mar 2017 13:56:32 +0000
-Received: from mail-it0-f68.google.com ([209.85.214.68])
+	Fri, 17 Mar 2017 14:01:25 +0000
+Received: from mail-it0-f67.google.com ([209.85.214.67])
 	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1cosMo-0006nv-8p
+	(Exim 4.76) id 1cosRX-0007UU-EK
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 17 Mar 2017 13:56:32 +0000
-Received: by mail-it0-f68.google.com with SMTP id g138so4099651itb.0
+	Fri, 17 Mar 2017 14:01:25 +0000
+Received: by mail-it0-f67.google.com with SMTP id g138so4126055itb.0
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Fri, 17 Mar 2017 06:56:30 -0700 (PDT)
+	Fri, 17 Mar 2017 07:01:23 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,264 +32,256 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-An encrypted directory under an unencrypted directory, the filename isn't encrypted.
+It seems the new created directory always includes inline dentries,
+let sload.f2fs supporting it. 
 
 Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
 ---
- fsck/dump.c       |  4 ++--
- fsck/fsck.c       | 44 ++++++++++++++++++++++----------------------
- fsck/mount.c      |  6 +++---
- include/f2fs_fs.h |  2 ++
- 4 files changed, 29 insertions(+), 27 deletions(-)
+ fsck/dir.c  | 139 +++++++++++++++++++++++++++++++++++++++++++++++++-----------
+ fsck/f2fs.h |   4 +-
+ 2 files changed, 117 insertions(+), 26 deletions(-)
 
-diff --git a/fsck/dump.c b/fsck/dump.c
-index 8cbeda1..22e2265 100644
---- a/fsck/dump.c
-+++ b/fsck/dump.c
-@@ -356,7 +356,7 @@ static void dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
- 	unsigned char name[F2FS_NAME_LEN + 1] = {0};
- 	char path[1024] = {0};
- 	char ans[255] = {0};
--	int is_encrypt = file_is_encrypt(inode);
-+	int enc_name = file_enc_name(inode);
+diff --git a/fsck/dir.c b/fsck/dir.c
+index d684b5d..57b7f9b 100644
+--- a/fsck/dir.c
++++ b/fsck/dir.c
+@@ -158,12 +158,6 @@ static int f2fs_find_entry(struct f2fs_sb_info *sbi,
+ 	unsigned int max_depth;
+ 	unsigned int level;
+ 
+-	if (dir->i.i_inline & F2FS_INLINE_DENTRY) {
+-		ERR_MSG("Not support to find \"%s\" in inline_dir pino=%x\n",
+-				de->name, de->pino);
+-		return 0;
+-	}
+-
+ 	max_depth = le32_to_cpu(dir->i.i_current_depth);
+ 	for (level = 0; level < max_depth; level ++) {
+ 		if (find_in_level(sbi, dir, level, de))
+@@ -172,7 +166,7 @@ static int f2fs_find_entry(struct f2fs_sb_info *sbi,
+ 	return 0;
+ }
+ 
+-static void f2fs_update_dentry(nid_t ino, umode_t mode,
++static void f2fs_update_dentry(nid_t ino, int file_type,
+ 		struct f2fs_dentry_ptr *d,
+ 		const unsigned char *name, int len, f2fs_hash_t name_hash,
+ 		unsigned int bit_pos)
+@@ -187,7 +181,7 @@ static void f2fs_update_dentry(nid_t ino, umode_t mode,
+ 	memcpy(d->filename[bit_pos], name, len);
+ 	d->filename[bit_pos][len] = 0;
+ 	de->ino = cpu_to_le32(ino);
+-	set_de_type(de, mode);
++	de->file_type = file_type;
+ 	for (i = 0; i < slots; i++)
+ 		test_and_set_bit_le(bit_pos + i, d->bitmap);
+ }
+@@ -196,24 +190,21 @@ static void f2fs_update_dentry(nid_t ino, umode_t mode,
+  * f2fs_add_link - Add a new file(dir) to parent dir.
+  */
+ static int f2fs_add_link(struct f2fs_sb_info *sbi, struct f2fs_node *parent,
+-			struct f2fs_node *child, block_t p_blkaddr)
++			const unsigned char *name, int name_len, nid_t ino,
++			int file_type, block_t p_blkaddr, int inc_link)
+ {
+ 	int level = 0, current_depth, bit_pos;
+ 	int nbucket, nblock, bidx, block;
+-	const unsigned char *name = child->i.i_name;
+-	int name_len = le32_to_cpu(child->i.i_namelen);
+ 	int slots = GET_DENTRY_SLOTS(name_len);
+ 	f2fs_hash_t dentry_hash = f2fs_dentry_hash(name, name_len);
+ 	struct f2fs_dentry_block *dentry_blk;
+ 	struct f2fs_dentry_ptr d;
+ 	struct dnode_of_data dn = {0};
+ 	nid_t pino = le32_to_cpu(parent->footer.ino);
+-	nid_t ino = le32_to_cpu(child->footer.ino);
+-	umode_t mode = le16_to_cpu(child->i.i_mode);
+ 	unsigned int dir_level = parent->i.i_dir_level;
  	int ret;
  
- 	if (!S_ISREG(imode) || namelen == 0 || namelen > F2FS_NAME_LEN) {
-@@ -377,7 +377,7 @@ dump:
+-	if (parent == NULL || child == NULL)
++	if (parent == NULL)
+ 		return -EINVAL;
  
- 		/* make a file */
- 		namelen = convert_encrypted_name(inode->i_name, namelen,
--							name, is_encrypt);
-+							name, enc_name);
- 		name[namelen] = 0;
- 		sprintf(path, "./lost_found/%s", name);
+ 	if (!pino) {
+@@ -266,7 +257,7 @@ start:
  
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 1c23199..cbd29cc 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -720,7 +720,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 					blkaddr,
- 					&child, (i_blocks == *blk_cnt),
- 					ftype, nid, idx, ni->version,
--					file_is_encrypt(&node_blk->i));
-+					file_enc_name(&node_blk->i));
- 			if (!ret) {
- 				*blk_cnt = *blk_cnt + 1;
- 			} else if (c.fix_on) {
-@@ -793,7 +793,7 @@ check:
- skip_blkcnt_fix:
- 	namelen = convert_encrypted_name(node_blk->i.i_name,
- 					le32_to_cpu(node_blk->i.i_namelen),
--					en, file_is_encrypt(&node_blk->i));
-+					en, file_enc_name(&node_blk->i));
- 	en[namelen] = '\0';
- 	if (ftype == F2FS_FT_ORPHAN)
- 		DBG(1, "Orphan Inode: 0x%x [%s] i_blocks: %u\n\n",
-@@ -878,7 +878,7 @@ int fsck_chk_dnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
- 			blkaddr, child,
- 			le64_to_cpu(inode->i_blocks) == *blk_cnt, ftype,
- 			nid, idx, ni->version,
--			file_is_encrypt(inode));
-+			file_enc_name(inode));
- 		if (!ret) {
- 			*blk_cnt = *blk_cnt + 1;
- 		} else if (c.fix_on) {
-@@ -1005,9 +1005,9 @@ static int digest_encode(const char *src, int len, char *dst)
- }
+ add_dentry:
+ 	make_dentry_ptr(&d, (void *)dentry_blk, 1);
+-	f2fs_update_dentry(ino, mode, &d, name, name_len, dentry_hash, bit_pos);
++	f2fs_update_dentry(ino, file_type, &d, name, name_len, dentry_hash, bit_pos);
  
- int convert_encrypted_name(unsigned char *name, int len,
--				unsigned char *new, int encrypted)
-+				unsigned char *new, int enc_name)
- {
--	if (!encrypted) {
-+	if (!enc_name) {
- 		memcpy(new, name, len);
- 		new[len] = 0;
- 		return len;
-@@ -1019,7 +1019,7 @@ int convert_encrypted_name(unsigned char *name, int len,
- 
- static void print_dentry(__u32 depth, __u8 *name,
- 		u8 *bitmap, struct f2fs_dir_entry *dentry,
--		int max, int idx, int last_blk, int encrypted)
-+		int max, int idx, int last_blk, int enc_name)
- {
- 	int last_de = 0;
- 	int next_idx = 0;
-@@ -1056,16 +1056,16 @@ static void print_dentry(__u32 depth, __u8 *name,
- 	for (i = 1; i < depth; i++)
- 		printf("%c   ", tree_mark[i]);
- 
--	convert_encrypted_name(name, name_len, new, encrypted);
-+	convert_encrypted_name(name, name_len, new, enc_name);
- 
- 	printf("%c-- %s <ino = 0x%x>, <encrypted (%d)>\n",
- 			last_de ? '`' : '|',
- 			new, le32_to_cpu(dentry[idx].ino),
--			encrypted);
-+			enc_name);
- }
- 
- static int f2fs_check_hash_code(struct f2fs_dir_entry *dentry,
--			const unsigned char *name, u32 len, int encrypted)
-+			const unsigned char *name, u32 len, int enc_name)
- {
- 	f2fs_hash_t hash_code = f2fs_dentry_hash(name, len);
- 
-@@ -1074,7 +1074,7 @@ static int f2fs_check_hash_code(struct f2fs_dir_entry *dentry,
- 		unsigned char new[F2FS_NAME_LEN + 1];
- 
- 		convert_encrypted_name((unsigned char *)name, len,
--							new, encrypted);
-+							new, enc_name);
- 		FIX_MSG("Mismatch hash_code for \"%s\" [%x:%x]",
- 				new, le32_to_cpu(dentry->hash_code),
- 				hash_code);
-@@ -1156,7 +1156,7 @@ static int __chk_dots_dentries(struct f2fs_sb_info *sbi,
- 			       struct child_info *child,
- 			       u8 *name, int len,
- 			       __u8 (*filename)[F2FS_SLOT_LEN],
--			       int encrypted)
-+			       int enc_name)
- {
- 	int fixed = 0;
- 
-@@ -1185,7 +1185,7 @@ static int __chk_dots_dentries(struct f2fs_sb_info *sbi,
- 		}
+ 	ret = dev_write_block(dentry_blk, dn.data_blkaddr);
+ 	ASSERT(ret >= 0);
+@@ -281,7 +272,7 @@ add_dentry:
  	}
  
--	if (f2fs_check_hash_code(dentry, name, len, encrypted))
-+	if (f2fs_check_hash_code(dentry, name, len, enc_name))
- 		fixed = 1;
- 
- 	if (name[len] != '\0') {
-@@ -1208,7 +1208,7 @@ static void nullify_dentry(struct f2fs_dir_entry *dentry, int offs,
- static int __chk_dentries(struct f2fs_sb_info *sbi, struct child_info *child,
- 			u8 *bitmap, struct f2fs_dir_entry *dentry,
- 			__u8 (*filenames)[F2FS_SLOT_LEN],
--			int max, int last_blk, int encrypted)
-+			int max, int last_blk, int enc_name)
- {
- 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
- 	enum FILE_TYPE ftype;
-@@ -1298,7 +1298,7 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, struct child_info *child,
- 							name_len == 2)) {
- 				ret = __chk_dots_dentries(sbi, &dentry[i],
- 					child, name, name_len, &filenames[i],
--					encrypted);
-+					enc_name);
- 				switch (ret) {
- 				case 1:
- 					fixed = 1;
-@@ -1321,7 +1321,7 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, struct child_info *child,
- 			}
- 		}
- 
--		if (f2fs_check_hash_code(dentry + i, name, name_len, encrypted))
-+		if (f2fs_check_hash_code(dentry + i, name, name_len, enc_name))
- 			fixed = 1;
- 
- 		if (max == NR_DENTRY_IN_BLOCK) {
-@@ -1340,7 +1340,7 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, struct child_info *child,
- 			}
- 		}
- 
--		en_len = convert_encrypted_name(name, name_len, en, encrypted);
-+		en_len = convert_encrypted_name(name, name_len, en, enc_name);
- 		en[en_len] = '\0';
- 		DBG(1, "[%3u]-[0x%x] name[%s] len[0x%x] ino[0x%x] type[0x%x]\n",
- 				fsck->dentry_depth, i, en, name_len,
-@@ -1348,7 +1348,7 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, struct child_info *child,
- 				dentry[i].file_type);
- 
- 		print_dentry(fsck->dentry_depth, name, bitmap,
--				dentry, max, i, last_blk, encrypted);
-+				dentry, max, i, last_blk, enc_name);
- 
- 		blk_cnt = 1;
- 		ret = fsck_chk_node_blk(sbi,
-@@ -1393,7 +1393,7 @@ int fsck_chk_inline_dentries(struct f2fs_sb_info *sbi,
- 			de_blk->dentry_bitmap,
- 			de_blk->dentry, de_blk->filename,
- 			NR_INLINE_DENTRY, 1,
--			file_is_encrypt(&node_blk->i));
-+			file_enc_name(&node_blk->i));
- 	if (dentries < 0) {
- 		DBG(1, "[%3d] Inline Dentry Block Fixed hash_codes\n\n",
- 			fsck->dentry_depth);
-@@ -1408,7 +1408,7 @@ int fsck_chk_inline_dentries(struct f2fs_sb_info *sbi,
+ 	/* Update parent's i_links info*/
+-	if (S_ISDIR(mode)) {
++	if (inc_link && (file_type == F2FS_FT_DIR)){
+ 		u32 links = le32_to_cpu(parent->i.i_links);
+ 		parent->i.i_links = cpu_to_le32(links + 1);
+ 		dn.idirty = 1;
+@@ -445,6 +436,102 @@ static void init_inode_block(struct f2fs_sb_info *sbi,
+ 		page_symlink(sbi, node_blk, de->link, size);
  }
  
- int fsck_chk_dentry_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
--		struct child_info *child, int last_blk, int encrypted)
-+		struct child_info *child, int last_blk, int enc_name)
++int convert_inline_dentry(struct f2fs_sb_info *sbi, struct f2fs_node *node,
++							block_t p_blkaddr)
++{
++	struct f2fs_inode *inode = &(node->i);
++	unsigned int dir_level = node->i.i_dir_level;
++	nid_t ino = le32_to_cpu(node->footer.ino);
++	char inline_data[MAX_INLINE_DATA];
++	struct dnode_of_data dn = {0};
++	struct f2fs_dentry_ptr d;
++	unsigned long bit_pos = 0;
++	int ret = 0;
++
++	if (!(inode->i_inline & F2FS_INLINE_DENTRY))
++		return 0;
++
++	memcpy(inline_data, inline_data_addr(node), MAX_INLINE_DATA);
++	memset(inline_data_addr(node), 0, MAX_INLINE_DATA);
++	inode->i_inline &= ~F2FS_INLINE_DENTRY;
++
++	ret = dev_write_block(node, p_blkaddr);
++	ASSERT(ret >= 0);
++
++	if (!dir_level) {
++		struct f2fs_inline_dentry *inline_dentry;
++		struct f2fs_dentry_block *dentry_blk;
++
++		dentry_blk = calloc(BLOCK_SZ, 1);
++		ASSERT(dentry_blk);
++
++		set_new_dnode(&dn, node, NULL, ino);
++		get_dnode_of_data(sbi, &dn, 0, ALLOC_NODE);
++		if (dn.data_blkaddr == NULL_ADDR)
++			new_data_block(sbi, dentry_blk, &dn, CURSEG_HOT_DATA);
++
++		inline_dentry = (struct f2fs_inline_dentry *)inline_data;
++		 /* copy data from inline dentry block to new dentry block */
++		memcpy(dentry_blk->dentry_bitmap, inline_dentry->dentry_bitmap,
++				INLINE_DENTRY_BITMAP_SIZE);
++		memset(dentry_blk->dentry_bitmap + INLINE_DENTRY_BITMAP_SIZE, 0,
++			SIZE_OF_DENTRY_BITMAP - INLINE_DENTRY_BITMAP_SIZE);
++
++		memcpy(dentry_blk->dentry, inline_dentry->dentry,
++			sizeof(struct f2fs_dir_entry) * NR_INLINE_DENTRY);
++		memcpy(dentry_blk->filename, inline_dentry->filename,
++				NR_INLINE_DENTRY * F2FS_SLOT_LEN);
++
++		ret = dev_write_block(dentry_blk, dn.data_blkaddr);
++		ASSERT(ret >= 0);
++
++		MSG(1, "%s: copy inline entry to block\n", __func__);
++
++		free(dentry_blk);
++		return ret;
++	}
++
++	make_empty_dir(sbi, node);
++	make_dentry_ptr(&d, (void *)inline_data, 2);
++
++	while (bit_pos < d.max) {
++		struct f2fs_dir_entry *de;
++		const unsigned char *filename;
++		int namelen;
++
++		if (!test_bit_le(bit_pos, d.bitmap)) {
++			bit_pos++;
++			continue;
++		}
++
++		de = &d.dentry[bit_pos];
++		if (!de->name_len) {
++			bit_pos++;
++			continue;
++		}
++
++		filename = d.filename[bit_pos];
++		namelen = le32_to_cpu(de->name_len);
++
++		if (is_dot_dotdot(filename, namelen)) {
++			bit_pos += GET_DENTRY_SLOTS(namelen);
++			continue;
++		}
++
++		ret = f2fs_add_link(sbi, node, filename, namelen,
++				le32_to_cpu(de->ino),
++				de->file_type, p_blkaddr, 0);
++		if (ret)
++			MSG(0, "Convert file \"%s\" ERR=%d\n", filename, ret);
++		else
++			MSG(1, "%s: add inline entry to block\n", __func__);
++
++		bit_pos += GET_DENTRY_SLOTS(namelen);
++	}
++
++	return 0;
++}
++
+ int f2fs_create(struct f2fs_sb_info *sbi, struct dentry *de)
  {
- 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
- 	struct f2fs_dentry_block *de_blk;
-@@ -1424,7 +1424,7 @@ int fsck_chk_dentry_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
- 	dentries = __chk_dentries(sbi, child,
- 			de_blk->dentry_bitmap,
- 			de_blk->dentry, de_blk->filename,
--			NR_DENTRY_IN_BLOCK, last_blk, encrypted);
-+			NR_DENTRY_IN_BLOCK, last_blk, enc_name);
+ 	struct f2fs_node *parent, *child;
+@@ -466,6 +553,13 @@ int f2fs_create(struct f2fs_sb_info *sbi, struct dentry *de)
+ 	ret = dev_read_block(parent, ni.blk_addr);
+ 	ASSERT(ret >= 0);
  
- 	if (dentries < 0 && !c.ro) {
- 		ret = dev_write_block(de_blk, blk_addr);
-@@ -1445,7 +1445,7 @@ int fsck_chk_dentry_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
- int fsck_chk_data_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
- 		struct child_info *child, int last_blk,
- 		enum FILE_TYPE ftype, u32 parent_nid, u16 idx_in_node, u8 ver,
--		int encrypted)
-+		int enc_name)
- {
- 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
- 
-@@ -1479,7 +1479,7 @@ int fsck_chk_data_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
- 	if (ftype == F2FS_FT_DIR) {
- 		f2fs_set_main_bitmap(sbi, blk_addr, CURSEG_HOT_DATA);
- 		return fsck_chk_dentry_blk(sbi, blk_addr, child,
--						last_blk, encrypted);
-+						last_blk, enc_name);
- 	} else {
- 		f2fs_set_main_bitmap(sbi, blk_addr, CURSEG_WARM_DATA);
++	/* Must convert inline dentry before the following opertions */
++	ret = convert_inline_dentry(sbi, parent, ni.blk_addr);
++	if (ret) {
++		MSG(0, "Convert inline dentry for pino=%x failed.\n", de->pino);
++		return -1;
++	}
++
+ 	ret = f2fs_find_entry(sbi, parent, de);
+ 	if (ret) {
+ 		MSG(0, "Skip the existing \"%s\" pino=%x ERR=%d\n",
+@@ -474,13 +568,6 @@ int f2fs_create(struct f2fs_sb_info *sbi, struct dentry *de)
+ 			de->ino = 0;
+ 		goto free_parent_dir;
  	}
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 7bc016b..3ced1e2 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -40,14 +40,14 @@ void print_inode_info(struct f2fs_inode *inode, int name)
- 	unsigned char en[F2FS_NAME_LEN + 1];
- 	unsigned int i = 0;
- 	int namelen = le32_to_cpu(inode->i_namelen);
--	int is_encrypt = file_is_encrypt(inode);
-+	int enc_name = file_enc_name(inode);
+-	if (parent->i.i_inline & F2FS_INLINE_DENTRY) {
+-		ERR_MSG("Not support adding \"%s\" in inline_dir pino=%x\n",
+-					de->name, de->pino);
+-		if (de->file_type == F2FS_FT_REG_FILE)
+-			de->ino = 0;
+-		goto free_parent_dir;
+-	}
  
--	namelen = convert_encrypted_name(inode->i_name, namelen, en, is_encrypt);
-+	namelen = convert_encrypted_name(inode->i_name, namelen, en, enc_name);
- 	en[namelen] = '\0';
- 	if (name && namelen) {
- 		inode->i_name[namelen] = '\0';
- 		MSG(0, " - File name         : %s%s\n", en,
--				is_encrypt ? " <encrypted>" : "");
-+				enc_name ? " <encrypted>" : "");
- 		setlocale(LC_ALL, "");
- 		MSG(0, " - File size         : %'llu (bytes)\n",
- 				le64_to_cpu(inode->i_size));
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 8e5c2f8..fa9d536 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -613,8 +613,10 @@ struct f2fs_extent {
- #define FADVISE_COLD_BIT       0x01
- #define FADVISE_LOST_PINO_BIT  0x02
- #define FADVISE_ENCRYPT_BIT    0x04
-+#define FADVISE_ENC_NAME_BIT   0x08
+ 	child = calloc(BLOCK_SZ, 1);
+ 	ASSERT(child);
+@@ -489,7 +576,11 @@ int f2fs_create(struct f2fs_sb_info *sbi, struct dentry *de)
  
- #define file_is_encrypt(fi)      ((fi)->i_advise & FADVISE_ENCRYPT_BIT)
-+#define file_enc_name(fi)        ((fi)->i_advise & FADVISE_ENC_NAME_BIT)
+ 	init_inode_block(sbi, child, de);
  
- struct f2fs_inode {
- 	__le16 i_mode;			/* file mode */
+-	ret = f2fs_add_link(sbi, parent, child, ni.blk_addr);
++	ret = f2fs_add_link(sbi, parent, child->i.i_name,
++				le32_to_cpu(child->i.i_namelen),
++				le32_to_cpu(child->footer.ino),
++				map_de_type(le16_to_cpu(child->i.i_mode)),
++				ni.blk_addr, 1);
+ 	if (ret) {
+ 		MSG(0, "Skip the existing \"%s\" pino=%x ERR=%d\n",
+ 					de->name, de->pino, ret);
+diff --git a/fsck/f2fs.h b/fsck/f2fs.h
+index b621912..efc43f6 100644
+--- a/fsck/f2fs.h
++++ b/fsck/f2fs.h
+@@ -444,9 +444,9 @@ static unsigned char f2fs_type_by_mode[S_IFMT >> S_SHIFT] = {
+ 	[S_IFLNK >> S_SHIFT]    = F2FS_FT_SYMLINK,
+ };
+ 
+-static inline void set_de_type(struct f2fs_dir_entry *de, umode_t mode)
++static inline int map_de_type(umode_t mode)
+ {
+-	de->file_type = f2fs_type_by_mode[(mode & S_IFMT) >> S_SHIFT];
++       return f2fs_type_by_mode[(mode & S_IFMT) >> S_SHIFT];
+ }
+ 
+ static inline void *inline_xattr_addr(struct f2fs_inode *inode)
 -- 
 2.9.3
 
