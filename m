@@ -1,26 +1,23 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: protect free nid operation with
-	cp_rwsem
-Date: Mon, 20 Mar 2017 19:06:02 +0800
-Message-ID: <e89152b2-b082-6727-feba-c1807fd39b67@huawei.com>
-References: <20170317104623.90116-1-yuchao0@huawei.com>
-	<20170319224426.GA45667@jaegeuk.local>
+Subject: [PATCH] f2fs: fix race condition in between free nid
+	allocator/initializer
+Date: Mon, 20 Mar 2017 19:07:53 +0800
+Message-ID: <20170320110753.53494-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1cpv8u-0004yU-BZ
+	(envelope-from <yuchao0@huawei.com>) id 1cpvAs-000540-RB
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 Mar 2017 11:06:28 +0000
-Received: from [45.249.212.188] (helo=dggrg02-dlp.huawei.com)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cpv8r-0005nI-6I
+	Mon, 20 Mar 2017 11:08:30 +0000
+Received: from [45.249.212.187] (helo=dggrg01-dlp.huawei.com)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cpvAr-00048Z-5q
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 Mar 2017 11:06:28 +0000
-In-Reply-To: <20170319224426.GA45667@jaegeuk.local>
+	Mon, 20 Mar 2017 11:08:30 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,84 +27,149 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
+To: jaegeuk@kernel.org
 Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Jaegeuk,
+In below concurrent case, allocated nid can be loaded into free nid cache
+and be allocated again.
 
-On 2017/3/20 6:44, Jaegeuk Kim wrote:
-> Hi Chao,
-> 
-> On 03/17, Chao Yu wrote:
->> - f2fs_balance_fs_bg
->>  - build_free_ni
->>   - __build_free_nids
->>    - scan_nat_page
->>     - add_free_nid
->> 					- f2fs_create
->> 					 - f2fs_new_inode
->> 					  - alloc_nid
->>    - remove_free_nid
->>
->> This patch uses cp_rwsem to protect free nid allocation/initialization
->> to avoid reusing allocated nid in above scenario.
-> 
-> It looks like description doesn't match to your change below?
+Thread A				Thread B
+- f2fs_create
+ - f2fs_new_inode
+  - alloc_nid
+   - __insert_nid_to_list(ALLOC_NID_LIST)
+					- f2fs_balance_fs_bg
+					 - build_free_nids
+					  - __build_free_nids
+					   - scan_nat_page
+					    - add_free_nid
+					     - __lookup_nat_cache
+ - f2fs_add_link
+  - init_inode_metadata
+   - new_inode_page
+    - new_node_page
+     - set_node_addr
+ - alloc_nid_done
+  - __remove_nid_from_list(ALLOC_NID_LIST)
+					     - __insert_nid_to_list(FREE_NID_LIST)
 
-It looks like the problem will not happen because on_build_free_nids will stop
-alloc_nid stealing one allocated nid while building free nids. Please ignore
-this patch, sorry.
+This patch uses build_lock covering free nid allocation and initialization
+to avoid this race condition.
 
-I found another potential case, could you please check that one?
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/node.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-Thanks,
-
-> 
-> Thanks,
-> 
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/inode.c   | 2 ++
->>  fs/f2fs/segment.c | 5 ++++-
->>  2 files changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->> index 2520fa72b23f..f941410f994a 100644
->> --- a/fs/f2fs/inode.c
->> +++ b/fs/f2fs/inode.c
->> @@ -423,7 +423,9 @@ void f2fs_evict_inode(struct inode *inode)
->>  			add_ino_entry(sbi, inode->i_ino, UPDATE_INO);
->>  	}
->>  	if (is_inode_flag_set(inode, FI_FREE_NID)) {
->> +		f2fs_lock_op(sbi);
->>  		alloc_nid_failed(sbi, inode->i_ino);
->> +		f2fs_unlock_op(sbi);
->>  		clear_inode_flag(inode, FI_FREE_NID);
->>  	}
->>  	f2fs_bug_on(sbi, err &&
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index 0bf024f62330..f85e1f443c99 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -426,8 +426,11 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
->>  
->>  	if (!available_free_memory(sbi, FREE_NIDS))
->>  		try_to_free_nids(sbi, MAX_FREE_NIDS);
->> -	else
->> +	else {
->> +		f2fs_lock_op(sbi);
->>  		build_free_nids(sbi, false, false);
->> +		f2fs_unlock_op(sbi);
->> +	}
->>  
->>  	if (!is_idle(sbi))
->>  		return;
->> -- 
->> 2.8.2.295.g3f1c1d0
-> 
-> .
-> 
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 3bfffd744f87..ea45be031c9d 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -22,8 +22,6 @@
+ #include "trace.h"
+ #include <trace/events/f2fs.h>
+ 
+-#define on_build_free_nids(nmi) mutex_is_locked(&nm_i->build_lock)
+-
+ static struct kmem_cache *nat_entry_slab;
+ static struct kmem_cache *free_nid_slab;
+ static struct kmem_cache *nat_entry_set_slab;
+@@ -1802,6 +1800,7 @@ static void remove_free_nid(struct f2fs_sb_info *sbi, nid_t nid)
+ 	struct free_nid *i;
+ 	bool need_free = false;
+ 
++	mutex_lock(&nm_i->build_lock);
+ 	spin_lock(&nm_i->nid_list_lock);
+ 	i = __lookup_free_nid_list(nm_i, nid);
+ 	if (i && i->state == NID_NEW) {
+@@ -1809,6 +1808,7 @@ static void remove_free_nid(struct f2fs_sb_info *sbi, nid_t nid)
+ 		need_free = true;
+ 	}
+ 	spin_unlock(&nm_i->nid_list_lock);
++	mutex_unlock(&nm_i->build_lock);
+ 
+ 	if (need_free)
+ 		kmem_cache_free(free_nid_slab, i);
+@@ -1999,15 +1999,18 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
+ 		return false;
+ 	}
+ #endif
++
++	mutex_lock(&nm_i->build_lock);
+ 	spin_lock(&nm_i->nid_list_lock);
+ 
+ 	if (unlikely(nm_i->available_nids == 0)) {
+ 		spin_unlock(&nm_i->nid_list_lock);
++		mutex_unlock(&nm_i->build_lock);
+ 		return false;
+ 	}
+ 
+ 	/* We should not use stale free nids created by build_free_nids */
+-	if (nm_i->nid_cnt[FREE_NID_LIST] && !on_build_free_nids(nm_i)) {
++	if (nm_i->nid_cnt[FREE_NID_LIST]) {
+ 		f2fs_bug_on(sbi, list_empty(&nm_i->nid_list[FREE_NID_LIST]));
+ 		i = list_first_entry(&nm_i->nid_list[FREE_NID_LIST],
+ 					struct free_nid, list);
+@@ -2021,9 +2024,11 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
+ 		update_free_nid_bitmap(sbi, *nid, false, false);
+ 
+ 		spin_unlock(&nm_i->nid_list_lock);
++		mutex_unlock(&nm_i->build_lock);
+ 		return true;
+ 	}
+ 	spin_unlock(&nm_i->nid_list_lock);
++	mutex_unlock(&nm_i->build_lock);
+ 
+ 	/* Let's scan nat pages and its caches to get free nids */
+ 	build_free_nids(sbi, true, false);
+@@ -2038,11 +2043,13 @@ void alloc_nid_done(struct f2fs_sb_info *sbi, nid_t nid)
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct free_nid *i;
+ 
++	mutex_lock(&nm_i->build_lock);
+ 	spin_lock(&nm_i->nid_list_lock);
+ 	i = __lookup_free_nid_list(nm_i, nid);
+ 	f2fs_bug_on(sbi, !i);
+ 	__remove_nid_from_list(sbi, i, ALLOC_NID_LIST, false);
+ 	spin_unlock(&nm_i->nid_list_lock);
++	mutex_unlock(&nm_i->build_lock);
+ 
+ 	kmem_cache_free(free_nid_slab, i);
+ }
+@@ -2059,6 +2066,7 @@ void alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid)
+ 	if (!nid)
+ 		return;
+ 
++	mutex_lock(&nm_i->build_lock);
+ 	spin_lock(&nm_i->nid_list_lock);
+ 	i = __lookup_free_nid_list(nm_i, nid);
+ 	f2fs_bug_on(sbi, !i);
+@@ -2077,6 +2085,7 @@ void alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid)
+ 	update_free_nid_bitmap(sbi, nid, true, false);
+ 
+ 	spin_unlock(&nm_i->nid_list_lock);
++	mutex_unlock(&nm_i->build_lock);
+ 
+ 	if (need_free)
+ 		kmem_cache_free(free_nid_slab, i);
+@@ -2443,6 +2452,7 @@ void flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	if (!nm_i->dirty_nat_cnt)
+ 		return;
+ 
++	mutex_lock(&nm_i->build_lock);
+ 	down_write(&nm_i->nat_tree_lock);
+ 
+ 	/*
+@@ -2468,6 +2478,7 @@ void flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 		__flush_nat_entry_set(sbi, set, cpc);
+ 
+ 	up_write(&nm_i->nat_tree_lock);
++	mutex_unlock(&nm_i->build_lock);
+ 
+ 	f2fs_bug_on(sbi, nm_i->dirty_nat_cnt);
+ }
+-- 
+2.8.2.295.g3f1c1d0
 
 
 ------------------------------------------------------------------------------
