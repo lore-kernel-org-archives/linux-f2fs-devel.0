@@ -1,29 +1,23 @@
-From: Kinglong Mee <kinglongmee@gmail.com>
-Subject: Re: [PATCH] f2fs: copy all valid xattr data includes the
-	last zero
-Date: Mon, 20 Mar 2017 20:33:28 +0800
-Message-ID: <10384529-5d09-712c-abba-a981be074072@gmail.com>
-References: <b70f5f84-a4e9-c0e2-d654-5a257eeffa35@gmail.com>
-	<20170320030842.GB45667@jaegeuk.local>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [GIT PULL] f2fs fix for 4.11-rc4
+Date: Mon, 20 Mar 2017 13:30:19 -0400
+Message-ID: <20170320173019.GA53763@jaegeuk.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <kinglongmee@gmail.com>) id 1cpwVI-0001aM-J8
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cq18Z-0007bv-VF
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 Mar 2017 12:33:40 +0000
-Received: from mail-it0-f65.google.com ([209.85.214.65])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1cpwVH-00073k-Pm
+	Mon, 20 Mar 2017 17:30:31 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cq18X-0007uP-Sl
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 Mar 2017 12:33:40 +0000
-Received: by mail-it0-f65.google.com with SMTP id y18so16793116itc.2
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 20 Mar 2017 05:33:39 -0700 (PDT)
-In-Reply-To: <20170320030842.GB45667@jaegeuk.local>
+	Mon, 20 Mar 2017 17:30:31 +0000
+Content-Disposition: inline
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,79 +27,49 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux FS Dev Mailing List <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
 
-On 3/20/2017 11:08, Jaegeuk Kim wrote:
-> Hi Kinglong,
-> 
-> On 03/18, Kinglong Mee wrote:
->> It's better coping all valid xattr data includes the last zero. 
-> 
-> Why do we need this?
-> 
-> The size of txattr_addr would be larger than the space we need.
-> 
-> Thanks,
-> 
->>
->> Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
->> ---
->>  fs/f2fs/xattr.c | 4 ++--
->>  fs/f2fs/xattr.h | 4 ++--
->>  2 files changed, 4 insertions(+), 4 deletions(-)
->>
->> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
->> index aff7619..41785c9 100644
->> --- a/fs/f2fs/xattr.c
->> +++ b/fs/f2fs/xattr.c
->> @@ -249,7 +249,7 @@ static int lookup_all_xattrs(struct inode *inode, struct page *ipage,
->>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->>  	void *cur_addr, *txattr_addr, *last_addr = NULL;
->>  	nid_t xnid = F2FS_I(inode)->i_xattr_nid;
->> -	unsigned int size = xnid ? VALID_XATTR_BLOCK_SIZE : 0;
+Hi Linus,
 
-Here maybe does not copy the last zero.
+Could you please pull the below fixes?
 
->> +	unsigned int size = xnid ? MAX_XATTR_BLOCK_SIZE : 0;
->>  	unsigned int inline_size = 0;
->>  	int err = 0;
->>  
->> @@ -328,7 +328,7 @@ static int read_all_xattrs(struct inode *inode, struct page *ipage,
->>  {
->>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->>  	struct f2fs_xattr_header *header;
->> -	size_t size = PAGE_SIZE, inline_size = 0;
+Thanks,
 
-Yes, it's larger.
-It's for consistent with the above.
+The following changes since commit 97da3854c526d3a6ee05c849c96e48d21527606c:
 
-thanks,
-Kinglong Mee
+  Linux 4.11-rc3 (2017-03-19 19:09:39 -0700)
 
->> +	size_t size = MAX_XATTR_BLOCK_SIZE, inline_size = 0;
->>  	void *txattr_addr;
->>  	int err;
->>  
->> diff --git a/fs/f2fs/xattr.h b/fs/f2fs/xattr.h
->> index d5a9492..629c8ae 100644
->> --- a/fs/f2fs/xattr.h
->> +++ b/fs/f2fs/xattr.h
->> @@ -73,9 +73,9 @@ struct f2fs_xattr_entry {
->>  				!IS_XATTR_LAST_ENTRY(entry);\
->>  				entry = XATTR_NEXT_ENTRY(entry))
->>  #define MAX_XATTR_BLOCK_SIZE	(PAGE_SIZE - sizeof(struct node_footer))
->> -#define VALID_XATTR_BLOCK_SIZE	(MAX_XATTR_BLOCK_SIZE - sizeof(__u32))
->> +/* A __u32 is reserved for the last entry as zero */
->>  #define MIN_OFFSET(i)		XATTR_ALIGN(inline_xattr_size(i) +	\
->> -						VALID_XATTR_BLOCK_SIZE)
->> +				MAX_XATTR_BLOCK_SIZE - sizeof(__u32))
->>  
->>  #define MAX_VALUE_LEN(i)	(MIN_OFFSET(i) -			\
->>  				sizeof(struct f2fs_xattr_header) -	\
->> -- 
->> 2.9.3
-> 
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/for-f2fs-4.11-rc4
+
+for you to fetch changes up to 7041d5d286fb54635f540c1bb3b43980ed65513a:
+
+  f2fs: combine nat_bits and free_nid_bitmap cache (2017-03-20 10:00:18 -0400)
+
+----------------------------------------------------------------
+Bug fix for f2fs
+
+- Fix performance regression reported by lkp-rebot
+- Fix potential data lost after power-cut due to SSR reallocation
+
+----------------------------------------------------------------
+Chao Yu (2):
+      f2fs: skip scanning free nid bitmap of full NAT blocks
+      f2fs: combine nat_bits and free_nid_bitmap cache
+
+Jaegeuk Kim (3):
+      f2fs: don't overwrite node block by SSR
+      f2fs: declare static functions
+      f2fs: use __set{__clear}_bit_le
+
+ fs/f2fs/debug.c   |   1 +
+ fs/f2fs/dir.c     |   2 +-
+ fs/f2fs/f2fs.h    |   2 +
+ fs/f2fs/node.c    | 163 ++++++++++++++++++++++++++----------------------------
+ fs/f2fs/segment.c |   6 ++
+ 5 files changed, 87 insertions(+), 87 deletions(-)
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
