@@ -1,25 +1,26 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: don't allow volatile writes for
-	non-regular file
-Date: Mon, 20 Mar 2017 18:56:13 +0800
-Message-ID: <9f786f97-7062-744c-1d52-a831333731f2@huawei.com>
-References: <201703192340.5NOXcZia%fengguang.wu@intel.com>
+Subject: Re: [PATCH] f2fs: protect free nid operation with
+	cp_rwsem
+Date: Mon, 20 Mar 2017 19:06:02 +0800
+Message-ID: <e89152b2-b082-6727-feba-c1807fd39b67@huawei.com>
+References: <20170317104623.90116-1-yuchao0@huawei.com>
+	<20170319224426.GA45667@jaegeuk.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1cpv07-0004VG-GA
+	(envelope-from <yuchao0@huawei.com>) id 1cpv8u-0004yU-BZ
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 Mar 2017 10:57:23 +0000
-Received: from [45.249.212.189] (helo=dggrg03-dlp.huawei.com)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cpv05-0002jI-3F
+	Mon, 20 Mar 2017 11:06:28 +0000
+Received: from [45.249.212.188] (helo=dggrg02-dlp.huawei.com)
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cpv8r-0005nI-6I
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 Mar 2017 10:57:23 +0000
-In-Reply-To: <201703192340.5NOXcZia%fengguang.wu@intel.com>
+	Mon, 20 Mar 2017 11:06:28 +0000
+In-Reply-To: <20170319224426.GA45667@jaegeuk.local>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,83 +30,81 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: kbuild test robot <lkp@intel.com>
-Cc: jaegeuk@kernel.org, chao@kernel.org, kbuild-all@01.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hello,
+Hi Jaegeuk,
 
-Sorry for my mistaken, have fixed and resent the patch.
+On 2017/3/20 6:44, Jaegeuk Kim wrote:
+> Hi Chao,
+> 
+> On 03/17, Chao Yu wrote:
+>> - f2fs_balance_fs_bg
+>>  - build_free_ni
+>>   - __build_free_nids
+>>    - scan_nat_page
+>>     - add_free_nid
+>> 					- f2fs_create
+>> 					 - f2fs_new_inode
+>> 					  - alloc_nid
+>>    - remove_free_nid
+>>
+>> This patch uses cp_rwsem to protect free nid allocation/initialization
+>> to avoid reusing allocated nid in above scenario.
+> 
+> It looks like description doesn't match to your change below?
 
-[PATCH RESEND] f2fs: don't allow volatile writes for non-regular file
+It looks like the problem will not happen because on_build_free_nids will stop
+alloc_nid stealing one allocated nid while building free nids. Please ignore
+this patch, sorry.
+
+I found another potential case, could you please check that one?
 
 Thanks,
 
-On 2017/3/20 0:00, kbuild test robot wrote:
-> Hi Chao,
 > 
-> [auto build test WARNING on f2fs/dev]
-> [also build test WARNING on v4.11-rc2 next-20170310]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> Thanks,
 > 
-> url:    https://github.com/0day-ci/linux/commits/Chao-Yu/f2fs-don-t-allow-volatile-writes-for-non-regular-file/20170319-221605
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev
-> reproduce:
->         # apt-get install sparse
->         make ARCH=x86_64 allmodconfig
->         make C=1 CF=-D__CHECK_ENDIAN__
-> 
-> 
-> sparse warnings: (new ones prefixed by >>)
-> 
->    include/linux/compiler.h:264:8: sparse: attribute 'no_sanitize_address': unknown attribute
->>> fs/f2fs/file.c:1598:14: sparse: incompatible types for operation (&)
->    fs/f2fs/file.c:1598:14:    left side has type struct inode *inode
->    fs/f2fs/file.c:1598:14:    right side has type int
->    fs/f2fs/file.c:1598:14: sparse: incompatible types for operation (==)
->    fs/f2fs/file.c:1598:14:    left side has type bad type
->    fs/f2fs/file.c:1598:14:    right side has type int
->    In file included from include/linux/stat.h:6:0,
->                     from include/linux/fs.h:9,
->                     from fs/f2fs/file.c:11:
->    fs/f2fs/file.c: In function 'f2fs_ioc_start_volatile_write':
->    include/uapi/linux/stat.h:20:26: error: invalid operands to binary & (have 'struct inode *' and 'int')
->     #define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
->                              ^
->    fs/f2fs/file.c:1598:7: note: in expansion of macro 'S_ISREG'
->      if (!S_ISREG(inode))
->           ^~~~~~~
-> 
-> vim +1598 fs/f2fs/file.c
-> 
->   1582			ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
->   1583		}
->   1584	err_out:
->   1585		inode_unlock(inode);
->   1586		mnt_drop_write_file(filp);
->   1587		return ret;
->   1588	}
->   1589	
->   1590	static int f2fs_ioc_start_volatile_write(struct file *filp)
->   1591	{
->   1592		struct inode *inode = file_inode(filp);
->   1593		int ret;
->   1594	
->   1595		if (!inode_owner_or_capable(inode))
->   1596			return -EACCES;
->   1597	
->> 1598		if (!S_ISREG(inode))
->   1599			return -EINVAL;
->   1600	
->   1601		ret = mnt_want_write_file(filp);
->   1602		if (ret)
->   1603			return ret;
->   1604	
->   1605		inode_lock(inode);
->   1606	
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/inode.c   | 2 ++
+>>  fs/f2fs/segment.c | 5 ++++-
+>>  2 files changed, 6 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+>> index 2520fa72b23f..f941410f994a 100644
+>> --- a/fs/f2fs/inode.c
+>> +++ b/fs/f2fs/inode.c
+>> @@ -423,7 +423,9 @@ void f2fs_evict_inode(struct inode *inode)
+>>  			add_ino_entry(sbi, inode->i_ino, UPDATE_INO);
+>>  	}
+>>  	if (is_inode_flag_set(inode, FI_FREE_NID)) {
+>> +		f2fs_lock_op(sbi);
+>>  		alloc_nid_failed(sbi, inode->i_ino);
+>> +		f2fs_unlock_op(sbi);
+>>  		clear_inode_flag(inode, FI_FREE_NID);
+>>  	}
+>>  	f2fs_bug_on(sbi, err &&
+>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>> index 0bf024f62330..f85e1f443c99 100644
+>> --- a/fs/f2fs/segment.c
+>> +++ b/fs/f2fs/segment.c
+>> @@ -426,8 +426,11 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+>>  
+>>  	if (!available_free_memory(sbi, FREE_NIDS))
+>>  		try_to_free_nids(sbi, MAX_FREE_NIDS);
+>> -	else
+>> +	else {
+>> +		f2fs_lock_op(sbi);
+>>  		build_free_nids(sbi, false, false);
+>> +		f2fs_unlock_op(sbi);
+>> +	}
+>>  
+>>  	if (!is_idle(sbi))
+>>  		return;
+>> -- 
+>> 2.8.2.295.g3f1c1d0
 > 
 > .
 > 
