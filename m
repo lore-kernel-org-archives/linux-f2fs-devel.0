@@ -1,9 +1,11 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2] f2fs: fix race condition in between free
- nid allocator/initializer
-Date: Tue, 21 Mar 2017 12:13:07 -0400
-Message-ID: <20170321161307.GA61126@jaegeuk.local>
-References: <20170321120831.75813-1-yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: copy all valid xattr data includes the
+	last zero
+Date: Tue, 21 Mar 2017 12:18:30 -0400
+Message-ID: <20170321161830.GB61126@jaegeuk.local>
+References: <b70f5f84-a4e9-c0e2-d654-5a257eeffa35@gmail.com>
+	<20170320030842.GB45667@jaegeuk.local>
+	<10384529-5d09-712c-abba-a981be074072@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,16 +13,16 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cqMPN-00079I-NH
+	(envelope-from <jaegeuk@kernel.org>) id 1cqMUa-0007NO-JW
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 21 Mar 2017 16:13:17 +0000
+	Tue, 21 Mar 2017 16:18:40 +0000
 Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cqMPM-0001oj-Jn
+	(Exim 4.76) id 1cqMUZ-0002Wh-SK
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 21 Mar 2017 16:13:17 +0000
+	Tue, 21 Mar 2017 16:18:40 +0000
 Content-Disposition: inline
-In-Reply-To: <20170321120831.75813-1-yuchao0@huawei.com>
+In-Reply-To: <10384529-5d09-712c-abba-a981be074072@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,135 +32,84 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Kinglong Mee <kinglongmee@gmail.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Chao,
-
-On 03/21, Chao Yu wrote:
-> In below concurrent case, allocated nid can be loaded into free nid cache
-> and be allocated again.
+On 03/20, Kinglong Mee wrote:
+> On 3/20/2017 11:08, Jaegeuk Kim wrote:
+> > Hi Kinglong,
+> > 
+> > On 03/18, Kinglong Mee wrote:
+> >> It's better coping all valid xattr data includes the last zero. 
+> > 
+> > Why do we need this?
+> > 
+> > The size of txattr_addr would be larger than the space we need.
+> > 
+> > Thanks,
+> > 
+> >>
+> >> Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
+> >> ---
+> >>  fs/f2fs/xattr.c | 4 ++--
+> >>  fs/f2fs/xattr.h | 4 ++--
+> >>  2 files changed, 4 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+> >> index aff7619..41785c9 100644
+> >> --- a/fs/f2fs/xattr.c
+> >> +++ b/fs/f2fs/xattr.c
+> >> @@ -249,7 +249,7 @@ static int lookup_all_xattrs(struct inode *inode, struct page *ipage,
+> >>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> >>  	void *cur_addr, *txattr_addr, *last_addr = NULL;
+> >>  	nid_t xnid = F2FS_I(inode)->i_xattr_nid;
+> >> -	unsigned int size = xnid ? VALID_XATTR_BLOCK_SIZE : 0;
 > 
-> Thread A				Thread B
-> - f2fs_create
->  - f2fs_new_inode
->   - alloc_nid
->    - __insert_nid_to_list(ALLOC_NID_LIST)
-> 					- f2fs_balance_fs_bg
-> 					 - build_free_nids
-> 					  - __build_free_nids
-> 					   - scan_nat_page
-> 					    - add_free_nid
-> 					     - __lookup_nat_cache
->  - f2fs_add_link
->   - init_inode_metadata
->    - new_inode_page
->     - new_node_page
->      - set_node_addr
->  - alloc_nid_done
->   - __remove_nid_from_list(ALLOC_NID_LIST)
-> 					     - __insert_nid_to_list(FREE_NID_LIST)
+> Here maybe does not copy the last zero.
+
+The below kzalloc() will make it zero. Any problem?
+
+Thanks,
+
+> >> +	unsigned int size = xnid ? MAX_XATTR_BLOCK_SIZE : 0;
+> >>  	unsigned int inline_size = 0;
+> >>  	int err = 0;
+> >>  
+> >> @@ -328,7 +328,7 @@ static int read_all_xattrs(struct inode *inode, struct page *ipage,
+> >>  {
+> >>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> >>  	struct f2fs_xattr_header *header;
+> >> -	size_t size = PAGE_SIZE, inline_size = 0;
 > 
-> This patch uses build_lock covering free nid allocation and initialization
-> to avoid this race condition.
-
-I have a concern about mutex contention.
-How about this?
-
----
- fs/f2fs/node.c | 60 ++++++++++++++++++++++++++++++++++++++++------------------
- 1 file changed, 42 insertions(+), 18 deletions(-)
-
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 347aa30ef0cf..25bc47087f91 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1759,40 +1759,64 @@ static void __remove_nid_from_list(struct f2fs_sb_info *sbi,
- static bool add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
- {
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
--	struct free_nid *i;
-+	struct free_nid *i, *e;
- 	struct nat_entry *ne;
--	int err;
-+	int err = -EINVAL;
-+	bool ret = false;
- 
- 	/* 0 nid should not be used */
- 	if (unlikely(nid == 0))
- 		return false;
- 
--	if (build) {
--		/* do not add allocated nids */
--		ne = __lookup_nat_cache(nm_i, nid);
--		if (ne && (!get_nat_flag(ne, IS_CHECKPOINTED) ||
--				nat_get_blkaddr(ne) != NULL_ADDR))
--			return false;
--	}
--
- 	i = f2fs_kmem_cache_alloc(free_nid_slab, GFP_NOFS);
- 	i->nid = nid;
- 	i->state = NID_NEW;
- 
--	if (radix_tree_preload(GFP_NOFS)) {
--		kmem_cache_free(free_nid_slab, i);
--		return true;
--	}
-+	if (radix_tree_preload(GFP_NOFS))
-+		goto err;
- 
- 	spin_lock(&nm_i->nid_list_lock);
-+
-+	if (build) {
-+		/*
-+		 *   Thread A             Thread B
-+		 *  - f2fs_create
-+		 *   - f2fs_new_inode
-+		 *    - alloc_nid
-+		 *     - __insert_nid_to_list(ALLOC_NID_LIST)
-+		 *                     - f2fs_balance_fs_bg
-+		 *                      - build_free_nids
-+		 *                       - __build_free_nids
-+		 *                        - scan_nat_page
-+		 *                         - add_free_nid
-+		 *                          - __lookup_nat_cache
-+		 *  - f2fs_add_link
-+		 *   - init_inode_metadata
-+		 *    - new_inode_page
-+		 *     - new_node_page
-+		 *      - set_node_addr
-+		 *  - alloc_nid_done
-+		 *   - __remove_nid_from_list(ALLOC_NID_LIST)
-+		 *                         - __insert_nid_to_list(FREE_NID_LIST)
-+		 */
-+		ne = __lookup_nat_cache(nm_i, nid);
-+		if (ne && (!get_nat_flag(ne, IS_CHECKPOINTED) ||
-+				nat_get_blkaddr(ne) != NULL_ADDR))
-+			goto err_out;
-+
-+		e = __lookup_free_nid_list(nm_i, nid);
-+		if (e && e->state == NID_ALLOC)
-+			goto err_out;
-+	}
-+	ret = true;
- 	err = __insert_nid_to_list(sbi, i, FREE_NID_LIST, true);
-+err_out:
- 	spin_unlock(&nm_i->nid_list_lock);
- 	radix_tree_preload_end();
--	if (err) {
-+err:
-+	if (err)
- 		kmem_cache_free(free_nid_slab, i);
--		return true;
--	}
--	return true;
-+	return ret;
- }
- 
- static void remove_free_nid(struct f2fs_sb_info *sbi, nid_t nid)
--- 
-2.11.0
-
+> Yes, it's larger.
+> It's for consistent with the above.
+> 
+> thanks,
+> Kinglong Mee
+> 
+> >> +	size_t size = MAX_XATTR_BLOCK_SIZE, inline_size = 0;
+> >>  	void *txattr_addr;
+> >>  	int err;
+> >>  
+> >> diff --git a/fs/f2fs/xattr.h b/fs/f2fs/xattr.h
+> >> index d5a9492..629c8ae 100644
+> >> --- a/fs/f2fs/xattr.h
+> >> +++ b/fs/f2fs/xattr.h
+> >> @@ -73,9 +73,9 @@ struct f2fs_xattr_entry {
+> >>  				!IS_XATTR_LAST_ENTRY(entry);\
+> >>  				entry = XATTR_NEXT_ENTRY(entry))
+> >>  #define MAX_XATTR_BLOCK_SIZE	(PAGE_SIZE - sizeof(struct node_footer))
+> >> -#define VALID_XATTR_BLOCK_SIZE	(MAX_XATTR_BLOCK_SIZE - sizeof(__u32))
+> >> +/* A __u32 is reserved for the last entry as zero */
+> >>  #define MIN_OFFSET(i)		XATTR_ALIGN(inline_xattr_size(i) +	\
+> >> -						VALID_XATTR_BLOCK_SIZE)
+> >> +				MAX_XATTR_BLOCK_SIZE - sizeof(__u32))
+> >>  
+> >>  #define MAX_VALUE_LEN(i)	(MIN_OFFSET(i) -			\
+> >>  				sizeof(struct f2fs_xattr_header) -	\
+> >> -- 
+> >> 2.9.3
+> > 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
