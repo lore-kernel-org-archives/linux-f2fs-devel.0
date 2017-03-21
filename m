@@ -1,22 +1,26 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 1/2] f2fs: introduce __drop_inmem_page
-Date: Tue, 21 Mar 2017 20:09:44 +0800
-Message-ID: <20170321120945.76050-1-yuchao0@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH v2] f2fs: fix race condition in between free
+ nid allocator/initializer
+Date: Tue, 21 Mar 2017 12:13:07 -0400
+Message-ID: <20170321161307.GA61126@jaegeuk.local>
+References: <20170321120831.75813-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1cqIcF-0003wJ-9A
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cqMPN-00079I-NH
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 21 Mar 2017 12:10:19 +0000
-Received: from [45.249.212.189] (helo=dggrg03-dlp.huawei.com)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cqIcD-0001uQ-Kk
+	Tue, 21 Mar 2017 16:13:17 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cqMPM-0001oj-Jn
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 21 Mar 2017 12:10:19 +0000
+	Tue, 21 Mar 2017 16:13:17 +0000
+Content-Disposition: inline
+In-Reply-To: <20170321120831.75813-1-yuchao0@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,178 +30,134 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
+To: Chao Yu <yuchao0@huawei.com>
 Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Introduce a separated inner help __drop_inmem_page in order to:
-a. enhance readability,
-b. use INMEM_INVALIDATE for better tracing,
-c. avoid useless loop.
+Hi Chao,
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+On 03/21, Chao Yu wrote:
+> In below concurrent case, allocated nid can be loaded into free nid cache
+> and be allocated again.
+> 
+> Thread A				Thread B
+> - f2fs_create
+>  - f2fs_new_inode
+>   - alloc_nid
+>    - __insert_nid_to_list(ALLOC_NID_LIST)
+> 					- f2fs_balance_fs_bg
+> 					 - build_free_nids
+> 					  - __build_free_nids
+> 					   - scan_nat_page
+> 					    - add_free_nid
+> 					     - __lookup_nat_cache
+>  - f2fs_add_link
+>   - init_inode_metadata
+>    - new_inode_page
+>     - new_node_page
+>      - set_node_addr
+>  - alloc_nid_done
+>   - __remove_nid_from_list(ALLOC_NID_LIST)
+> 					     - __insert_nid_to_list(FREE_NID_LIST)
+> 
+> This patch uses build_lock covering free nid allocation and initialization
+> to avoid this race condition.
+
+I have a concern about mutex contention.
+How about this?
+
 ---
- fs/f2fs/data.c              |  2 +-
- fs/f2fs/f2fs.h              |  1 +
- fs/f2fs/segment.c           | 47 ++++++++++++++++++++++++++++++++++-----------
- include/trace/events/f2fs.h |  2 ++
- 4 files changed, 40 insertions(+), 12 deletions(-)
+ fs/f2fs/node.c | 60 ++++++++++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 42 insertions(+), 18 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index f4b3006e3ecb..2d23c1f3d0f6 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1967,7 +1967,7 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
- 
- 	/* This is atomic written page, keep Private */
- 	if (IS_ATOMIC_WRITTEN_PAGE(page))
--		drop_inmem_page(inode, page);
-+		return drop_inmem_page(inode, page);
- 
- 	set_page_private(page, 0);
- 	ClearPagePrivate(page);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 44c6c72d5e7d..82ddf5649d68 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -720,6 +720,7 @@ enum page_type {
- 	META_FLUSH,
- 	INMEM,		/* the below types are used by tracepoints only. */
- 	INMEM_DROP,
-+	INMEM_INVALIDATE,
- 	INMEM_REVOKE,
- 	IPU,
- 	OPU,
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 3e8d08722151..0bf024f62330 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -192,7 +192,7 @@ void register_inmem_page(struct inode *inode, struct page *page)
- 	trace_f2fs_register_inmem_page(page, INMEM);
- }
- 
--static int __revoke_inmem_pages(struct inode *inode, struct page *p,
-+static int __revoke_inmem_pages(struct inode *inode,
- 				struct list_head *head, bool drop, bool recover)
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 347aa30ef0cf..25bc47087f91 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1759,40 +1759,64 @@ static void __remove_nid_from_list(struct f2fs_sb_info *sbi,
+ static bool add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
  {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-@@ -205,10 +205,7 @@ static int __revoke_inmem_pages(struct inode *inode, struct page *p,
- 		if (drop)
- 			trace_f2fs_commit_inmem_page(page, INMEM_DROP);
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+-	struct free_nid *i;
++	struct free_nid *i, *e;
+ 	struct nat_entry *ne;
+-	int err;
++	int err = -EINVAL;
++	bool ret = false;
  
--		if (!p)
--			lock_page(page);
--		else if (p != page)
--			continue;
-+		lock_page(page);
+ 	/* 0 nid should not be used */
+ 	if (unlikely(nid == 0))
+ 		return false;
  
- 		if (recover) {
- 			struct dnode_of_data dn;
-@@ -232,7 +229,7 @@ static int __revoke_inmem_pages(struct inode *inode, struct page *p,
- 			ClearPageUptodate(page);
- 		set_page_private(page, 0);
- 		ClearPagePrivate(page);
--		f2fs_put_page(page, p ? 0 : 1);
-+		f2fs_put_page(page, 1);
+-	if (build) {
+-		/* do not add allocated nids */
+-		ne = __lookup_nat_cache(nm_i, nid);
+-		if (ne && (!get_nat_flag(ne, IS_CHECKPOINTED) ||
+-				nat_get_blkaddr(ne) != NULL_ADDR))
+-			return false;
+-	}
+-
+ 	i = f2fs_kmem_cache_alloc(free_nid_slab, GFP_NOFS);
+ 	i->nid = nid;
+ 	i->state = NID_NEW;
  
- 		list_del(&cur->list);
- 		kmem_cache_free(inmem_entry_slab, cur);
-@@ -246,19 +243,47 @@ void drop_inmem_pages(struct inode *inode)
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
+-	if (radix_tree_preload(GFP_NOFS)) {
+-		kmem_cache_free(free_nid_slab, i);
+-		return true;
+-	}
++	if (radix_tree_preload(GFP_NOFS))
++		goto err;
  
- 	mutex_lock(&fi->inmem_lock);
--	__revoke_inmem_pages(inode, NULL, &fi->inmem_pages, true, false);
-+	__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
- 	mutex_unlock(&fi->inmem_lock);
- 
- 	clear_inode_flag(inode, FI_ATOMIC_FILE);
- 	stat_dec_atomic_write(inode);
- }
- 
-+void __drop_inmem_page(struct inode *inode, struct page *page)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	struct list_head *head = &F2FS_I(inode)->inmem_pages;
-+	struct inmem_pages *cur;
+ 	spin_lock(&nm_i->nid_list_lock);
 +
-+	f2fs_bug_on(sbi, !IS_ATOMIC_WRITTEN_PAGE(page));
++	if (build) {
++		/*
++		 *   Thread A             Thread B
++		 *  - f2fs_create
++		 *   - f2fs_new_inode
++		 *    - alloc_nid
++		 *     - __insert_nid_to_list(ALLOC_NID_LIST)
++		 *                     - f2fs_balance_fs_bg
++		 *                      - build_free_nids
++		 *                       - __build_free_nids
++		 *                        - scan_nat_page
++		 *                         - add_free_nid
++		 *                          - __lookup_nat_cache
++		 *  - f2fs_add_link
++		 *   - init_inode_metadata
++		 *    - new_inode_page
++		 *     - new_node_page
++		 *      - set_node_addr
++		 *  - alloc_nid_done
++		 *   - __remove_nid_from_list(ALLOC_NID_LIST)
++		 *                         - __insert_nid_to_list(FREE_NID_LIST)
++		 */
++		ne = __lookup_nat_cache(nm_i, nid);
++		if (ne && (!get_nat_flag(ne, IS_CHECKPOINTED) ||
++				nat_get_blkaddr(ne) != NULL_ADDR))
++			goto err_out;
 +
-+	list_for_each_entry(cur, head, list) {
-+		if (cur->page == page)
-+			goto drop;
++		e = __lookup_free_nid_list(nm_i, nid);
++		if (e && e->state == NID_ALLOC)
++			goto err_out;
 +	}
-+
-+	f2fs_bug_on(sbi, 1);
-+	return;
-+drop:
-+	trace_f2fs_commit_inmem_page(page, INMEM_INVALIDATE);
-+
-+	ClearPageUptodate(page);
-+	set_page_private(page, 0);
-+	ClearPagePrivate(page);
-+	f2fs_put_page(page, 0);
-+
-+	list_del(&cur->list);
-+	kmem_cache_free(inmem_entry_slab, cur);
-+	dec_page_count(sbi, F2FS_INMEM_PAGES);
-+}
-+
- void drop_inmem_page(struct inode *inode, struct page *page)
- {
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
- 
- 	mutex_lock(&fi->inmem_lock);
--	__revoke_inmem_pages(inode, page, &fi->inmem_pages, true, false);
-+	__drop_inmem_page(inode, page);
- 	mutex_unlock(&fi->inmem_lock);
++	ret = true;
+ 	err = __insert_nid_to_list(sbi, i, FREE_NID_LIST, true);
++err_out:
+ 	spin_unlock(&nm_i->nid_list_lock);
+ 	radix_tree_preload_end();
+-	if (err) {
++err:
++	if (err)
+ 		kmem_cache_free(free_nid_slab, i);
+-		return true;
+-	}
+-	return true;
++	return ret;
  }
  
-@@ -312,7 +337,7 @@ static int __commit_inmem_pages(struct inode *inode,
- 							DATA, WRITE);
- 
- 	if (!err)
--		__revoke_inmem_pages(inode, NULL, revoke_list, false, false);
-+		__revoke_inmem_pages(inode, revoke_list, false, false);
- 
- 	return err;
- }
-@@ -342,13 +367,13 @@ int commit_inmem_pages(struct inode *inode)
- 		 * recovery or rewrite & commit last transaction. For other
- 		 * error number, revoking was done by filesystem itself.
- 		 */
--		ret = __revoke_inmem_pages(inode, NULL, &revoke_list,
-+		ret = __revoke_inmem_pages(inode, &revoke_list,
- 							false, true);
- 		if (ret)
- 			err = ret;
- 
- 		/* drop all uncommitted pages */
--		__revoke_inmem_pages(inode, NULL, &fi->inmem_pages,
-+		__revoke_inmem_pages(inode, &fi->inmem_pages,
- 							true, false);
- 	}
- 	mutex_unlock(&fi->inmem_lock);
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 16fcd192e257..1714c75822de 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -15,6 +15,7 @@ TRACE_DEFINE_ENUM(META);
- TRACE_DEFINE_ENUM(META_FLUSH);
- TRACE_DEFINE_ENUM(INMEM);
- TRACE_DEFINE_ENUM(INMEM_DROP);
-+TRACE_DEFINE_ENUM(INMEM_INVALIDATE);
- TRACE_DEFINE_ENUM(INMEM_REVOKE);
- TRACE_DEFINE_ENUM(IPU);
- TRACE_DEFINE_ENUM(OPU);
-@@ -52,6 +53,7 @@ TRACE_DEFINE_ENUM(CP_DISCARD);
- 		{ META_FLUSH,	"META_FLUSH" },				\
- 		{ INMEM,	"INMEM" },				\
- 		{ INMEM_DROP,	"INMEM_DROP" },				\
-+		{ INMEM_INVALIDATE,	"INMEM_INVALIDATE" },		\
- 		{ INMEM_REVOKE,	"INMEM_REVOKE" },			\
- 		{ IPU,		"IN-PLACE" },				\
- 		{ OPU,		"OUT-OF-PLACE" })
+ static void remove_free_nid(struct f2fs_sb_info *sbi, nid_t nid)
 -- 
-2.8.2.295.g3f1c1d0
+2.11.0
 
 
 ------------------------------------------------------------------------------
