@@ -1,33 +1,22 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: copy all valid xattr data includes the
- last zero
-Date: Wed, 22 Mar 2017 23:53:28 -0400
-Message-ID: <20170323035328.GA3019@jaegeuk.local>
-References: <b70f5f84-a4e9-c0e2-d654-5a257eeffa35@gmail.com>
-	<20170320030842.GB45667@jaegeuk.local>
-	<10384529-5d09-712c-abba-a981be074072@gmail.com>
-	<20170321161830.GB61126@jaegeuk.local>
-	<9ed8366e-28f7-edf4-5078-54638d2c8990@huawei.com>
-	<cab19337-7713-de29-c59a-398e75077b51@huawei.com>
-	<20170322142140.GA74218@jaegeuk.local>
-	<2a84e619-1130-cb49-81f5-0a9a10405a49@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 1/2] f2fs: clean up xattr operation
+Date: Thu, 23 Mar 2017 13:38:25 +0800
+Message-ID: <20170323053826.37176-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cqtpD-0001z2-Sk
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1cqvSf-0006Ok-7y
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Mar 2017 03:54:11 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cqtog-0005nm-KC
+	Thu, 23 Mar 2017 05:39:01 +0000
+Received: from [45.249.212.187] (helo=dggrg01-dlp.huawei.com)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cqvSb-0001Fv-SP
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Mar 2017 03:54:11 +0000
-Content-Disposition: inline
-In-Reply-To: <2a84e619-1130-cb49-81f5-0a9a10405a49@huawei.com>
+	Thu, 23 Mar 2017 05:39:01 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -37,208 +26,116 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 03/23, Chao Yu wrote:
-> On 2017/3/22 22:21, Jaegeuk Kim wrote:
-> > On 03/22, Chao Yu wrote:
-> >> On 2017/3/22 16:42, Chao Yu wrote:
-> >>> On 2017/3/22 0:18, Jaegeuk Kim wrote:
-> >>>> On 03/20, Kinglong Mee wrote:
-> >>>>> On 3/20/2017 11:08, Jaegeuk Kim wrote:
-> >>>>>> Hi Kinglong,
-> >>>>>>
-> >>>>>> On 03/18, Kinglong Mee wrote:
-> >>>>>>> It's better coping all valid xattr data includes the last zero. 
-> >>>>>>
-> >>>>>> Why do we need this?
-> >>>>>>
-> >>>>>> The size of txattr_addr would be larger than the space we need.
-> >>>>>>
-> >>>>>> Thanks,
-> >>>>>>
-> >>>>>>>
-> >>>>>>> Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
-> >>>>>>> ---
-> >>>>>>>  fs/f2fs/xattr.c | 4 ++--
-> >>>>>>>  fs/f2fs/xattr.h | 4 ++--
-> >>>>>>>  2 files changed, 4 insertions(+), 4 deletions(-)
-> >>>>>>>
-> >>>>>>> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-> >>>>>>> index aff7619..41785c9 100644
-> >>>>>>> --- a/fs/f2fs/xattr.c
-> >>>>>>> +++ b/fs/f2fs/xattr.c
-> >>>>>>> @@ -249,7 +249,7 @@ static int lookup_all_xattrs(struct inode *inode, struct page *ipage,
-> >>>>>>>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> >>>>>>>  	void *cur_addr, *txattr_addr, *last_addr = NULL;
-> >>>>>>>  	nid_t xnid = F2FS_I(inode)->i_xattr_nid;
-> >>>>>>> -	unsigned int size = xnid ? VALID_XATTR_BLOCK_SIZE : 0;
-> >>>>>
-> >>>>> Here maybe does not copy the last zero.
-> >>>>
-> >>>> The below kzalloc() will make it zero. Any problem?
-> >>>
-> >>> There is no problem without this change, but anyway, IMO, it needs to do cleanup
-> >>> as it can provider better readability making allocated size and copied size be
-> >>> consistent among lookup_all_xattrs, read_all_xattrs and write_all_xattrs.
-> >>>
-> >>> And since during allocation we have initialize memory with zero, so I prefer to
-> >>> not copy extra reserved xattr space.
-> >>>
-> >>> Jaegeuk, Kinglong, how about changing like below:
-> >>>
-> >>> ---
-> >>>  fs/f2fs/xattr.c | 27 ++++++++++++---------------
-> >>>  fs/f2fs/xattr.h |  3 ++-
-> >>>  2 files changed, 14 insertions(+), 16 deletions(-)
-> >>>
-> >>> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-> >>> index aff7619e3f96..308b06664068 100644
-> >>> --- a/fs/f2fs/xattr.c
-> >>> +++ b/fs/f2fs/xattr.c
-> >>> @@ -250,15 +250,13 @@ static int lookup_all_xattrs(struct inode *inode, struct
-> >>> page *ipage,
-> >>>  	void *cur_addr, *txattr_addr, *last_addr = NULL;
-> >>>  	nid_t xnid = F2FS_I(inode)->i_xattr_nid;
-> >>>  	unsigned int size = xnid ? VALID_XATTR_BLOCK_SIZE : 0;
-> >>> -	unsigned int inline_size = 0;
-> >>> +	unsigned int inline_size = inline_xattr_size(inode);
-> >>>  	int err = 0;
-> >>>
-> >>> -	inline_size = inline_xattr_size(inode);
-> >>> -
-> >>>  	if (!size && !inline_size)
-> >>>  		return -ENODATA;
-> >>>
-> >>> -	txattr_addr = kzalloc(inline_size + size + sizeof(__u32),
-> >>> +	txattr_addr = kzalloc(inline_size + size + RESERVED_XATTR_SIZE,
-> >>>  							GFP_F2FS_ZERO);
-> >>>  	if (!txattr_addr)
-> >>>  		return -ENOMEM;
-> >>> @@ -328,13 +326,14 @@ static int read_all_xattrs(struct inode *inode, struct
-> >>> page *ipage,
-> >>>  {
-> >>>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> >>>  	struct f2fs_xattr_header *header;
-> >>> -	size_t size = PAGE_SIZE, inline_size = 0;
-> >>> +	nid_t xnid = F2FS_I(inode)->i_xattr_nid;
-> >>> +	unsigned int size = xnid ? VALID_XATTR_BLOCK_SIZE : 0;
-> >>
-> >> Here, always should assign size with VALID_XATTR_BLOCK_SIZE for enospc case in
-> >> inline xattr space while adding new xattr entry.
-> > 
-> > Do you mean any race condition? It seems setxattr is covered by i_mutex, but
-> > listxattr does not. But, given xnid, i_xattr_nid won't be used below, so it
-> > looks fine to go with xnid check.
-> 
-> To cover below case
-> 
-> - __f2fs_setxattr
->  - read_all_xattrs
->  - write_all_xattrs
->   - new_node_page
->   - memcpy
+1. don't allocate redundant memory in read_all_xattrs.
+2. introduce RESERVED_XATTR_SIZE for cleanup.
 
-Oh, I see. This happened in your change.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Reviewed-by: Kinglong Mee <kinglongmee@gmail.com>
+---
+ fs/f2fs/xattr.c | 25 +++++++++++--------------
+ fs/f2fs/xattr.h |  3 ++-
+ 2 files changed, 13 insertions(+), 15 deletions(-)
 
-Thanks,
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index aff7619e3f96..528aed399814 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -250,15 +250,13 @@ static int lookup_all_xattrs(struct inode *inode, struct page *ipage,
+ 	void *cur_addr, *txattr_addr, *last_addr = NULL;
+ 	nid_t xnid = F2FS_I(inode)->i_xattr_nid;
+ 	unsigned int size = xnid ? VALID_XATTR_BLOCK_SIZE : 0;
+-	unsigned int inline_size = 0;
++	unsigned int inline_size = inline_xattr_size(inode);
+ 	int err = 0;
+ 
+-	inline_size = inline_xattr_size(inode);
+-
+ 	if (!size && !inline_size)
+ 		return -ENODATA;
+ 
+-	txattr_addr = kzalloc(inline_size + size + sizeof(__u32),
++	txattr_addr = kzalloc(inline_size + size + RESERVED_XATTR_SIZE,
+ 							GFP_F2FS_ZERO);
+ 	if (!txattr_addr)
+ 		return -ENOMEM;
+@@ -328,13 +326,14 @@ static int read_all_xattrs(struct inode *inode, struct page *ipage,
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct f2fs_xattr_header *header;
+-	size_t size = PAGE_SIZE, inline_size = 0;
++	nid_t xnid = F2FS_I(inode)->i_xattr_nid;
++	unsigned int size = VALID_XATTR_BLOCK_SIZE;
++	unsigned int inline_size = inline_xattr_size(inode);
+ 	void *txattr_addr;
+ 	int err;
+ 
+-	inline_size = inline_xattr_size(inode);
+-
+-	txattr_addr = kzalloc(inline_size + size, GFP_F2FS_ZERO);
++	txattr_addr = kzalloc(inline_size + size + RESERVED_XATTR_SIZE,
++							GFP_F2FS_ZERO);
+ 	if (!txattr_addr)
+ 		return -ENOMEM;
+ 
+@@ -358,19 +357,19 @@ static int read_all_xattrs(struct inode *inode, struct page *ipage,
+ 	}
+ 
+ 	/* read from xattr node block */
+-	if (F2FS_I(inode)->i_xattr_nid) {
++	if (xnid) {
+ 		struct page *xpage;
+ 		void *xattr_addr;
+ 
+ 		/* The inode already has an extended attribute block. */
+-		xpage = get_node_page(sbi, F2FS_I(inode)->i_xattr_nid);
++		xpage = get_node_page(sbi, xnid);
+ 		if (IS_ERR(xpage)) {
+ 			err = PTR_ERR(xpage);
+ 			goto fail;
+ 		}
+ 
+ 		xattr_addr = page_address(xpage);
+-		memcpy(txattr_addr + inline_size, xattr_addr, PAGE_SIZE);
++		memcpy(txattr_addr + inline_size, xattr_addr, size);
+ 		f2fs_put_page(xpage, 1);
+ 	}
+ 
+@@ -392,14 +391,12 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
+ 				void *txattr_addr, struct page *ipage)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	size_t inline_size = 0;
++	size_t inline_size = inline_xattr_size(inode);
+ 	void *xattr_addr;
+ 	struct page *xpage;
+ 	nid_t new_nid = 0;
+ 	int err;
+ 
+-	inline_size = inline_xattr_size(inode);
+-
+ 	if (hsize > inline_size && !F2FS_I(inode)->i_xattr_nid)
+ 		if (!alloc_nid(sbi, &new_nid))
+ 			return -ENOSPC;
+diff --git a/fs/f2fs/xattr.h b/fs/f2fs/xattr.h
+index d5a94928c116..1e7db8d0806e 100644
+--- a/fs/f2fs/xattr.h
++++ b/fs/f2fs/xattr.h
+@@ -73,7 +73,8 @@ struct f2fs_xattr_entry {
+ 				!IS_XATTR_LAST_ENTRY(entry);\
+ 				entry = XATTR_NEXT_ENTRY(entry))
+ #define MAX_XATTR_BLOCK_SIZE	(PAGE_SIZE - sizeof(struct node_footer))
+-#define VALID_XATTR_BLOCK_SIZE	(MAX_XATTR_BLOCK_SIZE - sizeof(__u32))
++#define RESERVED_XATTR_SIZE	(sizeof(__u32))
++#define VALID_XATTR_BLOCK_SIZE	(MAX_XATTR_BLOCK_SIZE - RESERVED_XATTR_SIZE)
+ #define MIN_OFFSET(i)		XATTR_ALIGN(inline_xattr_size(i) +	\
+ 						VALID_XATTR_BLOCK_SIZE)
+ 
+-- 
+2.8.2.295.g3f1c1d0
 
-> 
-> > 
-> > Thanks,
-> > 
-> >>
-> >> unsigned int size = VALID_XATTR_BLOCK_SIZE;
-> >>
-> >> Thanks,
-> >>
-> >>> +	unsigned int inline_size = inline_xattr_size(inode);
-> >>>  	void *txattr_addr;
-> >>>  	int err;
-> >>>
-> >>> -	inline_size = inline_xattr_size(inode);
-> >>> -
-> >>> -	txattr_addr = kzalloc(inline_size + size, GFP_F2FS_ZERO);
-> >>> +	txattr_addr = kzalloc(inline_size + size + RESERVED_XATTR_SIZE,
-> >>> +							GFP_F2FS_ZERO);
-> >>>  	if (!txattr_addr)
-> >>>  		return -ENOMEM;
-> >>>
-> >>> @@ -358,19 +357,19 @@ static int read_all_xattrs(struct inode *inode, struct
-> >>> page *ipage,
-> >>>  	}
-> >>>
-> >>>  	/* read from xattr node block */
-> >>> -	if (F2FS_I(inode)->i_xattr_nid) {
-> >>> +	if (xnid) {
-> >>>  		struct page *xpage;
-> >>>  		void *xattr_addr;
-> >>>
-> >>>  		/* The inode already has an extended attribute block. */
-> >>> -		xpage = get_node_page(sbi, F2FS_I(inode)->i_xattr_nid);
-> >>> +		xpage = get_node_page(sbi, xnid);
-> >>>  		if (IS_ERR(xpage)) {
-> >>>  			err = PTR_ERR(xpage);
-> >>>  			goto fail;
-> >>>  		}
-> >>>
-> >>>  		xattr_addr = page_address(xpage);
-> >>> -		memcpy(txattr_addr + inline_size, xattr_addr, PAGE_SIZE);
-> >>> +		memcpy(txattr_addr + inline_size, xattr_addr, size);
-> >>>  		f2fs_put_page(xpage, 1);
-> >>>  	}
-> >>>
-> >>> @@ -392,14 +391,12 @@ static inline int write_all_xattrs(struct inode *inode,
-> >>> __u32 hsize,
-> >>>  				void *txattr_addr, struct page *ipage)
-> >>>  {
-> >>>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> >>> -	size_t inline_size = 0;
-> >>> +	size_t inline_size = inline_xattr_size(inode);
-> >>>  	void *xattr_addr;
-> >>>  	struct page *xpage;
-> >>>  	nid_t new_nid = 0;
-> >>>  	int err;
-> >>>
-> >>> -	inline_size = inline_xattr_size(inode);
-> >>> -
-> >>>  	if (hsize > inline_size && !F2FS_I(inode)->i_xattr_nid)
-> >>>  		if (!alloc_nid(sbi, &new_nid))
-> >>>  			return -ENOSPC;
-> >>> @@ -454,7 +451,7 @@ static inline int write_all_xattrs(struct inode *inode,
-> >>> __u32 hsize,
-> >>>  	}
-> >>>
-> >>>  	xattr_addr = page_address(xpage);
-> >>> -	memcpy(xattr_addr, txattr_addr + inline_size, MAX_XATTR_BLOCK_SIZE);
-> 
-> And this needs to be kept to avoid remain random data in newly allocated xattr
-> node page.
-> 
-> Thanks,
-> 
-> >>> +	memcpy(xattr_addr, txattr_addr + inline_size, VALID_XATTR_BLOCK_SIZE);
-> >>>  	set_page_dirty(xpage);
-> >>>  	f2fs_put_page(xpage, 1);
-> >>>
-> >>> diff --git a/fs/f2fs/xattr.h b/fs/f2fs/xattr.h
-> >>> index d5a94928c116..1e7db8d0806e 100644
-> >>> --- a/fs/f2fs/xattr.h
-> >>> +++ b/fs/f2fs/xattr.h
-> >>> @@ -73,7 +73,8 @@ struct f2fs_xattr_entry {
-> >>>  				!IS_XATTR_LAST_ENTRY(entry);\
-> >>>  				entry = XATTR_NEXT_ENTRY(entry))
-> >>>  #define MAX_XATTR_BLOCK_SIZE	(PAGE_SIZE - sizeof(struct node_footer))
-> >>> -#define VALID_XATTR_BLOCK_SIZE	(MAX_XATTR_BLOCK_SIZE - sizeof(__u32))
-> >>> +#define RESERVED_XATTR_SIZE	(sizeof(__u32))
-> >>> +#define VALID_XATTR_BLOCK_SIZE	(MAX_XATTR_BLOCK_SIZE - RESERVED_XATTR_SIZE)
-> >>>  #define MIN_OFFSET(i)		XATTR_ALIGN(inline_xattr_size(i) +	\
-> >>>  						VALID_XATTR_BLOCK_SIZE)
-> >>>
-> > 
-> > .
-> > 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
