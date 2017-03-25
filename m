@@ -1,53 +1,63 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/5] f2fs: relax node version check for victim data in gc
-Date: Sat, 25 Mar 2017 00:59:29 -0700
-Message-ID: <20170325075933.21072-1-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 5/5] f2fs: fix wrong max cost initialization
+Date: Sat, 25 Mar 2017 00:59:33 -0700
+Message-ID: <20170325075933.21072-5-jaegeuk@kernel.org>
+References: <20170325075933.21072-1-jaegeuk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1crgc5-0007eH-Ek
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 25 Mar 2017 07:59:53 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1crgc4-0001LJ-I8
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 25 Mar 2017 07:59:53 +0000
+In-Reply-To: <20170325075933.21072-1-jaegeuk@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, "# v4 . 10+" <stable@vger.kernel.org>
 
-- has_not_enough_free_secs
-node_secs: 0  dent_secs: 0  freed:0  free_segments:103  reserved:104
+This patch fixes missing increased max cost caused by a patch that we increased
+cose of data segments in greedy algorithm.
 
-          - f2fs_gc
-             - get_victim_by_default
-alloc_mode 0, gc_mode 1, max_search 2672, offset 4654, ofs_unit 1
-
-                - do_garbage_collect
-start_segno 3976, end_segno 3977   type 0
-
-                  - is_alive
-nid 22797, blkaddr 2131882, ofs_in_node 0, version 0x8/0x0
-
-                   - gc_data_segment 766, segno 3976, block 512/426 not alive
-
-So, this patch fixes subtle corrupted case where node version does not match
-to summary version which results in infinite loop by gc.
-
-Reported-by: Yunlei He <heyunlei@huawei.com>
+Cc: <stable@vger.kernel.org> # v4.10+
+Fixes: b9cd20619 "f2fs: node segment is prior to data segment selected victim"
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/gc.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/f2fs/gc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 939be88a8833..bbeee41aaf73 100644
+index 9d4158d55dbb..c52656ccbde5 100644
 --- a/fs/f2fs/gc.c
 +++ b/fs/f2fs/gc.c
-@@ -551,8 +551,10 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 	get_node_info(sbi, nid, dni);
- 
- 	if (sum->version != dni->version) {
--		f2fs_put_page(node_page, 1);
--		return false;
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+				"%s: valid data with mismatched node version.",
-+				__func__);
-+		set_sbi_flag(sbi, SBI_NEED_FSCK);
- 	}
- 
- 	*nofs = ofs_of_node(node_page);
+@@ -186,7 +186,7 @@ static unsigned int get_max_cost(struct f2fs_sb_info *sbi,
+ 	if (p->alloc_mode == SSR)
+ 		return sbi->blocks_per_seg;
+ 	if (p->gc_mode == GC_GREEDY)
+-		return sbi->blocks_per_seg * p->ofs_unit;
++		return 2 * sbi->blocks_per_seg * p->ofs_unit;
+ 	else if (p->gc_mode == GC_CB)
+ 		return UINT_MAX;
+ 	else /* No other gc_mode */
 -- 
 2.11.0
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
