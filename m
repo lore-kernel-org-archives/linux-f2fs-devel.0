@@ -1,22 +1,25 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] mkfs.f2fs: use noheap by default
-Date: Sat, 25 Mar 2017 00:59:58 -0700
-Message-ID: <20170325075958.21140-1-jaegeuk@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 1/5] f2fs: relax node version check for
+ victim data in gc
+Date: Sat, 25 Mar 2017 17:05:28 +0800
+Message-ID: <2b848126-cf2c-2145-083a-ae5ca77356b6@huawei.com>
+References: <20170325075933.21072-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1crgcL-0008AW-84
+	(envelope-from <yuchao0@huawei.com>) id 1crheD-00031n-7U
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 25 Mar 2017 08:00:09 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1crgcK-0001Nc-A1
+	Sat, 25 Mar 2017 09:06:09 +0000
+Received: from [45.249.212.188] (helo=dggrg02-dlp.huawei.com)
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1crheB-0001Wo-9J
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 25 Mar 2017 08:00:09 +0000
+	Sat, 25 Mar 2017 09:06:09 +0000
+In-Reply-To: <20170325075933.21072-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,65 +29,63 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Let's set noheap by default.
+Hi Jaegeuk,
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- lib/libf2fs.c           | 2 +-
- mkfs/f2fs_format.c      | 8 ++++++--
- mkfs/f2fs_format_main.c | 2 +-
- 3 files changed, 8 insertions(+), 4 deletions(-)
+On 2017/3/25 15:59, Jaegeuk Kim wrote:
+> - has_not_enough_free_secs
+> node_secs: 0  dent_secs: 0  freed:0  free_segments:103  reserved:104
+> 
+>           - f2fs_gc
+>              - get_victim_by_default
+> alloc_mode 0, gc_mode 1, max_search 2672, offset 4654, ofs_unit 1
+> 
+>                 - do_garbage_collect
+> start_segno 3976, end_segno 3977   type 0
+> 
+>                   - is_alive
+> nid 22797, blkaddr 2131882, ofs_in_node 0, version 0x8/0x0
+> 
+>                    - gc_data_segment 766, segno 3976, block 512/426 not alive
+> 
+> So, this patch fixes subtle corrupted case where node version does not match
+> to summary version which results in infinite loop by gc.
+> 
+> Reported-by: Yunlei He <heyunlei@huawei.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/gc.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 939be88a8833..bbeee41aaf73 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -551,8 +551,10 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+>  	get_node_info(sbi, nid, dni);
+>  
+>  	if (sum->version != dni->version) {
 
-diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index bb32df8..7352837 100644
---- a/lib/libf2fs.c
-+++ b/lib/libf2fs.c
-@@ -568,7 +568,7 @@ void f2fs_init_configuration(void)
- 	c.segs_per_sec = 1;
- 	c.secs_per_zone = 1;
- 	c.segs_per_zone = 1;
--	c.heap = 1;
-+	c.heap = 0;
- 	c.vol_label = "";
- 	c.trim = 1;
- 	c.ro = 0;
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index f6279b5..01f3488 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -376,8 +376,12 @@ static int f2fs_prepare_super_block(void)
- 		c.cur_seg[CURSEG_WARM_NODE] = next_zone(CURSEG_HOT_NODE);
- 		c.cur_seg[CURSEG_COLD_NODE] = next_zone(CURSEG_WARM_NODE);
- 		c.cur_seg[CURSEG_HOT_DATA] = next_zone(CURSEG_COLD_NODE);
--		c.cur_seg[CURSEG_COLD_DATA] = next_zone(CURSEG_HOT_DATA);
--		c.cur_seg[CURSEG_WARM_DATA] = next_zone(CURSEG_COLD_DATA);
-+		c.cur_seg[CURSEG_COLD_DATA] =
-+				max(last_section(last_zone(total_zones)) >> 2,
-+					next_zone(CURSEG_COLD_NODE));
-+		c.cur_seg[CURSEG_WARM_DATA] =
-+				max(last_section(last_zone(total_zones)) >> 1,
-+					next_zone(CURSEG_COLD_DATA));
- 	}
- 
- 	cure_extension_list();
-diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
-index 482506a..21ceeeb 100644
---- a/mkfs/f2fs_format_main.c
-+++ b/mkfs/f2fs_format_main.c
-@@ -33,7 +33,7 @@ static void mkfs_usage()
- {
- 	MSG(0, "\nUsage: mkfs.f2fs [options] device [sectors]\n");
- 	MSG(0, "[options]:\n");
--	MSG(0, "  -a heap-based allocation [default:1]\n");
-+	MSG(0, "  -a heap-based allocation [default:0]\n");
- 	MSG(0, "  -c [device path] up to 7 devices excepts meta device\n");
- 	MSG(0, "  -d debug level [default:0]\n");
- 	MSG(0, "  -e [extension list] e.g. \"mp3,gif,mov\"\n");
--- 
-2.11.0
+If the node was been truncated, we will increase its version number, since it
+was been truncated, so it will never be writebacked to storage, so the version
+in summary will not be updated.
+
+So this case can happen, shouldn't we just set SBI_NEED_FSCK for the case:
+sum->version != dni->version - 1
+
+Thanks,
+
+> -		f2fs_put_page(node_page, 1);
+> -		return false;
+> +		f2fs_msg(sbi->sb, KERN_WARNING,
+> +				"%s: valid data with mismatched node version.",
+> +				__func__);
+> +		set_sbi_flag(sbi, SBI_NEED_FSCK);
+>  	}
+>  
+>  	*nofs = ofs_of_node(node_page);
+> 
 
 
 ------------------------------------------------------------------------------
