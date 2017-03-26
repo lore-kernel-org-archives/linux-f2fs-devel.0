@@ -1,10 +1,7 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/5] f2fs: relax node version check for
- victim data in gc
-Date: Sat, 25 Mar 2017 14:27:42 -0700
-Message-ID: <20170325212742.GA24857@jaegeuk.local>
-References: <20170325075933.21072-1-jaegeuk@kernel.org>
-	<2b848126-cf2c-2145-083a-ae5ca77356b6@huawei.com>
+From: Piergiorgio Sartor <piergiorgio.sartor@nexgo.de>
+Subject: f2fs not mountable: CRC validation failed
+Date: Sun, 26 Mar 2017 22:12:03 +0200
+Message-ID: <20170326201203.GA9286@lazy.lzy>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -12,16 +9,32 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1crtE0-0001TM-Az
+	(envelope-from <piergiorgio.sartor@nexgo.de>) id 1csEmO-00076E-1e
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 25 Mar 2017 21:27:52 +0000
-Received: from mail.kernel.org ([198.145.29.136])
+	Sun, 26 Mar 2017 20:28:48 +0000
+Received: from vsmx010.vodafonemail.xion.oxcs.net ([153.92.174.88])
 	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1crtDz-00064O-DW
+	(Exim 4.76) id 1csEmM-0004pL-P5
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 25 Mar 2017 21:27:52 +0000
+	Sun, 26 Mar 2017 20:28:48 +0000
+Received: from vsmx002.vodafonemail.xion.oxcs.net (unknown [192.168.75.192])
+	by mta-6-out.mta.xion.oxcs.net (Postfix) with ESMTP id 67AA5801AC
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Sun, 26 Mar 2017 20:12:08 +0000 (UTC)
+Received: from lazy.lzy (unknown [217.84.21.31])
+	by mta-6-out.mta.xion.oxcs.net (Postfix) with ESMTPA id 70D5E3C03F3
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Sun, 26 Mar 2017 20:12:06 +0000 (UTC)
+Received: from lazy.lzy (localhost [127.0.0.1])
+	by lazy.lzy (8.15.2/8.14.5) with ESMTPS id v2QKC3J1009436
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO)
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Sun, 26 Mar 2017 22:12:05 +0200
+Received: (from red@localhost)
+	by lazy.lzy (8.15.2/8.15.2/Submit) id v2QKC37L009435
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 26 Mar 2017 22:12:03 +0200
 Content-Disposition: inline
-In-Reply-To: <2b848126-cf2c-2145-083a-ae5ca77356b6@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,70 +44,50 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-On 03/25, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> On 2017/3/25 15:59, Jaegeuk Kim wrote:
-> > - has_not_enough_free_secs
-> > node_secs: 0  dent_secs: 0  freed:0  free_segments:103  reserved:104
-> > 
-> >           - f2fs_gc
-> >              - get_victim_by_default
-> > alloc_mode 0, gc_mode 1, max_search 2672, offset 4654, ofs_unit 1
-> > 
-> >                 - do_garbage_collect
-> > start_segno 3976, end_segno 3977   type 0
-> > 
-> >                   - is_alive
-> > nid 22797, blkaddr 2131882, ofs_in_node 0, version 0x8/0x0
-> > 
-> >                    - gc_data_segment 766, segno 3976, block 512/426 not alive
-> > 
-> > So, this patch fixes subtle corrupted case where node version does not match
-> > to summary version which results in infinite loop by gc.
-> > 
-> > Reported-by: Yunlei He <heyunlei@huawei.com>
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/gc.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> > index 939be88a8833..bbeee41aaf73 100644
-> > --- a/fs/f2fs/gc.c
-> > +++ b/fs/f2fs/gc.c
-> > @@ -551,8 +551,10 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
-> >  	get_node_info(sbi, nid, dni);
-> >  
-> >  	if (sum->version != dni->version) {
-> 
-> If the node was been truncated, we will increase its version number, since it
-> was been truncated, so it will never be writebacked to storage, so the version
-> in summary will not be updated.
+Hi all,
 
-That's covered by node page lock, so we shouldn't be reached out to this point.
-Let's think more about this.
+I apologize in advance in case this is the
+wrong place for support (if so, please
+point me in the right direction).
 
-Thanks,
+I've an USB stick formatted with f2fs,
+used under Linux on a RPi2.
+To be clear, it is a USB device, not
+an SD card.
 
-> So this case can happen, shouldn't we just set SBI_NEED_FSCK for the case:
-> sum->version != dni->version - 1
-> 
-> Thanks,
-> 
-> > -		f2fs_put_page(node_page, 1);
-> > -		return false;
-> > +		f2fs_msg(sbi->sb, KERN_WARNING,
-> > +				"%s: valid data with mismatched node version.",
-> > +				__func__);
-> > +		set_sbi_flag(sbi, SBI_NEED_FSCK);
-> >  	}
-> >  
-> >  	*nofs = ofs_of_node(node_page);
-> > 
+After a crash, the USB stick is not mountable
+any more.
+There is no HW error on the stick.
+
+A "fsck" returns, among other information:
+
+[f2fs_crc_valid: 486] CRC validation failed: cal_crc = 3543933224, blk_crc = 719768680 buff_size = 0xffc
+[f2fs_crc_valid: 486] CRC validation failed: cal_crc = 1071250051, blk_crc = 2385854943 buff_size = 0xffc
+[f2fs_do_mount:2018] Can't find valid checkpoint
+
+And it does not perform any check / repair.
+
+I'm a bit puzzled, I wonder if there is way
+to force a repair, partially could be OK too.
+
+Clearly, "fsck.f2fs -f" did not work.
+
+Any chance to save some data?
+
+f2fs-tools is version 1.8.0 (I guess it's latest).
+
+System is Fedora 25, the tool is self compiled.
+
+Thanks a lot in advance, in case other information
+are required, please let me know.
+
+bye,
+
+-- 
+
+piergiorgio
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
