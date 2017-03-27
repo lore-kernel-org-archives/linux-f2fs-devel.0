@@ -1,106 +1,88 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: f2fs not mountable: CRC validation failed
-Date: Sun, 26 Mar 2017 16:45:37 -0700
-Message-ID: <20170326234537.GA33346@jaegeuk.local>
-References: <20170326201203.GA9286@lazy.lzy>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH 1/5] f2fs: relax node version check for victim
+ data in gc
+Date: Mon, 27 Mar 2017 16:18:26 +0800
+Message-ID: <f5823a24-4ea5-4e21-52eb-14c8d3761db5@huawei.com>
+References: <20170325075933.21072-1-jaegeuk@kernel.org>
+ <2b848126-cf2c-2145-083a-ae5ca77356b6@huawei.com>
+ <20170325212742.GA24857@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1csHr3-0005qE-8W
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 26 Mar 2017 23:45:49 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1csHr1-0006vi-3w
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 26 Mar 2017 23:45:49 +0000
-Content-Disposition: inline
-In-Reply-To: <20170326201203.GA9286@lazy.lzy>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Piergiorgio Sartor <piergiorgio.sartor@nexgo.de>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20170325212742.GA24857@jaegeuk.local>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hello,
+On 2017/3/26 5:27, Jaegeuk Kim wrote:
+> On 03/25, Chao Yu wrote:
+>> Hi Jaegeuk,
+>>
+>> On 2017/3/25 15:59, Jaegeuk Kim wrote:
+>>> - has_not_enough_free_secs
+>>> node_secs: 0  dent_secs: 0  freed:0  free_segments:103  reserved:104
+>>>
+>>>           - f2fs_gc
+>>>              - get_victim_by_default
+>>> alloc_mode 0, gc_mode 1, max_search 2672, offset 4654, ofs_unit 1
+>>>
+>>>                 - do_garbage_collect
+>>> start_segno 3976, end_segno 3977   type 0
+>>>
+>>>                   - is_alive
+>>> nid 22797, blkaddr 2131882, ofs_in_node 0, version 0x8/0x0
+>>>
+>>>                    - gc_data_segment 766, segno 3976, block 512/426 not alive
+>>>
+>>> So, this patch fixes subtle corrupted case where node version does not match
+>>> to summary version which results in infinite loop by gc.
+>>>
+>>> Reported-by: Yunlei He <heyunlei@huawei.com>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fs/f2fs/gc.c | 6 ++++--
+>>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>> index 939be88a8833..bbeee41aaf73 100644
+>>> --- a/fs/f2fs/gc.c
+>>> +++ b/fs/f2fs/gc.c
+>>> @@ -551,8 +551,10 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+>>>  	get_node_info(sbi, nid, dni);
+>>>  
+>>>  	if (sum->version != dni->version) {
+>>
+>> If the node was been truncated, we will increase its version number, since it
+>> was been truncated, so it will never be writebacked to storage, so the version
+>> in summary will not be updated.
+> 
+> That's covered by node page lock, so we shouldn't be reached out to this point.
+> Let's think more about this.
 
-On 03/26, Piergiorgio Sartor wrote:
-> Hi all,
-> 
-> I apologize in advance in case this is the
-> wrong place for support (if so, please
-> point me in the right direction).
-> 
-> I've an USB stick formatted with f2fs,
-> used under Linux on a RPi2.
-> To be clear, it is a USB device, not
-> an SD card.
-> 
-> After a crash, the USB stick is not mountable
-> any more.
-> There is no HW error on the stick.
-> 
-> A "fsck" returns, among other information:
-> 
-> [f2fs_crc_valid: 486] CRC validation failed: cal_crc = 3543933224, blk_crc = 719768680 buff_size = 0xffc
-> [f2fs_crc_valid: 486] CRC validation failed: cal_crc = 1071250051, blk_crc = 2385854943 buff_size = 0xffc
-> [f2fs_do_mount:2018] Can't find valid checkpoint
-
-Wow, this means all the checkpoint blocks were corrupted by USB stick, since we
-always guarantee one of them should be valid, which can be used as trusted root
-index. I'm in doubt whether or not USB stick supports cache_flush reliably tho.
-
-If you have a chance, now f2fs supports multiple devices, so you'd better use
-two paritions: one is very small local storage and the other is an USB stick, so
-that local storage keeps superblock and checkpoint more reliably.
-
-> And it does not perform any check / repair.
-> 
-> I'm a bit puzzled, I wonder if there is way
-> to force a repair, partially could be OK too.
-> 
-> Clearly, "fsck.f2fs -f" did not work.
-> 
-> Any chance to save some data?
-
-Hmm, fsck.f2fs always starts from valid checkpoint and superblock, so you can't.
-In order to retrieve some data, it needs to scan whole image to get inodes, but
-it looks like another tool that we need to implement.
+Yes, agreed. ;)
 
 Thanks,
 
 > 
-> f2fs-tools is version 1.8.0 (I guess it's latest).
+> Thanks,
 > 
-> System is Fedora 25, the tool is self compiled.
+>> So this case can happen, shouldn't we just set SBI_NEED_FSCK for the case:
+>> sum->version != dni->version - 1
+>>
+>> Thanks,
+>>
+>>> -		f2fs_put_page(node_page, 1);
+>>> -		return false;
+>>> +		f2fs_msg(sbi->sb, KERN_WARNING,
+>>> +				"%s: valid data with mismatched node version.",
+>>> +				__func__);
+>>> +		set_sbi_flag(sbi, SBI_NEED_FSCK);
+>>>  	}
+>>>  
+>>>  	*nofs = ofs_of_node(node_page);
+>>>
 > 
-> Thanks a lot in advance, in case other information
-> are required, please let me know.
+> .
 > 
-> bye,
-> 
-> -- 
-> 
-> piergiorgio
-> 
-> ------------------------------------------------------------------------------
-> Check out the vibrant tech community on one of the world's most
-> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
