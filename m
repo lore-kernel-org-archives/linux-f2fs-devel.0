@@ -1,22 +1,27 @@
-From: "kian" <motor@brakes.net>
-Subject: [SPAM] motorcycle brake pad
-Date: Wed, 29 Mar 2017 04:29:55 +0800
-Message-ID: <E1csxkf-0003ad-DW@sfs-ml-4.v29.ch3.sourceforge.com>
-Reply-To: kiankaplan@126.com
+From: heyunlei <heyunlei@huawei.com>
+Subject: Re: [PATCH 1/5] f2fs: relax node version check for
+ victim data in gc
+Date: Wed, 29 Mar 2017 15:04:30 +0800
+Message-ID: <3179fe9f-5d40-76f9-4852-3990792f226c@huawei.com>
+References: <20170325075933.21072-1-jaegeuk@kernel.org>
+	<2b848126-cf2c-2145-083a-ae5ca77356b6@huawei.com>
+	<20170325212742.GA24857@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <motor@brakes.net>) id 1csxke-0003Zl-BN
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1ct7kP-0003iV-LP
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 28 Mar 2017 20:30:00 +0000
-Received: from [218.61.195.32] (helo=lumama-PC)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1csxkc-0007Fy-0J for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 28 Mar 2017 20:30:00 +0000
+	Wed, 29 Mar 2017 07:10:25 +0000
+Received: from [45.249.212.191] (helo=dggrg05-dlp.huawei.com)
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ct7kN-0000FO-Fq
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 29 Mar 2017 07:10:25 +0000
+In-Reply-To: <20170325212742.GA24857@jaegeuk.local>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,21 +31,66 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi 
-We can supply high quality motorcycle brake pad in sintered material and semi-metallic 
-
-We have good quality material and cheaper prices
-
-if you have any requirment,you can click our website :www.tracyelise.com
-
-
-Thanks
-
-best regards
-kian
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+SGkgYWxs77yMCgpPbiAyMDE3LzMvMjYgNToyNywgSmFlZ2V1ayBLaW0gd3JvdGU6Cj4gT24gMDMv
+MjUsIENoYW8gWXUgd3JvdGU6Cj4+IEhpIEphZWdldWssCj4+Cj4+IE9uIDIwMTcvMy8yNSAxNTo1
+OSwgSmFlZ2V1ayBLaW0gd3JvdGU6Cj4+PiAtIGhhc19ub3RfZW5vdWdoX2ZyZWVfc2Vjcwo+Pj4g
+bm9kZV9zZWNzOiAwICBkZW50X3NlY3M6IDAgIGZyZWVkOjAgIGZyZWVfc2VnbWVudHM6MTAzICBy
+ZXNlcnZlZDoxMDQKPj4+Cj4+PiAgICAgICAgICAgLSBmMmZzX2djCj4+PiAgICAgICAgICAgICAg
+LSBnZXRfdmljdGltX2J5X2RlZmF1bHQKPj4+IGFsbG9jX21vZGUgMCwgZ2NfbW9kZSAxLCBtYXhf
+c2VhcmNoIDI2NzIsIG9mZnNldCA0NjU0LCBvZnNfdW5pdCAxCj4+Pgo+Pj4gICAgICAgICAgICAg
+ICAgIC0gZG9fZ2FyYmFnZV9jb2xsZWN0Cj4+PiBzdGFydF9zZWdubyAzOTc2LCBlbmRfc2Vnbm8g
+Mzk3NyAgIHR5cGUgMAo+Pj4KPj4+ICAgICAgICAgICAgICAgICAgIC0gaXNfYWxpdmUKPj4+IG5p
+ZCAyMjc5NywgYmxrYWRkciAyMTMxODgyLCBvZnNfaW5fbm9kZSAwLCB2ZXJzaW9uIDB4OC8weDAK
+Pj4+Cj4+PiAgICAgICAgICAgICAgICAgICAgLSBnY19kYXRhX3NlZ21lbnQgNzY2LCBzZWdubyAz
+OTc2LCBibG9jayA1MTIvNDI2IG5vdCBhbGl2ZQo+Pj4KPj4+IFNvLCB0aGlzIHBhdGNoIGZpeGVz
+IHN1YnRsZSBjb3JydXB0ZWQgY2FzZSB3aGVyZSBub2RlIHZlcnNpb24gZG9lcyBub3QgbWF0Y2gK
+Pj4+IHRvIHN1bW1hcnkgdmVyc2lvbiB3aGljaCByZXN1bHRzIGluIGluZmluaXRlIGxvb3AgYnkg
+Z2MuCj4+Pgo+Pj4gUmVwb3J0ZWQtYnk6IFl1bmxlaSBIZSA8aGV5dW5sZWlAaHVhd2VpLmNvbT4K
+Pj4+IFNpZ25lZC1vZmYtYnk6IEphZWdldWsgS2ltIDxqYWVnZXVrQGtlcm5lbC5vcmc+Cj4+PiAt
+LS0KPj4+ICBmcy9mMmZzL2djLmMgfCA2ICsrKystLQo+Pj4gIDEgZmlsZSBjaGFuZ2VkLCA0IGlu
+c2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMv
+Z2MuYyBiL2ZzL2YyZnMvZ2MuYwo+Pj4gaW5kZXggOTM5YmU4OGE4ODMzLi5iYmVlZTQxYWFmNzMg
+MTAwNjQ0Cj4+PiAtLS0gYS9mcy9mMmZzL2djLmMKPj4+ICsrKyBiL2ZzL2YyZnMvZ2MuYwo+Pj4g
+QEAgLTU1MSw4ICs1NTEsMTAgQEAgc3RhdGljIGJvb2wgaXNfYWxpdmUoc3RydWN0IGYyZnNfc2Jf
+aW5mbyAqc2JpLCBzdHJ1Y3QgZjJmc19zdW1tYXJ5ICpzdW0sCj4+PiAgCWdldF9ub2RlX2luZm8o
+c2JpLCBuaWQsIGRuaSk7Cj4+Pgo+Pj4gIAlpZiAoc3VtLT52ZXJzaW9uICE9IGRuaS0+dmVyc2lv
+bikgewo+Pgo+PiBJZiB0aGUgbm9kZSB3YXMgYmVlbiB0cnVuY2F0ZWQsIHdlIHdpbGwgaW5jcmVh
+c2UgaXRzIHZlcnNpb24gbnVtYmVyLCBzaW5jZSBpdAo+PiB3YXMgYmVlbiB0cnVuY2F0ZWQsIHNv
+IGl0IHdpbGwgbmV2ZXIgYmUgd3JpdGViYWNrZWQgdG8gc3RvcmFnZSwgc28gdGhlIHZlcnNpb24K
+Pj4gaW4gc3VtbWFyeSB3aWxsIG5vdCBiZSB1cGRhdGVkLgo+CgpUaGUgc2FtZSBwcm9ibGVtIEkg
+Y2FtZSBhY3Jvc3Mgd2l0aCBhIG5vZGUgc2VnbWVudDoKCjQ4MSAgICAgICAgICAgICAgICAgZ2V0
+X25vZGVfaW5mbyhzYmksIG5pZCwgJm5pKTsKNDgyICAgICAgICAgICAgICAgICBpZiAobmkuYmxr
+X2FkZHIgIT0gc3RhcnRfYWRkciArIG9mZikgewo0ODMgICAgICAgICAgICAgICAgICAgICAgICAg
+ZjJmc19wdXRfcGFnZShub2RlX3BhZ2UsIDEpOwo0ODQgICAgICAgICAgICAgICAgICAgICAgICAg
+Y29udGludWU7CjQ4NSAgICAgICAgICAgICAgICAgfQoKSGVyZSwgZ2V0IHZpY3RpbSBtZXRob2Qg
+YWx3YXlzIHNlbGVjdGVkIHNlZ25vIDUxNjkgZm9yIGdhcmJhZ2UgY29sbGVjdGlvbiwKCmJ1dCB0
+aGlzIHNlY3Rpb24gZ2MgZmFpbGVkIGZvciB1cHBlciBjb25kaXRpb246CgoJZ2Nfbm9kZV9zZWdt
+ZW50IDQ5NCwgYmxrX2FkZHIgMTY5NzU3MixzdGFydF9hZGRyIDI2Njg1NDQsb2ZmIDIwMAoKSSB0
+aGluayBpcyBzYW1lIHByb2JsZW0gd2l0aCBpc19hbGl2ZSBmdW5jdGlvbi4KClRoYW5rcy4KCgo+
+IFRoYXQncyBjb3ZlcmVkIGJ5IG5vZGUgcGFnZSBsb2NrLCBzbyB3ZSBzaG91bGRuJ3QgYmUgcmVh
+Y2hlZCBvdXQgdG8gdGhpcyBwb2ludC4KPiBMZXQncyB0aGluayBtb3JlIGFib3V0IHRoaXMuCj4K
+PiBUaGFua3MsCj4KPj4gU28gdGhpcyBjYXNlIGNhbiBoYXBwZW4sIHNob3VsZG4ndCB3ZSBqdXN0
+IHNldCBTQklfTkVFRF9GU0NLIGZvciB0aGUgY2FzZToKPj4gc3VtLT52ZXJzaW9uICE9IGRuaS0+
+dmVyc2lvbiAtIDEKPj4KPj4gVGhhbmtzLAo+Pgo+Pj4gLQkJZjJmc19wdXRfcGFnZShub2RlX3Bh
+Z2UsIDEpOwo+Pj4gLQkJcmV0dXJuIGZhbHNlOwo+Pj4gKwkJZjJmc19tc2coc2JpLT5zYiwgS0VS
+Tl9XQVJOSU5HLAo+Pj4gKwkJCQkiJXM6IHZhbGlkIGRhdGEgd2l0aCBtaXNtYXRjaGVkIG5vZGUg
+dmVyc2lvbi4iLAo+Pj4gKwkJCQlfX2Z1bmNfXyk7Cj4+PiArCQlzZXRfc2JpX2ZsYWcoc2JpLCBT
+QklfTkVFRF9GU0NLKTsKPj4+ICAJfQo+Pj4KPj4+ICAJKm5vZnMgPSBvZnNfb2Zfbm9kZShub2Rl
+X3BhZ2UpOwo+Pj4KPgo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+IENoZWNrIG91dCB0aGUgdmli
+cmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAo+IGVuZ2FnaW5n
+IHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cj4gX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiBMaW51eC1mMmZz
+LWRldmVsIG1haWxpbmcgbGlzdAo+IExpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2Uu
+bmV0Cj4gaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgt
+ZjJmcy1kZXZlbAo+Cj4gLgo+CgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUg
+dmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2lu
+ZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdApfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRl
+dmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApo
+dHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRl
+dmVsCg==
