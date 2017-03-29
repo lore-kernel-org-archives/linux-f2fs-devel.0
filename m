@@ -1,27 +1,22 @@
-From: heyunlei <heyunlei@huawei.com>
-Subject: Re: [PATCH 1/5] f2fs: relax node version check for
- victim data in gc
-Date: Wed, 29 Mar 2017 15:04:30 +0800
-Message-ID: <3179fe9f-5d40-76f9-4852-3990792f226c@huawei.com>
-References: <20170325075933.21072-1-jaegeuk@kernel.org>
-	<2b848126-cf2c-2145-083a-ae5ca77356b6@huawei.com>
-	<20170325212742.GA24857@jaegeuk.local>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 1/2] f2fs: write small sized IO to hot log
+Date: Wed, 29 Mar 2017 13:48:14 -0700
+Message-ID: <20170329204815.9175-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1ct7kP-0003iV-LP
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1ctKW3-0007pm-91
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 29 Mar 2017 07:10:25 +0000
-Received: from [45.249.212.191] (helo=dggrg05-dlp.huawei.com)
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1ct7kN-0000FO-Fq
+	Wed, 29 Mar 2017 20:48:27 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1ctKW2-0008Qc-Bm
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 29 Mar 2017 07:10:25 +0000
-In-Reply-To: <20170325212742.GA24857@jaegeuk.local>
+	Wed, 29 Mar 2017 20:48:27 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,66 +26,149 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-SGkgYWxs77yMCgpPbiAyMDE3LzMvMjYgNToyNywgSmFlZ2V1ayBLaW0gd3JvdGU6Cj4gT24gMDMv
-MjUsIENoYW8gWXUgd3JvdGU6Cj4+IEhpIEphZWdldWssCj4+Cj4+IE9uIDIwMTcvMy8yNSAxNTo1
-OSwgSmFlZ2V1ayBLaW0gd3JvdGU6Cj4+PiAtIGhhc19ub3RfZW5vdWdoX2ZyZWVfc2Vjcwo+Pj4g
-bm9kZV9zZWNzOiAwICBkZW50X3NlY3M6IDAgIGZyZWVkOjAgIGZyZWVfc2VnbWVudHM6MTAzICBy
-ZXNlcnZlZDoxMDQKPj4+Cj4+PiAgICAgICAgICAgLSBmMmZzX2djCj4+PiAgICAgICAgICAgICAg
-LSBnZXRfdmljdGltX2J5X2RlZmF1bHQKPj4+IGFsbG9jX21vZGUgMCwgZ2NfbW9kZSAxLCBtYXhf
-c2VhcmNoIDI2NzIsIG9mZnNldCA0NjU0LCBvZnNfdW5pdCAxCj4+Pgo+Pj4gICAgICAgICAgICAg
-ICAgIC0gZG9fZ2FyYmFnZV9jb2xsZWN0Cj4+PiBzdGFydF9zZWdubyAzOTc2LCBlbmRfc2Vnbm8g
-Mzk3NyAgIHR5cGUgMAo+Pj4KPj4+ICAgICAgICAgICAgICAgICAgIC0gaXNfYWxpdmUKPj4+IG5p
-ZCAyMjc5NywgYmxrYWRkciAyMTMxODgyLCBvZnNfaW5fbm9kZSAwLCB2ZXJzaW9uIDB4OC8weDAK
-Pj4+Cj4+PiAgICAgICAgICAgICAgICAgICAgLSBnY19kYXRhX3NlZ21lbnQgNzY2LCBzZWdubyAz
-OTc2LCBibG9jayA1MTIvNDI2IG5vdCBhbGl2ZQo+Pj4KPj4+IFNvLCB0aGlzIHBhdGNoIGZpeGVz
-IHN1YnRsZSBjb3JydXB0ZWQgY2FzZSB3aGVyZSBub2RlIHZlcnNpb24gZG9lcyBub3QgbWF0Y2gK
-Pj4+IHRvIHN1bW1hcnkgdmVyc2lvbiB3aGljaCByZXN1bHRzIGluIGluZmluaXRlIGxvb3AgYnkg
-Z2MuCj4+Pgo+Pj4gUmVwb3J0ZWQtYnk6IFl1bmxlaSBIZSA8aGV5dW5sZWlAaHVhd2VpLmNvbT4K
-Pj4+IFNpZ25lZC1vZmYtYnk6IEphZWdldWsgS2ltIDxqYWVnZXVrQGtlcm5lbC5vcmc+Cj4+PiAt
-LS0KPj4+ICBmcy9mMmZzL2djLmMgfCA2ICsrKystLQo+Pj4gIDEgZmlsZSBjaGFuZ2VkLCA0IGlu
-c2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMv
-Z2MuYyBiL2ZzL2YyZnMvZ2MuYwo+Pj4gaW5kZXggOTM5YmU4OGE4ODMzLi5iYmVlZTQxYWFmNzMg
-MTAwNjQ0Cj4+PiAtLS0gYS9mcy9mMmZzL2djLmMKPj4+ICsrKyBiL2ZzL2YyZnMvZ2MuYwo+Pj4g
-QEAgLTU1MSw4ICs1NTEsMTAgQEAgc3RhdGljIGJvb2wgaXNfYWxpdmUoc3RydWN0IGYyZnNfc2Jf
-aW5mbyAqc2JpLCBzdHJ1Y3QgZjJmc19zdW1tYXJ5ICpzdW0sCj4+PiAgCWdldF9ub2RlX2luZm8o
-c2JpLCBuaWQsIGRuaSk7Cj4+Pgo+Pj4gIAlpZiAoc3VtLT52ZXJzaW9uICE9IGRuaS0+dmVyc2lv
-bikgewo+Pgo+PiBJZiB0aGUgbm9kZSB3YXMgYmVlbiB0cnVuY2F0ZWQsIHdlIHdpbGwgaW5jcmVh
-c2UgaXRzIHZlcnNpb24gbnVtYmVyLCBzaW5jZSBpdAo+PiB3YXMgYmVlbiB0cnVuY2F0ZWQsIHNv
-IGl0IHdpbGwgbmV2ZXIgYmUgd3JpdGViYWNrZWQgdG8gc3RvcmFnZSwgc28gdGhlIHZlcnNpb24K
-Pj4gaW4gc3VtbWFyeSB3aWxsIG5vdCBiZSB1cGRhdGVkLgo+CgpUaGUgc2FtZSBwcm9ibGVtIEkg
-Y2FtZSBhY3Jvc3Mgd2l0aCBhIG5vZGUgc2VnbWVudDoKCjQ4MSAgICAgICAgICAgICAgICAgZ2V0
-X25vZGVfaW5mbyhzYmksIG5pZCwgJm5pKTsKNDgyICAgICAgICAgICAgICAgICBpZiAobmkuYmxr
-X2FkZHIgIT0gc3RhcnRfYWRkciArIG9mZikgewo0ODMgICAgICAgICAgICAgICAgICAgICAgICAg
-ZjJmc19wdXRfcGFnZShub2RlX3BhZ2UsIDEpOwo0ODQgICAgICAgICAgICAgICAgICAgICAgICAg
-Y29udGludWU7CjQ4NSAgICAgICAgICAgICAgICAgfQoKSGVyZSwgZ2V0IHZpY3RpbSBtZXRob2Qg
-YWx3YXlzIHNlbGVjdGVkIHNlZ25vIDUxNjkgZm9yIGdhcmJhZ2UgY29sbGVjdGlvbiwKCmJ1dCB0
-aGlzIHNlY3Rpb24gZ2MgZmFpbGVkIGZvciB1cHBlciBjb25kaXRpb246CgoJZ2Nfbm9kZV9zZWdt
-ZW50IDQ5NCwgYmxrX2FkZHIgMTY5NzU3MixzdGFydF9hZGRyIDI2Njg1NDQsb2ZmIDIwMAoKSSB0
-aGluayBpcyBzYW1lIHByb2JsZW0gd2l0aCBpc19hbGl2ZSBmdW5jdGlvbi4KClRoYW5rcy4KCgo+
-IFRoYXQncyBjb3ZlcmVkIGJ5IG5vZGUgcGFnZSBsb2NrLCBzbyB3ZSBzaG91bGRuJ3QgYmUgcmVh
-Y2hlZCBvdXQgdG8gdGhpcyBwb2ludC4KPiBMZXQncyB0aGluayBtb3JlIGFib3V0IHRoaXMuCj4K
-PiBUaGFua3MsCj4KPj4gU28gdGhpcyBjYXNlIGNhbiBoYXBwZW4sIHNob3VsZG4ndCB3ZSBqdXN0
-IHNldCBTQklfTkVFRF9GU0NLIGZvciB0aGUgY2FzZToKPj4gc3VtLT52ZXJzaW9uICE9IGRuaS0+
-dmVyc2lvbiAtIDEKPj4KPj4gVGhhbmtzLAo+Pgo+Pj4gLQkJZjJmc19wdXRfcGFnZShub2RlX3Bh
-Z2UsIDEpOwo+Pj4gLQkJcmV0dXJuIGZhbHNlOwo+Pj4gKwkJZjJmc19tc2coc2JpLT5zYiwgS0VS
-Tl9XQVJOSU5HLAo+Pj4gKwkJCQkiJXM6IHZhbGlkIGRhdGEgd2l0aCBtaXNtYXRjaGVkIG5vZGUg
-dmVyc2lvbi4iLAo+Pj4gKwkJCQlfX2Z1bmNfXyk7Cj4+PiArCQlzZXRfc2JpX2ZsYWcoc2JpLCBT
-QklfTkVFRF9GU0NLKTsKPj4+ICAJfQo+Pj4KPj4+ICAJKm5vZnMgPSBvZnNfb2Zfbm9kZShub2Rl
-X3BhZ2UpOwo+Pj4KPgo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+IENoZWNrIG91dCB0aGUgdmli
-cmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAo+IGVuZ2FnaW5n
-IHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cj4gX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiBMaW51eC1mMmZz
-LWRldmVsIG1haWxpbmcgbGlzdAo+IExpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2Uu
-bmV0Cj4gaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgt
-ZjJmcy1kZXZlbAo+Cj4gLgo+CgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUg
-dmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2lu
-ZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdApfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRl
-dmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApo
-dHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRl
-dmVsCg==
+It would better split small and large IOs separately in order to get more
+consecutive big writes.
+
+The default threshold is set to 64KB, but configurable by sysfs/min_hot_blocks.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/data.c    |  9 +++++++++
+ fs/f2fs/f2fs.h    |  2 ++
+ fs/f2fs/segment.c | 13 ++++++-------
+ fs/f2fs/segment.h |  1 +
+ fs/f2fs/super.c   |  2 ++
+ 5 files changed, 20 insertions(+), 7 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 090413236b27..8f36080b47c4 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1432,6 +1432,8 @@ static int __write_data_page(struct page *page, bool *submitted,
+ 		need_balance_fs = true;
+ 	else if (has_not_enough_free_secs(sbi, 0, 0))
+ 		goto redirty_out;
++	else
++		set_inode_flag(inode, FI_HOT_DATA);
+ 
+ 	err = -EAGAIN;
+ 	if (f2fs_has_inline_data(inode)) {
+@@ -1457,6 +1459,7 @@ static int __write_data_page(struct page *page, bool *submitted,
+ 	if (wbc->for_reclaim) {
+ 		f2fs_submit_merged_bio_cond(sbi, inode, 0, page->index,
+ 						DATA, WRITE);
++		clear_inode_flag(inode, FI_HOT_DATA);
+ 		remove_dirty_inode(inode);
+ 		submitted = NULL;
+ 	}
+@@ -1511,6 +1514,12 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 
+ 	pagevec_init(&pvec, 0);
+ 
++	if (get_dirty_pages(mapping->host) <=
++				SM_I(F2FS_M_SB(mapping))->min_hot_blocks)
++		set_inode_flag(mapping->host, FI_HOT_DATA);
++	else
++		clear_inode_flag(mapping->host, FI_HOT_DATA);
++
+ 	if (wbc->range_cyclic) {
+ 		writeback_index = mapping->writeback_index; /* prev offset */
+ 		index = writeback_index;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 5a49518ee786..32d6f674c114 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -678,6 +678,7 @@ struct f2fs_sm_info {
+ 	unsigned int ipu_policy;	/* in-place-update policy */
+ 	unsigned int min_ipu_util;	/* in-place-update threshold */
+ 	unsigned int min_fsync_blocks;	/* threshold for fsync */
++	unsigned int min_hot_blocks;	/* threshold for hot block allocation */
+ 
+ 	/* for flush command control */
+ 	struct flush_cmd_control *fcc_info;
+@@ -1717,6 +1718,7 @@ enum {
+ 	FI_DO_DEFRAG,		/* indicate defragment is running */
+ 	FI_DIRTY_FILE,		/* indicate regular/symlink has dirty pages */
+ 	FI_NO_PREALLOC,		/* indicate skipped preallocated blocks */
++	FI_HOT_DATA,		/* indicate file is hot */
+ };
+ 
+ static inline void __mark_inode_dirty_flag(struct inode *inode,
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index b5b2a4745328..bff3f3bc7827 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1841,18 +1841,16 @@ static int __get_segment_type_6(struct page *page, enum page_type p_type)
+ 	if (p_type == DATA) {
+ 		struct inode *inode = page->mapping->host;
+ 
+-		if (S_ISDIR(inode->i_mode))
+-			return CURSEG_HOT_DATA;
+-		else if (is_cold_data(page) || file_is_cold(inode))
++		if (is_cold_data(page) || file_is_cold(inode))
+ 			return CURSEG_COLD_DATA;
+-		else
+-			return CURSEG_WARM_DATA;
++		if (is_inode_flag_set(inode, FI_HOT_DATA))
++			return CURSEG_HOT_DATA;
++		return CURSEG_WARM_DATA;
+ 	} else {
+ 		if (IS_DNODE(page))
+ 			return is_cold_node(page) ? CURSEG_WARM_NODE :
+ 						CURSEG_HOT_NODE;
+-		else
+-			return CURSEG_COLD_NODE;
++		return CURSEG_COLD_NODE;
+ 	}
+ }
+ 
+@@ -2959,6 +2957,7 @@ int build_segment_manager(struct f2fs_sb_info *sbi)
+ 		sm_info->ipu_policy = 1 << F2FS_IPU_FSYNC;
+ 	sm_info->min_ipu_util = DEF_MIN_IPU_UTIL;
+ 	sm_info->min_fsync_blocks = DEF_MIN_FSYNC_BLOCKS;
++	sm_info->min_hot_blocks = DEF_MIN_HOT_BLOCKS;
+ 
+ 	sm_info->trim_sections = DEF_BATCHED_TRIM_SECTIONS;
+ 
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 31846b0fcb95..57e36c1ce7bd 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -540,6 +540,7 @@ static inline int utilization(struct f2fs_sb_info *sbi)
+  */
+ #define DEF_MIN_IPU_UTIL	70
+ #define DEF_MIN_FSYNC_BLOCKS	8
++#define DEF_MIN_HOT_BLOCKS	16
+ 
+ enum {
+ 	F2FS_IPU_FORCE,
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index b4c5c6298698..2d78f3c76d18 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -296,6 +296,7 @@ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, batched_trim_sections, trim_sections);
+ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, ipu_policy, ipu_policy);
+ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ipu_util, min_ipu_util);
+ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_fsync_blocks, min_fsync_blocks);
++F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_hot_blocks, min_hot_blocks);
+ F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ram_thresh, ram_thresh);
+ F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ra_nid_pages, ra_nid_pages);
+ F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, dirty_nats_ratio, dirty_nats_ratio);
+@@ -321,6 +322,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(ipu_policy),
+ 	ATTR_LIST(min_ipu_util),
+ 	ATTR_LIST(min_fsync_blocks),
++	ATTR_LIST(min_hot_blocks),
+ 	ATTR_LIST(max_victim_search),
+ 	ATTR_LIST(dir_level),
+ 	ATTR_LIST(ram_thresh),
+-- 
+2.11.0
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
