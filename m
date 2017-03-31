@@ -1,8 +1,8 @@
 From: heyunlei <heyunlei@huawei.com>
 Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: avoid IO split due to mixed
  WB_SYNC_ALL and WB_SYNC_NONE
-Date: Fri, 31 Mar 2017 11:41:54 +0800
-Message-ID: <fa85e856-723e-e6eb-acff-888934a979b6@huawei.com>
+Date: Fri, 31 Mar 2017 11:51:11 +0800
+Message-ID: <bf61ab56-b3be-990d-01c3-ce9273fb47b5@huawei.com>
 References: <20170329204815.9175-1-jaegeuk@kernel.org>
  <20170329204815.9175-2-jaegeuk@kernel.org>
 Mime-Version: 1.0
@@ -16,26 +16,16 @@ List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 Hi Jaegeuk,
 
-I try this patch and find it can fix below case:
+Can we split in place update bios into single sbi->f2fs_bio_info for more page
+merged in out place update? This case can be show as below:
 
-    kworker/u16:3-423   [002] ....   183.812347: submit_bio: kworker/u16:3(423): WRITE block 104749352 on mmcblk0p50 (8 sectors)
-              fio-2122  [003] ....   183.812380: submit_bio: fio(2122): WRITE block 104749360 on mmcblk0p50 (24 sectors)
-    kworker/u16:3-423   [002] ....   183.812388: submit_bio: kworker/u16:3(423): WRITE block 104749384 on mmcblk0p50 (8 sectors)
-              fio-2122  [003] ....   183.812403: submit_bio: fio(2122): WRITE block 104749392 on mmcblk0p50 (8 sectors)
-    kworker/u16:3-423   [002] ....   183.812404: submit_bio: kworker/u16:3(423): WRITE block 104749400 on mmcblk0p50 (8 sectors)
-              fio-2122  [003] ....   183.812427: submit_bio: fio(2122): WRITE block 104749408 on mmcblk0p50 (16 sectors)
-    kworker/u16:3-423   [002] ....   183.812429: submit_bio: kworker/u16:3(423): WRITE block 104749424 on mmcblk0p50 (8 sectors)
-              fio-2122  [003] ....   183.812450: submit_bio: fio(2122): WRITE block 104749432 on mmcblk0p50 (16 sectors)
-    kworker/u16:3-423   [002] ....   183.812455: submit_bio: kworker/u16:3(423): WRITE block 104749448 on mmcblk0p50 (8 sectors)
-              fio-2122  [003] ....   183.812470: submit_bio: fio(2122): WRITE block 104749456 on mmcblk0p50 (8 sectors)
-    kworker/u16:3-423   [002] ....   183.812476: submit_bio: kworker/u16:3(423): WRITE block 104749464 on mmcblk0p50 (8 sectors)
-              fio-2122  [003] ....   183.812492: submit_bio: fio(2122): WRITE block 104749472 on mmcblk0p50 (16 sectors)
-    kworker/u16:3-423   [002] ....   183.812497: submit_bio: kworker/u16:3(423): WRITE block 104749488 on mmcblk0p50 (8 sectors)
-              fio-2122  [003] ....   183.812512: submit_bio: fio(2122): WRITE block 104749496 on mmcblk0p50 (8 sectors)
-    kworker/u16:3-423   [002] ....   183.812514: submit_bio: kworker/u16:3(423): WRITE block 104749504 on mmcblk0p50 (8 sectors)
-              fio-2122  [003] ....   183.812532: submit_bio: fio(2122): WRITE block 104749512 on mmcblk0p50 (16 sectors)
+in place update submit a bio with one page
+	out place update submit a bio with one page
+in place update submit a bio with one page
+	out place update submit a bio with one page
+... ...
 
-    ... ...
+just like WB_SYNC_ALL and WB_SYNC_NONE case.
 
 Thanks.
 
