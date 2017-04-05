@@ -1,30 +1,23 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 3/3] f2fs: prevent waiter encountering
- incorrect discard states
-Date: Wed, 5 Apr 2017 18:25:49 +0800
-Message-ID: <61dcdb40-0e30-fbc7-8bc3-19326c4eada4@huawei.com>
-References: <20170327101406.56028-1-yuchao0@huawei.com>
-	<20170327101406.56028-3-yuchao0@huawei.com>
-	<20170327235608.GA4984@jaegeuk.local>
-	<1040d25a-9cc8-a4c8-7143-a0375ecdeeb5@huawei.com>
-	<b435e31f-5413-b392-4fc7-d0bcb1ef2600@huawei.com>
-	<20170403174057.GB1076@jaegeuk.local>
+Subject: [PATCH v2] f2fs: prevent waiter encountering incorrect
+	discard states
+Date: Wed, 5 Apr 2017 18:26:26 +0800
+Message-ID: <20170405102626.60148-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1cvi8f-0003xN-EB
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1cvi9q-00011U-Fi
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 05 Apr 2017 10:26:09 +0000
-Received: from [45.249.212.188] (helo=dggrg02-dlp.huawei.com)
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cvi8c-0000fV-Pk
+	Wed, 05 Apr 2017 10:27:22 +0000
+Received: from [45.249.212.189] (helo=dggrg03-dlp.huawei.com)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cvi9f-0001Yt-3R
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 05 Apr 2017 10:26:09 +0000
-In-Reply-To: <20170403174057.GB1076@jaegeuk.local>
+	Wed, 05 Apr 2017 10:27:22 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,72 +27,59 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
+To: jaegeuk@kernel.org
 Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/4/4 1:40, Jaegeuk Kim wrote:
-> On 04/01, Chao Yu wrote:
->> Ping,
->>
->> Any problem here?
->>
->> Thanks,
->>
->> On 2017/3/28 9:17, Chao Yu wrote:
->>> On 2017/3/28 7:56, Jaegeuk Kim wrote:
->>>> On 03/27, Chao Yu wrote:
->>>>> In f2fs_submit_discard_endio, we will wake up waiter before setting
->>>>> discard command states, so waiter may use incorrect states. Change
->>>>> the order between complete() and states setting to fix this issue.
->>>>>
->>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>>> ---
->>>>>  fs/f2fs/segment.c | 2 +-
->>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>>> index 57a81f9c8c14..9f9542c9fe47 100644
->>>>> --- a/fs/f2fs/segment.c
->>>>> +++ b/fs/f2fs/segment.c
->>>>> @@ -717,9 +717,9 @@ static void f2fs_submit_discard_endio(struct bio *bio)
->>>>>  {
->>>>>  	struct discard_cmd *dc = (struct discard_cmd *)bio->bi_private;
->>>>>  
->>>>> -	complete(&dc->wait);
->>>>>  	dc->error = bio->bi_error;
->>>>>  	dc->state = D_DONE;
->>>>> +	complete(&dc->wait);
->>>>
->>>> If we set D_DONE first, the object can be released by __remove_discard_cmd()?
-> 
-> What I mean was about use-after-free.
+In f2fs_submit_discard_endio, we will wake up waiter before setting
+discard command states, so waiter may use incorrect states. Change
+the order between complete() and states setting to fix this issue.
 
-I updated the patch, could you help to review it?
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v2: use wait_for_completion_io before releasing discard entry to avoid
+use-after-free.
+ fs/f2fs/segment.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Thanks,
-
-> 
-> Thanks,
-> 
->>>
->>> Yes, I think so.
->>>
->>> Thanks,
->>>
->>>>
->>>> Thanks,
->>>>
->>>>>  	bio_put(bio);
->>>>>  }
->>>>>  
->>>>> -- 
->>>>> 2.8.2.295.g3f1c1d0
->>>>
->>>> .
->>>>
-> 
-> .
-> 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 24911c5679d6..ec19cfcfcd24 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -717,9 +717,9 @@ static void f2fs_submit_discard_endio(struct bio *bio)
+ {
+ 	struct discard_cmd *dc = (struct discard_cmd *)bio->bi_private;
+ 
+-	complete(&dc->wait);
+ 	dc->error = bio->bi_error;
+ 	dc->state = D_DONE;
++	complete(&dc->wait);
+ 	bio_put(bio);
+ }
+ 
+@@ -807,8 +807,7 @@ void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
+ 
+ 	list_for_each_entry_safe(dc, tmp, wait_list, list) {
+ 		if (dc->lstart <= blkaddr && blkaddr < dc->lstart + dc->len) {
+-			if (dc->state == D_SUBMIT)
+-				wait_for_completion_io(&dc->wait);
++			wait_for_completion_io(&dc->wait);
+ 			__punch_discard_cmd(sbi, dc, blkaddr);
+ 		}
+ 	}
+@@ -868,8 +867,10 @@ static int issue_discard_thread(void *data)
+ 	blk_finish_plug(&plug);
+ 
+ 	list_for_each_entry_safe(dc, tmp, wait_list, list) {
+-		if (dc->state == D_DONE)
++		if (dc->state == D_DONE) {
++			wait_for_completion_io(&dc->wait);
+ 			__remove_discard_cmd(sbi, dc);
++		}
+ 	}
+ 	mutex_unlock(&dcc->cmd_lock);
+ 
+-- 
+2.12.2.510.ge1104a5ee539
 
 
 ------------------------------------------------------------------------------
