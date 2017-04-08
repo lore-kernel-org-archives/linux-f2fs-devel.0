@@ -1,85 +1,89 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: count writeback pages correctly
-Date: Fri, 7 Apr 2017 10:46:33 -0700
-Message-ID: <20170407174633.GB7227@jaegeuk.local>
-References: <20170405180201.4021-1-jaegeuk@kernel.org>
- <18bac85c-ee9a-76a8-5f89-f395579b2edd@huawei.com>
+From: Deepa Dinamani <deepa.kernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 00/12] Delete CURRENT_TIME,
+	CURRENT_TIME_SEC and current_fs_time
+Date: Fri,  7 Apr 2017 17:56:58 -0700
+Message-ID: <1491613030-11599-1-git-send-email-deepa.kernel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <18bac85c-ee9a-76a8-5f89-f395579b2edd@huawei.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <lustre-devel-bounces-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org>
+List-Unsubscribe: <http://lists.lustre.org/options.cgi/lustre-devel-lustre.org>,
+	<mailto:lustre-devel-request-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.lustre.org/pipermail/lustre-devel-lustre.org/>
+List-Post: <mailto:lustre-devel-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org>
+List-Help: <mailto:lustre-devel-request-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.lustre.org/listinfo.cgi/lustre-devel-lustre.org>,
+	<mailto:lustre-devel-request-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org?subject=subscribe>
+Errors-To: lustre-devel-bounces-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org
+Sender: "lustre-devel" <lustre-devel-bounces-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org>
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org
+Cc: yuchao0-hv44wF8Li93QT0dZR+AlfA@public.gmane.org, bfields-uC3wQj2KruNg9hUCZPvPmw@public.gmane.org, clm-b10kYP2dOMg@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, dushistov-JGs/UdohzUI@public.gmane.org, jlayton-vpEMnDpepFuMZCB2o+C8xQ@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, paul-r2n+y4ga6xFZroRs9YW3xA@public.gmane.org, y2038-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, mingo-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, rostedt-nx8X9YLhiw1AfugRpC6u6w@public.gmane.org, oleg.drokin-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org, dsterba-IBi9RG/b67k@public.gmane.org, jaegeuk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, ceph-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jbacik-b10kYP2dOMg@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, eparis-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-security-module-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-audit-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lustre-devel-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 04/06, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> On 2017/4/6 2:02, Jaegeuk Kim wrote:
-> > This patch fixes # of outstanding writeback pages by checking its original page.
-> 
-> Originally, we use bio_page to track encrypted page which is been writebacked,
-> there are two cases:
-> 1. background flush through .writepages: encrypted_page has no mapping info,
-> will not be tracked.
-> 2. synchronized GC through move_encrypted_block: encrypted_page is meta page,
-> will be tracked.
-> 
-> So there is no problem with old code?
+The series contains the last unmerged uses of CURRENT_TIME,
+CURRENT_TIME_SEC, and current_fs_time().
+The series also deletes these apis.
 
-Consistency was fine, but why not tracking # of writebacked pages for encryption
-case?
+All the patches except [PATCH 9/12] and [PATCH 10/12] are resend patches.
+These patches fix new instances of CURRENT_TIME.
+cifs and ceph patches have been squashed so that we have one patch per
+filesystem.
 
-Thanks,
+We want to get these merged onto 4.12 release so that I can post the series
+that changes vfs timestamps to use 64 bits for 4.13 release.
 
-> 
-> Thanks,
-> 
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/data.c | 7 +++----
-> >  1 file changed, 3 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > index 3d74c0ffa4c7..af3e849e96d2 100644
-> > --- a/fs/f2fs/data.c
-> > +++ b/fs/f2fs/data.c
-> > @@ -94,7 +94,6 @@ static void f2fs_write_end_io(struct bio *bio)
-> >  
-> >  	bio_for_each_segment_all(bvec, bio, i) {
-> >  		struct page *page = bvec->bv_page;
-> > -		enum count_type type = WB_DATA_TYPE(page);
-> >  
-> >  		if (IS_DUMMY_WRITTEN_PAGE(page)) {
-> >  			set_page_private(page, (unsigned long)NULL);
-> > @@ -113,7 +112,7 @@ static void f2fs_write_end_io(struct bio *bio)
-> >  			mapping_set_error(page->mapping, -EIO);
-> >  			f2fs_stop_checkpoint(sbi, true);
-> >  		}
-> > -		dec_page_count(sbi, type);
-> > +		dec_page_count(sbi, WB_DATA_TYPE(page));
-> >  		clear_cold_data(page);
-> >  		end_page_writeback(page);
-> >  	}
-> > @@ -389,7 +388,7 @@ int f2fs_submit_page_mbio(struct f2fs_io_info *fio)
-> >  	fio->submitted = 1;
-> >  
-> >  	if (!is_read)
-> > -		inc_page_count(sbi, WB_DATA_TYPE(bio_page));
-> > +		inc_page_count(sbi, WB_DATA_TYPE(fio->page));
-> >  
-> >  	down_write(&io->io_rwsem);
-> >  
-> > @@ -403,7 +402,7 @@ int f2fs_submit_page_mbio(struct f2fs_io_info *fio)
-> >  				fio->new_blkaddr & F2FS_IO_SIZE_MASK(sbi)) {
-> >  			err = -EAGAIN;
-> >  			if (!is_read)
-> > -				dec_page_count(sbi, WB_DATA_TYPE(bio_page));
-> > +				dec_page_count(sbi, WB_DATA_TYPE(fio->page));
-> >  			goto out_fail;
-> >  		}
-> >  		io->bio = __bio_alloc(sbi, fio->new_blkaddr,
-> > 
+I'm proposing these to be merged through Andrew's tree.
+
+Filesystem maintainers, please let Andrew know if you will be picking up
+the patch in your trees.
+
+Let me know if anybody has other preferences for merging.
+
+Deepa Dinamani (12):
+  fs: f2fs: Use ktime_get_real_seconds for sit_info times
+  trace: Make trace_hwlat timestamp y2038 safe
+  fs: cifs: Replace CURRENT_TIME by other appropriate apis
+  fs: ceph: CURRENT_TIME with ktime_get_real_ts()
+  fs: ufs: Use ktime_get_real_ts64() for birthtime
+  audit: Use timespec64 to represent audit timestamps
+  fs: btrfs: Use ktime_get_real_ts for root ctime
+  fs: ubifs: Replace CURRENT_TIME_SEC with current_time
+  lustre: Replace CURRENT_TIME macro
+  apparmorfs: Replace CURRENT_TIME with current_time()
+  time: Delete CURRENT_TIME_SEC and CURRENT_TIME
+  time: Delete current_fs_time() function
+
+ drivers/block/rbd.c                             |  2 +-
+ drivers/staging/lustre/lustre/llite/llite_lib.c |  6 +++---
+ drivers/staging/lustre/lustre/osc/osc_io.c      |  4 ++--
+ fs/btrfs/root-tree.c                            |  3 ++-
+ fs/ceph/mds_client.c                            |  4 +++-
+ fs/cifs/cifsencrypt.c                           |  4 +++-
+ fs/cifs/cifssmb.c                               | 10 ++++-----
+ fs/cifs/inode.c                                 | 28 +++++++++++++------------
+ fs/f2fs/segment.c                               |  2 +-
+ fs/f2fs/segment.h                               |  5 +++--
+ fs/ubifs/dir.c                                  | 12 +++++------
+ fs/ubifs/file.c                                 | 12 +++++------
+ fs/ubifs/ioctl.c                                |  2 +-
+ fs/ubifs/misc.h                                 | 10 ---------
+ fs/ubifs/sb.c                                   | 14 +++++++++----
+ fs/ubifs/xattr.c                                |  6 +++---
+ fs/ufs/ialloc.c                                 |  6 ++++--
+ include/linux/audit.h                           |  4 ++--
+ include/linux/fs.h                              |  1 -
+ include/linux/time.h                            |  3 ---
+ kernel/audit.c                                  | 10 ++++-----
+ kernel/audit.h                                  |  2 +-
+ kernel/auditsc.c                                |  6 +++---
+ kernel/time/time.c                              | 14 -------------
+ kernel/trace/trace_entries.h                    |  6 +++---
+ kernel/trace/trace_hwlat.c                      | 14 ++++++-------
+ kernel/trace/trace_output.c                     |  9 ++++----
+ net/ceph/messenger.c                            |  6 ++++--
+ net/ceph/osd_client.c                           |  4 ++--
+ security/apparmor/apparmorfs.c                  |  2 +-
+ 30 files changed, 100 insertions(+), 111 deletions(-)
+
+-- 
+2.7.4
