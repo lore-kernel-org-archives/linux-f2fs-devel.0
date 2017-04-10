@@ -1,68 +1,96 @@
-From: NeilBrown <neilb@suse.com>
-Subject: [PATCH 09/11] f2fs: Remove __GFP_NOFAIL flag from call to mempool_alloc()
-Date: Mon, 10 Apr 2017 12:17:37 +1000
-Message-ID: <8737dhxaym.fsf@notabene.neil.brown.name>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: count writeback pages correctly
+Date: Mon, 10 Apr 2017 19:14:29 +0800
+Message-ID: <7a52467a-61e5-24e9-00d0-51bc40cf2279@huawei.com>
+References: <20170405180201.4021-1-jaegeuk@kernel.org>
+ <18bac85c-ee9a-76a8-5f89-f395579b2edd@huawei.com>
+ <20170407174633.GB7227@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170407174633.GB7227@jaegeuk.local>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On 2017/4/8 1:46, Jaegeuk Kim wrote:
+> On 04/06, Chao Yu wrote:
+>> Hi Jaegeuk,
+>>
+>> On 2017/4/6 2:02, Jaegeuk Kim wrote:
+>>> This patch fixes # of outstanding writeback pages by checking its original page.
+>>
+>> Originally, we use bio_page to track encrypted page which is been writebacked,
+>> there are two cases:
+>> 1. background flush through .writepages: encrypted_page has no mapping info,
+>> will not be tracked.
+>> 2. synchronized GC through move_encrypted_block: encrypted_page is meta page,
+>> will be tracked.
+>>
+>> So there is no problem with old code?
+> 
+> Consistency was fine, but why not tracking # of writebacked pages for encryption
+> case?
 
+Hmm.. because checkpoint doesn't care about writebacked pages of normal file, no
+matter the file is encrypted or not. Right?
 
-Passing __GFP_NOFAIL to mempool_alloc() is strange
-because it bypasses the pool functionality provided
-by the mempool.  mempool_alloc() will not fail
-even without the NOFAIL flag.
+Thanks,
 
-So remove the flag and allow the pool to be used properly.
-
-Signed-off-by: NeilBrown <neilb@suse.com>
-=2D--
- fs/f2fs/data.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 1602b4bccae6..7e31751ec708 100644
-=2D-- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -204,7 +204,7 @@ static inline void __submit_bio(struct f2fs_sb_info *sb=
-i,
- 		for (; start < F2FS_IO_SIZE(sbi); start++) {
- 			struct page *page =3D
- 				mempool_alloc(sbi->write_io_dummy,
-=2D					GFP_NOIO | __GFP_ZERO | __GFP_NOFAIL);
-+					GFP_NOIO | __GFP_ZERO);
- 			f2fs_bug_on(sbi, !page);
-=20
- 			SetPagePrivate(page);
-=2D-=20
-2.12.2
-
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAljq60IACgkQOeye3VZi
-gbnixxAAnSleGfxNiq6+bbxB/ZoT85tUy2xUHh79TfkmTiZS/dFqvpTe5EUfbYfH
-iMInAa/SSXc51YXmtX9Nx+VvuYlglytXiGM7MPUYDgjbXcIX/9l04/6YTOqD6u5E
-WoiBRg6/x5/x7bAXGzR0pcVZQGG0vEGZKpCCt97W2AbpCDD3i5x5Xs2Hnyq8zCv3
-NtqhnLxSAu9+3h0COt24Ae3pX6E5XNLNDW6J/Cjb8ULptGk66xTZ6pwaHfdc0/3K
-4nhbxdhe3fxNz4E2TbTZOzLQl1oZqprH2WcyNmJop4pmRDHHDkILFc9H592gqGG5
-j50uswyTUc3uUbrNKF4Ahvk3Q4YStApxQCsS2uR8bm95sTjMAY82XIMngSpmqP7x
-OqpKCCPEGI197Xe5mxyUie6ZPbret8GKh6ezBcdfB3dpZ2iF9+mQtJJiTp9UtyUI
-3hQKLU8pL8hQE3CqUxK7juAQiU+WFG5T5BEDIeXKyKpZHKIMSTtjnrrZ3mnCQxdY
-jUVp5RhD7r7HHmvRugcpIxWEAYkwU7bToqjQHu64arV6Y0YAOzXvPYMrP9zB8W3E
-TS1mINg2fj9tP92vOgPdvUraefbXQMfUss9ZYyNX3uhb7udOsbaD+U2bb6PGoDcK
-kv/KNyxCm/6Rpi6S0NvkusQV93fLVTsPOdEPBC9KN7WIQBLHMrU=
-=dBdY
------END PGP SIGNATURE-----
---=-=-=--
+> 
+> Thanks,
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fs/f2fs/data.c | 7 +++----
+>>>  1 file changed, 3 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>> index 3d74c0ffa4c7..af3e849e96d2 100644
+>>> --- a/fs/f2fs/data.c
+>>> +++ b/fs/f2fs/data.c
+>>> @@ -94,7 +94,6 @@ static void f2fs_write_end_io(struct bio *bio)
+>>>  
+>>>  	bio_for_each_segment_all(bvec, bio, i) {
+>>>  		struct page *page = bvec->bv_page;
+>>> -		enum count_type type = WB_DATA_TYPE(page);
+>>>  
+>>>  		if (IS_DUMMY_WRITTEN_PAGE(page)) {
+>>>  			set_page_private(page, (unsigned long)NULL);
+>>> @@ -113,7 +112,7 @@ static void f2fs_write_end_io(struct bio *bio)
+>>>  			mapping_set_error(page->mapping, -EIO);
+>>>  			f2fs_stop_checkpoint(sbi, true);
+>>>  		}
+>>> -		dec_page_count(sbi, type);
+>>> +		dec_page_count(sbi, WB_DATA_TYPE(page));
+>>>  		clear_cold_data(page);
+>>>  		end_page_writeback(page);
+>>>  	}
+>>> @@ -389,7 +388,7 @@ int f2fs_submit_page_mbio(struct f2fs_io_info *fio)
+>>>  	fio->submitted = 1;
+>>>  
+>>>  	if (!is_read)
+>>> -		inc_page_count(sbi, WB_DATA_TYPE(bio_page));
+>>> +		inc_page_count(sbi, WB_DATA_TYPE(fio->page));
+>>>  
+>>>  	down_write(&io->io_rwsem);
+>>>  
+>>> @@ -403,7 +402,7 @@ int f2fs_submit_page_mbio(struct f2fs_io_info *fio)
+>>>  				fio->new_blkaddr & F2FS_IO_SIZE_MASK(sbi)) {
+>>>  			err = -EAGAIN;
+>>>  			if (!is_read)
+>>> -				dec_page_count(sbi, WB_DATA_TYPE(bio_page));
+>>> +				dec_page_count(sbi, WB_DATA_TYPE(fio->page));
+>>>  			goto out_fail;
+>>>  		}
+>>>  		io->bio = __bio_alloc(sbi, fio->new_blkaddr,
+>>>
+> 
+> .
+> 
