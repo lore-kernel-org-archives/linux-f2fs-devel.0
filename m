@@ -1,68 +1,171 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 2/3] f2fs: shrink blk plug region
-Date: Wed, 12 Apr 2017 12:57:16 -0700
-Message-ID: <20170412195716.GA12163@jaegeuk.local>
-References: <20170327101406.56028-1-yuchao0@huawei.com>
- <20170327101406.56028-2-yuchao0@huawei.com>
- <01ed1c10-f698-8e8c-2f76-f7c61265a844@huawei.com>
+Subject: Re: [PATCH v2] f2fs: fix fs corruption due to zero inode page
+Date: Wed, 12 Apr 2017 14:21:02 -0700
+Message-ID: <20170412212102.GA17576@jaegeuk.local>
+References: <20170411221641.4432-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <01ed1c10-f698-8e8c-2f76-f7c61265a844@huawei.com>
+In-Reply-To: <20170411221641.4432-1-jaegeuk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: stable@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 04/12, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> Just reminding, miss merging this patch? :)
+Change log from v1:
+ o fix some bugs
 
-Yup, merged. ;)
+>From 9bb02c3627f46e50246bf7ab957b56ffbef623cb Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Tue, 11 Apr 2017 19:01:26 -0700
+Subject: [PATCH] f2fs: fix fs corruption due to zero inode page
 
-> 
-> Thanks,
-> 
-> On 2017/3/27 18:14, Chao Yu wrote:
-> > Don't use blk plug covering area where there won't be any IOs being issued.
-> > 
-> > Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> > ---
-> >  fs/f2fs/segment.c | 6 ++----
-> >  1 file changed, 2 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index c1a03b0857f9..57a81f9c8c14 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -848,9 +848,8 @@ static int issue_discard_thread(void *data)
-> >  	if (kthread_should_stop())
-> >  		return 0;
-> >  
-> > -	blk_start_plug(&plug);
-> > -
-> >  	mutex_lock(&dcc->cmd_lock);
-> > +	blk_start_plug(&plug);
-> >  	list_for_each_entry_safe(dc, tmp, pend_list, list) {
-> >  		f2fs_bug_on(sbi, dc->state != D_PREP);
-> >  
-> > @@ -860,6 +859,7 @@ static int issue_discard_thread(void *data)
-> >  		if (iter++ > DISCARD_ISSUE_RATE)
-> >  			break;
-> >  	}
-> > +	blk_finish_plug(&plug);
-> >  
-> >  	list_for_each_entry_safe(dc, tmp, wait_list, list) {
-> >  		if (dc->state == D_DONE)
-> > @@ -867,8 +867,6 @@ static int issue_discard_thread(void *data)
-> >  	}
-> >  	mutex_unlock(&dcc->cmd_lock);
-> >  
-> > -	blk_finish_plug(&plug);
-> > -
-> >  	iter = 0;
-> >  	congestion_wait(BLK_RW_SYNC, HZ/50);
-> >  
-> > 
+This patch fixes the following scenario.
+
+- f2fs_create/f2fs_mkdir             - write_checkpoint
+ - f2fs_mark_inode_dirty_sync         - block_operations
+                                       - f2fs_lock_all
+                                       - f2fs_sync_inode_meta
+                                        - f2fs_unlock_all
+                                        - sync_inode_metadata
+ - f2fs_lock_op
+                                         - f2fs_write_inode
+                                          - update_inode_page
+                                           - get_node_page
+                                             return -ENOENT
+ - new_inode_page
+  - fill_node_footer
+ - f2fs_mark_inode_dirty_sync
+ - ...
+ - f2fs_unlock_op
+                                          - f2fs_inode_synced
+                                       - f2fs_lock_all
+                                       - do_checkpoint
+
+In this checkpoint, we can get an inode page which contains zeros having valid
+node footer only.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/inode.c |  2 +-
+ fs/f2fs/namei.c | 20 ++++++++++----------
+ 2 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 2520fa72b23f..0900814485c7 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -316,7 +316,6 @@ int update_inode_page(struct inode *inode)
+ 		} else if (err != -ENOENT) {
+ 			f2fs_stop_checkpoint(sbi, false);
+ 		}
+-		f2fs_inode_synced(inode);
+ 		return 0;
+ 	}
+ 	ret = update_inode(inode, node_page);
+@@ -450,6 +449,7 @@ void handle_failed_inode(struct inode *inode)
+ 	 * in a panic when flushing dirty inodes in gdirty_list.
+ 	 */
+ 	update_inode_page(inode);
++	f2fs_inode_synced(inode);
+ 
+ 	/* don't make bad inode, since it becomes a regular file. */
+ 	unlock_new_inode(inode);
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 8906c9f6cce4..8b5f596ed738 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -148,8 +148,6 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 	inode->i_mapping->a_ops = &f2fs_dblock_aops;
+ 	ino = inode->i_ino;
+ 
+-	f2fs_balance_fs(sbi, true);
+-
+ 	f2fs_lock_op(sbi);
+ 	err = f2fs_add_link(dentry, inode);
+ 	if (err)
+@@ -163,6 +161,8 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 
+ 	if (IS_DIRSYNC(dir))
+ 		f2fs_sync_fs(sbi->sb, 1);
++
++	f2fs_balance_fs(sbi, true);
+ 	return 0;
+ out:
+ 	handle_failed_inode(inode);
+@@ -423,8 +423,6 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+ 	inode_nohighmem(inode);
+ 	inode->i_mapping->a_ops = &f2fs_dblock_aops;
+ 
+-	f2fs_balance_fs(sbi, true);
+-
+ 	f2fs_lock_op(sbi);
+ 	err = f2fs_add_link(dentry, inode);
+ 	if (err)
+@@ -487,6 +485,8 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+ 	}
+ 
+ 	kfree(sd);
++
++	f2fs_balance_fs(sbi, true);
+ 	return err;
+ out:
+ 	handle_failed_inode(inode);
+@@ -508,8 +508,6 @@ static int f2fs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	inode->i_mapping->a_ops = &f2fs_dblock_aops;
+ 	mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_HIGH_ZERO);
+ 
+-	f2fs_balance_fs(sbi, true);
+-
+ 	set_inode_flag(inode, FI_INC_LINK);
+ 	f2fs_lock_op(sbi);
+ 	err = f2fs_add_link(dentry, inode);
+@@ -524,6 +522,8 @@ static int f2fs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 
+ 	if (IS_DIRSYNC(dir))
+ 		f2fs_sync_fs(sbi->sb, 1);
++
++	f2fs_balance_fs(sbi, true);
+ 	return 0;
+ 
+ out_fail:
+@@ -554,8 +554,6 @@ static int f2fs_mknod(struct inode *dir, struct dentry *dentry,
+ 	init_special_inode(inode, inode->i_mode, rdev);
+ 	inode->i_op = &f2fs_special_inode_operations;
+ 
+-	f2fs_balance_fs(sbi, true);
+-
+ 	f2fs_lock_op(sbi);
+ 	err = f2fs_add_link(dentry, inode);
+ 	if (err)
+@@ -569,6 +567,8 @@ static int f2fs_mknod(struct inode *dir, struct dentry *dentry,
+ 
+ 	if (IS_DIRSYNC(dir))
+ 		f2fs_sync_fs(sbi->sb, 1);
++
++	f2fs_balance_fs(sbi, true);
+ 	return 0;
+ out:
+ 	handle_failed_inode(inode);
+@@ -595,8 +595,6 @@ static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
+ 		inode->i_mapping->a_ops = &f2fs_dblock_aops;
+ 	}
+ 
+-	f2fs_balance_fs(sbi, true);
+-
+ 	f2fs_lock_op(sbi);
+ 	err = acquire_orphan_inode(sbi);
+ 	if (err)
+@@ -622,6 +620,8 @@ static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
+ 	/* link_count was changed by d_tmpfile as well. */
+ 	f2fs_unlock_op(sbi);
+ 	unlock_new_inode(inode);
++
++	f2fs_balance_fs(sbi, true);
+ 	return 0;
+ 
+ release_out:
+-- 
+2.11.0
