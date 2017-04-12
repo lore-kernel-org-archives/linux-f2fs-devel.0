@@ -1,23 +1,24 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/3] f2fs: give time to flush dirty pages for
-	checkpoint
-Date: Wed, 12 Apr 2017 14:21:19 -0700
-Message-ID: <20170412212121.17693-1-jaegeuk@kernel.org>
+Subject: [PATCH 2/3] f2fs: allocate hot_data for atomic writes
+Date: Wed, 12 Apr 2017 14:21:20 -0700
+Message-ID: <20170412212121.17693-2-jaegeuk@kernel.org>
+References: <20170412212121.17693-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cyPhi-0007gH-Ap
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cyPhl-0002Sl-7m
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 12 Apr 2017 21:21:30 +0000
+	Wed, 12 Apr 2017 21:21:33 +0000
 Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cyPhh-000109-ME
+	(Exim 4.76) id 1cyPhk-00010D-KP
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 12 Apr 2017 21:21:30 +0000
+	Wed, 12 Apr 2017 21:21:33 +0000
+In-Reply-To: <20170412212121.17693-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,42 +31,25 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-If all the threads are waiting for checkpoint, we have no chance to flush
-required dirty pages.
+We'd better allocate atomic writes to hot_data zone.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/checkpoint.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/f2fs/file.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 9db92990f193..800be94f8cb3 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -980,6 +980,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
- 		err = sync_dirty_inodes(sbi, DIR_INODE);
- 		if (err)
- 			goto out;
-+		cond_resched();
- 		goto retry_flush_dents;
- 	}
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 4731eb587e06..0ac833dd2634 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1531,6 +1531,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+ 		goto out;
  
-@@ -995,6 +996,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
- 		err = f2fs_sync_inode_meta(sbi);
- 		if (err)
- 			goto out;
-+		cond_resched();
- 		goto retry_flush_dents;
- 	}
+ 	set_inode_flag(inode, FI_ATOMIC_FILE);
++	set_inode_flag(inode, FI_HOT_DATA);
+ 	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
  
-@@ -1009,6 +1011,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
- 			f2fs_unlock_all(sbi);
- 			goto out;
- 		}
-+		cond_resched();
- 		goto retry_flush_nodes;
- 	}
- 
+ 	if (!get_dirty_pages(inode))
 -- 
 2.11.0
 
