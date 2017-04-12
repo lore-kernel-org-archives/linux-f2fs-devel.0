@@ -1,63 +1,46 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 2/3] f2fs: shrink blk plug region
-Date: Wed, 12 Apr 2017 16:33:37 +0800
-Message-ID: <01ed1c10-f698-8e8c-2f76-f7c61265a844@huawei.com>
-References: <20170327101406.56028-1-yuchao0@huawei.com>
- <20170327101406.56028-2-yuchao0@huawei.com>
+From: David Sterba <dsterba@suse.cz>
+Subject: Re: [PATCH 07/12] fs: btrfs: Use ktime_get_real_ts for root
+	ctime
+Date: Wed, 12 Apr 2017 15:42:45 +0200
+Message-ID: <20170412134245.GK4781@twin.jikos.cz>
+References: <1491613030-11599-1-git-send-email-deepa.kernel@gmail.com>
+ <1491613030-11599-8-git-send-email-deepa.kernel@gmail.com>
+Reply-To: dsterba@suse.cz
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170327101406.56028-2-yuchao0@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <y2038-bounces@lists.linaro.org>
+Content-Disposition: inline
+In-Reply-To: <1491613030-11599-8-git-send-email-deepa.kernel@gmail.com>
+List-Unsubscribe: <https://lists.linaro.org/mailman/options/y2038>,
+ <mailto:y2038-request@lists.linaro.org?subject=unsubscribe>
+List-Archive: <http://lists.linaro.org/pipermail/y2038/>
+List-Post: <mailto:y2038@lists.linaro.org>
+List-Help: <mailto:y2038-request@lists.linaro.org?subject=help>
+List-Subscribe: <https://lists.linaro.org/mailman/listinfo/y2038>,
+ <mailto:y2038-request@lists.linaro.org?subject=subscribe>
+Errors-To: y2038-bounces@lists.linaro.org
+Sender: "Y2038" <y2038-bounces@lists.linaro.org>
+To: Deepa Dinamani <deepa.kernel@gmail.com>
+Cc: yuchao0@huawei.com, bfields@fieldses.org, clm@fb.com, linux-mtd@lists.infradead.org, dushistov@mail.ru, jlayton@poochiereds.net, ceph-devel@vger.kernel.org, devel@driverdev.osuosl.org, linux-cifs@vger.kernel.org, paul@paul-moore.com, y2038@lists.linaro.org, mingo@redhat.com, jsimmons@infradead.org, arnd@arndb.de, rostedt@goodmis.org, oleg.drokin@intel.com, john.stultz@linaro.org, viro@zeniv.linux.org.uk, dsterba@suse.com, jaegeuk@kernel.org, tglx@linutronix.de, andreas.dilger@intel.com, jbacik@fb.com, gregkh@linuxfoundation.org, samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, eparis@redhat.com, linux-f2fs-devel@lists.sourceforge.net, linux-security-module@vger.kernel.org, linux-audit@redhat.com, netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org, davem@davemloft.net, linux-btrfs@vger.kernel.org, lustre-devel@lists.lustre.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
-
-Just reminding, miss merging this patch? :)
-
-Thanks,
-
-On 2017/3/27 18:14, Chao Yu wrote:
-> Don't use blk plug covering area where there won't be any IOs being issued.
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/segment.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index c1a03b0857f9..57a81f9c8c14 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -848,9 +848,8 @@ static int issue_discard_thread(void *data)
->  	if (kthread_should_stop())
->  		return 0;
->  
-> -	blk_start_plug(&plug);
-> -
->  	mutex_lock(&dcc->cmd_lock);
-> +	blk_start_plug(&plug);
->  	list_for_each_entry_safe(dc, tmp, pend_list, list) {
->  		f2fs_bug_on(sbi, dc->state != D_PREP);
->  
-> @@ -860,6 +859,7 @@ static int issue_discard_thread(void *data)
->  		if (iter++ > DISCARD_ISSUE_RATE)
->  			break;
->  	}
-> +	blk_finish_plug(&plug);
->  
->  	list_for_each_entry_safe(dc, tmp, wait_list, list) {
->  		if (dc->state == D_DONE)
-> @@ -867,8 +867,6 @@ static int issue_discard_thread(void *data)
->  	}
->  	mutex_unlock(&dcc->cmd_lock);
->  
-> -	blk_finish_plug(&plug);
-> -
->  	iter = 0;
->  	congestion_wait(BLK_RW_SYNC, HZ/50);
->  
-> 
+T24gRnJpLCBBcHIgMDcsIDIwMTcgYXQgMDU6NTc6MDVQTSAtMDcwMCwgRGVlcGEgRGluYW1hbmkg
+d3JvdGU6Cj4gYnRyZnNfcm9vdF9pdGVtIG1haW50YWlucyB0aGUgY3RpbWUgZm9yIHJvb3QgdXBk
+YXRlcy4KPiBUaGlzIGlzIG5vdCBwYXJ0IG9mIHZmc19pbm9kZS4KPiAKPiBTaW5jZSBjdXJyZW50
+X3RpbWUoKSB1c2VzIHN0cnVjdCBpbm9kZSogYXMgYW4gYXJndW1lbnQKPiBhcyBMaW51cyBzdWdn
+ZXN0ZWQsIHRoaXMgY2Fubm90IGJlIHVzZWQgdG8gdXBkYXRlIHJvb3QKPiB0aW1lcyB1bmxlc3Ms
+IHdlIG1vZGlmeSB0aGUgc2lnbmF0dXJlIHRvIHVzZSBpbm9kZS4KPiAKPiBTaW5jZSBidHJmcyB1
+c2VzIG5hbm9zZWNvbmQgdGltZSBncmFudWxhcml0eSwgaXQgY2FuIGFsc28KPiB1c2Uga3RpbWVf
+Z2V0X3JlYWxfdHMgZGlyZWN0bHkgdG8gb2J0YWluIHRpbWVzdGFtcCBmb3IKPiB0aGUgcm9vdC4g
+SXQgaXMgbmVjZXNzYXJ5IHRvIHVzZSB0aGUgdGltZXNwZWMgdGltZSBhcGkKPiBoZXJlIGJlY2F1
+c2UgdGhlIHNhbWUgYnRyZnNfc2V0X3N0YWNrX3RpbWVzcGVjXyooKSBhcGlzCj4gYXJlIHVzZWQg
+Zm9yIHZmcyBpbm9kZSB0aW1lcyBhcyB3ZWxsLiBUaGVzZSBjYW4gYmUKPiB0cmFuc2l0aW9uZWQg
+dG8gdXNpbmcgdGltZXNwZWM2NCB3aGVuIGJ0cmZzIGludGVybmFsbHkKPiBjaGFuZ2VzIHRvIHVz
+ZSB0aW1lc3BlYzY0IGFzIHdlbGwuCj4gCj4gU2lnbmVkLW9mZi1ieTogRGVlcGEgRGluYW1hbmkg
+PGRlZXBhLmtlcm5lbEBnbWFpbC5jb20+Cj4gQWNrZWQtYnk6IERhdmlkIFN0ZXJiYSA8ZHN0ZXJi
+YUBzdXNlLmNvbT4KPiBSZXZpZXdlZC1ieTogQXJuZCBCZXJnbWFubiA8YXJuZEBhcm5kYi5kZT4K
+CkknbSBnb2luZyB0byBhZGQgdGhlIHBhdGNoIHRvIG15IDQuMTIgcXVldWUgYW5kIHdpbGwgbGV0
+IEFuZHJldyBrbm93LgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpZMjAzOCBtYWlsaW5nIGxpc3QKWTIwMzhAbGlzdHMubGluYXJvLm9yZwpodHRwczovL2xp
+c3RzLmxpbmFyby5vcmcvbWFpbG1hbi9saXN0aW5mby95MjAzOAo=
