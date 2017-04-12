@@ -1,171 +1,75 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2] f2fs: fix fs corruption due to zero inode page
-Date: Wed, 12 Apr 2017 14:21:02 -0700
-Message-ID: <20170412212102.GA17576@jaegeuk.local>
-References: <20170411221641.4432-1-jaegeuk@kernel.org>
+Subject: [PATCH 1/3] f2fs: give time to flush dirty pages for
+	checkpoint
+Date: Wed, 12 Apr 2017 14:21:19 -0700
+Message-ID: <20170412212121.17693-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170411221641.4432-1-jaegeuk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cyPhi-0007gH-Ap
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 12 Apr 2017 21:21:30 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cyPhh-000109-ME
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 12 Apr 2017 21:21:30 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: stable@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Change log from v1:
- o fix some bugs
+If all the threads are waiting for checkpoint, we have no chance to flush
+required dirty pages.
 
->From 9bb02c3627f46e50246bf7ab957b56ffbef623cb Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Tue, 11 Apr 2017 19:01:26 -0700
-Subject: [PATCH] f2fs: fix fs corruption due to zero inode page
-
-This patch fixes the following scenario.
-
-- f2fs_create/f2fs_mkdir             - write_checkpoint
- - f2fs_mark_inode_dirty_sync         - block_operations
-                                       - f2fs_lock_all
-                                       - f2fs_sync_inode_meta
-                                        - f2fs_unlock_all
-                                        - sync_inode_metadata
- - f2fs_lock_op
-                                         - f2fs_write_inode
-                                          - update_inode_page
-                                           - get_node_page
-                                             return -ENOENT
- - new_inode_page
-  - fill_node_footer
- - f2fs_mark_inode_dirty_sync
- - ...
- - f2fs_unlock_op
-                                          - f2fs_inode_synced
-                                       - f2fs_lock_all
-                                       - do_checkpoint
-
-In this checkpoint, we can get an inode page which contains zeros having valid
-node footer only.
-
-Cc: <stable@vger.kernel.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/inode.c |  2 +-
- fs/f2fs/namei.c | 20 ++++++++++----------
- 2 files changed, 11 insertions(+), 11 deletions(-)
+ fs/f2fs/checkpoint.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 2520fa72b23f..0900814485c7 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -316,7 +316,6 @@ int update_inode_page(struct inode *inode)
- 		} else if (err != -ENOENT) {
- 			f2fs_stop_checkpoint(sbi, false);
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 9db92990f193..800be94f8cb3 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -980,6 +980,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
+ 		err = sync_dirty_inodes(sbi, DIR_INODE);
+ 		if (err)
+ 			goto out;
++		cond_resched();
+ 		goto retry_flush_dents;
+ 	}
+ 
+@@ -995,6 +996,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
+ 		err = f2fs_sync_inode_meta(sbi);
+ 		if (err)
+ 			goto out;
++		cond_resched();
+ 		goto retry_flush_dents;
+ 	}
+ 
+@@ -1009,6 +1011,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
+ 			f2fs_unlock_all(sbi);
+ 			goto out;
  		}
--		f2fs_inode_synced(inode);
- 		return 0;
- 	}
- 	ret = update_inode(inode, node_page);
-@@ -450,6 +449,7 @@ void handle_failed_inode(struct inode *inode)
- 	 * in a panic when flushing dirty inodes in gdirty_list.
- 	 */
- 	update_inode_page(inode);
-+	f2fs_inode_synced(inode);
- 
- 	/* don't make bad inode, since it becomes a regular file. */
- 	unlock_new_inode(inode);
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 8906c9f6cce4..8b5f596ed738 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -148,8 +148,6 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
- 	inode->i_mapping->a_ops = &f2fs_dblock_aops;
- 	ino = inode->i_ino;
- 
--	f2fs_balance_fs(sbi, true);
--
- 	f2fs_lock_op(sbi);
- 	err = f2fs_add_link(dentry, inode);
- 	if (err)
-@@ -163,6 +161,8 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
- 
- 	if (IS_DIRSYNC(dir))
- 		f2fs_sync_fs(sbi->sb, 1);
-+
-+	f2fs_balance_fs(sbi, true);
- 	return 0;
- out:
- 	handle_failed_inode(inode);
-@@ -423,8 +423,6 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
- 	inode_nohighmem(inode);
- 	inode->i_mapping->a_ops = &f2fs_dblock_aops;
- 
--	f2fs_balance_fs(sbi, true);
--
- 	f2fs_lock_op(sbi);
- 	err = f2fs_add_link(dentry, inode);
- 	if (err)
-@@ -487,6 +485,8 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
++		cond_resched();
+ 		goto retry_flush_nodes;
  	}
  
- 	kfree(sd);
-+
-+	f2fs_balance_fs(sbi, true);
- 	return err;
- out:
- 	handle_failed_inode(inode);
-@@ -508,8 +508,6 @@ static int f2fs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	inode->i_mapping->a_ops = &f2fs_dblock_aops;
- 	mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_HIGH_ZERO);
- 
--	f2fs_balance_fs(sbi, true);
--
- 	set_inode_flag(inode, FI_INC_LINK);
- 	f2fs_lock_op(sbi);
- 	err = f2fs_add_link(dentry, inode);
-@@ -524,6 +522,8 @@ static int f2fs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- 
- 	if (IS_DIRSYNC(dir))
- 		f2fs_sync_fs(sbi->sb, 1);
-+
-+	f2fs_balance_fs(sbi, true);
- 	return 0;
- 
- out_fail:
-@@ -554,8 +554,6 @@ static int f2fs_mknod(struct inode *dir, struct dentry *dentry,
- 	init_special_inode(inode, inode->i_mode, rdev);
- 	inode->i_op = &f2fs_special_inode_operations;
- 
--	f2fs_balance_fs(sbi, true);
--
- 	f2fs_lock_op(sbi);
- 	err = f2fs_add_link(dentry, inode);
- 	if (err)
-@@ -569,6 +567,8 @@ static int f2fs_mknod(struct inode *dir, struct dentry *dentry,
- 
- 	if (IS_DIRSYNC(dir))
- 		f2fs_sync_fs(sbi->sb, 1);
-+
-+	f2fs_balance_fs(sbi, true);
- 	return 0;
- out:
- 	handle_failed_inode(inode);
-@@ -595,8 +595,6 @@ static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
- 		inode->i_mapping->a_ops = &f2fs_dblock_aops;
- 	}
- 
--	f2fs_balance_fs(sbi, true);
--
- 	f2fs_lock_op(sbi);
- 	err = acquire_orphan_inode(sbi);
- 	if (err)
-@@ -622,6 +620,8 @@ static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
- 	/* link_count was changed by d_tmpfile as well. */
- 	f2fs_unlock_op(sbi);
- 	unlock_new_inode(inode);
-+
-+	f2fs_balance_fs(sbi, true);
- 	return 0;
- 
- release_out:
 -- 
 2.11.0
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
