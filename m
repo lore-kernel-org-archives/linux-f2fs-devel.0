@@ -1,24 +1,23 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: use rb-tree to track pending discard
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH v2] f2fs: use rb-tree to track pending discard
 	commands
-Date: Fri, 14 Apr 2017 17:41:32 +0800
-Message-ID: <20170414094132.12375-1-yuchao0@huawei.com>
+Date: Fri, 14 Apr 2017 23:24:55 +0800
+Message-ID: <20170414152455.5611-1-chao@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1cyxk9-0003vg-SP
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao@kernel.org>) id 1cz38E-0002GU-Gz
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 14 Apr 2017 09:42:17 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187]
-	helo=dggrg01-dlp.huawei.com)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cyxk4-0004LQ-OV
+	Fri, 14 Apr 2017 15:27:30 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cz38C-0000fr-HO
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 14 Apr 2017 09:42:17 +0000
+	Fri, 14 Apr 2017 15:27:30 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,20 +28,23 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+
+From: Chao Yu <yuchao0@huawei.com>
 
 Introduce rb-tree based discard cache infrastructure to speed up lookup and
 merge operation of discard entry.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/extent_cache.c |   6 +-
- fs/f2fs/f2fs.h         |  47 ++++++++++-
+v2: fix to update discard cmd with correct size.
+ fs/f2fs/extent_cache.c |  15 ++--
+ fs/f2fs/f2fs.h         |  48 ++++++++++-
  fs/f2fs/segment.c      | 223 ++++++++++++++++++++++++++++++++++++++++---------
- 3 files changed, 230 insertions(+), 46 deletions(-)
+ 3 files changed, 236 insertions(+), 50 deletions(-)
 
 diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index 68e649a31c7d..4624e87d3843 100644
+index 68e649a31c7d..221ad086ee00 100644
 --- a/fs/f2fs/extent_cache.c
 +++ b/fs/f2fs/extent_cache.c
 @@ -49,7 +49,7 @@ static struct rb_entry *__lookup_rb_tree_slow(struct rb_root *root,
@@ -63,7 +65,7 @@ index 68e649a31c7d..4624e87d3843 100644
  				struct rb_root *root, struct rb_node **parent,
  				unsigned int ofs)
  {
-@@ -92,7 +92,7 @@ static struct rb_node **__lookup_rb_tree_for_insert(struct f2fs_sb_info *sbi,
+@@ -92,13 +92,14 @@ static struct rb_node **__lookup_rb_tree_for_insert(struct f2fs_sb_info *sbi,
   * in order to simpfy the insertion after.
   * tree must stay unchanged between lookup and insertion.
   */
@@ -72,8 +74,40 @@ index 68e649a31c7d..4624e87d3843 100644
  				struct rb_entry *cached_re,
  				unsigned int ofs,
  				struct rb_entry **prev_entry,
+ 				struct rb_entry **next_entry,
+ 				struct rb_node ***insert_p,
+-				struct rb_node **insert_parent)
++				struct rb_node **insert_parent,
++				bool force)
+ {
+ 	struct rb_node **pnode = &root->rb_node;
+ 	struct rb_node *parent = NULL, *tmp_node;
+@@ -145,12 +146,12 @@ static struct rb_entry *__lookup_rb_tree_ret(struct rb_root *root,
+ 	return NULL;
+ 
+ lookup_neighbors:
+-	if (ofs == re->ofs) {
++	if (ofs == re->ofs || force) {
+ 		/* lookup prev node for merging backward later */
+ 		tmp_node = rb_prev(&re->rb_node);
+ 		*prev_entry = rb_entry_safe(tmp_node, struct rb_entry, rb_node);
+ 	}
+-	if (ofs == re->ofs + re->len - 1) {
++	if (ofs == re->ofs + re->len - 1 || force) {
+ 		/* lookup next node for merging frontward later */
+ 		tmp_node = rb_next(&re->rb_node);
+ 		*next_entry = rb_entry_safe(tmp_node, struct rb_entry, rb_node);
+@@ -481,7 +482,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
+ 					(struct rb_entry *)et->cached_en, fofs,
+ 					(struct rb_entry **)&prev_en,
+ 					(struct rb_entry **)&next_en,
+-					&insert_p, &insert_parent);
++					&insert_p, &insert_parent, false);
+ 	if (!en)
+ 		en = next_en;
+ 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 562db8989a4e..17c492f0d5b9 100644
+index 562db8989a4e..ee7d6105a7a5 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
 @@ -194,13 +194,26 @@ enum {
@@ -139,7 +173,7 @@ index 562db8989a4e..17c492f0d5b9 100644
  static inline bool __is_extent_mergeable(struct extent_info *back,
  						struct extent_info *front)
  {
-@@ -2573,6 +2605,15 @@ void f2fs_leave_shrinker(struct f2fs_sb_info *sbi);
+@@ -2573,6 +2605,16 @@ void f2fs_leave_shrinker(struct f2fs_sb_info *sbi);
  /*
   * extent_cache.c
   */
@@ -151,12 +185,13 @@ index 562db8989a4e..17c492f0d5b9 100644
 +struct rb_entry *__lookup_rb_tree_ret(struct rb_root *root,
 +		struct rb_entry *cached_re, unsigned int ofs,
 +		struct rb_entry **prev_entry, struct rb_entry **next_entry,
-+		struct rb_node ***insert_p, struct rb_node **insert_parent);
++		struct rb_node ***insert_p, struct rb_node **insert_parent,
++		bool force);
  unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink);
  bool f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext);
  void f2fs_drop_extent_tree(struct inode *inode);
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 58cfbe3d4dc7..0057bdf99ed3 100644
+index 58cfbe3d4dc7..44bb26086d28 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
 @@ -672,7 +672,7 @@ static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
@@ -335,7 +370,7 @@ index 58cfbe3d4dc7..0057bdf99ed3 100644
 +					NULL, lstart,
 +					(struct rb_entry **)&prev_dc,
 +					(struct rb_entry **)&next_dc,
-+					&insert_p, &insert_parent);
++					&insert_p, &insert_parent, true);
 +	if (dc)
 +		prev_dc = dc;
 +
@@ -450,7 +485,7 @@ index 58cfbe3d4dc7..0057bdf99ed3 100644
  	init_waitqueue_head(&dcc->discard_wait_queue);
  	SM_I(sbi)->dcc_info = dcc;
 -- 
-2.12.2.510.ge1104a5ee539
+2.12.2.575.gb14f27f
 
 
 ------------------------------------------------------------------------------
