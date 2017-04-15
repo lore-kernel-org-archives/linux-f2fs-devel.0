@@ -1,30 +1,37 @@
 From: Raouf Rokhjavan <rokhjavan.r@gmail.com>
 Subject: Re: f2fs Crash Consistency Problem
-Date: Sat, 15 Apr 2017 09:03:09 +0430
-Message-ID: <60b2d6f5-540b-30e7-cec1-82fbfdcad253@gmail.com>
+Date: Sat, 15 Apr 2017 09:43:09 +0430
+Message-ID: <b462f78b-7188-72ee-8b42-4e019e669161@gmail.com>
 References: <d5ab8383-25f3-ffd6-c506-20993348c499@gmail.com>
 	<20170413211935.GA3826@jaegeuk.local>
 	<60e7c703-13f1-0f7e-24cc-2c5fae3bc958@gmail.com>
-	<20170414184520.GA6827@jaegeuk.local>
+	<20170414235834.GA8933@jaegeuk.local>
+Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <rokhjavan.r@gmail.com>) id 1czFOi-0007C3-Ff
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <rokhjavan.r@gmail.com>) id 1czG1P-0002GB-JS
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 15 Apr 2017 04:33:20 +0000
-Received: from mail-wr0-f196.google.com ([209.85.128.196])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1czFOh-0005Ne-5O
+	Sat, 15 Apr 2017 05:13:19 +0000
+Received: from mail-wr0-f193.google.com ([209.85.128.193])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1czG1O-0005df-Ak
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 15 Apr 2017 04:33:20 +0000
-Received: by mail-wr0-f196.google.com with SMTP id l28so14270653wre.0
+	Sat, 15 Apr 2017 05:13:19 +0000
+Received: by mail-wr0-f193.google.com with SMTP id l28so14325945wre.0
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Fri, 14 Apr 2017 21:33:19 -0700 (PDT)
-In-Reply-To: <20170414184520.GA6827@jaegeuk.local>
+	Fri, 14 Apr 2017 22:13:18 -0700 (PDT)
+Received: from desktopr.example.com ([188.159.249.236])
+	by smtp.gmail.com with ESMTPSA id
+	c53sm4947622wra.16.2017.04.14.22.13.10
+	for <linux-f2fs-devel@lists.sourceforge.net>
+	(version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+	Fri, 14 Apr 2017 22:13:11 -0700 (PDT)
+In-Reply-To: <20170414235834.GA8933@jaegeuk.local>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,13 +41,16 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
 
 
-On 04/14/17 23:15, Jaegeuk Kim wrote:
+On 04/15/17 04:28, Jaegeuk Kim wrote:
 > On 04/14, Raouf Rokhjavan wrote:
+>>
+>> On 04/14/17 01:49, Jaegeuk Kim wrote:
+>> Hi
+>>
 >> First of all, thank you so much for your help.
 >>> Hello,
 >>>
@@ -79,54 +89,6 @@ On 04/14/17 23:15, Jaegeuk Kim wrote:
 >> CKPT after replay
 >> Info: CKPT version = 6bd74d5f
 >> CKPT after mount/umount
-> What does this mean? Did you mount/umount after replaying each entry?
-> I suspect it will break the original behaviors resulting in fs inconsistency.
-My test logic is this:
-1. setup a log-writes dm-device including including REPLAYDEV and LOGDEV.
-2. run mkfs.f2fs on log-writes dm-device
-3. run a xfstests on log-writes dm-device which is mounted and 
-configured as xfstests' TEST_DEV (no SCRATCH_DEV is configured in order 
-to control the mkfs log and replay process)
-4. remove the log-writes dm-device
-5. replay the logs of mkfs
-6. replay remaining entries from mkfs_end mark up to the end of log and 
-check the consistency of file system
-     - replay each entry -> fsck.f2fs -> mount, umount > fsck.f2fs
-
-The gist of my scripts is something like this:
-# ./replay-log --log $LOGDEV --replay $REPLAYDEV --end-mark mkfs_end
-# ./replay-log -v --log $LOGDEV --replay $REPLAYDEV --start-mark 
-009_start --fsck "./fsck_script.sh" --check 1
-
-*** ./fsck_script.sh ***
-fsck.f2fs $REPLAYDEV
-mount -t f2fs $REPLAYDEV $CCTESTS_MNT
-umount $CCTESTS_MNT
-fsck.f2fs $REPLAYDEV
-
-I do this since it's quite similar to what occurs during the power 
-failure. At any given point (any entry) system crashes, and after that, 
-the file system is mounted/umounted.
->
-> BTW, when I tested below, I couldn't find any issue.
->
-> # dmsetup create log
-> # mkfs.f2fs
-> # run xfstests/009
-> # dmsetup remove log
-> # ./replay-log --log log --replay dev --fsck "fsck.f2fs dev" --check fua
-You run fsck after FUA command to block layer, is there any specific 
-reason for that? Since I thought REQ_FUA  guarantees writing requests to 
-devices which leads to a consistent state. It is not quite
-what we're looking for, testing the file system response in the face of 
-inconsistency, Am I right?
-
-Regards, Raouf Rokhjavan
->
-> It'd be helpful that I can reproduce this tho. ;)
->
-> Thanks,
->
 >> Info: CKPT version = 6bd74d60
 >>
 >> ***** Entry #1554 *****
@@ -153,6 +115,61 @@ Regards, Raouf Rokhjavan
 >> CKPT after the first entry replay, so we can conclude CKPT is valid at this
 >> point. Accordingly, I believe everything goes well up to this point, Am I
 >> right?
+> Hmm, it seems you didn't set snapshot-base and snapshot-cow devices which are
+> acutally used by replay-individual.sh, since your CKPT versions just increase.
+Yes, you're completely right. I didn't set any snapshot target. In the 
+kernel Documentation of log-writes, it hasn't made any reference to 
+snapshot; honestly speaking, I didn't quite grab the point relating to 
+snapshot in "replay-individual.sh". I thought the main reason of this 
+target here is saving the state of whole disk (snapshot) after each log 
+entry, and it has nothing to do with f2fs consistency and specifically CKPT.
+
+> It make sense that versions should look like what I've run replay-individual.sh
+> after executing generic/009.
+>
+> creating snapshot base
+> 0 2097152 snapshot-origin /dev/nvme0n1p1
+> setting up COW TABLE
+> 100+0 records in
+> 100+0 records out
+> 104857600 bytes (105 MB) copied, 0.330227 s, 318 MB/s
+> replayin to mark
+> replaying entry 3116          <- starting entry number of 009
+> Info: CKPT version = 724f931a
+> Info: CKPT version = 724f931b
+> replaying entry 3117
+> Info: CKPT version = 724f931a
+> Info: CKPT version = 724f931c
+> replaying entry 3118
+> Info: CKPT version = 724f931a
+> Info: CKPT version = 724f931c
+> replaying entry 3119
+> Info: CKPT version = 724f931a
+> Info: CKPT version = 724f931c
+> replaying entry 3120
+> Info: CKPT version = 724f931a
+> Info: CKPT version = 724f931c
+> replaying entry 3121
+> Info: CKPT version = 724f931a
+> Info: CKPT version = 724f931c
+> replaying entry 3122
+> Info: CKPT version = 724f931a
+> ...
+> replaying entry 3294
+> Info: CKPT version = 724f931b
+> Info: CKPT version = 724f931c
+> replaying entry 3295          <- ending entry number
+> Info: CKPT version = 724f931c
+> Info: CKPT version = 724f931d
+>
+> Again, I couldn't find any issue here.
+>
+> Thanks,
+I wonder how a dm-target like snapshot can affect the behavior of upper 
+layer like f2fs and specifically its CKPT versions !!! Would you please 
+explain it a little bit?
+
+Regards, Raouf Rokhjavan
 >>> The -p [level] and default level is zero, which checks the image iif runtime
 >>> f2fs reported any bug case before. Otherwise, it simply returns. If you set
 >>> level 1, fsck.f2fs will check basic FS metadata parts.
