@@ -1,23 +1,23 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH v2] f2fs: use rb-tree to track pending discard
-	commands
-Date: Fri, 14 Apr 2017 23:24:55 +0800
-Message-ID: <20170414152455.5611-1-chao@kernel.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 1/2] f2fs: add flush data in faster device to
+	cold area
+Date: Fri, 14 Apr 2017 17:16:10 -0700
+Message-ID: <20170415001611.9059-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1cz38E-0002GU-Gz
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1czBO4-0000FV-No
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 14 Apr 2017 15:27:30 +0000
+	Sat, 15 Apr 2017 00:16:24 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cz38C-0000fr-HO
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1czBO3-00079x-FQ
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 14 Apr 2017 15:27:30 +0000
+	Sat, 15 Apr 2017 00:16:24 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,465 +27,258 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-From: Chao Yu <yuchao0@huawei.com>
+This patch flushes data in faster device to cold area.
 
-Introduce rb-tree based discard cache infrastructure to speed up lookup and
-merge operation of discard entry.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
-v2: fix to update discard cmd with correct size.
- fs/f2fs/extent_cache.c |  15 ++--
- fs/f2fs/f2fs.h         |  48 ++++++++++-
- fs/f2fs/segment.c      | 223 ++++++++++++++++++++++++++++++++++++++++---------
- 3 files changed, 236 insertions(+), 50 deletions(-)
+ fs/f2fs/f2fs.h    |  6 ++++--
+ fs/f2fs/file.c    | 54 +++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ fs/f2fs/gc.c      | 19 ++++++++++++++-----
+ fs/f2fs/segment.c | 14 ++++++++++----
+ fs/f2fs/segment.h |  3 ++-
+ 5 files changed, 83 insertions(+), 13 deletions(-)
 
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index 68e649a31c7d..221ad086ee00 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -49,7 +49,7 @@ static struct rb_entry *__lookup_rb_tree_slow(struct rb_root *root,
- 	return NULL;
- }
- 
--static struct rb_entry *__lookup_rb_tree(struct rb_root *root,
-+struct rb_entry *__lookup_rb_tree(struct rb_root *root,
- 				struct rb_entry *cached_re, unsigned int ofs)
- {
- 	struct rb_entry *re;
-@@ -61,7 +61,7 @@ static struct rb_entry *__lookup_rb_tree(struct rb_root *root,
- 	return re;
- }
- 
--static struct rb_node **__lookup_rb_tree_for_insert(struct f2fs_sb_info *sbi,
-+struct rb_node **__lookup_rb_tree_for_insert(struct f2fs_sb_info *sbi,
- 				struct rb_root *root, struct rb_node **parent,
- 				unsigned int ofs)
- {
-@@ -92,13 +92,14 @@ static struct rb_node **__lookup_rb_tree_for_insert(struct f2fs_sb_info *sbi,
-  * in order to simpfy the insertion after.
-  * tree must stay unchanged between lookup and insertion.
-  */
--static struct rb_entry *__lookup_rb_tree_ret(struct rb_root *root,
-+struct rb_entry *__lookup_rb_tree_ret(struct rb_root *root,
- 				struct rb_entry *cached_re,
- 				unsigned int ofs,
- 				struct rb_entry **prev_entry,
- 				struct rb_entry **next_entry,
- 				struct rb_node ***insert_p,
--				struct rb_node **insert_parent)
-+				struct rb_node **insert_parent,
-+				bool force)
- {
- 	struct rb_node **pnode = &root->rb_node;
- 	struct rb_node *parent = NULL, *tmp_node;
-@@ -145,12 +146,12 @@ static struct rb_entry *__lookup_rb_tree_ret(struct rb_root *root,
- 	return NULL;
- 
- lookup_neighbors:
--	if (ofs == re->ofs) {
-+	if (ofs == re->ofs || force) {
- 		/* lookup prev node for merging backward later */
- 		tmp_node = rb_prev(&re->rb_node);
- 		*prev_entry = rb_entry_safe(tmp_node, struct rb_entry, rb_node);
- 	}
--	if (ofs == re->ofs + re->len - 1) {
-+	if (ofs == re->ofs + re->len - 1 || force) {
- 		/* lookup next node for merging frontward later */
- 		tmp_node = rb_next(&re->rb_node);
- 		*next_entry = rb_entry_safe(tmp_node, struct rb_entry, rb_node);
-@@ -481,7 +482,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
- 					(struct rb_entry *)et->cached_en, fofs,
- 					(struct rb_entry **)&prev_en,
- 					(struct rb_entry **)&next_en,
--					&insert_p, &insert_parent);
-+					&insert_p, &insert_parent, false);
- 	if (!en)
- 		en = next_en;
- 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 562db8989a4e..ee7d6105a7a5 100644
+index 562db8989a4e..f2b58ca86473 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -194,13 +194,26 @@ enum {
- 	D_DONE,
- };
+@@ -280,6 +280,7 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
+ #define F2FS_IOC_DEFRAGMENT		_IO(F2FS_IOCTL_MAGIC, 8)
+ #define F2FS_IOC_MOVE_RANGE		_IOWR(F2FS_IOCTL_MAGIC, 9,	\
+ 						struct f2fs_move_range)
++#define F2FS_IOC_FLUSH_DEVICE		_IO(F2FS_IOCTL_MAGIC, 10)
  
-+struct discard_info {
-+	block_t lstart;			/* logical start address */
-+	block_t len;			/* length */
-+	block_t start;			/* actual start address in dev */
-+};
-+
- struct discard_cmd {
-+	struct rb_node rb_node;		/* rb node located in rb-tree */
-+	union {
-+		struct {
-+			block_t lstart;	/* logical start address */
-+			block_t len;	/* length */
-+			block_t start;	/* actual start address in dev */
-+		};
-+		struct discard_info di;	/* discard info */
-+
-+	};
- 	struct list_head list;		/* command list */
- 	struct completion wait;		/* compleation */
- 	struct block_device *bdev;	/* bdev */
--	block_t lstart;			/* logical start address */
--	block_t start;			/* actual start address in dev */
--	block_t len;			/* length */
- 	int state;			/* state */
- 	int error;			/* bio error */
- };
-@@ -217,6 +230,7 @@ struct discard_cmd_control {
- 	atomic_t issued_discard;		/* # of issued discard */
- 	atomic_t issing_discard;		/* # of issing discard */
- 	atomic_t discard_cmd_cnt;		/* # of cached cmd count */
-+	struct rb_root root;			/* root of discard rb-tree */
- };
+ #define F2FS_IOC_SET_ENCRYPTION_POLICY	FS_IOC_SET_ENCRYPTION_POLICY
+ #define F2FS_IOC_GET_ENCRYPTION_POLICY	FS_IOC_GET_ENCRYPTION_POLICY
+@@ -941,7 +942,7 @@ struct f2fs_sb_info {
+ 	int bg_gc;				/* background gc calls */
+ 	unsigned int ndirty_inode[NR_INODE_TYPE];	/* # of dirty inodes */
+ #endif
+-	unsigned int last_victim[2];		/* last victim segment # */
++	unsigned int last_victim[3];		/* last victim segment # */
+ 	spinlock_t stat_lock;			/* lock for stat operations */
  
- /* for the list of fsync inodes, used only during recovery */
-@@ -517,6 +531,24 @@ static inline void set_extent_info(struct extent_info *ei, unsigned int fofs,
- 	ei->len = len;
+ 	/* For sysfs suppport */
+@@ -2323,7 +2324,8 @@ int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
+ int start_gc_thread(struct f2fs_sb_info *sbi);
+ void stop_gc_thread(struct f2fs_sb_info *sbi);
+ block_t start_bidx_of_node(unsigned int node_ofs, struct inode *inode);
+-int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background);
++int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background,
++			unsigned int segno);
+ void build_gc_manager(struct f2fs_sb_info *sbi);
+ 
+ /*
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 0ac833dd2634..9d8f2126ebbb 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1855,7 +1855,7 @@ static int f2fs_ioc_gc(struct file *filp, unsigned long arg)
+ 		mutex_lock(&sbi->gc_mutex);
+ 	}
+ 
+-	ret = f2fs_gc(sbi, sync, true);
++	ret = f2fs_gc(sbi, sync, true, 0);
+ out:
+ 	mnt_drop_write_file(filp);
+ 	return ret;
+@@ -2211,6 +2211,56 @@ static int f2fs_ioc_move_range(struct file *filp, unsigned long arg)
+ 	return err;
  }
  
-+static inline bool __is_discard_mergeable(struct discard_info *back,
-+						struct discard_info *front)
++static int f2fs_ioc_flush_device(struct file *filp, unsigned long arg)
 +{
-+	return back->lstart + back->len == front->lstart;
++	struct inode *inode = file_inode(filp);
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	unsigned int start_segno = 0, end_segno = 0;
++	__u32 dev_num;
++	int ret;
++
++	if (!capable(CAP_SYS_ADMIN))
++		return -EPERM;
++
++	if (get_user(dev_num, (__u32 __user *)arg))
++		return -EFAULT;
++
++	if (f2fs_readonly(sbi->sb))
++		return -EROFS;
++
++	if (sbi->s_ndevs <= 1 || sbi->s_ndevs - 1 <= dev_num) {
++		f2fs_msg(sbi->sb, KERN_WARNING, "Can't flush %u in %d\n",
++				dev_num, sbi->s_ndevs);
++		return -EINVAL;
++	}
++
++	ret = mnt_want_write_file(filp);
++	if (ret)
++		return ret;
++
++	if (FDEV(dev_num).start_blk != 0)
++		start_segno = GET_SEGNO(sbi, FDEV(dev_num).start_blk);
++	end_segno = GET_SEGNO(sbi, FDEV(dev_num).end_blk);
++
++	while (start_segno++ < end_segno) {
++		if (!mutex_trylock(&sbi->gc_mutex)) {
++			ret = -EBUSY;
++			goto out;
++		}
++		sbi->last_victim[GC_CB] = end_segno + 1;
++		sbi->last_victim[GC_GREEDY] = end_segno + 1;
++		sbi->last_victim[ALLOC_NEXT] = end_segno + 1;
++		ret = f2fs_gc(sbi, true, true, start_segno);
++		sbi->last_victim[ALLOC_NEXT] = 0;
++		if (ret == -EAGAIN)
++			ret = 0;
++	}
++out:
++	mnt_drop_write_file(filp);
++	return ret;
 +}
 +
-+static inline bool __is_discard_back_mergeable(struct discard_info *cur,
-+						struct discard_info *back)
-+{
-+	return __is_discard_mergeable(back, cur);
-+}
 +
-+static inline bool __is_discard_front_mergeable(struct discard_info *cur,
-+						struct discard_info *front)
-+{
-+	return __is_discard_mergeable(cur, front);
-+}
-+
- static inline bool __is_extent_mergeable(struct extent_info *back,
- 						struct extent_info *front)
+ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
  {
-@@ -2573,6 +2605,16 @@ void f2fs_leave_shrinker(struct f2fs_sb_info *sbi);
- /*
-  * extent_cache.c
-  */
-+struct rb_entry *__lookup_rb_tree(struct rb_root *root,
-+				struct rb_entry *cached_re, unsigned int ofs);
-+struct rb_node **__lookup_rb_tree_for_insert(struct f2fs_sb_info *sbi,
-+				struct rb_root *root, struct rb_node **parent,
-+				unsigned int ofs);
-+struct rb_entry *__lookup_rb_tree_ret(struct rb_root *root,
-+		struct rb_entry *cached_re, unsigned int ofs,
-+		struct rb_entry **prev_entry, struct rb_entry **next_entry,
-+		struct rb_node ***insert_p, struct rb_node **insert_parent,
-+		bool force);
- unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink);
- bool f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext);
- void f2fs_drop_extent_tree(struct inode *inode);
+ 	switch (cmd) {
+@@ -2248,6 +2298,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		return f2fs_ioc_defragment(filp, arg);
+ 	case F2FS_IOC_MOVE_RANGE:
+ 		return f2fs_ioc_move_range(filp, arg);
++	case F2FS_IOC_FLUSH_DEVICE:
++		return f2fs_ioc_flush_device(filp, arg);
+ 	default:
+ 		return -ENOTTY;
+ 	}
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 9172112d6246..834d3b641b88 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -84,7 +84,7 @@ static int gc_thread_func(void *data)
+ 		stat_inc_bggc_count(sbi);
+ 
+ 		/* if return value is not zero, no victim was selected */
+-		if (f2fs_gc(sbi, test_opt(sbi, FORCE_FG_GC), true))
++		if (f2fs_gc(sbi, test_opt(sbi, FORCE_FG_GC), true, 0))
+ 			wait_ms = gc_th->no_gc_sleep_time;
+ 
+ 		trace_f2fs_background_gc(sbi->sb, wait_ms,
+@@ -308,6 +308,14 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+ 	p.min_segno = NULL_SEGNO;
+ 	p.min_cost = get_max_cost(sbi, &p);
+ 
++	if (*result) {
++		if (IS_DATASEG(get_seg_entry(sbi, *result)->type) &&
++			get_valid_blocks(sbi, *result, false) &&
++			!sec_usage_check(sbi, GET_SEC_FROM_SEG(sbi, *result)))
++			p.min_segno = *result;
++		goto out;
++	}
++
+ 	if (p.max_search == 0)
+ 		goto out;
+ 
+@@ -912,7 +920,6 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 		 *   - mutex_lock(sentry_lock)     - change_curseg()
+ 		 *                                  - lock_page(sum_page)
+ 		 */
+-
+ 		if (type == SUM_TYPE_NODE)
+ 			gc_node_segment(sbi, sum->entries, segno, gc_type);
+ 		else
+@@ -939,9 +946,9 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 	return sec_freed;
+ }
+ 
+-int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
++int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
++			bool background, unsigned int segno)
+ {
+-	unsigned int segno;
+ 	int gc_type = sync ? FG_GC : BG_GC;
+ 	int sec_freed = 0;
+ 	int ret = -EINVAL;
+@@ -990,8 +997,10 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
+ 		sbi->cur_victim_sec = NULL_SEGNO;
+ 
+ 	if (!sync) {
+-		if (has_not_enough_free_secs(sbi, sec_freed, 0))
++		if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
++			segno = 0;
+ 			goto gc_more;
++		}
+ 
+ 		if (gc_type == FG_GC)
+ 			ret = write_checkpoint(sbi, &cpc);
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 58cfbe3d4dc7..44bb26086d28 100644
+index 58cfbe3d4dc7..a9624cdb6db2 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -672,7 +672,7 @@ static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
- 	mutex_unlock(&dirty_i->seglist_lock);
- }
- 
--static void __add_discard_cmd(struct f2fs_sb_info *sbi,
-+static struct discard_cmd *__create_discard_cmd(struct f2fs_sb_info *sbi,
- 		struct block_device *bdev, block_t lstart,
- 		block_t start, block_t len)
- {
-@@ -689,18 +689,46 @@ static void __add_discard_cmd(struct f2fs_sb_info *sbi,
- 	dc->state = D_PREP;
- 	dc->error = 0;
- 	init_completion(&dc->wait);
--
--	mutex_lock(&dcc->cmd_lock);
- 	list_add_tail(&dc->list, pend_list);
--	mutex_unlock(&dcc->cmd_lock);
--
- 	atomic_inc(&dcc->discard_cmd_cnt);
-+
-+	return dc;
-+}
-+
-+static struct discard_cmd *__attach_discard_cmd(struct f2fs_sb_info *sbi,
-+				struct block_device *bdev, block_t lstart,
-+				block_t start, block_t len,
-+				struct rb_node *parent, struct rb_node **p)
-+{
-+	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-+	struct discard_cmd *dc;
-+
-+	dc = __create_discard_cmd(sbi, bdev, lstart, start, len);
-+
-+	rb_link_node(&dc->rb_node, parent, p);
-+	rb_insert_color(&dc->rb_node, &dcc->root);
-+
-+	return dc;
- }
- 
--static void __remove_discard_cmd(struct f2fs_sb_info *sbi, struct discard_cmd *dc)
-+static void __detach_discard_cmd(struct discard_cmd_control *dcc,
-+							struct discard_cmd *dc)
- {
- 	if (dc->state == D_DONE)
--		atomic_dec(&(SM_I(sbi)->dcc_info->issing_discard));
-+		atomic_dec(&dcc->issing_discard);
-+
-+	list_del(&dc->list);
-+	rb_erase(&dc->rb_node, &dcc->root);
-+
-+	kmem_cache_free(discard_cmd_slab, dc);
-+
-+	atomic_dec(&dcc->discard_cmd_cnt);
-+}
-+
-+static void __remove_discard_cmd(struct f2fs_sb_info *sbi,
-+							struct discard_cmd *dc)
-+{
-+	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
- 
- 	if (dc->error == -EOPNOTSUPP)
- 		dc->error = 0;
-@@ -708,9 +736,7 @@ static void __remove_discard_cmd(struct f2fs_sb_info *sbi, struct discard_cmd *d
- 	if (dc->error)
- 		f2fs_msg(sbi->sb, KERN_INFO,
- 				"Issue discard failed, ret: %d", dc->error);
--	list_del(&dc->list);
--	kmem_cache_free(discard_cmd_slab, dc);
--	atomic_dec(&SM_I(sbi)->dcc_info->discard_cmd_cnt);
-+	__detach_discard_cmd(dcc, dc);
- }
- 
- static void f2fs_submit_discard_endio(struct bio *bio)
-@@ -754,62 +780,178 @@ static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
+@@ -401,7 +401,7 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
+ 	 */
+ 	if (has_not_enough_free_secs(sbi, 0, 0)) {
+ 		mutex_lock(&sbi->gc_mutex);
+-		f2fs_gc(sbi, false, false);
++		f2fs_gc(sbi, false, false, 0);
  	}
  }
  
--static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
--		struct block_device *bdev, block_t blkstart, block_t blklen)
-+static struct discard_cmd *__insert_discard_tree(struct f2fs_sb_info *sbi,
-+				struct block_device *bdev, block_t lstart,
-+				block_t start, block_t len,
-+				struct rb_node **insert_p,
-+				struct rb_node *insert_parent)
- {
--	block_t lblkstart = blkstart;
-+	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-+	struct rb_node **p = &dcc->root.rb_node;
-+	struct rb_node *parent = NULL;
-+	struct discard_cmd *dc = NULL;
+@@ -1566,6 +1566,8 @@ static unsigned int __get_next_segno(struct f2fs_sb_info *sbi, int type)
+ 	if (type == CURSEG_HOT_DATA || IS_NODESEG(type))
+ 		return 0;
  
--	trace_f2fs_issue_discard(bdev, blkstart, blklen);
-+	if (insert_p && insert_parent) {
-+		parent = insert_parent;
-+		p = insert_p;
-+		goto do_insert;
-+	}
- 
--	if (sbi->s_ndevs) {
--		int devi = f2fs_target_device_index(sbi, blkstart);
-+	p = __lookup_rb_tree_for_insert(sbi, &dcc->root, &parent, lstart);
-+do_insert:
-+	dc = __attach_discard_cmd(sbi, bdev, lstart, start, len, parent, p);
-+	if (!dc)
-+		return NULL;
- 
--		blkstart -= FDEV(devi).start_blk;
--	}
--	__add_discard_cmd(sbi, bdev, lblkstart, blkstart, blklen);
--	wake_up(&SM_I(sbi)->dcc_info->discard_wait_queue);
--	return 0;
-+	return dc;
++	if (sbi->last_victim[ALLOC_NEXT])
++		return sbi->last_victim[ALLOC_NEXT];
+ 	return CURSEG_I(sbi, type)->segno;
  }
  
- static void __punch_discard_cmd(struct f2fs_sb_info *sbi,
- 				struct discard_cmd *dc, block_t blkaddr)
+@@ -1663,12 +1665,15 @@ static int get_ssr_segment(struct f2fs_sb_info *sbi, int type)
  {
--	block_t end_block = START_BLOCK(sbi, GET_SEGNO(sbi, blkaddr) + 1);
-+	struct discard_info di = dc->di;
-+	bool modified = false;
+ 	struct curseg_info *curseg = CURSEG_I(sbi, type);
+ 	const struct victim_selection *v_ops = DIRTY_I(sbi)->v_ops;
++	unsigned segno = 0;
+ 	int i, cnt;
+ 	bool reversed = false;
  
--	if (dc->state == D_DONE || dc->lstart + dc->len <= end_block) {
-+	if (dc->state == D_DONE || dc->len == 1) {
- 		__remove_discard_cmd(sbi, dc);
- 		return;
- 	}
- 
--	if (blkaddr - dc->lstart < dc->lstart + dc->len - end_block) {
--		dc->start += (end_block - dc->lstart);
--		dc->len -= (end_block - dc->lstart);
--		dc->lstart = end_block;
--	} else {
-+	if (blkaddr > di.lstart) {
- 		dc->len = blkaddr - dc->lstart;
-+		modified = true;
+ 	/* need_SSR() already forces to do this */
+-	if (v_ops->get_victim(sbi, &(curseg)->next_segno, BG_GC, type, SSR))
++	if (v_ops->get_victim(sbi, &segno, BG_GC, type, SSR)) {
++		curseg->next_segno = segno;
+ 		return 1;
 +	}
-+
-+	if (blkaddr < di.lstart + di.len - 1) {
-+		if (modified) {
-+			__insert_discard_tree(sbi, dc->bdev, blkaddr + 1,
-+					di.start + blkaddr + 1 - di.lstart,
-+					di.lstart + di.len - 1 - blkaddr,
-+					NULL, NULL);
-+		} else {
-+			dc->lstart++;
-+			dc->len--;
-+			dc->start++;
+ 
+ 	/* For node segments, let's do SSR more intensively */
+ 	if (IS_NODESEG(type)) {
+@@ -1692,9 +1697,10 @@ static int get_ssr_segment(struct f2fs_sb_info *sbi, int type)
+ 	for (; cnt-- > 0; reversed ? i-- : i++) {
+ 		if (i == type)
+ 			continue;
+-		if (v_ops->get_victim(sbi, &(curseg)->next_segno,
+-						BG_GC, i, SSR))
++		if (v_ops->get_victim(sbi, &segno, BG_GC, i, SSR)) {
++			curseg->next_segno = segno;
+ 			return 1;
 +		}
  	}
+ 	return 0;
  }
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 5f6ef163aa8f..155c53b79992 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -138,7 +138,8 @@ enum {
+  */
+ enum {
+ 	GC_CB = 0,
+-	GC_GREEDY
++	GC_GREEDY,
++	ALLOC_NEXT,
+ };
  
--/* This should be covered by global mutex, &sit_i->sentry_lock */
--void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
-+static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
-+				struct block_device *bdev, block_t lstart,
-+				block_t start, block_t len)
- {
- 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
--	struct list_head *pend_list = &(dcc->discard_pend_list);
--	struct list_head *wait_list = &(dcc->discard_wait_list);
--	struct discard_cmd *dc, *tmp;
-+	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
-+	struct discard_cmd *dc;
-+	struct discard_info di;
-+	struct rb_node **insert_p = NULL, *insert_parent = NULL;
-+	block_t end = lstart + len;
- 
- 	mutex_lock(&dcc->cmd_lock);
- 
--	list_for_each_entry_safe(dc, tmp, pend_list, list) {
--		if (dc->lstart <= blkaddr && blkaddr < dc->lstart + dc->len)
--			__punch_discard_cmd(sbi, dc, blkaddr);
-+	dc = (struct discard_cmd *)__lookup_rb_tree_ret(&dcc->root,
-+					NULL, lstart,
-+					(struct rb_entry **)&prev_dc,
-+					(struct rb_entry **)&next_dc,
-+					&insert_p, &insert_parent, true);
-+	if (dc)
-+		prev_dc = dc;
-+
-+	if (!prev_dc) {
-+		di.lstart = lstart;
-+		di.len = next_dc ? next_dc->lstart - lstart : len;
-+		di.len = min(di.len, len);
-+		di.start = start;
- 	}
- 
--	list_for_each_entry_safe(dc, tmp, wait_list, list) {
--		if (dc->lstart <= blkaddr && blkaddr < dc->lstart + dc->len) {
--			wait_for_completion_io(&dc->wait);
--			__punch_discard_cmd(sbi, dc, blkaddr);
-+	while (1) {
-+		struct rb_node *node;
-+		bool merged = false;
-+		struct discard_cmd *tdc = NULL;
-+
-+		if (prev_dc) {
-+			di.lstart = prev_dc->lstart + prev_dc->len;
-+			if (di.lstart < lstart)
-+				di.lstart = lstart;
-+			if (di.lstart >= end)
-+				break;
-+
-+			if (!next_dc || next_dc->lstart > end)
-+				di.len = end - di.lstart;
-+			else
-+				di.len = next_dc->lstart - di.lstart;
-+			di.start = start + di.lstart - lstart;
-+		}
-+
-+		if (!di.len)
-+			goto next;
-+
-+		if (prev_dc && prev_dc->state == D_PREP &&
-+			prev_dc->bdev == bdev &&
-+			__is_discard_back_mergeable(&di, &prev_dc->di)) {
-+			prev_dc->di.len += di.len;
-+			di = prev_dc->di;
-+			tdc = prev_dc;
-+			merged = true;
-+		}
-+
-+		if (next_dc && next_dc->state == D_PREP &&
-+			next_dc->bdev == bdev &&
-+			__is_discard_front_mergeable(&di, &next_dc->di)) {
-+			next_dc->di.lstart = di.lstart;
-+			next_dc->di.len += di.len;
-+			next_dc->di.start = di.start;
-+			if (tdc)
-+				__remove_discard_cmd(sbi, tdc);
-+
-+			merged = true;
- 		}
-+
-+		if (!merged)
-+			__insert_discard_tree(sbi, bdev, di.lstart, di.start,
-+							di.len, NULL, NULL);
-+ next:
-+		prev_dc = next_dc;
-+		if (!prev_dc)
-+			break;
-+
-+		node = rb_next(&prev_dc->rb_node);
-+		next_dc = rb_entry_safe(node, struct discard_cmd, rb_node);
-+	}
-+
-+	mutex_unlock(&dcc->cmd_lock);
-+}
-+
-+static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
-+		struct block_device *bdev, block_t blkstart, block_t blklen)
-+{
-+	block_t lblkstart = blkstart;
-+
-+	trace_f2fs_issue_discard(bdev, blkstart, blklen);
-+
-+	if (sbi->s_ndevs) {
-+		int devi = f2fs_target_device_index(sbi, blkstart);
-+
-+		blkstart -= FDEV(devi).start_blk;
-+	}
-+	__update_discard_tree_range(sbi, bdev, lblkstart, blkstart, blklen);
-+	wake_up(&SM_I(sbi)->dcc_info->discard_wait_queue);
-+	return 0;
-+}
-+
-+/* This should be covered by global mutex, &sit_i->sentry_lock */
-+void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
-+{
-+	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-+	struct discard_cmd *dc;
-+
-+	mutex_lock(&dcc->cmd_lock);
-+
-+	dc = (struct discard_cmd *)__lookup_rb_tree(&dcc->root, NULL, blkaddr);
-+	if (dc) {
-+		if (dc->state != D_PREP)
-+			wait_for_completion_io(&dc->wait);
-+		__punch_discard_cmd(sbi, dc, blkaddr);
- 	}
- 
- 	mutex_unlock(&dcc->cmd_lock);
-@@ -1178,6 +1320,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
- 	atomic_set(&dcc->discard_cmd_cnt, 0);
- 	dcc->nr_discards = 0;
- 	dcc->max_discards = 0;
-+	dcc->root = RB_ROOT;
- 
- 	init_waitqueue_head(&dcc->discard_wait_queue);
- 	SM_I(sbi)->dcc_info = dcc;
+ /*
 -- 
-2.12.2.575.gb14f27f
+2.11.0
 
 
 ------------------------------------------------------------------------------
