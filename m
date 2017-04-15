@@ -1,153 +1,46 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 1/3] f2fs: clean up discard_cmd_control structure
-Date: Sat, 15 Apr 2017 14:09:36 +0800
-Message-ID: <20170415060938.43694-1-yuchao0@huawei.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH 06/12] audit: Use timespec64 to represent
+	audit timestamps
+Date: Sat, 15 Apr 2017 10:29:00 +0000
+Message-ID: <CAK8P3a3w_3JKxW6kz-V9roxzf9RwbVgHaK8XjO5OOktVvZ_Sog@mail.gmail.com>
+References: <1491613030-11599-1-git-send-email-deepa.kernel@gmail.com>
+	<1491613030-11599-7-git-send-email-deepa.kernel@gmail.com>
+	<CAHC9VhTYWeKL+BAb6F3tfwzs7OKUEA8ANM=V05sfoiahNNX=9w@mail.gmail.com>
+	<CABeXuvoKmvbo_n3XQ0Y+iWGz88Jr3TwbPA7GiR3pia9407ANLw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1czGuQ-0006DA-6P
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 15 Apr 2017 06:10:10 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187]
-	helo=dggrg01-dlp.huawei.com)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1czGuL-0000a9-IT
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 15 Apr 2017 06:10:10 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <lustre-devel-bounces-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org>
+In-Reply-To: <CABeXuvoKmvbo_n3XQ0Y+iWGz88Jr3TwbPA7GiR3pia9407ANLw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <http://lists.lustre.org/options.cgi/lustre-devel-lustre.org>,
+	<mailto:lustre-devel-request-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.lustre.org/pipermail/lustre-devel-lustre.org/>
+List-Post: <mailto:lustre-devel-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org>
+List-Help: <mailto:lustre-devel-request-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.lustre.org/listinfo.cgi/lustre-devel-lustre.org>,
+	<mailto:lustre-devel-request-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org?subject=subscribe>
+Errors-To: lustre-devel-bounces-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org
+Sender: "lustre-devel" <lustre-devel-bounces-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org>
+To: Deepa Dinamani <deepa.kernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: yuchao0-hv44wF8Li93QT0dZR+AlfA@public.gmane.org, "J. Bruce Fields" <bfields-uC3wQj2KruNg9hUCZPvPmw@public.gmane.org>, Chris Mason <clm-b10kYP2dOMg@public.gmane.org>, linux-mtd <linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Evgeniy Dushistov <dushistov-JGs/UdohzUI@public.gmane.org>, Jeff Layton <jlayton-vpEMnDpepFuMZCB2o+C8xQ@public.gmane.org>, ceph-devel <ceph-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Paul Moore <paul-r2n+y4ga6xFZroRs9YW3xA@public.gmane.org>, y2038 Mailman List <y2038-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, Ingo Molnar <mingo-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Steven Rostedt <rostedt-nx8X9YLhiw1AfugRpC6u6w@public.gmane.org>, "Drokin,
+	Oleg" <oleg.drokin-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexander Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, David Sterba <dsterba-IBi9RG/b67k@public.gmane.org>, Jaegeuk Kim <jaegeuk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Josef Bacik <jbacik-b10kYP2dOMg@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Eric Paris <eparis-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Linux F2F
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Avoid long variable name in discard_cmd_control structure, no logic
-change.
+On Sat, Apr 8, 2017 at 5:58 PM, Deepa Dinamani <deepa.kernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> I have no problem merging this patch into audit/next for v4.12, would
+>> you prefer me to do that so at least this patch is merged?
+>
+> This would be fine.
+> But, I think whoever takes the last 2 deletion patches should also take them.
+> I'm not sure how that part works out.
+>
+>> It would probably make life a small bit easier for us in the audit
+>> world too as it would reduce the potential merge conflict.  However,
+>> that's a relatively small thing to worry about.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/f2fs.h    |  8 ++++----
- fs/f2fs/segment.c | 24 ++++++++++++------------
- 2 files changed, 16 insertions(+), 16 deletions(-)
+As Andrew has picked the remaining patches up into -mm, this will work
+out fine: any patches picked up by the respective maintainers for v4.12
+should arrive as git pull requests before the -mm patches get applied
+at a later stage of the merge window.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 476e9459fa56..bc32c1b8ad67 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -220,12 +220,12 @@ struct discard_cmd {
- 
- struct discard_cmd_control {
- 	struct task_struct *f2fs_issue_discard;	/* discard thread */
--	struct list_head discard_entry_list;	/* 4KB discard entry list */
--	int nr_discards;			/* # of discards in the list */
--	struct list_head discard_pend_list;	/* store pending entries */
--	struct list_head discard_wait_list;	/* store on-flushing entries */
-+	struct list_head entry_list;		/* 4KB discard entry list */
-+	struct list_head pend_list;		/* store pending entries */
-+	struct list_head wait_list;		/* store on-flushing entries */
- 	wait_queue_head_t discard_wait_queue;	/* waiting queue for wake-up */
- 	struct mutex cmd_lock;
-+	int nr_discards;			/* # of discards in the list */
- 	int max_discards;			/* max. discards to be issued */
- 	atomic_t issued_discard;		/* # of issued discard */
- 	atomic_t issing_discard;		/* # of issing discard */
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index c068dd6c016f..84648a716b01 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -677,7 +677,7 @@ static struct discard_cmd *__create_discard_cmd(struct f2fs_sb_info *sbi,
- 		block_t start, block_t len)
- {
- 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
--	struct list_head *pend_list = &(dcc->discard_pend_list);
-+	struct list_head *pend_list = &(dcc->pend_list);
- 	struct discard_cmd *dc;
- 
- 	dc = f2fs_kmem_cache_alloc(discard_cmd_slab, GFP_NOFS);
-@@ -773,7 +773,7 @@ static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
- 			bio->bi_end_io = f2fs_submit_discard_endio;
- 			bio->bi_opf |= REQ_SYNC;
- 			submit_bio(bio);
--			list_move_tail(&dc->list, &dcc->discard_wait_list);
-+			list_move_tail(&dc->list, &dcc->wait_list);
- 		}
- 	} else {
- 		__remove_discard_cmd(sbi, dc);
-@@ -961,8 +961,8 @@ void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
- void f2fs_wait_discard_bios(struct f2fs_sb_info *sbi)
- {
- 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
--	struct list_head *pend_list = &(dcc->discard_pend_list);
--	struct list_head *wait_list = &(dcc->discard_wait_list);
-+	struct list_head *pend_list = &(dcc->pend_list);
-+	struct list_head *wait_list = &(dcc->wait_list);
- 	struct discard_cmd *dc, *tmp;
- 	struct blk_plug plug;
- 
-@@ -986,8 +986,8 @@ static int issue_discard_thread(void *data)
- 	struct f2fs_sb_info *sbi = data;
- 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
- 	wait_queue_head_t *q = &dcc->discard_wait_queue;
--	struct list_head *pend_list = &dcc->discard_pend_list;
--	struct list_head *wait_list = &dcc->discard_wait_list;
-+	struct list_head *pend_list = &dcc->pend_list;
-+	struct list_head *wait_list = &dcc->wait_list;
- 	struct discard_cmd *dc, *tmp;
- 	struct blk_plug plug;
- 	int iter = 0;
-@@ -1135,7 +1135,7 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
- 	unsigned int start = 0, end = -1;
- 	bool force = (cpc->reason == CP_DISCARD);
- 	struct discard_entry *de = NULL;
--	struct list_head *head = &SM_I(sbi)->dcc_info->discard_entry_list;
-+	struct list_head *head = &SM_I(sbi)->dcc_info->entry_list;
- 	int i;
- 
- 	if (se->valid_blocks == max_blocks || !f2fs_discard_en(sbi))
-@@ -1184,7 +1184,7 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
- 
- void release_discard_addrs(struct f2fs_sb_info *sbi)
- {
--	struct list_head *head = &(SM_I(sbi)->dcc_info->discard_entry_list);
-+	struct list_head *head = &(SM_I(sbi)->dcc_info->entry_list);
- 	struct discard_entry *entry, *this;
- 
- 	/* drop caches */
-@@ -1210,7 +1210,7 @@ static void set_prefree_as_free_segments(struct f2fs_sb_info *sbi)
- 
- void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- {
--	struct list_head *head = &(SM_I(sbi)->dcc_info->discard_entry_list);
-+	struct list_head *head = &(SM_I(sbi)->dcc_info->entry_list);
- 	struct discard_entry *entry, *this;
- 	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
- 	unsigned long *prefree_map = dirty_i->dirty_segmap[PRE];
-@@ -1311,9 +1311,9 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
- 	if (!dcc)
- 		return -ENOMEM;
- 
--	INIT_LIST_HEAD(&dcc->discard_entry_list);
--	INIT_LIST_HEAD(&dcc->discard_pend_list);
--	INIT_LIST_HEAD(&dcc->discard_wait_list);
-+	INIT_LIST_HEAD(&dcc->entry_list);
-+	INIT_LIST_HEAD(&dcc->pend_list);
-+	INIT_LIST_HEAD(&dcc->wait_list);
- 	mutex_init(&dcc->cmd_lock);
- 	atomic_set(&dcc->issued_discard, 0);
- 	atomic_set(&dcc->issing_discard, 0);
--- 
-2.12.2.510.ge1104a5ee539
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+     Arnd
