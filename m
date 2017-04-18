@@ -1,62 +1,101 @@
-From: Jin Qian <jinqian@google.com>
-Subject: [PATCH 1/1] fsck.f2fs: fix cur_valid_map buffer overflow
-Date: Tue, 18 Apr 2017 10:58:05 -0700
-Message-ID: <20170418175805.17594-1-jinqian@google.com>
+From: Eric Biggers <ebiggers3@gmail.com>
+Subject: Re: [PATCH] fscrypt: use 32 bytes of encrypted filename
+Date: Tue, 18 Apr 2017 16:01:36 -0700
+Message-ID: <20170418230136.GA96152@gmail.com>
+References: <20170418210642.6039-1-gwendal@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jinqian@google.com>) id 1d0Xni-0006EL-Gj
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 18 Apr 2017 18:24:30 +0000
-Received: from mail-pf0-f174.google.com ([209.85.192.174])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1d0Xng-0003G6-Hz
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 18 Apr 2017 18:24:30 +0000
-Received: by mail-pf0-f174.google.com with SMTP id 194so456817pfv.3
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Tue, 18 Apr 2017 11:24:28 -0700 (PDT)
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: jaegeuk@kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-ext4-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170418210642.6039-1-gwendal@chromium.org>
+Sender: linux-ext4-owner@vger.kernel.org
+To: Gwendal Grignou <gwendal@chromium.org>
+Cc: tytso@mit.edu, ebiggers@google.com, linux-ext4@vger.kernel.org, linux-fscrypt@vger.kernel.org, kinaba@chromium.org, hashimoto@chromium.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-blk_off is read from image. Attacker can construct an image with big
-blk_off that trigger overflow on se->cur_valid_map.
++Cc linux-f2fs-devel@lists.sourceforge.net
++Cc linux-mtd@lists.infradead.org (for ubifs)
 
-Signed-off-by: Jin Qian <jinqian@google.com>
----
- fsck/fsck.c | 2 ++
- 1 file changed, 2 insertions(+)
+Hi Gwendal,
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index b625153..e97ee0a 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -1825,6 +1825,8 @@ int check_curseg_offset(struct f2fs_sb_info *sbi)
- 		struct seg_entry *se;
- 		int j, nblocks;
- 
-+		if ((curseg->next_blkoff >> 3) >= SIT_VBLOCK_MAP_SIZE)
-+			return -EINVAL;
- 		se = get_seg_entry(sbi, curseg->segno);
- 		if (f2fs_test_bit(curseg->next_blkoff,
- 					(const char *)se->cur_valid_map)) {
--- 
-2.12.2.762.g0e3151a226-goog
+On Tue, Apr 18, 2017 at 02:06:42PM -0700, Gwendal Grignou wrote:
+> If we use only 16 bytes, due to how CBC works, if the names have the
+> same beginning, their last ciphertext block (16 bytes) may be identical.
+> 
+> It happens when two file names share the first 16k bytes and both have
+> length withn 16 * n + 13 and 16 * n + 16.
+> 
+> Instead use 32 bytes to build the filenames from encrypted data when
+> directory is scrambled.
 
+Just some background for people who may be unfamiliar with what's going on here
+(and it may be useful to include some of this in the patch description):
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+When accessing files without access to the key, userspace needs to operate on a
+filename derived from the ciphertext filename, which contains arbitrary bytes. 
+
+But since it's supported to use filenames up to FILENAME_MAX (255 bytes) in
+length when using encryption, we can't always base-64 encode the filename, since
+that may make it too long.
+
+The way this is solved currently is that for filenames with ciphertext length
+greater than 32 bytes, the filesystem provides an 8-byte "cookie" (split into
+'hash' and 'minor_hash'), which along with the last 16 bytes of the filename
+ciphertext is base-64 encoded into a fixed-length name.  The filesystem returns
+this on readdir.  Then, when a lookup is done, the filesystem translates this
+info back into a specific directory entry.
+
+Since ext4 directory entries do not contain a hash field, ext4 relies only on
+the 16 bytes of ciphertext to distinguish collisions within a directory block.
+Unfortunately, this is broken because with the encryption mode used for
+filenames (CTS), the ciphertext of the last 16-byte block depends only on the
+plaintext up to and including the *second to last* block, not up to the last
+block.  This causes long filenames that differ just near the end to collide.
+
+We could fix this by using the second to last block of ciphertext rather than
+the last one.  However, using the last *two* blocks as you're proposing should
+be fine too.
+
+Of course we could also hash the filename's ciphertext with SHA-256 or
+something, but it's nice to take advantage of the encryption mode, and not have
+to do yet another hash.
+
+I am not too worried about changing the way encrypted filenames are presented,
+since applications are not supposed to rely on this.  (Though we probably should
+be doing something to catch broken applications, like encoding the filenames
+slightly differently after each reboot...)
+
+Strangely, f2fs and ubifs do not use the bytes from the filename at all when
+trying to find a specific directory entry in this case.  So this patch doesn't
+really affect them.  This seems unreliable; perhaps we should introduce a
+function like "fscrypt_name_matches()" which all the filesystems could call?
+Can any of the f2fs and ubifs developers explain why they don't look at any
+bytes from the filename?
+
+Anyway, a couple nits on this patch:
+
+> +	oname->len = 1 + digest_encode(
+> +			buf,
+> +			FS_FNAME_CRYPTO_DIGEST_SIZE + sizeof(u64),
+> +			oname->name + 1);
+>  	return 0;
+>  }
+
+Use 'sizeof(buf)'
+
+>  
+> diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+> index c4a389a6027b..14b2a2335a32 100644
+> --- a/fs/ext4/namei.c
+> +++ b/fs/ext4/namei.c
+> @@ -1257,8 +1257,8 @@ static inline int ext4_match(struct ext4_filename *fname,
+>  			int ret;
+
+>  			if (de->name_len < 16)
+>  				return 0;
+
+de->name_len < 32
+
+(or replace 32 with FS_FNAME_CRYPTO_DIGEST_SIZE, here and below)
+
+- Eric
