@@ -1,62 +1,108 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/3] f2fs: assign allocation hint for warm/cold
-	data
-Date: Tue, 18 Apr 2017 18:45:20 -0700
-Message-ID: <20170419014520.12536-3-jaegeuk@kernel.org>
-References: <20170419014520.12536-1-jaegeuk@kernel.org>
+From: Eric Biggers <ebiggers3@gmail.com>
+Subject: Re: [f2fs-dev] [PATCH] fscrypt: use 32 bytes of encrypted filename
+Date: Tue, 18 Apr 2017 21:01:38 -0700
+Message-ID: <20170419040138.GA563@zzz>
+References: <20170418210642.6039-1-gwendal@chromium.org>
+ <20170418230136.GA96152@gmail.com>
+ <20170419001005.GA143911@gmail.com>
+ <20170419014209.GB12215@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1d0egY-0000FF-Fi
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 19 Apr 2017 01:45:34 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1d0egW-0001OA-FU
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 19 Apr 2017 01:45:34 +0000
-In-Reply-To: <20170419014520.12536-1-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-ext4-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170419014209.GB12215@jaegeuk.local>
+Sender: linux-ext4-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Gwendal Grignou <gwendal@chromium.org>, hashimoto@chromium.org, ebiggers@google.com, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org, tytso@mit.edu, linux-ext4@vger.kernel.org, kinaba@chromium.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch gives slower device region to warm/cold data area more eagerly.
+On Tue, Apr 18, 2017 at 06:42:09PM -0700, Jaegeuk Kim wrote:
+> Hi Eric,
+> 
+> On 04/18, Eric Biggers wrote:
+> > On Tue, Apr 18, 2017 at 04:01:36PM -0700, Eric Biggers wrote:
+> > > 
+> > > Strangely, f2fs and ubifs do not use the bytes from the filename at all when
+> > > trying to find a specific directory entry in this case.  So this patch doesn't
+> > > really affect them.  This seems unreliable; perhaps we should introduce a
+> > > function like "fscrypt_name_matches()" which all the filesystems could call?
+> > > Can any of the f2fs and ubifs developers explain why they don't look at any
+> > > bytes from the filename?
+> > > 
+> 
+> The fscrypt_setup_filename sets fname->hash in the bigname case, but doesn't
+> give fname->disk_name. If it's not such the bigname case, we check its name
+> since fname->hash is zero.
+> 
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/gc.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Yes, that's what it does now.  The question is, in the "bigname" case why
+doesn't f2fs check the 16 bytes of ciphertext in fname->crypto_buf too?  f2fs
+doesn't even use 'minor_hash'; it can't possibly be the case that there are
+never any collisions of a 32-bit hash in a directory, can it?
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index d988c1aaf132..eb1846a80da3 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1028,4 +1028,9 @@ void build_gc_manager(struct f2fs_sb_info *sbi)
- 
- 	sbi->fggc_threshold = div64_u64((main_count - ovp_count) *
- 				BLKS_PER_SEC(sbi), (main_count - resv_count));
-+
-+	/* give warm/cold data area from slower device */
-+	if (sbi->s_ndevs)
-+		sbi->last_victim[ALLOC_NEXT] =
-+				GET_SEGNO(sbi, FDEV(0).end_blk) + 1;
- }
--- 
-2.11.0
+I actually tested it, and it definitely happens if you put a lot of files in an
+encrypted directory on f2fs.  An example with 100000 files:
 
+# seq -f "edir/abcdefghijklmnopqrstuvwxyz012345%.0f" 100000 | xargs touch
+# find edir -type f | xargs stat -c %i | sort | uniq | wc -l
+100000
+# sync
+# echo 3 > /proc/sys/vm/drop_caches
+# keyctl new_session
+# find edir -type f | xargs stat -c %i | sort | uniq | wc -l
+99999
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+So when I tried accessing the encrypted directory without the key, two dentries
+showed the same inode, due to a hash collision.
+
+Actually, checking the last 16 bytes of ciphertext currently wouldn't even help
+for those filenames since it's all the same, as they share a long common prefix:
+
+# ls -1  edir | head -n 4
+_++09VCAAAAgsQQf6Q5YgLgoO4f3PPSfb
+_++1UWDAAAAgsQQf6Q5YgLgoO4f3PPSfb
+_++2HAAAAAAgsQQf6Q5YgLgoO4f3PPSfb
+_++4UxBAAAAgsQQf6Q5YgLgoO4f3PPSfb
+
+But that's the bug, since the last two AES blocks are swapped when using
+ciphertext stealing.  We should at least be using the second-to-last block in
+which case we'd see:
+
+# ls -1  edir | head -n 4
+_++09VCAAAAw9VONwQEXOVv3RR,kOAKwB
+_++1UWDAAAAAHDi7c3QZxbiltjOo1m0,F
+_++2HAAAAAAAfd1Vx0oC31SmhzYpaYfwz
+_++4UxBAAAAwZxcWjzORdAef50FB9sKY4
+
+(In either case there are still a few A's at the beginning since f2fs doesn't
+set 'minor_hash'.  That's okay, but only if collisions are ruled out by other
+means.)
+
+> > -		/* encrypted case */
+> > -		de_name.name = d->filename[bit_pos];
+> > -		de_name.len = le16_to_cpu(de->name_len);
+> > -
+> > -		/* show encrypted name */
+> > -		if (fname->hash) {
+> > -			if (de->hash_code == cpu_to_le32(fname->hash))
+> > -				goto found;
+> > -		} else if (de_name.len == name->len &&
+> > -			de->hash_code == namehash &&
+> > -			!memcmp(de_name.name, name->name, name->len))
+> > +		if ((fname->hash == 0 ||
+> > +		     fname->hash == le32_to_cpu(de->hash_code)) &&
+> > +		    fscrypt_name_matches(fname, d->filename[bit_pos],
+> > +					 le16_to_cpu(de->name_len)))
+> 
+> BTW, this slips checking namehash?
+> 
+
+Yes that's a mistake.  Actually it seems that 'namehash' is the same as
+'fname->hash' when 'fname->hash' is nonzero, so the code should just be:
+
+	if (de->hash_code == namehash &&
+	    fscrypt_name_matches(fname, d->filename[bit_pos],
+				 le16_to_cpu(de->name_len)))
+		goto found;
+
+- Eric
