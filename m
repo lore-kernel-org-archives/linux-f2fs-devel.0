@@ -1,23 +1,24 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/3] f2fs: fix _IOW usage
-Date: Tue, 18 Apr 2017 18:45:19 -0700
-Message-ID: <20170419014520.12536-2-jaegeuk@kernel.org>
+Subject: [PATCH 3/3] f2fs: assign allocation hint for warm/cold
+	data
+Date: Tue, 18 Apr 2017 18:45:20 -0700
+Message-ID: <20170419014520.12536-3-jaegeuk@kernel.org>
 References: <20170419014520.12536-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1d0egX-000506-8E
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1d0egY-0000FF-Fi
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 19 Apr 2017 01:45:33 +0000
+	Wed, 19 Apr 2017 01:45:34 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1d0egV-000536-4M
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1d0egW-0001OA-FU
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 19 Apr 2017 01:45:33 +0000
+	Wed, 19 Apr 2017 01:45:34 +0000
 In-Reply-To: <20170419014520.12536-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -31,30 +32,27 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch fixes wrong _IOW usage.
+This patch gives slower device region to warm/cold data area more eagerly.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/f2fs.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/f2fs/gc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index c28e8e7d6a5f..6655061f6d3f 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -275,9 +275,10 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
- #define F2FS_IOC_START_VOLATILE_WRITE	_IO(F2FS_IOCTL_MAGIC, 3)
- #define F2FS_IOC_RELEASE_VOLATILE_WRITE	_IO(F2FS_IOCTL_MAGIC, 4)
- #define F2FS_IOC_ABORT_VOLATILE_WRITE	_IO(F2FS_IOCTL_MAGIC, 5)
--#define F2FS_IOC_GARBAGE_COLLECT	_IO(F2FS_IOCTL_MAGIC, 6)
-+#define F2FS_IOC_GARBAGE_COLLECT	_IOW(F2FS_IOCTL_MAGIC, 6, __u32)
- #define F2FS_IOC_WRITE_CHECKPOINT	_IO(F2FS_IOCTL_MAGIC, 7)
--#define F2FS_IOC_DEFRAGMENT		_IO(F2FS_IOCTL_MAGIC, 8)
-+#define F2FS_IOC_DEFRAGMENT		_IOWR(F2FS_IOCTL_MAGIC, 8,	\
-+						struct f2fs_defragment)
- #define F2FS_IOC_MOVE_RANGE		_IOWR(F2FS_IOCTL_MAGIC, 9,	\
- 						struct f2fs_move_range)
- #define F2FS_IOC_FLUSH_DEVICE		_IOW(F2FS_IOCTL_MAGIC, 10,	\
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index d988c1aaf132..eb1846a80da3 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1028,4 +1028,9 @@ void build_gc_manager(struct f2fs_sb_info *sbi)
+ 
+ 	sbi->fggc_threshold = div64_u64((main_count - ovp_count) *
+ 				BLKS_PER_SEC(sbi), (main_count - resv_count));
++
++	/* give warm/cold data area from slower device */
++	if (sbi->s_ndevs)
++		sbi->last_victim[ALLOC_NEXT] =
++				GET_SEGNO(sbi, FDEV(0).end_blk) + 1;
+ }
 -- 
 2.11.0
 
