@@ -1,132 +1,133 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] fscrypt: use 32 bytes of encrypted filename
-Date: Wed, 19 Apr 2017 13:44:48 -0700
-Message-ID: <20170419204448.GA1021@jaegeuk.local>
-References: <20170418210642.6039-1-gwendal@chromium.org>
- <20170418230136.GA96152@gmail.com>
- <20170419001005.GA143911@gmail.com>
- <20170419014209.GB12215@jaegeuk.local>
- <20170419040138.GA563@zzz>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: improve definition of statistic macros
+Date: Thu, 20 Apr 2017 09:13:57 +0800
+Message-ID: <f87ccc24-ca03-a962-0ff0-3efe213c6b73@huawei.com>
+References: <20170419173841.3885833-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-ext4-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170419040138.GA563@zzz>
-Sender: linux-ext4-owner@vger.kernel.org
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: Gwendal Grignou <gwendal@chromium.org>, hashimoto@chromium.org, ebiggers@google.com, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org, tytso@mit.edu, linux-ext4@vger.kernel.org, kinaba@chromium.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1d10fw-0002lQ-EH
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 20 Apr 2017 01:14:24 +0000
+Received: from szxga02-in.huawei.com ([45.249.212.188]
+	helo=dggrg02-dlp.huawei.com)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1d10ft-0002it-Lv
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 20 Apr 2017 01:14:24 +0000
+In-Reply-To: <20170419173841.3885833-1-arnd@arndb.de>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Arnd Bergmann <arnd@arndb.de>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: DongOh Shin <doscode.kr@gmail.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 04/18, Eric Biggers wrote:
-> On Tue, Apr 18, 2017 at 06:42:09PM -0700, Jaegeuk Kim wrote:
-> > Hi Eric,
-> > 
-> > On 04/18, Eric Biggers wrote:
-> > > On Tue, Apr 18, 2017 at 04:01:36PM -0700, Eric Biggers wrote:
-> > > > 
-> > > > Strangely, f2fs and ubifs do not use the bytes from the filename at all when
-> > > > trying to find a specific directory entry in this case.  So this patch doesn't
-> > > > really affect them.  This seems unreliable; perhaps we should introduce a
-> > > > function like "fscrypt_name_matches()" which all the filesystems could call?
-> > > > Can any of the f2fs and ubifs developers explain why they don't look at any
-> > > > bytes from the filename?
-> > > > 
-> > 
-> > The fscrypt_setup_filename sets fname->hash in the bigname case, but doesn't
-> > give fname->disk_name. If it's not such the bigname case, we check its name
-> > since fname->hash is zero.
-> > 
+On 2017/4/20 1:38, Arnd Bergmann wrote:
+> With a recent addition of f2fs_lookup_extent_tree(), we get a warning about
+> the use of empty macros:
 > 
-> Yes, that's what it does now.  The question is, in the "bigname" case why
-> doesn't f2fs check the 16 bytes of ciphertext in fname->crypto_buf too?  f2fs
-> doesn't even use 'minor_hash'; it can't possibly be the case that there are
-> never any collisions of a 32-bit hash in a directory, can it?
+> fs/f2fs/extent_cache.c: In function 'f2fs_lookup_extent_tree':
+> fs/f2fs/extent_cache.c:358:32: error: suggest braces around empty body in an 'else' statement [-Werror=empty-body]
+>    stat_inc_rbtree_node_hit(sbi);
 > 
-> I actually tested it, and it definitely happens if you put a lot of files in an
-> encrypted directory on f2fs.  An example with 100000 files:
+> A good way to avoid the warning and make the code more robust is to define
+> all no-op macros as 'do { } while (0)'.
 > 
-> # seq -f "edir/abcdefghijklmnopqrstuvwxyz012345%.0f" 100000 | xargs touch
-> # find edir -type f | xargs stat -c %i | sort | uniq | wc -l
-> 100000
-> # sync
-> # echo 3 > /proc/sys/vm/drop_caches
-> # keyctl new_session
-> # find edir -type f | xargs stat -c %i | sort | uniq | wc -l
-> 99999
-> 
-> So when I tried accessing the encrypted directory without the key, two dentries
-> showed the same inode, due to a hash collision.
+> Fixes: 54c2258cd63a ("f2fs: extract rb-tree operation infrastructure")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Thank you for sharing more details. I could reproduce this issue and reach out
-to what you mentioned. In order to resolve this, I wrote a patch for f2fs first
-to act like ext4 for easy backports. Then, I expect a global fscrypt function
-is easily able to clean them up.
+Thank you for the fix. :)
+
+Reivewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
 
->From 63ca24a64fb1625dac9740a2183fd8966388e185 Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Wed, 19 Apr 2017 10:49:21 -0700
-Subject: [PATCH] f2fs: check entire encrypted bigname when finding a dentry
+> ---
+>  fs/f2fs/f2fs.h | 58 +++++++++++++++++++++++++++++-----------------------------
+>  1 file changed, 29 insertions(+), 29 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 18bb86ac0f33..cdd33af74e01 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -2464,35 +2464,35 @@ void f2fs_destroy_stats(struct f2fs_sb_info *sbi);
+>  int __init f2fs_create_root_stats(void);
+>  void f2fs_destroy_root_stats(void);
+>  #else
+> -#define stat_inc_cp_count(si)
+> -#define stat_inc_bg_cp_count(si)
+> -#define stat_inc_call_count(si)
+> -#define stat_inc_bggc_count(si)
+> -#define stat_inc_dirty_inode(sbi, type)
+> -#define stat_dec_dirty_inode(sbi, type)
+> -#define stat_inc_total_hit(sb)
+> -#define stat_inc_rbtree_node_hit(sb)
+> -#define stat_inc_largest_node_hit(sbi)
+> -#define stat_inc_cached_node_hit(sbi)
+> -#define stat_inc_inline_xattr(inode)
+> -#define stat_dec_inline_xattr(inode)
+> -#define stat_inc_inline_inode(inode)
+> -#define stat_dec_inline_inode(inode)
+> -#define stat_inc_inline_dir(inode)
+> -#define stat_dec_inline_dir(inode)
+> -#define stat_inc_atomic_write(inode)
+> -#define stat_dec_atomic_write(inode)
+> -#define stat_update_max_atomic_write(inode)
+> -#define stat_inc_volatile_write(inode)
+> -#define stat_dec_volatile_write(inode)
+> -#define stat_update_max_volatile_write(inode)
+> -#define stat_inc_seg_type(sbi, curseg)
+> -#define stat_inc_block_count(sbi, curseg)
+> -#define stat_inc_inplace_blocks(sbi)
+> -#define stat_inc_seg_count(sbi, type, gc_type)
+> -#define stat_inc_tot_blk_count(si, blks)
+> -#define stat_inc_data_blk_count(sbi, blks, gc_type)
+> -#define stat_inc_node_blk_count(sbi, blks, gc_type)
+> +#define stat_inc_cp_count(si)				do { } while (0)
+> +#define stat_inc_bg_cp_count(si)			do { } while (0)
+> +#define stat_inc_call_count(si)				do { } while (0)
+> +#define stat_inc_bggc_count(si)				do { } while (0)
+> +#define stat_inc_dirty_inode(sbi, type)			do { } while (0)
+> +#define stat_dec_dirty_inode(sbi, type)			do { } while (0)
+> +#define stat_inc_total_hit(sb)				do { } while (0)
+> +#define stat_inc_rbtree_node_hit(sb)			do { } while (0)
+> +#define stat_inc_largest_node_hit(sbi)			do { } while (0)
+> +#define stat_inc_cached_node_hit(sbi)			do { } while (0)
+> +#define stat_inc_inline_xattr(inode)			do { } while (0)
+> +#define stat_dec_inline_xattr(inode)			do { } while (0)
+> +#define stat_inc_inline_inode(inode)			do { } while (0)
+> +#define stat_dec_inline_inode(inode)			do { } while (0)
+> +#define stat_inc_inline_dir(inode)			do { } while (0)
+> +#define stat_dec_inline_dir(inode)			do { } while (0)
+> +#define stat_inc_atomic_write(inode)			do { } while (0)
+> +#define stat_dec_atomic_write(inode)			do { } while (0)
+> +#define stat_update_max_atomic_write(inode)		do { } while (0)
+> +#define stat_inc_volatile_write(inode)			do { } while (0)
+> +#define stat_dec_volatile_write(inode)			do { } while (0)
+> +#define stat_update_max_volatile_write(inode)		do { } while (0)
+> +#define stat_inc_seg_type(sbi, curseg)			do { } while (0)
+> +#define stat_inc_block_count(sbi, curseg)		do { } while (0)
+> +#define stat_inc_inplace_blocks(sbi)			do { } while (0)
+> +#define stat_inc_seg_count(sbi, type, gc_type)		do { } while (0)
+> +#define stat_inc_tot_blk_count(si, blks)		do { } while (0)
+> +#define stat_inc_data_blk_count(sbi, blks, gc_type)	do { } while (0)
+> +#define stat_inc_node_blk_count(sbi, blks, gc_type)	do { } while (0)
+>  
+>  static inline int f2fs_build_stats(struct f2fs_sb_info *sbi) { return 0; }
+>  static inline void f2fs_destroy_stats(struct f2fs_sb_info *sbi) { }
+> 
 
-If user has no key under an encrypted dir, fscrypt gives digested dentries.
-Previously, when looking up a dentry, f2fs only checks its hash value with
-first 4 bytes of the digested dentry, which didn't handle hash collisions fully.
-This patch enhances to check entire dentry bytes likewise ext4.
 
-Eric reported how to reproduce this issue by:
-
- # seq -f "edir/abcdefghijklmnopqrstuvwxyz012345%.0f" 100000 | xargs touch
- # find edir -type f | xargs stat -c %i | sort | uniq | wc -l
-100000
- # sync
- # echo 3 > /proc/sys/vm/drop_caches
- # keyctl new_session
- # find edir -type f | xargs stat -c %i | sort | uniq | wc -l
-99999
-
-Cc: <stable@vger.kernel.org>
-Reported-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/dir.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
-
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index c143dffcae6e..007c3b4adc85 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -130,19 +130,29 @@ struct f2fs_dir_entry *find_target_dentry(struct fscrypt_name *fname,
- 			continue;
- 		}
- 
--		/* encrypted case */
-+		if (de->hash_code != namehash)
-+			goto not_match;
-+
- 		de_name.name = d->filename[bit_pos];
- 		de_name.len = le16_to_cpu(de->name_len);
- 
--		/* show encrypted name */
--		if (fname->hash) {
--			if (de->hash_code == cpu_to_le32(fname->hash))
--				goto found;
--		} else if (de_name.len == name->len &&
--			de->hash_code == namehash &&
--			!memcmp(de_name.name, name->name, name->len))
-+#ifdef CONFIG_F2FS_FS_ENCRYPTION
-+		if (unlikely(!name->name)) {
-+			if (fname->usr_fname->name[0] == '_') {
-+				if (de_name.len >= 16 &&
-+					!memcmp(de_name.name + de_name.len - 16,
-+						fname->crypto_buf.name + 8, 16))
-+					goto found;
-+				goto not_match;
-+			}
-+			name->name = fname->crypto_buf.name;
-+			name->len = fname->crypto_buf.len;
-+		}
-+#endif
-+		if (de_name.len == name->len &&
-+				!memcmp(de_name.name, name->name, name->len))
- 			goto found;
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
