@@ -1,32 +1,23 @@
-From: Eric Biggers <ebiggers3@gmail.com>
-Subject: Re: [PATCH] fscrypt: use 32 bytes of encrypted filename
-Date: Fri, 21 Apr 2017 00:44:02 -0700
-Message-ID: <20170421074402.GA7459@zzz>
-References: <20170418210642.6039-1-gwendal@chromium.org>
-	<20170418230136.GA96152@gmail.com>
-	<20170419001005.GA143911@gmail.com>
-	<20170419014209.GB12215@jaegeuk.local> <20170419040138.GA563@zzz>
-	<20170419204448.GA1021@jaegeuk.local>
+From: Hou Pengyang <houpengyang@huawei.com>
+Subject: [PATCH 0/3] optimize IPU
+Date: Fri, 21 Apr 2017 09:56:32 +0000
+Message-ID: <20170421095635.101454-1-houpengyang@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <ebiggers3@gmail.com>) id 1d1TEh-0003DH-Gp
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <houpengyang@huawei.com>) id 1d1VJR-00069G-VF
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 21 Apr 2017 07:44:11 +0000
-Received: from mail-io0-f193.google.com ([209.85.223.193])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1d1TEg-0000Xg-Av
+	Fri, 21 Apr 2017 09:57:13 +0000
+Received: from szxga02-in.huawei.com ([45.249.212.188]
+	helo=dggrg02-dlp.huawei.com)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1d1VJP-0001tU-V3
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 21 Apr 2017 07:44:11 +0000
-Received: by mail-io0-f193.google.com with SMTP id x86so27333052ioe.3
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Fri, 21 Apr 2017 00:44:10 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20170419204448.GA1021@jaegeuk.local>
+	Fri, 21 Apr 2017 09:57:13 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -36,78 +27,27 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Gwendal Grignou <gwendal@chromium.org>, hashimoto@chromium.org, ebiggers@google.com, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org, tytso@mit.edu, linux-ext4@vger.kernel.org, kinaba@chromium.org
+To: jaegeuk@kernel.org, chao@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Jaegeuk,
+For IPU, there is no need to read dnode, these three patches are to fix this
+issue.
 
-On Wed, Apr 19, 2017 at 01:44:48PM -0700, Jaegeuk Kim wrote:
-> 
-> Thank you for sharing more details. I could reproduce this issue and reach out
-> to what you mentioned. In order to resolve this, I wrote a patch for f2fs first
-> to act like ext4 for easy backports. Then, I expect a global fscrypt function
-> is easily able to clean them up.
-[...]
-> @@ -130,19 +130,29 @@ struct f2fs_dir_entry *find_target_dentry(struct fscrypt_name *fname,
->  			continue;
->  		}
->  
-> -		/* encrypted case */
-> +		if (de->hash_code != namehash)
-> +			goto not_match;
-> +
->  		de_name.name = d->filename[bit_pos];
->  		de_name.len = le16_to_cpu(de->name_len);
->  
-> -		/* show encrypted name */
-> -		if (fname->hash) {
-> -			if (de->hash_code == cpu_to_le32(fname->hash))
-> -				goto found;
-> -		} else if (de_name.len == name->len &&
-> -			de->hash_code == namehash &&
-> -			!memcmp(de_name.name, name->name, name->len))
-> +#ifdef CONFIG_F2FS_FS_ENCRYPTION
-> +		if (unlikely(!name->name)) {
-> +			if (fname->usr_fname->name[0] == '_') {
-> +				if (de_name.len >= 16 &&
-> +					!memcmp(de_name.name + de_name.len - 16,
-> +						fname->crypto_buf.name + 8, 16))
-> +					goto found;
-> +				goto not_match;
-> +			}
-> +			name->name = fname->crypto_buf.name;
-> +			name->len = fname->crypto_buf.len;
-> +		}
-> +#endif
-> +		if (de_name.len == name->len &&
-> +				!memcmp(de_name.name, name->name, name->len))
->  			goto found;
-> -
-> +not_match:
+patch 1): Reconstruct code in do_write_data_page, code logic stays unchanged,
+patch 2): Under high-probability IPU scenario, we check extent_tree first
+patch 3): Unlock dnode before IPU
 
-I agree with this approach, but I don't think it's ever the case that
-fname->usr_fname->name[0] != '_'.  (Yes, ext4 checks it, but I think it's
-unneeded there too.)  And if it was, it doesn't make sense to modify the 'name'
-that is passed in.
+Hou Pengyang (3):
+  f2fs: reconstruct code to write a data page
+  f2fs: lookup extent cache first under IPU scenario
+  f2fs: unlock dnode before IPU
 
-In any case, I guess that unless there are other ideas we can do these patches:
+ fs/f2fs/data.c | 94 ++++++++++++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 72 insertions(+), 22 deletions(-)
 
-1.) f2fs patch to start checking the name, as above
-2.) patch to start encoding last 32 bytes of the name (or second-to-last CTS
-    block, I haven't decided yet) rather than last 16 bytes, changing
-    fs/crypto/, fs/ext4/, and fs/f2fs/
-3.) cleanup patches to introduce helper function and switch ext4 and f2fs to it
+-- 
+2.10.1
 
-(1) and (2) will be backported.
-
-UBIFS can be changed to use the helper function later if needed.  It's not as
-important for it to be backported there since UBIFS does the "double hashing",
-and UBIFS encryption was just added in 4.10 anyway.
-
-I can try to put together the full series when I have time.  It probably would
-make sense for it to go through the fscrypt tree, given the dependencies.
-
-Eric
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
