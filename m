@@ -1,23 +1,25 @@
 From: Hou Pengyang <houpengyang@huawei.com>
-Subject: [PATCH 0/3] optimize f2fs IPU v2
-Date: Sat, 22 Apr 2017 09:22:20 +0000
-Message-ID: <20170422092223.118496-1-houpengyang@huawei.com>
+Subject: [PATCH 3/3] f2fs: unlock dnode before IPU
+Date: Sat, 22 Apr 2017 09:22:23 +0000
+Message-ID: <20170422092223.118496-4-houpengyang@huawei.com>
+References: <20170422092223.118496-1-houpengyang@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <houpengyang@huawei.com>) id 1d1rFd-0006mU-I0
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <houpengyang@huawei.com>) id 1d1rFf-0004vg-Ed
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 22 Apr 2017 09:22:45 +0000
+	Sat, 22 Apr 2017 09:22:47 +0000
 Received: from szxga03-in.huawei.com ([45.249.212.189]
 	helo=dggrg03-dlp.huawei.com)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1d1rFb-0007rx-DN
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1d1rFe-00010j-Cj
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 22 Apr 2017 09:22:45 +0000
+	Sat, 22 Apr 2017 09:22:47 +0000
+In-Reply-To: <20170422092223.118496-1-houpengyang@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,34 +32,25 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-For IPU, there is no need to read dnode, these three patches are to fix this
-issue.
+Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
+---
+ fs/f2fs/data.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-patch 1): Reconstruct code in do_write_data_page, code logic stays unchanged,
-patch 2): Under high-probability IPU scenario, we check extent_tree first
-patch 3): Unlock dnode before IPU
-
-v1->v2:
-1) fix 
-		if(f2fs_encrypt_page())
-			XXX
-	to 
-		err = f2fs_encrypt_page() 
-		if (err)
-			XXX
-
-	otherwise do_write_data_page would return a wrong return value.
-		
-2) extract need_in_place_block(fio, page) for IPU checking.
-
-Hou Pengyang (3):
-  f2fs: reconstruct code to write a data page
-  f2fs: lookup extent cache first under IPU scenario
-  f2fs: unlock dnode before IPU
-
- fs/f2fs/data.c | 109 ++++++++++++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 84 insertions(+), 25 deletions(-)
-
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 1c99ae1..a0df451 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1418,7 +1418,9 @@ int do_write_data_page(struct f2fs_io_info *fio)
+ 	 */
+ 	if (unlikely(fio->old_blkaddr != NEW_ADDR &&
+ 			need_inplace_update_block(fio, page))) {
++		f2fs_put_dnode(&dn);
+ 		err = do_rewrite_data_page(fio, page);
++		return err;
+ 	} else {
+ 		write_data_page(&dn, fio);
+ 		trace_f2fs_do_write_data_page(page, OPU);
 -- 
 2.10.1
 
