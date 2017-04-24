@@ -1,82 +1,82 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 2/2] f2fs: enable small discard by default
-Date: Tue, 25 Apr 2017 00:21:35 +0800
-Message-ID: <20170424162135.5566-2-chao@kernel.org>
-References: <20170424162135.5566-1-chao@kernel.org>
+From: Jeff Layton <jlayton@redhat.com>
+Subject: Re: [PATCH v3 20/20] gfs2: clean up some filemap_* calls
+Date: Mon, 24 Apr 2017 12:59:03 -0400
+Message-ID: <1493053143.2895.15.camel@redhat.com>
+References: <20170424132259.8680-1-jlayton@redhat.com>
+         <20170424132259.8680-21-jlayton@redhat.com>
+         <2139341349.405174.1493043175630.JavaMail.zimbra@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1d2gmH-0007cI-OR
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Apr 2017 16:23:53 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1d2gmH-0006wW-0D
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Apr 2017 16:23:53 +0000
-In-Reply-To: <20170424162135.5566-1-chao@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <2139341349.405174.1493043175630.JavaMail.zimbra@redhat.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Bob Peterson <rpeterso@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-cifs@vger.kernel.org, linux-mm@kvack.org, jfs-discussion@lists.sourceforge.net, linux-xfs@vger.kernel.org, cluster-devel@redhat.com, linux-f2fs-devel@lists.sourceforge.net, v9fs-developer@lists.sourceforge.net, osd-dev@open-osd.org, linux-nilfs@vger.kernel.org, linux-block@vger.kernel.org, dhowells@redhat.com, akpm@linux-foundation.org, hch@infradead.org, ross zwisler <ross.zwisler@linux.intel.com>, mawilcox@microsoft.com, jack@suse.com, viro@zeniv.linux.org.uk, corbet@lwn.net, neilb@suse.de, clm@fb.com, tytso@mit.edu, axboe@kernel.dk
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Chao Yu <yuchao0@huawei.com>
+On Mon, 2017-04-24 at 10:12 -0400, Bob Peterson wrote:
+> ----- Original Message -----
+> > In some places, it's trying to reset the mapping error after calling
+> > filemap_fdatawait. That's no longer required. Also, turn several
+> > filemap_fdatawrite+filemap_fdatawait calls into filemap_write_and_wait.
+> > That will at least return writeback errors that occur during the write
+> > phase.
+> > 
+> > Signed-off-by: Jeff Layton <jlayton@redhat.com>
+> > ---
+> >  fs/gfs2/glops.c | 12 ++++--------
+> >  fs/gfs2/lops.c  |  4 +---
+> >  fs/gfs2/super.c |  6 ++----
+> >  3 files changed, 7 insertions(+), 15 deletions(-)
+> > 
+> > diff --git a/fs/gfs2/glops.c b/fs/gfs2/glops.c
+> > index 5db59d444838..7362d19fdc4c 100644
+> > --- a/fs/gfs2/glops.c
+> > +++ b/fs/gfs2/glops.c
+> > @@ -158,9 +158,7 @@ static void rgrp_go_sync(struct gfs2_glock *gl)
+> >  	GLOCK_BUG_ON(gl, gl->gl_state != LM_ST_EXCLUSIVE);
+> >  
+> >  	gfs2_log_flush(sdp, gl, NORMAL_FLUSH);
+> > -	filemap_fdatawrite_range(mapping, gl->gl_vm.start, gl->gl_vm.end);
+> > -	error = filemap_fdatawait_range(mapping, gl->gl_vm.start, gl->gl_vm.end);
+> > -	mapping_set_error(mapping, error);
+> > +	filemap_write_and_wait_range(mapping, gl->gl_vm.start, gl->gl_vm.end);
+> 
+> This should probably have "error = ", no?
+> 
 
-This patch start to enable 4K granularity small discard by default
-when realtime discard is on, so, in seriously fragmented space,
-small size discard can be issued in time to avoid useless storage
-space occupying of invalid filesystem's data, then performance of
-flash storage can be recovered.
+This error is discarded in the current code after resetting the error in
+the mapping. With the earlier patches in this set we don't need to reset
+the error like this anymore.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/f2fs.h    | 4 ++--
- fs/f2fs/segment.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Now, if this code should doing something else with those errors, then
+that's a separate problem.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index e2d9a8d9101e..c620e98dcaa6 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -230,8 +230,8 @@ struct discard_cmd_control {
- 	struct list_head wait_list;		/* store on-flushing entries */
- 	wait_queue_head_t discard_wait_queue;	/* waiting queue for wake-up */
- 	struct mutex cmd_lock;
--	int nr_discards;			/* # of discards in the list */
--	int max_discards;			/* max. discards to be issued */
-+	unsigned int nr_discards;		/* # of discards in the list */
-+	unsigned int max_discards;		/* max. discards to be issued */
- 	unsigned int undiscard_blks;		/* # of undiscard blocks */
- 	atomic_t issued_discard;		/* # of issued discard */
- 	atomic_t issing_discard;		/* # of issing discard */
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 8097b4c8c7c7..eebe721f43c1 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1365,7 +1365,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
- 	atomic_set(&dcc->issing_discard, 0);
- 	atomic_set(&dcc->discard_cmd_cnt, 0);
- 	dcc->nr_discards = 0;
--	dcc->max_discards = 0;
-+	dcc->max_discards = MAIN_SEGS(sbi) << sbi->log_blocks_per_seg;
- 	dcc->undiscard_blks = 0;
- 	dcc->root = RB_ROOT;
- 
+> >  	gfs2_ail_empty_gl(gl);
+> >  
+> >  	spin_lock(&gl->gl_lockref.lock);
+> > @@ -225,12 +223,10 @@ static void inode_go_sync(struct gfs2_glock *gl)
+> >  	filemap_fdatawrite(metamapping);
+> >  	if (ip) {
+> >  		struct address_space *mapping = ip->i_inode.i_mapping;
+> > -		filemap_fdatawrite(mapping);
+> > -		error = filemap_fdatawait(mapping);
+> > -		mapping_set_error(mapping, error);
+> > +		filemap_write_and_wait(mapping);
+> > +	} else {
+> > +		filemap_fdatawait(metamapping);
+> >  	}
+> > -	error = filemap_fdatawait(metamapping);
+> > -	mapping_set_error(metamapping, error);
+> 
+> This part doesn't look right at all. There's a big difference in gfs2 between
+> mapping and metamapping. We need to wait for metamapping regardless.
+> 
+
+...and this should wait. Basically, filemap_write_and_wait does
+filemap_fdatawrite and then filemap_fdatawait. This is mostly just
+replacing the existing code with a more concise helper.
+
 -- 
-2.12.2.575.gb14f27f
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+Jeff Layton <jlayton@redhat.com>
