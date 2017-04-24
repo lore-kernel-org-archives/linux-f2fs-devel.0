@@ -1,26 +1,26 @@
 From: Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH 6/6] ext4: clean up ext4_match() and callers
-Date: Mon, 24 Apr 2017 10:00:13 -0700
-Message-ID: <20170424170013.85175-7-ebiggers3@gmail.com>
+Subject: [PATCH 5/6] f2fs: switch to using fscrypt_match_name()
+Date: Mon, 24 Apr 2017 10:00:12 -0700
+Message-ID: <20170424170013.85175-6-ebiggers3@gmail.com>
 References: <20170424170013.85175-1-ebiggers3@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <ebiggers3@gmail.com>) id 1d2hNa-0004L9-0L
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <ebiggers3@gmail.com>) id 1d2hNY-0000sO-HX
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Apr 2017 17:02:26 +0000
-Received: from mail-pg0-f67.google.com ([74.125.83.67])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1d2hNY-0005ht-4w
+	Mon, 24 Apr 2017 17:02:24 +0000
+Received: from mail-pf0-f195.google.com ([209.85.192.195])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1d2hNW-00089j-NN
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Apr 2017 17:02:25 +0000
-Received: by mail-pg0-f67.google.com with SMTP id t7so1954565pgt.1
+	Mon, 24 Apr 2017 17:02:24 +0000
+Received: by mail-pf0-f195.google.com with SMTP id v14so3986337pfd.3
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 24 Apr 2017 10:02:24 -0700 (PDT)
+	Mon, 24 Apr 2017 10:02:22 -0700 (PDT)
 In-Reply-To: <20170424170013.85175-1-ebiggers3@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -36,156 +36,61 @@ Cc: hashimoto@chromium.org, Gwendal Grignou <gwendal@chromium.org>, "Theodore Y 
 
 From: Eric Biggers <ebiggers@google.com>
 
-When ext4 encryption was originally merged, we were encrypting the
-user-specified filename in ext4_match(), introducing a lot of additional
-complexity into ext4_match() and its callers.  This has since been
-changed to encrypt the filename earlier, so we can remove the gunk
-that's no longer needed.  This more or less reverts ext4_search_dir()
-and ext4_find_dest_de() to the way they were in the v4.0 kernel.
+Switch f2fs directory searches to use the fscrypt_match_name() helper
+function.  There should be no functional change.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/ext4/namei.c | 81 ++++++++++++++++++---------------------------------------
- 1 file changed, 25 insertions(+), 56 deletions(-)
+ fs/f2fs/dir.c | 28 ++++------------------------
+ 1 file changed, 4 insertions(+), 24 deletions(-)
 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 6ecc3ae87a79..b6b8d073fdc4 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1237,18 +1237,17 @@ static void dx_insert_block(struct dx_frame *frame, u32 hash, ext4_lblk_t block)
- }
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 5df3596a667a..c7ed25fb3003 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -111,8 +111,6 @@ struct f2fs_dir_entry *find_target_dentry(struct fscrypt_name *fname,
+ 	struct f2fs_dir_entry *de;
+ 	unsigned long bit_pos = 0;
+ 	int max_len = 0;
+-	struct fscrypt_str de_name = FSTR_INIT(NULL, 0);
+-	struct fscrypt_str *name = &fname->disk_name;
  
- /*
-- * NOTE! unlike strncmp, ext4_match returns 1 for success, 0 for failure.
-+ * Test whether a directory entry matches the filename being searched for.
-  *
-- * `len <= EXT4_NAME_LEN' is guaranteed by caller.
-- * `de != NULL' is guaranteed by caller.
-+ * Return: %true if the directory entry matches, otherwise %false.
-  */
--static inline int ext4_match(struct ext4_filename *fname,
--			     struct ext4_dir_entry_2 *de)
-+static inline bool ext4_match(const struct ext4_filename *fname,
-+			      const struct ext4_dir_entry_2 *de)
- {
- 	struct fscrypt_name f;
- 
- 	if (!de->inode)
--		return 0;
-+		return false;
- 
- 	f.usr_fname = fname->usr_fname;
- 	f.disk_name = fname->disk_name;
-@@ -1269,48 +1268,31 @@ int ext4_search_dir(struct buffer_head *bh, char *search_buf, int buf_size,
- 	struct ext4_dir_entry_2 * de;
- 	char * dlimit;
- 	int de_len;
--	int res;
- 
- 	de = (struct ext4_dir_entry_2 *)search_buf;
- 	dlimit = search_buf + buf_size;
- 	while ((char *) de < dlimit) {
- 		/* this code is executed quadratically often */
- 		/* do minimal checking `by hand' */
--		if ((char *) de + de->name_len <= dlimit) {
--			res = ext4_match(fname, de);
--			if (res < 0) {
--				res = -1;
--				goto return_result;
--			}
--			if (res > 0) {
--				/* found a match - just to be sure, do
--				 * a full check */
--				if (ext4_check_dir_entry(dir, NULL, de, bh,
--						bh->b_data,
--						 bh->b_size, offset)) {
--					res = -1;
--					goto return_result;
--				}
--				*res_dir = de;
--				res = 1;
--				goto return_result;
--			}
--
-+		if ((char *) de + de->name_len <= dlimit &&
-+		    ext4_match(fname, de)) {
-+			/* found a match - just to be sure, do
-+			 * a full check */
-+			if (ext4_check_dir_entry(dir, NULL, de, bh, bh->b_data,
-+						 bh->b_size, offset))
-+				return -1;
-+			*res_dir = de;
-+			return 1;
+ 	if (max_slots)
+ 		*max_slots = 0;
+@@ -130,29 +128,11 @@ struct f2fs_dir_entry *find_target_dentry(struct fscrypt_name *fname,
+ 			continue;
  		}
- 		/* prevent looping on a bad block */
- 		de_len = ext4_rec_len_from_disk(de->rec_len,
- 						dir->i_sb->s_blocksize);
--		if (de_len <= 0) {
--			res = -1;
--			goto return_result;
--		}
-+		if (de_len <= 0)
-+			return -1;
- 		offset += de_len;
- 		de = (struct ext4_dir_entry_2 *) ((char *) de + de_len);
- 	}
--
--	res = 0;
--return_result:
--	return res;
-+	return 0;
- }
  
- static int is_dx_internal_node(struct inode *dir, ext4_lblk_t block,
-@@ -1821,24 +1803,15 @@ int ext4_find_dest_de(struct inode *dir, struct inode *inode,
- 	int nlen, rlen;
- 	unsigned int offset = 0;
- 	char *top;
--	int res;
- 
- 	de = (struct ext4_dir_entry_2 *)buf;
- 	top = buf + buf_size - reclen;
- 	while ((char *) de <= top) {
- 		if (ext4_check_dir_entry(dir, NULL, de, bh,
--					 buf, buf_size, offset)) {
--			res = -EFSCORRUPTED;
--			goto return_result;
--		}
--		/* Provide crypto context and crypto buffer to ext4 match */
--		res = ext4_match(fname, de);
--		if (res < 0)
--			goto return_result;
--		if (res > 0) {
--			res = -EEXIST;
--			goto return_result;
--		}
-+					 buf, buf_size, offset))
-+			return -EFSCORRUPTED;
-+		if (ext4_match(fname, de))
-+			return -EEXIST;
- 		nlen = EXT4_DIR_REC_LEN(de->name_len);
- 		rlen = ext4_rec_len_from_disk(de->rec_len, buf_size);
- 		if ((de->inode ? rlen - nlen : rlen) >= reclen)
-@@ -1846,15 +1819,11 @@ int ext4_find_dest_de(struct inode *dir, struct inode *inode,
- 		de = (struct ext4_dir_entry_2 *)((char *)de + rlen);
- 		offset += rlen;
- 	}
+-		if (de->hash_code != namehash)
+-			goto not_match;
 -
- 	if ((char *) de > top)
--		res = -ENOSPC;
--	else {
--		*dest_de = de;
--		res = 0;
--	}
--return_result:
--	return res;
-+		return -ENOSPC;
+-		de_name.name = d->filename[bit_pos];
+-		de_name.len = le16_to_cpu(de->name_len);
+-
+-#ifdef CONFIG_F2FS_FS_ENCRYPTION
+-		if (unlikely(!name->name)) {
+-			if (fname->usr_fname->name[0] == '_') {
+-				if (de_name.len > 32 &&
+-					!memcmp(de_name.name + ((de_name.len - 17) & ~15),
+-						fname->crypto_buf.name + 8, 16))
+-					goto found;
+-				goto not_match;
+-			}
+-			name->name = fname->crypto_buf.name;
+-			name->len = fname->crypto_buf.len;
+-		}
+-#endif
+-		if (de_name.len == name->len &&
+-				!memcmp(de_name.name, name->name, name->len))
++		if (de->hash_code == namehash &&
++		    fscrypt_match_name(fname, d->filename[bit_pos],
++				       le16_to_cpu(de->name_len)))
+ 			goto found;
+-not_match:
 +
-+	*dest_de = de;
-+	return 0;
- }
- 
- int ext4_insert_dentry(struct inode *dir,
+ 		if (max_slots && max_len > *max_slots)
+ 			*max_slots = max_len;
+ 		max_len = 0;
 -- 
 2.12.2.816.g2cccc81164-goog
 
