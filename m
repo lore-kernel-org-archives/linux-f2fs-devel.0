@@ -1,83 +1,93 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/2] f2fs: add braces for macro variables more
-Date: Mon, 24 Apr 2017 10:38:05 -0700
-Message-ID: <20170424173805.GA1853@jaegeuk.local>
-References: <20170421004957.23760-1-jaegeuk@kernel.org>
- <ed638ae8-e40b-9160-c06a-0b69e01ae2a2@huawei.com>
+From: Bob Peterson <rpeterso@redhat.com>
+Subject: Re: [PATCH v3 20/20] gfs2: clean up some filemap_* calls
+Date: Mon, 24 Apr 2017 13:41:14 -0400 (EDT)
+Message-ID: <2092108386.509535.1493055674293.JavaMail.zimbra@redhat.com>
+References: <20170424132259.8680-1-jlayton@redhat.com> <20170424132259.8680-21-jlayton@redhat.com> <2139341349.405174.1493043175630.JavaMail.zimbra@redhat.com> <1493053143.2895.15.camel@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <ed638ae8-e40b-9160-c06a-0b69e01ae2a2@huawei.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-block-owner@vger.kernel.org>
+In-Reply-To: <1493053143.2895.15.camel@redhat.com>
+Sender: linux-block-owner@vger.kernel.org
+To: Jeff Layton <jlayton@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-cifs@vger.kernel.org, linux-mm@kvack.org, jfs-discussion@lists.sourceforge.net, linux-xfs@vger.kernel.org, cluster-devel@redhat.com, linux-f2fs-devel@lists.sourceforge.net, v9fs-developer@lists.sourceforge.net, osd-dev@open-osd.org, linux-nilfs@vger.kernel.org, linux-block@vger.kernel.org, dhowells@redhat.com, akpm@linux-foundation.org, hch@infradead.org, ross zwisler <ross.zwisler@linux.intel.com>, mawilcox@microsoft.com, jack@suse.com, viro@zeniv.linux.org.uk, corbet@lwn.net, neilb@suse.de, clm@fb.com, tytso@mit.edu, axboe@kernel.dk
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 04/22, Chao Yu wrote:
-> On 2017/4/21 8:49, Jaegeuk Kim wrote:
-> > This patch adds braces for macro variables more in include/linux/f2fs_fs.h.
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/f2fs.h          |  1 +
-> >  include/linux/f2fs_fs.h | 10 +++++-----
-> >  2 files changed, 6 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index e2d9a8d9101e..ca647d264b61 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -16,6 +16,7 @@
-> >  #include <linux/buffer_head.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/crc32.h>
-> > +#include <linux/quota.h>
-> 
-> This is no needed. ;)
+Hi,
 
-Yup. :)
+----- Original Message -----
+| On Mon, 2017-04-24 at 10:12 -0400, Bob Peterson wrote:
+| > > +	filemap_write_and_wait_range(mapping, gl->gl_vm.start, gl->gl_vm.end);
+| > 
+| > This should probably have "error = ", no?
+| > 
+| 
+| This error is discarded in the current code after resetting the error in
+| the mapping. With the earlier patches in this set we don't need to reset
+| the error like this anymore.
+| 
+| Now, if this code should doing something else with those errors, then
+| that's a separate problem.
 
+Okay, I see. My bad.
+ 
+| > >  	gfs2_ail_empty_gl(gl);
+| > >  
+| > >  	spin_lock(&gl->gl_lockref.lock);
+| > > @@ -225,12 +223,10 @@ static void inode_go_sync(struct gfs2_glock *gl)
+| > >  	filemap_fdatawrite(metamapping);
+| > >  	if (ip) {
+| > >  		struct address_space *mapping = ip->i_inode.i_mapping;
+| > > -		filemap_fdatawrite(mapping);
+| > > -		error = filemap_fdatawait(mapping);
+| > > -		mapping_set_error(mapping, error);
+| > > +		filemap_write_and_wait(mapping);
+| > > +	} else {
+| > > +		filemap_fdatawait(metamapping);
+| > >  	}
+| > > -	error = filemap_fdatawait(metamapping);
+| > > -	mapping_set_error(metamapping, error);
+| > 
+| > This part doesn't look right at all. There's a big difference in gfs2
+| > between
+| > mapping and metamapping. We need to wait for metamapping regardless.
+| > 
+| 
+| ...and this should wait. Basically, filemap_write_and_wait does
+| filemap_fdatawrite and then filemap_fdatawait. This is mostly just
+| replacing the existing code with a more concise helper.
 
-> 
-> Thanks,
-> 
-> >  #include <linux/magic.h>
-> >  #include <linux/kobject.h>
-> >  #include <linux/sched.h>
-> > diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-> > index e2d239ed4c60..639cbdf65e2b 100644
-> > --- a/include/linux/f2fs_fs.h
-> > +++ b/include/linux/f2fs_fs.h
-> > @@ -32,9 +32,9 @@
-> >  /* 0, 1(node nid), 2(meta nid) are reserved node id */
-> >  #define F2FS_RESERVED_NODE_NUM		3
-> >  
-> > -#define F2FS_ROOT_INO(sbi)	(sbi->root_ino_num)
-> > -#define F2FS_NODE_INO(sbi)	(sbi->node_ino_num)
-> > -#define F2FS_META_INO(sbi)	(sbi->meta_ino_num)
-> > +#define F2FS_ROOT_INO(sbi)	((sbi)->root_ino_num)
-> > +#define F2FS_NODE_INO(sbi)	((sbi)->node_ino_num)
-> > +#define F2FS_META_INO(sbi)	((sbi)->meta_ino_num)
-> >  
-> >  #define F2FS_IO_SIZE(sbi)	(1 << (sbi)->write_io_size_bits) /* Blocks */
-> >  #define F2FS_IO_SIZE_KB(sbi)	(1 << ((sbi)->write_io_size_bits + 2)) /* KB */
-> > @@ -161,7 +161,7 @@ struct f2fs_checkpoint {
-> >   */
-> >  #define F2FS_ORPHANS_PER_BLOCK	1020
-> >  
-> > -#define GET_ORPHAN_BLOCKS(n)	((n + F2FS_ORPHANS_PER_BLOCK - 1) / \
-> > +#define GET_ORPHAN_BLOCKS(n)	(((n) + F2FS_ORPHANS_PER_BLOCK - 1) / \
-> >  					F2FS_ORPHANS_PER_BLOCK)
-> >  
-> >  struct f2fs_orphan_block {
-> > @@ -449,7 +449,7 @@ typedef __le32	f2fs_hash_t;
-> >  #define F2FS_SLOT_LEN		8
-> >  #define F2FS_SLOT_LEN_BITS	3
-> >  
-> > -#define GET_DENTRY_SLOTS(x)	((x + F2FS_SLOT_LEN - 1) >> F2FS_SLOT_LEN_BITS)
-> > +#define GET_DENTRY_SLOTS(x) (((x) + F2FS_SLOT_LEN - 1) >> F2FS_SLOT_LEN_BITS)
-> >  
-> >  /* MAX level for dir lookup */
-> >  #define MAX_DIR_HASH_DEPTH	63
-> > 
+But this isn't a simple replacement with a helper. This is two different
+address spaces (mapping and metamapping) and you added an else in there.
+
+So with this patch metamapping gets written, and if there's an ip,
+mapping gets written but it doesn't wait for metamapping. Unless
+I'm missing something.
+
+You could replace both filemap_fdatawrites with the helper instead.
+Today's code is structured as:
+
+(a) write metamapping
+if (ip)
+    (b) write mapping
+    (c) wait for mapping
+(d) wait for metamapping
+
+If you use the helper for both, it becomes, (a & d)(b & c) which is probably
+acceptable. (I think we just tried to optimize what the elevator was doing).
+
+But the way you've got it coded here still looks wrong. It looks like:
+(a)
+if (ip)
+   (b & c)
+ELSE -
+   (d)
+
+So (d) (metamapping) isn't guaranteed to be synced at the end of the function.
+Of course, you know the modified helper functions better than I do.
+What am I missing?
+
+Regards,
+
+Bob Peterson
+Red Hat File Systems
