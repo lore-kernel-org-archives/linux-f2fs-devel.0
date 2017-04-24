@@ -1,16 +1,22 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v3 10/20] fuse: set mapping error in
- writepage_locked when it fails
-Date: Mon, 24 Apr 2017 18:04:31 +0200
-Message-ID: <20170424160431.GK23988@quack2.suse.cz>
-References: <20170424132259.8680-1-jlayton@redhat.com>
-	<20170424132259.8680-11-jlayton@redhat.com>
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH 1/2] f2fs: delay awaking discard thread
+Date: Tue, 25 Apr 2017 00:21:34 +0800
+Message-ID: <20170424162135.5566-1-chao@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Content-Disposition: inline
-In-Reply-To: <20170424132259.8680-11-jlayton@redhat.com>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao@kernel.org>) id 1d2gmF-0007dt-Ey
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 24 Apr 2017 16:23:51 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1d2gmD-0003EF-LS
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 24 Apr 2017 16:23:51 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -20,42 +26,44 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jeff Layton <jlayton@redhat.com>
-Cc: jfs-discussion@lists.sourceforge.net, hch@infradead.org, dhowells@redhat.com, linux-mm@kvack.org, linux-cifs@vger.kernel.org, linux-nilfs@vger.kernel.org, corbet@lwn.net, cluster-devel@redhat.com, v9fs-developer@lists.sourceforge.net, ross.zwisler@linux.intel.com, linux-ext4@vger.kernel.org, linux-block@vger.kernel.org, osd-dev@open-osd.org, axboe@kernel.dk, tytso@mit.edu, clm@fb.com, mawilcox@microsoft.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org, jack@suse.com, linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org, linux-btrfs@vger.kernel.org, viro@zeniv.linux.org.uk
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Mon 24-04-17 09:22:49, Jeff Layton wrote:
-> This ensures that we see errors on fsync when writeback fails.
-> 
-> Signed-off-by: Jeff Layton <jlayton@redhat.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-Hum, but do we really want to clobber mapping errors with temporary stuff
-like ENOMEM? Or do you want to handle that in mapping_set_error?
+It's better to delay awaking discard thread while queuing discard commands
+in checkpoint, it will help to give more chances for merging big and small
+discard.
 
-								Honza
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/segment.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> ---
->  fs/fuse/file.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index ec238fb5a584..07d0efcb050c 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -1669,6 +1669,7 @@ static int fuse_writepage_locked(struct page *page)
->  err_free:
->  	fuse_request_free(req);
->  err:
-> +	mapping_set_error(page->mapping, error);
->  	end_page_writeback(page);
->  	return error;
->  }
-> -- 
-> 2.9.3
-> 
-> 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index d4bda1e54475..8097b4c8c7c7 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -971,7 +971,6 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+ 		blkstart -= FDEV(devi).start_blk;
+ 	}
+ 	__update_discard_tree_range(sbi, bdev, lblkstart, blkstart, blklen);
+-	wake_up(&SM_I(sbi)->dcc_info->discard_wait_queue);
+ 	return 0;
+ }
+ 
+@@ -1338,6 +1337,8 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 		SM_I(sbi)->dcc_info->nr_discards -= total_len;
+ 		kmem_cache_free(discard_entry_slab, entry);
+ 	}
++
++	wake_up(&SM_I(sbi)->dcc_info->discard_wait_queue);
+ }
+ 
+ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.12.2.575.gb14f27f
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
