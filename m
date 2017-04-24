@@ -1,73 +1,83 @@
-From: Jeff Layton <jlayton@redhat.com>
-Subject: Re: [PATCH v3 11/20] cifs: set mapping error when page writeback
- fails in writepage or launder_pages
-Date: Mon, 24 Apr 2017 13:16:27 -0400
-Message-ID: <1493054187.2895.18.camel@redhat.com>
-References: <20170424132259.8680-1-jlayton@redhat.com>
-	 <20170424132259.8680-12-jlayton@redhat.com>
-	 <20170424152708.GK9112@infradead.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 1/2] f2fs: add braces for macro variables more
+Date: Mon, 24 Apr 2017 10:38:05 -0700
+Message-ID: <20170424173805.GA1853@jaegeuk.local>
+References: <20170421004957.23760-1-jaegeuk@kernel.org>
+ <ed638ae8-e40b-9160-c06a-0b69e01ae2a2@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20170424152708.GK9112@infradead.org>
-Sender: owner-linux-mm@kvack.org
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-cifs@vger.kernel.org, linux-mm@kvack.org, jfs-discussion@lists.sourceforge.net, linux-xfs@vger.kernel.org, cluster-devel@redhat.com, linux-f2fs-devel@lists.sourceforge.net, v9fs-developer@lists.sourceforge.net, osd-dev@open-osd.org, linux-nilfs@vger.kernel.org, linux-block@vger.kernel.org, dhowells@redhat.com, akpm@linux-foundation.org, ross.zwisler@linux.intel.com, mawilcox@microsoft.com, jack@suse.com, viro@zeniv.linux.org.uk, corbet@lwn.net, neilb@suse.de, clm@fb.com, tytso@mit.edu, axboe@kernel.dk
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <ed638ae8-e40b-9160-c06a-0b69e01ae2a2@huawei.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Mon, 2017-04-24 at 08:27 -0700, Christoph Hellwig wrote:
-> On Mon, Apr 24, 2017 at 09:22:50AM -0400, Jeff Layton wrote:
-> > Signed-off-by: Jeff Layton <jlayton@redhat.com>
-> > ---
-> >  fs/cifs/file.c | 10 ++++++----
-> >  1 file changed, 6 insertions(+), 4 deletions(-)
+On 04/22, Chao Yu wrote:
+> On 2017/4/21 8:49, Jaegeuk Kim wrote:
+> > This patch adds braces for macro variables more in include/linux/f2fs_fs.h.
 > > 
-> > diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-> > index 21d404535739..4b696a23b0b1 100644
-> > --- a/fs/cifs/file.c
-> > +++ b/fs/cifs/file.c
-> > @@ -2234,14 +2234,16 @@ cifs_writepage_locked(struct page *page, struct writeback_control *wbc)
-> >  	set_page_writeback(page);
-> >  retry_write:
-> >  	rc = cifs_partialpagewrite(page, 0, PAGE_SIZE);
-> > +	if (rc == -EAGAIN && wbc->sync_mode == WB_SYNC_ALL) {
-> >  		goto retry_write;
-> > +	} else if (rc == -EAGAIN) {
-> >  		redirty_page_for_writepage(wbc, page);
-> > +	} else if (rc != 0) {
-> >  		SetPageError(page);
-> > +		mapping_set_error(page->mapping, rc);
-> > +	} else {
-> >  		SetPageUptodate(page);
-> > +	}
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/f2fs.h          |  1 +
+> >  include/linux/f2fs_fs.h | 10 +++++-----
+> >  2 files changed, 6 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index e2d9a8d9101e..ca647d264b61 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -16,6 +16,7 @@
+> >  #include <linux/buffer_head.h>
+> >  #include <linux/slab.h>
+> >  #include <linux/crc32.h>
+> > +#include <linux/quota.h>
 > 
-> Hmmm.  I might be a little too nitpicky, but I hate having the same
-> partial condition duplicated if possible.  Why not:
-> 
-> 	if (rc == -EAGAIN) {
-> 		if (wbc->sync_mode == WB_SYNC_ALL)
-> 			goto retry_write;
-> 		redirty_page_for_writepage(wbc, page);
-> 	} else if (rc) {
-> 		SetPageError(page);
-> 		mapping_set_error(page->mapping, rc);
-> 	} else {
-> 		SetPageUptodate(page);
-> 	}
-> 
-> Otherwise this looks fine to me:
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> This is no needed. ;)
 
-No, you're absolutely right. I merged that change into the patch.
+Yup. :)
 
-Thanks for the review so far!
--- 
-Jeff Layton <jlayton@redhat.com>
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+> 
+> Thanks,
+> 
+> >  #include <linux/magic.h>
+> >  #include <linux/kobject.h>
+> >  #include <linux/sched.h>
+> > diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+> > index e2d239ed4c60..639cbdf65e2b 100644
+> > --- a/include/linux/f2fs_fs.h
+> > +++ b/include/linux/f2fs_fs.h
+> > @@ -32,9 +32,9 @@
+> >  /* 0, 1(node nid), 2(meta nid) are reserved node id */
+> >  #define F2FS_RESERVED_NODE_NUM		3
+> >  
+> > -#define F2FS_ROOT_INO(sbi)	(sbi->root_ino_num)
+> > -#define F2FS_NODE_INO(sbi)	(sbi->node_ino_num)
+> > -#define F2FS_META_INO(sbi)	(sbi->meta_ino_num)
+> > +#define F2FS_ROOT_INO(sbi)	((sbi)->root_ino_num)
+> > +#define F2FS_NODE_INO(sbi)	((sbi)->node_ino_num)
+> > +#define F2FS_META_INO(sbi)	((sbi)->meta_ino_num)
+> >  
+> >  #define F2FS_IO_SIZE(sbi)	(1 << (sbi)->write_io_size_bits) /* Blocks */
+> >  #define F2FS_IO_SIZE_KB(sbi)	(1 << ((sbi)->write_io_size_bits + 2)) /* KB */
+> > @@ -161,7 +161,7 @@ struct f2fs_checkpoint {
+> >   */
+> >  #define F2FS_ORPHANS_PER_BLOCK	1020
+> >  
+> > -#define GET_ORPHAN_BLOCKS(n)	((n + F2FS_ORPHANS_PER_BLOCK - 1) / \
+> > +#define GET_ORPHAN_BLOCKS(n)	(((n) + F2FS_ORPHANS_PER_BLOCK - 1) / \
+> >  					F2FS_ORPHANS_PER_BLOCK)
+> >  
+> >  struct f2fs_orphan_block {
+> > @@ -449,7 +449,7 @@ typedef __le32	f2fs_hash_t;
+> >  #define F2FS_SLOT_LEN		8
+> >  #define F2FS_SLOT_LEN_BITS	3
+> >  
+> > -#define GET_DENTRY_SLOTS(x)	((x + F2FS_SLOT_LEN - 1) >> F2FS_SLOT_LEN_BITS)
+> > +#define GET_DENTRY_SLOTS(x) (((x) + F2FS_SLOT_LEN - 1) >> F2FS_SLOT_LEN_BITS)
+> >  
+> >  /* MAX level for dir lookup */
+> >  #define MAX_DIR_HASH_DEPTH	63
+> > 
