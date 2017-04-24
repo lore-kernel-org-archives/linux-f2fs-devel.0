@@ -1,26 +1,27 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: seperate read nat page from
-	nat_tree_lock
-Date: Mon, 24 Apr 2017 14:55:37 +0800
-Message-ID: <a8c3b869-fc3e-ced2-a85e-8b3fd2ad6d86@huawei.com>
-References: <20170422100626.21995-1-heyunlei@huawei.com>
+From: heyunlei <heyunlei@huawei.com>
+Subject: Re: [PATCH 2/3] f2fs: lookup extent cache first under
+	IPU scenario
+Date: Mon, 24 Apr 2017 17:51:01 +0800
+Message-ID: <5bb96646-ab0a-75fa-6037-391f884bb471@huawei.com>
+References: <20170421095635.101454-1-houpengyang@huawei.com>
+	<20170421095635.101454-3-houpengyang@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1d2Xuj-0000Ws-8o
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1d2aeu-00056q-MI
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Apr 2017 06:56:01 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187]
-	helo=dggrg01-dlp.huawei.com)
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1d2Xui-0006jr-1W
+	Mon, 24 Apr 2017 09:51:52 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191]
+	helo=dggrg05-dlp.huawei.com)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1d2aep-0005R8-SA
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Apr 2017 06:56:01 +0000
-In-Reply-To: <20170422100626.21995-1-heyunlei@huawei.com>
+	Mon, 24 Apr 2017 09:51:52 +0000
+In-Reply-To: <20170421095635.101454-3-houpengyang@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,73 +31,52 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Hou Pengyang <houpengyang@huawei.com>, jaegeuk@kernel.org, chao@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/4/22 18:06, Yunlei He wrote:
-> This patch seperate nat page read io from nat_tree_lock.
-> 
-> -lock_page
-> 	-get_node_info()
-> 		-current_nat_addr
-> 
-> 			......           	->       write_checkpoint
-> 
-> 			-get_meta_page
-> 
-> Because we lock node page, we can make sure no other threads
-> modify this nid concurrently. So we just obtain current_nat_addr
-> under nat_tree_lock, node info is always same in both nat pack.
-> 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
-
-> ---
->  fs/f2fs/node.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index ad54e90..b99e318 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -376,6 +376,7 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
->  	struct page *page = NULL;
->  	struct f2fs_nat_entry ne;
->  	struct nat_entry *e;
-> +	pgoff_t index;
->  	int i;
->  
->  	ni->nid = nid;
-> @@ -401,17 +402,21 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
->  		node_info_from_raw_nat(ni, &ne);
->  	}
->  	up_read(&curseg->journal_rwsem);
-> -	if (i >= 0)
-> +	if (i >= 0) {
-> +		up_read(&nm_i->nat_tree_lock);
->  		goto cache;
-> +	}
->  
->  	/* Fill node_info from nat page */
-> -	page = get_current_nat_page(sbi, start_nid);
-> +	index = current_nat_addr(sbi, nid);
-> +	up_read(&nm_i->nat_tree_lock);
-> +
-> +	page = get_meta_page(sbi, index);
->  	nat_blk = (struct f2fs_nat_block *)page_address(page);
->  	ne = nat_blk->entries[nid - start_nid];
->  	node_info_from_raw_nat(ni, &ne);
->  	f2fs_put_page(page, 1);
->  cache:
-> -	up_read(&nm_i->nat_tree_lock);
->  	/* cache nat entry */
->  	down_write(&nm_i->nat_tree_lock);
->  	cache_nat_entry(sbi, nid, &ne);
-> 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+SGkgYWxsLAoKQ291bGQgd2UgbW92ZSBJUFUganVkZ2VtZW50IG91dHNpZGUgY3BfcndzZW0gbG9j
+ayBsaWtlIGJlbG93OgoKaWYgKHNldCBpcHUgcG9saWN5KQogICAgICBpZiAoaXB1IHN1Y2Nlc3Mp
+CgkJcmV0dXJuCmxvY2tfb3AKICAgICAgb3B1CnVubG9ja19vcAoKQW5kIGF0IHNhbWUgdGltZSB3
+aGVuIHdlIHdyaXRlIG5ldyBjaGVja3BvaW50LCB3ZSBzZXQgaXB1IHBvbGljeQpkdXJpbmcgd2hv
+bGUgY3AsIHRoZSBwcm9jZXNzIGlzIGxpa2UgdGhpczoKCi4uLi58LS0tLU9QVS0tLS18LS0tLUlQ
+Ve+8iHdyaXRlIGNw77yJLS0tLXwtLS0tT1BVLS0tLXwtLS0tSVBV77yId3JpdGUgY3DvvIktLS0t
+fC4uLi4KClRoYW5rcy4KCk9uIDIwMTcvNC8yMSAxNzo1NiwgSG91IFBlbmd5YW5nIHdyb3RlOgo+
+IElmIGEgcGFnZSBpcyBjb2xkLCBOT1QgYXRvbWl0IHdyaXR0ZW4gYW5kIG5lZWRfaXB1IG5vdywg
+dGhlcmUgaXMKPiBhIGhpZ2ggcHJvYmFiaWxpdHkgdGhhdCBJUFUgc2hvdWxkIGJlIGFkYXB0ZWQu
+IEZvciBJUFUsIHdlIHRyeSB0bwo+IGNoZWNrIGV4dGVudCB0cmVlIHRvIGdldCB0aGUgYmxvY2sg
+aW5kZXggZmlyc3QsIGluc3RlYWQgb2YgcmVhZGluZwo+IHRoZSBkbm9kZSBwYWdlLCB3aGVyZSBt
+YXkgbGVhZCB0byBhbiB1c2VsZXNzIGRub2RlIElPLCBzaW5jZSBubyBuZWVkIHRvCj4gdXBkYXRl
+IHRoZSBkbm9kZSBpbmRleCBmb3IgSVBVLgo+Cj4gU2lnbmVkLW9mZi1ieTogSG91IFBlbmd5YW5n
+IDxob3VwZW5neWFuZ0BodWF3ZWkuY29tPgo+IC0tLQo+ICBmcy9mMmZzL2RhdGEuYyB8IDI2ICsr
+KysrKysrKysrKysrKysrKysrKysrKysrCj4gIDEgZmlsZSBjaGFuZ2VkLCAyNiBpbnNlcnRpb25z
+KCspCj4KPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9kYXRhLmMgYi9mcy9mMmZzL2RhdGEuYwo+IGlu
+ZGV4IDRiYTExYTYuLjNhNjYwZjcgMTAwNjQ0Cj4gLS0tIGEvZnMvZjJmcy9kYXRhLmMKPiArKysg
+Yi9mcy9mMmZzL2RhdGEuYwo+IEBAIC0xMzU1LDggKzEzNTUsMzQgQEAgaW50IGRvX3dyaXRlX2Rh
+dGFfcGFnZShzdHJ1Y3QgZjJmc19pb19pbmZvICpmaW8pCj4gIAlzdHJ1Y3QgcGFnZSAqcGFnZSA9
+IGZpby0+cGFnZTsKPiAgCXN0cnVjdCBpbm9kZSAqaW5vZGUgPSBwYWdlLT5tYXBwaW5nLT5ob3N0
+Owo+ICAJc3RydWN0IGRub2RlX29mX2RhdGEgZG47Cj4gKwlzdHJ1Y3QgZXh0ZW50X2luZm8gZWkg
+PSB7MCwwLDB9Owo+ICAJaW50IGVyciA9IDA7Cj4KPiArCS8qCj4gKwkgKiBJZiBhIHBhZ2UgaXMg
+Y29sZCwgTk9UIGF0b21pdCB3cml0dGVuIGFuZCBuZWVkX2lwdSBub3csIHRoZXJlIGlzCj4gKwkg
+KiBhIGhpZ2ggcHJvYmFiaWxpdHkgdGhhdCBJUFUgc2hvdWxkIGJlIGFkYXB0ZWQuIEZvciBJUFUs
+IHdlIHRyeSB0bwo+ICsJICogY2hlY2sgZXh0ZW50IHRyZWUgdG8gZ2V0IHRoZSBibG9jayBpbmRl
+eCBmaXJzdCwgaW5zdGVhZCBvZiByZWFkaW5nCj4gKwkgKiB0aGUgZG5vZGUgcGFnZSwgd2hlcmUg
+bWF5IGxlYWQgdG8gYW4gdXNlbGVzcyBkbm9kZSBJTywgc2luY2Ugbm8gbmVlZCB0bwo+ICsJICog
+dXBkYXRlIHRoZSBkbm9kZSBpbmRleCBmb3IgSVBVLgo+ICsJICovCj4gKwlpZiAodW5saWtlbHko
+IWlzX2NvbGRfZGF0YShwYWdlKSAmJgo+ICsJCQkhSVNfQVRPTUlDX1dSSVRURU5fUEFHRShwYWdl
+KSAmJgo+ICsJCQluZWVkX2lucGxhY2VfdXBkYXRlKGlub2RlLCBmaW8pICYmCj4gKwkJCWYyZnNf
+bG9va3VwX2V4dGVudF9jYWNoZShpbm9kZSwgcGFnZS0+aW5kZXgsICZlaSkpKSB7Cj4gKwo+ICsJ
+CWZpby0+b2xkX2Jsa2FkZHIgPSBlaS5ibGsgKyBwYWdlLT5pbmRleCAtIGVpLmZvZnM7Cj4gKwo+
+ICsJCWlmIChmaW8tPm9sZF9ibGthZGRyICE9IE5FV19BRERSICYmCj4gKwkJCQlmaW8tPm9sZF9i
+bGthZGRyICE9IE5VTExfQUREUikgewo+ICsJCQllcnIgPSBmMmZzX2VuY3J5cHRfcGFnZShmaW8s
+IHBhZ2UpOwo+ICsJCQlpZiAoZXJyKQo+ICsJCQkJcmV0dXJuIGVycjsKPiArCQkJc2V0X3BhZ2Vf
+d3JpdGViYWNrKHBhZ2UpOwo+ICsJCQllcnIgPSBkb19yZXdyaXRlX2RhdGFfcGFnZShmaW8sIHBh
+Z2UpOwo+ICsJCQlyZXR1cm4gZXJyOwo+ICsJCX0KPiArCX0KPiArCj4gIAlzZXRfbmV3X2Rub2Rl
+KCZkbiwgaW5vZGUsIE5VTEwsIE5VTEwsIDApOwo+ICAJZXJyID0gZ2V0X2Rub2RlX29mX2RhdGEo
+JmRuLCBwYWdlLT5pbmRleCwgTE9PS1VQX05PREUpOwo+ICAJaWYgKGVycikKPgoKLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUgdmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUg
+b2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0
+dHA6Ly9zZG0ubGluay9zbGFzaGRvdApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRl
+dmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9s
+aXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
