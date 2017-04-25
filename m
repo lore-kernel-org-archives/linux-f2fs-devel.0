@@ -1,124 +1,46 @@
-From: Hou Pengyang <houpengyang@huawei.com>
-Subject: [PATCH 3/4] f2fs: check IPU before cp to avoid IPU being
-	blocked by cp
-Date: Tue, 25 Apr 2017 12:45:14 +0000
-Message-ID: <20170425124515.160446-4-houpengyang@huawei.com>
-References: <20170425124515.160446-1-houpengyang@huawei.com>
+From: Richard Weinberger <richard.weinberger@gmail.com>
+Subject: Re: [PATCH 5/6] f2fs: switch to using fscrypt_match_name()
+Date: Tue, 25 Apr 2017 15:37:56 +0200
+Message-ID: <CAFLxGvxdanXJhzioJmgvr3mzSkS=Bxfh1bbtAn1L+t6CoSaHcA@mail.gmail.com>
+References: <20170424170013.85175-1-ebiggers3@gmail.com> <20170424170013.85175-6-ebiggers3@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <houpengyang@huawei.com>) id 1d2zqh-0002Hg-8p
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 25 Apr 2017 12:45:43 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187]
-	helo=dggrg01-dlp.huawei.com)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1d2zqf-0008RW-TC
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 25 Apr 2017 12:45:43 +0000
-In-Reply-To: <20170425124515.160446-1-houpengyang@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-ext4-owner@vger.kernel.org>
+In-Reply-To: <20170424170013.85175-6-ebiggers3@gmail.com>
+Sender: linux-ext4-owner@vger.kernel.org
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: linux-fscrypt@vger.kernel.org, Ryo Hashimoto <hashimoto@chromium.org>, Gwendal Grignou <gwendal@chromium.org>, "Theodore Y . Ts'o" <tytso@mit.edu>, Eric Biggers <ebiggers@google.com>, linux-f2fs-devel@lists.sourceforge.net, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org, Kazuhiro Inaba <kinaba@chromium.org>, David Gstir <david@sigma-star.at>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-IPU checking is under f2fs_lock_op, as a result, some IPU page(such as fsync/fdatasync IPU)
-may be blocked by a long time cp.
+Eric, Jaegeuk,
 
-This patch fix this by doing IPU checking before f2fs_lock_op, so fsync IPU could go along with cp.
 
-Suggested-by: He Yunlei <heyunlei@huawei.com>
-Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
----
- fs/f2fs/data.c    | 14 +++++++-------
- fs/f2fs/gc.c      |  1 +
- fs/f2fs/segment.c |  1 +
- 3 files changed, 9 insertions(+), 7 deletions(-)
+On Mon, Apr 24, 2017 at 7:00 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Switch f2fs directory searches to use the fscrypt_match_name() helper
+> function.  There should be no functional change.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 183a426..9bf9c7d 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1380,19 +1380,20 @@ int do_write_data_page(struct f2fs_io_info *fio)
- 	 * it had better in-place writes for updated data.
- 	 */
- 	if (need_inplace_update(fio)) {
--		f2fs_bug_on(fio->sbi, !fio->cp_rwsem_locked);
--		f2fs_unlock_op(fio->sbi);
--		fio->cp_rwsem_locked = false;
--
-+		f2fs_bug_on(fio->sbi, fio->cp_rwsem_locked);
- 		err = rewrite_data_page(fio);
- 		trace_f2fs_do_write_data_page(fio->page, IPU);
- 		set_inode_flag(inode, FI_UPDATE_WRITE);
- 	} else {
-+		if (!fio->cp_rwsem_locked)
-+			f2fs_lock_op(fio->sbi);
- 		write_data_page(&dn, fio);
- 		trace_f2fs_do_write_data_page(page, OPU);
- 		set_inode_flag(inode, FI_APPEND_WRITE);
- 		if (page->index == 0)
- 			set_inode_flag(inode, FI_FIRST_BLOCK_WRITTEN);
-+		if (!fio->cp_rwsem_locked)
-+			f2fs_unlock_op(fio->sbi);
- 	}
- out_writepage:
- 	f2fs_put_dnode(&dn);
-@@ -1473,13 +1474,12 @@ static int __write_data_page(struct page *page, bool *submitted,
- 		if (!err)
- 			goto out;
- 	}
--	f2fs_lock_op(sbi);
-+
-+	fio.cp_rwsem_locked = false;
- 	if (err == -EAGAIN)
- 		err = do_write_data_page(&fio);
- 	if (F2FS_I(inode)->last_disk_size < psize)
- 		F2FS_I(inode)->last_disk_size = psize;
--	if (fio.cp_rwsem_locked)
--		f2fs_unlock_op(sbi);
- done:
- 	if (err && err != -ENOENT)
- 		goto redirty_out;
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index e034857..b32cc30 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -715,6 +715,7 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
- 			.old_blkaddr = NULL_ADDR,
- 			.page = page,
- 			.encrypted_page = NULL,
-+			.cp_rwsem_locked = true,
- 		};
- 		bool is_dirty = PageDirty(page);
- 		int err;
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 9f86b98..463a77b 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -293,6 +293,7 @@ static int __commit_inmem_pages(struct inode *inode,
- 		.op_flags = REQ_SYNC | REQ_PRIO,
- 		.old_blkaddr = NULL_ADDR,
- 		.encrypted_page = NULL,
-+		.cp_rwsem_locked = true,
- 	};
- 	pgoff_t last_idx = ULONG_MAX;
- 	int err = 0;
+> -#ifdef CONFIG_F2FS_FS_ENCRYPTION
+> -               if (unlikely(!name->name)) {
+> -                       if (fname->usr_fname->name[0] == '_') {
+> -                               if (de_name.len > 32 &&
+> -                                       !memcmp(de_name.name + ((de_name.len - 17) & ~15),
+> -                                               fname->crypto_buf.name + 8, 16))
+> -                                       goto found;
+> -                               goto not_match;
+> -                       }
+> -                       name->name = fname->crypto_buf.name;
+> -                       name->len = fname->crypto_buf.len;
+> -               }
+
+Sorry if this is a stupid question, but why do you have to compare hashes _and_
+the last few bytes of the bigname?
+A lookup via bigname gives you two 32bits hash values, and there I'd assume that
+this is sufficient for a collisions free lookup. Especially since an
+resumed readdir()
+with a 64bits cookie has to work too on your filesystem.
+
 -- 
-2.10.1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+Thanks,
+//richard
