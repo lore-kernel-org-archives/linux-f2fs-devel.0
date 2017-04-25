@@ -1,98 +1,156 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v3 10/20] fuse: set mapping error in writepage_locked
- when it fails
-Date: Tue, 25 Apr 2017 13:19:03 +0200
-Message-ID: <20170425111903.GI2793@quack2.suse.cz>
-References: <20170424132259.8680-1-jlayton@redhat.com>
- <20170424132259.8680-11-jlayton@redhat.com>
- <20170424160431.GK23988@quack2.suse.cz>
- <1493054076.2895.17.camel@redhat.com>
- <20170425081720.GA2793@quack2.suse.cz>
- <1493116513.2758.1.camel@redhat.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 1/2] f2fs: introduce __issue_discard_cmd
+Date: Tue, 25 Apr 2017 20:21:37 +0800
+Message-ID: <20170425122138.53188-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <1493116513.2758.1.camel@redhat.com>
-Sender: owner-linux-mm@kvack.org
-To: Jeff Layton <jlayton@redhat.com>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-cifs@vger.kernel.org, linux-mm@kvack.org, jfs-discussion@lists.sourceforge.net, linux-xfs@vger.kernel.org, cluster-devel@redhat.com, linux-f2fs-devel@lists.sourceforge.net, v9fs-developer@lists.sourceforge.net, osd-dev@open-osd.org, linux-nilfs@vger.kernel.org, linux-block@vger.kernel.org, dhowells@redhat.com, akpm@linux-foundation.org, hch@infradead.org, ross.zwisler@linux.intel.com, mawilcox@microsoft.com, jack@suse.com, viro@zeniv.linux.org.uk, corbet@lwn.net, neilb@suse.de, clm@fb.com, tytso@mit.edu, axboe@kernel.dk
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1d2zUK-0001O2-7W
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 25 Apr 2017 12:22:36 +0000
+Received: from szxga02-in.huawei.com ([45.249.212.188]
+	helo=dggrg02-dlp.huawei.com)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1d2zUD-0005TB-VO
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 25 Apr 2017 12:22:36 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Tue 25-04-17 06:35:13, Jeff Layton wrote:
-> On Tue, 2017-04-25 at 10:17 +0200, Jan Kara wrote:
-> > On Mon 24-04-17 13:14:36, Jeff Layton wrote:
-> > > On Mon, 2017-04-24 at 18:04 +0200, Jan Kara wrote:
-> > > > On Mon 24-04-17 09:22:49, Jeff Layton wrote:
-> > > > > This ensures that we see errors on fsync when writeback fails.
-> > > > > 
-> > > > > Signed-off-by: Jeff Layton <jlayton@redhat.com>
-> > > > 
-> > > > Hum, but do we really want to clobber mapping errors with temporary stuff
-> > > > like ENOMEM? Or do you want to handle that in mapping_set_error?
-> > > > 
-> > > 
-> > > Right now we don't really have such a thing as temporary errors in the
-> > > writeback codepath. If you return an error here, the data doesn't stay
-> > > dirty or anything, and I think we want to ensure that that gets reported
-> > > via fsync.
-> > > 
-> > > I'd like to see us add better handling for retryable errors for stuff
-> > > like ENOMEM or EAGAIN. I think this is the first step toward that
-> > > though. Once we have more consistent handling of writeback errors in
-> > > general, then we can start doing more interesting things with retryable
-> > > errors.
-> > > 
-> > > So yeah, I this is the right thing to do for now.
-> > 
-> > OK, fair enough. And question number 2):
-> > 
-> > Who is actually responsible for setting the error in the mapping when error
-> > happens inside ->writepage()? Is it the ->writepage() callback or the
-> > caller of ->writepage()? Or something else? Currently it seems to be a
-> > strange mix (e.g. mm/page-writeback.c: __writepage() calls
-> > mapping_set_error() when ->writepage() returns error) so I'd like to
-> > understand what's the plan and have that recorded in the changelogs.
-> > 
-> 
-> That's an excellent question.
-> 
-> I think we probably want the writepage/launder_page operations to call
-> mapping_set_error. That makes it possible for filesystems (e.g. NFS) to
-> handle their own error tracking and reporting without using the new
-> infrastructure. If they never call mapping_set_error then we'll always
-> just return whatever their ->fsync operation returns on an fsync.
+Just cleanup, no logic change.
 
-OK, makes sense. It is also in line with what you did for DAX, 9p, or here
-for FUSE. So feel free to add:
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/segment.c | 63 ++++++++++++++++++++++++++-----------------------------
+ 1 file changed, 30 insertions(+), 33 deletions(-)
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-for this patch but please also add a sentense that ->writepage() is
-responsible for calling mapping_set_error() if it fails and page is not
-redirtied to the changelogs of patches changing writepage handlers.
-
-> I'll make another pass through the tree and see whether we have some
-> mapping_set_error calls that should be removed, and will flesh out
-> vfs.txt to state this. Maybe that file needs a whole section on
-> writeback error reporting? Hmmm...
-
-I think it would be nice to have all the logic described in one place. So
-+1 from me.
-
-> That probably also means that I should drop patch 8 from this series
-> (mm: ensure that we set mapping error if writeout fails), since that
-> should be happening in writepage already.
-
-Yes.
-
-								Honza
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 68a9f8d4d628..57989c2c3a6a 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -974,6 +974,32 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+ 	return 0;
+ }
+ 
++static void __issue_discard_cmd(struct f2fs_sb_info *sbi, bool issue_cond)
++{
++	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
++	struct list_head *pend_list;
++	struct discard_cmd *dc, *tmp;
++	struct blk_plug plug;
++	int i, iter = 0;
++
++	mutex_lock(&dcc->cmd_lock);
++	blk_start_plug(&plug);
++	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
++		pend_list = &dcc->pend_list[i];
++		list_for_each_entry_safe(dc, tmp, pend_list, list) {
++			f2fs_bug_on(sbi, dc->state != D_PREP);
++
++			if (!issue_cond || is_idle(sbi))
++				__submit_discard_cmd(sbi, dc);
++			if (issue_cond && iter++ > DISCARD_ISSUE_RATE)
++				goto out;
++		}
++	}
++out:
++	blk_finish_plug(&plug);
++	mutex_unlock(&dcc->cmd_lock);
++}
++
+ /* This should be covered by global mutex, &sit_i->sentry_lock */
+ void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
+ {
+@@ -996,27 +1022,16 @@ void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
+ void f2fs_wait_discard_bios(struct f2fs_sb_info *sbi)
+ {
+ 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+-	struct list_head *pend_list;
+ 	struct list_head *wait_list = &(dcc->wait_list);
+ 	struct discard_cmd *dc, *tmp;
+-	struct blk_plug plug;
+-	int i;
+ 
+-	mutex_lock(&dcc->cmd_lock);
+-
+-	blk_start_plug(&plug);
+-	for (i = 0; i < MAX_PLIST_NUM; i++) {
+-		pend_list = &dcc->pend_list[i];
+-		list_for_each_entry_safe(dc, tmp, pend_list, list)
+-			__submit_discard_cmd(sbi, dc);
+-	}
+-	blk_finish_plug(&plug);
++	__issue_discard_cmd(sbi, false);
+ 
++	mutex_lock(&dcc->cmd_lock);
+ 	list_for_each_entry_safe(dc, tmp, wait_list, list) {
+ 		wait_for_completion_io(&dc->wait);
+ 		__remove_discard_cmd(sbi, dc);
+ 	}
+-
+ 	mutex_unlock(&dcc->cmd_lock);
+ }
+ 
+@@ -1025,32 +1040,15 @@ static int issue_discard_thread(void *data)
+ 	struct f2fs_sb_info *sbi = data;
+ 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+ 	wait_queue_head_t *q = &dcc->discard_wait_queue;
+-	struct list_head *pend_list;
+ 	struct list_head *wait_list = &dcc->wait_list;
+ 	struct discard_cmd *dc, *tmp;
+-	struct blk_plug plug;
+-	int iter = 0, i;
+ repeat:
+ 	if (kthread_should_stop())
+ 		return 0;
+ 
+-	mutex_lock(&dcc->cmd_lock);
+-	blk_start_plug(&plug);
+-	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
+-		pend_list = &dcc->pend_list[i];
+-		list_for_each_entry_safe(dc, tmp, pend_list, list) {
+-			f2fs_bug_on(sbi, dc->state != D_PREP);
+-
+-			if (is_idle(sbi))
+-				__submit_discard_cmd(sbi, dc);
+-
+-			if (iter++ > DISCARD_ISSUE_RATE)
+-				goto next_step;
+-		}
+-	}
+-next_step:
+-	blk_finish_plug(&plug);
++	__issue_discard_cmd(sbi, true);
+ 
++	mutex_lock(&dcc->cmd_lock);
+ 	list_for_each_entry_safe(dc, tmp, wait_list, list) {
+ 		if (dc->state == D_DONE) {
+ 			wait_for_completion_io(&dc->wait);
+@@ -1059,7 +1057,6 @@ static int issue_discard_thread(void *data)
+ 	}
+ 	mutex_unlock(&dcc->cmd_lock);
+ 
+-	iter = 0;
+ 	congestion_wait(BLK_RW_SYNC, HZ/50);
+ 
+ 	wait_event_interruptible(*q, kthread_should_stop() ||
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.12.2.510.ge1104a5ee539
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
