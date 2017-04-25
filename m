@@ -1,22 +1,25 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: introduce valid_ipu_blkaddr to clean up
-Date: Tue, 25 Apr 2017 14:46:24 -0700
-Message-ID: <20170425214624.5027-1-jaegeuk@kernel.org>
+From: Jin Qian <jinqian@google.com>
+Subject: [PATCH 1/1] f2fs-tools: sanity check segment count
+Date: Tue, 25 Apr 2017 16:25:11 -0700
+Message-ID: <20170425232511.22127-1-jinqian@google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1d38I5-0006aC-Rn
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jinqian@google.com>) id 1d39rC-0001Zc-LE
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 25 Apr 2017 21:46:33 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1d38I5-0007yX-49
+	Tue, 25 Apr 2017 23:26:54 +0000
+Received: from mail-pg0-f50.google.com ([74.125.83.50])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1d39r9-00085F-49
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 25 Apr 2017 21:46:33 +0000
+	Tue, 25 Apr 2017 23:26:54 +0000
+Received: by mail-pg0-f50.google.com with SMTP id v1so23334997pgv.1
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Tue, 25 Apr 2017 16:26:51 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,68 +29,32 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org
 
-This patch introduces valid_ipu_blkaddr to clean up checking block address for
-inplace-update.
+make sure segment count in super block doesn't exceed F2FS_MAX_SEGMENT.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Jin Qian <jinqian@google.com>
 ---
- fs/f2fs/data.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ fsck/mount.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index b2992dbdd11e..c2b98e44c5f3 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1331,8 +1331,6 @@ static int encrypt_one_page(struct f2fs_io_info *fio)
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 761baa0..0111960 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -406,6 +406,9 @@ int sanity_check_raw_super(struct f2fs_super_block *sb, u64 offset)
+ 		return -1;
+ 	}
  
- static inline bool need_inplace_update(struct f2fs_io_info *fio)
- {
--	if (fio->old_blkaddr == NEW_ADDR)
--		return false;
- 	if (is_cold_data(fio->page))
- 		return false;
- 	if (IS_ATOMIC_WRITTEN_PAGE(fio->page))
-@@ -1341,6 +1339,15 @@ static inline bool need_inplace_update(struct f2fs_io_info *fio)
- 	return need_inplace_update_policy(fio->page->mapping->host, fio);
- }
- 
-+static inline bool valid_ipu_blkaddr(struct f2fs_io_info *fio)
-+{
-+	if (fio->old_blkaddr == NEW_ADDR)
-+		return false;
-+	if (fio->old_blkaddr == NULL_ADDR)
-+		return false;
-+	return true;
-+}
++	if (get_sb(segment_count) > F2FS_MAX_SEGMENT)
++		return -1;
 +
- int do_write_data_page(struct f2fs_io_info *fio)
- {
- 	struct page *page = fio->page;
-@@ -1354,8 +1361,8 @@ int do_write_data_page(struct f2fs_io_info *fio)
- 	if (need_inplace_update(fio) &&
- 			f2fs_lookup_extent_cache(inode, page->index, &ei)) {
- 		fio->old_blkaddr = ei.blk + page->index - ei.fofs;
--		if (fio->old_blkaddr != NULL_ADDR &&
--				fio->old_blkaddr != NEW_ADDR) {
-+
-+		if (valid_ipu_blkaddr(fio)) {
- 			ipu_force = true;
- 			goto got_it;
- 		}
-@@ -1382,7 +1389,7 @@ int do_write_data_page(struct f2fs_io_info *fio)
- 	 * If current allocation needs SSR,
- 	 * it had better in-place writes for updated data.
- 	 */
--	if (ipu_force || need_inplace_update(fio)) {
-+	if (ipu_force || (valid_ipu_blkaddr(fio) && need_inplace_update(fio))) {
- 		f2fs_bug_on(fio->sbi, fio->cp_rwsem_locked);
- 		f2fs_put_dnode(&dn);
- 		err = rewrite_data_page(fio);
+ 	if (sanity_check_area_boundary(sb, offset))
+ 		return -1;
+ 	return 0;
 -- 
-2.11.0
+2.13.0.rc0.306.g87b477812d-goog
 
 
 ------------------------------------------------------------------------------
