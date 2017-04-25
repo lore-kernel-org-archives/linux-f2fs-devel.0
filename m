@@ -1,8 +1,7 @@
 From: Hou Pengyang <houpengyang@huawei.com>
-Subject: [PATCH 2/4] f2fs: lookup extent cache first under IPU
-	scenario
-Date: Tue, 25 Apr 2017 12:45:13 +0000
-Message-ID: <20170425124515.160446-3-houpengyang@huawei.com>
+Subject: [PATCH 4/4] f2fs: unlock dnode before IPU
+Date: Tue, 25 Apr 2017 12:45:15 +0000
+Message-ID: <20170425124515.160446-5-houpengyang@huawei.com>
 References: <20170425124515.160446-1-houpengyang@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,16 +9,16 @@ Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <houpengyang@huawei.com>) id 1d2zqb-00008T-BW
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <houpengyang@huawei.com>) id 1d2zqi-000543-2Z
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 25 Apr 2017 12:45:37 +0000
-Received: from szxga03-in.huawei.com ([45.249.212.189]
-	helo=dggrg03-dlp.huawei.com)
+	Tue, 25 Apr 2017 12:45:44 +0000
+Received: from szxga01-in.huawei.com ([45.249.212.187]
+	helo=dggrg01-dlp.huawei.com)
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1d2zqZ-0003Fp-Ie
+	(Exim 4.76) id 1d2zqh-0003Ht-7J
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 25 Apr 2017 12:45:37 +0000
+	Tue, 25 Apr 2017 12:45:44 +0000
 In-Reply-To: <20170425124515.160446-1-houpengyang@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -33,87 +32,27 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-If a page is cold, NOT atomit written and need_ipu now, there is
-a high probability that IPU should be adapted. For IPU, we try to
-check extent tree to get the block index first, instead of reading
-the dnode page, where may lead to an useless dnode IO, since no need to
-update the dnode index for IPU.
-
 Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/data.c    | 11 ++++++++++-
- fs/f2fs/gc.c      |  1 +
- fs/f2fs/segment.c |  1 +
- 3 files changed, 12 insertions(+), 1 deletion(-)
+ fs/f2fs/data.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 02400b0..183a426 100644
+index 9bf9c7d..1d7157b 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -1346,21 +1346,29 @@ int do_write_data_page(struct f2fs_io_info *fio)
- 	struct page *page = fio->page;
- 	struct inode *inode = page->mapping->host;
- 	struct dnode_of_data dn;
-+	struct extent_info ei = {0,0,0};
- 	int err = 0;
- 
- 	set_new_dnode(&dn, inode, NULL, NULL, 0);
-+	if (need_inplace_update(fio) &&
-+			f2fs_lookup_extent_cache(inode, page->index, &ei)) {
-+		fio->old_blkaddr = ei.blk + page->index - ei.fofs;
-+		if (fio->old_blkaddr != NULL_ADDR &&
-+				fio->old_blkaddr != NEW_ADDR)
-+			goto got_it;
-+	}
- 	err = get_dnode_of_data(&dn, page->index, LOOKUP_NODE);
- 	if (err)
- 		return err;
- 
- 	fio->old_blkaddr = dn.data_blkaddr;
--
- 	/* This page is already truncated */
- 	if (fio->old_blkaddr == NULL_ADDR) {
- 		ClearPageUptodate(page);
- 		goto out_writepage;
- 	}
- 
-+got_it:
- 	err = encrypt_one_page(fio);
- 	if (err)
- 		goto out_writepage;
-@@ -1408,6 +1416,7 @@ static int __write_data_page(struct page *page, bool *submitted,
- 		.type = DATA,
- 		.op = REQ_OP_WRITE,
- 		.op_flags = wbc_to_write_flags(wbc),
-+		.old_blkaddr = NULL_ADDR,
- 		.page = page,
- 		.encrypted_page = NULL,
- 		.submitted = false,
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 499a43f..e034857 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -712,6 +712,7 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
- 			.type = DATA,
- 			.op = REQ_OP_WRITE,
- 			.op_flags = REQ_SYNC,
-+			.old_blkaddr = NULL_ADDR,
- 			.page = page,
- 			.encrypted_page = NULL,
- 		};
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 2a95535..9f86b98 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -291,6 +291,7 @@ static int __commit_inmem_pages(struct inode *inode,
- 		.type = DATA,
- 		.op = REQ_OP_WRITE,
- 		.op_flags = REQ_SYNC | REQ_PRIO,
-+		.old_blkaddr = NULL_ADDR,
- 		.encrypted_page = NULL,
- 	};
- 	pgoff_t last_idx = ULONG_MAX;
+@@ -1381,9 +1381,11 @@ int do_write_data_page(struct f2fs_io_info *fio)
+ 	 */
+ 	if (need_inplace_update(fio)) {
+ 		f2fs_bug_on(fio->sbi, fio->cp_rwsem_locked);
++		f2fs_put_dnode(&dn);
+ 		err = rewrite_data_page(fio);
+ 		trace_f2fs_do_write_data_page(fio->page, IPU);
+ 		set_inode_flag(inode, FI_UPDATE_WRITE);
++		return err;
+ 	} else {
+ 		if (!fio->cp_rwsem_locked)
+ 			f2fs_lock_op(fio->sbi);
 -- 
 2.10.1
 
