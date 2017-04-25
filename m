@@ -1,7 +1,8 @@
 From: Hou Pengyang <houpengyang@huawei.com>
-Subject: [PATCH 1/4] f2fs: reconstruct code to write a data page
-Date: Tue, 25 Apr 2017 12:45:12 +0000
-Message-ID: <20170425124515.160446-2-houpengyang@huawei.com>
+Subject: [PATCH 2/4] f2fs: lookup extent cache first under IPU
+	scenario
+Date: Tue, 25 Apr 2017 12:45:13 +0000
+Message-ID: <20170425124515.160446-3-houpengyang@huawei.com>
 References: <20170425124515.160446-1-houpengyang@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,16 +10,16 @@ Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <houpengyang@huawei.com>) id 1d2zqc-00053G-4x
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <houpengyang@huawei.com>) id 1d2zqb-00008T-BW
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 25 Apr 2017 12:45:38 +0000
+	Tue, 25 Apr 2017 12:45:37 +0000
 Received: from szxga03-in.huawei.com ([45.249.212.189]
 	helo=dggrg03-dlp.huawei.com)
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1d2zqZ-0003Fr-J6
+	(Exim 4.76) id 1d2zqZ-0003Fp-Ie
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 25 Apr 2017 12:45:38 +0000
+	Tue, 25 Apr 2017 12:45:37 +0000
 In-Reply-To: <20170425124515.160446-1-houpengyang@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -32,149 +33,87 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-This patch introduces encrypt_one_page which encrypts one data page before
-submit_bio, and change the use of need_inplace_update.
+If a page is cold, NOT atomit written and need_ipu now, there is
+a high probability that IPU should be adapted. For IPU, we try to
+check extent tree to get the block index first, instead of reading
+the dnode page, where may lead to an useless dnode IO, since no need to
+update the dnode index for IPU.
 
 Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/data.c    | 77 +++++++++++++++++++++++++++++++++----------------------
- fs/f2fs/file.c    |  2 +-
- fs/f2fs/segment.h |  2 +-
- 3 files changed, 49 insertions(+), 32 deletions(-)
+ fs/f2fs/data.c    | 11 ++++++++++-
+ fs/f2fs/gc.c      |  1 +
+ fs/f2fs/segment.c |  1 +
+ 3 files changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index b8dcd1e..02400b0 100644
+index 02400b0..183a426 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -1302,6 +1302,45 @@ static int f2fs_read_data_pages(struct file *file,
- 	return f2fs_mpage_readpages(mapping, pages, NULL, nr_pages);
- }
- 
-+static int encrypt_one_page(struct f2fs_io_info *fio)
-+{
-+	struct inode *inode = fio->page->mapping->host;
-+	gfp_t gfp_flags = GFP_NOFS;
-+
-+	if (!f2fs_encrypted_inode(inode) || !S_ISREG(inode->i_mode))
-+		return 0;
-+
-+	/* wait for GCed encrypted page writeback */
-+	f2fs_wait_on_encrypted_page_writeback(fio->sbi, fio->old_blkaddr);
-+
-+retry_encrypt:
-+	fio->encrypted_page = fscrypt_encrypt_page(inode, fio->page,
-+			PAGE_SIZE, 0, fio->page->index, gfp_flags);
-+	if (!IS_ERR(fio->encrypted_page))
-+		return 0;
-+
-+	/* flush pending IOs and wait for a while in the ENOMEM case */
-+	if (PTR_ERR(fio->encrypted_page) == -ENOMEM) {
-+		f2fs_flush_merged_bios(fio->sbi);
-+		congestion_wait(BLK_RW_ASYNC, HZ/50);
-+		gfp_flags |= __GFP_NOFAIL;
-+		goto retry_encrypt;
-+	}
-+	return PTR_ERR(fio->encrypted_page);
-+}
-+
-+static inline bool need_inplace_update(struct f2fs_io_info *fio)
-+{
-+	if (fio->old_blkaddr == NEW_ADDR)
-+		return false;
-+	if (is_cold_data(fio->page))
-+		return false;
-+	if (IS_ATOMIC_WRITTEN_PAGE(fio->page))
-+		return false;
-+
-+	return need_inplace_update_policy(fio->page->mapping->host, fio);
-+}
-+
- int do_write_data_page(struct f2fs_io_info *fio)
- {
+@@ -1346,21 +1346,29 @@ int do_write_data_page(struct f2fs_io_info *fio)
  	struct page *page = fio->page;
-@@ -1322,30 +1361,9 @@ int do_write_data_page(struct f2fs_io_info *fio)
+ 	struct inode *inode = page->mapping->host;
+ 	struct dnode_of_data dn;
++	struct extent_info ei = {0,0,0};
+ 	int err = 0;
+ 
+ 	set_new_dnode(&dn, inode, NULL, NULL, 0);
++	if (need_inplace_update(fio) &&
++			f2fs_lookup_extent_cache(inode, page->index, &ei)) {
++		fio->old_blkaddr = ei.blk + page->index - ei.fofs;
++		if (fio->old_blkaddr != NULL_ADDR &&
++				fio->old_blkaddr != NEW_ADDR)
++			goto got_it;
++	}
+ 	err = get_dnode_of_data(&dn, page->index, LOOKUP_NODE);
+ 	if (err)
+ 		return err;
+ 
+ 	fio->old_blkaddr = dn.data_blkaddr;
+-
+ 	/* This page is already truncated */
+ 	if (fio->old_blkaddr == NULL_ADDR) {
+ 		ClearPageUptodate(page);
  		goto out_writepage;
  	}
  
--	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode)) {
--		gfp_t gfp_flags = GFP_NOFS;
--
--		/* wait for GCed encrypted page writeback */
--		f2fs_wait_on_encrypted_page_writeback(F2FS_I_SB(inode),
--							fio->old_blkaddr);
--retry_encrypt:
--		fio->encrypted_page = fscrypt_encrypt_page(inode, fio->page,
--							PAGE_SIZE, 0,
--							fio->page->index,
--							gfp_flags);
--		if (IS_ERR(fio->encrypted_page)) {
--			err = PTR_ERR(fio->encrypted_page);
--			if (err == -ENOMEM) {
--				/* flush pending ios and wait for a while */
--				f2fs_flush_merged_bios(F2FS_I_SB(inode));
--				congestion_wait(BLK_RW_ASYNC, HZ/50);
--				gfp_flags |= __GFP_NOFAIL;
--				err = 0;
--				goto retry_encrypt;
--			}
--			goto out_writepage;
--		}
--	}
-+	err = encrypt_one_page(fio);
-+	if (err)
-+		goto out_writepage;
- 
- 	set_page_writeback(page);
- 
-@@ -1353,15 +1371,14 @@ int do_write_data_page(struct f2fs_io_info *fio)
- 	 * If current allocation needs SSR,
- 	 * it had better in-place writes for updated data.
- 	 */
--	if (unlikely(fio->old_blkaddr != NEW_ADDR &&
--			!is_cold_data(page) &&
--			!IS_ATOMIC_WRITTEN_PAGE(page) &&
--			need_inplace_update(inode, fio))) {
--		f2fs_unlock_op(F2FS_I_SB(inode));
-+	if (need_inplace_update(fio)) {
-+		f2fs_bug_on(fio->sbi, !fio->cp_rwsem_locked);
-+		f2fs_unlock_op(fio->sbi);
- 		fio->cp_rwsem_locked = false;
-+
- 		err = rewrite_data_page(fio);
-+		trace_f2fs_do_write_data_page(fio->page, IPU);
- 		set_inode_flag(inode, FI_UPDATE_WRITE);
--		trace_f2fs_do_write_data_page(page, IPU);
- 	} else {
- 		write_data_page(&dn, fio);
- 		trace_f2fs_do_write_data_page(page, OPU);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index e7a2b54..a0d9588 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1898,7 +1898,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
- 	int err;
- 
- 	/* if in-place-update policy is enabled, don't waste time here */
--	if (need_inplace_update(inode, NULL))
-+	if (need_inplace_update_policy(inode, NULL))
- 		return -EINVAL;
- 
- 	pg_start = range->start >> PAGE_SHIFT;
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 4a85035..2a6b8c1 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -561,7 +561,7 @@ enum {
- 	F2FS_IPU_ASYNC,
- };
- 
--static inline bool need_inplace_update(struct inode *inode,
-+static inline bool need_inplace_update_policy(struct inode *inode,
- 				struct f2fs_io_info *fio)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++got_it:
+ 	err = encrypt_one_page(fio);
+ 	if (err)
+ 		goto out_writepage;
+@@ -1408,6 +1416,7 @@ static int __write_data_page(struct page *page, bool *submitted,
+ 		.type = DATA,
+ 		.op = REQ_OP_WRITE,
+ 		.op_flags = wbc_to_write_flags(wbc),
++		.old_blkaddr = NULL_ADDR,
+ 		.page = page,
+ 		.encrypted_page = NULL,
+ 		.submitted = false,
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 499a43f..e034857 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -712,6 +712,7 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+ 			.type = DATA,
+ 			.op = REQ_OP_WRITE,
+ 			.op_flags = REQ_SYNC,
++			.old_blkaddr = NULL_ADDR,
+ 			.page = page,
+ 			.encrypted_page = NULL,
+ 		};
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 2a95535..9f86b98 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -291,6 +291,7 @@ static int __commit_inmem_pages(struct inode *inode,
+ 		.type = DATA,
+ 		.op = REQ_OP_WRITE,
+ 		.op_flags = REQ_SYNC | REQ_PRIO,
++		.old_blkaddr = NULL_ADDR,
+ 		.encrypted_page = NULL,
+ 	};
+ 	pgoff_t last_idx = ULONG_MAX;
 -- 
 2.10.1
 
