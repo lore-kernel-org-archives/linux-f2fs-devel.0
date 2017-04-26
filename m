@@ -1,30 +1,54 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: release cp and dnode lock before IPU
-Date: Wed, 26 Apr 2017 11:18:05 +0800
-Message-ID: <20170426031805.92884-1-yuchao0@huawei.com>
+Subject: [PATCH RESEND] f2fs: release cp and dnode lock before IPU
+Date: Wed, 26 Apr 2017 14:21:06 +0800
+Message-ID: <20170426062106.79920-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1d3GL6-0000EZ-5V
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 26 Apr 2017 06:22:12 +0000
+Received: from szxga03-in.huawei.com ([45.249.212.189]
+	helo=dggrg03-dlp.huawei.com)
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1d3GL1-0008HM-Ii
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 26 Apr 2017 06:22:12 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Hou Pengyang <houpengyang@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 From: Hou Pengyang <houpengyang@huawei.com>
 
 We don't need to rewrite the page under dnode locks.
 
 Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/data.c    | 40 ++++++++++++++++++++++++++--------------
+Changelog:
+ - remove uneeded f2fs_{un,}lock_op.
+ - add signed-off of mine.
+ fs/f2fs/data.c    | 38 ++++++++++++++++++++++++--------------
  fs/f2fs/f2fs.h    |  2 +-
  fs/f2fs/gc.c      |  1 +
  fs/f2fs/segment.c |  1 +
- 4 files changed, 29 insertions(+), 15 deletions(-)
+ 4 files changed, 27 insertions(+), 15 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index b8245a17ed69..bbe2c28810bf 100644
+index b8245a17ed69..6b75f23b434f 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
 @@ -1357,12 +1357,17 @@ int do_write_data_page(struct f2fs_io_info *fio)
@@ -99,13 +123,7 @@ index b8245a17ed69..bbe2c28810bf 100644
  		err = do_write_data_page(&fio);
  		goto done;
  	}
-@@ -1471,17 +1482,18 @@ static int __write_data_page(struct page *page, bool *submitted,
- 
- 	err = -EAGAIN;
- 	if (f2fs_has_inline_data(inode)) {
-+		f2fs_lock_op(sbi);
- 		err = f2fs_write_inline_data(inode, page);
-+		f2fs_unlock_op(sbi);
+@@ -1475,13 +1486,12 @@ static int __write_data_page(struct page *page, bool *submitted,
  		if (!err)
  			goto out;
  	}
@@ -160,3 +178,8 @@ index 4ba61ca430d0..63ea066f7dc0 100644
  	int err = 0;
 -- 
 2.12.2.510.ge1104a5ee539
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
