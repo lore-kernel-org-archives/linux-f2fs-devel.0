@@ -1,25 +1,22 @@
-From: Jin Qian <jinqian@google.com>
-Subject: [PATCH 1/1] f2fs: sanity check segment count
-Date: Tue, 25 Apr 2017 16:28:48 -0700
-Message-ID: <20170425232848.23078-1-jinqian@android.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] mkfs.f2fs: fix wrong segment assignment
+Date: Tue, 25 Apr 2017 17:53:41 -0700
+Message-ID: <20170426005341.12232-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jinqian@google.com>) id 1d39tI-0006Po-Jm
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1d3BDL-0004oA-0N
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 25 Apr 2017 23:29:04 +0000
-Received: from mail-pg0-f48.google.com ([74.125.83.48])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1d39tH-0006iM-RI
+	Wed, 26 Apr 2017 00:53:51 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1d3BDK-000449-4T
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 25 Apr 2017 23:29:04 +0000
-Received: by mail-pg0-f48.google.com with SMTP id 63so35043884pgh.0
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Tue, 25 Apr 2017 16:29:03 -0700 (PDT)
+	Wed, 26 Apr 2017 00:53:50 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,56 +27,59 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
-Cc: jaegeuk@kernel.org
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-From: Jin Qian <jinqian@google.com>
+We must guarantee that current segments should be different between different
+logs.
+This should resolve xfstests/generic/015 panic.
 
-F2FS uses 4 bytes to represent block address. As a result, supported
-size of disk is 16 TB and it equals to 16 * 1024 * 1024 / 2 segments.
-
-Signed-off-by: Jin Qian <jinqian@google.com>
+Fixes: 8f9327c0c02ee1 ("mkfs.f2fs: use noheap by default")
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/super.c         | 7 +++++++
- include/linux/f2fs_fs.h | 6 ++++++
- 2 files changed, 13 insertions(+)
+ mkfs/f2fs_format.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 97c07a5153e9..4cd3bee6775f 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1494,6 +1494,13 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 		return 1;
- 	}
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index ca47385..d354c88 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -117,6 +117,24 @@ next:
+ 	free(c.extension_list);
+ }
  
-+	if (le32_to_cpu(raw_super->segment_count) > F2FS_MAX_SEGMENT) {
-+		f2fs_msg(sb, KERN_INFO,
-+			"Invalid segment count (%u)",
-+			le32_to_cpu(raw_super->segment_count));
-+		return 1;
++static void verify_cur_segs(void)
++{
++	int i, j;
++
++	for (i = 0; i < NR_CURSEG_TYPE; i++) {
++		for (j = 0; j < NR_CURSEG_TYPE; j++)
++			if (c.cur_seg[i] == c.cur_seg[j])
++				break;
 +	}
 +
- 	/* check CP/SIT/NAT/SSA/MAIN_AREA area boundary */
- 	if (sanity_check_area_boundary(sbi, bh))
- 		return 1;
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index e2d239ed4c60..661200e6d281 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -302,6 +302,12 @@ struct f2fs_nat_block {
- #define SIT_ENTRY_PER_BLOCK (PAGE_SIZE / sizeof(struct f2fs_sit_entry))
- 
- /*
-+ * F2FS uses 4 bytes to represent block address. As a result, supported size of
-+ * disk is 16 TB and it equals to 16 * 1024 * 1024 / 2 segments.
-+ */
-+#define F2FS_MAX_SEGMENT       ((16 * 1024 * 1024) / 2)
++	if (i == NR_CURSEG_TYPE && j == NR_CURSEG_TYPE)
++		return;
 +
-+/*
-  * Note that f2fs_sit_entry->vblocks has the following bit-field information.
-  * [15:10] : allocation type such as CURSEG_XXXX_TYPE
-  * [9:0] : valid block count
++	c.cur_seg[0] = 0;
++	for (i = 1; i < NR_CURSEG_TYPE; i++)
++		c.cur_seg[i] = next_zone(i - 1);
++}
++
+ static int f2fs_prepare_super_block(void)
+ {
+ 	u_int32_t blk_size_bytes;
+@@ -384,6 +402,9 @@ static int f2fs_prepare_super_block(void)
+ 					next_zone(CURSEG_COLD_DATA));
+ 	}
+ 
++	/* if there is redundancy, reassign it */
++	verify_cur_segs();
++
+ 	cure_extension_list();
+ 
+ 	/* get kernel version */
 -- 
-2.13.0.rc0.306.g87b477812d-goog
+2.11.0
 
 
 ------------------------------------------------------------------------------
