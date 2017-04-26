@@ -1,23 +1,23 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH RESEND] f2fs: release cp and dnode lock before IPU
-Date: Wed, 26 Apr 2017 14:21:06 +0800
-Message-ID: <20170426062106.79920-1-yuchao0@huawei.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH] f2fs: fix a mount fail for wrong next_scan_nid
+Date: Wed, 26 Apr 2017 15:56:52 +0800
+Message-ID: <20170426075652.4249-1-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1d3GL6-0000EZ-5V
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1d3Hka-00013t-Q2
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 26 Apr 2017 06:22:12 +0000
-Received: from szxga03-in.huawei.com ([45.249.212.189]
-	helo=dggrg03-dlp.huawei.com)
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1d3GL1-0008HM-Ii
+	Wed, 26 Apr 2017 07:52:36 +0000
+Received: from szxga01-in.huawei.com ([45.249.212.187]
+	helo=dggrg01-dlp.huawei.com)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1d3HkZ-0002zi-EW
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 26 Apr 2017 06:22:12 +0000
+	Wed, 26 Apr 2017 07:52:36 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,157 +27,39 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-From: Hou Pengyang <houpengyang@huawei.com>
+-write_checkpoint
+   -do_checkpoint
+      -next_free_nid    <--- something wrong with next free nid
 
-We don't need to rewrite the page under dnode locks.
+-f2fs_fill_super
+   -build_node_manager
+      -build_free_nids
+          -get_current_nat_page
+             -__get_meta_page   <--- attempt to access beyond end of device
 
-Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
-Changelog:
- - remove uneeded f2fs_{un,}lock_op.
- - add signed-off of mine.
- fs/f2fs/data.c    | 38 ++++++++++++++++++++++++--------------
- fs/f2fs/f2fs.h    |  2 +-
- fs/f2fs/gc.c      |  1 +
- fs/f2fs/segment.c |  1 +
- 4 files changed, 27 insertions(+), 15 deletions(-)
+ fs/f2fs/node.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index b8245a17ed69..6b75f23b434f 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1357,12 +1357,17 @@ int do_write_data_page(struct f2fs_io_info *fio)
- 		if (fio->old_blkaddr != NULL_ADDR &&
- 				fio->old_blkaddr != NEW_ADDR) {
- 			ipu_force = true;
-+			fio->need_lock = false;
- 			goto got_it;
- 		}
- 	}
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index b99e318..98351a4 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1955,6 +1955,9 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
+ 	int i = 0;
+ 	nid_t nid = nm_i->next_scan_nid;
+ 
++	if (unlikely(nid >= nm_i->max_nid))
++		nid = 0;
 +
-+	if (fio->need_lock)
-+		f2fs_lock_op(fio->sbi);
-+
- 	err = get_dnode_of_data(&dn, page->index, LOOKUP_NODE);
- 	if (err)
--		return err;
-+		goto out;
- 
- 	fio->old_blkaddr = dn.data_blkaddr;
- 
-@@ -1383,21 +1388,26 @@ int do_write_data_page(struct f2fs_io_info *fio)
- 	 * it had better in-place writes for updated data.
- 	 */
- 	if (ipu_force || need_inplace_update(fio)) {
--		f2fs_bug_on(fio->sbi, !fio->cp_rwsem_locked);
--		f2fs_unlock_op(fio->sbi);
--		fio->cp_rwsem_locked = false;
-+		f2fs_put_dnode(&dn);
-+		if (fio->need_lock)
-+			f2fs_unlock_op(fio->sbi);
- 		err = rewrite_data_page(fio);
- 		trace_f2fs_do_write_data_page(fio->page, IPU);
- 		set_inode_flag(inode, FI_UPDATE_WRITE);
--	} else {
--		write_data_page(&dn, fio);
--		trace_f2fs_do_write_data_page(page, OPU);
--		set_inode_flag(inode, FI_APPEND_WRITE);
--		if (page->index == 0)
--			set_inode_flag(inode, FI_FIRST_BLOCK_WRITTEN);
-+		return err;
- 	}
-+
-+	/* LFS mode write path */
-+	write_data_page(&dn, fio);
-+	trace_f2fs_do_write_data_page(page, OPU);
-+	set_inode_flag(inode, FI_APPEND_WRITE);
-+	if (page->index == 0)
-+		set_inode_flag(inode, FI_FIRST_BLOCK_WRITTEN);
- out_writepage:
- 	f2fs_put_dnode(&dn);
-+out:
-+	if (fio->need_lock)
-+		f2fs_unlock_op(fio->sbi);
- 	return err;
- }
- 
-@@ -1422,7 +1432,7 @@ static int __write_data_page(struct page *page, bool *submitted,
- 		.page = page,
- 		.encrypted_page = NULL,
- 		.submitted = false,
--		.cp_rwsem_locked = true,
-+		.need_lock = true,
- 	};
- 
- 	trace_f2fs_writepage(page, DATA);
-@@ -1458,6 +1468,7 @@ static int __write_data_page(struct page *page, bool *submitted,
- 
- 	/* Dentry blocks are controlled by checkpoint */
- 	if (S_ISDIR(inode->i_mode)) {
-+		fio.need_lock = false,
- 		err = do_write_data_page(&fio);
- 		goto done;
- 	}
-@@ -1475,13 +1486,12 @@ static int __write_data_page(struct page *page, bool *submitted,
- 		if (!err)
- 			goto out;
- 	}
--	f2fs_lock_op(sbi);
-+
- 	if (err == -EAGAIN)
- 		err = do_write_data_page(&fio);
- 	if (F2FS_I(inode)->last_disk_size < psize)
- 		F2FS_I(inode)->last_disk_size = psize;
--	if (fio.cp_rwsem_locked)
--		f2fs_unlock_op(sbi);
-+
- done:
- 	if (err && err != -ENOENT)
- 		goto redirty_out;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index bf48213642ab..95fb347e7abe 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -802,7 +802,7 @@ struct f2fs_io_info {
- 	struct page *page;	/* page to be written */
- 	struct page *encrypted_page;	/* encrypted page */
- 	bool submitted;		/* indicate IO submission */
--	bool cp_rwsem_locked;	/* indicate cp_rwsem is held */
-+	bool need_lock;		/* indicate we need to lock cp_rwsem */
- };
- 
- #define is_read_io(rw) ((rw) == READ)
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index c2a9ae8397d3..ffabdcf52b85 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -717,6 +717,7 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
- 			.old_blkaddr = NULL_ADDR,
- 			.page = page,
- 			.encrypted_page = NULL,
-+			.need_lock = false,
- 		};
- 		bool is_dirty = PageDirty(page);
- 		int err;
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 4ba61ca430d0..63ea066f7dc0 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -293,6 +293,7 @@ static int __commit_inmem_pages(struct inode *inode,
- 		.op_flags = REQ_SYNC | REQ_PRIO,
- 		.old_blkaddr = NULL_ADDR,
- 		.encrypted_page = NULL,
-+		.need_lock = false,
- 	};
- 	pgoff_t last_idx = ULONG_MAX;
- 	int err = 0;
+ 	/* Enough entries */
+ 	if (nm_i->nid_cnt[FREE_NID_LIST] >= NAT_ENTRY_PER_BLOCK)
+ 		return;
 -- 
-2.12.2.510.ge1104a5ee539
+2.10.1
 
 
 ------------------------------------------------------------------------------
