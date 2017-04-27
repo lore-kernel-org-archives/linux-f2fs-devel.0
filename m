@@ -1,26 +1,27 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH RESEND v2] f2fs: release cp and dnode lock
-	before IPU
-Date: Thu, 27 Apr 2017 11:08:57 -0700
-Message-ID: <20170427180857.GA10978@jaegeuk.local>
-References: <20170426161721.9362-1-chao@kernel.org>
+Subject: Re: [PATCH 2/2] f2fs: introduce CP_TRIMMED_FLAG to avoid
+ unneeded discard
+Date: Thu, 27 Apr 2017 11:16:06 -0700
+Message-ID: <20170427181606.GB10978@jaegeuk.local>
+References: <20170427124040.74399-1-yuchao0@huawei.com>
+	<20170427124040.74399-2-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1d3nqm-0003QR-2i
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1d3nxg-00060s-AJ
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 27 Apr 2017 18:09:08 +0000
+	Thu, 27 Apr 2017 18:16:16 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1d3nqk-0006Po-2Q
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1d3nxf-0006Is-DA
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 27 Apr 2017 18:09:08 +0000
+	Thu, 27 Apr 2017 18:16:16 +0000
 Content-Disposition: inline
-In-Reply-To: <20170426161721.9362-1-chao@kernel.org>
+In-Reply-To: <20170427124040.74399-2-yuchao0@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,318 +31,134 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 Hi Chao,
 
+Could you add this state in print_cp_state() of f2fs-tools as well?
+
+Thanks,
+
 On 04/27, Chao Yu wrote:
-> From: Hou Pengyang <houpengyang@huawei.com>
+> Introduce CP_TRIMMED_FLAG to indicate all invalid block were trimmed
+> before umount, so once we do mount with image which contain the flag,
+> we don't record invalid blocks as undiscard one, when fstrim is being
+> triggered, we can avoid issuing redundant discard commands.
 > 
-> We don't need to rewrite the page under cp_rwsem and dnode locks.
-> 
-> Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
 > Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > ---
->  fs/f2fs/data.c    | 39 ++++++++++++++++++++++++---------------
->  fs/f2fs/f2fs.h    |  2 +-
->  fs/f2fs/gc.c      |  1 +
->  fs/f2fs/segment.c |  1 +
->  4 files changed, 27 insertions(+), 16 deletions(-)
+>  fs/f2fs/checkpoint.c    |  3 +++
+>  fs/f2fs/f2fs.h          |  1 +
+>  fs/f2fs/segment.c       | 28 ++++++++++++++++++++--------
+>  fs/f2fs/super.c         |  7 +++++++
+>  include/linux/f2fs_fs.h |  1 +
+>  5 files changed, 32 insertions(+), 8 deletions(-)
 > 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index ca21ecbd6bbd..632008241470 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1361,12 +1361,17 @@ int do_write_data_page(struct f2fs_io_info *fio)
->  		if (fio->old_blkaddr != NULL_ADDR &&
->  				fio->old_blkaddr != NEW_ADDR) {
->  			ipu_force = true;
-> +			fio->need_lock = false;
->  			goto got_it;
->  		}
->  	}
-> +
-> +	if (fio->need_lock)
-> +		f2fs_lock_op(fio->sbi);
-> +
->  	err = get_dnode_of_data(&dn, page->index, LOOKUP_NODE);
->  	if (err)
-> -		return err;
-> +		goto out;
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 27578903eeb6..ea9c317b5916 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1059,6 +1059,9 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks)
+>  		disable_nat_bits(sbi, false);
 >  
->  	fio->old_blkaddr = dn.data_blkaddr;
->  
-> @@ -1387,22 +1392,26 @@ int do_write_data_page(struct f2fs_io_info *fio)
->  	 * it had better in-place writes for updated data.
->  	 */
->  	if (ipu_force || need_inplace_update(fio)) {
-> -		f2fs_bug_on(fio->sbi, !fio->cp_rwsem_locked);
-> -		f2fs_unlock_op(fio->sbi);
-> -		fio->cp_rwsem_locked = false;
-> -
-> +		f2fs_put_dnode(&dn);
-> +		if (fio->need_lock)
-> +			f2fs_unlock_op(fio->sbi);
->  		err = rewrite_data_page(fio);
->  		trace_f2fs_do_write_data_page(fio->page, IPU);
->  		set_inode_flag(inode, FI_UPDATE_WRITE);
-> -	} else {
-> -		write_data_page(&dn, fio);
-> -		trace_f2fs_do_write_data_page(page, OPU);
-> -		set_inode_flag(inode, FI_APPEND_WRITE);
-> -		if (page->index == 0)
-> -			set_inode_flag(inode, FI_FIRST_BLOCK_WRITTEN);
-> +		return err;
->  	}
+> +	if (cpc->reason & CP_TRIMMED)
+> +		__set_ckpt_flags(ckpt, CP_TRIMMED_FLAG);
 > +
-> +	/* LFS mode write path */
-> +	write_data_page(&dn, fio);
-> +	trace_f2fs_do_write_data_page(page, OPU);
-> +	set_inode_flag(inode, FI_APPEND_WRITE);
-> +	if (page->index == 0)
-> +		set_inode_flag(inode, FI_FIRST_BLOCK_WRITTEN);
->  out_writepage:
->  	f2fs_put_dnode(&dn);
-> +out:
-> +	if (fio->need_lock)
-> +		f2fs_unlock_op(fio->sbi);
->  	return err;
->  }
->  
-> @@ -1427,7 +1436,7 @@ static int __write_data_page(struct page *page, bool *submitted,
->  		.page = page,
->  		.encrypted_page = NULL,
->  		.submitted = false,
-> -		.cp_rwsem_locked = true,
-> +		.need_lock = true,
->  	};
->  
->  	trace_f2fs_writepage(page, DATA);
-> @@ -1463,6 +1472,7 @@ static int __write_data_page(struct page *page, bool *submitted,
->  
->  	/* Dentry blocks are controlled by checkpoint */
->  	if (S_ISDIR(inode->i_mode)) {
-> +		fio.need_lock = false;
->  		err = do_write_data_page(&fio);
->  		goto done;
->  	}
-> @@ -1480,13 +1490,12 @@ static int __write_data_page(struct page *page, bool *submitted,
->  		if (!err)
->  			goto out;
->  	}
-> -	f2fs_lock_op(sbi);
-> +
->  	if (err == -EAGAIN)
->  		err = do_write_data_page(&fio);
->  	if (F2FS_I(inode)->last_disk_size < psize)
->  		F2FS_I(inode)->last_disk_size = psize;
-> -	if (fio.cp_rwsem_locked)
-> -		f2fs_unlock_op(sbi);
-> +
->  done:
->  	if (err && err != -ENOENT)
->  		goto redirty_out;
+>  	if (cpc->reason & CP_UMOUNT)
+>  		__set_ckpt_flags(ckpt, CP_UMOUNT_FLAG);
+>  	else
 > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index bf48213642ab..95fb347e7abe 100644
+> index 453eaa943a21..c6fce1631289 100644
 > --- a/fs/f2fs/f2fs.h
 > +++ b/fs/f2fs/f2fs.h
-> @@ -802,7 +802,7 @@ struct f2fs_io_info {
->  	struct page *page;	/* page to be written */
->  	struct page *encrypted_page;	/* encrypted page */
->  	bool submitted;		/* indicate IO submission */
-> -	bool cp_rwsem_locked;	/* indicate cp_rwsem is held */
-> +	bool need_lock;		/* indicate we need to lock cp_rwsem */
->  };
+> @@ -130,6 +130,7 @@ enum {
+>  #define	CP_SYNC		0x00000004
+>  #define	CP_RECOVERY	0x00000008
+>  #define	CP_DISCARD	0x00000010
+> +#define CP_TRIMMED	0x00000020
 >  
->  #define is_read_io(rw) ((rw) == READ)
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index c2a9ae8397d3..ffabdcf52b85 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -717,6 +717,7 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->  			.old_blkaddr = NULL_ADDR,
->  			.page = page,
->  			.encrypted_page = NULL,
-> +			.need_lock = false,
-
-Should be true.
-
->  		};
->  		bool is_dirty = PageDirty(page);
->  		int err;
+>  #define DEF_BATCHED_TRIM_SECTIONS	2048
+>  #define BATCHED_TRIM_SEGMENTS(sbi)	\
 > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 4ba61ca430d0..63ea066f7dc0 100644
+> index a2cd10cdff60..e4dd1e4a42c9 100644
 > --- a/fs/f2fs/segment.c
 > +++ b/fs/f2fs/segment.c
-> @@ -293,6 +293,7 @@ static int __commit_inmem_pages(struct inode *inode,
->  		.op_flags = REQ_SYNC | REQ_PRIO,
->  		.old_blkaddr = NULL_ADDR,
->  		.encrypted_page = NULL,
-> +		.need_lock = false,
-
-Set it below per each do_write_page() call.
-
->  	};
->  	pgoff_t last_idx = ULONG_MAX;
->  	int err = 0;
+> @@ -2989,10 +2989,17 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
+>  
+>  			/* build discard map only one time */
+>  			if (f2fs_discard_en(sbi)) {
+> -				memcpy(se->discard_map, se->cur_valid_map,
+> -							SIT_VBLOCK_MAP_SIZE);
+> -				sbi->discard_blks += sbi->blocks_per_seg -
+> -							se->valid_blocks;
+> +				if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
+> +					memset(se->discard_map, 0xff,
+> +						SIT_VBLOCK_MAP_SIZE);
+> +				} else {
+> +					memcpy(se->discard_map,
+> +						se->cur_valid_map,
+> +						SIT_VBLOCK_MAP_SIZE);
+> +					sbi->discard_blks +=
+> +						sbi->blocks_per_seg -
+> +						se->valid_blocks;
+> +				}
+>  			}
+>  
+>  			if (sbi->segs_per_sec > 1)
+> @@ -3016,10 +3023,15 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
+>  		seg_info_from_raw_sit(se, &sit);
+>  
+>  		if (f2fs_discard_en(sbi)) {
+> -			memcpy(se->discard_map, se->cur_valid_map,
+> -						SIT_VBLOCK_MAP_SIZE);
+> -			sbi->discard_blks += old_valid_blocks -
+> -						se->valid_blocks;
+> +			if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
+> +				memset(se->discard_map, 0xff,
+> +							SIT_VBLOCK_MAP_SIZE);
+> +			} else {
+> +				memcpy(se->discard_map, se->cur_valid_map,
+> +							SIT_VBLOCK_MAP_SIZE);
+> +				sbi->discard_blks += old_valid_blocks -
+> +							se->valid_blocks;
+> +			}
+>  		}
+>  
+>  		if (sbi->segs_per_sec > 1)
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 4cd3bee6775f..9a14b2590337 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -797,6 +797,13 @@ static void f2fs_put_super(struct super_block *sb)
+>  	/* be sure to wait for any on-going discard commands */
+>  	f2fs_wait_discard_bios(sbi);
+>  
+> +	if (!sbi->discard_blks) {
+> +		struct cp_control cpc = {
+> +			.reason = CP_UMOUNT | CP_TRIMMED,
+> +		};
+> +		write_checkpoint(sbi, &cpc);
+> +	}
+> +
+>  	/* write_checkpoint can update stat informaion */
+>  	f2fs_destroy_stats(sbi);
+>  
+> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+> index 093549e10ee2..b6feed6547ce 100644
+> --- a/include/linux/f2fs_fs.h
+> +++ b/include/linux/f2fs_fs.h
+> @@ -114,6 +114,7 @@ struct f2fs_super_block {
+>  /*
+>   * For checkpoint
+>   */
+> +#define CP_TRIMMED_FLAG		0x00000100
+>  #define CP_NAT_BITS_FLAG	0x00000080
+>  #define CP_CRC_RECOVERY_FLAG	0x00000040
+>  #define CP_FASTBOOT_FLAG	0x00000020
 > -- 
-> 2.12.2.575.gb14f27f
-
-So, like this?
-
->From 7718913e1c2bf8eb7f7719c40390e86f11d00f28 Mon Sep 17 00:00:00 2001
-From: Hou Pengyang <houpengyang@huawei.com>
-Date: Thu, 27 Apr 2017 00:17:21 +0800
-Subject: [PATCH] f2fs: release cp and dnode lock before IPU
-
-We don't need to rewrite the page under cp_rwsem and dnode locks.
-
-Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/data.c    | 39 ++++++++++++++++++++++++---------------
- fs/f2fs/f2fs.h    |  2 +-
- fs/f2fs/gc.c      |  1 +
- fs/f2fs/segment.c |  1 +
- 4 files changed, 27 insertions(+), 16 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 2f2de18d24fe..1254986dd6eb 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1368,12 +1368,17 @@ int do_write_data_page(struct f2fs_io_info *fio)
- 
- 		if (valid_ipu_blkaddr(fio)) {
- 			ipu_force = true;
-+			fio->need_lock = false;
- 			goto got_it;
- 		}
- 	}
-+
-+	if (fio->need_lock)
-+		f2fs_lock_op(fio->sbi);
-+
- 	err = get_dnode_of_data(&dn, page->index, LOOKUP_NODE);
- 	if (err)
--		return err;
-+		goto out;
- 
- 	fio->old_blkaddr = dn.data_blkaddr;
- 
-@@ -1394,22 +1399,26 @@ int do_write_data_page(struct f2fs_io_info *fio)
- 	 * it had better in-place writes for updated data.
- 	 */
- 	if (ipu_force || (valid_ipu_blkaddr(fio) && need_inplace_update(fio))) {
--		f2fs_bug_on(fio->sbi, !fio->cp_rwsem_locked);
--		f2fs_unlock_op(fio->sbi);
--		fio->cp_rwsem_locked = false;
--
-+		f2fs_put_dnode(&dn);
-+		if (fio->need_lock)
-+			f2fs_unlock_op(fio->sbi);
- 		err = rewrite_data_page(fio);
- 		trace_f2fs_do_write_data_page(fio->page, IPU);
- 		set_inode_flag(inode, FI_UPDATE_WRITE);
--	} else {
--		write_data_page(&dn, fio);
--		trace_f2fs_do_write_data_page(page, OPU);
--		set_inode_flag(inode, FI_APPEND_WRITE);
--		if (page->index == 0)
--			set_inode_flag(inode, FI_FIRST_BLOCK_WRITTEN);
-+		return err;
- 	}
-+
-+	/* LFS mode write path */
-+	write_data_page(&dn, fio);
-+	trace_f2fs_do_write_data_page(page, OPU);
-+	set_inode_flag(inode, FI_APPEND_WRITE);
-+	if (page->index == 0)
-+		set_inode_flag(inode, FI_FIRST_BLOCK_WRITTEN);
- out_writepage:
- 	f2fs_put_dnode(&dn);
-+out:
-+	if (fio->need_lock)
-+		f2fs_unlock_op(fio->sbi);
- 	return err;
- }
- 
-@@ -1434,7 +1443,7 @@ static int __write_data_page(struct page *page, bool *submitted,
- 		.page = page,
- 		.encrypted_page = NULL,
- 		.submitted = false,
--		.cp_rwsem_locked = true,
-+		.need_lock = true,
- 	};
- 
- 	trace_f2fs_writepage(page, DATA);
-@@ -1470,6 +1479,7 @@ static int __write_data_page(struct page *page, bool *submitted,
- 
- 	/* Dentry blocks are controlled by checkpoint */
- 	if (S_ISDIR(inode->i_mode)) {
-+		fio.need_lock = false;
- 		err = do_write_data_page(&fio);
- 		goto done;
- 	}
-@@ -1487,13 +1497,12 @@ static int __write_data_page(struct page *page, bool *submitted,
- 		if (!err)
- 			goto out;
- 	}
--	f2fs_lock_op(sbi);
-+
- 	if (err == -EAGAIN)
- 		err = do_write_data_page(&fio);
- 	if (F2FS_I(inode)->last_disk_size < psize)
- 		F2FS_I(inode)->last_disk_size = psize;
--	if (fio.cp_rwsem_locked)
--		f2fs_unlock_op(sbi);
-+
- done:
- 	if (err && err != -ENOENT)
- 		goto redirty_out;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 59eea5b9f6a1..914b5c64cfae 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -803,7 +803,7 @@ struct f2fs_io_info {
- 	struct page *page;	/* page to be written */
- 	struct page *encrypted_page;	/* encrypted page */
- 	bool submitted;		/* indicate IO submission */
--	bool cp_rwsem_locked;	/* indicate cp_rwsem is held */
-+	bool need_lock;		/* indicate we need to lock cp_rwsem */
- };
- 
- #define is_read_io(rw) ((rw) == READ)
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index c2a9ae8397d3..026522107ca3 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -717,6 +717,7 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
- 			.old_blkaddr = NULL_ADDR,
- 			.page = page,
- 			.encrypted_page = NULL,
-+			.need_lock = true,
- 		};
- 		bool is_dirty = PageDirty(page);
- 		int err;
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 656e1515ff56..e302f30ec7fe 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -312,6 +312,7 @@ static int __commit_inmem_pages(struct inode *inode,
- 			fio.page = page;
- 			fio.old_blkaddr = NULL_ADDR;
- 			fio.encrypted_page = NULL;
-+			fio.need_lock = false,
- 			err = do_write_data_page(&fio);
- 			if (err) {
- 				unlock_page(page);
--- 
-2.11.0
-
-
+> 2.12.2.510.ge1104a5ee539
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
