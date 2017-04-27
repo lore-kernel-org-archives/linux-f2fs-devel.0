@@ -1,41 +1,70 @@
-From: Richard Weinberger <richard@nod.at>
-Subject: Re: [PATCH] MAINTAINERS: fscrypt: update mailing list, patchwork, and
- git
-Date: Thu, 27 Apr 2017 21:12:40 +0200
-Message-ID: <c980efed-3bd2-36f5-5564-060513f48e6c@nod.at>
-References: <20170426234300.54741-1-ebiggers3@gmail.com>
- <CAFLxGvzEr94f90QzQFucc3bCrv56fyVtd4ryQ062ot5FUovqFQ@mail.gmail.com>
- <20170427174557.GB8130@gmail.com>
+From: Jin Qian <jinqian@google.com>
+Subject: [PATCH 1/1] f2fs-tools: sanity check cp_payload before
+	reading checkpoint
+Date: Thu, 27 Apr 2017 12:12:22 -0700
+Message-ID: <20170427191222.40402-1-jinqian@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-ext4-owner@vger.kernel.org>
-In-Reply-To: <20170427174557.GB8130@gmail.com>
-Sender: linux-ext4-owner@vger.kernel.org
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: linux-fscrypt@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Eric Biggers <ebiggers@google.com>, linux-f2fs-devel@lists.sourceforge.net, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jinqian@google.com>) id 1d3oqj-0008Oc-Tg
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 27 Apr 2017 19:13:09 +0000
+Received: from mail-pf0-f180.google.com ([209.85.192.180])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1d3oqj-0005nW-56
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 27 Apr 2017 19:13:09 +0000
+Received: by mail-pf0-f180.google.com with SMTP id v14so35431029pfd.2
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Thu, 27 Apr 2017 12:13:09 -0700 (PDT)
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org
 
-Eric,
+cp_payload is not sanity checked from input image. A invalid size
+can cause buffer overflow when reading checkpoint blks into memory.
 
-Am 27.04.2017 um 19:45 schrieb Eric Biggers:
-> On Thu, Apr 27, 2017 at 09:37:18AM +0200, Richard Weinberger wrote:
->>> +FSCRYPT: FILE SYSTEM LEVEL ENCRYPTION SUPPORT
->>>  M:     Theodore Y. Ts'o <tytso@mit.edu>
->>>  M:     Jaegeuk Kim <jaegeuk@kernel.org>
->>
->> IMHO we should also add such an entry, to match reality:
->>
->> R:      Eric Biggers <ebiggers@google.com>
->>
-> 
-> Well, we could, but IMO it's a little pointless since there's now a dedicated
-> mailing list, so there's no need to Cc me separately from the list.  I think
-> explicitly listing reviewer(s) is more useful for subsystems that don't have a
-> dedicated mailing list.
+Signed-off-by: Jin Qian <jinqian@google.com>
+---
+ fsck/mount.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-It depends on your workflow.
-i.e. my mail filters give mails that go directly to me a much higher priority.
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 761baa0..ffaa0ed 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -589,9 +589,14 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi)
+ 	unsigned long blk_size = sbi->blocksize;
+ 	unsigned long long cp1_version = 0, cp2_version = 0, version;
+ 	unsigned long long cp_start_blk_no;
+-	unsigned int cp_blks = 1 + get_sb(cp_payload);
++	unsigned int cp_payload, cp_blks;
+ 	int ret;
+ 
++	cp_payload = get_sb(cp_payload);
++	if (cp_payload > F2FS_BLK_ALIGN(MAX_SIT_BITMAP_SIZE))
++		return -EINVAL;
++
++	cp_blks = 1 + cp_payload;
+ 	sbi->ckpt = malloc(cp_blks * blk_size);
+ 	if (!sbi->ckpt)
+ 		return -ENOMEM;
+-- 
+2.13.0.rc0.306.g87b477812d-goog
 
-Thanks,
-//richard
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
