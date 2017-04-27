@@ -1,39 +1,48 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: nullify fio->encrypted_page for each writes
-Date: Wed, 26 Apr 2017 17:58:43 -0700
-Message-ID: <20170427005843.6327-1-jaegeuk@kernel.org>
+From: Richard Weinberger <richard.weinberger@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: fscrypt: update mailing list, patchwork, and git
+Date: Thu, 27 Apr 2017 09:37:18 +0200
+Message-ID: <CAFLxGvzEr94f90QzQFucc3bCrv56fyVtd4ryQ062ot5FUovqFQ@mail.gmail.com>
+References: <20170426234300.54741-1-ebiggers3@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20170426234300.54741-1-ebiggers3@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: linux-fscrypt@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Eric Biggers <ebiggers@google.com>, linux-f2fs-devel@lists.sourceforge.net, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This makes sure each write request has nullified encrypted_page pointer.
+Eric,
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/segment.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Apr 27, 2017 at 1:43 AM, Eric Biggers <ebiggers3@gmail.com> wrote:
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Now that there has been a dedicated mailing list, patchwork project, and
+> git repository set up for filesystem encryption, update the MAINTAINERS
+> file accordingly.
+>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  MAINTAINERS | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 38d3e4ed7208..22b509fb1c5e 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5365,10 +5365,12 @@ F:      Documentation/filesystems/caching/
+>  F:     fs/fscache/
+>  F:     include/linux/fscache*.h
+>
+> -FS-CRYPTO: FILE SYSTEM LEVEL ENCRYPTION SUPPORT
+> +FSCRYPT: FILE SYSTEM LEVEL ENCRYPTION SUPPORT
+>  M:     Theodore Y. Ts'o <tytso@mit.edu>
+>  M:     Jaegeuk Kim <jaegeuk@kernel.org>
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 38b97ad6bceb..b0babb73a076 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -291,7 +291,6 @@ static int __commit_inmem_pages(struct inode *inode,
- 		.type = DATA,
- 		.op = REQ_OP_WRITE,
- 		.op_flags = REQ_SYNC | REQ_PRIO,
--		.encrypted_page = NULL,
- 	};
- 	pgoff_t last_idx = ULONG_MAX;
- 	int err = 0;
-@@ -312,6 +311,7 @@ static int __commit_inmem_pages(struct inode *inode,
- 
- 			fio.page = page;
- 			fio.old_blkaddr = NULL_ADDR;
-+			fio.encrypted_page = NULL;
- 			err = do_write_data_page(&fio);
- 			if (err) {
- 				unlock_page(page);
+IMHO we should also add such an entry, to match reality:
+
+R:      Eric Biggers <ebiggers@google.com>
+
 -- 
-2.11.0
+Thanks,
+//richard
