@@ -1,181 +1,35 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 2/2] f2fs: introduce CP_TRIMMED_FLAG to avoid
- unneeded discard
-Date: Fri, 28 Apr 2017 09:40:12 +0800
-Message-ID: <0540ec1d-4999-f6b5-4f75-80838d507226@huawei.com>
-References: <20170427124040.74399-1-yuchao0@huawei.com>
-	<20170427124040.74399-2-yuchao0@huawei.com>
-	<20170427181606.GB10978@jaegeuk.local>
+From: Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: fscrypt: update mailing list, patchwork, and git
+Date: Fri, 28 Apr 2017 08:47:41 +0300
+Message-ID: <CAOQ4uxgzVOqNXX1DBG8gtYf+81Crkwwi5_kQK=zCVcjiHK7+fg@mail.gmail.com>
+References: <20170426234300.54741-1-ebiggers3@gmail.com> <CAFLxGvzEr94f90QzQFucc3bCrv56fyVtd4ryQ062ot5FUovqFQ@mail.gmail.com>
+ <20170427174557.GB8130@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1d3ute-0003k7-50
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 28 Apr 2017 01:40:34 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187]
-	helo=dggrg01-dlp.huawei.com)
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1d3utc-0007IG-Ju
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 28 Apr 2017 01:40:34 +0000
-In-Reply-To: <20170427181606.GB10978@jaegeuk.local>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20170427174557.GB8130@gmail.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: Richard Weinberger <richard.weinberger@gmail.com>, linux-fscrypt@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Eric Biggers <ebiggers@google.com>, linux-f2fs-devel@lists.sourceforge.net, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Ext4 <linux-ext4@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
-
-On 2017/4/28 2:16, Jaegeuk Kim wrote:
-> Hi Chao,
-> 
-> Could you add this state in print_cp_state() of f2fs-tools as well?
-
-Oh, right, and we can set the flag after trimming in mkfs, also we need to
-adjust this state into trace info.
-
-Let me fix this. :)
-
-Thanks,
-
-> 
-> Thanks,
-> 
-> On 04/27, Chao Yu wrote:
->> Introduce CP_TRIMMED_FLAG to indicate all invalid block were trimmed
->> before umount, so once we do mount with image which contain the flag,
->> we don't record invalid blocks as undiscard one, when fstrim is being
->> triggered, we can avoid issuing redundant discard commands.
+On Thu, Apr 27, 2017 at 8:45 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
+> On Thu, Apr 27, 2017 at 09:37:18AM +0200, Richard Weinberger wrote:
+>> > +FSCRYPT: FILE SYSTEM LEVEL ENCRYPTION SUPPORT
+>> >  M:     Theodore Y. Ts'o <tytso@mit.edu>
+>> >  M:     Jaegeuk Kim <jaegeuk@kernel.org>
 >>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/checkpoint.c    |  3 +++
->>  fs/f2fs/f2fs.h          |  1 +
->>  fs/f2fs/segment.c       | 28 ++++++++++++++++++++--------
->>  fs/f2fs/super.c         |  7 +++++++
->>  include/linux/f2fs_fs.h |  1 +
->>  5 files changed, 32 insertions(+), 8 deletions(-)
+>> IMHO we should also add such an entry, to match reality:
 >>
->> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->> index 27578903eeb6..ea9c317b5916 100644
->> --- a/fs/f2fs/checkpoint.c
->> +++ b/fs/f2fs/checkpoint.c
->> @@ -1059,6 +1059,9 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->>  			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks)
->>  		disable_nat_bits(sbi, false);
->>  
->> +	if (cpc->reason & CP_TRIMMED)
->> +		__set_ckpt_flags(ckpt, CP_TRIMMED_FLAG);
->> +
->>  	if (cpc->reason & CP_UMOUNT)
->>  		__set_ckpt_flags(ckpt, CP_UMOUNT_FLAG);
->>  	else
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index 453eaa943a21..c6fce1631289 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -130,6 +130,7 @@ enum {
->>  #define	CP_SYNC		0x00000004
->>  #define	CP_RECOVERY	0x00000008
->>  #define	CP_DISCARD	0x00000010
->> +#define CP_TRIMMED	0x00000020
->>  
->>  #define DEF_BATCHED_TRIM_SECTIONS	2048
->>  #define BATCHED_TRIM_SEGMENTS(sbi)	\
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index a2cd10cdff60..e4dd1e4a42c9 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -2989,10 +2989,17 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
->>  
->>  			/* build discard map only one time */
->>  			if (f2fs_discard_en(sbi)) {
->> -				memcpy(se->discard_map, se->cur_valid_map,
->> -							SIT_VBLOCK_MAP_SIZE);
->> -				sbi->discard_blks += sbi->blocks_per_seg -
->> -							se->valid_blocks;
->> +				if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
->> +					memset(se->discard_map, 0xff,
->> +						SIT_VBLOCK_MAP_SIZE);
->> +				} else {
->> +					memcpy(se->discard_map,
->> +						se->cur_valid_map,
->> +						SIT_VBLOCK_MAP_SIZE);
->> +					sbi->discard_blks +=
->> +						sbi->blocks_per_seg -
->> +						se->valid_blocks;
->> +				}
->>  			}
->>  
->>  			if (sbi->segs_per_sec > 1)
->> @@ -3016,10 +3023,15 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
->>  		seg_info_from_raw_sit(se, &sit);
->>  
->>  		if (f2fs_discard_en(sbi)) {
->> -			memcpy(se->discard_map, se->cur_valid_map,
->> -						SIT_VBLOCK_MAP_SIZE);
->> -			sbi->discard_blks += old_valid_blocks -
->> -						se->valid_blocks;
->> +			if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
->> +				memset(se->discard_map, 0xff,
->> +							SIT_VBLOCK_MAP_SIZE);
->> +			} else {
->> +				memcpy(se->discard_map, se->cur_valid_map,
->> +							SIT_VBLOCK_MAP_SIZE);
->> +				sbi->discard_blks += old_valid_blocks -
->> +							se->valid_blocks;
->> +			}
->>  		}
->>  
->>  		if (sbi->segs_per_sec > 1)
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index 4cd3bee6775f..9a14b2590337 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -797,6 +797,13 @@ static void f2fs_put_super(struct super_block *sb)
->>  	/* be sure to wait for any on-going discard commands */
->>  	f2fs_wait_discard_bios(sbi);
->>  
->> +	if (!sbi->discard_blks) {
->> +		struct cp_control cpc = {
->> +			.reason = CP_UMOUNT | CP_TRIMMED,
->> +		};
->> +		write_checkpoint(sbi, &cpc);
->> +	}
->> +
->>  	/* write_checkpoint can update stat informaion */
->>  	f2fs_destroy_stats(sbi);
->>  
->> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
->> index 093549e10ee2..b6feed6547ce 100644
->> --- a/include/linux/f2fs_fs.h
->> +++ b/include/linux/f2fs_fs.h
->> @@ -114,6 +114,7 @@ struct f2fs_super_block {
->>  /*
->>   * For checkpoint
->>   */
->> +#define CP_TRIMMED_FLAG		0x00000100
->>  #define CP_NAT_BITS_FLAG	0x00000080
->>  #define CP_CRC_RECOVERY_FLAG	0x00000040
->>  #define CP_FASTBOOT_FLAG	0x00000020
->> -- 
->> 2.12.2.510.ge1104a5ee539
-> 
-> .
-> 
+>> R:      Eric Biggers <ebiggers@google.com>
+>>
+>
+> Well, we could, but IMO it's a little pointless since there's now a dedicated
+> mailing list, so there's no need to Cc me separately from the list.  I think
+> explicitly listing reviewer(s) is more useful for subsystems that don't have a
+> dedicated mailing list.
+>
 
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+Does the fscrypt mailing list allow posting for non-subscribers?
+It is often a nuisance for a passing by developer to subscribe to a mailing list
+just to report a bug or CC a relevant patch.
