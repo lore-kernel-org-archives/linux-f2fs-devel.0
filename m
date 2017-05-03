@@ -1,58 +1,32 @@
-From: Jan Kara <jack@suse.cz>
-Subject: [PATCH 0/7] Fix fallout from changes to FUA and PREFLUSH
-	definitions
-Date: Tue,  2 May 2017 17:03:44 +0200
-Message-ID: <20170502150351.29452-1-jack@suse.cz>
+From: Eric Biggers <ebiggers3@gmail.com>
+Subject: Re: [PATCH 1/6] f2fs: check entire encrypted bigname when finding a
+ dentry
+Date: Tue, 2 May 2017 19:56:28 -0700
+Message-ID: <20170503025628.GA624@zzz>
+References: <20170424170013.85175-1-ebiggers3@gmail.com>
+ <20170424170013.85175-2-ebiggers3@gmail.com>
+ <20170425001023.GA4983@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jack@suse.cz>) id 1d5ZLU-0002H1-0r
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 02 May 2017 15:04:08 +0000
-Received: from mx2.suse.de ([195.135.220.15] helo=mx1.suse.de)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1d5ZLS-0003O1-4A
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 02 May 2017 15:04:08 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-fsdevel@vger.kernel.org
-Cc: cluster-devel@redhat.com, Theodore Ts'o <tytso@mit.edu>, Mike Snitzer <snitzer@redhat.com>, linux-raid@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Christoph Hellwig <hch@infradead.org>, dm-devel@redhat.com, Jaegeuk Kim <jaegeuk@kernel.org>, David Sterba <dsterba@suse.com>, Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, Shaohua Li <shli@kernel.org>, Steven Whitehouse <swhiteho@redhat.com>, linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-ext4-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170425001023.GA4983@jaegeuk.local>
+Sender: linux-ext4-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-fscrypt@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org, linux-mtd@lists.infradead.org, Gwendal Grignou <gwendal@chromium.org>, hashimoto@chromium.org, kinaba@chromium.org, stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hello,
+Hi Jaegeuk,
 
-this series addresses a performance issue caused by commit b685d3d65ac7 "block:
-treat REQ_FUA and REQ_PREFLUSH as synchronous". We know for certain this
-problem significanly regresses (over 10%, in some cases up to 100%) ext4 and
-btrfs for dbench4 and reaim benchmarks.  Based on this I have fixed up also
-other places which suffer from the same problem however those changes are
-untested so maintainers please have a look whether the change makes sense to
-you and also whether I possibly didn't miss some cases where REQ_SYNC should be
-also added. Patches in this series are completely independent so if maintainers
-agree with the change, feel free to take it through your tree.
+On Mon, Apr 24, 2017 at 05:10:23PM -0700, Jaegeuk Kim wrote:
+> Hi Eric,
+> 
+> This looks good to me.
+> I'll drop it from my tree, so please move forward through fscrypt.
+> 
+> Thanks,
 
-The core of the problem is that above mentioned commit removed REQ_SYNC flag
-from WRITE_{FUA|PREFLUSH|...} definitions.  generic_make_request_checks()
-however strips REQ_FUA and REQ_PREFLUSH flags from a bio when the storage
-doesn't report volatile write cache and thus write effectively becomes
-asynchronous which can lead to performance regressions.
+This is in fscrypt/master now (along with the other patches in the series), but
+it's also in f2fs/dev.  Are you still planning to drop it from the f2fs tree?
 
-A side note for ext4: The two patches for ext4 & jbd2 are on top of the change
-that got merged in the ext4 tree already.
-
-								Honza
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+- Eric
