@@ -1,25 +1,27 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] attr: adbjust acl_max of f2fs
-Date: Wed, 3 May 2017 10:02:27 -0700
-Message-ID: <20170503170227.GA93619@jaegeuk.local>
-References: <20170428131307.3384-1-chao@kernel.org>
+Subject: Re: [PATCH] f2fs: fix a mount fail for wrong
+	next_scan_nid
+Date: Wed, 3 May 2017 10:04:24 -0700
+Message-ID: <20170503170424.GB93619@jaegeuk.local>
+References: <20170426075652.4249-1-heyunlei@huawei.com>
+	<7822ea80-3064-0b8e-e3f0-ce5e16217c05@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1d5xfl-0001t7-Bo
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1d5xhc-00059n-Hm
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 03 May 2017 17:02:41 +0000
+	Wed, 03 May 2017 17:04:36 +0000
 Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1d5xfj-00046R-6O
+	(Exim 4.76) id 1d5xhb-0004ML-Rk
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 03 May 2017 17:02:41 +0000
+	Wed, 03 May 2017 17:04:36 +0000
 Content-Disposition: inline
-In-Reply-To: <20170428131307.3384-1-chao@kernel.org>
+In-Reply-To: <7822ea80-3064-0b8e-e3f0-ce5e16217c05@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,58 +31,55 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao@kernel.org>
-Cc: eguan@redhat.com, fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hello,
+On 05/03, Chao Yu wrote:
+> Hi all,
+> 
+> On 2017/4/26 15:56, Yunlei He wrote:
+> > -write_checkpoint
+> >    -do_checkpoint
+> >       -next_free_nid    <--- something wrong with next free nid
+> 
+> Since we have figured out how next_scan_nid can be changed to a wrong value, so
+> how about add a bug_on here to detect potential issue for further fixing?
 
-On 04/28, Chao Yu wrote:
-> From: Chao Yu <yuchao0@huawei.com>
-> 
-> f2fs has set inline_xattr as a default option, and introduced a new option
-> named 'noinline_xattr' for disabling default inline_xattr option. So in
-> _acl_get_max we need to check 'noinline_xattr' string in fs option,
-> otherwise we may select the wrong max acl number since we always found
-> the string 'ininline_xattr' in fs option.
-> 
-> Additionally, f2fs has changed disk layout of xattr block a bit, so will
-> contain one more entry in both inline and noinline xattr inode, this patch
-> will modify the max acl number to adjust it.
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  common/attr | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/common/attr b/common/attr
-> index ac139e61..6d4f68ed 100644
-> --- a/common/attr
-> +++ b/common/attr
-> @@ -43,11 +43,11 @@ _acl_get_max()
->  		echo 8191
->  		;;
->  	f2fs)
-> -		_fs_options $TEST_DEV | grep "inline_xattr" >/dev/null 2>&1
-> +		_fs_options $TEST_DEV | grep "noinline_xattr" >/dev/null 2>&1
-
-This breaks old kernel support which has no "noinline_xattr". It'd be good to
-check "inline_xattr" again after checking "noinline_xattr". And, in terms of
-different number of entries, can we get the number from local.config by adding
-an export symbol likewise FSTYP?
+I'll drop this patch for next merge window.
+So, what was the root cause of this?
 
 Thanks,
 
->  		if [ $? -eq 0 ]; then
-> -			echo 531
-> +			echo 507
->  		else
-> -			echo 506
-> +			echo 532
->  		fi
->  		;;
->  	*)
-> -- 
-> 2.12.2.575.gb14f27f
+> 
+> Thanks,
+> 
+> > 
+> > -f2fs_fill_super
+> >    -build_node_manager
+> >       -build_free_nids
+> >           -get_current_nat_page
+> >              -__get_meta_page   <--- attempt to access beyond end of device
+> > 
+> > Signed-off-by: Yunlei He <heyunlei@huawei.com>
+> > ---
+> >  fs/f2fs/node.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> > index b99e318..98351a4 100644
+> > --- a/fs/f2fs/node.c
+> > +++ b/fs/f2fs/node.c
+> > @@ -1955,6 +1955,9 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
+> >  	int i = 0;
+> >  	nid_t nid = nm_i->next_scan_nid;
+> >  
+> > +	if (unlikely(nid >= nm_i->max_nid))
+> > +		nid = 0;
+> > +
+> >  	/* Enough entries */
+> >  	if (nm_i->nid_cnt[FREE_NID_LIST] >= NAT_ENTRY_PER_BLOCK)
+> >  		return;
+> > 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
