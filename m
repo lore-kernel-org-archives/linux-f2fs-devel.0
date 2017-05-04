@@ -1,88 +1,211 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 3/7] f2fs: Make flush bios explicitely sync
-Date: Wed, 3 May 2017 14:22:46 -0700
-Message-ID: <20170503212246.GA97544@jaegeuk.local>
-References: <20170502150351.29452-1-jack@suse.cz>
- <20170502150351.29452-4-jack@suse.cz>
+From: sunqiuyang <sunqiuyang@huawei.com>
+Subject: [PATCH 1/3] f2fs:dax: fix races between page faults and
+	fallocate
+Date: Thu, 4 May 2017 08:16:59 +0800
+Message-ID: <1493857019-40586-1-git-send-email-sunqiuyang@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170502150351.29452-4-jack@suse.cz>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <sunqiuyang@huawei.com>) id 1d64Pt-0002i3-0J
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 04 May 2017 00:14:45 +0000
+Received: from szxga02-in.huawei.com ([45.249.212.188])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1d64Pr-0001F8-1f
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 04 May 2017 00:14:44 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: wenyuzhong1@huawei.com, wangxiaojun11@huawei.com, yi.zhang@huawei.com, houtao1@huawei.com, guzheng1@huawei.com, yanaijie@huawei.com, zhaohongjiang@huawei.com, dingxiang@huawei.com, wangyijing@huawei.com, sunqiuyang@huawei.com
 
-Hi Jan,
+Currently in F2FS, page faults and fallocate operations, like punch_hole 
+and collapse/insert/zero_range, are completely unsynchronized. This can 
+result in page fault faulting in a page into a range that we are changing 
+after truncating pagecache, and thus we can end up with a page mapped to 
+disk blocks that will be shortly freed. Filesystem corruption will shortly 
+follow. 
 
-On 05/02, Jan Kara wrote:
-> Commit b685d3d65ac7 "block: treat REQ_FUA and REQ_PREFLUSH as
-> synchronous" removed REQ_SYNC flag from WRITE_{FUA|PREFLUSH|...}
-> definitions.  generic_make_request_checks() however strips REQ_FUA and
-> REQ_PREFLUSH flags from a bio when the storage doesn't report volatile
-> write cache and thus write effectively becomes asynchronous which can
-> lead to performance regressions.
-> 
-> Fix the problem by making sure all bios which are synchronous are
-> properly marked with REQ_SYNC.
-> 
-> Fixes: b685d3d65ac791406e0dfd8779cc9b3707fea5a3
+This patch fixes the problem by creating new rw semaphore i_mmap_sem in 
+f2fs_inode_info and grab it for functions removing blocks from extent tree 
+and for read over page faults. The mechanism is similar to that in ext4.
 
-Looks good to me. Thank you for the patch.
-BTW, does this need cc to stable?
+Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
+---
+ fs/f2fs/f2fs.h  |  1 +
+ fs/f2fs/file.c  | 30 +++++++++++++++++++++---------
+ fs/f2fs/super.c |  1 +
+ 3 files changed, 23 insertions(+), 9 deletions(-)
 
-Cc: stable@vger.kernel.org # 4.9+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 0a6e115..f7957ca 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -474,6 +474,7 @@ struct f2fs_inode_info {
+ 	struct mutex inmem_lock;	/* lock for inmemory pages */
+ 	struct extent_tree *extent_tree;	/* cached extent_tree entry */
+ 	struct rw_semaphore dio_rwsem[2];/* avoid racing between dio and gc */
++	struct rw_semaphore i_mmap_sem;
+ };
+ 
+ static inline void get_extent_info(struct extent_info *ext,
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 5f73178..165acbf 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -813,22 +813,23 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
+ 	off_start = offset & (PAGE_SIZE - 1);
+ 	off_end = (offset + len) & (PAGE_SIZE - 1);
+ 
++	down_write(&F2FS_I(inode)->i_mmap_sem);
+ 	if (pg_start == pg_end) {
+ 		ret = fill_zero(inode, pg_start, off_start,
+ 						off_end - off_start);
+ 		if (ret)
+-			return ret;
++			goto out;
+ 	} else {
+ 		if (off_start) {
+ 			ret = fill_zero(inode, pg_start++, off_start,
+ 						PAGE_SIZE - off_start);
+ 			if (ret)
+-				return ret;
++				goto out;
+ 		}
+ 		if (off_end) {
+ 			ret = fill_zero(inode, pg_end, 0, off_end);
+ 			if (ret)
+-				return ret;
++				goto out;
+ 		}
+ 
+ 		if (pg_start < pg_end) {
+@@ -849,6 +850,8 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
+ 		}
+ 	}
+ 
++out:
++	up_write(&F2FS_I(inode)->i_mmap_sem);
+ 	return ret;
+ }
+ 
+@@ -1084,16 +1087,17 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+ 	pg_start = offset >> PAGE_SHIFT;
+ 	pg_end = (offset + len) >> PAGE_SHIFT;
+ 
++	down_write(&F2FS_I(inode)->i_mmap_sem);
+ 	/* write out all dirty pages from offset */
+ 	ret = filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	truncate_pagecache(inode, offset);
+ 
+ 	ret = f2fs_do_collapse(inode, pg_start, pg_end);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	/* write out all moved pages, if possible */
+ 	filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
+@@ -1106,6 +1110,8 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+ 	if (!ret)
+ 		f2fs_i_size_write(inode, new_size);
+ 
++out:
++	up_write(&F2FS_I(inode)->i_mmap_sem);
+ 	return ret;
+ }
+ 
+@@ -1182,11 +1188,12 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+ 	off_start = offset & (PAGE_SIZE - 1);
+ 	off_end = (offset + len) & (PAGE_SIZE - 1);
+ 
++	down_write(&F2FS_I(inode)->i_mmap_sem);
+ 	if (pg_start == pg_end) {
+ 		ret = fill_zero(inode, pg_start, off_start,
+ 						off_end - off_start);
+ 		if (ret)
+-			return ret;
++			goto unlock;
+ 
+ 		if (offset + len > new_size)
+ 			new_size = offset + len;
+@@ -1196,7 +1203,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+ 			ret = fill_zero(inode, pg_start++, off_start,
+ 						PAGE_SIZE - off_start);
+ 			if (ret)
+-				return ret;
++				goto unlock;
+ 
+ 			new_size = max_t(loff_t, new_size,
+ 					(loff_t)pg_start << PAGE_SHIFT);
+@@ -1245,6 +1252,8 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+ out:
+ 	if (!(mode & FALLOC_FL_KEEP_SIZE) && i_size_read(inode) < new_size)
+ 		f2fs_i_size_write(inode, new_size);
++unlock:
++	up_write(&F2FS_I(inode)->i_mmap_sem);
+ 
+ 	return ret;
+ }
+@@ -1271,16 +1280,17 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ 	if (ret)
+ 		return ret;
+ 
++	down_write(&F2FS_I(inode)->i_mmap_sem);
+ 	f2fs_balance_fs(sbi, true);
+ 
+ 	ret = truncate_blocks(inode, i_size_read(inode), true);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	/* write out all dirty pages from offset */
+ 	ret = filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	truncate_pagecache(inode, offset);
+ 
+@@ -1309,6 +1319,8 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ 
+ 	if (!ret)
+ 		f2fs_i_size_write(inode, new_size);
++out:
++	up_write(&F2FS_I(inode)->i_mmap_sem);
+ 	return ret;
+ }
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 96fe8ed..30855cf 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -616,6 +616,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ 	mutex_init(&fi->inmem_lock);
+ 	init_rwsem(&fi->dio_rwsem[READ]);
+ 	init_rwsem(&fi->dio_rwsem[WRITE]);
++	init_rwsem(&fi->i_mmap_sem);
+ 
+ 	/* Will be used by directory only */
+ 	fi->i_dir_level = F2FS_SB(sb)->dir_level;
+-- 
+1.8.3.1
 
-Thanks,
 
-> CC: Jaegeuk Kim <jaegeuk@kernel.org>
-> CC: linux-f2fs-devel@lists.sourceforge.net
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> ---
->  fs/f2fs/data.c    | 2 +-
->  fs/f2fs/segment.c | 2 +-
->  fs/f2fs/super.c   | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 1602b4bccae6..dd24476e8d2c 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -309,7 +309,7 @@ static void __f2fs_submit_merged_bio(struct f2fs_sb_info *sbi,
->  	if (type >= META_FLUSH) {
->  		io->fio.type = META_FLUSH;
->  		io->fio.op = REQ_OP_WRITE;
-> -		io->fio.op_flags = REQ_META | REQ_PRIO;
-> +		io->fio.op_flags = REQ_META | REQ_PRIO | REQ_SYNC;
->  		if (!test_opt(sbi, NOBARRIER))
->  			io->fio.op_flags |= REQ_PREFLUSH | REQ_FUA;
->  	}
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 29ef7088c558..0c24cec55dc9 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -416,7 +416,7 @@ static int __submit_flush_wait(struct block_device *bdev)
->  	struct bio *bio = f2fs_bio_alloc(0);
->  	int ret;
->  
-> -	bio->bi_opf = REQ_OP_WRITE | REQ_PREFLUSH;
-> +	bio->bi_opf = REQ_OP_WRITE | REQ_SYNC | REQ_PREFLUSH;
->  	bio->bi_bdev = bdev;
->  	ret = submit_bio_wait(bio);
->  	bio_put(bio);
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 96fe8ed73100..fa5af1f04798 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1307,7 +1307,7 @@ static int __f2fs_commit_super(struct buffer_head *bh,
->  	unlock_buffer(bh);
->  
->  	/* it's rare case, we can do fua all the time */
-> -	return __sync_dirty_buffer(bh, REQ_PREFLUSH | REQ_FUA);
-> +	return __sync_dirty_buffer(bh, REQ_SYNC | REQ_PREFLUSH | REQ_FUA);
->  }
->  
->  static inline bool sanity_check_area_boundary(struct f2fs_sb_info *sbi,
-> -- 
-> 2.12.0
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
