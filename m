@@ -1,96 +1,133 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: fix a mount fail for wrong
-	next_scan_nid
-Date: Thu, 4 May 2017 09:15:41 +0800
-Message-ID: <edf88000-54d0-3c56-8702-fd284d76bc6a@huawei.com>
-References: <20170426075652.4249-1-heyunlei@huawei.com>
-	<7822ea80-3064-0b8e-e3f0-ce5e16217c05@huawei.com>
-	<20170503170424.GB93619@jaegeuk.local>
+Subject: Re: [PATCH 3/3] f2fs: enhance scalability of trace macro
+Date: Thu, 4 May 2017 09:19:58 +0800
+Message-ID: <2ddfcb7b-bf56-5b77-cdb0-34aac2e74310@huawei.com>
+References: <20170503155914.6859-1-chao@kernel.org>
+ <20170503155914.6859-3-chao@kernel.org>
+ <20170503184710.GA96113@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1d65NI-0008Kc-9U
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 04 May 2017 01:16:08 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1d65ND-000705-TX
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 04 May 2017 01:16:08 +0000
-In-Reply-To: <20170503170424.GB93619@jaegeuk.local>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170503184710.GA96113@jaegeuk.local>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/5/4 1:04, Jaegeuk Kim wrote:
-> On 05/03, Chao Yu wrote:
->> Hi all,
->>
->> On 2017/4/26 15:56, Yunlei He wrote:
->>> -write_checkpoint
->>>    -do_checkpoint
->>>       -next_free_nid    <--- something wrong with next free nid
->>
->> Since we have figured out how next_scan_nid can be changed to a wrong value, so
->> how about add a bug_on here to detect potential issue for further fixing?
+Hi Jaegeuk,
+
+On 2017/5/4 2:47, Jaegeuk Kim wrote:
+> Hi Chao,
 > 
-> I'll drop this patch for next merge window.
-> So, what was the root cause of this?
+> On 05/03, Chao Yu wrote:
+>> From: Chao Yu <yuchao0@huawei.com>
+>>
+>> Use __print_flags in show_bio_op_flags and show_cpreason instead of
+>> __print_symbolic, it enables tracer function traverses and shows all
+>> bits in the flag.
+>>
+>> Additionally, add missing REQ_FUA into F2FS_OP_FLAGS.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  include/trace/events/f2fs.h | 29 ++++++++++++++---------------
+>>  1 file changed, 14 insertions(+), 15 deletions(-)
+>>
+>> diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+>> index c78a223a0d9c..ad4cbeeeef44 100644
+>> --- a/include/trace/events/f2fs.h
+>> +++ b/include/trace/events/f2fs.h
+>> @@ -59,8 +59,8 @@ TRACE_DEFINE_ENUM(CP_TRIMMED);
+>>  		{ IPU,		"IN-PLACE" },				\
+>>  		{ OPU,		"OUT-OF-PLACE" })
+>>  
+>> -#define F2FS_OP_FLAGS (REQ_RAHEAD | REQ_SYNC | REQ_PREFLUSH | REQ_META |\
+>> -			REQ_PRIO)
+>> +#define F2FS_OP_FLAGS (REQ_RAHEAD | REQ_SYNC | REQ_META | REQ_PRIO |	\
+>> +			REQ_PREFLUSH | REQ_FUA)
+>>  #define F2FS_BIO_FLAG_MASK(t)	(t & F2FS_OP_FLAGS)
+>>  
+>>  #define show_bio_type(op,op_flags)	show_bio_op(op),		\
+>> @@ -79,15 +79,13 @@ TRACE_DEFINE_ENUM(CP_TRIMMED);
+>>  		{ REQ_OP_WRITE_ZEROES,		"WRITE_ZEROES" })
+>>  
+>>  #define show_bio_op_flags(flags)					\
+>> -	__print_symbolic(F2FS_BIO_FLAG_MASK(flags),			\
+>> -		{ REQ_RAHEAD, 		"(RA)" },			\
+>> -		{ REQ_SYNC, 		"(S)" },			\
+>> -		{ REQ_SYNC | REQ_PRIO,	"(SP)" },			\
+>> -		{ REQ_META, 		"(M)" },			\
+>> -		{ REQ_META | REQ_PRIO,	"(MP)" },			\
+>> -		{ REQ_SYNC | REQ_PREFLUSH , "(SF)" },			\
+>> -		{ REQ_SYNC | REQ_META | REQ_PRIO, "(SMP)" },		\
+>> -		{ REQ_PREFLUSH | REQ_META | REQ_PRIO, "(FMP)" },	\
+>> +	__print_flags(F2FS_BIO_FLAG_MASK(flags), "|",			\
+>> +		{ REQ_RAHEAD,		"R" },				\
+>> +		{ REQ_SYNC,		"S" },				\
+>> +		{ REQ_META,		"M" },				\
+>> +		{ REQ_PRIO,		"P" },				\
+>> +		{ REQ_PREFLUSH,		"PF" },				\
+>> +		{ REQ_FUA,		"FUA" },			\
+>>  		{ 0, " \b" })
+> 
+> We don't need the above last entry.
 
-I don't know yet, :( maybe it was caused by bit-transition of cpu or memory.
+Agreed.
 
-Thanks,
+> 
+>>  
+>>  #define show_data_type(type)						\
+>> @@ -121,13 +119,14 @@ TRACE_DEFINE_ENUM(CP_TRIMMED);
+>>  		{ GC_CB,	"Cost-Benefit" })
+>>  
+>>  #define show_cpreason(type)						\
+>> -	__print_symbolic(type,						\
+>> +	__print_flags(type, "|",					\
+>>  		{ CP_UMOUNT,	"Umount" },				\
+>>  		{ CP_FASTBOOT,	"Fastboot" },				\
+>>  		{ CP_SYNC,	"Sync" },				\
+>>  		{ CP_RECOVERY,	"Recovery" },				\
+>>  		{ CP_DISCARD,	"Discard" },				\
+>> -		{ CP_UMOUNT | CP_TRIMMED,	"Umount,Trimmed" })
+>> +		{ CP_UMOUNT,	"Umount" },				\
+>> +		{ CP_TRIMMED,	"Trimmed" })
+>>  
+>>  struct victim_sel_policy;
+>>  struct f2fs_map_blocks;
+>> @@ -774,7 +773,7 @@ DECLARE_EVENT_CLASS(f2fs__submit_page_bio,
+>>  	),
+>>  
+>>  	TP_printk("dev = (%d,%d), ino = %lu, page_index = 0x%lx, "
+>> -		"oldaddr = 0x%llx, newaddr = 0x%llx, rw = %s%s, type = %s",
+>> +		"oldaddr = 0x%llx, newaddr = 0x%llx, rw = %s,%s, type = %s",
+> 
+> How about showing this like %s(%s) ?
 
+OK, let do the change in next version.
+
+thanks,
+
+> 
+>>  		show_dev_ino(__entry),
+>>  		(unsigned long)__entry->index,
+>>  		(unsigned long long)__entry->old_blkaddr,
+>> @@ -827,7 +826,7 @@ DECLARE_EVENT_CLASS(f2fs__bio,
+>>  		__entry->size		= bio->bi_iter.bi_size;
+>>  	),
+>>  
+>> -	TP_printk("dev = (%d,%d)/(%d,%d), rw = %s%s, %s, sector = %lld, size = %u",
+>> +	TP_printk("dev = (%d,%d)/(%d,%d), rw = %s,%s, %s, sector = %lld, size = %u",
+> 
+> ditto.
 > 
 > Thanks,
 > 
->>
->> Thanks,
->>
->>>
->>> -f2fs_fill_super
->>>    -build_node_manager
->>>       -build_free_nids
->>>           -get_current_nat_page
->>>              -__get_meta_page   <--- attempt to access beyond end of device
->>>
->>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->>> ---
->>>  fs/f2fs/node.c | 3 +++
->>>  1 file changed, 3 insertions(+)
->>>
->>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
->>> index b99e318..98351a4 100644
->>> --- a/fs/f2fs/node.c
->>> +++ b/fs/f2fs/node.c
->>> @@ -1955,6 +1955,9 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
->>>  	int i = 0;
->>>  	nid_t nid = nm_i->next_scan_nid;
->>>  
->>> +	if (unlikely(nid >= nm_i->max_nid))
->>> +		nid = 0;
->>> +
->>>  	/* Enough entries */
->>>  	if (nm_i->nid_cnt[FREE_NID_LIST] >= NAT_ENTRY_PER_BLOCK)
->>>  		return;
->>>
+>>  		show_dev(__entry->target),
+>>  		show_dev(__entry->dev),
+>>  		show_bio_type(__entry->op, __entry->op_flags),
+>> -- 
+>> 2.12.2.575.gb14f27f
 > 
 > .
 > 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
