@@ -1,47 +1,97 @@
-From: "kian" <motorbikebrakepad@sinteredbrakepad.net>
-Subject: [SPAM] motorbike brake pad info
-Date: Thu, 4 May 2017 12:12:26 +0800
-Message-ID: <E1d687o-0001QU-Rz@sfs-ml-1.v29.ch3.sourceforge.com>
-Reply-To: kiankaplan@126.com
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 3/7] f2fs: Make flush bios explicitely sync
+Date: Thu, 4 May 2017 09:32:11 +0200
+Message-ID: <20170504073211.GB31315@quack2.suse.cz>
+References: <20170502150351.29452-1-jack@suse.cz>
+ <20170502150351.29452-4-jack@suse.cz>
+ <20170503212246.GA97544@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <motorbikebrakepad@sinteredbrakepad.net>)
-	id 1d687o-0001QP-4Y for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 04 May 2017 04:12:20 +0000
-Received: from [220.188.179.206] (helo=lumama-PC)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1d687m-0001zs-Uc for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 04 May 2017 04:12:20 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170503212246.GA97544@jaegeuk.local>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi 
-We can supply high quality motorcycle brake pad in sintered material and semi-metallic 
+On Wed 03-05-17 14:22:46, Jaegeuk Kim wrote:
+> Hi Jan,
+> 
+> On 05/02, Jan Kara wrote:
+> > Commit b685d3d65ac7 "block: treat REQ_FUA and REQ_PREFLUSH as
+> > synchronous" removed REQ_SYNC flag from WRITE_{FUA|PREFLUSH|...}
+> > definitions.  generic_make_request_checks() however strips REQ_FUA and
+> > REQ_PREFLUSH flags from a bio when the storage doesn't report volatile
+> > write cache and thus write effectively becomes asynchronous which can
+> > lead to performance regressions.
+> > 
+> > Fix the problem by making sure all bios which are synchronous are
+> > properly marked with REQ_SYNC.
+> > 
+> > Fixes: b685d3d65ac791406e0dfd8779cc9b3707fea5a3
+> 
+> Looks good to me. Thank you for the patch.
+> BTW, does this need cc to stable?
+> 
+> Cc: stable@vger.kernel.org # 4.9+
 
-We have good quality material and cheaper prices
+Yeah, good point. Added.
 
-if you have any requirment,you can click our website :www.tracyelise.com
-
-
-Thanks
-
-best regards
-Motodios Limited
-kian
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+								Honza
+> 
+> Thanks,
+> 
+> > CC: Jaegeuk Kim <jaegeuk@kernel.org>
+> > CC: linux-f2fs-devel@lists.sourceforge.net
+> > Signed-off-by: Jan Kara <jack@suse.cz>
+> > ---
+> >  fs/f2fs/data.c    | 2 +-
+> >  fs/f2fs/segment.c | 2 +-
+> >  fs/f2fs/super.c   | 2 +-
+> >  3 files changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index 1602b4bccae6..dd24476e8d2c 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -309,7 +309,7 @@ static void __f2fs_submit_merged_bio(struct f2fs_sb_info *sbi,
+> >  	if (type >= META_FLUSH) {
+> >  		io->fio.type = META_FLUSH;
+> >  		io->fio.op = REQ_OP_WRITE;
+> > -		io->fio.op_flags = REQ_META | REQ_PRIO;
+> > +		io->fio.op_flags = REQ_META | REQ_PRIO | REQ_SYNC;
+> >  		if (!test_opt(sbi, NOBARRIER))
+> >  			io->fio.op_flags |= REQ_PREFLUSH | REQ_FUA;
+> >  	}
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 29ef7088c558..0c24cec55dc9 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -416,7 +416,7 @@ static int __submit_flush_wait(struct block_device *bdev)
+> >  	struct bio *bio = f2fs_bio_alloc(0);
+> >  	int ret;
+> >  
+> > -	bio->bi_opf = REQ_OP_WRITE | REQ_PREFLUSH;
+> > +	bio->bi_opf = REQ_OP_WRITE | REQ_SYNC | REQ_PREFLUSH;
+> >  	bio->bi_bdev = bdev;
+> >  	ret = submit_bio_wait(bio);
+> >  	bio_put(bio);
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index 96fe8ed73100..fa5af1f04798 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -1307,7 +1307,7 @@ static int __f2fs_commit_super(struct buffer_head *bh,
+> >  	unlock_buffer(bh);
+> >  
+> >  	/* it's rare case, we can do fua all the time */
+> > -	return __sync_dirty_buffer(bh, REQ_PREFLUSH | REQ_FUA);
+> > +	return __sync_dirty_buffer(bh, REQ_SYNC | REQ_PREFLUSH | REQ_FUA);
+> >  }
+> >  
+> >  static inline bool sanity_check_area_boundary(struct f2fs_sb_info *sbi,
+> > -- 
+> > 2.12.0
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
