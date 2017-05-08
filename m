@@ -1,263 +1,216 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 3/3] f2fs: introduce io_list for serialize
-	data/node IOs
-Date: Tue,  9 May 2017 00:33:22 +0800
-Message-ID: <20170508163322.8087-3-chao@kernel.org>
-References: <20170508163322.8087-1-chao@kernel.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [GIT PULL] f2fs for 4.12-rc1
+Date: Mon, 8 May 2017 10:15:03 -0700
+Message-ID: <20170508171503.GA42466@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1d7ldT-0008G6-AP
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 08 May 2017 16:35:47 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1d7ldS-0004bt-7L
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 08 May 2017 16:35:47 +0000
-In-Reply-To: <20170508163322.8087-1-chao@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux FS Dev Mailing List <linux-fsdevel@vger.kernel.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Chao Yu <yuchao0@huawei.com>
+Hi Linus,
 
-Serialize data/node IOs by using fifo list instead of mutex lock,
-it will help to enhance concurrency of f2fs, meanwhile keeping LFS
-IO semantics.
+Could you consider this pull request?
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/checkpoint.c |  1 +
- fs/f2fs/data.c       | 28 ++++++++++++++++++++++++----
- fs/f2fs/f2fs.h       |  5 ++++-
- fs/f2fs/gc.c         |  3 ++-
- fs/f2fs/segment.c    | 20 ++++++++++++++------
- fs/f2fs/segment.h    |  3 ++-
- 6 files changed, 47 insertions(+), 13 deletions(-)
+Thanks,
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 2a475e83a092..7b3393474f6b 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -162,6 +162,7 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
- 		.op = REQ_OP_READ,
- 		.op_flags = sync ? (REQ_META | REQ_PRIO) : REQ_RAHEAD,
- 		.encrypted_page = NULL,
-+		.in_list = false,
- 	};
- 	struct blk_plug plug;
- 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 5f001b471252..89eaa8aaa97b 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -393,10 +393,28 @@ int f2fs_submit_page_mbio(struct f2fs_io_info *fio)
- 	struct f2fs_bio_info *io;
- 	bool is_read = is_read_io(fio->op);
- 	struct page *bio_page;
-+	struct curseg_info *curseg;
- 	int err = 0;
- 
-+	if (fio->in_list)
-+		curseg = CURSEG_I(sbi, fio->seg_type);
-+
- 	io = __get_bio_info(sbi, fio->op, fio->type, fio->seg_type);
- 
-+	down_write(&io->io_rwsem);
-+next:
-+	if (fio->in_list) {
-+		spin_lock(&curseg->io_lock);
-+		if (list_empty(&curseg->io_list)) {
-+			spin_unlock(&curseg->io_lock);
-+			goto out_fail;
-+		}
-+		fio = list_first_entry(&curseg->io_list,
-+						struct f2fs_io_info, list);
-+		list_del(&fio->list);
-+		spin_unlock(&curseg->io_lock);
-+	}
-+
- 	if (fio->old_blkaddr != NEW_ADDR)
- 		verify_block_addr(sbi, fio->old_blkaddr);
- 	verify_block_addr(sbi, fio->new_blkaddr);
-@@ -409,8 +427,6 @@ int f2fs_submit_page_mbio(struct f2fs_io_info *fio)
- 	if (!is_read)
- 		inc_page_count(sbi, WB_DATA_TYPE(bio_page));
- 
--	down_write(&io->io_rwsem);
--
- 	if (io->bio && (io->last_block_in_bio != fio->new_blkaddr - 1 ||
- 	    (io->fio.op != fio->op || io->fio.op_flags != fio->op_flags) ||
- 			!__same_bdev(sbi, fio->new_blkaddr, io->bio)))
-@@ -437,9 +453,13 @@ int f2fs_submit_page_mbio(struct f2fs_io_info *fio)
- 
- 	io->last_block_in_bio = fio->new_blkaddr;
- 	f2fs_trace_ios(fio, 0);
-+
-+	trace_f2fs_submit_page_mbio(fio->page, fio);
-+
-+	if (fio->in_list)
-+		goto next;
- out_fail:
- 	up_write(&io->io_rwsem);
--	trace_f2fs_submit_page_mbio(fio->page, fio);
- 	return err;
- }
- 
-@@ -752,7 +772,7 @@ static int __allocate_data_block(struct dnode_of_data *dn)
- 	set_summary(&sum, dn->nid, dn->ofs_in_node, ni.version);
- 
- 	allocate_data_block(sbi, NULL, dn->data_blkaddr, &dn->data_blkaddr,
--						&sum, CURSEG_WARM_DATA);
-+					&sum, CURSEG_WARM_DATA, NULL, false);
- 	set_data_blkaddr(dn);
- 
- 	/* update i_size */
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9129a6229bc8..6b8e9f051aa2 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -802,8 +802,10 @@ struct f2fs_io_info {
- 	block_t old_blkaddr;	/* old block address before Cow */
- 	struct page *page;	/* page to be written */
- 	struct page *encrypted_page;	/* encrypted page */
-+	struct list_head list;		/* serialize IOs */
- 	bool submitted;		/* indicate IO submission */
- 	bool need_lock;		/* indicate we need to lock cp_rwsem */
-+	bool in_list;		/* indicate fio is in io_list */
- };
- 
- #define is_read_io(rw) ((rw) == READ)
-@@ -2274,7 +2276,8 @@ void f2fs_replace_block(struct f2fs_sb_info *sbi, struct dnode_of_data *dn,
- 			bool recover_newaddr);
- void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 			block_t old_blkaddr, block_t *new_blkaddr,
--			struct f2fs_summary *sum, int type);
-+			struct f2fs_summary *sum, int type,
-+			struct f2fs_io_info *fio, bool add_list);
- void f2fs_wait_on_page_writeback(struct page *page,
- 			enum page_type type, bool ordered);
- void f2fs_wait_on_encrypted_page_writeback(struct f2fs_sb_info *sbi,
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 8b267ca30926..ac2f74e40eea 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -590,6 +590,7 @@ static void move_encrypted_block(struct inode *inode, block_t bidx,
- 		.op = REQ_OP_READ,
- 		.op_flags = 0,
- 		.encrypted_page = NULL,
-+		.in_list = false,
- 	};
- 	struct dnode_of_data dn;
- 	struct f2fs_summary sum;
-@@ -633,7 +634,7 @@ static void move_encrypted_block(struct inode *inode, block_t bidx,
- 	fio.new_blkaddr = fio.old_blkaddr = dn.data_blkaddr;
- 
- 	allocate_data_block(fio.sbi, NULL, fio.old_blkaddr, &newaddr,
--							&sum, fio.seg_type);
-+					&sum, fio.seg_type, NULL, false);
- 
- 	fio.encrypted_page = pagecache_get_page(META_MAPPING(fio.sbi), newaddr,
- 					FGP_LOCK | FGP_CREAT, GFP_NOFS);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index c047b5d8b9d3..d4975b8f4620 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2100,7 +2100,8 @@ static int __get_segment_type(struct page *page, enum page_type p_type)
- 
- void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 		block_t old_blkaddr, block_t *new_blkaddr,
--		struct f2fs_summary *sum, int type)
-+		struct f2fs_summary *sum, int type,
-+		struct f2fs_io_info *fio, bool add_list)
- {
- 	struct sit_info *sit_i = SIT_I(sbi);
- 	struct curseg_info *curseg = CURSEG_I(sbi, type);
-@@ -2136,6 +2137,14 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 	if (page && IS_NODESEG(type))
- 		fill_node_footer_blkaddr(page, NEXT_FREE_BLKADDR(sbi, curseg));
- 
-+	if (add_list) {
-+		INIT_LIST_HEAD(&fio->list);
-+		fio->in_list = true;
-+		spin_lock(&curseg->io_lock);
-+		list_add_tail(&fio->list, &curseg->io_list);
-+		spin_unlock(&curseg->io_lock);
-+	}
-+
- 	mutex_unlock(&curseg->curseg_mutex);
- }
- 
-@@ -2145,10 +2154,9 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
- 
- 	fio->seg_type = __get_segment_type(fio->page, fio->type);
- 
--	mutex_lock(&CURSEG_I(fio->sbi, fio->seg_type)->wio_mutex);
- reallocate:
- 	allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
--					&fio->new_blkaddr, sum, fio->seg_type);
-+			&fio->new_blkaddr, sum, fio->seg_type, fio, true);
- 
- 	/* writeout dirty page into bdev */
- 	err = f2fs_submit_page_mbio(fio);
-@@ -2156,8 +2164,6 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
- 		fio->old_blkaddr = fio->new_blkaddr;
- 		goto reallocate;
- 	}
--
--	mutex_unlock(&CURSEG_I(fio->sbi, fio->seg_type)->wio_mutex);
- }
- 
- void write_meta_page(struct f2fs_sb_info *sbi, struct page *page)
-@@ -2171,6 +2177,7 @@ void write_meta_page(struct f2fs_sb_info *sbi, struct page *page)
- 		.new_blkaddr = page->index,
- 		.page = page,
- 		.encrypted_page = NULL,
-+		.in_list = false,
- 	};
- 
- 	if (unlikely(page->index >= MAIN_BLKADDR(sbi)))
-@@ -2978,7 +2985,8 @@ static int build_curseg(struct f2fs_sb_info *sbi)
- 		array[i].bio_info.sbi = sbi;
- 		array[i].bio_info.bio = NULL;
- 
--		mutex_init(&array[i].wio_mutex);
-+		spin_lock_init(&array[i].io_lock);
-+		INIT_LIST_HEAD(&array[i].io_list);
- 	}
- 	return restore_curseg_summaries(sbi);
- }
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 701944b462cd..b6f5dffeaa61 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -283,7 +283,8 @@ struct curseg_info {
- 	struct rw_semaphore journal_rwsem;	/* protect journal area */
- 	struct f2fs_journal *journal;		/* cached journal info */
- 	struct f2fs_bio_info bio_info;		/* for log bios */
--	struct mutex wio_mutex;			/* serialize DATA/NODE IOs */
-+	spinlock_t io_lock;			/* serialize DATA/NODE IOs */
-+	struct list_head io_list;		/* tracking fios */
- 	unsigned char alloc_type;		/* current allocation type */
- 	unsigned int segno;			/* current segment number */
- 	unsigned short next_blkoff;		/* next block offset to write */
--- 
-2.12.2.575.gb14f27f
+The following changes since commit 1f02071358301e376f5a54e40531db37a1d7c7ab:
 
+  Merge tag 'scsi-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi (2017-03-21 13:10:17 -0700)
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/for-f2fs-4.12
+
+for you to fetch changes up to e9cdd307704b5a8f685fa3fff4403691fbf64f97:
+
+  f2fs: fix a mount fail for wrong next_scan_nid (2017-05-03 19:00:30 -0700)
+
+----------------------------------------------------------------
+for-f2fs-4.12
+
+In this round, we've focused on enhancing performance with regards to block
+allocation, GC, and discard/in-place-update IO controls. There are a bunch
+of clean-ups as well as minor bug fixes.
+
+= Enhancement
+- disable heap-based allocation by default
+- issue small-sized discard commands by default
+- change the policy of data hotness for logging
+- distinguish IOs in terms of size and wbc type
+- start SSR earlier to avoid foreground GC
+- enhance data structures managing discard commands
+- enhance in-place update flow
+- add some more fault injection routines
+- secure one more xattr entry
+
+= Bug fix
+- calculate victim cost for GC correctly
+- remain correct victim segment number for GC
+- race condition in nid allocator and initializer
+- stale pointer produced by atomic_writes
+- fix missing REQ_SYNC for flush commands
+- handle missing errors in more corner cases
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      f2fs: improve definition of statistic macros
+
+Chao Yu (35):
+      f2fs: don't allow volatile writes for non-regular file
+      f2fs: cover update_free_nid_bitmap with nid_list_lock
+      f2fs: add missing INMEM_REVOKE trace enum definition
+      f2fs: fix recording invalid last_victim
+      f2fs: fix race condition in between free nid allocator/initializer
+      f2fs: show the max number of volatile operations
+      f2fs: don't track volatile file in dirty inode list
+      f2fs: clean up xattr operation
+      f2fs: don't reserve additional space in xattr block
+      f2fs: show issued flush/discard count
+      f2fs: count discard command entry
+      f2fs: clean up destroy_discard_cmd_control
+      f2fs: use bitmap in discard_entry
+      f2fs: split discard_cmd_list
+      f2fs: introduce f2fs_wait_discard_bios
+      f2fs: prevent waiter encountering incorrect discard states
+      f2fs: extract rb-tree operation infrastructure
+      f2fs: shrink blk plug region
+      f2fs: use rb-tree to track pending discard commands
+      f2fs: clean up discard_cmd_control structure
+      f2fs: in prior to issue big discard
+      f2fs: trace __submit_discard_cmd
+      f2fs: introduce __check_rb_tree_consistence
+      f2fs: unlock cp_rwsem early for IPU writes
+      f2fs: add undiscard blocks stat
+      f2fs: delay awaking discard thread
+      f2fs: enable small discard by default
+      f2fs: introduce __issue_discard_cmd
+      f2fs: introduce __wait_discard_cmd
+      f2fs: don't hold cmd_lock during waiting discard command
+      f2fs: shrink size of struct discard_cmd
+      f2fs: allow cpc->reason to indicate more than one reason
+      f2fs: introduce CP_TRIMMED_FLAG to avoid unneeded discard
+      f2fs: relocate inode_{,un}lock in F2FS_IOC_SETFLAGS
+      f2fs: enhance scalability of trace macro
+
+Fan Li (1):
+      f2fs: adjust the way of calculating nat block
+
+Hou Pengyang (5):
+      f2fs: introduce async IPU policy
+      f2fs: skip encrypted inode in ASYNC IPU policy
+      f2fs: reconstruct code to write a data page
+      f2fs: lookup extent cache first under IPU scenario
+      f2fs: release cp and dnode lock before IPU
+
+Jaegeuk Kim (36):
+      f2fs: don't need to invalidate wrong node page
+      f2fs: le16_to_cpu for xattr->e_value_size
+      f2fs: fix wrong error injection for evict_inode
+      f2fs: don't allow to get pino when filename is encrypted
+      f2fs: build stat_info before orphan inode recovery
+      f2fs: fix stale ATOMIC_WRITTEN_PAGE private pointer
+      f2fs: don't allow atomic writes for not regular files
+      f2fs: show more precise message on orphan recovery failure
+      f2fs: allocate a bio for discarding when actually issuing it
+      f2fs: add fault injection on f2fs_truncate
+      f2fs: fix wrong max cost initialization
+      f2fs: allocate node and hot data in the beginning of partition
+      f2fs: start SSR much eariler to avoid FG_GC
+      f2fs: relax node version check for victim data in gc
+      f2fs: write small sized IO to hot log
+      f2fs: avoid IO split due to mixed WB_SYNC_ALL and WB_SYNC_NONE
+      f2fs: submit bio of in-place-update pages
+      Revert "f2fs: put allocate_segment after refresh_sit_entry"
+      f2fs: use segment number for get_valid_blocks
+      f2fs: clean up get_valid_blocks with consistent parameter
+      f2fs: clean up some macros in terms of GET_SEGNO
+      f2fs: avoid frequent checkpoint during f2fs_gc
+      f2fs: fix fs corruption due to zero inode page
+      f2fs: give time to flush dirty pages for checkpoint
+      f2fs: allocate hot_data for atomic writes
+      f2fs: fix not to set fsync/dentry mark
+      f2fs: avoid dirty node pages in check_only recovery
+      f2fs: add ioctl to flush data from faster device to cold area
+      f2fs: fix _IOW usage
+      f2fs: assign allocation hint for warm/cold data
+      f2fs: add parentheses for macro variables more
+      f2fs: fix out-of free segments
+      f2fs: introduce valid_ipu_blkaddr to clean up
+      f2fs: nullify fio->encrypted_page for each writes
+      f2fs: flush dirty nats periodically
+      f2fs: show available_nids in f2fs/status
+
+Jan Kara (1):
+      f2fs: Make flush bios explicitely sync
+
+Jin Qian (1):
+      f2fs: sanity check segment count
+
+Kaixu Xia (1):
+      f2fs: remove the redundant variable definition
+
+Kinglong Mee (17):
+      f2fs: le32_to_cpu for ckpt->cp_pack_total_block_count
+      f2fs: fix the fault of checking F2FS_LINK_MAX for rename inode
+      f2fs: fix the fault of calculating blkstart twice
+      f2fs: make sure trace all f2fs_issue_flush
+      f2fs: drop duplicate radix tree lookup of nat_entry_set
+      f2fs: remove dead macro PGOFS_OF_NEXT_DNODE
+      f2fs: drop duplicate new_size assign in f2fs_zero_range
+      f2fs: avoid copy date to user-space if move file range fail
+      f2fs: check new size by inode_newsize_ok in f2fs_insert_range
+      f2fs: move mnt_want_write_file after arguments checking
+      f2fs: clear FI_DATA_EXIST flag in truncate_inline_inode
+      f2fs: fix bad prefetchw of NULL page
+      f2fs: cleanup the disk level filename updating
+      f2fs: sanity check of crc_offset from raw checkpoint
+      f2fs: avoid stat_inc_atomic_write for non-atomic file
+      f2fs: calculate the f2fs_stat_info into base_mem
+      f2fs: more reasonable mem_size calculating of ino_entry
+
+Sheng Yong (3):
+      f2fs: use parameter max_items instead of PIDVEC_SIZE
+      f2fs: check range before defragment
+      f2fs: fix multiple f2fs_add_link() having same name for inline dentry
+
+Tomohiro Kusumi (3):
+      f2fs: split make_dentry_ptr() into block and inline versions
+      f2fs: fix comment on f2fs_flush_merged_bios() after 86531d6b
+      f2fs: guard macro variables with braces
+
+Yunlei He (7):
+      f2fs: fix an error return value in truncate_partial_data_page
+      f2fs: skip writeback meta pages if cp_mutex acquire failed
+      f2fs: add a punch discard command function
+      f2fs: use set_page_private marcro in f2fs_trace_pid
+      f2fs: allow write page cache when writting cp
+      f2fs: seperate read nat page from nat_tree_lock
+      f2fs: fix a mount fail for wrong next_scan_nid
+
+ fs/f2fs/checkpoint.c        |  77 +++--
+ fs/f2fs/data.c              | 200 +++++++++---
+ fs/f2fs/debug.c             |  62 +++-
+ fs/f2fs/dir.c               |  46 +--
+ fs/f2fs/extent_cache.c      | 326 +++++++++++--------
+ fs/f2fs/f2fs.h              | 320 +++++++++++-------
+ fs/f2fs/file.c              | 173 +++++++---
+ fs/f2fs/gc.c                |  93 ++++--
+ fs/f2fs/inline.c            |  34 +-
+ fs/f2fs/inode.c             |  23 +-
+ fs/f2fs/namei.c             |  53 +--
+ fs/f2fs/node.c              | 144 ++++----
+ fs/f2fs/node.h              |  31 +-
+ fs/f2fs/recovery.c          |   8 +-
+ fs/f2fs/segment.c           | 776 ++++++++++++++++++++++++++++++++------------
+ fs/f2fs/segment.h           | 139 ++++----
+ fs/f2fs/super.c             |  48 ++-
+ fs/f2fs/trace.c             |   4 +-
+ fs/f2fs/xattr.c             |  31 +-
+ fs/f2fs/xattr.h             |   8 +-
+ include/linux/f2fs_fs.h     |  17 +-
+ include/trace/events/f2fs.h |  62 ++--
+ 22 files changed, 1747 insertions(+), 928 deletions(-)
