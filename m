@@ -1,47 +1,59 @@
-From: "kian" <brakes@brakes.net>
-Subject: [SPAM] motorbike brake pad info
-Date: Wed, 10 May 2017 00:08:05 +0800
-Message-ID: <E1d87gI-0008OH-Gu@sfs-ml-2.v29.ch3.sourceforge.com>
-Reply-To: kiankaplan@126.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <brakes@brakes.net>) id 1d87gG-0008NX-HU
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 09 May 2017 16:08:08 +0000
-Received: from [122.244.49.228] (helo=lumama-PC)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1d87gF-0007Ag-9i for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 09 May 2017 16:08:08 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+From: Jeff Layton <jlayton@redhat.com>
+Subject: [xfstests PATCH v2 0/3] xfstest for updated writeback error handling
+Date: Tue,  9 May 2017 12:12:42 -0400
+Message-ID: <20170509161245.29908-1-jlayton@redhat.com>
+Return-path: <owner-linux-mm@kvack.org>
+Sender: owner-linux-mm@kvack.org
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, linux-mm@kvack.org, jfs-discussion@lists.sourceforge.net, linux-xfs@vger.kernel.org, cluster-devel@redhat.com, linux-f2fs-devel@lists.sourceforge.net, v9fs-developer@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-block@vger.kernel.org, fstests@vger.kernel.org
+Cc: dhowells@redhat.com, akpm@linux-foundation.org, hch@infradead.org, ross.zwisler@linux.intel.com, mawilcox@microsoft.com, jack@suse.com, viro@zeniv.linux.org.uk, corbet@lwn.net, neilb@suse.de, clm@fb.com, tytso@mit.edu, axboe@kernel.dk, josef@toxicpanda.com, hubcap@omnibond.com, rpeterso@redhat.com, bo.li.liu@oracle.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi 
-We can supply high quality motorcycle brake pad in sintered material and semi-metallic 
+I've numbered the new test as 999 for the moment so as not to collide with
+tests being added while I've been working on this. I can change that and
+resend if this should go in.
 
-We have good quality material and cheaper prices
+I'm working on a set of kernel patches to change how writeback errors
+are handled and reported in the kernel. Instead of reporting a
+writeback error to only the first fsync caller on the file, I aim
+to make the kernel report them once on every file description:
 
-if you have any requirment,you can click our website :www.tracyelise.com
+   http://www.spinics.net/lists/kernel/msg2504453.html
 
+This patch adds a test for the new behavior, on local filesystems that
+can handle journalling to a separate device. Basically, open many fds to
+the same file, turn on dm_error, write to each of the fds, and then
+fsync them all to ensure that they all get an error back. Then, flip the
+device back to working, reopen the files and ensure that no error is
+reported.
 
-Thanks
+With the kernel patch series in place, ext4 and xfs now pass. btrfs still
+clears the error after the first fsync, so it seems like it still needs a
+bit of work.
 
-best regards
-Motodios Limited
-kian
+Jeff Layton (3):
+  generic: add a writeback error handling test
+  ext4: allow ext4 to use $SCRATCH_LOGDEV
+  btrfs: allow it to use $SCRATCH_LOGDEV
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+ common/dmerror        |  13 +++--
+ common/rc             |   5 ++
+ src/Makefile          |   2 +-
+ src/fsync-err.c       | 138 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ tests/generic/999     |  75 +++++++++++++++++++++++++++
+ tests/generic/999.out |   3 ++
+ tests/generic/group   |   1 +
+ tools/dmerror         |  47 +++++++++++++++++
+ 8 files changed, 278 insertions(+), 6 deletions(-)
+ create mode 100644 src/fsync-err.c
+ create mode 100755 tests/generic/999
+ create mode 100644 tests/generic/999.out
+ create mode 100755 tools/dmerror
+
+-- 
+2.9.3
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
