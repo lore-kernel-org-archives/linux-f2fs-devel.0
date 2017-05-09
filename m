@@ -1,111 +1,44 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] f2fs: make sure f2fs_gc returns consistent
- errno
-Date: Tue, 9 May 2017 23:25:35 +0800
-Message-ID: <494c3854-000d-c61c-caca-5a152ec6ff08@kernel.org>
-References: <20170509113754.53173-1-guoweichao@huawei.com>
+From: Jeff Layton <jlayton@redhat.com>
+Subject: Re: [RFC xfstests PATCH] xfstests: add a writeback error handling
+ test
+Date: Tue, 09 May 2017 11:33:03 -0400
+Message-ID: <1494343983.2659.7.camel@redhat.com>
+References: <20170424134551.10301-1-jlayton@redhat.com>
+	 <20170424150019.GA3288@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1d872J-0004nV-Rt
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 09 May 2017 15:26:51 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1d872G-0001ut-Fb
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 09 May 2017 15:26:51 +0000
-In-Reply-To: <20170509113754.53173-1-guoweichao@huawei.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Weichao Guo <guoweichao@huawei.com>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20170424150019.GA3288@infradead.org>
+Sender: owner-linux-mm@kvack.org
+To: Christoph Hellwig <hch@infradead.org>
+Cc: fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-cifs@vger.kernel.org, linux-mm@kvack.org, jfs-discussion@lists.sourceforge.net, linux-xfs@vger.kernel.org, cluster-devel@redhat.com, linux-f2fs-devel@lists.sourceforge.net, v9fs-developer@lists.sourceforge.net, osd-dev@open-osd.org, linux-nilfs@vger.kernel.org, linux-block@vger.kernel.org, dhowells@redhat.com, akpm@linux-foundation.org, ross.zwisler@linux.intel.com, mawilcox@microsoft.com, jack@suse.com, viro@zeniv.linux.org.uk, corbet@lwn.net, neilb@suse.de, clm@fb.com, tytso@mit.edu, axboe@kernel.dk
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/5/9 19:37, Weichao Guo wrote:
-> By default, f2fs_gc returns -EINVAL in general error cases, e.g., no victim
-> was selected. However, the default errno may be overwritten in two cases:
-> gc_more and BG_GC -> FG_GC. We should return consistent errno in such cases.
+On Mon, 2017-04-24 at 08:00 -0700, Christoph Hellwig wrote:
+> On Mon, Apr 24, 2017 at 09:45:51AM -0400, Jeff Layton wrote:
+> > With the patch series above, ext4 now passes. xfs and btrfs end up in
+> > r/o mode after the test. xfs returns -EIO at that point though, and
+> > btrfs returns -EROFS. What behavior we actually want there, I'm not
+> > certain. We might be able to mitigate that by putting the journals on a
+> > separate device?
+> 
+> This looks like XFS shut down because of a permanent write error from
+> dm-error.  Which seems like the expected behavior.
 
-How about clean up this patch as below, which always set return value
-before jumping to 'stop' tag.
+Oops, didn't see this message earlier...
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index ac2f74e40eea..6906a284c98d 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -957,7 +957,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
- {
- 	int gc_type = sync ? FG_GC : BG_GC;
- 	int sec_freed = 0;
--	int ret = -EINVAL;
-+	int ret;
- 	struct cp_control cpc;
- 	unsigned int init_segno = segno;
- 	struct gc_inode_list gc_list = {
-@@ -967,8 +967,10 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
-
- 	cpc.reason = __get_cp_reason(sbi);
- gc_more:
--	if (unlikely(!(sbi->sb->s_flags & MS_ACTIVE)))
-+	if (unlikely(!(sbi->sb->s_flags & MS_ACTIVE))) {
-+		ret = -EINVAL;
- 		goto stop;
-+	}
- 	if (unlikely(f2fs_cp_error(sbi))) {
- 		ret = -EIO;
- 		goto stop;
-@@ -989,6 +991,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
- 			gc_type = FG_GC;
- 	}
-
-+	ret = -EINVAL;
- 	/* f2fs_balance_fs doesn't need to do BG_GC in critical path. */
- 	if (gc_type == BG_GC && !background)
- 		goto stop;
+Yeah, that's entirely reasonable when there is a write error to the
+journal. The latest version of this uses $SCRATCH_LOGDEV to put the
+journal on a different device, and with that I get the expected behavior
+from xfs.
 
 Thanks,
+-- 
+Jeff Layton <jlayton@redhat.com>
 
-> 
-> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
-> ---
->  fs/f2fs/gc.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 0265221..32c9463 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -965,6 +965,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->  
->  	cpc.reason = __get_cp_reason(sbi);
->  gc_more:
-> +	ret = -EINVAL;
->  	if (unlikely(!(sbi->sb->s_flags & MS_ACTIVE)))
->  		goto stop;
->  	if (unlikely(f2fs_cp_error(sbi))) {
-> @@ -982,6 +983,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->  			ret = write_checkpoint(sbi, &cpc);
->  			if (ret)
->  				goto stop;
-> +			else
-> +				ret = -EINVAL;
->  		}
->  		if (has_not_enough_free_secs(sbi, 0, 0))
->  			gc_type = FG_GC;
-> 
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
