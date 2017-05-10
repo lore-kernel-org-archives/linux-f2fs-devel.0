@@ -1,142 +1,361 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/3] f2fs: use fio instead of multiple parameters
-Date: Wed, 10 May 2017 16:48:16 -0700
-Message-ID: <20170510234816.3373-3-jaegeuk@kernel.org>
-References: <20170510234816.3373-1-jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: split bio cache
+Date: Wed, 10 May 2017 16:50:05 -0700
+Message-ID: <20170510235005.GA3428@jaegeuk.local>
+References: <20170508123605.111446-1-yuchao0@huawei.com>
+ <20170508212324.GC47455@jaegeuk.local>
+ <fe1fc9ca-e49e-1160-1f79-7b75ec7d22ef@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1d8bLK-0000p8-Gk
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 10 May 2017 23:48:30 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1d8bLJ-0006Iq-Fa
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 10 May 2017 23:48:30 +0000
-In-Reply-To: <20170510234816.3373-1-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <fe1fc9ca-e49e-1160-1f79-7b75ec7d22ef@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch just changes using fio instead of parameters.
+On 05/09, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> On 2017/5/9 5:23, Jaegeuk Kim wrote:
+> > Hi Chao,
+> > 
+> > I can't see a strong reason to split meta from data/node and rename the existing
+> > function names. Instead, how about keeping the existing one while adding some
+> > page types to deal with log types?
+> 
+> Hmm.. before write this patch, I have thought about this implementation which
+> adds HOT_DATA/WARM_DATA/.. into page_type enum, but the final target is making
+> different temperature log-header being with independent bio cache, io lock, and
+> io list, eliminating interaction of different temperature IOs, also expanding
+> f2fs' scalability when adding more log-headers. If we don't split meta from
+> data/node, it's a little bit hard to approach this. What do you think?
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+I submitted clean-up patches. How about this on top of them?
+
 ---
- fs/f2fs/segment.c | 41 +++++++++++++++++++++--------------------
- 1 file changed, 21 insertions(+), 20 deletions(-)
+ fs/f2fs/data.c              | 51 +++++++++++++++++++++++++++++++++------------
+ fs/f2fs/f2fs.h              | 10 ++++++++-
+ fs/f2fs/gc.c                |  2 ++
+ fs/f2fs/segment.c           | 24 +++++++++++++++------
+ fs/f2fs/segment.h           |  4 ++++
+ fs/f2fs/super.c             | 21 ++++++++++++++++---
+ include/trace/events/f2fs.h | 14 ++++++++++++-
+ 7 files changed, 102 insertions(+), 24 deletions(-)
 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 06bb2042385e..49b7e3918484 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -282,21 +282,30 @@ static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
+ 				nid_t ino, pgoff_t idx, enum page_type type)
+ {
+ 	enum page_type btype = PAGE_TYPE_OF_BIO(type);
+-	struct f2fs_bio_info *io = &sbi->write_io[btype];
+-	bool ret;
++	enum temp_type temp;
++	struct f2fs_bio_info *io;
++	bool ret = false;
+ 
+-	down_read(&io->io_rwsem);
+-	ret = __has_merged_page(io, inode, ino, idx);
+-	up_read(&io->io_rwsem);
++	for (temp = HOT; temp < NR_TEMP_TYPE; temp++) {
++		io = sbi->write_io[btype] + temp;
++
++		down_read(&io->io_rwsem);
++		ret = __has_merged_page(io, inode, ino, idx);
++		up_read(&io->io_rwsem);
++
++		/* TODO: use HOT temp only for meta pages now. */
++		if (ret || btype == META)
++			break;
++	}
+ 	return ret;
+ }
+ 
+ static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
+ 				struct inode *inode, nid_t ino, pgoff_t idx,
+-				enum page_type type)
++				enum page_type type, enum temp_type temp)
+ {
+ 	enum page_type btype = PAGE_TYPE_OF_BIO(type);
+-	struct f2fs_bio_info *io = &sbi->write_io[btype];
++	struct f2fs_bio_info *io = sbi->write_io[btype] + temp;
+ 
+ 	down_write(&io->io_rwsem);
+ 
+@@ -316,17 +325,34 @@ static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
+ 	up_write(&io->io_rwsem);
+ }
+ 
++static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
++				struct inode *inode, nid_t ino, pgoff_t idx,
++				enum page_type type, bool force)
++{
++	enum temp_type temp;
++
++	if (!force && !has_merged_page(sbi, inode, ino, idx, type))
++		return;
++
++	for (temp = HOT; temp < NR_TEMP_TYPE; temp++) {
++		__f2fs_submit_merged_write(sbi, inode, ino, idx, type, temp);
++
++		/* TODO: use HOT temp only for meta pages now. */
++		if (type >= META)
++			break;
++	}
++}
++
+ void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type)
+ {
+-	__f2fs_submit_merged_write(sbi, NULL, 0, 0, type);
++	__submit_merged_write_cond(sbi, NULL, 0, 0, type, true);
+ }
+ 
+ void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
+ 				struct inode *inode, nid_t ino, pgoff_t idx,
+ 				enum page_type type)
+ {
+-	if (has_merged_page(sbi, inode, ino, idx, type))
+-		__f2fs_submit_merged_write(sbi, inode, ino, idx, type);
++	__submit_merged_write_cond(sbi, inode, ino, idx, type, false);
+ }
+ 
+ void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi)
+@@ -369,7 +395,7 @@ int f2fs_submit_page_write(struct f2fs_io_info *fio)
+ {
+ 	struct f2fs_sb_info *sbi = fio->sbi;
+ 	enum page_type btype = PAGE_TYPE_OF_BIO(fio->type);
+-	struct f2fs_bio_info *io = &sbi->write_io[btype];
++	struct f2fs_bio_info *io = sbi->write_io[btype] + fio->temp;
+ 	struct page *bio_page;
+ 	int err = 0;
+ 
+@@ -405,8 +431,7 @@ int f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 		io->fio = *fio;
+ 	}
+ 
+-	if (bio_add_page(io->bio, bio_page, PAGE_SIZE, 0) <
+-							PAGE_SIZE) {
++	if (bio_add_page(io->bio, bio_page, PAGE_SIZE, 0) < PAGE_SIZE) {
+ 		__submit_merged_bio(io);
+ 		goto alloc_new;
+ 	}
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index bf837458cb18..90e97bc11972 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -792,9 +792,17 @@ enum page_type {
+ 	OPU,
+ };
+ 
++enum temp_type {
++	HOT = 0,	/* must be zero for meta bio */
++	WARM,
++	COLD,
++	NR_TEMP_TYPE,
++};
++
+ struct f2fs_io_info {
+ 	struct f2fs_sb_info *sbi;	/* f2fs_sb_info pointer */
+ 	enum page_type type;	/* contains DATA/NODE/META/META_FLUSH */
++	enum temp_type temp;	/* contains HOT/WARM/COLD */
+ 	int op;			/* contains REQ_OP_ */
+ 	int op_flags;		/* req_flag_bits */
+ 	block_t new_blkaddr;	/* new block address to be written */
+@@ -880,7 +888,7 @@ struct f2fs_sb_info {
+ 
+ 	/* for bio operations */
+ 	struct f2fs_bio_info read_io;			/* for read bios */
+-	struct f2fs_bio_info write_io[NR_PAGE_TYPE];	/* for write bios */
++	struct f2fs_bio_info *write_io[NR_PAGE_TYPE];	/* for write bios */
+ 	struct mutex wio_mutex[NODE + 1];	/* bio ordering for NODE/DATA */
+ 	int write_io_size_bits;			/* Write IO size bits */
+ 	mempool_t *write_io_dummy;		/* Dummy pages */
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 67b87155bc48..e2b13558a915 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -586,6 +586,7 @@ static void move_encrypted_block(struct inode *inode, block_t bidx,
+ 	struct f2fs_io_info fio = {
+ 		.sbi = F2FS_I_SB(inode),
+ 		.type = DATA,
++		.temp = COLD,
+ 		.op = REQ_OP_READ,
+ 		.op_flags = 0,
+ 		.encrypted_page = NULL,
+@@ -712,6 +713,7 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+ 		struct f2fs_io_info fio = {
+ 			.sbi = F2FS_I_SB(inode),
+ 			.type = DATA,
++			.temp = COLD,
+ 			.op = REQ_OP_WRITE,
+ 			.op_flags = REQ_SYNC,
+ 			.old_blkaddr = NULL_ADDR,
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 38bb675976e2..c9f3a2faee21 100644
+index c9f3a2faee21..da4fd2c29e86 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -2039,61 +2039,62 @@ static bool __has_curseg_space(struct f2fs_sb_info *sbi, int type)
- 	return false;
- }
+@@ -2084,17 +2084,29 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
  
--static int __get_segment_type_2(struct page *page, enum page_type p_type)
-+static int __get_segment_type_2(struct f2fs_io_info *fio)
+ static int __get_segment_type(struct f2fs_io_info *fio)
  {
--	if (p_type == DATA)
-+	if (fio->type == DATA)
- 		return CURSEG_HOT_DATA;
- 	else
- 		return CURSEG_HOT_NODE;
- }
- 
--static int __get_segment_type_4(struct page *page, enum page_type p_type)
-+static int __get_segment_type_4(struct f2fs_io_info *fio)
- {
--	if (p_type == DATA) {
--		struct inode *inode = page->mapping->host;
-+	if (fio->type == DATA) {
-+		struct inode *inode = fio->page->mapping->host;
- 
- 		if (S_ISDIR(inode->i_mode))
- 			return CURSEG_HOT_DATA;
- 		else
- 			return CURSEG_COLD_DATA;
- 	} else {
--		if (IS_DNODE(page) && is_cold_node(page))
-+		if (IS_DNODE(fio->page) && is_cold_node(fio->page))
- 			return CURSEG_WARM_NODE;
- 		else
- 			return CURSEG_COLD_NODE;
- 	}
- }
- 
--static int __get_segment_type_6(struct page *page, enum page_type p_type)
-+static int __get_segment_type_6(struct f2fs_io_info *fio)
- {
--	if (p_type == DATA) {
--		struct inode *inode = page->mapping->host;
-+	if (fio->type == DATA) {
-+		struct inode *inode = fio->page->mapping->host;
- 
--		if (is_cold_data(page) || file_is_cold(inode))
-+		if (is_cold_data(fio->page) || file_is_cold(inode))
- 			return CURSEG_COLD_DATA;
- 		if (is_inode_flag_set(inode, FI_HOT_DATA))
- 			return CURSEG_HOT_DATA;
- 		return CURSEG_WARM_DATA;
- 	} else {
--		if (IS_DNODE(page))
--			return is_cold_node(page) ? CURSEG_WARM_NODE :
-+		if (IS_DNODE(fio->page))
-+			return is_cold_node(fio->page) ? CURSEG_WARM_NODE :
- 						CURSEG_HOT_NODE;
- 		return CURSEG_COLD_NODE;
- 	}
- }
- 
--static int __get_segment_type(struct page *page, enum page_type p_type)
-+static int __get_segment_type(struct f2fs_io_info *fio)
- {
--	switch (F2FS_P_SB(page)->active_logs) {
-+	switch (fio->sbi->active_logs) {
++	int type;
++
+ 	switch (fio->sbi->active_logs) {
  	case 2:
--		return __get_segment_type_2(page, p_type);
-+		return __get_segment_type_2(fio);
+-		return __get_segment_type_2(fio);
++		type = __get_segment_type_2(fio);
++		break;
  	case 4:
--		return __get_segment_type_4(page, p_type);
-+		return __get_segment_type_4(fio);
+-		return __get_segment_type_4(fio);
++		type = __get_segment_type_4(fio);
++		break;
++	case 6:
++		type = __get_segment_type_6(fio);
++		break;
++	default:
++		f2fs_bug_on(fio->sbi, true);
  	}
-+
- 	/* NR_CURSEG_TYPE(6) logs by default */
--	f2fs_bug_on(F2FS_P_SB(page),
--		F2FS_P_SB(page)->active_logs != NR_CURSEG_TYPE);
--	return __get_segment_type_6(page, p_type);
-+	f2fs_bug_on(fio->sbi, fio->sbi->active_logs != NR_CURSEG_TYPE);
-+
-+	return __get_segment_type_6(fio);
+ 
+-	/* NR_CURSEG_TYPE(6) logs by default */
+-	f2fs_bug_on(fio->sbi, fio->sbi->active_logs != NR_CURSEG_TYPE);
+-
+-	return __get_segment_type_6(fio);
++	if (IS_HOT(type))
++		fio->temp = HOT;
++	else if (IS_WARM(type))
++		fio->temp = WARM;
++	else
++		fio->temp = COLD;
++	return type;
  }
  
  void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
-@@ -2139,7 +2140,7 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 10bf05d4cff4..e9ba1f1d9723 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -27,6 +27,10 @@
+ #define IS_DATASEG(t)	((t) <= CURSEG_COLD_DATA)
+ #define IS_NODESEG(t)	((t) >= CURSEG_HOT_NODE)
  
- static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
++#define IS_HOT(t)	((t) == CURSEG_HOT_NODE || (t) == CURSEG_HOT_DATA)
++#define IS_WARM(t)	((t) == CURSEG_WARM_NODE || (t) == CURSEG_WARM_DATA)
++#define IS_COLD(t)	((t) == CURSEG_COLD_NODE || (t) == CURSEG_COLD_DATA)
++
+ #define IS_CURSEG(sbi, seg)						\
+ 	(((seg) == CURSEG_I(sbi, CURSEG_HOT_DATA)->segno) ||	\
+ 	 ((seg) == CURSEG_I(sbi, CURSEG_WARM_DATA)->segno) ||	\
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 104a571a41c0..91599c9c3ef6 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -768,6 +768,7 @@ static void destroy_device_list(struct f2fs_sb_info *sbi)
+ static void f2fs_put_super(struct super_block *sb)
  {
--	int type = __get_segment_type(fio->page, fio->type);
-+	int type = __get_segment_type(fio);
- 	int err;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
++	int i;
  
- 	if (fio->type == NODE || fio->type == DATA)
+ 	if (sbi->s_proc) {
+ 		remove_proc_entry("segment_info", sbi->s_proc);
+@@ -838,6 +839,8 @@ static void f2fs_put_super(struct super_block *sb)
+ 	destroy_device_list(sbi);
+ 	mempool_destroy(sbi->write_io_dummy);
+ 	destroy_percpu_info(sbi);
++	for (i = 0; i < NR_PAGE_TYPE; i++)
++		kfree(sbi->write_io[i]);
+ 	kfree(sbi);
+ }
+ 
+@@ -1954,9 +1957,19 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	sbi->read_io.sbi = sbi;
+ 	sbi->read_io.bio = NULL;
+ 	for (i = 0; i < NR_PAGE_TYPE; i++) {
+-		init_rwsem(&sbi->write_io[i].io_rwsem);
+-		sbi->write_io[i].sbi = sbi;
+-		sbi->write_io[i].bio = NULL;
++		int n = (i == META) ? 1: NR_TEMP_TYPE;
++		int j;
++
++		sbi->write_io[i] = kmalloc(n * sizeof(struct f2fs_bio_info),
++								GFP_KERNEL);
++		if (!sbi->write_io[i])
++			goto free_options;
++
++		for (j = HOT; j < n; j++) {
++			init_rwsem(&sbi->write_io[i][j].io_rwsem);
++			sbi->write_io[i][j].sbi = sbi;
++			sbi->write_io[i][j].bio = NULL;
++		}
+ 	}
+ 
+ 	init_rwsem(&sbi->cp_rwsem);
+@@ -2202,6 +2215,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ free_io_dummy:
+ 	mempool_destroy(sbi->write_io_dummy);
+ free_options:
++	for (i = 0; i < NR_PAGE_TYPE; i++)
++		kfree(sbi->write_io[i]);
+ 	destroy_percpu_info(sbi);
+ 	kfree(options);
+ free_sb_buf:
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index 5805d92893a8..6f77a2755abb 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -19,6 +19,9 @@ TRACE_DEFINE_ENUM(INMEM_INVALIDATE);
+ TRACE_DEFINE_ENUM(INMEM_REVOKE);
+ TRACE_DEFINE_ENUM(IPU);
+ TRACE_DEFINE_ENUM(OPU);
++TRACE_DEFINE_ENUM(HOT);
++TRACE_DEFINE_ENUM(WARM);
++TRACE_DEFINE_ENUM(COLD);
+ TRACE_DEFINE_ENUM(CURSEG_HOT_DATA);
+ TRACE_DEFINE_ENUM(CURSEG_WARM_DATA);
+ TRACE_DEFINE_ENUM(CURSEG_COLD_DATA);
+@@ -59,6 +62,12 @@ TRACE_DEFINE_ENUM(CP_TRIMMED);
+ 		{ IPU,		"IN-PLACE" },				\
+ 		{ OPU,		"OUT-OF-PLACE" })
+ 
++#define show_block_temp(temp)						\
++	__print_symbolic(temp,						\
++		{ HOT,		"HOT" },				\
++		{ WARM,		"WARM" },				\
++		{ COLD,		"COLD" })
++
+ #define F2FS_OP_FLAGS (REQ_RAHEAD | REQ_SYNC | REQ_META | REQ_PRIO |	\
+ 			REQ_PREFLUSH | REQ_FUA)
+ #define F2FS_BIO_FLAG_MASK(t)	(t & F2FS_OP_FLAGS)
+@@ -757,6 +766,7 @@ DECLARE_EVENT_CLASS(f2fs__submit_page_bio,
+ 		__field(block_t, new_blkaddr)
+ 		__field(int, op)
+ 		__field(int, op_flags)
++		__field(int, temp)
+ 		__field(int, type)
+ 	),
+ 
+@@ -768,16 +778,18 @@ DECLARE_EVENT_CLASS(f2fs__submit_page_bio,
+ 		__entry->new_blkaddr	= fio->new_blkaddr;
+ 		__entry->op		= fio->op;
+ 		__entry->op_flags	= fio->op_flags;
++		__entry->temp		= fio->temp;
+ 		__entry->type		= fio->type;
+ 	),
+ 
+ 	TP_printk("dev = (%d,%d), ino = %lu, page_index = 0x%lx, "
+-		"oldaddr = 0x%llx, newaddr = 0x%llx, rw = %s(%s), type = %s",
++		"oldaddr = 0x%llx, newaddr = 0x%llx, rw = %s(%s), type = %s_%s",
+ 		show_dev_ino(__entry),
+ 		(unsigned long)__entry->index,
+ 		(unsigned long long)__entry->old_blkaddr,
+ 		(unsigned long long)__entry->new_blkaddr,
+ 		show_bio_type(__entry->op, __entry->op_flags),
++		show_block_temp(__entry->temp),
+ 		show_block_type(__entry->type))
+ );
+ 
 -- 
 2.11.0
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
