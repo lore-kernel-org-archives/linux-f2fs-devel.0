@@ -1,114 +1,72 @@
-From: Jeff Layton <jlayton@redhat.com>
-Subject: Re: [PATCH v4 14/27] fs: new infrastructure for writeback error
- handling and reporting
-Date: Wed, 10 May 2017 08:19:50 -0400
-Message-ID: <1494418790.2688.7.camel@redhat.com>
-References: <20170509154930.29524-1-jlayton@redhat.com>
-	 <20170509154930.29524-15-jlayton@redhat.com>
-	 <20170510114840.GF25137@quack2.suse.cz>
+From: guoweichao <guoweichao@huawei.com>
+Subject: =?gb2312?b?tPC4tDogW1BBVENIXSBmMmZzOiBmaXggQkdfR0Mg?=
+	=?gb2312?b?Y291bnQgc3RhdA==?=
+Date: Wed, 10 May 2017 12:20:05 +0000
+Message-ID: <59E9362FEE765E42B5D239BD8C9B52349D5783@SZXEMI503-MBX.china.huawei.com>
+References: <20170509114008.53236-1-guoweichao@huawei.com>
+	<20170509175154.GA83848@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20170510114840.GF25137@quack2.suse.cz>
-Sender: owner-linux-mm@kvack.org
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, linux-mm@kvack.org, jfs-discussion@lists.sourceforge.net, linux-xfs@vger.kernel.org, cluster-devel@redhat.com, linux-f2fs-devel@lists.sourceforge.net, v9fs-developer@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-block@vger.kernel.org, dhowells@redhat.com, akpm@linux-foundation.org, hch@infradead.org, ross.zwisler@linux.intel.com, mawilcox@microsoft.com, jack@suse.com, viro@zeniv.linux.org.uk, corbet@lwn.net, neilb@suse.de, clm@fb.com, tytso@mit.edu, axboe@kernel.dk, josef@toxicpanda.com, hubcap@omnibond.com, rpeterso@redhat.com, bo.li.liu@oracle.com
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <guoweichao@huawei.com>) id 1d8Qbb-0002q3-CA
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 10 May 2017 12:20:35 +0000
+Received: from szxga02-in.huawei.com ([45.249.212.188])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1d8Qba-0000el-6M
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 10 May 2017 12:20:35 +0000
+In-Reply-To: <20170509175154.GA83848@jaegeuk.local>
+Content-Language: zh-CN
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-On Wed, 2017-05-10 at 13:48 +0200, Jan Kara wrote:
-> On Tue 09-05-17 11:49:17, Jeff Layton wrote:
-> > Most filesystems currently use mapping_set_error and
-> > filemap_check_errors for setting and reporting/clearing writeback errors
-> > at the mapping level. filemap_check_errors is indirectly called from
-> > most of the filemap_fdatawait_* functions and from
-> > filemap_write_and_wait*. These functions are called from all sorts of
-> > contexts to wait on writeback to finish -- e.g. mostly in fsync, but
-> > also in truncate calls, getattr, etc.
-> > 
-> > The non-fsync callers are problematic. We should be reporting writeback
-> > errors during fsync, but many places spread over the tree clear out
-> > errors before they can be properly reported, or report errors at
-> > nonsensical times.
-> > 
-> > If I get -EIO on a stat() call, there is no reason for me to assume that
-> > it is because some previous writeback failed. The fact that it also
-> > clears out the error such that a subsequent fsync returns 0 is a bug,
-> > and a nasty one since that's potentially silent data corruption.
-> > 
-> > This patch adds a small bit of new infrastructure for setting and
-> > reporting errors during address_space writeback. While the above was my
-> > original impetus for adding this, I think it's also the case that
-> > current fsync semantics are just problematic for userland. Most
-> > applications that call fsync do so to ensure that the data they wrote
-> > has hit the backing store.
-> > 
-> > In the case where there are multiple writers to the file at the same
-> > time, this is really hard to determine. The first one to call fsync will
-> > see any stored error, and the rest get back 0. The processes with open
-> > fds may not be associated with one another in any way. They could even
-> > be in different containers, so ensuring coordination between all fsync
-> > callers is not really an option.
-> > 
-> > One way to remedy this would be to track what file descriptor was used
-> > to dirty the file, but that's rather cumbersome and would likely be
-> > slow. However, there is a simpler way to improve the semantics here
-> > without incurring too much overhead.
-> > 
-> > This set adds an errseq_t to struct address_space, and a corresponding
-> > one is added to struct file. Writeback errors are recorded in the
-> > mapping's errseq_t, and the one in struct file is used as the "since"
-> > value.
-> > 
-> > This changes the semantics of the Linux fsync implementation such that
-> > applications can now use it to determine whether there were any
-> > writeback errors since fsync(fd) was last called (or since the file was
-> > opened in the case of fsync having never been called).
-> > 
-> > Note that those writeback errors may have occurred when writing data
-> > that was dirtied via an entirely different fd, but that's the case now
-> > with the current mapping_set_error/filemap_check_error infrastructure.
-> > This will at least prevent you from getting a false report of success.
-> > 
-> > The new behavior is still consistent with the POSIX spec, and is more
-> > reliable for application developers. This patch just adds some basic
-> > infrastructure for doing this. Later patches will change the existing
-> > code to use this new infrastructure.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@redhat.com>
-> 
-> Just one nit below. Otherwise the patch looks good to me. You can add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> 
-> > diff --git a/fs/file_table.c b/fs/file_table.c
-> > index 954d510b765a..d6138b6411ff 100644
-> > --- a/fs/file_table.c
-> > +++ b/fs/file_table.c
-> > @@ -168,6 +168,7 @@ struct file *alloc_file(const struct path *path, fmode_t mode,
-> >  	file->f_path = *path;
-> >  	file->f_inode = path->dentry->d_inode;
-> >  	file->f_mapping = path->dentry->d_inode->i_mapping;
-> > +	file->f_wb_err = filemap_sample_wb_error(file->f_mapping);
-> 
-> Why do you sample here when you also sample in do_dentry_open()? I didn't
-> find any alloc_file() callers that would possibly care about writeback
-> errors... 
-> 
-> 								Honza
-
-I basically used the setting of f_mapping as a guideline as to where to
-sample it for initialization. My thinking was that if f_mapping ever
-ended up different then you'd probably also want f_wb_err to be
-resampled anyway.
-
-I can drop this hunk if you think we don't need it.
-
--- 
-Jeff Layton <jlayton@redhat.com>
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+SGkgSmFlZ2V1aywNCg0KSSBhZ3JlZSB0aGF0IHN0YXQgaW5mbyBtaXNzIG1hdGNoaW5nIGlzIG5v
+dCBhIGJpZyBwcm9ibGVtLiBCdXQgY29uc2lzdGVudCBzdGF0IHZpZXcgaXMgYmV0dGVyIEkgdGhp
+bmsuDQpJIHdpbGwgZ2l2ZSBhIG5ldyBwYXRjaCBhcyB5b3Ugc3VnZ2VzdGVkLg0KDQpUaGFua3Ms
+DQpXZWljaGFvDQotLS0tLdPKvP7Urbz+LS0tLS0NCreivP7IyzogSmFlZ2V1ayBLaW0gW21haWx0
+bzpqYWVnZXVrQGtlcm5lbC5vcmddIA0Kt6LLzcqxvOQ6IDIwMTfE6jXUwjEwyNUgMTo1Mg0KytW8
+/sjLOiBndW93ZWljaGFvDQqzrcvNOiBsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdl
+Lm5ldDsgV2FuZ2JpbnRpYW4NCtb3zOI6IFJlOiBbUEFUQ0hdIGYyZnM6IGZpeCBCR19HQyBjb3Vu
+dCBzdGF0DQoNCk9uIDA1LzA5LCBXZWljaGFvIEd1byB3cm90ZToNCj4gV2Ugc2hvdWxkIGNhbGwg
+c3RhdF9pbmNfYmdnY19jb3VudCBvbmx5IGFmdGVyIEJHX0dDIGhhcyBiZWVuIHBlcmZvcm1lZCAN
+Cj4gc3VjY2Vzc2Z1bGx5LiBPdGhlcndpc2UsIEJHX0dDIGNvdW50IG1heSBiZSBsYXJnZXIgdGhh
+biB0b3RhbCBjb3VudCANCj4gd2hlbiBmMmZzX2djIGZhaWxlZCwgZS5nLiwgbm8gdmljdGltIHdh
+cyBzZWxlY3RlZC4NCg0KQlRXLCBpZiB3ZSBkbyB0aGlzLCB3ZSBjYW4ndCBtb25pdG9yIHRoZSBj
+YWxsIGNvdW50IG9mIEJHR0MuIEFjdHVhbGx5IHdlIGRvbid0IG5lZWQgdG8gbWF0Y2ggdGhpcyB3
+aXRoIHRvdGFsIEdDIGNvdW50LiBIb3cgYWJvdXQgYWRkaW5nIGFub3RoZXIgdmFyaWFibGUgdG8g
+c2hvdyBzdWNjZXNzZnVsIEdDIGNvdW50IHdoaWNoIGxvb2tzIGxpa2UgKEJHOiB4L3kpPw0KDQpU
+aGFua3MsDQoNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFdlaWNoYW8gR3VvIDxndW93ZWljaGFvQGh1
+YXdlaS5jb20+DQo+IC0tLQ0KPiAgZnMvZjJmcy9nYy5jIHwgNCArKy0tDQo+ICAxIGZpbGUgY2hh
+bmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBh
+L2ZzL2YyZnMvZ2MuYyBiL2ZzL2YyZnMvZ2MuYyBpbmRleCAwMjY1MjIxLi5mYmVhMDQ2IDEwMDY0
+NA0KPiAtLS0gYS9mcy9mMmZzL2djLmMNCj4gKysrIGIvZnMvZjJmcy9nYy5jDQo+IEBAIC04MSwx
+MSArODEsMTEgQEAgc3RhdGljIGludCBnY190aHJlYWRfZnVuYyh2b2lkICpkYXRhKQ0KPiAgCQll
+bHNlDQo+ICAJCQlpbmNyZWFzZV9zbGVlcF90aW1lKGdjX3RoLCAmd2FpdF9tcyk7DQo+ICANCj4g
+LQkJc3RhdF9pbmNfYmdnY19jb3VudChzYmkpOw0KPiAtDQo+ICAJCS8qIGlmIHJldHVybiB2YWx1
+ZSBpcyBub3QgemVybywgbm8gdmljdGltIHdhcyBzZWxlY3RlZCAqLw0KPiAgCQlpZiAoZjJmc19n
+YyhzYmksIHRlc3Rfb3B0KHNiaSwgRk9SQ0VfRkdfR0MpLCB0cnVlLCBOVUxMX1NFR05PKSkNCj4g
+IAkJCXdhaXRfbXMgPSBnY190aC0+bm9fZ2Nfc2xlZXBfdGltZTsNCj4gKwkJZWxzZQ0KPiArCQkJ
+c3RhdF9pbmNfYmdnY19jb3VudChzYmkpOw0KPiAgDQo+ICAJCXRyYWNlX2YyZnNfYmFja2dyb3Vu
+ZF9nYyhzYmktPnNiLCB3YWl0X21zLA0KPiAgCQkJCXByZWZyZWVfc2VnbWVudHMoc2JpKSwgZnJl
+ZV9zZWdtZW50cyhzYmkpKTsNCj4gLS0NCj4gMi4xMC4xDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
+Q2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQn
+cyBtb3N0CmVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5r
+L3NsYXNoZG90Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291
+cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZv
+L2xpbnV4LWYyZnMtZGV2ZWwK
