@@ -1,27 +1,23 @@
-From: guoweichao <guoweichao@huawei.com>
-Subject: =?gb2312?b?tPC4tDogW1BBVENIXSBmMmZzOiBmaXggQkdfR0Mg?=
-	=?gb2312?b?Y291bnQgc3RhdA==?=
-Date: Wed, 10 May 2017 12:20:05 +0000
-Message-ID: <59E9362FEE765E42B5D239BD8C9B52349D5783@SZXEMI503-MBX.china.huawei.com>
-References: <20170509114008.53236-1-guoweichao@huawei.com>
-	<20170509175154.GA83848@jaegeuk.local>
+From: Weichao Guo <guoweichao@huawei.com>
+Subject: [PATCH v2] f2fs: make sure f2fs_gc returns consistent
+	errno
+Date: Thu, 11 May 2017 04:28:00 +0800
+Message-ID: <20170510202800.101013-1-guoweichao@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guoweichao@huawei.com>) id 1d8Qbb-0002q3-CA
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <guoweichao@huawei.com>) id 1d8Ql7-00071e-0v
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 10 May 2017 12:20:35 +0000
+	Wed, 10 May 2017 12:30:25 +0000
 Received: from szxga02-in.huawei.com ([45.249.212.188])
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1d8Qba-0000el-6M
+	(Exim 4.76) id 1d8Ql3-0001v8-O8
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 10 May 2017 12:20:35 +0000
-In-Reply-To: <20170509175154.GA83848@jaegeuk.local>
-Content-Language: zh-CN
+	Wed, 10 May 2017 12:30:25 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,42 +27,55 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: chao@kernel.org, jaegeuk@kernel.org
+Cc: Weichao Guo <guoweichao@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
 
-SGkgSmFlZ2V1aywNCg0KSSBhZ3JlZSB0aGF0IHN0YXQgaW5mbyBtaXNzIG1hdGNoaW5nIGlzIG5v
-dCBhIGJpZyBwcm9ibGVtLiBCdXQgY29uc2lzdGVudCBzdGF0IHZpZXcgaXMgYmV0dGVyIEkgdGhp
-bmsuDQpJIHdpbGwgZ2l2ZSBhIG5ldyBwYXRjaCBhcyB5b3Ugc3VnZ2VzdGVkLg0KDQpUaGFua3Ms
-DQpXZWljaGFvDQotLS0tLdPKvP7Urbz+LS0tLS0NCreivP7IyzogSmFlZ2V1ayBLaW0gW21haWx0
-bzpqYWVnZXVrQGtlcm5lbC5vcmddIA0Kt6LLzcqxvOQ6IDIwMTfE6jXUwjEwyNUgMTo1Mg0KytW8
-/sjLOiBndW93ZWljaGFvDQqzrcvNOiBsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdl
-Lm5ldDsgV2FuZ2JpbnRpYW4NCtb3zOI6IFJlOiBbUEFUQ0hdIGYyZnM6IGZpeCBCR19HQyBjb3Vu
-dCBzdGF0DQoNCk9uIDA1LzA5LCBXZWljaGFvIEd1byB3cm90ZToNCj4gV2Ugc2hvdWxkIGNhbGwg
-c3RhdF9pbmNfYmdnY19jb3VudCBvbmx5IGFmdGVyIEJHX0dDIGhhcyBiZWVuIHBlcmZvcm1lZCAN
-Cj4gc3VjY2Vzc2Z1bGx5LiBPdGhlcndpc2UsIEJHX0dDIGNvdW50IG1heSBiZSBsYXJnZXIgdGhh
-biB0b3RhbCBjb3VudCANCj4gd2hlbiBmMmZzX2djIGZhaWxlZCwgZS5nLiwgbm8gdmljdGltIHdh
-cyBzZWxlY3RlZC4NCg0KQlRXLCBpZiB3ZSBkbyB0aGlzLCB3ZSBjYW4ndCBtb25pdG9yIHRoZSBj
-YWxsIGNvdW50IG9mIEJHR0MuIEFjdHVhbGx5IHdlIGRvbid0IG5lZWQgdG8gbWF0Y2ggdGhpcyB3
-aXRoIHRvdGFsIEdDIGNvdW50LiBIb3cgYWJvdXQgYWRkaW5nIGFub3RoZXIgdmFyaWFibGUgdG8g
-c2hvdyBzdWNjZXNzZnVsIEdDIGNvdW50IHdoaWNoIGxvb2tzIGxpa2UgKEJHOiB4L3kpPw0KDQpU
-aGFua3MsDQoNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFdlaWNoYW8gR3VvIDxndW93ZWljaGFvQGh1
-YXdlaS5jb20+DQo+IC0tLQ0KPiAgZnMvZjJmcy9nYy5jIHwgNCArKy0tDQo+ICAxIGZpbGUgY2hh
-bmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBh
-L2ZzL2YyZnMvZ2MuYyBiL2ZzL2YyZnMvZ2MuYyBpbmRleCAwMjY1MjIxLi5mYmVhMDQ2IDEwMDY0
-NA0KPiAtLS0gYS9mcy9mMmZzL2djLmMNCj4gKysrIGIvZnMvZjJmcy9nYy5jDQo+IEBAIC04MSwx
-MSArODEsMTEgQEAgc3RhdGljIGludCBnY190aHJlYWRfZnVuYyh2b2lkICpkYXRhKQ0KPiAgCQll
-bHNlDQo+ICAJCQlpbmNyZWFzZV9zbGVlcF90aW1lKGdjX3RoLCAmd2FpdF9tcyk7DQo+ICANCj4g
-LQkJc3RhdF9pbmNfYmdnY19jb3VudChzYmkpOw0KPiAtDQo+ICAJCS8qIGlmIHJldHVybiB2YWx1
-ZSBpcyBub3QgemVybywgbm8gdmljdGltIHdhcyBzZWxlY3RlZCAqLw0KPiAgCQlpZiAoZjJmc19n
-YyhzYmksIHRlc3Rfb3B0KHNiaSwgRk9SQ0VfRkdfR0MpLCB0cnVlLCBOVUxMX1NFR05PKSkNCj4g
-IAkJCXdhaXRfbXMgPSBnY190aC0+bm9fZ2Nfc2xlZXBfdGltZTsNCj4gKwkJZWxzZQ0KPiArCQkJ
-c3RhdF9pbmNfYmdnY19jb3VudChzYmkpOw0KPiAgDQo+ICAJCXRyYWNlX2YyZnNfYmFja2dyb3Vu
-ZF9nYyhzYmktPnNiLCB3YWl0X21zLA0KPiAgCQkJCXByZWZyZWVfc2VnbWVudHMoc2JpKSwgZnJl
-ZV9zZWdtZW50cyhzYmkpKTsNCj4gLS0NCj4gMi4xMC4xDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
-Q2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQn
-cyBtb3N0CmVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5r
-L3NsYXNoZG90Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291
-cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZv
-L2xpbnV4LWYyZnMtZGV2ZWwK
+By default, f2fs_gc returns -EINVAL in general error cases, e.g., no victim
+was selected. However, the default errno may be overwritten in two cases:
+gc_more and BG_GC -> FG_GC. We should return consistent errno in such cases.
+
+Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+---
+ fs/f2fs/gc.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 0265221..965fbf5 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -955,7 +955,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+ {
+ 	int gc_type = sync ? FG_GC : BG_GC;
+ 	int sec_freed = 0;
+-	int ret = -EINVAL;
++	int ret;
+ 	struct cp_control cpc;
+ 	unsigned int init_segno = segno;
+ 	struct gc_inode_list gc_list = {
+@@ -965,8 +965,10 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+ 
+ 	cpc.reason = __get_cp_reason(sbi);
+ gc_more:
+-	if (unlikely(!(sbi->sb->s_flags & MS_ACTIVE)))
++	if (unlikely(!(sbi->sb->s_flags & MS_ACTIVE))) {
++		ret = -EINVAL;
+ 		goto stop;
++	}
+ 	if (unlikely(f2fs_cp_error(sbi))) {
+ 		ret = -EIO;
+ 		goto stop;
+@@ -987,6 +989,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+ 			gc_type = FG_GC;
+ 	}
+ 
++	ret = -EINVAL;
+ 	/* f2fs_balance_fs doesn't need to do BG_GC in critical path. */
+ 	if (gc_type == BG_GC && !background)
+ 		goto stop;
+-- 
+2.10.1
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
