@@ -1,81 +1,40 @@
-From: Weichao Guo <guoweichao@huawei.com>
-Subject: [PATCH v2] f2fs: make sure f2fs_gc returns consistent
-	errno
-Date: Thu, 11 May 2017 04:28:00 +0800
-Message-ID: <20170510202800.101013-1-guoweichao@huawei.com>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v4 06/27] fs: check for writeback errors after syncing
+ out buffers in generic_file_fsync
+Date: Wed, 10 May 2017 05:48:36 -0700
+Message-ID: <20170510124836.GA1590@bombadil.infradead.org>
+References: <20170509154930.29524-1-jlayton@redhat.com>
+ <20170509154930.29524-7-jlayton@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guoweichao@huawei.com>) id 1d8Ql7-00071e-0v
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 10 May 2017 12:30:25 +0000
-Received: from szxga02-in.huawei.com ([45.249.212.188])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1d8Ql3-0001v8-O8
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 10 May 2017 12:30:25 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: chao@kernel.org, jaegeuk@kernel.org
-Cc: Weichao Guo <guoweichao@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <20170509154930.29524-7-jlayton@redhat.com>
+Sender: owner-linux-mm@kvack.org
+To: Jeff Layton <jlayton@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, linux-mm@kvack.org, jfs-discussion@lists.sourceforge.net, linux-xfs@vger.kernel.org, cluster-devel@redhat.com, linux-f2fs-devel@lists.sourceforge.net, v9fs-developer@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-block@vger.kernel.org, dhowells@redhat.com, akpm@linux-foundation.org, hch@infradead.org, ross.zwisler@linux.intel.com, mawilcox@microsoft.com, jack@suse.com, viro@zeniv.linux.org.uk, corbet@lwn.net, neilb@suse.de, clm@fb.com, tytso@mit.edu, axboe@kernel.dk, josef@toxicpanda.com, hubcap@omnibond.com, rpeterso@redhat.com, bo.li.liu@oracle.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-By default, f2fs_gc returns -EINVAL in general error cases, e.g., no victim
-was selected. However, the default errno may be overwritten in two cases:
-gc_more and BG_GC -> FG_GC. We should return consistent errno in such cases.
+On Tue, May 09, 2017 at 11:49:09AM -0400, Jeff Layton wrote:
+> ext2 currently does a test+clear of the AS_EIO flag, which is
+> is problematic for some coming changes.
+> 
+> What we really need to do instead is call filemap_check_errors
+> in __generic_file_fsync after syncing out the buffers. That
+> will be sufficient for this case, and help other callers detect
+> these errors properly as well.
+> 
+> With that, we don't need to twiddle it in ext2.
+> 
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Jeff Layton <jlayton@redhat.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
-Signed-off-by: Weichao Guo <guoweichao@huawei.com>
----
- fs/f2fs/gc.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 0265221..965fbf5 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -955,7 +955,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
- {
- 	int gc_type = sync ? FG_GC : BG_GC;
- 	int sec_freed = 0;
--	int ret = -EINVAL;
-+	int ret;
- 	struct cp_control cpc;
- 	unsigned int init_segno = segno;
- 	struct gc_inode_list gc_list = {
-@@ -965,8 +965,10 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
- 
- 	cpc.reason = __get_cp_reason(sbi);
- gc_more:
--	if (unlikely(!(sbi->sb->s_flags & MS_ACTIVE)))
-+	if (unlikely(!(sbi->sb->s_flags & MS_ACTIVE))) {
-+		ret = -EINVAL;
- 		goto stop;
-+	}
- 	if (unlikely(f2fs_cp_error(sbi))) {
- 		ret = -EIO;
- 		goto stop;
-@@ -987,6 +989,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
- 			gc_type = FG_GC;
- 	}
- 
-+	ret = -EINVAL;
- 	/* f2fs_balance_fs doesn't need to do BG_GC in critical path. */
- 	if (gc_type == BG_GC && !background)
- 		goto stop;
--- 
-2.10.1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
