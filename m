@@ -1,31 +1,23 @@
-From: Raouf Rokhjavan <rokhjavan.r@gmail.com>
-Subject: f2fs: failed tests in xfstests
-Date: Mon, 15 May 2017 12:13:35 +0430
-Message-ID: <0083d9ef-9874-50c5-83ea-d69988e48cdd@gmail.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH] f2fs: combine huge num of discard rb tree
+	consistence checks
+Date: Mon, 15 May 2017 18:01:17 +0800
+Message-ID: <1494842477-14116-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <rokhjavan.r@gmail.com>) id 1dAAfS-0000h7-2z
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1dACzc-0005K8-5E
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 May 2017 07:43:46 +0000
-Received: from mail-wm0-f67.google.com ([74.125.82.67])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1dAAfR-0002U7-1Q
+	Mon, 15 May 2017 10:12:44 +0000
+Received: from szxga02-in.huawei.com ([45.249.212.188])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1dACza-0001ab-2d
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 May 2017 07:43:45 +0000
-Received: by mail-wm0-f67.google.com with SMTP id u65so26012052wmu.3
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 15 May 2017 00:43:44 -0700 (PDT)
-Received: from desktopr.example.com ([5.75.200.133])
-	by smtp.gmail.com with ESMTPSA id
-	b25sm9453459edc.58.2017.05.15.00.43.37
-	for <linux-f2fs-devel@lists.sourceforge.net>
-	(version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-	Mon, 15 May 2017 00:43:38 -0700 (PDT)
+	Mon, 15 May 2017 10:12:44 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,35 +27,58 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-Hi,
+Came across a hungtask caused by huge number of rb tree traversing
+during adding discard addrs in cp. This patch combine these consistence
+checks and move it to discard thread.
 
-I ran the latest xfstests on f2fs, but some of them failed.
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fs/f2fs/segment.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-The following list includes the number of failed tests:
-
-generic/026 generic/042 generic/091 generic/102 generic/103 generic/114 
-generic/204 generic/240 generic/263 generic/300 generic/389 generic/392
-
-Some of them are related to the ACL, but the most of failures are 
-related to ENOSPC. For me, between these tests, the most indispensable 
-one is generic/392 which emphasizes  the consistency of data and 
-metadata after sync() and datasync().
-
-In order to pass these test, do I have to pass any specific mount option?
-
-Since these tests are generic, does f2fs behave differently from 
-expected results?
-
-
-Regards,
-
-R.R.
-
-
-
-
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index de31030..878ac90 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -918,8 +918,6 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+ 			prev_dc->di.len += di.len;
+ 			dcc->undiscard_blks += di.len;
+ 			__relocate_discard_cmd(dcc, prev_dc);
+-			f2fs_bug_on(sbi,
+-				!__check_rb_tree_consistence(sbi, &dcc->root));
+ 			di = prev_dc->di;
+ 			tdc = prev_dc;
+ 			merged = true;
+@@ -935,16 +933,12 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+ 			__relocate_discard_cmd(dcc, next_dc);
+ 			if (tdc)
+ 				__remove_discard_cmd(sbi, tdc);
+-			f2fs_bug_on(sbi,
+-				!__check_rb_tree_consistence(sbi, &dcc->root));
+ 			merged = true;
+ 		}
+ 
+ 		if (!merged) {
+ 			__insert_discard_tree(sbi, bdev, di.lstart, di.start,
+ 							di.len, NULL, NULL);
+-			f2fs_bug_on(sbi,
+-				!__check_rb_tree_consistence(sbi, &dcc->root));
+ 		}
+  next:
+ 		prev_dc = next_dc;
+@@ -983,6 +977,8 @@ static void __issue_discard_cmd(struct f2fs_sb_info *sbi, bool issue_cond)
+ 	int i, iter = 0;
+ 
+ 	mutex_lock(&dcc->cmd_lock);
++	f2fs_bug_on(sbi,
++		!__check_rb_tree_consistence(sbi, &dcc->root));
+ 	blk_start_plug(&plug);
+ 	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
+ 		pend_list = &dcc->pend_list[i];
+-- 
+1.9.1
 
 
 ------------------------------------------------------------------------------
