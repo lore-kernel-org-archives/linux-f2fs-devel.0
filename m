@@ -1,93 +1,86 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: combine huge num of discard rb tree
- consistence checks
-Date: Mon, 15 May 2017 19:20:05 +0800
-Message-ID: <c4cf1267-ed7e-2187-4b57-b79590679123@huawei.com>
-References: <1494842477-14116-1-git-send-email-heyunlei@huawei.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v4 19/27] buffer: set errors in mapping at the time that
+ the error occurs
+Date: Mon, 15 May 2017 13:53:19 +0200
+Message-ID: <20170515115319.GD16182@quack2.suse.cz>
+References: <20170509154930.29524-1-jlayton@redhat.com>
+ <20170509154930.29524-20-jlayton@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1dAE38-0001Il-34
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 May 2017 11:20:26 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1dAE36-00087i-H4
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 May 2017 11:20:26 +0000
-In-Reply-To: <1494842477-14116-1-git-send-email-heyunlei@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <20170509154930.29524-20-jlayton@redhat.com>
+Sender: owner-linux-mm@kvack.org
+To: Jeff Layton <jlayton@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, linux-mm@kvack.org, jfs-discussion@lists.sourceforge.net, linux-xfs@vger.kernel.org, cluster-devel@redhat.com, linux-f2fs-devel@lists.sourceforge.net, v9fs-developer@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-block@vger.kernel.org, dhowells@redhat.com, akpm@linux-foundation.org, hch@infradead.org, ross.zwisler@linux.intel.com, mawilcox@microsoft.com, jack@suse.com, viro@zeniv.linux.org.uk, corbet@lwn.net, neilb@suse.de, clm@fb.com, tytso@mit.edu, axboe@kernel.dk, josef@toxicpanda.com, hubcap@omnibond.com, rpeterso@redhat.com, bo.li.liu@oracle.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/5/15 18:01, Yunlei He wrote:
-> Came across a hungtask caused by huge number of rb tree traversing
-> during adding discard addrs in cp. This patch combine these consistence
-> checks and move it to discard thread.
-
-Need to remove all __check_rb_tree_consistence in __update_discard_tree_range.
-
-Thanks,
-
+On Tue 09-05-17 11:49:22, Jeff Layton wrote:
+> I noticed on xfs that I could still sometimes get back an error on fsync
+> on a fd that was opened after the error condition had been cleared.
 > 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> ---
->  fs/f2fs/segment.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
+> The problem is that the buffer code sets the write_io_error flag and
+> then later checks that flag to set the error in the mapping. That flag
+> perisists for quite a while however. If the file is later opened with
+> O_TRUNC, the buffers will then be invalidated and the mapping's error
+> set such that a subsequent fsync will return error. I think this is
+> incorrect, as there was no writeback between the open and fsync.
 > 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index de31030..878ac90 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -918,8 +918,6 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
->  			prev_dc->di.len += di.len;
->  			dcc->undiscard_blks += di.len;
->  			__relocate_discard_cmd(dcc, prev_dc);
-> -			f2fs_bug_on(sbi,
-> -				!__check_rb_tree_consistence(sbi, &dcc->root));
->  			di = prev_dc->di;
->  			tdc = prev_dc;
->  			merged = true;
-> @@ -935,16 +933,12 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
->  			__relocate_discard_cmd(dcc, next_dc);
->  			if (tdc)
->  				__remove_discard_cmd(sbi, tdc);
-> -			f2fs_bug_on(sbi,
-> -				!__check_rb_tree_consistence(sbi, &dcc->root));
->  			merged = true;
->  		}
+> Add a new mark_buffer_write_io_error operation that sets the flag and
+> the error in the mapping at the same time. Replace all calls to
+> set_buffer_write_io_error with mark_buffer_write_io_error, and remove
+> the places that check this flag in order to set the error in the
+> mapping.
+> 
+> This sets the error in the mapping earlier, at the time that it's first
+> detected.
+> 
+> Signed-off-by: Jeff Layton <jlayton@redhat.com>
+
+Looks good to me. You can add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+Small nits below.
+
+> @@ -354,7 +354,7 @@ void end_buffer_async_write(struct buffer_head *bh, int uptodate)
+>  	} else {
+>  		buffer_io_error(bh, ", lost async page write");
+>  		mapping_set_error(page->mapping, -EIO);
+> -		set_buffer_write_io_error(bh);
+> +		mark_buffer_write_io_error(bh);
+
+No need to call mapping_set_error() here when it gets called in
+mark_buffer_write_io_error() again?
+
+> @@ -1182,6 +1180,17 @@ void mark_buffer_dirty(struct buffer_head *bh)
+>  }
+>  EXPORT_SYMBOL(mark_buffer_dirty);
 >  
->  		if (!merged) {
->  			__insert_discard_tree(sbi, bdev, di.lstart, di.start,
->  							di.len, NULL, NULL);
-> -			f2fs_bug_on(sbi,
-> -				!__check_rb_tree_consistence(sbi, &dcc->root));
->  		}
->   next:
->  		prev_dc = next_dc;
-> @@ -983,6 +977,8 @@ static void __issue_discard_cmd(struct f2fs_sb_info *sbi, bool issue_cond)
->  	int i, iter = 0;
->  
->  	mutex_lock(&dcc->cmd_lock);
-> +	f2fs_bug_on(sbi,
-> +		!__check_rb_tree_consistence(sbi, &dcc->root));
->  	blk_start_plug(&plug);
->  	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
->  		pend_list = &dcc->pend_list[i];
-> 
+> +void mark_buffer_write_io_error(struct buffer_head *bh)
+> +{
+> +	set_buffer_write_io_error(bh);
+> +	/* FIXME: do we need to set this in both places? */
+> +	if (bh->b_page && bh->b_page->mapping)
+> +		mapping_set_error(bh->b_page->mapping, -EIO);
+> +	if (bh->b_assoc_map)
+> +		mapping_set_error(bh->b_assoc_map, -EIO);
+> +}
+> +EXPORT_SYMBOL(mark_buffer_write_io_error);
 
+So buffers that are shared by several inodes cannot have bh->b_assoc_map
+set. So for filesystems that have metadata like this setting in
+bh->b_assoc_map doesn't really help and they have to check blockdevice's
+mapping anyway. OTOH if filesystem doesn't have such type of metadata
+relevant for fsync, this could help it. So maybe it is worth it.
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
