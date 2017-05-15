@@ -1,56 +1,261 @@
-From: Jin Qian <jinqian@google.com>
-Subject: [PATCHv3 1/1] f2fs: sanity check checkpoint segno and blkoff
-Date: Mon, 15 May 2017 10:45:08 -0700
-Message-ID: <20170515174508.7800-1-jinqian@android.com>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: jaegeuk@kernel.org, jinqian@google.com, Jin Qian <jinqian@android.com>, stable@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: f2fs Crash Consistency Problem
+Date: Mon, 15 May 2017 10:46:40 -0700
+Message-ID: <20170515174640.GB6157@jaegeuk.local>
+References: <d5ab8383-25f3-ffd6-c506-20993348c499@gmail.com>
+	<20170413211935.GA3826@jaegeuk.local>
+	<bfeb7627-cd9c-6074-1655-38e87166a30b@gmail.com>
+	<20170512001431.GA9575@jaegeuk.local>
+	<d950ae5f-c9d4-618b-d1c2-e329ee81bc24@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1dAK52-0001pd-EQ
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 15 May 2017 17:46:48 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1dAK51-0003er-5l
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 15 May 2017 17:46:48 +0000
+Content-Disposition: inline
+In-Reply-To: <d950ae5f-c9d4-618b-d1c2-e329ee81bc24@gmail.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Raouf Rokhjavan <rokhjavan.r@gmail.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Make sure segno and blkoff read from raw image are valid.
+Hi,
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Jin Qian <jinqian@google.com>
----
- fs/f2fs/super.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+On 05/12, Raouf Rokhjavan wrote:
+> Hi,
+> 
+> On 05/12/17 04:44, Jaegeuk Kim wrote:
+> > Hi,
+> > 
+> > On 05/10, Raouf Rokhjavan wrote:
+> > ...
+> > 
+> > > As you told to use snapshot mechanism to prevent changing ckpt number after
+> > > each mount, I ran again generic tests of xfstests framework on top of
+> > > log-writes target with f2fs file system. In order to automate reporting an
+> > > inconsistency situation, I add a parameter to fsck.f2fs to return(-1) when
+> > > c.bug_on condition is met. To evaluate how f2fs react in case of crash
+> > > consistency, I replay each log and check the consistency of f2fs with a my
+> > > own modified version of fsck.f2fs.  Accordingly, all tests passed smoothly
+> > > except these tests:
+> > > 
+> > > [FAIL] Running generic/013 failed. (consistency_single)
+> > Could you check whether any IO made by mkfs was added in the replay log?
+> > If so, fsck.f2fs should be failed when replaying them.
+> These two functions undertake the whole logic which run different tests
+> including sysbench dbtests.
+> 
+> apply_test()
+> {
+>     local aTest
+>     aTest=$1
+> 
+>     # Create log-writes
+>     TABLE="0 ${BLKSIZE} log-writes ${REPLAYDEV} ${LOGDEV}"
+>     dmsetup create ${DEVMAP_LOG_WRITES} --table "${TABLE}"
+> 
+>     # Mark mkfs
+>     dmsetup message ${DEVMAP_LOG_WRITES} 0 mark mkfs_start
+>     ${TOOLS_DIR}/mkfs.f2fs ${DEVMAP_PART}
+>     dmsetup message ${DEVMAP_LOG_WRITES} 0 mark mkfs_end
+> 
+>     # Apply the test and mark it
+>     dmsetup message ${DEVMAP_LOG_WRITES} 0 mark ${aTest}_start
+>     ./check -E ./${CCTESTS_EXCLUDE} -s ${FSTYPE}_consistency ${aTest}
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 83355ec4a92c..c41b48e4cc33 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1521,6 +1521,8 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
- 	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
- 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
- 	unsigned int ovp_segments, reserved_segments;
-+	unsigned int main_segs, blocks_per_seg;
-+	int i;
- 
- 	total = le32_to_cpu(raw_super->segment_count);
- 	fsmeta = le32_to_cpu(raw_super->segment_count_ckpt);
-@@ -1542,6 +1544,22 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
- 		return 1;
- 	}
- 
-+	main_segs = le32_to_cpu(sbi->raw_super->segment_count_main);
-+	blocks_per_seg = sbi->blocks_per_seg;
-+
-+	for (i = 0; i < NR_CURSEG_NODE_TYPE; i++) {
-+		if (le32_to_cpu(ckpt->cur_node_segno[i]) >= main_segs ||
-+		    le16_to_cpu(ckpt->cur_node_blkoff[i]) >= blocks_per_seg) {
-+			return 1;
-+		}
-+	}
-+	for (i = 0; i < NR_CURSEG_DATA_TYPE; i++) {
-+		if (le32_to_cpu(ckpt->cur_data_segno[i]) >= main_segs ||
-+		    le16_to_cpu(ckpt->cur_data_blkoff[i]) >= blocks_per_seg) {
-+			return 1;
-+		}
-+	}
-+
- 	if (unlikely(f2fs_cp_error(sbi))) {
- 		f2fs_msg(sbi->sb, KERN_ERR, "A bug case: need to run fsck");
- 		return 1;
--- 
-2.13.0.rc2.291.g57267f2277-goog
+Here, what I did was I added the above start mark in the test script directly.
+For example, I added it just before running fsstress in tests/generic/070, since
+each test is able to call mkfs which wipes the device with log entries. In that
+case, fsck would not find superblock, resulting in a failure.
+
+Thanks,
+
+>     dmsetup message ${DEVMAP_LOG_WRITES} 0 mark ${aTest}_end
+> 
+>     # Remove log-writes
+>     dmsetup remove ${DEVMAP_LOG_WRITES}
+> }
+> 
+> apply_consistency_test()
+> {
+>     local aTest
+>     aTest=$1
+> 
+>     echo "Replaying mkfs ..."
+>     ENTRY=$(${TOOLS_DIR}/replay-log --log $LOGDEV --find --end-mark
+> mkfs_end)
+>     ${TOOLS_DIR}/replay-log --log $LOGDEV --replay $REPLAYDEV --end-mark
+> mkfs_end
+> 
+>     START_ENTRY=$(${TOOLS_DIR}/replay-log --log $LOGDEV --find --end-mark
+> ${aTest}_start)
+>     END_ENTRY=$(${TOOLS_DIR}/replay-log --log $LOGDEV --find --end-mark
+> ${aTest}_end)
+> 
+>     echo "Replaying test $aTest ..."
+>     echo "START_ENTRY is $START_ENTRY"
+>     echo "END_ENTRY is $END_ENTRY"
+> 
+>     ${TOOLS_DIR}/replay-log -v --log $LOGDEV --replay $REPLAYDEV
+> --start-mark ${aTest}_start\
+>         --fsck "$FSCK_SCRIPT" --check 1
+> }
+> 
+> First I call apply_test() and then apply_consistency_test().
+> I ran generic test  #013 a couple of times, but It failed haphazardly; what
+> I mean is that it fails one time and passes another time! In the case of
+> sysbench tests, the same thing happened. I wonder whether the order of
+> replaying IOs can cause this behavior or not.
+> > > [FAIL] Running generic/070 failed. (consistency_single)
+> > > [FAIL] Running generic/113 failed. (consistency_single)
+> > I added a mark to replay in the beginning of generic/113, and ran the test.
+> > But, I couldn't find any error given test_dev as a log_dev. (I tested this
+> > in the latest f2fs/dev-test branch.)
+> > 
+> > > [FAIL] Running generic/241 failed. (consistency_single)
+> > > 
+> > > In other words, in these tests, c.bug_on() was true. Would you please
+> > > describe why they become inconsistent?
+> > > 
+> > > Besides, I ran sysbench for database benchmark with 1 thread, 1000 records,
+> > > and 100 transactions on top of log-writes target with f2fs. Interestingly, I
+> > > encountered a weird inconsistency. After replaying about 100 logs, fsck.f2fs
+> > > complains about inconsistency with the following messages:
+> > Can you share the parameter for sysbench?
+> After starting the mariadb and copying /var/lib/mysql contents into f2fs
+> partition, These commands are run:
+> 
+> #sysbench --test=/home/roraouf/Projects/CrashConsistencyTest/locals/var/lib/dbtests/sysbench-lua/tests/db/oltp_write_only.lua
+> --db-driver=mysql --oltp-table-size=1000 --mysql-db=sysbench
+> --mysql-socket=/mnt/crash_consistency/f2fs/mysql/mysql.sock
+> --mysql-user=sysbench --mysql-password=password prepare
+> 
+> #sysbench --test=/home/roraouf/Projects/CrashConsistencyTest/locals/var/lib/dbtests/sysbench-lua/tests/db/oltp_write_only.lua
+> --db-driver=mysql --oltp-table-size=1000 --mysql-db=sysbench
+> --mysql-user=sysbench --mysql-password=password --max-requests=100
+> --num-threads=1 --mysql-socket=/mnt/crash_consistency/f2fs/mysql/mysql.sock
+> run
+> 
+> #sysbench --test=/home/roraouf/Projects/CrashConsistencyTest/locals/var/lib/dbtests/sysbench-lua/tests/db/oltp_write_only.lua
+> --db-driver=mysql --mysql-db=sysbench --mysql-user=sysbench
+> --mysql-password=password
+> --mysql-socket=/mnt/crash_consistency/f2fs/mysql/mysql.sock cleanup
+> 
+> These steps are done in a script file.
+> Honestly speaking, I couldn't find any form of pattern to reproduce these
+> errors.
+> 
+> The most intriguing part of these tests which is in common between all of
+> them is that after fsck.f2fs pops out a lot messages on the screen and I
+> cancel its execution with accepting fix partition, it doesn't generate the
+> same output again and says every thing goes well with [ok] !!! Why does it
+> behave in this way?
+> 
+> Regards
+> > 
+> > Thanks,
+> > 
+> > > Info: Segments per section = 1
+> > > Info: Sections per zone = 1
+> > > Info: sector size = 512
+> > > Info: total sectors = 2097152 (1024 MB)
+> > > Info: MKFS version
+> > >    "Linux version 4.9.8 (roraoof@desktopr.example.com) (gcc version 4.8.5
+> > > 20150623 (Red Hat 4.8.5-11) (GCC) ) #1 SMP Tue Feb 7 08:24:57 IRST 2017"
+> > > Info: FSCK version
+> > >    from "Linux version 4.9.8 (roraoof@desktopr.example.com) (gcc version
+> > > 4.8.5 20150623 (Red Hat 4.8.5-11) (GCC) ) #1 SMP Tue Feb 7 08:24:57 IRST
+> > > 2017"
+> > >      to "Linux version 4.9.8 (roraoof@desktopr.example.com) (gcc version
+> > > 4.8.5 20150623 (Red Hat 4.8.5-11) (GCC) ) #1 SMP Tue Feb 7 08:24:57 IRST
+> > > 2017"
+> > > Info: superblock features = 0 :
+> > > Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
+> > > Info: total FS sectors = 2097152 (1024 MB)
+> > > Info: CKPT version = 2b59c128
+> > > Info: checkpoint state = 44 :  compacted_summary sudden-power-off
+> > > [ASSERT] (sanity_check_nid: 388)  --> nid[0x6] nat_entry->ino[0x6]
+> > > footer.ino[0x0]
+> > > 
+> > > NID[0x6] is unreachable
+> > > NID[0x7] is unreachable
+> > > [FSCK] Unreachable nat entries                        [Fail] [0x2]
+> > > [FSCK] SIT valid block bitmap checking                [Fail]
+> > > [FSCK] Hard link checking for regular file            [Ok..] [0x0]
+> > > [FSCK] valid_block_count matching with CP             [Fail] [0x6dc9]
+> > > [FSCK] valid_node_count matcing with CP (de lookup)   [Fail] [0xe3]
+> > > [FSCK] valid_node_count matcing with CP (nat lookup)  [Ok..] [0xe5]
+> > > [FSCK] valid_inode_count matched with CP              [Fail] [0x63]
+> > > [FSCK] free segment_count matched with CP             [Ok..] [0x1c6]
+> > > [FSCK] next block offset is free                      [Ok..]
+> > > [FSCK] fixing SIT types
+> > > [FSCK] other corrupted bugs                           [Fail]
+> > > 
+> > > After canceling the test by using Ctrl-C without answering any YES/NO
+> > > questions, on another terminal I run fsck.f2fs again, but the output is
+> > > completely different:
+> > > [root@localhost CrashConsistencyTest]# ./locals/usr/local/sbin/fsck.f2fs
+> > > /dev/sdc
+> > > Info: [/dev/sdc] Disk Model: VMware Virtual S1.0
+> > > Info: Segments per section = 1
+> > > Info: Sections per zone = 1
+> > > Info: sector size = 512
+> > > Info: total sectors = 2097152 (1024 MB)
+> > > Info: MKFS version
+> > >    "Linux version 4.9.8 (roraoof@desktopr.example.com) (gcc version 4.8.5
+> > > 20150623 (Red Hat 4.8.5-11) (GCC) ) #1 SMP Tue Feb 7 08:24:57 IRST 2017"
+> > > Info: FSCK version
+> > >    from "Linux version 4.9.8 (roraoof@desktopr.example.com) (gcc version
+> > > 4.8.5 20150623 (Red Hat 4.8.5-11) (GCC) ) #1 SMP Tue Feb 7 08:24:57 IRST
+> > > 2017"
+> > >      to "Linux version 4.9.8 (roraoof@desktopr.example.com) (gcc version
+> > > 4.8.5 20150623 (Red Hat 4.8.5-11) (GCC) ) #1 SMP Tue Feb 7 08:24:57 IRST
+> > > 2017"
+> > > Info: superblock features = 0 :
+> > > Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
+> > > Info: total FS sectors = 2097152 (1024 MB)
+> > > Info: CKPT version = 2b59c128
+> > > Info: checkpoint state = 44 :  compacted_summary sudden-power-off
+> > > 
+> > > [FSCK] Unreachable nat entries                        [Ok..] [0x0]
+> > > [FSCK] SIT valid block bitmap checking                [Ok..]
+> > > [FSCK] Hard link checking for regular file            [Ok..] [0x0]
+> > > [FSCK] valid_block_count matching with CP             [Ok..] [0x6dcf]
+> > > [FSCK] valid_node_count matcing with CP (de lookup)   [Ok..] [0xe5]
+> > > [FSCK] valid_node_count matcing with CP (nat lookup)  [Ok..] [0xe5]
+> > > [FSCK] valid_inode_count matched with CP              [Ok..] [0x64]
+> > > [FSCK] free segment_count matched with CP             [Ok..] [0x1c6]
+> > > [FSCK] next block offset is free                      [Ok..]
+> > > [FSCK] fixing SIT types
+> > > [FSCK] other corrupted bugs                           [Ok..]
+> > > 
+> > > This situation raises a couple of questions:
+> > > 1. How  does an inconsistent file system turn into a consistent one in this
+> > > case?
+> > > 2. Why does an inconsistency occur in different log numbers; in other words,
+> > > why is it unpredictable?  Does ordering of logs have to do with disk
+> > > controller and I/O scheduler?
+> > > 
+> > > I do appreciate for your help.
+> > > Regards
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
