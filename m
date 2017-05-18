@@ -1,29 +1,23 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: f2fs Crash Consistency Problem
-Date: Wed, 17 May 2017 11:01:09 -0700
-Message-ID: <20170517180109.GC21506@jaegeuk.local>
-References: <d5ab8383-25f3-ffd6-c506-20993348c499@gmail.com>
-	<20170413211935.GA3826@jaegeuk.local>
-	<bfeb7627-cd9c-6074-1655-38e87166a30b@gmail.com>
-	<20170512001431.GA9575@jaegeuk.local>
-	<a5d7e55f-c246-8c5d-c32c-de299f5d3e03@gmail.com>
+From: sunqiuyang <sunqiuyang@huawei.com>
+Subject: [PATCH v2 1/2] f2fs: dax: fix races between page faults
+	and truncating pages
+Date: Thu, 18 May 2017 11:06:08 +0800
+Message-ID: <1495076768-17953-1-git-send-email-sunqiuyang@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1dB3GV-0008H9-V8
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <sunqiuyang@huawei.com>) id 1dBBjL-0004vG-5u
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 17 May 2017 18:01:39 +0000
-Received: from mail.kernel.org ([198.145.29.99])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1dB3GB-0002pa-S2
+	Thu, 18 May 2017 03:03:59 +0000
+Received: from szxga03-in.huawei.com ([45.249.212.189])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1dBBjI-0007CT-O6
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 17 May 2017 18:01:39 +0000
-Content-Disposition: inline
-In-Reply-To: <a5d7e55f-c246-8c5d-c32c-de299f5d3e03@gmail.com>
+	Thu, 18 May 2017 03:03:59 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,181 +27,277 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Raouf Rokhjavan <rokhjavan.r@gmail.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: wangxiaojun11@huawei.com, yi.zhang@huawei.com, houtao1@huawei.com, guzheng1@huawei.com, yanaijie@huawei.com, zhaohongjiang@huawei.com, dingxiang@huawei.com, wangyijing@huawei.com, sunqiuyang@huawei.com
 
-On 05/17, Raouf Rokhjavan wrote:
-> On 05/12/17 04:44, Jaegeuk Kim wrote:
-> > Hi,
-> > 
-> > On 05/10, Raouf Rokhjavan wrote:
-> > ...
-> > 
-> > > As you told to use snapshot mechanism to prevent changing ckpt number after
-> > > each mount, I ran again generic tests of xfstests framework on top of
-> > > log-writes target with f2fs file system. In order to automate reporting an
-> > > inconsistency situation, I add a parameter to fsck.f2fs to return(-1) when
-> > > c.bug_on condition is met. To evaluate how f2fs react in case of crash
-> > > consistency, I replay each log and check the consistency of f2fs with a my
-> > > own modified version of fsck.f2fs.  Accordingly, all tests passed smoothly
-> > > except these tests:
-> > > 
-> > > [FAIL] Running generic/013 failed. (consistency_single)
-> > Could you check whether any IO made by mkfs was added in the replay log?
-> > If so, fsck.f2fs should be failed when replaying them.
-> > 
-> > > [FAIL] Running generic/070 failed. (consistency_single)
-> > > [FAIL] Running generic/113 failed. (consistency_single)
-> > I added a mark to replay in the beginning of generic/113, and ran the test.
-> > But, I couldn't find any error given test_dev as a log_dev. (I tested this
-> > in the latest f2fs/dev-test branch.)
-> > 
-> > > [FAIL] Running generic/241 failed. (consistency_single)
-> > > 
-> > > In other words, in these tests, c.bug_on() was true. Would you please
-> > > describe why they become inconsistent?
-> > > 
-> > > Besides, I ran sysbench for database benchmark with 1 thread, 1000 records,
-> > > and 100 transactions on top of log-writes target with f2fs. Interestingly, I
-> > > encountered a weird inconsistency. After replaying about 100 logs, fsck.f2fs
-> > > complains about inconsistency with the following messages:
-> > Can you share the parameter for sysbench?
-> Hi,
-> 
-> Since I want to make sure that my system, having a database app, stay
-> operational after the power failure, I test database system on top of f2fs.
-> Accordingly, I use sysbench and dm-log-writes to serve this purpose. I took
-> advantage of lua scripting facility in sysbench to implement write only
-> operations in database:
-> 
-> #sysbench --test=/home/roraouf/Projects/CrashConsistencyTest/locals/var/lib/dbtests/sysbench-lua/tests/db/oltp_write_only.lua
-> --db-driver=mysql --oltp-table-size=1000 --mysql-db=sysbench
-> --mysql-user=sysbench --mysql-password=password --max-requests=100
-> --num-threads=1 --mysql-socket=/mnt/crash_consistency/f2fs/mysql/mysql.sock
-> run
-> 
-> I ran this test on 3 configurations:
-> 1- ext4 (ordered, noatime) - success 15/15
-> 2- ext4 (norecovery, noatime) - success 0/15
-> 3- f2fs (noatime) - success 3/15
-> 
-> Success, here, means whether file system is operational without running fsck
-> and fixing after each replay.
-> As the result show, ext4 with ordered journaling could surmount this test,
-> but ,as it had been expected, ext4 without journaling like ext2 needs fsck
-> to recover file system after simulated power loss.
-> The surprising part of this test is f2fs. As f2fs always maintains a stable
-> checkpoint of file system, and based on its FAST paper, it always rolls back
-> to its stable checkpoint after power loss, I didn't expect to see f2fs in
-> inconsistent state after replaying logs as fsck.f2fs reports. (It's
-> necessary to mention that we check consistency of f2fs after mkfs.f2fs.
-> ext4's results verify this notion.)
-> 
-> Unfortunately, the results are not reproducible, and inconsistency occurs in
-> different logs; moreover, fsck.f2fs passes this test occasionally.
-> To give more accurate information, I uploaded the output of fsck.f2fs on
-> Google Drive.
-> 
-> https://drive.google.com/open?id=0BxdqCs3G6wd3UWtDTmRGbFBiYmc
+From: Qiuyang Sun <sunqiuyang@huawei.com>
 
-Hi,
+Currently in F2FS, page faults and operations that truncate the pagecahe
+or data blocks, are completely unsynchronized. This can result in page
+fault faulting in a page into a range that we are changing after
+truncating, and thus we can end up with a page mapped to disk blocks that
+will be shortly freed. Filesystem corruption will shortly follow.
 
-Could you please check:
-- did you use a snapshot device?
-- what command was issued at #1687?
-- how's result of fsck.f2fs -d 3?
-- can you share your log-dev image?
+This patch fixes the problem by creating new rw semaphore i_mmap_sem in
+f2fs_inode_info and grab it for functions removing blocks from extent tree
+and for read over page faults. The mechanism is similar to that in ext4.
 
-Thanks,
+Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
+---
+Changelog v1 -> v2:
 
-> 
-> Regards,
-> > 
-> > Thanks,
-> > 
-> > > Info: Segments per section = 1
-> > > Info: Sections per zone = 1
-> > > Info: sector size = 512
-> > > Info: total sectors = 2097152 (1024 MB)
-> > > Info: MKFS version
-> > >    "Linux version 4.9.8 (roraoof@desktopr.example.com) (gcc version 4.8.5
-> > > 20150623 (Red Hat 4.8.5-11) (GCC) ) #1 SMP Tue Feb 7 08:24:57 IRST 2017"
-> > > Info: FSCK version
-> > >    from "Linux version 4.9.8 (roraoof@desktopr.example.com) (gcc version
-> > > 4.8.5 20150623 (Red Hat 4.8.5-11) (GCC) ) #1 SMP Tue Feb 7 08:24:57 IRST
-> > > 2017"
-> > >      to "Linux version 4.9.8 (roraoof@desktopr.example.com) (gcc version
-> > > 4.8.5 20150623 (Red Hat 4.8.5-11) (GCC) ) #1 SMP Tue Feb 7 08:24:57 IRST
-> > > 2017"
-> > > Info: superblock features = 0 :
-> > > Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
-> > > Info: total FS sectors = 2097152 (1024 MB)
-> > > Info: CKPT version = 2b59c128
-> > > Info: checkpoint state = 44 :  compacted_summary sudden-power-off
-> > > [ASSERT] (sanity_check_nid: 388)  --> nid[0x6] nat_entry->ino[0x6]
-> > > footer.ino[0x0]
-> > > 
-> > > NID[0x6] is unreachable
-> > > NID[0x7] is unreachable
-> > > [FSCK] Unreachable nat entries                        [Fail] [0x2]
-> > > [FSCK] SIT valid block bitmap checking                [Fail]
-> > > [FSCK] Hard link checking for regular file            [Ok..] [0x0]
-> > > [FSCK] valid_block_count matching with CP             [Fail] [0x6dc9]
-> > > [FSCK] valid_node_count matcing with CP (de lookup)   [Fail] [0xe3]
-> > > [FSCK] valid_node_count matcing with CP (nat lookup)  [Ok..] [0xe5]
-> > > [FSCK] valid_inode_count matched with CP              [Fail] [0x63]
-> > > [FSCK] free segment_count matched with CP             [Ok..] [0x1c6]
-> > > [FSCK] next block offset is free                      [Ok..]
-> > > [FSCK] fixing SIT types
-> > > [FSCK] other corrupted bugs                           [Fail]
-> > > 
-> > > After canceling the test by using Ctrl-C without answering any YES/NO
-> > > questions, on another terminal I run fsck.f2fs again, but the output is
-> > > completely different:
-> > > [root@localhost CrashConsistencyTest]# ./locals/usr/local/sbin/fsck.f2fs
-> > > /dev/sdc
-> > > Info: [/dev/sdc] Disk Model: VMware Virtual S1.0
-> > > Info: Segments per section = 1
-> > > Info: Sections per zone = 1
-> > > Info: sector size = 512
-> > > Info: total sectors = 2097152 (1024 MB)
-> > > Info: MKFS version
-> > >    "Linux version 4.9.8 (roraoof@desktopr.example.com) (gcc version 4.8.5
-> > > 20150623 (Red Hat 4.8.5-11) (GCC) ) #1 SMP Tue Feb 7 08:24:57 IRST 2017"
-> > > Info: FSCK version
-> > >    from "Linux version 4.9.8 (roraoof@desktopr.example.com) (gcc version
-> > > 4.8.5 20150623 (Red Hat 4.8.5-11) (GCC) ) #1 SMP Tue Feb 7 08:24:57 IRST
-> > > 2017"
-> > >      to "Linux version 4.9.8 (roraoof@desktopr.example.com) (gcc version
-> > > 4.8.5 20150623 (Red Hat 4.8.5-11) (GCC) ) #1 SMP Tue Feb 7 08:24:57 IRST
-> > > 2017"
-> > > Info: superblock features = 0 :
-> > > Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
-> > > Info: total FS sectors = 2097152 (1024 MB)
-> > > Info: CKPT version = 2b59c128
-> > > Info: checkpoint state = 44 :  compacted_summary sudden-power-off
-> > > 
-> > > [FSCK] Unreachable nat entries                        [Ok..] [0x0]
-> > > [FSCK] SIT valid block bitmap checking                [Ok..]
-> > > [FSCK] Hard link checking for regular file            [Ok..] [0x0]
-> > > [FSCK] valid_block_count matching with CP             [Ok..] [0x6dcf]
-> > > [FSCK] valid_node_count matcing with CP (de lookup)   [Ok..] [0xe5]
-> > > [FSCK] valid_node_count matcing with CP (nat lookup)  [Ok..] [0xe5]
-> > > [FSCK] valid_inode_count matched with CP              [Ok..] [0x64]
-> > > [FSCK] free segment_count matched with CP             [Ok..] [0x1c6]
-> > > [FSCK] next block offset is free                      [Ok..]
-> > > [FSCK] fixing SIT types
-> > > [FSCK] other corrupted bugs                           [Ok..]
-> > > 
-> > > This situation raises a couple of questions:
-> > > 1. How  does an inconsistent file system turn into a consistent one in this
-> > > case?
-> > > 2. Why does an inconsistency occur in different log numbers; in other words,
-> > > why is it unpredictable?  Does ordering of logs have to do with disk
-> > > controller and I/O scheduler?
-> > > 
-> > > I do appreciate for your help.
-> > > Regards
+- Apply the new rw semaphore in some other necessary scenarios:
+	f2fs_write_failed
+	f2fs_filemap_fault (new function)
+	f2fs_vm_page_mkwrite
+	f2fs_setattr
+(f2fs_add_inline_entries() does not need this rw semaphore, as dir is a
+directory file and its pages would not be mmap'ed.)
+
+- Lock coverage in the scenarios below are reconsidered:
+	punch_hole
+	f2fs_collapse_range
+	f2fs_zero_range
+	f2fs_insert_range
+
+The v2 patches are at 4.12-rc1.
+---
+ fs/f2fs/data.c  |  2 ++
+ fs/f2fs/f2fs.h  |  1 +
+ fs/f2fs/file.c  | 48 +++++++++++++++++++++++++++++++++++++++---------
+ fs/f2fs/super.c |  1 +
+ 4 files changed, 43 insertions(+), 9 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 7c0f6bd..c9a3fbd 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1753,8 +1753,10 @@ static void f2fs_write_failed(struct address_space *mapping, loff_t to)
+ 	loff_t i_size = i_size_read(inode);
+ 
+ 	if (to > i_size) {
++		down_write(&F2FS_I(inode)->i_mmap_sem);
+ 		truncate_pagecache(inode, i_size);
+ 		truncate_blocks(inode, i_size, true);
++		up_write(&F2FS_I(inode)->i_mmap_sem);
+ 	}
+ }
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 2185c7a..8095f4f 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -519,6 +519,7 @@ struct f2fs_inode_info {
+ 	struct mutex inmem_lock;	/* lock for inmemory pages */
+ 	struct extent_tree *extent_tree;	/* cached extent_tree entry */
+ 	struct rw_semaphore dio_rwsem[2];/* avoid racing between dio and gc */
++	struct rw_semaphore i_mmap_sem;
+ };
+ 
+ static inline void get_extent_info(struct extent_info *ext,
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 61af721..0b0115c 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -33,6 +33,18 @@
+ #include "trace.h"
+ #include <trace/events/f2fs.h>
+ 
++static int f2fs_filemap_fault(struct vm_fault *vmf)
++{
++	struct inode *inode = file_inode(vmf->vma->vm_file);
++	int err;
++
++	down_read(&F2FS_I(inode)->i_mmap_sem);
++	err = filemap_fault(vmf);
++	up_read(&F2FS_I(inode)->i_mmap_sem);
++
++	return err;
++}
++
+ static int f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ {
+ 	struct page *page = vmf->page;
+@@ -59,13 +71,14 @@ static int f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 	f2fs_balance_fs(sbi, dn.node_changed);
+ 
+ 	file_update_time(vmf->vma->vm_file);
++	down_read(&F2FS_I(inode)->i_mmap_sem);
+ 	lock_page(page);
+ 	if (unlikely(page->mapping != inode->i_mapping ||
+ 			page_offset(page) > i_size_read(inode) ||
+ 			!PageUptodate(page))) {
+ 		unlock_page(page);
+ 		err = -EFAULT;
+-		goto out;
++		goto out_sem;
+ 	}
+ 
+ 	/*
+@@ -94,6 +107,8 @@ static int f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
+ 		f2fs_wait_on_encrypted_page_writeback(sbi, dn.data_blkaddr);
+ 
++out_sem:
++	up_read(&F2FS_I(inode)->i_mmap_sem);
+ out:
+ 	sb_end_pagefault(inode->i_sb);
+ 	f2fs_update_time(sbi, REQ_TIME);
+@@ -101,7 +116,7 @@ static int f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ }
+ 
+ static const struct vm_operations_struct f2fs_file_vm_ops = {
+-	.fault		= filemap_fault,
++	.fault		= f2fs_filemap_fault,
+ 	.map_pages	= filemap_map_pages,
+ 	.page_mkwrite	= f2fs_vm_page_mkwrite,
+ };
+@@ -687,8 +702,10 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
+ 			return -EACCES;
+ 
+ 		if (attr->ia_size <= i_size_read(inode)) {
++			down_write(&F2FS_I(inode)->i_mmap_sem);
+ 			truncate_setsize(inode, attr->ia_size);
+ 			err = f2fs_truncate(inode);
++			up_write(&F2FS_I(inode)->i_mmap_sem);
+ 			if (err)
+ 				return err;
+ 		} else {
+@@ -696,7 +713,9 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
+ 			 * do not trim all blocks after i_size if target size is
+ 			 * larger than i_size.
+ 			 */
++			down_write(&F2FS_I(inode)->i_mmap_sem);
+ 			truncate_setsize(inode, attr->ia_size);
++			up_write(&F2FS_I(inode)->i_mmap_sem);
+ 
+ 			/* should convert inline inode here */
+ 			if (!f2fs_may_inline_data(inode)) {
+@@ -839,12 +858,14 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
+ 
+ 			blk_start = (loff_t)pg_start << PAGE_SHIFT;
+ 			blk_end = (loff_t)pg_end << PAGE_SHIFT;
++			down_write(&F2FS_I(inode)->i_mmap_sem);
+ 			truncate_inode_pages_range(mapping, blk_start,
+ 					blk_end - 1);
+ 
+ 			f2fs_lock_op(sbi);
+ 			ret = truncate_hole(inode, pg_start, pg_end);
+ 			f2fs_unlock_op(sbi);
++			up_write(&F2FS_I(inode)->i_mmap_sem);
+ 		}
+ 	}
+ 
+@@ -1083,16 +1104,17 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+ 	pg_start = offset >> PAGE_SHIFT;
+ 	pg_end = (offset + len) >> PAGE_SHIFT;
+ 
++	down_write(&F2FS_I(inode)->i_mmap_sem);
+ 	/* write out all dirty pages from offset */
+ 	ret = filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	truncate_pagecache(inode, offset);
+ 
+ 	ret = f2fs_do_collapse(inode, pg_start, pg_end);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	/* write out all moved pages, if possible */
+ 	filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
+@@ -1105,6 +1127,8 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+ 	if (!ret)
+ 		f2fs_i_size_write(inode, new_size);
+ 
++out:
++	up_write(&F2FS_I(inode)->i_mmap_sem);
+ 	return ret;
+ }
+ 
+@@ -1169,9 +1193,10 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+ 	if (ret)
+ 		return ret;
+ 
++	down_write(&F2FS_I(inode)->i_mmap_sem);
+ 	ret = filemap_write_and_wait_range(mapping, offset, offset + len - 1);
+ 	if (ret)
+-		return ret;
++		goto out_sem;
+ 
+ 	truncate_pagecache_range(inode, offset, offset + len - 1);
+ 
+@@ -1185,7 +1210,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+ 		ret = fill_zero(inode, pg_start, off_start,
+ 						off_end - off_start);
+ 		if (ret)
+-			return ret;
++			goto out_sem;
+ 
+ 		new_size = max_t(loff_t, new_size, offset + len);
+ 	} else {
+@@ -1193,7 +1218,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+ 			ret = fill_zero(inode, pg_start++, off_start,
+ 						PAGE_SIZE - off_start);
+ 			if (ret)
+-				return ret;
++				goto out_sem;
+ 
+ 			new_size = max_t(loff_t, new_size,
+ 					(loff_t)pg_start << PAGE_SHIFT);
+@@ -1242,6 +1267,8 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+ out:
+ 	if (!(mode & FALLOC_FL_KEEP_SIZE) && i_size_read(inode) < new_size)
+ 		f2fs_i_size_write(inode, new_size);
++out_sem:
++	up_write(&F2FS_I(inode)->i_mmap_sem);
+ 
+ 	return ret;
+ }
+@@ -1271,14 +1298,15 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ 
+ 	f2fs_balance_fs(sbi, true);
+ 
++	down_write(&F2FS_I(inode)->i_mmap_sem);
+ 	ret = truncate_blocks(inode, i_size_read(inode), true);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	/* write out all dirty pages from offset */
+ 	ret = filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	truncate_pagecache(inode, offset);
+ 
+@@ -1307,6 +1335,8 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ 
+ 	if (!ret)
+ 		f2fs_i_size_write(inode, new_size);
++out:
++	up_write(&F2FS_I(inode)->i_mmap_sem);
+ 	return ret;
+ }
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 83355ec..8472c98 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -624,6 +624,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ 	mutex_init(&fi->inmem_lock);
+ 	init_rwsem(&fi->dio_rwsem[READ]);
+ 	init_rwsem(&fi->dio_rwsem[WRITE]);
++	init_rwsem(&fi->i_mmap_sem);
+ 
+ 	/* Will be used by directory only */
+ 	fi->i_dir_level = F2FS_SB(sb)->dir_level;
+-- 
+1.8.3.1
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
