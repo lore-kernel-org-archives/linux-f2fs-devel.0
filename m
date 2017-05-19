@@ -1,22 +1,22 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v2] f2fs: fix a bug caused by NULL extent tree
-Date: Fri, 19 May 2017 15:06:12 +0800
-Message-ID: <1495177572-28886-1-git-send-email-heyunlei@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH v2 1/2] f2fs: split wio_mutex
+Date: Fri, 19 May 2017 23:37:00 +0800
+Message-ID: <20170519153701.19497-1-chao@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1dBcAP-0008Nh-8c
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao@kernel.org>) id 1dBjzp-0004Uh-8W
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 19 May 2017 07:17:41 +0000
-Received: from szxga02-in.huawei.com ([45.249.212.188])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1dBcAN-0003xu-Jx
+	Fri, 19 May 2017 15:39:17 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1dBjzn-00046v-7l
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 19 May 2017 07:17:41 +0000
+	Fri, 19 May 2017 15:39:17 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,61 +26,85 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Thread A:					Thread B:
+From: Chao Yu <yuchao0@huawei.com>
 
--f2fs_remount
-    -sbi->mount_opt.opt = 0;
-						<--- -f2fs_iget
-						         -do_read_inode
-							     -f2fs_init_extent_tree
-							         -F2FS_I(inode)->extent_tree is NULL
-        -default_options && parse_options
-	    -remount return
-						<---  -f2fs_map_blocks
-						          -f2fs_lookup_extent_tree
-                                                              -f2fs_bug_on(sbi, !et);
+Split wio_mutex to adjust different temperature bio cache.
 
-The same problem with f2fs_new_inode.
-
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/extent_cache.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+v2:
+ - rebase to last dev-test branch.
+ fs/f2fs/f2fs.h    | 3 ++-
+ fs/f2fs/segment.c | 4 ++--
+ fs/f2fs/super.c   | 7 ++++---
+ 3 files changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index 2f98d70..ff2352a 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -320,7 +320,7 @@ static void __drop_largest_extent(struct inode *inode,
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 8232aa5f0016..97d1a7ad243b 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -888,7 +888,8 @@ struct f2fs_sb_info {
+ 
+ 	/* for bio operations */
+ 	struct f2fs_bio_info *write_io[NR_PAGE_TYPE];	/* for write bios */
+-	struct mutex wio_mutex[NODE + 1];	/* bio ordering for NODE/DATA */
++	struct mutex wio_mutex[NR_PAGE_TYPE - 1][NR_TEMP_TYPE];
++						/* bio ordering for NODE/DATA */
+ 	int write_io_size_bits;			/* Write IO size bits */
+ 	mempool_t *write_io_dummy;		/* Dummy pages */
+ 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index fcada9d03817..f3218fd769b1 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2156,7 +2156,7 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
+ 	int err;
+ 
+ 	if (fio->type == NODE || fio->type == DATA)
+-		mutex_lock(&fio->sbi->wio_mutex[fio->type]);
++		mutex_lock(&fio->sbi->wio_mutex[fio->type][fio->temp]);
+ reallocate:
+ 	allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
+ 					&fio->new_blkaddr, sum, type);
+@@ -2169,7 +2169,7 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
+ 	}
+ 
+ 	if (fio->type == NODE || fio->type == DATA)
+-		mutex_unlock(&fio->sbi->wio_mutex[fio->type]);
++		mutex_unlock(&fio->sbi->wio_mutex[fio->type][fio->temp]);
  }
  
- /* return true, if inode page is changed */
--bool f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext)
-+static bool __f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext)
+ void write_meta_page(struct f2fs_sb_info *sbi, struct page *page)
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index fea563bff0c1..df19902282f2 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1555,7 +1555,7 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ static void init_sb_info(struct f2fs_sb_info *sbi)
  {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct extent_tree *et;
-@@ -358,6 +358,16 @@ bool f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext)
- 	return false;
+ 	struct f2fs_super_block *raw_super = sbi->raw_super;
+-	int i;
++	int i, j;
+ 
+ 	sbi->log_sectors_per_block =
+ 		le32_to_cpu(raw_super->log_sectors_per_block);
+@@ -1587,8 +1587,9 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+ 
+ 	INIT_LIST_HEAD(&sbi->s_list);
+ 	mutex_init(&sbi->umount_mutex);
+-	mutex_init(&sbi->wio_mutex[NODE]);
+-	mutex_init(&sbi->wio_mutex[DATA]);
++	for (i = 0; i < NR_PAGE_TYPE - 1; i++)
++		for (j = HOT; j < NR_TEMP_TYPE; j++)
++			mutex_init(&sbi->wio_mutex[i][j]);
+ 	spin_lock_init(&sbi->cp_lock);
  }
  
-+bool f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext)
-+{
-+	bool ret =  __f2fs_init_extent_tree(inode, i_ext);
-+
-+	if (!F2FS_I(inode)->extent_tree)
-+		set_inode_flag(inode, FI_NO_EXTENT);
-+
-+	return ret;
-+}
-+
- static bool f2fs_lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
- 							struct extent_info *ei)
- {
 -- 
-1.9.1
+2.12.2.575.gb14f27f
 
 
 ------------------------------------------------------------------------------
