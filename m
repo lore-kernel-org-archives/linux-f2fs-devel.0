@@ -1,25 +1,23 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 3/3] f2fs: wait discard IO completion without
-	cmd_lock held
-Date: Fri, 19 May 2017 23:46:45 +0800
-Message-ID: <20170519154645.20121-3-chao@kernel.org>
-References: <20170519154645.20121-1-chao@kernel.org>
+From: Hou Pengyang <houpengyang@huawei.com>
+Subject: [PATCH v2 0/5] f2fs: improve performance of NAT/SIT
+	flushing during cp
+Date: Sat, 20 May 2017 12:24:30 +0000
+Message-ID: <20170520122435.17574-1-houpengyang@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1dBk9M-0004pv-B3
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <houpengyang@huawei.com>) id 1dC3RJ-0006Pl-Em
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 19 May 2017 15:49:08 +0000
-Received: from mail.kernel.org ([198.145.29.99])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1dBk9L-0003Kk-IB
+	Sat, 20 May 2017 12:24:57 +0000
+Received: from szxga01-in.huawei.com ([45.249.212.187])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1dC3RI-00034Z-CH
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 19 May 2017 15:49:08 +0000
-In-Reply-To: <20170519154645.20121-1-chao@kernel.org>
+	Sat, 20 May 2017 12:24:57 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,63 +27,67 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, chao@kernel.org, miaoxie@huawei.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-From: Chao Yu <yuchao0@huawei.com>
+This patches are to designed to optimize NAT/SIT flushing procedure:
 
-Wait discard IO completion outside cmd_lock to avoid long latency
-of holding cmd_lock in IO busy scenario.
+patch 1) -- patch 3):
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/segment.c | 23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
+during flush_nat_entries, we do: 
+1) gang_lookup a radix tree, find all the dirty nat_entry_set;
+2) sort nat_entry_set by nat_entry_set->entry_cnt, in order to 
+    write to journal as much as possible to avoid unnessary IO. 
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 2b11119d9071..2b926db0588b 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1005,17 +1005,34 @@ static void __wait_discard_cmd(struct f2fs_sb_info *sbi, bool wait_cond)
- 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
- 	struct list_head *wait_list = &(dcc->wait_list);
- 	struct discard_cmd *dc, *tmp;
-+	bool need_wait;
-+
-+next:
-+	need_wait = false;
- 
- 	mutex_lock(&dcc->cmd_lock);
- 	list_for_each_entry_safe(dc, tmp, wait_list, list) {
--		if (!wait_cond || dc->state == D_DONE) {
--			if (dc->ref)
--				continue;
-+		if (!wait_cond || (dc->state == D_DONE && !dc->ref)) {
- 			wait_for_completion_io(&dc->wait);
- 			__remove_discard_cmd(sbi, dc);
-+		} else {
-+			dc->ref++;
-+			need_wait = true;
-+			break;
- 		}
- 	}
- 	mutex_unlock(&dcc->cmd_lock);
-+
-+	if (need_wait) {
-+		wait_for_completion_io(&dc->wait);
-+		mutex_lock(&dcc->cmd_lock);
-+		f2fs_bug_on(sbi, dc->state != D_DONE);
-+		dc->ref--;
-+		if (!dc->ref)
-+			__remove_discard_cmd(sbi, dc);
-+		mutex_unlock(&dcc->cmd_lock);
-+		goto next;
-+	}
- }
- 
- /* This should be covered by global mutex, &sit_i->sentry_lock */
+This patch optimize the look_up & sort algorithm by introducing an array:
+
+    f2fs_nm_info->dirty_set[NAT_ENTRY_PER_BLOCK+1];
+    (struct list_head dirty_set[NAT_ENTRY_PER_BLOCK + 1]) 
+
+dirty_set[1] links all nat_entry_set whose entry_cnt is 1
+dirty_set[2] links all nat_entry_set whose entry_cnt is 2
+......
+dirty_set[N] links all nat_entry_set whose entry_cnt is N
+
+as one NAT block has NAT_ENTRY_PER_BLOCK entries at MOST, so there should NOT 
+be one nat_entry_set whose entry_cnt is larger than NAT_ENTRY_PER_BLOCK.
+
+So it is enough for f2fs_nm_info->dirty_set to link all nat_entry_sets in system.
+
+Update:
+    we update nat_entry_set in real-time, e.g originally nat_entry_set->entry_cnt is
+1, and licked by dirty_set[1]; then call __set_nat_cache_dirty to increase nat_entry's
+entry_cnt, we move this nat_entry_set ot dirty_set[2]'s tail, no need to compare.
+
+Flush:
+    when flush dirty nat_entry_set, we just flush nat_entry_set from 
+f2fs_nm_info->dirty_set[0] to f2fs_nm_info->dirty_set[NAT_ENTRY_PER_BLOCK], where
+gang_lookup and sort can be avoid.
+    
+footprint of this algorithm:  sizeof(struct list_head)*NAT_ENTRY_PER_BLOCK
+                              = 8*455 = 3.6k bytes
+
+Same for SIT.
+
+In patch 5), we use array to manage sit_entry_sets instead of list, which 
+can avoid list travel, and there is no need to alloc/free lab memory.
+It is low footrpint consuming.
+
+Hou Pengyang (5):
+  f2fs: use bucket sort to avoid tree lookup and list sort when nat flushing
+  f2fs: reconstruct sit flushing code
+  f2fs: use bucket sort to avoid list sort when flush sit entries
+  f2fs: avoid unnecessary to_journal checking
+  f2fs: use an array to record sit_entry_set info to make sort fast
+
+ fs/f2fs/f2fs.h    |   5 +-
+ fs/f2fs/node.c    |  79 ++++++++-----------
+ fs/f2fs/segment.c | 227 ++++++++++++++++++++++++++----------------------------
+ fs/f2fs/segment.h |   2 +-
+ 4 files changed, 147 insertions(+), 166 deletions(-)
+
 -- 
-2.12.2.575.gb14f27f
+2.10.1
 
 
 ------------------------------------------------------------------------------
