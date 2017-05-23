@@ -1,38 +1,45 @@
-From: Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH 4/4] f2fs: don't bother checking for encryption key in ->write_iter()
-Date: Mon, 22 May 2017 17:39:45 -0700
-Message-ID: <20170523003945.14279-5-ebiggers3@gmail.com>
+From: David Gstir <david@sigma-star.at>
+Subject: Re: [PATCH 0/4] fscrypt: remove checks for encryption key after file
+ open
+Date: Tue, 23 May 2017 07:56:25 +0200
+Message-ID: <DA1CA888-856E-44A7-ABED-90F39D14C720@sigma-star.at>
 References: <20170523003945.14279-1-ebiggers3@gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-ext4-owner@vger.kernel.org>
 In-Reply-To: <20170523003945.14279-1-ebiggers3@gmail.com>
 Sender: linux-ext4-owner@vger.kernel.org
-To: linux-fscrypt@vger.kernel.org
-Cc: Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, Eric Biggers <ebiggers@google.com>
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: linux-fscrypt@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, Eric Biggers <ebiggers@google.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+Eric,
 
-Since only an open file can be written to, and we only allow open()ing
-an encrypted file when its key is available, there is no need to check
-for the key again before permitting each ->write_iter().
+> On 23 May 2017, at 02:39, Eric Biggers <ebiggers3@gmail.com> wrote:
+> 
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> This series removes checks for a regular file's encryption key that occur
+> after we've already opened the file.  We're guaranteed to already have
+> the key in such places, since we require it in ->open().  open() fails
+> with ENOKEY otherwise, and a file descriptor is never made available.
+> 
+> This pertains to regular files only.  (Directories can be opened with or
+> without their key.)
+> 
+> Eric Biggers (4):
+>  ext4: don't bother checking for encryption key in ->mmap()
+>  f2fs: don't bother checking for encryption key in ->mmap()
+>  ubifs: don't bother checking for encryption key in ->mmap()
+>  f2fs: don't bother checking for encryption key in ->write_iter()
+> 
+> fs/ext4/file.c  |  7 -------
+> fs/f2fs/file.c  | 13 -------------
+> fs/ubifs/file.c |  9 ---------
+> 3 files changed, 29 deletions(-)
 
-This code was also broken in that it wouldn't actually have failed if
-the key was in fact unavailable.
+The whole series looks good to me. So feel free to add my
+Reviewed-by: David Gstir <david@sigma-star.at>
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/f2fs/file.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index ff4db3efc0ac..3ccc63089a47 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2318,11 +2318,6 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	struct blk_plug plug;
- 	ssize_t ret;
- 
--	if (f2fs_encrypted_inode(inode) &&
--				!fscrypt_has_encryption_key(inode) &&
--				fscrypt_get_encryption_info(inode))
--		return -EACCES;
+David
