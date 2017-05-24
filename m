@@ -1,39 +1,47 @@
-From: Damien Le Moal <damien.lemoal@wdc.com>
-Subject: [PATCH] f2fs: Do not issue small discards in LFS mode
-Date: Wed, 24 May 2017 14:02:29 +0900
-Message-ID: <20170524050229.13213-1-damien.lemoal@wdc.com>
+From: "kian" <brakepad@brakes.net>
+Subject: [SPAM] motor brake pad information
+Date: Wed, 24 May 2017 19:02:04 +0800
+Message-ID: <E1dDU3A-0002NT-MI@sfs-ml-2.v29.ch3.sourceforge.com>
+Reply-To: kiankaplan@126.com
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: linux-fsdevel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <brakepad@brakes.net>) id 1dDU3A-0002Mz-2B
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 24 May 2017 11:01:56 +0000
+Received: from [122.244.51.20] (helo=lumama-PC)
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1dDU38-00073W-H0 for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 24 May 2017 11:01:56 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-clear_prefree_segments() issues small discards after discarding full
-segments. These small discards may not be section aligned, so not zone
-aligned when using a zoned block device, or more generally, when
-mounted in LFS mode. So do not issue these small discards when mounted
-in LFS mode.
+Hi 
+We can supply high quality motorcycle brake pad in sintered material and semi-metallic 
 
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
----
- fs/f2fs/segment.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+We have good quality material and cheaper prices
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 9684585..3d190a7 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1322,7 +1322,8 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 					sbi->blocks_per_seg, cur_pos);
- 			len = next_pos - cur_pos;
- 
--			if (force && len < cpc->trim_minlen)
-+			if (test_opt(sbi, LFS) ||
-+			    (force && len < cpc->trim_minlen))
- 				goto skip;
- 
- 			f2fs_issue_discard(sbi, entry->start_blkaddr + cur_pos,
--- 
-2.9.4
+if you have any requirment,you can click our website :www.tracyelise.com
+
+
+Thanks
+
+best regards
+Motodios Limited
+kian
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
