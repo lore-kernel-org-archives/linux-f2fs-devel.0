@@ -1,28 +1,26 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: BUG: effect of immutable attribute (chattr +i) is
- gone after remount
-Date: Tue, 23 May 2017 21:06:32 -0700
-Message-ID: <20170524040632.GA30325@jaegeuk-macbookpro.roam.corp.google.com>
-References: <HK2PR04MB064473E2C9EE4462A3BC0A5088E60@HK2PR04MB0644.apcprd04.prod.outlook.com>
-	<20170516202858.GA16238@jaegeuk.local>
-	<27601c5c-eb07-ab16-4cfe-c87668138d82@huawei.com>
+Subject: Re: [PATCH v2 0/5] f2fs: improve performance of NAT/SIT
+ flushing during cp
+Date: Tue, 23 May 2017 21:14:25 -0700
+Message-ID: <20170524041425.GB30325@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20170520122435.17574-1-houpengyang@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1dDNZJ-0001V8-0s
+	(envelope-from <jaegeuk@kernel.org>) id 1dDNgv-0001o9-34
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 24 May 2017 04:06:41 +0000
+	Wed, 24 May 2017 04:14:33 +0000
 Received: from mail.kernel.org ([198.145.29.99])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1dDNZH-0000HP-2q
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1dDNgt-0007GS-Rp
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 24 May 2017 04:06:40 +0000
+	Wed, 24 May 2017 04:14:32 +0000
 Content-Disposition: inline
-In-Reply-To: <27601c5c-eb07-ab16-4cfe-c87668138d82@huawei.com>
+In-Reply-To: <20170520122435.17574-1-houpengyang@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,166 +30,83 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: Hou Pengyang <houpengyang@huawei.com>
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Chao,
+Hi Pengyang,
 
-On 05/23, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> On 2017/5/17 4:28, Jaegeuk Kim wrote:
-> > Hi Tom,
-> > 
-> > On 05/16, Tom Yan wrote:
-> >> Hi all.
-> >>
-> >> Just happen to notice that a file on my f2fs filesystem marked as immutable is actually "mutable". At first I thought it was because of file corruption or so, but after some test it appears that the effect will be gone anyway once the filesystem is remounted. The flag remains though, as per the output of lsattr.
-> >>
-> > 
-> > Thank you so much for the report.
-> > 
-> >> Here is a test case:
-> >>
-> >> [tom@localhost ~]$ truncate -s 256M f2fs.img
-> >> [tom@localhost ~]$ sudo losetup -f f2fs.img 
-> >> [tom@localhost ~]$ sudo mkfs.f2fs /dev/loop0 
-> >>
-> >> 	F2FS-tools: mkfs.f2fs Ver: 1.8.0 (2017-02-03)
-> >>
-> >> Info: Debug level = 0
-> >> Info: Label = 
-> >> Info: Trim is enabled
-> >> Info: Segments per section = 1
-> >> Info: Sections per zone = 1
-> >> Info: sector size = 512
-> >> Info: total sectors = 524288 (256 MB)
-> >> Info: zone aligned segment0 blkaddr: 512
-> >> Info: format version with
-> >>   "Linux version 4.10.13-1-ARCH (builduser@tobias) (gcc version 6.3.1 20170306 (GCC) ) #1 SMP PREEMPT Thu Apr 27 12:15:09 CEST 2017"
-> >> Info: [/dev/loop0] Discarding device
-> >> Info: This device doesn't support BLKSECDISCARD
-> >> Info: Discarded 256 MB
-> >> Info: Overprovision ratio = 15.000%
-> >> Info: Overprovision segments = 35 (GC reserved = 21)
-> >> Info: format successful
-> >> [tom@localhost ~]$ sudo mount /dev/loop0 /mnt/
-> >> [tom@localhost ~]$ sudo chown tom:tom /mnt/
-> >> [tom@localhost ~]$ touch /mnt/testfile
-> >> [tom@localhost ~]$ sudo chattr +i /mnt/testfile 
-> >> [tom@localhost ~]$ echo test > /mnt/testfile 
-> >> bash: /mnt/testfile: Operation not permitted
-> >> [tom@localhost ~]$ rm /mnt/testfile 
-> >> rm: cannot remove '/mnt/testfile': Operation not permitted
-> >> [tom@localhost ~]$ sudo umount /mnt/
-> >> [tom@localhost ~]$ sudo mount /dev/loop0 /mnt/
-> >> [tom@localhost ~]$ lsattr /mnt/testfile 
-> >> ----i-------------- /mnt/testfile
-> >> [tom@localhost ~]$ echo test > /mnt/testfile 
-> >> [tom@localhost ~]$ rm /mnt/testfile 
-> >> [tom@localhost ~]$ sudo umount /mnt/
-> >> [tom@localhost ~]$ uname -a
-> >> Linux localhost 4.10.13-1-ARCH #1 SMP PREEMPT Thu Apr 27 12:15:09 CEST 2017 x86_64 GNU/Linux
-> >>
-> >> As you can see, mkfs.f2fs is of version 1.8.0, and the kernel is as of 4.10.13. Let me know if you need further information. Thanks in advance.
-> > 
-> > I could simply reproduce this, and wrote a patch to fix it like below. ;)
-> > Could you please check this patch as well?
-> > 
-> > Thanks,
-> > 
-> >>From 8aee3d3a0244802b141d1b2ae95c568d1aa26118 Mon Sep 17 00:00:00 2001
-> > From: Jaegeuk Kim <jaegeuk@kernel.org>
-> > Date: Tue, 16 May 2017 13:20:16 -0700
-> > Subject: [PATCH] f2fs: load inode's flag from disk
-> > 
-> > This patch fixes missing inode flag loaded from disk, reported by Tom.
-> > 
-> > [tom@localhost ~]$ sudo mount /dev/loop0 /mnt/
-> > [tom@localhost ~]$ sudo chown tom:tom /mnt/
-> > [tom@localhost ~]$ touch /mnt/testfile
-> > [tom@localhost ~]$ sudo chattr +i /mnt/testfile
-> > [tom@localhost ~]$ echo test > /mnt/testfile
-> > bash: /mnt/testfile: Operation not permitted
-> > [tom@localhost ~]$ rm /mnt/testfile
-> > rm: cannot remove '/mnt/testfile': Operation not permitted
-> > [tom@localhost ~]$ sudo umount /mnt/
-> > [tom@localhost ~]$ sudo mount /dev/loop0 /mnt/
-> > [tom@localhost ~]$ lsattr /mnt/testfile
-> > ----i-------------- /mnt/testfile
-> > [tom@localhost ~]$ echo test > /mnt/testfile
-> > [tom@localhost ~]$ rm /mnt/testfile
-> > [tom@localhost ~]$ sudo umount /mnt/
-> > 
-> > Cc: stable@vger.kernel.org
-> > Reported-by: Tom Yan <tom.ty89@outlook.com>
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/inode.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> > index 518f49643092..7aab8837b6b4 100644
-> > --- a/fs/f2fs/inode.c
-> > +++ b/fs/f2fs/inode.c
-> > @@ -226,6 +226,7 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
-> >  		ret = -EIO;
-> >  		goto bad_inode;
-> >  	}
-> > +	f2fs_set_inode_flags(inode);
-> 
-> f2fs_iget will make inode dirty after f2fs_set_inode_flags, it's not needed. So
-> how about changing like this?
-
-Yup, I applied this.
+Could you please shed a light on some performance gains by this?
 
 Thanks,
 
+On 05/20, Hou Pengyang wrote:
+> This patches are to designed to optimize NAT/SIT flushing procedure:
 > 
-> ---
->  fs/f2fs/file.c  | 1 +
->  fs/f2fs/inode.c | 2 +-
->  2 files changed, 2 insertions(+), 1 deletion(-)
+> patch 1) -- patch 3):
 > 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index e20a1c01e556..8ccbfe53c03c 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -1514,6 +1514,7 @@ static int f2fs_ioc_setflags(struct file *filp, unsigned long arg)
+> during flush_nat_entries, we do: 
+> 1) gang_lookup a radix tree, find all the dirty nat_entry_set;
+> 2) sort nat_entry_set by nat_entry_set->entry_cnt, in order to 
+>     write to journal as much as possible to avoid unnessary IO. 
 > 
->  	inode->i_ctime = current_time(inode);
->  	f2fs_set_inode_flags(inode);
-> +	f2fs_mark_inode_dirty_sync(inode, false);
+> This patch optimize the look_up & sort algorithm by introducing an array:
 > 
->  	inode_unlock(inode);
->  out:
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index 518f49643092..e53c784ab11e 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -44,7 +44,6 @@ void f2fs_set_inode_flags(struct inode *inode)
->  		new_fl |= S_DIRSYNC;
->  	inode_set_flags(inode, new_fl,
->  			S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC);
-> -	f2fs_mark_inode_dirty_sync(inode, false);
->  }
+>     f2fs_nm_info->dirty_set[NAT_ENTRY_PER_BLOCK+1];
+>     (struct list_head dirty_set[NAT_ENTRY_PER_BLOCK + 1]) 
 > 
->  static void __get_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
-> @@ -226,6 +225,7 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
->  		ret = -EIO;
->  		goto bad_inode;
->  	}
-> +	f2fs_set_inode_flags(inode);
->  	unlock_new_inode(inode);
->  	trace_f2fs_iget(inode);
->  	return inode;
+> dirty_set[1] links all nat_entry_set whose entry_cnt is 1
+> dirty_set[2] links all nat_entry_set whose entry_cnt is 2
+> ......
+> dirty_set[N] links all nat_entry_set whose entry_cnt is N
+> 
+> as one NAT block has NAT_ENTRY_PER_BLOCK entries at MOST, so there should NOT 
+> be one nat_entry_set whose entry_cnt is larger than NAT_ENTRY_PER_BLOCK.
+> 
+> So it is enough for f2fs_nm_info->dirty_set to link all nat_entry_sets in system.
+> 
+> Update:
+>     we update nat_entry_set in real-time, e.g originally nat_entry_set->entry_cnt is
+> 1, and licked by dirty_set[1]; then call __set_nat_cache_dirty to increase nat_entry's
+> entry_cnt, we move this nat_entry_set ot dirty_set[2]'s tail, no need to compare.
+> 
+> Flush:
+>     when flush dirty nat_entry_set, we just flush nat_entry_set from 
+> f2fs_nm_info->dirty_set[0] to f2fs_nm_info->dirty_set[NAT_ENTRY_PER_BLOCK], where
+> gang_lookup and sort can be avoid.
+>     
+> footprint of this algorithm:  sizeof(struct list_head)*NAT_ENTRY_PER_BLOCK
+>                               = 8*455 = 3.6k bytes
+> 
+> Same for SIT.
+> 
+> In patch 5), we use array to manage sit_entry_sets instead of list, which 
+> can avoid list travel, and there is no need to alloc/free lab memory.
+> It is low footrpint consuming.
+> 
+> Hou Pengyang (5):
+>   f2fs: use bucket sort to avoid tree lookup and list sort when nat flushing
+>   f2fs: reconstruct sit flushing code
+>   f2fs: use bucket sort to avoid list sort when flush sit entries
+>   f2fs: avoid unnecessary to_journal checking
+>   f2fs: use an array to record sit_entry_set info to make sort fast
+> 
+>  fs/f2fs/f2fs.h    |   5 +-
+>  fs/f2fs/node.c    |  79 ++++++++-----------
+>  fs/f2fs/segment.c | 227 ++++++++++++++++++++++++++----------------------------
+>  fs/f2fs/segment.h |   2 +-
+>  4 files changed, 147 insertions(+), 166 deletions(-)
+> 
 > -- 
-> 2.13.0.67.g10c78a162fa8
+> 2.10.1
 > 
-> >  	unlock_new_inode(inode);
-> >  	trace_f2fs_iget(inode);
-> >  	return inode;
-> > 
+> 
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
