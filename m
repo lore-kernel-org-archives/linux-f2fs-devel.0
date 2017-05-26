@@ -1,25 +1,22 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: Do not issue small discards in LFS
- mode
-Date: Fri, 26 May 2017 16:16:50 +0800
-Message-ID: <9287ca85-e796-3216-6496-8ead3a786467@huawei.com>
-References: <20170526080440.11160-1-damien.lemoal@wdc.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: remove false-positive bug_on
+Date: Fri, 26 May 2017 16:59:23 -0700
+Message-ID: <20170526235923.31058-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1dEAQK-0002w2-2J
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1dEP8n-0000IH-79
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 26 May 2017 08:16:40 +0000
-Received: from szxga03-in.huawei.com ([45.249.212.189])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1dEAQH-00031h-7E
+	Fri, 26 May 2017 23:59:33 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1dEP8m-0006YZ-8p
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 26 May 2017 08:16:40 +0000
-In-Reply-To: <20170526080440.11160-1-damien.lemoal@wdc.com>
+	Fri, 26 May 2017 23:59:33 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,43 +26,32 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Damien Le Moal <damien.lemoal@wdc.com>, linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
-Cc: linux-fsdevel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-On 2017/5/26 16:04, Damien Le Moal wrote:
-> clear_prefree_segments() issues small discards after discarding full
-> segments. These small discards may not be section aligned, so not zone
-> aligned on a zoned block device, causing __f2fs_iissue_discard_zone() to fail.
-> Fix this by not issuing small discards for a volume mounted with the BLKZONED
-> feature enabled.
-> 
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+If we got failure from both of create and evict_inode, we can hit this wrong
+bug_on.
 
-This version looks good to me.
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/inode.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
-
-> ---
->  fs/f2fs/segment.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 9684585..1279650 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -1322,7 +1322,8 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->  					sbi->blocks_per_seg, cur_pos);
->  			len = next_pos - cur_pos;
->  
-> -			if (force && len < cpc->trim_minlen)
-> +			if (f2fs_sb_mounted_blkzoned(sbi->sb) ||
-> +			    (force && len < cpc->trim_minlen))
->  				goto skip;
->  
->  			f2fs_issue_discard(sbi, entry->start_blkaddr + cur_pos,
-> 
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index e53c784ab11e..5673b0bd83b5 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -426,8 +426,6 @@ void f2fs_evict_inode(struct inode *inode)
+ 		alloc_nid_failed(sbi, inode->i_ino);
+ 		clear_inode_flag(inode, FI_FREE_NID);
+ 	}
+-	f2fs_bug_on(sbi, err &&
+-		!exist_written_data(sbi, inode->i_ino, ORPHAN_INO));
+ out_clear:
+ 	fscrypt_put_encryption_info(inode, NULL);
+ 	clear_inode(inode);
+-- 
+2.13.0.rc1.294.g07d810a77f-goog
 
 
 ------------------------------------------------------------------------------
