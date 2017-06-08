@@ -1,725 +1,553 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: dax: implement direct access
-Date: Wed, 7 Jun 2017 23:42:27 +0800
-Message-ID: <327fe770-dc35-2158-a032-c270f10b264f@kernel.org>
+From: kbuild test robot <lkp@intel.com>
+Subject: Re: [PATCH v3] f2fs: dax: implement direct access
+Date: Thu, 8 Jun 2017 14:37:32 +0800
+Message-ID: <201706081400.lVtm8m79%fengguang.wu@intel.com>
 References: <1496827763-575-1-git-send-email-sunqiuyang@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="KsGdsel6WgEHnImy"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <1496827763-575-1-git-send-email-sunqiuyang@huawei.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: sunqiuyang <sunqiuyang@huawei.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, sunqiuyang@huawei.com
 List-Id: linux-f2fs-devel.lists.sourceforge.net
+
+
+--KsGdsel6WgEHnImy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 Hi Qiuyang,
 
-On 2017/6/7 17:29, sunqiuyang wrote:
-> From: Qiuyang Sun <sunqiuyang@huawei.com>
-> 
-> This is a new version of PATCH v2 2/2 with the following minor changes:
-> - In dax_move_data_page(), the call of allocate_data_block() is changed
->   according to the new definition of this function in f2fs-dev, and the 
->   usage of wio_mutex is removed;
-> - put_dax() is added in f2fs_iomap_end().
-> 
-> Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
-> ---
->  fs/f2fs/data.c   |  93 ++++++++++++++++++++++++++
->  fs/f2fs/f2fs.h   |   8 +++
->  fs/f2fs/file.c   | 194 ++++++++++++++++++++++++++++++++++++++++++++++++++++++-
->  fs/f2fs/gc.c     |  93 ++++++++++++++++++++++++--
->  fs/f2fs/inline.c |   4 ++
->  fs/f2fs/namei.c  |   6 ++
->  fs/f2fs/super.c  |  15 +++++
->  7 files changed, 407 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 7d3af48..2285a10 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -2257,3 +2257,96 @@ int f2fs_migrate_page(struct address_space *mapping,
->  	.migratepage    = f2fs_migrate_page,
->  #endif
->  };
-> +
-> +#ifdef CONFIG_FS_DAX
-> +#include <linux/iomap.h>
-> +#include <linux/dax.h>
-> +
-> +static int f2fs_iomap_begin(struct inode *inode, loff_t offset,
-> +	loff_t length, unsigned int flags, struct iomap *iomap)
-> +{
-> +	struct block_device *bdev;
-> +	unsigned long first_block = F2FS_BYTES_TO_BLK(offset);
-> +	unsigned long last_block = F2FS_BYTES_TO_BLK(offset + length - 1);
-> +	struct f2fs_map_blocks map;
-> +	int ret;
-> +	loff_t original_i_size = i_size_read(inode);
-> +
-> +	if (WARN_ON_ONCE(f2fs_has_inline_data(inode)))
-> +		return -ERANGE;
-> +
-> +	map.m_lblk = first_block;
-> +	map.m_len = last_block - first_block + 1;
-> +	map.m_next_pgofs = NULL;
-> +
-> +	if (!(flags & IOMAP_WRITE))
-> +		ret = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_READ);
-> +	else {
-> +		ret = f2fs_map_blocks(inode, &map, 1, F2FS_GET_BLOCK_PRE_DIO);
-> +	/* i_size should be kept here and changed later in f2fs_iomap_end */
-> +		if (i_size_read(inode) != original_i_size)
-> +			f2fs_i_size_write(inode, original_i_size);
+[auto build test ERROR on f2fs/dev]
+[also build test ERROR on v4.12-rc4 next-20170607]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-If we allocated partial blocks in f2fs_map_blocks, then failed to
-allocate left ones due to ENOSPC or ENOMEM..., it needs to do the
-truncation according to original i_size.
+url:    https://github.com/0day-ci/linux/commits/sunqiuyang/f2fs-dax-implement-direct-access/20170608-140734
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev
+config: x86_64-randconfig-x010-201723 (attached as .config)
+compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
+reproduce:
+        # save the attached .config to linux build tree
+        make ARCH=x86_64 
 
-> +	}
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	iomap->flags = 0;
-> +	bdev = inode->i_sb->s_bdev;
-> +	iomap->bdev = bdev;
-> +	if (blk_queue_dax(bdev->bd_queue))
-> +		iomap->dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
-> +	else
-> +		iomap->dax_dev = NULL;
-> +	iomap->offset = F2FS_BLK_TO_BYTES((u64)first_block);
-> +
-> +	if (map.m_len == 0) {
-> +		iomap->type = IOMAP_HOLE;
-> +		iomap->blkno = IOMAP_NULL_BLOCK;
-> +		iomap->length = F2FS_BLKSIZE;
-> +	} else {
-> +		if (map.m_flags & F2FS_MAP_MAPPED) {
-> +			iomap->type = IOMAP_MAPPED;
-> +		} else if (map.m_flags & F2FS_MAP_UNWRITTEN) {
-> +			iomap->type = IOMAP_UNWRITTEN;
+All errors (new ones prefixed by >>):
 
-For read path, if blkaddr loaded in dnode is NEW_ADDR, we will set both
-F2FS_MAP_MAPPED and F2FS_MAP_UNWRITTEN flag in m_flags. With above
-condition we will set IOMAP_MAPPED instead of IOMAP_UNWRITTEN which may
-result in incorrectly using of map.m_pblk. So how about reverse above
-judgment condition to correct it?
+   fs/f2fs/file.c: In function 'f2fs_dax_huge_fault':
+>> fs/f2fs/file.c:124:26: error: 'struct f2fs_inode_info' has no member named 'i_mmap_sem'; did you mean 'i_sem'?
+     down_read(&F2FS_I(inode)->i_mmap_sem);
+                             ^~
+   fs/f2fs/file.c:126:24: error: 'struct f2fs_inode_info' has no member named 'i_mmap_sem'; did you mean 'i_sem'?
+     up_read(&F2FS_I(inode)->i_mmap_sem);
+                           ^~
+   fs/f2fs/file.c: In function 'f2fs_dax_pfn_mkwrite':
+   fs/f2fs/file.c:147:26: error: 'struct f2fs_inode_info' has no member named 'i_mmap_sem'; did you mean 'i_sem'?
+     down_read(&F2FS_I(inode)->i_mmap_sem);
+                             ^~
+   fs/f2fs/file.c:153:24: error: 'struct f2fs_inode_info' has no member named 'i_mmap_sem'; did you mean 'i_sem'?
+     up_read(&F2FS_I(inode)->i_mmap_sem);
+                           ^~
+--
+   fs/f2fs/gc.c: In function 'dax_move_data_page':
+>> fs/f2fs/gc.c:731:40: error: 'struct f2fs_inode_info' has no member named 'i_mmap_sem'; did you mean 'i_sem'?
+     if (!down_write_trylock(&F2FS_I(inode)->i_mmap_sem))
+                                           ^~
+   fs/f2fs/gc.c:783:25: error: 'struct f2fs_inode_info' has no member named 'i_mmap_sem'; did you mean 'i_sem'?
+     up_write(&F2FS_I(inode)->i_mmap_sem);
+                            ^~
 
-> +		} else {
-> +			WARN_ON_ONCE(1);
-> +			return -EIO;
-> +		}
-> +		iomap->blkno =
-> +			(sector_t)map.m_pblk << F2FS_LOG_SECTORS_PER_BLOCK;
-> +		iomap->length = F2FS_BLK_TO_BYTES((u64)map.m_len);
-> +	}
-> +
-> +	if (map.m_flags & F2FS_MAP_NEW)
-> +		iomap->flags |= IOMAP_F_NEW;
-> +	return 0;
-> +}
-> +
-> +static int f2fs_iomap_end(struct inode *inode, loff_t offset, loff_t length,
-> +	ssize_t written, unsigned int flags, struct iomap *iomap)
-> +{
-> +	put_dax(iomap->dax_dev);
+vim +124 fs/f2fs/file.c
 
-Why should we use dax_get_by_host & put_dax here?
+   118		bool write = vmf->flags & FAULT_FLAG_WRITE;
+   119	
+   120		if (write) {
+   121			sb_start_pagefault(sb);
+   122			file_update_time(vmf->vma->vm_file);
+   123		}
+ > 124		down_read(&F2FS_I(inode)->i_mmap_sem);
+   125		result = dax_iomap_fault(vmf, pe_size, &f2fs_iomap_ops);
+   126		up_read(&F2FS_I(inode)->i_mmap_sem);
+   127		if (write)
 
-> +	if (!(flags & IOMAP_WRITE) || (flags & IOMAP_FAULT))
-> +		return 0;
-> +
-> +	if (offset + written > i_size_read(inode))
-> +		f2fs_i_size_write(inode, offset + written);
-> +
-> +	if (iomap->offset + iomap->length >
-> +			ALIGN(i_size_read(inode), F2FS_BLKSIZE)) {
-> +		block_t written_blk = F2FS_BYTES_TO_BLK(offset + written);
-> +		block_t end_blk = F2FS_BYTES_TO_BLK(offset + length);
-> +
-> +		if (written_blk < end_blk)
-> +			f2fs_write_failed(inode->i_mapping, offset + length);
-> +	}
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+--KsGdsel6WgEHnImy
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
 
-> +
-> +	return 0;
-> +}
-> +
-> +struct iomap_ops f2fs_iomap_ops = {
-> +	.iomap_begin	= f2fs_iomap_begin,
-> +	.iomap_end	= f2fs_iomap_end,
-> +};
-> +#endif
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index da70964..e3c2ed4 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -88,6 +88,11 @@ struct f2fs_fault_info {
->  #define F2FS_MOUNT_FAULT_INJECTION	0x00010000
->  #define F2FS_MOUNT_ADAPTIVE		0x00020000
->  #define F2FS_MOUNT_LFS			0x00040000
-> +#ifdef CONFIG_FS_DAX
-> +#define F2FS_MOUNT_DAX			0x00080000 /* Direct Access */
-> +#else
-> +#define F2FS_MOUNT_DAX			0
-> +#endif
->  
->  #define clear_opt(sbi, option)	((sbi)->mount_opt.opt &= ~F2FS_MOUNT_##option)
->  #define set_opt(sbi, option)	((sbi)->mount_opt.opt |= F2FS_MOUNT_##option)
-> @@ -2387,6 +2392,9 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
->  int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
->  			struct page *page, enum migrate_mode mode);
->  #endif
-> +#ifdef CONFIG_FS_DAX
-> +extern struct iomap_ops f2fs_iomap_ops;
-> +#endif
->  
->  /*
->   * gc.c
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index ac8b943..4b070b0 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -23,6 +23,8 @@
->  #include <linux/uio.h>
->  #include <linux/uuid.h>
->  #include <linux/file.h>
-> +#include <linux/dax.h>
-> +#include <linux/iomap.h>
->  
->  #include "f2fs.h"
->  #include "node.h"
-> @@ -121,6 +123,64 @@ static int f2fs_vm_page_mkwrite(struct vm_fault *vmf)
->  	.page_mkwrite	= f2fs_vm_page_mkwrite,
->  };
->  
-> +#ifdef CONFIG_FS_DAX
-> +static int f2fs_dax_huge_fault(struct vm_fault *vmf,
-> +	enum page_entry_size pe_size)
-> +{
-> +	int result;
-> +	struct inode *inode = file_inode(vmf->vma->vm_file);
-> +	struct super_block *sb = inode->i_sb;
-> +	bool write = vmf->flags & FAULT_FLAG_WRITE;
-> +
-> +	if (write) {
-> +		sb_start_pagefault(sb);
-> +		file_update_time(vmf->vma->vm_file);
-> +	}
-> +	down_read(&F2FS_I(inode)->i_mmap_sem);
-> +	result = dax_iomap_fault(vmf, pe_size, &f2fs_iomap_ops);
-> +	up_read(&F2FS_I(inode)->i_mmap_sem);
-> +	if (write)
-> +		sb_end_pagefault(sb);
-> +
-> +	return result;
-> +}
-> +
-> +static int f2fs_dax_fault(struct vm_fault *vmf)
-> +{
-> +	return f2fs_dax_huge_fault(vmf, PE_SIZE_PTE);
-> +}
-> +
-> +static int f2fs_dax_pfn_mkwrite(struct vm_fault *vmf)
-> +{
-> +	struct inode *inode = file_inode(vmf->vma->vm_file);
-> +	struct super_block *sb = inode->i_sb;
-> +	loff_t size;
-> +	int ret;
-> +
-> +	sb_start_pagefault(sb);
-> +	file_update_time(vmf->vma->vm_file);
-> +	down_read(&F2FS_I(inode)->i_mmap_sem);
-> +	size = (i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT;
-> +	if (vmf->pgoff >= size)
-> +		ret = VM_FAULT_SIGBUS;
-> +	else
-> +		ret = dax_pfn_mkwrite(vmf);
-> +	up_read(&F2FS_I(inode)->i_mmap_sem);
-> +	sb_end_pagefault(sb);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct vm_operations_struct f2fs_dax_vm_ops = {
-> +	.fault		= f2fs_dax_fault,
-> +	.huge_fault	= f2fs_dax_huge_fault,
-> +	.page_mkwrite	= f2fs_dax_fault,
-> +	.pfn_mkwrite	= f2fs_dax_pfn_mkwrite,
-> +};
-> +#else
-> +#define f2fs_dax_vm_ops f2fs_file_vm_ops
-> +#endif
-> +
->  static int get_parent_ino(struct inode *inode, nid_t *pino)
->  {
->  	struct dentry *dentry;
-> @@ -436,7 +496,13 @@ static int f2fs_file_mmap(struct file *file, struct vm_area_struct *vma)
->  		return err;
->  
->  	file_accessed(file);
-> -	vma->vm_ops = &f2fs_file_vm_ops;
-> +
-> +	if (IS_DAX(inode)) {
-> +		vma->vm_ops = &f2fs_dax_vm_ops;
-> +		vma->vm_flags |= VM_MIXEDMAP | VM_HUGEPAGE;
-> +	} else
-> +		vma->vm_ops = &f2fs_file_vm_ops;
-> +
->  	return 0;
->  }
->  
-> @@ -520,6 +586,18 @@ static int truncate_partial_data_page(struct inode *inode, u64 from,
->  	if (!offset && !cache_only)
->  		return 0;
->  
-> +#ifdef CONFIG_FS_DAX
-> +	if (IS_DAX(inode)) {
-> +		int ret;
-> +
-> +		down_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
-> +		ret = iomap_zero_range(inode, from, PAGE_SIZE - offset,
-> +			NULL, &f2fs_iomap_ops);
-> +		up_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
-> +		return ret;
-> +	}
-> +#endif
-> +
->  	if (cache_only) {
->  		page = find_lock_page(mapping, index);
->  		if (page && PageUptodate(page))
-> @@ -781,6 +859,19 @@ static int fill_zero(struct inode *inode, pgoff_t index,
->  	if (!len)
->  		return 0;
->  
-> +#ifdef CONFIG_FS_DAX
-> +	if (IS_DAX(inode)) {
-> +		int ret;
-> +
-> +		down_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
-> +		ret = iomap_zero_range(inode,
-> +			F2FS_BLK_TO_BYTES((loff_t)index) + start,
-> +			len, NULL, &f2fs_iomap_ops);
-> +		up_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
-> +		return ret;
-> +	}
-> +#endif
-> +
->  	f2fs_balance_fs(sbi, true);
->  
->  	f2fs_lock_op(sbi);
-> @@ -1103,6 +1194,12 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
->  	loff_t new_size;
->  	int ret;
->  
-> +#ifdef CONFIG_FS_DAX
-> +	/* The current implementation does not apply to DAX files. */
-> +	if (IS_DAX(inode))
-> +		return -EINVAL;
-> +#endif
-> +
->  	if (offset + len >= i_size_read(inode))
->  		return -EINVAL;
->  
-> @@ -1293,6 +1390,12 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
->  	loff_t new_size;
->  	int ret = 0;
->  
-> +#ifdef CONFIG_FS_DAX
-> +	/* The current implementation does not apply to DAX files. */
-> +	if (IS_DAX(inode))
-> +		return -EINVAL;
-> +#endif
-> +
->  	new_size = i_size_read(inode) + len;
->  	ret = inode_newsize_ok(inode, new_size);
->  	if (ret)
-> @@ -1556,6 +1659,11 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
->  	struct inode *inode = file_inode(filp);
->  	int ret;
->  
-> +#ifdef CONFIG_FS_DAX
-> +	if (IS_DAX(inode))
-> +		return -EINVAL;
+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
 
-Should we allow to enable DAX for inode through F2FS_IOC_SETFLAGS? If it
-is allowed, we need to check atomic/volatile tag before dax configuring.
-
-In additional, we should also check dax file for defragment() and
-move_range().
-
-> +#endif
-> +
->  	if (!inode_owner_or_capable(inode))
->  		return -EACCES;
->  
-> @@ -1605,6 +1713,11 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
->  	struct inode *inode = file_inode(filp);
->  	int ret;
->  
-> +#ifdef CONFIG_FS_DAX
-> +	if (IS_DAX(inode))
-> +		return -EINVAL;
-> +#endif
-> +
->  	if (!inode_owner_or_capable(inode))
->  		return -EACCES;
->  
-> @@ -1641,6 +1754,11 @@ static int f2fs_ioc_start_volatile_write(struct file *filp)
->  	struct inode *inode = file_inode(filp);
->  	int ret;
->  
-> +#ifdef CONFIG_FS_DAX
-> +	if (IS_DAX(inode))
-> +		return -EINVAL;
-> +#endif
-> +
->  	if (!inode_owner_or_capable(inode))
->  		return -EACCES;
->  
-> @@ -1676,6 +1794,11 @@ static int f2fs_ioc_release_volatile_write(struct file *filp)
->  	struct inode *inode = file_inode(filp);
->  	int ret;
->  
-> +#ifdef CONFIG_FS_DAX
-> +	if (IS_DAX(inode))
-> +		return -EINVAL;
-> +#endif
-> +
->  	if (!inode_owner_or_capable(inode))
->  		return -EACCES;
->  
-> @@ -1705,6 +1828,11 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
->  	struct inode *inode = file_inode(filp);
->  	int ret;
->  
-> +#ifdef CONFIG_FS_DAX
-> +	if (IS_DAX(inode))
-> +		return -EINVAL;
-> +#endif
-> +
->  	if (!inode_owner_or_capable(inode))
->  		return -EACCES;
->  
-> @@ -2363,6 +2491,61 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->  	}
->  }
->  
-> +#ifdef CONFIG_FS_DAX
-> +static ssize_t f2fs_dax_read_iter(struct kiocb *iocb, struct iov_iter *to)
-> +{
-> +	struct inode *inode = file_inode(iocb->ki_filp);
-> +	ssize_t ret;
-> +
-> +	inode_lock_shared(inode);
-> +
-> +	if (!IS_DAX(inode)) {
-> +		inode_unlock_shared(inode);
-> +		return generic_file_read_iter(iocb, to);
-> +	}
-> +
-> +	down_read(&F2FS_I(inode)->dio_rwsem[READ]);
-> +	ret = dax_iomap_rw(iocb, to, &f2fs_iomap_ops);
-> +	up_read(&F2FS_I(inode)->dio_rwsem[READ]);
-> +	inode_unlock_shared(inode);
-> +
-> +	file_accessed(iocb->ki_filp);
-> +	return ret;
-> +}
-> +
-> +static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
-> +{
-> +	if (!iov_iter_count(to))
-> +		return 0; /* skip atime */
-> +
-> +	if (IS_DAX(file_inode(iocb->ki_filp)))
-> +		return f2fs_dax_read_iter(iocb, to);
-> +
-> +	return generic_file_read_iter(iocb, to);
-> +}
-> +
-> +static ssize_t f2fs_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> +{
-> +	struct inode *inode = file_inode(iocb->ki_filp);
-> +	ssize_t ret;
-> +
-> +	ret = file_remove_privs(iocb->ki_filp);
-> +	if (ret)
-> +		return ret;
-> +	ret = file_update_time(iocb->ki_filp);
-> +	if (ret)
-> +		return ret;
-> +
-> +	down_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
-> +	ret = dax_iomap_rw(iocb, from, &f2fs_iomap_ops);
-> +	up_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
-> +
-> +	return ret;
-> +}
-> +#else
-> +#define f2fs_dax_write_iter	__generic_file_write_iter
-> +#endif
-> +
->  static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  {
->  	struct file *file = iocb->ki_filp;
-> @@ -2384,7 +2567,10 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  			return err;
->  		}
->  		blk_start_plug(&plug);
-> -		ret = __generic_file_write_iter(iocb, from);
-> +		if (IS_DAX(inode))
-> +			ret = f2fs_dax_write_iter(iocb, from);
-> +		else
-> +			ret = __generic_file_write_iter(iocb, from);
->  		blk_finish_plug(&plug);
->  		clear_inode_flag(inode, FI_NO_PREALLOC);
->  	}
-> @@ -2432,7 +2618,11 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->  
->  const struct file_operations f2fs_file_operations = {
->  	.llseek		= f2fs_llseek,
-> +#ifdef CONFIG_FS_DAX
-> +	.read_iter	= f2fs_file_read_iter,
-> +#else
->  	.read_iter	= generic_file_read_iter,
-> +#endif
->  	.write_iter	= f2fs_file_write_iter,
->  	.open		= f2fs_file_open,
->  	.release	= f2fs_release_file,
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index fa3d2e2..3d24afe 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -16,6 +16,7 @@
->  #include <linux/kthread.h>
->  #include <linux/delay.h>
->  #include <linux/freezer.h>
-> +#include <linux/dax.h>
->  
->  #include "f2fs.h"
->  #include "node.h"
-> @@ -700,6 +701,88 @@ static void move_encrypted_block(struct inode *inode, block_t bidx,
->  	f2fs_put_page(page, 1);
->  }
->  
-> +static void dax_move_data_page(struct inode *inode, block_t bidx,
-> +				unsigned int segno, int off)
-> +{
-> +	struct block_device *bdev = inode->i_sb->s_bdev;
-> +	struct dax_device *dax_dev;
-> +	struct dnode_of_data dn;
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> +	struct f2fs_summary sum;
-> +	struct node_info ni;
-> +	block_t old_blkaddr, new_blkaddr;
-> +	int err, id;
-> +	long map_len;
-> +	pgoff_t pgoff;
-> +	void *kaddr_old, *kaddr_new;
-> +	pfn_t pfn;
-> +
-> +	if (blk_queue_dax(bdev->bd_queue))
-> +		dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
-> +	else
-> +		return;
-> +
-> +	if (!check_valid_map(sbi, segno, off))
-> +		return;
-> +
-> +	if (f2fs_is_atomic_file(inode))
-> +		return;
-
-It must not be an atomic opened file, could we change to add bug_on in
-the beginning of this function until we support dax for atomic file?
-
-> +
-> +	if (!down_write_trylock(&F2FS_I(inode)->i_mmap_sem))
-> +		return;
-> +
-> +	unmap_mapping_range(inode->i_mapping, (loff_t)bidx << PAGE_SHIFT,
-> +			PAGE_SIZE, 1);
-> +	/* find the old block address */
-> +	set_new_dnode(&dn, inode, NULL, NULL, 0);
-> +	err = get_dnode_of_data(&dn, bidx, LOOKUP_NODE);
-> +	if (err)
-> +		goto out_map;
-> +	old_blkaddr = dn.data_blkaddr;
-> +	/* This page is already truncated */
-> +	if (old_blkaddr == NULL_ADDR) {
-> +		f2fs_put_dnode(&dn);
-> +		goto out_map;
-> +	}
-> +
-> +	/* allocate a new block address */
-> +	get_node_info(sbi, dn.nid, &ni);
-> +	set_summary(&sum, dn.nid, dn.ofs_in_node, ni.version);
-> +	allocate_data_block(sbi, NULL, old_blkaddr, &new_blkaddr,
-> +			&sum, CURSEG_COLD_DATA, NULL, false);
-> +
-> +	/* copy data page from old to new address in dax_bdev */
-> +	id = dax_read_lock();
-> +	err = bdev_dax_pgoff(bdev, SECTOR_FROM_BLOCK(old_blkaddr),
-> +			PAGE_SIZE, &pgoff);
-> +	if (err)
-
-Once you allocated new block address, meanwhile sit/ssa info will be
-changed as well, so, in error path, we should do the recovery with
-__f2fs_replace_block.
-
-> +		goto unlock;
-> +	map_len = dax_direct_access(dax_dev, pgoff, 1, &kaddr_old, &pfn);
-> +	if (map_len < 0)
-> +		goto unlock;
-> +	err = bdev_dax_pgoff(bdev, SECTOR_FROM_BLOCK(new_blkaddr),
-> +			PAGE_SIZE, &pgoff);
-> +	if (err)
-> +		goto unlock;
-> +	map_len = dax_direct_access(dax_dev, pgoff, 1, &kaddr_new, &pfn);
-> +	if (map_len < 0)
-> +		goto unlock;
-> +	copy_page((void __force *)kaddr_new, (void __force *)kaddr_old);
-> +
-> +	f2fs_update_data_blkaddr(&dn, new_blkaddr);
-> +	set_inode_flag(inode, FI_APPEND_WRITE);
-> +	if (bidx == 0)
-> +		set_inode_flag(inode, FI_FIRST_BLOCK_WRITTEN);
-> +	f2fs_put_dnode(&dn);
-
-we should include f2fs_put_dnode in error path.
-
-> +
-> +unlock:
-> +	dax_read_unlock(id);
-> +out_map:
-> +	unmap_mapping_range(inode->i_mapping, (loff_t)bidx << PAGE_SHIFT,
-> +			PAGE_SIZE, 1);
-> +	up_write(&F2FS_I(inode)->i_mmap_sem);
-
-We need release dax_dev here.
-
-> +}
-> +
->  static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->  							unsigned int segno, int off)
->  {
-> @@ -818,9 +901,9 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->  			if (IS_ERR(inode) || is_bad_inode(inode))
->  				continue;
->  
-> -			/* if encrypted inode, let's go phase 3 */
-> -			if (f2fs_encrypted_inode(inode) &&
-> -						S_ISREG(inode->i_mode)) {
-> +			/* if DAX or encrypted inode, let's go phase 3 */
-> +			if (IS_DAX(inode) || (f2fs_encrypted_inode(inode) &&
-> +						S_ISREG(inode->i_mode))) {
->  				add_gc_inode(gc_list, inode);
->  				continue;
->  			}
-> @@ -858,7 +941,9 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->  
->  			start_bidx = start_bidx_of_node(nofs, inode)
->  								+ ofs_in_node;
-> -			if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
-> +			if (IS_DAX(inode))
-> +				dax_move_data_page(inode, start_bidx, segno, off);
-> +			else if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
->  				move_encrypted_block(inode, start_bidx, segno, off);
->  			else
->  				move_data_page(inode, start_bidx, gc_type, segno, off);
-> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> index e4c527c..f858817 100644
-> --- a/fs/f2fs/inline.c
-> +++ b/fs/f2fs/inline.c
-> @@ -28,6 +28,10 @@ bool f2fs_may_inline_data(struct inode *inode)
->  	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
->  		return false;
->  
-> +#ifdef CONFIG_FS_DAX
-> +	if (IS_DAX(inode))
-> +		return false;
-> +#endif
->  	return true;
->  }
->  
-> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index c31b40e..f3edc6c 100644
-> --- a/fs/f2fs/namei.c
-> +++ b/fs/f2fs/namei.c
-> @@ -60,6 +60,12 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
->  	if (f2fs_encrypted_inode(dir) && f2fs_may_encrypt(inode))
->  		f2fs_set_encrypted_inode(inode);
->  
-> +#ifdef CONFIG_FS_DAX
-> +	if (test_opt(sbi, DAX) && S_ISREG(inode->i_mode) &&
-> +	!f2fs_has_inline_data(inode) && !f2fs_encrypted_inode(inode))
-
-Coding style.
-
-if (test_opt(sbi, DAX) && S_ISREG(inode->i_mode) &&
-	!f2fs_has_inline_data(inode) && !f2fs_encrypted_inode(inode))
-
-> +		inode->i_flags |= S_DAX;
-> +#endif
-> +
->  	set_inode_flag(inode, FI_NEW_INODE);
->  
->  	if (test_opt(sbi, INLINE_XATTR))
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index ddd2973..02cda00 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -108,6 +108,7 @@ enum {
->  	Opt_fault_injection,
->  	Opt_lazytime,
->  	Opt_nolazytime,
-> +	Opt_dax,
->  	Opt_err,
->  };
->  
-> @@ -143,6 +144,7 @@ enum {
->  	{Opt_fault_injection, "fault_injection=%u"},
->  	{Opt_lazytime, "lazytime"},
->  	{Opt_nolazytime, "nolazytime"},
-> +	{Opt_dax, "dax"},
->  	{Opt_err, NULL},
->  };
->  
-> @@ -490,6 +492,15 @@ static int parse_options(struct super_block *sb, char *options)
->  			f2fs_msg(sb, KERN_INFO, "noacl options not supported");
->  			break;
->  #endif
-> +#ifdef CONFIG_FS_DAX
-> +		case Opt_dax:
-> +			set_opt(sbi, DAX);
-> +			break;
-> +#else
-> +		case Opt_dax:
-> +			f2fs_msg(sb, KERN_INFO, "dax options not supported");
-
-s/options/option
-
-Thanks,
-
-> +			break;
-> +#endif
->  		case Opt_active_logs:
->  			if (args->from && match_int(args, &arg))
->  				return -EINVAL;
-> @@ -986,6 +997,10 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
->  	if (test_opt(sbi, FAULT_INJECTION))
->  		seq_puts(seq, ",fault_injection");
->  #endif
-> +#ifdef CONFIG_FS_DAX
-> +	if (test_opt(sbi, DAX))
-> +		seq_puts(seq, ",dax");
-> +#endif
->  
->  	return 0;
->  }
-> 
+--KsGdsel6WgEHnImy--
