@@ -1,24 +1,27 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: use proper variable name
-Date: Fri, 9 Jun 2017 14:00:16 +0800
-Message-ID: <4cfa5ab3-ef4b-3089-5513-b7cc35f89805@huawei.com>
-References: <2114b573.218.15c89d6ccd8.Coremail.kernelpatch@126.com>
+From: Hou Pengyang <houpengyang@huawei.com>
+Subject: Re: [PATCH 1/5] f2fs: use bucket sort to avoid tree
+ lookup and list sort when nat flushing
+Date: Fri, 9 Jun 2017 21:48:08 +0800
+Message-ID: <593AA718.6090501@huawei.com>
+References: <20170520122435.17574-1-houpengyang@huawei.com>
+	<20170520122435.17574-2-houpengyang@huawei.com>
+	<456045b5-2f5c-f85b-66f6-4a786c623f2d@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1dJCwG-0003OJ-Uh
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <houpengyang@huawei.com>) id 1dJKHB-0003GX-NT
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 09 Jun 2017 05:58:28 +0000
-Received: from szxga03-in.huawei.com ([45.249.212.189])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1dJCwF-0002q8-DN
+	Fri, 09 Jun 2017 13:48:33 +0000
+Received: from szxga02-in.huawei.com ([45.249.212.188])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1dJKH9-0004j6-Hn
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 09 Jun 2017 05:58:28 +0000
-In-Reply-To: <2114b573.218.15c89d6ccd8.Coremail.kernelpatch@126.com>
+	Fri, 09 Jun 2017 13:48:33 +0000
+In-Reply-To: <456045b5-2f5c-f85b-66f6-4a786c623f2d@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,97 +31,197 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Tiezhu Yang <kernelpatch@126.com>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
 
-On 2017/6/9 6:32, Tiezhu Yang wrote:
-> It is better to use variable name "inline_dentry" instead of "dentry_blk"
-> when data type is "struct f2fs_inline_dentry". This patch has no functional
-> changes, just to make code more readable especially when call the function
-> make_dentry_ptr_inline() and f2fs_convert_inline_dir().
-> 
-> Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
+On 2017/6/7 17:44, Chao Yu wrote:
+> On 2017/5/20 20:24, Hou Pengyang wrote:
+>> during flush_nat_entries, we do:
+>> 1) gang_lookup a radix tree, find all the dirty nat_entry_set;
+>> 2) sort nat_entry_set by nat_entry_set->entry_cnt, in order to
+>>      write to journal as much as possible to avoid unnessary IO.
+>>
+>> This patch optimize the look_up & sort algorithm by introducing an array:
+>>
+>>      f2fs_nm_info->dirty_set[NAT_ENTRY_PER_BLOCK+1];
+>>      (struct list_head dirty_set[NAT_ENTRY_PER_BLOCK + 1])
+>>
+>> dirty_set[1] links all nat_entry_set whose entry_cnt is 1
+>> dirty_set[2] links all nat_entry_set whose entry_cnt is 2
+>> ......
+>> dirty_set[N] links all nat_entry_set whose entry_cnt is N
+>>
+>> as one NAT block has NAT_ENTRY_PER_BLOCK entries at MOST, so there should NOT
+>> be one nat_entry_set whose entry_cnt is larger than NAT_ENTRY_PER_BLOCK.
+>>
+>> So it is enough for f2fs_nm_info->dirty_set to link all nat_entry_sets in system.
+>>
+>> Update:
+>>      we update nat_entry_set in real-time, e.g originally nat_entry_set->entry_cnt is
+>> 1, and licked by dirty_set[1]; then call __set_nat_cache_dirty to increase nat_entry'sentry_cnt, we move this nat_entry_set ot dirty_set[2]'s tail, no need to compare.
+>>
+>> Flush:
+>>      when flush dirty nat_entry_set, we just flush nat_entry_set from
+>> f2fs_nm_info->dirty_set[0] to f2fs_nm_info->dirty_set[NAT_ENTRY_PER_BLOCK], where
+>> gang_lookup and sort can be avoid.
+>>
+>> footprint of this algorithm:  sizeof(struct list_head)*NAT_ENTRY_PER_BLOCK
+>>                                = 8*455 = 3.6k bytes
+>>
+>> Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
+>> ---
+>>   fs/f2fs/f2fs.h |  2 ++
+>>   fs/f2fs/node.c | 56 ++++++++++++++++++++++----------------------------------
+>>   2 files changed, 24 insertions(+), 34 deletions(-)
+>>
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 093d68a..88a96bb 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -628,6 +628,8 @@ struct f2fs_nm_info {
+>>
+>>   	/* for checkpoint */
+>>   	char *nat_bitmap;		/* NAT bitmap pointer */
+>> +	/* list dirty_set whose */
+>> +	struct list_head dirty_set[NAT_ENTRY_PER_BLOCK + 1]; /* for */
+>>
+>>   	unsigned int nat_bits_blocks;	/* # of nat bits blocks */
+>>   	unsigned char *nat_bits;	/* NAT bits blocks */
+>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+>> index d22db8c..340c33d 100644
+>> --- a/fs/f2fs/node.c
+>> +++ b/fs/f2fs/node.c
+>> @@ -174,13 +174,14 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
+>>   	list_move_tail(&ne->list, &head->entry_list);
+>>   	nm_i->dirty_nat_cnt++;
+>>   	head->entry_cnt++;
+>> +	list_move_tail(&head->set_list, &(nm_i->dirty_set[head->entry_cnt]));
+>>   	set_nat_flag(ne, IS_DIRTY, true);
+>>   }
+>>
+>>   static void __clear_nat_cache_dirty(struct f2fs_nm_info *nm_i,
+>>   		struct nat_entry_set *set, struct nat_entry *ne)
+>>   {
+>> -	list_move_tail(&ne->list, &nm_i->nat_entries);
+>> +	list_move_tail(&ne->list, &nm_i->nat_entries); /* to be shrinked */
+>>   	set_nat_flag(ne, IS_DIRTY, false);
+>>   	set->entry_cnt--;
+>>   	nm_i->dirty_nat_cnt--;
+>> @@ -2340,24 +2341,6 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
+>>   	up_write(&curseg->journal_rwsem);
+>>   }
+>>
+>> -static void __adjust_nat_entry_set(struct nat_entry_set *nes,
+>> -						struct list_head *head, int max)
+>> -{
+>> -	struct nat_entry_set *cur;
+>> -
+>> -	if (nes->entry_cnt >= max)
+>> -		goto add_out;
+>> -
+>> -	list_for_each_entry(cur, head, set_list) {
+>> -		if (cur->entry_cnt >= nes->entry_cnt) {
+>> -			list_add(&nes->set_list, cur->set_list.prev);
+>> -			return;
+>> -		}
+>> -	}
+>> -add_out:
+>> -	list_add_tail(&nes->set_list, head);
+>> -}
+>> -
+>>   static void __update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
+>>   						struct page *page)
+>>   {
+>> @@ -2460,9 +2443,11 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+>>
+>>   	/* Allow dirty nats by node block allocation in write_begin */
+>>   	if (!set->entry_cnt) {
+>> +		list_del(&set->set_list);
+>>   		radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
+>>   		kmem_cache_free(nat_entry_set_slab, set);
+>> -	}
+>> +	} else
+>> +		f2fs_bug_on(sbi, 1);
+>
+> Should remove this bug_on, because there will be new nat entries allocated
+> during flush nat entries since we allow buffered write during checkpoint.
+>
+> Thanks,
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
+hi, chao, I've got it. I will send a new version of this patch.
 Thanks,
+>
+>>   }
+>>
+>>   /*
+>> @@ -2473,10 +2458,8 @@ void flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>   	struct f2fs_nm_info *nm_i = NM_I(sbi);
+>>   	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+>>   	struct f2fs_journal *journal = curseg->journal;
+>> -	struct nat_entry_set *setvec[SETVEC_SIZE];
+>>   	struct nat_entry_set *set, *tmp;
+>> -	unsigned int found;
+>> -	nid_t set_idx = 0;
+>> +	int i;
+>>   	LIST_HEAD(sets);
+>>
+>>   	if (!nm_i->dirty_nat_cnt)
+>> @@ -2493,19 +2476,12 @@ void flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>   		!__has_cursum_space(journal, nm_i->dirty_nat_cnt, NAT_JOURNAL))
+>>   		remove_nats_in_journal(sbi);
+>>
+>> -	while ((found = __gang_lookup_nat_set(nm_i,
+>> -					set_idx, SETVEC_SIZE, setvec))) {
+>> -		unsigned idx;
+>> -		set_idx = setvec[found - 1]->set + 1;
+>> -		for (idx = 0; idx < found; idx++)
+>> -			__adjust_nat_entry_set(setvec[idx], &sets,
+>> -						MAX_NAT_JENTRIES(journal));
+>> +	for (i = 0; i <= NAT_ENTRY_PER_BLOCK; i++) {
+>> +		list_for_each_entry_safe(set, tmp, &nm_i->dirty_set[i], set_list)
+>> +			__flush_nat_entry_set(sbi, set, cpc);
+>> +		f2fs_bug_on(sbi, !list_empty(&nm_i->dirty_set[i]));
+>>   	}
+>>
+>> -	/* flush dirty nats in nat entry set */
+>> -	list_for_each_entry_safe(set, tmp, &sets, set_list)
+>> -		__flush_nat_entry_set(sbi, set, cpc);
+>> -
+>>   	up_write(&nm_i->nat_tree_lock);
+>>   	/* Allow dirty nats by node block allocation in write_begin */
+>>   }
+>> @@ -2668,6 +2644,15 @@ static int init_free_nid_cache(struct f2fs_sb_info *sbi)
+>>   	return 0;
+>>   }
+>>
+>> +static void init_dirty_set_list(struct f2fs_sb_info *sbi)
+>> +{
+>> +	struct f2fs_nm_info *nm_i = NM_I(sbi);
+>> +	int i;
+>> +
+>> +	for (i = 0; i <= NAT_ENTRY_PER_BLOCK; i++)
+>> +		INIT_LIST_HEAD(&nm_i->dirty_set[i]);
+>> +}
+>> +
+>>   int build_node_manager(struct f2fs_sb_info *sbi)
+>>   {
+>>   	int err;
+>> @@ -2687,6 +2672,9 @@ int build_node_manager(struct f2fs_sb_info *sbi)
+>>   	/* load free nid status from nat_bits table */
+>>   	load_free_nid_bitmap(sbi);
+>>
+>> +	/* init dirty set list */
+>> +	init_dirty_set_list(sbi);
+>> +
+>>   	build_free_nids(sbi, true, true);
+>>   	return 0;
+>>   }
+>>
+>
+>
+> .
+>
 
-> ---
->  fs/f2fs/inline.c | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> index e4c527c..e0fd437 100644
-> --- a/fs/f2fs/inline.c
-> +++ b/fs/f2fs/inline.c
-> @@ -316,12 +316,12 @@ struct f2fs_dir_entry *find_in_inline_dir(struct inode *dir,
->  int make_empty_inline_dir(struct inode *inode, struct inode *parent,
->  							struct page *ipage)
->  {
-> -	struct f2fs_inline_dentry *dentry_blk;
-> +	struct f2fs_inline_dentry *inline_dentry;
->  	struct f2fs_dentry_ptr d;
->  
-> -	dentry_blk = inline_data_addr(ipage);
-> +	inline_dentry = inline_data_addr(ipage);
->  
-> -	make_dentry_ptr_inline(NULL, &d, dentry_blk);
-> +	make_dentry_ptr_inline(NULL, &d, inline_dentry);
->  	do_make_empty_dir(inode, parent, &d);
->  
->  	set_page_dirty(ipage);
-> @@ -500,7 +500,7 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *new_name,
->  	struct page *ipage;
->  	unsigned int bit_pos;
->  	f2fs_hash_t name_hash;
-> -	struct f2fs_inline_dentry *dentry_blk = NULL;
-> +	struct f2fs_inline_dentry *inline_dentry = NULL;
->  	struct f2fs_dentry_ptr d;
->  	int slots = GET_DENTRY_SLOTS(new_name->len);
->  	struct page *page = NULL;
-> @@ -510,11 +510,11 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *new_name,
->  	if (IS_ERR(ipage))
->  		return PTR_ERR(ipage);
->  
-> -	dentry_blk = inline_data_addr(ipage);
-> -	bit_pos = room_for_filename(&dentry_blk->dentry_bitmap,
-> +	inline_dentry = inline_data_addr(ipage);
-> +	bit_pos = room_for_filename(&inline_dentry->dentry_bitmap,
->  						slots, NR_INLINE_DENTRY);
->  	if (bit_pos >= NR_INLINE_DENTRY) {
-> -		err = f2fs_convert_inline_dir(dir, ipage, dentry_blk);
-> +		err = f2fs_convert_inline_dir(dir, ipage, inline_dentry);
->  		if (err)
->  			return err;
->  		err = -EAGAIN;
-> @@ -534,7 +534,7 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *new_name,
->  	f2fs_wait_on_page_writeback(ipage, NODE, true);
->  
->  	name_hash = f2fs_dentry_hash(new_name, NULL);
-> -	make_dentry_ptr_inline(NULL, &d, dentry_blk);
-> +	make_dentry_ptr_inline(NULL, &d, inline_dentry);
->  	f2fs_update_dentry(ino, mode, &d, new_name, name_hash, bit_pos);
->  
->  	set_page_dirty(ipage);
-> @@ -586,14 +586,14 @@ bool f2fs_empty_inline_dir(struct inode *dir)
->  	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
->  	struct page *ipage;
->  	unsigned int bit_pos = 2;
-> -	struct f2fs_inline_dentry *dentry_blk;
-> +	struct f2fs_inline_dentry *inline_dentry;
->  
->  	ipage = get_node_page(sbi, dir->i_ino);
->  	if (IS_ERR(ipage))
->  		return false;
->  
-> -	dentry_blk = inline_data_addr(ipage);
-> -	bit_pos = find_next_bit_le(&dentry_blk->dentry_bitmap,
-> +	inline_dentry = inline_data_addr(ipage);
-> +	bit_pos = find_next_bit_le(&inline_dentry->dentry_bitmap,
->  					NR_INLINE_DENTRY,
->  					bit_pos);
->  
-> 
 
 
 ------------------------------------------------------------------------------
