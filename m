@@ -1,27 +1,26 @@
 From: Hou Pengyang <houpengyang@huawei.com>
-Subject: Re: [PATCH 1/5] f2fs: use bucket sort to avoid tree
- lookup and list sort when nat flushing
-Date: Fri, 9 Jun 2017 21:48:08 +0800
-Message-ID: <593AA718.6090501@huawei.com>
+Subject: Re: [PATCH v2 0/5] f2fs: improve performance of NAT/SIT
+ flushing during cp
+Date: Fri, 9 Jun 2017 21:48:27 +0800
+Message-ID: <593AA72B.2080103@huawei.com>
 References: <20170520122435.17574-1-houpengyang@huawei.com>
-	<20170520122435.17574-2-houpengyang@huawei.com>
-	<456045b5-2f5c-f85b-66f6-4a786c623f2d@huawei.com>
+	<20170524041425.GB30325@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <houpengyang@huawei.com>) id 1dJKHB-0003GX-NT
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <houpengyang@huawei.com>) id 1dJKHP-0003GE-5q
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 09 Jun 2017 13:48:33 +0000
-Received: from szxga02-in.huawei.com ([45.249.212.188])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1dJKH9-0004j6-Hn
+	Fri, 09 Jun 2017 13:48:47 +0000
+Received: from szxga03-in.huawei.com ([45.249.212.189])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1dJKHN-0000fj-M7
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 09 Jun 2017 13:48:33 +0000
-In-Reply-To: <456045b5-2f5c-f85b-66f6-4a786c623f2d@huawei.com>
+	Fri, 09 Jun 2017 13:48:47 +0000
+In-Reply-To: <20170524041425.GB30325@jaegeuk-macbookpro.roam.corp.google.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,11 +30,33 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, chao@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/6/7 17:44, Chao Yu wrote:
-> On 2017/5/20 20:24, Hou Pengyang wrote:
+On 2017/5/24 12:14, Jaegeuk Kim wrote:
+> Hi Pengyang,
+>
+> Could you please shed a light on some performance gains by this?
+
+Hi, Jaegeuk,
+Sorry for replying so late.
+
+I've tested the duration of nat-radix-tree traveling and list-sort of
+nat-entry, it is about *100us* averagely during fragmentation(arm64 mobile).
+
+100us seems nobody for CP, but I still think it make senses for scenario
+where massive dirty nat_entries exist in system(corner case, hard to 
+produce).
+
+Thanks,
+>
+> Thanks,
+>
+> On 05/20, Hou Pengyang wrote:
+>> This patches are to designed to optimize NAT/SIT flushing procedure:
+>>
+>> patch 1) -- patch 3):
+>>
 >> during flush_nat_entries, we do:
 >> 1) gang_lookup a radix tree, find all the dirty nat_entry_set;
 >> 2) sort nat_entry_set by nat_entry_set->entry_cnt, in order to
@@ -58,7 +79,8 @@ On 2017/6/7 17:44, Chao Yu wrote:
 >>
 >> Update:
 >>      we update nat_entry_set in real-time, e.g originally nat_entry_set->entry_cnt is
->> 1, and licked by dirty_set[1]; then call __set_nat_cache_dirty to increase nat_entry'sentry_cnt, we move this nat_entry_set ot dirty_set[2]'s tail, no need to compare.
+>> 1, and licked by dirty_set[1]; then call __set_nat_cache_dirty to increase nat_entry's
+>> entry_cnt, we move this nat_entry_set ot dirty_set[2]'s tail, no need to compare.
 >>
 >> Flush:
 >>      when flush dirty nat_entry_set, we just flush nat_entry_set from
@@ -68,156 +90,36 @@ On 2017/6/7 17:44, Chao Yu wrote:
 >> footprint of this algorithm:  sizeof(struct list_head)*NAT_ENTRY_PER_BLOCK
 >>                                = 8*455 = 3.6k bytes
 >>
->> Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
->> ---
->>   fs/f2fs/f2fs.h |  2 ++
->>   fs/f2fs/node.c | 56 ++++++++++++++++++++++----------------------------------
->>   2 files changed, 24 insertions(+), 34 deletions(-)
+>> Same for SIT.
 >>
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index 093d68a..88a96bb 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -628,6 +628,8 @@ struct f2fs_nm_info {
+>> In patch 5), we use array to manage sit_entry_sets instead of list, which
+>> can avoid list travel, and there is no need to alloc/free lab memory.
+>> It is low footrpint consuming.
 >>
->>   	/* for checkpoint */
->>   	char *nat_bitmap;		/* NAT bitmap pointer */
->> +	/* list dirty_set whose */
->> +	struct list_head dirty_set[NAT_ENTRY_PER_BLOCK + 1]; /* for */
+>> Hou Pengyang (5):
+>>    f2fs: use bucket sort to avoid tree lookup and list sort when nat flushing
+>>    f2fs: reconstruct sit flushing code
+>>    f2fs: use bucket sort to avoid list sort when flush sit entries
+>>    f2fs: avoid unnecessary to_journal checking
+>>    f2fs: use an array to record sit_entry_set info to make sort fast
 >>
->>   	unsigned int nat_bits_blocks;	/* # of nat bits blocks */
->>   	unsigned char *nat_bits;	/* NAT bits blocks */
->> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
->> index d22db8c..340c33d 100644
->> --- a/fs/f2fs/node.c
->> +++ b/fs/f2fs/node.c
->> @@ -174,13 +174,14 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
->>   	list_move_tail(&ne->list, &head->entry_list);
->>   	nm_i->dirty_nat_cnt++;
->>   	head->entry_cnt++;
->> +	list_move_tail(&head->set_list, &(nm_i->dirty_set[head->entry_cnt]));
->>   	set_nat_flag(ne, IS_DIRTY, true);
->>   }
+>>   fs/f2fs/f2fs.h    |   5 +-
+>>   fs/f2fs/node.c    |  79 ++++++++-----------
+>>   fs/f2fs/segment.c | 227 ++++++++++++++++++++++++++----------------------------
+>>   fs/f2fs/segment.h |   2 +-
+>>   4 files changed, 147 insertions(+), 166 deletions(-)
 >>
->>   static void __clear_nat_cache_dirty(struct f2fs_nm_info *nm_i,
->>   		struct nat_entry_set *set, struct nat_entry *ne)
->>   {
->> -	list_move_tail(&ne->list, &nm_i->nat_entries);
->> +	list_move_tail(&ne->list, &nm_i->nat_entries); /* to be shrinked */
->>   	set_nat_flag(ne, IS_DIRTY, false);
->>   	set->entry_cnt--;
->>   	nm_i->dirty_nat_cnt--;
->> @@ -2340,24 +2341,6 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
->>   	up_write(&curseg->journal_rwsem);
->>   }
+>> --
+>> 2.10.1
 >>
->> -static void __adjust_nat_entry_set(struct nat_entry_set *nes,
->> -						struct list_head *head, int max)
->> -{
->> -	struct nat_entry_set *cur;
->> -
->> -	if (nes->entry_cnt >= max)
->> -		goto add_out;
->> -
->> -	list_for_each_entry(cur, head, set_list) {
->> -		if (cur->entry_cnt >= nes->entry_cnt) {
->> -			list_add(&nes->set_list, cur->set_list.prev);
->> -			return;
->> -		}
->> -	}
->> -add_out:
->> -	list_add_tail(&nes->set_list, head);
->> -}
->> -
->>   static void __update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
->>   						struct page *page)
->>   {
->> @@ -2460,9 +2443,11 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
 >>
->>   	/* Allow dirty nats by node block allocation in write_begin */
->>   	if (!set->entry_cnt) {
->> +		list_del(&set->set_list);
->>   		radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
->>   		kmem_cache_free(nat_entry_set_slab, set);
->> -	}
->> +	} else
->> +		f2fs_bug_on(sbi, 1);
->
-> Should remove this bug_on, because there will be new nat entries allocated
-> during flush nat entries since we allow buffered write during checkpoint.
->
-> Thanks,
-
-hi, chao, I've got it. I will send a new version of this patch.
-Thanks,
->
->>   }
->>
->>   /*
->> @@ -2473,10 +2458,8 @@ void flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->>   	struct f2fs_nm_info *nm_i = NM_I(sbi);
->>   	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
->>   	struct f2fs_journal *journal = curseg->journal;
->> -	struct nat_entry_set *setvec[SETVEC_SIZE];
->>   	struct nat_entry_set *set, *tmp;
->> -	unsigned int found;
->> -	nid_t set_idx = 0;
->> +	int i;
->>   	LIST_HEAD(sets);
->>
->>   	if (!nm_i->dirty_nat_cnt)
->> @@ -2493,19 +2476,12 @@ void flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->>   		!__has_cursum_space(journal, nm_i->dirty_nat_cnt, NAT_JOURNAL))
->>   		remove_nats_in_journal(sbi);
->>
->> -	while ((found = __gang_lookup_nat_set(nm_i,
->> -					set_idx, SETVEC_SIZE, setvec))) {
->> -		unsigned idx;
->> -		set_idx = setvec[found - 1]->set + 1;
->> -		for (idx = 0; idx < found; idx++)
->> -			__adjust_nat_entry_set(setvec[idx], &sets,
->> -						MAX_NAT_JENTRIES(journal));
->> +	for (i = 0; i <= NAT_ENTRY_PER_BLOCK; i++) {
->> +		list_for_each_entry_safe(set, tmp, &nm_i->dirty_set[i], set_list)
->> +			__flush_nat_entry_set(sbi, set, cpc);
->> +		f2fs_bug_on(sbi, !list_empty(&nm_i->dirty_set[i]));
->>   	}
->>
->> -	/* flush dirty nats in nat entry set */
->> -	list_for_each_entry_safe(set, tmp, &sets, set_list)
->> -		__flush_nat_entry_set(sbi, set, cpc);
->> -
->>   	up_write(&nm_i->nat_tree_lock);
->>   	/* Allow dirty nats by node block allocation in write_begin */
->>   }
->> @@ -2668,6 +2644,15 @@ static int init_free_nid_cache(struct f2fs_sb_info *sbi)
->>   	return 0;
->>   }
->>
->> +static void init_dirty_set_list(struct f2fs_sb_info *sbi)
->> +{
->> +	struct f2fs_nm_info *nm_i = NM_I(sbi);
->> +	int i;
->> +
->> +	for (i = 0; i <= NAT_ENTRY_PER_BLOCK; i++)
->> +		INIT_LIST_HEAD(&nm_i->dirty_set[i]);
->> +}
->> +
->>   int build_node_manager(struct f2fs_sb_info *sbi)
->>   {
->>   	int err;
->> @@ -2687,6 +2672,9 @@ int build_node_manager(struct f2fs_sb_info *sbi)
->>   	/* load free nid status from nat_bits table */
->>   	load_free_nid_bitmap(sbi);
->>
->> +	/* init dirty set list */
->> +	init_dirty_set_list(sbi);
->> +
->>   	build_free_nids(sbi, true, true);
->>   	return 0;
->>   }
->>
->
+>> ------------------------------------------------------------------------------
+>> Check out the vibrant tech community on one of the world's most
+>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+>> _______________________________________________
+>> Linux-f2fs-devel mailing list
+>> Linux-f2fs-devel@lists.sourceforge.net
+>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 >
 > .
 >
