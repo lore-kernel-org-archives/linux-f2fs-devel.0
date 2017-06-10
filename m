@@ -1,25 +1,25 @@
-From: Hou Pengyang <houpengyang@huawei.com>
-Subject: [PATCH 1/5] f2fs: use bucket sort to avoid tree lookup
- and list sort when nat flushing
-Date: Fri, 9 Jun 2017 21:51:33 +0800
-Message-ID: <1497016293-88925-1-git-send-email-houpengyang@huawei.com>
-References: <20170520122435.17574-2-houpengyang@huawei.com>
+From: =?UTF-8?q?Piotr=20Soko=C5=82owski?= <piotrsok2@gmail.com>
+Subject: [PATCH] Bugfix - programm shows proper help communicate
+Date: Sat, 10 Jun 2017 11:27:29 +0200
+Message-ID: <1497086849-192-1-git-send-email-piotrsok2@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <houpengyang@huawei.com>) id 1dJKKY-0003Rw-Eo
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <piotrsok2@gmail.com>) id 1dJcgy-0000VT-Qk
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 09 Jun 2017 13:52:02 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1dJKKW-00018g-92
+	Sat, 10 Jun 2017 09:28:24 +0000
+Received: from mail-lf0-f68.google.com ([209.85.215.68])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1dJcgx-0003jO-49
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 09 Jun 2017 13:52:02 +0000
-In-Reply-To: <20170520122435.17574-2-houpengyang@huawei.com>
+	Sat, 10 Jun 2017 09:28:24 +0000
+Received: by mail-lf0-f68.google.com with SMTP id o28so6515921lfk.1
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Sat, 10 Jun 2017 02:28:23 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,177 +29,542 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, miaoxie@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jacek Kupiec <jacek.kupiec@o2.pl>
 
-during flush_nat_entries, we do: 
-1) gang_lookup a radix tree, find all the dirty nat_entry_set;
-2) sort nat_entry_set by nat_entry_set->entry_cnt, in order to 
-    write to journal as much as possible to avoid unnessary IO. 
+From: Jacek Kupiec <jacek.kupiec@o2.pl>
 
-This patch optimize the look_up & sort algorithm by introducing an array:
-
-    f2fs_nm_info->dirty_set[NAT_ENTRY_PER_BLOCK+1];
-    (struct list_head dirty_set[NAT_ENTRY_PER_BLOCK + 1]) 
-
-dirty_set[1] links all nat_entry_set whose entry_cnt is 1
-dirty_set[2] links all nat_entry_set whose entry_cnt is 2
-......
-dirty_set[N] links all nat_entry_set whose entry_cnt is N
-
-as one NAT block has NAT_ENTRY_PER_BLOCK entries at MOST, so there should NOT 
-be one nat_entry_set whose entry_cnt is larger than NAT_ENTRY_PER_BLOCK.
-
-So it is enough for f2fs_nm_info->dirty_set to link all nat_entry_sets in system.
-
-Update:
-    we update nat_entry_set in real-time, e.g originally nat_entry_set->entry_cnt is
-1, and licked by dirty_set[1]; then call __set_nat_cache_dirty to increase nat_entry'sentry_cnt, we move this nat_entry_set ot dirty_set[2]'s tail, no need to compare.
-
-Flush:
-    when flush dirty nat_entry_set, we just flush nat_entry_set from
-f2fs_nm_info->dirty_set[0] to f2fs_nm_info->dirty_set[NAT_ENTRY_PER_BLOCK], where
-gang_lookup and sort can be avoid.
-    
-footprint of this algorithm:  sizeof(struct list_head)*NAT_ENTRY_PER_BLOCK
-                              = 8*455 = 3.6k bytes
-
-Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
 ---
- fs/f2fs/f2fs.h |  2 ++
- fs/f2fs/node.c | 53 ++++++++++++++++++++---------------------------------
- 2 files changed, 22 insertions(+), 33 deletions(-)
+ fsck/main.c | 479 ++++++++++++++++++++++++++++++++----------------------------
+ 1 file changed, 252 insertions(+), 227 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 093d68a..1cf35c4 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -629,6 +629,8 @@ struct f2fs_nm_info {
- 	/* for checkpoint */
- 	char *nat_bitmap;		/* NAT bitmap pointer */
+diff --git a/fsck/main.c b/fsck/main.c
+index 6c94a70..b0881e8 100644
+--- a/fsck/main.c
++++ b/fsck/main.c
+@@ -108,6 +108,18 @@ void f2fs_parse_options(int argc, char *argv[])
+ 	char *prog = basename(argv[0]);
+ 	int err = NOERROR;
  
-+	struct list_head dirty_set[NAT_ENTRY_PER_BLOCK + 1];
++	if (!strcmp("fsck.f2fs", prog))
++		c.func = FSCK;
++	else if (!strcmp("dump.f2fs", prog))
++		c.func = DUMP;
++	else if (!strcmp("defrag.f2fs", prog))
++		c.func = DEFRAG;
++	else if (!strcmp("resize.f2fs", prog)) 
++		c.func = RESIZE;
++	else if (!strcmp("sload.f2fs", prog))
++		c.func = SLOAD;
++	
 +
- 	unsigned int nat_bits_blocks;	/* # of nat bits blocks */
- 	unsigned char *nat_bits;	/* NAT bits blocks */
- 	unsigned char *full_nat_bits;	/* full NAT pages */
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index d22db8c..454034f 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -174,13 +174,14 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
- 	list_move_tail(&ne->list, &head->entry_list);
- 	nm_i->dirty_nat_cnt++;
- 	head->entry_cnt++;
-+	list_move_tail(&head->set_list, &(nm_i->dirty_set[head->entry_cnt]));
- 	set_nat_flag(ne, IS_DIRTY, true);
- }
+ 	if (argc < 2) {
+ 		MSG(0, "\tError: Device not specified\n");
+ 		error_out();
+@@ -115,261 +127,274 @@ void f2fs_parse_options(int argc, char *argv[])
+ 	c.devices[0].path = strdup(argv[argc - 1]);
+ 	argv[argc-- - 1] = 0;
  
- static void __clear_nat_cache_dirty(struct f2fs_nm_info *nm_i,
- 		struct nat_entry_set *set, struct nat_entry *ne)
- {
--	list_move_tail(&ne->list, &nm_i->nat_entries);
-+	list_move_tail(&ne->list, &nm_i->nat_entries); /* to be shrinked */
- 	set_nat_flag(ne, IS_DIRTY, false);
- 	set->entry_cnt--;
- 	nm_i->dirty_nat_cnt--;
-@@ -2340,24 +2341,6 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
- 	up_write(&curseg->journal_rwsem);
- }
+-	if (!strcmp("fsck.f2fs", prog)) {
+-		const char *option_string = ":ad:fp:t";
++	switch (c.func) {
++	case FSCK:
++		{
++			const char *option_string = ":ad:fp:t";
  
--static void __adjust_nat_entry_set(struct nat_entry_set *nes,
--						struct list_head *head, int max)
--{
--	struct nat_entry_set *cur;
+-		c.func = FSCK;
+-		while ((option = getopt(argc, argv, option_string)) != EOF) {
+-			switch (option) {
+-			case 'a':
+-				c.auto_fix = 1;
+-				MSG(0, "Info: Fix the reported corruption.\n");
+-				break;
+-			case 'p':
+-				/* preen mode has different levels:
+-				 *  0: default level, the same as -a
+-				 *  1: check meta
+-				 */
+-				if (optarg[0] == '-') {
+-					c.preen_mode = PREEN_MODE_0;
+-					optind--;
+-					break;
+-				} else if (!is_digits(optarg)) {
+-					err = EWRONG_OPT;
+-					break;
+-				}
+-				c.preen_mode = atoi(optarg);
+-				if (c.preen_mode < 0)
+-					c.preen_mode = PREEN_MODE_0;
+-				else if (c.preen_mode >= PREEN_MODE_MAX)
+-					c.preen_mode = PREEN_MODE_MAX - 1;
+-				if (c.preen_mode == PREEN_MODE_0)
++			while ((option = getopt(argc, argv, option_string)) != EOF) {
++				switch (option) {
++				case 'a':
+ 					c.auto_fix = 1;
+-				MSG(0, "Info: Fix the reported corruption in "
+-					"preen mode %d\n", c.preen_mode);
+-				break;
+-			case 'd':
+-				if (optarg[0] == '-') {
+-					err = ENEED_ARG;
++					MSG(0, "Info: Fix the reported corruption.\n");
+ 					break;
+-				} else if (!is_digits(optarg)) {
+-					err = EWRONG_OPT;
++				case 'p':
++					/* preen mode has different levels:
++					*  0: default level, the same as -a
++					*  1: check meta
++					*/
++					if (optarg[0] == '-') {
++						c.preen_mode = PREEN_MODE_0;
++						optind--;
++						break;
++					} else if (!is_digits(optarg)) {
++						err = EWRONG_OPT;
++						break;
++					}
++					c.preen_mode = atoi(optarg);
++					if (c.preen_mode < 0)
++						c.preen_mode = PREEN_MODE_0;
++					else if (c.preen_mode >= PREEN_MODE_MAX)
++						c.preen_mode = PREEN_MODE_MAX - 1;
++					if (c.preen_mode == PREEN_MODE_0)
++						c.auto_fix = 1;
++					MSG(0, "Info: Fix the reported corruption in "
++						"preen mode %d\n", c.preen_mode);
++					break;
++				case 'd':
++					if (optarg[0] == '-') {
++						err = ENEED_ARG;
++						break;
++					} else if (!is_digits(optarg)) {
++						err = EWRONG_OPT;
++						break;
++					}
++					c.dbg_lv = atoi(optarg);
++					MSG(0, "Info: Debug level = %d\n", c.dbg_lv);
++					break;
++				case 'f':
++					c.fix_on = 1;
++					MSG(0, "Info: Force to fix corruption\n");
++					break;
++				case 't':
++					c.dbg_lv = -1;
+ 					break;
+-				}
+-				c.dbg_lv = atoi(optarg);
+-				MSG(0, "Info: Debug level = %d\n", c.dbg_lv);
+-				break;
+-			case 'f':
+-				c.fix_on = 1;
+-				MSG(0, "Info: Force to fix corruption\n");
+-				break;
+-			case 't':
+-				c.dbg_lv = -1;
+-				break;
+ 
+ 
+-			case ':':
+-				if (optopt == 'p') {
+-					MSG(0, "Info: Use default preen mode\n");
+-					c.preen_mode = PREEN_MODE_0;
+-					c.auto_fix = 1;
+-				} else {
++				case ':':
++					if (optopt == 'p') {
++						MSG(0, "Info: Use default preen mode\n");
++						c.preen_mode = PREEN_MODE_0;
++						c.auto_fix = 1;
++					} else {
++						option = optopt;
++						err = ENEED_ARG;
++						break;
++					}
++					break;
++				case '?':
+ 					option = optopt;
+-					err = ENEED_ARG;
++				default:
++					err = EUNKNOWN_OPT;
+ 					break;
+ 				}
+-				break;
+-			case '?':
+-				option = optopt;
+-			default:
+-				err = EUNKNOWN_OPT;
+-				break;
++				if (err != NOERROR)
++					break;
+ 			}
+-			if (err != NOERROR)
+-				break;
+ 		}
+-	} else if (!strcmp("dump.f2fs", prog)) {
+-		const char *option_string = "d:i:n:s:a:b:";
+-		static struct dump_option dump_opt = {
+-			.nid = 0,	/* default root ino */
+-			.start_nat = -1,
+-			.end_nat = -1,
+-			.start_sit = -1,
+-			.end_sit = -1,
+-			.start_ssa = -1,
+-			.end_ssa = -1,
+-			.blk_addr = -1,
+-		};
 -
--	if (nes->entry_cnt >= max)
--		goto add_out;
+-		c.func = DUMP;
+-		while ((option = getopt(argc, argv, option_string)) != EOF) {
+-			int ret = 0;
 -
--	list_for_each_entry(cur, head, set_list) {
--		if (cur->entry_cnt >= nes->entry_cnt) {
--			list_add(&nes->set_list, cur->set_list.prev);
--			return;
+-			switch (option) {
+-			case 'd':
+-				if (!is_digits(optarg)) {
+-					err = EWRONG_OPT;
++		
++		break;
++	case DUMP:
++		{
++			const char *option_string = "d:i:n:s:a:b:";
++			static struct dump_option dump_opt = {
++				.nid = 0,	/* default root ino */
++				.start_nat = -1,
++				.end_nat = -1,
++				.start_sit = -1,
++				.end_sit = -1,
++				.start_ssa = -1,
++				.end_ssa = -1,
++				.blk_addr = -1,
++			};
++
++			while ((option = getopt(argc, argv, option_string)) != EOF) {
++				int ret = 0;
++
++				switch (option) {
++				case 'd':
++					if (!is_digits(optarg)) {
++						err = EWRONG_OPT;
++						break;
++					}
++					c.dbg_lv = atoi(optarg);
++					MSG(0, "Info: Debug level = %d\n",
++								c.dbg_lv);
++					break;
++				case 'i':
++					if (strncmp(optarg, "0x", 2))
++						ret = sscanf(optarg, "%d",
++								&dump_opt.nid);
++					else
++						ret = sscanf(optarg, "%x",
++								&dump_opt.nid);
++					break;
++				case 'n':
++					ret = sscanf(optarg, "%d~%d",
++								&dump_opt.start_nat,
++								&dump_opt.end_nat);
++					break;
++				case 's':
++					ret = sscanf(optarg, "%d~%d",
++								&dump_opt.start_sit,
++								&dump_opt.end_sit);
++					break;
++				case 'a':
++					ret = sscanf(optarg, "%d~%d",
++								&dump_opt.start_ssa,
++								&dump_opt.end_ssa);
++					break;
++				case 'b':
++					if (strncmp(optarg, "0x", 2))
++						ret = sscanf(optarg, "%d",
++								&dump_opt.blk_addr);
++					else
++						ret = sscanf(optarg, "%x",
++								&dump_opt.blk_addr);
++					break;
++				default:
++					err = EUNKNOWN_OPT;
+ 					break;
+ 				}
+-				c.dbg_lv = atoi(optarg);
+-				MSG(0, "Info: Debug level = %d\n",
+-							c.dbg_lv);
+-				break;
+-			case 'i':
+-				if (strncmp(optarg, "0x", 2))
+-					ret = sscanf(optarg, "%d",
+-							&dump_opt.nid);
+-				else
+-					ret = sscanf(optarg, "%x",
+-							&dump_opt.nid);
+-				break;
+-			case 'n':
+-				ret = sscanf(optarg, "%d~%d",
+-							&dump_opt.start_nat,
+-							&dump_opt.end_nat);
+-				break;
+-			case 's':
+-				ret = sscanf(optarg, "%d~%d",
+-							&dump_opt.start_sit,
+-							&dump_opt.end_sit);
+-				break;
+-			case 'a':
+-				ret = sscanf(optarg, "%d~%d",
+-							&dump_opt.start_ssa,
+-							&dump_opt.end_ssa);
+-				break;
+-			case 'b':
+-				if (strncmp(optarg, "0x", 2))
+-					ret = sscanf(optarg, "%d",
+-							&dump_opt.blk_addr);
+-				else
+-					ret = sscanf(optarg, "%x",
+-							&dump_opt.blk_addr);
+-				break;
+-			default:
+-				err = EUNKNOWN_OPT;
+-				break;
++				ASSERT(ret >= 0);
++				if (err != NOERROR)
++					break;
+ 			}
+-			ASSERT(ret >= 0);
+-			if (err != NOERROR)
+-				break;
 -		}
--	}
--add_out:
--	list_add_tail(&nes->set_list, head);
--}
 -
- static void __update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
- 						struct page *page)
- {
-@@ -2460,6 +2443,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+-		c.private = &dump_opt;
+-	} else if (!strcmp("defrag.f2fs", prog)) {
+-		const char *option_string = "d:s:l:t:i";
  
- 	/* Allow dirty nats by node block allocation in write_begin */
- 	if (!set->entry_cnt) {
-+		list_del(&set->set_list);
- 		radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
- 		kmem_cache_free(nat_entry_set_slab, set);
- 	}
-@@ -2473,10 +2457,8 @@ void flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
- 	struct f2fs_journal *journal = curseg->journal;
--	struct nat_entry_set *setvec[SETVEC_SIZE];
- 	struct nat_entry_set *set, *tmp;
--	unsigned int found;
--	nid_t set_idx = 0;
-+	int i;
- 	LIST_HEAD(sets);
- 
- 	if (!nm_i->dirty_nat_cnt)
-@@ -2493,19 +2475,12 @@ void flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 		!__has_cursum_space(journal, nm_i->dirty_nat_cnt, NAT_JOURNAL))
- 		remove_nats_in_journal(sbi);
- 
--	while ((found = __gang_lookup_nat_set(nm_i,
--					set_idx, SETVEC_SIZE, setvec))) {
--		unsigned idx;
--		set_idx = setvec[found - 1]->set + 1;
--		for (idx = 0; idx < found; idx++)
--			__adjust_nat_entry_set(setvec[idx], &sets,
--						MAX_NAT_JENTRIES(journal));
-+	for (i = 0; i <= NAT_ENTRY_PER_BLOCK; i++) {
-+		list_for_each_entry_safe(set, tmp, &nm_i->dirty_set[i], set_list)
-+			__flush_nat_entry_set(sbi, set, cpc);
-+		f2fs_bug_on(sbi, !list_empty(&nm_i->dirty_set[i]));
- 	}
- 
--	/* flush dirty nats in nat entry set */
--	list_for_each_entry_safe(set, tmp, &sets, set_list)
--		__flush_nat_entry_set(sbi, set, cpc);
+-		c.func = DEFRAG;
+-		while ((option = getopt(argc, argv, option_string)) != EOF) {
+-			int ret = 0;
 -
- 	up_write(&nm_i->nat_tree_lock);
- 	/* Allow dirty nats by node block allocation in write_begin */
- }
-@@ -2668,6 +2643,15 @@ static int init_free_nid_cache(struct f2fs_sb_info *sbi)
- 	return 0;
- }
- 
-+static void init_dirty_set_list(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_nm_info *nm_i = NM_I(sbi);
-+	int i;
+-			switch (option) {
+-			case 'd':
+-				if (!is_digits(optarg)) {
+-					err = EWRONG_OPT;
++			c.private = &dump_opt;
++		}
++		break;
++	case DEFRAG:
++		{
++			const char *option_string = "d:s:l:t:i";
 +
-+	for (i = 0; i <= NAT_ENTRY_PER_BLOCK; i++)
-+		INIT_LIST_HEAD(&nm_i->dirty_set[i]);
-+}
++			while ((option = getopt(argc, argv, option_string)) != EOF) {
++				int ret = 0;
 +
- int build_node_manager(struct f2fs_sb_info *sbi)
- {
- 	int err;
-@@ -2687,6 +2671,9 @@ int build_node_manager(struct f2fs_sb_info *sbi)
- 	/* load free nid status from nat_bits table */
- 	load_free_nid_bitmap(sbi);
- 
-+	/* init dirty set list */
-+	init_dirty_set_list(sbi);
++				switch (option) {
++				case 'd':
++					if (!is_digits(optarg)) {
++						err = EWRONG_OPT;
++						break;
++					}
++					c.dbg_lv = atoi(optarg);
++					MSG(0, "Info: Debug level = %d\n",
++								c.dbg_lv);
++					break;
++				case 's':
++					if (strncmp(optarg, "0x", 2))
++						ret = sscanf(optarg, "%"PRIu64"",
++								&c.defrag_start);
++					else
++						ret = sscanf(optarg, "%"PRIx64"",
++								&c.defrag_start);
++					break;
++				case 'l':
++					if (strncmp(optarg, "0x", 2))
++						ret = sscanf(optarg, "%"PRIu64"",
++								&c.defrag_len);
++					else
++						ret = sscanf(optarg, "%"PRIx64"",
++								&c.defrag_len);
++					break;
++				case 't':
++					if (strncmp(optarg, "0x", 2))
++						ret = sscanf(optarg, "%"PRIu64"",
++								&c.defrag_target);
++					else
++						ret = sscanf(optarg, "%"PRIx64"",
++								&c.defrag_target);
++					break;
++				case 'i':
++					c.defrag_shrink = 1;
++					break;
++				default:
++					err = EUNKNOWN_OPT;
+ 					break;
+ 				}
+-				c.dbg_lv = atoi(optarg);
+-				MSG(0, "Info: Debug level = %d\n",
+-							c.dbg_lv);
+-				break;
+-			case 's':
+-				if (strncmp(optarg, "0x", 2))
+-					ret = sscanf(optarg, "%"PRIu64"",
+-							&c.defrag_start);
+-				else
+-					ret = sscanf(optarg, "%"PRIx64"",
+-							&c.defrag_start);
+-				break;
+-			case 'l':
+-				if (strncmp(optarg, "0x", 2))
+-					ret = sscanf(optarg, "%"PRIu64"",
+-							&c.defrag_len);
+-				else
+-					ret = sscanf(optarg, "%"PRIx64"",
+-							&c.defrag_len);
+-				break;
+-			case 't':
+-				if (strncmp(optarg, "0x", 2))
+-					ret = sscanf(optarg, "%"PRIu64"",
+-							&c.defrag_target);
+-				else
+-					ret = sscanf(optarg, "%"PRIx64"",
+-							&c.defrag_target);
+-				break;
+-			case 'i':
+-				c.defrag_shrink = 1;
+-				break;
+-			default:
+-				err = EUNKNOWN_OPT;
+-				break;
++				ASSERT(ret >= 0);
++				if (err != NOERROR)
++					break;
+ 			}
+-			ASSERT(ret >= 0);
+-			if (err != NOERROR)
+-				break;
+ 		}
+-	} else if (!strcmp("resize.f2fs", prog)) {
+-		const char *option_string = "d:t:";
+-
+-		c.func = RESIZE;
+-		while ((option = getopt(argc, argv, option_string)) != EOF) {
+-			int ret = 0;
+-
+-			switch (option) {
+-			case 'd':
+-				if (!is_digits(optarg)) {
+-					err = EWRONG_OPT;
++		break;
++	case RESIZE:
++		{
++			const char *option_string = "d:t:";
 +
- 	build_free_nids(sbi, true, true);
- 	return 0;
- }
++			while ((option = getopt(argc, argv, option_string)) != EOF) {
++				int ret = 0;
++
++				switch (option) {
++				case 'd':
++					if (!is_digits(optarg)) {
++						err = EWRONG_OPT;
++						break;
++					}
++					c.dbg_lv = atoi(optarg);
++					MSG(0, "Info: Debug level = %d\n",
++								c.dbg_lv);
++					break;
++				case 't':
++					if (strncmp(optarg, "0x", 2))
++						ret = sscanf(optarg, "%"PRIu64"",
++								&c.target_sectors);
++					else
++						ret = sscanf(optarg, "%"PRIx64"",
++								&c.target_sectors);
++					break;
++				default:
++					err = EUNKNOWN_OPT;
+ 					break;
+ 				}
+-				c.dbg_lv = atoi(optarg);
+-				MSG(0, "Info: Debug level = %d\n",
+-							c.dbg_lv);
+-				break;
+-			case 't':
+-				if (strncmp(optarg, "0x", 2))
+-					ret = sscanf(optarg, "%"PRIu64"",
+-							&c.target_sectors);
+-				else
+-					ret = sscanf(optarg, "%"PRIx64"",
+-							&c.target_sectors);
+-				break;
+-			default:
+-				err = EUNKNOWN_OPT;
+-				break;
++				ASSERT(ret >= 0);
++				if (err != NOERROR)
++					break;
+ 			}
+-			ASSERT(ret >= 0);
+-			if (err != NOERROR)
+-				break;
+ 		}
+-	} else if (!strcmp("sload.f2fs", prog)) {
+-		const char *option_string = "d:f:t:";
+-
+-		c.func = SLOAD;
+-		while ((option = getopt(argc, argv, option_string)) != EOF) {
+-			switch (option) {
+-			case 'd':
+-				if (!is_digits(optarg)) {
+-					err = EWRONG_OPT;
++		break;
++	case SLOAD:
++		{
++			const char *option_string = "d:f:t:";
++
++			while ((option = getopt(argc, argv, option_string)) != EOF) {
++				switch (option) {
++				case 'd':
++					if (!is_digits(optarg)) {
++						err = EWRONG_OPT;
++						break;
++					}
++					c.dbg_lv = atoi(optarg);
++					MSG(0, "Info: Debug level = %d\n",
++							c.dbg_lv);
++					break;
++				case 'f':
++					c.from_dir = (char *)optarg;
++					break;
++				case 't':
++					c.mount_point = (char *)optarg;
++					break;
++				default:
++					err = EUNKNOWN_OPT;
+ 					break;
+ 				}
+-				c.dbg_lv = atoi(optarg);
+-				MSG(0, "Info: Debug level = %d\n",
+-						c.dbg_lv);
+-				break;
+-			case 'f':
+-				c.from_dir = (char *)optarg;
+-				break;
+-			case 't':
+-				c.mount_point = (char *)optarg;
+-				break;
+-			default:
+-				err = EUNKNOWN_OPT;
+-				break;
++				if (err != NOERROR)
++					break;
+ 			}
+-			if (err != NOERROR)
+-				break;
+ 		}
++		break;
+ 	}
++
+ 	if (argc > optind) {
+ 		c.dbg_lv = 0;
+ 		err = EUNKNOWN_ARG;
 -- 
-2.10.1
+2.7.4
 
 
 ------------------------------------------------------------------------------
