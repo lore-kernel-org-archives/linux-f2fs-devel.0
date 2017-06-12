@@ -1,85 +1,47 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2 2/4] f2fs: fix to document fault injection
- option and sysfs file
-Date: Mon, 12 Jun 2017 18:58:27 +0800
-Message-ID: <20170612105827.94893-1-yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: Fix a return value in case of error in
+ 'f2fs_fill_super'
+Date: Mon, 12 Jun 2017 19:03:17 +0800
+Message-ID: <da6d6381-42e4-a99d-89e4-3cba1d628091@huawei.com>
+References: <20170611072111.2293-1-christophe.jaillet@wanadoo.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1dKN3k-0000wT-Tr
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 12 Jun 2017 10:59:00 +0000
-Received: from szxga02-in.huawei.com ([45.249.212.188])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1dKN3i-0005Ds-Jk
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 12 Jun 2017 10:59:00 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170611072111.2293-1-christophe.jaillet@wanadoo.fr>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Commit 73faec4d9935 ("f2fs: add mount option to select fault injection
-ratio") and Commit 087968974fcd ("f2fs: add fault injection to sysfs")
-forget to document mount option and sysfs file.
+On 2017/6/11 15:21, Christophe JAILLET wrote:
+> err must be set to -ENOMEM, otherwise we return 0.
+> 
+> Fixes: a912b54d3aaa0 ("f2fs: split bio cache")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-This patch fixes to document them.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2: fix to correct injection_{rate,type} to inject_{rate,type}.
- Documentation/ABI/testing/sysfs-fs-f2fs | 12 ++++++++++++
- Documentation/filesystems/f2fs.txt      |  2 ++
- 2 files changed, 14 insertions(+)
+Thanks,
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index a809f6005f14..3b7692cf3050 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -112,3 +112,15 @@ Date:		January 2016
- Contact:	"Shuoran Liu" <liushuoran@huawei.com>
- Description:
- 		 Shows total written kbytes issued to disk.
-+
-+What:		/sys/fs/f2fs/<disk>/inject_rate
-+Date:		May 2016
-+Contact:	"Sheng Yong" <shengyong1@huawei.com>
-+Description:
-+		 Contrils the injection rate.
-+
-+What:		/sys/fs/f2fs/<disk>/inject_type
-+Date:		May 2016
-+Contact:	"Sheng Yong" <shengyong1@huawei.com>
-+Description:
-+		 Contrils the injection type.
-diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-index 4f6531a4701b..8b04a6359530 100644
---- a/Documentation/filesystems/f2fs.txt
-+++ b/Documentation/filesystems/f2fs.txt
-@@ -155,6 +155,8 @@ noinline_data          Disable the inline data feature, inline data feature is
-                        enabled by default.
- data_flush             Enable data flushing before checkpoint in order to
-                        persist data of regular and symlink.
-+fault_injection=%d     Enable fault injection in all supported types with
-+                       specified injection rate.
- mode=%s                Control block allocation mode which supports "adaptive"
-                        and "lfs". In "lfs" mode, there should be no random
-                        writes towards main area.
--- 
-2.13.1.388.g69e6b9b4f4a9
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> ---
+>  fs/f2fs/super.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 5be27eacea99..38f1624ac5dc 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -1976,8 +1976,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  
+>  		sbi->write_io[i] = kmalloc(n * sizeof(struct f2fs_bio_info),
+>  								GFP_KERNEL);
+> -		if (!sbi->write_io[i])
+> +		if (!sbi->write_io[i]) {
+> +			err = -ENOMEM;
+>  			goto free_options;
+> +		}
+>  
+>  		for (j = HOT; j < n; j++) {
+>  			init_rwsem(&sbi->write_io[i][j].io_rwsem);
+> 
