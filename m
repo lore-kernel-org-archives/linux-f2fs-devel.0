@@ -1,34 +1,85 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: fix ref of discard command
-Date: Sun, 11 Jun 2017 20:04:49 -0700
-Message-ID: <20170612030449.79290-1-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v2 2/4] f2fs: fix to document fault injection
+ option and sysfs file
+Date: Mon, 12 Jun 2017 18:58:27 +0800
+Message-ID: <20170612105827.94893-1-yuchao0@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1dKN3k-0000wT-Tr
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 12 Jun 2017 10:59:00 +0000
+Received: from szxga02-in.huawei.com ([45.249.212.188])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1dKN3i-0005Ds-Jk
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 12 Jun 2017 10:59:00 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch resolves kernel panic for xfstests/081, caused by recent f2fs_bug_on
+Commit 73faec4d9935 ("f2fs: add mount option to select fault injection
+ratio") and Commit 087968974fcd ("f2fs: add fault injection to sysfs")
+forget to document mount option and sysfs file.
 
-  f2fs: add f2fs_bug_on in __remove_discard_cmd
+This patch fixes to document them.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/segment.c | 2 ++
- 1 file changed, 2 insertions(+)
+v2: fix to correct injection_{rate,type} to inject_{rate,type}.
+ Documentation/ABI/testing/sysfs-fs-f2fs | 12 ++++++++++++
+ Documentation/filesystems/f2fs.txt      |  2 ++
+ 2 files changed, 14 insertions(+)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 86a0c1095939..a6d77388a806 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1025,6 +1025,8 @@ static void __wait_discard_cmd(struct f2fs_sb_info *sbi, bool wait_cond)
- 	list_for_each_entry_safe(dc, tmp, wait_list, list) {
- 		if (!wait_cond || (dc->state == D_DONE && !dc->ref)) {
- 			wait_for_completion_io(&dc->wait);
-+			if (dc->state == D_DONE && dc->ref)
-+				dc->ref--;
- 			__remove_discard_cmd(sbi, dc);
- 		} else {
- 			dc->ref++;
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index a809f6005f14..3b7692cf3050 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -112,3 +112,15 @@ Date:		January 2016
+ Contact:	"Shuoran Liu" <liushuoran@huawei.com>
+ Description:
+ 		 Shows total written kbytes issued to disk.
++
++What:		/sys/fs/f2fs/<disk>/inject_rate
++Date:		May 2016
++Contact:	"Sheng Yong" <shengyong1@huawei.com>
++Description:
++		 Contrils the injection rate.
++
++What:		/sys/fs/f2fs/<disk>/inject_type
++Date:		May 2016
++Contact:	"Sheng Yong" <shengyong1@huawei.com>
++Description:
++		 Contrils the injection type.
+diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+index 4f6531a4701b..8b04a6359530 100644
+--- a/Documentation/filesystems/f2fs.txt
++++ b/Documentation/filesystems/f2fs.txt
+@@ -155,6 +155,8 @@ noinline_data          Disable the inline data feature, inline data feature is
+                        enabled by default.
+ data_flush             Enable data flushing before checkpoint in order to
+                        persist data of regular and symlink.
++fault_injection=%d     Enable fault injection in all supported types with
++                       specified injection rate.
+ mode=%s                Control block allocation mode which supports "adaptive"
+                        and "lfs". In "lfs" mode, there should be no random
+                        writes towards main area.
 -- 
-2.13.0.rc1.294.g07d810a77f-goog
+2.13.1.388.g69e6b9b4f4a9
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
