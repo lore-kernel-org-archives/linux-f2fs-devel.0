@@ -1,45 +1,61 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: fix ref of discard command
-Date: Mon, 12 Jun 2017 19:17:38 +0800
-Message-ID: <54b5aaad-1674-8d76-c489-d5eee6ef7f26@huawei.com>
-References: <20170612030449.79290-1-jaegeuk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH v3 2/4] f2fs: fix to document fault injection option and sysfs file
+Date: Mon, 12 Jun 2017 22:30:44 +0800
+Message-ID: <20170612143044.4147-1-chao@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170612030449.79290-1-jaegeuk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
+From: Chao Yu <yuchao0@huawei.com>
 
-On 2017/6/12 11:04, Jaegeuk Kim wrote:
-> This patch resolves kernel panic for xfstests/081, caused by recent f2fs_bug_on
-> 
->   f2fs: add f2fs_bug_on in __remove_discard_cmd
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/segment.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 86a0c1095939..a6d77388a806 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -1025,6 +1025,8 @@ static void __wait_discard_cmd(struct f2fs_sb_info *sbi, bool wait_cond)
->  	list_for_each_entry_safe(dc, tmp, wait_list, list) {
->  		if (!wait_cond || (dc->state == D_DONE && !dc->ref)) {
->  			wait_for_completion_io(&dc->wait);
-> +			if (dc->state == D_DONE && dc->ref)
-> +				dc->ref--;
+Commit 73faec4d9935 ("f2fs: add mount option to select fault injection
+ratio") and Commit 087968974fcd ("f2fs: add fault injection to sysfs")
+forget to document mount option and sysfs file.
 
-Should set dc->ref to 0 to avoid panic once we add other referrers?
+This patch fixes to document them.
 
-Thanks,
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+v3: fix typo.
+ Documentation/ABI/testing/sysfs-fs-f2fs | 12 ++++++++++++
+ Documentation/filesystems/f2fs.txt      |  2 ++
+ 2 files changed, 14 insertions(+)
 
->  			__remove_discard_cmd(sbi, dc);
->  		} else {
->  			dc->ref++;
-> 
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index a809f6005f14..994c88ca01d2 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -112,3 +112,15 @@ Date:		January 2016
+ Contact:	"Shuoran Liu" <liushuoran@huawei.com>
+ Description:
+ 		 Shows total written kbytes issued to disk.
++
++What:		/sys/fs/f2fs/<disk>/inject_rate
++Date:		May 2016
++Contact:	"Sheng Yong" <shengyong1@huawei.com>
++Description:
++		 Controls the injection rate.
++
++What:		/sys/fs/f2fs/<disk>/inject_type
++Date:		May 2016
++Contact:	"Sheng Yong" <shengyong1@huawei.com>
++Description:
++		 Controls the injection type.
+diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+index 4f6531a4701b..8b04a6359530 100644
+--- a/Documentation/filesystems/f2fs.txt
++++ b/Documentation/filesystems/f2fs.txt
+@@ -155,6 +155,8 @@ noinline_data          Disable the inline data feature, inline data feature is
+                        enabled by default.
+ data_flush             Enable data flushing before checkpoint in order to
+                        persist data of regular and symlink.
++fault_injection=%d     Enable fault injection in all supported types with
++                       specified injection rate.
+ mode=%s                Control block allocation mode which supports "adaptive"
+                        and "lfs". In "lfs" mode, there should be no random
+                        writes towards main area.
+-- 
+2.13.0.90.g1eb437020
