@@ -1,47 +1,45 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: Fix a return value in case of error in
- 'f2fs_fill_super'
-Date: Mon, 12 Jun 2017 19:03:17 +0800
-Message-ID: <da6d6381-42e4-a99d-89e4-3cba1d628091@huawei.com>
-References: <20170611072111.2293-1-christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] f2fs: fix ref of discard command
+Date: Mon, 12 Jun 2017 19:17:38 +0800
+Message-ID: <54b5aaad-1674-8d76-c489-d5eee6ef7f26@huawei.com>
+References: <20170612030449.79290-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170611072111.2293-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20170612030449.79290-1-jaegeuk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/6/11 15:21, Christophe JAILLET wrote:
-> err must be set to -ENOMEM, otherwise we return 0.
-> 
-> Fixes: a912b54d3aaa0 ("f2fs: split bio cache")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Hi Jaegeuk,
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+On 2017/6/12 11:04, Jaegeuk Kim wrote:
+> This patch resolves kernel panic for xfstests/081, caused by recent f2fs_bug_on
+> 
+>   f2fs: add f2fs_bug_on in __remove_discard_cmd
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/segment.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 86a0c1095939..a6d77388a806 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -1025,6 +1025,8 @@ static void __wait_discard_cmd(struct f2fs_sb_info *sbi, bool wait_cond)
+>  	list_for_each_entry_safe(dc, tmp, wait_list, list) {
+>  		if (!wait_cond || (dc->state == D_DONE && !dc->ref)) {
+>  			wait_for_completion_io(&dc->wait);
+> +			if (dc->state == D_DONE && dc->ref)
+> +				dc->ref--;
+
+Should set dc->ref to 0 to avoid panic once we add other referrers?
 
 Thanks,
 
-> ---
->  fs/f2fs/super.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 5be27eacea99..38f1624ac5dc 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1976,8 +1976,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->  
->  		sbi->write_io[i] = kmalloc(n * sizeof(struct f2fs_bio_info),
->  								GFP_KERNEL);
-> -		if (!sbi->write_io[i])
-> +		if (!sbi->write_io[i]) {
-> +			err = -ENOMEM;
->  			goto free_options;
-> +		}
->  
->  		for (j = HOT; j < n; j++) {
->  			init_rwsem(&sbi->write_io[i][j].io_rwsem);
+>  			__remove_discard_cmd(sbi, dc);
+>  		} else {
+>  			dc->ref++;
 > 
