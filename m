@@ -1,27 +1,26 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH 2/3] f2fs: require key for truncate(2) of
- encrypted file
-Date: Wed, 14 Jun 2017 20:44:19 +0800
-Message-ID: <e558657c-d383-4528-9be0-8c2d1ab8344c@kernel.org>
-References: <20170613234755.111167-1-ebiggers3@gmail.com>
-	<20170613234755.111167-3-ebiggers3@gmail.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: fix ref of discard command
+Date: Wed, 14 Jun 2017 07:26:48 -0700
+Message-ID: <20170614142648.GA74571@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20170612030449.79290-1-jaegeuk@kernel.org>
+	<54b5aaad-1674-8d76-c489-d5eee6ef7f26@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1dL7fO-00033T-Dd
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1dL9G5-0005ir-ME
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 14 Jun 2017 12:44:58 +0000
+	Wed, 14 Jun 2017 14:26:57 +0000
 Received: from mail.kernel.org ([198.145.29.99])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1dL7fL-0008G8-So
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1dL9G3-0007wb-Ri
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 14 Jun 2017 12:44:58 +0000
-In-Reply-To: <20170613234755.111167-3-ebiggers3@gmail.com>
-Content-Language: en-US
+	Wed, 14 Jun 2017 14:26:57 +0000
+Content-Disposition: inline
+In-Reply-To: <54b5aaad-1674-8d76-c489-d5eee6ef7f26@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,26 +30,46 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Eric Biggers <ebiggers3@gmail.com>, linux-fscrypt@vger.kernel.org
-Cc: Theodore Ts'o <tytso@mit.edu>, Eric Biggers <ebiggers@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/6/14 7:47, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On 06/12, Chao Yu wrote:
+> Hi Jaegeuk,
 > 
-> Currently, filesystems allow truncate(2) on an encrypted file without
-> the encryption key.  However, it's impossible to correctly handle the
-> case where the size being truncated to is not a multiple of the
-> filesystem block size, because that would require decrypting the final
-> block, zeroing the part beyond i_size, then encrypting the block.
+> On 2017/6/12 11:04, Jaegeuk Kim wrote:
+> > This patch resolves kernel panic for xfstests/081, caused by recent f2fs_bug_on
+> > 
+> >   f2fs: add f2fs_bug_on in __remove_discard_cmd
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/segment.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 86a0c1095939..a6d77388a806 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -1025,6 +1025,8 @@ static void __wait_discard_cmd(struct f2fs_sb_info *sbi, bool wait_cond)
+> >  	list_for_each_entry_safe(dc, tmp, wait_list, list) {
+> >  		if (!wait_cond || (dc->state == D_DONE && !dc->ref)) {
+> >  			wait_for_completion_io(&dc->wait);
+> > +			if (dc->state == D_DONE && dc->ref)
+> > +				dc->ref--;
 > 
-> As other modifications to encrypted file contents are prohibited without
-> the key, just prohibit truncate(2) as well, making it fail with ENOKEY.
-> 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> Should set dc->ref to 0 to avoid panic once we add other referrers?
 
-Acked-by: Chao Yu <yuchao0@huawei.com>
+Sorry, could you please explain this in more detail?
 
 Thanks,
+
+> 
+> Thanks,
+> 
+> >  			__remove_discard_cmd(sbi, dc);
+> >  		} else {
+> >  			dc->ref++;
+> > 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
