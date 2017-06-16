@@ -1,7 +1,7 @@
 From: Yang Jin via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Subject: [PATCH 1/1] add sparse support for f2fs
-Date: Thu, 15 Jun 2017 16:57:57 -0700
-Message-ID: <20170615235757.24770-1-yajin@google.com>
+Subject: [PATCHv2 1/1] add sparse support for f2fs
+Date: Thu, 15 Jun 2017 18:17:54 -0700
+Message-ID: <20170616011754.71927-1-yajin@google.com>
 Reply-To: Yang Jin <yajin@google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,18 +9,18 @@ Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yajin@google.com>) id 1dLeep-0007LJ-Gg
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yajin@google.com>) id 1dLfv1-0002HO-Gz
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 15 Jun 2017 23:58:35 +0000
-Received: from mail-pf0-f176.google.com ([209.85.192.176])
+	Fri, 16 Jun 2017 01:19:23 +0000
+Received: from mail-pf0-f178.google.com ([209.85.192.178])
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1dLeen-0004pc-R9
+	(Exim 4.76) id 1dLfuz-0006AE-RB
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 15 Jun 2017 23:58:35 +0000
-Received: by mail-pf0-f176.google.com with SMTP id x63so14354756pff.3
+	Fri, 16 Jun 2017 01:19:23 +0000
+Received: by mail-pf0-f178.google.com with SMTP id 83so15181820pfr.0
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Thu, 15 Jun 2017 16:58:33 -0700 (PDT)
+	Thu, 15 Jun 2017 18:19:21 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,29 +31,11 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
-Cc: jaegeuk@kernel.org, Yang Jin <yajin@google.com>
+Cc: jaegeuk@kernel.org
 
 Description:
 modify I/O operations to support writing in sparse format
 build host executable for making sparse image
-
-Tests:
-Using host executable:
-./make_f2fs_host -S2000000000 userdata.img
-fastboot flash userdata userdata.img
-
-Using target executable:
-adb push $OUT/system/bin/make_f2fs /system/bin
-fastboot erase userdata
-
-Analyzing the output image:
-./make_f2fs_host -S2000000000 userdata.img
-./make_f2fs_host test.img
-simg2img userdata.img output.img
-hexdump -C output.img >> output.txt
-hexdump -C test.img >> test.txt
-
-Bug: 62493641
 
 Signed-off-by: Yang Jin <yajin@google.com>
 ---
