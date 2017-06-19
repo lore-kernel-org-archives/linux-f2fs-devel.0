@@ -1,119 +1,57 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: add ioctl to do gc with target block address
-Date: Sat, 17 Jun 2017 07:17:20 -0700
-Message-ID: <20170617141720.51953-1-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 01/35] fscache: Remove unused ->now_uncached callback
+Date: Mon, 19 Jun 2017 15:12:53 +0200
+Message-ID: <20170619131253.GA22128@quack2.suse.cz>
+References: <20170601093245.29238-2-jack@suse.cz>
+ <20170601093245.29238-1-jack@suse.cz>
+ <10376.1496312768@warthog.procyon.org.uk>
+ <20170601113434.GC23077@quack2.suse.cz>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <20170601113434.GC23077@quack2.suse.cz>
+Sender: owner-linux-mm@kvack.org
+To: David Howells <dhowells@redhat.com>
+Cc: Jan Kara <jack@suse.cz>, linux-mm@kvack.org, Hugh Dickins <hughd@google.com>, linux-afs@lists.infradead.org, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-nilfs@vger.kernel.org, Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, tytso@mit.edu, linux-ext4@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>, "Yan, Zheng" <zyan@redhat.com>, ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>, "Darrick J . Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org, Nadia Yvette Chambers <nyc@holomorphy.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch adds f2fs_ioc_gc_range() to move blocks located in the given
-range.
+On Thu 01-06-17 13:34:34, Jan Kara wrote:
+> On Thu 01-06-17 11:26:08, David Howells wrote:
+> > Jan Kara <jack@suse.cz> wrote:
+> > 
+> > > The callback doesn't ever get called. Remove it.
+> > 
+> > Hmmm...  I should perhaps be calling this.  I'm not sure why I never did.
+> > 
+> > At the moment, it doesn't strictly matter as ops on pages marked with
+> > PG_fscache get ignored if the cache has suffered an I/O error or has been
+> > withdrawn - but it will incur a performance penalty (the PG_fscache flag is
+> > checked in the netfs before calling into fscache).
+> > 
+> > The downside of calling this is that when a cache is removed, fscache would go
+> > through all the cookies for that cache and iterate over all the pages
+> > associated with those cookies - which could cause a performance dip in the
+> > system.
+> 
+> So I know nothing about fscache. If you decide these functions should stay
+> in as you are going to use them soon, then I can just convert them to the
+> new API as everything else. What just caught my eye and why I had a more
+> detailed look is that I didn't understand that 'PAGEVEC_SIZE -
+> pagevec_count(&pvec)' as a pagevec_lookup() argument since pagevec_count()
+> should always return 0 at that point?
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/f2fs.h |  8 ++++++++
- fs/f2fs/file.c | 47 +++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 55 insertions(+)
+David, what is your final decision regarding this? Do you want to keep
+these unused functions (and I will just update my patch to convert them to
+the new calling convention) or will you apply the patch to remove them?
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 91db1d07f9f8..c27a6264d9bf 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -303,6 +303,8 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
- 						struct f2fs_move_range)
- #define F2FS_IOC_FLUSH_DEVICE		_IOW(F2FS_IOCTL_MAGIC, 10,	\
- 						struct f2fs_flush_device)
-+#define F2FS_IOC_GARBAGE_COLLECT_RANGE	_IOW(F2FS_IOCTL_MAGIC, 11,	\
-+						struct f2fs_gc_range)
- 
- #define F2FS_IOC_SET_ENCRYPTION_POLICY	FS_IOC_SET_ENCRYPTION_POLICY
- #define F2FS_IOC_GET_ENCRYPTION_POLICY	FS_IOC_GET_ENCRYPTION_POLICY
-@@ -327,6 +329,12 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
- #define F2FS_IOC32_GETVERSION		FS_IOC32_GETVERSION
- #endif
- 
-+struct f2fs_gc_range {
-+	u32 sync;
-+	u64 start;
-+	u64 len;
-+};
-+
- struct f2fs_defragment {
- 	u64 start;
- 	u64 len;
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 6a201c61eef5..3f56b27e761b 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1911,6 +1911,50 @@ static int f2fs_ioc_gc(struct file *filp, unsigned long arg)
- 	return ret;
- }
- 
-+static int f2fs_ioc_gc_range(struct file *filp, unsigned long arg)
-+{
-+	struct inode *inode = file_inode(filp);
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	struct f2fs_gc_range range;
-+	u64 end;
-+	int ret;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (copy_from_user(&range, (struct f2fs_gc_range __user *)arg,
-+							sizeof(range)))
-+		return -EFAULT;
-+
-+	if (f2fs_readonly(sbi->sb))
-+		return -EROFS;
-+
-+	ret = mnt_want_write_file(filp);
-+	if (ret)
-+		return ret;
-+
-+	end = range.start + range.len;
-+	if (range.start < MAIN_BLKADDR(sbi) || end >= MAX_BLKADDR(sbi))
-+		return -EINVAL;
-+do_more:
-+	if (!range.sync) {
-+		if (!mutex_trylock(&sbi->gc_mutex)) {
-+			ret = -EBUSY;
-+			goto out;
-+		}
-+	} else {
-+		mutex_lock(&sbi->gc_mutex);
-+	}
-+
-+	ret = f2fs_gc(sbi, range.sync, true, GET_SEGNO(sbi, range.start));
-+	range.start += sbi->blocks_per_seg;
-+	if (range.start <= end)
-+		goto do_more;
-+out:
-+	mnt_drop_write_file(filp);
-+	return ret;
-+}
-+
- static int f2fs_ioc_write_checkpoint(struct file *filp, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
-@@ -2355,6 +2399,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return f2fs_ioc_get_encryption_pwsalt(filp, arg);
- 	case F2FS_IOC_GARBAGE_COLLECT:
- 		return f2fs_ioc_gc(filp, arg);
-+	case F2FS_IOC_GARBAGE_COLLECT_RANGE:
-+		return f2fs_ioc_gc_range(filp, arg);
- 	case F2FS_IOC_WRITE_CHECKPOINT:
- 		return f2fs_ioc_write_checkpoint(filp, arg);
- 	case F2FS_IOC_DEFRAGMENT:
-@@ -2423,6 +2469,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case F2FS_IOC_GET_ENCRYPTION_PWSALT:
- 	case F2FS_IOC_GET_ENCRYPTION_POLICY:
- 	case F2FS_IOC_GARBAGE_COLLECT:
-+	case F2FS_IOC_GARBAGE_COLLECT_RANGE:
- 	case F2FS_IOC_WRITE_CHECKPOINT:
- 	case F2FS_IOC_DEFRAGMENT:
- 	case F2FS_IOC_MOVE_RANGE:
+								Honza
 -- 
-2.13.0.rc1.294.g07d810a77f-goog
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
