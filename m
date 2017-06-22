@@ -1,425 +1,749 @@
-From: betty_123@1234.com
-Subject: =?utf-8?b?ICA9PT09PT09PT09PT09PT09PT09PT09ICBQIE0gQyA=?=
- =?utf-8?b?55SfIOS6pyDorqEg5YiSIOWPiiDniakg5paZIOaOpyDliLYgID09PT09PT09?=
- =?utf-8?b?PT09PT09PT09PT09PT09?=
-Date: 21 Jun 2017 07:28:26 +0800
-Message-ID: <E1dNScF-0003hi-BG@sfs-ml-2.v29.ch3.sourceforge.com>
-Reply-To: 1043224115@qq.com
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v4 1/1] f2fs: dax: implement direct access
+Date: Thu, 22 Jun 2017 09:57:43 +0800
+Message-ID: <94a7d52c-bb63-6006-d5b6-d7b2d8a04fa9@huawei.com>
+References: <1497516975-10604-1-git-send-email-sunqiuyang@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <betty_123@1234.com>) id 1dNScE-0003hc-HB
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 20 Jun 2017 23:31:22 +0000
-Received: from [113.222.45.128] (helo=sisi.com)
-	by sog-mx-4.v43.ch3.sourceforge.com with smtp (Exim 4.76)
-	id 1dNScC-0007F8-0x for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 20 Jun 2017 23:31:22 +0000
-Received: from WINDOWS-B2JTI1D ([127.0.0.1])
-	(envelope-sender <betty_123@1234.com>) by 127.0.0.1 with ESMTP
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Wed, 21 Jun 2017 07:28:26 +0800
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1497516975-10604-1-git-send-email-sunqiuyang@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: sunqiuyang <sunqiuyang@huawei.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-QeKUhiAgIOOAgCDjgIogUCBNIEMg55SfIOS6pyDorqEg5YiSIOWPiiDniakg5paZIOaOpyDliLYg
-44CLDQpB4pSGICAg44CAIOKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKU
-heKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKU
-heKUheKUhQ0KQeKUhiAgIOOAgCDjgJDml7bpl7TlnLDngrnjgJENCkHilIYgICDjgIAgDQpB4pSG
-ICAg44CAIDbmnIgyMi0yM+aXpeS4iua1t+OAgTbmnIgyNC0yNeaXpea3seWcsyANCkHilIYgICDj
-gIAgN+aciDIwLTIx5pel5LiK5rW344CBN+aciDIyLTIz5pel5rex5ZyzIA0KQeKUhiAgIOOAgCA4
-5pyIMTctMTjml6XkuIrmtbfjgIE45pyIMTktMjDml6Xmt7HlnLMgDQpB4pSGICAg44CAIDnmnIgy
-MS0yMuaXpeS4iua1t+OAgTnmnIgyMy0yNOaXpea3seWcsw0KQeKUhiAgIOOAgCAxMeaciDktMTDm
-l6XkuIrmtbfjgIExMeaciDExLTEy5pel5rex5ZyzIA0KQeKUhiAgIOOAgCAxMuaciDE0LTE15pel
-5LiK5rW344CBMTLmnIgxNi0xN+aXpea3seWcsyANCkHilIYgICDjgIAgMTjlubQx5pyIMjUtMjbm
-l6XkuIrmtbfjgIExOOW5tDHmnIgyNy0yOOaXpea3seWcsyAgDQpB4pSGICAg44CAIOKUheKUheKU
-heKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKU
-heKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUhQ0KQeKUhiAgIOOAgCDjgJDo
-r77nqIvotLnnlKjjgJEgNDIwMOWFgy/kurrvvIjlkKvmjojor77jgIHmlZnmnZDjgIHljYjppJDj
-gIHojLbngrnlkoznqI7otLnvvIkNCkHilIYgICDjgIAg44CQ6K6k6K+B6LS555So44CR5Lit57qn
-6K+B5LmmMTAwMOWFgy/kuro76auY57qn6K+B5LmmMTIwMOWFgy/kuroo5Y+C5Yqg6K6k6K+B6ICD
-6K+V55qE5a2m5ZGY6aG75Lqk57qz5q2k6LS555So77yM5LiN5Y+C5Yqg6K6k6K+B6ICD6K+V55qE
-5a2m5ZGY5peg6aG75Lqk57qzKeOAgA0KQeKUhiAgIOOAgCDjgJDlpIfjgIDjgIDms6jjgJENCkHi
-lIYgICDjgIAgMS7pq5jnuqfor4HkuabnlLPor7fpobvlkIzml7bov5vooYznkIborrrogIPor5Xl
-kozmj5DkuqTorrrmlofogIPor5XvvIzlrablkZjlnKjmiqXlkI3lj4LliqDln7norq3lkozorqTo
-r4Hml7bor7fmj5DliY3lh4blpIflpb3orrrmloflubbpmo/nkIborrrogIPor5Xor5XljbfkuIDl
-kIzmj5DkuqTjgIINCkHilIYgICDjgIAgMi7lh6HluIzmnJvlj4LliqDorqTor4HogIPor5XkuYvl
-rablkZjvvIzlnKjln7norq3nu5PmnZ/lkI7lj4LliqDorqTor4HogIPor5XlubblkIjmoLzogIXv
-vIzpooHlj5HkuI7miYDlj4LliqDln7norq3or77nqIvkuJPkuJrpoobln5/nm7jlkIzkuYvvvJoN
-CkHilIYgICDjgIAg4oCc6aaZ5riv5Z+56K6t6K6k6K+B5Lit5b+DSEtUQ0Plm73pmYXogYzkuJro
-tYTmoLzorqTor4HkuK3lv4PjgIrlm73pmYXms6jlhozkuK3vvIjpq5jvvInnuqfnlJ/kuqfnrqHn
-kIbvvIjluIjvvInjgIvogYzkuJrotYTmoLzor4HkuabigJ3jgIINCkHilIYgICDjgIAg77yI5Zu9
-6ZmF6K6k6K+B77yP5YWo55CD6YCa6KGM77yP6ZuH5Li76K6k5Y+v77yP6IGU572R5p+l6K+i77yJ
-44CCDQpB4pSGICAg44CAIDMu6K++56iL57uT5p2f5ZCOMTDml6XlhoXlsIbor4Hkuablv6vpgJLl
-r4Tnu5nlrablkZjvvJsNCkHilIYgICDjgIAgDQpB4pSGICAg44CAIOOAkOaOiOivvuWvueixoeOA
-kQ0KQeKUhiAgIOOAgCDnlJ/kuqforqHliJLkuLvnrqEv54mp5paZ6K6h5YiSL+mHh1/otK0v57uP
-55CGL+S4u+euoS/orqHliJLkurrlkZgv6Lef5Y2V5Lq65ZGY44CBIOeUn+S6p+mDqOmXqC/nu4/n
-kIYv5Li7566hL+euoeeQhuS6uuWRmOOAgemUgF/llK7pg6jpl6gv57uP55CGL+S4u+euoQ0KQeKU
-hiAgIOOAgCAv6Lef5Y2V5Lq65ZGY44CC5bCk5YW25Lia5Yqh5Ymv5oC757uP55CG5bim6aKG566h
-55CG5bmy6YOo546w5Zy66K+K5pat5ZKM5a6e5L2c5a+5562W5pWI5p6c5pu05L2z44CCDQpB4pSG
-ICAg44CAIA0KQeKUhiAgIOOAgCDjgJDlj4LliqDpg6jpl6jjgJHnlJ/kuqforqHliJLpg6jpl6gv
-54mp5paZ6K6h5YiS6YOo6ZeoL+mHh1/otK3pg6jpl6gvIOeUn+S6p+mDqOmXqC/plIBf5ZSu6YOo
-6ZeoL+i0ouWKoemDqOOAgei0p+WAie+8iOeJqea1ge+8iS/noJTlj5Hpg6jpl6gvUElF77yI5bel
-6Im66YOo77yJL0lU6YOo6ZeoLw0KQeKUhiAgIOOAgCDilIXilIXilIXilIXilIXilIXilIXilIXi
-lIXilIXilIXilIXilIXilIXilIXilIXilIXilIXilIXilIXilIXilIXilIXilIXilIXilIXilIXi
-lIXilIXilIXilIXilIXilIXilIXilIUNCkHilIYgICDjgIAg44CQ6K++56iL6IOM5pmv44CRDQpB
-4pSGICAg44CAIOeUnyDkuqcg6K6hIOWIkuWSjCDniakgIOaWmSDmjqcg5Yi277yIUCBNIEPvvInp
-g6jpl6jmmK/kuIDkuKrkvIHkuJrigJzlv4PohI/igJ3vvIzmjozmj6HnnYDkvIHkuJrnlJ/kuqfl
-j4rnianmlpnov5DkvZznmoTmgLvosIPluqblkozlkb3ohInvvIznu5/nrbnokKXov5DotYTph5Hj
-gIHnianmtYHjgIENCkHilIYgICDjgIAg5L+h5oGv562J5Yqo6ISJ77yM55u05o6l5raJ5Y+K5b2x
-5ZON55Sf5Lqn6YOo44CB55Sf5Lqn5bel56iL6YOo44CB6YeHX+i0reOAgei0p+S7k+OAgeWTgeaO
-p+mDqOOAgeW8gOWPkeS4juiuvuiuoemDqOOAgeiuvuWkh+W3peeoi+OAgeS6uuWKm+i1hOa6kOWP
-iui0ouWKoeaIkOacrOmihA0KQeKUhiAgIOOAgCDnrpfmjqfliLbnrYnvvIzlhbbliLbluqblkozm
-tYHnqIvlhrPlrprlhazlj7jnm4jliKnmiJDotKXjgILlm6DmraRQTUPpg6jpl6jlkoznm7jlhbPn
-rqHnkIblsYLlv4XpobvlhYXliIbkuobop6PvvJrnianmlpnorqHliJLjgIHor7fotK3jgIHnianm
-lpnosIPluqbjgIHnianmlpkNCkHilIYgICDjgIAg5o6n5Yi277yI5pS244CB5Y+R44CB6YCA44CB
-5YCf44CB5aSH5paZ562J77yJ44CB55Sf5Lqn6K6h5YiS5LiO55Sf5Lqn6L+b5bqm5o6n5Yi277yM
-5bm26LCZ54af6L+Q55So6L+Z6Zeo566h55CG5oqA5pyv5p2l6Kej5Yaz6Zeu6aKY77yM5a2m5Lmg
-UE1D6K++56iL5LuO6K6h5YiSDQpB4pSGICAg44CAIOS7t+WAvOa1geWIh+WFpeWJluaekOW3peWO
-guWItumAoOaIkOacrOWSjOe8qeefreWItumAoOWRqOacn++8jOaPkOmrmOeJqea1gei/h+eoi+W+
-queOr+aViOeOh++8iOW6k+WtmOOAgei1hOmHkeeahOWRqOi9rOeOh++8ieWPiuWuouaIt+a7oeaE
-j+eOh++8m+S4uumZjeS9juaIlg0KQeKUhiAgIOOAgCDmtojpmaTnianmtYHov4fnqIvkuK3nmoTp
-nZ7lop7lgLzmtLvliqjjgIINCkHilIYgICDjgIAgDQpB4pSGICAg44CAIOOAkOivvuWgguebruag
-h+OAkQ0KQeKUhiAgIOOAgCAxLuW7uueri+WItuWumuWujOWWhOeahOeUn+S6p+S4jueJqeaOp+i/
-kOS9nOS9k+ezu+aPkOWNh+WHhuaXtuS6pOi0p+WSjOmZjeS9juW6k+WtmOaIkOacrDMwJQ0KQeKU
-hiAgIOOAgCAyLumihOa1i+WPiuWItuWumuWQiOeQhueahOefreOAgeS4reOAgemVv+acn+mUgF/l
-lK7orqHliJLovr7miJDlhazlj7jnrZbnlaXnrqHnkIbnm67moIcNCkHilIYgICDjgIAgMy7lr7no
-h6rouqvnmoTnlJ/kuqfog73lipvlkozotJ/ojbfpooTlhYjov5vooYzor6bnu4bliIbmnpDlubbl
-u7rnq4vlrozlloTkuqflk4HmlbDmja7mnLrliLbljY/liqnlhazlj7jlu7rnq4vkuqflk4Hlt6Xn
-qIvmlbDmja4NCkHilIYgICDjgIAgNC7nlJ/kuqfliY3mnJ/lgZrlpb3lrozmlbTnmoTnlJ/kuqfm
-jpLnqIvlkozlkajnlJ/kuqforqHliJLmj5Dpq5jlpIfmlpnlh4bnoa7njocsIOmUgeWumueUn+S6
-p+iuoeWIkuS4jeWPmOOAgg0KQeKUhiAgIOOAgCA1LumFjeWQiOeUn+S6p+iuoeWIkuWBmuWIsOiJ
-r+WlveeJqeaWmeaNn+iAl+aOp+WItuWSjOWkh+aWmeWujOWWhOmZjeS9jueJqeaWmeaNn+iAl+ac
-uuWItuWSjOWBnOW3peW+heaWmeW3peaXtg0KQeKUhiAgIOOAgCA2LuWvueeUn+S6p+i/m+W6puWP
-iueJqeaWmei/m+W6puWPiuaXtui3n+i/m+WSjOayn+mAmuWNj+iwg+e8qeefreeUn+S6p+WRqOac
-nyzmj5Dpq5jkvIHkuJrnq57kuonlipsNCkHilIYgICDjgIAg4pSF4pSF4pSF4pSF4pSF4pSF4pSF
-4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF
-4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSFDQpB4pSGICAg44CAIOOAkOivvueoi+Wkp+e6suOA
-kQ0KQeKUhiAgIOOAgCDnlJ/kuqforqHliJIv54mp5paZ5Lqk5pyf5o6n5Yi2UE1D5qGI5L6L6auY
-57qn54mI54+tDQpB4pSGICAg44CAIC0tLS0t5Lqn5L6b6ZSA5Y2P5ZCM5bmz6KGh4oCU6Kej5Yaz
-5o+S5Y2V77yM5oCl5Y2V77yM6KGl5Y2V77yM5Yqg5Y2V44CC5YeP5Y2V5ZKM5raI5Y2VLS0NCkHi
-lIYgICDjgIAgLS0tLeWwkemHj+WkmuaJueasoeiuouWNleW8j+eUn+S6p+aooeW8jy0tLSBQU0kv
-UyZPUC0tLS0tDQpB4pSGICAg44CAIA0KQeKUhiAgIOOAgCDnrKzkuIDlrqQ66Yq3X+WUruioiOWI
-ki/nlJ/nlKPoqIjliJIv54mp5paZ6KiI5YiS5Y2P6LCD5o6l5Y+j566h55CGDQpB4pSGICAg44CA
-IDEu55Sf55Sj6KiI5YiS6KeS6Imy5ZKM5a6a5L2NLS0t6K6i5Y2V5oC75a+85ryU77yP5oC75oyH
-5oylLS0t5Y2O5Li6DQpB4pSGICAg44CAIOeUn+S6p+iuoeWIkuWItuW6puWSjOa1geeoi+WGs+Wu
-muWFrOWPuOebiOWIqeaIkOi0pQ0KQeKUhiAgIOOAgCAyLumKt1/llK7oqIjliJIv55Sf55Sj6KiI
-5YiSL+eJqeaWmeioiOWIkuaetuaehC/ogYzog73liIblt6UNCkHilIYgICDjgIAg5LiJ5pif55S1
-5a2Q5rua5Yqo5ZGo6K6h5YiS6LSf6I235YiG5p6Q5ZKM5LiJ5aSp55Sf5Lqn6K6h5YiS5LiN6IO9
-5Y+Y6IGM6IO95Zu+DQpB4pSGICAg44CAIOaYjOi+vuWFrOWPuOi/nue7rea7muWKqOWRqOiuoeWI
-kui0n+iNt+WIhuaekOWSjOS4ieWkqeeUn+S6p+iuoeWIkuS4jeiDveWPmOiBjOiDveWbvg0KQeKU
-hiAgIOOAgCDmlr3ogJDlvrfpirdf5ZSu6KiI5YiSL+eUn+eUo+ioiOWIki/nianmlpnoqIjliJLn
-u4Tnu4fmnrbmnoQNCkHilIYgICDjgIAg55Sf55Sj6KiI5YiSL+eJqeaWmeaOp+WItuS6lOWkp+iB
-jOiDvS0tLS3mrKDmlpnliIbmnpDot5/ov5vvvI/lpIfmlpnlip/og70v5ZGG5paZ6aKE6Ziy5aSE
-55CGLS0tLS0tLS0gDQpB4pSGICAg44CAIDMu5oCO5qC35bu656uLL+WujOWWhOiuoeWIkuS9k+ez
-uy0tLS0t5LiA57qn5Li755Sf5Lqn6K6h5YiSL+S6jOe6p+eUn+S6p+iuoeWIkg0KQeKUhiAgIOOA
-gCDjgIDlubTluqborqHliJIv5rua5Yqo5pyI5bqm6K6h5YiSL+a7muWKqOWRqOiuoeWIki/mu5rl
-iqjlpKnorqHliJLnvJbliLblkozmiafooYwNCkHilIYgICDjgIAg44CA5rua5Yqo5pyI5bqm6K6h
-5YiS5Lqn5L6b6ZSA5bmz6KGh5Lya6K6u5Yi25bqmDQpB4pSGICAg44CAIOeUs+iPseW5tOW6pi/m
-u5rliqjmnIjluqYv5ZGo6K6h5YiSL+WkqeiuoeWIkue8luWItuWSjOaJp+ihjOa1geeoiw0KQeKU
-hiAgIOOAgCDnlLPoj7Hmu5rliqjmnIjluqborqHliJLkuqfkvpvplIDlubPooaHkvJrorq7liLbl
-uqblr6bkvovliIbmnpANCkHilIYgICDjgIAg5YGa5aW955Sf5Lqn6K6h5YiS5b+F6aG75YW35aSH
-5LqU5aSn5L+h5oGv5p2h5Lu25Y+K5Lmd5pa56Z2i5LiT5Lia5oqA6IO9LQ0KQeKUhiAgIOOAgCDk
-uIDnuqfkuLvnlJ/kuqforqHliJLliLborqLlkozmiafooYzmtYHnqIstIEFQU+ezu+e7nw0KQeKU
-hiAgIOOAgCDkuoznuqfkuLvnlJ/kuqforqHliJLliLborqLlkozmiafooYzmtYHnqIstLQ0KQeKU
-hiAgIOOAgCA0LuS4u+eUn+S6p+iuoeWIkumTvuaOpeS9k+ezuy0tLS3mjIfmjKXkuI7ljY/osIPk
-v53pmpzlip/og70NCkHilIYgICDjgIAgICDplIBf5ZSu6aKE5rWL5LiO55Sf5Lqn6K6h5YiS55qE
-6KGU5o6l5LiO5bmz6KGh55Sf5Lqn6K6h5YiSDQpB4pSGICAg44CAIOWHhuaXtueUn+S6p+iuoeWI
-klZT5biC5Zy65Lia5Yqh6YOoVlPlrqLmiLfigJzkuInotaLigJ3op4TliJkNCkHilIYgICDjgIAg
-5piM6L6+5YWs5Y+46ZSB5a6a5LiA5ZGo55Sf5Lqn6K6h5YiS5LiN6IO95Y+Y5o6n5Yi25rWB56iL
-5a+m5L6L5YiG5p6QDQpB4pSGICAg44CAIOacieaViOaOp+WItuaJpuWNleOAgeaApeWNleOAgeih
-peWNlS/liqDljZXkupTnp43mjqrmlr0o6IyD5L6LKS0tLS0t5Lit5bGx5p+Q5pyJ6ZmQ5YWs5Y+4
-DQpB4pSGICAg44CAIDUu6ZSAX+WUrumihOa1i+S4juS4u+eUn+S6p+iuoeWIku+8iE1QU++8ieS4
-juaciC/lkajnlJ/kuqforqHliJIv54mp5paZ6KiI5YiS77yITVJQ77yJ6ZO+5o6l5rWB56iLLS0g
-b3JkZXIgbWFuYWdlbWVuL0FQU+ezu+e7nw0KQeKUhiAgIOOAgCDpirdf5ZSu6aKE5rWL6KiI5YiS
-L+eUn+S6p+iuoeWIkuWPmOWMluWPjemmiOWSjOmihOa1i+W6k+WtmOaOp+WItuWNj+iwg+euoeeQ
-hg0KQeKUhiAgIOOAgCDlh6/lo6vmr5TorqLljZXorqHliJLlvq7osIPmtYHnqIvliLbluqbkuI7l
-ubPooaHnlJ/kuqforqHliJINCkHilIYgICDjgIAg5LiA57qn5Li755Sf5Lqn6K6h5YiS5Lqn5L6b
-6ZSA5bmz6KGh5Yi25bqmLeS4iua1t+afkOWMu+eWl+WFrOWPuC0NCkHilIYgICDjgIAg6Yq3X+WU
-ruioiOWIkua1geeoi+KAleKAlemUgF/llK7pooTmtYvmtYHnqIvvvI/plIBf5ZSu6K6h5YiS5rWB
-56iL77yP5aSH6LSn6K6h5YiS5rWB56iL77yP55Sf5Lqn6K6h5YiS5rWB56iLDQpB4pSGICAg44CA
-IDYu5Yi26YCg5Lia55Sf5Lqn6K6h5YiS5o6n5Yi25LiJ56eN5qih5byP4oCV4oCV6aKE5pyf5rua
-5Yqo6K6h5YiS57O757uf77yP5o6o6L+b5byPKHB1c2gp55Sf5Lqn5o6n5Yi257O757uf77yP5ouJ
-5Yqo5byPKHB1bGwp55Sf5Lqn5o6n5Yi257O757ufDQpB4pSGICAg44CAIDcu5LiN5ZCM5Lqn5ZOB
-6ZSAX+WUruetlueVpeWGs+WumuS4jeWQjOS6lOWkp+ioiOWIku+8iOmKt1/llK7oqIjliJIv55Sf
-55Sj6KiI5YiSL+eJqeaWmeioiOWIki/ph4df6LSt6KiI5YiSL+W6k+WtmOioiOWIku+8iQ0KQeKU
-hiAgIOOAgCDmt7HlnLPljY7kuLrnsr7nvo7orqHliJLnrqHnkIbmiYvlhozlrp7kvovliIbmnpAt
-DQpB4pSGICAg44CAIA0KQeKUhiAgIOOAgCDnrKzkuozlrqTpirdf5ZSu6KiI5YiSL+eUn+S6p+iu
-oeWIkuaOp+WItua1geeoiy0tLSBvcmRlciBtYW5hZ2VtZW50Le+8iOWMheaLrOmhueebruiuoeWI
-ku+8iQ0KQeKUhiAgIOOAgCDpirdf5ZSu6aKE5rWL6KiI5YiSL+S4u+eUn+S6p+iuoeWIku+8iE1Q
-U++8ieS4juaciC/lkajnlJ/kuqforqHliJLmjqfliLbmtYHnqIvkuIPpgJTlvoQtLS3orrLluIgv
-5a2m5ZGY54K56K+E5p+Q5YWs5Y+4546w5Zy66K+K5patDQpB4pSGICAg44CAIOOAgOOAgOmAmui/
-h+W4guWcuuiwg+afpS/kv6Hmga/lj43ppojmj5Dpq5jorqLljZXpooTmtYvlh4bnoa7njofkuInl
-pKflgZrms5UNCkHilIYgICDjgIAg44CAICDnlLPoj7HlkITniYfljLrpirdf5ZSu6aKE5rWL6KiI
-5YiS5Yi26K6i5ZKM5omn6KGM5rWB56iL5Yi25bqmDQpB4pSGICAg44CAIOOAgOOAgOiJvum7mOeU
-n+WQhOeJh+WMuumKt1/llK7lip7kuovlpITpirdf5ZSu6aKE5rWL6KiI5YiS5Yi26K6i5ZKM5omn
-6KGM5rWB56iL5Yi25bqmDQpB4pSGICAg44CAIOOAgOOAgOaPkOWNh+e8luWItumKt1/llK7pooTm
-tYvoqIjliJLnvJbliLblh4bnoa7mgKflha3lpKfmraXpqqQNCkHilIYgICDjgIAg44CA44CA5rOw
-56eR55S15a2Q6Yq3X+WUrumihOa1i+ioiOWIkue8luWItuWFreWkp+atpemqpOWvpuS+i+WIhuae
-kA0KQeKUhiAgIOOAgCDmu5rliqjpirdf5ZSu6aKE5rWL6KiI5YiS5b6u6LCD5Yi25bqm5YyW6ZmN
-5L2O6aKE5rWL5bqT5a2Y5oiQ5pys5Y6f55CG5YiG5p6QDQpB4pSGICAg44CAIOmdkuWym+a1t+Ww
-lOaWsOS6p+WTgemhueebruiuoeWIkuaAu+S9k+aWueahiOaOp+WItua1geeoi+WvpuS+i+WIhuae
-kC0tIG9yZGVyIG1hbmFnZW1lbnQNCkHilIYgICDjgIAg6IuP5bee6KW/6Zeo5a2Q5pyIL+WRqC/m
-l6Xpobnnm67orqHliJLml7bpl7ToioLngrnljY/osIPmtYHnqIvlr6bkvovliIbmnpAtLS0gTUlT
-57O757ufDQpB4pSGICAg44CAIOWvjOWjq+W6t+mbhuWbokVSUOKAlFNBUC9SM+ezu+e7n+S4u+eU
-n+S6p+iuoeWIkua1geeoi+ahiOS+i+WIhuaekC0tLSBvcmRlciBtYW5hZ2VtZW50DQpB4pSGICAg
-44CAIOWkp+mHkeepuuiwg++8iOaXpei1hOWFrOWPuO+8ieioiOWIkuaOp+WItua1geeoi+WvpuS+
-i+WIhuaekC0tLS1NRVPns7vnu58NCkHilIYgICDjgIAg5aiB6Z2I5pyIL+WRqC/ml6Xpobnnm67o
-rqHliJLljY/osIPmtYHnqIvlr6bkvovliIbmnpAtLS0tTUVT57O757ufDQpB4pSGICAg44CAIOS4
-nOiOnuS8n+aYk+i+vuaciOW6pua7muWKqOS6p+iDvei0n+iNt+WIhuaekC/kuInlpKnnlJ/kuqfo
-rqHliJLkuI3og73lj5jnmoTmu5rliqjkuqfog73otJ/ojbfliIbmnpDlr6bkvovliIbmnpANCkHi
-lIYgICDjgIAgMumAj+i/h+WHhuaXtuWMlueUn+S6p+acuuWItuino+WGs+iuouWNlemikee5geWP
-mOabtOS4ieenjeaWueazlS0tIFByb2R1Y3Rpb24gcGxhbiBjaGFuZ2UgbWFuYWdlbWVudA0KQeKU
-hiAgIOOAgCDkuJzojp7kvJ/mmJPovr7miabljZXjgIHmgKXljZXjgIHooaXljZUv5Yqg5Y2VL+eU
-n+eUo+ioiOWIkue0p+aApeaOp+WItua1geeoi+WvpuS+i+WIhuaekC0tIFByb2R1Y3Rpb24gcGxh
-biBjaGFuZ2UgbWFuYWdlbWVudA0KQeKUhiAgIOOAgCDpo57liKnmtabmiabljZUv5oCl5Y2V6KiI
-5YiS57Sn5oCl5o6n5Yi25rWB56iL5qGI5L6L5YiG5p6QLSBQcm9kdWN0aW9uIHBsYW4gY2hhbmdl
-IG1hbmFnZW1lbnQNCkHilIYgICDjgIAgDQpB4pSGICAg44CAIOesrOS4ieWupOS4gOe6p+S4u+eU
-n+S6p+iuoeWIki/kuoznuqfnlJ/kuqforqHliJLov5vluqbmjqfliLYtLS0tIG9yZGVyIGRlbGl2
-ZXJ5IG1hbmFnZW1lbnQNCkHilIYgICDjgIAgMS7nvKnnn63kuqflk4HlkajmnJ/mtYHnqIstLSBs
-ZWFkIHRpbWUgcmVkdWN0aW9uIA0KQeKUhiAgIOOAgCDopb/pl6jlrZDkuqflk4HlkajmnJ/nvKnn
-n63mtYHnqIvku7flgLzmtYHmoYjkvovliIbkuqsNCkHilIYgICDjgIAg5p+Q5YWs5Y+457yp55+t
-5Lqn5ZOB5ZGo5pyf55S16ISR57O757uf77yI55So5Y+L77yJ5rWB56iL5Li755WM6Z2i5a6e5L6L
-5YiG5p6QDQpB4pSGICAg44CAIDIu5pyIL+WRqOeUn+S6p+iuoeWIkuS6p+iDvei/nue7rea7muWK
-qOi0n+iNt+WIhuaekOWItuW6puWMlg0KQeKUhiAgIOOAgCDjgIDlqIHpnYjlhazlj7jmnIjluqbk
-uLvmjpLkuqforqHliJLotJ/ojbfliIbmnpDljYHkuInkvp3mja4NCkHilIYgICDjgIAgICDlqIHp
-nYjlhazlj7jkuInlpKnnlJ/kuqforqHliJLotJ/ojbfliIbmnpDkuZ3kvp3mja4NCkHilIYgICDj
-gIAgMy7lkajnlJ/kuqforqHliJLopoHngrnjgIHlhoXlrrnlj4rnvJbliLbmvJTnu4MtLS0tDQpB
-4pSGICAg44CAIOOAgOOAgOOAgOaciC/lkajnlJ/kuqforqHliJLmjpLnqIvooajliLblrprkuI7m
-iafooYzph43ngrnmvJTnu4MtLeS4iua1t+afkOWFrOWPuOS6lOW8oOiuouWNleaciC/lkajnlJ/k
-uqforqHliJLmjpLnqIvooajliLblrprkuKrmoYjmvJTnu4MNCkHilIYgICDjgIAgNC4g5YiG5p6Q
-5Lqn6IO96LSf6I235LiD6KaB57Sg5pa56Z2iLS0t5Lq65Yqb6LSf6I23L+acuuWZqOi0n+iNt+KA
-puKApg0KQeKUhiAgIOOAgCAgICDlub/lt57mn5DphY3ku7blhazlj7gyMDE2LzA35pyI5Lqn6IO9
-6LSf6I235Lya5a6e5b2V5paH5Lu25YiG5p6QDQpB4pSGICAg44CAICAgIOS6p+iDvei0n+iNt+WI
-huaekOihqOWunuS+iy0tLS0t5bm/5bee5p+Q5YWs5Y+4DQpB4pSGICAg44CAIDUg55Sf5Lqn6L+b
-5bqm55uR5o6n5LiJ5Liq6Zi25q61LS0t5LqL5YmNL+S6i+S4rS/kuovlkI4tLeS/oeaBr+WMluWc
-qOeUn+S6p+euoeeQhuS4rei/kOeUqA0KQeKUhiAgIOOAgCA1LjHlpoLkvZXnu5/orqHliIbmnpDn
-lJ/kuqfmlbDmja4tLS0tTUlT57O757ufDQpB4pSGICAg44CAIDUuMumAmui/h+eUn+S6p+aVsOaN
-rumHh+mbhuiuoeeul+acuuezu+e7n+WbvuebkeaOp+iuoeWIkuS4jui/m+W6pi0tLeS4nOiOnuaf
-kOWFrOWPuE1FU+ezu+e7nw0KQeKUhiAgIOOAgCA177yOM+eOsOWcuui/kOeUqExFRC/mnaHlvaLn
-oIHlkIzmraXnm5HmjqfnlJ/kuqfov5vluqblrp7nianlsZXnpLrliIbmnpAtLS3kuovkuK3nrqHn
-kIYNCkHilIYgICDjgIAgNi7ljY/osIPmsp/pgJrlpITnkIbnlJ/kuqflvILluLjpl67popgtLSDl
-havmnaHmlLnlloTmjqrmlr3vvIhOQ1IgZ29vZHMgbWFuYWdlbWVudOOAgO+8iQ0KQeKUhiAgIOOA
-gCA3LuS6p+mUgOWkseiwg+WOn+WboOS4juWvueetli0t6Leo6YOo6Zeo55Sf5Lqn6L+b5bqm5o6n
-5Yi25LiD5q2l6aqkDQpB4pSGICAg44CAIDgu5pWP5Y2O5a625YW35ZCE6YOo6Zeo5byC5bi45bel
-5pe2L+WQhOmDqOmXqOS6p+iDveaNn+WkseWbvuahiOS+i+WIhuaekC0tLS0tLS0t55Sf5Lqn57up
-5pWI566h55CGDQpB4pSGICAg44CAIDku5Lit5Zu95p+Q5YWs5Y+455Sf5Lqn6IO95Yqb5pWI546H
-6KGoL+e7vOWQiOaViOeOh+WIhuaekC0tLS0tLS3nlJ/kuqfnu6nmlYjnrqHnkIYNCkHilIYgICDj
-gIAgICDmt7HluqbmoYjkvovvvJrkuK3lm73mn5Dlhazlj7jnlJ/kuqforqHliJLlkITnm7jlhbPp
-g6jpl6jmjqfliLbmtYHnqIvvvIjlhbE0Numhte+8iQ0KQeKUhiAgIOOAgCANCkHilIYgICDjgIAg
-56ys5Zub5a6kIOeJqea1geiuoeWIkui3n+i/m+S4juWtmOmHj+euoeWItg0KQeKUhiAgIOOAgCAw
-LueJqea1geiuoeWIkua1geeoi+S4g+atpemqpC0tLS3mn5Dlhazlj7jlrablkZjnjrDlnLror4rm
-lq0o5a2m5ZGY5LiO6K6y5biI5LqS5Yqo54K56K+EKQ0KQeKUhiAgIOOAgCDkuqflk4HkuqTmnJ/n
-n60v54mp5paZ6YeHX+i0reWRqOacn+mVv+eJqea1geiuoeWIkua1geeoiw0KQeKUhiAgIOOAgCDl
-rprmnJ/nvKnnn63kvpvotKfllYZsZWFkIHRpbWXlt6XkvZzliLbluqbljJbmtYHnqIstLSBSZWFs
-IExlYWQgdGltZSBtb25pdG9yaW5nDQpB4pSGICAg44CAIOeJqeaWmemHh1/otK3lkajmnJ/plb/l
-ho3or7fotK3orqHliJLvvIhQUu+8iea1geeoiy0tLSBSZW9yZGVyIHBvaW50IG1hbmFnZW1lbnQN
-CkHilIYgICDjgIAg5omm5Y2V44CB5oCl5Y2V44CB6KGl5Y2VL+WKoOWNlS/nlJ/nlKPoqIjliJLn
-tKfmgKV1cGRhdGXnianmlpnorqHliJLmtYHnqIvop6PmnpANCkHilIYgICDjgIAg5LiK5rW36KW/
-6Zeo5a2QRVJQ4oCUU0FQL1Iz57O757ufUlVOLU1SUOa1geeoi+S4u+eVjOmdouWIhuaekA0KQeKU
-hiAgIOOAgCDljJfkuqzmn5Dlhazlj7hOb3JtYWwgT3JkZXIvIENPTlNJR05NRU5UL1ZNSS9KSVQv
-QnVmZmVyIENvbnRyb2zlm5vnp43ph4df6LSt5bel5L2c5rWB56iLDQpB4pSGICAg44CAIOS4ieiP
-se+8iOW5v+W3nu+8ieaciemZkOWFrOWPuCjmrKfmtLLlhajotYQpRVJQ4oCUU0FQL1Iz57O757uf
-6YeHX+i0reiuouWNleeuoeeQhua1geeoi+S4u+eVjOmdouWunuS+i+WIhuaekOKAlA0KQeKUhiAg
-IOOAgCAxLuS+m+i0p+WVhuS6pOacn+euoeWItuWNgeWkp+S5i+mBky0tIGxlYWQgdGltZSByZWR1
-Y3Rpb24gDQpB4pSGICAg44CAIDIu6YeHX+i0reeJqeaWmeS6pOacn+i3n+WCrOebkeaOp+S4ieW8
-oOihqOagvC/lt6XlhbcNCkHilIYgICDjgIAgICDlipvlirLmnLrmorDlnKjph4df6LSt54mp5paZ
-5qyg5paZ5YiG5p6Q6Lef6L+b6KGo5a+m5L6L5YiG5p6QDQpB4pSGICAg44CAICAg5qC85Yqb56m6
-6LCD6YeH6LO854mp5paZ6aKE6Ziy5qyg5paZ6KGo5qGI5L6LLw0KQeKUhiAgIOOAgCAgIOiBlOaD
-s+mbhuWboumHh1/otK3lpIfmlpnpvZDlpZfooajlrp7kvovliIbmnpANCkHilIYgICDjgIAgICDp
-h4fos7znianmlpnot5/ouKrooajmoYjkvovnoJToqI7igJXigJXmjbfmma7np5HmioAgDQpB4pSG
-ICAg44CAICAg5Lit5Zu95p+Q5LyB5qWtRVJQLU9SQUNMReezu+e7n+eJqeaWmeafpeivoi/ot5/o
-v5vkuLvnlYzpnaLlrp7kvovliIbmnpANCkHilIYgICDjgIAgMS7nianmlpnnn63nvLrlhavlpKfl
-jp/lm6DlkozkuIPnp43pooTpmLLlr7nnrZYNCkHilIYgICDjgIAgMi7nianmlpnmlLYv5Y+RL+ih
-pS/pgIAv5YCfL+aNoi/ov5jmlpnmjqfliLbmtYHnqIsNCkHilIYgICDjgIAg44CA5Yqb5Yqy5py6
-5qKw54mp5paZ5pS2L+WPkS/ooaUv6YCAL+WAny/mjaIv6L+Y5o6n5Yi25rWB56iLDQpB4pSGICAg
-44CAIOOAgOeJqeaWmeaUti/lj5Ev6KGlL+mAgC/lgJ8v5o2iL+i/mOWNleaNrueuoeeQhuWPiuWG
-suWHj+a1geeoiy0tLS0t5biQ54mp5LiA6Ie0DQpB4pSGICAg44CAIDMu54mp5paZ566h55CG55u4
-6L6F55u45oiQ5Y2B5Zub5rWB56iLLS0gd2FyZWhvdXNlIG1hbmFnZW1lbnQNCkHilIYgICDjgIAg
-My4x54mp5paZ566h55CG57K+6auT5LiJIOS4quebsueCueWSjOWFq+Wkp+atu+eptC0t4oCV4oCV
-5Lyf5Yib5Yqb77yIRmxleHRyb25pY3PvvInnvo7os4flhazlj7jlkYbmlpnpooTpmLLvvI/lpITn
-kIbliLbluqblrp7kvosNCkHilIYgICDjgIAgMy4y5p+Q5YWs5Y+454mp5paZ5bel56iL5pu05pS5
-5rWB56iL5YiG5p6QDQpB4pSGICAg44CAIDMuM+WogemdiOWFrOWPuOihpeaWmS/mjZ/ogJfmjqfl
-iLbmoYjkvovliIbmnpAtLemZjeS9juWGheW+queOr+aIkOacrA0KQeKUhiAgIOOAgCAzLjTku5Pl
-gqjlj4rml7bphY3pgIHnmoTov5DkvZzop4TliJLkupTmjqrmlr0NCkHilIYgICDjgIAgMS7lu7rn
-q4vphY3pgIHml7bmnLov5Zyw54K544CAMi7lrozlloTphY3pgIHkuK3lv4PmlbDmja4NCkHilIYg
-ICDjgIAgMy7phY3pgIHmlrnmoYjnmoTliLblrpo06YWN6YCB5bel5YW355qE5ZCI55CG6YWN572u
-NemFjemAgeS9nOS4mueahOaKgOW3pw0KQeKUhiAgIOOAgCAgIOWPsOi+vueUteWtkOS7k+WCqOWP
-iuaXtumFjemAgeaAu+S9k+aWueahiOaOp+WItua1geeoi+WvpuS+i+WIhuaekA0KQeKUhiAgIOOA
-gCA0LuWtmOmHj+euoeWIti0tIGludmVudG9yeSBtYW5hZ2VtZW50DQpB4pSGICAg44CAIOWcqOmK
-t1/llK7pooTmtYvkuI3lh4bmnaHku7bkuIvpgb/lhY3pooTmtYvph4df6LSt5a+86Ie05bqT5a2Y
-6YeP5o+Q5Y2H5bel5L2c5rWB56iLDQpB4pSGICAg44CAIOWPsOi+vueUteWtkOmcgOaxgumihOa1
-i+WPmOWMluWSjOW6k+WtmOebuOW6lOiwg+aVtOaOp+WItua1geeoi+WvpuS+i+WIhuaekA0KQeKU
-hiAgIOOAgCBUQ0zov5zmnJ/ph4df6LSt5bqT5a2Y5qih5byP5a6e5L6L5YiG5p6QLS0t5rW35aSW
-bGVhbiB0aW1l6ZW/54mp5paZ6YeHX+i0rQ0KQeKUhiAgIOOAgCDlronlhajlrZjph49WU+acgOmr
-mOWtmOmHj1ZTLuacgOS9juWtmOmHj+WumuS5iQ0KQeKUhiAgIOOAgCDlronlhajlrZjph4/kuInn
-p43orr7lrprmlrnms5UNCkHilIYgICDjgIAgQUJD5o6n5Yi25rOVLS0gd2FyZWhvdXNlIG1hbmFn
-ZW1lbnQNCkHilIYgICDjgIAg576O5rOw546p5YW3QUJD5o6n5Yi25rOV5a+m5L6L5YiG5p6QDQpB
-4pSGICAg44CAIOW6k+WtmOmHj+agueaNrueUn+S6p+a3oeaXuuazouWzsOiwg+aVtOS4pOWll+aW
-ueazlQ0KQeKUhiAgIOOAgCBBQkLmoLnmja7nlJ/kuqfmt6Hml7rms6Lls7DlupPlrZjph4/osIPm
-lbTkuInpmLbmrrXlr6bkvovliIbmnpANCkHilIYgICDjgIAg5L2/55So5p2h5b2i56CB5Y+K5LiO
-5L6b6LSn5ZWG6L+b6KGM55S15a2Q5pWw5o2u5Lqk5o2iKEVESSnpmY3kvY7lupPlrZjph4/mlrnm
-s5UNCkHilIYgICDjgIAg5bqT5a2Y6YeP6ZmN5L2O5LqU5aSn5pa55rOVDQpB4pSGICAg44CAIOS5
-neWkp+W6k+WtmOaMh+agh+euoeeQhi/ogIPmoLgNCkHilIYgICDjgIAg5bqT5a2Y5ZGo6L2s546H
-5a6a6YeP6K6h566XDQpB4pSGICAg44CAIOaPkOmrmOW6k+WtmOWRqOi9rOeOh+eahOmAlOW+hA0K
-QeKUhiAgIOOAgCDmkanmr5TnlLXlrZDnianmlpnlkajovazpgJ/luqYv5ZGo6L2s546HL+WtmOaW
-meeOh+eugOS+iw0KQeKUhiAgIOOAgCANCkHilIYgICDjgIAg5bC+5aOwOuW9k+WktOajkuWWneKA
-lOaNheegtOeql+e6uA0KQeKUhiAgIOOAgCAx5a2m5LmgL+WFtOWli+S4pOWkqSzlm57liLDlhazl
-j7jlkI7igKbigKbnu5PlkIjlhazlj7jlrp7pmYXmg4XlhrUtDQpB4pSGICAg44CAIDLpgJrov4fl
-rablkZjmiJDmnpzlj5HooagtLeS9k+S8muWIhuS6qy/nu4/pqozlm57pob4v6K6y5biI54K56K+E
-MyDlrp7ot7Uv5rS755So5omA5a2m5LqU5q2l6aqk44CA44CA44CA44CA44CA44CA44CA44CA44CA
-44CA44CA44CA44CA44CA44CA44CA44CA44CA44CA44CA44CA44CA44CA44CA44CA44CA44CA44CA
-44CA44CA44CA44CA44CA44CA44CA44CA44CADQpB4pSGICAg44CAIOKUheKUheKUheKUheKUheKU
-heKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKUheKU
-heKUheKUheKUheKUheKUheKUheKUheKUheKUheKUhQ0KQeKUhiAgIOOAgCDjgJDkuJPkuJror77n
-qIvorrLmjojkuJPlrrYtLS0tLembt+WNq+aXreiAgeW4iC0tLS0tU3RlcGhlbiBMZWkgLS0tLS3o
-tYTmt7Hpob7pl67jgJENCkHilIYgICDjgIAg6aaZ5riv55CG5bel5aSn5a2mTUJBLOmmmea4r+eU
-n+S6p+WKm+S/g+i/m+WxgOWSjOmmmea4r+W3peS4mue9sueJuee6puiusuW4iOOAgee+juWbveeu
-oeeQhuWtpuS8mihBTUEp5o6I5p2D5LiT5Lia5Z+56K6t5biI44CB5riF5Y2O5aSn5a2mL+WMl+S6
-rOWkp+Wtpi8NCkHilIYgICDjgIAg5rWZ5rGf5aSn5a2mL+S4iua1t+S6pOWkpy/kuK3lsbHlpKfl
-raZFTUJB54+t54m56YKA5a6e5oiY5Z6L6K6y5biIMjAwNi8yMDA3LzIwMDgvMjAwOS8yMDEwLzIw
-MTEvMjAxMi8yMDEz44CBMjAxNC4yMDE177yMMjAxNuW5tOiiqw0KQeKUhiAgIOOAgCDln7norq3o
-rrrlnZvmjqjoqonkuLrigJzljYHlpKflrp7miJjmtL7ln7norq3luIjigJ3jgIHkuJPkuJror77n
-qIvorrLmjojkuJPlrrbjgIHotYTmt7Hpob7pl64uIFNDTSZwbWPor77nqIvlhajlm73nrKzkuIDk
-urrjgILmm73ku7vmn5DlpKflnovml6XmuK/lkIjotYQNCkHilIYgICDjgIAg5LyB5Lia5Ymv5oC7
-57uP55CGLCDoh7Pku4rljY7pooLpm4blm6LogqHkuJzkuYvkuIAu5oul5pyJ5LqM5Y2B5YWr5bm0
-55qE6ZSAX+WUrueUn+S6p+eJqeaWmeeuoeeQhue7j+mqjC7orrLmjojnu4/pqozpnZ7luLjkuLDl
-r4zvvIzorrLmjogv6L6F5a+86L+HMTA4MzblrrYNCkHilIYgICDjgIAg5Lit5aSW5LyB5Lia44CB
-6J6N6ZuG5qyn576O44CC5Lit44CB5riv44CB5Y+w5aSa5a625LyB5Lia57uP6aqM5LmL57K+5Y2O
-LuW5tueUseWMl+S6rOWkp+WtpuWHuueJiOOAiuWmguS9leWBmuWlveeUn+S6py/nianmlpnph4df
-6LSt6K6h5YiS5o6n5Yi244CL57O75YiX5Y+i5pu4DQpB4pSGICAg44CAIOWSjOaZguS7o+WFieiP
-r+WHuueJiOWFieein++8jOeJueWIq+aYrzIwMDgvMjAwOeOAgTIwMTDlubTpl7TovoXlr7zpobrl
-vrfnvo7nmoTpm4blm6Iv5a+M5aOr5bq35L6b5bqU6ZO+566h55CG6aG555uuLOiusuino+a3seWF
-pea1heWHuuaIlua1heWFpea3seWHuiwNCkHilIYgICDjgIAg5LiN5LuF5qGI5L6L5Liw5a+MLOS4
-lOaPkOS+m+WkmuenjeWunueUqOeahOino+WGs+mXrumimOS5i+W3peWFt+WPiuaKgOW3py7oh7Pk
-u4rmnInlhavkuIfkuIPku5/ku6XkuIrkurrmrKHmjqXlj5fkuJPkuJror77nqIvorq3nu4PvvIzl
-iqHlrp7kvZzpo47mt7Hlj5fljoLlrrYNCkHilIYgICDjgIAg5aW96K+E5aaC5r2uLg0KQeKUhiAg
-IOOAgCDmm77nu4/orrLmjojlj4rovoXlr7zov4fnmoTkvIHkuJrmnInvvJos5Lit5Zu956e75Yqo
-44CC5Lit55+z5rK5L+S4rea1t+ayuS/kuK3nn7PljJbjgILkuK3lm73ljJfkuqzogZTpgJrjgILn
-vo7nmoTnqbrosIMu6IGU5oOz44CB5Y2X5pa555S1572R44CC5rex5Zyz5qC455S1DQpB4pSGICAg
-44CAIOermeOAgumVv+axn+S4ieWzoeeUteermeOAguWkp+WUkOeUteS/oeOAgueZveaymembhuWb
-ouOAguW5v+S4nOS4reeDn+OAgua5luWNl+S4reeDn+OAgua5luWMl+S4reeDn++8iOatpuaxieWN
-t+eDn+WOgu+8ieOAguS6keWNl+e6ouays+mbhuWboi7kuK3pm4bpm4blm6Iu57KkDQpB4pSGICAg
-44CAIOeUtembhuWbouOAgemAmueUqOeUteawlO+8iEdF77yJ77yM5qCq5bee5Y2X6L2m5pe25Luj
-LuS4reiIqumbhuWboi7lk4jmsJTpm4blm6LjgILkuJzmlrnnlLXmsJTpm4blm6LjgILkuJzmlrnn
-lLXmnLrjgILopb/pl6jlrZDmnLrovaYu5Y2X6L2m55S15py6LuS4remTgei9qA0KQeKUhiAgIOOA
-gCDpgZPns7vnu58u6Z2S5bKb5Zub5pa5LuS4iua1t+eUteawlOOAguilv+mXqOWtkOaxvei9ruac
-uuOAguatpuaxieaxvei9ruWPkeeUteacuuWOguOAgeadreW3nuaxvei9ruWPkeeUteacuuWOguOA
-guaWveiAkOW+t+eUteawlC7pmL/mtbfms5XnlLXmsJTjgILkuK3lm73nlLUNCkHilIYgICDjgIAg
-5a2Q56eR5oqA6ZuG5Zui77yI5Yab5bel77yJ44CC5LiK5rW35pel56uLL+aXpeeri+eUteairy7k
-uIrmtbfmnb7kuIvljYrlr7zkvZMu57Si5bC8Luilv+WuieadqOajruWItuiNr+OAgeefs+WutuW6
-hOWItuiNr+OAguiLj+W3ni/kuIrmtbfopb/pl6jlrZAu5Lyf5Yib5YqbLyANCkHilIYgICDjgIAg
-5o235pmu56eR5oqALuW6nuW3tOi/quacuui9puOAguWco+aIiOePreOAgi7lj6/lj6Plj6/kuZAu
-55m+5LqL5Y+v5LmQLuWGnOWkq+WxseaziS7okpnniZvjgILmsrPljZfmgJ3lv7Xpo5/lk4HjgILp
-vpnlpKfpo5/lk4Hpm4blm6LvvI7ljZfkuqzlt7Tmlq/lpKvjgILmi5wNCkHilIYgICDjgIAg5bCU
-44CC5p2t5beeL+mVv+aymeWNmuS4luOAgummmea4r+mVv+WunumbhuWboi7kuJzojp7kvJ/mmJPo
-vr7pm4blm6LjgIHliqDmi7/lpKfljJfnlLUu5rOw56eR55S15a2QL+WNoeilv+asp+eUteWtkOOA
-geW6t+aYjuaWr+OAguW5v+W3nui+iemXqOaxvei9pumFjeS7tuOAgg0KQeKUhiAgIOOAgCDlm5vn
-u7TlsJTmsb3ovabphY3ku7Yv5rGf5qOu5rG96L2m6YWN5Lu2L+W8l+WQieS6muaxvei9pumFjeS7
-tuOAguadjuWwlOaxvei9puWGhemlsOOAgumVv+aYpeWvjOWlpeaxvei9pumFjeS7tuOAguW5v+ac
-rOW5v+eIseWFtOaxvei9pumFjeS7tuOAguS4iua1t+exs+WFtg0KQeKUhiAgIOOAgCDmnpcv5Zu6
-54m55byCLiDkuK3nrZbmqaHog7Yu6ZuF5bGF5LmQ5oi/5Zyw5LqnLue+jui1nuiHo+OAguePoOax
-n+WVpOmFkuOAgeatpeatpemrmOeUteWtkOOAgeagvOWKm+epuuiwgy4gLuW5v+W3nuacrOeUsOWP
-keWKqOacui7kuIDmsb3lpKfkvJflj5HliqjmnLouDQpB4pSGICAg44CAIOS4iuaxveWkp+S8l+WP
-keWKqOacui7jgILpm4Xpqazlk4jmn7Tmsrnlj5HliqjmnLou546J5p+05Y+R5Yqo5py644CC5bq3
-5piO5pav5Y+R5Yqo5py6LuS4iuaftOWPkeWKqOacui4g5YyX5Lqs56aP55Sw5Y+R5Yqo5py6LiDm
-l6DplKHljZrkuJbvvIhCT1NDSO+8iQ0KQeKUhiAgIOOAgCDlj5HliqjmnLrllrflmLTjgILkuIrm
-tbfpgJrnlKjmsb3ou4ouIOS4iua1t+mAmueUqOS6lOiPsS/mn7Plt57kupToj7HjgILmiJDpg73k
-uLDnlLDjgILljY7mmajlrp3pqazjgILkuIDmsb3lpKfkvJfjgILlub/lt57mnKznlLDvvJvkuIrm
-sb3pm4blnJgu5rW35Y2X6amsDQpB4pSGICAg44CAIOiHqui+vi7mr5Tkuprov6rmsb3ou4ou6ZW/
-5a6J5rG96LuKLumDkeW3nuaXpeS6py7jgIDkuJzpo47msb3ovabogqHku73mnInpmZDlhazlj7jv
-vIhERkFD77yJ44CC5Lic6aOO56We6b6Z5rG96LuK44CC5aWH55Ge5rG96LuK44CC5YyX5Lqs56aP
-55Sw5rG96LuK44CCDQpB4pSGICAg44CAIOS4reWFtOaxvei7iuOAguW6nuW3tOi/quacuui9puOA
-guWMl+S6rEFCQuetieWkmuWutuefpeWQjeS8geS4mu+8jOabvumpu+WOgui+heWvvCDkuJzojp7o
-r7rln7rkuprjgIHoib7pu5jnlJ8u5YyX5Lqs57Si54ix44CC5pa55q2j56eR5oqA44CC6Z2S5bKb
-5rW35bCU44CCDQpB4pSGICAg44CAIOmdkuWym+a1t+S/oeOAguaDoOW3nlRDTOOAguWIm+e7tOeU
-teinhuOAgeWNl+S6rC/miJDpg73niLHnq4vkv6HjgIHljY7lvLrkuInmtIvjgIHkuInmmJ/nlLXl
-rZDjgIJMR+OAguWGoOaNt+eUteWtkC4g5Yev5aOr5q+U5rO15LiaLC7moLzlhbDlr4zms7XkuJos
-IA0KQeKUhiAgIOOAgCDlh6/ms4nms7XkuJou5L2b5bGx5rO15LiaLuWuieW+t+mHjOiMqOe6uOS4
-muacuuaisOOAgi7ljZrkuJbnlLXmnLou5LiJ5pif55S15py6LlNFV+eUteacui7kuInoj7HnlLXm
-nLrvvIxMR+eUteacui7lqIHpnYgu5Lic6Iqd55S15py644CC6YeR5rOw5b636IOc55S1DQpB4pSG
-ICAg44CAIOacui7ml6Xnq4vnlLXmnLrvvIzkuInoj7HmnLrmorDjgILokoLmo67mnLrmorDjgIJP
-VElT44CB5bGx5Lic5p2w55Ge44CC5bGx5Lic5Lic6JCl56eR55Ge55+z5rK56K6+5aSH5YWs5Y+4
-44CC5p2l56aP5aOr5rW35rSL55+z5rK55bel56iL5YWs5Y+4LuWuj+WNjuefsw0KQeKUhiAgIOOA
-gCDmsrnorr7lpIflhazlj7jjgILpnZLlspvlpKnml7bmtbfmtIvnn7Pmsrnorr7lpIflhazlj7gu
-LuaXpeeri+aMluacuuOAguWwj+advuaMluacuu+8jOW+kOW3pembhuWbouOAguW+kOW3pea2suWO
-i+enkeaKgOOAguaZruiMqOi/iOaWr+eJueacuuaisOOAguS4ieS4gOmHjQ0KQeKUhiAgIOOAgCDl
-t6XjgILkuInkuIDph43lt6XmjJbmnLrphY3ku7bjgILmlpflsbHmnLrmorAu5Lit6IGU6YeN56eR
-44CC5p+z5bee6YeN5bel44CC6b6Z5bel6ZuG5ZuiLuWOpumXqOmHjeW3peOAguaXpeeri+W3peeo
-i+acuuaisC7lm73pmYXnhaTnn7/mnLrmorBJTU3jgILlsbHmsrMNCkHilIYgICDjgIAg5pm66IO9
-Luael+W+t+WPiei9puOAgua1meaxn+ilv+WtkOmHjeW3peacuuaisOaciemZkOWFrOWPuOOAgiDm
-tbflpKnmnLrmorDvvIjlroHms6LvvInjgILlipvlirLmnLrmorDjgILkuJzoip3nlLXmnLrjgILl
-pKfov57ml6Xnq4vnlLXmnLrjgIJMZXhtYXJrLizmn68NCkHilIYgICDjgIAg5bC85Y2h576O6IO9
-44CC5Y2a6KW/55S15Zmo44CC6ZW/6Jm555S15Zmo44CC5byA5YipL+Wkp+mHkS/nlLPoj7Ev5b+X
-6auY5Lit5aSu56m66LCD44CC6ZW/5rKZ5YWz6KW/5raC5paZ44CC5Y2O5ram5raC5paZ44CC5bu6
-5ruU5YyW5bel44CC5ouc5bCU44CC5aSP5paw55S1DQpB4pSGICAg44CAIOWtkC7ljqbljY7pm4bl
-m6Iu5oOg5bee5b636LWb44CB6aOe5Yip5rWm44CB5rex5Zyz5Y2O5Li6LuWNl+S6rCjnhornjKsp
-54ix56uL5L+hLuivuuWfuuS6mi4g6K+66KW/LuS4reWFtOmAmuiur+OAgumYv+WwlOWNoeeJueOA
-geaAneenkeOAgeacl+iur+OAgeWMl+eUteOAgQ0KQeKUhiAgIOOAgCDopb/pl6jlrZAu6Im+6buY
-55SfLlVU5pav6L6+5bq344CC5pGp5q+U55S15a2QLiDov4jmma7pgJrkv6Eu5YWx6L+b55S15a2Q
-LuatpuaxieeDveeBq+enkeaKgC7kuK3lm73plb/ln47orqHnrpfmnLoo5rex5ZyzKS7kuJzojp7m
-saTlp4bpgIoo55S15ZmoKS4gDQpB4pSGICAg44CAIOe+jueahOaXpeeUqOmbhuWboi7moLzlhbDk
-u5Xpm4blm6Iu6IuP5rOK5bCU44CC5qyn5pmu54Wn5piO44CC6Zu35aOr54Wn5piO44CC5Lic6I+x
-6ZuG5Zui44CCVE9UT+OAgumhuuW+t+S5kOWNjumZtueTtyhhcnJvdykuIOW+l+iAjOi+vuawtOm+
-meWktO+8iERlbHRh77yJ44CCDQpB4pSGICAg44CAIOenkeWLkuWNq+a1tOOAguWNl+eOu+mbhuWb
-oi7mi4nms5Xln7rlu7rmnZAv5rC05rOl44CC5q2m5piM6Ii55Y6C44CC5rGf5Y2X6Ii55Y6C44CC
-5paH5Yay6Ii55Y6C44CC5LiK5rW3576O6IGU6ZKi5p6ELuadreiQp+mSouaehO+8jOaVj+WNjuWu
-tuWFt+OAguWFqOWPiw0KQeKUhiAgIOOAgCDlrrblhbcu5a6J5YipLumrmOmcsua0geeJmeiGj+OA
-gueri+eZve+8jFJFQ0tJVFQo5ru06ZyyKS7mpoToj4rnga3omavliYIuIOi/iOeRnueUn+eJqeWM
-u+eWl+OAguaZtuiLkeWItuihoy4g5rqi6L6+57q657uHLuS4nOiOnuS8n+aYk+i+vuOAguadjumU
-puiusOOAgg0KQeKUhiAgIOOAgCDnvo7ms7Dnjqnlhbcu5oGS5a6J57q45Lia77yI5b+D55u45Y2w
-77yJLiBBZGlkYXPjgIIu5Lic6I6e5Y+w6L6+55S15a2QLiDlr4zlo6vlurfpm4blm6Iu6Iux5Y2O
-6L6+LuW6t+S9s+mbhuWbouetiSANCkHilIYgICDjgIAg4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF
-4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF
-4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSFDQpB4pSGICAg44CAICDln7kg6K6tIOWbniDmiacg6KGo
-IO+8iOatpOihqOWkjeWItuacieaViO+8iQ0KQeKUhiAgIOOAgCANCkHilIYgICDjgIAg6K+35aGr
-5aW95LiL6KGo5Y+R6YCB6Iez5Lya5Yqh57uE77yacWluZ3JpQDE2My5jb20gIOW5tuivt+aKhOmA
-geS4gOWwgeWIsO+8mjM4NzAzOTQ1QHFxLmNvbQ0KQeKUhiAgIOOAgCDmiJHljZXkvY3lhbHvvL/v
-vL8g5Lq65oql5ZCN5Y+C5YqgIDIwMTflubRfX19fX18g5ZyoIF9fX19fIOS4vuWKnueahCBQIE0g
-QyDnlJ8g5LqnIOiuoSDliJIg5Y+KIOeJqSDmlpkg5o6nIOWItiDvvJsNCkHilIYgICDjgIAg5Y2V
-5L2N5ZCN56ew77ya77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/
-77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/
-77y/77y/77y/77y/DQpB4pSGICAg44CAIOWfueiureiBlOezu+S6uu+8mu+8v++8v++8v++8v++8
-v++8v++8v++8v++8vyDogZTns7vnlLXor53vvJrvvL/vvL/vvL/vvL/vvL/vvL/vvL/vvL/vvL8g
-6IGU57O75Lyg55yf77ya77y/77y/77y/77y/77y/77y/77y/77y/IA0KQeKUhiAgIOOAgCDnp7vl
-iqjnlLXor53vvJrvvL/vvL/vvL/vvL/vvL/vvL/vvL/vvL/vvL/vvL/vvL/vvL8g55S15a2Q6YKu
-566x77ya77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/
-77y/IA0KQeKUhiAgIOOAgCDlj4LliqDkurrmlbDvvJrvvL/vvL/vvL/vvL8g5Lq6IOi0ueeUqOaA
-u+iuoe+8mu+8v++8v++8v++8v++8v++8vyDlhYMNCkHilIYgICDjgIAg5Y+CIOS8miDkurrvvJrv
-vL/vvL/vvL/vvL/vvL/vvL/vvL/vvL8g5omA5Lu76IGM5Yqh77ya77y/77y/77y/77y/77y/77y/
-77y/77y/77y/77y/IOenu+WKqOeUteivne+8mu+8v++8v++8v++8v++8v++8v++8v++8v++8vyAN
-CkHilIYgICDjgIAg5Y+CIOS8miDkurrvvJrvvL/vvL/vvL/vvL/vvL/vvL/vvL/vvL8g5omA5Lu7
-6IGM5Yqh77ya77y/77y/77y/77y/77y/77y/77y/77y/77y/77y/IOenu+WKqOeUteivne+8mu+8
-v++8v++8v++8v++8v++8v++8v++8v++8vyANCkHilIYgICDjgIAg5Y+CIOS8miDkurrvvJrvvL/v
-vL/vvL/vvL/vvL/vvL/vvL/vvL8g5omA5Lu76IGM5Yqh77ya77y/77y/77y/77y/77y/77y/77y/
-77y/77y/77y/IOenu+WKqOeUteivne+8mu+8v++8v++8v++8v++8v++8v++8v++8v++8vyANCkHi
-lIYgICDjgIAg4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF
-4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSF4pSFDQpB4pSGICAg44CAICDkuIrmtbco
-5YyX5LqsKTogIDE1OSAyMTU3IDc4NzQgKOadjuWwj+WnkCnjgIAgICAgICAgIOa3seWcsyjlub/l
-t54pOiAgMTgzIDIwOTkgMDQ2MiAo6LW15bCP5aeQKQ0KQeKUhiAgIOOAgCDjgJDlj4Ig5LyaIOaW
-uSDlvI/jgJHor7fmgqjmiorln7lf6K6tX+Wbnl/miadf6KGo5aGr5YaZ5aW95Zue5Lyg77yM6K++
-5YmN5LiA5pif5pyf5oKo5bCG5Lya5pS25Yiw5Lyg55yf5Ye977yM5YyF5ous5Z+56K6t5rOo5oSP
-5LqL6aG55Y+K6K+m57uG5a6J5o6SDQpB4pSGICAg44CAIOOAkOWkh+OAgOOAgOazqOOAkSANCkHi
-lIYgICDjgIAgMS7or7flh4blpIfkuIDnm5LlkI3niYfvvIzmlrnkvr/kuI7lhajlnLrlkIzlrabk
-uqTmtYHvvJsNCkHilIYgICDjgIAgMi7or7flsIbnm67liY3pgYfliLDnmoTmnInlvoXop6PlhrPn
-moTlrqLmiLfpl67popjvvIzlh4blpIczMDDkuKrku6XkuIrnmoTlrZfvvIzlhpnlnKhBNOe6uOS4
-iu+8jOS4iuivvuaXtuaPkOWHuuadpeiuqOiuuu+8mw0KQeKUhiAgIOOAgCANCkHilIYgICDjgIAg
-Ci0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5p
-dHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hk
-b3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGlu
-dXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vm
-b3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+Hi Qiuyang
+
+As I tested with pmem, this patch will corrupt f2fs image with generic/051
+of fstest suit.
+
+Could you please take a look at this issue?
+
+Thanks,
+
+On 2017/6/15 16:56, sunqiuyang wrote:
+> From: Qiuyang Sun <sunqiuyang@huawei.com>
+> 
+> This patch implements Direct Access (DAX) in F2FS.
+> 
+> Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
+> ---
+> 
+> Changelog v3 -> v4:
+> 
+> <data.c>
+>   In f2fs_iomap_begin():
+> - For the write branch, if f2fs_map_blocks() returns error (probably due to
+>   ENOSPC), the allocated blocks beyond original_i_size are truncated.
+> - For the read branch, use F2FS_GET_BLOCK_FIEMAP instead of READ for 
+>   f2fs_map_blocks(), so that contiguous unwritten blocks can be treated in
+>   a batch. Accordingly, judge F2FS_MAP_UNWRITTEN before F2FS_MAP_MAPPED for
+>   iomap->type.
+> 
+> - Add a call of f2fs_update_time() in f2fs_iomap_end().
+> 
+> <file.c>
+> - In f2fs_move_file_range() and f2fs_ioc_defragment(), return -EINVAL for
+>   DAX files, as the current implementation uses page cache.
+> - Call f2fs_bug_on() in f2fs_ioc_commit_atomic_write() and 
+>   f2fs_ioc_(release|abort)_volatile_write() when the inode is DAX, which 
+>   should not happen.
+> 
+> <gc.c>
+> - Optimize the logic in dax_move_data_page().
+> 
+> <inode.c>
+> - Enable setting the S_DAX flag for an inode in f2fs_set_inode_flags().
+> 
+> The v4 patch is at f2fs-dev-test.
+> 
+> ---
+>  fs/f2fs/data.c   | 100 +++++++++++++++++++++++++++++
+>  fs/f2fs/f2fs.h   |   8 +++
+>  fs/f2fs/file.c   | 192 ++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+>  fs/f2fs/gc.c     | 104 ++++++++++++++++++++++++++++--
+>  fs/f2fs/inline.c |   4 ++
+>  fs/f2fs/inode.c  |   8 ++-
+>  fs/f2fs/namei.c  |   5 ++
+>  fs/f2fs/super.c  |  15 +++++
+>  8 files changed, 429 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 7d3af48..58efce0 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -2257,3 +2257,103 @@ int f2fs_migrate_page(struct address_space *mapping,
+>  	.migratepage    = f2fs_migrate_page,
+>  #endif
+>  };
+> +
+> +#ifdef CONFIG_FS_DAX
+> +#include <linux/iomap.h>
+> +#include <linux/dax.h>
+> +
+> +static int f2fs_iomap_begin(struct inode *inode, loff_t offset,
+> +	loff_t length, unsigned int flags, struct iomap *iomap)
+> +{
+> +	struct block_device *bdev;
+> +	unsigned long first_block = F2FS_BYTES_TO_BLK(offset);
+> +	unsigned long last_block = F2FS_BYTES_TO_BLK(offset + length - 1);
+> +	struct f2fs_map_blocks map;
+> +	int ret;
+> +
+> +	if (WARN_ON_ONCE(f2fs_has_inline_data(inode)))
+> +		return -ERANGE;
+> +
+> +	map.m_lblk = first_block;
+> +	map.m_len = last_block - first_block + 1;
+> +	map.m_next_pgofs = NULL;
+> +
+> +	if (!(flags & IOMAP_WRITE))
+> +		ret = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_FIEMAP);
+> +	else {
+> +	/* i_size should be kept here and changed later in f2fs_iomap_end */
+> +		loff_t original_i_size = i_size_read(inode);
+> +
+> +		ret = f2fs_map_blocks(inode, &map, 1, F2FS_GET_BLOCK_PRE_DIO);
+> +		if (i_size_read(inode) > original_i_size) {
+> +			f2fs_i_size_write(inode, original_i_size);
+> +			if (ret) {
+> +				truncate_pagecache(inode, original_i_size);
+> +				truncate_blocks(inode, original_i_size, true);
+> +			}
+> +		}
+> +	}
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	iomap->flags = 0;
+> +	bdev = inode->i_sb->s_bdev;
+> +	iomap->bdev = bdev;
+> +	if (blk_queue_dax(bdev->bd_queue))
+> +		iomap->dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
+> +	else
+> +		iomap->dax_dev = NULL;
+> +	iomap->offset = F2FS_BLK_TO_BYTES((u64)first_block);
+> +
+> +	if (map.m_len == 0) {
+> +		iomap->type = IOMAP_HOLE;
+> +		iomap->blkno = IOMAP_NULL_BLOCK;
+> +		iomap->length = F2FS_BLKSIZE;
+> +	} else {
+> +		if (map.m_flags & F2FS_MAP_UNWRITTEN) {
+> +			iomap->type = IOMAP_UNWRITTEN;
+> +		} else if (map.m_flags & F2FS_MAP_MAPPED) {
+> +			iomap->type = IOMAP_MAPPED;
+> +		} else {
+> +			WARN_ON_ONCE(1);
+> +			return -EIO;
+> +		}
+> +		iomap->blkno =
+> +			(sector_t)map.m_pblk << F2FS_LOG_SECTORS_PER_BLOCK;
+> +		iomap->length = F2FS_BLK_TO_BYTES((u64)map.m_len);
+> +	}
+> +
+> +	if (map.m_flags & F2FS_MAP_NEW)
+> +		iomap->flags |= IOMAP_F_NEW;
+> +	return 0;
+> +}
+> +
+> +static int f2fs_iomap_end(struct inode *inode, loff_t offset, loff_t length,
+> +	ssize_t written, unsigned int flags, struct iomap *iomap)
+> +{
+> +	put_dax(iomap->dax_dev);
+> +	if (!(flags & IOMAP_WRITE) || (flags & IOMAP_FAULT))
+> +		return 0;
+> +
+> +	if (offset + written > i_size_read(inode))
+> +		f2fs_i_size_write(inode, offset + written);
+> +
+> +	if (iomap->offset + iomap->length >
+> +			ALIGN(i_size_read(inode), F2FS_BLKSIZE)) {
+> +		block_t written_blk = F2FS_BYTES_TO_BLK(offset + written);
+> +		block_t end_blk = F2FS_BYTES_TO_BLK(offset + length);
+> +
+> +		if (written_blk < end_blk)
+> +			f2fs_write_failed(inode->i_mapping, offset + length);
+> +	}
+> +
+> +	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+> +	return 0;
+> +}
+> +
+> +struct iomap_ops f2fs_iomap_ops = {
+> +	.iomap_begin	= f2fs_iomap_begin,
+> +	.iomap_end	= f2fs_iomap_end,
+> +};
+> +#endif
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 91db1d0..f862b6b 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -88,6 +88,11 @@ struct f2fs_fault_info {
+>  #define F2FS_MOUNT_FAULT_INJECTION	0x00010000
+>  #define F2FS_MOUNT_ADAPTIVE		0x00020000
+>  #define F2FS_MOUNT_LFS			0x00040000
+> +#ifdef CONFIG_FS_DAX
+> +#define F2FS_MOUNT_DAX			0x00080000 /* Direct Access */
+> +#else
+> +#define F2FS_MOUNT_DAX			0
+> +#endif
+>  
+>  #define clear_opt(sbi, option)	((sbi)->mount_opt.opt &= ~F2FS_MOUNT_##option)
+>  #define set_opt(sbi, option)	((sbi)->mount_opt.opt |= F2FS_MOUNT_##option)
+> @@ -2390,6 +2395,9 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
+>  int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
+>  			struct page *page, enum migrate_mode mode);
+>  #endif
+> +#ifdef CONFIG_FS_DAX
+> +extern struct iomap_ops f2fs_iomap_ops;
+> +#endif
+>  
+>  /*
+>   * gc.c
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 6a201c6..e7352a6 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -23,6 +23,10 @@
+>  #include <linux/uio.h>
+>  #include <linux/uuid.h>
+>  #include <linux/file.h>
+> +#ifdef CONFIG_FS_DAX
+> +#include <linux/dax.h>
+> +#include <linux/iomap.h>
+> +#endif
+>  
+>  #include "f2fs.h"
+>  #include "node.h"
+> @@ -121,6 +125,64 @@ static int f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+>  	.page_mkwrite	= f2fs_vm_page_mkwrite,
+>  };
+>  
+> +#ifdef CONFIG_FS_DAX
+> +static int f2fs_dax_huge_fault(struct vm_fault *vmf,
+> +	enum page_entry_size pe_size)
+> +{
+> +	int result;
+> +	struct inode *inode = file_inode(vmf->vma->vm_file);
+> +	struct super_block *sb = inode->i_sb;
+> +	bool write = vmf->flags & FAULT_FLAG_WRITE;
+> +
+> +	if (write) {
+> +		sb_start_pagefault(sb);
+> +		file_update_time(vmf->vma->vm_file);
+> +	}
+> +	down_read(&F2FS_I(inode)->i_mmap_sem);
+> +	result = dax_iomap_fault(vmf, pe_size, &f2fs_iomap_ops);
+> +	up_read(&F2FS_I(inode)->i_mmap_sem);
+> +	if (write)
+> +		sb_end_pagefault(sb);
+> +
+> +	return result;
+> +}
+> +
+> +static int f2fs_dax_fault(struct vm_fault *vmf)
+> +{
+> +	return f2fs_dax_huge_fault(vmf, PE_SIZE_PTE);
+> +}
+> +
+> +static int f2fs_dax_pfn_mkwrite(struct vm_fault *vmf)
+> +{
+> +	struct inode *inode = file_inode(vmf->vma->vm_file);
+> +	struct super_block *sb = inode->i_sb;
+> +	loff_t size;
+> +	int ret;
+> +
+> +	sb_start_pagefault(sb);
+> +	file_update_time(vmf->vma->vm_file);
+> +	down_read(&F2FS_I(inode)->i_mmap_sem);
+> +	size = (i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT;
+> +	if (vmf->pgoff >= size)
+> +		ret = VM_FAULT_SIGBUS;
+> +	else
+> +		ret = dax_pfn_mkwrite(vmf);
+> +	up_read(&F2FS_I(inode)->i_mmap_sem);
+> +	sb_end_pagefault(sb);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct vm_operations_struct f2fs_dax_vm_ops = {
+> +	.fault		= f2fs_dax_fault,
+> +	.huge_fault	= f2fs_dax_huge_fault,
+> +	.page_mkwrite	= f2fs_dax_fault,
+> +	.pfn_mkwrite	= f2fs_dax_pfn_mkwrite,
+> +};
+> +#else
+> +#define f2fs_dax_vm_ops f2fs_file_vm_ops
+> +#endif
+> +
+>  static int get_parent_ino(struct inode *inode, nid_t *pino)
+>  {
+>  	struct dentry *dentry;
+> @@ -436,7 +498,13 @@ static int f2fs_file_mmap(struct file *file, struct vm_area_struct *vma)
+>  		return err;
+>  
+>  	file_accessed(file);
+> -	vma->vm_ops = &f2fs_file_vm_ops;
+> +
+> +	if (IS_DAX(inode)) {
+> +		vma->vm_ops = &f2fs_dax_vm_ops;
+> +		vma->vm_flags |= VM_MIXEDMAP | VM_HUGEPAGE;
+> +	} else
+> +		vma->vm_ops = &f2fs_file_vm_ops;
+> +
+>  	return 0;
+>  }
+>  
+> @@ -520,6 +588,17 @@ static int truncate_partial_data_page(struct inode *inode, u64 from,
+>  	if (!offset && !cache_only)
+>  		return 0;
+>  
+> +#ifdef CONFIG_FS_DAX
+> +	if (IS_DAX(inode)) {
+> +		int ret;
+> +
+> +		down_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
+> +		ret = iomap_zero_range(inode, from, PAGE_SIZE - offset,
+> +			NULL, &f2fs_iomap_ops);
+> +		up_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
+> +		return ret;
+> +	}
+> +#endif
+>  	if (cache_only) {
+>  		page = find_lock_page(mapping, index);
+>  		if (page && PageUptodate(page))
+> @@ -786,6 +865,18 @@ static int fill_zero(struct inode *inode, pgoff_t index,
+>  	if (!len)
+>  		return 0;
+>  
+> +#ifdef CONFIG_FS_DAX
+> +	if (IS_DAX(inode)) {
+> +		int ret;
+> +
+> +		down_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
+> +		ret = iomap_zero_range(inode,
+> +			F2FS_BLK_TO_BYTES((loff_t)index) + start,
+> +			len, NULL, &f2fs_iomap_ops);
+> +		up_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
+> +		return ret;
+> +	}
+> +#endif
+>  	f2fs_balance_fs(sbi, true);
+>  
+>  	f2fs_lock_op(sbi);
+> @@ -1108,6 +1199,11 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+>  	loff_t new_size;
+>  	int ret;
+>  
+> +#ifdef CONFIG_FS_DAX
+> +	/* The current implementation does not apply to DAX files. */
+> +	if (IS_DAX(inode))
+> +		return -EINVAL;
+> +#endif
+>  	if (offset + len >= i_size_read(inode))
+>  		return -EINVAL;
+>  
+> @@ -1298,6 +1394,11 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+>  	loff_t new_size;
+>  	int ret = 0;
+>  
+> +#ifdef CONFIG_FS_DAX
+> +	/* The current implementation does not apply to DAX files. */
+> +	if (IS_DAX(inode))
+> +		return -EINVAL;
+> +#endif
+>  	new_size = i_size_read(inode) + len;
+>  	ret = inode_newsize_ok(inode, new_size);
+>  	if (ret)
+> @@ -1561,6 +1662,10 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+>  	struct inode *inode = file_inode(filp);
+>  	int ret;
+>  
+> +#ifdef CONFIG_FS_DAX
+> +	if (IS_DAX(inode))
+> +		return -EINVAL;
+> +#endif
+>  	if (!inode_owner_or_capable(inode))
+>  		return -EACCES;
+>  
+> @@ -1610,6 +1715,9 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+>  	struct inode *inode = file_inode(filp);
+>  	int ret;
+>  
+> +#ifdef CONFIG_FS_DAX
+> +	f2fs_bug_on(F2FS_I_SB(inode), IS_DAX(inode));
+> +#endif
+>  	if (!inode_owner_or_capable(inode))
+>  		return -EACCES;
+>  
+> @@ -1646,6 +1754,10 @@ static int f2fs_ioc_start_volatile_write(struct file *filp)
+>  	struct inode *inode = file_inode(filp);
+>  	int ret;
+>  
+> +#ifdef CONFIG_FS_DAX
+> +	if (IS_DAX(inode))
+> +		return -EINVAL;
+> +#endif
+>  	if (!inode_owner_or_capable(inode))
+>  		return -EACCES;
+>  
+> @@ -1681,6 +1793,9 @@ static int f2fs_ioc_release_volatile_write(struct file *filp)
+>  	struct inode *inode = file_inode(filp);
+>  	int ret;
+>  
+> +#ifdef CONFIG_FS_DAX
+> +	f2fs_bug_on(F2FS_I_SB(inode), IS_DAX(inode));
+> +#endif
+>  	if (!inode_owner_or_capable(inode))
+>  		return -EACCES;
+>  
+> @@ -1710,6 +1825,9 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
+>  	struct inode *inode = file_inode(filp);
+>  	int ret;
+>  
+> +#ifdef CONFIG_FS_DAX
+> +	f2fs_bug_on(F2FS_I_SB(inode), IS_DAX(inode));
+> +#endif
+>  	if (!inode_owner_or_capable(inode))
+>  		return -EACCES;
+>  
+> @@ -2080,6 +2198,10 @@ static int f2fs_ioc_defragment(struct file *filp, unsigned long arg)
+>  	struct f2fs_defragment range;
+>  	int err;
+>  
+> +#ifdef CONFIG_FS_DAX
+> +	if (IS_DAX(inode))
+> +		return -EINVAL;
+> +#endif
+>  	if (!capable(CAP_SYS_ADMIN))
+>  		return -EPERM;
+>  
+> @@ -2129,6 +2251,10 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
+>  	size_t dst_osize;
+>  	int ret;
+>  
+> +#ifdef CONFIG_FS_DAX
+> +	if (IS_DAX(src) || IS_DAX(dst))
+> +		return -EINVAL;
+> +#endif
+>  	if (file_in->f_path.mnt != file_out->f_path.mnt ||
+>  				src->i_sb != dst->i_sb)
+>  		return -EXDEV;
+> @@ -2368,6 +2494,61 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>  	}
+>  }
+>  
+> +#ifdef CONFIG_FS_DAX
+> +static ssize_t f2fs_dax_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> +{
+> +	struct inode *inode = file_inode(iocb->ki_filp);
+> +	ssize_t ret;
+> +
+> +	inode_lock_shared(inode);
+> +
+> +	if (!IS_DAX(inode)) {
+> +		inode_unlock_shared(inode);
+> +		return generic_file_read_iter(iocb, to);
+> +	}
+> +
+> +	down_read(&F2FS_I(inode)->dio_rwsem[READ]);
+> +	ret = dax_iomap_rw(iocb, to, &f2fs_iomap_ops);
+> +	up_read(&F2FS_I(inode)->dio_rwsem[READ]);
+> +	inode_unlock_shared(inode);
+> +
+> +	file_accessed(iocb->ki_filp);
+> +	return ret;
+> +}
+> +
+> +static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> +{
+> +	if (!iov_iter_count(to))
+> +		return 0; /* skip atime */
+> +
+> +	if (IS_DAX(file_inode(iocb->ki_filp)))
+> +		return f2fs_dax_read_iter(iocb, to);
+> +
+> +	return generic_file_read_iter(iocb, to);
+> +}
+> +
+> +static ssize_t f2fs_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> +{
+> +	struct inode *inode = file_inode(iocb->ki_filp);
+> +	ssize_t ret;
+> +
+> +	ret = file_remove_privs(iocb->ki_filp);
+> +	if (ret)
+> +		return ret;
+> +	ret = file_update_time(iocb->ki_filp);
+> +	if (ret)
+> +		return ret;
+> +
+> +	down_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
+> +	ret = dax_iomap_rw(iocb, from, &f2fs_iomap_ops);
+> +	up_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
+> +
+> +	return ret;
+> +}
+> +#else
+> +#define f2fs_dax_write_iter	__generic_file_write_iter
+> +#endif
+> +
+>  static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  {
+>  	struct file *file = iocb->ki_filp;
+> @@ -2389,7 +2570,10 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  			return err;
+>  		}
+>  		blk_start_plug(&plug);
+> -		ret = __generic_file_write_iter(iocb, from);
+> +		if (IS_DAX(inode))
+> +			ret = f2fs_dax_write_iter(iocb, from);
+> +		else
+> +			ret = __generic_file_write_iter(iocb, from);
+>  		blk_finish_plug(&plug);
+>  		clear_inode_flag(inode, FI_NO_PREALLOC);
+>  	}
+> @@ -2437,7 +2621,11 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>  
+>  const struct file_operations f2fs_file_operations = {
+>  	.llseek		= f2fs_llseek,
+> +#ifdef CONFIG_FS_DAX
+> +	.read_iter	= f2fs_file_read_iter,
+> +#else
+>  	.read_iter	= generic_file_read_iter,
+> +#endif
+>  	.write_iter	= f2fs_file_write_iter,
+>  	.open		= f2fs_file_open,
+>  	.release	= f2fs_release_file,
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index fa3d2e2..ade4f71 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -700,6 +700,100 @@ static void move_encrypted_block(struct inode *inode, block_t bidx,
+>  	f2fs_put_page(page, 1);
+>  }
+>  
+> +#ifdef CONFIG_FS_DAX
+> +#include <linux/dax.h>
+> +
+> +static void dax_move_data_page(struct inode *inode, block_t bidx,
+> +				unsigned int segno, int off)
+> +{
+> +	struct block_device *bdev = inode->i_sb->s_bdev;
+> +	struct dax_device *dax_dev;
+> +	struct dnode_of_data dn;
+> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> +	struct f2fs_summary sum;
+> +	struct node_info ni;
+> +	block_t old_blkaddr, new_blkaddr;
+> +	int err, id;
+> +	long map_len;
+> +	pgoff_t pgoff;
+> +	void *kaddr_old, *kaddr_new;
+> +	pfn_t pfn;
+> +
+> +	f2fs_bug_on(sbi, f2fs_is_atomic_file(inode));
+> +
+> +	if (blk_queue_dax(bdev->bd_queue))
+> +		dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
+> +	else
+> +		return;
+> +
+> +	if (!check_valid_map(sbi, segno, off))
+> +		return;
+> +
+> +	if (!down_write_trylock(&F2FS_I(inode)->i_mmap_sem))
+> +		return;
+> +
+> +	unmap_mapping_range(inode->i_mapping, (loff_t)bidx << PAGE_SHIFT,
+> +			PAGE_SIZE, 1);
+> +	/* find the old block address */
+> +	set_new_dnode(&dn, inode, NULL, NULL, 0);
+> +	err = get_dnode_of_data(&dn, bidx, LOOKUP_NODE);
+> +	if (err)
+> +		goto out;
+> +	old_blkaddr = dn.data_blkaddr;
+> +	/* This page is already truncated */
+> +	if (old_blkaddr == NULL_ADDR)
+> +		goto put_dn;
+> +
+> +	/* allocate a new block address */
+> +	get_node_info(sbi, dn.nid, &ni);
+> +	set_summary(&sum, dn.nid, dn.ofs_in_node, ni.version);
+> +	allocate_data_block(sbi, NULL, old_blkaddr, &new_blkaddr,
+> +			&sum, CURSEG_COLD_DATA, NULL, false);
+> +
+> +	/* copy data page from old to new address in dax_bdev */
+> +	id = dax_read_lock();
+> +	err = bdev_dax_pgoff(bdev, SECTOR_FROM_BLOCK(old_blkaddr),
+> +			PAGE_SIZE, &pgoff);
+> +	if (err)
+> +		goto recover;
+> +	map_len = dax_direct_access(dax_dev, pgoff, 1, &kaddr_old, &pfn);
+> +	if (map_len < 0)
+> +		goto recover;
+> +	err = bdev_dax_pgoff(bdev, SECTOR_FROM_BLOCK(new_blkaddr),
+> +			PAGE_SIZE, &pgoff);
+> +	if (err)
+> +		goto recover;
+> +	map_len = dax_direct_access(dax_dev, pgoff, 1, &kaddr_new, &pfn);
+> +	if (map_len < 0)
+> +		goto recover;
+> +	copy_page((void __force *)kaddr_new, (void __force *)kaddr_old);
+> +
+> +	f2fs_update_data_blkaddr(&dn, new_blkaddr);
+> +	set_inode_flag(inode, FI_APPEND_WRITE);
+> +	if (bidx == 0)
+> +		set_inode_flag(inode, FI_FIRST_BLOCK_WRITTEN);
+> +
+> +recover:
+> +	if (err || map_len < 0)
+> +		__f2fs_replace_block(sbi, &sum, new_blkaddr, old_blkaddr,
+> +							true, true);
+> +	dax_read_unlock(id);
+> +put_dn:
+> +	f2fs_put_dnode(&dn);
+> +out:
+> +	unmap_mapping_range(inode->i_mapping, (loff_t)bidx << PAGE_SHIFT,
+> +			PAGE_SIZE, 1);
+> +	up_write(&F2FS_I(inode)->i_mmap_sem);
+> +	put_dax(dax_dev);
+> +}
+> +#else
+> +static void dax_move_data_page(struct inode *inode, block_t bidx,
+> +				unsigned int segno, int off)
+> +{
+> +	return;
+> +}
+> +#endif
+> +
+>  static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+>  							unsigned int segno, int off)
+>  {
+> @@ -818,9 +912,9 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+>  			if (IS_ERR(inode) || is_bad_inode(inode))
+>  				continue;
+>  
+> -			/* if encrypted inode, let's go phase 3 */
+> -			if (f2fs_encrypted_inode(inode) &&
+> -						S_ISREG(inode->i_mode)) {
+> +			/* if DAX or encrypted inode, let's go phase 3 */
+> +			if (IS_DAX(inode) || (f2fs_encrypted_inode(inode) &&
+> +						S_ISREG(inode->i_mode))) {
+>  				add_gc_inode(gc_list, inode);
+>  				continue;
+>  			}
+> @@ -858,7 +952,9 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+>  
+>  			start_bidx = start_bidx_of_node(nofs, inode)
+>  								+ ofs_in_node;
+> -			if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
+> +			if (IS_DAX(inode))
+> +				dax_move_data_page(inode, start_bidx, segno, off);
+> +			else if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
+>  				move_encrypted_block(inode, start_bidx, segno, off);
+>  			else
+>  				move_data_page(inode, start_bidx, gc_type, segno, off);
+> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+> index e0fd437..fd8b290 100644
+> --- a/fs/f2fs/inline.c
+> +++ b/fs/f2fs/inline.c
+> @@ -28,6 +28,10 @@ bool f2fs_may_inline_data(struct inode *inode)
+>  	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
+>  		return false;
+>  
+> +#ifdef CONFIG_FS_DAX
+> +	if (IS_DAX(inode))
+> +		return false;
+> +#endif
+>  	return true;
+>  }
+>  
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index 1ff5bd4..aa16c52 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -43,8 +43,14 @@ void f2fs_set_inode_flags(struct inode *inode)
+>  		new_fl |= S_NOATIME;
+>  	if (flags & FS_DIRSYNC_FL)
+>  		new_fl |= S_DIRSYNC;
+> +#ifdef CONFIG_FS_DAX
+> +	if (test_opt(F2FS_I_SB(inode), DAX) && S_ISREG(inode->i_mode) &&
+> +		!f2fs_has_inline_data(inode) && !f2fs_encrypted_inode(inode) &&
+> +		!f2fs_is_atomic_file(inode) && !f2fs_is_volatile_file(inode))
+> +		new_fl |= S_DAX;
+> +#endif
+>  	inode_set_flags(inode, new_fl,
+> -			S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC);
+> +			S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC|S_DAX);
+>  }
+>  
+>  static void __get_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index c31b40e..8feeb9a 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -60,6 +60,11 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
+>  	if (f2fs_encrypted_inode(dir) && f2fs_may_encrypt(inode))
+>  		f2fs_set_encrypted_inode(inode);
+>  
+> +#ifdef CONFIG_FS_DAX
+> +	if (test_opt(sbi, DAX) && S_ISREG(inode->i_mode) &&
+> +		!f2fs_has_inline_data(inode) && !f2fs_encrypted_inode(inode))
+> +		inode->i_flags |= S_DAX;
+> +#endif
+>  	set_inode_flag(inode, FI_NEW_INODE);
+>  
+>  	if (test_opt(sbi, INLINE_XATTR))
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 8e39b85..74277cd 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -106,6 +106,7 @@ enum {
+>  	Opt_fault_injection,
+>  	Opt_lazytime,
+>  	Opt_nolazytime,
+> +	Opt_dax,
+>  	Opt_err,
+>  };
+>  
+> @@ -141,6 +142,7 @@ enum {
+>  	{Opt_fault_injection, "fault_injection=%u"},
+>  	{Opt_lazytime, "lazytime"},
+>  	{Opt_nolazytime, "nolazytime"},
+> +	{Opt_dax, "dax"},
+>  	{Opt_err, NULL},
+>  };
+>  
+> @@ -380,6 +382,15 @@ static int parse_options(struct super_block *sb, char *options)
+>  		case Opt_nolazytime:
+>  			sb->s_flags &= ~MS_LAZYTIME;
+>  			break;
+> +#ifdef CONFIG_FS_DAX
+> +		case Opt_dax:
+> +			set_opt(sbi, DAX);
+> +			break;
+> +#else
+> +		case Opt_dax:
+> +			f2fs_msg(sb, KERN_INFO, "dax option not supported");
+> +			break;
+> +#endif
+>  		default:
+>  			f2fs_msg(sb, KERN_ERR,
+>  				"Unrecognized mount option \"%s\" or missing value",
+> @@ -775,6 +786,10 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+>  		seq_printf(seq, ",fault_injection=%u",
+>  				sbi->fault_info.inject_rate);
+>  #endif
+> +#ifdef CONFIG_FS_DAX
+> +	if (test_opt(sbi, DAX))
+> +		seq_puts(seq, ",dax");
+> +#endif
+>  
+>  	return 0;
+>  }
+> 
