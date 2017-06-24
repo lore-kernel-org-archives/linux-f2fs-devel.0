@@ -1,24 +1,26 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/2] f2fs: report # of free inodes more precisely
-Date: Sat, 24 Jun 2017 09:25:22 -0700
-Message-ID: <20170624162522.48931-2-jaegeuk@kernel.org>
-References: <20170624162522.48931-1-jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: fix ref of discard command
+Date: Sat, 24 Jun 2017 09:26:54 -0700
+Message-ID: <20170624162654.GA38959@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20170612030449.79290-1-jaegeuk@kernel.org>
+	<bedfaab3-0f28-51b4-289a-dd7fcd9ccd8a@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1dOnsR-0001Z5-Gm
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1dOnto-0003aK-Da
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 24 Jun 2017 16:25:39 +0000
+	Sat, 24 Jun 2017 16:27:04 +0000
 Received: from mail.kernel.org ([198.145.29.99])
 	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1dOnsO-0007M9-1P
+	(Exim 4.76) id 1dOntn-0007ZA-Lq
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 24 Jun 2017 16:25:39 +0000
-In-Reply-To: <20170624162522.48931-1-jaegeuk@kernel.org>
+	Sat, 24 Jun 2017 16:27:04 +0000
+Content-Disposition: inline
+In-Reply-To: <bedfaab3-0f28-51b4-289a-dd7fcd9ccd8a@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,52 +30,46 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-If the partition is small, we don't need to report total # of inodes including
-hidden free nodes.
+On 06/23, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> On 2017/6/12 11:04, Jaegeuk Kim wrote:
+> > This patch resolves kernel panic for xfstests/081, caused by recent f2fs_bug_on
+> > 
+> >   f2fs: add f2fs_bug_on in __remove_discard_cmd
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/segment.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 86a0c1095939..a6d77388a806 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -1025,6 +1025,8 @@ static void __wait_discard_cmd(struct f2fs_sb_info *sbi, bool wait_cond)
+> >  	list_for_each_entry_safe(dc, tmp, wait_list, list) {
+> >  		if (!wait_cond || (dc->state == D_DONE && !dc->ref)) {
+> >  			wait_for_completion_io(&dc->wait);
+> > +			if (dc->state == D_DONE && dc->ref)
+> > +				dc->ref--;
+> 
+> How about using ("f2fs: stop discard thread in prior during umount") instead of
+> this one? As dereference of dc here will lead use-after-free of real referrer.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/super.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+Yup, I'll also verify that.
+Thank you. :)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 8e39b850bfc0..3da6fb276f8b 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -680,6 +680,7 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
- 	u64 id = huge_encode_dev(sb->s_bdev->bd_dev);
- 	block_t total_count, user_block_count, start_count, ovp_count;
-+	u64 avail_node_count;
- 
- 	total_count = le64_to_cpu(sbi->raw_super->block_count);
- 	user_block_count = sbi->user_block_count;
-@@ -692,9 +693,16 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	buf->f_bfree = user_block_count - valid_user_blocks(sbi) + ovp_count;
- 	buf->f_bavail = user_block_count - valid_user_blocks(sbi);
- 
--	buf->f_files = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
--	buf->f_ffree = min(buf->f_files - valid_node_count(sbi),
--							buf->f_bavail);
-+	avail_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
-+
-+	if (avail_node_count > user_block_count) {
-+		buf->f_files = user_block_count;
-+		buf->f_ffree = buf->f_bavail;
-+	} else {
-+		buf->f_files = avail_node_count;
-+		buf->f_ffree = min(avail_node_count - valid_node_count(sbi),
-+					buf->f_bavail);
-+	}
- 
- 	buf->f_namelen = F2FS_NAME_LEN;
- 	buf->f_fsid.val[0] = (u32)id;
--- 
-2.13.0.rc1.294.g07d810a77f-goog
-
+> 
+> Thanks,
+> 
+> >  			__remove_discard_cmd(sbi, dc);
+> >  		} else {
+> >  			dc->ref++;
+> > 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
