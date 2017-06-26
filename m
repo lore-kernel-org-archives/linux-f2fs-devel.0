@@ -1,26 +1,25 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: fix ref of discard command
-Date: Sat, 24 Jun 2017 09:26:54 -0700
-Message-ID: <20170624162654.GA38959@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20170612030449.79290-1-jaegeuk@kernel.org>
-	<bedfaab3-0f28-51b4-289a-dd7fcd9ccd8a@huawei.com>
+From: Sheng Yong <shengyong1@huawei.com>
+Subject: [RFC PATCH v2 2/2] f2fs: do not set LOST_PINO for
+ renamed dir
+Date: Mon, 26 Jun 2017 10:41:36 +0800
+Message-ID: <20170626024136.211772-2-shengyong1@huawei.com>
+References: <20170626024136.211772-1-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1dOnto-0003aK-Da
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <shengyong1@huawei.com>) id 1dPJzS-0001ul-RY
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 24 Jun 2017 16:27:04 +0000
-Received: from mail.kernel.org ([198.145.29.99])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1dOntn-0007ZA-Lq
+	Mon, 26 Jun 2017 02:43:02 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1dPJzM-0000Bq-Ex
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 24 Jun 2017 16:27:04 +0000
-Content-Disposition: inline
-In-Reply-To: <bedfaab3-0f28-51b4-289a-dd7fcd9ccd8a@huawei.com>
+	Mon, 26 Jun 2017 02:43:02 +0000
+In-Reply-To: <20170626024136.211772-1-shengyong1@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,46 +29,46 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 06/23, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> On 2017/6/12 11:04, Jaegeuk Kim wrote:
-> > This patch resolves kernel panic for xfstests/081, caused by recent f2fs_bug_on
-> > 
-> >   f2fs: add f2fs_bug_on in __remove_discard_cmd
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/segment.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index 86a0c1095939..a6d77388a806 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -1025,6 +1025,8 @@ static void __wait_discard_cmd(struct f2fs_sb_info *sbi, bool wait_cond)
-> >  	list_for_each_entry_safe(dc, tmp, wait_list, list) {
-> >  		if (!wait_cond || (dc->state == D_DONE && !dc->ref)) {
-> >  			wait_for_completion_io(&dc->wait);
-> > +			if (dc->state == D_DONE && dc->ref)
-> > +				dc->ref--;
-> 
-> How about using ("f2fs: stop discard thread in prior during umount") instead of
-> this one? As dereference of dc here will lead use-after-free of real referrer.
+After renaming a directory, fsck could detect unmatched pino. The scenario
+can be reproduced as the following:
 
-Yup, I'll also verify that.
-Thank you. :)
+	$ mkdir /bar/subbar /foo
+	$ rename /bar/subbar /foo
 
-> 
-> Thanks,
-> 
-> >  			__remove_discard_cmd(sbi, dc);
-> >  		} else {
-> >  			dc->ref++;
-> > 
+Then fsck will report:
+[ASSERT] (__chk_dots_dentries:1182)  --> Bad inode number[0x3] for '..', parent parent ino is [0x4]
+
+Rename sets LOST_PINO for old_inode. However, the flag cannot be cleared,
+since dir is written back with CP. So, let's get rid of LOST_PINO for a
+renamed dir and fix the pino directly at the end of rename.
+
+Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+---
+ fs/f2fs/namei.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index c31b40e5f9cf..b75dc2f4ad57 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -772,7 +772,10 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	}
+ 
+ 	down_write(&F2FS_I(old_inode)->i_sem);
+-	file_lost_pino(old_inode);
++	if (!old_dir_entry || whiteout)
++		file_lost_pino(old_inode);
++	else
++		F2FS_I(old_inode)->i_pino = new_dir->i_ino;
+ 	up_write(&F2FS_I(old_inode)->i_sem);
+ 
+ 	old_inode->i_ctime = current_time(old_inode);
+-- 
+2.11.0
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
