@@ -1,62 +1,63 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: [RFC PATCH v2 1/2] f2fs: do not set LOST_PINO for newly
- created dir
-Date: Mon, 26 Jun 2017 10:41:35 +0800
-Message-ID: <20170626024136.211772-1-shengyong1@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: avoid deadlock caused by lock order
+ of page and lock_op
+Date: Mon, 26 Jun 2017 16:15:41 +0800
+Message-ID: <f572292c-026a-7167-89b4-864b60d05865@huawei.com>
+References: <20170624162522.48931-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <shengyong1@huawei.com>) id 1dPK0R-00070i-KN
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 26 Jun 2017 02:44:03 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1dPK0P-0000ND-TF
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 26 Jun 2017 02:44:03 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20170624162522.48931-1-jaegeuk@kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Since directories will be written back with checkpoint and fsync a
-directory will always write CP, there is no need to set LOST_PINO
-after creating a directory.
+Hi Jaegeuk,
 
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
----
- fs/f2fs/dir.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On 2017/6/25 0:25, Jaegeuk Kim wrote:
+> - punch_hole
+>  - fill_zero
+>   - f2fs_lock_op
+>   - get_new_data_page
+>    - lock_page
+> 
+> - f2fs_write_data_pages
+>  - lock_page
+>  - do_write_data_page
+>   - f2fs_lock_op
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 94756f55a97e..37f9c7f55605 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -415,7 +415,8 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
- 	 * We lost i_pino from now on.
- 	 */
- 	if (is_inode_flag_set(inode, FI_INC_LINK)) {
--		file_lost_pino(inode);
-+		if (!S_ISDIR(inode->i_mode))
-+			file_lost_pino(inode);
- 		/*
- 		 * If link the tmpfile to alias through linkat path,
- 		 * we should remove this inode from orphan list.
--- 
-2.11.0
+Good catch!
 
+With this implementation, page writeback can fail due to concurrent checkpoint,
+this will make fsync/atomic_commit which trigger synchronous write failed randomly.
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+How about unifying the lock order in punch_hole as one in writepages for regular
+inode? We can add one more parameter in get_new_data_page to indicate whether
+callee needs to lock cp_rwsem.
+
+Thanks,
+
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/data.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 7d3af48d34a9..9141bd19a902 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1404,8 +1404,9 @@ int do_write_data_page(struct f2fs_io_info *fio)
+>  		}
+>  	}
+>  
+> -	if (fio->need_lock == LOCK_REQ)
+> -		f2fs_lock_op(fio->sbi);
+> +	/* Deadlock due to between page->lock and f2fs_lock_op */
+> +	if (fio->need_lock == LOCK_REQ && !f2fs_trylock_op(fio->sbi))
+> +		return -EAGAIN;
+>  
+>  	err = get_dnode_of_data(&dn, page->index, LOOKUP_NODE);
+>  	if (err)
+> 
