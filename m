@@ -1,22 +1,21 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2 RESEND] f2fs: introduce __check_sit_bitmap
-Date: Fri, 30 Jun 2017 17:19:02 +0800
-Message-ID: <20170630091902.26371-1-yuchao0@huawei.com>
+From: "Tiezhu Yang" <kernelpatch@126.com>
+Subject: [PATCH] f2fs: avoid unnecessary function call
+Date: Sat, 1 Jul 2017 07:02:54 +0800 (CST)
+Message-ID: <22a88618.4a1.15cfb3e2aeb.Coremail.kernelpatch@126.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1dQs5j-0002f7-VG
+	(envelope-from <kernelpatch@126.com>) id 1dR4wN-0006zG-Tg
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 30 Jun 2017 09:19:55 +0000
-Received: from szxga02-in.huawei.com ([45.249.212.188])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1dQs5h-0005za-DA
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 30 Jun 2017 09:19:55 +0000
+	Fri, 30 Jun 2017 23:03:08 +0000
+Received: from m15-62.126.com ([220.181.15.62])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1dR4wM-0002bX-5f for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 30 Jun 2017 23:03:07 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,66 +26,49 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-After we introduce discard thread, discard command can be issued
-concurrently with data allocating, this patch adds new function to
-heck sit bitmap to ensure that userdata was invalid in which on-going
-discard command covered.
+It should call the function fscrypt_fname_free_buffer() in the exception
+handling only after the function fscrypt_fname_alloc_buffer() returns 0,
+otherwise it is unnecessary.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
 ---
-v2: remove sentry_lock to avoid ABBA deadlock.
- fs/f2fs/segment.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ fs/f2fs/namei.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 290ee80b8089..ce2576586ae7 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -763,6 +763,30 @@ static void f2fs_submit_discard_endio(struct bio *bio)
- 	bio_put(bio);
- }
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index c31b40e..3225a82 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -1036,12 +1036,12 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
  
-+void __check_sit_bitmap(struct f2fs_sb_info *sbi,
-+				block_t start, block_t end)
-+{
-+#ifdef CONFIG_F2FS_CHECK_FS
-+	struct seg_entry *sentry;
-+	unsigned int segno;
-+	block_t blk = start;
-+	unsigned long offset, size, max_blocks = sbi->blocks_per_seg;
-+	unsigned long *map;
-+
-+	while (blk < end) {
-+		segno = GET_SEGNO(sbi, blk);
-+		sentry = get_seg_entry(sbi, segno);
-+		offset = GET_BLKOFF_FROM_SEG0(sbi, blk);
-+
-+		size = min((unsigned long)(end - blk), max_blocks);
-+		map = (unsigned long *)(sentry->cur_valid_map);
-+		offset = __find_rev_next_bit(map, size, offset);
-+		f2fs_bug_on(sbi, offset != size);
-+		blk += size;
-+	}
-+#endif
-+}
-+
- /* this function is copied from blkdev_issue_discard from block/blk-lib.c */
- static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
- 				struct discard_cmd *dc)
-@@ -790,6 +814,7 @@ static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
- 			bio->bi_opf |= REQ_SYNC;
- 			submit_bio(bio);
- 			list_move_tail(&dc->list, &dcc->wait_list);
-+			__check_sit_bitmap(sbi, dc->start, dc->start + dc->len);
- 		}
- 	} else {
- 		__remove_discard_cmd(sbi, dc);
+ 	res = fscrypt_fname_disk_to_usr(inode, 0, 0, &cstr, &pstr);
+ 	if (res)
+-		goto errout;
++		goto out;
+ 
+ 	/* this is broken symlink case */
+ 	if (unlikely(pstr.name[0] == 0)) {
+ 		res = -ENOENT;
+-		goto errout;
++		goto out;
+ 	}
+ 
+ 	paddr = pstr.name;
+@@ -1052,8 +1052,9 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
+ 	put_page(cpage);
+ 	set_delayed_call(done, kfree_link, paddr);
+ 	return paddr;
+-errout:
++out:
+ 	fscrypt_fname_free_buffer(&pstr);
++errout:
+ 	put_page(cpage);
+ 	return ERR_PTR(res);
+ }
 -- 
-2.13.1.388.g69e6b9b4f4a9
-
-
+1.8.3.1
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
 engaging tech sites, Slashdot.org! http://sdm.link/slashdot
