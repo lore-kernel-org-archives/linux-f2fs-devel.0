@@ -1,51 +1,137 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 2/2] f2fs: reuse original mount option in ->remount_fs
-Date: Sat, 1 Jul 2017 00:48:04 -0700
-Message-ID: <20170701074804.GB85052@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20170629152046.2610-1-chao@kernel.org>
- <20170629152046.2610-2-chao@kernel.org>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH 2/2] f2fs: report # of free inodes more
+ precisely
+Date: Sat, 1 Jul 2017 16:28:40 +0800
+Message-ID: <ae7ad4a6-698a-d9ff-0fdf-a24f351d6ba7@kernel.org>
+References: <20170624162522.48931-1-jaegeuk@kernel.org>
+	<20170624162522.48931-2-jaegeuk@kernel.org>
+	<2d091ab2-cf3a-5185-99d1-59c606c9b9dc@huawei.com>
+	<20170626145846.GB8560@jaegeuk-macbookpro.roam.corp.google.com>
+	<2b10c6e0-50d2-04f6-f7d2-cfc95f90e8e6@kernel.org>
+	<20170701072700.GA83795@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170629152046.2610-2-chao@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao@kernel.org>) id 1dRDmj-0000Ox-HY
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 01 Jul 2017 08:29:45 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1dRDmh-0002Yx-3c
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 01 Jul 2017 08:29:45 +0000
+In-Reply-To: <20170701072700.GA83795@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 06/29, Chao Yu wrote:
-> From: Chao Yu <yuchao0@huawei.com>
+On 2017/7/1 15:27, Jaegeuk Kim wrote:
+> On 06/28, Chao Yu wrote:
+>> On 2017/6/26 22:58, Jaegeuk Kim wrote:
+>>> On 06/26, Chao Yu wrote:
+>>>> Hi Jaegeuk,
+>>>>
+>>>> On 2017/6/25 0:25, Jaegeuk Kim wrote:
+>>>>> If the partition is small, we don't need to report total # of inodes including
+>>>>> hidden free nodes.
+>>>>>
+>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>>> ---
+>>>>>  fs/f2fs/super.c | 14 +++++++++++---
+>>>>>  1 file changed, 11 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>>>> index 8e39b850bfc0..3da6fb276f8b 100644
+>>>>> --- a/fs/f2fs/super.c
+>>>>> +++ b/fs/f2fs/super.c
+>>>>> @@ -680,6 +680,7 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
+>>>>>  	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+>>>>>  	u64 id = huge_encode_dev(sb->s_bdev->bd_dev);
+>>>>>  	block_t total_count, user_block_count, start_count, ovp_count;
+>>>>> +	u64 avail_node_count;
+>>>>>  
+>>>>>  	total_count = le64_to_cpu(sbi->raw_super->block_count);
+>>>>>  	user_block_count = sbi->user_block_count;
+>>>>> @@ -692,9 +693,16 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
+>>>>>  	buf->f_bfree = user_block_count - valid_user_blocks(sbi) + ovp_count;
+>>>>>  	buf->f_bavail = user_block_count - valid_user_blocks(sbi);
+>>>>>  
+>>>>> -	buf->f_files = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
+>>>>> -	buf->f_ffree = min(buf->f_files - valid_node_count(sbi),
+>>>>> -							buf->f_bavail);
+>>>>> +	avail_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
+>>>>> +
+>>>>> +	if (avail_node_count > user_block_count) {
+>>>>> +		buf->f_files = user_block_count;
+>>>>> +		buf->f_ffree = buf->f_bavail;
+>>>>
+>>>> f_ffree is limited both by remained free nid count and free block count, so it
+>>>> needs to change like this?
+>>>
+>>> I thought both of them are same, since node block will consume user block. So,
+>>> we don't need to do min() again.
+>>
+>> avail_node_count comes from total free nid counts which is limited with
+>> nid_bitmap size, buf->f_bavail comes from total user block count which
+>> can both cosumed by node and data. So the value of them may not be the same.
 > 
-> Don't clear old mount option before parse new option during ->remount_fs
-> like other generic filesystems.
+> What I mean was, if avail_node_count is larger than user_block_count, we can
+> see buf->f_bavail is always smaller than avali_node_count - valid_node_count,
+> since node blocks concumes blocks as well.
 
-So, what happened on your original patch?
+Got you. :)
 
-commit 26666c8a4366debae30ae37d0688b2bec92d196a
-    f2fs: fix to clean previous mount option when remount_fs
-
-I think we need to rever the original patch tho.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
 
 > 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/super.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index f27c141cd8aa..af472f7968d0 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -846,7 +846,6 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
->  			clear_sbi_flag(sbi, SBI_NEED_SB_WRITE);
->  	}
->  
-> -	sbi->mount_opt.opt = 0;
->  	default_options(sbi);
->  
->  	/* parse mount options */
-> -- 
-> 2.13.0.90.g1eb437020
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>> if (avail_node_count > user_block_count)
+>>>> 	avail_node_count = user_block_count;
+>>>>
+>>>> buf->f_files = avail_node_count;
+>>>> buf->f_ffree = min(avail_node_count - valid_node_count(sbi),
+>>>> 					buf->f_bavail);
+>>>>
+>>>> Thanks,
+>>>>
+>>>>> +	} else {
+>>>>> +		buf->f_files = avail_node_count;
+>>>>> +		buf->f_ffree = min(avail_node_count - valid_node_count(sbi),
+>>>>> +					buf->f_bavail);
+>>>>> +	}
+>>>>>  
+>>>>>  	buf->f_namelen = F2FS_NAME_LEN;
+>>>>>  	buf->f_fsid.val[0] = (u32)id;
+>>>>>
+>>>
+>>> ------------------------------------------------------------------------------
+>>> Check out the vibrant tech community on one of the world's most
+>>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+>>> _______________________________________________
+>>> Linux-f2fs-devel mailing list
+>>> Linux-f2fs-devel@lists.sourceforge.net
+>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>>>
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
