@@ -1,31 +1,27 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/2] f2fs: avoid deadlock caused by lock
- order of page and lock_op
-Date: Sat, 1 Jul 2017 07:27:22 -0700
-Message-ID: <20170701142722.GA901@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20170624162522.48931-1-jaegeuk@kernel.org>
-	<f572292c-026a-7167-89b4-864b60d05865@huawei.com>
-	<20170626145433.GA8560@jaegeuk-macbookpro.roam.corp.google.com>
-	<060e5c2d-50cd-9f76-9efc-0cdec0d3df3b@kernel.org>
-	<20170701072827.GB83795@jaegeuk-macbookpro.roam.corp.google.com>
-	<556d8042-92f3-cb02-26c4-69e89b781c8c@kernel.org>
+Subject: Re: [RFC PATCH v2 2/2] f2fs: do not set LOST_PINO for
+ renamed dir
+Date: Sat, 1 Jul 2017 08:10:39 -0700
+Message-ID: <20170701151039.GD901@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20170626024136.211772-1-shengyong1@huawei.com>
+	<20170626024136.211772-2-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1dRJMv-0004Ej-Qu
+	(envelope-from <jaegeuk@kernel.org>) id 1dRK2r-0006LF-Of
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 01 Jul 2017 14:27:29 +0000
+	Sat, 01 Jul 2017 15:10:49 +0000
 Received: from mail.kernel.org ([198.145.29.99])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1dRJMu-00020A-Jh
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1dRK2n-0008SA-B7
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 01 Jul 2017 14:27:29 +0000
+	Sat, 01 Jul 2017 15:10:49 +0000
 Content-Disposition: inline
-In-Reply-To: <556d8042-92f3-cb02-26c4-69e89b781c8c@kernel.org>
+In-Reply-To: <20170626024136.211772-2-shengyong1@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,102 +31,60 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Sheng Yong <shengyong1@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 07/01, Chao Yu wrote:
-> On 2017/7/1 15:28, Jaegeuk Kim wrote:
-> > On 06/26, Chao Yu wrote:
-> >> Hi Jaegeuk,
-> >>
-> >> On 2017/6/26 22:54, Jaegeuk Kim wrote:
-> >>> Hi Chao,
-> >>>
-> >>> On 06/26, Chao Yu wrote:
-> >>>> Hi Jaegeuk,
-> >>>>
-> >>>> On 2017/6/25 0:25, Jaegeuk Kim wrote:
-> >>>>> - punch_hole
-> >>>>>  - fill_zero
-> >>>>>   - f2fs_lock_op
-> >>>>>   - get_new_data_page
-> >>>>>    - lock_page
-> >>>>>
-> >>>>> - f2fs_write_data_pages
-> >>>>>  - lock_page
-> >>>>>  - do_write_data_page
-> >>>>>   - f2fs_lock_op
-> >>>>
-> >>>> Good catch!
-> >>>>
-> >>>> With this implementation, page writeback can fail due to concurrent checkpoint,
-> >>>> this will make fsync/atomic_commit which trigger synchronous write failed randomly.
-> >>>>
-> >>>> How about unifying the lock order in punch_hole as one in writepages for regular
-> >>>> inode? We can add one more parameter in get_new_data_page to indicate whether
-> >>>> callee needs to lock cp_rwsem.
-> >>>
-> >>> Currently, there would be some places to keep cp_rwsem -> page.lock, which seems
-> >>> not simple to change the lock order with page.lock -> cp_rwsem. IMO, we can retry
-> >>> flushing data in f2fs_sync_file, once it gets -EAGAIN.
-> >>>
-> >>> Any thoughts?
-> >>
-> >> What about adding inode_lock in f2fs_sync_file to exclude other
-> >> foreground operation which have reversed lock order? Atomic_commit is OK
-> >> since it has inode_lock in its path.
-> > 
-> > I have concerned about performance regression, if we do that.
+Hi,
+
+On 06/26, Sheng Yong wrote:
+> After renaming a directory, fsck could detect unmatched pino. The scenario
+> can be reproduced as the following:
 > 
-> I think fsync vs write or fsync vs fsync scenarios are unusual, so is
-> there any usecase?
+> 	$ mkdir /bar/subbar /foo
+> 	$ rename /bar/subbar /foo
+> 
+> Then fsck will report:
+> [ASSERT] (__chk_dots_dentries:1182)  --> Bad inode number[0x3] for '..', parent parent ino is [0x4]
 
-Well, that'd be common to call multiple fsync calls at the same time.
-Like dbench or tiotest?
+Does fsck report this? If LOST_PINO is found, it must skip parent ino?
 
 > 
-> Thanks,
+> Rename sets LOST_PINO for old_inode. However, the flag cannot be cleared,
+> since dir is written back with CP. So, let's get rid of LOST_PINO for a
+> renamed dir and fix the pino directly at the end of rename.
 > 
-> > 
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>>>
-> >>>> Thanks,
-> >>>>
-> >>>>>
-> >>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>>>> ---
-> >>>>>  fs/f2fs/data.c | 5 +++--
-> >>>>>  1 file changed, 3 insertions(+), 2 deletions(-)
-> >>>>>
-> >>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> >>>>> index 7d3af48d34a9..9141bd19a902 100644
-> >>>>> --- a/fs/f2fs/data.c
-> >>>>> +++ b/fs/f2fs/data.c
-> >>>>> @@ -1404,8 +1404,9 @@ int do_write_data_page(struct f2fs_io_info *fio)
-> >>>>>  		}
-> >>>>>  	}
-> >>>>>  
-> >>>>> -	if (fio->need_lock == LOCK_REQ)
-> >>>>> -		f2fs_lock_op(fio->sbi);
-> >>>>> +	/* Deadlock due to between page->lock and f2fs_lock_op */
-> >>>>> +	if (fio->need_lock == LOCK_REQ && !f2fs_trylock_op(fio->sbi))
-> >>>>> +		return -EAGAIN;
-> >>>>>  
-> >>>>>  	err = get_dnode_of_data(&dn, page->index, LOOKUP_NODE);
-> >>>>>  	if (err)
-> >>>>>
-> >>>
-> >>> ------------------------------------------------------------------------------
-> >>> Check out the vibrant tech community on one of the world's most
-> >>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> >>> _______________________________________________
-> >>> Linux-f2fs-devel mailing list
-> >>> Linux-f2fs-devel@lists.sourceforge.net
-> >>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> >>>
+> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+> ---
+>  fs/f2fs/namei.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index c31b40e5f9cf..b75dc2f4ad57 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -772,7 +772,10 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+>  	}
+>  
+>  	down_write(&F2FS_I(old_inode)->i_sem);
+> -	file_lost_pino(old_inode);
+> +	if (!old_dir_entry || whiteout)
+> +		file_lost_pino(old_inode);
+> +	else
+> +		F2FS_I(old_inode)->i_pino = new_dir->i_ino;
+>  	up_write(&F2FS_I(old_inode)->i_sem);
+>  
+>  	old_inode->i_ctime = current_time(old_inode);
+> -- 
+> 2.11.0
+> 
+> 
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
