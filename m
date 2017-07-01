@@ -1,29 +1,25 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/2] f2fs: avoid deadlock caused by lock
- order of page and lock_op
-Date: Sat, 1 Jul 2017 00:28:27 -0700
-Message-ID: <20170701072827.GB83795@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20170624162522.48931-1-jaegeuk@kernel.org>
-	<f572292c-026a-7167-89b4-864b60d05865@huawei.com>
-	<20170626145433.GA8560@jaegeuk-macbookpro.roam.corp.google.com>
-	<060e5c2d-50cd-9f76-9efc-0cdec0d3df3b@kernel.org>
+Subject: Re: [PATCH] f2fs: avoid unnecessary function call
+Date: Sat, 1 Jul 2017 00:39:32 -0700
+Message-ID: <20170701073932.GA85052@jaegeuk-macbookpro.roam.corp.google.com>
+References: <22a88618.4a1.15cfb3e2aeb.Coremail.kernelpatch@126.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1dRCpW-0003cr-Jj
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1dRD0F-00060b-Da
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 01 Jul 2017 07:28:34 +0000
+	Sat, 01 Jul 2017 07:39:39 +0000
 Received: from mail.kernel.org ([198.145.29.99])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1dRCpV-0002D7-Jj
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1dRD0E-0008Nx-JT
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 01 Jul 2017 07:28:34 +0000
+	Sat, 01 Jul 2017 07:39:39 +0000
 Content-Disposition: inline
-In-Reply-To: <060e5c2d-50cd-9f76-9efc-0cdec0d3df3b@kernel.org>
+In-Reply-To: <22a88618.4a1.15cfb3e2aeb.Coremail.kernelpatch@126.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,90 +29,56 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Tiezhu Yang <kernelpatch@126.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 06/26, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> On 2017/6/26 22:54, Jaegeuk Kim wrote:
-> > Hi Chao,
-> > 
-> > On 06/26, Chao Yu wrote:
-> >> Hi Jaegeuk,
-> >>
-> >> On 2017/6/25 0:25, Jaegeuk Kim wrote:
-> >>> - punch_hole
-> >>>  - fill_zero
-> >>>   - f2fs_lock_op
-> >>>   - get_new_data_page
-> >>>    - lock_page
-> >>>
-> >>> - f2fs_write_data_pages
-> >>>  - lock_page
-> >>>  - do_write_data_page
-> >>>   - f2fs_lock_op
-> >>
-> >> Good catch!
-> >>
-> >> With this implementation, page writeback can fail due to concurrent checkpoint,
-> >> this will make fsync/atomic_commit which trigger synchronous write failed randomly.
-> >>
-> >> How about unifying the lock order in punch_hole as one in writepages for regular
-> >> inode? We can add one more parameter in get_new_data_page to indicate whether
-> >> callee needs to lock cp_rwsem.
-> > 
-> > Currently, there would be some places to keep cp_rwsem -> page.lock, which seems
-> > not simple to change the lock order with page.lock -> cp_rwsem. IMO, we can retry
-> > flushing data in f2fs_sync_file, once it gets -EAGAIN.
-> > 
-> > Any thoughts?
-> 
-> What about adding inode_lock in f2fs_sync_file to exclude other
-> foreground operation which have reversed lock order? Atomic_commit is OK
-> since it has inode_lock in its path.
+On 07/01, Tiezhu Yang wrote:
+> It should call the function fscrypt_fname_free_buffer() in the exception
+> handling only after the function fscrypt_fname_alloc_buffer() returns 0,
+> otherwise it is unnecessary.
 
-I have concerned about performance regression, if we do that.
+Hi, fscrypt_fname_free_buffer returns if crypto_str is null. So, this flow
+has no problem, which would be a quite conventional flow, no?
 
+Thanks,
+
+> Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
+> ---
+>  fs/f2fs/namei.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> Thanks,
-> 
-> > 
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>> ---
-> >>>  fs/f2fs/data.c | 5 +++--
-> >>>  1 file changed, 3 insertions(+), 2 deletions(-)
-> >>>
-> >>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> >>> index 7d3af48d34a9..9141bd19a902 100644
-> >>> --- a/fs/f2fs/data.c
-> >>> +++ b/fs/f2fs/data.c
-> >>> @@ -1404,8 +1404,9 @@ int do_write_data_page(struct f2fs_io_info *fio)
-> >>>  		}
-> >>>  	}
-> >>>  
-> >>> -	if (fio->need_lock == LOCK_REQ)
-> >>> -		f2fs_lock_op(fio->sbi);
-> >>> +	/* Deadlock due to between page->lock and f2fs_lock_op */
-> >>> +	if (fio->need_lock == LOCK_REQ && !f2fs_trylock_op(fio->sbi))
-> >>> +		return -EAGAIN;
-> >>>  
-> >>>  	err = get_dnode_of_data(&dn, page->index, LOOKUP_NODE);
-> >>>  	if (err)
-> >>>
-> > 
-> > ------------------------------------------------------------------------------
-> > Check out the vibrant tech community on one of the world's most
-> > engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> > 
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index c31b40e..3225a82 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -1036,12 +1036,12 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
+>  
+>  	res = fscrypt_fname_disk_to_usr(inode, 0, 0, &cstr, &pstr);
+>  	if (res)
+> -		goto errout;
+> +		goto out;
+>  
+>  	/* this is broken symlink case */
+>  	if (unlikely(pstr.name[0] == 0)) {
+>  		res = -ENOENT;
+> -		goto errout;
+> +		goto out;
+>  	}
+>  
+>  	paddr = pstr.name;
+> @@ -1052,8 +1052,9 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
+>  	put_page(cpage);
+>  	set_delayed_call(done, kfree_link, paddr);
+>  	return paddr;
+> -errout:
+> +out:
+>  	fscrypt_fname_free_buffer(&pstr);
+> +errout:
+>  	put_page(cpage);
+>  	return ERR_PTR(res);
+>  }
+> -- 
+> 1.8.3.1
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
