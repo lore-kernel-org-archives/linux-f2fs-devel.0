@@ -1,30 +1,29 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH 2/2] f2fs: report # of free inodes more
- precisely
-Date: Sat, 1 Jul 2017 16:28:40 +0800
-Message-ID: <ae7ad4a6-698a-d9ff-0fdf-a24f351d6ba7@kernel.org>
+Subject: Re: [PATCH 1/2] f2fs: avoid deadlock caused by lock
+ order of page and lock_op
+Date: Sat, 1 Jul 2017 16:41:49 +0800
+Message-ID: <556d8042-92f3-cb02-26c4-69e89b781c8c@kernel.org>
 References: <20170624162522.48931-1-jaegeuk@kernel.org>
-	<20170624162522.48931-2-jaegeuk@kernel.org>
-	<2d091ab2-cf3a-5185-99d1-59c606c9b9dc@huawei.com>
-	<20170626145846.GB8560@jaegeuk-macbookpro.roam.corp.google.com>
-	<2b10c6e0-50d2-04f6-f7d2-cfc95f90e8e6@kernel.org>
-	<20170701072700.GA83795@jaegeuk-macbookpro.roam.corp.google.com>
+	<f572292c-026a-7167-89b4-864b60d05865@huawei.com>
+	<20170626145433.GA8560@jaegeuk-macbookpro.roam.corp.google.com>
+	<060e5c2d-50cd-9f76-9efc-0cdec0d3df3b@kernel.org>
+	<20170701072827.GB83795@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1dRDmj-0000Ox-HY
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao@kernel.org>) id 1dRDzR-0006K6-L7
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 01 Jul 2017 08:29:45 +0000
+	Sat, 01 Jul 2017 08:42:53 +0000
 Received: from mail.kernel.org ([198.145.29.99])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1dRDmh-0002Yx-3c
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1dRDzQ-00079O-JS
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 01 Jul 2017 08:29:45 +0000
-In-Reply-To: <20170701072700.GA83795@jaegeuk-macbookpro.roam.corp.google.com>
+	Sat, 01 Jul 2017 08:42:53 +0000
+In-Reply-To: <20170701072827.GB83795@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -38,63 +37,51 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/7/1 15:27, Jaegeuk Kim wrote:
-> On 06/28, Chao Yu wrote:
->> On 2017/6/26 22:58, Jaegeuk Kim wrote:
+On 2017/7/1 15:28, Jaegeuk Kim wrote:
+> On 06/26, Chao Yu wrote:
+>> Hi Jaegeuk,
+>>
+>> On 2017/6/26 22:54, Jaegeuk Kim wrote:
+>>> Hi Chao,
+>>>
 >>> On 06/26, Chao Yu wrote:
 >>>> Hi Jaegeuk,
 >>>>
 >>>> On 2017/6/25 0:25, Jaegeuk Kim wrote:
->>>>> If the partition is small, we don't need to report total # of inodes including
->>>>> hidden free nodes.
+>>>>> - punch_hole
+>>>>>  - fill_zero
+>>>>>   - f2fs_lock_op
+>>>>>   - get_new_data_page
+>>>>>    - lock_page
 >>>>>
->>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>> ---
->>>>>  fs/f2fs/super.c | 14 +++++++++++---
->>>>>  1 file changed, 11 insertions(+), 3 deletions(-)
->>>>>
->>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>>>> index 8e39b850bfc0..3da6fb276f8b 100644
->>>>> --- a/fs/f2fs/super.c
->>>>> +++ b/fs/f2fs/super.c
->>>>> @@ -680,6 +680,7 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
->>>>>  	struct f2fs_sb_info *sbi = F2FS_SB(sb);
->>>>>  	u64 id = huge_encode_dev(sb->s_bdev->bd_dev);
->>>>>  	block_t total_count, user_block_count, start_count, ovp_count;
->>>>> +	u64 avail_node_count;
->>>>>  
->>>>>  	total_count = le64_to_cpu(sbi->raw_super->block_count);
->>>>>  	user_block_count = sbi->user_block_count;
->>>>> @@ -692,9 +693,16 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
->>>>>  	buf->f_bfree = user_block_count - valid_user_blocks(sbi) + ovp_count;
->>>>>  	buf->f_bavail = user_block_count - valid_user_blocks(sbi);
->>>>>  
->>>>> -	buf->f_files = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
->>>>> -	buf->f_ffree = min(buf->f_files - valid_node_count(sbi),
->>>>> -							buf->f_bavail);
->>>>> +	avail_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
->>>>> +
->>>>> +	if (avail_node_count > user_block_count) {
->>>>> +		buf->f_files = user_block_count;
->>>>> +		buf->f_ffree = buf->f_bavail;
+>>>>> - f2fs_write_data_pages
+>>>>>  - lock_page
+>>>>>  - do_write_data_page
+>>>>>   - f2fs_lock_op
 >>>>
->>>> f_ffree is limited both by remained free nid count and free block count, so it
->>>> needs to change like this?
+>>>> Good catch!
+>>>>
+>>>> With this implementation, page writeback can fail due to concurrent checkpoint,
+>>>> this will make fsync/atomic_commit which trigger synchronous write failed randomly.
+>>>>
+>>>> How about unifying the lock order in punch_hole as one in writepages for regular
+>>>> inode? We can add one more parameter in get_new_data_page to indicate whether
+>>>> callee needs to lock cp_rwsem.
 >>>
->>> I thought both of them are same, since node block will consume user block. So,
->>> we don't need to do min() again.
+>>> Currently, there would be some places to keep cp_rwsem -> page.lock, which seems
+>>> not simple to change the lock order with page.lock -> cp_rwsem. IMO, we can retry
+>>> flushing data in f2fs_sync_file, once it gets -EAGAIN.
+>>>
+>>> Any thoughts?
 >>
->> avail_node_count comes from total free nid counts which is limited with
->> nid_bitmap size, buf->f_bavail comes from total user block count which
->> can both cosumed by node and data. So the value of them may not be the same.
+>> What about adding inode_lock in f2fs_sync_file to exclude other
+>> foreground operation which have reversed lock order? Atomic_commit is OK
+>> since it has inode_lock in its path.
 > 
-> What I mean was, if avail_node_count is larger than user_block_count, we can
-> see buf->f_bavail is always smaller than avali_node_count - valid_node_count,
-> since node blocks concumes blocks as well.
+> I have concerned about performance regression, if we do that.
 
-Got you. :)
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+I think fsync vs write or fsync vs fsync scenarios are unusual, so is
+there any usecase?
 
 Thanks,
 
@@ -104,23 +91,30 @@ Thanks,
 >>
 >>>
 >>>>
->>>> if (avail_node_count > user_block_count)
->>>> 	avail_node_count = user_block_count;
->>>>
->>>> buf->f_files = avail_node_count;
->>>> buf->f_ffree = min(avail_node_count - valid_node_count(sbi),
->>>> 					buf->f_bavail);
->>>>
 >>>> Thanks,
 >>>>
->>>>> +	} else {
->>>>> +		buf->f_files = avail_node_count;
->>>>> +		buf->f_ffree = min(avail_node_count - valid_node_count(sbi),
->>>>> +					buf->f_bavail);
->>>>> +	}
+>>>>>
+>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>>> ---
+>>>>>  fs/f2fs/data.c | 5 +++--
+>>>>>  1 file changed, 3 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>>>> index 7d3af48d34a9..9141bd19a902 100644
+>>>>> --- a/fs/f2fs/data.c
+>>>>> +++ b/fs/f2fs/data.c
+>>>>> @@ -1404,8 +1404,9 @@ int do_write_data_page(struct f2fs_io_info *fio)
+>>>>>  		}
+>>>>>  	}
 >>>>>  
->>>>>  	buf->f_namelen = F2FS_NAME_LEN;
->>>>>  	buf->f_fsid.val[0] = (u32)id;
+>>>>> -	if (fio->need_lock == LOCK_REQ)
+>>>>> -		f2fs_lock_op(fio->sbi);
+>>>>> +	/* Deadlock due to between page->lock and f2fs_lock_op */
+>>>>> +	if (fio->need_lock == LOCK_REQ && !f2fs_trylock_op(fio->sbi))
+>>>>> +		return -EAGAIN;
+>>>>>  
+>>>>>  	err = get_dnode_of_data(&dn, page->index, LOOKUP_NODE);
+>>>>>  	if (err)
 >>>>>
 >>>
 >>> ------------------------------------------------------------------------------
