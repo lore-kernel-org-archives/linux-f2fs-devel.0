@@ -1,91 +1,61 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [RFC PATCH v2 2/2] f2fs: do not set LOST_PINO for
- renamed dir
-Date: Sat, 1 Jul 2017 08:10:39 -0700
-Message-ID: <20170701151039.GD901@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20170626024136.211772-1-shengyong1@huawei.com>
-	<20170626024136.211772-2-shengyong1@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH 2/2] f2fs: reuse original mount option in ->remount_fs
+Date: Sun, 2 Jul 2017 00:14:18 +0800
+Message-ID: <7e818878-875a-57ec-00cc-2d08fbc245d8@kernel.org>
+References: <20170629152046.2610-1-chao@kernel.org>
+ <20170629152046.2610-2-chao@kernel.org>
+ <20170701074804.GB85052@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1dRK2r-0006LF-Of
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 01 Jul 2017 15:10:49 +0000
-Received: from mail.kernel.org ([198.145.29.99])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1dRK2n-0008SA-B7
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 01 Jul 2017 15:10:49 +0000
-Content-Disposition: inline
-In-Reply-To: <20170626024136.211772-2-shengyong1@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Sheng Yong <shengyong1@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170701074804.GB85052@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi,
-
-On 06/26, Sheng Yong wrote:
-> After renaming a directory, fsck could detect unmatched pino. The scenario
-> can be reproduced as the following:
+On 2017/7/1 15:48, Jaegeuk Kim wrote:
+> On 06/29, Chao Yu wrote:
+>> From: Chao Yu <yuchao0@huawei.com>
+>>
+>> Don't clear old mount option before parse new option during ->remount_fs
+>> like other generic filesystems>
+> So, what happened on your original patch?
 > 
-> 	$ mkdir /bar/subbar /foo
-> 	$ rename /bar/subbar /foo
+> commit 26666c8a4366debae30ae37d0688b2bec92d196a
+>     f2fs: fix to clean previous mount option when remount_fs
 > 
-> Then fsck will report:
-> [ASSERT] (__chk_dots_dentries:1182)  --> Bad inode number[0x3] for '..', parent parent ino is [0x4]
+> I think we need to rever the original patch tho.
 
-Does fsck report this? If LOST_PINO is found, it must skip parent ino?
+I just removed this for passing some quota testcases in xfstests suit,
+and after that, I didn't get further failures in other testcases.
+
+Let me check this again.
+
+Thanks,
 
 > 
-> Rename sets LOST_PINO for old_inode. However, the flag cannot be cleared,
-> since dir is written back with CP. So, let's get rid of LOST_PINO for a
-> renamed dir and fix the pino directly at the end of rename.
+> Thanks,
 > 
-> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
-> ---
->  fs/f2fs/namei.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index c31b40e5f9cf..b75dc2f4ad57 100644
-> --- a/fs/f2fs/namei.c
-> +++ b/fs/f2fs/namei.c
-> @@ -772,7 +772,10 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
->  	}
->  
->  	down_write(&F2FS_I(old_inode)->i_sem);
-> -	file_lost_pino(old_inode);
-> +	if (!old_dir_entry || whiteout)
-> +		file_lost_pino(old_inode);
-> +	else
-> +		F2FS_I(old_inode)->i_pino = new_dir->i_ino;
->  	up_write(&F2FS_I(old_inode)->i_sem);
->  
->  	old_inode->i_ctime = current_time(old_inode);
-> -- 
-> 2.11.0
-> 
-> 
-> ------------------------------------------------------------------------------
-> Check out the vibrant tech community on one of the world's most
-> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/super.c | 1 -
+>>  1 file changed, 1 deletion(-)
+>>
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index f27c141cd8aa..af472f7968d0 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -846,7 +846,6 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+>>  			clear_sbi_flag(sbi, SBI_NEED_SB_WRITE);
+>>  	}
+>>  
+>> -	sbi->mount_opt.opt = 0;
+>>  	default_options(sbi);
+>>  
+>>  	/* parse mount options */
+>> -- 
+>> 2.13.0.90.g1eb437020
