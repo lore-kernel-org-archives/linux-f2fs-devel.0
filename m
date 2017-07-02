@@ -1,28 +1,24 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: Re: [RFC PATCH v2 2/2] f2fs: do not set LOST_PINO for
- renamed dir
-Date: Sun, 2 Jul 2017 12:09:09 +0800
-Message-ID: <c6de6bcd-2ca8-1a3b-71b7-be99ed832fb4@huawei.com>
-References: <20170626024136.211772-1-shengyong1@huawei.com>
-	<20170626024136.211772-2-shengyong1@huawei.com>
-	<20170701151039.GD901@jaegeuk-macbookpro.roam.corp.google.com>
+From: "Tiezhu Yang" <kernelpatch@126.com>
+Subject: Re: [PATCH] f2fs: avoid unnecessary function call
+Date: Mon, 3 Jul 2017 00:04:40 +0800 (CST)
+Message-ID: <53aec610.3d6a.15d040bfb68.Coremail.kernelpatch@126.com>
+References: <22a88618.4a1.15cfb3e2aeb.Coremail.kernelpatch@126.com>
+	<20170701073932.GA85052@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <shengyong1@huawei.com>) id 1dRWCa-0002ld-Th
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kernelpatch@126.com>) id 1dRhNF-0004z9-2v
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 02 Jul 2017 04:09:40 +0000
-Received: from szxga03-in.huawei.com ([45.249.212.189])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1dRWCY-00070u-JA
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 02 Jul 2017 04:09:40 +0000
-In-Reply-To: <20170701151039.GD901@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
+	Sun, 02 Jul 2017 16:05:25 +0000
+Received: from m15-14.126.com ([220.181.15.14])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1dRhNB-00083v-Ag for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 02 Jul 2017 16:05:25 +0000
+In-Reply-To: <20170701073932.GA85052@jaegeuk-macbookpro.roam.corp.google.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -37,69 +33,62 @@ Cc: linux-f2fs-devel@lists.sourceforge.net
 
 Hi, Jaegeuk
 
-On 2017/7/1 23:10, Jaegeuk Kim wrote:
-> Hi,
-> 
-> On 06/26, Sheng Yong wrote:
->> After renaming a directory, fsck could detect unmatched pino. The scenario
->> can be reproduced as the following:
->>
->> 	$ mkdir /bar/subbar /foo
->> 	$ rename /bar/subbar /foo
->>
->> Then fsck will report:
->> [ASSERT] (__chk_dots_dentries:1182)  --> Bad inode number[0x3] for '..', parent parent ino is [0x4]
-> 
-> Does fsck report this? If LOST_PINO is found, it must skip parent ino?
-Yes, fsck should skip checking pino if LOST_PINO is set. Meanwhile, I think
-we don't have to set LOST_PINO when rename a dir, since dir is not involved
-in recover and its pino will never get fixed.
+At 2017-07-01 15:39:32, "Jaegeuk Kim" <jaegeuk@kernel.org> wrote:
+>On 07/01, Tiezhu Yang wrote:
+>> It should call the function fscrypt_fname_free_buffer() in the exception
+>> handling only after the function fscrypt_fname_alloc_buffer() returns 0,
+>> otherwise it is unnecessary.
+>
+>Hi, fscrypt_fname_free_buffer returns if crypto_str is null. So, this flow
+>has no problem, which would be a quite conventional flow, no?
 
-thanks,
-Sheng
-> 
->>
->> Rename sets LOST_PINO for old_inode. However, the flag cannot be cleared,
->> since dir is written back with CP. So, let's get rid of LOST_PINO for a
->> renamed dir and fix the pino directly at the end of rename.
->>
->> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+Understood, just two points of view, both are OK.
+In my opinion, I would prefer not to call the function fscrypt_fname_free_buffer since I am
+absolutely sure that its argument is NULL and it will return directly without doing anything,
+this patch is to avoid unnecessary function call.
+
+Thanks,
+
+>
+>Thanks,
+>
+>> Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
 >> ---
->>   fs/f2fs/namei.c | 5 ++++-
->>   1 file changed, 4 insertions(+), 1 deletion(-)
->>
+>>  fs/f2fs/namei.c | 7 ++++---
+>>  1 file changed, 4 insertions(+), 3 deletions(-)
+>> 
 >> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
->> index c31b40e5f9cf..b75dc2f4ad57 100644
+>> index c31b40e..3225a82 100644
 >> --- a/fs/f2fs/namei.c
 >> +++ b/fs/f2fs/namei.c
->> @@ -772,7 +772,10 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
->>   	}
->>   
->>   	down_write(&F2FS_I(old_inode)->i_sem);
->> -	file_lost_pino(old_inode);
->> +	if (!old_dir_entry || whiteout)
->> +		file_lost_pino(old_inode);
->> +	else
->> +		F2FS_I(old_inode)->i_pino = new_dir->i_ino;
->>   	up_write(&F2FS_I(old_inode)->i_sem);
->>   
->>   	old_inode->i_ctime = current_time(old_inode);
+>> @@ -1036,12 +1036,12 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
+>>  
+>>  	res = fscrypt_fname_disk_to_usr(inode, 0, 0, &cstr, &pstr);
+>>  	if (res)
+>> -		goto errout;
+>> +		goto out;
+>>  
+>>  	/* this is broken symlink case */
+>>  	if (unlikely(pstr.name[0] == 0)) {
+>>  		res = -ENOENT;
+>> -		goto errout;
+>> +		goto out;
+>>  	}
+>>  
+>>  	paddr = pstr.name;
+>> @@ -1052,8 +1052,9 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
+>>  	put_page(cpage);
+>>  	set_delayed_call(done, kfree_link, paddr);
+>>  	return paddr;
+>> -errout:
+>> +out:
+>>  	fscrypt_fname_free_buffer(&pstr);
+>> +errout:
+>>  	put_page(cpage);
+>>  	return ERR_PTR(res);
+>>  }
 >> -- 
->> 2.11.0
->>
->>
->> ------------------------------------------------------------------------------
->> Check out the vibrant tech community on one of the world's most
->> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> .
-> 
-
-
+>> 1.8.3.1
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
 engaging tech sites, Slashdot.org! http://sdm.link/slashdot
