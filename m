@@ -1,103 +1,66 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: avoid migratepage for atomic written page
-Date: Mon,  3 Jul 2017 16:08:20 -0700
-Message-ID: <20170703230820.63929-1-jaegeuk@kernel.org>
+From: Damien Le Moal <damien.lemoal@wdc.com>
+Subject: Re: [PATCH v2] f2fs: Do not issue small discards in LFS mode
+Date: Tue, 4 Jul 2017 17:11:54 +0900
+Message-ID: <19a7f120-1892-facd-e0ac-eeaab6aa7b81@wdc.com>
+References: <20170526080440.11160-1-damien.lemoal@wdc.com>
+ <9287ca85-e796-3216-6496-8ead3a786467@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1dSASB-0006qg-Pc
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 03 Jul 2017 23:08:27 +0000
-Received: from mail.kernel.org ([198.145.29.99])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1dSASA-0003Rz-Sx
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 03 Jul 2017 23:08:27 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <9287ca85-e796-3216-6496-8ead3a786467@huawei.com>
+Content-Language: en-US
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-In order to avoid lock contention for atomic written pages, we'd better give
-EAGAIN in f2fs_migrate_page. We expect it will be released soon as transaction
-commits.
+Jaegeuk,
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/data.c | 35 ++++++++++-------------------------
- 1 file changed, 10 insertions(+), 25 deletions(-)
+On 5/26/17 17:16, Chao Yu wrote:
+> On 2017/5/26 16:04, Damien Le Moal wrote:
+>> clear_prefree_segments() issues small discards after discarding full
+>> segments. These small discards may not be section aligned, so not zone
+>> aligned on a zoned block device, causing __f2fs_iissue_discard_zone() to fail.
+>> Fix this by not issuing small discards for a volume mounted with the BLKZONED
+>> feature enabled.
+>>
+>> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+> 
+> This version looks good to me.
+> 
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> 
+> Thanks,
+> 
+>> ---
+>>  fs/f2fs/segment.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>> index 9684585..1279650 100644
+>> --- a/fs/f2fs/segment.c
+>> +++ b/fs/f2fs/segment.c
+>> @@ -1322,7 +1322,8 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>  					sbi->blocks_per_seg, cur_pos);
+>>  			len = next_pos - cur_pos;
+>>  
+>> -			if (force && len < cpc->trim_minlen)
+>> +			if (f2fs_sb_mounted_blkzoned(sbi->sb) ||
+>> +			    (force && len < cpc->trim_minlen))
+>>  				goto skip;
+>>  
+>>  			f2fs_issue_discard(sbi, entry->start_blkaddr + cur_pos,
+>>
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index d58b81213a86..1458e3a6d630 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2197,41 +2197,26 @@ static sector_t f2fs_bmap(struct address_space *mapping, sector_t block)
- int f2fs_migrate_page(struct address_space *mapping,
- 		struct page *newpage, struct page *page, enum migrate_mode mode)
- {
--	int rc, extra_count;
--	struct f2fs_inode_info *fi = F2FS_I(mapping->host);
--	bool atomic_written = IS_ATOMIC_WRITTEN_PAGE(page);
-+	int rc;
- 
--	BUG_ON(PageWriteback(page));
--
--	/* migrating an atomic written page is safe with the inmem_lock hold */
--	if (atomic_written && !mutex_trylock(&fi->inmem_lock))
-+	/*
-+	 * We'd better return EAGAIN for atomic pages, which will be committed
-+	 * sooner or later. Don't botter transactions with inmem_lock.
-+	 */
-+	if (IS_ATOMIC_WRITTEN_PAGE(page))
- 		return -EAGAIN;
- 
-+	BUG_ON(PageWriteback(page));	/* Writeback must be complete */
-+
- 	/*
- 	 * A reference is expected if PagePrivate set when move mapping,
- 	 * however F2FS breaks this for maintaining dirty page counts when
- 	 * truncating pages. So here adjusting the 'extra_count' make it work.
- 	 */
--	extra_count = (atomic_written ? 1 : 0) - page_has_private(page);
- 	rc = migrate_page_move_mapping(mapping, newpage,
--				page, NULL, mode, extra_count);
--	if (rc != MIGRATEPAGE_SUCCESS) {
--		if (atomic_written)
--			mutex_unlock(&fi->inmem_lock);
-+			page, NULL, mode, (page_has_private(page) ? -1 : 0));
-+	if (rc != MIGRATEPAGE_SUCCESS)
- 		return rc;
--	}
--
--	if (atomic_written) {
--		struct inmem_pages *cur;
--		list_for_each_entry(cur, &fi->inmem_pages, list)
--			if (cur->page == page) {
--				cur->page = newpage;
--				break;
--			}
--		mutex_unlock(&fi->inmem_lock);
--		put_page(page);
--		get_page(newpage);
--	}
- 
- 	if (PagePrivate(page))
- 		SetPagePrivate(newpage);
+It looks like this patch was not included in 4.12, so we are still
+getting a lot of "unaligned discard" on zoned block devices.
+Is there a problem with this patch or was that an oversight ?
+
+Please consider adding this patch.
+
+Best regards.
+
 -- 
-2.13.0.rc1.294.g07d810a77f-goog
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+Damien Le Moal,
+Western Digital
