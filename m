@@ -1,188 +1,242 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH v2] f2fs: don't count inode block in in-memory inode.i_blocks
-Date: Thu,  6 Jul 2017 01:11:31 +0800
-Message-ID: <20170705171131.31069-1-chao@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: Fwd: fsck.f2fs fails with "can't find valid
+ checkpoint"
+Date: Wed, 5 Jul 2017 18:57:33 -0700
+Message-ID: <20170706015733.GB50622@jaegeuk-macbookpro.roam.corp.google.com>
+References: <CAETC-g8rBb53ibGYPciFjgN-uKK7xahPJZVGs8NsR+=0Qpu+oQ@mail.gmail.com>
+	<CAOtxgydToHmRwgWa1mc13wB9tuZPREokNCE4qo83As_LgeU9-Q@mail.gmail.com>
+	<20170705035359.GE15448@jaegeuk-macbookpro.roam.corp.google.com>
+	<CAETC-g-3rmSN7COQ47x=kOyPc5-Hp7O5CVJyUOsbnvKW5h_sBA@mail.gmail.com>
+	<CAETC-g9YsiUzTLzAF-HMjcWkmTSxCU34gUWqV4Mc733=h5zfVg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1dSw32-0007eN-Va
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 06 Jul 2017 01:57:40 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1dSw31-00006l-Jg
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 06 Jul 2017 01:57:40 +0000
+Content-Disposition: inline
+In-Reply-To: <CAETC-g9YsiUzTLzAF-HMjcWkmTSxCU34gUWqV4Mc733=h5zfVg@mail.gmail.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: "Marcelo \"Marc\" Ranolfi" <marc.2377@gmail.com>
+Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-From: Chao Yu <yuchao0@huawei.com>
+On 07/05, Marcelo "Marc" Ranolfi wrote:
+> In the meantime, I was able to run photorec on the decrypted disk
+> /dev/mapper/csystem, and recovered 22 GB of files. I already found some of
+> the most important work files which weren't backed up, using grep.
+> Directory structure is lost, but this I can sort out given some time. But
+> photorec didn't recover any files without extension, which is sad because I
+> had a directory full of them.
+> 
+> This, combined with the result of 'fsck.f2fs -d 3' and the fact that
+> 'cryptsetup open' doesn't complain about anything, makes me believe this is
+> a filesystem issue.
+> 
+> How would it be possible to recover checkpoint manually?
 
-Previously, we count all inode consumed blocks including inode block,
-xattr block, index block, data block into i_blocks, for other generic
-filesystems, they won't count inode block into i_blocks, so for
-userspace applications or quota system, they may detect incorrect block
-count according to i_blocks value in inode.
+Hmm, if possible, could you please share the decrypted image? I'll take a
+look at it.
 
-This patch changes to count all blocks into inode.i_blocks excluding
-inode block, for on-disk i_blocks, we keep counting inode block for
-backward compatibility.
+Thanks,
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2:
-- fix incorrect return value pointed by Jaegeuk.
-- a little bit change in comment log.
- fs/f2fs/f2fs.h  | 22 ++++++++++++----------
- fs/f2fs/inode.c |  4 ++--
- fs/f2fs/node.c  | 16 ++++++----------
- 3 files changed, 20 insertions(+), 22 deletions(-)
+> 
+> Thanks
+> Marcelo "Marc" Ranolfi
+> 
+> On Wed, Jul 5, 2017 at 6:14 AM, Marcelo "Marc" Ranolfi <marc.2377@gmail.com>
+> wrote:
+> 
+> > Kim,
+> >
+> > I received your reply in the mailing list, but again, couldn't reply.
+> >
+> > The partition is 38GB. Do you need a full image, or only part of it? Also,
+> > do you need it encrypted, and if yes, the decryption key as well? Or only
+> > decrypted?
+> >
+> > I tried '-d 3' and got the following:
+> >
+> > --
+> > # fsck.f2fs -d 3 /dev/mapper/csystem
+> > Info: Debug level = 3
+> > Info: Segments per section = 1
+> > Info: Sections per zone = 1
+> > Info: sector size = 512
+> > Info: total sectors = 78120960 (38145 MB)
+> > Info: MKFS version
+> >   "Linux version 4.10.13-1-ARCH (builduser@tobias) (gcc version 6.3.1
+> > 20170306 (GCC) ) #1 SMP PREEMPT Thu Apr 27 12:15:09 CEST 2017"
+> > Info: FSCK version
+> >   from "Linux version 4.11.7-1-ARCH (builduser@tobias) (gcc version 7.1.1
+> > 20170621 (GCC) ) #1 SMP PREEMPT Sat Jun 24 09:07:09 CEST 2017"
+> >     to "Linux version 4.11.7-1-ARCH (builduser@tobias) (gcc version 7.1.1
+> > 20170621 (GCC) ) #1 SMP PREEMPT Sat Jun 24 09:07:09 CEST 2017"
+> > Info: superblock features = 0 :
+> > Info: superblock encrypt level = 0, salt = 000000000000000000000000000000
+> > 00
+> >
+> > +--------------------------------------------------------+
+> > | Super block                                            |
+> > +--------------------------------------------------------+
+> > magic                                 [0xf2f52010 : 4076150800]
+> > major_ver                             [0x       1 : 1]
+> > volum_name                            []
+> > minor_ver                             [0x       8 : 8]
+> > log_sectorsize                        [0x       9 : 9]
+> > log_sectors_per_block                 [0x       3 : 3]
+> > log_blocksize                         [0x       c : 12]
+> > log_blocks_per_seg                    [0x       9 : 9]
+> > segs_per_sec                          [0x       1 : 1]
+> > secs_per_zone                         [0x       1 : 1]
+> > checksum_offset                       [0x       0 : 0]
+> > block_count                           [0x  950100 : 9765120]
+> > section_count                         [0x    4a01 : 18945]
+> > segment_count                         [0x    4a7f : 19071]
+> > segment_count_ckpt                    [0x       2 : 2]
+> > segment_count_sit                     [0x       2 : 2]
+> > segment_count_nat                     [0x      54 : 84]
+> > segment_count_ssa                     [0x      26 : 38]
+> > segment_count_main                    [0x    4a01 : 18945]
+> > segment0_blkaddr                      [0x     200 : 512]
+> > cp_blkaddr                            [0x     200 : 512]
+> > sit_blkaddr                           [0x     600 : 1536]
+> > nat_blkaddr                           [0x     a00 : 2560]
+> > ssa_blkaddr                           [0x    b200 : 45568]
+> > main_blkaddr                          [0x    fe00 : 65024]
+> > root_ino                              [0x       3 : 3]
+> > node_ino                              [0x       1 : 1]
+> > meta_ino                              [0x       2 : 2]
+> > cp_payload                            [0x       0 : 0]
+> > version                       Linux version 4.11.7-1-ARCH (builduser@tobias)
+> > (gcc version 7.1.1 20170621 (GCC) ) #1 SMP PREEMPT Sat Jun 24 09:07:09 CEST
+> > 2017
+> > Info: total FS sectors = 78120960 (38145 MB)
+> > [f2fs_do_mount:2018] Can't find valid checkpoint
+> > --
+> >
+> > Thanks
+> > Marcelo "Marc" Ranolfi
+> >
+> > On Wed, Jul 5, 2017 at 12:53 AM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+> >
+> >> On 07/04, Jaegeuk Kim wrote:
+> >> > + f2fs mailing list
+> >> >
+> >> > ---------- Forwarded message ----------
+> >> > From: Marcelo "Marc" Ranolfi <marc.2377@gmail.com>
+> >> > Date: 2017-07-04 18:52 GMT-07:00
+> >> > Subject: Fwd: fsck.f2fs fails with "can't find valid checkpoint"
+> >> > To: Jaegeuk Kim <jaegeuk.kim@gmail.com>
+> >> >
+> >> >
+> >> >
+> >> > ---------- Forwarded message ----------
+> >> > From: Marcelo "Marc" Ranolfi <marc.2377@gmail.com>
+> >> > Date: Tue, Jul 4, 2017 at 3:54 PM
+> >> > Subject: fsck.f2fs fails with "can't find valid checkpoint"
+> >> > To: linux-f2fs-devel@lists.sourceforge.net
+> >> >
+> >> >
+> >> > (reposting because yesterday's email didn't work)
+> >> >
+> >> > Gentlemen,
+> >> >
+> >> > I was using F2FS in my system when it crashed, and since then, I can't
+> >> boot
+> >> > it, nor mount the root partition, and fsck doesn't help. I'm typing this
+> >> > from a live CD.
+> >> >
+> >> > The system is Arch Linux with the 4.12-rc7 kernel (I was compiling the
+> >> > stable kernel when it crashed). I posted about it here (
+> >> > https://unix.stackexchange.com/questions/375114/f2fs-lost-d
+> >> > ata-wont-mount-and-fsck-doesnt-work) but that probably won't help much.
+> >> > The gist of the story is that I'm trying these commands, from the arch
+> >> iso
+> >> > image:
+> >> >
+> >> > cryptsetup open /dev/sda3 csystem
+> >>
+> >> So, you did encrypt the disk, and then got sudden power-off.
+> >>
+> >> > fsck.f2fs -f /dev/mapper/csystem
+> >>
+> >> After then, fsck.f2fs can't find checkpoint, which means your encrypted
+> >> disk is
+> >> severely damaged. Once such the encrypted disk has been crashed, it's very
+> >> difficult to recover there-in files from filesystem level, since
+> >> checkpoint in
+> >> f2fs is not recoverable. Because, we don't expect two checkpoint copies
+> >> were
+> >> crashed at the same time.
+> >>
+> >> How's your fsck.f2fs -d 3 result? And, can you share your image? If it's
+> >> not
+> >> easy to recover checkpoint manually, I think it needs to write a tool to
+> >> scan
+> >> whole disk to find recoverable files. But, it'll take time.
+> >>
+> >> Thanks,
+> >>
+> >> >
+> >> > and instead of repairing, it reports:
+> >> >
+> >> > [f2fs_do_mount:2018] Can't find valid checkpoint
+> >> >
+> >> > The documentation available in the Kernel tree (
+> >> > https://github.com/torvalds/linux/blob/master/Documentation
+> >> > /filesystems/f2fs.txt) says under fsck.f2fs:
+> >> > "Note that, initial version of the tool does not fix any inconsistency."
+> >> >
+> >> > However that's not mentioned in the following sources:
+> >> > https://www.mankier.com/8/fsck.f2fs
+> >> > https://lkml.org/lkml/2014/9/20/104
+> >> >
+> >> > I suppose the Kernel doc is outdated, since from inspecting the fsck
+> >> source
+> >> > code, I think it should work.
+> >> >
+> >> >
+> >> > So, I'd like to know whether I'm facing a bug in the tool, or if
+> >> something
+> >> > specific to my case is preventing the tool to work. And of course, I'm
+> >> > really in need of having my files back.
+> >> >
+> >> > I'm a programmer so please let me know if I can be of any help, if need
+> >> be.
+> >> >
+> >> >
+> >> > Yours faithfully
+> >> > Marcelo "Marc" Ranolfi
+> >>
+> >> ------------------------------------------------------------
+> >> ------------------
+> >> Check out the vibrant tech community on one of the world's most
+> >> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> >> _______________________________________________
+> >> Linux-f2fs-devel mailing list
+> >> Linux-f2fs-devel@lists.sourceforge.net
+> >> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >>
+> >
+> >
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index abf9eea67966..7bd0a45dd081 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1355,8 +1355,6 @@ static inline int check_nid_range(struct f2fs_sb_info *sbi, nid_t nid)
- 	return 0;
- }
- 
--#define F2FS_DEFAULT_ALLOCATED_BLOCKS	1
--
- /*
-  * Check whether the inode has blocks or not
-  */
-@@ -1364,8 +1362,7 @@ static inline int F2FS_HAS_BLOCKS(struct inode *inode)
- {
- 	block_t xattr_block = F2FS_I(inode)->i_xattr_nid ? 1 : 0;
- 
--	return (inode->i_blocks >> F2FS_LOG_SECTORS_PER_BLOCK) >
--			(F2FS_DEFAULT_ALLOCATED_BLOCKS + xattr_block);
-+	return (inode->i_blocks >> F2FS_LOG_SECTORS_PER_BLOCK) > xattr_block;
- }
- 
- static inline bool f2fs_has_xattr_block(unsigned int ofs)
-@@ -1552,7 +1549,7 @@ static inline block_t __start_sum_addr(struct f2fs_sb_info *sbi)
- }
- 
- static inline bool inc_valid_node_count(struct f2fs_sb_info *sbi,
--						struct inode *inode)
-+					struct inode *inode, bool is_inode)
- {
- 	block_t	valid_block_count;
- 	unsigned int valid_node_count;
-@@ -1572,8 +1569,12 @@ static inline bool inc_valid_node_count(struct f2fs_sb_info *sbi,
- 		return false;
- 	}
- 
--	if (inode)
--		f2fs_i_blocks_write(inode, 1, true);
-+	if (inode) {
-+		if (is_inode)
-+			f2fs_mark_inode_dirty_sync(inode, true);
-+		else
-+			f2fs_i_blocks_write(inode, 1, true);
-+	}
- 
- 	sbi->total_valid_node_count++;
- 	sbi->total_valid_block_count++;
-@@ -1584,15 +1585,16 @@ static inline bool inc_valid_node_count(struct f2fs_sb_info *sbi,
- }
- 
- static inline void dec_valid_node_count(struct f2fs_sb_info *sbi,
--						struct inode *inode)
-+					struct inode *inode, bool is_inode)
- {
- 	spin_lock(&sbi->stat_lock);
- 
- 	f2fs_bug_on(sbi, !sbi->total_valid_block_count);
- 	f2fs_bug_on(sbi, !sbi->total_valid_node_count);
--	f2fs_bug_on(sbi, !inode->i_blocks);
-+	f2fs_bug_on(sbi, !is_inode && !inode->i_blocks);
- 
--	f2fs_i_blocks_write(inode, 1, false);
-+	if (!is_inode)
-+		f2fs_i_blocks_write(inode, 1, false);
- 	sbi->total_valid_node_count--;
- 	sbi->total_valid_block_count--;
- 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 1ff5bd418d87..e42a7a8805dc 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -130,7 +130,7 @@ static int do_read_inode(struct inode *inode)
- 	i_gid_write(inode, le32_to_cpu(ri->i_gid));
- 	set_nlink(inode, le32_to_cpu(ri->i_links));
- 	inode->i_size = le64_to_cpu(ri->i_size);
--	inode->i_blocks = SECTOR_FROM_BLOCK(le64_to_cpu(ri->i_blocks));
-+	inode->i_blocks = SECTOR_FROM_BLOCK(le64_to_cpu(ri->i_blocks) - 1);
- 
- 	inode->i_atime.tv_sec = le64_to_cpu(ri->i_atime);
- 	inode->i_ctime.tv_sec = le64_to_cpu(ri->i_ctime);
-@@ -268,7 +268,7 @@ int update_inode(struct inode *inode, struct page *node_page)
- 	ri->i_gid = cpu_to_le32(i_gid_read(inode));
- 	ri->i_links = cpu_to_le32(inode->i_nlink);
- 	ri->i_size = cpu_to_le64(i_size_read(inode));
--	ri->i_blocks = cpu_to_le64(SECTOR_TO_BLOCK(inode->i_blocks));
-+	ri->i_blocks = cpu_to_le64(SECTOR_TO_BLOCK(inode->i_blocks) + 1);
- 
- 	if (et) {
- 		read_lock(&et->lock);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index fd57ffd88508..b9f14ba6441f 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -678,15 +678,11 @@ static void truncate_node(struct dnode_of_data *dn)
- 	struct node_info ni;
- 
- 	get_node_info(sbi, dn->nid, &ni);
--	if (dn->inode->i_blocks == 0) {
--		f2fs_bug_on(sbi, ni.blk_addr != NULL_ADDR);
--		goto invalidate;
--	}
- 	f2fs_bug_on(sbi, ni.blk_addr == NULL_ADDR);
- 
- 	/* Deallocate node address */
- 	invalidate_blocks(sbi, ni.blk_addr);
--	dec_valid_node_count(sbi, dn->inode);
-+	dec_valid_node_count(sbi, dn->inode, dn->nid == dn->inode->i_ino);
- 	set_node_addr(sbi, &ni, NULL_ADDR, false);
- 
- 	if (dn->nid == dn->inode->i_ino) {
-@@ -694,7 +690,7 @@ static void truncate_node(struct dnode_of_data *dn)
- 		dec_valid_inode_count(sbi);
- 		f2fs_inode_synced(dn->inode);
- 	}
--invalidate:
-+
- 	clear_node_page_dirty(dn->node_page);
- 	set_sbi_flag(sbi, SBI_IS_DIRTY);
- 
-@@ -1044,7 +1040,7 @@ struct page *new_node_page(struct dnode_of_data *dn,
- 	if (!page)
- 		return ERR_PTR(-ENOMEM);
- 
--	if (unlikely(!inc_valid_node_count(sbi, dn->inode))) {
-+	if (unlikely(!inc_valid_node_count(sbi, dn->inode, !ofs))) {
- 		err = -ENOSPC;
- 		goto fail;
- 	}
-@@ -2207,14 +2203,14 @@ int recover_xattr_data(struct inode *inode, struct page *page, block_t blkaddr)
- 	get_node_info(sbi, prev_xnid, &ni);
- 	f2fs_bug_on(sbi, ni.blk_addr == NULL_ADDR);
- 	invalidate_blocks(sbi, ni.blk_addr);
--	dec_valid_node_count(sbi, inode);
-+	dec_valid_node_count(sbi, inode, false);
- 	set_node_addr(sbi, &ni, NULL_ADDR, false);
- 
- recover_xnid:
- 	/* 2: update xattr nid in inode */
- 	remove_free_nid(sbi, new_xnid);
- 	f2fs_i_xnid_write(inode, new_xnid);
--	if (unlikely(!inc_valid_node_count(sbi, inode)))
-+	if (unlikely(!inc_valid_node_count(sbi, inode, false)))
- 		f2fs_bug_on(sbi, 1);
- 	update_inode_page(inode);
- 
-@@ -2272,7 +2268,7 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
- 	new_ni = old_ni;
- 	new_ni.ino = ino;
- 
--	if (unlikely(!inc_valid_node_count(sbi, NULL)))
-+	if (unlikely(!inc_valid_node_count(sbi, NULL, true)))
- 		WARN_ON(1);
- 	set_node_addr(sbi, &new_ni, NEW_ADDR, false);
- 	inc_valid_inode_count(sbi);
--- 
-2.13.0.90.g1eb437020
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
