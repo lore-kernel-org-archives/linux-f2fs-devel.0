@@ -1,73 +1,32 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: relax permission for atomic/volatile ioctls
-Date: Wed,  5 Jul 2017 19:23:26 -0700
-Message-ID: <20170706022326.52594-1-jaegeuk@kernel.org>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: [PATCH] f2fs: no need to create issue_discard_thread if it exists
+Date: Thu, 6 Jul 2017 19:05:34 +0800
+Message-ID: <1499339134-104480-1-git-send-email-yunlong.song@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, sylinux@163.com, yunlong.song@huawei.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch allows atomic/volatile ioctls for sqlite under sdcardfs.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 ---
- fs/f2fs/file.c | 15 ---------------
- 1 file changed, 15 deletions(-)
+ fs/f2fs/segment.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index f5d6357e8360..dd8f5d2caa48 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1587,9 +1587,6 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
- 	struct inode *inode = file_inode(filp);
- 	int ret;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 4c246e3..b48d004 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1417,6 +1417,8 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
  
--	if (!inode_owner_or_capable(inode))
--		return -EACCES;
--
- 	if (!S_ISREG(inode->i_mode))
- 		return -EINVAL;
+ 	if (SM_I(sbi)->dcc_info) {
+ 		dcc = SM_I(sbi)->dcc_info;
++		if (dcc->f2fs_issue_discard)
++			return err;
+ 		goto init_thread;
+ 	}
  
-@@ -1636,9 +1633,6 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
- 	struct inode *inode = file_inode(filp);
- 	int ret;
- 
--	if (!inode_owner_or_capable(inode))
--		return -EACCES;
--
- 	ret = mnt_want_write_file(filp);
- 	if (ret)
- 		return ret;
-@@ -1672,9 +1666,6 @@ static int f2fs_ioc_start_volatile_write(struct file *filp)
- 	struct inode *inode = file_inode(filp);
- 	int ret;
- 
--	if (!inode_owner_or_capable(inode))
--		return -EACCES;
--
- 	if (!S_ISREG(inode->i_mode))
- 		return -EINVAL;
- 
-@@ -1707,9 +1698,6 @@ static int f2fs_ioc_release_volatile_write(struct file *filp)
- 	struct inode *inode = file_inode(filp);
- 	int ret;
- 
--	if (!inode_owner_or_capable(inode))
--		return -EACCES;
--
- 	ret = mnt_want_write_file(filp);
- 	if (ret)
- 		return ret;
-@@ -1736,9 +1724,6 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
- 	struct inode *inode = file_inode(filp);
- 	int ret;
- 
--	if (!inode_owner_or_capable(inode))
--		return -EACCES;
--
- 	ret = mnt_want_write_file(filp);
- 	if (ret)
- 		return ret;
 -- 
-2.13.0.rc1.294.g07d810a77f-goog
+1.8.5.2
