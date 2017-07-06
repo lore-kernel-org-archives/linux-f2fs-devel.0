@@ -1,43 +1,95 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] f2fs: no need to create issue_discard_thread if it exists
-Date: Thu, 6 Jul 2017 21:16:19 +0800
-Message-ID: <c76a5045-078b-1018-23f8-ccfaefa6f2b4@kernel.org>
-References: <1499339134-104480-1-git-send-email-yunlong.song@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid migratepage for atomic written
+ page
+Date: Thu, 6 Jul 2017 21:38:34 +0800
+Message-ID: <e95a37f3-5403-20c8-606f-ed1a55fa67b7@kernel.org>
+References: <20170703230820.63929-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1499339134-104480-1-git-send-email-yunlong.song@huawei.com>
+In-Reply-To: <20170703230820.63929-1-jaegeuk@kernel.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com, sylinux@163.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Yunlong,
+Hi Jaegeuk,
 
-It looks there is no way to create discard thread redundantly,
-so here we don't need to check this?
+On 2017/7/4 7:08, Jaegeuk Kim wrote:
+> In order to avoid lock contention for atomic written pages, we'd better give
+> EAGAIN in f2fs_migrate_page. We expect it will be released soon as transaction
+> commits.
+
+Hmm.. if atomic write is triggered intensively, there is little change to
+migrate fragmented page.
+
+How about detecting migrate mode here, for MIGRATE_SYNC case, let it moving
+the page; for MIGRATE_ASYNC/MIGRATE_SYNC_LIGHT case, the migration priority
+is lower, we can return EAGAIN.
 
 Thanks,
 
-On 2017/7/6 19:05, Yunlong Song wrote:
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> ---
->  fs/f2fs/segment.c | 2 ++
->  1 file changed, 2 insertions(+)
 > 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 4c246e3..b48d004 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -1417,6 +1417,8 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/data.c | 35 ++++++++++-------------------------
+>  1 file changed, 10 insertions(+), 25 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index d58b81213a86..1458e3a6d630 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -2197,41 +2197,26 @@ static sector_t f2fs_bmap(struct address_space *mapping, sector_t block)
+>  int f2fs_migrate_page(struct address_space *mapping,
+>  		struct page *newpage, struct page *page, enum migrate_mode mode)
+>  {
+> -	int rc, extra_count;
+> -	struct f2fs_inode_info *fi = F2FS_I(mapping->host);
+> -	bool atomic_written = IS_ATOMIC_WRITTEN_PAGE(page);
+> +	int rc;
 >  
->  	if (SM_I(sbi)->dcc_info) {
->  		dcc = SM_I(sbi)->dcc_info;
-> +		if (dcc->f2fs_issue_discard)
-> +			return err;
->  		goto init_thread;
->  	}
+> -	BUG_ON(PageWriteback(page));
+> -
+> -	/* migrating an atomic written page is safe with the inmem_lock hold */
+> -	if (atomic_written && !mutex_trylock(&fi->inmem_lock))
+> +	/*
+> +	 * We'd better return EAGAIN for atomic pages, which will be committed
+> +	 * sooner or later. Don't botter transactions with inmem_lock.
+> +	 */
+> +	if (IS_ATOMIC_WRITTEN_PAGE(page))
+>  		return -EAGAIN;
 >  
+> +	BUG_ON(PageWriteback(page));	/* Writeback must be complete */
+> +
+>  	/*
+>  	 * A reference is expected if PagePrivate set when move mapping,
+>  	 * however F2FS breaks this for maintaining dirty page counts when
+>  	 * truncating pages. So here adjusting the 'extra_count' make it work.
+>  	 */
+> -	extra_count = (atomic_written ? 1 : 0) - page_has_private(page);
+>  	rc = migrate_page_move_mapping(mapping, newpage,
+> -				page, NULL, mode, extra_count);
+> -	if (rc != MIGRATEPAGE_SUCCESS) {
+> -		if (atomic_written)
+> -			mutex_unlock(&fi->inmem_lock);
+> +			page, NULL, mode, (page_has_private(page) ? -1 : 0));
+> +	if (rc != MIGRATEPAGE_SUCCESS)
+>  		return rc;
+> -	}
+> -
+> -	if (atomic_written) {
+> -		struct inmem_pages *cur;
+> -		list_for_each_entry(cur, &fi->inmem_pages, list)
+> -			if (cur->page == page) {
+> -				cur->page = newpage;
+> -				break;
+> -			}
+> -		mutex_unlock(&fi->inmem_lock);
+> -		put_page(page);
+> -		get_page(newpage);
+> -	}
+>  
+>  	if (PagePrivate(page))
+>  		SetPagePrivate(newpage);
 > 
