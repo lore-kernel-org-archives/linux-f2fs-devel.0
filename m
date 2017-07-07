@@ -1,130 +1,121 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: =?utf-8?B?562U5aSNOiBbZjJmcy1kZXY=?= =?utf-8?Q?=5D?= [PATCH]
- f2fs: relax permission for atomic/volatile ioctls
-Date: Thu, 6 Jul 2017 19:12:03 -0700
-Message-ID: <20170707021203.GB12435@jaegeuk-macbookpro.roam.corp.google.com>
+From: "gaoxiang (P)" <gaoxiang25@huawei.com>
+Subject: Re: =?utf-8?b?562U5aSNOiAgW1BBVENIXSBmMmZzOiByZWxheCBw?=
+ =?utf-8?q?ermission_for_atomic/volatile_ioctls?=
+Date: Fri, 7 Jul 2017 02:19:23 +0000
+Message-ID: <9047C53C18267742AB12E43B65C7F9F70BBA0140@dggemi505-mbs.china.huawei.com>
 References: <20170706022326.52594-1-jaegeuk@kernel.org>
- <8346aeca-c28b-e5b9-5973-b5648b015c88@kernel.org>
- <20170707001609.GA8300@jaegeuk-macbookpro.roam.corp.google.com>
- <6929112f-e8f2-8fe2-bb13-7a7ebcdbf7db@kernel.org>
- <9047C53C18267742AB12E43B65C7F9F70BB9FFBF@dggemi505-mbs.china.huawei.com>
+	<8346aeca-c28b-e5b9-5973-b5648b015c88@kernel.org>
+	<20170707001609.GA8300@jaegeuk-macbookpro.roam.corp.google.com>
+	<6929112f-e8f2-8fe2-bb13-7a7ebcdbf7db@kernel.org>
+	<9047C53C18267742AB12E43B65C7F9F70BB9FFBF@dggemi505-mbs.china.huawei.com>
+	<20170707021203.GB12435@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <9047C53C18267742AB12E43B65C7F9F70BB9FFBF@dggemi505-mbs.china.huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "gaoxiang (P)" <gaoxiang25@huawei.com>
-Cc: Chao Yu <chao@kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <gaoxiang25@huawei.com>) id 1dTIs1-0006DH-Dh
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 07 Jul 2017 02:19:49 +0000
+Received: from szxga03-in.huawei.com ([45.249.212.189])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1dTIrz-0002Td-G0
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 07 Jul 2017 02:19:49 +0000
+In-Reply-To: <20170707021203.GB12435@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: zh-CN
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Chao Yu <chao@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-On 07/07, gaoxiang (P) wrote:
-> Hi,
-> I think Sdcardfs should override task_struct cred fsuid/fsgid before calling the underlay fs operation.
-> And it seems sdcardfs implementations misses override cred fsuid/fsgid before the ioctl operation.
-
-Oh, good catch!
-
-Thank you. ;)
-
-> 
-> Thanks.
-> 
-> -----邮件原件-----
-> 发件人: Chao Yu [mailto:chao@kernel.org] 
-> 发送时间: 2017年7月7日 8:58
-> 收件人: Jaegeuk Kim
-> 抄送: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> 主题: Re: [f2fs-dev] [PATCH] f2fs: relax permission for atomic/volatile ioctls
-> 
-> On 2017/7/7 8:16, Jaegeuk Kim wrote:
-> > On 07/07, Chao Yu wrote:
-> >> On 2017/7/6 10:23, Jaegeuk Kim wrote:
-> >>> This patch allows atomic/volatile ioctls for sqlite under sdcardfs.
-> >>
-> >> Out of curiosity, we will lose some capable when passing through sdcardfs?
-> > 
-> > I don't think so. But, it seems a test applicaion tries to access database from
-> > difference uid.
-> 
-> Oh, is that really allowed? if the sqlite database is public in sdcard directory,
-> application needs to apply WRITE_EXTERNAL_STORAGE in order to add itself to
-> sdcard_rw group, then it can access the database. Right?
-> 
-> Thanks,
-> 
-> > 
-> > Thanks,
-> > 
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>> ---
-> >>>  fs/f2fs/file.c | 15 ---------------
-> >>>  1 file changed, 15 deletions(-)
-> >>>
-> >>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> >>> index f5d6357e8360..dd8f5d2caa48 100644
-> >>> --- a/fs/f2fs/file.c
-> >>> +++ b/fs/f2fs/file.c
-> >>> @@ -1587,9 +1587,6 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
-> >>>  	struct inode *inode = file_inode(filp);
-> >>>  	int ret;
-> >>>  
-> >>> -	if (!inode_owner_or_capable(inode))
-> >>> -		return -EACCES;
-> >>> -
-> >>>  	if (!S_ISREG(inode->i_mode))
-> >>>  		return -EINVAL;
-> >>>  
-> >>> @@ -1636,9 +1633,6 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
-> >>>  	struct inode *inode = file_inode(filp);
-> >>>  	int ret;
-> >>>  
-> >>> -	if (!inode_owner_or_capable(inode))
-> >>> -		return -EACCES;
-> >>> -
-> >>>  	ret = mnt_want_write_file(filp);
-> >>>  	if (ret)
-> >>>  		return ret;
-> >>> @@ -1672,9 +1666,6 @@ static int f2fs_ioc_start_volatile_write(struct file *filp)
-> >>>  	struct inode *inode = file_inode(filp);
-> >>>  	int ret;
-> >>>  
-> >>> -	if (!inode_owner_or_capable(inode))
-> >>> -		return -EACCES;
-> >>> -
-> >>>  	if (!S_ISREG(inode->i_mode))
-> >>>  		return -EINVAL;
-> >>>  
-> >>> @@ -1707,9 +1698,6 @@ static int f2fs_ioc_release_volatile_write(struct file *filp)
-> >>>  	struct inode *inode = file_inode(filp);
-> >>>  	int ret;
-> >>>  
-> >>> -	if (!inode_owner_or_capable(inode))
-> >>> -		return -EACCES;
-> >>> -
-> >>>  	ret = mnt_want_write_file(filp);
-> >>>  	if (ret)
-> >>>  		return ret;
-> >>> @@ -1736,9 +1724,6 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
-> >>>  	struct inode *inode = file_inode(filp);
-> >>>  	int ret;
-> >>>  
-> >>> -	if (!inode_owner_or_capable(inode))
-> >>> -		return -EACCES;
-> >>> -
-> >>>  	ret = mnt_want_write_file(filp);
-> >>>  	if (ret)
-> >>>  		return ret;
-> >>>
-> 
-> ------------------------------------------------------------------------------
-> Check out the vibrant tech community on one of the world's most
-> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+DQotLS0tLemCruS7tuWOn+S7ti0tLS0tDQrlj5Hku7bkuro6IEphZWdldWsgS2ltIFttYWlsdG86
+amFlZ2V1a0BrZXJuZWwub3JnXSANCuWPkemAgeaXtumXtDogMjAxN+W5tDfmnIg35pelIDEwOjEy
+DQrmlLbku7bkuro6IGdhb3hpYW5nIChQKQ0K5oqE6YCBOiBDaGFvIFl1OyBsaW51eC1mc2RldmVs
+QHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtZjJm
+cy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQNCuS4u+mimDogUmU6IOetlOWkjTogW2YyZnMt
+ZGV2XSBbUEFUQ0hdIGYyZnM6IHJlbGF4IHBlcm1pc3Npb24gZm9yIGF0b21pYy92b2xhdGlsZSBp
+b2N0bHMNCg0KT24gMDcvMDcsIGdhb3hpYW5nIChQKSB3cm90ZToNCj4gSGksDQo+IEkgdGhpbmsg
+U2RjYXJkZnMgc2hvdWxkIG92ZXJyaWRlIHRhc2tfc3RydWN0IGNyZWQgZnN1aWQvZnNnaWQgYmVm
+b3JlIGNhbGxpbmcgdGhlIHVuZGVybGF5IGZzIG9wZXJhdGlvbi4NCj4gQW5kIGl0IHNlZW1zIHNk
+Y2FyZGZzIGltcGxlbWVudGF0aW9ucyBtaXNzZXMgb3ZlcnJpZGUgY3JlZCBmc3VpZC9mc2dpZCBi
+ZWZvcmUgdGhlIGlvY3RsIG9wZXJhdGlvbi4NCg0KT2gsIGdvb2QgY2F0Y2ghDQoNClRoYW5rIHlv
+dS4gOykNCg0KDQo7KSBXZSBhcmUgZml4aW5nIGl0IGludGVybmFsbHkuIEFuZCB0aGUgQU9TUCBz
+ZGNhcmRmcyBwYXRjaCB3b3VsZCBiZQ0KaHR0cHM6Ly9hbmRyb2lkLXJldmlldy5nb29nbGVzb3Vy
+Y2UuY29tLyMvYy80MzEyNTkvDQpJdCBpcyBub25lIG9mIGYyZnMgYnVzaW5lc3MuIDopIDopDQpU
+aGFua3MuDQoNCj4gDQo+IFRoYW5rcy4NCj4gDQo+IC0tLS0t6YKu5Lu25Y6f5Lu2LS0tLS0NCj4g
+5Y+R5Lu25Lq6OiBDaGFvIFl1IFttYWlsdG86Y2hhb0BrZXJuZWwub3JnXQ0KPiDlj5HpgIHml7bp
+l7Q6IDIwMTflubQ35pyIN+aXpSA4OjU4DQo+IOaUtuS7tuS6ujogSmFlZ2V1ayBLaW0NCj4g5oqE
+6YCBOiBsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2Vy
+bmVsLm9yZzsgDQo+IGxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0DQo+IOS4
+u+mimDogUmU6IFtmMmZzLWRldl0gW1BBVENIXSBmMmZzOiByZWxheCBwZXJtaXNzaW9uIGZvciBh
+dG9taWMvdm9sYXRpbGUgDQo+IGlvY3Rscw0KPiANCj4gT24gMjAxNy83LzcgODoxNiwgSmFlZ2V1
+ayBLaW0gd3JvdGU6DQo+ID4gT24gMDcvMDcsIENoYW8gWXUgd3JvdGU6DQo+ID4+IE9uIDIwMTcv
+Ny82IDEwOjIzLCBKYWVnZXVrIEtpbSB3cm90ZToNCj4gPj4+IFRoaXMgcGF0Y2ggYWxsb3dzIGF0
+b21pYy92b2xhdGlsZSBpb2N0bHMgZm9yIHNxbGl0ZSB1bmRlciBzZGNhcmRmcy4NCj4gPj4NCj4g
+Pj4gT3V0IG9mIGN1cmlvc2l0eSwgd2Ugd2lsbCBsb3NlIHNvbWUgY2FwYWJsZSB3aGVuIHBhc3Np
+bmcgdGhyb3VnaCBzZGNhcmRmcz8NCj4gPiANCj4gPiBJIGRvbid0IHRoaW5rIHNvLiBCdXQsIGl0
+IHNlZW1zIGEgdGVzdCBhcHBsaWNhaW9uIHRyaWVzIHRvIGFjY2VzcyANCj4gPiBkYXRhYmFzZSBm
+cm9tIGRpZmZlcmVuY2UgdWlkLg0KPiANCj4gT2gsIGlzIHRoYXQgcmVhbGx5IGFsbG93ZWQ/IGlm
+IHRoZSBzcWxpdGUgZGF0YWJhc2UgaXMgcHVibGljIGluIHNkY2FyZCANCj4gZGlyZWN0b3J5LCBh
+cHBsaWNhdGlvbiBuZWVkcyB0byBhcHBseSBXUklURV9FWFRFUk5BTF9TVE9SQUdFIGluIG9yZGVy
+IA0KPiB0byBhZGQgaXRzZWxmIHRvIHNkY2FyZF9ydyBncm91cCwgdGhlbiBpdCBjYW4gYWNjZXNz
+IHRoZSBkYXRhYmFzZS4gUmlnaHQ/DQo+IA0KPiBUaGFua3MsDQo+IA0KPiA+IA0KPiA+IFRoYW5r
+cywNCj4gPiANCj4gPj4NCj4gPj4gVGhhbmtzLA0KPiA+Pg0KPiA+Pj4NCj4gPj4+IFNpZ25lZC1v
+ZmYtYnk6IEphZWdldWsgS2ltIDxqYWVnZXVrQGtlcm5lbC5vcmc+PiAtLS0gIA0KPiA+Pj4gZnMv
+ZjJmcy9maWxlLmMgfCAxNSAtLS0tLS0tLS0tLS0tLS0NCj4gPj4+ICAxIGZpbGUgY2hhbmdlZCwg
+MTUgZGVsZXRpb25zKC0pDQo+ID4+Pg0KPiA+Pj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvZmlsZS5j
+IGIvZnMvZjJmcy9maWxlLmMgaW5kZXggDQo+ID4+PiBmNWQ2MzU3ZTgzNjAuLmRkOGY1ZDJjYWE0
+OCAxMDA2NDQNCj4gPj4+IC0tLSBhL2ZzL2YyZnMvZmlsZS5jDQo+ID4+PiArKysgYi9mcy9mMmZz
+L2ZpbGUuYw0KPiA+Pj4gQEAgLTE1ODcsOSArMTU4Nyw2IEBAIHN0YXRpYyBpbnQgZjJmc19pb2Nf
+c3RhcnRfYXRvbWljX3dyaXRlKHN0cnVjdCBmaWxlICpmaWxwKQ0KPiA+Pj4gIAlzdHJ1Y3QgaW5v
+ZGUgKmlub2RlID0gZmlsZV9pbm9kZShmaWxwKTsNCj4gPj4+ICAJaW50IHJldDsNCj4gPj4+ICAN
+Cj4gPj4+IC0JaWYgKCFpbm9kZV9vd25lcl9vcl9jYXBhYmxlKGlub2RlKSkNCj4gPj4+IC0JCXJl
+dHVybiAtRUFDQ0VTOw0KPiA+Pj4gLQ0KPiA+Pj4gIAlpZiAoIVNfSVNSRUcoaW5vZGUtPmlfbW9k
+ZSkpDQo+ID4+PiAgCQlyZXR1cm4gLUVJTlZBTDsNCj4gPj4+ICANCj4gPj4+IEBAIC0xNjM2LDkg
+KzE2MzMsNiBAQCBzdGF0aWMgaW50IGYyZnNfaW9jX2NvbW1pdF9hdG9taWNfd3JpdGUoc3RydWN0
+IGZpbGUgKmZpbHApDQo+ID4+PiAgCXN0cnVjdCBpbm9kZSAqaW5vZGUgPSBmaWxlX2lub2RlKGZp
+bHApOw0KPiA+Pj4gIAlpbnQgcmV0Ow0KPiA+Pj4gIA0KPiA+Pj4gLQlpZiAoIWlub2RlX293bmVy
+X29yX2NhcGFibGUoaW5vZGUpKQ0KPiA+Pj4gLQkJcmV0dXJuIC1FQUNDRVM7DQo+ID4+PiAtDQo+
+ID4+PiAgCXJldCA9IG1udF93YW50X3dyaXRlX2ZpbGUoZmlscCk7DQo+ID4+PiAgCWlmIChyZXQp
+DQo+ID4+PiAgCQlyZXR1cm4gcmV0Ow0KPiA+Pj4gQEAgLTE2NzIsOSArMTY2Niw2IEBAIHN0YXRp
+YyBpbnQgZjJmc19pb2Nfc3RhcnRfdm9sYXRpbGVfd3JpdGUoc3RydWN0IGZpbGUgKmZpbHApDQo+
+ID4+PiAgCXN0cnVjdCBpbm9kZSAqaW5vZGUgPSBmaWxlX2lub2RlKGZpbHApOw0KPiA+Pj4gIAlp
+bnQgcmV0Ow0KPiA+Pj4gIA0KPiA+Pj4gLQlpZiAoIWlub2RlX293bmVyX29yX2NhcGFibGUoaW5v
+ZGUpKQ0KPiA+Pj4gLQkJcmV0dXJuIC1FQUNDRVM7DQo+ID4+PiAtDQo+ID4+PiAgCWlmICghU19J
+U1JFRyhpbm9kZS0+aV9tb2RlKSkNCj4gPj4+ICAJCXJldHVybiAtRUlOVkFMOw0KPiA+Pj4gIA0K
+PiA+Pj4gQEAgLTE3MDcsOSArMTY5OCw2IEBAIHN0YXRpYyBpbnQgZjJmc19pb2NfcmVsZWFzZV92
+b2xhdGlsZV93cml0ZShzdHJ1Y3QgZmlsZSAqZmlscCkNCj4gPj4+ICAJc3RydWN0IGlub2RlICpp
+bm9kZSA9IGZpbGVfaW5vZGUoZmlscCk7DQo+ID4+PiAgCWludCByZXQ7DQo+ID4+PiAgDQo+ID4+
+PiAtCWlmICghaW5vZGVfb3duZXJfb3JfY2FwYWJsZShpbm9kZSkpDQo+ID4+PiAtCQlyZXR1cm4g
+LUVBQ0NFUzsNCj4gPj4+IC0NCj4gPj4+ICAJcmV0ID0gbW50X3dhbnRfd3JpdGVfZmlsZShmaWxw
+KTsNCj4gPj4+ICAJaWYgKHJldCkNCj4gPj4+ICAJCXJldHVybiByZXQ7DQo+ID4+PiBAQCAtMTcz
+Niw5ICsxNzI0LDYgQEAgc3RhdGljIGludCBmMmZzX2lvY19hYm9ydF92b2xhdGlsZV93cml0ZShz
+dHJ1Y3QgZmlsZSAqZmlscCkNCj4gPj4+ICAJc3RydWN0IGlub2RlICppbm9kZSA9IGZpbGVfaW5v
+ZGUoZmlscCk7DQo+ID4+PiAgCWludCByZXQ7DQo+ID4+PiAgDQo+ID4+PiAtCWlmICghaW5vZGVf
+b3duZXJfb3JfY2FwYWJsZShpbm9kZSkpDQo+ID4+PiAtCQlyZXR1cm4gLUVBQ0NFUzsNCj4gPj4+
+IC0NCj4gPj4+ICAJcmV0ID0gbW50X3dhbnRfd3JpdGVfZmlsZShmaWxwKTsNCj4gPj4+ICAJaWYg
+KHJldCkNCj4gPj4+ICAJCXJldHVybiByZXQ7DQo+ID4+Pg0KPiANCj4gLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0K
+PiAtLS0tLS0tLSBDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9m
+IHRoZSB3b3JsZCdzIA0KPiBtb3N0IGVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEg
+aHR0cDovL3NkbS5saW5rL3NsYXNoZG90IA0KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fXw0KPiBMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdA0KPiBM
+aW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldA0KPiBodHRwczovL2xpc3RzLnNv
+dXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsDQotLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0KQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBv
+ZiB0aGUgd29ybGQncyBtb3N0CmVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0
+cDovL3NkbS5saW5rL3NsYXNoZG90Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2
+ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xp
+c3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
