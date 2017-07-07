@@ -1,121 +1,239 @@
-From: "gaoxiang (P)" <gaoxiang25@huawei.com>
-Subject: Re: =?utf-8?b?562U5aSNOiAgW1BBVENIXSBmMmZzOiByZWxheCBw?=
- =?utf-8?q?ermission_for_atomic/volatile_ioctls?=
-Date: Fri, 7 Jul 2017 02:19:23 +0000
-Message-ID: <9047C53C18267742AB12E43B65C7F9F70BBA0140@dggemi505-mbs.china.huawei.com>
-References: <20170706022326.52594-1-jaegeuk@kernel.org>
-	<8346aeca-c28b-e5b9-5973-b5648b015c88@kernel.org>
-	<20170707001609.GA8300@jaegeuk-macbookpro.roam.corp.google.com>
-	<6929112f-e8f2-8fe2-bb13-7a7ebcdbf7db@kernel.org>
-	<9047C53C18267742AB12E43B65C7F9F70BB9FFBF@dggemi505-mbs.china.huawei.com>
-	<20170707021203.GB12435@jaegeuk-macbookpro.roam.corp.google.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <gaoxiang25@huawei.com>) id 1dTIs1-0006DH-Dh
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Jul 2017 02:19:49 +0000
-Received: from szxga03-in.huawei.com ([45.249.212.189])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1dTIrz-0002Td-G0
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Jul 2017 02:19:49 +0000
-In-Reply-To: <20170707021203.GB12435@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: zh-CN
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Chao Yu <chao@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH v2] f2fs: use spin_{,un}lock_irq{save,restore}
+Date: Fri,  7 Jul 2017 14:10:15 +0800
+Message-ID: <20170707061015.12536-1-chao@kernel.org>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>, stable@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-DQotLS0tLemCruS7tuWOn+S7ti0tLS0tDQrlj5Hku7bkuro6IEphZWdldWsgS2ltIFttYWlsdG86
-amFlZ2V1a0BrZXJuZWwub3JnXSANCuWPkemAgeaXtumXtDogMjAxN+W5tDfmnIg35pelIDEwOjEy
-DQrmlLbku7bkuro6IGdhb3hpYW5nIChQKQ0K5oqE6YCBOiBDaGFvIFl1OyBsaW51eC1mc2RldmVs
-QHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtZjJm
-cy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQNCuS4u+mimDogUmU6IOetlOWkjTogW2YyZnMt
-ZGV2XSBbUEFUQ0hdIGYyZnM6IHJlbGF4IHBlcm1pc3Npb24gZm9yIGF0b21pYy92b2xhdGlsZSBp
-b2N0bHMNCg0KT24gMDcvMDcsIGdhb3hpYW5nIChQKSB3cm90ZToNCj4gSGksDQo+IEkgdGhpbmsg
-U2RjYXJkZnMgc2hvdWxkIG92ZXJyaWRlIHRhc2tfc3RydWN0IGNyZWQgZnN1aWQvZnNnaWQgYmVm
-b3JlIGNhbGxpbmcgdGhlIHVuZGVybGF5IGZzIG9wZXJhdGlvbi4NCj4gQW5kIGl0IHNlZW1zIHNk
-Y2FyZGZzIGltcGxlbWVudGF0aW9ucyBtaXNzZXMgb3ZlcnJpZGUgY3JlZCBmc3VpZC9mc2dpZCBi
-ZWZvcmUgdGhlIGlvY3RsIG9wZXJhdGlvbi4NCg0KT2gsIGdvb2QgY2F0Y2ghDQoNClRoYW5rIHlv
-dS4gOykNCg0KDQo7KSBXZSBhcmUgZml4aW5nIGl0IGludGVybmFsbHkuIEFuZCB0aGUgQU9TUCBz
-ZGNhcmRmcyBwYXRjaCB3b3VsZCBiZQ0KaHR0cHM6Ly9hbmRyb2lkLXJldmlldy5nb29nbGVzb3Vy
-Y2UuY29tLyMvYy80MzEyNTkvDQpJdCBpcyBub25lIG9mIGYyZnMgYnVzaW5lc3MuIDopIDopDQpU
-aGFua3MuDQoNCj4gDQo+IFRoYW5rcy4NCj4gDQo+IC0tLS0t6YKu5Lu25Y6f5Lu2LS0tLS0NCj4g
-5Y+R5Lu25Lq6OiBDaGFvIFl1IFttYWlsdG86Y2hhb0BrZXJuZWwub3JnXQ0KPiDlj5HpgIHml7bp
-l7Q6IDIwMTflubQ35pyIN+aXpSA4OjU4DQo+IOaUtuS7tuS6ujogSmFlZ2V1ayBLaW0NCj4g5oqE
-6YCBOiBsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2Vy
-bmVsLm9yZzsgDQo+IGxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0DQo+IOS4
-u+mimDogUmU6IFtmMmZzLWRldl0gW1BBVENIXSBmMmZzOiByZWxheCBwZXJtaXNzaW9uIGZvciBh
-dG9taWMvdm9sYXRpbGUgDQo+IGlvY3Rscw0KPiANCj4gT24gMjAxNy83LzcgODoxNiwgSmFlZ2V1
-ayBLaW0gd3JvdGU6DQo+ID4gT24gMDcvMDcsIENoYW8gWXUgd3JvdGU6DQo+ID4+IE9uIDIwMTcv
-Ny82IDEwOjIzLCBKYWVnZXVrIEtpbSB3cm90ZToNCj4gPj4+IFRoaXMgcGF0Y2ggYWxsb3dzIGF0
-b21pYy92b2xhdGlsZSBpb2N0bHMgZm9yIHNxbGl0ZSB1bmRlciBzZGNhcmRmcy4NCj4gPj4NCj4g
-Pj4gT3V0IG9mIGN1cmlvc2l0eSwgd2Ugd2lsbCBsb3NlIHNvbWUgY2FwYWJsZSB3aGVuIHBhc3Np
-bmcgdGhyb3VnaCBzZGNhcmRmcz8NCj4gPiANCj4gPiBJIGRvbid0IHRoaW5rIHNvLiBCdXQsIGl0
-IHNlZW1zIGEgdGVzdCBhcHBsaWNhaW9uIHRyaWVzIHRvIGFjY2VzcyANCj4gPiBkYXRhYmFzZSBm
-cm9tIGRpZmZlcmVuY2UgdWlkLg0KPiANCj4gT2gsIGlzIHRoYXQgcmVhbGx5IGFsbG93ZWQ/IGlm
-IHRoZSBzcWxpdGUgZGF0YWJhc2UgaXMgcHVibGljIGluIHNkY2FyZCANCj4gZGlyZWN0b3J5LCBh
-cHBsaWNhdGlvbiBuZWVkcyB0byBhcHBseSBXUklURV9FWFRFUk5BTF9TVE9SQUdFIGluIG9yZGVy
-IA0KPiB0byBhZGQgaXRzZWxmIHRvIHNkY2FyZF9ydyBncm91cCwgdGhlbiBpdCBjYW4gYWNjZXNz
-IHRoZSBkYXRhYmFzZS4gUmlnaHQ/DQo+IA0KPiBUaGFua3MsDQo+IA0KPiA+IA0KPiA+IFRoYW5r
-cywNCj4gPiANCj4gPj4NCj4gPj4gVGhhbmtzLA0KPiA+Pg0KPiA+Pj4NCj4gPj4+IFNpZ25lZC1v
-ZmYtYnk6IEphZWdldWsgS2ltIDxqYWVnZXVrQGtlcm5lbC5vcmc+PiAtLS0gIA0KPiA+Pj4gZnMv
-ZjJmcy9maWxlLmMgfCAxNSAtLS0tLS0tLS0tLS0tLS0NCj4gPj4+ICAxIGZpbGUgY2hhbmdlZCwg
-MTUgZGVsZXRpb25zKC0pDQo+ID4+Pg0KPiA+Pj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvZmlsZS5j
-IGIvZnMvZjJmcy9maWxlLmMgaW5kZXggDQo+ID4+PiBmNWQ2MzU3ZTgzNjAuLmRkOGY1ZDJjYWE0
-OCAxMDA2NDQNCj4gPj4+IC0tLSBhL2ZzL2YyZnMvZmlsZS5jDQo+ID4+PiArKysgYi9mcy9mMmZz
-L2ZpbGUuYw0KPiA+Pj4gQEAgLTE1ODcsOSArMTU4Nyw2IEBAIHN0YXRpYyBpbnQgZjJmc19pb2Nf
-c3RhcnRfYXRvbWljX3dyaXRlKHN0cnVjdCBmaWxlICpmaWxwKQ0KPiA+Pj4gIAlzdHJ1Y3QgaW5v
-ZGUgKmlub2RlID0gZmlsZV9pbm9kZShmaWxwKTsNCj4gPj4+ICAJaW50IHJldDsNCj4gPj4+ICAN
-Cj4gPj4+IC0JaWYgKCFpbm9kZV9vd25lcl9vcl9jYXBhYmxlKGlub2RlKSkNCj4gPj4+IC0JCXJl
-dHVybiAtRUFDQ0VTOw0KPiA+Pj4gLQ0KPiA+Pj4gIAlpZiAoIVNfSVNSRUcoaW5vZGUtPmlfbW9k
-ZSkpDQo+ID4+PiAgCQlyZXR1cm4gLUVJTlZBTDsNCj4gPj4+ICANCj4gPj4+IEBAIC0xNjM2LDkg
-KzE2MzMsNiBAQCBzdGF0aWMgaW50IGYyZnNfaW9jX2NvbW1pdF9hdG9taWNfd3JpdGUoc3RydWN0
-IGZpbGUgKmZpbHApDQo+ID4+PiAgCXN0cnVjdCBpbm9kZSAqaW5vZGUgPSBmaWxlX2lub2RlKGZp
-bHApOw0KPiA+Pj4gIAlpbnQgcmV0Ow0KPiA+Pj4gIA0KPiA+Pj4gLQlpZiAoIWlub2RlX293bmVy
-X29yX2NhcGFibGUoaW5vZGUpKQ0KPiA+Pj4gLQkJcmV0dXJuIC1FQUNDRVM7DQo+ID4+PiAtDQo+
-ID4+PiAgCXJldCA9IG1udF93YW50X3dyaXRlX2ZpbGUoZmlscCk7DQo+ID4+PiAgCWlmIChyZXQp
-DQo+ID4+PiAgCQlyZXR1cm4gcmV0Ow0KPiA+Pj4gQEAgLTE2NzIsOSArMTY2Niw2IEBAIHN0YXRp
-YyBpbnQgZjJmc19pb2Nfc3RhcnRfdm9sYXRpbGVfd3JpdGUoc3RydWN0IGZpbGUgKmZpbHApDQo+
-ID4+PiAgCXN0cnVjdCBpbm9kZSAqaW5vZGUgPSBmaWxlX2lub2RlKGZpbHApOw0KPiA+Pj4gIAlp
-bnQgcmV0Ow0KPiA+Pj4gIA0KPiA+Pj4gLQlpZiAoIWlub2RlX293bmVyX29yX2NhcGFibGUoaW5v
-ZGUpKQ0KPiA+Pj4gLQkJcmV0dXJuIC1FQUNDRVM7DQo+ID4+PiAtDQo+ID4+PiAgCWlmICghU19J
-U1JFRyhpbm9kZS0+aV9tb2RlKSkNCj4gPj4+ICAJCXJldHVybiAtRUlOVkFMOw0KPiA+Pj4gIA0K
-PiA+Pj4gQEAgLTE3MDcsOSArMTY5OCw2IEBAIHN0YXRpYyBpbnQgZjJmc19pb2NfcmVsZWFzZV92
-b2xhdGlsZV93cml0ZShzdHJ1Y3QgZmlsZSAqZmlscCkNCj4gPj4+ICAJc3RydWN0IGlub2RlICpp
-bm9kZSA9IGZpbGVfaW5vZGUoZmlscCk7DQo+ID4+PiAgCWludCByZXQ7DQo+ID4+PiAgDQo+ID4+
-PiAtCWlmICghaW5vZGVfb3duZXJfb3JfY2FwYWJsZShpbm9kZSkpDQo+ID4+PiAtCQlyZXR1cm4g
-LUVBQ0NFUzsNCj4gPj4+IC0NCj4gPj4+ICAJcmV0ID0gbW50X3dhbnRfd3JpdGVfZmlsZShmaWxw
-KTsNCj4gPj4+ICAJaWYgKHJldCkNCj4gPj4+ICAJCXJldHVybiByZXQ7DQo+ID4+PiBAQCAtMTcz
-Niw5ICsxNzI0LDYgQEAgc3RhdGljIGludCBmMmZzX2lvY19hYm9ydF92b2xhdGlsZV93cml0ZShz
-dHJ1Y3QgZmlsZSAqZmlscCkNCj4gPj4+ICAJc3RydWN0IGlub2RlICppbm9kZSA9IGZpbGVfaW5v
-ZGUoZmlscCk7DQo+ID4+PiAgCWludCByZXQ7DQo+ID4+PiAgDQo+ID4+PiAtCWlmICghaW5vZGVf
-b3duZXJfb3JfY2FwYWJsZShpbm9kZSkpDQo+ID4+PiAtCQlyZXR1cm4gLUVBQ0NFUzsNCj4gPj4+
-IC0NCj4gPj4+ICAJcmV0ID0gbW50X3dhbnRfd3JpdGVfZmlsZShmaWxwKTsNCj4gPj4+ICAJaWYg
-KHJldCkNCj4gPj4+ICAJCXJldHVybiByZXQ7DQo+ID4+Pg0KPiANCj4gLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0K
-PiAtLS0tLS0tLSBDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9m
-IHRoZSB3b3JsZCdzIA0KPiBtb3N0IGVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEg
-aHR0cDovL3NkbS5saW5rL3NsYXNoZG90IA0KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXw0KPiBMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdA0KPiBM
-aW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldA0KPiBodHRwczovL2xpc3RzLnNv
-dXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsDQotLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0KQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBv
-ZiB0aGUgd29ybGQncyBtb3N0CmVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0
-cDovL3NkbS5saW5rL3NsYXNoZG90Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2
-ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xp
-c3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+From: Chao Yu <yuchao0@huawei.com>
+
+generic/361 reports below warning, this is because: once, there is
+someone entering into critical region of sbi.cp_lock, if write_end_io.
+f2fs_stop_checkpoint is invoked from an triggered IRQ, we will encounter
+deadlock.
+
+So this patch changes to use spin_{,un}lock_irq{save,restore} to create
+critical region without IRQ enabled to avoid potential deadlock.
+
+ irq event stamp: 83391573
+ loop: Write error at byte offset 438729728, length 1024.
+ hardirqs last  enabled at (83391573): [<c1809752>] restore_all+0xf/0x65
+ hardirqs last disabled at (83391572): [<c1809eac>] reschedule_interrupt+0x30/0x3c
+ loop: Write error at byte offset 438860288, length 1536.
+ softirqs last  enabled at (83389244): [<c180cc4e>] __do_softirq+0x1ae/0x476
+ softirqs last disabled at (83389237): [<c101ca7c>] do_softirq_own_stack+0x2c/0x40
+ loop: Write error at byte offset 438990848, length 2048.
+ ================================
+ WARNING: inconsistent lock state
+ 4.12.0-rc2+ #30 Tainted: G           O
+ --------------------------------
+ inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-W} usage.
+ xfs_io/7959 [HC1[1]:SC0[0]:HE0:SE1] takes:
+  (&(&sbi->cp_lock)->rlock){?.+...}, at: [<f96f96cc>] f2fs_stop_checkpoint+0x1c/0x50 [f2fs]
+ {HARDIRQ-ON-W} state was registered at:
+   __lock_acquire+0x527/0x7b0
+   lock_acquire+0xae/0x220
+   _raw_spin_lock+0x42/0x50
+   do_checkpoint+0x165/0x9e0 [f2fs]
+   write_checkpoint+0x33f/0x740 [f2fs]
+   __f2fs_sync_fs+0x92/0x1f0 [f2fs]
+   f2fs_sync_fs+0x12/0x20 [f2fs]
+   sync_filesystem+0x67/0x80
+   generic_shutdown_super+0x27/0x100
+   kill_block_super+0x22/0x50
+   kill_f2fs_super+0x3a/0x40 [f2fs]
+   deactivate_locked_super+0x3d/0x70
+   deactivate_super+0x40/0x60
+   cleanup_mnt+0x39/0x70
+   __cleanup_mnt+0x10/0x20
+   task_work_run+0x69/0x80
+   exit_to_usermode_loop+0x57/0x85
+   do_fast_syscall_32+0x18c/0x1b0
+   entry_SYSENTER_32+0x4c/0x7b
+ irq event stamp: 1957420
+ hardirqs last  enabled at (1957419): [<c1808f37>] _raw_spin_unlock_irq+0x27/0x50
+ hardirqs last disabled at (1957420): [<c1809f9c>] call_function_single_interrupt+0x30/0x3c
+ softirqs last  enabled at (1953784): [<c180cc4e>] __do_softirq+0x1ae/0x476
+ softirqs last disabled at (1953773): [<c101ca7c>] do_softirq_own_stack+0x2c/0x40
+
+ other info that might help us debug this:
+  Possible unsafe locking scenario:
+
+        CPU0
+        ----
+   lock(&(&sbi->cp_lock)->rlock);
+   <Interrupt>
+     lock(&(&sbi->cp_lock)->rlock);
+
+  *** DEADLOCK ***
+
+ 2 locks held by xfs_io/7959:
+  #0:  (sb_writers#13){.+.+.+}, at: [<c11fd7ca>] vfs_write+0x16a/0x190
+  #1:  (&sb->s_type->i_mutex_key#16){+.+.+.}, at: [<f96e33f5>] f2fs_file_write_iter+0x25/0x140 [f2fs]
+
+ stack backtrace:
+ CPU: 2 PID: 7959 Comm: xfs_io Tainted: G           O    4.12.0-rc2+ #30
+ Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+ Call Trace:
+  dump_stack+0x5f/0x92
+  print_usage_bug+0x1d3/0x1dd
+  ? check_usage_backwards+0xe0/0xe0
+  mark_lock+0x23d/0x280
+  __lock_acquire+0x699/0x7b0
+  ? __this_cpu_preempt_check+0xf/0x20
+  ? trace_hardirqs_off_caller+0x91/0xe0
+  lock_acquire+0xae/0x220
+  ? f2fs_stop_checkpoint+0x1c/0x50 [f2fs]
+  _raw_spin_lock+0x42/0x50
+  ? f2fs_stop_checkpoint+0x1c/0x50 [f2fs]
+  f2fs_stop_checkpoint+0x1c/0x50 [f2fs]
+  f2fs_write_end_io+0x147/0x150 [f2fs]
+  bio_endio+0x7a/0x1e0
+  blk_update_request+0xad/0x410
+  blk_mq_end_request+0x16/0x60
+  lo_complete_rq+0x3c/0x70
+  __blk_mq_complete_request_remote+0x11/0x20
+  flush_smp_call_function_queue+0x6d/0x120
+  ? debug_smp_processor_id+0x12/0x20
+  generic_smp_call_function_single_interrupt+0x12/0x30
+  smp_call_function_single_interrupt+0x25/0x40
+  call_function_single_interrupt+0x37/0x3c
+ EIP: _raw_spin_unlock_irq+0x2d/0x50
+ EFLAGS: 00000296 CPU: 2
+ EAX: 00000001 EBX: d2ccc51c ECX: 00000001 EDX: c1aacebd
+ ESI: 00000000 EDI: 00000000 EBP: c96c9d1c ESP: c96c9d18
+  DS: 007b ES: 007b FS: 00d8 GS: 0033 SS: 0068
+  ? inherit_task_group.isra.98.part.99+0x6b/0xb0
+  __add_to_page_cache_locked+0x1d4/0x290
+  add_to_page_cache_lru+0x38/0xb0
+  pagecache_get_page+0x8e/0x200
+  f2fs_write_begin+0x96/0xf00 [f2fs]
+  ? trace_hardirqs_on_caller+0xdd/0x1c0
+  ? current_time+0x17/0x50
+  ? trace_hardirqs_on+0xb/0x10
+  generic_perform_write+0xa9/0x170
+  __generic_file_write_iter+0x1a2/0x1f0
+  ? f2fs_preallocate_blocks+0x137/0x160 [f2fs]
+  f2fs_file_write_iter+0x6e/0x140 [f2fs]
+  ? __lock_acquire+0x429/0x7b0
+  __vfs_write+0xc1/0x140
+  vfs_write+0x9b/0x190
+  SyS_pwrite64+0x63/0xa0
+  do_fast_syscall_32+0xa1/0x1b0
+  entry_SYSENTER_32+0x4c/0x7b
+ EIP: 0xb7786c61
+ EFLAGS: 00000293 CPU: 2
+ EAX: ffffffda EBX: 00000003 ECX: 08416000 EDX: 00001000
+ ESI: 18b24000 EDI: 00000000 EBP: 00000003 ESP: bf9b36b0
+  DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b
+
+Fixes: aaec2b1d1879 ("f2fs: introduce cp_lock to protect updating of ckpt_flags")
+Cc: stable@vger.kernel.org
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v2: spread spin_{,un}lock_irq{save,restore}.
+ fs/f2fs/checkpoint.c | 11 ++++++-----
+ fs/f2fs/f2fs.h       | 18 ++++++++++++------
+ 2 files changed, 18 insertions(+), 11 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 954917d582f8..56bbf592e487 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1053,8 +1053,9 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ {
+ 	unsigned long orphan_num = sbi->im[ORPHAN_INO].ino_num;
+ 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
++	unsigned long flags;
+ 
+-	spin_lock(&sbi->cp_lock);
++	spin_lock_irqsave(&sbi->cp_lock, flags);
+ 
+ 	if ((cpc->reason & CP_UMOUNT) &&
+ 			le32_to_cpu(ckpt->cp_pack_total_block_count) >
+@@ -1085,14 +1086,14 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	/* set this flag to activate crc|cp_ver for recovery */
+ 	__set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG);
+ 
+-	spin_unlock(&sbi->cp_lock);
++	spin_unlock_irqrestore(&sbi->cp_lock, flags);
+ }
+ 
+ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ {
+ 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+-	unsigned long orphan_num = sbi->im[ORPHAN_INO].ino_num;
++	unsigned long orphan_num = sbi->im[ORPHAN_INO].ino_num, flags;
+ 	block_t start_blk;
+ 	unsigned int data_sum_blocks, orphan_blocks;
+ 	__u32 crc32 = 0;
+@@ -1134,12 +1135,12 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 
+ 	/* 2 cp  + n data seg summary + orphan inode blocks */
+ 	data_sum_blocks = npages_for_summary_flush(sbi, false);
+-	spin_lock(&sbi->cp_lock);
++	spin_lock_irqsave(&sbi->cp_lock, flags);
+ 	if (data_sum_blocks < NR_CURSEG_DATA_TYPE)
+ 		__set_ckpt_flags(ckpt, CP_COMPACT_SUM_FLAG);
+ 	else
+ 		__clear_ckpt_flags(ckpt, CP_COMPACT_SUM_FLAG);
+-	spin_unlock(&sbi->cp_lock);
++	spin_unlock_irqrestore(&sbi->cp_lock, flags);
+ 
+ 	orphan_blocks = GET_ORPHAN_BLOCKS(orphan_num);
+ 	ckpt->cp_pack_start_sum = cpu_to_le32(1 + cp_payload_blks +
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 0ca49e60002c..7ee533fc8e56 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1263,9 +1263,11 @@ static inline void __set_ckpt_flags(struct f2fs_checkpoint *cp, unsigned int f)
+ 
+ static inline void set_ckpt_flags(struct f2fs_sb_info *sbi, unsigned int f)
+ {
+-	spin_lock(&sbi->cp_lock);
++	unsigned long flags;
++
++	spin_lock_irqsave(&sbi->cp_lock, flags);
+ 	__set_ckpt_flags(F2FS_CKPT(sbi), f);
+-	spin_unlock(&sbi->cp_lock);
++	spin_unlock_irqrestore(&sbi->cp_lock, flags);
+ }
+ 
+ static inline void __clear_ckpt_flags(struct f2fs_checkpoint *cp, unsigned int f)
+@@ -1279,22 +1281,26 @@ static inline void __clear_ckpt_flags(struct f2fs_checkpoint *cp, unsigned int f
+ 
+ static inline void clear_ckpt_flags(struct f2fs_sb_info *sbi, unsigned int f)
+ {
+-	spin_lock(&sbi->cp_lock);
++	unsigned long flags;
++
++	spin_lock_irqsave(&sbi->cp_lock, flags);
+ 	__clear_ckpt_flags(F2FS_CKPT(sbi), f);
+-	spin_unlock(&sbi->cp_lock);
++	spin_unlock_irqrestore(&sbi->cp_lock, flags);
+ }
+ 
+ static inline void disable_nat_bits(struct f2fs_sb_info *sbi, bool lock)
+ {
++	unsigned long flags;
++
+ 	set_sbi_flag(sbi, SBI_NEED_FSCK);
+ 
+ 	if (lock)
+-		spin_lock(&sbi->cp_lock);
++		spin_lock_irqsave(&sbi->cp_lock, flags);
+ 	__clear_ckpt_flags(F2FS_CKPT(sbi), CP_NAT_BITS_FLAG);
+ 	kfree(NM_I(sbi)->nat_bits);
+ 	NM_I(sbi)->nat_bits = NULL;
+ 	if (lock)
+-		spin_unlock(&sbi->cp_lock);
++		spin_unlock_irqrestore(&sbi->cp_lock, flags);
+ }
+ 
+ static inline bool enabled_nat_bits(struct f2fs_sb_info *sbi,
+-- 
+2.13.0.90.g1eb437020
