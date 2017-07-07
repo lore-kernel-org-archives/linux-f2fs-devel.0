@@ -1,26 +1,25 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH v2] f2fs: relax migratepage for atomic
- written page
-Date: Fri, 7 Jul 2017 07:57:29 +0800
-Message-ID: <4f92014b-5265-2c60-51a6-f80f34dd1418@kernel.org>
-References: <20170703230820.63929-1-jaegeuk@kernel.org>
-	<20170706214926.GB395@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH] f2fs: relax permission for atomic/volatile
+ ioctls
+Date: Fri, 7 Jul 2017 08:04:32 +0800
+Message-ID: <8346aeca-c28b-e5b9-5973-b5648b015c88@kernel.org>
+References: <20170706022326.52594-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1dTGfQ-00038I-FP
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao@kernel.org>) id 1dTGmE-0004oR-Lg
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 06 Jul 2017 23:58:40 +0000
+	Fri, 07 Jul 2017 00:05:42 +0000
 Received: from mail.kernel.org ([198.145.29.99])
 	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1dTGfP-0004aq-6o
+	(Exim 4.76) id 1dTGmD-0005r6-Un
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 06 Jul 2017 23:58:40 +0000
-In-Reply-To: <20170706214926.GB395@jaegeuk-macbookpro.roam.corp.google.com>
+	Fri, 07 Jul 2017 00:05:42 +0000
+In-Reply-To: <20170706022326.52594-1-jaegeuk@kernel.org>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,42 +32,72 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/7/7 5:49, Jaegeuk Kim wrote:
-> In order to avoid lock contention for atomic written pages, we'd better give
-> EBUSY in f2fs_migrate_page when mode is asynchronous. We expect it will be
-> released soon as transaction commits.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+On 2017/7/6 10:23, Jaegeuk Kim wrote:
+> This patch allows atomic/volatile ioctls for sqlite under sdcardfs.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Out of curiosity, we will lose some capable when passing through sdcardfs?
 
-> ---
+Thanks,
+
 > 
-> Change log from v1:
->  - return -EBUSY when mode is MIGRATE_ASYNC or MIGRATE_SYNC_LIGHT
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>> ---
+>  fs/f2fs/file.c | 15 ---------------
+>  1 file changed, 15 deletions(-)
 > 
->  fs/f2fs/data.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 85ac3a63cce6..74c31cb203e2 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -2206,8 +2206,12 @@ int f2fs_migrate_page(struct address_space *mapping,
->  	BUG_ON(PageWriteback(page));
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index f5d6357e8360..dd8f5d2caa48 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -1587,9 +1587,6 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+>  	struct inode *inode = file_inode(filp);
+>  	int ret;
 >  
->  	/* migrating an atomic written page is safe with the inmem_lock hold */
-> -	if (atomic_written && !mutex_trylock(&fi->inmem_lock))
-> -		return -EAGAIN;
-> +	if (atomic_written) {
-> +		if (mode != MIGRATE_SYNC)
-> +			return -EBUSY;
-> +		if (!mutex_trylock(&fi->inmem_lock))
-> +			return -EAGAIN;
-> +	}
+> -	if (!inode_owner_or_capable(inode))
+> -		return -EACCES;
+> -
+>  	if (!S_ISREG(inode->i_mode))
+>  		return -EINVAL;
 >  
->  	/*
->  	 * A reference is expected if PagePrivate set when move mapping,
+> @@ -1636,9 +1633,6 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+>  	struct inode *inode = file_inode(filp);
+>  	int ret;
+>  
+> -	if (!inode_owner_or_capable(inode))
+> -		return -EACCES;
+> -
+>  	ret = mnt_want_write_file(filp);
+>  	if (ret)
+>  		return ret;
+> @@ -1672,9 +1666,6 @@ static int f2fs_ioc_start_volatile_write(struct file *filp)
+>  	struct inode *inode = file_inode(filp);
+>  	int ret;
+>  
+> -	if (!inode_owner_or_capable(inode))
+> -		return -EACCES;
+> -
+>  	if (!S_ISREG(inode->i_mode))
+>  		return -EINVAL;
+>  
+> @@ -1707,9 +1698,6 @@ static int f2fs_ioc_release_volatile_write(struct file *filp)
+>  	struct inode *inode = file_inode(filp);
+>  	int ret;
+>  
+> -	if (!inode_owner_or_capable(inode))
+> -		return -EACCES;
+> -
+>  	ret = mnt_want_write_file(filp);
+>  	if (ret)
+>  		return ret;
+> @@ -1736,9 +1724,6 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
+>  	struct inode *inode = file_inode(filp);
+>  	int ret;
+>  
+> -	if (!inode_owner_or_capable(inode))
+> -		return -EACCES;
+> -
+>  	ret = mnt_want_write_file(filp);
+>  	if (ret)
+>  		return ret;
 > 
 
 ------------------------------------------------------------------------------
