@@ -1,51 +1,55 @@
-From: Luis Henriques <lhenriques@suse.com>
-Subject: [PATCH] f2fs: remove extra inode_unlock() in error path
-Date: Tue, 11 Jul 2017 17:30:33 +0100
-Message-ID: <20170711163033.3700-1-lhenriques@suse.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: Don't clear SGID when inheriting ACLs
+Date: Tue, 11 Jul 2017 13:53:24 -0700
+Message-ID: <20170711205324.90260-1-jaegeuk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Luis Henriques <lhenriques@suse.com>
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, stable@vger.kernel.org, Jan Kara <jack@suse.cz>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This commit removes an extra inode_unlock() that is being done in function
-f2fs_ioc_setflags error path.  While there, get rid of a useless 'out'
-label as well.
+This patch copies commit b7f8a09f80:
+  "btrfs: Don't clear SGID when inheriting ACLs" written by Jan.
 
-Fixes: 0abd675e97e6 ("f2fs: support plain user/group quota")
-Signed-off-by: Luis Henriques <lhenriques@suse.com>
+Fixes: 073931017b49d9458aa351605b43a7e34598caef
+CC: stable@vger.kernel.org
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/file.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ fs/f2fs/acl.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index a0e6d2c65a9e..2706130c261b 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1538,7 +1538,6 @@ static int f2fs_ioc_setflags(struct file *filp, unsigned long arg)
+diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+index a140c5e3dc54..da77352c5ad3 100644
+--- a/fs/f2fs/acl.c
++++ b/fs/f2fs/acl.c
+@@ -211,12 +211,8 @@ static int __f2fs_set_acl(struct inode *inode, int type,
+ 	switch (type) {
+ 	case ACL_TYPE_ACCESS:
+ 		name_index = F2FS_XATTR_INDEX_POSIX_ACL_ACCESS;
+-		if (acl) {
+-			error = posix_acl_update_mode(inode, &inode->i_mode, &acl);
+-			if (error)
+-				return error;
++		if (acl)
+ 			set_acl_inode(inode, inode->i_mode);
+-		}
+ 		break;
  
- 	/* Is it quota file? Do not allow user to mess with it */
- 	if (IS_NOQUOTA(inode)) {
--		inode_unlock(inode);
- 		ret = -EPERM;
- 		goto unlock_out;
- 	}
-@@ -1549,9 +1548,8 @@ static int f2fs_ioc_setflags(struct file *filp, unsigned long arg)
+ 	case ACL_TYPE_DEFAULT:
+@@ -249,6 +245,13 @@ static int __f2fs_set_acl(struct inode *inode, int type,
  
- 	if ((flags ^ oldflags) & (FS_APPEND_FL | FS_IMMUTABLE_FL)) {
- 		if (!capable(CAP_LINUX_IMMUTABLE)) {
--			inode_unlock(inode);
- 			ret = -EPERM;
--			goto out;
-+			goto unlock_out;
- 		}
- 	}
- 
-@@ -1564,7 +1562,6 @@ static int f2fs_ioc_setflags(struct file *filp, unsigned long arg)
- 	f2fs_mark_inode_dirty_sync(inode, false);
- unlock_out:
- 	inode_unlock(inode);
--out:
- 	mnt_drop_write_file(filp);
- 	return ret;
+ int f2fs_set_acl(struct inode *inode, struct posix_acl *acl, int type)
+ {
++	int ret;
++
++	if (type == ACL_TYPE_ACCESS && acl) {
++		ret = posix_acl_update_mode(inode, &inode->i_mode, &acl);
++		if (ret)
++			return ret;
++	}
+ 	return __f2fs_set_acl(inode, type, acl, NULL);
  }
+ 
+-- 
+2.13.0.rc1.294.g07d810a77f-goog
