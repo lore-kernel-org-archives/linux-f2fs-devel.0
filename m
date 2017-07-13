@@ -1,52 +1,30 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: Don't clear SGID when inheriting ACLs
-Date: Thu, 13 Jul 2017 12:08:13 +0800
-Message-ID: <290aabd7-dc61-081a-bbda-74fa97197e62@kernel.org>
-References: <20170711205324.90260-1-jaegeuk@kernel.org>
- <20170711233124.GA96177@jaegeuk-macbookpro.roam.corp.google.com>
+From: Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
+Subject: Re: [PATCH 3/6] fscrypt: use HKDF-SHA512 to derive the per-inode encryption keys
+Date: Thu, 13 Jul 2017 16:54:55 +0200
+Message-ID: <2034167.Brpu2WxA6s@tauon.chronox.de>
+References: <20170712210035.51534-1-ebiggers3@gmail.com> <20170712210035.51534-4-ebiggers3@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170711233124.GA96177@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jan Kara <jack@suse.cz>, stable@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-ext4-owner@vger.kernel.org>
+In-Reply-To: <20170712210035.51534-4-ebiggers3@gmail.com>
+Sender: linux-ext4-owner@vger.kernel.org
+To: herbert@gondor.apana.org.au
+Cc: Eric Biggers <ebiggers3@gmail.com>, linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, linux-crypto@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Alex Cope <alexcope@google.com>, Eric Biggers <ebiggers@google.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/7/12 7:31, Jaegeuk Kim wrote:
-> This patch copies commit b7f8a09f80:
-> "btrfs: Don't clear SGID when inheriting ACLs" written by Jan.
-> 
-> Fixes: 073931017b49d9458aa351605b43a7e34598caef
-> CC: stable@vger.kernel.org
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Am Mittwoch, 12. Juli 2017, 23:00:32 CEST schrieb Eric Biggers:
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Hi Herbert,
 
-Thanks,
+This patch adds a second KDF to the kernel -- the first is found in the keys 
+subsystem.
 
-> ---
-> 
-> Change log from v1:
->  - fix for simple change
-> 
->  fs/f2fs/acl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
-> index a140c5e3dc54..b4b8438c42ef 100644
-> --- a/fs/f2fs/acl.c
-> +++ b/fs/f2fs/acl.c
-> @@ -211,7 +211,7 @@ static int __f2fs_set_acl(struct inode *inode, int type,
->  	switch (type) {
->  	case ACL_TYPE_ACCESS:
->  		name_index = F2FS_XATTR_INDEX_POSIX_ACL_ACCESS;
-> -		if (acl) {
-> +		if (acl && !ipage) {
->  			error = posix_acl_update_mode(inode, &inode->i_mode, &acl);
->  			if (error)
->  				return error;
-> 
+The next KDF that may come in is in the TLS scope.
+
+Would it make sense to warm up the KDF patches adding generic KDF support to 
+the kernel crypto API that I supplied some time ago? The advantages would be 
+to have one location of KDF implementations and the benefit of the testmgr.
+
+Ciao
+Stephan
