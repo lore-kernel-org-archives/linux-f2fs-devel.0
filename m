@@ -1,37 +1,23 @@
-From: "Marcelo \"Marc\" Ranolfi" <marc.2377@gmail.com>
-Subject: Re: Fwd: fsck.f2fs fails with "can't find valid
- checkpoint"
-Date: Sun, 16 Jul 2017 02:45:16 -0300
-Message-ID: <CAETC-g8iHogVHcxYPkzWPVudQwhENAeB_qsv-CBwz6jd_GJTTQ@mail.gmail.com>
-References: <CAETC-g8rBb53ibGYPciFjgN-uKK7xahPJZVGs8NsR+=0Qpu+oQ@mail.gmail.com>
-	<CAOtxgydToHmRwgWa1mc13wB9tuZPREokNCE4qo83As_LgeU9-Q@mail.gmail.com>
-	<20170705035359.GE15448@jaegeuk-macbookpro.roam.corp.google.com>
-	<CAETC-g-3rmSN7COQ47x=kOyPc5-Hp7O5CVJyUOsbnvKW5h_sBA@mail.gmail.com>
-	<CAETC-g9YsiUzTLzAF-HMjcWkmTSxCU34gUWqV4Mc733=h5zfVg@mail.gmail.com>
-	<20170706015733.GB50622@jaegeuk-macbookpro.roam.corp.google.com>
-	<CAETC-g9GnW1=awqmN+_D5QuH7bvnA1DYyfzDZZ5nL+hdLRu2VA@mail.gmail.com>
-	<20170706210622.GA395@jaegeuk-macbookpro.roam.corp.google.com>
-	<CAETC-g8hjjMFnSKk5k-HnxwPAdGhdopqoD8yvRt_-j0F5zsE6w@mail.gmail.com>
-	<20170716010702.GB51202@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH 1/6] f2fs: spread struct f2fs_dentry_ptr for
+ inline path
+Date: Sun, 16 Jul 2017 15:08:54 +0800
+Message-ID: <20170716070859.25246-1-chao@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <marc.2377@gmail.com>) id 1dWcMw-00067o-G3
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao@kernel.org>) id 1dWdhw-0000zF-Ij
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 16 Jul 2017 05:45:26 +0000
-Received: from mail-lf0-f67.google.com ([209.85.215.67])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1dWcMu-0006p1-9Z
+	Sun, 16 Jul 2017 07:11:12 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1dWdhv-0006ld-4C
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 16 Jul 2017 05:45:26 +0000
-Received: by mail-lf0-f67.google.com with SMTP id g21so10941804lfk.1
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sat, 15 Jul 2017 22:45:24 -0700 (PDT)
-In-Reply-To: <20170716010702.GB51202@jaegeuk-macbookpro.roam.corp.google.com>
+	Sun, 16 Jul 2017 07:11:12 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -41,275 +27,189 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Sure thing. Let me just figure out how to do it, and get back to you.
+From: Chao Yu <yuchao0@huawei.com>
 
-On Sat, Jul 15, 2017 at 10:07 PM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> On 07/12, Marcelo "Marc" Ranolfi wrote:
->> Hi Mr. Kim,
->>
->> I managed to compress the fs image to 14 GiB. As I couldn't find any
->> reliable service that will let me share this for free, and since the
->> upload will take about 20 hours due to my limited upstream link, I'm
->> wondering, if we could transfer via Syncthing (https://syncthing.net)
->> which is a file sync tool I'm familiar with, very capable.
->>
->> Or if you have a better suggestion, I'll sure be interested.
->
-> Thank you for taking time. If you have Linux box, how about giving me
-> an temp account to access your machine via ssh?
->
-> Thanks,
->
->>
->> Thanks.
->> Marc
->>
->> On Thu, Jul 6, 2017 at 6:06 PM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
->> > On 07/05, Marcelo "Marc" Ranolfi wrote:
->> >> Sure. I'll try to compress it, and investigate a way of sharing.
->> >>
->> >> If a partial image (first X sectors|MB|GB) and/or a sample from the middle
->> >> and end is enough, at least as a starting point, it can be a lot easier.
->> >> Let me know.
->> >
->> > Not sure for the first bytes, since it checks partition size in the beginning.
->> > Let me have a full image.
->> >
->> > Thanks,
->> >
->> >>
->> >> Thanks
->> >>
->> >> On Wed, Jul 5, 2017 at 10:57 PM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
->> >>
->> >> > On 07/05, Marcelo "Marc" Ranolfi wrote:
->> >> > > In the meantime, I was able to run photorec on the decrypted disk
->> >> > > /dev/mapper/csystem, and recovered 22 GB of files. I already found some
->> >> > of
->> >> > > the most important work files which weren't backed up, using grep.
->> >> > > Directory structure is lost, but this I can sort out given some time. But
->> >> > > photorec didn't recover any files without extension, which is sad
->> >> > because I
->> >> > > had a directory full of them.
->> >> > >
->> >> > > This, combined with the result of 'fsck.f2fs -d 3' and the fact that
->> >> > > 'cryptsetup open' doesn't complain about anything, makes me believe this
->> >> > is
->> >> > > a filesystem issue.
->> >> > >
->> >> > > How would it be possible to recover checkpoint manually?
->> >> >
->> >> > Hmm, if possible, could you please share the decrypted image? I'll take a
->> >> > look at it.
->> >> >
->> >> > Thanks,
->> >> >
->> >> > >
->> >> > > Thanks
->> >> > > Marcelo "Marc" Ranolfi
->> >> > >
->> >> > > On Wed, Jul 5, 2017 at 6:14 AM, Marcelo "Marc" Ranolfi <
->> >> > marc.2377@gmail.com>
->> >> > > wrote:
->> >> > >
->> >> > > > Kim,
->> >> > > >
->> >> > > > I received your reply in the mailing list, but again, couldn't reply.
->> >> > > >
->> >> > > > The partition is 38GB. Do you need a full image, or only part of it?
->> >> > Also,
->> >> > > > do you need it encrypted, and if yes, the decryption key as well? Or
->> >> > only
->> >> > > > decrypted?
->> >> > > >
->> >> > > > I tried '-d 3' and got the following:
->> >> > > >
->> >> > > > --
->> >> > > > # fsck.f2fs -d 3 /dev/mapper/csystem
->> >> > > > Info: Debug level = 3
->> >> > > > Info: Segments per section = 1
->> >> > > > Info: Sections per zone = 1
->> >> > > > Info: sector size = 512
->> >> > > > Info: total sectors = 78120960 (38145 MB)
->> >> > > > Info: MKFS version
->> >> > > >   "Linux version 4.10.13-1-ARCH (builduser@tobias) (gcc version 6.3.1
->> >> > > > 20170306 (GCC) ) #1 SMP PREEMPT Thu Apr 27 12:15:09 CEST 2017"
->> >> > > > Info: FSCK version
->> >> > > >   from "Linux version 4.11.7-1-ARCH (builduser@tobias) (gcc version
->> >> > 7.1.1
->> >> > > > 20170621 (GCC) ) #1 SMP PREEMPT Sat Jun 24 09:07:09 CEST 2017"
->> >> > > >     to "Linux version 4.11.7-1-ARCH (builduser@tobias) (gcc version
->> >> > 7.1.1
->> >> > > > 20170621 (GCC) ) #1 SMP PREEMPT Sat Jun 24 09:07:09 CEST 2017"
->> >> > > > Info: superblock features = 0 :
->> >> > > > Info: superblock encrypt level = 0, salt =
->> >> > 000000000000000000000000000000
->> >> > > > 00
->> >> > > >
->> >> > > > +--------------------------------------------------------+
->> >> > > > | Super block                                            |
->> >> > > > +--------------------------------------------------------+
->> >> > > > magic                                 [0xf2f52010 : 4076150800]
->> >> > > > major_ver                             [0x       1 : 1]
->> >> > > > volum_name                            []
->> >> > > > minor_ver                             [0x       8 : 8]
->> >> > > > log_sectorsize                        [0x       9 : 9]
->> >> > > > log_sectors_per_block                 [0x       3 : 3]
->> >> > > > log_blocksize                         [0x       c : 12]
->> >> > > > log_blocks_per_seg                    [0x       9 : 9]
->> >> > > > segs_per_sec                          [0x       1 : 1]
->> >> > > > secs_per_zone                         [0x       1 : 1]
->> >> > > > checksum_offset                       [0x       0 : 0]
->> >> > > > block_count                           [0x  950100 : 9765120]
->> >> > > > section_count                         [0x    4a01 : 18945]
->> >> > > > segment_count                         [0x    4a7f : 19071]
->> >> > > > segment_count_ckpt                    [0x       2 : 2]
->> >> > > > segment_count_sit                     [0x       2 : 2]
->> >> > > > segment_count_nat                     [0x      54 : 84]
->> >> > > > segment_count_ssa                     [0x      26 : 38]
->> >> > > > segment_count_main                    [0x    4a01 : 18945]
->> >> > > > segment0_blkaddr                      [0x     200 : 512]
->> >> > > > cp_blkaddr                            [0x     200 : 512]
->> >> > > > sit_blkaddr                           [0x     600 : 1536]
->> >> > > > nat_blkaddr                           [0x     a00 : 2560]
->> >> > > > ssa_blkaddr                           [0x    b200 : 45568]
->> >> > > > main_blkaddr                          [0x    fe00 : 65024]
->> >> > > > root_ino                              [0x       3 : 3]
->> >> > > > node_ino                              [0x       1 : 1]
->> >> > > > meta_ino                              [0x       2 : 2]
->> >> > > > cp_payload                            [0x       0 : 0]
->> >> > > > version                       Linux version 4.11.7-1-ARCH
->> >> > (builduser@tobias)
->> >> > > > (gcc version 7.1.1 20170621 (GCC) ) #1 SMP PREEMPT Sat Jun 24 09:07:09
->> >> > CEST
->> >> > > > 2017
->> >> > > > Info: total FS sectors = 78120960 (38145 MB)
->> >> > > > [f2fs_do_mount:2018] Can't find valid checkpoint
->> >> > > > --
->> >> > > >
->> >> > > > Thanks
->> >> > > > Marcelo "Marc" Ranolfi
->> >> > > >
->> >> > > > On Wed, Jul 5, 2017 at 12:53 AM, Jaegeuk Kim <jaegeuk@kernel.org>
->> >> > wrote:
->> >> > > >
->> >> > > >> On 07/04, Jaegeuk Kim wrote:
->> >> > > >> > + f2fs mailing list
->> >> > > >> >
->> >> > > >> > ---------- Forwarded message ----------
->> >> > > >> > From: Marcelo "Marc" Ranolfi <marc.2377@gmail.com>
->> >> > > >> > Date: 2017-07-04 18:52 GMT-07:00
->> >> > > >> > Subject: Fwd: fsck.f2fs fails with "can't find valid checkpoint"
->> >> > > >> > To: Jaegeuk Kim <jaegeuk.kim@gmail.com>
->> >> > > >> >
->> >> > > >> >
->> >> > > >> >
->> >> > > >> > ---------- Forwarded message ----------
->> >> > > >> > From: Marcelo "Marc" Ranolfi <marc.2377@gmail.com>
->> >> > > >> > Date: Tue, Jul 4, 2017 at 3:54 PM
->> >> > > >> > Subject: fsck.f2fs fails with "can't find valid checkpoint"
->> >> > > >> > To: linux-f2fs-devel@lists.sourceforge.net
->> >> > > >> >
->> >> > > >> >
->> >> > > >> > (reposting because yesterday's email didn't work)
->> >> > > >> >
->> >> > > >> > Gentlemen,
->> >> > > >> >
->> >> > > >> > I was using F2FS in my system when it crashed, and since then, I
->> >> > can't
->> >> > > >> boot
->> >> > > >> > it, nor mount the root partition, and fsck doesn't help. I'm typing
->> >> > this
->> >> > > >> > from a live CD.
->> >> > > >> >
->> >> > > >> > The system is Arch Linux with the 4.12-rc7 kernel (I was compiling
->> >> > the
->> >> > > >> > stable kernel when it crashed). I posted about it here (
->> >> > > >> > https://unix.stackexchange.com/questions/375114/f2fs-lost-d
->> >> > > >> > ata-wont-mount-and-fsck-doesnt-work) but that probably won't help
->> >> > much.
->> >> > > >> > The gist of the story is that I'm trying these commands, from the
->> >> > arch
->> >> > > >> iso
->> >> > > >> > image:
->> >> > > >> >
->> >> > > >> > cryptsetup open /dev/sda3 csystem
->> >> > > >>
->> >> > > >> So, you did encrypt the disk, and then got sudden power-off.
->> >> > > >>
->> >> > > >> > fsck.f2fs -f /dev/mapper/csystem
->> >> > > >>
->> >> > > >> After then, fsck.f2fs can't find checkpoint, which means your
->> >> > encrypted
->> >> > > >> disk is
->> >> > > >> severely damaged. Once such the encrypted disk has been crashed, it's
->> >> > very
->> >> > > >> difficult to recover there-in files from filesystem level, since
->> >> > > >> checkpoint in
->> >> > > >> f2fs is not recoverable. Because, we don't expect two checkpoint
->> >> > copies
->> >> > > >> were
->> >> > > >> crashed at the same time.
->> >> > > >>
->> >> > > >> How's your fsck.f2fs -d 3 result? And, can you share your image? If
->> >> > it's
->> >> > > >> not
->> >> > > >> easy to recover checkpoint manually, I think it needs to write a tool
->> >> > to
->> >> > > >> scan
->> >> > > >> whole disk to find recoverable files. But, it'll take time.
->> >> > > >>
->> >> > > >> Thanks,
->> >> > > >>
->> >> > > >> >
->> >> > > >> > and instead of repairing, it reports:
->> >> > > >> >
->> >> > > >> > [f2fs_do_mount:2018] Can't find valid checkpoint
->> >> > > >> >
->> >> > > >> > The documentation available in the Kernel tree (
->> >> > > >> > https://github.com/torvalds/linux/blob/master/Documentation
->> >> > > >> > /filesystems/f2fs.txt) says under fsck.f2fs:
->> >> > > >> > "Note that, initial version of the tool does not fix any
->> >> > inconsistency."
->> >> > > >> >
->> >> > > >> > However that's not mentioned in the following sources:
->> >> > > >> > https://www.mankier.com/8/fsck.f2fs
->> >> > > >> > https://lkml.org/lkml/2014/9/20/104
->> >> > > >> >
->> >> > > >> > I suppose the Kernel doc is outdated, since from inspecting the fsck
->> >> > > >> source
->> >> > > >> > code, I think it should work.
->> >> > > >> >
->> >> > > >> >
->> >> > > >> > So, I'd like to know whether I'm facing a bug in the tool, or if
->> >> > > >> something
->> >> > > >> > specific to my case is preventing the tool to work. And of course,
->> >> > I'm
->> >> > > >> > really in need of having my files back.
->> >> > > >> >
->> >> > > >> > I'm a programmer so please let me know if I can be of any help, if
->> >> > need
->> >> > > >> be.
->> >> > > >> >
->> >> > > >> >
->> >> > > >> > Yours faithfully
->> >> > > >> > Marcelo "Marc" Ranolfi
->> >> > > >>
->> >> > > >> ------------------------------------------------------------
->> >> > > >> ------------------
->> >> > > >> Check out the vibrant tech community on one of the world's most
->> >> > > >> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
->> >> > > >> _______________________________________________
->> >> > > >> Linux-f2fs-devel mailing list
->> >> > > >> Linux-f2fs-devel@lists.sourceforge.net
->> >> > > >> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->> >> > > >>
->> >> > > >
->> >> > > >
->> >> >
+Use f2fs_dentry_ptr structure to indicate inline dentry structure as
+much as possible, so we can wrap inline dentry with size-fixed fields
+to the one with size-changeable fields. With this change, we can
+handle size-changeable inline dentry more easily.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/f2fs.h   |  5 ++++-
+ fs/f2fs/inline.c | 47 ++++++++++++++++++++++++++---------------------
+ 2 files changed, 30 insertions(+), 22 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 42c39f0bfd88..23f117e4aeb8 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -361,10 +361,11 @@ struct f2fs_flush_device {
+ /* for directory operations */
+ struct f2fs_dentry_ptr {
+ 	struct inode *inode;
+-	const void *bitmap;
++	void *bitmap;
+ 	struct f2fs_dir_entry *dentry;
+ 	__u8 (*filename)[F2FS_SLOT_LEN];
+ 	int max;
++	int nr_bitmap;
+ };
+ 
+ static inline void make_dentry_ptr_block(struct inode *inode,
+@@ -372,6 +373,7 @@ static inline void make_dentry_ptr_block(struct inode *inode,
+ {
+ 	d->inode = inode;
+ 	d->max = NR_DENTRY_IN_BLOCK;
++	d->nr_bitmap = SIZE_OF_DENTRY_BITMAP;
+ 	d->bitmap = &t->dentry_bitmap;
+ 	d->dentry = t->dentry;
+ 	d->filename = t->filename;
+@@ -382,6 +384,7 @@ static inline void make_dentry_ptr_inline(struct inode *inode,
+ {
+ 	d->inode = inode;
+ 	d->max = NR_INLINE_DENTRY;
++	d->nr_bitmap = INLINE_DENTRY_BITMAP_SIZE;
+ 	d->bitmap = &t->dentry_bitmap;
+ 	d->dentry = t->dentry;
+ 	d->filename = t->filename;
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index e0fd4376e6fb..2082816a504a 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -342,6 +342,7 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
+ 	struct page *page;
+ 	struct dnode_of_data dn;
+ 	struct f2fs_dentry_block *dentry_blk;
++	struct f2fs_dentry_ptr src, dst;
+ 	int err;
+ 
+ 	page = f2fs_grab_cache_page(dir->i_mapping, 0, false);
+@@ -360,21 +361,20 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
+ 
+ 	dentry_blk = kmap_atomic(page);
+ 
++	make_dentry_ptr_inline(NULL, &src, inline_dentry);
++	make_dentry_ptr_block(NULL, &dst, dentry_blk);
++
+ 	/* copy data from inline dentry block to new dentry block */
+-	memcpy(dentry_blk->dentry_bitmap, inline_dentry->dentry_bitmap,
+-					INLINE_DENTRY_BITMAP_SIZE);
+-	memset(dentry_blk->dentry_bitmap + INLINE_DENTRY_BITMAP_SIZE, 0,
+-			SIZE_OF_DENTRY_BITMAP - INLINE_DENTRY_BITMAP_SIZE);
++	memcpy(dst.bitmap, src.bitmap, src.nr_bitmap);
++	memset(dst.bitmap + src.nr_bitmap, 0, dst.nr_bitmap - src.nr_bitmap);
+ 	/*
+ 	 * we do not need to zero out remainder part of dentry and filename
+ 	 * field, since we have used bitmap for marking the usage status of
+ 	 * them, besides, we can also ignore copying/zeroing reserved space
+ 	 * of dentry block, because them haven't been used so far.
+ 	 */
+-	memcpy(dentry_blk->dentry, inline_dentry->dentry,
+-			sizeof(struct f2fs_dir_entry) * NR_INLINE_DENTRY);
+-	memcpy(dentry_blk->filename, inline_dentry->filename,
+-					NR_INLINE_DENTRY * F2FS_SLOT_LEN);
++	memcpy(dst.dentry, src.dentry, SIZE_OF_DIR_ENTRY * src.max);
++	memcpy(dst.filename, src.filename, src.max * F2FS_SLOT_LEN);
+ 
+ 	kunmap_atomic(dentry_blk);
+ 	if (!PageUptodate(page))
+@@ -511,9 +511,10 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *new_name,
+ 		return PTR_ERR(ipage);
+ 
+ 	inline_dentry = inline_data_addr(ipage);
+-	bit_pos = room_for_filename(&inline_dentry->dentry_bitmap,
+-						slots, NR_INLINE_DENTRY);
+-	if (bit_pos >= NR_INLINE_DENTRY) {
++	make_dentry_ptr_inline(NULL, &d, inline_dentry);
++
++	bit_pos = room_for_filename(d.bitmap, slots, d.max);
++	if (bit_pos >= d.max) {
+ 		err = f2fs_convert_inline_dir(dir, ipage, inline_dentry);
+ 		if (err)
+ 			return err;
+@@ -534,7 +535,6 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *new_name,
+ 	f2fs_wait_on_page_writeback(ipage, NODE, true);
+ 
+ 	name_hash = f2fs_dentry_hash(new_name, NULL);
+-	make_dentry_ptr_inline(NULL, &d, inline_dentry);
+ 	f2fs_update_dentry(ino, mode, &d, new_name, name_hash, bit_pos);
+ 
+ 	set_page_dirty(ipage);
+@@ -558,6 +558,7 @@ void f2fs_delete_inline_entry(struct f2fs_dir_entry *dentry, struct page *page,
+ 					struct inode *dir, struct inode *inode)
+ {
+ 	struct f2fs_inline_dentry *inline_dentry;
++	struct f2fs_dentry_ptr d;
+ 	int slots = GET_DENTRY_SLOTS(le16_to_cpu(dentry->name_len));
+ 	unsigned int bit_pos;
+ 	int i;
+@@ -566,10 +567,11 @@ void f2fs_delete_inline_entry(struct f2fs_dir_entry *dentry, struct page *page,
+ 	f2fs_wait_on_page_writeback(page, NODE, true);
+ 
+ 	inline_dentry = inline_data_addr(page);
+-	bit_pos = dentry - inline_dentry->dentry;
++	make_dentry_ptr_inline(NULL, &d, inline_dentry);
++
++	bit_pos = dentry - d.dentry;
+ 	for (i = 0; i < slots; i++)
+-		__clear_bit_le(bit_pos + i,
+-				&inline_dentry->dentry_bitmap);
++		__clear_bit_le(bit_pos + i, d.bitmap);
+ 
+ 	set_page_dirty(page);
+ 	f2fs_put_page(page, 1);
+@@ -587,19 +589,20 @@ bool f2fs_empty_inline_dir(struct inode *dir)
+ 	struct page *ipage;
+ 	unsigned int bit_pos = 2;
+ 	struct f2fs_inline_dentry *inline_dentry;
++	struct f2fs_dentry_ptr d;
+ 
+ 	ipage = get_node_page(sbi, dir->i_ino);
+ 	if (IS_ERR(ipage))
+ 		return false;
+ 
+ 	inline_dentry = inline_data_addr(ipage);
+-	bit_pos = find_next_bit_le(&inline_dentry->dentry_bitmap,
+-					NR_INLINE_DENTRY,
+-					bit_pos);
++	make_dentry_ptr_inline(NULL, &d, inline_dentry);
++
++	bit_pos = find_next_bit_le(d.bitmap, d.max, bit_pos);
+ 
+ 	f2fs_put_page(ipage, 1);
+ 
+-	if (bit_pos < NR_INLINE_DENTRY)
++	if (bit_pos < d.max)
+ 		return false;
+ 
+ 	return true;
+@@ -614,7 +617,9 @@ int f2fs_read_inline_dir(struct file *file, struct dir_context *ctx,
+ 	struct f2fs_dentry_ptr d;
+ 	int err;
+ 
+-	if (ctx->pos == NR_INLINE_DENTRY)
++	make_dentry_ptr_inline(inode, &d, inline_dentry);
++
++	if (ctx->pos == d.max)
+ 		return 0;
+ 
+ 	ipage = get_node_page(F2FS_I_SB(inode), inode->i_ino);
+@@ -627,7 +632,7 @@ int f2fs_read_inline_dir(struct file *file, struct dir_context *ctx,
+ 
+ 	err = f2fs_fill_dentries(ctx, &d, 0, fstr);
+ 	if (!err)
+-		ctx->pos = NR_INLINE_DENTRY;
++		ctx->pos = d.max;
+ 
+ 	f2fs_put_page(ipage, 1);
+ 	return err < 0 ? err : 0;
+-- 
+2.13.0.90.g1eb437020
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
