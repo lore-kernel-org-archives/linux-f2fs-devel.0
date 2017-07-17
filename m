@@ -1,24 +1,26 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 3/3] f2fs-tools: support project quota
-Date: Sun, 16 Jul 2017 15:12:51 +0800
-Message-ID: <20170716071251.25793-3-chao@kernel.org>
-References: <20170716071251.25793-1-chao@kernel.org>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: Re: [PATCH] f2fs: let __get_victim successfully get a
+ segno in corner case
+Date: Mon, 17 Jul 2017 09:51:44 +0800
+Message-ID: <596C1830.8040202@huawei.com>
+References: <1500033432-57620-1-git-send-email-yunlong.song@huawei.com>
+	<20170716010934.GC51202@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1dWdln-00019h-PU
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yunlong.song@huawei.com>) id 1dWvCz-0005DS-TP
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 16 Jul 2017 07:15:11 +0000
-Received: from mail.kernel.org ([198.145.29.99])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1dWdlm-0007Ob-P4
+	Mon, 17 Jul 2017 01:52:25 +0000
+Received: from szxga03-in.huawei.com ([45.249.212.189])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1dWvCv-0001iW-UC
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 16 Jul 2017 07:15:11 +0000
-In-Reply-To: <20170716071251.25793-1-chao@kernel.org>
+	Mon, 17 Jul 2017 01:52:25 +0000
+In-Reply-To: <20170716010934.GC51202@jaegeuk-macbookpro.roam.corp.google.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,143 +30,102 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, sylinux@163.com, linux-fsdevel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
-
-This patch introduce a new option '-p' for enabling project quota
-functionality during mkfs.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fsck/mount.c            | 4 ++++
- include/f2fs_fs.h       | 5 +++++
- lib/libf2fs.c           | 1 +
- mkfs/f2fs_format.c      | 1 +
- mkfs/f2fs_format_main.c | 8 +++++++-
- 5 files changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 693e4a8..b4f8958 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -90,6 +90,7 @@ void print_inode_info(struct f2fs_inode *inode, int name)
- 
- 	DISP_u16(inode, i_extra_isize);
- 	DISP_u16(inode, i_padding);
-+	DISP_u32(inode, i_projid);
- 
- 	DISP_u32(inode, i_addr[ofs]);		/* Pointers to data blocks */
- 	DISP_u32(inode, i_addr[ofs + 1]);	/* Pointers to data blocks */
-@@ -284,6 +285,9 @@ void print_sb_state(struct f2fs_super_block *sb)
- 	if (f & cpu_to_le32(F2FS_FEATURE_BLKZONED)) {
- 		MSG(0, "%s", " zoned block device");
- 	}
-+	if (f & cpu_to_le32(F2FS_FEATURE_PRJQUOTA)) {
-+		MSG(0, "%s", " project quota");
-+	}
- 	MSG(0, "\n");
- 	MSG(0, "Info: superblock encrypt level = %d, salt = ",
- 					sb->encryption_level);
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 88ceb61..b49b6f5 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -267,6 +267,7 @@ struct f2fs_configuration {
- 	int sparse_mode;
- 	int zoned_mode;
- 	int zoned_model;
-+	int project_quota;
- 	size_t zone_blocks;
- 	double overprovision;
- 	double new_overprovision;
-@@ -470,6 +471,7 @@ enum {
- 
- #define F2FS_FEATURE_ENCRYPT	0x0001
- #define F2FS_FEATURE_BLKZONED	0x0002
-+#define F2FS_FEATURE_PRJQUOTA	0x0004
- 
- #define MAX_VOLUME_NAME		512
- 
-@@ -622,6 +624,8 @@ struct f2fs_extent {
- 	(offsetof(struct f2fs_inode, i_extra_end) -	\
- 	offsetof(struct f2fs_inode, i_extra_isize))	\
- 
-+#define	F2FS_DEF_PROJID		0	/* default project ID */
-+
- #define MAX_INLINE_DATA(node) (sizeof(__le32) *				\
- 				(DEF_ADDRS_PER_INODE_INLINE_XATTR -	\
- 				get_extra_isize(node) -			\
-@@ -677,6 +681,7 @@ struct f2fs_inode {
- 		struct {
- 			__le16 i_extra_isize;	/* extra inode attribute size */
- 			__le16 i_padding;	/* padding */
-+			__le32 i_projid;	/* project id */
- 			__le32 i_extra_end[0];	/* for attribute size calculation */
- 		};
- 		__le32 i_addr[DEF_ADDRS_PER_INODE];	/* Pointers to data blocks */
-diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index a3091bb..c595130 100644
---- a/lib/libf2fs.c
-+++ b/lib/libf2fs.c
-@@ -557,6 +557,7 @@ void f2fs_init_configuration(void)
- 	c.zoned_mode = 0;
- 	c.zoned_model = 0;
- 	c.zone_blocks = 0;
-+	c.project_quota = 0;
- 
- 	for (i = 0; i < MAX_DEVICES; i++) {
- 		memset(&c.devices[i], 0, sizeof(struct device_info));
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index 4f2b403..ebb9d3c 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -924,6 +924,7 @@ static int f2fs_write_root_inode(void)
- 	raw_node->i.i_dir_level = DEF_DIR_LEVEL;
- 	raw_node->i.i_inline = F2FS_EXTRA_ATTR;
- 	raw_node->i.i_extra_isize = cpu_to_le16(F2FS_TOTAL_EXTRA_ATTR_SIZE);
-+	raw_node->i.i_projid = cpu_to_le32(F2FS_DEF_PROJID);
- 
- 	data_blk_nor = get_sb(main_blkaddr) +
- 		c.cur_seg[CURSEG_HOT_DATA] * c.blks_per_seg;
-diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
-index 5525d1c..4ce075c 100644
---- a/mkfs/f2fs_format_main.c
-+++ b/mkfs/f2fs_format_main.c
-@@ -88,7 +88,7 @@ static void parse_feature(const char *features)
- 
- static void f2fs_parse_options(int argc, char *argv[])
- {
--	static const char *option_string = "qa:c:d:e:l:mo:O:s:S:z:t:f";
-+	static const char *option_string = "qa:c:d:e:l:mo:O:p:s:S:z:t:f";
- 	int32_t option=0;
- 
- 	while ((option = getopt(argc,argv,option_string)) != EOF) {
-@@ -135,6 +135,9 @@ static void f2fs_parse_options(int argc, char *argv[])
- 		case 'O':
- 			parse_feature(optarg);
- 			break;
-+		case 'p':
-+			c.project_quota = 1;
-+			break;
- 		case 's':
- 			c.segs_per_sec = atoi(optarg);
- 			break;
-@@ -180,6 +183,9 @@ static void f2fs_parse_options(int argc, char *argv[])
- 
- 	if (c.zoned_mode)
- 		c.feature |= cpu_to_le32(F2FS_FEATURE_BLKZONED);
-+
-+	if (c.project_quota)
-+		c.feature |= cpu_to_le32(F2FS_FEATURE_PRJQUOTA);
- }
- 
- #ifdef HAVE_LIBBLKID
--- 
-2.13.0.90.g1eb437020
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+SGkgSmF5LAogICAgSW4gZmFjdO+8jHRoaXMgaXMgbm90ICJzdXBwb3NlIiBjYXNlIHlldCwgd2Ug
+aGF2ZSBhbHJlYWR5IG1ldCB0aGlzIHByb2JsZW0gc2V2ZXJhbCB0aW1lcyBpbiBzb21lIHRlc3Qg
+c3VpdHMgZm9yIGNvcm5lciBjYXNlLCBvciBJIGNhbm5vdCBub3RpY2UgdGhhdCB0aGlzIGNvdWxk
+IGhhcHBlbi4KCk9uIDIwMTcvNy8xNiA5OjA5LCBKYWVnZXVrIEtpbSB3cm90ZToKPiBIaSBZdW5s
+b25nLAo+Cj4gT24gMDcvMTQsIFl1bmxvbmcgU29uZyB3cm90ZToKPj4gU3VwcG9zZSB0aGF0IHRo
+ZSB2YWxpZCBibG9ja3Mgb2YgZWFjaCBzZWN0aW9uIGFyZSBhbGwgb3ZlciBzYmktPmZnZ2NfdGhy
+ZXNob2xkLAo+IEhvdyBhYm91dCBhZGRpbmcgYSBrZXJuZWwgbWVzc2FnZSBmaXJzdCB0byBkZXRl
+Y3QgeW91ciAqc3VwcG9zZWQqIHNjZWFucmlvPwo+IElmIHRoYXQgaGFwcGVucywgaXQnbGwgYmUg
+YSBzb3J0IG9mIGJ1ZyB3aGljaCB3ZSBoYXZlbid0IGFzc3VtZWQuCj4KPiBUaGFua3MsCj4KPj4g
+YW5kIGV2ZW4gaGFzX25vdF9lbm91Z2hfZnJlZV9zZWNzIGlzIHRydWUsIGYyZnNfZ2MgY2Fubm90
+IGRvIGl0cyBqb2Igc2luY2UgdGhlCj4+IG5vX2ZnZ2NfY2FuZGlkYXRlIGFsd2F5cyByZXR1cm5z
+IHRydWUuIEFzIGEgcmVzdWx0LCB0aGUgcmVzZXJ2ZWQgc2VnbWVudHMgY2FuIGJlCj4+IHVzZWQg
+dXAsIGFuZCBmaW5hbGx5IHRoZXJlIGlzIG5vIGZyZWUgc2VnbWVudCBhdCBhbGwsIGFuZCBnZXRf
+bmV3X3NlZ21lbnQgY2Fubm90Cj4+IGdldCBhIGZyZWUgc2VnbWVudCwgZmlsZXN5c3RlbSB3aWxs
+IHRyYXAgaW50byBhIHdyb25nIHN0YXR1cy4KPj4KPj4gVG8gZml4IHRoaXMsIHdlIHJlY29yZCB0
+aGUgc2Vnbm8gd2hpY2ggaGFzIGEgcm91Z2ggbWluaW11bSBjb3N0IGFuZCByZXR1cm4gaXQgdG8K
+Pj4gX19nZXRfdmljdGltIHRvIGNvbnRpbnVlIGYyZnNfZ2MncyBqb2IuCj4+Cj4+IFNpZ25lZC1v
+ZmYtYnk6IFl1bmxvbmcgU29uZyA8eXVubG9uZy5zb25nQGh1YXdlaS5jb20+Cj4+IC0tLQo+PiAg
+ZnMvZjJmcy9nYy5jICAgICAgfCAxOSArKysrKysrKysrKysrKy0tLS0tCj4+ICBmcy9mMmZzL3Nl
+Z21lbnQuaCB8IDE3ICsrKysrKysrKysrKysrLS0tCj4+ICAyIGZpbGVzIGNoYW5nZWQsIDI4IGlu
+c2VydGlvbnMoKyksIDggZGVsZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9mcy9mMmZzL2dj
+LmMgYi9mcy9mMmZzL2djLmMKPj4gaW5kZXggZmEzZDJlMi4uOTY1ZTc4MyAxMDA2NDQKPj4gLS0t
+IGEvZnMvZjJmcy9nYy5jCj4+ICsrKyBiL2ZzL2YyZnMvZ2MuYwo+PiBAQCAtMTc4LDYgKzE3OCw4
+IEBAIHN0YXRpYyB2b2lkIHNlbGVjdF9wb2xpY3koc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBp
+bnQgZ2NfdHlwZSwKPj4gIAkJcC0+b2Zmc2V0ID0gMDsKPj4gIAllbHNlCj4+ICAJCXAtPm9mZnNl
+dCA9IFNJVF9JKHNiaSktPmxhc3RfdmljdGltW3AtPmdjX21vZGVdOwo+PiArCj4+ICsJcC0+bWlu
+X2Nvc3RfciA9IFVJTlRfTUFYOwo+PiAgfQo+PiAgCj4+ICBzdGF0aWMgdW5zaWduZWQgaW50IGdl
+dF9tYXhfY29zdChzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksCj4+IEBAIC0xOTQsNyArMTk2LDcg
+QEAgc3RhdGljIHVuc2lnbmVkIGludCBnZXRfbWF4X2Nvc3Qoc3RydWN0IGYyZnNfc2JfaW5mbyAq
+c2JpLAo+PiAgCQlyZXR1cm4gMDsKPj4gIH0KPj4gIAo+PiAtc3RhdGljIHVuc2lnbmVkIGludCBj
+aGVja19iZ192aWN0aW1zKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSkKPj4gK3N0YXRpYyB1bnNp
+Z25lZCBpbnQgY2hlY2tfYmdfdmljdGltcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIHN0cnVj
+dCB2aWN0aW1fc2VsX3BvbGljeSAqcCkKPj4gIHsKPj4gIAlzdHJ1Y3QgZGlydHlfc2VnbGlzdF9p
+bmZvICpkaXJ0eV9pID0gRElSVFlfSShzYmkpOwo+PiAgCXVuc2lnbmVkIGludCBzZWNubzsKPj4g
+QEAgLTIwOCwxMSArMjEwLDEyIEBAIHN0YXRpYyB1bnNpZ25lZCBpbnQgY2hlY2tfYmdfdmljdGlt
+cyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpCj4+ICAJCWlmIChzZWNfdXNhZ2VfY2hlY2soc2Jp
+LCBzZWNubykpCj4+ICAJCQljb250aW51ZTsKPj4gIAo+PiAtCQlpZiAobm9fZmdnY19jYW5kaWRh
+dGUoc2JpLCBzZWNubykpCj4+ICsJCXAtPmN1cl9zZWdub19yID0gR0VUX1NFR19GUk9NX1NFQyhz
+YmksIHNlY25vKTsKPj4gKwkJaWYgKG5vX2ZnZ2NfY2FuZGlkYXRlKHNiaSwgc2Vjbm8sIHApKQo+
+PiAgCQkJY29udGludWU7Cj4+ICAKPj4gIAkJY2xlYXJfYml0KHNlY25vLCBkaXJ0eV9pLT52aWN0
+aW1fc2VjbWFwKTsKPj4gLQkJcmV0dXJuIEdFVF9TRUdfRlJPTV9TRUMoc2JpLCBzZWNubyk7Cj4+
+ICsJCXJldHVybiBwLT5jdXJfc2Vnbm9fcjsKPj4gIAl9Cj4+ICAJcmV0dXJuIE5VTExfU0VHTk87
+Cj4+ICB9Cj4+IEBAIC0zMzIsNyArMzM1LDcgQEAgc3RhdGljIGludCBnZXRfdmljdGltX2J5X2Rl
+ZmF1bHQoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLAo+PiAgCj4+ICAJbGFzdF92aWN0aW0gPSBz
+bS0+bGFzdF92aWN0aW1bcC5nY19tb2RlXTsKPj4gIAlpZiAocC5hbGxvY19tb2RlID09IExGUyAm
+JiBnY190eXBlID09IEZHX0dDKSB7Cj4+IC0JCXAubWluX3NlZ25vID0gY2hlY2tfYmdfdmljdGlt
+cyhzYmkpOwo+PiArCQlwLm1pbl9zZWdubyA9IGNoZWNrX2JnX3ZpY3RpbXMoc2JpLCAmcCk7Cj4+
+ICAJCWlmIChwLm1pbl9zZWdubyAhPSBOVUxMX1NFR05PKQo+PiAgCQkJZ290byBnb3RfaXQ7Cj4+
+ICAJfQo+PiBAQCAtMzY5LDggKzM3Miw5IEBAIHN0YXRpYyBpbnQgZ2V0X3ZpY3RpbV9ieV9kZWZh
+dWx0KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwKPj4gIAkJCWdvdG8gbmV4dDsKPj4gIAkJaWYg
+KGdjX3R5cGUgPT0gQkdfR0MgJiYgdGVzdF9iaXQoc2Vjbm8sIGRpcnR5X2ktPnZpY3RpbV9zZWNt
+YXApKQo+PiAgCQkJZ290byBuZXh0Owo+PiArCQlwLmN1cl9zZWdub19yID0gc2Vnbm87Cj4+ICAJ
+CWlmIChnY190eXBlID09IEZHX0dDICYmIHAuYWxsb2NfbW9kZSA9PSBMRlMgJiYKPj4gLQkJCQkJ
+bm9fZmdnY19jYW5kaWRhdGUoc2JpLCBzZWNubykpCj4+ICsJCQkJCW5vX2ZnZ2NfY2FuZGlkYXRl
+KHNiaSwgc2Vjbm8sICZwKSkKPj4gIAkJCWdvdG8gbmV4dDsKPj4gIAo+PiAgCQljb3N0ID0gZ2V0
+X2djX2Nvc3Qoc2JpLCBzZWdubywgJnApOwo+PiBAQCAtNDAzLDYgKzQwNywxMSBAQCBzdGF0aWMg
+aW50IGdldF92aWN0aW1fYnlfZGVmYXVsdChzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksCj4+ICAJ
+CXRyYWNlX2YyZnNfZ2V0X3ZpY3RpbShzYmktPnNiLCB0eXBlLCBnY190eXBlLCAmcCwKPj4gIAkJ
+CQlzYmktPmN1cl92aWN0aW1fc2VjLAo+PiAgCQkJCXByZWZyZWVfc2VnbWVudHMoc2JpKSwgZnJl
+ZV9zZWdtZW50cyhzYmkpKTsKPj4gKwl9IGVsc2UgaWYgKGhhc19ub3RfZW5vdWdoX2ZyZWVfc2Vj
+cyhzYmksIDAsIDApKSB7Cj4+ICsJCXAubWluX3NlZ25vID0gcC5taW5fc2Vnbm9fcjsKPj4gKwkJ
+aWYgKHAuYWxsb2NfbW9kZSA9PSBMRlMgJiYgZ2NfdHlwZSA9PSBGR19HQykKPj4gKwkJCWNsZWFy
+X2JpdChHRVRfU0VDX0ZST01fU0VHKHNiaSwgcC5taW5fc2Vnbm8pLCBkaXJ0eV9pLT52aWN0aW1f
+c2VjbWFwKTsKPj4gKwkJZ290byBnb3RfaXQ7Cj4+ICAJfQo+PiAgb3V0Ogo+PiAgCW11dGV4X3Vu
+bG9jaygmZGlydHlfaS0+c2VnbGlzdF9sb2NrKTsKPj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc2Vn
+bWVudC5oIGIvZnMvZjJmcy9zZWdtZW50LmgKPj4gaW5kZXggNmI4NzFiNC4uN2QyZDBmMyAxMDA2
+NDQKPj4gLS0tIGEvZnMvZjJmcy9zZWdtZW50LmgKPj4gKysrIGIvZnMvZjJmcy9zZWdtZW50LmgK
+Pj4gQEAgLTE2OSw2ICsxNjksOSBAQCBzdHJ1Y3QgdmljdGltX3NlbF9wb2xpY3kgewo+PiAgCXVu
+c2lnbmVkIGludCBvZnNfdW5pdDsJCS8qIGJpdG1hcCBzZWFyY2ggdW5pdCAqLwo+PiAgCXVuc2ln
+bmVkIGludCBtaW5fY29zdDsJCS8qIG1pbmltdW0gY29zdCAqLwo+PiAgCXVuc2lnbmVkIGludCBt
+aW5fc2Vnbm87CQkvKiBzZWdtZW50ICMgaGF2aW5nIG1pbi4gY29zdCAqLwo+PiArCXVuc2lnbmVk
+IGludCBtaW5fY29zdF9yOwkJLyogcm91Z2ggbWluaW11bSBjb3N0ICovCj4+ICsJdW5zaWduZWQg
+aW50IG1pbl9zZWdub19yOwkJLyogc2VnbWVudCAjIGhhdmluZyByb3VnaCBtaW4uIGNvc3QgKi8K
+Pj4gKwl1bnNpZ25lZCBpbnQgY3VyX3NlZ25vX3I7CQkvKiBzZWdtZW50ICMgcm91Z2ggcHJvY2Vz
+cyBpcyBoYW5kbGluZyAqLwo+PiAgfTsKPj4gIAo+PiAgc3RydWN0IHNlZ19lbnRyeSB7Cj4+IEBA
+IC03NDMsMTEgKzc0NiwxOSBAQCBzdGF0aWMgaW5saW5lIGJsb2NrX3Qgc3VtX2Jsa19hZGRyKHN0
+cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgaW50IGJhc2UsIGludCB0eXBlKQo+PiAgfQo+PiAgCj4+
+ICBzdGF0aWMgaW5saW5lIGJvb2wgbm9fZmdnY19jYW5kaWRhdGUoc3RydWN0IGYyZnNfc2JfaW5m
+byAqc2JpLAo+PiAtCQkJCQkJdW5zaWduZWQgaW50IHNlY25vKQo+PiArCQkJCQkJdW5zaWduZWQg
+aW50IHNlY25vLCBzdHJ1Y3QgdmljdGltX3NlbF9wb2xpY3kgKnApCj4+ICB7Cj4+IC0JaWYgKGdl
+dF92YWxpZF9ibG9ja3Moc2JpLCBHRVRfU0VHX0ZST01fU0VDKHNiaSwgc2Vjbm8pLCB0cnVlKSA+
+PQo+PiAtCQkJCQkJc2JpLT5mZ2djX3RocmVzaG9sZCkKPj4gKwl1bnNpZ25lZCBpbnQgY3VyX2Nv
+c3Q7Cj4+ICsKPj4gKwljdXJfY29zdCA9IGdldF92YWxpZF9ibG9ja3Moc2JpLCBHRVRfU0VHX0ZS
+T01fU0VDKHNiaSwgc2Vjbm8pLCB0cnVlKTsKPj4gKwlpZiAoY3VyX2Nvc3QgPj0gc2JpLT5mZ2dj
+X3RocmVzaG9sZCkgewo+PiArCQlpZiAocC0+bWluX2Nvc3RfciA+IGN1cl9jb3N0KSB7Cj4+ICsJ
+CQlwLT5taW5fY29zdF9yID0gY3VyX2Nvc3Q7Cj4+ICsJCQlwLT5taW5fc2Vnbm9fciA9IHAtPmN1
+cl9zZWdub19yOwo+PiArCQl9Cj4+ICAJCXJldHVybiB0cnVlOwo+PiArCX0KPj4gKwo+PiAgCXJl
+dHVybiBmYWxzZTsKPj4gIH0KPj4gIAo+PiAtLSAKPj4gMS44LjUuMgo+IC4KPgoKCi0tIApUaGFu
+a3MsCll1bmxvbmcgU29uZwoKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQ2hlY2sgb3V0IHRoZSB2
+aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0CmVuZ2FnaW5n
+IHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2
+ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0
+dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2
+ZWwK
