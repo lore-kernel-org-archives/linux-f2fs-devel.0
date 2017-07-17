@@ -1,24 +1,26 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH 1/2] f2fs: remove unused input parameter
-Date: Mon, 17 Jul 2017 22:39:11 +0800
-Message-ID: <b2621773-56a5-e7ee-d756-0a262617a9b0@kernel.org>
+Subject: Re: [PATCH 2/2] f2fs: alloc new nids for xattr block in
+ recovery
+Date: Mon, 17 Jul 2017 23:00:49 +0800
+Message-ID: <7bb9c2b0-1f3b-005e-21ee-4dc6f0237a16@kernel.org>
 References: <1500290172-24915-1-git-send-email-heyunlei@huawei.com>
+	<1500290172-24915-2-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1dX7BY-00037T-Og
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao@kernel.org>) id 1dX7WW-00078p-A5
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 17 Jul 2017 14:39:44 +0000
+	Mon, 17 Jul 2017 15:01:24 +0000
 Received: from mail.kernel.org ([198.145.29.99])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1dX7BX-0004Bo-MF
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1dX7WU-0002cT-Vw
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 17 Jul 2017 14:39:44 +0000
-In-Reply-To: <1500290172-24915-1-git-send-email-heyunlei@huawei.com>
+	Mon, 17 Jul 2017 15:01:24 +0000
+In-Reply-To: <1500290172-24915-2-git-send-email-heyunlei@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -31,75 +33,92 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
+Hi Yunlei,
+
 On 2017/7/17 19:16, Yunlei He wrote:
-> This patch remove unused input parameter in function
-> new_node_page.
+> recovery file A:			recovery file B:
+> 	-get_dnode_of_data
+> 		-alloc_nid
+> 					-recover_xattr_data
+> 						-set_node_addr(sbi, &ni, NEW_ADDR, false);
+> 							--->bug_on for nid has been used by file A
+> 
+> In recovery process, new allocated node blocks may "reuse" xattr block
+> nids, this patch alloc new nids for xattr blocks in recovery process to
+> avoid this problem.
+
+Good catch!
+
 > 
 > Signed-off-by: Yunlei He <heyunlei@huawei.com>
 > Signed-off-by: Yong Sheng <shengyong1@huawei.com>
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
 > ---
->  fs/f2fs/f2fs.h  | 3 +--
->  fs/f2fs/node.c  | 7 +++----
->  fs/f2fs/xattr.c | 2 +-
->  3 files changed, 5 insertions(+), 7 deletions(-)
+>  fs/f2fs/node.c | 25 +++++++++++++++----------
+>  1 file changed, 15 insertions(+), 10 deletions(-)
 > 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 94a88b2..7a17b21 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -2285,8 +2285,7 @@ f2fs_hash_t f2fs_dentry_hash(const struct qstr *name_info,
->  int wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino);
->  int remove_inode_page(struct inode *inode);
->  struct page *new_inode_page(struct inode *inode);
-> -struct page *new_node_page(struct dnode_of_data *dn,
-> -			unsigned int ofs, struct page *ipage);
-> +struct page *new_node_page(struct dnode_of_data *dn, unsigned int ofs);
->  void ra_node_page(struct f2fs_sb_info *sbi, nid_t nid);
->  struct page *get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid);
->  struct page *get_node_page_ra(struct page *parent, int start);
 > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index d53fe62..adc3a70 100644
+> index adc3a70..5d7db9c 100644
 > --- a/fs/f2fs/node.c
 > +++ b/fs/f2fs/node.c
-> @@ -613,7 +613,7 @@ int get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode)
->  			}
+> @@ -19,6 +19,7 @@
+>  #include "f2fs.h"
+>  #include "node.h"
+>  #include "segment.h"
+> +#include "xattr.h"
+>  #include "trace.h"
+>  #include <trace/events/f2fs.h>
 >  
->  			dn->nid = nids[i];
-> -			npage[i] = new_node_page(dn, noffset[i], NULL);
-> +			npage[i] = new_node_page(dn, noffset[i]);
->  			if (IS_ERR(npage[i])) {
->  				alloc_nid_failed(sbi, nids[i]);
->  				err = PTR_ERR(npage[i]);
-> @@ -1022,11 +1022,10 @@ struct page *new_inode_page(struct inode *inode)
->  	set_new_dnode(&dn, inode, NULL, NULL, inode->i_ino);
->  
->  	/* caller should f2fs_put_page(page, 1); */
-> -	return new_node_page(&dn, 0, NULL);
-> +	return new_node_page(&dn, 0);
->  }
->  
-> -struct page *new_node_page(struct dnode_of_data *dn,
-> -				unsigned int ofs, struct page *ipage)
-> +struct page *new_node_page(struct dnode_of_data *dn, unsigned int ofs)
+> @@ -2190,7 +2191,8 @@ int recover_xattr_data(struct inode *inode, struct page *page, block_t blkaddr)
 >  {
->  	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
->  	struct node_info new_ni;
-> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-> index 832c511..ef3a372 100644
-> --- a/fs/f2fs/xattr.c
-> +++ b/fs/f2fs/xattr.c
-> @@ -442,7 +442,7 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
->  	} else {
->  		struct dnode_of_data dn;
->  		set_new_dnode(&dn, inode, NULL, NULL, new_nid);
-> -		xpage = new_node_page(&dn, XATTR_NODE_OFFSET, ipage);
-> +		xpage = new_node_page(&dn, XATTR_NODE_OFFSET);
->  		if (IS_ERR(xpage)) {
->  			alloc_nid_failed(sbi, new_nid);
->  			return PTR_ERR(xpage);
+>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>  	nid_t prev_xnid = F2FS_I(inode)->i_xattr_nid;
+> -	nid_t new_xnid = nid_of_node(page);
+> +	nid_t new_xnid;
+> +	struct dnode_of_data dn;
+>  	struct node_info ni;
+>  	struct page *xpage;
+>  
+> @@ -2206,22 +2208,25 @@ int recover_xattr_data(struct inode *inode, struct page *page, block_t blkaddr)
+>  
+>  recover_xnid:
+>  	/* 2: update xattr nid in inode */
+> -	remove_free_nid(sbi, new_xnid);
+> +	if (!alloc_nid(sbi, &new_xnid))
+> +		return -ENOSPC;
+> +
+> +	set_new_dnode(&dn, inode, NULL, NULL, new_xnid);
+> +	xpage = new_node_page(&dn, XATTR_NODE_OFFSET);
+> +	if (IS_ERR(xpage)) {
+> +		alloc_nid_failed(sbi, new_xnid);
+> +		return PTR_ERR(xpage);
+> +	}
+> +
+> +	alloc_nid_done(sbi, new_xnid);
+>  	f2fs_i_xnid_write(inode, new_xnid);
+>  	if (unlikely(inc_valid_node_count(sbi, inode, false)))
+>  		f2fs_bug_on(sbi, 1);
+
+We do not need duplicated f2fs_i_xnid_write & inc_valid_node_count here
+since they have already been invoked in new_node_page.
+
+Thanks,
+
+>  	update_inode_page(inode);
+>  
+>  	/* 3: update and set xattr node page dirty */
+> -	xpage = grab_cache_page(NODE_MAPPING(sbi), new_xnid);
+> -	if (!xpage)
+> -		return -ENOMEM;
+> -
+> -	memcpy(F2FS_NODE(xpage), F2FS_NODE(page), PAGE_SIZE);
+> +	memcpy(F2FS_NODE(xpage), F2FS_NODE(page), VALID_XATTR_BLOCK_SIZE);
+>  
+> -	get_node_info(sbi, new_xnid, &ni);
+> -	ni.ino = inode->i_ino;
+> -	set_node_addr(sbi, &ni, NEW_ADDR, false);
+>  	set_page_dirty(xpage);
+>  	f2fs_put_page(xpage, 1);
+>  
 > 
 
 ------------------------------------------------------------------------------
