@@ -1,67 +1,107 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: avoid cpu lockup
-Date: Mon, 17 Jul 2017 22:34:49 +0800
-Message-ID: <330acf45-f218-cb85-28b6-08e12c4fb888@kernel.org>
-References: <20170715012245.24640-1-jaegeuk@kernel.org>
- <20170716010422.GA51202@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH 1/2] f2fs: remove unused input parameter
+Date: Mon, 17 Jul 2017 22:39:11 +0800
+Message-ID: <b2621773-56a5-e7ee-d756-0a262617a9b0@kernel.org>
+References: <1500290172-24915-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170716010422.GA51202@jaegeuk-macbookpro.roam.corp.google.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao@kernel.org>) id 1dX7BY-00037T-Og
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 17 Jul 2017 14:39:44 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1dX7BX-0004Bo-MF
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 17 Jul 2017 14:39:44 +0000
+In-Reply-To: <1500290172-24915-1-git-send-email-heyunlei@huawei.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/7/16 9:04, Jaegeuk Kim wrote:
-> Before retrying to flush data or dentry pages, we need to release cpu in order
-> to prevent watchdog.
+On 2017/7/17 19:16, Yunlei He wrote:
+> This patch remove unused input parameter in function
+> new_node_page.
 > 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+> Signed-off-by: Yong Sheng <shengyong1@huawei.com>
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 > ---
-> Change log from v1:
->  - timeout more specifically
+>  fs/f2fs/f2fs.h  | 3 +--
+>  fs/f2fs/node.c  | 7 +++----
+>  fs/f2fs/xattr.c | 2 +-
+>  3 files changed, 5 insertions(+), 7 deletions(-)
 > 
->  fs/f2fs/checkpoint.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index 56bbf592e487..5b876f6d3f6b 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -879,6 +879,7 @@ int sync_dirty_inodes(struct f2fs_sb_info *sbi, enum inode_type type)
->  	struct inode *inode;
->  	struct f2fs_inode_info *fi;
->  	bool is_dir = (type == DIR_INODE);
-> +	unsigned long ino = 0;
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 94a88b2..7a17b21 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -2285,8 +2285,7 @@ f2fs_hash_t f2fs_dentry_hash(const struct qstr *name_info,
+>  int wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino);
+>  int remove_inode_page(struct inode *inode);
+>  struct page *new_inode_page(struct inode *inode);
+> -struct page *new_node_page(struct dnode_of_data *dn,
+> -			unsigned int ofs, struct page *ipage);
+> +struct page *new_node_page(struct dnode_of_data *dn, unsigned int ofs);
+>  void ra_node_page(struct f2fs_sb_info *sbi, nid_t nid);
+>  struct page *get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid);
+>  struct page *get_node_page_ra(struct page *parent, int start);
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index d53fe62..adc3a70 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -613,7 +613,7 @@ int get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode)
+>  			}
 >  
->  	trace_f2fs_sync_dirty_inodes_enter(sbi->sb, is_dir,
->  				get_pages(sbi, is_dir ?
-> @@ -901,8 +902,17 @@ int sync_dirty_inodes(struct f2fs_sb_info *sbi, enum inode_type type)
->  	inode = igrab(&fi->vfs_inode);
->  	spin_unlock(&sbi->inode_lock[type]);
->  	if (inode) {
-> +		unsigned long cur_ino = inode->i_ino;
-> +
->  		filemap_fdatawrite(inode->i_mapping);
->  		iput(inode);
-> +		/* We need to give cpu to another writers. */
-> +		if (ino == cur_ino) {
-
-We failed to flush dirty pages of inode due to encountering -EAGAIN of writepage?
-
-Thanks,
-
-> +			congestion_wait(BLK_RW_ASYNC, HZ/50);
-> +			cond_resched();
-> +		} else {
-> +			ino = cur_ino;
-> +		}
+>  			dn->nid = nids[i];
+> -			npage[i] = new_node_page(dn, noffset[i], NULL);
+> +			npage[i] = new_node_page(dn, noffset[i]);
+>  			if (IS_ERR(npage[i])) {
+>  				alloc_nid_failed(sbi, nids[i]);
+>  				err = PTR_ERR(npage[i]);
+> @@ -1022,11 +1022,10 @@ struct page *new_inode_page(struct inode *inode)
+>  	set_new_dnode(&dn, inode, NULL, NULL, inode->i_ino);
+>  
+>  	/* caller should f2fs_put_page(page, 1); */
+> -	return new_node_page(&dn, 0, NULL);
+> +	return new_node_page(&dn, 0);
+>  }
+>  
+> -struct page *new_node_page(struct dnode_of_data *dn,
+> -				unsigned int ofs, struct page *ipage)
+> +struct page *new_node_page(struct dnode_of_data *dn, unsigned int ofs)
+>  {
+>  	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
+>  	struct node_info new_ni;
+> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+> index 832c511..ef3a372 100644
+> --- a/fs/f2fs/xattr.c
+> +++ b/fs/f2fs/xattr.c
+> @@ -442,7 +442,7 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
 >  	} else {
->  		/*
->  		 * We should submit bio, since it exists several
+>  		struct dnode_of_data dn;
+>  		set_new_dnode(&dn, inode, NULL, NULL, new_nid);
+> -		xpage = new_node_page(&dn, XATTR_NODE_OFFSET, ipage);
+> +		xpage = new_node_page(&dn, XATTR_NODE_OFFSET);
+>  		if (IS_ERR(xpage)) {
+>  			alloc_nid_failed(sbi, new_nid);
+>  			return PTR_ERR(xpage);
 > 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
