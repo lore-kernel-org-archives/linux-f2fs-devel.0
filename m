@@ -1,587 +1,651 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 2/6] f2fs: make max inline size changeable
-Date: Tue, 18 Jul 2017 09:43:40 +0800
-Message-ID: <08927676-53ed-6069-dd7a-6e6f8e8f04af@huawei.com>
-References: <20170716070859.25246-1-chao@kernel.org>
- <20170716070859.25246-2-chao@kernel.org>
- <20170717231209.GA94966@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH 2/3] f2fs-tools: enhance on-disk inode
+ structure scalability
+Date: Tue, 18 Jul 2017 09:51:10 +0800
+Message-ID: <76ed35bb-92a0-8b8a-dc8b-4ba2aa89186e@huawei.com>
+References: <20170716071251.25793-1-chao@kernel.org>
+	<20170716071251.25793-2-chao@kernel.org>
+	<20170717222254.GC81128@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170717231209.GA94966@jaegeuk-macbookpro.roam.corp.google.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1dXHfp-0006Ac-8u
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 18 Jul 2017 01:51:41 +0000
+Received: from szxga03-in.huawei.com ([45.249.212.189])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1dXHfl-0007ZU-Hd
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 18 Jul 2017 01:51:41 +0000
+In-Reply-To: <20170717222254.GC81128@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
 Hi Jaegeuk,
 
-On 2017/7/18 7:12, Jaegeuk Kim wrote:
+On 2017/7/18 6:22, Jaegeuk Kim wrote:
 > Hi Chao,
+> 
+> Nice work!
+> Looking at a glance, we need to consider backward compatibility where old f2fs
+> cannot interpret extra i_size. So, we need to add an option to enable this in
+> order for users to be aware of it.
+
+OK, let me add F2FS_FEATURE_EXTRA_ATTR feature flag in superblock if user use
+'-e' option during mkfs.f2fs. In kernel side, we can create inode with new
+format which has F2FS_EXTRA_ATTR flag if F2FS_FEATURE_EXTRA_ATTR is set.
+
 > 
 > On 07/16, Chao Yu wrote:
 >> From: Chao Yu <yuchao0@huawei.com>
 >>
->> This patch tries to make below macros calculating max inline size,
->> inline dentry field size considerring reserving size-changeable
->> space:
->> - MAX_INLINE_DATA
->> - NR_INLINE_DENTRY
->> - INLINE_DENTRY_BITMAP_SIZE
->> - INLINE_RESERVED_SIZE
+>> Adjust to change of kernel side:
 >>
->> Then, when inline_{data,dentry} options is enabled, it allows us to
->> reserve inline space with different size flexibly for adding newly
->> introduced inode attribute.
+>> This patch add new flag F2FS_EXTRA_ATTR storing in inode.i_inline
+>> to indicate that on-disk structure of current inode is extended.
 >>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/data.c          |   6 +--
->>  fs/f2fs/f2fs.h          |  51 +++++++++++++++++++-----
->>  fs/f2fs/inline.c        | 101 ++++++++++++++++++++++++------------------------
->>  fs/f2fs/inode.c         |   4 +-
->>  fs/f2fs/super.c         |   3 ++
->>  include/linux/f2fs_fs.h |  23 +----------
->>  6 files changed, 102 insertions(+), 86 deletions(-)
+>> In order to extend, we changed the inode structure a bit:
 >>
->> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->> index 251356859476..f42a93781119 100644
->> --- a/fs/f2fs/data.c
->> +++ b/fs/f2fs/data.c
->> @@ -813,7 +813,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
->>  				F2FS_GET_BLOCK_PRE_AIO :
->>  				F2FS_GET_BLOCK_PRE_DIO);
->>  	}
->> -	if (iocb->ki_pos + iov_iter_count(from) > MAX_INLINE_DATA) {
->> +	if (iocb->ki_pos + iov_iter_count(from) > MAX_INLINE_DATA(inode)) {
->>  		err = f2fs_convert_inline_inode(inode);
->>  		if (err)
->>  			return err;
->> @@ -1857,8 +1857,8 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
->>  	set_new_dnode(&dn, inode, ipage, ipage, 0);
->>  
->>  	if (f2fs_has_inline_data(inode)) {
->> -		if (pos + len <= MAX_INLINE_DATA) {
->> -			read_inline_data(page, ipage);
->> +		if (pos + len <= MAX_INLINE_DATA(inode)) {
->> +			read_inline_data(inode, page, ipage);
->>  			set_inode_flag(inode, FI_DATA_EXIST);
->>  			if (inode->i_nlink)
->>  				set_inline_node(ipage);
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index 23f117e4aeb8..8a23001e2ed2 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -355,6 +355,25 @@ struct f2fs_flush_device {
->>  	u32 segments;		/* # of segments to flush */
->>  };
->>  
->> +/* for inline stuff */
->> +#define DEF_INLINE_RESERVED_SIZE	1
->> +
->> +static inline int get_inline_reserved_size(struct inode *inode);
->> +#define MAX_INLINE_DATA(inode)	(sizeof(__le32) * (DEF_ADDRS_PER_INODE -\
->> +				get_inline_reserved_size(inode) -\
->> +				F2FS_INLINE_XATTR_ADDRS))
->> +
->> +/* for inline dir */
->> +#define NR_INLINE_DENTRY(inode)	(MAX_INLINE_DATA(inode) * BITS_PER_BYTE / \
->> +				((SIZE_OF_DIR_ENTRY + F2FS_SLOT_LEN) * \
->> +				BITS_PER_BYTE + 1))
->> +#define INLINE_DENTRY_BITMAP_SIZE(inode)	((NR_INLINE_DENTRY(inode) + \
->> +					BITS_PER_BYTE - 1) / BITS_PER_BYTE)
->> +#define INLINE_RESERVED_SIZE(inode)	(MAX_INLINE_DATA(inode) - \
->> +				((SIZE_OF_DIR_ENTRY + F2FS_SLOT_LEN) * \
->> +				NR_INLINE_DENTRY(inode) + \
->> +				INLINE_DENTRY_BITMAP_SIZE(inode)))
->> +
->>  /*
->>   * For INODE and NODE manager
->>   */
->> @@ -380,14 +399,19 @@ static inline void make_dentry_ptr_block(struct inode *inode,
->>  }
->>  
->>  static inline void make_dentry_ptr_inline(struct inode *inode,
->> -		struct f2fs_dentry_ptr *d, struct f2fs_inline_dentry *t)
->> +					struct f2fs_dentry_ptr *d, void *t)
->>  {
->> +	int entry_cnt = NR_INLINE_DENTRY(inode);
->> +	int bitmap_size = INLINE_DENTRY_BITMAP_SIZE(inode);
->> +	int reserved_size = INLINE_RESERVED_SIZE(inode);
->> +
->>  	d->inode = inode;
->> -	d->max = NR_INLINE_DENTRY;
->> -	d->nr_bitmap = INLINE_DENTRY_BITMAP_SIZE;
->> -	d->bitmap = &t->dentry_bitmap;
->> -	d->dentry = t->dentry;
->> -	d->filename = t->filename;
->> +	d->max = entry_cnt;
->> +	d->nr_bitmap = bitmap_size;
->> +	d->bitmap = t;
->> +	d->dentry = t + bitmap_size + reserved_size;
->> +	d->filename = t + bitmap_size + reserved_size +
->> +					SIZE_OF_DIR_ENTRY * entry_cnt;
->>  }
->>  
->>  /*
->> @@ -540,6 +564,8 @@ struct f2fs_inode_info {
->>  	struct extent_tree *extent_tree;	/* cached extent_tree entry */
->>  	struct rw_semaphore dio_rwsem[2];/* avoid racing between dio and gc */
->>  	struct rw_semaphore i_mmap_sem;
->> +
->> +	int i_inline_reserved;		/* reserved size in inline data */
->>  };
->>  
->>  static inline void get_extent_info(struct extent_info *ext,
->> @@ -2069,11 +2095,12 @@ static inline bool f2fs_is_drop_cache(struct inode *inode)
->>  	return is_inode_flag_set(inode, FI_DROP_CACHE);
->>  }
->>  
->> -static inline void *inline_data_addr(struct page *page)
->> +static inline void *inline_data_addr(struct inode *inode, struct page *page)
->>  {
->>  	struct f2fs_inode *ri = F2FS_INODE(page);
->> +	int reserved_size = get_inline_reserved_size(inode);
->>  
->> -	return (void *)&(ri->i_addr[1]);
->> +	return (void *)&(ri->i_addr[reserved_size]);
->>  }
->>  
->>  static inline int f2fs_has_inline_dentry(struct inode *inode)
->> @@ -2184,6 +2211,11 @@ static inline void *f2fs_kvzalloc(size_t size, gfp_t flags)
->>  	return ret;
->>  }
->>  
->> +static inline int get_inline_reserved_size(struct inode *inode)
->> +{
->> +	return F2FS_I(inode)->i_inline_reserved;
->> +}
->> +
->>  #define get_inode_mode(i) \
->>  	((is_inode_flag_set(i, FI_ACL_MODE)) ? \
->>  	 (F2FS_I(i)->i_acl_mode) : ((i)->i_mode))
->> @@ -2681,7 +2713,8 @@ extern struct kmem_cache *inode_entry_slab;
->>   */
->>  bool f2fs_may_inline_data(struct inode *inode);
->>  bool f2fs_may_inline_dentry(struct inode *inode);
->> -void read_inline_data(struct page *page, struct page *ipage);
->> +void read_inline_data(struct inode *inode, struct page *page,
->> +							struct page *ipage);
->>  void truncate_inline_inode(struct inode *inode, struct page *ipage, u64 from);
->>  int f2fs_read_inline_data(struct inode *inode, struct page *page);
->>  int f2fs_convert_inline_page(struct dnode_of_data *dn, struct page *page);
->> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
->> index 2082816a504a..838ad2339e54 100644
->> --- a/fs/f2fs/inline.c
->> +++ b/fs/f2fs/inline.c
->> @@ -22,7 +22,7 @@ bool f2fs_may_inline_data(struct inode *inode)
->>  	if (!S_ISREG(inode->i_mode) && !S_ISLNK(inode->i_mode))
->>  		return false;
->>  
->> -	if (i_size_read(inode) > MAX_INLINE_DATA)
->> +	if (i_size_read(inode) > MAX_INLINE_DATA(inode))
->>  		return false;
->>  
->>  	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
->> @@ -42,7 +42,8 @@ bool f2fs_may_inline_dentry(struct inode *inode)
->>  	return true;
->>  }
->>  
->> -void read_inline_data(struct page *page, struct page *ipage)
->> +void read_inline_data(struct inode *inode, struct page *page,
->> +						struct page *ipage)
->>  {
->>  	void *src_addr, *dst_addr;
+>> Original one:
+>>
+>> struct f2fs_inode {
+>> 	...
+>> 	struct f2fs_extent i_ext;
+>> 	__le32 i_addr[DEF_ADDRS_PER_INODE];
+>> 	__le32 i_nid[DEF_NIDS_PER_INODE];
+>> }
+>>
+>> Extended one:
+>>
+>> struct f2fs_inode {
+>>         ...
+>>         struct f2fs_extent i_ext;
+>> 	union {
+>> 		struct {
+>> 			__le16 i_extra_isize;
+>> 			__le16 i_padding;
 > 
-> How about
-> 	struct inode *inode = page->mapping->host;
+> 	union {
+> 		struct {
+> 			__le16 i_extra_isize;	/* extra inode attribute size */
+> 			__le16 i_padding;	/* padding */
+> 			__le32 i_extra_end[0];	/* for attribute size calculation */
+> 		};
+> 		__le32 i_addr[DEF_ADDRS_PER_INODE];	/* Pointers to data blocks */
+> 	};
+> 
+> Need to update.
 
-More clean, I will update it.
+Will do.
 
 Thanks,
 
 > 
 > Thanks,
 > 
+>> 		};
+>> 		__le32 i_addr[DEF_ADDRS_PER_INODE];
+>> 	};
+>>         __le32 i_nid[DEF_NIDS_PER_INODE];
+>> }
+>>
+>> Once F2FS_EXTRA_ATTR is set, we will steal four bytes in the head of
+>> i_addr field for storing i_extra_isize and i_padding. with i_extra_isize,
+>> we can calculate actual size of reserved space in i_addr, available
+>> attribute fields included in total extra attribute fields for current
+>> inode can be described as below:
+>>
+>>   +--------------------+
+>>   | .i_mode            |
+>>   | ...                |
+>>   | .i_ext             |
+>>   +--------------------+
+>>   | .i_extra_isize     |-----+
+>>   | .i_padding         |     |
+>>   | .i_prjid           |     |
+>>   | .i_atime_extra     |     |
+>>   | .i_ctime_extra     |     |
+>>   | .i_mtime_extra     |<----+
+>>   | .i_inode_cs        |<----- store blkaddr/inline from here
+>>   | .i_xattr_cs        |
+>>   | ...                |
+>>   +--------------------+
+>>   |                    |
+>>   |    block address   |
+>>   |                    |
+>>   +--------------------+
+>>   | .i_nid             |
+>>   +--------------------+
+>>   |   node_footer      |
+>>   | (nid, ino, offset) |
+>>   +--------------------+
+>>
+>> Hence, with this patch, we would enhance scalability of f2fs inode for
+>> storing more newly added attribute.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fsck/dir.c         | 48 +++++++++++++++++++---------------
+>>  fsck/dump.c        |  6 ++---
+>>  fsck/f2fs.h        |  4 ++-
+>>  fsck/fsck.c        | 35 +++++++++++++++----------
+>>  fsck/fsck.h        |  2 +-
+>>  fsck/mount.c       | 20 ++++++++++-----
+>>  fsck/node.c        |  6 ++---
+>>  fsck/node.h        |  7 ++++-
+>>  fsck/segment.c     |  5 ++--
+>>  include/f2fs_fs.h  | 75 +++++++++++++++++++++++++++++++++++++++++-------------
+>>  lib/libf2fs.c      |  4 +--
+>>  mkfs/f2fs_format.c |  4 ++-
+>>  12 files changed, 143 insertions(+), 73 deletions(-)
+>>
+>> diff --git a/fsck/dir.c b/fsck/dir.c
+>> index 62bc7b9..d70183f 100644
+>> --- a/fsck/dir.c
+>> +++ b/fsck/dir.c
+>> @@ -34,7 +34,8 @@ next:
 >>  
->> @@ -51,12 +52,12 @@ void read_inline_data(struct page *page, struct page *ipage)
+>>  }
 >>  
->>  	f2fs_bug_on(F2FS_P_SB(page), page->index);
->>  
->> -	zero_user_segment(page, MAX_INLINE_DATA, PAGE_SIZE);
->> +	zero_user_segment(page, MAX_INLINE_DATA(inode), PAGE_SIZE);
->>  
->>  	/* Copy the whole inline data block */
->> -	src_addr = inline_data_addr(ipage);
->> +	src_addr = inline_data_addr(inode, ipage);
->>  	dst_addr = kmap_atomic(page);
->> -	memcpy(dst_addr, src_addr, MAX_INLINE_DATA);
->> +	memcpy(dst_addr, src_addr, MAX_INLINE_DATA(inode));
->>  	flush_dcache_page(page);
->>  	kunmap_atomic(dst_addr);
->>  	if (!PageUptodate(page))
->> @@ -67,13 +68,13 @@ void truncate_inline_inode(struct inode *inode, struct page *ipage, u64 from)
+>> -void make_dentry_ptr(struct f2fs_dentry_ptr *d, void *src, int type)
+>> +void make_dentry_ptr(struct f2fs_dentry_ptr *d, struct f2fs_node *node_blk,
+>> +							void *src, int type)
 >>  {
->>  	void *addr;
+>>  	if (type == 1) {
+>>  		struct f2fs_dentry_block *t = (struct f2fs_dentry_block *)src;
+>> @@ -44,12 +45,16 @@ void make_dentry_ptr(struct f2fs_dentry_ptr *d, void *src, int type)
+>>  		d->dentry = t->dentry;
+>>  		d->filename = t->filename;
+>>  	} else {
+>> -		struct f2fs_inline_dentry *t = (struct f2fs_inline_dentry *)src;
+>> -		d->max = NR_INLINE_DENTRY;
+>> -		d->nr_bitmap = INLINE_DENTRY_BITMAP_SIZE;
+>> -		d->bitmap = t->dentry_bitmap;
+>> -		d->dentry = t->dentry;
+>> -		d->filename = t->filename;
+>> +		int entry_cnt = NR_INLINE_DENTRY(node_blk);
+>> +		int bitmap_size = INLINE_DENTRY_BITMAP_SIZE(node_blk);
+>> +		int reserved_size = INLINE_RESERVED_SIZE(node_blk);
+>> +
+>> +		d->max = entry_cnt;
+>> +		d->nr_bitmap = bitmap_size;
+>> +		d->bitmap = src;
+>> +		d->dentry = src + bitmap_size + reserved_size;
+>> +		d->filename = src + bitmap_size + reserved_size +
+>> +						SIZE_OF_DIR_ENTRY * entry_cnt;
+>>  	}
+>>  }
 >>  
->> -	if (from >= MAX_INLINE_DATA)
->> +	if (from >= MAX_INLINE_DATA(inode))
+>> @@ -95,7 +100,7 @@ static struct f2fs_dir_entry *find_in_block(void *block,
+>>  {
+>>  	struct f2fs_dentry_ptr d;
+>>  
+>> -	make_dentry_ptr(&d, block, 1);
+>> +	make_dentry_ptr(&d, NULL, block, 1);
+>>  	return find_target_dentry(name, len, namehash, max_slots, &d);
+>>  }
+>>  
+>> @@ -258,7 +263,7 @@ start:
+>>  	goto start;
+>>  
+>>  add_dentry:
+>> -	make_dentry_ptr(&d, (void *)dentry_blk, 1);
+>> +	make_dentry_ptr(&d, NULL, (void *)dentry_blk, 1);
+>>  	f2fs_update_dentry(ino, file_type, &d, name, name_len, dentry_hash, bit_pos);
+>>  
+>>  	ret = dev_write_block(dentry_blk, dn.data_blkaddr);
+>> @@ -338,7 +343,7 @@ static void make_empty_dir(struct f2fs_sb_info *sbi, struct f2fs_node *inode)
+>>  	ret = dev_write_block(dent_blk, blkaddr);
+>>  	ASSERT(ret >= 0);
+>>  
+>> -	inode->i.i_addr[0] = cpu_to_le32(blkaddr);
+>> +	inode->i.i_addr[get_extra_isize(inode)] = cpu_to_le32(blkaddr);
+>>  	free(dent_blk);
+>>  }
+>>  
+>> @@ -355,10 +360,10 @@ static void page_symlink(struct f2fs_sb_info *sbi, struct f2fs_node *inode,
+>>  	get_node_info(sbi, ino, &ni);
+>>  
+>>  	/* store into inline_data */
+>> -	if (symlen + 1 <= MAX_INLINE_DATA) {
+>> +	if (symlen + 1 <= MAX_INLINE_DATA(inode)) {
+>>  		inode->i.i_inline |= F2FS_INLINE_DATA;
+>>  		inode->i.i_inline |= F2FS_DATA_EXIST;
+>> -		memcpy(&inode->i.i_addr[1], symname, symlen);
+>> +		memcpy(inline_data_addr(inode), symname, symlen);
 >>  		return;
+>>  	}
 >>  
->> -	addr = inline_data_addr(ipage);
->> +	addr = inline_data_addr(inode, ipage);
+>> @@ -373,7 +378,7 @@ static void page_symlink(struct f2fs_sb_info *sbi, struct f2fs_node *inode,
+>>  	ret = dev_write_block(data_blk, blkaddr);
+>>  	ASSERT(ret >= 0);
 >>  
->>  	f2fs_wait_on_page_writeback(ipage, NODE, true);
->> -	memset(addr + from, 0, MAX_INLINE_DATA - from);
->> +	memset(addr + from, 0, MAX_INLINE_DATA(inode) - from);
->>  	set_page_dirty(ipage);
->>  
->>  	if (from == 0)
->> @@ -98,7 +99,7 @@ int f2fs_read_inline_data(struct inode *inode, struct page *page)
->>  	if (page->index)
->>  		zero_user_segment(page, 0, PAGE_SIZE);
->>  	else
->> -		read_inline_data(page, ipage);
->> +		read_inline_data(inode, page, ipage);
->>  
->>  	if (!PageUptodate(page))
->>  		SetPageUptodate(page);
->> @@ -128,7 +129,7 @@ int f2fs_convert_inline_page(struct dnode_of_data *dn, struct page *page)
->>  
->>  	f2fs_bug_on(F2FS_P_SB(page), PageWriteback(page));
->>  
->> -	read_inline_data(page, dn->inode_page);
->> +	read_inline_data(dn->inode, page, dn->inode_page);
->>  	set_page_dirty(page);
->>  
->>  	/* clear dirty state */
->> @@ -216,8 +217,8 @@ int f2fs_write_inline_data(struct inode *inode, struct page *page)
->>  
->>  	f2fs_wait_on_page_writeback(dn.inode_page, NODE, true);
->>  	src_addr = kmap_atomic(page);
->> -	dst_addr = inline_data_addr(dn.inode_page);
->> -	memcpy(dst_addr, src_addr, MAX_INLINE_DATA);
->> +	dst_addr = inline_data_addr(inode, dn.inode_page);
->> +	memcpy(dst_addr, src_addr, MAX_INLINE_DATA(inode));
->>  	kunmap_atomic(src_addr);
->>  	set_page_dirty(dn.inode_page);
->>  
->> @@ -255,9 +256,9 @@ bool recover_inline_data(struct inode *inode, struct page *npage)
->>  
->>  		f2fs_wait_on_page_writeback(ipage, NODE, true);
->>  
->> -		src_addr = inline_data_addr(npage);
->> -		dst_addr = inline_data_addr(ipage);
->> -		memcpy(dst_addr, src_addr, MAX_INLINE_DATA);
->> +		src_addr = inline_data_addr(inode, npage);
->> +		dst_addr = inline_data_addr(inode, ipage);
->> +		memcpy(dst_addr, src_addr, MAX_INLINE_DATA(inode));
->>  
->>  		set_inode_flag(inode, FI_INLINE_DATA);
->>  		set_inode_flag(inode, FI_DATA_EXIST);
->> @@ -285,11 +286,11 @@ struct f2fs_dir_entry *find_in_inline_dir(struct inode *dir,
->>  			struct fscrypt_name *fname, struct page **res_page)
->>  {
->>  	struct f2fs_sb_info *sbi = F2FS_SB(dir->i_sb);
->> -	struct f2fs_inline_dentry *inline_dentry;
->>  	struct qstr name = FSTR_TO_QSTR(&fname->disk_name);
->>  	struct f2fs_dir_entry *de;
->>  	struct f2fs_dentry_ptr d;
->>  	struct page *ipage;
->> +	void *inline_dentry;
->>  	f2fs_hash_t namehash;
->>  
->>  	ipage = get_node_page(sbi, dir->i_ino);
->> @@ -300,9 +301,9 @@ struct f2fs_dir_entry *find_in_inline_dir(struct inode *dir,
->>  
->>  	namehash = f2fs_dentry_hash(&name, fname);
->>  
->> -	inline_dentry = inline_data_addr(ipage);
->> +	inline_dentry = inline_data_addr(dir, ipage);
->>  
->> -	make_dentry_ptr_inline(NULL, &d, inline_dentry);
->> +	make_dentry_ptr_inline(dir, &d, inline_dentry);
->>  	de = find_target_dentry(fname, namehash, NULL, &d);
->>  	unlock_page(ipage);
->>  	if (de)
->> @@ -316,19 +317,19 @@ struct f2fs_dir_entry *find_in_inline_dir(struct inode *dir,
->>  int make_empty_inline_dir(struct inode *inode, struct inode *parent,
->>  							struct page *ipage)
->>  {
->> -	struct f2fs_inline_dentry *inline_dentry;
->>  	struct f2fs_dentry_ptr d;
->> +	void *inline_dentry;
->>  
->> -	inline_dentry = inline_data_addr(ipage);
->> +	inline_dentry = inline_data_addr(inode, ipage);
->>  
->> -	make_dentry_ptr_inline(NULL, &d, inline_dentry);
->> +	make_dentry_ptr_inline(inode, &d, inline_dentry);
->>  	do_make_empty_dir(inode, parent, &d);
->>  
->>  	set_page_dirty(ipage);
->>  
->>  	/* update i_size to MAX_INLINE_DATA */
->> -	if (i_size_read(inode) < MAX_INLINE_DATA)
->> -		f2fs_i_size_write(inode, MAX_INLINE_DATA);
->> +	if (i_size_read(inode) < MAX_INLINE_DATA(inode))
->> +		f2fs_i_size_write(inode, MAX_INLINE_DATA(inode));
->>  	return 0;
+>> -	inode->i.i_addr[0] = cpu_to_le32(blkaddr);
+>> +	inode->i.i_addr[get_extra_isize(inode)] = cpu_to_le32(blkaddr);
+>>  	free(data_blk);
 >>  }
 >>  
->> @@ -337,7 +338,7 @@ int make_empty_inline_dir(struct inode *inode, struct inode *parent,
->>   * release ipage in this function.
->>   */
->>  static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
->> -				struct f2fs_inline_dentry *inline_dentry)
->> +							void *inline_dentry)
->>  {
->>  	struct page *page;
->>  	struct dnode_of_data dn;
->> @@ -357,12 +358,12 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
->>  		goto out;
+>> @@ -398,7 +403,7 @@ static void init_inode_block(struct f2fs_sb_info *sbi,
+>>  		ASSERT(de->link);
+>>  		mode |= S_IFLNK;
+>>  		size = strlen(de->link);
+>> -		if (size + 1 > MAX_INLINE_DATA)
+>> +		if (size + 1 > MAX_INLINE_DATA(node_blk))
+>>  			blocks++;
+>>  	} else {
+>>  		ASSERT(0);
+>> @@ -421,11 +426,12 @@ static void init_inode_block(struct f2fs_sb_info *sbi,
+>>  	node_blk->i.i_current_depth = cpu_to_le32(1);
+>>  	node_blk->i.i_xattr_nid = 0;
+>>  	node_blk->i.i_flags = 0;
+>> -	node_blk->i.i_inline = F2FS_INLINE_XATTR;
+>> +	node_blk->i.i_inline = F2FS_INLINE_XATTR | F2FS_EXTRA_ATTR;
+>>  	node_blk->i.i_pino = cpu_to_le32(de->pino);
+>>  	node_blk->i.i_namelen = cpu_to_le32(de->len);
+>>  	memcpy(node_blk->i.i_name, de->name, de->len);
+>>  	node_blk->i.i_name[de->len] = 0;
+>> +	node_blk->i.i_extra_isize = cpu_to_le16(F2FS_TOTAL_EXTRA_ATTR_SIZE);
 >>  
->>  	f2fs_wait_on_page_writeback(page, DATA, true);
->> -	zero_user_segment(page, MAX_INLINE_DATA, PAGE_SIZE);
->> +	zero_user_segment(page, MAX_INLINE_DATA(dir), PAGE_SIZE);
->>  
->>  	dentry_blk = kmap_atomic(page);
->>  
->> -	make_dentry_ptr_inline(NULL, &src, inline_dentry);
->> -	make_dentry_ptr_block(NULL, &dst, dentry_blk);
->> +	make_dentry_ptr_inline(dir, &src, inline_dentry);
->> +	make_dentry_ptr_block(dir, &dst, dentry_blk);
->>  
->>  	/* copy data from inline dentry block to new dentry block */
->>  	memcpy(dst.bitmap, src.bitmap, src.nr_bitmap);
->> @@ -395,14 +396,13 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
->>  	return err;
->>  }
->>  
->> -static int f2fs_add_inline_entries(struct inode *dir,
->> -			struct f2fs_inline_dentry *inline_dentry)
->> +static int f2fs_add_inline_entries(struct inode *dir, void *inline_dentry)
->>  {
+>>  	node_blk->footer.ino = cpu_to_le32(de->ino);
+>>  	node_blk->footer.nid = cpu_to_le32(de->ino);
+>> @@ -444,7 +450,7 @@ int convert_inline_dentry(struct f2fs_sb_info *sbi, struct f2fs_node *node,
+>>  	struct f2fs_inode *inode = &(node->i);
+>>  	unsigned int dir_level = node->i.i_dir_level;
+>>  	nid_t ino = le32_to_cpu(node->footer.ino);
+>> -	char inline_data[MAX_INLINE_DATA];
+>> +	char inline_data[MAX_INLINE_DATA(node)];
+>>  	struct dnode_of_data dn = {0};
 >>  	struct f2fs_dentry_ptr d;
 >>  	unsigned long bit_pos = 0;
->>  	int err = 0;
+>> @@ -453,8 +459,8 @@ int convert_inline_dentry(struct f2fs_sb_info *sbi, struct f2fs_node *node,
+>>  	if (!(inode->i_inline & F2FS_INLINE_DENTRY))
+>>  		return 0;
 >>  
->> -	make_dentry_ptr_inline(NULL, &d, inline_dentry);
->> +	make_dentry_ptr_inline(dir, &d, inline_dentry);
+>> -	memcpy(inline_data, inline_data_addr(node), MAX_INLINE_DATA);
+>> -	memset(inline_data_addr(node), 0, MAX_INLINE_DATA);
+>> +	memcpy(inline_data, inline_data_addr(node), MAX_INLINE_DATA(node));
+>> +	memset(inline_data_addr(node), 0, MAX_INLINE_DATA(node));
+>>  	inode->i_inline &= ~F2FS_INLINE_DENTRY;
+>>  
+>>  	ret = dev_write_block(node, p_blkaddr);
+>> @@ -472,8 +478,8 @@ int convert_inline_dentry(struct f2fs_sb_info *sbi, struct f2fs_node *node,
+>>  		if (dn.data_blkaddr == NULL_ADDR)
+>>  			new_data_block(sbi, dentry_blk, &dn, CURSEG_HOT_DATA);
+>>  
+>> -		make_dentry_ptr(&src, (void *)inline_data, 2);
+>> -		make_dentry_ptr(&dst, (void *)dentry_blk, 1);
+>> +		make_dentry_ptr(&src, node, (void *)inline_data, 2);
+>> +		make_dentry_ptr(&dst, NULL, (void *)dentry_blk, 1);
+>>  
+>>  		 /* copy data from inline dentry block to new dentry block */
+>>  		memcpy(dst.bitmap, src.bitmap, src.nr_bitmap);
+>> @@ -493,7 +499,7 @@ int convert_inline_dentry(struct f2fs_sb_info *sbi, struct f2fs_node *node,
+>>  	}
+>>  
+>>  	make_empty_dir(sbi, node);
+>> -	make_dentry_ptr(&d, (void *)inline_data, 2);
+>> +	make_dentry_ptr(&d, node, (void *)inline_data, 2);
 >>  
 >>  	while (bit_pos < d.max) {
 >>  		struct f2fs_dir_entry *de;
->> @@ -444,19 +444,19 @@ static int f2fs_add_inline_entries(struct inode *dir,
->>  }
->>  
->>  static int f2fs_move_rehashed_dirents(struct inode *dir, struct page *ipage,
->> -				struct f2fs_inline_dentry *inline_dentry)
->> +							void *inline_dentry)
->>  {
->> -	struct f2fs_inline_dentry *backup_dentry;
->> +	void *backup_dentry;
->>  	int err;
->>  
->>  	backup_dentry = f2fs_kmalloc(F2FS_I_SB(dir),
->> -			sizeof(struct f2fs_inline_dentry), GFP_F2FS_ZERO);
->> +				MAX_INLINE_DATA(dir), GFP_F2FS_ZERO);
->>  	if (!backup_dentry) {
->>  		f2fs_put_page(ipage, 1);
->>  		return -ENOMEM;
+>> diff --git a/fsck/dump.c b/fsck/dump.c
+>> index 22e2265..128dc53 100644
+>> --- a/fsck/dump.c
+>> +++ b/fsck/dump.c
+>> @@ -322,14 +322,14 @@ static void dump_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+>>  		DBG(3, "ino[0x%x] has inline data!\n", nid);
+>>  		/* recover from inline data */
+>>  		dev_write_dump(((unsigned char *)node_blk) + INLINE_DATA_OFFSET,
+>> -							0, MAX_INLINE_DATA);
+>> +						0, MAX_INLINE_DATA(node_blk));
+>>  		return;
 >>  	}
 >>  
->> -	memcpy(backup_dentry, inline_dentry, MAX_INLINE_DATA);
->> +	memcpy(backup_dentry, inline_dentry, MAX_INLINE_DATA(dir));
->>  	truncate_inline_inode(dir, ipage, 0);
+>>  	/* check data blocks in inode */
+>>  	for (i = 0; i < ADDRS_PER_INODE(&node_blk->i); i++, ofs++)
+>> -		dump_data_blk(sbi, ofs * F2FS_BLKSIZE,
+>> -				le32_to_cpu(node_blk->i.i_addr[i]));
+>> +		dump_data_blk(sbi, ofs * F2FS_BLKSIZE, le32_to_cpu(
+>> +			node_blk->i.i_addr[get_extra_isize(node_blk) + i]));
 >>  
->>  	unlock_page(ipage);
->> @@ -473,9 +473,9 @@ static int f2fs_move_rehashed_dirents(struct inode *dir, struct page *ipage,
->>  	return 0;
->>  recover:
->>  	lock_page(ipage);
->> -	memcpy(inline_dentry, backup_dentry, MAX_INLINE_DATA);
->> +	memcpy(inline_dentry, backup_dentry, MAX_INLINE_DATA(dir));
->>  	f2fs_i_depth_write(dir, 0);
->> -	f2fs_i_size_write(dir, MAX_INLINE_DATA);
->> +	f2fs_i_size_write(dir, MAX_INLINE_DATA(dir));
->>  	set_page_dirty(ipage);
->>  	f2fs_put_page(ipage, 1);
+>>  	/* check node blocks in inode */
+>>  	for (i = 0; i < 5; i++) {
+>> diff --git a/fsck/f2fs.h b/fsck/f2fs.h
+>> index d1626e3..871cffc 100644
+>> --- a/fsck/f2fs.h
+>> +++ b/fsck/f2fs.h
+>> @@ -233,7 +233,9 @@ static inline struct sit_info *SIT_I(struct f2fs_sb_info *sbi)
 >>  
->> @@ -484,7 +484,7 @@ static int f2fs_move_rehashed_dirents(struct inode *dir, struct page *ipage,
+>>  static inline void *inline_data_addr(struct f2fs_node *node_blk)
+>>  {
+>> -	return (void *)&(node_blk->i.i_addr[1]);
+>> +	int ofs = get_extra_isize(node_blk) + DEF_INLINE_RESERVED_SIZE;
+>> +
+>> +	return (void *)&(node_blk->i.i_addr[ofs]);
 >>  }
 >>  
->>  static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
->> -				struct f2fs_inline_dentry *inline_dentry)
->> +							void *inline_dentry)
->>  {
->>  	if (!F2FS_I(dir)->i_dir_level)
->>  		return f2fs_move_inline_dirents(dir, ipage, inline_dentry);
->> @@ -500,7 +500,7 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *new_name,
->>  	struct page *ipage;
->>  	unsigned int bit_pos;
->>  	f2fs_hash_t name_hash;
->> -	struct f2fs_inline_dentry *inline_dentry = NULL;
->> +	void *inline_dentry = NULL;
->>  	struct f2fs_dentry_ptr d;
->>  	int slots = GET_DENTRY_SLOTS(new_name->len);
->>  	struct page *page = NULL;
->> @@ -510,8 +510,8 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *new_name,
->>  	if (IS_ERR(ipage))
->>  		return PTR_ERR(ipage);
->>  
->> -	inline_dentry = inline_data_addr(ipage);
->> -	make_dentry_ptr_inline(NULL, &d, inline_dentry);
->> +	inline_dentry = inline_data_addr(dir, ipage);
->> +	make_dentry_ptr_inline(dir, &d, inline_dentry);
->>  
->>  	bit_pos = room_for_filename(d.bitmap, slots, d.max);
->>  	if (bit_pos >= d.max) {
->> @@ -557,8 +557,8 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *new_name,
->>  void f2fs_delete_inline_entry(struct f2fs_dir_entry *dentry, struct page *page,
->>  					struct inode *dir, struct inode *inode)
->>  {
->> -	struct f2fs_inline_dentry *inline_dentry;
->>  	struct f2fs_dentry_ptr d;
->> +	void *inline_dentry;
->>  	int slots = GET_DENTRY_SLOTS(le16_to_cpu(dentry->name_len));
->>  	unsigned int bit_pos;
->>  	int i;
->> @@ -566,8 +566,8 @@ void f2fs_delete_inline_entry(struct f2fs_dir_entry *dentry, struct page *page,
->>  	lock_page(page);
->>  	f2fs_wait_on_page_writeback(page, NODE, true);
->>  
->> -	inline_dentry = inline_data_addr(page);
->> -	make_dentry_ptr_inline(NULL, &d, inline_dentry);
->> +	inline_dentry = inline_data_addr(dir, page);
->> +	make_dentry_ptr_inline(dir, &d, inline_dentry);
->>  
->>  	bit_pos = dentry - d.dentry;
->>  	for (i = 0; i < slots; i++)
->> @@ -588,15 +588,15 @@ bool f2fs_empty_inline_dir(struct inode *dir)
->>  	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
->>  	struct page *ipage;
->>  	unsigned int bit_pos = 2;
->> -	struct f2fs_inline_dentry *inline_dentry;
->> +	void *inline_dentry;
->>  	struct f2fs_dentry_ptr d;
->>  
->>  	ipage = get_node_page(sbi, dir->i_ino);
->>  	if (IS_ERR(ipage))
->>  		return false;
->>  
->> -	inline_dentry = inline_data_addr(ipage);
->> -	make_dentry_ptr_inline(NULL, &d, inline_dentry);
->> +	inline_dentry = inline_data_addr(dir, ipage);
->> +	make_dentry_ptr_inline(dir, &d, inline_dentry);
->>  
->>  	bit_pos = find_next_bit_le(d.bitmap, d.max, bit_pos);
->>  
->> @@ -612,9 +612,9 @@ int f2fs_read_inline_dir(struct file *file, struct dir_context *ctx,
->>  				struct fscrypt_str *fstr)
->>  {
->>  	struct inode *inode = file_inode(file);
->> -	struct f2fs_inline_dentry *inline_dentry = NULL;
->>  	struct page *ipage = NULL;
->>  	struct f2fs_dentry_ptr d;
->> +	void *inline_dentry = NULL;
->>  	int err;
->>  
->>  	make_dentry_ptr_inline(inode, &d, inline_dentry);
->> @@ -626,7 +626,7 @@ int f2fs_read_inline_dir(struct file *file, struct dir_context *ctx,
->>  	if (IS_ERR(ipage))
->>  		return PTR_ERR(ipage);
->>  
->> -	inline_dentry = inline_data_addr(ipage);
->> +	inline_dentry = inline_data_addr(inode, ipage);
->>  
->>  	make_dentry_ptr_inline(inode, &d, inline_dentry);
->>  
->> @@ -657,7 +657,7 @@ int f2fs_inline_data_fiemap(struct inode *inode,
+>>  static inline unsigned int ofs_of_node(struct f2fs_node *node_blk)
+>> diff --git a/fsck/fsck.c b/fsck/fsck.c
+>> index 84196cf..7a81855 100644
+>> --- a/fsck/fsck.c
+>> +++ b/fsck/fsck.c
+>> @@ -226,10 +226,13 @@ static int is_valid_summary(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
 >>  		goto out;
+>>  
+>>  	/* check its block address */
+>> -	if (node_blk->footer.nid == node_blk->footer.ino)
+>> -		target_blk_addr = node_blk->i.i_addr[ofs_in_node];
+>> -	else
+>> +	if (node_blk->footer.nid == node_blk->footer.ino) {
+>> +		int ofs = get_extra_isize(node_blk);
+>> +
+>> +		target_blk_addr = node_blk->i.i_addr[ofs + ofs_in_node];
+>> +	} else {
+>>  		target_blk_addr = node_blk->dn.addr[ofs_in_node];
+>> +	}
+>>  
+>>  	if (blk_addr == le32_to_cpu(target_blk_addr))
+>>  		ret = 1;
+>> @@ -658,20 +661,22 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+>>  		goto check;
+>>  
+>>  	if((node_blk->i.i_inline & F2FS_INLINE_DATA)) {
+>> -		if (le32_to_cpu(node_blk->i.i_addr[0]) != 0) {
+>> +		int ofs = get_extra_isize(node_blk);
+>> +
+>> +		if (le32_to_cpu(node_blk->i.i_addr[ofs]) != 0) {
+>>  			/* should fix this bug all the time */
+>>  			FIX_MSG("inline_data has wrong 0'th block = %x",
+>> -					le32_to_cpu(node_blk->i.i_addr[0]));
+>> -			node_blk->i.i_addr[0] = 0;
+>> +					le32_to_cpu(node_blk->i.i_addr[ofs]));
+>> +			node_blk->i.i_addr[ofs] = 0;
+>>  			node_blk->i.i_blocks = cpu_to_le64(*blk_cnt);
+>>  			need_fix = 1;
+>>  		}
+>>  		if (!(node_blk->i.i_inline & F2FS_DATA_EXIST)) {
+>> -			char buf[MAX_INLINE_DATA];
+>> -			memset(buf, 0, MAX_INLINE_DATA);
+>> +			char buf[MAX_INLINE_DATA(node_blk)];
+>> +			memset(buf, 0, MAX_INLINE_DATA(node_blk));
+>>  
+>> -			if (memcmp(buf, &node_blk->i.i_addr[1],
+>> -							MAX_INLINE_DATA)) {
+>> +			if (memcmp(buf, inline_data_addr(node_blk),
+>> +						MAX_INLINE_DATA(node_blk))) {
+>>  				FIX_MSG("inline_data has DATA_EXIST");
+>>  				node_blk->i.i_inline |= F2FS_DATA_EXIST;
+>>  				need_fix = 1;
+>> @@ -710,7 +715,8 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+>>  	/* check data blocks in inode */
+>>  	for (idx = 0; idx < ADDRS_PER_INODE(&node_blk->i);
+>>  						idx++, child.pgofs++) {
+>> -		block_t blkaddr = le32_to_cpu(node_blk->i.i_addr[idx]);
+>> +		int ofs = get_extra_isize(node_blk);
+>> +		block_t blkaddr = le32_to_cpu(node_blk->i.i_addr[ofs + idx]);
+>>  
+>>  		/* check extent info */
+>>  		check_extent_info(&child, blkaddr, 0);
+>> @@ -724,9 +730,10 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+>>  			if (!ret) {
+>>  				*blk_cnt = *blk_cnt + 1;
+>>  			} else if (c.fix_on) {
+>> -				node_blk->i.i_addr[idx] = 0;
+>> +				node_blk->i.i_addr[ofs + idx] = 0;
+>>  				need_fix = 1;
+>> -				FIX_MSG("[0x%x] i_addr[%d] = 0", nid, idx);
+>> +				FIX_MSG("[0x%x] i_addr[%d] = 0",
+>> +							nid, ofs + idx);
+>>  			}
+>>  		}
+>>  	}
+>> @@ -1362,7 +1369,7 @@ int fsck_chk_inline_dentries(struct f2fs_sb_info *sbi,
+>>  	inline_dentry = inline_data_addr(node_blk);
+>>  	ASSERT(inline_dentry != NULL);
+>>  
+>> -	make_dentry_ptr(&d, inline_dentry, 2);
+>> +	make_dentry_ptr(&d, node_blk, inline_dentry, 2);
+>>  
+>>  	fsck->dentry_depth++;
+>>  	dentries = __chk_dentries(sbi, child,
+>> diff --git a/fsck/fsck.h b/fsck/fsck.h
+>> index 5d2cfd6..1e8ed0b 100644
+>> --- a/fsck/fsck.h
+>> +++ b/fsck/fsck.h
+>> @@ -221,7 +221,7 @@ block_t new_node_block(struct f2fs_sb_info *,
+>>  					struct dnode_of_data *, unsigned int);
+>>  void get_dnode_of_data(struct f2fs_sb_info *, struct dnode_of_data *,
+>>  					pgoff_t, int);
+>> -void make_dentry_ptr(struct f2fs_dentry_ptr *, void *, int);
+>> +void make_dentry_ptr(struct f2fs_dentry_ptr *, struct f2fs_node *, void *, int);
+>>  int f2fs_create(struct f2fs_sb_info *, struct dentry *);
+>>  int f2fs_mkdir(struct f2fs_sb_info *, struct dentry *);
+>>  int f2fs_symlink(struct f2fs_sb_info *, struct dentry *);
+>> diff --git a/fsck/mount.c b/fsck/mount.c
+>> index a0b0bea..693e4a8 100644
+>> --- a/fsck/mount.c
+>> +++ b/fsck/mount.c
+>> @@ -41,6 +41,7 @@ void print_inode_info(struct f2fs_inode *inode, int name)
+>>  	unsigned int i = 0;
+>>  	int namelen = le32_to_cpu(inode->i_namelen);
+>>  	int enc_name = file_enc_name(inode);
+>> +	int ofs = __get_extra_isize(inode);
+>>  
+>>  	namelen = convert_encrypted_name(inode->i_name, namelen, en, enc_name);
+>>  	en[namelen] = '\0';
+>> @@ -87,12 +88,15 @@ void print_inode_info(struct f2fs_inode *inode, int name)
+>>  			le32_to_cpu(inode->i_ext.blk_addr),
+>>  			le32_to_cpu(inode->i_ext.len));
+>>  
+>> -	DISP_u32(inode, i_addr[0]);	/* Pointers to data blocks */
+>> -	DISP_u32(inode, i_addr[1]);	/* Pointers to data blocks */
+>> -	DISP_u32(inode, i_addr[2]);	/* Pointers to data blocks */
+>> -	DISP_u32(inode, i_addr[3]);	/* Pointers to data blocks */
+>> +	DISP_u16(inode, i_extra_isize);
+>> +	DISP_u16(inode, i_padding);
+>>  
+>> -	for (i = 4; i < ADDRS_PER_INODE(inode); i++) {
+>> +	DISP_u32(inode, i_addr[ofs]);		/* Pointers to data blocks */
+>> +	DISP_u32(inode, i_addr[ofs + 1]);	/* Pointers to data blocks */
+>> +	DISP_u32(inode, i_addr[ofs + 2]);	/* Pointers to data blocks */
+>> +	DISP_u32(inode, i_addr[ofs + 3]);	/* Pointers to data blocks */
+>> +
+>> +	for (i = ofs + 4; i < ADDRS_PER_INODE(inode); i++) {
+>>  		if (inode->i_addr[i] != 0x0) {
+>>  			printf("i_addr[0x%x] points data block\r\t\t[0x%4x]\n",
+>>  					i, le32_to_cpu(inode->i_addr[i]));
+>> @@ -1357,8 +1361,10 @@ void update_data_blkaddr(struct f2fs_sb_info *sbi, nid_t nid,
+>>  
+>>  	/* check its block address */
+>>  	if (node_blk->footer.nid == node_blk->footer.ino) {
+>> -		oldaddr = le32_to_cpu(node_blk->i.i_addr[ofs_in_node]);
+>> -		node_blk->i.i_addr[ofs_in_node] = cpu_to_le32(newaddr);
+>> +		int ofs = get_extra_isize(node_blk);
+>> +
+>> +		oldaddr = le32_to_cpu(node_blk->i.i_addr[ofs + ofs_in_node]);
+>> +		node_blk->i.i_addr[ofs + ofs_in_node] = cpu_to_le32(newaddr);
+>>  	} else {
+>>  		oldaddr = le32_to_cpu(node_blk->dn.addr[ofs_in_node]);
+>>  		node_blk->dn.addr[ofs_in_node] = cpu_to_le32(newaddr);
+>> diff --git a/fsck/node.c b/fsck/node.c
+>> index fe923e5..e37b817 100644
+>> --- a/fsck/node.c
+>> +++ b/fsck/node.c
+>> @@ -105,10 +105,10 @@ block_t new_node_block(struct f2fs_sb_info *sbi,
+>>   *
+>>   * By default, it sets inline_xattr and inline_data
+>>   */
+>> -static int get_node_path(unsigned long block,
+>> +static int get_node_path(struct f2fs_node *node, unsigned long block,
+>>  				int offset[4], unsigned int noffset[4])
+>>  {
+>> -	const long direct_index = DEF_ADDRS_PER_INODE_INLINE_XATTR;
+>> +	const long direct_index = ADDRS_PER_INODE(&node->i);
+>>  	const long direct_blks = ADDRS_PER_BLOCK;
+>>  	const long dptrs_per_blk = NIDS_PER_BLOCK;
+>>  	const long indirect_blks = ADDRS_PER_BLOCK * NIDS_PER_BLOCK;
+>> @@ -191,7 +191,7 @@ void get_dnode_of_data(struct f2fs_sb_info *sbi, struct dnode_of_data *dn,
+>>  	int level, i;
+>>  	int ret;
+>>  
+>> -	level = get_node_path(index, offset, noffset);
+>> +	level = get_node_path(dn->inode_blk, index, offset, noffset);
+>>  
+>>  	nids[0] = dn->nid;
+>>  	parent = dn->inode_blk;
+>> diff --git a/fsck/node.h b/fsck/node.h
+>> index 721e5b7..cbf7ed7 100644
+>> --- a/fsck/node.h
+>> +++ b/fsck/node.h
+>> @@ -26,9 +26,14 @@ static inline int IS_INODE(struct f2fs_node *node)
+>>  	return ((node)->footer.nid == (node)->footer.ino);
+>>  }
+>>  
+>> +static inline __le32 *blkaddr_in_inode(struct f2fs_node *node)
+>> +{
+>> +	return node->i.i_addr + get_extra_isize(node);
+>> +}
+>> +
+>>  static inline __le32 *blkaddr_in_node(struct f2fs_node *node)
+>>  {
+>> -	return IS_INODE(node) ? node->i.i_addr : node->dn.addr;
+>> +	return IS_INODE(node) ? blkaddr_in_inode(node) : node->dn.addr;
+>>  }
+>>  
+>>  static inline block_t datablock_addr(struct f2fs_node *node_page,
+>> diff --git a/fsck/segment.c b/fsck/segment.c
+>> index 6b2f6c1..e21339b 100644
+>> --- a/fsck/segment.c
+>> +++ b/fsck/segment.c
+>> @@ -179,7 +179,7 @@ int f2fs_build_file(struct f2fs_sb_info *sbi, struct dentry *de)
 >>  	}
 >>  
->> -	ilen = min_t(size_t, MAX_INLINE_DATA, i_size_read(inode));
->> +	ilen = min_t(size_t, MAX_INLINE_DATA(inode), i_size_read(inode));
->>  	if (start >= ilen)
->>  		goto out;
->>  	if (start + len < ilen)
->> @@ -666,7 +666,8 @@ int f2fs_inline_data_fiemap(struct inode *inode,
+>>  	/* inline_data support */
+>> -	if (de->size <= MAX_INLINE_DATA) {
+>> +	if (de->size <= DEF_MAX_INLINE_DATA) {
+>>  		struct node_info ni;
+>>  		struct f2fs_node *node_blk;
+>>  		int ret;
+>> @@ -194,9 +194,10 @@ int f2fs_build_file(struct f2fs_sb_info *sbi, struct dentry *de)
 >>  
->>  	get_node_info(F2FS_I_SB(inode), inode->i_ino, &ni);
->>  	byteaddr = (__u64)ni.blk_addr << inode->i_sb->s_blocksize_bits;
->> -	byteaddr += (char *)inline_data_addr(ipage) - (char *)F2FS_INODE(ipage);
->> +	byteaddr += (char *)inline_data_addr(inode, ipage) -
->> +					(char *)F2FS_INODE(ipage);
->>  	err = fiemap_fill_next_extent(fieinfo, start, byteaddr, ilen, flags);
->>  out:
->>  	f2fs_put_page(ipage, 1);
->> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->> index 6cd312a17c69..32ec6b23fe01 100644
->> --- a/fs/f2fs/inode.c
->> +++ b/fs/f2fs/inode.c
->> @@ -87,9 +87,9 @@ static void __set_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
+>>  		node_blk->i.i_inline |= F2FS_INLINE_DATA;
+>>  		node_blk->i.i_inline |= F2FS_DATA_EXIST;
+>> +		node_blk->i.i_inline |= F2FS_EXTRA_ATTR;
+>>  		n = read(fd, buffer, BLOCK_SZ);
+>>  		ASSERT(n == de->size);
+>> -		memcpy(&node_blk->i.i_addr[1], buffer, de->size);
+>> +		memcpy(inline_data_addr(node_blk), buffer, de->size);
 >>  
->>  static void __recover_inline_status(struct inode *inode, struct page *ipage)
->>  {
->> -	void *inline_data = inline_data_addr(ipage);
->> +	void *inline_data = inline_data_addr(inode, ipage);
->>  	__le32 *start = inline_data;
->> -	__le32 *end = start + MAX_INLINE_DATA / sizeof(__le32);
->> +	__le32 *end = start + MAX_INLINE_DATA(inode) / sizeof(__le32);
+>>  		node_blk->i.i_size = cpu_to_le64(de->size);
 >>  
->>  	while (start < end) {
->>  		if (*start++) {
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index dd92170e0d6d..71ad30214ef0 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -446,6 +446,9 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
->>  #endif
->>  	/* Will be used by directory only */
->>  	fi->i_dir_level = F2FS_SB(sb)->dir_level;
+>> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+>> index dd2635b..88ceb61 100644
+>> --- a/include/f2fs_fs.h
+>> +++ b/include/f2fs_fs.h
+>> @@ -167,6 +167,14 @@ static inline uint64_t bswap_64(uint64_t val)
+>>  		printf("%-30s" fmt, #member, ((ptr)->member));	\
+>>  	} while (0)
+>>  
+>> +#define DISP_u16(ptr, member)						\
+>> +	do {								\
+>> +		assert(sizeof((ptr)->member) == 2);			\
+>> +		printf("%-30s" "\t\t[0x%8x : %u]\n",			\
+>> +			#member, le16_to_cpu(((ptr)->member)),		\
+>> +			le16_to_cpu(((ptr)->member)));			\
+>> +	} while (0)
 >> +
->> +	fi->i_inline_reserved = DEF_INLINE_RESERVED_SIZE;
->> +
->>  	return &fi->vfs_inode;
->>  }
->>  
->> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
->> index b6feed6547ce..060b1c5b0836 100644
->> --- a/include/linux/f2fs_fs.h
->> +++ b/include/linux/f2fs_fs.h
->> @@ -206,9 +206,6 @@ struct f2fs_extent {
+>>  #define DISP_u32(ptr, member)						\
+>>  	do {								\
+>>  		assert(sizeof((ptr)->member) <= 4);			\
+>> @@ -585,6 +593,8 @@ struct f2fs_extent {
+>>  #define F2FS_NAME_LEN		255
+>>  #define F2FS_INLINE_XATTR_ADDRS	50	/* 200 bytes for inline xattrs */
+>>  #define DEF_ADDRS_PER_INODE	923	/* Address Pointers in an Inode */
+>> +#define CUR_ADDRS_PER_INODE(inode)	(DEF_ADDRS_PER_INODE - \
+>> +					__get_extra_isize(inode))
+>>  #define ADDRS_PER_INODE(i)	addrs_per_inode(i)
+>>  #define DEF_ADDRS_PER_INODE_INLINE_XATTR				\
+>>  		(DEF_ADDRS_PER_INODE - F2FS_INLINE_XATTR_ADDRS)
+>> @@ -602,12 +612,27 @@ struct f2fs_extent {
+>>  #define F2FS_INLINE_DENTRY	0x04	/* file inline dentry flag */
 >>  #define F2FS_DATA_EXIST		0x08	/* file inline data exist flag */
 >>  #define F2FS_INLINE_DOTS	0x10	/* file having implicit dot dentries */
+>> +#define F2FS_EXTRA_ATTR		0x20	/* file having extra attribute */
 >>  
->> -#define MAX_INLINE_DATA		(sizeof(__le32) * (DEF_ADDRS_PER_INODE - \
->> -						F2FS_INLINE_XATTR_ADDRS - 1))
+>> -#define MAX_INLINE_DATA (sizeof(__le32) *				\
+>> -			(DEF_ADDRS_PER_INODE_INLINE_XATTR - 1))
+>> +#if !defined(offsetof)
+>> +#define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
+>> +#endif
+>>  
+>> +#define F2FS_TOTAL_EXTRA_ATTR_SIZE			\
+>> +	(offsetof(struct f2fs_inode, i_extra_end) -	\
+>> +	offsetof(struct f2fs_inode, i_extra_isize))	\
+>> +
+>> +#define MAX_INLINE_DATA(node) (sizeof(__le32) *				\
+>> +				(DEF_ADDRS_PER_INODE_INLINE_XATTR -	\
+>> +				get_extra_isize(node) -			\
+>> +				DEF_INLINE_RESERVED_SIZE))
+>> +#define DEF_MAX_INLINE_DATA	(sizeof(__le32) *			\
+>> +				(DEF_ADDRS_PER_INODE_INLINE_XATTR -	\
+>> +				F2FS_TOTAL_EXTRA_ATTR_SIZE -		\
+>> +				DEF_INLINE_RESERVED_SIZE))
+>>  #define INLINE_DATA_OFFSET	(PAGE_CACHE_SIZE - sizeof(struct node_footer) \
+>> -				- sizeof(__le32)*(DEF_ADDRS_PER_INODE + 5 - 1))
+>> +				- sizeof(__le32)*(DEF_ADDRS_PER_INODE + 5 - \
+>> +				DEF_INLINE_RESERVED_SIZE))
+>>  
+>>  #define DEF_DIR_LEVEL		0
+>>  
+>> @@ -648,8 +673,14 @@ struct f2fs_inode {
+>>  
+>>  	struct f2fs_extent i_ext;	/* caching a largest extent */
+>>  
+>> -	__le32 i_addr[DEF_ADDRS_PER_INODE];	/* Pointers to data blocks */
 >> -
->>  struct f2fs_inode {
->>  	__le16 i_mode;			/* file mode */
->>  	__u8 i_advise;			/* file hints */
->> @@ -465,7 +462,7 @@ typedef __le32	f2fs_hash_t;
->>  #define MAX_DIR_BUCKETS		(1 << ((MAX_DIR_HASH_DEPTH / 2) - 1))
->>  
->>  /*
->> - * space utilization of regular dentry and inline dentry
->> + * space utilization of regular dentry and inline dentry (w/o extra reservation)
->>   *		regular dentry			inline dentry
->>   * bitmap	1 * 27 = 27			1 * 23 = 23
->>   * reserved	1 * 3 = 3			1 * 7 = 7
->> @@ -501,24 +498,6 @@ struct f2fs_dentry_block {
+>> +	union {
+>> +		struct {
+>> +			__le16 i_extra_isize;	/* extra inode attribute size */
+>> +			__le16 i_padding;	/* padding */
+>> +			__le32 i_extra_end[0];	/* for attribute size calculation */
+>> +		};
+>> +		__le32 i_addr[DEF_ADDRS_PER_INODE];	/* Pointers to data blocks */
+>> +	};
+>>  	__le32 i_nid[5];		/* direct(2), indirect(2),
+>>  						double_indirect(1) node id */
+>>  } __attribute__((packed));
+>> @@ -909,23 +940,19 @@ struct f2fs_dentry_block {
 >>  	__u8 filename[NR_DENTRY_IN_BLOCK][F2FS_SLOT_LEN];
->>  } __packed;
+>>  } __attribute__((packed));
 >>  
->> -/* for inline dir */
+>> +/* for inline stuff */
+>> +#define DEF_INLINE_RESERVED_SIZE	1
+>> +
+>>  /* for inline dir */
 >> -#define NR_INLINE_DENTRY	(MAX_INLINE_DATA * BITS_PER_BYTE / \
->> -				((SIZE_OF_DIR_ENTRY + F2FS_SLOT_LEN) * \
->> -				BITS_PER_BYTE + 1))
+>> +#define NR_INLINE_DENTRY(node)	(MAX_INLINE_DATA(node) * BITS_PER_BYTE / \
+>>  				((SIZE_OF_DIR_ENTRY + F2FS_SLOT_LEN) * \
+>>  				BITS_PER_BYTE + 1))
 >> -#define INLINE_DENTRY_BITMAP_SIZE	((NR_INLINE_DENTRY + \
->> -					BITS_PER_BYTE - 1) / BITS_PER_BYTE)
+>> +#define INLINE_DENTRY_BITMAP_SIZE(node)	((NR_INLINE_DENTRY(node) + \
+>>  					BITS_PER_BYTE - 1) / BITS_PER_BYTE)
 >> -#define INLINE_RESERVED_SIZE	(MAX_INLINE_DATA - \
->> -				((SIZE_OF_DIR_ENTRY + F2FS_SLOT_LEN) * \
+>> +#define INLINE_RESERVED_SIZE(node)	(MAX_INLINE_DATA(node) - \
+>>  				((SIZE_OF_DIR_ENTRY + F2FS_SLOT_LEN) * \
 >> -				NR_INLINE_DENTRY + INLINE_DENTRY_BITMAP_SIZE))
 >> -
 >> -/* inline directory entry structure */
@@ -590,13 +654,73 @@ Thanks,
 >> -	__u8 reserved[INLINE_RESERVED_SIZE];
 >> -	struct f2fs_dir_entry dentry[NR_INLINE_DENTRY];
 >> -	__u8 filename[NR_INLINE_DENTRY][F2FS_SLOT_LEN];
->> -} __packed;
->> -
+>> -} __attribute__((packed));
+>> +				NR_INLINE_DENTRY(node) + \
+>> +				INLINE_DENTRY_BITMAP_SIZE(node)))
+>>  
 >>  /* file types used in inode_info->flags */
->>  enum {
->>  	F2FS_FT_UNKNOWN,
+>>  enum FILE_TYPE {
+>> @@ -990,6 +1017,20 @@ extern int dev_read_version(void *, __u64, size_t);
+>>  extern void get_kernel_version(__u8 *);
+>>  f2fs_hash_t f2fs_dentry_hash(const unsigned char *, int);
+>>  
+>> +static inline bool f2fs_has_extra_isize(struct f2fs_inode *inode)
+>> +{
+>> +	return (inode->i_inline & F2FS_EXTRA_ATTR);
+>> +}
+>> +
+>> +static inline int __get_extra_isize(struct f2fs_inode *inode)
+>> +{
+>> +	if (f2fs_has_extra_isize(inode))
+>> +		return le16_to_cpu(inode->i_extra_isize) / sizeof(__le32);
+>> +	return 0;
+>> +}
+>> +
+>> +#define get_extra_isize(node)	__get_extra_isize(&node->i)
+>> +
+>>  #define F2FS_ZONED_NONE		0
+>>  #define F2FS_ZONED_HA		1
+>>  #define F2FS_ZONED_HM		2
+>> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+>> index 31836db..a3091bb 100644
+>> --- a/lib/libf2fs.c
+>> +++ b/lib/libf2fs.c
+>> @@ -457,8 +457,8 @@ f2fs_hash_t f2fs_dentry_hash(const unsigned char *name, int len)
+>>  unsigned int addrs_per_inode(struct f2fs_inode *i)
+>>  {
+>>  	if (i->i_inline & F2FS_INLINE_XATTR)
+>> -		return DEF_ADDRS_PER_INODE - F2FS_INLINE_XATTR_ADDRS;
+>> -	return DEF_ADDRS_PER_INODE;
+>> +		return CUR_ADDRS_PER_INODE(i) - F2FS_INLINE_XATTR_ADDRS;
+>> +	return CUR_ADDRS_PER_INODE(i);
+>>  }
+>>  
+>>  /*
+>> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+>> index ff1153a..4f2b403 100644
+>> --- a/mkfs/f2fs_format.c
+>> +++ b/mkfs/f2fs_format.c
+>> @@ -922,10 +922,12 @@ static int f2fs_write_root_inode(void)
+>>  	raw_node->i.i_flags = 0;
+>>  	raw_node->i.i_current_depth = cpu_to_le32(1);
+>>  	raw_node->i.i_dir_level = DEF_DIR_LEVEL;
+>> +	raw_node->i.i_inline = F2FS_EXTRA_ATTR;
+>> +	raw_node->i.i_extra_isize = cpu_to_le16(F2FS_TOTAL_EXTRA_ATTR_SIZE);
+>>  
+>>  	data_blk_nor = get_sb(main_blkaddr) +
+>>  		c.cur_seg[CURSEG_HOT_DATA] * c.blks_per_seg;
+>> -	raw_node->i.i_addr[0] = cpu_to_le32(data_blk_nor);
+>> +	raw_node->i.i_addr[get_extra_isize(raw_node)] = cpu_to_le32(data_blk_nor);
+>>  
+>>  	raw_node->i.i_ext.fofs = 0;
+>>  	raw_node->i.i_ext.blk_addr = 0;
 >> -- 
 >> 2.13.0.90.g1eb437020
 > 
 > .
 > 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
