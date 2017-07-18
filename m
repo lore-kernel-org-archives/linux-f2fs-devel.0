@@ -1,10 +1,8 @@
 From: Chao Yu <chao@kernel.org>
-Subject: [PATCH v2 4/6] f2fs: support project quota
-Date: Wed, 19 Jul 2017 00:19:07 +0800
-Message-ID: <20170718161907.14453-3-chao@kernel.org>
-References: <20170718161907.14453-1-chao@kernel.org>
+Subject: [PATCH v2 2/3] f2fs-tools: enhance on-disk inode structure scalability
+Date: Wed, 19 Jul 2017 00:23:20 +0800
+Message-ID: <20170718162321.14673-1-chao@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170718161907.14453-1-chao@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
@@ -12,368 +10,686 @@ List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-This patch adds to support plain project quota.
+This patch adds an option 'extra_attr' in mkfs for enabling v2 f2fs
+inode format in kernel codes.
+
+Also this patch makes fsck to support recognize v2 inode format,
+below is v2 format description:
+
+Original one:
+
+struct f2fs_inode {
+	...
+	struct f2fs_extent i_ext;
+	__le32 i_addr[DEF_ADDRS_PER_INODE];
+	__le32 i_nid[DEF_NIDS_PER_INODE];
+}
+
+Extended one:
+
+struct f2fs_inode {
+        ...
+        struct f2fs_extent i_ext;
+	union {
+		struct {
+			__le16 i_extra_isize;
+			__le16 i_padding;
+			__le32 i_extra_end[0];
+		};
+		__le32 i_addr[DEF_ADDRS_PER_INODE];
+	};
+        __le32 i_nid[DEF_NIDS_PER_INODE];
+}
+
+Once F2FS_EXTRA_ATTR is set, we will steal four bytes in the head of
+i_addr field for storing i_extra_isize and i_padding. with i_extra_isize,
+we can calculate actual size of reserved space in i_addr, available
+attribute fields included in total extra attribute fields for current
+inode can be described as below:
+
+  +--------------------+
+  | .i_mode            |
+  | ...                |
+  | .i_ext             |
+  +--------------------+
+  | .i_extra_isize     |-----+
+  | .i_padding         |     |
+  | .i_prjid           |     |
+  | .i_atime_extra     |     |
+  | .i_ctime_extra     |     |
+  | .i_mtime_extra     |<----+
+  | .i_inode_cs        |<----- store blkaddr/inline from here
+  | .i_xattr_cs        |
+  | ...                |
+  +--------------------+
+  |                    |
+  |    block address   |
+  |                    |
+  +--------------------+
+  | .i_nid             |
+  +--------------------+
+  |   node_footer      |
+  | (nid, ino, offset) |
+  +--------------------+
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- v2: rebase codes.
- Documentation/filesystems/f2fs.txt |  1 +
- fs/f2fs/f2fs.h                     | 29 +++++++++++++++++++++++++++++
- fs/f2fs/file.c                     | 13 -------------
- fs/f2fs/inode.c                    | 23 ++++++++++++++++++++++-
- fs/f2fs/namei.c                    | 31 +++++++++++++++++++++++++++++++
- fs/f2fs/node.c                     |  6 +++++-
- fs/f2fs/super.c                    | 17 ++++++++++++++++-
- include/linux/f2fs_fs.h            |  3 +++
- 8 files changed, 107 insertions(+), 16 deletions(-)
+ v2:
+ - update comments.
+ - add new feature for enabling v2 inode format.
+ fsck/dir.c              | 51 ++++++++++++++++++++-------------
+ fsck/dump.c             |  6 ++--
+ fsck/f2fs.h             |  4 ++-
+ fsck/fsck.c             | 35 ++++++++++++++---------
+ fsck/fsck.h             |  2 +-
+ fsck/mount.c            | 23 ++++++++++-----
+ fsck/node.c             |  6 ++--
+ fsck/node.h             |  7 ++++-
+ fsck/segment.c          | 10 +++++--
+ include/f2fs_fs.h       | 76 ++++++++++++++++++++++++++++++++++++++-----------
+ lib/libf2fs.c           |  4 +--
+ mkfs/f2fs_format.c      |  8 +++++-
+ mkfs/f2fs_format_main.c |  2 ++
+ 13 files changed, 162 insertions(+), 72 deletions(-)
 
-diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-index 273ccb26885e..b8f495a8b67d 100644
---- a/Documentation/filesystems/f2fs.txt
-+++ b/Documentation/filesystems/f2fs.txt
-@@ -164,6 +164,7 @@ io_bits=%u             Set the bit size of write IO requests. It should be set
-                        with "mode=lfs".
- usrquota               Enable plain user disk quota accounting.
- grpquota               Enable plain group disk quota accounting.
-+prjquota               Enable plain project quota accounting.
+diff --git a/fsck/dir.c b/fsck/dir.c
+index 62bc7b9..d2ac2df 100644
+--- a/fsck/dir.c
++++ b/fsck/dir.c
+@@ -34,7 +34,8 @@ next:
  
- ================================================================================
- DEBUGFS ENTRIES
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index cb5e88bc3a98..d37b6aeb553e 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -91,6 +91,7 @@ extern char *fault_name[FAULT_MAX];
- #define F2FS_MOUNT_LFS			0x00040000
- #define F2FS_MOUNT_USRQUOTA		0x00080000
- #define F2FS_MOUNT_GRPQUOTA		0x00100000
-+#define F2FS_MOUNT_PRJQUOTA		0x00200000
+ }
  
- #define clear_opt(sbi, option)	((sbi)->mount_opt.opt &= ~F2FS_MOUNT_##option)
- #define set_opt(sbi, option)	((sbi)->mount_opt.opt |= F2FS_MOUNT_##option)
-@@ -113,6 +114,7 @@ struct f2fs_mount_info {
+-void make_dentry_ptr(struct f2fs_dentry_ptr *d, void *src, int type)
++void make_dentry_ptr(struct f2fs_dentry_ptr *d, struct f2fs_node *node_blk,
++							void *src, int type)
+ {
+ 	if (type == 1) {
+ 		struct f2fs_dentry_block *t = (struct f2fs_dentry_block *)src;
+@@ -44,12 +45,16 @@ void make_dentry_ptr(struct f2fs_dentry_ptr *d, void *src, int type)
+ 		d->dentry = t->dentry;
+ 		d->filename = t->filename;
+ 	} else {
+-		struct f2fs_inline_dentry *t = (struct f2fs_inline_dentry *)src;
+-		d->max = NR_INLINE_DENTRY;
+-		d->nr_bitmap = INLINE_DENTRY_BITMAP_SIZE;
+-		d->bitmap = t->dentry_bitmap;
+-		d->dentry = t->dentry;
+-		d->filename = t->filename;
++		int entry_cnt = NR_INLINE_DENTRY(node_blk);
++		int bitmap_size = INLINE_DENTRY_BITMAP_SIZE(node_blk);
++		int reserved_size = INLINE_RESERVED_SIZE(node_blk);
++
++		d->max = entry_cnt;
++		d->nr_bitmap = bitmap_size;
++		d->bitmap = src;
++		d->dentry = src + bitmap_size + reserved_size;
++		d->filename = src + bitmap_size + reserved_size +
++						SIZE_OF_DIR_ENTRY * entry_cnt;
+ 	}
+ }
+ 
+@@ -95,7 +100,7 @@ static struct f2fs_dir_entry *find_in_block(void *block,
+ {
+ 	struct f2fs_dentry_ptr d;
+ 
+-	make_dentry_ptr(&d, block, 1);
++	make_dentry_ptr(&d, NULL, block, 1);
+ 	return find_target_dentry(name, len, namehash, max_slots, &d);
+ }
+ 
+@@ -258,7 +263,7 @@ start:
+ 	goto start;
+ 
+ add_dentry:
+-	make_dentry_ptr(&d, (void *)dentry_blk, 1);
++	make_dentry_ptr(&d, NULL, (void *)dentry_blk, 1);
+ 	f2fs_update_dentry(ino, file_type, &d, name, name_len, dentry_hash, bit_pos);
+ 
+ 	ret = dev_write_block(dentry_blk, dn.data_blkaddr);
+@@ -338,7 +343,7 @@ static void make_empty_dir(struct f2fs_sb_info *sbi, struct f2fs_node *inode)
+ 	ret = dev_write_block(dent_blk, blkaddr);
+ 	ASSERT(ret >= 0);
+ 
+-	inode->i.i_addr[0] = cpu_to_le32(blkaddr);
++	inode->i.i_addr[get_extra_isize(inode)] = cpu_to_le32(blkaddr);
+ 	free(dent_blk);
+ }
+ 
+@@ -355,10 +360,10 @@ static void page_symlink(struct f2fs_sb_info *sbi, struct f2fs_node *inode,
+ 	get_node_info(sbi, ino, &ni);
+ 
+ 	/* store into inline_data */
+-	if (symlen + 1 <= MAX_INLINE_DATA) {
++	if (symlen + 1 <= MAX_INLINE_DATA(inode)) {
+ 		inode->i.i_inline |= F2FS_INLINE_DATA;
+ 		inode->i.i_inline |= F2FS_DATA_EXIST;
+-		memcpy(&inode->i.i_addr[1], symname, symlen);
++		memcpy(inline_data_addr(inode), symname, symlen);
+ 		return;
+ 	}
+ 
+@@ -373,7 +378,7 @@ static void page_symlink(struct f2fs_sb_info *sbi, struct f2fs_node *inode,
+ 	ret = dev_write_block(data_blk, blkaddr);
+ 	ASSERT(ret >= 0);
+ 
+-	inode->i.i_addr[0] = cpu_to_le32(blkaddr);
++	inode->i.i_addr[get_extra_isize(inode)] = cpu_to_le32(blkaddr);
+ 	free(data_blk);
+ }
+ 
+@@ -398,7 +403,7 @@ static void init_inode_block(struct f2fs_sb_info *sbi,
+ 		ASSERT(de->link);
+ 		mode |= S_IFLNK;
+ 		size = strlen(de->link);
+-		if (size + 1 > MAX_INLINE_DATA)
++		if (size + 1 > MAX_INLINE_DATA(node_blk))
+ 			blocks++;
+ 	} else {
+ 		ASSERT(0);
+@@ -427,6 +432,12 @@ static void init_inode_block(struct f2fs_sb_info *sbi,
+ 	memcpy(node_blk->i.i_name, de->name, de->len);
+ 	node_blk->i.i_name[de->len] = 0;
+ 
++	if (c.feature & F2FS_FEATURE_EXTRA_ATTR) {
++		node_blk->i.i_inline |= F2FS_EXTRA_ATTR;
++		node_blk->i.i_extra_isize =
++				cpu_to_le16(F2FS_TOTAL_EXTRA_ATTR_SIZE);
++	}
++
+ 	node_blk->footer.ino = cpu_to_le32(de->ino);
+ 	node_blk->footer.nid = cpu_to_le32(de->ino);
+ 	node_blk->footer.flag = 0;
+@@ -444,7 +455,7 @@ int convert_inline_dentry(struct f2fs_sb_info *sbi, struct f2fs_node *node,
+ 	struct f2fs_inode *inode = &(node->i);
+ 	unsigned int dir_level = node->i.i_dir_level;
+ 	nid_t ino = le32_to_cpu(node->footer.ino);
+-	char inline_data[MAX_INLINE_DATA];
++	char inline_data[MAX_INLINE_DATA(node)];
+ 	struct dnode_of_data dn = {0};
+ 	struct f2fs_dentry_ptr d;
+ 	unsigned long bit_pos = 0;
+@@ -453,8 +464,8 @@ int convert_inline_dentry(struct f2fs_sb_info *sbi, struct f2fs_node *node,
+ 	if (!(inode->i_inline & F2FS_INLINE_DENTRY))
+ 		return 0;
+ 
+-	memcpy(inline_data, inline_data_addr(node), MAX_INLINE_DATA);
+-	memset(inline_data_addr(node), 0, MAX_INLINE_DATA);
++	memcpy(inline_data, inline_data_addr(node), MAX_INLINE_DATA(node));
++	memset(inline_data_addr(node), 0, MAX_INLINE_DATA(node));
+ 	inode->i_inline &= ~F2FS_INLINE_DENTRY;
+ 
+ 	ret = dev_write_block(node, p_blkaddr);
+@@ -472,8 +483,8 @@ int convert_inline_dentry(struct f2fs_sb_info *sbi, struct f2fs_node *node,
+ 		if (dn.data_blkaddr == NULL_ADDR)
+ 			new_data_block(sbi, dentry_blk, &dn, CURSEG_HOT_DATA);
+ 
+-		make_dentry_ptr(&src, (void *)inline_data, 2);
+-		make_dentry_ptr(&dst, (void *)dentry_blk, 1);
++		make_dentry_ptr(&src, node, (void *)inline_data, 2);
++		make_dentry_ptr(&dst, NULL, (void *)dentry_blk, 1);
+ 
+ 		 /* copy data from inline dentry block to new dentry block */
+ 		memcpy(dst.bitmap, src.bitmap, src.nr_bitmap);
+@@ -493,7 +504,7 @@ int convert_inline_dentry(struct f2fs_sb_info *sbi, struct f2fs_node *node,
+ 	}
+ 
+ 	make_empty_dir(sbi, node);
+-	make_dentry_ptr(&d, (void *)inline_data, 2);
++	make_dentry_ptr(&d, node, (void *)inline_data, 2);
+ 
+ 	while (bit_pos < d.max) {
+ 		struct f2fs_dir_entry *de;
+diff --git a/fsck/dump.c b/fsck/dump.c
+index 22e2265..128dc53 100644
+--- a/fsck/dump.c
++++ b/fsck/dump.c
+@@ -322,14 +322,14 @@ static void dump_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 		DBG(3, "ino[0x%x] has inline data!\n", nid);
+ 		/* recover from inline data */
+ 		dev_write_dump(((unsigned char *)node_blk) + INLINE_DATA_OFFSET,
+-							0, MAX_INLINE_DATA);
++						0, MAX_INLINE_DATA(node_blk));
+ 		return;
+ 	}
+ 
+ 	/* check data blocks in inode */
+ 	for (i = 0; i < ADDRS_PER_INODE(&node_blk->i); i++, ofs++)
+-		dump_data_blk(sbi, ofs * F2FS_BLKSIZE,
+-				le32_to_cpu(node_blk->i.i_addr[i]));
++		dump_data_blk(sbi, ofs * F2FS_BLKSIZE, le32_to_cpu(
++			node_blk->i.i_addr[get_extra_isize(node_blk) + i]));
+ 
+ 	/* check node blocks in inode */
+ 	for (i = 0; i < 5; i++) {
+diff --git a/fsck/f2fs.h b/fsck/f2fs.h
+index d1626e3..871cffc 100644
+--- a/fsck/f2fs.h
++++ b/fsck/f2fs.h
+@@ -233,7 +233,9 @@ static inline struct sit_info *SIT_I(struct f2fs_sb_info *sbi)
+ 
+ static inline void *inline_data_addr(struct f2fs_node *node_blk)
+ {
+-	return (void *)&(node_blk->i.i_addr[1]);
++	int ofs = get_extra_isize(node_blk) + DEF_INLINE_RESERVED_SIZE;
++
++	return (void *)&(node_blk->i.i_addr[ofs]);
+ }
+ 
+ static inline unsigned int ofs_of_node(struct f2fs_node *node_blk)
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 84196cf..7a81855 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -226,10 +226,13 @@ static int is_valid_summary(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 		goto out;
+ 
+ 	/* check its block address */
+-	if (node_blk->footer.nid == node_blk->footer.ino)
+-		target_blk_addr = node_blk->i.i_addr[ofs_in_node];
+-	else
++	if (node_blk->footer.nid == node_blk->footer.ino) {
++		int ofs = get_extra_isize(node_blk);
++
++		target_blk_addr = node_blk->i.i_addr[ofs + ofs_in_node];
++	} else {
+ 		target_blk_addr = node_blk->dn.addr[ofs_in_node];
++	}
+ 
+ 	if (blk_addr == le32_to_cpu(target_blk_addr))
+ 		ret = 1;
+@@ -658,20 +661,22 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 		goto check;
+ 
+ 	if((node_blk->i.i_inline & F2FS_INLINE_DATA)) {
+-		if (le32_to_cpu(node_blk->i.i_addr[0]) != 0) {
++		int ofs = get_extra_isize(node_blk);
++
++		if (le32_to_cpu(node_blk->i.i_addr[ofs]) != 0) {
+ 			/* should fix this bug all the time */
+ 			FIX_MSG("inline_data has wrong 0'th block = %x",
+-					le32_to_cpu(node_blk->i.i_addr[0]));
+-			node_blk->i.i_addr[0] = 0;
++					le32_to_cpu(node_blk->i.i_addr[ofs]));
++			node_blk->i.i_addr[ofs] = 0;
+ 			node_blk->i.i_blocks = cpu_to_le64(*blk_cnt);
+ 			need_fix = 1;
+ 		}
+ 		if (!(node_blk->i.i_inline & F2FS_DATA_EXIST)) {
+-			char buf[MAX_INLINE_DATA];
+-			memset(buf, 0, MAX_INLINE_DATA);
++			char buf[MAX_INLINE_DATA(node_blk)];
++			memset(buf, 0, MAX_INLINE_DATA(node_blk));
+ 
+-			if (memcmp(buf, &node_blk->i.i_addr[1],
+-							MAX_INLINE_DATA)) {
++			if (memcmp(buf, inline_data_addr(node_blk),
++						MAX_INLINE_DATA(node_blk))) {
+ 				FIX_MSG("inline_data has DATA_EXIST");
+ 				node_blk->i.i_inline |= F2FS_DATA_EXIST;
+ 				need_fix = 1;
+@@ -710,7 +715,8 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 	/* check data blocks in inode */
+ 	for (idx = 0; idx < ADDRS_PER_INODE(&node_blk->i);
+ 						idx++, child.pgofs++) {
+-		block_t blkaddr = le32_to_cpu(node_blk->i.i_addr[idx]);
++		int ofs = get_extra_isize(node_blk);
++		block_t blkaddr = le32_to_cpu(node_blk->i.i_addr[ofs + idx]);
+ 
+ 		/* check extent info */
+ 		check_extent_info(&child, blkaddr, 0);
+@@ -724,9 +730,10 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 			if (!ret) {
+ 				*blk_cnt = *blk_cnt + 1;
+ 			} else if (c.fix_on) {
+-				node_blk->i.i_addr[idx] = 0;
++				node_blk->i.i_addr[ofs + idx] = 0;
+ 				need_fix = 1;
+-				FIX_MSG("[0x%x] i_addr[%d] = 0", nid, idx);
++				FIX_MSG("[0x%x] i_addr[%d] = 0",
++							nid, ofs + idx);
+ 			}
+ 		}
+ 	}
+@@ -1362,7 +1369,7 @@ int fsck_chk_inline_dentries(struct f2fs_sb_info *sbi,
+ 	inline_dentry = inline_data_addr(node_blk);
+ 	ASSERT(inline_dentry != NULL);
+ 
+-	make_dentry_ptr(&d, inline_dentry, 2);
++	make_dentry_ptr(&d, node_blk, inline_dentry, 2);
+ 
+ 	fsck->dentry_depth++;
+ 	dentries = __chk_dentries(sbi, child,
+diff --git a/fsck/fsck.h b/fsck/fsck.h
+index 5d2cfd6..1e8ed0b 100644
+--- a/fsck/fsck.h
++++ b/fsck/fsck.h
+@@ -221,7 +221,7 @@ block_t new_node_block(struct f2fs_sb_info *,
+ 					struct dnode_of_data *, unsigned int);
+ void get_dnode_of_data(struct f2fs_sb_info *, struct dnode_of_data *,
+ 					pgoff_t, int);
+-void make_dentry_ptr(struct f2fs_dentry_ptr *, void *, int);
++void make_dentry_ptr(struct f2fs_dentry_ptr *, struct f2fs_node *, void *, int);
+ int f2fs_create(struct f2fs_sb_info *, struct dentry *);
+ int f2fs_mkdir(struct f2fs_sb_info *, struct dentry *);
+ int f2fs_symlink(struct f2fs_sb_info *, struct dentry *);
+diff --git a/fsck/mount.c b/fsck/mount.c
+index a0b0bea..f41709e 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -41,6 +41,7 @@ void print_inode_info(struct f2fs_inode *inode, int name)
+ 	unsigned int i = 0;
+ 	int namelen = le32_to_cpu(inode->i_namelen);
+ 	int enc_name = file_enc_name(inode);
++	int ofs = __get_extra_isize(inode);
+ 
+ 	namelen = convert_encrypted_name(inode->i_name, namelen, en, enc_name);
+ 	en[namelen] = '\0';
+@@ -87,12 +88,15 @@ void print_inode_info(struct f2fs_inode *inode, int name)
+ 			le32_to_cpu(inode->i_ext.blk_addr),
+ 			le32_to_cpu(inode->i_ext.len));
+ 
+-	DISP_u32(inode, i_addr[0]);	/* Pointers to data blocks */
+-	DISP_u32(inode, i_addr[1]);	/* Pointers to data blocks */
+-	DISP_u32(inode, i_addr[2]);	/* Pointers to data blocks */
+-	DISP_u32(inode, i_addr[3]);	/* Pointers to data blocks */
++	DISP_u16(inode, i_extra_isize);
++	DISP_u16(inode, i_padding);
+ 
+-	for (i = 4; i < ADDRS_PER_INODE(inode); i++) {
++	DISP_u32(inode, i_addr[ofs]);		/* Pointers to data blocks */
++	DISP_u32(inode, i_addr[ofs + 1]);	/* Pointers to data blocks */
++	DISP_u32(inode, i_addr[ofs + 2]);	/* Pointers to data blocks */
++	DISP_u32(inode, i_addr[ofs + 3]);	/* Pointers to data blocks */
++
++	for (i = ofs + 4; i < ADDRS_PER_INODE(inode); i++) {
+ 		if (inode->i_addr[i] != 0x0) {
+ 			printf("i_addr[0x%x] points data block\r\t\t[0x%4x]\n",
+ 					i, le32_to_cpu(inode->i_addr[i]));
+@@ -280,6 +284,9 @@ void print_sb_state(struct f2fs_super_block *sb)
+ 	if (f & cpu_to_le32(F2FS_FEATURE_BLKZONED)) {
+ 		MSG(0, "%s", " zoned block device");
+ 	}
++	if (f & cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR)) {
++		MSG(0, "%s", " extra attribute");
++	}
+ 	MSG(0, "\n");
+ 	MSG(0, "Info: superblock encrypt level = %d, salt = ",
+ 					sb->encryption_level);
+@@ -1357,8 +1364,10 @@ void update_data_blkaddr(struct f2fs_sb_info *sbi, nid_t nid,
+ 
+ 	/* check its block address */
+ 	if (node_blk->footer.nid == node_blk->footer.ino) {
+-		oldaddr = le32_to_cpu(node_blk->i.i_addr[ofs_in_node]);
+-		node_blk->i.i_addr[ofs_in_node] = cpu_to_le32(newaddr);
++		int ofs = get_extra_isize(node_blk);
++
++		oldaddr = le32_to_cpu(node_blk->i.i_addr[ofs + ofs_in_node]);
++		node_blk->i.i_addr[ofs + ofs_in_node] = cpu_to_le32(newaddr);
+ 	} else {
+ 		oldaddr = le32_to_cpu(node_blk->dn.addr[ofs_in_node]);
+ 		node_blk->dn.addr[ofs_in_node] = cpu_to_le32(newaddr);
+diff --git a/fsck/node.c b/fsck/node.c
+index fe923e5..e37b817 100644
+--- a/fsck/node.c
++++ b/fsck/node.c
+@@ -105,10 +105,10 @@ block_t new_node_block(struct f2fs_sb_info *sbi,
+  *
+  * By default, it sets inline_xattr and inline_data
+  */
+-static int get_node_path(unsigned long block,
++static int get_node_path(struct f2fs_node *node, unsigned long block,
+ 				int offset[4], unsigned int noffset[4])
+ {
+-	const long direct_index = DEF_ADDRS_PER_INODE_INLINE_XATTR;
++	const long direct_index = ADDRS_PER_INODE(&node->i);
+ 	const long direct_blks = ADDRS_PER_BLOCK;
+ 	const long dptrs_per_blk = NIDS_PER_BLOCK;
+ 	const long indirect_blks = ADDRS_PER_BLOCK * NIDS_PER_BLOCK;
+@@ -191,7 +191,7 @@ void get_dnode_of_data(struct f2fs_sb_info *sbi, struct dnode_of_data *dn,
+ 	int level, i;
+ 	int ret;
+ 
+-	level = get_node_path(index, offset, noffset);
++	level = get_node_path(dn->inode_blk, index, offset, noffset);
+ 
+ 	nids[0] = dn->nid;
+ 	parent = dn->inode_blk;
+diff --git a/fsck/node.h b/fsck/node.h
+index 721e5b7..cbf7ed7 100644
+--- a/fsck/node.h
++++ b/fsck/node.h
+@@ -26,9 +26,14 @@ static inline int IS_INODE(struct f2fs_node *node)
+ 	return ((node)->footer.nid == (node)->footer.ino);
+ }
+ 
++static inline __le32 *blkaddr_in_inode(struct f2fs_node *node)
++{
++	return node->i.i_addr + get_extra_isize(node);
++}
++
+ static inline __le32 *blkaddr_in_node(struct f2fs_node *node)
+ {
+-	return IS_INODE(node) ? node->i.i_addr : node->dn.addr;
++	return IS_INODE(node) ? blkaddr_in_inode(node) : node->dn.addr;
+ }
+ 
+ static inline block_t datablock_addr(struct f2fs_node *node_page,
+diff --git a/fsck/segment.c b/fsck/segment.c
+index 6b2f6c1..5395099 100644
+--- a/fsck/segment.c
++++ b/fsck/segment.c
+@@ -179,7 +179,7 @@ int f2fs_build_file(struct f2fs_sb_info *sbi, struct dentry *de)
+ 	}
+ 
+ 	/* inline_data support */
+-	if (de->size <= MAX_INLINE_DATA) {
++	if (de->size <= DEF_MAX_INLINE_DATA) {
+ 		struct node_info ni;
+ 		struct f2fs_node *node_blk;
+ 		int ret;
+@@ -194,9 +194,15 @@ int f2fs_build_file(struct f2fs_sb_info *sbi, struct dentry *de)
+ 
+ 		node_blk->i.i_inline |= F2FS_INLINE_DATA;
+ 		node_blk->i.i_inline |= F2FS_DATA_EXIST;
++
++		if (c.feature & F2FS_FEATURE_EXTRA_ATTR) {
++			node_blk->i.i_inline |= F2FS_EXTRA_ATTR;
++			node_blk->i.i_extra_isize =
++				cpu_to_le16(F2FS_TOTAL_EXTRA_ATTR_SIZE);
++		}
+ 		n = read(fd, buffer, BLOCK_SZ);
+ 		ASSERT(n == de->size);
+-		memcpy(&node_blk->i.i_addr[1], buffer, de->size);
++		memcpy(inline_data_addr(node_blk), buffer, de->size);
+ 
+ 		node_blk->i.i_size = cpu_to_le64(de->size);
+ 
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index dd2635b..85e1a8c 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -167,6 +167,14 @@ static inline uint64_t bswap_64(uint64_t val)
+ 		printf("%-30s" fmt, #member, ((ptr)->member));	\
+ 	} while (0)
+ 
++#define DISP_u16(ptr, member)						\
++	do {								\
++		assert(sizeof((ptr)->member) == 2);			\
++		printf("%-30s" "\t\t[0x%8x : %u]\n",			\
++			#member, le16_to_cpu(((ptr)->member)),		\
++			le16_to_cpu(((ptr)->member)));			\
++	} while (0)
++
+ #define DISP_u32(ptr, member)						\
+ 	do {								\
+ 		assert(sizeof((ptr)->member) <= 4);			\
+@@ -462,6 +470,7 @@ enum {
+ 
  #define F2FS_FEATURE_ENCRYPT	0x0001
  #define F2FS_FEATURE_BLKZONED	0x0002
- #define F2FS_FEATURE_EXTRA_ATTR	0x0004
-+#define F2FS_FEATURE_PRJQUOTA	0x0008
++#define F2FS_FEATURE_EXTRA_ATTR	0x0004
  
- #define F2FS_HAS_FEATURE(sb, mask)					\
- 	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
-@@ -567,6 +569,7 @@ struct f2fs_inode_info {
- 	struct rw_semaphore i_mmap_sem;
+ #define MAX_VOLUME_NAME		512
  
- 	int i_extra_isize;		/* size of extra space located in i_addr */
-+	kprojid_t i_projid;		/* id for project quota */
- };
+@@ -585,6 +594,8 @@ struct f2fs_extent {
+ #define F2FS_NAME_LEN		255
+ #define F2FS_INLINE_XATTR_ADDRS	50	/* 200 bytes for inline xattrs */
+ #define DEF_ADDRS_PER_INODE	923	/* Address Pointers in an Inode */
++#define CUR_ADDRS_PER_INODE(inode)	(DEF_ADDRS_PER_INODE - \
++					__get_extra_isize(inode))
+ #define ADDRS_PER_INODE(i)	addrs_per_inode(i)
+ #define DEF_ADDRS_PER_INODE_INLINE_XATTR				\
+ 		(DEF_ADDRS_PER_INODE - F2FS_INLINE_XATTR_ADDRS)
+@@ -602,12 +613,27 @@ struct f2fs_extent {
+ #define F2FS_INLINE_DENTRY	0x04	/* file inline dentry flag */
+ #define F2FS_DATA_EXIST		0x08	/* file inline data exist flag */
+ #define F2FS_INLINE_DOTS	0x10	/* file having implicit dot dentries */
++#define F2FS_EXTRA_ATTR		0x20	/* file having extra attribute */
  
- static inline void get_extent_info(struct extent_info *ext,
-@@ -1884,6 +1887,20 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
- 	*addr ^= mask;
- }
+-#define MAX_INLINE_DATA (sizeof(__le32) *				\
+-			(DEF_ADDRS_PER_INODE_INLINE_XATTR - 1))
++#if !defined(offsetof)
++#define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
++#endif
  
-+#define F2FS_REG_FLMASK		(~(FS_DIRSYNC_FL | FS_TOPDIR_FL))
-+#define F2FS_OTHER_FLMASK	(FS_NODUMP_FL | FS_NOATIME_FL)
-+#define F2FS_FL_INHERITED	(FS_PROJINHERIT_FL)
++#define F2FS_TOTAL_EXTRA_ATTR_SIZE			\
++	(offsetof(struct f2fs_inode, i_extra_end) -	\
++	offsetof(struct f2fs_inode, i_extra_isize))	\
 +
-+static inline __u32 f2fs_mask_flags(umode_t mode, __u32 flags)
++#define MAX_INLINE_DATA(node) (sizeof(__le32) *				\
++				(DEF_ADDRS_PER_INODE_INLINE_XATTR -	\
++				get_extra_isize(node) -			\
++				DEF_INLINE_RESERVED_SIZE))
++#define DEF_MAX_INLINE_DATA	(sizeof(__le32) *			\
++				(DEF_ADDRS_PER_INODE_INLINE_XATTR -	\
++				F2FS_TOTAL_EXTRA_ATTR_SIZE -		\
++				DEF_INLINE_RESERVED_SIZE))
+ #define INLINE_DATA_OFFSET	(PAGE_CACHE_SIZE - sizeof(struct node_footer) \
+-				- sizeof(__le32)*(DEF_ADDRS_PER_INODE + 5 - 1))
++				- sizeof(__le32)*(DEF_ADDRS_PER_INODE + 5 - \
++				DEF_INLINE_RESERVED_SIZE))
+ 
+ #define DEF_DIR_LEVEL		0
+ 
+@@ -648,8 +674,14 @@ struct f2fs_inode {
+ 
+ 	struct f2fs_extent i_ext;	/* caching a largest extent */
+ 
+-	__le32 i_addr[DEF_ADDRS_PER_INODE];	/* Pointers to data blocks */
+-
++	union {
++		struct {
++			__le16 i_extra_isize;	/* extra inode attribute size */
++			__le16 i_padding;	/* padding */
++			__le32 i_extra_end[0];	/* for attribute size calculation */
++		};
++		__le32 i_addr[DEF_ADDRS_PER_INODE];	/* Pointers to data blocks */
++	};
+ 	__le32 i_nid[5];		/* direct(2), indirect(2),
+ 						double_indirect(1) node id */
+ } __attribute__((packed));
+@@ -909,23 +941,19 @@ struct f2fs_dentry_block {
+ 	__u8 filename[NR_DENTRY_IN_BLOCK][F2FS_SLOT_LEN];
+ } __attribute__((packed));
+ 
++/* for inline stuff */
++#define DEF_INLINE_RESERVED_SIZE	1
++
+ /* for inline dir */
+-#define NR_INLINE_DENTRY	(MAX_INLINE_DATA * BITS_PER_BYTE / \
++#define NR_INLINE_DENTRY(node)	(MAX_INLINE_DATA(node) * BITS_PER_BYTE / \
+ 				((SIZE_OF_DIR_ENTRY + F2FS_SLOT_LEN) * \
+ 				BITS_PER_BYTE + 1))
+-#define INLINE_DENTRY_BITMAP_SIZE	((NR_INLINE_DENTRY + \
++#define INLINE_DENTRY_BITMAP_SIZE(node)	((NR_INLINE_DENTRY(node) + \
+ 					BITS_PER_BYTE - 1) / BITS_PER_BYTE)
+-#define INLINE_RESERVED_SIZE	(MAX_INLINE_DATA - \
++#define INLINE_RESERVED_SIZE(node)	(MAX_INLINE_DATA(node) - \
+ 				((SIZE_OF_DIR_ENTRY + F2FS_SLOT_LEN) * \
+-				NR_INLINE_DENTRY + INLINE_DENTRY_BITMAP_SIZE))
+-
+-/* inline directory entry structure */
+-struct f2fs_inline_dentry {
+-	__u8 dentry_bitmap[INLINE_DENTRY_BITMAP_SIZE];
+-	__u8 reserved[INLINE_RESERVED_SIZE];
+-	struct f2fs_dir_entry dentry[NR_INLINE_DENTRY];
+-	__u8 filename[NR_INLINE_DENTRY][F2FS_SLOT_LEN];
+-} __attribute__((packed));
++				NR_INLINE_DENTRY(node) + \
++				INLINE_DENTRY_BITMAP_SIZE(node)))
+ 
+ /* file types used in inode_info->flags */
+ enum FILE_TYPE {
+@@ -990,6 +1018,20 @@ extern int dev_read_version(void *, __u64, size_t);
+ extern void get_kernel_version(__u8 *);
+ f2fs_hash_t f2fs_dentry_hash(const unsigned char *, int);
+ 
++static inline bool f2fs_has_extra_isize(struct f2fs_inode *inode)
 +{
-+	if (S_ISDIR(mode))
-+		return flags;
-+	else if (S_ISREG(mode))
-+		return flags & F2FS_REG_FLMASK;
-+	else
-+		return flags & F2FS_OTHER_FLMASK;
++	return (inode->i_inline & F2FS_EXTRA_ATTR);
 +}
 +
- /* used for f2fs_inode_info->flags */
- enum {
- 	FI_NEW_INODE,		/* indicate newly allocated inode */
-@@ -1913,6 +1930,7 @@ enum {
- 	FI_NO_PREALLOC,		/* indicate skipped preallocated blocks */
- 	FI_HOT_DATA,		/* indicate file is hot */
- 	FI_EXTRA_ATTR,		/* indicate file has extra attribute */
-+	FI_PROJ_INHERIT,	/* indicate file inherits projectid */
- };
- 
- static inline void __mark_inode_dirty_flag(struct inode *inode,
-@@ -2236,6 +2254,12 @@ static inline int get_extra_isize(struct inode *inode)
- 	(offsetof(struct f2fs_inode, i_extra_end) -	\
- 	offsetof(struct f2fs_inode, i_extra_isize))	\
- 
-+#define F2FS_OLD_ATTRIBUTE_SIZE	(offsetof(struct f2fs_inode, i_addr))
-+#define F2FS_FITS_IN_INODE(f2fs_inode, extra_isize, field)		\
-+		((offsetof(typeof(*f2fs_inode), field) +	\
-+		sizeof((f2fs_inode)->field))			\
-+		<= (F2FS_OLD_ATTRIBUTE_SIZE + extra_isize))	\
-+
- /*
-  * file.c
-  */
-@@ -2833,6 +2857,11 @@ static inline int f2fs_sb_has_extra_attr(struct super_block *sb)
- 	return F2FS_HAS_FEATURE(sb, F2FS_FEATURE_EXTRA_ATTR);
- }
- 
-+static inline int f2fs_sb_has_project_quota(struct super_block *sb)
++static inline int __get_extra_isize(struct f2fs_inode *inode)
 +{
-+	return F2FS_HAS_FEATURE(sb, F2FS_FEATURE_PRJQUOTA);
-+}
-+
- #ifdef CONFIG_BLK_DEV_ZONED
- static inline int get_blkz_type(struct f2fs_sb_info *sbi,
- 			struct block_device *bdev, block_t blkaddr)
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 6d654de799ae..b89b12f5130f 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1502,19 +1502,6 @@ static int f2fs_release_file(struct inode *inode, struct file *filp)
- 	return 0;
- }
- 
--#define F2FS_REG_FLMASK		(~(FS_DIRSYNC_FL | FS_TOPDIR_FL))
--#define F2FS_OTHER_FLMASK	(FS_NODUMP_FL | FS_NOATIME_FL)
--
--static inline __u32 f2fs_mask_flags(umode_t mode, __u32 flags)
--{
--	if (S_ISDIR(mode))
--		return flags;
--	else if (S_ISREG(mode))
--		return flags & F2FS_REG_FLMASK;
--	else
--		return flags & F2FS_OTHER_FLMASK;
--}
--
- static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 0a6699a23dfb..17bae39ee759 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -114,6 +114,7 @@ static int do_read_inode(struct inode *inode)
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	struct page *node_page;
- 	struct f2fs_inode *ri;
-+	projid_t i_projid;
- 
- 	/* Check if ino is within scope */
- 	if (check_nid_range(sbi, inode->i_ino)) {
-@@ -173,6 +174,16 @@ static int do_read_inode(struct inode *inode)
- 	if (!need_inode_block_update(sbi, inode->i_ino))
- 		fi->last_disk_size = inode->i_size;
- 
-+	if (fi->i_flags & FS_PROJINHERIT_FL)
-+		set_inode_flag(inode, FI_PROJ_INHERIT);
-+
-+	if (f2fs_has_extra_attr(inode) &&
-+			F2FS_FITS_IN_INODE(ri, fi->i_extra_isize, i_projid))
-+		i_projid = (projid_t)le32_to_cpu(ri->i_projid);
-+	else
-+		i_projid = F2FS_DEF_PROJID;
-+	fi->i_projid = make_kprojid(&init_user_ns, i_projid);
-+
- 	f2fs_put_page(node_page, 1);
- 
- 	stat_inc_inline_xattr(inode);
-@@ -299,9 +310,19 @@ int update_inode(struct inode *inode, struct page *node_page)
- 	ri->i_generation = cpu_to_le32(inode->i_generation);
- 	ri->i_dir_level = F2FS_I(inode)->i_dir_level;
- 
--	if (f2fs_has_extra_attr(inode))
-+	if (f2fs_has_extra_attr(inode)) {
- 		ri->i_extra_isize = cpu_to_le16(F2FS_I(inode)->i_extra_isize);
- 
-+		if (F2FS_FITS_IN_INODE(ri, F2FS_I(inode)->i_extra_isize,
-+								i_projid)) {
-+			projid_t i_projid;
-+
-+			i_projid = from_kprojid(&init_user_ns,
-+						F2FS_I(inode)->i_projid);
-+			ri->i_projid = cpu_to_le32(i_projid);
-+		}
-+	}
-+
- 	__set_inode_rdev(inode, ri);
- 	set_cold_node(inode, node_page);
- 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 26b4d2b54812..25d9452bc557 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -58,6 +58,13 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 		goto fail;
- 	}
- 
-+	if (f2fs_sb_has_project_quota(sbi->sb) &&
-+		(F2FS_I(dir)->i_flags & FS_PROJINHERIT_FL))
-+		F2FS_I(inode)->i_projid = F2FS_I(dir)->i_projid;
-+	else
-+		F2FS_I(inode)->i_projid = make_kprojid(&init_user_ns,
-+							F2FS_DEF_PROJID);
-+
- 	err = dquot_initialize(inode);
- 	if (err)
- 		goto fail_drop;
-@@ -90,6 +97,12 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 	stat_inc_inline_inode(inode);
- 	stat_inc_inline_dir(inode);
- 
-+	F2FS_I(inode)->i_flags =
-+		f2fs_mask_flags(mode, F2FS_I(dir)->i_flags & F2FS_FL_INHERITED);
-+
-+	if (F2FS_I(inode)->i_flags & FS_PROJINHERIT_FL)
-+		set_inode_flag(inode, FI_PROJ_INHERIT);
-+
- 	trace_f2fs_new_inode(inode, 0);
- 	return inode;
- 
-@@ -209,6 +222,11 @@ static int f2fs_link(struct dentry *old_dentry, struct inode *dir,
- 			!fscrypt_has_permitted_context(dir, inode))
- 		return -EPERM;
- 
-+	if (is_inode_flag_set(dir, FI_PROJ_INHERIT) &&
-+			(!projid_eq(F2FS_I(dir)->i_projid,
-+			F2FS_I(old_dentry->d_inode)->i_projid)))
-+		return -EXDEV;
-+
- 	err = dquot_initialize(dir);
- 	if (err)
- 		return err;
-@@ -729,6 +747,11 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		goto out;
- 	}
- 
-+	if (is_inode_flag_set(new_dir, FI_PROJ_INHERIT) &&
-+			(!projid_eq(F2FS_I(new_dir)->i_projid,
-+			F2FS_I(old_dentry->d_inode)->i_projid)))
-+		return -EXDEV;
-+
- 	err = dquot_initialize(old_dir);
- 	if (err)
- 		goto out;
-@@ -917,6 +940,14 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
- 			 !fscrypt_has_permitted_context(old_dir, new_inode)))
- 		return -EPERM;
- 
-+	if ((is_inode_flag_set(new_dir, FI_PROJ_INHERIT) &&
-+			!projid_eq(F2FS_I(new_dir)->i_projid,
-+			F2FS_I(old_dentry->d_inode)->i_projid)) ||
-+	    (is_inode_flag_set(new_dir, FI_PROJ_INHERIT) &&
-+			!projid_eq(F2FS_I(old_dir)->i_projid,
-+			F2FS_I(new_dentry->d_inode)->i_projid)))
-+		return -EXDEV;
-+
- 	err = dquot_initialize(old_dir);
- 	if (err)
- 		goto out;
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 547b84fc10f6..37382f065de9 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2265,8 +2265,12 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
- 	dst->i_links = cpu_to_le32(1);
- 	dst->i_xattr_nid = 0;
- 	dst->i_inline = src->i_inline & (F2FS_INLINE_XATTR | F2FS_EXTRA_ATTR);
--	if (dst->i_inline & F2FS_EXTRA_ATTR)
-+	if (dst->i_inline & F2FS_EXTRA_ATTR) {
- 		dst->i_extra_isize = src->i_extra_isize;
-+		if (F2FS_FITS_IN_INODE(src, le16_to_cpu(src->i_extra_isize),
-+								i_projid))
-+			dst->i_projid = src->i_projid;
-+	}
- 
- 	new_ni = old_ni;
- 	new_ni.ino = ino;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index b30097190605..1241739f4d54 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -109,6 +109,7 @@ enum {
- 	Opt_nolazytime,
- 	Opt_usrquota,
- 	Opt_grpquota,
-+	Opt_prjquota,
- 	Opt_err,
- };
- 
-@@ -146,6 +147,7 @@ static match_table_t f2fs_tokens = {
- 	{Opt_nolazytime, "nolazytime"},
- 	{Opt_usrquota, "usrquota"},
- 	{Opt_grpquota, "grpquota"},
-+	{Opt_prjquota, "prjquota"},
- 	{Opt_err, NULL},
- };
- 
-@@ -392,9 +394,13 @@ static int parse_options(struct super_block *sb, char *options)
- 		case Opt_grpquota:
- 			set_opt(sbi, GRPQUOTA);
- 			break;
-+		case Opt_prjquota:
-+			set_opt(sbi, PRJQUOTA);
-+			break;
- #else
- 		case Opt_usrquota:
- 		case Opt_grpquota:
-+		case Opt_prjquota:
- 			f2fs_msg(sb, KERN_INFO,
- 					"quota operations not supported");
- 			break;
-@@ -814,6 +820,8 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_puts(seq, ",usrquota");
- 	if (test_opt(sbi, GRPQUOTA))
- 		seq_puts(seq, ",grpquota");
-+	if (test_opt(sbi, PRJQUOTA))
-+		seq_puts(seq, ",prjquota");
- #endif
- 
- 	return 0;
-@@ -1172,6 +1180,12 @@ static void f2fs_quota_off_umount(struct super_block *sb)
- 		f2fs_quota_off(sb, type);
- }
- 
-+int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
-+{
-+	*projid = F2FS_I(inode)->i_projid;
++	if (f2fs_has_extra_isize(inode))
++		return le16_to_cpu(inode->i_extra_isize) / sizeof(__le32);
 +	return 0;
 +}
 +
- static const struct dquot_operations f2fs_quota_operations = {
- 	.get_reserved_space = f2fs_get_reserved_space,
- 	.write_dquot	= dquot_commit,
-@@ -1181,6 +1195,7 @@ static const struct dquot_operations f2fs_quota_operations = {
- 	.write_info	= dquot_commit_info,
- 	.alloc_dquot	= dquot_alloc,
- 	.destroy_dquot	= dquot_destroy,
-+	.get_projid	= f2fs_get_projid,
- 	.get_next_id	= dquot_get_next_id,
- };
- 
-@@ -1964,7 +1979,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- #ifdef CONFIG_QUOTA
- 	sb->dq_op = &f2fs_quota_operations;
- 	sb->s_qcop = &f2fs_quotactl_ops;
--	sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP;
-+	sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP | QTYPE_MASK_PRJ;
- #endif
- 
- 	sb->s_op = &f2fs_sops;
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 0c79ddd40b70..50f176683676 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -239,6 +239,7 @@ struct f2fs_inode {
- 		struct {
- 			__le16 i_extra_isize;	/* extra inode attribute size */
- 			__le16 i_padding;	/* padding */
-+			__le32 i_projid;	/* project id */
- 			__le32 i_extra_end[0];	/* for attribute size calculation */
- 		};
- 		__le32 i_addr[DEF_ADDRS_PER_INODE];	/* Pointers to data blocks */
-@@ -522,4 +523,6 @@ enum {
- 
- #define S_SHIFT 12
- 
-+#define	F2FS_DEF_PROJID		0	/* default project ID */
++#define get_extra_isize(node)	__get_extra_isize(&node->i)
 +
- #endif  /* _LINUX_F2FS_FS_H */
+ #define F2FS_ZONED_NONE		0
+ #define F2FS_ZONED_HA		1
+ #define F2FS_ZONED_HM		2
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index 31836db..a3091bb 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -457,8 +457,8 @@ f2fs_hash_t f2fs_dentry_hash(const unsigned char *name, int len)
+ unsigned int addrs_per_inode(struct f2fs_inode *i)
+ {
+ 	if (i->i_inline & F2FS_INLINE_XATTR)
+-		return DEF_ADDRS_PER_INODE - F2FS_INLINE_XATTR_ADDRS;
+-	return DEF_ADDRS_PER_INODE;
++		return CUR_ADDRS_PER_INODE(i) - F2FS_INLINE_XATTR_ADDRS;
++	return CUR_ADDRS_PER_INODE(i);
+ }
+ 
+ /*
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index ff1153a..acfb56d 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -923,9 +923,15 @@ static int f2fs_write_root_inode(void)
+ 	raw_node->i.i_current_depth = cpu_to_le32(1);
+ 	raw_node->i.i_dir_level = DEF_DIR_LEVEL;
+ 
++	if (c.feature & F2FS_FEATURE_EXTRA_ATTR) {
++		raw_node->i.i_inline = F2FS_EXTRA_ATTR;
++		raw_node->i.i_extra_isize =
++				cpu_to_le16(F2FS_TOTAL_EXTRA_ATTR_SIZE);
++	}
++
+ 	data_blk_nor = get_sb(main_blkaddr) +
+ 		c.cur_seg[CURSEG_HOT_DATA] * c.blks_per_seg;
+-	raw_node->i.i_addr[0] = cpu_to_le32(data_blk_nor);
++	raw_node->i.i_addr[get_extra_isize(raw_node)] = cpu_to_le32(data_blk_nor);
+ 
+ 	raw_node->i.i_ext.fofs = 0;
+ 	raw_node->i.i_ext.blk_addr = 0;
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index 5525d1c..1a75a6f 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -80,6 +80,8 @@ static void parse_feature(const char *features)
+ 		features++;
+ 	if (!strcmp(features, "encrypt")) {
+ 		c.feature |= cpu_to_le32(F2FS_FEATURE_ENCRYPT);
++	} else if (!strcmp(features, "extra_attr")) {
++		c.feature |= cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR);
+ 	} else {
+ 		MSG(0, "Error: Wrong features\n");
+ 		mkfs_usage();
 -- 
 2.13.0.90.g1eb437020
