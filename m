@@ -1,42 +1,54 @@
-From: Eric Biggers <ebiggers3@gmail.com>
-Subject: Re: [PATCH 5/6] fscrypt: cache the HMAC transform for each master key
-Date: Wed, 19 Jul 2017 10:37:44 -0700
-Message-ID: <20170719173744.GB78811@gmail.com>
-References: <20170712210035.51534-1-ebiggers3@gmail.com>
- <20170712210035.51534-6-ebiggers3@gmail.com>
- <20170717174551.GA32282@google.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [GIT PULL] f2fs: update for 4.13-rc2
+Date: Wed, 19 Jul 2017 20:18:46 -0700
+Message-ID: <20170720031846.GA72919@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-ext4-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170717174551.GA32282@google.com>
-Sender: linux-ext4-owner@vger.kernel.org
-To: Michael Halcrow <mhalcrow@google.com>
-Cc: linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, linux-crypto@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Alex Cope <alexcope@google.com>, Eric Biggers <ebiggers@google.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux FS Dev Mailing List <linux-fsdevel@vger.kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Mon, Jul 17, 2017 at 10:45:51AM -0700, Michael Halcrow wrote:
-> > +/*
-> > + * Get the fscrypt_master_key identified by the specified v2+ encryption
-> > + * context, or create it if not found.
-> > + *
-> > + * Returns the fscrypt_master_key with a reference taken, or an ERR_PTR().
-> > + */
-> > +static struct fscrypt_master_key *
-> > +find_or_create_master_key(const struct inode *inode,
-> > +			  const struct fscrypt_context *ctx,
-> > +			  unsigned int min_keysize)
-> > +{
-> > +	struct fscrypt_master_key *master_key;
-> > +
-> > +	if (WARN_ON(ctx->version < FSCRYPT_CONTEXT_V2))
-> > +		return ERR_PTR(-EINVAL);
-> 
-> Isn't this a programming error?  If so, consider either BUG_ON() or
-> omit the check.
-> 
+Hi Linus,
 
-Yes, but BUG_ON() is discouraged in cases where there is a straightforward way
-to recover from the error.  checkpatch actually warns about using it these days.
+Could you please pull this request?
 
-Eric
+Thanks,
+
+The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
+
+  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/for-f2fs-v4.13-rc2
+
+for you to fetch changes up to 4db08d016ccedb5b97869724a096990acad59685:
+
+  f2fs: avoid cpu lockup (2017-07-17 19:23:18 -0700)
+
+----------------------------------------------------------------
+for-f2fs-v4.13-rc2
+
+We've filed some bug fixes:
+- missing f2fs case in terms of stale SGID big, introduced by Jan
+- build error for seq_file.h
+- avoid cpu lockup
+- wrong inode_unlock in error case
+
+----------------------------------------------------------------
+Jaegeuk Kim (3):
+      f2fs: Don't clear SGID when inheriting ACLs
+      f2fs: include seq_file.h for sysfs.c
+      f2fs: avoid cpu lockup
+
+Luis Henriques (1):
+      f2fs: remove extra inode_unlock() in error path
+
+ fs/f2fs/acl.c        |  2 +-
+ fs/f2fs/checkpoint.c | 10 ++++++++++
+ fs/f2fs/file.c       |  5 +----
+ fs/f2fs/sysfs.c      |  1 +
+ 4 files changed, 13 insertions(+), 5 deletions(-)
