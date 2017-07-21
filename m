@@ -1,97 +1,191 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: let background GC being aware of
- freezing
-Date: Fri, 21 Jul 2017 13:54:18 -0700
-Message-ID: <20170721205418.GA14361@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20170721033635.6277-1-yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: let __get_victim successfully get a segno in
+ corner case
+Date: Fri, 21 Jul 2017 14:07:33 -0700
+Message-ID: <20170721210733.GB14361@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1500033432-57620-1-git-send-email-yunlong.song@huawei.com>
+ <20170716010934.GC51202@jaegeuk-macbookpro.roam.corp.google.com>
+ <3b3c1eba.b25.15d495786fe.Coremail.sylinux@163.com>
+ <20170717165636.GB81128@jaegeuk-macbookpro.roam.corp.google.com>
+ <5970A19F.4030000@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
- helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <jaegeuk@kernel.org>) id 1dYewM-0001tM-DA
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 Jul 2017 20:54:26 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1dYewL-0000tx-Bt
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 Jul 2017 20:54:26 +0000
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170721033635.6277-1-yuchao0@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <5970A19F.4030000@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yunlong Song <yunlong.song@huawei.com>
+Cc: sylinux <sylinux@163.com>, chao <chao@kernel.org>, yuchao0 <yuchao0@huawei.com>, miaoxie <miaoxie@huawei.com>, "bintian.wang" <bintian.wang@huawei.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>, linux-kernel <linux-kernel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Chao,
+Hi Yunlong,
 
-On 07/21, Chao Yu wrote:
-> When ->freeze_fs is called from lvm for doing snapshot, it needs to
-> make sure there will be no more changes in filesystem's data, however,
-> previously, background GC wasn't aware of freezing, so in environment
-> with active background GC thread, data of snapshot becomes unstable.
+On 07/20, Yunlong Song wrote:
+> Hi, Jay,
+>     The distribution is like this, unit is segment counts:
+>     cnt_free: 0 (free blocks)
+>     cnt_full: 25182 (segment which has 512 blocks)
+>     cnt_over: 25192 (segment which valid blocks over fggc_threshold)
+>     cnt_below: 870 (segment which valid blocks below fggc_threshold)
 
-What about flush/discard threads?
+What are the values of fggc_threshold and ovp ratio or reserved_segments?
+How was the proc/segment_info?
 
 Thanks,
 
 > 
-> This patch fixes this issue by adding sb_{start,end}_intwrite in GC
-> flow.
+> The test is fragment test, add and delete small files over and over.
 > 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/gc.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+> On 2017/7/18 0:56, Jaegeuk Kim wrote:
+> > On 07/16, sylinux wrote:
+> >> In fact，this is not "suppose" case yet, we have already met this problem several times in some test suits for corner case, or I cannot notice that this could happen.
+> > So, have you taken a look at distribution of valid blocks in that case?
+> > I'm wondering what distribution can cause this.
+> >
+> > Thanks,
+> >
+> >>
+> >>
+> >>
+> >> 发自网易邮箱大师
+> >> On 07/16/2017 09:09, Jaegeuk Kim wrote:
+> >> Hi Yunlong,
+> >>
+> >> On 07/14, Yunlong Song wrote:
+> >>> Suppose that the valid blocks of each section are all over sbi->fggc_threshold,
+> >> How about adding a kernel message first to detect your *supposed* sceanrio?
+> >> If that happens, it'll be a sort of bug which we haven't assumed.
+> >>
+> >> Thanks,
+> >>
+> >>> and even has_not_enough_free_secs is true, f2fs_gc cannot do its job since the
+> >>> no_fggc_candidate always returns true. As a result, the reserved segments can be
+> >>> used up, and finally there is no free segment at all, and get_new_segment cannot
+> >>> get a free segment, filesystem will trap into a wrong status.
+> >>>
+> >>> To fix this, we record the segno which has a rough minimum cost and return it to
+> >>> __get_victim to continue f2fs_gc's job.
+> >>>
+> >>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> >>> ---
+> >>>  fs/f2fs/gc.c      | 19 ++++++++++++++-----
+> >>>  fs/f2fs/segment.h | 17 ++++++++++++++---
+> >>>  2 files changed, 28 insertions(+), 8 deletions(-)
+> >>>
+> >>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> >>> index fa3d2e2..965e783 100644
+> >>> --- a/fs/f2fs/gc.c
+> >>> +++ b/fs/f2fs/gc.c
+> >>> @@ -178,6 +178,8 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
+> >>>          p->offset = 0;
+> >>>      else
+> >>>          p->offset = SIT_I(sbi)->last_victim[p->gc_mode];
+> >>> +
+> >>> +    p->min_cost_r = UINT_MAX;
+> >>>  }
+> >>>  
+> >>>  static unsigned int get_max_cost(struct f2fs_sb_info *sbi,
+> >>> @@ -194,7 +196,7 @@ static unsigned int get_max_cost(struct f2fs_sb_info *sbi,
+> >>>          return 0;
+> >>>  }
+> >>>  
+> >>> -static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
+> >>> +static unsigned int check_bg_victims(struct f2fs_sb_info *sbi, struct victim_sel_policy *p)
+> >>>  {
+> >>>      struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
+> >>>      unsigned int secno;
+> >>> @@ -208,11 +210,12 @@ static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
+> >>>          if (sec_usage_check(sbi, secno))
+> >>>              continue;
+> >>>  
+> >>> -        if (no_fggc_candidate(sbi, secno))
+> >>> +        p->cur_segno_r = GET_SEG_FROM_SEC(sbi, secno);
+> >>> +        if (no_fggc_candidate(sbi, secno, p))
+> >>>              continue;
+> >>>  
+> >>>          clear_bit(secno, dirty_i->victim_secmap);
+> >>> -        return GET_SEG_FROM_SEC(sbi, secno);
+> >>> +        return p->cur_segno_r;
+> >>>      }
+> >>>      return NULL_SEGNO;
+> >>>  }
+> >>> @@ -332,7 +335,7 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+> >>>  
+> >>>      last_victim = sm->last_victim[p.gc_mode];
+> >>>      if (p.alloc_mode == LFS && gc_type == FG_GC) {
+> >>> -        p.min_segno = check_bg_victims(sbi);
+> >>> +        p.min_segno = check_bg_victims(sbi, &p);
+> >>>          if (p.min_segno != NULL_SEGNO)
+> >>>              goto got_it;
+> >>>      }
+> >>> @@ -369,8 +372,9 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+> >>>              goto next;
+> >>>          if (gc_type == BG_GC && test_bit(secno, dirty_i->victim_secmap))
+> >>>              goto next;
+> >>> +        p.cur_segno_r = segno;
+> >>>          if (gc_type == FG_GC && p.alloc_mode == LFS &&
+> >>> -                    no_fggc_candidate(sbi, secno))
+> >>> +                    no_fggc_candidate(sbi, secno, &p))
+> >>>              goto next;
+> >>>  
+> >>>          cost = get_gc_cost(sbi, segno, &p);
+> >>> @@ -403,6 +407,11 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+> >>>          trace_f2fs_get_victim(sbi->sb, type, gc_type, &p,
+> >>>                  sbi->cur_victim_sec,
+> >>>                  prefree_segments(sbi), free_segments(sbi));
+> >>> +    } else if (has_not_enough_free_secs(sbi, 0, 0)) {
+> >>> +        p.min_segno = p.min_segno_r;
+> >>> +        if (p.alloc_mode == LFS && gc_type == FG_GC)
+> >>> +            clear_bit(GET_SEC_FROM_SEG(sbi, p.min_segno), dirty_i->victim_secmap);
+> >>> +        goto got_it;
+> >>>      }
+> >>>  out:
+> >>>      mutex_unlock(&dirty_i->seglist_lock);
+> >>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> >>> index 6b871b4..7d2d0f3 100644
+> >>> --- a/fs/f2fs/segment.h
+> >>> +++ b/fs/f2fs/segment.h
+> >>> @@ -169,6 +169,9 @@ struct victim_sel_policy {
+> >>>      unsigned int ofs_unit;        /* bitmap search unit */
+> >>>      unsigned int min_cost;        /* minimum cost */
+> >>>      unsigned int min_segno;        /* segment # having min. cost */
+> >>> +    unsigned int min_cost_r;        /* rough minimum cost */
+> >>> +    unsigned int min_segno_r;        /* segment # having rough min. cost */
+> >>> +    unsigned int cur_segno_r;        /* segment # rough process is handling */
+> >>>  };
+> >>>  
+> >>>  struct seg_entry {
+> >>> @@ -743,11 +746,19 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
+> >>>  }
+> >>>  
+> >>>  static inline bool no_fggc_candidate(struct f2fs_sb_info *sbi,
+> >>> -                        unsigned int secno)
+> >>> +                        unsigned int secno, struct victim_sel_policy *p)
+> >>>  {
+> >>> -    if (get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true) >=
+> >>> -                        sbi->fggc_threshold)
+> >>> +    unsigned int cur_cost;
+> >>> +
+> >>> +    cur_cost = get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true);
+> >>> +    if (cur_cost >= sbi->fggc_threshold) {
+> >>> +        if (p->min_cost_r > cur_cost) {
+> >>> +            p->min_cost_r = cur_cost;
+> >>> +            p->min_segno_r = p->cur_segno_r;
+> >>> +        }
+> >>>          return true;
+> >>> +    }
+> >>> +
+> >>>      return false;
+> >>>  }
+> >>>  
+> >>> --
+> >>> 1.8.5.2
+> > .
+> >
 > 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 76ad2c3d88db..1c0117f60083 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -55,6 +55,8 @@ static int gc_thread_func(void *data)
->  		}
->  #endif
->  
-> +		sb_start_intwrite(sbi->sb);
-> +
->  		/*
->  		 * [GC triggering condition]
->  		 * 0. GC is not conducted currently.
-> @@ -69,12 +71,12 @@ static int gc_thread_func(void *data)
->  		 * So, I'd like to wait some time to collect dirty segments.
->  		 */
->  		if (!mutex_trylock(&sbi->gc_mutex))
-> -			continue;
-> +			goto next;
->  
->  		if (!is_idle(sbi)) {
->  			increase_sleep_time(gc_th, &wait_ms);
->  			mutex_unlock(&sbi->gc_mutex);
-> -			continue;
-> +			goto next;
->  		}
->  
->  		if (has_enough_invalid_blocks(sbi))
-> @@ -93,6 +95,8 @@ static int gc_thread_func(void *data)
->  
->  		/* balancing f2fs's metadata periodically */
->  		f2fs_balance_fs_bg(sbi);
-> +next:
-> +		sb_end_intwrite(sbi->sb);
->  
->  	} while (!kthread_should_stop());
->  	return 0;
+> 
 > -- 
-> 2.13.1.388.g69e6b9b4f4a9
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> Thanks,
+> Yunlong Song
+> 
