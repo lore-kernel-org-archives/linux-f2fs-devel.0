@@ -1,191 +1,150 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: let __get_victim successfully get a segno in
- corner case
-Date: Fri, 21 Jul 2017 14:07:33 -0700
-Message-ID: <20170721210733.GB14361@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1500033432-57620-1-git-send-email-yunlong.song@huawei.com>
- <20170716010934.GC51202@jaegeuk-macbookpro.roam.corp.google.com>
- <3b3c1eba.b25.15d495786fe.Coremail.sylinux@163.com>
- <20170717165636.GB81128@jaegeuk-macbookpro.roam.corp.google.com>
- <5970A19F.4030000@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Andreas Dilger <adilger@dilger.ca>
+Subject: Re: [PATCH] f2fs: add ioctl to expose current features
+Date: Fri, 21 Jul 2017 15:20:57 -0600
+Message-ID: <4FCA5098-4C23-4D8E-92DD-2B616FB23463@dilger.ca>
+References: <20170721201108.18408-1-jaegeuk@kernel.org>
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_1FAA3780-87E1-49CC-B97D-EA7EE93DA6D8";
+ protocol="application/pgp-signature"; micalg=pgp-sha1
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5970A19F.4030000@huawei.com>
+In-Reply-To: <20170721201108.18408-1-jaegeuk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>
-Cc: sylinux <sylinux@163.com>, chao <chao@kernel.org>, yuchao0 <yuchao0@huawei.com>, miaoxie <miaoxie@huawei.com>, "bintian.wang" <bintian.wang@huawei.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>, linux-kernel <linux-kernel@vger.kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Yunlong,
 
-On 07/20, Yunlong Song wrote:
-> Hi, Jay,
->     The distribution is like this, unit is segment counts:
->     cnt_free: 0 (free blocks)
->     cnt_full: 25182 (segment which has 512 blocks)
->     cnt_over: 25192 (segment which valid blocks over fggc_threshold)
->     cnt_below: 870 (segment which valid blocks below fggc_threshold)
+--Apple-Mail=_1FAA3780-87E1-49CC-B97D-EA7EE93DA6D8
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
-What are the values of fggc_threshold and ovp ratio or reserved_segments?
-How was the proc/segment_info?
+> On Jul 21, 2017, at 2:11 PM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+>=20
+> This patch adds an ioctl to provide feature information to user.
+> For exapmle, SQLite can use this ioctl to detect whether f2fs support =
+atomic
+> write or not.
 
-Thanks,
+Just for reference, ext4 exposes functionality that the kernel supports =
+via
+a file in /sys/fs/ext4/features/{feature_name} so that it is possible to
+check [ -e /sys/fs/ext4/features/lazy_itable_init ] in a shell script =
+also.
 
-> 
-> The test is fragment test, add and delete small files over and over.
-> 
-> On 2017/7/18 0:56, Jaegeuk Kim wrote:
-> > On 07/16, sylinux wrote:
-> >> In fact，this is not "suppose" case yet, we have already met this problem several times in some test suits for corner case, or I cannot notice that this could happen.
-> > So, have you taken a look at distribution of valid blocks in that case?
-> > I'm wondering what distribution can cause this.
-> >
-> > Thanks,
-> >
-> >>
-> >>
-> >>
-> >> 发自网易邮箱大师
-> >> On 07/16/2017 09:09, Jaegeuk Kim wrote:
-> >> Hi Yunlong,
-> >>
-> >> On 07/14, Yunlong Song wrote:
-> >>> Suppose that the valid blocks of each section are all over sbi->fggc_threshold,
-> >> How about adding a kernel message first to detect your *supposed* sceanrio?
-> >> If that happens, it'll be a sort of bug which we haven't assumed.
-> >>
-> >> Thanks,
-> >>
-> >>> and even has_not_enough_free_secs is true, f2fs_gc cannot do its job since the
-> >>> no_fggc_candidate always returns true. As a result, the reserved segments can be
-> >>> used up, and finally there is no free segment at all, and get_new_segment cannot
-> >>> get a free segment, filesystem will trap into a wrong status.
-> >>>
-> >>> To fix this, we record the segno which has a rough minimum cost and return it to
-> >>> __get_victim to continue f2fs_gc's job.
-> >>>
-> >>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> >>> ---
-> >>>  fs/f2fs/gc.c      | 19 ++++++++++++++-----
-> >>>  fs/f2fs/segment.h | 17 ++++++++++++++---
-> >>>  2 files changed, 28 insertions(+), 8 deletions(-)
-> >>>
-> >>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> >>> index fa3d2e2..965e783 100644
-> >>> --- a/fs/f2fs/gc.c
-> >>> +++ b/fs/f2fs/gc.c
-> >>> @@ -178,6 +178,8 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
-> >>>          p->offset = 0;
-> >>>      else
-> >>>          p->offset = SIT_I(sbi)->last_victim[p->gc_mode];
-> >>> +
-> >>> +    p->min_cost_r = UINT_MAX;
-> >>>  }
-> >>>  
-> >>>  static unsigned int get_max_cost(struct f2fs_sb_info *sbi,
-> >>> @@ -194,7 +196,7 @@ static unsigned int get_max_cost(struct f2fs_sb_info *sbi,
-> >>>          return 0;
-> >>>  }
-> >>>  
-> >>> -static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
-> >>> +static unsigned int check_bg_victims(struct f2fs_sb_info *sbi, struct victim_sel_policy *p)
-> >>>  {
-> >>>      struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
-> >>>      unsigned int secno;
-> >>> @@ -208,11 +210,12 @@ static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
-> >>>          if (sec_usage_check(sbi, secno))
-> >>>              continue;
-> >>>  
-> >>> -        if (no_fggc_candidate(sbi, secno))
-> >>> +        p->cur_segno_r = GET_SEG_FROM_SEC(sbi, secno);
-> >>> +        if (no_fggc_candidate(sbi, secno, p))
-> >>>              continue;
-> >>>  
-> >>>          clear_bit(secno, dirty_i->victim_secmap);
-> >>> -        return GET_SEG_FROM_SEC(sbi, secno);
-> >>> +        return p->cur_segno_r;
-> >>>      }
-> >>>      return NULL_SEGNO;
-> >>>  }
-> >>> @@ -332,7 +335,7 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
-> >>>  
-> >>>      last_victim = sm->last_victim[p.gc_mode];
-> >>>      if (p.alloc_mode == LFS && gc_type == FG_GC) {
-> >>> -        p.min_segno = check_bg_victims(sbi);
-> >>> +        p.min_segno = check_bg_victims(sbi, &p);
-> >>>          if (p.min_segno != NULL_SEGNO)
-> >>>              goto got_it;
-> >>>      }
-> >>> @@ -369,8 +372,9 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
-> >>>              goto next;
-> >>>          if (gc_type == BG_GC && test_bit(secno, dirty_i->victim_secmap))
-> >>>              goto next;
-> >>> +        p.cur_segno_r = segno;
-> >>>          if (gc_type == FG_GC && p.alloc_mode == LFS &&
-> >>> -                    no_fggc_candidate(sbi, secno))
-> >>> +                    no_fggc_candidate(sbi, secno, &p))
-> >>>              goto next;
-> >>>  
-> >>>          cost = get_gc_cost(sbi, segno, &p);
-> >>> @@ -403,6 +407,11 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
-> >>>          trace_f2fs_get_victim(sbi->sb, type, gc_type, &p,
-> >>>                  sbi->cur_victim_sec,
-> >>>                  prefree_segments(sbi), free_segments(sbi));
-> >>> +    } else if (has_not_enough_free_secs(sbi, 0, 0)) {
-> >>> +        p.min_segno = p.min_segno_r;
-> >>> +        if (p.alloc_mode == LFS && gc_type == FG_GC)
-> >>> +            clear_bit(GET_SEC_FROM_SEG(sbi, p.min_segno), dirty_i->victim_secmap);
-> >>> +        goto got_it;
-> >>>      }
-> >>>  out:
-> >>>      mutex_unlock(&dirty_i->seglist_lock);
-> >>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> >>> index 6b871b4..7d2d0f3 100644
-> >>> --- a/fs/f2fs/segment.h
-> >>> +++ b/fs/f2fs/segment.h
-> >>> @@ -169,6 +169,9 @@ struct victim_sel_policy {
-> >>>      unsigned int ofs_unit;        /* bitmap search unit */
-> >>>      unsigned int min_cost;        /* minimum cost */
-> >>>      unsigned int min_segno;        /* segment # having min. cost */
-> >>> +    unsigned int min_cost_r;        /* rough minimum cost */
-> >>> +    unsigned int min_segno_r;        /* segment # having rough min. cost */
-> >>> +    unsigned int cur_segno_r;        /* segment # rough process is handling */
-> >>>  };
-> >>>  
-> >>>  struct seg_entry {
-> >>> @@ -743,11 +746,19 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
-> >>>  }
-> >>>  
-> >>>  static inline bool no_fggc_candidate(struct f2fs_sb_info *sbi,
-> >>> -                        unsigned int secno)
-> >>> +                        unsigned int secno, struct victim_sel_policy *p)
-> >>>  {
-> >>> -    if (get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true) >=
-> >>> -                        sbi->fggc_threshold)
-> >>> +    unsigned int cur_cost;
-> >>> +
-> >>> +    cur_cost = get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true);
-> >>> +    if (cur_cost >= sbi->fggc_threshold) {
-> >>> +        if (p->min_cost_r > cur_cost) {
-> >>> +            p->min_cost_r = cur_cost;
-> >>> +            p->min_segno_r = p->cur_segno_r;
-> >>> +        }
-> >>>          return true;
-> >>> +    }
-> >>> +
-> >>>      return false;
-> >>>  }
-> >>>  
-> >>> --
-> >>> 1.8.5.2
-> > .
-> >
-> 
-> 
-> -- 
-> Thanks,
-> Yunlong Song
-> 
+There are also per-filesystem tunables in /sys/fs/ext4/{device}/ and it
+wouldn't be a bad idea to expose per-filesystem features something like
+/sys/fs/{fstype}/{device}/features/{feature_name} so that it is easily
+checked by userspace tools using [ -e $feature ] in bash or access()
+in programs rather than an ioctl.
+
+Cheers, Andreas
+
+>=20
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+> fs/f2fs/f2fs.h |  2 ++
+> fs/f2fs/file.c | 13 +++++++++++++
+> 2 files changed, 15 insertions(+)
+>=20
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index e06d4e4b4579..5c46a462b56e 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -112,6 +112,7 @@ struct f2fs_mount_info {
+>=20
+> #define F2FS_FEATURE_ENCRYPT	0x0001
+> #define F2FS_FEATURE_BLKZONED	0x0002
+> +#define F2FS_FEATURE_ATOMIC_WRITE 0x0004
+>=20
+> #define F2FS_HAS_FEATURE(sb, mask)					=
+\
+> 	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) !=3D 0)
+> @@ -308,6 +309,7 @@ static inline bool __has_cursum_space(struct =
+f2fs_journal *journal,
+> 						struct =
+f2fs_flush_device)
+> #define F2FS_IOC_GARBAGE_COLLECT_RANGE	_IOW(F2FS_IOCTL_MAGIC, =
+11,	\
+> 						struct f2fs_gc_range)
+> +#define	F2FS_IOC_GET_FEATURES		_IOR(F2FS_IOCTL_MAGIC, =
+12, __u32)
+>=20
+> #define F2FS_IOC_SET_ENCRYPTION_POLICY	=
+FS_IOC_SET_ENCRYPTION_POLICY
+> #define F2FS_IOC_GET_ENCRYPTION_POLICY	=
+FS_IOC_GET_ENCRYPTION_POLICY
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 2706130c261b..0e07b5b18cfa 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -2384,6 +2384,16 @@ static int f2fs_ioc_flush_device(struct file =
+*filp, unsigned long arg)
+> 	return ret;
+> }
+>=20
+> +static int f2fs_ioc_get_features(struct file *filp, unsigned long =
+arg)
+> +{
+> +	struct inode *inode =3D file_inode(filp);
+> +	u32 sb_feature =3D =
+le32_to_cpu(F2FS_I_SB(inode)->raw_super->feature);
+> +
+> +	/* Must validate to set it with SQLite behavior in Android. */
+> +	sb_feature |=3D F2FS_FEATURE_ATOMIC_WRITE;
+> +
+> +	return put_user(sb_feature, (u32 __user *)arg);
+> +}
+>=20
+> long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long =
+arg)
+> {
+> @@ -2426,6 +2436,8 @@ long f2fs_ioctl(struct file *filp, unsigned int =
+cmd, unsigned long arg)
+> 		return f2fs_ioc_move_range(filp, arg);
+> 	case F2FS_IOC_FLUSH_DEVICE:
+> 		return f2fs_ioc_flush_device(filp, arg);
+> +	case F2FS_IOC_GET_FEATURES:
+> +		return f2fs_ioc_get_features(filp, arg);
+> 	default:
+> 		return -ENOTTY;
+> 	}
+> @@ -2491,6 +2503,7 @@ long f2fs_compat_ioctl(struct file *file, =
+unsigned int cmd, unsigned long arg)
+> 	case F2FS_IOC_DEFRAGMENT:
+> 	case F2FS_IOC_MOVE_RANGE:
+> 	case F2FS_IOC_FLUSH_DEVICE:
+> +	case F2FS_IOC_GET_FEATURES:
+> 		break;
+> 	default:
+> 		return -ENOIOCTLCMD;
+> --
+> 2.13.0.rc1.294.g07d810a77f-goog
+>=20
+
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_1FAA3780-87E1-49CC-B97D-EA7EE93DA6D8
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iD8DBQFZcnA7pIg59Q01vtYRAgPkAKDCEGMEuxpYWsYkmXDI98Rt/PiDugCaAxL4
+OC1Ds5rOShpn8VpuU2LN80Q=
+=HpUu
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_1FAA3780-87E1-49CC-B97D-EA7EE93DA6D8--
