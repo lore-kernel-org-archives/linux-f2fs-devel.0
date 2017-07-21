@@ -1,86 +1,80 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: let background GC being aware of freezing
-Date: Fri, 21 Jul 2017 11:36:35 +0800
-Message-ID: <20170721033635.6277-1-yuchao0@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
- helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1dYOkO-0007pK-V3
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 Jul 2017 03:37:00 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187])
- by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1dYOkN-0005wF-54
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 Jul 2017 03:37:00 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: add ioctl to expose current features
+Date: Fri, 21 Jul 2017 13:11:08 -0700
+Message-ID: <20170721201108.18408-1-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-When ->freeze_fs is called from lvm for doing snapshot, it needs to
-make sure there will be no more changes in filesystem's data, however,
-previously, background GC wasn't aware of freezing, so in environment
-with active background GC thread, data of snapshot becomes unstable.
+This patch adds an ioctl to provide feature information to user.
+For exapmle, SQLite can use this ioctl to detect whether f2fs support atomic
+write or not.
 
-This patch fixes this issue by adding sb_{start,end}_intwrite in GC
-flow.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/gc.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/f2fs/f2fs.h |  2 ++
+ fs/f2fs/file.c | 13 +++++++++++++
+ 2 files changed, 15 insertions(+)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 76ad2c3d88db..1c0117f60083 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -55,6 +55,8 @@ static int gc_thread_func(void *data)
- 		}
- #endif
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index e06d4e4b4579..5c46a462b56e 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -112,6 +112,7 @@ struct f2fs_mount_info {
  
-+		sb_start_intwrite(sbi->sb);
+ #define F2FS_FEATURE_ENCRYPT	0x0001
+ #define F2FS_FEATURE_BLKZONED	0x0002
++#define F2FS_FEATURE_ATOMIC_WRITE 0x0004
+ 
+ #define F2FS_HAS_FEATURE(sb, mask)					\
+ 	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
+@@ -308,6 +309,7 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
+ 						struct f2fs_flush_device)
+ #define F2FS_IOC_GARBAGE_COLLECT_RANGE	_IOW(F2FS_IOCTL_MAGIC, 11,	\
+ 						struct f2fs_gc_range)
++#define	F2FS_IOC_GET_FEATURES		_IOR(F2FS_IOCTL_MAGIC, 12, __u32)
+ 
+ #define F2FS_IOC_SET_ENCRYPTION_POLICY	FS_IOC_SET_ENCRYPTION_POLICY
+ #define F2FS_IOC_GET_ENCRYPTION_POLICY	FS_IOC_GET_ENCRYPTION_POLICY
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 2706130c261b..0e07b5b18cfa 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2384,6 +2384,16 @@ static int f2fs_ioc_flush_device(struct file *filp, unsigned long arg)
+ 	return ret;
+ }
+ 
++static int f2fs_ioc_get_features(struct file *filp, unsigned long arg)
++{
++	struct inode *inode = file_inode(filp);
++	u32 sb_feature = le32_to_cpu(F2FS_I_SB(inode)->raw_super->feature);
 +
- 		/*
- 		 * [GC triggering condition]
- 		 * 0. GC is not conducted currently.
-@@ -69,12 +71,12 @@ static int gc_thread_func(void *data)
- 		 * So, I'd like to wait some time to collect dirty segments.
- 		 */
- 		if (!mutex_trylock(&sbi->gc_mutex))
--			continue;
-+			goto next;
++	/* Must validate to set it with SQLite behavior in Android. */
++	sb_feature |= F2FS_FEATURE_ATOMIC_WRITE;
++
++	return put_user(sb_feature, (u32 __user *)arg);
++}
  
- 		if (!is_idle(sbi)) {
- 			increase_sleep_time(gc_th, &wait_ms);
- 			mutex_unlock(&sbi->gc_mutex);
--			continue;
-+			goto next;
- 		}
- 
- 		if (has_enough_invalid_blocks(sbi))
-@@ -93,6 +95,8 @@ static int gc_thread_func(void *data)
- 
- 		/* balancing f2fs's metadata periodically */
- 		f2fs_balance_fs_bg(sbi);
-+next:
-+		sb_end_intwrite(sbi->sb);
- 
- 	} while (!kthread_should_stop());
- 	return 0;
+ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ {
+@@ -2426,6 +2436,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		return f2fs_ioc_move_range(filp, arg);
+ 	case F2FS_IOC_FLUSH_DEVICE:
+ 		return f2fs_ioc_flush_device(filp, arg);
++	case F2FS_IOC_GET_FEATURES:
++		return f2fs_ioc_get_features(filp, arg);
+ 	default:
+ 		return -ENOTTY;
+ 	}
+@@ -2491,6 +2503,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	case F2FS_IOC_DEFRAGMENT:
+ 	case F2FS_IOC_MOVE_RANGE:
+ 	case F2FS_IOC_FLUSH_DEVICE:
++	case F2FS_IOC_GET_FEATURES:
+ 		break;
+ 	default:
+ 		return -ENOIOCTLCMD;
 -- 
-2.13.1.388.g69e6b9b4f4a9
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+2.13.0.rc1.294.g07d810a77f-goog
