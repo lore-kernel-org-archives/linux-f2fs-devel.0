@@ -1,105 +1,136 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH v2] f2fs: make background threads of f2fs being aware of freezing
-Date: Sat, 22 Jul 2017 08:52:23 +0800
-Message-ID: <20170722005223.8628-1-chao@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: sunqiuyang <sunqiuyang@huawei.com>
+Subject: Re: [f2fs:dev-test 9/9] fs/f2fs/file.c:599:9: error:
+ implicit declaration of function 'iomap_zero_range'
+Date: Mon, 24 Jul 2017 01:09:56 +0000
+Message-ID: <157FC541501A9C4C862B2F16FFE316DCFC2160@DGGEMM506-MBS.china.huawei.com>
+References: <201707220508.tlZncFoS%fengguang.wu@intel.com>,
+ <20170721220959.GA22459@jaegeuk-macbookpro.roam.corp.google.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+ helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <sunqiuyang@huawei.com>)
+ id 1dZRtH-00068r-Ui
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Jul 2017 01:10:31 +0000
+Received: from szxga01-in.huawei.com ([45.249.212.187])
+ by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1dZRtF-0003mp-PI
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Jul 2017 01:10:31 +0000
+In-Reply-To: <20170721220959.GA22459@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, kbuild test robot <fengguang.wu@intel.com>
+Cc: "kbuild-all@01.org" <kbuild-all@01.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-From: Chao Yu <yuchao0@huawei.com>
+Hi Jaegeuk, 
 
-When ->freeze_fs is called from lvm for doing snapshot, it needs to
-make sure there will be no more changes in filesystem's data, however,
-previously, background threads like GC thread wasn't aware of freezing,
-so in environment with active background threads, data of snapshot
-becomes unstable.
+OK, I agree with your modification.
 
-This patch fixes this issue by adding sb_{start,end}_intwrite in
-below background threads:
-- GC thread
-- flush thread
-- discard thread
+Thanks,
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/gc.c      | 8 ++++++--
- fs/f2fs/segment.c | 8 ++++++++
- 2 files changed, 14 insertions(+), 2 deletions(-)
+________________________________________
+From: Jaegeuk Kim [jaegeuk@kernel.org]
+Sent: Saturday, July 22, 2017 6:09
+To: kbuild test robot
+Cc: sunqiuyang; kbuild-all@01.org; linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs:dev-test 9/9] fs/f2fs/file.c:599:9: error: implicit declaration of function 'iomap_zero_range'
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 29f412d7cbf1..7aa17f80fdf1 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -55,6 +55,8 @@ static int gc_thread_func(void *data)
- 		}
- #endif
- 
-+		sb_start_intwrite(sbi->sb);
-+
- 		/*
- 		 * [GC triggering condition]
- 		 * 0. GC is not conducted currently.
-@@ -69,12 +71,12 @@ static int gc_thread_func(void *data)
- 		 * So, I'd like to wait some time to collect dirty segments.
- 		 */
- 		if (!mutex_trylock(&sbi->gc_mutex))
--			continue;
-+			goto next;
- 
- 		if (!is_idle(sbi)) {
- 			increase_sleep_time(gc_th, &wait_ms);
- 			mutex_unlock(&sbi->gc_mutex);
--			continue;
-+			goto next;
- 		}
- 
- 		if (has_enough_invalid_blocks(sbi))
-@@ -93,6 +95,8 @@ static int gc_thread_func(void *data)
- 
- 		/* balancing f2fs's metadata periodically */
- 		f2fs_balance_fs_bg(sbi);
-+next:
-+		sb_end_intwrite(sbi->sb);
- 
- 	} while (!kthread_should_stop());
- 	return 0;
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 6d091c75aa59..df1bb0c144f1 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -485,6 +485,8 @@ static int issue_flush_thread(void *data)
- 	if (kthread_should_stop())
- 		return 0;
- 
-+	sb_start_intwrite(sbi->sb);
-+
- 	if (!llist_empty(&fcc->issue_list)) {
- 		struct flush_cmd *cmd, *next;
- 		int ret;
-@@ -503,6 +505,8 @@ static int issue_flush_thread(void *data)
- 		fcc->dispatch_list = NULL;
- 	}
- 
-+	sb_end_intwrite(sbi->sb);
-+
- 	wait_event_interruptible(*q,
- 		kthread_should_stop() || !llist_empty(&fcc->issue_list));
- 	goto repeat;
-@@ -1130,9 +1134,13 @@ static int issue_discard_thread(void *data)
- 		if (kthread_should_stop())
- 			return 0;
- 
-+		sb_start_intwrite(sbi->sb);
-+
- 		__issue_discard_cmd(sbi, true);
- 		__wait_discard_cmd(sbi, true);
- 
-+		sb_end_intwrite(sbi->sb);
-+
- 		congestion_wait(BLK_RW_SYNC, HZ/50);
- 	} while (!kthread_should_stop());
- 	return 0;
--- 
-2.13.0.90.g1eb437020
+Qiuyang,
+
+I've modified your patch to resolve this, and pushed a new one into f2fs.git.
+Could you please check it?
+
+Thanks,
+
+On 07/22, kbuild test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
+> head:   7f25bbd057c335857559619b4a16738b3ba79db9
+> commit: 7f25bbd057c335857559619b4a16738b3ba79db9 [9/9] f2fs: dax: implement direct access
+> config: i386-randconfig-x003-07210940 (attached as .config)
+> compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
+> reproduce:
+>         git checkout 7f25bbd057c335857559619b4a16738b3ba79db9
+>         # save the attached .config to linux build tree
+>         make ARCH=i386
+>
+> All errors (new ones prefixed by >>):
+>
+>    fs/f2fs/file.c: In function 'truncate_partial_data_page':
+> >> fs/f2fs/file.c:599:9: error: implicit declaration of function 'iomap_zero_range' [-Werror=implicit-function-declaration]
+>       ret = iomap_zero_range(inode, from, PAGE_SIZE - offset,
+>             ^~~~~~~~~~~~~~~~
+> >> fs/f2fs/file.c:600:11: error: 'f2fs_iomap_ops' undeclared (first use in this function)
+>        NULL, &f2fs_iomap_ops);
+>               ^~~~~~~~~~~~~~
+>    fs/f2fs/file.c:600:11: note: each undeclared identifier is reported only once for each function it appears in
+>    fs/f2fs/file.c: In function 'fill_zero':
+>    fs/f2fs/file.c:891:16: error: 'f2fs_iomap_ops' undeclared (first use in this function)
+>        len, NULL, &f2fs_iomap_ops);
+>                    ^~~~~~~~~~~~~~
+>    cc1: some warnings being treated as errors
+>
+> vim +/iomap_zero_range +599 fs/f2fs/file.c
+>
+>    583
+>    584        static int truncate_partial_data_page(struct inode *inode, u64 from,
+>    585                                                                        bool cache_only)
+>    586        {
+>    587                unsigned offset = from & (PAGE_SIZE - 1);
+>    588                pgoff_t index = from >> PAGE_SHIFT;
+>    589                struct address_space *mapping = inode->i_mapping;
+>    590                struct page *page;
+>    591
+>    592                if (!offset && !cache_only)
+>    593                        return 0;
+>    594
+>    595                if (f2fs_dax_file(inode)) {
+>    596                        int ret;
+>    597
+>    598                        down_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
+>  > 599                        ret = iomap_zero_range(inode, from, PAGE_SIZE - offset,
+>  > 600                                NULL, &f2fs_iomap_ops);
+>    601                        up_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
+>    602                        return ret;
+>    603                }
+>    604
+>    605                if (cache_only) {
+>    606                        page = find_lock_page(mapping, index);
+>    607                        if (page && PageUptodate(page))
+>    608                                goto truncate_out;
+>    609                        f2fs_put_page(page, 1);
+>    610                        return 0;
+>    611                }
+>    612
+>    613                page = get_lock_data_page(inode, index, true);
+>    614                if (IS_ERR(page))
+>    615                        return PTR_ERR(page) == -ENOENT ? 0 : PTR_ERR(page);
+>    616        truncate_out:
+>    617                f2fs_wait_on_page_writeback(page, DATA, true);
+>    618                zero_user(page, offset, PAGE_SIZE - offset);
+>    619
+>    620                /* An encrypted inode should have a key and truncate the last page. */
+>    621                f2fs_bug_on(F2FS_I_SB(inode), cache_only && f2fs_encrypted_inode(inode));
+>    622                if (!cache_only)
+>    623                        set_page_dirty(page);
+>    624                f2fs_put_page(page, 1);
+>    625                return 0;
+>    626        }
+>    627
+>
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
