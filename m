@@ -1,167 +1,888 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH] f2fs: let __get_victim successfully get a
- segno in corner case
-Date: Mon, 24 Jul 2017 17:18:55 +0800
-Message-ID: <6f374ac6-b9a3-9d96-35c3-49ef2e45ea77@huawei.com>
-References: <1500033432-57620-1-git-send-email-yunlong.song@huawei.com>
- <20170716010934.GC51202@jaegeuk-macbookpro.roam.corp.google.com>
- <3b3c1eba.b25.15d495786fe.Coremail.sylinux@163.com>
- <20170717165636.GB81128@jaegeuk-macbookpro.roam.corp.google.com>
- <5970A19F.4030000@huawei.com>
- <20170721210733.GB14361@jaegeuk-macbookpro.roam.corp.google.com>
+From: Sun Qiuyang <sunqiuyang@huawei.com>
+Subject: Re: [PATCH v8 1/1] f2fs: dax: implement direct access
+Date: Mon, 24 Jul 2017 20:03:04 +0800
+Message-ID: <42186476-5ee1-ff0d-230f-e2efeb530d0b@huawei.com>
+References: <1500552639-18523-1-git-send-email-sunqiuyang@huawei.com>
+ <20170722003440.GA29168@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
- helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yunlong.song@huawei.com>)
- id 1dZZZw-00028k-5v
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Jul 2017 09:23:04 +0000
-Received: from szxga03-in.huawei.com ([45.249.212.189])
- by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1dZZZt-0003MN-UU
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Jul 2017 09:23:04 +0000
-In-Reply-To: <20170721210733.GB14361@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20170722003440.GA29168@jaegeuk-macbookpro.roam.corp.google.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: chao <chao@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>, sylinux <sylinux@163.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGkgSmF5LAogICAgIGZnZ2NfdGhyZXNob2xkIGlzIDUwNywgcmVzZXJ2ZWRfc2VnbWVudCBpcyA0
-NjIuCgpPbiAyMDE3LzcvMjIgNTowNywgSmFlZ2V1ayBLaW0gd3JvdGU6Cj4gSGkgWXVubG9uZywK
-Pgo+IE9uIDA3LzIwLCBZdW5sb25nIFNvbmcgd3JvdGU6Cj4+IEhpLCBKYXksCj4+ICAgICAgVGhl
-IGRpc3RyaWJ1dGlvbiBpcyBsaWtlIHRoaXMsIHVuaXQgaXMgc2VnbWVudCBjb3VudHM6Cj4+ICAg
-ICAgY250X2ZyZWU6IDAgKGZyZWUgYmxvY2tzKQo+PiAgICAgIGNudF9mdWxsOiAyNTE4MiAoc2Vn
-bWVudCB3aGljaCBoYXMgNTEyIGJsb2NrcykKPj4gICAgICBjbnRfb3ZlcjogMjUxOTIgKHNlZ21l
-bnQgd2hpY2ggdmFsaWQgYmxvY2tzIG92ZXIgZmdnY190aHJlc2hvbGQpCj4+ICAgICAgY250X2Jl
-bG93OiA4NzAgKHNlZ21lbnQgd2hpY2ggdmFsaWQgYmxvY2tzIGJlbG93IGZnZ2NfdGhyZXNob2xk
-KQo+IFdoYXQgYXJlIHRoZSB2YWx1ZXMgb2YgZmdnY190aHJlc2hvbGQgYW5kIG92cCByYXRpbyBv
-ciByZXNlcnZlZF9zZWdtZW50cz8KPiBIb3cgd2FzIHRoZSBwcm9jL3NlZ21lbnRfaW5mbz8KPgo+
-IFRoYW5rcywKPgo+PiBUaGUgdGVzdCBpcyBmcmFnbWVudCB0ZXN0LCBhZGQgYW5kIGRlbGV0ZSBz
-bWFsbCBmaWxlcyBvdmVyIGFuZCBvdmVyLgo+Pgo+PiBPbiAyMDE3LzcvMTggMDo1NiwgSmFlZ2V1
-ayBLaW0gd3JvdGU6Cj4+PiBPbiAwNy8xNiwgc3lsaW51eCB3cm90ZToKPj4+PiBJbiBmYWN077yM
-dGhpcyBpcyBub3QgInN1cHBvc2UiIGNhc2UgeWV0LCB3ZSBoYXZlIGFscmVhZHkgbWV0IHRoaXMg
-cHJvYmxlbSBzZXZlcmFsIHRpbWVzIGluIHNvbWUgdGVzdCBzdWl0cyBmb3IgY29ybmVyIGNhc2Us
-IG9yIEkgY2Fubm90IG5vdGljZSB0aGF0IHRoaXMgY291bGQgaGFwcGVuLgo+Pj4gU28sIGhhdmUg
-eW91IHRha2VuIGEgbG9vayBhdCBkaXN0cmlidXRpb24gb2YgdmFsaWQgYmxvY2tzIGluIHRoYXQg
-Y2FzZT8KPj4+IEknbSB3b25kZXJpbmcgd2hhdCBkaXN0cmlidXRpb24gY2FuIGNhdXNlIHRoaXMu
-Cj4+Pgo+Pj4gVGhhbmtzLAo+Pj4KPj4+Pgo+Pj4+Cj4+Pj4g5Y+R6Ieq572R5piT6YKu566x5aSn
-5biICj4+Pj4gT24gMDcvMTYvMjAxNyAwOTowOSwgSmFlZ2V1ayBLaW0gd3JvdGU6Cj4+Pj4gSGkg
-WXVubG9uZywKPj4+Pgo+Pj4+IE9uIDA3LzE0LCBZdW5sb25nIFNvbmcgd3JvdGU6Cj4+Pj4+IFN1
-cHBvc2UgdGhhdCB0aGUgdmFsaWQgYmxvY2tzIG9mIGVhY2ggc2VjdGlvbiBhcmUgYWxsIG92ZXIg
-c2JpLT5mZ2djX3RocmVzaG9sZCwKPj4+PiBIb3cgYWJvdXQgYWRkaW5nIGEga2VybmVsIG1lc3Nh
-Z2UgZmlyc3QgdG8gZGV0ZWN0IHlvdXIgKnN1cHBvc2VkKiBzY2VhbnJpbz8KPj4+PiBJZiB0aGF0
-IGhhcHBlbnMsIGl0J2xsIGJlIGEgc29ydCBvZiBidWcgd2hpY2ggd2UgaGF2ZW4ndCBhc3N1bWVk
-Lgo+Pj4+Cj4+Pj4gVGhhbmtzLAo+Pj4+Cj4+Pj4+IGFuZCBldmVuIGhhc19ub3RfZW5vdWdoX2Zy
-ZWVfc2VjcyBpcyB0cnVlLCBmMmZzX2djIGNhbm5vdCBkbyBpdHMgam9iIHNpbmNlIHRoZQo+Pj4+
-PiBub19mZ2djX2NhbmRpZGF0ZSBhbHdheXMgcmV0dXJucyB0cnVlLiBBcyBhIHJlc3VsdCwgdGhl
-IHJlc2VydmVkIHNlZ21lbnRzIGNhbiBiZQo+Pj4+PiB1c2VkIHVwLCBhbmQgZmluYWxseSB0aGVy
-ZSBpcyBubyBmcmVlIHNlZ21lbnQgYXQgYWxsLCBhbmQgZ2V0X25ld19zZWdtZW50IGNhbm5vdAo+
-Pj4+PiBnZXQgYSBmcmVlIHNlZ21lbnQsIGZpbGVzeXN0ZW0gd2lsbCB0cmFwIGludG8gYSB3cm9u
-ZyBzdGF0dXMuCj4+Pj4+Cj4+Pj4+IFRvIGZpeCB0aGlzLCB3ZSByZWNvcmQgdGhlIHNlZ25vIHdo
-aWNoIGhhcyBhIHJvdWdoIG1pbmltdW0gY29zdCBhbmQgcmV0dXJuIGl0IHRvCj4+Pj4+IF9fZ2V0
-X3ZpY3RpbSB0byBjb250aW51ZSBmMmZzX2djJ3Mgam9iLgo+Pj4+Pgo+Pj4+PiBTaWduZWQtb2Zm
-LWJ5OiBZdW5sb25nIFNvbmcgPHl1bmxvbmcuc29uZ0BodWF3ZWkuY29tPgo+Pj4+PiAtLS0KPj4+
-Pj4gICBmcy9mMmZzL2djLmMgICAgICB8IDE5ICsrKysrKysrKysrKysrLS0tLS0KPj4+Pj4gICBm
-cy9mMmZzL3NlZ21lbnQuaCB8IDE3ICsrKysrKysrKysrKysrLS0tCj4+Pj4+ICAgMiBmaWxlcyBj
-aGFuZ2VkLCAyOCBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQo+Pj4+Pgo+Pj4+PiBkaWZm
-IC0tZ2l0IGEvZnMvZjJmcy9nYy5jIGIvZnMvZjJmcy9nYy5jCj4+Pj4+IGluZGV4IGZhM2QyZTIu
-Ljk2NWU3ODMgMTAwNjQ0Cj4+Pj4+IC0tLSBhL2ZzL2YyZnMvZ2MuYwo+Pj4+PiArKysgYi9mcy9m
-MmZzL2djLmMKPj4+Pj4gQEAgLTE3OCw2ICsxNzgsOCBAQCBzdGF0aWMgdm9pZCBzZWxlY3RfcG9s
-aWN5KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgaW50IGdjX3R5cGUsCj4+Pj4+ICAgICAgICAg
-ICBwLT5vZmZzZXQgPSAwOwo+Pj4+PiAgICAgICBlbHNlCj4+Pj4+ICAgICAgICAgICBwLT5vZmZz
-ZXQgPSBTSVRfSShzYmkpLT5sYXN0X3ZpY3RpbVtwLT5nY19tb2RlXTsKPj4+Pj4gKwo+Pj4+PiAr
-ICAgIHAtPm1pbl9jb3N0X3IgPSBVSU5UX01BWDsKPj4+Pj4gICB9Cj4+Pj4+ICAgCj4+Pj4+ICAg
-c3RhdGljIHVuc2lnbmVkIGludCBnZXRfbWF4X2Nvc3Qoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2Jp
-LAo+Pj4+PiBAQCAtMTk0LDcgKzE5Niw3IEBAIHN0YXRpYyB1bnNpZ25lZCBpbnQgZ2V0X21heF9j
-b3N0KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwKPj4+Pj4gICAgICAgICAgIHJldHVybiAwOwo+
-Pj4+PiAgIH0KPj4+Pj4gICAKPj4+Pj4gLXN0YXRpYyB1bnNpZ25lZCBpbnQgY2hlY2tfYmdfdmlj
-dGltcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpCj4+Pj4+ICtzdGF0aWMgdW5zaWduZWQgaW50
-IGNoZWNrX2JnX3ZpY3RpbXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1Y3QgdmljdGlt
-X3NlbF9wb2xpY3kgKnApCj4+Pj4+ICAgewo+Pj4+PiAgICAgICBzdHJ1Y3QgZGlydHlfc2VnbGlz
-dF9pbmZvICpkaXJ0eV9pID0gRElSVFlfSShzYmkpOwo+Pj4+PiAgICAgICB1bnNpZ25lZCBpbnQg
-c2Vjbm87Cj4+Pj4+IEBAIC0yMDgsMTEgKzIxMCwxMiBAQCBzdGF0aWMgdW5zaWduZWQgaW50IGNo
-ZWNrX2JnX3ZpY3RpbXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpKQo+Pj4+PiAgICAgICAgICAg
-aWYgKHNlY191c2FnZV9jaGVjayhzYmksIHNlY25vKSkKPj4+Pj4gICAgICAgICAgICAgICBjb250
-aW51ZTsKPj4+Pj4gICAKPj4+Pj4gLSAgICAgICAgaWYgKG5vX2ZnZ2NfY2FuZGlkYXRlKHNiaSwg
-c2Vjbm8pKQo+Pj4+PiArICAgICAgICBwLT5jdXJfc2Vnbm9fciA9IEdFVF9TRUdfRlJPTV9TRUMo
-c2JpLCBzZWNubyk7Cj4+Pj4+ICsgICAgICAgIGlmIChub19mZ2djX2NhbmRpZGF0ZShzYmksIHNl
-Y25vLCBwKSkKPj4+Pj4gICAgICAgICAgICAgICBjb250aW51ZTsKPj4+Pj4gICAKPj4+Pj4gICAg
-ICAgICAgIGNsZWFyX2JpdChzZWNubywgZGlydHlfaS0+dmljdGltX3NlY21hcCk7Cj4+Pj4+IC0g
-ICAgICAgIHJldHVybiBHRVRfU0VHX0ZST01fU0VDKHNiaSwgc2Vjbm8pOwo+Pj4+PiArICAgICAg
-ICByZXR1cm4gcC0+Y3VyX3NlZ25vX3I7Cj4+Pj4+ICAgICAgIH0KPj4+Pj4gICAgICAgcmV0dXJu
-IE5VTExfU0VHTk87Cj4+Pj4+ICAgfQo+Pj4+PiBAQCAtMzMyLDcgKzMzNSw3IEBAIHN0YXRpYyBp
-bnQgZ2V0X3ZpY3RpbV9ieV9kZWZhdWx0KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwKPj4+Pj4g
-ICAKPj4+Pj4gICAgICAgbGFzdF92aWN0aW0gPSBzbS0+bGFzdF92aWN0aW1bcC5nY19tb2RlXTsK
-Pj4+Pj4gICAgICAgaWYgKHAuYWxsb2NfbW9kZSA9PSBMRlMgJiYgZ2NfdHlwZSA9PSBGR19HQykg
-ewo+Pj4+PiAtICAgICAgICBwLm1pbl9zZWdubyA9IGNoZWNrX2JnX3ZpY3RpbXMoc2JpKTsKPj4+
-Pj4gKyAgICAgICAgcC5taW5fc2Vnbm8gPSBjaGVja19iZ192aWN0aW1zKHNiaSwgJnApOwo+Pj4+
-PiAgICAgICAgICAgaWYgKHAubWluX3NlZ25vICE9IE5VTExfU0VHTk8pCj4+Pj4+ICAgICAgICAg
-ICAgICAgZ290byBnb3RfaXQ7Cj4+Pj4+ICAgICAgIH0KPj4+Pj4gQEAgLTM2OSw4ICszNzIsOSBA
-QCBzdGF0aWMgaW50IGdldF92aWN0aW1fYnlfZGVmYXVsdChzdHJ1Y3QgZjJmc19zYl9pbmZvICpz
-YmksCj4+Pj4+ICAgICAgICAgICAgICAgZ290byBuZXh0Owo+Pj4+PiAgICAgICAgICAgaWYgKGdj
-X3R5cGUgPT0gQkdfR0MgJiYgdGVzdF9iaXQoc2Vjbm8sIGRpcnR5X2ktPnZpY3RpbV9zZWNtYXAp
-KQo+Pj4+PiAgICAgICAgICAgICAgIGdvdG8gbmV4dDsKPj4+Pj4gKyAgICAgICAgcC5jdXJfc2Vn
-bm9fciA9IHNlZ25vOwo+Pj4+PiAgICAgICAgICAgaWYgKGdjX3R5cGUgPT0gRkdfR0MgJiYgcC5h
-bGxvY19tb2RlID09IExGUyAmJgo+Pj4+PiAtICAgICAgICAgICAgICAgICAgICBub19mZ2djX2Nh
-bmRpZGF0ZShzYmksIHNlY25vKSkKPj4+Pj4gKyAgICAgICAgICAgICAgICAgICAgbm9fZmdnY19j
-YW5kaWRhdGUoc2JpLCBzZWNubywgJnApKQo+Pj4+PiAgICAgICAgICAgICAgIGdvdG8gbmV4dDsK
-Pj4+Pj4gICAKPj4+Pj4gICAgICAgICAgIGNvc3QgPSBnZXRfZ2NfY29zdChzYmksIHNlZ25vLCAm
-cCk7Cj4+Pj4+IEBAIC00MDMsNiArNDA3LDExIEBAIHN0YXRpYyBpbnQgZ2V0X3ZpY3RpbV9ieV9k
-ZWZhdWx0KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwKPj4+Pj4gICAgICAgICAgIHRyYWNlX2Yy
-ZnNfZ2V0X3ZpY3RpbShzYmktPnNiLCB0eXBlLCBnY190eXBlLCAmcCwKPj4+Pj4gICAgICAgICAg
-ICAgICAgICAgc2JpLT5jdXJfdmljdGltX3NlYywKPj4+Pj4gICAgICAgICAgICAgICAgICAgcHJl
-ZnJlZV9zZWdtZW50cyhzYmkpLCBmcmVlX3NlZ21lbnRzKHNiaSkpOwo+Pj4+PiArICAgIH0gZWxz
-ZSBpZiAoaGFzX25vdF9lbm91Z2hfZnJlZV9zZWNzKHNiaSwgMCwgMCkpIHsKPj4+Pj4gKyAgICAg
-ICAgcC5taW5fc2Vnbm8gPSBwLm1pbl9zZWdub19yOwo+Pj4+PiArICAgICAgICBpZiAocC5hbGxv
-Y19tb2RlID09IExGUyAmJiBnY190eXBlID09IEZHX0dDKQo+Pj4+PiArICAgICAgICAgICAgY2xl
-YXJfYml0KEdFVF9TRUNfRlJPTV9TRUcoc2JpLCBwLm1pbl9zZWdubyksIGRpcnR5X2ktPnZpY3Rp
-bV9zZWNtYXApOwo+Pj4+PiArICAgICAgICBnb3RvIGdvdF9pdDsKPj4+Pj4gICAgICAgfQo+Pj4+
-PiAgIG91dDoKPj4+Pj4gICAgICAgbXV0ZXhfdW5sb2NrKCZkaXJ0eV9pLT5zZWdsaXN0X2xvY2sp
-Owo+Pj4+PiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9zZWdtZW50LmggYi9mcy9mMmZzL3NlZ21lbnQu
-aAo+Pj4+PiBpbmRleCA2Yjg3MWI0Li43ZDJkMGYzIDEwMDY0NAo+Pj4+PiAtLS0gYS9mcy9mMmZz
-L3NlZ21lbnQuaAo+Pj4+PiArKysgYi9mcy9mMmZzL3NlZ21lbnQuaAo+Pj4+PiBAQCAtMTY5LDYg
-KzE2OSw5IEBAIHN0cnVjdCB2aWN0aW1fc2VsX3BvbGljeSB7Cj4+Pj4+ICAgICAgIHVuc2lnbmVk
-IGludCBvZnNfdW5pdDsgICAgICAgIC8qIGJpdG1hcCBzZWFyY2ggdW5pdCAqLwo+Pj4+PiAgICAg
-ICB1bnNpZ25lZCBpbnQgbWluX2Nvc3Q7ICAgICAgICAvKiBtaW5pbXVtIGNvc3QgKi8KPj4+Pj4g
-ICAgICAgdW5zaWduZWQgaW50IG1pbl9zZWdubzsgICAgICAgIC8qIHNlZ21lbnQgIyBoYXZpbmcg
-bWluLiBjb3N0ICovCj4+Pj4+ICsgICAgdW5zaWduZWQgaW50IG1pbl9jb3N0X3I7ICAgICAgICAv
-KiByb3VnaCBtaW5pbXVtIGNvc3QgKi8KPj4+Pj4gKyAgICB1bnNpZ25lZCBpbnQgbWluX3NlZ25v
-X3I7ICAgICAgICAvKiBzZWdtZW50ICMgaGF2aW5nIHJvdWdoIG1pbi4gY29zdCAqLwo+Pj4+PiAr
-ICAgIHVuc2lnbmVkIGludCBjdXJfc2Vnbm9fcjsgICAgICAgIC8qIHNlZ21lbnQgIyByb3VnaCBw
-cm9jZXNzIGlzIGhhbmRsaW5nICovCj4+Pj4+ICAgfTsKPj4+Pj4gICAKPj4+Pj4gICBzdHJ1Y3Qg
-c2VnX2VudHJ5IHsKPj4+Pj4gQEAgLTc0MywxMSArNzQ2LDE5IEBAIHN0YXRpYyBpbmxpbmUgYmxv
-Y2tfdCBzdW1fYmxrX2FkZHIoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBpbnQgYmFzZSwgaW50
-IHR5cGUpCj4+Pj4+ICAgfQo+Pj4+PiAgIAo+Pj4+PiAgIHN0YXRpYyBpbmxpbmUgYm9vbCBub19m
-Z2djX2NhbmRpZGF0ZShzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksCj4+Pj4+IC0gICAgICAgICAg
-ICAgICAgICAgICAgICB1bnNpZ25lZCBpbnQgc2Vjbm8pCj4+Pj4+ICsgICAgICAgICAgICAgICAg
-ICAgICAgICB1bnNpZ25lZCBpbnQgc2Vjbm8sIHN0cnVjdCB2aWN0aW1fc2VsX3BvbGljeSAqcCkK
-Pj4+Pj4gICB7Cj4+Pj4+IC0gICAgaWYgKGdldF92YWxpZF9ibG9ja3Moc2JpLCBHRVRfU0VHX0ZS
-T01fU0VDKHNiaSwgc2Vjbm8pLCB0cnVlKSA+PQo+Pj4+PiAtICAgICAgICAgICAgICAgICAgICAg
-ICAgc2JpLT5mZ2djX3RocmVzaG9sZCkKPj4+Pj4gKyAgICB1bnNpZ25lZCBpbnQgY3VyX2Nvc3Q7
-Cj4+Pj4+ICsKPj4+Pj4gKyAgICBjdXJfY29zdCA9IGdldF92YWxpZF9ibG9ja3Moc2JpLCBHRVRf
-U0VHX0ZST01fU0VDKHNiaSwgc2Vjbm8pLCB0cnVlKTsKPj4+Pj4gKyAgICBpZiAoY3VyX2Nvc3Qg
-Pj0gc2JpLT5mZ2djX3RocmVzaG9sZCkgewo+Pj4+PiArICAgICAgICBpZiAocC0+bWluX2Nvc3Rf
-ciA+IGN1cl9jb3N0KSB7Cj4+Pj4+ICsgICAgICAgICAgICBwLT5taW5fY29zdF9yID0gY3VyX2Nv
-c3Q7Cj4+Pj4+ICsgICAgICAgICAgICBwLT5taW5fc2Vnbm9fciA9IHAtPmN1cl9zZWdub19yOwo+
-Pj4+PiArICAgICAgICB9Cj4+Pj4+ICAgICAgICAgICByZXR1cm4gdHJ1ZTsKPj4+Pj4gKyAgICB9
-Cj4+Pj4+ICsKPj4+Pj4gICAgICAgcmV0dXJuIGZhbHNlOwo+Pj4+PiAgIH0KPj4+Pj4gICAKPj4+
-Pj4gLS0KPj4+Pj4gMS44LjUuMgo+Pj4gLgo+Pj4KPj4KPj4gLS0gCj4+IFRoYW5rcywKPj4gWXVu
-bG9uZyBTb25nCj4+Cj4gLgo+CgotLSAKVGhhbmtzLApZdW5sb25nIFNvbmcKCgoKLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUgdmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUg
-b2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0
-dHA6Ly9zZG0ubGluay9zbGFzaGRvdApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRl
-dmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9s
-aXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+Hi Jaegeuk,
+
+Below is the error message I got from this testcase:
+---
+write (Invalid argument) len 1024 dio [dax to nondax | both nodax]
+read (Bad address) len [4096 | 16777216 | 67108864] dio dax to nondax
+---
+The write error is expected, as F2FS does not support unaligned direct 
+IO (1024 B).
+
+The read error is more complex. In the test script, when we mmap the src 
+file (dax), the flags (VM_MIXEDMAP | VM_HUGEPAGE) are added into
+vma->vm_flags. Later on, when we write to the dest file (nondax) and 
+then read from it by direct IO, we will fail to get pages from this 
+"special" vma.
+
+Functions involved:
+f2fs_direct_IO
+blockdev_direct_IO
+__blockdev_direct_IO
+do_direct_IO
+dio_get_page
+dio_refill_pages
+iov_iter_get_pages
+get_user_pages_unlocked
+__get_user_pages_fast
+__get_user_pages_unlocked
+__get_user_pages_locked
+__get_user_pages
+follow_page_mask
+follow_p4d_mask
+follow_pud_mask
+follow_pmd_mask
+follow_page_pte
+	vm_normal_page
+	follow_pfn_pte
+
+In my test environment HAVE_PTE_SPECIAL is true, and vm_normal_page() 
+returns NULL due to VM_MIXEDMAP in vm_flags. Then follow_page_pte() 
+continue to call follow_pfn_pte(), which returns -EFAULT. This is how we 
+get a "bad address" error finally.
+
+This error also occurs in EXT4-DAX for similar reasons.
+
+Thanks,
+
+
+> Hi Qiuyang,
+>
+> This fails xfstests/generic/413.
+>
+> Thanks,
+>
+> On 07/20, sunqiuyang wrote:
+>> From: Qiuyang Sun <sunqiuyang@huawei.com>
+>>
+>> This patch implements Direct Access (DAX) in F2FS, including:
+>>  - a mount option to choose whether to enable DAX or not
+>>  - read/write and mmap of regular files in the DAX way
+>>  - zero-out of unaligned partial blocks in the DAX way
+>>  - garbage collection of DAX files, by mapping both old and new physical
+>>    addresses of a data page into memory and copy data between them directly
+>>  - incompatibility of DAX with inline data, atomic or volatile write,
+>>    collapse|insert_range, etc.
+>>
+>> Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
+>> ---
+>> Changelog v7 -> v8:
+>>  - Introduce the macro f2fs_dax_file() to judge if a file is DAX for cases
+>>    when CONFIG_FS_DAX is set or not
+>>  - Return -ENOTSUPP when an operation does not support DAX
+>>  - In f2fs_iomap_begin(), convert the inline data of an inode (if any)
+>>    before mapping blocks
+>>  - Minor cleanups
+>> ---
+>>  Documentation/filesystems/f2fs.txt |   2 +
+>>  fs/f2fs/data.c                     | 132 +++++++++++++++++++++++++-
+>>  fs/f2fs/f2fs.h                     |  15 +++
+>>  fs/f2fs/file.c                     | 183 ++++++++++++++++++++++++++++++++++++-
+>>  fs/f2fs/gc.c                       | 103 ++++++++++++++++++++-
+>>  fs/f2fs/inline.c                   |   3 +
+>>  fs/f2fs/inode.c                    |   8 +-
+>>  fs/f2fs/namei.c                    |   5 +
+>>  fs/f2fs/super.c                    |  15 +++
+>>  9 files changed, 454 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+>> index 273ccb2..c86c421 100644
+>> --- a/Documentation/filesystems/f2fs.txt
+>> +++ b/Documentation/filesystems/f2fs.txt
+>> @@ -164,6 +164,8 @@ io_bits=%u             Set the bit size of write IO requests. It should be set
+>>                         with "mode=lfs".
+>>  usrquota               Enable plain user disk quota accounting.
+>>  grpquota               Enable plain group disk quota accounting.
+>> +dax                    Use direct access (no page cache). See
+>> +                       Documentation/filesystems/dax.txt.
+>>
+>>  ================================================================================
+>>  DEBUGFS ENTRIES
+>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>> index 87c1f41..4eb4b76 100644
+>> --- a/fs/f2fs/data.c
+>> +++ b/fs/f2fs/data.c
+>> @@ -910,6 +910,15 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>>  				err = -EIO;
+>>  				goto sync_out;
+>>  			}
+>> +			/*
+>> +			 * If newly allocated blocks are to be zeroed out later,
+>> +			 * a single f2fs_map_blocks must not contain both old
+>> +			 * and new blocks at the same time.
+>> +			 */
+>> +			if (flag == F2FS_GET_BLOCK_ZERO
+>> +					&& (map->m_flags & F2FS_MAP_MAPPED)
+>> +					&& !(map->m_flags & F2FS_MAP_NEW))
+>> +				goto sync_out;
+>>  			if (flag == F2FS_GET_BLOCK_PRE_AIO) {
+>>  				if (blkaddr == NULL_ADDR) {
+>>  					prealloc++;
+>> @@ -938,6 +947,8 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>>  						blkaddr != NEW_ADDR)
+>>  				goto sync_out;
+>>  		}
+>> +	} else if (flag == F2FS_GET_BLOCK_ZERO && map->m_flags & F2FS_MAP_NEW) {
+>> +		goto sync_out;
+>>  	}
+>>
+>>  	if (flag == F2FS_GET_BLOCK_PRE_AIO)
+>> @@ -996,6 +1007,12 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>>  	goto next_dnode;
+>>
+>>  sync_out:
+>> +	if (flag == F2FS_GET_BLOCK_ZERO && map->m_flags & F2FS_MAP_NEW) {
+>> +		clean_bdev_aliases(inode->i_sb->s_bdev,
+>> +				map->m_pblk, map->m_len);
+>> +		err = sb_issue_zeroout(inode->i_sb, map->m_pblk,
+>> +				map->m_len, GFP_NOFS);
+>> +	}
+>>  	f2fs_put_dnode(&dn);
+>>  unlock_out:
+>>  	if (create) {
+>> @@ -1808,16 +1825,19 @@ static int f2fs_write_data_pages(struct address_space *mapping,
+>>  	return 0;
+>>  }
+>>
+>> -static void f2fs_write_failed(struct address_space *mapping, loff_t to)
+>> +static void f2fs_write_failed(struct address_space *mapping, loff_t to,
+>> +								bool lock)
+>>  {
+>>  	struct inode *inode = mapping->host;
+>>  	loff_t i_size = i_size_read(inode);
+>>
+>>  	if (to > i_size) {
+>> -		down_write(&F2FS_I(inode)->i_mmap_sem);
+>> +		if (lock)
+>> +			down_write(&F2FS_I(inode)->i_mmap_sem);
+>>  		truncate_pagecache(inode, i_size);
+>>  		truncate_blocks(inode, i_size, true);
+>> -		up_write(&F2FS_I(inode)->i_mmap_sem);
+>> +		if (lock)
+>> +			up_write(&F2FS_I(inode)->i_mmap_sem);
+>>  	}
+>>  }
+>>
+>> @@ -2000,7 +2020,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+>>
+>>  fail:
+>>  	f2fs_put_page(page, 1);
+>> -	f2fs_write_failed(mapping, pos + len);
+>> +	f2fs_write_failed(mapping, pos + len, true);
+>>  	return err;
+>>  }
+>>
+>> @@ -2077,7 +2097,7 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>>  		if (err > 0)
+>>  			set_inode_flag(inode, FI_UPDATE_WRITE);
+>>  		else if (err < 0)
+>> -			f2fs_write_failed(mapping, offset + count);
+>> +			f2fs_write_failed(mapping, offset + count, true);
+>>  	}
+>>
+>>  	trace_f2fs_direct_IO_exit(inode, offset, count, rw, err);
+>> @@ -2274,3 +2294,105 @@ int f2fs_migrate_page(struct address_space *mapping,
+>>  	.migratepage    = f2fs_migrate_page,
+>>  #endif
+>>  };
+>> +
+>> +#ifdef CONFIG_FS_DAX
+>> +#include <linux/iomap.h>
+>> +#include <linux/dax.h>
+>> +
+>> +static int f2fs_iomap_begin(struct inode *inode, loff_t offset,
+>> +	loff_t length, unsigned int flags, struct iomap *iomap)
+>> +{
+>> +	struct block_device *bdev;
+>> +	unsigned long first_block = F2FS_BYTES_TO_BLK(offset);
+>> +	unsigned long last_block = F2FS_BYTES_TO_BLK(offset + length - 1);
+>> +	struct f2fs_map_blocks map;
+>> +	int ret;
+>> +
+>> +	ret = f2fs_convert_inline_inode(inode);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	map.m_lblk = first_block;
+>> +	map.m_len = last_block - first_block + 1;
+>> +	map.m_next_pgofs = NULL;
+>> +
+>> +	if (!(flags & IOMAP_WRITE)) {
+>> +		ret = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_FIEMAP);
+>> +	} else {
+>> +	/* i_size should be kept here and changed later in f2fs_iomap_end */
+>> +		loff_t original_i_size = i_size_read(inode);
+>> +
+>> +		ret = f2fs_map_blocks(inode, &map, 1, F2FS_GET_BLOCK_ZERO);
+>> +		if (i_size_read(inode) > original_i_size) {
+>> +			f2fs_i_size_write(inode, original_i_size);
+>> +			if (ret)
+>> +				f2fs_write_failed(inode->i_mapping,
+>> +						offset + length,
+>> +						!(flags & IOMAP_FAULT));
+>> +		}
+>> +	}
+>> +
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	iomap->flags = 0;
+>> +	bdev = inode->i_sb->s_bdev;
+>> +	iomap->bdev = bdev;
+>> +	if (blk_queue_dax(bdev->bd_queue))
+>> +		iomap->dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
+>> +	else
+>> +		iomap->dax_dev = NULL;
+>> +	iomap->offset = F2FS_BLK_TO_BYTES((u64)first_block);
+>> +
+>> +	if (map.m_len == 0) {
+>> +		iomap->type = IOMAP_HOLE;
+>> +		iomap->blkno = IOMAP_NULL_BLOCK;
+>> +		iomap->length = F2FS_BLKSIZE;
+>> +	} else {
+>> +		if (map.m_flags & F2FS_MAP_UNWRITTEN) {
+>> +			iomap->type = IOMAP_UNWRITTEN;
+>> +		} else if (map.m_flags & F2FS_MAP_MAPPED) {
+>> +			iomap->type = IOMAP_MAPPED;
+>> +		} else {
+>> +			WARN_ON_ONCE(1);
+>> +			return -EIO;
+>> +		}
+>> +		iomap->blkno =
+>> +			(sector_t)map.m_pblk << F2FS_LOG_SECTORS_PER_BLOCK;
+>> +		iomap->length = F2FS_BLK_TO_BYTES((u64)map.m_len);
+>> +	}
+>> +
+>> +	if (map.m_flags & F2FS_MAP_NEW)
+>> +		iomap->flags |= IOMAP_F_NEW;
+>> +	return 0;
+>> +}
+>> +
+>> +static int f2fs_iomap_end(struct inode *inode, loff_t offset, loff_t length,
+>> +	ssize_t written, unsigned int flags, struct iomap *iomap)
+>> +{
+>> +	put_dax(iomap->dax_dev);
+>> +	if (!(flags & IOMAP_WRITE) || (flags & IOMAP_FAULT))
+>> +		return 0;
+>> +
+>> +	if (offset + written > i_size_read(inode))
+>> +		f2fs_i_size_write(inode, offset + written);
+>> +
+>> +	if (iomap->offset + iomap->length >
+>> +			ALIGN(i_size_read(inode), F2FS_BLKSIZE)) {
+>> +		block_t written_blk = F2FS_BYTES_TO_BLK(offset + written);
+>> +		block_t end_blk = F2FS_BYTES_TO_BLK(offset + length);
+>> +
+>> +		if (written_blk < end_blk)
+>> +			f2fs_write_failed(inode->i_mapping, offset + length,
+>> +									true);
+>> +	}
+>> +
+>> +	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+>> +	return 0;
+>> +}
+>> +
+>> +struct iomap_ops f2fs_iomap_ops = {
+>> +	.iomap_begin	= f2fs_iomap_begin,
+>> +	.iomap_end	= f2fs_iomap_end,
+>> +};
+>> +#endif
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 70777a8..b6d629a 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -91,6 +91,11 @@ struct f2fs_fault_info {
+>>  #define F2FS_MOUNT_LFS			0x00040000
+>>  #define F2FS_MOUNT_USRQUOTA		0x00080000
+>>  #define F2FS_MOUNT_GRPQUOTA		0x00100000
+>> +#ifdef CONFIG_FS_DAX
+>> +#define F2FS_MOUNT_DAX			0x00400000 /* Direct Access */
+>> +#else
+>> +#define F2FS_MOUNT_DAX			0
+>> +#endif
+>>
+>>  #define clear_opt(sbi, option)	((sbi)->mount_opt.opt &= ~F2FS_MOUNT_##option)
+>>  #define set_opt(sbi, option)	((sbi)->mount_opt.opt |= F2FS_MOUNT_##option)
+>> @@ -482,6 +487,7 @@ struct f2fs_map_blocks {
+>>  #define F2FS_GET_BLOCK_BMAP		3
+>>  #define F2FS_GET_BLOCK_PRE_DIO		4
+>>  #define F2FS_GET_BLOCK_PRE_AIO		5
+>> +#define F2FS_GET_BLOCK_ZERO		6
+>>
+>>  /*
+>>   * i_advise uses FADVISE_XXX_BIT. We can add additional hints later.
+>> @@ -506,6 +512,12 @@ struct f2fs_map_blocks {
+>>  #define file_keep_isize(inode)	is_file(inode, FADVISE_KEEP_SIZE_BIT)
+>>  #define file_set_keep_isize(inode) set_file(inode, FADVISE_KEEP_SIZE_BIT)
+>>
+>> +#ifdef CONFIG_FS_DAX
+>> +#define f2fs_dax_file(inode)	IS_DAX(inode)
+>> +#else
+>> +#define f2fs_dax_file(inode)	false
+>> +#endif
+>> +
+>>  #define DEF_DIR_LEVEL		0
+>>
+>>  struct f2fs_inode_info {
+>> @@ -2439,6 +2451,9 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
+>>  int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
+>>  			struct page *page, enum migrate_mode mode);
+>>  #endif
+>> +#ifdef CONFIG_FS_DAX
+>> +extern struct iomap_ops f2fs_iomap_ops;
+>> +#endif
+>>
+>>  /*
+>>   * gc.c
+>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>> index 2706130..e26114f 100644
+>> --- a/fs/f2fs/file.c
+>> +++ b/fs/f2fs/file.c
+>> @@ -23,6 +23,10 @@
+>>  #include <linux/uio.h>
+>>  #include <linux/uuid.h>
+>>  #include <linux/file.h>
+>> +#ifdef CONFIG_FS_DAX
+>> +#include <linux/dax.h>
+>> +#include <linux/iomap.h>
+>> +#endif
+>>
+>>  #include "f2fs.h"
+>>  #include "node.h"
+>> @@ -121,6 +125,64 @@ static int f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+>>  	.page_mkwrite	= f2fs_vm_page_mkwrite,
+>>  };
+>>
+>> +#ifdef CONFIG_FS_DAX
+>> +static int f2fs_dax_huge_fault(struct vm_fault *vmf,
+>> +	enum page_entry_size pe_size)
+>> +{
+>> +	int result;
+>> +	struct inode *inode = file_inode(vmf->vma->vm_file);
+>> +	struct super_block *sb = inode->i_sb;
+>> +	bool write = vmf->flags & FAULT_FLAG_WRITE;
+>> +
+>> +	if (write) {
+>> +		sb_start_pagefault(sb);
+>> +		file_update_time(vmf->vma->vm_file);
+>> +	}
+>> +	down_read(&F2FS_I(inode)->i_mmap_sem);
+>> +	result = dax_iomap_fault(vmf, pe_size, &f2fs_iomap_ops);
+>> +	up_read(&F2FS_I(inode)->i_mmap_sem);
+>> +	if (write)
+>> +		sb_end_pagefault(sb);
+>> +
+>> +	return result;
+>> +}
+>> +
+>> +static int f2fs_dax_fault(struct vm_fault *vmf)
+>> +{
+>> +	return f2fs_dax_huge_fault(vmf, PE_SIZE_PTE);
+>> +}
+>> +
+>> +static int f2fs_dax_pfn_mkwrite(struct vm_fault *vmf)
+>> +{
+>> +	struct inode *inode = file_inode(vmf->vma->vm_file);
+>> +	struct super_block *sb = inode->i_sb;
+>> +	loff_t size;
+>> +	int ret;
+>> +
+>> +	sb_start_pagefault(sb);
+>> +	file_update_time(vmf->vma->vm_file);
+>> +	down_read(&F2FS_I(inode)->i_mmap_sem);
+>> +	size = (i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT;
+>> +	if (vmf->pgoff >= size)
+>> +		ret = VM_FAULT_SIGBUS;
+>> +	else
+>> +		ret = dax_pfn_mkwrite(vmf);
+>> +	up_read(&F2FS_I(inode)->i_mmap_sem);
+>> +	sb_end_pagefault(sb);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static const struct vm_operations_struct f2fs_dax_vm_ops = {
+>> +	.fault		= f2fs_dax_fault,
+>> +	.huge_fault	= f2fs_dax_huge_fault,
+>> +	.page_mkwrite	= f2fs_dax_fault,
+>> +	.pfn_mkwrite	= f2fs_dax_pfn_mkwrite,
+>> +};
+>> +#else
+>> +#define f2fs_dax_vm_ops f2fs_file_vm_ops
+>> +#endif
+>> +
+>>  static int get_parent_ino(struct inode *inode, nid_t *pino)
+>>  {
+>>  	struct dentry *dentry;
+>> @@ -436,7 +498,13 @@ static int f2fs_file_mmap(struct file *file, struct vm_area_struct *vma)
+>>  		return err;
+>>
+>>  	file_accessed(file);
+>> -	vma->vm_ops = &f2fs_file_vm_ops;
+>> +
+>> +	if (f2fs_dax_file(inode)) {
+>> +		vma->vm_ops = &f2fs_dax_vm_ops;
+>> +		vma->vm_flags |= VM_MIXEDMAP | VM_HUGEPAGE;
+>> +	} else {
+>> +		vma->vm_ops = &f2fs_file_vm_ops;
+>> +	}
+>>  	return 0;
+>>  }
+>>
+>> @@ -519,6 +587,16 @@ static int truncate_partial_data_page(struct inode *inode, u64 from,
+>>  	if (!offset && !cache_only)
+>>  		return 0;
+>>
+>> +	if (f2fs_dax_file(inode)) {
+>> +		int ret;
+>> +
+>> +		down_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
+>> +		ret = iomap_zero_range(inode, from, PAGE_SIZE - offset,
+>> +			NULL, &f2fs_iomap_ops);
+>> +		up_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
+>> +		return ret;
+>> +	}
+>> +
+>>  	if (cache_only) {
+>>  		page = find_lock_page(mapping, index);
+>>  		if (page && PageUptodate(page))
+>> @@ -799,6 +877,17 @@ static int fill_zero(struct inode *inode, pgoff_t index,
+>>  	if (!len)
+>>  		return 0;
+>>
+>> +	if (f2fs_dax_file(inode)) {
+>> +		int ret;
+>> +
+>> +		down_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
+>> +		ret = iomap_zero_range(inode,
+>> +			F2FS_BLK_TO_BYTES((loff_t)index) + start,
+>> +			len, NULL, &f2fs_iomap_ops);
+>> +		up_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
+>> +		return ret;
+>> +	}
+>> +
+>>  	f2fs_balance_fs(sbi, true);
+>>
+>>  	f2fs_lock_op(sbi);
+>> @@ -1121,6 +1210,10 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+>>  	loff_t new_size;
+>>  	int ret;
+>>
+>> +	/* The current implementation does not apply to DAX files. */
+>> +	if (f2fs_dax_file(inode))
+>> +		return -ENOTSUPP;
+>> +
+>>  	if (offset + len >= i_size_read(inode))
+>>  		return -EINVAL;
+>>
+>> @@ -1311,6 +1404,10 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+>>  	loff_t new_size;
+>>  	int ret = 0;
+>>
+>> +	/* The current implementation does not apply to DAX files. */
+>> +	if (f2fs_dax_file(inode))
+>> +		return -ENOTSUPP;
+>> +
+>>  	new_size = i_size_read(inode) + len;
+>>  	ret = inode_newsize_ok(inode, new_size);
+>>  	if (ret)
+>> @@ -1578,6 +1675,9 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+>>  	struct inode *inode = file_inode(filp);
+>>  	int ret;
+>>
+>> +	if (f2fs_dax_file(inode))
+>> +		return -ENOTSUPP;
+>> +
+>>  	if (!inode_owner_or_capable(inode))
+>>  		return -EACCES;
+>>
+>> @@ -1627,6 +1727,9 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+>>  	struct inode *inode = file_inode(filp);
+>>  	int ret;
+>>
+>> +	if (f2fs_dax_file(inode))
+>> +		return -ENOTSUPP;
+>> +
+>>  	if (!inode_owner_or_capable(inode))
+>>  		return -EACCES;
+>>
+>> @@ -1663,6 +1766,9 @@ static int f2fs_ioc_start_volatile_write(struct file *filp)
+>>  	struct inode *inode = file_inode(filp);
+>>  	int ret;
+>>
+>> +	if (f2fs_dax_file(inode))
+>> +		return -ENOTSUPP;
+>> +
+>>  	if (!inode_owner_or_capable(inode))
+>>  		return -EACCES;
+>>
+>> @@ -1698,6 +1804,9 @@ static int f2fs_ioc_release_volatile_write(struct file *filp)
+>>  	struct inode *inode = file_inode(filp);
+>>  	int ret;
+>>
+>> +	if (f2fs_dax_file(inode))
+>> +		return -ENOTSUPP;
+>> +
+>>  	if (!inode_owner_or_capable(inode))
+>>  		return -EACCES;
+>>
+>> @@ -1727,6 +1836,9 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
+>>  	struct inode *inode = file_inode(filp);
+>>  	int ret;
+>>
+>> +	if (f2fs_dax_file(inode))
+>> +		return -ENOTSUPP;
+>> +
+>>  	if (!inode_owner_or_capable(inode))
+>>  		return -EACCES;
+>>
+>> @@ -2141,6 +2253,9 @@ static int f2fs_ioc_defragment(struct file *filp, unsigned long arg)
+>>  	struct f2fs_defragment range;
+>>  	int err;
+>>
+>> +	if (f2fs_dax_file(inode))
+>> +		return -ENOTSUPP;
+>> +
+>>  	if (!capable(CAP_SYS_ADMIN))
+>>  		return -EPERM;
+>>
+>> @@ -2190,6 +2305,9 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
+>>  	size_t dst_osize;
+>>  	int ret;
+>>
+>> +	if (f2fs_dax_file(src) || f2fs_dax_file(dst))
+>> +		return -ENOTSUPP;
+>> +
+>>  	if (file_in->f_path.mnt != file_out->f_path.mnt ||
+>>  				src->i_sb != dst->i_sb)
+>>  		return -EXDEV;
+>> @@ -2431,6 +2549,62 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>>  	}
+>>  }
+>>
+>> +#ifdef CONFIG_FS_DAX
+>> +static ssize_t f2fs_dax_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>> +{
+>> +	struct inode *inode = file_inode(iocb->ki_filp);
+>> +	ssize_t ret;
+>> +
+>> +	inode_lock_shared(inode);
+>> +
+>> +	if (!IS_DAX(inode)) {
+>> +		inode_unlock_shared(inode);
+>> +		return generic_file_read_iter(iocb, to);
+>> +	}
+>> +
+>> +	down_read(&F2FS_I(inode)->dio_rwsem[READ]);
+>> +	ret = dax_iomap_rw(iocb, to, &f2fs_iomap_ops);
+>> +	up_read(&F2FS_I(inode)->dio_rwsem[READ]);
+>> +	inode_unlock_shared(inode);
+>> +
+>> +	file_accessed(iocb->ki_filp);
+>> +	return ret;
+>> +}
+>> +
+>> +static ssize_t f2fs_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>> +{
+>> +	struct inode *inode = file_inode(iocb->ki_filp);
+>> +	ssize_t ret;
+>> +
+>> +	ret = file_remove_privs(iocb->ki_filp);
+>> +	if (ret)
+>> +		return ret;
+>> +	ret = file_update_time(iocb->ki_filp);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	down_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
+>> +	ret = dax_iomap_rw(iocb, from, &f2fs_iomap_ops);
+>> +	up_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
+>> +
+>> +	return ret;
+>> +}
+>> +#else
+>> +#define f2fs_dax_read_iter	generic_file_read_iter
+>> +#define f2fs_dax_write_iter	__generic_file_write_iter
+>> +#endif
+>> +
+>> +static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>> +{
+>> +	if (!iov_iter_count(to))
+>> +		return 0; /* skip atime */
+>> +
+>> +	if (f2fs_dax_file(file_inode(iocb->ki_filp)))
+>> +		return f2fs_dax_read_iter(iocb, to);
+>> +
+>> +	return generic_file_read_iter(iocb, to);
+>> +}
+>> +
+>>  static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>>  {
+>>  	struct file *file = iocb->ki_filp;
+>> @@ -2452,7 +2626,10 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>>  			return err;
+>>  		}
+>>  		blk_start_plug(&plug);
+>> -		ret = __generic_file_write_iter(iocb, from);
+>> +		if (f2fs_dax_file(inode))
+>> +			ret = f2fs_dax_write_iter(iocb, from);
+>> +		else
+>> +			ret = __generic_file_write_iter(iocb, from);
+>>  		blk_finish_plug(&plug);
+>>  		clear_inode_flag(inode, FI_NO_PREALLOC);
+>>  	}
+>> @@ -2501,7 +2678,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>>
+>>  const struct file_operations f2fs_file_operations = {
+>>  	.llseek		= f2fs_llseek,
+>> -	.read_iter	= generic_file_read_iter,
+>> +	.read_iter	= f2fs_file_read_iter,
+>>  	.write_iter	= f2fs_file_write_iter,
+>>  	.open		= f2fs_file_open,
+>>  	.release	= f2fs_release_file,
+>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>> index fa3d2e2..06b6859 100644
+>> --- a/fs/f2fs/gc.c
+>> +++ b/fs/f2fs/gc.c
+>> @@ -700,6 +700,100 @@ static void move_encrypted_block(struct inode *inode, block_t bidx,
+>>  	f2fs_put_page(page, 1);
+>>  }
+>>
+>> +#ifdef CONFIG_FS_DAX
+>> +#include <linux/dax.h>
+>> +
+>> +static void dax_move_data_page(struct inode *inode, block_t bidx,
+>> +				unsigned int segno, int off)
+>> +{
+>> +	struct block_device *bdev = inode->i_sb->s_bdev;
+>> +	struct dax_device *dax_dev;
+>> +	struct dnode_of_data dn;
+>> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>> +	struct f2fs_summary sum;
+>> +	struct node_info ni;
+>> +	block_t old_blkaddr, new_blkaddr;
+>> +	int err, id;
+>> +	long map_len;
+>> +	pgoff_t pgoff;
+>> +	void *kaddr_old, *kaddr_new;
+>> +	pfn_t pfn;
+>> +
+>> +	f2fs_bug_on(sbi, f2fs_is_atomic_file(inode));
+>> +
+>> +	if (!check_valid_map(sbi, segno, off))
+>> +		return;
+>> +
+>> +	f2fs_bug_on(sbi, !blk_queue_dax(bdev->bd_queue));
+>> +
+>> +	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
+>> +
+>> +	if (!down_write_trylock(&F2FS_I(inode)->i_mmap_sem))
+>> +		goto release;
+>> +
+>> +	unmap_mapping_range(inode->i_mapping, (loff_t)bidx << PAGE_SHIFT,
+>> +			PAGE_SIZE, 1);
+>> +	/* find the old block address */
+>> +	set_new_dnode(&dn, inode, NULL, NULL, 0);
+>> +	err = get_dnode_of_data(&dn, bidx, LOOKUP_NODE);
+>> +	if (err)
+>> +		goto out;
+>> +	old_blkaddr = dn.data_blkaddr;
+>> +	/* This page is already truncated */
+>> +	if (old_blkaddr == NULL_ADDR)
+>> +		goto put_dn;
+>> +
+>> +	/* allocate a new block address */
+>> +	get_node_info(sbi, dn.nid, &ni);
+>> +	set_summary(&sum, dn.nid, dn.ofs_in_node, ni.version);
+>> +	allocate_data_block(sbi, NULL, old_blkaddr, &new_blkaddr,
+>> +			&sum, CURSEG_COLD_DATA, NULL, false);
+>> +
+>> +	/* copy data page from old to new address in dax_bdev */
+>> +	id = dax_read_lock();
+>> +	err = bdev_dax_pgoff(bdev, SECTOR_FROM_BLOCK(old_blkaddr),
+>> +			PAGE_SIZE, &pgoff);
+>> +	if (err)
+>> +		goto recover;
+>> +	map_len = dax_direct_access(dax_dev, pgoff, 1, &kaddr_old, &pfn);
+>> +	if (map_len < 0)
+>> +		goto recover;
+>> +	err = bdev_dax_pgoff(bdev, SECTOR_FROM_BLOCK(new_blkaddr),
+>> +			PAGE_SIZE, &pgoff);
+>> +	if (err)
+>> +		goto recover;
+>> +	map_len = dax_direct_access(dax_dev, pgoff, 1, &kaddr_new, &pfn);
+>> +	if (map_len < 0)
+>> +		goto recover;
+>> +	copy_page((void __force *)kaddr_new, (void __force *)kaddr_old);
+>> +
+>> +	f2fs_update_data_blkaddr(&dn, new_blkaddr);
+>> +	set_inode_flag(inode, FI_APPEND_WRITE);
+>> +	if (bidx == 0)
+>> +		set_inode_flag(inode, FI_FIRST_BLOCK_WRITTEN);
+>> +
+>> +recover:
+>> +	if (err || map_len < 0)
+>> +		__f2fs_replace_block(sbi, &sum, new_blkaddr, old_blkaddr,
+>> +							true, true);
+>> +	dax_read_unlock(id);
+>> +put_dn:
+>> +	f2fs_put_dnode(&dn);
+>> +out:
+>> +	unmap_mapping_range(inode->i_mapping, (loff_t)bidx << PAGE_SHIFT,
+>> +			PAGE_SIZE, 1);
+>> +	up_write(&F2FS_I(inode)->i_mmap_sem);
+>> +release:
+>> +	put_dax(dax_dev);
+>> +}
+>> +#else
+>> +static void dax_move_data_page(struct inode *inode, block_t bidx,
+>> +				unsigned int segno, int off)
+>> +{
+>> +	BUG_ON(1);
+>> +}
+>> +#endif
+>> +
+>>  static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+>>  							unsigned int segno, int off)
+>>  {
+>> @@ -818,9 +912,10 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+>>  			if (IS_ERR(inode) || is_bad_inode(inode))
+>>  				continue;
+>>
+>> -			/* if encrypted inode, let's go phase 3 */
+>> +			/* if DAX or encrypted inode, let's go phase 3 */
+>>  			if (f2fs_encrypted_inode(inode) &&
+>> -						S_ISREG(inode->i_mode)) {
+>> +						S_ISREG(inode->i_mode) ||
+>> +						f2fs_dax_file(inode)) {
+>>  				add_gc_inode(gc_list, inode);
+>>  				continue;
+>>  			}
+>> @@ -858,7 +953,9 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+>>
+>>  			start_bidx = start_bidx_of_node(nofs, inode)
+>>  								+ ofs_in_node;
+>> -			if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
+>> +			if (f2fs_dax_file(inode))
+>> +				dax_move_data_page(inode, start_bidx, segno, off);
+>> +			else if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
+>>  				move_encrypted_block(inode, start_bidx, segno, off);
+>>  			else
+>>  				move_data_page(inode, start_bidx, gc_type, segno, off);
+>> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+>> index 2082816..b8c9116 100644
+>> --- a/fs/f2fs/inline.c
+>> +++ b/fs/f2fs/inline.c
+>> @@ -28,6 +28,9 @@ bool f2fs_may_inline_data(struct inode *inode)
+>>  	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
+>>  		return false;
+>>
+>> +	if (f2fs_dax_file(inode))
+>> +		return false;
+>> +
+>>  	return true;
+>>  }
+>>
+>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+>> index 6cd312a..7741461 100644
+>> --- a/fs/f2fs/inode.c
+>> +++ b/fs/f2fs/inode.c
+>> @@ -43,8 +43,14 @@ void f2fs_set_inode_flags(struct inode *inode)
+>>  		new_fl |= S_NOATIME;
+>>  	if (flags & FS_DIRSYNC_FL)
+>>  		new_fl |= S_DIRSYNC;
+>> +#ifdef CONFIG_FS_DAX
+>> +	if (test_opt(F2FS_I_SB(inode), DAX) && S_ISREG(inode->i_mode) &&
+>> +		!f2fs_has_inline_data(inode) && !f2fs_encrypted_inode(inode) &&
+>> +		!f2fs_is_atomic_file(inode) && !f2fs_is_volatile_file(inode))
+>> +		new_fl |= S_DAX;
+>> +#endif
+>>  	inode_set_flags(inode, new_fl,
+>> -			S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC);
+>> +			S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC|S_DAX);
+>>  }
+>>
+>>  static void __get_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
+>> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+>> index 760d852..afc52e0 100644
+>> --- a/fs/f2fs/namei.c
+>> +++ b/fs/f2fs/namei.c
+>> @@ -70,6 +70,11 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
+>>  	if (f2fs_encrypted_inode(dir) && f2fs_may_encrypt(inode))
+>>  		f2fs_set_encrypted_inode(inode);
+>>
+>> +#ifdef CONFIG_FS_DAX
+>> +	if (test_opt(sbi, DAX) && S_ISREG(inode->i_mode) &&
+>> +		!f2fs_has_inline_data(inode) && !f2fs_encrypted_inode(inode))
+>> +		inode->i_flags |= S_DAX;
+>> +#endif
+>>  	set_inode_flag(inode, FI_NEW_INODE);
+>>
+>>  	if (test_opt(sbi, INLINE_XATTR))
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index 32e4c02..aefe931 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -109,6 +109,7 @@ enum {
+>>  	Opt_nolazytime,
+>>  	Opt_usrquota,
+>>  	Opt_grpquota,
+>> +	Opt_dax,
+>>  	Opt_err,
+>>  };
+>>
+>> @@ -146,6 +147,7 @@ enum {
+>>  	{Opt_nolazytime, "nolazytime"},
+>>  	{Opt_usrquota, "usrquota"},
+>>  	{Opt_grpquota, "grpquota"},
+>> +	{Opt_dax, "dax"},
+>>  	{Opt_err, NULL},
+>>  };
+>>
+>> @@ -399,6 +401,15 @@ static int parse_options(struct super_block *sb, char *options)
+>>  					"quota operations not supported");
+>>  			break;
+>>  #endif
+>> +#ifdef CONFIG_FS_DAX
+>> +		case Opt_dax:
+>> +			set_opt(sbi, DAX);
+>> +			break;
+>> +#else
+>> +		case Opt_dax:
+>> +			f2fs_msg(sb, KERN_INFO, "dax option not supported");
+>> +			break;
+>> +#endif
+>>  		default:
+>>  			f2fs_msg(sb, KERN_ERR,
+>>  				"Unrecognized mount option \"%s\" or missing value",
+>> @@ -814,6 +825,10 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+>>  	if (test_opt(sbi, GRPQUOTA))
+>>  		seq_puts(seq, ",grpquota");
+>>  #endif
+>> +#ifdef CONFIG_FS_DAX
+>> +	if (test_opt(sbi, DAX))
+>> +		seq_puts(seq, ",dax");
+>> +#endif
+>>
+>>  	return 0;
+>>  }
+>> --
+>> 1.8.3.1
+>
+> .
+>
