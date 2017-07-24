@@ -1,26 +1,25 @@
-From: sunqiuyang <sunqiuyang@huawei.com>
-Subject: Re: [f2fs:dev-test 9/9] fs/f2fs/file.c:599:9: error:
- implicit declaration of function 'iomap_zero_range'
-Date: Mon, 24 Jul 2017 01:09:56 +0000
-Message-ID: <157FC541501A9C4C862B2F16FFE316DCFC2160@DGGEMM506-MBS.china.huawei.com>
-References: <201707220508.tlZncFoS%fengguang.wu@intel.com>,
- <20170721220959.GA22459@jaegeuk-macbookpro.roam.corp.google.com>
+From: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= <ernesto.mnd.fernandez@gmail.com>
+Subject: [PATCH] f2fs: preserve i_mode if __f2fs_set_acl() fails
+Date: Sun, 23 Jul 2017 22:32:54 -0300
+Message-ID: <20170724013251.GA3459@debian.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
  helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <sunqiuyang@huawei.com>)
- id 1dZRtH-00068r-Ui
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Jul 2017 01:10:31 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1dZRtF-0003mp-PI
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Jul 2017 01:10:31 +0000
-In-Reply-To: <20170721220959.GA22459@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <ernesto.mnd.fernandez@gmail.com>)
+ id 1dZSF7-00045O-2C
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Jul 2017 01:33:05 +0000
+Received: from mail-qk0-f193.google.com ([209.85.220.193])
+ by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+ (Exim 4.76) id 1dZSF6-0000zE-9A
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Jul 2017 01:33:04 +0000
+Received: by mail-qk0-f193.google.com with SMTP id d136so8808432qkg.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sun, 23 Jul 2017 18:33:04 -0700 (PDT)
+Content-Disposition: inline
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,107 +29,42 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, kbuild test robot <fengguang.wu@intel.com>
-Cc: "kbuild-all@01.org" <kbuild-all@01.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= <ernesto.mnd.fernandez@gmail.com>
 
-Hi Jaegeuk, 
-
-OK, I agree with your modification.
-
-Thanks,
-
-________________________________________
-From: Jaegeuk Kim [jaegeuk@kernel.org]
-Sent: Saturday, July 22, 2017 6:09
-To: kbuild test robot
-Cc: sunqiuyang; kbuild-all@01.org; linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs:dev-test 9/9] fs/f2fs/file.c:599:9: error: implicit declaration of function 'iomap_zero_range'
-
-Qiuyang,
-
-I've modified your patch to resolve this, and pushed a new one into f2fs.git.
-Could you please check it?
-
-Thanks,
-
-On 07/22, kbuild test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
-> head:   7f25bbd057c335857559619b4a16738b3ba79db9
-> commit: 7f25bbd057c335857559619b4a16738b3ba79db9 [9/9] f2fs: dax: implement direct access
-> config: i386-randconfig-x003-07210940 (attached as .config)
-> compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
-> reproduce:
->         git checkout 7f25bbd057c335857559619b4a16738b3ba79db9
->         # save the attached .config to linux build tree
->         make ARCH=i386
->
-> All errors (new ones prefixed by >>):
->
->    fs/f2fs/file.c: In function 'truncate_partial_data_page':
-> >> fs/f2fs/file.c:599:9: error: implicit declaration of function 'iomap_zero_range' [-Werror=implicit-function-declaration]
->       ret = iomap_zero_range(inode, from, PAGE_SIZE - offset,
->             ^~~~~~~~~~~~~~~~
-> >> fs/f2fs/file.c:600:11: error: 'f2fs_iomap_ops' undeclared (first use in this function)
->        NULL, &f2fs_iomap_ops);
->               ^~~~~~~~~~~~~~
->    fs/f2fs/file.c:600:11: note: each undeclared identifier is reported only once for each function it appears in
->    fs/f2fs/file.c: In function 'fill_zero':
->    fs/f2fs/file.c:891:16: error: 'f2fs_iomap_ops' undeclared (first use in this function)
->        len, NULL, &f2fs_iomap_ops);
->                    ^~~~~~~~~~~~~~
->    cc1: some warnings being treated as errors
->
-> vim +/iomap_zero_range +599 fs/f2fs/file.c
->
->    583
->    584        static int truncate_partial_data_page(struct inode *inode, u64 from,
->    585                                                                        bool cache_only)
->    586        {
->    587                unsigned offset = from & (PAGE_SIZE - 1);
->    588                pgoff_t index = from >> PAGE_SHIFT;
->    589                struct address_space *mapping = inode->i_mapping;
->    590                struct page *page;
->    591
->    592                if (!offset && !cache_only)
->    593                        return 0;
->    594
->    595                if (f2fs_dax_file(inode)) {
->    596                        int ret;
->    597
->    598                        down_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
->  > 599                        ret = iomap_zero_range(inode, from, PAGE_SIZE - offset,
->  > 600                                NULL, &f2fs_iomap_ops);
->    601                        up_read(&F2FS_I(inode)->dio_rwsem[WRITE]);
->    602                        return ret;
->    603                }
->    604
->    605                if (cache_only) {
->    606                        page = find_lock_page(mapping, index);
->    607                        if (page && PageUptodate(page))
->    608                                goto truncate_out;
->    609                        f2fs_put_page(page, 1);
->    610                        return 0;
->    611                }
->    612
->    613                page = get_lock_data_page(inode, index, true);
->    614                if (IS_ERR(page))
->    615                        return PTR_ERR(page) == -ENOENT ? 0 : PTR_ERR(page);
->    616        truncate_out:
->    617                f2fs_wait_on_page_writeback(page, DATA, true);
->    618                zero_user(page, offset, PAGE_SIZE - offset);
->    619
->    620                /* An encrypted inode should have a key and truncate the last page. */
->    621                f2fs_bug_on(F2FS_I_SB(inode), cache_only && f2fs_encrypted_inode(inode));
->    622                if (!cache_only)
->    623                        set_page_dirty(page);
->    624                f2fs_put_page(page, 1);
->    625                return 0;
->    626        }
->    627
->
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+V2hlbiBjaGFuZ2luZyBhIGZpbGUncyBhY2wgbWFzaywgX19mMmZzX3NldF9hY2woKSB3aWxsIGZp
+cnN0IHNldCB0aGUKZ3JvdXAgYml0cyBvZiBpX21vZGUgdG8gdGhlIHZhbHVlIG9mIHRoZSBtYXNr
+LCBhbmQgb25seSB0aGVuIHNldCB0aGUKYWN0dWFsIGV4dGVuZGVkIGF0dHJpYnV0ZSByZXByZXNl
+bnRpbmcgdGhlIG5ldyBhY2wuCgpJZiB0aGUgc2Vjb25kIHBhcnQgZmFpbHMgKGR1ZSB0byBsYWNr
+IG9mIHNwYWNlLCBmb3IgZXhhbXBsZSkgYW5kIHRoZQpmaWxlIGhhZCBubyBhY2wgYXR0cmlidXRl
+IHRvIGJlZ2luIHdpdGgsIHRoZSBzeXN0ZW0gd2lsbCBmcm9tIG5vdyBvbgphc3N1bWUgdGhhdCB0
+aGUgbWFzayBwZXJtaXNzaW9uIGJpdHMgYXJlIGFjdHVhbCBncm91cCBwZXJtaXNzaW9uIGJpdHMs
+CnBvdGVudGlhbGx5IGdyYW50aW5nIGFjY2VzcyB0byB0aGUgd3JvbmcgdXNlcnMuCgpQcmV2ZW50
+IHRoaXMgYnkgb25seSBjaGFuZ2luZyB0aGUgaW5vZGUgbW9kZSBhZnRlciB0aGUgYWNsIGhhcyBi
+ZWVuIHNldC4KClNpZ25lZC1vZmYtYnk6IEVybmVzdG8gQS4gRmVybsOhbmRleiA8ZXJuZXN0by5t
+bmQuZmVybmFuZGV6QGdtYWlsLmNvbT4KLS0tClRoaXMgYnVnIGlzIGNvdmVyZWQgYnkgZ2VuZXJp
+Yy80NDkgaW4geGZzdGVzdHMsIHRob3VnaCB0aGF0IHRlc3QgbWF5IG5vdCBydW4KZm9yIGYyZnMg
+dW5sZXNzIHlvdSBjaGFuZ2UgdGhlIHNpemUgaW4gdGhlIGNhbGwgdG8gX3NjcmF0Y2hfbWtmc19z
+aXplZC4KClNldmVyYWwgZmlsZXN5c3RlbXMgYXJlIGFmZmVjdGVkOyBzb21lIG9mIHRoZW0gaGF2
+ZSBhbHJlYWR5IGFwcGxpZWQgcGF0Y2hlcywKc2VlIGZvciBleGFtcGxlOiAiZmUyNjU2OSBleHQy
+OiBwcmVzZXJ2ZSBpX21vZGUgaWYgZXh0Ml9zZXRfYWNsKCkgZmFpbHMiLgoKIGZzL2YyZnMvYWNs
+LmMgfCA1ICsrKy0tCiAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9u
+cygtKQoKZGlmZiAtLWdpdCBhL2ZzL2YyZnMvYWNsLmMgYi9mcy9mMmZzL2FjbC5jCmluZGV4IGI0
+Yjg0MzguLjQzNmIzYTEgMTAwNjQ0Ci0tLSBhL2ZzL2YyZnMvYWNsLmMKKysrIGIvZnMvZjJmcy9h
+Y2wuYwpAQCAtMjA3LDE1ICsyMDcsMTYgQEAgc3RhdGljIGludCBfX2YyZnNfc2V0X2FjbChzdHJ1
+Y3QgaW5vZGUgKmlub2RlLCBpbnQgdHlwZSwKIAl2b2lkICp2YWx1ZSA9IE5VTEw7CiAJc2l6ZV90
+IHNpemUgPSAwOwogCWludCBlcnJvcjsKKwl1bW9kZV90IG1vZGUgPSBpbm9kZS0+aV9tb2RlOwog
+CiAJc3dpdGNoICh0eXBlKSB7CiAJY2FzZSBBQ0xfVFlQRV9BQ0NFU1M6CiAJCW5hbWVfaW5kZXgg
+PSBGMkZTX1hBVFRSX0lOREVYX1BPU0lYX0FDTF9BQ0NFU1M7CiAJCWlmIChhY2wgJiYgIWlwYWdl
+KSB7Ci0JCQllcnJvciA9IHBvc2l4X2FjbF91cGRhdGVfbW9kZShpbm9kZSwgJmlub2RlLT5pX21v
+ZGUsICZhY2wpOworCQkJZXJyb3IgPSBwb3NpeF9hY2xfdXBkYXRlX21vZGUoaW5vZGUsICZtb2Rl
+LCAmYWNsKTsKIAkJCWlmIChlcnJvcikKIAkJCQlyZXR1cm4gZXJyb3I7Ci0JCQlzZXRfYWNsX2lu
+b2RlKGlub2RlLCBpbm9kZS0+aV9tb2RlKTsKKwkJCXNldF9hY2xfaW5vZGUoaW5vZGUsIG1vZGUp
+OwogCQl9CiAJCWJyZWFrOwogCi0tIAoyLjEuNAoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpDaGVj
+ayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1v
+c3QKZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xh
+c2hkb3QKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGlu
+dXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vm
+b3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGlu
+dXgtZjJmcy1kZXZlbAo=
