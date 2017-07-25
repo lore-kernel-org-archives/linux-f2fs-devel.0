@@ -1,28 +1,28 @@
-From: Natasha Ali <  jgross@quastels.com>
-Subject: [SPAM] Re:FW:Price Quotation needed
-Date: 24 Jul 2017 23:16:10 -0700
-Message-ID: <20170724221706.4632753501492839@quastels.com>
+From: Natasha Ali < sales@quastels.com>
+Subject: [SPAM] .Re:FW:Price Quotation needed
+Date: 25 Jul 2017 00:40:20 -0700
+Message-ID: <20170724234209.16464C73DD1017B5@quastels.com>
 Reply-To: nali@qaustels.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <jgross@quastels.com>) id 1dZt8p-0004BP-IO
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Jul 2017 06:16:23 +0000
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <sales@quastels.com>) id 1dZuW0-0003oD-4G
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Jul 2017 07:44:24 +0000
 Received: from 213-053-128-083.dynamic.caiway.nl ([83.128.53.213]
  helo=edelater.nl)
- by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1dZt8o-0005YF-75
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Jul 2017 06:16:23 +0000
+ by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+ (Exim 4.76) id 1dZuVy-0003yq-1v
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Jul 2017 07:44:24 +0000
 Received: from quastels.com (unknown [107.178.110.212])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested) (Authenticated sender: Marco)
- by edelater.nl (Postfix) with ESMTPSA id ADF1B3B1B5
+ by edelater.nl (Postfix) with ESMTPSA id 223E52B5B8
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 25 Jul 2017 08:16:12 +0200 (CEST)
+ Tue, 25 Jul 2017 09:40:21 +0200 (CEST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
