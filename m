@@ -1,46 +1,67 @@
-From: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: [PATCH v8 1/1] f2fs: dax: implement direct access
-Date: Wed, 26 Jul 2017 10:20:11 -0700
-Message-ID: <20170726172011.GA30142@infradead.org>
-References: <1500552639-18523-1-git-send-email-sunqiuyang@huawei.com>
- <CAA9_cmeyVXgu1-ozb7b346ANq+P3e3ATWYfoVGkAKrn5cmo=Hw@mail.gmail.com>
- <20170726072634.GA4684@infradead.org>
- <CAPcyv4igEW-mFDGywh16QLqywuOusu2u6UboppfzzQ_RRvcgVw@mail.gmail.com>
- <20170726170147.GA31930@infradead.org>
- <CAPcyv4iNP0qxL5vToffBivkQWyUquD7HrgNmvYXQW9ejhFrAmA@mail.gmail.com>
+From: =?UTF-8?q?Piotr=20Soko=C5=82owski?= <piosoko1@student.pg.edu.pl>
+Subject: [PATCH] f2fs-tools: fix printing block adresses
+Date: Wed, 26 Jul 2017 19:16:37 +0200
+Message-ID: <1501089397-10422-1-git-send-email-piosoko1@student.pg.edu.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4iNP0qxL5vToffBivkQWyUquD7HrgNmvYXQW9ejhFrAmA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.01.org/mailman/options/linux-nvdimm>,
- <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.01.org/pipermail/linux-nvdimm/>
-List-Post: <mailto:linux-nvdimm-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
-List-Help: <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.01.org/mailman/listinfo/linux-nvdimm>,
- <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=subscribe>
-Errors-To: linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org
-Sender: "Linux-nvdimm" <linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
-To: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: "linux-nvdimm-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org" <linux-nvdimm-y27Ovi1pjclAfugRpC6u6w@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-fsdevel <linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jaegeuk Kim <jaegeuk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, sunqiuyang <sunqiuyang-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+ helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <piosoko1@student.pg.edu.pl>)
+ id 1daQCI-0005PO-40
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Jul 2017 17:34:10 +0000
+Received: from smtp.student.pg.edu.pl ([153.19.40.202])
+ by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+ (Exim 4.76) id 1daQCG-0008Ss-7A
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Jul 2017 17:34:10 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: jackupie@student.pg.edu.pl, magstach@student.pg.edu.pl
 
-On Wed, Jul 26, 2017 at 10:11:08AM -0700, Dan Williams wrote:
-> Until HMAT came along we had no data in the kernel how to pick a sane
-> default, but we could now very easily make a "if pmem performance <
-> dram, disable dax by default" policy in the kernel.
+This patch allows properly printing all addresses in an inode.
+It is useful in commands like dump.f2fs.
 
-I'd rather do it the other way around - if HMAT is present and
-pmem performance >= dram use dax.  Else require the explicit -o dax
-for now to enable it.  If an explicit -o nodax is specified disable
-DAX even if HMAT says it is faster.
+---
+ fsck/mount.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-> The question for this patch is do we want to add yet another
-> filesystem that adds "-o dax" or require use of per-inode flags to
-> enable dax.
+diff --git a/fsck/mount.c b/fsck/mount.c
+index a0b0bea..4d7ac6a 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -92,12 +92,14 @@ void print_inode_info(struct f2fs_inode *inode, int name)
+ 	DISP_u32(inode, i_addr[2]);	/* Pointers to data blocks */
+ 	DISP_u32(inode, i_addr[3]);	/* Pointers to data blocks */
+ 
+-	for (i = 4; i < ADDRS_PER_INODE(inode); i++) {
++	for (i = 0; i < ADDRS_PER_INODE(inode); i++) {
+ 		if (inode->i_addr[i] != 0x0) {
+-			printf("i_addr[0x%x] points data block\r\t\t[0x%4x]\n",
+-					i, le32_to_cpu(inode->i_addr[i]));
+-			break;
++			if (i>3)
++				printf("i_addr[0x%x] points data block\t\t[0x%4x]\n",
++						i, le32_to_cpu(inode->i_addr[i]));
+ 		}
++		else
++			break;
+ 	}
+ 
+ 	DISP_u32(inode, i_nid[0]);	/* direct */
+-- 
+2.1.4
 
-Please stick to the mount option.  After spending a lot of time with
-DAX and various memory techologies I'm pretty confident that the inode
-flag is the wrong thing to do.
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
