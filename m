@@ -1,96 +1,102 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: add ioctl to expose current features
-Date: Wed, 26 Jul 2017 22:06:29 +0800
-Message-ID: <be3906c7-dc66-bbb2-cebe-da56c676c313@kernel.org>
-References: <20170721201108.18408-1-jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: don't give partially written atomic
+ data from process crash
+Date: Wed, 26 Jul 2017 22:07:59 +0800
+Message-ID: <e7b3548b-3d2e-3ffb-fc13-9eae3397101d@kernel.org>
+References: <20170726012921.53002-1-jaegeuk@kernel.org>
+ <20170726012921.53002-2-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170721201108.18408-1-jaegeuk@kernel.org>
+In-Reply-To: <20170726012921.53002-2-jaegeuk@kernel.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
-
-I noted that the patch ("f2fs: give a try to do atomic write in -ENOMEM case")
-hasn't been sent to mailing list before been merged.
-
-Could you please send it out, and please add:
+On 2017/7/26 9:29, Jaegeuk Kim wrote:
+> This patch resolves the below scenario.
+> 
+> == Process 1 ==     == Process 2 ==
+> open(w)             open(rw)
+> begin
+> write(new_#1)
+> process_crash
+>   f_op->flush
+>   locks_remove_posix
+>   f_op>release
+>                     read (new_#1)
+> 
+> In order to avoid corrupted database caused by new_#1, we must do roll-back
+> at process_crash time. In order to check that, this patch keeps task which
+> triggers transaction begin, and does roll-back in f_op->flush before removing
+> file locks.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
 
-On 2017/7/22 4:11, Jaegeuk Kim wrote:
-> This patch adds an ioctl to provide feature information to user.
-> For exapmle, SQLite can use this ioctl to detect whether f2fs support atomic
-> write or not.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > ---
->  fs/f2fs/f2fs.h |  2 ++
->  fs/f2fs/file.c | 13 +++++++++++++
->  2 files changed, 15 insertions(+)
+>  fs/f2fs/f2fs.h |  1 +
+>  fs/f2fs/file.c | 18 ++++++++++++++++++
+>  2 files changed, 19 insertions(+)
 > 
 > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index e06d4e4b4579..5c46a462b56e 100644
+> index a336021b777f..3e48c2ac2f21 100644
 > --- a/fs/f2fs/f2fs.h
 > +++ b/fs/f2fs/f2fs.h
-> @@ -112,6 +112,7 @@ struct f2fs_mount_info {
->  
->  #define F2FS_FEATURE_ENCRYPT	0x0001
->  #define F2FS_FEATURE_BLKZONED	0x0002
-> +#define F2FS_FEATURE_ATOMIC_WRITE 0x0004
->  
->  #define F2FS_HAS_FEATURE(sb, mask)					\
->  	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
-> @@ -308,6 +309,7 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
->  						struct f2fs_flush_device)
->  #define F2FS_IOC_GARBAGE_COLLECT_RANGE	_IOW(F2FS_IOCTL_MAGIC, 11,	\
->  						struct f2fs_gc_range)
-> +#define	F2FS_IOC_GET_FEATURES		_IOR(F2FS_IOCTL_MAGIC, 12, __u32)
->  
->  #define F2FS_IOC_SET_ENCRYPTION_POLICY	FS_IOC_SET_ENCRYPTION_POLICY
->  #define F2FS_IOC_GET_ENCRYPTION_POLICY	FS_IOC_GET_ENCRYPTION_POLICY
+> @@ -565,6 +565,7 @@ struct f2fs_inode_info {
+>  	struct list_head dirty_list;	/* dirty list for dirs and files */
+>  	struct list_head gdirty_list;	/* linked in global dirty list */
+>  	struct list_head inmem_pages;	/* inmemory pages managed by f2fs */
+> +	struct task_struct *inmem_task;	/* store inmemory task */
+>  	struct mutex inmem_lock;	/* lock for inmemory pages */
+>  	struct extent_tree *extent_tree;	/* cached extent_tree entry */
+>  	struct rw_semaphore dio_rwsem[2];/* avoid racing between dio and gc */
 > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 2706130c261b..0e07b5b18cfa 100644
+> index 0f4dbeb61845..cb0a013859e6 100644
 > --- a/fs/f2fs/file.c
 > +++ b/fs/f2fs/file.c
-> @@ -2384,6 +2384,16 @@ static int f2fs_ioc_flush_device(struct file *filp, unsigned long arg)
->  	return ret;
+> @@ -1502,6 +1502,22 @@ static int f2fs_release_file(struct inode *inode, struct file *filp)
+>  	return 0;
 >  }
 >  
-> +static int f2fs_ioc_get_features(struct file *filp, unsigned long arg)
+> +static int f2fs_file_flush(struct file *file, fl_owner_t id)
 > +{
-> +	struct inode *inode = file_inode(filp);
-> +	u32 sb_feature = le32_to_cpu(F2FS_I_SB(inode)->raw_super->feature);
+> +	struct inode *inode = file_inode(file);
 > +
-> +	/* Must validate to set it with SQLite behavior in Android. */
-> +	sb_feature |= F2FS_FEATURE_ATOMIC_WRITE;
-> +
-> +	return put_user(sb_feature, (u32 __user *)arg);
+> +	/*
+> +	 * If the process doing a transaction is crashed, we should do
+> +	 * roll-back. Otherwise, other reader/write can see corrupted database
+> +	 * until all the writers close its file. Since this should be done
+> +	 * before dropping file lock, it needs to do in ->flush.
+> +	 */
+> +	if (f2fs_is_atomic_file(inode) &&
+> +			F2FS_I(inode)->inmem_task == current)
+> +		drop_inmem_pages(inode);
+> +	return 0;
 > +}
->  
->  long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+> +
+>  static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
 >  {
-> @@ -2426,6 +2436,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->  		return f2fs_ioc_move_range(filp, arg);
->  	case F2FS_IOC_FLUSH_DEVICE:
->  		return f2fs_ioc_flush_device(filp, arg);
-> +	case F2FS_IOC_GET_FEATURES:
-> +		return f2fs_ioc_get_features(filp, arg);
->  	default:
->  		return -ENOTTY;
+>  	struct inode *inode = file_inode(filp);
+> @@ -1608,6 +1624,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
 >  	}
-> @@ -2491,6 +2503,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->  	case F2FS_IOC_DEFRAGMENT:
->  	case F2FS_IOC_MOVE_RANGE:
->  	case F2FS_IOC_FLUSH_DEVICE:
-> +	case F2FS_IOC_GET_FEATURES:
->  		break;
->  	default:
->  		return -ENOIOCTLCMD;
+>  
+>  inc_stat:
+> +	F2FS_I(inode)->inmem_task = current;
+>  	stat_inc_atomic_write(inode);
+>  	stat_update_max_atomic_write(inode);
+>  out:
+> @@ -2514,6 +2531,7 @@ const struct file_operations f2fs_file_operations = {
+>  	.open		= f2fs_file_open,
+>  	.release	= f2fs_release_file,
+>  	.mmap		= f2fs_file_mmap,
+> +	.flush		= f2fs_file_flush,
+>  	.fsync		= f2fs_sync_file,
+>  	.fallocate	= f2fs_fallocate,
+>  	.unlocked_ioctl	= f2fs_ioctl,
 > 
