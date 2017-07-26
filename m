@@ -1,116 +1,90 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH] f2fs: provide f2fs_balance_fs to __write_node_page
-Date: Wed, 26 Jul 2017 20:40:11 +0800
-Message-ID: <1501072811-32260-1-git-send-email-yunlong.song@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: add ioctl to expose current features
+Date: Wed, 26 Jul 2017 22:02:25 +0800
+Message-ID: <7ae3b5c5-fd42-795e-b9a4-e27b982c535b@kernel.org>
+References: <20170721201108.18408-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170721201108.18408-1-jaegeuk@kernel.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, sylinux@163.com, yunlong.song@huawei.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
----
- fs/f2fs/checkpoint.c |  2 +-
- fs/f2fs/f2fs.h       |  2 +-
- fs/f2fs/node.c       | 16 ++++++++++------
- 3 files changed, 12 insertions(+), 8 deletions(-)
+On 2017/7/22 4:11, Jaegeuk Kim wrote:
+> This patch adds an ioctl to provide feature information to user.
+> For exapmle, SQLite can use this ioctl to detect whether f2fs support atomic
+> write or not.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 5b876f6..3c84a25 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1017,7 +1017,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
- 
- 	if (get_pages(sbi, F2FS_DIRTY_NODES)) {
- 		up_write(&sbi->node_write);
--		err = sync_node_pages(sbi, &wbc);
-+		err = sync_node_pages(sbi, &wbc, false);
- 		if (err) {
- 			up_write(&sbi->node_change);
- 			f2fs_unlock_all(sbi);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 94a88b2..f69051b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2293,7 +2293,7 @@ struct page *new_node_page(struct dnode_of_data *dn,
- void move_node_page(struct page *node_page, int gc_type);
- int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 			struct writeback_control *wbc, bool atomic);
--int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc);
-+int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc, bool need);
- void build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount);
- bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid);
- void alloc_nid_done(struct f2fs_sb_info *sbi, nid_t nid);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index d53fe62..b5c0ce3 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1326,7 +1326,7 @@ static struct page *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
- }
- 
- static int __write_node_page(struct page *page, bool atomic, bool *submitted,
--				struct writeback_control *wbc)
-+				struct writeback_control *wbc, bool need)
- {
- 	struct f2fs_sb_info *sbi = F2FS_P_SB(page);
- 	nid_t nid;
-@@ -1387,6 +1387,10 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
- 	}
- 
- 	unlock_page(page);
-+	if (need)
-+		f2fs_balance_fs(sbi, false);
-+	else
-+		f2fs_balance_fs_bg(sbi);
- 
- 	if (unlikely(f2fs_cp_error(sbi))) {
- 		f2fs_submit_merged_write(sbi, NODE);
-@@ -1405,7 +1409,7 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
- static int f2fs_write_node_page(struct page *page,
- 				struct writeback_control *wbc)
- {
--	return __write_node_page(page, false, NULL, wbc);
-+	return __write_node_page(page, false, NULL, wbc, true);
- }
- 
- int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
-@@ -1493,7 +1497,7 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 
- 			ret = __write_node_page(page, atomic &&
- 						page == last_page,
--						&submitted, wbc);
-+						&submitted, wbc, true);
- 			if (ret) {
- 				unlock_page(page);
- 				f2fs_put_page(last_page, 0);
-@@ -1530,7 +1534,7 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 	return ret ? -EIO: 0;
- }
- 
--int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc)
-+int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc, bool need)
- {
- 	pgoff_t index, end;
- 	struct pagevec pvec;
-@@ -1608,7 +1612,7 @@ int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc)
- 			set_fsync_mark(page, 0);
- 			set_dentry_mark(page, 0);
- 
--			ret = __write_node_page(page, false, &submitted, wbc);
-+			ret = __write_node_page(page, false, &submitted, wbc, need);
- 			if (ret)
- 				unlock_page(page);
- 			else if (submitted)
-@@ -1697,7 +1701,7 @@ static int f2fs_write_node_pages(struct address_space *mapping,
- 	diff = nr_pages_to_write(sbi, NODE, wbc);
- 	wbc->sync_mode = WB_SYNC_NONE;
- 	blk_start_plug(&plug);
--	sync_node_pages(sbi, wbc);
-+	sync_node_pages(sbi, wbc, true);
- 	blk_finish_plug(&plug);
- 	wbc->nr_to_write = max((long)0, wbc->nr_to_write - diff);
- 	return 0;
--- 
-1.8.5.2
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks,
+
+> ---
+>  fs/f2fs/f2fs.h |  2 ++
+>  fs/f2fs/file.c | 13 +++++++++++++
+>  2 files changed, 15 insertions(+)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index e06d4e4b4579..5c46a462b56e 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -112,6 +112,7 @@ struct f2fs_mount_info {
+>  
+>  #define F2FS_FEATURE_ENCRYPT	0x0001
+>  #define F2FS_FEATURE_BLKZONED	0x0002
+> +#define F2FS_FEATURE_ATOMIC_WRITE 0x0004
+>  
+>  #define F2FS_HAS_FEATURE(sb, mask)					\
+>  	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
+> @@ -308,6 +309,7 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
+>  						struct f2fs_flush_device)
+>  #define F2FS_IOC_GARBAGE_COLLECT_RANGE	_IOW(F2FS_IOCTL_MAGIC, 11,	\
+>  						struct f2fs_gc_range)
+> +#define	F2FS_IOC_GET_FEATURES		_IOR(F2FS_IOCTL_MAGIC, 12, __u32)
+>  
+>  #define F2FS_IOC_SET_ENCRYPTION_POLICY	FS_IOC_SET_ENCRYPTION_POLICY
+>  #define F2FS_IOC_GET_ENCRYPTION_POLICY	FS_IOC_GET_ENCRYPTION_POLICY
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 2706130c261b..0e07b5b18cfa 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -2384,6 +2384,16 @@ static int f2fs_ioc_flush_device(struct file *filp, unsigned long arg)
+>  	return ret;
+>  }
+>  
+> +static int f2fs_ioc_get_features(struct file *filp, unsigned long arg)
+> +{
+> +	struct inode *inode = file_inode(filp);
+> +	u32 sb_feature = le32_to_cpu(F2FS_I_SB(inode)->raw_super->feature);
+> +
+> +	/* Must validate to set it with SQLite behavior in Android. */
+> +	sb_feature |= F2FS_FEATURE_ATOMIC_WRITE;
+> +
+> +	return put_user(sb_feature, (u32 __user *)arg);
+> +}
+>  
+>  long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>  {
+> @@ -2426,6 +2436,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>  		return f2fs_ioc_move_range(filp, arg);
+>  	case F2FS_IOC_FLUSH_DEVICE:
+>  		return f2fs_ioc_flush_device(filp, arg);
+> +	case F2FS_IOC_GET_FEATURES:
+> +		return f2fs_ioc_get_features(filp, arg);
+>  	default:
+>  		return -ENOTTY;
+>  	}
+> @@ -2491,6 +2503,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>  	case F2FS_IOC_DEFRAGMENT:
+>  	case F2FS_IOC_MOVE_RANGE:
+>  	case F2FS_IOC_FLUSH_DEVICE:
+> +	case F2FS_IOC_GET_FEATURES:
+>  		break;
+>  	default:
+>  		return -ENOIOCTLCMD;
+> 
