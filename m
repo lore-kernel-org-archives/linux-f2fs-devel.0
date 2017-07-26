@@ -1,7 +1,7 @@
 From: Chao Yu <chao@kernel.org>
 Subject: Re: [f2fs-dev] [PATCH] f2fs: add ioctl to expose current features
-Date: Wed, 26 Jul 2017 22:02:25 +0800
-Message-ID: <7ae3b5c5-fd42-795e-b9a4-e27b982c535b@kernel.org>
+Date: Wed, 26 Jul 2017 22:06:29 +0800
+Message-ID: <be3906c7-dc66-bbb2-cebe-da56c676c313@kernel.org>
 References: <20170721201108.18408-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -13,17 +13,23 @@ Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
+Hi Jaegeuk,
+
+I noted that the patch ("f2fs: give a try to do atomic write in -ENOMEM case")
+hasn't been sent to mailing list before been merged.
+
+Could you please send it out, and please add:
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks,
+
 On 2017/7/22 4:11, Jaegeuk Kim wrote:
 > This patch adds an ioctl to provide feature information to user.
 > For exapmle, SQLite can use this ioctl to detect whether f2fs support atomic
 > write or not.
 > 
 > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
-
 > ---
 >  fs/f2fs/f2fs.h |  2 ++
 >  fs/f2fs/file.c | 13 +++++++++++++
