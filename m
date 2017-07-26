@@ -1,7 +1,7 @@
 From: Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: support inode checksum
-Date: Wed, 26 Jul 2017 22:57:47 +0800
-Message-ID: <20170726145747.9535-1-chao@kernel.org>
+Subject: [PATCH] f2fs-tools: support inode checksum
+Date: Wed, 26 Jul 2017 23:01:35 +0800
+Message-ID: <20170726150135.9641-1-chao@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org
@@ -10,98 +10,163 @@ List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-This patch adds to support inode checksum in f2fs.
+This patch introduce a new option 'inode_checksum' for enabling inode
+checksum functionality in mkfs/fsck/sload.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/f2fs.h          | 31 ++++++++++++++++++++++++
- fs/f2fs/inode.c         | 64 +++++++++++++++++++++++++++++++++++++++++++++++++
- fs/f2fs/node.c          |  2 ++
- fs/f2fs/segment.c       |  5 +++-
- fs/f2fs/super.c         |  5 ++++
- include/linux/f2fs_fs.h |  1 +
- 6 files changed, 107 insertions(+), 1 deletion(-)
+ fsck/dir.c              |  4 ++++
+ fsck/fsck.c             | 27 +++++++++++++++++++++++++--
+ fsck/mount.c            |  9 +++++++++
+ fsck/segment.c          |  4 ++++
+ include/f2fs_fs.h       |  5 +++++
+ lib/libf2fs.c           | 22 ++++++++++++++++++++++
+ mkfs/f2fs_format.c      |  8 ++++++++
+ mkfs/f2fs_format_main.c |  7 +++++++
+ 8 files changed, 84 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index a6259660e401..5cfffd6f0209 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -122,6 +122,7 @@ struct f2fs_mount_info {
+diff --git a/fsck/dir.c b/fsck/dir.c
+index 3aa67ec..bbf28aa 100644
+--- a/fsck/dir.c
++++ b/fsck/dir.c
+@@ -447,6 +447,10 @@ static void init_inode_block(struct f2fs_sb_info *sbi,
+ 		make_empty_dir(sbi, node_blk);
+ 	else if (S_ISLNK(mode))
+ 		page_symlink(sbi, node_blk, de->link, size);
++
++	if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM))
++		node_blk->i.i_inode_checksum =
++			cpu_to_le32(f2fs_inode_chksum(node_blk));
+ }
+ 
+ int convert_inline_dentry(struct f2fs_sb_info *sbi, struct f2fs_node *node,
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 7a81855..2787b35 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -857,9 +857,32 @@ skip_blkcnt_fix:
+ 					nid, i_links);
+ 		}
+ 	}
+-	if (need_fix && !c.ro) {
+-		/* drop extent information to avoid potential wrong access */
++
++	/* drop extent information to avoid potential wrong access */
++	if (need_fix && !c.ro)
+ 		node_blk->i.i_ext.len = 0;
++
++	if ((c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM)) &&
++				f2fs_has_extra_isize(&node_blk->i)) {
++		__u32 provided, calculated;
++
++		provided = le32_to_cpu(node_blk->i.i_inode_checksum);
++		calculated = f2fs_inode_chksum(node_blk);
++
++		if (provided != calculated) {
++			ASSERT_MSG("ino: 0x%x chksum:0x%x, but calculated one is: 0x%x",
++				nid, provided, calculated);
++			if (c.fix_on) {
++				node_blk->i.i_inode_checksum =
++							cpu_to_le32(calculated);
++				need_fix = 1;
++				FIX_MSG("ino: 0x%x recover, i_inode_checksum= 0x%x -> 0x%x",
++						provided, calculated);
++			}
++		}
++	}
++
++	if (need_fix && !c.ro) {
+ 		ret = dev_write_block(node_blk, ni->blk_addr);
+ 		ASSERT(ret >= 0);
+ 	}
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 0453f64..8b30264 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -91,6 +91,7 @@ void print_inode_info(struct f2fs_inode *inode, int name)
+ 	DISP_u16(inode, i_extra_isize);
+ 	DISP_u16(inode, i_padding);
+ 	DISP_u32(inode, i_projid);
++	DISP_u32(inode, i_inode_checksum);
+ 
+ 	DISP_u32(inode, i_addr[ofs]);		/* Pointers to data blocks */
+ 	DISP_u32(inode, i_addr[ofs + 1]);	/* Pointers to data blocks */
+@@ -291,6 +292,9 @@ void print_sb_state(struct f2fs_super_block *sb)
+ 	if (f & cpu_to_le32(F2FS_FEATURE_PRJQUOTA)) {
+ 		MSG(0, "%s", " project quota");
+ 	}
++	if (f & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM)) {
++		MSG(0, "%s", " inode checksum");
++	}
+ 	MSG(0, "\n");
+ 	MSG(0, "Info: superblock encrypt level = %d, salt = ",
+ 					sb->encryption_level);
+@@ -2157,6 +2161,11 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
+ 	}
+ 
+ 	c.bug_on = 0;
++	c.feature = sb->feature;
++
++	/* precompute checksum seed for metadata */
++	if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM))
++		c.chksum_seed = f2fs_cal_crc32(~0, sb->uuid, sizeof(sb->uuid));
+ 
+ 	sbi->total_valid_node_count = get_cp(valid_node_count);
+ 	sbi->total_valid_inode_count = get_cp(valid_inode_count);
+diff --git a/fsck/segment.c b/fsck/segment.c
+index 5e23b6b..d568d61 100644
+--- a/fsck/segment.c
++++ b/fsck/segment.c
+@@ -206,6 +206,10 @@ int f2fs_build_file(struct f2fs_sb_info *sbi, struct dentry *de)
+ 
+ 		node_blk->i.i_size = cpu_to_le64(de->size);
+ 
++		if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM))
++			node_blk->i.i_inode_checksum =
++				cpu_to_le32(f2fs_inode_chksum(node_blk));
++
+ 		ret = dev_write_block(node_blk, ni.blk_addr);
+ 		ASSERT(ret >= 0);
+ 		free(node_blk);
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index 380bc2a..dfbe36d 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -316,6 +316,9 @@ struct f2fs_configuration {
+ 	/* sload parameters */
+ 	char *from_dir;
+ 	char *mount_point;
++
++	/* precomputed fs UUID checksum for seeding other checksums */
++	u_int32_t chksum_seed;
+ };
+ 
+ #ifdef CONFIG_64BIT
+@@ -473,6 +476,7 @@ enum {
  #define F2FS_FEATURE_ATOMIC_WRITE	0x0004
  #define F2FS_FEATURE_EXTRA_ATTR		0x0008
  #define F2FS_FEATURE_PRJQUOTA		0x0010
 +#define F2FS_FEATURE_INODE_CHKSUM	0x0020
  
- #define F2FS_HAS_FEATURE(sb, mask)					\
- 	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
-@@ -1097,6 +1098,9 @@ struct f2fs_sb_info {
- 	/* Reference to checksum algorithm driver via cryptoapi */
- 	struct crypto_shash *s_chksum_driver;
+ #define MAX_VOLUME_NAME		512
  
-+	/* Precomputed FS UUID checksum for seeding other checksums */
-+	__u32 s_chksum_seed;
-+
- 	/* For fault injection */
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- 	struct f2fs_fault_info fault_info;
-@@ -1194,6 +1198,27 @@ static inline bool f2fs_crc_valid(struct f2fs_sb_info *sbi, __u32 blk_crc,
- 	return f2fs_crc32(sbi, buf, buf_size) == blk_crc;
+@@ -683,6 +687,7 @@ struct f2fs_inode {
+ 			__le16 i_extra_isize;	/* extra inode attribute size */
+ 			__le16 i_padding;	/* padding */
+ 			__le32 i_projid;	/* project id */
++			__le32 i_inode_checksum;/* inode meta checksum */
+ 			__le32 i_extra_end[0];	/* for attribute size calculation */
+ 		};
+ 		__le32 i_addr[DEF_ADDRS_PER_INODE];	/* Pointers to data blocks */
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index a3091bb..3c0465c 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -493,6 +493,28 @@ int f2fs_crc_valid(u_int32_t blk_crc, void *buf, int len)
+ 	return 0;
  }
  
-+static inline u32 f2fs_chksum(struct f2fs_sb_info *sbi, u32 crc,
-+			      const void *address, unsigned int length)
-+{
-+	struct {
-+		struct shash_desc shash;
-+		char ctx[4];
-+	} desc;
-+	int err;
-+
-+	BUG_ON(crypto_shash_descsize(sbi->s_chksum_driver) != sizeof(desc.ctx));
-+
-+	desc.shash.tfm = sbi->s_chksum_driver;
-+	desc.shash.flags = 0;
-+	*(u32 *)desc.ctx = crc;
-+
-+	err = crypto_shash_update(&desc.shash, address, length);
-+	BUG_ON(err);
-+
-+	return *(u32 *)desc.ctx;
-+}
-+
- static inline struct f2fs_inode_info *F2FS_I(struct inode *inode)
- {
- 	return container_of(inode, struct f2fs_inode_info, vfs_inode);
-@@ -2303,6 +2328,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
-  * inode.c
-  */
- void f2fs_set_inode_flags(struct inode *inode);
-+void f2fs_inode_chksum_set(struct f2fs_sb_info *sbi, struct f2fs_node *node);
- struct inode *f2fs_iget(struct super_block *sb, unsigned long ino);
- struct inode *f2fs_iget_retry(struct super_block *sb, unsigned long ino);
- int try_to_free_nats(struct f2fs_sb_info *sbi, int nr_shrink);
-@@ -2889,6 +2915,11 @@ static inline int f2fs_sb_has_project_quota(struct super_block *sb)
- 	return F2FS_HAS_FEATURE(sb, F2FS_FEATURE_PRJQUOTA);
- }
- 
-+static inline int f2fs_sb_has_inode_chksum(struct super_block *sb)
-+{
-+	return F2FS_HAS_FEATURE(sb, F2FS_FEATURE_INODE_CHKSUM);
-+}
-+
- #ifdef CONFIG_BLK_DEV_ZONED
- static inline int get_blkz_type(struct f2fs_sb_info *sbi,
- 			struct block_device *bdev, block_t blkaddr)
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 6530c4f1743b..d81aaea6a832 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -114,6 +114,64 @@ static void __recover_inline_status(struct inode *inode, struct page *ipage)
- 	return;
- }
- 
-+static __u32 f2fs_inode_chksum(struct f2fs_sb_info *sbi,
-+					struct f2fs_node *node)
++__u32 f2fs_inode_chksum(struct f2fs_node *node)
 +{
 +	struct f2fs_inode *ri = &node->i;
 +	__le32 ino = node->footer.ino;
@@ -111,127 +176,71 @@ index 6530c4f1743b..d81aaea6a832 100644
 +	unsigned int offset = offsetof(struct f2fs_inode, i_inode_checksum);
 +	unsigned int cs_size = sizeof(dummy_cs);
 +
-+	chksum = f2fs_chksum(sbi, sbi->s_chksum_seed, (__u8 *)&ino,
++	chksum = f2fs_cal_crc32(c.chksum_seed, (__u8 *)&ino,
 +							sizeof(ino));
-+	chksum_seed = f2fs_chksum(sbi, chksum, (__u8 *)&gen, sizeof(gen));
++	chksum_seed = f2fs_cal_crc32(chksum, (__u8 *)&gen, sizeof(gen));
 +
-+	chksum = f2fs_chksum(sbi, chksum_seed, (__u8 *)ri, offset);
-+	chksum = f2fs_chksum(sbi, chksum, (__u8 *)&dummy_cs, cs_size);
++	chksum = f2fs_cal_crc32(chksum_seed, (__u8 *)ri, offset);
++	chksum = f2fs_cal_crc32(chksum, (__u8 *)&dummy_cs, cs_size);
 +	offset += cs_size;
-+	chksum = f2fs_chksum(sbi, chksum, (__u8 *)ri + offset,
++	chksum = f2fs_cal_crc32(chksum, (__u8 *)ri + offset,
 +						F2FS_BLKSIZE - offset);
 +	return chksum;
 +}
 +
-+static bool f2fs_inode_chksum_verify(struct f2fs_sb_info *sbi,
-+			struct f2fs_node *node, struct f2fs_inode_info *fi)
-+{
-+	struct f2fs_inode *ri = &node->i;
-+	__u32 provided, calculated;
-+
-+	if (!f2fs_sb_has_inode_chksum(sbi->sb))
-+		return true;
-+
-+	if (!F2FS_FITS_IN_INODE(ri, fi->i_extra_isize, i_inode_checksum))
-+		return true;
-+
-+	provided = le32_to_cpu(ri->i_inode_checksum);
-+	calculated = f2fs_inode_chksum(sbi, node);
-+
-+	return provided == calculated;
-+}
-+
-+void f2fs_inode_chksum_set(struct f2fs_sb_info *sbi, struct f2fs_node *node)
-+{
-+	struct f2fs_inode *ri = &node->i;
-+	int extra_isize = le32_to_cpu(ri->i_extra_isize);
-+
-+	if (!f2fs_sb_has_inode_chksum(sbi->sb))
-+		return;
-+
-+	if (!RAW_IS_INODE(node) || !(ri->i_inline & F2FS_EXTRA_ATTR))
-+		return;
-+
-+	if (!F2FS_FITS_IN_INODE(ri, extra_isize, i_inode_checksum))
-+		return;
-+
-+	ri->i_inode_checksum = cpu_to_le32(f2fs_inode_chksum(sbi, node));
-+}
-+
- static int do_read_inode(struct inode *inode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-@@ -167,6 +225,12 @@ static int do_read_inode(struct inode *inode)
- 	fi->i_extra_isize = f2fs_has_extra_attr(inode) ?
- 					le16_to_cpu(ri->i_extra_isize) : 0;
+ /*
+  * try to identify the root device
+  */
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 8e068e9..92876b8 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -369,6 +369,10 @@ static int f2fs_prepare_super_block(void)
  
-+	if (!f2fs_inode_chksum_verify(sbi, F2FS_NODE(node_page), fi)) {
-+		f2fs_msg(sbi->sb, KERN_WARNING, "checksum invalid");
-+		f2fs_put_page(node_page, 1);
-+		return -EBADMSG;
-+	}
-+
- 	/* check data exist */
- 	if (f2fs_has_inline_data(inode) && !f2fs_exist_data(inode))
- 		__recover_inline_status(inode, node_page);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 11e2d49203b3..f97792202ada 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2271,6 +2271,8 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
- 			F2FS_FITS_IN_INODE(src, le16_to_cpu(src->i_extra_isize),
- 								i_projid))
- 			dst->i_projid = src->i_projid;
-+
-+		f2fs_inode_chksum_set(sbi, F2FS_NODE(ipage));
- 	}
- 
- 	new_ni = old_ni;
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 2a5672a20a62..df1bb0c144f1 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2214,9 +2214,12 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 
- 	mutex_unlock(&sit_i->sentry_lock);
- 
--	if (page && IS_NODESEG(type))
-+	if (page && IS_NODESEG(type)) {
- 		fill_node_footer_blkaddr(page, NEXT_FREE_BLKADDR(sbi, curseg));
- 
-+		f2fs_inode_chksum_set(sbi, F2FS_NODE(page));
-+	}
-+
- 	if (add_list) {
- 		struct f2fs_bio_info *io;
- 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index d7c8f6bee446..99a62f340295 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2284,6 +2284,11 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	sb->s_fs_info = sbi;
- 	sbi->raw_super = raw_super;
+ 	uuid_generate(sb->uuid);
  
 +	/* precompute checksum seed for metadata */
-+	if (f2fs_sb_has_inode_chksum(sb))
-+		sbi->s_chksum_seed = f2fs_chksum(sbi, ~0, raw_super->uuid,
-+						sizeof(raw_super->uuid));
++	if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM))
++		c.chksum_seed = f2fs_cal_crc32(~0, sb->uuid, sizeof(sb->uuid));
 +
- 	/*
- 	 * The BLKZONED feature indicates that the drive was formatted with
- 	 * zone alignment optimization. This is optional for host-aware
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 50f176683676..2a0c453d7235 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -240,6 +240,7 @@ struct f2fs_inode {
- 			__le16 i_extra_isize;	/* extra inode attribute size */
- 			__le16 i_padding;	/* padding */
- 			__le32 i_projid;	/* project id */
-+			__le32 i_inode_checksum;/* inode meta checksum */
- 			__le32 i_extra_end[0];	/* for attribute size calculation */
- 		};
- 		__le32 i_addr[DEF_ADDRS_PER_INODE];	/* Pointers to data blocks */
+ 	utf8_to_utf16(sb->volume_name, (const char *)c.vol_label,
+ 				MAX_VOLUME_NAME, strlen(c.vol_label));
+ 	set_sb(node_ino, 1);
+@@ -940,6 +944,10 @@ static int f2fs_write_root_inode(void)
+ 	raw_node->i.i_ext.blk_addr = 0;
+ 	raw_node->i.i_ext.len = 0;
+ 
++	if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM))
++		raw_node->i.i_inode_checksum =
++			cpu_to_le32(f2fs_inode_chksum(raw_node));
++
+ 	main_area_node_seg_blk_offset = get_sb(main_blkaddr);
+ 	main_area_node_seg_blk_offset += c.cur_seg[CURSEG_HOT_NODE] *
+ 					c.blks_per_seg;
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index 39e8e3f..adbbff9 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -84,6 +84,8 @@ static void parse_feature(const char *features)
+ 		c.feature |= cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR);
+ 	} else if (!strcmp(features, "project_quota")) {
+ 		c.feature |= cpu_to_le32(F2FS_FEATURE_PRJQUOTA);
++	} else if (!strcmp(features, "inode_checksum")) {
++		c.feature |= cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM);
+ 	} else {
+ 		MSG(0, "Error: Wrong features\n");
+ 		mkfs_usage();
+@@ -169,6 +171,11 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 				"enabled with extra attr feature\n");
+ 			exit(1);
+ 		}
++		if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM)) {
++			MSG(0, "\tInfo: inode checksum feature should always been"
++				"enabled with extra attr feature\n");
++			exit(1);
++		}
+ 	}
+ 
+ 	if (optind >= argc) {
 -- 
 2.13.0.90.g1eb437020
