@@ -1,80 +1,119 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs-tools: fix printing block adresses
-Date: Thu, 27 Jul 2017 13:42:31 +0800
-Message-ID: <3ccfd2f9-37fc-b39e-7411-d608aa840f87@huawei.com>
-References: <1501089397-10422-1-git-send-email-piosoko1@student.pg.edu.pl>
- <20170726212546.GA66153@jaegeuk-macbookpro.roam.corp.google.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: [PATCH v2] f2fs: provide f2fs_balance_fs to __write_node_page
+Date: Thu, 27 Jul 2017 20:11:00 +0800
+Message-ID: <1501157460-51262-1-git-send-email-yunlong.song@huawei.com>
+References: <1501072811-32260-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
- helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1dabZU-0001Qc-BV
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Jul 2017 05:42:52 +0000
-Received: from szxga02-in.huawei.com ([45.249.212.188])
- by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1dabZS-00030j-LK
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Jul 2017 05:42:52 +0000
-In-Reply-To: <20170726212546.GA66153@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, =?UTF-8?Q?Piotr_Soko=c5=82owski?= <piosoko1@student.pg.edu.pl>
-Cc: jackupie@student.pg.edu.pl, magstach@student.pg.edu.pl, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1501072811-32260-1-git-send-email-yunlong.song@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, sylinux@163.com, yunlong.song@huawei.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-T24gMjAxNy83LzI3IDU6MjUsIEphZWdldWsgS2ltIHdyb3RlOgo+IEhpIFBpb3RyLAo+IAo+IEkn
-dmUgbW9kaWZpZWQgeW91ciBwYXRjaCB0byByZXNvbHZlIHNvbWUgY29uZmxpY3RzIGFuZCBhZGQg
-eW91ciBTb0IuCj4gQ291bGQgeW91IHRha2UgYSBsb29rIGF0IHRoaXM/Cj4gCj4gaHR0cHM6Ly9n
-aXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvamFlZ2V1ay9mMmZzLXRvb2xz
-LmdpdC9jb21taXQvP2g9ZGV2LXRlc3QmaWQ9NWJjZDc0NDY4ZjljMTJiMGViNjZhOGIzZjViNzYy
-MzNjMGYzOGZiOAo+IAo+IFRoYW5rcywKPiAKPiBPbiAwNy8yNiwgUGlvdHIgU29rb8WCb3dza2kg
-d3JvdGU6Cj4+IFRoaXMgcGF0Y2ggYWxsb3dzIHByb3Blcmx5IHByaW50aW5nIGFsbCBhZGRyZXNz
-ZXMgaW4gYW4gaW5vZGUuCj4+IEl0IGlzIHVzZWZ1bCBpbiBjb21tYW5kcyBsaWtlIGR1bXAuZjJm
-cy4KPj4KPj4gLS0tCj4+ICBmc2NrL21vdW50LmMgfCAxMCArKysrKystLS0tCj4+ICAxIGZpbGUg
-Y2hhbmdlZCwgNiBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0
-IGEvZnNjay9tb3VudC5jIGIvZnNjay9tb3VudC5jCj4+IGluZGV4IGEwYjBiZWEuLjRkN2FjNmEg
-MTAwNjQ0Cj4+IC0tLSBhL2ZzY2svbW91bnQuYwo+PiArKysgYi9mc2NrL21vdW50LmMKPj4gQEAg
-LTkyLDEyICs5MiwxNCBAQCB2b2lkIHByaW50X2lub2RlX2luZm8oc3RydWN0IGYyZnNfaW5vZGUg
-Kmlub2RlLCBpbnQgbmFtZSkKPj4gIAlESVNQX3UzMihpbm9kZSwgaV9hZGRyWzJdKTsJLyogUG9p
-bnRlcnMgdG8gZGF0YSBibG9ja3MgKi8KPj4gIAlESVNQX3UzMihpbm9kZSwgaV9hZGRyWzNdKTsJ
-LyogUG9pbnRlcnMgdG8gZGF0YSBibG9ja3MgKi8KPj4gIAo+PiAtCWZvciAoaSA9IDQ7IGkgPCBB
-RERSU19QRVJfSU5PREUoaW5vZGUpOyBpKyspIHsKPj4gKwlmb3IgKGkgPSAwOyBpIDwgQUREUlNf
-UEVSX0lOT0RFKGlub2RlKTsgaSsrKSB7Cj4+ICAJCWlmIChpbm9kZS0+aV9hZGRyW2ldICE9IDB4
-MCkgewo+PiAtCQkJcHJpbnRmKCJpX2FkZHJbMHgleF0gcG9pbnRzIGRhdGEgYmxvY2tcclx0XHRb
-MHglNHhdXG4iLAo+PiAtCQkJCQlpLCBsZTMyX3RvX2NwdShpbm9kZS0+aV9hZGRyW2ldKSk7Cj4+
-IC0JCQlicmVhazsKPj4gKwkJCWlmIChpPjMpCj4+ICsJCQkJcHJpbnRmKCJpX2FkZHJbMHgleF0g
-cG9pbnRzIGRhdGEgYmxvY2tcdFx0WzB4JTR4XVxuIiwKPj4gKwkJCQkJCWksIGxlMzJfdG9fY3B1
-KGlub2RlLT5pX2FkZHJbaV0pKTsKPj4gIAkJfQo+PiArCQllbHNlCj4+ICsJCQlicmVhazsKCldo
-YXQgYWJvdXQganVzdCBza2lwcGluZyBpZiBpX2FkZHIgaXMgMHgwMD8gdGhlbiBiZWxsb3cgdmFs
-aWQgYmxrYWRkcnMgY291bGQgYmUKcHJpbnRlZC4KClRoYW5rcywKCj4+ICAJfQo+PiAgCj4+ICAJ
-RElTUF91MzIoaW5vZGUsIGlfbmlkWzBdKTsJLyogZGlyZWN0ICovCj4+IC0tIAo+PiAyLjEuNAo+
-Pgo+Pgo+PiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPj4gQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRl
-Y2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0Cj4+IGVuZ2FnaW5nIHRlY2gg
-c2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cj4+IF9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4+IExpbnV4LWYyZnMtZGV2
-ZWwgbWFpbGluZyBsaXN0Cj4+IExpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0
-Cj4+IGh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYy
-ZnMtZGV2ZWwKPiAKPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiBDaGVjayBvdXQgdGhlIHZpYnJh
-bnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKPiBlbmdhZ2luZyB0
-ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdAo+IF9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gTGludXgtZjJmcy1k
-ZXZlbCBtYWlsaW5nIGxpc3QKPiBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5l
-dAo+IGh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYy
-ZnMtZGV2ZWwKPiAKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQ2hlY2sgb3V0IHRoZSB2aWJyYW50
-IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0CmVuZ2FnaW5nIHRlY2gg
-c2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cl9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFp
-bGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8v
-bGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+Let node writeback also do f2fs_balance_fs to ensure there are always enough free
+segments.
+
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+---
+ fs/f2fs/checkpoint.c |  2 +-
+ fs/f2fs/f2fs.h       |  2 +-
+ fs/f2fs/node.c       | 14 ++++++++------
+ 3 files changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 5b876f6..3c84a25 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1017,7 +1017,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
+ 
+ 	if (get_pages(sbi, F2FS_DIRTY_NODES)) {
+ 		up_write(&sbi->node_write);
+-		err = sync_node_pages(sbi, &wbc);
++		err = sync_node_pages(sbi, &wbc, false);
+ 		if (err) {
+ 			up_write(&sbi->node_change);
+ 			f2fs_unlock_all(sbi);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 94a88b2..f69051b 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2293,7 +2293,7 @@ struct page *new_node_page(struct dnode_of_data *dn,
+ void move_node_page(struct page *node_page, int gc_type);
+ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ 			struct writeback_control *wbc, bool atomic);
+-int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc);
++int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc, bool need);
+ void build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount);
+ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid);
+ void alloc_nid_done(struct f2fs_sb_info *sbi, nid_t nid);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index d53fe62..210ec25 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1326,7 +1326,7 @@ static struct page *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
+ }
+ 
+ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+-				struct writeback_control *wbc)
++				struct writeback_control *wbc, bool need)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_P_SB(page);
+ 	nid_t nid;
+@@ -1387,6 +1387,8 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+ 	}
+ 
+ 	unlock_page(page);
++	if (need)
++		f2fs_balance_fs(sbi, false);
+ 
+ 	if (unlikely(f2fs_cp_error(sbi))) {
+ 		f2fs_submit_merged_write(sbi, NODE);
+@@ -1405,7 +1407,7 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+ static int f2fs_write_node_page(struct page *page,
+ 				struct writeback_control *wbc)
+ {
+-	return __write_node_page(page, false, NULL, wbc);
++	return __write_node_page(page, false, NULL, wbc, false);
+ }
+ 
+ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+@@ -1493,7 +1495,7 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ 
+ 			ret = __write_node_page(page, atomic &&
+ 						page == last_page,
+-						&submitted, wbc);
++						&submitted, wbc, true);
+ 			if (ret) {
+ 				unlock_page(page);
+ 				f2fs_put_page(last_page, 0);
+@@ -1530,7 +1532,7 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ 	return ret ? -EIO: 0;
+ }
+ 
+-int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc)
++int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc, bool need)
+ {
+ 	pgoff_t index, end;
+ 	struct pagevec pvec;
+@@ -1608,7 +1610,7 @@ int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc)
+ 			set_fsync_mark(page, 0);
+ 			set_dentry_mark(page, 0);
+ 
+-			ret = __write_node_page(page, false, &submitted, wbc);
++			ret = __write_node_page(page, false, &submitted, wbc, need);
+ 			if (ret)
+ 				unlock_page(page);
+ 			else if (submitted)
+@@ -1697,7 +1699,7 @@ static int f2fs_write_node_pages(struct address_space *mapping,
+ 	diff = nr_pages_to_write(sbi, NODE, wbc);
+ 	wbc->sync_mode = WB_SYNC_NONE;
+ 	blk_start_plug(&plug);
+-	sync_node_pages(sbi, wbc);
++	sync_node_pages(sbi, wbc, true);
+ 	blk_finish_plug(&plug);
+ 	wbc->nr_to_write = max((long)0, wbc->nr_to_write - diff);
+ 	return 0;
+-- 
+1.8.5.2
