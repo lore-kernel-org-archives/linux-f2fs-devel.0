@@ -1,24 +1,23 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 1/2] f2fs: expose /sys/fs/f2fs/features
-Date: Thu, 27 Jul 2017 13:36:06 +0800
-Message-ID: <3e7ed741-8aee-02a3-a04a-b62a72beb8ef@huawei.com>
-References: <20170726012921.53002-1-jaegeuk@kernel.org>
- <765ab60d-b0fc-7233-83b5-86a617e4134f@kernel.org>
- <20170726214326.GC66153@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH] f2fs-tools: fix printing block adresses
+Date: Thu, 27 Jul 2017 13:42:31 +0800
+Message-ID: <3ccfd2f9-37fc-b39e-7411-d608aa840f87@huawei.com>
+References: <1501089397-10422-1-git-send-email-piosoko1@student.pg.edu.pl>
+ <20170726212546.GA66153@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
  helo=mx.sourceforge.net)
  by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1dabTH-0001A8-Rg
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Jul 2017 05:36:27 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187])
+ (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1dabZU-0001Qc-BV
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Jul 2017 05:42:52 +0000
+Received: from szxga02-in.huawei.com ([45.249.212.188])
  by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1dabTD-00028z-NB
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Jul 2017 05:36:27 +0000
-In-Reply-To: <20170726214326.GC66153@jaegeuk-macbookpro.roam.corp.google.com>
+ (Exim 4.76) id 1dabZS-00030j-LK
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Jul 2017 05:42:52 +0000
+In-Reply-To: <20170726212546.GA66153@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -29,155 +28,53 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, =?UTF-8?Q?Piotr_Soko=c5=82owski?= <piosoko1@student.pg.edu.pl>
+Cc: jackupie@student.pg.edu.pl, magstach@student.pg.edu.pl, linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/7/27 5:43, Jaegeuk Kim wrote:
-> On 07/26, Chao Yu wrote:
->> On 2017/7/26 9:29, Jaegeuk Kim wrote:
->>> This patch exposes what features are supported by current f2fs build to sysfs
->>> entry.
->>>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>
->> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->>
->> Minor thing, can you exchange below function name to follow ext4:
->> f2fs_init_sysfs <-> f2fs_register_sysfs
->> f2fs_exit_sysfs <-> f2fs_unregister_sysfs
->>
->>From 4cf8a3138f3ee171750ae279fefd4de672a0ee29 Mon Sep 17 00:00:00 2001
-> From: Jaegeuk Kim <jaegeuk@kernel.org>
-> Date: Wed, 26 Jul 2017 11:24:13 -0700
-> Subject: [PATCH] f2fs: avoid naming confusion of sysfs init
-> 
-> This patch changes the function names of sysfs init to follow ext4.
-> 
-> f2fs_init_sysfs <-> f2fs_register_sysfs
-> f2fs_exit_sysfs <-> f2fs_unregister_sysfs
-> 
-> Suggested-by: Chao Yu <yuchao0@huawei.com>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-
-Reivewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
-
-> ---
->  fs/f2fs/f2fs.h  |  8 ++++----
->  fs/f2fs/super.c | 10 +++++-----
->  fs/f2fs/sysfs.c |  8 ++++----
->  3 files changed, 13 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index d486539086b6..a1bfd0b9be44 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -2820,10 +2820,10 @@ void destroy_extent_cache(void);
->  /*
->   * sysfs.c
->   */
-> -int __init f2fs_register_sysfs(void);
-> -void f2fs_unregister_sysfs(void);
-> -int f2fs_init_sysfs(struct f2fs_sb_info *sbi);
-> -void f2fs_exit_sysfs(struct f2fs_sb_info *sbi);
-> +int __init f2fs_init_sysfs(void);
-> +void f2fs_exit_sysfs(void);
-> +int f2fs_register_sysfs(struct f2fs_sb_info *sbi);
-> +void f2fs_unregister_sysfs(struct f2fs_sb_info *sbi);
->  
->  /*
->   * crypto support
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 1241739f4d54..12513caabe6e 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -649,7 +649,7 @@ static void f2fs_put_super(struct super_block *sb)
->  
->  	kfree(sbi->ckpt);
->  
-> -	f2fs_exit_sysfs(sbi);
-> +	f2fs_unregister_sysfs(sbi);
->  
->  	sb->s_fs_info = NULL;
->  	if (sbi->s_chksum_driver)
-> @@ -2145,7 +2145,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->  		goto free_root_inode;
->  	}
->  
-> -	err = f2fs_init_sysfs(sbi);
-> +	err = f2fs_register_sysfs(sbi);
->  	if (err)
->  		goto free_root_inode;
->  
-> @@ -2216,7 +2216,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->  
->  free_sysfs:
->  	f2fs_sync_inode_meta(sbi);
-> -	f2fs_exit_sysfs(sbi);
-> +	f2fs_unregister_sysfs(sbi);
->  free_root_inode:
->  	dput(sb->s_root);
->  	sb->s_root = NULL;
-> @@ -2334,7 +2334,7 @@ static int __init init_f2fs_fs(void)
->  	err = create_extent_cache();
->  	if (err)
->  		goto free_checkpoint_caches;
-> -	err = f2fs_register_sysfs();
-> +	err = f2fs_init_sysfs();
->  	if (err)
->  		goto free_extent_cache;
->  	err = register_shrinker(&f2fs_shrinker_info);
-> @@ -2373,7 +2373,7 @@ static void __exit exit_f2fs_fs(void)
->  	f2fs_destroy_root_stats();
->  	unregister_filesystem(&f2fs_fs_type);
->  	unregister_shrinker(&f2fs_shrinker_info);
-> -	f2fs_unregister_sysfs();
-> +	f2fs_exit_sysfs();
->  	destroy_extent_cache();
->  	destroy_checkpoint_caches();
->  	destroy_segment_manager_caches();
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index 71191d89917d..5a78b9af92ef 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -304,7 +304,7 @@ static const struct file_operations f2fs_seq_##_name##_fops = {		\
->  F2FS_PROC_FILE_DEF(segment_info);
->  F2FS_PROC_FILE_DEF(segment_bits);
->  
-> -int __init f2fs_register_sysfs(void)
-> +int __init f2fs_init_sysfs(void)
->  {
->  	f2fs_proc_root = proc_mkdir("fs/f2fs", NULL);
->  
-> @@ -314,13 +314,13 @@ int __init f2fs_register_sysfs(void)
->  	return 0;
->  }
->  
-> -void f2fs_unregister_sysfs(void)
-> +void f2fs_exit_sysfs(void)
->  {
->  	kset_unregister(f2fs_kset);
->  	remove_proc_entry("fs/f2fs", NULL);
->  }
->  
-> -int f2fs_init_sysfs(struct f2fs_sb_info *sbi)
-> +int f2fs_register_sysfs(struct f2fs_sb_info *sbi)
->  {
->  	struct super_block *sb = sbi->sb;
->  	int err;
-> @@ -351,7 +351,7 @@ int f2fs_init_sysfs(struct f2fs_sb_info *sbi)
->  	return err;
->  }
->  
-> -void f2fs_exit_sysfs(struct f2fs_sb_info *sbi)
-> +void f2fs_unregister_sysfs(struct f2fs_sb_info *sbi)
->  {
->  	kobject_del(&sbi->s_kobj);
->  	kobject_put(&sbi->s_kobj);
-> 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+T24gMjAxNy83LzI3IDU6MjUsIEphZWdldWsgS2ltIHdyb3RlOgo+IEhpIFBpb3RyLAo+IAo+IEkn
+dmUgbW9kaWZpZWQgeW91ciBwYXRjaCB0byByZXNvbHZlIHNvbWUgY29uZmxpY3RzIGFuZCBhZGQg
+eW91ciBTb0IuCj4gQ291bGQgeW91IHRha2UgYSBsb29rIGF0IHRoaXM/Cj4gCj4gaHR0cHM6Ly9n
+aXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvamFlZ2V1ay9mMmZzLXRvb2xz
+LmdpdC9jb21taXQvP2g9ZGV2LXRlc3QmaWQ9NWJjZDc0NDY4ZjljMTJiMGViNjZhOGIzZjViNzYy
+MzNjMGYzOGZiOAo+IAo+IFRoYW5rcywKPiAKPiBPbiAwNy8yNiwgUGlvdHIgU29rb8WCb3dza2kg
+d3JvdGU6Cj4+IFRoaXMgcGF0Y2ggYWxsb3dzIHByb3Blcmx5IHByaW50aW5nIGFsbCBhZGRyZXNz
+ZXMgaW4gYW4gaW5vZGUuCj4+IEl0IGlzIHVzZWZ1bCBpbiBjb21tYW5kcyBsaWtlIGR1bXAuZjJm
+cy4KPj4KPj4gLS0tCj4+ICBmc2NrL21vdW50LmMgfCAxMCArKysrKystLS0tCj4+ICAxIGZpbGUg
+Y2hhbmdlZCwgNiBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0
+IGEvZnNjay9tb3VudC5jIGIvZnNjay9tb3VudC5jCj4+IGluZGV4IGEwYjBiZWEuLjRkN2FjNmEg
+MTAwNjQ0Cj4+IC0tLSBhL2ZzY2svbW91bnQuYwo+PiArKysgYi9mc2NrL21vdW50LmMKPj4gQEAg
+LTkyLDEyICs5MiwxNCBAQCB2b2lkIHByaW50X2lub2RlX2luZm8oc3RydWN0IGYyZnNfaW5vZGUg
+Kmlub2RlLCBpbnQgbmFtZSkKPj4gIAlESVNQX3UzMihpbm9kZSwgaV9hZGRyWzJdKTsJLyogUG9p
+bnRlcnMgdG8gZGF0YSBibG9ja3MgKi8KPj4gIAlESVNQX3UzMihpbm9kZSwgaV9hZGRyWzNdKTsJ
+LyogUG9pbnRlcnMgdG8gZGF0YSBibG9ja3MgKi8KPj4gIAo+PiAtCWZvciAoaSA9IDQ7IGkgPCBB
+RERSU19QRVJfSU5PREUoaW5vZGUpOyBpKyspIHsKPj4gKwlmb3IgKGkgPSAwOyBpIDwgQUREUlNf
+UEVSX0lOT0RFKGlub2RlKTsgaSsrKSB7Cj4+ICAJCWlmIChpbm9kZS0+aV9hZGRyW2ldICE9IDB4
+MCkgewo+PiAtCQkJcHJpbnRmKCJpX2FkZHJbMHgleF0gcG9pbnRzIGRhdGEgYmxvY2tcclx0XHRb
+MHglNHhdXG4iLAo+PiAtCQkJCQlpLCBsZTMyX3RvX2NwdShpbm9kZS0+aV9hZGRyW2ldKSk7Cj4+
+IC0JCQlicmVhazsKPj4gKwkJCWlmIChpPjMpCj4+ICsJCQkJcHJpbnRmKCJpX2FkZHJbMHgleF0g
+cG9pbnRzIGRhdGEgYmxvY2tcdFx0WzB4JTR4XVxuIiwKPj4gKwkJCQkJCWksIGxlMzJfdG9fY3B1
+KGlub2RlLT5pX2FkZHJbaV0pKTsKPj4gIAkJfQo+PiArCQllbHNlCj4+ICsJCQlicmVhazsKCldo
+YXQgYWJvdXQganVzdCBza2lwcGluZyBpZiBpX2FkZHIgaXMgMHgwMD8gdGhlbiBiZWxsb3cgdmFs
+aWQgYmxrYWRkcnMgY291bGQgYmUKcHJpbnRlZC4KClRoYW5rcywKCj4+ICAJfQo+PiAgCj4+ICAJ
+RElTUF91MzIoaW5vZGUsIGlfbmlkWzBdKTsJLyogZGlyZWN0ICovCj4+IC0tIAo+PiAyLjEuNAo+
+Pgo+Pgo+PiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPj4gQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRl
+Y2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0Cj4+IGVuZ2FnaW5nIHRlY2gg
+c2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cj4+IF9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4+IExpbnV4LWYyZnMtZGV2
+ZWwgbWFpbGluZyBsaXN0Cj4+IExpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0
+Cj4+IGh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYy
+ZnMtZGV2ZWwKPiAKPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiBDaGVjayBvdXQgdGhlIHZpYnJh
+bnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKPiBlbmdhZ2luZyB0
+ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdAo+IF9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gTGludXgtZjJmcy1k
+ZXZlbCBtYWlsaW5nIGxpc3QKPiBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5l
+dAo+IGh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYy
+ZnMtZGV2ZWwKPiAKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQ2hlY2sgb3V0IHRoZSB2aWJyYW50
+IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0CmVuZ2FnaW5nIHRlY2gg
+c2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cl9fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFp
+bGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8v
+bGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
