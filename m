@@ -1,151 +1,316 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH v2] f2fs: provide f2fs_balance_fs to
- __write_node_page
-Date: Thu, 27 Jul 2017 20:13:15 +0800
-Message-ID: <98e2be6b-904b-bb32-fb90-769cdedda0c1@huawei.com>
-References: <1501072811-32260-1-git-send-email-yunlong.song@huawei.com>
- <1501157460-51262-1-git-send-email-yunlong.song@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH 1/2 v2] f2fs: expose /sys/fs/f2fs/features
+Date: Fri, 28 Jul 2017 20:40:10 +0800
+Message-ID: <e8c0eba5-9560-7528-429f-88a2c10545e4@kernel.org>
+References: <20170726012921.53002-1-jaegeuk@kernel.org>
+ <20170726214426.GD66153@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
- helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yunlong.song@huawei.com>)
- id 1dahiw-0002O9-JN
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Jul 2017 12:17:02 +0000
-Received: from szxga03-in.huawei.com ([45.249.212.189])
- by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1dahiv-0002Tm-1o
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Jul 2017 12:17:02 +0000
-In-Reply-To: <1501157460-51262-1-git-send-email-yunlong.song@huawei.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170726214426.GD66153@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, sylinux@163.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-v1->v2, fix some dead lock problems under some heavy load test
+Hi Jaegeuk,
 
-On 2017/7/27 20:11, Yunlong Song wrote:
-> Let node writeback also do f2fs_balance_fs to ensure there are always enough free
-> segments.
->
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+On 2017/7/27 5:44, Jaegeuk Kim wrote:
+> Change log from v1:
+>  - add /sys/fs/f2fs/dev/features
+> 
+> This patch exposes what features are supported by current f2fs build to sysfs
+> entry via:
+> 
+> /sys/fs/f2fs/features/> /sys/fs/f2fs/dev/features
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > ---
->   fs/f2fs/checkpoint.c |  2 +-
->   fs/f2fs/f2fs.h       |  2 +-
->   fs/f2fs/node.c       | 14 ++++++++------
->   3 files changed, 10 insertions(+), 8 deletions(-)
->
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index 5b876f6..3c84a25 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -1017,7 +1017,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
->   
->   	if (get_pages(sbi, F2FS_DIRTY_NODES)) {
->   		up_write(&sbi->node_write);
-> -		err = sync_node_pages(sbi, &wbc);
-> +		err = sync_node_pages(sbi, &wbc, false);
->   		if (err) {
->   			up_write(&sbi->node_change);
->   			f2fs_unlock_all(sbi);
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 94a88b2..f69051b 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -2293,7 +2293,7 @@ struct page *new_node_page(struct dnode_of_data *dn,
->   void move_node_page(struct page *node_page, int gc_type);
->   int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
->   			struct writeback_control *wbc, bool atomic);
-> -int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc);
-> +int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc, bool need);
->   void build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount);
->   bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid);
->   void alloc_nid_done(struct f2fs_sb_info *sbi, nid_t nid);
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index d53fe62..210ec25 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1326,7 +1326,7 @@ static struct page *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
->   }
->   
->   static int __write_node_page(struct page *page, bool atomic, bool *submitted,
-> -				struct writeback_control *wbc)
-> +				struct writeback_control *wbc, bool need)
->   {
->   	struct f2fs_sb_info *sbi = F2FS_P_SB(page);
->   	nid_t nid;
-> @@ -1387,6 +1387,8 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
->   	}
->   
->   	unlock_page(page);
-> +	if (need)
-> +		f2fs_balance_fs(sbi, false);
->   
->   	if (unlikely(f2fs_cp_error(sbi))) {
->   		f2fs_submit_merged_write(sbi, NODE);
-> @@ -1405,7 +1407,7 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
->   static int f2fs_write_node_page(struct page *page,
->   				struct writeback_control *wbc)
->   {
-> -	return __write_node_page(page, false, NULL, wbc);
-> +	return __write_node_page(page, false, NULL, wbc, false);
->   }
->   
->   int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
-> @@ -1493,7 +1495,7 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
->   
->   			ret = __write_node_page(page, atomic &&
->   						page == last_page,
-> -						&submitted, wbc);
-> +						&submitted, wbc, true);
->   			if (ret) {
->   				unlock_page(page);
->   				f2fs_put_page(last_page, 0);
-> @@ -1530,7 +1532,7 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
->   	return ret ? -EIO: 0;
->   }
->   
-> -int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc)
-> +int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc, bool need)
->   {
->   	pgoff_t index, end;
->   	struct pagevec pvec;
-> @@ -1608,7 +1610,7 @@ int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc)
->   			set_fsync_mark(page, 0);
->   			set_dentry_mark(page, 0);
->   
-> -			ret = __write_node_page(page, false, &submitted, wbc);
-> +			ret = __write_node_page(page, false, &submitted, wbc, need);
->   			if (ret)
->   				unlock_page(page);
->   			else if (submitted)
-> @@ -1697,7 +1699,7 @@ static int f2fs_write_node_pages(struct address_space *mapping,
->   	diff = nr_pages_to_write(sbi, NODE, wbc);
->   	wbc->sync_mode = WB_SYNC_NONE;
->   	blk_start_plug(&plug);
-> -	sync_node_pages(sbi, wbc);
-> +	sync_node_pages(sbi, wbc, true);
->   	blk_finish_plug(&plug);
->   	wbc->nr_to_write = max((long)0, wbc->nr_to_write - diff);
->   	return 0;
+>  fs/f2fs/sysfs.c | 138 +++++++++++++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 112 insertions(+), 26 deletions(-)
+> 
+> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> index 5a78b9af92ef..83ab0dd73b2c 100644
+> --- a/fs/f2fs/sysfs.c
+> +++ b/fs/f2fs/sysfs.c
+> @@ -18,7 +18,6 @@
+>  #include "gc.h"
+>  
+>  static struct proc_dir_entry *f2fs_proc_root;
+> -static struct kset *f2fs_kset;
+>  
+>  /* Sysfs support for f2fs */
+>  enum {
+> @@ -41,6 +40,7 @@ struct f2fs_attr {
+>  			 const char *, size_t);
+>  	int struct_type;
+>  	int offset;
+> +	int id;
+>  };
+>  
+>  static unsigned char *__struct_ptr(struct f2fs_sb_info *sbi, int struct_type)
+> @@ -76,6 +76,28 @@ static ssize_t lifetime_write_kbytes_show(struct f2fs_attr *a,
+>  			BD_PART_WRITTEN(sbi)));
+>  }
+>  
+> +static ssize_t features_show(struct f2fs_attr *a,
+> +		struct f2fs_sb_info *sbi, char *buf)
+> +{
+> +	struct super_block *sb = sbi->sb;
+> +	int len = 0;
+> +
+> +	if (!sb->s_bdev->bd_part)
+> +		return snprintf(buf, PAGE_SIZE, "0\n");
+> +
+> +	if (f2fs_sb_has_crypto(sb))
+> +		len += snprintf(buf, PAGE_SIZE - len, "%s\n", "encryption");
 
--- 
+How about printing as below:
+len += snprintf(buf, PAGE_SIZE - len, "%s\n", "encryption ");
+
+It avoids unneeded ',' in the beginning of output string:
+cat /sys/fs/f2fs/zram0/features
+, extra_attr, projquota, inode_checksum
+
+> +	if (f2fs_sb_mounted_blkzoned(sb))
+> +		len += snprintf(buf, PAGE_SIZE - len, "%s\n", ", blkzoned");
+
+len += snprintf(buf, PAGE_SIZE - len, "%s\n", "blkzoned ");
+
+> +	if (f2fs_sb_has_extra_attr(sb))
+> +		len += snprintf(buf, PAGE_SIZE - len, "%s\n", ", extra_attr");
+
+ditto
+
+> +	if (f2fs_sb_has_project_quota(sb))
+> +		len += snprintf(buf, PAGE_SIZE - len, "%s\n", ", projquota");
+
+ditto
+
+> +	if (f2fs_sb_has_inode_chksum(sb))
+> +		len += snprintf(buf, PAGE_SIZE - len, "%s\n", ", inode_checksum");
+
+ditto
+
+> +	return len;
+> +}
+> +
+>  static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
+>  			struct f2fs_sb_info *sbi, char *buf)
+>  {
+> @@ -155,6 +177,24 @@ static void f2fs_sb_release(struct kobject *kobj)
+>  	complete(&sbi->s_kobj_unregister);
+>  }
+>  
+> +enum feat_id {
+> +	FEAT_CRYPTO = 0,
+> +	FEAT_BLKZONED,
+> +	FEAT_ATOMIC_WRITE,
+
+Adds below missing macro:
+FEAT_EXTRA_ATTR,
+FEAT_PROJECT_QUOTA,
+FEAT_INODE_CHECKSUM,
+
+> +};
+> +
+> +static ssize_t f2fs_feature_show(struct f2fs_attr *a,
+> +		struct f2fs_sb_info *sbi, char *buf)
+> +{
+> +	switch (a->id) {
+> +	case FEAT_CRYPTO:
+> +	case FEAT_BLKZONED:
+> +	case FEAT_ATOMIC_WRITE:
+
+case FEAT_EXTRA_ATTR:
+case FEAT_PROJECT_QUOTA:
+case FEAT_INODE_CHECKSUM:
+
+> +		return snprintf(buf, PAGE_SIZE, "supported\n");
+> +	}
+> +	return 0;
+> +}
+> +
+>  #define F2FS_ATTR_OFFSET(_struct_type, _name, _mode, _show, _store, _offset) \
+>  static struct f2fs_attr f2fs_attr_##_name = {			\
+>  	.attr = {.name = __stringify(_name), .mode = _mode },	\
+> @@ -172,6 +212,13 @@ static struct f2fs_attr f2fs_attr_##_name = {			\
+>  #define F2FS_GENERAL_RO_ATTR(name) \
+>  static struct f2fs_attr f2fs_attr_##name = __ATTR(name, 0444, name##_show, NULL)
+>  
+> +#define F2FS_FEATURE_RO_ATTR(_name, _id)			\
+> +static struct f2fs_attr f2fs_attr_##_name = {			\
+> +	.attr = {.name = __stringify(_name), .mode = 0444 },	\
+> +	.show	= f2fs_feature_show,				\
+> +	.id	= _id,						\
+> +}
+> +
+>  F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_min_sleep_time, min_sleep_time);
+>  F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_max_sleep_time, max_sleep_time);
+>  F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_no_gc_sleep_time, no_gc_sleep_time);
+> @@ -196,6 +243,15 @@ F2FS_RW_ATTR(FAULT_INFO_RATE, f2fs_fault_info, inject_rate, inject_rate);
+>  F2FS_RW_ATTR(FAULT_INFO_TYPE, f2fs_fault_info, inject_type, inject_type);
+>  #endif
+>  F2FS_GENERAL_RO_ATTR(lifetime_write_kbytes);
+> +F2FS_GENERAL_RO_ATTR(features);
+> +
+> +#ifdef CONFIG_F2FS_FS_ENCRYPTION
+> +F2FS_FEATURE_RO_ATTR(encryption, FEAT_CRYPTO);
+> +#endif
+> +#ifdef CONFIG_BLK_DEV_ZONED
+> +F2FS_FEATURE_RO_ATTR(block_zoned, FEAT_BLKZONED);
+> +#endif
+> +F2FS_FEATURE_RO_ATTR(atomic_write, FEAT_ATOMIC_WRITE);
+
+F2FS_FEATURE_RO_ATTR(extra_attr, FEAT_EXTRA_ATTR);
+F2FS_FEATURE_RO_ATTR(project_quota, FEAT_PROJECT_QUOTA);
+F2FS_FEATURE_RO_ATTR(inode_checksum, FEAT_INODE_CHECKSUM);
+
+>  
+>  #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
+>  static struct attribute *f2fs_attrs[] = {
+> @@ -222,21 +278,50 @@ static struct attribute *f2fs_attrs[] = {
+>  	ATTR_LIST(inject_type),
+>  #endif
+>  	ATTR_LIST(lifetime_write_kbytes),
+> +	ATTR_LIST(features),
+>  	ATTR_LIST(reserved_blocks),
+>  	NULL,
+>  };
+>  
+> +static struct attribute *f2fs_feat_attrs[] = {
+> +#ifdef CONFIG_F2FS_FS_ENCRYPTION
+> +	ATTR_LIST(encryption),
+> +#endif
+> +#ifdef CONFIG_BLK_DEV_ZONED
+> +	ATTR_LIST(block_zoned),
+> +#endif
+> +	ATTR_LIST(atomic_write),
+
+ATTR_LIST(extra_attr),
+ATTR_LIST(project_quota),
+ATTR_LIST(inode_checksum),
+
 Thanks,
-Yunlong Song
 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> +	NULL,
+> +};
+> +
+>  static const struct sysfs_ops f2fs_attr_ops = {
+>  	.show	= f2fs_attr_show,
+>  	.store	= f2fs_attr_store,
+>  };
+>  
+> -static struct kobj_type f2fs_ktype = {
+> +static struct kobj_type f2fs_sb_ktype = {
+>  	.default_attrs	= f2fs_attrs,
+>  	.sysfs_ops	= &f2fs_attr_ops,
+>  	.release	= f2fs_sb_release,
+>  };
+>  
+> +static struct kobj_type f2fs_ktype = {
+> +	.sysfs_ops	= &f2fs_attr_ops,
+> +};
+> +
+> +static struct kset f2fs_kset = {
+> +	.kobj   = {.ktype = &f2fs_ktype},
+> +};
+> +
+> +static struct kobj_type f2fs_feat_ktype = {
+> +	.default_attrs	= f2fs_feat_attrs,
+> +	.sysfs_ops	= &f2fs_attr_ops,
+> +};
+> +
+> +static struct kobject f2fs_feat = {
+> +	.kset	= &f2fs_kset,
+> +};
+> +
+>  static int segment_info_seq_show(struct seq_file *seq, void *offset)
+>  {
+>  	struct super_block *sb = seq->private;
+> @@ -306,18 +391,29 @@ F2FS_PROC_FILE_DEF(segment_bits);
+>  
+>  int __init f2fs_init_sysfs(void)
+>  {
+> -	f2fs_proc_root = proc_mkdir("fs/f2fs", NULL);
+> +	int ret;
+>  
+> -	f2fs_kset = kset_create_and_add("f2fs", NULL, fs_kobj);
+> -	if (!f2fs_kset)
+> -		return -ENOMEM;
+> -	return 0;
+> +	kobject_set_name(&f2fs_kset.kobj, "f2fs");
+> +	f2fs_kset.kobj.parent = fs_kobj;
+> +	ret = kset_register(&f2fs_kset);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = kobject_init_and_add(&f2fs_feat, &f2fs_feat_ktype,
+> +				   NULL, "features");
+> +	if (ret)
+> +		kset_unregister(&f2fs_kset);
+> +	else
+> +		f2fs_proc_root = proc_mkdir("fs/f2fs", NULL);
+> +	return ret;
+>  }
+>  
+>  void f2fs_exit_sysfs(void)
+>  {
+> -	kset_unregister(f2fs_kset);
+> +	kobject_put(&f2fs_feat);
+> +	kset_unregister(&f2fs_kset);
+>  	remove_proc_entry("fs/f2fs", NULL);
+> +	f2fs_proc_root = NULL;
+>  }
+>  
+>  int f2fs_register_sysfs(struct f2fs_sb_info *sbi)
+> @@ -325,6 +421,13 @@ int f2fs_register_sysfs(struct f2fs_sb_info *sbi)
+>  	struct super_block *sb = sbi->sb;
+>  	int err;
+>  
+> +	sbi->s_kobj.kset = &f2fs_kset;
+> +	init_completion(&sbi->s_kobj_unregister);
+> +	err = kobject_init_and_add(&sbi->s_kobj, &f2fs_sb_ktype, NULL,
+> +				"%s", sb->s_id);
+> +	if (err)
+> +		return err;
+> +
+>  	if (f2fs_proc_root)
+>  		sbi->s_proc = proc_mkdir(sb->s_id, f2fs_proc_root);
+>  
+> @@ -334,32 +437,15 @@ int f2fs_register_sysfs(struct f2fs_sb_info *sbi)
+>  		proc_create_data("segment_bits", S_IRUGO, sbi->s_proc,
+>  				 &f2fs_seq_segment_bits_fops, sb);
+>  	}
+> -
+> -	sbi->s_kobj.kset = f2fs_kset;
+> -	init_completion(&sbi->s_kobj_unregister);
+> -	err = kobject_init_and_add(&sbi->s_kobj, &f2fs_ktype, NULL,
+> -							"%s", sb->s_id);
+> -	if (err)
+> -		goto err_out;
+>  	return 0;
+> -err_out:
+> -	if (sbi->s_proc) {
+> -		remove_proc_entry("segment_info", sbi->s_proc);
+> -		remove_proc_entry("segment_bits", sbi->s_proc);
+> -		remove_proc_entry(sb->s_id, f2fs_proc_root);
+> -	}
+> -	return err;
+>  }
+>  
+>  void f2fs_unregister_sysfs(struct f2fs_sb_info *sbi)
+>  {
+> -	kobject_del(&sbi->s_kobj);
+> -	kobject_put(&sbi->s_kobj);
+> -	wait_for_completion(&sbi->s_kobj_unregister);
+> -
+>  	if (sbi->s_proc) {
+>  		remove_proc_entry("segment_info", sbi->s_proc);
+>  		remove_proc_entry("segment_bits", sbi->s_proc);
+>  		remove_proc_entry(sbi->sb->s_id, f2fs_proc_root);
+>  	}
+> +	kobject_del(&sbi->s_kobj);
+>  }
+> 
