@@ -1,178 +1,167 @@
 From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH] f2fs: provide f2fs_balance_fs to __write_data_page for dentry pages
-Date: Sat, 29 Jul 2017 21:19:25 +0800
-Message-ID: <1501334365-123333-1-git-send-email-yunlong.song@huawei.com>
+Subject: Re: [PATCH v2] f2fs: provide f2fs_balance_fs to
+ __write_node_page
+Date: Sat, 29 Jul 2017 21:19:56 +0800
+Message-ID: <44f5c40a-1cfe-a576-3810-548afc69e308@huawei.com>
+References: <1501072811-32260-1-git-send-email-yunlong.song@huawei.com>
+ <1501157460-51262-1-git-send-email-yunlong.song@huawei.com>
+ <98e2be6b-904b-bb32-fb90-769cdedda0c1@huawei.com>
+ <20170728162013.GB27548@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, sylinux@163.com, yunlong.song@huawei.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+ helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <yunlong.song@huawei.com>)
+ id 1dbRfb-000526-7R
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 29 Jul 2017 13:20:39 +0000
+Received: from szxga01-in.huawei.com ([45.249.212.187])
+ by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1dbRfZ-00028O-DP
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 29 Jul 2017 13:20:39 +0000
+In-Reply-To: <20170728162013.GB27548@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, sylinux@163.com, linux-fsdevel@vger.kernel.org
 
-f2fs_balance_fs of dentry pages is skipped in __write_data_page due to deadlock
-of gc_mutex in write_checkpoint flow. This patch enables f2fs_balance_fs for
-normal dentry page writeback to ensure there are always enough free segments.
+Hi, Jay,
+     Not sure yet, whether it is just the case or not, at least we 
+strengthen f2fs_balance_fs in some
+corner cases. And maybe there are still some corner cases which we have 
+not considered yet. See
+my new patch "provide f2fs_balance_fs to __write_data_page for dentry 
+pages", which is reported
+by Chao. This is another corner case.
 
-Reported-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
----
- fs/f2fs/checkpoint.c |  2 +-
- fs/f2fs/data.c       | 67 +++++++++++++++++++++++++++++++++++++++++++++-------
- fs/f2fs/f2fs.h       |  1 +
- 3 files changed, 61 insertions(+), 9 deletions(-)
+On 2017/7/29 0:20, Jaegeuk Kim wrote:
+> Hi Yunlong,
+>
+> On 07/27, Yunlong Song wrote:
+>> v1->v2, fix some dead lock problems under some heavy load test
+> So, does this patch resolve the previous GC problem?
+>
+> Thanks,
+>
+>> On 2017/7/27 20:11, Yunlong Song wrote:
+>>> Let node writeback also do f2fs_balance_fs to ensure there are always enough free
+>>> segments.
+>>>
+>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>>> ---
+>>>    fs/f2fs/checkpoint.c |  2 +-
+>>>    fs/f2fs/f2fs.h       |  2 +-
+>>>    fs/f2fs/node.c       | 14 ++++++++------
+>>>    3 files changed, 10 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>>> index 5b876f6..3c84a25 100644
+>>> --- a/fs/f2fs/checkpoint.c
+>>> +++ b/fs/f2fs/checkpoint.c
+>>> @@ -1017,7 +1017,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
+>>>    	if (get_pages(sbi, F2FS_DIRTY_NODES)) {
+>>>    		up_write(&sbi->node_write);
+>>> -		err = sync_node_pages(sbi, &wbc);
+>>> +		err = sync_node_pages(sbi, &wbc, false);
+>>>    		if (err) {
+>>>    			up_write(&sbi->node_change);
+>>>    			f2fs_unlock_all(sbi);
+>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>> index 94a88b2..f69051b 100644
+>>> --- a/fs/f2fs/f2fs.h
+>>> +++ b/fs/f2fs/f2fs.h
+>>> @@ -2293,7 +2293,7 @@ struct page *new_node_page(struct dnode_of_data *dn,
+>>>    void move_node_page(struct page *node_page, int gc_type);
+>>>    int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>>>    			struct writeback_control *wbc, bool atomic);
+>>> -int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc);
+>>> +int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc, bool need);
+>>>    void build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount);
+>>>    bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid);
+>>>    void alloc_nid_done(struct f2fs_sb_info *sbi, nid_t nid);
+>>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+>>> index d53fe62..210ec25 100644
+>>> --- a/fs/f2fs/node.c
+>>> +++ b/fs/f2fs/node.c
+>>> @@ -1326,7 +1326,7 @@ static struct page *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
+>>>    }
+>>>    static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+>>> -				struct writeback_control *wbc)
+>>> +				struct writeback_control *wbc, bool need)
+>>>    {
+>>>    	struct f2fs_sb_info *sbi = F2FS_P_SB(page);
+>>>    	nid_t nid;
+>>> @@ -1387,6 +1387,8 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+>>>    	}
+>>>    	unlock_page(page);
+>>> +	if (need)
+>>> +		f2fs_balance_fs(sbi, false);
+>>>    	if (unlikely(f2fs_cp_error(sbi))) {
+>>>    		f2fs_submit_merged_write(sbi, NODE);
+>>> @@ -1405,7 +1407,7 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+>>>    static int f2fs_write_node_page(struct page *page,
+>>>    				struct writeback_control *wbc)
+>>>    {
+>>> -	return __write_node_page(page, false, NULL, wbc);
+>>> +	return __write_node_page(page, false, NULL, wbc, false);
+>>>    }
+>>>    int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>>> @@ -1493,7 +1495,7 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>>>    			ret = __write_node_page(page, atomic &&
+>>>    						page == last_page,
+>>> -						&submitted, wbc);
+>>> +						&submitted, wbc, true);
+>>>    			if (ret) {
+>>>    				unlock_page(page);
+>>>    				f2fs_put_page(last_page, 0);
+>>> @@ -1530,7 +1532,7 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>>>    	return ret ? -EIO: 0;
+>>>    }
+>>> -int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc)
+>>> +int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc, bool need)
+>>>    {
+>>>    	pgoff_t index, end;
+>>>    	struct pagevec pvec;
+>>> @@ -1608,7 +1610,7 @@ int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc)
+>>>    			set_fsync_mark(page, 0);
+>>>    			set_dentry_mark(page, 0);
+>>> -			ret = __write_node_page(page, false, &submitted, wbc);
+>>> +			ret = __write_node_page(page, false, &submitted, wbc, need);
+>>>    			if (ret)
+>>>    				unlock_page(page);
+>>>    			else if (submitted)
+>>> @@ -1697,7 +1699,7 @@ static int f2fs_write_node_pages(struct address_space *mapping,
+>>>    	diff = nr_pages_to_write(sbi, NODE, wbc);
+>>>    	wbc->sync_mode = WB_SYNC_NONE;
+>>>    	blk_start_plug(&plug);
+>>> -	sync_node_pages(sbi, wbc);
+>>> +	sync_node_pages(sbi, wbc, true);
+>>>    	blk_finish_plug(&plug);
+>>>    	wbc->nr_to_write = max((long)0, wbc->nr_to_write - diff);
+>>>    	return 0;
+>> -- 
+>> Thanks,
+>> Yunlong Song
+>>
+> .
+>
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 3c84a25..2882878 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -904,7 +904,7 @@ int sync_dirty_inodes(struct f2fs_sb_info *sbi, enum inode_type type)
- 	if (inode) {
- 		unsigned long cur_ino = inode->i_ino;
- 
--		filemap_fdatawrite(inode->i_mapping);
-+		f2fs_filemap_fdatawrite(inode->i_mapping, is_dir);
- 		iput(inode);
- 		/* We need to give cpu to another writers. */
- 		if (ino == cur_ino) {
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index aefc2a5..ed7efa5 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1475,7 +1475,7 @@ int do_write_data_page(struct f2fs_io_info *fio)
- }
- 
- static int __write_data_page(struct page *page, bool *submitted,
--				struct writeback_control *wbc)
-+				struct writeback_control *wbc, bool do_balance)
- {
- 	struct inode *inode = page->mapping->host;
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-@@ -1578,7 +1578,7 @@ static int __write_data_page(struct page *page, bool *submitted,
- 	}
- 
- 	unlock_page(page);
--	if (!S_ISDIR(inode->i_mode))
-+	if (do_balance)
- 		f2fs_balance_fs(sbi, need_balance_fs);
- 
- 	if (unlikely(f2fs_cp_error(sbi))) {
-@@ -1602,7 +1602,7 @@ static int __write_data_page(struct page *page, bool *submitted,
- static int f2fs_write_data_page(struct page *page,
- 					struct writeback_control *wbc)
- {
--	return __write_data_page(page, NULL, wbc);
-+	return __write_data_page(page, NULL, wbc, true);
- }
- 
- /*
-@@ -1611,7 +1611,7 @@ static int f2fs_write_data_page(struct page *page,
-  * warm/hot data page.
-  */
- static int f2fs_write_cache_pages(struct address_space *mapping,
--					struct writeback_control *wbc)
-+					struct writeback_control *wbc, bool do_balance)
- {
- 	int ret = 0;
- 	int done = 0;
-@@ -1701,7 +1701,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 			if (!clear_page_dirty_for_io(page))
- 				goto continue_unlock;
- 
--			ret = __write_data_page(page, &submitted, wbc);
-+			ret = __write_data_page(page, &submitted, wbc, do_balance);
- 			if (unlikely(ret)) {
- 				/*
- 				 * keep nr_to_write, since vfs uses this to
-@@ -1756,8 +1756,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 	return ret;
- }
- 
--static int f2fs_write_data_pages(struct address_space *mapping,
--			    struct writeback_control *wbc)
-+static int _f2fs_write_data_pages(struct address_space *mapping,
-+			    struct writeback_control *wbc, bool do_balance)
- {
- 	struct inode *inode = mapping->host;
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-@@ -1794,7 +1794,7 @@ static int f2fs_write_data_pages(struct address_space *mapping,
- 		goto skip_write;
- 
- 	blk_start_plug(&plug);
--	ret = f2fs_write_cache_pages(mapping, wbc);
-+	ret = f2fs_write_cache_pages(mapping, wbc, do_balance);
- 	blk_finish_plug(&plug);
- 
- 	if (wbc->sync_mode == WB_SYNC_ALL)
-@@ -1813,6 +1813,57 @@ static int f2fs_write_data_pages(struct address_space *mapping,
- 	return 0;
- }
- 
-+static int f2fs_write_data_pages(struct address_space *mapping,
-+			    struct writeback_control *wbc)
-+{
-+	return	_f2fs_write_data_pages(mapping, wbc, true);
-+}
-+
-+/*
-+ * This function was copied from do_writepages from mm/page-writeback.c.
-+ * The major change is changing writepages to _f2fs_write_data_pages.
-+ */
-+static int f2fs_do_writepages(struct address_space *mapping,
-+				struct writeback_control *wbc, bool is_dir)
-+{
-+	int ret;
-+
-+	if (wbc->nr_to_write <= 0)
-+		return 0;
-+	while (1) {
-+		ret = _f2fs_write_data_pages(mapping, wbc, !is_dir);
-+		if ((ret != -ENOMEM) || (wbc->sync_mode != WB_SYNC_ALL))
-+			break;
-+		cond_resched();
-+		congestion_wait(BLK_RW_ASYNC, HZ/50);
-+	}
-+	return ret;
-+}
-+
-+/*
-+ * This function was copied from __filemap_fdatawrite_range from
-+ * mm/filemap.c. The major change is changing do_writepages to
-+ * f2fs_do_writepages.
-+ */
-+int f2fs_filemap_fdatawrite(struct address_space *mapping, bool is_dir)
-+{
-+	int ret;
-+	struct writeback_control wbc = {
-+		.sync_mode = WB_SYNC_ALL,
-+		.nr_to_write = LONG_MAX,
-+		.range_start = 0,
-+		.range_end = LLONG_MAX,
-+	};
-+
-+	if (!mapping_cap_writeback_dirty(mapping))
-+		return 0;
-+
-+	wbc_attach_fdatawrite_inode(&wbc, mapping->host);
-+	ret = f2fs_do_writepages(mapping, &wbc, is_dir);
-+	wbc_detach_inode(&wbc);
-+	return ret;
-+}
-+
- static void f2fs_write_failed(struct address_space *mapping, loff_t to)
- {
- 	struct inode *inode = mapping->host;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9280283..ea9bebb 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2572,6 +2572,7 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
- int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
- 			struct page *page, enum migrate_mode mode);
- #endif
-+int f2fs_filemap_fdatawrite(struct address_space *mapping, bool is_dir);
- 
- /*
-  * gc.c
 -- 
-1.8.5.2
+Thanks,
+Yunlong Song
+
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
