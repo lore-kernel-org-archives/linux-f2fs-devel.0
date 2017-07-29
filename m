@@ -1,298 +1,133 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 1/2 v3] f2fs: expose /sys/fs/f2fs/features
-Date: Fri, 28 Jul 2017 12:41:34 -0700
-Message-ID: <20170728194134.GC27548@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20170726012921.53002-1-jaegeuk@kernel.org>
- <20170726214426.GD66153@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v2] f2fs: provide f2fs_balance_fs to __write_node_page
+Date: Sat, 29 Jul 2017 08:19:45 +0800
+Message-ID: <6ecea436-1a2d-2a39-43c7-ee2c914853e5@huawei.com>
+References: <1501072811-32260-1-git-send-email-yunlong.song@huawei.com>
+ <1501157460-51262-1-git-send-email-yunlong.song@huawei.com>
+ <98e2be6b-904b-bb32-fb90-769cdedda0c1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170726214426.GD66153@jaegeuk-macbookpro.roam.corp.google.com>
+In-Reply-To: <98e2be6b-904b-bb32-fb90-769cdedda0c1@huawei.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, sylinux@163.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
- Change log from v2:
-  - add missing new features
-  - fix print out features
+Hi Yunlong,
 
- Change log from v1:
-  - add /sys/fs/f2fs/dev/features
+On 2017/7/27 20:13, Yunlong Song wrote:
+> v1->v2, fix some dead lock problems under some heavy load test
+> 
+> On 2017/7/27 20:11, Yunlong Song wrote:
+>> Let node writeback also do f2fs_balance_fs to ensure there are always enough free
+>> segments.
 
->From cf512bfeed89d760138ade12014f17fc5779ca04 Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Fri, 21 Jul 2017 17:14:09 -0700
-Subject: [PATCH] f2fs: expose features to sysfs entry
+Could we cover __write_data_page of directory inode with this logic?
 
-This patch exposes what features are supported by current f2fs build to sysfs
-entry via:
+Thanks,
 
-/sys/fs/f2fs/features/
-/sys/fs/f2fs/dev/features
-
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/sysfs.c | 156 ++++++++++++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 130 insertions(+), 26 deletions(-)
-
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index ebb4ac76f070..1bc2cfb0b9df 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -18,7 +18,6 @@
- #include "gc.h"
- 
- static struct proc_dir_entry *f2fs_proc_root;
--static struct kset *f2fs_kset;
- 
- /* Sysfs support for f2fs */
- enum {
-@@ -41,6 +40,7 @@ struct f2fs_attr {
- 			 const char *, size_t);
- 	int struct_type;
- 	int offset;
-+	int id;
- };
- 
- static unsigned char *__struct_ptr(struct f2fs_sb_info *sbi, int struct_type)
-@@ -76,6 +76,34 @@ static ssize_t lifetime_write_kbytes_show(struct f2fs_attr *a,
- 			BD_PART_WRITTEN(sbi)));
- }
- 
-+static ssize_t features_show(struct f2fs_attr *a,
-+		struct f2fs_sb_info *sbi, char *buf)
-+{
-+	struct super_block *sb = sbi->sb;
-+	int len = 0;
-+
-+	if (!sb->s_bdev->bd_part)
-+		return snprintf(buf, PAGE_SIZE, "0\n");
-+
-+	if (f2fs_sb_has_crypto(sb))
-+		len += snprintf(buf, PAGE_SIZE - len, "%s",
-+						"encryption");
-+	if (f2fs_sb_mounted_blkzoned(sb))
-+		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+				len ? ", " : "", "blkzoned");
-+	if (f2fs_sb_has_extra_attr(sb))
-+		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+				len ? ", " : "", "extra_attr");
-+	if (f2fs_sb_has_project_quota(sb))
-+		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+				len ? ", " : "", "projquota");
-+	if (f2fs_sb_has_inode_chksum(sb))
-+		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+				len ? ", " : "", "inode_checksum");
-+	len += snprintf(buf + len, PAGE_SIZE - len, "\n");
-+	return len;
-+}
-+
- static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
- 			struct f2fs_sb_info *sbi, char *buf)
- {
-@@ -155,6 +183,30 @@ static void f2fs_sb_release(struct kobject *kobj)
- 	complete(&sbi->s_kobj_unregister);
- }
- 
-+enum feat_id {
-+	FEAT_CRYPTO = 0,
-+	FEAT_BLKZONED,
-+	FEAT_ATOMIC_WRITE,
-+	FEAT_EXTRA_ATTR,
-+	FEAT_PROJECT_QUOTA,
-+	FEAT_INODE_CHECKSUM,
-+};
-+
-+static ssize_t f2fs_feature_show(struct f2fs_attr *a,
-+		struct f2fs_sb_info *sbi, char *buf)
-+{
-+	switch (a->id) {
-+	case FEAT_CRYPTO:
-+	case FEAT_BLKZONED:
-+	case FEAT_ATOMIC_WRITE:
-+	case FEAT_EXTRA_ATTR:
-+	case FEAT_PROJECT_QUOTA:
-+	case FEAT_INODE_CHECKSUM:
-+		return snprintf(buf, PAGE_SIZE, "supported\n");
-+	}
-+	return 0;
-+}
-+
- #define F2FS_ATTR_OFFSET(_struct_type, _name, _mode, _show, _store, _offset) \
- static struct f2fs_attr f2fs_attr_##_name = {			\
- 	.attr = {.name = __stringify(_name), .mode = _mode },	\
-@@ -172,6 +224,13 @@ static struct f2fs_attr f2fs_attr_##_name = {			\
- #define F2FS_GENERAL_RO_ATTR(name) \
- static struct f2fs_attr f2fs_attr_##name = __ATTR(name, 0444, name##_show, NULL)
- 
-+#define F2FS_FEATURE_RO_ATTR(_name, _id)			\
-+static struct f2fs_attr f2fs_attr_##_name = {			\
-+	.attr = {.name = __stringify(_name), .mode = 0444 },	\
-+	.show	= f2fs_feature_show,				\
-+	.id	= _id,						\
-+}
-+
- F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_min_sleep_time, min_sleep_time);
- F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_max_sleep_time, max_sleep_time);
- F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_no_gc_sleep_time, no_gc_sleep_time);
-@@ -197,6 +256,18 @@ F2FS_RW_ATTR(FAULT_INFO_RATE, f2fs_fault_info, inject_rate, inject_rate);
- F2FS_RW_ATTR(FAULT_INFO_TYPE, f2fs_fault_info, inject_type, inject_type);
- #endif
- F2FS_GENERAL_RO_ATTR(lifetime_write_kbytes);
-+F2FS_GENERAL_RO_ATTR(features);
-+
-+#ifdef CONFIG_F2FS_FS_ENCRYPTION
-+F2FS_FEATURE_RO_ATTR(encryption, FEAT_CRYPTO);
-+#endif
-+#ifdef CONFIG_BLK_DEV_ZONED
-+F2FS_FEATURE_RO_ATTR(block_zoned, FEAT_BLKZONED);
-+#endif
-+F2FS_FEATURE_RO_ATTR(atomic_write, FEAT_ATOMIC_WRITE);
-+F2FS_FEATURE_RO_ATTR(extra_attr, FEAT_EXTRA_ATTR);
-+F2FS_FEATURE_RO_ATTR(project_quota, FEAT_PROJECT_QUOTA);
-+F2FS_FEATURE_RO_ATTR(inode_checksum, FEAT_INODE_CHECKSUM);
- 
- #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
- static struct attribute *f2fs_attrs[] = {
-@@ -224,21 +295,53 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(inject_type),
- #endif
- 	ATTR_LIST(lifetime_write_kbytes),
-+	ATTR_LIST(features),
- 	ATTR_LIST(reserved_blocks),
- 	NULL,
- };
- 
-+static struct attribute *f2fs_feat_attrs[] = {
-+#ifdef CONFIG_F2FS_FS_ENCRYPTION
-+	ATTR_LIST(encryption),
-+#endif
-+#ifdef CONFIG_BLK_DEV_ZONED
-+	ATTR_LIST(block_zoned),
-+#endif
-+	ATTR_LIST(atomic_write),
-+	ATTR_LIST(extra_attr),
-+	ATTR_LIST(project_quota),
-+	ATTR_LIST(inode_checksum),
-+	NULL,
-+};
-+
- static const struct sysfs_ops f2fs_attr_ops = {
- 	.show	= f2fs_attr_show,
- 	.store	= f2fs_attr_store,
- };
- 
--static struct kobj_type f2fs_ktype = {
-+static struct kobj_type f2fs_sb_ktype = {
- 	.default_attrs	= f2fs_attrs,
- 	.sysfs_ops	= &f2fs_attr_ops,
- 	.release	= f2fs_sb_release,
- };
- 
-+static struct kobj_type f2fs_ktype = {
-+	.sysfs_ops	= &f2fs_attr_ops,
-+};
-+
-+static struct kset f2fs_kset = {
-+	.kobj   = {.ktype = &f2fs_ktype},
-+};
-+
-+static struct kobj_type f2fs_feat_ktype = {
-+	.default_attrs	= f2fs_feat_attrs,
-+	.sysfs_ops	= &f2fs_attr_ops,
-+};
-+
-+static struct kobject f2fs_feat = {
-+	.kset	= &f2fs_kset,
-+};
-+
- static int segment_info_seq_show(struct seq_file *seq, void *offset)
- {
- 	struct super_block *sb = seq->private;
-@@ -308,18 +411,29 @@ F2FS_PROC_FILE_DEF(segment_bits);
- 
- int __init f2fs_init_sysfs(void)
- {
--	f2fs_proc_root = proc_mkdir("fs/f2fs", NULL);
-+	int ret;
- 
--	f2fs_kset = kset_create_and_add("f2fs", NULL, fs_kobj);
--	if (!f2fs_kset)
--		return -ENOMEM;
--	return 0;
-+	kobject_set_name(&f2fs_kset.kobj, "f2fs");
-+	f2fs_kset.kobj.parent = fs_kobj;
-+	ret = kset_register(&f2fs_kset);
-+	if (ret)
-+		return ret;
-+
-+	ret = kobject_init_and_add(&f2fs_feat, &f2fs_feat_ktype,
-+				   NULL, "features");
-+	if (ret)
-+		kset_unregister(&f2fs_kset);
-+	else
-+		f2fs_proc_root = proc_mkdir("fs/f2fs", NULL);
-+	return ret;
- }
- 
- void f2fs_exit_sysfs(void)
- {
--	kset_unregister(f2fs_kset);
-+	kobject_put(&f2fs_feat);
-+	kset_unregister(&f2fs_kset);
- 	remove_proc_entry("fs/f2fs", NULL);
-+	f2fs_proc_root = NULL;
- }
- 
- int f2fs_register_sysfs(struct f2fs_sb_info *sbi)
-@@ -327,6 +441,13 @@ int f2fs_register_sysfs(struct f2fs_sb_info *sbi)
- 	struct super_block *sb = sbi->sb;
- 	int err;
- 
-+	sbi->s_kobj.kset = &f2fs_kset;
-+	init_completion(&sbi->s_kobj_unregister);
-+	err = kobject_init_and_add(&sbi->s_kobj, &f2fs_sb_ktype, NULL,
-+				"%s", sb->s_id);
-+	if (err)
-+		return err;
-+
- 	if (f2fs_proc_root)
- 		sbi->s_proc = proc_mkdir(sb->s_id, f2fs_proc_root);
- 
-@@ -336,32 +457,15 @@ int f2fs_register_sysfs(struct f2fs_sb_info *sbi)
- 		proc_create_data("segment_bits", S_IRUGO, sbi->s_proc,
- 				 &f2fs_seq_segment_bits_fops, sb);
- 	}
--
--	sbi->s_kobj.kset = f2fs_kset;
--	init_completion(&sbi->s_kobj_unregister);
--	err = kobject_init_and_add(&sbi->s_kobj, &f2fs_ktype, NULL,
--							"%s", sb->s_id);
--	if (err)
--		goto err_out;
- 	return 0;
--err_out:
--	if (sbi->s_proc) {
--		remove_proc_entry("segment_info", sbi->s_proc);
--		remove_proc_entry("segment_bits", sbi->s_proc);
--		remove_proc_entry(sb->s_id, f2fs_proc_root);
--	}
--	return err;
- }
- 
- void f2fs_unregister_sysfs(struct f2fs_sb_info *sbi)
- {
--	kobject_del(&sbi->s_kobj);
--	kobject_put(&sbi->s_kobj);
--	wait_for_completion(&sbi->s_kobj_unregister);
--
- 	if (sbi->s_proc) {
- 		remove_proc_entry("segment_info", sbi->s_proc);
- 		remove_proc_entry("segment_bits", sbi->s_proc);
- 		remove_proc_entry(sbi->sb->s_id, f2fs_proc_root);
- 	}
-+	kobject_del(&sbi->s_kobj);
- }
--- 
-2.13.0.rc1.294.g07d810a77f-goog
+>>
+>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>> ---
+>>   fs/f2fs/checkpoint.c |  2 +-
+>>   fs/f2fs/f2fs.h       |  2 +-
+>>   fs/f2fs/node.c       | 14 ++++++++------
+>>   3 files changed, 10 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>> index 5b876f6..3c84a25 100644
+>> --- a/fs/f2fs/checkpoint.c
+>> +++ b/fs/f2fs/checkpoint.c
+>> @@ -1017,7 +1017,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
+>>   
+>>   	if (get_pages(sbi, F2FS_DIRTY_NODES)) {
+>>   		up_write(&sbi->node_write);
+>> -		err = sync_node_pages(sbi, &wbc);
+>> +		err = sync_node_pages(sbi, &wbc, false);
+>>   		if (err) {
+>>   			up_write(&sbi->node_change);
+>>   			f2fs_unlock_all(sbi);
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 94a88b2..f69051b 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -2293,7 +2293,7 @@ struct page *new_node_page(struct dnode_of_data *dn,
+>>   void move_node_page(struct page *node_page, int gc_type);
+>>   int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>>   			struct writeback_control *wbc, bool atomic);
+>> -int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc);
+>> +int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc, bool need);
+>>   void build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount);
+>>   bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid);
+>>   void alloc_nid_done(struct f2fs_sb_info *sbi, nid_t nid);
+>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+>> index d53fe62..210ec25 100644
+>> --- a/fs/f2fs/node.c
+>> +++ b/fs/f2fs/node.c
+>> @@ -1326,7 +1326,7 @@ static struct page *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
+>>   }
+>>   
+>>   static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+>> -				struct writeback_control *wbc)
+>> +				struct writeback_control *wbc, bool need)
+>>   {
+>>   	struct f2fs_sb_info *sbi = F2FS_P_SB(page);
+>>   	nid_t nid;
+>> @@ -1387,6 +1387,8 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+>>   	}
+>>   
+>>   	unlock_page(page);
+>> +	if (need)
+>> +		f2fs_balance_fs(sbi, false);
+>>   
+>>   	if (unlikely(f2fs_cp_error(sbi))) {
+>>   		f2fs_submit_merged_write(sbi, NODE);
+>> @@ -1405,7 +1407,7 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+>>   static int f2fs_write_node_page(struct page *page,
+>>   				struct writeback_control *wbc)
+>>   {
+>> -	return __write_node_page(page, false, NULL, wbc);
+>> +	return __write_node_page(page, false, NULL, wbc, false);
+>>   }
+>>   
+>>   int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>> @@ -1493,7 +1495,7 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>>   
+>>   			ret = __write_node_page(page, atomic &&
+>>   						page == last_page,
+>> -						&submitted, wbc);
+>> +						&submitted, wbc, true);
+>>   			if (ret) {
+>>   				unlock_page(page);
+>>   				f2fs_put_page(last_page, 0);
+>> @@ -1530,7 +1532,7 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>>   	return ret ? -EIO: 0;
+>>   }
+>>   
+>> -int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc)
+>> +int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc, bool need)
+>>   {
+>>   	pgoff_t index, end;
+>>   	struct pagevec pvec;
+>> @@ -1608,7 +1610,7 @@ int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc)
+>>   			set_fsync_mark(page, 0);
+>>   			set_dentry_mark(page, 0);
+>>   
+>> -			ret = __write_node_page(page, false, &submitted, wbc);
+>> +			ret = __write_node_page(page, false, &submitted, wbc, need);
+>>   			if (ret)
+>>   				unlock_page(page);
+>>   			else if (submitted)
+>> @@ -1697,7 +1699,7 @@ static int f2fs_write_node_pages(struct address_space *mapping,
+>>   	diff = nr_pages_to_write(sbi, NODE, wbc);
+>>   	wbc->sync_mode = WB_SYNC_NONE;
+>>   	blk_start_plug(&plug);
+>> -	sync_node_pages(sbi, wbc);
+>> +	sync_node_pages(sbi, wbc, true);
+>>   	blk_finish_plug(&plug);
+>>   	wbc->nr_to_write = max((long)0, wbc->nr_to_write - diff);
+>>   	return 0;
+> 
