@@ -1,62 +1,38 @@
 From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH v2] f2fs: provide f2fs_balance_fs to
- __write_node_page
-Date: Sat, 29 Jul 2017 21:19:56 +0800
-Message-ID: <44f5c40a-1cfe-a576-3810-548afc69e308@huawei.com>
+Subject: Re: [PATCH v2] f2fs: provide f2fs_balance_fs to __write_node_page
+Date: Sat, 29 Jul 2017 21:22:27 +0800
+Message-ID: <2338d71a-f09a-72b9-f135-f7928cc1b0e0@huawei.com>
 References: <1501072811-32260-1-git-send-email-yunlong.song@huawei.com>
  <1501157460-51262-1-git-send-email-yunlong.song@huawei.com>
  <98e2be6b-904b-bb32-fb90-769cdedda0c1@huawei.com>
- <20170728162013.GB27548@jaegeuk-macbookpro.roam.corp.google.com>
+ <6ecea436-1a2d-2a39-43c7-ee2c914853e5@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
- helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yunlong.song@huawei.com>)
- id 1dbRfb-000526-7R
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 29 Jul 2017 13:20:39 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187])
- by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1dbRfZ-00028O-DP
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 29 Jul 2017 13:20:39 +0000
-In-Reply-To: <20170728162013.GB27548@jaegeuk-macbookpro.roam.corp.google.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <6ecea436-1a2d-2a39-43c7-ee2c914853e5@huawei.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, sylinux@163.com, linux-fsdevel@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, sylinux@163.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi, Jay,
-     Not sure yet, whether it is just the case or not, at least we 
-strengthen f2fs_balance_fs in some
-corner cases. And maybe there are still some corner cases which we have 
-not considered yet. See
-my new patch "provide f2fs_balance_fs to __write_data_page for dentry 
-pages", which is reported
-by Chao. This is another corner case.
+Hi Chao,
+     Nice suggestion, I have sent out a new patch to implement it.
 
-On 2017/7/29 0:20, Jaegeuk Kim wrote:
+On 2017/7/29 8:19, Chao Yu wrote:
 > Hi Yunlong,
 >
-> On 07/27, Yunlong Song wrote:
+> On 2017/7/27 20:13, Yunlong Song wrote:
 >> v1->v2, fix some dead lock problems under some heavy load test
-> So, does this patch resolve the previous GC problem?
->
-> Thanks,
->
+>>
 >> On 2017/7/27 20:11, Yunlong Song wrote:
 >>> Let node writeback also do f2fs_balance_fs to ensure there are always enough free
 >>> segments.
->>>
+> Could we cover __write_data_page of directory inode with this logic?
+>
+> Thanks,
+>
 >>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 >>> ---
 >>>    fs/f2fs/checkpoint.c |  2 +-
@@ -69,6 +45,7 @@ On 2017/7/29 0:20, Jaegeuk Kim wrote:
 >>> --- a/fs/f2fs/checkpoint.c
 >>> +++ b/fs/f2fs/checkpoint.c
 >>> @@ -1017,7 +1017,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
+>>>    
 >>>    	if (get_pages(sbi, F2FS_DIRTY_NODES)) {
 >>>    		up_write(&sbi->node_write);
 >>> -		err = sync_node_pages(sbi, &wbc);
@@ -95,6 +72,7 @@ On 2017/7/29 0:20, Jaegeuk Kim wrote:
 >>> +++ b/fs/f2fs/node.c
 >>> @@ -1326,7 +1326,7 @@ static struct page *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
 >>>    }
+>>>    
 >>>    static int __write_node_page(struct page *page, bool atomic, bool *submitted,
 >>> -				struct writeback_control *wbc)
 >>> +				struct writeback_control *wbc, bool need)
@@ -103,9 +81,11 @@ On 2017/7/29 0:20, Jaegeuk Kim wrote:
 >>>    	nid_t nid;
 >>> @@ -1387,6 +1387,8 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
 >>>    	}
+>>>    
 >>>    	unlock_page(page);
 >>> +	if (need)
 >>> +		f2fs_balance_fs(sbi, false);
+>>>    
 >>>    	if (unlikely(f2fs_cp_error(sbi))) {
 >>>    		f2fs_submit_merged_write(sbi, NODE);
 >>> @@ -1405,7 +1407,7 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
@@ -115,8 +95,10 @@ On 2017/7/29 0:20, Jaegeuk Kim wrote:
 >>> -	return __write_node_page(page, false, NULL, wbc);
 >>> +	return __write_node_page(page, false, NULL, wbc, false);
 >>>    }
+>>>    
 >>>    int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
 >>> @@ -1493,7 +1495,7 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>>>    
 >>>    			ret = __write_node_page(page, atomic &&
 >>>    						page == last_page,
 >>> -						&submitted, wbc);
@@ -127,6 +109,7 @@ On 2017/7/29 0:20, Jaegeuk Kim wrote:
 >>> @@ -1530,7 +1532,7 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
 >>>    	return ret ? -EIO: 0;
 >>>    }
+>>>    
 >>> -int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc)
 >>> +int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc, bool need)
 >>>    {
@@ -135,6 +118,7 @@ On 2017/7/29 0:20, Jaegeuk Kim wrote:
 >>> @@ -1608,7 +1610,7 @@ int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc)
 >>>    			set_fsync_mark(page, 0);
 >>>    			set_dentry_mark(page, 0);
+>>>    
 >>> -			ret = __write_node_page(page, false, &submitted, wbc);
 >>> +			ret = __write_node_page(page, false, &submitted, wbc, need);
 >>>    			if (ret)
@@ -149,19 +133,10 @@ On 2017/7/29 0:20, Jaegeuk Kim wrote:
 >>>    	blk_finish_plug(&plug);
 >>>    	wbc->nr_to_write = max((long)0, wbc->nr_to_write - diff);
 >>>    	return 0;
->> -- 
->> Thanks,
->> Yunlong Song
->>
+>
 > .
 >
 
 -- 
 Thanks,
 Yunlong Song
-
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
