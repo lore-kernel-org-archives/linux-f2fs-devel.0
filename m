@@ -1,205 +1,383 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] f2fs: provide f2fs_balance_fs to __write_data_page for
- dentry pages
-Date: Sun, 30 Jul 2017 18:11:48 +0800
-Message-ID: <aafa64e2-95cc-5cc5-79e6-7c7dfd3372e3@kernel.org>
-References: <1501334365-123333-1-git-send-email-yunlong.song@huawei.com>
- <20170730073154.GA13058@jaegeuk-macbookpro.roam.corp.google.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] fs: convert a pile of fsync routines to errseq_t based
+ reporting
+Date: Mon, 31 Jul 2017 09:25:17 +0200
+Message-ID: <20170731072517.GB18621@quack2.suse.cz>
+References: <20170728142321.11492-1-jlayton@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170730073154.GA13058@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Yunlong Song <yunlong.song@huawei.com>
-Cc: yuchao0@huawei.com, sylinux@163.com, miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170728142321.11492-1-jlayton@kernel.org>
+Sender: reiserfs-devel-owner@vger.kernel.org
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, jack@suse.cz, viro@zeniv.linux.org.uk, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org, linux-fbdev@vger.kernel.org, v9fs-developer@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, user-mode-linux-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net, linux-ntfs-dev@lists.sourceforge.net, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, akpm@linux-foundation.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
-
-On 2017/7/30 15:31, Jaegeuk Kim wrote:
-> On 07/29, Yunlong Song wrote:
->> f2fs_balance_fs of dentry pages is skipped in __write_data_page due to deadlock
->> of gc_mutex in write_checkpoint flow. This patch enables f2fs_balance_fs for
->> normal dentry page writeback to ensure there are always enough free segments.
+On Fri 28-07-17 10:23:21, Jeff Layton wrote:
+> From: Jeff Layton <jlayton@redhat.com>
 > 
-> Sorry, by the way, why do we need to do this? I subtly thought that dirty node
-> pages can be produce by redirtied inodes from what we've not covered through
-> filesystem calls. But, in dentry pages, we're controlling the number of dirty
-> pages, and calling f2fs_balance_fs in each directory operations.
-
-IMO, writebacking dentry page can redirty dnode page which may be clean previously,
-so it will be more safe to call f2fs_balance_fs to make sure dirty metadatas of
-filesystem didn't exceed the threshold.
-
-Thanks,
-
+> This patch converts most of the in-kernel filesystems that do writeback
+> out of the pagecache to report errors using the errseq_t-based
+> infrastructure that was recently added. This allows them to report
+> errors once for each open file description.
 > 
-> Chao?
+> Most filesystems have a fairly straightforward fsync operation. They
+> call filemap_write_and_wait_range to write back all of the data and
+> wait on it, and then (sometimes) sync out the metadata.
 > 
-> Thanks,
+> For those filesystems this is a straightforward conversion from calling
+> filemap_write_and_wait_range in their fsync operation to calling
+> file_write_and_wait_range.
 > 
->>
->> Reported-by: Chao Yu <yuchao0@huawei.com>
->> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->> ---
->>  fs/f2fs/checkpoint.c |  2 +-
->>  fs/f2fs/data.c       | 67 +++++++++++++++++++++++++++++++++++++++++++++-------
->>  fs/f2fs/f2fs.h       |  1 +
->>  3 files changed, 61 insertions(+), 9 deletions(-)
->>
->> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->> index 3c84a25..2882878 100644
->> --- a/fs/f2fs/checkpoint.c
->> +++ b/fs/f2fs/checkpoint.c
->> @@ -904,7 +904,7 @@ int sync_dirty_inodes(struct f2fs_sb_info *sbi, enum inode_type type)
->>  	if (inode) {
->>  		unsigned long cur_ino = inode->i_ino;
->>  
->> -		filemap_fdatawrite(inode->i_mapping);
->> +		f2fs_filemap_fdatawrite(inode->i_mapping, is_dir);
->>  		iput(inode);
->>  		/* We need to give cpu to another writers. */
->>  		if (ino == cur_ino) {
->> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->> index aefc2a5..ed7efa5 100644
->> --- a/fs/f2fs/data.c
->> +++ b/fs/f2fs/data.c
->> @@ -1475,7 +1475,7 @@ int do_write_data_page(struct f2fs_io_info *fio)
->>  }
->>  
->>  static int __write_data_page(struct page *page, bool *submitted,
->> -				struct writeback_control *wbc)
->> +				struct writeback_control *wbc, bool do_balance)
->>  {
->>  	struct inode *inode = page->mapping->host;
->>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->> @@ -1578,7 +1578,7 @@ static int __write_data_page(struct page *page, bool *submitted,
->>  	}
->>  
->>  	unlock_page(page);
->> -	if (!S_ISDIR(inode->i_mode))
->> +	if (do_balance)
->>  		f2fs_balance_fs(sbi, need_balance_fs);
->>  
->>  	if (unlikely(f2fs_cp_error(sbi))) {
->> @@ -1602,7 +1602,7 @@ static int __write_data_page(struct page *page, bool *submitted,
->>  static int f2fs_write_data_page(struct page *page,
->>  					struct writeback_control *wbc)
->>  {
->> -	return __write_data_page(page, NULL, wbc);
->> +	return __write_data_page(page, NULL, wbc, true);
->>  }
->>  
->>  /*
->> @@ -1611,7 +1611,7 @@ static int f2fs_write_data_page(struct page *page,
->>   * warm/hot data page.
->>   */
->>  static int f2fs_write_cache_pages(struct address_space *mapping,
->> -					struct writeback_control *wbc)
->> +					struct writeback_control *wbc, bool do_balance)
->>  {
->>  	int ret = 0;
->>  	int done = 0;
->> @@ -1701,7 +1701,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->>  			if (!clear_page_dirty_for_io(page))
->>  				goto continue_unlock;
->>  
->> -			ret = __write_data_page(page, &submitted, wbc);
->> +			ret = __write_data_page(page, &submitted, wbc, do_balance);
->>  			if (unlikely(ret)) {
->>  				/*
->>  				 * keep nr_to_write, since vfs uses this to
->> @@ -1756,8 +1756,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->>  	return ret;
->>  }
->>  
->> -static int f2fs_write_data_pages(struct address_space *mapping,
->> -			    struct writeback_control *wbc)
->> +static int _f2fs_write_data_pages(struct address_space *mapping,
->> +			    struct writeback_control *wbc, bool do_balance)
->>  {
->>  	struct inode *inode = mapping->host;
->>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->> @@ -1794,7 +1794,7 @@ static int f2fs_write_data_pages(struct address_space *mapping,
->>  		goto skip_write;
->>  
->>  	blk_start_plug(&plug);
->> -	ret = f2fs_write_cache_pages(mapping, wbc);
->> +	ret = f2fs_write_cache_pages(mapping, wbc, do_balance);
->>  	blk_finish_plug(&plug);
->>  
->>  	if (wbc->sync_mode == WB_SYNC_ALL)
->> @@ -1813,6 +1813,57 @@ static int f2fs_write_data_pages(struct address_space *mapping,
->>  	return 0;
->>  }
->>  
->> +static int f2fs_write_data_pages(struct address_space *mapping,
->> +			    struct writeback_control *wbc)
->> +{
->> +	return	_f2fs_write_data_pages(mapping, wbc, true);
->> +}
->> +
->> +/*
->> + * This function was copied from do_writepages from mm/page-writeback.c.
->> + * The major change is changing writepages to _f2fs_write_data_pages.
->> + */
->> +static int f2fs_do_writepages(struct address_space *mapping,
->> +				struct writeback_control *wbc, bool is_dir)
->> +{
->> +	int ret;
->> +
->> +	if (wbc->nr_to_write <= 0)
->> +		return 0;
->> +	while (1) {
->> +		ret = _f2fs_write_data_pages(mapping, wbc, !is_dir);
->> +		if ((ret != -ENOMEM) || (wbc->sync_mode != WB_SYNC_ALL))
->> +			break;
->> +		cond_resched();
->> +		congestion_wait(BLK_RW_ASYNC, HZ/50);
->> +	}
->> +	return ret;
->> +}
->> +
->> +/*
->> + * This function was copied from __filemap_fdatawrite_range from
->> + * mm/filemap.c. The major change is changing do_writepages to
->> + * f2fs_do_writepages.
->> + */
->> +int f2fs_filemap_fdatawrite(struct address_space *mapping, bool is_dir)
->> +{
->> +	int ret;
->> +	struct writeback_control wbc = {
->> +		.sync_mode = WB_SYNC_ALL,
->> +		.nr_to_write = LONG_MAX,
->> +		.range_start = 0,
->> +		.range_end = LLONG_MAX,
->> +	};
->> +
->> +	if (!mapping_cap_writeback_dirty(mapping))
->> +		return 0;
->> +
->> +	wbc_attach_fdatawrite_inode(&wbc, mapping->host);
->> +	ret = f2fs_do_writepages(mapping, &wbc, is_dir);
->> +	wbc_detach_inode(&wbc);
->> +	return ret;
->> +}
->> +
->>  static void f2fs_write_failed(struct address_space *mapping, loff_t to)
->>  {
->>  	struct inode *inode = mapping->host;
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index 9280283..ea9bebb 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -2572,6 +2572,7 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
->>  int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
->>  			struct page *page, enum migrate_mode mode);
->>  #endif
->> +int f2fs_filemap_fdatawrite(struct address_space *mapping, bool is_dir);
->>  
->>  /*
->>   * gc.c
->> -- 
->> 1.8.5.2
+> Signed-off-by: Jeff Layton <jlayton@redhat.com>
+
+This all looks rather obvious. Feel free to add:
+
+Acked-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+
+> ---
+>  arch/powerpc/platforms/cell/spufs/file.c   | 2 +-
+>  drivers/staging/lustre/lustre/llite/file.c | 2 +-
+>  drivers/video/fbdev/core/fb_defio.c        | 2 +-
+>  fs/9p/vfs_file.c                           | 4 ++--
+>  fs/affs/file.c                             | 2 +-
+>  fs/afs/write.c                             | 2 +-
+>  fs/cifs/file.c                             | 4 ++--
+>  fs/exofs/file.c                            | 2 +-
+>  fs/f2fs/file.c                             | 2 +-
+>  fs/hfs/inode.c                             | 2 +-
+>  fs/hfsplus/inode.c                         | 2 +-
+>  fs/hostfs/hostfs_kern.c                    | 2 +-
+>  fs/hpfs/file.c                             | 2 +-
+>  fs/jffs2/file.c                            | 2 +-
+>  fs/jfs/file.c                              | 2 +-
+>  fs/ncpfs/file.c                            | 2 +-
+>  fs/ntfs/dir.c                              | 2 +-
+>  fs/ntfs/file.c                             | 2 +-
+>  fs/ocfs2/file.c                            | 2 +-
+>  fs/reiserfs/dir.c                          | 2 +-
+>  fs/reiserfs/file.c                         | 2 +-
+>  fs/ubifs/file.c                            | 2 +-
+>  22 files changed, 24 insertions(+), 24 deletions(-)
+> 
+> Rolling up all of these conversions into a single patch, as Christoph
+> Hellwig suggested. Most of these are not tested, but the conversion
+> here is fairly straightforward.
+> 
+> Any maintainers who object, please let me know and I'll yank that
+> part out of this patch.
+> 
+> diff --git a/arch/powerpc/platforms/cell/spufs/file.c b/arch/powerpc/platforms/cell/spufs/file.c
+> index ae2f740a82f1..5ffcdeb1eb17 100644
+> --- a/arch/powerpc/platforms/cell/spufs/file.c
+> +++ b/arch/powerpc/platforms/cell/spufs/file.c
+> @@ -1749,7 +1749,7 @@ static int spufs_mfc_flush(struct file *file, fl_owner_t id)
+>  static int spufs_mfc_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+>  {
+>  	struct inode *inode = file_inode(file);
+> -	int err = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> +	int err = file_write_and_wait_range(file, start, end);
+>  	if (!err) {
+>  		inode_lock(inode);
+>  		err = spufs_mfc_flush(file, NULL);
+> diff --git a/drivers/staging/lustre/lustre/llite/file.c b/drivers/staging/lustre/lustre/llite/file.c
+> index ab1c85c1ed38..f7d07735ac66 100644
+> --- a/drivers/staging/lustre/lustre/llite/file.c
+> +++ b/drivers/staging/lustre/lustre/llite/file.c
+> @@ -2364,7 +2364,7 @@ int ll_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+>  	       PFID(ll_inode2fid(inode)), inode);
+>  	ll_stats_ops_tally(ll_i2sbi(inode), LPROC_LL_FSYNC, 1);
+>  
+> -	rc = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> +	rc = file_write_and_wait_range(file, start, end);
+>  	inode_lock(inode);
+>  
+>  	/* catch async errors that were recorded back when async writeback
+> diff --git a/drivers/video/fbdev/core/fb_defio.c b/drivers/video/fbdev/core/fb_defio.c
+> index 37f69c061210..487d5e336e1b 100644
+> --- a/drivers/video/fbdev/core/fb_defio.c
+> +++ b/drivers/video/fbdev/core/fb_defio.c
+> @@ -69,7 +69,7 @@ int fb_deferred_io_fsync(struct file *file, loff_t start, loff_t end, int datasy
+>  {
+>  	struct fb_info *info = file->private_data;
+>  	struct inode *inode = file_inode(file);
+> -	int err = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> +	int err = file_write_and_wait_range(file, start, end);
+>  	if (err)
+>  		return err;
+>  
+> diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+> index 3de3b4a89d89..4802d75b3cf7 100644
+> --- a/fs/9p/vfs_file.c
+> +++ b/fs/9p/vfs_file.c
+> @@ -445,7 +445,7 @@ static int v9fs_file_fsync(struct file *filp, loff_t start, loff_t end,
+>  	struct p9_wstat wstat;
+>  	int retval;
+>  
+> -	retval = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> +	retval = file_write_and_wait_range(filp, start, end);
+>  	if (retval)
+>  		return retval;
+>  
+> @@ -468,7 +468,7 @@ int v9fs_file_fsync_dotl(struct file *filp, loff_t start, loff_t end,
+>  	struct inode *inode = filp->f_mapping->host;
+>  	int retval;
+>  
+> -	retval = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> +	retval = file_write_and_wait_range(filp, start, end);
+>  	if (retval)
+>  		return retval;
+>  
+> diff --git a/fs/affs/file.c b/fs/affs/file.c
+> index 196ee7f6fdc4..00331810f690 100644
+> --- a/fs/affs/file.c
+> +++ b/fs/affs/file.c
+> @@ -954,7 +954,7 @@ int affs_file_fsync(struct file *filp, loff_t start, loff_t end, int datasync)
+>  	struct inode *inode = filp->f_mapping->host;
+>  	int ret, err;
+>  
+> -	err = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> +	err = file_write_and_wait_range(filp, start, end);
+>  	if (err)
+>  		return err;
+>  
+> diff --git a/fs/afs/write.c b/fs/afs/write.c
+> index 2d2fccd5044b..106e43db1115 100644
+> --- a/fs/afs/write.c
+> +++ b/fs/afs/write.c
+> @@ -714,7 +714,7 @@ int afs_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+>  	       vnode->fid.vid, vnode->fid.vnode, file,
+>  	       datasync);
+>  
+> -	ret = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> +	ret = file_write_and_wait_range(file, start, end);
+>  	if (ret)
+>  		return ret;
+>  	inode_lock(inode);
+> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+> index bc09df6b473a..0786f19d288f 100644
+> --- a/fs/cifs/file.c
+> +++ b/fs/cifs/file.c
+> @@ -2329,7 +2329,7 @@ int cifs_strict_fsync(struct file *file, loff_t start, loff_t end,
+>  	struct inode *inode = file_inode(file);
+>  	struct cifs_sb_info *cifs_sb = CIFS_SB(inode->i_sb);
+>  
+> -	rc = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> +	rc = file_write_and_wait_range(file, start, end);
+>  	if (rc)
+>  		return rc;
+>  	inode_lock(inode);
+> @@ -2371,7 +2371,7 @@ int cifs_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+>  	struct cifs_sb_info *cifs_sb = CIFS_FILE_SB(file);
+>  	struct inode *inode = file->f_mapping->host;
+>  
+> -	rc = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> +	rc = file_write_and_wait_range(file, start, end);
+>  	if (rc)
+>  		return rc;
+>  	inode_lock(inode);
+> diff --git a/fs/exofs/file.c b/fs/exofs/file.c
+> index 28645f0640f7..a94594ea2aa3 100644
+> --- a/fs/exofs/file.c
+> +++ b/fs/exofs/file.c
+> @@ -48,7 +48,7 @@ static int exofs_file_fsync(struct file *filp, loff_t start, loff_t end,
+>  	struct inode *inode = filp->f_mapping->host;
+>  	int ret;
+>  
+> -	ret = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> +	ret = file_write_and_wait_range(filp, start, end);
+>  	if (ret)
+>  		return ret;
+>  
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index a0e6d2c65a9e..40fb3d4bb9c2 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -206,7 +206,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>  	/* if fdatasync is triggered, let's do in-place-update */
+>  	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
+>  		set_inode_flag(inode, FI_NEED_IPU);
+> -	ret = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> +	ret = file_write_and_wait_range(file, start, end);
+>  	clear_inode_flag(inode, FI_NEED_IPU);
+>  
+>  	if (ret) {
+> diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
+> index bfbba799430f..2538b49cc349 100644
+> --- a/fs/hfs/inode.c
+> +++ b/fs/hfs/inode.c
+> @@ -656,7 +656,7 @@ static int hfs_file_fsync(struct file *filp, loff_t start, loff_t end,
+>  	struct super_block * sb;
+>  	int ret, err;
+>  
+> -	ret = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> +	ret = file_write_and_wait_range(filp, start, end);
+>  	if (ret)
+>  		return ret;
+>  	inode_lock(inode);
+> diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
+> index e8638d528195..4f26b6877130 100644
+> --- a/fs/hfsplus/inode.c
+> +++ b/fs/hfsplus/inode.c
+> @@ -283,7 +283,7 @@ int hfsplus_file_fsync(struct file *file, loff_t start, loff_t end,
+>  	struct hfsplus_sb_info *sbi = HFSPLUS_SB(inode->i_sb);
+>  	int error = 0, error2;
+>  
+> -	error = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> +	error = file_write_and_wait_range(file, start, end);
+>  	if (error)
+>  		return error;
+>  	inode_lock(inode);
+> diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
+> index e61261a7417e..c148e7f4f451 100644
+> --- a/fs/hostfs/hostfs_kern.c
+> +++ b/fs/hostfs/hostfs_kern.c
+> @@ -374,7 +374,7 @@ static int hostfs_fsync(struct file *file, loff_t start, loff_t end,
+>  	struct inode *inode = file->f_mapping->host;
+>  	int ret;
+>  
+> -	ret = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> +	ret = file_write_and_wait_range(file, start, end);
+>  	if (ret)
+>  		return ret;
+>  
+> diff --git a/fs/hpfs/file.c b/fs/hpfs/file.c
+> index b3be1b5a62e2..f26138425b16 100644
+> --- a/fs/hpfs/file.c
+> +++ b/fs/hpfs/file.c
+> @@ -24,7 +24,7 @@ int hpfs_file_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+>  	struct inode *inode = file->f_mapping->host;
+>  	int ret;
+>  
+> -	ret = filemap_write_and_wait_range(file->f_mapping, start, end);
+> +	ret = file_write_and_wait_range(file, start, end);
+>  	if (ret)
+>  		return ret;
+>  	return sync_blockdev(inode->i_sb->s_bdev);
+> diff --git a/fs/jffs2/file.c b/fs/jffs2/file.c
+> index c12476e309c6..bd0428bebe9b 100644
+> --- a/fs/jffs2/file.c
+> +++ b/fs/jffs2/file.c
+> @@ -35,7 +35,7 @@ int jffs2_fsync(struct file *filp, loff_t start, loff_t end, int datasync)
+>  	struct jffs2_sb_info *c = JFFS2_SB_INFO(inode->i_sb);
+>  	int ret;
+>  
+> -	ret = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> +	ret = file_write_and_wait_range(filp, start, end);
+>  	if (ret)
+>  		return ret;
+>  
+> diff --git a/fs/jfs/file.c b/fs/jfs/file.c
+> index 739492c7a3fd..36665fd37095 100644
+> --- a/fs/jfs/file.c
+> +++ b/fs/jfs/file.c
+> @@ -34,7 +34,7 @@ int jfs_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+>  	struct inode *inode = file->f_mapping->host;
+>  	int rc = 0;
+>  
+> -	rc = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> +	rc = file_write_and_wait_range(file, start, end);
+>  	if (rc)
+>  		return rc;
+>  
+> diff --git a/fs/ncpfs/file.c b/fs/ncpfs/file.c
+> index 76965e772264..a06c07619ee6 100644
+> --- a/fs/ncpfs/file.c
+> +++ b/fs/ncpfs/file.c
+> @@ -23,7 +23,7 @@
+>  
+>  static int ncp_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+>  {
+> -	return filemap_write_and_wait_range(file->f_mapping, start, end);
+> +	return file_write_and_wait_range(file, start, end);
+>  }
+>  
+>  /*
+> diff --git a/fs/ntfs/dir.c b/fs/ntfs/dir.c
+> index 0ee19ecc982d..1a24be9e8405 100644
+> --- a/fs/ntfs/dir.c
+> +++ b/fs/ntfs/dir.c
+> @@ -1506,7 +1506,7 @@ static int ntfs_dir_fsync(struct file *filp, loff_t start, loff_t end,
+>  
+>  	ntfs_debug("Entering for inode 0x%lx.", vi->i_ino);
+>  
+> -	err = filemap_write_and_wait_range(vi->i_mapping, start, end);
+> +	err = file_write_and_wait_range(filp, start, end);
+>  	if (err)
+>  		return err;
+>  	inode_lock(vi);
+> diff --git a/fs/ntfs/file.c b/fs/ntfs/file.c
+> index c4f68c338735..331910fa8442 100644
+> --- a/fs/ntfs/file.c
+> +++ b/fs/ntfs/file.c
+> @@ -1989,7 +1989,7 @@ static int ntfs_file_fsync(struct file *filp, loff_t start, loff_t end,
+>  
+>  	ntfs_debug("Entering for inode 0x%lx.", vi->i_ino);
+>  
+> -	err = filemap_write_and_wait_range(vi->i_mapping, start, end);
+> +	err = file_write_and_wait_range(filp, start, end);
+>  	if (err)
+>  		return err;
+>  	inode_lock(vi);
+> diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
+> index bfeb647459d9..66e59d3163ea 100644
+> --- a/fs/ocfs2/file.c
+> +++ b/fs/ocfs2/file.c
+> @@ -196,7 +196,7 @@ static int ocfs2_sync_file(struct file *file, loff_t start, loff_t end,
+>  	if (ocfs2_is_hard_readonly(osb) || ocfs2_is_soft_readonly(osb))
+>  		return -EROFS;
+>  
+> -	err = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> +	err = file_write_and_wait_range(file, start, end);
+>  	if (err)
+>  		return err;
+>  
+> diff --git a/fs/reiserfs/dir.c b/fs/reiserfs/dir.c
+> index 45aa05e2232f..5b50689d8539 100644
+> --- a/fs/reiserfs/dir.c
+> +++ b/fs/reiserfs/dir.c
+> @@ -34,7 +34,7 @@ static int reiserfs_dir_fsync(struct file *filp, loff_t start, loff_t end,
+>  	struct inode *inode = filp->f_mapping->host;
+>  	int err;
+>  
+> -	err = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> +	err = file_write_and_wait_range(filp, start, end);
+>  	if (err)
+>  		return err;
+>  
+> diff --git a/fs/reiserfs/file.c b/fs/reiserfs/file.c
+> index b396eb09f288..843aadcc123c 100644
+> --- a/fs/reiserfs/file.c
+> +++ b/fs/reiserfs/file.c
+> @@ -154,7 +154,7 @@ static int reiserfs_sync_file(struct file *filp, loff_t start, loff_t end,
+>  	int err;
+>  	int barrier_done;
+>  
+> -	err = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> +	err = file_write_and_wait_range(filp, start, end);
+>  	if (err)
+>  		return err;
+>  
+> diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
+> index 8cad0b19b404..f90a466ea5db 100644
+> --- a/fs/ubifs/file.c
+> +++ b/fs/ubifs/file.c
+> @@ -1337,7 +1337,7 @@ int ubifs_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+>  		 */
+>  		return 0;
+>  
+> -	err = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> +	err = file_write_and_wait_range(file, start, end);
+>  	if (err)
+>  		return err;
+>  	inode_lock(inode);
+> -- 
+> 2.13.3
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
