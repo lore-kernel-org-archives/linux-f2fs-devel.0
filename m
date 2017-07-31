@@ -1,262 +1,167 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: support inode checksum
-Date: Mon, 31 Jul 2017 20:19:09 +0800
-Message-ID: <20170731121909.89539-1-yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix potential deadlock
+Date: Mon, 31 Jul 2017 20:32:00 +0800
+Message-ID: <20170731123200.24257-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
- helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1dc9fc-0001mW-RP
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 31 Jul 2017 12:19:36 +0000
-Received: from szxga03-in.huawei.com ([45.249.212.189])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1dc9fZ-0004lM-Uc
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 31 Jul 2017 12:19:36 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch adds to support inode checksum in f2fs.
+generic/241 reports below bug:
+
+ ======================================================
+ WARNING: possible circular locking dependency detected
+ 4.13.0-rc1+ #32 Tainted: G           O
+ ------------------------------------------------------
+ f2fs_gc-250:0/22186 is trying to acquire lock:
+  (&sbi->gc_mutex){+.+...}, at: [<f8fa7f0b>] f2fs_sync_fs+0x7b/0x1b0 [f2fs]
+
+ but task is already holding lock:
+  (sb_internal#2){++++.-}, at: [<f8fb5609>] gc_thread_func+0x159/0x4a0 [f2fs]
+
+ which lock already depends on the new lock.
+
+ the existing dependency chain (in reverse order) is:
+
+ -> #2 (sb_internal#2){++++.-}:
+        __lock_acquire+0x405/0x7b0
+        lock_acquire+0xae/0x220
+        __sb_start_write+0x11d/0x1f0
+        f2fs_evict_inode+0x2d6/0x4e0 [f2fs]
+        evict+0xa8/0x170
+        iput+0x1fb/0x2c0
+        f2fs_sync_inode_meta+0x3f/0xf0 [f2fs]
+        write_checkpoint+0x1b1/0x750 [f2fs]
+        f2fs_sync_fs+0x85/0x1b0 [f2fs]
+        f2fs_do_sync_file.isra.24+0x137/0xa30 [f2fs]
+        f2fs_sync_file+0x34/0x40 [f2fs]
+        vfs_fsync_range+0x4a/0xa0
+        do_fsync+0x3c/0x60
+        SyS_fdatasync+0x15/0x20
+        do_fast_syscall_32+0xa1/0x1b0
+        entry_SYSENTER_32+0x4c/0x7b
+
+ -> #1 (&sbi->cp_mutex){+.+...}:
+        __lock_acquire+0x405/0x7b0
+        lock_acquire+0xae/0x220
+        __mutex_lock+0x4f/0x830
+        mutex_lock_nested+0x25/0x30
+        write_checkpoint+0x2f/0x750 [f2fs]
+        f2fs_sync_fs+0x85/0x1b0 [f2fs]
+        sync_filesystem+0x67/0x80
+        generic_shutdown_super+0x27/0x100
+        kill_block_super+0x22/0x50
+        kill_f2fs_super+0x3a/0x40 [f2fs]
+        deactivate_locked_super+0x3d/0x70
+        deactivate_super+0x40/0x60
+        cleanup_mnt+0x39/0x70
+        __cleanup_mnt+0x10/0x20
+        task_work_run+0x69/0x80
+        exit_to_usermode_loop+0x57/0x92
+        do_fast_syscall_32+0x18c/0x1b0
+        entry_SYSENTER_32+0x4c/0x7b
+
+ -> #0 (&sbi->gc_mutex){+.+...}:
+        validate_chain.isra.36+0xc50/0xdb0
+        __lock_acquire+0x405/0x7b0
+        lock_acquire+0xae/0x220
+        __mutex_lock+0x4f/0x830
+        mutex_lock_nested+0x25/0x30
+        f2fs_sync_fs+0x7b/0x1b0 [f2fs]
+        f2fs_balance_fs_bg+0xb9/0x200 [f2fs]
+        gc_thread_func+0x302/0x4a0 [f2fs]
+        kthread+0xe9/0x120
+        ret_from_fork+0x19/0x24
+
+ other info that might help us debug this:
+
+ Chain exists of:
+   &sbi->gc_mutex --> &sbi->cp_mutex --> sb_internal#2
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(sb_internal#2);
+                                lock(&sbi->cp_mutex);
+                                lock(sb_internal#2);
+   lock(&sbi->gc_mutex);
+
+  *** DEADLOCK ***
+
+ 1 lock held by f2fs_gc-250:0/22186:
+  #0:  (sb_internal#2){++++.-}, at: [<f8fb5609>] gc_thread_func+0x159/0x4a0 [f2fs]
+
+ stack backtrace:
+ CPU: 2 PID: 22186 Comm: f2fs_gc-250:0 Tainted: G           O    4.13.0-rc1+ #32
+ Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+ Call Trace:
+  dump_stack+0x5f/0x92
+  print_circular_bug+0x1b3/0x1bd
+  validate_chain.isra.36+0xc50/0xdb0
+  ? __this_cpu_preempt_check+0xf/0x20
+  __lock_acquire+0x405/0x7b0
+  lock_acquire+0xae/0x220
+  ? f2fs_sync_fs+0x7b/0x1b0 [f2fs]
+  __mutex_lock+0x4f/0x830
+  ? f2fs_sync_fs+0x7b/0x1b0 [f2fs]
+  mutex_lock_nested+0x25/0x30
+  ? f2fs_sync_fs+0x7b/0x1b0 [f2fs]
+  f2fs_sync_fs+0x7b/0x1b0 [f2fs]
+  f2fs_balance_fs_bg+0xb9/0x200 [f2fs]
+  gc_thread_func+0x302/0x4a0 [f2fs]
+  ? preempt_schedule_common+0x2f/0x4d
+  ? f2fs_gc+0x540/0x540 [f2fs]
+  kthread+0xe9/0x120
+  ? f2fs_gc+0x540/0x540 [f2fs]
+  ? kthread_create_on_node+0x30/0x30
+  ret_from_fork+0x19/0x24
+
+The deadlock occurs in below condition:
+GC Thread			Thread B
+- sb_start_intwrite
+				- f2fs_sync_file
+				 - f2fs_sync_fs
+				  - mutex_lock(&sbi->gc_mutex)
+				   - write_checkpoint
+				    - block_operations
+				     - f2fs_sync_inode_meta
+				      - iput
+				       - sb_start_intwrite
+ - mutex_lock(&sbi->gc_mutex)
+
+Fix this by altering sb_start_intwrite to sb_start_write_trylock.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
-v2: add to print detail info if checksum failed.
- fs/f2fs/f2fs.h          | 31 +++++++++++++++++++++++
- fs/f2fs/inode.c         | 66 +++++++++++++++++++++++++++++++++++++++++++++++++
- fs/f2fs/node.c          |  2 ++
- fs/f2fs/segment.c       |  5 +++-
- fs/f2fs/super.c         |  5 ++++
- include/linux/f2fs_fs.h |  1 +
- 6 files changed, 109 insertions(+), 1 deletion(-)
+ fs/f2fs/gc.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index a1bfd0b9be44..d35621b8d739 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -116,6 +116,7 @@ struct f2fs_mount_info {
- #define F2FS_FEATURE_ATOMIC_WRITE	0x0004
- #define F2FS_FEATURE_EXTRA_ATTR		0x0008
- #define F2FS_FEATURE_PRJQUOTA		0x0010
-+#define F2FS_FEATURE_INODE_CHKSUM	0x0020
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 1c0117f60083..f57cadae1a30 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -55,7 +55,8 @@ static int gc_thread_func(void *data)
+ 		}
+ #endif
  
- #define F2FS_HAS_FEATURE(sb, mask)					\
- 	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
-@@ -1082,6 +1083,9 @@ struct f2fs_sb_info {
- 	/* Reference to checksum algorithm driver via cryptoapi */
- 	struct crypto_shash *s_chksum_driver;
+-		sb_start_intwrite(sbi->sb);
++		if (!sb_start_write_trylock(sbi->sb))
++			continue;
  
-+	/* Precomputed FS UUID checksum for seeding other checksums */
-+	__u32 s_chksum_seed;
-+
- 	/* For fault injection */
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- 	struct f2fs_fault_info fault_info;
-@@ -1173,6 +1177,27 @@ static inline bool f2fs_crc_valid(struct f2fs_sb_info *sbi, __u32 blk_crc,
- 	return f2fs_crc32(sbi, buf, buf_size) == blk_crc;
- }
+ 		/*
+ 		 * [GC triggering condition]
+@@ -96,7 +97,7 @@ static int gc_thread_func(void *data)
+ 		/* balancing f2fs's metadata periodically */
+ 		f2fs_balance_fs_bg(sbi);
+ next:
+-		sb_end_intwrite(sbi->sb);
++		sb_end_write(sbi->sb);
  
-+static inline u32 f2fs_chksum(struct f2fs_sb_info *sbi, u32 crc,
-+			      const void *address, unsigned int length)
-+{
-+	struct {
-+		struct shash_desc shash;
-+		char ctx[4];
-+	} desc;
-+	int err;
-+
-+	BUG_ON(crypto_shash_descsize(sbi->s_chksum_driver) != sizeof(desc.ctx));
-+
-+	desc.shash.tfm = sbi->s_chksum_driver;
-+	desc.shash.flags = 0;
-+	*(u32 *)desc.ctx = crc;
-+
-+	err = crypto_shash_update(&desc.shash, address, length);
-+	BUG_ON(err);
-+
-+	return *(u32 *)desc.ctx;
-+}
-+
- static inline struct f2fs_inode_info *F2FS_I(struct inode *inode)
- {
- 	return container_of(inode, struct f2fs_inode_info, vfs_inode);
-@@ -2282,6 +2307,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
-  * inode.c
-  */
- void f2fs_set_inode_flags(struct inode *inode);
-+void f2fs_inode_chksum_set(struct f2fs_sb_info *sbi, struct f2fs_node *node);
- struct inode *f2fs_iget(struct super_block *sb, unsigned long ino);
- struct inode *f2fs_iget_retry(struct super_block *sb, unsigned long ino);
- int try_to_free_nats(struct f2fs_sb_info *sbi, int nr_shrink);
-@@ -2865,6 +2891,11 @@ static inline int f2fs_sb_has_project_quota(struct super_block *sb)
- 	return F2FS_HAS_FEATURE(sb, F2FS_FEATURE_PRJQUOTA);
- }
- 
-+static inline int f2fs_sb_has_inode_chksum(struct super_block *sb)
-+{
-+	return F2FS_HAS_FEATURE(sb, F2FS_FEATURE_INODE_CHKSUM);
-+}
-+
- #ifdef CONFIG_BLK_DEV_ZONED
- static inline int get_blkz_type(struct f2fs_sb_info *sbi,
- 			struct block_device *bdev, block_t blkaddr)
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index f15e663a1a15..05c8aeb0101e 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -108,6 +108,64 @@ static void __recover_inline_status(struct inode *inode, struct page *ipage)
- 	return;
- }
- 
-+static __u32 f2fs_inode_chksum(struct f2fs_sb_info *sbi,
-+					struct f2fs_node *node)
-+{
-+	struct f2fs_inode *ri = &node->i;
-+	__le32 ino = node->footer.ino;
-+	__le32 gen = ri->i_generation;
-+	__u32 chksum, chksum_seed;
-+	__u32 dummy_cs = 0;
-+	unsigned int offset = offsetof(struct f2fs_inode, i_inode_checksum);
-+	unsigned int cs_size = sizeof(dummy_cs);
-+
-+	chksum = f2fs_chksum(sbi, sbi->s_chksum_seed, (__u8 *)&ino,
-+							sizeof(ino));
-+	chksum_seed = f2fs_chksum(sbi, chksum, (__u8 *)&gen, sizeof(gen));
-+
-+	chksum = f2fs_chksum(sbi, chksum_seed, (__u8 *)ri, offset);
-+	chksum = f2fs_chksum(sbi, chksum, (__u8 *)&dummy_cs, cs_size);
-+	offset += cs_size;
-+	chksum = f2fs_chksum(sbi, chksum, (__u8 *)ri + offset,
-+						F2FS_BLKSIZE - offset);
-+	return chksum;
-+}
-+
-+static bool f2fs_inode_chksum_verify(struct f2fs_sb_info *sbi,
-+			struct f2fs_node *node, struct f2fs_inode_info *fi)
-+{
-+	struct f2fs_inode *ri = &node->i;
-+	__u32 provided, calculated;
-+
-+	if (!f2fs_sb_has_inode_chksum(sbi->sb))
-+		return true;
-+
-+	if (!F2FS_FITS_IN_INODE(ri, fi->i_extra_isize, i_inode_checksum))
-+		return true;
-+
-+	provided = le32_to_cpu(ri->i_inode_checksum);
-+	calculated = f2fs_inode_chksum(sbi, node);
-+
-+	return provided == calculated;
-+}
-+
-+void f2fs_inode_chksum_set(struct f2fs_sb_info *sbi, struct f2fs_node *node)
-+{
-+	struct f2fs_inode *ri = &node->i;
-+	int extra_isize = le32_to_cpu(ri->i_extra_isize);
-+
-+	if (!f2fs_sb_has_inode_chksum(sbi->sb))
-+		return;
-+
-+	if (!RAW_IS_INODE(node) || !(ri->i_inline & F2FS_EXTRA_ATTR))
-+		return;
-+
-+	if (!F2FS_FITS_IN_INODE(ri, extra_isize, i_inode_checksum))
-+		return;
-+
-+	ri->i_inode_checksum = cpu_to_le32(f2fs_inode_chksum(sbi, node));
-+}
-+
- static int do_read_inode(struct inode *inode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-@@ -161,6 +219,14 @@ static int do_read_inode(struct inode *inode)
- 	fi->i_extra_isize = f2fs_has_extra_attr(inode) ?
- 					le16_to_cpu(ri->i_extra_isize) : 0;
- 
-+	if (!f2fs_inode_chksum_verify(sbi, F2FS_NODE(node_page), fi)) {
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+			"checksum invalid, ino:%lu, on-disk:%u",
-+			inode->i_ino, le32_to_cpu(ri->i_inode_checksum));
-+		f2fs_put_page(node_page, 1);
-+		return -EBADMSG;
-+	}
-+
- 	/* check data exist */
- 	if (f2fs_has_inline_data(inode) && !f2fs_exist_data(inode))
- 		__recover_inline_status(inode, node_page);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 11e2d49203b3..f97792202ada 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2271,6 +2271,8 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
- 			F2FS_FITS_IN_INODE(src, le16_to_cpu(src->i_extra_isize),
- 								i_projid))
- 			dst->i_projid = src->i_projid;
-+
-+		f2fs_inode_chksum_set(sbi, F2FS_NODE(ipage));
- 	}
- 
- 	new_ni = old_ni;
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 2a5672a20a62..df1bb0c144f1 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2214,9 +2214,12 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 
- 	mutex_unlock(&sit_i->sentry_lock);
- 
--	if (page && IS_NODESEG(type))
-+	if (page && IS_NODESEG(type)) {
- 		fill_node_footer_blkaddr(page, NEXT_FREE_BLKADDR(sbi, curseg));
- 
-+		f2fs_inode_chksum_set(sbi, F2FS_NODE(page));
-+	}
-+
- 	if (add_list) {
- 		struct f2fs_bio_info *io;
- 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index f44a09375e64..043908e1869c 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1945,6 +1945,11 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	sb->s_fs_info = sbi;
- 	sbi->raw_super = raw_super;
- 
-+	/* precompute checksum seed for metadata */
-+	if (f2fs_sb_has_inode_chksum(sb))
-+		sbi->s_chksum_seed = f2fs_chksum(sbi, ~0, raw_super->uuid,
-+						sizeof(raw_super->uuid));
-+
- 	/*
- 	 * The BLKZONED feature indicates that the drive was formatted with
- 	 * zone alignment optimization. This is optional for host-aware
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 50f176683676..2a0c453d7235 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -240,6 +240,7 @@ struct f2fs_inode {
- 			__le16 i_extra_isize;	/* extra inode attribute size */
- 			__le16 i_padding;	/* padding */
- 			__le32 i_projid;	/* project id */
-+			__le32 i_inode_checksum;/* inode meta checksum */
- 			__le32 i_extra_end[0];	/* for attribute size calculation */
- 		};
- 		__le32 i_addr[DEF_ADDRS_PER_INODE];	/* Pointers to data blocks */
+ 	} while (!kthread_should_stop());
+ 	return 0;
 -- 
 2.13.1.388.g69e6b9b4f4a9
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
