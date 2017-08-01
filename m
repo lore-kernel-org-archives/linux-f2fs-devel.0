@@ -1,139 +1,258 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] f2fs: update cur_valid_map_mir together with
- cur_valid_map
-Date: Tue, 1 Aug 2017 23:44:06 +0800
-Message-ID: <d04ca5c3-f38f-fe48-a073-243e49bc243c@kernel.org>
-References: <1501574206-150946-1-git-send-email-yunlong.song@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: provide f2fs_balance_fs to __write_data_page for
+ dentry pages
+Date: Tue, 1 Aug 2017 11:22:54 -0700
+Message-ID: <20170801182254.GA52047@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1501334365-123333-1-git-send-email-yunlong.song@huawei.com>
+ <20170730073154.GA13058@jaegeuk-macbookpro.roam.corp.google.com>
+ <4916ac46.daf0.15d943f23b9.Coremail.sylinux@163.com>
+ <e2336730-40f4-efb9-48eb-7707fe3cbf11@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1501574206-150946-1-git-send-email-yunlong.song@huawei.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <e2336730-40f4-efb9-48eb-7707fe3cbf11@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com, sylinux@163.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Yunlong Song <yunlong.song@huawei.com>
+Cc: Yunlong Song <sylinux@163.com>, chao <chao@kernel.org>, yuchao0 <yuchao0@huawei.com>, miaoxie <miaoxie@huawei.com>, "bintian.wang" <bintian.wang@huawei.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>, linux-kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Yunlong,
+On 08/01, Yunlong Song wrote:
+> Hi Jay,
+>     The SBI_BLOCK_OPS can not cover all the case, once SBI_BLOCK_OPS is set,
+> all the normal writeback
+> (before the SBI_BLOCK_OPS is clear) of dentry pages which do not come from
+> write_checkpoint flow will
+> totally miss all the f2fs_balance_fs check.
 
-How about checking consistence in between original and mirror bitmap all
-the time as below?
+Why not? There must be no dirty dentry pages after sync_dirty_inodes() in that
+period which we grabbed the globla lock.
 
----
- fs/f2fs/segment.c | 41 +++++++++++++++++++++++++++--------------
- 1 file changed, 27 insertions(+), 14 deletions(-)
+Thanks,
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index a26c24dae70c..f32a19cf486a 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1510,6 +1510,7 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
- 	struct seg_entry *se;
- 	unsigned int segno, offset;
- 	long int new_vblocks;
-+	bool exist, mir_exist;
-
- 	segno = GET_SEGNO(sbi, blkaddr);
-
-@@ -1526,17 +1527,23 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
-
- 	/* Update valid block bitmap */
- 	if (del > 0) {
--		if (f2fs_test_and_set_bit(offset, se->cur_valid_map)) {
-+		exist = f2fs_test_and_set_bit(offset, se->cur_valid_map);
- #ifdef CONFIG_F2FS_CHECK_FS
--			if (f2fs_test_and_set_bit(offset,
--						se->cur_valid_map_mir))
--				f2fs_bug_on(sbi, 1);
--			else
--				WARN_ON(1);
--#else
-+		mir_exist = f2fs_test_and_set_bit(offset,
-+						se->cur_valid_map_mir);
-+		if (exist != mir_exist) {
-+			f2fs_msg(sbi->sb, KERN_ERR, "Inconsistent error "
-+				"when setting bitmap, blk:%u, old bit:%d",
-+				blkaddr, exist);
- 			f2fs_bug_on(sbi, 1);
-+		}
- #endif
-+		if (exist) {
-+			f2fs_msg(sbi->sb, KERN_ERR,
-+				"Bitmap was set, blk:%u", blkaddr);
-+			f2fs_bug_on(sbi, 1);
- 		}
-+
- 		if (f2fs_discard_en(sbi) &&
- 			!f2fs_test_and_set_bit(offset, se->discard_map))
- 			sbi->discard_blks--;
-@@ -1547,17 +1554,23 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
- 				se->ckpt_valid_blocks++;
- 		}
- 	} else {
--		if (!f2fs_test_and_clear_bit(offset, se->cur_valid_map)) {
-+		exist = f2fs_test_and_clear_bit(offset, se->cur_valid_map);
- #ifdef CONFIG_F2FS_CHECK_FS
--			if (!f2fs_test_and_clear_bit(offset,
--						se->cur_valid_map_mir))
--				f2fs_bug_on(sbi, 1);
--			else
--				WARN_ON(1);
--#else
-+		mir_exist = f2fs_test_and_clear_bit(offset,
-+						se->cur_valid_map_mir);
-+		if (exist != mir_exist) {
-+			f2fs_msg(sbi->sb, KERN_ERR, "Inconsistent error "
-+				"when clearing bitmap, blk:%u, old bit:%d",
-+				blkaddr, exist);
- 			f2fs_bug_on(sbi, 1);
-+		}
- #endif
-+		if (!exist) {
-+			f2fs_msg(sbi->sb, KERN_ERR,
-+				"Bitmap was cleared, blk:%u", blkaddr);
-+			f2fs_bug_on(sbi, 1);
- 		}
-+
- 		if (f2fs_discard_en(sbi) &&
- 			f2fs_test_and_clear_bit(offset, se->discard_map))
- 			sbi->discard_blks++;
--- 
-2.13.0.90.g1eb437020
-
-On 2017/8/1 15:56, Yunlong Song wrote:
-> When cur_valid_map passes the f2fs_test_and_set(,clear)_bit test,
-> cur_valid_map_mir update is skipped unlikely, so fix it.
 > 
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> ---
->  fs/f2fs/segment.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> On 2017/7/31 0:05, Yunlong Song wrote:
+> > Hi Jay,
+> >     Chao has pointed out one reason, besides, I have another reason: we
+> > should take care of writeback for f2fs_balance_fs carefully, because if
+> > some bugs cause reserved segments unlikely used, which means
+> > f2fs_balance_fs does not work or is skipped in some corner case that we
+> > have not noticed or found out yet, then the reserved segments may be
+> > continually used and even used up in the writeback process of dentry
+> > page,  since current  design believe in the f2fs_balance_fs in system
+> > call and has no check in denty page writeback. To avoid this, we can put
+> > a f2fs_balance_fs in the dentry page writeback process to give f2fs more
+> > robust in free segments reserved. This is worth, because free segments
+> > reserved are so important, if they are used up, f2fs will enter a
+> > totally wrong status and make a wrong image.
+> > 
+> > On 07/30/2017 15:31, Jaegeuk Kim <mailto:jaegeuk@kernel.org> wrote:
+> > 
+> >     On 07/29, Yunlong Song wrote:
+> >     > f2fs_balance_fs of dentry pages is skipped in __write_data_page
+> >     due to deadlock
+> >     > of gc_mutex in write_checkpoint flow. This patch enables
+> >     f2fs_balance_fs for
+> >     > normal dentry page writeback to ensure there are always enough
+> >     free segments.
+> > 
+> >     Sorry, by the way, why do we need to do this? I subtly thought
+> >     that dirty node
+> >     pages can be produce by redirtied inodes from what we've not
+> >     covered through
+> >     filesystem calls. But, in dentry pages, we're controlling the
+> >     number of dirty
+> >     pages, and calling f2fs_balance_fs in each directory operations.
+> > 
+> >     Chao?
+> > 
+> >     Thanks,
+> > 
+> >     >
+> >     > Reported-by: Chao Yu <yuchao0@huawei.com>
+> >     > Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> >     > ---
+> >     >  fs/f2fs/checkpoint.c |  2 +-
+> >     >  fs/f2fs/data.c       | 67
+> >     +++++++++++++++++++++++++++++++++++++++++++++-------
+> >     >  fs/f2fs/f2fs.h       |  1 +
+> >     >  3 files changed, 61 insertions(+), 9 deletions(-)
+> >     >
+> >     > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> >     > index 3c84a25..2882878 100644
+> >     > --- a/fs/f2fs/checkpoint.c
+> >     > +++ b/fs/f2fs/checkpoint.c
+> >     > @@ -904,7 +904,7 @@ int sync_dirty_inodes(struct f2fs_sb_info
+> >     *sbi, enum inode_type type)
+> >     >      if (inode) {
+> >     >          unsigned long cur_ino = inode->i_ino;
+> >     >
+> >     > -        filemap_fdatawrite(inode->i_mapping);
+> >     > +        f2fs_filemap_fdatawrite(inode->i_mapping, is_dir);
+> >     >          iput(inode);
+> >     >          /* We need to give cpu to another writers. */
+> >     >          if (ino == cur_ino) {
+> >     > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> >     > index aefc2a5..ed7efa5 100644
+> >     > --- a/fs/f2fs/data.c
+> >     > +++ b/fs/f2fs/data.c
+> >     > @@ -1475,7 +1475,7 @@ int do_write_data_page(struct f2fs_io_info
+> >     *fio)
+> >     >  }
+> >     >
+> >     >  static int __write_data_page(struct page *page, bool *submitted,
+> >     > -                struct writeback_control *wbc)
+> >     > +                struct writeback_control *wbc, bool do_balance)
+> >     >  {
+> >     >      struct inode *inode = page->mapping->host;
+> >     >      struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> >     > @@ -1578,7 +1578,7 @@ static int __write_data_page(struct page
+> >     *page, bool *submitted,
+> >     >      }
+> >     >
+> >     >      unlock_page(page);
+> >     > -    if (!S_ISDIR(inode->i_mode))
+> >     > +    if (do_balance)
+> >     >          f2fs_balance_fs(sbi, need_balance_fs);
+> >     >
+> >     >      if (unlikely(f2fs_cp_error(sbi))) {
+> >     > @@ -1602,7 +1602,7 @@ static int __write_data_page(struct page
+> >     *page, bool *submitted,
+> >     >  static int f2fs_write_data_page(struct page *page,
+> >     >                      struct writeback_control *wbc)
+> >     >  {
+> >     > -    return __write_data_page(page, NULL, wbc);
+> >     > +    return __write_data_page(page, NULL, wbc, true);
+> >     >  }
+> >     >
+> >     >  /*
+> >     > @@ -1611,7 +1611,7 @@ static int f2fs_write_data_page(struct
+> >     page *page,
+> >     >   * warm/hot data page.
+> >     >   */
+> >     >  static int f2fs_write_cache_pages(struct address_space *mapping,
+> >     > -                    struct writeback_control *wbc)
+> >     > +                    struct writeback_control *wbc, bool
+> >     do_balance)
+> >     >  {
+> >     >      int ret = 0;
+> >     >      int done = 0;
+> >     > @@ -1701,7 +1701,7 @@ static int f2fs_write_cache_pages(struct
+> >     address_space *mapping,
+> >     >              if (!clear_page_dirty_for_io(page))
+> >     >                  goto continue_unlock;
+> >     >
+> >     > -            ret = __write_data_page(page, &submitted, wbc);
+> >     > +            ret = __write_data_page(page, &submitted, wbc,
+> >     do_balance);
+> >     >              if (unlikely(ret)) {
+> >     >                  /*
+> >     >                   * keep nr_to_write, since vfs uses this to
+> >     > @@ -1756,8 +1756,8 @@ static int f2fs_write_cache_pages(struct
+> >     address_space *mapping,
+> >     >      return ret;
+> >     >  }
+> >     >
+> >     > -static int f2fs_write_data_pages(struct address_space *mapping,
+> >     > -                struct writeback_control *wbc)
+> >     > +static int _f2fs_write_data_pages(struct address_space *mapping,
+> >     > +                struct writeback_control *wbc, bool do_balance)
+> >     >  {
+> >     >      struct inode *inode = mapping->host;
+> >     >      struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> >     > @@ -1794,7 +1794,7 @@ static int f2fs_write_data_pages(struct
+> >     address_space *mapping,
+> >     >          goto skip_write;
+> >     >
+> >     >      blk_start_plug(&plug);
+> >     > -    ret = f2fs_write_cache_pages(mapping, wbc);
+> >     > +    ret = f2fs_write_cache_pages(mapping, wbc, do_balance);
+> >     >      blk_finish_plug(&plug);
+> >     >
+> >     >      if (wbc->sync_mode == WB_SYNC_ALL)
+> >     > @@ -1813,6 +1813,57 @@ static int f2fs_write_data_pages(struct
+> >     address_space *mapping,
+> >     >      return 0;
+> >     >  }
+> >     >
+> >     > +static int f2fs_write_data_pages(struct address_space *mapping,
+> >     > +                struct writeback_control *wbc)
+> >     > +{
+> >     > +    return    _f2fs_write_data_pages(mapping, wbc, true);
+> >     > +}
+> >     > +
+> >     > +/*
+> >     > + * This function was copied from do_writepages from
+> >     mm/page-writeback.c.
+> >     > + * The major change is changing writepages to
+> >     _f2fs_write_data_pages.
+> >     > + */
+> >     > +static int f2fs_do_writepages(struct address_space *mapping,
+> >     > +                struct writeback_control *wbc, bool is_dir)
+> >     > +{
+> >     > +    int ret;
+> >     > +
+> >     > +    if (wbc->nr_to_write <= 0)
+> >     > +        return 0;
+> >     > +    while (1) {
+> >     > +        ret = _f2fs_write_data_pages(mapping, wbc, !is_dir);
+> >     > +        if ((ret != -ENOMEM) || (wbc->sync_mode != WB_SYNC_ALL))
+> >     > +            break;
+> >     > +        cond_resched();
+> >     > +        congestion_wait(BLK_RW_ASYNC, HZ/50);
+> >     > +    }
+> >     > +    return ret;
+> >     > +}
+> >     > +
+> >     > +/*
+> >     > + * This function was copied from __filemap_fdatawrite_range from
+> >     > + * mm/filemap.c. The major change is changing do_writepages to
+> >     > + * f2fs_do_writepages.
+> >     > + */
+> >     > +int f2fs_filemap_fdatawrite(struct address_space *mapping, bool
+> >     is_dir)
+> >     > +{
+> >     > +    int ret;
+> >     > +    struct writeback_control wbc = {
+> >     > +        .sync_mode = WB_SYNC_ALL,
+> >     > +        .nr_to_write = LONG_MAX,
+> >     > +        .range_start = 0,
+> >     > +        .range_end = LLONG_MAX,
+> >     > +    };
+> >     > +
+> >     > +    if (!mapping_cap_writeback_dirty(mapping))
+> >     > +        return 0;
+> >     > +
+> >     > +    wbc_attach_fdatawrite_inode(&wbc, mapping->host);
+> >     > +    ret = f2fs_do_writepages(mapping, &wbc, is_dir);
+> >     > +    wbc_detach_inode(&wbc);
+> >     > +    return ret;
+> >     > +}
+> >     > +
+> >     >  static void f2fs_write_failed(struct address_space *mapping,
+> >     loff_t to)
+> >     >  {
+> >     >      struct inode *inode = mapping->host;
+> >     > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >     > index 9280283..ea9bebb 100644
+> >     > --- a/fs/f2fs/f2fs.h
+> >     > +++ b/fs/f2fs/f2fs.h
+> >     > @@ -2572,6 +2572,7 @@ void f2fs_invalidate_page(struct page
+> >     *page, unsigned int offset,
+> >     >  int f2fs_migrate_page(struct address_space *mapping, struct
+> >     page *newpage,
+> >     >              struct page *page, enum migrate_mode mode);
+> >     >  #endif
+> >     > +int f2fs_filemap_fdatawrite(struct address_space *mapping, bool
+> >     is_dir);
+> >     >
+> >     >  /*
+> >     >   * gc.c
+> >     > --
+> >     > 1.8.5.2
+> > 
 > 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 151968e..6f7731a 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -1535,6 +1535,10 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
->  			f2fs_bug_on(sbi, 1);
->  #endif
->  		}
-> +#ifdef CONFIG_F2FS_CHECK_FS
-> +		else
-> +			f2fs_set_bit(offset, se->cur_valid_map_mir);
-> +#endif
->  		if (f2fs_discard_en(sbi) &&
->  			!f2fs_test_and_set_bit(offset, se->discard_map))
->  			sbi->discard_blks--;
-> @@ -1556,6 +1560,10 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
->  			f2fs_bug_on(sbi, 1);
->  #endif
->  		}
-> +#ifdef CONFIG_F2FS_CHECK_FS
-> +		else
-> +			f2fs_clear_bit(offset, se->cur_valid_map_mir);
-> +#endif
->  		if (f2fs_discard_en(sbi) &&
->  			f2fs_test_and_clear_bit(offset, se->discard_map))
->  			sbi->discard_blks++;
+> -- 
+> Thanks,
+> Yunlong Song
 > 
