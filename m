@@ -1,48 +1,28 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH] f2fs: update cur_valid_map_mir together with cur_valid_map
-Date: Tue, 1 Aug 2017 15:56:46 +0800
-Message-ID: <1501574206-150946-1-git-send-email-yunlong.song@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix potential deadlock
+Date: Tue, 1 Aug 2017 23:39:55 +0800
+Message-ID: <2a25ca1a-68de-445d-b9b2-c3102cf3b2e6@kernel.org>
+References: <20170731123200.24257-1-yuchao0@huawei.com>
+ <20170731234909.GB3993@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170731234909.GB3993@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, sylinux@163.com, yunlong.song@huawei.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-When cur_valid_map passes the f2fs_test_and_set(,clear)_bit test,
-cur_valid_map_mir update is skipped unlikely, so fix it.
+Hi Jaegeuk,
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
----
- fs/f2fs/segment.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On 2017/8/1 7:49, Jaegeuk Kim wrote:
+> Hi Chao,
+> 
+> Let me integrate this patch into original freeze patch:
+>   (f2fs: make background threads of f2fs being aware of freezing)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 151968e..6f7731a 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1535,6 +1535,10 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
- 			f2fs_bug_on(sbi, 1);
- #endif
- 		}
-+#ifdef CONFIG_F2FS_CHECK_FS
-+		else
-+			f2fs_set_bit(offset, se->cur_valid_map_mir);
-+#endif
- 		if (f2fs_discard_en(sbi) &&
- 			!f2fs_test_and_set_bit(offset, se->discard_map))
- 			sbi->discard_blks--;
-@@ -1556,6 +1560,10 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
- 			f2fs_bug_on(sbi, 1);
- #endif
- 		}
-+#ifdef CONFIG_F2FS_CHECK_FS
-+		else
-+			f2fs_clear_bit(offset, se->cur_valid_map_mir);
-+#endif
- 		if (f2fs_discard_en(sbi) &&
- 			f2fs_test_and_clear_bit(offset, se->discard_map))
- 			sbi->discard_blks++;
--- 
-1.8.5.2
+It's OK to me. :)
+
+Thanks,
