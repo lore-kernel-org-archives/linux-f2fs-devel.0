@@ -1,187 +1,232 @@
 From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH] f2fs: update cur_valid_map_mir together with
- cur_valid_map
-Date: Wed, 2 Aug 2017 16:02:35 +0800
-Message-ID: <7e8346ed-8484-2ab9-85a1-03d232b16865@huawei.com>
-References: <1501574206-150946-1-git-send-email-yunlong.song@huawei.com>
- <d04ca5c3-f38f-fe48-a073-243e49bc243c@kernel.org>
- <c1935af.77af.15d9ebd35e3.Coremail.sylinux@163.com>
- <8be82ea4-db80-8f87-9029-e63d2926f7d1@huawei.com>
+Subject: Re: [PATCH] f2fs: provide f2fs_balance_fs to
+ __write_data_page for dentry pages
+Date: Wed, 2 Aug 2017 16:42:34 +0800
+Message-ID: <4568e3fb-272c-1d67-ac9f-2f0e194bcdd5@huawei.com>
+References: <1501334365-123333-1-git-send-email-yunlong.song@huawei.com>
+ <20170730073154.GA13058@jaegeuk-macbookpro.roam.corp.google.com>
+ <4916ac46.daf0.15d943f23b9.Coremail.sylinux@163.com>
+ <e2336730-40f4-efb9-48eb-7707fe3cbf11@huawei.com>
+ <20170801182254.GA52047@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <8be82ea4-db80-8f87-9029-e63d2926f7d1@huawei.com>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+ helo=mx.sourceforge.net)
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <yunlong.song@huawei.com>)
+ id 1dcpFO-0006Lj-M8
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 02 Aug 2017 08:43:18 +0000
+Received: from szxga02-in.huawei.com ([45.249.212.188])
+ by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1dcpFM-0007cR-7a
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 02 Aug 2017 08:43:18 +0000
+In-Reply-To: <20170801182254.GA52047@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>, Yunlong Song <sylinux@163.com>, Chao Yu <chao@kernel.org>
-Cc: jaegeuk <jaegeuk@kernel.org>, miaoxie <miaoxie@huawei.com>, "bintian.wang" <bintian.wang@huawei.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>, linux-kernel <linux-kernel@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: chao <chao@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>, Yunlong Song <sylinux@163.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
 
-Hi Chao,
-     For the memory overflow or cache bit-transition case, when CHECK_FS 
-is on, should f2fs
-enter panic or just provide WARNing information? I prefer WARNing, 
-because it is not f2fs's
-fault, f2fs does not need to pay for it, why not use WARN_ON instead?
-
-On 2017/8/2 9:34, Chao Yu wrote:
-> Hi Yunlong,
->
-> On 2017/8/2 0:59, Yunlong Song wrote:
->> Hi Chao,
->>      I think there is no need to test mirror bitmap when original bitmap's check
->> get passed, it is an instruction waste for "test". By the way, previous patch
->> uses WARN to skip trigger panic when the memory is flipped, I think it is proper
->> to not trigger panic in this situation, because it is not code bug at all in
->> such case.
-> Original idea is trying to use bitmap mirror to detect bitmap corruption caused
-> by memory overflow or bit-transition of cache.
->
-> So if we encounter inconsistency in between original bitmap and mirror bitmap,
-> there may be memory overflow or cache bit-transition, we need to detect that;
-> another case is that both bitmap is consistent, but we are trying to reuse valid
-> block address or free invalid block address, indeed that is a bug.
->
-> Below modification can cover above two cases, which make original idea of
-> introducing mirror bitmap check working correctly.
->
-> Thanks,
->
->> On 08/01/2017 23:44, Chao Yu <mailto:chao@kernel.org> wrote:
->>
->>      Hi Yunlong,
->>
->>      How about checking consistence in between original and mirror bitmap all
->>      the time as below?
->>
->>      ---
->>      fs/f2fs/segment.c | 41 +++++++++++++++++++++++++++--------------
->>      1 file changed, 27 insertions(+), 14 deletions(-)
->>
->>      diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>      index a26c24dae70c..f32a19cf486a 100644
->>      --- a/fs/f2fs/segment.c
->>      +++ b/fs/f2fs/segment.c
->>      @@ -1510,6 +1510,7 @@ static void update_sit_entry(struct f2fs_sb_info *sbi,
->>      block_t blkaddr, int del)
->>         struct seg_entry *se;
->>         unsigned int segno, offset;
->>         long int new_vblocks;
->>      +    bool exist, mir_exist;
->>
->>         segno = GET_SEGNO(sbi, blkaddr);
->>
->>      @@ -1526,17 +1527,23 @@ static void update_sit_entry(struct f2fs_sb_info
->>      *sbi, block_t blkaddr, int del)
->>
->>         /* Update valid block bitmap */
->>         if (del > 0) {
->>      -        if (f2fs_test_and_set_bit(offset, se->cur_valid_map)) {
->>      +        exist = f2fs_test_and_set_bit(offset, se->cur_valid_map);
->>      #ifdef CONFIG_F2FS_CHECK_FS
->>      -            if (f2fs_test_and_set_bit(offset,
->>      -                        se->cur_valid_map_mir))
->>      -                f2fs_bug_on(sbi, 1);
->>      -            else
->>      -                WARN_ON(1);
->>      -#else
->>      +        mir_exist = f2fs_test_and_set_bit(offset,
->>      +                        se->cur_valid_map_mir);
->>      +        if (exist != mir_exist) {
->>      +            f2fs_msg(sbi->sb, KERN_ERR, "Inconsistent error "
->>      +                "when setting bitmap, blk:%u, old bit:%d",
->>      +                blkaddr, exist);
->>                 f2fs_bug_on(sbi, 1);
->>      +        }
->>      #endif
->>      +        if (exist) {
->>      +            f2fs_msg(sbi->sb, KERN_ERR,
->>      +                "Bitmap was set, blk:%u", blkaddr);
->>      +            f2fs_bug_on(sbi, 1);
->>             }
->>      +
->>             if (f2fs_discard_en(sbi) &&
->>                 !f2fs_test_and_set_bit(offset, se->discard_map))
->>                 sbi->discard_blks--;
->>      @@ -1547,17 +1554,23 @@ static void update_sit_entry(struct f2fs_sb_info
->>      *sbi, block_t blkaddr, int del)
->>                     se->ckpt_valid_blocks++;
->>             }
->>         } else {
->>      -        if (!f2fs_test_and_clear_bit(offset, se->cur_valid_map)) {
->>      +        exist = f2fs_test_and_clear_bit(offset, se->cur_valid_map);
->>      #ifdef CONFIG_F2FS_CHECK_FS
->>      -            if (!f2fs_test_and_clear_bit(offset,
->>      -                        se->cur_valid_map_mir))
->>      -                f2fs_bug_on(sbi, 1);
->>      -            else
->>      -                WARN_ON(1);
->>      -#else
->>      +        mir_exist = f2fs_test_and_clear_bit(offset,
->>      +                        se->cur_valid_map_mir);
->>      +        if (exist != mir_exist) {
->>      +            f2fs_msg(sbi->sb, KERN_ERR, "Inconsistent error "
->>      +                "when clearing bitmap, blk:%u, old bit:%d",
->>      +                blkaddr, exist);
->>                 f2fs_bug_on(sbi, 1);
->>      +        }
->>      #endif
->>      +        if (!exist) {
->>      +            f2fs_msg(sbi->sb, KERN_ERR,
->>      +                "Bitmap was cleared, blk:%u", blkaddr);
->>      +            f2fs_bug_on(sbi, 1);
->>             }
->>      +
->>             if (f2fs_discard_en(sbi) &&
->>                 f2fs_test_and_clear_bit(offset, se->discard_map))
->>                 sbi->discard_blks++;
->>      --
->>      2.13.0.90.g1eb437020
->>
->>      On 2017/8/1 15:56, Yunlong Song wrote:
->>      > When cur_valid_map passes the f2fs_test_and_set(,clear)_bit test,
->>      > cur_valid_map_mir update is skipped unlikely, so fix it.
->>      >
->>      > Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->>      > ---
->>      >  fs/f2fs/segment.c | 8 ++++++++
->>      >  1 file changed, 8 insertions(+)
->>      >
->>      > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>      > index 151968e..6f7731a 100644
->>      > --- a/fs/f2fs/segment.c
->>      > +++ b/fs/f2fs/segment.c
->>      > @@ -1535,6 +1535,10 @@ static void update_sit_entry(struct f2fs_sb_info
->>      *sbi, block_t blkaddr, int del)
->>      >              f2fs_bug_on(sbi, 1);
->>      >  #endif
->>      >          }
->>      > +#ifdef CONFIG_F2FS_CHECK_FS
->>      > +        else
->>      > +            f2fs_set_bit(offset, se->cur_valid_map_mir);
->>      > +#endif
->>      >          if (f2fs_discard_en(sbi) &&
->>      >              !f2fs_test_and_set_bit(offset, se->discard_map))
->>      >              sbi->discard_blks--;
->>      > @@ -1556,6 +1560,10 @@ static void update_sit_entry(struct f2fs_sb_info
->>      *sbi, block_t blkaddr, int del)
->>      >              f2fs_bug_on(sbi, 1);
->>      >  #endif
->>      >          }
->>      > +#ifdef CONFIG_F2FS_CHECK_FS
->>      > +        else
->>      > +            f2fs_clear_bit(offset, se->cur_valid_map_mir);
->>      > +#endif
->>      >          if (f2fs_discard_en(sbi) &&
->>      >              f2fs_test_and_clear_bit(offset, se->discard_map))
->>      >              sbi->discard_blks++;
->>      >
->>
->
-> .
->
-
--- 
-Thanks,
-Yunlong Song
+SGkgSmF5LAogICAgIFRoZSBjYXNlIGlzIGxpa2UgdGhpczoKICAgd3JpdGVfY2hlY2twb2ludDog
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbm9ybWFsIApkZW50cnkg
+cGFnZSB3cml0ZWJhY2sgb2YgaW5vZGVC77yaCiAgICAgLWJsb2NrX29wZXJhdGlvbnMgLWYyZnNf
+d3JpdGVfZGF0YV9wYWdlcwogICAgICAgICAtU0JJX0JMT0NLX09QUyBpcyBzZXQgLWYyZnNfd3Jp
+dGVfY2FjaGVfcGFnZXMKICAgICAgICAgLXN5bmNfZGlydHlfaW5vZGVzICAgICAgIC1fX3dyaXRl
+X2RhdGFfcGFnZQogICAgICAgICAgICAtcmV0cnk6ICAgICAgICAgICAgICAgICAgICAtdGVzdCBT
+QklfQkxPQ0tfT1BTIGlzIHNldCBhbmQgCnNraXAgZjJmc19iYWxhbmNlX2ZzCiAgICAgICAgICAg
+ICAgICAgaW5vZGVBIDwtIGxpc3RfZmlyc3RfZW50cnkoZGlydHlfbGlzdCkKICAgICAgICAgICAg
+ICAgICBmaWxlbWFwX2ZkYXRhd3JpdGUoaW5vZGVBKQogICAgICAgICAgICAgICAgIGdvdG8gcmV0
+cnkKICAgICAgICAgLVNCSV9CTE9DS19PUFMgaXMgY2xlYXIKCndyaXRlX2NoZWNrcG9pbnQgZmxv
+dyBjYWxsIHN5bmNfZGlydHlfaW5vZGVzIHRvIHRyYXZlcnNhbCB0aGUgZGlydHkgCmlub2RlIGxp
+c3QgYW5kIGZpbGVtYXBfZmRhdGF3cml0ZSBlYWNoIGlub2RlLApkdXJpbmcgdGhpcyBwZXJpb2Qs
+IGlmIG5vcm1hbCBkZW50cnlfcGFnZSB3cml0ZWJhY2sgaXMgcHJvY2Vzc2luZyAKaW5vZGVCLCBh
+bmQgc3ljX2RpcnR5X2lub2RlcyBpcyBwcm9jZXNzaW5nCmlub2RlQSwgdGhlbiBpbm9kZUIgd3Jp
+dGViYWNrIGZsb3cgd2lsbCBza2lwIGYyZnNfYmFsYW5jZV9mcyBhbmQgbWF5IAp3cml0ZSB0aGUg
+ZGVudHJ5IHBhZ2UgdG8gcmVzZXJ2ZWQgc2VnbWVudHMuCgpPbiAyMDE3LzgvMiAyOjIyLCBKYWVn
+ZXVrIEtpbSB3cm90ZToKPiBPbiAwOC8wMSwgWXVubG9uZyBTb25nIHdyb3RlOgo+PiBIaSBKYXks
+Cj4+ICAgICAgVGhlIFNCSV9CTE9DS19PUFMgY2FuIG5vdCBjb3ZlciBhbGwgdGhlIGNhc2UsIG9u
+Y2UgU0JJX0JMT0NLX09QUyBpcyBzZXQsCj4+IGFsbCB0aGUgbm9ybWFsIHdyaXRlYmFjawo+PiAo
+YmVmb3JlIHRoZSBTQklfQkxPQ0tfT1BTIGlzIGNsZWFyKSBvZiBkZW50cnkgcGFnZXMgd2hpY2gg
+ZG8gbm90IGNvbWUgZnJvbQo+PiB3cml0ZV9jaGVja3BvaW50IGZsb3cgd2lsbAo+PiB0b3RhbGx5
+IG1pc3MgYWxsIHRoZSBmMmZzX2JhbGFuY2VfZnMgY2hlY2suCj4gV2h5IG5vdD8gVGhlcmUgbXVz
+dCBiZSBubyBkaXJ0eSBkZW50cnkgcGFnZXMgYWZ0ZXIgc3luY19kaXJ0eV9pbm9kZXMoKSBpbiB0
+aGF0Cj4gcGVyaW9kIHdoaWNoIHdlIGdyYWJiZWQgdGhlIGdsb2JsYSBsb2NrLgo+Cj4gVGhhbmtz
+LAo+Cj4+IE9uIDIwMTcvNy8zMSAwOjA1LCBZdW5sb25nIFNvbmcgd3JvdGU6Cj4+PiBIaSBKYXks
+Cj4+PiAgICAgIENoYW8gaGFzIHBvaW50ZWQgb3V0IG9uZSByZWFzb24sIGJlc2lkZXMsIEkgaGF2
+ZSBhbm90aGVyIHJlYXNvbjogd2UKPj4+IHNob3VsZCB0YWtlIGNhcmUgb2Ygd3JpdGViYWNrIGZv
+ciBmMmZzX2JhbGFuY2VfZnMgY2FyZWZ1bGx5LCBiZWNhdXNlIGlmCj4+PiBzb21lIGJ1Z3MgY2F1
+c2UgcmVzZXJ2ZWQgc2VnbWVudHMgdW5saWtlbHkgdXNlZCwgd2hpY2ggbWVhbnMKPj4+IGYyZnNf
+YmFsYW5jZV9mcyBkb2VzIG5vdCB3b3JrIG9yIGlzIHNraXBwZWQgaW4gc29tZSBjb3JuZXIgY2Fz
+ZSB0aGF0IHdlCj4+PiBoYXZlIG5vdCBub3RpY2VkIG9yIGZvdW5kIG91dCB5ZXQsIHRoZW4gdGhl
+IHJlc2VydmVkIHNlZ21lbnRzIG1heSBiZQo+Pj4gY29udGludWFsbHkgdXNlZCBhbmQgZXZlbiB1
+c2VkIHVwIGluIHRoZSB3cml0ZWJhY2sgcHJvY2VzcyBvZiBkZW50cnkKPj4+IHBhZ2UsICBzaW5j
+ZSBjdXJyZW50ICBkZXNpZ24gYmVsaWV2ZSBpbiB0aGUgZjJmc19iYWxhbmNlX2ZzIGluIHN5c3Rl
+bQo+Pj4gY2FsbCBhbmQgaGFzIG5vIGNoZWNrIGluIGRlbnR5IHBhZ2Ugd3JpdGViYWNrLiBUbyBh
+dm9pZCB0aGlzLCB3ZSBjYW4gcHV0Cj4+PiBhIGYyZnNfYmFsYW5jZV9mcyBpbiB0aGUgZGVudHJ5
+IHBhZ2Ugd3JpdGViYWNrIHByb2Nlc3MgdG8gZ2l2ZSBmMmZzIG1vcmUKPj4+IHJvYnVzdCBpbiBm
+cmVlIHNlZ21lbnRzIHJlc2VydmVkLiBUaGlzIGlzIHdvcnRoLCBiZWNhdXNlIGZyZWUgc2VnbWVu
+dHMKPj4+IHJlc2VydmVkIGFyZSBzbyBpbXBvcnRhbnQsIGlmIHRoZXkgYXJlIHVzZWQgdXAsIGYy
+ZnMgd2lsbCBlbnRlciBhCj4+PiB0b3RhbGx5IHdyb25nIHN0YXR1cyBhbmQgbWFrZSBhIHdyb25n
+IGltYWdlLgo+Pj4KPj4+IE9uIDA3LzMwLzIwMTcgMTU6MzEsIEphZWdldWsgS2ltIDxtYWlsdG86
+amFlZ2V1a0BrZXJuZWwub3JnPiB3cm90ZToKPj4+Cj4+PiAgICAgIE9uIDA3LzI5LCBZdW5sb25n
+IFNvbmcgd3JvdGU6Cj4+PiAgICAgID4gZjJmc19iYWxhbmNlX2ZzIG9mIGRlbnRyeSBwYWdlcyBp
+cyBza2lwcGVkIGluIF9fd3JpdGVfZGF0YV9wYWdlCj4+PiAgICAgIGR1ZSB0byBkZWFkbG9jawo+
+Pj4gICAgICA+IG9mIGdjX211dGV4IGluIHdyaXRlX2NoZWNrcG9pbnQgZmxvdy4gVGhpcyBwYXRj
+aCBlbmFibGVzCj4+PiAgICAgIGYyZnNfYmFsYW5jZV9mcyBmb3IKPj4+ICAgICAgPiBub3JtYWwg
+ZGVudHJ5IHBhZ2Ugd3JpdGViYWNrIHRvIGVuc3VyZSB0aGVyZSBhcmUgYWx3YXlzIGVub3VnaAo+
+Pj4gICAgICBmcmVlIHNlZ21lbnRzLgo+Pj4KPj4+ICAgICAgU29ycnksIGJ5IHRoZSB3YXksIHdo
+eSBkbyB3ZSBuZWVkIHRvIGRvIHRoaXM/IEkgc3VidGx5IHRob3VnaHQKPj4+ICAgICAgdGhhdCBk
+aXJ0eSBub2RlCj4+PiAgICAgIHBhZ2VzIGNhbiBiZSBwcm9kdWNlIGJ5IHJlZGlydGllZCBpbm9k
+ZXMgZnJvbSB3aGF0IHdlJ3ZlIG5vdAo+Pj4gICAgICBjb3ZlcmVkIHRocm91Z2gKPj4+ICAgICAg
+ZmlsZXN5c3RlbSBjYWxscy4gQnV0LCBpbiBkZW50cnkgcGFnZXMsIHdlJ3JlIGNvbnRyb2xsaW5n
+IHRoZQo+Pj4gICAgICBudW1iZXIgb2YgZGlydHkKPj4+ICAgICAgcGFnZXMsIGFuZCBjYWxsaW5n
+IGYyZnNfYmFsYW5jZV9mcyBpbiBlYWNoIGRpcmVjdG9yeSBvcGVyYXRpb25zLgo+Pj4KPj4+ICAg
+ICAgQ2hhbz8KPj4+Cj4+PiAgICAgIFRoYW5rcywKPj4+Cj4+PiAgICAgID4KPj4+ICAgICAgPiBS
+ZXBvcnRlZC1ieTogQ2hhbyBZdSA8eXVjaGFvMEBodWF3ZWkuY29tPgo+Pj4gICAgICA+IFNpZ25l
+ZC1vZmYtYnk6IFl1bmxvbmcgU29uZyA8eXVubG9uZy5zb25nQGh1YXdlaS5jb20+Cj4+PiAgICAg
+ID4gLS0tCj4+PiAgICAgID4gIGZzL2YyZnMvY2hlY2twb2ludC5jIHwgIDIgKy0KPj4+ICAgICAg
+PiAgZnMvZjJmcy9kYXRhLmMgICAgICAgfCA2Nwo+Pj4gICAgICArKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0tCj4+PiAgICAgID4gIGZzL2YyZnMvZjJm
+cy5oICAgICAgIHwgIDEgKwo+Pj4gICAgICA+ICAzIGZpbGVzIGNoYW5nZWQsIDYxIGluc2VydGlv
+bnMoKyksIDkgZGVsZXRpb25zKC0pCj4+PiAgICAgID4KPj4+ICAgICAgPiBkaWZmIC0tZ2l0IGEv
+ZnMvZjJmcy9jaGVja3BvaW50LmMgYi9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+Pj4gICAgICA+IGlu
+ZGV4IDNjODRhMjUuLjI4ODI4NzggMTAwNjQ0Cj4+PiAgICAgID4gLS0tIGEvZnMvZjJmcy9jaGVj
+a3BvaW50LmMKPj4+ICAgICAgPiArKysgYi9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+Pj4gICAgICA+
+IEBAIC05MDQsNyArOTA0LDcgQEAgaW50IHN5bmNfZGlydHlfaW5vZGVzKHN0cnVjdCBmMmZzX3Ni
+X2luZm8KPj4+ICAgICAgKnNiaSwgZW51bSBpbm9kZV90eXBlIHR5cGUpCj4+PiAgICAgID4gICAg
+ICBpZiAoaW5vZGUpIHsKPj4+ICAgICAgPiAgICAgICAgICB1bnNpZ25lZCBsb25nIGN1cl9pbm8g
+PSBpbm9kZS0+aV9pbm87Cj4+PiAgICAgID4KPj4+ICAgICAgPiAtICAgICAgICBmaWxlbWFwX2Zk
+YXRhd3JpdGUoaW5vZGUtPmlfbWFwcGluZyk7Cj4+PiAgICAgID4gKyAgICAgICAgZjJmc19maWxl
+bWFwX2ZkYXRhd3JpdGUoaW5vZGUtPmlfbWFwcGluZywgaXNfZGlyKTsKPj4+ICAgICAgPiAgICAg
+ICAgICBpcHV0KGlub2RlKTsKPj4+ICAgICAgPiAgICAgICAgICAvKiBXZSBuZWVkIHRvIGdpdmUg
+Y3B1IHRvIGFub3RoZXIgd3JpdGVycy4gKi8KPj4+ICAgICAgPiAgICAgICAgICBpZiAoaW5vID09
+IGN1cl9pbm8pIHsKPj4+ICAgICAgPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9kYXRhLmMgYi9mcy9m
+MmZzL2RhdGEuYwo+Pj4gICAgICA+IGluZGV4IGFlZmMyYTUuLmVkN2VmYTUgMTAwNjQ0Cj4+PiAg
+ICAgID4gLS0tIGEvZnMvZjJmcy9kYXRhLmMKPj4+ICAgICAgPiArKysgYi9mcy9mMmZzL2RhdGEu
+Ywo+Pj4gICAgICA+IEBAIC0xNDc1LDcgKzE0NzUsNyBAQCBpbnQgZG9fd3JpdGVfZGF0YV9wYWdl
+KHN0cnVjdCBmMmZzX2lvX2luZm8KPj4+ICAgICAgKmZpbykKPj4+ICAgICAgPiAgfQo+Pj4gICAg
+ICA+Cj4+PiAgICAgID4gIHN0YXRpYyBpbnQgX193cml0ZV9kYXRhX3BhZ2Uoc3RydWN0IHBhZ2Ug
+KnBhZ2UsIGJvb2wgKnN1Ym1pdHRlZCwKPj4+ICAgICAgPiAtICAgICAgICAgICAgICAgIHN0cnVj
+dCB3cml0ZWJhY2tfY29udHJvbCAqd2JjKQo+Pj4gICAgICA+ICsgICAgICAgICAgICAgICAgc3Ry
+dWN0IHdyaXRlYmFja19jb250cm9sICp3YmMsIGJvb2wgZG9fYmFsYW5jZSkKPj4+ICAgICAgPiAg
+ewo+Pj4gICAgICA+ICAgICAgc3RydWN0IGlub2RlICppbm9kZSA9IHBhZ2UtPm1hcHBpbmctPmhv
+c3Q7Cj4+PiAgICAgID4gICAgICBzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkgPSBGMkZTX0lfU0Io
+aW5vZGUpOwo+Pj4gICAgICA+IEBAIC0xNTc4LDcgKzE1NzgsNyBAQCBzdGF0aWMgaW50IF9fd3Jp
+dGVfZGF0YV9wYWdlKHN0cnVjdCBwYWdlCj4+PiAgICAgICpwYWdlLCBib29sICpzdWJtaXR0ZWQs
+Cj4+PiAgICAgID4gICAgICB9Cj4+PiAgICAgID4KPj4+ICAgICAgPiAgICAgIHVubG9ja19wYWdl
+KHBhZ2UpOwo+Pj4gICAgICA+IC0gICAgaWYgKCFTX0lTRElSKGlub2RlLT5pX21vZGUpKQo+Pj4g
+ICAgICA+ICsgICAgaWYgKGRvX2JhbGFuY2UpCj4+PiAgICAgID4gICAgICAgICAgZjJmc19iYWxh
+bmNlX2ZzKHNiaSwgbmVlZF9iYWxhbmNlX2ZzKTsKPj4+ICAgICAgPgo+Pj4gICAgICA+ICAgICAg
+aWYgKHVubGlrZWx5KGYyZnNfY3BfZXJyb3Ioc2JpKSkpIHsKPj4+ICAgICAgPiBAQCAtMTYwMiw3
+ICsxNjAyLDcgQEAgc3RhdGljIGludCBfX3dyaXRlX2RhdGFfcGFnZShzdHJ1Y3QgcGFnZQo+Pj4g
+ICAgICAqcGFnZSwgYm9vbCAqc3VibWl0dGVkLAo+Pj4gICAgICA+ICBzdGF0aWMgaW50IGYyZnNf
+d3JpdGVfZGF0YV9wYWdlKHN0cnVjdCBwYWdlICpwYWdlLAo+Pj4gICAgICA+ICAgICAgICAgICAg
+ICAgICAgICAgIHN0cnVjdCB3cml0ZWJhY2tfY29udHJvbCAqd2JjKQo+Pj4gICAgICA+ICB7Cj4+
+PiAgICAgID4gLSAgICByZXR1cm4gX193cml0ZV9kYXRhX3BhZ2UocGFnZSwgTlVMTCwgd2JjKTsK
+Pj4+ICAgICAgPiArICAgIHJldHVybiBfX3dyaXRlX2RhdGFfcGFnZShwYWdlLCBOVUxMLCB3YmMs
+IHRydWUpOwo+Pj4gICAgICA+ICB9Cj4+PiAgICAgID4KPj4+ICAgICAgPiAgLyoKPj4+ICAgICAg
+PiBAQCAtMTYxMSw3ICsxNjExLDcgQEAgc3RhdGljIGludCBmMmZzX3dyaXRlX2RhdGFfcGFnZShz
+dHJ1Y3QKPj4+ICAgICAgcGFnZSAqcGFnZSwKPj4+ICAgICAgPiAgICogd2FybS9ob3QgZGF0YSBw
+YWdlLgo+Pj4gICAgICA+ICAgKi8KPj4+ICAgICAgPiAgc3RhdGljIGludCBmMmZzX3dyaXRlX2Nh
+Y2hlX3BhZ2VzKHN0cnVjdCBhZGRyZXNzX3NwYWNlICptYXBwaW5nLAo+Pj4gICAgICA+IC0gICAg
+ICAgICAgICAgICAgICAgIHN0cnVjdCB3cml0ZWJhY2tfY29udHJvbCAqd2JjKQo+Pj4gICAgICA+
+ICsgICAgICAgICAgICAgICAgICAgIHN0cnVjdCB3cml0ZWJhY2tfY29udHJvbCAqd2JjLCBib29s
+Cj4+PiAgICAgIGRvX2JhbGFuY2UpCj4+PiAgICAgID4gIHsKPj4+ICAgICAgPiAgICAgIGludCBy
+ZXQgPSAwOwo+Pj4gICAgICA+ICAgICAgaW50IGRvbmUgPSAwOwo+Pj4gICAgICA+IEBAIC0xNzAx
+LDcgKzE3MDEsNyBAQCBzdGF0aWMgaW50IGYyZnNfd3JpdGVfY2FjaGVfcGFnZXMoc3RydWN0Cj4+
+PiAgICAgIGFkZHJlc3Nfc3BhY2UgKm1hcHBpbmcsCj4+PiAgICAgID4gICAgICAgICAgICAgIGlm
+ICghY2xlYXJfcGFnZV9kaXJ0eV9mb3JfaW8ocGFnZSkpCj4+PiAgICAgID4gICAgICAgICAgICAg
+ICAgICBnb3RvIGNvbnRpbnVlX3VubG9jazsKPj4+ICAgICAgPgo+Pj4gICAgICA+IC0gICAgICAg
+ICAgICByZXQgPSBfX3dyaXRlX2RhdGFfcGFnZShwYWdlLCAmc3VibWl0dGVkLCB3YmMpOwo+Pj4g
+ICAgICA+ICsgICAgICAgICAgICByZXQgPSBfX3dyaXRlX2RhdGFfcGFnZShwYWdlLCAmc3VibWl0
+dGVkLCB3YmMsCj4+PiAgICAgIGRvX2JhbGFuY2UpOwo+Pj4gICAgICA+ICAgICAgICAgICAgICBp
+ZiAodW5saWtlbHkocmV0KSkgewo+Pj4gICAgICA+ICAgICAgICAgICAgICAgICAgLyoKPj4+ICAg
+ICAgPiAgICAgICAgICAgICAgICAgICAqIGtlZXAgbnJfdG9fd3JpdGUsIHNpbmNlIHZmcyB1c2Vz
+IHRoaXMgdG8KPj4+ICAgICAgPiBAQCAtMTc1Niw4ICsxNzU2LDggQEAgc3RhdGljIGludCBmMmZz
+X3dyaXRlX2NhY2hlX3BhZ2VzKHN0cnVjdAo+Pj4gICAgICBhZGRyZXNzX3NwYWNlICptYXBwaW5n
+LAo+Pj4gICAgICA+ICAgICAgcmV0dXJuIHJldDsKPj4+ICAgICAgPiAgfQo+Pj4gICAgICA+Cj4+
+PiAgICAgID4gLXN0YXRpYyBpbnQgZjJmc193cml0ZV9kYXRhX3BhZ2VzKHN0cnVjdCBhZGRyZXNz
+X3NwYWNlICptYXBwaW5nLAo+Pj4gICAgICA+IC0gICAgICAgICAgICAgICAgc3RydWN0IHdyaXRl
+YmFja19jb250cm9sICp3YmMpCj4+PiAgICAgID4gK3N0YXRpYyBpbnQgX2YyZnNfd3JpdGVfZGF0
+YV9wYWdlcyhzdHJ1Y3QgYWRkcmVzc19zcGFjZSAqbWFwcGluZywKPj4+ICAgICAgPiArICAgICAg
+ICAgICAgICAgIHN0cnVjdCB3cml0ZWJhY2tfY29udHJvbCAqd2JjLCBib29sIGRvX2JhbGFuY2Up
+Cj4+PiAgICAgID4gIHsKPj4+ICAgICAgPiAgICAgIHN0cnVjdCBpbm9kZSAqaW5vZGUgPSBtYXBw
+aW5nLT5ob3N0Owo+Pj4gICAgICA+ICAgICAgc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpID0gRjJG
+U19JX1NCKGlub2RlKTsKPj4+ICAgICAgPiBAQCAtMTc5NCw3ICsxNzk0LDcgQEAgc3RhdGljIGlu
+dCBmMmZzX3dyaXRlX2RhdGFfcGFnZXMoc3RydWN0Cj4+PiAgICAgIGFkZHJlc3Nfc3BhY2UgKm1h
+cHBpbmcsCj4+PiAgICAgID4gICAgICAgICAgZ290byBza2lwX3dyaXRlOwo+Pj4gICAgICA+Cj4+
+PiAgICAgID4gICAgICBibGtfc3RhcnRfcGx1ZygmcGx1Zyk7Cj4+PiAgICAgID4gLSAgICByZXQg
+PSBmMmZzX3dyaXRlX2NhY2hlX3BhZ2VzKG1hcHBpbmcsIHdiYyk7Cj4+PiAgICAgID4gKyAgICBy
+ZXQgPSBmMmZzX3dyaXRlX2NhY2hlX3BhZ2VzKG1hcHBpbmcsIHdiYywgZG9fYmFsYW5jZSk7Cj4+
+PiAgICAgID4gICAgICBibGtfZmluaXNoX3BsdWcoJnBsdWcpOwo+Pj4gICAgICA+Cj4+PiAgICAg
+ID4gICAgICBpZiAod2JjLT5zeW5jX21vZGUgPT0gV0JfU1lOQ19BTEwpCj4+PiAgICAgID4gQEAg
+LTE4MTMsNiArMTgxMyw1NyBAQCBzdGF0aWMgaW50IGYyZnNfd3JpdGVfZGF0YV9wYWdlcyhzdHJ1
+Y3QKPj4+ICAgICAgYWRkcmVzc19zcGFjZSAqbWFwcGluZywKPj4+ICAgICAgPiAgICAgIHJldHVy
+biAwOwo+Pj4gICAgICA+ICB9Cj4+PiAgICAgID4KPj4+ICAgICAgPiArc3RhdGljIGludCBmMmZz
+X3dyaXRlX2RhdGFfcGFnZXMoc3RydWN0IGFkZHJlc3Nfc3BhY2UgKm1hcHBpbmcsCj4+PiAgICAg
+ID4gKyAgICAgICAgICAgICAgICBzdHJ1Y3Qgd3JpdGViYWNrX2NvbnRyb2wgKndiYykKPj4+ICAg
+ICAgPiArewo+Pj4gICAgICA+ICsgICAgcmV0dXJuICAgIF9mMmZzX3dyaXRlX2RhdGFfcGFnZXMo
+bWFwcGluZywgd2JjLCB0cnVlKTsKPj4+ICAgICAgPiArfQo+Pj4gICAgICA+ICsKPj4+ICAgICAg
+PiArLyoKPj4+ICAgICAgPiArICogVGhpcyBmdW5jdGlvbiB3YXMgY29waWVkIGZyb20gZG9fd3Jp
+dGVwYWdlcyBmcm9tCj4+PiAgICAgIG1tL3BhZ2Utd3JpdGViYWNrLmMuCj4+PiAgICAgID4gKyAq
+IFRoZSBtYWpvciBjaGFuZ2UgaXMgY2hhbmdpbmcgd3JpdGVwYWdlcyB0bwo+Pj4gICAgICBfZjJm
+c193cml0ZV9kYXRhX3BhZ2VzLgo+Pj4gICAgICA+ICsgKi8KPj4+ICAgICAgPiArc3RhdGljIGlu
+dCBmMmZzX2RvX3dyaXRlcGFnZXMoc3RydWN0IGFkZHJlc3Nfc3BhY2UgKm1hcHBpbmcsCj4+PiAg
+ICAgID4gKyAgICAgICAgICAgICAgICBzdHJ1Y3Qgd3JpdGViYWNrX2NvbnRyb2wgKndiYywgYm9v
+bCBpc19kaXIpCj4+PiAgICAgID4gK3sKPj4+ICAgICAgPiArICAgIGludCByZXQ7Cj4+PiAgICAg
+ID4gKwo+Pj4gICAgICA+ICsgICAgaWYgKHdiYy0+bnJfdG9fd3JpdGUgPD0gMCkKPj4+ICAgICAg
+PiArICAgICAgICByZXR1cm4gMDsKPj4+ICAgICAgPiArICAgIHdoaWxlICgxKSB7Cj4+PiAgICAg
+ID4gKyAgICAgICAgcmV0ID0gX2YyZnNfd3JpdGVfZGF0YV9wYWdlcyhtYXBwaW5nLCB3YmMsICFp
+c19kaXIpOwo+Pj4gICAgICA+ICsgICAgICAgIGlmICgocmV0ICE9IC1FTk9NRU0pIHx8ICh3YmMt
+PnN5bmNfbW9kZSAhPSBXQl9TWU5DX0FMTCkpCj4+PiAgICAgID4gKyAgICAgICAgICAgIGJyZWFr
+Owo+Pj4gICAgICA+ICsgICAgICAgIGNvbmRfcmVzY2hlZCgpOwo+Pj4gICAgICA+ICsgICAgICAg
+IGNvbmdlc3Rpb25fd2FpdChCTEtfUldfQVNZTkMsIEhaLzUwKTsKPj4+ICAgICAgPiArICAgIH0K
+Pj4+ICAgICAgPiArICAgIHJldHVybiByZXQ7Cj4+PiAgICAgID4gK30KPj4+ICAgICAgPiArCj4+
+PiAgICAgID4gKy8qCj4+PiAgICAgID4gKyAqIFRoaXMgZnVuY3Rpb24gd2FzIGNvcGllZCBmcm9t
+IF9fZmlsZW1hcF9mZGF0YXdyaXRlX3JhbmdlIGZyb20KPj4+ICAgICAgPiArICogbW0vZmlsZW1h
+cC5jLiBUaGUgbWFqb3IgY2hhbmdlIGlzIGNoYW5naW5nIGRvX3dyaXRlcGFnZXMgdG8KPj4+ICAg
+ICAgPiArICogZjJmc19kb193cml0ZXBhZ2VzLgo+Pj4gICAgICA+ICsgKi8KPj4+ICAgICAgPiAr
+aW50IGYyZnNfZmlsZW1hcF9mZGF0YXdyaXRlKHN0cnVjdCBhZGRyZXNzX3NwYWNlICptYXBwaW5n
+LCBib29sCj4+PiAgICAgIGlzX2RpcikKPj4+ICAgICAgPiArewo+Pj4gICAgICA+ICsgICAgaW50
+IHJldDsKPj4+ICAgICAgPiArICAgIHN0cnVjdCB3cml0ZWJhY2tfY29udHJvbCB3YmMgPSB7Cj4+
+PiAgICAgID4gKyAgICAgICAgLnN5bmNfbW9kZSA9IFdCX1NZTkNfQUxMLAo+Pj4gICAgICA+ICsg
+ICAgICAgIC5ucl90b193cml0ZSA9IExPTkdfTUFYLAo+Pj4gICAgICA+ICsgICAgICAgIC5yYW5n
+ZV9zdGFydCA9IDAsCj4+PiAgICAgID4gKyAgICAgICAgLnJhbmdlX2VuZCA9IExMT05HX01BWCwK
+Pj4+ICAgICAgPiArICAgIH07Cj4+PiAgICAgID4gKwo+Pj4gICAgICA+ICsgICAgaWYgKCFtYXBw
+aW5nX2NhcF93cml0ZWJhY2tfZGlydHkobWFwcGluZykpCj4+PiAgICAgID4gKyAgICAgICAgcmV0
+dXJuIDA7Cj4+PiAgICAgID4gKwo+Pj4gICAgICA+ICsgICAgd2JjX2F0dGFjaF9mZGF0YXdyaXRl
+X2lub2RlKCZ3YmMsIG1hcHBpbmctPmhvc3QpOwo+Pj4gICAgICA+ICsgICAgcmV0ID0gZjJmc19k
+b193cml0ZXBhZ2VzKG1hcHBpbmcsICZ3YmMsIGlzX2Rpcik7Cj4+PiAgICAgID4gKyAgICB3YmNf
+ZGV0YWNoX2lub2RlKCZ3YmMpOwo+Pj4gICAgICA+ICsgICAgcmV0dXJuIHJldDsKPj4+ICAgICAg
+PiArfQo+Pj4gICAgICA+ICsKPj4+ICAgICAgPiAgc3RhdGljIHZvaWQgZjJmc193cml0ZV9mYWls
+ZWQoc3RydWN0IGFkZHJlc3Nfc3BhY2UgKm1hcHBpbmcsCj4+PiAgICAgIGxvZmZfdCB0bykKPj4+
+ICAgICAgPiAgewo+Pj4gICAgICA+ICAgICAgc3RydWN0IGlub2RlICppbm9kZSA9IG1hcHBpbmct
+Pmhvc3Q7Cj4+PiAgICAgID4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvZjJmcy5oIGIvZnMvZjJmcy9m
+MmZzLmgKPj4+ICAgICAgPiBpbmRleCA5MjgwMjgzLi5lYTliZWJiIDEwMDY0NAo+Pj4gICAgICA+
+IC0tLSBhL2ZzL2YyZnMvZjJmcy5oCj4+PiAgICAgID4gKysrIGIvZnMvZjJmcy9mMmZzLmgKPj4+
+ICAgICAgPiBAQCAtMjU3Miw2ICsyNTcyLDcgQEAgdm9pZCBmMmZzX2ludmFsaWRhdGVfcGFnZShz
+dHJ1Y3QgcGFnZQo+Pj4gICAgICAqcGFnZSwgdW5zaWduZWQgaW50IG9mZnNldCwKPj4+ICAgICAg
+PiAgaW50IGYyZnNfbWlncmF0ZV9wYWdlKHN0cnVjdCBhZGRyZXNzX3NwYWNlICptYXBwaW5nLCBz
+dHJ1Y3QKPj4+ICAgICAgcGFnZSAqbmV3cGFnZSwKPj4+ICAgICAgPiAgICAgICAgICAgICAgc3Ry
+dWN0IHBhZ2UgKnBhZ2UsIGVudW0gbWlncmF0ZV9tb2RlIG1vZGUpOwo+Pj4gICAgICA+ICAjZW5k
+aWYKPj4+ICAgICAgPiAraW50IGYyZnNfZmlsZW1hcF9mZGF0YXdyaXRlKHN0cnVjdCBhZGRyZXNz
+X3NwYWNlICptYXBwaW5nLCBib29sCj4+PiAgICAgIGlzX2Rpcik7Cj4+PiAgICAgID4KPj4+ICAg
+ICAgPiAgLyoKPj4+ICAgICAgPiAgICogZ2MuYwo+Pj4gICAgICA+IC0tCj4+PiAgICAgID4gMS44
+LjUuMgo+Pj4KPj4gLS0gCj4+IFRoYW5rcywKPj4gWXVubG9uZyBTb25nCj4+Cj4gLgo+CgotLSAK
+VGhhbmtzLApZdW5sb25nIFNvbmcKCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0
+aGUgdmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdh
+Z2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdApf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZz
+LWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5l
+dApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZz
+LWRldmVsCg==
