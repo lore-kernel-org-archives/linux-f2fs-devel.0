@@ -1,8 +1,8 @@
 From: Yunlong Song <yunlong.song@huawei.com>
 Subject: Re: [PATCH] f2fs: provide f2fs_balance_fs to __write_data_page for
  dentry pages
-Date: Fri, 4 Aug 2017 10:44:32 +0800
-Message-ID: <e9432597-f4cb-4a23-cfe2-999da92a99b9@huawei.com>
+Date: Fri, 4 Aug 2017 11:00:49 +0800
+Message-ID: <c5c1f225-0da9-fb15-651e-194739e2b47b@huawei.com>
 References: <1501334365-123333-1-git-send-email-yunlong.song@huawei.com>
  <20170730073154.GA13058@jaegeuk-macbookpro.roam.corp.google.com>
  <4916ac46.daf0.15d943f23b9.Coremail.sylinux@163.com>
@@ -36,18 +36,18 @@ writeback of inodeB just happens before sync_dirty_inodes fetch it from
 the dirty_list,
 the normal writeback of indoeB will skip the f2fs_balance_fs check.
 
-f2fs_trim(,sync)_fs normal dentry page writeback of inodeB
+f2fs_trim(,sync)_fs                             normal dentry page 
+writeback of inodeB
    -- write_checkpoint --f2fs_write_data_pages
---block_operations --f2fs_write_cache_pages
-         --SBI_BLOCK_OPS is set --__write_data_page
---sync_dirty_inodes --test SBI_BLOCK_OPS is set and skip f2fs_balance_fs
---retry: write to reserved segments
+         --block_operations --f2fs_write_cache_pages
+             --SBI_BLOCK_OPS is set --__write_data_page
+             --sync_dirty_inodes --test SBI_BLOCK_OPS is set and skip 
+f2fs_balance_fs
+                 --retry:         write to reserved segments
                     inodeA <- list_first_entry(dirty_list)
                     filemap_fdatawrite(inodeA)
                     go to retry
-         --SBI_BLOCK_OPS is clear
-
-
+             --SBI_BLOCK_OPS is clear
 
 On 2017/8/4 9:57, Jaegeuk Kim wrote:
 > On 08/02, Yunlong Song wrote:
