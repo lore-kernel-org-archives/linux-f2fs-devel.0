@@ -1,44 +1,35 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: avoid unneeded sync on quota file
-Date: Mon, 7 Aug 2017 16:37:59 +0800
-Message-ID: <20170807083759.43251-1-yuchao0@huawei.com>
+Subject: Re: [PATCH v2] f2fs: support journelled quota
+Date: Mon, 7 Aug 2017 16:40:28 +0800
+Message-ID: <af032701-c125-ae0e-4922-98bf129549d2@huawei.com>
+References: <20170725161502.13520-1-chao@kernel.org>
+ <20170730073538.GB13058@jaegeuk-macbookpro.roam.corp.google.com>
+ <470db7bc-10ad-9a74-e76d-29e07d782d99@kernel.org>
+ <20170731210457.GA3993@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170731210457.GA3993@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-We only need to sync quota file with appointed quota type instead of all
-types in f2fs_quota_{on,off}.
+Hi Jaegeuk,
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/super.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 2017/8/1 5:04, Jaegeuk Kim wrote:
+> On 07/30, Chao Yu wrote:
+>> Hi Jaegeuk,
+>>
+>> On 2017/7/30 15:35, Jaegeuk Kim wrote:
+>>> Hi Chao,
+>>>
+>>> When I add this patch, xfstests/fsstress are giving some weird kernel hang
+>>> or panic now. Without only this patch, I can't see any problem. Can you review
+>>> this patch one more time in terms of memory and lock usages.
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 5310bd80f72c..4b292f5dce89 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1458,7 +1458,7 @@ static int f2fs_quota_on(struct super_block *sb, int type, int format_id,
- 	struct inode *inode;
- 	int err;
- 
--	err = f2fs_quota_sync(sb, -1);
-+	err = f2fs_quota_sync(sb, type);
- 	if (err)
- 		return err;
- 
-@@ -1486,7 +1486,7 @@ static int f2fs_quota_off(struct super_block *sb, int type)
- 	if (!inode || !igrab(inode))
- 		return dquot_quota_off(sb, type);
- 
--	f2fs_quota_sync(sb, -1);
-+	f2fs_quota_sync(sb, type);
- 
- 	err = dquot_quota_off(sb, type);
- 	if (err)
--- 
-2.13.1.388.g69e6b9b4f4a9
+Could you have a try with v3?
+
+Thanks,
