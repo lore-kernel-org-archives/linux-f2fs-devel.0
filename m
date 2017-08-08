@@ -1,77 +1,74 @@
-From: Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH v3 43/49] f2fs: convert to bio_for_each_segment_all_sp()
-Date: Tue,  8 Aug 2017 16:45:42 +0800
-Message-ID: <20170808084548.18963-44-ming.lei@redhat.com>
-References: <20170808084548.18963-1-ming.lei@redhat.com>
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20170808084548.18963-1-ming.lei@redhat.com>
-Sender: owner-linux-mm@kvack.org
-To: Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>, Huang Ying <ying.huang@intel.com>, Andrew Morton <akpm@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, Ming Lei <ming.lei@redhat.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+From: sunqiuyang <sunqiuyang@huawei.com>
+Subject: [PATCH 1/1] f2fs: merge equivalent flags F2FS_GET_BLOCK_[READ|DIO]
+Date: Tue, 8 Aug 2017 18:27:19 +0800
+Message-ID: <1502188039-25453-1-git-send-email-sunqiuyang@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: sunqiuyang@huawei.com
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
+From: Qiuyang Sun <sunqiuyang@huawei.com>
+
+Currently, the two flags F2FS_GET_BLOCK_[READ|DIO] are totally equivalent
+and can be used interchangably in all scenarios they are involved in. This
+patch deletes F2FS_GET_BLOCK_READ and uses F2FS_GET_BLOCK_DIO instead.
+
+Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
 ---
- fs/f2fs/data.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ fs/f2fs/data.c | 2 +-
+ fs/f2fs/f2fs.h | 1 -
+ fs/f2fs/file.c | 4 ++--
+ 3 files changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 99fa8e9780e8..69aa500834d3 100644
+index c43262d..e0a59bf 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -54,6 +54,7 @@ static void f2fs_read_end_io(struct bio *bio)
- {
- 	struct bio_vec *bvec;
- 	int i;
-+	struct bvec_iter_all bia;
+@@ -1244,7 +1244,7 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
+ 			map.m_len = last_block - block_in_file;
  
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- 	/*
-@@ -75,7 +76,7 @@ static void f2fs_read_end_io(struct bio *bio)
+ 			if (f2fs_map_blocks(inode, &map, 0,
+-						F2FS_GET_BLOCK_READ))
++						F2FS_GET_BLOCK_DIO))
+ 				goto set_error_page;
  		}
- 	}
+ got_it:
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index cea329f..0593ca7 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -514,7 +514,6 @@ struct f2fs_map_blocks {
+ };
  
--	bio_for_each_segment_all(bvec, bio, i) {
-+	bio_for_each_segment_all_sp(bvec, bio, i, bia) {
- 		struct page *page = bvec->bv_page;
+ /* for flag in get_data_block */
+-#define F2FS_GET_BLOCK_READ		0
+ #define F2FS_GET_BLOCK_DIO		1
+ #define F2FS_GET_BLOCK_FIEMAP		2
+ #define F2FS_GET_BLOCK_BMAP		3
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index e2b33b8..8271cb5 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2074,7 +2074,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
+ 	 */
+ 	while (map.m_lblk < pg_end) {
+ 		map.m_len = pg_end - map.m_lblk;
+-		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_READ);
++		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_DIO);
+ 		if (err)
+ 			goto out;
  
- 		if (!bio->bi_status) {
-@@ -95,8 +96,9 @@ static void f2fs_write_end_io(struct bio *bio)
- 	struct f2fs_sb_info *sbi = bio->bi_private;
- 	struct bio_vec *bvec;
- 	int i;
-+	struct bvec_iter_all bia;
+@@ -2116,7 +2116,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
  
--	bio_for_each_segment_all(bvec, bio, i) {
-+	bio_for_each_segment_all_sp(bvec, bio, i, bia) {
- 		struct page *page = bvec->bv_page;
- 		enum count_type type = WB_DATA_TYPE(page);
+ do_map:
+ 		map.m_len = pg_end - map.m_lblk;
+-		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_READ);
++		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_DIO);
+ 		if (err)
+ 			goto clear_out;
  
-@@ -256,6 +258,7 @@ static bool __has_merged_page(struct f2fs_bio_info *io,
- 	struct bio_vec *bvec;
- 	struct page *target;
- 	int i;
-+	struct bvec_iter_all bia;
- 
- 	if (!io->bio)
- 		return false;
-@@ -263,7 +266,7 @@ static bool __has_merged_page(struct f2fs_bio_info *io,
- 	if (!inode && !ino)
- 		return true;
- 
--	bio_for_each_segment_all(bvec, io->bio, i) {
-+	bio_for_each_segment_all_sp(bvec, io->bio, i, bia) {
- 
- 		if (bvec->bv_page->mapping)
- 			target = bvec->bv_page;
 -- 
-2.9.4
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+1.8.3.1
