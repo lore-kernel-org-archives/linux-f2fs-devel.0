@@ -1,44 +1,91 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: retry to revoke atomic commit in -ENOMEM case
-Date: Tue, 8 Aug 2017 19:09:08 +0800
-Message-ID: <20170808110908.108562-1-yuchao0@huawei.com>
+Subject: Re: [PATCH 1/1] f2fs: merge equivalent flags
+ F2FS_GET_BLOCK_[READ|DIO]
+Date: Tue, 8 Aug 2017 19:24:37 +0800
+Message-ID: <c2528da6-36c8-0f58-e18e-4ba97c1f5ebf@huawei.com>
+References: <1502188039-25453-1-git-send-email-sunqiuyang@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1502188039-25453-1-git-send-email-sunqiuyang@huawei.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+To: sunqiuyang <sunqiuyang@huawei.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-During atomic committing, if we encounter -ENOMEM in revoke path, it's
-better to give a chance to retry revoking.
+On 2017/8/8 18:27, sunqiuyang wrote:
+> From: Qiuyang Sun <sunqiuyang@huawei.com>
+> 
+> Currently, the two flags F2FS_GET_BLOCK_[READ|DIO] are totally equivalent
+> and can be used interchangably in all scenarios they are involved in. This
+> patch deletes F2FS_GET_BLOCK_READ and uses F2FS_GET_BLOCK_DIO instead.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/segment.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Seems weird from readability point of view, so how about keeping
+F2FS_GET_BLOCK_READ alive but sharing defined value with F2FS_GET_BLOCK_DIO?
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 45fb53411032..682ae68b9ef7 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -213,9 +213,15 @@ static int __revoke_inmem_pages(struct inode *inode,
- 			struct node_info ni;
- 
- 			trace_f2fs_commit_inmem_page(page, INMEM_REVOKE);
--
-+retry:
- 			set_new_dnode(&dn, inode, NULL, NULL, 0);
--			if (get_dnode_of_data(&dn, page->index, LOOKUP_NODE)) {
-+			err = get_dnode_of_data(&dn, page->index, LOOKUP_NODE);
-+			if (err) {
-+				if (err == -ENOMEM) {
-+					congestion_wait(BLK_RW_ASYNC, HZ/50);
-+					cond_resched();
-+					goto retry;
-+				}
- 				err = -EAGAIN;
- 				goto next;
- 			}
--- 
-2.13.1.388.g69e6b9b4f4a9
+enum {
+	F2FS_GET_BLOCK_DIO,
+	F2FS_GET_BLOCK_READ = F2FS_GET_BLOCK_DIO,
+	F2FS_GET_BLOCK_FIEMAP,
+	...
+}
+
+Thanks,
+
+> 
+> Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
+> ---
+>  fs/f2fs/data.c | 2 +-
+>  fs/f2fs/f2fs.h | 1 -
+>  fs/f2fs/file.c | 4 ++--
+>  3 files changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index c43262d..e0a59bf 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1244,7 +1244,7 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
+>  			map.m_len = last_block - block_in_file;
+>  
+>  			if (f2fs_map_blocks(inode, &map, 0,
+> -						F2FS_GET_BLOCK_READ))
+> +						F2FS_GET_BLOCK_DIO))
+>  				goto set_error_page;
+>  		}
+>  got_it:
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index cea329f..0593ca7 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -514,7 +514,6 @@ struct f2fs_map_blocks {
+>  };
+>  
+>  /* for flag in get_data_block */
+> -#define F2FS_GET_BLOCK_READ		0
+>  #define F2FS_GET_BLOCK_DIO		1
+>  #define F2FS_GET_BLOCK_FIEMAP		2
+>  #define F2FS_GET_BLOCK_BMAP		3
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index e2b33b8..8271cb5 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -2074,7 +2074,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
+>  	 */
+>  	while (map.m_lblk < pg_end) {
+>  		map.m_len = pg_end - map.m_lblk;
+> -		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_READ);
+> +		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_DIO);
+>  		if (err)
+>  			goto out;
+>  
+> @@ -2116,7 +2116,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
+>  
+>  do_map:
+>  		map.m_len = pg_end - map.m_lblk;
+> -		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_READ);
+> +		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_DIO);
+>  		if (err)
+>  			goto clear_out;
+>  
+> 
