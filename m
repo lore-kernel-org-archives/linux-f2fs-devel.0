@@ -1,163 +1,115 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH] f2fs: introduce cur_reserved_blocks in sysfs
-Date: Tue, 8 Aug 2017 21:43:45 +0800
-Message-ID: <1502199825-15218-1-git-send-email-yunlong.song@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 1/1] f2fs: merge equivalent flags
+ F2FS_GET_BLOCK_[READ|DIO]
+Date: Wed, 9 Aug 2017 09:13:19 +0800
+Message-ID: <75d6efdd-a4a6-2c00-150f-458a00b3892f@huawei.com>
+References: <1502188039-25453-1-git-send-email-sunqiuyang@huawei.com>
+ <c2528da6-36c8-0f58-e18e-4ba97c1f5ebf@huawei.com>
+ <8ce0003f-780a-a349-e30e-218fdf61488d@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <8ce0003f-780a-a349-e30e-218fdf61488d@huawei.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Sun Qiuyang <sunqiuyang@huawei.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-In this patch, we add a new sysfs interface, we can use it to gradually achieve
-the reserved_blocks finally, even when reserved_blocks is initially set over
-user_block_count - total_valid_block_count. This is very useful, especially when
-we upgrade kernel with new reserved_blocks value, but old disk image unluckily has
-user_block_count - total_valid_block_count smaller than the desired reserved_blocks.
-With this patch, f2fs can try its best to reserve space and get close to the
-reserved_blocks, and the current value of achieved reserved_blocks can be shown
-in real time.
+On 2017/8/8 19:41, Sun Qiuyang wrote:
+> 
+> 
+>> On 2017/8/8 18:27, sunqiuyang wrote:
+>>> From: Qiuyang Sun <sunqiuyang@huawei.com>
+>>>
+>>> Currently, the two flags F2FS_GET_BLOCK_[READ|DIO] are totally equivalent
+>>> and can be used interchangably in all scenarios they are involved in. This
+>>> patch deletes F2FS_GET_BLOCK_READ and uses F2FS_GET_BLOCK_DIO instead.
+>>
+>> Seems weird from readability point of view, so how about keeping
+>> F2FS_GET_BLOCK_READ alive but sharing defined value with F2FS_GET_BLOCK_DIO?
+>>
+>> enum {
+>> 	F2FS_GET_BLOCK_DIO,
+>> 	F2FS_GET_BLOCK_READ = F2FS_GET_BLOCK_DIO,
+>> 	F2FS_GET_BLOCK_FIEMAP,
+>> 	...
+>> }
+>>
+>> Thanks,
+> How about renaming both of them F2FS_GET_BLOCK_DEFAULT? Actually neither 
+> READ nor DIO is explicitly referenced in f2fs_map_blocks(); it is just 
+> the "default" case. We have no reason to limit the use of this flag to 
+> "read" or "direct IO" only.
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
----
- Documentation/ABI/testing/sysfs-fs-f2fs |  6 ++++++
- fs/f2fs/f2fs.h                          |  9 +++++++--
- fs/f2fs/super.c                         |  4 +++-
- fs/f2fs/sysfs.c                         | 15 ++++++++++-----
- 4 files changed, 26 insertions(+), 8 deletions(-)
+Better. :)
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 11b7f4e..bdbb9f3 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -151,3 +151,9 @@ Date:		August 2017
- Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
- Description:
- 		 Controls sleep time of GC urgent mode
-+
-+What:		/sys/fs/f2fs/<disk>/cur_reserved_blocks
-+Date:		August 2017
-+Contact:	"Yunlong Song" <yunlong.song@huawei.com>
-+Description:
-+		 Shows current reserved blocks in system.
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index cea329f..3b7056f 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1040,6 +1040,7 @@ struct f2fs_sb_info {
- 	block_t discard_blks;			/* discard command candidats */
- 	block_t last_valid_block_count;		/* for recovery */
- 	block_t reserved_blocks;		/* configurable reserved blocks */
-+	block_t cur_reserved_blocks;		/* current reserved blocks */
- 
- 	u32 s_next_generation;			/* for NFS support */
- 
-@@ -1514,7 +1515,7 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
- 
- 	spin_lock(&sbi->stat_lock);
- 	sbi->total_valid_block_count += (block_t)(*count);
--	avail_user_block_count = sbi->user_block_count - sbi->reserved_blocks;
-+	avail_user_block_count = sbi->user_block_count - sbi->cur_reserved_blocks;
- 	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
- 		diff = sbi->total_valid_block_count - avail_user_block_count;
- 		*count -= diff;
-@@ -1548,6 +1549,8 @@ static inline void dec_valid_block_count(struct f2fs_sb_info *sbi,
- 	f2fs_bug_on(sbi, sbi->total_valid_block_count < (block_t) count);
- 	f2fs_bug_on(sbi, inode->i_blocks < sectors);
- 	sbi->total_valid_block_count -= (block_t)count;
-+	sbi->cur_reserved_blocks = min(sbi->reserved_blocks,
-+									sbi->cur_reserved_blocks + count);
- 	spin_unlock(&sbi->stat_lock);
- 	f2fs_i_blocks_write(inode, count, false, true);
- }
-@@ -1694,7 +1697,7 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
- 	spin_lock(&sbi->stat_lock);
- 
- 	valid_block_count = sbi->total_valid_block_count + 1;
--	if (unlikely(valid_block_count + sbi->reserved_blocks >
-+	if (unlikely(valid_block_count + sbi->cur_reserved_blocks >
- 						sbi->user_block_count)) {
- 		spin_unlock(&sbi->stat_lock);
- 		goto enospc;
-@@ -1737,6 +1740,8 @@ static inline void dec_valid_node_count(struct f2fs_sb_info *sbi,
- 
- 	sbi->total_valid_node_count--;
- 	sbi->total_valid_block_count--;
-+	sbi->cur_reserved_blocks = min(sbi->reserved_blocks,
-+									sbi->cur_reserved_blocks + 1);
- 
- 	spin_unlock(&sbi->stat_lock);
- 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 4c1bdcb..2934aa2 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -957,7 +957,7 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	buf->f_blocks = total_count - start_count;
- 	buf->f_bfree = user_block_count - valid_user_blocks(sbi) + ovp_count;
- 	buf->f_bavail = user_block_count - valid_user_blocks(sbi) -
--						sbi->reserved_blocks;
-+						sbi->cur_reserved_blocks;
- 
- 	avail_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
- 
-@@ -2411,6 +2411,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 				le64_to_cpu(sbi->ckpt->valid_block_count);
- 	sbi->last_valid_block_count = sbi->total_valid_block_count;
- 	sbi->reserved_blocks = 0;
-+	sbi->cur_reserved_blocks = min(sbi->reserved_blocks,
-+						sbi->user_block_count - sbi->total_valid_block_count);
- 
- 	for (i = 0; i < NR_INODE_TYPE; i++) {
- 		INIT_LIST_HEAD(&sbi->inode_list[i]);
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index b769a3d..405c13f 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -76,6 +76,12 @@ static ssize_t lifetime_write_kbytes_show(struct f2fs_attr *a,
- 			BD_PART_WRITTEN(sbi)));
- }
- 
-+static ssize_t cur_reserved_blocks_show(struct f2fs_attr *a,
-+		struct f2fs_sb_info *sbi, char *buf)
-+{
-+	return snprintf(buf, PAGE_SIZE, "%u\n", sbi->cur_reserved_blocks);
-+}
-+
- static ssize_t features_show(struct f2fs_attr *a,
- 		struct f2fs_sb_info *sbi, char *buf)
- {
-@@ -143,12 +149,9 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
- #endif
- 	if (a->struct_type == RESERVED_BLOCKS) {
- 		spin_lock(&sbi->stat_lock);
--		if ((unsigned long)sbi->total_valid_block_count + t >
--				(unsigned long)sbi->user_block_count) {
--			spin_unlock(&sbi->stat_lock);
--			return -EINVAL;
--		}
- 		*ui = t;
-+		sbi->cur_reserved_blocks = min(t, sbi->user_block_count -
-+										sbi->total_valid_block_count);
- 		spin_unlock(&sbi->stat_lock);
- 		return count;
- 	}
-@@ -274,6 +277,7 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
- #endif
- F2FS_GENERAL_RO_ATTR(lifetime_write_kbytes);
- F2FS_GENERAL_RO_ATTR(features);
-+F2FS_GENERAL_RO_ATTR(cur_reserved_blocks);
- 
- #ifdef CONFIG_F2FS_FS_ENCRYPTION
- F2FS_FEATURE_RO_ATTR(encryption, FEAT_CRYPTO);
-@@ -317,6 +321,7 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
- 	ATTR_LIST(lifetime_write_kbytes),
- 	ATTR_LIST(features),
- 	ATTR_LIST(reserved_blocks),
-+	ATTR_LIST(cur_reserved_blocks),
- 	NULL,
- };
- 
--- 
-1.8.5.2
+Thanks,
+
+> 
+> Thanks,
+>>
+>>>
+>>> Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
+>>> ---
+>>>  fs/f2fs/data.c | 2 +-
+>>>  fs/f2fs/f2fs.h | 1 -
+>>>  fs/f2fs/file.c | 4 ++--
+>>>  3 files changed, 3 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>> index c43262d..e0a59bf 100644
+>>> --- a/fs/f2fs/data.c
+>>> +++ b/fs/f2fs/data.c
+>>> @@ -1244,7 +1244,7 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
+>>>  			map.m_len = last_block - block_in_file;
+>>>
+>>>  			if (f2fs_map_blocks(inode, &map, 0,
+>>> -						F2FS_GET_BLOCK_READ))
+>>> +						F2FS_GET_BLOCK_DIO))
+>>>  				goto set_error_page;
+>>>  		}
+>>>  got_it:
+>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>> index cea329f..0593ca7 100644
+>>> --- a/fs/f2fs/f2fs.h
+>>> +++ b/fs/f2fs/f2fs.h
+>>> @@ -514,7 +514,6 @@ struct f2fs_map_blocks {
+>>>  };
+>>>
+>>>  /* for flag in get_data_block */
+>>> -#define F2FS_GET_BLOCK_READ		0
+>>>  #define F2FS_GET_BLOCK_DIO		1
+>>>  #define F2FS_GET_BLOCK_FIEMAP		2
+>>>  #define F2FS_GET_BLOCK_BMAP		3
+>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>>> index e2b33b8..8271cb5 100644
+>>> --- a/fs/f2fs/file.c
+>>> +++ b/fs/f2fs/file.c
+>>> @@ -2074,7 +2074,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
+>>>  	 */
+>>>  	while (map.m_lblk < pg_end) {
+>>>  		map.m_len = pg_end - map.m_lblk;
+>>> -		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_READ);
+>>> +		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_DIO);
+>>>  		if (err)
+>>>  			goto out;
+>>>
+>>> @@ -2116,7 +2116,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
+>>>
+>>>  do_map:
+>>>  		map.m_len = pg_end - map.m_lblk;
+>>> -		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_READ);
+>>> +		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_DIO);
+>>>  		if (err)
+>>>  			goto clear_out;
+>>>
+>>>
+>>
+>>
+>> .
+>>
+> 
+> 
+> .
+> 
