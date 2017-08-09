@@ -1,97 +1,58 @@
-From: sunqiuyang <sunqiuyang@huawei.com>
-Subject: [PATCH 1/1] f2fs: merge equivalent flags F2FS_GET_BLOCK_[READ|DIO]
-Date: Wed, 9 Aug 2017 17:27:30 +0800
-Message-ID: <1502270850-34212-1-git-send-email-sunqiuyang@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix potential overflow in build_sit_info
+Date: Wed, 9 Aug 2017 18:09:12 +0800
+Message-ID: <20170809100912.65591-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: sunqiuyang@huawei.com
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Qiuyang Sun <sunqiuyang@huawei.com>
+On a 32-bit system, below calculation may overflow the 32-bit unsigned
+integer, allocating a buffer size that smaller than needed. A write on
+the buffer will then trigger an out of boundary write.
+1. MAIN_SEGS(sbi) * sizeof(struct seg_entry)
+2. MAIN_SECS(sbi) * sizeof(struct sec_entry)
 
-Currently, the two flags F2FS_GET_BLOCK_[READ|DIO] are totally equivalent
-and can be used interchangably in all scenarios they are involved in. 
-Neither of the flags is referenced in f2fs_map_blocks(), making them both 
-the default case. To remove the ambiguity, this patch merges both flags
-into F2FS_GET_BLOCK_DEFAULT, and introduces an enum for all distinct flags.
+Fixes this by doing type cast before calculating.
 
-Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
+This patch fixes CVE-2017-10662.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/data.c |  4 ++--
- fs/f2fs/f2fs.h | 13 +++++++------
- fs/f2fs/file.c |  4 ++--
- 3 files changed, 11 insertions(+), 10 deletions(-)
+ fs/f2fs/segment.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index c43262d..67da4f6 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1044,7 +1044,7 @@ static int get_data_block_dio(struct inode *inode, sector_t iblock,
- 			struct buffer_head *bh_result, int create)
- {
- 	return __get_data_block(inode, iblock, bh_result, create,
--						F2FS_GET_BLOCK_DIO, NULL);
-+						F2FS_GET_BLOCK_DEFAULT, NULL);
- }
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 682ae68b9ef7..947674b5f466 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2997,8 +2997,9 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
  
- static int get_data_block_bmap(struct inode *inode, sector_t iblock,
-@@ -1244,7 +1244,7 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
- 			map.m_len = last_block - block_in_file;
+ 	SM_I(sbi)->sit_info = sit_i;
  
- 			if (f2fs_map_blocks(inode, &map, 0,
--						F2FS_GET_BLOCK_READ))
-+						F2FS_GET_BLOCK_DEFAULT))
- 				goto set_error_page;
- 		}
- got_it:
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index cea329f..2f20b6b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -514,12 +514,13 @@ struct f2fs_map_blocks {
- };
+-	sit_i->sentries = kvzalloc(MAIN_SEGS(sbi) *
+-					sizeof(struct seg_entry), GFP_KERNEL);
++	sit_i->sentries = kvzalloc((unsigned long long)MAIN_SEGS(sbi) *
++				(unsigned long long)sizeof(struct seg_entry),
++				GFP_KERNEL);
+ 	if (!sit_i->sentries)
+ 		return -ENOMEM;
  
- /* for flag in get_data_block */
--#define F2FS_GET_BLOCK_READ		0
--#define F2FS_GET_BLOCK_DIO		1
--#define F2FS_GET_BLOCK_FIEMAP		2
--#define F2FS_GET_BLOCK_BMAP		3
--#define F2FS_GET_BLOCK_PRE_DIO		4
--#define F2FS_GET_BLOCK_PRE_AIO		5
-+enum {
-+	F2FS_GET_BLOCK_DEFAULT,
-+	F2FS_GET_BLOCK_FIEMAP,
-+	F2FS_GET_BLOCK_BMAP,
-+	F2FS_GET_BLOCK_PRE_DIO,
-+	F2FS_GET_BLOCK_PRE_AIO,
-+};
+@@ -3036,8 +3037,10 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
+ 		return -ENOMEM;
  
- /*
-  * i_advise uses FADVISE_XXX_BIT. We can add additional hints later.
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index e2b33b8..3eebd49 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2074,7 +2074,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
- 	 */
- 	while (map.m_lblk < pg_end) {
- 		map.m_len = pg_end - map.m_lblk;
--		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_READ);
-+		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_DEFAULT);
- 		if (err)
- 			goto out;
- 
-@@ -2116,7 +2116,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
- 
- do_map:
- 		map.m_len = pg_end - map.m_lblk;
--		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_READ);
-+		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_DEFAULT);
- 		if (err)
- 			goto clear_out;
- 
+ 	if (sbi->segs_per_sec > 1) {
+-		sit_i->sec_entries = kvzalloc(MAIN_SECS(sbi) *
+-					sizeof(struct sec_entry), GFP_KERNEL);
++		sit_i->sec_entries = kvzalloc(
++				(unsigned long long)MAIN_SECS(sbi) *
++				(unsigned long long)sizeof(struct sec_entry),
++				GFP_KERNEL);
+ 		if (!sit_i->sec_entries)
+ 			return -ENOMEM;
+ 	}
 -- 
-1.8.3.1
+2.13.1.388.g69e6b9b4f4a9
