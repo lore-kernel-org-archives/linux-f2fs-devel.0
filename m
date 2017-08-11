@@ -1,37 +1,50 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: let fill_super handle roll-forward errors
-Date: Thu, 10 Aug 2017 17:42:04 -0700
-Message-ID: <20170811004204.24078-1-jaegeuk@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: retry to revoke atomic commit in -ENOMEM case
+Date: Fri, 11 Aug 2017 09:12:02 +0800
+Message-ID: <cbab44fc-e3bb-5579-d15d-07fa8af2bad8@huawei.com>
+References: <20170808110908.108562-1-yuchao0@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170808110908.108562-1-yuchao0@huawei.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, stable@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If we set CP_ERROR_FLAG in roll-forward error, f2fs is no longer to proceed
-any IOs due to f2fs_cp_error(). But, for example, if some stale data is involved
-on roll-forward process, we're able to get -ENOENT, getting fs stuck.
-If we get any error, let fill_super set SBI_NEED_FSCK and try to recover back
-to stable point.
+Ping,
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/recovery.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index a3d02613934a..f707d810c87d 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -649,8 +649,6 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- 	}
- 
- 	clear_sbi_flag(sbi, SBI_POR_DOING);
--	if (err)
--		set_ckpt_flags(sbi, CP_ERROR_FLAG);
- 	mutex_unlock(&sbi->cp_mutex);
- 
- 	/* let's drop all the directory inodes for clean checkpoint */
--- 
-2.14.0.rc1.383.gd1ce394fe2-goog
+On 2017/8/8 19:09, Chao Yu wrote:
+> During atomic committing, if we encounter -ENOMEM in revoke path, it's
+> better to give a chance to retry revoking.
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/segment.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 45fb53411032..682ae68b9ef7 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -213,9 +213,15 @@ static int __revoke_inmem_pages(struct inode *inode,
+>  			struct node_info ni;
+>  
+>  			trace_f2fs_commit_inmem_page(page, INMEM_REVOKE);
+> -
+> +retry:
+>  			set_new_dnode(&dn, inode, NULL, NULL, 0);
+> -			if (get_dnode_of_data(&dn, page->index, LOOKUP_NODE)) {
+> +			err = get_dnode_of_data(&dn, page->index, LOOKUP_NODE);
+> +			if (err) {
+> +				if (err == -ENOMEM) {
+> +					congestion_wait(BLK_RW_ASYNC, HZ/50);
+> +					cond_resched();
+> +					goto retry;
+> +				}
+>  				err = -EAGAIN;
+>  				goto next;
+>  			}
+> 
