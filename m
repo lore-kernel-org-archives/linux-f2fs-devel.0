@@ -1,33 +1,29 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: check hot_data for roll-forward recovery
-Date: Sat, 12 Aug 2017 21:34:16 -0700
-Message-ID: <20170813043416.89230-1-jaegeuk@kernel.org>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH v3 RESEND] f2fs: support journalled quota
+Date: Sun, 13 Aug 2017 19:57:05 +0800
+Message-ID: <cb5c285a-c740-0452-b12e-ce089ecf81ac@kernel.org>
+References: <20170808025431.75626-1-yuchao0@huawei.com>
+ <20170811015106.GA27619@jaegeuk-macbookpro.roam.corp.google.com>
+ <95c8739c-a9dc-fae8-aed4-5945fa6623ea@huawei.com>
+ <20170811173523.GA6929@jaegeuk-macbookpro.roam.corp.google.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170811173523.GA6929@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-We need to check HOT_DATA to truncate any previous data block when doing
-roll-forward recovery.
+Hi Jaegeuk,
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/recovery.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you for providing the info.
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index f707d810c87d..9626758bc762 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -317,7 +317,7 @@ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
- 		return 0;
- 
- 	/* Get the previous summary */
--	for (i = CURSEG_WARM_DATA; i <= CURSEG_COLD_DATA; i++) {
-+	for (i = CURSEG_HOT_DATA; i <= CURSEG_COLD_DATA; i++) {
- 		struct curseg_info *curseg = CURSEG_I(sbi, i);
- 		if (curseg->segno == segno) {
- 			sum = curseg->sum_blk->entries[blkoff];
--- 
-2.14.0.rc1.383.gd1ce394fe2-goog
+BTW, I just notice that my personal email address has been junked from f2fs
+mailing list, anyway, I will resubscribe the list. But before that, I'd like
+to ask, could you please Cc to chao@kernel.org when you send the patch to
+mailing list? :)
+
+Thanks,
