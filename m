@@ -1,42 +1,41 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: remove unused function overprovision_sections
-Date: Tue, 15 Aug 2017 20:36:45 +0800
-Message-ID: <2983d28f-abfd-1b76-82c7-0c39a2d14e87@huawei.com>
-References: <1502700763-73036-1-git-send-email-yunlong.song@huawei.com>
+Subject: Re: [PATCH] f2fs: check hot_data for roll-forward recovery
+Date: Tue, 15 Aug 2017 20:37:00 +0800
+Message-ID: <08788823-d67f-90e0-216b-cac32cb62919@huawei.com>
+References: <20170813043416.89230-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1502700763-73036-1-git-send-email-yunlong.song@huawei.com>
+In-Reply-To: <20170813043416.89230-1-jaegeuk@kernel.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/8/14 16:52, Yunlong Song wrote:
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+On 2017/8/13 12:34, Jaegeuk Kim wrote:
+> We need to check HOT_DATA to truncate any previous data block when doing
+> roll-forward recovery.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 > ---
->  fs/f2fs/segment.h | 5 -----
->  1 file changed, 5 deletions(-)
+>  fs/f2fs/recovery.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> index 7f700e5..b9b4f85 100644
-> --- a/fs/f2fs/segment.h
-> +++ b/fs/f2fs/segment.h
-> @@ -492,11 +492,6 @@ static inline int overprovision_segments(struct f2fs_sb_info *sbi)
->  	return SM_I(sbi)->ovp_segments;
->  }
+> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> index f707d810c87d..9626758bc762 100644
+> --- a/fs/f2fs/recovery.c
+> +++ b/fs/f2fs/recovery.c
+> @@ -317,7 +317,7 @@ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
+>  		return 0;
 >  
-> -static inline int overprovision_sections(struct f2fs_sb_info *sbi)
-> -{
-> -	return GET_SEC_FROM_SEG(sbi, (unsigned int)overprovision_segments(sbi));
-> -}
-> -
->  static inline int reserved_sections(struct f2fs_sb_info *sbi)
->  {
->  	return GET_SEC_FROM_SEG(sbi, (unsigned int)reserved_segments(sbi));
+>  	/* Get the previous summary */
+> -	for (i = CURSEG_WARM_DATA; i <= CURSEG_COLD_DATA; i++) {
+> +	for (i = CURSEG_HOT_DATA; i <= CURSEG_COLD_DATA; i++) {
+>  		struct curseg_info *curseg = CURSEG_I(sbi, i);
+>  		if (curseg->segno == segno) {
+>  			sum = curseg->sum_blk->entries[blkoff];
 > 
