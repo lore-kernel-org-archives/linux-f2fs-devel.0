@@ -1,36 +1,75 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH v2] f2fs-tools: fix the usage message of overprovision option
-Date: Tue, 15 Aug 2017 15:41:57 +0800
-Message-ID: <1502782917-97779-1-git-send-email-yunlong.song@huawei.com>
-References: <1502457915-46935-1-git-send-email-yunlong.song@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: let fill_super handle roll-forward errors
+Date: Tue, 15 Aug 2017 19:45:03 +0800
+Message-ID: <30b91d0c-63b2-0082-0132-3f188c1a4602@huawei.com>
+References: <20170811004204.24078-1-jaegeuk@kernel.org>
+ <b3aea107-b582-6949-a558-a94558a1f253@huawei.com>
+ <20170815032209.GA91145@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1502457915-46935-1-git-send-email-yunlong.song@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20170815032209.GA91145@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
+Sender: stable-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, stable@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-The usage message shows a wrong message for ovp option, so fix it.
+On 2017/8/15 11:22, Jaegeuk Kim wrote:
+> On 08/15, Chao Yu wrote:
+>> Hi Jaegeuk,
+>>
+>> On 2017/8/11 8:42, Jaegeuk Kim wrote:
+>>> If we set CP_ERROR_FLAG in roll-forward error, f2fs is no longer to proceed
+>>> any IOs due to f2fs_cp_error(). But, for example, if some stale data is involved
+>>> on roll-forward process, we're able to get -ENOENT, getting fs stuck.
+>>> If we get any error, let fill_super set SBI_NEED_FSCK and try to recover back
+>>> to stable point.
+>>
+>> Before that, we have cleaned up all node/meta page cache, so we will get back to
+>> last checkpoint status, means losing fsynced datas for ever.
+>>
+>> Would it be better to just leave message reminding user to mount with
+>> disable_roll_forward or run fsck offline.
+> 
+> We can't rely on user for this, since fsck cannot recover this, resulting in
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
----
- mkfs/f2fs_format_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If fsck has no ability to recover this, it could tag superblock in somewhere,
+then kernel could skip recovery. Comparing to fail recovery directly, it give
+user another chance to rescuer his datas.
 
-diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
-index a3652a9..3279829 100644
---- a/mkfs/f2fs_format_main.c
-+++ b/mkfs/f2fs_format_main.c
-@@ -41,7 +41,7 @@ static void mkfs_usage()
- 	MSG(0, "  -f force overwrite the exist filesystem\n");
- 	MSG(0, "  -l label\n");
- 	MSG(0, "  -m support zoned block device [default:0]\n");
--	MSG(0, "  -o overprovision ratio [default:5]\n");
-+	MSG(0, "  -o overprovision ratio [initial value 0 lets mkfs determine its best value]\n");
- 	MSG(0, "  -O [feature list] e.g. \"encrypt\"\n");
- 	MSG(0, "  -q quiet mode\n");
- 	MSG(0, "  -s # of segments per section [default:1]\n");
--- 
-1.8.5.2
+Thanks,
+
+> infinite mount failure. The only way is to disable roll-forward recovery, which
+> is same as returning error here.
+> 
+> Thanks,
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>> Cc: <stable@vger.kernel.org>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fs/f2fs/recovery.c | 2 --
+>>>  1 file changed, 2 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+>>> index a3d02613934a..f707d810c87d 100644
+>>> --- a/fs/f2fs/recovery.c
+>>> +++ b/fs/f2fs/recovery.c
+>>> @@ -649,8 +649,6 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+>>>  	}
+>>>  
+>>>  	clear_sbi_flag(sbi, SBI_POR_DOING);
+>>> -	if (err)
+>>> -		set_ckpt_flags(sbi, CP_ERROR_FLAG);
+>>>  	mutex_unlock(&sbi->cp_mutex);
+>>>  
+>>>  	/* let's drop all the directory inodes for clean checkpoint */
+>>>
+> 
+> .
+> 
