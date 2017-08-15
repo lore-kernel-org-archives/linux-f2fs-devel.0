@@ -1,65 +1,36 @@
 From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH] f2fs: free_user_blocks should use reserved_segments
- instead
-Date: Tue, 15 Aug 2017 15:17:44 +0800
-Message-ID: <367fde95-a6f6-5600-5eda-df254e4ed03b@huawei.com>
-References: <1502702552-78497-1-git-send-email-yunlong.song@huawei.com>
- <20170815033258.GD91145@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: [PATCH v2] f2fs-tools: fix the usage message of overprovision option
+Date: Tue, 15 Aug 2017 15:41:57 +0800
+Message-ID: <1502782917-97779-1-git-send-email-yunlong.song@huawei.com>
+References: <1502457915-46935-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170815033258.GD91145@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
+In-Reply-To: <1502457915-46935-1-git-send-email-yunlong.song@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Consider this, I have sent another patch v2, please review.
+The usage message shows a wrong message for ovp option, so fix it.
 
-The part (overprovision_segments - reserved_segments) can still be used for LFS
-in some case, e.g., there are lots of invalid block from dirty segments, then
-the part (overprovision_segments - reserved_segments) can be safely used. So
-free_use_blocks should use reserved_segments instead, rather than directly use
-overprovision_segments. BTW, we also add the constraint of sbi->reserved_blocks.
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+---
+ mkfs/f2fs_format_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-On 2017/8/15 11:32, Jaegeuk Kim wrote:
-> On 08/14, Yunlong Song wrote:
->> The part (overprovision_segments - reserved_segments) can still be used for LFS,
->> so free_use_blocks should use reserved_segments instead, rather than use
->> overprovision_segments.
->>
->> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->> ---
->>   fs/f2fs/gc.h | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
->> index 9325191..6258305 100644
->> --- a/fs/f2fs/gc.h
->> +++ b/fs/f2fs/gc.h
->> @@ -49,10 +49,10 @@ struct gc_inode_list {
->>    */
->>   static inline block_t free_user_blocks(struct f2fs_sb_info *sbi)
-> NAK. This gives user-visible block count.
->
->>   {
->> -	if (free_segments(sbi) < overprovision_segments(sbi))
->> +	if (free_segments(sbi) < reserved_segments(sbi))
->>   		return 0;
->>   	else
->> -		return (free_segments(sbi) - overprovision_segments(sbi))
->> +		return (free_segments(sbi) - reserved_segments(sbi))
->>   			<< sbi->log_blocks_per_seg;
->>   }
->>   
->> -- 
->> 1.8.5.2
-> .
->
-
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index a3652a9..3279829 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -41,7 +41,7 @@ static void mkfs_usage()
+ 	MSG(0, "  -f force overwrite the exist filesystem\n");
+ 	MSG(0, "  -l label\n");
+ 	MSG(0, "  -m support zoned block device [default:0]\n");
+-	MSG(0, "  -o overprovision ratio [default:5]\n");
++	MSG(0, "  -o overprovision ratio [initial value 0 lets mkfs determine its best value]\n");
+ 	MSG(0, "  -O [feature list] e.g. \"encrypt\"\n");
+ 	MSG(0, "  -q quiet mode\n");
+ 	MSG(0, "  -s # of segments per section [default:1]\n");
 -- 
-Thanks,
-Yunlong Song
+1.8.5.2
