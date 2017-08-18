@@ -1,348 +1,329 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: introduce cur_reserved_blocks in sysfs
-Date: Fri, 18 Aug 2017 18:20:23 +0800
-Message-ID: <f09c40a0-1f64-cfa4-3258-9265c72e8e00@huawei.com>
-References: <1502199825-15218-1-git-send-email-yunlong.song@huawei.com>
- <1502451826-45453-1-git-send-email-yunlong.song@huawei.com>
- <2e1652f9-5e3a-4f38-5736-54b1a89ac02a@huawei.com>
- <3ef856f1-4155-4821-4cf8-25f5872257e5@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH v4] f2fs: introduce discard_granularity sysfs
+ entry
+Date: Fri, 18 Aug 2017 22:18:50 +0800
+Message-ID: <0bb733a8-5f86-950f-9474-edde718b1546@kernel.org>
+References: <20170807150956.9433-1-chao@kernel.org>
+ <20170815034518.GA94478@jaegeuk-macbookpro.roam.corp.google.com>
+ <085f08d4-1f46-6bd5-b81e-a09b51499267@huawei.com>
+ <20170815175445.GB4293@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <3ef856f1-4155-4821-4cf8-25f5872257e5@huawei.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+ helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <chao@kernel.org>) id 1dii7G-00062T-TK
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 18 Aug 2017 14:19:14 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+ (Exim 4.76) id 1dii7D-0000jl-1U
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 18 Aug 2017 14:19:14 +0000
+In-Reply-To: <20170815175445.GB4293@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Yunlong,
+Hi Jaegeuk,
 
-IMO, we don't need additional sysfs entry, how about changing a bit as below?
+Sorry for the delay, the modification looks good to me. ;)
 
->From 3fc8206871fe457859f1537c9dc8918b45f14601 Mon Sep 17 00:00:00 2001
-From: Yunlong Song <yunlong.song@huawei.com>
-Date: Wed, 16 Aug 2017 23:01:56 +0800
-Subject: [PATCH] f2fs: support soft block reservation
+Thanks,
 
-It supports to extend reserved_blocks sysfs interface to be soft
-threshold, which allows user configure it exceeding current available
-user space.
-
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- Documentation/ABI/testing/sysfs-fs-f2fs |  3 ++-
- fs/f2fs/f2fs.h                          | 12 ++++++++++--
- fs/f2fs/super.c                         |  3 ++-
- fs/f2fs/sysfs.c                         | 16 ++++++++++++++--
- 4 files changed, 28 insertions(+), 6 deletions(-)
-
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 11b7f4ebea7c..45c3d92f77c8 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -138,7 +138,8 @@ What:		/sys/fs/f2fs/<disk>/reserved_blocks
- Date:		June 2017
- Contact:	"Chao Yu" <yuchao0@huawei.com>
- Description:
--		 Controls current reserved blocks in system.
-+		 Controls current reserved blocks in system, the threshold
-+		 is soft, it could exceed current avaible user space.
-
- What:		/sys/fs/f2fs/<disk>/gc_urgent
- Date:		August 2017
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 336021b9b93e..a7b2d257e8ee 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1046,6 +1046,7 @@ struct f2fs_sb_info {
- 	block_t discard_blks;			/* discard command candidats */
- 	block_t last_valid_block_count;		/* for recovery */
- 	block_t reserved_blocks;		/* configurable reserved blocks */
-+	block_t current_reserved_blocks;	/* current reserved blocks */
-
- 	u32 s_next_generation;			/* for NFS support */
-
-@@ -1520,7 +1521,8 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
-
- 	spin_lock(&sbi->stat_lock);
- 	sbi->total_valid_block_count += (block_t)(*count);
--	avail_user_block_count = sbi->user_block_count - sbi->reserved_blocks;
-+	avail_user_block_count = sbi->user_block_count -
-+					sbi->current_reserved_blocks;
- 	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
- 		diff = sbi->total_valid_block_count - avail_user_block_count;
- 		*count -= diff;
-@@ -1554,6 +1556,9 @@ static inline void dec_valid_block_count(struct f2fs_sb_info *sbi,
- 	f2fs_bug_on(sbi, sbi->total_valid_block_count < (block_t) count);
- 	f2fs_bug_on(sbi, inode->i_blocks < sectors);
- 	sbi->total_valid_block_count -= (block_t)count;
-+	if (sbi->reserved_blocks)
-+		sbi->current_reserved_blocks = min(sbi->reserved_blocks,
-+					sbi->current_reserved_blocks + count);
- 	spin_unlock(&sbi->stat_lock);
- 	f2fs_i_blocks_write(inode, count, false, true);
- }
-@@ -1700,7 +1705,7 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
- 	spin_lock(&sbi->stat_lock);
-
- 	valid_block_count = sbi->total_valid_block_count + 1;
--	if (unlikely(valid_block_count + sbi->reserved_blocks >
-+	if (unlikely(valid_block_count + sbi->current_reserved_blocks >
- 						sbi->user_block_count)) {
- 		spin_unlock(&sbi->stat_lock);
- 		goto enospc;
-@@ -1743,6 +1748,9 @@ static inline void dec_valid_node_count(struct f2fs_sb_info *sbi,
-
- 	sbi->total_valid_node_count--;
- 	sbi->total_valid_block_count--;
-+	if (sbi->reserved_blocks)
-+		sbi->current_reserved_blocks = min(sbi->reserved_blocks,
-+					sbi->current_reserved_blocks + 1);
-
- 	spin_unlock(&sbi->stat_lock);
-
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 4c1bdcb94133..036f083bbf56 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -957,7 +957,7 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	buf->f_blocks = total_count - start_count;
- 	buf->f_bfree = user_block_count - valid_user_blocks(sbi) + ovp_count;
- 	buf->f_bavail = user_block_count - valid_user_blocks(sbi) -
--						sbi->reserved_blocks;
-+						sbi->current_reserved_blocks;
-
- 	avail_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
-
-@@ -2411,6 +2411,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 				le64_to_cpu(sbi->ckpt->valid_block_count);
- 	sbi->last_valid_block_count = sbi->total_valid_block_count;
- 	sbi->reserved_blocks = 0;
-+	sbi->current_reserved_blocks = 0;
-
- 	for (i = 0; i < NR_INODE_TYPE; i++) {
- 		INIT_LIST_HEAD(&sbi->inode_list[i]);
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 4bcaa9059026..3173a272fe7c 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -104,12 +104,23 @@ static ssize_t features_show(struct f2fs_attr *a,
- 	return len;
- }
-
-+static ssize_t f2fs_reserved_blocks_show(struct f2fs_attr *a,
-+					struct f2fs_sb_info *sbi, char *buf)
-+{
-+	return snprintf(buf, PAGE_SIZE,
-+			"expected:	%u\ncurrent:	%u\n",
-+			sbi->reserved_blocks, sbi->current_reserved_blocks);
-+}
-+
- static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
- 			struct f2fs_sb_info *sbi, char *buf)
- {
- 	unsigned char *ptr = NULL;
- 	unsigned int *ui;
-
-+	if (a->struct_type == RESERVED_BLOCKS)
-+		return f2fs_reserved_blocks_show(a, sbi, buf);
-+
- 	ptr = __struct_ptr(sbi, a->struct_type);
- 	if (!ptr)
- 		return -EINVAL;
-@@ -143,12 +154,13 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
- #endif
- 	if (a->struct_type == RESERVED_BLOCKS) {
- 		spin_lock(&sbi->stat_lock);
--		if ((unsigned long)sbi->total_valid_block_count + t >
--				(unsigned long)sbi->user_block_count) {
-+		if (t > (unsigned long)sbi->user_block_count) {
- 			spin_unlock(&sbi->stat_lock);
- 			return -EINVAL;
- 		}
- 		*ui = t;
-+		sbi->current_reserved_blocks = min(sbi->reserved_blocks,
-+				sbi->user_block_count - valid_user_blocks(sbi));
- 		spin_unlock(&sbi->stat_lock);
- 		return count;
- 	}
--- 
-2.13.1.388.g69e6b9b4f4a9
-
-
-
-On 2017/8/18 18:05, Yunlong Song wrote:
-> ping...
-> 
-> On 2017/8/15 12:08, Yunlong Song wrote:
->> ping...
+On 2017/8/16 1:54, Jaegeuk Kim wrote:
+> On 08/15, Chao Yu wrote:
+>> On 2017/8/15 11:45, Jaegeuk Kim wrote:
+>>> On 08/07, Chao Yu wrote:
+>>>> From: Chao Yu <yuchao0@huawei.com>
+>>>>
+>>>> Commit d618ebaf0aa8 ("f2fs: enable small discard by default") enables
+>>>> f2fs to issue 4K size discard in real-time discard mode. However, issuing
+>>>> smaller discard may cost more lifetime but releasing less free space in
+>>>> flash device. Since f2fs has ability of separating hot/cold data and
+>>>> garbage collection, we can expect that small-sized invalid region would
+>>>> expand soon with OPU, deletion or garbage collection on valid datas, so
+>>>> it's better to delay or skip issuing smaller size discards, it could help
+>>>> to reduce overmuch consumption of IO bandwidth and lifetime of flash
+>>>> storage.
+>>>>
+>>>> This patch makes f2fs selectng 64K size as its default minimal
+>>>> granularity, and issue discard with the size which is not smaller than
+>>>> minimal granularity. Also it exposes discard granularity as sysfs entry
+>>>> for configuration in different scenario.
+>>>
+>>> Hi Chao,
+>>>
+>>> I'd like to change the default value to 1 in order to keep the original
+>>> behavior, since we must avoid performance fluctuation after this single
+>>> patch. Instead, you probably can change the value through sysfs.
 >>
->> On 2017/8/11 19:43, Yunlong Song wrote:
->>> In this patch, we add a new sysfs interface, we can use it to 
->>> gradually achieve
->>> the reserved_blocks finally, even when reserved_blocks is initially 
->>> set over
->>> user_block_count - total_valid_block_count. This is very useful, 
->>> especially when
->>> we upgrade kernel with new reserved_blocks value, but old disk image 
->>> unluckily has
->>> user_block_count - total_valid_block_count smaller than the desired 
->>> reserved_blocks.
->>> With this patch, f2fs can try its best to reserve space and get close 
->>> to the
->>> reserved_blocks, and the current value of achieved reserved_blocks 
->>> can be shown
->>> in real time.
->>>
->>> To ensure there is enough space for supporting system's activation, 
->>> we safely
->>> increase cur_reserved_blocks in dev_valid_block(,node)_count to only 
->>> take up the
->>> blocks which are just obsoleted.
->>>
->>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->>> ---
->>>   Documentation/ABI/testing/sysfs-fs-f2fs |  6 ++++++
->>>   fs/f2fs/f2fs.h                          |  9 +++++++--
->>>   fs/f2fs/super.c                         |  3 ++-
->>>   fs/f2fs/sysfs.c                         | 15 ++++++++++-----
->>>   4 files changed, 25 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs 
->>> b/Documentation/ABI/testing/sysfs-fs-f2fs
->>> index 11b7f4e..bdbb9f3 100644
->>> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
->>> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
->>> @@ -151,3 +151,9 @@ Date:        August 2017
->>>   Contact:    "Jaegeuk Kim" <jaegeuk@kernel.org>
->>>   Description:
->>>            Controls sleep time of GC urgent mode
->>> +
->>> +What:        /sys/fs/f2fs/<disk>/cur_reserved_blocks
->>> +Date:        August 2017
->>> +Contact:    "Yunlong Song" <yunlong.song@huawei.com>
->>> +Description:
->>> +         Shows current reserved blocks in system.
->>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>> index 2f20b6b..62d7343 100644
->>> --- a/fs/f2fs/f2fs.h
->>> +++ b/fs/f2fs/f2fs.h
->>> @@ -1041,6 +1041,7 @@ struct f2fs_sb_info {
->>>       block_t discard_blks;            /* discard command candidats */
->>>       block_t last_valid_block_count;        /* for recovery */
->>>       block_t reserved_blocks;        /* configurable reserved blocks */
->>> +    block_t cur_reserved_blocks;        /* current reserved blocks */
->>>         u32 s_next_generation;            /* for NFS support */
->>>   @@ -1515,7 +1516,7 @@ static inline int 
->>> inc_valid_block_count(struct f2fs_sb_info *sbi,
->>>         spin_lock(&sbi->stat_lock);
->>>       sbi->total_valid_block_count += (block_t)(*count);
->>> -    avail_user_block_count = sbi->user_block_count - 
->>> sbi->reserved_blocks;
->>> +    avail_user_block_count = sbi->user_block_count - 
->>> sbi->cur_reserved_blocks;
->>>       if (unlikely(sbi->total_valid_block_count > 
->>> avail_user_block_count)) {
->>>           diff = sbi->total_valid_block_count - avail_user_block_count;
->>>           *count -= diff;
->>> @@ -1549,6 +1550,8 @@ static inline void dec_valid_block_count(struct 
->>> f2fs_sb_info *sbi,
->>>       f2fs_bug_on(sbi, sbi->total_valid_block_count < (block_t) count);
->>>       f2fs_bug_on(sbi, inode->i_blocks < sectors);
->>>       sbi->total_valid_block_count -= (block_t)count;
->>> +    sbi->cur_reserved_blocks = min(sbi->reserved_blocks,
->>> +                                    sbi->cur_reserved_blocks + count);
->>>       spin_unlock(&sbi->stat_lock);
->>>       f2fs_i_blocks_write(inode, count, false, true);
->>>   }
->>> @@ -1695,7 +1698,7 @@ static inline int inc_valid_node_count(struct 
->>> f2fs_sb_info *sbi,
->>>       spin_lock(&sbi->stat_lock);
->>>         valid_block_count = sbi->total_valid_block_count + 1;
->>> -    if (unlikely(valid_block_count + sbi->reserved_blocks >
->>> +    if (unlikely(valid_block_count + sbi->cur_reserved_blocks >
->>>                           sbi->user_block_count)) {
->>>           spin_unlock(&sbi->stat_lock);
->>>           goto enospc;
->>> @@ -1738,6 +1741,8 @@ static inline void dec_valid_node_count(struct 
->>> f2fs_sb_info *sbi,
->>>         sbi->total_valid_node_count--;
->>>       sbi->total_valid_block_count--;
->>> +    sbi->cur_reserved_blocks = min(sbi->reserved_blocks,
->>> +                                    sbi->cur_reserved_blocks + 1);
->>>         spin_unlock(&sbi->stat_lock);
->>>   diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>> index 4c1bdcb..16a805f 100644
->>> --- a/fs/f2fs/super.c
->>> +++ b/fs/f2fs/super.c
->>> @@ -957,7 +957,7 @@ static int f2fs_statfs(struct dentry *dentry, 
->>> struct kstatfs *buf)
->>>       buf->f_blocks = total_count - start_count;
->>>       buf->f_bfree = user_block_count - valid_user_blocks(sbi) + 
->>> ovp_count;
->>>       buf->f_bavail = user_block_count - valid_user_blocks(sbi) -
->>> -                        sbi->reserved_blocks;
->>> +                        sbi->cur_reserved_blocks;
->>>         avail_node_count = sbi->total_node_count - 
->>> F2FS_RESERVED_NODE_NUM;
->>>   @@ -2411,6 +2411,7 @@ static int f2fs_fill_super(struct super_block 
->>> *sb, void *data, int silent)
->>> le64_to_cpu(sbi->ckpt->valid_block_count);
->>>       sbi->last_valid_block_count = sbi->total_valid_block_count;
->>>       sbi->reserved_blocks = 0;
->>> +    sbi->cur_reserved_blocks = 0;
->>>         for (i = 0; i < NR_INODE_TYPE; i++) {
->>>           INIT_LIST_HEAD(&sbi->inode_list[i]);
->>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
->>> index a1be5ac..03f9d3d 100644
->>> --- a/fs/f2fs/sysfs.c
->>> +++ b/fs/f2fs/sysfs.c
->>> @@ -76,6 +76,12 @@ static ssize_t lifetime_write_kbytes_show(struct 
->>> f2fs_attr *a,
->>>               BD_PART_WRITTEN(sbi)));
->>>   }
->>>   +static ssize_t cur_reserved_blocks_show(struct f2fs_attr *a,
->>> +        struct f2fs_sb_info *sbi, char *buf)
->>> +{
->>> +    return snprintf(buf, PAGE_SIZE, "%u\n", sbi->cur_reserved_blocks);
->>> +}
->>> +
->>>   static ssize_t features_show(struct f2fs_attr *a,
->>>           struct f2fs_sb_info *sbi, char *buf)
->>>   {
->>> @@ -143,12 +149,9 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
->>>   #endif
->>>       if (a->struct_type == RESERVED_BLOCKS) {
->>>           spin_lock(&sbi->stat_lock);
->>> -        if ((unsigned long)sbi->total_valid_block_count + t >
->>> -                (unsigned long)sbi->user_block_count) {
->>> -            spin_unlock(&sbi->stat_lock);
->>> -            return -EINVAL;
->>> -        }
->>>           *ui = t;
->>> +        if (t < sbi->cur_reserved_blocks)
->>> +            sbi->cur_reserved_blocks = t;
->>>           spin_unlock(&sbi->stat_lock);
->>>           return count;
->>>       }
->>> @@ -274,6 +277,7 @@ static ssize_t f2fs_feature_show(struct f2fs_attr 
->>> *a,
->>>   #endif
->>>   F2FS_GENERAL_RO_ATTR(lifetime_write_kbytes);
->>>   F2FS_GENERAL_RO_ATTR(features);
->>> +F2FS_GENERAL_RO_ATTR(cur_reserved_blocks);
->>>     #ifdef CONFIG_F2FS_FS_ENCRYPTION
->>>   F2FS_FEATURE_RO_ATTR(encryption, FEAT_CRYPTO);
->>> @@ -317,6 +321,7 @@ static ssize_t f2fs_feature_show(struct f2fs_attr 
->>> *a,
->>>       ATTR_LIST(lifetime_write_kbytes),
->>>       ATTR_LIST(features),
->>>       ATTR_LIST(reserved_blocks),
->>> +    ATTR_LIST(cur_reserved_blocks),
->>>       NULL,
->>>   };
->>
+>> As I know, in fragmented filesystem space, there are may dozens of thousand
+>> discard, in scenario of cellphone user are using, 30% is above 64K size, but
+>> occupy 75% space of all undiscard space, so I changed discard_granularity to 64K
+>> just to release bulk space in device. For other small-sized discards, I expect
+>> that they may extend and cross the granularity threshold soon, and fstrim of
+>> android could cover them in the night.
 > 
+> Yup, I thought that, but this patch prevents fstrim from issuing small discards
+> due to the granularity check. And, low-end device likes to issue small discards
+> much more. How about this?
+> 
+> From a0f38a8574a35995ba9e9e81ae5138919bb672a8 Mon Sep 17 00:00:00 2001
+> From: Chao Yu <yuchao0@huawei.com>
+> Date: Mon, 7 Aug 2017 23:09:56 +0800
+> Subject: [PATCH] f2fs: introduce discard_granularity sysfs entry
+> 
+> Commit d618ebaf0aa8 ("f2fs: enable small discard by default") enables
+> f2fs to issue 4K size discard in real-time discard mode. However, issuing
+> smaller discard may cost more lifetime but releasing less free space in
+> flash device. Since f2fs has ability of separating hot/cold data and
+> garbage collection, we can expect that small-sized invalid region would
+> expand soon with OPU, deletion or garbage collection on valid datas, so
+> it's better to delay or skip issuing smaller size discards, it could help
+> to reduce overmuch consumption of IO bandwidth and lifetime of flash
+> storage.
+> 
+> This patch makes f2fs selectng 64K size as its default minimal
+> granularity, and issue discard with the size which is not smaller than
+> minimal granularity. Also it exposes discard granularity as sysfs entry
+> for configuration in different scenario.
+> 
+> Jaegeuk Kim:
+>  We must issue all the accumulated discard commands when fstrim is called.
+>  So, I've added pend_list_tag[] to indicate whether we should issue the
+>  commands or not. If tag sets P_ACTIVE or P_TRIM, we have to issue them.
+>  P_TRIM is set once at a time, given fstrim trigger.
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  Documentation/ABI/testing/sysfs-fs-f2fs |  9 +++++++
+>  fs/f2fs/f2fs.h                          |  9 +++++++
+>  fs/f2fs/segment.c                       | 43 +++++++++++++++++++++++++++++++--
+>  fs/f2fs/sysfs.c                         | 23 ++++++++++++++++++
+>  4 files changed, 82 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+> index 621da3fc56c5..11b7f4ebea7c 100644
+> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+> @@ -57,6 +57,15 @@ Contact:	"Jaegeuk Kim" <jaegeuk.kim@samsung.com>
+>  Description:
+>  		 Controls the issue rate of small discard commands.
+>  
+> +What:          /sys/fs/f2fs/<disk>/discard_granularity
+> +Date:          July 2017
+> +Contact:       "Chao Yu" <yuchao0@huawei.com>
+> +Description:
+> +		Controls discard granularity of inner discard thread, inner thread
+> +		will not issue discards with size that is smaller than granularity.
+> +		The unit size is one block, now only support configuring in range
+> +		of [1, 512].
+> +
+>  What:		/sys/fs/f2fs/<disk>/max_victim_search
+>  Date:		January 2014
+>  Contact:	"Jaegeuk Kim" <jaegeuk.kim@samsung.com>
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index e252e5bf9791..336021b9b93e 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -196,11 +196,18 @@ struct discard_entry {
+>  	unsigned char discard_map[SIT_VBLOCK_MAP_SIZE];	/* segment discard bitmap */
+>  };
+>  
+> +/* default discard granularity of inner discard thread, unit: block count */
+> +#define DEFAULT_DISCARD_GRANULARITY		16
+> +
+>  /* max discard pend list number */
+>  #define MAX_PLIST_NUM		512
+>  #define plist_idx(blk_num)	((blk_num) >= MAX_PLIST_NUM ?		\
+>  					(MAX_PLIST_NUM - 1) : (blk_num - 1))
+>  
+> +#define P_ACTIVE	0x01
+> +#define P_TRIM		0x02
+> +#define plist_issue(tag)	(((tag) & P_ACTIVE) || ((tag) & P_TRIM))
+> +
+>  enum {
+>  	D_PREP,
+>  	D_SUBMIT,
+> @@ -236,11 +243,13 @@ struct discard_cmd_control {
+>  	struct task_struct *f2fs_issue_discard;	/* discard thread */
+>  	struct list_head entry_list;		/* 4KB discard entry list */
+>  	struct list_head pend_list[MAX_PLIST_NUM];/* store pending entries */
+> +	unsigned char pend_list_tag[MAX_PLIST_NUM];/* tag for pending entries */
+>  	struct list_head wait_list;		/* store on-flushing entries */
+>  	wait_queue_head_t discard_wait_queue;	/* waiting queue for wake-up */
+>  	struct mutex cmd_lock;
+>  	unsigned int nr_discards;		/* # of discards in the list */
+>  	unsigned int max_discards;		/* max. discards to be issued */
+> +	unsigned int discard_granularity;	/* discard granularity */
+>  	unsigned int undiscard_blks;		/* # of undiscard blocks */
+>  	atomic_t issued_discard;		/* # of issued discard */
+>  	atomic_t issing_discard;		/* # of issing discard */
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 05144b3a7f62..8c90b69dcd6d 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -1028,22 +1028,49 @@ static void __issue_discard_cmd(struct f2fs_sb_info *sbi, bool issue_cond)
+>  	f2fs_bug_on(sbi,
+>  		!__check_rb_tree_consistence(sbi, &dcc->root));
+>  	blk_start_plug(&plug);
+> -	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
+> +	for (i = MAX_PLIST_NUM - 1;
+> +			i >= 0 && plist_issue(dcc->pend_list_tag[i]); i--) {
+>  		pend_list = &dcc->pend_list[i];
+>  		list_for_each_entry_safe(dc, tmp, pend_list, list) {
+>  			f2fs_bug_on(sbi, dc->state != D_PREP);
+>  
+> +			/* Hurry up to finish fstrim */
+> +			if (dcc->pend_list_tag[i] & P_TRIM) {
+> +				__submit_discard_cmd(sbi, dc);
+> +				continue;
+> +			}
+> +
+>  			if (!issue_cond || is_idle(sbi))
+>  				__submit_discard_cmd(sbi, dc);
+>  			if (issue_cond && iter++ > DISCARD_ISSUE_RATE)
+>  				goto out;
+>  		}
+> +		if (list_empty(pend_list) && dcc->pend_list_tag[i] & P_TRIM)
+> +			dcc->pend_list_tag[i] &= (~P_TRIM);
+>  	}
+>  out:
+>  	blk_finish_plug(&plug);
+>  	mutex_unlock(&dcc->cmd_lock);
+>  }
+>  
+> +static void __drop_discard_cmd(struct f2fs_sb_info *sbi)
+> +{
+> +	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+> +	struct list_head *pend_list;
+> +	struct discard_cmd *dc, *tmp;
+> +	int i;
+> +
+> +	mutex_lock(&dcc->cmd_lock);
+> +	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
+> +		pend_list = &dcc->pend_list[i];
+> +		list_for_each_entry_safe(dc, tmp, pend_list, list) {
+> +			f2fs_bug_on(sbi, dc->state != D_PREP);
+> +			__remove_discard_cmd(sbi, dc);
+> +		}
+> +	}
+> +	mutex_unlock(&dcc->cmd_lock);
+> +}
+> +
+>  static void __wait_one_discard_bio(struct f2fs_sb_info *sbi,
+>  							struct discard_cmd *dc)
+>  {
+> @@ -1126,6 +1153,7 @@ void stop_discard_thread(struct f2fs_sb_info *sbi)
+>  void f2fs_wait_discard_bios(struct f2fs_sb_info *sbi)
+>  {
+>  	__issue_discard_cmd(sbi, false);
+> +	__drop_discard_cmd(sbi);
+>  	__wait_discard_cmd(sbi, false);
+>  }
+>  
+> @@ -1448,9 +1476,13 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
+>  	if (!dcc)
+>  		return -ENOMEM;
+>  
+> +	dcc->discard_granularity = DEFAULT_DISCARD_GRANULARITY;
+>  	INIT_LIST_HEAD(&dcc->entry_list);
+> -	for (i = 0; i < MAX_PLIST_NUM; i++)
+> +	for (i = 0; i < MAX_PLIST_NUM; i++) {
+>  		INIT_LIST_HEAD(&dcc->pend_list[i]);
+> +		if (i >= dcc->discard_granularity - 1)
+> +			dcc->pend_list_tag[i] |= P_ACTIVE;
+> +	}
+>  	INIT_LIST_HEAD(&dcc->wait_list);
+>  	mutex_init(&dcc->cmd_lock);
+>  	atomic_set(&dcc->issued_discard, 0);
+> @@ -2079,11 +2111,13 @@ bool exist_trim_candidates(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  
+>  int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+>  {
+> +	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+>  	__u64 start = F2FS_BYTES_TO_BLK(range->start);
+>  	__u64 end = start + F2FS_BYTES_TO_BLK(range->len) - 1;
+>  	unsigned int start_segno, end_segno;
+>  	struct cp_control cpc;
+>  	int err = 0;
+> +	int i;
+>  
+>  	if (start >= MAX_BLKADDR(sbi) || range->len < sbi->blocksize)
+>  		return -EINVAL;
+> @@ -2127,6 +2161,11 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+>  
+>  		schedule();
+>  	}
+> +	/* It's time to issue all the filed discards */
+> +	mutex_lock(&dcc->cmd_lock);
+> +	for (i = 0; i < MAX_PLIST_NUM; i++)
+> +		dcc->pend_list_tag[i] |= P_TRIM;
+> +	mutex_unlock(&dcc->cmd_lock);
+>  out:
+>  	range->len = F2FS_BLK_TO_BYTES(cpc.trimmed);
+>  	return err;
+> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> index c40e5d24df9f..4bcaa9059026 100644
+> --- a/fs/f2fs/sysfs.c
+> +++ b/fs/f2fs/sysfs.c
+> @@ -152,6 +152,27 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+>  		spin_unlock(&sbi->stat_lock);
+>  		return count;
+>  	}
+> +
+> +	if (!strcmp(a->attr.name, "discard_granularity")) {
+> +		struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+> +		int i;
+> +
+> +		if (t == 0 || t > MAX_PLIST_NUM)
+> +			return -EINVAL;
+> +		if (t == *ui)
+> +			return count;
+> +
+> +		mutex_lock(&dcc->cmd_lock);
+> +		for (i = 0; i < MAX_PLIST_NUM; i++) {
+> +			if (i >= t - 1)
+> +				dcc->pend_list_tag[i] |= P_ACTIVE;
+> +			else
+> +				dcc->pend_list_tag[i] &= (~P_ACTIVE);
+> +		}
+> +		mutex_unlock(&dcc->cmd_lock);
+> +		return count;
+> +	}
+> +
+>  	*ui = t;
+>  
+>  	if (!strcmp(a->attr.name, "iostat_enable") && *ui == 0)
+> @@ -248,6 +269,7 @@ F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_idle, gc_idle);
+>  F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_urgent, gc_urgent);
+>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, reclaim_segments, rec_prefree_segments);
+>  F2FS_RW_ATTR(DCC_INFO, discard_cmd_control, max_small_discards, max_discards);
+> +F2FS_RW_ATTR(DCC_INFO, discard_cmd_control, discard_granularity, discard_granularity);
+>  F2FS_RW_ATTR(RESERVED_BLOCKS, f2fs_sb_info, reserved_blocks, reserved_blocks);
+>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, batched_trim_sections, trim_sections);
+>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, ipu_policy, ipu_policy);
+> @@ -290,6 +312,7 @@ static struct attribute *f2fs_attrs[] = {
+>  	ATTR_LIST(gc_urgent),
+>  	ATTR_LIST(reclaim_segments),
+>  	ATTR_LIST(max_small_discards),
+> +	ATTR_LIST(discard_granularity),
+>  	ATTR_LIST(batched_trim_sections),
+>  	ATTR_LIST(ipu_policy),
+>  	ATTR_LIST(min_ipu_util),
+> 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
