@@ -1,60 +1,67 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: trigger normal fsync for non-atomic_write
- file
-Date: Fri, 18 Aug 2017 16:20:33 +0800
-Message-ID: <20170818082033.96162-1-yuchao0@huawei.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: Re: [PATCH v2] f2fs: free_user_blocks should use reserved_segments
+ instead
+Date: Fri, 18 Aug 2017 18:02:13 +0800
+Message-ID: <624b1f95-1b48-1b2e-4e9a-27d19859b878@huawei.com>
+References: <1502702552-78497-1-git-send-email-yunlong.song@huawei.com>
+ <1502781273-97035-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
- helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1dicWd-0002Dp-0P
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 18 Aug 2017 08:21:03 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1dicWa-0006yI-UH
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 18 Aug 2017 08:21:02 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: Chao Yu <yuchao0@huawei.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1502781273-97035-1-git-send-email-yunlong.song@huawei.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If file was not opened with atomic write mode, but user uses atomic write
-ioctl to fsync datas, in the flow, we should not fsync that file with
-atomic write mode.
+ping...
 
-Fixes: 608514deba38 ("f2fs: set fsync mark only for the last dnode")
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2017/8/15 15:14, Yunlong Song wrote:
+> The part (overprovision_segments - reserved_segments) can still be used for LFS
+> in some case, e.g., there are lots of invalid block from dirty segments, then
+> the part (overprovision_segments - reserved_segments) can be safely used. So
+> free_use_blocks should use reserved_segments instead, rather than directly use
+> overprovision_segments. BTW, we also add the constraint of sbi->reserved_blocks.
+>
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> ---
+>   fs/f2fs/gc.h | 18 +++++++++++++++---
+>   1 file changed, 15 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+> index 9325191..542612a 100644
+> --- a/fs/f2fs/gc.h
+> +++ b/fs/f2fs/gc.h
+> @@ -49,11 +49,23 @@ struct gc_inode_list {
+>    */
+>   static inline block_t free_user_blocks(struct f2fs_sb_info *sbi)
+>   {
+> -	if (free_segments(sbi) < overprovision_segments(sbi))
+> +	block_t avail_user_block_count, free_blocks, avail_free_blocks;
+> +	block_t reserved_blocks;
+> +
+> +	avail_user_block_count = sbi->user_block_count - sbi->reserved_blocks;
+> +
+> +	if (unlikely(sbi->total_valid_block_count > avail_user_block_count))
+> +		return 0;
+> +
+> +	free_blocks = free_segments(sbi) << sbi->log_blocks_per_seg;
+> +	avail_free_blocks = min(free_blocks, avail_user_block_count -
+> +								sbi->total_valid_block_count);
+> +	reserved_blocks = reserved_segments(sbi) << sbi->log_blocks_per_seg;
+> +
+> +	if (avail_free_blocks < reserved_blocks)
+>   		return 0;
+>   	else
+> -		return (free_segments(sbi) - overprovision_segments(sbi))
+> -			<< sbi->log_blocks_per_seg;
+> +		return avail_free_blocks - reserved_blocks;
+>   }
+>   
+>   static inline block_t limit_invalid_user_blocks(struct f2fs_sb_info *sbi)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 3fe8f2ab0222..c93cf2a00395 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1698,7 +1698,7 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
- 			stat_dec_atomic_write(inode);
- 		}
- 	} else {
--		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
-+		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, false);
- 	}
- err_out:
- 	inode_unlock(inode);
 -- 
-2.13.1.388.g69e6b9b4f4a9
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+Thanks,
+Yunlong Song
