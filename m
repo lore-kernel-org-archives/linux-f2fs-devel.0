@@ -1,29 +1,24 @@
-From: "Marcelo \"Marc\" Ranolfi" <marc.2377@gmail.com>
-Subject: Re: Userspace locks at f2fs_issue_flush kernel call,
- hard reset necessary
-Date: Wed, 23 Aug 2017 14:26:32 -0300
-Message-ID: <CAETC-g_vr_JcB6eTdFzyga9EyV799wKOpeYYnYGExThsvS+NgQ@mail.gmail.com>
-References: <CAETC-g9+HJXSL4mqgzdTBoaOyoXU5OwL9TsFxUURNRQQ2tryxA@mail.gmail.com>
- <CAETC-g8=z6LuzkxfMZBvuLeMBkFX2Aaais9_ydaoecaRUUpRfQ@mail.gmail.com>
- <ad969786-ffff-4093-1deb-9be1f0eab4fc@kernel.org>
- <CAETC-g9CJ_vzzD7a53QuXxYD8wX6oLPENq7nZTo-8PK6UANf-A@mail.gmail.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: f2fs: WARNING: at fs/f2fs/segment.c:718
+ update_sit_entry+0x1c0/0x2b0()
+Date: Wed, 23 Aug 2017 13:37:46 -0700
+Message-ID: <20170823203746.GA45152@jaegeuk-macbookpro.roam.corp.google.com>
+References: <f8e749a4-d01a-2247-a215-e8363762fb81@linux-ipv6.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
  helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <marc.2377@gmail.com>) id 1dkZQO-0003Z9-TS
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Aug 2017 17:26:40 +0000
-Received: from mail-lf0-f66.google.com ([209.85.215.66])
- by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
- (Exim 4.76) id 1dkZQN-0004Ox-RH
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Aug 2017 17:26:40 +0000
-Received: by mail-lf0-f66.google.com with SMTP id t190so81829lfe.5
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 23 Aug 2017 10:26:39 -0700 (PDT)
-In-Reply-To: <CAETC-g9CJ_vzzD7a53QuXxYD8wX6oLPENq7nZTo-8PK6UANf-A@mail.gmail.com>
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <jaegeuk@kernel.org>) id 1dkcPS-00061u-2M
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Aug 2017 20:37:54 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+ (Exim 4.76) id 1dkcPQ-0006rs-QJ
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Aug 2017 20:37:53 +0000
+Content-Disposition: inline
+In-Reply-To: <f8e749a4-d01a-2247-a215-e8363762fb81@linux-ipv6.be>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,88 +28,78 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao@kernel.org>
+To: Stijn Tintel <stijn@linux-ipv6.be>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Chao,
+Thank you for the report.
+Could you please test this patch?
 
-I just had the same problem, with kernel 4.12.8 with patch _f2fs: fix
-out-of-order execution in f2fs_issue_flush_.
+>From 440e8638c5b4a7e7bd1234ea1e7da20ce226112e Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Wed, 23 Aug 2017 13:33:00 -0700
+Subject: [PATCH] mkfs.f2fs: fix missing cpu_to_le64 for checkpoint version
 
-On Tue, Aug 22, 2017 at 2:00 PM, Marcelo "Marc" Ranolfi
-<marc.2377@gmail.com> wrote:
-> Hi Chao
->
-> I'm testing the kernel with your patch since last night. Will give new
-> feedback a couple of days/weeks about how it goes.
->
->
-> Thank you.
->
->
->
-> On Mon, Aug 21, 2017 at 11:58 AM, Chao Yu <chao@kernel.org> wrote:
->> Hi Marcelo,
->>
->> Thanks for the report!
->>
->> Would you have a try with below patch?
->>
->> f2fs: fix out-of-order execution in f2fs_issue_flush
->>
->> Thanks,
->>
->> On 2017/8/16 15:24, Marcelo "Marc" Ranolfi wrote:
->>> Just wanted to let you all know that this is still an issue, even with
->>> the 4.12.7 kernel.
->>>
->>> The two most affected applications are qemu-system-x86_64 and totem.
->>>
->>> On Wed, Aug 9, 2017 at 3:04 AM, Marcelo "Marc" Ranolfi
->>> <marc.2377@gmail.com> wrote:
->>>> What follows is a bug report.
->>>>
->>>> I've been experiencing system lockups somewhat randomly. Sometimes an
->>>> application freezes, and when I go check its properties, it says the
->>>> process' Wait Channel is _f2fs_issue_flush_.
->>>>
->>>> Sometimes it's the qemu process (which I use via libvirt), other times
->>>> it's Firefox, or Gnome Videos (totem) and it happened to Nemo once as
->>>> well. I have screenshots if necessary.
->>>>
->>>> I've been tracking this with screenshots, and it's happenning every 4
->>>> days - on average.
->>>>
->>>> When this happens, the process stays unresponsive no matter what. I tried:
->>>>
->>>> - Restarting swap
->>>> - Restarting the Display Manager
->>>> - Graceful shutdown / reboot - takes forever, doesn't work
->>>> - Shutdown -k and unmounting filesystems from command line - root
->>>> can't be unmounted unless -l used, no solution
->>>>
->>>> The only working solution is to reset the machine via power button or
->>>> #reboot -f.
->>>>
->>>> I have:
->>>>
->>>> - Kingston SV300S37A120G - hardware is fine, I have other OS / filesystems on it
->>>> - f2fs filesystem in a 40 GB partition, GPT
->>>> - kernel 4.12.4 with systemd 234.11 - typical up-to-date Arch Linux setup.
->>>>
->>>> You gentlemen let me know if I provide more help.
->>>>
->>>> Best,
->>>> Marc
->>>
->>> ------------------------------------------------------------------------------
->>> Check out the vibrant tech community on one of the world's most
->>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
->>> _______________________________________________
->>> Linux-f2fs-devel mailing list
->>> Linux-f2fs-devel@lists.sourceforge.net
->>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>>
+The error on mips was reported by Stjin as follow.
+
+Commit 8399a29df92d6867d226df362edbf2e0efa527c1 in f2fs-tools
+("mkfs.f2fs: give random checkpoint version") causes a bug when mounting
+a filesystem created with it on a MIPS64 device running a 4.4(.83)
+kernel. The following kernel warning appears several times per second,
+for 30 seconds:
+
+[   23.837262] ------------[ cut here ]------------
+[   23.842039] WARNING: CPU: 0 PID: 935 at fs/f2fs/segment.c:718
+update_sit_entry+0x1c0/0x2b0()
+[   23.850507] Modules linked in: pppoe ppp_async l2tp_ppp iptable_nat
+[   24.174064] Call Trace:
+[   24.176527] [<ffffffff81126e14>] show_stack+0x68/0xb4
+[   24.181595] [<ffffffff81321fc4>] dump_stack+0x8c/0xc4
+[   24.186660] [<ffffffff8113d004>] warn_slowpath_common+0xa0/0xd0
+[   24.192597] [<ffffffff812e0148>] update_sit_entry+0x1c0/0x2b0
+[   24.198353] [<ffffffff812e0a70>] refresh_sit_entry+0x70/0xf8
+[   24.204022] [<ffffffff812e251c>] allocate_data_block+0x1f0/0x310
+[   24.210038] [<ffffffff812e28d8>] do_write_page+0x29c/0x2bc
+[   24.215532] [<ffffffff812e2a88>] write_data_page+0xa0/0xd8
+[   24.221028] [<ffffffff812d844c>] do_write_data_page+0xe4/0x384
+[   24.226870] [<ffffffff812d88f4>] f2fs_write_data_page+0x208/0x464
+[   24.232972] [<ffffffff812d5184>] __f2fs_writepage+0x1c/0x74
+[   24.238553] [<ffffffff812d54dc>]
+f2fs_write_cache_pages.constprop.7+0x250/0x394
+[   24.245869] [<ffffffff812d57f4>] f2fs_write_data_pages+0x130/0x1b0
+[   24.252066] [<ffffffff811a9f80>] __filemap_fdatawrite_range+0xa0/0xd4
+[   24.258515] [<ffffffff812d2338>] sync_dirty_dir_inodes+0x94/0xd8
+[   24.264530] [<ffffffff812d2484>] write_checkpoint+0x108/0xb9c
+[   24.270283] [<ffffffff812cc398>] f2fs_sync_fs+0x68/0xb0
+[   24.275526] [<ffffffff812c641c>] f2fs_sync_file+0x2e8/0x518
+[   24.281107] [<ffffffff81213ff4>] do_fsync+0x38/0x70
+[   24.285992] [<ffffffff812142e8>] SyS_fsync+0x14/0x20
+[   24.290972] [<ffffffff81103950>] syscall_common+0x34/0x58
+[   24.296372]
+[   24.298096] ---[ end trace fd3ac44449b218ab ]---
+
+Fix: 8399a29df92d68 ("mkfs.f2fs: give random checkpoint version")
+Reported-by: Stijn Tintel <stijn@linux-ipv6.be>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ mkfs/f2fs_format.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 92876b8..b379e80 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -546,7 +546,7 @@ static int f2fs_write_check_point_pack(void)
+ 	}
+ 
+ 	/* 1. cp page 1 of checkpoint pack 1 */
+-	cp->checkpoint_ver = rand() | 0x1;
++	cp->checkpoint_ver = cpu_to_le64(rand() | 0x1);
+ 	set_cp(cur_node_segno[0], c.cur_seg[CURSEG_HOT_NODE]);
+ 	set_cp(cur_node_segno[1], c.cur_seg[CURSEG_WARM_NODE]);
+ 	set_cp(cur_node_segno[2], c.cur_seg[CURSEG_COLD_NODE]);
+-- 
+2.14.0.rc1.383.gd1ce394fe2-goog
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
