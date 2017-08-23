@@ -1,22 +1,29 @@
-From: Stijn Tintel <stijn@linux-ipv6.be>
-Subject: f2fs: WARNING: at fs/f2fs/segment.c:718
- update_sit_entry+0x1c0/0x2b0()
-Date: Wed, 23 Aug 2017 15:21:24 +0300
-Message-ID: <f8e749a4-d01a-2247-a215-e8363762fb81@linux-ipv6.be>
+From: "Marcelo \"Marc\" Ranolfi" <marc.2377@gmail.com>
+Subject: Re: Userspace locks at f2fs_issue_flush kernel call,
+ hard reset necessary
+Date: Wed, 23 Aug 2017 14:26:32 -0300
+Message-ID: <CAETC-g_vr_JcB6eTdFzyga9EyV799wKOpeYYnYGExThsvS+NgQ@mail.gmail.com>
+References: <CAETC-g9+HJXSL4mqgzdTBoaOyoXU5OwL9TsFxUURNRQQ2tryxA@mail.gmail.com>
+ <CAETC-g8=z6LuzkxfMZBvuLeMBkFX2Aaais9_ydaoecaRUUpRfQ@mail.gmail.com>
+ <ad969786-ffff-4093-1deb-9be1f0eab4fc@kernel.org>
+ <CAETC-g9CJ_vzzD7a53QuXxYD8wX6oLPENq7nZTo-8PK6UANf-A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <stijn@linux-ipv6.be>) id 1dkUv8-0003PB-0z
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Aug 2017 12:38:06 +0000
-Received: from mail.tintel.eu ([62.213.201.86])
- by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1dkUv5-0007EX-Su
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Aug 2017 12:38:05 +0000
-Content-Language: en-GB
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <marc.2377@gmail.com>) id 1dkZQO-0003Z9-TS
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Aug 2017 17:26:40 +0000
+Received: from mail-lf0-f66.google.com ([209.85.215.66])
+ by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+ (Exim 4.76) id 1dkZQN-0004Ox-RH
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Aug 2017 17:26:40 +0000
+Received: by mail-lf0-f66.google.com with SMTP id t190so81829lfe.5
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 23 Aug 2017 10:26:39 -0700 (PDT)
+In-Reply-To: <CAETC-g9CJ_vzzD7a53QuXxYD8wX6oLPENq7nZTo-8PK6UANf-A@mail.gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,121 +33,89 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-SGksCgpDb21taXQgODM5OWEyOWRmOTJkNjg2N2QyMjZkZjM2MmVkYmYyZTBlZmE1MjdjMSBpbiBm
-MmZzLXRvb2xzCigibWtmcy5mMmZzOiBnaXZlIHJhbmRvbSBjaGVja3BvaW50IHZlcnNpb24iKSBj
-YXVzZXMgYSBidWcgd2hlbiBtb3VudGluZwphIGZpbGVzeXN0ZW0gY3JlYXRlZCB3aXRoIGl0IG9u
-IGEgTUlQUzY0IGRldmljZSBydW5uaW5nIGEgNC40KC44MykKa2VybmVsLiBUaGUgZm9sbG93aW5n
-IGtlcm5lbCB3YXJuaW5nIGFwcGVhcnMgc2V2ZXJhbCB0aW1lcyBwZXIgc2Vjb25kLApmb3IgMzAg
-c2Vjb25kczoKClvCoMKgIDIzLjgzNzI2Ml0gLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0tLS0t
-LS0tLS0tClvCoMKgIDIzLjg0MjAzOV0gV0FSTklORzogQ1BVOiAwIFBJRDogOTM1IGF0IGZzL2Yy
-ZnMvc2VnbWVudC5jOjcxOAp1cGRhdGVfc2l0X2VudHJ5KzB4MWMwLzB4MmIwKCkKW8KgwqAgMjMu
-ODUwNTA3XSBNb2R1bGVzIGxpbmtlZCBpbjogcHBwb2UgcHBwX2FzeW5jIGwydHBfcHBwIGlwdGFi
-bGVfbmF0CnBwdHAgcHBwb3ggcHBwX21wcGUgcHBwX2dlbmVyaWMgbmZ0X2NoYWluX25hdF9pcHY0
-IG5mX3RhYmxlc19pbmV0Cm5mX25hdF9wcHRwIG5mX25hdF9pcHY2IG5mX25hdF9pcHY0IG5mX25h
-dF9hbWFuZGEgbmZfY29ubnRyYWNrX3BwdHAKbmZfY29ubnRyYWNrX2lwdjYgbmZfY29ubnRyYWNr
-X2lwdjQgbmZfY29ubnRyYWNrX2FtYW5kYSBpcHRfUkVKRUNUCmlwdF9NQVNRVUVSQURFIHh0X3Rp
-bWUgeHRfdGNwdWRwIHh0X3RjcG1zcyB4dF9zdHJpbmcgeHRfc3RhdGlzdGljCnh0X3N0YXRlIHh0
-X3JlY2VudCB4dF9xdW90YSB4dF9wb2xpY3kgeHRfcGt0dHlwZSB4dF9waHlzZGV2IHh0X293bmVy
-Cnh0X25hdCB4dF9tdWx0aXBvcnQgeHRfbWFyayB4dF9tYWMgeHRfbGltaXQgeHRfbGVuZ3RoIHh0
-X2hsIHh0X2hlbHBlcgp4dF9lc3AgeHRfZWNuIHh0X2RzY3AgeHRfY29ubnRyYWNrIHh0X2Nvbm5t
-YXJrIHh0X2Nvbm5saW1pdCB4dF9jb25uYnl0ZXMKeHRfY29tbWVudCB4dF9hZGRydHlwZSB4dF9U
-Q1BNU1MgeHRfUkVESVJFQ1QgeHRfTE9HIHh0X0hMIHh0X0RTQ1AKeHRfQ0xBU1NJRlkgd2lyZWd1
-YXJkIHRzX2ttcCB0c19mc20gdHNfYm0gc2xoYyBuZnRfcmVqZWN0X2lwdjYKbmZ0X3JlamVjdF9p
-cHY0IG5mdF9yZWplY3RfaW5ldCBuZnRfcmVqZWN0IG5mdF9yZWRpcl9pcHY0IG5mdF9yZWRpcgpu
-ZnRfcmJ0cmVlIG5mdF9uYXQgbmZ0X21ldGEgbmZ0X21hc3FfaXB2NiBuZnRfbWFzcV9pcHY0IG5m
-dF9tYXNxIG5mdF9sb2cKbmZ0X2xpbWl0IG5mdF9oYXNoIG5mdF9leHRoZHIgbmZ0X2N0IG5mdF9j
-b3VudGVyIG5mdF9jaGFpbl9yb3V0ZV9pcHY2Cm5mdF9jaGFpbl9yb3V0ZV9pcHY0IG5mX3RhYmxl
-c19pcHY2IG5mX3RhYmxlc19pcHY0IG5mX3RhYmxlcwpuZl9yZWplY3RfaXB2NCBuZl9uYXRfdGZ0
-cCBuZl9uYXRfc25tcF9iYXNpYyBuZl9uYXRfc2lwIG5mX25hdF9ydHNwCm5mX25hdF9yZWRpcmVj
-dCBuZl9uYXRfcHJvdG9fZ3JlIG5mX25hdF9tYXNxdWVyYWRlX2lwdjYKbmZfbmF0X21hc3F1ZXJh
-ZGVfaXB2NCBuZl9uYXRfaXJjIG5mX25hdF9oMzIzIG5mX25hdF9mdHAgbmZfbmF0Cm5mX2xvZ19p
-cHY0IG5mX2RlZnJhZ19pcHY2IG5mX2RlZnJhZ19pcHY0IG5mX2Nvbm50cmFja190ZnRwCm5mX2Nv
-bm50cmFja19zbm1wIG5mX2Nvbm50cmFja19zaXAgbmZfY29ubnRyYWNrX3J0c3AKbmZfY29ubnRy
-YWNrX3J0Y2FjaGUgbmZfY29ubnRyYWNrX3Byb3RvX2dyZSBuZl9jb25udHJhY2tfbmV0bGluawpu
-Zl9jb25udHJhY2tfaXJjIG5mX2Nvbm50cmFja19oMzIzIG5mX2Nvbm50cmFja19mdHAKbmZfY29u
-bnRyYWNrX2Jyb2FkY2FzdCBtYWN2bGFuIGlwdGFibGVfbWFuZ2xlIGlwdGFibGVfZmlsdGVyIGlw
-dF9haAppcHRfRUNOIGlwX3RhYmxlcyBjcmNfY2NpdHQgY29tcGF0X3h0YWJsZXMgYnJfbmV0Zmls
-dGVyIHNjaF9jYWtlCnNjaF90ZXFsIGVtX25ieXRlIHNjaF9jb2RlbCBzY2hfcHJpbyBzY2hfcGll
-IGFjdF9pcHQgc2NoX2dyZWQgc2NoX2RzbWFyawpjbHNfYmFzaWMgZW1fY21wIGVtX3RleHQgZW1f
-bWV0YSBzY2hfc2ZxIGFjdF9wb2xpY2Ugc2NoX2ZxIHNjaF9yZWQKYWN0X2Nvbm5tYXJrIG5mX2Nv
-bm50cmFjayBhY3Rfc2tiZWRpdCBhY3RfbWlycmVkIGVtX3UzMiBjbHNfdTMyCmNsc190Y2luZGV4
-IGNsc19mbG93IGNsc19yb3V0ZSBjbHNfZncgc2NoX3RiZiBzY2hfaHRiIHNjaF9oZnNjCnNjaF9p
-bmdyZXNzIGNyeXB0b2RldiB4dF9zZXQgaXBfc2V0X2xpc3Rfc2V0IGlwX3NldF9oYXNoX25ldGlm
-YWNlCmlwX3NldF9oYXNoX25ldHBvcnQgaXBfc2V0X2hhc2hfbmV0bmV0IGlwX3NldF9oYXNoX25l
-dAppcF9zZXRfaGFzaF9uZXRwb3J0bmV0IGlwX3NldF9oYXNoX21hYyBpcF9zZXRfaGFzaF9pcHBv
-cnRuZXQKaXBfc2V0X2hhc2hfaXBwb3J0aXAgaXBfc2V0X2hhc2hfaXBwb3J0IGlwX3NldF9oYXNo
-X2lwbWFyawppcF9zZXRfaGFzaF9pcCBpcF9zZXRfYml0bWFwX3BvcnQgaXBfc2V0X2JpdG1hcF9p
-cG1hYyBpcF9zZXRfYml0bWFwX2lwCmlwX3NldCBuZm5ldGxpbmsgaXA2dF9ydCBpcDZ0X2ZyYWcg
-aXA2dF9oYmggaXA2dF9ldWk2NCBpcDZ0X21oIGlwNnRfYWgKaXA2dF9pcHY2aGVhZGVyIGlwNnRf
-UkVKRUNUIG5mX3JlamVjdF9pcHY2IG5mX2xvZ19pcHY2IG5mX2xvZ19jb21tb24KaXA2dGFibGVf
-bWFuZ2xlIGlwNnRhYmxlX2ZpbHRlciBpcDZfdGFibGVzIHhfdGFibGVzIGlwX2dyZSBncmUgaWZi
-CmwydHBfaXA2IGwydHBfaXAgbDJ0cF9ldGggaXA2X3Z0aSBpcF92dGkgc2l0IGwydHBfbmV0bGlu
-ayBsMnRwX2NvcmUKdWRwX3R1bm5lbCBpcDZfdWRwX3R1bm5lbCBpcGNvbXA2IHhmcm02X3R1bm5l
-bCB4ZnJtNl9tb2RlX3R1bm5lbAp4ZnJtNl9tb2RlX3RyYW5zcG9ydCB4ZnJtNl9tb2RlX2JlZXQg
-ZXNwNiBhaDYgaXBjb21wIHhmcm00X3R1bm5lbAp4ZnJtNF9tb2RlX3R1bm5lbCB4ZnJtNF9tb2Rl
-X3RyYW5zcG9ydCB4ZnJtNF9tb2RlX2JlZXQgZXNwNCBhaDQKaXA2X3R1bm5lbCB0dW5uZWw2IHR1
-bm5lbDQgaXBfdHVubmVsIGFmX2tleSB4ZnJtX3VzZXIgeGZybV9pcGNvbXAKeGZybV9hbGdvIG9j
-dGVvbl9zaGE1MTIgc2hhNTEyX2dlbmVyaWMgb2N0ZW9uX3NoYTI1NiBzaGEyNTZfZ2VuZXJpYwpv
-Y3Rlb25fc2hhMSBzaGExX2dlbmVyaWMgc2VxaXYgaml0dGVyZW50cm9weV9ybmcgZHJiZyBvY3Rl
-b25fbWQ1IG1kNQpobWFjIGdoYXNoX2dlbmVyaWMgZ2YxMjhtdWwgZ2NtIGVjaGFpbml2IGVjYiBk
-ZXNfZ2VuZXJpYyBkZWZsYXRlCnpsaWJfZGVmbGF0ZSBjdHIgY2NtIGNiYyBhdXRoZW5jClvCoMKg
-IDI0LjEwMjgyMF0gQ1BVOiAwIFBJRDogOTM1IENvbW06IHVjaSBOb3QgdGFpbnRlZCA0LjQuODMg
-IzAKW8KgwqAgMjQuMTA4Mzk0XSBTdGFjayA6IGZmZmZmZmZmODE2NzAwMDAgZmZmZmZmZmY4MTE3
-NTkwYwpmZmZmZmZmZjgxODEwMDAwIDAwMDAwMDAwMDAwMDAwMDEKwqDCoMKgwqDCoMKgwqDCoMKg
-IGZmZmZmZmZmODE4MTAwMDAgMDAwMDAwMDAwMDAwMDAwMCAwMDAwMDAwMDAwMDAwMGNlCjAwMDAw
-MDAwMDAwMDAwMDYKwqDCoMKgwqDCoMKgwqDCoMKgIGZmZmZmZmZmODE1YmFlOTAgZmZmZmZmZmY4
-MTgxMDAwMCAwMDAwMDAwMDAwMDAwMDAwCmZmZmZmZmZmODE3ZWFmNWEKwqDCoMKgwqDCoMKgwqDC
-oMKgIDAwMDAwMDAwMDAwMDAwMDYgMDAwMDAwMDAwMDAwMDAwNCAwMDAwMDAwMDAwMDAwMDAwCjAw
-MDAwMDAwMDAwMDAwMmYKwqDCoMKgwqDCoMKgwqDCoMKgIDAwMDAwMDAwMDAwMDAwMDAgODAwMDAw
-MDAwZjExMzcwOCAwMDAwMDAwMDAwMDAwMDAwCmZmZmZmZmZmODExNzVkZTQKwqDCoMKgwqDCoMKg
-wqDCoMKgIDAwMDAwMDAwMDAwMDAwMDAgMDAwMDAwMDAwMDAwMDAwMCBmZmZmZmZmZjgxNjcwMDAw
-CmZmZmZmZmZmODE2NzAwMDAKwqDCoMKgwqDCoMKgwqDCoMKgIGZmZmZmZmZmODE2NjAwMDAgZmZm
-ZmZmZmY4MTViNTc3OCA4MDAwMDAwNDFmOWQ4MDAwCjAwMDAwMDAwMDAwMDAwMDAKwqDCoMKgwqDC
-oMKgwqDCoMKgIDAwMDAwMDAwMDAwMDAzYTcgZmZmZmZmZmY4MTdlNmRmOCA4MDAwMDAwMDBmMTEz
-NWQwCjAwMDAwMDAwMDAwMDAwODAKwqDCoMKgwqDCoMKgwqDCoMKgIGZmZmZmZmZmODEzMjFmYzQg
-MDAwMDAwMDAwMDAwMDAwMCA4MDAwMDAwMDBmMTEzNzA4CmRjOGZhMjAwY2I4YzU3MmMKwqDCoMKg
-wqDCoMKgwqDCoMKgIGZmZmZmZmZmODE2NmM1NWYgZmZmZmZmZmY4MTE3NmJhYyBmZmZmZmZmZjgx
-MTI2ZTE0CmZmZmZmZmZmODE1YjU3NzgKwqDCoMKgwqDCoMKgwqDCoMKgIC4uLgpbwqDCoCAyNC4x
-NzQwNjRdIENhbGwgVHJhY2U6ClvCoMKgIDI0LjE3NjUyN10gWzxmZmZmZmZmZjgxMTI2ZTE0Pl0g
-c2hvd19zdGFjaysweDY4LzB4YjQKW8KgwqAgMjQuMTgxNTk1XSBbPGZmZmZmZmZmODEzMjFmYzQ+
-XSBkdW1wX3N0YWNrKzB4OGMvMHhjNApbwqDCoCAyNC4xODY2NjBdIFs8ZmZmZmZmZmY4MTEzZDAw
-ND5dIHdhcm5fc2xvd3BhdGhfY29tbW9uKzB4YTAvMHhkMApbwqDCoCAyNC4xOTI1OTddIFs8ZmZm
-ZmZmZmY4MTJlMDE0OD5dIHVwZGF0ZV9zaXRfZW50cnkrMHgxYzAvMHgyYjAKW8KgwqAgMjQuMTk4
-MzUzXSBbPGZmZmZmZmZmODEyZTBhNzA+XSByZWZyZXNoX3NpdF9lbnRyeSsweDcwLzB4ZjgKW8Kg
-wqAgMjQuMjA0MDIyXSBbPGZmZmZmZmZmODEyZTI1MWM+XSBhbGxvY2F0ZV9kYXRhX2Jsb2NrKzB4
-MWYwLzB4MzEwClvCoMKgIDI0LjIxMDAzOF0gWzxmZmZmZmZmZjgxMmUyOGQ4Pl0gZG9fd3JpdGVf
-cGFnZSsweDI5Yy8weDJiYwpbwqDCoCAyNC4yMTU1MzJdIFs8ZmZmZmZmZmY4MTJlMmE4OD5dIHdy
-aXRlX2RhdGFfcGFnZSsweGEwLzB4ZDgKW8KgwqAgMjQuMjIxMDI4XSBbPGZmZmZmZmZmODEyZDg0
-NGM+XSBkb193cml0ZV9kYXRhX3BhZ2UrMHhlNC8weDM4NApbwqDCoCAyNC4yMjY4NzBdIFs8ZmZm
-ZmZmZmY4MTJkODhmND5dIGYyZnNfd3JpdGVfZGF0YV9wYWdlKzB4MjA4LzB4NDY0ClvCoMKgIDI0
-LjIzMjk3Ml0gWzxmZmZmZmZmZjgxMmQ1MTg0Pl0gX19mMmZzX3dyaXRlcGFnZSsweDFjLzB4NzQK
-W8KgwqAgMjQuMjM4NTUzXSBbPGZmZmZmZmZmODEyZDU0ZGM+XQpmMmZzX3dyaXRlX2NhY2hlX3Bh
-Z2VzLmNvbnN0cHJvcC43KzB4MjUwLzB4Mzk0ClvCoMKgIDI0LjI0NTg2OV0gWzxmZmZmZmZmZjgx
-MmQ1N2Y0Pl0gZjJmc193cml0ZV9kYXRhX3BhZ2VzKzB4MTMwLzB4MWIwClvCoMKgIDI0LjI1MjA2
-Nl0gWzxmZmZmZmZmZjgxMWE5ZjgwPl0gX19maWxlbWFwX2ZkYXRhd3JpdGVfcmFuZ2UrMHhhMC8w
-eGQ0ClvCoMKgIDI0LjI1ODUxNV0gWzxmZmZmZmZmZjgxMmQyMzM4Pl0gc3luY19kaXJ0eV9kaXJf
-aW5vZGVzKzB4OTQvMHhkOApbwqDCoCAyNC4yNjQ1MzBdIFs8ZmZmZmZmZmY4MTJkMjQ4ND5dIHdy
-aXRlX2NoZWNrcG9pbnQrMHgxMDgvMHhiOWMKW8KgwqAgMjQuMjcwMjgzXSBbPGZmZmZmZmZmODEy
-Y2MzOTg+XSBmMmZzX3N5bmNfZnMrMHg2OC8weGIwClvCoMKgIDI0LjI3NTUyNl0gWzxmZmZmZmZm
-ZjgxMmM2NDFjPl0gZjJmc19zeW5jX2ZpbGUrMHgyZTgvMHg1MTgKW8KgwqAgMjQuMjgxMTA3XSBb
-PGZmZmZmZmZmODEyMTNmZjQ+XSBkb19mc3luYysweDM4LzB4NzAKW8KgwqAgMjQuMjg1OTkyXSBb
-PGZmZmZmZmZmODEyMTQyZTg+XSBTeVNfZnN5bmMrMHgxNC8weDIwClvCoMKgIDI0LjI5MDk3Ml0g
-WzxmZmZmZmZmZjgxMTAzOTUwPl0gc3lzY2FsbF9jb21tb24rMHgzNC8weDU4ClvCoMKgIDI0LjI5
-NjM3Ml0KW8KgwqAgMjQuMjk4MDk2XSAtLS1bIGVuZCB0cmFjZSBmZDNhYzQ0NDQ5YjIxOGFiIF0t
-LS0KCkl0IHRoZW4gc3RvcHMgZm9yIGEgbWludXRlLCBhbmQgc3RhcnRzIHJlLWFwcGVhcmluZyBm
-b3IgYXQgbGVhc3QgYQptaW51dGUsIGJlZm9yZSBpdCBzZXR0bGVzIGRvd24gYW5kIG9ubHkgYXBw
-ZWFycyBzcG9yYWRpY2FsbHkuCgpUaGlzIHByb2JsZW0gd2FzIHJlcG9ydGVkIGRvd25zdHJlYW0g
-YXQKaHR0cHM6Ly9idWdzLmxlZGUtcHJvamVjdC5vcmcvaW5kZXgucGhwP2RvPWRldGFpbHMmdGFz
-a19pZD03NDkuIEl0IGRvZXMKbm90IG9jY3VyIG9uIGEgNC45KC40NCkga2VybmVsLCBhbmQgaXQg
-YWxzbyBkb2VzIG5vdCBvY2N1ciBvbiBhbiB4ODYvNjQKZGV2aWNlIHJ1bm5pbmcgNC40KC44Myku
-CgpLaW5kIHJlZ2FyZHMsClN0aWpuCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0
-aGUgdmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdh
-Z2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdApf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZz
-LWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5l
-dApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZz
-LWRldmVsCg==
+Chao,
+
+I just had the same problem, with kernel 4.12.8 with patch _f2fs: fix
+out-of-order execution in f2fs_issue_flush_.
+
+On Tue, Aug 22, 2017 at 2:00 PM, Marcelo "Marc" Ranolfi
+<marc.2377@gmail.com> wrote:
+> Hi Chao
+>
+> I'm testing the kernel with your patch since last night. Will give new
+> feedback a couple of days/weeks about how it goes.
+>
+>
+> Thank you.
+>
+>
+>
+> On Mon, Aug 21, 2017 at 11:58 AM, Chao Yu <chao@kernel.org> wrote:
+>> Hi Marcelo,
+>>
+>> Thanks for the report!
+>>
+>> Would you have a try with below patch?
+>>
+>> f2fs: fix out-of-order execution in f2fs_issue_flush
+>>
+>> Thanks,
+>>
+>> On 2017/8/16 15:24, Marcelo "Marc" Ranolfi wrote:
+>>> Just wanted to let you all know that this is still an issue, even with
+>>> the 4.12.7 kernel.
+>>>
+>>> The two most affected applications are qemu-system-x86_64 and totem.
+>>>
+>>> On Wed, Aug 9, 2017 at 3:04 AM, Marcelo "Marc" Ranolfi
+>>> <marc.2377@gmail.com> wrote:
+>>>> What follows is a bug report.
+>>>>
+>>>> I've been experiencing system lockups somewhat randomly. Sometimes an
+>>>> application freezes, and when I go check its properties, it says the
+>>>> process' Wait Channel is _f2fs_issue_flush_.
+>>>>
+>>>> Sometimes it's the qemu process (which I use via libvirt), other times
+>>>> it's Firefox, or Gnome Videos (totem) and it happened to Nemo once as
+>>>> well. I have screenshots if necessary.
+>>>>
+>>>> I've been tracking this with screenshots, and it's happenning every 4
+>>>> days - on average.
+>>>>
+>>>> When this happens, the process stays unresponsive no matter what. I tried:
+>>>>
+>>>> - Restarting swap
+>>>> - Restarting the Display Manager
+>>>> - Graceful shutdown / reboot - takes forever, doesn't work
+>>>> - Shutdown -k and unmounting filesystems from command line - root
+>>>> can't be unmounted unless -l used, no solution
+>>>>
+>>>> The only working solution is to reset the machine via power button or
+>>>> #reboot -f.
+>>>>
+>>>> I have:
+>>>>
+>>>> - Kingston SV300S37A120G - hardware is fine, I have other OS / filesystems on it
+>>>> - f2fs filesystem in a 40 GB partition, GPT
+>>>> - kernel 4.12.4 with systemd 234.11 - typical up-to-date Arch Linux setup.
+>>>>
+>>>> You gentlemen let me know if I provide more help.
+>>>>
+>>>> Best,
+>>>> Marc
+>>>
+>>> ------------------------------------------------------------------------------
+>>> Check out the vibrant tech community on one of the world's most
+>>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+>>> _______________________________________________
+>>> Linux-f2fs-devel mailing list
+>>> Linux-f2fs-devel@lists.sourceforge.net
+>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>>>
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
