@@ -1,43 +1,89 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH] f2fs: discard small invalid blocks in current active segments
-Date: Sat, 26 Aug 2017 20:49:32 +0800
-Message-ID: <1503751772-158812-1-git-send-email-yunlong.song@huawei.com>
+From: =?UTF-8?Q?=EF=BF=BD=0A?= <hermina2rbm567matejka@chromass.com>
+Subject: [SPAM] Cheap Mail Databases - 20% off
+Date: Sat, 26 Aug 2017 19:36:43 +0200
+Message-ID: <bhc1ej1mnc4cfew79t7.X5sfSryj95@chromass.com>
+Reply-To: hermina2rbm567matejka@chromass.com
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+ helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <hermina2rbm567matejka@chromass.com>)
+ id 1dlf2M-0004fL-3l
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 26 Aug 2017 17:38:22 +0000
+Received: from reflect.mktmorais.com ([64.20.61.39] helo=reflect.chromass.com)
+ by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+ id 1dlf2L-0007uE-9Q
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 26 Aug 2017 17:38:21 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-1. write file A with 5 blocks to current empty active segment
-2. remove file A
-3. write checkpoint
-4. write file B with 507 blocks to the same active segment
+Hello!
 
-If file B is alive all the time, the blocks used by file A will never be
-discarded. So current active segment should also be treated as a candidate
-for small discards.
+Do you need email databases?
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
----
- fs/f2fs/segment.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+20% discount every database! And Free databases too.
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 8375257..a2e7c8f 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1339,7 +1339,9 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
- 		return false;
- 
- 	if (!force) {
--		if (!test_opt(sbi, DISCARD) || !se->valid_blocks ||
-+		if (!test_opt(sbi, DISCARD) ||
-+			(!se->valid_blocks &&
-+			!IS_CURSEG(sbi, cpc->trim_start)) ||
- 			SM_I(sbi)->dcc_info->nr_discards >=
- 				SM_I(sbi)->dcc_info->max_discards)
- 			return false;
--- 
-1.8.5.2
+20% discount code: database20
+Use the coupon code - 20%
+
+-------------------------------------------------
+Available lists:
+
+Belgium 80 000 Consumer email database - $29 USD
+
+Canada 1 400 000 email database - $99 USD
+
+Czech Republic 950 000 email database - $189 USD
+
+France 800 000 Consumer email database - $109 USD
+
+Free email databases 5 000 - $0 USD
+
+2017 fresh updated Hungary 9 000 000 consumer email database - $289 USD
+
+2017 fresh updated Spain 2 010 000 business email database - $169 USD
+
+59,000 USA valid company email-phone database - $79 USD
+
+Austria 600 000 b2b-b2c email database - $129 USD
+
+-------------------------------------------------
+
+More infos:
+http://chromass.com/emaildatabasepro
+
+Or:
+
+www (dot) emaildatabasepro (dot) com
+
+If you have any questions:
+emaildatabaseprocom (at) gmail (dot) com
+
+
+Best Regards,
+EmailDataBasePro team
+
+
+
+
+
+
+
+
+Unsubscibe:
+http://chromass.com/ob.php?tw6=_#egyedikampannyal#_
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
