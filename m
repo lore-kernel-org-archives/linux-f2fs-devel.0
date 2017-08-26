@@ -1,23 +1,20 @@
-From: =?UTF-8?Q?=EF=BF=BD=0A?= <nikolan4381pekubicek@aspenlogdesigns.com>
-Subject: [SPAM] Email databases - 20% discount and free database
-Date: Fri, 25 Aug 2017 17:06:16 +0200
-Message-ID: <wf9c73dzcvd-Nwslu7y@aspenlogdesigns.com>
-Reply-To: nikolan4381pekubicek@aspenlogdesigns.com
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] mkfs.f2fs: fix wrong curseg check
+Date: Fri, 25 Aug 2017 17:10:55 -0700
+Message-ID: <20170826001055.4478-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89)
- (envelope-from <nikolan4381pekubicek@aspenlogdesigns.com>)
- id 1dlGBj-00031V-NW
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 25 Aug 2017 15:06:23 +0000
-Received: from tall.kvstong.com ([64.20.61.45] helo=tall.aspenlogdesigns.com)
- by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
- id 1dlGBh-0003ph-Ri
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 25 Aug 2017 15:06:23 +0000
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <jaegeuk@kernel.org>) id 1dlOgp-0002u1-TZ
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 26 Aug 2017 00:11:03 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+ (Exim 4.76) id 1dlOgp-0002tY-7n
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 26 Aug 2017 00:11:03 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,62 +25,31 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Hello!
+We should avoid i==j, otherwise we always assign 0~5 segments.
 
-Do you need email databases?
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ mkfs/f2fs_format.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-20% discount every database! And Free databases too.
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index b379e80..219c2a7 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -123,7 +123,7 @@ static void verify_cur_segs(void)
+ 
+ 	for (i = 0; i < NR_CURSEG_TYPE; i++) {
+ 		for (j = 0; j < NR_CURSEG_TYPE; j++)
+-			if (c.cur_seg[i] == c.cur_seg[j])
++			if (i != j && c.cur_seg[i] == c.cur_seg[j])
+ 				break;
+ 	}
+ 
+-- 
+2.14.0.rc1.383.gd1ce394fe2-goog
 
-20% discount code: database20
-Use the coupon code - 20%
-
--------------------------------------------------
-Available lists:
-
-Belgium 80 000 Consumer email database - $29 USD
-
-Canada 1 400 000 email database - $99 USD
-
-Czech Republic 950 000 email database - $189 USD
-
-France 800 000 Consumer email database - $109 USD
-
-Free email databases 5 000 - $0 USD
-
-2017 fresh updated Hungary 9 000 000 consumer email database - $289 USD
-
-2017 fresh updated Spain 2 010 000 business email database - $169 USD
-
-59,000 USA valid company email-phone database - $79 USD
-
-Austria 600 000 b2b-b2c email database - $129 USD
-
--------------------------------------------------
-
-More infos:
-http://aspenlogdesigns.com/emaildatabasepro
-
-Or:
-
-www (dot) emaildatabasepro (dot) com
-
-If you have any questions:
-emaildatabaseprocom (at) gmail (dot) com
-
-
-Best Regards,
-EmailDataBasePro team
-
-
-
-
-
-
-
-
-Unsubscibe:
-http://aspenlogdesigns.com/ob.php?tw6=_#egyedikampannyal#_
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
