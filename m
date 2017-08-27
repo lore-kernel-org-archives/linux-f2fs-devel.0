@@ -1,22 +1,22 @@
-From: =?UTF-8?Q?=EF=BF=BD=0A?= <hermina2rbm567matejka@chromass.com>
-Subject: [SPAM] Cheap Mail Databases - 20% off
-Date: Sat, 26 Aug 2017 19:36:43 +0200
-Message-ID: <bhc1ej1mnc4cfew79t7.X5sfSryj95@chromass.com>
-Reply-To: hermina2rbm567matejka@chromass.com
+From: =?UTF-8?Q?Alexandr?= <alexandrhbtkdrx@ouatseup.com>
+Subject: [SPAM] Email databases - 20% discount and free database
+Date: Sun, 27 Aug 2017 11:21:10 +0200
+Message-ID: <a187i9CCsdcxgAd1Kwa-8BZ0AEAPA@ouatseup.com>
+Reply-To: alexandrhbtkdrx@ouatseup.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
  helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <hermina2rbm567matejka@chromass.com>)
- id 1dlf2M-0004fL-3l
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 26 Aug 2017 17:38:22 +0000
-Received: from reflect.mktmorais.com ([64.20.61.39] helo=reflect.chromass.com)
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <alexandrhbtkdrx@ouatseup.com>)
+ id 1dltkq-0000xy-B9
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 27 Aug 2017 09:21:16 +0000
+Received: from obtain.ndamghan.com ([64.20.61.40] helo=obtain.ouatseup.com)
  by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
- id 1dlf2L-0007uE-9Q
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 26 Aug 2017 17:38:21 +0000
+ id 1dltkp-0001bH-Bu
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 27 Aug 2017 09:21:16 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -61,7 +61,7 @@ Austria 600 000 b2b-b2c email database - $129 USD
 -------------------------------------------------
 
 More infos:
-http://chromass.com/emaildatabasepro
+http://ouatseup.com/emaildatabasepro
 
 Or:
 
@@ -82,7 +82,7 @@ EmailDataBasePro team
 
 
 Unsubscibe:
-http://chromass.com/ob.php?tw6=_#egyedikampannyal#_
+http://ouatseup.com/ob.php?tw6=_#egyedikampannyal#_
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
