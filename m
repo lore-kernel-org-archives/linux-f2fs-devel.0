@@ -1,89 +1,71 @@
-From: =?UTF-8?Q?Alexandr?= <alexandrhbtkdrx@ouatseup.com>
-Subject: [SPAM] Email databases - 20% discount and free database
-Date: Sun, 27 Aug 2017 11:21:10 +0200
-Message-ID: <a187i9CCsdcxgAd1Kwa-8BZ0AEAPA@ouatseup.com>
-Reply-To: alexandrhbtkdrx@ouatseup.com
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: issue discard commands if gc_urgent is set
+Date: Mon, 28 Aug 2017 17:20:35 +0800
+Message-ID: <a392efd5-a0af-68d7-134b-d20bccd3c3ce@huawei.com>
+References: <20170821205647.67775-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
- helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <alexandrhbtkdrx@ouatseup.com>)
- id 1dltkq-0000xy-B9
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 27 Aug 2017 09:21:16 +0000
-Received: from obtain.ndamghan.com ([64.20.61.40] helo=obtain.ouatseup.com)
- by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
- id 1dltkp-0001bH-Bu
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 27 Aug 2017 09:21:16 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170821205647.67775-1-jaegeuk@kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hello!
+On 2017/8/22 4:56, Jaegeuk Kim wrote:
+> It's time to issue all the discard commands, if user sets the idle time.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Do you need email databases?
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-20% discount every database! And Free databases too.
-
-20% discount code: database20
-Use the coupon code - 20%
-
--------------------------------------------------
-Available lists:
-
-Belgium 80 000 Consumer email database - $29 USD
-
-Canada 1 400 000 email database - $99 USD
-
-Czech Republic 950 000 email database - $189 USD
-
-France 800 000 Consumer email database - $109 USD
-
-Free email databases 5 000 - $0 USD
-
-2017 fresh updated Hungary 9 000 000 consumer email database - $289 USD
-
-2017 fresh updated Spain 2 010 000 business email database - $169 USD
-
-59,000 USA valid company email-phone database - $79 USD
-
-Austria 600 000 b2b-b2c email database - $129 USD
-
--------------------------------------------------
-
-More infos:
-http://ouatseup.com/emaildatabasepro
-
-Or:
-
-www (dot) emaildatabasepro (dot) com
-
-If you have any questions:
-emaildatabaseprocom (at) gmail (dot) com
-
-
-Best Regards,
-EmailDataBasePro team
-
-
-
-
-
-
-
-
-Unsubscibe:
-http://ouatseup.com/ob.php?tw6=_#egyedikampannyal#_
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> ---
+>  fs/f2fs/segment.c | 6 +++++-
+>  fs/f2fs/sysfs.c   | 5 +++++
+>  2 files changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 1387925a0d83..e3922f902c8c 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -21,6 +21,7 @@
+>  #include "f2fs.h"
+>  #include "segment.h"
+>  #include "node.h"
+> +#include "gc.h"
+>  #include "trace.h"
+>  #include <trace/events/f2fs.h>
+>  
+> @@ -1194,8 +1195,11 @@ static int issue_discard_thread(void *data)
+>  		if (kthread_should_stop())
+>  			return 0;
+>  
+> -		if (dcc->discard_wake)
+> +		if (dcc->discard_wake) {
+>  			dcc->discard_wake = 0;
+> +			if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
+> +				mark_discard_range_all(sbi);
+> +		}
+>  
+>  		sb_start_intwrite(sbi->sb);
+>  
+> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> index 4bcaa9059026..b9ad9041559f 100644
+> --- a/fs/f2fs/sysfs.c
+> +++ b/fs/f2fs/sysfs.c
+> @@ -178,8 +178,13 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+>  	if (!strcmp(a->attr.name, "iostat_enable") && *ui == 0)
+>  		f2fs_reset_iostat(sbi);
+>  	if (!strcmp(a->attr.name, "gc_urgent") && t == 1 && sbi->gc_thread) {
+> +		struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+> +
+>  		sbi->gc_thread->gc_wake = 1;
+>  		wake_up_interruptible_all(&sbi->gc_thread->gc_wait_queue_head);
+> +
+> +		dcc->discard_wake = 1;
+> +		wake_up_interruptible_all(&dcc->discard_wait_queue);
+>  	}
+>  
+>  	return count;
+> 
