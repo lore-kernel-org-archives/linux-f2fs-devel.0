@@ -1,20 +1,30 @@
-From: "=?utf-8?B?5LyN5aqa?=" <768731346@qq.com>
-Subject: [SPAM] ===〔〔銀河〕〕334718點com【添加釦釦：723539924-領取神秘紅寶】===杨丽娇?yanglijiao?
-Date: Wed, 30 Aug 2017 21:12:03 +0800
-Message-ID: <342a9374239764f594c3c4ff140d3513@qq.com>
+From: "Marcelo \"Marc\" Ranolfi" <marc.2377@gmail.com>
+Subject: Re: Userspace locks at f2fs_issue_flush kernel call,
+ hard reset necessary
+Date: Wed, 30 Aug 2017 14:02:57 -0300
+Message-ID: <CAETC-g8B4jhfM0jeV+ivu169NfkM0UhmXhkPnusqXABsKHYxhQ@mail.gmail.com>
+References: <CAETC-g9+HJXSL4mqgzdTBoaOyoXU5OwL9TsFxUURNRQQ2tryxA@mail.gmail.com>
+ <CAETC-g8=z6LuzkxfMZBvuLeMBkFX2Aaais9_ydaoecaRUUpRfQ@mail.gmail.com>
+ <ad969786-ffff-4093-1deb-9be1f0eab4fc@kernel.org>
+ <CAETC-g9CJ_vzzD7a53QuXxYD8wX6oLPENq7nZTo-8PK6UANf-A@mail.gmail.com>
+ <CAETC-g_vr_JcB6eTdFzyga9EyV799wKOpeYYnYGExThsvS+NgQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
  helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <768731346@qq.com>) id 1dn2n8-0006Ql-OT
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 30 Aug 2017 13:12:22 +0000
-Received: from [59.62.35.201] (helo=changhaopipe.com)
- by sog-mx-2.v43.ch3.sourceforge.com with smtp (Exim 4.76)
- id 1dn2n6-0004c1-JO
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 30 Aug 2017 13:12:22 +0000
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <marc.2377@gmail.com>) id 1dn6OQ-0002sV-OQ
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 30 Aug 2017 17:03:06 +0000
+Received: from mail-lf0-f66.google.com ([209.85.215.66])
+ by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+ (Exim 4.76) id 1dn6OP-00049A-Hm
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 30 Aug 2017 17:03:06 +0000
+Received: by mail-lf0-f66.google.com with SMTP id z12so2799092lfd.5
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 30 Aug 2017 10:03:05 -0700 (PDT)
+In-Reply-To: <CAETC-g_vr_JcB6eTdFzyga9EyV799wKOpeYYnYGExThsvS+NgQ@mail.gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -24,9 +34,106 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
+Hi,
 
+as an update, I've been able to reproduce this bug reliably by using a
+lot of RAM in order to force swap (I have vm_swappiness at 10).
+
+Once swapping takes place, it's only a matter of time until some
+userspace application locks at f2fs_issue_flush.
+
+It will remain locked even when I free some RAM and force pages back
+to it (by disabling swap).
+
+Also, the shutdown and restart command works, but they take more than
+5 minutes and changes to storage are not persistent after next boot
+(for example: equalizer settings are reset, browser history is gone,
+and recently saved documents are also gone).
+
+On Wed, Aug 23, 2017 at 2:26 PM, Marcelo "Marc" Ranolfi
+<marc.2377@gmail.com> wrote:
+> Chao,
+>
+> I just had the same problem, with kernel 4.12.8 with patch _f2fs: fix
+> out-of-order execution in f2fs_issue_flush_.
+>
+> On Tue, Aug 22, 2017 at 2:00 PM, Marcelo "Marc" Ranolfi
+> <marc.2377@gmail.com> wrote:
+>> Hi Chao
+>>
+>> I'm testing the kernel with your patch since last night. Will give new
+>> feedback a couple of days/weeks about how it goes.
+>>
+>>
+>> Thank you.
+>>
+>>
+>>
+>> On Mon, Aug 21, 2017 at 11:58 AM, Chao Yu <chao@kernel.org> wrote:
+>>> Hi Marcelo,
+>>>
+>>> Thanks for the report!
+>>>
+>>> Would you have a try with below patch?
+>>>
+>>> f2fs: fix out-of-order execution in f2fs_issue_flush
+>>>
+>>> Thanks,
+>>>
+>>> On 2017/8/16 15:24, Marcelo "Marc" Ranolfi wrote:
+>>>> Just wanted to let you all know that this is still an issue, even with
+>>>> the 4.12.7 kernel.
+>>>>
+>>>> The two most affected applications are qemu-system-x86_64 and totem.
+>>>>
+>>>> On Wed, Aug 9, 2017 at 3:04 AM, Marcelo "Marc" Ranolfi
+>>>> <marc.2377@gmail.com> wrote:
+>>>>> What follows is a bug report.
+>>>>>
+>>>>> I've been experiencing system lockups somewhat randomly. Sometimes an
+>>>>> application freezes, and when I go check its properties, it says the
+>>>>> process' Wait Channel is _f2fs_issue_flush_.
+>>>>>
+>>>>> Sometimes it's the qemu process (which I use via libvirt), other times
+>>>>> it's Firefox, or Gnome Videos (totem) and it happened to Nemo once as
+>>>>> well. I have screenshots if necessary.
+>>>>>
+>>>>> I've been tracking this with screenshots, and it's happenning every 4
+>>>>> days - on average.
+>>>>>
+>>>>> When this happens, the process stays unresponsive no matter what. I tried:
+>>>>>
+>>>>> - Restarting swap
+>>>>> - Restarting the Display Manager
+>>>>> - Graceful shutdown / reboot - takes forever, doesn't work
+>>>>> - Shutdown -k and unmounting filesystems from command line - root
+>>>>> can't be unmounted unless -l used, no solution
+>>>>>
+>>>>> The only working solution is to reset the machine via power button or
+>>>>> #reboot -f.
+>>>>>
+>>>>> I have:
+>>>>>
+>>>>> - Kingston SV300S37A120G - hardware is fine, I have other OS / filesystems on it
+>>>>> - f2fs filesystem in a 40 GB partition, GPT
+>>>>> - kernel 4.12.4 with systemd 234.11 - typical up-to-date Arch Linux setup.
+>>>>>
+>>>>> You gentlemen let me know if I provide more help.
+>>>>>
+>>>>> Best,
+>>>>> Marc
+>>>>
+>>>> ------------------------------------------------------------------------------
+>>>> Check out the vibrant tech community on one of the world's most
+>>>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+>>>> _______________________________________________
+>>>> Linux-f2fs-devel mailing list
+>>>> Linux-f2fs-devel@lists.sourceforge.net
+>>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>>>>
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
