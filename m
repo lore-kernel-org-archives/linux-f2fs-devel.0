@@ -1,44 +1,140 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: constify super_operations
-Date: Thu, 31 Aug 2017 18:56:48 +0800
-Message-ID: <c0820f21-01f0-1fd1-02b1-ffb62388f538@huawei.com>
-References: <668bb6351adb54694cee5e94f213f5f4c63f96bd.1504171894.git.arvind.yadav.cs@gmail.com>
+Subject: Re: Userspace locks at f2fs_issue_flush kernel call,
+ hard reset necessary
+Date: Thu, 31 Aug 2017 19:01:42 +0800
+Message-ID: <82098916-57cf-2fe8-e2ec-b947ffaa0a74@huawei.com>
+References: <CAETC-g9+HJXSL4mqgzdTBoaOyoXU5OwL9TsFxUURNRQQ2tryxA@mail.gmail.com>
+ <CAETC-g8=z6LuzkxfMZBvuLeMBkFX2Aaais9_ydaoecaRUUpRfQ@mail.gmail.com>
+ <ad969786-ffff-4093-1deb-9be1f0eab4fc@kernel.org>
+ <CAETC-g9CJ_vzzD7a53QuXxYD8wX6oLPENq7nZTo-8PK6UANf-A@mail.gmail.com>
+ <CAETC-g_vr_JcB6eTdFzyga9EyV799wKOpeYYnYGExThsvS+NgQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <668bb6351adb54694cee5e94f213f5f4c63f96bd.1504171894.git.arvind.yadav.cs@gmail.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+ helo=mx.sourceforge.net)
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1dnNER-0008QX-DM
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 31 Aug 2017 11:01:55 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190])
+ by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1dnNEP-0006c5-M1
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 31 Aug 2017 11:01:55 +0000
+In-Reply-To: <CAETC-g_vr_JcB6eTdFzyga9EyV799wKOpeYYnYGExThsvS+NgQ@mail.gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>, jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: "Marcelo \"Marc\" Ranolfi" <marc.2377@gmail.com>, Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/8/31 17:36, Arvind Yadav wrote:
-> super_operations are not supposed to change at runtime.
-> "struct super_block" working with super_operations provided
-> by <linux/fs.h> work with const super_operations. So mark
-> the non-const structs as const
-> 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Hi Marcelo,
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Sorry for the delay, :(
 
-> ---
->  fs/f2fs/super.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+I'd like ask, any possible that we did ro remount before the problem happened?
+
+Thanks,
+
+On 2017/8/24 1:26, Marcelo "Marc" Ranolfi wrote:
+> Chao,
 > 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 32e4c02..2bf0869 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1199,7 +1199,7 @@ static inline void f2fs_quota_off_umount(struct super_block *sb)
->  }
->  #endif
->  
-> -static struct super_operations f2fs_sops = {
-> +static const struct super_operations f2fs_sops = {
->  	.alloc_inode	= f2fs_alloc_inode,
->  	.drop_inode	= f2fs_drop_inode,
->  	.destroy_inode	= f2fs_destroy_inode,
+> I just had the same problem, with kernel 4.12.8 with patch _f2fs: fix
+> out-of-order execution in f2fs_issue_flush_.
 > 
+> On Tue, Aug 22, 2017 at 2:00 PM, Marcelo "Marc" Ranolfi
+> <marc.2377@gmail.com> wrote:
+>> Hi Chao
+>>
+>> I'm testing the kernel with your patch since last night. Will give new
+>> feedback a couple of days/weeks about how it goes.
+>>
+>>
+>> Thank you.
+>>
+>>
+>>
+>> On Mon, Aug 21, 2017 at 11:58 AM, Chao Yu <chao@kernel.org> wrote:
+>>> Hi Marcelo,
+>>>
+>>> Thanks for the report!
+>>>
+>>> Would you have a try with below patch?
+>>>
+>>> f2fs: fix out-of-order execution in f2fs_issue_flush
+>>>
+>>> Thanks,
+>>>
+>>> On 2017/8/16 15:24, Marcelo "Marc" Ranolfi wrote:
+>>>> Just wanted to let you all know that this is still an issue, even with
+>>>> the 4.12.7 kernel.
+>>>>
+>>>> The two most affected applications are qemu-system-x86_64 and totem.
+>>>>
+>>>> On Wed, Aug 9, 2017 at 3:04 AM, Marcelo "Marc" Ranolfi
+>>>> <marc.2377@gmail.com> wrote:
+>>>>> What follows is a bug report.
+>>>>>
+>>>>> I've been experiencing system lockups somewhat randomly. Sometimes an
+>>>>> application freezes, and when I go check its properties, it says the
+>>>>> process' Wait Channel is _f2fs_issue_flush_.
+>>>>>
+>>>>> Sometimes it's the qemu process (which I use via libvirt), other times
+>>>>> it's Firefox, or Gnome Videos (totem) and it happened to Nemo once as
+>>>>> well. I have screenshots if necessary.
+>>>>>
+>>>>> I've been tracking this with screenshots, and it's happenning every 4
+>>>>> days - on average.
+>>>>>
+>>>>> When this happens, the process stays unresponsive no matter what. I tried:
+>>>>>
+>>>>> - Restarting swap
+>>>>> - Restarting the Display Manager
+>>>>> - Graceful shutdown / reboot - takes forever, doesn't work
+>>>>> - Shutdown -k and unmounting filesystems from command line - root
+>>>>> can't be unmounted unless -l used, no solution
+>>>>>
+>>>>> The only working solution is to reset the machine via power button or
+>>>>> #reboot -f.
+>>>>>
+>>>>> I have:
+>>>>>
+>>>>> - Kingston SV300S37A120G - hardware is fine, I have other OS / filesystems on it
+>>>>> - f2fs filesystem in a 40 GB partition, GPT
+>>>>> - kernel 4.12.4 with systemd 234.11 - typical up-to-date Arch Linux setup.
+>>>>>
+>>>>> You gentlemen let me know if I provide more help.
+>>>>>
+>>>>> Best,
+>>>>> Marc
+>>>>
+>>>> ------------------------------------------------------------------------------
+>>>> Check out the vibrant tech community on one of the world's most
+>>>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+>>>> _______________________________________________
+>>>> Linux-f2fs-devel mailing list
+>>>> Linux-f2fs-devel@lists.sourceforge.net
+>>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>>>>
+> 
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
+> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
