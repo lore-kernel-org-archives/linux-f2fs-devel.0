@@ -1,10 +1,14 @@
-From: heyunlei <heyunlei@huawei.com>
-Subject: =?gb2312?b?tPC4tDogW1BBVENIXSBmMmZzOiBmaXggYSBpbmZp?=
- =?gb2312?b?bml0ZSBsb29wIGluIHdyaXR0aW5nIGNoZWNrcG9pbnQ=?=
-Date: Fri, 1 Sep 2017 04:19:27 +0000
-Message-ID: <42B685BFA705F94C860C6DD0752F05654802B6F4@DGGEMA503-MBX.china.huawei.com>
-References: <1503720935-23349-1-git-send-email-heyunlei@huawei.com>
- <2786ac13-0e33-82ad-6362-51944c2f8aa4@huawei.com>
+From: "Marcelo \"Marc\" Ranolfi" <marc.2377@gmail.com>
+Subject: Re: Userspace locks at f2fs_issue_flush kernel call,
+ hard reset necessary
+Date: Fri, 1 Sep 2017 01:54:30 -0300
+Message-ID: <CAETC-g-XFUB6H=J6Zy_y7ywczOXPQEuTnugfbf1Tq8HpceR-AQ@mail.gmail.com>
+References: <CAETC-g9+HJXSL4mqgzdTBoaOyoXU5OwL9TsFxUURNRQQ2tryxA@mail.gmail.com>
+ <CAETC-g8=z6LuzkxfMZBvuLeMBkFX2Aaais9_ydaoecaRUUpRfQ@mail.gmail.com>
+ <ad969786-ffff-4093-1deb-9be1f0eab4fc@kernel.org>
+ <CAETC-g9CJ_vzzD7a53QuXxYD8wX6oLPENq7nZTo-8PK6UANf-A@mail.gmail.com>
+ <CAETC-g_vr_JcB6eTdFzyga9EyV799wKOpeYYnYGExThsvS+NgQ@mail.gmail.com>
+ <82098916-57cf-2fe8-e2ec-b947ffaa0a74@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -12,14 +16,16 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
  helo=mx.sourceforge.net)
  by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <heyunlei@huawei.com>) id 1dndQs-0003jr-5s
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Sep 2017 04:19:50 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187])
- by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1dndQq-0006Eq-5d
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Sep 2017 04:19:50 +0000
-In-Reply-To: <2786ac13-0e33-82ad-6362-51944c2f8aa4@huawei.com>
-Content-Language: zh-CN
+ (Exim 4.89) (envelope-from <marc.2377@gmail.com>) id 1dndyY-0004pU-LU
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Sep 2017 04:54:38 +0000
+Received: from mail-lf0-f50.google.com ([209.85.215.50])
+ by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+ (Exim 4.76) id 1dndyX-00031H-I4
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Sep 2017 04:54:38 +0000
+Received: by mail-lf0-f50.google.com with SMTP id d17so5436278lfe.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 31 Aug 2017 21:54:37 -0700 (PDT)
+In-Reply-To: <82098916-57cf-2fe8-e2ec-b947ffaa0a74@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,71 +35,119 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "Yuchao (T)" <yuchao0@huawei.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
-Cc: "Wangkai (Morgan, Euler)" <morgan.wang@huawei.com>
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
+
+Hi,
+
+no problem at all.
+
+No, I never did ro remount before it happened. In fact its been a long
+while since I used ro.
 
 
-Hi Yunlei,
+Regards
 
-On 2017/8/26 12:15, Yunlei He wrote:
-> The loop reason is DIRTY IMETA always equal to 1:
-> 
-> Thread A:
-> -write_checkpoint
->    -block_operations
->        -f2fs_sync_inode_meta
->            -igrab       <--- here igrab return NULL
-> 
-> Thread B:
-> -f2fs_evict_inode
->    -remove_inode_page
->        -truncate_xattr_node
->           -__get_node_page
->              -read_node_page   <---- here return -ENOENT
-> 
-> This patch walk around this cause.
-
-It needs to figure out root cause that why xattr node entry is invalid.
-
-How about this modification:
-
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index b4c401d..62de5f7 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -497,7 +497,7 @@ void f2fs_evict_inode(struct inode *inode)
-                f2fs_lock_op(sbi);
-                err = remove_inode_page(inode);
-                f2fs_unlock_op(sbi);
--               if (err == -ENOENT)
-+               if (err == -ENOENT && is_bad_inode(inode))
-                        err = 0;
-        }
-
-Thanks
-
-> 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> ---
->  fs/f2fs/node.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c index 2654c91..ec7a0e0 
-> 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -973,8 +973,9 @@ int truncate_xattr_node(struct inode *inode, struct page *page)
->  		return 0;
->  
->  	npage = get_node_page(sbi, nid);
-> -	if (IS_ERR(npage))
-> +	if (IS_ERR(npage) && PTR_ERR(npage) != -ENOENT) {
->  		return PTR_ERR(npage);
-> +	}
->  
->  	f2fs_i_xnid_write(inode, 0);
->  
-> 
+On Thu, Aug 31, 2017 at 8:01 AM, Chao Yu <yuchao0@huawei.com> wrote:
+> Hi Marcelo,
+>
+> Sorry for the delay, :(
+>
+> I'd like ask, any possible that we did ro remount before the problem happened?
+>
+> Thanks,
+>
+> On 2017/8/24 1:26, Marcelo "Marc" Ranolfi wrote:
+>> Chao,
+>>
+>> I just had the same problem, with kernel 4.12.8 with patch _f2fs: fix
+>> out-of-order execution in f2fs_issue_flush_.
+>>
+>> On Tue, Aug 22, 2017 at 2:00 PM, Marcelo "Marc" Ranolfi
+>> <marc.2377@gmail.com> wrote:
+>>> Hi Chao
+>>>
+>>> I'm testing the kernel with your patch since last night. Will give new
+>>> feedback a couple of days/weeks about how it goes.
+>>>
+>>>
+>>> Thank you.
+>>>
+>>>
+>>>
+>>> On Mon, Aug 21, 2017 at 11:58 AM, Chao Yu <chao@kernel.org> wrote:
+>>>> Hi Marcelo,
+>>>>
+>>>> Thanks for the report!
+>>>>
+>>>> Would you have a try with below patch?
+>>>>
+>>>> f2fs: fix out-of-order execution in f2fs_issue_flush
+>>>>
+>>>> Thanks,
+>>>>
+>>>> On 2017/8/16 15:24, Marcelo "Marc" Ranolfi wrote:
+>>>>> Just wanted to let you all know that this is still an issue, even with
+>>>>> the 4.12.7 kernel.
+>>>>>
+>>>>> The two most affected applications are qemu-system-x86_64 and totem.
+>>>>>
+>>>>> On Wed, Aug 9, 2017 at 3:04 AM, Marcelo "Marc" Ranolfi
+>>>>> <marc.2377@gmail.com> wrote:
+>>>>>> What follows is a bug report.
+>>>>>>
+>>>>>> I've been experiencing system lockups somewhat randomly. Sometimes an
+>>>>>> application freezes, and when I go check its properties, it says the
+>>>>>> process' Wait Channel is _f2fs_issue_flush_.
+>>>>>>
+>>>>>> Sometimes it's the qemu process (which I use via libvirt), other times
+>>>>>> it's Firefox, or Gnome Videos (totem) and it happened to Nemo once as
+>>>>>> well. I have screenshots if necessary.
+>>>>>>
+>>>>>> I've been tracking this with screenshots, and it's happenning every 4
+>>>>>> days - on average.
+>>>>>>
+>>>>>> When this happens, the process stays unresponsive no matter what. I tried:
+>>>>>>
+>>>>>> - Restarting swap
+>>>>>> - Restarting the Display Manager
+>>>>>> - Graceful shutdown / reboot - takes forever, doesn't work
+>>>>>> - Shutdown -k and unmounting filesystems from command line - root
+>>>>>> can't be unmounted unless -l used, no solution
+>>>>>>
+>>>>>> The only working solution is to reset the machine via power button or
+>>>>>> #reboot -f.
+>>>>>>
+>>>>>> I have:
+>>>>>>
+>>>>>> - Kingston SV300S37A120G - hardware is fine, I have other OS / filesystems on it
+>>>>>> - f2fs filesystem in a 40 GB partition, GPT
+>>>>>> - kernel 4.12.4 with systemd 234.11 - typical up-to-date Arch Linux setup.
+>>>>>>
+>>>>>> You gentlemen let me know if I provide more help.
+>>>>>>
+>>>>>> Best,
+>>>>>> Marc
+>>>>>
+>>>>> ------------------------------------------------------------------------------
+>>>>> Check out the vibrant tech community on one of the world's most
+>>>>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+>>>>> _______________________________________________
+>>>>> Linux-f2fs-devel mailing list
+>>>>> Linux-f2fs-devel@lists.sourceforge.net
+>>>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>>>>>
+>>
+>> ------------------------------------------------------------------------------
+>> Check out the vibrant tech community on one of the world's most
+>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+>> _______________________________________________
+>> Linux-f2fs-devel mailing list
+>> Linux-f2fs-devel@lists.sourceforge.net
+>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>>
+>>
+>
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
