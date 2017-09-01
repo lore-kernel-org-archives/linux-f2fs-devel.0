@@ -1,31 +1,28 @@
-From: "Marcelo \"Marc\" Ranolfi" <marc.2377@gmail.com>
-Subject: Re: Userspace locks at f2fs_issue_flush kernel call,
- hard reset necessary
-Date: Fri, 1 Sep 2017 01:54:30 -0300
-Message-ID: <CAETC-g-XFUB6H=J6Zy_y7ywczOXPQEuTnugfbf1Tq8HpceR-AQ@mail.gmail.com>
-References: <CAETC-g9+HJXSL4mqgzdTBoaOyoXU5OwL9TsFxUURNRQQ2tryxA@mail.gmail.com>
- <CAETC-g8=z6LuzkxfMZBvuLeMBkFX2Aaais9_ydaoecaRUUpRfQ@mail.gmail.com>
- <ad969786-ffff-4093-1deb-9be1f0eab4fc@kernel.org>
- <CAETC-g9CJ_vzzD7a53QuXxYD8wX6oLPENq7nZTo-8PK6UANf-A@mail.gmail.com>
- <CAETC-g_vr_JcB6eTdFzyga9EyV799wKOpeYYnYGExThsvS+NgQ@mail.gmail.com>
- <82098916-57cf-2fe8-e2ec-b947ffaa0a74@huawei.com>
+From: Daeho Jeong <daeho.jeong@samsung.com>
+Subject: How do I execute regression test for f2fs?
+Date: Fri, 01 Sep 2017 05:19:47 +0000
+Message-ID: <20170901051947epcms1p477656fd4bbe3f2b8d85d0f57df3c47fd@epcms1p4>
+References: <CGME20170901051947epcms1p477656fd4bbe3f2b8d85d0f57df3c47fd@epcms1p4>
+Reply-To: daeho.jeong@samsung.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
  helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <marc.2377@gmail.com>) id 1dndyY-0004pU-LU
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Sep 2017 04:54:38 +0000
-Received: from mail-lf0-f50.google.com ([209.85.215.50])
- by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
- (Exim 4.76) id 1dndyX-00031H-I4
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Sep 2017 04:54:38 +0000
-Received: by mail-lf0-f50.google.com with SMTP id d17so5436278lfe.1
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <daeho.jeong@samsung.com>)
+ id 1dnefj-0002kQ-2j
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Sep 2017 05:39:15 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+ by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+ (Exim 4.76) id 1dnefg-0000NS-S4
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Sep 2017 05:39:15 +0000
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+ by mailout2.samsung.com (KnoxPortal) with ESMTP id
+ 20170901051950epoutp02a01b5cc7952e27eb63b2af50366b5228~gJTZOUJYD2867328673epoutp02C
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 31 Aug 2017 21:54:37 -0700 (PDT)
-In-Reply-To: <82098916-57cf-2fe8-e2ec-b947ffaa0a74@huawei.com>
+ Fri,  1 Sep 2017 05:19:50 +0000 (GMT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,119 +32,19 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "chao@kernel.org" <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
 Hi,
 
-no problem at all.
+I have a question about developing f2fs. :-)
 
-No, I never did ro remount before it happened. In fact its been a long
-while since I used ro.
+I've made a patch for f2fs, but I don't know how to execute regression
+test, xfstest, for f2fs. Do you have some guide document or url about
+how to use xfstest for f2fs?
 
+Otherwise, is there another regression testing method for f2fs?
 
-Regards
-
-On Thu, Aug 31, 2017 at 8:01 AM, Chao Yu <yuchao0@huawei.com> wrote:
-> Hi Marcelo,
->
-> Sorry for the delay, :(
->
-> I'd like ask, any possible that we did ro remount before the problem happened?
->
-> Thanks,
->
-> On 2017/8/24 1:26, Marcelo "Marc" Ranolfi wrote:
->> Chao,
->>
->> I just had the same problem, with kernel 4.12.8 with patch _f2fs: fix
->> out-of-order execution in f2fs_issue_flush_.
->>
->> On Tue, Aug 22, 2017 at 2:00 PM, Marcelo "Marc" Ranolfi
->> <marc.2377@gmail.com> wrote:
->>> Hi Chao
->>>
->>> I'm testing the kernel with your patch since last night. Will give new
->>> feedback a couple of days/weeks about how it goes.
->>>
->>>
->>> Thank you.
->>>
->>>
->>>
->>> On Mon, Aug 21, 2017 at 11:58 AM, Chao Yu <chao@kernel.org> wrote:
->>>> Hi Marcelo,
->>>>
->>>> Thanks for the report!
->>>>
->>>> Would you have a try with below patch?
->>>>
->>>> f2fs: fix out-of-order execution in f2fs_issue_flush
->>>>
->>>> Thanks,
->>>>
->>>> On 2017/8/16 15:24, Marcelo "Marc" Ranolfi wrote:
->>>>> Just wanted to let you all know that this is still an issue, even with
->>>>> the 4.12.7 kernel.
->>>>>
->>>>> The two most affected applications are qemu-system-x86_64 and totem.
->>>>>
->>>>> On Wed, Aug 9, 2017 at 3:04 AM, Marcelo "Marc" Ranolfi
->>>>> <marc.2377@gmail.com> wrote:
->>>>>> What follows is a bug report.
->>>>>>
->>>>>> I've been experiencing system lockups somewhat randomly. Sometimes an
->>>>>> application freezes, and when I go check its properties, it says the
->>>>>> process' Wait Channel is _f2fs_issue_flush_.
->>>>>>
->>>>>> Sometimes it's the qemu process (which I use via libvirt), other times
->>>>>> it's Firefox, or Gnome Videos (totem) and it happened to Nemo once as
->>>>>> well. I have screenshots if necessary.
->>>>>>
->>>>>> I've been tracking this with screenshots, and it's happenning every 4
->>>>>> days - on average.
->>>>>>
->>>>>> When this happens, the process stays unresponsive no matter what. I tried:
->>>>>>
->>>>>> - Restarting swap
->>>>>> - Restarting the Display Manager
->>>>>> - Graceful shutdown / reboot - takes forever, doesn't work
->>>>>> - Shutdown -k and unmounting filesystems from command line - root
->>>>>> can't be unmounted unless -l used, no solution
->>>>>>
->>>>>> The only working solution is to reset the machine via power button or
->>>>>> #reboot -f.
->>>>>>
->>>>>> I have:
->>>>>>
->>>>>> - Kingston SV300S37A120G - hardware is fine, I have other OS / filesystems on it
->>>>>> - f2fs filesystem in a 40 GB partition, GPT
->>>>>> - kernel 4.12.4 with systemd 234.11 - typical up-to-date Arch Linux setup.
->>>>>>
->>>>>> You gentlemen let me know if I provide more help.
->>>>>>
->>>>>> Best,
->>>>>> Marc
->>>>>
->>>>> ------------------------------------------------------------------------------
->>>>> Check out the vibrant tech community on one of the world's most
->>>>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
->>>>> _______________________________________________
->>>>> Linux-f2fs-devel mailing list
->>>>> Linux-f2fs-devel@lists.sourceforge.net
->>>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>>>>
->>
->> ------------------------------------------------------------------------------
->> Check out the vibrant tech community on one of the world's most
->> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>
->>
->
+Best Regards,
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
