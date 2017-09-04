@@ -1,42 +1,50 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: don't need to update inode checksum
- for recovery
-Date: Mon, 4 Sep 2017 09:26:12 +0800
-Message-ID: <74132304-3604-c9b6-b618-7cc5ea7d6a49@huawei.com>
-References: <20170901172511.7045-1-jaegeuk@kernel.org>
+From: Daeho Jeong <daeho.jeong@samsung.com>
+Subject: Re: How do I execute regression test for f2fs?
+Date: Mon, 04 Sep 2017 01:30:36 +0000
+Message-ID: <20170904013036epcms1p41ff336171e7ddbb04be682ed85f9cbce@epcms1p4>
+References: <20170901173414.GA6786@jaegeuk-macbookpro.roam.corp.google.com>
+ <20170901051947epcms1p477656fd4bbe3f2b8d85d0f57df3c47fd@epcms1p4>
+ <CGME20170901051947epcms1p477656fd4bbe3f2b8d85d0f57df3c47fd@epcms1p4>
+Reply-To: daeho.jeong@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170901172511.7045-1-jaegeuk@kernel.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+ helo=mx.sourceforge.net)
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <daeho.jeong@samsung.com>)
+ id 1dogE0-00044z-Mn
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Sep 2017 01:30:52 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+ by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+ (Exim 4.76) id 1dogDv-00021L-2S
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Sep 2017 01:30:52 +0000
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+ by mailout1.samsung.com (KnoxPortal) with ESMTP id
+ 20170904013038epoutp01895a966f4492f135e26d2a64a53b052e~hBHIsZcyJ2957329573epoutp01j
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon,  4 Sep 2017 01:30:38 +0000 (GMT)
+In-Reply-To: <20170901173414.GA6786@jaegeuk-macbookpro.roam.corp.google.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Daeho Jeong <daeho.jeong@samsung.com>
+Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-On 2017/9/2 1:25, Jaegeuk Kim wrote:
-> This patch fixes "f2fs: support inode checksum".
-> The recovered inode page will be rewritten with valid checksum.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-> ---
->  fs/f2fs/node.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index 2654c9166fba..388a00262a5f 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -2287,8 +2287,6 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
->  			F2FS_FITS_IN_INODE(src, le16_to_cpu(src->i_extra_isize),
->  								i_projid))
->  			dst->i_projid = src->i_projid;
-> -
-> -		f2fs_inode_chksum_set(sbi, ipage);
->  	}
->  
->  	new_ni = old_ni;
-> 
+PiBXZWxsLMKgeGZzdGVzdHPCoGFscmVhZHnCoHN1cHBvcnRzwqBmMmZzP8KgWW91wqBjYW7CoHRl
+c3TCoGp1c3TCoHdpdGjCoEZTVFlQPWYyZnMuDQrCoA0KPiBUaGFua3MsDQoNCkhpIEphZWdldWss
+DQoNCk9rLCBJJ2xsIHRyeSB0aGF0Lg0KVGhhbmsgeW91IGZvciB5b3VyIHJlc3BvbnNlLiA6LSkN
+CsKgDQrCoAoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUgdmlicmFudCB0ZWNo
+IGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2luZyB0ZWNoIHNpdGVz
+LCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdApfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcg
+bGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3Rz
+LnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
