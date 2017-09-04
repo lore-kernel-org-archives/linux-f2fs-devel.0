@@ -1,60 +1,73 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: don't check inode's checksum if it
- was dirtied or writebacked
-Date: Mon, 4 Sep 2017 09:33:25 +0800
-Message-ID: <df6b44f0-ee25-f264-b105-e942586e5b39@huawei.com>
-References: <20170901172511.7045-1-jaegeuk@kernel.org>
- <20170901172511.7045-2-jaegeuk@kernel.org>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: Re: [PATCH] f2fs: clear get_ssr_cost
+Date: Mon, 4 Sep 2017 09:54:07 +0800
+Message-ID: <e78cb8f1-99ee-672b-ffc0-1a5fdf9df908@huawei.com>
+References: <1504268075-81858-1-git-send-email-yunlong.song@huawei.com>
+ <2503831f-3868-4037-307d-1e5fb4833a29@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170901172511.7045-2-jaegeuk@kernel.org>
+In-Reply-To: <2503831f-3868-4037-307d-1e5fb4833a29@huawei.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/9/2 1:25, Jaegeuk Kim wrote:
-> If another thread already made the page dirtied or writebacked, we must avoid
-> to verify checksum. If we got an error, we need to remove its uptodate as well.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+The update_sit_entry provides this:
+...
+1658     if (!f2fs_test_bit(offset, se->ckpt_valid_map))
+1659         se->ckpt_valid_blocks += del;
+...
+As a result, the ckpt_valid_blocks is always larger than valid_blocks. 
+If not correct, can you provide
+the case valid_blocks larger than ckpt_valid_blocks?
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+On 2017/9/4 9:17, Chao Yu wrote:
+> On 2017/9/1 20:14, Yunlong Song wrote:
+>> se->ckpt_valid_blocks is always larger than se->valid_blocks, so
+>> get_ssr_cost can be cleared.
+> I think this is not correct.
+>
+> Thanks,
+>
+>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>> ---
+>>   fs/f2fs/gc.c | 11 +----------
+>>   1 file changed, 1 insertion(+), 10 deletions(-)
+>>
+>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>> index cd147e7..b226760 100644
+>> --- a/fs/f2fs/gc.c
+>> +++ b/fs/f2fs/gc.c
+>> @@ -277,20 +277,11 @@ static unsigned int get_greedy_cost(struct f2fs_sb_info *sbi,
+>>   				valid_blocks * 2 : valid_blocks;
+>>   }
+>>   
+>> -static unsigned int get_ssr_cost(struct f2fs_sb_info *sbi,
+>> -						unsigned int segno)
+>> -{
+>> -	struct seg_entry *se = get_seg_entry(sbi, segno);
+>> -
+>> -	return se->ckpt_valid_blocks > se->valid_blocks ?
+>> -				se->ckpt_valid_blocks : se->valid_blocks;
+>> -}
+>> -
+>>   static inline unsigned int get_gc_cost(struct f2fs_sb_info *sbi,
+>>   			unsigned int segno, struct victim_sel_policy *p)
+>>   {
+>>   	if (p->alloc_mode == SSR)
+>> -		return get_ssr_cost(sbi, segno);
+>> +		return get_seg_entry(sbi, segno)->ckpt_valid_blocks;
+>>   
+>>   	/* alloc_mode == LFS */
+>>   	if (p->gc_mode == GC_GREEDY)
+>>
+>
+> .
+>
 
-> ---
->  fs/f2fs/inode.c | 3 ++-
->  fs/f2fs/node.c  | 2 +-
->  2 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index b4c401d456e7..c33b05aec1a1 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -153,7 +153,8 @@ bool f2fs_inode_chksum_verify(struct f2fs_sb_info *sbi, struct page *page)
->  	struct f2fs_inode *ri;
->  	__u32 provided, calculated;
->  
-> -	if (!f2fs_enable_inode_chksum(sbi, page))
-> +	if (!f2fs_enable_inode_chksum(sbi, page) ||
-> +			PageDirty(page) || PageWriteback(page))
->  		return true;
->  
->  	ri = &F2FS_NODE(page)->i;
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index 388a00262a5f..fca87835a1da 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1187,9 +1187,9 @@ static struct page *__get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid,
->  			nid, nid_of_node(page), ino_of_node(page),
->  			ofs_of_node(page), cpver_of_node(page),
->  			next_blkaddr_of_node(page));
-> -		ClearPageUptodate(page);
->  		err = -EINVAL;
->  out_err:
-> +		ClearPageUptodate(page);
->  		f2fs_put_page(page, 1);
->  		return ERR_PTR(err);
->  	}
-> 
+-- 
+Thanks,
+Yunlong Song
