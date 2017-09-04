@@ -1,50 +1,60 @@
-From: Daeho Jeong <daeho.jeong@samsung.com>
-Subject: Re: How do I execute regression test for f2fs?
-Date: Mon, 04 Sep 2017 01:30:36 +0000
-Message-ID: <20170904013036epcms1p41ff336171e7ddbb04be682ed85f9cbce@epcms1p4>
-References: <20170901173414.GA6786@jaegeuk-macbookpro.roam.corp.google.com>
- <20170901051947epcms1p477656fd4bbe3f2b8d85d0f57df3c47fd@epcms1p4>
- <CGME20170901051947epcms1p477656fd4bbe3f2b8d85d0f57df3c47fd@epcms1p4>
-Reply-To: daeho.jeong@samsung.com
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: don't check inode's checksum if it
+ was dirtied or writebacked
+Date: Mon, 4 Sep 2017 09:33:25 +0800
+Message-ID: <df6b44f0-ee25-f264-b105-e942586e5b39@huawei.com>
+References: <20170901172511.7045-1-jaegeuk@kernel.org>
+ <20170901172511.7045-2-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
- helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <daeho.jeong@samsung.com>)
- id 1dogE0-00044z-Mn
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Sep 2017 01:30:52 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1dogDv-00021L-2S
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Sep 2017 01:30:52 +0000
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
- by mailout1.samsung.com (KnoxPortal) with ESMTP id
- 20170904013038epoutp01895a966f4492f135e26d2a64a53b052e~hBHIsZcyJ2957329573epoutp01j
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  4 Sep 2017 01:30:38 +0000 (GMT)
-In-Reply-To: <20170901173414.GA6786@jaegeuk-macbookpro.roam.corp.google.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Daeho Jeong <daeho.jeong@samsung.com>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170901172511.7045-2-jaegeuk@kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-PiBXZWxsLMKgeGZzdGVzdHPCoGFscmVhZHnCoHN1cHBvcnRzwqBmMmZzP8KgWW91wqBjYW7CoHRl
-c3TCoGp1c3TCoHdpdGjCoEZTVFlQPWYyZnMuDQrCoA0KPiBUaGFua3MsDQoNCkhpIEphZWdldWss
-DQoNCk9rLCBJJ2xsIHRyeSB0aGF0Lg0KVGhhbmsgeW91IGZvciB5b3VyIHJlc3BvbnNlLiA6LSkN
-CsKgDQrCoAoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUgdmlicmFudCB0ZWNo
-IGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2luZyB0ZWNoIHNpdGVz
-LCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdApfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcg
-bGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3Rz
-LnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+On 2017/9/2 1:25, Jaegeuk Kim wrote:
+> If another thread already made the page dirtied or writebacked, we must avoid
+> to verify checksum. If we got an error, we need to remove its uptodate as well.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+> ---
+>  fs/f2fs/inode.c | 3 ++-
+>  fs/f2fs/node.c  | 2 +-
+>  2 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index b4c401d456e7..c33b05aec1a1 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -153,7 +153,8 @@ bool f2fs_inode_chksum_verify(struct f2fs_sb_info *sbi, struct page *page)
+>  	struct f2fs_inode *ri;
+>  	__u32 provided, calculated;
+>  
+> -	if (!f2fs_enable_inode_chksum(sbi, page))
+> +	if (!f2fs_enable_inode_chksum(sbi, page) ||
+> +			PageDirty(page) || PageWriteback(page))
+>  		return true;
+>  
+>  	ri = &F2FS_NODE(page)->i;
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 388a00262a5f..fca87835a1da 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1187,9 +1187,9 @@ static struct page *__get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid,
+>  			nid, nid_of_node(page), ino_of_node(page),
+>  			ofs_of_node(page), cpver_of_node(page),
+>  			next_blkaddr_of_node(page));
+> -		ClearPageUptodate(page);
+>  		err = -EINVAL;
+>  out_err:
+> +		ClearPageUptodate(page);
+>  		f2fs_put_page(page, 1);
+>  		return ERR_PTR(err);
+>  	}
+> 
