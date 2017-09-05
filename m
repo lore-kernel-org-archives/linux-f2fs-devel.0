@@ -1,116 +1,117 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] mkfs.f2fs: fix wrong curseg check
-Date: Tue, 5 Sep 2017 10:47:04 -0700
-Message-ID: <20170905174704.GA36912@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20170826001055.4478-1-jaegeuk@kernel.org>
- <34b9300b-47e9-3736-7429-1cfbbf864999@huawei.com>
- <74b7ae57-85f0-213a-7d35-27bfffe001c5@kernel.org>
+From: Eric Biggers <ebiggers3@gmail.com>
+Subject: Re: [PATCH v2] fscrypt: add a documentation file for
+ filesystem-level encryption
+Date: Tue, 5 Sep 2017 11:08:54 -0700
+Message-ID: <20170905180854.GA85970@gmail.com>
+References: <20170901000217.36965-1-ebiggers3@gmail.com>
+ <20170902001228.GA27020@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
- helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <jaegeuk@kernel.org>) id 1dpHwO-0006jC-Ap
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Sep 2017 17:47:12 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1dpHwM-00029A-HC
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Sep 2017 17:47:12 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-doc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <74b7ae57-85f0-213a-7d35-27bfffe001c5@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <20170902001228.GA27020@google.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Michael Halcrow <mhalcrow@google.com>
+Cc: linux-fscrypt@vger.kernel.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, Eric Biggers <ebiggers@google.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 09/05, Chao Yu wrote:
-> Hi Jaegeuk,
+Hi Michael,
+
+On Fri, Sep 01, 2017 at 05:12:28PM -0700, Michael Halcrow wrote:
+> > +fscrypt is only resistant to side-channel attacks, such as timing or
+> > +electromagnetic attacks, to the extent that the underlying Linux
+> > +Cryptographic API algorithms are.  If a vulnerable algorithm is used,
+> > +such as a table-based implementation of AES, it may be possible for an
+> > +attacker to mount a side channel attack against the online system.
 > 
-> I still can hit kernel panic with this patch, the reason is reorder of log header
-> during mkfs is not actually executed, it needs to change as below.
+> Conservatively, I'd go a step further and say that even if the kernel
+> crypto API were to mitigate all side channel attacks, we don't make
+> any claims as to whether encryption key material (or data for that
+> matter) would be vulnerable from code in fs/crypto or the individual
+> filesystems.
+
+If possible, I'd prefer to make a stronger claim, at least for the key material.
+We are very careful with how we manage the keys in the kernel, and I'd consider
+any timing attack against the keys to be a bug --- and I expect that other
+people would too.
+
+Data is a different story though, since ultimately it is used by applications to
+actually do something.
+
+> > +After an encryption key has been provided, fscrypt is not designed to
+> > +hide the plaintext file contents or filenames from other users on the
+> > +same system, regardless of the visibility of the keyring key.
+> > +Instead, existing access control mechanisms such as file mode bits,
+> > +POSIX ACLs, or SELinux should be used for this purpose.  Also note
 > 
-> On 2017/8/28 17:47, Chao Yu wrote:
-> > On 2017/8/26 8:10, Jaegeuk Kim wrote:
-> >> We should avoid i==j, otherwise we always assign 0~5 segments.
-> >>
-> >> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > 
-> > Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> > 
-> >> ---
-> >>  mkfs/f2fs_format.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-> >> index b379e80..219c2a7 100644
-> >> --- a/mkfs/f2fs_format.c
-> >> +++ b/mkfs/f2fs_format.c
-> >> @@ -123,7 +123,7 @@ static void verify_cur_segs(void)
-> >>  
-> >>  	for (i = 0; i < NR_CURSEG_TYPE; i++) {
-> >>  		for (j = 0; j < NR_CURSEG_TYPE; j++)
-> >> -			if (c.cur_seg[i] == c.cur_seg[j])
-> >> +			if (i != j && c.cur_seg[i] == c.cur_seg[j])
-> >>  				break;
+> Suggest replacing "SELinux" with "LSMs."  Also do you think we should
+> mention namespaces?
+
+We could mention that a filesystem containing encrypted files can be "hidden" by
+unmounting it, though that should be obvious.  It's also possible to hide
+individual files or directories by bind-mounting stuff over them, though that is
+getting somewhat eccentric; usually mode bits, ACLs, etc. would be used instead.
+
+> > +that as long as the encryption keys are *anywhere* in memory, an
+> > +online attacker can necessarily compromise them by mounting a physical
+> > +attack or by exploiting any kernel security vulnerability which
+> > +provides an arbitrary memory read primitive.
 > 
-> 	if (i != j && c.cur_seg[i] == c.cur_seg[j])
+> Or hooking into a FireWire port and doing DMA?
 
-Can be overflowed?
+That falls under the category of "physical attack".
 
-How about this?
+> > +Currently, fscrypt does not prevent a user from maliciously providing
+> > +an incorrect key for another user's existing encrypted files.  A
+> > +protection against this is planned.
+> 
+> How's the review for that patch coming along?
 
->From 53923f74b188028c4f5a8b64b330f0d7b12adf24 Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Thu, 24 Aug 2017 19:33:10 -0700
-Subject: [PATCH] mkfs.f2fs: fix wrong curseg check
+So far you're the only person who has reviewed the patchset in detail.  I've
+tried to get more people interested, but it has been difficult.  Perhaps the new
+documentation will help people understand the problems that the patchset solves.
+Being able to provide the wrong key for another user's encrypted files is a
+security vulnerability, so we *have* to fix it eventually.
 
-We should avoid i==j, otherwise we always assign 0~5 segments.
+> > +- Per-file keys strengthen the encryption of filenames, where IVs are
+> > +  reused out of necessity.  With a unique key per directory, IV reuse
+> > +  is limited to within a single directory.
+> 
+> Side note: Alex's HEH patchset addresses this.  Is there interest in
+> the community for us to push for a merge at this point?
+> 
+> https://www.spinics.net/lists/linux-crypto/msg22411.html
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- mkfs/f2fs_format.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Well, I think there are higher priorities right now, but if we want to start
+that conversation we'd first need to send the updated version of the patchset
+which implements the latest version of the algorithm
+(https://tools.ietf.org/html/draft-cope-heh-01) and has been rebased onto the
+latest kernel.
 
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index b379e80..8319f24 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -120,14 +120,18 @@ next:
- static void verify_cur_segs(void)
- {
- 	int i, j;
-+	bool reorder = false;
- 
- 	for (i = 0; i < NR_CURSEG_TYPE; i++) {
--		for (j = 0; j < NR_CURSEG_TYPE; j++)
--			if (c.cur_seg[i] == c.cur_seg[j])
-+		for (j = i + 1; j < NR_CURSEG_TYPE; j++) {
-+			if (c.cur_seg[i] == c.cur_seg[j]) {
-+				reorder = true;
- 				break;
-+			}
-+		}
- 	}
- 
--	if (i == NR_CURSEG_TYPE && j == NR_CURSEG_TYPE)
-+	if (!reorder)
- 		return;
- 
- 	c.cur_seg[0] = 0;
--- 
-2.14.0.rc1.383.gd1ce394fe2-goog
+> > +Note: this KDF meets the primary security requirement, which is to
+> > +produce unique derived keys that preserve the entropy of the master
+> > +key, assuming that the master key is already a good pseudorandom key.
+> > +However, it is nonstandard and has some theoretical problems such as
+> > +being reversible, so it is generally considered to be a mistake!  It
+> 
+> Being reversible isn't theoretical -- it's trivially reversible *if*
+> you can exploit kernel memory.  The attack I'm concerned about is that
+> an adversary is somehow able to get to an inode key but isn't able to
+> get to the master key.  Exploiting kernel memory wasn't in my
+> adversarial model at the time, and when I suggested going to something
+> like HKDF, Ted convinced me that it would be too painful since he had
+> already merged the code.
+> 
+> Regardless, I'm happy to call it a mistake.
+> 
+> > +may be replaced with HKDF or another more standard KDF in the future.
+> 
+> Again, I should point out that your patchset that includes migrating
+> to HKDF is still pending merge.  I'd like to see that go in soon.
 
+It is too late for v4.14 since that merge window is already open.  It could
+potentially go into v4.15, though as a prerequisite for that I expect that Ted
+would like to see more people review/discuss it first.  Note that we do not want
+to rush it, since we will be locked into the new on-disk format once merged.
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+- Eric
