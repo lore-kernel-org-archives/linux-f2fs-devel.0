@@ -1,130 +1,120 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/2] f2fs: use generic terms used for encrypted block management
-Date: Tue,  5 Sep 2017 17:15:50 -0700
-Message-ID: <20170906001550.53917-2-jaegeuk@kernel.org>
-References: <20170906001550.53917-1-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170906001550.53917-1-jaegeuk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH v2] f2fs: avoid race in between read xattr &
+ write xattr
+Date: Wed, 6 Sep 2017 09:34:05 +0800
+Message-ID: <1504661645-2058-1-git-send-email-heyunlei@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+ helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <heyunlei@huawei.com>) id 1dpPRf-0000W0-OS
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Sep 2017 01:47:59 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190])
+ by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1dpPRd-0006bS-Rh
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Sep 2017 01:47:59 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: heyunlei@huawei.com, morgan.wang@huawei.com
 
-This patch renames functions regarding to buffer management via META_MAPPING
-used for encrypted blocks especially. We can actually use them in generic way.
+Thread A:					Thread B:
+-f2fs_getxattr
+   -lookup_all_xattrs
+      -xnid = F2FS_I(inode)->i_xattr_nid;
+						-f2fs_setxattr
+						    -__f2fs_setxattr
+						        -write_all_xattrs
+						            -truncate_xattr_node
+							          ...  ...
+						-write_checkpoint
+								  ...  ...
+						-alloc_nid   <- nid reuse
+          -get_node_page
+              -f2fs_bug_on  <- nid != node_footer->nid
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+It's need a rw_sem to avoid the race
+
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fs/f2fs/data.c    |  6 +++---
- fs/f2fs/f2fs.h    |  3 +--
- fs/f2fs/file.c    |  2 +-
- fs/f2fs/gc.c      | 13 +++++++++----
- fs/f2fs/segment.c |  3 +--
- 5 files changed, 15 insertions(+), 12 deletions(-)
+ fs/f2fs/f2fs.h  | 1 +
+ fs/f2fs/super.c | 1 +
+ fs/f2fs/xattr.c | 6 ++++++
+ 3 files changed, 8 insertions(+)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index e6c683e7a10e..ee6801fdbdec 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1163,7 +1163,7 @@ static struct bio *f2fs_grab_bio(struct inode *inode, block_t blkaddr,
- 			return ERR_CAST(ctx);
- 
- 		/* wait the page to be moved by cleaning */
--		f2fs_wait_on_encrypted_page_writeback(sbi, blkaddr);
-+		f2fs_wait_on_block_writeback(sbi, blkaddr);
- 	}
- 
- 	bio = bio_alloc(GFP_KERNEL, min_t(int, nr_pages, BIO_MAX_PAGES));
-@@ -1349,7 +1349,7 @@ static int encrypt_one_page(struct f2fs_io_info *fio)
- 		return 0;
- 
- 	/* wait for GCed encrypted page writeback */
--	f2fs_wait_on_encrypted_page_writeback(fio->sbi, fio->old_blkaddr);
-+	f2fs_wait_on_block_writeback(fio->sbi, fio->old_blkaddr);
- 
- retry_encrypt:
- 	fio->encrypted_page = fscrypt_encrypt_page(inode, fio->page,
-@@ -1975,7 +1975,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
- 
- 	/* wait for GCed encrypted page writeback */
- 	if (f2fs_encrypted_file(inode))
--		f2fs_wait_on_encrypted_page_writeback(sbi, blkaddr);
-+		f2fs_wait_on_block_writeback(sbi, blkaddr);
- 
- 	if (len == PAGE_SIZE || PageUptodate(page))
- 		return 0;
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 417c28f01fd5..91fb749686f2 100644
+index 4b99396..b07ff26 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -2550,8 +2550,7 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 			struct f2fs_io_info *fio, bool add_list);
- void f2fs_wait_on_page_writeback(struct page *page,
- 			enum page_type type, bool ordered);
--void f2fs_wait_on_encrypted_page_writeback(struct f2fs_sb_info *sbi,
--			block_t blkaddr);
-+void f2fs_wait_on_block_writeback(struct f2fs_sb_info *sbi, block_t blkaddr);
- void write_data_summaries(struct f2fs_sb_info *sbi, block_t start_blk);
- void write_node_summaries(struct f2fs_sb_info *sbi, block_t start_blk);
- int lookup_journal_in_cursum(struct f2fs_journal *journal, int type,
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index f8cedaba7ce4..224379a9848c 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -107,7 +107,7 @@ static int f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+@@ -589,6 +589,7 @@ struct f2fs_inode_info {
+ 	struct extent_tree *extent_tree;	/* cached extent_tree entry */
+ 	struct rw_semaphore dio_rwsem[2];/* avoid racing between dio and gc */
+ 	struct rw_semaphore i_mmap_sem;
++	struct rw_semaphore xattr_sem; /* avoid racing between reading and changing EAs */
  
- 	/* wait for GCed encrypted page writeback */
- 	if (f2fs_encrypted_file(inode))
--		f2fs_wait_on_encrypted_page_writeback(sbi, dn.data_blkaddr);
-+		f2fs_wait_on_block_writeback(sbi, dn.data_blkaddr);
+ 	int i_extra_isize;		/* size of extra space located in i_addr */
+ 	kprojid_t i_projid;		/* id for project quota */
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 7730316..03950eb 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -630,6 +630,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ 	init_rwsem(&fi->dio_rwsem[READ]);
+ 	init_rwsem(&fi->dio_rwsem[WRITE]);
+ 	init_rwsem(&fi->i_mmap_sem);
++	init_rwsem(&fi->xattr_sem);
  
- out_sem:
- 	up_read(&F2FS_I(inode)->i_mmap_sem);
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 6a12f33d0cdd..bfe6a8ccc3a0 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -599,8 +599,12 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 	return true;
- }
+ #ifdef CONFIG_QUOTA
+ 	memset(&fi->i_dquot, 0, sizeof(fi->i_dquot));
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index ef3a372..75f7c4d 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -473,8 +473,10 @@ int f2fs_getxattr(struct inode *inode, int index, const char *name,
+ 	if (len > F2FS_NAME_LEN)
+ 		return -ERANGE;
  
--static void move_encrypted_block(struct inode *inode, block_t bidx,
--							unsigned int segno, int off)
-+/*
-+ * Move data block via META_MAPPING while keeping locked data page.
-+ * This can be used to move blocks, aka LBAs, directly on disk.
-+ */
-+static void move_data_block(struct inode *inode, block_t bidx,
-+					unsigned int segno, int off)
- {
- 	struct f2fs_io_info fio = {
- 		.sbi = F2FS_I_SB(inode),
-@@ -873,9 +877,10 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 			start_bidx = start_bidx_of_node(nofs, inode)
- 								+ ofs_in_node;
- 			if (f2fs_encrypted_file(inode))
--				move_encrypted_block(inode, start_bidx, segno, off);
-+				move_data_block(inode, start_bidx, segno, off);
- 			else
--				move_data_page(inode, start_bidx, gc_type, segno, off);
-+				move_data_page(inode, start_bidx, gc_type,
-+								segno, off);
++	down_read(&F2FS_I(inode)->xattr_sem);
+ 	error = lookup_all_xattrs(inode, ipage, index, len, name,
+ 				&entry, &base_addr);
++	up_read(&F2FS_I(inode)->xattr_sem);
+ 	if (error)
+ 		return error;
  
- 			if (locked) {
- 				up_write(&fi->dio_rwsem[WRITE]);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 265c3bc44f2d..9e708e525ba8 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2528,8 +2528,7 @@ void f2fs_wait_on_page_writeback(struct page *page,
- 	}
- }
+@@ -503,7 +505,9 @@ ssize_t f2fs_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
+ 	int error = 0;
+ 	size_t rest = buffer_size;
  
--void f2fs_wait_on_encrypted_page_writeback(struct f2fs_sb_info *sbi,
--							block_t blkaddr)
-+void f2fs_wait_on_block_writeback(struct f2fs_sb_info *sbi, block_t blkaddr)
- {
- 	struct page *cpage;
++	down_read(&F2FS_I(inode)->xattr_sem);
+ 	error = read_all_xattrs(inode, NULL, &base_addr);
++	up_read(&F2FS_I(inode)->xattr_sem);
+ 	if (error)
+ 		return error;
+ 
+@@ -686,7 +690,9 @@ int f2fs_setxattr(struct inode *inode, int index, const char *name,
+ 	f2fs_lock_op(sbi);
+ 	/* protect xattr_ver */
+ 	down_write(&F2FS_I(inode)->i_sem);
++	down_write(&F2FS_I(inode)->xattr_sem);
+ 	err = __f2fs_setxattr(inode, index, name, value, size, ipage, flags);
++	up_write(&F2FS_I(inode)->xattr_sem);
+ 	up_write(&F2FS_I(inode)->i_sem);
+ 	f2fs_unlock_op(sbi);
  
 -- 
-2.14.0.rc1.383.gd1ce394fe2-goog
+1.9.1
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
