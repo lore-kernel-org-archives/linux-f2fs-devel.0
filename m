@@ -1,23 +1,25 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: avoid race in between read xattr &
- write xattr
-Date: Wed, 6 Sep 2017 11:26:51 +0800
-Message-ID: <628971ec-5c07-c8e4-7395-db26f61e1ca8@huawei.com>
-References: <1504661645-2058-1-git-send-email-heyunlei@huawei.com>
+Subject: Re: [PATCH] mkfs.f2fs: fix wrong curseg check
+Date: Wed, 6 Sep 2017 11:41:46 +0800
+Message-ID: <b1846ac3-74f7-07b8-f46b-908b33be89dc@huawei.com>
+References: <20170826001055.4478-1-jaegeuk@kernel.org>
+ <34b9300b-47e9-3736-7429-1cfbbf864999@huawei.com>
+ <74b7ae57-85f0-213a-7d35-27bfffe001c5@kernel.org>
+ <20170905174704.GA36912@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
  helo=mx.sourceforge.net)
  by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1dpQzg-0001Ce-7d
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Sep 2017 03:27:12 +0000
+ (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1dpRE0-0001Vr-82
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Sep 2017 03:42:00 +0000
 Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1dpQze-0001Jy-L7
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Sep 2017 03:27:12 +0000
-In-Reply-To: <1504661645-2058-1-git-send-email-heyunlei@huawei.com>
+ by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1dpRDy-0003t8-AJ
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Sep 2017 03:42:00 +0000
+In-Reply-To: <20170905174704.GA36912@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -28,99 +30,90 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: morgan.wang@huawei.com
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/9/6 9:34, Yunlei He wrote:
-> Thread A:					Thread B:
-> -f2fs_getxattr
->    -lookup_all_xattrs
->       -xnid = F2FS_I(inode)->i_xattr_nid;
-> 						-f2fs_setxattr
-> 						    -__f2fs_setxattr
-> 						        -write_all_xattrs
-> 						            -truncate_xattr_node
-> 							          ...  ...
-> 						-write_checkpoint
-> 								  ...  ...
-> 						-alloc_nid   <- nid reuse
->           -get_node_page
->               -f2fs_bug_on  <- nid != node_footer->nid
+On 2017/9/6 1:47, Jaegeuk Kim wrote:
+> On 09/05, Chao Yu wrote:
+>> Hi Jaegeuk,
+>>
+>> I still can hit kernel panic with this patch, the reason is reorder of log header
+>> during mkfs is not actually executed, it needs to change as below.
+>>
+>> On 2017/8/28 17:47, Chao Yu wrote:
+>>> On 2017/8/26 8:10, Jaegeuk Kim wrote:
+>>>> We should avoid i==j, otherwise we always assign 0~5 segments.
+>>>>
+>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>
+>>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>>>
+>>>> ---
+>>>>  mkfs/f2fs_format.c | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+>>>> index b379e80..219c2a7 100644
+>>>> --- a/mkfs/f2fs_format.c
+>>>> +++ b/mkfs/f2fs_format.c
+>>>> @@ -123,7 +123,7 @@ static void verify_cur_segs(void)
+>>>>  
+>>>>  	for (i = 0; i < NR_CURSEG_TYPE; i++) {
+>>>>  		for (j = 0; j < NR_CURSEG_TYPE; j++)
+>>>> -			if (c.cur_seg[i] == c.cur_seg[j])
+>>>> +			if (i != j && c.cur_seg[i] == c.cur_seg[j])
+>>>>  				break;
+>>
+>> 	if (i != j && c.cur_seg[i] == c.cur_seg[j])
 > 
-> It's need a rw_sem to avoid the race
+> Can be overflowed?
 > 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> ---
->  fs/f2fs/f2fs.h  | 1 +
->  fs/f2fs/super.c | 1 +
->  fs/f2fs/xattr.c | 6 ++++++
->  3 files changed, 8 insertions(+)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 4b99396..b07ff26 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -589,6 +589,7 @@ struct f2fs_inode_info {
->  	struct extent_tree *extent_tree;	/* cached extent_tree entry */
->  	struct rw_semaphore dio_rwsem[2];/* avoid racing between dio and gc */
->  	struct rw_semaphore i_mmap_sem;
-> +	struct rw_semaphore xattr_sem; /* avoid racing between reading and changing EAs *
-i_xattr_sem;	/* avoid racing between reading and changing EAs */
+> How about this?
 
-Otherwise looks good to me. :)
+It's OK to me. :)
 
 Thanks,
 
+> 
+>>From 53923f74b188028c4f5a8b64b330f0d7b12adf24 Mon Sep 17 00:00:00 2001
+> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> Date: Thu, 24 Aug 2017 19:33:10 -0700
+> Subject: [PATCH] mkfs.f2fs: fix wrong curseg check
+> 
+> We should avoid i==j, otherwise we always assign 0~5 segments.
+> 
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  mkfs/f2fs_format.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+> index b379e80..8319f24 100644
+> --- a/mkfs/f2fs_format.c
+> +++ b/mkfs/f2fs_format.c
+> @@ -120,14 +120,18 @@ next:
+>  static void verify_cur_segs(void)
+>  {
+>  	int i, j;
+> +	bool reorder = false;
 >  
->  	int i_extra_isize;		/* size of extra space located in i_addr */
->  	kprojid_t i_projid;		/* id for project quota */
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 7730316..03950eb 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -630,6 +630,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
->  	init_rwsem(&fi->dio_rwsem[READ]);
->  	init_rwsem(&fi->dio_rwsem[WRITE]);
->  	init_rwsem(&fi->i_mmap_sem);
-> +	init_rwsem(&fi->xattr_sem);
+>  	for (i = 0; i < NR_CURSEG_TYPE; i++) {
+> -		for (j = 0; j < NR_CURSEG_TYPE; j++)
+> -			if (c.cur_seg[i] == c.cur_seg[j])
+> +		for (j = i + 1; j < NR_CURSEG_TYPE; j++) {
+> +			if (c.cur_seg[i] == c.cur_seg[j]) {
+> +				reorder = true;
+>  				break;
+> +			}
+> +		}
+>  	}
 >  
->  #ifdef CONFIG_QUOTA
->  	memset(&fi->i_dquot, 0, sizeof(fi->i_dquot));
-> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-> index ef3a372..75f7c4d 100644
-> --- a/fs/f2fs/xattr.c
-> +++ b/fs/f2fs/xattr.c
-> @@ -473,8 +473,10 @@ int f2fs_getxattr(struct inode *inode, int index, const char *name,
->  	if (len > F2FS_NAME_LEN)
->  		return -ERANGE;
+> -	if (i == NR_CURSEG_TYPE && j == NR_CURSEG_TYPE)
+> +	if (!reorder)
+>  		return;
 >  
-> +	down_read(&F2FS_I(inode)->xattr_sem);
->  	error = lookup_all_xattrs(inode, ipage, index, len, name,
->  				&entry, &base_addr);
-> +	up_read(&F2FS_I(inode)->xattr_sem);
->  	if (error)
->  		return error;
->  
-> @@ -503,7 +505,9 @@ ssize_t f2fs_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
->  	int error = 0;
->  	size_t rest = buffer_size;
->  
-> +	down_read(&F2FS_I(inode)->xattr_sem);
->  	error = read_all_xattrs(inode, NULL, &base_addr);
-> +	up_read(&F2FS_I(inode)->xattr_sem);
->  	if (error)
->  		return error;
->  
-> @@ -686,7 +690,9 @@ int f2fs_setxattr(struct inode *inode, int index, const char *name,
->  	f2fs_lock_op(sbi);
->  	/* protect xattr_ver */
->  	down_write(&F2FS_I(inode)->i_sem);
-> +	down_write(&F2FS_I(inode)->xattr_sem);
->  	err = __f2fs_setxattr(inode, index, name, value, size, ipage, flags);
-> +	up_write(&F2FS_I(inode)->xattr_sem);
->  	up_write(&F2FS_I(inode)->i_sem);
->  	f2fs_unlock_op(sbi);
->  
+>  	c.cur_seg[0] = 0;
 > 
 
 
