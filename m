@@ -1,120 +1,57 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v2] f2fs: avoid race in between read xattr &
- write xattr
-Date: Wed, 6 Sep 2017 09:34:05 +0800
-Message-ID: <1504661645-2058-1-git-send-email-heyunlei@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: fix wrong bfree and bavail
+Date: Wed, 6 Sep 2017 11:07:57 +0800
+Message-ID: <a6954033-c98a-44e9-69ce-d1416aa64640@huawei.com>
+References: <20170905210653.46186-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
- helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <heyunlei@huawei.com>) id 1dpPRf-0000W0-OS
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Sep 2017 01:47:59 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1dpPRd-0006bS-Rh
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Sep 2017 01:47:59 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
-Cc: heyunlei@huawei.com, morgan.wang@huawei.com
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20170905210653.46186-1-jaegeuk@kernel.org>
+Content-Language: en-US
+Sender: stable-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: stable@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Thread A:					Thread B:
--f2fs_getxattr
-   -lookup_all_xattrs
-      -xnid = F2FS_I(inode)->i_xattr_nid;
-						-f2fs_setxattr
-						    -__f2fs_setxattr
-						        -write_all_xattrs
-						            -truncate_xattr_node
-							          ...  ...
-						-write_checkpoint
-								  ...  ...
-						-alloc_nid   <- nid reuse
-          -get_node_page
-              -f2fs_bug_on  <- nid != node_footer->nid
+On 2017/9/6 5:06, Jaegeuk Kim wrote:
+> This patch fixes bavail and bfree finally.
+> 
+> long    f_bfree;    /* free blocks in fs */
+> long    f_bavail;   /* free blocks avail to non-superuser */
+> 
+> So, bfree represents all the reserved blocks, while bavail does the space only
+> visible to normal user.
+> 
+> Fix: 3e6d0b4d9c1c ("f2fs: fix incorrect f_bfree calculation in ->statfs")
+> Cc: <stable@vger.kernel.org> # 4.8+
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/super.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 7e29db227910..17cca4cb93af 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -955,8 +955,8 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
+>  	buf->f_bsize = sbi->blocksize;
+>  
+>  	buf->f_blocks = total_count - start_count;
+> -	buf->f_bfree = user_block_count - valid_user_blocks(sbi) + ovp_count;
+> -	buf->f_bavail = user_block_count - valid_user_blocks(sbi) -
+> +	buf->f_bfree = user_block_count - valid_user_blocks(sbi);
+> +	buf->f_bavail = user_block_count - valid_user_blocks(sbi) - ovp_count -
 
-It's need a rw_sem to avoid the race
+	set_cp(user_block_count, ((get_cp(free_segment_count) + 6 -
+			get_cp(overprov_segment_count)) * c.blks_per_seg));
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fs/f2fs/f2fs.h  | 1 +
- fs/f2fs/super.c | 1 +
- fs/f2fs/xattr.c | 6 ++++++
- 3 files changed, 8 insertions(+)
+As we calculated in mkfs, we have removed ovp_count in user_block_count, so
+shouldn't we add ovp_count for f_bfree here?
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4b99396..b07ff26 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -589,6 +589,7 @@ struct f2fs_inode_info {
- 	struct extent_tree *extent_tree;	/* cached extent_tree entry */
- 	struct rw_semaphore dio_rwsem[2];/* avoid racing between dio and gc */
- 	struct rw_semaphore i_mmap_sem;
-+	struct rw_semaphore xattr_sem; /* avoid racing between reading and changing EAs */
- 
- 	int i_extra_isize;		/* size of extra space located in i_addr */
- 	kprojid_t i_projid;		/* id for project quota */
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 7730316..03950eb 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -630,6 +630,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
- 	init_rwsem(&fi->dio_rwsem[READ]);
- 	init_rwsem(&fi->dio_rwsem[WRITE]);
- 	init_rwsem(&fi->i_mmap_sem);
-+	init_rwsem(&fi->xattr_sem);
- 
- #ifdef CONFIG_QUOTA
- 	memset(&fi->i_dquot, 0, sizeof(fi->i_dquot));
-diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-index ef3a372..75f7c4d 100644
---- a/fs/f2fs/xattr.c
-+++ b/fs/f2fs/xattr.c
-@@ -473,8 +473,10 @@ int f2fs_getxattr(struct inode *inode, int index, const char *name,
- 	if (len > F2FS_NAME_LEN)
- 		return -ERANGE;
- 
-+	down_read(&F2FS_I(inode)->xattr_sem);
- 	error = lookup_all_xattrs(inode, ipage, index, len, name,
- 				&entry, &base_addr);
-+	up_read(&F2FS_I(inode)->xattr_sem);
- 	if (error)
- 		return error;
- 
-@@ -503,7 +505,9 @@ ssize_t f2fs_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
- 	int error = 0;
- 	size_t rest = buffer_size;
- 
-+	down_read(&F2FS_I(inode)->xattr_sem);
- 	error = read_all_xattrs(inode, NULL, &base_addr);
-+	up_read(&F2FS_I(inode)->xattr_sem);
- 	if (error)
- 		return error;
- 
-@@ -686,7 +690,9 @@ int f2fs_setxattr(struct inode *inode, int index, const char *name,
- 	f2fs_lock_op(sbi);
- 	/* protect xattr_ver */
- 	down_write(&F2FS_I(inode)->i_sem);
-+	down_write(&F2FS_I(inode)->xattr_sem);
- 	err = __f2fs_setxattr(inode, index, name, value, size, ipage, flags);
-+	up_write(&F2FS_I(inode)->xattr_sem);
- 	up_write(&F2FS_I(inode)->i_sem);
- 	f2fs_unlock_op(sbi);
- 
--- 
-1.9.1
+Thanks,
 
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+>  						sbi->reserved_blocks;
+>  
+>  	avail_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
+> 
