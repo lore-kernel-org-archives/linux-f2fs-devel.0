@@ -1,149 +1,142 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: introduce f2fs_encrypted_file for
- clean-up
-Date: Wed, 6 Sep 2017 11:10:42 +0800
-Message-ID: <a546c89e-163f-190d-8fe9-00352d4559f1@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: use generic terms used for encrypted
+ block management
+Date: Wed, 6 Sep 2017 11:18:23 +0800
+Message-ID: <91ccf77a-f099-5189-81f6-2197da000918@huawei.com>
 References: <20170906001550.53917-1-jaegeuk@kernel.org>
+ <20170906001550.53917-2-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170906001550.53917-1-jaegeuk@kernel.org>
+In-Reply-To: <20170906001550.53917-2-jaegeuk@kernel.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 On 2017/9/6 8:15, Jaegeuk Kim wrote:
-> This patch replaces (f2fs_encrypted_inode() && S_ISREG()) with
-> f2fs_encrypted_file(), which gives no functional change.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> This patch renames functions regarding to buffer management via META_MAPPING
+> used for encrypted blocks especially. We can actually use them in generic way.
+
+Meta inode cache is more like bd_inode cache now. ;)
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
 
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > ---
->  fs/f2fs/data.c   | 10 +++++-----
->  fs/f2fs/f2fs.h   |  5 +++++
->  fs/f2fs/file.c   |  2 +-
->  fs/f2fs/gc.c     |  5 ++---
->  fs/f2fs/inline.c |  2 +-
->  5 files changed, 14 insertions(+), 10 deletions(-)
+>  fs/f2fs/data.c    |  6 +++---
+>  fs/f2fs/f2fs.h    |  3 +--
+>  fs/f2fs/file.c    |  2 +-
+>  fs/f2fs/gc.c      | 13 +++++++++----
+>  fs/f2fs/segment.c |  3 +--
+>  5 files changed, 15 insertions(+), 12 deletions(-)
 > 
 > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 67da4f6eeaa0..e6c683e7a10e 100644
+> index e6c683e7a10e..ee6801fdbdec 100644
 > --- a/fs/f2fs/data.c
 > +++ b/fs/f2fs/data.c
-> @@ -581,7 +581,7 @@ struct page *get_read_data_page(struct inode *inode, pgoff_t index,
->  		.encrypted_page = NULL,
->  	};
->  
-> -	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
-> +	if (f2fs_encrypted_file(inode))
->  		return read_mapping_page(mapping, index, NULL);
->  
->  	page = f2fs_grab_cache_page(mapping, index, for_write);
-> @@ -786,7 +786,7 @@ static int __allocate_data_block(struct dnode_of_data *dn)
->  
->  static inline bool __force_buffered_io(struct inode *inode, int rw)
->  {
-> -	return ((f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode)) ||
-> +	return (f2fs_encrypted_file(inode) ||
->  			(rw == WRITE && test_opt(F2FS_I_SB(inode), LFS)) ||
->  			F2FS_I_SB(inode)->s_ndevs);
->  }
-> @@ -1157,7 +1157,7 @@ static struct bio *f2fs_grab_bio(struct inode *inode, block_t blkaddr,
->  	struct fscrypt_ctx *ctx = NULL;
->  	struct bio *bio;
->  
-> -	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode)) {
-> +	if (f2fs_encrypted_file(inode)) {
->  		ctx = fscrypt_get_ctx(inode, GFP_NOFS);
->  		if (IS_ERR(ctx))
+> @@ -1163,7 +1163,7 @@ static struct bio *f2fs_grab_bio(struct inode *inode, block_t blkaddr,
 >  			return ERR_CAST(ctx);
-> @@ -1345,7 +1345,7 @@ static int encrypt_one_page(struct f2fs_io_info *fio)
->  	struct inode *inode = fio->page->mapping->host;
->  	gfp_t gfp_flags = GFP_NOFS;
 >  
-> -	if (!f2fs_encrypted_inode(inode) || !S_ISREG(inode->i_mode))
-> +	if (!f2fs_encrypted_file(inode))
+>  		/* wait the page to be moved by cleaning */
+> -		f2fs_wait_on_encrypted_page_writeback(sbi, blkaddr);
+> +		f2fs_wait_on_block_writeback(sbi, blkaddr);
+>  	}
+>  
+>  	bio = bio_alloc(GFP_KERNEL, min_t(int, nr_pages, BIO_MAX_PAGES));
+> @@ -1349,7 +1349,7 @@ static int encrypt_one_page(struct f2fs_io_info *fio)
 >  		return 0;
 >  
 >  	/* wait for GCed encrypted page writeback */
-> @@ -1974,7 +1974,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
->  	f2fs_wait_on_page_writeback(page, DATA, false);
+> -	f2fs_wait_on_encrypted_page_writeback(fio->sbi, fio->old_blkaddr);
+> +	f2fs_wait_on_block_writeback(fio->sbi, fio->old_blkaddr);
+>  
+>  retry_encrypt:
+>  	fio->encrypted_page = fscrypt_encrypt_page(inode, fio->page,
+> @@ -1975,7 +1975,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
 >  
 >  	/* wait for GCed encrypted page writeback */
-> -	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
-> +	if (f2fs_encrypted_file(inode))
->  		f2fs_wait_on_encrypted_page_writeback(sbi, blkaddr);
+>  	if (f2fs_encrypted_file(inode))
+> -		f2fs_wait_on_encrypted_page_writeback(sbi, blkaddr);
+> +		f2fs_wait_on_block_writeback(sbi, blkaddr);
 >  
 >  	if (len == PAGE_SIZE || PageUptodate(page))
+>  		return 0;
 > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 4b993961d81d..417c28f01fd5 100644
+> index 417c28f01fd5..91fb749686f2 100644
 > --- a/fs/f2fs/f2fs.h
 > +++ b/fs/f2fs/f2fs.h
-> @@ -2939,6 +2939,11 @@ static inline bool f2fs_encrypted_inode(struct inode *inode)
->  	return file_is_encrypt(inode);
->  }
->  
-> +static inline bool f2fs_encrypted_file(struct inode *inode)
-> +{
-> +	return f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode);
-> +}
-> +
->  static inline void f2fs_set_encrypted_inode(struct inode *inode)
->  {
->  #ifdef CONFIG_F2FS_FS_ENCRYPTION
+> @@ -2550,8 +2550,7 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+>  			struct f2fs_io_info *fio, bool add_list);
+>  void f2fs_wait_on_page_writeback(struct page *page,
+>  			enum page_type type, bool ordered);
+> -void f2fs_wait_on_encrypted_page_writeback(struct f2fs_sb_info *sbi,
+> -			block_t blkaddr);
+> +void f2fs_wait_on_block_writeback(struct f2fs_sb_info *sbi, block_t blkaddr);
+>  void write_data_summaries(struct f2fs_sb_info *sbi, block_t start_blk);
+>  void write_node_summaries(struct f2fs_sb_info *sbi, block_t start_blk);
+>  int lookup_journal_in_cursum(struct f2fs_journal *journal, int type,
 > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 63e394907808..f8cedaba7ce4 100644
+> index f8cedaba7ce4..224379a9848c 100644
 > --- a/fs/f2fs/file.c
 > +++ b/fs/f2fs/file.c
-> @@ -106,7 +106,7 @@ static int f2fs_vm_page_mkwrite(struct vm_fault *vmf)
->  	f2fs_wait_on_page_writeback(page, DATA, false);
+> @@ -107,7 +107,7 @@ static int f2fs_vm_page_mkwrite(struct vm_fault *vmf)
 >  
 >  	/* wait for GCed encrypted page writeback */
-> -	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
-> +	if (f2fs_encrypted_file(inode))
->  		f2fs_wait_on_encrypted_page_writeback(sbi, dn.data_blkaddr);
+>  	if (f2fs_encrypted_file(inode))
+> -		f2fs_wait_on_encrypted_page_writeback(sbi, dn.data_blkaddr);
+> +		f2fs_wait_on_block_writeback(sbi, dn.data_blkaddr);
 >  
 >  out_sem:
+>  	up_read(&F2FS_I(inode)->i_mmap_sem);
 > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index b226760afba8..6a12f33d0cdd 100644
+> index 6a12f33d0cdd..bfe6a8ccc3a0 100644
 > --- a/fs/f2fs/gc.c
 > +++ b/fs/f2fs/gc.c
-> @@ -831,8 +831,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->  				continue;
+> @@ -599,8 +599,12 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+>  	return true;
+>  }
 >  
->  			/* if encrypted inode, let's go phase 3 */
-> -			if (f2fs_encrypted_inode(inode) &&
-> -						S_ISREG(inode->i_mode)) {
-> +			if (f2fs_encrypted_file(inode)) {
->  				add_gc_inode(gc_list, inode);
->  				continue;
->  			}
-> @@ -873,7 +872,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->  
+> -static void move_encrypted_block(struct inode *inode, block_t bidx,
+> -							unsigned int segno, int off)
+> +/*
+> + * Move data block via META_MAPPING while keeping locked data page.
+> + * This can be used to move blocks, aka LBAs, directly on disk.
+> + */
+> +static void move_data_block(struct inode *inode, block_t bidx,
+> +					unsigned int segno, int off)
+>  {
+>  	struct f2fs_io_info fio = {
+>  		.sbi = F2FS_I_SB(inode),
+> @@ -873,9 +877,10 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
 >  			start_bidx = start_bidx_of_node(nofs, inode)
 >  								+ ofs_in_node;
-> -			if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
-> +			if (f2fs_encrypted_file(inode))
->  				move_encrypted_block(inode, start_bidx, segno, off);
+>  			if (f2fs_encrypted_file(inode))
+> -				move_encrypted_block(inode, start_bidx, segno, off);
+> +				move_data_block(inode, start_bidx, segno, off);
 >  			else
->  				move_data_page(inode, start_bidx, gc_type, segno, off);
-> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> index e63ab0d1f614..c133a4fdecf6 100644
-> --- a/fs/f2fs/inline.c
-> +++ b/fs/f2fs/inline.c
-> @@ -25,7 +25,7 @@ bool f2fs_may_inline_data(struct inode *inode)
->  	if (i_size_read(inode) > MAX_INLINE_DATA(inode))
->  		return false;
+> -				move_data_page(inode, start_bidx, gc_type, segno, off);
+> +				move_data_page(inode, start_bidx, gc_type,
+> +								segno, off);
 >  
-> -	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
-> +	if (f2fs_encrypted_file(inode))
->  		return false;
+>  			if (locked) {
+>  				up_write(&fi->dio_rwsem[WRITE]);
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 265c3bc44f2d..9e708e525ba8 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -2528,8 +2528,7 @@ void f2fs_wait_on_page_writeback(struct page *page,
+>  	}
+>  }
 >  
->  	return true;
+> -void f2fs_wait_on_encrypted_page_writeback(struct f2fs_sb_info *sbi,
+> -							block_t blkaddr)
+> +void f2fs_wait_on_block_writeback(struct f2fs_sb_info *sbi, block_t blkaddr)
+>  {
+>  	struct page *cpage;
+>  
 > 
