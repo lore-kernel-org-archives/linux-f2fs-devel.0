@@ -1,48 +1,50 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH] f2fs-tools: support CP_CRC_RECOVERY_FLAG check
-Date: Thu, 7 Sep 2017 22:24:57 +0800
-Message-ID: <1504794297-150702-1-git-send-email-yunlong.song@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+From: Michael Halcrow <mhalcrow@google.com>
+Subject: [PATCH 0/3] fscrypto: Return -EXDEV for link, rename, and cross-rename between incompat contexts
+Date: Thu,  7 Sep 2017 17:12:01 -0700
+Message-ID: <20170908001204.18174-1-mhalcrow@google.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: linux-fscrypt@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
----
- fsck/fsck.c  | 3 +++
- fsck/mount.c | 3 +++
- 2 files changed, 6 insertions(+)
+Currently file systems support fscrypto will return -EPERM when the
+user attempts to link, rename, or cross-rename between two directories
+that have incompatible encryption policy contexts.  User space tools
+will fail the operation when receiving this errno.  With -EXDEV, user
+space tools will typically fall back to copy-and-delete instead.
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index cb341ba..f63a609 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -1786,6 +1786,9 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
- 	set_cp(cp_pack_total_block_count, 8 + orphan_blks + get_sb(cp_payload));
- 
- 	flags = update_nat_bits_flags(sb, cp, flags);
-+
-+	if (is_set_ckpt_flags(cp, CP_CRC_RECOVERY_FLAG))
-+		flags |= CP_CRC_RECOVERY_FLAG;
- 	set_cp(ckpt_flags, flags);
- 
- 	set_cp(free_segment_count, get_free_segments(sbi));
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 7a8aeae..0d77cce 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -1902,6 +1902,9 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
- 	set_cp(cp_pack_total_block_count, 8 + orphan_blks + get_sb(cp_payload));
- 
- 	flags = update_nat_bits_flags(sb, cp, flags);
-+
-+	if (is_set_ckpt_flags(cp, CP_CRC_RECOVERY_FLAG))
-+		flags |= CP_CRC_RECOVERY_FLAG;
- 	set_cp(ckpt_flags, flags);
- 
- 	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CHECKSUM_OFFSET);
+Our original motivation for returning -EPERM was to force users to try
+harder when doing these operations, hopefully making them think more
+carefully about whether what they're doing is secure.  One security
+concern is that when moving files between unencrypted locations into
+encrypted locations, the data in the unencrypted location will remain
+in the clear on the storage device until the freed blocks are
+overwritten at some arbitrary point in the future (if ever).  Moving
+files from encrypted locations into unencrypted locations is also
+(perhaps more obviously) problematic.
+
+Whether making things fail will have the intended effect on users is
+up for debate.  Meanwhile I've had at least one person tell me their
+userspace tools are failing and that they would prefer seeing the same
+sort of behavior that they see when (for example) moving files from
+one project quota hierarchy to another (ext4 returns -EXDEV).
+
+Note that xfstests generic/398 will require an update with this
+change.
+
+Michael Halcrow (3):
+  ext4 crypto: Return -EXDEV for link, rename, and cross-rename between
+    incompat contexts
+  F2FS crypto: Return -EXDEV for link, rename, and cross-rename between
+    incompat contexts
+  UBIFS crypto: Return -EXDEV for link, rename, and cross-rename between
+    incompat contexts
+
+ fs/ext4/namei.c | 6 +++---
+ fs/f2fs/namei.c | 6 +++---
+ fs/ubifs/dir.c  | 6 +++---
+ 3 files changed, 9 insertions(+), 9 deletions(-)
+
 -- 
-1.8.5.2
+2.14.1.581.gf28d330327-goog
