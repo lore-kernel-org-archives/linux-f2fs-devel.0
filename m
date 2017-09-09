@@ -1,29 +1,48 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: speed up gc_urgent mode with SSR and more discard commands
-Date: Sat,  9 Sep 2017 11:17:30 -0700
-Message-ID: <20170909181730.78225-1-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 1/2] f2fs: speed up gc_urgent mode with SSR
+Date: Sat,  9 Sep 2017 12:17:09 -0700
+Message-ID: <20170909191710.81288-1-jaegeuk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+ helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <jaegeuk@kernel.org>) id 1dqlFm-0004gV-FY
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 09 Sep 2017 19:17:18 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+ (Exim 4.76) id 1dqlFl-0006Kx-Mm
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 09 Sep 2017 19:17:18 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@google.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Jaegeuk Kim <jaegeuk@google.com>
 
 From: Jaegeuk Kim <jaegeuk@google.com>
 
-This patch activates SSR and issuing more discard commands in gc_urgent mode.
+This patch activates SSR in gc_urgent mode.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@google.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
  fs/f2fs/f2fs.h    |  1 +
- fs/f2fs/segment.c | 19 ++++++++++++++++++-
+ fs/f2fs/segment.c | 15 +++++++++++++++
  fs/f2fs/segment.h | 13 -------------
- 3 files changed, 19 insertions(+), 14 deletions(-)
+ 3 files changed, 16 insertions(+), 13 deletions(-)
 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 7a467fcd4bcd..3fbf55e41694 100644
+index c0803b1873b3..9a7c90386947 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -2517,6 +2517,7 @@ void destroy_node_manager_caches(void);
+@@ -2511,6 +2511,7 @@ void destroy_node_manager_caches(void);
  /*
   * segment.c
   */
@@ -32,7 +51,7 @@ index 7a467fcd4bcd..3fbf55e41694 100644
  void drop_inmem_pages(struct inode *inode);
  void drop_inmem_page(struct inode *inode, struct page *page);
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 9e708e525ba8..d6e0c160a268 100644
+index 9e708e525ba8..f96e61e8ddf7 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
 @@ -168,6 +168,21 @@ static unsigned long __find_rev_next_zero_bit(const unsigned long *addr,
@@ -57,30 +76,6 @@ index 9e708e525ba8..d6e0c160a268 100644
  void register_inmem_page(struct inode *inode, struct page *page)
  {
  	struct f2fs_inode_info *fi = F2FS_I(inode);
-@@ -1203,6 +1218,7 @@ static int issue_discard_thread(void *data)
- 	wait_queue_head_t *q = &dcc->discard_wait_queue;
- 	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
- 	int issued;
-+	bool urgent = false;
- 
- 	set_freezable();
- 
-@@ -1218,13 +1234,14 @@ static int issue_discard_thread(void *data)
- 
- 		if (dcc->discard_wake) {
- 			dcc->discard_wake = 0;
-+			urgent = sbi->gc_thread && sbi->gc_thread->gc_urgent;
- 			if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
- 				mark_discard_range_all(sbi);
- 		}
- 
- 		sb_start_intwrite(sbi->sb);
- 
--		issued = __issue_discard_cmd(sbi, true);
-+		issued = __issue_discard_cmd(sbi, !urgent);
- 		if (issued) {
- 			__wait_discard_cmd(sbi, true);
- 			wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
 diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
 index 613b2fa7b1c1..e0a6cc23ace3 100644
 --- a/fs/f2fs/segment.h
@@ -107,3 +102,8 @@ index 613b2fa7b1c1..e0a6cc23ace3 100644
  {
 -- 
 2.14.0.rc1.383.gd1ce394fe2-goog
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
