@@ -1,94 +1,58 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: speed up gc_urgent mode with SSR
-Date: Mon, 11 Sep 2017 18:27:07 +0800
-Message-ID: <93658b33-9401-3cc6-01eb-140193ca27ec@huawei.com>
-References: <20170909191710.81288-1-jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs-tools: support CP_CRC_RECOVERY_FLAG check
+Date: Mon, 11 Sep 2017 18:32:13 +0800
+Message-ID: <ff7842f7-6781-01e7-258b-d1b6dc844774@huawei.com>
+References: <1504794297-150702-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170909191710.81288-1-jaegeuk@kernel.org>
+In-Reply-To: <1504794297-150702-1-git-send-email-yunlong.song@huawei.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@google.com>
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/9/10 3:17, Jaegeuk Kim wrote:
-> From: Jaegeuk Kim <jaegeuk@google.com>
-> 
-> This patch activates SSR in gc_urgent mode.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Hi Yunlong,
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Do we need to recover other flags?
 
+Thanks,
+
+On 2017/9/7 22:24, Yunlong Song wrote:
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 > ---
->  fs/f2fs/f2fs.h    |  1 +
->  fs/f2fs/segment.c | 15 +++++++++++++++
->  fs/f2fs/segment.h | 13 -------------
->  3 files changed, 16 insertions(+), 13 deletions(-)
+>  fsck/fsck.c  | 3 +++
+>  fsck/mount.c | 3 +++
+>  2 files changed, 6 insertions(+)
 > 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index c0803b1873b3..9a7c90386947 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -2511,6 +2511,7 @@ void destroy_node_manager_caches(void);
->  /*
->   * segment.c
->   */
-> +bool need_SSR(struct f2fs_sb_info *sbi);
->  void register_inmem_page(struct inode *inode, struct page *page);
->  void drop_inmem_pages(struct inode *inode);
->  void drop_inmem_page(struct inode *inode, struct page *page);
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 9e708e525ba8..f96e61e8ddf7 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -168,6 +168,21 @@ static unsigned long __find_rev_next_zero_bit(const unsigned long *addr,
->  	return result - size + __reverse_ffz(tmp);
->  }
+> diff --git a/fsck/fsck.c b/fsck/fsck.c
+> index cb341ba..f63a609 100644
+> --- a/fsck/fsck.c
+> +++ b/fsck/fsck.c
+> @@ -1786,6 +1786,9 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
+>  	set_cp(cp_pack_total_block_count, 8 + orphan_blks + get_sb(cp_payload));
 >  
-> +bool need_SSR(struct f2fs_sb_info *sbi)
-> +{
-> +	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
-> +	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
-> +	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
+>  	flags = update_nat_bits_flags(sb, cp, flags);
 > +
-> +	if (test_opt(sbi, LFS))
-> +		return false;
-> +	if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
-> +		return true;
-> +
-> +	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
-> +						2 * reserved_sections(sbi));
-> +}
-> +
->  void register_inmem_page(struct inode *inode, struct page *page)
->  {
->  	struct f2fs_inode_info *fi = F2FS_I(inode);
-> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> index 613b2fa7b1c1..e0a6cc23ace3 100644
-> --- a/fs/f2fs/segment.h
-> +++ b/fs/f2fs/segment.h
-> @@ -497,19 +497,6 @@ static inline int reserved_sections(struct f2fs_sb_info *sbi)
->  	return GET_SEC_FROM_SEG(sbi, (unsigned int)reserved_segments(sbi));
->  }
+> +	if (is_set_ckpt_flags(cp, CP_CRC_RECOVERY_FLAG))
+> +		flags |= CP_CRC_RECOVERY_FLAG;
+>  	set_cp(ckpt_flags, flags);
 >  
-> -static inline bool need_SSR(struct f2fs_sb_info *sbi)
-> -{
-> -	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
-> -	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
-> -	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
-> -
-> -	if (test_opt(sbi, LFS))
-> -		return false;
-> -
-> -	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
-> -						2 * reserved_sections(sbi));
-> -}
-> -
->  static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
->  					int freed, int needed)
->  {
+>  	set_cp(free_segment_count, get_free_segments(sbi));
+> diff --git a/fsck/mount.c b/fsck/mount.c
+> index 7a8aeae..0d77cce 100644
+> --- a/fsck/mount.c
+> +++ b/fsck/mount.c
+> @@ -1902,6 +1902,9 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
+>  	set_cp(cp_pack_total_block_count, 8 + orphan_blks + get_sb(cp_payload));
+>  
+>  	flags = update_nat_bits_flags(sb, cp, flags);
+> +
+> +	if (is_set_ckpt_flags(cp, CP_CRC_RECOVERY_FLAG))
+> +		flags |= CP_CRC_RECOVERY_FLAG;
+>  	set_cp(ckpt_flags, flags);
+>  
+>  	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CHECKSUM_OFFSET);
 > 
