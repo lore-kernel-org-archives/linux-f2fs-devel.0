@@ -1,53 +1,58 @@
-From: Chao Yu <yuchao0@huawei.com>
+From: Daeho Jeong <daeho.jeong@samsung.com>
 Subject: Re: [f2fs-dev] [PATCH] f2fs: fix double count on issued discard
  commands
-Date: Tue, 12 Sep 2017 11:53:09 +0800
-Message-ID: <6209aa5a-4d45-ac2b-448a-4b405dfb25d1@huawei.com>
-References: <20170911033845.53701-1-jaegeuk@kernel.org>
- <b6550c76-448a-fa48-eef8-3abcc2835b30@huawei.com>
+Date: Tue, 12 Sep 2017 04:34:23 +0000
+Message-ID: <20170912043423epcms1p72de7da42985bf53e94e50ea8474b682c@epcms1p7>
+References: <20170912042916.GA95671@jaegeuk-macbookpro.roam.corp.google.com>
+        <20170911033845.53701-1-jaegeuk@kernel.org>
+        <b6550c76-448a-fa48-eef8-3abcc2835b30@huawei.com>
+        <6209aa5a-4d45-ac2b-448a-4b405dfb25d1@huawei.com>
+        <CGME20170912042935epcas1p4630737028cc7b9536a0c688c92084e84@epcms1p7>
+Reply-To: daeho.jeong@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b6550c76-448a-fa48-eef8-3abcc2835b30@huawei.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: daehojng@gmail.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20170912042916.GA95671@jaegeuk-macbookpro.roam.corp.google.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/9/12 9:53, Chao Yu wrote:
-> On 2017/9/11 11:38, Jaegeuk Kim wrote:
->> If issue_cond is true, it does double count for # of issued commands.
->>
->> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> 
-> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> Yeah, that's exactly like what I made a mistake before.
 
-As Daeho Jeong mentioned, the change makes 'iter > DISCARD_ISSUE_RATE' dead
-code, I just misread iter and issued variable, sorry. :(
+> I should have mentioned that earlier. :)
+
+
+
+Or I think the previous code which used "iter++" might be right.
+
+You might just want to check the fixed number of small discards, DISCARD_ISSUE_RATE,
+
+when issue_cond is "true".
+
+
+
+Anyways, I have another question about this function.
+
+How about just issuing, not checking whether it is idle, the fixed number of small
+
+discards, DISCARD_ISSUE_RATE, when issue_cond is "true".
+
+Actually, the discard commands will be issued as "asynchronous" requests,
+
+which has a low priority in the I/O scheduler,
+
+so the performance degradation of other threads by doing this will not be much severe,
+
+but we can make the performance of the storage device better even if there is no idle.
+
+
+
+I am just worried about the storage device I/O performance gets worse 
+
+under I/O intensive senario where there is no idle
+
+
 
 Thanks,
-
-> 
->> ---
->>  fs/f2fs/segment.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index 7fd742f747ce..25196ff5d587 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -1087,7 +1087,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi, bool issue_cond)
->>  				issued++;
->>  				__submit_discard_cmd(sbi, dc);
->>  			}
->> -			if (issue_cond && iter++ > DISCARD_ISSUE_RATE)
->> +			if (issue_cond && iter > DISCARD_ISSUE_RATE)
->>  				goto out;
->>  		}
->>  		if (list_empty(pend_list) && dcc->pend_list_tag[i] & P_TRIM)
->>
-> 
-> 
-> 
