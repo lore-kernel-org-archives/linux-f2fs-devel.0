@@ -1,21 +1,21 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix to show correct discard_granularity in
- sysfs
-Date: Tue, 12 Sep 2017 14:25:35 +0800
-Message-ID: <20170912062535.3858-1-yuchao0@huawei.com>
+Subject: [PATCH] f2fs: hurry up to issue discard after io
+ interruption
+Date: Tue, 12 Sep 2017 18:08:08 +0800
+Message-ID: <20170912100808.23775-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
  helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1dree2-0000Iy-HG
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Sep 2017 06:26:02 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191])
- by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1dree0-0006Dm-VQ
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Sep 2017 06:26:02 +0000
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1dri7W-0006CD-EP
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Sep 2017 10:08:42 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190])
+ by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1dri7U-00006c-ES
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Sep 2017 10:08:42 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,31 +28,58 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Fix below incorrect display when reading discard_granularity sysfs node.
-
-$ cat /sys/fs/f2fs/<device>/discard_granularity
-$ 16
-$ echo 32 > /sys/fs/f2fs/<device>/discard_granularity
-$ cat /sys/fs/f2fs/<device>/discard_granularity
-$ 16
+Once we encounter I/O interruption during issuing discards, we will delay
+long time before next round, but if system status is I/O idle during the
+time, it may loses opportunity to issue discards. So this patch changes
+to hurry up to issue discard after io interruption.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/sysfs.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/f2fs/segment.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 962735dc9c63..e2c258f717cd 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -170,6 +170,8 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
- 				dcc->pend_list_tag[i] &= (~P_ACTIVE);
- 		}
- 		mutex_unlock(&dcc->cmd_lock);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 7fd742f747ce..3ee2236fc091 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1062,6 +1062,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi, bool issue_cond)
+ 	struct blk_plug plug;
+ 	int iter = 0, issued = 0;
+ 	int i;
++	bool io_interrupted = false;
+ 
+ 	mutex_lock(&dcc->cmd_lock);
+ 	f2fs_bug_on(sbi,
+@@ -1083,10 +1084,19 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi, bool issue_cond)
+ 				continue;
+ 			}
+ 
+-			if (!issue_cond || is_idle(sbi)) {
++			if (!issue_cond) {
++				__submit_discard_cmd(sbi, dc);
+ 				issued++;
++				continue;
++			}
 +
-+		*ui = t;
- 		return count;
- 	}
++			if (is_idle(sbi)) {
+ 				__submit_discard_cmd(sbi, dc);
++				issued++;
++			} else {
++				io_interrupted = true;
+ 			}
++
+ 			if (issue_cond && iter++ > DISCARD_ISSUE_RATE)
+ 				goto out;
+ 		}
+@@ -1097,6 +1107,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi, bool issue_cond)
+ 	blk_finish_plug(&plug);
+ 	mutex_unlock(&dcc->cmd_lock);
+ 
++	if (!issued && io_interrupted)
++		issued = -1;
++
+ 	return issued;
+ }
  
 -- 
 2.13.1.388.g69e6b9b4f4a9
