@@ -1,82 +1,43 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: fix double count on issued discard
+From: Daeho Jeong <daeho.jeong@samsung.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix double count on issued discard
  commands
-Date: Wed, 13 Sep 2017 15:13:06 +0800
-Message-ID: <d2894eac-1fba-daf9-480f-1d0cbef67423@huawei.com>
-References: <20170912042916.GA95671@jaegeuk-macbookpro.roam.corp.google.com>
- <20170911033845.53701-1-jaegeuk@kernel.org>
- <b6550c76-448a-fa48-eef8-3abcc2835b30@huawei.com>
- <6209aa5a-4d45-ac2b-448a-4b405dfb25d1@huawei.com>
- <CGME20170912042935epcas1p4630737028cc7b9536a0c688c92084e84@epcms1p7>
- <20170912043423epcms1p72de7da42985bf53e94e50ea8474b682c@epcms1p7>
+Date: Wed, 13 Sep 2017 08:48:30 +0000
+Message-ID: <20170913084830epcms1p8a0a01f9de4c8f09730206203b9969a79@epcms1p8>
+References: <d2894eac-1fba-daf9-480f-1d0cbef67423@huawei.com>
+        <20170912042916.GA95671@jaegeuk-macbookpro.roam.corp.google.com>
+        <20170911033845.53701-1-jaegeuk@kernel.org>
+        <b6550c76-448a-fa48-eef8-3abcc2835b30@huawei.com>
+        <6209aa5a-4d45-ac2b-448a-4b405dfb25d1@huawei.com>
+        <20170912043423epcms1p72de7da42985bf53e94e50ea8474b682c@epcms1p7>
+        <CGME20170912042935epcas1p4630737028cc7b9536a0c688c92084e84@epcms1p8>
+Reply-To: daeho.jeong@samsung.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
- helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1ds1rc-0006ry-9T
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Sep 2017 07:13:36 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1ds1ra-0007nd-Bn
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Sep 2017 07:13:36 +0000
-In-Reply-To: <20170912043423epcms1p72de7da42985bf53e94e50ea8474b682c@epcms1p7>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: daeho.jeong@samsung.com, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <d2894eac-1fba-daf9-480f-1d0cbef67423@huawei.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-T24gMjAxNy85LzEyIDEyOjM0LCBEYWVobyBKZW9uZyB3cm90ZToKPj4gWWVhaCzCoHRoYXQnc8Kg
-ZXhhY3RsecKgbGlrZcKgd2hhdMKgScKgbWFkZcKgYcKgbWlzdGFrZcKgYmVmb3JlLgo+PiBJwqBz
-aG91bGTCoGhhdmXCoG1lbnRpb25lZMKgdGhhdMKgZWFybGllci7CoDopCj4gCj4gT3IgSSB0aGlu
-ayB0aGUgcHJldmlvdXMgY29kZSB3aGljaCB1c2VkICJpdGVyKysiIG1pZ2h0IGJlIHJpZ2h0Lgo+
-IFlvdSBtaWdodCBqdXN0IHdhbnQgdG8gY2hlY2sgdGhlIGZpeGVkIG51bWJlciBvZiBzbWFsbCBk
-aXNjYXJkcywgRElTQ0FSRF9JU1NVRV9SQVRFLAo+IHdoZW4gaXNzdWVfY29uZCBpcyAidHJ1ZSIu
-Cj4gCj4gQW55d2F5cywgSSBoYXZlIGFub3RoZXIgcXVlc3Rpb24gYWJvdXQgdGhpcyBmdW5jdGlv
-bi4KPiBIb3cgYWJvdXQganVzdCBpc3N1aW5nLCBub3QgY2hlY2tpbmcgd2hldGhlciBpdCBpcyBp
-ZGxlLCB0aGUgZml4ZWQgbnVtYmVyIG9mIHNtYWxsCj4gZGlzY2FyZHMsIERJU0NBUkRfSVNTVUVf
-UkFURSwgd2hlbiBpc3N1ZV9jb25kIGlzICJ0cnVlIi4KPiBBY3R1YWxseSwgdGhlIGRpc2NhcmQg
-Y29tbWFuZHMgd2lsbCBiZSBpc3N1ZWQgYXMgImFzeW5jaHJvbm91cyIgcmVxdWVzdHMsCj4gd2hp
-Y2ggaGFzIGEgbG93IHByaW9yaXR5IGluIHRoZSBJL08gc2NoZWR1bGVyLAo+IHNvIHRoZSBwZXJm
-b3JtYW5jZSBkZWdyYWRhdGlvbiBvZiBvdGhlciB0aHJlYWRzIGJ5IGRvaW5nIHRoaXMgd2lsbCBu
-b3QgYmUgbXVjaCBzZXZlcmUsCj4gYnV0IHdlIGNhbiBtYWtlIHRoZSBwZXJmb3JtYW5jZSBvZiB0
-aGUgc3RvcmFnZSBkZXZpY2UgYmV0dGVyIGV2ZW4gaWYgdGhlcmUgaXMgbm8gaWRsZS4KCkFjdHVh
-bGx5LCB3ZSBkaWRuJ3QgY2hhbmdlIHByaW9yaXR5IG9mIGRpc2NhcmQgY29tbWFuZCwgc28gdGhh
-dCBpdCBpcyBzdGlsbApzeW5jaHJvbm91cyBJTyBmb3IgSS9PIHNjaGVkdWxlciwgaGVuY2UgSS9P
-IGludGVyZmVyZW5jZSB3aWxsIHN0aWxsIGV4aXN0IGlmIHdlCnRyeSB0byBpc3N1ZSBkaXNjYXJk
-IHdpdGhvdXQgSU8gYXdhcmUgYWJpbGl0eS4KCk9mIGNvdXJzZSB3ZSBjYW4gY2hhbmdlIHRoZSBw
-cmlvcml0eSBvZiBkaXNjYXJkIGNvbW1hbmQgdG8gbG93ZXIsIGJ1dCBwb3RlbnRpYWwKaXNzdWUg
-aXMgdGhhdCB3aXRoIFJPVyBJL08gc2NoZWR1bGVyIGluIGtlcm5lbCBvciBGVEwsIGFzeW5jIEkv
-TyB3aWxsIGhhbmRsZQp2ZXJ5IHNsb3dseSBpbiBoZWF2eSBsb2FkIHNjZW5hcmlvLCBpZiB3ZSBh
-cmUgZ29pbmcgdG8gdHJpZ2dlciBzeW5jIHdyaXRlIElPIGluCnBsYWNlIGluIHdoZXJlIHdlJ3Jl
-IGRvaW5nIGFzeW5jIGRpc2NhcmQsIHdlIHdpbGwgZmFjZSBsb25nIGxhdGVuY3kuCgpTdGlsbCBJ
-IHRoaW5rIGl0IGlzIHdvcnRoIHRvIGJ1aWxkIHRoZSBhYmlsaXR5IHRvIGlzc3VlIGFzeW5jIGRp
-c2NhcmQgYXMgYSBwYXJ0Cm9mIGRpc2NhcmQgcG9saWN5IGFuZCBsYXRlciB3ZSBjYW4gYWRqdXN0
-IHBvbGljeSBiYXNlZCBvbiBkaWZmZXJlbnQgc2NlbmFyaW8uCgpUaGFua3MsCgo+IAo+IEkgYW0g
-anVzdCB3b3JyaWVkIGFib3V0IHRoZSBzdG9yYWdlIGRldmljZSBJL08gcGVyZm9ybWFuY2UgZ2V0
-cyB3b3JzZSAKPiB1bmRlciBJL08gaW50ZW5zaXZlIHNlbmFyaW8gd2hlcmUgdGhlcmUgaXMgbm8g
-aWRsZQo+IAo+IFRoYW5rcywKPiAKPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiBDaGVjayBvdXQg
-dGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKPiBl
-bmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRv
-dAo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gTGlu
-dXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKPiBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJj
-ZWZvcmdlLm5ldAo+IGh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZv
-L2xpbnV4LWYyZnMtZGV2ZWwKPiAKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQ2hlY2sgb3V0IHRo
-ZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0CmVuZ2Fn
-aW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMt
-ZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0
-Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMt
-ZGV2ZWwK
+> Actually, we didn't change priority of discard command, so that it is still
+> synchronous IO for I/O scheduler, hence I/O interference will still exist if we
+> try to issue discard without IO aware ability.
+ 
+> Of course we can change the priority of discard command to lower, but potential
+> issue is that with ROW I/O scheduler in kernel or FTL, async I/O will handle
+> very slowly in heavy load scenario, if we are going to trigger sync write IO in
+> place in where we're doing async discard, we will face long latency.
+ 
+> Still I think it is worth to build the ability to issue async discard as a part
+> of discard policy and later we can adjust policy based on different scenario.
+ 
+> Thanks,
+
+Oh, I see.
+
+f2fs is sending discard requests as "sync" requests, I didn't know that.
+Right, I just though in case of CFQ I/O scheduler, but f2fs has to consider the other
+schedulers, but CFQ.
+
+Thanks, :)
