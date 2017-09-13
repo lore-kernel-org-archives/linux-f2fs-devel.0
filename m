@@ -1,80 +1,28 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] vfs: introduce UMOUNT_WAIT which waits for umount completion
-Date: Wed, 13 Sep 2017 13:09:41 -0700
-Message-ID: <20170913200941.39420-1-jaegeuk@kernel.org>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: [PATCH] vfs: introduce UMOUNT_WAIT which waits for umount
+ completion
+Date: Thu, 14 Sep 2017 00:04:26 +0100
+Message-ID: <20170913230426.GN5426@ZenIV.linux.org.uk>
+References: <20170913200941.39420-1-jaegeuk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170913200941.39420-1-jaegeuk@kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch introduces UMOUNT_WAIT flag for umount(2) which let user wait for
-its completion. This would fix a kernel panic caused by block device access by
-filesystem, after device_shutdown during kernel_restart. This can happen due
-to delayed umount -- reboot process already succeeded to unmount filesystem,
-but its instance is sitll alive.
+On Wed, Sep 13, 2017 at 01:09:41PM -0700, Jaegeuk Kim wrote:
+> +	if (!retval && (flags & UMOUNT_WAIT)) {
+> +		if (likely(!(current->flags & PF_KTHREAD)))
+> +			task_work_run();
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/namespace.c     | 12 +++++++++++-
- include/linux/fs.h |  1 +
- 2 files changed, 12 insertions(+), 1 deletion(-)
+This is complete crap.  The same damn thing will be done by
+caller of sys_umount() pretty much immediately afterwards.
+I'm not sure what it is that you are trying to paper over,
+but this is just plain wrong.
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index f8893dc6a989..b1ac89915b10 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -21,6 +21,7 @@
- #include <linux/fs_struct.h>	/* get_fs_root et.al. */
- #include <linux/fsnotify.h>	/* fsnotify_vfsmount_delete */
- #include <linux/uaccess.h>
-+#include <linux/file.h>
- #include <linux/proc_ns.h>
- #include <linux/magic.h>
- #include <linux/bootmem.h>
-@@ -1629,7 +1630,8 @@ SYSCALL_DEFINE2(umount, char __user *, name, int, flags)
- 	int retval;
- 	int lookup_flags = 0;
- 
--	if (flags & ~(MNT_FORCE | MNT_DETACH | MNT_EXPIRE | UMOUNT_NOFOLLOW))
-+	if (flags & ~(MNT_FORCE | MNT_DETACH | MNT_EXPIRE | UMOUNT_NOFOLLOW |
-+			UMOUNT_WAIT))
- 		return -EINVAL;
- 
- 	if (!may_mount())
-@@ -1652,12 +1654,20 @@ SYSCALL_DEFINE2(umount, char __user *, name, int, flags)
- 	retval = -EPERM;
- 	if (flags & MNT_FORCE && !capable(CAP_SYS_ADMIN))
- 		goto dput_and_out;
-+	if (flags & UMOUNT_WAIT)
-+		flush_delayed_fput();
- 
- 	retval = do_umount(mnt, flags);
- dput_and_out:
- 	/* we mustn't call path_put() as that would clear mnt_expiry_mark */
- 	dput(path.dentry);
- 	mntput_no_expire(mnt);
-+	if (!retval && (flags & UMOUNT_WAIT)) {
-+		if (likely(!(current->flags & PF_KTHREAD)))
-+			task_work_run();
-+		else
-+			flush_scheduled_work();
-+	}
- out:
- 	return retval;
- }
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 83341a6a553e..cb62af7a03e7 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1283,6 +1283,7 @@ struct mm_struct;
- #define MNT_DETACH	0x00000002	/* Just detach from the tree */
- #define MNT_EXPIRE	0x00000004	/* Mark for expiry */
- #define UMOUNT_NOFOLLOW	0x00000008	/* Don't follow symlink on umount */
-+#define UMOUNT_WAIT	0x00000010	/* Wait to unmount completely */
- #define UMOUNT_UNUSED	0x80000000	/* Flag guaranteed to be unused */
- 
- /* sb->s_iflags */
--- 
-2.14.0.rc1.383.gd1ce394fe2-goog
+What _is_ the semantics of UMOUNT_WAIT?  What does it guarantee,
+and what would be supplying it to umount(2)?
