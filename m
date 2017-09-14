@@ -1,48 +1,84 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: [PATCH] vfs: introduce UMOUNT_WAIT which waits for umount
- completion
-Date: Thu, 14 Sep 2017 02:30:17 +0100
-Message-ID: <20170914013017.GP5426@ZenIV.linux.org.uk>
-References: <20170913200941.39420-1-jaegeuk@kernel.org>
- <20170913230426.GN5426@ZenIV.linux.org.uk>
- <20170913233116.GA45354@jaegeuk-macbookpro.roam.corp.google.com>
- <20170913234437.GO5426@ZenIV.linux.org.uk>
- <20170914011048.GA47448@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: show flush list status in sysfs
+Date: Thu, 14 Sep 2017 10:18:01 +0800
+Message-ID: <20170914021801.4234-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170914011048.GA47448@jaegeuk-macbookpro.roam.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+ helo=mx.sourceforge.net)
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1dsJjW-0000cl-Mz
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 Sep 2017 02:18:26 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191])
+ by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1dsJjU-0006u6-FK
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 Sep 2017 02:18:26 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Wed, Sep 13, 2017 at 06:10:48PM -0700, Jaegeuk Kim wrote:
+This patch adds to show flush list status in sysfs.
 
-> Android triggers umount(2) by init process, which is definitely not a kernel
-> thread. But, we've seen some kernel panics which say umount(2) was succeeded,
-> but ext4 triggered a kernel panic due to EIO after then like below. I'm also
-> not sure task_work_run() would be also safe enoughly. May I ask where I can
-> find sys_umount() calls task_work_run()?
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/debug.c | 5 ++++-
+ fs/f2fs/f2fs.h  | 3 ++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-ret_{fast,slow}_syscall ->
-	slow_work_pending ->
-		do_work_pending() ->
-			tracehook_notify_resume() ->
-				task_work_run()
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 87f449845f5f..00c1d4a9f356 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -61,6 +61,8 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+ 			atomic_read(&SM_I(sbi)->fcc_info->issued_flush);
+ 		si->nr_flushing =
+ 			atomic_read(&SM_I(sbi)->fcc_info->issing_flush);
++		si->flush_list_empty =
++			llist_empty(&SM_I(sbi)->fcc_info->issue_list);
+ 	}
+ 	if (SM_I(sbi) && SM_I(sbi)->dcc_info) {
+ 		si->nr_discarded =
+@@ -349,10 +351,11 @@ static int stat_show(struct seq_file *s, void *v)
+ 		seq_printf(s, "  - Inner Struct Count: tree: %d(%d), node: %d\n",
+ 				si->ext_tree, si->zombie_tree, si->ext_node);
+ 		seq_puts(s, "\nBalancing F2FS Async:\n");
+-		seq_printf(s, "  - IO (CP: %4d, Data: %4d, Flush: (%4d %4d), "
++		seq_printf(s, "  - IO (CP: %4d, Data: %4d, Flush: (%4d %4d %4d), "
+ 			"Discard: (%4d %4d)) cmd: %4d undiscard:%4u\n",
+ 			   si->nr_wb_cp_data, si->nr_wb_data,
+ 			   si->nr_flushing, si->nr_flushed,
++			   si->flush_list_empty,
+ 			   si->nr_discarding, si->nr_discarded,
+ 			   si->nr_discard_cmd, si->undiscard_blks);
+ 		seq_printf(s, "  - inmem: %4d, atomic IO: %4d (Max. %4d), "
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 5d33d5a84b07..c5d3d15b57c9 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2704,7 +2704,8 @@ struct f2fs_stat_info {
+ 	int free_nids, avail_nids, alloc_nids;
+ 	int total_count, utilization;
+ 	int bg_gc, nr_wb_cp_data, nr_wb_data;
+-	int nr_flushing, nr_flushed, nr_discarding, nr_discarded;
++	int nr_flushing, nr_flushed, flush_list_empty;
++	int nr_discarding, nr_discarded;
+ 	int nr_discard_cmd;
+ 	unsigned int undiscard_blks;
+ 	int inline_xattr, inline_inode, inline_dir, append, update, orphans;
+-- 
+2.13.1.388.g69e6b9b4f4a9
 
-It's not sys_umount() (or any other sys_...()) - it's syscall dispatcher after
-having called one of those and before returning to userland.  What is guaranteed
-is that after successful task_work_add() the damn thing will be run in context
-of originating process before it returns from syscall.  So any subsequent
-syscalls from that process are guaranteed to happen after the work has run.
-The same happens if the process exits rather than returns to userland (do_exit() ->
-exit_task_work() -> task_work_run()), but for that you would need it to die in
-umount(2) (e.g. get kill -9 delivered on the way out).
 
-Please, check if you are seeing task_work_add() failure in there and if you do,
-I would like to see a stack trace.  IOW, slap WARN_ON(1); right after
-                        if (!task_work_add(task, &mnt->mnt_rcu, true))
-                                return;
-and see what (if anything) gets printed.
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
