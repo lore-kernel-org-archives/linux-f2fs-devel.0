@@ -1,179 +1,70 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: Userspace locks at f2fs_issue_flush kernel call,
- hard reset necessary
-Date: Thu, 14 Sep 2017 10:22:04 +0800
-Message-ID: <76946108-47ec-1140-48ca-30b54ec8ec48@huawei.com>
-References: <CAETC-g9+HJXSL4mqgzdTBoaOyoXU5OwL9TsFxUURNRQQ2tryxA@mail.gmail.com>
- <CAETC-g8=z6LuzkxfMZBvuLeMBkFX2Aaais9_ydaoecaRUUpRfQ@mail.gmail.com>
- <ad969786-ffff-4093-1deb-9be1f0eab4fc@kernel.org>
- <CAETC-g9CJ_vzzD7a53QuXxYD8wX6oLPENq7nZTo-8PK6UANf-A@mail.gmail.com>
- <CAETC-g_vr_JcB6eTdFzyga9EyV799wKOpeYYnYGExThsvS+NgQ@mail.gmail.com>
- <82098916-57cf-2fe8-e2ec-b947ffaa0a74@huawei.com>
- <CAETC-g-XFUB6H=J6Zy_y7ywczOXPQEuTnugfbf1Tq8HpceR-AQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
- helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1dsJnj-0003JL-R4
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 Sep 2017 02:22:47 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1dsJng-0007J9-PH
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 Sep 2017 02:22:47 +0000
-In-Reply-To: <CAETC-g-XFUB6H=J6Zy_y7ywczOXPQEuTnugfbf1Tq8HpceR-AQ@mail.gmail.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "Marcelo \"Marc\" Ranolfi" <marc.2377@gmail.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+From: Jan Kara <jack@suse.cz>
+Subject: [PATCH 03/15] ceph: Use pagevec_lookup_range_tag()
+Date: Thu, 14 Sep 2017 15:18:07 +0200
+Message-ID: <20170914131819.26266-4-jack@suse.cz>
+References: <20170914131819.26266-1-jack@suse.cz>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20170914131819.26266-1-jack@suse.cz>
+Sender: owner-linux-mm@kvack.org
+To: linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>, ceph-devel@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, Jan Kara <jack@suse.cz>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Marcelo,
+We want only pages from given range in ceph_writepages_start(). Use
+pagevec_lookup_range_tag() instead of pagevec_lookup_tag() and remove
+unnecessary code.
 
-Please add "f2fs: show flush list status in sysfs" first in your repo.
+CC: Ilya Dryomov <idryomov@gmail.com>
+CC: "Yan, Zheng" <zyan@redhat.com>
+CC: ceph-devel@vger.kernel.org
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/ceph/addr.c | 19 +++----------------
+ 1 file changed, 3 insertions(+), 16 deletions(-)
 
-And please try:
-1. mount without flush_merge option and do the test to see whether it is caused
-by issue of the feature or lower block layer.
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index b3e3edc09d80..e57e9d37bf2d 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -871,13 +871,10 @@ static int ceph_writepages_start(struct address_space *mapping,
+ get_more_pages:
+ 		pvec_pages = min_t(unsigned, PAGEVEC_SIZE,
+ 				   max_pages - locked_pages);
+-		if (end - index < (u64)(pvec_pages - 1))
+-			pvec_pages = (unsigned)(end - index) + 1;
+-
+-		pvec_pages = pagevec_lookup_tag(&pvec, mapping, &index,
+-						PAGECACHE_TAG_DIRTY,
++		pvec_pages = pagevec_lookup_range_tag(&pvec, mapping, &index,
++						end, PAGECACHE_TAG_DIRTY,
+ 						pvec_pages);
+-		dout("pagevec_lookup_tag got %d\n", pvec_pages);
++		dout("pagevec_lookup_range_tag got %d\n", pvec_pages);
+ 		if (!pvec_pages && !locked_pages)
+ 			break;
+ 		for (i = 0; i < pvec_pages && locked_pages < max_pages; i++) {
+@@ -895,16 +892,6 @@ static int ceph_writepages_start(struct address_space *mapping,
+ 				unlock_page(page);
+ 				continue;
+ 			}
+-			if (page->index > end) {
+-				dout("end of range %p\n", page);
+-				/* can't be range_cyclic (1st pass) because
+-				 * end == -1 in that case. */
+-				stop = true;
+-				if (ceph_wbc.head_snapc)
+-					done = true;
+-				unlock_page(page);
+-				break;
+-			}
+ 			if (strip_unit_end && (page->index > strip_unit_end)) {
+ 				dout("end of strip unit %p\n", page);
+ 				unlock_page(page);
+-- 
+2.12.3
 
-For disabling the feature:
-mount -o noflush_merge
-
-2. do test with last codes in dev-test branch.
-
-If the problem is still there, please dump info with:
-echo l > /proc/sysrq-trigger
-echo w > /proc/sysrq-trigger
-dmesg
-cat /sys/kernel/debug/f2fs/status
-
-Thanks,
-
-On 2017/9/1 12:54, Marcelo "Marc" Ranolfi wrote:
-> Hi,
-> 
-> no problem at all.
-> 
-> No, I never did ro remount before it happened. In fact its been a long
-> while since I used ro.
-> 
-> 
-> Regards
-> 
-> On Thu, Aug 31, 2017 at 8:01 AM, Chao Yu <yuchao0@huawei.com> wrote:
->> Hi Marcelo,
->>
->> Sorry for the delay, :(
->>
->> I'd like ask, any possible that we did ro remount before the problem happened?
->>
->> Thanks,
->>
->> On 2017/8/24 1:26, Marcelo "Marc" Ranolfi wrote:
->>> Chao,
->>>
->>> I just had the same problem, with kernel 4.12.8 with patch _f2fs: fix
->>> out-of-order execution in f2fs_issue_flush_.
->>>
->>> On Tue, Aug 22, 2017 at 2:00 PM, Marcelo "Marc" Ranolfi
->>> <marc.2377@gmail.com> wrote:
->>>> Hi Chao
->>>>
->>>> I'm testing the kernel with your patch since last night. Will give new
->>>> feedback a couple of days/weeks about how it goes.
->>>>
->>>>
->>>> Thank you.
->>>>
->>>>
->>>>
->>>> On Mon, Aug 21, 2017 at 11:58 AM, Chao Yu <chao@kernel.org> wrote:
->>>>> Hi Marcelo,
->>>>>
->>>>> Thanks for the report!
->>>>>
->>>>> Would you have a try with below patch?
->>>>>
->>>>> f2fs: fix out-of-order execution in f2fs_issue_flush
->>>>>
->>>>> Thanks,
->>>>>
->>>>> On 2017/8/16 15:24, Marcelo "Marc" Ranolfi wrote:
->>>>>> Just wanted to let you all know that this is still an issue, even with
->>>>>> the 4.12.7 kernel.
->>>>>>
->>>>>> The two most affected applications are qemu-system-x86_64 and totem.
->>>>>>
->>>>>> On Wed, Aug 9, 2017 at 3:04 AM, Marcelo "Marc" Ranolfi
->>>>>> <marc.2377@gmail.com> wrote:
->>>>>>> What follows is a bug report.
->>>>>>>
->>>>>>> I've been experiencing system lockups somewhat randomly. Sometimes an
->>>>>>> application freezes, and when I go check its properties, it says the
->>>>>>> process' Wait Channel is _f2fs_issue_flush_.
->>>>>>>
->>>>>>> Sometimes it's the qemu process (which I use via libvirt), other times
->>>>>>> it's Firefox, or Gnome Videos (totem) and it happened to Nemo once as
->>>>>>> well. I have screenshots if necessary.
->>>>>>>
->>>>>>> I've been tracking this with screenshots, and it's happenning every 4
->>>>>>> days - on average.
->>>>>>>
->>>>>>> When this happens, the process stays unresponsive no matter what. I tried:
->>>>>>>
->>>>>>> - Restarting swap
->>>>>>> - Restarting the Display Manager
->>>>>>> - Graceful shutdown / reboot - takes forever, doesn't work
->>>>>>> - Shutdown -k and unmounting filesystems from command line - root
->>>>>>> can't be unmounted unless -l used, no solution
->>>>>>>
->>>>>>> The only working solution is to reset the machine via power button or
->>>>>>> #reboot -f.
->>>>>>>
->>>>>>> I have:
->>>>>>>
->>>>>>> - Kingston SV300S37A120G - hardware is fine, I have other OS / filesystems on it
->>>>>>> - f2fs filesystem in a 40 GB partition, GPT
->>>>>>> - kernel 4.12.4 with systemd 234.11 - typical up-to-date Arch Linux setup.
->>>>>>>
->>>>>>> You gentlemen let me know if I provide more help.
->>>>>>>
->>>>>>> Best,
->>>>>>> Marc
->>>>>>
->>>>>> ------------------------------------------------------------------------------
->>>>>> Check out the vibrant tech community on one of the world's most
->>>>>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
->>>>>> _______________________________________________
->>>>>> Linux-f2fs-devel mailing list
->>>>>> Linux-f2fs-devel@lists.sourceforge.net
->>>>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>>>>>
->>>
->>> ------------------------------------------------------------------------------
->>> Check out the vibrant tech community on one of the world's most
->>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
->>> _______________________________________________
->>> Linux-f2fs-devel mailing list
->>> Linux-f2fs-devel@lists.sourceforge.net
->>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>>
->>>
->>
-> 
-> .
-> 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
