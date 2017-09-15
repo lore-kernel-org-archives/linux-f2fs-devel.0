@@ -1,64 +1,29 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: [PATCH] vfs: introduce UMOUNT_WAIT which waits for umount
- completion
-Date: Fri, 15 Sep 2017 05:21:37 +0100
-Message-ID: <20170915042137.GX5426@ZenIV.linux.org.uk>
-References: <20170913230426.GN5426@ZenIV.linux.org.uk>
- <20170913233116.GA45354@jaegeuk-macbookpro.roam.corp.google.com>
- <20170913234437.GO5426@ZenIV.linux.org.uk>
- <20170914011048.GA47448@jaegeuk-macbookpro.roam.corp.google.com>
- <20170914013017.GP5426@ZenIV.linux.org.uk>
- <20170914183723.GA17131@ZenIV.linux.org.uk>
- <20170914191447.GA9428@jaegeuk-macbookpro.roam.corp.google.com>
- <20170915001939.GA20096@jaegeuk-macbookpro.roam.corp.google.com>
- <20170915020607.GW5426@ZenIV.linux.org.uk>
- <20170915034518.GB20096@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH 05/15] f2fs: Use pagevec_lookup_range_tag()
+Date: Fri, 15 Sep 2017 21:33:05 +0800
+Message-ID: <e98f9561-8d71-6011-d686-d9173f55dc2c@kernel.org>
+References: <20170914131819.26266-1-jack@suse.cz>
+ <20170914131819.26266-6-jack@suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170915034518.GB20096@jaegeuk-macbookpro.roam.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20170914131819.26266-6-jack@suse.cz>
+Content-Language: en-US
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Jan Kara <jack@suse.cz>, linux-mm@kvack.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, "Yan, Zheng" <zyan@redhat.com>, linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, ceph-devel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Thu, Sep 14, 2017 at 08:45:18PM -0700, Jaegeuk Kim wrote:
-
-> > Which filesystem it is?  With root I would've expected remount ro done
-> > by sys_umount(); with anything else...  How has it managed to avoid
-> > -EBUSY?  If it was umount -l (IOW, MNT_DETACH), I can see that happening,
-> > but...  How would flushing prevent the scenario when the same opened
-> > file had remained open until after the umount(2) return?
+On 2017/9/14 21:18, Jan Kara wrote:
+> We want only pages from given range in f2fs_write_cache_pages(). Use
+> pagevec_lookup_range_tag() instead of pagevec_lookup_tag() and remove
+> unnecessary code.
 > 
-> It's ext4, and we use umount(0) and retry it several times if -EBUSY happens.
+> CC: Jaegeuk Kim <jaegeuk@kernel.org>
+> CC: linux-f2fs-devel@lists.sourceforge.net
+> Signed-off-by: Jan Kara <jack@suse.cz>
 
-????
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-umount(0) will result in EFAULT; what are you talking about?
-
-> But, I don't see -EBUSY error in the log.
-
-Sorry, I'd been unclear - where is it mounted?  Is that the root filesystem?
-
-> > In other words, where has that fput() come from and how had it managed
-> > to get past the umount(2)?
-> 
-> Huge number of fput() were called by system drivers when init kills all the
-> processes before umount(2). So, most of fput() were added in delayed_fput_list.
-
-Umm...  What do you mean by system drivers?  If it was held by userland processes,
-then we are back to the same question - why has task_work_add() failed in fput()?
-If it had been kernel threads, which files had they been holding open?
-
-> Then, it seems there is a race between delayed_fput() and umount(). Anyway,
-> even after umount returns zero, it seems ext4's superblock is still alive
-> and waiting for delayed_fput() which will finally call put_super.
-
-That might be more than one mount of the same fs (in different namespaces, for
-example) with umount taking out one of those, with the other having been
-hit with umount -l before that, with some opened files being the only thing
-that used to keep it alive.
-
-I'd like to see /proc/1/mountinfo and fuser output, TBH...  I'm not familiar enough
-with Android userland setup, so my apologies for dumb questions ;-/
+Thanks,
