@@ -1,8 +1,8 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] vfs: introduce UMOUNT_WAIT which waits for umount
- completion
-Date: Thu, 14 Sep 2017 17:19:39 -0700
-Message-ID: <20170915001939.GA20096@jaegeuk-macbookpro.roam.corp.google.com>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: [PATCH] vfs: introduce UMOUNT_WAIT which waits for
+ umount completion
+Date: Fri, 15 Sep 2017 03:06:07 +0100
+Message-ID: <20170915020607.GW5426@ZenIV.linux.org.uk>
 References: <20170913200941.39420-1-jaegeuk@kernel.org>
  <20170913230426.GN5426@ZenIV.linux.org.uk>
  <20170913233116.GA45354@jaegeuk-macbookpro.roam.corp.google.com>
@@ -11,84 +11,63 @@ References: <20170913200941.39420-1-jaegeuk@kernel.org>
  <20170914013017.GP5426@ZenIV.linux.org.uk>
  <20170914183723.GA17131@ZenIV.linux.org.uk>
  <20170914191447.GA9428@jaegeuk-macbookpro.roam.corp.google.com>
+ <20170915001939.GA20096@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+ helo=mx.sourceforge.net)
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <viro@ftp.linux.org.uk>)
+ id 1dsg1J-00036l-6r
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Sep 2017 02:06:17 +0000
+Received: from zeniv.linux.org.uk ([195.92.253.2])
+ by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+ (Exim 4.76) id 1dsg1H-0006Ev-TF
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Sep 2017 02:06:17 +0000
 Content-Disposition: inline
-In-Reply-To: <20170914191447.GA9428@jaegeuk-macbookpro.roam.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <20170915001939.GA20096@jaegeuk-macbookpro.roam.corp.google.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 09/14, Jaegeuk Kim wrote:
-> On 09/14, Al Viro wrote:
-> > On Thu, Sep 14, 2017 at 02:30:17AM +0100, Al Viro wrote:
-> > > On Wed, Sep 13, 2017 at 06:10:48PM -0700, Jaegeuk Kim wrote:
-> > > 
-> > > > Android triggers umount(2) by init process, which is definitely not a kernel
-> > > > thread. But, we've seen some kernel panics which say umount(2) was succeeded,
-> > > > but ext4 triggered a kernel panic due to EIO after then like below. I'm also
-> > > > not sure task_work_run() would be also safe enoughly. May I ask where I can
-> > > > find sys_umount() calls task_work_run()?
-> > > 
-> > > ret_{fast,slow}_syscall ->
-> > > 	slow_work_pending ->
-> > > 		do_work_pending() ->
-> > > 			tracehook_notify_resume() ->
-> > > 				task_work_run()
-> > > 
-> > > It's not sys_umount() (or any other sys_...()) - it's syscall dispatcher after
-> > > having called one of those and before returning to userland.  What is guaranteed
-> > > is that after successful task_work_add() the damn thing will be run in context
-> > > of originating process before it returns from syscall.  So any subsequent
-> > > syscalls from that process are guaranteed to happen after the work has run.
-> > > The same happens if the process exits rather than returns to userland (do_exit() ->
-> > > exit_task_work() -> task_work_run()), but for that you would need it to die in
-> > > umount(2) (e.g. get kill -9 delivered on the way out).
-> > > 
-> > > Please, check if you are seeing task_work_add() failure in there and if you do,
-> > > I would like to see a stack trace.  IOW, slap WARN_ON(1); right after
-> > >                         if (!task_work_add(task, &mnt->mnt_rcu, true))
-> > >                                 return;
-> > > and see what (if anything) gets printed.
-> > 
-> > AFAICS, for task_work_add() to fail here we need a final mntput() to be run
-> > in context of a thread that already had exit_signals() run *and* subsequent
-> > task_work_run() run to completion (with all pending callbacks executed, along
-> > with all callbacks added by those, etc.)
-> > 
-> > For that to have happened during umount(2) we would've needed
-> > 	* killing signal delivered while going through the syscall
-> > 	* final mntput() to have been done *NOT* from sys_umount() (otherwise
-> > the work would've been added before we got to exit_signals())
-> > 	* final mntput() to have been done *NOT* from any task_work callbacks
-> > (otherwise it would've been added before we'd observed a combination of empty
-> > list of pending work with PF_EXITING)
-> > 
-> > I really want to see the stack trace of that failing task_work_add(), if that's
-> > what actually happens there.  What kind of a reproducer do you have for that?
+On Thu, Sep 14, 2017 at 05:19:39PM -0700, Jaegeuk Kim wrote:
+> Instead, I put more traces in the reboot procedure, and got a clue to suspect
+> the below flow.
 > 
-> I've got this error from Android user, so there's no reproducer unfortunately.
-> So, I wrote a script capturing WARN_ON after reboot running at every minute, but
-> couldn't have got the error since yesterday so far.
+> delayed_fput()                 init
+>                                - umount
+>  - mntput()
+>  - mntput_no_expire()            - mntput_no_expire()
+>                                  - mnt_add_count(-1);
+>                                  - mnt_get_count() return;
+>                                  - return 0;
+>  - mnt_add_count(-1);
+>  - delayed_mntput_work
+>                                - device_shutdown
+>  - ext4_put_super()
+>  - EIO
+> 
+> Does this make any sense?
 
-Instead, I put more traces in the reboot procedure, and got a clue to suspect
-the below flow.
+Which filesystem it is?  With root I would've expected remount ro done
+by sys_umount(); with anything else...  How has it managed to avoid
+-EBUSY?  If it was umount -l (IOW, MNT_DETACH), I can see that happening,
+but...  How would flushing prevent the scenario when the same opened
+file had remained open until after the umount(2) return?
 
-delayed_fput()                 init
-                               - umount
- - mntput()
- - mntput_no_expire()            - mntput_no_expire()
-                                 - mnt_add_count(-1);
-                                 - mnt_get_count() return;
-                                 - return 0;
- - mnt_add_count(-1);
- - delayed_mntput_work
-                               - device_shutdown
- - ext4_put_super()
- - EIO
+In other words, where has that fput() come from and how had it managed
+to get past the umount(2)?
 
-Does this make any sense?
-
-Thanks,
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
