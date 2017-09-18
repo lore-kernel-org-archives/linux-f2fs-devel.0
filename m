@@ -1,54 +1,39 @@
-From: "Yan, Zheng" <ukernel@gmail.com>
-Subject: Re: [PATCH 13/15] ceph: Use pagevec_lookup_range_nr_tag()
-Date: Mon, 18 Sep 2017 13:35:50 +0800
-Message-ID: <CAAM7YAnHjkGRhzeUUXOMnux70UKqnQ3kG6x0jRpzasSNeyAVCg@mail.gmail.com>
-References: <20170914131819.26266-1-jack@suse.cz> <20170914131819.26266-14-jack@suse.cz>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [f2fs-dev] [PATCH 07/15] f2fs: Use find_get_pages_tag() for
+ looking up single page
+Date: Mon, 18 Sep 2017 09:52:07 +0200
+Message-ID: <20170918075207.GA32516@quack2.suse.cz>
+References: <20170914131819.26266-1-jack@suse.cz>
+ <20170914131819.26266-8-jack@suse.cz>
+ <2cd84505-3d52-61dc-4a8d-099a58467cc1@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20170914131819.26266-14-jack@suse.cz>
+Content-Disposition: inline
+In-Reply-To: <2cd84505-3d52-61dc-4a8d-099a58467cc1@kernel.org>
 Sender: owner-linux-mm@kvack.org
-To: Jan Kara <jack@suse.cz>
-Cc: linux-mm@kvack.org, Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>, "Linux F2FS DEV, Mailing List" <linux-f2fs-devel@lists.sourceforge.net>, Jaegeuk Kim <jaegeuk@kernel.org>, ceph-devel <ceph-devel@vger.kernel.org>, "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
+To: Chao Yu <chao@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, linux-mm@kvack.org, linux-f2fs-devel@lists.sourceforge.net, "Yan, Zheng" <zyan@redhat.com>, linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, ceph-devel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Thu, Sep 14, 2017 at 9:18 PM, Jan Kara <jack@suse.cz> wrote:
-> Use new function for looking up pages since nr_pages argument from
-> pagevec_lookup_range_tag() is going away.
->
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> ---
->  fs/ceph/addr.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index e57e9d37bf2d..87789c477381 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -869,11 +869,9 @@ static int ceph_writepages_start(struct address_space *mapping,
->                 max_pages = wsize >> PAGE_SHIFT;
->
->  get_more_pages:
-> -               pvec_pages = min_t(unsigned, PAGEVEC_SIZE,
-> -                                  max_pages - locked_pages);
-> -               pvec_pages = pagevec_lookup_range_tag(&pvec, mapping, &index,
-> +               pvec_pages = pagevec_lookup_range_nr_tag(&pvec, mapping, &index,
->                                                 end, PAGECACHE_TAG_DIRTY,
-> -                                               pvec_pages);
-> +                                               max_pages - locked_pages);
->                 dout("pagevec_lookup_range_tag got %d\n", pvec_pages);
->                 if (!pvec_pages && !locked_pages)
->                         break;
-> --
-> 2.12.3
->
+On Fri 15-09-17 21:43:03, Chao Yu wrote:
+> On 2017/9/14 21:18, Jan Kara wrote:
+> > __get_first_dirty_index() wants to lookup only the first dirty page
+> > after given index. There's no point in using pagevec_lookup_tag() for
+> > that. Just use find_get_pages_tag() directly.
+> > 
+> > CC: Jaegeuk Kim <jaegeuk@kernel.org>
+> > CC: linux-f2fs-devel@lists.sourceforge.net
+> > Signed-off-by: Jan Kara <jack@suse.cz>
+> 
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+Thanks for the review!
 
-> --
-> To unsubscribe from this list: send the line "unsubscribe ceph-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
 --
 To unsubscribe, send a message with 'unsubscribe linux-mm' in
