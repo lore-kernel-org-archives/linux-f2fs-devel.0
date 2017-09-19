@@ -1,92 +1,55 @@
 From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 4/6] f2fs: reduce cmd_lock coverage in
- __issue_discard_cmd
-Date: Tue, 19 Sep 2017 23:30:14 +0800
-Message-ID: <20170919153016.4116-4-chao@kernel.org>
+Subject: [PATCH 5/6] f2fs: trace f2fs_remove_discard
+Date: Tue, 19 Sep 2017 23:30:15 +0800
+Message-ID: <20170919153016.4116-5-chao@kernel.org>
 References: <20170919153016.4116-1-chao@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
- helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <chao@kernel.org>) id 1duKU6-0006Vd-P2
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Sep 2017 15:30:50 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1duKU5-00069g-Ut
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Sep 2017 15:30:50 +0000
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170919153016.4116-1-chao@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-__submit_discard_cmd may lead long latency due to exhaustion of I/O
-request resource in block layer, so issuing all discard under cmd_lock
-may lead to hangtask, in order to avoid that, let's reduce it's coverage.
+This patch adds tracepoint to trace f2fs_remove_discard.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/segment.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ fs/f2fs/segment.c           | 2 ++
+ include/trace/events/f2fs.h | 7 +++++++
+ 2 files changed, 9 insertions(+)
 
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index c3eb355b0171..412ac3a68be3 100644
+index 412ac3a68be3..85f909419b69 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -1130,14 +1130,14 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 	int i, iter = 0, issued = 0;
- 	bool io_interrupted = false;
+@@ -794,6 +794,8 @@ static void __remove_discard_cmd(struct f2fs_sb_info *sbi,
+ {
+ 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
  
--	mutex_lock(&dcc->cmd_lock);
--	f2fs_bug_on(sbi,
--		!__check_rb_tree_consistence(sbi, &dcc->root));
--	blk_start_plug(&plug);
- 	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
- 		if (i + 1 < dpolicy->granularity)
- 			break;
- 		pend_list = &dcc->pend_list[i];
++	trace_f2fs_remove_discard(dc->bdev, dc->start, dc->len);
 +
-+		mutex_lock(&dcc->cmd_lock);
-+		f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
-+		blk_start_plug(&plug);
- 		list_for_each_entry_safe(dc, tmp, pend_list, list) {
- 			f2fs_bug_on(sbi, dc->state != D_PREP);
+ 	f2fs_bug_on(sbi, dc->ref);
  
-@@ -1151,12 +1151,14 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 			issued++;
- skip:
- 			if (++iter >= dpolicy->max_requests)
--				goto out;
-+				break;
- 		}
-+		blk_finish_plug(&plug);
-+		mutex_unlock(&dcc->cmd_lock);
+ 	if (dc->error == -EOPNOTSUPP)
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index 8955e75dd48e..407713ef5981 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -1286,6 +1286,13 @@ DEFINE_EVENT(f2fs_discard, f2fs_issue_discard,
+ 	TP_ARGS(dev, blkstart, blklen)
+ );
+ 
++DEFINE_EVENT(f2fs_discard, f2fs_remove_discard,
 +
-+		if (iter >= dpolicy->max_requests)
-+			break;
- 	}
--out:
--	blk_finish_plug(&plug);
--	mutex_unlock(&dcc->cmd_lock);
++	TP_PROTO(struct block_device *dev, block_t blkstart, block_t blklen),
++
++	TP_ARGS(dev, blkstart, blklen)
++);
++
+ TRACE_EVENT(f2fs_issue_reset_zone,
  
- 	if (!issued && io_interrupted)
- 		issued = -1;
+ 	TP_PROTO(struct block_device *dev, block_t blkstart),
 -- 
 2.14.1.145.gb3622a4ee
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
