@@ -1,65 +1,89 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: [PATCH v2] vfs: introduce UMOUNT_WAIT which waits for umount
- completion
-Date: Wed, 20 Sep 2017 19:38:25 +0100
-Message-ID: <20170920183825.GD32076@ZenIV.linux.org.uk>
-References: <20170913200941.39420-1-jaegeuk@kernel.org>
- <20170920173831.GA7151@jaegeuk-macbookpro.roam.corp.google.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170920173831.GA7151@jaegeuk-macbookpro.roam.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Eric Biggers <ebiggers3@gmail.com>
+Subject: [PATCH 00/25] fscrypt: add some higher-level helper functions
+Date: Wed, 20 Sep 2017 15:45:40 -0700
+Message-ID: <20170920224605.22030-1-ebiggers3@gmail.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: linux-fscrypt@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Michael Halcrow <mhalcrow@google.com>, Eric Biggers <ebiggers@google.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wed, Sep 20, 2017 at 10:38:31AM -0700, Jaegeuk Kim wrote:
-> This patch introduces UMOUNT_WAIT flag for umount(2) which let user wait for
-> umount(2) to complete filesystem shutdown. This should fix a kernel panic
-> triggered when a living filesystem tries to access dead block device after
-> device_shutdown done by kernel_restart as below.
+From: Eric Biggers <ebiggers@google.com>
 
-NAK.  This is just papering over the race you've got; it does not fix it.
-You count upon the kernel threads in question having already gotten past
-scheduling delayed fput, but what's there to guarantee that?  You are
-essentially adding a "flush all pending fput that had already been
-scheduled" syscall.  It
-	a) doesn't belong in umount(2) and
-	b) doesn't fix the race.
-It might change the timing enough to have your specific reproducer survive,
-but that kind of approach is simply wrong.
+This series reduces code duplication among ext4, f2fs, and ubifs by
+introducing a S_ENCRYPTED inode flag (so we don't have to call back into
+the filesystem to test the filesystem-specific inode flag), then
+introducing new helper functions that are called at the beginning of the
+open, link, rename, lookup, and setattr operations.
 
-Incidentally, the name is a misnomer - it does *NOT* wait for completion of
-fs shutdown.  Proof: have a filesystem mounted in two namespaces and issue
-that thing in one of them.  Then observe how it's still alive, well and
-accessible in another.
+In the future we maybe should even call these new helpers from the VFS
+so that each individual filesystem doesn't have to do it.  But that's
+not possible currently because fs/crypto/ can be built as a module.
 
-The only case that gets affected by it is when another mount is heading for
-shutdown and is in a very specific part of that.  That is waited for.
-If it's just before *OR* just past that stage, you are fucked.
+Making changes like this is a bit challenging due to interdependencies
+between fscrypt and the individual filesystems, all of which have
+different maintainers.  For now my intent is that patches 1-10 be taken
+through the fscrypt tree --- though it's not perfect since patches 1-4
+do make some changes to each filesystem, as everyone must set
+S_ENCRYPTED before we can use it everywhere in the shared code.  But
+afterwards, patches 11-25 can be picked up by the individual filesystems
+to switch to the new helpers.
 
-And yes, "just past" is also affected.  Look:
-CPU1: delayed_fput()
-        struct llist_node *node = llist_del_all(&delayed_fput_list);
-delayed_fput_list() is empty now
-        llist_for_each_entry_safe(f, t, node, f_u.fu_llist)
-                __fput(f);
-CPU2: your umount UMOUNT_WAIT
-	flush_delayed_fput()
-		does nothing, the list is empty
-	....
-	flush_scheduled_work()
-		waits for delayed_fput() to finish
-CPU1:
-	finish __fput()
-	call mntput() from it
-	schedule_delayed_work(&delayed_mntput_work, 1);
-CPU2:
-	OK, everything scheduled prior to call of flush_scheduled_work() is completed,
-we are done.
-	return from umount(2)
-	(in bogus userland code) tell it to shut devices down
-...
-oops, that delayed_mntput_work we'd scheduled there got to run.  Too bad...
+Eric Biggers (25):
+  fs, fscrypt: add an S_ENCRYPTED inode flag
+  fscrypt: switch from ->is_encrypted() to IS_ENCRYPTED()
+  fscrypt: remove ->is_encrypted()
+  fscrypt: remove unneeded empty fscrypt_operations structs
+  fscrypt: new helper function - fscrypt_require_key()
+  fscrypt: new helper function - fscrypt_file_open()
+  fscrypt: new helper function - fscrypt_prepare_link()
+  fscrypt: new helper function - fscrypt_prepare_rename()
+  fscrypt: new helper function - fscrypt_prepare_lookup()
+  fscrypt: new helper function - fscrypt_prepare_setattr()
+  ext4: switch to fscrypt_file_open()
+  ext4: switch to fscrypt_prepare_link()
+  ext4: switch to fscrypt_prepare_rename()
+  ext4: switch to fscrypt_prepare_lookup()
+  ext4: switch to fscrypt_prepare_setattr()
+  f2fs: switch to fscrypt_file_open()
+  f2fs: switch to fscrypt_prepare_link()
+  f2fs: switch to fscrypt_prepare_rename()
+  f2fs: switch to fscrypt_prepare_lookup()
+  f2fs: switch to fscrypt_prepare_setattr()
+  ubifs: switch to fscrypt_file_open()
+  ubifs: switch to fscrypt_prepare_link()
+  ubifs: switch to fscrypt_prepare_rename()
+  ubifs: switch to fscrypt_prepare_lookup()
+  ubifs: switch to fscrypt_prepare_setattr()
+
+ fs/crypto/Makefile              |   2 +-
+ fs/crypto/crypto.c              |   2 +-
+ fs/crypto/fname.c               |   3 +-
+ fs/crypto/hooks.c               | 112 +++++++++++++++++++++++++++++
+ fs/crypto/keyinfo.c             |   2 +-
+ fs/crypto/policy.c              |   6 +-
+ fs/ext4/file.c                  |  23 ++----
+ fs/ext4/inode.c                 |  19 +++--
+ fs/ext4/namei.c                 |  62 +++++-----------
+ fs/ext4/super.c                 |  15 ++--
+ fs/f2fs/f2fs.h                  |   1 +
+ fs/f2fs/file.c                  |  30 ++------
+ fs/f2fs/inode.c                 |   5 +-
+ fs/f2fs/namei.c                 |  54 ++++----------
+ fs/f2fs/super.c                 |   7 +-
+ fs/ubifs/crypto.c               |   1 -
+ fs/ubifs/dir.c                  |  43 ++++-------
+ fs/ubifs/file.c                 |  41 ++---------
+ fs/ubifs/ioctl.c                |   5 +-
+ fs/ubifs/super.c                |   8 +--
+ fs/ubifs/ubifs.h                |   9 +--
+ fs/ubifs/xattr.c                |   1 +
+ include/linux/fs.h              |   2 +
+ include/linux/fscrypt_common.h  |   1 -
+ include/linux/fscrypt_notsupp.h |  54 +++++++++++++-
+ include/linux/fscrypt_supp.h    | 153 ++++++++++++++++++++++++++++++++++++++++
+ 26 files changed, 418 insertions(+), 243 deletions(-)
+ create mode 100644 fs/crypto/hooks.c
+
+-- 
+2.14.1.821.g8fa685d3b7-goog
