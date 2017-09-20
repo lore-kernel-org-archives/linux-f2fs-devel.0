@@ -1,24 +1,24 @@
 From: Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH 12/25] ext4: switch to fscrypt_prepare_link()
-Date: Wed, 20 Sep 2017 15:45:52 -0700
-Message-ID: <20170920224605.22030-13-ebiggers3@gmail.com>
+Subject: [PATCH 19/25] f2fs: switch to fscrypt_prepare_lookup()
+Date: Wed, 20 Sep 2017 15:45:59 -0700
+Message-ID: <20170920224605.22030-20-ebiggers3@gmail.com>
 References: <20170920224605.22030-1-ebiggers3@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
  helo=mx.sourceforge.net)
  by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <ebiggers3@gmail.com>) id 1dunlv-0000ZX-3C
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 20 Sep 2017 22:47:11 +0000
-Received: from mail-pg0-f65.google.com ([74.125.83.65])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
- (Exim 4.76) id 1dunlu-0003D1-9d
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 20 Sep 2017 22:47:11 +0000
-Received: by mail-pg0-f65.google.com with SMTP id j16so2375882pga.2
+ (Exim 4.89) (envelope-from <ebiggers3@gmail.com>) id 1dunm2-0000aI-30
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 20 Sep 2017 22:47:18 +0000
+Received: from mail-pf0-f194.google.com ([209.85.192.194])
+ by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+ (Exim 4.76) id 1dunm1-0004u2-9s
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 20 Sep 2017 22:47:18 +0000
+Received: by mail-pf0-f194.google.com with SMTP id g65so1725873pfe.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 20 Sep 2017 15:47:10 -0700 (PDT)
+ Wed, 20 Sep 2017 15:47:17 -0700 (PDT)
 In-Reply-To: <20170920224605.22030-1-ebiggers3@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -36,27 +36,37 @@ From: Eric Biggers <ebiggers@google.com>
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/ext4/namei.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ fs/f2fs/namei.c | 17 +++--------------
+ 1 file changed, 3 insertions(+), 14 deletions(-)
 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index c1cf020d1889..b2058500f1dc 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -3221,9 +3221,10 @@ static int ext4_link(struct dentry *old_dentry,
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 80bcf2185fd8..f4b99f1468d8 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -335,20 +335,9 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+ 	int err = 0;
+ 	unsigned int root_ino = F2FS_ROOT_INO(F2FS_I_SB(dir));
  
- 	if (inode->i_nlink >= EXT4_LINK_MAX)
- 		return -EMLINK;
--	if (ext4_encrypted_inode(dir) &&
--			!fscrypt_has_permitted_context(dir, inode))
--		return -EPERM;
-+
-+	err = fscrypt_prepare_link(old_dentry, dir, dentry);
+-	if (f2fs_encrypted_inode(dir)) {
+-		int res = fscrypt_get_encryption_info(dir);
+-
+-		/*
+-		 * DCACHE_ENCRYPTED_WITH_KEY is set if the dentry is
+-		 * created while the directory was encrypted and we
+-		 * don't have access to the key.
+-		 */
+-		if (fscrypt_has_encryption_key(dir))
+-			fscrypt_set_encrypted_dentry(dentry);
+-		fscrypt_set_d_op(dentry);
+-		if (res && res != -ENOKEY)
+-			return ERR_PTR(res);
+-	}
++	err = fscrypt_prepare_lookup(dir, dentry, flags);
 +	if (err)
-+		return err;
++		return ERR_PTR(err);
  
-        if ((ext4_test_inode_flag(dir, EXT4_INODE_PROJINHERIT)) &&
- 	   (!projid_eq(EXT4_I(dir)->i_projid,
+ 	if (dentry->d_name.len > F2FS_NAME_LEN)
+ 		return ERR_PTR(-ENAMETOOLONG);
 -- 
 2.14.1.821.g8fa685d3b7-goog
 
