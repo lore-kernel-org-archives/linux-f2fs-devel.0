@@ -1,24 +1,24 @@
 From: Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH 20/25] f2fs: switch to fscrypt_prepare_setattr()
-Date: Wed, 20 Sep 2017 15:46:00 -0700
-Message-ID: <20170920224605.22030-21-ebiggers3@gmail.com>
+Subject: [PATCH 15/25] ext4: switch to fscrypt_prepare_setattr()
+Date: Wed, 20 Sep 2017 15:45:55 -0700
+Message-ID: <20170920224605.22030-16-ebiggers3@gmail.com>
 References: <20170920224605.22030-1-ebiggers3@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <ebiggers3@gmail.com>) id 1dunm3-00081h-8n
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 20 Sep 2017 22:47:19 +0000
-Received: from mail-pg0-f65.google.com ([74.125.83.65])
- by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
- (Exim 4.76) id 1dunm2-0003N6-FQ
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 20 Sep 2017 22:47:19 +0000
-Received: by mail-pg0-f65.google.com with SMTP id d8so2372970pgt.3
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <ebiggers3@gmail.com>) id 1dunly-0003ml-8c
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 20 Sep 2017 22:47:14 +0000
+Received: from mail-pg0-f67.google.com ([74.125.83.67])
+ by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+ (Exim 4.76) id 1dunlx-0004tv-EC
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 20 Sep 2017 22:47:14 +0000
+Received: by mail-pg0-f67.google.com with SMTP id u18so2378975pgo.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 20 Sep 2017 15:47:18 -0700 (PDT)
+ Wed, 20 Sep 2017 15:47:13 -0700 (PDT)
 In-Reply-To: <20170920224605.22030-1-ebiggers3@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -36,39 +36,39 @@ From: Eric Biggers <ebiggers@google.com>
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/file.c | 12 ++++--------
+ fs/ext4/inode.c | 12 ++++--------
  1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 8cef3931a00b..629bb91fa44e 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -714,6 +714,10 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
- 	if (err)
- 		return err;
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index d5a471939fbc..617c7feced24 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5311,6 +5311,10 @@ int ext4_setattr(struct dentry *dentry, struct iattr *attr)
+ 	if (error)
+ 		return error;
  
-+	err = fscrypt_prepare_setattr(dentry, attr);
-+	if (err)
-+		return err;
++	error = fscrypt_prepare_setattr(dentry, attr);
++	if (error)
++		return error;
 +
  	if (is_quota_modification(inode, attr)) {
- 		err = dquot_initialize(inode);
- 		if (err)
-@@ -729,14 +733,6 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
- 	}
+ 		error = dquot_initialize(inode);
+ 		if (error)
+@@ -5356,14 +5360,6 @@ int ext4_setattr(struct dentry *dentry, struct iattr *attr)
+ 		loff_t oldsize = inode->i_size;
+ 		int shrink = (attr->ia_size <= inode->i_size);
  
- 	if (attr->ia_valid & ATTR_SIZE) {
--		if (f2fs_encrypted_inode(inode)) {
--			err = fscrypt_get_encryption_info(inode);
--			if (err)
--				return err;
+-		if (ext4_encrypted_inode(inode)) {
+-			error = fscrypt_get_encryption_info(inode);
+-			if (error)
+-				return error;
 -			if (!fscrypt_has_encryption_key(inode))
 -				return -ENOKEY;
 -		}
 -
- 		if (attr->ia_size <= i_size_read(inode)) {
- 			down_write(&F2FS_I(inode)->i_mmap_sem);
- 			truncate_setsize(inode, attr->ia_size);
+ 		if (!(ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))) {
+ 			struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
+ 
 -- 
 2.14.1.821.g8fa685d3b7-goog
 
