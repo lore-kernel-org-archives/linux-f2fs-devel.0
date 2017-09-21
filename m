@@ -1,99 +1,193 @@
-From: Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH 23/25] ubifs: switch to fscrypt_prepare_rename()
-Date: Wed, 20 Sep 2017 15:46:03 -0700
-Message-ID: <20170920224605.22030-24-ebiggers3@gmail.com>
-References: <20170920224605.22030-1-ebiggers3@gmail.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH v2] vfs: introduce UMOUNT_WAIT which waits for umount
+ completion
+Date: Wed, 20 Sep 2017 17:34:09 -0700
+Message-ID: <20170921003409.GA11365@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20170913200941.39420-1-jaegeuk@kernel.org>
+ <20170920173831.GA7151@jaegeuk-macbookpro.roam.corp.google.com>
+ <20170920183825.GD32076@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
- helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <ebiggers3@gmail.com>) id 1dunm6-0004Rb-FV
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 20 Sep 2017 22:47:22 +0000
-Received: from mail-pf0-f194.google.com ([209.85.192.194])
- by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
- (Exim 4.76) id 1dunm5-0004uC-NZ
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 20 Sep 2017 22:47:22 +0000
-Received: by mail-pf0-f194.google.com with SMTP id g65so1725922pfe.1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 20 Sep 2017 15:47:21 -0700 (PDT)
-In-Reply-To: <20170920224605.22030-1-ebiggers3@gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-fscrypt@vger.kernel.org
-Cc: "Theodore Y . Ts'o" <tytso@mit.edu>, Eric Biggers <ebiggers@google.com>, Michael Halcrow <mhalcrow@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170920183825.GD32076@ZenIV.linux.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+On 09/20, Al Viro wrote:
+> On Wed, Sep 20, 2017 at 10:38:31AM -0700, Jaegeuk Kim wrote:
+> > This patch introduces UMOUNT_WAIT flag for umount(2) which let user wait for
+> > umount(2) to complete filesystem shutdown. This should fix a kernel panic
+> > triggered when a living filesystem tries to access dead block device after
+> > device_shutdown done by kernel_restart as below.
+> 
+> NAK.  This is just papering over the race you've got; it does not fix it.
+> You count upon the kernel threads in question having already gotten past
+> scheduling delayed fput, but what's there to guarantee that?  You are
+> essentially adding a "flush all pending fput that had already been
+> scheduled" syscall.  It
+> 	a) doesn't belong in umount(2) and
+> 	b) doesn't fix the race.
+>
+> It might change the timing enough to have your specific reproducer survive,
+> but that kind of approach is simply wrong.
+> Incidentally, the name is a misnomer - it does *NOT* wait for completion of
+> fs shutdown.  Proof: have a filesystem mounted in two namespaces and issue
+> that thing in one of them.  Then observe how it's still alive, well and
+> accessible in another.
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Yes, I wrote the description incorrectly. Let me try describing UMOUNT_WAIT
+which waits for any pending delayed works only like what you said. In normal
+cases where other namespace is still active, this doesn't work at all.
+
+> The only case that gets affected by it is when another mount is heading for
+> shutdown and is in a very specific part of that.  That is waited for.
+> If it's just before *OR* just past that stage, you are fucked.
+> 
+> And yes, "just past" is also affected.  Look:
+> CPU1: delayed_fput()
+>         struct llist_node *node = llist_del_all(&delayed_fput_list);
+> delayed_fput_list() is empty now
+>         llist_for_each_entry_safe(f, t, node, f_u.fu_llist)
+>                 __fput(f);
+> CPU2: your umount UMOUNT_WAIT
+> 	flush_delayed_fput()
+> 		does nothing, the list is empty
+
+		how about waiting for workqueue completion here?
+
+> 	....
+
+	If all the __fput()s are not finished, do_umount() will return -EBUSY.
+
+> 	flush_scheduled_work()
+> 		waits for delayed_fput() to finish
+> CPU1:
+> 	finish __fput()
+> 	call mntput() from it
+> 	schedule_delayed_work(&delayed_mntput_work, 1);
+> CPU2:
+> 	OK, everything scheduled prior to call of flush_scheduled_work() is completed,
+> we are done.
+> 	return from umount(2)
+> 	(in bogus userland code) tell it to shut devices down
+> ...
+> oops, that delayed_mntput_work we'd scheduled there got to run.  Too bad...
+
+Is this doable?
+
 ---
- fs/ubifs/dir.c | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
+ fs/file_table.c      |  6 ++++++
+ fs/namespace.c       | 26 +++++++++++++++++++++++++-
+ include/linux/file.h |  1 +
+ include/linux/fs.h   |  1 +
+ 4 files changed, 33 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
-index 09e6c56b11bc..7bf847d79b4a 100644
---- a/fs/ubifs/dir.c
-+++ b/fs/ubifs/dir.c
-@@ -1353,12 +1353,6 @@ static int do_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	if (unlink)
- 		ubifs_assert(inode_is_locked(new_inode));
+diff --git a/fs/file_table.c b/fs/file_table.c
+index 72e861a35a7f..35b32ffdb934 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -263,6 +263,12 @@ void flush_delayed_fput(void)
  
--	if (old_dir != new_dir) {
--		if (ubifs_crypt_is_encrypted(new_dir) &&
--		    !fscrypt_has_permitted_context(new_dir, old_inode))
--			return -EPERM;
--	}
--
- 	if (unlink && is_dir) {
- 		err = ubifs_check_dir_empty(new_inode);
- 		if (err)
-@@ -1573,13 +1567,6 @@ static int ubifs_xrename(struct inode *old_dir, struct dentry *old_dentry,
+ static DECLARE_DELAYED_WORK(delayed_fput_work, delayed_fput);
  
- 	ubifs_assert(fst_inode && snd_inode);
- 
--	if ((ubifs_crypt_is_encrypted(old_dir) ||
--	    ubifs_crypt_is_encrypted(new_dir)) &&
--	    (old_dir != new_dir) &&
--	    (!fscrypt_has_permitted_context(new_dir, fst_inode) ||
--	     !fscrypt_has_permitted_context(old_dir, snd_inode)))
--		return -EPERM;
--
- 	err = fscrypt_setup_filename(old_dir, &old_dentry->d_name, 0, &fst_nm);
- 	if (err)
- 		return err;
-@@ -1624,12 +1611,19 @@ static int ubifs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 			struct inode *new_dir, struct dentry *new_dentry,
- 			unsigned int flags)
- {
-+	int err;
++void flush_delayed_fput_wait(void)
++{
++	delayed_fput(NULL);
++	flush_delayed_work(&delayed_fput_work);
++}
 +
- 	if (flags & ~(RENAME_NOREPLACE | RENAME_WHITEOUT | RENAME_EXCHANGE))
+ void fput(struct file *file)
+ {
+ 	if (atomic_long_dec_and_test(&file->f_count)) {
+diff --git a/fs/namespace.c b/fs/namespace.c
+index f8893dc6a989..e2586a38c83c 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -21,6 +21,7 @@
+ #include <linux/fs_struct.h>	/* get_fs_root et.al. */
+ #include <linux/fsnotify.h>	/* fsnotify_vfsmount_delete */
+ #include <linux/uaccess.h>
++#include <linux/file.h>
+ #include <linux/proc_ns.h>
+ #include <linux/magic.h>
+ #include <linux/bootmem.h>
+@@ -1133,6 +1134,12 @@ static void delayed_mntput(struct work_struct *unused)
+ }
+ static DECLARE_DELAYED_WORK(delayed_mntput_work, delayed_mntput);
+ 
++void flush_delayed_mntput_wait(void)
++{
++	delayed_mntput(NULL);
++	flush_delayed_work(&delayed_mntput_work);
++}
++
+ static void mntput_no_expire(struct mount *mnt)
+ {
+ 	rcu_read_lock();
+@@ -1629,7 +1636,8 @@ SYSCALL_DEFINE2(umount, char __user *, name, int, flags)
+ 	int retval;
+ 	int lookup_flags = 0;
+ 
+-	if (flags & ~(MNT_FORCE | MNT_DETACH | MNT_EXPIRE | UMOUNT_NOFOLLOW))
++	if (flags & ~(MNT_FORCE | MNT_DETACH | MNT_EXPIRE | UMOUNT_NOFOLLOW |
++			UMOUNT_WAIT))
  		return -EINVAL;
  
- 	ubifs_assert(inode_is_locked(old_dir));
- 	ubifs_assert(inode_is_locked(new_dir));
+ 	if (!may_mount())
+@@ -1653,11 +1661,27 @@ SYSCALL_DEFINE2(umount, char __user *, name, int, flags)
+ 	if (flags & MNT_FORCE && !capable(CAP_SYS_ADMIN))
+ 		goto dput_and_out;
  
-+	err = fscrypt_prepare_rename(old_dir, old_dentry, new_dir, new_dentry,
-+				     flags);
-+	if (err)
-+		return err;
++	/* flush delayed_fput to put mnt_count */
++	if (flags & UMOUNT_WAIT)
++		flush_delayed_fput_wait();
 +
- 	if (flags & RENAME_EXCHANGE)
- 		return ubifs_xrename(old_dir, old_dentry, new_dir, new_dentry);
+ 	retval = do_umount(mnt, flags);
+ dput_and_out:
+ 	/* we mustn't call path_put() as that would clear mnt_expiry_mark */
+ 	dput(path.dentry);
+ 	mntput_no_expire(mnt);
++
++	if (!retval && (flags & UMOUNT_WAIT)) {
++		/*
++		 * If the last delayed_fput() is called during do_umount()
++		 * and makes mnt_count zero, we need to guarantee to register
++		 * delayed_mntput by waiting for delayed_fput work again.
++		 */
++		flush_delayed_fput_wait();
++
++		/* flush delayed_mntput_work to put sb->s_active */
++		flush_delayed_mntput_wait();
++	}
+ out:
+ 	return retval;
+ }
+diff --git a/include/linux/file.h b/include/linux/file.h
+index 61eb82cbafba..ffb4236cde39 100644
+--- a/include/linux/file.h
++++ b/include/linux/file.h
+@@ -84,6 +84,7 @@ extern void put_unused_fd(unsigned int fd);
+ extern void fd_install(unsigned int fd, struct file *file);
  
+ extern void flush_delayed_fput(void);
++extern void flush_delayed_fput_wait(void);
+ extern void __fput_sync(struct file *);
+ 
+ #endif /* __LINUX_FILE_H */
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 6e1fd5d21248..69f0fd53c9c7 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1278,6 +1278,7 @@ struct mm_struct;
+ #define MNT_DETACH	0x00000002	/* Just detach from the tree */
+ #define MNT_EXPIRE	0x00000004	/* Mark for expiry */
+ #define UMOUNT_NOFOLLOW	0x00000008	/* Don't follow symlink on umount */
++#define UMOUNT_WAIT	0x00000010	/* Wait to unmount completely */
+ #define UMOUNT_UNUSED	0x80000000	/* Flag guaranteed to be unused */
+ 
+ /* sb->s_iflags */
 -- 
-2.14.1.821.g8fa685d3b7-goog
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+2.14.0.rc1.383.gd1ce394fe2-goog
