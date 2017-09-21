@@ -1,65 +1,81 @@
-From: "gaoxiang (P)" <gaoxiang25@huawei.com>
-Subject: [PATCH] f2fs: allow readpages with NULL file pointer
-Date: Thu, 21 Sep 2017 05:00:33 +0000
-Message-ID: <9047C53C18267742AB12E43B65C7F9F70BBE4BD7@dggemi505-mbs.china.huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH v2] vfs: introduce UMOUNT_WAIT which waits for umount
+ completion
+Date: Wed, 20 Sep 2017 22:02:37 -0700
+Message-ID: <20170921050237.GA28821@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20170913200941.39420-1-jaegeuk@kernel.org>
+ <20170920173831.GA7151@jaegeuk-macbookpro.roam.corp.google.com>
+ <20170920183825.GD32076@ZenIV.linux.org.uk>
+ <20170921003409.GA11365@jaegeuk-macbookpro.roam.corp.google.com>
+ <20170921024251.GE32076@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
- helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <gaoxiang25@huawei.com>)
- id 1dutc8-0000Y5-OD
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Sep 2017 05:01:28 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187])
- by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1dutc6-000146-He
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Sep 2017 05:01:28 +0000
-Content-Language: zh-CN
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "Yuchao (T)" <yuchao0@huawei.com>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170921024251.GE32076@ZenIV.linux.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Keep in line with the other Linux file system implementations
-since page_cache_sync_readahead supports NULL file pointer,
-and thus we can readahead data by f2fs itself without file opening
-(something like the btrfs behavior).
+On 09/21, Al Viro wrote:
+> On Wed, Sep 20, 2017 at 05:34:09PM -0700, Jaegeuk Kim wrote:
+> > > 	flush_delayed_fput()
+> > > 		does nothing, the list is empty
+> > 
+> > 		how about waiting for workqueue completion here?
+> > 
+> > > 	....
+> > 
+> > 	If all the __fput()s are not finished, do_umount() will return -EBUSY.
+> 
+> Hell, no.  That's only when they are all on the same vfsmount.  And in that
+> case you don't need any waiting - if any of those mntput() is not past the
+> unlock_mount_hash() in mntput_no_expire(), you will get -EBUSY.  And if they
+> all are, the caller of umount(2) will end up dropping the last reference.  
+> In which case the shutdown will be scheduled via task_work_add() and processed
+> before umount(2) returns to userland.
 
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- fs/f2fs/data.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Yes, what I'm trying to do with this flag would be waiting for releasing
+mnt_count in the same vfsmount as well as sb->s_active across namespaces.
+So, here at first, I wanted to wait for delayed_fput which grabs mnt_count
+in the same vfsmount, so that do_umount() could be succeeded in time. If
+this is the last remaining namespace, waiting for delayed_mntput enables
+us to shut the filesystem down by task_work at the end of umount(2).
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 95f30f0..afa12f1 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1333,9 +1333,11 @@ static int f2fs_read_data_pages(struct file *file,
- 			struct address_space *mapping,
- 			struct list_head *pages, unsigned nr_pages)
- {
--	struct inode *inode = file->f_mapping->host;
-+	struct inode *inode = mapping->host;
- 	struct page *page = list_last_entry(pages, struct page, lru);
- 
-+	if (likely(file != NULL))
-+		BUG_ON(file->f_mapping != mapping);
- 	trace_f2fs_readpages(inode, page, nr_pages);
- 
- 	/* If the file has inline data, skip readpages */
--- 
-2.1.4
+> The whole problem is that you have several vfsmounts over the same filesystem
+> (== same struct super_block), some of them held by kernel threads of yours.
+> umount(2) doesn't affect those and isn't affected by those.  What you do is,
+> AFAICS,
+> 	ask the kernel threads to start shutting down
+> 	umount()
+> 	shut device down, hoping that all vfsmounts that used
+> to be held by those threads are gone by that point.
 
+Yes, and actually, android retries umount(2) for several seconds, if it gets
+failure. So, first I thought it'd be better to make umount() more deterministic.
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> Your patch tries to stick "flush the pending work" in the umount().
+> With no warranty that it will catch that stuff in the stage where
+> flushing will affect anything.
+> 
+> > +void flush_delayed_fput_wait(void)
+> > +{
+> > +	delayed_fput(NULL);
+> > +	flush_delayed_work(&delayed_fput_work);
+> > +}
+> 
+> > +void flush_delayed_mntput_wait(void)
+> > +{
+> > +	delayed_mntput(NULL);
+> > +	flush_delayed_work(&delayed_mntput_work);
+> > +}
+> 
+> It's still a broken approach.  What I don't understand is why bother
+> with that sort of brittle logics in the first place.  Why not simply
+> open the damn thing with O_EXCL before proceeding to device shutdown?
+> And if you get "busy" from that, wait and retry...
+
+I'm not sure how many times we can retry and wait for this. IMHO, it'd be better
+to use this together with the new flag, since this can detect unclosed namespace
+given successful umount(2).
