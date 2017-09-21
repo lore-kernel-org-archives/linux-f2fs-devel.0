@@ -1,71 +1,41 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] f2fs: allow readpages with NULL file pointer
-Date: Thu, 21 Sep 2017 22:33:00 +0800
-Message-ID: <ce60dc40-d2b5-1d89-b050-3314dded93c1@kernel.org>
-References: <9047C53C18267742AB12E43B65C7F9F70BBE4BD7@dggemi505-mbs.china.huawei.com>
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH v2] vfs: introduce UMOUNT_WAIT which waits for umount
+ completion
+Date: Thu, 21 Sep 2017 10:48:09 -0400
+Message-ID: <20170921144809.wv6546fqtentm7vv@thunk.org>
+References: <20170913200941.39420-1-jaegeuk@kernel.org>
+ <20170920173831.GA7151@jaegeuk-macbookpro.roam.corp.google.com>
+ <20170920183825.GD32076@ZenIV.linux.org.uk>
+ <20170921003409.GA11365@jaegeuk-macbookpro.roam.corp.google.com>
+ <20170921024251.GE32076@ZenIV.linux.org.uk>
+ <20170921050237.GA28821@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
- helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <chao@kernel.org>) id 1dv2Xp-0007Qs-1s
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Sep 2017 14:33:37 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1dv2Xj-0007my-2R
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Sep 2017 14:33:36 +0000
-In-Reply-To: <9047C53C18267742AB12E43B65C7F9F70BBE4BD7@dggemi505-mbs.china.huawei.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "gaoxiang (P)" <gaoxiang25@huawei.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "Yuchao (T)" <yuchao0@huawei.com>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170921050237.GA28821@jaegeuk-macbookpro.roam.corp.google.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/9/21 13:00, gaoxiang (P) wrote:
-> Keep in line with the other Linux file system implementations
-> since page_cache_sync_readahead supports NULL file pointer,
-> and thus we can readahead data by f2fs itself without file opening
-> (something like the btrfs behavior).
-
-Let's keep what it is until there is an example doing readahead passing @file
-with NULL.
-
-Thanks,
-
+On Wed, Sep 20, 2017 at 10:02:37PM -0700, Jaegeuk Kim wrote:
 > 
-> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
-> ---
->  fs/f2fs/data.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> Yes, and actually, android retries umount(2) for several seconds, if it gets
+> failure. So, first I thought it'd be better to make umount() more deterministic.
 > 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 95f30f0..afa12f1 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1333,9 +1333,11 @@ static int f2fs_read_data_pages(struct file *file,
->  			struct address_space *mapping,
->  			struct list_head *pages, unsigned nr_pages)
->  {
-> -	struct inode *inode = file->f_mapping->host;
-> +	struct inode *inode = mapping->host;
->  	struct page *page = list_last_entry(pages, struct page, lru);
->  
-> +	if (likely(file != NULL))
-> +		BUG_ON(file->f_mapping != mapping);
->  	trace_f2fs_readpages(inode, page, nr_pages);
->  
->  	/* If the file has inline data, skip readpages */
-> 
+> I'm not sure how many times we can retry and wait for this. IMHO, it'd be better
+> to use this together with the new flag, since this can detect unclosed namespace
+> given successful umount(2).
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+Even if you could make umount wait for the binder deferred workqueue
+to exit, if it takes time, it takes time.  And that's not the core
+VFS's fault.  It's binder's.
+
+So... why not fix this by adding a binder ioctl which forces its
+workqueue to be flushed, and use that *before* you try calling mount?
+
+If that binder ioctl takes minutes or hours to complete, then that's a
+binder bug, and needs to be fixed in binder.
+
+       	    	      	    	  - Ted
