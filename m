@@ -1,45 +1,56 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2] vfs: introduce UMOUNT_WAIT which waits for umount
- completion
-Date: Thu, 21 Sep 2017 10:16:44 -0700
-Message-ID: <20170921171644.GA3813@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20170913200941.39420-1-jaegeuk@kernel.org>
- <20170920173831.GA7151@jaegeuk-macbookpro.roam.corp.google.com>
- <20170920183825.GD32076@ZenIV.linux.org.uk>
- <20170921003409.GA11365@jaegeuk-macbookpro.roam.corp.google.com>
- <20170921024251.GE32076@ZenIV.linux.org.uk>
- <20170921050237.GA28821@jaegeuk-macbookpro.roam.corp.google.com>
- <20170921144809.wv6546fqtentm7vv@thunk.org>
+From: Eric Biggers <ebiggers3@gmail.com>
+Subject: Re: [PATCH 00/25] fscrypt: add some higher-level helper functions
+Date: Thu, 21 Sep 2017 10:47:05 -0700
+Message-ID: <20170921174705.GA29643@gmail.com>
+References: <20170920224605.22030-1-ebiggers3@gmail.com>
+ <20170921064502.GR10621@dastard>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170921144809.wv6546fqtentm7vv@thunk.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Theodore Ts'o <tytso@mit.edu>, Al Viro <viro@ZenIV.linux.org.uk>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <20170921064502.GR10621@dastard>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Michael Halcrow <mhalcrow@google.com>, Eric Biggers <ebiggers@google.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 09/21, Theodore Ts'o wrote:
-> On Wed, Sep 20, 2017 at 10:02:37PM -0700, Jaegeuk Kim wrote:
-> > 
-> > Yes, and actually, android retries umount(2) for several seconds, if it gets
-> > failure. So, first I thought it'd be better to make umount() more deterministic.
-> > 
-> > I'm not sure how many times we can retry and wait for this. IMHO, it'd be better
-> > to use this together with the new flag, since this can detect unclosed namespace
-> > given successful umount(2).
-> 
-> Even if you could make umount wait for the binder deferred workqueue
-> to exit, if it takes time, it takes time.  And that's not the core
-> VFS's fault.  It's binder's.
-> 
-> So... why not fix this by adding a binder ioctl which forces its
-> workqueue to be flushed, and use that *before* you try calling mount?
+Hi Dave,
 
-Yes, we can, but I'm not 100% sure this happens only by binder. This is caused
-by delayed_fput/mntput called by any kernel thread which would be much generic.
-
-> If that binder ioctl takes minutes or hours to complete, then that's a
-> binder bug, and needs to be fixed in binder.
+On Thu, Sep 21, 2017 at 04:45:02PM +1000, Dave Chinner wrote:
+> fscrypto: clean up include file mess
 > 
->        	    	      	    	  - Ted
+> From: Dave Chinner <dchinner@redhat.com>
+> 
+> Filesystems have to include different header files based on whether
+> they are compiled with encryption support or not. That's nasty and
+> messy.
+> 
+> Instead, rationalise the headers so we have a single include
+> fscrypt.h and let it decide what internal implementation to include
+> based on the __FS_HAS_ENCRYPTION define. Filesystems set
+> __FS_HAS_ENCRYPTION before including linux/fscrypt.h if they are
+> built with encryption support.
+> 
+> Add guards to prevent fscrypt_supp.h and fscrypt_notsupp.h from
+> being directly included by filesystems.
+
+This looks good; we probably should have done it that way originally.  This will
+allow us to have the inline functions like fscrypt_prepare_rename() defined in
+fscrypt.h, and then have supp/notsupp versions of __fscrypt_prepare_rename()
+instead --- so common checks like for IS_ENCRYPTED() will be in one place only.
+
+One nit:
+
+> +#ifdef CONFIG_EXT4_FS_ENCRYPTION
+> +#define __FS_HAS_ENCRYPTION 1
+> +#endif
+> +#include <linux/fscrypt.h>
+
+How about doing
+
+	#define __FS_HAS_ENCRYPTION IS_ENABLED(CONFIG_EXT4_FS_ENCRYPTION)
+
+(and likewise for f2fs and ubifs), then checking '#if __FS_HAS_ENCRYPTION'
+rather than '#ifdef __FS_HAS_ENCRYPTION'?
+
+Eric
