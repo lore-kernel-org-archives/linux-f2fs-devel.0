@@ -1,21 +1,21 @@
 From: Hsiang Kao via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Subject: Re: [PATCH] f2fs: allow readpages with NULL file pointer
-Date: Sun, 24 Sep 2017 01:42:57 +0800
-Message-ID: <04ad81b4-4c9d-3bcb-5b36-507e1d2f0f80@aol.com>
+Subject: [PATCH v2] f2fs: allow readpages with NULL file pointer
+Date: Sun, 24 Sep 2017 02:45:42 +0800
+Message-ID: <bb773ebc-6372-dae7-4642-10594d6e3c94@aol.com>
 Reply-To: Hsiang Kao <hsiangkao@aol.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
  helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <hsiangkao@aol.com>) id 1dvoSL-0002Xp-Ra
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 23 Sep 2017 17:43:09 +0000
-Received: from omr-m011e.mx.aol.com ([204.29.186.11])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1dvoSK-0006Uz-GE
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 23 Sep 2017 17:43:09 +0000
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <hsiangkao@aol.com>) id 1dvpR6-00085m-L6
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 23 Sep 2017 18:45:56 +0000
+Received: from omr-m008e.mx.aol.com ([204.29.186.7])
+ by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+ (Exim 4.76) id 1dvpR4-0001ZL-FB
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 23 Sep 2017 18:45:56 +0000
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -26,77 +26,35 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: chao@kernel.org, jaegeuk@kernel.org
+To: jaegeuk@kernel.org, chao@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-SGkgQ2hhbywKCk9uIDIwMTcvOS8yMyAyMDo1MCwgQ2hhbyBZdSB3cm90ZToKPiBIaSBYaWFuZyBH
-YW8sCj4KPiBPbiAyMDE3LzkvMjIgOTo1NCwgZ2FveGlhbmcgKFApIHdyb3RlOgo+ID4gSGkgQ2hh
-bywKPiA+Cj4gPiBUaGFua3MgZm9yIHlvdXIgcmVwbHkuCj4gPiBUaGlzIHBhdGNoIG9yaWdpbmF0
-ZXMgZnJvbSB0aGUgb3VyIHNkY2FyZGZzIGNvbXBhdGlibGUgCj4gY2FzZS1pbnNlbnNpdGl2ZSBs
-b29rdXAgYWNjZWxlcmF0aW9uLgo+ID4KPiA+IEZvciB0aGUgY3VzdG9taXplZCBjYXNlLWluc2Vu
-c2l0aXZlIGNyZWF0ZSBvcGVyYXRpb24gc2luY2UgZjJmcyBoYXMgCj4gbm8gaGFzaCBhbmQgaXQg
-bmVlZHMgdG8gZGVjcnlwdCBhbGwgdGhlIGRpcmVudCBuYW1lLAo+ID4gaXQgaXMgcmVjb21tZW5k
-ZWQgdG8gcmVhZCBhaGVhZCB0aGUgd2hvbGUgZGlyIGRhdGEgaW4gYWR2YW5jZS4KPiA+Cj4gPiBI
-b3dldmVyIEkgZm91bmQgZjJmcyBjYW5ub3QgdXNlIHBhZ2VfY2FjaGVfc3luY19yZWFkYWhlYWQg
-d2l0aCBudWxsIAo+IEBmaWxlIHBvaW50ZXIgYXMgdGhlIG90aGVyIGNvbW1vbiBMaW51eCBmaWxl
-IHN5c3RlbSwKPiA+IHRoaXMgZmVhdHVyZSBpcyBzb21ldGhpbmcgbGlrZSBhw4PigJrDgsKgIGJv
-bnVzIGFuZCBJIGtub3cgdGhhdCBMaW51eCBoYXMgbm8gCj4gd3JpdHRlbiB3b3JkcyB0aGF0IHdl
-IHNob3VsZCBzdXBwb3J0IG51bGwgQGZpbGUgcG9pbnRlciwgeWV0Cj4gPiBwYWdlX2NhY2hlX3N5
-bmNfcmVhZGFoZWFkIGlzIGFuIEVYUE9SVF9TWU1CT0xfR1BMIGFuZCBjb3VsZCBiZSB1c2VkIAo+
-IGJ5IG90aGVyIG5vbi1zdGFuZGFyZCAzcmQga2VybmVsIG1vZHVsZXMgYW5kCj4gPiBvZiBjb3Vy
-c2UgSSB0aGluayBpdCBpcyByZWFsbHkgbm8gcHJvYmxlbS4KPgo+IExvb2tzIGxpa2Ugc29tZSBm
-aWxlc3lzdGVtcyBzdG9yZSBwcml2YXRlIGRhdGEgaW4gZmlsZS0+cHJpdmF0ZV9kYXRhIAo+IGZv
-ciBzb21lCj4gcHVycG9zZSBkdXJpbmcgLT5vcGVuLCBhbmQgd2lsbCB1c2UgdGhlIGRhdGEgaW4g
-bGF0ZSAtPnJlYWRwYWdlcy4gU28gCj4gcGFzc2luZwo+IEBmaWxlIHdpdGggTlVMTCB2YWx1ZSB3
-aWxsIHNpbXBseSBjYXVzZSBrZXJuZWwgYnVnIGZvciB0aGVzZSBmaWxlc3lzdGVtcy4KPgo+IEFz
-IEkgY2hlY2tlZCwgbW9zdCBnZW5lcmljIGxvY2FsIGZpbGVzeXN0ZW1zIGp1c3QgdXNlIG1hcHBp
-bmctPmhvc3QgCj4gaW5zdGVhZCBvZgo+IGZpbGUtPmZfbWFwcGluZy0+aG9zdCwgc28gbG9vayB0
-aGlzIHBhdGNoIGFnYWluLCBmb2xsb3dpbmcgZ2VuZXJpYyAKPiBmaWxlc3lzdGVtCj4gbG9va3Mg
-bm90IGJhZC4gOykKPgoKSSdtIGdsYWQgdG8gaGVhciB0aGF0IHRoZSBjb21tdW5pdHkgY291bGQg
-YXBwbHkgaXQuIDopCgo+IEhvdyBhYm91dCBqdXN0IGNoYW5naW5nIGZpbGUtPmZfbWFwcGluZy0+
-aG9zdCB0byBtYXBwaW5nLT5ob3N0IGluIG91dCAKPiBwYXRjaD8KClRvIG15IGtub3dsZWRnZSBv
-ZiBmMmZzLCBJIGFtIG5vdCBxdWl0ZSBzdXJlIHdoZXRoZXIgZl9tYXBwaW5nIGluIGYyZnMgaXMK
-cmVhbGx5IGVxdWFsIHRvIG1hcHBpbmcgb3Igbm90LiBUaGVyZWZvcmUgSSBhZGQgYSBleHRyYSBC
-VUdfT04gYW5kIGRvIHNvbWUKc3RyZXNzIHRlc3RzIHRvIHJlLWNvbmZpcm0gdGhhdC4KClllcywg
-aXQncyBmaW5lIHdpdGggbWUgdGhhdCB3ZSBvbmx5IGNoYW5nZSBmaWxlLT5mX21hcHBpbmctPmhv
-c3QgdG8KbWFwcGluZy0+aG9zdC4KClRoYW5rcywKCj4KPiBUaGFua3MsCj4KPiA+Cj4gPiBBbnl3
-YXksIGlmIGl0IGhhcyBubyB1c2UgdG8gdGhlIGNvbW11bml0eSwgSSB3aWxsIGFwcGx5IGl0IG9u
-bHkgb24gCj4gdGhlIGludGVybmFsIGJyYW5jaC4KPiA+IEFuZCBJIHdpbGwgYWxzbyBmaW5kIHNv
-bWUgY29tbW9uIGV4YW1wbGVzIG9mIGRhdGEgcGFnZSByZWFkYWhlYWQuIDopCj4gPgo+ID4gVGhh
-bmtzLAo+ID4KPiA+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+ID4+IEZyb206IENoYW8g
-WXUgW21haWx0bzpjaGFvQGtlcm5lbC5vcmddCj4gPj4gU2VudDogVGh1cnNkYXksIFNlcHRlbWJl
-ciAyMSwgMjAxNyAxMDozMyBQTQo+ID4+IFRvOiBnYW94aWFuZyAoUCkgPGdhb3hpYW5nMjVAaHVh
-d2VpLmNvbT47IGphZWdldWtAa2VybmVsLm9yZzsgCj4gWXVjaGFvIChUKQo+ID4+IDx5dWNoYW8w
-QGh1YXdlaS5jb20+Cj4gPj4gQ2M6IGxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2Uu
-bmV0Cj4gPj4gU3ViamVjdDogUmU6IFtmMmZzLWRldl0gW1BBVENIXSBmMmZzOiBhbGxvdyByZWFk
-cGFnZXMgd2l0aCBOVUxMIAo+IGZpbGUgcG9pbnRlcgo+ID4+Cj4gPj4gT24gMjAxNy85LzIxIDEz
-OjAwLCBnYW94aWFuZyAoUCkgd3JvdGU6Cj4gPj4+IEtlZXAgaW4gbGluZSB3aXRoIHRoZSBvdGhl
-ciBMaW51eCBmaWxlIHN5c3RlbSBpbXBsZW1lbnRhdGlvbnMgc2luY2UKPiA+Pj4gcGFnZV9jYWNo
-ZV9zeW5jX3JlYWRhaGVhZCBzdXBwb3J0cyBOVUxMIGZpbGUgcG9pbnRlciwgYW5kIHRodXMgd2Ug
-Y2FuCj4gPj4+IHJlYWRhaGVhZCBkYXRhIGJ5IGYyZnMgaXRzZWxmIHdpdGhvdXQgZmlsZSBvcGVu
-aW5nIChzb21ldGhpbmcgbGlrZSB0aGUKPiA+Pj4gYnRyZnMgYmVoYXZpb3IpLgo+ID4+Cj4gPj4g
-TGV0J3Mga2VlcCB3aGF0IGl0IGlzIHVudGlsIHRoZXJlIGlzIGFuIGV4YW1wbGUgZG9pbmcgcmVh
-ZGFoZWFkIAo+IHBhc3NpbmcgQGZpbGUKPiA+PiB3aXRoIE5VTEwuCj4gPj4KPiA+PiBUaGFua3Ms
-Cj4gPj4KPiA+Pj4KPiA+Pj4gU2lnbmVkLW9mZi1ieTogR2FvIFhpYW5nIDxnYW94aWFuZzI1QGh1
-YXdlaS5jb20+Cj4gPj4+IC0tLQo+ID4+PiAgZnMvZjJmcy9kYXRhLmMgfCA0ICsrKy0KPiA+Pj4g
-IDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPiA+Pj4KPiA+
-Pj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvZGF0YS5jIGIvZnMvZjJmcy9kYXRhLmMgaW5kZXggOTVm
-MzBmMC4uYWZhMTJmMQo+ID4+PiAxMDA2NDQKPiA+Pj4gLS0tIGEvZnMvZjJmcy9kYXRhLmMKPiA+
-Pj4gKysrIGIvZnMvZjJmcy9kYXRhLmMKPiA+Pj4gQEAgLTEzMzMsOSArMTMzMywxMSBAQCBzdGF0
-aWMgaW50IGYyZnNfcmVhZF9kYXRhX3BhZ2VzKHN0cnVjdCBmaWxlICpmaWxlLAo+ID4+PiAgICAg
-ICAgICAgICAgICAgICAgICBzdHJ1Y3QgYWRkcmVzc19zcGFjZSAqbWFwcGluZywKPiA+Pj4gICAg
-ICAgICAgICAgICAgICAgICAgc3RydWN0IGxpc3RfaGVhZCAqcGFnZXMsIHVuc2lnbmVkIG5yX3Bh
-Z2VzKSAgewo+ID4+PiAtICAgc3RydWN0IGlub2RlICppbm9kZSA9IGZpbGUtPmZfbWFwcGluZy0+
-aG9zdDsKPiA+Pj4gKyAgIHN0cnVjdCBpbm9kZSAqaW5vZGUgPSBtYXBwaW5nLT5ob3N0Owo+ID4+
-PiAgICAgIHN0cnVjdCBwYWdlICpwYWdlID0gbGlzdF9sYXN0X2VudHJ5KHBhZ2VzLCBzdHJ1Y3Qg
-cGFnZSwgbHJ1KTsKPiA+Pj4KPiA+Pj4gKyAgIGlmIChsaWtlbHkoZmlsZSAhPSBOVUxMKSkKPiA+
-Pj4gKyAgICAgICAgICAgQlVHX09OKGZpbGUtPmZfbWFwcGluZyAhPSBtYXBwaW5nKTsKPiA+Pj4g
-ICAgICB0cmFjZV9mMmZzX3JlYWRwYWdlcyhpbm9kZSwgcGFnZSwgbnJfcGFnZXMpOwo+ID4+Pgo+
-ID4+PiAgICAgIC8qIElmIHRoZSBmaWxlIGhhcyBpbmxpbmUgZGF0YSwgc2tpcCByZWFkcGFnZXMg
-Ki8KPiA+Pj4KCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRl
-Y2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0CmVuZ2FnaW5nIHRlY2ggc2l0
-ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGlu
-ZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlz
-dHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+Keep in line with the other Linux file system implementations
+since page_cache_sync_readahead supports NULL file pointer,
+and thus we can readahead data by f2fs itself without file opening
+(something like the btrfs behavior).
+
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+  fs/f2fs/data.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 95f30f0..506281d 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1333,7 +1333,7 @@ static int f2fs_read_data_pages(struct file *file,
+  			struct address_space *mapping,
+  			struct list_head *pages, unsigned nr_pages)
+  {
+-	struct inode *inode = file->f_mapping->host;
++	struct inode *inode = mapping->host;
+  	struct page *page = list_last_entry(pages, struct page, lru);
+   	trace_f2fs_readpages(inode, page, nr_pages);
+-- 
+2.7.4
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
