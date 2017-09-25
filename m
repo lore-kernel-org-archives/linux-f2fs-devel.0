@@ -1,20 +1,22 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] Revert "f2fs: reuse nids more aggressively"
-Date: Mon, 25 Sep 2017 14:17:51 +0800
-Message-ID: <20170925061751.71567-1-yuchao0@huawei.com>
+From: "gaoxiang (P)" <gaoxiang25@huawei.com>
+Subject: [PATCH v2] f2fs: allow readpages with NULL file pointer
+Date: Mon, 25 Sep 2017 11:05:15 +0000
+Message-ID: <9047C53C18267742AB12E43B65C7F9F70BBE87E3@dggemi505-mbs.china.huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
  helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1dwMie-0000w9-Qx
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 25 Sep 2017 06:18:16 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1dwMid-0005MA-1A
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 25 Sep 2017 06:18:16 +0000
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <gaoxiang25@huawei.com>)
+ id 1dwRCn-00079D-VK
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 25 Sep 2017 11:05:41 +0000
+Received: from szxga03-in.huawei.com ([45.249.212.189])
+ by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1dwRCk-00047E-6r
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 25 Sep 2017 11:05:41 +0000
+Content-Language: zh-CN
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -24,44 +26,34 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: "jaegeuk@kernel.org" <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-Commit 268344664603 ("f2fs: reuse nids more aggressively") tries to
-reuse nids as many as possilbe, in order to mitigate producing obsolete
-node pages in page cache.
+Keep in line with the other Linux file system implementations
+since page_cache_sync_readahead supports NULL file pointer,
+and thus we can readahead data by f2fs itself without file opening
+(something like the btrfs behavior).
 
-But acutally, before we reuse the nids and related node page cache,
-we will always invalidate that node page, so there will be not any
-obsolete node pages in cache.
-
-Let's just revert previous commit, so that nm_i::next_scan_nid can be
-increased ascendingly, making __build_free_nids traverses all NAT pages
-more easily, finally, free nid bitmap cache can be enabled as soon as
-possible.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- fs/f2fs/node.c | 4 ----
- 1 file changed, 4 deletions(-)
+ fs/f2fs/data.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index fc9f141eed9b..bfeaa0124670 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -327,10 +327,6 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
- 	if (nat_get_blkaddr(e) != NEW_ADDR && new_blkaddr == NULL_ADDR) {
- 		unsigned char version = nat_get_version(e);
- 		nat_set_version(e, inc_node_version(version));
--
--		/* in order to reuse the nid */
--		if (nm_i->next_scan_nid > ni->nid)
--			nm_i->next_scan_nid = ni->nid;
- 	}
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 95f30f0..506281d 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1333,7 +1333,7 @@ static int f2fs_read_data_pages(struct file *file,
+ 			struct address_space *mapping,
+ 			struct list_head *pages, unsigned nr_pages)
+ {
+-	struct inode *inode = file->f_mapping->host;
++	struct inode *inode = mapping->host;
+ 	struct page *page = list_last_entry(pages, struct page, lru);
  
- 	/* change address */
+ 	trace_f2fs_readpages(inode, page, nr_pages);
 -- 
-2.13.1.388.g69e6b9b4f4a9
+2.1.4
 
 
 ------------------------------------------------------------------------------
