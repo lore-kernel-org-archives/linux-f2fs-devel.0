@@ -1,74 +1,89 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: allow readpages with NULL file
- pointer
-Date: Mon, 25 Sep 2017 09:35:57 +0800
-Message-ID: <db00dc18-6c6b-8205-4994-cc13e0a43fa1@huawei.com>
-References: <bb773ebc-6372-dae7-4642-10594d6e3c94@aol.com>
+Subject: Re: [PATCH] Revert "f2fs: node segment is prior to data segment
+ selected victim"
+Date: Mon, 25 Sep 2017 10:52:48 +0800
+Message-ID: <ae11fe8d-6030-ed2a-1193-74dc43aa0279@huawei.com>
+References: <1506157338-20441-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
- helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1dwIJq-00034H-SH
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 25 Sep 2017 01:36:22 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1dwIJo-00026l-L5
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 25 Sep 2017 01:36:22 +0000
-In-Reply-To: <bb773ebc-6372-dae7-4642-10594d6e3c94@aol.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1506157338-20441-1-git-send-email-yunlong.song@huawei.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Hsiang Kao <hsiangkao@aol.com>, jaegeuk@kernel.org, chao@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/9/24 2:45, Hsiang Kao via Linux-f2fs-devel wrote:
-> Keep in line with the other Linux file system implementations
-> since page_cache_sync_readahead supports NULL file pointer,
-> and thus we can readahead data by f2fs itself without file opening
-> (something like the btrfs behavior).
+On 2017/9/23 17:02, Yunlong Song wrote:
+> This reverts commit b9cd20619e359d199b755543474c3d853c8e3415.
 > 
-> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+> That patch causes much fewer node segments (which can be used for SSR)
+> than before, and in the corner case (e.g. create and delete *.txt files in
+> one same directory, there will be very few node segments but many data
+> segments), if the reserved free segments are all used up during gc, then
+> the write_checkpoint can still flush dentry pages to data ssr segments,
+> but will probably fail to flush node pages to node ssr segments, since
+> there are not enough node ssr segments left (the left ones are all
+> full).
 
-Just encounter applying failure with this patch:
+IMO, greedy algorithm wants to minimize price of moving one dirty segment, our
+behavior is accord with semantics of our algorithm to select victim with least
+valid blocks. Pengyang's patch tries to adjust greedy algorithm to consider
+minimizing total number of valid blocks in all selected victim segments during
+whole FGGC cycle, but its algorithm is corrupted, since if all valid data blocks
+in current victim segment is not belong to different dnode block, our selection
+may be incorrect.
 
-Applying: f2fs: allow readpages with NULL file pointer
-error: corrupt patch at line 18
-Patch failed at 0001 f2fs: allow readpages with NULL file pointer
+Anyway, I agree to revert Pengyang's patch first before we got a entire scheme.
 
-Could you check and adjust the email client configuration to avoid its
-additional modification?
+BTW, for SSR or LFS selection, there is a trade-off in between: a) SSR-write
+costs less free segment and move less data/node blocks, but it triggers random
+write which results in bad performance. b) LFS-write costs more free segment and
+move more data/node blocks, but it triggers sequential write which results in
+good performance. So I don't think more SSR we trigger, lower latency our FGGC
+faces.
 
 Thanks,
 
+> 
+> So revert this patch to give a fair chance to let node segments remain
+> for SSR, which provides more robustness for corner cases.
+> 
+> Conflicts:
+> 	fs/f2fs/gc.c
 > ---
->   fs/f2fs/data.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  fs/f2fs/gc.c | 12 +-----------
+>  1 file changed, 1 insertion(+), 11 deletions(-)
 > 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 95f30f0..506281d 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1333,7 +1333,7 @@ static int f2fs_read_data_pages(struct file *file,
->   			struct address_space *mapping,
->   			struct list_head *pages, unsigned nr_pages)
->   {
-> -	struct inode *inode = file->f_mapping->host;
-> +	struct inode *inode = mapping->host;
->   	struct page *page = list_last_entry(pages, struct page, lru);
->    	trace_f2fs_readpages(inode, page, nr_pages);
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index bfe6a8c..f777e07 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -267,16 +267,6 @@ static unsigned int get_cb_cost(struct f2fs_sb_info *sbi, unsigned int segno)
+>  	return UINT_MAX - ((100 * (100 - u) * age) / (100 + u));
+>  }
+>  
+> -static unsigned int get_greedy_cost(struct f2fs_sb_info *sbi,
+> -						unsigned int segno)
+> -{
+> -	unsigned int valid_blocks =
+> -			get_valid_blocks(sbi, segno, true);
+> -
+> -	return IS_DATASEG(get_seg_entry(sbi, segno)->type) ?
+> -				valid_blocks * 2 : valid_blocks;
+> -}
+> -
+>  static inline unsigned int get_gc_cost(struct f2fs_sb_info *sbi,
+>  			unsigned int segno, struct victim_sel_policy *p)
+>  {
+> @@ -285,7 +275,7 @@ static inline unsigned int get_gc_cost(struct f2fs_sb_info *sbi,
+>  
+>  	/* alloc_mode == LFS */
+>  	if (p->gc_mode == GC_GREEDY)
+> -		return get_greedy_cost(sbi, segno);
+> +		return get_valid_blocks(sbi, segno, true);
+>  	else
+>  		return get_cb_cost(sbi, segno);
+>  }
 > 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
