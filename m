@@ -1,22 +1,24 @@
-From: "gaoxiang (P)" <gaoxiang25@huawei.com>
-Subject: [PATCH v2] f2fs: allow readpages with NULL file pointer
-Date: Mon, 25 Sep 2017 11:05:15 +0000
-Message-ID: <9047C53C18267742AB12E43B65C7F9F70BBE87E3@dggemi505-mbs.china.huawei.com>
+From: Park Ju Hyung <qkrwngud825@gmail.com>
+Subject: [PATCH] f2fs: set ioprio of GC kthread to idle
+Date: Tue, 26 Sep 2017 11:36:26 +0900
+Message-ID: <20170926023626.864-1-qkrwngud825@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <gaoxiang25@huawei.com>)
- id 1dwRCn-00079D-VK
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 25 Sep 2017 11:05:41 +0000
-Received: from szxga03-in.huawei.com ([45.249.212.189])
- by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1dwRCk-00047E-6r
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 25 Sep 2017 11:05:41 +0000
-Content-Language: zh-CN
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <qkrwngud825@gmail.com>)
+ id 1dwfk6-0007Cs-LM
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Sep 2017 02:37:02 +0000
+Received: from mail-pg0-f67.google.com ([74.125.83.67])
+ by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+ (Exim 4.76) id 1dwfk5-0000JZ-Qy
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Sep 2017 02:37:02 +0000
+Received: by mail-pg0-f67.google.com with SMTP id u18so5926677pgo.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 25 Sep 2017 19:37:01 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,34 +28,33 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "jaegeuk@kernel.org" <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: linux-f2fs-devel@lists.sourceforge.net
 
-Keep in line with the other Linux file system implementations
-since page_cache_sync_readahead supports NULL file pointer,
-and thus we can readahead data by f2fs itself without file opening
-(something like the btrfs behavior).
+GC should run conservatively as possible to reduce latency spikes to the user.
 
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+Setting ioprio to idle class will allow the kernel to schedule GC thread's I/O
+to not affect any other processes' I/O requests.
+
+Signed-off-by: Park Ju Hyung <qkrwngud825@gmail.com>
 ---
- fs/f2fs/data.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/gc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 95f30f0..506281d 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1333,7 +1333,7 @@ static int f2fs_read_data_pages(struct file *file,
- 			struct address_space *mapping,
- 			struct list_head *pages, unsigned nr_pages)
- {
--	struct inode *inode = file->f_mapping->host;
-+	struct inode *inode = mapping->host;
- 	struct page *page = list_last_entry(pages, struct page, lru);
- 
- 	trace_f2fs_readpages(inode, page, nr_pages);
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index bfe6a8ccc3a0..54d2d74e9afe 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -143,6 +143,8 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
+ 		kfree(gc_th);
+ 		sbi->gc_thread = NULL;
+ 	}
++	set_task_ioprio(sbi->gc_thread->f2fs_gc_task,
++			IOPRIO_PRIO_VALUE(IOPRIO_CLASS_IDLE, 0));
+ out:
+ 	return err;
+ }
 -- 
-2.1.4
+2.14.1
 
 
 ------------------------------------------------------------------------------
