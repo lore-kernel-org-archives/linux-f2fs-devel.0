@@ -1,7 +1,7 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 3/5] f2fs: fix to show ino management cache size correctly
-Date: Fri, 29 Sep 2017 13:59:37 +0800
-Message-ID: <20170929055939.39937-3-yuchao0@huawei.com>
+Subject: [PATCH 2/5] f2fs: drop FI_UPDATE_WRITE tag after f2fs_issue_flush
+Date: Fri, 29 Sep 2017 13:59:36 +0800
+Message-ID: <20170929055939.39937-2-yuchao0@huawei.com>
 References: <20170929055939.39937-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,27 +12,32 @@ To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-It needs to stat size of ino management cache with all type instead of
-orphan ino type.
+If we failed to issue flush in ->fsync, we need to keep FI_UPDATE_WRITE
+flag to make sure triggering flush in next ->fsync.
 
-Fixes: 652be55162dc ("f2fs: show # of orphan inodes")
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/file.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 14095fbb4039..d441660c3ba6 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -240,7 +240,7 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
- 	si->cache_mem += NM_I(sbi)->dirty_nat_cnt *
- 					sizeof(struct nat_entry_set);
- 	si->cache_mem += si->inmem_pages * sizeof(struct inmem_pages);
--	for (i = 0; i <= ORPHAN_INO; i++)
-+	for (i = 0; i < MAX_INO_ENTRY; i++)
- 		si->cache_mem += sbi->im[i].ino_num * sizeof(struct ino_entry);
- 	si->cache_mem += atomic_read(&sbi->total_ext_tree) *
- 						sizeof(struct extent_tree);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 224379a9848c..18ca8b305699 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -294,10 +294,12 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 	remove_ino_entry(sbi, ino, APPEND_INO);
+ 	clear_inode_flag(inode, FI_APPEND_WRITE);
+ flush_out:
+-	remove_ino_entry(sbi, ino, UPDATE_INO);
+-	clear_inode_flag(inode, FI_UPDATE_WRITE);
+ 	if (!atomic)
+ 		ret = f2fs_issue_flush(sbi);
++	if (!ret) {
++		remove_ino_entry(sbi, ino, UPDATE_INO);
++		clear_inode_flag(inode, FI_UPDATE_WRITE);
++	}
+ 	f2fs_update_time(sbi, REQ_TIME);
+ out:
+ 	trace_f2fs_sync_file_exit(inode, need_cp, datasync, ret);
 -- 
 2.13.1.388.g69e6b9b4f4a9
