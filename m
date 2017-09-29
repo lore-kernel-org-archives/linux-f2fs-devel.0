@@ -1,22 +1,22 @@
 From: <guoweichao@huawei.com>
-Subject: [PATCH] f2fs: convert inline data for direct I/O &
+Subject: [PATCH v2] f2fs: convert inline data for direct I/O &
  FI_NO_PREALLOC
-Date: Fri, 29 Sep 2017 22:25:29 +0800
-Message-ID: <20170929142529.170167-1-guoweichao@huawei.com>
+Date: Fri, 29 Sep 2017 22:43:23 +0800
+Message-ID: <20170929144323.170386-1-guoweichao@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
  helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
  (Exim 4.89) (envelope-from <guoweichao@huawei.com>)
- id 1dxotB-00037A-I1
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Sep 2017 06:35:09 +0000
+ id 1dxpBt-00064u-VM
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Sep 2017 06:54:29 +0000
 Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1dxot8-0002eT-67
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Sep 2017 06:35:09 +0000
+ by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1dxpBp-0000lV-ML
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Sep 2017 06:54:29 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -42,7 +42,7 @@ Signed-off-by: Weichao Guo <guoweichao@huawei.com>
  1 file changed, 8 insertions(+), 5 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 36b5352..64c9cfc 100644
+index 36b5352..3793ba4 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
 @@ -833,6 +833,13 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
@@ -51,9 +51,9 @@ index 36b5352..64c9cfc 100644
  
 +	/* convert inline data for Direct I/O*/
 +	if (iocb->ki_flags & IOCB_DIRECT) {
-+		ret = f2fs_convert_inline_inode(inode);
-+		if (ret)
-+			return ret;
++		err = f2fs_convert_inline_inode(inode);
++		if (err)
++			return err;
 +	}
 +
  	if (is_inode_flag_set(inode, FI_NO_PREALLOC))
