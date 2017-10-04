@@ -1,127 +1,94 @@
 From: Chao Yu <chao@kernel.org>
-Subject: [PATCH v2 6/6] f2fs: give up CP_TRIMMED_FLAG if it drops discards
-Date: Wed,  4 Oct 2017 09:08:37 +0800
-Message-ID: <20171004010837.9809-6-chao@kernel.org>
+Subject: [PATCH v2 4/6] f2fs: reduce cmd_lock coverage in
+ __issue_discard_cmd
+Date: Wed,  4 Oct 2017 09:08:35 +0800
+Message-ID: <20171004010837.9809-4-chao@kernel.org>
 References: <20171004010837.9809-1-chao@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+ helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <chao@kernel.org>) id 1dzYBD-0000gZ-HD
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Oct 2017 01:08:55 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+ (Exim 4.76) id 1dzYBC-0003Oy-Ot
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Oct 2017 01:08:55 +0000
 In-Reply-To: <20171004010837.9809-1-chao@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-In ->umount, once we drop remained discard entries, we should not
-set CP_TRIMMED_FLAG with another checkpoint.
+__submit_discard_cmd may lead long latency due to exhaustion of I/O
+request resource in block layer, so issuing all discard under cmd_lock
+may lead to hangtask, in order to avoid that, let's reduce it's coverage.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
 v2:
 - rebase on last codes of Jaegeuk's dev-test branch.
- fs/f2fs/f2fs.h    |  2 +-
- fs/f2fs/segment.c | 15 +++++++++++----
- fs/f2fs/super.c   |  5 +++--
- 3 files changed, 15 insertions(+), 7 deletions(-)
+ fs/f2fs/segment.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f274805e231d..c85f49c41003 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2565,7 +2565,7 @@ void init_discard_policy(struct discard_policy *dpolicy, int discard_type,
- 						unsigned int granularity);
- void refresh_sit_entry(struct f2fs_sb_info *sbi, block_t old, block_t new);
- void stop_discard_thread(struct f2fs_sb_info *sbi);
--void f2fs_wait_discard_bios(struct f2fs_sb_info *sbi);
-+bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi);
- void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc);
- void release_discard_addrs(struct f2fs_sb_info *sbi);
- int npages_for_summary_flush(struct f2fs_sb_info *sbi, bool for_ra);
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 4a108321233d..bfbcff8339c5 100644
+index e8fcc1eb4e0a..ba433828c170 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -1196,12 +1196,13 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 	return issued;
- }
+@@ -1158,14 +1158,14 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 	int i, iter = 0, issued = 0;
+ 	bool io_interrupted = false;
  
--static void __drop_discard_cmd(struct f2fs_sb_info *sbi)
-+static bool __drop_discard_cmd(struct f2fs_sb_info *sbi)
- {
- 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
- 	struct list_head *pend_list;
- 	struct discard_cmd *dc, *tmp;
- 	int i;
-+	bool dropped = false;
- 
- 	mutex_lock(&dcc->cmd_lock);
+-	mutex_lock(&dcc->cmd_lock);
+-	f2fs_bug_on(sbi,
+-		!__check_rb_tree_consistence(sbi, &dcc->root));
+-	blk_start_plug(&plug);
  	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
-@@ -1209,9 +1210,12 @@ static void __drop_discard_cmd(struct f2fs_sb_info *sbi)
+ 		if (i + 1 < dpolicy->granularity)
+ 			break;
+ 		pend_list = &dcc->pend_list[i];
++
++		mutex_lock(&dcc->cmd_lock);
++		f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
++		blk_start_plug(&plug);
  		list_for_each_entry_safe(dc, tmp, pend_list, list) {
  			f2fs_bug_on(sbi, dc->state != D_PREP);
- 			__remove_discard_cmd(sbi, dc);
-+			dropped = true;
+ 
+@@ -1179,12 +1179,14 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 			issued++;
+ skip:
+ 			if (++iter >= dpolicy->max_requests)
+-				goto out;
++				break;
  		}
- 	}
- 	mutex_unlock(&dcc->cmd_lock);
++		blk_finish_plug(&plug);
++		mutex_unlock(&dcc->cmd_lock);
 +
-+	return dropped;
- }
- 
- static void __wait_one_discard_bio(struct f2fs_sb_info *sbi,
-@@ -1306,15 +1310,18 @@ void stop_discard_thread(struct f2fs_sb_info *sbi)
- }
- 
- /* This comes from f2fs_put_super */
--void f2fs_wait_discard_bios(struct f2fs_sb_info *sbi)
-+bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi)
- {
- 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
- 	struct discard_policy dpolicy;
-+	bool dropped;
- 
- 	init_discard_policy(&dpolicy, DPOLICY_UMOUNT, dcc->discard_granularity);
- 	__issue_discard_cmd(sbi, &dpolicy);
--	__drop_discard_cmd(sbi);
-+	dropped = __drop_discard_cmd(sbi);
- 	__wait_all_discard_cmd(sbi, &dpolicy);
-+
-+	return dropped;
- }
- 
- static int issue_discard_thread(void *data)
-@@ -1659,7 +1666,7 @@ void init_discard_policy(struct discard_policy *dpolicy,
- 		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
- 		dpolicy->max_requests = DEF_MAX_DISCARD_REQUEST;
- 		dpolicy->io_aware_gran = MAX_PLIST_NUM;
--		dpolicy->io_aware = false;
-+		dpolicy->io_aware = true;
- 	} else if (discard_type == DPOLICY_FSTRIM) {
- 		dpolicy->max_requests = DEF_MAX_DISCARD_REQUEST;
- 		dpolicy->io_aware_gran = MAX_PLIST_NUM;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index a13269d1a1f0..1d68c18a487b 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -807,6 +807,7 @@ static void f2fs_put_super(struct super_block *sb)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
- 	int i;
-+	bool dropped;
- 
- 	f2fs_quota_off_umount(sb);
- 
-@@ -827,9 +828,9 @@ static void f2fs_put_super(struct super_block *sb)
++		if (iter >= dpolicy->max_requests)
++			break;
  	}
+-out:
+-	blk_finish_plug(&plug);
+-	mutex_unlock(&dcc->cmd_lock);
  
- 	/* be sure to wait for any on-going discard commands */
--	f2fs_wait_discard_bios(sbi, true);
-+	dropped = f2fs_wait_discard_bios(sbi);
- 
--	if (f2fs_discard_en(sbi) && !sbi->discard_blks) {
-+	if (f2fs_discard_en(sbi) && !sbi->discard_blks && !dropped) {
- 		struct cp_control cpc = {
- 			.reason = CP_UMOUNT | CP_TRIMMED,
- 		};
+ 	if (!issued && io_interrupted)
+ 		issued = -1;
 -- 
 2.14.1.145.gb3622a4ee
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
