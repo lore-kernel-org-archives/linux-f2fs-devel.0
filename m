@@ -1,21 +1,23 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix to avoid race when accessing
- last_disk_size
-Date: Mon, 9 Oct 2017 17:55:19 +0800
-Message-ID: <20171009095519.12648-1-yuchao0@huawei.com>
+From: Jan Kara <jack@suse.cz>
+Subject: [PATCH 07/16] f2fs: Use find_get_pages_tag() for looking
+ up single page
+Date: Mon,  9 Oct 2017 17:13:50 +0200
+Message-ID: <20171009151359.31984-8-jack@suse.cz>
+References: <20171009151359.31984-1-jack@suse.cz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
  helo=mx.sourceforge.net)
  by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e1Un8-0003ZG-W1
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Oct 2017 09:56:07 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191])
- by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1e1Un7-0007Tz-4Q
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Oct 2017 09:56:06 +0000
+ (Exim 4.89) (envelope-from <jack@suse.cz>) id 1e1Zl4-0001pC-LG
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Oct 2017 15:14:18 +0000
+Received: from mx2.suse.de ([195.135.220.15])
+ by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+ (Exim 4.76) id 1e1Zkz-0003sx-1L
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Oct 2017 15:14:18 +0000
+In-Reply-To: <20171009151359.31984-1-jack@suse.cz>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -25,83 +27,54 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jan Kara <jack@suse.cz>, linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Daniel Jordan <daniel.m.jordan@oracle.com>
 
-last_disk_size could be wrong due to concurrently updating, so using
-i_sem semaphore to make last_disk_size updating exclusive to fix this
-issue.
+__get_first_dirty_index() wants to lookup only the first dirty page
+after given index. There's no point in using pagevec_lookup_tag() for
+that. Just use find_get_pages_tag() directly.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+CC: Jaegeuk Kim <jaegeuk@kernel.org>
+CC: linux-f2fs-devel@lists.sourceforge.net
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Reviewed-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/f2fs/data.c |  3 +++
- fs/f2fs/f2fs.h | 10 ++++++++--
- fs/f2fs/file.c |  4 ++++
- 3 files changed, 15 insertions(+), 2 deletions(-)
+ fs/f2fs/file.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 77c238b81e32..467f56521e9b 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1569,8 +1569,11 @@ static int __write_data_page(struct page *page, bool *submitted,
- 			err = do_write_data_page(&fio);
- 		}
- 	}
-+
-+	down_write(&F2FS_I(inode)->i_sem);
- 	if (F2FS_I(inode)->last_disk_size < psize)
- 		F2FS_I(inode)->last_disk_size = psize;
-+	up_write(&F2FS_I(inode)->i_sem);
- 
- done:
- 	if (err && err != -ENOENT)
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 5bd7631975f5..08190df79195 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2313,9 +2313,10 @@ static inline void clear_file(struct inode *inode, int type)
- 
- static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
- {
-+	bool ret;
-+
- 	if (dsync) {
- 		struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--		bool ret;
- 
- 		spin_lock(&sbi->inode_lock[DIRTY_META]);
- 		ret = list_empty(&F2FS_I(inode)->gdirty_list);
-@@ -2326,7 +2327,12 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
- 			file_keep_isize(inode) ||
- 			i_size_read(inode) & PAGE_MASK)
- 		return false;
--	return F2FS_I(inode)->last_disk_size == i_size_read(inode);
-+
-+	down_read(&F2FS_I(inode)->i_sem);
-+	ret = F2FS_I(inode)->last_disk_size == i_size_read(inode);
-+	up_read(&F2FS_I(inode)->i_sem);
-+
-+	return ret;
- }
- 
- static inline int f2fs_readonly(struct super_block *sb)
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 463f7cd17f71..fe92fb0d7bfe 100644
+index 517e112c8a9a..f78b76ec4707 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -802,6 +802,10 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
- 			inode->i_mtime = inode->i_ctime = current_time(inode);
- 		}
+@@ -313,18 +313,19 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
+ static pgoff_t __get_first_dirty_index(struct address_space *mapping,
+ 						pgoff_t pgofs, int whence)
+ {
+-	struct pagevec pvec;
++	struct page *page;
+ 	int nr_pages;
  
-+		down_write(&F2FS_I(inode)->i_sem);
-+		F2FS_I(inode)->last_disk_size = i_size_read(inode);
-+		up_write(&F2FS_I(inode)->i_sem);
-+
- 		size_changed = true;
- 	}
+ 	if (whence != SEEK_DATA)
+ 		return 0;
+ 
+ 	/* find first dirty page index */
+-	pagevec_init(&pvec, 0);
+-	nr_pages = pagevec_lookup_tag(&pvec, mapping, &pgofs,
+-					PAGECACHE_TAG_DIRTY, 1);
+-	pgofs = nr_pages ? pvec.pages[0]->index : ULONG_MAX;
+-	pagevec_release(&pvec);
++	nr_pages = find_get_pages_tag(mapping, &pgofs, PAGECACHE_TAG_DIRTY,
++				      1, &page);
++	if (!nr_pages)
++		return ULONG_MAX;
++	pgofs = page->index;
++	put_page(page);
+ 	return pgofs;
+ }
  
 -- 
-2.13.1.388.g69e6b9b4f4a9
+2.12.3
 
 
 ------------------------------------------------------------------------------
