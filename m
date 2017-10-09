@@ -1,220 +1,79 @@
-From: Jan Kara <jack@suse.cz>
-Subject: [PATCH 06/16] f2fs: Simplify page iteration loops
-Date: Mon,  9 Oct 2017 17:13:49 +0200
-Message-ID: <20171009151359.31984-7-jack@suse.cz>
-References: <20171009151359.31984-1-jack@suse.cz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
- helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <jack@suse.cz>) id 1e1Zl1-00089C-N2
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Oct 2017 15:14:15 +0000
-Received: from mx2.suse.de ([195.135.220.15])
- by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1e1Zkz-0001eb-19
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Oct 2017 15:14:15 +0000
-In-Reply-To: <20171009151359.31984-1-jack@suse.cz>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jan Kara <jack@suse.cz>, linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Daniel Jordan <daniel.m.jordan@oracle.com>
+From: Eric Biggers <ebiggers3@gmail.com>
+Subject: [PATCH v2 00/11] fscrypt: add some higher-level helper functions
+Date: Mon,  9 Oct 2017 12:15:33 -0700
+Message-ID: <20171009191544.43656-1-ebiggers3@gmail.com>
+Return-path: <linux-ext4-owner@vger.kernel.org>
+Sender: linux-ext4-owner@vger.kernel.org
+To: linux-fscrypt@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, Eric Biggers <ebiggers@google.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-In several places we want to iterate over all tagged pages in a mapping.
-However the code was apparently copied from places that iterate only
-over a limited range and thus it checks for index <= end, optimizes the
-case where we are coming close to range end which is all pointless when
-end == ULONG_MAX. So just remove this dead code.
+From: Eric Biggers <ebiggers@google.com>
 
-CC: Jaegeuk Kim <jaegeuk@kernel.org>
-CC: linux-f2fs-devel@lists.sourceforge.net
-Reviewed-by: Daniel Jordan <daniel.m.jordan@oracle.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/f2fs/checkpoint.c | 13 ++++-------
- fs/f2fs/node.c       | 65 +++++++++++++++++++---------------------------------
- 2 files changed, 28 insertions(+), 50 deletions(-)
+This series prepares to reduce code duplication among ext4, f2fs, and
+ubifs by introducing a S_ENCRYPTED inode flag (so we don't have to call
+back into the filesystem to test the filesystem-specific inode flag),
+then introducing new helper functions that are called at the beginning
+of the open, link, rename, lookup, and setattr operations.
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 04fe1df052b2..54ccf5ba8191 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -305,9 +305,10 @@ long sync_meta_pages(struct f2fs_sb_info *sbi, enum page_type type,
- 				long nr_to_write, enum iostat_type io_type)
- {
- 	struct address_space *mapping = META_MAPPING(sbi);
--	pgoff_t index = 0, end = ULONG_MAX, prev = ULONG_MAX;
-+	pgoff_t index = 0, prev = ULONG_MAX;
- 	struct pagevec pvec;
- 	long nwritten = 0;
-+	int nr_pages;
- 	struct writeback_control wbc = {
- 		.for_reclaim = 0,
- 	};
-@@ -317,13 +318,9 @@ long sync_meta_pages(struct f2fs_sb_info *sbi, enum page_type type,
- 
- 	blk_start_plug(&plug);
- 
--	while (index <= end) {
--		int i, nr_pages;
--		nr_pages = pagevec_lookup_tag(&pvec, mapping, &index,
--				PAGECACHE_TAG_DIRTY,
--				min(end - index, (pgoff_t)PAGEVEC_SIZE-1) + 1);
--		if (unlikely(nr_pages == 0))
--			break;
-+	while (nr_pages = pagevec_lookup_tag(&pvec, mapping, &index,
-+				PAGECACHE_TAG_DIRTY, PAGEVEC_SIZE)) {
-+		int i;
- 
- 		for (i = 0; i < nr_pages; i++) {
- 			struct page *page = pvec.pages[i];
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index fca87835a1da..f9ccbda73ea9 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1277,21 +1277,17 @@ void move_node_page(struct page *node_page, int gc_type)
- 
- static struct page *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
- {
--	pgoff_t index, end;
-+	pgoff_t index;
- 	struct pagevec pvec;
- 	struct page *last_page = NULL;
-+	int nr_pages;
- 
- 	pagevec_init(&pvec, 0);
- 	index = 0;
--	end = ULONG_MAX;
--
--	while (index <= end) {
--		int i, nr_pages;
--		nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
--				PAGECACHE_TAG_DIRTY,
--				min(end - index, (pgoff_t)PAGEVEC_SIZE-1) + 1);
--		if (nr_pages == 0)
--			break;
-+
-+	while (nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
-+				PAGECACHE_TAG_DIRTY, PAGEVEC_SIZE)) {
-+		int i;
- 
- 		for (i = 0; i < nr_pages; i++) {
- 			struct page *page = pvec.pages[i];
-@@ -1425,13 +1421,14 @@ static int f2fs_write_node_page(struct page *page,
- int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 			struct writeback_control *wbc, bool atomic)
- {
--	pgoff_t index, end;
-+	pgoff_t index;
- 	pgoff_t last_idx = ULONG_MAX;
- 	struct pagevec pvec;
- 	int ret = 0;
- 	struct page *last_page = NULL;
- 	bool marked = false;
- 	nid_t ino = inode->i_ino;
-+	int nr_pages;
- 
- 	if (atomic) {
- 		last_page = last_fsync_dnode(sbi, ino);
-@@ -1441,15 +1438,10 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- retry:
- 	pagevec_init(&pvec, 0);
- 	index = 0;
--	end = ULONG_MAX;
--
--	while (index <= end) {
--		int i, nr_pages;
--		nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
--				PAGECACHE_TAG_DIRTY,
--				min(end - index, (pgoff_t)PAGEVEC_SIZE-1) + 1);
--		if (nr_pages == 0)
--			break;
-+
-+	while (nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
-+				PAGECACHE_TAG_DIRTY, PAGEVEC_SIZE)) {
-+		int i;
- 
- 		for (i = 0; i < nr_pages; i++) {
- 			struct page *page = pvec.pages[i];
-@@ -1548,25 +1540,21 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc,
- 				bool do_balance, enum iostat_type io_type)
- {
--	pgoff_t index, end;
-+	pgoff_t index;
- 	struct pagevec pvec;
- 	int step = 0;
- 	int nwritten = 0;
- 	int ret = 0;
-+	int nr_pages;
- 
- 	pagevec_init(&pvec, 0);
- 
- next_step:
- 	index = 0;
--	end = ULONG_MAX;
--
--	while (index <= end) {
--		int i, nr_pages;
--		nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
--				PAGECACHE_TAG_DIRTY,
--				min(end - index, (pgoff_t)PAGEVEC_SIZE-1) + 1);
--		if (nr_pages == 0)
--			break;
-+
-+	while (nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
-+				PAGECACHE_TAG_DIRTY, PAGEVEC_SIZE)) {
-+		int i;
- 
- 		for (i = 0; i < nr_pages; i++) {
- 			struct page *page = pvec.pages[i];
-@@ -1655,27 +1643,20 @@ int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc,
- 
- int wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino)
- {
--	pgoff_t index = 0, end = ULONG_MAX;
-+	pgoff_t index = 0;
- 	struct pagevec pvec;
- 	int ret2, ret = 0;
-+	int nr_pages;
- 
- 	pagevec_init(&pvec, 0);
- 
--	while (index <= end) {
--		int i, nr_pages;
--		nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
--				PAGECACHE_TAG_WRITEBACK,
--				min(end - index, (pgoff_t)PAGEVEC_SIZE-1) + 1);
--		if (nr_pages == 0)
--			break;
-+	while (nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
-+				PAGECACHE_TAG_WRITEBACK, PAGEVEC_SIZE)) {
-+		int i;
- 
- 		for (i = 0; i < nr_pages; i++) {
- 			struct page *page = pvec.pages[i];
- 
--			/* until radix tree lookup accepts end_index */
--			if (unlikely(page->index > end))
--				continue;
--
- 			if (ino && ino_of_node(page) == ino) {
- 				f2fs_wait_on_page_writeback(page, NODE, true);
- 				if (TestClearPageError(page))
+In the future we maybe should even call these new helpers from the VFS
+so that each individual filesystem doesn't have to do it.  But that's
+not possible currently because fs/crypto/ can be built as a module.
+
+The patches to switch the filesystems over to use the helper functions
+were included in v1 of this patchset.  They are not included now since
+I'm planning to get them picked up by the individual filesystem
+maintainers after this goes in.
+
+Changes since v1:
+    - Added Dave Chinner's patch to make fscrypt.h include
+      fscrypt_supp.h or fscrypt_notsupp.h, then reorganized the helpers
+      so that most are defined in fscrypt.h.
+    - As noted above, for now omitted the patches to switch the
+      individual filesystems over to the new helpers.
+
+Dave Chinner (1):
+  fscrypt: clean up include file mess
+
+Eric Biggers (10):
+  fs, fscrypt: add an S_ENCRYPTED inode flag
+  fscrypt: switch from ->is_encrypted() to IS_ENCRYPTED()
+  fscrypt: remove ->is_encrypted()
+  fscrypt: remove unneeded empty fscrypt_operations structs
+  fscrypt: new helper function - fscrypt_require_key()
+  fscrypt: new helper function - fscrypt_file_open()
+  fscrypt: new helper function - fscrypt_prepare_link()
+  fscrypt: new helper function - fscrypt_prepare_rename()
+  fscrypt: new helper function - fscrypt_prepare_lookup()
+  fscrypt: new helper function - fscrypt_prepare_setattr()
+
+ fs/crypto/Makefile              |   2 +-
+ fs/crypto/crypto.c              |   2 +-
+ fs/crypto/fname.c               |   3 +-
+ fs/crypto/fscrypt_private.h     |   3 +-
+ fs/crypto/hooks.c               | 112 +++++++++++++++
+ fs/crypto/keyinfo.c             |   2 +-
+ fs/crypto/policy.c              |   6 +-
+ fs/ext4/ext4.h                  |   8 +-
+ fs/ext4/inode.c                 |   7 +-
+ fs/ext4/super.c                 |  15 +-
+ fs/f2fs/f2fs.h                  |   9 +-
+ fs/f2fs/inode.c                 |   5 +-
+ fs/f2fs/super.c                 |   7 +-
+ fs/ubifs/crypto.c               |   1 -
+ fs/ubifs/ioctl.c                |   5 +-
+ fs/ubifs/super.c                |   8 +-
+ fs/ubifs/ubifs.h                |  18 +--
+ fs/ubifs/xattr.c                |   1 +
+ include/linux/fs.h              |   2 +
+ include/linux/fscrypt.h         | 293 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/fscrypt_common.h  | 141 -------------------
+ include/linux/fscrypt_notsupp.h |  39 +++++-
+ include/linux/fscrypt_supp.h    |  17 ++-
+ 23 files changed, 505 insertions(+), 201 deletions(-)
+ create mode 100644 fs/crypto/hooks.c
+ create mode 100644 include/linux/fscrypt.h
+ delete mode 100644 include/linux/fscrypt_common.h
+
 -- 
-2.12.3
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+2.14.2.920.gcf0c67979c-goog
