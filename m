@@ -1,63 +1,109 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: Fix bool initialization/comparison
-Date: Mon, 9 Oct 2017 09:48:24 +0800
-Message-ID: <ca988eaa-74aa-8677-a879-11f4edf1039a@huawei.com>
-References: <1507383097081-778026979-0-diffsplit-thomas@m3y3r.de>
- <1507383097084-400953728-9-diffsplit-thomas@m3y3r.de>
- <CAD14+f2qcTmYa066cNFOkSycsAHaCcc+q_63U75Jv=0y49_YhA@mail.gmail.com>
- <1507404632.27502.5.camel@perches.com>
+Subject: [PATCH] f2fs: fix to avoid race when accessing
+ last_disk_size
+Date: Mon, 9 Oct 2017 17:55:19 +0800
+Message-ID: <20171009095519.12648-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1507404632.27502.5.camel@perches.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joe Perches <joe@perches.com>, Ju Hyung Park <qkrwngud825@gmail.com>, Thomas Meyer <thomas@m3y3r.de>
-Cc: "jaegeuk@kernel.org" <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+ helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e1Un8-0003ZG-W1
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Oct 2017 09:56:07 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191])
+ by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1e1Un7-0007Tz-4Q
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Oct 2017 09:56:06 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/10/8 3:30, Joe Perches wrote:
-> On Sat, 2017-10-07 at 23:33 +0900, Ju Hyung Park wrote:
->> Isn't this bogus?
->>
->> "bool" type in Linux kernel is a typedef to "_Bool"
->> and true/false is defined as 1 and 0 by enum at include/linux/stddef.h.
-> 
-> Bogus?  Well, not really.  It's just a neatening and it's
-> identical object code.
-> 
-> The idea is that true/false is more intelligible than 1/0
-> for a human reader.
+last_disk_size could be wrong due to concurrently updating, so using
+i_sem semaphore to make last_disk_size updating exclusive to fix this
+issue.
 
-Yes, that's just cleanup.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/data.c |  3 +++
+ fs/f2fs/f2fs.h | 10 ++++++++--
+ fs/f2fs/file.c |  4 ++++
+ 3 files changed, 15 insertions(+), 2 deletions(-)
 
-Hi Thomas, could you change the commit message a bit?
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 77c238b81e32..467f56521e9b 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1569,8 +1569,11 @@ static int __write_data_page(struct page *page, bool *submitted,
+ 			err = do_write_data_page(&fio);
+ 		}
+ 	}
++
++	down_write(&F2FS_I(inode)->i_sem);
+ 	if (F2FS_I(inode)->last_disk_size < psize)
+ 		F2FS_I(inode)->last_disk_size = psize;
++	up_write(&F2FS_I(inode)->i_sem);
+ 
+ done:
+ 	if (err && err != -ENOENT)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 5bd7631975f5..08190df79195 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2313,9 +2313,10 @@ static inline void clear_file(struct inode *inode, int type)
+ 
+ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+ {
++	bool ret;
++
+ 	if (dsync) {
+ 		struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-		bool ret;
+ 
+ 		spin_lock(&sbi->inode_lock[DIRTY_META]);
+ 		ret = list_empty(&F2FS_I(inode)->gdirty_list);
+@@ -2326,7 +2327,12 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+ 			file_keep_isize(inode) ||
+ 			i_size_read(inode) & PAGE_MASK)
+ 		return false;
+-	return F2FS_I(inode)->last_disk_size == i_size_read(inode);
++
++	down_read(&F2FS_I(inode)->i_sem);
++	ret = F2FS_I(inode)->last_disk_size == i_size_read(inode);
++	up_read(&F2FS_I(inode)->i_sem);
++
++	return ret;
+ }
+ 
+ static inline int f2fs_readonly(struct super_block *sb)
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 463f7cd17f71..fe92fb0d7bfe 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -802,6 +802,10 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
+ 			inode->i_mtime = inode->i_ctime = current_time(inode);
+ 		}
+ 
++		down_write(&F2FS_I(inode)->i_sem);
++		F2FS_I(inode)->last_disk_size = i_size_read(inode);
++		up_write(&F2FS_I(inode)->i_sem);
++
+ 		size_changed = true;
+ 	}
+ 
+-- 
+2.13.1.388.g69e6b9b4f4a9
 
-> 
->> On Sat, Oct 7, 2017 at 11:02 PM, Thomas Meyer <thomas@m3y3r.de> wrote:
->>> Bool initializations should use true and false. Bool tests don't need
->>> comparisons.
-> []
->>> diff -u -p a/fs/f2fs/data.c b/fs/f2fs/data.c
-> []
->>> @@ -419,7 +419,7 @@ next:
->>>         bio_page = fio->encrypted_page ? fio->encrypted_page : fio->page;
->>>
->>>         /* set submitted = 1 as a return value */
 
-Comment should be updated too.
-
-Thanks,
-
->>> -       fio->submitted = 1;
->>> +       fio->submitted = true;
->>>
->>>         inc_page_count(sbi, WB_DATA_TYPE(bio_page));
->>>
-> 
-> And it's probably better to change the comment too.
-> 
-> 
-> .
-> 
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
