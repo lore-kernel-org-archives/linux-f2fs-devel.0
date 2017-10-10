@@ -1,69 +1,32 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: Fix bool initialization/comparison
-Date: Tue, 10 Oct 2017 10:41:36 -0700
-Message-ID: <20171010174136.GC6455@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1507383097081-778026979-0-diffsplit-thomas@m3y3r.de>
- <1507383097084-400953728-9-diffsplit-thomas@m3y3r.de>
- <CAD14+f2qcTmYa066cNFOkSycsAHaCcc+q_63U75Jv=0y49_YhA@mail.gmail.com>
- <1507404632.27502.5.camel@perches.com>
- <ca988eaa-74aa-8677-a879-11f4edf1039a@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Subject: [PATCH] f2fs/crypto: drop crypto key at evict_inode only
+Date: Tue, 10 Oct 2017 10:56:46 -0700
+Message-ID: <20171010175646.9211-1-jaegeuk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <ca988eaa-74aa-8677-a879-11f4edf1039a@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: Joe Perches <joe@perches.com>, Ju Hyung Park <qkrwngud825@gmail.com>, Thomas Meyer <thomas@m3y3r.de>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 10/09, Chao Yu wrote:
-> On 2017/10/8 3:30, Joe Perches wrote:
-> > On Sat, 2017-10-07 at 23:33 +0900, Ju Hyung Park wrote:
-> >> Isn't this bogus?
-> >>
-> >> "bool" type in Linux kernel is a typedef to "_Bool"
-> >> and true/false is defined as 1 and 0 by enum at include/linux/stddef.h.
-> > 
-> > Bogus?  Well, not really.  It's just a neatening and it's
-> > identical object code.
-> > 
-> > The idea is that true/false is more intelligible than 1/0
-> > for a human reader.
-> 
-> Yes, that's just cleanup.
-> 
-> Hi Thomas, could you change the commit message a bit?
-> 
-> > 
-> >> On Sat, Oct 7, 2017 at 11:02 PM, Thomas Meyer <thomas@m3y3r.de> wrote:
-> >>> Bool initializations should use true and false. Bool tests don't need
-> >>> comparisons.
-> > []
-> >>> diff -u -p a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > []
-> >>> @@ -419,7 +419,7 @@ next:
-> >>>         bio_page = fio->encrypted_page ? fio->encrypted_page : fio->page;
-> >>>
-> >>>         /* set submitted = 1 as a return value */
-> 
-> Comment should be updated too.
+This patch avoids dropping crypto key in f2fs_drop_inode, so we can guarantee
+it happens only at evict_inode.
 
-I just merged the patch with a fix for this.
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/super.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Thanks,
-
-> 
-> Thanks,
-> 
-> >>> -       fio->submitted = 1;
-> >>> +       fio->submitted = true;
-> >>>
-> >>>         inc_page_count(sbi, WB_DATA_TYPE(bio_page));
-> >>>
-> > 
-> > And it's probably better to change the comment too.
-> > 
-> > 
-> > .
-> > 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index dc05b16df514..f10a1b1380c2 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -717,7 +717,6 @@ static int f2fs_drop_inode(struct inode *inode)
+ 
+ 			sb_end_intwrite(inode->i_sb);
+ 
+-			fscrypt_put_encryption_info(inode, NULL);
+ 			spin_lock(&inode->i_lock);
+ 			atomic_dec(&inode->i_count);
+ 		}
+-- 
+2.14.0.rc1.383.gd1ce394fe2-goog
