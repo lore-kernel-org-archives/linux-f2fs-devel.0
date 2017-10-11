@@ -1,42 +1,46 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs/crypto: drop crypto key at evict_inode only
-Date: Wed, 11 Oct 2017 11:44:34 +0800
-Message-ID: <6e12a05c-eba6-e59c-fce2-d9c197dfe48c@huawei.com>
-References: <20171010175646.9211-1-jaegeuk@kernel.org>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: [PATCH] f2fs: update dirty status for CURSEG as well
+Date: Wed, 11 Oct 2017 21:25:18 +0800
+Message-ID: <1507728318-113117-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171010175646.9211-1-jaegeuk@kernel.org>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/10/11 1:56, Jaegeuk Kim wrote:
-> This patch avoids dropping crypto key in f2fs_drop_inode, so we can guarantee
-> it happens only at evict_inode.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Without this patch, it will cause all the free segments using up in some
+corner case. For example, there are 100 segments, and 20 of them are
+reserved for ovp. If 79 segments are full of data, segment 80 becomes
+CURSEG segment, write 512 blocks and then delete 511 blocks. Since it is
+CURSEG segment, the __locate_dirty_segment will not update its dirty
+status. Then the dirty_segments(sbi) is 0, f2fs_gc will fail to
+get_victim, and f2fs_balance_fs will fail to trigger gc action. After
+f2fs_balance_fs returns, f2fs can continue to write data to segment 81.
+Again, segment 81 becomes CURSEG segment, write 512 blocks and delete
+511 blocks, the dirty_segments(sbi) is 0 and f2fs_gc fail again. This
+can finally use up all the free segments and cause panic.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+---
+ fs/f2fs/segment.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Thanks,
-
-> ---
->  fs/f2fs/super.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index dc05b16df514..f10a1b1380c2 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -717,7 +717,6 @@ static int f2fs_drop_inode(struct inode *inode)
->  
->  			sb_end_intwrite(inode->i_sb);
->  
-> -			fscrypt_put_encryption_info(inode, NULL);
->  			spin_lock(&inode->i_lock);
->  			atomic_dec(&inode->i_count);
->  		}
-> 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index bfbcff8..0ff52d5 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -686,10 +686,6 @@ static void __locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
+ {
+ 	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
+ 
+-	/* need not be added */
+-	if (IS_CURSEG(sbi, segno))
+-		return;
+-
+ 	if (!test_and_set_bit(segno, dirty_i->dirty_segmap[dirty_type]))
+ 		dirty_i->nr_dirty[dirty_type]++;
+ 
+-- 
+1.8.5.2
