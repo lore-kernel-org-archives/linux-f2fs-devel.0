@@ -1,61 +1,69 @@
 From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: update dirty status for CURSEG as well
-Date: Fri, 13 Oct 2017 19:15:56 +0800
-Message-ID: <93303124-c68e-6092-03c1-82fd026d0344@huawei.com>
-References: <1507728318-113117-1-git-send-email-yunlong.song@huawei.com>
- <19ac8324-6743-34bf-a670-d20fec2cfd7f@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: add bug_on when f2fs_gc even fails to
+ get one victim
+Date: Fri, 13 Oct 2017 19:20:22 +0800
+Message-ID: <ec42530e-ec96-65dd-64c3-9cc1e42d0ef7@huawei.com>
+References: <1507729864-118702-1-git-send-email-yunlong.song@huawei.com>
+ <7a3f0052-86e0-4e46-c89b-048d6137b820@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <19ac8324-6743-34bf-a670-d20fec2cfd7f@kernel.org>
+In-Reply-To: <7a3f0052-86e0-4e46-c89b-048d6137b820@kernel.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
 Cc: linux-fsdevel@vger.kernel.org, miaoxie@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Correct, I will update the patch.
+Yep, both are OK, since I do not care it is foreground or background. 
+Here it just needs to do gc.
 
-On 2017/10/13 19:08, Chao Yu wrote:
-> Hi Yunlong,
->
-> On 2017/10/11 21:25, Yunlong Song wrote:
->> Without this patch, it will cause all the free segments using up in some
->> corner case. For example, there are 100 segments, and 20 of them are
->> reserved for ovp. If 79 segments are full of data, segment 80 becomes
->> CURSEG segment, write 512 blocks and then delete 511 blocks. Since it is
->> CURSEG segment, the __locate_dirty_segment will not update its dirty
->> status. Then the dirty_segments(sbi) is 0, f2fs_gc will fail to
->> get_victim, and f2fs_balance_fs will fail to trigger gc action. After
->> f2fs_balance_fs returns, f2fs can continue to write data to segment 81.
->> Again, segment 81 becomes CURSEG segment, write 512 blocks and delete
->> 511 blocks, the dirty_segments(sbi) is 0 and f2fs_gc fail again. This
->> can finally use up all the free segments and cause panic.
-> Should we also remove the check in locate_dirty_segment?
+On 2017/10/13 19:09, Chao Yu wrote:
+> On 2017/10/11 21:51, Yunlong Song wrote:
+>> This can help us to debug on some corner case.
+>>
+>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>> ---
+>>   fs/f2fs/gc.c | 6 +++++-
+>>   1 file changed, 5 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>> index 197ebf4..960503e 100644
+>> --- a/fs/f2fs/gc.c
+>> +++ b/fs/f2fs/gc.c
+>> @@ -986,6 +986,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>   		.ilist = LIST_HEAD_INIT(gc_list.ilist),
+>>   		.iroot = RADIX_TREE_INIT(GFP_NOFS),
+>>   	};
+>> +	bool need_gc = false;
+> How about changing variable name to need_fggc for better readability?
 >
 > Thanks,
 >
->> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->> ---
->>   fs/f2fs/segment.c | 4 ----
->>   1 file changed, 4 deletions(-)
->>
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index bfbcff8..0ff52d5 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -686,10 +686,6 @@ static void __locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
->>   {
->>   	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
 >>   
->> -	/* need not be added */
->> -	if (IS_CURSEG(sbi, segno))
->> -		return;
->> -
->>   	if (!test_and_set_bit(segno, dirty_i->dirty_segmap[dirty_type]))
->>   		dirty_i->nr_dirty[dirty_type]++;
+>>   	trace_f2fs_gc_begin(sbi->sb, sync, background,
+>>   				get_pages(sbi, F2FS_DIRTY_NODES),
+>> @@ -1018,8 +1019,10 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>   			if (ret)
+>>   				goto stop;
+>>   		}
+>> -		if (has_not_enough_free_secs(sbi, 0, 0))
+>> +		if (has_not_enough_free_secs(sbi, 0, 0)) {
+>>   			gc_type = FG_GC;
+>> +			need_gc = true;
+>> +		}
+>>   	}
 >>   
+>>   	/* f2fs_balance_fs doesn't need to do BG_GC in critical path. */
+>> @@ -1028,6 +1031,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>   		goto stop;
+>>   	}
+>>   	if (!__get_victim(sbi, &segno, gc_type)) {
+>> +		f2fs_bug_on(sbi, !total_freed && need_gc);
+>>   		ret = -ENODATA;
+>>   		goto stop;
+>>   	}
 >>
 > .
 >
