@@ -1,72 +1,54 @@
-From: Weichao Guo <guoweichao@huawei.com>
-Subject: [PATCH] f2fs: no need to punch hole far beyond the file
- size
-Date: Sat, 14 Oct 2017 00:59:50 +0800
-Message-ID: <20171013165950.219357-1-guoweichao@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 4/5] f2fs: relocate readahead codes in readdir()
+Date: Fri, 13 Oct 2017 18:01:35 +0800
+Message-ID: <20171013100136.35212-4-yuchao0@huawei.com>
+References: <20171013100136.35212-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
- helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <guoweichao@huawei.com>)
- id 1e2vmL-0000u7-Pt
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Oct 2017 08:57:13 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1e2vmK-0000fW-3G
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Oct 2017 08:57:13 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171013100136.35212-1-yuchao0@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Punching hole with a length which far larger than file size will
-cause a long time looping in truncate_hole after lock_op, it can
-be reproduced as the following:
+Previously, for large directory, we just do readahead only once in
+readdir(), readdir()'s performance may drop when traversing latter
+blocks. In order to avoid this, relocate readahead codes to covering
+all traverse flow.
 
-        $ echo "abc" > file
-        $ xfs_io -c "fpunch 0 HUGE_LENGTH" file
-
-This may cause other I/Os blocked a long time. Let's fix this case
-by setting the hole to end after the page that contains i_size.
-
-Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/file.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ fs/f2fs/dir.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 517e112..1b44d26 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -873,6 +873,14 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
- 	if (ret)
- 		return ret;
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 1ebd206a4085..14646440b662 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -870,11 +870,6 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
+ 		goto out_free;
+ 	}
  
-+	/*
-+	 * If the hole extends beyond i_size, set the hole
-+	 * to end after the page that contains i_size
-+	 */
-+	if (offset + len > inode->i_size)
-+		len = inode->i_size + PAGE_CACHE_SIZE -
-+			(inode->i_size & (PAGE_CACHE_SIZE - 1)) - offset;
+-	/* readahead for multi pages of dir */
+-	if (npages - n > 1 && !ra_has_index(ra, n))
+-		page_cache_sync_readahead(inode->i_mapping, ra, file, n,
+-				min(npages - n, (pgoff_t)MAX_DIR_RA_PAGES));
+-
+ 	for (; n < npages; n++) {
+ 
+ 		/* allow readdir() to be interrupted */
+@@ -884,6 +879,11 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
+ 		}
+ 		cond_resched();
+ 
++		/* readahead for multi pages of dir */
++		if (npages - n > 1 && !ra_has_index(ra, n))
++			page_cache_sync_readahead(inode->i_mapping, ra, file, n,
++				min(npages - n, (pgoff_t)MAX_DIR_RA_PAGES));
 +
- 	pg_start = ((unsigned long long) offset) >> PAGE_SHIFT;
- 	pg_end = ((unsigned long long) offset + len) >> PAGE_SHIFT;
- 
+ 		dentry_page = get_lock_data_page(inode, n, false);
+ 		if (IS_ERR(dentry_page)) {
+ 			err = PTR_ERR(dentry_page);
 -- 
-2.10.1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+2.13.1.388.g69e6b9b4f4a9
