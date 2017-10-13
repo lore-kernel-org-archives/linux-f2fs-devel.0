@@ -1,95 +1,55 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] f2fs: no need to punch hole far beyond the
- file size
-Date: Fri, 13 Oct 2017 20:42:39 +0800
-Message-ID: <aff291b3-6684-d3a7-044e-3e754bac6365@kernel.org>
-References: <20171013165950.219357-1-guoweichao@huawei.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: [PATCH v2] f2fs: update dirty status for CURSEG as well
+Date: Fri, 13 Oct 2017 21:21:37 +0800
+Message-ID: <1507900897-156286-1-git-send-email-yunlong.song@huawei.com>
+References: <1507728318-113117-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
- helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <chao@kernel.org>) id 1e2zIs-0004l2-Lh
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Oct 2017 12:43:02 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1e2zIr-0003it-JM
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Oct 2017 12:43:02 +0000
-In-Reply-To: <20171013165950.219357-1-guoweichao@huawei.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Weichao Guo <guoweichao@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1507728318-113117-1-git-send-email-yunlong.song@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/10/14 0:59, Weichao Guo wrote:
-> Punching hole with a length which far larger than file size will
-> cause a long time looping in truncate_hole after lock_op, it can
-> be reproduced as the following:
-> 
->         $ echo "abc" > file
->         $ xfs_io -c "fpunch 0 HUGE_LENGTH" file
-> 
-> This may cause other I/Os blocked a long time. Let's fix this case
-> by setting the hole to end after the page that contains i_size.
-You know, we can reserve blocks across EOF through fallocate(fd, FALLOC_FL_KEEP_SIZE,
-ofs, len), so this patch will cause f2fs losing ability of punching preallocated
-blocks across EOF.
+Without this patch, it will cause all the free segments using up in some
+corner case. For example, there are 100 segments, and 20 of them are
+reserved for ovp. If 79 segments are full of data, segment 80 becomes
+CURSEG segment, write 512 blocks and then delete 511 blocks. Since it is
+CURSEG segment, the __locate_dirty_segment will not update its dirty
+status. Then the dirty_segments(sbi) is 0, f2fs_gc will fail to
+get_victim, and f2fs_balance_fs will fail to trigger gc action. After
+f2fs_balance_fs returns, f2fs can continue to write data to segment 81.
+Again, segment 81 becomes CURSEG segment, write 512 blocks and delete
+511 blocks, the dirty_segments(sbi) is 0 and f2fs_gc fail again. This
+can finally use up all the free segments and cause panic.
 
-How about below change:
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+---
+ fs/f2fs/segment.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index cfee75bf88d9..91fd2ef7221b 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -847,7 +847,7 @@ int truncate_hole(struct inode *inode, pgoff_t pg_start, pgoff_t pg_end)
- 		err = get_dnode_of_data(&dn, pg_start, LOOKUP_NODE);
- 		if (err) {
- 			if (err == -ENOENT) {
--				pg_start++;
-+				pg_start = get_next_page_offset(&dn, pg_start);
- 				continue;
- 			}
- 			return err;
-
-Thanks,
-
-> 
-> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
-> ---
->  fs/f2fs/file.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 517e112..1b44d26 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -873,6 +873,14 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
->  	if (ret)
->  		return ret;
->  
-> +	/*
-> +	 * If the hole extends beyond i_size, set the hole
-> +	 * to end after the page that contains i_size
-> +	 */
-> +	if (offset + len > inode->i_size)
-> +		len = inode->i_size + PAGE_CACHE_SIZE -
-> +			(inode->i_size & (PAGE_CACHE_SIZE - 1)) - offset;
-> +
->  	pg_start = ((unsigned long long) offset) >> PAGE_SHIFT;
->  	pg_end = ((unsigned long long) offset + len) >> PAGE_SHIFT;
->  
-> 
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index bfbcff8..0fce076 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -687,7 +687,7 @@ static void __locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
+ 	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
+ 
+ 	/* need not be added */
+-	if (IS_CURSEG(sbi, segno))
++	if (IS_CURSEG(sbi, segno) && dirty_type == PRE)
+ 		return;
+ 
+ 	if (!test_and_set_bit(segno, dirty_i->dirty_segmap[dirty_type]))
+@@ -737,7 +737,7 @@ static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
+ 	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
+ 	unsigned short valid_blocks;
+ 
+-	if (segno == NULL_SEGNO || IS_CURSEG(sbi, segno))
++	if (segno == NULL_SEGNO)
+ 		return;
+ 
+ 	mutex_lock(&dirty_i->seglist_lock);
+-- 
+1.8.5.2
