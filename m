@@ -1,68 +1,57 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 5/5] f2fs: update ctx->pos correctly when hitting
- hole in directory
-Date: Fri, 13 Oct 2017 18:01:36 +0800
-Message-ID: <20171013100136.35212-5-yuchao0@huawei.com>
-References: <20171013100136.35212-1-yuchao0@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: update dirty status for CURSEG as well
+Date: Fri, 13 Oct 2017 19:08:38 +0800
+Message-ID: <19ac8324-6743-34bf-a670-d20fec2cfd7f@kernel.org>
+References: <1507728318-113117-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
- helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e2wnF-00029f-VN
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Oct 2017 10:02:13 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1e2wnA-0007tp-2x
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Oct 2017 10:02:13 +0000
-In-Reply-To: <20171013100136.35212-1-yuchao0@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1507728318-113117-1-git-send-email-yunlong.song@huawei.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
+Cc: linux-fsdevel@vger.kernel.org, miaoxie@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch fixes to update ctx->pos correctly when hitting hole in
-directory.
+Hi Yunlong,
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/dir.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+On 2017/10/11 21:25, Yunlong Song wrote:
+> Without this patch, it will cause all the free segments using up in some
+> corner case. For example, there are 100 segments, and 20 of them are
+> reserved for ovp. If 79 segments are full of data, segment 80 becomes
+> CURSEG segment, write 512 blocks and then delete 511 blocks. Since it is
+> CURSEG segment, the __locate_dirty_segment will not update its dirty
+> status. Then the dirty_segments(sbi) is 0, f2fs_gc will fail to
+> get_victim, and f2fs_balance_fs will fail to trigger gc action. After
+> f2fs_balance_fs returns, f2fs can continue to write data to segment 81.
+> Again, segment 81 becomes CURSEG segment, write 512 blocks and delete
+> 511 blocks, the dirty_segments(sbi) is 0 and f2fs_gc fail again. This
+> can finally use up all the free segments and cause panic.
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 14646440b662..2d98d877c09d 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -870,7 +870,7 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
- 		goto out_free;
- 	}
- 
--	for (; n < npages; n++) {
-+	for (; n < npages; n++, ctx->pos = n * NR_DENTRY_IN_BLOCK) {
- 
- 		/* allow readdir() to be interrupted */
- 		if (fatal_signal_pending(current)) {
-@@ -907,7 +907,6 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
- 			break;
- 		}
- 
--		ctx->pos = (n + 1) * NR_DENTRY_IN_BLOCK;
- 		kunmap(dentry_page);
- 		f2fs_put_page(dentry_page, 1);
- 	}
--- 
-2.13.1.388.g69e6b9b4f4a9
+Should we also remove the check in locate_dirty_segment?
 
+Thanks,
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> 
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> ---
+>  fs/f2fs/segment.c | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index bfbcff8..0ff52d5 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -686,10 +686,6 @@ static void __locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
+>  {
+>  	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
+>  
+> -	/* need not be added */
+> -	if (IS_CURSEG(sbi, segno))
+> -		return;
+> -
+>  	if (!test_and_set_bit(segno, dirty_i->dirty_segmap[dirty_type]))
+>  		dirty_i->nr_dirty[dirty_type]++;
+>  
+> 
