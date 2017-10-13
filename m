@@ -1,180 +1,137 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 1/5] f2fs: trace f2fs_lookup
-Date: Fri, 13 Oct 2017 18:01:32 +0800
-Message-ID: <20171013100136.35212-1-yuchao0@huawei.com>
+Subject: [PATCH 2/5] f2fs: trace f2fs_readdir
+Date: Fri, 13 Oct 2017 18:01:33 +0800
+Message-ID: <20171013100136.35212-2-yuchao0@huawei.com>
+References: <20171013100136.35212-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+ helo=mx.sourceforge.net)
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e2wnC-00028j-2d
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Oct 2017 10:02:10 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191])
+ by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1e2wn6-0004oh-4r
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Oct 2017 10:02:10 +0000
+In-Reply-To: <20171013100136.35212-1-yuchao0@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch adds trace for f2fs_lookup.
+This patch adds trace for f2fs_readdir.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/namei.c             | 42 ++++++++++++++++++++++------------
- include/trace/events/f2fs.h | 56 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 83 insertions(+), 15 deletions(-)
+ fs/f2fs/dir.c               | 14 +++++++++-----
+ include/trace/events/f2fs.h | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index b6455b7ca00f..3aaf273aa97d 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -337,12 +337,14 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 	struct inode *inode = NULL;
- 	struct f2fs_dir_entry *de;
- 	struct page *page;
--	nid_t ino;
-+	nid_t ino = -1;
- 	int err = 0;
- 	unsigned int root_ino = F2FS_ROOT_INO(F2FS_I_SB(dir));
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index c0c933ad43c8..148927f5bc93 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -14,6 +14,7 @@
+ #include "node.h"
+ #include "acl.h"
+ #include "xattr.h"
++#include <trace/events/f2fs.h>
  
-+	trace_f2fs_lookup_start(dir, dentry, flags);
-+
- 	if (f2fs_encrypted_inode(dir)) {
--		int res = fscrypt_get_encryption_info(dir);
-+		err = fscrypt_get_encryption_info(dir);
+ static unsigned long dir_blocks(struct inode *inode)
+ {
+@@ -847,6 +848,7 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
+ 	struct f2fs_dentry_block *dentry_blk = NULL;
+ 	struct page *dentry_page = NULL;
+ 	struct file_ra_state *ra = &file->f_ra;
++	loff_t start_pos = ctx->pos;
+ 	unsigned int n = ((unsigned long)ctx->pos / NR_DENTRY_IN_BLOCK);
+ 	struct f2fs_dentry_ptr d;
+ 	struct fscrypt_str fstr = FSTR_INIT(NULL, 0);
+@@ -855,16 +857,16 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
+ 	if (f2fs_encrypted_inode(inode)) {
+ 		err = fscrypt_get_encryption_info(inode);
+ 		if (err && err != -ENOKEY)
+-			return err;
++			goto out;
  
- 		/*
- 		 * DCACHE_ENCRYPTED_WITH_KEY is set if the dentry is
-@@ -352,18 +354,22 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 		if (fscrypt_has_encryption_key(dir))
- 			fscrypt_set_encrypted_dentry(dentry);
- 		fscrypt_set_d_op(dentry);
--		if (res && res != -ENOKEY)
--			return ERR_PTR(res);
-+		if (err && err != -ENOKEY)
+ 		err = fscrypt_fname_alloc_buffer(inode, F2FS_NAME_LEN, &fstr);
+ 		if (err < 0)
+-			return err;
 +			goto out;
  	}
  
--	if (dentry->d_name.len > F2FS_NAME_LEN)
--		return ERR_PTR(-ENAMETOOLONG);
-+	if (dentry->d_name.len > F2FS_NAME_LEN) {
-+		err = -ENAMETOOLONG;
-+		goto out;
-+	}
- 
- 	de = f2fs_find_entry(dir, &dentry->d_name, &page);
- 	if (!de) {
--		if (IS_ERR(page))
--			return (struct dentry *)page;
--		return d_splice_alias(inode, dentry);
-+		if (IS_ERR(page)) {
-+			err = PTR_ERR(page);
-+			goto out;
-+		}
-+		goto out_splice;
+ 	if (f2fs_has_inline_dentry(inode)) {
+ 		err = f2fs_read_inline_dir(file, ctx, &fstr);
+-		goto out;
++		goto out_free;
  	}
  
- 	ino = le32_to_cpu(de->ino);
-@@ -371,19 +377,21 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 	f2fs_put_page(page, 0);
+ 	/* readahead for multi pages of dir */
+@@ -880,7 +882,7 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
+ 				err = 0;
+ 				continue;
+ 			} else {
+-				goto out;
++				goto out_free;
+ 			}
+ 		}
  
- 	inode = f2fs_iget(dir->i_sb, ino);
--	if (IS_ERR(inode))
--		return ERR_CAST(inode);
-+	if (IS_ERR(inode)) {
-+		err = PTR_ERR(inode);
-+		goto out;
-+	}
- 
- 	if ((dir->i_ino == root_ino) && f2fs_has_inline_dots(dir)) {
- 		err = __recover_dot_dentries(dir, root_ino);
- 		if (err)
--			goto err_out;
-+			goto out_iput;
+@@ -900,8 +902,10 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
+ 		kunmap(dentry_page);
+ 		f2fs_put_page(dentry_page, 1);
  	}
- 
- 	if (f2fs_has_inline_dots(inode)) {
- 		err = __recover_dot_dentries(inode, dir->i_ino);
- 		if (err)
--			goto err_out;
-+			goto out_iput;
- 	}
- 	if (f2fs_encrypted_inode(dir) &&
- 	    (S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode)) &&
-@@ -392,12 +400,16 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 			 "Inconsistent encryption contexts: %lu/%lu",
- 			 dir->i_ino, inode->i_ino);
- 		err = -EPERM;
--		goto err_out;
-+		goto out_iput;
- 	}
-+out_splice:
-+	trace_f2fs_lookup_end(dir, dentry, ino, 0);
- 	return d_splice_alias(inode, dentry);
- 
--err_out:
-+out_iput:
- 	iput(inode);
+-out:
++out_free:
+ 	fscrypt_fname_free_buffer(&fstr);
 +out:
-+	trace_f2fs_lookup_end(dir, dentry, ino, err);
- 	return ERR_PTR(err);
++	trace_f2fs_readdir(inode, start_pos, ctx->pos, err);
+ 	return err < 0 ? err : 0;
  }
  
 diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 407713ef5981..df9dd1b62820 100644
+index df9dd1b62820..6c4dbcc2ee3d 100644
 --- a/include/trace/events/f2fs.h
 +++ b/include/trace/events/f2fs.h
-@@ -728,6 +728,62 @@ TRACE_EVENT(f2fs_get_victim,
- 		__entry->free)
+@@ -784,6 +784,35 @@ TRACE_EVENT(f2fs_lookup_end,
+ 		__entry->err)
  );
  
-+TRACE_EVENT(f2fs_lookup_start,
++TRACE_EVENT(f2fs_readdir,
 +
-+	TP_PROTO(struct inode *dir, struct dentry *dentry, unsigned int flags),
++	TP_PROTO(struct inode *dir, loff_t start_pos, loff_t end_pos, int err),
 +
-+	TP_ARGS(dir, dentry, flags),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,	dev)
-+		__field(ino_t,	ino)
-+		__field(const char *,	name)
-+		__field(unsigned int, flags)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev	= dir->i_sb->s_dev;
-+		__entry->ino	= dir->i_ino;
-+		__entry->name	= dentry->d_name.name;
-+		__entry->flags	= flags;
-+	),
-+
-+	TP_printk("dev = (%d,%d), pino = %lu, name:%s, flags:%u",
-+		show_dev_ino(__entry),
-+		__entry->name,
-+		__entry->flags)
-+);
-+
-+TRACE_EVENT(f2fs_lookup_end,
-+
-+	TP_PROTO(struct inode *dir, struct dentry *dentry, nid_t ino,
-+		int err),
-+
-+	TP_ARGS(dir, dentry, ino, err),
++	TP_ARGS(dir, start_pos, end_pos, err),
 +
 +	TP_STRUCT__entry(
 +		__field(dev_t,	dev)
 +		__field(ino_t,	ino)
-+		__field(const char *,	name)
-+		__field(ino_t,	cino)
++		__field(loff_t,	start)
++		__field(loff_t,	end)
 +		__field(int,	err)
 +	),
 +
 +	TP_fast_assign(
 +		__entry->dev	= dir->i_sb->s_dev;
 +		__entry->ino	= dir->i_ino;
-+		__entry->name	= dentry->d_name.name;
-+		__entry->cino	= ino;
++		__entry->start	= start_pos;
++		__entry->end	= end_pos;
 +		__entry->err	= err;
 +	),
 +
-+	TP_printk("dev = (%d,%d), pino = %lu, name:%s, ino:%lu, err:%d",
++	TP_printk("dev = (%d,%d), ino = %lu, start_pos:%llu, end_pos:%llu, err:%d",
 +		show_dev_ino(__entry),
-+		__entry->name,
-+		__entry->cino,
++		__entry->start,
++		__entry->end,
 +		__entry->err)
 +);
 +
@@ -183,3 +140,8 @@ index 407713ef5981..df9dd1b62820 100644
  	TP_PROTO(struct inode *inode, int mode,
 -- 
 2.13.1.388.g69e6b9b4f4a9
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
