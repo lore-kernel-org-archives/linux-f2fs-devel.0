@@ -1,62 +1,55 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: return error number for quota_write
-Date: Mon, 16 Oct 2017 16:04:44 -0700
-Message-ID: <20171016230444.GA94030@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20171012231500.19489-1-jaegeuk@kernel.org>
- <f84b3522-f53d-d91a-464d-71c194dd5864@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid stale fi->gdirty_list pointer
+Date: Mon, 16 Oct 2017 16:06:26 -0700
+Message-ID: <20171016230626.GB94030@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20171013021411.25850-1-jaegeuk@kernel.org>
+ <7a1ee4f5-78c3-fcb8-c4ef-97c7d49e5a07@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <f84b3522-f53d-d91a-464d-71c194dd5864@huawei.com>
+In-Reply-To: <7a1ee4f5-78c3-fcb8-c4ef-97c7d49e5a07@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Chao Yu <yuchao0@huawei.com>
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 On 10/16, Chao Yu wrote:
-> Hi Jaegeuk,
+> On 2017/10/13 10:14, Jaegeuk Kim wrote:
+> > When doing fault injection test, f2fs_evict_inode() didn't remove gdirty_list
+> > which incurs a kernel panic due to wrong pointer access.
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > 
-> On 2017/10/13 7:15, Jaegeuk Kim wrote:
-> > This patch returns an error number to quota_write in order for quota to handle
-> > it correctly.
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
 > 
-> We should return error number like __generic_file_write_iter, right? it
-> needs to return written bytes if we have written one page or more, otherwise
-> return error number feedbacked from write_begin.
+> Minor thing, how about reverting judgment condition for readability?
 > 
-> So how about reverting 4f31d26b0c17 ("f2fs: return wrong error number on
-> f2fs_quota_write")?
+> if (is_set_ckpt_flags(sbi, CP_ERROR_FLAG))
+> 	f2fs_inode_synced()
 
-I thought like that, but realized the code change is somewhat different between
-them.
+We don't need to expect such the errored corner case first. ;)
 
-Thanks,
-
+> else
+> 	f2fs_bug_on()
 > 
 > Thanks,
 > 
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > > ---
-> >  fs/f2fs/super.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> >  fs/f2fs/inode.c | 2 ++
+> >  1 file changed, 2 insertions(+)
 > > 
-> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > index 2feecf5e7f4c..840a0876005b 100644
-> > --- a/fs/f2fs/super.c
-> > +++ b/fs/f2fs/super.c
-> > @@ -1397,8 +1397,11 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
+> > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> > index f6db9d533ca4..1ae5396c97d6 100644
+> > --- a/fs/f2fs/inode.c
+> > +++ b/fs/f2fs/inode.c
+> > @@ -535,6 +535,8 @@ void f2fs_evict_inode(struct inode *inode)
 > >  
-> >  		err = a_ops->write_begin(NULL, mapping, off, tocopy, 0,
-> >  							&page, NULL);
-> > -		if (unlikely(err))
-> > +		if (unlikely(err)) {
-> > +			if (len == towrite)
-> > +				return err;
-> >  			break;
-> > +		}
+> >  	if (!is_set_ckpt_flags(sbi, CP_ERROR_FLAG))
+> >  		f2fs_bug_on(sbi, is_inode_flag_set(inode, FI_DIRTY_INODE));
+> > +	else
+> > +		f2fs_inode_synced(inode);
 > >  
-> >  		kaddr = kmap_atomic(page);
-> >  		memcpy(kaddr + offset, data, tocopy);
+> >  	/* ino == 0, if f2fs_new_inode() was failed t*/
+> >  	if (inode->i_ino)
 > > 
