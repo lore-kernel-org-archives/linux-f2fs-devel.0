@@ -1,26 +1,26 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: add bug_on when f2fs_gc even fails
- to get one victim
-Date: Mon, 16 Oct 2017 11:25:58 +0800
-Message-ID: <c6e82b46-fe59-ad29-aab7-6c876ebaba5b@huawei.com>
-References: <1507729864-118702-1-git-send-email-yunlong.song@huawei.com>
- <1507901500-162168-1-git-send-email-yunlong.song@huawei.com>
- <7f05bef6-929f-ea7b-9d60-e9a6d8e70d3c@kernel.org>
- <31f2c1b6-58ee-bb52-0b75-f6172b6f801f@huawei.com>
+Subject: Re: [PATCH v2] f2fs: update dirty status for CURSEG as
+ well
+Date: Mon, 16 Oct 2017 11:43:04 +0800
+Message-ID: <e7054aad-bfa6-703d-0c82-3068dd4bed78@huawei.com>
+References: <1507728318-113117-1-git-send-email-yunlong.song@huawei.com>
+ <1507900897-156286-1-git-send-email-yunlong.song@huawei.com>
+ <72f5511f-dcd4-939b-661f-f333738ee691@kernel.org>
+ <3c29460d-36c6-45d5-2c02-b38f0afa5ac2@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
  helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e3w2u-0002Hv-7B
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Oct 2017 03:26:28 +0000
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e3wMI-0004tK-0w
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Oct 2017 03:46:30 +0000
 Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1e3w2s-0007it-Ed
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Oct 2017 03:26:28 +0000
-In-Reply-To: <31f2c1b6-58ee-bb52-0b75-f6172b6f801f@huawei.com>
+ by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1e3wMG-0000jF-65
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Oct 2017 03:46:29 +0000
+In-Reply-To: <3c29460d-36c6-45d5-2c02-b38f0afa5ac2@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -34,83 +34,92 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Yunlong Song <yunlong.song@huawei.com>, Chao Yu <chao@kernel.org>, jaegeuk@kernel.org, yunlong.song@icloud.com
 Cc: linux-fsdevel@vger.kernel.org, miaoxie@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/10/14 20:34, Yunlong Song wrote:
-> Do you mean check out-of-space test? I have tried that but no bugon.
+On 2017/10/14 20:53, Yunlong Song wrote:
+> Oh, yes it is. I found that problem in a kernel tree which does not have 
+> commit
+> c6f82fe90d7458e5fa190a6820bfc24f96b0de4e (Revert "f2fs: put allocate_segment
+> after refresh_sit_entry"). In that kernel, the allocate_segment is still 
+> behind
+> refresh_sit_entry. Now I understand the commit message:
+> "This makes a leak to register dirty segments. I reproduced the issue by
+>      modified postmark which injects a lot of file create/delete/update and
+>      finally triggers huge number of SSR allocations."
+> 
+> The reason is that if refresh_sit_entry is before allocate_segment, then the
+> dirty status of CURSEG is not updated, as a result, the count of dirty 
+> segments
+> is wrong, which is much smaller than its real value. Then the f2fs_gc 
+> can not
+> do its work since it can not even get one victim, then the free segments are
+> used up and then triggers much SSR. So Jay reverts the patch.
+> 
+> It seems there are two options:
+> (1) keep this patch ([PATCH v2] f2fs: update dirty status for CURSEG as 
+> well)
+> and we can recover commit 3436c4bdb30de421d46f58c9174669fbcfd40ce0
+> (f2fs: put allocate_segment after refresh_sit_entry)
+> (2) remove this patch at all
+> 
+> It seems (1) is robust, but (2) avoids unnecessary check.
 
-Yes, test recent f2fs codes with kernel 4.13.0-rc1+ in VM, FYI:
+What about reverting 5e443818fa0b ("f2fs: handle dirty segments inside
+refresh_sit_entry") to keep the original order:
 
-kernel BUG at gc.c:1034!
-invalid opcode: 0000 [#1] SMP
-Hardware name: Xen HVM domU, BIOS 4.1.2_115-900.260_ 11/06/2015
-RIP: 0010:f2fs_gc+0x6e5/0x6f0 [f2fs]
-RSP: 0018:ffffc90004af7b40 EFLAGS: 00010202
-RAX: ffff8801b0a15940 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: ffff8801b0a15940 RSI: ffff8801978d5f00 RDI: ffff880128148048
-RBP: ffffc90004af7c38 R08: ffff8801978d5f00 R09: 0000000000000003
-R10: 0000000000000003 R11: ffff8800060703a0 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000001 R15: ffff8801b4279800
-FS:  00007f23493cb740(0000) GS:ffff880216f00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffd05402ff8 CR3: 00000001bffb3000 CR4: 00000000001406e0
-Call Trace:
- f2fs_balance_fs+0x123/0x140 [f2fs]
- f2fs_create+0x130/0x240 [f2fs]
- path_openat+0xee7/0x1360
- do_filp_open+0x7e/0xd0
- do_sys_open+0x115/0x1f0
- SyS_open+0x1e/0x20
- do_syscall_64+0x6e/0x160
- entry_SYSCALL64_slow_path+0x25/0x25
+1. update sit info
+2. allocate new segment
+3. update dirty status of segment
 
 Thanks,
 
 > 
-> On 2017/10/14 8:17, Chao Yu wrote:
->> On 2017/10/13 21:31, Yunlong Song wrote:
->>> This can help us to debug on some corner case.
->> I can hit this bugon with generic/015 of fstest easily, could have a look at
->> this?
+> On 2017/10/14 8:14, Chao Yu wrote:
+>> On 2017/10/13 21:21, Yunlong Song wrote:
+>>> Without this patch, it will cause all the free segments using up in some
+>>> corner case. For example, there are 100 segments, and 20 of them are
+>>> reserved for ovp. If 79 segments are full of data, segment 80 becomes
+>>> CURSEG segment, write 512 blocks and then delete 511 blocks. Since it is
+>>> CURSEG segment, the __locate_dirty_segment will not update its dirty
+>>> status. Then the dirty_segments(sbi) is 0, f2fs_gc will fail to
+>>> get_victim, and f2fs_balance_fs will fail to trigger gc action. After
+>>> f2fs_balance_fs returns, f2fs can continue to write data to segment 81.
+>>> Again, segment 81 becomes CURSEG segment, write 512 blocks and delete
+>>> 511 blocks, the dirty_segments(sbi) is 0 and f2fs_gc fail again. This
+>>> can finally use up all the free segments and cause panic.
+>> Look into this patch again, I found refresh_sit_entry is called after
+>> ->allocate_segment, so if all 512 blocks were allocated, log header should
+>> have been moved to another segment, so locate_dirty_segment in
+>> refresh_sit_entry should update dirty status of previous segment correctly,
+>> anything I'm missing?
 >>
 >> Thanks,
 >>
 >>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
 >>> ---
->>>   fs/f2fs/gc.c | 6 +++++-
->>>   1 file changed, 5 insertions(+), 1 deletion(-)
+>>>   fs/f2fs/segment.c | 4 ++--
+>>>   1 file changed, 2 insertions(+), 2 deletions(-)
 >>>
->>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>> index 197ebf4..2b03202 100644
->>> --- a/fs/f2fs/gc.c
->>> +++ b/fs/f2fs/gc.c
->>> @@ -986,6 +986,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>>   		.ilist = LIST_HEAD_INIT(gc_list.ilist),
->>>   		.iroot = RADIX_TREE_INIT(GFP_NOFS),
->>>   	};
->>> +	bool need_fggc = false;
+>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>> index bfbcff8..0fce076 100644
+>>> --- a/fs/f2fs/segment.c
+>>> +++ b/fs/f2fs/segment.c
+>>> @@ -687,7 +687,7 @@ static void __locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
+>>>   	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
 >>>   
->>>   	trace_f2fs_gc_begin(sbi->sb, sync, background,
->>>   				get_pages(sbi, F2FS_DIRTY_NODES),
->>> @@ -1018,8 +1019,10 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>>   			if (ret)
->>>   				goto stop;
->>>   		}
->>> -		if (has_not_enough_free_secs(sbi, 0, 0))
->>> +		if (has_not_enough_free_secs(sbi, 0, 0)) {
->>>   			gc_type = FG_GC;
->>> +			need_fggc = true;
->>> +		}
->>>   	}
+>>>   	/* need not be added */
+>>> -	if (IS_CURSEG(sbi, segno))
+>>> +	if (IS_CURSEG(sbi, segno) && dirty_type == PRE)
+>>>   		return;
 >>>   
->>>   	/* f2fs_balance_fs doesn't need to do BG_GC in critical path. */
->>> @@ -1028,6 +1031,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>>   		goto stop;
->>>   	}
->>>   	if (!__get_victim(sbi, &segno, gc_type)) {
->>> +		f2fs_bug_on(sbi, !total_freed && need_fggc);
->>>   		ret = -ENODATA;
->>>   		goto stop;
->>>   	}
+>>>   	if (!test_and_set_bit(segno, dirty_i->dirty_segmap[dirty_type]))
+>>> @@ -737,7 +737,7 @@ static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
+>>>   	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
+>>>   	unsigned short valid_blocks;
+>>>   
+>>> -	if (segno == NULL_SEGNO || IS_CURSEG(sbi, segno))
+>>> +	if (segno == NULL_SEGNO)
+>>>   		return;
+>>>   
+>>>   	mutex_lock(&dirty_i->seglist_lock);
 >>>
 >> .
 >>
