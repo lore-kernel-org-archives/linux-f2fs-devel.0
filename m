@@ -1,57 +1,54 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs-tools: don't finalize device early
-Date: Sat, 14 Oct 2017 12:22:52 -0700
-Message-ID: <20171014192252.52845-1-jaegeuk@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: return error number for quota_write
+Date: Mon, 16 Oct 2017 09:52:05 +0800
+Message-ID: <f84b3522-f53d-d91a-464d-71c194dd5864@huawei.com>
+References: <20171012231500.19489-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
- helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <jaegeuk@kernel.org>) id 1e3S1X-0007tX-IL
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Oct 2017 19:23:03 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1e3S1W-00007B-KI
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Oct 2017 19:23:03 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171012231500.19489-1-jaegeuk@kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-We should close the device by main body of each tools.
+Hi Jaegeuk,
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fsck/mount.c | 3 ---
- 1 file changed, 3 deletions(-)
+On 2017/10/13 7:15, Jaegeuk Kim wrote:
+> This patch returns an error number to quota_write in order for quota to handle
+> it correctly.
 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 7a28314..c78314e 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -1941,9 +1941,6 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
- 	if (flags & CP_NAT_BITS_FLAG)
- 		write_nat_bits(sbi, sb, cp, sbi->cur_cp);
- 
--	/* in case of sudden power off */
--	f2fs_finalize_device();
--
- 	/* write the last cp */
- 	ret = dev_write_block(cp, cp_blk_no++);
- 	ASSERT(ret >= 0);
--- 
-2.14.0.rc1.383.gd1ce394fe2-goog
+We should return error number like __generic_file_write_iter, right? it
+needs to return written bytes if we have written one page or more, otherwise
+return error number feedbacked from write_begin.
 
+So how about reverting 4f31d26b0c17 ("f2fs: return wrong error number on
+f2fs_quota_write")?
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+Thanks,
+
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/super.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 2feecf5e7f4c..840a0876005b 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -1397,8 +1397,11 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
+>  
+>  		err = a_ops->write_begin(NULL, mapping, off, tocopy, 0,
+>  							&page, NULL);
+> -		if (unlikely(err))
+> +		if (unlikely(err)) {
+> +			if (len == towrite)
+> +				return err;
+>  			break;
+> +		}
+>  
+>  		kaddr = kmap_atomic(page);
+>  		memcpy(kaddr + offset, data, tocopy);
+> 
