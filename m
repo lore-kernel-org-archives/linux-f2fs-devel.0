@@ -1,72 +1,141 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: fix to correct no_fggc_candidate
-Date: Tue, 17 Oct 2017 23:01:39 +0800
-Message-ID: <20171017150139.6348-1-chao@kernel.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: handle error case when adding xattr
+ entry
+Date: Tue, 17 Oct 2017 09:41:54 -0700
+Message-ID: <20171017164154.GA5509@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20171016230642.94228-1-jaegeuk@kernel.org>
+ <cfca102c-fcd9-4d43-80a7-1684a59f5e95@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
- helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <chao@kernel.org>) id 1e4TNS-0003j2-9d
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Oct 2017 15:01:54 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1e4TNQ-0005PS-Ds
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Oct 2017 15:01:54 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <cfca102c-fcd9-4d43-80a7-1684a59f5e95@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Chao Yu <yuchao0@huawei.com>
+On 10/17, Chao Yu wrote:
+> On 2017/10/17 7:06, Jaegeuk Kim wrote:
+> > This patch fixes recovering incomplete xattr entries remaining in inline xattr
+> > and xattr block, caused by any kind of errors.
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/xattr.c | 48 ++++++++++++++++++++++++++++--------------------
+> >  1 file changed, 28 insertions(+), 20 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+> > index e74a4d7f744a..5a9c5e6ad714 100644
+> > --- a/fs/f2fs/xattr.c
+> > +++ b/fs/f2fs/xattr.c
+> > @@ -389,10 +389,11 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
+> >  {
+> >  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> >  	size_t inline_size = inline_xattr_size(inode);
+> > -	void *xattr_addr;
+> > +	struct page *in_page = NULL;
+> > +	void *xattr_addr, *inline_addr;
+> >  	struct page *xpage;
+> >  	nid_t new_nid = 0;
+> > -	int err;
+> > +	int err = 0;
+> >  
+> >  	if (hsize > inline_size && !F2FS_I(inode)->i_xattr_nid)
+> >  		if (!alloc_nid(sbi, &new_nid))
+> > @@ -400,30 +401,30 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
+> >  
+> >  	/* write to inline xattr */
+> >  	if (inline_size) {
+> > -		struct page *page = NULL;
+> > -		void *inline_addr;
+> > -
+> >  		if (ipage) {
+> >  			inline_addr = inline_xattr_addr(inode, ipage);
+> > -			f2fs_wait_on_page_writeback(ipage, NODE, true);
+> > -			set_page_dirty(ipage);
+> >  		} else {
+> > -			page = get_node_page(sbi, inode->i_ino);
+> > -			if (IS_ERR(page)) {
+> > +			in_page = get_node_page(sbi, inode->i_ino);
+> > +			if (IS_ERR(in_page)) {
+> >  				alloc_nid_failed(sbi, new_nid);
+> > -				return PTR_ERR(page);
+> > +				return PTR_ERR(in_page);
+> >  			}
+> > -			inline_addr = inline_xattr_addr(inode, page);
+> > -			f2fs_wait_on_page_writeback(page, NODE, true);
+> > +			inline_addr = inline_xattr_addr(inode, in_page);
+> >  		}
+> > -		memcpy(inline_addr, txattr_addr, inline_size);
+> > -		f2fs_put_page(page, 1);
+> >  
+> > +		f2fs_wait_on_page_writeback(ipage ? ipage : in_page,
+> > +							NODE, true);
+> >  		/* no need to use xattr node block */
+> >  		if (hsize <= inline_size) {
+> >  			err = truncate_xattr_node(inode, ipage);
+> 
+> truncate_xattr_node(inode, ipage ? ipage : in_page);
 
-There may be extreme case as below:
+No, that should be ipage.
 
-For one section contains one segment, and there are total 100 segments
-with 10% over-privision ratio in f2fs partition, fggc_threshold will
-be rounded down to 460 instead of 460.8 as below caclulation:
+Thanks,
 
-sbi->fggc_threshold = div_u64((u64)(main_count - ovp_count) *
-			BLKS_PER_SEC(sbi), (main_count - resv_count));
-
-If section usage is as:
-
-As valid block number in all sections is large than fggc_threshold, so
-none of them will be chosen as candidate due to incorrect fggc_threshold.
-
-Let's just soften the term of choosing foreground GC candidates.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/segment.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 5a1f7b9c8a72..8d93652d5b6a 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -731,7 +731,7 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
- static inline bool no_fggc_candidate(struct f2fs_sb_info *sbi,
- 						unsigned int secno)
- {
--	if (get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true) >=
-+	if (get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true) >
- 						sbi->fggc_threshold)
- 		return true;
- 	return false;
--- 
-2.14.1.145.gb3622a4ee
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> Please add:
+> 
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> 
+> Thanks,
+> 
+> >  			alloc_nid_failed(sbi, new_nid);
+> > -			return err;
+> > +			if (err) {
+> > +				f2fs_put_page(in_page, 1);
+> > +				return err;
+> > +			}
+> > +			memcpy(inline_addr, txattr_addr, inline_size);
+> > +			set_page_dirty(ipage ? ipage : in_page);
+> > +			goto in_page_out;
+> >  		}
+> >  	}
+> >  
+> > @@ -432,7 +433,7 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
+> >  		xpage = get_node_page(sbi, F2FS_I(inode)->i_xattr_nid);
+> >  		if (IS_ERR(xpage)) {
+> >  			alloc_nid_failed(sbi, new_nid);
+> > -			return PTR_ERR(xpage);
+> > +			goto in_page_out;
+> >  		}
+> >  		f2fs_bug_on(sbi, new_nid);
+> >  		f2fs_wait_on_page_writeback(xpage, NODE, true);
+> > @@ -442,17 +443,24 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
+> >  		xpage = new_node_page(&dn, XATTR_NODE_OFFSET);
+> >  		if (IS_ERR(xpage)) {
+> >  			alloc_nid_failed(sbi, new_nid);
+> > -			return PTR_ERR(xpage);
+> > +			goto in_page_out;
+> >  		}
+> >  		alloc_nid_done(sbi, new_nid);
+> >  	}
+> > -
+> >  	xattr_addr = page_address(xpage);
+> > +
+> > +	if (inline_size)
+> > +		memcpy(inline_addr, txattr_addr, inline_size);
+> >  	memcpy(xattr_addr, txattr_addr + inline_size, VALID_XATTR_BLOCK_SIZE);
+> > +
+> > +	if (inline_size)
+> > +		set_page_dirty(ipage ? ipage : in_page);
+> >  	set_page_dirty(xpage);
+> > -	f2fs_put_page(xpage, 1);
+> >  
+> > -	return 0;
+> > +	f2fs_put_page(xpage, 1);
+> > +in_page_out:
+> > +	f2fs_put_page(in_page, 1);
+> > +	return err;
+> >  }
+> >  
+> >  int f2fs_getxattr(struct inode *inode, int index, const char *name,
+> > 
