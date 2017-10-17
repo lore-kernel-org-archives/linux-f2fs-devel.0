@@ -1,24 +1,20 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH 1/1] f2fs: simplify the calculation of
- fggc_threshold
-Date: Tue, 17 Oct 2017 22:33:08 +0800
-Message-ID: <a1c60acf-1a71-9acd-279b-341440d14981@kernel.org>
-References: <1508244140-8831-1-git-send-email-sunqiuyang@huawei.com>
+Subject: [PATCH] f2fs: fix to correct no_fggc_candidate
+Date: Tue, 17 Oct 2017 23:01:39 +0800
+Message-ID: <20171017150139.6348-1-chao@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <chao@kernel.org>) id 1e4Svv-0002y7-QH
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Oct 2017 14:33:27 +0000
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <chao@kernel.org>) id 1e4TNS-0003j2-9d
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Oct 2017 15:01:54 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1e4Svu-0003mK-Vq
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Oct 2017 14:33:27 +0000
-In-Reply-To: <1508244140-8831-1-git-send-email-sunqiuyang@huawei.com>
-Content-Language: en-US
+ by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+ (Exim 4.76) id 1e4TNQ-0005PS-Ds
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Oct 2017 15:01:54 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,50 +24,48 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: sunqiuyang <sunqiuyang@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/10/17 20:42, sunqiuyang wrote:
-> From: Qiuyang Sun <sunqiuyang@huawei.com>
-> 
-> Do not need to convert segment counts to blocks for this calculation.
-> 
-> Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com> 
+From: Chao Yu <yuchao0@huawei.com>
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+There may be extreme case as below:
 
-Thanks,
+For one section contains one segment, and there are total 100 segments
+with 10% over-privision ratio in f2fs partition, fggc_threshold will
+be rounded down to 460 instead of 460.8 as below caclulation:
 
-> ---
->  fs/f2fs/gc.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 197ebf4..9df8cae 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -1073,16 +1073,16 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->  
->  void build_gc_manager(struct f2fs_sb_info *sbi)
->  {
-> -	u64 main_count, resv_count, ovp_count;
-> +	unsigned int main_count, resv_count, ovp_count;
->  
->  	DIRTY_I(sbi)->v_ops = &default_v_ops;
->  
->  	/* threshold of # of valid blocks in a section for victims of FG_GC */
-> -	main_count = SM_I(sbi)->main_segments << sbi->log_blocks_per_seg;
-> -	resv_count = SM_I(sbi)->reserved_segments << sbi->log_blocks_per_seg;
-> -	ovp_count = SM_I(sbi)->ovp_segments << sbi->log_blocks_per_seg;
-> +	main_count = SM_I(sbi)->main_segments;
-> +	resv_count = SM_I(sbi)->reserved_segments;
-> +	ovp_count = SM_I(sbi)->ovp_segments;
->  
-> -	sbi->fggc_threshold = div64_u64((main_count - ovp_count) *
-> +	sbi->fggc_threshold = div_u64((u64)(main_count - ovp_count) *
->  				BLKS_PER_SEC(sbi), (main_count - resv_count));
->  
->  	/* give warm/cold data area from slower device */
-> 
+sbi->fggc_threshold = div_u64((u64)(main_count - ovp_count) *
+			BLKS_PER_SEC(sbi), (main_count - resv_count));
+
+If section usage is as:
+
+As valid block number in all sections is large than fggc_threshold, so
+none of them will be chosen as candidate due to incorrect fggc_threshold.
+
+Let's just soften the term of choosing foreground GC candidates.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/segment.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 5a1f7b9c8a72..8d93652d5b6a 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -731,7 +731,7 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
+ static inline bool no_fggc_candidate(struct f2fs_sb_info *sbi,
+ 						unsigned int secno)
+ {
+-	if (get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true) >=
++	if (get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true) >
+ 						sbi->fggc_threshold)
+ 		return true;
+ 	return false;
+-- 
+2.14.1.145.gb3622a4ee
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
