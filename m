@@ -1,73 +1,87 @@
-From: sunqiuyang <sunqiuyang@huawei.com>
-Subject: [PATCH 1/1] f2fs: simplify the calculation of
- fggc_threshold
-Date: Tue, 17 Oct 2017 20:42:20 +0800
-Message-ID: <1508244140-8831-1-git-send-email-sunqiuyang@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: return error number for quota_write
+Date: Tue, 17 Oct 2017 21:12:14 +0800
+Message-ID: <79d07284-167a-3b12-bed3-cea138ab4eb7@kernel.org>
+References: <20171012231500.19489-1-jaegeuk@kernel.org>
+ <f84b3522-f53d-d91a-464d-71c194dd5864@huawei.com>
+ <20171016230444.GA94030@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
- helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <sunqiuyang@huawei.com>)
- id 1e4R75-0004Y1-Hp
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Oct 2017 12:36:51 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1e4R73-0007fj-U3
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Oct 2017 12:36:51 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: sunqiuyang@huawei.com
-
-From: Qiuyang Sun <sunqiuyang@huawei.com>
-
-Do not need to convert segment counts to blocks for this calculation.
-
-Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com> 
----
- fs/f2fs/gc.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 197ebf4..9df8cae 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1073,16 +1073,16 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
- 
- void build_gc_manager(struct f2fs_sb_info *sbi)
- {
--	u64 main_count, resv_count, ovp_count;
-+	unsigned int main_count, resv_count, ovp_count;
- 
- 	DIRTY_I(sbi)->v_ops = &default_v_ops;
- 
- 	/* threshold of # of valid blocks in a section for victims of FG_GC */
--	main_count = SM_I(sbi)->main_segments << sbi->log_blocks_per_seg;
--	resv_count = SM_I(sbi)->reserved_segments << sbi->log_blocks_per_seg;
--	ovp_count = SM_I(sbi)->ovp_segments << sbi->log_blocks_per_seg;
-+	main_count = SM_I(sbi)->main_segments;
-+	resv_count = SM_I(sbi)->reserved_segments;
-+	ovp_count = SM_I(sbi)->ovp_segments;
- 
--	sbi->fggc_threshold = div64_u64((main_count - ovp_count) *
-+	sbi->fggc_threshold = div_u64((u64)(main_count - ovp_count) *
- 				BLKS_PER_SEC(sbi), (main_count - resv_count));
- 
- 	/* give warm/cold data area from slower device */
--- 
-1.8.3.1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171016230444.GA94030@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+
+On 2017/10/17 7:04, Jaegeuk Kim wrote:
+> On 10/16, Chao Yu wrote:
+>> Hi Jaegeuk,
+>>
+>> On 2017/10/13 7:15, Jaegeuk Kim wrote:
+>>> This patch returns an error number to quota_write in order for quota to handle
+>>> it correctly.
+>>
+>> We should return error number like __generic_file_write_iter, right? it
+>> needs to return written bytes if we have written one page or more, otherwise
+>> return error number feedbacked from write_begin.
+>>
+>> So how about reverting 4f31d26b0c17 ("f2fs: return wrong error number on
+>> f2fs_quota_write")?
+> 
+> I thought like that, but realized the code change is somewhat different between
+> them.
+
+Hmm... main structure of codes here is copied from other file systems, is there
+the same problem in *_quota_write of other file systems?
+
+BTW, it looks making below judgment condition being useless.
+
+	if (len == towrite)
+		return 0;
+
+Thanks,
+
+> 
+> Thanks,
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fs/f2fs/super.c | 5 ++++-
+>>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>> index 2feecf5e7f4c..840a0876005b 100644
+>>> --- a/fs/f2fs/super.c
+>>> +++ b/fs/f2fs/super.c
+>>> @@ -1397,8 +1397,11 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
+>>>  
+>>>  		err = a_ops->write_begin(NULL, mapping, off, tocopy, 0,
+>>>  							&page, NULL);
+>>> -		if (unlikely(err))
+>>> +		if (unlikely(err)) {
+>>> +			if (len == towrite)
+>>> +				return err;
+>>>  			break;
+>>> +		}
+>>>  
+>>>  		kaddr = kmap_atomic(page);
+>>>  		memcpy(kaddr + offset, data, tocopy);
+>>>
+> 
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
