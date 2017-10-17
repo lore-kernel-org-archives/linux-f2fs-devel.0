@@ -1,24 +1,21 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs-tools: don't finalize device early
-Date: Mon, 16 Oct 2017 16:16:37 -0700
-Message-ID: <20171016231637.GC94030@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20171014192252.52845-1-jaegeuk@kernel.org>
- <e902d75b-4e51-158b-ddbe-0f06102bb387@huawei.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH] fsck: introduce generic function
+ f2fs_fsync_device
+Date: Tue, 17 Oct 2017 15:03:51 +0800
+Message-ID: <1508223831-29251-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <jaegeuk@kernel.org>) id 1e4Eco-0000B1-SM
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Oct 2017 23:16:46 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1e4Eco-0001Z0-6k
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Oct 2017 23:16:46 +0000
-Content-Disposition: inline
-In-Reply-To: <e902d75b-4e51-158b-ddbe-0f06102bb387@huawei.com>
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <heyunlei@huawei.com>) id 1e4LyA-0003ie-NM
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Oct 2017 07:07:18 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191])
+ by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1e4Ly8-0000fy-Uu
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Oct 2017 07:07:18 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,49 +25,71 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: He Yunlei <heyunlei@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net, yuchao0@huawei.com, jaegeuk@kernel.org
+Cc: Yunlei He <heyunlei@huawei.com>
 
-On 10/16, Chao Yu wrote:
-> On 2017/10/15 3:22, Jaegeuk Kim wrote:
-> > We should close the device by main body of each tools.
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fsck/mount.c | 3 ---
-> >  1 file changed, 3 deletions(-)
-> > 
-> > diff --git a/fsck/mount.c b/fsck/mount.c
-> > index 7a28314..c78314e 100644
-> > --- a/fsck/mount.c
-> > +++ b/fsck/mount.c
-> > @@ -1941,9 +1941,6 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
-> >  	if (flags & CP_NAT_BITS_FLAG)
-> >  		write_nat_bits(sbi, sb, cp, sbi->cur_cp);
-> >  
-> > -	/* in case of sudden power off */
-> > -	f2fs_finalize_device();
-> 
-> IIRC, Yunlei wants to fsync previous data in checkpoint area before write last
-> CP pack, in order to avoid checkpoint corruption in sudden-power-off case.
-> 
-> Shouldn't we use fsync(main-device-fd) here instead?
+We use f2fs_finalize_device to fsync previous data in
+checkpoint area before write last CP pack, in order to avoid
+cp corruption in sudden-power-off case. But this function will
+close the device, so this patch introduce a function to call
+fsync() only.
 
-Yunlei,
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fsck/mount.c      |  2 +-
+ include/f2fs_fs.h |  1 +
+ lib/libf2fs_io.c  | 10 ++++++++++
+ 3 files changed, 12 insertions(+), 1 deletion(-)
 
-If it's correct, could you write a patch introducing a generic function to call
-fsync() only? I should have reviewed the original patch tho.
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 7a8aeae..e234fe9 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -1939,7 +1939,7 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
+ 		write_nat_bits(sbi, sb, cp, sbi->cur_cp);
+ 
+ 	/* in case of sudden power off */
+-	f2fs_finalize_device();
++	f2fs_fsync_device();
+ 
+ 	/* write the last cp */
+ 	ret = dev_write_block(cp, cp_blk_no++);
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index bd609b9..3673817 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -1013,6 +1013,7 @@ extern int f2fs_dev_is_umounted(char *);
+ extern int f2fs_get_device_info(void);
+ extern int get_device_info(int);
+ extern void f2fs_finalize_device(void);
++extern void f2fs_fsync_device(void);
+ 
+ extern int dev_read(void *, __u64, size_t);
+ extern int dev_write(void *, __u64, size_t);
+diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
+index aa99068..50ff171 100644
+--- a/lib/libf2fs_io.c
++++ b/lib/libf2fs_io.c
+@@ -193,6 +193,16 @@ int dev_reada_block(__u64 blk_addr)
+ 	return dev_readahead(blk_addr << F2FS_BLKSIZE_BITS, F2FS_BLKSIZE);
+ }
+ 
++void f2fs_fsync_device(void)
++{
++	int i;
++
++	for (i = 0; i < c.ndevs; i++) {
++		if (fsync(c.devices[i].fd) < 0)
++			MSG(0, "\tError: Could not conduct fsync!!!\n");
++	}
++}
++
+ void f2fs_finalize_device(void)
+ {
+ 	int i;
+-- 
+2.7.4
 
-Thanks,
-
-> 
-> Thanks,
-> 
-> > -
-> >  	/* write the last cp */
-> >  	ret = dev_write_block(cp, cp_blk_no++);
-> >  	ASSERT(ret >= 0);
-> > 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
