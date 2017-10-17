@@ -1,141 +1,97 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: handle error case when adding xattr
- entry
-Date: Tue, 17 Oct 2017 09:41:54 -0700
-Message-ID: <20171017164154.GA5509@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20171016230642.94228-1-jaegeuk@kernel.org>
- <cfca102c-fcd9-4d43-80a7-1684a59f5e95@kernel.org>
+Subject: Re: [PATCH] f2fs: avoid stale fi->gdirty_list pointer
+Date: Tue, 17 Oct 2017 11:16:43 -0700
+Message-ID: <20171017181643.GA10794@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20171013021411.25850-1-jaegeuk@kernel.org>
+ <7a1ee4f5-78c3-fcb8-c4ef-97c7d49e5a07@huawei.com>
+ <20171016230626.GB94030@jaegeuk-macbookpro.roam.corp.google.com>
+ <dc7a59ca-ae19-c401-ae60-517034d9e9ca@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+ helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <jaegeuk@kernel.org>) id 1e4WQA-0003Fp-EX
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Oct 2017 18:16:54 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+ (Exim 4.76) id 1e4WQ9-0003HI-6R
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Oct 2017 18:16:54 +0000
 Content-Disposition: inline
-In-Reply-To: <cfca102c-fcd9-4d43-80a7-1684a59f5e95@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <dc7a59ca-ae19-c401-ae60-517034d9e9ca@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 On 10/17, Chao Yu wrote:
 > On 2017/10/17 7:06, Jaegeuk Kim wrote:
-> > This patch fixes recovering incomplete xattr entries remaining in inline xattr
-> > and xattr block, caused by any kind of errors.
+> > On 10/16, Chao Yu wrote:
+> >> On 2017/10/13 10:14, Jaegeuk Kim wrote:
+> >>> When doing fault injection test, f2fs_evict_inode() didn't remove gdirty_list
+> >>> which incurs a kernel panic due to wrong pointer access.
+> >>>
+> >>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>
+> >> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> >>
+> >> Minor thing, how about reverting judgment condition for readability?
+> >>
+> >> if (is_set_ckpt_flags(sbi, CP_ERROR_FLAG))
+> >> 	f2fs_inode_synced()
 > > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/xattr.c | 48 ++++++++++++++++++++++++++++--------------------
-> >  1 file changed, 28 insertions(+), 20 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-> > index e74a4d7f744a..5a9c5e6ad714 100644
-> > --- a/fs/f2fs/xattr.c
-> > +++ b/fs/f2fs/xattr.c
-> > @@ -389,10 +389,11 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
-> >  {
-> >  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> >  	size_t inline_size = inline_xattr_size(inode);
-> > -	void *xattr_addr;
-> > +	struct page *in_page = NULL;
-> > +	void *xattr_addr, *inline_addr;
-> >  	struct page *xpage;
-> >  	nid_t new_nid = 0;
-> > -	int err;
-> > +	int err = 0;
-> >  
-> >  	if (hsize > inline_size && !F2FS_I(inode)->i_xattr_nid)
-> >  		if (!alloc_nid(sbi, &new_nid))
-> > @@ -400,30 +401,30 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
-> >  
-> >  	/* write to inline xattr */
-> >  	if (inline_size) {
-> > -		struct page *page = NULL;
-> > -		void *inline_addr;
-> > -
-> >  		if (ipage) {
-> >  			inline_addr = inline_xattr_addr(inode, ipage);
-> > -			f2fs_wait_on_page_writeback(ipage, NODE, true);
-> > -			set_page_dirty(ipage);
-> >  		} else {
-> > -			page = get_node_page(sbi, inode->i_ino);
-> > -			if (IS_ERR(page)) {
-> > +			in_page = get_node_page(sbi, inode->i_ino);
-> > +			if (IS_ERR(in_page)) {
-> >  				alloc_nid_failed(sbi, new_nid);
-> > -				return PTR_ERR(page);
-> > +				return PTR_ERR(in_page);
-> >  			}
-> > -			inline_addr = inline_xattr_addr(inode, page);
-> > -			f2fs_wait_on_page_writeback(page, NODE, true);
-> > +			inline_addr = inline_xattr_addr(inode, in_page);
-> >  		}
-> > -		memcpy(inline_addr, txattr_addr, inline_size);
-> > -		f2fs_put_page(page, 1);
-> >  
-> > +		f2fs_wait_on_page_writeback(ipage ? ipage : in_page,
-> > +							NODE, true);
-> >  		/* no need to use xattr node block */
-> >  		if (hsize <= inline_size) {
-> >  			err = truncate_xattr_node(inode, ipage);
+> > We don't need to expect such the errored corner case first. ;)
 > 
-> truncate_xattr_node(inode, ipage ? ipage : in_page);
+> Alright, making compiler being aware of this by using {un,}likely? :)
 
-No, that should be ipage.
+Yup, added. ;)
 
-Thanks,
-
-> Please add:
-> 
-> Reviewed-by: Chao Yu <yuchao0@huawei.com>
 > 
 > Thanks,
 > 
-> >  			alloc_nid_failed(sbi, new_nid);
-> > -			return err;
-> > +			if (err) {
-> > +				f2fs_put_page(in_page, 1);
-> > +				return err;
-> > +			}
-> > +			memcpy(inline_addr, txattr_addr, inline_size);
-> > +			set_page_dirty(ipage ? ipage : in_page);
-> > +			goto in_page_out;
-> >  		}
-> >  	}
-> >  
-> > @@ -432,7 +433,7 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
-> >  		xpage = get_node_page(sbi, F2FS_I(inode)->i_xattr_nid);
-> >  		if (IS_ERR(xpage)) {
-> >  			alloc_nid_failed(sbi, new_nid);
-> > -			return PTR_ERR(xpage);
-> > +			goto in_page_out;
-> >  		}
-> >  		f2fs_bug_on(sbi, new_nid);
-> >  		f2fs_wait_on_page_writeback(xpage, NODE, true);
-> > @@ -442,17 +443,24 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
-> >  		xpage = new_node_page(&dn, XATTR_NODE_OFFSET);
-> >  		if (IS_ERR(xpage)) {
-> >  			alloc_nid_failed(sbi, new_nid);
-> > -			return PTR_ERR(xpage);
-> > +			goto in_page_out;
-> >  		}
-> >  		alloc_nid_done(sbi, new_nid);
-> >  	}
-> > -
-> >  	xattr_addr = page_address(xpage);
-> > +
-> > +	if (inline_size)
-> > +		memcpy(inline_addr, txattr_addr, inline_size);
-> >  	memcpy(xattr_addr, txattr_addr + inline_size, VALID_XATTR_BLOCK_SIZE);
-> > +
-> > +	if (inline_size)
-> > +		set_page_dirty(ipage ? ipage : in_page);
-> >  	set_page_dirty(xpage);
-> > -	f2fs_put_page(xpage, 1);
-> >  
-> > -	return 0;
-> > +	f2fs_put_page(xpage, 1);
-> > +in_page_out:
-> > +	f2fs_put_page(in_page, 1);
-> > +	return err;
-> >  }
-> >  
-> >  int f2fs_getxattr(struct inode *inode, int index, const char *name,
 > > 
+> >> else
+> >> 	f2fs_bug_on()
+> >>
+> >> Thanks,
+> >>
+> >>> ---
+> >>>  fs/f2fs/inode.c | 2 ++
+> >>>  1 file changed, 2 insertions(+)
+> >>>
+> >>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> >>> index f6db9d533ca4..1ae5396c97d6 100644
+> >>> --- a/fs/f2fs/inode.c
+> >>> +++ b/fs/f2fs/inode.c
+> >>> @@ -535,6 +535,8 @@ void f2fs_evict_inode(struct inode *inode)
+> >>>  
+> >>>  	if (!is_set_ckpt_flags(sbi, CP_ERROR_FLAG))
+> >>>  		f2fs_bug_on(sbi, is_inode_flag_set(inode, FI_DIRTY_INODE));
+> >>> +	else
+> >>> +		f2fs_inode_synced(inode);
+> >>>  
+> >>>  	/* ino == 0, if f2fs_new_inode() was failed t*/
+> >>>  	if (inode->i_ino)
+> >>>
+> > 
+> > ------------------------------------------------------------------------------
+> > Check out the vibrant tech community on one of the world's most
+> > engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> > _______________________________________________
+> > Linux-f2fs-devel mailing list
+> > Linux-f2fs-devel@lists.sourceforge.net
+> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> > 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
