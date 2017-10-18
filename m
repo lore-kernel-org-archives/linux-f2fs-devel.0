@@ -1,70 +1,52 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: expose some sectors to user in inline data or
- dentry case
-Date: Wed, 18 Oct 2017 10:32:17 +0800
-Message-ID: <4e39c0c5-2cfb-5dd5-4c29-5bff7b2373f8@huawei.com>
-References: <20171013173145.36510-1-jaegeuk@kernel.org>
- <6ecc1778-bcf8-c07d-037a-dd733e247fa9@huawei.com>
- <20171017220327.GA20428@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: [PATCH v2] f2fs: fix to correct no_fggc_candidate
+Date: Wed, 18 Oct 2017 10:34:14 +0800
+Message-ID: <20171018023414.23078-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171017220327.GA20428@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/10/18 6:03, Jaegeuk Kim wrote:
-> On 10/16, Chao Yu wrote:
->> On 2017/10/14 1:31, Jaegeuk Kim wrote:
->>> If there's some data written through inline data or dentry, we need to shouw
->>> st_blocks. This fixes reporting zero blocks even though there is small written
->>> data.
->>>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>
->> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->>
->> Thanks,
->>
->>> ---
->>>  fs/f2fs/file.c | 5 +++++
->>>  1 file changed, 5 insertions(+)
->>>
->>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>> index 2eb3efe92018..f7be6c394fa8 100644
->>> --- a/fs/f2fs/file.c
->>> +++ b/fs/f2fs/file.c
->>> @@ -698,6 +698,11 @@ int f2fs_getattr(const struct path *path, struct kstat *stat,
->>>  				  STATX_ATTR_NODUMP);
->>>  
->>>  	generic_fillattr(inode, stat);
->>> +
->>> +	/* we need to show initial sectors used for inline_data/dentries */
->>> +	if (f2fs_has_inline_data(inode) || f2fs_has_inline_dentry(inode))
-> 
-> FYI;
-> I added S_ISREG(inode->i_mode) with f2fs_has_inline_data() to avoid quotacheck
-> error.
+There may be extreme case as below:
 
-If this patch is related to quotacheck issue, I doubt that there will be
-problemetic, in no journalled quota case, fs quota system won't stat blocks
-in inline file, however, after SPO, when using quotacheck to scan file to
-recover quota info, blocks of inline file showed in getattr can be stated
-into quota. That would be inconsistent.
+For one section contains one segment, and there are total 100 segments
+with 10% over-privision ratio in f2fs partition, fggc_threshold will
+be rounded down to 460 instead of 460.8 as below caclulation:
 
-Thanks,
+sbi->fggc_threshold = div_u64((u64)(main_count - ovp_count) *
+			BLKS_PER_SEC(sbi), (main_count - resv_count));
 
-> 
->>> +		stat->blocks += (stat->size + 511) >> 9;
->>> +
->>>  	return 0;
->>>  }
->>>  
->>>
-> 
-> .
-> 
+If section usage is as:
+60 segments which contain 460 valid blocks
+40 segments which contain 462 valid blocks
+
+As valid block number in all sections is large than fggc_threshold, so
+none of them will be chosen as candidate due to incorrect fggc_threshold.
+
+Let's just soften the term of choosing foreground GC candidates.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v2:
+- add missing section usage info.
+ fs/f2fs/segment.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 5a1f7b9c8a72..8d93652d5b6a 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -731,7 +731,7 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
+ static inline bool no_fggc_candidate(struct f2fs_sb_info *sbi,
+ 						unsigned int secno)
+ {
+-	if (get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true) >=
++	if (get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true) >
+ 						sbi->fggc_threshold)
+ 		return true;
+ 	return false;
+-- 
+2.13.1.388.g69e6b9b4f4a9
