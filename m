@@ -1,220 +1,28 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: limit # of inmemory pages
-Date: Wed, 18 Oct 2017 19:15:16 -0700
-Message-ID: <20171019021516.65627-1-jaegeuk@kernel.org>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] f2fs: limit # of inmemory pages
+Date: Thu, 19 Oct 2017 00:28:04 -0700
+Message-ID: <20171019072804.GA16321@infradead.org>
+References: <20171019021516.65627-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
- helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <jaegeuk@kernel.org>) id 1e50Mt-0006Im-Pj
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Oct 2017 02:15:31 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1e50Ms-0002Es-Ok
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Oct 2017 02:15:31 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20171019021516.65627-1-jaegeuk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If some abnormal users try lots of atomic write operations, f2fs is able to
-produce pinned pages in the main memory which affects system performance.
-This patch limits that as 20% over total memory size, and if f2fs reaches
-to the limit, it will drop all the inmemory pages.
+On Wed, Oct 18, 2017 at 07:15:16PM -0700, Jaegeuk Kim wrote:
+> If some abnormal users try lots of atomic write operations, f2fs is able to
+> produce pinned pages in the main memory which affects system performance.
+> This patch limits that as 20% over total memory size, and if f2fs reaches
+> to the limit, it will drop all the inmemory pages.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/data.c    |  8 ++++++++
- fs/f2fs/f2fs.h    |  3 +++
- fs/f2fs/node.c    |  4 ++++
- fs/f2fs/node.h    |  1 +
- fs/f2fs/segment.c | 38 ++++++++++++++++++++++++++++++++++++++
- fs/f2fs/super.c   |  1 +
- 6 files changed, 55 insertions(+)
+Can you please document your "atomic" writes and how they pin memory
+in a mail to linux-abi?  And how they compare to my O_ATOMIC implement
+as well as the papers it is based on?
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 95fdbe3e6cca..7fd09837820a 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1944,6 +1944,12 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
- 
- 	trace_f2fs_write_begin(inode, pos, len, flags);
- 
-+	if (f2fs_is_atomic_file(inode) &&
-+			!available_free_memory(sbi, INMEM_PAGES)) {
-+		err = -ENOMEM;
-+		goto fail;
-+	}
-+
- 	/*
- 	 * We should check this at this moment to avoid deadlock on inode page
- 	 * and #0 page. The locking rule for inline_data conversion should be:
-@@ -2021,6 +2027,8 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
- fail:
- 	f2fs_put_page(page, 1);
- 	f2fs_write_failed(mapping, pos + len);
-+	if (f2fs_is_atomic_file(inode))
-+		drop_inmem_pages_all(sbi);
- 	return err;
- }
- 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index a53fa3dbccf8..e0ef31cb2cc6 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -606,6 +606,7 @@ struct f2fs_inode_info {
- #endif
- 	struct list_head dirty_list;	/* dirty list for dirs and files */
- 	struct list_head gdirty_list;	/* linked in global dirty list */
-+	struct list_head inmem_ilist;	/* list for inmem inodes */
- 	struct list_head inmem_pages;	/* inmemory pages managed by f2fs */
- 	struct task_struct *inmem_task;	/* store inmemory task */
- 	struct mutex inmem_lock;	/* lock for inmemory pages */
-@@ -971,6 +972,7 @@ enum inode_type {
- 	DIR_INODE,			/* for dirty dir inode */
- 	FILE_INODE,			/* for dirty regular/symlink inode */
- 	DIRTY_META,			/* for all dirtied inode metadata */
-+	ATOMIC_FILE,			/* for all atomic files */
- 	NR_INODE_TYPE,
- };
- 
-@@ -2556,6 +2558,7 @@ void destroy_node_manager_caches(void);
-  */
- bool need_SSR(struct f2fs_sb_info *sbi);
- void register_inmem_page(struct inode *inode, struct page *page);
-+void drop_inmem_pages_all(struct f2fs_sb_info *sbi);
- void drop_inmem_pages(struct inode *inode);
- void drop_inmem_page(struct inode *inode, struct page *page);
- int commit_inmem_pages(struct inode *inode);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index b95b2784e7d8..ac629d6258ca 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -74,6 +74,10 @@ bool available_free_memory(struct f2fs_sb_info *sbi, int type)
- 				atomic_read(&sbi->total_ext_node) *
- 				sizeof(struct extent_node)) >> PAGE_SHIFT;
- 		res = mem_size < ((avail_ram * nm_i->ram_thresh / 100) >> 1);
-+	} else if (type == INMEM_PAGES) {
-+		/* it allows 20% / total_ram for inmemory pages */
-+		mem_size = get_pages(sbi, F2FS_INMEM_PAGES);
-+		res = mem_size < (val.totalram / 5);
- 	} else {
- 		if (!sbi->sb->s_bdi->wb.dirty_exceeded)
- 			return true;
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index e91b08b4a51a..0ee3e5ff49a3 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -140,6 +140,7 @@ enum mem_type {
- 	DIRTY_DENTS,	/* indicates dirty dentry pages */
- 	INO_ENTRIES,	/* indicates inode entries */
- 	EXTENT_CACHE,	/* indicates extent cache */
-+	INMEM_PAGES,	/* indicates inmemory pages */
- 	BASE_CHECK,	/* check kernel status */
- };
- 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index bfbcff8339c5..049bbeb8ebff 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -186,6 +186,7 @@ bool need_SSR(struct f2fs_sb_info *sbi)
- 
- void register_inmem_page(struct inode *inode, struct page *page)
- {
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	struct inmem_pages *new;
- 
-@@ -204,6 +205,10 @@ void register_inmem_page(struct inode *inode, struct page *page)
- 	mutex_lock(&fi->inmem_lock);
- 	get_page(page);
- 	list_add_tail(&new->list, &fi->inmem_pages);
-+	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
-+	if (list_empty(&fi->inmem_ilist))
-+		list_add_tail(&fi->inmem_ilist, &sbi->inode_list[ATOMIC_FILE]);
-+	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
- 	inc_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
- 	mutex_unlock(&fi->inmem_lock);
- 
-@@ -262,12 +267,41 @@ static int __revoke_inmem_pages(struct inode *inode,
- 	return err;
- }
- 
-+void drop_inmem_pages_all(struct f2fs_sb_info *sbi)
-+{
-+	struct list_head *head = &sbi->inode_list[ATOMIC_FILE];
-+	struct inode *inode;
-+	struct f2fs_inode_info *fi;
-+next:
-+	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
-+	if (list_empty(head)) {
-+		spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
-+		return;
-+	}
-+	fi = list_first_entry(head, struct f2fs_inode_info, inmem_ilist);
-+	inode = igrab(&fi->vfs_inode);
-+	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
-+
-+	if (inode) {
-+		drop_inmem_pages(inode);
-+		iput(inode);
-+	}
-+	congestion_wait(BLK_RW_ASYNC, HZ/50);
-+	cond_resched();
-+	goto next;
-+}
-+
- void drop_inmem_pages(struct inode *inode)
- {
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
- 
- 	mutex_lock(&fi->inmem_lock);
- 	__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
-+	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
-+	if (!list_empty(&fi->inmem_ilist))
-+		list_del_init(&fi->inmem_ilist);
-+	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
- 	mutex_unlock(&fi->inmem_lock);
- 
- 	clear_inode_flag(inode, FI_ATOMIC_FILE);
-@@ -399,6 +433,10 @@ int commit_inmem_pages(struct inode *inode)
- 		/* drop all uncommitted pages */
- 		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
- 	}
-+	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
-+	if (!list_empty(&fi->inmem_ilist))
-+		list_del_init(&fi->inmem_ilist);
-+	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
- 	mutex_unlock(&fi->inmem_lock);
- 
- 	clear_inode_flag(inode, FI_ATOMIC_COMMIT);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 840a0876005b..fc3b74e53670 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -651,6 +651,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
- 	init_rwsem(&fi->i_sem);
- 	INIT_LIST_HEAD(&fi->dirty_list);
- 	INIT_LIST_HEAD(&fi->gdirty_list);
-+	INIT_LIST_HEAD(&fi->inmem_ilist);
- 	INIT_LIST_HEAD(&fi->inmem_pages);
- 	mutex_init(&fi->inmem_lock);
- 	init_rwsem(&fi->dio_rwsem[READ]);
--- 
-2.14.0.rc1.383.gd1ce394fe2-goog
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+I tried to take a quick look at the code and it looks very bogus to me
+in addition to being sneaked in through fs-specific ioctls without any
+review whatsoever.
