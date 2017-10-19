@@ -1,62 +1,96 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: return error number for quota_write
-Date: Thu, 19 Oct 2017 12:08:51 -0700
-Message-ID: <20171019190851.GB82186@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20171012231500.19489-1-jaegeuk@kernel.org>
- <f84b3522-f53d-d91a-464d-71c194dd5864@huawei.com>
- <20171016230444.GA94030@jaegeuk-macbookpro.roam.corp.google.com>
- <79d07284-167a-3b12-bed3-cea138ab4eb7@kernel.org>
- <20171017181749.GB10794@jaegeuk-macbookpro.roam.corp.google.com>
- <f7c99fe2-5920-1274-a6c2-0cc831b8aca3@huawei.com>
+Subject: Re: [PATCH] f2fs: expose some sectors to user in inline
+ data or dentry case
+Date: Thu, 19 Oct 2017 12:12:29 -0700
+Message-ID: <20171019191229.GC82186@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20171013173145.36510-1-jaegeuk@kernel.org>
+ <6ecc1778-bcf8-c07d-037a-dd733e247fa9@huawei.com>
+ <20171017220327.GA20428@jaegeuk-macbookpro.roam.corp.google.com>
+ <4e39c0c5-2cfb-5dd5-4c29-5bff7b2373f8@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+ helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <jaegeuk@kernel.org>) id 1e5GFG-0002Kh-4F
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Oct 2017 19:12:42 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+ (Exim 4.76) id 1e5GFF-0005lR-5I
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Oct 2017 19:12:42 +0000
 Content-Disposition: inline
-In-Reply-To: <f7c99fe2-5920-1274-a6c2-0cc831b8aca3@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <4e39c0c5-2cfb-5dd5-4c29-5bff7b2373f8@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Chao Yu <yuchao0@huawei.com>
-Cc: Chao Yu <chao@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 On 10/18, Chao Yu wrote:
-> On 2017/10/18 2:17, Jaegeuk Kim wrote:
-> > On 10/17, Chao Yu wrote:
-> >>
-> >>
-> >> On 2017/10/17 7:04, Jaegeuk Kim wrote:
-> >>> On 10/16, Chao Yu wrote:
-> >>>> Hi Jaegeuk,
-> >>>>
-> >>>> On 2017/10/13 7:15, Jaegeuk Kim wrote:
-> >>>>> This patch returns an error number to quota_write in order for quota to handle
-> >>>>> it correctly.
-> >>>>
-> >>>> We should return error number like __generic_file_write_iter, right? it
-> >>>> needs to return written bytes if we have written one page or more, otherwise
-> >>>> return error number feedbacked from write_begin.
-> >>>>
-> >>>> So how about reverting 4f31d26b0c17 ("f2fs: return wrong error number on
-> >>>> f2fs_quota_write")?
+> On 2017/10/18 6:03, Jaegeuk Kim wrote:
+> > On 10/16, Chao Yu wrote:
+> >> On 2017/10/14 1:31, Jaegeuk Kim wrote:
+> >>> If there's some data written through inline data or dentry, we need to shouw
+> >>> st_blocks. This fixes reporting zero blocks even though there is small written
+> >>> data.
 > >>>
-> >>> I thought like that, but realized the code change is somewhat different between
-> >>> them.
+> >>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > >>
-> >> Hmm... main structure of codes here is copied from other file systems, is there
-> >> the same problem in *_quota_write of other file systems?
+> >> Reviewed-by: Chao Yu <yuchao0@huawei.com>
 > >>
-> >> BTW, it looks making below judgment condition being useless.
+> >> Thanks,
 > >>
-> >> 	if (len == towrite)
-> >> 		return 0;
+> >>> ---
+> >>>  fs/f2fs/file.c | 5 +++++
+> >>>  1 file changed, 5 insertions(+)
+> >>>
+> >>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> >>> index 2eb3efe92018..f7be6c394fa8 100644
+> >>> --- a/fs/f2fs/file.c
+> >>> +++ b/fs/f2fs/file.c
+> >>> @@ -698,6 +698,11 @@ int f2fs_getattr(const struct path *path, struct kstat *stat,
+> >>>  				  STATX_ATTR_NODUMP);
+> >>>  
+> >>>  	generic_fillattr(inode, stat);
+> >>> +
+> >>> +	/* we need to show initial sectors used for inline_data/dentries */
+> >>> +	if (f2fs_has_inline_data(inode) || f2fs_has_inline_dentry(inode))
 > > 
-> > We need this to avoid needless inode updates. :P
+> > FYI;
+> > I added S_ISREG(inode->i_mode) with f2fs_has_inline_data() to avoid quotacheck
+> > error.
 > 
-> For err = 0 and len == towrite case, it more likes a bug of quota that passing
-> 0 in @len.
+> If this patch is related to quotacheck issue, I doubt that there will be
+> problemetic, in no journalled quota case, fs quota system won't stat blocks
+> in inline file, however, after SPO, when using quotacheck to scan file to
+> recover quota info, blocks of inline file showed in getattr can be stated
+> into quota. That would be inconsistent.
+
+FWIW, quotacheck counts i_blocks via ioctl for normal files. Without this
+modification, xfstests gives an failure on quota cases.
+
 > 
-> :(, Oh, still didn't get that why there is difference in between reverting and
-> this fixing. Can you please explain more about this?
+> Thanks,
+> 
+> > 
+> >>> +		stat->blocks += (stat->size + 511) >> 9;
+> >>> +
+> >>>  	return 0;
+> >>>  }
+> >>>  
+> >>>
+> > 
+> > .
+> > 
 
-Ah, right. Let me just revert the original patch. :)
-
-Thanks,
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
