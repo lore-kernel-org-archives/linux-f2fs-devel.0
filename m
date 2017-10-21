@@ -1,19 +1,24 @@
 From: Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: [RFC PATCH 1/2] security, capabilities: create
+Subject: Re: [kernel-hardening] [RFC PATCH 1/2] security, capabilities: create
  CAP_TRUSTED
 Date: Sat, 21 Oct 2017 10:25:21 -0700
-Message-ID: <d3e1c911-138d-082a-b941-651217d0faf8__3148.95889391682$1508606750$gmane$org@schaufler-ca.com>
+Message-ID: <d3e1c911-138d-082a-b941-651217d0faf8__4374.78477038002$1508606790$gmane$org@schaufler-ca.com>
 References: <20171021134558.21195-1-nicolas@belouin.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <kernel-hardening-return-10231-glkh-kernel-hardening=m.gmane.org@lists.openwall.com>
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
 In-Reply-To: <20171021134558.21195-1-nicolas@belouin.fr>
 Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
+List-Post: <mailto:linux-mtd@lists.infradead.org>
+List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
+Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
 To: Nicolas Belouin <nicolas@belouin.fr>, Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, David Woodhouse <dwmw2@infradead.org>, Dave Kleikamp <shaggy@kernel.org>, Mark Fasheh <mfasheh@versity.com>, Joel Becker <jlbec@evilplan.org>, Miklos Szeredi <miklos@szeredi.hu>, Phillip Lougher <phillip@squashfs.org.uk>, Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
@@ -69,3 +74,8 @@ would the two interact?
 >  #error New capability defined, please update COMMON_CAP2_PERMS.
 >  #endif
 >  
+
+
+______________________________________________________
+Linux MTD discussion mailing list
+http://lists.infradead.org/mailman/listinfo/linux-mtd/
