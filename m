@@ -2,34 +2,24 @@ From: Casey Schaufler <casey@schaufler-ca.com>
 Subject: Re: [kernel-hardening] [RFC PATCH 1/2] security,
  capabilities: create CAP_TRUSTED
 Date: Sat, 21 Oct 2017 10:25:21 -0700
-Message-ID: <d3e1c911-138d-082a-b941-651217d0faf8__45471.9699141153$1508608566$gmane$org@schaufler-ca.com>
+Message-ID: <d3e1c911-138d-082a-b941-651217d0faf8__26008.4701738835$1508644646$gmane$org@schaufler-ca.com>
 References: <20171021134558.21195-1-nicolas@belouin.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
- helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <casey@schaufler-ca.com>)
- id 1e5y01-0003Et-3o
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 21 Oct 2017 17:55:53 +0000
-Received: from sonic312-28.consmr.mail.ne1.yahoo.com ([66.163.191.209])
- by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
- (Exim 4.76) id 1e5xzy-0007yi-QG
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 21 Oct 2017 17:55:53 +0000
+Return-path: <jfs-discussion-bounces@lists.sourceforge.net>
 In-Reply-To: <20171021134558.21195-1-nicolas@belouin.fr>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/jfs-discussion>,
+ <mailto:jfs-discussion-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=jfs-discussion>
+List-Post: <mailto:jfs-discussion@lists.sourceforge.net>
+List-Help: <mailto:jfs-discussion-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/jfs-discussion>,
+ <mailto:jfs-discussion-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: jfs-discussion-bounces@lists.sourceforge.net
 To: Nicolas Belouin <nicolas@belouin.fr>, Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, David Woodhouse <dwmw2@infradead.org>, Dave Kleikamp <shaggy@kernel.org>, Mark Fasheh <mfasheh@versity.com>, Joel Becker <jlbec@evilplan.org>, Miklos Szeredi <miklos@szeredi.hu>, Phillip Lougher <phillip@squashfs.org.uk>, Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 On 10/21/2017 6:45 AM, Nicolas Belouin wrote:
 > with CAP_SYS_ADMIN being bloated, the usefulness of using it to
