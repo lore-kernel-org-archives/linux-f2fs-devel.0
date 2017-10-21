@@ -1,64 +1,75 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v2 00/11] fscrypt: add some higher-level
- helper functions
-Date: Fri, 20 Oct 2017 15:44:45 -0400
-Message-ID: <20171020194445.dirxpfu2nk2n7a6b@thunk.org>
-References: <20171009191544.43656-1-ebiggers3@gmail.com>
+From: Nicolas Belouin <nicolas@belouin.fr>
+Subject: [RFC PATCH 1/2] security, capabilities: create CAP_TRUSTED
+Date: Sat, 21 Oct 2017 15:45:57 +0200
+Message-ID: <20171021134558.21195-1-nicolas@belouin.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
- helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <tytso@thunk.org>) id 1e5dE0-0001XN-O4
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Oct 2017 19:44:56 +0000
-Received: from imap.thunk.org ([74.207.234.97])
- by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1e5dDz-0000JF-Bf
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Oct 2017 19:44:56 +0000
-Content-Disposition: inline
-In-Reply-To: <20171009191544.43656-1-ebiggers3@gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: Eric Biggers <ebiggers@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org
+Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
+List-Post: <mailto:linux-mtd@lists.infradead.org>
+List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
+Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
+To: Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, David Woodhouse <dwmw2@infradead.org>, Dave Kleikamp <shaggy@kernel.org>, Mark Fasheh <mfasheh@versity.com>, Joel Becker <jlbec@evilplan.org>, Miklos Szeredi <miklos@szeredi.hu>, Phillip Lougher <phillip@squashfs.org.uk>, Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris <eparis@parisplace.org>, James Morris <james.l.morris@oracle.com>, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-mtd@lists.infrad
+Cc: Nicolas Belouin <nicolas@belouin.fr>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Mon, Oct 09, 2017 at 12:15:33PM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> This series prepares to reduce code duplication among ext4, f2fs, and
-> ubifs by introducing a S_ENCRYPTED inode flag (so we don't have to call
-> back into the filesystem to test the filesystem-specific inode flag),
-> then introducing new helper functions that are called at the beginning
-> of the open, link, rename, lookup, and setattr operations.
-> 
-> In the future we maybe should even call these new helpers from the VFS
-> so that each individual filesystem doesn't have to do it.  But that's
-> not possible currently because fs/crypto/ can be built as a module.
-> 
-> The patches to switch the filesystems over to use the helper functions
-> were included in v1 of this patchset.  They are not included now since
-> I'm planning to get them picked up by the individual filesystem
-> maintainers after this goes in.
+with CAP_SYS_ADMIN being bloated, the usefulness of using it to
+flag a process to be entrusted for e.g reading and writing trusted
+xattr is near zero.
+CAP_TRUSTED aims to provide userland with a way to mark a process as
+entrusted to do specific (not specially admin-centered) actions. It
+would for example allow a process to red/write the trusted xattrs.
 
-Thanks, I've applied these patches plus the ones for ext4 on the
-fscrypt.git tree.
+Signed-off-by: Nicolas Belouin <nicolas@belouin.fr>
+---
+ include/uapi/linux/capability.h     | 6 +++++-
+ security/selinux/include/classmap.h | 5 +++--
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
-The only concern I have is that in fscrypt_file_name() the warning
-prints just the inode numbers, but not the block device (it replaced
-an ext4_warning() call which automatically printed the block device).
-I'll add a patch to fix that up in the next day or two.
+diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
+index ce230aa6d928..27e457b93c84 100644
+--- a/include/uapi/linux/capability.h
++++ b/include/uapi/linux/capability.h
+@@ -369,7 +369,11 @@ struct vfs_ns_cap_data {
+ 
+ #define CAP_SYS_MOUNT		38
+ 
+-#define CAP_LAST_CAP         CAP_SYS_MOUNT
++/* Allow read/write trusted xattr */
++
++#define CAP_TRUSTED		39
++
++#define CAP_LAST_CAP         CAP_TRUSTED
+ 
+ #define cap_valid(x) ((x) >= 0 && (x) <= CAP_LAST_CAP)
+ 
+diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+index a873dce97fd5..f5dc8e109f5a 100644
+--- a/security/selinux/include/classmap.h
++++ b/security/selinux/include/classmap.h
+@@ -24,9 +24,10 @@
+ 	    "audit_control", "setfcap"
+ 
+ #define COMMON_CAP2_PERMS  "mac_override", "mac_admin", "syslog", \
+-		"wake_alarm", "block_suspend", "audit_read", "sys_mount"
++		"wake_alarm", "block_suspend", "audit_read", "sys_mount", \
++		"trusted"
+ 
+-#if CAP_LAST_CAP > CAP_SYS_MOUNT
++#if CAP_LAST_CAP > CAP_TRUSTED
+ #error New capability defined, please update COMMON_CAP2_PERMS.
+ #endif
+ 
+-- 
+2.14.2
 
-     	   	    	     	- Ted
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+______________________________________________________
+Linux MTD discussion mailing list
+http://lists.infradead.org/mailman/listinfo/linux-mtd/
