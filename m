@@ -1,232 +1,71 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] f2fs: limit # of inmemory pages
-Date: Mon, 23 Oct 2017 20:03:07 +0800
-Message-ID: <0cf05e1f-845f-cb5b-46b0-11a7f214e1a1@kernel.org>
-References: <20171019021516.65627-1-jaegeuk@kernel.org>
+From: Casey Schaufler <casey-iSGtlc1asvQWG2LlvL+J4A@public.gmane.org>
+Subject: Re: [kernel-hardening] [RFC PATCH 1/2] security,
+ capabilities: create CAP_TRUSTED
+Date: Sat, 21 Oct 2017 10:25:21 -0700
+Message-ID: <d3e1c911-138d-082a-b941-651217d0faf8__30980.0032446676$1508762145$gmane$org@schaufler-ca.com>
+References: <20171021134558.21195-1-nicolas@belouin.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
- helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <chao@kernel.org>) id 1e6bS3-0004Bv-7l
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 23 Oct 2017 12:03:27 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1e6bRx-0000Az-5z
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 23 Oct 2017 12:03:27 +0000
-In-Reply-To: <20171019021516.65627-1-jaegeuk@kernel.org>
+Return-path: <selinux-bounces-+05T5uksL2qpZYMLLGbcSA@public.gmane.org>
+In-Reply-To: <20171021134558.21195-1-nicolas-6zwZCx3K5ONGWvitb5QawA@public.gmane.org>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Post: <mailto:selinux-+05T5uksL2qpZYMLLGbcSA@public.gmane.org>
+List-Help: <mailto:selinux-request-+05T5uksL2qpZYMLLGbcSA@public.gmane.org?subject=help>
+Errors-To: selinux-bounces-+05T5uksL2qpZYMLLGbcSA@public.gmane.org
+Sender: "Selinux" <selinux-bounces-+05T5uksL2qpZYMLLGbcSA@public.gmane.org>
+To: Nicolas Belouin <nicolas-6zwZCx3K5ONGWvitb5QawA@public.gmane.org>, Jan Kara <jack-IBi9RG/b67k@public.gmane.org>, Theodore Ts'o <tytso-3s7WtUTddSA@public.gmane.org>, Andreas Dilger <adilger.kernel-m1MBpc4rdrD3fQ9qLvQP4Q@public.gmane.org>, Jaegeuk Kim <jaegeuk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chao Yu <yuchao0-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Dave Kleikamp <shaggy-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Fasheh <mfasheh-rOS7oXVqrJRBDgjK7y7TUQ@public.gmane.org>, Joel Becker <jlbec-aKy9MeLSZ9dg9hUCZPvPmw@public.gmane.org>, Miklos Szeredi <miklos-sUDqSbJrdHQHWmgEVkV9KA@public.gmane.org>, Phillip Lougher <phillip-Y7wUz+saRi+tmTQ+vhA3Yw@public.gmane.org>, Richard Weinberger <richard-/L3Ra7n9ekc@public.gmane.org>, Artem Bityutskiy <dedekind1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Alexander Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, Serge Hallyn <serge-A9i7LUbDfNHQT0dZR+AlfA@public.gmane.org>, Paul Moore <paul-r2n+y4ga6xFZroRs9YW3xA@public.gmane.org>, Stephen Smalley <sds-+05T5uksL2qpZYMLLGbcSA@public.gmane.org>, Eric Paris <eparis-FjpueFixGhCM4zKIHC2jIg@public.gmane.org>, James Morris <james.l.morris-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-ex
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/10/19 10:15, Jaegeuk Kim wrote:
-> If some abnormal users try lots of atomic write operations, f2fs is able to
-> produce pinned pages in the main memory which affects system performance.
-> This patch limits that as 20% over total memory size, and if f2fs reaches
-> to the limit, it will drop all the inmemory pages.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+On 10/21/2017 6:45 AM, Nicolas Belouin wrote:
+> with CAP_SYS_ADMIN being bloated, the usefulness of using it to
+> flag a process to be entrusted for e.g reading and writing trusted
+> xattr is near zero.
+> CAP_TRUSTED aims to provide userland with a way to mark a process as
+> entrusted to do specific (not specially admin-centered) actions. It
+> would for example allow a process to red/write the trusted xattrs.
 
-The code looks good to me, but we will fail all atomic writes by telling them
-ENOMEM when all atomic write takes 20% memory of total size, but our user may
-be confused as there may be lots of free memory, it's hard to let user to
-understand this condition...
+Please explain how this is different from CAP_MAC_ADMIN in
+any existing use case. If it is significantly different, how
+would the two interact?
 
-Atomic commit won't delay much time after atomic writing, so is that due
-to incorrect usage of atomic write in application?
-
-Thanks,
-
+> Signed-off-by: Nicolas Belouin <nicolas-6zwZCx3K5ONGWvitb5QawA@public.gmane.org>
 > ---
->  fs/f2fs/data.c    |  8 ++++++++
->  fs/f2fs/f2fs.h    |  3 +++
->  fs/f2fs/node.c    |  4 ++++
->  fs/f2fs/node.h    |  1 +
->  fs/f2fs/segment.c | 38 ++++++++++++++++++++++++++++++++++++++
->  fs/f2fs/super.c   |  1 +
->  6 files changed, 55 insertions(+)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 95fdbe3e6cca..7fd09837820a 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1944,6 +1944,12 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+>  include/uapi/linux/capability.h     | 6 +++++-
+>  security/selinux/include/classmap.h | 5 +++--
+>  2 files changed, 8 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
+> index ce230aa6d928..27e457b93c84 100644
+> --- a/include/uapi/linux/capability.h
+> +++ b/include/uapi/linux/capability.h
+> @@ -369,7 +369,11 @@ struct vfs_ns_cap_data {
 >  
->  	trace_f2fs_write_begin(inode, pos, len, flags);
+>  #define CAP_SYS_MOUNT		38
 >  
-> +	if (f2fs_is_atomic_file(inode) &&
-> +			!available_free_memory(sbi, INMEM_PAGES)) {
-> +		err = -ENOMEM;
-> +		goto fail;
-> +	}
+> -#define CAP_LAST_CAP         CAP_SYS_MOUNT
+> +/* Allow read/write trusted xattr */
 > +
->  	/*
->  	 * We should check this at this moment to avoid deadlock on inode page
->  	 * and #0 page. The locking rule for inline_data conversion should be:
-> @@ -2021,6 +2027,8 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
->  fail:
->  	f2fs_put_page(page, 1);
->  	f2fs_write_failed(mapping, pos + len);
-> +	if (f2fs_is_atomic_file(inode))
-> +		drop_inmem_pages_all(sbi);
->  	return err;
->  }
+> +#define CAP_TRUSTED		39
+> +
+> +#define CAP_LAST_CAP         CAP_TRUSTED
 >  
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index a53fa3dbccf8..e0ef31cb2cc6 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -606,6 +606,7 @@ struct f2fs_inode_info {
+>  #define cap_valid(x) ((x) >= 0 && (x) <= CAP_LAST_CAP)
+>  
+> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+> index a873dce97fd5..f5dc8e109f5a 100644
+> --- a/security/selinux/include/classmap.h
+> +++ b/security/selinux/include/classmap.h
+> @@ -24,9 +24,10 @@
+>  	    "audit_control", "setfcap"
+>  
+>  #define COMMON_CAP2_PERMS  "mac_override", "mac_admin", "syslog", \
+> -		"wake_alarm", "block_suspend", "audit_read", "sys_mount"
+> +		"wake_alarm", "block_suspend", "audit_read", "sys_mount", \
+> +		"trusted"
+>  
+> -#if CAP_LAST_CAP > CAP_SYS_MOUNT
+> +#if CAP_LAST_CAP > CAP_TRUSTED
+>  #error New capability defined, please update COMMON_CAP2_PERMS.
 >  #endif
->  	struct list_head dirty_list;	/* dirty list for dirs and files */
->  	struct list_head gdirty_list;	/* linked in global dirty list */
-> +	struct list_head inmem_ilist;	/* list for inmem inodes */
->  	struct list_head inmem_pages;	/* inmemory pages managed by f2fs */
->  	struct task_struct *inmem_task;	/* store inmemory task */
->  	struct mutex inmem_lock;	/* lock for inmemory pages */
-> @@ -971,6 +972,7 @@ enum inode_type {
->  	DIR_INODE,			/* for dirty dir inode */
->  	FILE_INODE,			/* for dirty regular/symlink inode */
->  	DIRTY_META,			/* for all dirtied inode metadata */
-> +	ATOMIC_FILE,			/* for all atomic files */
->  	NR_INODE_TYPE,
->  };
 >  
-> @@ -2556,6 +2558,7 @@ void destroy_node_manager_caches(void);
->   */
->  bool need_SSR(struct f2fs_sb_info *sbi);
->  void register_inmem_page(struct inode *inode, struct page *page);
-> +void drop_inmem_pages_all(struct f2fs_sb_info *sbi);
->  void drop_inmem_pages(struct inode *inode);
->  void drop_inmem_page(struct inode *inode, struct page *page);
->  int commit_inmem_pages(struct inode *inode);
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index b95b2784e7d8..ac629d6258ca 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -74,6 +74,10 @@ bool available_free_memory(struct f2fs_sb_info *sbi, int type)
->  				atomic_read(&sbi->total_ext_node) *
->  				sizeof(struct extent_node)) >> PAGE_SHIFT;
->  		res = mem_size < ((avail_ram * nm_i->ram_thresh / 100) >> 1);
-> +	} else if (type == INMEM_PAGES) {
-> +		/* it allows 20% / total_ram for inmemory pages */
-> +		mem_size = get_pages(sbi, F2FS_INMEM_PAGES);
-> +		res = mem_size < (val.totalram / 5);
->  	} else {
->  		if (!sbi->sb->s_bdi->wb.dirty_exceeded)
->  			return true;
-> diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-> index e91b08b4a51a..0ee3e5ff49a3 100644
-> --- a/fs/f2fs/node.h
-> +++ b/fs/f2fs/node.h
-> @@ -140,6 +140,7 @@ enum mem_type {
->  	DIRTY_DENTS,	/* indicates dirty dentry pages */
->  	INO_ENTRIES,	/* indicates inode entries */
->  	EXTENT_CACHE,	/* indicates extent cache */
-> +	INMEM_PAGES,	/* indicates inmemory pages */
->  	BASE_CHECK,	/* check kernel status */
->  };
->  
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index bfbcff8339c5..049bbeb8ebff 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -186,6 +186,7 @@ bool need_SSR(struct f2fs_sb_info *sbi)
->  
->  void register_inmem_page(struct inode *inode, struct page *page)
->  {
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->  	struct f2fs_inode_info *fi = F2FS_I(inode);
->  	struct inmem_pages *new;
->  
-> @@ -204,6 +205,10 @@ void register_inmem_page(struct inode *inode, struct page *page)
->  	mutex_lock(&fi->inmem_lock);
->  	get_page(page);
->  	list_add_tail(&new->list, &fi->inmem_pages);
-> +	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
-> +	if (list_empty(&fi->inmem_ilist))
-> +		list_add_tail(&fi->inmem_ilist, &sbi->inode_list[ATOMIC_FILE]);
-> +	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
->  	inc_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
->  	mutex_unlock(&fi->inmem_lock);
->  
-> @@ -262,12 +267,41 @@ static int __revoke_inmem_pages(struct inode *inode,
->  	return err;
->  }
->  
-> +void drop_inmem_pages_all(struct f2fs_sb_info *sbi)
-> +{
-> +	struct list_head *head = &sbi->inode_list[ATOMIC_FILE];
-> +	struct inode *inode;
-> +	struct f2fs_inode_info *fi;
-> +next:
-> +	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
-> +	if (list_empty(head)) {
-> +		spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
-> +		return;
-> +	}
-> +	fi = list_first_entry(head, struct f2fs_inode_info, inmem_ilist);
-> +	inode = igrab(&fi->vfs_inode);
-> +	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
-> +
-> +	if (inode) {
-> +		drop_inmem_pages(inode);
-> +		iput(inode);
-> +	}
-> +	congestion_wait(BLK_RW_ASYNC, HZ/50);
-> +	cond_resched();
-> +	goto next;
-> +}
-> +
->  void drop_inmem_pages(struct inode *inode)
->  {
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->  	struct f2fs_inode_info *fi = F2FS_I(inode);
->  
->  	mutex_lock(&fi->inmem_lock);
->  	__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
-> +	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
-> +	if (!list_empty(&fi->inmem_ilist))
-> +		list_del_init(&fi->inmem_ilist);
-> +	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
->  	mutex_unlock(&fi->inmem_lock);
->  
->  	clear_inode_flag(inode, FI_ATOMIC_FILE);
-> @@ -399,6 +433,10 @@ int commit_inmem_pages(struct inode *inode)
->  		/* drop all uncommitted pages */
->  		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
->  	}
-> +	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
-> +	if (!list_empty(&fi->inmem_ilist))
-> +		list_del_init(&fi->inmem_ilist);
-> +	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
->  	mutex_unlock(&fi->inmem_lock);
->  
->  	clear_inode_flag(inode, FI_ATOMIC_COMMIT);
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 840a0876005b..fc3b74e53670 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -651,6 +651,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
->  	init_rwsem(&fi->i_sem);
->  	INIT_LIST_HEAD(&fi->dirty_list);
->  	INIT_LIST_HEAD(&fi->gdirty_list);
-> +	INIT_LIST_HEAD(&fi->inmem_ilist);
->  	INIT_LIST_HEAD(&fi->inmem_pages);
->  	mutex_init(&fi->inmem_lock);
->  	init_rwsem(&fi->dio_rwsem[READ]);
-> 
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
