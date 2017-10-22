@@ -1,46 +1,72 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid using timespec
-Date: Sun, 22 Oct 2017 22:55:35 +0800
-Message-ID: <05cd8aef-c68d-c47e-3dc5-5a13f515347a@kernel.org>
-References: <20171019095252.688181-1-arnd@arndb.de>
+Subject: Re: [f2fs-dev] [PATCH][f2fs-next] f2fs: remove several redundant
+ assignments
+Date: Sun, 22 Oct 2017 22:57:59 +0800
+Message-ID: <bf9d1036-e07d-5d61-bba7-cb931d00016a@kernel.org>
+References: <20171019105821.336-1-colin.king@canonical.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171019095252.688181-1-arnd@arndb.de>
+In-Reply-To: <20171019105821.336-1-colin.king@canonical.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc: Eric Biggers <ebiggers@google.com>, y2038@lists.linaro.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Deepa Dinamani <deepa.kernel@gmail.com>, linux-fsdevel@vger.kernel.org, DongOh Shin <doscode.kr@gmail.com>, Tomohiro Kusumi <tkusumi@tuxera.com>
+To: Colin King <colin.king@canonical.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/10/19 17:52, Arnd Bergmann wrote:
-> All uses of timespec are deprecated, and this one is not particularly
-> useful, as the documented method for converting seconds to jiffies
-> is to multiply by 'HZ'.
+On 2017/10/19 18:58, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> There are several assignments to variables that are redundant
+> as the values are never read when the variables are updated later
+> and so the redundant statements can be safely removed.
+> 
+> Cleans up clang warnings:
+> fs/f2fs/segment.c:923:19: warning: Value stored to 'p' during its initialization is never read
+> fs/f2fs/segment.c:2060:2: warning: Value stored to 'hint' is never read
+> fs/f2fs/segment.c:2353:2: warning: Value stored to 'start_block' is never read
+> fs/f2fs/segment.c:2354:2: warning: Value stored to 'end_block' is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
 
 > ---
->  fs/f2fs/f2fs.h | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  fs/f2fs/segment.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
 > 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 4b4a72f392be..b9a4a5db426c 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1178,8 +1178,7 @@ static inline void f2fs_update_time(struct f2fs_sb_info *sbi, int type)
->  
->  static inline bool f2fs_time_over(struct f2fs_sb_info *sbi, int type)
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index bfbcff8339c5..df7af294c1e0 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -920,7 +920,7 @@ static struct discard_cmd *__insert_discard_tree(struct f2fs_sb_info *sbi,
+>  				struct rb_node *insert_parent)
 >  {
-> -	struct timespec ts = {sbi->interval_time[type], 0};
-> -	unsigned long interval = timespec_to_jiffies(&ts);
-> +	unsigned long interval = sbi->interval_time[type] * HZ;
+>  	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+> -	struct rb_node **p = &dcc->root.rb_node;
+> +	struct rb_node **p;
+>  	struct rb_node *parent = NULL;
+>  	struct discard_cmd *dc = NULL;
 >  
->  	return time_after(jiffies, sbi->last_time[type] + interval);
->  }
+> @@ -2057,7 +2057,6 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
+>  	}
+>  	secno = left_start;
+>  skip_left:
+> -	hint = secno;
+>  	segno = GET_SEG_FROM_SEC(sbi, secno);
+>  	zoneno = GET_ZONE_FROM_SEC(sbi, secno);
+>  
+> @@ -2350,9 +2349,6 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+>  	end_segno = (end >= MAX_BLKADDR(sbi)) ? MAIN_SEGS(sbi) - 1 :
+>  						GET_SEGNO(sbi, end);
+>  
+> -	start_block = START_BLOCK(sbi, start_segno);
+> -	end_block = START_BLOCK(sbi, end_segno + 1);
+> -
+>  	cpc.reason = CP_DISCARD;
+>  	cpc.trim_minlen = max_t(__u64, 1, F2FS_BYTES_TO_BLK(range->minlen));
+>  
 > 
