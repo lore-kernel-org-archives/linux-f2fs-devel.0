@@ -1,64 +1,63 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: retry ENOMEM for quota_read|write
-Date: Sun, 22 Oct 2017 23:02:18 +0800
-Message-ID: <3000c803-d3a4-209f-d1eb-88bc61bd316b@kernel.org>
+Subject: Re: [PATCH 2/2] f2fs: relax EIO injection for quota file
+Date: Sun, 22 Oct 2017 23:11:08 +0800
+Message-ID: <b8e70503-c0e3-22b2-a1fe-089f8fb206a6@kernel.org>
 References: <20171019165617.79128-1-jaegeuk@kernel.org>
+ <20171019165617.79128-2-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171019165617.79128-1-jaegeuk@kernel.org>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+ helo=mx.sourceforge.net)
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <chao@kernel.org>) id 1e6HuN-0003wc-03
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 22 Oct 2017 15:11:23 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+ (Exim 4.76) id 1e6HuM-0007Jg-7a
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 22 Oct 2017 15:11:22 +0000
+In-Reply-To: <20171019165617.79128-2-jaegeuk@kernel.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 On 2017/10/20 0:56, Jaegeuk Kim wrote:
-> This gives another chance to read or write quota data.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> This case is not happening easily.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Actually it can happen, so why not just keep it?
 
 Thanks,
 
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > ---
->  fs/f2fs/super.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
+>  fs/f2fs/f2fs.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index fc3b74e53670..2c6e9adce464 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1351,8 +1351,13 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
->  		tocopy = min_t(unsigned long, sb->s_blocksize - offset, toread);
->  repeat:
->  		page = read_mapping_page(mapping, blkidx, NULL);
-> -		if (IS_ERR(page))
-> +		if (IS_ERR(page)) {
-> +			if (PTR_ERR(page) == -ENOMEM) {
-> +				congestion_wait(BLK_RW_ASYNC, HZ/50);
-> +				goto repeat;
-> +			}
->  			return PTR_ERR(page);
-> +		}
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index e0ef31cb2cc6..6301ccca8888 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1544,7 +1544,7 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+>  		return ret;
 >  
->  		lock_page(page);
->  
-> @@ -1395,10 +1400,14 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
->  	while (towrite > 0) {
->  		tocopy = min_t(unsigned long, sb->s_blocksize - offset,
->  								towrite);
-> -
-> +retry:
->  		err = a_ops->write_begin(NULL, mapping, off, tocopy, 0,
->  							&page, NULL);
->  		if (unlikely(err)) {
-> +			if (err == -ENOMEM) {
-> +				congestion_wait(BLK_RW_ASYNC, HZ/50);
-> +				goto retry;
-> +			}
->  			if (len == towrite)
->  				return err;
->  			break;
+>  #ifdef CONFIG_F2FS_FAULT_INJECTION
+> -	if (time_to_inject(sbi, FAULT_BLOCK)) {
+> +	if (!IS_NOQUOTA(inode) && time_to_inject(sbi, FAULT_BLOCK)) {
+>  		f2fs_show_injection_info(FAULT_BLOCK);
+>  		release = *count;
+>  		goto enospc;
 > 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
