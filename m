@@ -1,54 +1,45 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: show # of dirty segments via sysfs
-Date: Tue, 24 Oct 2017 10:36:49 +0200
-Message-ID: <20171024083649.80404-1-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 1/2] f2fs: add missing quota_initialize in f2fs_set_acl
+Date: Tue, 24 Oct 2017 17:46:17 +0800
+Message-ID: <f20fe8e5-b3f1-59f9-a9be-e16732f52e83@huawei.com>
+References: <20171023221409.59148-1-jaegeuk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20171023221409.59148-1-jaegeuk@kernel.org>
+Content-Language: en-US
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch adds one sysfs entry to show # of dirty segments which can be
-used for gc timing by user.
+On 2017/10/24 6:14, Jaegeuk Kim wrote:
+> This patch adds to call quota_intialize in f2fs_set_acl.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/acl.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+> index 436b3a1464d9..f6471f9d707e 100644
+> --- a/fs/f2fs/acl.c
+> +++ b/fs/f2fs/acl.c
+> @@ -209,6 +209,10 @@ static int __f2fs_set_acl(struct inode *inode, int type,
+>  	int error;
+>  	umode_t mode = inode->i_mode;
+>  
+> +	error = dquot_initialize(inode);
+> +	if (error)
+> +		return error;
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/sysfs.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Could you move this to f2fs_setxattr, and also add missing dquot_initialize in
+unlink and rename like ext4?
 
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index ca74bfdfd4eb..e09e59cc678a 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -63,6 +63,13 @@ static unsigned char *__struct_ptr(struct f2fs_sb_info *sbi, int struct_type)
- 	return NULL;
- }
- 
-+static ssize_t dirty_segments_show(struct f2fs_attr *a,
-+		struct f2fs_sb_info *sbi, char *buf)
-+{
-+	return snprintf(buf, PAGE_SIZE, "%llu\n",
-+		(unsigned long long)(dirty_segments(sbi)));
-+}
-+
- static ssize_t lifetime_write_kbytes_show(struct f2fs_attr *a,
- 		struct f2fs_sb_info *sbi, char *buf)
- {
-@@ -283,6 +290,7 @@ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
- F2FS_RW_ATTR(FAULT_INFO_RATE, f2fs_fault_info, inject_rate, inject_rate);
- F2FS_RW_ATTR(FAULT_INFO_TYPE, f2fs_fault_info, inject_type, inject_type);
- #endif
-+F2FS_GENERAL_RO_ATTR(dirty_segments);
- F2FS_GENERAL_RO_ATTR(lifetime_write_kbytes);
- F2FS_GENERAL_RO_ATTR(features);
- 
-@@ -326,6 +334,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(inject_rate),
- 	ATTR_LIST(inject_type),
- #endif
-+	ATTR_LIST(dirty_segments),
- 	ATTR_LIST(lifetime_write_kbytes),
- 	ATTR_LIST(features),
- 	ATTR_LIST(reserved_blocks),
--- 
-2.14.0.rc1.383.gd1ce394fe2-goog
+Thanks,
+
+> +
+>  	switch (type) {
+>  	case ACL_TYPE_ACCESS:
+>  		name_index = F2FS_XATTR_INDEX_POSIX_ACL_ACCESS;
+> 
