@@ -1,86 +1,180 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix to keep backward compatibility of flexible inline xattr feature
-Date: Wed, 25 Oct 2017 18:31:24 +0800
-Message-ID: <20171025103124.63162-1-yuchao0@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH v3] f2fs: add cur_reserved_blocks to support soft block
+ reservation
+Date: Wed, 25 Oct 2017 20:26:04 +0800
+Message-ID: <1748ac88-3415-0431-33e7-91cd1cff946c@kernel.org>
+References: <1502199825-15218-1-git-send-email-yunlong.song@huawei.com>
+ <1503068943-162538-1-git-send-email-yunlong.song@huawei.com>
+ <fee3ad76-a490-3d3c-3699-a2f48759f8ef@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <fee3ad76-a490-3d3c-3699-a2f48759f8ef@huawei.com>
+Content-Language: en-US
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Previously, in inode layout, we will always reserve 200 bytes for inline
-xattr space no matter the inode enables inline xattr feature or not, due
-to this reason, max inline size of inode is fixed, but now, if inline
-xattr is not enabled, max inline size of inode will be enlarged by 200
-bytes, for regular and symlink inode, it will be safe to reuse resevered
-space as they are all zero, but for directory, we need to keep the
-reservation for stablizing directory structure.
+On 2017/10/25 18:02, Yunlong Song wrote:
+> ping...
 
-Reported-by: Sheng Yong <shengyong1@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/f2fs.h  |  5 +----
- fs/f2fs/inode.c | 15 ++++++++++++---
- fs/f2fs/namei.c |  2 ++
- 3 files changed, 15 insertions(+), 7 deletions(-)
+I've replied in this thread, check your email list please, or you can check the
+comments in below link:
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 2af1d31ae74b..7ddd0d085e3b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2393,10 +2393,7 @@ static inline int get_extra_isize(struct inode *inode)
- static inline int f2fs_sb_has_flexible_inline_xattr(struct super_block *sb);
- static inline int get_inline_xattr_addrs(struct inode *inode)
- {
--	if (!f2fs_has_inline_xattr(inode))
--		return 0;
--	if (!f2fs_sb_has_flexible_inline_xattr(F2FS_I_SB(inode)->sb))
--		return DEFAULT_INLINE_XATTR_ADDRS;
-+
- 	return F2FS_I(inode)->i_inline_xattr_size;
- }
- 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index bb876737e653..7f31b22c9efa 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -232,10 +232,19 @@ static int do_read_inode(struct inode *inode)
- 	fi->i_extra_isize = f2fs_has_extra_attr(inode) ?
- 					le16_to_cpu(ri->i_extra_isize) : 0;
- 
--	if (!f2fs_has_inline_xattr(inode))
--		fi->i_inline_xattr_size = 0;
--	else if (f2fs_sb_has_flexible_inline_xattr(sbi->sb))
-+	/*
-+	 * Previously, we will always reserve DEFAULT_INLINE_XATTR_ADDRS size
-+	 * space for inline xattr datas, if inline xattr is not enabled, we
-+	 * can expect all zero in reserved area, so for regular or symlink,
-+	 * it will be safe to reuse reserved area, but for directory, we
-+	 * should keep the reservation for stablizing directory structure.
-+	 */
-+	if (f2fs_has_extra_attr(inode) &&
-+		f2fs_sb_has_flexible_inline_xattr(sbi->sb))
- 		fi->i_inline_xattr_size = le16_to_cpu(ri->i_inline_xattr_size);
-+	else if (!f2fs_has_inline_xattr(inode) &&
-+		(S_ISREG(inode->i_mode) || S_ISLNK(inode->i_mode)))
-+		fi->i_inline_xattr_size = 0;
- 	else
- 		fi->i_inline_xattr_size = DEFAULT_INLINE_XATTR_ADDRS;
- 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index e6f86d5d97b9..a1c56a14c191 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -91,6 +91,8 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 		f2fs_sb_has_flexible_inline_xattr(sbi->sb) &&
- 		f2fs_has_inline_xattr(inode))
- 		F2FS_I(inode)->i_inline_xattr_size = sbi->inline_xattr_size;
-+	else
-+		F2FS_I(inode)->i_inline_xattr_size = 0;
- 
- 	if (test_opt(sbi, INLINE_DATA) && f2fs_may_inline_data(inode))
- 		set_inode_flag(inode, FI_INLINE_DATA);
--- 
-2.13.1.388.g69e6b9b4f4a9
+https://patchwork.kernel.org/patch/9909407/
+
+Anyway, see comments below.
+
+> 
+> On 2017/8/18 23:09, Yunlong Song wrote:
+>> This patch adds cur_reserved_blocks to extend reserved_blocks sysfs
+>> interface to be soft threshold, which allows user configure it exceeding
+>> current available user space. To ensure there is enough space for
+>> supporting system's activation, this patch does not set the reserved space
+>> to the configured reserved_blocks value at once, instead, it safely
+>> increase cur_reserved_blocks in dev_valid_block(,node)_count to only take
+>> up the blocks which are just obsoleted.
+>>
+>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>   Documentation/ABI/testing/sysfs-fs-f2fs |  3 ++-
+>>   fs/f2fs/f2fs.h                          | 13 +++++++++++--
+>>   fs/f2fs/super.c                         |  3 ++-
+>>   fs/f2fs/sysfs.c                         | 15 +++++++++++++--
+>>   4 files changed, 28 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+>> index 11b7f4e..ba282ca 100644
+>> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+>> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+>> @@ -138,7 +138,8 @@ What:        /sys/fs/f2fs/<disk>/reserved_blocks
+>>   Date:        June 2017
+>>   Contact:    "Chao Yu" <yuchao0@huawei.com>
+>>   Description:
+>> -         Controls current reserved blocks in system.
+>> +         Controls current reserved blocks in system, the threshold
+>> +         is soft, it could exceed current available user space.
+>>     What:        /sys/fs/f2fs/<disk>/gc_urgent
+>>   Date:        August 2017
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 2f20b6b..84ccbdc 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -1041,6 +1041,7 @@ struct f2fs_sb_info {
+>>       block_t discard_blks;            /* discard command candidats */
+>>       block_t last_valid_block_count;        /* for recovery */
+>>       block_t reserved_blocks;        /* configurable reserved blocks */
+>> +    block_t cur_reserved_blocks;        /* current reserved blocks */
+>>         u32 s_next_generation;            /* for NFS support */
+>>   @@ -1515,7 +1516,8 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+>>         spin_lock(&sbi->stat_lock);
+>>       sbi->total_valid_block_count += (block_t)(*count);
+>> -    avail_user_block_count = sbi->user_block_count - sbi->reserved_blocks;
+>> +    avail_user_block_count = sbi->user_block_count -
+>> +                        sbi->cur_reserved_blocks;
+>>       if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
+>>           diff = sbi->total_valid_block_count - avail_user_block_count;
+>>           *count -= diff;
+>> @@ -1549,6 +1551,10 @@ static inline void dec_valid_block_count(struct f2fs_sb_info *sbi,
+>>       f2fs_bug_on(sbi, sbi->total_valid_block_count < (block_t) count);
+>>       f2fs_bug_on(sbi, inode->i_blocks < sectors);
+>>       sbi->total_valid_block_count -= (block_t)count;
+>> +    if (sbi->reserved_blocks &&
+>> +        sbi->reserved_blocks != sbi->cur_reserved_blocks)
+
+It's redundent check here...
+
+>> +        sbi->cur_reserved_blocks = min(sbi->reserved_blocks,
+>> +                    sbi->cur_reserved_blocks + count);
+>>       spin_unlock(&sbi->stat_lock);
+>>       f2fs_i_blocks_write(inode, count, false, true);
+>>   }
+>> @@ -1695,7 +1701,7 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+>>       spin_lock(&sbi->stat_lock);
+>>         valid_block_count = sbi->total_valid_block_count + 1;
+>> -    if (unlikely(valid_block_count + sbi->reserved_blocks >
+>> +    if (unlikely(valid_block_count + sbi->cur_reserved_blocks >
+>>                           sbi->user_block_count)) {
+>>           spin_unlock(&sbi->stat_lock);
+>>           goto enospc;
+>> @@ -1738,6 +1744,9 @@ static inline void dec_valid_node_count(struct f2fs_sb_info *sbi,
+>>         sbi->total_valid_node_count--;
+>>       sbi->total_valid_block_count--;
+>> +    if (sbi->reserved_blocks &&
+>> +        sbi->reserved_blocks != sbi->cur_reserved_blocks)
+
+Checking low boundary is more safe here.
+
+>> +        sbi->cur_reserved_blocks++;
+>>         spin_unlock(&sbi->stat_lock);
+>>   diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index 4c1bdcb..16a805f 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -957,7 +957,7 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
+>>       buf->f_blocks = total_count - start_count;
+>>       buf->f_bfree = user_block_count - valid_user_blocks(sbi) + ovp_count;
+>>       buf->f_bavail = user_block_count - valid_user_blocks(sbi) -
+>> -                        sbi->reserved_blocks;
+>> +                        sbi->cur_reserved_blocks;
+>>         avail_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
+>>   @@ -2411,6 +2411,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>                   le64_to_cpu(sbi->ckpt->valid_block_count);
+>>       sbi->last_valid_block_count = sbi->total_valid_block_count;
+>>       sbi->reserved_blocks = 0;
+>> +    sbi->cur_reserved_blocks = 0;
+>>         for (i = 0; i < NR_INODE_TYPE; i++) {
+>>           INIT_LIST_HEAD(&sbi->inode_list[i]);
+>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+>> index a1be5ac..75c37bb 100644
+>> --- a/fs/f2fs/sysfs.c
+>> +++ b/fs/f2fs/sysfs.c
+>> @@ -104,12 +104,22 @@ static ssize_t features_show(struct f2fs_attr *a,
+>>       return len;
+>>   }
+>>   +static ssize_t f2fs_reserved_blocks_show(struct f2fs_attr *a,
+>> +        struct f2fs_sb_info *sbi, char *buf)
+>> +{
+>> +    return snprintf(buf, PAGE_SIZE, "expected: %u\ncurrent: %u\n",
+>> +            sbi->reserved_blocks, sbi->cur_reserved_blocks);
+>> +}
+>> +
+>>   static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
+>>               struct f2fs_sb_info *sbi, char *buf)
+>>   {
+>>       unsigned char *ptr = NULL;
+>>       unsigned int *ui;
+>>   +    if (a->struct_type == RESERVED_BLOCKS)
+>> +        return f2fs_reserved_blocks_show(a, sbi, buf);
+>> +
+>>       ptr = __struct_ptr(sbi, a->struct_type);
+>>       if (!ptr)
+>>           return -EINVAL;
+>> @@ -143,12 +153,13 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+>>   #endif
+>>       if (a->struct_type == RESERVED_BLOCKS) {
+>>           spin_lock(&sbi->stat_lock);
+>> -        if ((unsigned long)sbi->total_valid_block_count + t >
+>> -                (unsigned long)sbi->user_block_count) {
+>> +        if (t > (unsigned long)sbi->user_block_count) {
+>>               spin_unlock(&sbi->stat_lock);
+>>               return -EINVAL;
+>>           }
+>>           *ui = t;
+>> +        if (t < (unsigned long)sbi->cur_reserved_blocks)
+>> +            sbi->cur_reserved_blocks = t;
+
+No, for 't < cur_reserved_blocks' case, cur_reserved_blocks will out of update
+even if there is enough free space. You know, for soft block resevation, we need
+to reserve blocks as many as possible, making free space being zero suddenly is
+possible.
+
+Thanks,
+
+>>           spin_unlock(&sbi->stat_lock);
+>>           return count;
+>>       }
+> 
