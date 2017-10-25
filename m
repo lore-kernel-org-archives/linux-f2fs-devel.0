@@ -1,146 +1,195 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/2] f2fs: add missing quota_initialize in f2fs_set_acl
-Date: Wed, 25 Oct 2017 08:30:58 +0200
-Message-ID: <20171025063058.GA99117@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20171023221409.59148-1-jaegeuk@kernel.org>
- <f20fe8e5-b3f1-59f9-a9be-e16732f52e83@huawei.com>
- <20171025054419.GB83348@jaegeuk-macbookpro.roam.corp.google.com>
- <fa22fb69-e026-dbbb-d5ba-19fdfd9d2df3@huawei.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: Re: [PATCH v3] f2fs: add cur_reserved_blocks to support
+ soft block reservation
+Date: Wed, 25 Oct 2017 18:02:43 +0800
+Message-ID: <fee3ad76-a490-3d3c-3699-a2f48759f8ef@huawei.com>
+References: <1502199825-15218-1-git-send-email-yunlong.song@huawei.com>
+ <1503068943-162538-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <fa22fb69-e026-dbbb-d5ba-19fdfd9d2df3@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+ helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <yunlong.song@huawei.com>)
+ id 1e7IXQ-0003jo-7t
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 Oct 2017 10:03:52 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190])
+ by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1e7IXO-00069l-7o
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 Oct 2017 10:03:52 +0000
+In-Reply-To: <1503068943-162538-1-git-send-email-yunlong.song@huawei.com>
+Content-Language: en-US
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
+Cc: linux-fsdevel@vger.kernel.org, miaoxie@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 10/25, Chao Yu wrote:
-> On 2017/10/25 13:44, Jaegeuk Kim wrote:
-> > On 10/24, Chao Yu wrote:
-> >> On 2017/10/24 6:14, Jaegeuk Kim wrote:
-> >>> This patch adds to call quota_intialize in f2fs_set_acl.
-> >>>
-> >>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>> ---
-> >>>  fs/f2fs/acl.c | 4 ++++
-> >>>  1 file changed, 4 insertions(+)
-> >>>
-> >>> diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
-> >>> index 436b3a1464d9..f6471f9d707e 100644
-> >>> --- a/fs/f2fs/acl.c
-> >>> +++ b/fs/f2fs/acl.c
-> >>> @@ -209,6 +209,10 @@ static int __f2fs_set_acl(struct inode *inode, int type,
-> >>>  	int error;
-> >>>  	umode_t mode = inode->i_mode;
-> >>>  
-> >>> +	error = dquot_initialize(inode);
-> >>> +	if (error)
-> >>> +		return error;
-> >>
-> >> Could you move this to f2fs_setxattr, and also add missing dquot_initialize in
-> >> unlink and rename like ext4?
-> > 
-> > I've checked that f2fs_unlink and f2fs_rename are calling dquot_initialize().
-> 
-> ext4_unlink:
-> 
-> 	retval = dquot_initialize(dir);
-> 	if (retval)
-> 		return retval;
-> 	retval = dquot_initialize(d_inode(dentry));
-> 	if (retval)
-> 		return retval;
-> 
-> f2fs_unlink:
-> 
-> 	err = dquot_initialize(dir);
-> 	if (err)
-> 		return err;
-> 
-> ext4_rename
-> 
-> 	retval = dquot_initialize(old.dir);
-> 	if (retval)
-> 		return retval;
-> 	retval = dquot_initialize(new.dir);
-> 	if (retval)
-> 		return retval;
-> 
-> 	/* Initialize quotas before so that eventual writes go
-> 	 * in separate transaction */
-> 	if (new.inode) {
-> 		retval = dquot_initialize(new.inode);
-> 		if (retval)
-> 			return retval;
-> 	}
-> 
-> f2fs_rename
-> 
-> 	err = dquot_initialize(old_dir);
-> 	if (err)
-> 		goto out;
-> 
-> 	err = dquot_initialize(new_dir);
-> 	if (err)
-> 		goto out;
-> 
-> ext4 call one more dquot_initialize than f2fs, I didn't look into this in
-> detail, but it's better to check that. :)
+ping...
 
-Ah, okay. :)
+On 2017/8/18 23:09, Yunlong Song wrote:
+> This patch adds cur_reserved_blocks to extend reserved_blocks sysfs
+> interface to be soft threshold, which allows user configure it exceeding
+> current available user space. To ensure there is enough space for
+> supporting system's activation, this patch does not set the reserved space
+> to the configured reserved_blocks value at once, instead, it safely
+> increase cur_reserved_blocks in dev_valid_block(,node)_count to only take
+> up the blocks which are just obsoleted.
+>
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>   Documentation/ABI/testing/sysfs-fs-f2fs |  3 ++-
+>   fs/f2fs/f2fs.h                          | 13 +++++++++++--
+>   fs/f2fs/super.c                         |  3 ++-
+>   fs/f2fs/sysfs.c                         | 15 +++++++++++++--
+>   4 files changed, 28 insertions(+), 6 deletions(-)
+>
+> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+> index 11b7f4e..ba282ca 100644
+> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+> @@ -138,7 +138,8 @@ What:		/sys/fs/f2fs/<disk>/reserved_blocks
+>   Date:		June 2017
+>   Contact:	"Chao Yu" <yuchao0@huawei.com>
+>   Description:
+> -		 Controls current reserved blocks in system.
+> +		 Controls current reserved blocks in system, the threshold
+> +		 is soft, it could exceed current available user space.
+>   
+>   What:		/sys/fs/f2fs/<disk>/gc_urgent
+>   Date:		August 2017
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 2f20b6b..84ccbdc 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1041,6 +1041,7 @@ struct f2fs_sb_info {
+>   	block_t discard_blks;			/* discard command candidats */
+>   	block_t last_valid_block_count;		/* for recovery */
+>   	block_t reserved_blocks;		/* configurable reserved blocks */
+> +	block_t cur_reserved_blocks;		/* current reserved blocks */
+>   
+>   	u32 s_next_generation;			/* for NFS support */
+>   
+> @@ -1515,7 +1516,8 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+>   
+>   	spin_lock(&sbi->stat_lock);
+>   	sbi->total_valid_block_count += (block_t)(*count);
+> -	avail_user_block_count = sbi->user_block_count - sbi->reserved_blocks;
+> +	avail_user_block_count = sbi->user_block_count -
+> +						sbi->cur_reserved_blocks;
+>   	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
+>   		diff = sbi->total_valid_block_count - avail_user_block_count;
+>   		*count -= diff;
+> @@ -1549,6 +1551,10 @@ static inline void dec_valid_block_count(struct f2fs_sb_info *sbi,
+>   	f2fs_bug_on(sbi, sbi->total_valid_block_count < (block_t) count);
+>   	f2fs_bug_on(sbi, inode->i_blocks < sectors);
+>   	sbi->total_valid_block_count -= (block_t)count;
+> +	if (sbi->reserved_blocks &&
+> +		sbi->reserved_blocks != sbi->cur_reserved_blocks)
+> +		sbi->cur_reserved_blocks = min(sbi->reserved_blocks,
+> +					sbi->cur_reserved_blocks + count);
+>   	spin_unlock(&sbi->stat_lock);
+>   	f2fs_i_blocks_write(inode, count, false, true);
+>   }
+> @@ -1695,7 +1701,7 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+>   	spin_lock(&sbi->stat_lock);
+>   
+>   	valid_block_count = sbi->total_valid_block_count + 1;
+> -	if (unlikely(valid_block_count + sbi->reserved_blocks >
+> +	if (unlikely(valid_block_count + sbi->cur_reserved_blocks >
+>   						sbi->user_block_count)) {
+>   		spin_unlock(&sbi->stat_lock);
+>   		goto enospc;
+> @@ -1738,6 +1744,9 @@ static inline void dec_valid_node_count(struct f2fs_sb_info *sbi,
+>   
+>   	sbi->total_valid_node_count--;
+>   	sbi->total_valid_block_count--;
+> +	if (sbi->reserved_blocks &&
+> +		sbi->reserved_blocks != sbi->cur_reserved_blocks)
+> +		sbi->cur_reserved_blocks++;
+>   
+>   	spin_unlock(&sbi->stat_lock);
+>   
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 4c1bdcb..16a805f 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -957,7 +957,7 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
+>   	buf->f_blocks = total_count - start_count;
+>   	buf->f_bfree = user_block_count - valid_user_blocks(sbi) + ovp_count;
+>   	buf->f_bavail = user_block_count - valid_user_blocks(sbi) -
+> -						sbi->reserved_blocks;
+> +						sbi->cur_reserved_blocks;
+>   
+>   	avail_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
+>   
+> @@ -2411,6 +2411,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>   				le64_to_cpu(sbi->ckpt->valid_block_count);
+>   	sbi->last_valid_block_count = sbi->total_valid_block_count;
+>   	sbi->reserved_blocks = 0;
+> +	sbi->cur_reserved_blocks = 0;
+>   
+>   	for (i = 0; i < NR_INODE_TYPE; i++) {
+>   		INIT_LIST_HEAD(&sbi->inode_list[i]);
+> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> index a1be5ac..75c37bb 100644
+> --- a/fs/f2fs/sysfs.c
+> +++ b/fs/f2fs/sysfs.c
+> @@ -104,12 +104,22 @@ static ssize_t features_show(struct f2fs_attr *a,
+>   	return len;
+>   }
+>   
+> +static ssize_t f2fs_reserved_blocks_show(struct f2fs_attr *a,
+> +		struct f2fs_sb_info *sbi, char *buf)
+> +{
+> +	return snprintf(buf, PAGE_SIZE, "expected: %u\ncurrent: %u\n",
+> +			sbi->reserved_blocks, sbi->cur_reserved_blocks);
+> +}
+> +
+>   static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
+>   			struct f2fs_sb_info *sbi, char *buf)
+>   {
+>   	unsigned char *ptr = NULL;
+>   	unsigned int *ui;
+>   
+> +	if (a->struct_type == RESERVED_BLOCKS)
+> +		return f2fs_reserved_blocks_show(a, sbi, buf);
+> +
+>   	ptr = __struct_ptr(sbi, a->struct_type);
+>   	if (!ptr)
+>   		return -EINVAL;
+> @@ -143,12 +153,13 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+>   #endif
+>   	if (a->struct_type == RESERVED_BLOCKS) {
+>   		spin_lock(&sbi->stat_lock);
+> -		if ((unsigned long)sbi->total_valid_block_count + t >
+> -				(unsigned long)sbi->user_block_count) {
+> +		if (t > (unsigned long)sbi->user_block_count) {
+>   			spin_unlock(&sbi->stat_lock);
+>   			return -EINVAL;
+>   		}
+>   		*ui = t;
+> +		if (t < (unsigned long)sbi->cur_reserved_blocks)
+> +			sbi->cur_reserved_blocks = t;
+>   		spin_unlock(&sbi->stat_lock);
+>   		return count;
+>   	}
 
-This patch adds to call quota_intialize in f2fs_set_acl, f2fs_unlink,
-and f2fs_rename.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/namei.c | 9 +++++++++
- fs/f2fs/xattr.c | 4 ++++
- 2 files changed, 13 insertions(+)
-
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 944f7a6940b6..35d982a475b1 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -436,6 +436,9 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
- 		return -EIO;
- 
- 	err = dquot_initialize(dir);
-+	if (err)
-+		return err;
-+	err = dquot_initialize(inode);
- 	if (err)
- 		return err;
- 
-@@ -815,6 +818,12 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	if (err)
- 		goto out;
- 
-+	if (new_inode) {
-+		err = dquot_initialize(new_inode);
-+		if (err)
-+			goto out;
-+	}
-+
- 	old_entry = f2fs_find_entry(old_dir, &old_dentry->d_name, &old_page);
- 	if (!old_entry) {
- 		if (IS_ERR(old_page))
-diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-index 147b481c6902..8801db019892 100644
---- a/fs/f2fs/xattr.c
-+++ b/fs/f2fs/xattr.c
-@@ -686,6 +686,10 @@ int f2fs_setxattr(struct inode *inode, int index, const char *name,
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	int err;
- 
-+	err = dquot_initialize(inode);
-+	if (err)
-+		return err;
-+
- 	/* this case is only from init_inode_metadata */
- 	if (ipage)
- 		return __f2fs_setxattr(inode, index, name, value,
 -- 
-2.14.0.rc1.383.gd1ce394fe2-goog
+Thanks,
+Yunlong Song
+
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
