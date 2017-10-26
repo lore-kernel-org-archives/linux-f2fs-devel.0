@@ -1,8 +1,8 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v3] f2fs: add cur_reserved_blocks to support
- soft block reservation
-Date: Thu, 26 Oct 2017 11:26:33 +0800
-Message-ID: <0f20e316-166d-e5d2-30aa-1a406bdf7f85@huawei.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: Re: [PATCH v3] f2fs: add cur_reserved_blocks to support soft block
+ reservation
+Date: Thu, 26 Oct 2017 11:30:41 +0800
+Message-ID: <3f0d83f5-f348-98a3-643f-169a4f9e23d6@huawei.com>
 References: <1502199825-15218-1-git-send-email-yunlong.song@huawei.com>
  <1503068943-162538-1-git-send-email-yunlong.song@huawei.com>
  <fee3ad76-a490-3d3c-3699-a2f48759f8ef@huawei.com>
@@ -10,242 +10,256 @@ References: <1502199825-15218-1-git-send-email-yunlong.song@huawei.com>
  <df73ab00-a313-a283-6512-1170c0c2fe3e@huawei.com>
  <04ef9339-940e-064a-f6cf-75671c956c04@kernel.org>
  <1d34c464-ca60-7380-13a1-1fd4d196dfb6@huawei.com>
+ <0f20e316-166d-e5d2-30aa-1a406bdf7f85@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
- helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e7Yp5-0001H9-0X
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 Oct 2017 03:27:11 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1e7Yp2-0006YP-8O
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 Oct 2017 03:27:10 +0000
-In-Reply-To: <1d34c464-ca60-7380-13a1-1fd4d196dfb6@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <0f20e316-166d-e5d2-30aa-1a406bdf7f85@huawei.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlong Song <yunlong.song@huawei.com>, Chao Yu <chao@kernel.org>, jaegeuk@kernel.org, yunlong.song@icloud.com
-Cc: linux-fsdevel@vger.kernel.org, miaoxie@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>, Chao Yu <chao@kernel.org>, jaegeuk@kernel.org, yunlong.song@icloud.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-T24gMjAxNy8xMC8yNiAxMTowNywgWXVubG9uZyBTb25nIHdyb3RlOgo+IFllcywgSSBhZ3JlZSB3
-aXRoIHRoZSBzb2Z0IHNlbWFudGljIHlvdSBpbnRyb2R1Y2UsIGl0IGlzIHRvbyBzbG93IHRvIAo+
-IGluY3JlYXNlIGN1cl9yZXNlcnZlZF9ibG9ja3Mgb25seSBpbgo+IGRlY192YWxpZF9ibG9jaygs
-bm9kZSlfY291bnQsIGUuZy4gaWYgdXNlcnMgd2FudCB0byBzZXQgCj4gY3VyX3Jlc2VydmVkX2Js
-b2NrcyB0byAxMEcuCgpZdXAsCgo+IAo+IFRoZW4gaG93IGFib3V0IGZpeCB0aGUgaW5pdGlhbGl6
-YXRpb24gb2YgY3VyX3Jlc2VydmVkX2Jsb2NrcyBpbiAKPiBmcy9mMmZzL3N1cGVyLmMgYXMgZm9s
-bG93aW5nOgo+IHNiaS0+Y3VycmVudF9yZXNlcnZlZF9ibG9ja3MgPSAwCj4gY2hhbmdlIHRvCj4g
-c2JpLT5jdXJyZW50X3Jlc2VydmVkX2Jsb2NrcyA9IG1pbihzYmktPnJlc2VydmVkX2Jsb2Nrcywg
-Cj4gc2JpLT51c2VyX2Jsb2NrX2NvdW50IC0gdmFsaWRfdXNlcl9ibG9ja3Moc2JpKSk7CgpJdCB3
-aWxsIGJlIG5lY2Vzc2FyeSBvbmx5IGlmIHJlc2VydmVkX2Jsb2NrcyBpcyBpbml0aWFsaXplZCB3
-aXRoIGEgbm9uLXplcm8gdmFsdWUsCmJ1dCBub3cgaXQgaGFzIHZhbHVlIG9mIHplcm8sIHNvIGl0
-J3MgcmVkdW5kYW50Li4uCgpXaGF0IGFib3V0IGFkZGluZyB0aGlzIGNoZWNrIGlmIHdlIGluaXRp
-YWxpemUgcmVzZXJ2ZWRfYmxvY2tzIHdpdGggYSBub24temVybyBkZWZhdWx0CnZhbHVlIG9yIHZh
-bHVlIHdoaWNoIG1heSBiZSBjb25maWd1cmVkIHdpdGggbW91bnRfb3B0aW9uPwoKVGhhbmtzLAoK
-PiAKPiBPbiAyMDE3LzEwLzI1IDIzOjQ2LCBDaGFvIFl1IHdyb3RlOgo+PiBPbiAyMDE3LzEwLzI1
-IDIyOjA2LCBZdW5sb25nIFNvbmcgd3JvdGU6Cj4+PiBIaSwgQ2hhbywKPj4+ICAgICAgUGxlYXNl
-IHNlZSBteSBjb21tZW50cyBiZWxvdy4KPj4+Cj4+PiBPbiAyMDE3LzEwLzI1IDIwOjI2LCBDaGFv
-IFl1IHdyb3RlOgo+Pj4+IE9uIDIwMTcvMTAvMjUgMTg6MDIsIFl1bmxvbmcgU29uZyB3cm90ZToK
-Pj4+Pj4gcGluZy4uLgo+Pj4+IEkndmUgcmVwbGllZCBpbiB0aGlzIHRocmVhZCwgY2hlY2sgeW91
-ciBlbWFpbCBsaXN0IHBsZWFzZSwgb3IgeW91IGNhbiBjaGVjayB0aGUKPj4+PiBjb21tZW50cyBp
-biBiZWxvdyBsaW5rOgo+Pj4+Cj4+Pj4gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRj
-aC85OTA5NDA3Lwo+Pj4+Cj4+Pj4gQW55d2F5LCBzZWUgY29tbWVudHMgYmVsb3cuCj4+Pj4KPj4+
-Pj4gT24gMjAxNy84LzE4IDIzOjA5LCBZdW5sb25nIFNvbmcgd3JvdGU6Cj4+Pj4+PiBUaGlzIHBh
-dGNoIGFkZHMgY3VyX3Jlc2VydmVkX2Jsb2NrcyB0byBleHRlbmQgcmVzZXJ2ZWRfYmxvY2tzIHN5
-c2ZzCj4+Pj4+PiBpbnRlcmZhY2UgdG8gYmUgc29mdCB0aHJlc2hvbGQsIHdoaWNoIGFsbG93cyB1
-c2VyIGNvbmZpZ3VyZSBpdCBleGNlZWRpbmcKPj4+Pj4+IGN1cnJlbnQgYXZhaWxhYmxlIHVzZXIg
-c3BhY2UuIFRvIGVuc3VyZSB0aGVyZSBpcyBlbm91Z2ggc3BhY2UgZm9yCj4+Pj4+PiBzdXBwb3J0
-aW5nIHN5c3RlbSdzIGFjdGl2YXRpb24sIHRoaXMgcGF0Y2ggZG9lcyBub3Qgc2V0IHRoZSByZXNl
-cnZlZCBzcGFjZQo+Pj4+Pj4gdG8gdGhlIGNvbmZpZ3VyZWQgcmVzZXJ2ZWRfYmxvY2tzIHZhbHVl
-IGF0IG9uY2UsIGluc3RlYWQsIGl0IHNhZmVseQo+Pj4+Pj4gaW5jcmVhc2UgY3VyX3Jlc2VydmVk
-X2Jsb2NrcyBpbiBkZXZfdmFsaWRfYmxvY2soLG5vZGUpX2NvdW50IHRvIG9ubHkgdGFrZQo+Pj4+
-Pj4gdXAgdGhlIGJsb2NrcyB3aGljaCBhcmUganVzdCBvYnNvbGV0ZWQuCj4+Pj4+Pgo+Pj4+Pj4g
-U2lnbmVkLW9mZi1ieTogWXVubG9uZyBTb25nIDx5dW5sb25nLnNvbmdAaHVhd2VpLmNvbT4KPj4+
-Pj4+IFNpZ25lZC1vZmYtYnk6IENoYW8gWXUgPHl1Y2hhbzBAaHVhd2VpLmNvbT4KPj4+Pj4+IC0t
-LQo+Pj4+Pj4gICAgIERvY3VtZW50YXRpb24vQUJJL3Rlc3Rpbmcvc3lzZnMtZnMtZjJmcyB8ICAz
-ICsrLQo+Pj4+Pj4gICAgIGZzL2YyZnMvZjJmcy5oICAgICAgICAgICAgICAgICAgICAgICAgICB8
-IDEzICsrKysrKysrKysrLS0KPj4+Pj4+ICAgICBmcy9mMmZzL3N1cGVyLmMgICAgICAgICAgICAg
-ICAgICAgICAgICAgfCAgMyArKy0KPj4+Pj4+ICAgICBmcy9mMmZzL3N5c2ZzLmMgICAgICAgICAg
-ICAgICAgICAgICAgICAgfCAxNSArKysrKysrKysrKysrLS0KPj4+Pj4+ICAgICA0IGZpbGVzIGNo
-YW5nZWQsIDI4IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pCj4+Pj4+Pgo+Pj4+Pj4gZGlm
-ZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vQUJJL3Rlc3Rpbmcvc3lzZnMtZnMtZjJmcyBiL0RvY3Vt
-ZW50YXRpb24vQUJJL3Rlc3Rpbmcvc3lzZnMtZnMtZjJmcwo+Pj4+Pj4gaW5kZXggMTFiN2Y0ZS4u
-YmEyODJjYSAxMDA2NDQKPj4+Pj4+IC0tLSBhL0RvY3VtZW50YXRpb24vQUJJL3Rlc3Rpbmcvc3lz
-ZnMtZnMtZjJmcwo+Pj4+Pj4gKysrIGIvRG9jdW1lbnRhdGlvbi9BQkkvdGVzdGluZy9zeXNmcy1m
-cy1mMmZzCj4+Pj4+PiBAQCAtMTM4LDcgKzEzOCw4IEBAIFdoYXQ6ICAgICAgICAvc3lzL2ZzL2Yy
-ZnMvPGRpc2s+L3Jlc2VydmVkX2Jsb2Nrcwo+Pj4+Pj4gICAgIERhdGU6ICAgICAgICBKdW5lIDIw
-MTcKPj4+Pj4+ICAgICBDb250YWN0OiAgICAiQ2hhbyBZdSIgPHl1Y2hhbzBAaHVhd2VpLmNvbT4K
-Pj4+Pj4+ICAgICBEZXNjcmlwdGlvbjoKPj4+Pj4+IC0gICAgICAgICBDb250cm9scyBjdXJyZW50
-IHJlc2VydmVkIGJsb2NrcyBpbiBzeXN0ZW0uCj4+Pj4+PiArICAgICAgICAgQ29udHJvbHMgY3Vy
-cmVudCByZXNlcnZlZCBibG9ja3MgaW4gc3lzdGVtLCB0aGUgdGhyZXNob2xkCj4+Pj4+PiArICAg
-ICAgICAgaXMgc29mdCwgaXQgY291bGQgZXhjZWVkIGN1cnJlbnQgYXZhaWxhYmxlIHVzZXIgc3Bh
-Y2UuCj4+Pj4+PiAgICAgICBXaGF0OiAgICAgICAgL3N5cy9mcy9mMmZzLzxkaXNrPi9nY191cmdl
-bnQKPj4+Pj4+ICAgICBEYXRlOiAgICAgICAgQXVndXN0IDIwMTcKPj4+Pj4+IGRpZmYgLS1naXQg
-YS9mcy9mMmZzL2YyZnMuaCBiL2ZzL2YyZnMvZjJmcy5oCj4+Pj4+PiBpbmRleCAyZjIwYjZiLi44
-NGNjYmRjIDEwMDY0NAo+Pj4+Pj4gLS0tIGEvZnMvZjJmcy9mMmZzLmgKPj4+Pj4+ICsrKyBiL2Zz
-L2YyZnMvZjJmcy5oCj4+Pj4+PiBAQCAtMTA0MSw2ICsxMDQxLDcgQEAgc3RydWN0IGYyZnNfc2Jf
-aW5mbyB7Cj4+Pj4+PiAgICAgICAgIGJsb2NrX3QgZGlzY2FyZF9ibGtzOyAgICAgICAgICAgIC8q
-IGRpc2NhcmQgY29tbWFuZCBjYW5kaWRhdHMgKi8KPj4+Pj4+ICAgICAgICAgYmxvY2tfdCBsYXN0
-X3ZhbGlkX2Jsb2NrX2NvdW50OyAgICAgICAgLyogZm9yIHJlY292ZXJ5ICovCj4+Pj4+PiAgICAg
-ICAgIGJsb2NrX3QgcmVzZXJ2ZWRfYmxvY2tzOyAgICAgICAgLyogY29uZmlndXJhYmxlIHJlc2Vy
-dmVkIGJsb2NrcyAqLwo+Pj4+Pj4gKyAgICBibG9ja190IGN1cl9yZXNlcnZlZF9ibG9ja3M7ICAg
-ICAgICAvKiBjdXJyZW50IHJlc2VydmVkIGJsb2NrcyAqLwo+Pj4+Pj4gICAgICAgICAgIHUzMiBz
-X25leHRfZ2VuZXJhdGlvbjsgICAgICAgICAgICAvKiBmb3IgTkZTIHN1cHBvcnQgKi8KPj4+Pj4+
-ICAgICBAQCAtMTUxNSw3ICsxNTE2LDggQEAgc3RhdGljIGlubGluZSBpbnQgaW5jX3ZhbGlkX2Js
-b2NrX2NvdW50KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwKPj4+Pj4+ICAgICAgICAgICBzcGlu
-X2xvY2soJnNiaS0+c3RhdF9sb2NrKTsKPj4+Pj4+ICAgICAgICAgc2JpLT50b3RhbF92YWxpZF9i
-bG9ja19jb3VudCArPSAoYmxvY2tfdCkoKmNvdW50KTsKPj4+Pj4+IC0gICAgYXZhaWxfdXNlcl9i
-bG9ja19jb3VudCA9IHNiaS0+dXNlcl9ibG9ja19jb3VudCAtIHNiaS0+cmVzZXJ2ZWRfYmxvY2tz
-Owo+Pj4+Pj4gKyAgICBhdmFpbF91c2VyX2Jsb2NrX2NvdW50ID0gc2JpLT51c2VyX2Jsb2NrX2Nv
-dW50IC0KPj4+Pj4+ICsgICAgICAgICAgICAgICAgICAgICAgICBzYmktPmN1cl9yZXNlcnZlZF9i
-bG9ja3M7Cj4+Pj4+PiAgICAgICAgIGlmICh1bmxpa2VseShzYmktPnRvdGFsX3ZhbGlkX2Jsb2Nr
-X2NvdW50ID4gYXZhaWxfdXNlcl9ibG9ja19jb3VudCkpIHsKPj4+Pj4+ICAgICAgICAgICAgIGRp
-ZmYgPSBzYmktPnRvdGFsX3ZhbGlkX2Jsb2NrX2NvdW50IC0gYXZhaWxfdXNlcl9ibG9ja19jb3Vu
-dDsKPj4+Pj4+ICAgICAgICAgICAgICpjb3VudCAtPSBkaWZmOwo+Pj4+Pj4gQEAgLTE1NDksNiAr
-MTU1MSwxMCBAQCBzdGF0aWMgaW5saW5lIHZvaWQgZGVjX3ZhbGlkX2Jsb2NrX2NvdW50KHN0cnVj
-dCBmMmZzX3NiX2luZm8gKnNiaSwKPj4+Pj4+ICAgICAgICAgZjJmc19idWdfb24oc2JpLCBzYmkt
-PnRvdGFsX3ZhbGlkX2Jsb2NrX2NvdW50IDwgKGJsb2NrX3QpIGNvdW50KTsKPj4+Pj4+ICAgICAg
-ICAgZjJmc19idWdfb24oc2JpLCBpbm9kZS0+aV9ibG9ja3MgPCBzZWN0b3JzKTsKPj4+Pj4+ICAg
-ICAgICAgc2JpLT50b3RhbF92YWxpZF9ibG9ja19jb3VudCAtPSAoYmxvY2tfdCljb3VudDsKPj4+
-Pj4+ICsgICAgaWYgKHNiaS0+cmVzZXJ2ZWRfYmxvY2tzICYmCj4+Pj4+PiArICAgICAgICBzYmkt
-PnJlc2VydmVkX2Jsb2NrcyAhPSBzYmktPmN1cl9yZXNlcnZlZF9ibG9ja3MpCj4+Pj4gSXQncyBy
-ZWR1bmRlbnQgY2hlY2sgaGVyZS4uLgo+Pj4gSSB0aGluayBpbiBtb3N0IGNhc2VzLCBjdXJfcmVz
-ZXJ2ZWRfYmxvY2tzIGlzIGVxdWFsIHRvIHJlc2VydmVkX2Jsb2Nrcywgc28gd2UgZG8gbm90IG5l
-ZWQgdG8gY2FsY3VsYXRlIG1pbiBhbnkgbW9yZSwgb3RoZXJ3aXNlLAo+Pj4gaWYgcmVzZXJ2ZWRf
-YmxvY2tzIGlzIG5vdCAwLCBpdCB3aWxsIGNhbGN1bGF0ZSBtaW4gYW5kIHNldCBjdXJyZW50X3Jl
-c2VydmVkX2Jsb2NrcyBlYWNoIHRpbWUuCj4+IE9LLCBJTU8sIGluIHNvbWUgY29uZGl0aW9uLCB3
-ZSBjYW4gc2F2ZSBkaXJ0eWluZyBjYWNoZSBsaW5lIHRvIGRlY3JlYXNlIGNhY2hlCj4+IGxpbmUg
-bWlzc2luZyB3aXRoIHRoYXQgY2hlY2suCj4+Cj4+Pj4+PiArICAgICAgICBzYmktPmN1cl9yZXNl
-cnZlZF9ibG9ja3MgPSBtaW4oc2JpLT5yZXNlcnZlZF9ibG9ja3MsCj4+Pj4+PiArICAgICAgICAg
-ICAgICAgICAgICBzYmktPmN1cl9yZXNlcnZlZF9ibG9ja3MgKyBjb3VudCk7Cj4+Pj4+PiAgICAg
-ICAgIHNwaW5fdW5sb2NrKCZzYmktPnN0YXRfbG9jayk7Cj4+Pj4+PiAgICAgICAgIGYyZnNfaV9i
-bG9ja3Nfd3JpdGUoaW5vZGUsIGNvdW50LCBmYWxzZSwgdHJ1ZSk7Cj4+Pj4+PiAgICAgfQo+Pj4+
-Pj4gQEAgLTE2OTUsNyArMTcwMSw3IEBAIHN0YXRpYyBpbmxpbmUgaW50IGluY192YWxpZF9ub2Rl
-X2NvdW50KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwKPj4+Pj4+ICAgICAgICAgc3Bpbl9sb2Nr
-KCZzYmktPnN0YXRfbG9jayk7Cj4+Pj4+PiAgICAgICAgICAgdmFsaWRfYmxvY2tfY291bnQgPSBz
-YmktPnRvdGFsX3ZhbGlkX2Jsb2NrX2NvdW50ICsgMTsKPj4+Pj4+IC0gICAgaWYgKHVubGlrZWx5
-KHZhbGlkX2Jsb2NrX2NvdW50ICsgc2JpLT5yZXNlcnZlZF9ibG9ja3MgPgo+Pj4+Pj4gKyAgICBp
-ZiAodW5saWtlbHkodmFsaWRfYmxvY2tfY291bnQgKyBzYmktPmN1cl9yZXNlcnZlZF9ibG9ja3Mg
-Pgo+Pj4+Pj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNiaS0+dXNlcl9ibG9ja19jb3Vu
-dCkpIHsKPj4+Pj4+ICAgICAgICAgICAgIHNwaW5fdW5sb2NrKCZzYmktPnN0YXRfbG9jayk7Cj4+
-Pj4+PiAgICAgICAgICAgICBnb3RvIGVub3NwYzsKPj4+Pj4+IEBAIC0xNzM4LDYgKzE3NDQsOSBA
-QCBzdGF0aWMgaW5saW5lIHZvaWQgZGVjX3ZhbGlkX25vZGVfY291bnQoc3RydWN0IGYyZnNfc2Jf
-aW5mbyAqc2JpLAo+Pj4+Pj4gICAgICAgICAgIHNiaS0+dG90YWxfdmFsaWRfbm9kZV9jb3VudC0t
-Owo+Pj4+Pj4gICAgICAgICBzYmktPnRvdGFsX3ZhbGlkX2Jsb2NrX2NvdW50LS07Cj4+Pj4+PiAr
-ICAgIGlmIChzYmktPnJlc2VydmVkX2Jsb2NrcyAmJgo+Pj4+Pj4gKyAgICAgICAgc2JpLT5yZXNl
-cnZlZF9ibG9ja3MgIT0gc2JpLT5jdXJfcmVzZXJ2ZWRfYmxvY2tzKQo+Pj4+IENoZWNraW5nIGxv
-dyBib3VuZGFyeSBpcyBtb3JlIHNhZmUgaGVyZS4KPj4+IEkgdGhpbmsgY3VyX3Jlc2VydmVkX2Js
-b2NrcyBjYW4gbmV2ZXIgYmUgbGFyZ2VyIHRoYW4gcmVzZXJ2ZWRfYmxvY2tzIGluIGFueSBjYXNl
-LiBzbyBtaW4ocmVzZXJ2ZWRfYmxvY2tzLAo+Pj4gY3VyX3Jlc2VydmVkX2Jsb2NrcyArMSkgaXMg
-c2FtZSB0byBjdXJfcmVzZXJ2ZWRfYmxvY2tzKysgd2hlbiByZXNlcnZlZF9ibG9ja3MgIT0gY3Vy
-X3Jlc2VydmVkX2Jsb2Nrcwo+Pj4gKHdoaWNoIG1lYW5zIHJlc2VydmVkX2Jsb2NrcyA+IGN1cl9y
-ZXNlcnZlZF9ibG9jayApCj4+IERpdHRvLgo+Pgo+Pj4+Pj4gKyAgICAgICAgc2JpLT5jdXJfcmVz
-ZXJ2ZWRfYmxvY2tzKys7Cj4+Pj4+PiAgICAgICAgICAgc3Bpbl91bmxvY2soJnNiaS0+c3RhdF9s
-b2NrKTsKPj4+Pj4+ICAgICBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9zdXBlci5jIGIvZnMvZjJmcy9z
-dXBlci5jCj4+Pj4+PiBpbmRleCA0YzFiZGNiLi4xNmE4MDVmIDEwMDY0NAo+Pj4+Pj4gLS0tIGEv
-ZnMvZjJmcy9zdXBlci5jCj4+Pj4+PiArKysgYi9mcy9mMmZzL3N1cGVyLmMKPj4+Pj4+IEBAIC05
-NTcsNyArOTU3LDcgQEAgc3RhdGljIGludCBmMmZzX3N0YXRmcyhzdHJ1Y3QgZGVudHJ5ICpkZW50
-cnksIHN0cnVjdCBrc3RhdGZzICpidWYpCj4+Pj4+PiAgICAgICAgIGJ1Zi0+Zl9ibG9ja3MgPSB0
-b3RhbF9jb3VudCAtIHN0YXJ0X2NvdW50Owo+Pj4+Pj4gICAgICAgICBidWYtPmZfYmZyZWUgPSB1
-c2VyX2Jsb2NrX2NvdW50IC0gdmFsaWRfdXNlcl9ibG9ja3Moc2JpKSArIG92cF9jb3VudDsKPj4+
-Pj4+ICAgICAgICAgYnVmLT5mX2JhdmFpbCA9IHVzZXJfYmxvY2tfY291bnQgLSB2YWxpZF91c2Vy
-X2Jsb2NrcyhzYmkpIC0KPj4+Pj4+IC0gICAgICAgICAgICAgICAgICAgICAgICBzYmktPnJlc2Vy
-dmVkX2Jsb2NrczsKPj4+Pj4+ICsgICAgICAgICAgICAgICAgICAgICAgICBzYmktPmN1cl9yZXNl
-cnZlZF9ibG9ja3M7Cj4+Pj4+PiAgICAgICAgICAgYXZhaWxfbm9kZV9jb3VudCA9IHNiaS0+dG90
-YWxfbm9kZV9jb3VudCAtIEYyRlNfUkVTRVJWRURfTk9ERV9OVU07Cj4+Pj4+PiAgICAgQEAgLTI0
-MTEsNiArMjQxMSw3IEBAIHN0YXRpYyBpbnQgZjJmc19maWxsX3N1cGVyKHN0cnVjdCBzdXBlcl9i
-bG9jayAqc2IsIHZvaWQgKmRhdGEsIGludCBzaWxlbnQpCj4+Pj4+PiAgICAgICAgICAgICAgICAg
-ICAgIGxlNjRfdG9fY3B1KHNiaS0+Y2twdC0+dmFsaWRfYmxvY2tfY291bnQpOwo+Pj4+Pj4gICAg
-ICAgICBzYmktPmxhc3RfdmFsaWRfYmxvY2tfY291bnQgPSBzYmktPnRvdGFsX3ZhbGlkX2Jsb2Nr
-X2NvdW50Owo+Pj4+Pj4gICAgICAgICBzYmktPnJlc2VydmVkX2Jsb2NrcyA9IDA7Cj4+Pj4+PiAr
-ICAgIHNiaS0+Y3VyX3Jlc2VydmVkX2Jsb2NrcyA9IDA7Cj4+Pj4+PiAgICAgICAgICAgZm9yIChp
-ID0gMDsgaSA8IE5SX0lOT0RFX1RZUEU7IGkrKykgewo+Pj4+Pj4gICAgICAgICAgICAgSU5JVF9M
-SVNUX0hFQUQoJnNiaS0+aW5vZGVfbGlzdFtpXSk7Cj4+Pj4+PiBkaWZmIC0tZ2l0IGEvZnMvZjJm
-cy9zeXNmcy5jIGIvZnMvZjJmcy9zeXNmcy5jCj4+Pj4+PiBpbmRleCBhMWJlNWFjLi43NWMzN2Ji
-IDEwMDY0NAo+Pj4+Pj4gLS0tIGEvZnMvZjJmcy9zeXNmcy5jCj4+Pj4+PiArKysgYi9mcy9mMmZz
-L3N5c2ZzLmMKPj4+Pj4+IEBAIC0xMDQsMTIgKzEwNCwyMiBAQCBzdGF0aWMgc3NpemVfdCBmZWF0
-dXJlc19zaG93KHN0cnVjdCBmMmZzX2F0dHIgKmEsCj4+Pj4+PiAgICAgICAgIHJldHVybiBsZW47
-Cj4+Pj4+PiAgICAgfQo+Pj4+Pj4gICAgICtzdGF0aWMgc3NpemVfdCBmMmZzX3Jlc2VydmVkX2Js
-b2Nrc19zaG93KHN0cnVjdCBmMmZzX2F0dHIgKmEsCj4+Pj4+PiArICAgICAgICBzdHJ1Y3QgZjJm
-c19zYl9pbmZvICpzYmksIGNoYXIgKmJ1ZikKPj4+Pj4+ICt7Cj4+Pj4+PiArICAgIHJldHVybiBz
-bnByaW50ZihidWYsIFBBR0VfU0laRSwgImV4cGVjdGVkOiAldVxuY3VycmVudDogJXVcbiIsCj4+
-Pj4+PiArICAgICAgICAgICAgc2JpLT5yZXNlcnZlZF9ibG9ja3MsIHNiaS0+Y3VyX3Jlc2VydmVk
-X2Jsb2Nrcyk7Cj4+Pj4+PiArfQo+Pj4+Pj4gKwo+Pj4+Pj4gICAgIHN0YXRpYyBzc2l6ZV90IGYy
-ZnNfc2JpX3Nob3coc3RydWN0IGYyZnNfYXR0ciAqYSwKPj4+Pj4+ICAgICAgICAgICAgICAgICBz
-dHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIGNoYXIgKmJ1ZikKPj4+Pj4+ICAgICB7Cj4+Pj4+PiAg
-ICAgICAgIHVuc2lnbmVkIGNoYXIgKnB0ciA9IE5VTEw7Cj4+Pj4+PiAgICAgICAgIHVuc2lnbmVk
-IGludCAqdWk7Cj4+Pj4+PiAgICAgKyAgICBpZiAoYS0+c3RydWN0X3R5cGUgPT0gUkVTRVJWRURf
-QkxPQ0tTKQo+Pj4+Pj4gKyAgICAgICAgcmV0dXJuIGYyZnNfcmVzZXJ2ZWRfYmxvY2tzX3Nob3co
-YSwgc2JpLCBidWYpOwo+Pj4+Pj4gKwo+Pj4+Pj4gICAgICAgICBwdHIgPSBfX3N0cnVjdF9wdHIo
-c2JpLCBhLT5zdHJ1Y3RfdHlwZSk7Cj4+Pj4+PiAgICAgICAgIGlmICghcHRyKQo+Pj4+Pj4gICAg
-ICAgICAgICAgcmV0dXJuIC1FSU5WQUw7Cj4+Pj4+PiBAQCAtMTQzLDEyICsxNTMsMTMgQEAgc3Rh
-dGljIHNzaXplX3QgZjJmc19zYmlfc3RvcmUoc3RydWN0IGYyZnNfYXR0ciAqYSwKPj4+Pj4+ICAg
-ICAjZW5kaWYKPj4+Pj4+ICAgICAgICAgaWYgKGEtPnN0cnVjdF90eXBlID09IFJFU0VSVkVEX0JM
-T0NLUykgewo+Pj4+Pj4gICAgICAgICAgICAgc3Bpbl9sb2NrKCZzYmktPnN0YXRfbG9jayk7Cj4+
-Pj4+PiAtICAgICAgICBpZiAoKHVuc2lnbmVkIGxvbmcpc2JpLT50b3RhbF92YWxpZF9ibG9ja19j
-b3VudCArIHQgPgo+Pj4+Pj4gLSAgICAgICAgICAgICAgICAodW5zaWduZWQgbG9uZylzYmktPnVz
-ZXJfYmxvY2tfY291bnQpIHsKPj4+Pj4+ICsgICAgICAgIGlmICh0ID4gKHVuc2lnbmVkIGxvbmcp
-c2JpLT51c2VyX2Jsb2NrX2NvdW50KSB7Cj4+Pj4+PiAgICAgICAgICAgICAgICAgc3Bpbl91bmxv
-Y2soJnNiaS0+c3RhdF9sb2NrKTsKPj4+Pj4+ICAgICAgICAgICAgICAgICByZXR1cm4gLUVJTlZB
-TDsKPj4+Pj4+ICAgICAgICAgICAgIH0KPj4+Pj4+ICAgICAgICAgICAgICp1aSA9IHQ7Cj4+Pj4+
-PiArICAgICAgICBpZiAodCA8ICh1bnNpZ25lZCBsb25nKXNiaS0+Y3VyX3Jlc2VydmVkX2Jsb2Nr
-cykKPj4+Pj4+ICsgICAgICAgICAgICBzYmktPmN1cl9yZXNlcnZlZF9ibG9ja3MgPSB0Owo+Pj4+
-IE5vLCBmb3IgJ3QgPCBjdXJfcmVzZXJ2ZWRfYmxvY2tzJyBjYXNlLCBjdXJfcmVzZXJ2ZWRfYmxv
-Y2tzIHdpbGwgb3V0IG9mIHVwZGF0ZQo+Pj4+IGV2ZW4gaWYgdGhlcmUgaXMgZW5vdWdoIGZyZWUg
-c3BhY2UuIFlvdSBrbm93LCBmb3Igc29mdCBibG9jayByZXNldmF0aW9uLCB3ZSBuZWVkCj4+Pj4g
-dG8gcmVzZXJ2ZSBibG9ja3MgYXMgbWFueSBhcyBwb3NzaWJsZSwgbWFraW5nIGZyZWUgc3BhY2Ug
-YmVpbmcgemVybyBzdWRkZW5seSBpcwo+Pj4+IHBvc3NpYmxlLgo+Pj4gSSBkbyBub3QgdW5kZXJz
-dGFuZCB3aHkgaXQgaXMgbm90IHNhZmUgdG8gZGVjcmVhc2UgY3VyX3Jlc2VydmVkX2Jsb2Nrcywg
-Zm9yIGV4YW1wbGUsCj4+PiBpZiBjdXJyZW50IGN1cl9yZXNlcnZlZF9ibG9ja3MgaXMgMTAwLCBu
-b3cgZGVjcmVhc2UgaXQgdG8gODAsIGlzIHRoZXJlIGFueSBwcm9ibGVtPwo+Pj4gSWYgODAgd2ls
-bCBtYWtlIGZyZWUgc3BhY2UgemVybywgaG93IGRvZXMgMTAwIGV4aXN0Pwo+Pj4gQW5kIEkgZG8g
-bm90IHRoaW5rIGl0IGlzIHNhZmUgYXMgZm9sbG93aW5nOgo+Pj4gICAgICAgICAgICp1aSA9IHQ7
-Cj4+PiArICAgICAgICBzYmktPmN1cnJlbnRfcmVzZXJ2ZWRfYmxvY2tzID0gbWluKHNiaS0+cmVz
-ZXJ2ZWRfYmxvY2tzLAo+Pj4gKyAgICAgICAgICAgICAgICBzYmktPnVzZXJfYmxvY2tfY291bnQg
-LSB2YWxpZF91c2VyX2Jsb2NrcyhzYmkpKTsKPj4+Cj4+PiBJZiB1c2VyX2Jsb2NrX2NvdW50ID0g
-MjAwLCB2YWxpZF91c2VyX2Jsb2Nrcz0xNTDvvIwgcmVzZXJ2ZWRfYmxvY2tzID0gMTAwLAo+Pj4g
-dGhlbiBjdXJyZW50X3Jlc2VydmVkX2Jsb2NrID0gbWluKDEwMCwyMDAtNTApID0gNTAsIGluIHRo
-aXMgY2FzZSwgZnJlZSBzcGFjZQo+Pj4gaXMgc3VkZGVubHkgYmVjb21pbmcgemVyby4KPj4gRnJl
-ZSBzcGFjZSBiZWNvbWVzIHplcm8gc3VkZGVubHkgaXMgc2FmZSwgYXMgSSBzYWlkIGJlZm9yZSwg
-SSBkb24ndCBleHBlY3QgdGhpcwo+PiBmZWF0dXJlIGNhbiBiZSB1c2VkIGluIGFuZHJvaWQsIGlu
-c3RlYWQsIGl0IG1heSBiZSB1c2VkIGluIGRpc3RyaWJ1dGVkIHN0b3JhZ2UKPj4gc2NlbmFyaW8s
-IGluIHdoZXJlLCBvbmNlIHdlIGNvbmZpZ3VyZSBzb2Z0X3Jlc2VydmVkX2Jsb2NrIG1ha2luZyBv
-bmUgc2VydmVyIG91dAo+PiBvZiBmcmVlIHNwYWNlLCBpdCdzIG5vdCBjcml0aWNhbCBpc3N1ZSB0
-byB0aGlzIHN5c3RlbSBzaW5jZSB3ZSBjYW4gbW92ZSBjdXJyZW50Cj4+IGNvcHkgdG8gYW5vdGhl
-ciBzZXJ2ZXIgd2hpY2ggaGFzIGVub3VnaCBmcmVlIHNwYWNlLgo+Pgo+PiBTZWNvbmRseSwgYXMg
-YW4gZ2xvYmFsIGNvbmZpZ3VyYXRpb24sIGl0J3MgZHVlIHRvIHVzYWdlIG9mIGFkbWluaXN0cmF0
-b3Igd2l0aAo+PiBpdCwgaWYgdGhlcmUgaXMgY3JpdGljYWwgYXBwbGljYXRpb24gd2hpY2ggaXMg
-c2Vuc2l0aXZlIHdpdGggZnJlZSBzcGFjZSwKPj4gYWRtaW5pc3RyYXRvciBzaG91bGQgbWFrZSBz
-dXJlIG91ciByZXNlcnZhdGlvbiBzaG91bGQgbm90IG92ZXJsb2FkIGNvbnN1bWluZyBmcmVlCj4+
-IHNwYWNlLCB3aGljaCBtZWFucyBzb2Z0IHJlc2VydmF0aW9uIGlzIG5vdCBzdWl0YWJsZS4KPj4K
-Pj4+IFRvIGF2b2lkIHRoaXMsIEkgY2hhbmdlIHRoZSBjb2RlIHRvOgo+Pj4KPj4+ICsgICAgICAg
-IGlmICh0IDwgKHVuc2lnbmVkIGxvbmcpc2JpLT5jdXJfcmVzZXJ2ZWRfYmxvY2tzKQo+Pj4gKyAg
-ICAgICAgICAgIHNiaS0+Y3VyX3Jlc2VydmVkX2Jsb2NrcyA9IHQ7Cj4+Pgo+Pj4gSSB0aGluayBp
-dCBpcyBvbmx5IHNhZmUgdG8gZGVjcmVhc2UgdGhlIHZhbHVlIG9mIGN1cl9yZXNlcnZlZF9ibG9j
-a3MsIGFuZCBsZWF2ZSBpbmNyZWFzZSBvcGVyYXRpb24gdG8KPj4+IGRlY192YWxpZF9ibG9jaygs
-bm9kZSlfY291bnQsIGl0IGlzIHNhZmUgdG8gaW5jcmVhc2UgY3VyX3Jlc2VydmVkX2Jsb2NrcyB0
-aGVyZS4KPj4gRm9yIGluaXRpYWxpemF0aW9uIG9mIHJlc2VydmVkX2Jsb2NrcywgY3VyX3Jlc2Vy
-dmVkX2Jsb2NrcyB3aWxsIGFsd2F5cyBiZSB6ZXJvCj4+IGR1ZSB0byB0aGlzIGNoZWNrLCBhbmQg
-d2lsbCBiZSB1cGRhdGVkIHRvIGNsb3NlIHRvIHJlc2VydmVkX2Jsb2NrcyBhZnRlciBibG9jawo+
-PiBhbGxvY2F0aW9uIGFuZCBkZWFsbG9jYXRpb24gb2YgdXNlciwgSU1PLCBpdCdzIG5vdCBsb29r
-cyByZWFzb25hYmxlIHRvIHVzZXIuCj4+Cj4+IEFueXdheSwgaXQncyBkdWUgdG8gaG93IHlvdSBk
-ZWZpbmUgc2VtYW50aWNzIG9mIHNvZnQgcmVzZXJ2YXRpb24sIHNvIHdoYXQgaXMgeW91cgo+PiB1
-bmRlcnN0YW5kaW5nIG9mIGl0Pwo+Pgo+PiBUaGFua3MsCj4+Cj4+Pj4gVGhhbmtzLAo+Pj4+Cj4+
-Pj4+PiAgICAgICAgICAgICBzcGluX3VubG9jaygmc2JpLT5zdGF0X2xvY2spOwo+Pj4+Pj4gICAg
-ICAgICAgICAgcmV0dXJuIGNvdW50Owo+Pj4+Pj4gICAgICAgICB9Cj4+Pj4gLgo+Pj4+Cj4+IC4K
-Pj4KPiAKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2gg
-Y29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0CmVuZ2FnaW5nIHRlY2ggc2l0ZXMs
-IFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBs
-aXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMu
-c291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+Agree
+
+On 2017/10/26 11:26, Chao Yu wrote:
+> On 2017/10/26 11:07, Yunlong Song wrote:
+>> Yes, I agree with the soft semantic you introduce, it is too slow to
+>> increase cur_reserved_blocks only in
+>> dec_valid_block(,node)_count, e.g. if users want to set
+>> cur_reserved_blocks to 10G.
+> Yup,
+>
+>> Then how about fix the initialization of cur_reserved_blocks in
+>> fs/f2fs/super.c as following:
+>> sbi->current_reserved_blocks = 0
+>> change to
+>> sbi->current_reserved_blocks = min(sbi->reserved_blocks,
+>> sbi->user_block_count - valid_user_blocks(sbi));
+> It will be necessary only if reserved_blocks is initialized with a non-zero value,
+> but now it has value of zero, so it's redundant...
+>
+> What about adding this check if we initialize reserved_blocks with a non-zero default
+> value or value which may be configured with mount_option?
+>
+> Thanks,
+>
+>> On 2017/10/25 23:46, Chao Yu wrote:
+>>> On 2017/10/25 22:06, Yunlong Song wrote:
+>>>> Hi, Chao,
+>>>>       Please see my comments below.
+>>>>
+>>>> On 2017/10/25 20:26, Chao Yu wrote:
+>>>>> On 2017/10/25 18:02, Yunlong Song wrote:
+>>>>>> ping...
+>>>>> I've replied in this thread, check your email list please, or you can check the
+>>>>> comments in below link:
+>>>>>
+>>>>> https://patchwork.kernel.org/patch/9909407/
+>>>>>
+>>>>> Anyway, see comments below.
+>>>>>
+>>>>>> On 2017/8/18 23:09, Yunlong Song wrote:
+>>>>>>> This patch adds cur_reserved_blocks to extend reserved_blocks sysfs
+>>>>>>> interface to be soft threshold, which allows user configure it exceeding
+>>>>>>> current available user space. To ensure there is enough space for
+>>>>>>> supporting system's activation, this patch does not set the reserved space
+>>>>>>> to the configured reserved_blocks value at once, instead, it safely
+>>>>>>> increase cur_reserved_blocks in dev_valid_block(,node)_count to only take
+>>>>>>> up the blocks which are just obsoleted.
+>>>>>>>
+>>>>>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>>>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>>>>> ---
+>>>>>>>      Documentation/ABI/testing/sysfs-fs-f2fs |  3 ++-
+>>>>>>>      fs/f2fs/f2fs.h                          | 13 +++++++++++--
+>>>>>>>      fs/f2fs/super.c                         |  3 ++-
+>>>>>>>      fs/f2fs/sysfs.c                         | 15 +++++++++++++--
+>>>>>>>      4 files changed, 28 insertions(+), 6 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+>>>>>>> index 11b7f4e..ba282ca 100644
+>>>>>>> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+>>>>>>> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+>>>>>>> @@ -138,7 +138,8 @@ What:        /sys/fs/f2fs/<disk>/reserved_blocks
+>>>>>>>      Date:        June 2017
+>>>>>>>      Contact:    "Chao Yu" <yuchao0@huawei.com>
+>>>>>>>      Description:
+>>>>>>> -         Controls current reserved blocks in system.
+>>>>>>> +         Controls current reserved blocks in system, the threshold
+>>>>>>> +         is soft, it could exceed current available user space.
+>>>>>>>        What:        /sys/fs/f2fs/<disk>/gc_urgent
+>>>>>>>      Date:        August 2017
+>>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>>>>>> index 2f20b6b..84ccbdc 100644
+>>>>>>> --- a/fs/f2fs/f2fs.h
+>>>>>>> +++ b/fs/f2fs/f2fs.h
+>>>>>>> @@ -1041,6 +1041,7 @@ struct f2fs_sb_info {
+>>>>>>>          block_t discard_blks;            /* discard command candidats */
+>>>>>>>          block_t last_valid_block_count;        /* for recovery */
+>>>>>>>          block_t reserved_blocks;        /* configurable reserved blocks */
+>>>>>>> +    block_t cur_reserved_blocks;        /* current reserved blocks */
+>>>>>>>            u32 s_next_generation;            /* for NFS support */
+>>>>>>>      @@ -1515,7 +1516,8 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+>>>>>>>            spin_lock(&sbi->stat_lock);
+>>>>>>>          sbi->total_valid_block_count += (block_t)(*count);
+>>>>>>> -    avail_user_block_count = sbi->user_block_count - sbi->reserved_blocks;
+>>>>>>> +    avail_user_block_count = sbi->user_block_count -
+>>>>>>> +                        sbi->cur_reserved_blocks;
+>>>>>>>          if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
+>>>>>>>              diff = sbi->total_valid_block_count - avail_user_block_count;
+>>>>>>>              *count -= diff;
+>>>>>>> @@ -1549,6 +1551,10 @@ static inline void dec_valid_block_count(struct f2fs_sb_info *sbi,
+>>>>>>>          f2fs_bug_on(sbi, sbi->total_valid_block_count < (block_t) count);
+>>>>>>>          f2fs_bug_on(sbi, inode->i_blocks < sectors);
+>>>>>>>          sbi->total_valid_block_count -= (block_t)count;
+>>>>>>> +    if (sbi->reserved_blocks &&
+>>>>>>> +        sbi->reserved_blocks != sbi->cur_reserved_blocks)
+>>>>> It's redundent check here...
+>>>> I think in most cases, cur_reserved_blocks is equal to reserved_blocks, so we do not need to calculate min any more, otherwise,
+>>>> if reserved_blocks is not 0, it will calculate min and set current_reserved_blocks each time.
+>>> OK, IMO, in some condition, we can save dirtying cache line to decrease cache
+>>> line missing with that check.
+>>>
+>>>>>>> +        sbi->cur_reserved_blocks = min(sbi->reserved_blocks,
+>>>>>>> +                    sbi->cur_reserved_blocks + count);
+>>>>>>>          spin_unlock(&sbi->stat_lock);
+>>>>>>>          f2fs_i_blocks_write(inode, count, false, true);
+>>>>>>>      }
+>>>>>>> @@ -1695,7 +1701,7 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+>>>>>>>          spin_lock(&sbi->stat_lock);
+>>>>>>>            valid_block_count = sbi->total_valid_block_count + 1;
+>>>>>>> -    if (unlikely(valid_block_count + sbi->reserved_blocks >
+>>>>>>> +    if (unlikely(valid_block_count + sbi->cur_reserved_blocks >
+>>>>>>>                              sbi->user_block_count)) {
+>>>>>>>              spin_unlock(&sbi->stat_lock);
+>>>>>>>              goto enospc;
+>>>>>>> @@ -1738,6 +1744,9 @@ static inline void dec_valid_node_count(struct f2fs_sb_info *sbi,
+>>>>>>>            sbi->total_valid_node_count--;
+>>>>>>>          sbi->total_valid_block_count--;
+>>>>>>> +    if (sbi->reserved_blocks &&
+>>>>>>> +        sbi->reserved_blocks != sbi->cur_reserved_blocks)
+>>>>> Checking low boundary is more safe here.
+>>>> I think cur_reserved_blocks can never be larger than reserved_blocks in any case. so min(reserved_blocks,
+>>>> cur_reserved_blocks +1) is same to cur_reserved_blocks++ when reserved_blocks != cur_reserved_blocks
+>>>> (which means reserved_blocks > cur_reserved_block )
+>>> Ditto.
+>>>
+>>>>>>> +        sbi->cur_reserved_blocks++;
+>>>>>>>            spin_unlock(&sbi->stat_lock);
+>>>>>>>      diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>>>>>> index 4c1bdcb..16a805f 100644
+>>>>>>> --- a/fs/f2fs/super.c
+>>>>>>> +++ b/fs/f2fs/super.c
+>>>>>>> @@ -957,7 +957,7 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
+>>>>>>>          buf->f_blocks = total_count - start_count;
+>>>>>>>          buf->f_bfree = user_block_count - valid_user_blocks(sbi) + ovp_count;
+>>>>>>>          buf->f_bavail = user_block_count - valid_user_blocks(sbi) -
+>>>>>>> -                        sbi->reserved_blocks;
+>>>>>>> +                        sbi->cur_reserved_blocks;
+>>>>>>>            avail_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
+>>>>>>>      @@ -2411,6 +2411,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>>>>>>                      le64_to_cpu(sbi->ckpt->valid_block_count);
+>>>>>>>          sbi->last_valid_block_count = sbi->total_valid_block_count;
+>>>>>>>          sbi->reserved_blocks = 0;
+>>>>>>> +    sbi->cur_reserved_blocks = 0;
+>>>>>>>            for (i = 0; i < NR_INODE_TYPE; i++) {
+>>>>>>>              INIT_LIST_HEAD(&sbi->inode_list[i]);
+>>>>>>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+>>>>>>> index a1be5ac..75c37bb 100644
+>>>>>>> --- a/fs/f2fs/sysfs.c
+>>>>>>> +++ b/fs/f2fs/sysfs.c
+>>>>>>> @@ -104,12 +104,22 @@ static ssize_t features_show(struct f2fs_attr *a,
+>>>>>>>          return len;
+>>>>>>>      }
+>>>>>>>      +static ssize_t f2fs_reserved_blocks_show(struct f2fs_attr *a,
+>>>>>>> +        struct f2fs_sb_info *sbi, char *buf)
+>>>>>>> +{
+>>>>>>> +    return snprintf(buf, PAGE_SIZE, "expected: %u\ncurrent: %u\n",
+>>>>>>> +            sbi->reserved_blocks, sbi->cur_reserved_blocks);
+>>>>>>> +}
+>>>>>>> +
+>>>>>>>      static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
+>>>>>>>                  struct f2fs_sb_info *sbi, char *buf)
+>>>>>>>      {
+>>>>>>>          unsigned char *ptr = NULL;
+>>>>>>>          unsigned int *ui;
+>>>>>>>      +    if (a->struct_type == RESERVED_BLOCKS)
+>>>>>>> +        return f2fs_reserved_blocks_show(a, sbi, buf);
+>>>>>>> +
+>>>>>>>          ptr = __struct_ptr(sbi, a->struct_type);
+>>>>>>>          if (!ptr)
+>>>>>>>              return -EINVAL;
+>>>>>>> @@ -143,12 +153,13 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+>>>>>>>      #endif
+>>>>>>>          if (a->struct_type == RESERVED_BLOCKS) {
+>>>>>>>              spin_lock(&sbi->stat_lock);
+>>>>>>> -        if ((unsigned long)sbi->total_valid_block_count + t >
+>>>>>>> -                (unsigned long)sbi->user_block_count) {
+>>>>>>> +        if (t > (unsigned long)sbi->user_block_count) {
+>>>>>>>                  spin_unlock(&sbi->stat_lock);
+>>>>>>>                  return -EINVAL;
+>>>>>>>              }
+>>>>>>>              *ui = t;
+>>>>>>> +        if (t < (unsigned long)sbi->cur_reserved_blocks)
+>>>>>>> +            sbi->cur_reserved_blocks = t;
+>>>>> No, for 't < cur_reserved_blocks' case, cur_reserved_blocks will out of update
+>>>>> even if there is enough free space. You know, for soft block resevation, we need
+>>>>> to reserve blocks as many as possible, making free space being zero suddenly is
+>>>>> possible.
+>>>> I do not understand why it is not safe to decrease cur_reserved_blocks, for example,
+>>>> if current cur_reserved_blocks is 100, now decrease it to 80, is there any problem?
+>>>> If 80 will make free space zero, how does 100 exist?
+>>>> And I do not think it is safe as following:
+>>>>            *ui = t;
+>>>> +        sbi->current_reserved_blocks = min(sbi->reserved_blocks,
+>>>> +                sbi->user_block_count - valid_user_blocks(sbi));
+>>>>
+>>>> If user_block_count = 200, valid_user_blocks=150， reserved_blocks = 100,
+>>>> then current_reserved_block = min(100,200-50) = 50, in this case, free space
+>>>> is suddenly becoming zero.
+>>> Free space becomes zero suddenly is safe, as I said before, I don't expect this
+>>> feature can be used in android, instead, it may be used in distributed storage
+>>> scenario, in where, once we configure soft_reserved_block making one server out
+>>> of free space, it's not critical issue to this system since we can move current
+>>> copy to another server which has enough free space.
+>>>
+>>> Secondly, as an global configuration, it's due to usage of administrator with
+>>> it, if there is critical application which is sensitive with free space,
+>>> administrator should make sure our reservation should not overload consuming free
+>>> space, which means soft reservation is not suitable.
+>>>
+>>>> To avoid this, I change the code to:
+>>>>
+>>>> +        if (t < (unsigned long)sbi->cur_reserved_blocks)
+>>>> +            sbi->cur_reserved_blocks = t;
+>>>>
+>>>> I think it is only safe to decrease the value of cur_reserved_blocks, and leave increase operation to
+>>>> dec_valid_block(,node)_count, it is safe to increase cur_reserved_blocks there.
+>>> For initialization of reserved_blocks, cur_reserved_blocks will always be zero
+>>> due to this check, and will be updated to close to reserved_blocks after block
+>>> allocation and deallocation of user, IMO, it's not looks reasonable to user.
+>>>
+>>> Anyway, it's due to how you define semantics of soft reservation, so what is your
+>>> understanding of it?
+>>>
+>>> Thanks,
+>>>
+>>>>> Thanks,
+>>>>>
+>>>>>>>              spin_unlock(&sbi->stat_lock);
+>>>>>>>              return count;
+>>>>>>>          }
+>>>>> .
+>>>>>
+>>> .
+>>>
+>
+> .
+>
+
+-- 
+Thanks,
+Yunlong Song
