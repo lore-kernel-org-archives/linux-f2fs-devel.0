@@ -1,20 +1,25 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v3] f2fs: modify for accurate fggc node io stat
-Date: Fri, 27 Oct 2017 11:17:17 +0800
-Message-ID: <1509074237-7693-1-git-send-email-heyunlei@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: Fwd: Re: [PATCH 1/1] f2fs: simplify the calculation
+ of fggc_threshold
+Date: Fri, 27 Oct 2017 11:47:57 +0800
+Message-ID: <b42d5510-5d11-c2d9-f4de-126d95e85d4a@huawei.com>
+References: <6b8c7cee-3806-3b3a-e6c9-9f22857e9ae8@huawei.com>
+ <249859c1-668d-5236-ec6f-1f35b9843f42@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
  helo=mx.sourceforge.net)
  by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <heyunlei@huawei.com>) id 1e7vKz-0002EH-RK
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Oct 2017 03:29:37 +0000
+ (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e7vd1-0002ep-Hh
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Oct 2017 03:48:15 +0000
 Received: from szxga05-in.huawei.com ([45.249.212.191])
- by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1e7vKy-0008IH-AD
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Oct 2017 03:29:37 +0000
+ by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1e7vcz-0000Sl-Mz
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Oct 2017 03:48:15 +0000
+In-Reply-To: <249859c1-668d-5236-ec6f-1f35b9843f42@huawei.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -24,99 +29,88 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
-Cc: ning.jia@huawei.com, heyunlei@huawei.com
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Sun Qiuyang <sunqiuyang@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-modify for accurate fggc node io stat
+On 2017/10/27 11:43, Sun Qiuyang wrote:
+> 
+> Hi Jaegeuk,
+> 
+> I noticed that the log of the commit:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev-test&id=7e515b31d44dcd20a98c938dfdc21877a30042a0
+> 
+> used a new expression as follows:
+> 
+> sbi->fggc_threshold = div_u64((u64)(main_count - ovp_count) *
+> 			BLKS_PER_SEC(sbi), (main_count - resv_count));
+> 
+> This might originate from my patch below, which has been merged into the 
+> f2fs-dev branch of kernel/git/chao/linux.git, but not 
+> kernel/git/jaegeuk/f2fs.git yet.
+> 
+> So, would you like to consider merging my patch as well?
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fs/f2fs/node.c | 63 +++++++++++++++++++++++++++++-----------------------------
- 1 file changed, 32 insertions(+), 31 deletions(-)
+As you see, I have reviewed this patch, since it looks good to me. ;)
+But forgot to remind Jaegeuk to merge this, sorry.
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index f44d837..0701713 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1242,37 +1242,6 @@ static void flush_inline_data(struct f2fs_sb_info *sbi, nid_t ino)
- 	iput(inode);
- }
- 
--void move_node_page(struct page *node_page, int gc_type)
--{
--	if (gc_type == FG_GC) {
--		struct f2fs_sb_info *sbi = F2FS_P_SB(node_page);
--		struct writeback_control wbc = {
--			.sync_mode = WB_SYNC_ALL,
--			.nr_to_write = 1,
--			.for_reclaim = 0,
--		};
--
--		set_page_dirty(node_page);
--		f2fs_wait_on_page_writeback(node_page, NODE, true);
--
--		f2fs_bug_on(sbi, PageWriteback(node_page));
--		if (!clear_page_dirty_for_io(node_page))
--			goto out_page;
--
--		if (NODE_MAPPING(sbi)->a_ops->writepage(node_page, &wbc))
--			unlock_page(node_page);
--		goto release_page;
--	} else {
--		/* set page dirty and write it */
--		if (!PageWriteback(node_page))
--			set_page_dirty(node_page);
--	}
--out_page:
--	unlock_page(node_page);
--release_page:
--	f2fs_put_page(node_page, 0);
--}
--
- static struct page *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
- {
- 	pgoff_t index, end;
-@@ -1415,6 +1384,38 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
- 	return AOP_WRITEPAGE_ACTIVATE;
- }
- 
-+void move_node_page(struct page *node_page, int gc_type)
-+{
-+	if (gc_type == FG_GC) {
-+		struct f2fs_sb_info *sbi = F2FS_P_SB(node_page);
-+		struct writeback_control wbc = {
-+			.sync_mode = WB_SYNC_ALL,
-+			.nr_to_write = 1,
-+			.for_reclaim = 0,
-+		};
-+
-+		set_page_dirty(node_page);
-+		f2fs_wait_on_page_writeback(node_page, NODE, true);
-+
-+		f2fs_bug_on(sbi, PageWriteback(node_page));
-+		if (!clear_page_dirty_for_io(node_page))
-+			goto out_page;
-+
-+		if (__write_node_page(node_page, false, NULL,
-+					&wbc, false, FS_GC_NODE_IO))
-+			unlock_page(node_page);
-+		goto release_page;
-+	} else {
-+		/* set page dirty and write it */
-+		if (!PageWriteback(node_page))
-+			set_page_dirty(node_page);
-+	}
-+out_page:
-+	unlock_page(node_page);
-+release_page:
-+	f2fs_put_page(node_page, 0);
-+}
-+
- static int f2fs_write_node_page(struct page *page,
- 				struct writeback_control *wbc)
- {
--- 
-1.9.1
+Anyway, how do you think of this cleanup? Jaegeuk.
+
+Thanks,
+
+> 
+> Thanks,
+> 
+> 
+>> On 2017/10/17 20:42, sunqiuyang wrote:
+>>> From: Qiuyang Sun <sunqiuyang@huawei.com>
+>>>
+>>> Do not need to convert segment counts to blocks for this calculation.
+>>>
+>>> Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
+>>
+>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>>
+>> Thanks,
+>>
+>>> ---
+>>>  fs/f2fs/gc.c | 10 +++++-----
+>>>  1 file changed, 5 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>> index 197ebf4..9df8cae 100644
+>>> --- a/fs/f2fs/gc.c
+>>> +++ b/fs/f2fs/gc.c
+>>> @@ -1073,16 +1073,16 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>>
+>>>  void build_gc_manager(struct f2fs_sb_info *sbi)
+>>>  {
+>>> -	u64 main_count, resv_count, ovp_count;
+>>> +	unsigned int main_count, resv_count, ovp_count;
+>>>
+>>>  	DIRTY_I(sbi)->v_ops = &default_v_ops;
+>>>
+>>>  	/* threshold of # of valid blocks in a section for victims of FG_GC */
+>>> -	main_count = SM_I(sbi)->main_segments << sbi->log_blocks_per_seg;
+>>> -	resv_count = SM_I(sbi)->reserved_segments << sbi->log_blocks_per_seg;
+>>> -	ovp_count = SM_I(sbi)->ovp_segments << sbi->log_blocks_per_seg;
+>>> +	main_count = SM_I(sbi)->main_segments;
+>>> +	resv_count = SM_I(sbi)->reserved_segments;
+>>> +	ovp_count = SM_I(sbi)->ovp_segments;
+>>>
+>>> -	sbi->fggc_threshold = div64_u64((main_count - ovp_count) *
+>>> +	sbi->fggc_threshold = div_u64((u64)(main_count - ovp_count) *
+>>>  				BLKS_PER_SEC(sbi), (main_count - resv_count));
+>>>
+>>>  	/* give warm/cold data area from slower device */
+>>>
+>>
+>> .
+>>
+> 
+> 
+> .
+> 
 
 
 ------------------------------------------------------------------------------
