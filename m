@@ -1,209 +1,185 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH v5 RESEND] f2fs: support soft block reservation
-Date: Fri, 27 Oct 2017 20:45:05 +0800
-Message-ID: <1509108305-125467-1-git-send-email-yunlong.song@huawei.com>
-References: <1509104832-124189-1-git-send-email-yunlong.song@huawei.com>
+From: Michael Halcrow <mhalcrow@google.com>
+Subject: Re: [RFC PATCH 01/25] fs, fscrypt: move uapi definitions to new
+ header <linux/fscrypt.h>
+Date: Fri, 27 Oct 2017 11:01:41 -0700
+Message-ID: <20171027180141.GA10611@google.com>
+References: <20171023214058.128121-1-ebiggers3@gmail.com>
+ <20171023214058.128121-2-ebiggers3@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
- helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yunlong.song@huawei.com>)
- id 1e849q-0008Ce-9R
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Oct 2017 12:54:42 +0000
-Received: from [45.249.212.32] (helo=huawei.com)
- by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
- id 1e849j-0002jS-M1
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Oct 2017 12:54:42 +0000
-In-Reply-To: <1509104832-124189-1-git-send-email-yunlong.song@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
-Cc: linux-fsdevel@vger.kernel.org, miaoxie@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20171023214058.128121-2-ebiggers3@gmail.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, linux-api@vger.kernel.org, keyrings@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Gwendal Grignou <gwendal@chromium.org>, Ryo Hashimoto <hashimoto@chromium.org>, Sarthak Kukreti <sarthakkukreti@chromium.org>, Nick Desaulniers <ndesaulniers@google.com>, Eric Biggers <ebiggers@google.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-It supports to extend reserved_blocks sysfs interface to be soft
-threshold, which allows user configure it exceeding current available
-user space. This patch also introduces a new sysfs interface called
-current_reserved_blocks, which shows the current blocks that have
-already been reserved.
+On Mon, Oct 23, 2017 at 02:40:34PM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> There are going to be more filesystem encryption definitions added, and
+> we don't want to use a disproportionate amount of space in <linux/fs.h>
+> for filesystem encryption stuff.  So move the fscrypt definitions to a
+> new header <linux/fscrypt.h>.
+> 
+> For compatibility with existing userspace programs which may be
+> including <linux/fs.h>, <linux/fs.h> still includes the new header.
+> (It's debatable whether we really need this, though; the filesystem
+> encryption API is new enough that most if not all programs that are
+> using it have to declare it themselves anyway.)
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- Documentation/ABI/testing/sysfs-fs-f2fs | 13 ++++++++++++-
- fs/f2fs/f2fs.h                          | 13 +++++++++++--
- fs/f2fs/super.c                         |  3 ++-
- fs/f2fs/sysfs.c                         | 15 ++++++++++++---
- 4 files changed, 37 insertions(+), 7 deletions(-)
+Reviewed-by: Michael Halcrow <mhalcrow@google.com>
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 11b7f4e..7562b0d 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -138,7 +138,18 @@ What:		/sys/fs/f2fs/<disk>/reserved_blocks
- Date:		June 2017
- Contact:	"Chao Yu" <yuchao0@huawei.com>
- Description:
--		 Controls current reserved blocks in system.
-+		 Controls target reserved blocks in system, the threshold
-+		 is soft, it could exceed current available user space.
-+
-+What:		/sys/fs/f2fs/<disk>/current_reserved_blocks
-+Date:		October 2017
-+Contact:	"Yunlong Song" <yunlong.song@huawei.com>
-+Contact:	"Chao Yu" <yuchao0@huawei.com>
-+Description:
-+		 Shows current reserved blocks in system, it may be temporarily
-+		 smaller than target_reserved_blocks, but will gradually
-+		 increase to target_reserved_blocks when more free blocks are
-+		 freed by user later.
- 
- What:		/sys/fs/f2fs/<disk>/gc_urgent
- Date:		August 2017
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 13a96b8..5ed40fb 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1082,6 +1082,7 @@ struct f2fs_sb_info {
- 	block_t discard_blks;			/* discard command candidats */
- 	block_t last_valid_block_count;		/* for recovery */
- 	block_t reserved_blocks;		/* configurable reserved blocks */
-+	block_t current_reserved_blocks;	/* current reserved blocks */
- 
- 	u32 s_next_generation;			/* for NFS support */
- 
-@@ -1557,7 +1558,8 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
- 
- 	spin_lock(&sbi->stat_lock);
- 	sbi->total_valid_block_count += (block_t)(*count);
--	avail_user_block_count = sbi->user_block_count - sbi->reserved_blocks;
-+	avail_user_block_count = sbi->user_block_count -
-+					sbi->current_reserved_blocks;
- 	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
- 		diff = sbi->total_valid_block_count - avail_user_block_count;
- 		*count -= diff;
-@@ -1591,6 +1593,10 @@ static inline void dec_valid_block_count(struct f2fs_sb_info *sbi,
- 	f2fs_bug_on(sbi, sbi->total_valid_block_count < (block_t) count);
- 	f2fs_bug_on(sbi, inode->i_blocks < sectors);
- 	sbi->total_valid_block_count -= (block_t)count;
-+	if (sbi->reserved_blocks &&
-+		sbi->current_reserved_blocks < sbi->reserved_blocks)
-+		sbi->current_reserved_blocks = min(sbi->reserved_blocks,
-+					sbi->current_reserved_blocks + count);
- 	spin_unlock(&sbi->stat_lock);
- 	f2fs_i_blocks_write(inode, count, false, true);
- }
-@@ -1737,7 +1743,7 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
- 	spin_lock(&sbi->stat_lock);
- 
- 	valid_block_count = sbi->total_valid_block_count + 1;
--	if (unlikely(valid_block_count + sbi->reserved_blocks >
-+	if (unlikely(valid_block_count + sbi->current_reserved_blocks >
- 						sbi->user_block_count)) {
- 		spin_unlock(&sbi->stat_lock);
- 		goto enospc;
-@@ -1780,6 +1786,9 @@ static inline void dec_valid_node_count(struct f2fs_sb_info *sbi,
- 
- 	sbi->total_valid_node_count--;
- 	sbi->total_valid_block_count--;
-+	if (sbi->reserved_blocks &&
-+		sbi->current_reserved_blocks < sbi->reserved_blocks)
-+		sbi->current_reserved_blocks++;
- 
- 	spin_unlock(&sbi->stat_lock);
- 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 213d2c1..dab1fed 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -987,7 +987,7 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	buf->f_blocks = total_count - start_count;
- 	buf->f_bfree = user_block_count - valid_user_blocks(sbi) + ovp_count;
- 	buf->f_bavail = user_block_count - valid_user_blocks(sbi) -
--						sbi->reserved_blocks;
-+						sbi->current_reserved_blocks;
- 
- 	avail_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
- 
-@@ -2458,6 +2458,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 				le64_to_cpu(sbi->ckpt->valid_block_count);
- 	sbi->last_valid_block_count = sbi->total_valid_block_count;
- 	sbi->reserved_blocks = 0;
-+	sbi->current_reserved_blocks = 0;
- 
- 	for (i = 0; i < NR_INODE_TYPE; i++) {
- 		INIT_LIST_HEAD(&sbi->inode_list[i]);
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index e09e59c..4166ac7 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -30,7 +30,7 @@ enum {
- 	FAULT_INFO_RATE,	/* struct f2fs_fault_info */
- 	FAULT_INFO_TYPE,	/* struct f2fs_fault_info */
- #endif
--	RESERVED_BLOCKS,
-+	RESERVED_BLOCKS,	/* struct f2fs_sb_info */
- };
- 
- struct f2fs_attr {
-@@ -114,6 +114,12 @@ static ssize_t features_show(struct f2fs_attr *a,
- 	return len;
- }
- 
-+static ssize_t current_reserved_blocks_show(struct f2fs_attr *a,
-+					struct f2fs_sb_info *sbi, char *buf)
-+{
-+	return snprintf(buf, PAGE_SIZE, "%u\n", sbi->current_reserved_blocks);
-+}
-+
- static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
- 			struct f2fs_sb_info *sbi, char *buf)
- {
-@@ -153,12 +159,13 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
- #endif
- 	if (a->struct_type == RESERVED_BLOCKS) {
- 		spin_lock(&sbi->stat_lock);
--		if ((unsigned long)sbi->total_valid_block_count + t >
--				(unsigned long)sbi->user_block_count) {
-+		if (t > (unsigned long)sbi->user_block_count) {
- 			spin_unlock(&sbi->stat_lock);
- 			return -EINVAL;
- 		}
- 		*ui = t;
-+		sbi->current_reserved_blocks = min(sbi->reserved_blocks,
-+				sbi->user_block_count - valid_user_blocks(sbi));
- 		spin_unlock(&sbi->stat_lock);
- 		return count;
- 	}
-@@ -293,6 +300,7 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
- F2FS_GENERAL_RO_ATTR(dirty_segments);
- F2FS_GENERAL_RO_ATTR(lifetime_write_kbytes);
- F2FS_GENERAL_RO_ATTR(features);
-+F2FS_GENERAL_RO_ATTR(current_reserved_blocks);
- 
- #ifdef CONFIG_F2FS_FS_ENCRYPTION
- F2FS_FEATURE_RO_ATTR(encryption, FEAT_CRYPTO);
-@@ -338,6 +346,7 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
- 	ATTR_LIST(lifetime_write_kbytes),
- 	ATTR_LIST(features),
- 	ATTR_LIST(reserved_blocks),
-+	ATTR_LIST(current_reserved_blocks),
- 	NULL,
- };
- 
--- 
-1.8.5.2
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> ---
+>  include/linux/fscrypt.h      |  2 +-
+>  include/uapi/linux/fs.h      | 50 +++--------------------------------------
+>  include/uapi/linux/fscrypt.h | 53 ++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 57 insertions(+), 48 deletions(-)
+>  create mode 100644 include/uapi/linux/fscrypt.h
+> 
+> diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+> index 53437bfdfcbc..f7aa7d62e235 100644
+> --- a/include/linux/fscrypt.h
+> +++ b/include/linux/fscrypt.h
+> @@ -19,7 +19,7 @@
+>  #include <linux/bio.h>
+>  #include <linux/dcache.h>
+>  #include <crypto/skcipher.h>
+> -#include <uapi/linux/fs.h>
+> +#include <uapi/linux/fscrypt.h>
+>  
+>  #define FS_CRYPTO_BLOCK_SIZE		16
+>  
+> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> index 56235dddea7d..6ecd3ee9960c 100644
+> --- a/include/uapi/linux/fs.h
+> +++ b/include/uapi/linux/fs.h
+> @@ -12,6 +12,9 @@
+>  #include <linux/limits.h>
+>  #include <linux/ioctl.h>
+>  #include <linux/types.h>
+> +#ifndef __KERNEL__
+> +#include <linux/fscrypt.h>
+> +#endif
+>  
+>  /*
+>   * It's silly to have NR_OPEN bigger than NR_FILE, but you can change
+> @@ -253,53 +256,6 @@ struct fsxattr {
+>  #define FS_IOC_FSGETXATTR		_IOR ('X', 31, struct fsxattr)
+>  #define FS_IOC_FSSETXATTR		_IOW ('X', 32, struct fsxattr)
+>  
+> -/*
+> - * File system encryption support
+> - */
+> -/* Policy provided via an ioctl on the topmost directory */
+> -#define FS_KEY_DESCRIPTOR_SIZE	8
+> -
+> -#define FS_POLICY_FLAGS_PAD_4		0x00
+> -#define FS_POLICY_FLAGS_PAD_8		0x01
+> -#define FS_POLICY_FLAGS_PAD_16		0x02
+> -#define FS_POLICY_FLAGS_PAD_32		0x03
+> -#define FS_POLICY_FLAGS_PAD_MASK	0x03
+> -#define FS_POLICY_FLAGS_VALID		0x03
+> -
+> -/* Encryption algorithms */
+> -#define FS_ENCRYPTION_MODE_INVALID		0
+> -#define FS_ENCRYPTION_MODE_AES_256_XTS		1
+> -#define FS_ENCRYPTION_MODE_AES_256_GCM		2
+> -#define FS_ENCRYPTION_MODE_AES_256_CBC		3
+> -#define FS_ENCRYPTION_MODE_AES_256_CTS		4
+> -#define FS_ENCRYPTION_MODE_AES_128_CBC		5
+> -#define FS_ENCRYPTION_MODE_AES_128_CTS		6
+> -
+> -struct fscrypt_policy {
+> -	__u8 version;
+> -	__u8 contents_encryption_mode;
+> -	__u8 filenames_encryption_mode;
+> -	__u8 flags;
+> -	__u8 master_key_descriptor[FS_KEY_DESCRIPTOR_SIZE];
+> -};
+> -
+> -#define FS_IOC_SET_ENCRYPTION_POLICY	_IOR('f', 19, struct fscrypt_policy)
+> -#define FS_IOC_GET_ENCRYPTION_PWSALT	_IOW('f', 20, __u8[16])
+> -#define FS_IOC_GET_ENCRYPTION_POLICY	_IOW('f', 21, struct fscrypt_policy)
+> -
+> -/* Parameters for passing an encryption key into the kernel keyring */
+> -#define FS_KEY_DESC_PREFIX		"fscrypt:"
+> -#define FS_KEY_DESC_PREFIX_SIZE		8
+> -
+> -/* Structure that userspace passes to the kernel keyring */
+> -#define FS_MAX_KEY_SIZE			64
+> -
+> -struct fscrypt_key {
+> -	__u32 mode;
+> -	__u8 raw[FS_MAX_KEY_SIZE];
+> -	__u32 size;
+> -};
+> -
+>  /*
+>   * Inode flags (FS_IOC_GETFLAGS / FS_IOC_SETFLAGS)
+>   *
+> diff --git a/include/uapi/linux/fscrypt.h b/include/uapi/linux/fscrypt.h
+> new file mode 100644
+> index 000000000000..c09209fc42ea
+> --- /dev/null
+> +++ b/include/uapi/linux/fscrypt.h
+> @@ -0,0 +1,53 @@
+> +#ifndef _UAPI_LINUX_FSCRYPT_H
+> +#define _UAPI_LINUX_FSCRYPT_H
+> +
+> +#include <linux/types.h>
+> +
+> +/*
+> + * File system encryption support
+> + */
+> +/* Policy provided via an ioctl on the topmost directory */
+> +#define FS_KEY_DESCRIPTOR_SIZE	8
+> +
+> +#define FS_POLICY_FLAGS_PAD_4		0x00
+> +#define FS_POLICY_FLAGS_PAD_8		0x01
+> +#define FS_POLICY_FLAGS_PAD_16		0x02
+> +#define FS_POLICY_FLAGS_PAD_32		0x03
+> +#define FS_POLICY_FLAGS_PAD_MASK	0x03
+> +#define FS_POLICY_FLAGS_VALID		0x03
+> +
+> +/* Encryption algorithms */
+> +#define FS_ENCRYPTION_MODE_INVALID		0
+> +#define FS_ENCRYPTION_MODE_AES_256_XTS		1
+> +#define FS_ENCRYPTION_MODE_AES_256_GCM		2
+> +#define FS_ENCRYPTION_MODE_AES_256_CBC		3
+> +#define FS_ENCRYPTION_MODE_AES_256_CTS		4
+> +#define FS_ENCRYPTION_MODE_AES_128_CBC		5
+> +#define FS_ENCRYPTION_MODE_AES_128_CTS		6
+> +
+> +struct fscrypt_policy {
+> +	__u8 version;
+> +	__u8 contents_encryption_mode;
+> +	__u8 filenames_encryption_mode;
+> +	__u8 flags;
+> +	__u8 master_key_descriptor[FS_KEY_DESCRIPTOR_SIZE];
+> +};
+> +
+> +#define FS_IOC_SET_ENCRYPTION_POLICY	_IOR('f', 19, struct fscrypt_policy)
+> +#define FS_IOC_GET_ENCRYPTION_PWSALT	_IOW('f', 20, __u8[16])
+> +#define FS_IOC_GET_ENCRYPTION_POLICY	_IOW('f', 21, struct fscrypt_policy)
+> +
+> +/* Parameters for passing an encryption key into the kernel keyring */
+> +#define FS_KEY_DESC_PREFIX		"fscrypt:"
+> +#define FS_KEY_DESC_PREFIX_SIZE		8
+> +
+> +/* Structure that userspace passes to the kernel keyring */
+> +#define FS_MAX_KEY_SIZE			64
+> +
+> +struct fscrypt_key {
+> +	__u32 mode;
+> +	__u8 raw[FS_MAX_KEY_SIZE];
+> +	__u32 size;
+> +};
+> +
+> +#endif /* _UAPI_LINUX_FSCRYPT_H */
+> -- 
+> 2.15.0.rc0.271.g36b669edcc-goog
+> 
