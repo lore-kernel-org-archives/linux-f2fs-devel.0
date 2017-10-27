@@ -1,12 +1,9 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: Fwd: Re: [PATCH 1/1] f2fs: simplify the calculation
- of fggc_threshold
-Date: Fri, 27 Oct 2017 20:31:07 +0800
-Message-ID: <f210342a-36ba-9fa9-623d-826828fed941@kernel.org>
-References: <6b8c7cee-3806-3b3a-e6c9-9f22857e9ae8@huawei.com>
- <249859c1-668d-5236-ec6f-1f35b9843f42@huawei.com>
- <b42d5510-5d11-c2d9-f4de-126d95e85d4a@huawei.com>
- <20171027114214.GE96994@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH v5] f2fs: support soft block reservation
+Date: Fri, 27 Oct 2017 20:36:34 +0800
+Message-ID: <347e6612-3f58-a5d1-4ed2-482ccb4cccc6@kernel.org>
+References: <1502199825-15218-1-git-send-email-yunlong.song@huawei.com>
+ <1509104832-124189-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -14,13 +11,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
  helo=mx.sourceforge.net)
  by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <chao@kernel.org>) id 1e83nL-0002JK-0a
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Oct 2017 12:31:27 +0000
+ (Exim 4.89) (envelope-from <chao@kernel.org>) id 1e83sd-0002Q5-JT
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Oct 2017 12:36:55 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1e83nI-0000UQ-Ra
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Oct 2017 12:31:26 +0000
-In-Reply-To: <20171027114214.GE96994@jaegeuk-macbookpro.roam.corp.google.com>
+ (Exim 4.76) id 1e83sc-0001BO-FR
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Oct 2017 12:36:55 +0000
+In-Reply-To: <1509104832-124189-1-git-send-email-yunlong.song@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -31,107 +28,191 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc: Sun Qiuyang <sunqiuyang@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
+Cc: linux-fsdevel@vger.kernel.org, miaoxie@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/10/27 19:42, Jaegeuk Kim wrote:
-> On 10/27, Chao Yu wrote:
->> On 2017/10/27 11:43, Sun Qiuyang wrote:
->>>
->>> Hi Jaegeuk,
->>>
->>> I noticed that the log of the commit:
->>>
->>> https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev-test&id=7e515b31d44dcd20a98c938dfdc21877a30042a0
->>>
->>> used a new expression as follows:
->>>
->>> sbi->fggc_threshold = div_u64((u64)(main_count - ovp_count) *
->>> 			BLKS_PER_SEC(sbi), (main_count - resv_count));
->>>
->>> This might originate from my patch below, which has been merged into the 
->>> f2fs-dev branch of kernel/git/chao/linux.git, but not 
->>> kernel/git/jaegeuk/f2fs.git yet.
->>>
->>> So, would you like to consider merging my patch as well?
->>
->> As you see, I have reviewed this patch, since it looks good to me. ;)
->> But forgot to remind Jaegeuk to merge this, sorry.
+On 2017/10/27 19:47, Yunlong Song wrote:
+> It supports to extend reserved_blocks sysfs interface to be soft
+> threshold, which allows user configure it exceeding current available
+> user space. This patch also introduces a new sysfs interface called
+> current_reserved_blocks, which shows the current blocks that have
+> already been reserved.
 > 
-> So, why do we have to do this? We're calculating this based on # of blocks.
-> If we don't use this patch, didn't we need the Chao's patch as well?
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  Documentation/ABI/testing/sysfs-fs-f2fs | 15 +++++++++++++--
+>  fs/f2fs/f2fs.h                          | 13 +++++++++++--
+>  fs/f2fs/super.c                         |  3 ++-
+>  fs/f2fs/sysfs.c                         | 15 ++++++++++++---
+>  4 files changed, 38 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+> index 11b7f4e..482d78b 100644
+> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+> @@ -134,11 +134,22 @@ Contact:	"Sheng Yong" <shengyong1@huawei.com>
+>  Description:
+>  		 Controls the injection type.
+>  
+> -What:		/sys/fs/f2fs/<disk>/reserved_blocks
+> +What:		/sys/fs/f2fs/<disk>/target_reserved_blocks
 
-Only connection of these two patches is that comments in my patch referenced
-codes which Qiuyang's patch modified:
-
-sbi->fggc_threshold = div_u64((u64)(main_count - ovp_count) *
-			BLKS_PER_SEC(sbi), (main_count - resv_count));
-
-For content of two patches, they are irrelevant.
+It needs to keep old sysfs interface description as you did in code.
 
 Thanks,
 
+>  Date:		June 2017
+>  Contact:	"Chao Yu" <yuchao0@huawei.com>
+>  Description:
+> -		 Controls current reserved blocks in system.
+> +		 Controls target reserved blocks in system, the threshold
+> +		 is soft, it could exceed current available user space.
+> +
+> +What:		/sys/fs/f2fs/<disk>/current_reserved_blocks
+> +Date:		October 2017
+> +Contact:	"Yunlong Song" <yunlong.song@huawei.com>
+> +Contact:	"Chao Yu" <yuchao0@huawei.com>
+> +Description:
+> +		 Shows current reserved blocks in system, it may be temporarily
+> +		 smaller than target_reserved_blocks, but will gradually
+> +		 increase to target_reserved_blocks when more free blocks are
+> +		 freed by user later.
+>  
+>  What:		/sys/fs/f2fs/<disk>/gc_urgent
+>  Date:		August 2017
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 13a96b8..5ed40fb 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1082,6 +1082,7 @@ struct f2fs_sb_info {
+>  	block_t discard_blks;			/* discard command candidats */
+>  	block_t last_valid_block_count;		/* for recovery */
+>  	block_t reserved_blocks;		/* configurable reserved blocks */
+> +	block_t current_reserved_blocks;	/* current reserved blocks */
+>  
+>  	u32 s_next_generation;			/* for NFS support */
+>  
+> @@ -1557,7 +1558,8 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+>  
+>  	spin_lock(&sbi->stat_lock);
+>  	sbi->total_valid_block_count += (block_t)(*count);
+> -	avail_user_block_count = sbi->user_block_count - sbi->reserved_blocks;
+> +	avail_user_block_count = sbi->user_block_count -
+> +					sbi->current_reserved_blocks;
+>  	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
+>  		diff = sbi->total_valid_block_count - avail_user_block_count;
+>  		*count -= diff;
+> @@ -1591,6 +1593,10 @@ static inline void dec_valid_block_count(struct f2fs_sb_info *sbi,
+>  	f2fs_bug_on(sbi, sbi->total_valid_block_count < (block_t) count);
+>  	f2fs_bug_on(sbi, inode->i_blocks < sectors);
+>  	sbi->total_valid_block_count -= (block_t)count;
+> +	if (sbi->reserved_blocks &&
+> +		sbi->current_reserved_blocks < sbi->reserved_blocks)
+> +		sbi->current_reserved_blocks = min(sbi->reserved_blocks,
+> +					sbi->current_reserved_blocks + count);
+>  	spin_unlock(&sbi->stat_lock);
+>  	f2fs_i_blocks_write(inode, count, false, true);
+>  }
+> @@ -1737,7 +1743,7 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+>  	spin_lock(&sbi->stat_lock);
+>  
+>  	valid_block_count = sbi->total_valid_block_count + 1;
+> -	if (unlikely(valid_block_count + sbi->reserved_blocks >
+> +	if (unlikely(valid_block_count + sbi->current_reserved_blocks >
+>  						sbi->user_block_count)) {
+>  		spin_unlock(&sbi->stat_lock);
+>  		goto enospc;
+> @@ -1780,6 +1786,9 @@ static inline void dec_valid_node_count(struct f2fs_sb_info *sbi,
+>  
+>  	sbi->total_valid_node_count--;
+>  	sbi->total_valid_block_count--;
+> +	if (sbi->reserved_blocks &&
+> +		sbi->current_reserved_blocks < sbi->reserved_blocks)
+> +		sbi->current_reserved_blocks++;
+>  
+>  	spin_unlock(&sbi->stat_lock);
+>  
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 213d2c1..dab1fed 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -987,7 +987,7 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
+>  	buf->f_blocks = total_count - start_count;
+>  	buf->f_bfree = user_block_count - valid_user_blocks(sbi) + ovp_count;
+>  	buf->f_bavail = user_block_count - valid_user_blocks(sbi) -
+> -						sbi->reserved_blocks;
+> +						sbi->current_reserved_blocks;
+>  
+>  	avail_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
+>  
+> @@ -2458,6 +2458,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  				le64_to_cpu(sbi->ckpt->valid_block_count);
+>  	sbi->last_valid_block_count = sbi->total_valid_block_count;
+>  	sbi->reserved_blocks = 0;
+> +	sbi->current_reserved_blocks = 0;
+>  
+>  	for (i = 0; i < NR_INODE_TYPE; i++) {
+>  		INIT_LIST_HEAD(&sbi->inode_list[i]);
+> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> index e09e59c..4166ac7 100644
+> --- a/fs/f2fs/sysfs.c
+> +++ b/fs/f2fs/sysfs.c
+> @@ -30,7 +30,7 @@ enum {
+>  	FAULT_INFO_RATE,	/* struct f2fs_fault_info */
+>  	FAULT_INFO_TYPE,	/* struct f2fs_fault_info */
+>  #endif
+> -	RESERVED_BLOCKS,
+> +	RESERVED_BLOCKS,	/* struct f2fs_sb_info */
+>  };
+>  
+>  struct f2fs_attr {
+> @@ -114,6 +114,12 @@ static ssize_t features_show(struct f2fs_attr *a,
+>  	return len;
+>  }
+>  
+> +static ssize_t current_reserved_blocks_show(struct f2fs_attr *a,
+> +					struct f2fs_sb_info *sbi, char *buf)
+> +{
+> +	return snprintf(buf, PAGE_SIZE, "%u\n", sbi->current_reserved_blocks);
+> +}
+> +
+>  static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
+>  			struct f2fs_sb_info *sbi, char *buf)
+>  {
+> @@ -153,12 +159,13 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+>  #endif
+>  	if (a->struct_type == RESERVED_BLOCKS) {
+>  		spin_lock(&sbi->stat_lock);
+> -		if ((unsigned long)sbi->total_valid_block_count + t >
+> -				(unsigned long)sbi->user_block_count) {
+> +		if (t > (unsigned long)sbi->user_block_count) {
+>  			spin_unlock(&sbi->stat_lock);
+>  			return -EINVAL;
+>  		}
+>  		*ui = t;
+> +		sbi->current_reserved_blocks = min(sbi->reserved_blocks,
+> +				sbi->user_block_count - valid_user_blocks(sbi));
+>  		spin_unlock(&sbi->stat_lock);
+>  		return count;
+>  	}
+> @@ -293,6 +300,7 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
+>  F2FS_GENERAL_RO_ATTR(dirty_segments);
+>  F2FS_GENERAL_RO_ATTR(lifetime_write_kbytes);
+>  F2FS_GENERAL_RO_ATTR(features);
+> +F2FS_GENERAL_RO_ATTR(current_reserved_blocks);
+>  
+>  #ifdef CONFIG_F2FS_FS_ENCRYPTION
+>  F2FS_FEATURE_RO_ATTR(encryption, FEAT_CRYPTO);
+> @@ -338,6 +346,7 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
+>  	ATTR_LIST(lifetime_write_kbytes),
+>  	ATTR_LIST(features),
+>  	ATTR_LIST(reserved_blocks),
+> +	ATTR_LIST(current_reserved_blocks),
+>  	NULL,
+>  };
+>  
 > 
-> Thanks,
-> 
->>
->> Anyway, how do you think of this cleanup? Jaegeuk.
->>
->> Thanks,
->>
->>>
->>> Thanks,
->>>
->>>
->>>> On 2017/10/17 20:42, sunqiuyang wrote:
->>>>> From: Qiuyang Sun <sunqiuyang@huawei.com>
->>>>>
->>>>> Do not need to convert segment counts to blocks for this calculation.
->>>>>
->>>>> Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
->>>>
->>>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->>>>
->>>> Thanks,
->>>>
->>>>> ---
->>>>>  fs/f2fs/gc.c | 10 +++++-----
->>>>>  1 file changed, 5 insertions(+), 5 deletions(-)
->>>>>
->>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>>>> index 197ebf4..9df8cae 100644
->>>>> --- a/fs/f2fs/gc.c
->>>>> +++ b/fs/f2fs/gc.c
->>>>> @@ -1073,16 +1073,16 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>>>>
->>>>>  void build_gc_manager(struct f2fs_sb_info *sbi)
->>>>>  {
->>>>> -	u64 main_count, resv_count, ovp_count;
->>>>> +	unsigned int main_count, resv_count, ovp_count;
->>>>>
->>>>>  	DIRTY_I(sbi)->v_ops = &default_v_ops;
->>>>>
->>>>>  	/* threshold of # of valid blocks in a section for victims of FG_GC */
->>>>> -	main_count = SM_I(sbi)->main_segments << sbi->log_blocks_per_seg;
->>>>> -	resv_count = SM_I(sbi)->reserved_segments << sbi->log_blocks_per_seg;
->>>>> -	ovp_count = SM_I(sbi)->ovp_segments << sbi->log_blocks_per_seg;
->>>>> +	main_count = SM_I(sbi)->main_segments;
->>>>> +	resv_count = SM_I(sbi)->reserved_segments;
->>>>> +	ovp_count = SM_I(sbi)->ovp_segments;
->>>>>
->>>>> -	sbi->fggc_threshold = div64_u64((main_count - ovp_count) *
->>>>> +	sbi->fggc_threshold = div_u64((u64)(main_count - ovp_count) *
->>>>>  				BLKS_PER_SEC(sbi), (main_count - resv_count));
->>>>>
->>>>>  	/* give warm/cold data area from slower device */
->>>>>
->>>>
->>>> .
->>>>
->>>
->>>
->>> .
->>>
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
