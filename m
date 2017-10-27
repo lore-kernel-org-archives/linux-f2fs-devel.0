@@ -1,216 +1,124 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v4] f2fs: support soft block reservation
-Date: Fri, 27 Oct 2017 11:28:06 +0800
-Message-ID: <b99ee29b-0d57-2eda-652f-dca549cdb554@huawei.com>
-References: <1502199825-15218-1-git-send-email-yunlong.song@huawei.com>
- <1509073896-97491-1-git-send-email-yunlong.song@huawei.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH v3] f2fs: modify for accurate fggc node io stat
+Date: Fri, 27 Oct 2017 11:17:17 +0800
+Message-ID: <1509074237-7693-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <1509073896-97491-1-git-send-email-yunlong.song@huawei.com>
-Content-Language: en-US
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+ helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <heyunlei@huawei.com>) id 1e7vKz-0002EH-RK
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Oct 2017 03:29:37 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191])
+ by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1e7vKy-0008IH-AD
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Oct 2017 03:29:37 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: ning.jia@huawei.com, heyunlei@huawei.com
 
-On 2017/10/27 11:11, Yunlong Song wrote:
-> It renames reserved_blocks sysfs interface to target_reserved_blocks,
-> and supports to extend it to be soft threshold, which allows user
-> configure it exceeding current available user space. So this patch
-> also introduces a new sysfs interface called current_reserved_blocks to
-> show the current blocks which have already been reserved.
-> 
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  Documentation/ABI/testing/sysfs-fs-f2fs | 15 +++++++++++++--
->  fs/f2fs/f2fs.h                          | 15 ++++++++++++---
->  fs/f2fs/super.c                         |  5 +++--
->  fs/f2fs/sysfs.c                         | 20 +++++++++++++++-----
->  4 files changed, 43 insertions(+), 12 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-> index 11b7f4e..482d78b 100644
-> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
-> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-> @@ -134,11 +134,22 @@ Contact:	"Sheng Yong" <shengyong1@huawei.com>
->  Description:
->  		 Controls the injection type.
->  
-> -What:		/sys/fs/f2fs/<disk>/reserved_blocks
-> +What:		/sys/fs/f2fs/<disk>/target_reserved_blocks
+modify for accurate fggc node io stat
 
-For backward compatibility, how about keep this interface name, instead
-just update its description?
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fs/f2fs/node.c | 63 +++++++++++++++++++++++++++++-----------------------------
+ 1 file changed, 32 insertions(+), 31 deletions(-)
 
-Thanks,
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index f44d837..0701713 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1242,37 +1242,6 @@ static void flush_inline_data(struct f2fs_sb_info *sbi, nid_t ino)
+ 	iput(inode);
+ }
+ 
+-void move_node_page(struct page *node_page, int gc_type)
+-{
+-	if (gc_type == FG_GC) {
+-		struct f2fs_sb_info *sbi = F2FS_P_SB(node_page);
+-		struct writeback_control wbc = {
+-			.sync_mode = WB_SYNC_ALL,
+-			.nr_to_write = 1,
+-			.for_reclaim = 0,
+-		};
+-
+-		set_page_dirty(node_page);
+-		f2fs_wait_on_page_writeback(node_page, NODE, true);
+-
+-		f2fs_bug_on(sbi, PageWriteback(node_page));
+-		if (!clear_page_dirty_for_io(node_page))
+-			goto out_page;
+-
+-		if (NODE_MAPPING(sbi)->a_ops->writepage(node_page, &wbc))
+-			unlock_page(node_page);
+-		goto release_page;
+-	} else {
+-		/* set page dirty and write it */
+-		if (!PageWriteback(node_page))
+-			set_page_dirty(node_page);
+-	}
+-out_page:
+-	unlock_page(node_page);
+-release_page:
+-	f2fs_put_page(node_page, 0);
+-}
+-
+ static struct page *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
+ {
+ 	pgoff_t index, end;
+@@ -1415,6 +1384,38 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+ 	return AOP_WRITEPAGE_ACTIVATE;
+ }
+ 
++void move_node_page(struct page *node_page, int gc_type)
++{
++	if (gc_type == FG_GC) {
++		struct f2fs_sb_info *sbi = F2FS_P_SB(node_page);
++		struct writeback_control wbc = {
++			.sync_mode = WB_SYNC_ALL,
++			.nr_to_write = 1,
++			.for_reclaim = 0,
++		};
++
++		set_page_dirty(node_page);
++		f2fs_wait_on_page_writeback(node_page, NODE, true);
++
++		f2fs_bug_on(sbi, PageWriteback(node_page));
++		if (!clear_page_dirty_for_io(node_page))
++			goto out_page;
++
++		if (__write_node_page(node_page, false, NULL,
++					&wbc, false, FS_GC_NODE_IO))
++			unlock_page(node_page);
++		goto release_page;
++	} else {
++		/* set page dirty and write it */
++		if (!PageWriteback(node_page))
++			set_page_dirty(node_page);
++	}
++out_page:
++	unlock_page(node_page);
++release_page:
++	f2fs_put_page(node_page, 0);
++}
++
+ static int f2fs_write_node_page(struct page *page,
+ 				struct writeback_control *wbc)
+ {
+-- 
+1.9.1
 
->  Date:		June 2017
->  Contact:	"Chao Yu" <yuchao0@huawei.com>
->  Description:
-> -		 Controls current reserved blocks in system.
-> +		 Controls target reserved blocks in system, the threshold
-> +		 is soft, it could exceed current available user space.
-> +
-> +What:		/sys/fs/f2fs/<disk>/current_reserved_blocks
-> +Date:		October 2017
-> +Contact:	"Yunlong Song" <yunlong.song@huawei.com>
-> +Contact:	"Chao Yu" <yuchao0@huawei.com>
-> +Description:
-> +		 Shows current reserved blocks in system, it may be temporarily
-> +		 smaller than target_reserved_blocks, but will gradually
-> +		 increase to target_reserved_blocks when more free blocks are
-> +		 freed by user later.
->  
->  What:		/sys/fs/f2fs/<disk>/gc_urgent
->  Date:		August 2017
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 13a96b8..c26fccb 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1081,7 +1081,8 @@ struct f2fs_sb_info {
->  	block_t total_valid_block_count;	/* # of valid blocks */
->  	block_t discard_blks;			/* discard command candidats */
->  	block_t last_valid_block_count;		/* for recovery */
-> -	block_t reserved_blocks;		/* configurable reserved blocks */
-> +	block_t target_reserved_blocks;		/* configurable reserved blocks */
-> +	block_t current_reserved_blocks;	/* current reserved blocks */
->  
->  	u32 s_next_generation;			/* for NFS support */
->  
-> @@ -1557,7 +1558,8 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
->  
->  	spin_lock(&sbi->stat_lock);
->  	sbi->total_valid_block_count += (block_t)(*count);
-> -	avail_user_block_count = sbi->user_block_count - sbi->reserved_blocks;
-> +	avail_user_block_count = sbi->user_block_count -
-> +					sbi->current_reserved_blocks;
->  	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
->  		diff = sbi->total_valid_block_count - avail_user_block_count;
->  		*count -= diff;
-> @@ -1591,6 +1593,10 @@ static inline void dec_valid_block_count(struct f2fs_sb_info *sbi,
->  	f2fs_bug_on(sbi, sbi->total_valid_block_count < (block_t) count);
->  	f2fs_bug_on(sbi, inode->i_blocks < sectors);
->  	sbi->total_valid_block_count -= (block_t)count;
-> +	if (sbi->target_reserved_blocks &&
-> +		sbi->current_reserved_blocks < sbi->target_reserved_blocks)
-> +		sbi->current_reserved_blocks = min(sbi->target_reserved_blocks,
-> +					sbi->current_reserved_blocks + count);
->  	spin_unlock(&sbi->stat_lock);
->  	f2fs_i_blocks_write(inode, count, false, true);
->  }
-> @@ -1737,7 +1743,7 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
->  	spin_lock(&sbi->stat_lock);
->  
->  	valid_block_count = sbi->total_valid_block_count + 1;
-> -	if (unlikely(valid_block_count + sbi->reserved_blocks >
-> +	if (unlikely(valid_block_count + sbi->current_reserved_blocks >
->  						sbi->user_block_count)) {
->  		spin_unlock(&sbi->stat_lock);
->  		goto enospc;
-> @@ -1780,6 +1786,9 @@ static inline void dec_valid_node_count(struct f2fs_sb_info *sbi,
->  
->  	sbi->total_valid_node_count--;
->  	sbi->total_valid_block_count--;
-> +	if (sbi->target_reserved_blocks &&
-> +		sbi->current_reserved_blocks < sbi->target_reserved_blocks)
-> +		sbi->current_reserved_blocks++;
->  
->  	spin_unlock(&sbi->stat_lock);
->  
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 213d2c1..c682978 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -987,7 +987,7 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
->  	buf->f_blocks = total_count - start_count;
->  	buf->f_bfree = user_block_count - valid_user_blocks(sbi) + ovp_count;
->  	buf->f_bavail = user_block_count - valid_user_blocks(sbi) -
-> -						sbi->reserved_blocks;
-> +						sbi->current_reserved_blocks;
->  
->  	avail_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
->  
-> @@ -2457,7 +2457,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->  	sbi->total_valid_block_count =
->  				le64_to_cpu(sbi->ckpt->valid_block_count);
->  	sbi->last_valid_block_count = sbi->total_valid_block_count;
-> -	sbi->reserved_blocks = 0;
-> +	sbi->target_reserved_blocks = 0;
-> +	sbi->current_reserved_blocks = 0;
->  
->  	for (i = 0; i < NR_INODE_TYPE; i++) {
->  		INIT_LIST_HEAD(&sbi->inode_list[i]);
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index e09e59c..568e32f 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -30,7 +30,7 @@ enum {
->  	FAULT_INFO_RATE,	/* struct f2fs_fault_info */
->  	FAULT_INFO_TYPE,	/* struct f2fs_fault_info */
->  #endif
-> -	RESERVED_BLOCKS,
-> +	RESERVED_BLOCKS,	/* struct f2fs_sb_info */
->  };
->  
->  struct f2fs_attr {
-> @@ -114,6 +114,12 @@ static ssize_t features_show(struct f2fs_attr *a,
->  	return len;
->  }
->  
-> +static ssize_t current_reserved_blocks_show(struct f2fs_attr *a,
-> +					struct f2fs_sb_info *sbi, char *buf)
-> +{
-> +	return snprintf(buf, PAGE_SIZE, "%u\n", sbi->current_reserved_blocks);
-> +}
-> +
->  static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
->  			struct f2fs_sb_info *sbi, char *buf)
->  {
-> @@ -153,12 +159,13 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
->  #endif
->  	if (a->struct_type == RESERVED_BLOCKS) {
->  		spin_lock(&sbi->stat_lock);
-> -		if ((unsigned long)sbi->total_valid_block_count + t >
-> -				(unsigned long)sbi->user_block_count) {
-> +		if (t > (unsigned long)sbi->user_block_count) {
->  			spin_unlock(&sbi->stat_lock);
->  			return -EINVAL;
->  		}
->  		*ui = t;
-> +		sbi->current_reserved_blocks = min(sbi->target_reserved_blocks,
-> +				sbi->user_block_count - valid_user_blocks(sbi));
->  		spin_unlock(&sbi->stat_lock);
->  		return count;
->  	}
-> @@ -272,7 +279,8 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
->  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, reclaim_segments, rec_prefree_segments);
->  F2FS_RW_ATTR(DCC_INFO, discard_cmd_control, max_small_discards, max_discards);
->  F2FS_RW_ATTR(DCC_INFO, discard_cmd_control, discard_granularity, discard_granularity);
-> -F2FS_RW_ATTR(RESERVED_BLOCKS, f2fs_sb_info, reserved_blocks, reserved_blocks);
-> +F2FS_RW_ATTR(RESERVED_BLOCKS, f2fs_sb_info, target_reserved_blocks,
-> +							target_reserved_blocks);
->  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, batched_trim_sections, trim_sections);
->  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, ipu_policy, ipu_policy);
->  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ipu_util, min_ipu_util);
-> @@ -293,6 +301,7 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
->  F2FS_GENERAL_RO_ATTR(dirty_segments);
->  F2FS_GENERAL_RO_ATTR(lifetime_write_kbytes);
->  F2FS_GENERAL_RO_ATTR(features);
-> +F2FS_GENERAL_RO_ATTR(current_reserved_blocks);
->  
->  #ifdef CONFIG_F2FS_FS_ENCRYPTION
->  F2FS_FEATURE_RO_ATTR(encryption, FEAT_CRYPTO);
-> @@ -337,7 +346,8 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
->  	ATTR_LIST(dirty_segments),
->  	ATTR_LIST(lifetime_write_kbytes),
->  	ATTR_LIST(features),
-> -	ATTR_LIST(reserved_blocks),
-> +	ATTR_LIST(target_reserved_blocks),
-> +	ATTR_LIST(current_reserved_blocks),
->  	NULL,
->  };
->  
-> 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
