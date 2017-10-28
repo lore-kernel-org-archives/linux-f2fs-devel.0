@@ -1,20 +1,20 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 4/5] f2fs: give correct trimmed blocks in fstrim
-Date: Sat, 28 Oct 2017 16:52:32 +0800
-Message-ID: <20171028085233.34488-4-yuchao0@huawei.com>
+Subject: [PATCH 2/5] f2fs: support get_page error injection
+Date: Sat, 28 Oct 2017 16:52:30 +0800
+Message-ID: <20171028085233.34488-2-yuchao0@huawei.com>
 References: <20171028085233.34488-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e8MrZ-00007D-1g
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e8MrZ-0002QO-1F
  for linux-f2fs-devel@lists.sourceforge.net; Sat, 28 Oct 2017 08:53:05 +0000
 Received: from [45.249.212.32] (helo=huawei.com)
- by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
- id 1e8MrX-0002dF-Cc
+ by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+ id 1e8MrX-0001pz-9u
  for linux-f2fs-devel@lists.sourceforge.net; Sat, 28 Oct 2017 08:53:04 +0000
 In-Reply-To: <20171028085233.34488-1-yuchao0@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
@@ -29,129 +29,104 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-We have supported to issue discard in specified range during fstrim,
-it needs to return caller with successfully trimmed bytes in that
-range instead of bytes of invalid blocks which are scanned in
-checkpoint.
+This patch adds to support get_page error injection to simulate
+out-of-memory test scenario.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/f2fs.h    |  1 -
- fs/f2fs/segment.c | 27 +++++++++++++++++++--------
- 2 files changed, 19 insertions(+), 9 deletions(-)
+ fs/f2fs/data.c  |  2 +-
+ fs/f2fs/f2fs.h  | 14 ++++++++++++++
+ fs/f2fs/gc.c    |  4 ++--
+ fs/f2fs/node.c  |  3 ++-
+ fs/f2fs/super.c |  1 +
+ 5 files changed, 20 insertions(+), 4 deletions(-)
 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 5259e81f288b..7099f1d51bab 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1958,7 +1958,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+ 	 * Do not use grab_cache_page_write_begin() to avoid deadlock due to
+ 	 * wait_for_stable_page. Will wait that below with our IO control.
+ 	 */
+-	page = pagecache_get_page(mapping, index,
++	page = f2fs_pagecache_get_page(mapping, index,
+ 				FGP_LOCK | FGP_WRITE | FGP_CREAT, GFP_NOFS);
+ 	if (!page) {
+ 		err = -ENOMEM;
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ddcd8f876938..850457e72002 100644
+index e93e922ff66d..6d2984abc50f 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -162,7 +162,6 @@ struct cp_control {
- 	__u64 trim_start;
- 	__u64 trim_end;
- 	__u64 trim_minlen;
--	__u64 trimmed;
- };
- 
- /*
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index f75685418d9f..ab6382ee5111 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1218,21 +1218,27 @@ static bool __drop_discard_cmd(struct f2fs_sb_info *sbi)
- 	return dropped;
+@@ -46,6 +46,7 @@
+ enum {
+ 	FAULT_KMALLOC,
+ 	FAULT_PAGE_ALLOC,
++	FAULT_PAGE_GET,
+ 	FAULT_ALLOC_NID,
+ 	FAULT_ORPHAN,
+ 	FAULT_BLOCK,
+@@ -1843,6 +1844,19 @@ static inline struct page *f2fs_grab_cache_page(struct address_space *mapping,
+ 	return grab_cache_page_write_begin(mapping, index, AOP_FLAG_NOFS);
  }
  
--static void __wait_one_discard_bio(struct f2fs_sb_info *sbi,
-+static unsigned int __wait_one_discard_bio(struct f2fs_sb_info *sbi,
- 							struct discard_cmd *dc)
- {
- 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-+	unsigned int len = 0;
- 
- 	wait_for_completion_io(&dc->wait);
- 	mutex_lock(&dcc->cmd_lock);
- 	f2fs_bug_on(sbi, dc->state != D_DONE);
- 	dc->ref--;
--	if (!dc->ref)
-+	if (!dc->ref) {
-+		if (!dc->error)
-+			len = dc->len;
- 		__remove_discard_cmd(sbi, dc);
++static inline struct page *f2fs_pagecache_get_page(
++				struct address_space *mapping, pgoff_t index,
++				int fgp_flags, gfp_t gfp_mask)
++{
++#ifdef CONFIG_F2FS_FAULT_INJECTION
++	if (time_to_inject(F2FS_M_SB(mapping), FAULT_PAGE_GET)) {
++		f2fs_show_injection_info(FAULT_PAGE_GET);
++		return NULL;
 +	}
- 	mutex_unlock(&dcc->cmd_lock);
++#endif
++	return pagecache_get_page(mapping, index, fgp_flags, gfp_mask);
++}
 +
-+	return len;
- }
- 
--static void __wait_discard_cmd_range(struct f2fs_sb_info *sbi,
-+static unsigned int __wait_discard_cmd_range(struct f2fs_sb_info *sbi,
- 						struct discard_policy *dpolicy,
- 						block_t start, block_t end)
+ static inline void f2fs_copy_page(struct page *src, struct page *dst)
  {
-@@ -1241,6 +1247,7 @@ static void __wait_discard_cmd_range(struct f2fs_sb_info *sbi,
- 					&(dcc->fstrim_list) : &(dcc->wait_list);
- 	struct discard_cmd *dc, *tmp;
- 	bool need_wait;
-+	unsigned int trimmed = 0;
+ 	char *src_kaddr = kmap(src);
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 197ebf45e4e4..c7b1d704846a 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -650,8 +650,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
+ 	allocate_data_block(fio.sbi, NULL, fio.old_blkaddr, &newaddr,
+ 					&sum, CURSEG_COLD_DATA, NULL, false);
  
- next:
- 	need_wait = false;
-@@ -1253,6 +1260,8 @@ static void __wait_discard_cmd_range(struct f2fs_sb_info *sbi,
- 			continue;
- 		if (dc->state == D_DONE && !dc->ref) {
- 			wait_for_completion_io(&dc->wait);
-+			if (!dc->error)
-+				trimmed += dc->len;
- 			__remove_discard_cmd(sbi, dc);
- 		} else {
- 			dc->ref++;
-@@ -1263,9 +1272,11 @@ static void __wait_discard_cmd_range(struct f2fs_sb_info *sbi,
- 	mutex_unlock(&dcc->cmd_lock);
+-	fio.encrypted_page = pagecache_get_page(META_MAPPING(fio.sbi), newaddr,
+-					FGP_LOCK | FGP_CREAT, GFP_NOFS);
++	fio.encrypted_page = f2fs_pagecache_get_page(META_MAPPING(fio.sbi),
++				newaddr, FGP_LOCK | FGP_CREAT, GFP_NOFS);
+ 	if (!fio.encrypted_page) {
+ 		err = -ENOMEM;
+ 		goto recover_block;
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index ba669f7ce0ae..e5f7a260737c 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1216,7 +1216,8 @@ static void flush_inline_data(struct f2fs_sb_info *sbi, nid_t ino)
+ 	if (!inode)
+ 		return;
  
- 	if (need_wait) {
--		__wait_one_discard_bio(sbi, dc);
-+		trimmed += __wait_one_discard_bio(sbi, dc);
- 		goto next;
- 	}
-+
-+	return trimmed;
- }
+-	page = pagecache_get_page(inode->i_mapping, 0, FGP_LOCK|FGP_NOWAIT, 0);
++	page = f2fs_pagecache_get_page(inode->i_mapping, 0,
++					FGP_LOCK|FGP_NOWAIT, 0);
+ 	if (!page)
+ 		goto iput_out;
  
- static void __wait_all_discard_cmd(struct f2fs_sb_info *sbi,
-@@ -1626,7 +1637,6 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 
- 			f2fs_issue_discard(sbi, entry->start_blkaddr + cur_pos,
- 									len);
--			cpc->trimmed += len;
- 			total_len += len;
- 		} else {
- 			next_pos = find_next_bit_le(entry->discard_map,
-@@ -2330,12 +2340,12 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
- 	block_t start_block, end_block;
- 	struct cp_control cpc;
- 	struct discard_policy dpolicy;
-+	unsigned long long trimmed = 0;
- 	int err = 0;
- 
- 	if (start >= MAX_BLKADDR(sbi) || range->len < sbi->blocksize)
- 		return -EINVAL;
- 
--	cpc.trimmed = 0;
- 	if (end <= MAIN_BLKADDR(sbi))
- 		goto out;
- 
-@@ -2385,9 +2395,10 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
- 
- 	init_discard_policy(&dpolicy, DPOLICY_FSTRIM, cpc.trim_minlen);
- 	__issue_discard_cmd_range(sbi, &dpolicy, start_block, end_block);
--	__wait_discard_cmd_range(sbi, &dpolicy, start_block, end_block);
-+	trimmed = __wait_discard_cmd_range(sbi, &dpolicy,
-+					start_block, end_block);
- out:
--	range->len = F2FS_BLK_TO_BYTES(cpc.trimmed);
-+	range->len = F2FS_BLK_TO_BYTES(trimmed);
- 	return err;
- }
- 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 03c115f3cd7a..02d98401c52b 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -44,6 +44,7 @@ static struct kmem_cache *f2fs_inode_cachep;
+ char *fault_name[FAULT_MAX] = {
+ 	[FAULT_KMALLOC]		= "kmalloc",
+ 	[FAULT_PAGE_ALLOC]	= "page alloc",
++	[FAULT_PAGE_GET]	= "page get",
+ 	[FAULT_ALLOC_NID]	= "alloc nid",
+ 	[FAULT_ORPHAN]		= "orphan",
+ 	[FAULT_BLOCK]		= "no more block",
 -- 
 2.13.1.388.g69e6b9b4f4a9
 
