@@ -1,130 +1,43 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH v2] f2fs: update dirty status for CURSEG as
- well
-Date: Sun, 29 Oct 2017 09:06:10 +0800
-Message-ID: <729b4b2c-e35f-d2ee-5641-fb7d75fa217a@kernel.org>
-References: <1507728318-113117-1-git-send-email-yunlong.song@huawei.com>
- <1507900897-156286-1-git-send-email-yunlong.song@huawei.com>
- <72f5511f-dcd4-939b-661f-f333738ee691@kernel.org>
- <3c29460d-36c6-45d5-2c02-b38f0afa5ac2@huawei.com>
- <e7054aad-bfa6-703d-0c82-3068dd4bed78@huawei.com>
- <a8d849bb-d7c9-bd52-0cde-af0e41dd3f35@kernel.org>
- <67a02221-4de9-c227-19c8-757e56528d23@huawei.com>
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH v3] fscrypt: add a documentation file for
+ filesystem-level encryption
+Date: Sun, 29 Oct 2017 06:24:06 -0400
+Message-ID: <20171029102406.hc6zzeepgbntwesx@thunk.org>
+References: <20170909001512.72431-1-ebiggers3@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
- helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <chao@kernel.org>) id 1e8c3e-0004EP-2S
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Oct 2017 01:06:34 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1e8c3c-0002n1-UJ
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Oct 2017 01:06:33 +0000
-In-Reply-To: <67a02221-4de9-c227-19c8-757e56528d23@huawei.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlong Song <yunlong.song@huawei.com>, yunlong.song@icloud.com
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, miaoxie@huawei.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-ext4-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170909001512.72431-1-ebiggers3@gmail.com>
+Sender: linux-ext4-owner@vger.kernel.org
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: linux-fscrypt@vger.kernel.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, Eric Biggers <ebiggers@google.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGkgWXVubG9uZywKCk9uIDIwMTcvMTAvMjggMjM6NTgsIFl1bmxvbmcgU29uZyB3cm90ZToKPiBI
-aSBDaGFvLAo+IMKgwqDCoCBUaGFua3MgZm9yIHlvdXIgd29yay4gSSBzZW5kIGEgdjIgcGF0Y2gs
-IHdoaWNoIGNoYW5nZXMgcmVmcmVzaF9zaXRfZW50cnkgdG8gc3RhdGljLgoKVGhlIGNsZWFudXAg
-bG9va3MgZ29vZCB0byBtZSwgYnV0IHlvdSBrbm93LCB0aGUgY29tbWl0IHRpdGxlIGlzIG5vdCBm
-cmllbmRseQpmb3IgcmVhZGluZywgd2hhdCBhYm91dCB1c2luZyBjb21tb24gJ1JldmVydDogIm9y
-aWdpbmFsIGNvbW1pdCB0aWxlIicgaGVyZT8KClRoYW5rcywKCj4gCj4gT24gMjAxNy8xMC8yOCAy
-MDowMiwgQ2hhbyBZdSB3cm90ZToKPj4gSGkgWXVubG9uZywKPj4KPj4gSSB0aGluayB5b3UncmUg
-c28gYnVzeSwgSSBqdXN0IGhlbHAgdG8gcmVmYWN0b3IgeW91ciBwYXRjaCwgYW5kIHNlbmQgaXQg
-b3V0Cj4+IGF1dGhvcmVkIHdpdGggeW91LCBwbGVhc2UgY2hlY2sgdGhhdCBwYXRjaCwgaWYgeW91
-IGhhdmUgZGlmZmVyZW50IG9waW5pb24sIGxldAo+PiBtZSBrbm93Lgo+Pgo+PiBUaGFua3MsCj4+
-Cj4+IE9uIDIwMTcvMTAvMTYgMTE6NDMsIENoYW8gWXUgd3JvdGU6Cj4+PiBPbiAyMDE3LzEwLzE0
-IDIwOjUzLCBZdW5sb25nIFNvbmcgd3JvdGU6Cj4+Pj4gT2gsIHllcyBpdCBpcy4gSSBmb3VuZCB0
-aGF0IHByb2JsZW0gaW4gYSBrZXJuZWwgdHJlZSB3aGljaCBkb2VzIG5vdCBoYXZlCj4+Pj4gY29t
-bWl0Cj4+Pj4gYzZmODJmZTkwZDc0NThlNWZhMTkwYTY4MjBiZmMyNGY5NmIwZGU0ZSAoUmV2ZXJ0
-ICJmMmZzOiBwdXQgYWxsb2NhdGVfc2VnbWVudAo+Pj4+IGFmdGVyIHJlZnJlc2hfc2l0X2VudHJ5
-IikuIEluIHRoYXQga2VybmVsLCB0aGUgYWxsb2NhdGVfc2VnbWVudCBpcyBzdGlsbAo+Pj4+IGJl
-aGluZAo+Pj4+IHJlZnJlc2hfc2l0X2VudHJ5LiBOb3cgSSB1bmRlcnN0YW5kIHRoZSBjb21taXQg
-bWVzc2FnZToKPj4+PiAiVGhpcyBtYWtlcyBhIGxlYWsgdG8gcmVnaXN0ZXIgZGlydHkgc2VnbWVu
-dHMuIEkgcmVwcm9kdWNlZCB0aGUgaXNzdWUgYnkKPj4+PiDCoMKgwqDCoMKgIG1vZGlmaWVkIHBv
-c3RtYXJrIHdoaWNoIGluamVjdHMgYSBsb3Qgb2YgZmlsZSBjcmVhdGUvZGVsZXRlL3VwZGF0ZSBh
-bmQKPj4+PiDCoMKgwqDCoMKgIGZpbmFsbHkgdHJpZ2dlcnMgaHVnZSBudW1iZXIgb2YgU1NSIGFs
-bG9jYXRpb25zLiIKPj4+Pgo+Pj4+IFRoZSByZWFzb24gaXMgdGhhdCBpZiByZWZyZXNoX3NpdF9l
-bnRyeSBpcyBiZWZvcmUgYWxsb2NhdGVfc2VnbWVudCwgdGhlbiB0aGUKPj4+PiBkaXJ0eSBzdGF0
-dXMgb2YgQ1VSU0VHIGlzIG5vdCB1cGRhdGVkLCBhcyBhIHJlc3VsdCwgdGhlIGNvdW50IG9mIGRp
-cnR5Cj4+Pj4gc2VnbWVudHMKPj4+PiBpcyB3cm9uZywgd2hpY2ggaXMgbXVjaCBzbWFsbGVyIHRo
-YW4gaXRzIHJlYWwgdmFsdWUuIFRoZW4gdGhlIGYyZnNfZ2MKPj4+PiBjYW4gbm90Cj4+Pj4gZG8g
-aXRzIHdvcmsgc2luY2UgaXQgY2FuIG5vdCBldmVuIGdldCBvbmUgdmljdGltLCB0aGVuIHRoZSBm
-cmVlIHNlZ21lbnRzIGFyZQo+Pj4+IHVzZWQgdXAgYW5kIHRoZW4gdHJpZ2dlcnMgbXVjaCBTU1Iu
-IFNvIEpheSByZXZlcnRzIHRoZSBwYXRjaC4KPj4+Pgo+Pj4+IEl0IHNlZW1zIHRoZXJlIGFyZSB0
-d28gb3B0aW9uczoKPj4+PiAoMSkga2VlcCB0aGlzIHBhdGNoIChbUEFUQ0ggdjJdIGYyZnM6IHVw
-ZGF0ZSBkaXJ0eSBzdGF0dXMgZm9yIENVUlNFRyBhcwo+Pj4+IHdlbGwpCj4+Pj4gYW5kIHdlIGNh
-biByZWNvdmVyIGNvbW1pdCAzNDM2YzRiZGIzMGRlNDIxZDQ2ZjU4YzkxNzQ2NjlmYmNmZDQwY2Uw
-Cj4+Pj4gKGYyZnM6IHB1dCBhbGxvY2F0ZV9zZWdtZW50IGFmdGVyIHJlZnJlc2hfc2l0X2VudHJ5
-KQo+Pj4+ICgyKSByZW1vdmUgdGhpcyBwYXRjaCBhdCBhbGwKPj4+Pgo+Pj4+IEl0IHNlZW1zICgx
-KSBpcyByb2J1c3QsIGJ1dCAoMikgYXZvaWRzIHVubmVjZXNzYXJ5IGNoZWNrLgo+Pj4gV2hhdCBh
-Ym91dCByZXZlcnRpbmcgNWU0NDM4MThmYTBiICgiZjJmczogaGFuZGxlIGRpcnR5IHNlZ21lbnRz
-IGluc2lkZQo+Pj4gcmVmcmVzaF9zaXRfZW50cnkiKSB0byBrZWVwIHRoZSBvcmlnaW5hbCBvcmRl
-cjoKPj4+Cj4+PiAxLiB1cGRhdGUgc2l0IGluZm8KPj4+IDIuIGFsbG9jYXRlIG5ldyBzZWdtZW50
-Cj4+PiAzLiB1cGRhdGUgZGlydHkgc3RhdHVzIG9mIHNlZ21lbnQKPj4+Cj4+PiBUaGFua3MsCj4+
-Pgo+Pj4+IE9uIDIwMTcvMTAvMTQgODoxNCwgQ2hhbyBZdSB3cm90ZToKPj4+Pj4gT24gMjAxNy8x
-MC8xMyAyMToyMSwgWXVubG9uZyBTb25nIHdyb3RlOgo+Pj4+Pj4gV2l0aG91dCB0aGlzIHBhdGNo
-LCBpdCB3aWxsIGNhdXNlIGFsbCB0aGUgZnJlZSBzZWdtZW50cyB1c2luZyB1cCBpbiBzb21lCj4+
-Pj4+PiBjb3JuZXIgY2FzZS4gRm9yIGV4YW1wbGUsIHRoZXJlIGFyZSAxMDAgc2VnbWVudHMsIGFu
-ZCAyMCBvZiB0aGVtIGFyZQo+Pj4+Pj4gcmVzZXJ2ZWQgZm9yIG92cC4gSWYgNzkgc2VnbWVudHMg
-YXJlIGZ1bGwgb2YgZGF0YSwgc2VnbWVudCA4MCBiZWNvbWVzCj4+Pj4+PiBDVVJTRUcgc2VnbWVu
-dCwgd3JpdGUgNTEyIGJsb2NrcyBhbmQgdGhlbiBkZWxldGUgNTExIGJsb2Nrcy4gU2luY2UgaXQg
-aXMKPj4+Pj4+IENVUlNFRyBzZWdtZW50LCB0aGUgX19sb2NhdGVfZGlydHlfc2VnbWVudCB3aWxs
-IG5vdCB1cGRhdGUgaXRzIGRpcnR5Cj4+Pj4+PiBzdGF0dXMuIFRoZW4gdGhlIGRpcnR5X3NlZ21l
-bnRzKHNiaSkgaXMgMCwgZjJmc19nYyB3aWxsIGZhaWwgdG8KPj4+Pj4+IGdldF92aWN0aW0sIGFu
-ZCBmMmZzX2JhbGFuY2VfZnMgd2lsbCBmYWlsIHRvIHRyaWdnZXIgZ2MgYWN0aW9uLiBBZnRlcgo+
-Pj4+Pj4gZjJmc19iYWxhbmNlX2ZzIHJldHVybnMsIGYyZnMgY2FuIGNvbnRpbnVlIHRvIHdyaXRl
-IGRhdGEgdG8gc2VnbWVudCA4MS4KPj4+Pj4+IEFnYWluLCBzZWdtZW50IDgxIGJlY29tZXMgQ1VS
-U0VHIHNlZ21lbnQsIHdyaXRlIDUxMiBibG9ja3MgYW5kIGRlbGV0ZQo+Pj4+Pj4gNTExIGJsb2Nr
-cywgdGhlIGRpcnR5X3NlZ21lbnRzKHNiaSkgaXMgMCBhbmQgZjJmc19nYyBmYWlsIGFnYWluLiBU
-aGlzCj4+Pj4+PiBjYW4gZmluYWxseSB1c2UgdXAgYWxsIHRoZSBmcmVlIHNlZ21lbnRzIGFuZCBj
-YXVzZSBwYW5pYy4KPj4+Pj4gTG9vayBpbnRvIHRoaXMgcGF0Y2ggYWdhaW4sIEkgZm91bmQgcmVm
-cmVzaF9zaXRfZW50cnkgaXMgY2FsbGVkIGFmdGVyCj4+Pj4+IC0+YWxsb2NhdGVfc2VnbWVudCwg
-c28gaWYgYWxsIDUxMiBibG9ja3Mgd2VyZSBhbGxvY2F0ZWQsIGxvZyBoZWFkZXIgc2hvdWxkCj4+
-Pj4+IGhhdmUgYmVlbiBtb3ZlZCB0byBhbm90aGVyIHNlZ21lbnQsIHNvIGxvY2F0ZV9kaXJ0eV9z
-ZWdtZW50IGluCj4+Pj4+IHJlZnJlc2hfc2l0X2VudHJ5IHNob3VsZCB1cGRhdGUgZGlydHkgc3Rh
-dHVzIG9mIHByZXZpb3VzIHNlZ21lbnQgY29ycmVjdGx5LAo+Pj4+PiBhbnl0aGluZyBJJ20gbWlz
-c2luZz8KPj4+Pj4KPj4+Pj4gVGhhbmtzLAo+Pj4+Pgo+Pj4+Pj4gU2lnbmVkLW9mZi1ieTogWXVu
-bG9uZyBTb25nIDx5dW5sb25nLnNvbmdAaHVhd2VpLmNvbT4KPj4+Pj4+IC0tLQo+Pj4+Pj4gwqDC
-oCBmcy9mMmZzL3NlZ21lbnQuYyB8IDQgKystLQo+Pj4+Pj4gwqDCoCAxIGZpbGUgY2hhbmdlZCwg
-MiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+Pj4+Pj4KPj4+Pj4+IGRpZmYgLS1naXQg
-YS9mcy9mMmZzL3NlZ21lbnQuYyBiL2ZzL2YyZnMvc2VnbWVudC5jCj4+Pj4+PiBpbmRleCBiZmJj
-ZmY4Li4wZmNlMDc2IDEwMDY0NAo+Pj4+Pj4gLS0tIGEvZnMvZjJmcy9zZWdtZW50LmMKPj4+Pj4+
-ICsrKyBiL2ZzL2YyZnMvc2VnbWVudC5jCj4+Pj4+PiBAQCAtNjg3LDcgKzY4Nyw3IEBAIHN0YXRp
-YyB2b2lkIF9fbG9jYXRlX2RpcnR5X3NlZ21lbnQoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCB1
-bnNpZ25lZCBpbnQgc2Vnbm8sCj4+Pj4+PiDCoMKgwqDCoMKgwqAgc3RydWN0IGRpcnR5X3NlZ2xp
-c3RfaW5mbyAqZGlydHlfaSA9IERJUlRZX0koc2JpKTsKPj4+Pj4+IMKgwqAgwqDCoMKgwqDCoMKg
-IC8qIG5lZWQgbm90IGJlIGFkZGVkICovCj4+Pj4+PiAtwqDCoMKgIGlmIChJU19DVVJTRUcoc2Jp
-LCBzZWdubykpCj4+Pj4+PiArwqDCoMKgIGlmIChJU19DVVJTRUcoc2JpLCBzZWdubykgJiYgZGly
-dHlfdHlwZSA9PSBQUkUpCj4+Pj4+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXR1cm47Cj4+Pj4+
-PiDCoMKgIMKgwqDCoMKgwqDCoCBpZiAoIXRlc3RfYW5kX3NldF9iaXQoc2Vnbm8sIGRpcnR5X2kt
-PmRpcnR5X3NlZ21hcFtkaXJ0eV90eXBlXSkpCj4+Pj4+PiBAQCAtNzM3LDcgKzczNyw3IEBAIHN0
-YXRpYyB2b2lkIGxvY2F0ZV9kaXJ0eV9zZWdtZW50KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwg
-dW5zaWduZWQgaW50IHNlZ25vKQo+Pj4+Pj4gwqDCoMKgwqDCoMKgIHN0cnVjdCBkaXJ0eV9zZWds
-aXN0X2luZm8gKmRpcnR5X2kgPSBESVJUWV9JKHNiaSk7Cj4+Pj4+PiDCoMKgwqDCoMKgwqAgdW5z
-aWduZWQgc2hvcnQgdmFsaWRfYmxvY2tzOwo+Pj4+Pj4gwqDCoCAtwqDCoMKgIGlmIChzZWdubyA9
-PSBOVUxMX1NFR05PIHx8IElTX0NVUlNFRyhzYmksIHNlZ25vKSkKPj4+Pj4+ICvCoMKgwqAgaWYg
-KHNlZ25vID09IE5VTExfU0VHTk8pCj4+Pj4+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXR1cm47
-Cj4+Pj4+PiDCoMKgIMKgwqDCoMKgwqDCoCBtdXRleF9sb2NrKCZkaXJ0eV9pLT5zZWdsaXN0X2xv
-Y2spOwo+Pj4+Pj4KPj4+Pj4gLgo+Pj4+Pgo+PiAuCj4+Cj4gCgotLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0KQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29y
-bGQncyBtb3N0CmVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5s
-aW5rL3NsYXNoZG90Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMu
-c291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3Rp
-bmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+On Fri, Sep 08, 2017 at 05:15:12PM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Perhaps long overdue, add a documentation file for filesystem-level
+> encryption, a.k.a. fscrypt or fs/crypto/, to the Documentation
+> directory.  The new file is based loosely on the latest version of the
+> "EXT4 Encryption Design Document (public version)" Google Doc, but with
+> many improvements made, including:
+> 
+> - Reflect the reality that it is not specific to ext4 anymore.
+> - More thoroughly document the design and user-visible API/behavior.
+> - Replace outdated information, such as the outdated explanation of how
+>   encrypted filenames are hashed for indexed directories and how
+>   encrypted filenames are presented to userspace without the key.
+>   (This was changed just before release.)
+> 
+> For now the focus is on the design and user-visible API/behavior, not on
+> how to add encryption support to a filesystem --- since the internal API
+> is still pretty messy and any standalone documentation for it would
+> become outdated as things get refactored over time.
+> 
+> Reviewed-by: Michael Halcrow <mhalcrow@google.com>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+
+Applied, thanks.
+
+					- Ted
