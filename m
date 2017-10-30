@@ -1,136 +1,67 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH v2] f2fs: fix out-of-free problem caused by atomic write
-Date: Mon, 30 Oct 2017 21:04:18 +0800
-Message-ID: <1509368658-60355-1-git-send-email-yunlong.song@huawei.com>
-References: <1509027715-80477-1-git-send-email-yunlong.song@huawei.com>
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH] f2fs: don't bother with inode->i_version
+Date: Mon, 30 Oct 2017 11:11:56 -0400
+Message-ID: <20171030151156.6418-1-jlayton@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1509027715-80477-1-git-send-email-yunlong.song@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+ helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <jlayton@kernel.org>) id 1e9BjW-00042B-1f
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Oct 2017 15:12:10 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+ (Exim 4.76) id 1e9BjQ-0007du-9E
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Oct 2017 15:12:09 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-f2fs_balance_fs only actives once in the commit_inmem_pages, but there
-are more than one page to commit, so all the other pages will miss the
-check. This will lead to out-of-free problem when commit a very large
-file. However, we cannot do f2fs_balance_fs for each inmem page, since
-this will break atomicity. As a result, we should collect prefree
-segments if needed and stop atomic commit when there are not enough
-available blocks to write atomic pages.
+From: Jeff Layton <jlayton@redhat.com>
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+f2fs does not set the SB_I_VERSION flag, so the i_version will never
+be incremented on write. It was recently changed to increment the
+i_version on a quota write, which isn't necessary here.
+
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
 ---
- fs/f2fs/f2fs.h    |  1 +
- fs/f2fs/segment.c | 29 ++++++++++++++++++++++++++++-
- 2 files changed, 29 insertions(+), 1 deletion(-)
+ fs/f2fs/super.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 13a96b8..04ce48f 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -610,6 +610,7 @@ struct f2fs_inode_info {
- 	struct list_head inmem_pages;	/* inmemory pages managed by f2fs */
- 	struct task_struct *inmem_task;	/* store inmemory task */
- 	struct mutex inmem_lock;	/* lock for inmemory pages */
-+	unsigned long inmem_blocks;	/* inmemory blocks */
- 	struct extent_tree *extent_tree;	/* cached extent_tree entry */
- 	struct rw_semaphore dio_rwsem[2];/* avoid racing between dio and gc */
- 	struct rw_semaphore i_mmap_sem;
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 46dfbca..813c110 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -210,6 +210,7 @@ void register_inmem_page(struct inode *inode, struct page *page)
- 		list_add_tail(&fi->inmem_ilist, &sbi->inode_list[ATOMIC_FILE]);
- 	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
- 	inc_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
-+	fi->inmem_blocks++;
- 	mutex_unlock(&fi->inmem_lock);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 933c3d529e65..b3359158e7be 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -618,7 +618,6 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ 	init_once((void *) fi);
  
- 	trace_f2fs_register_inmem_page(page, INMEM);
-@@ -221,6 +222,7 @@ static int __revoke_inmem_pages(struct inode *inode,
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct inmem_pages *cur, *tmp;
- 	int err = 0;
-+	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 	/* Initialize f2fs-specific inode info */
+-	fi->vfs_inode.i_version = 1;
+ 	atomic_set(&fi->dirty_pages, 0);
+ 	fi->i_current_depth = 1;
+ 	fi->i_advise = 0;
+@@ -1386,7 +1385,6 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
  
- 	list_for_each_entry_safe(cur, tmp, head, list) {
- 		struct page *page = cur->page;
-@@ -263,6 +265,7 @@ static int __revoke_inmem_pages(struct inode *inode,
- 		list_del(&cur->list);
- 		kmem_cache_free(inmem_entry_slab, cur);
- 		dec_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
-+		fi->inmem_blocks--;
- 	}
- 	return err;
- }
-@@ -302,6 +305,10 @@ void drop_inmem_pages(struct inode *inode)
- 	if (!list_empty(&fi->inmem_ilist))
- 		list_del_init(&fi->inmem_ilist);
- 	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
-+	if (fi->inmem_blocks) {
-+		f2fs_bug_on(sbi, 1);
-+		fi->inmem_blocks = 0;
-+	}
- 	mutex_unlock(&fi->inmem_lock);
- 
- 	clear_inode_flag(inode, FI_ATOMIC_FILE);
-@@ -326,6 +333,7 @@ void drop_inmem_page(struct inode *inode, struct page *page)
- 
- 	f2fs_bug_on(sbi, !cur || cur->page != page);
- 	list_del(&cur->list);
-+	fi->inmem_blocks--;
- 	mutex_unlock(&fi->inmem_lock);
- 
- 	dec_page_count(sbi, F2FS_INMEM_PAGES);
-@@ -410,11 +418,26 @@ int commit_inmem_pages(struct inode *inode)
- 
- 	INIT_LIST_HEAD(&revoke_list);
- 	f2fs_balance_fs(sbi, true);
-+	if (prefree_segments(sbi)
-+		&& has_not_enough_free_secs(sbi, 0,
-+		fi->inmem_blocks / BLKS_PER_SEC(sbi))) {
-+		struct cp_control cpc;
-+
-+		cpc.reason = __get_cp_reason(sbi);
-+		err = write_checkpoint(sbi, &cpc);
-+		if (err)
-+			goto drop;
-+	}
- 	f2fs_lock_op(sbi);
- 
- 	set_inode_flag(inode, FI_ATOMIC_COMMIT);
- 
- 	mutex_lock(&fi->inmem_lock);
-+	if ((sbi->user_block_count - valid_user_blocks(sbi)) <
-+		fi->inmem_blocks) {
-+		err = -ENOSPC;
-+		goto drop;
-+	}
- 	err = __commit_inmem_pages(inode, &revoke_list);
- 	if (err) {
- 		int ret;
-@@ -429,7 +452,7 @@ int commit_inmem_pages(struct inode *inode)
- 		ret = __revoke_inmem_pages(inode, &revoke_list, false, true);
- 		if (ret)
- 			err = ret;
--
-+drop:
- 		/* drop all uncommitted pages */
- 		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
- 	}
-@@ -437,6 +460,10 @@ int commit_inmem_pages(struct inode *inode)
- 	if (!list_empty(&fi->inmem_ilist))
- 		list_del_init(&fi->inmem_ilist);
- 	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
-+	if (fi->inmem_blocks) {
-+		f2fs_bug_on(sbi, 1);
-+		fi->inmem_blocks = 0;
-+	}
- 	mutex_unlock(&fi->inmem_lock);
- 
- 	clear_inode_flag(inode, FI_ATOMIC_COMMIT);
+ 	if (len == towrite)
+ 		return 0;
+-	inode->i_version++;
+ 	inode->i_mtime = inode->i_ctime = current_time(inode);
+ 	f2fs_mark_inode_dirty_sync(inode, false);
+ 	return len - towrite;
 -- 
-1.8.5.2
+2.13.6
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
