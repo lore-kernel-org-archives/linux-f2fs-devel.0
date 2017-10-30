@@ -1,43 +1,116 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v3] fscrypt: add a documentation file for
- filesystem-level encryption
-Date: Sun, 29 Oct 2017 06:24:06 -0400
-Message-ID: <20171029102406.hc6zzeepgbntwesx@thunk.org>
-References: <20170909001512.72431-1-ebiggers3@gmail.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: [PATCH v2 RESEND] Revert "f2fs: handle dirty segments
+ inside refresh_sit_entry"
+Date: Mon, 30 Oct 2017 09:33:41 +0800
+Message-ID: <1509327221-159302-1-git-send-email-yunlong.song@huawei.com>
+References: <20171028115709.4622-1-chao@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-ext4-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170909001512.72431-1-ebiggers3@gmail.com>
-Sender: linux-ext4-owner@vger.kernel.org
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: linux-fscrypt@vger.kernel.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, Eric Biggers <ebiggers@google.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+ helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <yunlong.song@huawei.com>)
+ id 1e8yxz-0002nJ-LX
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Oct 2017 01:34:15 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+ id 1e8yxx-0003Zw-AP
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Oct 2017 01:34:15 +0000
+In-Reply-To: <20171028115709.4622-1-chao@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
+Cc: linux-fsdevel@vger.kernel.org, miaoxie@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Fri, Sep 08, 2017 at 05:15:12PM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> Perhaps long overdue, add a documentation file for filesystem-level
-> encryption, a.k.a. fscrypt or fs/crypto/, to the Documentation
-> directory.  The new file is based loosely on the latest version of the
-> "EXT4 Encryption Design Document (public version)" Google Doc, but with
-> many improvements made, including:
-> 
-> - Reflect the reality that it is not specific to ext4 anymore.
-> - More thoroughly document the design and user-visible API/behavior.
-> - Replace outdated information, such as the outdated explanation of how
->   encrypted filenames are hashed for indexed directories and how
->   encrypted filenames are presented to userspace without the key.
->   (This was changed just before release.)
-> 
-> For now the focus is on the design and user-visible API/behavior, not on
-> how to add encryption support to a filesystem --- since the internal API
-> is still pretty messy and any standalone documentation for it would
-> become outdated as things get refactored over time.
-> 
-> Reviewed-by: Michael Halcrow <mhalcrow@google.com>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+This reverts commit 5e443818fa0b2a2845561ee25bec181424fb2889
 
-Applied, thanks.
+The commit should be reverted because call sequence of below two parts
+of code must be kept:
+a. update sit information, it needs to be updated before segment
+allocation since latter allocation may trigger SSR, and SSR allocation
+needs latest valid block information of all segments.
+b. update segment status, it needs to be updated after segment allocation
+since we can skip updating current opened segment status.
 
-					- Ted
+Fixes: 5e443818fa0b ("f2fs: handle dirty segments inside refresh_sit_entry")
+Suggested-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+---
+ fs/f2fs/f2fs.h    |  1 -
+ fs/f2fs/segment.c | 20 +++++++++++++-------
+ 2 files changed, 13 insertions(+), 8 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 13a96b8..f166112 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2567,7 +2567,6 @@ int restore_node_summary(struct f2fs_sb_info *sbi,
+ bool is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr);
+ void init_discard_policy(struct discard_policy *dpolicy, int discard_type,
+ 						unsigned int granularity);
+-void refresh_sit_entry(struct f2fs_sb_info *sbi, block_t old, block_t new);
+ void stop_discard_thread(struct f2fs_sb_info *sbi);
+ bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi);
+ void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 46dfbca..a3509e9 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1884,14 +1884,11 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+ 		get_sec_entry(sbi, segno)->valid_blocks += del;
+ }
+ 
+-void refresh_sit_entry(struct f2fs_sb_info *sbi, block_t old, block_t new)
++static void refresh_sit_entry(struct f2fs_sb_info *sbi, block_t old, block_t new)
+ {
+ 	update_sit_entry(sbi, new, 1);
+ 	if (GET_SEGNO(sbi, old) != NULL_SEGNO)
+ 		update_sit_entry(sbi, old, -1);
+-
+-	locate_dirty_segment(sbi, GET_SEGNO(sbi, old));
+-	locate_dirty_segment(sbi, GET_SEGNO(sbi, new));
+ }
+ 
+ void invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr)
+@@ -2529,13 +2526,22 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+ 
+ 	stat_inc_block_count(sbi, curseg);
+ 
++	/*
++	 * SIT information should be updated before segment allocation,
++	 * since SSR needs latest valid block information.
++	 */
++	refresh_sit_entry(sbi, old_blkaddr, *new_blkaddr);
++
+ 	if (!__has_curseg_space(sbi, type))
+ 		sit_i->s_ops->allocate_segment(sbi, type, false);
++
+ 	/*
+-	 * SIT information should be updated after segment allocation,
+-	 * since we need to keep dirty segments precisely under SSR.
++	 * segment dirty status should be updated after segment allocation,
++	 * so we just need to update status only one time after previous
++	 * segment being closed.
+ 	 */
+-	refresh_sit_entry(sbi, old_blkaddr, *new_blkaddr);
++	locate_dirty_segment(sbi, GET_SEGNO(sbi, old_blkaddr));
++	locate_dirty_segment(sbi, GET_SEGNO(sbi, *new_blkaddr));
+ 
+ 	mutex_unlock(&sit_i->sentry_lock);
+ 
+-- 
+1.8.5.2
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
