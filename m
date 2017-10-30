@@ -1,206 +1,108 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: add a function to move nid
-Date: Mon, 30 Oct 2017 02:30:26 -0700
-Message-ID: <20171030093026.GB26880@jaegeuk-macbookpro.roam.corp.google.com>
-References: <CGME20171028110400epcas1p2cd8fd0105884f449b5116b1ee9cf6092@epcas1p2.samsung.com>
- <000001d34fdc$7d461260$77d23720$@samsung.com>
- <70867f4c-e865-2acb-472a-8f24a7588d91@kernel.org>
+Subject: Re: [PATCH v2 RESEND] Revert "f2fs: handle dirty segments inside
+ refresh_sit_entry"
+Date: Mon, 30 Oct 2017 02:39:08 -0700
+Message-ID: <20171030093908.GC26880@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20171028115709.4622-1-chao@kernel.org>
+ <1509327221-159302-1-git-send-email-yunlong.song@huawei.com>
+ <043afe52-6c41-933f-9382-07cee10f447f@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
- helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <jaegeuk@kernel.org>) id 1e96Ov-0002Nq-O6
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Oct 2017 09:30:33 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1e96Ou-0003nW-IX
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Oct 2017 09:30:33 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <70867f4c-e865-2acb-472a-8f24a7588d91@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <043afe52-6c41-933f-9382-07cee10f447f@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Yunlong Song <yunlong.song@huawei.com>, yunlong.song@icloud.com, chao@kernel.org, miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 10/28, Chao Yu wrote:
-> On 2017/10/28 19:03, Fan Li wrote:
-> > This patch add a new function to move nid from one state to another.
-> > Move operation is heavily used, by adding a new function for it 
-> > we can cut down some branches from several flow.
+On 10/30, Chao Yu wrote:
+> On 2017/10/30 9:33, Yunlong Song wrote:
+> > This reverts commit 5e443818fa0b2a2845561ee25bec181424fb2889
 > > 
+> > The commit should be reverted because call sequence of below two parts
+> > of code must be kept:
+> > a. update sit information, it needs to be updated before segment
+> > allocation since latter allocation may trigger SSR, and SSR allocation
+> > needs latest valid block information of all segments.
+> > b. update segment status, it needs to be updated after segment allocation
+> > since we can skip updating current opened segment status.
 > > 
-> > Signed-off-by: Fan li <fanofcode.li@samsung.com>
-> > ---
-> >  fs/f2fs/node.c | 51 ++++++++++++++++++++++++++++++---------------------
-> >  1 file changed, 30 insertions(+), 21 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> > index ac629d6..8116b50
-> > --- a/fs/f2fs/node.c
-> > +++ b/fs/f2fs/node.c
-> > @@ -1763,15 +1763,13 @@ static struct free_nid *__lookup_free_nid_list(struct f2fs_nm_info *nm_i,
-> >  }
-> >  
-> >  static int __insert_free_nid(struct f2fs_sb_info *sbi,
-> > -			struct free_nid *i, enum nid_state state, bool new)
-> > +			struct free_nid *i, enum nid_state state)
-> >  {
-> >  	struct f2fs_nm_info *nm_i = NM_I(sbi);
-> >  
-> > -	if (new) {
-> > -		int err = radix_tree_insert(&nm_i->free_nid_root, i->nid, i);
-> > -		if (err)
-> > -			return err;
-> > -	}
-> > +	int err = radix_tree_insert(&nm_i->free_nid_root, i->nid, i);
-> > +	if (err)
-> > +		return err;
-> >  
-> >  	f2fs_bug_on(sbi, state != i->state);
-> >  	nm_i->nid_cnt[state]++;
-> > @@ -1781,7 +1779,7 @@ static int __insert_free_nid(struct f2fs_sb_info *sbi,
-> >  }
-> >  
-> >  static void __remove_free_nid(struct f2fs_sb_info *sbi,
-> > -			struct free_nid *i, enum nid_state state, bool reuse)
-> > +			struct free_nid *i, enum nid_state state)
-> >  {
-> >  	struct f2fs_nm_info *nm_i = NM_I(sbi);
-> >  
-> > @@ -1789,8 +1787,23 @@ static void __remove_free_nid(struct f2fs_sb_info *sbi,
-> >  	nm_i->nid_cnt[state]--;
-> >  	if (state == FREE_NID)
-> >  		list_del(&i->list);
-> > -	if (!reuse)
-> > -		radix_tree_delete(&nm_i->free_nid_root, i->nid);
-> > +	radix_tree_delete(&nm_i->free_nid_root, i->nid);
-> > +}
-> > +
-> > +static void __move_free_nid(struct f2fs_sb_info *sbi, struct free_nid *i,
-> > +			enum nid_state org_state, enum nid_state dst_state)
-> > +{
-> > +	struct f2fs_nm_info *nm_i = NM_I(sbi);
-> > +
-> > +	f2fs_bug_on(sbi, org_state != i->state);
-> > +	i->state = dst_state;
-> > +	nm_i->nid_cnt[org_state]--;
-> > +	nm_i->nid_cnt[dst_state]++;
-> > +
-> > +	if (org_state == FREE_NID)
-> 
-> Welcome back to community, Fan. :)
-> 
-> Minor, how about "if (dst_stat == PREALLOC_NID)" ?
-
-How about this?
-
-switch (dst_state) {
-	case PREALLOC_NID:
-		list_del(&i->list);
-		break;
-	case FREE_NID:
-		list_add_tail(&i->list, &nm_i->free_nid_list);
-		break;
-	default:
-		BUG_ON(1);
-};
-
-> 
-> Otherwise this patch looks good to me, anyway, you can add:
+> > Fixes: 5e443818fa0b ("f2fs: handle dirty segments inside refresh_sit_entry")
+> > Suggested-by: Chao Yu <yuchao0@huawei.com>
+> > Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 > 
 > Reviewed-by: Chao Yu <yuchao0@huawei.com>
 > 
 > Thanks,
 > 
-> > +		list_del(&i->list);
-> > +	else if (dst_state == FREE_NID)
-> > +		list_add_tail(&i->list, &nm_i->free_nid_list);
+> > ---
+> >  fs/f2fs/f2fs.h    |  1 -
+> >  fs/f2fs/segment.c | 20 +++++++++++++-------
+> >  2 files changed, 13 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 13a96b8..f166112 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -2567,7 +2567,6 @@ int restore_node_summary(struct f2fs_sb_info *sbi,
+> >  bool is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr);
+> >  void init_discard_policy(struct discard_policy *dpolicy, int discard_type,
+> >  						unsigned int granularity);
+> > -void refresh_sit_entry(struct f2fs_sb_info *sbi, block_t old, block_t new);
+> >  void stop_discard_thread(struct f2fs_sb_info *sbi);
+> >  bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi);
+> >  void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc);
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 46dfbca..a3509e9 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -1884,14 +1884,11 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+> >  		get_sec_entry(sbi, segno)->valid_blocks += del;
 > >  }
 > >  
-> >  /* return if the nid is recognized as free */
-> > @@ -1850,7 +1863,7 @@ static bool add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
-> >  		}
-> >  	}
-> >  	ret = true;
-> > -	err = __insert_free_nid(sbi, i, FREE_NID, true);
-> > +	err = __insert_free_nid(sbi, i, FREE_NID);
-> >  err_out:
-> >  	spin_unlock(&nm_i->nid_list_lock);
-> >  	radix_tree_preload_end();
-> > @@ -1869,7 +1882,7 @@ static void remove_free_nid(struct f2fs_sb_info *sbi, nid_t nid)
-> >  	spin_lock(&nm_i->nid_list_lock);
-> >  	i = __lookup_free_nid_list(nm_i, nid);
-> >  	if (i && i->state == FREE_NID) {
-> > -		__remove_free_nid(sbi, i, FREE_NID, false);
-> > +		__remove_free_nid(sbi, i, FREE_NID);
-> >  		need_free = true;
-> >  	}
-> >  	spin_unlock(&nm_i->nid_list_lock);
-> > @@ -2080,9 +2093,7 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
-> >  					struct free_nid, list);
-> >  		*nid = i->nid;
-> >  
-> > -		__remove_free_nid(sbi, i, FREE_NID, true);
-> > -		i->state = PREALLOC_NID;
-> > -		__insert_free_nid(sbi, i, PREALLOC_NID, false);
-> > +		__move_free_nid(sbi, i, FREE_NID, PREALLOC_NID);
-> >  		nm_i->available_nids--;
-> >  
-> >  		update_free_nid_bitmap(sbi, *nid, false, false);
-> > @@ -2108,7 +2119,7 @@ void alloc_nid_done(struct f2fs_sb_info *sbi, nid_t nid)
-> >  	spin_lock(&nm_i->nid_list_lock);
-> >  	i = __lookup_free_nid_list(nm_i, nid);
-> >  	f2fs_bug_on(sbi, !i);
-> > -	__remove_free_nid(sbi, i, PREALLOC_NID, false);
-> > +	__remove_free_nid(sbi, i, PREALLOC_NID);
-> >  	spin_unlock(&nm_i->nid_list_lock);
-> >  
-> >  	kmem_cache_free(free_nid_slab, i);
-> > @@ -2131,12 +2142,10 @@ void alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid)
-> >  	f2fs_bug_on(sbi, !i);
-> >  
-> >  	if (!available_free_memory(sbi, FREE_NIDS)) {
-> > -		__remove_free_nid(sbi, i, PREALLOC_NID, false);
-> > +		__remove_free_nid(sbi, i, PREALLOC_NID);
-> >  		need_free = true;
-> >  	} else {
-> > -		__remove_free_nid(sbi, i, PREALLOC_NID, true);
-> > -		i->state = FREE_NID;
-> > -		__insert_free_nid(sbi, i, FREE_NID, false);
-> > +		__move_free_nid(sbi, i, PREALLOC_NID, FREE_NID);
-> >  	}
-> >  
-> >  	nm_i->available_nids++;
-> > @@ -2167,7 +2176,7 @@ int try_to_free_nids(struct f2fs_sb_info *sbi, int nr_shrink)
-> >  				nm_i->nid_cnt[FREE_NID] <= MAX_FREE_NIDS)
-> >  			break;
-> >  
-> > -		__remove_free_nid(sbi, i, FREE_NID, false);
-> > +		__remove_free_nid(sbi, i, FREE_NID);
-> >  		kmem_cache_free(free_nid_slab, i);
-> >  		nr_shrink--;
-> >  	}
-> > @@ -2746,7 +2755,7 @@ void destroy_node_manager(struct f2fs_sb_info *sbi)
-> >  	/* destroy free nid list */
-> >  	spin_lock(&nm_i->nid_list_lock);
-> >  	list_for_each_entry_safe(i, next_i, &nm_i->free_nid_list, list) {
-> > -		__remove_free_nid(sbi, i, FREE_NID, false);
-> > +		__remove_free_nid(sbi, i, FREE_NID);
-> >  		spin_unlock(&nm_i->nid_list_lock);
-> >  		kmem_cache_free(free_nid_slab, i);
-> >  		spin_lock(&nm_i->nid_list_lock);
-> > 
+> > -void refresh_sit_entry(struct f2fs_sb_info *sbi, block_t old, block_t new)
+> > +static void refresh_sit_entry(struct f2fs_sb_info *sbi, block_t old, block_t new)
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+IMO, we don't even need this function, and insteda, do update_sit_entry work
+directly below. Merged with it, so let me know, if you have any concern.
+
+Thanks,
+
+> >  {
+> >  	update_sit_entry(sbi, new, 1);
+> >  	if (GET_SEGNO(sbi, old) != NULL_SEGNO)
+> >  		update_sit_entry(sbi, old, -1);
+> > -
+> > -	locate_dirty_segment(sbi, GET_SEGNO(sbi, old));
+> > -	locate_dirty_segment(sbi, GET_SEGNO(sbi, new));
+> >  }
+> >  
+> >  void invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr)
+> > @@ -2529,13 +2526,22 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+> >  
+> >  	stat_inc_block_count(sbi, curseg);
+> >  
+> > +	/*
+> > +	 * SIT information should be updated before segment allocation,
+> > +	 * since SSR needs latest valid block information.
+> > +	 */
+> > +	refresh_sit_entry(sbi, old_blkaddr, *new_blkaddr);
+> > +
+> >  	if (!__has_curseg_space(sbi, type))
+> >  		sit_i->s_ops->allocate_segment(sbi, type, false);
+> > +
+> >  	/*
+> > -	 * SIT information should be updated after segment allocation,
+> > -	 * since we need to keep dirty segments precisely under SSR.
+> > +	 * segment dirty status should be updated after segment allocation,
+> > +	 * so we just need to update status only one time after previous
+> > +	 * segment being closed.
+> >  	 */
+> > -	refresh_sit_entry(sbi, old_blkaddr, *new_blkaddr);
+> > +	locate_dirty_segment(sbi, GET_SEGNO(sbi, old_blkaddr));
+> > +	locate_dirty_segment(sbi, GET_SEGNO(sbi, *new_blkaddr));
+> >  
+> >  	mutex_unlock(&sit_i->sentry_lock);
+> >  
+> > 
