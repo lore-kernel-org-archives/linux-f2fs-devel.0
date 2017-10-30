@@ -1,28 +1,22 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 2/2] f2fs: relax EIO injection for quota file
-Date: Mon, 30 Oct 2017 17:43:04 +0800
-Message-ID: <384897c7-111b-99cc-d99d-989fafaa6330@huawei.com>
-References: <20171019165617.79128-1-jaegeuk@kernel.org>
- <20171019165617.79128-2-jaegeuk@kernel.org>
- <b8e70503-c0e3-22b2-a1fe-089f8fb206a6@kernel.org>
- <20171022165109.GA33676@jaegeuk-macbookpro.roam.corp.google.com>
- <369986d8-18f2-85b6-28cd-64dffea2f7a7@huawei.com>
- <20171030092114.GA26880@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: [PATCH 2/2] f2fs: check curseg space before foreground GC
+Date: Mon, 30 Oct 2017 17:49:54 +0800
+Message-ID: <20171030094954.80691-2-yuchao0@huawei.com>
+References: <20171030094954.80691-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e96bx-0004oJ-Mq
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Oct 2017 09:44:01 +0000
-Received: from [45.249.212.32] (helo=huawei.com)
- by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
- id 1e96bv-0002gN-05
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Oct 2017 09:44:01 +0000
-In-Reply-To: <20171030092114.GA26880@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e96iY-0001V9-RE
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Oct 2017 09:50:50 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190])
+ by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1e96iX-0005sb-BX
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Oct 2017 09:50:50 +0000
+In-Reply-To: <20171030094954.80691-1-yuchao0@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,70 +26,73 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/10/30 17:21, Jaegeuk Kim wrote:
-> On 10/28, Chao Yu wrote:
->> Hi Jaegeuk,
->>
->> On 2017/10/23 0:51, Jaegeuk Kim wrote:
->>> On 10/22, Chao Yu wrote:
->>>> On 2017/10/20 0:56, Jaegeuk Kim wrote:
->>>>> This case is not happening easily.
->>>>
->>>> Actually it can happen, so why not just keep it?
->>>
->>> Okay, so let me keep this patch for local stress tests only.
->>
->> May I ask which type and rate of fault injection you are using for
->> test now?
-> 
-> I select random value between 3000 and 5000, and 255 for type.
+When we are closing to trigger foreground GC, if there are only a few
+of dirty metas, we can log these dirty metas in left space of opened
+segments instead of triggering foreground GC.
 
-Got it, thanks for your sharing. :)
+With this patch, total count of foreground GC triggered by
+test/generic/* of fstest suit reduce from 254 to 184.
 
-Thanks,
+So let's do the check before foreground GC anyway.
 
-> 
-> Thanks,
-> 
->>
->> Thanks,
->>
->>>
->>> Thanks,
->>>
->>>
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>> ---
->>>>>  fs/f2fs/f2fs.h | 2 +-
->>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>>> index e0ef31cb2cc6..6301ccca8888 100644
->>>>> --- a/fs/f2fs/f2fs.h
->>>>> +++ b/fs/f2fs/f2fs.h
->>>>> @@ -1544,7 +1544,7 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
->>>>>  		return ret;
->>>>>  
->>>>>  #ifdef CONFIG_F2FS_FAULT_INJECTION
->>>>> -	if (time_to_inject(sbi, FAULT_BLOCK)) {
->>>>> +	if (!IS_NOQUOTA(inode) && time_to_inject(sbi, FAULT_BLOCK)) {
->>>>>  		f2fs_show_injection_info(FAULT_BLOCK);
->>>>>  		release = *count;
->>>>>  		goto enospc;
->>>>>
->>>
->>> .
->>>
-> 
-> .
-> 
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/segment.h | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 245acb34cab5..d1d394cdf61d 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -497,6 +497,33 @@ static inline int reserved_sections(struct f2fs_sb_info *sbi)
+ 	return GET_SEC_FROM_SEG(sbi, (unsigned int)reserved_segments(sbi));
+ }
+ 
++static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi)
++{
++	unsigned int node_blocks = get_pages(sbi, F2FS_DIRTY_NODES) +
++					get_pages(sbi, F2FS_DIRTY_DENTS);
++	unsigned int dent_blocks = get_pages(sbi, F2FS_DIRTY_DENTS);
++	unsigned int segno, left_blocks;
++	int i;
++
++	/* check current node segment */
++	for (i = CURSEG_HOT_NODE; i <= CURSEG_COLD_NODE; i++) {
++		segno = CURSEG_I(sbi, i)->segno;
++		left_blocks = sbi->blocks_per_seg -
++			get_seg_entry(sbi, segno)->ckpt_valid_blocks;
++
++		if (node_blocks > left_blocks)
++			return false;
++	}
++
++	/* check current data segment */
++	segno = CURSEG_I(sbi, CURSEG_HOT_DATA)->segno;
++	left_blocks = sbi->blocks_per_seg -
++			get_seg_entry(sbi, segno)->ckpt_valid_blocks;
++	if (dent_blocks > left_blocks)
++		return false;
++	return true;
++}
++
+ static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
+ 					int freed, int needed)
+ {
+@@ -507,6 +534,9 @@ static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
+ 	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
+ 		return false;
+ 
++	if (free_sections(sbi) + freed == reserved_sections(sbi) + needed &&
++			has_curseg_enough_space(sbi))
++		return false;
+ 	return (free_sections(sbi) + freed) <=
+ 		(node_secs + 2 * dent_secs + imeta_secs +
+ 		reserved_sections(sbi) + needed);
+-- 
+2.13.1.388.g69e6b9b4f4a9
 
 
 ------------------------------------------------------------------------------
