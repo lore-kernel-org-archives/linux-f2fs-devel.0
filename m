@@ -1,26 +1,24 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [RFC PATCH 5/8] dump.f2fs: do not dump encrypted
- files
-Date: Tue, 31 Oct 2017 19:09:26 +0800
-Message-ID: <4ea7d801-6a20-d744-c850-eafc3a1bfda5@huawei.com>
+Subject: Re: [RFC PATCH 1/8] fsck.f2fs: do not set fix_on directly
+Date: Tue, 31 Oct 2017 19:12:52 +0800
+Message-ID: <962294c3-e179-39d8-d1f2-baf535196e9e@huawei.com>
 References: <20171031013824.46544-1-shengyong1@huawei.com>
- <20171031013824.46544-5-shengyong1@huawei.com>
- <f400c643-bf4d-bca5-0598-13f114db6d19@huawei.com>
- <ea0fdae9-24bb-449b-fab1-ea3f89b929c1@huawei.com>
+ <225753a9-68b7-3c98-ffac-55c6c79941eb@huawei.com>
+ <b00a3c1e-2fa3-dc1c-a4c7-37707d52b478@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e9URc-00069d-Mo
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 11:10:56 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1e9URb-0007Ib-Go
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 11:10:56 +0000
-In-Reply-To: <ea0fdae9-24bb-449b-fab1-ea3f89b929c1@huawei.com>
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e9UTv-0007hk-KG
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 11:13:19 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+ id 1e9UTt-0001f2-LL
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 11:13:19 +0000
+In-Reply-To: <b00a3c1e-2fa3-dc1c-a4c7-37707d52b478@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -34,30 +32,36 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/10/31 17:16, Sheng Yong wrote:
+On 2017/10/31 17:34, Sheng Yong wrote:
 > 
 > 
-> On 2017/10/31 15:57, Chao Yu wrote:
+> On 2017/10/31 15:06, Chao Yu wrote:
 >> On 2017/10/31 9:38, Sheng Yong wrote:
->>> If a file is encrypted, its content is cipher text on the storage. So
->>> there is no need to dump an encrypted file.
+>>> Do not set fix_on if it is allowed by user.
+>>>
+>>> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+>>> ---
+>>>   fsck/main.c  | 2 +-
+>>>   fsck/mount.c | 2 +-
+>>>   2 files changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/fsck/main.c b/fsck/main.c
+>>> index c9411eb..93037e1 100644
+>>> --- a/fsck/main.c
+>>> +++ b/fsck/main.c
+>>> @@ -429,7 +429,7 @@ static void do_fsck(struct f2fs_sb_info *sbi)
+>>>   				c.fix_on = 1;
+>>>   			break;
+>>>   		}
+>>> -	} else {
+>>> +	} else if (c.preen_mode) {
 >>
->> IMO, if user have encryption key, it still has chance to read that file,
->> right? So how about keeping this functionality?
-> Nope. When we dump an encrypted file, we only get the cipher data. If we want
-> to decrypt the data, we must provide a method to writeback the data directly> to the device. Then we get a chance to get the correct plain data. Otherwise,
-> if we simply copy the dumped file to filesystem, it doesn't work.
+>> Needs to update below comments?
+> I think the new condition hits comment 3 ("fsck -p 1 && error is detected, then
+> bug_on is set fix_on = 1 here, so that fsck can fix errors automatically"). The
+> condition was missing and the comment seems not that correct before ;)
 
-I just thought we can provider the cipher data and encryption policy info,
-then particular filesystem can provider specified interface to recover this
-file, maybe via DIO or ioctl.
-
-Maybe we can discuss with google developer that how can we handle dumpfile
-flow with encrypted regular.
-
-Anyway, enable/disable this functionality are both okay to me.
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+OK, so please fix it in your patch. :)
 
 Thanks,
 
@@ -65,47 +69,33 @@ Thanks,
 > thanks,
 > Sheng
 >>
+>>>   		/*
+>>>   		 * we can hit this in 3 situations:
+>>>   		 *  1. fsck -f, fix_on has already been set to 1 when
+>>> diff --git a/fsck/mount.c b/fsck/mount.c
+>>> index 29af3b7..faa9bc8 100644
+>>> --- a/fsck/mount.c
+>>> +++ b/fsck/mount.c
+>>> @@ -1879,6 +1879,7 @@ void nullify_nat_entry(struct f2fs_sb_info *sbi, u32 nid)
+>>>   
+>>>   	memset(&nat_block->entries[entry_off], 0,
+>>>   					sizeof(struct f2fs_nat_entry));
+>>> +	FIX_MSG("Remove nid [0x%x] in NAT\n", nid);
+>>
+>> How about adding debug message in separated patch?
+>>
 >> Thanks,
 >>
->>>
->>> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
->>> ---
->>>   fsck/dump.c | 12 ++++++++----
->>>   1 file changed, 8 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/fsck/dump.c b/fsck/dump.c
->>> index 01889fd..d11e8e2 100644
->>> --- a/fsck/dump.c
->>> +++ b/fsck/dump.c
->>> @@ -410,12 +410,17 @@ static void dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
->>>   	struct f2fs_inode *inode = &node_blk->i;
->>>   	u32 imode = le32_to_cpu(inode->i_mode);
->>>   	u32 namelen = le32_to_cpu(inode->i_namelen);
->>> -	unsigned char name[F2FS_NAME_LEN + 1] = {0};
->>> +	char name[F2FS_NAME_LEN + 1] = {0};
->>>   	char path[1024] = {0};
->>>   	char ans[255] = {0};
->>> -	int enc_name = file_enc_name(inode);
->>> +	int is_encrypted = file_is_encrypt(inode);
->>>   	int ret;
 >>>   
->>> +	if (is_encrypted) {
->>> +		MSG(force, "File is encrypted\n");
->>> +		return;
->>> +	}
->>> +
->>>   	if (!S_ISREG(imode) || namelen == 0 || namelen > F2FS_NAME_LEN) {
->>>   		MSG(force, "Not a regular file or wrong name info\n\n");
->>>   		return;
->>> @@ -433,8 +438,7 @@ dump:
->>>   		ASSERT(ret >= 0);
->>>   
->>>   		/* make a file */
->>> -		namelen = convert_encrypted_name(inode->i_name, namelen,
->>> -							name, enc_name);
->>> +		strncpy(name, (const char *)inode->i_name, namelen);
->>>   		name[namelen] = 0;
->>>   		sprintf(path, "./lost_found/%s", name);
+>>>   	ret = dev_write_block(nat_block, block_addr);
+>>>   	ASSERT(ret >= 0);
+>>> @@ -2031,7 +2032,6 @@ void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
+>>>   				 */
+>>>   				ASSERT_MSG("Invalid nat entry[0]: "
+>>>   					"blk_addr[0x%x]\n", ni.blk_addr);
+>>> -				c.fix_on = 1;
+>>>   				fsck->chk.valid_nat_entry_cnt--;
+>>>   			}
 >>>   
 >>>
 >>
