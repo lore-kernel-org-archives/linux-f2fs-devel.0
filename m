@@ -1,26 +1,26 @@
 From: Sheng Yong <shengyong1@huawei.com>
-Subject: Re: [RFC PATCH 5/8] dump.f2fs: do not dump encrypted
- files
-Date: Tue, 31 Oct 2017 17:16:50 +0800
-Message-ID: <ea0fdae9-24bb-449b-fab1-ea3f89b929c1@huawei.com>
+Subject: Re: [RFC PATCH 6/8] fsck.f2fs: introduce new option
+ --dry-run
+Date: Tue, 31 Oct 2017 17:19:40 +0800
+Message-ID: <856efe58-e45a-ee50-6227-c4a8c25405a8@huawei.com>
 References: <20171031013824.46544-1-shengyong1@huawei.com>
- <20171031013824.46544-5-shengyong1@huawei.com>
- <f400c643-bf4d-bca5-0598-13f114db6d19@huawei.com>
+ <20171031013824.46544-6-shengyong1@huawei.com>
+ <9ebcb886-ae85-6cb0-2a61-df3d2a585df1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
  helo=mx.sourceforge.net)
  by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
  (Exim 4.89) (envelope-from <shengyong1@huawei.com>)
- id 1e9Si1-0003Qo-US
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 09:19:45 +0000
+ id 1e9Ske-0003WD-Vb
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 09:22:28 +0000
 Received: from [45.249.212.32] (helo=huawei.com)
- by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
- id 1e9Si0-0008Nu-7D
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 09:19:45 +0000
-In-Reply-To: <f400c643-bf4d-bca5-0598-13f114db6d19@huawei.com>
+ by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+ id 1e9Skd-0001tO-1d
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 09:22:28 +0000
+In-Reply-To: <9ebcb886-ae85-6cb0-2a61-df3d2a585df1@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -38,60 +38,43 @@ Cc: linux-f2fs-devel@lists.sourceforge.net
 
 On 2017/10/31 15:57, Chao Yu wrote:
 > On 2017/10/31 9:38, Sheng Yong wrote:
->> If a file is encrypted, its content is cipher text on the storage. So
->> there is no need to dump an encrypted file.
+>> With --dry-run enabled, fsck.f2fs will do all checks and "fixes" except
+>> that all fixes will not be written to storage at last.
+>>
+>> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+>> ---
+>>   fsck/main.c       | 14 +++++++++++++-
+>>   include/f2fs_fs.h |  1 +
+>>   lib/libf2fs.c     |  1 +
+>>   lib/libf2fs_io.c  |  3 +++
+>>   4 files changed, 18 insertions(+), 1 deletion(-)
+>>
+>>   
+[...]
+>>   static int is_mounted(const char *mpt, const char *device)
+>> diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
+>> index 50ff171..8a79672 100644
+>> --- a/lib/libf2fs_io.c
+>> +++ b/lib/libf2fs_io.c
+>> @@ -129,6 +129,9 @@ int dev_write(void *buf, __u64 offset, size_t len)
+>>   {
+>>   	int fd;
+>>   
+>> +	if (c.dry_run)
+>> +		return 0;
+>> +
+>>   	if (c.sparse_mode)
+>>   		return dev_write_sparse(buf, offset, len);
 > 
-> IMO, if user have encryption key, it still has chance to read that file,
-> right? So how about keeping this functionality?
-Nope. When we dump an encrypted file, we only get the cipher data. If we want
-to decrypt the data, we must provide a method to writeback the data directly
-to the device. Then we get a chance to get the correct plain data. Otherwise,
-if we simply copy the dumped file to filesystem, it doesn't work.
+> Do we need to cover dev_write_block?
+dev_write_block calls dev_write. So dev_write_block is also covered by intercepting
+write in dev_write. :)
 
-thanks,
+Thanks,
 Sheng
 > 
 > Thanks,
 > 
->>
->> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
->> ---
->>   fsck/dump.c | 12 ++++++++----
->>   1 file changed, 8 insertions(+), 4 deletions(-)
->>
->> diff --git a/fsck/dump.c b/fsck/dump.c
->> index 01889fd..d11e8e2 100644
->> --- a/fsck/dump.c
->> +++ b/fsck/dump.c
->> @@ -410,12 +410,17 @@ static void dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
->>   	struct f2fs_inode *inode = &node_blk->i;
->>   	u32 imode = le32_to_cpu(inode->i_mode);
->>   	u32 namelen = le32_to_cpu(inode->i_namelen);
->> -	unsigned char name[F2FS_NAME_LEN + 1] = {0};
->> +	char name[F2FS_NAME_LEN + 1] = {0};
->>   	char path[1024] = {0};
->>   	char ans[255] = {0};
->> -	int enc_name = file_enc_name(inode);
->> +	int is_encrypted = file_is_encrypt(inode);
->>   	int ret;
->>   
->> +	if (is_encrypted) {
->> +		MSG(force, "File is encrypted\n");
->> +		return;
->> +	}
->> +
->>   	if (!S_ISREG(imode) || namelen == 0 || namelen > F2FS_NAME_LEN) {
->>   		MSG(force, "Not a regular file or wrong name info\n\n");
->>   		return;
->> @@ -433,8 +438,7 @@ dump:
->>   		ASSERT(ret >= 0);
->>   
->>   		/* make a file */
->> -		namelen = convert_encrypted_name(inode->i_name, namelen,
->> -							name, enc_name);
->> +		strncpy(name, (const char *)inode->i_name, namelen);
->>   		name[namelen] = 0;
->>   		sprintf(path, "./lost_found/%s", name);
 >>   
 >>
 > 
