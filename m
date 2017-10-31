@@ -1,20 +1,29 @@
-From: Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH] f2fs: don't bother with inode->i_version
-Date: Mon, 30 Oct 2017 11:11:56 -0400
-Message-ID: <20171030151156.6418-1-jlayton@kernel.org>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: Re: [PATCH v2] f2fs: add bug_on when f2fs_gc even fails
+ to get one victim
+Date: Tue, 31 Oct 2017 09:32:38 +0800
+Message-ID: <7eb77c60-ed9b-2440-cc46-55c2eb8573d1@huawei.com>
+References: <1507729864-118702-1-git-send-email-yunlong.song@huawei.com>
+ <1507901500-162168-1-git-send-email-yunlong.song@huawei.com>
+ <7f05bef6-929f-ea7b-9d60-e9a6d8e70d3c@kernel.org>
+ <31f2c1b6-58ee-bb52-0b75-f6172b6f801f@huawei.com>
+ <c6e82b46-fe59-ad29-aab7-6c876ebaba5b@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
  helo=mx.sourceforge.net)
  by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <jlayton@kernel.org>) id 1e9BjW-00042B-1f
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Oct 2017 15:12:10 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1e9BjQ-0007du-9E
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Oct 2017 15:12:09 +0000
+ (Exim 4.89) (envelope-from <yunlong.song@huawei.com>)
+ id 1e9LSR-0001M3-D5
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 01:35:11 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190])
+ by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1e9LSP-0006gu-NO
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 01:35:11 +0000
+In-Reply-To: <c6e82b46-fe59-ad29-aab7-6c876ebaba5b@huawei.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -24,42 +33,100 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>, Chao Yu <chao@kernel.org>, jaegeuk@kernel.org, yunlong.song@icloud.com
+Cc: linux-fsdevel@vger.kernel.org, miaoxie@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-From: Jeff Layton <jlayton@redhat.com>
+I think there may be bugs somewhere, since no victim is selected but it 
+really needs gc.
+What is the size of the data image?
 
-f2fs does not set the SB_I_VERSION flag, so the i_version will never
-be incremented on write. It was recently changed to increment the
-i_version on a quota write, which isn't necessary here.
+On 2017/10/16 11:25, Chao Yu wrote:
+> On 2017/10/14 20:34, Yunlong Song wrote:
+>> Do you mean check out-of-space test? I have tried that but no bugon.
+> Yes, test recent f2fs codes with kernel 4.13.0-rc1+ in VM, FYI:
+>
+> kernel BUG at gc.c:1034!
+> invalid opcode: 0000 [#1] SMP
+> Hardware name: Xen HVM domU, BIOS 4.1.2_115-900.260_ 11/06/2015
+> RIP: 0010:f2fs_gc+0x6e5/0x6f0 [f2fs]
+> RSP: 0018:ffffc90004af7b40 EFLAGS: 00010202
+> RAX: ffff8801b0a15940 RBX: 0000000000000000 RCX: 0000000000000000
+> RDX: ffff8801b0a15940 RSI: ffff8801978d5f00 RDI: ffff880128148048
+> RBP: ffffc90004af7c38 R08: ffff8801978d5f00 R09: 0000000000000003
+> R10: 0000000000000003 R11: ffff8800060703a0 R12: 0000000000000000
+> R13: 0000000000000000 R14: 0000000000000001 R15: ffff8801b4279800
+> FS:  00007f23493cb740(0000) GS:ffff880216f00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007ffd05402ff8 CR3: 00000001bffb3000 CR4: 00000000001406e0
+> Call Trace:
+>   f2fs_balance_fs+0x123/0x140 [f2fs]
+>   f2fs_create+0x130/0x240 [f2fs]
+>   path_openat+0xee7/0x1360
+>   do_filp_open+0x7e/0xd0
+>   do_sys_open+0x115/0x1f0
+>   SyS_open+0x1e/0x20
+>   do_syscall_64+0x6e/0x160
+>   entry_SYSCALL64_slow_path+0x25/0x25
+>
+> Thanks,
+>
+>> On 2017/10/14 8:17, Chao Yu wrote:
+>>> On 2017/10/13 21:31, Yunlong Song wrote:
+>>>> This can help us to debug on some corner case.
+>>> I can hit this bugon with generic/015 of fstest easily, could have a look at
+>>> this?
+>>>
+>>> Thanks,
+>>>
+>>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>> ---
+>>>>    fs/f2fs/gc.c | 6 +++++-
+>>>>    1 file changed, 5 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>>> index 197ebf4..2b03202 100644
+>>>> --- a/fs/f2fs/gc.c
+>>>> +++ b/fs/f2fs/gc.c
+>>>> @@ -986,6 +986,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>>>    		.ilist = LIST_HEAD_INIT(gc_list.ilist),
+>>>>    		.iroot = RADIX_TREE_INIT(GFP_NOFS),
+>>>>    	};
+>>>> +	bool need_fggc = false;
+>>>>    
+>>>>    	trace_f2fs_gc_begin(sbi->sb, sync, background,
+>>>>    				get_pages(sbi, F2FS_DIRTY_NODES),
+>>>> @@ -1018,8 +1019,10 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>>>    			if (ret)
+>>>>    				goto stop;
+>>>>    		}
+>>>> -		if (has_not_enough_free_secs(sbi, 0, 0))
+>>>> +		if (has_not_enough_free_secs(sbi, 0, 0)) {
+>>>>    			gc_type = FG_GC;
+>>>> +			need_fggc = true;
+>>>> +		}
+>>>>    	}
+>>>>    
+>>>>    	/* f2fs_balance_fs doesn't need to do BG_GC in critical path. */
+>>>> @@ -1028,6 +1031,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>>>    		goto stop;
+>>>>    	}
+>>>>    	if (!__get_victim(sbi, &segno, gc_type)) {
+>>>> +		f2fs_bug_on(sbi, !total_freed && need_fggc);
+>>>>    		ret = -ENODATA;
+>>>>    		goto stop;
+>>>>    	}
+>>>>
+>>> .
+>>>
+>
+> .
+>
 
-Signed-off-by: Jeff Layton <jlayton@redhat.com>
----
- fs/f2fs/super.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 933c3d529e65..b3359158e7be 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -618,7 +618,6 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
- 	init_once((void *) fi);
- 
- 	/* Initialize f2fs-specific inode info */
--	fi->vfs_inode.i_version = 1;
- 	atomic_set(&fi->dirty_pages, 0);
- 	fi->i_current_depth = 1;
- 	fi->i_advise = 0;
-@@ -1386,7 +1385,6 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
- 
- 	if (len == towrite)
- 		return 0;
--	inode->i_version++;
- 	inode->i_mtime = inode->i_ctime = current_time(inode);
- 	f2fs_mark_inode_dirty_sync(inode, false);
- 	return len - towrite;
 -- 
-2.13.6
+Thanks,
+Yunlong Song
+
 
 
 ------------------------------------------------------------------------------
