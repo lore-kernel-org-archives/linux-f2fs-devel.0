@@ -1,25 +1,26 @@
 From: Sheng Yong <shengyong1@huawei.com>
-Subject: Re: [RFC PATCH 4/8] dump.f2fs: introduce dump_xattr
-Date: Tue, 31 Oct 2017 17:11:52 +0800
-Message-ID: <e6df1483-9b02-7872-facc-658c40881108@huawei.com>
+Subject: Re: [RFC PATCH 5/8] dump.f2fs: do not dump encrypted
+ files
+Date: Tue, 31 Oct 2017 17:16:50 +0800
+Message-ID: <ea0fdae9-24bb-449b-fab1-ea3f89b929c1@huawei.com>
 References: <20171031013824.46544-1-shengyong1@huawei.com>
- <20171031013824.46544-4-shengyong1@huawei.com>
- <91948c76-3a3f-b1c9-1a37-d0c66ef0b393@huawei.com>
+ <20171031013824.46544-5-shengyong1@huawei.com>
+ <f400c643-bf4d-bca5-0598-13f114db6d19@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
  helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
  (Exim 4.89) (envelope-from <shengyong1@huawei.com>)
- id 1e9ScV-0006M2-OK
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 09:14:03 +0000
+ id 1e9Si1-0003Qo-US
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 09:19:45 +0000
 Received: from [45.249.212.32] (helo=huawei.com)
- by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
- id 1e9ScP-0004p3-Mu
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 09:14:03 +0000
-In-Reply-To: <91948c76-3a3f-b1c9-1a37-d0c66ef0b393@huawei.com>
+ by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+ id 1e9Si0-0008Nu-7D
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 09:19:45 +0000
+In-Reply-To: <f400c643-bf4d-bca5-0598-13f114db6d19@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,46 +34,72 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-CgpPbiAyMDE3LzEwLzMxIDE1OjUxLCBDaGFvIFl1IHdyb3RlOgo+IE9uIDIwMTcvMTAvMzEgOToz
-OCwgU2hlbmcgWW9uZyB3cm90ZToKPj4gVGhpcyBwYXRjaCBpbnRyb2R1Y2VzIGR1bXBfeGF0dHIg
-dG8gY3JlYXRlIHhhdHRycyBmb3IgZHVtcGVkIGZpbGVzLgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBT
-aGVuZyBZb25nIDxzaGVuZ3lvbmcxQGh1YXdlaS5jb20+Cj4+IC0tLQo+PiAgIGZzY2svZHVtcC5j
-IHwgNjMgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKy0tLQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCA2MCBpbnNlcnRpb25zKCspLCAzIGRlbGV0
-aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZnNjay9kdW1wLmMgYi9mc2NrL2R1bXAuYwo+PiBp
-bmRleCA5MGZkMDczLi4wMTg4OWZkIDEwMDY0NAo+PiAtLS0gYS9mc2NrL2R1bXAuYwo+PiArKysg
-Yi9mc2NrL2R1bXAuYwo+PiBAQCAtMTEsNiArMTEsOSBAQAo+PiAgICNpbmNsdWRlIDxpbnR0eXBl
-cy5oPgo+PiAgIAo+PiAgICNpbmNsdWRlICJmc2NrLmgiCj4+ICsjaW5jbHVkZSAieGF0dHIuaCIK
-Pj4gKyNpbmNsdWRlIDxhdHRyL3hhdHRyLmg+Cj4+ICsjaW5jbHVkZSA8bGludXgveGF0dHIuaD4K
-Pj4gICAjaW5jbHVkZSA8bG9jYWxlLmg+Cj4+ICAgCj4+ICAgI2RlZmluZSBCVUZfU1oJODAKPj4g
-QEAgLTMxMCwxNSArMzEzLDY3IEBAIHN0YXRpYyB2b2lkIGR1bXBfbm9kZV9ibGsoc3RydWN0IGYy
-ZnNfc2JfaW5mbyAqc2JpLCBpbnQgbnR5cGUsCj4+ICAgCWZyZWUobm9kZV9ibGspOwo+PiAgIH0K
-Pj4gICAKWy4uLl0KPj4gKwkJREJHKDEsICJmZCAlZCB4YXR0cl9uYW1lICVzXG4iLCBjLmR1bXBf
-ZmQsIHhhdHRyX25hbWUpOwo+PiArCQlyZXQgPSBmc2V0eGF0dHIoYy5kdW1wX2ZkLCB4YXR0cl9u
-YW1lLCB2YWx1ZSwKPj4gKwkJCQlsZTE2X3RvX2NwdShlbnQtPmVfdmFsdWVfc2l6ZSksIFhBVFRS
-X0NSRUFURSk7Cj4+ICsJCWlmIChyZXQpCj4gCj4gaWYgKHJldCA9PSAtRUVYSVNUKQo+IAlmc2V0
-eGF0dHIoLCwsLFhBVFRSX1JFUExBQ0UpPwpIbW0sIHRoZXJlIHNob3VsZCBiZSBubyAyIHhhdHRy
-cyB3aXRoIHRoZSBzYW1lIG5hbWUgaW4gb25lIGZpbGXvvIwgcmlnaHQ/IDopCgp0aGFua3MsClNo
-ZW5nCj4gCj4gVGhhbmtzLAo+IAo+PiArCQkJTVNHKDAsICJYQVRUUiBpbmRleCAweCV4IHNldCB4
-YXR0ciBmYWlsZWQgZXJyb3IgJWRcbiIsCj4+ICsJCQkgICAgZW50LT5lX25hbWVfaW5kZXgsIGVy
-cm5vKTsKPj4gKwo+PiArCQlmcmVlKG5hbWUpOwo+PiArCX0KPj4gKwo+PiArCWZyZWUoeGF0dHIp
-Owo+PiArfQo+PiArCj4+ICAgc3RhdGljIHZvaWQgZHVtcF9pbm9kZV9ibGsoc3RydWN0IGYyZnNf
-c2JfaW5mbyAqc2JpLCB1MzIgbmlkLAo+PiAgIAkJCQkJc3RydWN0IGYyZnNfbm9kZSAqbm9kZV9i
-bGspCj4+ICAgewo+PiAgIAl1MzIgaSA9IDA7Cj4+ICAgCXU2NCBvZnMgPSAwOwo+PiAgIAo+PiAt
-CS8qIFRPRE86IG5lZWQgdG8gZHVtcCB4YXR0ciAqLwo+PiAtCj4+IC0JaWYoKG5vZGVfYmxrLT5p
-LmlfaW5saW5lICYgRjJGU19JTkxJTkVfREFUQSkpewo+PiArCWlmKChub2RlX2Jsay0+aS5pX2lu
-bGluZSAmIEYyRlNfSU5MSU5FX0RBVEEpKSB7Cj4+ICAgCQlEQkcoMywgImlub1sweCV4XSBoYXMg
-aW5saW5lIGRhdGEhXG4iLCBuaWQpOwo+PiAgIAkJLyogcmVjb3ZlciBmcm9tIGlubGluZSBkYXRh
-ICovCj4+ICAgCQlkZXZfd3JpdGVfZHVtcCgoKHVuc2lnbmVkIGNoYXIgKilub2RlX2JsaykgKyBJ
-TkxJTkVfREFUQV9PRkZTRVQsCj4+IEBAIC0zNDUsNiArNDAwLDggQEAgc3RhdGljIHZvaWQgZHVt
-cF9pbm9kZV9ibGsoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCB1MzIgbmlkLAo+PiAgIAkJZWxz
-ZQo+PiAgIAkJCUFTU0VSVCgwKTsKPj4gICAJfQo+PiArCj4+ICsJZHVtcF94YXR0cihzYmksIG5v
-ZGVfYmxrKTsKPj4gICB9Cj4+ICAgCj4+ICAgc3RhdGljIHZvaWQgZHVtcF9maWxlKHN0cnVjdCBm
-MmZzX3NiX2luZm8gKnNiaSwgc3RydWN0IG5vZGVfaW5mbyAqbmksCj4+Cj4gCj4gCj4gLgo+IAoK
-Ci0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5p
-dHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hk
-b3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGlu
-dXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vm
-b3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+
+
+On 2017/10/31 15:57, Chao Yu wrote:
+> On 2017/10/31 9:38, Sheng Yong wrote:
+>> If a file is encrypted, its content is cipher text on the storage. So
+>> there is no need to dump an encrypted file.
+> 
+> IMO, if user have encryption key, it still has chance to read that file,
+> right? So how about keeping this functionality?
+Nope. When we dump an encrypted file, we only get the cipher data. If we want
+to decrypt the data, we must provide a method to writeback the data directly
+to the device. Then we get a chance to get the correct plain data. Otherwise,
+if we simply copy the dumped file to filesystem, it doesn't work.
+
+thanks,
+Sheng
+> 
+> Thanks,
+> 
+>>
+>> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+>> ---
+>>   fsck/dump.c | 12 ++++++++----
+>>   1 file changed, 8 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/fsck/dump.c b/fsck/dump.c
+>> index 01889fd..d11e8e2 100644
+>> --- a/fsck/dump.c
+>> +++ b/fsck/dump.c
+>> @@ -410,12 +410,17 @@ static void dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
+>>   	struct f2fs_inode *inode = &node_blk->i;
+>>   	u32 imode = le32_to_cpu(inode->i_mode);
+>>   	u32 namelen = le32_to_cpu(inode->i_namelen);
+>> -	unsigned char name[F2FS_NAME_LEN + 1] = {0};
+>> +	char name[F2FS_NAME_LEN + 1] = {0};
+>>   	char path[1024] = {0};
+>>   	char ans[255] = {0};
+>> -	int enc_name = file_enc_name(inode);
+>> +	int is_encrypted = file_is_encrypt(inode);
+>>   	int ret;
+>>   
+>> +	if (is_encrypted) {
+>> +		MSG(force, "File is encrypted\n");
+>> +		return;
+>> +	}
+>> +
+>>   	if (!S_ISREG(imode) || namelen == 0 || namelen > F2FS_NAME_LEN) {
+>>   		MSG(force, "Not a regular file or wrong name info\n\n");
+>>   		return;
+>> @@ -433,8 +438,7 @@ dump:
+>>   		ASSERT(ret >= 0);
+>>   
+>>   		/* make a file */
+>> -		namelen = convert_encrypted_name(inode->i_name, namelen,
+>> -							name, enc_name);
+>> +		strncpy(name, (const char *)inode->i_name, namelen);
+>>   		name[namelen] = 0;
+>>   		sprintf(path, "./lost_found/%s", name);
+>>   
+>>
+> 
+> 
+> .
+> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
