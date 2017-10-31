@@ -1,25 +1,23 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: Re: [RFC PATCH 1/8] fsck.f2fs: do not set fix_on directly
-Date: Tue, 31 Oct 2017 17:34:54 +0800
-Message-ID: <b00a3c1e-2fa3-dc1c-a4c7-37707d52b478@huawei.com>
-References: <20171031013824.46544-1-shengyong1@huawei.com>
- <225753a9-68b7-3c98-ffac-55c6c79941eb@huawei.com>
+From: kbuild test robot <fengguang.wu@intel.com>
+Subject: [f2fs:dev-test 49/54] fs/f2fs/node.c:1811:2-3: Unneeded
+ semicolon
+Date: Tue, 31 Oct 2017 18:21:18 +0800
+Message-ID: <201710311816.09TUqUr9%fengguang.wu@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
  helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <shengyong1@huawei.com>)
- id 1e9SzT-0000u5-Ko
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 09:37:47 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191])
- by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1e9SzS-0004tG-2m
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 09:37:47 +0000
-In-Reply-To: <225753a9-68b7-3c98-ffac-55c6c79941eb@huawei.com>
-Content-Language: en-US
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <fengguang.wu@intel.com>)
+ id 1e9TgF-0004q8-4o
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 10:21:59 +0000
+Received: from mga05.intel.com ([192.55.52.43])
+ by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+ (Exim 4.76) id 1e9TgC-00027b-J2
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 10:21:59 +0000
+Content-Disposition: inline
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,74 +27,23 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Fan Li <fanofcode.li@samsung.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, kbuild-all@01.org, linux-f2fs-devel@lists.sourceforge.net
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
+head:   d9d30de5fa1574410aeb97a00f997d6f80c9e695
+commit: 817f0b532391ffb7d2adb26d57246267a8b04088 [49/54] f2fs: add a function to move nid
 
 
+coccinelle warnings: (new ones prefixed by >>)
 
-On 2017/10/31 15:06, Chao Yu wrote:
-> On 2017/10/31 9:38, Sheng Yong wrote:
->> Do not set fix_on if it is allowed by user.
->>
->> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
->> ---
->>   fsck/main.c  | 2 +-
->>   fsck/mount.c | 2 +-
->>   2 files changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/fsck/main.c b/fsck/main.c
->> index c9411eb..93037e1 100644
->> --- a/fsck/main.c
->> +++ b/fsck/main.c
->> @@ -429,7 +429,7 @@ static void do_fsck(struct f2fs_sb_info *sbi)
->>   				c.fix_on = 1;
->>   			break;
->>   		}
->> -	} else {
->> +	} else if (c.preen_mode) {
-> 
-> Needs to update below comments?
-I think the new condition hits comment 3 ("fsck -p 1 && error is detected, then
-bug_on is set fix_on = 1 here, so that fsck can fix errors automatically"). The
-condition was missing and the comment seems not that correct before ;)
+>> fs/f2fs/node.c:1811:2-3: Unneeded semicolon
 
-thanks,
-Sheng
-> 
->>   		/*
->>   		 * we can hit this in 3 situations:
->>   		 *  1. fsck -f, fix_on has already been set to 1 when
->> diff --git a/fsck/mount.c b/fsck/mount.c
->> index 29af3b7..faa9bc8 100644
->> --- a/fsck/mount.c
->> +++ b/fsck/mount.c
->> @@ -1879,6 +1879,7 @@ void nullify_nat_entry(struct f2fs_sb_info *sbi, u32 nid)
->>   
->>   	memset(&nat_block->entries[entry_off], 0,
->>   					sizeof(struct f2fs_nat_entry));
->> +	FIX_MSG("Remove nid [0x%x] in NAT\n", nid);
-> 
-> How about adding debug message in separated patch?
-> 
-> Thanks,
-> 
->>   
->>   	ret = dev_write_block(nat_block, block_addr);
->>   	ASSERT(ret >= 0);
->> @@ -2031,7 +2032,6 @@ void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
->>   				 */
->>   				ASSERT_MSG("Invalid nat entry[0]: "
->>   					"blk_addr[0x%x]\n", ni.blk_addr);
->> -				c.fix_on = 1;
->>   				fsck->chk.valid_nat_entry_cnt--;
->>   			}
->>   
->>
-> 
-> 
-> .
-> 
+Please review and possibly fold the followup patch.
 
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
