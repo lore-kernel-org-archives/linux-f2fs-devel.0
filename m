@@ -1,25 +1,26 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [RFC PATCH 4/8] dump.f2fs: introduce dump_xattr
-Date: Tue, 31 Oct 2017 18:46:35 +0800
-Message-ID: <107984ac-3663-4688-e0e0-131cc27a3368@huawei.com>
+Subject: Re: [RFC PATCH 6/8] fsck.f2fs: introduce new option
+ --dry-run
+Date: Tue, 31 Oct 2017 19:10:19 +0800
+Message-ID: <339434e4-1ffd-a010-ce15-ecbbe0984123@huawei.com>
 References: <20171031013824.46544-1-shengyong1@huawei.com>
- <20171031013824.46544-4-shengyong1@huawei.com>
- <91948c76-3a3f-b1c9-1a37-d0c66ef0b393@huawei.com>
- <e6df1483-9b02-7872-facc-658c40881108@huawei.com>
+ <20171031013824.46544-6-shengyong1@huawei.com>
+ <9ebcb886-ae85-6cb0-2a61-df3d2a585df1@huawei.com>
+ <856efe58-e45a-ee50-6227-c4a8c25405a8@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
  helo=mx.sourceforge.net)
  by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e9U6B-0005Uz-Bu
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 10:48:47 +0000
+ (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e9URV-00063d-Mw
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 11:10:49 +0000
 Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1e9U64-0006pj-U6
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 10:48:47 +0000
-In-Reply-To: <e6df1483-9b02-7872-facc-658c40881108@huawei.com>
+ by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1e9URP-00054v-1A
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 11:10:49 +0000
+In-Reply-To: <856efe58-e45a-ee50-6227-c4a8c25405a8@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,50 +34,67 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-T24gMjAxNy8xMC8zMSAxNzoxMSwgU2hlbmcgWW9uZyB3cm90ZToKPiAKPiAKPiBPbiAyMDE3LzEw
-LzMxIDE1OjUxLCBDaGFvIFl1IHdyb3RlOgo+PiBPbiAyMDE3LzEwLzMxIDk6MzgsIFNoZW5nIFlv
-bmcgd3JvdGU6Cj4+PiBUaGlzIHBhdGNoIGludHJvZHVjZXMgZHVtcF94YXR0ciB0byBjcmVhdGUg
-eGF0dHJzIGZvciBkdW1wZWQgZmlsZXMuCj4+Pgo+Pj4gU2lnbmVkLW9mZi1ieTogU2hlbmcgWW9u
-ZyA8c2hlbmd5b25nMUBodWF3ZWkuY29tPgo+Pj4gLS0tCj4+PiAgIGZzY2svZHVtcC5jIHwgNjMg
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-Ky0tLQo+Pj4gICAxIGZpbGUgY2hhbmdlZCwgNjAgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMo
-LSkKPj4+Cj4+PiBkaWZmIC0tZ2l0IGEvZnNjay9kdW1wLmMgYi9mc2NrL2R1bXAuYwo+Pj4gaW5k
-ZXggOTBmZDA3My4uMDE4ODlmZCAxMDA2NDQKPj4+IC0tLSBhL2ZzY2svZHVtcC5jCj4+PiArKysg
-Yi9mc2NrL2R1bXAuYwo+Pj4gQEAgLTExLDYgKzExLDkgQEAKPj4+ICAgI2luY2x1ZGUgPGludHR5
-cGVzLmg+Cj4+PiAgIAo+Pj4gICAjaW5jbHVkZSAiZnNjay5oIgo+Pj4gKyNpbmNsdWRlICJ4YXR0
-ci5oIgo+Pj4gKyNpbmNsdWRlIDxhdHRyL3hhdHRyLmg+Cj4+PiArI2luY2x1ZGUgPGxpbnV4L3hh
-dHRyLmg+Cj4+PiAgICNpbmNsdWRlIDxsb2NhbGUuaD4KPj4+ICAgCj4+PiAgICNkZWZpbmUgQlVG
-X1NaCTgwCj4+PiBAQCAtMzEwLDE1ICszMTMsNjcgQEAgc3RhdGljIHZvaWQgZHVtcF9ub2RlX2Js
-ayhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIGludCBudHlwZSwKPj4+ICAgCWZyZWUobm9kZV9i
-bGspOwo+Pj4gICB9Cj4+PiAgIAo+IFsuLi5dCj4+PiArCQlEQkcoMSwgImZkICVkIHhhdHRyX25h
-bWUgJXNcbiIsIGMuZHVtcF9mZCwgeGF0dHJfbmFtZSk7Cj4+PiArCQlyZXQgPSBmc2V0eGF0dHIo
-Yy5kdW1wX2ZkLCB4YXR0cl9uYW1lLCB2YWx1ZSwKPj4+ICsJCQkJbGUxNl90b19jcHUoZW50LT5l
-X3ZhbHVlX3NpemUpLCBYQVRUUl9DUkVBVEUpOwo+Pj4gKwkJaWYgKHJldCkKPj4KPj4gaWYgKHJl
-dCA9PSAtRUVYSVNUKQo+PiAJZnNldHhhdHRyKCwsLCxYQVRUUl9SRVBMQUNFKT8KPiBIbW0sIHRo
-ZXJlIHNob3VsZCBiZSBubyAyIHhhdHRycyB3aXRoIHRoZSBzYW1lIG5hbWUgaW4gb25lIGZpbGXv
-vIwgcmlnaHQ/IDopCgpJJ20gbm90IHN1cmUsIG1heWJlIHdlIHNob3VsZCBoYW5kbGUgdGhpcyBp
-biB0aGlzIHBhdGNoIHRvIGF2b2lkIG1pc3NpbmcgdGhpcwpjb25kaXRpb24uCgpUaGFua3MsCgo+
-IAo+IHRoYW5rcywKPiBTaGVuZwo+Pgo+PiBUaGFua3MsCj4+Cj4+PiArCQkJTVNHKDAsICJYQVRU
-UiBpbmRleCAweCV4IHNldCB4YXR0ciBmYWlsZWQgZXJyb3IgJWRcbiIsCj4+PiArCQkJICAgIGVu
-dC0+ZV9uYW1lX2luZGV4LCBlcnJubyk7Cj4+PiArCj4+PiArCQlmcmVlKG5hbWUpOwo+Pj4gKwl9
-Cj4+PiArCj4+PiArCWZyZWUoeGF0dHIpOwo+Pj4gK30KPj4+ICsKPj4+ICAgc3RhdGljIHZvaWQg
-ZHVtcF9pbm9kZV9ibGsoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCB1MzIgbmlkLAo+Pj4gICAJ
-CQkJCXN0cnVjdCBmMmZzX25vZGUgKm5vZGVfYmxrKQo+Pj4gICB7Cj4+PiAgIAl1MzIgaSA9IDA7
-Cj4+PiAgIAl1NjQgb2ZzID0gMDsKPj4+ICAgCj4+PiAtCS8qIFRPRE86IG5lZWQgdG8gZHVtcCB4
-YXR0ciAqLwo+Pj4gLQo+Pj4gLQlpZigobm9kZV9ibGstPmkuaV9pbmxpbmUgJiBGMkZTX0lOTElO
-RV9EQVRBKSl7Cj4+PiArCWlmKChub2RlX2Jsay0+aS5pX2lubGluZSAmIEYyRlNfSU5MSU5FX0RB
-VEEpKSB7Cj4+PiAgIAkJREJHKDMsICJpbm9bMHgleF0gaGFzIGlubGluZSBkYXRhIVxuIiwgbmlk
-KTsKPj4+ICAgCQkvKiByZWNvdmVyIGZyb20gaW5saW5lIGRhdGEgKi8KPj4+ICAgCQlkZXZfd3Jp
-dGVfZHVtcCgoKHVuc2lnbmVkIGNoYXIgKilub2RlX2JsaykgKyBJTkxJTkVfREFUQV9PRkZTRVQs
-Cj4+PiBAQCAtMzQ1LDYgKzQwMCw4IEBAIHN0YXRpYyB2b2lkIGR1bXBfaW5vZGVfYmxrKHN0cnVj
-dCBmMmZzX3NiX2luZm8gKnNiaSwgdTMyIG5pZCwKPj4+ICAgCQllbHNlCj4+PiAgIAkJCUFTU0VS
-VCgwKTsKPj4+ICAgCX0KPj4+ICsKPj4+ICsJZHVtcF94YXR0cihzYmksIG5vZGVfYmxrKTsKPj4+
-ICAgfQo+Pj4gICAKPj4+ICAgc3RhdGljIHZvaWQgZHVtcF9maWxlKHN0cnVjdCBmMmZzX3NiX2lu
-Zm8gKnNiaSwgc3RydWN0IG5vZGVfaW5mbyAqbmksCj4+Pgo+Pgo+Pgo+PiAuCj4+Cj4gCj4gCj4g
-Lgo+IAoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBj
-b21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKZW5nYWdpbmcgdGVjaCBzaXRlcywg
-U2xhc2hkb3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxp
-c3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5z
-b3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+On 2017/10/31 17:19, Sheng Yong wrote:
+> 
+> 
+> On 2017/10/31 15:57, Chao Yu wrote:
+>> On 2017/10/31 9:38, Sheng Yong wrote:
+>>> With --dry-run enabled, fsck.f2fs will do all checks and "fixes" except
+>>> that all fixes will not be written to storage at last.
+>>>
+>>> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+>>> ---
+>>>   fsck/main.c       | 14 +++++++++++++-
+>>>   include/f2fs_fs.h |  1 +
+>>>   lib/libf2fs.c     |  1 +
+>>>   lib/libf2fs_io.c  |  3 +++
+>>>   4 files changed, 18 insertions(+), 1 deletion(-)
+>>>
+>>>   
+> [...]
+>>>   static int is_mounted(const char *mpt, const char *device)
+>>> diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
+>>> index 50ff171..8a79672 100644
+>>> --- a/lib/libf2fs_io.c
+>>> +++ b/lib/libf2fs_io.c
+>>> @@ -129,6 +129,9 @@ int dev_write(void *buf, __u64 offset, size_t len)
+>>>   {
+>>>   	int fd;
+>>>   
+>>> +	if (c.dry_run)
+>>> +		return 0;
+>>> +
+>>>   	if (c.sparse_mode)
+>>>   		return dev_write_sparse(buf, offset, len);
+>>
+>> Do we need to cover dev_write_block?
+> dev_write_block calls dev_write. So dev_write_block is also covered by intercepting
+> write in dev_write. :)
+
+Correct. :)
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks,
+
+> 
+> Thanks,
+> Sheng
+>>
+>> Thanks,
+>>
+>>>   
+>>>
+>>
+>>
+>> .
+>>
+> 
+> 
+> .
+> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
