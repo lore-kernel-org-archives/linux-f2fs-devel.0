@@ -1,26 +1,26 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [RFC PATCH 2/8] fsck.f2fs: do not fix corrupted nat
- entries in build_nat_area_bitmap
-Date: Tue, 31 Oct 2017 18:43:07 +0800
-Message-ID: <6faacbe5-2ac9-3c52-d621-5b36735770a3@huawei.com>
+Subject: Re: [RFC PATCH 3/8] dump/fsck: introduce
+ print_xattr_entry
+Date: Tue, 31 Oct 2017 18:44:36 +0800
+Message-ID: <9b94792a-d91a-9268-6b56-d37044f11a98@huawei.com>
 References: <20171031013824.46544-1-shengyong1@huawei.com>
- <20171031013824.46544-2-shengyong1@huawei.com>
- <3f115971-e992-2382-8aca-9a77cfc3558d@huawei.com>
- <cfc9f636-2fa6-85bb-c7a9-7c4e9717bc03@huawei.com>
+ <20171031013824.46544-3-shengyong1@huawei.com>
+ <6c6f032f-51f1-5ce1-ae23-48c72f4588cf@huawei.com>
+ <7a8efa8b-c8ae-c2fa-3ed4-698d599a41c1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e9U2U-0005Oy-4O
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e9U2U-0003Nm-4N
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 10:44:58 +0000
 Received: from szxga05-in.huawei.com ([45.249.212.191])
- by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1e9U2P-0006Km-Ss
+ by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1e9U2P-0005II-S9
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 10:44:58 +0000
-In-Reply-To: <cfc9f636-2fa6-85bb-c7a9-7c4e9717bc03@huawei.com>
+In-Reply-To: <7a8efa8b-c8ae-c2fa-3ed4-698d599a41c1@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -34,90 +34,193 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/10/31 16:57, Sheng Yong wrote:
-> Hi, Chao
+On 2017/10/31 17:02, Sheng Yong wrote:
 > 
-> On 2017/10/31 15:20, Chao Yu wrote:
+> 
+> On 2017/10/31 15:51, Chao Yu wrote:
 >> On 2017/10/31 9:38, Sheng Yong wrote:
->>> Fixing corrupted data depends on c.fix_on. If it's not set, we should not
->>> force fixing corrupted data.  So if nat entries are found invalid when
->>> building nat_area_bitmap, we should just set c.bug_on, and fix it later.
+> [...]
+>>> +
+>>> +void print_xattr_entry(struct f2fs_xattr_entry *ent)
+>>> +{
+>>> +	char *value = (char *)(ent->e_name + le16_to_cpu(ent->e_name_len));
+>>> +	struct fscrypt_context *ctx;
+>>> +	int i;
+>>> +
+>>> +	MSG(0, "\nxattr: e_name_index:%d e_name:", ent->e_name_index);
+>>> +	for (i = 0; i < le16_to_cpu(ent->e_name_len); i++)
+>>> +		MSG(0, "%c", ent->e_name[i]);
+>>> +	MSG(0, " e_name_len:%d e_value_size:%d e_value:\n",
+>>> +			ent->e_name_len, le16_to_cpu(ent->e_value_size));
+>>> +
+>>> +	switch (ent->e_name_index) {
+>>> +	case F2FS_XATTR_INDEX_USER:
+>>> +	case F2FS_XATTR_INDEX_SECURITY:
+>>> +		for (i = 0; i < le16_to_cpu(ent->e_value_size); i++)
+>>> +			MSG(0, "%c", value[i]);
 >>
->> It looks comments and code change doesn't match?
-> In build_nat_area_bitmap(), if node/meta inode is invalid, the node block is
-> corrected and written back directly. The "write" should depend on c.fix_on.
-> So I think we should not fix the node block in build_nat_area_bitmap().
+>> It could be unreadable if user stores pure value in xattr entry.
+> Actually, I'm not quite sure about the value of each type of xattr. But does
+> USER xattr contain only plain text?
 
-Oh, I got it, sorry for misunderstanding. ;)
+IIRC, there is no such restriction, value can be any type, with variable length.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Thanks,
 
-> 
->> do you mean
->>
->> @@ -2031,7 +2032,6 @@ void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
->>   				 */
->>   				ASSERT_MSG("Invalid nat entry[0]: "
->>   					"blk_addr[0x%x]\n", ni.blk_addr);
->> -				c.fix_on = 1;
->>   				fsck->chk.valid_nat_entry_cnt--;
->>   			}
->>
->> Thanks,
->>
->>>
->>> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
->>> ---
->>>   fsck/mount.c | 21 ++++++++++++++-------
->>>   1 file changed, 14 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/fsck/mount.c b/fsck/mount.c
->>> index faa9bc8..2d51678 100644
->>> --- a/fsck/mount.c
->>> +++ b/fsck/mount.c
->>> @@ -1877,9 +1877,15 @@ void nullify_nat_entry(struct f2fs_sb_info *sbi, u32 nid)
->>>   	ret = dev_read_block(nat_block, block_addr);
->>>   	ASSERT(ret >= 0);
->>>   
->>> -	memset(&nat_block->entries[entry_off], 0,
->>> +	if (nid == F2FS_NODE_INO(sbi) || nid == F2FS_META_INO(sbi)) {
->>> +		FIX_MSG("nid [0x%x] block_addr= 0x%x -> 0x1", nid,
->>> +			le32_to_cpu(nat_block->entries[entry_off].block_addr));
->>> +		nat_block->entries[entry_off].block_addr = cpu_to_le32(0x1);
->>> +	} else {
->>> +		memset(&nat_block->entries[entry_off], 0,
->>>   					sizeof(struct f2fs_nat_entry));
->>> -	FIX_MSG("Remove nid [0x%x] in NAT\n", nid);
->>> +		FIX_MSG("Remove nid [0x%x] in NAT\n", nid);
->>> +	}
->>>   
->>>   	ret = dev_write_block(nat_block, block_addr);
->>>   	ASSERT(ret >= 0);
->>> @@ -2001,13 +2007,14 @@ void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
->>>   
->>>   			if ((nid + i) == F2FS_NODE_INO(sbi) ||
->>>   					(nid + i) == F2FS_META_INO(sbi)) {
->>> -				/* block_addr of node/meta inode should be 0x1 */
->>> +				/*
->>> +				 * block_addr of node/meta inode should be 0x1.
->>> +				 * Set this bit, and fsck_verify will fix it.
->>> +				 */
->>>   				if (le32_to_cpu(nat_block->entries[i].block_addr) != 0x1) {
->>> -					FIX_MSG("ino: 0x%x node/meta inode, block_addr= 0x%x -> 0x1",
->>> +					ASSERT_MSG("\tError: ino[0x%x] block_addr[0x%x] is invalid\n",
->>>   							nid + i, le32_to_cpu(nat_block->entries[i].block_addr));
->>> -					nat_block->entries[i].block_addr = cpu_to_le32(0x1);
->>> -					ret = dev_write_block(nat_block, block_addr);
-> dev_write_block should depend on (c.fix_on == 1). ^^^^^^^^^^^
-> The corruption will be fixed in nullify_nat_entry().
 > 
 > thanks,
 > Sheng
->>> -					ASSERT(ret >= 0);
->>> +					f2fs_set_bit(nid + i, fsck->nat_area_bitmap);
->>>   				}
->>>   				continue;
->>>   			}
+>>
+>> Thanks,
+>>
+>>> +		MSG(0, "\n");
+>>> +		break;
+>>> +	case F2FS_XATTR_INDEX_POSIX_ACL_ACCESS:
+>>> +	case F2FS_XATTR_INDEX_POSIX_ACL_DEFAULT:
+>>> +		print_acl(value, le16_to_cpu(ent->e_value_size));
+>>> +		break;
+>>> +	case F2FS_XATTR_INDEX_TRUSTED:
+>>> +	case F2FS_XATTR_INDEX_LUSTRE:
+>>> +		for (i = 0; i < le16_to_cpu(ent->e_value_size); i++)
+>>> +			MSG(0, "%02X", value[i]);
+>>> +		MSG(0, "\n");
+>>> +		break;
+>>> +	case F2FS_XATTR_INDEX_ENCRYPTION:
+>>> +		ctx = (struct fscrypt_context *)value;
+>>> +		MSG(0, "format: %d\n", ctx->format);
+>>> +		MSG(0, "contents_encryption_mode: 0x%x\n", ctx->contents_encryption_mode);
+>>> +		MSG(0, "filenames_encryption_mode: 0x%x\n", ctx->filenames_encryption_mode);
+>>> +		MSG(0, "flags: 0x%x\n", ctx->flags);
+>>> +		MSG(0, "master_key_descriptor: ");
+>>> +		for (i = 0; i < FS_KEY_DESCRIPTOR_SIZE; i++)
+>>> +			MSG(0, "%02X", ctx->master_key_descriptor[i]);
+>>> +		MSG(0, "\nnonce: ");
+>>> +		for (i = 0; i < FS_KEY_DERIVATION_NONCE_SIZE; i++)
+>>> +			MSG(0, "%02X", ctx->nonce[i]);
+>>> +		MSG(0, "\n");
+>>> +		break;
+>>> +	default:
+>>> +		break;
+>>> +	}
+>>> +}
+>>> +
+>>> +void print_inode_info(struct f2fs_sb_info *sbi,
+>>> +			struct f2fs_node *node, int name)
+>>> +{
+>>> +	struct f2fs_inode *inode = &node->i;
+>>> +	void *xattr_addr;
+>>> +	struct f2fs_xattr_entry *ent;
+>>>   	unsigned char en[F2FS_NAME_LEN + 1];
+>>>   	unsigned int i = 0;
+>>>   	int namelen = le32_to_cpu(inode->i_namelen);
+>>> @@ -111,17 +225,24 @@ void print_inode_info(struct f2fs_inode *inode, int name)
+>>>   	DISP_u32(inode, i_nid[3]);	/* indirect */
+>>>   	DISP_u32(inode, i_nid[4]);	/* double indirect */
+>>>   
+>>> +	xattr_addr = read_all_xattrs(sbi, node);
+>>> +	list_for_each_xattr(ent, xattr_addr) {
+>>> +		print_xattr_entry(ent);
+>>> +	}
+>>> +	free(xattr_addr);
+>>> +
+>>>   	printf("\n");
+>>>   }
+>>>   
+>>> -void print_node_info(struct f2fs_node *node_block, int verbose)
+>>> +void print_node_info(struct f2fs_sb_info *sbi,
+>>> +			struct f2fs_node *node_block, int verbose)
+>>>   {
+>>>   	nid_t ino = le32_to_cpu(node_block->footer.ino);
+>>>   	nid_t nid = le32_to_cpu(node_block->footer.nid);
+>>>   	/* Is this inode? */
+>>>   	if (ino == nid) {
+>>>   		DBG(verbose, "Node ID [0x%x:%u] is inode\n", nid, nid);
+>>> -		print_inode_info(&node_block->i, verbose);
+>>> +		print_inode_info(sbi, node_block, verbose);
+>>>   	} else {
+>>>   		int i;
+>>>   		u32 *dump_blk = (u32 *)node_block;
+>>> diff --git a/fsck/xattr.c b/fsck/xattr.c
+>>> index 3f5c7d3..1d0f7d3 100644
+>>> --- a/fsck/xattr.c
+>>> +++ b/fsck/xattr.c
+>>> @@ -20,7 +20,7 @@
+>>>   #define XATTR_CREATE 0x1
+>>>   #define XATTR_REPLACE 0x2
+>>>   
+>>> -static void *read_all_xattrs(struct f2fs_sb_info *sbi, struct f2fs_node *inode)
+>>> +void *read_all_xattrs(struct f2fs_sb_info *sbi, struct f2fs_node *inode)
+>>>   {
+>>>   	struct f2fs_xattr_header *header;
+>>>   	void *txattr_addr;
+>>> diff --git a/fsck/xattr.h b/fsck/xattr.h
+>>> index b414629..beed3bb 100644
+>>> --- a/fsck/xattr.h
+>>> +++ b/fsck/xattr.h
+>>> @@ -31,10 +31,62 @@ struct f2fs_xattr_entry {
+>>>   	char e_name[0];		/* attribute name */
+>>>   };
+>>>   
+>>> +#define FS_KEY_DESCRIPTOR_SIZE 8
+>>> +#define FS_KEY_DERIVATION_NONCE_SIZE 16
+>>> +
+>>> +struct fscrypt_context {
+>>> +	u8 format;
+>>> +	u8 contents_encryption_mode;
+>>> +	u8 filenames_encryption_mode;
+>>> +	u8 flags;
+>>> +	u8 master_key_descriptor[FS_KEY_DESCRIPTOR_SIZE];
+>>> +	u8 nonce[FS_KEY_DERIVATION_NONCE_SIZE];
+>>> +} __attribute__((packed));
+>>> +
+>>> +#define F2FS_ACL_VERSION	0x0001
+>>> +
+>>> +struct f2fs_acl_entry {
+>>> +	__le16 e_tag;
+>>> +	__le16 e_perm;
+>>> +	__le32 e_id;
+>>> +};
+>>> +
+>>> +struct f2fs_acl_entry_short {
+>>> +	__le16 e_tag;
+>>> +	__le16 e_perm;
+>>> +};
+>>> +
+>>> +struct f2fs_acl_header {
+>>> +	__le32 a_version;
+>>> +};
+>>> +
+>>> +static inline int f2fs_acl_count(int size)
+>>> +{
+>>> +	ssize_t s;
+>>> +	size -= sizeof(struct f2fs_acl_header);
+>>> +	s = size - 4 * sizeof(struct f2fs_acl_entry_short);
+>>> +	if (s < 0) {
+>>> +		if (size % sizeof(struct f2fs_acl_entry_short))
+>>> +			return -1;
+>>> +		return size / sizeof(struct f2fs_acl_entry_short);
+>>> +	} else {
+>>> +		if (s % sizeof(struct f2fs_acl_entry))
+>>> +			return -1;
+>>> +		return s / sizeof(struct f2fs_acl_entry) + 4;
+>>> +	}
+>>> +}
+>>> +
+>>>   #define XATTR_ROUND	(3)
+>>>   
+>>>   #define XATTR_SELINUX_SUFFIX "selinux"
+>>> -#define F2FS_XATTR_INDEX_SECURITY	6
+>>> +#define F2FS_XATTR_INDEX_USER			1
+>>> +#define F2FS_XATTR_INDEX_POSIX_ACL_ACCESS	2
+>>> +#define F2FS_XATTR_INDEX_POSIX_ACL_DEFAULT	3
+>>> +#define F2FS_XATTR_INDEX_TRUSTED		4
+>>> +#define F2FS_XATTR_INDEX_LUSTRE			5
+>>> +#define F2FS_XATTR_INDEX_SECURITY		6
+>>> +#define F2FS_XATTR_INDEX_ENCRYPTION		9
+>>> +
+>>>   #define IS_XATTR_LAST_ENTRY(entry) (*(__u32 *)(entry) == 0)
+>>>   
+>>>   #define XATTR_HDR(ptr)		((struct f2fs_xattr_header *)(ptr))
 >>>
 >>
 >>
