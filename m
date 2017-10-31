@@ -1,26 +1,25 @@
 From: Sheng Yong <shengyong1@huawei.com>
-Subject: Re: [RFC PATCH 3/8] dump/fsck: introduce
- print_xattr_entry
-Date: Tue, 31 Oct 2017 17:02:25 +0800
-Message-ID: <7a8efa8b-c8ae-c2fa-3ed4-698d599a41c1@huawei.com>
+Subject: Re: [RFC PATCH 4/8] dump.f2fs: introduce dump_xattr
+Date: Tue, 31 Oct 2017 17:11:52 +0800
+Message-ID: <e6df1483-9b02-7872-facc-658c40881108@huawei.com>
 References: <20171031013824.46544-1-shengyong1@huawei.com>
- <20171031013824.46544-3-shengyong1@huawei.com>
- <6c6f032f-51f1-5ce1-ae23-48c72f4588cf@huawei.com>
+ <20171031013824.46544-4-shengyong1@huawei.com>
+ <91948c76-3a3f-b1c9-1a37-d0c66ef0b393@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
  (Exim 4.89) (envelope-from <shengyong1@huawei.com>)
- id 1e9SUL-000394-Uo
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 09:05:37 +0000
+ id 1e9ScV-0006M2-OK
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 09:14:03 +0000
 Received: from [45.249.212.32] (helo=huawei.com)
  by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
- id 1e9SUK-0003XM-5i
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 09:05:37 +0000
-In-Reply-To: <6c6f032f-51f1-5ce1-ae23-48c72f4588cf@huawei.com>
+ id 1e9ScP-0004p3-Mu
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 09:14:03 +0000
+In-Reply-To: <91948c76-3a3f-b1c9-1a37-d0c66ef0b393@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -34,194 +33,46 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-
-
-On 2017/10/31 15:51, Chao Yu wrote:
-> On 2017/10/31 9:38, Sheng Yong wrote:
-[...]
->> +
->> +void print_xattr_entry(struct f2fs_xattr_entry *ent)
->> +{
->> +	char *value = (char *)(ent->e_name + le16_to_cpu(ent->e_name_len));
->> +	struct fscrypt_context *ctx;
->> +	int i;
->> +
->> +	MSG(0, "\nxattr: e_name_index:%d e_name:", ent->e_name_index);
->> +	for (i = 0; i < le16_to_cpu(ent->e_name_len); i++)
->> +		MSG(0, "%c", ent->e_name[i]);
->> +	MSG(0, " e_name_len:%d e_value_size:%d e_value:\n",
->> +			ent->e_name_len, le16_to_cpu(ent->e_value_size));
->> +
->> +	switch (ent->e_name_index) {
->> +	case F2FS_XATTR_INDEX_USER:
->> +	case F2FS_XATTR_INDEX_SECURITY:
->> +		for (i = 0; i < le16_to_cpu(ent->e_value_size); i++)
->> +			MSG(0, "%c", value[i]);
-> 
-> It could be unreadable if user stores pure value in xattr entry.
-Actually, I'm not quite sure about the value of each type of xattr. But does
-USER xattr contain only plain text?
-
-thanks,
-Sheng
-> 
-> Thanks,
-> 
->> +		MSG(0, "\n");
->> +		break;
->> +	case F2FS_XATTR_INDEX_POSIX_ACL_ACCESS:
->> +	case F2FS_XATTR_INDEX_POSIX_ACL_DEFAULT:
->> +		print_acl(value, le16_to_cpu(ent->e_value_size));
->> +		break;
->> +	case F2FS_XATTR_INDEX_TRUSTED:
->> +	case F2FS_XATTR_INDEX_LUSTRE:
->> +		for (i = 0; i < le16_to_cpu(ent->e_value_size); i++)
->> +			MSG(0, "%02X", value[i]);
->> +		MSG(0, "\n");
->> +		break;
->> +	case F2FS_XATTR_INDEX_ENCRYPTION:
->> +		ctx = (struct fscrypt_context *)value;
->> +		MSG(0, "format: %d\n", ctx->format);
->> +		MSG(0, "contents_encryption_mode: 0x%x\n", ctx->contents_encryption_mode);
->> +		MSG(0, "filenames_encryption_mode: 0x%x\n", ctx->filenames_encryption_mode);
->> +		MSG(0, "flags: 0x%x\n", ctx->flags);
->> +		MSG(0, "master_key_descriptor: ");
->> +		for (i = 0; i < FS_KEY_DESCRIPTOR_SIZE; i++)
->> +			MSG(0, "%02X", ctx->master_key_descriptor[i]);
->> +		MSG(0, "\nnonce: ");
->> +		for (i = 0; i < FS_KEY_DERIVATION_NONCE_SIZE; i++)
->> +			MSG(0, "%02X", ctx->nonce[i]);
->> +		MSG(0, "\n");
->> +		break;
->> +	default:
->> +		break;
->> +	}
->> +}
->> +
->> +void print_inode_info(struct f2fs_sb_info *sbi,
->> +			struct f2fs_node *node, int name)
->> +{
->> +	struct f2fs_inode *inode = &node->i;
->> +	void *xattr_addr;
->> +	struct f2fs_xattr_entry *ent;
->>   	unsigned char en[F2FS_NAME_LEN + 1];
->>   	unsigned int i = 0;
->>   	int namelen = le32_to_cpu(inode->i_namelen);
->> @@ -111,17 +225,24 @@ void print_inode_info(struct f2fs_inode *inode, int name)
->>   	DISP_u32(inode, i_nid[3]);	/* indirect */
->>   	DISP_u32(inode, i_nid[4]);	/* double indirect */
->>   
->> +	xattr_addr = read_all_xattrs(sbi, node);
->> +	list_for_each_xattr(ent, xattr_addr) {
->> +		print_xattr_entry(ent);
->> +	}
->> +	free(xattr_addr);
->> +
->>   	printf("\n");
->>   }
->>   
->> -void print_node_info(struct f2fs_node *node_block, int verbose)
->> +void print_node_info(struct f2fs_sb_info *sbi,
->> +			struct f2fs_node *node_block, int verbose)
->>   {
->>   	nid_t ino = le32_to_cpu(node_block->footer.ino);
->>   	nid_t nid = le32_to_cpu(node_block->footer.nid);
->>   	/* Is this inode? */
->>   	if (ino == nid) {
->>   		DBG(verbose, "Node ID [0x%x:%u] is inode\n", nid, nid);
->> -		print_inode_info(&node_block->i, verbose);
->> +		print_inode_info(sbi, node_block, verbose);
->>   	} else {
->>   		int i;
->>   		u32 *dump_blk = (u32 *)node_block;
->> diff --git a/fsck/xattr.c b/fsck/xattr.c
->> index 3f5c7d3..1d0f7d3 100644
->> --- a/fsck/xattr.c
->> +++ b/fsck/xattr.c
->> @@ -20,7 +20,7 @@
->>   #define XATTR_CREATE 0x1
->>   #define XATTR_REPLACE 0x2
->>   
->> -static void *read_all_xattrs(struct f2fs_sb_info *sbi, struct f2fs_node *inode)
->> +void *read_all_xattrs(struct f2fs_sb_info *sbi, struct f2fs_node *inode)
->>   {
->>   	struct f2fs_xattr_header *header;
->>   	void *txattr_addr;
->> diff --git a/fsck/xattr.h b/fsck/xattr.h
->> index b414629..beed3bb 100644
->> --- a/fsck/xattr.h
->> +++ b/fsck/xattr.h
->> @@ -31,10 +31,62 @@ struct f2fs_xattr_entry {
->>   	char e_name[0];		/* attribute name */
->>   };
->>   
->> +#define FS_KEY_DESCRIPTOR_SIZE 8
->> +#define FS_KEY_DERIVATION_NONCE_SIZE 16
->> +
->> +struct fscrypt_context {
->> +	u8 format;
->> +	u8 contents_encryption_mode;
->> +	u8 filenames_encryption_mode;
->> +	u8 flags;
->> +	u8 master_key_descriptor[FS_KEY_DESCRIPTOR_SIZE];
->> +	u8 nonce[FS_KEY_DERIVATION_NONCE_SIZE];
->> +} __attribute__((packed));
->> +
->> +#define F2FS_ACL_VERSION	0x0001
->> +
->> +struct f2fs_acl_entry {
->> +	__le16 e_tag;
->> +	__le16 e_perm;
->> +	__le32 e_id;
->> +};
->> +
->> +struct f2fs_acl_entry_short {
->> +	__le16 e_tag;
->> +	__le16 e_perm;
->> +};
->> +
->> +struct f2fs_acl_header {
->> +	__le32 a_version;
->> +};
->> +
->> +static inline int f2fs_acl_count(int size)
->> +{
->> +	ssize_t s;
->> +	size -= sizeof(struct f2fs_acl_header);
->> +	s = size - 4 * sizeof(struct f2fs_acl_entry_short);
->> +	if (s < 0) {
->> +		if (size % sizeof(struct f2fs_acl_entry_short))
->> +			return -1;
->> +		return size / sizeof(struct f2fs_acl_entry_short);
->> +	} else {
->> +		if (s % sizeof(struct f2fs_acl_entry))
->> +			return -1;
->> +		return s / sizeof(struct f2fs_acl_entry) + 4;
->> +	}
->> +}
->> +
->>   #define XATTR_ROUND	(3)
->>   
->>   #define XATTR_SELINUX_SUFFIX "selinux"
->> -#define F2FS_XATTR_INDEX_SECURITY	6
->> +#define F2FS_XATTR_INDEX_USER			1
->> +#define F2FS_XATTR_INDEX_POSIX_ACL_ACCESS	2
->> +#define F2FS_XATTR_INDEX_POSIX_ACL_DEFAULT	3
->> +#define F2FS_XATTR_INDEX_TRUSTED		4
->> +#define F2FS_XATTR_INDEX_LUSTRE			5
->> +#define F2FS_XATTR_INDEX_SECURITY		6
->> +#define F2FS_XATTR_INDEX_ENCRYPTION		9
->> +
->>   #define IS_XATTR_LAST_ENTRY(entry) (*(__u32 *)(entry) == 0)
->>   
->>   #define XATTR_HDR(ptr)		((struct f2fs_xattr_header *)(ptr))
->>
-> 
-> 
-> .
-> 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+CgpPbiAyMDE3LzEwLzMxIDE1OjUxLCBDaGFvIFl1IHdyb3RlOgo+IE9uIDIwMTcvMTAvMzEgOToz
+OCwgU2hlbmcgWW9uZyB3cm90ZToKPj4gVGhpcyBwYXRjaCBpbnRyb2R1Y2VzIGR1bXBfeGF0dHIg
+dG8gY3JlYXRlIHhhdHRycyBmb3IgZHVtcGVkIGZpbGVzLgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBT
+aGVuZyBZb25nIDxzaGVuZ3lvbmcxQGh1YXdlaS5jb20+Cj4+IC0tLQo+PiAgIGZzY2svZHVtcC5j
+IHwgNjMgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKy0tLQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCA2MCBpbnNlcnRpb25zKCspLCAzIGRlbGV0
+aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZnNjay9kdW1wLmMgYi9mc2NrL2R1bXAuYwo+PiBp
+bmRleCA5MGZkMDczLi4wMTg4OWZkIDEwMDY0NAo+PiAtLS0gYS9mc2NrL2R1bXAuYwo+PiArKysg
+Yi9mc2NrL2R1bXAuYwo+PiBAQCAtMTEsNiArMTEsOSBAQAo+PiAgICNpbmNsdWRlIDxpbnR0eXBl
+cy5oPgo+PiAgIAo+PiAgICNpbmNsdWRlICJmc2NrLmgiCj4+ICsjaW5jbHVkZSAieGF0dHIuaCIK
+Pj4gKyNpbmNsdWRlIDxhdHRyL3hhdHRyLmg+Cj4+ICsjaW5jbHVkZSA8bGludXgveGF0dHIuaD4K
+Pj4gICAjaW5jbHVkZSA8bG9jYWxlLmg+Cj4+ICAgCj4+ICAgI2RlZmluZSBCVUZfU1oJODAKPj4g
+QEAgLTMxMCwxNSArMzEzLDY3IEBAIHN0YXRpYyB2b2lkIGR1bXBfbm9kZV9ibGsoc3RydWN0IGYy
+ZnNfc2JfaW5mbyAqc2JpLCBpbnQgbnR5cGUsCj4+ICAgCWZyZWUobm9kZV9ibGspOwo+PiAgIH0K
+Pj4gICAKWy4uLl0KPj4gKwkJREJHKDEsICJmZCAlZCB4YXR0cl9uYW1lICVzXG4iLCBjLmR1bXBf
+ZmQsIHhhdHRyX25hbWUpOwo+PiArCQlyZXQgPSBmc2V0eGF0dHIoYy5kdW1wX2ZkLCB4YXR0cl9u
+YW1lLCB2YWx1ZSwKPj4gKwkJCQlsZTE2X3RvX2NwdShlbnQtPmVfdmFsdWVfc2l6ZSksIFhBVFRS
+X0NSRUFURSk7Cj4+ICsJCWlmIChyZXQpCj4gCj4gaWYgKHJldCA9PSAtRUVYSVNUKQo+IAlmc2V0
+eGF0dHIoLCwsLFhBVFRSX1JFUExBQ0UpPwpIbW0sIHRoZXJlIHNob3VsZCBiZSBubyAyIHhhdHRy
+cyB3aXRoIHRoZSBzYW1lIG5hbWUgaW4gb25lIGZpbGXvvIwgcmlnaHQ/IDopCgp0aGFua3MsClNo
+ZW5nCj4gCj4gVGhhbmtzLAo+IAo+PiArCQkJTVNHKDAsICJYQVRUUiBpbmRleCAweCV4IHNldCB4
+YXR0ciBmYWlsZWQgZXJyb3IgJWRcbiIsCj4+ICsJCQkgICAgZW50LT5lX25hbWVfaW5kZXgsIGVy
+cm5vKTsKPj4gKwo+PiArCQlmcmVlKG5hbWUpOwo+PiArCX0KPj4gKwo+PiArCWZyZWUoeGF0dHIp
+Owo+PiArfQo+PiArCj4+ICAgc3RhdGljIHZvaWQgZHVtcF9pbm9kZV9ibGsoc3RydWN0IGYyZnNf
+c2JfaW5mbyAqc2JpLCB1MzIgbmlkLAo+PiAgIAkJCQkJc3RydWN0IGYyZnNfbm9kZSAqbm9kZV9i
+bGspCj4+ICAgewo+PiAgIAl1MzIgaSA9IDA7Cj4+ICAgCXU2NCBvZnMgPSAwOwo+PiAgIAo+PiAt
+CS8qIFRPRE86IG5lZWQgdG8gZHVtcCB4YXR0ciAqLwo+PiAtCj4+IC0JaWYoKG5vZGVfYmxrLT5p
+LmlfaW5saW5lICYgRjJGU19JTkxJTkVfREFUQSkpewo+PiArCWlmKChub2RlX2Jsay0+aS5pX2lu
+bGluZSAmIEYyRlNfSU5MSU5FX0RBVEEpKSB7Cj4+ICAgCQlEQkcoMywgImlub1sweCV4XSBoYXMg
+aW5saW5lIGRhdGEhXG4iLCBuaWQpOwo+PiAgIAkJLyogcmVjb3ZlciBmcm9tIGlubGluZSBkYXRh
+ICovCj4+ICAgCQlkZXZfd3JpdGVfZHVtcCgoKHVuc2lnbmVkIGNoYXIgKilub2RlX2JsaykgKyBJ
+TkxJTkVfREFUQV9PRkZTRVQsCj4+IEBAIC0zNDUsNiArNDAwLDggQEAgc3RhdGljIHZvaWQgZHVt
+cF9pbm9kZV9ibGsoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCB1MzIgbmlkLAo+PiAgIAkJZWxz
+ZQo+PiAgIAkJCUFTU0VSVCgwKTsKPj4gICAJfQo+PiArCj4+ICsJZHVtcF94YXR0cihzYmksIG5v
+ZGVfYmxrKTsKPj4gICB9Cj4+ICAgCj4+ICAgc3RhdGljIHZvaWQgZHVtcF9maWxlKHN0cnVjdCBm
+MmZzX3NiX2luZm8gKnNiaSwgc3RydWN0IG5vZGVfaW5mbyAqbmksCj4+Cj4gCj4gCj4gLgo+IAoK
+Ci0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5p
+dHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hk
+b3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGlu
+dXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vm
+b3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
