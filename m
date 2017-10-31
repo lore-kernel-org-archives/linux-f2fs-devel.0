@@ -1,24 +1,24 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [RFC PATCH 5/8] dump.f2fs: do not dump encrypted
- files
-Date: Tue, 31 Oct 2017 15:57:43 +0800
-Message-ID: <f400c643-bf4d-bca5-0598-13f114db6d19@huawei.com>
+Subject: Re: [RFC PATCH 7/8] fsck.f2fs: introduce
+ sanity_check_inode
+Date: Tue, 31 Oct 2017 16:04:42 +0800
+Message-ID: <c609e8f2-520f-a5ed-8a9e-f624de3cff63@huawei.com>
 References: <20171031013824.46544-1-shengyong1@huawei.com>
- <20171031013824.46544-5-shengyong1@huawei.com>
+ <20171031013824.46544-7-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e9RRT-0001TE-Jr
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 07:58:35 +0000
-Received: from [45.249.212.32] (helo=huawei.com)
- by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
- id 1e9RRS-0001pW-BB
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 07:58:35 +0000
-In-Reply-To: <20171031013824.46544-5-shengyong1@huawei.com>
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e9RY4-0001Ui-R7
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 08:05:24 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191])
+ by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1e9RY3-00080O-2w
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 08:05:24 +0000
+In-Reply-To: <20171031013824.46544-7-shengyong1@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,54 +33,81 @@ To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
 On 2017/10/31 9:38, Sheng Yong wrote:
-> If a file is encrypted, its content is cipher text on the storage. So
-> there is no need to dump an encrypted file.
-
-IMO, if user have encryption key, it still has chance to read that file,
-right? So how about keeping this functionality?
-
-Thanks,
-
+> f2fs_iget checks if i_mode is valid. If it is not, the file cannot be
+> accessed as well as deleted. To make sure such files can be removed,
+> fsck adds the same check, and removes incorrect inode blocks.
 > 
 > Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 > ---
->  fsck/dump.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
+>  fsck/fsck.c  | 21 +++++++++++++++++++++
+>  fsck/mount.c |  4 ++--
+>  2 files changed, 23 insertions(+), 2 deletions(-)
 > 
-> diff --git a/fsck/dump.c b/fsck/dump.c
-> index 01889fd..d11e8e2 100644
-> --- a/fsck/dump.c
-> +++ b/fsck/dump.c
-> @@ -410,12 +410,17 @@ static void dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
->  	struct f2fs_inode *inode = &node_blk->i;
->  	u32 imode = le32_to_cpu(inode->i_mode);
->  	u32 namelen = le32_to_cpu(inode->i_namelen);
-> -	unsigned char name[F2FS_NAME_LEN + 1] = {0};
-> +	char name[F2FS_NAME_LEN + 1] = {0};
->  	char path[1024] = {0};
->  	char ans[255] = {0};
-> -	int enc_name = file_enc_name(inode);
-> +	int is_encrypted = file_is_encrypt(inode);
->  	int ret;
+> diff --git a/fsck/fsck.c b/fsck/fsck.c
+> index 56a47be..77490d8 100644
+> --- a/fsck/fsck.c
+> +++ b/fsck/fsck.c
+> @@ -458,6 +458,25 @@ static int sanity_check_nid(struct f2fs_sb_info *sbi, u32 nid,
+>  	return 0;
+>  }
 >  
-> +	if (is_encrypted) {
-> +		MSG(force, "File is encrypted\n");
-> +		return;
+> +static int sanity_check_inode(struct f2fs_sb_info *sbi, struct f2fs_node *node)
+> +{
+> +	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
+> +	struct f2fs_inode *fi = &node->i;
+> +
+> +	if (!(le16_to_cpu(fi->i_mode) & S_IFMT)) {
+> +		ASSERT_MSG("i_mode is not valid. [0x%x]", le16_to_cpu(fi->i_mode));
+> +		goto remove_node;
 > +	}
 > +
->  	if (!S_ISREG(imode) || namelen == 0 || namelen > F2FS_NAME_LEN) {
->  		MSG(force, "Not a regular file or wrong name info\n\n");
->  		return;
-> @@ -433,8 +438,7 @@ dump:
->  		ASSERT(ret >= 0);
+> +	return 0;
+> +
+> +remove_node:> +	f2fs_set_bit(le32_to_cpu(node->footer.ino), fsck->nat_area_bitmap);
+> +	fsck->chk.valid_blk_cnt--;
+> +	fsck->chk.valid_node_cnt--;
+> +	return -EINVAL;
+> +}
+> +
+>  static int fsck_chk_xattr_blk(struct f2fs_sb_info *sbi, u32 ino,
+>  					u32 x_nid, u32 *blk_cnt)
+>  {
+> @@ -500,6 +519,8 @@ int fsck_chk_node_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
+>  		goto err;
 >  
->  		/* make a file */
-> -		namelen = convert_encrypted_name(inode->i_name, namelen,
-> -							name, enc_name);
-> +		strncpy(name, (const char *)inode->i_name, namelen);
->  		name[namelen] = 0;
->  		sprintf(path, "./lost_found/%s", name);
+>  	if (ntype == TYPE_INODE) {
+> +		if (sanity_check_inode(sbi, node_blk))
+> +			goto err;
+>  		fsck_chk_inode_blk(sbi, nid, ftype, node_blk, blk_cnt, &ni);
+>  	} else {
+>  		switch (ntype) {
+> diff --git a/fsck/mount.c b/fsck/mount.c
+> index a9cd581..45341bc 100644
+> --- a/fsck/mount.c
+> +++ b/fsck/mount.c
+> @@ -1985,7 +1985,7 @@ void nullify_nat_entry(struct f2fs_sb_info *sbi, u32 nid)
+>  		if (le32_to_cpu(nid_in_journal(journal, i)) == nid) {
+>  			memset(&nat_in_journal(journal, i), 0,
+>  					sizeof(struct f2fs_nat_entry));
+> -			FIX_MSG("Remove nid [0x%x] in nat journal\n", nid);
+> +			FIX_MSG("Remove nid [0x%x] in nat journal", nid);
+>  			return;
+>  		}
+>  	}
+> @@ -2005,7 +2005,7 @@ void nullify_nat_entry(struct f2fs_sb_info *sbi, u32 nid)
+>  	} else {
+>  		memset(&nat_block->entries[entry_off], 0,
+>  					sizeof(struct f2fs_nat_entry));
+> -		FIX_MSG("Remove nid [0x%x] in NAT\n", nid);
+> +		FIX_MSG("Remove nid [0x%x] in NAT", nid);
+
+How about moving all message printing modification into one patch?
+
+Thanks,
+
+>  	}
 >  
+>  	ret = dev_write_block(nat_block, block_addr);
 > 
 
 
