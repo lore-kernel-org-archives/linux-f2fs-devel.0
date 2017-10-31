@@ -1,23 +1,24 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [RFC PATCH 4/8] dump.f2fs: introduce dump_xattr
-Date: Tue, 31 Oct 2017 15:51:32 +0800
-Message-ID: <91948c76-3a3f-b1c9-1a37-d0c66ef0b393@huawei.com>
+Subject: Re: [RFC PATCH 6/8] fsck.f2fs: introduce new option
+ --dry-run
+Date: Tue, 31 Oct 2017 15:57:52 +0800
+Message-ID: <9ebcb886-ae85-6cb0-2a61-df3d2a585df1@huawei.com>
 References: <20171031013824.46544-1-shengyong1@huawei.com>
- <20171031013824.46544-4-shengyong1@huawei.com>
+ <20171031013824.46544-6-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
  helo=mx.sourceforge.net)
  by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e9RLk-00070d-8h
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 07:52:40 +0000
+ (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e9RRA-0007Am-8N
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 07:58:16 +0000
 Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1e9RLi-0006D9-WA
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 07:52:40 +0000
-In-Reply-To: <20171031013824.46544-4-shengyong1@huawei.com>
+ by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1e9RR8-0001li-RA
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 07:58:16 +0000
+In-Reply-To: <20171031013824.46544-6-shengyong1@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -32,113 +33,102 @@ To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
 On 2017/10/31 9:38, Sheng Yong wrote:
-> This patch introduces dump_xattr to create xattrs for dumped files.
+> With --dry-run enabled, fsck.f2fs will do all checks and "fixes" except
+> that all fixes will not be written to storage at last.
 > 
 > Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 > ---
->  fsck/dump.c | 63 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 60 insertions(+), 3 deletions(-)
+>  fsck/main.c       | 14 +++++++++++++-
+>  include/f2fs_fs.h |  1 +
+>  lib/libf2fs.c     |  1 +
+>  lib/libf2fs_io.c  |  3 +++
+>  4 files changed, 18 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fsck/dump.c b/fsck/dump.c
-> index 90fd073..01889fd 100644
-> --- a/fsck/dump.c
-> +++ b/fsck/dump.c
-> @@ -11,6 +11,9 @@
->  #include <inttypes.h>
->  
+> diff --git a/fsck/main.c b/fsck/main.c
+> index 93037e1..baa8efc 100644
+> --- a/fsck/main.c
+> +++ b/fsck/main.c
+> @@ -18,6 +18,7 @@
 >  #include "fsck.h"
-> +#include "xattr.h"
-> +#include <attr/xattr.h>
-> +#include <linux/xattr.h>
->  #include <locale.h>
+>  #include <libgen.h>
+>  #include <ctype.h>
+> +#include <getopt.h>
 >  
->  #define BUF_SZ	80
-> @@ -310,15 +313,67 @@ static void dump_node_blk(struct f2fs_sb_info *sbi, int ntype,
->  	free(node_blk);
+>  struct f2fs_fsck gfsck;
+>  
+> @@ -30,6 +31,7 @@ void fsck_usage()
+>  	MSG(0, "  -f check/fix entire partition\n");
+>  	MSG(0, "  -p preen mode [default:0 the same as -a [0|1]]\n");
+>  	MSG(0, "  -t show directory tree\n");
+> +	MSG(0, "  --dry-run do not really fix corruptions\n");
+>  	exit(1);
 >  }
 >  
-> +static void dump_xattr(struct f2fs_sb_info *sbi, struct f2fs_node *node_blk)
-> +{
-> +	void *xattr;
-> +	struct f2fs_xattr_entry *ent;
-> +	char xattr_name[F2FS_NAME_LEN] = {0};
-> +	int ret;
+> @@ -117,10 +119,20 @@ void f2fs_parse_options(int argc, char *argv[])
+>  
+>  	if (!strcmp("fsck.f2fs", prog)) {
+>  		const char *option_string = ":ad:fp:t";
+> +		int opt = 0;
+> +		struct option long_opt[] = {
+> +			{"dry-run", no_argument, 0, 1},
+> +			{0, 0, 0, 0}
+> +		};
+>  
+>  		c.func = FSCK;
+> -		while ((option = getopt(argc, argv, option_string)) != EOF) {
+> +		while ((option = getopt_long(argc, argv, option_string,
+> +						long_opt, &opt)) != EOF) {
+>  			switch (option) {
+> +			case 1:
+> +				c.dry_run = 1;
+> +				MSG(0, "Info: Dry run\n");
+> +				break;
+>  			case 'a':
+>  				c.auto_fix = 1;
+>  				MSG(0, "Info: Fix the reported corruption.\n");
+> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+> index e1e299d..64a796d 100644
+> --- a/include/f2fs_fs.h
+> +++ b/include/f2fs_fs.h
+> @@ -300,6 +300,7 @@ struct f2fs_configuration {
+>  	int trimmed;
+>  	int func;
+>  	void *private;
+> +	int dry_run;
+>  	int fix_on;
+>  	int bug_on;
+>  	int auto_fix;
+> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+> index 69f5ccc..259bd17 100644
+> --- a/lib/libf2fs.c
+> +++ b/lib/libf2fs.c
+> @@ -598,6 +598,7 @@ void f2fs_init_configuration(void)
+>  	c.trimmed = 0;
+>  	c.ro = 0;
+>  	c.kd = -1;
+> +	c.dry_run = 0;
+>  }
+>  
+>  static int is_mounted(const char *mpt, const char *device)
+> diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
+> index 50ff171..8a79672 100644
+> --- a/lib/libf2fs_io.c
+> +++ b/lib/libf2fs_io.c
+> @@ -129,6 +129,9 @@ int dev_write(void *buf, __u64 offset, size_t len)
+>  {
+>  	int fd;
+>  
+> +	if (c.dry_run)
+> +		return 0;
 > +
-> +	xattr = read_all_xattrs(sbi, node_blk);
-> +
-> +	list_for_each_xattr(ent, xattr) {
-> +		char *name = strndup(ent->e_name, ent->e_name_len);
-> +		void *value = ent->e_name + ent->e_name_len;
-> +
-> +		if (!name)
-> +			continue;
-> +
-> +		switch (ent->e_name_index) {
-> +		case F2FS_XATTR_INDEX_USER:
-> +			ret = snprintf(xattr_name, F2FS_NAME_LEN, "%s%s",
-> +				       XATTR_USER_PREFIX, name);
-> +			break;
-> +
-> +		case F2FS_XATTR_INDEX_SECURITY:
-> +			ret = snprintf(xattr_name, F2FS_NAME_LEN, "%s%s",
-> +				       XATTR_SECURITY_PREFIX, name);
-> +			break;
-> +		case F2FS_XATTR_INDEX_TRUSTED:
-> +			ret = snprintf(xattr_name, F2FS_NAME_LEN, "%s%s",
-> +				       XATTR_TRUSTED_PREFIX, name);
-> +			break;
-> +		default:
-> +			MSG(0, "Unknown xattr index 0x%x\n", ent->e_name_index);
-> +			free(name);
-> +			continue;
-> +		}
-> +		if (ret >= F2FS_NAME_LEN) {
-> +			MSG(0, "XATTR index 0x%x name too long\n", ent->e_name_index);
-> +			free(name);
-> +			continue;
-> +		}
-> +
-> +		DBG(1, "fd %d xattr_name %s\n", c.dump_fd, xattr_name);
-> +		ret = fsetxattr(c.dump_fd, xattr_name, value,
-> +				le16_to_cpu(ent->e_value_size), XATTR_CREATE);
-> +		if (ret)
+>  	if (c.sparse_mode)
+>  		return dev_write_sparse(buf, offset, len);
 
-if (ret == -EEXIST)
-	fsetxattr(,,,,XATTR_REPLACE)?
+Do we need to cover dev_write_block?
 
 Thanks,
 
-> +			MSG(0, "XATTR index 0x%x set xattr failed error %d\n",
-> +			    ent->e_name_index, errno);
-> +
-> +		free(name);
-> +	}
-> +
-> +	free(xattr);
-> +}
-> +
->  static void dump_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
->  					struct f2fs_node *node_blk)
->  {
->  	u32 i = 0;
->  	u64 ofs = 0;
 >  
-> -	/* TODO: need to dump xattr */
-> -
-> -	if((node_blk->i.i_inline & F2FS_INLINE_DATA)){
-> +	if((node_blk->i.i_inline & F2FS_INLINE_DATA)) {
->  		DBG(3, "ino[0x%x] has inline data!\n", nid);
->  		/* recover from inline data */
->  		dev_write_dump(((unsigned char *)node_blk) + INLINE_DATA_OFFSET,
-> @@ -345,6 +400,8 @@ static void dump_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
->  		else
->  			ASSERT(0);
->  	}
-> +
-> +	dump_xattr(sbi, node_blk);
->  }
->  
->  static void dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
 > 
 
 
