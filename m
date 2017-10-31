@@ -1,26 +1,21 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH v2] f2fs: collect prefree segments to avoild
- write checkpoint fail
-Date: Tue, 31 Oct 2017 09:33:54 +0800
-Message-ID: <e7966d00-c63c-060b-2b1d-c9a9cb134b3b@huawei.com>
-References: <1503748019-152845-1-git-send-email-yunlong.song@huawei.com>
- <1504267219-76575-1-git-send-email-yunlong.song@huawei.com>
+From: Sheng Yong <shengyong1@huawei.com>
+Subject: [RFC PATCH 1/8] fsck.f2fs: do not set fix_on directly
+Date: Tue, 31 Oct 2017 09:38:17 +0800
+Message-ID: <20171031013824.46544-1-shengyong1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
  helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yunlong.song@huawei.com>)
- id 1e9LSb-00056m-6m
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 01:35:21 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1e9LSZ-0006ji-RF
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 01:35:21 +0000
-In-Reply-To: <1504267219-76575-1-git-send-email-yunlong.song@huawei.com>
-Content-Language: en-US
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <shengyong1@huawei.com>)
+ id 1e9LWn-0005SL-1H
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 01:39:41 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+ id 1e9LWk-0008Su-UI
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 01:39:40 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,47 +25,52 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
-Cc: linux-fsdevel@vger.kernel.org, miaoxie@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: shengyong1@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-ping...
+Do not set fix_on if it is allowed by user.
 
-On 2017/9/1 20:00, Yunlong Song wrote:
-> In come corner case, the reserved segments are used to do gc, and there are
-> not enough free segments for write checkpoint to finish its job, then the
-> gc process will fail to change the prefree segments to free segments.
->
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> ---
->   fs/f2fs/gc.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
->
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index cd147e7..6552b04 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -1056,6 +1056,16 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->   	if (!sync) {
->   		if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
->   			segno = NULL_SEGNO;
-> +#ifndef CONFIG_F2FS_CHECK_FS
-> +			if (prefree_segments(sbi) &&
-> +				has_not_enough_free_secs(sbi,
-> +					reserved_sections(sbi), 0)) {
-> +				ret = write_checkpoint(sbi, &cpc);
-> +				if (ret)
-> +					goto stop;
-> +				sec_freed = 0;
-> +			}
-> +#endif
->   			goto gc_more;
->   		}
->   
+Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+---
+ fsck/main.c  | 2 +-
+ fsck/mount.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/fsck/main.c b/fsck/main.c
+index c9411eb..93037e1 100644
+--- a/fsck/main.c
++++ b/fsck/main.c
+@@ -429,7 +429,7 @@ static void do_fsck(struct f2fs_sb_info *sbi)
+ 				c.fix_on = 1;
+ 			break;
+ 		}
+-	} else {
++	} else if (c.preen_mode) {
+ 		/*
+ 		 * we can hit this in 3 situations:
+ 		 *  1. fsck -f, fix_on has already been set to 1 when
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 29af3b7..faa9bc8 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -1879,6 +1879,7 @@ void nullify_nat_entry(struct f2fs_sb_info *sbi, u32 nid)
+ 
+ 	memset(&nat_block->entries[entry_off], 0,
+ 					sizeof(struct f2fs_nat_entry));
++	FIX_MSG("Remove nid [0x%x] in NAT\n", nid);
+ 
+ 	ret = dev_write_block(nat_block, block_addr);
+ 	ASSERT(ret >= 0);
+@@ -2031,7 +2032,6 @@ void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
+ 				 */
+ 				ASSERT_MSG("Invalid nat entry[0]: "
+ 					"blk_addr[0x%x]\n", ni.blk_addr);
+-				c.fix_on = 1;
+ 				fsck->chk.valid_nat_entry_cnt--;
+ 			}
+ 
 -- 
-Thanks,
-Yunlong Song
-
+2.11.0
 
 
 ------------------------------------------------------------------------------
