@@ -1,24 +1,24 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [RFC PATCH 6/8] fsck.f2fs: introduce new option
- --dry-run
-Date: Tue, 31 Oct 2017 15:57:52 +0800
-Message-ID: <9ebcb886-ae85-6cb0-2a61-df3d2a585df1@huawei.com>
+Subject: Re: [RFC PATCH 5/8] dump.f2fs: do not dump encrypted
+ files
+Date: Tue, 31 Oct 2017 15:57:43 +0800
+Message-ID: <f400c643-bf4d-bca5-0598-13f114db6d19@huawei.com>
 References: <20171031013824.46544-1-shengyong1@huawei.com>
- <20171031013824.46544-6-shengyong1@huawei.com>
+ <20171031013824.46544-5-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
  helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e9RRA-0007Am-8N
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 07:58:16 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1e9RR8-0001li-RA
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 07:58:16 +0000
-In-Reply-To: <20171031013824.46544-6-shengyong1@huawei.com>
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1e9RRT-0001TE-Jr
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 07:58:35 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+ id 1e9RRS-0001pW-BB
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 07:58:35 +0000
+In-Reply-To: <20171031013824.46544-5-shengyong1@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,101 +33,53 @@ To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
 On 2017/10/31 9:38, Sheng Yong wrote:
-> With --dry-run enabled, fsck.f2fs will do all checks and "fixes" except
-> that all fixes will not be written to storage at last.
-> 
-> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
-> ---
->  fsck/main.c       | 14 +++++++++++++-
->  include/f2fs_fs.h |  1 +
->  lib/libf2fs.c     |  1 +
->  lib/libf2fs_io.c  |  3 +++
->  4 files changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fsck/main.c b/fsck/main.c
-> index 93037e1..baa8efc 100644
-> --- a/fsck/main.c
-> +++ b/fsck/main.c
-> @@ -18,6 +18,7 @@
->  #include "fsck.h"
->  #include <libgen.h>
->  #include <ctype.h>
-> +#include <getopt.h>
->  
->  struct f2fs_fsck gfsck;
->  
-> @@ -30,6 +31,7 @@ void fsck_usage()
->  	MSG(0, "  -f check/fix entire partition\n");
->  	MSG(0, "  -p preen mode [default:0 the same as -a [0|1]]\n");
->  	MSG(0, "  -t show directory tree\n");
-> +	MSG(0, "  --dry-run do not really fix corruptions\n");
->  	exit(1);
->  }
->  
-> @@ -117,10 +119,20 @@ void f2fs_parse_options(int argc, char *argv[])
->  
->  	if (!strcmp("fsck.f2fs", prog)) {
->  		const char *option_string = ":ad:fp:t";
-> +		int opt = 0;
-> +		struct option long_opt[] = {
-> +			{"dry-run", no_argument, 0, 1},
-> +			{0, 0, 0, 0}
-> +		};
->  
->  		c.func = FSCK;
-> -		while ((option = getopt(argc, argv, option_string)) != EOF) {
-> +		while ((option = getopt_long(argc, argv, option_string,
-> +						long_opt, &opt)) != EOF) {
->  			switch (option) {
-> +			case 1:
-> +				c.dry_run = 1;
-> +				MSG(0, "Info: Dry run\n");
-> +				break;
->  			case 'a':
->  				c.auto_fix = 1;
->  				MSG(0, "Info: Fix the reported corruption.\n");
-> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-> index e1e299d..64a796d 100644
-> --- a/include/f2fs_fs.h
-> +++ b/include/f2fs_fs.h
-> @@ -300,6 +300,7 @@ struct f2fs_configuration {
->  	int trimmed;
->  	int func;
->  	void *private;
-> +	int dry_run;
->  	int fix_on;
->  	int bug_on;
->  	int auto_fix;
-> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-> index 69f5ccc..259bd17 100644
-> --- a/lib/libf2fs.c
-> +++ b/lib/libf2fs.c
-> @@ -598,6 +598,7 @@ void f2fs_init_configuration(void)
->  	c.trimmed = 0;
->  	c.ro = 0;
->  	c.kd = -1;
-> +	c.dry_run = 0;
->  }
->  
->  static int is_mounted(const char *mpt, const char *device)
-> diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
-> index 50ff171..8a79672 100644
-> --- a/lib/libf2fs_io.c
-> +++ b/lib/libf2fs_io.c
-> @@ -129,6 +129,9 @@ int dev_write(void *buf, __u64 offset, size_t len)
->  {
->  	int fd;
->  
-> +	if (c.dry_run)
-> +		return 0;
-> +
->  	if (c.sparse_mode)
->  		return dev_write_sparse(buf, offset, len);
+> If a file is encrypted, its content is cipher text on the storage. So
+> there is no need to dump an encrypted file.
 
-Do we need to cover dev_write_block?
+IMO, if user have encryption key, it still has chance to read that file,
+right? So how about keeping this functionality?
 
 Thanks,
 
+> 
+> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+> ---
+>  fsck/dump.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fsck/dump.c b/fsck/dump.c
+> index 01889fd..d11e8e2 100644
+> --- a/fsck/dump.c
+> +++ b/fsck/dump.c
+> @@ -410,12 +410,17 @@ static void dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
+>  	struct f2fs_inode *inode = &node_blk->i;
+>  	u32 imode = le32_to_cpu(inode->i_mode);
+>  	u32 namelen = le32_to_cpu(inode->i_namelen);
+> -	unsigned char name[F2FS_NAME_LEN + 1] = {0};
+> +	char name[F2FS_NAME_LEN + 1] = {0};
+>  	char path[1024] = {0};
+>  	char ans[255] = {0};
+> -	int enc_name = file_enc_name(inode);
+> +	int is_encrypted = file_is_encrypt(inode);
+>  	int ret;
+>  
+> +	if (is_encrypted) {
+> +		MSG(force, "File is encrypted\n");
+> +		return;
+> +	}
+> +
+>  	if (!S_ISREG(imode) || namelen == 0 || namelen > F2FS_NAME_LEN) {
+>  		MSG(force, "Not a regular file or wrong name info\n\n");
+>  		return;
+> @@ -433,8 +438,7 @@ dump:
+>  		ASSERT(ret >= 0);
+>  
+>  		/* make a file */
+> -		namelen = convert_encrypted_name(inode->i_name, namelen,
+> -							name, enc_name);
+> +		strncpy(name, (const char *)inode->i_name, namelen);
+>  		name[namelen] = 0;
+>  		sprintf(path, "./lost_found/%s", name);
 >  
 > 
 
