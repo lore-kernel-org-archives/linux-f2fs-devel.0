@@ -1,7 +1,7 @@
 From: Sheng Yong <shengyong1@huawei.com>
-Subject: [RFC PATCH 8/8] f2fs-tools: remove unused list.h
-Date: Tue, 31 Oct 2017 09:38:24 +0800
-Message-ID: <20171031013824.46544-8-shengyong1@huawei.com>
+Subject: [RFC PATCH 6/8] fsck.f2fs: introduce new option --dry-run
+Date: Tue, 31 Oct 2017 09:38:22 +0800
+Message-ID: <20171031013824.46544-6-shengyong1@huawei.com>
 References: <20171031013824.46544-1-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,13 +9,13 @@ Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
  (Exim 4.89) (envelope-from <shengyong1@huawei.com>)
- id 1e9LWt-0001TR-F1
+ id 1e9LWt-0005Sr-NK
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 01:39:47 +0000
 Received: from [45.249.212.32] (helo=huawei.com)
  by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
- id 1e9LWs-0005uU-DT
+ id 1e9LWs-0005uT-DV
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Oct 2017 01:39:47 +0000
 In-Reply-To: <20171031013824.46544-1-shengyong1@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
@@ -30,109 +30,97 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: shengyong1@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-Commit 7d96d138a378 ("fsck.f2fs: remove list.h") has already the usage
-of list.h. So let's remove list.h itself.
+With --dry-run enabled, fsck.f2fs will do all checks and "fixes" except
+that all fixes will not be written to storage at last.
 
 Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 ---
- include/list.h | 88 ----------------------------------------------------------
- 1 file changed, 88 deletions(-)
- delete mode 100644 include/list.h
+ fsck/main.c       | 14 +++++++++++++-
+ include/f2fs_fs.h |  1 +
+ lib/libf2fs.c     |  1 +
+ lib/libf2fs_io.c  |  3 +++
+ 4 files changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/include/list.h b/include/list.h
-deleted file mode 100644
-index 571cd5c..0000000
---- a/include/list.h
-+++ /dev/null
-@@ -1,88 +0,0 @@
--
--#define POISON_POINTER_DELTA 0
--#define LIST_POISON1  ((void *) (0x00100100 + POISON_POINTER_DELTA))
--#define LIST_POISON2  ((void *) (0x00200200 + POISON_POINTER_DELTA))
--
--#if !defined(offsetof)
--#define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
--#endif
--#define container_of(ptr, type, member) ({                      \
--		const typeof( ((type *)0)->member ) *__mptr = (ptr);    \
--		(type *)( (char *)__mptr - offsetof(type,member) );})
--
--struct list_head {
--	struct list_head *next, *prev;
--};
--
--#define LIST_HEAD_INIT(name) { &(name), &(name) }
--
--#define LIST_HEAD(name) \
--	struct list_head name = LIST_HEAD_INIT(name)
--
--static inline void INIT_LIST_HEAD(struct list_head *list)
--{
--	list->next = list;
--	list->prev = list;
--}
--
--static inline void __list_add(struct list_head *new,
--		struct list_head *prev,
--		struct list_head *next)
--{
--	next->prev = new;
--	new->next = next;
--	new->prev = prev;
--	prev->next = new;
--}
--
--static inline void list_add(struct list_head *new, struct list_head *head)
--{
--	__list_add(new, head, head->next);
--}
--
--static inline void list_add_tail(struct list_head *new, struct list_head *head)
--{
--	__list_add(new, head->prev, head);
--}
--
--static inline void __list_del(struct list_head * prev, struct list_head * next)
--{
--	next->prev = prev;
--	prev->next = next;
--}
--
--static inline void __list_del_entry(struct list_head *entry)
--{
--	__list_del(entry->prev, entry->next);
--}
--
--static inline void list_del(struct list_head *entry)
--{
--	__list_del(entry->prev, entry->next);
--	entry->next = LIST_POISON1;
--	entry->prev = LIST_POISON2;
--}
--
--static inline int list_empty(const struct list_head *head)
--{
--	return head->next == head;
--}
--
--#define list_entry(ptr, type, member) \
--	container_of(ptr, type, member)
--
--#define list_for_each(pos, head) \
--	for (pos = (head)->next; pos != (head); pos = pos->next)
--
--#define list_for_each_safe(pos, n, head) \
--	for (pos = (head)->next, n = pos->next; pos != (head); \
--			pos = n, n = pos->next)
--#define list_for_each_entry(pos, head, member)                          \
--	for (pos = list_entry((head)->next, typeof(*pos), member);      \
--			&pos->member != (head);    \
--			pos = list_entry(pos->member.next, typeof(*pos), member))
--#define list_for_each_entry_safe(pos, n, head, member)                  \
--	for (pos = list_entry((head)->next, typeof(*pos), member),      \
--			n = list_entry(pos->member.next, typeof(*pos), member); \
--			&pos->member != (head);                                    \
--			pos = n, n = list_entry(n->member.next, typeof(*n), member))
+diff --git a/fsck/main.c b/fsck/main.c
+index 93037e1..baa8efc 100644
+--- a/fsck/main.c
++++ b/fsck/main.c
+@@ -18,6 +18,7 @@
+ #include "fsck.h"
+ #include <libgen.h>
+ #include <ctype.h>
++#include <getopt.h>
+ 
+ struct f2fs_fsck gfsck;
+ 
+@@ -30,6 +31,7 @@ void fsck_usage()
+ 	MSG(0, "  -f check/fix entire partition\n");
+ 	MSG(0, "  -p preen mode [default:0 the same as -a [0|1]]\n");
+ 	MSG(0, "  -t show directory tree\n");
++	MSG(0, "  --dry-run do not really fix corruptions\n");
+ 	exit(1);
+ }
+ 
+@@ -117,10 +119,20 @@ void f2fs_parse_options(int argc, char *argv[])
+ 
+ 	if (!strcmp("fsck.f2fs", prog)) {
+ 		const char *option_string = ":ad:fp:t";
++		int opt = 0;
++		struct option long_opt[] = {
++			{"dry-run", no_argument, 0, 1},
++			{0, 0, 0, 0}
++		};
+ 
+ 		c.func = FSCK;
+-		while ((option = getopt(argc, argv, option_string)) != EOF) {
++		while ((option = getopt_long(argc, argv, option_string,
++						long_opt, &opt)) != EOF) {
+ 			switch (option) {
++			case 1:
++				c.dry_run = 1;
++				MSG(0, "Info: Dry run\n");
++				break;
+ 			case 'a':
+ 				c.auto_fix = 1;
+ 				MSG(0, "Info: Fix the reported corruption.\n");
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index e1e299d..64a796d 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -300,6 +300,7 @@ struct f2fs_configuration {
+ 	int trimmed;
+ 	int func;
+ 	void *private;
++	int dry_run;
+ 	int fix_on;
+ 	int bug_on;
+ 	int auto_fix;
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index 69f5ccc..259bd17 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -598,6 +598,7 @@ void f2fs_init_configuration(void)
+ 	c.trimmed = 0;
+ 	c.ro = 0;
+ 	c.kd = -1;
++	c.dry_run = 0;
+ }
+ 
+ static int is_mounted(const char *mpt, const char *device)
+diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
+index 50ff171..8a79672 100644
+--- a/lib/libf2fs_io.c
++++ b/lib/libf2fs_io.c
+@@ -129,6 +129,9 @@ int dev_write(void *buf, __u64 offset, size_t len)
+ {
+ 	int fd;
+ 
++	if (c.dry_run)
++		return 0;
++
+ 	if (c.sparse_mode)
+ 		return dev_write_sparse(buf, offset, len);
+ 
 -- 
 2.11.0
 
