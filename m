@@ -1,8 +1,7 @@
 From: Sheng Yong <shengyong1@huawei.com>
-Subject: [RFC PATCH v2 2/9] fsck.f2fs: do not fix corrupted nat
- entries in build_nat_area_bitmap
-Date: Thu, 2 Nov 2017 11:56:05 +0800
-Message-ID: <20171102035612.217263-3-shengyong1@huawei.com>
+Subject: [RFC PATCH v2 1/9] fsck.f2fs: do not set fix_on directly
+Date: Thu, 2 Nov 2017 11:56:04 +0800
+Message-ID: <20171102035612.217263-2-shengyong1@huawei.com>
 References: <20171102035612.217263-1-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,13 +9,13 @@ Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
  helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
  (Exim 4.89) (envelope-from <shengyong1@huawei.com>)
- id 1eA6cL-0002qx-Dr
+ id 1eA6cL-0002J6-Aw
  for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Nov 2017 03:56:33 +0000
 Received: from szxga05-in.huawei.com ([45.249.212.191])
  by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1eA6cJ-00015m-SY
+ (Exim 4.76) id 1eA6cJ-00015o-SY
  for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Nov 2017 03:56:33 +0000
 In-Reply-To: <20171102035612.217263-1-shengyong1@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
@@ -31,56 +30,39 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: shengyong1@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-Fixing corrupted data depends on c.fix_on. If it's not set, we should not
-force fixing corrupted data.  So if nat entries are found invalid when
-building nat_area_bitmap, we should just set c.bug_on, and fix it later.
+Do not set fix_on if it is allowed by user.
 
 Signed-off-by: Sheng Yong <shengyong1@huawei.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
 ---
- fsck/mount.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ fsck/main.c  | 2 +-
+ fsck/mount.c | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/fsck/main.c b/fsck/main.c
+index c9411eb..93037e1 100644
+--- a/fsck/main.c
++++ b/fsck/main.c
+@@ -429,7 +429,7 @@ static void do_fsck(struct f2fs_sb_info *sbi)
+ 				c.fix_on = 1;
+ 			break;
+ 		}
+-	} else {
++	} else if (c.preen_mode) {
+ 		/*
+ 		 * we can hit this in 3 situations:
+ 		 *  1. fsck -f, fix_on has already been set to 1 when
 diff --git a/fsck/mount.c b/fsck/mount.c
-index 17da814..d8bc50c 100644
+index 29af3b7..17da814 100644
 --- a/fsck/mount.c
 +++ b/fsck/mount.c
-@@ -1877,8 +1877,14 @@ void nullify_nat_entry(struct f2fs_sb_info *sbi, u32 nid)
- 	ret = dev_read_block(nat_block, block_addr);
- 	ASSERT(ret >= 0);
- 
--	memset(&nat_block->entries[entry_off], 0,
-+	if (nid == F2FS_NODE_INO(sbi) || nid == F2FS_META_INO(sbi)) {
-+		FIX_MSG("nid [0x%x] block_addr= 0x%x -> 0x1", nid,
-+			le32_to_cpu(nat_block->entries[entry_off].block_addr));
-+		nat_block->entries[entry_off].block_addr = cpu_to_le32(0x1);
-+	} else {
-+		memset(&nat_block->entries[entry_off], 0,
- 					sizeof(struct f2fs_nat_entry));
-+	}
- 
- 	ret = dev_write_block(nat_block, block_addr);
- 	ASSERT(ret >= 0);
-@@ -2000,13 +2006,14 @@ void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
- 
- 			if ((nid + i) == F2FS_NODE_INO(sbi) ||
- 					(nid + i) == F2FS_META_INO(sbi)) {
--				/* block_addr of node/meta inode should be 0x1 */
-+				/*
-+				 * block_addr of node/meta inode should be 0x1.
-+				 * Set this bit, and fsck_verify will fix it.
-+				 */
- 				if (le32_to_cpu(nat_block->entries[i].block_addr) != 0x1) {
--					FIX_MSG("ino: 0x%x node/meta inode, block_addr= 0x%x -> 0x1",
-+					ASSERT_MSG("\tError: ino[0x%x] block_addr[0x%x] is invalid\n",
- 							nid + i, le32_to_cpu(nat_block->entries[i].block_addr));
--					nat_block->entries[i].block_addr = cpu_to_le32(0x1);
--					ret = dev_write_block(nat_block, block_addr);
--					ASSERT(ret >= 0);
-+					f2fs_set_bit(nid + i, fsck->nat_area_bitmap);
- 				}
- 				continue;
+@@ -2031,7 +2031,6 @@ void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
+ 				 */
+ 				ASSERT_MSG("Invalid nat entry[0]: "
+ 					"blk_addr[0x%x]\n", ni.blk_addr);
+-				c.fix_on = 1;
+ 				fsck->chk.valid_nat_entry_cnt--;
  			}
+ 
 -- 
 2.11.0
 
