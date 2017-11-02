@@ -1,20 +1,21 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 2/4] f2fs: remove dead code in update_meta_page
-Date: Thu, 2 Nov 2017 20:41:02 +0800
-Message-ID: <20171102124104.75298-2-yuchao0@huawei.com>
+Subject: [PATCH 4/4] f2fs: avoid race in between GC and block
+ exchange
+Date: Thu, 2 Nov 2017 20:41:04 +0800
+Message-ID: <20171102124104.75298-4-yuchao0@huawei.com>
 References: <20171102124104.75298-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1eAEoL-0001H8-Eb
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1eAEoL-0006yT-Hs
  for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Nov 2017 12:41:29 +0000
 Received: from szxga05-in.huawei.com ([45.249.212.191])
- by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1eAEoJ-0001C5-Va
+ by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1eAEoK-0000sv-12
  for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Nov 2017 12:41:29 +0000
 In-Reply-To: <20171102124104.75298-1-yuchao0@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
@@ -29,32 +30,88 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-After commit a468f0ef516f ("f2fs: use crc and cp version to determine
-roll-forward recovery"), last caller of update_meta_page passing @src
-with NULL is gone, so remove related dead code there.
+During block exchange in {insert,collapse,move}_range, page-block mapping
+is unstable due to mapping moving or recovery, so there should be no
+concurrent cache read operation rely on such mapping, nor cache write
+operation to mess up block exchange.
+
+So this patch let background GC be aware of that.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/segment.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ fs/f2fs/file.c | 22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 83125f92accc..eece3804c049 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2028,12 +2028,8 @@ struct page *get_sum_page(struct f2fs_sb_info *sbi, unsigned int segno)
- void update_meta_page(struct f2fs_sb_info *sbi, void *src, block_t blk_addr)
- {
- 	struct page *page = grab_meta_page(sbi, blk_addr);
--	void *dst = page_address(page);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 0e09b9f02dc5..21ae4faa7c58 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1186,6 +1186,9 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+ 	if (ret)
+ 		goto out;
  
--	if (src)
--		memcpy(dst, src, PAGE_SIZE);
--	else
--		memset(dst, 0, PAGE_SIZE);
-+	memcpy(page_address(page), src, PAGE_SIZE);
- 	set_page_dirty(page);
- 	f2fs_put_page(page, 1);
++	/* avoid gc operation during block exchange */
++	down_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
++
+ 	truncate_pagecache(inode, offset);
+ 
+ 	ret = f2fs_do_collapse(inode, pg_start, pg_end);
+@@ -1204,6 +1207,7 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+ 		f2fs_i_size_write(inode, new_size);
+ 
+ out:
++	up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
+ 	up_write(&F2FS_I(inode)->i_mmap_sem);
+ 	return ret;
+ }
+@@ -1385,6 +1389,9 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ 	if (ret)
+ 		goto out;
+ 
++	/* avoid gc operation during block exchange */
++	down_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
++
+ 	truncate_pagecache(inode, offset);
+ 
+ 	pg_start = offset >> PAGE_SHIFT;
+@@ -1412,6 +1419,8 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ 
+ 	if (!ret)
+ 		f2fs_i_size_write(inode, new_size);
++
++	up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
+ out:
+ 	up_write(&F2FS_I(inode)->i_mmap_sem);
+ 	return ret;
+@@ -2274,9 +2283,13 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
+ 	}
+ 
+ 	inode_lock(src);
++	down_write(&F2FS_I(src)->dio_rwsem[WRITE]);
+ 	if (src != dst) {
+-		if (!inode_trylock(dst)) {
+-			ret = -EBUSY;
++		ret = -EBUSY;
++		if (!inode_trylock(dst))
++			goto out;
++		if (!down_write_trylock(&F2FS_I(dst)->dio_rwsem[WRITE])) {
++			inode_unlock(dst);
+ 			goto out;
+ 		}
+ 	}
+@@ -2336,9 +2349,12 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
+ 	}
+ 	f2fs_unlock_op(sbi);
+ out_unlock:
+-	if (src != dst)
++	if (src != dst) {
++		up_write(&F2FS_I(dst)->dio_rwsem[WRITE]);
+ 		inode_unlock(dst);
++	}
+ out:
++	up_write(&F2FS_I(src)->dio_rwsem[WRITE]);
+ 	inode_unlock(src);
+ 	return ret;
  }
 -- 
 2.13.1.388.g69e6b9b4f4a9
