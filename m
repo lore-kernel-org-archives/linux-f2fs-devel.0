@@ -1,24 +1,22 @@
-From: Fan Li <fanofcode.li@samsung.com>
-Subject: [PATCH] f2fs: save a multiplication for last_nid
- calculation
-Date: Thu, 02 Nov 2017 11:02:52 +0800
-Message-ID: <000101d35387$2dec7d40$89c577c0$@samsung.com>
-References: <CGME20171102030338epcas1p19ad41be52b4346e4828fd9e0cc92d711@epcas1p1.samsung.com>
+From: Sheng Yong <shengyong1@huawei.com>
+Subject: [RFC PATCH v2 0/9] f2fs-tools: fix fix_on usage and
+ introduce dump/print xattr
+Date: Thu, 2 Nov 2017 11:56:03 +0800
+Message-ID: <20171102035612.217263-1-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <fanofcode.li@samsung.com>)
- id 1eA5nI-0006F3-OT
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Nov 2017 03:03:48 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
- by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1eA5nG-0005Z5-O1
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Nov 2017 03:03:48 +0000
-Content-language: en-us
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <shengyong1@huawei.com>)
+ id 1eA6cL-0002qr-7m
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Nov 2017 03:56:33 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191])
+ by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1eA6cK-00015q-6J
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Nov 2017 03:56:33 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,31 +26,45 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Chao Yu' <chao@kernel.org>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: shengyong1@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-Use a slightly easier way to calculate last_nid.
+v1-v2:
+[PATCH 3] print values of USER/SECRUITY xattr as hex instead of plain text.
+[PATCH 4] replace xattr value if it already exists by setting parameter
+          `flags' as 0 of fsetxattr.
+[PATCH 1/7] move message printing modification into a different patch.
 
-Signed-off-by: Fan li <fanofcode.li@samsung.com>
----
- fs/f2fs/node.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+thanks,
+Sheng
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 7834097..55ab330 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2642,7 +2642,7 @@ static inline void load_free_nid_bitmap(struct f2fs_sb_info *sbi)
-                __set_bit_le(i, nm_i->nat_block_bitmap);
+Sheng Yong (9):
+  fsck.f2fs: do not set fix_on directly
+  fsck.f2fs: do not fix corrupted nat entries in build_nat_area_bitmap
+  dump/fsck: introduce print_xattr_entry
+  dump.f2fs: introduce dump_xattr
+  dump.f2fs: do not dump encrypted files
+  fsck.f2fs: introduce new option --dry-run
+  fsck.f2fs: introduce sanity_check_inode
+  f2fs-tools: remove unused list.h
+  fsck.f2fs: format output message of FIX_MSG
 
-                nid = i * NAT_ENTRY_PER_BLOCK;
--               last_nid = (i + 1) * NAT_ENTRY_PER_BLOCK;
-+               last_nid = nid + NAT_ENTRY_PER_BLOCK;
+ fsck/dump.c       |  93 ++++++++++++++++++++++++++++------
+ fsck/fsck.c       |  25 +++++++++-
+ fsck/fsck.h       |   7 ++-
+ fsck/main.c       |  16 +++++-
+ fsck/mount.c      | 146 ++++++++++++++++++++++++++++++++++++++++++++++++++----
+ fsck/xattr.c      |   2 +-
+ fsck/xattr.h      |  54 +++++++++++++++++++-
+ include/f2fs_fs.h |   1 +
+ include/list.h    |  88 --------------------------------
+ lib/libf2fs.c     |   1 +
+ lib/libf2fs_io.c  |   3 ++
+ 11 files changed, 313 insertions(+), 123 deletions(-)
+ delete mode 100644 include/list.h
 
-                spin_lock(&NM_I(sbi)->nid_list_lock);
-                for (; nid < last_nid; nid++)
---
-2.7.4
+-- 
+2.11.0
 
 
 ------------------------------------------------------------------------------
