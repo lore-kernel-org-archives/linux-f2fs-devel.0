@@ -1,23 +1,23 @@
 From: Sheng Yong <shengyong1@huawei.com>
-Subject: [RFC PATCH v2 9/9] fsck.f2fs: format output message of
- FIX_MSG
-Date: Thu, 2 Nov 2017 11:56:12 +0800
-Message-ID: <20171102035612.217263-10-shengyong1@huawei.com>
+Subject: [RFC PATCH v2 7/9] fsck.f2fs: introduce
+ sanity_check_inode
+Date: Thu, 2 Nov 2017 11:56:10 +0800
+Message-ID: <20171102035612.217263-8-shengyong1@huawei.com>
 References: <20171102035612.217263-1-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
  (Exim 4.89) (envelope-from <shengyong1@huawei.com>)
- id 1eA6cZ-0002zZ-3I
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Nov 2017 03:56:47 +0000
+ id 1eA6cY-0002ry-Mq
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Nov 2017 03:56:46 +0000
 Received: from [45.249.212.32] (helo=huawei.com)
- by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
- id 1eA6cX-0003oe-3M
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Nov 2017 03:56:47 +0000
+ by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+ id 1eA6cW-00048M-MV
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Nov 2017 03:56:46 +0000
 In-Reply-To: <20171102035612.217263-1-shengyong1@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -31,57 +31,54 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: shengyong1@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-This patch removes an extra '\n' at the end of the string in FIX_MSG.
+f2fs_iget checks if i_mode is valid. If it is not, the file cannot be
+accessed as well as deleted. To make sure such files can be removed,
+fsck adds the same check, and removes incorrect inode blocks.
 
 Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 ---
- fsck/fsck.c  | 4 ++--
- fsck/mount.c | 3 ++-
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ fsck/fsck.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
 diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 77490d8..1905319 100644
+index 56a47be..77490d8 100644
 --- a/fsck/fsck.c
 +++ b/fsck/fsck.c
-@@ -966,7 +966,7 @@ int fsck_chk_idnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
- 			else {
- 				node_blk->in.nid[i] = 0;
- 				need_fix = 1;
--				FIX_MSG("Set indirect node 0x%x -> 0\n", i);
-+				FIX_MSG("Set indirect node 0x%x -> 0", i);
- 			}
- skip:
- 			child->pgofs += ADDRS_PER_BLOCK;
-@@ -1006,7 +1006,7 @@ int fsck_chk_didnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
- 			else {
- 				node_blk->in.nid[i] = 0;
- 				need_fix = 1;
--				FIX_MSG("Set double indirect node 0x%x -> 0\n", i);
-+				FIX_MSG("Set double indirect node 0x%x -> 0", i);
- 			}
- skip:
- 			child->pgofs += ADDRS_PER_BLOCK * NIDS_PER_BLOCK;
-diff --git a/fsck/mount.c b/fsck/mount.c
-index d631547..cf2ef8e 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -1981,7 +1981,7 @@ void nullify_nat_entry(struct f2fs_sb_info *sbi, u32 nid)
- 		if (le32_to_cpu(nid_in_journal(journal, i)) == nid) {
- 			memset(&nat_in_journal(journal, i), 0,
- 					sizeof(struct f2fs_nat_entry));
--			FIX_MSG("Remove nid [0x%x] in nat journal\n", nid);
-+			FIX_MSG("Remove nid [0x%x] in nat journal", nid);
- 			return;
- 		}
- 	}
-@@ -2001,6 +2001,7 @@ void nullify_nat_entry(struct f2fs_sb_info *sbi, u32 nid)
- 	} else {
- 		memset(&nat_block->entries[entry_off], 0,
- 					sizeof(struct f2fs_nat_entry));
-+		FIX_MSG("Remove nid [0x%x] in NAT", nid);
- 	}
+@@ -458,6 +458,25 @@ static int sanity_check_nid(struct f2fs_sb_info *sbi, u32 nid,
+ 	return 0;
+ }
  
- 	ret = dev_write_block(nat_block, block_addr);
++static int sanity_check_inode(struct f2fs_sb_info *sbi, struct f2fs_node *node)
++{
++	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
++	struct f2fs_inode *fi = &node->i;
++
++	if (!(le16_to_cpu(fi->i_mode) & S_IFMT)) {
++		ASSERT_MSG("i_mode is not valid. [0x%x]", le16_to_cpu(fi->i_mode));
++		goto remove_node;
++	}
++
++	return 0;
++
++remove_node:
++	f2fs_set_bit(le32_to_cpu(node->footer.ino), fsck->nat_area_bitmap);
++	fsck->chk.valid_blk_cnt--;
++	fsck->chk.valid_node_cnt--;
++	return -EINVAL;
++}
++
+ static int fsck_chk_xattr_blk(struct f2fs_sb_info *sbi, u32 ino,
+ 					u32 x_nid, u32 *blk_cnt)
+ {
+@@ -500,6 +519,8 @@ int fsck_chk_node_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
+ 		goto err;
+ 
+ 	if (ntype == TYPE_INODE) {
++		if (sanity_check_inode(sbi, node_blk))
++			goto err;
+ 		fsck_chk_inode_blk(sbi, nid, ftype, node_blk, blk_cnt, &ni);
+ 	} else {
+ 		switch (ntype) {
 -- 
 2.11.0
 
