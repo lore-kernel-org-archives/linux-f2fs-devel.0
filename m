@@ -1,24 +1,23 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH RESEND] f2fs: modify the procedure of scan
- free nid
-Date: Fri, 3 Nov 2017 16:53:57 +0800
-Message-ID: <f83b866a-b755-c3b8-b321-0ce1e91acb6f@huawei.com>
-References: <CGME20171103073249epcas1p4a6e7f7875d21ec575efd593c3b5bd970@epcas1p4.samsung.com>
- <001101d35475$f33d8b40$d9b8a1c0$@samsung.com>
+Subject: Re: [PATCH] fsck: check inline_dentry i_addr[0] same as
+ inline_data
+Date: Fri, 3 Nov 2017 17:25:23 +0800
+Message-ID: <69bffe5b-1f2c-0971-8dfe-ee9520a1447e@huawei.com>
+References: <1509690579-16102-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
  helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1eAXkS-0003uT-CS
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Nov 2017 08:54:44 +0000
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1eAYF0-0005kg-Ul
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Nov 2017 09:26:18 +0000
 Received: from szxga05-in.huawei.com ([45.249.212.191])
- by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1eAXkP-0001K6-QC
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Nov 2017 08:54:44 +0000
-In-Reply-To: <001101d35475$f33d8b40$d9b8a1c0$@samsung.com>
+ by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1eAYEy-0000tZ-VT
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Nov 2017 09:26:18 +0000
+In-Reply-To: <1509690579-16102-1-git-send-email-heyunlei@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -29,237 +28,90 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Fan Li <fanofcode.li@samsung.com>, 'Chao Yu' <chao@kernel.org>, 'Jaegeuk
- Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: morgan.wang@huawei.com
 
-On 2017/11/3 15:31, Fan Li wrote:
-> In current version, we preserve 8 pages of nat blocks as free nids,
-> we build bitmaps for it and use them to allocate nids until its number
-> drops below NAT_ENTRY_PER_BLOCK.
+On 2017/11/3 14:29, Yunlei He wrote:
+> <4>[   30.222442s][pid:1,cpu4,init][<ffffff8008357ffc>] f2fs_evict_inode+0x850/0xa34
+> <4>[   30.222442s][pid:1,cpu4,init][<ffffff8008209ec4>] evict+0xa0/0x168
+> <4>[   30.222442s][pid:1,cpu4,init][<ffffff800820ad34>] iput+0x188/0x220
+> <4>[   30.222473s][pid:1,cpu4,init][<ffffff800836d050>] recover_orphan_inodes+0x2b4/0xa80
+> <4>[   30.222473s][pid:1,cpu4,init][<ffffff80083648b0>] f2fs_fill_super+0xcf4/0x16a0
+> <4>[   30.222473s][pid:1,cpu4,init][<ffffff80081f2478>] mount_bdev+0x198/0x1c8
+> <4>[   30.222473s][pid:1,cpu4,init][<ffffff80083608a8>] f2fs_mount+0x14/0x1c
+> <4>[   30.222503s][pid:1,cpu4,init][<ffffff80081f2f38>] mount_fs+0x3c/0x15c
+> <4>[   30.222503s][pid:1,cpu4,init][<ffffff800820e9f8>] vfs_kern_mount+0x7c/0x16c
+> <4>[   30.222503s][pid:1,cpu4,init][<ffffff8008212548>] do_mount+0x214/0xcf8
+> <4>[   30.222503s][pid:1,cpu4,init][<ffffff800821338c>] SyS_mount+0xa8/0x164
+> <4>[   30.222503s][pid:1,cpu4,init][<ffffff80080831b0>] el0_svc_naked+0x24/0x28
 > 
-> After that, we have a problem, scan_free_nid_bits will scan the same
-> 8 pages trying to find more free nids, but in most cases the free nids
-> in these bitmaps are already in free list, scan them won't get us any
-> new nids.
-> Further more, after scan_free_nid_bits, the scan is over if
-> nid_cnt[FREE_NID] != 0.
-> It causes that we scan the same pages over and over again, and no new
-> free nids are found until nid_cnt[FREE_NID]==0. While the scanned pages
-> increase, the problem grows worse.
+> Mount failed with message as blow:
+> 	recover_orphan_inode: orphan failed (ino=1265), run fsck to fix
 > 
-> This patch mark the range where new free nids could exist and keep scan
-> for free nids until nid_cnt[FREE_NID] >= NAT_ENTRY_PER_BLOCK.
-> The new vairable first_scan_block marks the start of the range, it's
-> initialized with NEW_ADDR, which means all free nids before next_scan_nid
-> are already in free list;
-> and use next_scan_nid as the end of the range since all free nids which
-> are scanned in scan_free_nid_bits must be smaller next_scan_nid.
+> One orphan directory with inline_dentry flag, but i_addr[0] is not zero.
+> By the way, sit bitmap of i_addr[0] is also invalidate.
+> 
+> Signed-off-by: Yunlei He <heyunlei@huawei.com>
 
-Think over again, IMO, we can add an variable for stating total count of
-free nids in bitamp, if there is no free nid, just skipping scanning all
-existed bitmap.
-
-And if there is only few free nid scattered in bitmap, the cost will be
-limited because we will skip scanning nm_i::free_nid_bitmap if
-nm_i::free_nid_count is zero. Once we find one free nid, let's skip out.
-
-Since there shouldn't be very heavy overhead for CPU during traveling
-nm_i::nat_block_bitmap, I expect below change could be more simple for
-maintaining and being with the same effect.
-
-How do you think?
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index cb3f10bc8723..238d95e89dec 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -729,6 +729,7 @@ struct f2fs_nm_info {
- 	unsigned char (*free_nid_bitmap)[NAT_ENTRY_BITMAP_SIZE];
- 	unsigned char *nat_block_bitmap;
- 	unsigned short *free_nid_count;	/* free nid count of NAT block */
-+	unsigned int total_bitmap_free_nid;	/* total free nid count in bitmap */
-
- 	/* for checkpoint */
- 	char *nat_bitmap;		/* NAT bitmap pointer */
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index fef5c68886b1..e4861908a396 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1911,10 +1911,13 @@ static void update_free_nid_bitmap(struct f2fs_sb_info *sbi, nid_t nid,
- 	else
- 		__clear_bit_le(nid_ofs, nm_i->free_nid_bitmap[nat_ofs]);
-
--	if (set)
-+	if (set) {
- 		nm_i->free_nid_count[nat_ofs]++;
--	else if (!build)
-+		nm_i->total_bitmap_free_nid++;
-+	} else if (!build) {
- 		nm_i->free_nid_count[nat_ofs]--;
-+		nm_i->total_bitmap_free_nid--;
-+	}
- }
-
- static void scan_nat_page(struct f2fs_sb_info *sbi,
-@@ -1958,6 +1961,9 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
-
- 	down_read(&nm_i->nat_tree_lock);
-
-+	if (!nm_i->total_bitmap_free_nid)
-+		goto out;
-+
- 	for (i = 0; i < nm_i->nat_blocks; i++) {
- 		if (!test_bit_le(i, nm_i->nat_block_bitmap))
- 			continue;
-@@ -1972,7 +1978,7 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
- 			nid = i * NAT_ENTRY_PER_BLOCK + idx;
- 			add_free_nid(sbi, nid, true);
-
--			if (nm_i->nid_cnt[FREE_NID] >= MAX_FREE_NIDS)
-+			if (nm_i->nid_cnt[FREE_NID])
- 				goto out;
- 		}
- 	}
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
 
-> 
-> Signed-off-by: Fan li <fanofcode.li@samsung.com>
 > ---
->  fs/f2fs/f2fs.h |  1 +
->  fs/f2fs/node.c | 42 +++++++++++++++++++++++++++++++++++-------
->  2 files changed, 36 insertions(+), 7 deletions(-)
+>  fsck/fsck.c | 18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
 > 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index e0ef31c..ae1cf91 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -705,6 +705,7 @@ struct f2fs_nm_info {
->  	nid_t max_nid;			/* maximum possible node ids */
->  	nid_t available_nids;		/* # of available node ids */
->  	nid_t next_scan_nid;		/* the next nid to be scanned */
-> +	block_t first_scan_block;       /* the first NAT block to be scanned */
->  	unsigned int ram_thresh;	/* control the memory footprint */
->  	unsigned int ra_nid_pages;	/* # of nid pages to be readaheaded */
->  	unsigned int dirty_nats_ratio;	/* control dirty nats ratio threshold */
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index 3d0d1be..f921e0c 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1812,7 +1812,7 @@ static bool add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
->  	struct f2fs_nm_info *nm_i = NM_I(sbi);
->  	struct free_nid *i, *e;
->  	struct nat_entry *ne;
-> -	int err = -EINVAL;
-> +	int need_free = 1;
->  	bool ret = false;
+> diff --git a/fsck/fsck.c b/fsck/fsck.c
+> index 56a47be..17cf6ff 100644
+> --- a/fsck/fsck.c
+> +++ b/fsck/fsck.c
+> @@ -601,6 +601,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+>  	u32 i_links = le32_to_cpu(node_blk->i.i_links);
+>  	u64 i_size = le64_to_cpu(node_blk->i.i_size);
+>  	u64 i_blocks = le64_to_cpu(node_blk->i.i_blocks);
+> +	int ofs = get_extra_isize(node_blk);
+>  	unsigned char en[F2FS_NAME_LEN + 1];
+>  	int namelen;
+>  	unsigned int idx = 0;
+> @@ -660,9 +661,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+>  			ftype == F2FS_FT_FIFO || ftype == F2FS_FT_SOCK)
+>  		goto check;
 >  
->  	/* 0 nid should not be used */
-> @@ -1863,13 +1863,25 @@ static bool add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
->  		}
+> -	if((node_blk->i.i_inline & F2FS_INLINE_DATA)) {
+> -		int ofs = get_extra_isize(node_blk);
+> -
+> +	if ((node_blk->i.i_inline & F2FS_INLINE_DATA)) {
+>  		if (le32_to_cpu(node_blk->i.i_addr[ofs]) != 0) {
+>  			/* should fix this bug all the time */
+>  			FIX_MSG("inline_data has wrong 0'th block = %x",
+> @@ -685,8 +684,18 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+>  		DBG(3, "ino[0x%x] has inline data!\n", nid);
+>  		goto check;
 >  	}
->  	ret = true;
-> -	err = __insert_free_nid(sbi, i, FREE_NID);
-> +	need_free = __insert_free_nid(sbi, i, FREE_NID);
->  err_out:
->  	spin_unlock(&nm_i->nid_list_lock);
->  	radix_tree_preload_end();
->  err:
-> -	if (err)
-> +	if (need_free)
->  		kmem_cache_free(free_nid_slab, i);
-> +	/*
-> +	 * For nid that should be free but not in the free
-> +	 * structure, update the scan range in hope of adding
-> +	 * it in the next scan.
-> +	 */
-> +	if (!ret || need_free < 0) {
-> +		block_t tmp_block = NAT_BLOCK_OFFSET(nid);
+> -	if((node_blk->i.i_inline & F2FS_INLINE_DENTRY)) {
 > +
-> +		if (tmp_block < nm_i->first_scan_block)
-> +			nm_i->first_scan_block = tmp_block;
-> +	}
+> +	if ((node_blk->i.i_inline & F2FS_INLINE_DENTRY)) {
+>  		DBG(3, "ino[0x%x] has inline dentry!\n", nid);
+> +		if (le32_to_cpu(node_blk->i.i_addr[ofs]) != 0) {
+> +			/* should fix this bug all the time */
+> +			FIX_MSG("inline_dentry has wrong 0'th block = %x",
+> +					le32_to_cpu(node_blk->i.i_addr[ofs]));
+> +			node_blk->i.i_addr[ofs] = 0;
+> +			node_blk->i.i_blocks = cpu_to_le64(*blk_cnt);
+> +			need_fix = 1;
+> +		}
 > +
->  	return ret;
->  }
+>  		ret = fsck_chk_inline_dentries(sbi, node_blk, &child);
+>  		if (ret < 0) {
+>  			/* should fix this bug all the time */
+> @@ -715,7 +724,6 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+>  	/* check data blocks in inode */
+>  	for (idx = 0; idx < ADDRS_PER_INODE(&node_blk->i);
+>  						idx++, child.pgofs++) {
+> -		int ofs = get_extra_isize(node_blk);
+>  		block_t blkaddr = le32_to_cpu(node_blk->i.i_addr[ofs + idx]);
 >  
-> @@ -1950,10 +1962,17 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
->  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
->  	struct f2fs_journal *journal = curseg->journal;
->  	unsigned int i, idx;
-> +	unsigned int max_blocks = NAT_BLOCK_OFFSET(nm_i->next_scan_nid);
->  
-> -	down_read(&nm_i->nat_tree_lock);
-> +	/* every free nid in blocks scanned previously is in the free list */
-> +	if (nm_i->first_scan_block == NEW_ADDR)
-> +		return;
->  
-> -	for (i = 0; i < nm_i->nat_blocks; i++) {
-> +	if (max_blocks == 0)
-> +		max_blocks = nm_i->nat_blocks;
-> +
-> +	down_read(&nm_i->nat_tree_lock);
-> +	for (i = nm_i->first_scan_block; i < max_blocks; i++) {
->  		if (!test_bit_le(i, nm_i->nat_block_bitmap))
->  			continue;
->  		if (!nm_i->free_nid_count[i])
-> @@ -1967,10 +1986,13 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
->  			nid = i * NAT_ENTRY_PER_BLOCK + idx;
->  			add_free_nid(sbi, nid, true);
->  
-> -			if (nm_i->nid_cnt[FREE_NID] >= MAX_FREE_NIDS)
-> +			if (nm_i->nid_cnt[FREE_NID] >= MAX_FREE_NIDS) {
-> +				nm_i->first_scan_block = i;
->  				goto out;
-> +			}
->  		}
->  	}
-> +	nm_i->first_scan_block = NEW_ADDR;
->  out:
->  	down_read(&curseg->journal_rwsem);
->  	for (i = 0; i < nats_in_cursum(journal); i++) {
-> @@ -2010,7 +2032,7 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
->  		/* try to find free nids in free_nid_bitmap */
->  		scan_free_nid_bits(sbi);
->  
-> -		if (nm_i->nid_cnt[FREE_NID])
-> +		if (nm_i->nid_cnt[FREE_NID] >= NAT_ENTRY_PER_BLOCK)
->  			return;
->  	}
->  
-> @@ -2163,6 +2185,7 @@ int try_to_free_nids(struct f2fs_sb_info *sbi, int nr_shrink)
->  	struct f2fs_nm_info *nm_i = NM_I(sbi);
->  	struct free_nid *i, *next;
->  	int nr = nr_shrink;
-> +	nid_t min_nid = nm_i->max_nid;
->  
->  	if (nm_i->nid_cnt[FREE_NID] <= MAX_FREE_NIDS)
->  		return 0;
-> @@ -2176,11 +2199,15 @@ int try_to_free_nids(struct f2fs_sb_info *sbi, int nr_shrink)
->  				nm_i->nid_cnt[FREE_NID] <= MAX_FREE_NIDS)
->  			break;
->  
-> +		if (i->nid < min_nid)
-> +			min_nid = i->nid;
->  		__remove_free_nid(sbi, i, FREE_NID);
->  		kmem_cache_free(free_nid_slab, i);
->  		nr_shrink--;
->  	}
->  	spin_unlock(&nm_i->nid_list_lock);
-> +	if (min_nid != nm_i->max_nid)
-> +		nm_i->first_scan_block = NAT_BLOCK_OFFSET(min_nid);
->  	mutex_unlock(&nm_i->build_lock);
->  
->  	return nr - nr_shrink;
-> @@ -2674,6 +2701,7 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
->  	init_rwsem(&nm_i->nat_tree_lock);
->  
->  	nm_i->next_scan_nid = le32_to_cpu(sbi->ckpt->next_free_nid);
-> +	nm_i->first_scan_block = NEW_ADDR;
->  	nm_i->bitmap_size = __bitmap_size(sbi, NAT_BITMAP);
->  	version_bitmap = __bitmap_ptr(sbi, NAT_BITMAP);
->  	if (!version_bitmap)
+>  		/* check extent info */
 > 
 
 
