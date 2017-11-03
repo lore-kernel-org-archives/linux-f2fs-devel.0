@@ -1,25 +1,26 @@
 From: Sheng Yong <shengyong1@huawei.com>
-Subject: [PATCH v3] dump/fsck: introduce print_xattr_entry
-Date: Fri, 3 Nov 2017 12:08:08 +0800
-Message-ID: <3faf699c-3f47-bf2b-ec82-952714187500@huawei.com>
+Subject: [PATCH v4] dump/fsck: introduce print_xattr_entry
+Date: Fri, 3 Nov 2017 12:14:52 +0800
+Message-ID: <b08b1b5a-8558-5152-4b8c-95694eb0226a@huawei.com>
 References: <20171102035612.217263-1-shengyong1@huawei.com>
  <20171102035612.217263-4-shengyong1@huawei.com>
  <20171103032743.GA11335@jaegeuk-macbookpro.roam.corp.google.com>
+ <3faf699c-3f47-bf2b-ec82-952714187500@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
  helo=mx.sourceforge.net)
  by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
  (Exim 4.89) (envelope-from <shengyong1@huawei.com>)
- id 1eATIx-0006Pg-Of
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Nov 2017 04:10:03 +0000
+ id 1eATPH-0006Ym-1K
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Nov 2017 04:16:35 +0000
 Received: from szxga05-in.huawei.com ([45.249.212.191])
- by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1eATIu-00048j-Ff
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Nov 2017 04:10:03 +0000
-In-Reply-To: <20171103032743.GA11335@jaegeuk-macbookpro.roam.corp.google.com>
+ by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.76) id 1eATPF-000195-6S
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Nov 2017 04:16:34 +0000
+In-Reply-To: <3faf699c-3f47-bf2b-ec82-952714187500@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -39,9 +40,16 @@ accroding to its xattr index.
 
 Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 ---
+v3->v4:
+Please ignore the previous [PATCH v3] because of the bad indent. Sorry
+for the noise :(
+
 v2->v3:
 check if <linux/posix_acl.h> is supported. If it is not, print ACL value
 in hex format.
+
+thanks,
+Sheng
 
   configure.ac |   3 +-
   fsck/dump.c  |  18 ++++----
@@ -410,6 +418,8 @@ index b414629..beed3bb 100644
   #define XATTR_HDR(ptr)		((struct f2fs_xattr_header *)(ptr))
 -- 
 2.11.0
+
+
 
 
 ------------------------------------------------------------------------------
