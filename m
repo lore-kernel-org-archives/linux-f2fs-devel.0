@@ -1,11 +1,8 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 2/2] f2fs: support quota sys files
-Date: Fri, 3 Nov 2017 13:48:15 +0800
-Message-ID: <108bf3af-da8c-1b99-c67d-29345de96244@huawei.com>
-References: <20171031034030.26719-1-jaegeuk@kernel.org>
- <20171031034030.26719-2-jaegeuk@kernel.org>
- <74cfa9eb-0a37-3a23-288e-7f140ba584b2@kernel.org>
- <20171103033738.GB11335@jaegeuk-macbookpro.roam.corp.google.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH] fsck: check inline_dentry i_addr[0] same as
+ inline_data
+Date: Fri, 3 Nov 2017 14:29:39 +0800
+Message-ID: <1509690579-16102-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -13,14 +10,12 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
  helo=mx.sourceforge.net)
  by sfs-ml-1.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <yuchao0@huawei.com>) id 1eAUrH-0000VY-LQ
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Nov 2017 05:49:35 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190])
+ (Exim 4.89) (envelope-from <heyunlei@huawei.com>) id 1eAVg2-0001qU-KW
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Nov 2017 06:42:02 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191])
  by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1eAUrE-0004sB-Ja
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Nov 2017 05:49:35 +0000
-In-Reply-To: <20171103033738.GB11335@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
+ (Exim 4.76) id 1eAVg0-0003bZ-Ji
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Nov 2017 06:42:02 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,378 +25,86 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: heyunlei@huawei.com, morgan.wang@huawei.com
 
-On 2017/11/3 11:37, Jaegeuk Kim wrote:
-> On 11/02, Chao Yu wrote:
->> On 2017/10/31 11:40, Jaegeuk Kim wrote:
->>> This patch supports hidden quota files in the system, which will be used for
->>> Android. It requires up-to-date f2fs-tools later than v1.9.0.
->>>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>> ---
->>>  fs/f2fs/checkpoint.c |   9 +++-
->>>  fs/f2fs/f2fs.h       |   9 +++-
->>>  fs/f2fs/recovery.c   |   8 ++-
->>>  fs/f2fs/super.c      | 145 ++++++++++++++++++++++++++++++++++++++++++++++-----
->>>  4 files changed, 153 insertions(+), 18 deletions(-)
->>>
->>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->>> index 6b52d4b66c7b..78e1b2998bbd 100644
->>> --- a/fs/f2fs/checkpoint.c
->>> +++ b/fs/f2fs/checkpoint.c
->>> @@ -615,6 +615,9 @@ int recover_orphan_inodes(struct f2fs_sb_info *sbi)
->>>  	block_t start_blk, orphan_blocks, i, j;
->>>  	unsigned int s_flags = sbi->sb->s_flags;
->>>  	int err = 0;
->>> +#ifdef CONFIG_QUOTA
->>> +	int quota_enabled;
->>> +#endif
->>>  
->>>  	if (!is_set_ckpt_flags(sbi, CP_ORPHAN_PRESENT_FLAG))
->>>  		return 0;
->>> @@ -627,8 +630,9 @@ int recover_orphan_inodes(struct f2fs_sb_info *sbi)
->>>  #ifdef CONFIG_QUOTA
->>>  	/* Needed for iput() to work correctly and not trash data */
->>>  	sbi->sb->s_flags |= MS_ACTIVE;
->>> +
->>>  	/* Turn on quotas so that they are updated correctly */
->>> -	f2fs_enable_quota_files(sbi);
->>> +	quota_enabled = f2fs_enable_quota_files(sbi, s_flags & MS_RDONLY);
->>>  #endif
->>>  
->>>  	start_blk = __start_cp_addr(sbi) + 1 + __cp_payload(sbi);
->>> @@ -656,7 +660,8 @@ int recover_orphan_inodes(struct f2fs_sb_info *sbi)
->>>  out:
->>>  #ifdef CONFIG_QUOTA
->>>  	/* Turn quotas off */
->>> -	f2fs_quota_off_umount(sbi->sb);
->>> +	if (quota_enabled)
->>> +		f2fs_quota_off_umount(sbi->sb);
->>>  #endif
->>>  	sbi->sb->s_flags = s_flags; /* Restore MS_RDONLY status */
->>>  
->>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>> index 9a1c7ffa6845..e1d3a940d9f8 100644
->>> --- a/fs/f2fs/f2fs.h
->>> +++ b/fs/f2fs/f2fs.h
->>> @@ -1384,6 +1384,13 @@ static inline unsigned long long cur_cp_version(struct f2fs_checkpoint *cp)
->>>  	return le64_to_cpu(cp->checkpoint_ver);
->>>  }
->>>  
->>> +static inline unsigned long f2fs_qf_ino(struct super_block *sb, int type)
->>> +{
->>> +	if (type < F2FS_QUOTA_INO)
->>
->> Why not just use F2FS_MAX_QUOTAS instead of F2FS_QUOTA_INO? since in patch 1/2
->> we have defined qf_ino array with upper-boundary F2FS_MAX_QUOTAS.
-> 
-> It was intended to indicate # of enabled quotas. ;)
+<4>[   30.222442s][pid:1,cpu4,init][<ffffff8008357ffc>] f2fs_evict_inode+0x850/0xa34
+<4>[   30.222442s][pid:1,cpu4,init][<ffffff8008209ec4>] evict+0xa0/0x168
+<4>[   30.222442s][pid:1,cpu4,init][<ffffff800820ad34>] iput+0x188/0x220
+<4>[   30.222473s][pid:1,cpu4,init][<ffffff800836d050>] recover_orphan_inodes+0x2b4/0xa80
+<4>[   30.222473s][pid:1,cpu4,init][<ffffff80083648b0>] f2fs_fill_super+0xcf4/0x16a0
+<4>[   30.222473s][pid:1,cpu4,init][<ffffff80081f2478>] mount_bdev+0x198/0x1c8
+<4>[   30.222473s][pid:1,cpu4,init][<ffffff80083608a8>] f2fs_mount+0x14/0x1c
+<4>[   30.222503s][pid:1,cpu4,init][<ffffff80081f2f38>] mount_fs+0x3c/0x15c
+<4>[   30.222503s][pid:1,cpu4,init][<ffffff800820e9f8>] vfs_kern_mount+0x7c/0x16c
+<4>[   30.222503s][pid:1,cpu4,init][<ffffff8008212548>] do_mount+0x214/0xcf8
+<4>[   30.222503s][pid:1,cpu4,init][<ffffff800821338c>] SyS_mount+0xa8/0x164
+<4>[   30.222503s][pid:1,cpu4,init][<ffffff80080831b0>] el0_svc_naked+0x24/0x28
 
-Alright, so how about renaming it to F2FS_ENABLED_QUOTA_INO... :)
+Mount failed with message as blow:
+	recover_orphan_inode: orphan failed (ino=1265), run fsck to fix
 
-Thanks,
+One orphan directory with inline_dentry flag, but i_addr[0] is not zero.
+By the way, sit bitmap of i_addr[0] is also invalidate.
 
-> 
->>
->> 	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
->>
->> Other part looks good to me. ;)
->>
->> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->>
->> Thanks,
->>
->>> +		return le32_to_cpu(F2FS_SB(sb)->raw_super->qf_ino[type]);
->>> +	return 0;
->>> +}
->>> +
->>>  static inline __u64 cur_cp_crc(struct f2fs_checkpoint *cp)
->>>  {
->>>  	size_t crc_offset = le32_to_cpu(cp->checksum_offset);
->>> @@ -2526,7 +2533,7 @@ static inline int f2fs_add_link(struct dentry *dentry, struct inode *inode)
->>>   */
->>>  int f2fs_inode_dirtied(struct inode *inode, bool sync);
->>>  void f2fs_inode_synced(struct inode *inode);
->>> -void f2fs_enable_quota_files(struct f2fs_sb_info *sbi);
->>> +int f2fs_enable_quota_files(struct f2fs_sb_info *sbi, bool rdonly);
->>>  void f2fs_quota_off_umount(struct super_block *sb);
->>>  int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover);
->>>  int f2fs_sync_fs(struct super_block *sb, int sync);
->>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
->>> index 9626758bc762..92c57ace1939 100644
->>> --- a/fs/f2fs/recovery.c
->>> +++ b/fs/f2fs/recovery.c
->>> @@ -594,6 +594,9 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
->>>  	int ret = 0;
->>>  	unsigned long s_flags = sbi->sb->s_flags;
->>>  	bool need_writecp = false;
->>> +#ifdef CONFIG_QUOTA
->>> +	int quota_enabled;
->>> +#endif
->>>  
->>>  	if (s_flags & MS_RDONLY) {
->>>  		f2fs_msg(sbi->sb, KERN_INFO, "orphan cleanup on readonly fs");
->>> @@ -604,7 +607,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
->>>  	/* Needed for iput() to work correctly and not trash data */
->>>  	sbi->sb->s_flags |= MS_ACTIVE;
->>>  	/* Turn on quotas so that they are updated correctly */
->>> -	f2fs_enable_quota_files(sbi);
->>> +	quota_enabled = f2fs_enable_quota_files(sbi, s_flags & MS_RDONLY);
->>>  #endif
->>>  
->>>  	fsync_entry_slab = f2fs_kmem_cache_create("f2fs_fsync_inode_entry",
->>> @@ -665,7 +668,8 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
->>>  out:
->>>  #ifdef CONFIG_QUOTA
->>>  	/* Turn quotas off */
->>> -	f2fs_quota_off_umount(sbi->sb);
->>> +	if (quota_enabled)
->>> +		f2fs_quota_off_umount(sbi->sb);
->>>  #endif
->>>  	sbi->sb->s_flags = s_flags; /* Restore MS_RDONLY status */
->>>  
->>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>> index 96e145c34ba2..0ca7b055e4e0 100644
->>> --- a/fs/f2fs/super.c
->>> +++ b/fs/f2fs/super.c
->>> @@ -213,6 +213,12 @@ static int f2fs_set_qf_name(struct super_block *sb, int qtype,
->>>  			"quota options when quota turned on");
->>>  		return -EINVAL;
->>>  	}
->>> +	if (f2fs_sb_has_quota_ino(sb)) {
->>> +		f2fs_msg(sb, KERN_INFO,
->>> +			"QUOTA feature is enabled, so ignore qf_name");
->>> +		return 0;
->>> +	}
->>> +
->>>  	qname = match_strdup(args);
->>>  	if (!qname) {
->>>  		f2fs_msg(sb, KERN_ERR,
->>> @@ -291,6 +297,18 @@ static int f2fs_check_quota_options(struct f2fs_sb_info *sbi)
->>>  			return -1;
->>>  		}
->>>  	}
->>> +
->>> +	if (f2fs_sb_has_quota_ino(sbi->sb) && sbi->s_jquota_fmt) {
->>> +		f2fs_msg(sbi->sb, KERN_INFO,
->>> +			"QUOTA feature is enabled, so ignore jquota_fmt");
->>> +		sbi->s_jquota_fmt = 0;
->>> +	}
->>> +	if (f2fs_sb_has_quota_ino(sbi->sb) && sb_rdonly(sbi->sb)) {
->>> +		f2fs_msg(sbi->sb, KERN_INFO,
->>> +			 "Filesystem with quota feature cannot be mounted RDWR "
->>> +			 "without CONFIG_QUOTA");
->>> +		return -1;
->>> +	}
->>>  	return 0;
->>>  }
->>>  #endif
->>> @@ -1172,6 +1190,7 @@ static void default_options(struct f2fs_sb_info *sbi)
->>>  #endif
->>>  }
->>>  
->>> +static int f2fs_enable_quotas(struct super_block *sb);
->>>  static int f2fs_remount(struct super_block *sb, int *flags, char *data)
->>>  {
->>>  	struct f2fs_sb_info *sbi = F2FS_SB(sb);
->>> @@ -1238,6 +1257,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
->>>  	if (f2fs_readonly(sb) && (*flags & MS_RDONLY))
->>>  		goto skip;
->>>  
->>> +#ifdef CONFIG_QUOTA
->>>  	if (!f2fs_readonly(sb) && (*flags & MS_RDONLY)) {
->>>  		err = dquot_suspend(sb, -1);
->>>  		if (err < 0)
->>> @@ -1245,9 +1265,15 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
->>>  	} else {
->>>  		/* dquot_resume needs RW */
->>>  		sb->s_flags &= ~MS_RDONLY;
->>> -		dquot_resume(sb, -1);
->>> +		if (sb_any_quota_suspended(sb)) {
->>> +			dquot_resume(sb, -1);
->>> +		} else if (f2fs_sb_has_quota_ino(sb)) {
->>> +			err = f2fs_enable_quotas(sb);
->>> +			if (err)
->>> +				goto restore_opts;
->>> +		}
->>>  	}
->>> -
->>> +#endif
->>>  	/* disallow enable/disable extent_cache dynamically */
->>>  	if (no_extent_cache == !!test_opt(sbi, EXTENT_CACHE)) {
->>>  		err = -EINVAL;
->>> @@ -1454,19 +1480,91 @@ static int f2fs_quota_on_mount(struct f2fs_sb_info *sbi, int type)
->>>  						sbi->s_jquota_fmt, type);
->>>  }
->>>  
->>> -void f2fs_enable_quota_files(struct f2fs_sb_info *sbi)
->>> +int f2fs_enable_quota_files(struct f2fs_sb_info *sbi, bool rdonly)
->>>  {
->>> -	int i, ret;
->>> +	int enabled = 0;
->>> +	int i, err;
->>> +
->>> +	if (f2fs_sb_has_quota_ino(sbi->sb) && rdonly) {
->>> +		err = f2fs_enable_quotas(sbi->sb);
->>> +		if (err) {
->>> +			f2fs_msg(sbi->sb, KERN_ERR,
->>> +					"Cannot turn on quota_ino: %d", err);
->>> +			return 0;
->>> +		}
->>> +		return 1;
->>> +	}
->>>  
->>>  	for (i = 0; i < MAXQUOTAS; i++) {
->>>  		if (sbi->s_qf_names[i]) {
->>> -			ret = f2fs_quota_on_mount(sbi, i);
->>> -			if (ret < 0)
->>> -				f2fs_msg(sbi->sb, KERN_ERR,
->>> -					"Cannot turn on journaled "
->>> -					"quota: error %d", ret);
->>> +			err = f2fs_quota_on_mount(sbi, i);
->>> +			if (!err) {
->>> +				enabled = 1;
->>> +				continue;
->>> +			}
->>> +			f2fs_msg(sbi->sb, KERN_ERR,
->>> +				"Cannot turn on quotas: %d on %d", err, i);
->>> +		}
->>> +	}
->>> +	return enabled;
->>> +}
->>> +
->>> +static int f2fs_quota_enable(struct super_block *sb, int type, int format_id,
->>> +			     unsigned int flags)
->>> +{
->>> +	struct inode *qf_inode;
->>> +	unsigned long qf_inum;
->>> +	int err;
->>> +
->>> +	BUG_ON(!f2fs_sb_has_quota_ino(sb));
->>> +
->>> +	qf_inum = f2fs_qf_ino(sb, type);
->>> +	if (!qf_inum)
->>> +		return -EPERM;
->>> +
->>> +	qf_inode = f2fs_iget(sb, qf_inum);
->>> +	if (IS_ERR(qf_inode)) {
->>> +		f2fs_msg(sb, KERN_ERR,
->>> +			"Bad quota inode %u:%lu", type, qf_inum);
->>> +		return PTR_ERR(qf_inode);
->>> +	}
->>> +
->>> +	/* Don't account quota for quota files to avoid recursion */
->>> +	qf_inode->i_flags |= S_NOQUOTA;
->>> +	err = dquot_enable(qf_inode, type, format_id, flags);
->>> +	iput(qf_inode);
->>> +	return err;
->>> +}
->>> +
->>> +static int f2fs_enable_quotas(struct super_block *sb)
->>> +{
->>> +	int type, err = 0;
->>> +	unsigned long qf_inum;
->>> +	bool quota_mopt[MAXQUOTAS] = {
->>> +		test_opt(F2FS_SB(sb), USRQUOTA),
->>> +		test_opt(F2FS_SB(sb), GRPQUOTA),
->>> +		test_opt(F2FS_SB(sb), PRJQUOTA),
->>> +	};
->>> +
->>> +	sb_dqopt(sb)->flags |= DQUOT_QUOTA_SYS_FILE | DQUOT_NOLIST_DIRTY;
->>> +	for (type = 0; type < MAXQUOTAS; type++) {
->>> +		qf_inum = f2fs_qf_ino(sb, type);
->>> +		if (qf_inum) {
->>> +			err = f2fs_quota_enable(sb, type, QFMT_VFS_V1,
->>> +				DQUOT_USAGE_ENABLED |
->>> +				(quota_mopt[type] ? DQUOT_LIMITS_ENABLED : 0));
->>> +			if (err) {
->>> +				f2fs_msg(sb, KERN_ERR,
->>> +					"Failed to enable quota tracking "
->>> +					"(type=%d, err=%d). Please run "
->>> +					"fsck to fix.", type, err);
->>> +				for (type--; type >= 0; type--)
->>> +					dquot_quota_off(sb, type);
->>> +				return err;
->>> +			}
->>>  		}
->>>  	}
->>> +	return 0;
->>>  }
->>>  
->>>  static int f2fs_quota_sync(struct super_block *sb, int type)
->>> @@ -1537,7 +1635,7 @@ static int f2fs_quota_off(struct super_block *sb, int type)
->>>  	f2fs_quota_sync(sb, type);
->>>  
->>>  	err = dquot_quota_off(sb, type);
->>> -	if (err)
->>> +	if (err || f2fs_sb_has_quota_ino(sb))
->>>  		goto out_put;
->>>  
->>>  	inode_lock(inode);
->>> @@ -2364,7 +2462,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>>  
->>>  #ifdef CONFIG_QUOTA
->>>  	sb->dq_op = &f2fs_quota_operations;
->>> -	sb->s_qcop = &f2fs_quotactl_ops;
->>> +	if (f2fs_sb_has_quota_ino(sb))
->>> +		sb->s_qcop = &dquot_quotactl_sysfile_ops;
->>> +	else
->>> +		sb->s_qcop = &f2fs_quotactl_ops;
->>>  	sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP | QTYPE_MASK_PRJ;
->>>  #endif
->>>  
->>> @@ -2535,10 +2636,24 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>>  	if (err)
->>>  		goto free_root_inode;
->>>  
->>> +#ifdef CONFIG_QUOTA
->>> +	/*
->>> +	 * Turn on quotas which were not enabled for read-only mounts if
->>> +	 * filesystem has quota feature, so that they are updated correctly.
->>> +	 */
->>> +	if (f2fs_sb_has_quota_ino(sb) && !sb_rdonly(sb)) {
->>> +		err = f2fs_enable_quotas(sb);
->>> +		if (err) {
->>> +			f2fs_msg(sb, KERN_ERR,
->>> +				"Cannot turn on quotas: error %d", err);
->>> +			goto free_sysfs;
->>> +		}
->>> +	}
->>> +#endif
->>>  	/* if there are nt orphan nodes free them */
->>>  	err = recover_orphan_inodes(sbi);
->>>  	if (err)
->>> -		goto free_sysfs;
->>> +		goto free_meta;
->>>  
->>>  	/* recover fsynced data */
->>>  	if (!test_opt(sbi, DISABLE_ROLL_FORWARD)) {
->>> @@ -2572,7 +2687,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>>  			err = -EINVAL;
->>>  			f2fs_msg(sb, KERN_ERR,
->>>  				"Need to recover fsync data");
->>> -			goto free_sysfs;
->>> +			goto free_meta;
->>>  		}
->>>  	}
->>>  skip_recovery:
->>> @@ -2606,6 +2721,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>>  	return 0;
->>>  
->>>  free_meta:
->>> +#ifdef CONFIG_QUOTA
->>> +	if (f2fs_sb_has_quota_ino(sb) && !sb_rdonly(sb))
->>> +		f2fs_quota_off_umount(sbi->sb);
->>> +#endif
->>>  	f2fs_sync_inode_meta(sbi);
->>>  	/*
->>>  	 * Some dirty meta pages can be produced by recover_orphan_inodes()
->>>
-> 
-> .
-> 
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fsck/fsck.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
+
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 56a47be..17cf6ff 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -601,6 +601,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 	u32 i_links = le32_to_cpu(node_blk->i.i_links);
+ 	u64 i_size = le64_to_cpu(node_blk->i.i_size);
+ 	u64 i_blocks = le64_to_cpu(node_blk->i.i_blocks);
++	int ofs = get_extra_isize(node_blk);
+ 	unsigned char en[F2FS_NAME_LEN + 1];
+ 	int namelen;
+ 	unsigned int idx = 0;
+@@ -660,9 +661,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 			ftype == F2FS_FT_FIFO || ftype == F2FS_FT_SOCK)
+ 		goto check;
+ 
+-	if((node_blk->i.i_inline & F2FS_INLINE_DATA)) {
+-		int ofs = get_extra_isize(node_blk);
+-
++	if ((node_blk->i.i_inline & F2FS_INLINE_DATA)) {
+ 		if (le32_to_cpu(node_blk->i.i_addr[ofs]) != 0) {
+ 			/* should fix this bug all the time */
+ 			FIX_MSG("inline_data has wrong 0'th block = %x",
+@@ -685,8 +684,18 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 		DBG(3, "ino[0x%x] has inline data!\n", nid);
+ 		goto check;
+ 	}
+-	if((node_blk->i.i_inline & F2FS_INLINE_DENTRY)) {
++
++	if ((node_blk->i.i_inline & F2FS_INLINE_DENTRY)) {
+ 		DBG(3, "ino[0x%x] has inline dentry!\n", nid);
++		if (le32_to_cpu(node_blk->i.i_addr[ofs]) != 0) {
++			/* should fix this bug all the time */
++			FIX_MSG("inline_dentry has wrong 0'th block = %x",
++					le32_to_cpu(node_blk->i.i_addr[ofs]));
++			node_blk->i.i_addr[ofs] = 0;
++			node_blk->i.i_blocks = cpu_to_le64(*blk_cnt);
++			need_fix = 1;
++		}
++
+ 		ret = fsck_chk_inline_dentries(sbi, node_blk, &child);
+ 		if (ret < 0) {
+ 			/* should fix this bug all the time */
+@@ -715,7 +724,6 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 	/* check data blocks in inode */
+ 	for (idx = 0; idx < ADDRS_PER_INODE(&node_blk->i);
+ 						idx++, child.pgofs++) {
+-		int ofs = get_extra_isize(node_blk);
+ 		block_t blkaddr = le32_to_cpu(node_blk->i.i_addr[ofs + idx]);
+ 
+ 		/* check extent info */
+-- 
+1.9.1
 
 
 ------------------------------------------------------------------------------
