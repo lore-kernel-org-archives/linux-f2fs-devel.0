@@ -1,20 +1,25 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs-tools: fix warnings when building in android
-Date: Thu,  2 Nov 2017 20:16:39 -0700
-Message-ID: <20171103031639.11136-1-jaegeuk@kernel.org>
+Subject: Re: [RFC PATCH v2 3/9] dump/fsck: introduce
+ print_xattr_entry
+Date: Thu, 2 Nov 2017 20:27:43 -0700
+Message-ID: <20171103032743.GA11335@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20171102035612.217263-1-shengyong1@huawei.com>
+ <20171102035612.217263-4-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
  helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <jaegeuk@kernel.org>) id 1eASTQ-0006XJ-52
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Nov 2017 03:16:48 +0000
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) (envelope-from <jaegeuk@kernel.org>) id 1eASe7-0002ab-7j
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Nov 2017 03:27:51 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
- (Exim 4.76) id 1eASTO-0004VG-Ud
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Nov 2017 03:16:48 +0000
+ by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+ (Exim 4.76) id 1eASe5-0005aI-EG
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Nov 2017 03:27:51 +0000
+Content-Disposition: inline
+In-Reply-To: <20171102035612.217263-4-shengyong1@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -24,210 +29,367 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@google.com>
+To: Sheng Yong <shengyong1@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-From: Jaegeuk Kim <jaegeuk@google.com>
+Hi Sheng,
 
-This patch tries to avoid all the warnings.
+This triggers:
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@google.com>
----
- fsck/dir.c     | 28 +++++++++++++++++-----------
- fsck/fsck.h    |  4 ++--
- fsck/node.c    |  2 +-
- fsck/segment.c | 10 +++++-----
- 4 files changed, 25 insertions(+), 19 deletions(-)
+mount.c:14:29: fatal error: linux/posix_acl.h: No such file or directory
 
-diff --git a/fsck/dir.c b/fsck/dir.c
-index bbf28aa..27c3245 100644
---- a/fsck/dir.c
-+++ b/fsck/dir.c
-@@ -51,10 +51,12 @@ void make_dentry_ptr(struct f2fs_dentry_ptr *d, struct f2fs_node *node_blk,
- 
- 		d->max = entry_cnt;
- 		d->nr_bitmap = bitmap_size;
--		d->bitmap = src;
--		d->dentry = src + bitmap_size + reserved_size;
--		d->filename = src + bitmap_size + reserved_size +
--						SIZE_OF_DIR_ENTRY * entry_cnt;
-+		d->bitmap = (u8 *)src;
-+		d->dentry = (struct f2fs_dir_entry *)
-+				((char *)src + bitmap_size + reserved_size);
-+		d->filename = (__u8 (*)[F2FS_SLOT_LEN])((char *)src +
-+				bitmap_size + reserved_size +
-+				SIZE_OF_DIR_ENTRY * entry_cnt);
- 	}
- }
- 
-@@ -68,7 +70,7 @@ static struct f2fs_dir_entry *find_target_dentry(const u8 *name,
- 
- 	if (max_slots)
- 		*max_slots = 0;
--	while (bit_pos < d->max) {
-+	while (bit_pos < (unsigned long)d->max) {
- 		if (!test_bit_le(bit_pos, d->bitmap)) {
- 			bit_pos++;
- 			max_len++;
-@@ -110,7 +112,7 @@ static int find_in_level(struct f2fs_sb_info *sbi,struct f2fs_node *dir,
- 	unsigned int nbucket, nblock;
- 	unsigned int bidx, end_block;
- 	struct f2fs_dir_entry *dentry = NULL;
--	struct dnode_of_data dn = {0};
-+	struct dnode_of_data dn;
- 	void *dentry_blk;
- 	int max_slots = 214;
- 	nid_t ino = le32_to_cpu(dir->footer.ino);
-@@ -129,6 +131,7 @@ static int find_in_level(struct f2fs_sb_info *sbi,struct f2fs_node *dir,
- 	dentry_blk = calloc(BLOCK_SZ, 1);
- 	ASSERT(dentry_blk);
- 
-+	memset(&dn, 0, sizeof(dn));
- 	for (; bidx < end_block; bidx++) {
- 
- 		/* Firstly, we should know direct node of target data blk */
-@@ -206,7 +209,7 @@ static int f2fs_add_link(struct f2fs_sb_info *sbi, struct f2fs_node *parent,
- 	f2fs_hash_t dentry_hash = f2fs_dentry_hash(name, name_len);
- 	struct f2fs_dentry_block *dentry_blk;
- 	struct f2fs_dentry_ptr d;
--	struct dnode_of_data dn = {0};
-+	struct dnode_of_data dn;
- 	nid_t pino = le32_to_cpu(parent->footer.ino);
- 	unsigned int dir_level = parent->i.i_dir_level;
- 	int ret;
-@@ -238,6 +241,7 @@ start:
- 	nblock = bucket_blocks(level);
- 	bidx = dir_block_index(level, dir_level, le32_to_cpu(dentry_hash) % nbucket);
- 
-+	memset(&dn, 0, sizeof(dn));
- 	for (block = bidx; block <= (bidx + nblock - 1); block++) {
- 
- 		/* Firstly, we should know the direct node of target data blk */
-@@ -285,7 +289,8 @@ add_dentry:
- 		dn.idirty = 1;
- 	}
- 
--	if ((block + 1) * F2FS_BLKSIZE > le64_to_cpu(parent->i.i_size)) {
-+	if ((__u64)((block + 1) * F2FS_BLKSIZE) >
-+					le64_to_cpu(parent->i.i_size)) {
- 		parent->i.i_size = cpu_to_le64((block + 1) * F2FS_BLKSIZE);
- 		dn.idirty = 1;
- 	}
-@@ -360,7 +365,7 @@ static void page_symlink(struct f2fs_sb_info *sbi, struct f2fs_node *inode,
- 	get_node_info(sbi, ino, &ni);
- 
- 	/* store into inline_data */
--	if (symlen + 1 <= MAX_INLINE_DATA(inode)) {
-+	if ((unsigned long)(symlen + 1) <= MAX_INLINE_DATA(inode)) {
- 		inode->i.i_inline |= F2FS_INLINE_DATA;
- 		inode->i.i_inline |= F2FS_DATA_EXIST;
- 		memcpy(inline_data_addr(inode), symname, symlen);
-@@ -460,7 +465,7 @@ int convert_inline_dentry(struct f2fs_sb_info *sbi, struct f2fs_node *node,
- 	unsigned int dir_level = node->i.i_dir_level;
- 	nid_t ino = le32_to_cpu(node->footer.ino);
- 	char inline_data[MAX_INLINE_DATA(node)];
--	struct dnode_of_data dn = {0};
-+	struct dnode_of_data dn;
- 	struct f2fs_dentry_ptr d;
- 	unsigned long bit_pos = 0;
- 	int ret = 0;
-@@ -475,6 +480,7 @@ int convert_inline_dentry(struct f2fs_sb_info *sbi, struct f2fs_node *node,
- 	ret = dev_write_block(node, p_blkaddr);
- 	ASSERT(ret >= 0);
- 
-+	memset(&dn, 0, sizeof(dn));
- 	if (!dir_level) {
- 		struct f2fs_dentry_block *dentry_blk;
- 		struct f2fs_dentry_ptr src, dst;
-@@ -510,7 +516,7 @@ int convert_inline_dentry(struct f2fs_sb_info *sbi, struct f2fs_node *node,
- 	make_empty_dir(sbi, node);
- 	make_dentry_ptr(&d, node, (void *)inline_data, 2);
- 
--	while (bit_pos < d.max) {
-+	while (bit_pos < (unsigned long)d.max) {
- 		struct f2fs_dir_entry *de;
- 		const unsigned char *filename;
- 		int namelen;
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index 7b6ac2b..1db5437 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -231,8 +231,8 @@ block_t new_node_block(struct f2fs_sb_info *,
- 					struct dnode_of_data *, unsigned int);
- 
- /* segment.c */
--u64 f2fs_read(struct f2fs_sb_info *, nid_t, void *, u64, pgoff_t);
--u64 f2fs_write(struct f2fs_sb_info *, nid_t, void *, u64, pgoff_t);
-+u64 f2fs_read(struct f2fs_sb_info *, nid_t, u8 *, u64, pgoff_t);
-+u64 f2fs_write(struct f2fs_sb_info *, nid_t, u8 *, u64, pgoff_t);
- void f2fs_filesize_update(struct f2fs_sb_info *, nid_t, u64);
- 
- void get_dnode_of_data(struct f2fs_sb_info *, struct dnode_of_data *,
-diff --git a/fsck/node.c b/fsck/node.c
-index e37b817..fd583f7 100644
---- a/fsck/node.c
-+++ b/fsck/node.c
-@@ -105,7 +105,7 @@ block_t new_node_block(struct f2fs_sb_info *sbi,
-  *
-  * By default, it sets inline_xattr and inline_data
-  */
--static int get_node_path(struct f2fs_node *node, unsigned long block,
-+static int get_node_path(struct f2fs_node *node, long block,
- 				int offset[4], unsigned int noffset[4])
- {
- 	const long direct_index = ADDRS_PER_INODE(&node->i);
-diff --git a/fsck/segment.c b/fsck/segment.c
-index efbd667..695fc6a 100644
---- a/fsck/segment.c
-+++ b/fsck/segment.c
-@@ -66,7 +66,7 @@ void new_data_block(struct f2fs_sb_info *sbi, void *block,
- {
- 	struct f2fs_summary sum;
- 	struct node_info ni;
--	int blkaddr = datablock_addr(dn->node_blk, dn->ofs_in_node);
-+	unsigned int blkaddr = datablock_addr(dn->node_blk, dn->ofs_in_node);
- 
- 	ASSERT(dn->node_blk);
- 	memset(block, 0, BLOCK_SZ);
-@@ -82,7 +82,7 @@ void new_data_block(struct f2fs_sb_info *sbi, void *block,
- 	set_data_blkaddr(dn);
- }
- 
--u64 f2fs_read(struct f2fs_sb_info *sbi, nid_t ino, void *buffer,
-+u64 f2fs_read(struct f2fs_sb_info *sbi, nid_t ino, u8 *buffer,
- 					u64 count, pgoff_t offset)
- {
- 	struct dnode_of_data dn;
-@@ -165,7 +165,7 @@ u64 f2fs_read(struct f2fs_sb_info *sbi, nid_t ino, void *buffer,
- 	return read_count;
- }
- 
--u64 f2fs_write(struct f2fs_sb_info *sbi, nid_t ino, void *buffer,
-+u64 f2fs_write(struct f2fs_sb_info *sbi, nid_t ino, u8 *buffer,
- 					u64 count, pgoff_t offset)
- {
- 	struct dnode_of_data dn;
-@@ -276,7 +276,7 @@ int f2fs_build_file(struct f2fs_sb_info *sbi, struct dentry *de)
- {
- 	int fd, n;
- 	pgoff_t off = 0;
--	char buffer[BLOCK_SZ];
-+	u8 buffer[BLOCK_SZ];
- 
- 	if (de->ino == 0)
- 		return -1;
-@@ -310,7 +310,7 @@ int f2fs_build_file(struct f2fs_sb_info *sbi, struct dentry *de)
- 				cpu_to_le16(F2FS_TOTAL_EXTRA_ATTR_SIZE);
- 		}
- 		n = read(fd, buffer, BLOCK_SZ);
--		ASSERT(n == de->size);
-+		ASSERT((unsigned long)n == de->size);
- 		memcpy(inline_data_addr(node_blk), buffer, de->size);
- 		node_blk->i.i_size = cpu_to_le64(de->size);
- 		write_inode(ni.blk_addr, node_blk);
--- 
-2.14.0.rc1.383.gd1ce394fe2-goog
+Thanks,
 
+On 11/02, Sheng Yong wrote:
+> This patch exports read_all_xattrs to allow dump/fsck to get all xattrs,
+> and introduces print_xattr_entry which tries to parse an xattr entry
+> accroding to its xattr index.
+> 
+> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+> ---
+>  fsck/dump.c  |  18 ++++-----
+>  fsck/fsck.h  |   7 +++-
+>  fsck/mount.c | 123 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+>  fsck/xattr.c |   2 +-
+>  fsck/xattr.h |  54 +++++++++++++++++++++++++-
+>  5 files changed, 188 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fsck/dump.c b/fsck/dump.c
+> index 128dc53..90fd073 100644
+> --- a/fsck/dump.c
+> +++ b/fsck/dump.c
+> @@ -419,17 +419,17 @@ void dump_node(struct f2fs_sb_info *sbi, nid_t nid, int force)
+>  	if (le32_to_cpu(node_blk->footer.ino) == ni.ino &&
+>  			le32_to_cpu(node_blk->footer.nid) == ni.nid &&
+>  			ni.ino == ni.nid) {
+> -		print_node_info(node_blk, force);
+> +		print_node_info(sbi, node_blk, force);
+>  		dump_file(sbi, &ni, node_blk, force);
+>  	} else {
+> -		print_node_info(node_blk, force);
+> +		print_node_info(sbi, node_blk, force);
+>  		MSG(force, "Invalid (i)node block\n\n");
+>  	}
+>  
+>  	free(node_blk);
+>  }
+>  
+> -static void dump_node_from_blkaddr(u32 blk_addr)
+> +static void dump_node_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
+>  {
+>  	struct f2fs_node *node_blk;
+>  	int ret;
+> @@ -441,9 +441,9 @@ static void dump_node_from_blkaddr(u32 blk_addr)
+>  	ASSERT(ret >= 0);
+>  
+>  	if (c.dbg_lv > 0)
+> -		print_node_info(node_blk, 0);
+> +		print_node_info(sbi, node_blk, 0);
+>  	else
+> -		print_inode_info(&node_blk->i, 1);
+> +		print_inode_info(sbi, node_blk, 1);
+>  
+>  	free(node_blk);
+>  }
+> @@ -567,7 +567,7 @@ int dump_info_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
+>  
+>  	/* print inode */
+>  	if (c.dbg_lv > 0)
+> -		dump_node_from_blkaddr(ino_ni.blk_addr);
+> +		dump_node_from_blkaddr(sbi, ino_ni.blk_addr);
+>  
+>  	if (type == SEG_TYPE_CUR_DATA || type == SEG_TYPE_DATA) {
+>  		MSG(0, "FS Userdata Area: Data block from 0x%x\n", blk_addr);
+> @@ -575,7 +575,7 @@ int dump_info_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
+>  					nid, ni.blk_addr);
+>  		MSG(0, " - Inode block       : id = 0x%x from 0x%x\n",
+>  					ni.ino, ino_ni.blk_addr);
+> -		dump_node_from_blkaddr(ino_ni.blk_addr);
+> +		dump_node_from_blkaddr(sbi, ino_ni.blk_addr);
+>  		dump_data_offset(ni.blk_addr,
+>  			le16_to_cpu(sum_entry.ofs_in_node));
+>  	} else {
+> @@ -583,13 +583,13 @@ int dump_info_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
+>  		if (ni.ino == ni.nid) {
+>  			MSG(0, " - Inode block       : id = 0x%x from 0x%x\n",
+>  					ni.ino, ino_ni.blk_addr);
+> -			dump_node_from_blkaddr(ino_ni.blk_addr);
+> +			dump_node_from_blkaddr(sbi, ino_ni.blk_addr);
+>  		} else {
+>  			MSG(0, " - Node block        : id = 0x%x from 0x%x\n",
+>  					nid, ni.blk_addr);
+>  			MSG(0, " - Inode block       : id = 0x%x from 0x%x\n",
+>  					ni.ino, ino_ni.blk_addr);
+> -			dump_node_from_blkaddr(ino_ni.blk_addr);
+> +			dump_node_from_blkaddr(sbi, ino_ni.blk_addr);
+>  			dump_node_offset(ni.blk_addr);
+>  		}
+>  	}
+> diff --git a/fsck/fsck.h b/fsck/fsck.h
+> index 1e8ed0b..f8caa46 100644
+> --- a/fsck/fsck.h
+> +++ b/fsck/fsck.h
+> @@ -141,8 +141,8 @@ int convert_encrypted_name(unsigned char *, int, unsigned char *, int);
+>  
+>  extern void update_free_segments(struct f2fs_sb_info *);
+>  void print_cp_state(u32);
+> -extern void print_node_info(struct f2fs_node *, int);
+> -extern void print_inode_info(struct f2fs_inode *, int);
+> +extern void print_node_info(struct f2fs_sb_info *, struct f2fs_node *, int);
+> +extern void print_inode_info(struct f2fs_sb_info *, struct f2fs_node *, int);
+>  extern struct seg_entry *get_seg_entry(struct f2fs_sb_info *, unsigned int);
+>  extern struct f2fs_summary_block *get_sum_block(struct f2fs_sb_info *,
+>  				unsigned int, int *);
+> @@ -228,4 +228,7 @@ int f2fs_symlink(struct f2fs_sb_info *, struct dentry *);
+>  int inode_set_selinux(struct f2fs_sb_info *, u32, const char *);
+>  int f2fs_find_path(struct f2fs_sb_info *, char *, nid_t *);
+>  
+> +/* xattr.c */
+> +void *read_all_xattrs(struct f2fs_sb_info *, struct f2fs_node *);
+> +
+>  #endif /* _FSCK_H_ */
+> diff --git a/fsck/mount.c b/fsck/mount.c
+> index d8bc50c..d631547 100644
+> --- a/fsck/mount.c
+> +++ b/fsck/mount.c
+> @@ -9,7 +9,9 @@
+>   * published by the Free Software Foundation.
+>   */
+>  #include "fsck.h"
+> +#include "xattr.h"
+>  #include <locale.h>
+> +#include <linux/posix_acl.h>
+>  
+>  u32 get_free_segments(struct f2fs_sb_info *sbi)
+>  {
+> @@ -35,8 +37,116 @@ void update_free_segments(struct f2fs_sb_info *sbi)
+>  	i++;
+>  }
+>  
+> -void print_inode_info(struct f2fs_inode *inode, int name)
+> +void print_acl(char *value, int size)
+>  {
+> +	struct f2fs_acl_header *hdr = (struct f2fs_acl_header *)value;
+> +	struct f2fs_acl_entry *entry = (struct f2fs_acl_entry *)(hdr + 1);
+> +	const char *end = value + size;
+> +	int i, count;
+> +
+> +	if (hdr->a_version != cpu_to_le32(F2FS_ACL_VERSION)) {
+> +		MSG(0, "Invalid ACL version [0x%x : 0x%x]\n",
+> +				le32_to_cpu(hdr->a_version), F2FS_ACL_VERSION);
+> +		return;
+> +	}
+> +
+> +	count = f2fs_acl_count(size);
+> +	if (count <= 0) {
+> +		MSG(0, "Invalid ACL value size %d\n", size);
+> +		return;
+> +	}
+> +
+> +	for (i = 0; i < count; i++) {
+> +		if ((char *)entry > end) {
+> +			MSG(0, "Invalid ACL entries count %d\n", count);
+> +			return;
+> +		}
+> +
+> +		switch (le16_to_cpu(entry->e_tag)) {
+> +		case ACL_USER_OBJ:
+> +		case ACL_GROUP_OBJ:
+> +		case ACL_MASK:
+> +		case ACL_OTHER:
+> +			MSG(0, "tag:0x%x perm:0x%x\n",
+> +					le16_to_cpu(entry->e_tag),
+> +					le16_to_cpu(entry->e_perm));
+> +			entry = (struct f2fs_acl_entry *)((char *)entry +
+> +					sizeof(struct f2fs_acl_entry_short));
+> +			break;
+> +		case ACL_USER:
+> +			MSG(0, "tag:0x%x perm:0x%x uid:%u\n",
+> +					le16_to_cpu(entry->e_tag),
+> +					le16_to_cpu(entry->e_perm),
+> +					le32_to_cpu(entry->e_id));
+> +			entry = (struct f2fs_acl_entry *)((char *)entry +
+> +					sizeof(struct f2fs_acl_entry));
+> +			break;
+> +		case ACL_GROUP:
+> +			MSG(0, "tag:0x%x perm:0x%x gid:%u\n",
+> +					le16_to_cpu(entry->e_tag),
+> +					le16_to_cpu(entry->e_perm),
+> +					le32_to_cpu(entry->e_id));
+> +			entry = (struct f2fs_acl_entry *)((char *)entry +
+> +					sizeof(struct f2fs_acl_entry));
+> +			break;
+> +		default:
+> +			MSG(0, "Unknown ACL tag 0x%x\n",
+> +					le16_to_cpu(entry->e_tag));
+> +			return;
+> +		}
+> +	}
+> +}
+> +
+> +void print_xattr_entry(struct f2fs_xattr_entry *ent)
+> +{
+> +	char *value = (char *)(ent->e_name + le16_to_cpu(ent->e_name_len));
+> +	struct fscrypt_context *ctx;
+> +	int i;
+> +
+> +	MSG(0, "\nxattr: e_name_index:%d e_name:", ent->e_name_index);
+> +	for (i = 0; i < le16_to_cpu(ent->e_name_len); i++)
+> +		MSG(0, "%c", ent->e_name[i]);
+> +	MSG(0, " e_name_len:%d e_value_size:%d e_value:\n",
+> +			ent->e_name_len, le16_to_cpu(ent->e_value_size));
+> +
+> +	switch (ent->e_name_index) {
+> +	case F2FS_XATTR_INDEX_POSIX_ACL_ACCESS:
+> +	case F2FS_XATTR_INDEX_POSIX_ACL_DEFAULT:
+> +		print_acl(value, le16_to_cpu(ent->e_value_size));
+> +		break;
+> +	case F2FS_XATTR_INDEX_USER:
+> +	case F2FS_XATTR_INDEX_SECURITY:
+> +	case F2FS_XATTR_INDEX_TRUSTED:
+> +	case F2FS_XATTR_INDEX_LUSTRE:
+> +		for (i = 0; i < le16_to_cpu(ent->e_value_size); i++)
+> +			MSG(0, "%02X", value[i]);
+> +		MSG(0, "\n");
+> +		break;
+> +	case F2FS_XATTR_INDEX_ENCRYPTION:
+> +		ctx = (struct fscrypt_context *)value;
+> +		MSG(0, "format: %d\n", ctx->format);
+> +		MSG(0, "contents_encryption_mode: 0x%x\n", ctx->contents_encryption_mode);
+> +		MSG(0, "filenames_encryption_mode: 0x%x\n", ctx->filenames_encryption_mode);
+> +		MSG(0, "flags: 0x%x\n", ctx->flags);
+> +		MSG(0, "master_key_descriptor: ");
+> +		for (i = 0; i < FS_KEY_DESCRIPTOR_SIZE; i++)
+> +			MSG(0, "%02X", ctx->master_key_descriptor[i]);
+> +		MSG(0, "\nnonce: ");
+> +		for (i = 0; i < FS_KEY_DERIVATION_NONCE_SIZE; i++)
+> +			MSG(0, "%02X", ctx->nonce[i]);
+> +		MSG(0, "\n");
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +}
+> +
+> +void print_inode_info(struct f2fs_sb_info *sbi,
+> +			struct f2fs_node *node, int name)
+> +{
+> +	struct f2fs_inode *inode = &node->i;
+> +	void *xattr_addr;
+> +	struct f2fs_xattr_entry *ent;
+>  	unsigned char en[F2FS_NAME_LEN + 1];
+>  	unsigned int i = 0;
+>  	int namelen = le32_to_cpu(inode->i_namelen);
+> @@ -111,17 +221,24 @@ void print_inode_info(struct f2fs_inode *inode, int name)
+>  	DISP_u32(inode, i_nid[3]);	/* indirect */
+>  	DISP_u32(inode, i_nid[4]);	/* double indirect */
+>  
+> +	xattr_addr = read_all_xattrs(sbi, node);
+> +	list_for_each_xattr(ent, xattr_addr) {
+> +		print_xattr_entry(ent);
+> +	}
+> +	free(xattr_addr);
+> +
+>  	printf("\n");
+>  }
+>  
+> -void print_node_info(struct f2fs_node *node_block, int verbose)
+> +void print_node_info(struct f2fs_sb_info *sbi,
+> +			struct f2fs_node *node_block, int verbose)
+>  {
+>  	nid_t ino = le32_to_cpu(node_block->footer.ino);
+>  	nid_t nid = le32_to_cpu(node_block->footer.nid);
+>  	/* Is this inode? */
+>  	if (ino == nid) {
+>  		DBG(verbose, "Node ID [0x%x:%u] is inode\n", nid, nid);
+> -		print_inode_info(&node_block->i, verbose);
+> +		print_inode_info(sbi, node_block, verbose);
+>  	} else {
+>  		int i;
+>  		u32 *dump_blk = (u32 *)node_block;
+> diff --git a/fsck/xattr.c b/fsck/xattr.c
+> index 3f5c7d3..1d0f7d3 100644
+> --- a/fsck/xattr.c
+> +++ b/fsck/xattr.c
+> @@ -20,7 +20,7 @@
+>  #define XATTR_CREATE 0x1
+>  #define XATTR_REPLACE 0x2
+>  
+> -static void *read_all_xattrs(struct f2fs_sb_info *sbi, struct f2fs_node *inode)
+> +void *read_all_xattrs(struct f2fs_sb_info *sbi, struct f2fs_node *inode)
+>  {
+>  	struct f2fs_xattr_header *header;
+>  	void *txattr_addr;
+> diff --git a/fsck/xattr.h b/fsck/xattr.h
+> index b414629..beed3bb 100644
+> --- a/fsck/xattr.h
+> +++ b/fsck/xattr.h
+> @@ -31,10 +31,62 @@ struct f2fs_xattr_entry {
+>  	char e_name[0];		/* attribute name */
+>  };
+>  
+> +#define FS_KEY_DESCRIPTOR_SIZE 8
+> +#define FS_KEY_DERIVATION_NONCE_SIZE 16
+> +
+> +struct fscrypt_context {
+> +	u8 format;
+> +	u8 contents_encryption_mode;
+> +	u8 filenames_encryption_mode;
+> +	u8 flags;
+> +	u8 master_key_descriptor[FS_KEY_DESCRIPTOR_SIZE];
+> +	u8 nonce[FS_KEY_DERIVATION_NONCE_SIZE];
+> +} __attribute__((packed));
+> +
+> +#define F2FS_ACL_VERSION	0x0001
+> +
+> +struct f2fs_acl_entry {
+> +	__le16 e_tag;
+> +	__le16 e_perm;
+> +	__le32 e_id;
+> +};
+> +
+> +struct f2fs_acl_entry_short {
+> +	__le16 e_tag;
+> +	__le16 e_perm;
+> +};
+> +
+> +struct f2fs_acl_header {
+> +	__le32 a_version;
+> +};
+> +
+> +static inline int f2fs_acl_count(int size)
+> +{
+> +	ssize_t s;
+> +	size -= sizeof(struct f2fs_acl_header);
+> +	s = size - 4 * sizeof(struct f2fs_acl_entry_short);
+> +	if (s < 0) {
+> +		if (size % sizeof(struct f2fs_acl_entry_short))
+> +			return -1;
+> +		return size / sizeof(struct f2fs_acl_entry_short);
+> +	} else {
+> +		if (s % sizeof(struct f2fs_acl_entry))
+> +			return -1;
+> +		return s / sizeof(struct f2fs_acl_entry) + 4;
+> +	}
+> +}
+> +
+>  #define XATTR_ROUND	(3)
+>  
+>  #define XATTR_SELINUX_SUFFIX "selinux"
+> -#define F2FS_XATTR_INDEX_SECURITY	6
+> +#define F2FS_XATTR_INDEX_USER			1
+> +#define F2FS_XATTR_INDEX_POSIX_ACL_ACCESS	2
+> +#define F2FS_XATTR_INDEX_POSIX_ACL_DEFAULT	3
+> +#define F2FS_XATTR_INDEX_TRUSTED		4
+> +#define F2FS_XATTR_INDEX_LUSTRE			5
+> +#define F2FS_XATTR_INDEX_SECURITY		6
+> +#define F2FS_XATTR_INDEX_ENCRYPTION		9
+> +
+>  #define IS_XATTR_LAST_ENTRY(entry) (*(__u32 *)(entry) == 0)
+>  
+>  #define XATTR_HDR(ptr)		((struct f2fs_xattr_header *)(ptr))
+> -- 
+> 2.11.0
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
