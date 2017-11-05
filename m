@@ -1,8 +1,10 @@
 From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 1/3] f2fs: avoid using __GFP_NOFAIL
-Date: Sun,  5 Nov 2017 21:53:28 +0800
-Message-ID: <20171105135330.15070-1-chao@kernel.org>
+Subject: [PATCH 2/3] f2fs: trace checkpoint reason in fsync()
+Date: Sun,  5 Nov 2017 21:53:29 +0800
+Message-ID: <20171105135330.15070-2-chao@kernel.org>
+References: <20171105135330.15070-1-chao@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171105135330.15070-1-chao@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
@@ -10,52 +12,141 @@ List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-We will keep __add_ino_entry success all the time, for ENOMEM failure
-case, we have already handled it with an opened loop code, so we don't
-have to use redundant __GFP_NOFAIL in radix_tree_preload, remove it.
+This patch slightly changes need_do_checkpoint to return the detail
+info that indicates why we need do checkpoint, then caller could print
+it with trace message.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/checkpoint.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ fs/f2fs/file.c              | 34 ++++++++++++++++++----------------
+ include/trace/events/f2fs.h | 12 ++++++------
+ 2 files changed, 24 insertions(+), 22 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 98777c1ae70c..43ee9d97fd8f 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -405,10 +405,11 @@ static void __add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino,
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index cee0f36ba9a1..d9d8b1c372f8 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -141,27 +141,29 @@ static int get_parent_ino(struct inode *inode, nid_t *pino)
+ 	return 1;
+ }
+ 
+-static inline bool need_do_checkpoint(struct inode *inode)
++static inline int need_do_checkpoint(struct inode *inode)
  {
- 	struct inode_management *im = &sbi->im[type];
- 	struct ino_entry *e, *tmp;
-+	bool preloaded;
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	bool need_cp = false;
++	int cp_reason = 0;
  
- 	tmp = f2fs_kmem_cache_alloc(ino_entry_slab, GFP_NOFS);
- retry:
--	radix_tree_preload(GFP_NOFS | __GFP_NOFAIL);
-+	preloaded = !radix_tree_preload(GFP_NOFS);
+-	if (!S_ISREG(inode->i_mode) || inode->i_nlink != 1)
+-		need_cp = true;
++	if (!S_ISREG(inode->i_mode))
++		cp_reason = 1;
++	else if (inode->i_nlink != 1)
++		cp_reason = 2;
+ 	else if (is_sbi_flag_set(sbi, SBI_NEED_CP))
+-		need_cp = true;
++		cp_reason = 3;
+ 	else if (file_wrong_pino(inode))
+-		need_cp = true;
++		cp_reason = 4;
+ 	else if (!space_for_roll_forward(sbi))
+-		need_cp = true;
++		cp_reason = 5;
+ 	else if (!is_checkpointed_node(sbi, F2FS_I(inode)->i_pino))
+-		need_cp = true;
++		cp_reason = 6;
+ 	else if (test_opt(sbi, FASTBOOT))
+-		need_cp = true;
++		cp_reason = 7;
+ 	else if (sbi->active_logs == 2)
+-		need_cp = true;
++		cp_reason = 8;
  
- 	spin_lock(&im->ino_lock);
- 	e = radix_tree_lookup(&im->ino_root, ino);
-@@ -416,7 +417,8 @@ static void __add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino,
- 		e = tmp;
- 		if (radix_tree_insert(&im->ino_root, ino, e)) {
- 			spin_unlock(&im->ino_lock);
--			radix_tree_preload_end();
-+			if (preloaded)
-+				radix_tree_preload_end();
- 			goto retry;
- 		}
- 		memset(e, 0, sizeof(struct ino_entry));
-@@ -431,7 +433,9 @@ static void __add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino,
- 		f2fs_set_bit(devidx, (char *)&e->dirty_device);
+-	return need_cp;
++	return cp_reason;
+ }
  
- 	spin_unlock(&im->ino_lock);
--	radix_tree_preload_end();
-+
-+	if (preloaded)
-+		radix_tree_preload_end();
+ static bool need_inode_page_update(struct f2fs_sb_info *sbi, nid_t ino)
+@@ -196,7 +198,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	nid_t ino = inode->i_ino;
+ 	int ret = 0;
+-	bool need_cp = false;
++	bool cp_reason = 0;
+ 	struct writeback_control wbc = {
+ 		.sync_mode = WB_SYNC_ALL,
+ 		.nr_to_write = LONG_MAX,
+@@ -215,7 +217,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 	clear_inode_flag(inode, FI_NEED_IPU);
  
- 	if (e != tmp)
- 		kmem_cache_free(ino_entry_slab, tmp);
+ 	if (ret) {
+-		trace_f2fs_sync_file_exit(inode, need_cp, datasync, ret);
++		trace_f2fs_sync_file_exit(inode, cp_reason, datasync, ret);
+ 		return ret;
+ 	}
+ 
+@@ -246,10 +248,10 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 	 * sudden-power-off.
+ 	 */
+ 	down_read(&F2FS_I(inode)->i_sem);
+-	need_cp = need_do_checkpoint(inode);
++	cp_reason = need_do_checkpoint(inode);
+ 	up_read(&F2FS_I(inode)->i_sem);
+ 
+-	if (need_cp) {
++	if (cp_reason) {
+ 		/* all the dirty node pages should be flushed for POR */
+ 		ret = f2fs_sync_fs(inode->i_sb, 1);
+ 
+@@ -306,7 +308,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 	}
+ 	f2fs_update_time(sbi, REQ_TIME);
+ out:
+-	trace_f2fs_sync_file_exit(inode, need_cp, datasync, ret);
++	trace_f2fs_sync_file_exit(inode, cp_reason, datasync, ret);
+ 	f2fs_trace_ios(NULL, 1);
+ 	return ret;
+ }
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index 009745564214..f1a317e6db79 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -210,14 +210,14 @@ DEFINE_EVENT(f2fs__inode, f2fs_sync_file_enter,
+ 
+ TRACE_EVENT(f2fs_sync_file_exit,
+ 
+-	TP_PROTO(struct inode *inode, int need_cp, int datasync, int ret),
++	TP_PROTO(struct inode *inode, int cp_reason, int datasync, int ret),
+ 
+-	TP_ARGS(inode, need_cp, datasync, ret),
++	TP_ARGS(inode, cp_reason, datasync, ret),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+ 		__field(ino_t,	ino)
+-		__field(int,	need_cp)
++		__field(int,	cp_reason)
+ 		__field(int,	datasync)
+ 		__field(int,	ret)
+ 	),
+@@ -225,15 +225,15 @@ TRACE_EVENT(f2fs_sync_file_exit,
+ 	TP_fast_assign(
+ 		__entry->dev		= inode->i_sb->s_dev;
+ 		__entry->ino		= inode->i_ino;
+-		__entry->need_cp	= need_cp;
++		__entry->cp_reason	= cp_reason;
+ 		__entry->datasync	= datasync;
+ 		__entry->ret		= ret;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, checkpoint is %s, "
++	TP_printk("dev = (%d,%d), ino = %lu, cp_reason:%d, "
+ 		"datasync = %d, ret = %d",
+ 		show_dev_ino(__entry),
+-		__entry->need_cp ? "needed" : "not needed",
++		__entry->cp_reason,
+ 		__entry->datasync,
+ 		__entry->ret)
+ );
 -- 
 2.14.1.145.gb3622a4ee
