@@ -1,164 +1,123 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v2] f2fs: Separate nat entry mem alloc from
- nat_tree_locks
-Date: Mon, 6 Nov 2017 09:42:58 +0800
-Message-ID: <1509932578-18529-1-git-send-email-heyunlei@huawei.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: [PATCH v3] f2fs: fix out-of-free problem caused by atomic write
+Date: Mon, 6 Nov 2017 10:07:51 +0800
+Message-ID: <1509934071-116656-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
- helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
- (Exim 4.89) (envelope-from <heyunlei@huawei.com>) id 1eBWeq-0001jV-W9
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 Nov 2017 01:57:01 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.76) id 1eBWep-0002uy-5P
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 Nov 2017 01:57:00 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
-Cc: ning.jia@huawei.com, heyunlei@huawei.com
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This path separate nat_entry mem alloc from nat_tree_lock,
-which will benefit in some low mem case.
+f2fs_balance_fs only actives once in the commit_inmem_pages, but there
+are more than one page to commit, so all the other pages will miss the
+check. This will lead to out-of-free problem when commit a very large
+file. However, we cannot do f2fs_balance_fs for each inmem page, since
+this will break atomicity. As a result, we should collect prefree
+segments if needed.
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 ---
- fs/f2fs/node.c | 50 ++++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 36 insertions(+), 14 deletions(-)
+ fs/f2fs/f2fs.h    |  1 +
+ fs/f2fs/segment.c | 24 +++++++++++++++++++++++-
+ 2 files changed, 24 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index fef5c68..3828e39 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -257,22 +257,15 @@ static struct nat_entry *grab_nat_entry(struct f2fs_nm_info *nm_i, nid_t nid,
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 13a96b8..04ce48f 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -610,6 +610,7 @@ struct f2fs_inode_info {
+ 	struct list_head inmem_pages;	/* inmemory pages managed by f2fs */
+ 	struct task_struct *inmem_task;	/* store inmemory task */
+ 	struct mutex inmem_lock;	/* lock for inmemory pages */
++	unsigned long inmem_blocks;	/* inmemory blocks */
+ 	struct extent_tree *extent_tree;	/* cached extent_tree entry */
+ 	struct rw_semaphore dio_rwsem[2];/* avoid racing between dio and gc */
+ 	struct rw_semaphore i_mmap_sem;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 46dfbca..b87ede4 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -210,6 +210,7 @@ void register_inmem_page(struct inode *inode, struct page *page)
+ 		list_add_tail(&fi->inmem_ilist, &sbi->inode_list[ATOMIC_FILE]);
+ 	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+ 	inc_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
++	fi->inmem_blocks++;
+ 	mutex_unlock(&fi->inmem_lock);
  
- 	if (no_fail) {
- 		new = f2fs_kmem_cache_alloc(nat_entry_slab, GFP_NOFS);
--		f2fs_radix_tree_insert(&nm_i->nat_root, nid, new);
- 	} else {
- 		new = kmem_cache_alloc(nat_entry_slab, GFP_NOFS);
- 		if (!new)
- 			return NULL;
--		if (radix_tree_insert(&nm_i->nat_root, nid, new)) {
--			kmem_cache_free(nat_entry_slab, new);
--			return NULL;
--		}
+ 	trace_f2fs_register_inmem_page(page, INMEM);
+@@ -221,6 +222,7 @@ static int __revoke_inmem_pages(struct inode *inode,
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct inmem_pages *cur, *tmp;
+ 	int err = 0;
++	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 
+ 	list_for_each_entry_safe(cur, tmp, head, list) {
+ 		struct page *page = cur->page;
+@@ -263,6 +265,7 @@ static int __revoke_inmem_pages(struct inode *inode,
+ 		list_del(&cur->list);
+ 		kmem_cache_free(inmem_entry_slab, cur);
+ 		dec_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
++		fi->inmem_blocks--;
  	}
- 
- 	memset(new, 0, sizeof(struct nat_entry));
- 	nat_set_nid(new, nid);
- 	nat_reset_flag(new);
--	list_add_tail(&new->list, &nm_i->nat_entries);
--	nm_i->nat_cnt++;
- 	return new;
+ 	return err;
  }
+@@ -302,6 +305,10 @@ void drop_inmem_pages(struct inode *inode)
+ 	if (!list_empty(&fi->inmem_ilist))
+ 		list_del_init(&fi->inmem_ilist);
+ 	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
++	if (fi->inmem_blocks) {
++		f2fs_bug_on(sbi, 1);
++		fi->inmem_blocks = 0;
++	}
+ 	mutex_unlock(&fi->inmem_lock);
  
-@@ -281,18 +274,33 @@ static void cache_nat_entry(struct f2fs_sb_info *sbi, nid_t nid,
- {
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct nat_entry *e;
-+	struct nat_entry *new = grab_nat_entry(nm_i, nid, false);
+ 	clear_inode_flag(inode, FI_ATOMIC_FILE);
+@@ -326,6 +333,7 @@ void drop_inmem_page(struct inode *inode, struct page *page)
  
-+	down_write(&nm_i->nat_tree_lock);
- 	e = __lookup_nat_cache(nm_i, nid);
- 	if (!e) {
--		e = grab_nat_entry(nm_i, nid, false);
--		if (e)
--			node_info_from_raw_nat(&e->ni, ne);
-+		if (!new)
-+			goto out;
+ 	f2fs_bug_on(sbi, !cur || cur->page != page);
+ 	list_del(&cur->list);
++	fi->inmem_blocks--;
+ 	mutex_unlock(&fi->inmem_lock);
+ 
+ 	dec_page_count(sbi, F2FS_INMEM_PAGES);
+@@ -410,6 +418,16 @@ int commit_inmem_pages(struct inode *inode)
+ 
+ 	INIT_LIST_HEAD(&revoke_list);
+ 	f2fs_balance_fs(sbi, true);
++	if (prefree_segments(sbi)
++		&& has_not_enough_free_secs(sbi, 0,
++		fi->inmem_blocks / BLKS_PER_SEC(sbi))) {
++		struct cp_control cpc;
 +
-+		e = new;
-+		if (radix_tree_insert(&nm_i->nat_root, nid, e)) {
-+			kmem_cache_free(nat_entry_slab, e);
-+			goto out;
-+		}
-+
-+		list_add_tail(&e->list, &nm_i->nat_entries);
-+		nm_i->nat_cnt++;
-+		node_info_from_raw_nat(&e->ni, ne);
- 	} else {
- 		f2fs_bug_on(sbi, nat_get_ino(e) != le32_to_cpu(ne->ino) ||
- 				nat_get_blkaddr(e) !=
- 					le32_to_cpu(ne->block_addr) ||
- 				nat_get_version(e) != ne->version);
-+		if (new)
-+			kmem_cache_free(nat_entry_slab, new);
++		cpc.reason = __get_cp_reason(sbi);
++		err = write_checkpoint(sbi, &cpc);
++		if (err)
++			goto drop;
++	}
+ 	f2fs_lock_op(sbi);
+ 
+ 	set_inode_flag(inode, FI_ATOMIC_COMMIT);
+@@ -429,7 +447,7 @@ int commit_inmem_pages(struct inode *inode)
+ 		ret = __revoke_inmem_pages(inode, &revoke_list, false, true);
+ 		if (ret)
+ 			err = ret;
+-
++drop:
+ 		/* drop all uncommitted pages */
+ 		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
  	}
-+out:
-+	up_write(&nm_i->nat_tree_lock);
- }
+@@ -437,6 +455,10 @@ int commit_inmem_pages(struct inode *inode)
+ 	if (!list_empty(&fi->inmem_ilist))
+ 		list_del_init(&fi->inmem_ilist);
+ 	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
++	if (fi->inmem_blocks) {
++		f2fs_bug_on(sbi, 1);
++		fi->inmem_blocks = 0;
++	}
+ 	mutex_unlock(&fi->inmem_lock);
  
- static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
-@@ -300,12 +308,22 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
- {
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct nat_entry *e;
-+	struct nat_entry *new = grab_nat_entry(nm_i, ni->nid, true);
- 
-+retry:
- 	down_write(&nm_i->nat_tree_lock);
- 	e = __lookup_nat_cache(nm_i, ni->nid);
- 	if (!e) {
--		e = grab_nat_entry(nm_i, ni->nid, true);
--		copy_node_info(&e->ni, ni);
-+		e = new;
-+		if (radix_tree_insert(&nm_i->nat_root, ni->nid, e)) {
-+			up_write(&nm_i->nat_tree_lock);
-+			cond_resched();
-+			goto retry;
-+		}
-+
-+		list_add_tail(&e->list, &nm_i->nat_entries);
-+		nm_i->nat_cnt++;
-+		copy_node_info(&new->ni, ni);
- 		f2fs_bug_on(sbi, ni->blk_addr == NEW_ADDR);
- 	} else if (new_blkaddr == NEW_ADDR) {
- 		/*
-@@ -315,6 +333,9 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
- 		 */
- 		copy_node_info(&e->ni, ni);
- 		f2fs_bug_on(sbi, ni->blk_addr != NULL_ADDR);
-+		kmem_cache_free(nat_entry_slab, new);
-+	} else {
-+		kmem_cache_free(nat_entry_slab, new);
- 	}
- 
- 	/* sanity check */
-@@ -424,9 +445,7 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
- 	f2fs_put_page(page, 1);
- cache:
- 	/* cache nat entry */
--	down_write(&nm_i->nat_tree_lock);
- 	cache_nat_entry(sbi, nid, &ne);
--	up_write(&nm_i->nat_tree_lock);
- }
- 
- /*
-@@ -2375,6 +2394,9 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
- 		ne = __lookup_nat_cache(nm_i, nid);
- 		if (!ne) {
- 			ne = grab_nat_entry(nm_i, nid, true);
-+			f2fs_radix_tree_insert(&nm_i->nat_root, nid, ne);
-+			list_add_tail(&ne->list, &nm_i->nat_entries);
-+			nm_i->nat_cnt++;
- 			node_info_from_raw_nat(&ne->ni, &raw_ne);
- 		}
- 
+ 	clear_inode_flag(inode, FI_ATOMIC_COMMIT);
 -- 
-1.9.1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+1.8.5.2
