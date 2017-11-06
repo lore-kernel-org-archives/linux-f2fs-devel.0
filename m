@@ -1,163 +1,77 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 2/3] f2fs: trace checkpoint reason in fsync()
-Date: Sun, 5 Nov 2017 16:55:41 -0800
-Message-ID: <20171106005541.GB49513@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20171105135330.15070-1-chao@kernel.org>
- <20171105135330.15070-2-chao@kernel.org>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: Re: [PATCH v2] f2fs: add bug_on when f2fs_gc even fails to get one
+ victim
+Date: Mon, 6 Nov 2017 09:12:43 +0800
+Message-ID: <3b26badb-c34e-3c2d-74a2-26ecef1f64ff@huawei.com>
+References: <1507729864-118702-1-git-send-email-yunlong.song@huawei.com>
+ <1507901500-162168-1-git-send-email-yunlong.song@huawei.com>
+ <20171103034402.GC11335@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171105135330.15070-2-chao@kernel.org>
+In-Reply-To: <20171103034402.GC11335@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 11/05, Chao Yu wrote:
-> From: Chao Yu <yuchao0@huawei.com>
-> 
-> This patch slightly changes need_do_checkpoint to return the detail
-> info that indicates why we need do checkpoint, then caller could print
-> it with trace message.
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/file.c              | 34 ++++++++++++++++++----------------
->  include/trace/events/f2fs.h | 12 ++++++------
->  2 files changed, 24 insertions(+), 22 deletions(-)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index cee0f36ba9a1..d9d8b1c372f8 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -141,27 +141,29 @@ static int get_parent_ino(struct inode *inode, nid_t *pino)
->  	return 1;
->  }
->  
-> -static inline bool need_do_checkpoint(struct inode *inode)
-> +static inline int need_do_checkpoint(struct inode *inode)
->  {
->  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> -	bool need_cp = false;
-> +	int cp_reason = 0;
->  
-> -	if (!S_ISREG(inode->i_mode) || inode->i_nlink != 1)
-> -		need_cp = true;
-> +	if (!S_ISREG(inode->i_mode))
-> +		cp_reason = 1;
-> +	else if (inode->i_nlink != 1)
-> +		cp_reason = 2;
->  	else if (is_sbi_flag_set(sbi, SBI_NEED_CP))
-> -		need_cp = true;
-> +		cp_reason = 3;
->  	else if (file_wrong_pino(inode))
-> -		need_cp = true;
-> +		cp_reason = 4;
->  	else if (!space_for_roll_forward(sbi))
-> -		need_cp = true;
-> +		cp_reason = 5;
->  	else if (!is_checkpointed_node(sbi, F2FS_I(inode)->i_pino))
-> -		need_cp = true;
-> +		cp_reason = 6;
->  	else if (test_opt(sbi, FASTBOOT))
-> -		need_cp = true;
-> +		cp_reason = 7;
->  	else if (sbi->active_logs == 2)
-> -		need_cp = true;
-> +		cp_reason = 8;
+Agree.
 
-We need to make the numbers by enum so that we could interpret them in tracepoint
-below.
+On 2017/11/3 11:44, Jaegeuk Kim wrote:
+> On 10/13, Yunlong Song wrote:
+>> This can help us to debug on some corner case.
+>>
+>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>   fs/f2fs/gc.c | 6 +++++-
+>>   1 file changed, 5 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>> index 197ebf4..2b03202 100644
+>> --- a/fs/f2fs/gc.c
+>> +++ b/fs/f2fs/gc.c
+>> @@ -986,6 +986,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>   		.ilist = LIST_HEAD_INIT(gc_list.ilist),
+>>   		.iroot = RADIX_TREE_INIT(GFP_NOFS),
+>>   	};
+>> +	bool need_fggc = false;
+>>   
+>>   	trace_f2fs_gc_begin(sbi->sb, sync, background,
+>>   				get_pages(sbi, F2FS_DIRTY_NODES),
+>> @@ -1018,8 +1019,10 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>   			if (ret)
+>>   				goto stop;
+>>   		}
+>> -		if (has_not_enough_free_secs(sbi, 0, 0))
+>> +		if (has_not_enough_free_secs(sbi, 0, 0)) {
+>>   			gc_type = FG_GC;
+>> +			need_fggc = true;
+>> +		}
+>>   	}
+>>   
+>>   	/* f2fs_balance_fs doesn't need to do BG_GC in critical path. */
+>> @@ -1028,6 +1031,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>   		goto stop;
+>>   	}
+>>   	if (!__get_victim(sbi, &segno, gc_type)) {
+>> +		f2fs_bug_on(sbi, !total_freed && need_fggc);
+> Just like this?
+That's OK.
 
+>
+> 		f2fs_bug_on(sbi, !total_freed && !sync && gc_type == FG_GC);
+>
+>>   		ret = -ENODATA;
+>>   		goto stop;
+>>   	}
+>> -- 
+>> 1.8.5.2
+> .
+>
+
+-- 
 Thanks,
-
->  
-> -	return need_cp;
-> +	return cp_reason;
->  }
->  
->  static bool need_inode_page_update(struct f2fs_sb_info *sbi, nid_t ino)
-> @@ -196,7 +198,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
->  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->  	nid_t ino = inode->i_ino;
->  	int ret = 0;
-> -	bool need_cp = false;
-> +	bool cp_reason = 0;
->  	struct writeback_control wbc = {
->  		.sync_mode = WB_SYNC_ALL,
->  		.nr_to_write = LONG_MAX,
-> @@ -215,7 +217,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
->  	clear_inode_flag(inode, FI_NEED_IPU);
->  
->  	if (ret) {
-> -		trace_f2fs_sync_file_exit(inode, need_cp, datasync, ret);
-> +		trace_f2fs_sync_file_exit(inode, cp_reason, datasync, ret);
->  		return ret;
->  	}
->  
-> @@ -246,10 +248,10 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
->  	 * sudden-power-off.
->  	 */
->  	down_read(&F2FS_I(inode)->i_sem);
-> -	need_cp = need_do_checkpoint(inode);
-> +	cp_reason = need_do_checkpoint(inode);
->  	up_read(&F2FS_I(inode)->i_sem);
->  
-> -	if (need_cp) {
-> +	if (cp_reason) {
->  		/* all the dirty node pages should be flushed for POR */
->  		ret = f2fs_sync_fs(inode->i_sb, 1);
->  
-> @@ -306,7 +308,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
->  	}
->  	f2fs_update_time(sbi, REQ_TIME);
->  out:
-> -	trace_f2fs_sync_file_exit(inode, need_cp, datasync, ret);
-> +	trace_f2fs_sync_file_exit(inode, cp_reason, datasync, ret);
->  	f2fs_trace_ios(NULL, 1);
->  	return ret;
->  }
-> diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-> index 009745564214..f1a317e6db79 100644
-> --- a/include/trace/events/f2fs.h
-> +++ b/include/trace/events/f2fs.h
-> @@ -210,14 +210,14 @@ DEFINE_EVENT(f2fs__inode, f2fs_sync_file_enter,
->  
->  TRACE_EVENT(f2fs_sync_file_exit,
->  
-> -	TP_PROTO(struct inode *inode, int need_cp, int datasync, int ret),
-> +	TP_PROTO(struct inode *inode, int cp_reason, int datasync, int ret),
->  
-> -	TP_ARGS(inode, need_cp, datasync, ret),
-> +	TP_ARGS(inode, cp_reason, datasync, ret),
->  
->  	TP_STRUCT__entry(
->  		__field(dev_t,	dev)
->  		__field(ino_t,	ino)
-> -		__field(int,	need_cp)
-> +		__field(int,	cp_reason)
->  		__field(int,	datasync)
->  		__field(int,	ret)
->  	),
-> @@ -225,15 +225,15 @@ TRACE_EVENT(f2fs_sync_file_exit,
->  	TP_fast_assign(
->  		__entry->dev		= inode->i_sb->s_dev;
->  		__entry->ino		= inode->i_ino;
-> -		__entry->need_cp	= need_cp;
-> +		__entry->cp_reason	= cp_reason;
->  		__entry->datasync	= datasync;
->  		__entry->ret		= ret;
->  	),
->  
-> -	TP_printk("dev = (%d,%d), ino = %lu, checkpoint is %s, "
-> +	TP_printk("dev = (%d,%d), ino = %lu, cp_reason:%d, "
->  		"datasync = %d, ret = %d",
->  		show_dev_ino(__entry),
-> -		__entry->need_cp ? "needed" : "not needed",
-> +		__entry->cp_reason,
->  		__entry->datasync,
->  		__entry->ret)
->  );
-> -- 
-> 2.14.1.145.gb3622a4ee
+Yunlong Song
