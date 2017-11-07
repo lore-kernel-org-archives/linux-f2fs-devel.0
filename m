@@ -1,26 +1,26 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v3] f2fs: Separate nat entry mem alloc from
- nat_tree_locks
-Date: Mon, 6 Nov 2017 18:15:58 -0800
-Message-ID: <20171107021558.GC88544@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1509934287-21823-1-git-send-email-heyunlei@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v3] f2fs: fix out-of-free problem caused by
+ atomic write
+Date: Tue, 7 Nov 2017 10:17:12 +0800
+Message-ID: <dd709887-fa43-6ee1-8ee7-5d4d8ee194f1@huawei.com>
+References: <1509934071-116656-1-git-send-email-yunlong.song@huawei.com>
+ <20171107015543.GB88544@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1eBtQs-0005Gm-Ox
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Nov 2017 02:16:06 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eBtQr-0008EW-Qi
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Nov 2017 02:16:06 +0000
-Content-Disposition: inline
-In-Reply-To: <1509934287-21823-1-git-send-email-heyunlei@huawei.com>
+ (envelope-from <yuchao0@huawei.com>) id 1eBtSN-0008TQ-6T
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Nov 2017 02:17:39 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191])
+ by sfi-mx-3.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.89) id 1eBtSK-00070W-Ql
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Nov 2017 02:17:39 +0000
+In-Reply-To: <20171107015543.GB88544@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,166 +30,158 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>
-Cc: morgan.wang@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Yunlong Song <yunlong.song@huawei.com>
+Cc: yunlong.song@icloud.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, miaoxie@huawei.com
 
-On 11/06, Yunlei He wrote:
-> This path separate nat_entry mem alloc from nat_tree_lock,
-> which will benefit in some low mem case.
+On 2017/11/7 9:55, Jaegeuk Kim wrote:
+> On 11/06, Yunlong Song wrote:
+>> f2fs_balance_fs only actives once in the commit_inmem_pages, but there
+>> are more than one page to commit, so all the other pages will miss the
+>> check. This will lead to out-of-free problem when commit a very large
+>> file. However, we cannot do f2fs_balance_fs for each inmem page, since
+>> this will break atomicity. As a result, we should collect prefree
+>> segments if needed.
+>>
+>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>> ---
+>>  fs/f2fs/f2fs.h    |  1 +
+>>  fs/f2fs/segment.c | 24 +++++++++++++++++++++++-
+>>  2 files changed, 24 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 13a96b8..04ce48f 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -610,6 +610,7 @@ struct f2fs_inode_info {
+>>  	struct list_head inmem_pages;	/* inmemory pages managed by f2fs */
+>>  	struct task_struct *inmem_task;	/* store inmemory task */
+>>  	struct mutex inmem_lock;	/* lock for inmemory pages */
+>> +	unsigned long inmem_blocks;	/* inmemory blocks */
+>>  	struct extent_tree *extent_tree;	/* cached extent_tree entry */
+>>  	struct rw_semaphore dio_rwsem[2];/* avoid racing between dio and gc */
+>>  	struct rw_semaphore i_mmap_sem;
+>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>> index 46dfbca..b87ede4 100644
+>> --- a/fs/f2fs/segment.c
+>> +++ b/fs/f2fs/segment.c
+>> @@ -210,6 +210,7 @@ void register_inmem_page(struct inode *inode, struct page *page)
+>>  		list_add_tail(&fi->inmem_ilist, &sbi->inode_list[ATOMIC_FILE]);
+>>  	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+>>  	inc_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
+>> +	fi->inmem_blocks++;
+>>  	mutex_unlock(&fi->inmem_lock);
+>>  
+>>  	trace_f2fs_register_inmem_page(page, INMEM);
+>> @@ -221,6 +222,7 @@ static int __revoke_inmem_pages(struct inode *inode,
+>>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>>  	struct inmem_pages *cur, *tmp;
+>>  	int err = 0;
+>> +	struct f2fs_inode_info *fi = F2FS_I(inode);
+>>  
+>>  	list_for_each_entry_safe(cur, tmp, head, list) {
+>>  		struct page *page = cur->page;
+>> @@ -263,6 +265,7 @@ static int __revoke_inmem_pages(struct inode *inode,
+>>  		list_del(&cur->list);
+>>  		kmem_cache_free(inmem_entry_slab, cur);
+>>  		dec_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
+>> +		fi->inmem_blocks--;
+>>  	}
+>>  	return err;
+>>  }
+>> @@ -302,6 +305,10 @@ void drop_inmem_pages(struct inode *inode)
+>>  	if (!list_empty(&fi->inmem_ilist))
+>>  		list_del_init(&fi->inmem_ilist);
+>>  	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+>> +	if (fi->inmem_blocks) {
+>> +		f2fs_bug_on(sbi, 1);
+>> +		fi->inmem_blocks = 0;
+>> +	}
+>>  	mutex_unlock(&fi->inmem_lock);
+>>  
+>>  	clear_inode_flag(inode, FI_ATOMIC_FILE);
+>> @@ -326,6 +333,7 @@ void drop_inmem_page(struct inode *inode, struct page *page)
+>>  
+>>  	f2fs_bug_on(sbi, !cur || cur->page != page);
+>>  	list_del(&cur->list);
+>> +	fi->inmem_blocks--;
+>>  	mutex_unlock(&fi->inmem_lock);
+>>  
+>>  	dec_page_count(sbi, F2FS_INMEM_PAGES);
+>> @@ -410,6 +418,16 @@ int commit_inmem_pages(struct inode *inode)
+>>  
+>>  	INIT_LIST_HEAD(&revoke_list);
+>>  	f2fs_balance_fs(sbi, true);
+>> +	if (prefree_segments(sbi)
+>> +		&& has_not_enough_free_secs(sbi, 0,
+>> +		fi->inmem_blocks / BLKS_PER_SEC(sbi))) {
+>> +		struct cp_control cpc;
+>> +
+>> +		cpc.reason = __get_cp_reason(sbi);
+>> +		err = write_checkpoint(sbi, &cpc);
+>> +		if (err)
+>> +			goto drop;
 > 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> ---
->  fs/f2fs/node.c | 48 +++++++++++++++++++++++++++++++++++-------------
->  1 file changed, 35 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index fef5c68..4af6277 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -257,22 +257,15 @@ static struct nat_entry *grab_nat_entry(struct f2fs_nm_info *nm_i, nid_t nid,
->  
->  	if (no_fail) {
->  		new = f2fs_kmem_cache_alloc(nat_entry_slab, GFP_NOFS);
-> -		f2fs_radix_tree_insert(&nm_i->nat_root, nid, new);
->  	} else {
->  		new = kmem_cache_alloc(nat_entry_slab, GFP_NOFS);
->  		if (!new)
->  			return NULL;
-> -		if (radix_tree_insert(&nm_i->nat_root, nid, new)) {
-> -			kmem_cache_free(nat_entry_slab, new);
-> -			return NULL;
-> -		}
->  	}
->  
->  	memset(new, 0, sizeof(struct nat_entry));
->  	nat_set_nid(new, nid);
->  	nat_reset_flag(new);
-> -	list_add_tail(&new->list, &nm_i->nat_entries);
-> -	nm_i->nat_cnt++;
->  	return new;
->  }
->  
-> @@ -281,18 +274,33 @@ static void cache_nat_entry(struct f2fs_sb_info *sbi, nid_t nid,
->  {
->  	struct f2fs_nm_info *nm_i = NM_I(sbi);
->  	struct nat_entry *e;
-> +	struct nat_entry *new = grab_nat_entry(nm_i, nid, false);
+> What do you want to guarantee with this? How about passing target # of segments
+> into f2fs_balance_fs() so that f2fs_gc() could secure wanted free space in a
+> loop?
 
-How about this?
+Agreed, Jaegeuk, IMO, later we can add one more dirty type F2FS_DIRTY_BUDGET in
+enum count_type, and introduce below function, add them around dirtying
+node/dent/imeta datas.
 
+void f2fs_budget_space(struct f2fs_sb_info *sbi, unsigned int dirty_budget)
 {
-	struct nat_entry *new = grab_nat_entry(nm_i, nid, false);
-	bool free = false;
+	if (dirty_budget)
+		atomic_add(&sbi->nr_pages[F2FS_DIRTY_BUDGET], dirty_budget);
 
-	if (!new)
-		return;
-	
-	down_write();
-	e = __lookup_nat_cache();
-	if (!e) {
-		if (!radix_tree_insert(new)) {
-			list_add_tail(new);
-			nm_i->nat_cnt++;
-			node_info_from_raw_nat(&new);
-		} else {
-			free = true;
-		}
-	} else {
-		f2fs_bug_on();
-		free = true;
-	}
-	up_write();
-	if (free)
-		kmem_cache_free(new);
+	f2fs_balance_fs(sbi, dirty_budget);
 }
 
->  
-> +	down_write(&nm_i->nat_tree_lock);
->  	e = __lookup_nat_cache(nm_i, nid);
->  	if (!e) {
-> -		e = grab_nat_entry(nm_i, nid, false);
-> -		if (e)
-> -			node_info_from_raw_nat(&e->ni, ne);
-> +		if (!new)
-> +			goto out;
-> +
-> +		e = new;
-> +		if (radix_tree_insert(&nm_i->nat_root, nid, e)) {
-> +			kmem_cache_free(nat_entry_slab, e);
-> +			goto out;
-> +		}
-> +
-> +		list_add_tail(&e->list, &nm_i->nat_entries);
-> +		nm_i->nat_cnt++;
-> +		node_info_from_raw_nat(&e->ni, ne);
->  	} else {
->  		f2fs_bug_on(sbi, nat_get_ino(e) != le32_to_cpu(ne->ino) ||
->  				nat_get_blkaddr(e) !=
->  					le32_to_cpu(ne->block_addr) ||
->  				nat_get_version(e) != ne->version);
-> +		if (new)
-> +			kmem_cache_free(nat_entry_slab, new);
->  	}
-> +out:
-> +	up_write(&nm_i->nat_tree_lock);
->  }
->  
->  static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
-> @@ -300,11 +308,21 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
->  {
->  	struct f2fs_nm_info *nm_i = NM_I(sbi);
->  	struct nat_entry *e;
-> +	struct nat_entry *new = grab_nat_entry(nm_i, ni->nid, true);
->  
-> +retry:
->  	down_write(&nm_i->nat_tree_lock);
->  	e = __lookup_nat_cache(nm_i, ni->nid);
->  	if (!e) {
-> -		e = grab_nat_entry(nm_i, ni->nid, true);
-> +		e = new;
-> +		if (radix_tree_insert(&nm_i->nat_root, ni->nid, e)) {
-> +			up_write(&nm_i->nat_tree_lock);
-> +			cond_resched();
-> +			goto retry;
-> +		}
-> +
-> +		list_add_tail(&e->list, &nm_i->nat_entries);
-> +		nm_i->nat_cnt++;
->  		copy_node_info(&e->ni, ni);
->  		f2fs_bug_on(sbi, ni->blk_addr == NEW_ADDR);
->  	} else if (new_blkaddr == NEW_ADDR) {
-> @@ -315,6 +333,9 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
->  		 */
->  		copy_node_info(&e->ni, ni);
->  		f2fs_bug_on(sbi, ni->blk_addr != NULL_ADDR);
-> +		kmem_cache_free(nat_entry_slab, new);
-> +	} else {
-> +		kmem_cache_free(nat_entry_slab, new);
->  	}
->  
->  	/* sanity check */
-> @@ -424,9 +445,7 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
->  	f2fs_put_page(page, 1);
->  cache:
->  	/* cache nat entry */
-> -	down_write(&nm_i->nat_tree_lock);
->  	cache_nat_entry(sbi, nid, &ne);
-> -	up_write(&nm_i->nat_tree_lock);
->  }
->  
->  /*
-> @@ -2375,6 +2394,9 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
->  		ne = __lookup_nat_cache(nm_i, nid);
->  		if (!ne) {
->  			ne = grab_nat_entry(nm_i, nid, true);
-> +			f2fs_radix_tree_insert(&nm_i->nat_root, nid, ne);
-> +			list_add_tail(&ne->list, &nm_i->nat_entries);
-> +			nm_i->nat_cnt++;
->  			node_info_from_raw_nat(&ne->ni, &raw_ne);
->  		}
->  
-> -- 
-> 1.9.1
+void f2fs_release_budget(struct f2fs_sb_info *sbi, unsigned int dirty_budget)
+{
+	atomic_dec(&sbi->nr_pages[F2FS_DIRTY_BUDGET], dirty_budget);
+}
+
+So that in has_not_enough_free_secs we can calculate all dirty datas include
+F2FS_DIRTY_BUDGET type datas more precisely.
+
+How about that?
+
+Thanks,
+
+> 
+> Thanks,
+> 
+>> +	}
+>>  	f2fs_lock_op(sbi);
+>>  
+>>  	set_inode_flag(inode, FI_ATOMIC_COMMIT);
+>> @@ -429,7 +447,7 @@ int commit_inmem_pages(struct inode *inode)
+>>  		ret = __revoke_inmem_pages(inode, &revoke_list, false, true);
+>>  		if (ret)
+>>  			err = ret;
+>> -
+>> +drop:
+>>  		/* drop all uncommitted pages */
+>>  		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
+>>  	}
+>> @@ -437,6 +455,10 @@ int commit_inmem_pages(struct inode *inode)
+>>  	if (!list_empty(&fi->inmem_ilist))
+>>  		list_del_init(&fi->inmem_ilist);
+>>  	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+>> +	if (fi->inmem_blocks) {
+>> +		f2fs_bug_on(sbi, 1);
+>> +		fi->inmem_blocks = 0;
+>> +	}
+>>  	mutex_unlock(&fi->inmem_lock);
+>>  
+>>  	clear_inode_flag(inode, FI_ATOMIC_COMMIT);
+>> -- 
+>> 1.8.5.2
+> 
+> .
+> 
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
