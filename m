@@ -1,28 +1,22 @@
-From: Fan Li <fanofcode.li@samsung.com>
-Subject: Re: [PATCH] f2fs: keep scanning until enough free nids
- are acquired
-Date: Tue, 07 Nov 2017 15:30:31 +0800
-Message-ID: <001d01d3579a$82f21680$88d64380$@samsung.com>
-References: <CGME20171107030535epcas1p2094e05ca25eecd2140518cab7a39723d@epcas1p2.samsung.com>
- <001901d35775$47b598f0$d720cad0$@samsung.com>
- <20171107034034.GC92599@jaegeuk-macbookpro.roam.corp.google.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH v4] f2fs: Separate nat entry mem alloc from
+ nat_tree_locks
+Date: Tue, 7 Nov 2017 17:36:20 +0800
+Message-ID: <1510047380-7169-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <fanofcode.li@samsung.com>) id 1eByMq-0005FM-Ji
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Nov 2017 07:32:16 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eByMn-0002GE-Us
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Nov 2017 07:32:16 +0000
-In-reply-to: <20171107034034.GC92599@jaegeuk-macbookpro.roam.corp.google.com>
-Content-language: en-us
+ (envelope-from <heyunlei@huawei.com>) id 1eC0VA-0000zP-IX
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Nov 2017 09:49:00 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190])
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.89) id 1eC0V8-0006ow-1D
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Nov 2017 09:49:00 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,57 +26,138 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: ning.jia@huawei.com, heyunlei@huawei.com
 
+This path separate nat_entry mem alloc from nat_tree_lock,
+which will benefit in some low mem case.
 
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fs/f2fs/node.c | 55 ++++++++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 38 insertions(+), 17 deletions(-)
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Tuesday, November 07, 2017 11:41 AM
-> To: Fan Li
-> Cc: 'Chao Yu'; 'Chao Yu'; linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH] f2fs: keep scanning until enough free nids are acquired
-> 
-> Hi,
-> 
-> I merged this patch after fixing some broken format. Could you please check your email configuration?
-> 
-> Thanks,
-> 
-
-Sorry to bother you with so trivial problem, mail configuration is fine, 
-but I use a wrong way to copy the text this time, won't happen again.
-
-
-> On 11/07, Fan Li wrote:
-> > In current version, after scan_free_nid_bits, the scan is over if nid_cnt[FREE_NID] != 0.
-> > In most cases, there are still free nids in the free list during the
-> > scan, and scan_free_nid_bits usually can't increase nid_cnt[FREE_NID].
-> > It causes that __build_free_nids is called many times without solving
-> > the shortage of the free nids. This patch fixes that.
-> >
-> > Signed-off-by: Fan li <fanofcode.li@samsung.com>
-> > ---
-> >  fs/f2fs/node.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c index 3d0d1be..5cef118
-> > 100644
-> > --- a/fs/f2fs/node.c
-> > +++ b/fs/f2fs/node.c
-> > @@ -2010,7 +2010,7 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
-> >                 /* try to find free nids in free_nid_bitmap */
-> >                 scan_free_nid_bits(sbi);
-> >
-> > -               if (nm_i->nid_cnt[FREE_NID])
-> > +               if (nm_i->nid_cnt[FREE_NID] >= NAT_ENTRY_PER_BLOCK)
-> >                         return;
-> >         }
-> >
-> > --
-> > 2.7.4
-
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index fef5c68..31909f8 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -257,22 +257,15 @@ static struct nat_entry *grab_nat_entry(struct f2fs_nm_info *nm_i, nid_t nid,
+ 
+ 	if (no_fail) {
+ 		new = f2fs_kmem_cache_alloc(nat_entry_slab, GFP_NOFS);
+-		f2fs_radix_tree_insert(&nm_i->nat_root, nid, new);
+ 	} else {
+ 		new = kmem_cache_alloc(nat_entry_slab, GFP_NOFS);
+ 		if (!new)
+ 			return NULL;
+-		if (radix_tree_insert(&nm_i->nat_root, nid, new)) {
+-			kmem_cache_free(nat_entry_slab, new);
+-			return NULL;
+-		}
+ 	}
+ 
+ 	memset(new, 0, sizeof(struct nat_entry));
+ 	nat_set_nid(new, nid);
+ 	nat_reset_flag(new);
+-	list_add_tail(&new->list, &nm_i->nat_entries);
+-	nm_i->nat_cnt++;
+ 	return new;
+ }
+ 
+@@ -282,17 +275,31 @@ static void cache_nat_entry(struct f2fs_sb_info *sbi, nid_t nid,
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct nat_entry *e;
+ 
++#ifdef CONFIG_F2FS_CHECK_FS
++	down_read(&nm_i->nat_tree_lock);
+ 	e = __lookup_nat_cache(nm_i, nid);
+-	if (!e) {
+-		e = grab_nat_entry(nm_i, nid, false);
+-		if (e)
+-			node_info_from_raw_nat(&e->ni, ne);
+-	} else {
++	if (e) {
+ 		f2fs_bug_on(sbi, nat_get_ino(e) != le32_to_cpu(ne->ino) ||
+-				nat_get_blkaddr(e) !=
+-					le32_to_cpu(ne->block_addr) ||
++			nat_get_blkaddr(e) != le32_to_cpu(ne->block_addr) ||
+ 				nat_get_version(e) != ne->version);
++		return;
++	}
++	up_read(&nm_i->nat_tree_lock);
++#endif
++	e = grab_nat_entry(nm_i, nid, false);
++	down_write(&nm_i->nat_tree_lock);
++	if (!e)
++		goto out;
++
++	if (!radix_tree_insert(&nm_i->nat_root, nid, e)) {
++		list_add_tail(&e->list, &nm_i->nat_entries);
++		nm_i->nat_cnt++;
++		node_info_from_raw_nat(&e->ni, ne);
++	} else {
++		kmem_cache_free(nat_entry_slab, e);
+ 	}
++out:
++	up_write(&nm_i->nat_tree_lock);
+ }
+ 
+ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+@@ -300,11 +307,21 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct nat_entry *e;
++	struct nat_entry *new = grab_nat_entry(nm_i, ni->nid, true);
+ 
++retry:
+ 	down_write(&nm_i->nat_tree_lock);
+ 	e = __lookup_nat_cache(nm_i, ni->nid);
+ 	if (!e) {
+-		e = grab_nat_entry(nm_i, ni->nid, true);
++		e = new;
++		if (radix_tree_insert(&nm_i->nat_root, ni->nid, e)) {
++			up_write(&nm_i->nat_tree_lock);
++			cond_resched();
++			goto retry;
++		}
++
++		list_add_tail(&e->list, &nm_i->nat_entries);
++		nm_i->nat_cnt++;
+ 		copy_node_info(&e->ni, ni);
+ 		f2fs_bug_on(sbi, ni->blk_addr == NEW_ADDR);
+ 	} else if (new_blkaddr == NEW_ADDR) {
+@@ -315,6 +332,9 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+ 		 */
+ 		copy_node_info(&e->ni, ni);
+ 		f2fs_bug_on(sbi, ni->blk_addr != NULL_ADDR);
++		kmem_cache_free(nat_entry_slab, new);
++	} else {
++		kmem_cache_free(nat_entry_slab, new);
+ 	}
+ 
+ 	/* sanity check */
+@@ -424,9 +444,7 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
+ 	f2fs_put_page(page, 1);
+ cache:
+ 	/* cache nat entry */
+-	down_write(&nm_i->nat_tree_lock);
+ 	cache_nat_entry(sbi, nid, &ne);
+-	up_write(&nm_i->nat_tree_lock);
+ }
+ 
+ /*
+@@ -2375,6 +2393,9 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
+ 		ne = __lookup_nat_cache(nm_i, nid);
+ 		if (!ne) {
+ 			ne = grab_nat_entry(nm_i, nid, true);
++			f2fs_radix_tree_insert(&nm_i->nat_root, nid, ne);
++			list_add_tail(&ne->list, &nm_i->nat_entries);
++			nm_i->nat_cnt++;
+ 			node_info_from_raw_nat(&ne->ni, &raw_ne);
+ 		}
+ 
+-- 
+1.9.1
 
 
 ------------------------------------------------------------------------------
