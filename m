@@ -1,115 +1,210 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH v2] f2fs: add bug_on when f2fs_gc even fails to get one
- victim
-Date: Tue, 7 Nov 2017 12:01:58 +0800
-Message-ID: <7433d584-b1e0-76e9-a6e4-8da1218dd71d@huawei.com>
-References: <1507729864-118702-1-git-send-email-yunlong.song@huawei.com>
- <1507901500-162168-1-git-send-email-yunlong.song@huawei.com>
- <20171103034402.GC11335@jaegeuk-macbookpro.roam.corp.google.com>
- <3b26badb-c34e-3c2d-74a2-26ecef1f64ff@huawei.com>
- <20171107023835.GG88544@jaegeuk-macbookpro.roam.corp.google.com>
- <20171107024058.GH88544@jaegeuk-macbookpro.roam.corp.google.com>
- <cafd59c4-1a39-f54b-095e-24430a79437e@huawei.com>
- <20171107032636.GB92599@jaegeuk-macbookpro.roam.corp.google.com>
+From: heyunlei <heyunlei@huawei.com>
+Subject: =?utf-8?b?562U5aSNOiBbUEFUQ0ggdjNdIGYyZnM6IFNlcGFyYXRl?=
+ =?utf-8?q?_nat_entry_mem_alloc_from_nat=5Ftree=5Flocks?=
+Date: Tue, 7 Nov 2017 04:35:37 +0000
+Message-ID: <42B685BFA705F94C860C6DD0752F0565482BEA50@DGGEMA503-MBX.china.huawei.com>
+References: <1509934287-21823-1-git-send-email-heyunlei@huawei.com>
+ <20171107021558.GC88544@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171107032636.GB92599@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+ helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <heyunlei@huawei.com>) id 1eBvcI-0000qA-8n
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Nov 2017 04:36:02 +0000
+Received: from szxga03-in.huawei.com ([45.249.212.189])
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.89) id 1eBvcF-0004Wr-FY
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Nov 2017 04:36:02 +0000
+In-Reply-To: <20171107021558.GC88544@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: zh-CN
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
-
-Sorry, misunderstanding, because I think when sync == true, FG_GC does not
-check has_not_enough_free_secs, so maybe it does not have to do any gc 
-at all.
-For example, if there are 100 segments for f2fs, and 20 segments are full or
-valid blocks over fggc_threshold, then it is correct to fail in get victim.
+Cc: "Wangkai (Morgan)" <morgan.wang@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
 
-On 2017/11/7 11:26, Jaegeuk Kim wrote:
-> On 11/07, Yunlong Song wrote:
->> Because I find that some out-of-free problem is caused by the failure
->> of get victim target. For example, chao has pointed out that he has
->> found out a bug when adding this bug_on last week.
-> That's NOT what I asked. Why not checking FG_GC all the time like this?
+>-----Original Message-----
+>From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+>Sent: Tuesday, November 07, 2017 10:16 AM
+>To: heyunlei
+>Cc: Yuchao (T); linux-f2fs-devel@lists.sourceforge.net; Wangbintian; Wangkai (Morgan)
+>Subject: Re: [f2fs-dev][PATCH v3] f2fs: Separate nat entry mem alloc from nat_tree_locks
 >
-> f2fs_bug_on(sbi, !total_freed && gc_type == FG_GC);
->
->> On 2017/11/7 10:40, Jaegeuk Kim wrote:
->>> On 11/06, Jaegeuk Kim wrote:
->>>> On 11/06, Yunlong Song wrote:
->>>>> Agree.
->>>>>
->>>>> On 2017/11/3 11:44, Jaegeuk Kim wrote:
->>>>>> On 10/13, Yunlong Song wrote:
->>>>>>> This can help us to debug on some corner case.
->>>>>>>
->>>>>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->>>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>>>>> ---
->>>>>>>     fs/f2fs/gc.c | 6 +++++-
->>>>>>>     1 file changed, 5 insertions(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>>>>>> index 197ebf4..2b03202 100644
->>>>>>> --- a/fs/f2fs/gc.c
->>>>>>> +++ b/fs/f2fs/gc.c
->>>>>>> @@ -986,6 +986,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>>>>>>     		.ilist = LIST_HEAD_INIT(gc_list.ilist),
->>>>>>>     		.iroot = RADIX_TREE_INIT(GFP_NOFS),
->>>>>>>     	};
->>>>>>> +	bool need_fggc = false;
->>>>>>>     	trace_f2fs_gc_begin(sbi->sb, sync, background,
->>>>>>>     				get_pages(sbi, F2FS_DIRTY_NODES),
->>>>>>> @@ -1018,8 +1019,10 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>>>>>>     			if (ret)
->>>>>>>     				goto stop;
->>>>>>>     		}
->>>>>>> -		if (has_not_enough_free_secs(sbi, 0, 0))
->>>>>>> +		if (has_not_enough_free_secs(sbi, 0, 0)) {
->>>>>>>     			gc_type = FG_GC;
->>>>>>> +			need_fggc = true;
->>>>>>> +		}
->>>>>>>     	}
->>>>>>>     	/* f2fs_balance_fs doesn't need to do BG_GC in critical path. */
->>>>>>> @@ -1028,6 +1031,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>>>>>>     		goto stop;
->>>>>>>     	}
->>>>>>>     	if (!__get_victim(sbi, &segno, gc_type)) {
->>>>>>> +		f2fs_bug_on(sbi, !total_freed && need_fggc);
->>>>>> Just like this?
->>>>> That's OK.
->>>> I'm not quite sure whether this is really a bug_on case.
->>>> Let me make it WARN_ON() for debugging purpose first.
->>> BTW, why is this the special case where BG_GC detects FG_GC?
->>>
->>>> Thanks,
->>>>
->>>>>> 		f2fs_bug_on(sbi, !total_freed && !sync && gc_type == FG_GC);
->>>>>>
->>>>>>>     		ret = -ENODATA;
->>>>>>>     		goto stop;
->>>>>>>     	}
->>>>>>> -- 
->>>>>>> 1.8.5.2
->>>>>> .
->>>>>>
->>>>> -- 
->>>>> Thanks,
->>>>> Yunlong Song
->>>>>
->>> .
->>>
->> -- 
->> Thanks,
->> Yunlong Song
+>On 11/06, Yunlei He wrote:
+>> This path separate nat_entry mem alloc from nat_tree_lock,
+>> which will benefit in some low mem case.
 >>
-> .
+>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+>> ---
+>>  fs/f2fs/node.c | 48 +++++++++++++++++++++++++++++++++++-------------
+>>  1 file changed, 35 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+>> index fef5c68..4af6277 100644
+>> --- a/fs/f2fs/node.c
+>> +++ b/fs/f2fs/node.c
+>> @@ -257,22 +257,15 @@ static struct nat_entry *grab_nat_entry(struct f2fs_nm_info *nm_i, nid_t nid,
+>>
+>>  	if (no_fail) {
+>>  		new = f2fs_kmem_cache_alloc(nat_entry_slab, GFP_NOFS);
+>> -		f2fs_radix_tree_insert(&nm_i->nat_root, nid, new);
+>>  	} else {
+>>  		new = kmem_cache_alloc(nat_entry_slab, GFP_NOFS);
+>>  		if (!new)
+>>  			return NULL;
+>> -		if (radix_tree_insert(&nm_i->nat_root, nid, new)) {
+>> -			kmem_cache_free(nat_entry_slab, new);
+>> -			return NULL;
+>> -		}
+>>  	}
+>>
+>>  	memset(new, 0, sizeof(struct nat_entry));
+>>  	nat_set_nid(new, nid);
+>>  	nat_reset_flag(new);
+>> -	list_add_tail(&new->list, &nm_i->nat_entries);
+>> -	nm_i->nat_cnt++;
+>>  	return new;
+>>  }
+>>
+>> @@ -281,18 +274,33 @@ static void cache_nat_entry(struct f2fs_sb_info *sbi, nid_t nid,
+>>  {
+>>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+>>  	struct nat_entry *e;
+>> +	struct nat_entry *new = grab_nat_entry(nm_i, nid, false);
 >
+>How about this?
+>
+>{
+>	struct nat_entry *new = grab_nat_entry(nm_i, nid, false);
+>	bool free = false;
+>
+>	if (!new)
+>		return;
 
--- 
-Thanks,
-Yunlong Song
+Return here may loss nat cache check blow?
+
+BTW, here __lookup_nat_cache() could find an nat entry? We look up earlier and 
+node page lock always held during whole get node info process.
+
+Thanks.
+>
+>	down_write();
+>	e = __lookup_nat_cache();
+>	if (!e) {
+>		if (!radix_tree_insert(new)) {
+>			list_add_tail(new);
+>			nm_i->nat_cnt++;
+>			node_info_from_raw_nat(&new);
+>		} else {
+>			free = true;
+>		}
+>	} else {
+>		f2fs_bug_on();
+>		free = true;
+>	}
+>	up_write();
+>	if (free)
+>		kmem_cache_free(new);
+>}
+>
+>>
+>> +	down_write(&nm_i->nat_tree_lock);
+>>  	e = __lookup_nat_cache(nm_i, nid);
+>>  	if (!e) {
+>> -		e = grab_nat_entry(nm_i, nid, false);
+>> -		if (e)
+>> -			node_info_from_raw_nat(&e->ni, ne);
+>> +		if (!new)
+>> +			goto out;
+>> +
+>> +		e = new;
+>> +		if (radix_tree_insert(&nm_i->nat_root, nid, e)) {
+>> +			kmem_cache_free(nat_entry_slab, e);
+>> +			goto out;
+>> +		}
+>> +
+>> +		list_add_tail(&e->list, &nm_i->nat_entries);
+>> +		nm_i->nat_cnt++;
+>> +		node_info_from_raw_nat(&e->ni, ne);
+>>  	} else {
+>>  		f2fs_bug_on(sbi, nat_get_ino(e) != le32_to_cpu(ne->ino) ||
+>>  				nat_get_blkaddr(e) !=
+>>  					le32_to_cpu(ne->block_addr) ||
+>>  				nat_get_version(e) != ne->version);
+>> +		if (new)
+>> +			kmem_cache_free(nat_entry_slab, new);
+>>  	}
+>> +out:
+>> +	up_write(&nm_i->nat_tree_lock);
+>>  }
+>>
+>>  static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+>> @@ -300,11 +308,21 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+>>  {
+>>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+>>  	struct nat_entry *e;
+>> +	struct nat_entry *new = grab_nat_entry(nm_i, ni->nid, true);
+>>
+>> +retry:
+>>  	down_write(&nm_i->nat_tree_lock);
+>>  	e = __lookup_nat_cache(nm_i, ni->nid);
+>>  	if (!e) {
+>> -		e = grab_nat_entry(nm_i, ni->nid, true);
+>> +		e = new;
+>> +		if (radix_tree_insert(&nm_i->nat_root, ni->nid, e)) {
+>> +			up_write(&nm_i->nat_tree_lock);
+>> +			cond_resched();
+>> +			goto retry;
+>> +		}
+>> +
+>> +		list_add_tail(&e->list, &nm_i->nat_entries);
+>> +		nm_i->nat_cnt++;
+>>  		copy_node_info(&e->ni, ni);
+>>  		f2fs_bug_on(sbi, ni->blk_addr == NEW_ADDR);
+>>  	} else if (new_blkaddr == NEW_ADDR) {
+>> @@ -315,6 +333,9 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+>>  		 */
+>>  		copy_node_info(&e->ni, ni);
+>>  		f2fs_bug_on(sbi, ni->blk_addr != NULL_ADDR);
+>> +		kmem_cache_free(nat_entry_slab, new);
+>> +	} else {
+>> +		kmem_cache_free(nat_entry_slab, new);
+>>  	}
+>>
+>>  	/* sanity check */
+>> @@ -424,9 +445,7 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
+>>  	f2fs_put_page(page, 1);
+>>  cache:
+>>  	/* cache nat entry */
+>> -	down_write(&nm_i->nat_tree_lock);
+>>  	cache_nat_entry(sbi, nid, &ne);
+>> -	up_write(&nm_i->nat_tree_lock);
+>>  }
+>>
+>>  /*
+>> @@ -2375,6 +2394,9 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
+>>  		ne = __lookup_nat_cache(nm_i, nid);
+>>  		if (!ne) {
+>>  			ne = grab_nat_entry(nm_i, nid, true);
+>> +			f2fs_radix_tree_insert(&nm_i->nat_root, nid, ne);
+>> +			list_add_tail(&ne->list, &nm_i->nat_entries);
+>> +			nm_i->nat_cnt++;
+>>  			node_info_from_raw_nat(&ne->ni, &raw_ne);
+>>  		}
+>>
+>> --
+>> 1.9.1
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
