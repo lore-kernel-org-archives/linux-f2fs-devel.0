@@ -1,61 +1,132 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: let f2fs also gc atomic file to avoid loop gc
-Date: Wed, 8 Nov 2017 17:28:30 +0800
-Message-ID: <239f770e-53f0-69c6-fc1d-67aeb9a1065a@huawei.com>
-References: <1510108497-58331-1-git-send-email-yunlong.song@huawei.com>
+Subject: [PATCH] f2fs: introduce scan_curseg_cache for cleanup
+Date: Wed, 8 Nov 2017 17:47:36 +0800
+Message-ID: <20171108094736.43470-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1510108497-58331-1-git-send-email-yunlong.song@huawei.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+ helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <yuchao0@huawei.com>) id 1eCMxn-0001hq-CA
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Nov 2017 09:48:03 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191])
+ by sfi-mx-3.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.89) id 1eCMxl-00017n-2U
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Nov 2017 09:48:03 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/11/8 10:34, Yunlong Song wrote:
-> If some files are opened with atomic flag and have not commited yet, at
-> the same time, if all the target victim segments have at least one page
-> of these atomic files, then f2fs gc will fail to do gc and hangs in the
-> process of go to gc_more, since gc_date_segment will not move any data
-> and get_valid_blocks will never be 0, then do_garbage_collect will
-> always return 0.
+Commit 4ac912427c42 ("f2fs: introduce free nid bitmap") copied codes
+from __build_free_nids() into scan_free_nid_bits(), they are redundant,
+introduce one common function scan_curseg_cache for cleanup.
 
-Oh, I added this judgment condition to avoid ruining atomic write by data
-GC, could we find another way to solve this issue? BTW, if there is direct
-IO, we will also skip data segment GC.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/node.c | 50 +++++++++++++++++++++++---------------------------
+ 1 file changed, 23 insertions(+), 27 deletions(-)
 
-Thanks,
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 9c80d48bfe6d..810d84e2ae92 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1971,11 +1971,30 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
+ 	}
+ }
+ 
+-static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
++static void scan_curseg_cache(struct f2fs_sb_info *sbi)
+ {
+-	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+ 	struct f2fs_journal *journal = curseg->journal;
++	int i;
++
++	down_read(&curseg->journal_rwsem);
++	for (i = 0; i < nats_in_cursum(journal); i++) {
++		block_t addr;
++		nid_t nid;
++
++		addr = le32_to_cpu(nat_in_journal(journal, i).block_addr);
++		nid = le32_to_cpu(nid_in_journal(journal, i));
++		if (addr == NULL_ADDR)
++			add_free_nid(sbi, nid, true);
++		else
++			remove_free_nid(sbi, nid);
++	}
++	up_read(&curseg->journal_rwsem);
++}
++
++static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
++{
++	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	unsigned int i, idx;
+ 
+ 	down_read(&nm_i->nat_tree_lock);
+@@ -2002,27 +2021,14 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
+ 		}
+ 	}
+ out:
+-	down_read(&curseg->journal_rwsem);
+-	for (i = 0; i < nats_in_cursum(journal); i++) {
+-		block_t addr;
+-		nid_t nid;
++	scan_curseg_cache(sbi);
+ 
+-		addr = le32_to_cpu(nat_in_journal(journal, i).block_addr);
+-		nid = le32_to_cpu(nid_in_journal(journal, i));
+-		if (addr == NULL_ADDR)
+-			add_free_nid(sbi, nid, true);
+-		else
+-			remove_free_nid(sbi, nid);
+-	}
+-	up_read(&curseg->journal_rwsem);
+ 	up_read(&nm_i->nat_tree_lock);
+ }
+ 
+ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+-	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+-	struct f2fs_journal *journal = curseg->journal;
+ 	int i = 0;
+ 	nid_t nid = nm_i->next_scan_nid;
+ 
+@@ -2072,18 +2078,8 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
+ 	nm_i->next_scan_nid = nid;
+ 
+ 	/* find free nids from current sum_pages */
+-	down_read(&curseg->journal_rwsem);
+-	for (i = 0; i < nats_in_cursum(journal); i++) {
+-		block_t addr;
++	scan_curseg_cache(sbi);
+ 
+-		addr = le32_to_cpu(nat_in_journal(journal, i).block_addr);
+-		nid = le32_to_cpu(nid_in_journal(journal, i));
+-		if (addr == NULL_ADDR)
+-			add_free_nid(sbi, nid, true);
+-		else
+-			remove_free_nid(sbi, nid);
+-	}
+-	up_read(&curseg->journal_rwsem);
+ 	up_read(&nm_i->nat_tree_lock);
+ 
+ 	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nm_i->next_scan_nid),
+-- 
+2.15.0.55.gc2ece9dc4de6
 
-> 
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> ---
->  fs/f2fs/gc.c | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 5d5bba4..3fdcd04 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -621,9 +621,6 @@ static void move_data_block(struct inode *inode, block_t bidx,
->  	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->  		goto out;
->  
-> -	if (f2fs_is_atomic_file(inode))
-> -		goto out;
-> -
->  	set_new_dnode(&dn, inode, NULL, NULL, 0);
->  	err = get_dnode_of_data(&dn, bidx, LOOKUP_NODE);
->  	if (err)
-> @@ -718,9 +715,6 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->  	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->  		goto out;
->  
-> -	if (f2fs_is_atomic_file(inode))
-> -		goto out;
-> -
->  	if (gc_type == BG_GC) {
->  		if (PageWriteback(page))
->  			goto out;
-> 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
