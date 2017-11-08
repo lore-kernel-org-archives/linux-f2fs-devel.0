@@ -1,73 +1,61 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: optimize the way of traversing
- free_nid_bitmap
-Date: Wed, 8 Nov 2017 16:52:21 +0800
-Message-ID: <17b70863-a406-45c5-c94a-27fda486c66e@huawei.com>
-References: <CGME20171107111512epcas2p2bb846cc19c3d8fa6f2858874183c446c@epcas2p2.samsung.com>
- <002201d357b9$adf558a0$09e009e0$@samsung.com>
+Subject: Re: [PATCH] f2fs: let f2fs also gc atomic file to avoid loop gc
+Date: Wed, 8 Nov 2017 17:28:30 +0800
+Message-ID: <239f770e-53f0-69c6-fc1d-67aeb9a1065a@huawei.com>
+References: <1510108497-58331-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <002201d357b9$adf558a0$09e009e0$@samsung.com>
+In-Reply-To: <1510108497-58331-1-git-send-email-yunlong.song@huawei.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Fan Li <fanofcode.li@samsung.com>, 'Chao Yu' <chao@kernel.org>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/11/7 19:14, Fan Li wrote:
-> We call scan_free_nid_bits only when there isn't many
-> free nids left, it means that marked bits in free_nid_bitmap
-> are supposed to be few, use find_next_bit_le is more
-> efficient in such case.
-> According to my tests, use find_next_bit_le instead of
-> test_bit_le will cut down the traversal time to one
-> third of its original.
-> 
-> Signed-off-by: Fan li <fanofcode.li@samsung.com>
+On 2017/11/8 10:34, Yunlong Song wrote:
+> If some files are opened with atomic flag and have not commited yet, at
+> the same time, if all the target victim segments have at least one page
+> of these atomic files, then f2fs gc will fail to do gc and hangs in the
+> process of go to gc_more, since gc_date_segment will not move any data
+> and get_valid_blocks will never be 0, then do_garbage_collect will
+> always return 0.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Oh, I added this judgment condition to avoid ruining atomic write by data
+GC, could we find another way to solve this issue? BTW, if there is direct
+IO, we will also skip data segment GC.
 
 Thanks,
 
-> ---
->  fs/f2fs/node.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index fef5c68..d234c6e 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1955,6 +1955,7 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
->  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
->  	struct f2fs_journal *journal = curseg->journal;
->  	unsigned int i, idx;
-> +	nid_t nid;
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> ---
+>  fs/f2fs/gc.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 5d5bba4..3fdcd04 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -621,9 +621,6 @@ static void move_data_block(struct inode *inode, block_t bidx,
+>  	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+>  		goto out;
 >  
->  	down_read(&nm_i->nat_tree_lock);
->  
-> @@ -1964,10 +1965,10 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
->  		if (!nm_i->free_nid_count[i])
->  			continue;
->  		for (idx = 0; idx < NAT_ENTRY_PER_BLOCK; idx++) {
-> -			nid_t nid;
+> -	if (f2fs_is_atomic_file(inode))
+> -		goto out;
 > -
-> -			if (!test_bit_le(idx, nm_i->free_nid_bitmap[i]))
-> -				continue;
-> +			idx = find_next_bit_le(nm_i->free_nid_bitmap[i],
-> +						NAT_ENTRY_PER_BLOCK, idx);
-> +			if (idx >= NAT_ENTRY_PER_BLOCK)
-> +				break;
+>  	set_new_dnode(&dn, inode, NULL, NULL, 0);
+>  	err = get_dnode_of_data(&dn, bidx, LOOKUP_NODE);
+>  	if (err)
+> @@ -718,9 +715,6 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+>  	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+>  		goto out;
 >  
->  			nid = i * NAT_ENTRY_PER_BLOCK + idx;
->  			add_free_nid(sbi, nid, true);
-> @@ -1980,7 +1981,6 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
->  	down_read(&curseg->journal_rwsem);
->  	for (i = 0; i < nats_in_cursum(journal); i++) {
->  		block_t addr;
-> -		nid_t nid;
->  
->  		addr = le32_to_cpu(nat_in_journal(journal, i).block_addr);
->  		nid = le32_to_cpu(nid_in_journal(journal, i));
+> -	if (f2fs_is_atomic_file(inode))
+> -		goto out;
+> -
+>  	if (gc_type == BG_GC) {
+>  		if (PageWriteback(page))
+>  			goto out;
 > 
