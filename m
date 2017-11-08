@@ -1,175 +1,73 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v5] f2fs: Separate nat entry mem alloc from
- nat_tree_locks
-Date: Wed, 8 Nov 2017 16:46:09 +0800
-Message-ID: <3a4f384a-d6b6-5018-3c5a-737a82c9a3d9@huawei.com>
-References: <1510048045-10419-1-git-send-email-heyunlei@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: optimize the way of traversing
+ free_nid_bitmap
+Date: Wed, 8 Nov 2017 16:52:21 +0800
+Message-ID: <17b70863-a406-45c5-c94a-27fda486c66e@huawei.com>
+References: <CGME20171107111512epcas2p2bb846cc19c3d8fa6f2858874183c446c@epcas2p2.samsung.com>
+ <002201d357b9$adf558a0$09e009e0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
- helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1eCM0G-0005d8-6a
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Nov 2017 08:46:32 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191])
- by sfi-mx-2.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.89) id 1eCM0D-0005AO-PE
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Nov 2017 08:46:32 +0000
-In-Reply-To: <1510048045-10419-1-git-send-email-heyunlei@huawei.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <002201d357b9$adf558a0$09e009e0$@samsung.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: ning.jia@huawei.com
+Sender: linux-kernel-owner@vger.kernel.org
+To: Fan Li <fanofcode.li@samsung.com>, 'Chao Yu' <chao@kernel.org>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/11/7 17:47, Yunlei He wrote:
-> This path separate nat_entry mem alloc from nat_tree_lock,
-> which will benefit in some low mem case.
+On 2017/11/7 19:14, Fan Li wrote:
+> We call scan_free_nid_bits only when there isn't many
+> free nids left, it means that marked bits in free_nid_bitmap
+> are supposed to be few, use find_next_bit_le is more
+> efficient in such case.
+> According to my tests, use find_next_bit_le instead of
+> test_bit_le will cut down the traversal time to one
+> third of its original.
 > 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> ---
->  fs/f2fs/node.c | 56 +++++++++++++++++++++++++++++++++++++++-----------------
->  1 file changed, 39 insertions(+), 17 deletions(-)
-> 
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index fef5c68..c6aea33 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -257,22 +257,15 @@ static struct nat_entry *grab_nat_entry(struct f2fs_nm_info *nm_i, nid_t nid,
->  
->  	if (no_fail) {
->  		new = f2fs_kmem_cache_alloc(nat_entry_slab, GFP_NOFS);
-> -		f2fs_radix_tree_insert(&nm_i->nat_root, nid, new);
->  	} else {
->  		new = kmem_cache_alloc(nat_entry_slab, GFP_NOFS);
->  		if (!new)
->  			return NULL;
-> -		if (radix_tree_insert(&nm_i->nat_root, nid, new)) {
-> -			kmem_cache_free(nat_entry_slab, new);
-> -			return NULL;
-> -		}
->  	}
->  
->  	memset(new, 0, sizeof(struct nat_entry));
->  	nat_set_nid(new, nid);
->  	nat_reset_flag(new);
-> -	list_add_tail(&new->list, &nm_i->nat_entries);
-> -	nm_i->nat_cnt++;
->  	return new;
->  }
->  
-> @@ -282,17 +275,32 @@ static void cache_nat_entry(struct f2fs_sb_info *sbi, nid_t nid,
->  	struct f2fs_nm_info *nm_i = NM_I(sbi);
->  	struct nat_entry *e;
->  
-> +#ifdef CONFIG_F2FS_CHECK_FS
-> +	down_read(&nm_i->nat_tree_lock);
->  	e = __lookup_nat_cache(nm_i, nid);
-> -	if (!e) {
-> -		e = grab_nat_entry(nm_i, nid, false);
-> -		if (e)
-> -			node_info_from_raw_nat(&e->ni, ne);
-> -	} else {
-> +	if (unlikely(e)) {
->  		f2fs_bug_on(sbi, nat_get_ino(e) != le32_to_cpu(ne->ino) ||
-> -				nat_get_blkaddr(e) !=
-> -					le32_to_cpu(ne->block_addr) ||
-> +			nat_get_blkaddr(e) != le32_to_cpu(ne->block_addr) ||
->  				nat_get_version(e) != ne->version);
-> +		up_read(&nm_i->nat_tree_lock);
-> +		return;
-> +	}
-> +	up_read(&nm_i->nat_tree_lock);
-> +#endif
-> +	e = grab_nat_entry(nm_i, nid, false);
+> Signed-off-by: Fan li <fanofcode.li@samsung.com>
 
-if (!e)
-	return;
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
 
-> +	down_write(&nm_i->nat_tree_lock);
-> +	if (!e)
-> +		goto out;
-> +
-> +	if (!radix_tree_insert(&nm_i->nat_root, nid, e)) {
-> +		list_add_tail(&e->list, &nm_i->nat_entries);
-> +		nm_i->nat_cnt++;
-> +		node_info_from_raw_nat(&e->ni, ne);
-> +	} else {
-> +		kmem_cache_free(nat_entry_slab, e);
->  	}
-> +out:
-> +	up_write(&nm_i->nat_tree_lock);
->  }
->  
->  static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
-> @@ -300,11 +308,21 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
->  {
->  	struct f2fs_nm_info *nm_i = NM_I(sbi);
->  	struct nat_entry *e;
-> +	struct nat_entry *new = grab_nat_entry(nm_i, ni->nid, true);
->  
-> +retry:
->  	down_write(&nm_i->nat_tree_lock);
->  	e = __lookup_nat_cache(nm_i, ni->nid);
->  	if (!e) {
-> -		e = grab_nat_entry(nm_i, ni->nid, true);
-> +		e = new;
-> +		if (radix_tree_insert(&nm_i->nat_root, ni->nid, e)) {
-> +			up_write(&nm_i->nat_tree_lock);
-> +			cond_resched();
-> +			goto retry;
-> +		}
-> +
-> +		list_add_tail(&e->list, &nm_i->nat_entries);
-> +		nm_i->nat_cnt++;
->  		copy_node_info(&e->ni, ni);
->  		f2fs_bug_on(sbi, ni->blk_addr == NEW_ADDR);
->  	} else if (new_blkaddr == NEW_ADDR) {
-> @@ -315,6 +333,9 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
->  		 */
->  		copy_node_info(&e->ni, ni);
->  		f2fs_bug_on(sbi, ni->blk_addr != NULL_ADDR);
-> +		kmem_cache_free(nat_entry_slab, new);
-> +	} else {
-> +		kmem_cache_free(nat_entry_slab, new);
->  	}
->  
->  	/* sanity check */
-> @@ -424,9 +445,7 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
->  	f2fs_put_page(page, 1);
->  cache:
->  	/* cache nat entry */
-> -	down_write(&nm_i->nat_tree_lock);
->  	cache_nat_entry(sbi, nid, &ne);
-> -	up_write(&nm_i->nat_tree_lock);
->  }
->  
->  /*
-> @@ -2375,6 +2394,9 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
->  		ne = __lookup_nat_cache(nm_i, nid);
->  		if (!ne) {
->  			ne = grab_nat_entry(nm_i, nid, true);
-> +			f2fs_radix_tree_insert(&nm_i->nat_root, nid, ne);
-> +			list_add_tail(&ne->list, &nm_i->nat_entries);
-> +			nm_i->nat_cnt++;
->  			node_info_from_raw_nat(&ne->ni, &raw_ne);
->  		}
->  
+> ---
+>  fs/f2fs/node.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index fef5c68..d234c6e 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1955,6 +1955,7 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
+>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+>  	struct f2fs_journal *journal = curseg->journal;
+>  	unsigned int i, idx;
+> +	nid_t nid;
+>  
+>  	down_read(&nm_i->nat_tree_lock);
+>  
+> @@ -1964,10 +1965,10 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
+>  		if (!nm_i->free_nid_count[i])
+>  			continue;
+>  		for (idx = 0; idx < NAT_ENTRY_PER_BLOCK; idx++) {
+> -			nid_t nid;
+> -
+> -			if (!test_bit_le(idx, nm_i->free_nid_bitmap[i]))
+> -				continue;
+> +			idx = find_next_bit_le(nm_i->free_nid_bitmap[i],
+> +						NAT_ENTRY_PER_BLOCK, idx);
+> +			if (idx >= NAT_ENTRY_PER_BLOCK)
+> +				break;
+>  
+>  			nid = i * NAT_ENTRY_PER_BLOCK + idx;
+>  			add_free_nid(sbi, nid, true);
+> @@ -1980,7 +1981,6 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
+>  	down_read(&curseg->journal_rwsem);
+>  	for (i = 0; i < nats_in_cursum(journal); i++) {
+>  		block_t addr;
+> -		nid_t nid;
+>  
+>  		addr = le32_to_cpu(nat_in_journal(journal, i).block_addr);
+>  		nid = le32_to_cpu(nid_in_journal(journal, i));
+> 
