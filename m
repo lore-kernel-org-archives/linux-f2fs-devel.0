@@ -1,26 +1,27 @@
-From: heyunlei <heyunlei@huawei.com>
-Subject: Re: [PATCH] f2fs: check block reserve strictly a little
- bit
-Date: Fri, 10 Nov 2017 02:30:56 +0000
-Message-ID: <42B685BFA705F94C860C6DD0752F0565482C09BB@DGGEMA503-MBX.china.huawei.com>
-References: <1510048610-17771-1-git-send-email-heyunlei@huawei.com>
- <20171109175527.GB55844@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [RFC PATCH 0/2] apply write hints to select the type
+ of segments
+Date: Fri, 10 Nov 2017 10:31:14 +0800
+Message-ID: <d305845e-d971-553b-ad95-afc321c131b6@huawei.com>
+References: <1510206688-12767-1-git-send-email-hyc.lee@gmail.com>
+ <1b0b44de-c724-5dc4-e9cb-79a894bdb611@huawei.com>
+ <20171109181624.GA59398@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <heyunlei@huawei.com>) id 1eCz6I-0006RZ-TQ
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Nov 2017 02:31:22 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187])
- by sfi-mx-4.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.89) id 1eCz6G-0005eT-LZ
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Nov 2017 02:31:22 +0000
-In-Reply-To: <20171109175527.GB55844@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: zh-CN
+ (envelope-from <yuchao0@huawei.com>) id 1eCz8D-0003qa-OG
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Nov 2017 02:33:21 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191])
+ by sfi-mx-3.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.89) id 1eCz8B-0004Q4-NY
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Nov 2017 02:33:21 +0000
+In-Reply-To: <20171109181624.GA59398@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,108 +32,82 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: "Jianing (Euler)" <ning.jia@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Cc: kernel-team@lge.com, Hyunchul Lee <cheol.lee@lge.com>, linux-kernel@vger.kernel.org, Hyunchul Lee <hyc.lee@gmail.com>, linux-f2fs-devel@lists.sourceforge.net
 
+On 2017/11/10 2:16, Jaegeuk Kim wrote:
+> On 11/09, Chao Yu wrote:
+>> On 2017/11/9 13:51, Hyunchul Lee wrote:
+>>> From: Hyunchul Lee <cheol.lee@lge.com>
+>>>
+>>> Using write hints[1], applications can inform the life time of the data
+>>> written to devices. and this[2] reported that the write hints patch
+>>> decreased writes in NAND by 25%.
+>>>
+>>> This hints help F2FS to determine the followings.
+>>>   1) the segment types where the data will be written.
+>>>   2) the hints that will be passed down to devices with the data of segments.
+>>>
+>>> This patch set implements the first mapping from write hints to segment types
+>>> as shown below.
+>>>
+>>>   hints                     segment type
+>>>   -----                     ------------
+>>>   WRITE_LIFE_SHORT          CURSEG_COLD_DATA
+>>>   WRITE_LIFE_EXTREME        CURSEG_HOT_DATA
+>>>   others                    CURSEG_WARM_DATA
+>>>
+>>> The F2FS poliy for hot/cold seperation has precedence over this hints, And
+>>> hints are not applied in in-place update.
+>>
+>> Could we change to disable IPU if file/inode write hint is existing?
+> 
+> Well, this is a hint which is not related to IPU. I think user should be aware
+> of controlling IPU.
 
+Yes, no matter filesystem trigger IPU or OPU, in FTL, old PPA will always become
+invalid (life is end), FTL only cares about how long PPA will become invalid
+instead of how LPA/PPA mapps. So from FTL aspect, it's no problem. :)
 
->-----Original Message-----
->From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
->Sent: Friday, November 10, 2017 1:55 AM
->To: heyunlei
->Cc: Yuchao (T); linux-f2fs-devel@lists.sourceforge.net; Wangbintian; Jianing (Euler)
->Subject: Re: [f2fs-dev][PATCH] f2fs: check block reserve strictly a little bit
->
->On 11/07, Yunlei He wrote:
->> This patch check new block reserve strictly, in case of
->> garbage data of node page.
->>
->> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->> ---
->>  fs/f2fs/data.c    |  9 +++++++--
->>  fs/f2fs/file.c    | 13 +++++--------
->>  fs/f2fs/segment.c |  1 +
->>  3 files changed, 13 insertions(+), 10 deletions(-)
->>
->> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->> index b0781ed..3017a87 100644
->> --- a/fs/f2fs/data.c
->> +++ b/fs/f2fs/data.c
->> @@ -558,13 +558,18 @@ int reserve_new_blocks(struct dnode_of_data *dn, blkcnt_t count)
->>
->>  	f2fs_wait_on_page_writeback(dn->node_page, NODE, true);
->>
->> -	for (; count > 0; dn->ofs_in_node++) {
->> +	for (; count > 0; dn->ofs_in_node++, count--) {
->>  		block_t blkaddr = datablock_addr(dn->inode,
->>  					dn->node_page, dn->ofs_in_node);
->>  		if (blkaddr == NULL_ADDR) {
->>  			dn->data_blkaddr = NEW_ADDR;
->>  			__set_data_blkaddr(dn);
->> -			count--;
->> +		} else {
->> +			f2fs_msg(sbi->sb, KERN_ERR, "reserve non NULL block, "
->> +				"blkaddr:%u, ino:%lu, nid:%u, ofs_in_node:%u",
->> +				blkaddr, dn->inode->i_ino, dn->nid,
->> +				dn->ofs_in_node);
->> +			f2fs_bug_on(sbi, 1);
->
->What if there is a hole?
+But from f2fs space management aspect, IPU method can make effect of hot/cold
+separating strategy becoming worse, e.g. if we trigger IPU for some hot datas,
+data migration in hot segment can be postponed, result in high usage of hot
+segment, leaving more work to GC.
 
-Hole can hold a non NULL block index? 
-NEW_ADDR may be possible, for the case date block is reserved but without wb
-after new cp.
-How about this?
-	} else if (blkaddr != NEW_ADDR ){
-		 	f2fs_msg();
-	}
-Thanks. 
->
->>  		}
->>  	}
+So there is a trade-off in between reducing node writes in fsync and reduce GC
+work with better hot/cold separating...
+
+Thanks,
+
+> 
+>>>
+>>> Before the second mapping is implemented, write hints are not passed down
+>>> to devices. Because it is better that the data of a segment have the same 
+>>> hint.
+>>>
+>>> [1]: c75b1d9421f80f4143e389d2d50ddfc8a28c8c35
+>>> [2]: https://lwn.net/Articles/726477/
 >>
->> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->> index cee0f36..dfc23c2 100644
->> --- a/fs/f2fs/file.c
->> +++ b/fs/f2fs/file.c
->> @@ -1218,19 +1218,16 @@ static int f2fs_do_zero_range(struct dnode_of_data *dn, pgoff_t start,
->>  	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
->>  	pgoff_t index = start;
->>  	unsigned int ofs_in_node = dn->ofs_in_node;
->> -	blkcnt_t count = 0;
->> -	int ret;
->> +	int ret = 0;
+>> Could you write a patch to support passing write hint to block layer for
+>> buffered writes as below commit:
+>> 0127251c45ae ("ext4: add support for passing in write hints for buffered writes")
 >>
->>  	for (; index < end; index++, dn->ofs_in_node++) {
->>  		if (datablock_addr(dn->inode, dn->node_page,
->>  					dn->ofs_in_node) == NULL_ADDR)
->> -			count++;
->> -	}
->> +			ret = reserve_new_blocks(dn, 1);
+>> Thanks,
 >>
->> -	dn->ofs_in_node = ofs_in_node;
->> -	ret = reserve_new_blocks(dn, count);
->> -	if (ret)
->> -		return ret;
->> +		if (ret)
->> +			return ret;
->> +	}
->>
->>  	dn->ofs_in_node = ofs_in_node;
->>  	for (index = start; index < end; index++, dn->ofs_in_node++) {
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index 20722b2..e670967 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -1815,6 +1815,7 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
->>  	bool mir_exist;
->>  #endif
->>
->> +	verify_block_addr(sbi, blkaddr);
->>  	segno = GET_SEGNO(sbi, blkaddr);
->>
->>  	se = get_seg_entry(sbi, segno);
->> --
->> 1.9.1
+>>>
+>>> Hyunchul Lee (2):
+>>>   f2fs: apply write hints to select the type of segments for buffered
+>>>     write
+>>>   f2fs: apply write hints to select the type of segment for direct write
+>>>
+>>>  fs/f2fs/data.c    | 101 ++++++++++++++++++++++++++++++++----------------------
+>>>  fs/f2fs/f2fs.h    |   1 +
+>>>  fs/f2fs/segment.c |  14 +++++++-
+>>>  3 files changed, 74 insertions(+), 42 deletions(-)
+>>>
+> 
+> .
+> 
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
