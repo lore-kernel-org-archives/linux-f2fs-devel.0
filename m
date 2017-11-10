@@ -1,92 +1,125 @@
-From: Hyunchul Lee <hyc.lee@gmail.com>
-Subject: Re: [RFC PATCH 0/2] apply write hints to select the type of segments
-Date: Fri, 10 Nov 2017 09:23:32 +0900
-Message-ID: <5A04F184.3000204@gmail.com>
-References: <1510206688-12767-1-git-send-email-hyc.lee@gmail.com> <1b0b44de-c724-5dc4-e9cb-79a894bdb611@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v2 1/3] f2fs: avoid opened loop codes in
+ __add_ino_entry
+Date: Fri, 10 Nov 2017 09:07:11 +0800
+Message-ID: <3ef4ee57-f88c-633b-dcdc-b2664df81bfa@huawei.com>
+References: <20171107054142.6242-1-yuchao0@huawei.com>
+ <20171109175129.GA55844@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1b0b44de-c724-5dc4-e9cb-79a894bdb611@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-team@lge.com, Hyunchul Lee <cheol.lee@lge.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+ helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <yuchao0@huawei.com>) id 1eCxnO-0002eK-3d
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Nov 2017 01:07:46 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190])
+ by sfi-mx-4.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.89) id 1eCxnL-0006lV-Rm
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Nov 2017 01:07:46 +0000
+In-Reply-To: <20171109175129.GA55844@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: mhocko@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hello, Chao
 
-On 11/09/2017 06:12 PM, Chao Yu wrote:
-> On 2017/11/9 13:51, Hyunchul Lee wrote:
->> From: Hyunchul Lee <cheol.lee@lge.com>
->>
->> Using write hints[1], applications can inform the life time of the data
->> written to devices. and this[2] reported that the write hints patch
->> decreased writes in NAND by 25%.
->>
->> This hints help F2FS to determine the followings.
->>   1) the segment types where the data will be written.
->>   2) the hints that will be passed down to devices with the data of segments.
->>
->> This patch set implements the first mapping from write hints to segment types
->> as shown below.
->>
->>   hints                     segment type
->>   -----                     ------------
->>   WRITE_LIFE_SHORT          CURSEG_COLD_DATA
->>   WRITE_LIFE_EXTREME        CURSEG_HOT_DATA
->>   others                    CURSEG_WARM_DATA
->>
->> The F2FS poliy for hot/cold seperation has precedence over this hints, And
->> hints are not applied in in-place update.
+
+On 2017/11/10 1:51, Jaegeuk Kim wrote:
+> Hi Chao,
 > 
-> Could we change to disable IPU if file/inode write hint is existing?
+> On 11/07, Chao Yu wrote:
+>> We will keep __add_ino_entry success all the time, for ENOMEM failure
+>> case, we have already handled it by using  __GFP_NOFAIL flag, so we
+>> don't have to use additional opened loop codes here, remove them.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>> v2:
+>> As Michal Hocko suggested, with __GFP_NOFAIL, MM will do all it can for
+>> memory allocation including access memory reserves, so it's better to
+>> use it rather than opened loop code, update this patch for it.
+>>  fs/f2fs/checkpoint.c | 19 +++++++++++--------
+>>  1 file changed, 11 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>> index 98777c1ae70c..80b90146cff2 100644
+>> --- a/fs/f2fs/checkpoint.c
+>> +++ b/fs/f2fs/checkpoint.c
+>> @@ -405,20 +405,21 @@ static void __add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino,
+>>  {
+>>  	struct inode_management *im = &sbi->im[type];
+>>  	struct ino_entry *e, *tmp;
+>> +	bool preloaded;
+>> +	int err;
+>>  
+>>  	tmp = f2fs_kmem_cache_alloc(ino_entry_slab, GFP_NOFS);
+>> -retry:
+>> -	radix_tree_preload(GFP_NOFS | __GFP_NOFAIL);
+>> +
+>> +	preloaded = !radix_tree_preload(GFP_NOFS | __GFP_NOFAIL);
+>> +	f2fs_bug_on(sbi, !preloaded);
+> 
+> I don't think we need this by adding new useless variable.
+
+Yup, let me update it.
+
+> 
+>>  
+>>  	spin_lock(&im->ino_lock);
+>>  	e = radix_tree_lookup(&im->ino_root, ino);
+>>  	if (!e) {
+>>  		e = tmp;
+>> -		if (radix_tree_insert(&im->ino_root, ino, e)) {
+> 
+> How about just adding this?
+> 
+> 		if (unlikely(radix_tree_insert(&im->ino_root, ino, e)))
+> 			f2fs_bug_on(sbi, 1);
+
+Okay.
+
+Thanks,
+
+> 
+>> -			spin_unlock(&im->ino_lock);
+>> -			radix_tree_preload_end();
+>> -			goto retry;
+>> -		}
+>> +		err = radix_tree_insert(&im->ino_root, ino, e);
+>> +		f2fs_bug_on(sbi, err);
+>> +
+>>  		memset(e, 0, sizeof(struct ino_entry));
+>>  		e->ino = ino;
+>>  
+>> @@ -431,7 +432,9 @@ static void __add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino,
+>>  		f2fs_set_bit(devidx, (char *)&e->dirty_device);
+>>  
+>>  	spin_unlock(&im->ino_lock);
+>> -	radix_tree_preload_end();
+>> +
+>> +	if (preloaded)
+>> +		radix_tree_preload_end();
+>>  
+>>  	if (e != tmp)
+>>  		kmem_cache_free(ino_entry_slab, tmp);
+>> -- 
+>> 2.15.0.55.gc2ece9dc4de6
+> 
+> .
 > 
 
-I am afraid that this makes side effects. for example, this could cause
-out-of-place updates even when there are not enough free segments. 
-I can write the patch that handles these situations. But I wonder 
-that this is required, and I am not sure which IPU polices can be disabled.
 
->>
->> Before the second mapping is implemented, write hints are not passed down
->> to devices. Because it is better that the data of a segment have the same 
->> hint.
->>
->> [1]: c75b1d9421f80f4143e389d2d50ddfc8a28c8c35
->> [2]: https://lwn.net/Articles/726477/
-> 
-> Could you write a patch to support passing write hint to block layer for
-> buffered writes as below commit:
-> 0127251c45ae ("ext4: add support for passing in write hints for buffered writes")
-> 
-
-Sure I will. I wrote it already ;)
-I think that datas from the same segment should be passed down with the same
-hint, and the following mapping is reasonable. I wonder what is your opinion
-about it.
-
-  segment type               hints
-  ------------               -----
-  CURSEG_COLD_DATA           WRITE_LIFE_EXTREME
-  CURSEG_HOT_DATA            WRITE_LIFE_SHORT
-  CURSEG_COLD_NODE           WRITE_LIFE_NORMAL
-  CURSEG_HOT_NODE            WRITE_LIFE_MEDIUM
-  others                     WRITE_LIFE_NONE
- 
-> Thanks,
-> 
->>
->> Hyunchul Lee (2):
->>   f2fs: apply write hints to select the type of segments for buffered
->>     write
->>   f2fs: apply write hints to select the type of segment for direct write
->>
->>  fs/f2fs/data.c    | 101 ++++++++++++++++++++++++++++++++----------------------
->>  fs/f2fs/f2fs.h    |   1 +
->>  fs/f2fs/segment.c |  14 +++++++-
->>  3 files changed, 74 insertions(+), 42 deletions(-)
->>
-> 
-> 
-
-Thanks
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
