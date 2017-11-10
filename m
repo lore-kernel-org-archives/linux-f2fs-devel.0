@@ -1,27 +1,26 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [RFC PATCH 0/2] apply write hints to select the type
- of segments
-Date: Fri, 10 Nov 2017 10:31:14 +0800
-Message-ID: <d305845e-d971-553b-ad95-afc321c131b6@huawei.com>
-References: <1510206688-12767-1-git-send-email-hyc.lee@gmail.com>
- <1b0b44de-c724-5dc4-e9cb-79a894bdb611@huawei.com>
- <20171109181624.GA59398@jaegeuk-macbookpro.roam.corp.google.com>
+From: heyunlei <heyunlei@huawei.com>
+Subject: Re: [PATCH v5] f2fs: Separate nat entry mem alloc from
+ nat_tree_locks
+Date: Fri, 10 Nov 2017 03:26:04 +0000
+Message-ID: <42B685BFA705F94C860C6DD0752F0565482C0AE1@DGGEMA503-MBX.china.huawei.com>
+References: <1510048045-10419-1-git-send-email-heyunlei@huawei.com>
+ <20171109180443.GD55844@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1eCz8D-0003qa-OG
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Nov 2017 02:33:21 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191])
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.89) id 1eCz8B-0004Q4-NY
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Nov 2017 02:33:21 +0000
-In-Reply-To: <20171109181624.GA59398@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
+ (envelope-from <heyunlei@huawei.com>) id 1eCzxi-0001q3-M3
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Nov 2017 03:26:34 +0000
+Received: from szxga01-in.huawei.com ([45.249.212.187])
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.89) id 1eCzxg-0003ee-68
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Nov 2017 03:26:34 +0000
+In-Reply-To: <20171109180443.GD55844@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: zh-CN
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,83 +31,99 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: kernel-team@lge.com, Hyunchul Lee <cheol.lee@lge.com>, linux-kernel@vger.kernel.org, Hyunchul Lee <hyc.lee@gmail.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: "Jianing (Euler)" <ning.jia@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-On 2017/11/10 2:16, Jaegeuk Kim wrote:
-> On 11/09, Chao Yu wrote:
->> On 2017/11/9 13:51, Hyunchul Lee wrote:
->>> From: Hyunchul Lee <cheol.lee@lge.com>
->>>
->>> Using write hints[1], applications can inform the life time of the data
->>> written to devices. and this[2] reported that the write hints patch
->>> decreased writes in NAND by 25%.
->>>
->>> This hints help F2FS to determine the followings.
->>>   1) the segment types where the data will be written.
->>>   2) the hints that will be passed down to devices with the data of segments.
->>>
->>> This patch set implements the first mapping from write hints to segment types
->>> as shown below.
->>>
->>>   hints                     segment type
->>>   -----                     ------------
->>>   WRITE_LIFE_SHORT          CURSEG_COLD_DATA
->>>   WRITE_LIFE_EXTREME        CURSEG_HOT_DATA
->>>   others                    CURSEG_WARM_DATA
->>>
->>> The F2FS poliy for hot/cold seperation has precedence over this hints, And
->>> hints are not applied in in-place update.
->>
->> Could we change to disable IPU if file/inode write hint is existing?
-> 
-> Well, this is a hint which is not related to IPU. I think user should be aware
-> of controlling IPU.
-
-Yes, no matter filesystem trigger IPU or OPU, in FTL, old PPA will always become
-invalid (life is end), FTL only cares about how long PPA will become invalid
-instead of how LPA/PPA mapps. So from FTL aspect, it's no problem. :)
-
-But from f2fs space management aspect, IPU method can make effect of hot/cold
-separating strategy becoming worse, e.g. if we trigger IPU for some hot datas,
-data migration in hot segment can be postponed, result in high usage of hot
-segment, leaving more work to GC.
-
-So there is a trade-off in between reducing node writes in fsync and reduce GC
-work with better hot/cold separating...
-
-Thanks,
-
-> 
->>>
->>> Before the second mapping is implemented, write hints are not passed down
->>> to devices. Because it is better that the data of a segment have the same 
->>> hint.
->>>
->>> [1]: c75b1d9421f80f4143e389d2d50ddfc8a28c8c35
->>> [2]: https://lwn.net/Articles/726477/
->>
->> Could you write a patch to support passing write hint to block layer for
->> buffered writes as below commit:
->> 0127251c45ae ("ext4: add support for passing in write hints for buffered writes")
->>
->> Thanks,
->>
->>>
->>> Hyunchul Lee (2):
->>>   f2fs: apply write hints to select the type of segments for buffered
->>>     write
->>>   f2fs: apply write hints to select the type of segment for direct write
->>>
->>>  fs/f2fs/data.c    | 101 ++++++++++++++++++++++++++++++++----------------------
->>>  fs/f2fs/f2fs.h    |   1 +
->>>  fs/f2fs/segment.c |  14 +++++++-
->>>  3 files changed, 74 insertions(+), 42 deletions(-)
->>>
-> 
-> .
-> 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IEphZWdldWsgS2ltIFttYWls
+dG86amFlZ2V1a0BrZXJuZWwub3JnXQ0KPlNlbnQ6IEZyaWRheSwgTm92ZW1iZXIgMTAsIDIwMTcg
+MjowNSBBTQ0KPlRvOiBoZXl1bmxlaQ0KPkNjOiBZdWNoYW8gKFQpOyBsaW51eC1mMmZzLWRldmVs
+QGxpc3RzLnNvdXJjZWZvcmdlLm5ldDsgV2FuZ2JpbnRpYW47IEppYW5pbmcgKEV1bGVyKQ0KPlN1
+YmplY3Q6IFJlOiBbZjJmcy1kZXZdW1BBVENIIHY1XSBmMmZzOiBTZXBhcmF0ZSBuYXQgZW50cnkg
+bWVtIGFsbG9jIGZyb20gbmF0X3RyZWVfbG9ja3MNCj4NCj5PbiAxMS8wNywgWXVubGVpIEhlIHdy
+b3RlOg0KPj4gVGhpcyBwYXRoIHNlcGFyYXRlIG5hdF9lbnRyeSBtZW0gYWxsb2MgZnJvbSBuYXRf
+dHJlZV9sb2NrLA0KPj4gd2hpY2ggd2lsbCBiZW5lZml0IGluIHNvbWUgbG93IG1lbSBjYXNlLg0K
+Pj4NCj4+IFNpZ25lZC1vZmYtYnk6IFl1bmxlaSBIZSA8aGV5dW5sZWlAaHVhd2VpLmNvbT4NCj4+
+IC0tLQ0KPj4gIGZzL2YyZnMvbm9kZS5jIHwgNTYgKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0NCj4+ICAxIGZpbGUgY2hhbmdlZCwgMzkgaW5z
+ZXJ0aW9ucygrKSwgMTcgZGVsZXRpb25zKC0pDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMv
+bm9kZS5jIGIvZnMvZjJmcy9ub2RlLmMNCj4+IGluZGV4IGZlZjVjNjguLmM2YWVhMzMgMTAwNjQ0
+DQo+PiAtLS0gYS9mcy9mMmZzL25vZGUuYw0KPj4gKysrIGIvZnMvZjJmcy9ub2RlLmMNCj4+IEBA
+IC0yNTcsMjIgKzI1NywxNSBAQCBzdGF0aWMgc3RydWN0IG5hdF9lbnRyeSAqZ3JhYl9uYXRfZW50
+cnkoc3RydWN0IGYyZnNfbm1faW5mbyAqbm1faSwgbmlkX3QgbmlkLA0KPj4NCj4+ICAJaWYgKG5v
+X2ZhaWwpIHsNCj4+ICAJCW5ldyA9IGYyZnNfa21lbV9jYWNoZV9hbGxvYyhuYXRfZW50cnlfc2xh
+YiwgR0ZQX05PRlMpOw0KPj4gLQkJZjJmc19yYWRpeF90cmVlX2luc2VydCgmbm1faS0+bmF0X3Jv
+b3QsIG5pZCwgbmV3KTsNCj4+ICAJfSBlbHNlIHsNCj4+ICAJCW5ldyA9IGttZW1fY2FjaGVfYWxs
+b2MobmF0X2VudHJ5X3NsYWIsIEdGUF9OT0ZTKTsNCj4+ICAJCWlmICghbmV3KQ0KPj4gIAkJCXJl
+dHVybiBOVUxMOw0KPj4gLQkJaWYgKHJhZGl4X3RyZWVfaW5zZXJ0KCZubV9pLT5uYXRfcm9vdCwg
+bmlkLCBuZXcpKSB7DQo+PiAtCQkJa21lbV9jYWNoZV9mcmVlKG5hdF9lbnRyeV9zbGFiLCBuZXcp
+Ow0KPj4gLQkJCXJldHVybiBOVUxMOw0KPj4gLQkJfQ0KPj4gIAl9DQo+Pg0KPj4gIAltZW1zZXQo
+bmV3LCAwLCBzaXplb2Yoc3RydWN0IG5hdF9lbnRyeSkpOw0KPj4gIAluYXRfc2V0X25pZChuZXcs
+IG5pZCk7DQo+PiAgCW5hdF9yZXNldF9mbGFnKG5ldyk7DQo+PiAtCWxpc3RfYWRkX3RhaWwoJm5l
+dy0+bGlzdCwgJm5tX2ktPm5hdF9lbnRyaWVzKTsNCj4+IC0Jbm1faS0+bmF0X2NudCsrOw0KPj4g
+IAlyZXR1cm4gbmV3Ow0KPj4gIH0NCj4+DQo+PiBAQCAtMjgyLDE3ICsyNzUsMzIgQEAgc3RhdGlj
+IHZvaWQgY2FjaGVfbmF0X2VudHJ5KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgbmlkX3Qgbmlk
+LA0KPj4gIAlzdHJ1Y3QgZjJmc19ubV9pbmZvICpubV9pID0gTk1fSShzYmkpOw0KPj4gIAlzdHJ1
+Y3QgbmF0X2VudHJ5ICplOw0KPj4NCj4+ICsjaWZkZWYgQ09ORklHX0YyRlNfQ0hFQ0tfRlMNCj4+
+ICsJZG93bl9yZWFkKCZubV9pLT5uYXRfdHJlZV9sb2NrKTsNCj4+ICAJZSA9IF9fbG9va3VwX25h
+dF9jYWNoZShubV9pLCBuaWQpOw0KPj4gLQlpZiAoIWUpIHsNCj4+IC0JCWUgPSBncmFiX25hdF9l
+bnRyeShubV9pLCBuaWQsIGZhbHNlKTsNCj4+IC0JCWlmIChlKQ0KPj4gLQkJCW5vZGVfaW5mb19m
+cm9tX3Jhd19uYXQoJmUtPm5pLCBuZSk7DQo+PiAtCX0gZWxzZSB7DQo+PiArCWlmICh1bmxpa2Vs
+eShlKSkgew0KPj4gIAkJZjJmc19idWdfb24oc2JpLCBuYXRfZ2V0X2lubyhlKSAhPSBsZTMyX3Rv
+X2NwdShuZS0+aW5vKSB8fA0KPj4gLQkJCQluYXRfZ2V0X2Jsa2FkZHIoZSkgIT0NCj4+IC0JCQkJ
+CWxlMzJfdG9fY3B1KG5lLT5ibG9ja19hZGRyKSB8fA0KPj4gKwkJCW5hdF9nZXRfYmxrYWRkcihl
+KSAhPSBsZTMyX3RvX2NwdShuZS0+YmxvY2tfYWRkcikgfHwNCj4+ICAJCQkJbmF0X2dldF92ZXJz
+aW9uKGUpICE9IG5lLT52ZXJzaW9uKTsNCj4+ICsJCXVwX3JlYWQoJm5tX2ktPm5hdF90cmVlX2xv
+Y2spOw0KPj4gKwkJcmV0dXJuOw0KPj4gKwl9DQo+PiArCXVwX3JlYWQoJm5tX2ktPm5hdF90cmVl
+X2xvY2spOw0KPj4gKyNlbmRpZg0KPg0KPlBsZWFzZSBhdm9pZCAjaWZkZWYgYXMgbXVjaCBhcyBw
+b3NzaWJsZSwgd2hpY2ggaXMgdG90YWxseSB1bmRlc2lyYWJsZS4NCj5CVFcsIGl0J2QgYmUgYmV0
+dGVyIHRvIGdpdmUgdGhlIG1hbGxvY2F0ZWQgZSB0byBncmFiX25hdF9lbnRyeSgpIHRvIGNvbnNv
+bGlkYXRlDQo+aW5pdGlhbGl6YXRpb24gc3R1ZmZzPw0KDQpEbyB5b3UgbWVhbiB0aGF0IGRlbGV0
+ZSB0aGUgZm91bmQgbmF0IGVudHJ5IGFuZCB1c2UgdGhlIG5ldyBhbGxvY2VkIG9uZaO/DQoNClRo
+YW5rcy4NCj4NCj4+ICsJZSA9IGdyYWJfbmF0X2VudHJ5KG5tX2ksIG5pZCwgZmFsc2UpOw0KPj4g
+Kwlkb3duX3dyaXRlKCZubV9pLT5uYXRfdHJlZV9sb2NrKTsNCj4+ICsJaWYgKCFlKQ0KPj4gKwkJ
+Z290byBvdXQ7DQo+PiArDQo+PiArCWlmICghcmFkaXhfdHJlZV9pbnNlcnQoJm5tX2ktPm5hdF9y
+b290LCBuaWQsIGUpKSB7DQo+PiArCQlsaXN0X2FkZF90YWlsKCZlLT5saXN0LCAmbm1faS0+bmF0
+X2VudHJpZXMpOw0KPj4gKwkJbm1faS0+bmF0X2NudCsrOw0KPj4gKwkJbm9kZV9pbmZvX2Zyb21f
+cmF3X25hdCgmZS0+bmksIG5lKTsNCj4+ICsJfSBlbHNlIHsNCj4+ICsJCWttZW1fY2FjaGVfZnJl
+ZShuYXRfZW50cnlfc2xhYiwgZSk7DQo+PiAgCX0NCj4+ICtvdXQ6DQo+PiArCXVwX3dyaXRlKCZu
+bV9pLT5uYXRfdHJlZV9sb2NrKTsNCj4+ICB9DQo+Pg0KPj4gIHN0YXRpYyB2b2lkIHNldF9ub2Rl
+X2FkZHIoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1Y3Qgbm9kZV9pbmZvICpuaSwNCj4+
+IEBAIC0zMDAsMTEgKzMwOCwyMSBAQCBzdGF0aWMgdm9pZCBzZXRfbm9kZV9hZGRyKHN0cnVjdCBm
+MmZzX3NiX2luZm8gKnNiaSwgc3RydWN0IG5vZGVfaW5mbyAqbmksDQo+PiAgew0KPj4gIAlzdHJ1
+Y3QgZjJmc19ubV9pbmZvICpubV9pID0gTk1fSShzYmkpOw0KPj4gIAlzdHJ1Y3QgbmF0X2VudHJ5
+ICplOw0KPj4gKwlzdHJ1Y3QgbmF0X2VudHJ5ICpuZXcgPSBncmFiX25hdF9lbnRyeShubV9pLCBu
+aS0+bmlkLCB0cnVlKTsNCj4+DQo+PiArcmV0cnk6DQo+PiAgCWRvd25fd3JpdGUoJm5tX2ktPm5h
+dF90cmVlX2xvY2spOw0KPj4gIAllID0gX19sb29rdXBfbmF0X2NhY2hlKG5tX2ksIG5pLT5uaWQp
+Ow0KPj4gIAlpZiAoIWUpIHsNCj4+IC0JCWUgPSBncmFiX25hdF9lbnRyeShubV9pLCBuaS0+bmlk
+LCB0cnVlKTsNCj4+ICsJCWUgPSBuZXc7DQo+PiArCQlpZiAocmFkaXhfdHJlZV9pbnNlcnQoJm5t
+X2ktPm5hdF9yb290LCBuaS0+bmlkLCBlKSkgew0KPj4gKwkJCXVwX3dyaXRlKCZubV9pLT5uYXRf
+dHJlZV9sb2NrKTsNCj4+ICsJCQljb25kX3Jlc2NoZWQoKTsNCj4+ICsJCQlnb3RvIHJldHJ5Ow0K
+Pj4gKwkJfQ0KPj4gKw0KPj4gKwkJbGlzdF9hZGRfdGFpbCgmZS0+bGlzdCwgJm5tX2ktPm5hdF9l
+bnRyaWVzKTsNCj4+ICsJCW5tX2ktPm5hdF9jbnQrKzsNCj4+ICAJCWNvcHlfbm9kZV9pbmZvKCZl
+LT5uaSwgbmkpOw0KPj4gIAkJZjJmc19idWdfb24oc2JpLCBuaS0+YmxrX2FkZHIgPT0gTkVXX0FE
+RFIpOw0KPj4gIAl9IGVsc2UgaWYgKG5ld19ibGthZGRyID09IE5FV19BRERSKSB7DQo+PiBAQCAt
+MzE1LDYgKzMzMyw5IEBAIHN0YXRpYyB2b2lkIHNldF9ub2RlX2FkZHIoc3RydWN0IGYyZnNfc2Jf
+aW5mbyAqc2JpLCBzdHJ1Y3Qgbm9kZV9pbmZvICpuaSwNCj4+ICAJCSAqLw0KPj4gIAkJY29weV9u
+b2RlX2luZm8oJmUtPm5pLCBuaSk7DQo+PiAgCQlmMmZzX2J1Z19vbihzYmksIG5pLT5ibGtfYWRk
+ciAhPSBOVUxMX0FERFIpOw0KPj4gKwkJa21lbV9jYWNoZV9mcmVlKG5hdF9lbnRyeV9zbGFiLCBu
+ZXcpOw0KPj4gKwl9IGVsc2Ugew0KPj4gKwkJa21lbV9jYWNoZV9mcmVlKG5hdF9lbnRyeV9zbGFi
+LCBuZXcpOw0KPj4gIAl9DQo+Pg0KPj4gIAkvKiBzYW5pdHkgY2hlY2sgKi8NCj4+IEBAIC00MjQs
+OSArNDQ1LDcgQEAgdm9pZCBnZXRfbm9kZV9pbmZvKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwg
+bmlkX3QgbmlkLCBzdHJ1Y3Qgbm9kZV9pbmZvICpuaSkNCj4+ICAJZjJmc19wdXRfcGFnZShwYWdl
+LCAxKTsNCj4+ICBjYWNoZToNCj4+ICAJLyogY2FjaGUgbmF0IGVudHJ5ICovDQo+PiAtCWRvd25f
+d3JpdGUoJm5tX2ktPm5hdF90cmVlX2xvY2spOw0KPj4gIAljYWNoZV9uYXRfZW50cnkoc2JpLCBu
+aWQsICZuZSk7DQo+PiAtCXVwX3dyaXRlKCZubV9pLT5uYXRfdHJlZV9sb2NrKTsNCj4+ICB9DQo+
+Pg0KPj4gIC8qDQo+PiBAQCAtMjM3NSw2ICsyMzk0LDkgQEAgc3RhdGljIHZvaWQgcmVtb3ZlX25h
+dHNfaW5fam91cm5hbChzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpDQo+PiAgCQluZSA9IF9fbG9v
+a3VwX25hdF9jYWNoZShubV9pLCBuaWQpOw0KPj4gIAkJaWYgKCFuZSkgew0KPj4gIAkJCW5lID0g
+Z3JhYl9uYXRfZW50cnkobm1faSwgbmlkLCB0cnVlKTsNCj4+ICsJCQlmMmZzX3JhZGl4X3RyZWVf
+aW5zZXJ0KCZubV9pLT5uYXRfcm9vdCwgbmlkLCBuZSk7DQo+PiArCQkJbGlzdF9hZGRfdGFpbCgm
+bmUtPmxpc3QsICZubV9pLT5uYXRfZW50cmllcyk7DQo+PiArCQkJbm1faS0+bmF0X2NudCsrOw0K
+Pj4gIAkJCW5vZGVfaW5mb19mcm9tX3Jhd19uYXQoJm5lLT5uaSwgJnJhd19uZSk7DQo+PiAgCQl9
+DQo+Pg0KPj4gLS0NCj4+IDEuOS4xDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQ2hlY2sgb3V0IHRo
+ZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0CmVuZ2Fn
+aW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMt
+ZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0
+Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMt
+ZGV2ZWwK
