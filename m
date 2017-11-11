@@ -1,28 +1,28 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: check block reserve strictly a little
- bit
-Date: Fri, 10 Nov 2017 11:55:34 -0800
-Message-ID: <20171110195534.GA92643@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1510048610-17771-1-git-send-email-heyunlei@huawei.com>
- <20171109175527.GB55844@jaegeuk-macbookpro.roam.corp.google.com>
- <42B685BFA705F94C860C6DD0752F0565482C09BB@DGGEMA503-MBX.china.huawei.com>
+Subject: Re: [PATCH v5] f2fs: Separate nat entry mem alloc from
+ nat_tree_locks
+Date: Fri, 10 Nov 2017 16:14:15 -0800
+Message-ID: <20171111001415.GA924@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1510048045-10419-1-git-send-email-heyunlei@huawei.com>
+ <20171109180443.GD55844@jaegeuk-macbookpro.roam.corp.google.com>
+ <42B685BFA705F94C860C6DD0752F0565482C0AE1@DGGEMA503-MBX.china.huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1eDFOx-0000Cz-PU
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Nov 2017 19:55:43 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1eDJRJ-00026Y-D9
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 11 Nov 2017 00:14:25 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eDFOw-0000BQ-Nt
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Nov 2017 19:55:43 +0000
+ id 1eDJRH-0002TX-Ur
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 11 Nov 2017 00:14:25 +0000
 Content-Disposition: inline
-In-Reply-To: <42B685BFA705F94C860C6DD0752F0565482C09BB@DGGEMA503-MBX.china.huawei.com>
+In-Reply-To: <42B685BFA705F94C860C6DD0752F0565482C0AE1@DGGEMA503-MBX.china.huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,112 +35,133 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: heyunlei <heyunlei@huawei.com>
 Cc: "Jianing (Euler)" <ning.jia@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-On 11/10, heyunlei wrote:
-> 
-> 
-> >-----Original Message-----
-> >From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> >Sent: Friday, November 10, 2017 1:55 AM
-> >To: heyunlei
-> >Cc: Yuchao (T); linux-f2fs-devel@lists.sourceforge.net; Wangbintian; Jianing (Euler)
-> >Subject: Re: [f2fs-dev][PATCH] f2fs: check block reserve strictly a little bit
-> >
-> >On 11/07, Yunlei He wrote:
-> >> This patch check new block reserve strictly, in case of
-> >> garbage data of node page.
-> >>
-> >> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> >> ---
-> >>  fs/f2fs/data.c    |  9 +++++++--
-> >>  fs/f2fs/file.c    | 13 +++++--------
-> >>  fs/f2fs/segment.c |  1 +
-> >>  3 files changed, 13 insertions(+), 10 deletions(-)
-> >>
-> >> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> >> index b0781ed..3017a87 100644
-> >> --- a/fs/f2fs/data.c
-> >> +++ b/fs/f2fs/data.c
-> >> @@ -558,13 +558,18 @@ int reserve_new_blocks(struct dnode_of_data *dn, blkcnt_t count)
-> >>
-> >>  	f2fs_wait_on_page_writeback(dn->node_page, NODE, true);
-> >>
-> >> -	for (; count > 0; dn->ofs_in_node++) {
-> >> +	for (; count > 0; dn->ofs_in_node++, count--) {
-> >>  		block_t blkaddr = datablock_addr(dn->inode,
-> >>  					dn->node_page, dn->ofs_in_node);
-> >>  		if (blkaddr == NULL_ADDR) {
-> >>  			dn->data_blkaddr = NEW_ADDR;
-> >>  			__set_data_blkaddr(dn);
-> >> -			count--;
-> >> +		} else {
-> >> +			f2fs_msg(sbi->sb, KERN_ERR, "reserve non NULL block, "
-> >> +				"blkaddr:%u, ino:%lu, nid:%u, ofs_in_node:%u",
-> >> +				blkaddr, dn->inode->i_ino, dn->nid,
-> >> +				dn->ofs_in_node);
-> >> +			f2fs_bug_on(sbi, 1);
-> >
-> >What if there is a hole?
-> 
-> Hole can hold a non NULL block index? 
-> NEW_ADDR may be possible, for the case date block is reserved but without wb
-> after new cp.
-> How about this?
-> 	} else if (blkaddr != NEW_ADDR ){
-> 		 	f2fs_msg();
-> 	}
-
-No, it is allowed to allocate new blocks in holes. We can give the # of
-allocated blocks to caller which can check its intention.
-
-> Thanks. 
-> >
-> >>  		}
-> >>  	}
-> >>
-> >> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> >> index cee0f36..dfc23c2 100644
-> >> --- a/fs/f2fs/file.c
-> >> +++ b/fs/f2fs/file.c
-> >> @@ -1218,19 +1218,16 @@ static int f2fs_do_zero_range(struct dnode_of_data *dn, pgoff_t start,
-> >>  	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
-> >>  	pgoff_t index = start;
-> >>  	unsigned int ofs_in_node = dn->ofs_in_node;
-> >> -	blkcnt_t count = 0;
-> >> -	int ret;
-> >> +	int ret = 0;
-> >>
-> >>  	for (; index < end; index++, dn->ofs_in_node++) {
-> >>  		if (datablock_addr(dn->inode, dn->node_page,
-> >>  					dn->ofs_in_node) == NULL_ADDR)
-> >> -			count++;
-> >> -	}
-> >> +			ret = reserve_new_blocks(dn, 1);
-> >>
-> >> -	dn->ofs_in_node = ofs_in_node;
-> >> -	ret = reserve_new_blocks(dn, count);
-> >> -	if (ret)
-> >> -		return ret;
-> >> +		if (ret)
-> >> +			return ret;
-> >> +	}
-> >>
-> >>  	dn->ofs_in_node = ofs_in_node;
-> >>  	for (index = start; index < end; index++, dn->ofs_in_node++) {
-> >> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >> index 20722b2..e670967 100644
-> >> --- a/fs/f2fs/segment.c
-> >> +++ b/fs/f2fs/segment.c
-> >> @@ -1815,6 +1815,7 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
-> >>  	bool mir_exist;
-> >>  #endif
-> >>
-> >> +	verify_block_addr(sbi, blkaddr);
-> >>  	segno = GET_SEGNO(sbi, blkaddr);
-> >>
-> >>  	se = get_seg_entry(sbi, segno);
-> >> --
-> >> 1.9.1
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+T24gMTEvMTAsIGhleXVubGVpIHdyb3RlOgo+IAo+IAo+ID4tLS0tLU9yaWdpbmFsIE1lc3NhZ2Ut
+LS0tLQo+ID5Gcm9tOiBKYWVnZXVrIEtpbSBbbWFpbHRvOmphZWdldWtAa2VybmVsLm9yZ10KPiA+
+U2VudDogRnJpZGF5LCBOb3ZlbWJlciAxMCwgMjAxNyAyOjA1IEFNCj4gPlRvOiBoZXl1bmxlaQo+
+ID5DYzogWXVjaGFvIChUKTsgbGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQ7
+IFdhbmdiaW50aWFuOyBKaWFuaW5nIChFdWxlcikKPiA+U3ViamVjdDogUmU6IFtmMmZzLWRldl1b
+UEFUQ0ggdjVdIGYyZnM6IFNlcGFyYXRlIG5hdCBlbnRyeSBtZW0gYWxsb2MgZnJvbSBuYXRfdHJl
+ZV9sb2Nrcwo+ID4KPiA+T24gMTEvMDcsIFl1bmxlaSBIZSB3cm90ZToKPiA+PiBUaGlzIHBhdGgg
+c2VwYXJhdGUgbmF0X2VudHJ5IG1lbSBhbGxvYyBmcm9tIG5hdF90cmVlX2xvY2ssCj4gPj4gd2hp
+Y2ggd2lsbCBiZW5lZml0IGluIHNvbWUgbG93IG1lbSBjYXNlLgo+ID4+Cj4gPj4gU2lnbmVkLW9m
+Zi1ieTogWXVubGVpIEhlIDxoZXl1bmxlaUBodWF3ZWkuY29tPgo+ID4+IC0tLQo+ID4+ICBmcy9m
+MmZzL25vZGUuYyB8IDU2ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0t
+LS0tLS0tLS0tLS0tLS0tCj4gPj4gIDEgZmlsZSBjaGFuZ2VkLCAzOSBpbnNlcnRpb25zKCspLCAx
+NyBkZWxldGlvbnMoLSkKPiA+Pgo+ID4+IGRpZmYgLS1naXQgYS9mcy9mMmZzL25vZGUuYyBiL2Zz
+L2YyZnMvbm9kZS5jCj4gPj4gaW5kZXggZmVmNWM2OC4uYzZhZWEzMyAxMDA2NDQKPiA+PiAtLS0g
+YS9mcy9mMmZzL25vZGUuYwo+ID4+ICsrKyBiL2ZzL2YyZnMvbm9kZS5jCj4gPj4gQEAgLTI1Nywy
+MiArMjU3LDE1IEBAIHN0YXRpYyBzdHJ1Y3QgbmF0X2VudHJ5ICpncmFiX25hdF9lbnRyeShzdHJ1
+Y3QgZjJmc19ubV9pbmZvICpubV9pLCBuaWRfdCBuaWQsCj4gPj4KPiA+PiAgCWlmIChub19mYWls
+KSB7Cj4gPj4gIAkJbmV3ID0gZjJmc19rbWVtX2NhY2hlX2FsbG9jKG5hdF9lbnRyeV9zbGFiLCBH
+RlBfTk9GUyk7Cj4gPj4gLQkJZjJmc19yYWRpeF90cmVlX2luc2VydCgmbm1faS0+bmF0X3Jvb3Qs
+IG5pZCwgbmV3KTsKPiA+PiAgCX0gZWxzZSB7Cj4gPj4gIAkJbmV3ID0ga21lbV9jYWNoZV9hbGxv
+YyhuYXRfZW50cnlfc2xhYiwgR0ZQX05PRlMpOwo+ID4+ICAJCWlmICghbmV3KQo+ID4+ICAJCQly
+ZXR1cm4gTlVMTDsKPiA+PiAtCQlpZiAocmFkaXhfdHJlZV9pbnNlcnQoJm5tX2ktPm5hdF9yb290
+LCBuaWQsIG5ldykpIHsKPiA+PiAtCQkJa21lbV9jYWNoZV9mcmVlKG5hdF9lbnRyeV9zbGFiLCBu
+ZXcpOwo+ID4+IC0JCQlyZXR1cm4gTlVMTDsKPiA+PiAtCQl9Cj4gPj4gIAl9Cj4gPj4KPiA+PiAg
+CW1lbXNldChuZXcsIDAsIHNpemVvZihzdHJ1Y3QgbmF0X2VudHJ5KSk7Cj4gPj4gIAluYXRfc2V0
+X25pZChuZXcsIG5pZCk7Cj4gPj4gIAluYXRfcmVzZXRfZmxhZyhuZXcpOwo+ID4+IC0JbGlzdF9h
+ZGRfdGFpbCgmbmV3LT5saXN0LCAmbm1faS0+bmF0X2VudHJpZXMpOwo+ID4+IC0Jbm1faS0+bmF0
+X2NudCsrOwo+ID4+ICAJcmV0dXJuIG5ldzsKPiA+PiAgfQo+ID4+Cj4gPj4gQEAgLTI4MiwxNyAr
+Mjc1LDMyIEBAIHN0YXRpYyB2b2lkIGNhY2hlX25hdF9lbnRyeShzdHJ1Y3QgZjJmc19zYl9pbmZv
+ICpzYmksIG5pZF90IG5pZCwKPiA+PiAgCXN0cnVjdCBmMmZzX25tX2luZm8gKm5tX2kgPSBOTV9J
+KHNiaSk7Cj4gPj4gIAlzdHJ1Y3QgbmF0X2VudHJ5ICplOwo+ID4+Cj4gPj4gKyNpZmRlZiBDT05G
+SUdfRjJGU19DSEVDS19GUwo+ID4+ICsJZG93bl9yZWFkKCZubV9pLT5uYXRfdHJlZV9sb2NrKTsK
+PiA+PiAgCWUgPSBfX2xvb2t1cF9uYXRfY2FjaGUobm1faSwgbmlkKTsKPiA+PiAtCWlmICghZSkg
+ewo+ID4+IC0JCWUgPSBncmFiX25hdF9lbnRyeShubV9pLCBuaWQsIGZhbHNlKTsKPiA+PiAtCQlp
+ZiAoZSkKPiA+PiAtCQkJbm9kZV9pbmZvX2Zyb21fcmF3X25hdCgmZS0+bmksIG5lKTsKPiA+PiAt
+CX0gZWxzZSB7Cj4gPj4gKwlpZiAodW5saWtlbHkoZSkpIHsKPiA+PiAgCQlmMmZzX2J1Z19vbihz
+YmksIG5hdF9nZXRfaW5vKGUpICE9IGxlMzJfdG9fY3B1KG5lLT5pbm8pIHx8Cj4gPj4gLQkJCQlu
+YXRfZ2V0X2Jsa2FkZHIoZSkgIT0KPiA+PiAtCQkJCQlsZTMyX3RvX2NwdShuZS0+YmxvY2tfYWRk
+cikgfHwKPiA+PiArCQkJbmF0X2dldF9ibGthZGRyKGUpICE9IGxlMzJfdG9fY3B1KG5lLT5ibG9j
+a19hZGRyKSB8fAo+ID4+ICAJCQkJbmF0X2dldF92ZXJzaW9uKGUpICE9IG5lLT52ZXJzaW9uKTsK
+PiA+PiArCQl1cF9yZWFkKCZubV9pLT5uYXRfdHJlZV9sb2NrKTsKPiA+PiArCQlyZXR1cm47Cj4g
+Pj4gKwl9Cj4gPj4gKwl1cF9yZWFkKCZubV9pLT5uYXRfdHJlZV9sb2NrKTsKPiA+PiArI2VuZGlm
+Cj4gPgo+ID5QbGVhc2UgYXZvaWQgI2lmZGVmIGFzIG11Y2ggYXMgcG9zc2libGUsIHdoaWNoIGlz
+IHRvdGFsbHkgdW5kZXNpcmFibGUuCj4gPkJUVywgaXQnZCBiZSBiZXR0ZXIgdG8gZ2l2ZSB0aGUg
+bWFsbG9jYXRlZCBlIHRvIGdyYWJfbmF0X2VudHJ5KCkgdG8gY29uc29saWRhdGUKPiA+aW5pdGlh
+bGl6YXRpb24gc3R1ZmZzPwo+IAo+IERvIHlvdSBtZWFuIHRoYXQgZGVsZXRlIHRoZSBmb3VuZCBu
+YXQgZW50cnkgYW5kIHVzZSB0aGUgbmV3IGFsbG9jZWQgb25l77yfCgpMaWtlIHRoaXM/CgotLS0K
+IGZzL2YyZnMvbm9kZS5jIHwgODIgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDUxIGluc2VydGlvbnMoKyks
+IDMxIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2ZzL2YyZnMvbm9kZS5jIGIvZnMvZjJmcy9u
+b2RlLmMKaW5kZXggZDI1MzAxNzljYzljLi44NTZiM2FhOWNhYjEgMTAwNjQ0Ci0tLSBhL2ZzL2Yy
+ZnMvbm9kZS5jCisrKyBiL2ZzL2YyZnMvbm9kZS5jCkBAIC0yNTAsNDkgKzI1MCw2NyBAQCBib29s
+IG5lZWRfaW5vZGVfYmxvY2tfdXBkYXRlKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgbmlkX3Qg
+aW5vKQogCXJldHVybiBuZWVkX3VwZGF0ZTsKIH0KIAotc3RhdGljIHN0cnVjdCBuYXRfZW50cnkg
+KmdyYWJfbmF0X2VudHJ5KHN0cnVjdCBmMmZzX25tX2luZm8gKm5tX2ksIG5pZF90IG5pZCwKLQkJ
+CQkJCQkJYm9vbCBub19mYWlsKQorc3RhdGljIHN0cnVjdCBuYXRfZW50cnkgKl9fYWxsb2NfbmF0
+X2VudHJ5KG5pZF90IG5pZCwgYm9vbCBub19mYWlsKQogewotCXN0cnVjdCBuYXRfZW50cnkgKm5l
+dzsKKwlzdHJ1Y3QgbmF0X2VudHJ5ICpuZXcgPSBOVUxMOwogCi0JaWYgKG5vX2ZhaWwpIHsKLQkJ
+bmV3ID0gZjJmc19rbWVtX2NhY2hlX2FsbG9jKG5hdF9lbnRyeV9zbGFiLCBHRlBfTk9GUyk7Ci0J
+CWYyZnNfcmFkaXhfdHJlZV9pbnNlcnQoJm5tX2ktPm5hdF9yb290LCBuaWQsIG5ldyk7Ci0JfSBl
+bHNlIHsKLQkJbmV3ID0ga21lbV9jYWNoZV9hbGxvYyhuYXRfZW50cnlfc2xhYiwgR0ZQX05PRlMp
+OwotCQlpZiAoIW5ldykKLQkJCXJldHVybiBOVUxMOwotCQlpZiAocmFkaXhfdHJlZV9pbnNlcnQo
+Jm5tX2ktPm5hdF9yb290LCBuaWQsIG5ldykpIHsKLQkJCWttZW1fY2FjaGVfZnJlZShuYXRfZW50
+cnlfc2xhYiwgbmV3KTsKLQkJCXJldHVybiBOVUxMOwotCQl9CisJaWYgKG5vX2ZhaWwpCisJCW5l
+dyA9IGYyZnNfa21lbV9jYWNoZV9hbGxvYyhuYXRfZW50cnlfc2xhYiwKKwkJCQkJCUdGUF9OT0ZT
+IHwgX19HRlBfWkVSTyk7CisJZWxzZQorCQluZXcgPSBrbWVtX2NhY2hlX2FsbG9jKG5hdF9lbnRy
+eV9zbGFiLAorCQkJCQkJR0ZQX05PRlMgfCBfX0dGUF9aRVJPKTsKKwlpZiAobmV3KSB7CisJCW5h
+dF9zZXRfbmlkKG5ldywgbmlkKTsKKwkJbmF0X3Jlc2V0X2ZsYWcobmV3KTsKIAl9CisJcmV0dXJu
+IG5ldzsKK30KKworc3RhdGljIHZvaWQgX19mcmVlX25hdF9lbnRyeShzdHJ1Y3QgbmF0X2VudHJ5
+ICplKQoreworCWttZW1fY2FjaGVfZnJlZShuYXRfZW50cnlfc2xhYiwgZSk7Cit9CiAKLQltZW1z
+ZXQobmV3LCAwLCBzaXplb2Yoc3RydWN0IG5hdF9lbnRyeSkpOwotCW5hdF9zZXRfbmlkKG5ldywg
+bmlkKTsKLQluYXRfcmVzZXRfZmxhZyhuZXcpOwotCWxpc3RfYWRkX3RhaWwoJm5ldy0+bGlzdCwg
+Jm5tX2ktPm5hdF9lbnRyaWVzKTsKKy8qIG11c3QgYmUgbG9ja2VkIGJ5IG5hdF90cmVlX2xvY2sg
+Ki8KK3N0YXRpYyBzdHJ1Y3QgbmF0X2VudHJ5ICpfX2luaXRfbmF0X2VudHJ5KHN0cnVjdCBmMmZz
+X25tX2luZm8gKm5tX2ksCisJc3RydWN0IG5hdF9lbnRyeSAqbmUsIHN0cnVjdCBmMmZzX25hdF9l
+bnRyeSAqcmF3X25lLCBib29sIG5vX2ZhaWwpCit7CisJaWYgKG5vX2ZhaWwpCisJCWYyZnNfcmFk
+aXhfdHJlZV9pbnNlcnQoJm5tX2ktPm5hdF9yb290LCBuYXRfZ2V0X25pZChuZSksIG5lKTsKKwll
+bHNlIGlmIChyYWRpeF90cmVlX2luc2VydCgmbm1faS0+bmF0X3Jvb3QsIG5hdF9nZXRfbmlkKG5l
+KSwgbmUpKQorCQlyZXR1cm4gTlVMTDsKKworCWlmIChyYXdfbmUpCisJCW5vZGVfaW5mb19mcm9t
+X3Jhd19uYXQoJm5lLT5uaSwgcmF3X25lKTsKKwlsaXN0X2FkZF90YWlsKCZuZS0+bGlzdCwgJm5t
+X2ktPm5hdF9lbnRyaWVzKTsKIAlubV9pLT5uYXRfY250Kys7Ci0JcmV0dXJuIG5ldzsKKwlyZXR1
+cm4gbmU7CiB9CiAKKy8qIG11c3QgYmUgbG9ja2VkIGJ5IG5hdF90cmVlX2xvY2sgKi8KIHN0YXRp
+YyB2b2lkIGNhY2hlX25hdF9lbnRyeShzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIG5pZF90IG5p
+ZCwKIAkJCQkJCXN0cnVjdCBmMmZzX25hdF9lbnRyeSAqbmUpCiB7CiAJc3RydWN0IGYyZnNfbm1f
+aW5mbyAqbm1faSA9IE5NX0koc2JpKTsKLQlzdHJ1Y3QgbmF0X2VudHJ5ICplOworCXN0cnVjdCBu
+YXRfZW50cnkgKm5ldywgKmU7CisKKwluZXcgPSBfX2FsbG9jX25hdF9lbnRyeShuaWQsIGZhbHNl
+KTsKKwlpZiAoIW5ldykKKwkJcmV0dXJuOwogCisJZG93bl93cml0ZSgmbm1faS0+bmF0X3RyZWVf
+bG9jayk7CiAJZSA9IF9fbG9va3VwX25hdF9jYWNoZShubV9pLCBuaWQpOwotCWlmICghZSkgewot
+CQllID0gZ3JhYl9uYXRfZW50cnkobm1faSwgbmlkLCBmYWxzZSk7Ci0JCWlmIChlKQotCQkJbm9k
+ZV9pbmZvX2Zyb21fcmF3X25hdCgmZS0+bmksIG5lKTsKLQl9IGVsc2UgeworCWlmICghZSkKKwkJ
+ZSA9IF9faW5pdF9uYXRfZW50cnkobm1faSwgbmV3LCBuZSwgZmFsc2UpOworCWVsc2UKIAkJZjJm
+c19idWdfb24oc2JpLCBuYXRfZ2V0X2lubyhlKSAhPSBsZTMyX3RvX2NwdShuZS0+aW5vKSB8fAog
+CQkJCW5hdF9nZXRfYmxrYWRkcihlKSAhPQogCQkJCQlsZTMyX3RvX2NwdShuZS0+YmxvY2tfYWRk
+cikgfHwKIAkJCQluYXRfZ2V0X3ZlcnNpb24oZSkgIT0gbmUtPnZlcnNpb24pOwotCX0KKwl1cF93
+cml0ZSgmbm1faS0+bmF0X3RyZWVfbG9jayk7CisJaWYgKGUgIT0gbmV3KQorCQlfX2ZyZWVfbmF0
+X2VudHJ5KG5ldyk7CiB9CiAKIHN0YXRpYyB2b2lkIHNldF9ub2RlX2FkZHIoc3RydWN0IGYyZnNf
+c2JfaW5mbyAqc2JpLCBzdHJ1Y3Qgbm9kZV9pbmZvICpuaSwKQEAgLTMwMCwxMSArMzE4LDEyIEBA
+IHN0YXRpYyB2b2lkIHNldF9ub2RlX2FkZHIoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1
+Y3Qgbm9kZV9pbmZvICpuaSwKIHsKIAlzdHJ1Y3QgZjJmc19ubV9pbmZvICpubV9pID0gTk1fSShz
+YmkpOwogCXN0cnVjdCBuYXRfZW50cnkgKmU7CisJc3RydWN0IG5hdF9lbnRyeSAqbmV3ID0gX19h
+bGxvY19uYXRfZW50cnkobmktPm5pZCwgdHJ1ZSk7CiAKIAlkb3duX3dyaXRlKCZubV9pLT5uYXRf
+dHJlZV9sb2NrKTsKIAllID0gX19sb29rdXBfbmF0X2NhY2hlKG5tX2ksIG5pLT5uaWQpOwogCWlm
+ICghZSkgewotCQllID0gZ3JhYl9uYXRfZW50cnkobm1faSwgbmktPm5pZCwgdHJ1ZSk7CisJCWUg
+PSBfX2luaXRfbmF0X2VudHJ5KG5tX2ksIG5ldywgTlVMTCwgdHJ1ZSk7CiAJCWNvcHlfbm9kZV9p
+bmZvKCZlLT5uaSwgbmkpOwogCQlmMmZzX2J1Z19vbihzYmksIG5pLT5ibGtfYWRkciA9PSBORVdf
+QUREUik7CiAJfSBlbHNlIGlmIChuZXdfYmxrYWRkciA9PSBORVdfQUREUikgewpAQCAtMzE2LDYg
+KzMzNSw5IEBAIHN0YXRpYyB2b2lkIHNldF9ub2RlX2FkZHIoc3RydWN0IGYyZnNfc2JfaW5mbyAq
+c2JpLCBzdHJ1Y3Qgbm9kZV9pbmZvICpuaSwKIAkJY29weV9ub2RlX2luZm8oJmUtPm5pLCBuaSk7
+CiAJCWYyZnNfYnVnX29uKHNiaSwgbmktPmJsa19hZGRyICE9IE5VTExfQUREUik7CiAJfQorCS8q
+IGxldCdzIGZyZWUgZWFybHkgdG8gcmVkdWNlIG1lbW9yeSBjb25zdW1wdGlvbiAqLworCWlmIChl
+ICE9IG5ldykKKwkJX19mcmVlX25hdF9lbnRyeShuZXcpOwogCiAJLyogc2FuaXR5IGNoZWNrICov
+CiAJZjJmc19idWdfb24oc2JpLCBuYXRfZ2V0X2Jsa2FkZHIoZSkgIT0gbmktPmJsa19hZGRyKTsK
+QEAgLTQyNCw5ICs0NDYsNyBAQCB2b2lkIGdldF9ub2RlX2luZm8oc3RydWN0IGYyZnNfc2JfaW5m
+byAqc2JpLCBuaWRfdCBuaWQsIHN0cnVjdCBub2RlX2luZm8gKm5pKQogCWYyZnNfcHV0X3BhZ2Uo
+cGFnZSwgMSk7CiBjYWNoZToKIAkvKiBjYWNoZSBuYXQgZW50cnkgKi8KLQlkb3duX3dyaXRlKCZu
+bV9pLT5uYXRfdHJlZV9sb2NrKTsKIAljYWNoZV9uYXRfZW50cnkoc2JpLCBuaWQsICZuZSk7Ci0J
+dXBfd3JpdGUoJm5tX2ktPm5hdF90cmVlX2xvY2spOwogfQogCiAvKgpAQCAtMjM3MSw4ICsyMzkx
+LDggQEAgc3RhdGljIHZvaWQgcmVtb3ZlX25hdHNfaW5fam91cm5hbChzdHJ1Y3QgZjJmc19zYl9p
+bmZvICpzYmkpCiAKIAkJbmUgPSBfX2xvb2t1cF9uYXRfY2FjaGUobm1faSwgbmlkKTsKIAkJaWYg
+KCFuZSkgewotCQkJbmUgPSBncmFiX25hdF9lbnRyeShubV9pLCBuaWQsIHRydWUpOwotCQkJbm9k
+ZV9pbmZvX2Zyb21fcmF3X25hdCgmbmUtPm5pLCAmcmF3X25lKTsKKwkJCW5lID0gX19hbGxvY19u
+YXRfZW50cnkobmlkLCB0cnVlKTsKKwkJCV9faW5pdF9uYXRfZW50cnkobm1faSwgbmUsICZyYXdf
+bmUsIHRydWUpOwogCQl9CiAKIAkJLyoKLS0gCjIuMTQuMC5yYzEuMzgzLmdkMWNlMzk0ZmUyLWdv
+b2cKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29t
+bXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0CmVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNs
+YXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0
+CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291
+cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
