@@ -1,167 +1,207 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v5] f2fs: Separate nat entry mem alloc from
- nat_tree_locks
-Date: Fri, 10 Nov 2017 16:14:15 -0800
-Message-ID: <20171111001415.GA924@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1510048045-10419-1-git-send-email-heyunlei@huawei.com>
- <20171109180443.GD55844@jaegeuk-macbookpro.roam.corp.google.com>
- <42B685BFA705F94C860C6DD0752F0565482C0AE1@DGGEMA503-MBX.china.huawei.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [f2fs-dev] [RFC PATHC 2/2] f2fs: apply write hints to select the
+ type of segment for direct write
+Date: Sat, 11 Nov 2017 08:38:15 +0800
+Message-ID: <711d3991-47e1-bc1c-4eb8-c9254fec156a@kernel.org>
+References: <1510206688-12767-1-git-send-email-hyc.lee@gmail.com>
+ <1510206688-12767-3-git-send-email-hyc.lee@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
- helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1eDJRJ-00026Y-D9
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 11 Nov 2017 00:14:25 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eDJRH-0002TX-Ur
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 11 Nov 2017 00:14:25 +0000
-Content-Disposition: inline
-In-Reply-To: <42B685BFA705F94C860C6DD0752F0565482C0AE1@DGGEMA503-MBX.china.huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: heyunlei <heyunlei@huawei.com>
-Cc: "Jianing (Euler)" <ning.jia@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1510206688-12767-3-git-send-email-hyc.lee@gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hyunchul Lee <hyc.lee@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: kernel-team@lge.com, Hyunchul Lee <cheol.lee@lge.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, chao@kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-T24gMTEvMTAsIGhleXVubGVpIHdyb3RlOgo+IAo+IAo+ID4tLS0tLU9yaWdpbmFsIE1lc3NhZ2Ut
-LS0tLQo+ID5Gcm9tOiBKYWVnZXVrIEtpbSBbbWFpbHRvOmphZWdldWtAa2VybmVsLm9yZ10KPiA+
-U2VudDogRnJpZGF5LCBOb3ZlbWJlciAxMCwgMjAxNyAyOjA1IEFNCj4gPlRvOiBoZXl1bmxlaQo+
-ID5DYzogWXVjaGFvIChUKTsgbGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQ7
-IFdhbmdiaW50aWFuOyBKaWFuaW5nIChFdWxlcikKPiA+U3ViamVjdDogUmU6IFtmMmZzLWRldl1b
-UEFUQ0ggdjVdIGYyZnM6IFNlcGFyYXRlIG5hdCBlbnRyeSBtZW0gYWxsb2MgZnJvbSBuYXRfdHJl
-ZV9sb2Nrcwo+ID4KPiA+T24gMTEvMDcsIFl1bmxlaSBIZSB3cm90ZToKPiA+PiBUaGlzIHBhdGgg
-c2VwYXJhdGUgbmF0X2VudHJ5IG1lbSBhbGxvYyBmcm9tIG5hdF90cmVlX2xvY2ssCj4gPj4gd2hp
-Y2ggd2lsbCBiZW5lZml0IGluIHNvbWUgbG93IG1lbSBjYXNlLgo+ID4+Cj4gPj4gU2lnbmVkLW9m
-Zi1ieTogWXVubGVpIEhlIDxoZXl1bmxlaUBodWF3ZWkuY29tPgo+ID4+IC0tLQo+ID4+ICBmcy9m
-MmZzL25vZGUuYyB8IDU2ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0t
-LS0tLS0tLS0tLS0tLS0tCj4gPj4gIDEgZmlsZSBjaGFuZ2VkLCAzOSBpbnNlcnRpb25zKCspLCAx
-NyBkZWxldGlvbnMoLSkKPiA+Pgo+ID4+IGRpZmYgLS1naXQgYS9mcy9mMmZzL25vZGUuYyBiL2Zz
-L2YyZnMvbm9kZS5jCj4gPj4gaW5kZXggZmVmNWM2OC4uYzZhZWEzMyAxMDA2NDQKPiA+PiAtLS0g
-YS9mcy9mMmZzL25vZGUuYwo+ID4+ICsrKyBiL2ZzL2YyZnMvbm9kZS5jCj4gPj4gQEAgLTI1Nywy
-MiArMjU3LDE1IEBAIHN0YXRpYyBzdHJ1Y3QgbmF0X2VudHJ5ICpncmFiX25hdF9lbnRyeShzdHJ1
-Y3QgZjJmc19ubV9pbmZvICpubV9pLCBuaWRfdCBuaWQsCj4gPj4KPiA+PiAgCWlmIChub19mYWls
-KSB7Cj4gPj4gIAkJbmV3ID0gZjJmc19rbWVtX2NhY2hlX2FsbG9jKG5hdF9lbnRyeV9zbGFiLCBH
-RlBfTk9GUyk7Cj4gPj4gLQkJZjJmc19yYWRpeF90cmVlX2luc2VydCgmbm1faS0+bmF0X3Jvb3Qs
-IG5pZCwgbmV3KTsKPiA+PiAgCX0gZWxzZSB7Cj4gPj4gIAkJbmV3ID0ga21lbV9jYWNoZV9hbGxv
-YyhuYXRfZW50cnlfc2xhYiwgR0ZQX05PRlMpOwo+ID4+ICAJCWlmICghbmV3KQo+ID4+ICAJCQly
-ZXR1cm4gTlVMTDsKPiA+PiAtCQlpZiAocmFkaXhfdHJlZV9pbnNlcnQoJm5tX2ktPm5hdF9yb290
-LCBuaWQsIG5ldykpIHsKPiA+PiAtCQkJa21lbV9jYWNoZV9mcmVlKG5hdF9lbnRyeV9zbGFiLCBu
-ZXcpOwo+ID4+IC0JCQlyZXR1cm4gTlVMTDsKPiA+PiAtCQl9Cj4gPj4gIAl9Cj4gPj4KPiA+PiAg
-CW1lbXNldChuZXcsIDAsIHNpemVvZihzdHJ1Y3QgbmF0X2VudHJ5KSk7Cj4gPj4gIAluYXRfc2V0
-X25pZChuZXcsIG5pZCk7Cj4gPj4gIAluYXRfcmVzZXRfZmxhZyhuZXcpOwo+ID4+IC0JbGlzdF9h
-ZGRfdGFpbCgmbmV3LT5saXN0LCAmbm1faS0+bmF0X2VudHJpZXMpOwo+ID4+IC0Jbm1faS0+bmF0
-X2NudCsrOwo+ID4+ICAJcmV0dXJuIG5ldzsKPiA+PiAgfQo+ID4+Cj4gPj4gQEAgLTI4MiwxNyAr
-Mjc1LDMyIEBAIHN0YXRpYyB2b2lkIGNhY2hlX25hdF9lbnRyeShzdHJ1Y3QgZjJmc19zYl9pbmZv
-ICpzYmksIG5pZF90IG5pZCwKPiA+PiAgCXN0cnVjdCBmMmZzX25tX2luZm8gKm5tX2kgPSBOTV9J
-KHNiaSk7Cj4gPj4gIAlzdHJ1Y3QgbmF0X2VudHJ5ICplOwo+ID4+Cj4gPj4gKyNpZmRlZiBDT05G
-SUdfRjJGU19DSEVDS19GUwo+ID4+ICsJZG93bl9yZWFkKCZubV9pLT5uYXRfdHJlZV9sb2NrKTsK
-PiA+PiAgCWUgPSBfX2xvb2t1cF9uYXRfY2FjaGUobm1faSwgbmlkKTsKPiA+PiAtCWlmICghZSkg
-ewo+ID4+IC0JCWUgPSBncmFiX25hdF9lbnRyeShubV9pLCBuaWQsIGZhbHNlKTsKPiA+PiAtCQlp
-ZiAoZSkKPiA+PiAtCQkJbm9kZV9pbmZvX2Zyb21fcmF3X25hdCgmZS0+bmksIG5lKTsKPiA+PiAt
-CX0gZWxzZSB7Cj4gPj4gKwlpZiAodW5saWtlbHkoZSkpIHsKPiA+PiAgCQlmMmZzX2J1Z19vbihz
-YmksIG5hdF9nZXRfaW5vKGUpICE9IGxlMzJfdG9fY3B1KG5lLT5pbm8pIHx8Cj4gPj4gLQkJCQlu
-YXRfZ2V0X2Jsa2FkZHIoZSkgIT0KPiA+PiAtCQkJCQlsZTMyX3RvX2NwdShuZS0+YmxvY2tfYWRk
-cikgfHwKPiA+PiArCQkJbmF0X2dldF9ibGthZGRyKGUpICE9IGxlMzJfdG9fY3B1KG5lLT5ibG9j
-a19hZGRyKSB8fAo+ID4+ICAJCQkJbmF0X2dldF92ZXJzaW9uKGUpICE9IG5lLT52ZXJzaW9uKTsK
-PiA+PiArCQl1cF9yZWFkKCZubV9pLT5uYXRfdHJlZV9sb2NrKTsKPiA+PiArCQlyZXR1cm47Cj4g
-Pj4gKwl9Cj4gPj4gKwl1cF9yZWFkKCZubV9pLT5uYXRfdHJlZV9sb2NrKTsKPiA+PiArI2VuZGlm
-Cj4gPgo+ID5QbGVhc2UgYXZvaWQgI2lmZGVmIGFzIG11Y2ggYXMgcG9zc2libGUsIHdoaWNoIGlz
-IHRvdGFsbHkgdW5kZXNpcmFibGUuCj4gPkJUVywgaXQnZCBiZSBiZXR0ZXIgdG8gZ2l2ZSB0aGUg
-bWFsbG9jYXRlZCBlIHRvIGdyYWJfbmF0X2VudHJ5KCkgdG8gY29uc29saWRhdGUKPiA+aW5pdGlh
-bGl6YXRpb24gc3R1ZmZzPwo+IAo+IERvIHlvdSBtZWFuIHRoYXQgZGVsZXRlIHRoZSBmb3VuZCBu
-YXQgZW50cnkgYW5kIHVzZSB0aGUgbmV3IGFsbG9jZWQgb25l77yfCgpMaWtlIHRoaXM/CgotLS0K
-IGZzL2YyZnMvbm9kZS5jIHwgODIgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDUxIGluc2VydGlvbnMoKyks
-IDMxIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2ZzL2YyZnMvbm9kZS5jIGIvZnMvZjJmcy9u
-b2RlLmMKaW5kZXggZDI1MzAxNzljYzljLi44NTZiM2FhOWNhYjEgMTAwNjQ0Ci0tLSBhL2ZzL2Yy
-ZnMvbm9kZS5jCisrKyBiL2ZzL2YyZnMvbm9kZS5jCkBAIC0yNTAsNDkgKzI1MCw2NyBAQCBib29s
-IG5lZWRfaW5vZGVfYmxvY2tfdXBkYXRlKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgbmlkX3Qg
-aW5vKQogCXJldHVybiBuZWVkX3VwZGF0ZTsKIH0KIAotc3RhdGljIHN0cnVjdCBuYXRfZW50cnkg
-KmdyYWJfbmF0X2VudHJ5KHN0cnVjdCBmMmZzX25tX2luZm8gKm5tX2ksIG5pZF90IG5pZCwKLQkJ
-CQkJCQkJYm9vbCBub19mYWlsKQorc3RhdGljIHN0cnVjdCBuYXRfZW50cnkgKl9fYWxsb2NfbmF0
-X2VudHJ5KG5pZF90IG5pZCwgYm9vbCBub19mYWlsKQogewotCXN0cnVjdCBuYXRfZW50cnkgKm5l
-dzsKKwlzdHJ1Y3QgbmF0X2VudHJ5ICpuZXcgPSBOVUxMOwogCi0JaWYgKG5vX2ZhaWwpIHsKLQkJ
-bmV3ID0gZjJmc19rbWVtX2NhY2hlX2FsbG9jKG5hdF9lbnRyeV9zbGFiLCBHRlBfTk9GUyk7Ci0J
-CWYyZnNfcmFkaXhfdHJlZV9pbnNlcnQoJm5tX2ktPm5hdF9yb290LCBuaWQsIG5ldyk7Ci0JfSBl
-bHNlIHsKLQkJbmV3ID0ga21lbV9jYWNoZV9hbGxvYyhuYXRfZW50cnlfc2xhYiwgR0ZQX05PRlMp
-OwotCQlpZiAoIW5ldykKLQkJCXJldHVybiBOVUxMOwotCQlpZiAocmFkaXhfdHJlZV9pbnNlcnQo
-Jm5tX2ktPm5hdF9yb290LCBuaWQsIG5ldykpIHsKLQkJCWttZW1fY2FjaGVfZnJlZShuYXRfZW50
-cnlfc2xhYiwgbmV3KTsKLQkJCXJldHVybiBOVUxMOwotCQl9CisJaWYgKG5vX2ZhaWwpCisJCW5l
-dyA9IGYyZnNfa21lbV9jYWNoZV9hbGxvYyhuYXRfZW50cnlfc2xhYiwKKwkJCQkJCUdGUF9OT0ZT
-IHwgX19HRlBfWkVSTyk7CisJZWxzZQorCQluZXcgPSBrbWVtX2NhY2hlX2FsbG9jKG5hdF9lbnRy
-eV9zbGFiLAorCQkJCQkJR0ZQX05PRlMgfCBfX0dGUF9aRVJPKTsKKwlpZiAobmV3KSB7CisJCW5h
-dF9zZXRfbmlkKG5ldywgbmlkKTsKKwkJbmF0X3Jlc2V0X2ZsYWcobmV3KTsKIAl9CisJcmV0dXJu
-IG5ldzsKK30KKworc3RhdGljIHZvaWQgX19mcmVlX25hdF9lbnRyeShzdHJ1Y3QgbmF0X2VudHJ5
-ICplKQoreworCWttZW1fY2FjaGVfZnJlZShuYXRfZW50cnlfc2xhYiwgZSk7Cit9CiAKLQltZW1z
-ZXQobmV3LCAwLCBzaXplb2Yoc3RydWN0IG5hdF9lbnRyeSkpOwotCW5hdF9zZXRfbmlkKG5ldywg
-bmlkKTsKLQluYXRfcmVzZXRfZmxhZyhuZXcpOwotCWxpc3RfYWRkX3RhaWwoJm5ldy0+bGlzdCwg
-Jm5tX2ktPm5hdF9lbnRyaWVzKTsKKy8qIG11c3QgYmUgbG9ja2VkIGJ5IG5hdF90cmVlX2xvY2sg
-Ki8KK3N0YXRpYyBzdHJ1Y3QgbmF0X2VudHJ5ICpfX2luaXRfbmF0X2VudHJ5KHN0cnVjdCBmMmZz
-X25tX2luZm8gKm5tX2ksCisJc3RydWN0IG5hdF9lbnRyeSAqbmUsIHN0cnVjdCBmMmZzX25hdF9l
-bnRyeSAqcmF3X25lLCBib29sIG5vX2ZhaWwpCit7CisJaWYgKG5vX2ZhaWwpCisJCWYyZnNfcmFk
-aXhfdHJlZV9pbnNlcnQoJm5tX2ktPm5hdF9yb290LCBuYXRfZ2V0X25pZChuZSksIG5lKTsKKwll
-bHNlIGlmIChyYWRpeF90cmVlX2luc2VydCgmbm1faS0+bmF0X3Jvb3QsIG5hdF9nZXRfbmlkKG5l
-KSwgbmUpKQorCQlyZXR1cm4gTlVMTDsKKworCWlmIChyYXdfbmUpCisJCW5vZGVfaW5mb19mcm9t
-X3Jhd19uYXQoJm5lLT5uaSwgcmF3X25lKTsKKwlsaXN0X2FkZF90YWlsKCZuZS0+bGlzdCwgJm5t
-X2ktPm5hdF9lbnRyaWVzKTsKIAlubV9pLT5uYXRfY250Kys7Ci0JcmV0dXJuIG5ldzsKKwlyZXR1
-cm4gbmU7CiB9CiAKKy8qIG11c3QgYmUgbG9ja2VkIGJ5IG5hdF90cmVlX2xvY2sgKi8KIHN0YXRp
-YyB2b2lkIGNhY2hlX25hdF9lbnRyeShzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIG5pZF90IG5p
-ZCwKIAkJCQkJCXN0cnVjdCBmMmZzX25hdF9lbnRyeSAqbmUpCiB7CiAJc3RydWN0IGYyZnNfbm1f
-aW5mbyAqbm1faSA9IE5NX0koc2JpKTsKLQlzdHJ1Y3QgbmF0X2VudHJ5ICplOworCXN0cnVjdCBu
-YXRfZW50cnkgKm5ldywgKmU7CisKKwluZXcgPSBfX2FsbG9jX25hdF9lbnRyeShuaWQsIGZhbHNl
-KTsKKwlpZiAoIW5ldykKKwkJcmV0dXJuOwogCisJZG93bl93cml0ZSgmbm1faS0+bmF0X3RyZWVf
-bG9jayk7CiAJZSA9IF9fbG9va3VwX25hdF9jYWNoZShubV9pLCBuaWQpOwotCWlmICghZSkgewot
-CQllID0gZ3JhYl9uYXRfZW50cnkobm1faSwgbmlkLCBmYWxzZSk7Ci0JCWlmIChlKQotCQkJbm9k
-ZV9pbmZvX2Zyb21fcmF3X25hdCgmZS0+bmksIG5lKTsKLQl9IGVsc2UgeworCWlmICghZSkKKwkJ
-ZSA9IF9faW5pdF9uYXRfZW50cnkobm1faSwgbmV3LCBuZSwgZmFsc2UpOworCWVsc2UKIAkJZjJm
-c19idWdfb24oc2JpLCBuYXRfZ2V0X2lubyhlKSAhPSBsZTMyX3RvX2NwdShuZS0+aW5vKSB8fAog
-CQkJCW5hdF9nZXRfYmxrYWRkcihlKSAhPQogCQkJCQlsZTMyX3RvX2NwdShuZS0+YmxvY2tfYWRk
-cikgfHwKIAkJCQluYXRfZ2V0X3ZlcnNpb24oZSkgIT0gbmUtPnZlcnNpb24pOwotCX0KKwl1cF93
-cml0ZSgmbm1faS0+bmF0X3RyZWVfbG9jayk7CisJaWYgKGUgIT0gbmV3KQorCQlfX2ZyZWVfbmF0
-X2VudHJ5KG5ldyk7CiB9CiAKIHN0YXRpYyB2b2lkIHNldF9ub2RlX2FkZHIoc3RydWN0IGYyZnNf
-c2JfaW5mbyAqc2JpLCBzdHJ1Y3Qgbm9kZV9pbmZvICpuaSwKQEAgLTMwMCwxMSArMzE4LDEyIEBA
-IHN0YXRpYyB2b2lkIHNldF9ub2RlX2FkZHIoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1
-Y3Qgbm9kZV9pbmZvICpuaSwKIHsKIAlzdHJ1Y3QgZjJmc19ubV9pbmZvICpubV9pID0gTk1fSShz
-YmkpOwogCXN0cnVjdCBuYXRfZW50cnkgKmU7CisJc3RydWN0IG5hdF9lbnRyeSAqbmV3ID0gX19h
-bGxvY19uYXRfZW50cnkobmktPm5pZCwgdHJ1ZSk7CiAKIAlkb3duX3dyaXRlKCZubV9pLT5uYXRf
-dHJlZV9sb2NrKTsKIAllID0gX19sb29rdXBfbmF0X2NhY2hlKG5tX2ksIG5pLT5uaWQpOwogCWlm
-ICghZSkgewotCQllID0gZ3JhYl9uYXRfZW50cnkobm1faSwgbmktPm5pZCwgdHJ1ZSk7CisJCWUg
-PSBfX2luaXRfbmF0X2VudHJ5KG5tX2ksIG5ldywgTlVMTCwgdHJ1ZSk7CiAJCWNvcHlfbm9kZV9p
-bmZvKCZlLT5uaSwgbmkpOwogCQlmMmZzX2J1Z19vbihzYmksIG5pLT5ibGtfYWRkciA9PSBORVdf
-QUREUik7CiAJfSBlbHNlIGlmIChuZXdfYmxrYWRkciA9PSBORVdfQUREUikgewpAQCAtMzE2LDYg
-KzMzNSw5IEBAIHN0YXRpYyB2b2lkIHNldF9ub2RlX2FkZHIoc3RydWN0IGYyZnNfc2JfaW5mbyAq
-c2JpLCBzdHJ1Y3Qgbm9kZV9pbmZvICpuaSwKIAkJY29weV9ub2RlX2luZm8oJmUtPm5pLCBuaSk7
-CiAJCWYyZnNfYnVnX29uKHNiaSwgbmktPmJsa19hZGRyICE9IE5VTExfQUREUik7CiAJfQorCS8q
-IGxldCdzIGZyZWUgZWFybHkgdG8gcmVkdWNlIG1lbW9yeSBjb25zdW1wdGlvbiAqLworCWlmIChl
-ICE9IG5ldykKKwkJX19mcmVlX25hdF9lbnRyeShuZXcpOwogCiAJLyogc2FuaXR5IGNoZWNrICov
-CiAJZjJmc19idWdfb24oc2JpLCBuYXRfZ2V0X2Jsa2FkZHIoZSkgIT0gbmktPmJsa19hZGRyKTsK
-QEAgLTQyNCw5ICs0NDYsNyBAQCB2b2lkIGdldF9ub2RlX2luZm8oc3RydWN0IGYyZnNfc2JfaW5m
-byAqc2JpLCBuaWRfdCBuaWQsIHN0cnVjdCBub2RlX2luZm8gKm5pKQogCWYyZnNfcHV0X3BhZ2Uo
-cGFnZSwgMSk7CiBjYWNoZToKIAkvKiBjYWNoZSBuYXQgZW50cnkgKi8KLQlkb3duX3dyaXRlKCZu
-bV9pLT5uYXRfdHJlZV9sb2NrKTsKIAljYWNoZV9uYXRfZW50cnkoc2JpLCBuaWQsICZuZSk7Ci0J
-dXBfd3JpdGUoJm5tX2ktPm5hdF90cmVlX2xvY2spOwogfQogCiAvKgpAQCAtMjM3MSw4ICsyMzkx
-LDggQEAgc3RhdGljIHZvaWQgcmVtb3ZlX25hdHNfaW5fam91cm5hbChzdHJ1Y3QgZjJmc19zYl9p
-bmZvICpzYmkpCiAKIAkJbmUgPSBfX2xvb2t1cF9uYXRfY2FjaGUobm1faSwgbmlkKTsKIAkJaWYg
-KCFuZSkgewotCQkJbmUgPSBncmFiX25hdF9lbnRyeShubV9pLCBuaWQsIHRydWUpOwotCQkJbm9k
-ZV9pbmZvX2Zyb21fcmF3X25hdCgmbmUtPm5pLCAmcmF3X25lKTsKKwkJCW5lID0gX19hbGxvY19u
-YXRfZW50cnkobmlkLCB0cnVlKTsKKwkJCV9faW5pdF9uYXRfZW50cnkobm1faSwgbmUsICZyYXdf
-bmUsIHRydWUpOwogCQl9CiAKIAkJLyoKLS0gCjIuMTQuMC5yYzEuMzgzLmdkMWNlMzk0ZmUyLWdv
-b2cKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29t
-bXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0CmVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNs
-YXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0
-CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291
-cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+On 2017/11/9 13:51, Hyunchul Lee wrote:
+> From: Hyunchul Lee <cheol.lee@lge.com>
+> 
+> Select the type of the segment using write hints, when blocks are
+> allocated for direct write.
+> 
+> There are unhandled corner cases. Hints are not applied in
+> in-place update.  And if the blocks of a file is not pre-allocated
+> because of the invalid user buffer, CURSEG_WARM_DATA segment will
+> be selected.
+> 
+> Signed-off-by: Hyunchul Lee <cheol.lee@lge.com>
+> ---
+>  fs/f2fs/data.c | 101 ++++++++++++++++++++++++++++++++++-----------------------
+>  fs/f2fs/f2fs.h |   1 +
+>  2 files changed, 61 insertions(+), 41 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 36b5352..d06048a 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -783,7 +783,7 @@ struct page *get_new_data_page(struct inode *inode,
+>  	return page;
+>  }
+>  
+> -static int __allocate_data_block(struct dnode_of_data *dn)
+> +static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
+>  {
+>  	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
+>  	struct f2fs_summary sum;
+> @@ -808,7 +808,7 @@ static int __allocate_data_block(struct dnode_of_data *dn)
+>  	set_summary(&sum, dn->nid, dn->ofs_in_node, ni.version);
+>  
+>  	allocate_data_block(sbi, NULL, dn->data_blkaddr, &dn->data_blkaddr,
+> -					&sum, CURSEG_WARM_DATA, NULL, false);
+> +					&sum, seg_type, NULL, false);
+>  	set_data_blkaddr(dn);
+>  
+>  	/* update i_size */
+> @@ -827,42 +827,6 @@ static inline bool __force_buffered_io(struct inode *inode, int rw)
+>  			F2FS_I_SB(inode)->s_ndevs);
+>  }
+>  
+> -int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+> -{
+> -	struct inode *inode = file_inode(iocb->ki_filp);
+> -	struct f2fs_map_blocks map;
+> -	int err = 0;
+> -
+> -	if (is_inode_flag_set(inode, FI_NO_PREALLOC))
+> -		return 0;
+> -
+> -	map.m_lblk = F2FS_BLK_ALIGN(iocb->ki_pos);
+> -	map.m_len = F2FS_BYTES_TO_BLK(iocb->ki_pos + iov_iter_count(from));
+> -	if (map.m_len > map.m_lblk)
+> -		map.m_len -= map.m_lblk;
+> -	else
+> -		map.m_len = 0;
+> -
+> -	map.m_next_pgofs = NULL;
+> -
+> -	if (iocb->ki_flags & IOCB_DIRECT) {
+> -		err = f2fs_convert_inline_inode(inode);
+> -		if (err)
+> -			return err;
+> -		return f2fs_map_blocks(inode, &map, 1,
+> -			__force_buffered_io(inode, WRITE) ?
+> -				F2FS_GET_BLOCK_PRE_AIO :
+> -				F2FS_GET_BLOCK_PRE_DIO);
+> -	}
+> -	if (iocb->ki_pos + iov_iter_count(from) > MAX_INLINE_DATA(inode)) {
+> -		err = f2fs_convert_inline_inode(inode);
+> -		if (err)
+> -			return err;
+> -	}
+> -	if (!f2fs_has_inline_data(inode))
+> -		return f2fs_map_blocks(inode, &map, 1, F2FS_GET_BLOCK_PRE_AIO);
+> -	return err;
+> -}
+>  
+>  static inline void __do_map_lock(struct f2fs_sb_info *sbi, int flag, bool lock)
+>  {
+> @@ -888,8 +852,8 @@ static inline void __do_map_lock(struct f2fs_sb_info *sbi, int flag, bool lock)
+>   *     b. do not use extent cache for better performance
+>   *     c. give the block addresses to blockdev
+>   */
+> -int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+> -						int create, int flag)
+> +static int __f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+> +				int create, int flag, int seg_type)
+>  {
+>  	unsigned int maxblocks = map->m_len;
+>  	struct dnode_of_data dn;
+> @@ -957,7 +921,12 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>  					last_ofs_in_node = dn.ofs_in_node;
+>  				}
+>  			} else {
+> -				err = __allocate_data_block(&dn);
+> +				/* if this inode is marked with FI_NO_PREALLOC,
+> +				 * @seg_type is NO_CHECK_TYPE
+> +				 */
+> +				if (seg_type == NO_CHECK_TYPE)
+> +					seg_type = CURSEG_WARM_DATA;
+> +				err = __allocate_data_block(&dn, seg_type);
+
+We need to use inode.i_write_hint instead of ki_hint passed from file.f_write_hint?
+
+Thanks,
+
+>  				if (!err)
+>  					set_inode_flag(inode, FI_APPEND_WRITE);
+>  			}
+> @@ -1048,6 +1017,51 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>  	return err;
+>  }
+>  
+> +int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+> +						int create, int flag)
+> +{
+> +	return __f2fs_map_blocks(inode, map, create, flag, NO_CHECK_TYPE);
+> +}
+> +
+> +int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+> +{
+> +	struct inode *inode = file_inode(iocb->ki_filp);
+> +	struct f2fs_map_blocks map;
+> +	int err = 0;
+> +
+> +	if (is_inode_flag_set(inode, FI_NO_PREALLOC))
+> +		return 0;
+> +
+> +	map.m_lblk = F2FS_BLK_ALIGN(iocb->ki_pos);
+> +	map.m_len = F2FS_BYTES_TO_BLK(iocb->ki_pos + iov_iter_count(from));
+> +	if (map.m_len > map.m_lblk)
+> +		map.m_len -= map.m_lblk;
+> +	else
+> +		map.m_len = 0;
+> +
+> +	map.m_next_pgofs = NULL;
+> +
+> +	if (iocb->ki_flags & IOCB_DIRECT) {
+> +		err = f2fs_convert_inline_inode(inode);
+> +		if (err)
+> +			return err;
+> +		return __f2fs_map_blocks(inode, &map, 1,
+> +			__force_buffered_io(inode, WRITE) ?
+> +				F2FS_GET_BLOCK_PRE_AIO :
+> +				F2FS_GET_BLOCK_PRE_DIO,
+> +				rw_hint_to_seg_type(iocb->ki_hint));
+> +	}
+> +	if (iocb->ki_pos + iov_iter_count(from) > MAX_INLINE_DATA(inode)) {
+> +		err = f2fs_convert_inline_inode(inode);
+> +		if (err)
+> +			return err;
+> +	}
+> +	if (!f2fs_has_inline_data(inode))
+> +		return f2fs_map_blocks(inode, &map, 1, F2FS_GET_BLOCK_PRE_AIO);
+> +
+> +	return err;
+> +}
+> +
+>  static int __get_data_block(struct inode *inode, sector_t iblock,
+>  			struct buffer_head *bh, int create, int flag,
+>  			pgoff_t *next_pgofs)
+> @@ -2082,6 +2096,11 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>  
+>  	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
+>  
+> +	/* This is for avoiding the situation that the data of a segment is
+> +	 * passed down to devices with different hints
+> +	 */
+> +	iocb->ki_hint = WRITE_LIFE_NOT_SET;
+> +
+>  	down_read(&F2FS_I(inode)->dio_rwsem[rw]);
+>  	err = blockdev_direct_IO(iocb, inode, iter, get_data_block_dio);
+>  	up_read(&F2FS_I(inode)->dio_rwsem[rw]);
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 4b4a72f..9be5658 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -2562,6 +2562,7 @@ int lookup_journal_in_cursum(struct f2fs_journal *journal, int type,
+>  void destroy_segment_manager(struct f2fs_sb_info *sbi);
+>  int __init create_segment_manager_caches(void);
+>  void destroy_segment_manager_caches(void);
+> +int rw_hint_to_seg_type(enum rw_hint hint);
+>  
+>  /*
+>   * checkpoint.c
+> 
