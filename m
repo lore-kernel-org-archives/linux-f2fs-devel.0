@@ -1,27 +1,26 @@
-From: Hyunchul Lee <hyc.lee@gmail.com>
-Subject: Re: [RFC PATCH 0/2] apply write hints to select the type
- of segments
-Date: Mon, 13 Nov 2017 09:24:55 +0900
-Message-ID: <5A08E657.8060807@gmail.com>
-References: <1510206688-12767-1-git-send-email-hyc.lee@gmail.com>
- <1b0b44de-c724-5dc4-e9cb-79a894bdb611@huawei.com>
- <5A04F184.3000204@gmail.com>
- <edf62076-a125-11e2-b2e6-fd32d5e6118f@huawei.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: Re: [PATCH v4] f2fs: fix out-of-free problem caused by
+ atomic write
+Date: Mon, 13 Nov 2017 09:11:39 +0800
+Message-ID: <4cbdba1e-9d9e-6de8-e367-3fd305d23eac@huawei.com>
+References: <1509934071-116656-1-git-send-email-yunlong.song@huawei.com>
+ <1510107446-52423-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <hyc.lee@gmail.com>) id 1eE2Yj-0005vd-84
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 13 Nov 2017 00:25:05 +0000
-Received: from lgeamrelo12.lge.com ([156.147.23.52])
- by sfi-mx-4.v28.ch3.sourceforge.com with esmtp (Exim 4.89)
- id 1eE2Yh-0007aU-21
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 13 Nov 2017 00:25:05 +0000
-In-Reply-To: <edf62076-a125-11e2-b2e6-fd32d5e6118f@huawei.com>
+ (envelope-from <yunlong.song@huawei.com>) id 1eE3JT-0006l5-1J
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 13 Nov 2017 01:13:23 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191])
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.89) id 1eE3JQ-0004VY-8S
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 13 Nov 2017 01:13:22 +0000
+In-Reply-To: <1510107446-52423-1-git-send-email-yunlong.song@huawei.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,123 +30,267 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: kernel-team@lge.com, Jaegeuk Kim <jaegeuk@kernel.org>, Hyunchul Lee <cheol.lee@lge.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
+Cc: linux-fsdevel@vger.kernel.org, miaoxie@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 11/10/2017 03:42 PM, Chao Yu wrote:
-> On 2017/11/10 8:23, Hyunchul Lee wrote:
->> Hello, Chao
->>
->> On 11/09/2017 06:12 PM, Chao Yu wrote:
->>> On 2017/11/9 13:51, Hyunchul Lee wrote:
->>>> From: Hyunchul Lee <cheol.lee@lge.com>
->>>>
->>>> Using write hints[1], applications can inform the life time of the data
->>>> written to devices. and this[2] reported that the write hints patch
->>>> decreased writes in NAND by 25%.
->>>>
->>>> This hints help F2FS to determine the followings.
->>>>   1) the segment types where the data will be written.
->>>>   2) the hints that will be passed down to devices with the data of segments.
->>>>
->>>> This patch set implements the first mapping from write hints to segment types
->>>> as shown below.
->>>>
->>>>   hints                     segment type
->>>>   -----                     ------------
->>>>   WRITE_LIFE_SHORT          CURSEG_COLD_DATA
->>>>   WRITE_LIFE_EXTREME        CURSEG_HOT_DATA
->>>>   others                    CURSEG_WARM_DATA
->>>>
->>>> The F2FS poliy for hot/cold seperation has precedence over this hints, And
->>>> hints are not applied in in-place update.
->>>
->>> Could we change to disable IPU if file/inode write hint is existing?
->>>
->>
->> I am afraid that this makes side effects. for example, this could cause
->> out-of-place updates even when there are not enough free segments. 
->> I can write the patch that handles these situations. But I wonder 
->> that this is required, and I am not sure which IPU polices can be disabled.
-> 
-> Oh, As I replied in another thread, I think IPU just affects filesystem
-> hot/cold separating, rather than this feature. So I think it will be okay
-> to not consider it.
-> 
->>
->>>>
->>>> Before the second mapping is implemented, write hints are not passed down
->>>> to devices. Because it is better that the data of a segment have the same 
->>>> hint.
->>>>
->>>> [1]: c75b1d9421f80f4143e389d2d50ddfc8a28c8c35
->>>> [2]: https://lwn.net/Articles/726477/
->>>
->>> Could you write a patch to support passing write hint to block layer for
->>> buffered writes as below commit:
->>> 0127251c45ae ("ext4: add support for passing in write hints for buffered writes")
->>>
->>
->> Sure I will. I wrote it already ;)
-> 
-> Cool, ;)
-> 
->> I think that datas from the same segment should be passed down with the same
->> hint, and the following mapping is reasonable. I wonder what is your opinion
->> about it.
->>
->>   segment type               hints
->>   ------------               -----
->>   CURSEG_COLD_DATA           WRITE_LIFE_EXTREME
->>   CURSEG_HOT_DATA            WRITE_LIFE_SHORT
->>   CURSEG_COLD_NODE           WRITE_LIFE_NORMAL
-> 
-> We have WRITE_LIFE_LONG defined rather than WRITE_LIFE_NORMAL in fs.h?
-> 
->>   CURSEG_HOT_NODE            WRITE_LIFE_MEDIUM
-> 
-> As I know, in scenario of cell phone, data of meta_inode is hottest, then hot
-> data, warm node, and cold node should be coldest. So I suggested we can define
-> as below:
-> 
-> META_DATA			WRITE_LIFE_SHORT
-> HOT_DATA & WARM_NODE		WRITE_LIFE_MEDIUM
-> HOT_NODE & WARM_DATA		WRITE_LIFE_LONG
-> COLD_NODE & COLD_DATA		WRITE_LIFE_EXTREME
-> 
+ping...
 
-I agree, But I am not sure that assigning the same hint to a node and data
-segment is good. Because NVMe is likely to write them in the same erase 
-block if they have the same hint.
+On 2017/11/8 10:17, Yunlong Song wrote:
+> f2fs_balance_fs only actives once in the commit_inmem_pages, but there
+> are more than one page to commit, so all the other pages will miss the
+> check. This will lead to out-of-free problem when commit a very large
+> file. However, we cannot do f2fs_balance_fs for each inmem page, since
+> this will break atomicity. As a result, we should do f2fs_balance_fs
+> for all the inmem pages together.
+>
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> ---
+>   fs/f2fs/debug.c   |  5 +++--
+>   fs/f2fs/f2fs.h    | 26 ++++++++++++++++++++++++--
+>   fs/f2fs/segment.c | 30 ++++++++++++++++++++++++------
+>   fs/f2fs/segment.h |  4 +++-
+>   4 files changed, 54 insertions(+), 11 deletions(-)
+>
+> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+> index f7eec50..41c47c4 100644
+> --- a/fs/f2fs/debug.c
+> +++ b/fs/f2fs/debug.c
+> @@ -50,6 +50,7 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+>   	si->ndirty_files = sbi->ndirty_inode[FILE_INODE];
+>   	si->ndirty_all = sbi->ndirty_inode[DIRTY_META];
+>   	si->inmem_pages = get_pages(sbi, F2FS_INMEM_PAGES);
+> +	si->inmem_commit_pages = get_pages(sbi, F2FS_INMEM_COMMIT_PAGES);
+>   	si->aw_cnt = atomic_read(&sbi->aw_cnt);
+>   	si->vw_cnt = atomic_read(&sbi->vw_cnt);
+>   	si->max_aw_cnt = atomic_read(&sbi->max_aw_cnt);
+> @@ -360,9 +361,9 @@ static int stat_show(struct seq_file *s, void *v)
+>   			   si->nr_discarding, si->nr_discarded,
+>   			   si->nr_discard_cmd, si->undiscard_blks);
+>   		seq_printf(s, "  - inmem: %4d, atomic IO: %4d (Max. %4d), "
+> -			"volatile IO: %4d (Max. %4d)\n",
+> +			"volatile IO: %4d (Max. %4d), commit: %4d\n",
+>   			   si->inmem_pages, si->aw_cnt, si->max_aw_cnt,
+> -			   si->vw_cnt, si->max_vw_cnt);
+> +			   si->vw_cnt, si->max_vw_cnt, si->inmem_commit_pages);
+>   		seq_printf(s, "  - nodes: %4d in %4d\n",
+>   			   si->ndirty_node, si->node_pages);
+>   		seq_printf(s, "  - dents: %4d in dirs:%4d (%4d)\n",
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 13a96b8..749bdb6 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -610,6 +610,7 @@ struct f2fs_inode_info {
+>   	struct list_head inmem_pages;	/* inmemory pages managed by f2fs */
+>   	struct task_struct *inmem_task;	/* store inmemory task */
+>   	struct mutex inmem_lock;	/* lock for inmemory pages */
+> +	unsigned long inmem_blocks;	/* inmemory blocks */
+>   	struct extent_tree *extent_tree;	/* cached extent_tree entry */
+>   	struct rw_semaphore dio_rwsem[2];/* avoid racing between dio and gc */
+>   	struct rw_semaphore i_mmap_sem;
+> @@ -863,6 +864,7 @@ enum count_type {
+>   	F2FS_DIRTY_NODES,
+>   	F2FS_DIRTY_META,
+>   	F2FS_INMEM_PAGES,
+> +	F2FS_INMEM_COMMIT_PAGES,
+>   	F2FS_DIRTY_IMETA,
+>   	F2FS_WB_CP_DATA,
+>   	F2FS_WB_DATA,
+> @@ -1600,7 +1602,21 @@ static inline void inc_page_count(struct f2fs_sb_info *sbi, int count_type)
+>   	atomic_inc(&sbi->nr_pages[count_type]);
+>   
+>   	if (count_type == F2FS_DIRTY_DATA || count_type == F2FS_INMEM_PAGES ||
+> -		count_type == F2FS_WB_CP_DATA || count_type == F2FS_WB_DATA)
+> +		count_type == F2FS_WB_CP_DATA || count_type == F2FS_WB_DATA ||
+> +		count_type == F2FS_INMEM_COMMIT_PAGES)
+> +		return;
+> +
+> +	set_sbi_flag(sbi, SBI_IS_DIRTY);
+> +}
+> +
+> +static inline void inc_pages_count(struct f2fs_sb_info *sbi, int count_type,
+> +					int pages)
+> +{
+> +	atomic_add(pages, &sbi->nr_pages[count_type]);
+> +
+> +	if (count_type == F2FS_DIRTY_DATA || count_type == F2FS_INMEM_PAGES ||
+> +		count_type == F2FS_WB_CP_DATA || count_type == F2FS_WB_DATA ||
+> +		count_type == F2FS_INMEM_COMMIT_PAGES)
+>   		return;
+>   
+>   	set_sbi_flag(sbi, SBI_IS_DIRTY);
+> @@ -1618,6 +1634,12 @@ static inline void dec_page_count(struct f2fs_sb_info *sbi, int count_type)
+>   	atomic_dec(&sbi->nr_pages[count_type]);
+>   }
+>   
+> +static inline void dec_pages_count(struct f2fs_sb_info *sbi, int count_type,
+> +					int pages)
+> +{
+> +	atomic_sub(pages, &sbi->nr_pages[count_type]);
+> +}
+> +
+>   static inline void inode_dec_dirty_pages(struct inode *inode)
+>   {
+>   	if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode) &&
+> @@ -2716,7 +2738,7 @@ struct f2fs_stat_info {
+>   	unsigned long long hit_total, total_ext;
+>   	int ext_tree, zombie_tree, ext_node;
+>   	int ndirty_node, ndirty_dent, ndirty_meta, ndirty_data, ndirty_imeta;
+> -	int inmem_pages;
+> +	int inmem_pages, inmem_commit_pages;
+>   	unsigned int ndirty_dirs, ndirty_files, ndirty_all;
+>   	int nats, dirty_nats, sits, dirty_sits;
+>   	int free_nids, avail_nids, alloc_nids;
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 46dfbca..2ff1bba4 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -174,6 +174,8 @@ bool need_SSR(struct f2fs_sb_info *sbi)
+>   	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
+>   	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
+>   	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
+> +	int inmem_commit_secs = get_blocktype_secs(sbi,
+> +						F2FS_INMEM_COMMIT_PAGES);
+>   
+>   	if (test_opt(sbi, LFS))
+>   		return false;
+> @@ -181,7 +183,7 @@ bool need_SSR(struct f2fs_sb_info *sbi)
+>   		return true;
+>   
+>   	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
+> -						2 * reserved_sections(sbi));
+> +				inmem_commit_secs + 2 * reserved_sections(sbi));
+>   }
+>   
+>   void register_inmem_page(struct inode *inode, struct page *page)
+> @@ -210,6 +212,7 @@ void register_inmem_page(struct inode *inode, struct page *page)
+>   		list_add_tail(&fi->inmem_ilist, &sbi->inode_list[ATOMIC_FILE]);
+>   	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+>   	inc_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
+> +	fi->inmem_blocks++;
+>   	mutex_unlock(&fi->inmem_lock);
+>   
+>   	trace_f2fs_register_inmem_page(page, INMEM);
+> @@ -221,6 +224,7 @@ static int __revoke_inmem_pages(struct inode *inode,
+>   	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>   	struct inmem_pages *cur, *tmp;
+>   	int err = 0;
+> +	struct f2fs_inode_info *fi = F2FS_I(inode);
+>   
+>   	list_for_each_entry_safe(cur, tmp, head, list) {
+>   		struct page *page = cur->page;
+> @@ -263,6 +267,7 @@ static int __revoke_inmem_pages(struct inode *inode,
+>   		list_del(&cur->list);
+>   		kmem_cache_free(inmem_entry_slab, cur);
+>   		dec_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
+> +		fi->inmem_blocks--;
+>   	}
+>   	return err;
+>   }
+> @@ -302,6 +307,10 @@ void drop_inmem_pages(struct inode *inode)
+>   	if (!list_empty(&fi->inmem_ilist))
+>   		list_del_init(&fi->inmem_ilist);
+>   	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+> +	if (fi->inmem_blocks) {
+> +		f2fs_bug_on(sbi, 1);
+> +		fi->inmem_blocks = 0;
+> +	}
+>   	mutex_unlock(&fi->inmem_lock);
+>   
+>   	clear_inode_flag(inode, FI_ATOMIC_FILE);
+> @@ -326,6 +335,7 @@ void drop_inmem_page(struct inode *inode, struct page *page)
+>   
+>   	f2fs_bug_on(sbi, !cur || cur->page != page);
+>   	list_del(&cur->list);
+> +	fi->inmem_blocks--;
+>   	mutex_unlock(&fi->inmem_lock);
+>   
+>   	dec_page_count(sbi, F2FS_INMEM_PAGES);
+> @@ -354,7 +364,7 @@ static int __commit_inmem_pages(struct inode *inode,
+>   		.io_type = FS_DATA_IO,
+>   	};
+>   	pgoff_t last_idx = ULONG_MAX;
+> -	int err = 0;
+> +	int err = 0, inmem_blocks = fi->inmem_blocks;
+>   
+>   	list_for_each_entry_safe(cur, tmp, &fi->inmem_pages, list) {
+>   		struct page *page = cur->page;
+> @@ -390,6 +400,8 @@ static int __commit_inmem_pages(struct inode *inode,
+>   		}
+>   		unlock_page(page);
+>   		list_move_tail(&cur->list, revoke_list);
+> +		dec_page_count(sbi, F2FS_INMEM_COMMIT_PAGES);
+> +		inmem_blocks--;
+>   	}
+>   
+>   	if (last_idx != ULONG_MAX)
+> @@ -397,6 +409,8 @@ static int __commit_inmem_pages(struct inode *inode,
+>   
+>   	if (!err)
+>   		__revoke_inmem_pages(inode, revoke_list, false, false);
+> +	else
+> +		dec_pages_count(sbi, F2FS_INMEM_COMMIT_PAGES, inmem_blocks);
+>   
+>   	return err;
+>   }
+> @@ -409,12 +423,12 @@ int commit_inmem_pages(struct inode *inode)
+>   	int err;
+>   
+>   	INIT_LIST_HEAD(&revoke_list);
+> +	set_inode_flag(inode, FI_ATOMIC_COMMIT);
+> +	mutex_lock(&fi->inmem_lock);
+> +	inc_pages_count(sbi, F2FS_INMEM_COMMIT_PAGES, fi->inmem_blocks);
+>   	f2fs_balance_fs(sbi, true);
+>   	f2fs_lock_op(sbi);
+>   
+> -	set_inode_flag(inode, FI_ATOMIC_COMMIT);
+> -
+> -	mutex_lock(&fi->inmem_lock);
+>   	err = __commit_inmem_pages(inode, &revoke_list);
+>   	if (err) {
+>   		int ret;
+> @@ -437,11 +451,15 @@ int commit_inmem_pages(struct inode *inode)
+>   	if (!list_empty(&fi->inmem_ilist))
+>   		list_del_init(&fi->inmem_ilist);
+>   	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+> +	if (fi->inmem_blocks) {
+> +		f2fs_bug_on(sbi, 1);
+> +		fi->inmem_blocks = 0;
+> +	}
+> +	f2fs_unlock_op(sbi);
+>   	mutex_unlock(&fi->inmem_lock);
+>   
+>   	clear_inode_flag(inode, FI_ATOMIC_COMMIT);
+>   
+> -	f2fs_unlock_op(sbi);
+>   	return err;
+>   }
+>   
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index 8d93652..f3885de 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -503,12 +503,14 @@ static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
+>   	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
+>   	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
+>   	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
+> +	int inmem_commit_secs = get_blocktype_secs(sbi,
+> +						F2FS_INMEM_COMMIT_PAGES);
+>   
+>   	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
+>   		return false;
+>   
+>   	return (free_sections(sbi) + freed) <=
+> -		(node_secs + 2 * dent_secs + imeta_secs +
+> +		(node_secs + 2 * dent_secs + imeta_secs + inmem_commit_secs +
+>   		reserved_sections(sbi) + needed);
+>   }
+>   
 
-Thanks.
+-- 
+Thanks,
+Yunlong Song
 
-> Thanks,
-> 
->>   others                     WRITE_LIFE_NONE
->>  
->>> Thanks,
->>>
->>>>
->>>> Hyunchul Lee (2):
->>>>   f2fs: apply write hints to select the type of segments for buffered
->>>>     write
->>>>   f2fs: apply write hints to select the type of segment for direct write
->>>>
->>>>  fs/f2fs/data.c    | 101 ++++++++++++++++++++++++++++++++----------------------
->>>>  fs/f2fs/f2fs.h    |   1 +
->>>>  fs/f2fs/segment.c |  14 +++++++-
->>>>  3 files changed, 74 insertions(+), 42 deletions(-)
->>>>
->>>
->>>
->>
->> Thanks
->>
->> .
->>
-> 
-> 
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
