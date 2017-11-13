@@ -1,235 +1,167 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [RFC PATHC 2/2] f2fs: apply write hints to select the
- type of segment for direct write
-Date: Mon, 13 Nov 2017 09:24:06 +0800
-Message-ID: <70bf8e31-9b5c-e2cc-107b-d699c02c843f@huawei.com>
+Subject: Re: [RFC PATCH 0/2] apply write hints to select the type
+ of segments
+Date: Mon, 13 Nov 2017 09:26:32 +0800
+Message-ID: <c3199798-cd5b-afca-845b-73817c77c902@huawei.com>
 References: <1510206688-12767-1-git-send-email-hyc.lee@gmail.com>
- <1510206688-12767-3-git-send-email-hyc.lee@gmail.com>
- <711d3991-47e1-bc1c-4eb8-c9254fec156a@kernel.org> <5A08E253.50408@gmail.com>
+ <1b0b44de-c724-5dc4-e9cb-79a894bdb611@huawei.com>
+ <5A04F184.3000204@gmail.com>
+ <edf62076-a125-11e2-b2e6-fd32d5e6118f@huawei.com>
+ <5A08E657.8060807@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5A08E253.50408@gmail.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+ helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <yuchao0@huawei.com>) id 1eE3WO-000773-Id
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 13 Nov 2017 01:26:44 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191])
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.89) id 1eE3WM-00050c-Fg
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 13 Nov 2017 01:26:44 +0000
+In-Reply-To: <5A08E657.8060807@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hyunchul Lee <hyc.lee@gmail.com>, Chao Yu <chao@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: kernel-team@lge.com, Hyunchul Lee <cheol.lee@lge.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Hyunchul Lee <hyc.lee@gmail.com>
+Cc: kernel-team@lge.com, Jaegeuk Kim <jaegeuk@kernel.org>, Hyunchul Lee <cheol.lee@lge.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/11/13 8:07, Hyunchul Lee wrote:
-> On 11/11/2017 09:38 AM, Chao Yu wrote:
->> On 2017/11/9 13:51, Hyunchul Lee wrote:
->>> From: Hyunchul Lee <cheol.lee@lge.com>
+On 2017/11/13 8:24, Hyunchul Lee wrote:
+> On 11/10/2017 03:42 PM, Chao Yu wrote:
+>> On 2017/11/10 8:23, Hyunchul Lee wrote:
+>>> Hello, Chao
 >>>
->>> Select the type of the segment using write hints, when blocks are
->>> allocated for direct write.
+>>> On 11/09/2017 06:12 PM, Chao Yu wrote:
+>>>> On 2017/11/9 13:51, Hyunchul Lee wrote:
+>>>>> From: Hyunchul Lee <cheol.lee@lge.com>
+>>>>>
+>>>>> Using write hints[1], applications can inform the life time of the data
+>>>>> written to devices. and this[2] reported that the write hints patch
+>>>>> decreased writes in NAND by 25%.
+>>>>>
+>>>>> This hints help F2FS to determine the followings.
+>>>>>   1) the segment types where the data will be written.
+>>>>>   2) the hints that will be passed down to devices with the data of segments.
+>>>>>
+>>>>> This patch set implements the first mapping from write hints to segment types
+>>>>> as shown below.
+>>>>>
+>>>>>   hints                     segment type
+>>>>>   -----                     ------------
+>>>>>   WRITE_LIFE_SHORT          CURSEG_COLD_DATA
+>>>>>   WRITE_LIFE_EXTREME        CURSEG_HOT_DATA
+>>>>>   others                    CURSEG_WARM_DATA
+>>>>>
+>>>>> The F2FS poliy for hot/cold seperation has precedence over this hints, And
+>>>>> hints are not applied in in-place update.
+>>>>
+>>>> Could we change to disable IPU if file/inode write hint is existing?
+>>>>
 >>>
->>> There are unhandled corner cases. Hints are not applied in
->>> in-place update.  And if the blocks of a file is not pre-allocated
->>> because of the invalid user buffer, CURSEG_WARM_DATA segment will
->>> be selected.
->>>
->>> Signed-off-by: Hyunchul Lee <cheol.lee@lge.com>
->>> ---
->>>  fs/f2fs/data.c | 101 ++++++++++++++++++++++++++++++++++-----------------------
->>>  fs/f2fs/f2fs.h |   1 +
->>>  2 files changed, 61 insertions(+), 41 deletions(-)
->>>
->>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>> index 36b5352..d06048a 100644
->>> --- a/fs/f2fs/data.c
->>> +++ b/fs/f2fs/data.c
->>> @@ -783,7 +783,7 @@ struct page *get_new_data_page(struct inode *inode,
->>>  	return page;
->>>  }
->>>  
->>> -static int __allocate_data_block(struct dnode_of_data *dn)
->>> +static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
->>>  {
->>>  	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
->>>  	struct f2fs_summary sum;
->>> @@ -808,7 +808,7 @@ static int __allocate_data_block(struct dnode_of_data *dn)
->>>  	set_summary(&sum, dn->nid, dn->ofs_in_node, ni.version);
->>>  
->>>  	allocate_data_block(sbi, NULL, dn->data_blkaddr, &dn->data_blkaddr,
->>> -					&sum, CURSEG_WARM_DATA, NULL, false);
->>> +					&sum, seg_type, NULL, false);
->>>  	set_data_blkaddr(dn);
->>>  
->>>  	/* update i_size */
->>> @@ -827,42 +827,6 @@ static inline bool __force_buffered_io(struct inode *inode, int rw)
->>>  			F2FS_I_SB(inode)->s_ndevs);
->>>  }
->>>  
->>> -int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
->>> -{
->>> -	struct inode *inode = file_inode(iocb->ki_filp);
->>> -	struct f2fs_map_blocks map;
->>> -	int err = 0;
->>> -
->>> -	if (is_inode_flag_set(inode, FI_NO_PREALLOC))
->>> -		return 0;
->>> -
->>> -	map.m_lblk = F2FS_BLK_ALIGN(iocb->ki_pos);
->>> -	map.m_len = F2FS_BYTES_TO_BLK(iocb->ki_pos + iov_iter_count(from));
->>> -	if (map.m_len > map.m_lblk)
->>> -		map.m_len -= map.m_lblk;
->>> -	else
->>> -		map.m_len = 0;
->>> -
->>> -	map.m_next_pgofs = NULL;
->>> -
->>> -	if (iocb->ki_flags & IOCB_DIRECT) {
->>> -		err = f2fs_convert_inline_inode(inode);
->>> -		if (err)
->>> -			return err;
->>> -		return f2fs_map_blocks(inode, &map, 1,
->>> -			__force_buffered_io(inode, WRITE) ?
->>> -				F2FS_GET_BLOCK_PRE_AIO :
->>> -				F2FS_GET_BLOCK_PRE_DIO);
->>> -	}
->>> -	if (iocb->ki_pos + iov_iter_count(from) > MAX_INLINE_DATA(inode)) {
->>> -		err = f2fs_convert_inline_inode(inode);
->>> -		if (err)
->>> -			return err;
->>> -	}
->>> -	if (!f2fs_has_inline_data(inode))
->>> -		return f2fs_map_blocks(inode, &map, 1, F2FS_GET_BLOCK_PRE_AIO);
->>> -	return err;
->>> -}
->>>  
->>>  static inline void __do_map_lock(struct f2fs_sb_info *sbi, int flag, bool lock)
->>>  {
->>> @@ -888,8 +852,8 @@ static inline void __do_map_lock(struct f2fs_sb_info *sbi, int flag, bool lock)
->>>   *     b. do not use extent cache for better performance
->>>   *     c. give the block addresses to blockdev
->>>   */
->>> -int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->>> -						int create, int flag)
->>> +static int __f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->>> +				int create, int flag, int seg_type)
->>>  {
->>>  	unsigned int maxblocks = map->m_len;
->>>  	struct dnode_of_data dn;
->>> @@ -957,7 +921,12 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->>>  					last_ofs_in_node = dn.ofs_in_node;
->>>  				}
->>>  			} else {
->>> -				err = __allocate_data_block(&dn);
->>> +				/* if this inode is marked with FI_NO_PREALLOC,
->>> +				 * @seg_type is NO_CHECK_TYPE
->>> +				 */
->>> +				if (seg_type == NO_CHECK_TYPE)
->>> +					seg_type = CURSEG_WARM_DATA;
->>> +				err = __allocate_data_block(&dn, seg_type);
+>>> I am afraid that this makes side effects. for example, this could cause
+>>> out-of-place updates even when there are not enough free segments. 
+>>> I can write the patch that handles these situations. But I wonder 
+>>> that this is required, and I am not sure which IPU polices can be disabled.
 >>
->> We need to use inode.i_write_hint instead of ki_hint passed from file.f_write_hint?
+>> Oh, As I replied in another thread, I think IPU just affects filesystem
+>> hot/cold separating, rather than this feature. So I think it will be okay
+>> to not consider it.
+>>
+>>>
+>>>>>
+>>>>> Before the second mapping is implemented, write hints are not passed down
+>>>>> to devices. Because it is better that the data of a segment have the same 
+>>>>> hint.
+>>>>>
+>>>>> [1]: c75b1d9421f80f4143e389d2d50ddfc8a28c8c35
+>>>>> [2]: https://lwn.net/Articles/726477/
+>>>>
+>>>> Could you write a patch to support passing write hint to block layer for
+>>>> buffered writes as below commit:
+>>>> 0127251c45ae ("ext4: add support for passing in write hints for buffered writes")
+>>>>
+>>>
+>>> Sure I will. I wrote it already ;)
+>>
+>> Cool, ;)
+>>
+>>> I think that datas from the same segment should be passed down with the same
+>>> hint, and the following mapping is reasonable. I wonder what is your opinion
+>>> about it.
+>>>
+>>>   segment type               hints
+>>>   ------------               -----
+>>>   CURSEG_COLD_DATA           WRITE_LIFE_EXTREME
+>>>   CURSEG_HOT_DATA            WRITE_LIFE_SHORT
+>>>   CURSEG_COLD_NODE           WRITE_LIFE_NORMAL
+>>
+>> We have WRITE_LIFE_LONG defined rather than WRITE_LIFE_NORMAL in fs.h?
+>>
+>>>   CURSEG_HOT_NODE            WRITE_LIFE_MEDIUM
+>>
+>> As I know, in scenario of cell phone, data of meta_inode is hottest, then hot
+>> data, warm node, and cold node should be coldest. So I suggested we can define
+>> as below:
+>>
+>> META_DATA			WRITE_LIFE_SHORT
+>> HOT_DATA & WARM_NODE		WRITE_LIFE_MEDIUM
+>> HOT_NODE & WARM_DATA		WRITE_LIFE_LONG
+>> COLD_NODE & COLD_DATA		WRITE_LIFE_EXTREME
 >>
 > 
-> The following commit says to use file.f_write_hint if it is available. 
-> "c75b1d9 fs: add fcntl() interface for setting/getting write life time hints"
+> I agree, But I am not sure that assigning the same hint to a node and data
+> segment is good. Because NVMe is likely to write them in the same erase 
+> block if they have the same hint.
 
-Oh, yes, f_write_hint is recommended. So, I'm OK with this.
-
-One left question as below.
-
-> 
-> And ki_hint is assiged to file.f_write_hint or inode.i_write_hint 
-> by file_write_hint() in init_sync_kiocb().
-> So, I think we need to use ki_hint instead of inode.i_write_hint.
-> 
-> Thanks
-> 
->> Thanks,
->>
->>>  				if (!err)
->>>  					set_inode_flag(inode, FI_APPEND_WRITE);
->>>  			}
->>> @@ -1048,6 +1017,51 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->>>  	return err;
->>>  }
->>>  
->>> +int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->>> +						int create, int flag)
->>> +{
->>> +	return __f2fs_map_blocks(inode, map, create, flag, NO_CHECK_TYPE);
->>> +}
->>> +
->>> +int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
->>> +{
->>> +	struct inode *inode = file_inode(iocb->ki_filp);
->>> +	struct f2fs_map_blocks map;
->>> +	int err = 0;
->>> +
->>> +	if (is_inode_flag_set(inode, FI_NO_PREALLOC))
->>> +		return 0;
->>> +
->>> +	map.m_lblk = F2FS_BLK_ALIGN(iocb->ki_pos);
->>> +	map.m_len = F2FS_BYTES_TO_BLK(iocb->ki_pos + iov_iter_count(from));
->>> +	if (map.m_len > map.m_lblk)
->>> +		map.m_len -= map.m_lblk;
->>> +	else
->>> +		map.m_len = 0;
->>> +
->>> +	map.m_next_pgofs = NULL;
->>> +
->>> +	if (iocb->ki_flags & IOCB_DIRECT) {
->>> +		err = f2fs_convert_inline_inode(inode);
->>> +		if (err)
->>> +			return err;
->>> +		return __f2fs_map_blocks(inode, &map, 1,
->>> +			__force_buffered_io(inode, WRITE) ?
->>> +				F2FS_GET_BLOCK_PRE_AIO :
->>> +				F2FS_GET_BLOCK_PRE_DIO,
->>> +				rw_hint_to_seg_type(iocb->ki_hint));
->>> +	}
->>> +	if (iocb->ki_pos + iov_iter_count(from) > MAX_INLINE_DATA(inode)) {
->>> +		err = f2fs_convert_inline_inode(inode);
->>> +		if (err)
->>> +			return err;
->>> +	}
->>> +	if (!f2fs_has_inline_data(inode))
->>> +		return f2fs_map_blocks(inode, &map, 1, F2FS_GET_BLOCK_PRE_AIO);
->>> +
->>> +	return err;
->>> +}
->>> +
->>>  static int __get_data_block(struct inode *inode, sector_t iblock,
->>>  			struct buffer_head *bh, int create, int flag,
->>>  			pgoff_t *next_pgofs)
->>> @@ -2082,6 +2096,11 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->>>  
->>>  	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
->>>  
->>> +	/* This is for avoiding the situation that the data of a segment is
->>> +	 * passed down to devices with different hints
->>> +	 */
->>> +	iocb->ki_hint = WRITE_LIFE_NOT_SET;
-
-Why we need to change this? I'm not sure this will be used later in somewhere,
-if it's not necessary, how about keeping it as it is?
+If we do not give the hint, they can still be written to the same erase block,
+right? it will not be worse?
 
 Thanks,
 
->>> +
->>>  	down_read(&F2FS_I(inode)->dio_rwsem[rw]);
->>>  	err = blockdev_direct_IO(iocb, inode, iter, get_data_block_dio);
->>>  	up_read(&F2FS_I(inode)->dio_rwsem[rw]);
->>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>> index 4b4a72f..9be5658 100644
->>> --- a/fs/f2fs/f2fs.h
->>> +++ b/fs/f2fs/f2fs.h
->>> @@ -2562,6 +2562,7 @@ int lookup_journal_in_cursum(struct f2fs_journal *journal, int type,
->>>  void destroy_segment_manager(struct f2fs_sb_info *sbi);
->>>  int __init create_segment_manager_caches(void);
->>>  void destroy_segment_manager_caches(void);
->>> +int rw_hint_to_seg_type(enum rw_hint hint);
+> 
+> Thanks.
+> 
+>> Thanks,
+>>
+>>>   others                     WRITE_LIFE_NONE
 >>>  
->>>  /*
->>>   * checkpoint.c
+>>>> Thanks,
+>>>>
+>>>>>
+>>>>> Hyunchul Lee (2):
+>>>>>   f2fs: apply write hints to select the type of segments for buffered
+>>>>>     write
+>>>>>   f2fs: apply write hints to select the type of segment for direct write
+>>>>>
+>>>>>  fs/f2fs/data.c    | 101 ++++++++++++++++++++++++++++++++----------------------
+>>>>>  fs/f2fs/f2fs.h    |   1 +
+>>>>>  fs/f2fs/segment.c |  14 +++++++-
+>>>>>  3 files changed, 74 insertions(+), 42 deletions(-)
+>>>>>
+>>>>
+>>>>
 >>>
+>>> Thanks
+>>>
+>>> .
+>>>
+>>
 >>
 > 
 > .
 > 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
