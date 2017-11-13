@@ -1,297 +1,235 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH v4] f2fs: fix out-of-free problem caused by
- atomic write
-Date: Mon, 13 Nov 2017 09:11:39 +0800
-Message-ID: <4cbdba1e-9d9e-6de8-e367-3fd305d23eac@huawei.com>
-References: <1509934071-116656-1-git-send-email-yunlong.song@huawei.com>
- <1510107446-52423-1-git-send-email-yunlong.song@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [RFC PATHC 2/2] f2fs: apply write hints to select the
+ type of segment for direct write
+Date: Mon, 13 Nov 2017 09:24:06 +0800
+Message-ID: <70bf8e31-9b5c-e2cc-107b-d699c02c843f@huawei.com>
+References: <1510206688-12767-1-git-send-email-hyc.lee@gmail.com>
+ <1510206688-12767-3-git-send-email-hyc.lee@gmail.com>
+ <711d3991-47e1-bc1c-4eb8-c9254fec156a@kernel.org> <5A08E253.50408@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
- helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yunlong.song@huawei.com>) id 1eE3JT-0006l5-1J
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 13 Nov 2017 01:13:23 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191])
- by sfi-mx-1.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.89) id 1eE3JQ-0004VY-8S
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 13 Nov 2017 01:13:22 +0000
-In-Reply-To: <1510107446-52423-1-git-send-email-yunlong.song@huawei.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5A08E253.50408@gmail.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
-Cc: linux-fsdevel@vger.kernel.org, miaoxie@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hyunchul Lee <hyc.lee@gmail.com>, Chao Yu <chao@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: kernel-team@lge.com, Hyunchul Lee <cheol.lee@lge.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-ping...
+On 2017/11/13 8:07, Hyunchul Lee wrote:
+> On 11/11/2017 09:38 AM, Chao Yu wrote:
+>> On 2017/11/9 13:51, Hyunchul Lee wrote:
+>>> From: Hyunchul Lee <cheol.lee@lge.com>
+>>>
+>>> Select the type of the segment using write hints, when blocks are
+>>> allocated for direct write.
+>>>
+>>> There are unhandled corner cases. Hints are not applied in
+>>> in-place update.  And if the blocks of a file is not pre-allocated
+>>> because of the invalid user buffer, CURSEG_WARM_DATA segment will
+>>> be selected.
+>>>
+>>> Signed-off-by: Hyunchul Lee <cheol.lee@lge.com>
+>>> ---
+>>>  fs/f2fs/data.c | 101 ++++++++++++++++++++++++++++++++++-----------------------
+>>>  fs/f2fs/f2fs.h |   1 +
+>>>  2 files changed, 61 insertions(+), 41 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>> index 36b5352..d06048a 100644
+>>> --- a/fs/f2fs/data.c
+>>> +++ b/fs/f2fs/data.c
+>>> @@ -783,7 +783,7 @@ struct page *get_new_data_page(struct inode *inode,
+>>>  	return page;
+>>>  }
+>>>  
+>>> -static int __allocate_data_block(struct dnode_of_data *dn)
+>>> +static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
+>>>  {
+>>>  	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
+>>>  	struct f2fs_summary sum;
+>>> @@ -808,7 +808,7 @@ static int __allocate_data_block(struct dnode_of_data *dn)
+>>>  	set_summary(&sum, dn->nid, dn->ofs_in_node, ni.version);
+>>>  
+>>>  	allocate_data_block(sbi, NULL, dn->data_blkaddr, &dn->data_blkaddr,
+>>> -					&sum, CURSEG_WARM_DATA, NULL, false);
+>>> +					&sum, seg_type, NULL, false);
+>>>  	set_data_blkaddr(dn);
+>>>  
+>>>  	/* update i_size */
+>>> @@ -827,42 +827,6 @@ static inline bool __force_buffered_io(struct inode *inode, int rw)
+>>>  			F2FS_I_SB(inode)->s_ndevs);
+>>>  }
+>>>  
+>>> -int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+>>> -{
+>>> -	struct inode *inode = file_inode(iocb->ki_filp);
+>>> -	struct f2fs_map_blocks map;
+>>> -	int err = 0;
+>>> -
+>>> -	if (is_inode_flag_set(inode, FI_NO_PREALLOC))
+>>> -		return 0;
+>>> -
+>>> -	map.m_lblk = F2FS_BLK_ALIGN(iocb->ki_pos);
+>>> -	map.m_len = F2FS_BYTES_TO_BLK(iocb->ki_pos + iov_iter_count(from));
+>>> -	if (map.m_len > map.m_lblk)
+>>> -		map.m_len -= map.m_lblk;
+>>> -	else
+>>> -		map.m_len = 0;
+>>> -
+>>> -	map.m_next_pgofs = NULL;
+>>> -
+>>> -	if (iocb->ki_flags & IOCB_DIRECT) {
+>>> -		err = f2fs_convert_inline_inode(inode);
+>>> -		if (err)
+>>> -			return err;
+>>> -		return f2fs_map_blocks(inode, &map, 1,
+>>> -			__force_buffered_io(inode, WRITE) ?
+>>> -				F2FS_GET_BLOCK_PRE_AIO :
+>>> -				F2FS_GET_BLOCK_PRE_DIO);
+>>> -	}
+>>> -	if (iocb->ki_pos + iov_iter_count(from) > MAX_INLINE_DATA(inode)) {
+>>> -		err = f2fs_convert_inline_inode(inode);
+>>> -		if (err)
+>>> -			return err;
+>>> -	}
+>>> -	if (!f2fs_has_inline_data(inode))
+>>> -		return f2fs_map_blocks(inode, &map, 1, F2FS_GET_BLOCK_PRE_AIO);
+>>> -	return err;
+>>> -}
+>>>  
+>>>  static inline void __do_map_lock(struct f2fs_sb_info *sbi, int flag, bool lock)
+>>>  {
+>>> @@ -888,8 +852,8 @@ static inline void __do_map_lock(struct f2fs_sb_info *sbi, int flag, bool lock)
+>>>   *     b. do not use extent cache for better performance
+>>>   *     c. give the block addresses to blockdev
+>>>   */
+>>> -int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>>> -						int create, int flag)
+>>> +static int __f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>>> +				int create, int flag, int seg_type)
+>>>  {
+>>>  	unsigned int maxblocks = map->m_len;
+>>>  	struct dnode_of_data dn;
+>>> @@ -957,7 +921,12 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>>>  					last_ofs_in_node = dn.ofs_in_node;
+>>>  				}
+>>>  			} else {
+>>> -				err = __allocate_data_block(&dn);
+>>> +				/* if this inode is marked with FI_NO_PREALLOC,
+>>> +				 * @seg_type is NO_CHECK_TYPE
+>>> +				 */
+>>> +				if (seg_type == NO_CHECK_TYPE)
+>>> +					seg_type = CURSEG_WARM_DATA;
+>>> +				err = __allocate_data_block(&dn, seg_type);
+>>
+>> We need to use inode.i_write_hint instead of ki_hint passed from file.f_write_hint?
+>>
+> 
+> The following commit says to use file.f_write_hint if it is available. 
+> "c75b1d9 fs: add fcntl() interface for setting/getting write life time hints"
 
-On 2017/11/8 10:17, Yunlong Song wrote:
-> f2fs_balance_fs only actives once in the commit_inmem_pages, but there
-> are more than one page to commit, so all the other pages will miss the
-> check. This will lead to out-of-free problem when commit a very large
-> file. However, we cannot do f2fs_balance_fs for each inmem page, since
-> this will break atomicity. As a result, we should do f2fs_balance_fs
-> for all the inmem pages together.
->
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> ---
->   fs/f2fs/debug.c   |  5 +++--
->   fs/f2fs/f2fs.h    | 26 ++++++++++++++++++++++++--
->   fs/f2fs/segment.c | 30 ++++++++++++++++++++++++------
->   fs/f2fs/segment.h |  4 +++-
->   4 files changed, 54 insertions(+), 11 deletions(-)
->
-> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-> index f7eec50..41c47c4 100644
-> --- a/fs/f2fs/debug.c
-> +++ b/fs/f2fs/debug.c
-> @@ -50,6 +50,7 @@ static void update_general_status(struct f2fs_sb_info *sbi)
->   	si->ndirty_files = sbi->ndirty_inode[FILE_INODE];
->   	si->ndirty_all = sbi->ndirty_inode[DIRTY_META];
->   	si->inmem_pages = get_pages(sbi, F2FS_INMEM_PAGES);
-> +	si->inmem_commit_pages = get_pages(sbi, F2FS_INMEM_COMMIT_PAGES);
->   	si->aw_cnt = atomic_read(&sbi->aw_cnt);
->   	si->vw_cnt = atomic_read(&sbi->vw_cnt);
->   	si->max_aw_cnt = atomic_read(&sbi->max_aw_cnt);
-> @@ -360,9 +361,9 @@ static int stat_show(struct seq_file *s, void *v)
->   			   si->nr_discarding, si->nr_discarded,
->   			   si->nr_discard_cmd, si->undiscard_blks);
->   		seq_printf(s, "  - inmem: %4d, atomic IO: %4d (Max. %4d), "
-> -			"volatile IO: %4d (Max. %4d)\n",
-> +			"volatile IO: %4d (Max. %4d), commit: %4d\n",
->   			   si->inmem_pages, si->aw_cnt, si->max_aw_cnt,
-> -			   si->vw_cnt, si->max_vw_cnt);
-> +			   si->vw_cnt, si->max_vw_cnt, si->inmem_commit_pages);
->   		seq_printf(s, "  - nodes: %4d in %4d\n",
->   			   si->ndirty_node, si->node_pages);
->   		seq_printf(s, "  - dents: %4d in dirs:%4d (%4d)\n",
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 13a96b8..749bdb6 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -610,6 +610,7 @@ struct f2fs_inode_info {
->   	struct list_head inmem_pages;	/* inmemory pages managed by f2fs */
->   	struct task_struct *inmem_task;	/* store inmemory task */
->   	struct mutex inmem_lock;	/* lock for inmemory pages */
-> +	unsigned long inmem_blocks;	/* inmemory blocks */
->   	struct extent_tree *extent_tree;	/* cached extent_tree entry */
->   	struct rw_semaphore dio_rwsem[2];/* avoid racing between dio and gc */
->   	struct rw_semaphore i_mmap_sem;
-> @@ -863,6 +864,7 @@ enum count_type {
->   	F2FS_DIRTY_NODES,
->   	F2FS_DIRTY_META,
->   	F2FS_INMEM_PAGES,
-> +	F2FS_INMEM_COMMIT_PAGES,
->   	F2FS_DIRTY_IMETA,
->   	F2FS_WB_CP_DATA,
->   	F2FS_WB_DATA,
-> @@ -1600,7 +1602,21 @@ static inline void inc_page_count(struct f2fs_sb_info *sbi, int count_type)
->   	atomic_inc(&sbi->nr_pages[count_type]);
->   
->   	if (count_type == F2FS_DIRTY_DATA || count_type == F2FS_INMEM_PAGES ||
-> -		count_type == F2FS_WB_CP_DATA || count_type == F2FS_WB_DATA)
-> +		count_type == F2FS_WB_CP_DATA || count_type == F2FS_WB_DATA ||
-> +		count_type == F2FS_INMEM_COMMIT_PAGES)
-> +		return;
-> +
-> +	set_sbi_flag(sbi, SBI_IS_DIRTY);
-> +}
-> +
-> +static inline void inc_pages_count(struct f2fs_sb_info *sbi, int count_type,
-> +					int pages)
-> +{
-> +	atomic_add(pages, &sbi->nr_pages[count_type]);
-> +
-> +	if (count_type == F2FS_DIRTY_DATA || count_type == F2FS_INMEM_PAGES ||
-> +		count_type == F2FS_WB_CP_DATA || count_type == F2FS_WB_DATA ||
-> +		count_type == F2FS_INMEM_COMMIT_PAGES)
->   		return;
->   
->   	set_sbi_flag(sbi, SBI_IS_DIRTY);
-> @@ -1618,6 +1634,12 @@ static inline void dec_page_count(struct f2fs_sb_info *sbi, int count_type)
->   	atomic_dec(&sbi->nr_pages[count_type]);
->   }
->   
-> +static inline void dec_pages_count(struct f2fs_sb_info *sbi, int count_type,
-> +					int pages)
-> +{
-> +	atomic_sub(pages, &sbi->nr_pages[count_type]);
-> +}
-> +
->   static inline void inode_dec_dirty_pages(struct inode *inode)
->   {
->   	if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode) &&
-> @@ -2716,7 +2738,7 @@ struct f2fs_stat_info {
->   	unsigned long long hit_total, total_ext;
->   	int ext_tree, zombie_tree, ext_node;
->   	int ndirty_node, ndirty_dent, ndirty_meta, ndirty_data, ndirty_imeta;
-> -	int inmem_pages;
-> +	int inmem_pages, inmem_commit_pages;
->   	unsigned int ndirty_dirs, ndirty_files, ndirty_all;
->   	int nats, dirty_nats, sits, dirty_sits;
->   	int free_nids, avail_nids, alloc_nids;
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 46dfbca..2ff1bba4 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -174,6 +174,8 @@ bool need_SSR(struct f2fs_sb_info *sbi)
->   	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
->   	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
->   	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
-> +	int inmem_commit_secs = get_blocktype_secs(sbi,
-> +						F2FS_INMEM_COMMIT_PAGES);
->   
->   	if (test_opt(sbi, LFS))
->   		return false;
-> @@ -181,7 +183,7 @@ bool need_SSR(struct f2fs_sb_info *sbi)
->   		return true;
->   
->   	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
-> -						2 * reserved_sections(sbi));
-> +				inmem_commit_secs + 2 * reserved_sections(sbi));
->   }
->   
->   void register_inmem_page(struct inode *inode, struct page *page)
-> @@ -210,6 +212,7 @@ void register_inmem_page(struct inode *inode, struct page *page)
->   		list_add_tail(&fi->inmem_ilist, &sbi->inode_list[ATOMIC_FILE]);
->   	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
->   	inc_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
-> +	fi->inmem_blocks++;
->   	mutex_unlock(&fi->inmem_lock);
->   
->   	trace_f2fs_register_inmem_page(page, INMEM);
-> @@ -221,6 +224,7 @@ static int __revoke_inmem_pages(struct inode *inode,
->   	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->   	struct inmem_pages *cur, *tmp;
->   	int err = 0;
-> +	struct f2fs_inode_info *fi = F2FS_I(inode);
->   
->   	list_for_each_entry_safe(cur, tmp, head, list) {
->   		struct page *page = cur->page;
-> @@ -263,6 +267,7 @@ static int __revoke_inmem_pages(struct inode *inode,
->   		list_del(&cur->list);
->   		kmem_cache_free(inmem_entry_slab, cur);
->   		dec_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
-> +		fi->inmem_blocks--;
->   	}
->   	return err;
->   }
-> @@ -302,6 +307,10 @@ void drop_inmem_pages(struct inode *inode)
->   	if (!list_empty(&fi->inmem_ilist))
->   		list_del_init(&fi->inmem_ilist);
->   	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
-> +	if (fi->inmem_blocks) {
-> +		f2fs_bug_on(sbi, 1);
-> +		fi->inmem_blocks = 0;
-> +	}
->   	mutex_unlock(&fi->inmem_lock);
->   
->   	clear_inode_flag(inode, FI_ATOMIC_FILE);
-> @@ -326,6 +335,7 @@ void drop_inmem_page(struct inode *inode, struct page *page)
->   
->   	f2fs_bug_on(sbi, !cur || cur->page != page);
->   	list_del(&cur->list);
-> +	fi->inmem_blocks--;
->   	mutex_unlock(&fi->inmem_lock);
->   
->   	dec_page_count(sbi, F2FS_INMEM_PAGES);
-> @@ -354,7 +364,7 @@ static int __commit_inmem_pages(struct inode *inode,
->   		.io_type = FS_DATA_IO,
->   	};
->   	pgoff_t last_idx = ULONG_MAX;
-> -	int err = 0;
-> +	int err = 0, inmem_blocks = fi->inmem_blocks;
->   
->   	list_for_each_entry_safe(cur, tmp, &fi->inmem_pages, list) {
->   		struct page *page = cur->page;
-> @@ -390,6 +400,8 @@ static int __commit_inmem_pages(struct inode *inode,
->   		}
->   		unlock_page(page);
->   		list_move_tail(&cur->list, revoke_list);
-> +		dec_page_count(sbi, F2FS_INMEM_COMMIT_PAGES);
-> +		inmem_blocks--;
->   	}
->   
->   	if (last_idx != ULONG_MAX)
-> @@ -397,6 +409,8 @@ static int __commit_inmem_pages(struct inode *inode,
->   
->   	if (!err)
->   		__revoke_inmem_pages(inode, revoke_list, false, false);
-> +	else
-> +		dec_pages_count(sbi, F2FS_INMEM_COMMIT_PAGES, inmem_blocks);
->   
->   	return err;
->   }
-> @@ -409,12 +423,12 @@ int commit_inmem_pages(struct inode *inode)
->   	int err;
->   
->   	INIT_LIST_HEAD(&revoke_list);
-> +	set_inode_flag(inode, FI_ATOMIC_COMMIT);
-> +	mutex_lock(&fi->inmem_lock);
-> +	inc_pages_count(sbi, F2FS_INMEM_COMMIT_PAGES, fi->inmem_blocks);
->   	f2fs_balance_fs(sbi, true);
->   	f2fs_lock_op(sbi);
->   
-> -	set_inode_flag(inode, FI_ATOMIC_COMMIT);
-> -
-> -	mutex_lock(&fi->inmem_lock);
->   	err = __commit_inmem_pages(inode, &revoke_list);
->   	if (err) {
->   		int ret;
-> @@ -437,11 +451,15 @@ int commit_inmem_pages(struct inode *inode)
->   	if (!list_empty(&fi->inmem_ilist))
->   		list_del_init(&fi->inmem_ilist);
->   	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
-> +	if (fi->inmem_blocks) {
-> +		f2fs_bug_on(sbi, 1);
-> +		fi->inmem_blocks = 0;
-> +	}
-> +	f2fs_unlock_op(sbi);
->   	mutex_unlock(&fi->inmem_lock);
->   
->   	clear_inode_flag(inode, FI_ATOMIC_COMMIT);
->   
-> -	f2fs_unlock_op(sbi);
->   	return err;
->   }
->   
-> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> index 8d93652..f3885de 100644
-> --- a/fs/f2fs/segment.h
-> +++ b/fs/f2fs/segment.h
-> @@ -503,12 +503,14 @@ static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
->   	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
->   	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
->   	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
-> +	int inmem_commit_secs = get_blocktype_secs(sbi,
-> +						F2FS_INMEM_COMMIT_PAGES);
->   
->   	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
->   		return false;
->   
->   	return (free_sections(sbi) + freed) <=
-> -		(node_secs + 2 * dent_secs + imeta_secs +
-> +		(node_secs + 2 * dent_secs + imeta_secs + inmem_commit_secs +
->   		reserved_sections(sbi) + needed);
->   }
->   
+Oh, yes, f_write_hint is recommended. So, I'm OK with this.
 
--- 
+One left question as below.
+
+> 
+> And ki_hint is assiged to file.f_write_hint or inode.i_write_hint 
+> by file_write_hint() in init_sync_kiocb().
+> So, I think we need to use ki_hint instead of inode.i_write_hint.
+> 
+> Thanks
+> 
+>> Thanks,
+>>
+>>>  				if (!err)
+>>>  					set_inode_flag(inode, FI_APPEND_WRITE);
+>>>  			}
+>>> @@ -1048,6 +1017,51 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>>>  	return err;
+>>>  }
+>>>  
+>>> +int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>>> +						int create, int flag)
+>>> +{
+>>> +	return __f2fs_map_blocks(inode, map, create, flag, NO_CHECK_TYPE);
+>>> +}
+>>> +
+>>> +int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+>>> +{
+>>> +	struct inode *inode = file_inode(iocb->ki_filp);
+>>> +	struct f2fs_map_blocks map;
+>>> +	int err = 0;
+>>> +
+>>> +	if (is_inode_flag_set(inode, FI_NO_PREALLOC))
+>>> +		return 0;
+>>> +
+>>> +	map.m_lblk = F2FS_BLK_ALIGN(iocb->ki_pos);
+>>> +	map.m_len = F2FS_BYTES_TO_BLK(iocb->ki_pos + iov_iter_count(from));
+>>> +	if (map.m_len > map.m_lblk)
+>>> +		map.m_len -= map.m_lblk;
+>>> +	else
+>>> +		map.m_len = 0;
+>>> +
+>>> +	map.m_next_pgofs = NULL;
+>>> +
+>>> +	if (iocb->ki_flags & IOCB_DIRECT) {
+>>> +		err = f2fs_convert_inline_inode(inode);
+>>> +		if (err)
+>>> +			return err;
+>>> +		return __f2fs_map_blocks(inode, &map, 1,
+>>> +			__force_buffered_io(inode, WRITE) ?
+>>> +				F2FS_GET_BLOCK_PRE_AIO :
+>>> +				F2FS_GET_BLOCK_PRE_DIO,
+>>> +				rw_hint_to_seg_type(iocb->ki_hint));
+>>> +	}
+>>> +	if (iocb->ki_pos + iov_iter_count(from) > MAX_INLINE_DATA(inode)) {
+>>> +		err = f2fs_convert_inline_inode(inode);
+>>> +		if (err)
+>>> +			return err;
+>>> +	}
+>>> +	if (!f2fs_has_inline_data(inode))
+>>> +		return f2fs_map_blocks(inode, &map, 1, F2FS_GET_BLOCK_PRE_AIO);
+>>> +
+>>> +	return err;
+>>> +}
+>>> +
+>>>  static int __get_data_block(struct inode *inode, sector_t iblock,
+>>>  			struct buffer_head *bh, int create, int flag,
+>>>  			pgoff_t *next_pgofs)
+>>> @@ -2082,6 +2096,11 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>>>  
+>>>  	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
+>>>  
+>>> +	/* This is for avoiding the situation that the data of a segment is
+>>> +	 * passed down to devices with different hints
+>>> +	 */
+>>> +	iocb->ki_hint = WRITE_LIFE_NOT_SET;
+
+Why we need to change this? I'm not sure this will be used later in somewhere,
+if it's not necessary, how about keeping it as it is?
+
 Thanks,
-Yunlong Song
 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+>>> +
+>>>  	down_read(&F2FS_I(inode)->dio_rwsem[rw]);
+>>>  	err = blockdev_direct_IO(iocb, inode, iter, get_data_block_dio);
+>>>  	up_read(&F2FS_I(inode)->dio_rwsem[rw]);
+>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>> index 4b4a72f..9be5658 100644
+>>> --- a/fs/f2fs/f2fs.h
+>>> +++ b/fs/f2fs/f2fs.h
+>>> @@ -2562,6 +2562,7 @@ int lookup_journal_in_cursum(struct f2fs_journal *journal, int type,
+>>>  void destroy_segment_manager(struct f2fs_sb_info *sbi);
+>>>  int __init create_segment_manager_caches(void);
+>>>  void destroy_segment_manager_caches(void);
+>>> +int rw_hint_to_seg_type(enum rw_hint hint);
+>>>  
+>>>  /*
+>>>   * checkpoint.c
+>>>
+>>
+> 
+> .
+> 
