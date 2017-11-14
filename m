@@ -1,28 +1,30 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: =?utf-8?b?562U5aSNOiAgW1BBVENIIFJFU0VORF0gZjJmczog?=
- =?utf-8?q?validate_before_set/clear_free_nat_bitmap?=
-Date: Tue, 14 Nov 2017 14:27:42 +0800
-Message-ID: <f571ad40-7a6d-4324-6e47-c9cce7281733@huawei.com>
-References: <CGME20171111082604epcas5p472a0e6a07db371cb050eb6a13d8f0676@epcas5p4.samsung.com>
- <000401d35ac6$b6c36700$244a3500$@samsung.com>
- <20171114045418.GB13008@jaegeuk-macbookpro.roam.corp.google.com>
- <000501d35d0d$e5d313d0$b1793b70$@samsung.com>
+From: "LiFan" <fanofcode.li@samsung.com>
+Subject: Re: [PATCH RESEND] f2fs: validate before set/clear free
+ nat bitmap
+Date: Tue, 14 Nov 2017 15:17:01 +0800
+Message-ID: <002101d35d18$acdd5120$0697f360$@samsung.com>
+References: <CGME20171114071748epcas5p1ec5196e346fa6083c3e183873595c11e@epcas5p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1eEUhm-0004B0-Pb
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Nov 2017 06:28:18 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.89) id 1eEUhl-00010U-EV
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Nov 2017 06:28:18 +0000
-In-Reply-To: <000501d35d0d$e5d313d0$b1793b70$@samsung.com>
-Content-Language: en-US
+ (envelope-from <fanofcode.li@samsung.com>) id 1eEVTs-0001Hm-5Q
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Nov 2017 07:18:00 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eEVTp-00035Z-I4
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Nov 2017 07:18:00 +0000
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+ by mailout1.samsung.com (KnoxPortal) with ESMTP id
+ 20171114071750epoutp016f52d2b79cd357f22e62b96c811a31bf~24pio9JhR0984809848epoutp01H
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 14 Nov 2017 07:17:50 +0000 (GMT)
+Content-Language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,56 +34,33 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: LiFan <fanofcode.li@samsung.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: 'Chao Yu' <yuchao0@huawei.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-T24gMjAxNy8xMS8xNCAxMzo1OSwgTGlGYW4gd3JvdGU6Cj4gU29ycnksIGl0IHNlZW1zIG15IGNv
-bXBhbnkgbWFpbGJveCBzaW5nbGUgbWFpbCB3b3VsZCBjdXQgdGhlIGxvbmcgbGluZSBzaG9ydAo+
-IGF1dG9tYXRpY2FsbHkuCj4gSXQncyBmaW5lIGluIG15IG91dGxvb2sgbWFpbCwgc28gSSBvdmVy
-bG9va2VkLgoKTWF5YmUgJ2dpdCBzZW5kLWVtYWlsJyBjYW4gYmUgb25lIG9mIHlvdXIgb3B0aW9u
-cyB0byBzYXZlIHNvbWUgd29yayBpbiB5b3VyCmVtYWlsIGNsaWVudD8gOykKClRoYW5rcywKCj4g
-SSBoYXZlbid0IGZpbmQgYSB3YXkgdG8gc29sdmUgdGhhdCB5ZXQsIHBsZWFzZSBob2xkIGJvdGgg
-b2YgbXkgbmV3IHBhdGNoLgo+IEkgd2lsbCBmaXggaXQgYXMgc29vbiBhcyBwb3NzaWJsZS4KPiAK
-PiAKPiAtLS0tLdPKvP7Urbz+LS0tLS0KPiC3orz+yMs6IEphZWdldWsgS2ltIFttYWlsdG86amFl
-Z2V1a0BrZXJuZWwub3JnXSAKPiC3osvNyrG85DogMjAxN8TqMTHUwjE0yNUgMTI6NTQKPiDK1bz+
-yMs6IExpRmFuCj4gs63LzTogJ0NoYW8gWXUnOyAnQ2hhbyBZdSc7IGxpbnV4LWtlcm5lbEB2Z2Vy
-Lmtlcm5lbC5vcmc7Cj4gbGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiDW
-98ziOiBSZTogW2YyZnMtZGV2XSBbUEFUQ0ggUkVTRU5EXSBmMmZzOiB2YWxpZGF0ZSBiZWZvcmUg
-c2V0L2NsZWFyIGZyZWUgbmF0Cj4gYml0bWFwCj4gCj4gU29ycnksIEkgY2FuJ3QgbWVyZ2UgdGhp
-cyBwYXRjaCBkdWUgdG8gd3JvbmcgZm9ybWF0Lgo+IAo+IE9uIDExLzExLCBMaUZhbiB3cm90ZToK
-Pj4gSW4gZmx1c2hfbmF0X2VudHJpZXMsIGFsbCBkaXJ0eSBuYXRzIHdpbGwgYmUgZmx1c2hlZCBh
-bmQgaWYgdGhlaXIgbmV3IAo+PiBhZGRyZXNzIGlzbid0IE5VTExfQUREUiwgdGhlaXIgYml0bWFw
-cyB3aWxsIGJlIHVwZGF0ZWQsIHRoZSAKPj4gZnJlZV9uaWRfY291bnQgb2YgdGhlIGJpdG1hcHMg
-d2lsbCBiZSBpbmNyZWFzZWQgcmVnYXJkbGVzcyBvZiB3aGV0aGVyIAo+PiB0aGUgbmF0cyBoYXZl
-IGFscmVhZHkgYmVlbiBvY2N1cGllZCBiZWZvcmUuIFRoaXMgY291bGQgbGVhZCB0byB3cm9uZyAK
-Pj4gZnJlZV9uaWRfY291bnQuCj4+IFNvIHRoaXMgcGF0Y2ggY2hlY2tzIHRoZSBzdGF0dXMgb2Yg
-dGhlIGJpdHMgYmVmb3JlIGFjdHVhbGx5IHNldC9jbGVhcgo+IHRoZW0uCj4+Cj4+IEZpeGVzOiA1
-ODZkMTQ5MmYzMDEgKCJmMmZzOiBza2lwIHNjYW5uaW5nIGZyZWUgbmlkIGJpdG1hcCBvZiBmdWxs
-IE5BVAo+PiBibG9ja3MiKQo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBGYW4gbGkgPGZhbm9mY29kZS5s
-aUBzYW1zdW5nLmNvbT4KPj4gLS0tCj4+ICBmcy9mMmZzL25vZGUuYyB8IDE3ICsrKysrKysrKyst
-LS0tLS0tCj4+ICAxIGZpbGUgY2hhbmdlZCwgMTAgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMo
-LSkKPj4KPj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvbm9kZS5jIGIvZnMvZjJmcy9ub2RlLmMgaW5k
-ZXggZDIzNGM2ZS4uYjk2NWE1MyAKPj4gMTAwNjQ0Cj4+IC0tLSBhL2ZzL2YyZnMvbm9kZS5jCj4+
-ICsrKyBiL2ZzL2YyZnMvbm9kZS5jCj4+IEBAIC0xOTA2LDE1ICsxOTA2LDE4IEBAIHN0YXRpYyB2
-b2lkIHVwZGF0ZV9mcmVlX25pZF9iaXRtYXAoc3RydWN0IAo+PiBmMmZzX3NiX2luZm8gKnNiaSwg
-bmlkX3QgbmlkLAo+PiAgCWlmICghdGVzdF9iaXRfbGUobmF0X29mcywgbm1faS0+bmF0X2Jsb2Nr
-X2JpdG1hcCkpCj4+ICAJCXJldHVybjsKPj4gIAo+PiAtCWlmIChzZXQpCj4+ICsJaWYgKHNldCkg
-ewo+PiArCQlpZiAodGVzdF9iaXRfbGUobmlkX29mcywgbm1faS0+ZnJlZV9uaWRfYml0bWFwW25h
-dF9vZnNdKSkKPj4gKwkJCXJldHVybjsKPj4gIAkJX19zZXRfYml0X2xlKG5pZF9vZnMsIG5tX2kt
-PmZyZWVfbmlkX2JpdG1hcFtuYXRfb2ZzXSk7Cj4+IC0JZWxzZQo+PiAtCQlfX2NsZWFyX2JpdF9s
-ZShuaWRfb2ZzLCBubV9pLT5mcmVlX25pZF9iaXRtYXBbbmF0X29mc10pOwo+PiAtCj4+IC0JaWYg
-KHNldCkKPj4gIAkJbm1faS0+ZnJlZV9uaWRfY291bnRbbmF0X29mc10rKzsKPj4gLQllbHNlIGlm
-ICghYnVpbGQpCj4+IC0JCW5tX2ktPmZyZWVfbmlkX2NvdW50W25hdF9vZnNdLS07Cj4+ICsJfSBl
-bHNlIHsKPj4gKwkJaWYgKCF0ZXN0X2JpdF9sZShuaWRfb2ZzLCBubV9pLT5mcmVlX25pZF9iaXRt
-YXBbbmF0X29mc10pKQo+PiArCQkJcmV0dXJuOwo+PiArCQlfX2NsZWFyX2JpdF9sZShuaWRfb2Zz
-LCBubV9pLT5mcmVlX25pZF9iaXRtYXBbbmF0X29mc10pOwo+PiArCQlpZiAoIWJ1aWxkKQo+PiAr
-CQkJbm1faS0+ZnJlZV9uaWRfY291bnRbbmF0X29mc10tLTsKPj4gKwl9Cj4+ICB9Cj4+ICAKPj4g
-IHN0YXRpYyB2b2lkIHNjYW5fbmF0X3BhZ2Uoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLAo+PiAt
-LQo+PiAyLjcuNAo+Pgo+IAo+IAo+IAo+IAo+IAoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpDaGVj
-ayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1v
-c3QKZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xh
-c2hkb3QKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGlu
-dXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vm
-b3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGlu
-dXgtZjJmcy1kZXZlbAo=
+> -----Original Message-----
+> From: Chao Yu [mailto:yuchao0@huawei.com]
+> Sent: Tuesday, November 14, 2017 2:28 PM
+> To: LiFan; 'Jaegeuk Kim'
+> Cc: 'Chao Yu'; linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: Re: [f2fs-dev] [PATCH RESEND] f2fs: validate before set/clear free nat bitmap
+> 
+> On 2017/11/14 13:59, LiFan wrote:
+> > Sorry, it seems my company mailbox single mail would cut the long line
+> > short automatically.
+> > It's fine in my outlook mail, so I overlooked.
+> 
+> Maybe 'git send-email' can be one of your options to save some work in your email client? ;)
+> 
+> Thanks,
+> 
+
+Thanks for the advice, but look how many mistakes I have made using outlook, I'm frightened
+to try a new method...
+It looks like the problem is still original from outlook configuration, my computer has just been
+replaced, and I copied all the old files, but apparently it's not enough...
+
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
