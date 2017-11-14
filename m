@@ -1,33 +1,33 @@
-From: "LiFan" <fanofcode.li@samsung.com>
-Subject: =?gb2312?b?tPC4tDogIFtQQVRDSCBSRVNFTkRdIGYyZnM6IHZh?=
- =?gb2312?b?bGlkYXRlIGJlZm9yZSBzZXQvY2xlYXIgZnJlZSBuYXQgYml0bWFw?=
-Date: Tue, 14 Nov 2017 13:59:49 +0800
-Message-ID: <000501d35d0d$e5d313d0$b1793b70$@samsung.com>
-References: <CGME20171111082604epcas5p472a0e6a07db371cb050eb6a13d8f0676@epcas5p4.samsung.com>
- <000401d35ac6$b6c36700$244a3500$@samsung.com>
- <20171114045418.GB13008@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [RFC PATCH 0/2] apply write hints to select the type
+ of segments
+Date: Tue, 14 Nov 2017 14:22:03 +0800
+Message-ID: <3dd3f540-f5e5-2d58-99ef-6abf18bad923@huawei.com>
+References: <1510206688-12767-1-git-send-email-hyc.lee@gmail.com>
+ <1b0b44de-c724-5dc4-e9cb-79a894bdb611@huawei.com>
+ <5A04F184.3000204@gmail.com>
+ <edf62076-a125-11e2-b2e6-fd32d5e6118f@huawei.com>
+ <5A08E657.8060807@gmail.com>
+ <c3199798-cd5b-afca-845b-73817c77c902@huawei.com>
+ <5A08F6CA.6040507@gmail.com>
+ <5bd3945c-16f8-a718-a140-44589ceb490a@huawei.com> <5A090283.60206@gmail.com>
+ <20171114042024.GA13008@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
  helo=mx.sourceforge.net)
  by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <fanofcode.li@samsung.com>) id 1eEUHC-0000UK-Kp
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Nov 2017 06:00:50 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
- by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eEUH9-000797-Sp
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Nov 2017 06:00:50 +0000
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
- by mailout2.samsung.com (KnoxPortal) with ESMTP id
- 20171114060040epoutp02361b0b8e36ef2cfb9a57bbeccae7d45d~23mK5pMBX0240902409epoutp02p
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 14 Nov 2017 06:00:40 +0000 (GMT)
-In-Reply-To: <20171114045418.GB13008@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: zh-cn
+ (envelope-from <yuchao0@huawei.com>) id 1eEUc1-0000t6-U7
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Nov 2017 06:22:21 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191])
+ by sfi-mx-3.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.89) id 1eEUbz-0000no-2U
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Nov 2017 06:22:21 +0000
+In-Reply-To: <20171114042024.GA13008@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -37,53 +37,190 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Hyunchul Lee <hyc.lee@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, kernel-team@lge.com, Hyunchul Lee <cheol.lee@lge.com>
 
-U29ycnksIGl0IHNlZW1zIG15IGNvbXBhbnkgbWFpbGJveCBzaW5nbGUgbWFpbCB3b3VsZCBjdXQg
-dGhlIGxvbmcgbGluZSBzaG9ydAphdXRvbWF0aWNhbGx5LgpJdCdzIGZpbmUgaW4gbXkgb3V0bG9v
-ayBtYWlsLCBzbyBJIG92ZXJsb29rZWQuCkkgaGF2ZW4ndCBmaW5kIGEgd2F5IHRvIHNvbHZlIHRo
-YXQgeWV0LCBwbGVhc2UgaG9sZCBib3RoIG9mIG15IG5ldyBwYXRjaC4KSSB3aWxsIGZpeCBpdCBh
-cyBzb29uIGFzIHBvc3NpYmxlLgoKCi0tLS0t08q8/tStvP4tLS0tLQ0Kt6K8/sjLOiBKYWVnZXVr
-IEtpbSBbbWFpbHRvOmphZWdldWtAa2VybmVsLm9yZ10gDQq3osvNyrG85DogMjAxN8TqMTHUwjE0
-yNUgMTI6NTQNCsrVvP7IyzogTGlGYW4NCrOty806ICdDaGFvIFl1JzsgJ0NoYW8gWXUnOyBsaW51
-eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KbGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vm
-b3JnZS5uZXQNCtb3zOI6IFJlOiBbZjJmcy1kZXZdIFtQQVRDSCBSRVNFTkRdIGYyZnM6IHZhbGlk
-YXRlIGJlZm9yZSBzZXQvY2xlYXIgZnJlZSBuYXQNCmJpdG1hcA0KDQpTb3JyeSwgSSBjYW4ndCBt
-ZXJnZSB0aGlzIHBhdGNoIGR1ZSB0byB3cm9uZyBmb3JtYXQuDQoNCk9uIDExLzExLCBMaUZhbiB3
-cm90ZToNCj4gSW4gZmx1c2hfbmF0X2VudHJpZXMsIGFsbCBkaXJ0eSBuYXRzIHdpbGwgYmUgZmx1
-c2hlZCBhbmQgaWYgdGhlaXIgbmV3IA0KPiBhZGRyZXNzIGlzbid0IE5VTExfQUREUiwgdGhlaXIg
-Yml0bWFwcyB3aWxsIGJlIHVwZGF0ZWQsIHRoZSANCj4gZnJlZV9uaWRfY291bnQgb2YgdGhlIGJp
-dG1hcHMgd2lsbCBiZSBpbmNyZWFzZWQgcmVnYXJkbGVzcyBvZiB3aGV0aGVyIA0KPiB0aGUgbmF0
-cyBoYXZlIGFscmVhZHkgYmVlbiBvY2N1cGllZCBiZWZvcmUuIFRoaXMgY291bGQgbGVhZCB0byB3
-cm9uZyANCj4gZnJlZV9uaWRfY291bnQuDQo+IFNvIHRoaXMgcGF0Y2ggY2hlY2tzIHRoZSBzdGF0
-dXMgb2YgdGhlIGJpdHMgYmVmb3JlIGFjdHVhbGx5IHNldC9jbGVhcg0KdGhlbS4NCj4gDQo+IEZp
-eGVzOiA1ODZkMTQ5MmYzMDEgKCJmMmZzOiBza2lwIHNjYW5uaW5nIGZyZWUgbmlkIGJpdG1hcCBv
-ZiBmdWxsIE5BVA0KPiBibG9ja3MiKQ0KPiANCj4gU2lnbmVkLW9mZi1ieTogRmFuIGxpIDxmYW5v
-ZmNvZGUubGlAc2Ftc3VuZy5jb20+DQo+IC0tLQ0KPiAgZnMvZjJmcy9ub2RlLmMgfCAxNyArKysr
-KysrKysrLS0tLS0tLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDcgZGVs
-ZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9ub2RlLmMgYi9mcy9mMmZzL25v
-ZGUuYyBpbmRleCBkMjM0YzZlLi5iOTY1YTUzIA0KPiAxMDA2NDQNCj4gLS0tIGEvZnMvZjJmcy9u
-b2RlLmMNCj4gKysrIGIvZnMvZjJmcy9ub2RlLmMNCj4gQEAgLTE5MDYsMTUgKzE5MDYsMTggQEAg
-c3RhdGljIHZvaWQgdXBkYXRlX2ZyZWVfbmlkX2JpdG1hcChzdHJ1Y3QgDQo+IGYyZnNfc2JfaW5m
-byAqc2JpLCBuaWRfdCBuaWQsDQo+ICAJaWYgKCF0ZXN0X2JpdF9sZShuYXRfb2ZzLCBubV9pLT5u
-YXRfYmxvY2tfYml0bWFwKSkNCj4gIAkJcmV0dXJuOw0KPiAgDQo+IC0JaWYgKHNldCkNCj4gKwlp
-ZiAoc2V0KSB7DQo+ICsJCWlmICh0ZXN0X2JpdF9sZShuaWRfb2ZzLCBubV9pLT5mcmVlX25pZF9i
-aXRtYXBbbmF0X29mc10pKQ0KPiArCQkJcmV0dXJuOw0KPiAgCQlfX3NldF9iaXRfbGUobmlkX29m
-cywgbm1faS0+ZnJlZV9uaWRfYml0bWFwW25hdF9vZnNdKTsNCj4gLQllbHNlDQo+IC0JCV9fY2xl
-YXJfYml0X2xlKG5pZF9vZnMsIG5tX2ktPmZyZWVfbmlkX2JpdG1hcFtuYXRfb2ZzXSk7DQo+IC0N
-Cj4gLQlpZiAoc2V0KQ0KPiAgCQlubV9pLT5mcmVlX25pZF9jb3VudFtuYXRfb2ZzXSsrOw0KPiAt
-CWVsc2UgaWYgKCFidWlsZCkNCj4gLQkJbm1faS0+ZnJlZV9uaWRfY291bnRbbmF0X29mc10tLTsN
-Cj4gKwl9IGVsc2Ugew0KPiArCQlpZiAoIXRlc3RfYml0X2xlKG5pZF9vZnMsIG5tX2ktPmZyZWVf
-bmlkX2JpdG1hcFtuYXRfb2ZzXSkpDQo+ICsJCQlyZXR1cm47DQo+ICsJCV9fY2xlYXJfYml0X2xl
-KG5pZF9vZnMsIG5tX2ktPmZyZWVfbmlkX2JpdG1hcFtuYXRfb2ZzXSk7DQo+ICsJCWlmICghYnVp
-bGQpDQo+ICsJCQlubV9pLT5mcmVlX25pZF9jb3VudFtuYXRfb2ZzXS0tOw0KPiArCX0NCj4gIH0N
-Cj4gIA0KPiAgc3RhdGljIHZvaWQgc2Nhbl9uYXRfcGFnZShzdHJ1Y3QgZjJmc19zYl9pbmZvICpz
-YmksDQo+IC0tDQo+IDIuNy40DQo+IA0KDQoNCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNr
-IG91dCB0aGUgdmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9z
-dAplbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFz
-aGRvdApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51
-eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZv
-cmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51
-eC1mMmZzLWRldmVsCg==
+On 2017/11/14 12:20, Jaegeuk Kim wrote:
+> On 11/13, Hyunchul Lee wrote:
+>> On 11/13/2017 10:59 AM, Chao Yu wrote:
+>>> On 2017/11/13 9:35, Hyunchul Lee wrote:
+>>>> On 11/13/2017 10:26 AM, Chao Yu wrote:
+>>>>> On 2017/11/13 8:24, Hyunchul Lee wrote:
+>>>>>> On 11/10/2017 03:42 PM, Chao Yu wrote:
+>>>>>>> On 2017/11/10 8:23, Hyunchul Lee wrote:
+>>>>>>>> Hello, Chao
+>>>>>>>>
+>>>>>>>> On 11/09/2017 06:12 PM, Chao Yu wrote:
+>>>>>>>>> On 2017/11/9 13:51, Hyunchul Lee wrote:
+>>>>>>>>>> From: Hyunchul Lee <cheol.lee@lge.com>
+>>>>>>>>>>
+>>>>>>>>>> Using write hints[1], applications can inform the life time of the data
+>>>>>>>>>> written to devices. and this[2] reported that the write hints patch
+>>>>>>>>>> decreased writes in NAND by 25%.
+>>>>>>>>>>
+>>>>>>>>>> This hints help F2FS to determine the followings.
+>>>>>>>>>>   1) the segment types where the data will be written.
+>>>>>>>>>>   2) the hints that will be passed down to devices with the data of segments.
+>>>>>>>>>>
+>>>>>>>>>> This patch set implements the first mapping from write hints to segment types
+>>>>>>>>>> as shown below.
+>>>>>>>>>>
+>>>>>>>>>>   hints                     segment type
+>>>>>>>>>>   -----                     ------------
+>>>>>>>>>>   WRITE_LIFE_SHORT          CURSEG_COLD_DATA
+>>>>>>>>>>   WRITE_LIFE_EXTREME        CURSEG_HOT_DATA
+>>>>>>>>>>   others                    CURSEG_WARM_DATA
+>>>>>>>>>>
+>>>>>>>>>> The F2FS poliy for hot/cold seperation has precedence over this hints, And
+>>>>>>>>>> hints are not applied in in-place update.
+>>>>>>>>>
+>>>>>>>>> Could we change to disable IPU if file/inode write hint is existing?
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> I am afraid that this makes side effects. for example, this could cause
+>>>>>>>> out-of-place updates even when there are not enough free segments. 
+>>>>>>>> I can write the patch that handles these situations. But I wonder 
+>>>>>>>> that this is required, and I am not sure which IPU polices can be disabled.
+>>>>>>>
+>>>>>>> Oh, As I replied in another thread, I think IPU just affects filesystem
+>>>>>>> hot/cold separating, rather than this feature. So I think it will be okay
+>>>>>>> to not consider it.
+>>>>>>>
+>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> Before the second mapping is implemented, write hints are not passed down
+>>>>>>>>>> to devices. Because it is better that the data of a segment have the same 
+>>>>>>>>>> hint.
+>>>>>>>>>>
+>>>>>>>>>> [1]: c75b1d9421f80f4143e389d2d50ddfc8a28c8c35
+>>>>>>>>>> [2]: https://lwn.net/Articles/726477/
+>>>>>>>>>
+>>>>>>>>> Could you write a patch to support passing write hint to block layer for
+>>>>>>>>> buffered writes as below commit:
+>>>>>>>>> 0127251c45ae ("ext4: add support for passing in write hints for buffered writes")
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> Sure I will. I wrote it already ;)
+>>>>>>>
+>>>>>>> Cool, ;)
+>>>>>>>
+>>>>>>>> I think that datas from the same segment should be passed down with the same
+>>>>>>>> hint, and the following mapping is reasonable. I wonder what is your opinion
+>>>>>>>> about it.
+>>>>>>>>
+>>>>>>>>   segment type               hints
+>>>>>>>>   ------------               -----
+>>>>>>>>   CURSEG_COLD_DATA           WRITE_LIFE_EXTREME
+>>>>>>>>   CURSEG_HOT_DATA            WRITE_LIFE_SHORT
+>>>>>>>>   CURSEG_COLD_NODE           WRITE_LIFE_NORMAL
+>>>>>>>
+>>>>>>> We have WRITE_LIFE_LONG defined rather than WRITE_LIFE_NORMAL in fs.h?
+>>>>>>>
+>>>>>>>>   CURSEG_HOT_NODE            WRITE_LIFE_MEDIUM
+>>>>>>>
+>>>>>>> As I know, in scenario of cell phone, data of meta_inode is hottest, then hot
+>>>>>>> data, warm node, and cold node should be coldest. So I suggested we can define
+>>>>>>> as below:
+>>>>>>>
+>>>>>>> META_DATA			WRITE_LIFE_SHORT
+>>>>>>> HOT_DATA & WARM_NODE		WRITE_LIFE_MEDIUM
+>>>>>>> HOT_NODE & WARM_DATA		WRITE_LIFE_LONG
+>>>>>>> COLD_NODE & COLD_DATA		WRITE_LIFE_EXTREME
+>>>>>>>
+>>>>>>
+>>>>>> I agree, But I am not sure that assigning the same hint to a node and data
+>>>>>> segment is good. Because NVMe is likely to write them in the same erase 
+>>>>>> block if they have the same hint.
+>>>>>
+>>>>> If we do not give the hint, they can still be written to the same erase block,
+>>>
+>>> I mean it's possible to write them to the same erase block. :)
+>>>
+>>>>> right? it will not be worse?
+>>>>>
+>>>>
+>>>> If the hint is not given, I think that they could be written to 
+>>>> the same erase block, or not. But if we give the same hint, they are written
+>>>> to the same block.
+>>>
+>>> IMO, Only if underlying device can support more hint type or opened channels,
+>>> and actual temperature of data segment and node segment is quite different, we
+>>> can separate them.
+>>>
+>>
+>> Okay, If Jaegeuk Kim agrees with this, I will submit the patch that 
+>> implements your proposed mapping.
+> 
+> How about this? We'd better to split data and node blocks as much as possible.
+> 
+> segment type                    hints
+> ------------                    -----
+> COLD_NODE & COLD_DATA		WRITE_LIFE_NONE
+
+WRITE_LIFE_NONE means there is no hints about write life time.
+
+Shouldn't we define COLD_NODE & COLD_DATA as WRITE_LIFE_EXTERME?
+
+Thanks,
+
+> WARM_DATA			WRITE_LIFE_EXTERME
+> HOT_NODE & WARM_NODE		WRITE_LIFE_LONG
+> HOT_DATA			WRITE_LIFE_MEDIUM
+> META_DATA			WRITE_LIFE_SHORT
+> 
+>>
+>> Thank you for comments ;)
+>>
+>>> Thanks,
+>>>
+>>>> I am not sure ;)
+>>>>
+>>>>> Thanks,
+>>>>>
+>>>>>>
+>>>>>> Thanks.
+>>>>>>
+>>>>>>> Thanks,
+>>>>>>>
+>>>>>>>>   others                     WRITE_LIFE_NONE
+>>>>>>>>  
+>>>>>>>>> Thanks,
+>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> Hyunchul Lee (2):
+>>>>>>>>>>   f2fs: apply write hints to select the type of segments for buffered
+>>>>>>>>>>     write
+>>>>>>>>>>   f2fs: apply write hints to select the type of segment for direct write
+>>>>>>>>>>
+>>>>>>>>>>  fs/f2fs/data.c    | 101 ++++++++++++++++++++++++++++++++----------------------
+>>>>>>>>>>  fs/f2fs/f2fs.h    |   1 +
+>>>>>>>>>>  fs/f2fs/segment.c |  14 +++++++-
+>>>>>>>>>>  3 files changed, 74 insertions(+), 42 deletions(-)
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> Thanks
+>>>>>>>>
+>>>>>>>> .
+>>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>
+>>>>>> .
+>>>>>>
+>>>>>
+>>>>>
+>>>>
+>>>> .
+>>>>
+>>>
+>>>
+> 
+> .
+> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
