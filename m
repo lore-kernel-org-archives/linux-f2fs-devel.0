@@ -1,26 +1,34 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: fix concurrent problem for updating
- free bitmap
-Date: Tue, 14 Nov 2017 10:10:06 +0800
-Message-ID: <b080eb7c-1fd5-ec7c-0236-fb347ab69c28@huawei.com>
-References: <CGME20171113130746epcas5p48964ff4d424b19d1de816bb7468957f2@epcas5p4.samsung.com>
- <006b01d35c80$6648c250$32da46f0$@samsung.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [RFC PATCH 0/2] apply write hints to select the type
+ of segments
+Date: Mon, 13 Nov 2017 20:20:24 -0800
+Message-ID: <20171114042024.GA13008@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1510206688-12767-1-git-send-email-hyc.lee@gmail.com>
+ <1b0b44de-c724-5dc4-e9cb-79a894bdb611@huawei.com>
+ <5A04F184.3000204@gmail.com>
+ <edf62076-a125-11e2-b2e6-fd32d5e6118f@huawei.com>
+ <5A08E657.8060807@gmail.com>
+ <c3199798-cd5b-afca-845b-73817c77c902@huawei.com>
+ <5A08F6CA.6040507@gmail.com>
+ <5bd3945c-16f8-a718-a140-44589ceb490a@huawei.com>
+ <5A090283.60206@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
+Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
  helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1eEQgv-00028a-Sr
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Nov 2017 02:11:09 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sfi-mx-2.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.89) id 1eEQgt-0001d9-BU
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Nov 2017 02:11:09 +0000
-In-Reply-To: <006b01d35c80$6648c250$32da46f0$@samsung.com>
-Content-Language: en-US
+ (envelope-from <jaegeuk@kernel.org>) id 1eESi8-0004D1-RU
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Nov 2017 04:20:32 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eESi7-0005gv-3c
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Nov 2017 04:20:32 +0000
+Content-Disposition: inline
+In-Reply-To: <5A090283.60206@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,122 +38,178 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: LiFan <fanofcode.li@samsung.com>, 'Chao Yu' <chao@kernel.org>, 'Jaegeuk
- Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Hyunchul Lee <hyc.lee@gmail.com>
+Cc: kernel-team@lge.com, Hyunchul Lee <cheol.lee@lge.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-T24gMjAxNy8xMS8xMyAyMTowNiwgTGlGYW4gd3JvdGU6Cj4gYWxsb2NfbmlkX2ZhaWxlZCBhbmQg
-c2Nhbl9uYXRfcGFnZSBjYW4gYmUgY2FsbGVkIGF0IHRoZSBzYW1lIHRpbWUsCj4gYW5kIHdlIGhh
-dmVuJ3QgcHJvdGVjdGVkIGFkZF9mcmVlX25pZCBhbmQgdXBkYXRlX2ZyZWVfbmlkX2JpdG1hcAo+
-IHdpdGggdGhlIHNhbWUgbmlkX2xpc3RfbG9jay4gVGhhdCBjb3VsZCBsZWFkIHRvCj4gCj4gVGhy
-ZWFkIEEJCQkJVGhyZWFkIEIKPiAtIF9fYnVpbGRfZnJlZV9uaWRzCj4gIC0gc2Nhbl9uYXRfcGFn
-ZQkJCQkKPiAgIC0gYWRkX2ZyZWVfbmlkCj4gCQkJCQktIGFsbG9jX25pZF9mYWlsZWQKPiAJCQkJ
-CSAtIHVwZGF0ZV9mcmVlX25pZF9iaXRtYXAKPiAgIC0gdXBkYXRlX2ZyZWVfbmlkX2JpdG1hcAoK
-R29vZCBjYXRjaC4KCj4gCj4gc2Nhbl9uYXRfcGFnZSB3aWxsIGNsZWFyIHRoZSBmcmVlIGJpdG1h
-cCBzaW5jZSB0aGUgbmlkIGlzIFBSRUFMTE9DX05JRCwKPiBidXQgYWxsb2NfbmlkX2ZhaWxlZCBu
-ZWVkcyB0byBzZXQgdGhlIGZyZWUgYml0bWFwLiBUaGlzIHJlc3VsdHMgaW4KPiBmcmVlIG5pZCB3
-aXRoIGZyZWUgYml0bWFwIGNsZWFyZWQuCj4gVGhpcyBwYXRjaCB1cGRhdGUgdGhlIGJpdG1hcCB1
-bmRlciB0aGUgc2FtZSBuaWRfbGlzdF9sb2NrIGluIGFkZF9mcmVlX25pZC4KPiAKPiBTaWduZWQt
-b2ZmLWJ5OiBGYW4gbGkgPGZhbm9mY29kZS5saUBzYW1zdW5nLmNvbT4KPiAtLS0KPiAgZnMvZjJm
-cy9ub2RlLmMgfCA4Mgo+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDQyIGluc2VydGlvbnMoKyksIDQw
-IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9mcy9mMmZzL25vZGUuYyBiL2ZzL2YyZnMv
-bm9kZS5jCj4gaW5kZXggYjk2NWE1My4uMGEyMTdkMiAxMDA2NDQKPiAtLS0gYS9mcy9mMmZzL25v
-ZGUuYwo+ICsrKyBiL2ZzL2YyZnMvbm9kZS5jCj4gQEAgLTE4MTEsOCArMTgxMSwzMyBAQCBzdGF0
-aWMgdm9pZCBfX21vdmVfZnJlZV9uaWQoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLAo+IHN0cnVj
-dCBmcmVlX25pZCAqaSwKPiAgCX0KPiAgfQo+ICAKPiArc3RhdGljIHZvaWQgdXBkYXRlX2ZyZWVf
-bmlkX2JpdG1hcChzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIG5pZF90IG5pZCwKPiArCQkJCQkJ
-CWJvb2wgc2V0LCBib29sCj4gYnVpbGQpCj4gK3sKPiArCXN0cnVjdCBmMmZzX25tX2luZm8gKm5t
-X2kgPSBOTV9JKHNiaSk7Cj4gKwl1bnNpZ25lZCBpbnQgbmF0X29mcyA9IE5BVF9CTE9DS19PRkZT
-RVQobmlkKTsKPiArCXVuc2lnbmVkIGludCBuaWRfb2ZzID0gbmlkIC0gU1RBUlRfTklEKG5pZCk7
-Cj4gKwo+ICsJaWYgKCF0ZXN0X2JpdF9sZShuYXRfb2ZzLCBubV9pLT5uYXRfYmxvY2tfYml0bWFw
-KSkKPiArCQlyZXR1cm47Cj4gKwo+ICsJaWYgKHNldCkgewo+ICsJCWlmICh0ZXN0X2JpdF9sZShu
-aWRfb2ZzLCBubV9pLT5mcmVlX25pZF9iaXRtYXBbbmF0X29mc10pKQo+ICsJCQlyZXR1cm47Cj4g
-KwkJX19zZXRfYml0X2xlKG5pZF9vZnMsIG5tX2ktPmZyZWVfbmlkX2JpdG1hcFtuYXRfb2ZzXSk7
-Cj4gKwkJbm1faS0+ZnJlZV9uaWRfY291bnRbbmF0X29mc10rKzsKPiArCX0gZWxzZSB7Cj4gKwkJ
-aWYgKCF0ZXN0X2JpdF9sZShuaWRfb2ZzLCBubV9pLT5mcmVlX25pZF9iaXRtYXBbbmF0X29mc10p
-KQo+ICsJCQlyZXR1cm47Cj4gKwkJX19jbGVhcl9iaXRfbGUobmlkX29mcywgbm1faS0+ZnJlZV9u
-aWRfYml0bWFwW25hdF9vZnNdKTsKPiArCQlpZiAoIWJ1aWxkKQo+ICsJCQlubV9pLT5mcmVlX25p
-ZF9jb3VudFtuYXRfb2ZzXS0tOwo+ICsJfQo+ICt9Cj4gKwo+ICAvKiByZXR1cm4gaWYgdGhlIG5p
-ZCBpcyByZWNvZ25pemVkIGFzIGZyZWUgKi8KPiAtc3RhdGljIGJvb2wgYWRkX2ZyZWVfbmlkKHN0
-cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgbmlkX3QgbmlkLCBib29sIGJ1aWxkKQo+ICtzdGF0aWMg
-Ym9vbCBhZGRfZnJlZV9uaWQoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLAo+ICsJCQkJbmlkX3Qg
-bmlkLCBib29sIGJ1aWxkLCBib29sIHVwZGF0ZSkKPiAgewo+ICAJc3RydWN0IGYyZnNfbm1faW5m
-byAqbm1faSA9IE5NX0koc2JpKTsKPiAgCXN0cnVjdCBmcmVlX25pZCAqaSwgKmU7Cj4gQEAgLTE4
-NzAsNiArMTg5NSwxMSBAQCBzdGF0aWMgYm9vbCBhZGRfZnJlZV9uaWQoc3RydWN0IGYyZnNfc2Jf
-aW5mbyAqc2JpLAo+IG5pZF90IG5pZCwgYm9vbCBidWlsZCkKCk5lZWQgdG8gdXNlIHJhZGl4X3Ry
-ZWVfcHJlbG9hZChHRlBfTk9GUyB8IF9fR0ZQX05PRkFJTCnvvIwgb3RoZXJ3aXNlLCBmb3IKb3V0
-LW9mLW1lbW9yeSBjYXNlLCB3ZSBtYXkgc2tpcCBiaXRtYXAgdXBkYXRpbmcuCgpUaGFua3MsCgo+
-ICAJcmV0ID0gdHJ1ZTsKPiAgCWVyciA9IF9faW5zZXJ0X2ZyZWVfbmlkKHNiaSwgaSwgRlJFRV9O
-SUQpOwo+ICBlcnJfb3V0Ogo+ICsJaWYgKHVwZGF0ZSkgewo+ICsJCXVwZGF0ZV9mcmVlX25pZF9i
-aXRtYXAoc2JpLCBuaWQsIHJldCwgYnVpbGQpOwo+ICsJCWlmICghYnVpbGQpCj4gKwkJCW5tX2kt
-PmF2YWlsYWJsZV9uaWRzKys7Cj4gKwl9Cj4gIAlzcGluX3VubG9jaygmbm1faS0+bmlkX2xpc3Rf
-bG9jayk7Cj4gIAlyYWRpeF90cmVlX3ByZWxvYWRfZW5kKCk7Cj4gIGVycjoKPiBAQCAtMTg5Niwz
-MCArMTkyNiw2IEBAIHN0YXRpYyB2b2lkIHJlbW92ZV9mcmVlX25pZChzdHJ1Y3QgZjJmc19zYl9p
-bmZvICpzYmksCj4gbmlkX3QgbmlkKQo+ICAJCWttZW1fY2FjaGVfZnJlZShmcmVlX25pZF9zbGFi
-LCBpKTsKPiAgfQo+ICAKPiAtc3RhdGljIHZvaWQgdXBkYXRlX2ZyZWVfbmlkX2JpdG1hcChzdHJ1
-Y3QgZjJmc19zYl9pbmZvICpzYmksIG5pZF90IG5pZCwKPiAtCQkJCQkJCWJvb2wgc2V0LCBib29s
-Cj4gYnVpbGQpCj4gLXsKPiAtCXN0cnVjdCBmMmZzX25tX2luZm8gKm5tX2kgPSBOTV9JKHNiaSk7
-Cj4gLQl1bnNpZ25lZCBpbnQgbmF0X29mcyA9IE5BVF9CTE9DS19PRkZTRVQobmlkKTsKPiAtCXVu
-c2lnbmVkIGludCBuaWRfb2ZzID0gbmlkIC0gU1RBUlRfTklEKG5pZCk7Cj4gLQo+IC0JaWYgKCF0
-ZXN0X2JpdF9sZShuYXRfb2ZzLCBubV9pLT5uYXRfYmxvY2tfYml0bWFwKSkKPiAtCQlyZXR1cm47
-Cj4gLQo+IC0JaWYgKHNldCkgewo+IC0JCWlmICh0ZXN0X2JpdF9sZShuaWRfb2ZzLCBubV9pLT5m
-cmVlX25pZF9iaXRtYXBbbmF0X29mc10pKQo+IC0JCQlyZXR1cm47Cj4gLQkJX19zZXRfYml0X2xl
-KG5pZF9vZnMsIG5tX2ktPmZyZWVfbmlkX2JpdG1hcFtuYXRfb2ZzXSk7Cj4gLQkJbm1faS0+ZnJl
-ZV9uaWRfY291bnRbbmF0X29mc10rKzsKPiAtCX0gZWxzZSB7Cj4gLQkJaWYgKCF0ZXN0X2JpdF9s
-ZShuaWRfb2ZzLCBubV9pLT5mcmVlX25pZF9iaXRtYXBbbmF0X29mc10pKQo+IC0JCQlyZXR1cm47
-Cj4gLQkJX19jbGVhcl9iaXRfbGUobmlkX29mcywgbm1faS0+ZnJlZV9uaWRfYml0bWFwW25hdF9v
-ZnNdKTsKPiAtCQlpZiAoIWJ1aWxkKQo+IC0JCQlubV9pLT5mcmVlX25pZF9jb3VudFtuYXRfb2Zz
-XS0tOwo+IC0JfQo+IC19Cj4gLQo+ICBzdGF0aWMgdm9pZCBzY2FuX25hdF9wYWdlKHN0cnVjdCBm
-MmZzX3NiX2luZm8gKnNiaSwKPiAgCQkJc3RydWN0IHBhZ2UgKm5hdF9wYWdlLCBuaWRfdCBzdGFy
-dF9uaWQpCj4gIHsKPiBAQCAtMTkzNywxOCArMTk0MywxOCBAQCBzdGF0aWMgdm9pZCBzY2FuX25h
-dF9wYWdlKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwKPiAgCWkgPSBzdGFydF9uaWQgJSBOQVRf
-RU5UUllfUEVSX0JMT0NLOwo+ICAKPiAgCWZvciAoOyBpIDwgTkFUX0VOVFJZX1BFUl9CTE9DSzsg
-aSsrLCBzdGFydF9uaWQrKykgewo+IC0JCWJvb2wgZnJlZWQgPSBmYWxzZTsKPiAtCj4gIAkJaWYg
-KHVubGlrZWx5KHN0YXJ0X25pZCA+PSBubV9pLT5tYXhfbmlkKSkKPiAgCQkJYnJlYWs7Cj4gIAo+
-ICAJCWJsa19hZGRyID0gbGUzMl90b19jcHUobmF0X2Jsay0+ZW50cmllc1tpXS5ibG9ja19hZGRy
-KTsKPiAgCQlmMmZzX2J1Z19vbihzYmksIGJsa19hZGRyID09IE5FV19BRERSKTsKPiAtCQlpZiAo
-YmxrX2FkZHIgPT0gTlVMTF9BRERSKQo+IC0JCQlmcmVlZCA9IGFkZF9mcmVlX25pZChzYmksIHN0
-YXJ0X25pZCwgdHJ1ZSk7Cj4gLQkJc3Bpbl9sb2NrKCZOTV9JKHNiaSktPm5pZF9saXN0X2xvY2sp
-Owo+IC0JCXVwZGF0ZV9mcmVlX25pZF9iaXRtYXAoc2JpLCBzdGFydF9uaWQsIGZyZWVkLCB0cnVl
-KTsKPiAtCQlzcGluX3VubG9jaygmTk1fSShzYmkpLT5uaWRfbGlzdF9sb2NrKTsKPiArCQlpZiAo
-YmxrX2FkZHIgPT0gTlVMTF9BRERSKSB7Cj4gKwkJCWFkZF9mcmVlX25pZChzYmksIHN0YXJ0X25p
-ZCwgdHJ1ZSwgdHJ1ZSk7Cj4gKwkJfSBlbHNlIHsKPiArCQkJc3Bpbl9sb2NrKCZOTV9JKHNiaSkt
-Pm5pZF9saXN0X2xvY2spOwo+ICsJCQl1cGRhdGVfZnJlZV9uaWRfYml0bWFwKHNiaSwgc3RhcnRf
-bmlkLCBmYWxzZSwgdHJ1ZSk7Cj4gKwkJCXNwaW5fdW5sb2NrKCZOTV9JKHNiaSktPm5pZF9saXN0
-X2xvY2spOwo+ICsJCX0KPiAgCX0KPiAgfQo+ICAKPiBAQCAtMTk3NCw3ICsxOTgwLDcgQEAgc3Rh
-dGljIHZvaWQgc2Nhbl9mcmVlX25pZF9iaXRzKHN0cnVjdCBmMmZzX3NiX2luZm8KPiAqc2JpKQo+
-ICAJCQkJYnJlYWs7Cj4gIAo+ICAJCQluaWQgPSBpICogTkFUX0VOVFJZX1BFUl9CTE9DSyArIGlk
-eDsKPiAtCQkJYWRkX2ZyZWVfbmlkKHNiaSwgbmlkLCB0cnVlKTsKPiArCQkJYWRkX2ZyZWVfbmlk
-KHNiaSwgbmlkLCB0cnVlLCBmYWxzZSk7Cj4gIAo+ICAJCQlpZiAobm1faS0+bmlkX2NudFtGUkVF
-X05JRF0gPj0gTUFYX0ZSRUVfTklEUykKPiAgCQkJCWdvdG8gb3V0Owo+IEBAIC0xOTg4LDcgKzE5
-OTQsNyBAQCBzdGF0aWMgdm9pZCBzY2FuX2ZyZWVfbmlkX2JpdHMoc3RydWN0IGYyZnNfc2JfaW5m
-bwo+ICpzYmkpCj4gIAkJYWRkciA9IGxlMzJfdG9fY3B1KG5hdF9pbl9qb3VybmFsKGpvdXJuYWws
-IGkpLmJsb2NrX2FkZHIpOwo+ICAJCW5pZCA9IGxlMzJfdG9fY3B1KG5pZF9pbl9qb3VybmFsKGpv
-dXJuYWwsIGkpKTsKPiAgCQlpZiAoYWRkciA9PSBOVUxMX0FERFIpCj4gLQkJCWFkZF9mcmVlX25p
-ZChzYmksIG5pZCwgdHJ1ZSk7Cj4gKwkJCWFkZF9mcmVlX25pZChzYmksIG5pZCwgdHJ1ZSwgZmFs
-c2UpOwo+ICAJCWVsc2UKPiAgCQkJcmVtb3ZlX2ZyZWVfbmlkKHNiaSwgbmlkKTsKPiAgCX0KPiBA
-QCAtMjA1Myw3ICsyMDU5LDcgQEAgc3RhdGljIHZvaWQgX19idWlsZF9mcmVlX25pZHMoc3RydWN0
-IGYyZnNfc2JfaW5mbwo+ICpzYmksIGJvb2wgc3luYywgYm9vbCBtb3VudCkKPiAgCQlhZGRyID0g
-bGUzMl90b19jcHUobmF0X2luX2pvdXJuYWwoam91cm5hbCwgaSkuYmxvY2tfYWRkcik7Cj4gIAkJ
-bmlkID0gbGUzMl90b19jcHUobmlkX2luX2pvdXJuYWwoam91cm5hbCwgaSkpOwo+ICAJCWlmIChh
-ZGRyID09IE5VTExfQUREUikKPiAtCQkJYWRkX2ZyZWVfbmlkKHNiaSwgbmlkLCB0cnVlKTsKPiAr
-CQkJYWRkX2ZyZWVfbmlkKHNiaSwgbmlkLCB0cnVlLCBmYWxzZSk7Cj4gIAkJZWxzZQo+ICAJCQly
-ZW1vdmVfZnJlZV9uaWQoc2JpLCBuaWQpOwo+ICAJfQo+IEBAIC0yNDk5LDExICsyNTA1LDcgQEAg
-c3RhdGljIHZvaWQgX19mbHVzaF9uYXRfZW50cnlfc2V0KHN0cnVjdCBmMmZzX3NiX2luZm8KPiAq
-c2JpLAo+ICAJCW5hdF9yZXNldF9mbGFnKG5lKTsKPiAgCQlfX2NsZWFyX25hdF9jYWNoZV9kaXJ0
-eShOTV9JKHNiaSksIHNldCwgbmUpOwo+ICAJCWlmIChuYXRfZ2V0X2Jsa2FkZHIobmUpID09IE5V
-TExfQUREUikgewo+IC0JCQlhZGRfZnJlZV9uaWQoc2JpLCBuaWQsIGZhbHNlKTsKPiAtCQkJc3Bp
-bl9sb2NrKCZOTV9JKHNiaSktPm5pZF9saXN0X2xvY2spOwo+IC0JCQlOTV9JKHNiaSktPmF2YWls
-YWJsZV9uaWRzKys7Cj4gLQkJCXVwZGF0ZV9mcmVlX25pZF9iaXRtYXAoc2JpLCBuaWQsIHRydWUs
-IGZhbHNlKTsKPiAtCQkJc3Bpbl91bmxvY2soJk5NX0koc2JpKS0+bmlkX2xpc3RfbG9jayk7Cj4g
-KwkJCWFkZF9mcmVlX25pZChzYmksIG5pZCwgZmFsc2UsIHRydWUpOwo+ICAJCX0gZWxzZSB7Cj4g
-IAkJCXNwaW5fbG9jaygmTk1fSShzYmkpLT5uaWRfbGlzdF9sb2NrKTsKPiAgCQkJdXBkYXRlX2Zy
-ZWVfbmlkX2JpdG1hcChzYmksIG5pZCwgZmFsc2UsIGZhbHNlKTsKPiAKCgotLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0KQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0
-aGUgd29ybGQncyBtb3N0CmVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDov
-L3NkbS5saW5rL3NsYXNoZG90Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxA
-bGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3Rz
-L2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+On 11/13, Hyunchul Lee wrote:
+> On 11/13/2017 10:59 AM, Chao Yu wrote:
+> > On 2017/11/13 9:35, Hyunchul Lee wrote:
+> >> On 11/13/2017 10:26 AM, Chao Yu wrote:
+> >>> On 2017/11/13 8:24, Hyunchul Lee wrote:
+> >>>> On 11/10/2017 03:42 PM, Chao Yu wrote:
+> >>>>> On 2017/11/10 8:23, Hyunchul Lee wrote:
+> >>>>>> Hello, Chao
+> >>>>>>
+> >>>>>> On 11/09/2017 06:12 PM, Chao Yu wrote:
+> >>>>>>> On 2017/11/9 13:51, Hyunchul Lee wrote:
+> >>>>>>>> From: Hyunchul Lee <cheol.lee@lge.com>
+> >>>>>>>>
+> >>>>>>>> Using write hints[1], applications can inform the life time of the data
+> >>>>>>>> written to devices. and this[2] reported that the write hints patch
+> >>>>>>>> decreased writes in NAND by 25%.
+> >>>>>>>>
+> >>>>>>>> This hints help F2FS to determine the followings.
+> >>>>>>>>   1) the segment types where the data will be written.
+> >>>>>>>>   2) the hints that will be passed down to devices with the data of segments.
+> >>>>>>>>
+> >>>>>>>> This patch set implements the first mapping from write hints to segment types
+> >>>>>>>> as shown below.
+> >>>>>>>>
+> >>>>>>>>   hints                     segment type
+> >>>>>>>>   -----                     ------------
+> >>>>>>>>   WRITE_LIFE_SHORT          CURSEG_COLD_DATA
+> >>>>>>>>   WRITE_LIFE_EXTREME        CURSEG_HOT_DATA
+> >>>>>>>>   others                    CURSEG_WARM_DATA
+> >>>>>>>>
+> >>>>>>>> The F2FS poliy for hot/cold seperation has precedence over this hints, And
+> >>>>>>>> hints are not applied in in-place update.
+> >>>>>>>
+> >>>>>>> Could we change to disable IPU if file/inode write hint is existing?
+> >>>>>>>
+> >>>>>>
+> >>>>>> I am afraid that this makes side effects. for example, this could cause
+> >>>>>> out-of-place updates even when there are not enough free segments. 
+> >>>>>> I can write the patch that handles these situations. But I wonder 
+> >>>>>> that this is required, and I am not sure which IPU polices can be disabled.
+> >>>>>
+> >>>>> Oh, As I replied in another thread, I think IPU just affects filesystem
+> >>>>> hot/cold separating, rather than this feature. So I think it will be okay
+> >>>>> to not consider it.
+> >>>>>
+> >>>>>>
+> >>>>>>>>
+> >>>>>>>> Before the second mapping is implemented, write hints are not passed down
+> >>>>>>>> to devices. Because it is better that the data of a segment have the same 
+> >>>>>>>> hint.
+> >>>>>>>>
+> >>>>>>>> [1]: c75b1d9421f80f4143e389d2d50ddfc8a28c8c35
+> >>>>>>>> [2]: https://lwn.net/Articles/726477/
+> >>>>>>>
+> >>>>>>> Could you write a patch to support passing write hint to block layer for
+> >>>>>>> buffered writes as below commit:
+> >>>>>>> 0127251c45ae ("ext4: add support for passing in write hints for buffered writes")
+> >>>>>>>
+> >>>>>>
+> >>>>>> Sure I will. I wrote it already ;)
+> >>>>>
+> >>>>> Cool, ;)
+> >>>>>
+> >>>>>> I think that datas from the same segment should be passed down with the same
+> >>>>>> hint, and the following mapping is reasonable. I wonder what is your opinion
+> >>>>>> about it.
+> >>>>>>
+> >>>>>>   segment type               hints
+> >>>>>>   ------------               -----
+> >>>>>>   CURSEG_COLD_DATA           WRITE_LIFE_EXTREME
+> >>>>>>   CURSEG_HOT_DATA            WRITE_LIFE_SHORT
+> >>>>>>   CURSEG_COLD_NODE           WRITE_LIFE_NORMAL
+> >>>>>
+> >>>>> We have WRITE_LIFE_LONG defined rather than WRITE_LIFE_NORMAL in fs.h?
+> >>>>>
+> >>>>>>   CURSEG_HOT_NODE            WRITE_LIFE_MEDIUM
+> >>>>>
+> >>>>> As I know, in scenario of cell phone, data of meta_inode is hottest, then hot
+> >>>>> data, warm node, and cold node should be coldest. So I suggested we can define
+> >>>>> as below:
+> >>>>>
+> >>>>> META_DATA			WRITE_LIFE_SHORT
+> >>>>> HOT_DATA & WARM_NODE		WRITE_LIFE_MEDIUM
+> >>>>> HOT_NODE & WARM_DATA		WRITE_LIFE_LONG
+> >>>>> COLD_NODE & COLD_DATA		WRITE_LIFE_EXTREME
+> >>>>>
+> >>>>
+> >>>> I agree, But I am not sure that assigning the same hint to a node and data
+> >>>> segment is good. Because NVMe is likely to write them in the same erase 
+> >>>> block if they have the same hint.
+> >>>
+> >>> If we do not give the hint, they can still be written to the same erase block,
+> > 
+> > I mean it's possible to write them to the same erase block. :)
+> > 
+> >>> right? it will not be worse?
+> >>>
+> >>
+> >> If the hint is not given, I think that they could be written to 
+> >> the same erase block, or not. But if we give the same hint, they are written
+> >> to the same block.
+> > 
+> > IMO, Only if underlying device can support more hint type or opened channels,
+> > and actual temperature of data segment and node segment is quite different, we
+> > can separate them.
+> > 
+> 
+> Okay, If Jaegeuk Kim agrees with this, I will submit the patch that 
+> implements your proposed mapping.
+
+How about this? We'd better to split data and node blocks as much as possible.
+
+segment type                    hints
+------------                    -----
+COLD_NODE & COLD_DATA		WRITE_LIFE_NONE
+WARM_DATA			WRITE_LIFE_EXTERME
+HOT_NODE & WARM_NODE		WRITE_LIFE_LONG
+HOT_DATA			WRITE_LIFE_MEDIUM
+META_DATA			WRITE_LIFE_SHORT
+
+> 
+> Thank you for comments ;)
+> 
+> > Thanks,
+> > 
+> >> I am not sure ;)
+> >>
+> >>> Thanks,
+> >>>
+> >>>>
+> >>>> Thanks.
+> >>>>
+> >>>>> Thanks,
+> >>>>>
+> >>>>>>   others                     WRITE_LIFE_NONE
+> >>>>>>  
+> >>>>>>> Thanks,
+> >>>>>>>
+> >>>>>>>>
+> >>>>>>>> Hyunchul Lee (2):
+> >>>>>>>>   f2fs: apply write hints to select the type of segments for buffered
+> >>>>>>>>     write
+> >>>>>>>>   f2fs: apply write hints to select the type of segment for direct write
+> >>>>>>>>
+> >>>>>>>>  fs/f2fs/data.c    | 101 ++++++++++++++++++++++++++++++++----------------------
+> >>>>>>>>  fs/f2fs/f2fs.h    |   1 +
+> >>>>>>>>  fs/f2fs/segment.c |  14 +++++++-
+> >>>>>>>>  3 files changed, 74 insertions(+), 42 deletions(-)
+> >>>>>>>>
+> >>>>>>>
+> >>>>>>>
+> >>>>>>
+> >>>>>> Thanks
+> >>>>>>
+> >>>>>> .
+> >>>>>>
+> >>>>>
+> >>>>>
+> >>>>
+> >>>> .
+> >>>>
+> >>>
+> >>>
+> >>
+> >> .
+> >>
+> > 
+> > 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
