@@ -1,95 +1,89 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: expose quota information in debugfs
-Date: Mon, 13 Nov 2017 21:12:14 -0800
-Message-ID: <20171114051214.83458-1-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: "LiFan" <fanofcode.li@samsung.com>
+Subject: =?gb2312?b?tPC4tDogIFtQQVRDSCBSRVNFTkRdIGYyZnM6IHZh?=
+ =?gb2312?b?bGlkYXRlIGJlZm9yZSBzZXQvY2xlYXIgZnJlZSBuYXQgYml0bWFw?=
+Date: Tue, 14 Nov 2017 13:59:49 +0800
+Message-ID: <000501d35d0d$e5d313d0$b1793b70$@samsung.com>
+References: <CGME20171111082604epcas5p472a0e6a07db371cb050eb6a13d8f0676@epcas5p4.samsung.com>
+ <000401d35ac6$b6c36700$244a3500$@samsung.com>
+ <20171114045418.GB13008@jaegeuk-macbookpro.roam.corp.google.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+ helo=mx.sourceforge.net)
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <fanofcode.li@samsung.com>) id 1eEUHC-0000UK-Kp
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Nov 2017 06:00:50 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eEUH9-000797-Sp
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Nov 2017 06:00:50 +0000
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+ by mailout2.samsung.com (KnoxPortal) with ESMTP id
+ 20171114060040epoutp02361b0b8e36ef2cfb9a57bbeccae7d45d~23mK5pMBX0240902409epoutp02p
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 14 Nov 2017 06:00:40 +0000 (GMT)
+In-Reply-To: <20171114045418.GB13008@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: zh-cn
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch shows # of dirty pages and # of hidden quota files.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/debug.c | 11 +++++++++++
- fs/f2fs/f2fs.h  | 10 ++++++++--
- 2 files changed, 19 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index f7eec506ceea..ecada8425268 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -45,9 +45,18 @@ static void update_general_status(struct f2fs_sb_info *sbi)
- 	si->ndirty_dent = get_pages(sbi, F2FS_DIRTY_DENTS);
- 	si->ndirty_meta = get_pages(sbi, F2FS_DIRTY_META);
- 	si->ndirty_data = get_pages(sbi, F2FS_DIRTY_DATA);
-+	si->ndirty_qdata = get_pages(sbi, F2FS_DIRTY_QDATA);
- 	si->ndirty_imeta = get_pages(sbi, F2FS_DIRTY_IMETA);
- 	si->ndirty_dirs = sbi->ndirty_inode[DIR_INODE];
- 	si->ndirty_files = sbi->ndirty_inode[FILE_INODE];
-+
-+	si->nquota_files = 0;
-+	if (f2fs_sb_has_quota_ino(sbi->sb)) {
-+		for (i = 0; i < MAXQUOTAS; i++) {
-+			if (f2fs_qf_ino(sbi->sb, i))
-+				si->nquota_files++;
-+		}
-+	}
- 	si->ndirty_all = sbi->ndirty_inode[DIRTY_META];
- 	si->inmem_pages = get_pages(sbi, F2FS_INMEM_PAGES);
- 	si->aw_cnt = atomic_read(&sbi->aw_cnt);
-@@ -369,6 +378,8 @@ static int stat_show(struct seq_file *s, void *v)
- 			   si->ndirty_dent, si->ndirty_dirs, si->ndirty_all);
- 		seq_printf(s, "  - datas: %4d in files:%4d\n",
- 			   si->ndirty_data, si->ndirty_files);
-+		seq_printf(s, "  - quota datas: %4d in quota files:%4d\n",
-+			   si->ndirty_qdata, si->nquota_files);
- 		seq_printf(s, "  - meta: %4d in %4d\n",
- 			   si->ndirty_meta, si->meta_pages);
- 		seq_printf(s, "  - imeta: %4d\n",
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 5c379a8ea075..44f874483ecf 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -865,6 +865,7 @@ struct f2fs_sm_info {
- enum count_type {
- 	F2FS_DIRTY_DENTS,
- 	F2FS_DIRTY_DATA,
-+	F2FS_DIRTY_QDATA,
- 	F2FS_DIRTY_NODES,
- 	F2FS_DIRTY_META,
- 	F2FS_INMEM_PAGES,
-@@ -1642,6 +1643,8 @@ static inline void inode_inc_dirty_pages(struct inode *inode)
- 	atomic_inc(&F2FS_I(inode)->dirty_pages);
- 	inc_page_count(F2FS_I_SB(inode), S_ISDIR(inode->i_mode) ?
- 				F2FS_DIRTY_DENTS : F2FS_DIRTY_DATA);
-+	if (IS_NOQUOTA(inode))
-+		inc_page_count(F2FS_I_SB(inode), F2FS_DIRTY_QDATA);
- }
- 
- static inline void dec_page_count(struct f2fs_sb_info *sbi, int count_type)
-@@ -1658,6 +1661,8 @@ static inline void inode_dec_dirty_pages(struct inode *inode)
- 	atomic_dec(&F2FS_I(inode)->dirty_pages);
- 	dec_page_count(F2FS_I_SB(inode), S_ISDIR(inode->i_mode) ?
- 				F2FS_DIRTY_DENTS : F2FS_DIRTY_DATA);
-+	if (IS_NOQUOTA(inode))
-+		dec_page_count(F2FS_I_SB(inode), F2FS_DIRTY_QDATA);
- }
- 
- static inline s64 get_pages(struct f2fs_sb_info *sbi, int count_type)
-@@ -2771,9 +2776,10 @@ struct f2fs_stat_info {
- 	unsigned long long hit_largest, hit_cached, hit_rbtree;
- 	unsigned long long hit_total, total_ext;
- 	int ext_tree, zombie_tree, ext_node;
--	int ndirty_node, ndirty_dent, ndirty_meta, ndirty_data, ndirty_imeta;
-+	int ndirty_node, ndirty_dent, ndirty_meta, ndirty_imeta;
-+	int ndirty_data, ndirty_qdata;
- 	int inmem_pages;
--	unsigned int ndirty_dirs, ndirty_files, ndirty_all;
-+	unsigned int ndirty_dirs, ndirty_files, nquota_files, ndirty_all;
- 	int nats, dirty_nats, sits, dirty_sits;
- 	int free_nids, avail_nids, alloc_nids;
- 	int total_count, utilization;
--- 
-2.14.0.rc1.383.gd1ce394fe2-goog
+U29ycnksIGl0IHNlZW1zIG15IGNvbXBhbnkgbWFpbGJveCBzaW5nbGUgbWFpbCB3b3VsZCBjdXQg
+dGhlIGxvbmcgbGluZSBzaG9ydAphdXRvbWF0aWNhbGx5LgpJdCdzIGZpbmUgaW4gbXkgb3V0bG9v
+ayBtYWlsLCBzbyBJIG92ZXJsb29rZWQuCkkgaGF2ZW4ndCBmaW5kIGEgd2F5IHRvIHNvbHZlIHRo
+YXQgeWV0LCBwbGVhc2UgaG9sZCBib3RoIG9mIG15IG5ldyBwYXRjaC4KSSB3aWxsIGZpeCBpdCBh
+cyBzb29uIGFzIHBvc3NpYmxlLgoKCi0tLS0t08q8/tStvP4tLS0tLQ0Kt6K8/sjLOiBKYWVnZXVr
+IEtpbSBbbWFpbHRvOmphZWdldWtAa2VybmVsLm9yZ10gDQq3osvNyrG85DogMjAxN8TqMTHUwjE0
+yNUgMTI6NTQNCsrVvP7IyzogTGlGYW4NCrOty806ICdDaGFvIFl1JzsgJ0NoYW8gWXUnOyBsaW51
+eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KbGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vm
+b3JnZS5uZXQNCtb3zOI6IFJlOiBbZjJmcy1kZXZdIFtQQVRDSCBSRVNFTkRdIGYyZnM6IHZhbGlk
+YXRlIGJlZm9yZSBzZXQvY2xlYXIgZnJlZSBuYXQNCmJpdG1hcA0KDQpTb3JyeSwgSSBjYW4ndCBt
+ZXJnZSB0aGlzIHBhdGNoIGR1ZSB0byB3cm9uZyBmb3JtYXQuDQoNCk9uIDExLzExLCBMaUZhbiB3
+cm90ZToNCj4gSW4gZmx1c2hfbmF0X2VudHJpZXMsIGFsbCBkaXJ0eSBuYXRzIHdpbGwgYmUgZmx1
+c2hlZCBhbmQgaWYgdGhlaXIgbmV3IA0KPiBhZGRyZXNzIGlzbid0IE5VTExfQUREUiwgdGhlaXIg
+Yml0bWFwcyB3aWxsIGJlIHVwZGF0ZWQsIHRoZSANCj4gZnJlZV9uaWRfY291bnQgb2YgdGhlIGJp
+dG1hcHMgd2lsbCBiZSBpbmNyZWFzZWQgcmVnYXJkbGVzcyBvZiB3aGV0aGVyIA0KPiB0aGUgbmF0
+cyBoYXZlIGFscmVhZHkgYmVlbiBvY2N1cGllZCBiZWZvcmUuIFRoaXMgY291bGQgbGVhZCB0byB3
+cm9uZyANCj4gZnJlZV9uaWRfY291bnQuDQo+IFNvIHRoaXMgcGF0Y2ggY2hlY2tzIHRoZSBzdGF0
+dXMgb2YgdGhlIGJpdHMgYmVmb3JlIGFjdHVhbGx5IHNldC9jbGVhcg0KdGhlbS4NCj4gDQo+IEZp
+eGVzOiA1ODZkMTQ5MmYzMDEgKCJmMmZzOiBza2lwIHNjYW5uaW5nIGZyZWUgbmlkIGJpdG1hcCBv
+ZiBmdWxsIE5BVA0KPiBibG9ja3MiKQ0KPiANCj4gU2lnbmVkLW9mZi1ieTogRmFuIGxpIDxmYW5v
+ZmNvZGUubGlAc2Ftc3VuZy5jb20+DQo+IC0tLQ0KPiAgZnMvZjJmcy9ub2RlLmMgfCAxNyArKysr
+KysrKysrLS0tLS0tLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDcgZGVs
+ZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9ub2RlLmMgYi9mcy9mMmZzL25v
+ZGUuYyBpbmRleCBkMjM0YzZlLi5iOTY1YTUzIA0KPiAxMDA2NDQNCj4gLS0tIGEvZnMvZjJmcy9u
+b2RlLmMNCj4gKysrIGIvZnMvZjJmcy9ub2RlLmMNCj4gQEAgLTE5MDYsMTUgKzE5MDYsMTggQEAg
+c3RhdGljIHZvaWQgdXBkYXRlX2ZyZWVfbmlkX2JpdG1hcChzdHJ1Y3QgDQo+IGYyZnNfc2JfaW5m
+byAqc2JpLCBuaWRfdCBuaWQsDQo+ICAJaWYgKCF0ZXN0X2JpdF9sZShuYXRfb2ZzLCBubV9pLT5u
+YXRfYmxvY2tfYml0bWFwKSkNCj4gIAkJcmV0dXJuOw0KPiAgDQo+IC0JaWYgKHNldCkNCj4gKwlp
+ZiAoc2V0KSB7DQo+ICsJCWlmICh0ZXN0X2JpdF9sZShuaWRfb2ZzLCBubV9pLT5mcmVlX25pZF9i
+aXRtYXBbbmF0X29mc10pKQ0KPiArCQkJcmV0dXJuOw0KPiAgCQlfX3NldF9iaXRfbGUobmlkX29m
+cywgbm1faS0+ZnJlZV9uaWRfYml0bWFwW25hdF9vZnNdKTsNCj4gLQllbHNlDQo+IC0JCV9fY2xl
+YXJfYml0X2xlKG5pZF9vZnMsIG5tX2ktPmZyZWVfbmlkX2JpdG1hcFtuYXRfb2ZzXSk7DQo+IC0N
+Cj4gLQlpZiAoc2V0KQ0KPiAgCQlubV9pLT5mcmVlX25pZF9jb3VudFtuYXRfb2ZzXSsrOw0KPiAt
+CWVsc2UgaWYgKCFidWlsZCkNCj4gLQkJbm1faS0+ZnJlZV9uaWRfY291bnRbbmF0X29mc10tLTsN
+Cj4gKwl9IGVsc2Ugew0KPiArCQlpZiAoIXRlc3RfYml0X2xlKG5pZF9vZnMsIG5tX2ktPmZyZWVf
+bmlkX2JpdG1hcFtuYXRfb2ZzXSkpDQo+ICsJCQlyZXR1cm47DQo+ICsJCV9fY2xlYXJfYml0X2xl
+KG5pZF9vZnMsIG5tX2ktPmZyZWVfbmlkX2JpdG1hcFtuYXRfb2ZzXSk7DQo+ICsJCWlmICghYnVp
+bGQpDQo+ICsJCQlubV9pLT5mcmVlX25pZF9jb3VudFtuYXRfb2ZzXS0tOw0KPiArCX0NCj4gIH0N
+Cj4gIA0KPiAgc3RhdGljIHZvaWQgc2Nhbl9uYXRfcGFnZShzdHJ1Y3QgZjJmc19zYl9pbmZvICpz
+YmksDQo+IC0tDQo+IDIuNy40DQo+IA0KDQoNCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNr
+IG91dCB0aGUgdmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9z
+dAplbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFz
+aGRvdApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51
+eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZv
+cmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51
+eC1mMmZzLWRldmVsCg==
