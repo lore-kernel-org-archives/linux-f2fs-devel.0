@@ -1,35 +1,26 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [RFC PATCH 0/2] apply write hints to select the type
- of segments
-Date: Wed, 15 Nov 2017 08:27:30 -0800
-Message-ID: <20171115162730.GC33528@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1b0b44de-c724-5dc4-e9cb-79a894bdb611@huawei.com>
- <5A04F184.3000204@gmail.com>
- <edf62076-a125-11e2-b2e6-fd32d5e6118f@huawei.com>
- <5A08E657.8060807@gmail.com>
- <c3199798-cd5b-afca-845b-73817c77c902@huawei.com>
- <5A08F6CA.6040507@gmail.com>
- <5bd3945c-16f8-a718-a140-44589ceb490a@huawei.com>
- <5A090283.60206@gmail.com>
- <20171114042024.GA13008@jaegeuk-macbookpro.roam.corp.google.com>
- <3dd3f540-f5e5-2d58-99ef-6abf18bad923@huawei.com>
+Subject: Re: [PATCH] f2fs: check sit bitmap under sentry_lock
+Date: Wed, 15 Nov 2017 08:30:40 -0800
+Message-ID: <20171115163040.GD33528@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20171113095439.49897-1-yuchao0@huawei.com>
+ <126ac734-9ff4-8b27-ea0b-386f0caaff55@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1eF0XM-0001OD-7q
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Nov 2017 16:27:40 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1eF0aO-0002dF-ML
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Nov 2017 16:30:48 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eF0XI-0003mF-S0
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Nov 2017 16:27:40 +0000
+ id 1eF0aN-0008Tf-S7
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Nov 2017 16:30:48 +0000
 Content-Disposition: inline
-In-Reply-To: <3dd3f540-f5e5-2d58-99ef-6abf18bad923@huawei.com>
+In-Reply-To: <126ac734-9ff4-8b27-ea0b-386f0caaff55@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -39,194 +30,89 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-kernel@vger.kernel.org, Hyunchul Lee <hyc.lee@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, kernel-team@lge.com, Hyunchul Lee <cheol.lee@lge.com>
+To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 11/14, Chao Yu wrote:
-> On 2017/11/14 12:20, Jaegeuk Kim wrote:
-> > On 11/13, Hyunchul Lee wrote:
-> >> On 11/13/2017 10:59 AM, Chao Yu wrote:
-> >>> On 2017/11/13 9:35, Hyunchul Lee wrote:
-> >>>> On 11/13/2017 10:26 AM, Chao Yu wrote:
-> >>>>> On 2017/11/13 8:24, Hyunchul Lee wrote:
-> >>>>>> On 11/10/2017 03:42 PM, Chao Yu wrote:
-> >>>>>>> On 2017/11/10 8:23, Hyunchul Lee wrote:
-> >>>>>>>> Hello, Chao
-> >>>>>>>>
-> >>>>>>>> On 11/09/2017 06:12 PM, Chao Yu wrote:
-> >>>>>>>>> On 2017/11/9 13:51, Hyunchul Lee wrote:
-> >>>>>>>>>> From: Hyunchul Lee <cheol.lee@lge.com>
-> >>>>>>>>>>
-> >>>>>>>>>> Using write hints[1], applications can inform the life time of the data
-> >>>>>>>>>> written to devices. and this[2] reported that the write hints patch
-> >>>>>>>>>> decreased writes in NAND by 25%.
-> >>>>>>>>>>
-> >>>>>>>>>> This hints help F2FS to determine the followings.
-> >>>>>>>>>>   1) the segment types where the data will be written.
-> >>>>>>>>>>   2) the hints that will be passed down to devices with the data of segments.
-> >>>>>>>>>>
-> >>>>>>>>>> This patch set implements the first mapping from write hints to segment types
-> >>>>>>>>>> as shown below.
-> >>>>>>>>>>
-> >>>>>>>>>>   hints                     segment type
-> >>>>>>>>>>   -----                     ------------
-> >>>>>>>>>>   WRITE_LIFE_SHORT          CURSEG_COLD_DATA
-> >>>>>>>>>>   WRITE_LIFE_EXTREME        CURSEG_HOT_DATA
-> >>>>>>>>>>   others                    CURSEG_WARM_DATA
-> >>>>>>>>>>
-> >>>>>>>>>> The F2FS poliy for hot/cold seperation has precedence over this hints, And
-> >>>>>>>>>> hints are not applied in in-place update.
-> >>>>>>>>>
-> >>>>>>>>> Could we change to disable IPU if file/inode write hint is existing?
-> >>>>>>>>>
-> >>>>>>>>
-> >>>>>>>> I am afraid that this makes side effects. for example, this could cause
-> >>>>>>>> out-of-place updates even when there are not enough free segments. 
-> >>>>>>>> I can write the patch that handles these situations. But I wonder 
-> >>>>>>>> that this is required, and I am not sure which IPU polices can be disabled.
-> >>>>>>>
-> >>>>>>> Oh, As I replied in another thread, I think IPU just affects filesystem
-> >>>>>>> hot/cold separating, rather than this feature. So I think it will be okay
-> >>>>>>> to not consider it.
-> >>>>>>>
-> >>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> Before the second mapping is implemented, write hints are not passed down
-> >>>>>>>>>> to devices. Because it is better that the data of a segment have the same 
-> >>>>>>>>>> hint.
-> >>>>>>>>>>
-> >>>>>>>>>> [1]: c75b1d9421f80f4143e389d2d50ddfc8a28c8c35
-> >>>>>>>>>> [2]: https://lwn.net/Articles/726477/
-> >>>>>>>>>
-> >>>>>>>>> Could you write a patch to support passing write hint to block layer for
-> >>>>>>>>> buffered writes as below commit:
-> >>>>>>>>> 0127251c45ae ("ext4: add support for passing in write hints for buffered writes")
-> >>>>>>>>>
-> >>>>>>>>
-> >>>>>>>> Sure I will. I wrote it already ;)
-> >>>>>>>
-> >>>>>>> Cool, ;)
-> >>>>>>>
-> >>>>>>>> I think that datas from the same segment should be passed down with the same
-> >>>>>>>> hint, and the following mapping is reasonable. I wonder what is your opinion
-> >>>>>>>> about it.
-> >>>>>>>>
-> >>>>>>>>   segment type               hints
-> >>>>>>>>   ------------               -----
-> >>>>>>>>   CURSEG_COLD_DATA           WRITE_LIFE_EXTREME
-> >>>>>>>>   CURSEG_HOT_DATA            WRITE_LIFE_SHORT
-> >>>>>>>>   CURSEG_COLD_NODE           WRITE_LIFE_NORMAL
-> >>>>>>>
-> >>>>>>> We have WRITE_LIFE_LONG defined rather than WRITE_LIFE_NORMAL in fs.h?
-> >>>>>>>
-> >>>>>>>>   CURSEG_HOT_NODE            WRITE_LIFE_MEDIUM
-> >>>>>>>
-> >>>>>>> As I know, in scenario of cell phone, data of meta_inode is hottest, then hot
-> >>>>>>> data, warm node, and cold node should be coldest. So I suggested we can define
-> >>>>>>> as below:
-> >>>>>>>
-> >>>>>>> META_DATA			WRITE_LIFE_SHORT
-> >>>>>>> HOT_DATA & WARM_NODE		WRITE_LIFE_MEDIUM
-> >>>>>>> HOT_NODE & WARM_DATA		WRITE_LIFE_LONG
-> >>>>>>> COLD_NODE & COLD_DATA		WRITE_LIFE_EXTREME
-> >>>>>>>
-> >>>>>>
-> >>>>>> I agree, But I am not sure that assigning the same hint to a node and data
-> >>>>>> segment is good. Because NVMe is likely to write them in the same erase 
-> >>>>>> block if they have the same hint.
-> >>>>>
-> >>>>> If we do not give the hint, they can still be written to the same erase block,
-> >>>
-> >>> I mean it's possible to write them to the same erase block. :)
-> >>>
-> >>>>> right? it will not be worse?
-> >>>>>
-> >>>>
-> >>>> If the hint is not given, I think that they could be written to 
-> >>>> the same erase block, or not. But if we give the same hint, they are written
-> >>>> to the same block.
-> >>>
-> >>> IMO, Only if underlying device can support more hint type or opened channels,
-> >>> and actual temperature of data segment and node segment is quite different, we
-> >>> can separate them.
-> >>>
-> >>
-> >> Okay, If Jaegeuk Kim agrees with this, I will submit the patch that 
-> >> implements your proposed mapping.
-> > 
-> > How about this? We'd better to split data and node blocks as much as possible.
-> > 
-> > segment type                    hints
-> > ------------                    -----
-> > COLD_NODE & COLD_DATA		WRITE_LIFE_NONE
+On 11/15, Chao Yu wrote:
+> Hi Jaegeuk,
 > 
-> WRITE_LIFE_NONE means there is no hints about write life time.
+> Please drop this patch first, as it still can trigger deadlock as below, sorry
+> about this mistake.
+
+Got it. Thank you.
+
 > 
-> Shouldn't we define COLD_NODE & COLD_DATA as WRITE_LIFE_EXTERME?
-
-The assumption would be to split different types of blocks by flash firmware,
-so I think we can use WRITE_LIFE_NONE as a type as well.
-
-Thanks,
-
+> - f2fs_put_super
+>  - f2fs_wait_discard_bios
+>   - __issue_discard_cmd
+>    - lock(&dcc->cmd_lock);		A
+>    - __check_sit_bitmap
+>     - down_read(&sit_i->sentry_lock)	B
+> 
+> - do_write_page
+>  - allocate_data_block
+>   - down_write(&sit_i->sentry_lock)	B
+>   - locate_dirty_segment
+>    - lock(&dirty_i->seglist_lock)	C
+> 
+> - write_checkpoint
+>  - clear_prefree_segments
+>   - lock(&dirty_i->seglist_lock)	C
+>    - f2fs_issue_discard
+>     - __issue_discard_async
+>      - __queue_discard_cmd
+>       - __update_discard_tree_range
+>        - lock(&dcc->cmd_lock)		A
 > 
 > Thanks,
 > 
-> > WARM_DATA			WRITE_LIFE_EXTERME
-> > HOT_NODE & WARM_NODE		WRITE_LIFE_LONG
-> > HOT_DATA			WRITE_LIFE_MEDIUM
-> > META_DATA			WRITE_LIFE_SHORT
+> On 2017/11/13 17:54, Chao Yu wrote:
+> > This patch protects sit bitmap accessing in __check_sit_bitmap with
+> > sentry_lock, meanwhile, in allocate_data_block, f2fs_wait_discard_bio
+> > will not access/update sit cache, let's exclude it from sentry_lock's
+> > region.>
+> > Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> > ---
+> >  fs/f2fs/segment.c | 7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
 > > 
-> >>
-> >> Thank you for comments ;)
-> >>
-> >>> Thanks,
-> >>>
-> >>>> I am not sure ;)
-> >>>>
-> >>>>> Thanks,
-> >>>>>
-> >>>>>>
-> >>>>>> Thanks.
-> >>>>>>
-> >>>>>>> Thanks,
-> >>>>>>>
-> >>>>>>>>   others                     WRITE_LIFE_NONE
-> >>>>>>>>  
-> >>>>>>>>> Thanks,
-> >>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> Hyunchul Lee (2):
-> >>>>>>>>>>   f2fs: apply write hints to select the type of segments for buffered
-> >>>>>>>>>>     write
-> >>>>>>>>>>   f2fs: apply write hints to select the type of segment for direct write
-> >>>>>>>>>>
-> >>>>>>>>>>  fs/f2fs/data.c    | 101 ++++++++++++++++++++++++++++++++----------------------
-> >>>>>>>>>>  fs/f2fs/f2fs.h    |   1 +
-> >>>>>>>>>>  fs/f2fs/segment.c |  14 +++++++-
-> >>>>>>>>>>  3 files changed, 74 insertions(+), 42 deletions(-)
-> >>>>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>
-> >>>>>>>> Thanks
-> >>>>>>>>
-> >>>>>>>> .
-> >>>>>>>>
-> >>>>>>>
-> >>>>>>>
-> >>>>>>
-> >>>>>> .
-> >>>>>>
-> >>>>>
-> >>>>>
-> >>>>
-> >>>> .
-> >>>>
-> >>>
-> >>>
-> > 
-> > .
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index c117e0913f2a..464696b1612a 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -894,6 +894,8 @@ void __check_sit_bitmap(struct f2fs_sb_info *sbi,
+> >  	unsigned long offset, size, max_blocks = sbi->blocks_per_seg;
+> >  	unsigned long *map;
+> >  
+> > +	down_read(&SIT_I(sbi)->sentry_lock);
+> > +
+> >  	while (blk < end) {
+> >  		segno = GET_SEGNO(sbi, blk);
+> >  		sentry = get_seg_entry(sbi, segno);
+> > @@ -908,6 +910,8 @@ void __check_sit_bitmap(struct f2fs_sb_info *sbi,
+> >  		f2fs_bug_on(sbi, offset != size);
+> >  		blk = START_BLOCK(sbi, segno + 1);
+> >  	}
+> > +
+> > +	up_read(&SIT_I(sbi)->sentry_lock);
+> >  #endif
+> >  }
+> >  
+> > @@ -2527,12 +2531,13 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+> >  	down_read(&SM_I(sbi)->curseg_lock);
+> >  
+> >  	mutex_lock(&curseg->curseg_mutex);
+> > -	down_write(&sit_i->sentry_lock);
+> >  
+> >  	*new_blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
+> >  
+> >  	f2fs_wait_discard_bio(sbi, *new_blkaddr);
+> >  
+> > +	down_write(&sit_i->sentry_lock);
+> > +
+> >  	/*
+> >  	 * __add_sum_entry should be resided under the curseg_mutex
+> >  	 * because, this function updates a summary entry in the
 > > 
 
 ------------------------------------------------------------------------------
