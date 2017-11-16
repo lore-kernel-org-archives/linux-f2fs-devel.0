@@ -1,23 +1,33 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [GIT PULL] f2fs update for 4.15-rc1
-Date: Wed, 15 Nov 2017 20:07:16 -0800
-Message-ID: <20171116040716.GA77527@jaegeuk-macbookpro.roam.corp.google.com>
+From: Hyunchul Lee <hyc.lee@gmail.com>
+Subject: Re: [RFC PATCH 0/2] apply write hints to select the type
+ of segments
+Date: Thu, 16 Nov 2017 13:35:53 +0900
+Message-ID: <5A0D15A9.3090706@gmail.com>
+References: <5A08E657.8060807@gmail.com>
+ <c3199798-cd5b-afca-845b-73817c77c902@huawei.com>
+ <5A08F6CA.6040507@gmail.com>
+ <5bd3945c-16f8-a718-a140-44589ceb490a@huawei.com> <5A090283.60206@gmail.com>
+ <20171114042024.GA13008@jaegeuk-macbookpro.roam.corp.google.com>
+ <3dd3f540-f5e5-2d58-99ef-6abf18bad923@huawei.com>
+ <20171115162730.GC33528@jaegeuk-macbookpro.roam.corp.google.com>
+ <5A0CE25A.9090506@gmail.com>
+ <533fb91e-21af-513e-f587-619498b1f848@huawei.com>
+ <20171116035858.GA73172@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1eFBSY-0006eR-6a
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Nov 2017 04:07:26 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eFBSU-0006Y2-Go
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Nov 2017 04:07:26 +0000
-Content-Disposition: inline
+ (envelope-from <hyc.lee@gmail.com>) id 1eFBuF-0007Ip-P2
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Nov 2017 04:36:03 +0000
+Received: from lgeamrelo13.lge.com ([156.147.23.53])
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtp (Exim 4.89)
+ id 1eFBuD-0007hP-0F
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Nov 2017 04:36:03 +0000
+In-Reply-To: <20171116035858.GA73172@jaegeuk-macbookpro.roam.corp.google.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,177 +37,261 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: kernel-team@lge.com, Hyunchul Lee <cheol.lee@lge.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Linux,
+On 11/16/2017 12:58 PM, Jaegeuk Kim wrote:
+> On 11/16, Chao Yu wrote:
+>> On 2017/11/16 8:56, Hyunchul Lee wrote:
+>>>
+>>> On 11/16/2017 01:27 AM, Jaegeuk Kim wrote:
+>>>> On 11/14, Chao Yu wrote:
+>>>>> On 2017/11/14 12:20, Jaegeuk Kim wrote:
+>>>>>> On 11/13, Hyunchul Lee wrote:
+>>>>>>> On 11/13/2017 10:59 AM, Chao Yu wrote:
+>>>>>>>> On 2017/11/13 9:35, Hyunchul Lee wrote:
+>>>>>>>>> On 11/13/2017 10:26 AM, Chao Yu wrote:
+>>>>>>>>>> On 2017/11/13 8:24, Hyunchul Lee wrote:
+>>>>>>>>>>> On 11/10/2017 03:42 PM, Chao Yu wrote:
+>>>>>>>>>>>> On 2017/11/10 8:23, Hyunchul Lee wrote:
+>>>>>>>>>>>>> Hello, Chao
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> On 11/09/2017 06:12 PM, Chao Yu wrote:
+>>>>>>>>>>>>>> On 2017/11/9 13:51, Hyunchul Lee wrote:
+>>>>>>>>>>>>>>> From: Hyunchul Lee <cheol.lee@lge.com>
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Using write hints[1], applications can inform the life time of the data
+>>>>>>>>>>>>>>> written to devices. and this[2] reported that the write hints patch
+>>>>>>>>>>>>>>> decreased writes in NAND by 25%.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> This hints help F2FS to determine the followings.
+>>>>>>>>>>>>>>>   1) the segment types where the data will be written.
+>>>>>>>>>>>>>>>   2) the hints that will be passed down to devices with the data of segments.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> This patch set implements the first mapping from write hints to segment types
+>>>>>>>>>>>>>>> as shown below.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>   hints                     segment type
+>>>>>>>>>>>>>>>   -----                     ------------
+>>>>>>>>>>>>>>>   WRITE_LIFE_SHORT          CURSEG_COLD_DATA
+>>>>>>>>>>>>>>>   WRITE_LIFE_EXTREME        CURSEG_HOT_DATA
+>>>>>>>>>>>>>>>   others                    CURSEG_WARM_DATA
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> The F2FS poliy for hot/cold seperation has precedence over this hints, And
+>>>>>>>>>>>>>>> hints are not applied in in-place update.
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> Could we change to disable IPU if file/inode write hint is existing?
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> I am afraid that this makes side effects. for example, this could cause
+>>>>>>>>>>>>> out-of-place updates even when there are not enough free segments. 
+>>>>>>>>>>>>> I can write the patch that handles these situations. But I wonder 
+>>>>>>>>>>>>> that this is required, and I am not sure which IPU polices can be disabled.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Oh, As I replied in another thread, I think IPU just affects filesystem
+>>>>>>>>>>>> hot/cold separating, rather than this feature. So I think it will be okay
+>>>>>>>>>>>> to not consider it.
+>>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Before the second mapping is implemented, write hints are not passed down
+>>>>>>>>>>>>>>> to devices. Because it is better that the data of a segment have the same 
+>>>>>>>>>>>>>>> hint.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> [1]: c75b1d9421f80f4143e389d2d50ddfc8a28c8c35
+>>>>>>>>>>>>>>> [2]: https://lwn.net/Articles/726477/
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> Could you write a patch to support passing write hint to block layer for
+>>>>>>>>>>>>>> buffered writes as below commit:
+>>>>>>>>>>>>>> 0127251c45ae ("ext4: add support for passing in write hints for buffered writes")
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Sure I will. I wrote it already ;)
+>>>>>>>>>>>>
+>>>>>>>>>>>> Cool, ;)
+>>>>>>>>>>>>
+>>>>>>>>>>>>> I think that datas from the same segment should be passed down with the same
+>>>>>>>>>>>>> hint, and the following mapping is reasonable. I wonder what is your opinion
+>>>>>>>>>>>>> about it.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>   segment type               hints
+>>>>>>>>>>>>>   ------------               -----
+>>>>>>>>>>>>>   CURSEG_COLD_DATA           WRITE_LIFE_EXTREME
+>>>>>>>>>>>>>   CURSEG_HOT_DATA            WRITE_LIFE_SHORT
+>>>>>>>>>>>>>   CURSEG_COLD_NODE           WRITE_LIFE_NORMAL
+>>>>>>>>>>>>
+>>>>>>>>>>>> We have WRITE_LIFE_LONG defined rather than WRITE_LIFE_NORMAL in fs.h?
+>>>>>>>>>>>>
+>>>>>>>>>>>>>   CURSEG_HOT_NODE            WRITE_LIFE_MEDIUM
+>>>>>>>>>>>>
+>>>>>>>>>>>> As I know, in scenario of cell phone, data of meta_inode is hottest, then hot
+>>>>>>>>>>>> data, warm node, and cold node should be coldest. So I suggested we can define
+>>>>>>>>>>>> as below:
+>>>>>>>>>>>>
+>>>>>>>>>>>> META_DATA			WRITE_LIFE_SHORT
+>>>>>>>>>>>> HOT_DATA & WARM_NODE		WRITE_LIFE_MEDIUM
+>>>>>>>>>>>> HOT_NODE & WARM_DATA		WRITE_LIFE_LONG
+>>>>>>>>>>>> COLD_NODE & COLD_DATA		WRITE_LIFE_EXTREME
+>>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> I agree, But I am not sure that assigning the same hint to a node and data
+>>>>>>>>>>> segment is good. Because NVMe is likely to write them in the same erase 
+>>>>>>>>>>> block if they have the same hint.
+>>>>>>>>>>
+>>>>>>>>>> If we do not give the hint, they can still be written to the same erase block,
+>>>>>>>>
+>>>>>>>> I mean it's possible to write them to the same erase block. :)
+>>>>>>>>
+>>>>>>>>>> right? it will not be worse?
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> If the hint is not given, I think that they could be written to 
+>>>>>>>>> the same erase block, or not. But if we give the same hint, they are written
+>>>>>>>>> to the same block.
+>>>>>>>>
+>>>>>>>> IMO, Only if underlying device can support more hint type or opened channels,
+>>>>>>>> and actual temperature of data segment and node segment is quite different, we
+>>>>>>>> can separate them.
+>>>>>>>>
+>>>>>>>
+>>>>>>> Okay, If Jaegeuk Kim agrees with this, I will submit the patch that 
+>>>>>>> implements your proposed mapping.
+>>>>>>
+>>>>>> How about this? We'd better to split data and node blocks as much as possible.
+>>>>>>
+>>>>>> segment type                    hints
+>>>>>> ------------                    -----
+>>>>>> COLD_NODE & COLD_DATA		WRITE_LIFE_NONE
+>>>>>
+>>>>> WRITE_LIFE_NONE means there is no hints about write life time.
+>>>>>
+>>>>> Shouldn't we define COLD_NODE & COLD_DATA as WRITE_LIFE_EXTERME?
+>>>>
+>>>> The assumption would be to split different types of blocks by flash firmware,
+>>>> so I think we can use WRITE_LIFE_NONE as a type as well.
+>>>>
+>>>
+>>> WRITE_LIFE_NONE means that no stream id is specified. It equals WRITE_LIFE_NOT_SET.
+>>
+>> Rgith, I just saw nvme implementation:
+>>
+>> nvme_assign_write_stream
+>>
+>> 	enum rw_hint streamid = req->write_hint;
+>>
+>> 	if (streamid == WRITE_LIFE_NOT_SET || streamid == WRITE_LIFE_NONE)
+>> 		streamid = 0;
+>> 	else {
+>> 		streamid--;
+>> ...
+>>
+>>> So I think that we can define WARM_DATA as WRITE_LIFE_NONE, and
+>>> COLD_NODE & COLD_DATA as WRITE_LIFE_EXTREME.
+> 
+> What's the point?
+> 
+> segment type                 hints                streamid
+> -------------                -----                -------
+> COLD_NODE & COLD_DATA        WRITE_LIFE_NONE      0
+> WARM_DATA                    WRITE_LIFE_EXTERME   4
+> HOT_NODE & WARM_NODE         WRITE_LIFE_LONG      3
+> HOT_DATA                     WRITE_LIFE_MEDIUM    2
+> META_DATA                    WRITE_LIFE_SHORT     1
+> 
+> So, I don't think something is wrong. Again, I don't care about its hotness
+> given to the naming, but do care how to split different types of blocks with
+> different stream ids. Exceptions would be giving _SHORT or _MEDIUM which are
+> likely to be latency-critical, since I guess firmware may be able to store them
+> into SLC buffer.
+> 
+> Am I missing that _NONE has another meaning?
+> 
 
-Could you please consider this pull request?
+What I am worried about is that datas with no hint have WRITE_LIFE_NOT_SET(id 0).
+If block devices have swap partitions and anothor file systems, cold datas could
+be mixed with datas from that. Does this seems way too much?
 
-Thanks,
+And I think that stream id 0 means disabling stream directives. 
+Becasue NVME_RW_DTYPE_STREAMS is clear.
 
-The following changes since commit 7056964a85031f42e2360617b14272593729ce1b:
+Thanks.
 
-  Merge tag 'f2fs-for-4.14-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs (2017-10-10 11:04:00 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-4.15-rc1
-
-for you to fetch changes up to ead710b7d82dc9e8184e10871c155a3ed8b3f673:
-
-  f2fs: deny accessing encryption policy if encryption is off (2017-11-15 08:30:19 -0800)
-
-----------------------------------------------------------------
-f2fs-for-4.15-rc1
-
-In this round, we introduce sysfile-based quota support which is required
-for Android by default. In addition, we allow that users are able to reserve
-some blocks in runtime to mitigate performance drops in low free space.
-
-Enhancement
-- assign proper data segments according to write_hints given by user
-- issue cache_flush on dirty devices only among multiple devices
-- exploit cp_error flag and add more faults to enhance fault injection test
-- conduct more readaheads during f2fs_readdir
-- add a range for discard commands
-
-Bug fix
-- fix zero stat->st_blocks when inline_data is set
-- drop crypto key and free stale memory pointer while evict_inode is failing
-- fix some corner cases in free space and segment management
-- fix wrong last_disk_size
-
-This series includes lots of clean-ups and code enhancement in terms of xattr
-operations, discard/flush command control. In addition, it adds versatile
-debugfs entries to monitor f2fs status.
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      f2fs: avoid using timespec
-
-Chao Yu (41):
-      Revert "f2fs: reuse nids more aggressively"
-      f2fs: introduce read_inline_xattr
-      f2fs: introduce read_xattr_block
-      f2fs: show flush list status in sysfs
-      f2fs: obsolete ALLOC_NID_LIST list
-      f2fs: drop FI_UPDATE_WRITE tag after f2fs_issue_flush
-      f2fs: fix to show ino management cache size correctly
-      f2fs: enhance multiple device flush
-      f2fs: fix to flush multiple device in checkpoint
-      f2fs: support issuing/waiting discard in range
-      f2fs: wrap discard policy
-      f2fs: split discard policy
-      f2fs: reduce cmd_lock coverage in __issue_discard_cmd
-      f2fs: trace f2fs_remove_discard
-      f2fs: give up CP_TRIMMED_FLAG if it drops discards
-      f2fs: fix to avoid race when accessing last_disk_size
-      f2fs: trace f2fs_lookup
-      f2fs: trace f2fs_readdir
-      f2fs: allow readdir() to be interrupted
-      f2fs: relocate readahead codes in readdir()
-      f2fs: update ctx->pos correctly when hitting hole in directory
-      f2fs: fix to correct no_fggc_candidate
-      f2fs: support flexible inline xattr size
-      f2fs: add missing sysfs description
-      f2fs: support get_page error injection
-      f2fs: support bio allocation error injection
-      f2fs: give correct trimmed blocks in fstrim
-      f2fs: export SSR allocation threshold
-      f2fs: use rw_semaphore to protect SIT cache
-      f2fs: check curseg space before foreground GC
-      f2fs: remove unneeded semicolon
-      f2fs: remove dead code in update_meta_page
-      f2fs: fix summary info corruption
-      f2fs: avoid race in between GC and block exchange
-      f2fs: keep isize once block is reserved cross EOF
-      f2fs: trace checkpoint reason in fsync()
-      f2fs: introduce scan_curseg_cache for cleanup
-      f2fs: avoid opened loop codes in __add_ino_entry
-      f2fs: fix to clear FI_NO_PREALLOC
-      f2fs: inject fault in inc_valid_node_count
-      f2fs: deny accessing encryption policy if encryption is off
-
-Colin Ian King (1):
-      f2fs: remove several redundant assignments
-
-Fan Li (5):
-      f2fs: add a function to move nid
-      f2fs: optimize __update_nat_bits
-      f2fs: save a multiplication for last_nid calculation
-      f2fs: keep scanning until enough free nids are acquired
-      f2fs: optimize the way of traversing free_nid_bitmap
-
-Hsiang Kao (1):
-      f2fs: allow readpages with NULL file pointer
-
-Hyunchul Lee (1):
-      f2fs: apply write hints to select the type of segments for buffered write
-
-Jaegeuk Kim (15):
-      f2fs/crypto: drop crypto key at evict_inode only
-      f2fs: avoid stale fi->gdirty_list pointer
-      f2fs: expose some sectors to user in inline data or dentry case
-      f2fs: limit # of inmemory pages
-      f2fs: retry ENOMEM for quota_read|write
-      f2fs: remove obsolete pointer for truncate_xattr_node
-      Revert "f2fs: return wrong error number on f2fs_quota_write"
-      f2fs: stop all the operations by cp_error flag
-      f2fs: show # of dirty segments via sysfs
-      f2fs: add missing quota_initialize
-      f2fs: show current cp state
-      f2fs: handle error case when adding xattr entry
-      f2fs: add quota_ino feature infra
-      f2fs: support quota sys files
-      f2fs: expose quota information in debugfs
-
-Jeff Layton (1):
-      f2fs: don't bother with inode->i_version
-
-LiFan (1):
-      f2fs: validate before set/clear free nat bitmap
-
-Thomas Meyer (1):
-      f2fs: Fix bool initialization/comparison
-
-Weichao Guo (2):
-      f2fs: convert inline data for direct I/O & FI_NO_PREALLOC
-      f2fs: skip searching non-exist range in truncate_hole
-
-Yunlei He (2):
-      f2fs: modify for accurate fggc node io stat
-      f2fs: separate nat entry mem alloc from nat_tree_lock
-
-Yunlong Song (3):
-      Revert "f2fs: node segment is prior to data segment selected victim"
-      f2fs: support soft block reservation
-      Revert "f2fs: handle dirty segments inside refresh_sit_entry"
-
- Documentation/ABI/testing/sysfs-fs-f2fs |  37 ++-
- fs/f2fs/acl.c                           |   3 +
- fs/f2fs/checkpoint.c                    |  64 +++-
- fs/f2fs/data.c                          |  37 ++-
- fs/f2fs/debug.c                         |  31 +-
- fs/f2fs/dir.c                           |  32 +-
- fs/f2fs/f2fs.h                          | 222 +++++++++++---
- fs/f2fs/file.c                          | 123 ++++++--
- fs/f2fs/gc.c                            |  37 ++-
- fs/f2fs/inline.c                        |   1 +
- fs/f2fs/inode.c                         |  26 +-
- fs/f2fs/namei.c                         | 101 +++++--
- fs/f2fs/node.c                          | 410 +++++++++++++------------
- fs/f2fs/node.h                          |  16 +-
- fs/f2fs/recovery.c                      |   8 +-
- fs/f2fs/segment.c                       | 509 ++++++++++++++++++++++++--------
- fs/f2fs/segment.h                       |  39 ++-
- fs/f2fs/shrinker.c                      |   2 +-
- fs/f2fs/super.c                         | 219 ++++++++++++--
- fs/f2fs/sysfs.c                         |  53 +++-
- fs/f2fs/xattr.c                         | 174 ++++++-----
- include/linux/f2fs_fs.h                 |  10 +-
- include/trace/events/f2fs.h             | 116 +++++++-
- 23 files changed, 1648 insertions(+), 622 deletions(-)
+> Thanks,
+> 
+>>
+>> I think that would be better.
+>>
+>> Thanks,
+>>
+>>>
+>>> Thanks.
+>>>
+>>>> Thanks,
+>>>>
+>>>>>
+>>>>> Thanks,
+>>>>>
+>>>>>> WARM_DATA			WRITE_LIFE_EXTERME
+>>>>>> HOT_NODE & WARM_NODE		WRITE_LIFE_LONG
+>>>>>> HOT_DATA			WRITE_LIFE_MEDIUM
+>>>>>> META_DATA			WRITE_LIFE_SHORT
+>>>>>>
+>>>>>>>
+>>>>>>> Thank you for comments ;)
+>>>>>>>
+>>>>>>>> Thanks,
+>>>>>>>>
+>>>>>>>>> I am not sure ;)
+>>>>>>>>>
+>>>>>>>>>> Thanks,
+>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> Thanks.
+>>>>>>>>>>>
+>>>>>>>>>>>> Thanks,
+>>>>>>>>>>>>
+>>>>>>>>>>>>>   others                     WRITE_LIFE_NONE
+>>>>>>>>>>>>>  
+>>>>>>>>>>>>>> Thanks,
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Hyunchul Lee (2):
+>>>>>>>>>>>>>>>   f2fs: apply write hints to select the type of segments for buffered
+>>>>>>>>>>>>>>>     write
+>>>>>>>>>>>>>>>   f2fs: apply write hints to select the type of segment for direct write
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>  fs/f2fs/data.c    | 101 ++++++++++++++++++++++++++++++++----------------------
+>>>>>>>>>>>>>>>  fs/f2fs/f2fs.h    |   1 +
+>>>>>>>>>>>>>>>  fs/f2fs/segment.c |  14 +++++++-
+>>>>>>>>>>>>>>>  3 files changed, 74 insertions(+), 42 deletions(-)
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Thanks
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> .
+>>>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> .
+>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> .
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>
+>>>>>> .
+>>>>>>
+>>>>
+>>>
+>>> .
+>>>
+> 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
