@@ -1,22 +1,26 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v2] f2fs: no need to read nat block if
- nat_block_bitmap is set
-Date: Mon, 20 Nov 2017 10:06:19 +0800
-Message-ID: <1511143579-30882-1-git-send-email-heyunlei@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH RESEND v2] f2fs: validate before set/clear
+ free nat bitmap
+Date: Mon, 20 Nov 2017 10:58:35 +0800
+Message-ID: <04b03e04-240e-f5fd-b2ac-1eb6091175ab@huawei.com>
+References: <CGME20171114072142epcas5p1e7543c4f118db48ff8ad417894f964d2@epcas5p1.samsung.com>
+ <002201d35d19$3837e870$a8a7b950$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
  by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <heyunlei@huawei.com>) id 1eGbfw-0001vF-2Y
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Nov 2017 02:19:08 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1eGcIV-0002pf-El
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Nov 2017 02:58:59 +0000
 Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sfi-mx-4.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.89) id 1eGbfu-0002Wq-1e
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Nov 2017 02:19:08 +0000
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.89) id 1eGcIT-0006jO-FM
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Nov 2017 02:58:59 +0000
+In-Reply-To: <002201d35d19$3837e870$a8a7b950$@samsung.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,51 +30,64 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
-Cc: ning.jia@huawei.com, heyunlei@huawei.com
+To: LiFan <fanofcode.li@samsung.com>, 'Chao Yu' <chao@kernel.org>, 'Jaegeuk
+ Kim' <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-No need to read nat block if nat_block_bitmap is set.
+On 2017/11/14 15:20, LiFan wrote:
+> In flush_nat_entries, all dirty nats will be flushed and if their new address
+> isn't NULL_ADDR, their bitmaps will be updated, the free_nid_count of the
+> bitmaps will be increased regardless of whether the nats have already been
+> occupied before. This could lead to wrong free_nid_count.
+> So this patch checks the status of the bits before actually set/clear them.
+> 
+> Fixes: 586d1492f301 ("f2fs: skip scanning free nid bitmap of full NAT blocks")
+> 
+> Signed-off-by: Fan li <fanofcode.li@samsung.com>
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fs/f2fs/node.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index fe1fc66..7fd65928 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1949,9 +1949,6 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
- 	unsigned int nat_ofs = NAT_BLOCK_OFFSET(start_nid);
- 	int i;
- 
--	if (test_bit_le(nat_ofs, nm_i->nat_block_bitmap))
--		return;
--
- 	__set_bit_le(nat_ofs, nm_i->nat_block_bitmap);
- 
- 	i = start_nid % NAT_ENTRY_PER_BLOCK;
-@@ -2056,11 +2053,16 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
- 	down_read(&nm_i->nat_tree_lock);
- 
- 	while (1) {
--		struct page *page = get_current_nat_page(sbi, nid);
-+		struct page *page;
- 
-+		if (test_bit_le(NAT_BLOCK_OFFSET(nid),
-+					nm_i->nat_block_bitmap))
-+			goto skip;
-+
-+		page = get_current_nat_page(sbi, nid);
- 		scan_nat_page(sbi, page, nid);
- 		f2fs_put_page(page, 1);
--
-+skip:
- 		nid += (NAT_ENTRY_PER_BLOCK - (nid % NAT_ENTRY_PER_BLOCK));
- 		if (unlikely(nid >= nm_i->max_nid))
- 			nid = 0;
--- 
-1.9.1
+Thanks,
+
+> ---
+>  fs/f2fs/node.c | 17 ++++++++++-------
+>  1 file changed, 10 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c index d234c6e..b965a53 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1906,15 +1906,18 @@ static void update_free_nid_bitmap(struct f2fs_sb_info *sbi, nid_t nid,
+>  	if (!test_bit_le(nat_ofs, nm_i->nat_block_bitmap))
+>  		return;
+>  
+> -	if (set)
+> +	if (set) {
+> +		if (test_bit_le(nid_ofs, nm_i->free_nid_bitmap[nat_ofs]))
+> +			return;
+>  		__set_bit_le(nid_ofs, nm_i->free_nid_bitmap[nat_ofs]);
+> -	else
+> -		__clear_bit_le(nid_ofs, nm_i->free_nid_bitmap[nat_ofs]);
+> -
+> -	if (set)
+>  		nm_i->free_nid_count[nat_ofs]++;
+> -	else if (!build)
+> -		nm_i->free_nid_count[nat_ofs]--;
+> +	} else {
+> +		if (!test_bit_le(nid_ofs, nm_i->free_nid_bitmap[nat_ofs]))
+> +			return;
+> +		__clear_bit_le(nid_ofs, nm_i->free_nid_bitmap[nat_ofs]);
+> +		if (!build)
+> +			nm_i->free_nid_count[nat_ofs]--;
+> +	}
+>  }
+>  
+>  static void scan_nat_page(struct f2fs_sb_info *sbi,
+> --
+> 2.7.4
+> 
+> 
+> 
+> 
 
 
 ------------------------------------------------------------------------------
