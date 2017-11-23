@@ -1,26 +1,25 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH RESEND v3] f2fs: fix concurrent problem for
- updating free bitmap
-Date: Thu, 23 Nov 2017 21:06:12 +0800
-Message-ID: <d02f9bc3-ae88-c0c7-83e7-666b212dd88a@kernel.org>
-References: <CGME20171122080814epcas5p4694a196adb1a55eeb8ac086ca0aace05@epcas5p4.samsung.com>
- <001501d36369$0bb9d3c0$232d7b40$@samsung.com>
+Subject: Re: [RFC PATCH 1/3] f2fs: introduce sysfs readdir_ra to
+ readahead inode block in readdir
+Date: Thu, 23 Nov 2017 21:11:44 +0800
+Message-ID: <2a8f4917-215a-58bc-1045-0c3ff0887505@kernel.org>
+References: <20171122102340.133491-1-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <chao@kernel.org>) id 1eHrD7-0004Sq-MW
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 Nov 2017 13:06:33 +0000
+ (envelope-from <chao@kernel.org>) id 1eHrIY-0006ZS-Ef
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 Nov 2017 13:12:10 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eHrD6-0002Mu-FY
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 Nov 2017 13:06:33 +0000
-In-Reply-To: <001501d36369$0bb9d3c0$232d7b40$@samsung.com>
+ id 1eHrIW-0000zj-Fp
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 Nov 2017 13:12:10 +0000
+In-Reply-To: <20171122102340.133491-1-shengyong1@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -31,191 +30,100 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: LiFan <fanofcode.li@samsung.com>, 'Chao Yu' <yuchao0@huawei.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/11/22 16:07, LiFan wrote:
-> alloc_nid_failed and scan_nat_page can be called at the same time,
-> and we haven't protected add_free_nid and update_free_nid_bitmap
-> with the same nid_list_lock. That could lead to
+On 2017/11/22 18:23, Sheng Yong wrote:
+> This patch introduces a sysfs interface readdir_ra to enable/disable
+> readaheading inode block in f2fs_readdir. When readdir_ra is enabled,
+> it improves the performance of "readdir + stat".
 > 
-> Thread A				Thread B
-> - __build_free_nids
->  - scan_nat_page				
->   - add_free_nid
-> 					- alloc_nid_failed
-> 					 - update_free_nid_bitmap
->   - update_free_nid_bitmap
+> For 300,000 files:
+> 	time find /data/test > /dev/null
+> disable readdir_ra: 1m25.69s real  0m01.94s user  0m50.80s system
+> enable  readdir_ra: 0m18.55s real  0m00.44s user  0m15.39s system
 > 
-> scan_nat_page will clear the free bitmap since the nid is PREALLOC_NID,
-> but alloc_nid_failed needs to set the free bitmap. This results in
-> free nid with free bitmap cleared.
-> This patch update the bitmap under the same nid_list_lock in add_free_nid.
-> And use __GFP_NOFAIL to make sure to update status of free nid correctly.
-> 
-> Signed-off-by: Fan li <fanofcode.li@samsung.com>
+> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
 
 > ---
->  fs/f2fs/node.c | 85 +++++++++++++++++++++++++++++-----------------------------
->  1 file changed, 43 insertions(+), 42 deletions(-)
+>  Documentation/ABI/testing/sysfs-fs-f2fs | 6 ++++++
+>  fs/f2fs/dir.c                           | 4 ++++
+>  fs/f2fs/f2fs.h                          | 1 +
+>  fs/f2fs/sysfs.c                         | 2 ++
+>  4 files changed, 13 insertions(+)
 > 
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index fe1fc66..8d5a06b 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1831,8 +1831,33 @@ static void __move_free_nid(struct f2fs_sb_info *sbi, struct free_nid *i,
+> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+> index a7799c2fca28..d870b5514d15 100644
+> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+> @@ -186,3 +186,9 @@ Date:		August 2017
+>  Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
+>  Description:
+>  		 Controls sleep time of GC urgent mode
+> +
+> +What:		/sys/fs/f2fs/<disk>/readdir_ra
+> +Date:		November 2017
+> +Contact:	"Sheng Yong" <shengyong1@huawei.com>
+> +Description:
+> +		 Controls readahead inode block in readdir.
+> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> index 2d98d877c09d..724304dc6143 100644
+> --- a/fs/f2fs/dir.c
+> +++ b/fs/f2fs/dir.c
+> @@ -798,6 +798,7 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+>  	unsigned int bit_pos;
+>  	struct f2fs_dir_entry *de = NULL;
+>  	struct fscrypt_str de_name = FSTR_INIT(NULL, 0);
+> +	struct f2fs_sb_info *sbi = F2FS_I_SB(d->inode);
+>  
+>  	bit_pos = ((unsigned long)ctx->pos % d->max);
+>  
+> @@ -836,6 +837,9 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+>  					le32_to_cpu(de->ino), d_type))
+>  			return 1;
+>  
+> +		if (sbi->readdir_ra == 1)
+> +			ra_node_page(sbi, le32_to_cpu(de->ino));
+> +
+>  		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
+>  		ctx->pos = start_pos + bit_pos;
 >  	}
->  }
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index ca6b0c9bc621..a269d795ba7c 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1095,6 +1095,7 @@ struct f2fs_sb_info {
+>  	int dir_level;				/* directory level */
+>  	int inline_xattr_size;			/* inline xattr size */
+>  	unsigned int trigger_ssr_threshold;	/* threshold to trigger ssr */
+> +	int readdir_ra;				/* readahead inode in readdir */
 >  
-> +static void update_free_nid_bitmap(struct f2fs_sb_info *sbi, nid_t nid,
-> +							bool set, bool build)
-> +{
-> +	struct f2fs_nm_info *nm_i = NM_I(sbi);
-> +	unsigned int nat_ofs = NAT_BLOCK_OFFSET(nid);
-> +	unsigned int nid_ofs = nid - START_NID(nid);
-> +
-> +	if (!test_bit_le(nat_ofs, nm_i->nat_block_bitmap))
-> +		return;
-> +
-> +	if (set) {
-> +		if (test_bit_le(nid_ofs, nm_i->free_nid_bitmap[nat_ofs]))
-> +			return;
-> +		__set_bit_le(nid_ofs, nm_i->free_nid_bitmap[nat_ofs]);
-> +		nm_i->free_nid_count[nat_ofs]++;
-> +	} else {
-> +		if (!test_bit_le(nid_ofs, nm_i->free_nid_bitmap[nat_ofs]))
-> +			return;
-> +		__clear_bit_le(nid_ofs, nm_i->free_nid_bitmap[nat_ofs]);
-> +		if (!build)
-> +			nm_i->free_nid_count[nat_ofs]--;
-> +	}
-> +}
-> +
->  /* return if the nid is recognized as free */
-> -static bool add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
-> +static bool add_free_nid(struct f2fs_sb_info *sbi,
-> +				nid_t nid, bool build, bool update)
->  {
->  	struct f2fs_nm_info *nm_i = NM_I(sbi);
->  	struct free_nid *i, *e;
-> @@ -1848,8 +1873,7 @@ static bool add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
->  	i->nid = nid;
->  	i->state = FREE_NID;
->  
-> -	if (radix_tree_preload(GFP_NOFS))
-> -		goto err;
-> +	radix_tree_preload(GFP_NOFS | __GFP_NOFAIL);
->  
->  	spin_lock(&nm_i->nid_list_lock);
->  
-> @@ -1890,9 +1914,14 @@ static bool add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
->  	ret = true;
->  	err = __insert_free_nid(sbi, i, FREE_NID);
->  err_out:
-> +	if (update) {
-> +		update_free_nid_bitmap(sbi, nid, ret, build);
-> +		if (!build)
-> +			nm_i->available_nids++;
-> +	}
->  	spin_unlock(&nm_i->nid_list_lock);
->  	radix_tree_preload_end();
-> -err:
-> +
->  	if (err)
->  		kmem_cache_free(free_nid_slab, i);
->  	return ret;
-> @@ -1916,30 +1945,6 @@ static void remove_free_nid(struct f2fs_sb_info *sbi, nid_t nid)
->  		kmem_cache_free(free_nid_slab, i);
->  }
->  
-> -static void update_free_nid_bitmap(struct f2fs_sb_info *sbi, nid_t nid,
-> -							bool set, bool build)
-> -{
-> -	struct f2fs_nm_info *nm_i = NM_I(sbi);
-> -	unsigned int nat_ofs = NAT_BLOCK_OFFSET(nid);
-> -	unsigned int nid_ofs = nid - START_NID(nid);
-> -
-> -	if (!test_bit_le(nat_ofs, nm_i->nat_block_bitmap))
-> -		return;
-> -
-> -	if (set) {
-> -		if (test_bit_le(nid_ofs, nm_i->free_nid_bitmap[nat_ofs]))
-> -			return;
-> -		__set_bit_le(nid_ofs, nm_i->free_nid_bitmap[nat_ofs]);
-> -		nm_i->free_nid_count[nat_ofs]++;
-> -	} else {
-> -		if (!test_bit_le(nid_ofs, nm_i->free_nid_bitmap[nat_ofs]))
-> -			return;
-> -		__clear_bit_le(nid_ofs, nm_i->free_nid_bitmap[nat_ofs]);
-> -		if (!build)
-> -			nm_i->free_nid_count[nat_ofs]--;
-> -	}
-> -}
-> -
->  static void scan_nat_page(struct f2fs_sb_info *sbi,
->  			struct page *nat_page, nid_t start_nid)
->  {
-> @@ -1957,18 +1962,18 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
->  	i = start_nid % NAT_ENTRY_PER_BLOCK;
->  
->  	for (; i < NAT_ENTRY_PER_BLOCK; i++, start_nid++) {
-> -		bool freed = false;
-> -
->  		if (unlikely(start_nid >= nm_i->max_nid))
->  			break;
->  
->  		blk_addr = le32_to_cpu(nat_blk->entries[i].block_addr);
->  		f2fs_bug_on(sbi, blk_addr == NEW_ADDR);
-> -		if (blk_addr == NULL_ADDR)
-> -			freed = add_free_nid(sbi, start_nid, true);
-> -		spin_lock(&NM_I(sbi)->nid_list_lock);
-> -		update_free_nid_bitmap(sbi, start_nid, freed, true);
-> -		spin_unlock(&NM_I(sbi)->nid_list_lock);
-> +		if (blk_addr == NULL_ADDR) {
-> +			add_free_nid(sbi, start_nid, true, true);
-> +		} else {
-> +			spin_lock(&NM_I(sbi)->nid_list_lock);
-> +			update_free_nid_bitmap(sbi, start_nid, false, true);
-> +			spin_unlock(&NM_I(sbi)->nid_list_lock);
-> +		}
->  	}
->  }
->  
-> @@ -1986,7 +1991,7 @@ static void scan_curseg_cache(struct f2fs_sb_info *sbi)
->  		addr = le32_to_cpu(nat_in_journal(journal, i).block_addr);
->  		nid = le32_to_cpu(nid_in_journal(journal, i));
->  		if (addr == NULL_ADDR)
-> -			add_free_nid(sbi, nid, true);
-> +			add_free_nid(sbi, nid, true, false);
->  		else
->  			remove_free_nid(sbi, nid);
->  	}
-> @@ -2013,7 +2018,7 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
->  				break;
->  
->  			nid = i * NAT_ENTRY_PER_BLOCK + idx;
-> -			add_free_nid(sbi, nid, true);
-> +			add_free_nid(sbi, nid, true, false);
->  
->  			if (nm_i->nid_cnt[FREE_NID] >= MAX_FREE_NIDS)
->  				goto out;
-> @@ -2516,11 +2521,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
->  		nat_reset_flag(ne);
->  		__clear_nat_cache_dirty(NM_I(sbi), set, ne);
->  		if (nat_get_blkaddr(ne) == NULL_ADDR) {
-> -			add_free_nid(sbi, nid, false);
-> -			spin_lock(&NM_I(sbi)->nid_list_lock);
-> -			NM_I(sbi)->available_nids++;
-> -			update_free_nid_bitmap(sbi, nid, true, false);
-> -			spin_unlock(&NM_I(sbi)->nid_list_lock);
-> +			add_free_nid(sbi, nid, false, true);
->  		} else {
->  			spin_lock(&NM_I(sbi)->nid_list_lock);
->  			update_free_nid_bitmap(sbi, nid, false, false);
+>  	block_t user_block_count;		/* # of user blocks */
+>  	block_t total_valid_block_count;	/* # of valid blocks */
+> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> index 9835348b6e5d..93c3364250dd 100644
+> --- a/fs/f2fs/sysfs.c
+> +++ b/fs/f2fs/sysfs.c
+> @@ -299,6 +299,7 @@ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
+>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
+>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
+>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
+> +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
+>  #ifdef CONFIG_F2FS_FAULT_INJECTION
+>  F2FS_RW_ATTR(FAULT_INFO_RATE, f2fs_fault_info, inject_rate, inject_rate);
+>  F2FS_RW_ATTR(FAULT_INFO_TYPE, f2fs_fault_info, inject_type, inject_type);
+> @@ -346,6 +347,7 @@ static struct attribute *f2fs_attrs[] = {
+>  	ATTR_LIST(cp_interval),
+>  	ATTR_LIST(idle_interval),
+>  	ATTR_LIST(iostat_enable),
+> +	ATTR_LIST(readdir_ra),
+>  #ifdef CONFIG_F2FS_FAULT_INJECTION
+>  	ATTR_LIST(inject_rate),
+>  	ATTR_LIST(inject_type),
 > 
 
 ------------------------------------------------------------------------------
