@@ -1,115 +1,105 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH 3/3] f2fs: remove unused parameter
-Date: Thu, 23 Nov 2017 21:17:46 +0800
-Message-ID: <8cb6642e-cdad-372d-0319-f23c6682414f@kernel.org>
-References: <20171122102340.133491-1-shengyong1@huawei.com>
- <20171122102340.133491-3-shengyong1@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
- helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <chao@kernel.org>) id 1eHrOJ-0006jA-KI
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 Nov 2017 13:18:07 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eHrOI-0001wB-Kf
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 Nov 2017 13:18:07 +0000
-In-Reply-To: <20171122102340.133491-3-shengyong1@huawei.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH] f2fs: fix lock dependency in between dio_rwsem & i_mmap_sem
+Date: Thu, 23 Nov 2017 23:26:52 +0800
+Message-ID: <20171123152652.16232-1-chao@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/11/22 18:23, Sheng Yong wrote:
-> Commit d260081ccf37 ("f2fs: change recovery policy of xattr node block")
-> removes the use of blkaddr, which is no longer used. So remove the
-> parameter.
-> 
-> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+test/generic/208 reports a potential deadlock as below:
 
-Thanks,
+Chain exists of:
+  &mm->mmap_sem --> &fi->i_mmap_sem --> &fi->dio_rwsem[WRITE]
 
-> ---
->  fs/f2fs/f2fs.h     | 3 +--
->  fs/f2fs/node.c     | 2 +-
->  fs/f2fs/recovery.c | 6 +++---
->  3 files changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index a269d795ba7c..bab4c2287090 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -2607,8 +2607,7 @@ void alloc_nid_done(struct f2fs_sb_info *sbi, nid_t nid);
->  void alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid);
->  int try_to_free_nids(struct f2fs_sb_info *sbi, int nr_shrink);
->  void recover_inline_xattr(struct inode *inode, struct page *page);
-> -int recover_xattr_data(struct inode *inode, struct page *page,
-> -			block_t blkaddr);
-> +int recover_xattr_data(struct inode *inode, struct page *page);
->  int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page);
->  int restore_node_summary(struct f2fs_sb_info *sbi,
->  			unsigned int segno, struct f2fs_summary_block *sum);
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index fe1fc662af2a..ebb0d1797431 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -2238,7 +2238,7 @@ void recover_inline_xattr(struct inode *inode, struct page *page)
->  	f2fs_put_page(ipage, 1);
->  }
->  
-> -int recover_xattr_data(struct inode *inode, struct page *page, block_t blkaddr)
-> +int recover_xattr_data(struct inode *inode, struct page *page)
->  {
->  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->  	nid_t prev_xnid = F2FS_I(inode)->i_xattr_nid;
-> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-> index 92c57ace1939..7d63faf51e52 100644
-> --- a/fs/f2fs/recovery.c
-> +++ b/fs/f2fs/recovery.c
-> @@ -404,7 +404,7 @@ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
->  }
->  
->  static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
-> -					struct page *page, block_t blkaddr)
-> +					struct page *page)
->  {
->  	struct dnode_of_data dn;
->  	struct node_info ni;
-> @@ -415,7 +415,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
->  	if (IS_INODE(page)) {
->  		recover_inline_xattr(inode, page);
->  	} else if (f2fs_has_xattr_block(ofs_of_node(page))) {
-> -		err = recover_xattr_data(inode, page, blkaddr);
-> +		err = recover_xattr_data(inode, page);
->  		if (!err)
->  			recovered++;
->  		goto out;
-> @@ -568,7 +568,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
->  				break;
->  			}
->  		}
-> -		err = do_recover_data(sbi, entry->inode, page, blkaddr);
-> +		err = do_recover_data(sbi, entry->inode, page);
->  		if (err) {
->  			f2fs_put_page(page, 1);
->  			break;
-> 
+ Possible unsafe locking scenario:
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+       CPU0                    CPU1
+       ----                    ----
+  lock(&fi->dio_rwsem[WRITE]);
+                               lock(&fi->i_mmap_sem);
+                               lock(&fi->dio_rwsem[WRITE]);
+  lock(&mm->mmap_sem);
+
+This patch changes the lock dependency as below in fallocate() to
+fix this issue:
+- dio_rwsem
+ - i_mmap_sem
+
+Fixes: bb06664a534b ("f2fs: avoid race in between GC and block exchange")
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/file.c | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index a292a1a3a692..d08e003e6d6b 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1185,14 +1185,14 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+ 	pg_start = offset >> PAGE_SHIFT;
+ 	pg_end = (offset + len) >> PAGE_SHIFT;
+ 
++	/* avoid gc operation during block exchange */
++	down_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
++
+ 	down_write(&F2FS_I(inode)->i_mmap_sem);
+ 	/* write out all dirty pages from offset */
+ 	ret = filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
+ 	if (ret)
+-		goto out;
+-
+-	/* avoid gc operation during block exchange */
+-	down_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
++		goto out_unlock;
+ 
+ 	truncate_pagecache(inode, offset);
+ 
+@@ -1211,9 +1211,8 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+ 	if (!ret)
+ 		f2fs_i_size_write(inode, new_size);
+ out_unlock:
+-	up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
+-out:
+ 	up_write(&F2FS_I(inode)->i_mmap_sem);
++	up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
+ 	return ret;
+ }
+ 
+@@ -1384,6 +1383,9 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ 
+ 	f2fs_balance_fs(sbi, true);
+ 
++	/* avoid gc operation during block exchange */
++	down_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
++
+ 	down_write(&F2FS_I(inode)->i_mmap_sem);
+ 	ret = truncate_blocks(inode, i_size_read(inode), true);
+ 	if (ret)
+@@ -1394,9 +1396,6 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ 	if (ret)
+ 		goto out;
+ 
+-	/* avoid gc operation during block exchange */
+-	down_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
+-
+ 	truncate_pagecache(inode, offset);
+ 
+ 	pg_start = offset >> PAGE_SHIFT;
+@@ -1424,10 +1423,9 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ 
+ 	if (!ret)
+ 		f2fs_i_size_write(inode, new_size);
+-
+-	up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
+ out:
+ 	up_write(&F2FS_I(inode)->i_mmap_sem);
++	up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
+ 	return ret;
+ }
+ 
+-- 
+2.14.1.145.gb3622a4ee
