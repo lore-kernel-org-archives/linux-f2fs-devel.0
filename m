@@ -1,134 +1,297 @@
 From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH] f2fs: avoid false positive of free secs check
-Date: Thu, 30 Nov 2017 10:42:53 +0800
-Message-ID: <277e385f-650f-fe29-ac41-ff847a1b7858@huawei.com>
-References: <1511765699-47553-1-git-send-email-yunlong.song@huawei.com>
- <ee9ea493-1c61-2b19-f2ea-ec9278ae6543@kernel.org>
+Subject: Re: [PATCH v4 RESEND] f2fs: fix out-of-free problem
+ caused by atomic write
+Date: Thu, 30 Nov 2017 10:45:33 +0800
+Message-ID: <e32decea-7239-b9af-08a2-4ce1ccd62bd5@huawei.com>
+References: <1510880065-148982-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <ee9ea493-1c61-2b19-f2ea-ec9278ae6543@kernel.org>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
+ helo=mx.sourceforge.net)
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <yunlong.song@huawei.com>) id 1eKEri-0000Af-9j
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Nov 2017 02:46:18 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eKErg-0003Up-DF
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Nov 2017 02:46:18 +0000
+In-Reply-To: <1510880065-148982-1-git-send-email-yunlong.song@huawei.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
+Cc: linux-fsdevel@vger.kernel.org, miaoxie@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-SSR can make hot/warm/cold nodes written together, so why should we account
-them different?
+ping...
 
-On 2017/11/29 19:56, Chao Yu wrote:
-> On 2017/11/27 14:54, Yunlong Song wrote:
->> Sometimes f2fs_gc is called with no target victim (e.g. xfstest
->> generic/027, ndirty_node:545 ndiry_dent:1 ndirty_imeta:513 rsvd_segs:21
->> free_segs:27, has_not_enough_free_secs will return true). This patch
->> first merges pages and then converts into sections.
-> I don't think this could be right, IMO, instead, it would be better to
-> account dirty hot/warm/cold nodes or imeta separately, as actually, they
-> will use different section, but currently, our calculation way is based
-> on that they could be written to same section.
+On 2017/11/17 8:54, Yunlong Song wrote:
+> f2fs_balance_fs only actives once in the commit_inmem_pages, but there
+> are more than one page to commit, so all the other pages will miss the
+> check. This will lead to out-of-free problem when commit a very large
+> file. However, we cannot do f2fs_balance_fs for each inmem page, since
+> this will break atomicity. As a result, we should do f2fs_balance_fs
+> for all the inmem pages together.
 >
-> Thanks,
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> ---
+>   fs/f2fs/debug.c   |  5 +++--
+>   fs/f2fs/f2fs.h    | 26 ++++++++++++++++++++++++--
+>   fs/f2fs/segment.c | 30 ++++++++++++++++++++++++------
+>   fs/f2fs/segment.h |  4 +++-
+>   4 files changed, 54 insertions(+), 11 deletions(-)
 >
->> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->> ---
->>   fs/f2fs/f2fs.h    |  9 ---------
->>   fs/f2fs/segment.c | 12 +++++++-----
->>   fs/f2fs/segment.h | 13 +++++++++----
->>   3 files changed, 16 insertions(+), 18 deletions(-)
->>
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index ca6b0c9..e89cff7 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -1675,15 +1675,6 @@ static inline int get_dirty_pages(struct inode *inode)
->>   	return atomic_read(&F2FS_I(inode)->dirty_pages);
->>   }
->>   
->> -static inline int get_blocktype_secs(struct f2fs_sb_info *sbi, int block_type)
->> -{
->> -	unsigned int pages_per_sec = sbi->segs_per_sec * sbi->blocks_per_seg;
->> -	unsigned int segs = (get_pages(sbi, block_type) + pages_per_sec - 1) >>
->> -						sbi->log_blocks_per_seg;
->> -
->> -	return segs / sbi->segs_per_sec;
->> -}
->> -
->>   static inline block_t valid_user_blocks(struct f2fs_sb_info *sbi)
->>   {
->>   	return sbi->total_valid_block_count;
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index c117e09..603f805 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -171,17 +171,19 @@ static unsigned long __find_rev_next_zero_bit(const unsigned long *addr,
->>   
->>   bool need_SSR(struct f2fs_sb_info *sbi)
->>   {
->> -	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
->> -	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
->> -	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
->> +	s64 node_pages = get_pages(sbi, F2FS_DIRTY_NODES);
->> +	s64 dent_pages = get_pages(sbi, F2FS_DIRTY_DENTS);
->> +	s64 imeta_pages = get_pages(sbi, F2FS_DIRTY_IMETA);
->>   
->>   	if (test_opt(sbi, LFS))
->>   		return false;
->>   	if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
->>   		return true;
->>   
->> -	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
->> -			SM_I(sbi)->min_ssr_sections + reserved_sections(sbi));
->> +	return free_sections(sbi) <=
->> +		(PAGE2SEC(sbi, node_pages + imeta_pages) +
->> +		PAGE2SEC(sbi, 2 * dent_pages) +
->> +		SM_I(sbi)->min_ssr_sections + reserved_sections(sbi));
->>   }
->>   
->>   void register_inmem_page(struct inode *inode, struct page *page)
->> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
->> index d1d394c..723d79e 100644
->> --- a/fs/f2fs/segment.h
->> +++ b/fs/f2fs/segment.h
->> @@ -115,6 +115,10 @@
->>   #define SECTOR_TO_BLOCK(sectors)					\
->>   	((sectors) >> F2FS_LOG_SECTORS_PER_BLOCK)
->>   
->> +#define PAGE2SEC(sbi, pages)				\
->> +	((((pages) + BLKS_PER_SEC(sbi) - 1)		\
->> +	>> sbi->log_blocks_per_seg) / sbi->segs_per_sec)
->> +
->>   /*
->>    * indicate a block allocation direction: RIGHT and LEFT.
->>    * RIGHT means allocating new sections towards the end of volume.
->> @@ -527,9 +531,9 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi)
->>   static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
->>   					int freed, int needed)
->>   {
->> -	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
->> -	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
->> -	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
->> +	s64 node_pages = get_pages(sbi, F2FS_DIRTY_NODES);
->> +	s64 dent_pages = get_pages(sbi, F2FS_DIRTY_DENTS);
->> +	s64 imeta_pages = get_pages(sbi, F2FS_DIRTY_IMETA);
->>   
->>   	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
->>   		return false;
->> @@ -538,7 +542,8 @@ static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
->>   			has_curseg_enough_space(sbi))
->>   		return false;
->>   	return (free_sections(sbi) + freed) <=
->> -		(node_secs + 2 * dent_secs + imeta_secs +
->> +		(PAGE2SEC(sbi, node_pages + imeta_pages) +
->> +		PAGE2SEC(sbi, 2 * dent_pages) +
->>   		reserved_sections(sbi) + needed);
->>   }
->>   
->>
-> .
->
+> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+> index f7eec50..41c47c4 100644
+> --- a/fs/f2fs/debug.c
+> +++ b/fs/f2fs/debug.c
+> @@ -50,6 +50,7 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+>   	si->ndirty_files = sbi->ndirty_inode[FILE_INODE];
+>   	si->ndirty_all = sbi->ndirty_inode[DIRTY_META];
+>   	si->inmem_pages = get_pages(sbi, F2FS_INMEM_PAGES);
+> +	si->inmem_commit_pages = get_pages(sbi, F2FS_INMEM_COMMIT_PAGES);
+>   	si->aw_cnt = atomic_read(&sbi->aw_cnt);
+>   	si->vw_cnt = atomic_read(&sbi->vw_cnt);
+>   	si->max_aw_cnt = atomic_read(&sbi->max_aw_cnt);
+> @@ -360,9 +361,9 @@ static int stat_show(struct seq_file *s, void *v)
+>   			   si->nr_discarding, si->nr_discarded,
+>   			   si->nr_discard_cmd, si->undiscard_blks);
+>   		seq_printf(s, "  - inmem: %4d, atomic IO: %4d (Max. %4d), "
+> -			"volatile IO: %4d (Max. %4d)\n",
+> +			"volatile IO: %4d (Max. %4d), commit: %4d\n",
+>   			   si->inmem_pages, si->aw_cnt, si->max_aw_cnt,
+> -			   si->vw_cnt, si->max_vw_cnt);
+> +			   si->vw_cnt, si->max_vw_cnt, si->inmem_commit_pages);
+>   		seq_printf(s, "  - nodes: %4d in %4d\n",
+>   			   si->ndirty_node, si->node_pages);
+>   		seq_printf(s, "  - dents: %4d in dirs:%4d (%4d)\n",
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 13a96b8..749bdb6 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -610,6 +610,7 @@ struct f2fs_inode_info {
+>   	struct list_head inmem_pages;	/* inmemory pages managed by f2fs */
+>   	struct task_struct *inmem_task;	/* store inmemory task */
+>   	struct mutex inmem_lock;	/* lock for inmemory pages */
+> +	unsigned long inmem_blocks;	/* inmemory blocks */
+>   	struct extent_tree *extent_tree;	/* cached extent_tree entry */
+>   	struct rw_semaphore dio_rwsem[2];/* avoid racing between dio and gc */
+>   	struct rw_semaphore i_mmap_sem;
+> @@ -863,6 +864,7 @@ enum count_type {
+>   	F2FS_DIRTY_NODES,
+>   	F2FS_DIRTY_META,
+>   	F2FS_INMEM_PAGES,
+> +	F2FS_INMEM_COMMIT_PAGES,
+>   	F2FS_DIRTY_IMETA,
+>   	F2FS_WB_CP_DATA,
+>   	F2FS_WB_DATA,
+> @@ -1600,7 +1602,21 @@ static inline void inc_page_count(struct f2fs_sb_info *sbi, int count_type)
+>   	atomic_inc(&sbi->nr_pages[count_type]);
+>   
+>   	if (count_type == F2FS_DIRTY_DATA || count_type == F2FS_INMEM_PAGES ||
+> -		count_type == F2FS_WB_CP_DATA || count_type == F2FS_WB_DATA)
+> +		count_type == F2FS_WB_CP_DATA || count_type == F2FS_WB_DATA ||
+> +		count_type == F2FS_INMEM_COMMIT_PAGES)
+> +		return;
+> +
+> +	set_sbi_flag(sbi, SBI_IS_DIRTY);
+> +}
+> +
+> +static inline void inc_pages_count(struct f2fs_sb_info *sbi, int count_type,
+> +					int pages)
+> +{
+> +	atomic_add(pages, &sbi->nr_pages[count_type]);
+> +
+> +	if (count_type == F2FS_DIRTY_DATA || count_type == F2FS_INMEM_PAGES ||
+> +		count_type == F2FS_WB_CP_DATA || count_type == F2FS_WB_DATA ||
+> +		count_type == F2FS_INMEM_COMMIT_PAGES)
+>   		return;
+>   
+>   	set_sbi_flag(sbi, SBI_IS_DIRTY);
+> @@ -1618,6 +1634,12 @@ static inline void dec_page_count(struct f2fs_sb_info *sbi, int count_type)
+>   	atomic_dec(&sbi->nr_pages[count_type]);
+>   }
+>   
+> +static inline void dec_pages_count(struct f2fs_sb_info *sbi, int count_type,
+> +					int pages)
+> +{
+> +	atomic_sub(pages, &sbi->nr_pages[count_type]);
+> +}
+> +
+>   static inline void inode_dec_dirty_pages(struct inode *inode)
+>   {
+>   	if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode) &&
+> @@ -2716,7 +2738,7 @@ struct f2fs_stat_info {
+>   	unsigned long long hit_total, total_ext;
+>   	int ext_tree, zombie_tree, ext_node;
+>   	int ndirty_node, ndirty_dent, ndirty_meta, ndirty_data, ndirty_imeta;
+> -	int inmem_pages;
+> +	int inmem_pages, inmem_commit_pages;
+>   	unsigned int ndirty_dirs, ndirty_files, ndirty_all;
+>   	int nats, dirty_nats, sits, dirty_sits;
+>   	int free_nids, avail_nids, alloc_nids;
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 46dfbca..2ff1bba4 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -174,6 +174,8 @@ bool need_SSR(struct f2fs_sb_info *sbi)
+>   	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
+>   	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
+>   	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
+> +	int inmem_commit_secs = get_blocktype_secs(sbi,
+> +						F2FS_INMEM_COMMIT_PAGES);
+>   
+>   	if (test_opt(sbi, LFS))
+>   		return false;
+> @@ -181,7 +183,7 @@ bool need_SSR(struct f2fs_sb_info *sbi)
+>   		return true;
+>   
+>   	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
+> -						2 * reserved_sections(sbi));
+> +				inmem_commit_secs + 2 * reserved_sections(sbi));
+>   }
+>   
+>   void register_inmem_page(struct inode *inode, struct page *page)
+> @@ -210,6 +212,7 @@ void register_inmem_page(struct inode *inode, struct page *page)
+>   		list_add_tail(&fi->inmem_ilist, &sbi->inode_list[ATOMIC_FILE]);
+>   	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+>   	inc_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
+> +	fi->inmem_blocks++;
+>   	mutex_unlock(&fi->inmem_lock);
+>   
+>   	trace_f2fs_register_inmem_page(page, INMEM);
+> @@ -221,6 +224,7 @@ static int __revoke_inmem_pages(struct inode *inode,
+>   	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>   	struct inmem_pages *cur, *tmp;
+>   	int err = 0;
+> +	struct f2fs_inode_info *fi = F2FS_I(inode);
+>   
+>   	list_for_each_entry_safe(cur, tmp, head, list) {
+>   		struct page *page = cur->page;
+> @@ -263,6 +267,7 @@ static int __revoke_inmem_pages(struct inode *inode,
+>   		list_del(&cur->list);
+>   		kmem_cache_free(inmem_entry_slab, cur);
+>   		dec_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
+> +		fi->inmem_blocks--;
+>   	}
+>   	return err;
+>   }
+> @@ -302,6 +307,10 @@ void drop_inmem_pages(struct inode *inode)
+>   	if (!list_empty(&fi->inmem_ilist))
+>   		list_del_init(&fi->inmem_ilist);
+>   	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+> +	if (fi->inmem_blocks) {
+> +		f2fs_bug_on(sbi, 1);
+> +		fi->inmem_blocks = 0;
+> +	}
+>   	mutex_unlock(&fi->inmem_lock);
+>   
+>   	clear_inode_flag(inode, FI_ATOMIC_FILE);
+> @@ -326,6 +335,7 @@ void drop_inmem_page(struct inode *inode, struct page *page)
+>   
+>   	f2fs_bug_on(sbi, !cur || cur->page != page);
+>   	list_del(&cur->list);
+> +	fi->inmem_blocks--;
+>   	mutex_unlock(&fi->inmem_lock);
+>   
+>   	dec_page_count(sbi, F2FS_INMEM_PAGES);
+> @@ -354,7 +364,7 @@ static int __commit_inmem_pages(struct inode *inode,
+>   		.io_type = FS_DATA_IO,
+>   	};
+>   	pgoff_t last_idx = ULONG_MAX;
+> -	int err = 0;
+> +	int err = 0, inmem_blocks = fi->inmem_blocks;
+>   
+>   	list_for_each_entry_safe(cur, tmp, &fi->inmem_pages, list) {
+>   		struct page *page = cur->page;
+> @@ -390,6 +400,8 @@ static int __commit_inmem_pages(struct inode *inode,
+>   		}
+>   		unlock_page(page);
+>   		list_move_tail(&cur->list, revoke_list);
+> +		dec_page_count(sbi, F2FS_INMEM_COMMIT_PAGES);
+> +		inmem_blocks--;
+>   	}
+>   
+>   	if (last_idx != ULONG_MAX)
+> @@ -397,6 +409,8 @@ static int __commit_inmem_pages(struct inode *inode,
+>   
+>   	if (!err)
+>   		__revoke_inmem_pages(inode, revoke_list, false, false);
+> +	else
+> +		dec_pages_count(sbi, F2FS_INMEM_COMMIT_PAGES, inmem_blocks);
+>   
+>   	return err;
+>   }
+> @@ -409,12 +423,12 @@ int commit_inmem_pages(struct inode *inode)
+>   	int err;
+>   
+>   	INIT_LIST_HEAD(&revoke_list);
+> +	set_inode_flag(inode, FI_ATOMIC_COMMIT);
+> +	mutex_lock(&fi->inmem_lock);
+> +	inc_pages_count(sbi, F2FS_INMEM_COMMIT_PAGES, fi->inmem_blocks);
+>   	f2fs_balance_fs(sbi, true);
+>   	f2fs_lock_op(sbi);
+>   
+> -	set_inode_flag(inode, FI_ATOMIC_COMMIT);
+> -
+> -	mutex_lock(&fi->inmem_lock);
+>   	err = __commit_inmem_pages(inode, &revoke_list);
+>   	if (err) {
+>   		int ret;
+> @@ -437,11 +451,15 @@ int commit_inmem_pages(struct inode *inode)
+>   	if (!list_empty(&fi->inmem_ilist))
+>   		list_del_init(&fi->inmem_ilist);
+>   	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+> +	if (fi->inmem_blocks) {
+> +		f2fs_bug_on(sbi, 1);
+> +		fi->inmem_blocks = 0;
+> +	}
+> +	f2fs_unlock_op(sbi);
+>   	mutex_unlock(&fi->inmem_lock);
+>   
+>   	clear_inode_flag(inode, FI_ATOMIC_COMMIT);
+>   
+> -	f2fs_unlock_op(sbi);
+>   	return err;
+>   }
+>   
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index 8d93652..f3885de 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -503,12 +503,14 @@ static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
+>   	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
+>   	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
+>   	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
+> +	int inmem_commit_secs = get_blocktype_secs(sbi,
+> +						F2FS_INMEM_COMMIT_PAGES);
+>   
+>   	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
+>   		return false;
+>   
+>   	return (free_sections(sbi) + freed) <=
+> -		(node_secs + 2 * dent_secs + imeta_secs +
+> +		(node_secs + 2 * dent_secs + imeta_secs + inmem_commit_secs +
+>   		reserved_sections(sbi) + needed);
+>   }
+>   
 
 -- 
 Thanks,
 Yunlong Song
+
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
