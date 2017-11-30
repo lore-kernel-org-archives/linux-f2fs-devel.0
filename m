@@ -1,24 +1,26 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 1/2] f2fs: pass down write hints to block
- layer for bufferd write
-Date: Thu, 30 Nov 2017 15:06:25 +0800
-Message-ID: <d71418e1-d667-3dc6-9265-61db5d8f40bc@huawei.com>
-References: <1511828607-624-1-git-send-email-hyc.lee@gmail.com>
+Subject: Re: [PATCH] f2fs: remove a redundant conditional
+ expression
+Date: Thu, 30 Nov 2017 15:07:24 +0800
+Message-ID: <8179406b-46dc-a97c-34cf-76d0fd848f11@huawei.com>
+References: <CGME20171128121829epcas5p1d7a840229243b79f5b82d56d0b4dc38d@epcas5p1.samsung.com>
+ <000b01d36842$fed887d0$fc899770$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1eKIvo-0008EF-Ly
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Nov 2017 07:06:48 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.89) id 1eKIvm-0000cB-IG
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Nov 2017 07:06:48 +0000
-In-Reply-To: <1511828607-624-1-git-send-email-hyc.lee@gmail.com>
+ (envelope-from <yuchao0@huawei.com>) id 1eKIwa-0007cm-Uh
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Nov 2017 07:07:36 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eKIwZ-0001Vl-DP
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Nov 2017 07:07:36 +0000
+In-Reply-To: <000b01d36842$fed887d0$fc899770$@samsung.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -29,32 +31,17 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Hyunchul Lee <hyc.lee@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, kernel-team@lge.com, linux-fsdevel@vger.kernel.org, Hyunchul Lee <cheol.lee@lge.com>
+To: LiFan <fanofcode.li@samsung.com>, 'Chao Yu' <chao@kernel.org>, 'Jaegeuk
+ Kim' <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Hyunchul,
-
-On 2017/11/28 8:23, Hyunchul Lee wrote:
-> From: Hyunchul Lee <cheol.lee@lge.com>
+On 2017/11/28 20:17, LiFan wrote:
+> Avoid checking is_inode repeatedly, and make the logic 
+> a little bit clearer.
 > 
-> This implements which hint is passed down to block layer
-> for datas from the specific segment type.
-> 
-> segment type                     hints
-> ------------                     -----
-> COLD_NODE & COLD_DATA            WRITE_LIFE_EXTREME
-> WARM_DATA                        WRITE_LIFE_NONE
-> HOT_NODE & WARM_NODE             WRITE_LIFE_LONG
-> HOT_DATA                         WRITE_LIFE_MEDIUM
-> META_DATA                        WRITE_LIFE_SHORT
+> Signed-off-by: Fan li <fanofcode.li@samsung.com>
 
-Just noticed, if our user do not give the hint via ioctl, f2fs can
-provider hint to lower layer according to hot/cold separation ability,
-it will be okay. But once user give his hint which may be more accurate
-than filesystem, hint converted by f2fs may be wrong.
-
-So what do you think of adding an option to control whether filesystem
-can convert hint user given?
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
 
