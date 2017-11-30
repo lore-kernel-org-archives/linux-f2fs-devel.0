@@ -1,23 +1,21 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 2/3] f2fs: refactor __build_free_nids
-Date: Thu, 30 Nov 2017 19:32:10 +0800
-Message-ID: <20171130113211.62990-2-yuchao0@huawei.com>
-References: <20171130113211.62990-1-yuchao0@huawei.com>
+Subject: [PATCH 1/3] f2fs: avoid unneeded free nid building
+Date: Thu, 30 Nov 2017 19:32:09 +0800
+Message-ID: <20171130113211.62990-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1eKN53-0005FR-1M
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Nov 2017 11:32:37 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1eKN50-0003ST-OF
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Nov 2017 11:32:34 +0000
 Received: from szxga05-in.huawei.com ([45.249.212.191])
- by sfi-mx-1.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.89) id 1eKN4z-0000t6-SP
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Nov 2017 11:32:36 +0000
-In-Reply-To: <20171130113211.62990-1-yuchao0@huawei.com>
+ by sfi-mx-4.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.89) id 1eKN4z-0001AF-JW
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Nov 2017 11:32:34 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,110 +28,81 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Previously, in __build_free_nids we try to load bitmap from
-next_scan_nid pointed NAT block, but actually, due to nat_bits
-bitmap, current NAT blocks readed can be already ran out, so
-it makes __build_free_nids low efficiency.
-
-This patch refactors __build_free_nids a bit to search
-nat_block_bitmap first to find out which NAT blocks have not been
-loaded yet, and then do loading bitmaps.
+This patch adds nm_i::valid_bitmap_count to count current valid free
+nid bitmap, with it we can skip running into __build_free_nids more
+early.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/node.c | 54 ++++++++++++++++++++++++++++++++++--------------------
- 1 file changed, 34 insertions(+), 20 deletions(-)
+ fs/f2fs/f2fs.h |  1 +
+ fs/f2fs/node.c | 14 ++++++++++++++
+ 2 files changed, 15 insertions(+)
 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f08e0feb38c1..fd9c8d1bffd5 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -730,6 +730,7 @@ struct f2fs_nm_info {
+ 	unsigned char *nat_block_bitmap;
+ 	unsigned short *free_nid_count;	/* free nid count of NAT block */
+ 	unsigned int available_free_nids;	/* available free nid count in bitmaps */
++	unsigned int valid_bitmap_count;	/* valid bitmap count */
+ 
+ 	/* for checkpoint */
+ 	char *nat_bitmap;		/* NAT bitmap pointer */
 diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 4c758747980c..fb52622727ea 100644
+index d2c9dcb0cbf8..4c758747980c 100644
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
-@@ -1865,13 +1865,13 @@ static void scan_curseg_cache(struct f2fs_sb_info *sbi, nid_t start_nid,
- 	up_read(&curseg->journal_rwsem);
- }
+@@ -1882,6 +1882,7 @@ static void scan_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
+ 	nat_blk = page_address(page);
  
--static void scan_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
-+static void scan_nat_page(struct f2fs_sb_info *sbi, unsigned int nat_ofs)
- {
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct page *page;
- 	struct f2fs_nat_block *nat_blk;
- 	block_t blk_addr;
--	unsigned int nat_ofs = NAT_BLOCK_OFFSET(nid);
-+	nid_t nid = nat_ofs * NAT_ENTRY_PER_BLOCK;
- 	nid_t start_nid = nid;
- 	int i;
+ 	__set_bit_le(nat_ofs, nm_i->nat_block_bitmap);
++	nm_i->valid_bitmap_count++;
  
-@@ -1935,37 +1935,51 @@ static nid_t lookup_free_nid_bitmap(struct f2fs_sb_info *sbi)
- static void __build_free_nids(struct f2fs_sb_info *sbi, bool mount)
- {
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
--	int i = 0;
--	nid_t nid = nm_i->next_scan_nid;
-+	unsigned int pos, start, end, max_cnt = nm_i->nat_blocks;
-+	bool sync_ra = true;
+ 	i = nid % NAT_ENTRY_PER_BLOCK;
  
--	if (unlikely(nid >= nm_i->max_nid))
--		nid = 0;
-+	if (unlikely(nm_i->next_scan_nid >= nm_i->max_nid))
-+		nm_i->next_scan_nid = 0;
- 
- 	/* Enough entries */
- 	if (!mount && nm_i->available_free_nids >= NAT_ENTRY_PER_BLOCK)
- 		return;
- 
--	/* readahead nat pages to be scanned */
--	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nid), FREE_NID_PAGES,
--							META_NAT, true);
-+	start = NAT_BLOCK_OFFSET(nm_i->next_scan_nid);
- 
--	down_read(&nm_i->nat_tree_lock);
-+readahead:
-+	/* search unloaded bitmap in range of [start, max] */
-+	pos = find_next_zero_bit_le(nm_i->nat_block_bitmap, max_cnt, start);
-+	if (pos >= max_cnt) {
-+		if (!start)
-+			return;
-+		/* search unloaded bitmap in range of [0, start] */
-+		pos = find_next_zero_bit_le(nm_i->nat_block_bitmap, start, 0);
-+		if (pos >= start)
-+			return;
-+	}
- 
--	do {
--		scan_nat_page(sbi, nid);
-+	end = find_next_bit_le(nm_i->nat_block_bitmap, max_cnt, pos);
-+	end = min(end, start + FREE_NID_PAGES);
- 
--		nid += (NAT_ENTRY_PER_BLOCK - (nid % NAT_ENTRY_PER_BLOCK));
--		if (unlikely(nid >= nm_i->max_nid))
--			nid = 0;
--	} while (++i < FREE_NID_PAGES);
-+	/* readahead nat pages to be scanned */
-+	ra_meta_pages(sbi, pos, end - pos, META_NAT, sync_ra);
- 
--	/* go to the next free nat pages to find free nids abundantly */
--	nm_i->next_scan_nid = nid;
-+	if (!sync_ra)
-+		return;
- 
-+	down_read(&nm_i->nat_tree_lock);
-+	for (; pos < end; pos++)
-+		scan_nat_page(sbi, pos);
- 	up_read(&nm_i->nat_tree_lock);
- 
--	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nm_i->next_scan_nid),
--					nm_i->ra_nid_pages, META_NAT, false);
-+	/* go to the next free nat pages to find free nids abundantly */
-+	nm_i->next_scan_nid = end * NAT_ENTRY_PER_BLOCK;
-+
-+	/* do async readahead for continual nid allocation */
-+	start = NAT_BLOCK_OFFSET(nm_i->next_scan_nid);
-+	sync_ra = false;
-+	goto readahead;
- }
+@@ -1969,6 +1970,16 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool mount)
  
  void build_free_nids(struct f2fs_sb_info *sbi, bool mount)
+ {
++	/*
++	 * do not try to load nid bitmap from NAT blocks if all nid
++	 * bitmaps are available now.
++	 */
++	if (NM_I(sbi)->valid_bitmap_count >= NM_I(sbi)->nat_blocks) {
++		if (!mount)
++			cond_resched();
++		return;
++	}
++
+ 	mutex_lock(&NM_I(sbi)->build_lock);
+ 	__build_free_nids(sbi, mount);
+ 	mutex_unlock(&NM_I(sbi)->build_lock);
+@@ -2489,6 +2500,7 @@ static inline void load_free_nid_bitmap(struct f2fs_sb_info *sbi)
+ 			break;
+ 
+ 		__set_bit_le(i, nm_i->nat_block_bitmap);
++		nm_i->valid_bitmap_count++;
+ 
+ 		nid = i * NAT_ENTRY_PER_BLOCK;
+ 		last_nid = nid + NAT_ENTRY_PER_BLOCK;
+@@ -2505,6 +2517,7 @@ static inline void load_free_nid_bitmap(struct f2fs_sb_info *sbi)
+ 			break;
+ 
+ 		__set_bit_le(i, nm_i->nat_block_bitmap);
++		nm_i->valid_bitmap_count++;
+ 	}
+ 
+ 	scan_curseg_cache(sbi, 0, nm_i->max_nid);
+@@ -2529,6 +2542,7 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
+ 	nm_i->available_nids = nm_i->max_nid - sbi->total_valid_node_count -
+ 				sbi->nquota_files - F2FS_RESERVED_NODE_NUM;
+ 	nm_i->available_free_nids = 0;
++	nm_i->valid_bitmap_count = 0;
+ 	nm_i->nat_cnt = 0;
+ 	nm_i->ram_thresh = DEF_RAM_THRESHOLD;
+ 	nm_i->ra_nid_pages = DEF_RA_NID_PAGES;
 -- 
 2.15.0.55.gc2ece9dc4de6
 
