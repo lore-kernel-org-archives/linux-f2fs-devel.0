@@ -1,81 +1,134 @@
-From: Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH v2 5/5] f2fs: switch to fscrypt_prepare_setattr()
-Date: Wed, 29 Nov 2017 12:35:32 -0800
-Message-ID: <20171129203532.87729-6-ebiggers3@gmail.com>
-References: <20171129203532.87729-1-ebiggers3@gmail.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: Re: [PATCH] f2fs: avoid false positive of free secs check
+Date: Thu, 30 Nov 2017 10:42:53 +0800
+Message-ID: <277e385f-650f-fe29-ac41-ff847a1b7858@huawei.com>
+References: <1511765699-47553-1-git-send-email-yunlong.song@huawei.com>
+ <ee9ea493-1c61-2b19-f2ea-ec9278ae6543@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
- helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <ebiggers3@gmail.com>) id 1eK96O-0004Bk-8H
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Nov 2017 20:37:04 +0000
-Received: from mail-io0-f195.google.com ([209.85.223.195])
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.89)
- id 1eK96M-00057O-AY
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Nov 2017 20:37:04 +0000
-Received: by mail-io0-f195.google.com with SMTP id h12so5110617iof.6
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 29 Nov 2017 12:37:02 -0800 (PST)
-In-Reply-To: <20171129203532.87729-1-ebiggers3@gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-fscrypt@vger.kernel.org, Eric Biggers <ebiggers@google.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <ee9ea493-1c61-2b19-f2ea-ec9278ae6543@kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+SSR can make hot/warm/cold nodes written together, so why should we account
+them different?
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/f2fs/file.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+On 2017/11/29 19:56, Chao Yu wrote:
+> On 2017/11/27 14:54, Yunlong Song wrote:
+>> Sometimes f2fs_gc is called with no target victim (e.g. xfstest
+>> generic/027, ndirty_node:545 ndiry_dent:1 ndirty_imeta:513 rsvd_segs:21
+>> free_segs:27, has_not_enough_free_secs will return true). This patch
+>> first merges pages and then converts into sections.
+> I don't think this could be right, IMO, instead, it would be better to
+> account dirty hot/warm/cold nodes or imeta separately, as actually, they
+> will use different section, but currently, our calculation way is based
+> on that they could be written to same section.
+>
+> Thanks,
+>
+>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>> ---
+>>   fs/f2fs/f2fs.h    |  9 ---------
+>>   fs/f2fs/segment.c | 12 +++++++-----
+>>   fs/f2fs/segment.h | 13 +++++++++----
+>>   3 files changed, 16 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index ca6b0c9..e89cff7 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -1675,15 +1675,6 @@ static inline int get_dirty_pages(struct inode *inode)
+>>   	return atomic_read(&F2FS_I(inode)->dirty_pages);
+>>   }
+>>   
+>> -static inline int get_blocktype_secs(struct f2fs_sb_info *sbi, int block_type)
+>> -{
+>> -	unsigned int pages_per_sec = sbi->segs_per_sec * sbi->blocks_per_seg;
+>> -	unsigned int segs = (get_pages(sbi, block_type) + pages_per_sec - 1) >>
+>> -						sbi->log_blocks_per_seg;
+>> -
+>> -	return segs / sbi->segs_per_sec;
+>> -}
+>> -
+>>   static inline block_t valid_user_blocks(struct f2fs_sb_info *sbi)
+>>   {
+>>   	return sbi->total_valid_block_count;
+>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>> index c117e09..603f805 100644
+>> --- a/fs/f2fs/segment.c
+>> +++ b/fs/f2fs/segment.c
+>> @@ -171,17 +171,19 @@ static unsigned long __find_rev_next_zero_bit(const unsigned long *addr,
+>>   
+>>   bool need_SSR(struct f2fs_sb_info *sbi)
+>>   {
+>> -	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
+>> -	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
+>> -	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
+>> +	s64 node_pages = get_pages(sbi, F2FS_DIRTY_NODES);
+>> +	s64 dent_pages = get_pages(sbi, F2FS_DIRTY_DENTS);
+>> +	s64 imeta_pages = get_pages(sbi, F2FS_DIRTY_IMETA);
+>>   
+>>   	if (test_opt(sbi, LFS))
+>>   		return false;
+>>   	if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
+>>   		return true;
+>>   
+>> -	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
+>> -			SM_I(sbi)->min_ssr_sections + reserved_sections(sbi));
+>> +	return free_sections(sbi) <=
+>> +		(PAGE2SEC(sbi, node_pages + imeta_pages) +
+>> +		PAGE2SEC(sbi, 2 * dent_pages) +
+>> +		SM_I(sbi)->min_ssr_sections + reserved_sections(sbi));
+>>   }
+>>   
+>>   void register_inmem_page(struct inode *inode, struct page *page)
+>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+>> index d1d394c..723d79e 100644
+>> --- a/fs/f2fs/segment.h
+>> +++ b/fs/f2fs/segment.h
+>> @@ -115,6 +115,10 @@
+>>   #define SECTOR_TO_BLOCK(sectors)					\
+>>   	((sectors) >> F2FS_LOG_SECTORS_PER_BLOCK)
+>>   
+>> +#define PAGE2SEC(sbi, pages)				\
+>> +	((((pages) + BLKS_PER_SEC(sbi) - 1)		\
+>> +	>> sbi->log_blocks_per_seg) / sbi->segs_per_sec)
+>> +
+>>   /*
+>>    * indicate a block allocation direction: RIGHT and LEFT.
+>>    * RIGHT means allocating new sections towards the end of volume.
+>> @@ -527,9 +531,9 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi)
+>>   static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
+>>   					int freed, int needed)
+>>   {
+>> -	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
+>> -	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
+>> -	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
+>> +	s64 node_pages = get_pages(sbi, F2FS_DIRTY_NODES);
+>> +	s64 dent_pages = get_pages(sbi, F2FS_DIRTY_DENTS);
+>> +	s64 imeta_pages = get_pages(sbi, F2FS_DIRTY_IMETA);
+>>   
+>>   	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
+>>   		return false;
+>> @@ -538,7 +542,8 @@ static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
+>>   			has_curseg_enough_space(sbi))
+>>   		return false;
+>>   	return (free_sections(sbi) + freed) <=
+>> -		(node_secs + 2 * dent_secs + imeta_secs +
+>> +		(PAGE2SEC(sbi, node_pages + imeta_pages) +
+>> +		PAGE2SEC(sbi, 2 * dent_pages) +
+>>   		reserved_sections(sbi) + needed);
+>>   }
+>>   
+>>
+> .
+>
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index ae2cf96190e4..52b8f95b9bee 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -743,6 +743,10 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
- 	if (err)
- 		return err;
- 
-+	err = fscrypt_prepare_setattr(dentry, attr);
-+	if (err)
-+		return err;
-+
- 	if (is_quota_modification(inode, attr)) {
- 		err = dquot_initialize(inode);
- 		if (err)
-@@ -758,14 +762,6 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
- 	}
- 
- 	if (attr->ia_valid & ATTR_SIZE) {
--		if (f2fs_encrypted_inode(inode)) {
--			err = fscrypt_get_encryption_info(inode);
--			if (err)
--				return err;
--			if (!fscrypt_has_encryption_key(inode))
--				return -ENOKEY;
--		}
--
- 		if (attr->ia_size <= i_size_read(inode)) {
- 			down_write(&F2FS_I(inode)->i_mmap_sem);
- 			truncate_setsize(inode, attr->ia_size);
 -- 
-2.15.0.531.g2ccb3012c9-goog
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+Thanks,
+Yunlong Song
