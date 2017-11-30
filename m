@@ -1,140 +1,83 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: avoid false positive of free secs check
-Date: Thu, 30 Nov 2017 15:15:11 +0800
-Message-ID: <3cbc03ab-5918-d8b9-fced-18f1c674f2da@huawei.com>
-References: <1511765699-47553-1-git-send-email-yunlong.song@huawei.com>
- <ee9ea493-1c61-2b19-f2ea-ec9278ae6543@kernel.org>
- <277e385f-650f-fe29-ac41-ff847a1b7858@huawei.com>
+Subject: [PATCH 6/7] f2fs: clean up f2fs_map_blocks
+Date: Thu, 30 Nov 2017 19:28:22 +0800
+Message-ID: <20171130112823.100494-6-yuchao0@huawei.com>
+References: <20171130112823.100494-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <277e385f-650f-fe29-ac41-ff847a1b7858@huawei.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>, Chao Yu <chao@kernel.org>, jaegeuk@kernel.org, yunlong.song@icloud.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+ helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <yuchao0@huawei.com>) id 1eKN1R-0005X2-B4
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Nov 2017 11:28:53 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191])
+ by sfi-mx-3.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.89) id 1eKN1P-0007dX-Oc
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Nov 2017 11:28:53 +0000
+In-Reply-To: <20171130112823.100494-1-yuchao0@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/11/30 10:42, Yunlong Song wrote:
-> SSR can make hot/warm/cold nodes written together, so why should we account
-> them different?
+f2fs_map_blocks():
 
-Current segment which is using ssr allocation has only one valid type, so we
-can not write data/node with different type into current segment which already
-has fixed type, right?
+if (blkaddr == NEW_ADDR || blkaddr == NULL_ADDR) {
+	if (create) {
+		...
+	} else {
+		...
+		if (flag == F2FS_GET_BLOCK_FIEMAP &&
+					blkaddr == NULL_ADDR) {
+			...
+		}
+		if (flag != F2FS_GET_BLOCK_FIEMAP ||
+					blkaddr != NEW_ADDR)
+			goto sync_out;
+	}
 
-Thanks,
+It means we can break the loop in cases of:
+a) flag != F2FS_GET_BLOCK_FIEMAP or
+b) flag == F2FS_GET_BLOCK_FIEMAP && blkaddr == NULL_ADDR
 
-> 
-> On 2017/11/29 19:56, Chao Yu wrote:
->> On 2017/11/27 14:54, Yunlong Song wrote:
->>> Sometimes f2fs_gc is called with no target victim (e.g. xfstest
->>> generic/027, ndirty_node:545 ndiry_dent:1 ndirty_imeta:513 rsvd_segs:21
->>> free_segs:27, has_not_enough_free_secs will return true). This patch
->>> first merges pages and then converts into sections.
->> I don't think this could be right, IMO, instead, it would be better to
->> account dirty hot/warm/cold nodes or imeta separately, as actually, they
->> will use different section, but currently, our calculation way is based
->> on that they could be written to same section.
->>
->> Thanks,
->>
->>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->>> ---
->>>   fs/f2fs/f2fs.h    |  9 ---------
->>>   fs/f2fs/segment.c | 12 +++++++-----
->>>   fs/f2fs/segment.h | 13 +++++++++----
->>>   3 files changed, 16 insertions(+), 18 deletions(-)
->>>
->>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>> index ca6b0c9..e89cff7 100644
->>> --- a/fs/f2fs/f2fs.h
->>> +++ b/fs/f2fs/f2fs.h
->>> @@ -1675,15 +1675,6 @@ static inline int get_dirty_pages(struct inode *inode)
->>>   	return atomic_read(&F2FS_I(inode)->dirty_pages);
->>>   }
->>>   
->>> -static inline int get_blocktype_secs(struct f2fs_sb_info *sbi, int block_type)
->>> -{
->>> -	unsigned int pages_per_sec = sbi->segs_per_sec * sbi->blocks_per_seg;
->>> -	unsigned int segs = (get_pages(sbi, block_type) + pages_per_sec - 1) >>
->>> -						sbi->log_blocks_per_seg;
->>> -
->>> -	return segs / sbi->segs_per_sec;
->>> -}
->>> -
->>>   static inline block_t valid_user_blocks(struct f2fs_sb_info *sbi)
->>>   {
->>>   	return sbi->total_valid_block_count;
->>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>> index c117e09..603f805 100644
->>> --- a/fs/f2fs/segment.c
->>> +++ b/fs/f2fs/segment.c
->>> @@ -171,17 +171,19 @@ static unsigned long __find_rev_next_zero_bit(const unsigned long *addr,
->>>   
->>>   bool need_SSR(struct f2fs_sb_info *sbi)
->>>   {
->>> -	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
->>> -	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
->>> -	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
->>> +	s64 node_pages = get_pages(sbi, F2FS_DIRTY_NODES);
->>> +	s64 dent_pages = get_pages(sbi, F2FS_DIRTY_DENTS);
->>> +	s64 imeta_pages = get_pages(sbi, F2FS_DIRTY_IMETA);
->>>   
->>>   	if (test_opt(sbi, LFS))
->>>   		return false;
->>>   	if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
->>>   		return true;
->>>   
->>> -	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
->>> -			SM_I(sbi)->min_ssr_sections + reserved_sections(sbi));
->>> +	return free_sections(sbi) <=
->>> +		(PAGE2SEC(sbi, node_pages + imeta_pages) +
->>> +		PAGE2SEC(sbi, 2 * dent_pages) +
->>> +		SM_I(sbi)->min_ssr_sections + reserved_sections(sbi));
->>>   }
->>>   
->>>   void register_inmem_page(struct inode *inode, struct page *page)
->>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
->>> index d1d394c..723d79e 100644
->>> --- a/fs/f2fs/segment.h
->>> +++ b/fs/f2fs/segment.h
->>> @@ -115,6 +115,10 @@
->>>   #define SECTOR_TO_BLOCK(sectors)					\
->>>   	((sectors) >> F2FS_LOG_SECTORS_PER_BLOCK)
->>>   
->>> +#define PAGE2SEC(sbi, pages)				\
->>> +	((((pages) + BLKS_PER_SEC(sbi) - 1)		\
->>> +	>> sbi->log_blocks_per_seg) / sbi->segs_per_sec)
->>> +
->>>   /*
->>>    * indicate a block allocation direction: RIGHT and LEFT.
->>>    * RIGHT means allocating new sections towards the end of volume.
->>> @@ -527,9 +531,9 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi)
->>>   static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
->>>   					int freed, int needed)
->>>   {
->>> -	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
->>> -	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
->>> -	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
->>> +	s64 node_pages = get_pages(sbi, F2FS_DIRTY_NODES);
->>> +	s64 dent_pages = get_pages(sbi, F2FS_DIRTY_DENTS);
->>> +	s64 imeta_pages = get_pages(sbi, F2FS_DIRTY_IMETA);
->>>   
->>>   	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
->>>   		return false;
->>> @@ -538,7 +542,8 @@ static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
->>>   			has_curseg_enough_space(sbi))
->>>   		return false;
->>>   	return (free_sections(sbi) + freed) <=
->>> -		(node_secs + 2 * dent_secs + imeta_secs +
->>> +		(PAGE2SEC(sbi, node_pages + imeta_pages) +
->>> +		PAGE2SEC(sbi, 2 * dent_pages) +
->>>   		reserved_sections(sbi) + needed);
->>>   }
->>>   
->>>
->> .
->>
-> 
+Condition b) is the same as previous one, so merge operations of them
+for readability.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/data.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index c792f13081db..c24ea5be2a67 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -988,9 +988,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ 						blkaddr == NULL_ADDR) {
+ 				if (map->m_next_pgofs)
+ 					*map->m_next_pgofs = pgofs + 1;
++				goto sync_out;
+ 			}
+-			if (flag != F2FS_GET_BLOCK_FIEMAP ||
+-						blkaddr != NEW_ADDR)
++			if (flag != F2FS_GET_BLOCK_FIEMAP)
+ 				goto sync_out;
+ 		}
+ 	}
+-- 
+2.15.0.55.gc2ece9dc4de6
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
