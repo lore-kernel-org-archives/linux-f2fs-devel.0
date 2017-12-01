@@ -1,26 +1,27 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2 0/5] f2fs: switch to new fscrypt helper
- functions
-Date: Thu, 30 Nov 2017 23:12:42 -0800
-Message-ID: <20171201071242.GA86192@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20171129203532.87729-1-ebiggers3@gmail.com>
+Subject: Re: [PATCH 1/2] f2fs: pass down write hints to block
+ layer for bufferd write
+Date: Thu, 30 Nov 2017 23:28:20 -0800
+Message-ID: <20171201072820.GB86192@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1511828607-624-1-git-send-email-hyc.lee@gmail.com>
+ <f5d08de4-b2f8-78f0-2a2e-3d5569e898ef@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
  helo=mx.sourceforge.net)
  by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1eKfVB-0001Oq-P9
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Dec 2017 07:12:49 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1eKfkJ-0001li-Q4
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Dec 2017 07:28:27 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eKfVB-0003Qz-0y
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Dec 2017 07:12:49 +0000
+ id 1eKfkI-0002Cm-Nb
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Dec 2017 07:28:27 +0000
 Content-Disposition: inline
-In-Reply-To: <20171129203532.87729-1-ebiggers3@gmail.com>
+In-Reply-To: <f5d08de4-b2f8-78f0-2a2e-3d5569e898ef@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,33 +31,142 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: linux-fscrypt@vger.kernel.org, Eric Biggers <ebiggers@google.com>, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, Hyunchul Lee <hyc.lee@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, kernel-team@lge.com, linux-fsdevel@vger.kernel.org, Hyunchul Lee <cheol.lee@lge.com>
 
-Thanks, merged.
+On 11/30, Chao Yu wrote:
+> On 2017/11/28 8:23, Hyunchul Lee wrote:
+> > From: Hyunchul Lee <cheol.lee@lge.com>
+> > 
+> > This implements which hint is passed down to block layer
+> > for datas from the specific segment type.
+> > 
+> > segment type                     hints
+> > ------------                     -----
+> > COLD_NODE & COLD_DATA            WRITE_LIFE_EXTREME
+> > WARM_DATA                        WRITE_LIFE_NONE
+> > HOT_NODE & WARM_NODE             WRITE_LIFE_LONG
+> > HOT_DATA                         WRITE_LIFE_MEDIUM
+> > META_DATA                        WRITE_LIFE_SHORT
+> 
+> The correspondence looks good to me.
 
-On 11/29, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+Still, I don't fully get the point. Why do we have to assign WRITE_LIFE_NONE
+to WARM_DATA? Why not using WRITE_LIFE_NOT_SET?
+
+> > 
+> > Many thanks to Chao Yu and Jaegeuk Kim for comments to
+> > implement this patch.
+> > 
+> > Signed-off-by: Hyunchul Lee <cheol.lee@lge.com>
+> > ---
+> >  fs/f2fs/data.c    |  1 +
+> >  fs/f2fs/f2fs.h    |  2 ++
+> >  fs/f2fs/segment.c | 29 +++++++++++++++++++++++++++++
+> >  fs/f2fs/super.c   |  2 ++
+> >  4 files changed, 34 insertions(+)
+> > 
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index a7ae418..0919a43 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -437,6 +437,7 @@ int f2fs_submit_page_write(struct f2fs_io_info *fio)
+> >  		}
+> >  		io->bio = __bio_alloc(sbi, fio->new_blkaddr,
+> >  						BIO_MAX_PAGES, false);
+> > +		io->bio->bi_write_hint = io->write_hint;
 > 
-> This series switches f2fs to use the fscrypt helper functions for
-> open/link/rename/lookup/setattr introduced in v4.15.
+> Need to assign bi_write_hint for IPU path?
 > 
-> These patches were originally sent in "[PATCH 00/25] fscrypt: add some
-> higher-level helper functions".  I've rebased them onto v4.15-rc1.
+> - rewrite_data_page
+>  - f2fs_submit_page_bio
 > 
-> Eric Biggers (5):
->   f2fs: switch to fscrypt_file_open()
->   f2fs: switch to fscrypt_prepare_link()
->   f2fs: switch to fscrypt_prepare_rename()
->   f2fs: switch to fscrypt_prepare_lookup()
->   f2fs: switch to fscrypt_prepare_setattr()
+> >  		io->fio = *fio;
+> >  	}
+> >  
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 7bcd148..be3cb0c 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -969,6 +969,7 @@ struct f2fs_bio_info {
+> >  	struct rw_semaphore io_rwsem;	/* blocking op for bio */
+> >  	spinlock_t io_lock;		/* serialize DATA/NODE IOs */
+> >  	struct list_head io_list;	/* track fios */
+> > +	enum rw_hint write_hint;
 > 
->  fs/f2fs/file.c  | 30 +++++++-----------------------
->  fs/f2fs/namei.c | 54 +++++++++++++-----------------------------------------
->  2 files changed, 20 insertions(+), 64 deletions(-)
+> Add missing comment?
 > 
-> -- 
-> 2.15.0.531.g2ccb3012c9-goog
+> >  };
+> >  
+> >  #define FDEV(i)				(sbi->devs[i])
+> > @@ -2674,6 +2675,7 @@ int lookup_journal_in_cursum(struct f2fs_journal *journal, int type,
+> >  int __init create_segment_manager_caches(void);
+> >  void destroy_segment_manager_caches(void);
+> >  int rw_hint_to_seg_type(enum rw_hint hint);
+> > +enum rw_hint io_type_to_rw_hint(enum page_type page, enum temp_type temp);
+> >  
+> >  /*
+> >   * checkpoint.c
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index c117e09..0570db7 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -2446,6 +2446,35 @@ int rw_hint_to_seg_type(enum rw_hint hint)
+> >  	}
+> >  }
+> >  
+> 
+> It will be better to copy commit log here to declare correspondence
+> more clearly.
+> 
+> Thanks,
+> 
+> > +enum rw_hint io_type_to_rw_hint(enum page_type page, enum temp_type temp)
+> > +{
+> > +	if (page == DATA) {
+> > +		switch (temp) {
+> > +		case WARM:
+> > +			return WRITE_LIFE_NONE;
+> > +		case COLD:
+> > +			return WRITE_LIFE_EXTREME;
+> > +		case HOT:
+> > +			return WRITE_LIFE_MEDIUM;
+> > +		default:
+> > +			return WRITE_LIFE_NOT_SET;
+> > +		}
+> > +	} else if (page == NODE) {
+> > +		switch (temp) {
+> > +		case WARM:
+> > +		case HOT:
+> > +			return WRITE_LIFE_LONG;
+> > +		case COLD:
+> > +			return WRITE_LIFE_EXTREME;
+> > +		default:
+> > +			return WRITE_LIFE_NOT_SET;
+> > +		}
+> > +
+> > +	} else {
+> > +		return WRITE_LIFE_SHORT;
+> > +	}
+> > +}
+> > +
+> >  static int __get_segment_type_2(struct f2fs_io_info *fio)
+> >  {
+> >  	if (fio->type == DATA)
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index a6c5dd4..51c19a0 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -2508,6 +2508,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> >  			sbi->write_io[i][j].bio = NULL;
+> >  			spin_lock_init(&sbi->write_io[i][j].io_lock);
+> >  			INIT_LIST_HEAD(&sbi->write_io[i][j].io_list);
+> > +			sbi->write_io[i][j].write_hint =
+> > +						io_type_to_rw_hint(i, j);
+> >  		}
+> >  	}
+> >  
+> > 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
