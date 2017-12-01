@@ -1,89 +1,158 @@
 From: Hyunchul Lee <hyc.lee@gmail.com>
-Subject: Re: [PATCH 1/2] f2fs: pass down write hints to block
- layer for bufferd write
-Date: Fri, 01 Dec 2017 17:28:23 +0900
-Message-ID: <5A2112A7.2070208@gmail.com>
-References: <1511828607-624-1-git-send-email-hyc.lee@gmail.com>
- <d71418e1-d667-3dc6-9265-61db5d8f40bc@huawei.com>
+Subject: Re: [PATCH 1/2] f2fs: pass down write hints to block layer for bufferd
+ write
+Date: Fri, 01 Dec 2017 17:50:11 +0900
+Message-ID: <5A2117C3.804@gmail.com>
+References: <1511828607-624-1-git-send-email-hyc.lee@gmail.com> <f5d08de4-b2f8-78f0-2a2e-3d5569e898ef@huawei.com> <20171201072820.GB86192@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
- helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <hyc.lee@gmail.com>) id 1eKggT-0005Qr-48
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Dec 2017 08:28:33 +0000
-Received: from lgeamrelo11.lge.com ([156.147.23.51])
- by sfi-mx-4.v28.ch3.sourceforge.com with esmtp (Exim 4.89)
- id 1eKggR-0001sF-18
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Dec 2017 08:28:33 +0000
-In-Reply-To: <d71418e1-d667-3dc6-9265-61db5d8f40bc@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, kernel-team@lge.com, linux-fsdevel@vger.kernel.org, Hyunchul Lee <cheol.lee@lge.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171201072820.GB86192@jaegeuk-macbookpro.roam.corp.google.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, kernel-team@lge.com, Jens Axboe <axboe@kernel.dk>, Hyunchul Lee <cheol.lee@lge.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Chao,
+Hi Jaegeuk,
 
-On 11/30/2017 04:06 PM, Chao Yu wrote:
-> Hi Hyunchul,
-> 
-> On 2017/11/28 8:23, Hyunchul Lee wrote:
->> From: Hyunchul Lee <cheol.lee@lge.com>
+On 12/01/2017 04:28 PM, Jaegeuk Kim wrote:
+> On 11/30, Chao Yu wrote:
+>> On 2017/11/28 8:23, Hyunchul Lee wrote:
+>>> From: Hyunchul Lee <cheol.lee@lge.com>
+>>>
+>>> This implements which hint is passed down to block layer
+>>> for datas from the specific segment type.
+>>>
+>>> segment type                     hints
+>>> ------------                     -----
+>>> COLD_NODE & COLD_DATA            WRITE_LIFE_EXTREME
+>>> WARM_DATA                        WRITE_LIFE_NONE
+>>> HOT_NODE & WARM_NODE             WRITE_LIFE_LONG
+>>> HOT_DATA                         WRITE_LIFE_MEDIUM
+>>> META_DATA                        WRITE_LIFE_SHORT
 >>
->> This implements which hint is passed down to block layer
->> for datas from the specific segment type.
->>
->> segment type                     hints
->> ------------                     -----
->> COLD_NODE & COLD_DATA            WRITE_LIFE_EXTREME
->> WARM_DATA                        WRITE_LIFE_NONE
->> HOT_NODE & WARM_NODE             WRITE_LIFE_LONG
->> HOT_DATA                         WRITE_LIFE_MEDIUM
->> META_DATA                        WRITE_LIFE_SHORT
+>> The correspondence looks good to me.
 > 
-> Just noticed, if our user do not give the hint via ioctl, f2fs can
-> provider hint to lower layer according to hot/cold separation ability,
-> it will be okay. But once user give his hint which may be more accurate
-> than filesystem, hint converted by f2fs may be wrong.
-> 
-> So what do you think of adding an option to control whether filesystem
-> can convert hint user given?
+> Still, I don't fully get the point. Why do we have to assign WRITE_LIFE_NONE
+> to WARM_DATA? Why not using WRITE_LIFE_NOT_SET?
 > 
 
-I think it is okay for LIFE_SHORT and LIFE_EXTREME. because they are 
-converted to different hints.
-
-file hint      segment type        io hint
----------      ------------        -------
-LIFE_SHORT     HOT_DATA            LIFE_MEDIUM
-LIFE_MEDIUM    WARM_DATA           LIFE_NONE
-LIFE_LONG      WARM_DATA           LIFE_NONE
-LIFE_EXTREME   COLD_DATA           LIFE_EXTREME
-
-the problem is that LIFE_MEDIUM and LIFE_LONG are converted to 
-the same hint, LIFE_NONE. I am not sure that the seperation between 
-LIFE_MEDIUM and LIFE_LONG is really needed. Because I guess that the 
-difference between them is a little ambigous for users, and if WARM_DATA 
-segment has two different hints, it can makes GC non-efficient.
-
-I wonder your thought about this.
+I think LIFE_NONE and LIFE_NOT_SET are the same. So I chose LIFE_NONE simply.
 
 Thanks.
 
-> Thanks,
+>>>
+>>> Many thanks to Chao Yu and Jaegeuk Kim for comments to
+>>> implement this patch.
+>>>
+>>> Signed-off-by: Hyunchul Lee <cheol.lee@lge.com>
+>>> ---
+>>>  fs/f2fs/data.c    |  1 +
+>>>  fs/f2fs/f2fs.h    |  2 ++
+>>>  fs/f2fs/segment.c | 29 +++++++++++++++++++++++++++++
+>>>  fs/f2fs/super.c   |  2 ++
+>>>  4 files changed, 34 insertions(+)
+>>>
+>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>> index a7ae418..0919a43 100644
+>>> --- a/fs/f2fs/data.c
+>>> +++ b/fs/f2fs/data.c
+>>> @@ -437,6 +437,7 @@ int f2fs_submit_page_write(struct f2fs_io_info *fio)
+>>>  		}
+>>>  		io->bio = __bio_alloc(sbi, fio->new_blkaddr,
+>>>  						BIO_MAX_PAGES, false);
+>>> +		io->bio->bi_write_hint = io->write_hint;
+>>
+>> Need to assign bi_write_hint for IPU path?
+>>
+>> - rewrite_data_page
+>>  - f2fs_submit_page_bio
+>>
+>>>  		io->fio = *fio;
+>>>  	}
+>>>  
+>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>> index 7bcd148..be3cb0c 100644
+>>> --- a/fs/f2fs/f2fs.h
+>>> +++ b/fs/f2fs/f2fs.h
+>>> @@ -969,6 +969,7 @@ struct f2fs_bio_info {
+>>>  	struct rw_semaphore io_rwsem;	/* blocking op for bio */
+>>>  	spinlock_t io_lock;		/* serialize DATA/NODE IOs */
+>>>  	struct list_head io_list;	/* track fios */
+>>> +	enum rw_hint write_hint;
+>>
+>> Add missing comment?
+>>
+>>>  };
+>>>  
+>>>  #define FDEV(i)				(sbi->devs[i])
+>>> @@ -2674,6 +2675,7 @@ int lookup_journal_in_cursum(struct f2fs_journal *journal, int type,
+>>>  int __init create_segment_manager_caches(void);
+>>>  void destroy_segment_manager_caches(void);
+>>>  int rw_hint_to_seg_type(enum rw_hint hint);
+>>> +enum rw_hint io_type_to_rw_hint(enum page_type page, enum temp_type temp);
+>>>  
+>>>  /*
+>>>   * checkpoint.c
+>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>> index c117e09..0570db7 100644
+>>> --- a/fs/f2fs/segment.c
+>>> +++ b/fs/f2fs/segment.c
+>>> @@ -2446,6 +2446,35 @@ int rw_hint_to_seg_type(enum rw_hint hint)
+>>>  	}
+>>>  }
+>>>  
+>>
+>> It will be better to copy commit log here to declare correspondence
+>> more clearly.
+>>
+>> Thanks,
+>>
+>>> +enum rw_hint io_type_to_rw_hint(enum page_type page, enum temp_type temp)
+>>> +{
+>>> +	if (page == DATA) {
+>>> +		switch (temp) {
+>>> +		case WARM:
+>>> +			return WRITE_LIFE_NONE;
+>>> +		case COLD:
+>>> +			return WRITE_LIFE_EXTREME;
+>>> +		case HOT:
+>>> +			return WRITE_LIFE_MEDIUM;
+>>> +		default:
+>>> +			return WRITE_LIFE_NOT_SET;
+>>> +		}
+>>> +	} else if (page == NODE) {
+>>> +		switch (temp) {
+>>> +		case WARM:
+>>> +		case HOT:
+>>> +			return WRITE_LIFE_LONG;
+>>> +		case COLD:
+>>> +			return WRITE_LIFE_EXTREME;
+>>> +		default:
+>>> +			return WRITE_LIFE_NOT_SET;
+>>> +		}
+>>> +
+>>> +	} else {
+>>> +		return WRITE_LIFE_SHORT;
+>>> +	}
+>>> +}
+>>> +
+>>>  static int __get_segment_type_2(struct f2fs_io_info *fio)
+>>>  {
+>>>  	if (fio->type == DATA)
+>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>> index a6c5dd4..51c19a0 100644
+>>> --- a/fs/f2fs/super.c
+>>> +++ b/fs/f2fs/super.c
+>>> @@ -2508,6 +2508,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>>  			sbi->write_io[i][j].bio = NULL;
+>>>  			spin_lock_init(&sbi->write_io[i][j].io_lock);
+>>>  			INIT_LIST_HEAD(&sbi->write_io[i][j].io_list);
+>>> +			sbi->write_io[i][j].write_hint =
+>>> +						io_type_to_rw_hint(i, j);
+>>>  		}
+>>>  	}
+>>>  
+>>>
 > 
-> 
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
