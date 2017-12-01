@@ -1,22 +1,25 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/6] f2fs-tools: build tools selectively
-Date: Thu, 30 Nov 2017 21:51:52 -0800
-Message-ID: <20171201055157.72846-1-jaegeuk@kernel.org>
+Subject: [PATCH 3/6] mkfs.f2fs: match uid/gid/projid between root
+ inode and quota info
+Date: Thu, 30 Nov 2017 21:51:54 -0800
+Message-ID: <20171201055157.72846-3-jaegeuk@kernel.org>
+References: <20171201055157.72846-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
  by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1eKeFG-0008M7-71
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Dec 2017 05:52:18 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1eKeFH-0008MD-4L
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Dec 2017 05:52:19 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eKeFF-0008Qt-EA
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Dec 2017 05:52:18 +0000
+ id 1eKeFG-0004B1-Ci
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Dec 2017 05:52:19 +0000
+In-Reply-To: <20171201055157.72846-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,68 +32,63 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch enables to build tools except mkfs.f2fs selectively.
+This patch fixes mismatched root inode and quota info.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fsck/main.c       | 11 ++++++++++-
- include/f2fs_fs.h |  5 +++++
- 2 files changed, 15 insertions(+), 1 deletion(-)
+ mkfs/f2fs_format.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/fsck/main.c b/fsck/main.c
-index 543c10f..9d9cc0c 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -637,23 +637,32 @@ fsck_again:
- 	case FSCK:
- 		do_fsck(sbi);
- 		break;
-+#ifdef WITH_DUMP
- 	case DUMP:
- 		do_dump(sbi);
- 		break;
--#ifndef WITH_ANDROID
-+#endif
-+#ifdef WITH_DEFRAG
- 	case DEFRAG:
- 		ret = do_defrag(sbi);
- 		if (ret)
- 			goto out_err;
- 		break;
-+#endif
-+#ifdef WITH_RESIZE
- 	case RESIZE:
- 		if (do_resize(sbi))
- 			goto out_err;
- 		break;
-+#endif
-+#ifdef WITH_SLOAD
- 	case SLOAD:
- 		do_sload(sbi);
- 		break;
- #endif
-+	default:
-+		ERR_MSG("Wrong program name\n");
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 45963c8..ddd0809 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -1061,7 +1061,8 @@ static int f2fs_write_root_inode(void)
+ 	return 0;
+ }
+ 
+-static int f2fs_write_default_quota(int qtype, unsigned int blkaddr)
++static int f2fs_write_default_quota(int qtype, unsigned int blkaddr,
++						__le32 raw_id)
+ {
+ 	char *filebuf = calloc(F2FS_BLKSIZE, 2);
+ 	int file_magics[] = INITQMAGICS;
+@@ -1098,7 +1099,7 @@ static int f2fs_write_default_quota(int qtype, unsigned int blkaddr)
+ 
+ 	filebuf[5120 + 8] = 1;
+ 
+-	dqblk.dqb_id = cpu_to_le32(0);
++	dqblk.dqb_id = raw_id;
+ 	dqblk.dqb_pad = cpu_to_le32(0);
+ 	dqblk.dqb_ihardlimit = cpu_to_le64(0);
+ 	dqblk.dqb_isoftlimit = cpu_to_le64(0);
+@@ -1129,6 +1130,7 @@ static int f2fs_write_qf_inode(int qtype)
+ 	struct f2fs_node *raw_node = NULL;
+ 	u_int64_t data_blk_nor;
+ 	u_int64_t main_area_node_seg_blk_offset = 0;
++	__le32 raw_id;
+ 	int i;
+ 
+ 	raw_node = calloc(F2FS_BLKSIZE, 1);
+@@ -1180,9 +1182,17 @@ static int f2fs_write_qf_inode(int qtype)
+ 	for (i = 0; i < qtype; i++)
+ 		if (sb->qf_ino[i])
+ 			data_blk_nor += QUOTA_DATA(i);
++	if (qtype == 0)
++		raw_id = raw_node->i.i_uid;
++	else if (qtype == 1)
++		raw_id = raw_node->i.i_gid;
++	else if (qtype == 2)
++		raw_id = raw_node->i.i_projid;
++	else
 +		ASSERT(0);
+ 
+ 	/* write two blocks */
+-	if (f2fs_write_default_quota(qtype, data_blk_nor)) {
++	if (f2fs_write_default_quota(qtype, data_blk_nor, raw_id)) {
+ 		free(raw_node);
+ 		return -1;
  	}
- 
- 	f2fs_do_umount(sbi);
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 2b39d12..7e766a8 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -22,6 +22,11 @@
- 
- #ifdef WITH_ANDROID
- #include <android_config.h>
-+#else
-+#define WITH_DUMP
-+#define WITH_DEFRAG
-+#define WITH_RESIZE
-+#define WITH_SLOAD
- #endif
- 
- #include <inttypes.h>
 -- 
 2.15.0.403.gc27cc4dac6-goog
 
