@@ -1,8 +1,8 @@
 From: "LiFan" <fanofcode.li@samsung.com>
-Subject: [f2fs-dev] [PATCH] f2fs: release reserved blocks for quota
-Date: Tue, 5 Dec 2017 15:52:06 +0800
-Message-ID: <000b01d36d9e$199ee360$4cdcaa20$@samsung.com>
-References: <CGME20171205075320epcas5p3c146367a8d57d8b4617085982b195e40@epcas5p3.samsung.com>
+Subject: [f2fs-dev] [PATCH] f2fs: use unlikely for release case
+Date: Tue, 5 Dec 2017 16:38:01 +0800
+Message-ID: <000c01d36da4$7a9efbe0$6fdcf3a0$@samsung.com>
+References: <CGME20171205083900epcas5p3da0ba06455bf7f17ffacd0b25328aca3@epcas5p3.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
@@ -13,28 +13,26 @@ To: 'Chao Yu' <yuchao0@huawei.com>, 'Chao Yu' <chao@kernel.org>, 'Jaegeuk Kim' <
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-
-Quota has been modified during inc_valid_block_count(), but not in
-truncate process. This patch adds it.
+Since the variable release is only nonzero when another unlikely
+case occurs, use unlikely() on it seems logical.
 
 Signed-off-by: Fan li <fanofcode.li@samsung.com>
 ---
- fs/f2fs/f2fs.h | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/f2fs/f2fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 82f1dc3..71fbba96 100644
+index 71fbba96..0f01af0 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -1619,7 +1619,9 @@ static inline void dec_valid_block_count(struct f2fs_sb_info *sbi,
- 		sbi->current_reserved_blocks = min(sbi->reserved_blocks,
- 					sbi->current_reserved_blocks + count);
+@@ -1594,7 +1594,7 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+ 	}
  	spin_unlock(&sbi->stat_lock);
-+
- 	f2fs_i_blocks_write(inode, count, false, true);
-+	dquot_release_reservation_block(inode, count);
- }
  
- static inline void inc_page_count(struct f2fs_sb_info *sbi, int count_type)
+-	if (release)
++	if (unlikely(release))
+ 		dquot_release_reservation_block(inode, release);
+ 	f2fs_i_blocks_write(inode, *count, true, true);
+ 	return 0;
 -- 
 2.7.4
