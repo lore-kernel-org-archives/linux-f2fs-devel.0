@@ -1,55 +1,190 @@
-From: Matthew Wilcox <willy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: [PATCH v4 62/73] dax: Convert dax_insert_pfn_mkwrite to XArray
-Date: Tue,  5 Dec 2017 16:41:48 -0800
-Message-ID: <20171206004159.3755-63-willy@infradead.org>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v4 73/73] usb: Convert xhci-mem to XArray
+Date: Tue,  5 Dec 2017 16:41:59 -0800
+Message-ID: <20171206004159.3755-74-willy@infradead.org>
 References: <20171206004159.3755-1-willy@infradead.org>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171206004159.3755-1-willy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Matthew Wilcox <mawilcox-0li6OtcxBFHby3iVrkZq2A@public.gmane.org>, Ross Zwisler <ross.zwisler-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, Rehas Sachdeva <aquannie-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-xfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20171206004159.3755-1-willy@infradead.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Jens Axboe <axboe@kernel.dk>, Rehas Sachdeva <aquannie@gmail.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Matthew Wilcox <mawilcox-0li6OtcxBFHby3iVrkZq2A@public.gmane.org>
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Signed-off-by: Matthew Wilcox <mawilcox-0li6OtcxBFHby3iVrkZq2A@public.gmane.org>
+The XArray API is a slightly better fit for xhci_insert_segment_mapping()
+than the radix tree API was.
+
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/dax.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/usb/host/xhci-mem.c | 70 +++++++++++++++++++++------------------------
+ drivers/usb/host/xhci.h     |  6 ++--
+ 2 files changed, 35 insertions(+), 41 deletions(-)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 7bd94f1b61d0..619aff70583f 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -1498,21 +1498,21 @@ static int dax_insert_pfn_mkwrite(struct vm_fault *vmf,
- 	void *entry;
- 	int vmf_ret, error;
+diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+index e1fba4688509..533d813bdc52 100644
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -149,70 +149,64 @@ static void xhci_link_rings(struct xhci_hcd *xhci, struct xhci_ring *ring,
+ }
  
--	xa_lock_irq(&mapping->pages);
-+	xas_lock_irq(&xas);
- 	entry = get_unlocked_mapping_entry(&xas);
- 	/* Did we race with someone splitting entry or so? */
- 	if (!entry ||
- 	    (pe_size == PE_SIZE_PTE && !dax_is_pte_entry(entry)) ||
- 	    (pe_size == PE_SIZE_PMD && !dax_is_pmd_entry(entry))) {
- 		put_unlocked_mapping_entry(&xas, entry);
--		xa_unlock_irq(&mapping->pages);
-+		xas_unlock_irq(&xas);
- 		trace_dax_insert_pfn_mkwrite_no_entry(mapping->host, vmf,
- 						      VM_FAULT_NOPAGE);
- 		return VM_FAULT_NOPAGE;
- 	}
--	radix_tree_tag_set(&mapping->pages, index, PAGECACHE_TAG_DIRTY);
-+	xas_set_tag(&xas, PAGECACHE_TAG_DIRTY);
- 	entry = lock_slot(&xas);
--	xa_unlock_irq(&mapping->pages);
-+	xas_unlock_irq(&xas);
- 	switch (pe_size) {
- 	case PE_SIZE_PTE:
- 		error = vm_insert_mixed_mkwrite(vmf->vma, vmf->address, pfn);
+ /*
+- * We need a radix tree for mapping physical addresses of TRBs to which stream
+- * ID they belong to.  We need to do this because the host controller won't tell
++ * We need to map physical addresses of TRBs to the stream ID they belong to.
++ * We need to do this because the host controller won't tell
+  * us which stream ring the TRB came from.  We could store the stream ID in an
+  * event data TRB, but that doesn't help us for the cancellation case, since the
+  * endpoint may stop before it reaches that event data TRB.
+  *
+- * The radix tree maps the upper portion of the TRB DMA address to a ring
++ * The xarray maps the upper portion of the TRB DMA address to a ring
+  * segment that has the same upper portion of DMA addresses.  For example, say I
+  * have segments of size 1KB, that are always 1KB aligned.  A segment may
+  * start at 0x10c91000 and end at 0x10c913f0.  If I use the upper 10 bits, the
+- * key to the stream ID is 0x43244.  I can use the DMA address of the TRB to
+- * pass the radix tree a key to get the right stream ID:
++ * index of the stream ID is 0x43244.  I can use the DMA address of the TRB as
++ * the xarray index to get the right stream ID:
+  *
+  *	0x10c90fff >> 10 = 0x43243
+  *	0x10c912c0 >> 10 = 0x43244
+  *	0x10c91400 >> 10 = 0x43245
+  *
+  * Obviously, only those TRBs with DMA addresses that are within the segment
+- * will make the radix tree return the stream ID for that ring.
++ * will make the xarray return the stream ID for that ring.
+  *
+- * Caveats for the radix tree:
++ * Caveats for the xarray:
+  *
+- * The radix tree uses an unsigned long as a key pair.  On 32-bit systems, an
++ * The xarray uses an unsigned long for the index.  On 32-bit systems, an
+  * unsigned long will be 32-bits; on a 64-bit system an unsigned long will be
+  * 64-bits.  Since we only request 32-bit DMA addresses, we can use that as the
+- * key on 32-bit or 64-bit systems (it would also be fine if we asked for 64-bit
+- * PCI DMA addresses on a 64-bit system).  There might be a problem on 32-bit
+- * extended systems (where the DMA address can be bigger than 32-bits),
++ * index on 32-bit or 64-bit systems (it would also be fine if we asked for
++ * 64-bit PCI DMA addresses on a 64-bit system).  There might be a problem on
++ * 32-bit extended systems (where the DMA address can be bigger than 32-bits),
+  * if we allow the PCI dma mask to be bigger than 32-bits.  So don't do that.
+  */
+-static int xhci_insert_segment_mapping(struct radix_tree_root *trb_address_map,
++
++static unsigned long trb_index(dma_addr_t dma)
++{
++	return (unsigned long)(dma >> TRB_SEGMENT_SHIFT);
++}
++
++static int xhci_insert_segment_mapping(struct xarray *trb_address_map,
+ 		struct xhci_ring *ring,
+ 		struct xhci_segment *seg,
+-		gfp_t mem_flags)
++		gfp_t gfp)
+ {
+-	unsigned long key;
+-	int ret;
+-
+-	key = (unsigned long)(seg->dma >> TRB_SEGMENT_SHIFT);
+ 	/* Skip any segments that were already added. */
+-	if (radix_tree_lookup(trb_address_map, key))
+-		return 0;
++	void *entry = xa_cmpxchg(trb_address_map, trb_index(seg->dma), NULL,
++								ring, gfp);
+ 
+-	ret = radix_tree_maybe_preload(mem_flags);
+-	if (ret)
+-		return ret;
+-	ret = radix_tree_insert(trb_address_map,
+-			key, ring);
+-	radix_tree_preload_end();
+-	return ret;
++	if (IS_ERR(entry))
++		return PTR_ERR(entry);
++	return 0;
+ }
+ 
+-static void xhci_remove_segment_mapping(struct radix_tree_root *trb_address_map,
++static void xhci_remove_segment_mapping(struct xarray *trb_address_map,
+ 		struct xhci_segment *seg)
+ {
+-	unsigned long key;
+-
+-	key = (unsigned long)(seg->dma >> TRB_SEGMENT_SHIFT);
+-	if (radix_tree_lookup(trb_address_map, key))
+-		radix_tree_delete(trb_address_map, key);
++	xa_erase(trb_address_map, trb_index(seg->dma));
+ }
+ 
+ static int xhci_update_stream_segment_mapping(
+-		struct radix_tree_root *trb_address_map,
++		struct xarray *trb_address_map,
+ 		struct xhci_ring *ring,
+ 		struct xhci_segment *first_seg,
+ 		struct xhci_segment *last_seg,
+@@ -574,8 +568,8 @@ struct xhci_ring *xhci_dma_to_transfer_ring(
+ 		u64 address)
+ {
+ 	if (ep->ep_state & EP_HAS_STREAMS)
+-		return radix_tree_lookup(&ep->stream_info->trb_address_map,
+-				address >> TRB_SEGMENT_SHIFT);
++		return xa_load(&ep->stream_info->trb_address_map,
++				trb_index(address));
+ 	return ep->ring;
+ }
+ 
+@@ -654,10 +648,10 @@ struct xhci_stream_info *xhci_alloc_stream_info(struct xhci_hcd *xhci,
+ 	if (!stream_info->free_streams_command)
+ 		goto cleanup_ctx;
+ 
+-	INIT_RADIX_TREE(&stream_info->trb_address_map, GFP_ATOMIC);
++	xa_init(&stream_info->trb_address_map);
+ 
+ 	/* Allocate rings for all the streams that the driver will use,
+-	 * and add their segment DMA addresses to the radix tree.
++	 * and add their segment DMA addresses to the map.
+ 	 * Stream 0 is reserved.
+ 	 */
+ 
+@@ -2362,7 +2356,7 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
+ 	 * Initialize the ring segment pool.  The ring must be a contiguous
+ 	 * structure comprised of TRBs.  The TRBs must be 16 byte aligned,
+ 	 * however, the command ring segment needs 64-byte aligned segments
+-	 * and our use of dma addresses in the trb_address_map radix tree needs
++	 * and our use of dma addresses in the trb_address_map xarray needs
+ 	 * TRB_SEGMENT_SIZE alignment, so we pick the greater alignment need.
+ 	 */
+ 	xhci->segment_pool = dma_pool_create("xHCI ring segments", dev,
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index 054ce74524af..e8208a3eee3c 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -15,7 +15,7 @@
+ #include <linux/usb.h>
+ #include <linux/timer.h>
+ #include <linux/kernel.h>
+-#include <linux/radix-tree.h>
++#include <linux/xarray.h>
+ #include <linux/usb/hcd.h>
+ #include <linux/io-64-nonatomic-lo-hi.h>
+ 
+@@ -837,7 +837,7 @@ struct xhci_stream_info {
+ 	unsigned int			num_stream_ctxs;
+ 	dma_addr_t			ctx_array_dma;
+ 	/* For mapping physical TRB addresses to segments in stream rings */
+-	struct radix_tree_root		trb_address_map;
++	struct xarray			trb_address_map;
+ 	struct xhci_command		*free_streams_command;
+ };
+ 
+@@ -1584,7 +1584,7 @@ struct xhci_ring {
+ 	unsigned int		bounce_buf_len;
+ 	enum xhci_ring_type	type;
+ 	bool			last_td_was_short;
+-	struct radix_tree_root	*trb_address_map;
++	struct xarray		*trb_address_map;
+ };
+ 
+ struct xhci_erst_entry {
 -- 
 2.15.0
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
