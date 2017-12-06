@@ -1,7 +1,7 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v4 63/73] dax: Convert dax_insert_mapping_entry to XArray
-Date: Tue,  5 Dec 2017 16:41:49 -0800
-Message-ID: <20171206004159.3755-64-willy@infradead.org>
+Subject: [PATCH v4 61/73] dax: Convert dax_writeback_one to XArray
+Date: Tue,  5 Dec 2017 16:41:47 -0800
+Message-ID: <20171206004159.3755-62-willy@infradead.org>
 References: <20171206004159.3755-1-willy@infradead.org>
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
 In-Reply-To: <20171206004159.3755-1-willy@infradead.org>
@@ -11,59 +11,74 @@ List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
+Likewise easy
+
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/dax.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+ fs/dax.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
 diff --git a/fs/dax.c b/fs/dax.c
-index 619aff70583f..de85ce87d333 100644
+index 66f6c4ea18f7..7bd94f1b61d0 100644
 --- a/fs/dax.c
 +++ b/fs/dax.c
-@@ -498,9 +498,9 @@ static void *dax_insert_mapping_entry(struct address_space *mapping,
- 				      void *entry, sector_t sector,
- 				      unsigned long flags, bool dirty)
+@@ -633,8 +633,7 @@ static int dax_writeback_one(struct block_device *bdev,
+ 		struct dax_device *dax_dev, struct address_space *mapping,
+ 		pgoff_t index, void *entry)
  {
 -	struct radix_tree_root *pages = &mapping->pages;
- 	void *new_entry;
- 	pgoff_t index = vmf->pgoff;
+-	XA_STATE(xas, pages, index);
 +	XA_STATE(xas, &mapping->pages, index);
- 
- 	if (dirty)
- 		__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
-@@ -516,7 +516,7 @@ static void *dax_insert_mapping_entry(struct address_space *mapping,
- 					PAGE_SIZE, 0);
- 	}
+ 	void *entry2, *kaddr;
+ 	long ret = 0, id;
+ 	sector_t sector;
+@@ -649,7 +648,7 @@ static int dax_writeback_one(struct block_device *bdev,
+ 	if (WARN_ON(!xa_is_value(entry)))
+ 		return -EIO;
  
 -	xa_lock_irq(&mapping->pages);
 +	xas_lock_irq(&xas);
- 	new_entry = dax_radix_locked_entry(sector, flags);
- 
- 	if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
-@@ -528,21 +528,15 @@ static void *dax_insert_mapping_entry(struct address_space *mapping,
- 		 * existing entry is a PMD, we will just leave the PMD in the
- 		 * tree and dirty it if necessary.
- 		 */
--		struct radix_tree_node *node;
--		void **slot;
--		void *ret;
--
--		ret = __radix_tree_lookup(pages, index, &node, &slot);
--		WARN_ON_ONCE(ret != entry);
--		__radix_tree_replace(pages, node, slot,
--				     new_entry, NULL);
-+		void *prev = xas_store(&xas, new_entry);
-+		WARN_ON_ONCE(prev != entry);
- 		entry = new_entry;
+ 	entry2 = get_unlocked_mapping_entry(&xas);
+ 	/* Entry got punched out / reallocated? */
+ 	if (!entry2 || WARN_ON_ONCE(!xa_is_value(entry2)))
+@@ -668,7 +667,7 @@ static int dax_writeback_one(struct block_device *bdev,
  	}
  
- 	if (dirty)
--		radix_tree_tag_set(pages, index, PAGECACHE_TAG_DIRTY);
-+		xas_set_tag(&xas, PAGECACHE_TAG_DIRTY);
+ 	/* Another fsync thread may have already written back this entry */
+-	if (!radix_tree_tag_get(pages, index, PAGECACHE_TAG_TOWRITE))
++	if (!xas_get_tag(&xas, PAGECACHE_TAG_TOWRITE))
+ 		goto put_unlocked;
+ 	/* Lock the entry to serialize with page faults */
+ 	entry = lock_slot(&xas);
+@@ -679,8 +678,8 @@ static int dax_writeback_one(struct block_device *bdev,
+ 	 * at the entry only under xa_lock and once they do that they will
+ 	 * see the entry locked and wait for it to unlock.
+ 	 */
+-	radix_tree_tag_clear(pages, index, PAGECACHE_TAG_TOWRITE);
+-	xa_unlock_irq(&mapping->pages);
++	xas_clear_tag(&xas, PAGECACHE_TAG_TOWRITE);
++	xas_unlock_irq(&xas);
  
+ 	/*
+ 	 * Even if dax_writeback_mapping_range() was given a wbc->range_start
+@@ -718,9 +717,7 @@ static int dax_writeback_one(struct block_device *bdev,
+ 	 * the pfn mappings are writeprotected and fault waits for mapping
+ 	 * entry lock.
+ 	 */
+-	xa_lock_irq(&mapping->pages);
+-	radix_tree_tag_clear(pages, index, PAGECACHE_TAG_DIRTY);
+-	xa_unlock_irq(&mapping->pages);
++	xa_clear_tag(&mapping->pages, index, PAGECACHE_TAG_DIRTY);
+ 	trace_dax_writeback_one(mapping->host, index, size >> PAGE_SHIFT);
+  dax_unlock:
+ 	dax_read_unlock(id);
+@@ -729,7 +726,7 @@ static int dax_writeback_one(struct block_device *bdev,
+ 
+  put_unlocked:
+ 	put_unlocked_mapping_entry(&xas, entry2);
 -	xa_unlock_irq(&mapping->pages);
 +	xas_unlock_irq(&xas);
- 	return entry;
+ 	return ret;
  }
  
 -- 
