@@ -1,67 +1,35 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v4 43/73] shmem: Convert find_swap_entry to XArray
-Date: Tue,  5 Dec 2017 16:41:29 -0800
-Message-ID: <20171206004159.3755-44-willy@infradead.org>
+Subject: [PATCH v4 65/73] dax: Fix sparse warning
+Date: Tue,  5 Dec 2017 16:41:51 -0800
+Message-ID: <20171206004159.3755-66-willy@infradead.org>
 References: <20171206004159.3755-1-willy@infradead.org>
-Return-path: <linux-btrfs-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20171206004159.3755-1-willy@infradead.org>
-Sender: linux-btrfs-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 Cc: Matthew Wilcox <mawilcox@microsoft.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Jens Axboe <axboe@kernel.dk>, Rehas Sachdeva <aquannie@gmail.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-This is a 1:1 conversion.
+sparse doesn't know that follow_pte_pmd conditionally acquires the ptl,
+so add an annotation to let it know what's going on.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- mm/shmem.c | 23 +++++++++++------------
- 1 file changed, 11 insertions(+), 12 deletions(-)
+ fs/dax.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 654f367aca90..ce285ae635ea 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1076,28 +1076,27 @@ static void shmem_evict_inode(struct inode *inode)
- 	clear_inode(inode);
- }
- 
--static unsigned long find_swap_entry(struct radix_tree_root *root, void *item)
-+static unsigned long find_swap_entry(struct xarray *xa, void *item)
- {
--	struct radix_tree_iter iter;
--	void **slot;
--	unsigned long found = -1;
-+	XA_STATE(xas, xa, 0);
- 	unsigned int checked = 0;
-+	void *entry;
- 
- 	rcu_read_lock();
--	radix_tree_for_each_slot(slot, root, &iter, 0) {
--		if (*slot == item) {
--			found = iter.index;
-+	xas_for_each(&xas, entry, ULONG_MAX) {
-+		if (xas_retry(&xas, entry))
-+			continue;
-+		if (entry == item)
- 			break;
--		}
- 		checked++;
--		if ((checked % 4096) != 0)
-+		if ((checked % XA_CHECK_SCHED) != 0)
+diff --git a/fs/dax.c b/fs/dax.c
+index c663d82e8ba3..7a86ff1153dd 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -531,6 +531,7 @@ static void dax_mapping_entry_mkclean(struct address_space *mapping,
+ 		 */
+ 		if (follow_pte_pmd(vma->vm_mm, address, &start, &end, &ptep, &pmdp, &ptl))
  			continue;
--		slot = radix_tree_iter_resume(slot, &iter);
-+		xas_pause(&xas);
- 		cond_resched_rcu();
- 	}
--
- 	rcu_read_unlock();
--	return found;
-+
-+	return xas_invalid(&xas) ? -1 : xas.xa_index;
- }
++		__acquire(ptl); /* Conditionally acquired above */
  
- /*
+ 		/*
+ 		 * No need to call mmu_notifier_invalidate_range() as we are
 -- 
 2.15.0
-
