@@ -1,55 +1,43 @@
-From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Subject: Re: [PATCH v4 72/73] xfs: Convert mru cache to XArray
-Date: Fri, 8 Dec 2017 12:35:07 -0500 (EST)
-Message-ID: <Pine.LNX.4.44L0.1712081228430.1371-100000@iolanthe.rowland.org>
-References: <fd7130d7-9066-524e-1053-a61eeb27cb36@lge.com>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: Re: Lockdep is less useful than it was
+Date: Fri, 8 Dec 2017 10:14:38 -0800
+Message-ID: <20171208181438.GA6406@bombadil.infradead.org>
+References: <20171206004159.3755-73-willy@infradead.org>
+ <20171206012901.GZ4094@dastard>
+ <20171206020208.GK26021@bombadil.infradead.org>
+ <20171206031456.GE4094@dastard>
+ <20171206044549.GO26021@bombadil.infradead.org>
+ <20171206084404.GF4094@dastard>
+ <20171206140648.GB32044@bombadil.infradead.org>
+ <20171207160634.il3vt5d6a4v5qesi@thunk.org>
+ <20171207223803.GC26792@bombadil.infradead.org>
+ <20171208152717.fx5w66wvyrfx6vrz@thunk.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <fd7130d7-9066-524e-1053-a61eeb27cb36-Hm3cg6mZ9cc@public.gmane.org>
-Sender: linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Byungchul Park <byungchul.park-Hm3cg6mZ9cc@public.gmane.org>
-Cc: Dave Chinner <david-FqsqvQoI3Ljby3iVrkZq2A@public.gmane.org>, Theodore Ts'o <tytso-3s7WtUTddSA@public.gmane.org>, Matthew Wilcox <willy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Matthew Wilcox <mawilcox-0li6OtcxBFHby3iVrkZq2A@public.gmane.org>, Ross Zwisler <ross.zwisler-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, Rehas Sachdeva <aquannie-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-xfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-team-Hm3cg6mZ9cc@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-btrfs-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20171208152717.fx5w66wvyrfx6vrz@thunk.org>
+Sender: linux-btrfs-owner@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>, Dave Chinner <david@fromorbit.com>, Matthew Wilcox <mawilcox@microsoft.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Jens Axboe <axboe@kernel.dk>, Rehas Sachdeva <aquannie@gmail.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org, byungchul.park@lge.com
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Fri, 8 Dec 2017, Byungchul Park wrote:
+On Fri, Dec 08, 2017 at 10:27:17AM -0500, Theodore Ts'o wrote:
+> So if you are adding complexity to the kernel with the argument,
+> "lockdep will save us", I'm with Dave --- it's just not a believable
+> argument.
 
-> I'm sorry to hear that.. If I were you, I would also get
-> annoyed. And.. thanks for explanation.
-> 
-> But, I think assigning lock classes properly and checking
-> relationship of the classes to detect deadlocks is reasonable.
-> 
-> In my opinion about the common lockdep stuff, there are 2
-> problems on it.
-> 
-> 1) Firstly, it's hard to assign lock classes *properly*. By
-> default, it relies on the caller site of lockdep_init_map(),
-> but we need to assign another class manually, where ordering
-> rules are complicated so cannot rely on the caller site. That
-> *only* can be done by experts of the subsystem.
-> 
-> I think if they want to get benifit from lockdep, they have no
-> choice but to assign classes manually with the domain knowledge,
-> or use *lockdep_set_novalidate_class()* to invalidate locks
-> making the developers annoyed and not want to use the checking
-> for them.
+I think that's a gross misrepresentation of what I'm doing.
 
-Lockdep's no_validate class is used when the locking patterns are too
-complicated for lockdep to understand.  Basically, it tells lockdep to
-ignore those locks.
+At the moment, the radix tree actively disables the RCU checking that
+enabling lockdep would give us.  It has to, because it has no idea what
+lock protects any individual access to the radix tree.  The XArray can
+use the RCU checking because it knows that every reference is protected
+by either the spinlock or the RCU lock.
 
-The device core uses that class.  The tree of struct devices, each with
-its own lock, gets used in many different and complicated ways.  
-Lockdep can't understand this -- it doesn't have the ability to
-represent an arbitrarily deep hierarchical tree of locks -- so we tell
-it to ignore the device locks.
+Dave was saying that he has a tree which has to be protected by a mutex
+because of where it is in the locking hierarchy, and I was vigorously
+declining his proposal of allowing him to skip taking the spinlock.
 
-It sounds like XFS may need to do the same thing with its semaphores.
-
-Alan Stern
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-nilfs" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+And yes, we have bugs today that I assume we only stumble across every
+few billion years (or only on alpha, or only if our compiler gets more
+aggressive) because we have missing rcu_dereference annotations.
