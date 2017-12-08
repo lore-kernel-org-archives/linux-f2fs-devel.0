@@ -1,26 +1,26 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH RFC] f2fs: fix an error case of missing
- update inode page
-Date: Thu, 7 Dec 2017 21:26:50 -0800
-Message-ID: <20171208052650.GB77074@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1512446867-29122-1-git-send-email-heyunlei@huawei.com>
+Subject: Re: [PATCH] f2fs: avoid dead loop in function
+ find_fsync_dnodes
+Date: Thu, 7 Dec 2017 21:31:26 -0800
+Message-ID: <20171208053126.GC77074@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1512702988-22986-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1eNBBZ-0000Lx-TA
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 08 Dec 2017 05:26:57 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1eNBG1-000261-IQ
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 08 Dec 2017 05:31:33 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eNBBY-0003vm-O6
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 08 Dec 2017 05:26:57 +0000
+ id 1eNBG0-00044h-I9
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 08 Dec 2017 05:31:33 +0000
 Content-Disposition: inline
-In-Reply-To: <1512446867-29122-1-git-send-email-heyunlei@huawei.com>
+In-Reply-To: <1512702988-22986-1-git-send-email-heyunlei@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,98 +33,127 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Yunlei He <heyunlei@huawei.com>
 Cc: ning.jia@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 12/05, Yunlei He wrote:
-> -Thread A					Thread B
-> 
-> -write_checkpoint
-> 	-block_operations
-> 		-f2fs_unlock_all		-f2fs_sync_file
-> 							-f2fs_write_inode
-> 								-f2fs_inode_synced
-> 
-> 			-f2fs_sync_inode_meta
-> 				-sync_node_pages
-> 									-set_page_drity
-> 
-> In this case, if sudden power off without next new checkpoint,
-> the last inode page update will lost. wb_writeback is same with
-> fsync.
+Hi Yunlei,
 
-BTW, what do you mean wb_writeback is same with fsync?
-
-Thanks,
-
+On 12/08, Yunlei He wrote:
+> Came across a dead loop in recovery like this:
+> 
+> ......
+> [   24.680480s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597696
+> [   24.698394s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597697
+> [   24.724334s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> [   24.724334s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> [   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> [   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> [   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> [   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> [   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> [   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> [   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> [   24.724426s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> ......
+> 
+> Mount process will block in dead loop and fsck can do nothing with this
+> error, This patch abandon recovery if node chain is cyclical.
 > 
 > Signed-off-by: Yunlei He <heyunlei@huawei.com>
 > ---
->  fs/f2fs/f2fs.h  |  4 ++--
->  fs/f2fs/inode.c | 15 +++++++--------
->  2 files changed, 9 insertions(+), 10 deletions(-)
+>  fs/f2fs/node.h          |  8 +++++---
+>  fs/f2fs/recovery.c      | 22 ++++++++++++++--------
+>  include/linux/f2fs_fs.h |  3 ++-
+>  3 files changed, 21 insertions(+), 12 deletions(-)
 > 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 82f1dc3..38f9324 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -2513,8 +2513,8 @@ int f2fs_getattr(const struct path *path, struct kstat *stat,
->  struct inode *f2fs_iget(struct super_block *sb, unsigned long ino);
->  struct inode *f2fs_iget_retry(struct super_block *sb, unsigned long ino);
->  int try_to_free_nats(struct f2fs_sb_info *sbi, int nr_shrink);
-> -int update_inode(struct inode *inode, struct page *node_page);
-> -int update_inode_page(struct inode *inode);
-> +void update_inode(struct inode *inode, struct page *node_page);
-> +void update_inode_page(struct inode *inode);
->  int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc);
->  void f2fs_evict_inode(struct inode *inode);
->  void handle_failed_inode(struct inode *inode);
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index b4c4f2b..10d3c7c 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -360,14 +360,15 @@ struct inode *f2fs_iget_retry(struct super_block *sb, unsigned long ino)
->  	return inode;
+> diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+> index 0ee3e5f..049ff5e 100644
+> --- a/fs/f2fs/node.h
+> +++ b/fs/f2fs/node.h
+> @@ -399,9 +399,10 @@ static inline int is_node(struct page *page, int type)
+>  	return le32_to_cpu(rn->footer.flag) & (1 << type);
 >  }
 >  
-> -int update_inode(struct inode *inode, struct page *node_page)
-> +void update_inode(struct inode *inode, struct page *node_page)
->  {
->  	struct f2fs_inode *ri;
->  	struct extent_tree *et = F2FS_I(inode)->extent_tree;
+> -#define is_cold_node(page)	is_node(page, COLD_BIT_SHIFT)
+> -#define is_fsync_dnode(page)	is_node(page, FSYNC_BIT_SHIFT)
+> -#define is_dent_dnode(page)	is_node(page, DENT_BIT_SHIFT)
+> +#define is_cold_node(page)		is_node(page, COLD_BIT_SHIFT)
+> +#define is_fsync_dnode(page)		is_node(page, FSYNC_BIT_SHIFT)
+> +#define is_dent_dnode(page)		is_node(page, DENT_BIT_SHIFT)
+> +#define is_recovered_dnode(page)	is_node(page, RECOVERED_BIT_SHIFT)
 >  
-> -	f2fs_inode_synced(inode);
-> -
->  	f2fs_wait_on_page_writeback(node_page, NODE, true);
-> +	set_page_dirty(node_page);
+>  static inline int is_inline_node(struct page *page)
+>  {
+> @@ -442,3 +443,4 @@ static inline void set_mark(struct page *page, int mark, int type)
+>  }
+>  #define set_dentry_mark(page, mark)	set_mark(page, mark, DENT_BIT_SHIFT)
+>  #define set_fsync_mark(page, mark)	set_mark(page, mark, FSYNC_BIT_SHIFT)
+> +#define set_recovered_mark(page, mark)	set_mark(page, mark, RECOVERED_BIT_SHIFT)
+> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> index 7d63faf..bfbb3e4 100644
+> --- a/fs/f2fs/recovery.c
+> +++ b/fs/f2fs/recovery.c
+> @@ -220,6 +220,14 @@ static void recover_inode(struct inode *inode, struct page *page)
+>  			ino_of_node(page), name);
+>  }
+>  
+> +static void destroy_fsync_dnodes(struct list_head *head)
+> +{
+> +	struct fsync_inode_entry *entry, *tmp;
 > +
-> +	f2fs_inode_synced(inode);
->  
->  	ri = F2FS_INODE(node_page);
->  
-> @@ -426,10 +427,9 @@ int update_inode(struct inode *inode, struct page *node_page)
->  	if (inode->i_nlink == 0)
->  		clear_inline_node(node_page);
->  
-> -	return set_page_dirty(node_page);
->  }
->  
-> -int update_inode_page(struct inode *inode)
-> +void update_inode_page(struct inode *inode)
+> +	list_for_each_entry_safe(entry, tmp, head, list)
+> +		del_fsync_inode(entry);
+> +}
+> +
+>  static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+>  				bool check_only)
 >  {
->  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->  	struct page *node_page;
-> @@ -444,11 +444,10 @@ int update_inode_page(struct inode *inode)
->  		} else if (err != -ENOENT) {
->  			f2fs_stop_checkpoint(sbi, false);
->  		}
-> -		return 0;
-> +		return;
->  	}
-> -	ret = update_inode(inode, node_page);
-> +	update_inode(inode, node_page);
->  	f2fs_put_page(node_page, 1);
-> -	return ret;
+> @@ -239,7 +247,13 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+>  			return 0;
+>  
+>  		page = get_tmp_page(sbi, blkaddr);
+> +		if (unlikely(is_recovered_dnode(page))) {
+> +			f2fs_msg(sbi->sb, KERN_ERR, "Abandon dead loop node block list");
+> +			destroy_fsync_dnodes(head);
+> +			break;
+> +		}
+>  
+> +		set_recovered_mark(page, RECOVERED_BIT_SHIFT);
+>  		if (!is_recoverable_dnode(page))
+>  			break;
+>  
+> @@ -288,14 +302,6 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+>  	return err;
 >  }
 >  
->  int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
+> -static void destroy_fsync_dnodes(struct list_head *head)
+> -{
+> -	struct fsync_inode_entry *entry, *tmp;
+> -
+> -	list_for_each_entry_safe(entry, tmp, head, list)
+> -		del_fsync_inode(entry);
+> -}
+> -
+>  static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
+>  			block_t blkaddr, struct dnode_of_data *dn)
+>  {
+> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+> index 43e98d3..9aa85b1 100644
+> --- a/include/linux/f2fs_fs.h
+> +++ b/include/linux/f2fs_fs.h
+> @@ -265,7 +265,8 @@ enum {
+>  	COLD_BIT_SHIFT = 0,
+>  	FSYNC_BIT_SHIFT,
+>  	DENT_BIT_SHIFT,
+> -	OFFSET_BIT_SHIFT
+> +	OFFSET_BIT_SHIFT,
+> +	RECOVERED_BIT_SHIFT
+
+This will make adding new bits be difficult in future. Can we get another
+in-memory one to check block loop?
+
+Thanks,
+
+>  };
+>  
+>  #define OFFSET_BIT_MASK		(0x07)	/* (0x01 << OFFSET_BIT_SHIFT) - 1 */
 > -- 
 > 1.9.1
 
