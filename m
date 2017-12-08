@@ -1,61 +1,93 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: Lockdep is less useful than it was
-Date: Sat, 9 Dec 2017 09:47:17 +1100
-Message-ID: <20171208224717.GQ5858@dastard>
-References: <20171206012901.GZ4094@dastard>
- <20171206020208.GK26021@bombadil.infradead.org>
- <20171206031456.GE4094@dastard>
- <20171206044549.GO26021@bombadil.infradead.org>
- <20171206084404.GF4094@dastard>
- <20171206140648.GB32044@bombadil.infradead.org>
- <20171207160634.il3vt5d6a4v5qesi@thunk.org>
- <20171207223803.GC26792@bombadil.infradead.org>
- <20171208152717.fx5w66wvyrfx6vrz@thunk.org>
- <20171208181438.GA6406@bombadil.infradead.org>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: [RFC PATCH] crypto: chacha20 - add implementation using 96-bit nonce
+Date: Fri, 8 Dec 2017 22:54:24 +0000
+Message-ID: <CAKv+Gu9uO_qsTLdqF4unkwjBC+niDbueAK5a4TbusqL+P5aXKg@mail.gmail.com>
+References: <20171208115502.21775-1-ard.biesheuvel@linaro.org>
+ <20171208221716.GB104193@gmail.com> <CAKv+Gu9VJ3X6A+WBiKyTmapOMA-r_pKCoiWkDSJJi3okXDeyEA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20171208181438.GA6406@bombadil.infradead.org>
-Sender: owner-linux-mm@kvack.org
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Theodore Ts'o <tytso@mit.edu>, Matthew Wilcox <mawilcox@microsoft.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Jens Axboe <axboe@kernel.dk>, Rehas Sachdeva <aquannie@gmail.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org, byungchul.park@lge.com
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <CAKv+Gu9VJ3X6A+WBiKyTmapOMA-r_pKCoiWkDSJJi3okXDeyEA@mail.gmail.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, Eric Biggers <ebiggers@google.com>, linux-fscrypt@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Michael Halcrow <mhalcrow@google.com>, Paul Crowley <paulcrowley@google.com>, Martin Willi <martin@strongswan.org>, David Gstir <david@sigma-star.at>, "Jason A . Donenfeld" <Jason@zx2c4.com>, Stephan Mueller <smueller@chronox.de>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Fri, Dec 08, 2017 at 10:14:38AM -0800, Matthew Wilcox wrote:
-> At the moment, the radix tree actively disables the RCU checking that
-> enabling lockdep would give us.  It has to, because it has no idea what
-> lock protects any individual access to the radix tree.  The XArray can
-> use the RCU checking because it knows that every reference is protected
-> by either the spinlock or the RCU lock.
-> 
-> Dave was saying that he has a tree which has to be protected by a mutex
-> because of where it is in the locking hierarchy, and I was vigorously
-> declining his proposal of allowing him to skip taking the spinlock.
+On 8 December 2017 at 22:42, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> On 8 December 2017 at 22:17, Eric Biggers <ebiggers3@gmail.com> wrote:
+>> On Fri, Dec 08, 2017 at 11:55:02AM +0000, Ard Biesheuvel wrote:
+>>> As pointed out by Eric [0], the way RFC7539 was interpreted when creating
+>>> our implementation of ChaCha20 creates a risk of IV reuse when using a
+>>> little endian counter as the IV generator. The reason is that the low end
+>>> bits of the counter get mapped onto the ChaCha20 block counter, which
+>>> advances every 64 bytes. This means that the counter value that gets
+>>> selected as IV for the next input block will collide with the ChaCha20
+>>> block counter of the previous block, basically recreating the same
+>>> keystream but shifted by 64 bytes.
+>>>
+>>> RFC7539 describes the inputs of the algorithm as follows:
+>>>
+>>>   The inputs to ChaCha20 are:
+>>>
+>>>      o  A 256-bit key
+>>>
+>>>      o  A 32-bit initial counter.  This can be set to any number, but will
+>>>         usually be zero or one.  It makes sense to use one if we use the
+>>>         zero block for something else, such as generating a one-time
+>>>         authenticator key as part of an AEAD algorithm.
+>>>
+>>>      o  A 96-bit nonce.  In some protocols, this is known as the
+>>>         Initialization Vector.
+>>>
+>>>      o  An arbitrary-length plaintext
+>>>
+>>> The solution is to use a fixed value of 0 for the initial counter, and
+>>> only expose a 96-bit IV to the upper layers of the crypto API.
+>>>
+>>> So introduce a new ChaCha20 flavor called chacha20-iv96, which takes the
+>>> above into account, and should become the preferred ChaCha20
+>>> implementation going forward for general use.
+>>
+>> Note that there are two conflicting conventions for what inputs ChaCha takes.
+>> The original paper by Daniel Bernstein
+>> (https://cr.yp.to/chacha/chacha-20080128.pdf) says that the block counter is
+>> 64-bit and the nonce is 64-bit, thereby expanding the key into 2^64 randomly
+>> accessible streams, each containing 2^64 randomly accessible 64-byte blocks.
+>>
+>> The RFC 7539 convention is equivalent to seeking to a large offset (determined
+>> by the first 32 bits of the 96-bit nonce) in the keystream defined by the djb
+>> convention, but only if the 32-bit portion of the block counter never overflows.
+>>
+>> Maybe it is only RFC 7539 that matters because that is what is being
+>> standardized by the IETF; I don't know.  But it confused me.
+>>
+>
+> The distinction only matters if you start the counter at zero (or
+> one), because you 'lose' 32 bits of IV that will never be != 0 in
+> practice if you use a 64-bit counter.
+>
+> So that argues for not exposing the block counter as part of the API,
+> given that it should start at zero anyway, and that you should take
+> care not to put colliding values in it.
+>
+>> Anyway, I actually thought it was intentional that the ChaCha implementations in
+>> the Linux kernel allowed specifying the block counter, and therefore allowed
+>> seeking to any point in the keystream, exposing the full functionality of the
+>> cipher.  It's true that it's easily misused though, so there may nevertheless be
+>> value in providing a nonce-only variant.
+>>
+>
+> Currently, the skcipher API does not allow such random access, so
+> while I can see how that could be a useful feature, we can't really
+> make use of it today. But more importantly, it still does not mean the
+> block counter should be exposed to the /users/ of the skcipher API
+> which typically encrypt/decrypt blocks that are much larger than 64
+> bytes.
 
-Oh, I wasn't suggesting that you remove the internal tree locking
-because we need external locking.
+... but now that I think of it, how is this any different from, say,
+AES in CTR mode? The counter is big endian, but apart from that, using
+IVs derived from a counter will result in the exact same issue, only
+with a shift of 16 bytes.
 
-I was trying to point out that the internal locking doesn't remove
-the need for external locking,  and that there are cases where
-smearing the internal lock outside the XA tree doesn't work, either.
-i.e. internal locking doesn't replace all the cases where external
-locking is required, and so it's less efficient than the existing
-radix tree code.
-
-What I was questioning was the value of replacing the radix tree
-code with a less efficient structure just to add lockdep validation
-to a tree that doesn't actually need any extra locking validation...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+That means using file block numbers as IV is simply inappropriate, and
+you should encrypt them first like is done for AES-CBC
