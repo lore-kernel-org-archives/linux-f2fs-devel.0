@@ -1,188 +1,274 @@
-From: Byungchul Park <byungchul.park-Hm3cg6mZ9cc@public.gmane.org>
-Subject: Re: [PATCH v4 72/73] xfs: Convert mru cache to XArray
-Date: Fri, 8 Dec 2017 18:27:45 +0900
-Message-ID: <fd7130d7-9066-524e-1053-a61eeb27cb36@lge.com>
-References: <20171206004159.3755-73-willy@infradead.org>
- <20171206012901.GZ4094@dastard>
- <20171206020208.GK26021@bombadil.infradead.org>
- <20171206031456.GE4094@dastard>
- <20171206044549.GO26021@bombadil.infradead.org>
- <20171206084404.GF4094@dastard>
- <20171206140648.GB32044@bombadil.infradead.org>
- <20171207160634.il3vt5d6a4v5qesi@thunk.org> <20171207222216.GH4094@dastard>
- <20171208044552.GA32473@X58A-UD3R> <20171208072500.GO5858@dastard>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: [PATCH] fscrypt: add support for ChaCha20 contents
+ encryption
+Date: Fri, 8 Dec 2017 10:06:31 +0000
+Message-ID: <CAKv+Gu-GfHpukc0WA6z13xAfdcmL9LQUmH41J4GsuMP+m4ge3g@mail.gmail.com>
+References: <20171208013838.105034-1-ebiggers3@gmail.com>
+ <CAKv+Gu8Y_7GKnVnv+UgjP+K8MDXA7v72F8kCrUHt+t9_BRLn1A@mail.gmail.com>
+ <CAKv+Gu_7vMAOP371MJh+FoYb81gwF1y_zy+OES9q5eWTTdOBTg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171208072500.GO5858@dastard>
-Content-Language: en-US
-Sender: linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dave Chinner <david-FqsqvQoI3Ljby3iVrkZq2A@public.gmane.org>
-Cc: Theodore Ts'o <tytso-3s7WtUTddSA@public.gmane.org>, Matthew Wilcox <willy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Matthew Wilcox <mawilcox-0li6OtcxBFHby3iVrkZq2A@public.gmane.org>, Ross Zwisler <ross.zwisler-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, Rehas Sachdeva <aquannie-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-xfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-team-Hm3cg6mZ9cc@public.gmane.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+ helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <ard.biesheuvel@linaro.org>) id 1eNFYG-0004YK-I8
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 08 Dec 2017 10:06:40 +0000
+Received: from mail-it0-f52.google.com ([209.85.214.52])
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.89)
+ id 1eNFYD-00006w-Ss
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 08 Dec 2017 10:06:40 +0000
+Received: by mail-it0-f52.google.com with SMTP id t1so3764445ite.5
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 08 Dec 2017 02:06:37 -0800 (PST)
+In-Reply-To: <CAKv+Gu_7vMAOP371MJh+FoYb81gwF1y_zy+OES9q5eWTTdOBTg@mail.gmail.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: David Gstir <david@sigma-star.at>, Theodore Ts'o <tytso@mit.edu>, Eric Biggers <ebiggers@google.com>, Martin Willi <martin@strongswan.org>, Michael Halcrow <mhalcrow@google.com>, "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org, "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org, Paul Crowley <paulcrowley@google.com>
 
-On 12/8/2017 4:25 PM, Dave Chinner wrote:
-> On Fri, Dec 08, 2017 at 01:45:52PM +0900, Byungchul Park wrote:
->> On Fri, Dec 08, 2017 at 09:22:16AM +1100, Dave Chinner wrote:
->>> On Thu, Dec 07, 2017 at 11:06:34AM -0500, Theodore Ts'o wrote:
->>>> On Wed, Dec 06, 2017 at 06:06:48AM -0800, Matthew Wilcox wrote:
->>>>>> Unfortunately for you, I don't find arguments along the lines of
->>>>>> "lockdep will save us" at all convincing.  lockdep already throws
->>>>>> too many false positives to be useful as a tool that reliably and
->>>>>> accurately points out rare, exciting, complex, intricate locking
->>>>>> problems.
->>>>>
->>>>> But it does reliably and accurately point out "dude, you forgot to take
->>>>> the lock".  It's caught a number of real problems in my own testing that
->>>>> you never got to see.
->>>>
->>>> The problem is that if it has too many false positives --- and it's
->>>> gotten *way* worse with the completion callback "feature", people will
->>>> just stop using Lockdep as being too annyoing and a waste of developer
->>>> time when trying to figure what is a legitimate locking bug versus
->>>> lockdep getting confused.
->>>>
->>>> <Rant>I can't even disable the new Lockdep feature which is throwing
->>>> lots of new false positives --- it's just all or nothing.</Rant>
->>>>
->>>> Dave has just said he's already stopped using Lockdep, as a result.
->>>
->>> This is compeltely OT, but FYI I stopped using lockdep a long time
->>> ago.  We've spend orders of magnitude more time and effort to shut
->>> up lockdep false positives in the XFS code than we ever have on
->>> locking problems that lockdep has uncovered. And still lockdep
->>> throws too many false positives on XFS workloads to be useful to me.
->>>
->>> But it's more than that: I understand just how much lockdep *doesn't
->>> check* and that means *I know I can't rely on lockdep* for potential
->>> deadlock detection. e.g.  it doesn't cover semaphores, which means
+On 8 December 2017 at 09:11, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> On 8 December 2017 at 09:11, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>> Hi Eric,
 >>
->> Hello,
->>
->> I'm careful in saying the following since you seem to feel not good at
->> crossrelease and even lockdep. Now that cross-release has been
->> introduced, semaphores can be covered as you might know. Actually, all
->> general waiters can.
-> 
-> And all it will do is create a whole bunch more work for us XFS guys
-> to shut up all the the false positive crap that falls out from it
-> because the locking model we have is far more complex than any of
-> the lockdep developers thought was necessary to support, just like
-> happened with the XFS inode annotations all those years ago.
-> 
-> e.g. nobody has ever bothered to ask us what is needed to describe
-> XFS's semaphore locking model.  If you did that, you'd know that we
-> nest *thousands* of locked semaphores in compeltely random lock
-> order during metadata buffer writeback. And that this lock order
-> does not reflect the actual locking order rules we have for locking
-> buffers during transactions.
-> 
-> Oh, and you'd also know that a semaphore's lock order and context
-> can change multiple times during the life time of the buffer.  Say
-> we free a block and the reallocate it as something else before it is
-> reclaimed - that buffer now might have a different lock order. Or
-> maybe we promote a buffer to be a root btree block as a result of a
-> join - it's now the first buffer in a lock run, rather than a child.
-> Or we split a tree, and the root is now a node and so no longer is
-> the first buffer in a lock run. Or that we walk sideways along the
-> leaf nodes siblings during searches.  IOWs, there is no well defined
-> static lock ordering at all for buffers - and therefore semaphores -
-> in XFS at all.
-> 
-> And knowing that, you wouldn't simply mention that lockdep can
-> support semaphores now as though that is necessary to "make it work"
-> for XFS.  It's going to be much simpler for us to just turn off
-> lockdep and ignore whatever crap it sends our way than it is to
-> spend unplanned weeks of our time to try to make lockdep sorta work
-> again. Sure, we might get there in the end, but it's likely to take
-> months, if not years like it did with the XFS inode annotations.....
-> 
->>> it has zero coverage of the entire XFS metadata buffer subsystem and
->>> the complex locking orders we have for metadata updates.
+>> On 8 December 2017 at 01:38, Eric Biggers <ebiggers3@gmail.com> wrote:
+>>> From: Eric Biggers <ebiggers@google.com>
 >>>
->>> Put simply: lockdep doesn't provide me with any benefit, so I don't
->>> use it...
+>>> fscrypt currently only supports AES encryption.  However, many low-end
+>>> mobile devices still use older CPUs such as ARMv7, which do not support
+>>> the AES instructions (the ARMv8 Cryptography Extensions).  This results
+>>> in very poor AES performance, even if the NEON bit-sliced implementation
+>>> is used.  Roughly 20-40 MB/s is a typical number, in comparison to
+>>> 300-800 MB/s on CPUs that support the AES instructions.  Switching from
+>>> AES-256 to AES-128 only helps by about 30%.
+>>>
+>>> The result is that vendors don't enable encryption on these devices,
+>>> leaving users unprotected.
+>>>
+>>> A performance difference of similar magnitude can also be observed on
+>>> x86, between CPUs with and without the AES-NI instruction set.
+>>>
+>>> This patch provides an alternative to AES by updating fscrypt to support
+>>> the ChaCha20 stream cipher (RFC7539) for contents encryption.  ChaCha20
+>>> was designed to have a large security margin, to be efficient on
+>>> general-purpose CPUs without dedicated instructions, and to be
+>>> vectorizable.  It is already supported by the Linux crypto API,
+>>> including a vectorized implementation for ARM using NEON instructions,
+>>> and vectorized implementations for x86 using SSSE3 or AVX2 instructions.
+>>>
+>>> On 32-bit ARM processors with NEON support, ChaCha20 is about 3.2 times
+>>> faster than AES-128-XTS (chacha20-neon vs. xts-aes-neonbs).  Without
+>>> NEON support, ChaCha20 is about 1.5 times as fast (chacha20-generic vs.
+>>> xts(aes-asm)).  The improvement over AES-256-XTS is even greater.
+>>>
+>>> Note that stream ciphers are not an ideal choice for disk encryption,
+>>> since each data block has to be encrypted with the same IV each time it
+>>> is overwritten.  Consequently, an adversary who observes the ciphertext
+>>> both before and after a write can trivially recover the keystream if
+>>> they can guess one of the plaintexts.  Moreover, an adversary who can
+>>> write to the ciphertext can flip arbitrary bits in the plaintext, merely
+>>> by flipping the corresponding bits in the ciphertext.  A block cipher
+>>> operating in the XTS or CBC-ESSIV mode provides some protection against
+>>> these types of attacks -- albeit not full protection, which would at
+>>> minimum require the use an authenticated encryption mode with nonces.
+>>>
+>>> Unfortunately, we are unaware of any block cipher which performs as well
+>>> as ChaCha20, has a similar or greater security margin, and has been
+>>> subject to as much public security analysis.  We do not consider Speck
+>>> to be a viable alternative at this time.
+>>>
+>>> Still, a stream cipher is sufficient to protect data confidentiality in
+>>> the event of a single point-in-time permanent offline compromise of the
+>>> disk, which currently is the primary threat model for fscrypt.  Thus,
+>>> when the alternative is quite literally *no encryption*, we might as
+>>> well use a stream cipher.
+>>>
+>>> We offer ChaCha20 rather than the reduced-round variants ChaCha8 or
+>>> ChaCha12 because ChaCha20 has a much higher security margin, and we are
+>>> primarily targeting CPUs where ChaCha20 is fast enough, in particular
+>>> CPUs that have vector instructions such as NEON or SSSE3.  Also, the
+>>> crypto API currently only supports ChaCha20.  Still, if ChaCha8 and/or
+>>> ChaCha12 support were to be added to the crypto API, it would be
+>>> straightforward to support them in fscrypt too.
+>>>
+>>> Currently, stream ciphers cannot be used for filenames encryption with
+>>> fscrypt because all filenames in a directory have to be encrypted with
+>>> the same IV.  Therefore, we offer ChaCha20 for contents encryption only.
+>>> Filenames encryption still must use AES-256-CTS-CBC.  This is acceptable
+>>> because filenames encryption is not as performance-critical as contents
+>>> encryption.
+>>>
+>>> Reviewed-by: Michael Halcrow <mhalcrow@google.com>
+>>> Signed-off-by: Eric Biggers <ebiggers@google.com>
+>>> ---
+>>>  Documentation/filesystems/fscrypt.rst | 43 +++++++++++++++++++---
+>>>  fs/crypto/Kconfig                     |  1 +
+>>>  fs/crypto/crypto.c                    | 69 ++++++++++++++++++++++++++++-------
+>>>  fs/crypto/keyinfo.c                   |  2 +
+>>>  include/linux/fscrypt.h               |  6 ++-
+>>>  include/uapi/linux/fs.h               |  1 +
+>>>  6 files changed, 102 insertions(+), 20 deletions(-)
+>>>
+>>> diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
+>>> index 776ddc655f79..927d3c88816b 100644
+>>> --- a/Documentation/filesystems/fscrypt.rst
+>>> +++ b/Documentation/filesystems/fscrypt.rst
+>>> @@ -184,6 +184,9 @@ replaced with HKDF or another more standard KDF in the future.
+>>>  Encryption modes and usage
+>>>  ==========================
+>>>
+>>> +Available modes
+>>> +---------------
+>>> +
+>>>  fscrypt allows one encryption mode to be specified for file contents
+>>>  and one encryption mode to be specified for filenames.  Different
+>>>  directory trees are permitted to use different encryption modes.
+>>> @@ -191,24 +194,52 @@ Currently, the following pairs of encryption modes are supported:
+>>>
+>>>  - AES-256-XTS for contents and AES-256-CTS-CBC for filenames
+>>>  - AES-128-CBC for contents and AES-128-CTS-CBC for filenames
+>>> +- ChaCha20 for contents and AES-256-CTS-CBC for filenames
+>>>
+>>>  It is strongly recommended to use AES-256-XTS for contents encryption.
+>>>  AES-128-CBC was added only for low-powered embedded devices with
+>>>  crypto accelerators such as CAAM or CESA that do not support XTS.
+>>>
+>>> +Similarly, ChaCha20 was only added for low-end devices that have
+>>> +neither a CPU with AES instructions, nor a hardware crypto
+>>> +accelerator.  Note that since ChaCha20 is a stream cipher, it is
+>>> +easily broken if an attacker can view encrypted data both before and
+>>> +after it is overwritten.  Thus, even moreso than the other modes,
+>>> +ChaCha20 can protect data confidentiality *only* in the event of a
+>>> +single point-in-time, permanent offline compromise of the storage.
+>>> +Also, ChaCha20 is supported only for contents encryption, not
+>>> +filenames encryption, because all filenames in a directory have to be
+>>> +encrypted with the same IV, which would be especially inappropriate
+>>> +for a stream cipher.
+>>> +
+>>>  New encryption modes can be added relatively easily, without changes
+>>>  to individual filesystems.  However, authenticated encryption (AE)
+>>>  modes are not currently supported because of the difficulty of dealing
+>>>  with ciphertext expansion.
+>>>
+>>> +Contents encryption
+>>> +-------------------
+>>> +
+>>>  For file contents, each filesystem block is encrypted independently.
+>>>  Currently, only the case where the filesystem block size is equal to
+>>> -the system's page size (usually 4096 bytes) is supported.  With the
+>>> -XTS mode of operation (recommended), the logical block number within
+>>> -the file is used as the IV.  With the CBC mode of operation (not
+>>> -recommended), ESSIV is used; specifically, the IV for CBC is the
+>>> -logical block number encrypted with AES-256, where the AES-256 key is
+>>> -the SHA-256 hash of the inode's data encryption key.
+>>> +the system's page size (usually 4096 bytes) is supported.
+>>> +
+>>> +With the XTS mode of operation, the logical block number within the
+>>> +file is used as the IV.
+>>> +
+>>> +With the CBC mode of operation, ESSIV is used.  Specifically, the IV
+>>> +is the file logical block number encrypted with AES-256, where the
+>>> +AES-256 key is the SHA-256 hash of the inode's data encryption key.
+>>> +
+>>> +With ChaCha20, the file logical block number is also used as the IV,
+>>> +but it is formatted differently to ensure that it is copied into the
+>>> +"nonce" portion of the ChaCha20 initial state (words 14-15) rather
+>>> +than the "block counter" portion (words 12-13).  This detail is
+>>> +critical, since otherwise different portions of the file would be
+>>> +encrypted with the same keystream.
+>>> +
+>>> +Filenames encryption
+>>> +--------------------
+>>>
+>>>  For filenames, the full filename is encrypted at once.  Because of the
+>>>  requirements to retain support for efficient directory lookups and
+>>> diff --git a/fs/crypto/Kconfig b/fs/crypto/Kconfig
+>>> index 02b7d91c9231..44f052e9d842 100644
+>>> --- a/fs/crypto/Kconfig
+>>> +++ b/fs/crypto/Kconfig
+>>> @@ -3,6 +3,7 @@ config FS_ENCRYPTION
+>>>         select CRYPTO
+>>>         select CRYPTO_AES
+>>>         select CRYPTO_CBC
+>>> +       select CRYPTO_CHACHA20
+>>>         select CRYPTO_ECB
+>>>         select CRYPTO_XTS
+>>>         select CRYPTO_CTS
+>>> diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+>>> index 732a786cce9d..d5c95a18db59 100644
+>>> --- a/fs/crypto/crypto.c
+>>> +++ b/fs/crypto/crypto.c
+>>> @@ -126,15 +126,66 @@ struct fscrypt_ctx *fscrypt_get_ctx(const struct inode *inode, gfp_t gfp_flags)
+>>>  }
+>>>  EXPORT_SYMBOL(fscrypt_get_ctx);
+>>>
+>>> +struct fscrypt_iv {
+>>> +       __le64 first_half;
+>>> +       __le64 second_half;
+>>> +};
+>>> +
+>>> +/*
+>>> + * Generate the IV for encrypting/decrypting the block at the given logical
+>>> + * block number within a file.
+>>> + */
+>>> +static void fscrypt_generate_iv(struct fscrypt_iv *iv, u64 lblk_num,
+>>> +                               const struct fscrypt_info *ci)
+>>> +{
+>>> +       BUILD_BUG_ON(sizeof(*iv) != FS_IV_SIZE);
+>>> +
+>>> +       if (ci->ci_data_mode == FS_ENCRYPTION_MODE_CHACHA20) {
+>>> +               /*
+>>> +                * ChaCha20 interprets its IV as a block counter followed by a
+>>> +                * nonce.  We *MUST NOT* use the file logical block number as
+>>> +                * the Chacha block counter because the ChaCha block counter
+>>> +                * counts 64-byte ChaCha blocks, which are much smaller than
+>>> +                * file blocks.  If we did, then portions of the keystream would
+>>> +                * be repeated, which would be catastrophic.
+>>> +                *
 >>
->> Sad..
-> 
-> I don't think you understand. I'll try to explain.
-> 
-> The lockdep infrastructure by itself doesn't make lockdep a useful
-> tool - it mostly generates false positives because it has no
-> concept of locking models that don't match it's internal tracking
-> assumptions and/or limitations.
-> 
-> That means if we can't suppress the false positives, then lockdep is
-> going to be too noisy to find real problems.  It's taken the XFS
-> developers months of work over the past 7-8 years to suppress all
-> the *common* false positives that lockdep throws on XFS. And despite
-> all that work, there's still too many false positives occuring
-> because we can't easily suppress them with annotations. IOWs, the
-> signal to noise ratio is still too low for lockdep to find real
-> problems.
-> 
-> That's why lockdep isn't useful to me - the noise floor is too high,
-> and the effort to lower the noise floor further is too great.
-> 
-> This is important, because cross-release just raised the noise floor
-> by a large margin and so now we have to spend the time to reduce it
-> again back to where it was before cross-release was added.  IOWs,
-> adding new detection features to lockdep actually makes lockdep less
-> useful for a significant period of time. That length of time is
-> dependent on the rate at which subsystem developers can suppress the
-> false positives and lower the noise floor back down to an acceptible
-> level. And there is always the possibility that we can't get the
-> noise floor low enough for lockdep to be a reliable, useful tool for
-> some subsystems....
-> 
-> That's what I don't think you understand - that the most important
-> part of lockdep is /not the core infrastructure/ you work on. The
-> most important part of lockdep is the annotations that suppress the
-> noise floor and allow the real problems to stand out.
+>> OK, so you are saying that LBA n + 1 will share its keystream with LBA
+>> n but shift by 64 blocks, right? Yeah, that's terrible.
+>>
+>
+> shift-ed by 64 *bytes*
 
-I'm sorry to hear that.. If I were you, I would also get
-annoyed. And.. thanks for explanation.
+Actually, this appears to be a flaw in our implementation of ChaCha20.
+According to RFC7539:
 
-But, I think assigning lock classes properly and checking
-relationship of the classes to detect deadlocks is reasonable.
+   The inputs to ChaCha20 are:
 
-In my opinion about the common lockdep stuff, there are 2
-problems on it.
+   o  A 256-bit key
 
-1) Firstly, it's hard to assign lock classes *properly*. By
-default, it relies on the caller site of lockdep_init_map(),
-but we need to assign another class manually, where ordering
-rules are complicated so cannot rely on the caller site. That
-*only* can be done by experts of the subsystem.
+   o  A 32-bit initial counter.  This can be set to any number, but will
+      usually be zero or one.  It makes sense to use one if we use the
+      zero block for something else, such as generating a one-time
+      authenticator key as part of an AEAD algorithm.
 
-I think if they want to get benifit from lockdep, they have no
-choice but to assign classes manually with the domain knowledge,
-or use *lockdep_set_novalidate_class()* to invalidate locks
-making the developers annoyed and not want to use the checking
-for them.
+   o  A 96-bit nonce.  In some protocols, this is known as the
+      Initialization Vector.
 
-It's a problem of choice between (1) getting benifit from
-lockdep by doing something with the domain knowledge, and (2)
-giving up the benifit by invalidating locks making them panic.
+   o  An arbitrary-length plaintext
 
-2) Secondly, I've seen several places where lock_acquire()s
-are a little bit wrongly used more than we need. That would add
-additional detection capability and make lockdep strong but
-increase the possibility to give us more false positives.
+and so the initial value of the counter should be an internal
+parameter of the implementation, not something that is exposed via the
+IV input parameter.
 
-If you don't want to work on the additional annotations at the
-moment, then I think you can choose an option whatever you
-want, and consider locks again you've invalidated, when it
-becomes necessary to detect deadlocks involving those locks by
-validating those locks back and adding necessary annotations.
+Given how it is not uncommon for counters to be used as IV, this is a
+fundamental flaw that could rear its head in other places as well, so
+I propose we fix this one way (fix the current code) or the other
+(deprecate the current code and create a new chacha20-rfc7539
+blockcipher that uses a 96-bit IV and sets the counter to 0)
 
-Am I missing something?
-
--- 
-Thanks,
-Byungchul
---
-To unsubscribe from this list: send the line "unsubscribe linux-nilfs" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
