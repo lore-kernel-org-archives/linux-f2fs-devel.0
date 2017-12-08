@@ -1,94 +1,83 @@
-From: Dave Chinner <david-FqsqvQoI3Ljby3iVrkZq2A@public.gmane.org>
-Subject: Re: [PATCH v4 72/73] xfs: Convert mru cache to XArray
-Date: Sat, 9 Dec 2017 09:36:54 +1100
-Message-ID: <20171208223654.GP5858@dastard>
-References: <fd7130d7-9066-524e-1053-a61eeb27cb36@lge.com>
- <Pine.LNX.4.44L0.1712081228430.1371-100000@iolanthe.rowland.org>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: [RFC PATCH] crypto: chacha20 - add implementation using 96-bit nonce
+Date: Fri, 8 Dec 2017 22:42:41 +0000
+Message-ID: <CAKv+Gu9VJ3X6A+WBiKyTmapOMA-r_pKCoiWkDSJJi3okXDeyEA@mail.gmail.com>
+References: <20171208115502.21775-1-ard.biesheuvel@linaro.org> <20171208221716.GB104193@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1712081228430.1371-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
-Sender: linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Cc: Byungchul Park <byungchul.park-Hm3cg6mZ9cc@public.gmane.org>, Theodore Ts'o <tytso-3s7WtUTddSA@public.gmane.org>, Matthew Wilcox <willy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Matthew Wilcox <mawilcox-0li6OtcxBFHby3iVrkZq2A@public.gmane.org>, Ross Zwisler <ross.zwisler-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, Rehas Sachdeva <aquannie-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-xfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-team-Hm3cg6mZ9cc@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-ext4-owner@vger.kernel.org>
+In-Reply-To: <20171208221716.GB104193@gmail.com>
+Sender: linux-ext4-owner@vger.kernel.org
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, Eric Biggers <ebiggers@google.com>, linux-fscrypt@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Michael Halcrow <mhalcrow@google.com>, Paul Crowley <paulcrowley@google.com>, Martin Willi <martin@strongswan.org>, David Gstir <david@sigma-star.at>, "Jason A . Donenfeld" <Jason@zx2c4.com>, Stephan Mueller <smueller@chronox.de>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Fri, Dec 08, 2017 at 12:35:07PM -0500, Alan Stern wrote:
-> On Fri, 8 Dec 2017, Byungchul Park wrote:
-> 
-> > I'm sorry to hear that.. If I were you, I would also get
-> > annoyed. And.. thanks for explanation.
-> > 
-> > But, I think assigning lock classes properly and checking
-> > relationship of the classes to detect deadlocks is reasonable.
-> > 
-> > In my opinion about the common lockdep stuff, there are 2
-> > problems on it.
-> > 
-> > 1) Firstly, it's hard to assign lock classes *properly*. By
-> > default, it relies on the caller site of lockdep_init_map(),
-> > but we need to assign another class manually, where ordering
-> > rules are complicated so cannot rely on the caller site. That
-> > *only* can be done by experts of the subsystem.
+On 8 December 2017 at 22:17, Eric Biggers <ebiggers3@gmail.com> wrote:
+> On Fri, Dec 08, 2017 at 11:55:02AM +0000, Ard Biesheuvel wrote:
+>> As pointed out by Eric [0], the way RFC7539 was interpreted when creating
+>> our implementation of ChaCha20 creates a risk of IV reuse when using a
+>> little endian counter as the IV generator. The reason is that the low end
+>> bits of the counter get mapped onto the ChaCha20 block counter, which
+>> advances every 64 bytes. This means that the counter value that gets
+>> selected as IV for the next input block will collide with the ChaCha20
+>> block counter of the previous block, basically recreating the same
+>> keystream but shifted by 64 bytes.
+>>
+>> RFC7539 describes the inputs of the algorithm as follows:
+>>
+>>   The inputs to ChaCha20 are:
+>>
+>>      o  A 256-bit key
+>>
+>>      o  A 32-bit initial counter.  This can be set to any number, but will
+>>         usually be zero or one.  It makes sense to use one if we use the
+>>         zero block for something else, such as generating a one-time
+>>         authenticator key as part of an AEAD algorithm.
+>>
+>>      o  A 96-bit nonce.  In some protocols, this is known as the
+>>         Initialization Vector.
+>>
+>>      o  An arbitrary-length plaintext
+>>
+>> The solution is to use a fixed value of 0 for the initial counter, and
+>> only expose a 96-bit IV to the upper layers of the crypto API.
+>>
+>> So introduce a new ChaCha20 flavor called chacha20-iv96, which takes the
+>> above into account, and should become the preferred ChaCha20
+>> implementation going forward for general use.
+>
+> Note that there are two conflicting conventions for what inputs ChaCha takes.
+> The original paper by Daniel Bernstein
+> (https://cr.yp.to/chacha/chacha-20080128.pdf) says that the block counter is
+> 64-bit and the nonce is 64-bit, thereby expanding the key into 2^64 randomly
+> accessible streams, each containing 2^64 randomly accessible 64-byte blocks.
+>
+> The RFC 7539 convention is equivalent to seeking to a large offset (determined
+> by the first 32 bits of the 96-bit nonce) in the keystream defined by the djb
+> convention, but only if the 32-bit portion of the block counter never overflows.
+>
+> Maybe it is only RFC 7539 that matters because that is what is being
+> standardized by the IETF; I don't know.  But it confused me.
+>
 
-Sure, but that's not the issue here. The issue here is the lack of
-communication with subsystem experts and that the annotation
-complexity warnings given immediately by the subsystem experts were
-completely ignored...
+The distinction only matters if you start the counter at zero (or
+one), because you 'lose' 32 bits of IV that will never be != 0 in
+practice if you use a 64-bit counter.
 
-> > I think if they want to get benifit from lockdep, they have no
-> > choice but to assign classes manually with the domain knowledge,
-> > or use *lockdep_set_novalidate_class()* to invalidate locks
-> > making the developers annoyed and not want to use the checking
-> > for them.
-> 
-> Lockdep's no_validate class is used when the locking patterns are too
-> complicated for lockdep to understand.  Basically, it tells lockdep to
-> ignore those locks.
+So that argues for not exposing the block counter as part of the API,
+given that it should start at zero anyway, and that you should take
+care not to put colliding values in it.
 
-Let me just point out two things here:
+> Anyway, I actually thought it was intentional that the ChaCha implementations in
+> the Linux kernel allowed specifying the block counter, and therefore allowed
+> seeking to any point in the keystream, exposing the full functionality of the
+> cipher.  It's true that it's easily misused though, so there may nevertheless be
+> value in providing a nonce-only variant.
+>
 
-	1. Using lockdep_set_novalidate_class() for anything other
-	than device->mutex will throw checkpatch warnings. Nice. (*)
-
-	2. lockdep_set_novalidate_class() is completely undocumented
-	- it's the first I've ever heard of this functionality. i.e.
-	nobody has ever told us there is a mechanism to turn off
-	validation of an object; we've *always* been told to "change
-	your code and/or fix your annotations" when discussing
-	lockdep deficiencies. (**)
-
-> The device core uses that class.  The tree of struct devices, each with
-> its own lock, gets used in many different and complicated ways.  
-> Lockdep can't understand this -- it doesn't have the ability to
-> represent an arbitrarily deep hierarchical tree of locks -- so we tell
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-That largely describes the in-memory structure of XFS, except we
-have a forest of lock trees, not just one....
-
-> it to ignore the device locks.
-> 
-> It sounds like XFS may need to do the same thing with its semaphores.
-
-Who-ever adds semaphore checking to lockdep can add those
-annotations. The externalisation of the development cost of new
-lockdep functionality is one of the problems here.
-
--Dave.
-
-(*) checkpatch.pl is considered mostly harmful round here, too,
-but that's another rant....
-
-(**) the frequent occurrence of "core code/devs aren't held to the
-same rules/standard as everyone else" is another rant I have stored
-up for a rainy day.
-
--- 
-Dave Chinner
-david-FqsqvQoI3Ljby3iVrkZq2A@public.gmane.org
---
-To unsubscribe from this list: send the line "unsubscribe linux-nilfs" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Currently, the skcipher API does not allow such random access, so
+while I can see how that could be a useful feature, we can't really
+make use of it today. But more importantly, it still does not mean the
+block counter should be exposed to the /users/ of the skcipher API
+which typically encrypt/decrypt blocks that are much larger than 64
+bytes.
