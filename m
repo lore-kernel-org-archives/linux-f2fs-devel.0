@@ -1,79 +1,79 @@
-From: Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v4 72/73] xfs: Convert mru cache to XArray
-Date: Fri, 8 Dec 2017 15:01:31 -0800
-Message-ID: <20171208230131.GC32293@bombadil.infradead.org>
-References: <20171206004159.3755-1-willy@infradead.org>
- <20171206004159.3755-73-willy@infradead.org>
- <20171206012901.GZ4094@dastard>
- <20171206020208.GK26021@bombadil.infradead.org>
- <20171206031456.GE4094@dastard>
- <20171206044549.GO26021@bombadil.infradead.org>
- <20171206084404.GF4094@dastard>
- <20171206140648.GB32044@bombadil.infradead.org>
- <20171207003843.GG4094@dastard>
+From: Eric Biggers <ebiggers3@gmail.com>
+Subject: Re: [RFC PATCH] crypto: chacha20 - add implementation using 96-bit
+ nonce
+Date: Fri, 8 Dec 2017 15:11:56 -0800
+Message-ID: <20171208231156.GC104193@gmail.com>
+References: <20171208115502.21775-1-ard.biesheuvel@linaro.org>
+ <20171208221716.GB104193@gmail.com>
+ <CAKv+Gu9VJ3X6A+WBiKyTmapOMA-r_pKCoiWkDSJJi3okXDeyEA@mail.gmail.com>
+ <CAKv+Gu9uO_qsTLdqF4unkwjBC+niDbueAK5a4TbusqL+P5aXKg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
+Return-path: <linux-crypto-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20171207003843.GG4094@dastard>
-Sender: owner-linux-mm@kvack.org
-To: Dave Chinner <david@fromorbit.com>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Jens Axboe <axboe@kernel.dk>, Rehas Sachdeva <aquannie@gmail.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <CAKv+Gu9uO_qsTLdqF4unkwjBC+niDbueAK5a4TbusqL+P5aXKg@mail.gmail.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, Eric Biggers <ebiggers@google.com>, linux-fscrypt@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Michael Halcrow <mhalcrow@google.com>, Paul Crowley <paulcrowley@google.com>, Martin Willi <martin@strongswan.org>, David Gstir <david@sigma-star.at>, "Jason A . Donenfeld" <Jason@zx2c4.com>, Stephan Mueller <smueller@chronox.de>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Thu, Dec 07, 2017 at 11:38:43AM +1100, Dave Chinner wrote:
-> > > cmpxchg is for replacing a known object in a store - it's not really
-> > > intended for doing initial inserts after a lookup tells us there is
-> > > nothing in the store.  The radix tree "insert only if empty" makes
-> > > sense here, because it naturally takes care of lookup/insert races
-> > > via the -EEXIST mechanism.
-> > > 
-> > > I think that providing xa_store_excl() (which would return -EEXIST
-> > > if the entry is not empty) would be a better interface here, because
-> > > it matches the semantics of lookup cache population used all over
-> > > the kernel....
-> > 
-> > I'm not thrilled with xa_store_excl(), but I need to think about that
-> > a bit more.
+On Fri, Dec 08, 2017 at 10:54:24PM +0000, Ard Biesheuvel wrote:
+> >> Note that there are two conflicting conventions for what inputs ChaCha takes.
+> >> The original paper by Daniel Bernstein
+> >> (https://cr.yp.to/chacha/chacha-20080128.pdf) says that the block counter is
+> >> 64-bit and the nonce is 64-bit, thereby expanding the key into 2^64 randomly
+> >> accessible streams, each containing 2^64 randomly accessible 64-byte blocks.
+> >>
+> >> The RFC 7539 convention is equivalent to seeking to a large offset (determined
+> >> by the first 32 bits of the 96-bit nonce) in the keystream defined by the djb
+> >> convention, but only if the 32-bit portion of the block counter never overflows.
+> >>
+> >> Maybe it is only RFC 7539 that matters because that is what is being
+> >> standardized by the IETF; I don't know.  But it confused me.
+> >>
+> >
+> > The distinction only matters if you start the counter at zero (or
+> > one), because you 'lose' 32 bits of IV that will never be != 0 in
+> > practice if you use a 64-bit counter.
+> >
+> > So that argues for not exposing the block counter as part of the API,
+> > given that it should start at zero anyway, and that you should take
+> > care not to put colliding values in it.
+> >
+> >> Anyway, I actually thought it was intentional that the ChaCha implementations in
+> >> the Linux kernel allowed specifying the block counter, and therefore allowed
+> >> seeking to any point in the keystream, exposing the full functionality of the
+> >> cipher.  It's true that it's easily misused though, so there may nevertheless be
+> >> value in providing a nonce-only variant.
+> >>
+> >
+> > Currently, the skcipher API does not allow such random access, so
+> > while I can see how that could be a useful feature, we can't really
+> > make use of it today. But more importantly, it still does not mean the
+> > block counter should be exposed to the /users/ of the skcipher API
+> > which typically encrypt/decrypt blocks that are much larger than 64
+> > bytes.
 > 
-> Not fussed about the name - I just think we need a function that
-> matches the insert semantics of the code....
+> ... but now that I think of it, how is this any different from, say,
+> AES in CTR mode? The counter is big endian, but apart from that, using
+> IVs derived from a counter will result in the exact same issue, only
+> with a shift of 16 bytes.
+> 
+> That means using file block numbers as IV is simply inappropriate, and
+> you should encrypt them first like is done for AES-CBC
 
-I think I have something that works better for you than returning -EEXIST
-(because you don't actually want -EEXIST, you want -EAGAIN):
+The problem with using a stream cipher --- whether that is ChaCha20, AES-CTR, or
+something else --- for disk/file encryption is that by necessity of file/disk
+encryption, each time the "same" block is written to, the IV is the same, which
+is really bad for stream ciphers (but not as bad for AES-XTS, AES-CBC, etc.).
+It's irrelevant whether you do ESSIV or otherwise encrypt the IVs.  ESSIV does
+make the IV for each offset unpredictable by an attacker, which is desirable for
+AES-CBC, but it doesn't stop the IV from being repeated for each overwrite.
 
-        /* insert the new inode */
--       spin_lock(&pag->pag_ici_lock);
--       error = radix_tree_insert(&pag->pag_ici_root, agino, ip);
--       if (unlikely(error)) {
--               WARN_ON(error != -EEXIST);
--               XFS_STATS_INC(mp, xs_ig_dup);
--               error = -EAGAIN;
--               goto out_preload_end;
--       }
--       spin_unlock(&pag->pag_ici_lock);
--       radix_tree_preload_end();
-+       curr = xa_cmpxchg(&pag->pag_ici_xa, agino, NULL, ip, GFP_NOFS);
-+       error = __xa_race(curr, -EAGAIN);
-+       if (error)
-+               goto out_unlock;
+And just to clarify, you definitely *can* seek to any position in the ChaCha20
+stream using the existing ChaCha20 implementations and the existing skcipher
+API, simply by providing the appropriate IV.  Maybe it was unintentional, but it
+does work.  chacha20poly1305.c even uses it to start at block 1 instead of block
+0.  I don't know whether there are other users, though.
 
-...
-
--out_preload_end:
--       spin_unlock(&pag->pag_ici_lock);
--       radix_tree_preload_end();
-+out_unlock:
-+       if (error == -EAGAIN)
-+               XFS_STATS_INC(mp, xs_ig_dup);
-
-I've changed the behaviour slightly in that returning an -ENOMEM used to
-hit a WARN_ON, and I don't think that's the right response -- GFP_NOFS
-returning -ENOMEM probably gets you a nice warning already from the
-mm code.
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Eric
