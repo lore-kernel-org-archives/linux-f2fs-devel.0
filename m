@@ -1,98 +1,62 @@
-From: Jeffrey Walton <noloader@gmail.com>
-Subject: Re: [PATCH] fscrypt: add support for ChaCha20 contents encryption
-Date: Fri, 8 Dec 2017 19:48:54 -0500
-Message-ID: <CAH8yC8knEBwum3Ka3x+8sT3qhtHT2FLb4Bo6DzjPKFC0hw4KQA@mail.gmail.com>
-References: <20171208013838.105034-1-ebiggers3@gmail.com>
-Reply-To: noloader@gmail.com
+From: hsiangkao--- via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Subject: question about find_next_free_block in f2fs-tools
+Date: Sat, 9 Dec 2017 14:29:58 +0800
+Message-ID: <2017120914295588417753@aol.com>
+Reply-To: "hsiangkao@aol.com" <hsiangkao@aol.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <20171208013838.105034-1-ebiggers3@gmail.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: linux-fscrypt@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Michael Halcrow <mhalcrow@google.com>, Paul Crowley <paulcrowley@google.com>, Martin Willi <martin@strongswan.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, David Gstir <david@sigma-star.at>, "Jason A . Donenfeld" <Jason@zx2c4.com>, Eric Biggers <ebiggers@google.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+ helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <hsiangkao@aol.com>) id 1eNYeE-0002Zg-Pk
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 09 Dec 2017 06:30:06 +0000
+Received: from omr-a010e.mx.aol.com ([204.29.186.54])
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) id 1eNYeD-0005Ug-Rr
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 09 Dec 2017 06:30:06 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk <jaegeuk@kernel.org>, chao <chao@kernel.org>
+Cc: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 
-> Still, a stream cipher is sufficient to protect data confidentiality in
-> the event of a single point-in-time permanent offline compromise of the
-> disk, which currently is the primary threat model for fscrypt.  Thus,
-> when the alternative is quite literally *no encryption*, we might as
-> well use a stream cipher.
-
-The "single point in time" requirement is kind of interesting. I
-believe you are saying the scheme lacks semantic security.
-
-Forgive my ignorance... Does that mean this cipher should not be used
-when backups are in effect; or sync'ing to <insert favorite cloud
-provider> happens?
-
-Jeff
-
-On Thu, Dec 7, 2017 at 8:38 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> From: Eric Biggers <ebiggers@google.com>
->
-> fscrypt currently only supports AES encryption.  However, many low-end
-> mobile devices still use older CPUs such as ARMv7, which do not support
-> the AES instructions (the ARMv8 Cryptography Extensions).  This results
-> in very poor AES performance, even if the NEON bit-sliced implementation
-> is used.  Roughly 20-40 MB/s is a typical number, in comparison to
-> 300-800 MB/s on CPUs that support the AES instructions.  Switching from
-> AES-256 to AES-128 only helps by about 30%.
->
-> The result is that vendors don't enable encryption on these devices,
-> leaving users unprotected.
->
-> A performance difference of similar magnitude can also be observed on
-> x86, between CPUs with and without the AES-NI instruction set.
->
-> This patch provides an alternative to AES by updating fscrypt to support
-> the ChaCha20 stream cipher (RFC7539) for contents encryption.  ChaCha20
-> was designed to have a large security margin, to be efficient on
-> general-purpose CPUs without dedicated instructions, and to be
-> vectorizable.  It is already supported by the Linux crypto API,
-> including a vectorized implementation for ARM using NEON instructions,
-> and vectorized implementations for x86 using SSSE3 or AVX2 instructions.
->
-> On 32-bit ARM processors with NEON support, ChaCha20 is about 3.2 times
-> faster than AES-128-XTS (chacha20-neon vs. xts-aes-neonbs).  Without
-> NEON support, ChaCha20 is about 1.5 times as fast (chacha20-generic vs.
-> xts(aes-asm)).  The improvement over AES-256-XTS is even greater.
->
-> Note that stream ciphers are not an ideal choice for disk encryption,
-> since each data block has to be encrypted with the same IV each time it
-> is overwritten.  Consequently, an adversary who observes the ciphertext
-> both before and after a write can trivially recover the keystream if
-> they can guess one of the plaintexts.  Moreover, an adversary who can
-> write to the ciphertext can flip arbitrary bits in the plaintext, merely
-> by flipping the corresponding bits in the ciphertext.  A block cipher
-> operating in the XTS or CBC-ESSIV mode provides some protection against
-> these types of attacks -- albeit not full protection, which would at
-> minimum require the use an authenticated encryption mode with nonces.
->
-> Unfortunately, we are unaware of any block cipher which performs as well
-> as ChaCha20, has a similar or greater security margin, and has been
-> subject to as much public security analysis.  We do not consider Speck
-> to be a viable alternative at this time.
->
-> Still, a stream cipher is sufficient to protect data confidentiality in
-> the event of a single point-in-time permanent offline compromise of the
-> disk, which currently is the primary threat model for fscrypt.  Thus,
-> when the alternative is quite literally *no encryption*, we might as
-> well use a stream cipher.
->
-> We offer ChaCha20 rather than the reduced-round variants ChaCha8 or
-> ChaCha12 because ChaCha20 has a much higher security margin, and we are
-> primarily targeting CPUs where ChaCha20 is fast enough, in particular
-> CPUs that have vector instructions such as NEON or SSSE3.  Also, the
-> crypto API currently only supports ChaCha20.  Still, if ChaCha8 and/or
-> ChaCha12 support were to be added to the crypto API, it would be
-> straightforward to support them in fscrypt too.
->
-> Currently, stream ciphers cannot be used for filenames encryption with
-> fscrypt because all filenames in a directory have to be encrypted with
-> the same IV.  Therefore, we offer ChaCha20 for contents encryption only.
-> Filenames encryption still must use AES-256-CTS-CBC.  This is acceptable
-> because filenames encryption is not as performance-critical as contents
-> encryption.
->
-> ...
+SGkgSmFlZ2V1ayBhbmQgQ2hhbywKwqAgwqAgSSBoYXZlIGEgbWlub3IgcXVlc3Rpb24gYWJvdXQg
+dGhlIGZvbGxvd2luZyBjb2RlIHNuaXBwZXQgaW7CoGZpbmRfbmV4dF9mcmVlX2Jsb2NrwqByZWNl
+bnRseQoJCWlmIChzZS0+dmFsaWRfYmxvY2tzID09IDAgJiYgIShzZWdubyAlIHNiaS0+c2Vnc19w
+ZXJfc2VjKSkgewoJCQlzdHJ1Y3Qgc2VnX2VudHJ5ICpzZTI7CgkJCXVuc2lnbmVkIGludCBpOwoK
+CQkJZm9yIChpID0gMTsgaSA8IHNiaS0+c2Vnc19wZXJfc2VjOyBpKyspIHsKCQkJCXNlMiA9IGdl
+dF9zZWdfZW50cnkoc2JpLCBzZWdubyArIGkpOwoJCQkJaWYgKHNlMi0+dmFsaWRfYmxvY2tzKQoJ
+CQkJCWJyZWFrOwoJCQl9CgkJCWlmIChpID09IHNiaS0+c2Vnc19wZXJfc2VjKQoJCQkJcmV0dXJu
+IDA7CgkJfQrCoCDCoCBXaGF0IGRvZXMgaXQgZG8gaWYgYSBzZWN0aW9uIGhhcyAyIG9yIG1vcmUg
+c2VnbWVudHM/CsKgIMKgIEl0IHNlZW1zIHRoYXQgaXQgc3VjY2VlZHMgb25secKgaWYgdGhlIHNl
+Y3Rpb24gaXMgdG90YWxseSBmcmVlPyBpZiBub3QsIGRvIFNTUiBpbnN0ZWFkP8KgSSBoYXZlIG5v
+IGlkZWEgYWJvdXQgdGhhdC4gOigKwqAgwqAgQW5kIHRoZSBjb2RlIG1haW5seSBmb3IgU1NSwqBm
+b2xsb3dzLCBidXQgSSBhbSBjb25mdXNlZCB3aGVuIEkgYXNzb2NpYXRlwqB0aGF0IHdpdGggdGhl
+IGFib3ZlLi4uCgkJaWYgKHNlLT50eXBlID09IHR5cGUgJiYKCQkJIWYyZnNfdGVzdF9iaXQob2Zm
+c2V0LCAoY29uc3QgY2hhciAqKXNlLT5jdXJfdmFsaWRfbWFwKSkKCQkJcmV0dXJuIDA7CsKgIMKg
+IERvZXMgdGhhdCBpbmRpY2F0ZSBzZWdtZW50cyBvZiBhIHNlY3Rpb24gc2hvdWxkIGhhdmUgdGhl
+IHNhbWUgdHlwZT8KwqAgwqAgwqAgwqAgYnV0IEkgY291bGQgbm90IGZpbmQgYW55IG1lY2hhbmlz
+bSB0byBrZWVwIHNlZ21lbnRzIG9mIGEgc2VjdGlvbiBpbiB0aGUgc2FtZSB0eXBlLi7CoAoKwqAg
+wqAgQW5kIEkgY291bGQgbm90IHVuZGVyc3RhbmQgd2hhdMKgdGhlIGNvbW1pdCBtZXNzYWdlKCJm
+c2NrLmYyZnM6IExGUyBhbGxvY190eXBlIG11c3QgaGF2ZSBmcmVlIHNlZ21lbnQgYWZ0ZXIgYmxr
+b2ZmIikgbWVhbnMuLi4KwqAgwqAgV2h5IHNob3VsZCB0aGUgbGFzdCBvZiBzZWdtZW50IGhhdmUg
+bm8gdmFsaWQgYmxvY2sgaW7CoExGUyBtb2RlPwoKwqAgwqAgQ291bGQgeW91IHRha2Ugc29tZSB0
+aW1lIGFuZCBnaXZlIG1lIHNvbWUgY2x1ZXMgb24gaXQuLi4gOkQKClRoYW5rcyBhIGxvdC4KCkdh
+byBYaWFuZwpoc2lhbmdrYW9AYW9sLmNvbQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQ2hlY2sgb3V0
+IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0CmVu
+Z2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYy
+ZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2Uu
+bmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYy
+ZnMtZGV2ZWwK
