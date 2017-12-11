@@ -1,170 +1,213 @@
-From: Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v4 72/73] xfs: Convert mru cache to XArray
-Date: Sun, 10 Dec 2017 20:23:15 -0800
-Message-ID: <20171211042315.GA25236@bombadil.infradead.org>
-References: <20171206004159.3755-73-willy@infradead.org>
- <20171206012901.GZ4094@dastard>
- <20171206020208.GK26021@bombadil.infradead.org>
- <20171206031456.GE4094@dastard>
- <20171206044549.GO26021@bombadil.infradead.org>
- <20171206084404.GF4094@dastard>
- <20171206140648.GB32044@bombadil.infradead.org>
- <20171207003843.GG4094@dastard>
- <20171208230131.GC32293@bombadil.infradead.org>
- <20171210235745.GR5858@dastard>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH v2] f2fs: avoid dead loop in function
+ find_fsync_dnodes
+Date: Mon, 11 Dec 2017 12:23:32 +0800
+Message-ID: <1512966212-12595-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20171210235745.GR5858@dastard>
-Sender: owner-linux-mm@kvack.org
-To: Dave Chinner <david@fromorbit.com>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Jens Axboe <axboe@kernel.dk>, Rehas Sachdeva <aquannie@gmail.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+ helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <heyunlei@huawei.com>) id 1eOFpw-0004p5-Kx
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Dec 2017 04:37:04 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eOFpv-0000bk-1x
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Dec 2017 04:37:04 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: ning.jia@huawei.com, heyunlei@huawei.com
 
-On Mon, Dec 11, 2017 at 10:57:45AM +1100, Dave Chinner wrote:
-> i.e.  the fact the cmpxchg failed may not have anything to do with a
-> race condtion - it failed because the slot wasn't empty like we
-> expected it to be. There can be any number of reasons the slot isn't
-> empty - the API should not "document" that the reason the insert
-> failed was a race condition. It should document the case that we
-> "couldn't insert because there was an existing entry in the slot".
-> Let the surrounding code document the reason why that might have
-> happened - it's not for the API to assume reasons for failure.
-> 
-> i.e. this API and potential internal implementation makes much
-> more sense:
-> 
-> int
-> xa_store_iff_empty(...)
-> {
-> 	curr = xa_cmpxchg(&pag->pag_ici_xa, agino, NULL, ip, GFP_NOFS);
-> 	if (!curr)
-> 		return 0;	/* success! */
-> 	if (!IS_ERR(curr))
-> 		return -EEXIST;	/* failed - slot not empty */
-> 	return PTR_ERR(curr);	/* failed - XA internal issue */
-> }
-> 
-> as it replaces the existing preload and insert code in the XFS code
-> paths whilst letting us handle and document the "insert failed
-> because slot not empty" case however we want. It implies nothing
-> about *why* the slot wasn't empty, just that we couldn't do the
-> insert because it wasn't empty.
+Came across a dead loop in recovery like this:
 
-Yeah, OK.  So, over the top of the recent changes I'm looking at this:
+......
+[   24.680480s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597696
+[   24.698394s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597697
+[   24.724334s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724334s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724426s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+......
 
-I'm not in love with xa_store_empty() as a name.  I almost want
-xa_store_weak(), but after my MAP_FIXED_WEAK proposed name got shot
-down, I'm leery of it.  "empty" is at least a concept we already have
-in the API with the comment for xa_init() talking about an empty array
-and xa_empty().  I also considered xa_store_null and xa_overwrite_null
-and xa_replace_null().  Naming remains hard.
+Mount process will block in dead loop and fsck can do nothing with this
+error, This patch abandon recovery if node chain is cyclical.
 
-diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-index 941f38bb94a4..586b43836905 100644
---- a/fs/xfs/xfs_icache.c
-+++ b/fs/xfs/xfs_icache.c
-@@ -451,7 +451,7 @@ xfs_iget_cache_miss(
- 	int			flags,
- 	int			lock_flags)
- {
--	struct xfs_inode	*ip, *curr;
-+	struct xfs_inode	*ip;
- 	int			error;
- 	xfs_agino_t		agino = XFS_INO_TO_AGINO(mp, ino);
- 	int			iflags;
-@@ -498,8 +498,7 @@ xfs_iget_cache_miss(
- 	xfs_iflags_set(ip, iflags);
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fs/f2fs/f2fs.h     |  6 +++++
+ fs/f2fs/recovery.c | 71 ++++++++++++++++++++++++++++++++++++++++++++++--------
+ 2 files changed, 67 insertions(+), 10 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 82f1dc3..4649663 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -289,6 +289,12 @@ struct fsync_inode_entry {
+ 	block_t last_dentry;	/* block address locating the last dentry */
+ };
  
- 	/* insert the new inode */
--	curr = xa_cmpxchg(&pag->pag_ici_xa, agino, NULL, ip, GFP_NOFS);
--	error = __xa_race(curr, -EAGAIN);
-+	error = xa_store_empty(&pag->pag_ici_xa, agino, ip, GFP_NOFS, -EAGAIN);
- 	if (error)
- 		goto out_unlock;
++/* for the block of node chain, used only during recovery */
++struct fsync_node_entry {
++	struct list_head list;	/* list head */
++	block_t blkaddr;	/* locating the node block in recovery chain */
++};
++
+ #define nats_in_cursum(jnl)		(le16_to_cpu((jnl)->n_nats))
+ #define sits_in_cursum(jnl)		(le16_to_cpu((jnl)->n_sits))
  
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index 5792b6dbb040..cc7cc5253a67 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -271,43 +271,30 @@ static inline int xa_err(void *entry)
- }
- 
- /**
-- * __xa_race() - Turn a cmpxchg result into an errno.
-- * @entry: Result from calling an XArray function.
-- * @errno: Error number to return if we lost the race.
-+ * xa_store_empty() - Store this entry in the XArray unless another entry is
-+ * 			already present.
-+ * @xa: XArray.
-+ * @index: Index into array.
-+ * @entry: New entry.
-+ * @gfp: Memory allocation flags.
-+ * @rc: Number to return if another entry was present.
-  *
-- * Like xa_race(), but returns the error number of your choice.  Calling
-- * __xa_race(entry, 0) has the same result (but is less efficient) as
-- * calling xa_err().
-+ * Like xa_store(), but will fail and return the supplied error number if
-+ * the existing entry at @index is not %NULL.
-  *
-  * Return: A negative errno or 0.
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 7d63faf..9958abb 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -46,6 +46,7 @@
   */
--static inline int __xa_race(void *entry, int errno)
-+static inline int xa_store_empty(struct xarray *xa, unsigned long index,
-+		void *entry, gfp_t gfp, int errno)
+ 
+ static struct kmem_cache *fsync_entry_slab;
++static struct kmem_cache *fsync_node_chain_slab;
+ 
+ bool space_for_roll_forward(struct f2fs_sb_info *sbi)
  {
--	if (!entry)
-+	void *curr = xa_cmpxchg(xa, index, NULL, entry, gfp);
-+	if (!curr)
- 		return 0;
--	if (xa_is_err(entry))
--		return (long)entry >> 2;
-+	if (xa_is_err(curr))
-+		return xa_err(curr);
- 	return errno;
+@@ -220,14 +221,55 @@ static void recover_inode(struct inode *inode, struct page *page)
+ 			ino_of_node(page), name);
  }
  
--/**
-- * xa_race() - Turn a cmpxchg result into an errno.
-- * @entry: Result from calling an XArray function.
-- *
-- * It is common to use xa_cmpxchg() to ensure that only one thread assigns
-- * a value to an index.  Pass the result from xa_cmpxchg() to xa_race() to
-- * get an errno back.  This function also handles any other error which
-- * may have been returned by xa_cmpxchg() such as ENOMEM.
-- *
-- * If you don't care that you lost the race, you can use xa_err() instead.
-- *
-- * Return: A negative errno or 0.
-- */
--static inline int xa_race(void *entry)
++static void destroy_node_blocks(struct list_head *head)
++{
++	struct fsync_node_entry *entry, *tmp;
++
++	list_for_each_entry_safe(entry, tmp, head, list) {
++		list_del(&entry->list);
++		kmem_cache_free(fsync_node_chain_slab, entry);
++	}
++}
++
++static bool blkaddr_already_in_list(struct list_head *head, block_t blkaddr)
++{
++	struct fsync_node_entry *entry;
++
++	list_for_each_entry(entry, head, list)
++		if (entry->blkaddr == blkaddr)
++			return true;
++
++	return false;
++}
++
++static void add_fsync_node(struct list_head *head, block_t blkaddr)
++{
++	struct fsync_node_entry *entry;
++
++	entry = f2fs_kmem_cache_alloc(fsync_node_chain_slab, GFP_F2FS_ZERO);
++	entry->blkaddr = blkaddr;
++	list_add_tail(&entry->list, head);
++}
++
++static void destroy_fsync_dnodes(struct list_head *head)
++{
++	struct fsync_inode_entry *entry, *tmp;
++
++	list_for_each_entry_safe(entry, tmp, head, list)
++		del_fsync_inode(entry);
++}
++
+ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 				bool check_only)
+ {
+ 	struct curseg_info *curseg;
+ 	struct page *page = NULL;
++	struct list_head node_block_list;
+ 	block_t blkaddr;
+ 	int err = 0;
+ 
++	INIT_LIST_HEAD(&node_block_list);
++
+ 	/* get node pages in the current segment */
+ 	curseg = CURSEG_I(sbi, CURSEG_WARM_NODE);
+ 	blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
+@@ -239,7 +281,13 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 			return 0;
+ 
+ 		page = get_tmp_page(sbi, blkaddr);
++		if (unlikely(blkaddr_already_in_list(&node_block_list, blkaddr))) {
++			f2fs_msg(sbi->sb, KERN_ERR, "Abandon dead loop node block list");
++			destroy_fsync_dnodes(head);
++			break;
++		}
+ 
++		add_fsync_node(&node_block_list, blkaddr);
+ 		if (!is_recoverable_dnode(page))
+ 			break;
+ 
+@@ -284,18 +332,12 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 
+ 		ra_meta_pages_cond(sbi, blkaddr);
+ 	}
++
++	destroy_node_blocks(&node_block_list);
+ 	f2fs_put_page(page, 1);
+ 	return err;
+ }
+ 
+-static void destroy_fsync_dnodes(struct list_head *head)
 -{
--	return __xa_race(entry, -EEXIST);
+-	struct fsync_inode_entry *entry, *tmp;
+-
+-	list_for_each_entry_safe(entry, tmp, head, list)
+-		del_fsync_inode(entry);
 -}
 -
- /* Everything below here is the Advanced API.  Proceed with caution. */
+ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
+ 			block_t blkaddr, struct dnode_of_data *dn)
+ {
+@@ -614,7 +656,14 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ 			sizeof(struct fsync_inode_entry));
+ 	if (!fsync_entry_slab) {
+ 		err = -ENOMEM;
+-		goto out;
++		goto free_inode_entry;
++	}
++
++	fsync_node_chain_slab = f2fs_kmem_cache_create("f2fs_fsync_node_entry",
++			sizeof(struct fsync_node_entry));
++	if (!fsync_node_chain_slab) {
++		err = -ENOMEM;
++		goto free_node_entry;
+ 	}
  
- #define xa_trylock(xa)		spin_trylock(&(xa)->xa_lock)
-diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-index 85d1bc963ab6..87ed55af823e 100644
---- a/mm/backing-dev.c
-+++ b/mm/backing-dev.c
-@@ -614,8 +614,8 @@ static int cgwb_create(struct backing_dev_info *bdi,
- 	spin_lock_irqsave(&cgwb_lock, flags);
- 	if (test_bit(WB_registered, &bdi->wb.state) &&
- 	    blkcg_cgwb_list->next && memcg_cgwb_list->next) {
--		ret = xa_race(xa_cmpxchg(&bdi->cgwb_xa, memcg_css->id, NULL,
--						wb, GFP_ATOMIC));
-+		ret = xa_store_empty(&bdi->cgwb_xa, memcg_css->id, wb,
-+					GFP_ATOMIC, -EEXIST);
- 		if (!ret) {
- 			list_add_tail_rcu(&wb->bdi_node, &bdi->wb_list);
- 			list_add(&wb->memcg_node, memcg_cgwb_list);
+ 	INIT_LIST_HEAD(&inode_list);
+@@ -664,8 +713,10 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ 		err = write_checkpoint(sbi, &cpc);
+ 	}
+ 
++	kmem_cache_destroy(fsync_node_chain_slab);
++free_node_entry:
+ 	kmem_cache_destroy(fsync_entry_slab);
+-out:
++free_inode_entry:
+ #ifdef CONFIG_QUOTA
+ 	/* Turn quotas off */
+ 	if (quota_enabled)
+-- 
+1.9.1
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
