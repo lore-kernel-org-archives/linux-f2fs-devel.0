@@ -1,58 +1,59 @@
-From: David Gstir <david@sigma-star.at>
-Subject: Re: [PATCH] fscrypt: add support for ChaCha20 contents encryption
-Date: Mon, 11 Dec 2017 17:11:41 +0100
-Message-ID: <899E2752-1AD9-4DF4-ABC7-E0D1582AF292@sigma-star.at>
-References: <20171208013838.105034-1-ebiggers3@gmail.com>
- <CAHmME9ob8eG1yS=jkGHFnYDq+FtiJCP38CKpzUs0Z33R8_0Msw@mail.gmail.com>
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Content-Type: text/plain;
-        charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-ext4-owner@vger.kernel.org>
-In-Reply-To: <CAHmME9ob8eG1yS=jkGHFnYDq+FtiJCP38CKpzUs0Z33R8_0Msw@mail.gmail.com>
-Sender: linux-ext4-owner@vger.kernel.org
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Eric Biggers <ebiggers3@gmail.com>, linux-fscrypt@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Michael Halcrow <mhalcrow@google.com>, Paul Crowley <paulcrowley@google.com>, Martin Willi <martin@strongswan.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Eric Biggers <ebiggers@google.com>, Richard Weinberger <richard@nod.at>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH v4 72/73] xfs: Convert mru cache to XArray
+Date: Tue, 12 Dec 2017 08:43:00 +1100
+Message-ID: <20171211214300.GT5858@dastard>
+References: <fd7130d7-9066-524e-1053-a61eeb27cb36@lge.com>
+ <Pine.LNX.4.44L0.1712081228430.1371-100000@iolanthe.rowland.org>
+ <20171208223654.GP5858@dastard>
+ <1512838818.26342.7.camel@perches.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <1512838818.26342.7.camel@perches.com>
+Sender: owner-linux-mm@kvack.org
+To: Joe Perches <joe@perches.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>, Byungchul Park <byungchul.park@lge.com>, Theodore Ts'o <tytso@mit.edu>, Matthew Wilcox <willy@infradead.org>, Matthew Wilcox <mawilcox@microsoft.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Jens Axboe <axboe@kernel.dk>, Rehas Sachdeva <aquannie@gmail.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@lge.com
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-
-> On 08.12.2017, at 03:51, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+On Sat, Dec 09, 2017 at 09:00:18AM -0800, Joe Perches wrote:
+> On Sat, 2017-12-09 at 09:36 +1100, Dave Chinner wrote:
+> > 	1. Using lockdep_set_novalidate_class() for anything other
+> > 	than device->mutex will throw checkpatch warnings. Nice. (*)
+> []
+> > (*) checkpatch.pl is considered mostly harmful round here, too,
+> > but that's another rant....
 > 
-> Hi Eric,
-> 
-> Nice to see more use of ChaCha20. However...
-> 
-> Can we skip over the "sort of worse than XTS, but not having _real_
-> authentication sucks anyway in either case, so whatever" and move
-> directly to, "linux finally supports authenticated encryption for disk
-> encryption!"? This would be a big deal and would actually be a
-> noticeable security improvement, instead of a potentially dubious step
-> sidewaysbackish.
+> How so?
 
-Out of curiosity, does anybody know of any specific attacks that authenticated
-encryption for disk encryption would solve as opposed to just using encryption
-with AES-XTS?
+Short story is that it barfs all over the slightly non-standard
+coding style used in XFS.  It generates enough noise on incidental
+things we aren't important that it complicates simple things. e.g. I
+just moved a block of defines from one header to another, and
+checkpatch throws about 10 warnings on that because of whitespace.
+I'm just moving code - I don't want to change it and it doesn't need
+to be modified because it is neat and easy to read and is obviously
+correct. A bunch of prototypes I added another parameter to gets
+warnings because it uses "unsigned" for an existing parameter that
+I'm not changing. And so on.
 
-To my knowledge the XTS mode is frowned upon [1], but I don't know of any
-serious flaws that would eg. allow an attacker to modify file contents
-without a *serious* amount of effort. CBC is another story though [2].
+This sort of stuff is just lowest-common-denominator noise - great
+for new code and/or inexperienced developers, but not for working
+with large bodies of existing code with slightly non-standard
+conventions. Churning *lots* of code we otherwise wouldn't touch
+just to shut up checkpatch warnings takes time, risks regressions
+and makes it harder to trace the history of the code when we are
+trying to track down bugs.
 
-Don't get me wrong, I'd like to have authenticated encryption too.
-In fact we are currently working on a concept for adding authentication to
-UBIFS (I'll share more details as soon as its in a presentable state).
-However, the reason for this is mainly because UBIFS does *not* operate on
-the block layer, so dm-integrity/dm-verity is not an option and fscrypt
-only protects the confidentiality of file contents and filenames.
-This means that the filesystem index is unprotected which makes it rather
-easy to move files around - eg. replace /bin/bash with something completely
-different without knowing the fscrypt master key or any derived key.
+Cheers,
 
-For the general use case though (eg. securing *really important* files on my desktop),
-I'd use authenticated encryption at a higher layer to get more flexibility
-to eg. easily use explicit IVs over implicit ones derived from block/sector
-number. But maybe there are some uses cases I didn't think of just now... :)
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
-David
-
-[1] https://sockpuppet.org/blog/2014/04/30/you-dont-want-xts/
-[2] http://www.jakoblell.com/blog/2013/12/22/practical-malleability-attack-against-cbc-encrypted-luks-partitions/
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
