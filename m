@@ -1,123 +1,118 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: pass down write hints to block layer
- for bufferd write
-Date: Tue, 12 Dec 2017 10:45:09 +0800
-Message-ID: <85f7fc1b-5286-c66f-6833-af1a44c5130f@huawei.com>
-References: <1511828607-624-1-git-send-email-hyc.lee@gmail.com>
- <d71418e1-d667-3dc6-9265-61db5d8f40bc@huawei.com>
- <5A2112A7.2070208@gmail.com>
- <1fa09755-7322-a886-c582-02e3d93d8f87@kernel.org> <5A2F3BC5.90803@gmail.com>
+Subject: [PATCH] f2fs: fix potential hangtask in f2fs_trace_pid
+Date: Tue, 12 Dec 2017 14:11:40 +0800
+Message-ID: <20171212061140.118506-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5A2F3BC5.90803@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hyunchul Lee <hyc.lee@gmail.com>, Chao Yu <chao@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, kernel-team@lge.com, linux-fsdevel@vger.kernel.org, Hyunchul Lee <cheol.lee@lge.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+ helo=mx.sourceforge.net)
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <yuchao0@huawei.com>) id 1eOdnd-0001HG-RF
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Dec 2017 06:12:17 +0000
+Received: from [45.249.212.35] (helo=huawei.com)
+ by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eOdnb-00010z-Se
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Dec 2017 06:12:17 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Hyunchul,
+As Jia-Ju Bai reported:
 
-On 2017/12/12 10:15, Hyunchul Lee wrote:
-> Hi Chao,
-> 
-> On 12/11/2017 10:15 PM, Chao Yu wrote:
->> Hi Hyunchul,
->>
->> On 2017/12/1 16:28, Hyunchul Lee wrote:
->>> Hi Chao,
->>>
->>> On 11/30/2017 04:06 PM, Chao Yu wrote:
->>>> Hi Hyunchul,
->>>>
->>>> On 2017/11/28 8:23, Hyunchul Lee wrote:
->>>>> From: Hyunchul Lee <cheol.lee@lge.com>
->>>>>
->>>>> This implements which hint is passed down to block layer
->>>>> for datas from the specific segment type.
->>>>>
->>>>> segment type                     hints
->>>>> ------------                     -----
->>>>> COLD_NODE & COLD_DATA            WRITE_LIFE_EXTREME
->>>>> WARM_DATA                        WRITE_LIFE_NONE
->>>>> HOT_NODE & WARM_NODE             WRITE_LIFE_LONG
->>>>> HOT_DATA                         WRITE_LIFE_MEDIUM
->>>>> META_DATA                        WRITE_LIFE_SHORT
->>>>
->>>> Just noticed, if our user do not give the hint via ioctl, f2fs can
->>>> provider hint to lower layer according to hot/cold separation ability,
->>>> it will be okay. But once user give his hint which may be more accurate
->>>> than filesystem, hint converted by f2fs may be wrong.
->>>>
->>>> So what do you think of adding an option to control whether filesystem
->>>> can convert hint user given?
->>>>
->>>
->>> I think it is okay for LIFE_SHORT and LIFE_EXTREME. because they are 
->>> converted to different hints.
->>
->> What I mean is introducing a mount option, e.g. fs_iohint,
->> a) w/o fs_iohint, propagate file/inode io_hint to low layer.
->> b) w/ fs_iohint, ignore file/inode io_hint, use io_hint which is generated
->> with filesystem's private rule.
->>
-> 
-> Okay, I will implement this option and send this patch again.
+"According to fs/f2fs/trace.c, the kernel module may sleep under a spinlock.
+The function call path is:
+f2fs_trace_pid (acquire the spinlock)
+   f2fs_radix_tree_insert
+     cond_resched --> may sleep
 
-Let's wait for Jaegeuk's comments first?
+I do not find a good way to fix it, so I only report.
+This possible bug is found by my static analysis tool (DSAC) and my code
+review."
 
-> 
-> Without fs_iohint, Even if data blocks are moved due to GC, 
-> we should keep user hints. And if user hints are not given, 
-> any hints are not passed down to block layer, right?
+Obviously, it's problemetic to schedule in critical region of spinlock,
+which will cause uninterruptable sleep if there is no waker.
 
-Hmm.. that will be a problem, IMO, we can store last user's io_hint into inode
-layout, so later when we trigger GC, we can use the last io_hint in inode rather
-than giving no hint or fs' hint.
+This patch changes to use mutex lock intead of spinlock to avoid this
+condition.
 
-I think it needs to discuss with original author of IO hint, what is the IO hint
-policy when filesystem move block by itself after inode has been released in system.
+Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/trace.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Thanks,
+diff --git a/fs/f2fs/trace.c b/fs/f2fs/trace.c
+index bccbbf2616d2..a1fcd00bbb2b 100644
+--- a/fs/f2fs/trace.c
++++ b/fs/f2fs/trace.c
+@@ -17,7 +17,7 @@
+ #include "trace.h"
+ 
+ static RADIX_TREE(pids, GFP_ATOMIC);
+-static spinlock_t pids_lock;
++static struct mutex pids_lock;
+ static struct last_io_info last_io;
+ 
+ static inline void __print_last_io(void)
+@@ -64,7 +64,7 @@ void f2fs_trace_pid(struct page *page)
+ 	if (radix_tree_preload(GFP_NOFS))
+ 		return;
+ 
+-	spin_lock(&pids_lock);
++	mutex_lock(&pids_lock);
+ 	p = radix_tree_lookup(&pids, pid);
+ 	if (p == current)
+ 		goto out;
+@@ -77,7 +77,7 @@ void f2fs_trace_pid(struct page *page)
+ 			MAJOR(inode->i_sb->s_dev), MINOR(inode->i_sb->s_dev),
+ 			pid, current->comm);
+ out:
+-	spin_unlock(&pids_lock);
++	mutex_unlock(&pids_lock);
+ 	radix_tree_preload_end();
+ }
+ 
+@@ -122,7 +122,7 @@ void f2fs_trace_ios(struct f2fs_io_info *fio, int flush)
+ 
+ void f2fs_build_trace_ios(void)
+ {
+-	spin_lock_init(&pids_lock);
++	mutex_init(&pids_lock);
+ }
+ 
+ #define PIDVEC_SIZE	128
+@@ -150,7 +150,7 @@ void f2fs_destroy_trace_ios(void)
+ 	pid_t next_pid = 0;
+ 	unsigned int found;
+ 
+-	spin_lock(&pids_lock);
++	mutex_lock(&pids_lock);
+ 	while ((found = gang_lookup_pids(pid, next_pid, PIDVEC_SIZE))) {
+ 		unsigned idx;
+ 
+@@ -158,5 +158,5 @@ void f2fs_destroy_trace_ios(void)
+ 		for (idx = 0; idx < found; idx++)
+ 			radix_tree_delete(&pids, pid[idx]);
+ 	}
+-	spin_unlock(&pids_lock);
++	mutex_unlock(&pids_lock);
+ }
+-- 
+2.15.0.55.gc2ece9dc4de6
 
-> 
-> Thank you for comments.
-> 
->> Thanks,
->>
->>>
->>> file hint      segment type        io hint
->>> ---------      ------------        -------
->>> LIFE_SHORT     HOT_DATA            LIFE_MEDIUM
->>> LIFE_MEDIUM    WARM_DATA           LIFE_NONE
->>> LIFE_LONG      WARM_DATA           LIFE_NONE
->>> LIFE_EXTREME   COLD_DATA           LIFE_EXTREME
->>>
->>> the problem is that LIFE_MEDIUM and LIFE_LONG are converted to 
->>> the same hint, LIFE_NONE. I am not sure that the seperation between 
->>> LIFE_MEDIUM and LIFE_LONG is really needed. Because I guess that the 
->>> difference between them is a little ambigous for users, and if WARM_DATA 
->>> segment has two different hints, it can makes GC non-efficient.
->>>
->>> I wonder your thought about this.
->>>
->>> Thanks.
->>>
->>>> Thanks,
->>>>
->>>>
->>>
->>> ------------------------------------------------------------------------------
->>> Check out the vibrant tech community on one of the world's most
->>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
->>> _______________________________________________
->>> Linux-f2fs-devel mailing list
->>> Linux-f2fs-devel@lists.sourceforge.net
->>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>>
->>
-> 
-> .
-> 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
