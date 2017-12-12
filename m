@@ -1,24 +1,22 @@
-From: Chao Yu <yuchao0@huawei.com>
+From: "gaoxiang (P)" <gaoxiang25@huawei.com>
 Subject: Re: question about find_next_free_block in f2fs-tools
-Date: Tue, 12 Dec 2017 18:01:50 +0800
-Message-ID: <d537f302-7a05-3020-c2b7-91a30775c80d@huawei.com>
-References: <2017120914295588417753@aol.com>
+Date: Tue, 12 Dec 2017 12:19:56 +0000
+Message-ID: <9047C53C18267742AB12E43B65C7F9F70BCAD9A0@dggemi505-mbs.china.huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1eOhOL-00010S-7U
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Dec 2017 10:02:25 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191])
- by sfi-mx-1.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.89) id 1eOhOD-0007uX-28
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Dec 2017 10:02:25 +0000
-In-Reply-To: <2017120914295588417753@aol.com>
-Content-Language: en-US
+ (envelope-from <gaoxiang25@huawei.com>) id 1eOjXp-0003k6-NB
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Dec 2017 12:20:21 +0000
+Received: from szxga03-in.huawei.com ([45.249.212.189])
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.89) id 1eOjXk-0006GD-On
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Dec 2017 12:20:21 +0000
+Content-Language: zh-CN
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,49 +26,81 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "hsiangkao@aol.com" <hsiangkao@aol.com>, jaegeuk <jaegeuk@kernel.org>, chao <chao@kernel.org>
-Cc: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+To: "Yuchao (T)" <yuchao0@huawei.com>
+Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-T24gMjAxNy8xMi85IDE0OjI5LCBoc2lhbmdrYW8tLS0gdmlhIExpbnV4LWYyZnMtZGV2ZWwgd3Jv
-dGU6Cj4gSGkgSmFlZ2V1ayBhbmQgQ2hhbywKPiDCoCDCoCBJIGhhdmUgYSBtaW5vciBxdWVzdGlv
-biBhYm91dCB0aGUgZm9sbG93aW5nIGNvZGUgc25pcHBldCBpbsKgZmluZF9uZXh0X2ZyZWVfYmxv
-Y2vCoHJlY2VudGx5Cj4gCQlpZiAoc2UtPnZhbGlkX2Jsb2NrcyA9PSAwICYmICEoc2Vnbm8gJSBz
-YmktPnNlZ3NfcGVyX3NlYykpIHsKPiAJCQlzdHJ1Y3Qgc2VnX2VudHJ5ICpzZTI7Cj4gCQkJdW5z
-aWduZWQgaW50IGk7Cj4gCj4gCQkJZm9yIChpID0gMTsgaSA8IHNiaS0+c2Vnc19wZXJfc2VjOyBp
-KyspIHsKPiAJCQkJc2UyID0gZ2V0X3NlZ19lbnRyeShzYmksIHNlZ25vICsgaSk7Cj4gCQkJCWlm
-IChzZTItPnZhbGlkX2Jsb2NrcykKPiAJCQkJCWJyZWFrOwo+IAkJCX0KPiAJCQlpZiAoaSA9PSBz
-YmktPnNlZ3NfcGVyX3NlYykKPiAJCQkJcmV0dXJuIDA7Cj4gCQl9Cj4gwqAgwqAgV2hhdCBkb2Vz
-IGl0IGRvIGlmIGEgc2VjdGlvbiBoYXMgMiBvciBtb3JlIHNlZ21lbnRzPwoKSXQgaW50ZW5kcyB0
-byB1c2UgZnJlZSBzZWN0aW9uIHByaW9yIHRvIHVzZWQgb25lPwoKPiDCoCDCoCBJdCBzZWVtcyB0
-aGF0IGl0IHN1Y2NlZWRzIG9ubHnCoGlmIHRoZSBzZWN0aW9uIGlzIHRvdGFsbHkgZnJlZT8gaWYg
-bm90LCBkbyBTU1IgaW5zdGVhZD/CoEkgaGF2ZSBubyBpZGVhIGFib3V0IHRoYXQuIDooCj4gwqAg
-wqAgQW5kIHRoZSBjb2RlIG1haW5seSBmb3IgU1NSwqBmb2xsb3dzLCBidXQgSSBhbSBjb25mdXNl
-ZCB3aGVuIEkgYXNzb2NpYXRlwqB0aGF0IHdpdGggdGhlIGFib3ZlLi4uCj4gCQlpZiAoc2UtPnR5
-cGUgPT0gdHlwZSAmJgo+IAkJCSFmMmZzX3Rlc3RfYml0KG9mZnNldCwgKGNvbnN0IGNoYXIgKilz
-ZS0+Y3VyX3ZhbGlkX21hcCkpCj4gCQkJcmV0dXJuIDA7Cj4gwqAgwqAgRG9lcyB0aGF0IGluZGlj
-YXRlIHNlZ21lbnRzIG9mIGEgc2VjdGlvbiBzaG91bGQgaGF2ZSB0aGUgc2FtZSB0eXBlPwo+IMKg
-IMKgIMKgIMKgIGJ1dCBJIGNvdWxkIG5vdCBmaW5kIGFueSBtZWNoYW5pc20gdG8ga2VlcCBzZWdt
-ZW50cyBvZiBhIHNlY3Rpb24gaW4gdGhlIHNhbWUgdHlwZS4uIAoKSSdtIGFmcmFpZCB0aGVyZSBp
-cyBubyBndWFyYW50ZWUuCgo+IAo+IMKgIMKgIEFuZCBJIGNvdWxkIG5vdCB1bmRlcnN0YW5kIHdo
-YXTCoHRoZSBjb21taXQgbWVzc2FnZSgiZnNjay5mMmZzOiBMRlMgYWxsb2NfdHlwZSBtdXN0IGhh
-dmUgZnJlZSBzZWdtZW50IGFmdGVyIGJsa29mZiIpIG1lYW5zLi4uCj4gwqAgwqAgV2h5IHNob3Vs
-ZCB0aGUgbGFzdCBvZiBzZWdtZW50IGhhdmUgbm8gdmFsaWQgYmxvY2sgaW7CoExGUyBtb2RlPwoK
-TEZTIHRyaWVzIHRvIGRvIGFsbG9jYXRpb24gZnJvbSB0aGUgZmlyc3QgYmxvY2sgdG8gdGhlIGxh
-c3Qgb25lIGluIG9wZW5lZCBzZWdtZW50LApzbyBpZiB0aGVyZSBpcyBhbnkgdmFsaWQgYmxvY2sg
-aW4gdGhhdCBzZWdtZW50LCB0aGVyZSB3aWxsIGJlIGNvbGxpc2lvbiBhbnl3YXkuCgpUaGFua3Ms
-Cgo+IAo+IMKgIMKgIENvdWxkIHlvdSB0YWtlIHNvbWUgdGltZSBhbmQgZ2l2ZSBtZSBzb21lIGNs
-dWVzIG9uIGl0Li4uIDpECj4gCj4gVGhhbmtzIGEgbG90Lgo+IAo+IEdhbyBYaWFuZwo+IGhzaWFu
-Z2thb0Bhb2wuY29tCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gQ2hlY2sgb3V0IHRoZSB2aWJy
-YW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0Cj4gZW5nYWdpbmcg
-dGVjaCBzaXRlcywgU2xhc2hkb3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QKPiBfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IExpbnV4LWYyZnMt
-ZGV2ZWwgbWFpbGluZyBsaXN0Cj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5u
-ZXQKPiBodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1m
-MmZzLWRldmVsCj4gCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUgdmlicmFu
-dCB0ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2luZyB0ZWNo
-IHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdApfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1h
-aWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczov
-L2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+Hi Chao,
+
+Thanks for your reply.
+
+> On 2017/12/9 14:29, hsiangkao--- via Linux-f2fs-devel wrote:
+>> Hi Jaegeuk and Chao,
+>>     I have a minor question about the following code snippet in find_next_free_block recently
+>> 		if (se->valid_blocks == 0 && !(segno % sbi->segs_per_sec)) {
+>> 			struct seg_entry *se2;
+>> 			unsigned int i;
+>> 
+>> 			for (i = 1; i < sbi->segs_per_sec; i++) {
+>> 				se2 = get_seg_entry(sbi, segno + i);
+>> 				if (se2->valid_blocks)
+>> 					break;
+>> 			}
+>> 			if (i == sbi->segs_per_sec)
+>> 				return 0;
+>> 		}
+>>     What does it do if a section has 2 or more segments?
+> 
+> It intends to use free section prior to used one?It is still hard for me to understand. :(
+
+I guess if some section doesn't satisfy the above condition (means if some segment was used in the section), we just skip those free sections and fail in the worst case rather than fall back again in the case that SSR approach cannot allocate any block?
+
+> 
+>>     It seems that it succeeds only if the section is totally free? if not, do SSR instead? I have no idea about that. :(
+>>     And the code mainly for SSR follows, but I am confused when I associate that with the above...
+>> 		if (se->type == type &&
+>> 			!f2fs_test_bit(offset, (const char *)se->cur_valid_map))
+>> 			return 0;
+>>     Does that indicate segments of a section should have the same type?
+>>         but I could not find any mechanism to keep segments of a section in the same type.. 
+> 
+> I'm afraid there is no guarantee.
+
+Hmm... I have no idea...
+
+> 
+>> 
+>>     And I could not understand what the commit message("fsck.f2fs: LFS alloc_type must have free segment after blkoff") means...
+>>     Why should the last of segment have no valid block in LFS mode?
+> 
+> LFS tries to do allocation from the first block to the last one in opened segment,
+> so if there is any valid block in that segment, there will be collision anyway.
+>
+
+Yes, I could understand the LFS policy you explained.
+However, the commit message says "LFS alloc_type must have free segment after blkoff" instead of "must have free blocks followed by blkoff".
+That is what I'm confused. :(
+
+
+Thanks.
+
+> Thanks,
+> 
+>> 
+>>     Could you take some time and give me some clues on it... :D
+>> 
+>> Thanks a lot.
+>> 
+>> Gao Xiang
+>> hsiangkao@...
+>> ------------------------------------------------------------------------------
+>> Check out the vibrant tech community on one of the world's most
+>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+>> _______________________________________________
+>> Linux-f2fs-devel mailing list
+>> Linux-f2fs-devel@...
+>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>> 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
