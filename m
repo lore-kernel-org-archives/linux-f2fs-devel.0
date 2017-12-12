@@ -1,22 +1,24 @@
-From: "gaoxiang (P)" <gaoxiang25@huawei.com>
-Subject: Re: question about find_next_free_block in f2fs-tools
-Date: Tue, 12 Dec 2017 12:19:56 +0000
-Message-ID: <9047C53C18267742AB12E43B65C7F9F70BCAD9A0@dggemi505-mbs.china.huawei.com>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v4 72/73] xfs: Convert mru cache to XArray
+Date: Tue, 12 Dec 2017 10:51:37 -0500 (EST)
+Message-ID: <Pine.LNX.4.44L0.1712121041240.1358-100000@iolanthe.rowland.org>
+References: <1513035963.3036.17.camel@perches.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <gaoxiang25@huawei.com>) id 1eOjXp-0003k6-NB
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Dec 2017 12:20:21 +0000
-Received: from szxga03-in.huawei.com ([45.249.212.189])
- by sfi-mx-2.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.89) id 1eOjXk-0006GD-On
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Dec 2017 12:20:21 +0000
-Content-Language: zh-CN
+ (envelope-from <stern+5a26ac42@rowland.harvard.edu>)
+ id 1eOmqO-0005cu-4e
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Dec 2017 15:51:44 +0000
+Received: from iolanthe.rowland.org ([192.131.102.54])
+ by sfi-mx-1.v28.ch3.sourceforge.com with smtp (Exim 4.89)
+ id 1eOmqN-0008Qe-1g
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Dec 2017 15:51:44 +0000
+In-Reply-To: <1513035963.3036.17.camel@perches.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,80 +28,58 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "Yuchao (T)" <yuchao0@huawei.com>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: Joe Perches <joe@perches.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-xfs@vger.kernel.org, linux-nilfs@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Matthew Wilcox <mawilcox@microsoft.com>, linux-usb@vger.kernel.org, Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net, Byungchul Park <byungchul.park@lge.com>, linux-mm@kvack.org, kernel-team@lge.com, Andy Whitcroft <apw@shadowen.org>, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Rehas Sachdeva <aquannie@gmail.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, linux-btrfs@vger.kernel.org
 
-Hi Chao,
+On Mon, 11 Dec 2017, Joe Perches wrote:
 
-Thanks for your reply.
+> >  - I don't understand the error for xa_head here:
+> > 
+> > struct xarray {
+> >         spinlock_t      xa_lock;
+> >         gfp_t           xa_flags;
+> >         void __rcu *    xa_head;
+> > };
+> > 
+> >    Do people really think that:
+> > 
+> > struct xarray {
+> >         spinlock_t      xa_lock;
+> >         gfp_t           xa_flags;
+> >         void __rcu	*xa_head;
+> > };
+> > 
+> >    is more aesthetically pleasing?  And not just that, but it's an *error*
+> >    so the former is *RIGHT* and this is *WRONG*.  And not just a matter
 
-> On 2017/12/9 14:29, hsiangkao--- via Linux-f2fs-devel wrote:
->> Hi Jaegeuk and Chao,
->>     I have a minor question about the following code snippet in find_next_free_block recently
->> 		if (se->valid_blocks == 0 && !(segno % sbi->segs_per_sec)) {
->> 			struct seg_entry *se2;
->> 			unsigned int i;
->> 
->> 			for (i = 1; i < sbi->segs_per_sec; i++) {
->> 				se2 = get_seg_entry(sbi, segno + i);
->> 				if (se2->valid_blocks)
->> 					break;
->> 			}
->> 			if (i == sbi->segs_per_sec)
->> 				return 0;
->> 		}
->>     What does it do if a section has 2 or more segments?
+Not sure what was meant here.  Neither one is *WRONG* in the sense of 
+being invalid C code.  In the sense of what checkpatch will accept, the 
+former is *WRONG* and the latter is *RIGHT* -- the opposite of what 
+was written.
+
+> >    of taste?
 > 
-> It intends to use free section prior to used one?It is still hard for me to understand. :(
+> No opinion really.
+> That's from Andy Whitcroft's original implementation.
 
-I guess if some section doesn't satisfy the above condition (means if some segment was used in the section), we just skip those free sections and fail in the worst case rather than fall back again in the case that SSR approach cannot allocate any block?
+This one, at least, is easy to explain.  The original version tends to
+lead to bugs, or easily misunderstood code.  Consider if another
+variable was added to the declaration; it could easily turn into:
 
-> 
->>     It seems that it succeeds only if the section is totally free? if not, do SSR instead? I have no idea about that. :(
->>     And the code mainly for SSR follows, but I am confused when I associate that with the above...
->> 		if (se->type == type &&
->> 			!f2fs_test_bit(offset, (const char *)se->cur_valid_map))
->> 			return 0;
->>     Does that indicate segments of a section should have the same type?
->>         but I could not find any mechanism to keep segments of a section in the same type.. 
-> 
-> I'm afraid there is no guarantee.
+	void __rcu *	xa_head, xa_head2;
 
-Hmm... I have no idea...
+(The compiler will reject this, but it wouldn't if the underlying type
+had been int instead of void.)
 
-> 
->> 
->>     And I could not understand what the commit message("fsck.f2fs: LFS alloc_type must have free segment after blkoff") means...
->>     Why should the last of segment have no valid block in LFS mode?
-> 
-> LFS tries to do allocation from the first block to the last one in opened segment,
-> so if there is any valid block in that segment, there will be collision anyway.
->
+Doing it the other way makes the meaning a lot more clear:
 
-Yes, I could understand the LFS policy you explained.
-However, the commit message says "LFS alloc_type must have free segment after blkoff" instead of "must have free blocks followed by blkoff".
-That is what I'm confused. :(
+	void __rcu	*xa_head, *xa_head2;
 
+This is an idiom specifically intended to reduce the likelihood of 
+errors.  Rather like avoiding assignments inside conditionals.
 
-Thanks.
+Alan Stern
 
-> Thanks,
-> 
->> 
->>     Could you take some time and give me some clues on it... :D
->> 
->> Thanks a lot.
->> 
->> Gao Xiang
->> hsiangkao@...
->> ------------------------------------------------------------------------------
->> Check out the vibrant tech community on one of the world's most
->> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@...
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->> 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
