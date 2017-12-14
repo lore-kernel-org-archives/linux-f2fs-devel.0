@@ -1,102 +1,327 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH v4 72/73] xfs: Convert mru cache to XArray
-Date: Thu, 14 Dec 2017 10:23:42 -0800
-Message-ID: <1513275822.27409.73.camel@perches.com>
-References: <fd7130d7-9066-524e-1053-a61eeb27cb36@lge.com>
-	 <Pine.LNX.4.44L0.1712081228430.1371-100000@iolanthe.rowland.org>
-	 <20171208223654.GP5858@dastard> <1512838818.26342.7.camel@perches.com>
-	 <20171211214300.GT5858@dastard> <1513030348.3036.5.camel@perches.com>
-	 <20171211224301.GA3925@bombadil.infradead.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] mkfs.f2fs: Limit pragma pack(1) only for Windows
+ Host
+Date: Thu, 14 Dec 2017 10:27:35 -0800
+Message-ID: <20171214182735.35044-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20171211224301.GA3925@bombadil.infradead.org>
-Sender: owner-linux-mm@kvack.org
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Dave Chinner <david@fromorbit.com>, Alan Stern <stern@rowland.harvard.edu>, Byungchul Park <byungchul.park@lge.com>, Theodore Ts'o <tytso@mit.edu>, Matthew Wilcox <mawilcox@microsoft.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Jens Axboe <axboe@kernel.dk>, Rehas Sachdeva <aquannie@gmail.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@lge.com
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+ helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <jaegeuk@kernel.org>) id 1ePYET-0007b6-9x
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 Dec 2017 18:27:45 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1ePYES-0004HR-7V
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 Dec 2017 18:27:45 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Hyojun Kim <hyojun@google.com>
 
-On Mon, 2017-12-11 at 14:43 -0800, Matthew Wilcox wrote:
->  - There's no warning for the first paragraph of section 6:
-> 
-> 6) Functions
-> ------------
-> 
-> Functions should be short and sweet, and do just one thing.  They should
-> fit on one or two screenfuls of text (the ISO/ANSI screen size is 80x24,
-> as we all know), and do one thing and do that well.
-> 
->    I'm not expecting you to be able to write a perl script that checks
->    the first line, but we have way too many 200-plus line functions in
->    the kernel.  I'd like a warning on anything over 200 lines (a factor
->    of 4 over Linus's stated goal).
+From: Hyojun Kim <hyojun@google.com>
 
-Perhaps something like this?
+A side-effect was found for #pragma pack(1), which were added for
+Windows SDK support. Limiting it with ANDROID_WINDOWS_HOST.
 
-(very very lightly tested, more testing appreciated)
+Signed-off-by: Hyojun Kim <hyojun@google.com>
 ---
- scripts/checkpatch.pl | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ include/f2fs_fs.h | 52 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/quota.h   |  6 ++++++
+ 2 files changed, 58 insertions(+)
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 4306b7616cdd..523aead40b87 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -59,6 +59,7 @@ my $conststructsfile = "$D/const_structs.checkpatch";
- my $typedefsfile = "";
- my $color = "auto";
- my $allow_c99_comments = 1;
-+my $max_function_length = 200;
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index d8d199f..782c936 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -556,13 +556,17 @@ enum {
+ /*
+  * For superblock
+  */
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct f2fs_device {
+ 	__u8 path[MAX_PATH_LEN];
+ 	__le32 total_segments;
+ } __attribute__((packed));
  
- sub help {
- 	my ($exitcode) = @_;
-@@ -2202,6 +2203,7 @@ sub process {
- 	my $realcnt = 0;
- 	my $here = '';
- 	my $context_function;		#undef'd unless there's a known function
-+	my $context_function_linenum;
- 	my $in_comment = 0;
- 	my $comment_edge = 0;
- 	my $first_line = 0;
-@@ -2341,6 +2343,7 @@ sub process {
- 			} else {
- 				undef $context_function;
- 			}
-+			undef $context_function_linenum;
- 			next;
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct f2fs_super_block {
+ 	__le32 magic;			/* Magic Number */
+ 	__le16 major_ver;		/* Major Version */
+@@ -619,7 +623,9 @@ struct f2fs_super_block {
+ #define CP_ORPHAN_PRESENT_FLAG	0x00000002
+ #define CP_UMOUNT_FLAG		0x00000001
  
- # track the line number as we move through the hunk, note that
-@@ -3200,11 +3203,18 @@ sub process {
- 		if ($sline =~ /^\+\{\s*$/ &&
- 		    $prevline =~ /^\+(?:(?:(?:$Storage|$Inline)\s*)*\s*$Type\s*)?($Ident)\(/) {
- 			$context_function = $1;
-+			$context_function_linenum = $realline;
- 		}
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct f2fs_checkpoint {
+ 	__le64 checkpoint_ver;		/* checkpoint block version number */
+ 	__le64 user_block_count;	/* # of user blocks */
+@@ -656,7 +662,9 @@ struct f2fs_checkpoint {
+  */
+ #define F2FS_ORPHANS_PER_BLOCK	1020
  
- # check if this appears to be the end of function declaration
- 		if ($sline =~ /^\+\}\s*$/) {
-+			if (defined($context_function_linenum) &&
-+			    ($realline - $context_function_linenum) > $max_function_length) {
-+				WARN("LONG_FUNCTION",
-+				     "'$context_function' function definition is " . ($realline - $context_function_linenum) . " lines, perhaps refactor\n" . $herecurr);
-+			}
- 			undef $context_function;
-+			undef $context_function_linenum;
- 		}
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct f2fs_orphan_block {
+ 	__le32 ino[F2FS_ORPHANS_PER_BLOCK];	/* inode numbers */
+ 	__le32 reserved;	/* reserved */
+@@ -669,7 +677,9 @@ struct f2fs_orphan_block {
+ /*
+  * For NODE structure
+  */
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct f2fs_extent {
+ 	__le32 fofs;		/* start file offset of the extent */
+ 	__le32 blk_addr;	/* start block address of the extent */
+@@ -736,7 +746,9 @@ struct f2fs_extent {
+ #define file_is_encrypt(fi)      ((fi)->i_advise & FADVISE_ENCRYPT_BIT)
+ #define file_enc_name(fi)        ((fi)->i_advise & FADVISE_ENC_NAME_BIT)
  
- # check indentation of any line with a bare else
-@@ -5983,6 +5993,7 @@ sub process {
- 		    defined $stat &&
- 		    $stat =~ /^.\s*(?:$Storage\s+)?$Type\s*($Ident)\s*$balanced_parens\s*{/s) {
- 			$context_function = $1;
-+			$context_function_linenum = $realline;
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct f2fs_inode {
+ 	__le16 i_mode;			/* file mode */
+ 	__u8 i_advise;			/* file hints */
+@@ -778,12 +790,16 @@ struct f2fs_inode {
+ } __attribute__((packed));
  
- # check for multiline function definition with misplaced open brace
- 			my $ok = 0;
+ 
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct direct_node {
+ 	__le32 addr[ADDRS_PER_BLOCK];	/* array of data block address */
+ } __attribute__((packed));
+ 
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct indirect_node {
+ 	__le32 nid[NIDS_PER_BLOCK];	/* array of data block address */
+ } __attribute__((packed));
+@@ -797,7 +813,9 @@ enum {
+ 
+ #define XATTR_NODE_OFFSET	((((unsigned int)-1) << OFFSET_BIT_SHIFT) \
+ 				>> OFFSET_BIT_SHIFT)
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct node_footer {
+ 	__le32 nid;		/* node id */
+ 	__le32 ino;		/* inode nunmber */
+@@ -806,7 +824,9 @@ struct node_footer {
+ 	__le32 next_blkaddr;	/* next node page block address */
+ } __attribute__((packed));
+ 
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct f2fs_node {
+ 	/* can be one of three types: inode, direct, and indirect types */
+ 	union {
+@@ -823,14 +843,18 @@ struct f2fs_node {
+ #define NAT_ENTRY_PER_BLOCK (PAGE_CACHE_SIZE / sizeof(struct f2fs_nat_entry))
+ #define NAT_BLOCK_OFFSET(start_nid) (start_nid / NAT_ENTRY_PER_BLOCK)
+ 
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct f2fs_nat_entry {
+ 	__u8 version;		/* latest version of cached nat entry */
+ 	__le32 ino;		/* inode number */
+ 	__le32 block_addr;	/* block address */
+ } __attribute__((packed));
+ 
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct f2fs_nat_block {
+ 	struct f2fs_nat_entry entries[NAT_ENTRY_PER_BLOCK];
+ } __attribute__((packed));
+@@ -867,14 +891,18 @@ struct f2fs_nat_block {
+ 	((le16_to_cpu((raw_sit)->vblocks) & ~SIT_VBLOCKS_MASK)	\
+ 	 >> SIT_VBLOCKS_SHIFT)
+ 
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct f2fs_sit_entry {
+ 	__le16 vblocks;				/* reference above */
+ 	__u8 valid_map[SIT_VBLOCK_MAP_SIZE];	/* bitmap for valid blocks */
+ 	__le64 mtime;				/* segment age for cleaning */
+ } __attribute__((packed));
+ 
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct f2fs_sit_block {
+ 	struct f2fs_sit_entry entries[SIT_ENTRY_PER_BLOCK];
+ } __attribute__((packed));
+@@ -900,12 +928,16 @@ struct f2fs_sit_block {
+ #define SUM_ENTRIES_SIZE	(SUMMARY_SIZE * ENTRIES_IN_SUM)
+ 
+ /* a summary entry for a 4KB-sized block in a segment */
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct f2fs_summary {
+ 	__le32 nid;		/* parent node id */
+ 	union {
+ 		__u8 reserved[3];
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ 		struct {
+ 			__u8 version;		/* node version number */
+ 			__le16 ofs_in_node;	/* block index in parent node */
+@@ -917,7 +949,9 @@ struct f2fs_summary {
+ #define SUM_TYPE_NODE		(1)
+ #define SUM_TYPE_DATA		(0)
+ 
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct summary_footer {
+ 	unsigned char entry_type;	/* SUM_TYPE_XXX */
+ 	__le32 check_sum;		/* summary checksum */
+@@ -949,37 +983,49 @@ enum {
+ 	SIT_JOURNAL
+ };
+ 
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct nat_journal_entry {
+ 	__le32 nid;
+ 	struct f2fs_nat_entry ne;
+ } __attribute__((packed));
+ 
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct nat_journal {
+ 	struct nat_journal_entry entries[NAT_JOURNAL_ENTRIES];
+ 	__u8 reserved[NAT_JOURNAL_RESERVED];
+ } __attribute__((packed));
+ 
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct sit_journal_entry {
+ 	__le32 segno;
+ 	struct f2fs_sit_entry se;
+ } __attribute__((packed));
+ 
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct sit_journal {
+ 	struct sit_journal_entry entries[SIT_JOURNAL_ENTRIES];
+ 	__u8 reserved[SIT_JOURNAL_RESERVED];
+ } __attribute__((packed));
+ 
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct f2fs_extra_info {
+ 	__le64 kbytes_written;
+ 	__u8 reserved[EXTRA_INFO_RESERVED];
+ } __attribute__((packed));
+ 
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct f2fs_journal {
+ 	union {
+ 		__le16 n_nats;
+@@ -994,7 +1040,9 @@ struct f2fs_journal {
+ } __attribute__((packed));
+ 
+ /* 4KB-sized summary block structure */
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct f2fs_summary_block {
+ 	struct f2fs_summary entries[ENTRIES_IN_SUM];
+ 	struct f2fs_journal journal;
+@@ -1034,7 +1082,9 @@ typedef __le32	f2fs_hash_t;
+ 				NR_DENTRY_IN_BLOCK + SIZE_OF_DENTRY_BITMAP))
+ 
+ /* One directory entry slot representing F2FS_SLOT_LEN-sized file name */
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct f2fs_dir_entry {
+ 	__le32 hash_code;	/* hash code of file name */
+ 	__le32 ino;		/* inode number */
+@@ -1043,7 +1093,9 @@ struct f2fs_dir_entry {
+ } __attribute__((packed));
+ 
+ /* 4KB-sized directory entry block */
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct f2fs_dentry_block {
+ 	/* validity bitmap for directory entries in each block */
+ 	__u8 dentry_bitmap[SIZE_OF_DENTRY_BITMAP];
+diff --git a/include/quota.h b/include/quota.h
+index 80dbdc6..cfb9861 100644
+--- a/include/quota.h
++++ b/include/quota.h
+@@ -44,14 +44,18 @@ enum quota_type {
+ 
+ #define QT_TREEOFF	1	/* Offset of tree in file in blocks */
+ 
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct v2_disk_dqheader {
+ 	u_int32_t dqh_magic;	/* Magic number identifying file */
+ 	u_int32_t dqh_version;	/* File version */
+ } __attribute__ ((packed));
+ 
+ /* Header with type and version specific information */
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct v2_disk_dqinfo {
+ 	u_int32_t dqi_bgrace;	/* Time before block soft limit becomes hard limit */
+ 	u_int32_t dqi_igrace;	/* Time before inode soft limit becomes hard limit */
+@@ -61,7 +65,9 @@ struct v2_disk_dqinfo {
+ 	u_int32_t dqi_free_entry;	/* Number of block with at least one free entry */
+ } __attribute__ ((packed));
+ 
++#ifdef ANDROID_WINDOWS_HOST
+ #pragma pack(1)
++#endif
+ struct v2r1_disk_dqblk {
+ 	__le32 dqb_id;  	/* id this quota applies to */
+ 	__le32 dqb_pad;
+-- 
+2.15.0.531.g2ccb3012c9-goog
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
