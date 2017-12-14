@@ -1,296 +1,330 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: add an ioctl to disable GC for
- specific file
-Date: Thu, 14 Dec 2017 11:50:27 -0800
-Message-ID: <20171214195027.GC35234@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20171208051555.76998-1-jaegeuk@kernel.org>
- <20171208193723.GA87676@jaegeuk-macbookpro.roam.corp.google.com>
- <ae9a4c6b-f277-b03c-f3cf-ef45a49de22f@huawei.com>
+Subject: Re: [PATCH] fs/*/Kconfig: drop links to 404-compliant
+ http://acl.bestbits.at
+Date: Thu, 14 Dec 2017 11:54:35 -0800
+Message-ID: <20171214195435.GD35234@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20171213053825.10903-1-kilobyte@angband.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <ae9a4c6b-f277-b03c-f3cf-ef45a49de22f@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <20171213053825.10903-1-kilobyte@angband.pl>
+Sender: reiserfs-devel-owner@vger.kernel.org
+To: Adam Borowski <kilobyte@angband.pl>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.com>, Jonathan Corbet <corbet@lwn.net>, linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Eric Van Hensbergen <ericvh@gmail.com>, Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>, v9fs-developer@lists.sourceforge.net, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org, Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 12/12, Chao Yu wrote:
-> Hi Jaegeuk,
+On 12/13, Adam Borowski wrote:
+> This link is replicated in most filesystems' config stanzas.  Referring
+> to an archived version of that site is pointless as it mostly deals with
+> patches; user documentation is available elsewhere.
 > 
-> On 2017/12/9 3:37, Jaegeuk Kim wrote:
-> > Change log from v1:
-> >  - fix bug in error handling of ioctl 
-> > 
-> >>From b905e03d8aad7d25ecaf9bde05411a68d3d2460e Mon Sep 17 00:00:00 2001
-> > From: Jaegeuk Kim <jaegeuk@kernel.org>
-> > Date: Thu, 7 Dec 2017 16:25:39 -0800
-> > Subject: [PATCH] f2fs: add an ioctl to disable GC for specific file
-> > 
-> > This patch gives a flag to disable GC on given file, which would be useful, when
-> > user wants to keep its block map.
+> Signed-off-by: Adam Borowski <kilobyte@angband.pl>
+> ---
+> Sending this as one piece; if you guys would instead prefer this chopped
+> into tiny per-filesystem bits, please say so.
 > 
-> Could you add some description about in which scenario userspace application
-> can use this ioctl, otherwise than android, other developers can get hint about
-> the usage of this interface, maybe later it can be used more wildly. ;)
+> 
+>  Documentation/filesystems/ext2.txt |  2 --
+>  Documentation/filesystems/ext4.txt |  7 +++----
+>  fs/9p/Kconfig                      |  3 ---
+>  fs/Kconfig                         |  6 +-----
+>  fs/btrfs/Kconfig                   |  3 ---
+>  fs/ceph/Kconfig                    |  3 ---
+>  fs/cifs/Kconfig                    | 15 +++++++--------
+>  fs/ext2/Kconfig                    |  6 +-----
+>  fs/ext4/Kconfig                    |  3 ---
+>  fs/f2fs/Kconfig                    |  6 +-----
 
-The usecase would be somewhat hacky tho, it looks like 1) building a block map
-through fibmap, 2) storing the map in another partition, 3) using the map to
-overwrite data contents directly by low-level tools. In that case, we have to
-keep its block locations.
+Acked-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Thanks,
-
+>  fs/hfsplus/Kconfig                 |  3 ---
+>  fs/jffs2/Kconfig                   |  6 +-----
+>  fs/jfs/Kconfig                     |  3 ---
+>  fs/reiserfs/Kconfig                |  6 +-----
+>  fs/xfs/Kconfig                     |  3 ---
+>  15 files changed, 15 insertions(+), 60 deletions(-)
 > 
-> Thanks,
-> 
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/f2fs.h          | 17 ++++++++++++++++
-> >  fs/f2fs/file.c          | 54 +++++++++++++++++++++++++++++++++++++++++++++++++
-> >  fs/f2fs/gc.c            | 11 ++++++++++
-> >  fs/f2fs/gc.h            |  2 ++
-> >  fs/f2fs/sysfs.c         |  2 ++
-> >  include/linux/f2fs_fs.h |  1 +
-> >  6 files changed, 87 insertions(+)
-> > 
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index 82f1dc345505..dd76cbf02791 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -375,6 +375,8 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
-> >  #define F2FS_IOC_FSGETXATTR		FS_IOC_FSGETXATTR
-> >  #define F2FS_IOC_FSSETXATTR		FS_IOC_FSSETXATTR
-> >  
-> > +#define F2FS_IOC_SET_DONTMOVE		_IO(F2FS_IOCTL_MAGIC, 13)
-> > +
-> >  struct f2fs_gc_range {
-> >  	u32 sync;
-> >  	u64 start;
-> > @@ -1129,6 +1131,9 @@ struct f2fs_sb_info {
-> >  	/* threshold for converting bg victims for fg */
-> >  	u64 fggc_threshold;
-> >  
-> > +	/* threshold for dontmove gc trials */
-> > +	u64 gc_dontmove;
-> > +
-> >  	/* maximum # of trials to find a victim segment for SSR and GC */
-> >  	unsigned int max_victim_search;
-> >  
-> > @@ -2104,6 +2109,7 @@ enum {
-> >  	FI_HOT_DATA,		/* indicate file is hot */
-> >  	FI_EXTRA_ATTR,		/* indicate file has extra attribute */
-> >  	FI_PROJ_INHERIT,	/* indicate file inherits projectid */
-> > +	FI_DONTMOVE,		/* indicate file should not be gced */
-> >  };
-> >  
-> >  static inline void __mark_inode_dirty_flag(struct inode *inode,
-> > @@ -2117,6 +2123,7 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
-> >  			return;
-> >  	case FI_DATA_EXIST:
-> >  	case FI_INLINE_DOTS:
-> > +	case FI_DONTMOVE:
-> >  		f2fs_mark_inode_dirty_sync(inode, true);
-> >  	}
-> >  }
-> > @@ -2225,6 +2232,8 @@ static inline void get_inline_info(struct inode *inode, struct f2fs_inode *ri)
-> >  		set_bit(FI_INLINE_DOTS, &fi->flags);
-> >  	if (ri->i_inline & F2FS_EXTRA_ATTR)
-> >  		set_bit(FI_EXTRA_ATTR, &fi->flags);
-> > +	if (ri->i_inline & F2FS_DONTMOVE)
-> > +		set_bit(FI_DONTMOVE, &fi->flags);
-> >  }
-> >  
-> >  static inline void set_raw_inline(struct inode *inode, struct f2fs_inode *ri)
-> > @@ -2243,6 +2252,8 @@ static inline void set_raw_inline(struct inode *inode, struct f2fs_inode *ri)
-> >  		ri->i_inline |= F2FS_INLINE_DOTS;
-> >  	if (is_inode_flag_set(inode, FI_EXTRA_ATTR))
-> >  		ri->i_inline |= F2FS_EXTRA_ATTR;
-> > +	if (is_inode_flag_set(inode, FI_DONTMOVE))
-> > +		ri->i_inline |= F2FS_DONTMOVE;
-> >  }
-> >  
-> >  static inline int f2fs_has_extra_attr(struct inode *inode)
-> > @@ -2288,6 +2299,11 @@ static inline int f2fs_has_inline_dots(struct inode *inode)
-> >  	return is_inode_flag_set(inode, FI_INLINE_DOTS);
-> >  }
-> >  
-> > +static inline bool f2fs_is_dontmove_file(struct inode *inode)
-> > +{
-> > +	return is_inode_flag_set(inode, FI_DONTMOVE);
-> > +}
-> > +
-> >  static inline bool f2fs_is_atomic_file(struct inode *inode)
-> >  {
-> >  	return is_inode_flag_set(inode, FI_ATOMIC_FILE);
-> > @@ -2503,6 +2519,7 @@ int truncate_hole(struct inode *inode, pgoff_t pg_start, pgoff_t pg_end);
-> >  void truncate_data_blocks_range(struct dnode_of_data *dn, int count);
-> >  long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
-> >  long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
-> > +int f2fs_dontmove_control(struct inode *inode, bool inc);
-> >  
-> >  /*
-> >   * inode.c
-> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > index 1db68f1bcd77..e232f8d91f6f 100644
-> > --- a/fs/f2fs/file.c
-> > +++ b/fs/f2fs/file.c
-> > @@ -2666,6 +2666,57 @@ static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
-> >  	return 0;
-> >  }
-> >  
-> > +int f2fs_dontmove_control(struct inode *inode, bool inc)
-> > +{
-> > +	struct f2fs_inode_info *fi = F2FS_I(inode);
-> > +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> > +
-> > +	/* Use i_current_depth for normal file as a risk signal. */
-> > +	if (inc)
-> > +		f2fs_i_depth_write(inode, fi->i_current_depth + 1);
-> > +
-> > +	if (fi->i_current_depth > sbi->gc_dontmove) {
-> > +		f2fs_msg(sbi->sb, KERN_WARNING,
-> > +			"%s: Enable GC = ino %lx after %x GC trials\n",
-> > +			__func__, inode->i_ino, fi->i_current_depth);
-> > +		return -EAGAIN;
-> > +	}
-> > +	return 0;
-> > +}
-> > +
-> > +static int f2fs_ioc_set_dontmove(struct file *filp)
-> > +{
-> > +	struct inode *inode = file_inode(filp);
-> > +	int ret;
-> > +
-> > +	if (!inode_owner_or_capable(inode))
-> > +		return -EACCES;
-> > +
-> > +	if (!S_ISREG(inode->i_mode))
-> > +		return -EINVAL;
-> > +
-> > +	if (f2fs_readonly(F2FS_I_SB(inode)->sb))
-> > +		return -EROFS;
-> > +
-> > +	inode_lock(inode);
-> > +
-> > +	if (f2fs_dontmove_control(inode, false)) {
-> > +		ret = -EAGAIN;
-> > +		goto out;
-> > +	}
-> > +
-> > +	ret = f2fs_convert_inline_inode(inode);
-> > +	if (ret)
-> > +		goto out;
-> > +
-> > +	set_inode_flag(inode, FI_DONTMOVE);
-> > +	ret = F2FS_I(inode)->i_current_depth;
-> > +	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
-> > +out:
-> > +	inode_unlock(inode);
-> > +	return ret;
-> > +}
-> > +
-> >  long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-> >  {
-> >  	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
-> > @@ -2716,6 +2767,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-> >  		return f2fs_ioc_fsgetxattr(filp, arg);
-> >  	case F2FS_IOC_FSSETXATTR:
-> >  		return f2fs_ioc_fssetxattr(filp, arg);
-> > +	case F2FS_IOC_SET_DONTMOVE:
-> > +		return f2fs_ioc_set_dontmove(filp);
-> >  	default:
-> >  		return -ENOTTY;
-> >  	}
-> > @@ -2791,6 +2844,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-> >  	case F2FS_IOC_GET_FEATURES:
-> >  	case F2FS_IOC_FSGETXATTR:
-> >  	case F2FS_IOC_FSSETXATTR:
-> > +	case F2FS_IOC_SET_DONTMOVE:
-> >  		break;
-> >  	default:
-> >  		return -ENOIOCTLCMD;
-> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> > index 5d5bba462f26..263cb0b71ec8 100644
-> > --- a/fs/f2fs/gc.c
-> > +++ b/fs/f2fs/gc.c
-> > @@ -624,6 +624,11 @@ static void move_data_block(struct inode *inode, block_t bidx,
-> >  	if (f2fs_is_atomic_file(inode))
-> >  		goto out;
-> >  
-> > +	if (f2fs_is_dontmove_file(inode)) {
-> > +		f2fs_dontmove_control(inode, false);
-> > +		goto out;
-> > +	}
-> > +
-> >  	set_new_dnode(&dn, inode, NULL, NULL, 0);
-> >  	err = get_dnode_of_data(&dn, bidx, LOOKUP_NODE);
-> >  	if (err)
-> > @@ -720,6 +725,11 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
-> >  
-> >  	if (f2fs_is_atomic_file(inode))
-> >  		goto out;
-> > +	if (f2fs_is_dontmove_file(inode)) {
-> > +		if (gc_type == FG_GC)
-> > +			f2fs_dontmove_control(inode, false);
-> > +		goto out;
-> > +	}
-> >  
-> >  	if (gc_type == BG_GC) {
-> >  		if (PageWriteback(page))
-> > @@ -1091,6 +1101,7 @@ void build_gc_manager(struct f2fs_sb_info *sbi)
-> >  
-> >  	sbi->fggc_threshold = div64_u64((main_count - ovp_count) *
-> >  				BLKS_PER_SEC(sbi), (main_count - resv_count));
-> > +	sbi->gc_dontmove = DEF_GC_FAILED_DONTMOVE;
-> >  
-> >  	/* give warm/cold data area from slower device */
-> >  	if (sbi->s_ndevs && sbi->segs_per_sec == 1)
-> > diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-> > index 9325191fab2d..3fbb74253e52 100644
-> > --- a/fs/f2fs/gc.h
-> > +++ b/fs/f2fs/gc.h
-> > @@ -20,6 +20,8 @@
-> >  #define LIMIT_INVALID_BLOCK	40 /* percentage over total user space */
-> >  #define LIMIT_FREE_BLOCK	40 /* percentage over invalid + free space */
-> >  
-> > +#define DEF_GC_FAILED_DONTMOVE		1024
-> > +
-> >  /* Search max. number of dirty segments to select a victim segment */
-> >  #define DEF_MAX_VICTIM_SEARCH 4096 /* covers 8GB */
-> >  
-> > diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> > index 93c3364250dd..57dd6660936a 100644
-> > --- a/fs/f2fs/sysfs.c
-> > +++ b/fs/f2fs/sysfs.c
-> > @@ -300,6 +300,7 @@ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
-> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
-> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
-> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
-> > +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_dontmove, gc_dontmove);
-> >  #ifdef CONFIG_F2FS_FAULT_INJECTION
-> >  F2FS_RW_ATTR(FAULT_INFO_RATE, f2fs_fault_info, inject_rate, inject_rate);
-> >  F2FS_RW_ATTR(FAULT_INFO_TYPE, f2fs_fault_info, inject_type, inject_type);
-> > @@ -348,6 +349,7 @@ static struct attribute *f2fs_attrs[] = {
-> >  	ATTR_LIST(idle_interval),
-> >  	ATTR_LIST(iostat_enable),
-> >  	ATTR_LIST(readdir_ra),
-> > +	ATTR_LIST(gc_dontmove),
-> >  #ifdef CONFIG_F2FS_FAULT_INJECTION
-> >  	ATTR_LIST(inject_rate),
-> >  	ATTR_LIST(inject_type),
-> > diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-> > index 43e98d30d2df..fedb2698a8f7 100644
-> > --- a/include/linux/f2fs_fs.h
-> > +++ b/include/linux/f2fs_fs.h
-> > @@ -212,6 +212,7 @@ struct f2fs_extent {
-> >  #define F2FS_DATA_EXIST		0x08	/* file inline data exist flag */
-> >  #define F2FS_INLINE_DOTS	0x10	/* file having implicit dot dentries */
-> >  #define F2FS_EXTRA_ATTR		0x20	/* file having extra attribute */
-> > +#define F2FS_DONTMOVE		0x40	/* file should not be move */
-> >  
-> >  struct f2fs_inode {
-> >  	__le16 i_mode;			/* file mode */
-> > 
+> diff --git a/Documentation/filesystems/ext2.txt b/Documentation/filesystems/ext2.txt
+> index 55755395d3dc..81c0becab225 100644
+> --- a/Documentation/filesystems/ext2.txt
+> +++ b/Documentation/filesystems/ext2.txt
+> @@ -49,12 +49,10 @@ sb=n				Use alternate superblock at this location.
+>  
+>  user_xattr			Enable "user." POSIX Extended Attributes
+>  				(requires CONFIG_EXT2_FS_XATTR).
+> -				See also http://acl.bestbits.at
+>  nouser_xattr			Don't support "user." extended attributes.
+>  
+>  acl				Enable POSIX Access Control Lists support
+>  				(requires CONFIG_EXT2_FS_POSIX_ACL).
+> -				See also http://acl.bestbits.at
+>  noacl				Don't support POSIX ACLs.
+>  
+>  nobh				Do not attach buffer_heads to file pagecache.
+> diff --git a/Documentation/filesystems/ext4.txt b/Documentation/filesystems/ext4.txt
+> index 75236c0c2ac2..8cd63e16f171 100644
+> --- a/Documentation/filesystems/ext4.txt
+> +++ b/Documentation/filesystems/ext4.txt
+> @@ -202,15 +202,14 @@ inode_readahead_blks=n	This tuning parameter controls the maximum
+>  			the buffer cache.  The default value is 32 blocks.
+>  
+>  nouser_xattr		Disables Extended User Attributes.  See the
+> -			attr(5) manual page and http://acl.bestbits.at/
+> -			for more information about extended attributes.
+> +			attr(5) manual page for more information about
+> +			extended attributes.
+>  
+>  noacl			This option disables POSIX Access Control List
+>  			support. If ACL support is enabled in the kernel
+>  			configuration (CONFIG_EXT4_FS_POSIX_ACL), ACL is
+>  			enabled by default on mount. See the acl(5) manual
+> -			page and http://acl.bestbits.at/ for more information
+> -			about acl.
+> +			page for more information about acl.
+>  
+>  bsddf		(*)	Make 'df' act like BSD.
+>  minixdf			Make 'df' act like Minix.
+> diff --git a/fs/9p/Kconfig b/fs/9p/Kconfig
+> index 6489e1fc1afd..11045d8e356a 100644
+> --- a/fs/9p/Kconfig
+> +++ b/fs/9p/Kconfig
+> @@ -25,9 +25,6 @@ config 9P_FS_POSIX_ACL
+>  	  POSIX Access Control Lists (ACLs) support permissions for users and
+>  	  groups beyond the owner/group/world scheme.
+>  
+> -	  To learn more about Access Control Lists, visit the POSIX ACLs for
+> -	  Linux website <http://acl.bestbits.at/>.
+> -
+>  	  If you don't know what Access Control Lists are, say N
+>  
+>  endif
+> diff --git a/fs/Kconfig b/fs/Kconfig
+> index 7aee6d699fd6..0ed56752f208 100644
+> --- a/fs/Kconfig
+> +++ b/fs/Kconfig
+> @@ -167,17 +167,13 @@ config TMPFS_POSIX_ACL
+>  	  files for sound to work properly.  In short, if you're not sure,
+>  	  say Y.
+>  
+> -	  To learn more about Access Control Lists, visit the POSIX ACLs for
+> -	  Linux website <http://acl.bestbits.at/>.
+> -
+>  config TMPFS_XATTR
+>  	bool "Tmpfs extended attributes"
+>  	depends on TMPFS
+>  	default n
+>  	help
+>  	  Extended attributes are name:value pairs associated with inodes by
+> -	  the kernel or by users (see the attr(5) manual page, or visit
+> -	  <http://acl.bestbits.at/> for details).
+> +	  the kernel or by users (see the attr(5) manual page for details).
+>  
+>  	  Currently this enables support for the trusted.* and
+>  	  security.* namespaces.
+> diff --git a/fs/btrfs/Kconfig b/fs/btrfs/Kconfig
+> index 2e558227931a..273351ee4c46 100644
+> --- a/fs/btrfs/Kconfig
+> +++ b/fs/btrfs/Kconfig
+> @@ -38,9 +38,6 @@ config BTRFS_FS_POSIX_ACL
+>  	  POSIX Access Control Lists (ACLs) support permissions for users and
+>  	  groups beyond the owner/group/world scheme.
+>  
+> -	  To learn more about Access Control Lists, visit the POSIX ACLs for
+> -	  Linux website <http://acl.bestbits.at/>.
+> -
+>  	  If you don't know what Access Control Lists are, say N
+>  
+>  config BTRFS_FS_CHECK_INTEGRITY
+> diff --git a/fs/ceph/Kconfig b/fs/ceph/Kconfig
+> index 264e9bf83ff3..52095f473464 100644
+> --- a/fs/ceph/Kconfig
+> +++ b/fs/ceph/Kconfig
+> @@ -34,7 +34,4 @@ config CEPH_FS_POSIX_ACL
+>  	  POSIX Access Control Lists (ACLs) support permissions for users and
+>  	  groups beyond the owner/group/world scheme.
+>  
+> -	  To learn more about Access Control Lists, visit the POSIX ACLs for
+> -	  Linux website <http://acl.bestbits.at/>.
+> -
+>  	  If you don't know what Access Control Lists are, say N
+> diff --git a/fs/cifs/Kconfig b/fs/cifs/Kconfig
+> index d5b2e12b5d02..e73d25f4b97a 100644
+> --- a/fs/cifs/Kconfig
+> +++ b/fs/cifs/Kconfig
+> @@ -108,14 +108,13 @@ config CIFS_XATTR
+>          depends on CIFS
+>          help
+>            Extended attributes are name:value pairs associated with inodes by
+> -          the kernel or by users (see the attr(5) manual page, or visit
+> -          <http://acl.bestbits.at/> for details).  CIFS maps the name of
+> -          extended attributes beginning with the user namespace prefix
+> -          to SMB/CIFS EAs. EAs are stored on Windows servers without the
+> -          user namespace prefix, but their names are seen by Linux cifs clients
+> -          prefaced by the user namespace prefix. The system namespace
+> -          (used by some filesystems to store ACLs) is not supported at
+> -          this time.
+> +          the kernel or by users (see the attr(5) manual page for details).
+> +          CIFS maps the name of extended attributes beginning with the user
+> +          namespace prefix to SMB/CIFS EAs.  EAs are stored on Windows
+> +          servers without the user namespace prefix, but their names are
+> +          seen by Linux cifs clients prefaced by the user namespace prefix.
+> +          The system namespace (used by some filesystems to store ACLs) is
+> +          not supported at this time.
+>  
+>            If unsure, say Y.
+>  
+> diff --git a/fs/ext2/Kconfig b/fs/ext2/Kconfig
+> index c634874e12d9..894e4c53d1d2 100644
+> --- a/fs/ext2/Kconfig
+> +++ b/fs/ext2/Kconfig
+> @@ -13,8 +13,7 @@ config EXT2_FS_XATTR
+>  	depends on EXT2_FS
+>  	help
+>  	  Extended attributes are name:value pairs associated with inodes by
+> -	  the kernel or by users (see the attr(5) manual page, or visit
+> -	  <http://acl.bestbits.at/> for details).
+> +	  the kernel or by users (see the attr(5) manual page for details).
+>  
+>  	  If unsure, say N.
+>  
+> @@ -26,9 +25,6 @@ config EXT2_FS_POSIX_ACL
+>  	  Posix Access Control Lists (ACLs) support permissions for users and
+>  	  groups beyond the owner/group/world scheme.
+>  
+> -	  To learn more about Access Control Lists, visit the Posix ACLs for
+> -	  Linux website <http://acl.bestbits.at/>.
+> -
+>  	  If you don't know what Access Control Lists are, say N
+>  
+>  config EXT2_FS_SECURITY
+> diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
+> index 73b850f5659c..a453cc87082b 100644
+> --- a/fs/ext4/Kconfig
+> +++ b/fs/ext4/Kconfig
+> @@ -82,9 +82,6 @@ config EXT4_FS_POSIX_ACL
+>  	  POSIX Access Control Lists (ACLs) support permissions for users and
+>  	  groups beyond the owner/group/world scheme.
+>  
+> -	  To learn more about Access Control Lists, visit the POSIX ACLs for
+> -	  Linux website <http://acl.bestbits.at/>.
+> -
+>  	  If you don't know what Access Control Lists are, say N
+>  
+>  config EXT4_FS_SECURITY
+> diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
+> index 378c221d68a9..9a20ef42fadd 100644
+> --- a/fs/f2fs/Kconfig
+> +++ b/fs/f2fs/Kconfig
+> @@ -35,8 +35,7 @@ config F2FS_FS_XATTR
+>  	default y
+>  	help
+>  	  Extended attributes are name:value pairs associated with inodes by
+> -	  the kernel or by users (see the attr(5) manual page, or visit
+> -	  <http://acl.bestbits.at/> for details).
+> +	  the kernel or by users (see the attr(5) manual page for details).
+>  
+>  	  If unsure, say N.
+>  
+> @@ -49,9 +48,6 @@ config F2FS_FS_POSIX_ACL
+>  	  Posix Access Control Lists (ACLs) support permissions for users and
+>  	  groups beyond the owner/group/world scheme.
+>  
+> -	  To learn more about Access Control Lists, visit the POSIX ACLs for
+> -	  Linux website <http://acl.bestbits.at/>.
+> -
+>  	  If you don't know what Access Control Lists are, say N
+>  
+>  config F2FS_FS_SECURITY
+> diff --git a/fs/hfsplus/Kconfig b/fs/hfsplus/Kconfig
+> index 24bc20fd42f7..7cc8b4acf66a 100644
+> --- a/fs/hfsplus/Kconfig
+> +++ b/fs/hfsplus/Kconfig
+> @@ -20,9 +20,6 @@ config HFSPLUS_FS_POSIX_ACL
+>  	  POSIX Access Control Lists (ACLs) support permissions for users and
+>  	  groups beyond the owner/group/world scheme.
+>  
+> -	  To learn more about Access Control Lists, visit the POSIX ACLs for
+> -	  Linux website <http://acl.bestbits.at/>.
+> -
+>  	  It needs to understand that POSIX ACLs are treated only under
+>  	  Linux. POSIX ACLs doesn't mean something under Mac OS X.
+>  	  Mac OS X beginning with version 10.4 ("Tiger") support NFSv4 ACLs,
+> diff --git a/fs/jffs2/Kconfig b/fs/jffs2/Kconfig
+> index d8bb6c411e96..ad850c5bf2ca 100644
+> --- a/fs/jffs2/Kconfig
+> +++ b/fs/jffs2/Kconfig
+> @@ -68,8 +68,7 @@ config JFFS2_FS_XATTR
+>  	default n
+>  	help
+>  	  Extended attributes are name:value pairs associated with inodes by
+> -	  the kernel or by users (see the attr(5) manual page, or visit
+> -	  <http://acl.bestbits.at/> for details).
+> +	  the kernel or by users (see the attr(5) manual page for details).
+>  
+>  	  If unsure, say N.
+>  
+> @@ -82,9 +81,6 @@ config JFFS2_FS_POSIX_ACL
+>  	  Posix Access Control Lists (ACLs) support permissions for users and
+>  	  groups beyond the owner/group/world scheme.
+>  
+> -	  To learn more about Access Control Lists, visit the Posix ACLs for
+> -	  Linux website <http://acl.bestbits.at/>.
+> -
+>  	  If you don't know what Access Control Lists are, say N
+>  
+>  config JFFS2_FS_SECURITY
+> diff --git a/fs/jfs/Kconfig b/fs/jfs/Kconfig
+> index 57cef19951db..851de78fdabb 100644
+> --- a/fs/jfs/Kconfig
+> +++ b/fs/jfs/Kconfig
+> @@ -16,9 +16,6 @@ config JFS_POSIX_ACL
+>  	  Posix Access Control Lists (ACLs) support permissions for users and
+>  	  groups beyond the owner/group/world scheme.
+>  
+> -	  To learn more about Access Control Lists, visit the Posix ACLs for
+> -	  Linux website <http://acl.bestbits.at/>.
+> -
+>  	  If you don't know what Access Control Lists are, say N
+>  
+>  config JFS_SECURITY
+> diff --git a/fs/reiserfs/Kconfig b/fs/reiserfs/Kconfig
+> index 7cd46666ba2c..86e71c0caf48 100644
+> --- a/fs/reiserfs/Kconfig
+> +++ b/fs/reiserfs/Kconfig
+> @@ -57,8 +57,7 @@ config REISERFS_FS_XATTR
+>  	depends on REISERFS_FS
+>  	help
+>  	  Extended attributes are name:value pairs associated with inodes by
+> -	  the kernel or by users (see the attr(5) manual page, or visit
+> -	  <http://acl.bestbits.at/> for details).
+> +	  the kernel or by users (see the attr(5) manual page for details).
+>  
+>  	  If unsure, say N.
+>  
+> @@ -70,9 +69,6 @@ config REISERFS_FS_POSIX_ACL
+>  	  Posix Access Control Lists (ACLs) support permissions for users and
+>  	  groups beyond the owner/group/world scheme.
+>  
+> -	  To learn more about Access Control Lists, visit the Posix ACLs for
+> -	  Linux website <http://acl.bestbits.at/>.
+> -
+>  	  If you don't know what Access Control Lists are, say N
+>  
+>  config REISERFS_FS_SECURITY
+> diff --git a/fs/xfs/Kconfig b/fs/xfs/Kconfig
+> index f42fcf1b5465..46bcf0e649f5 100644
+> --- a/fs/xfs/Kconfig
+> +++ b/fs/xfs/Kconfig
+> @@ -48,9 +48,6 @@ config XFS_POSIX_ACL
+>  	  POSIX Access Control Lists (ACLs) support permissions for users and
+>  	  groups beyond the owner/group/world scheme.
+>  
+> -	  To learn more about Access Control Lists, visit the POSIX ACLs for
+> -	  Linux website <http://acl.bestbits.at/>.
+> -
+>  	  If you don't know what Access Control Lists are, say N.
+>  
+>  config XFS_RT
+> -- 
+> 2.15.1
