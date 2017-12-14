@@ -1,23 +1,23 @@
 From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v3] f2fs: avoid dead loop in function
- find_fsync_dnodes
-Date: Thu, 14 Dec 2017 11:54:52 +0800
-Message-ID: <1513223692-20178-1-git-send-email-heyunlei@huawei.com>
+Subject: [PATCH] f2fs: uses the same naming scheme for struct
+ nat_entry and f2fs_nat_entry
+Date: Thu, 14 Dec 2017 12:00:17 +0800
+Message-ID: <1513224017-20296-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
  helo=mx.sourceforge.net)
  by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <heyunlei@huawei.com>) id 1ePKox-0005Su-Od
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 Dec 2017 04:08:31 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
+ (envelope-from <heyunlei@huawei.com>) id 1ePKu8-0005Zv-NU
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 Dec 2017 04:13:52 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ePKow-0003Fk-9g
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 Dec 2017 04:08:31 +0000
+ id 1ePKu6-0005yR-M9
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 Dec 2017 04:13:52 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,104 +30,279 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 Cc: ning.jia@huawei.com, heyunlei@huawei.com
 
-Came across a dead loop in recovery like this:
-
-......
-[   24.680480s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597696
-[   24.698394s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597697
-[   24.724334s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
-[   24.724334s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
-[   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
-[   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
-[   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
-[   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
-[   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
-[   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
-[   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
-[   24.724426s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
-......
-
-Mount process will block in dead loop and fsck can do nothing with this
-error, This patch abandon recovery if node chain is cyclical.
+Uses the same naming scheme for struct nat_entry and f2fs_nat_entry
+as in function __flush_nat_entry_set. No functional change.
 
 Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fs/f2fs/data.c     |  5 +++++
- fs/f2fs/recovery.c | 23 +++++++++++++++--------
- 2 files changed, 20 insertions(+), 8 deletions(-)
+ fs/f2fs/node.c | 128 ++++++++++++++++++++++++++++-----------------------------
+ 1 file changed, 64 insertions(+), 64 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 7aca6cc..2ac992f 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2146,6 +2146,9 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
- 		}
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index a9c340e..5645967 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -155,9 +155,9 @@ static struct nat_entry *__alloc_nat_entry(nid_t nid, bool no_fail)
+ 	return new;
+ }
+ 
+-static void __free_nat_entry(struct nat_entry *e)
++static void __free_nat_entry(struct nat_entry *ne)
+ {
+-	kmem_cache_free(nat_entry_slab, e);
++	kmem_cache_free(nat_entry_slab, ne);
+ }
+ 
+ /* must be locked by nat_tree_lock */
+@@ -187,12 +187,12 @@ static unsigned int __gang_lookup_nat_cache(struct f2fs_nm_info *nm_i,
+ 	return radix_tree_gang_lookup(&nm_i->nat_root, (void **)ep, start, nr);
+ }
+ 
+-static void __del_from_nat_cache(struct f2fs_nm_info *nm_i, struct nat_entry *e)
++static void __del_from_nat_cache(struct f2fs_nm_info *nm_i, struct nat_entry *ne)
+ {
+-	list_del(&e->list);
+-	radix_tree_delete(&nm_i->nat_root, nat_get_nid(e));
++	list_del(&ne->list);
++	radix_tree_delete(&nm_i->nat_root, nat_get_nid(ne));
+ 	nm_i->nat_cnt--;
+-	__free_nat_entry(e);
++	__free_nat_entry(ne);
+ }
+ 
+ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
+@@ -244,14 +244,14 @@ static unsigned int __gang_lookup_nat_set(struct f2fs_nm_info *nm_i,
+ int need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+-	struct nat_entry *e;
++	struct nat_entry *ne;
+ 	bool need = false;
+ 
+ 	down_read(&nm_i->nat_tree_lock);
+-	e = __lookup_nat_cache(nm_i, nid);
+-	if (e) {
+-		if (!get_nat_flag(e, IS_CHECKPOINTED) &&
+-				!get_nat_flag(e, HAS_FSYNCED_INODE))
++	ne = __lookup_nat_cache(nm_i, nid);
++	if (ne) {
++		if (!get_nat_flag(ne, IS_CHECKPOINTED) &&
++				!get_nat_flag(ne, HAS_FSYNCED_INODE))
+ 			need = true;
+ 	}
+ 	up_read(&nm_i->nat_tree_lock);
+@@ -261,12 +261,12 @@ int need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid)
+ bool is_checkpointed_node(struct f2fs_sb_info *sbi, nid_t nid)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+-	struct nat_entry *e;
++	struct nat_entry *ne;
+ 	bool is_cp = true;
+ 
+ 	down_read(&nm_i->nat_tree_lock);
+-	e = __lookup_nat_cache(nm_i, nid);
+-	if (e && !get_nat_flag(e, IS_CHECKPOINTED))
++	ne = __lookup_nat_cache(nm_i, nid);
++	if (ne && !get_nat_flag(ne, IS_CHECKPOINTED))
+ 		is_cp = false;
+ 	up_read(&nm_i->nat_tree_lock);
+ 	return is_cp;
+@@ -275,14 +275,14 @@ bool is_checkpointed_node(struct f2fs_sb_info *sbi, nid_t nid)
+ bool need_inode_block_update(struct f2fs_sb_info *sbi, nid_t ino)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+-	struct nat_entry *e;
++	struct nat_entry *ne;
+ 	bool need_update = true;
+ 
+ 	down_read(&nm_i->nat_tree_lock);
+-	e = __lookup_nat_cache(nm_i, ino);
+-	if (e && get_nat_flag(e, HAS_LAST_FSYNC) &&
+-			(get_nat_flag(e, IS_CHECKPOINTED) ||
+-			 get_nat_flag(e, HAS_FSYNCED_INODE)))
++	ne = __lookup_nat_cache(nm_i, ino);
++	if (ne && get_nat_flag(ne, HAS_LAST_FSYNC) &&
++			(get_nat_flag(ne, IS_CHECKPOINTED) ||
++			 get_nat_flag(ne, HAS_FSYNCED_INODE)))
+ 		need_update = false;
+ 	up_read(&nm_i->nat_tree_lock);
+ 	return need_update;
+@@ -290,26 +290,26 @@ bool need_inode_block_update(struct f2fs_sb_info *sbi, nid_t ino)
+ 
+ /* must be locked by nat_tree_lock */
+ static void cache_nat_entry(struct f2fs_sb_info *sbi, nid_t nid,
+-						struct f2fs_nat_entry *ne)
++						struct f2fs_nat_entry *raw_ne)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+-	struct nat_entry *new, *e;
++	struct nat_entry *new, *ne;
+ 
+ 	new = __alloc_nat_entry(nid, false);
+ 	if (!new)
+ 		return;
+ 
+ 	down_write(&nm_i->nat_tree_lock);
+-	e = __lookup_nat_cache(nm_i, nid);
+-	if (!e)
+-		e = __init_nat_entry(nm_i, new, ne, false);
++	ne = __lookup_nat_cache(nm_i, nid);
++	if (!ne)
++		ne = __init_nat_entry(nm_i, new, raw_ne, false);
+ 	else
+-		f2fs_bug_on(sbi, nat_get_ino(e) != le32_to_cpu(ne->ino) ||
+-				nat_get_blkaddr(e) !=
+-					le32_to_cpu(ne->block_addr) ||
+-				nat_get_version(e) != ne->version);
++		f2fs_bug_on(sbi, nat_get_ino(ne) != le32_to_cpu(raw_ne->ino) ||
++				nat_get_blkaddr(ne) !=
++					le32_to_cpu(raw_ne->block_addr) ||
++				nat_get_version(ne) != raw_ne->version);
+ 	up_write(&nm_i->nat_tree_lock);
+-	if (e != new)
++	if (ne != new)
+ 		__free_nat_entry(new);
+ }
+ 
+@@ -317,14 +317,14 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+ 			block_t new_blkaddr, bool fsync_done)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+-	struct nat_entry *e;
++	struct nat_entry *ne;
+ 	struct nat_entry *new = __alloc_nat_entry(ni->nid, true);
+ 
+ 	down_write(&nm_i->nat_tree_lock);
+-	e = __lookup_nat_cache(nm_i, ni->nid);
+-	if (!e) {
+-		e = __init_nat_entry(nm_i, new, NULL, true);
+-		copy_node_info(&e->ni, ni);
++	ne = __lookup_nat_cache(nm_i, ni->nid);
++	if (!ne) {
++		ne = __init_nat_entry(nm_i, new, NULL, true);
++		copy_node_info(&ne->ni, ni);
+ 		f2fs_bug_on(sbi, ni->blk_addr == NEW_ADDR);
+ 	} else if (new_blkaddr == NEW_ADDR) {
+ 		/*
+@@ -332,42 +332,42 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+ 		 * previous nat entry can be remained in nat cache.
+ 		 * So, reinitialize it with new information.
+ 		 */
+-		copy_node_info(&e->ni, ni);
++		copy_node_info(&ne->ni, ni);
+ 		f2fs_bug_on(sbi, ni->blk_addr != NULL_ADDR);
+ 	}
+ 	/* let's free early to reduce memory consumption */
+-	if (e != new)
++	if (ne != new)
+ 		__free_nat_entry(new);
+ 
+ 	/* sanity check */
+-	f2fs_bug_on(sbi, nat_get_blkaddr(e) != ni->blk_addr);
+-	f2fs_bug_on(sbi, nat_get_blkaddr(e) == NULL_ADDR &&
++	f2fs_bug_on(sbi, nat_get_blkaddr(ne) != ni->blk_addr);
++	f2fs_bug_on(sbi, nat_get_blkaddr(ne) == NULL_ADDR &&
+ 			new_blkaddr == NULL_ADDR);
+-	f2fs_bug_on(sbi, nat_get_blkaddr(e) == NEW_ADDR &&
++	f2fs_bug_on(sbi, nat_get_blkaddr(ne) == NEW_ADDR &&
+ 			new_blkaddr == NEW_ADDR);
+-	f2fs_bug_on(sbi, nat_get_blkaddr(e) != NEW_ADDR &&
+-			nat_get_blkaddr(e) != NULL_ADDR &&
++	f2fs_bug_on(sbi, nat_get_blkaddr(ne) != NEW_ADDR &&
++			nat_get_blkaddr(ne) != NULL_ADDR &&
+ 			new_blkaddr == NEW_ADDR);
+ 
+ 	/* increment version no as node is removed */
+-	if (nat_get_blkaddr(e) != NEW_ADDR && new_blkaddr == NULL_ADDR) {
+-		unsigned char version = nat_get_version(e);
+-		nat_set_version(e, inc_node_version(version));
++	if (nat_get_blkaddr(ne) != NEW_ADDR && new_blkaddr == NULL_ADDR) {
++		unsigned char version = nat_get_version(ne);
++		nat_set_version(ne, inc_node_version(version));
  	}
  
-+	if (PageChecked(page))
-+		ClearPageChecked(page);
-+
- 	/* This is atomic written page, keep Private */
- 	if (IS_ATOMIC_WRITTEN_PAGE(page))
- 		return drop_inmem_page(inode, page);
-@@ -2292,6 +2295,8 @@ int f2fs_migrate_page(struct address_space *mapping,
- 		SetPagePrivate(newpage);
- 	set_page_private(newpage, page_private(page));
+ 	/* change address */
+-	nat_set_blkaddr(e, new_blkaddr);
++	nat_set_blkaddr(ne, new_blkaddr);
+ 	if (new_blkaddr == NEW_ADDR || new_blkaddr == NULL_ADDR)
+-		set_nat_flag(e, IS_CHECKPOINTED, false);
+-	__set_nat_cache_dirty(nm_i, e);
++		set_nat_flag(ne, IS_CHECKPOINTED, false);
++	__set_nat_cache_dirty(nm_i, ne);
  
-+	if (PageChecked(page))
-+		SetPageChecked(page);
- 	if (mode != MIGRATE_SYNC_NO_COPY)
- 		migrate_page_copy(newpage, page);
- 	else
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 7d63faf..905be02 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -220,6 +220,14 @@ static void recover_inode(struct inode *inode, struct page *page)
- 			ino_of_node(page), name);
+ 	/* update fsync_mark if its inode nat entry is still alive */
+ 	if (ni->nid != ni->ino)
+-		e = __lookup_nat_cache(nm_i, ni->ino);
+-	if (e) {
++		ne = __lookup_nat_cache(nm_i, ni->ino);
++	if (ne) {
+ 		if (fsync_done && ni->nid == ni->ino)
+-			set_nat_flag(e, HAS_FSYNCED_INODE, true);
+-		set_nat_flag(e, HAS_LAST_FSYNC, fsync_done);
++			set_nat_flag(ne, HAS_FSYNCED_INODE, true);
++		set_nat_flag(ne, HAS_LAST_FSYNC, fsync_done);
+ 	}
+ 	up_write(&nm_i->nat_tree_lock);
+ }
+@@ -402,8 +402,8 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
+ 	nid_t start_nid = START_NID(nid);
+ 	struct f2fs_nat_block *nat_blk;
+ 	struct page *page = NULL;
+-	struct f2fs_nat_entry ne;
+-	struct nat_entry *e;
++	struct f2fs_nat_entry raw_ne;
++	struct nat_entry *ne;
+ 	pgoff_t index;
+ 	int i;
+ 
+@@ -411,23 +411,23 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
+ 
+ 	/* Check nat cache */
+ 	down_read(&nm_i->nat_tree_lock);
+-	e = __lookup_nat_cache(nm_i, nid);
+-	if (e) {
+-		ni->ino = nat_get_ino(e);
+-		ni->blk_addr = nat_get_blkaddr(e);
+-		ni->version = nat_get_version(e);
++	ne = __lookup_nat_cache(nm_i, nid);
++	if (ne) {
++		ni->ino = nat_get_ino(ne);
++		ni->blk_addr = nat_get_blkaddr(ne);
++		ni->version = nat_get_version(ne);
+ 		up_read(&nm_i->nat_tree_lock);
+ 		return;
+ 	}
+ 
+-	memset(&ne, 0, sizeof(struct f2fs_nat_entry));
++	memset(&raw_ne, 0, sizeof(struct f2fs_nat_entry));
+ 
+ 	/* Check current segment summary */
+ 	down_read(&curseg->journal_rwsem);
+ 	i = lookup_journal_in_cursum(journal, NAT_JOURNAL, nid, 0);
+ 	if (i >= 0) {
+-		ne = nat_in_journal(journal, i);
+-		node_info_from_raw_nat(ni, &ne);
++		raw_ne = nat_in_journal(journal, i);
++		node_info_from_raw_nat(ni, &raw_ne);
+ 	}
+ 	up_read(&curseg->journal_rwsem);
+ 	if (i >= 0) {
+@@ -441,12 +441,12 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
+ 
+ 	page = get_meta_page(sbi, index);
+ 	nat_blk = (struct f2fs_nat_block *)page_address(page);
+-	ne = nat_blk->entries[nid - start_nid];
+-	node_info_from_raw_nat(ni, &ne);
++	raw_ne = nat_blk->entries[nid - start_nid];
++	node_info_from_raw_nat(ni, &raw_ne);
+ 	f2fs_put_page(page, 1);
+ cache:
+ 	/* cache nat entry */
+-	cache_nat_entry(sbi, nid, &ne);
++	cache_nat_entry(sbi, nid, &raw_ne);
  }
  
-+static void destroy_fsync_dnodes(struct list_head *head)
-+{
-+	struct fsync_inode_entry *entry, *tmp;
-+
-+	list_for_each_entry_safe(entry, tmp, head, list)
-+		del_fsync_inode(entry);
-+}
-+
- static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
- 				bool check_only)
- {
-@@ -239,7 +247,14 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
- 			return 0;
- 
- 		page = get_tmp_page(sbi, blkaddr);
-+		if (PageChecked(page)) {
-+			f2fs_msg(sbi->sb, KERN_ERR, "Abandon dead loop node block list");
-+			destroy_fsync_dnodes(head);
-+			break;
-+		}
- 
-+		/* No need ClearPageChecked for page cache truncated */
-+		SetPageChecked(page);
- 		if (!is_recoverable_dnode(page))
- 			break;
- 
-@@ -288,14 +303,6 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
- 	return err;
- }
- 
--static void destroy_fsync_dnodes(struct list_head *head)
--{
--	struct fsync_inode_entry *entry, *tmp;
--
--	list_for_each_entry_safe(entry, tmp, head, list)
--		del_fsync_inode(entry);
--}
--
- static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
- 			block_t blkaddr, struct dnode_of_data *dn)
- {
+ /*
 -- 
 1.9.1
 
