@@ -1,151 +1,137 @@
-From: Hyunchul Lee <hyc.lee@gmail.com>
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: pass down write hints to block layer
- for bufferd write
-Date: Thu, 14 Dec 2017 10:33:59 +0900
-Message-ID: <5A31D507.70304@gmail.com>
-References: <1511828607-624-1-git-send-email-hyc.lee@gmail.com> <d71418e1-d667-3dc6-9265-61db5d8f40bc@huawei.com> <5A2112A7.2070208@gmail.com> <1fa09755-7322-a886-c582-02e3d93d8f87@kernel.org> <5A2F3BC5.90803@gmail.com> <85f7fc1b-5286-c66f-6833-af1a44c5130f@huawei.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH v3] f2fs: avoid dead loop in function
+ find_fsync_dnodes
+Date: Thu, 14 Dec 2017 11:54:52 +0800
+Message-ID: <1513223692-20178-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <85f7fc1b-5286-c66f-6833-af1a44c5130f@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>, Chao Yu <chao@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, kernel-team@lge.com, linux-fsdevel@vger.kernel.org, Hyunchul Lee <cheol.lee@lge.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+ helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <heyunlei@huawei.com>) id 1ePKox-0005Su-Od
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 Dec 2017 04:08:31 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1ePKow-0003Fk-9g
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 Dec 2017 04:08:31 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: ning.jia@huawei.com, heyunlei@huawei.com
 
-Hi Jaegeuk,
+Came across a dead loop in recovery like this:
 
-I need your comment about the fs_iohint mount option.
+......
+[   24.680480s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597696
+[   24.698394s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597697
+[   24.724334s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724334s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724426s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+......
 
-a) w/o fs_iohint, propagate user hints to low layer.
-b) w/ fs_iohint, ignore user hints, and use hints which is generated
-with F2FS.
+Mount process will block in dead loop and fsck can do nothing with this
+error, This patch abandon recovery if node chain is cyclical.
 
-Chao suggests this option. because user hints are more accurate than
-file system.
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fs/f2fs/data.c     |  5 +++++
+ fs/f2fs/recovery.c | 23 +++++++++++++++--------
+ 2 files changed, 20 insertions(+), 8 deletions(-)
 
-This is resonable, But I have some concerns about this option. 
-The first thing is that blocks of a segments have different hints. This
-could make GC less effective. 
-The second is that the separation between LIFE_MEDIUM and LIFE_LONG is 
-really needed. I think that difference between them is a little ambigous 
-for users, and LIFE_SHORT and LIFE_EXTREME is converted to different 
-hints by F2FS.
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 7aca6cc..2ac992f 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2146,6 +2146,9 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
+ 		}
+ 	}
+ 
++	if (PageChecked(page))
++		ClearPageChecked(page);
++
+ 	/* This is atomic written page, keep Private */
+ 	if (IS_ATOMIC_WRITTEN_PAGE(page))
+ 		return drop_inmem_page(inode, page);
+@@ -2292,6 +2295,8 @@ int f2fs_migrate_page(struct address_space *mapping,
+ 		SetPagePrivate(newpage);
+ 	set_page_private(newpage, page_private(page));
+ 
++	if (PageChecked(page))
++		SetPageChecked(page);
+ 	if (mode != MIGRATE_SYNC_NO_COPY)
+ 		migrate_page_copy(newpage, page);
+ 	else
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 7d63faf..905be02 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -220,6 +220,14 @@ static void recover_inode(struct inode *inode, struct page *page)
+ 			ino_of_node(page), name);
+ }
+ 
++static void destroy_fsync_dnodes(struct list_head *head)
++{
++	struct fsync_inode_entry *entry, *tmp;
++
++	list_for_each_entry_safe(entry, tmp, head, list)
++		del_fsync_inode(entry);
++}
++
+ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 				bool check_only)
+ {
+@@ -239,7 +247,14 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 			return 0;
+ 
+ 		page = get_tmp_page(sbi, blkaddr);
++		if (PageChecked(page)) {
++			f2fs_msg(sbi->sb, KERN_ERR, "Abandon dead loop node block list");
++			destroy_fsync_dnodes(head);
++			break;
++		}
+ 
++		/* No need ClearPageChecked for page cache truncated */
++		SetPageChecked(page);
+ 		if (!is_recoverable_dnode(page))
+ 			break;
+ 
+@@ -288,14 +303,6 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 	return err;
+ }
+ 
+-static void destroy_fsync_dnodes(struct list_head *head)
+-{
+-	struct fsync_inode_entry *entry, *tmp;
+-
+-	list_for_each_entry_safe(entry, tmp, head, list)
+-		del_fsync_inode(entry);
+-}
+-
+ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
+ 			block_t blkaddr, struct dnode_of_data *dn)
+ {
+-- 
+1.9.1
 
-Thanks.
 
-On 12/12/2017 11:45 AM, Chao Yu wrote:
-> Hi Hyunchul,
-> 
-> On 2017/12/12 10:15, Hyunchul Lee wrote:
->> Hi Chao,
->>
->> On 12/11/2017 10:15 PM, Chao Yu wrote:
->>> Hi Hyunchul,
->>>
->>> On 2017/12/1 16:28, Hyunchul Lee wrote:
->>>> Hi Chao,
->>>>
->>>> On 11/30/2017 04:06 PM, Chao Yu wrote:
->>>>> Hi Hyunchul,
->>>>>
->>>>> On 2017/11/28 8:23, Hyunchul Lee wrote:
->>>>>> From: Hyunchul Lee <cheol.lee@lge.com>
->>>>>>
->>>>>> This implements which hint is passed down to block layer
->>>>>> for datas from the specific segment type.
->>>>>>
->>>>>> segment type                     hints
->>>>>> ------------                     -----
->>>>>> COLD_NODE & COLD_DATA            WRITE_LIFE_EXTREME
->>>>>> WARM_DATA                        WRITE_LIFE_NONE
->>>>>> HOT_NODE & WARM_NODE             WRITE_LIFE_LONG
->>>>>> HOT_DATA                         WRITE_LIFE_MEDIUM
->>>>>> META_DATA                        WRITE_LIFE_SHORT
->>>>>
->>>>> Just noticed, if our user do not give the hint via ioctl, f2fs can
->>>>> provider hint to lower layer according to hot/cold separation ability,
->>>>> it will be okay. But once user give his hint which may be more accurate
->>>>> than filesystem, hint converted by f2fs may be wrong.
->>>>>
->>>>> So what do you think of adding an option to control whether filesystem
->>>>> can convert hint user given?
->>>>>
->>>>
->>>> I think it is okay for LIFE_SHORT and LIFE_EXTREME. because they are 
->>>> converted to different hints.
->>>
->>> What I mean is introducing a mount option, e.g. fs_iohint,
->>> a) w/o fs_iohint, propagate file/inode io_hint to low layer.
->>> b) w/ fs_iohint, ignore file/inode io_hint, use io_hint which is generated
->>> with filesystem's private rule.
->>>
->>
->> Okay, I will implement this option and send this patch again.
-> 
-> Let's wait for Jaegeuk's comments first?
-> 
->>
->> Without fs_iohint, Even if data blocks are moved due to GC, 
->> we should keep user hints. And if user hints are not given, 
->> any hints are not passed down to block layer, right?
-> 
-> Hmm.. that will be a problem, IMO, we can store last user's io_hint into inode
-> layout, so later when we trigger GC, we can use the last io_hint in inode rather
-> than giving no hint or fs' hint.
-> 
-> I think it needs to discuss with original author of IO hint, what is the IO hint
-> policy when filesystem move block by itself after inode has been released in system.
-> 
-> Thanks,
-> 
->>
->> Thank you for comments.
->>
->>> Thanks,
->>>
->>>>
->>>> file hint      segment type        io hint
->>>> ---------      ------------        -------
->>>> LIFE_SHORT     HOT_DATA            LIFE_MEDIUM
->>>> LIFE_MEDIUM    WARM_DATA           LIFE_NONE
->>>> LIFE_LONG      WARM_DATA           LIFE_NONE
->>>> LIFE_EXTREME   COLD_DATA           LIFE_EXTREME
->>>>
->>>> the problem is that LIFE_MEDIUM and LIFE_LONG are converted to 
->>>> the same hint, LIFE_NONE. I am not sure that the seperation between 
->>>> LIFE_MEDIUM and LIFE_LONG is really needed. Because I guess that the 
->>>> difference between them is a little ambigous for users, and if WARM_DATA 
->>>> segment has two different hints, it can makes GC non-efficient.
->>>>
->>>> I wonder your thought about this.
->>>>
->>>> Thanks.
->>>>
->>>>> Thanks,
->>>>>
->>>>>
->>>>
->>>> ------------------------------------------------------------------------------
->>>> Check out the vibrant tech community on one of the world's most
->>>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
->>>> _______________________________________________
->>>> Linux-f2fs-devel mailing list
->>>> Linux-f2fs-devel@lists.sourceforge.net
->>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>>>
->>>
->>
->> .
->>
-> 
-> 
-> ------------------------------------------------------------------------------
-> Check out the vibrant tech community on one of the world's most
-> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
