@@ -1,24 +1,23 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v5 50/78] shmem: Convert shmem_partial_swap_usage
- to XArray
-Date: Fri, 15 Dec 2017 14:04:22 -0800
-Message-ID: <20171215220450.7899-51-willy@infradead.org>
+Subject: [PATCH v5 52/78] btrfs: Convert page cache to XArray
+Date: Fri, 15 Dec 2017 14:04:24 -0800
+Message-ID: <20171215220450.7899-53-willy@infradead.org>
 References: <20171215220450.7899-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <willy@infradead.org>) id 1ePy7j-00077S-F3
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Dec 2017 22:06:31 +0000
+ (envelope-from <willy@infradead.org>) id 1ePy7U-0002qU-Fl
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Dec 2017 22:06:16 +0000
 Received: from bombadil.infradead.org ([65.50.211.133])
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ePy7i-0000YN-DS
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Dec 2017 22:06:31 +0000
+ id 1ePy7T-00027s-NK
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Dec 2017 22:06:16 +0000
 In-Reply-To: <20171215220450.7899-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -34,51 +33,45 @@ Cc: Jens Axboe <axboe@kernel.dk>, linux-xfs@vger.kernel.org, linux-nilfs@vger.ke
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Simpler code because the xarray takes care of things like the limit and
-dereferencing the slot.
-
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- mm/shmem.c | 18 +++---------------
- 1 file changed, 3 insertions(+), 15 deletions(-)
+ fs/btrfs/compression.c | 4 +---
+ fs/btrfs/extent_io.c   | 6 ++----
+ 2 files changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index dd663341e01e..ecf05645509b 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -658,29 +658,17 @@ static int shmem_free_swap(struct address_space *mapping,
- unsigned long shmem_partial_swap_usage(struct address_space *mapping,
- 						pgoff_t start, pgoff_t end)
- {
--	struct radix_tree_iter iter;
--	void **slot;
-+	XA_STATE(xas, &mapping->pages, start);
- 	struct page *page;
- 	unsigned long swapped = 0;
+diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+index e687d06cd97c..4174b166e235 100644
+--- a/fs/btrfs/compression.c
++++ b/fs/btrfs/compression.c
+@@ -449,9 +449,7 @@ static noinline int add_ra_bio_pages(struct inode *inode,
+ 		if (pg_index > end_index)
+ 			break;
  
- 	rcu_read_lock();
--
--	radix_tree_for_each_slot(slot, &mapping->pages, &iter, start) {
--		if (iter.index >= end)
--			break;
--
--		page = radix_tree_deref_slot(slot);
--
--		if (radix_tree_deref_retry(page)) {
--			slot = radix_tree_iter_retry(&iter);
--			continue;
+-		rcu_read_lock();
+-		page = radix_tree_lookup(&mapping->pages, pg_index);
+-		rcu_read_unlock();
++		page = xa_load(&mapping->pages, pg_index);
+ 		if (page && !xa_is_value(page)) {
+ 			misses++;
+ 			if (misses > 4)
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index 4301cbf4e31f..fd5e9d887328 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -5197,11 +5197,9 @@ void clear_extent_buffer_dirty(struct extent_buffer *eb)
+ 
+ 		clear_page_dirty_for_io(page);
+ 		xa_lock_irq(&page->mapping->pages);
+-		if (!PageDirty(page)) {
+-			radix_tree_tag_clear(&page->mapping->pages,
+-						page_index(page),
++		if (!PageDirty(page))
++			__xa_clear_tag(&page->mapping->pages, page_index(page),
+ 						PAGECACHE_TAG_DIRTY);
 -		}
--
-+	xas_for_each(&xas, page, end - 1) {
- 		if (xa_is_value(page))
- 			swapped++;
- 
- 		if (need_resched()) {
--			slot = radix_tree_iter_resume(slot, &iter);
-+			xas_pause(&xas);
- 			cond_resched_rcu();
- 		}
- 	}
+ 		xa_unlock_irq(&page->mapping->pages);
+ 		ClearPageError(page);
+ 		unlock_page(page);
 -- 
 2.15.1
 
