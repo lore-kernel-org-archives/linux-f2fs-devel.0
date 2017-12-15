@@ -1,185 +1,339 @@
-From: Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH 23/24] fscrypt: fix up
- fscrypt_fname_encrypted_size() for internal use
-Date: Fri, 15 Dec 2017 09:42:24 -0800
-Message-ID: <20171215174225.31583-24-ebiggers3@gmail.com>
-References: <20171215174225.31583-1-ebiggers3@gmail.com>
+From: Steve French <smfrench@gmail.com>
+Subject: Re: [PATCH] fs/*/Kconfig: drop links to 404-compliant http://acl.bestbits.at
+Date: Fri, 15 Dec 2017 13:58:39 -0600
+Message-ID: <CAH2r5mt907N1RdRmSwqSPiJh7r989C3NrxJ51GBET1Q0-Qrokg@mail.gmail.com>
+References: <20171213053825.10903-1-kilobyte@angband.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
- helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <ebiggers3@gmail.com>) id 1ePu4k-0005RH-IJ
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Dec 2017 17:47:10 +0000
-Received: from mail-pg0-f67.google.com ([74.125.83.67])
- by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.89)
- id 1ePu4j-0008M6-O8
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Dec 2017 17:47:10 +0000
-Received: by mail-pg0-f67.google.com with SMTP id k134so6254907pga.3
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 15 Dec 2017 09:47:09 -0800 (PST)
-In-Reply-To: <20171215174225.31583-1-ebiggers3@gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-fscrypt@vger.kernel.org
-Cc: "Theodore Y . Ts'o" <tytso@mit.edu>, Eric Biggers <ebiggers@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-ext4-owner@vger.kernel.org>
+In-Reply-To: <20171213053825.10903-1-kilobyte@angband.pl>
+Sender: linux-ext4-owner@vger.kernel.org
+To: Adam Borowski <kilobyte@angband.pl>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, linux-ext4@vger.kernel.org, Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>, v9fs-developer@lists.sourceforge.net, linux-btrfs@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>, linux-cifs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, "Darrick J. Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+Acked-by: Steve French <smfrench@gmail.com>
 
-Filesystems don't need fscrypt_fname_encrypted_size() anymore, so
-unexport it and move it to fscrypt_private.h.
+On Tue, Dec 12, 2017 at 11:38 PM, Adam Borowski <kilobyte@angband.pl> wrote:
+> This link is replicated in most filesystems' config stanzas.  Referring
+> to an archived version of that site is pointless as it mostly deals with
+> patches; user documentation is available elsewhere.
+>
+> Signed-off-by: Adam Borowski <kilobyte@angband.pl>
+> ---
+> Sending this as one piece; if you guys would instead prefer this chopped
+> into tiny per-filesystem bits, please say so.
+>
+>
+>  Documentation/filesystems/ext2.txt |  2 --
+>  Documentation/filesystems/ext4.txt |  7 +++----
+>  fs/9p/Kconfig                      |  3 ---
+>  fs/Kconfig                         |  6 +-----
+>  fs/btrfs/Kconfig                   |  3 ---
+>  fs/ceph/Kconfig                    |  3 ---
+>  fs/cifs/Kconfig                    | 15 +++++++--------
+>  fs/ext2/Kconfig                    |  6 +-----
+>  fs/ext4/Kconfig                    |  3 ---
+>  fs/f2fs/Kconfig                    |  6 +-----
+>  fs/hfsplus/Kconfig                 |  3 ---
+>  fs/jffs2/Kconfig                   |  6 +-----
+>  fs/jfs/Kconfig                     |  3 ---
+>  fs/reiserfs/Kconfig                |  6 +-----
+>  fs/xfs/Kconfig                     |  3 ---
+>  15 files changed, 15 insertions(+), 60 deletions(-)
+>
+> diff --git a/Documentation/filesystems/ext2.txt b/Documentation/filesystems/ext2.txt
+> index 55755395d3dc..81c0becab225 100644
+> --- a/Documentation/filesystems/ext2.txt
+> +++ b/Documentation/filesystems/ext2.txt
+> @@ -49,12 +49,10 @@ sb=n                                Use alternate superblock at this location.
+>
+>  user_xattr                     Enable "user." POSIX Extended Attributes
+>                                 (requires CONFIG_EXT2_FS_XATTR).
+> -                               See also http://acl.bestbits.at
+>  nouser_xattr                   Don't support "user." extended attributes.
+>
+>  acl                            Enable POSIX Access Control Lists support
+>                                 (requires CONFIG_EXT2_FS_POSIX_ACL).
+> -                               See also http://acl.bestbits.at
+>  noacl                          Don't support POSIX ACLs.
+>
+>  nobh                           Do not attach buffer_heads to file pagecache.
+> diff --git a/Documentation/filesystems/ext4.txt b/Documentation/filesystems/ext4.txt
+> index 75236c0c2ac2..8cd63e16f171 100644
+> --- a/Documentation/filesystems/ext4.txt
+> +++ b/Documentation/filesystems/ext4.txt
+> @@ -202,15 +202,14 @@ inode_readahead_blks=n    This tuning parameter controls the maximum
+>                         the buffer cache.  The default value is 32 blocks.
+>
+>  nouser_xattr           Disables Extended User Attributes.  See the
+> -                       attr(5) manual page and http://acl.bestbits.at/
+> -                       for more information about extended attributes.
+> +                       attr(5) manual page for more information about
+> +                       extended attributes.
+>
+>  noacl                  This option disables POSIX Access Control List
+>                         support. If ACL support is enabled in the kernel
+>                         configuration (CONFIG_EXT4_FS_POSIX_ACL), ACL is
+>                         enabled by default on mount. See the acl(5) manual
+> -                       page and http://acl.bestbits.at/ for more information
+> -                       about acl.
+> +                       page for more information about acl.
+>
+>  bsddf          (*)     Make 'df' act like BSD.
+>  minixdf                        Make 'df' act like Minix.
+> diff --git a/fs/9p/Kconfig b/fs/9p/Kconfig
+> index 6489e1fc1afd..11045d8e356a 100644
+> --- a/fs/9p/Kconfig
+> +++ b/fs/9p/Kconfig
+> @@ -25,9 +25,6 @@ config 9P_FS_POSIX_ACL
+>           POSIX Access Control Lists (ACLs) support permissions for users and
+>           groups beyond the owner/group/world scheme.
+>
+> -         To learn more about Access Control Lists, visit the POSIX ACLs for
+> -         Linux website <http://acl.bestbits.at/>.
+> -
+>           If you don't know what Access Control Lists are, say N
+>
+>  endif
+> diff --git a/fs/Kconfig b/fs/Kconfig
+> index 7aee6d699fd6..0ed56752f208 100644
+> --- a/fs/Kconfig
+> +++ b/fs/Kconfig
+> @@ -167,17 +167,13 @@ config TMPFS_POSIX_ACL
+>           files for sound to work properly.  In short, if you're not sure,
+>           say Y.
+>
+> -         To learn more about Access Control Lists, visit the POSIX ACLs for
+> -         Linux website <http://acl.bestbits.at/>.
+> -
+>  config TMPFS_XATTR
+>         bool "Tmpfs extended attributes"
+>         depends on TMPFS
+>         default n
+>         help
+>           Extended attributes are name:value pairs associated with inodes by
+> -         the kernel or by users (see the attr(5) manual page, or visit
+> -         <http://acl.bestbits.at/> for details).
+> +         the kernel or by users (see the attr(5) manual page for details).
+>
+>           Currently this enables support for the trusted.* and
+>           security.* namespaces.
+> diff --git a/fs/btrfs/Kconfig b/fs/btrfs/Kconfig
+> index 2e558227931a..273351ee4c46 100644
+> --- a/fs/btrfs/Kconfig
+> +++ b/fs/btrfs/Kconfig
+> @@ -38,9 +38,6 @@ config BTRFS_FS_POSIX_ACL
+>           POSIX Access Control Lists (ACLs) support permissions for users and
+>           groups beyond the owner/group/world scheme.
+>
+> -         To learn more about Access Control Lists, visit the POSIX ACLs for
+> -         Linux website <http://acl.bestbits.at/>.
+> -
+>           If you don't know what Access Control Lists are, say N
+>
+>  config BTRFS_FS_CHECK_INTEGRITY
+> diff --git a/fs/ceph/Kconfig b/fs/ceph/Kconfig
+> index 264e9bf83ff3..52095f473464 100644
+> --- a/fs/ceph/Kconfig
+> +++ b/fs/ceph/Kconfig
+> @@ -34,7 +34,4 @@ config CEPH_FS_POSIX_ACL
+>           POSIX Access Control Lists (ACLs) support permissions for users and
+>           groups beyond the owner/group/world scheme.
+>
+> -         To learn more about Access Control Lists, visit the POSIX ACLs for
+> -         Linux website <http://acl.bestbits.at/>.
+> -
+>           If you don't know what Access Control Lists are, say N
+> diff --git a/fs/cifs/Kconfig b/fs/cifs/Kconfig
+> index d5b2e12b5d02..e73d25f4b97a 100644
+> --- a/fs/cifs/Kconfig
+> +++ b/fs/cifs/Kconfig
+> @@ -108,14 +108,13 @@ config CIFS_XATTR
+>          depends on CIFS
+>          help
+>            Extended attributes are name:value pairs associated with inodes by
+> -          the kernel or by users (see the attr(5) manual page, or visit
+> -          <http://acl.bestbits.at/> for details).  CIFS maps the name of
+> -          extended attributes beginning with the user namespace prefix
+> -          to SMB/CIFS EAs. EAs are stored on Windows servers without the
+> -          user namespace prefix, but their names are seen by Linux cifs clients
+> -          prefaced by the user namespace prefix. The system namespace
+> -          (used by some filesystems to store ACLs) is not supported at
+> -          this time.
+> +          the kernel or by users (see the attr(5) manual page for details).
+> +          CIFS maps the name of extended attributes beginning with the user
+> +          namespace prefix to SMB/CIFS EAs.  EAs are stored on Windows
+> +          servers without the user namespace prefix, but their names are
+> +          seen by Linux cifs clients prefaced by the user namespace prefix.
+> +          The system namespace (used by some filesystems to store ACLs) is
+> +          not supported at this time.
+>
+>            If unsure, say Y.
+>
+> diff --git a/fs/ext2/Kconfig b/fs/ext2/Kconfig
+> index c634874e12d9..894e4c53d1d2 100644
+> --- a/fs/ext2/Kconfig
+> +++ b/fs/ext2/Kconfig
+> @@ -13,8 +13,7 @@ config EXT2_FS_XATTR
+>         depends on EXT2_FS
+>         help
+>           Extended attributes are name:value pairs associated with inodes by
+> -         the kernel or by users (see the attr(5) manual page, or visit
+> -         <http://acl.bestbits.at/> for details).
+> +         the kernel or by users (see the attr(5) manual page for details).
+>
+>           If unsure, say N.
+>
+> @@ -26,9 +25,6 @@ config EXT2_FS_POSIX_ACL
+>           Posix Access Control Lists (ACLs) support permissions for users and
+>           groups beyond the owner/group/world scheme.
+>
+> -         To learn more about Access Control Lists, visit the Posix ACLs for
+> -         Linux website <http://acl.bestbits.at/>.
+> -
+>           If you don't know what Access Control Lists are, say N
+>
+>  config EXT2_FS_SECURITY
+> diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
+> index 73b850f5659c..a453cc87082b 100644
+> --- a/fs/ext4/Kconfig
+> +++ b/fs/ext4/Kconfig
+> @@ -82,9 +82,6 @@ config EXT4_FS_POSIX_ACL
+>           POSIX Access Control Lists (ACLs) support permissions for users and
+>           groups beyond the owner/group/world scheme.
+>
+> -         To learn more about Access Control Lists, visit the POSIX ACLs for
+> -         Linux website <http://acl.bestbits.at/>.
+> -
+>           If you don't know what Access Control Lists are, say N
+>
+>  config EXT4_FS_SECURITY
+> diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
+> index 378c221d68a9..9a20ef42fadd 100644
+> --- a/fs/f2fs/Kconfig
+> +++ b/fs/f2fs/Kconfig
+> @@ -35,8 +35,7 @@ config F2FS_FS_XATTR
+>         default y
+>         help
+>           Extended attributes are name:value pairs associated with inodes by
+> -         the kernel or by users (see the attr(5) manual page, or visit
+> -         <http://acl.bestbits.at/> for details).
+> +         the kernel or by users (see the attr(5) manual page for details).
+>
+>           If unsure, say N.
+>
+> @@ -49,9 +48,6 @@ config F2FS_FS_POSIX_ACL
+>           Posix Access Control Lists (ACLs) support permissions for users and
+>           groups beyond the owner/group/world scheme.
+>
+> -         To learn more about Access Control Lists, visit the POSIX ACLs for
+> -         Linux website <http://acl.bestbits.at/>.
+> -
+>           If you don't know what Access Control Lists are, say N
+>
+>  config F2FS_FS_SECURITY
+> diff --git a/fs/hfsplus/Kconfig b/fs/hfsplus/Kconfig
+> index 24bc20fd42f7..7cc8b4acf66a 100644
+> --- a/fs/hfsplus/Kconfig
+> +++ b/fs/hfsplus/Kconfig
+> @@ -20,9 +20,6 @@ config HFSPLUS_FS_POSIX_ACL
+>           POSIX Access Control Lists (ACLs) support permissions for users and
+>           groups beyond the owner/group/world scheme.
+>
+> -         To learn more about Access Control Lists, visit the POSIX ACLs for
+> -         Linux website <http://acl.bestbits.at/>.
+> -
+>           It needs to understand that POSIX ACLs are treated only under
+>           Linux. POSIX ACLs doesn't mean something under Mac OS X.
+>           Mac OS X beginning with version 10.4 ("Tiger") support NFSv4 ACLs,
+> diff --git a/fs/jffs2/Kconfig b/fs/jffs2/Kconfig
+> index d8bb6c411e96..ad850c5bf2ca 100644
+> --- a/fs/jffs2/Kconfig
+> +++ b/fs/jffs2/Kconfig
+> @@ -68,8 +68,7 @@ config JFFS2_FS_XATTR
+>         default n
+>         help
+>           Extended attributes are name:value pairs associated with inodes by
+> -         the kernel or by users (see the attr(5) manual page, or visit
+> -         <http://acl.bestbits.at/> for details).
+> +         the kernel or by users (see the attr(5) manual page for details).
+>
+>           If unsure, say N.
+>
+> @@ -82,9 +81,6 @@ config JFFS2_FS_POSIX_ACL
+>           Posix Access Control Lists (ACLs) support permissions for users and
+>           groups beyond the owner/group/world scheme.
+>
+> -         To learn more about Access Control Lists, visit the Posix ACLs for
+> -         Linux website <http://acl.bestbits.at/>.
+> -
+>           If you don't know what Access Control Lists are, say N
+>
+>  config JFFS2_FS_SECURITY
+> diff --git a/fs/jfs/Kconfig b/fs/jfs/Kconfig
+> index 57cef19951db..851de78fdabb 100644
+> --- a/fs/jfs/Kconfig
+> +++ b/fs/jfs/Kconfig
+> @@ -16,9 +16,6 @@ config JFS_POSIX_ACL
+>           Posix Access Control Lists (ACLs) support permissions for users and
+>           groups beyond the owner/group/world scheme.
+>
+> -         To learn more about Access Control Lists, visit the Posix ACLs for
+> -         Linux website <http://acl.bestbits.at/>.
+> -
+>           If you don't know what Access Control Lists are, say N
+>
+>  config JFS_SECURITY
+> diff --git a/fs/reiserfs/Kconfig b/fs/reiserfs/Kconfig
+> index 7cd46666ba2c..86e71c0caf48 100644
+> --- a/fs/reiserfs/Kconfig
+> +++ b/fs/reiserfs/Kconfig
+> @@ -57,8 +57,7 @@ config REISERFS_FS_XATTR
+>         depends on REISERFS_FS
+>         help
+>           Extended attributes are name:value pairs associated with inodes by
+> -         the kernel or by users (see the attr(5) manual page, or visit
+> -         <http://acl.bestbits.at/> for details).
+> +         the kernel or by users (see the attr(5) manual page for details).
+>
+>           If unsure, say N.
+>
+> @@ -70,9 +69,6 @@ config REISERFS_FS_POSIX_ACL
+>           Posix Access Control Lists (ACLs) support permissions for users and
+>           groups beyond the owner/group/world scheme.
+>
+> -         To learn more about Access Control Lists, visit the Posix ACLs for
+> -         Linux website <http://acl.bestbits.at/>.
+> -
+>           If you don't know what Access Control Lists are, say N
+>
+>  config REISERFS_FS_SECURITY
+> diff --git a/fs/xfs/Kconfig b/fs/xfs/Kconfig
+> index f42fcf1b5465..46bcf0e649f5 100644
+> --- a/fs/xfs/Kconfig
+> +++ b/fs/xfs/Kconfig
+> @@ -48,9 +48,6 @@ config XFS_POSIX_ACL
+>           POSIX Access Control Lists (ACLs) support permissions for users and
+>           groups beyond the owner/group/world scheme.
+>
+> -         To learn more about Access Control Lists, visit the POSIX ACLs for
+> -         Linux website <http://acl.bestbits.at/>.
+> -
+>           If you don't know what Access Control Lists are, say N.
+>
+>  config XFS_RT
+> --
+> 2.15.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-We also never calculate the encrypted size of a filename without having
-the fscrypt_info present since it is needed to know the amount of
-NUL-padding which is determined by the encryption policy, and also we
-will always truncate the NUL-padding to the maximum filename length.
-Therefore, also make fscrypt_fname_encrypted_size() assume that the
-fscrypt_info is present, and make it truncate the returned length to the
-specified max_len.
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/crypto/fname.c               | 31 +++++++++++++++----------------
- fs/crypto/fscrypt_private.h     |  3 +++
- fs/crypto/hooks.c               | 10 +++++-----
- include/linux/fscrypt_notsupp.h |  8 --------
- include/linux/fscrypt_supp.h    |  1 -
- 5 files changed, 23 insertions(+), 30 deletions(-)
 
-diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-index 44ddd094b7c5..e33f3d3c5ade 100644
---- a/fs/crypto/fname.c
-+++ b/fs/crypto/fname.c
-@@ -191,17 +191,20 @@ static int digest_decode(const char *src, int len, char *dst)
- 	return cp - dst;
- }
- 
--u32 fscrypt_fname_encrypted_size(const struct inode *inode, u32 ilen)
-+bool fscrypt_fname_encrypted_size(const struct inode *inode, u32 orig_len,
-+				  u32 max_len, u32 *encrypted_len_ret)
- {
--	int padding = 32;
--	struct fscrypt_info *ci = inode->i_crypt_info;
--
--	if (ci)
--		padding = 4 << (ci->ci_flags & FS_POLICY_FLAGS_PAD_MASK);
--	ilen = max(ilen, (u32)FS_CRYPTO_BLOCK_SIZE);
--	return round_up(ilen, padding);
-+	int padding = 4 << (inode->i_crypt_info->ci_flags &
-+			    FS_POLICY_FLAGS_PAD_MASK);
-+	u32 encrypted_len;
-+
-+	if (orig_len > max_len)
-+		return false;
-+	encrypted_len = max(orig_len, (u32)FS_CRYPTO_BLOCK_SIZE);
-+	encrypted_len = round_up(encrypted_len, padding);
-+	*encrypted_len_ret = min(encrypted_len, max_len);
-+	return true;
- }
--EXPORT_SYMBOL(fscrypt_fname_encrypted_size);
- 
- /**
-  * fscrypt_fname_alloc_buffer - allocate a buffer for presented filenames
-@@ -342,14 +345,10 @@ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
- 		return ret;
- 
- 	if (dir->i_crypt_info) {
--		unsigned int max_len = dir->i_sb->s_cop->max_namelen(dir);
--
--		if (iname->len > max_len)
-+		if (!fscrypt_fname_encrypted_size(dir, iname->len,
-+						  dir->i_sb->s_cop->max_namelen(dir),
-+						  &fname->crypto_buf.len))
- 			return -ENAMETOOLONG;
--
--		fname->crypto_buf.len =
--			min(fscrypt_fname_encrypted_size(dir, iname->len),
--			    max_len);
- 		fname->crypto_buf.name = kmalloc(fname->crypto_buf.len,
- 						 GFP_NOFS);
- 		if (!fname->crypto_buf.name)
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index 053917587200..ad6722bae8b7 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -110,6 +110,9 @@ extern struct page *fscrypt_alloc_bounce_page(struct fscrypt_ctx *ctx,
- /* fname.c */
- extern int fname_encrypt(struct inode *inode, const struct qstr *iname,
- 			 u8 *out, unsigned int olen);
-+extern bool fscrypt_fname_encrypted_size(const struct inode *inode,
-+					 u32 orig_len, u32 max_len,
-+					 u32 *encrypted_len_ret);
- 
- /* keyinfo.c */
- extern void __exit fscrypt_essiv_cleanup(void);
-diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
-index ff20cacdea94..3e84d92215a1 100644
---- a/fs/crypto/hooks.c
-+++ b/fs/crypto/hooks.c
-@@ -139,12 +139,12 @@ int __fscrypt_prepare_symlink(struct inode *dir, unsigned int len,
- 	 * counting it (even though it is meaningless for ciphertext) is simpler
- 	 * for now since filesystems will assume it is there and subtract it.
- 	 */
--	if (sizeof(struct fscrypt_symlink_data) + len > max_len)
-+	if (!fscrypt_fname_encrypted_size(dir, len,
-+					  max_len - sizeof(struct fscrypt_symlink_data),
-+					  &disk_link->len))
- 		return -ENAMETOOLONG;
--	disk_link->len = min_t(unsigned int,
--			       sizeof(struct fscrypt_symlink_data) +
--					fscrypt_fname_encrypted_size(dir, len),
--			       max_len);
-+	disk_link->len += sizeof(struct fscrypt_symlink_data);
-+
- 	disk_link->name = NULL;
- 	return 0;
- }
-diff --git a/include/linux/fscrypt_notsupp.h b/include/linux/fscrypt_notsupp.h
-index c9592e307df5..342eb97e0476 100644
---- a/include/linux/fscrypt_notsupp.h
-+++ b/include/linux/fscrypt_notsupp.h
-@@ -131,14 +131,6 @@ static inline void fscrypt_free_filename(struct fscrypt_name *fname)
- 	return;
- }
- 
--static inline u32 fscrypt_fname_encrypted_size(const struct inode *inode,
--					       u32 ilen)
--{
--	/* never happens */
--	WARN_ON(1);
--	return 0;
--}
--
- static inline int fscrypt_fname_alloc_buffer(const struct inode *inode,
- 					     u32 max_encrypted_len,
- 					     struct fscrypt_str *crypto_str)
-diff --git a/include/linux/fscrypt_supp.h b/include/linux/fscrypt_supp.h
-index e00191deb0d6..2dd5767c77b0 100644
---- a/include/linux/fscrypt_supp.h
-+++ b/include/linux/fscrypt_supp.h
-@@ -107,7 +107,6 @@ static inline void fscrypt_free_filename(struct fscrypt_name *fname)
- 	kfree(fname->crypto_buf.name);
- }
- 
--extern u32 fscrypt_fname_encrypted_size(const struct inode *, u32);
- extern int fscrypt_fname_alloc_buffer(const struct inode *, u32,
- 				struct fscrypt_str *);
- extern void fscrypt_fname_free_buffer(struct fscrypt_str *);
 -- 
-2.15.1
+Thanks,
 
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+Steve
