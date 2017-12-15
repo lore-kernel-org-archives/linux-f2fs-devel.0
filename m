@@ -1,232 +1,322 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: pass down write hints to block
- layer for bufferd write
-Date: Thu, 14 Dec 2017 18:06:12 -0800
-Message-ID: <20171215020612.GF35234@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1511828607-624-1-git-send-email-hyc.lee@gmail.com>
- <d71418e1-d667-3dc6-9265-61db5d8f40bc@huawei.com>
- <5A2112A7.2070208@gmail.com>
- <1fa09755-7322-a886-c582-02e3d93d8f87@kernel.org>
- <5A2F3BC5.90803@gmail.com>
- <85f7fc1b-5286-c66f-6833-af1a44c5130f@huawei.com>
- <5A31D507.70304@gmail.com>
+Subject: Re: [PATCH] f2fs: uses the same naming scheme for struct
+ nat_entry and f2fs_nat_entry
+Date: Thu, 14 Dec 2017 18:10:34 -0800
+Message-ID: <20171215021034.GG35234@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1513224017-20296-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
+ helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <jaegeuk@kernel.org>) id 1ePfST-000193-Pp
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Dec 2017 02:10:41 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1ePfSS-0000qG-DZ
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Dec 2017 02:10:41 +0000
 Content-Disposition: inline
-In-Reply-To: <5A31D507.70304@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hyunchul Lee <hyc.lee@gmail.com>
-Cc: Chao Yu <yuchao0@huawei.com>, Chao Yu <chao@kernel.org>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, kernel-team@lge.com, linux-fsdevel@vger.kernel.org, Hyunchul Lee <cheol.lee@lge.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <1513224017-20296-1-git-send-email-heyunlei@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Yunlei He <heyunlei@huawei.com>
+Cc: ning.jia@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 12/14, Hyunchul Lee wrote:
-> Hi Jaegeuk,
-> 
-> I need your comment about the fs_iohint mount option.
-> 
-> a) w/o fs_iohint, propagate user hints to low layer.
-> b) w/ fs_iohint, ignore user hints, and use hints which is generated
-> with F2FS.
-> 
-> Chao suggests this option. because user hints are more accurate than
-> file system.
-> 
-> This is resonable, But I have some concerns about this option. 
-> The first thing is that blocks of a segments have different hints. This
-> could make GC less effective. 
-> The second is that the separation between LIFE_MEDIUM and LIFE_LONG is 
-> really needed. I think that difference between them is a little ambigous 
-> for users, and LIFE_SHORT and LIFE_EXTREME is converted to different 
-> hints by F2FS.
+Hi Yunlei,
 
-I think what we really can do would assign many user hints to our 3 DATA
-logs likewise rw_hint_to_seg_type(), since it's just hints for user data.
-Then, we can decide how to keep that as much as possible, since we have
-another filesystem metadata such as meta and nodes. In addition, I don't
-think we have to keep the original user-hints which makes F2FS logs be
-messed up.
-
-With that mind, I can think of the below cases. Especially, if user wants
-to keep their io_hints, we'd better recommend to use direct_io w/o fs_iohints.
-In order to keep this policy, I think fs_iohints would be better to be a
-feature set by mkfs.f2fs and detected by sysfs entries for users.
-
-1) w/ fs_iohints
-
-User                        F2FS               Block
--------------------------------------------------------------------
-                            Meta               WRITE_LIFE_MEDIUM
-                            HOT_NODE           WRITE_LIFE_NOTSET
-                            WARM_NODE          -'
-                            COLD_NODE          WRITE_LIFE_NONE
-ioctl(cold)                 COLD_DATA          WRITE_LIFE_EXTREME
-extention list              -'                 -'
-WRITE_LIFE_EXTREME          -'                 -'
-WRITE_LIFE_SHORT            HOT_DATA           WRITE_LIFE_SHORT
-
--- buffered_io
-WRITE_LIFE_NOT_SET          WARM_DATA          WRITE_LIFE_LONG
-WRITE_LIFE_NONE             -'                 -'
-WRITE_LIFE_MEDIUM           -'                 -'
-WRITE_LIFE_LONG             -'                 -'
-
--- direct_io (Not recommendable)
-WRITE_LIFE_NOT_SET          WARM_DATA          WRITE_LIFE_NOT_SET
-WRITE_LIFE_NONE             -'                 WRITE_LIFE_NONE
-WRITE_LIFE_MEDIUM           -'                 WRITE_LIFE_MEDIUM
-WRITE_LIFE_LONG             -'                 WRITE_LIFE_LONG
-
-2) w/o fs_iohints
-
-User                        F2FS               Block
--------------------------------------------------------------------
-                            Meta               -
-                            HOT_NODE           -
-                            WARM_NODE          -
-                            COLD_NODE          -
-ioctl(cold)                 COLD_DATA          -
-extention list              -'                 -
-
--- buffered_io
-WRITE_LIFE_EXTREME          COLD_DATA          -
-WRITE_LIFE_SHORT            HOT_DATA           -
-WRITE_LIFE_NOT_SET          WARM_DATA          -
-WRITE_LIFE_NONE             -'                 -
-WRITE_LIFE_MEDIUM           -'                 -
-WRITE_LIFE_LONG             -'                 -
-
--- direct_io
-WRITE_LIFE_EXTREME          COLD_DATA          WRITE_LIFE_EXTREME
-WRITE_LIFE_SHORT            HOT_DATA           WRITE_LIFE_SHORT
-WRITE_LIFE_NOT_SET          WARM_DATA          WRITE_LIFE_NOT_SET
-WRITE_LIFE_NONE             -'                 WRITE_LIFE_NONE
-WRITE_LIFE_MEDIUM           -'                 WRITE_LIFE_MEDIUM
-WRITE_LIFE_LONG             -'                 WRITE_LIFE_LONG
-
-
-Note that, I don't much care about how to manipulate streamid in nvme driver
-in terms of LIFE_NONE or LIFE_NOTSET, since other drivers can handle them
-in different ways. Taking a look at the definition, at least, we don't need
-to assume that those are same at all. For example, if we can expolit this in
-UFS driver, we can pass all the stream ids to the device as context ids.
+Thank you for the work, however, when considering backporting effort, this would
+be likely to generate somewhat merge conflicts.
 
 Thanks,
 
+On 12/14, Yunlei He wrote:
+> Uses the same naming scheme for struct nat_entry and f2fs_nat_entry
+> as in function __flush_nat_entry_set. No functional change.
 > 
-> Thanks.
+> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+> ---
+>  fs/f2fs/node.c | 128 ++++++++++++++++++++++++++++-----------------------------
+>  1 file changed, 64 insertions(+), 64 deletions(-)
 > 
-> On 12/12/2017 11:45 AM, Chao Yu wrote:
-> > Hi Hyunchul,
-> > 
-> > On 2017/12/12 10:15, Hyunchul Lee wrote:
-> >> Hi Chao,
-> >>
-> >> On 12/11/2017 10:15 PM, Chao Yu wrote:
-> >>> Hi Hyunchul,
-> >>>
-> >>> On 2017/12/1 16:28, Hyunchul Lee wrote:
-> >>>> Hi Chao,
-> >>>>
-> >>>> On 11/30/2017 04:06 PM, Chao Yu wrote:
-> >>>>> Hi Hyunchul,
-> >>>>>
-> >>>>> On 2017/11/28 8:23, Hyunchul Lee wrote:
-> >>>>>> From: Hyunchul Lee <cheol.lee@lge.com>
-> >>>>>>
-> >>>>>> This implements which hint is passed down to block layer
-> >>>>>> for datas from the specific segment type.
-> >>>>>>
-> >>>>>> segment type                     hints
-> >>>>>> ------------                     -----
-> >>>>>> COLD_NODE & COLD_DATA            WRITE_LIFE_EXTREME
-> >>>>>> WARM_DATA                        WRITE_LIFE_NONE
-> >>>>>> HOT_NODE & WARM_NODE             WRITE_LIFE_LONG
-> >>>>>> HOT_DATA                         WRITE_LIFE_MEDIUM
-> >>>>>> META_DATA                        WRITE_LIFE_SHORT
-> >>>>>
-> >>>>> Just noticed, if our user do not give the hint via ioctl, f2fs can
-> >>>>> provider hint to lower layer according to hot/cold separation ability,
-> >>>>> it will be okay. But once user give his hint which may be more accurate
-> >>>>> than filesystem, hint converted by f2fs may be wrong.
-> >>>>>
-> >>>>> So what do you think of adding an option to control whether filesystem
-> >>>>> can convert hint user given?
-> >>>>>
-> >>>>
-> >>>> I think it is okay for LIFE_SHORT and LIFE_EXTREME. because they are 
-> >>>> converted to different hints.
-> >>>
-> >>> What I mean is introducing a mount option, e.g. fs_iohint,
-> >>> a) w/o fs_iohint, propagate file/inode io_hint to low layer.
-> >>> b) w/ fs_iohint, ignore file/inode io_hint, use io_hint which is generated
-> >>> with filesystem's private rule.
-> >>>
-> >>
-> >> Okay, I will implement this option and send this patch again.
-> > 
-> > Let's wait for Jaegeuk's comments first?
-> > 
-> >>
-> >> Without fs_iohint, Even if data blocks are moved due to GC, 
-> >> we should keep user hints. And if user hints are not given, 
-> >> any hints are not passed down to block layer, right?
-> > 
-> > Hmm.. that will be a problem, IMO, we can store last user's io_hint into inode
-> > layout, so later when we trigger GC, we can use the last io_hint in inode rather
-> > than giving no hint or fs' hint.
-> > 
-> > I think it needs to discuss with original author of IO hint, what is the IO hint
-> > policy when filesystem move block by itself after inode has been released in system.
-> > 
-> > Thanks,
-> > 
-> >>
-> >> Thank you for comments.
-> >>
-> >>> Thanks,
-> >>>
-> >>>>
-> >>>> file hint      segment type        io hint
-> >>>> ---------      ------------        -------
-> >>>> LIFE_SHORT     HOT_DATA            LIFE_MEDIUM
-> >>>> LIFE_MEDIUM    WARM_DATA           LIFE_NONE
-> >>>> LIFE_LONG      WARM_DATA           LIFE_NONE
-> >>>> LIFE_EXTREME   COLD_DATA           LIFE_EXTREME
-> >>>>
-> >>>> the problem is that LIFE_MEDIUM and LIFE_LONG are converted to 
-> >>>> the same hint, LIFE_NONE. I am not sure that the seperation between 
-> >>>> LIFE_MEDIUM and LIFE_LONG is really needed. Because I guess that the 
-> >>>> difference between them is a little ambigous for users, and if WARM_DATA 
-> >>>> segment has two different hints, it can makes GC non-efficient.
-> >>>>
-> >>>> I wonder your thought about this.
-> >>>>
-> >>>> Thanks.
-> >>>>
-> >>>>> Thanks,
-> >>>>>
-> >>>>>
-> >>>>
-> >>>> ------------------------------------------------------------------------------
-> >>>> Check out the vibrant tech community on one of the world's most
-> >>>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> >>>> _______________________________________________
-> >>>> Linux-f2fs-devel mailing list
-> >>>> Linux-f2fs-devel@lists.sourceforge.net
-> >>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> >>>>
-> >>>
-> >>
-> >> .
-> >>
-> > 
-> > 
-> > ------------------------------------------------------------------------------
-> > Check out the vibrant tech community on one of the world's most
-> > engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> > 
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index a9c340e..5645967 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -155,9 +155,9 @@ static struct nat_entry *__alloc_nat_entry(nid_t nid, bool no_fail)
+>  	return new;
+>  }
+>  
+> -static void __free_nat_entry(struct nat_entry *e)
+> +static void __free_nat_entry(struct nat_entry *ne)
+>  {
+> -	kmem_cache_free(nat_entry_slab, e);
+> +	kmem_cache_free(nat_entry_slab, ne);
+>  }
+>  
+>  /* must be locked by nat_tree_lock */
+> @@ -187,12 +187,12 @@ static unsigned int __gang_lookup_nat_cache(struct f2fs_nm_info *nm_i,
+>  	return radix_tree_gang_lookup(&nm_i->nat_root, (void **)ep, start, nr);
+>  }
+>  
+> -static void __del_from_nat_cache(struct f2fs_nm_info *nm_i, struct nat_entry *e)
+> +static void __del_from_nat_cache(struct f2fs_nm_info *nm_i, struct nat_entry *ne)
+>  {
+> -	list_del(&e->list);
+> -	radix_tree_delete(&nm_i->nat_root, nat_get_nid(e));
+> +	list_del(&ne->list);
+> +	radix_tree_delete(&nm_i->nat_root, nat_get_nid(ne));
+>  	nm_i->nat_cnt--;
+> -	__free_nat_entry(e);
+> +	__free_nat_entry(ne);
+>  }
+>  
+>  static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
+> @@ -244,14 +244,14 @@ static unsigned int __gang_lookup_nat_set(struct f2fs_nm_info *nm_i,
+>  int need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid)
+>  {
+>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+> -	struct nat_entry *e;
+> +	struct nat_entry *ne;
+>  	bool need = false;
+>  
+>  	down_read(&nm_i->nat_tree_lock);
+> -	e = __lookup_nat_cache(nm_i, nid);
+> -	if (e) {
+> -		if (!get_nat_flag(e, IS_CHECKPOINTED) &&
+> -				!get_nat_flag(e, HAS_FSYNCED_INODE))
+> +	ne = __lookup_nat_cache(nm_i, nid);
+> +	if (ne) {
+> +		if (!get_nat_flag(ne, IS_CHECKPOINTED) &&
+> +				!get_nat_flag(ne, HAS_FSYNCED_INODE))
+>  			need = true;
+>  	}
+>  	up_read(&nm_i->nat_tree_lock);
+> @@ -261,12 +261,12 @@ int need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid)
+>  bool is_checkpointed_node(struct f2fs_sb_info *sbi, nid_t nid)
+>  {
+>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+> -	struct nat_entry *e;
+> +	struct nat_entry *ne;
+>  	bool is_cp = true;
+>  
+>  	down_read(&nm_i->nat_tree_lock);
+> -	e = __lookup_nat_cache(nm_i, nid);
+> -	if (e && !get_nat_flag(e, IS_CHECKPOINTED))
+> +	ne = __lookup_nat_cache(nm_i, nid);
+> +	if (ne && !get_nat_flag(ne, IS_CHECKPOINTED))
+>  		is_cp = false;
+>  	up_read(&nm_i->nat_tree_lock);
+>  	return is_cp;
+> @@ -275,14 +275,14 @@ bool is_checkpointed_node(struct f2fs_sb_info *sbi, nid_t nid)
+>  bool need_inode_block_update(struct f2fs_sb_info *sbi, nid_t ino)
+>  {
+>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+> -	struct nat_entry *e;
+> +	struct nat_entry *ne;
+>  	bool need_update = true;
+>  
+>  	down_read(&nm_i->nat_tree_lock);
+> -	e = __lookup_nat_cache(nm_i, ino);
+> -	if (e && get_nat_flag(e, HAS_LAST_FSYNC) &&
+> -			(get_nat_flag(e, IS_CHECKPOINTED) ||
+> -			 get_nat_flag(e, HAS_FSYNCED_INODE)))
+> +	ne = __lookup_nat_cache(nm_i, ino);
+> +	if (ne && get_nat_flag(ne, HAS_LAST_FSYNC) &&
+> +			(get_nat_flag(ne, IS_CHECKPOINTED) ||
+> +			 get_nat_flag(ne, HAS_FSYNCED_INODE)))
+>  		need_update = false;
+>  	up_read(&nm_i->nat_tree_lock);
+>  	return need_update;
+> @@ -290,26 +290,26 @@ bool need_inode_block_update(struct f2fs_sb_info *sbi, nid_t ino)
+>  
+>  /* must be locked by nat_tree_lock */
+>  static void cache_nat_entry(struct f2fs_sb_info *sbi, nid_t nid,
+> -						struct f2fs_nat_entry *ne)
+> +						struct f2fs_nat_entry *raw_ne)
+>  {
+>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+> -	struct nat_entry *new, *e;
+> +	struct nat_entry *new, *ne;
+>  
+>  	new = __alloc_nat_entry(nid, false);
+>  	if (!new)
+>  		return;
+>  
+>  	down_write(&nm_i->nat_tree_lock);
+> -	e = __lookup_nat_cache(nm_i, nid);
+> -	if (!e)
+> -		e = __init_nat_entry(nm_i, new, ne, false);
+> +	ne = __lookup_nat_cache(nm_i, nid);
+> +	if (!ne)
+> +		ne = __init_nat_entry(nm_i, new, raw_ne, false);
+>  	else
+> -		f2fs_bug_on(sbi, nat_get_ino(e) != le32_to_cpu(ne->ino) ||
+> -				nat_get_blkaddr(e) !=
+> -					le32_to_cpu(ne->block_addr) ||
+> -				nat_get_version(e) != ne->version);
+> +		f2fs_bug_on(sbi, nat_get_ino(ne) != le32_to_cpu(raw_ne->ino) ||
+> +				nat_get_blkaddr(ne) !=
+> +					le32_to_cpu(raw_ne->block_addr) ||
+> +				nat_get_version(ne) != raw_ne->version);
+>  	up_write(&nm_i->nat_tree_lock);
+> -	if (e != new)
+> +	if (ne != new)
+>  		__free_nat_entry(new);
+>  }
+>  
+> @@ -317,14 +317,14 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+>  			block_t new_blkaddr, bool fsync_done)
+>  {
+>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+> -	struct nat_entry *e;
+> +	struct nat_entry *ne;
+>  	struct nat_entry *new = __alloc_nat_entry(ni->nid, true);
+>  
+>  	down_write(&nm_i->nat_tree_lock);
+> -	e = __lookup_nat_cache(nm_i, ni->nid);
+> -	if (!e) {
+> -		e = __init_nat_entry(nm_i, new, NULL, true);
+> -		copy_node_info(&e->ni, ni);
+> +	ne = __lookup_nat_cache(nm_i, ni->nid);
+> +	if (!ne) {
+> +		ne = __init_nat_entry(nm_i, new, NULL, true);
+> +		copy_node_info(&ne->ni, ni);
+>  		f2fs_bug_on(sbi, ni->blk_addr == NEW_ADDR);
+>  	} else if (new_blkaddr == NEW_ADDR) {
+>  		/*
+> @@ -332,42 +332,42 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+>  		 * previous nat entry can be remained in nat cache.
+>  		 * So, reinitialize it with new information.
+>  		 */
+> -		copy_node_info(&e->ni, ni);
+> +		copy_node_info(&ne->ni, ni);
+>  		f2fs_bug_on(sbi, ni->blk_addr != NULL_ADDR);
+>  	}
+>  	/* let's free early to reduce memory consumption */
+> -	if (e != new)
+> +	if (ne != new)
+>  		__free_nat_entry(new);
+>  
+>  	/* sanity check */
+> -	f2fs_bug_on(sbi, nat_get_blkaddr(e) != ni->blk_addr);
+> -	f2fs_bug_on(sbi, nat_get_blkaddr(e) == NULL_ADDR &&
+> +	f2fs_bug_on(sbi, nat_get_blkaddr(ne) != ni->blk_addr);
+> +	f2fs_bug_on(sbi, nat_get_blkaddr(ne) == NULL_ADDR &&
+>  			new_blkaddr == NULL_ADDR);
+> -	f2fs_bug_on(sbi, nat_get_blkaddr(e) == NEW_ADDR &&
+> +	f2fs_bug_on(sbi, nat_get_blkaddr(ne) == NEW_ADDR &&
+>  			new_blkaddr == NEW_ADDR);
+> -	f2fs_bug_on(sbi, nat_get_blkaddr(e) != NEW_ADDR &&
+> -			nat_get_blkaddr(e) != NULL_ADDR &&
+> +	f2fs_bug_on(sbi, nat_get_blkaddr(ne) != NEW_ADDR &&
+> +			nat_get_blkaddr(ne) != NULL_ADDR &&
+>  			new_blkaddr == NEW_ADDR);
+>  
+>  	/* increment version no as node is removed */
+> -	if (nat_get_blkaddr(e) != NEW_ADDR && new_blkaddr == NULL_ADDR) {
+> -		unsigned char version = nat_get_version(e);
+> -		nat_set_version(e, inc_node_version(version));
+> +	if (nat_get_blkaddr(ne) != NEW_ADDR && new_blkaddr == NULL_ADDR) {
+> +		unsigned char version = nat_get_version(ne);
+> +		nat_set_version(ne, inc_node_version(version));
+>  	}
+>  
+>  	/* change address */
+> -	nat_set_blkaddr(e, new_blkaddr);
+> +	nat_set_blkaddr(ne, new_blkaddr);
+>  	if (new_blkaddr == NEW_ADDR || new_blkaddr == NULL_ADDR)
+> -		set_nat_flag(e, IS_CHECKPOINTED, false);
+> -	__set_nat_cache_dirty(nm_i, e);
+> +		set_nat_flag(ne, IS_CHECKPOINTED, false);
+> +	__set_nat_cache_dirty(nm_i, ne);
+>  
+>  	/* update fsync_mark if its inode nat entry is still alive */
+>  	if (ni->nid != ni->ino)
+> -		e = __lookup_nat_cache(nm_i, ni->ino);
+> -	if (e) {
+> +		ne = __lookup_nat_cache(nm_i, ni->ino);
+> +	if (ne) {
+>  		if (fsync_done && ni->nid == ni->ino)
+> -			set_nat_flag(e, HAS_FSYNCED_INODE, true);
+> -		set_nat_flag(e, HAS_LAST_FSYNC, fsync_done);
+> +			set_nat_flag(ne, HAS_FSYNCED_INODE, true);
+> +		set_nat_flag(ne, HAS_LAST_FSYNC, fsync_done);
+>  	}
+>  	up_write(&nm_i->nat_tree_lock);
+>  }
+> @@ -402,8 +402,8 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
+>  	nid_t start_nid = START_NID(nid);
+>  	struct f2fs_nat_block *nat_blk;
+>  	struct page *page = NULL;
+> -	struct f2fs_nat_entry ne;
+> -	struct nat_entry *e;
+> +	struct f2fs_nat_entry raw_ne;
+> +	struct nat_entry *ne;
+>  	pgoff_t index;
+>  	int i;
+>  
+> @@ -411,23 +411,23 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
+>  
+>  	/* Check nat cache */
+>  	down_read(&nm_i->nat_tree_lock);
+> -	e = __lookup_nat_cache(nm_i, nid);
+> -	if (e) {
+> -		ni->ino = nat_get_ino(e);
+> -		ni->blk_addr = nat_get_blkaddr(e);
+> -		ni->version = nat_get_version(e);
+> +	ne = __lookup_nat_cache(nm_i, nid);
+> +	if (ne) {
+> +		ni->ino = nat_get_ino(ne);
+> +		ni->blk_addr = nat_get_blkaddr(ne);
+> +		ni->version = nat_get_version(ne);
+>  		up_read(&nm_i->nat_tree_lock);
+>  		return;
+>  	}
+>  
+> -	memset(&ne, 0, sizeof(struct f2fs_nat_entry));
+> +	memset(&raw_ne, 0, sizeof(struct f2fs_nat_entry));
+>  
+>  	/* Check current segment summary */
+>  	down_read(&curseg->journal_rwsem);
+>  	i = lookup_journal_in_cursum(journal, NAT_JOURNAL, nid, 0);
+>  	if (i >= 0) {
+> -		ne = nat_in_journal(journal, i);
+> -		node_info_from_raw_nat(ni, &ne);
+> +		raw_ne = nat_in_journal(journal, i);
+> +		node_info_from_raw_nat(ni, &raw_ne);
+>  	}
+>  	up_read(&curseg->journal_rwsem);
+>  	if (i >= 0) {
+> @@ -441,12 +441,12 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
+>  
+>  	page = get_meta_page(sbi, index);
+>  	nat_blk = (struct f2fs_nat_block *)page_address(page);
+> -	ne = nat_blk->entries[nid - start_nid];
+> -	node_info_from_raw_nat(ni, &ne);
+> +	raw_ne = nat_blk->entries[nid - start_nid];
+> +	node_info_from_raw_nat(ni, &raw_ne);
+>  	f2fs_put_page(page, 1);
+>  cache:
+>  	/* cache nat entry */
+> -	cache_nat_entry(sbi, nid, &ne);
+> +	cache_nat_entry(sbi, nid, &raw_ne);
+>  }
+>  
+>  /*
+> -- 
+> 1.9.1
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
