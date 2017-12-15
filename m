@@ -1,100 +1,81 @@
-From: Matthew Wilcox <willy@infradead.org>
-Subject: Storing errors in the XArray
-Date: Fri, 15 Dec 2017 09:10:12 -0800
-Message-ID: <20171215171012.GA11918@bombadil.infradead.org>
-References: <20171206004159.3755-1-willy@infradead.org>
- <20171206004159.3755-9-willy@infradead.org>
- <66ad068b-1973-ca41-7bbf-8a0634cc488d@infradead.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <66ad068b-1973-ca41-7bbf-8a0634cc488d@infradead.org>
-Sender: owner-linux-mm@kvack.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Jens Axboe <axboe@kernel.dk>, Rehas Sachdeva <aquannie@gmail.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Eric Biggers <ebiggers3@gmail.com>
+Subject: [PATCH 00/24] fscrypt: symlink helpers and fscrypt.h cleanup
+Date: Fri, 15 Dec 2017 09:42:01 -0800
+Message-ID: <20171215174225.31583-1-ebiggers3@gmail.com>
+Return-path: <linux-ext4-owner@vger.kernel.org>
+Sender: linux-ext4-owner@vger.kernel.org
+To: linux-fscrypt@vger.kernel.org
+Cc: "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, Eric Biggers <ebiggers3@gmail.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Mon, Dec 11, 2017 at 03:10:22PM -0800, Randy Dunlap wrote:
-> > +The XArray does not support storing :c:func:`IS_ERR` pointers; some
-> > +conflict with data values and others conflict with entries the XArray
-> > +uses for its own purposes.  If you need to store special values which
-> > +cannot be confused with real kernel pointers, the values 4, 8, ... 4092
-> > +are available.
-> 
-> or if I know that they values are errno-range values, I can just shift them
-> left by 2 to store them and then shift them right by 2 to use them?
+This series introduces helper functions in fscrypt that filesystems can
+call to simplify handling of encrypted symlinks.  The helpers also fix a
+couple subtle bugs, such as incorrectly rejecting symlinks that are very
+close to the maximum length, and accidentally leaving the "." and ".."
+symlink targets unencrypted (they need to be special in directory
+entries, but not in symlink targets).
 
-On further thought, I like this idea so much, it's worth writing helpers
-for this usage.  And test-suite (also doubles as a demonstration of how
-to use it).
+Patches 1-9 are mostly cleanup to trim down fscrypt.h, moving stuff into
+more appropriate places depending on whether it is needed only
+internally by fscrypt, or only by filesystems supporting encryption,
+etc.  I was going to send these out as a separate series, but there is a
+dependency because the symlink helpers depend on
+fscrypt_dummy_context_enabled() having been fixed to work correctly in
+the "notsupp" case.
 
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index c616e9319c7c..53aa251df57a 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -232,6 +232,39 @@ static inline bool xa_is_value(const void *entry)
- 	return (unsigned long)entry & 1;
- }
- 
-+/**
-+ * xa_mk_errno() - Create an XArray entry from an error number.
-+ * @error: Error number to store in XArray.
-+ *
-+ * Return: An entry suitable for storing in the XArray.
-+ */
-+static inline void *xa_mk_errno(long error)
-+{
-+	return (void *)(error << 2);
-+}
-+
-+/**
-+ * xa_to_errno() - Get error number stored in an XArray entry.
-+ * @entry: XArray entry.
-+ *
-+ * Return: The error number stored in the XArray entry.
-+ */
-+static inline unsigned long xa_to_errno(const void *entry)
-+{
-+	return (long)entry >> 2;
-+}
-+
-+/**
-+ * xa_is_errno() - Determine if an entry is an errno.
-+ * @entry: XArray entry.
-+ *
-+ * Return: True if the entry is an errno, false if it is a pointer.
-+ */
-+static inline bool xa_is_errno(const void *entry)
-+{
-+	return (((unsigned long)entry & 3) == 0) && (entry > (void *)-4096);
-+}
-+
- /**
-  * xa_is_internal() - Is the entry an internal entry?
-  * @entry: Entry retrieved from the XArray
-diff --git a/tools/testing/radix-tree/xarray-test.c b/tools/testing/radix-tree/xarray-test.c
-index 43111786ebdd..b843cedf3988 100644
---- a/tools/testing/radix-tree/xarray-test.c
-+++ b/tools/testing/radix-tree/xarray-test.c
-@@ -29,7 +29,13 @@ void check_xa_err(struct xarray *xa)
- 	assert(xa_err(xa_store(xa, 1, xa_mk_value(0), GFP_KERNEL)) == 0);
- 	assert(xa_err(xa_store(xa, 1, NULL, 0)) == 0);
- // kills the test-suite :-(
--//     assert(xa_err(xa_store(xa, 0, xa_mk_internal(0), 0)) == -EINVAL);
-+//	assert(xa_err(xa_store(xa, 0, xa_mk_internal(0), 0)) == -EINVAL);
-+
-+	assert(xa_err(xa_store(xa, 0, xa_mk_errno(-ENOMEM), GFP_KERNEL)) == 0);
-+	assert(xa_err(xa_load(xa, 0)) == 0);
-+	assert(xa_is_errno(xa_load(xa, 0)) == true);
-+	assert(xa_to_errno(xa_load(xa, 0)) == -ENOMEM);
-+	xa_erase(xa, 0);
- }
- 
- void check_xa_tag(struct xarray *xa)
+Patch 10 introduces the helpers for ->symlink() and patch 11 introduces
+a helper for ->get_link().
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Patches 12-18 switch ext4, f2fs, and ubifs over to the symlink helpers,
+and patches 19-24 clean things up in fscrypt as a consequence of all the
+filesystems having been switched over to the symlink helpers.  Note that
+as with the previous round of fscrypt helpers it may take an extra
+development cycle to get the filesystem-specific patches in through the
+filesystem-specific trees, so please consider patches 1-11 the ones that
+may be applied right away, and the rest as the future plans.
+
+Eric Biggers (24):
+  fscrypt: move fscrypt_has_encryption_key() to supp/notsupp headers
+  fscrypt: move fscrypt_control_page() to supp/notsupp headers
+  fscrypt: move fscrypt_info_cachep declaration to fscrypt_private.h
+  fscrypt: move fscrypt_ctx declaration to fscrypt_supp.h
+  fscrypt: split fscrypt_dummy_context_enabled() into supp/notsupp
+    versions
+  fscrypt: move fscrypt_operations declaration to fscrypt_supp.h
+  fscrypt: move fscrypt_valid_enc_modes() to fscrypt_private.h
+  fscrypt: move fscrypt_is_dot_dotdot() to fs/crypto/fname.c
+  fscrypt: trim down fscrypt.h includes
+  fscrypt: new helper functions for ->symlink()
+  fscrypt: new helper function - fscrypt_get_symlink()
+  ext4: switch to fscrypt ->symlink() helper functions
+  ext4: switch to fscrypt_get_symlink()
+  f2fs: switch to fscrypt ->symlink() helper functions
+  f2fs: switch to fscrypt_get_symlink()
+  ubifs: free the encrypted symlink target
+  ubifs: switch to fscrypt ->symlink() helper functions
+  ubifs: switch to fscrypt_get_symlink()
+  fscrypt: remove fscrypt_fname_usr_to_disk()
+  fscrypt: move fscrypt_symlink_data to fscrypt_private.h
+  fscrypt: calculate NUL-padding length in one place only
+  fscrypt: define fscrypt_fname_alloc_buffer() to be for presented names
+  fscrypt: fix up fscrypt_fname_encrypted_size() for internal use
+  fscrypt: document symlink length restriction
+
+ Documentation/filesystems/fscrypt.rst |  10 +-
+ fs/crypto/crypto.c                    |   1 +
+ fs/crypto/fname.c                     | 140 ++++++++++++---------------
+ fs/crypto/fscrypt_private.h           |  31 ++++++
+ fs/crypto/hooks.c                     | 154 ++++++++++++++++++++++++++++++
+ fs/crypto/keyinfo.c                   |   1 +
+ fs/ext4/namei.c                       |  58 +++---------
+ fs/ext4/symlink.c                     |  43 ++-------
+ fs/f2fs/namei.c                       | 132 +++++---------------------
+ fs/ubifs/dir.c                        |  63 +++---------
+ fs/ubifs/file.c                       |  36 +------
+ include/linux/fscrypt.h               | 174 +++++++++++++---------------------
+ include/linux/fscrypt_notsupp.h       |  56 +++++++----
+ include/linux/fscrypt_supp.h          |  66 ++++++++++++-
+ 14 files changed, 488 insertions(+), 477 deletions(-)
+
+-- 
+2.15.1
