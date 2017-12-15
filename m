@@ -1,120 +1,81 @@
-From: Matthew Wilcox <willy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: [PATCH v4 08/73] xarray: Add documentation
-Date: Thu, 14 Dec 2017 20:22:14 -0800
-Message-ID: <20171215042214.GA17444@bombadil.infradead.org>
-References: <20171206004159.3755-1-willy@infradead.org>
- <20171206004159.3755-9-willy@infradead.org>
- <66ad068b-1973-ca41-7bbf-8a0634cc488d@infradead.org>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: [PATCH] fsck.f2fs: check and fix i_namelen to avoid
+ double free
+Date: Fri, 15 Dec 2017 14:25:30 +0800
+Message-ID: <1513319130-114230-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <66ad068b-1973-ca41-7bbf-8a0634cc488d-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Sender: linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Cc: Matthew Wilcox <mawilcox-0li6OtcxBFHby3iVrkZq2A@public.gmane.org>, Ross Zwisler <ross.zwisler-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, Rehas Sachdeva <aquannie-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-xfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+ helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <yunlong.song@huawei.com>) id 1ePjRg-0004Ff-ED
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Dec 2017 06:26:08 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1ePjRe-0002XT-1I
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Dec 2017 06:26:08 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
+Cc: shengyong1@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, heyunlei@huawei.com, linux-fsdevel@vger.kernel.org, miaoxie@huawei.com
 
-On Mon, Dec 11, 2017 at 03:10:22PM -0800, Randy Dunlap wrote:
-> > +A freshly-initialised XArray contains a ``NULL`` pointer at every index.
-> > +Each non-``NULL`` entry in the array has three bits associated with
-> > +it called tags.  Each tag may be flipped on or off independently of
-> > +the others.  You can search for entries with a given tag set.
-> 
-> Only tags that are set, or search for entries with some tag(s) cleared?
-> Or is that like a mathematical set?
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+---
+ fsck/fsck.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
-hmm ...
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 2212aa3..8ff4e4b 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -643,7 +643,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 	u64 i_blocks = le64_to_cpu(node_blk->i.i_blocks);
+ 	int ofs = get_extra_isize(node_blk);
+ 	unsigned char *en;
+-	int namelen;
++	int namelen, i_namelen;
+ 	unsigned int idx = 0;
+ 	int need_fix = 0;
+ 	int ret;
+@@ -850,8 +850,21 @@ skip_blkcnt_fix:
+ 	en = malloc(F2FS_NAME_LEN + 1);
+ 	ASSERT(en);
+ 
+-	namelen = convert_encrypted_name(node_blk->i.i_name,
+-					le32_to_cpu(node_blk->i.i_namelen),
++	i_namelen = le32_to_cpu(node_blk->i.i_namelen);
++	namelen = strlen((const char *)node_blk->i.i_name);
++	if (i_namelen > F2FS_NAME_LEN) {
++		ASSERT_MSG("ino: 0x%x has i_namelen: 0x%x, "
++				"but has %d characters for name",
++				nid, i_namelen, namelen);
++		if (c.fix_on) {
++			FIX_MSG("[0x%x] i_namelen=0x%x -> 0x%x", nid, i_namelen,
++				namelen);
++			node_blk->i.i_namelen = cpu_to_le32(namelen);
++			need_fix = 1;
++		}
++		i_namelen = namelen;
++	}
++	namelen = convert_encrypted_name(node_blk->i.i_name, i_namelen,
+ 					en, file_enc_name(&node_blk->i));
+ 	en[namelen] = '\0';
+ 	if (ftype == F2FS_FT_ORPHAN)
+-- 
+1.8.5.2
 
-"Each tag may be set or cleared independently of the others.  You can
-search for entries which have a particular tag set."
 
-Doesn't completely remove the ambiguity, but I can't think of how to phrase
-that better ...
-
-> > +Normal pointers may be stored in the XArray directly.  They must be 4-byte
-> > +aligned, which is true for any pointer returned from :c:func:`kmalloc` and
-> > +:c:func:`alloc_page`.  It isn't true for arbitrary user-space pointers,
-> > +nor for function pointers.  You can store pointers to statically allocated
-> > +objects, as long as those objects have an alignment of at least 4.
-> 
-> This (above) is due to the internal usage of low bits for flags?
-
-Sort of ... if bit 0 is set then we're storing an integer (see below),
-and if bit 0 is clear and bit 1 is set, then it's an internal entry.
-
-But I don't want the implementation details to leak into the user manual.
->From the user's point of view, they can store a pointer to anything they
-allocated with kmalloc.  If they want to store an arbitrary pointer,
-they're out of luck.
-
-> > +The XArray does not support storing :c:func:`IS_ERR` pointers; some
-> > +conflict with data values and others conflict with entries the XArray
-> > +uses for its own purposes.  If you need to store special values which
-> > +cannot be confused with real kernel pointers, the values 4, 8, ... 4092
-> > +are available.
-> 
-> or if I know that they values are errno-range values, I can just shift them
-> left by 2 to store them and then shift them right by 2 to use them?
-
-Yes, the values -4 to -4092 also make good error signals.
-
-> oh, or use the following function?
-> 
-> > +You can also store integers between 0 and ``LONG_MAX`` in the XArray.
-> > +You must first convert it into an entry using :c:func:`xa_mk_value`.
-> > +When you retrieve an entry from the XArray, you can check whether it is
-> > +a data value by calling :c:func:`xa_is_value`, and convert it back to
-> > +an integer by calling :c:func:`xa_to_value`.
-
-Yup, you could also store errors as integers, if you like.  Your choice :-)
-
-> > +You can enquire whether a tag is set on an entry by using
-> > +:c:func:`xa_get_tag`.  If the entry is not ``NULL``, you can set a tag
-> > +on it by using :c:func:`xa_set_tag` and remove the tag from an entry by
-> > +calling :c:func:`xa_clear_tag`.  You can ask whether any entry in the
-> 
->                                                         an entry
-> 
-> > +XArray has a particular tag set by calling :c:func:`xa_tagged`.
-> 
-> or maybe I don't understand.  Does xa_tagged() test one entry and return its
-> "tagged" result/status?  or does it test (potentially) the entire array to search
-> for a particular tag value?
-
-It asks the question "Does any entry in the array have tag N set?"
-
-> > +If the xa_state is holding an %ENOMEM error, calling :c:func:`xas_nomem`
-> > +will attempt to allocate more memory using the specified gfp flags and
-> > +cache it in the xa_state for the next attempt.  The idea is that you take
-> > +the xa_lock, attempt the operation and drop the lock.  The operation
-> > +attempts to allocate memory while holding the lock, but it is more
-> > +likely to fail.  Once you have dropped the lock, :c:func:`xas_nomem`
-> > +can try harder to allocate more memory.  It will return ``true`` if it
-> > +is worth retrying the operation (ie that there was a memory error *and*
-> 
->                          usually    i.e.
-> 
-> > +more memory was allocated.  If it has previously allocated memory, and
-> 
->                    allocated).
-
-Thanks!
-
-> > +If you need to move to a different index in the XArray, call
-> > +:c:func:`xas_set`.  This reinitialises the cursor which will generally
-> 
-> I would put a comma .... here.......................^
-> but consult your $editor.  :)
-
-I'll ask her, but I think you're right :-)
-
-> Nicely done.  Thanks.
-
-Thanks for the review!  I think we're still struggling a little to
-talk about tags in an unambiguous way, but apart from that it feels
-pretty good.
---
-To unsubscribe from this list: send the line "unsubscribe linux-nilfs" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
