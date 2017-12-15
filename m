@@ -1,193 +1,120 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH RFC] f2fs: fix an error case of missing
- update inode page
-Date: Thu, 14 Dec 2017 20:20:53 -0800
-Message-ID: <20171215042053.GA55416@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1512446867-29122-1-git-send-email-heyunlei@huawei.com>
- <20171214194627.GB35234@jaegeuk-macbookpro.roam.corp.google.com>
- <42B685BFA705F94C860C6DD0752F0565482FA1E8@DGGEMA503-MBX.china.huawei.com>
+From: Matthew Wilcox <willy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Subject: Re: [PATCH v4 08/73] xarray: Add documentation
+Date: Thu, 14 Dec 2017 20:22:14 -0800
+Message-ID: <20171215042214.GA17444@bombadil.infradead.org>
+References: <20171206004159.3755-1-willy@infradead.org>
+ <20171206004159.3755-9-willy@infradead.org>
+ <66ad068b-1973-ca41-7bbf-8a0634cc488d@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
- helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1ePhUb-0006Pq-Hi
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Dec 2017 04:21:01 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ePhUa-0006JV-9L
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Dec 2017 04:21:01 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <42B685BFA705F94C860C6DD0752F0565482FA1E8@DGGEMA503-MBX.china.huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: heyunlei <heyunlei@huawei.com>
-Cc: "Jianing (Euler)" <ning.jia@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+In-Reply-To: <66ad068b-1973-ca41-7bbf-8a0634cc488d-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Sender: linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Cc: Matthew Wilcox <mawilcox-0li6OtcxBFHby3iVrkZq2A@public.gmane.org>, Ross Zwisler <ross.zwisler-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, Rehas Sachdeva <aquannie-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-xfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 12/15, heyunlei wrote:
+On Mon, Dec 11, 2017 at 03:10:22PM -0800, Randy Dunlap wrote:
+> > +A freshly-initialised XArray contains a ``NULL`` pointer at every index.
+> > +Each non-``NULL`` entry in the array has three bits associated with
+> > +it called tags.  Each tag may be flipped on or off independently of
+> > +the others.  You can search for entries with a given tag set.
 > 
-> 
-> >-----Original Message-----
-> >From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> >Sent: Friday, December 15, 2017 3:46 AM
-> >To: heyunlei
-> >Cc: Yuchao (T); linux-f2fs-devel@lists.sourceforge.net; Wangbintian; Jianing (Euler)
-> >Subject: Re: [f2fs-dev][PATCH RFC] f2fs: fix an error case of missing update inode page
-> >
-> >On 12/05, Yunlei He wrote:
-> >> -Thread A					Thread B
-> >>
-> >> -write_checkpoint
-> >> 	-block_operations
-> >> 		-f2fs_unlock_all		-f2fs_sync_file
-> >> 							-f2fs_write_inode
-> >> 								-f2fs_inode_synced
-> >>
-> >> 			-f2fs_sync_inode_meta
-> >> 				-sync_node_pages
-> >> 									-set_page_drity
-> >>
-> >> In this case, if sudden power off without next new checkpoint,
-> >> the last inode page update will lost. wb_writeback is same with
-> >> fsync.
-> >
-> >Does this patch fix the problem?
-> >
-> I modify code as below:
-> @@ -366,7 +366,7 @@ int update_inode(struct inode *inode, struct page *node_page)
->         struct extent_tree *et = F2FS_I(inode)->extent_tree;
->  
->         f2fs_inode_synced(inode);
-> -
-> +       msleep(10000);
->         f2fs_wait_on_page_writeback(node_page, NODE, true);
-> 
-> shell 1:                                       shell2:
-> dd if=/dev/zero of=./test bs=1M count=10
-> sync
-> echo "hello" >> ./test
-> fsync test  // sleep 10s
->                    	                         sync  //return quickly
-> 											 echo c > /proc/sysrq-trigger  //before fsync return 
-> fsck will find iblocks mismatch, and with this patch it 's ok.
+> Only tags that are set, or search for entries with some tag(s) cleared?
+> Or is that like a mathematical set?
 
-So, do you mean it was fixed by adding msleep() on top of this patch as well?
-Like:
-	- f2fs_write_inode()
-		- set_page_drity
- 		- f2fs_inode_synced
-		- msleep(10000);
+hmm ...
 
-> 
-> Besides,I came across another error like this:
-> 
-> f2fs_inode-> i_xattr_nid is non-zero, but node blkaddr in raw nat entry is NULL.
-> 
-> This case makes sense to this problem also.
-> 
-> > -write_checkpoint
-> > 	-block_operations
-> > 		-f2fs_unlock_all		-f2fs_sync_file
-> > 							-f2fs_write_inode
-> > 								-set_page_drity
-> > 								-f2fs_inode_synced
-> > 			-f2fs_sync_inode_meta
-> > 				-sync_node_pages
-> >
-> >I think, we need to cover f2fs_lock_op() for f2fs_write_inode() again.
-> 
-> It can also work well with f2fs_lock_op(), I am afraid other cases will update inode
-> like f2fs_write_inode without f2fs_lock_op
-> 
-> Thanks
-> >
-> >Thanks,
-> >
-> >>
-> >> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> >> ---
-> >>  fs/f2fs/f2fs.h  |  4 ++--
-> >>  fs/f2fs/inode.c | 15 +++++++--------
-> >>  2 files changed, 9 insertions(+), 10 deletions(-)
-> >>
-> >> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >> index 82f1dc3..38f9324 100644
-> >> --- a/fs/f2fs/f2fs.h
-> >> +++ b/fs/f2fs/f2fs.h
-> >> @@ -2513,8 +2513,8 @@ int f2fs_getattr(const struct path *path, struct kstat *stat,
-> >>  struct inode *f2fs_iget(struct super_block *sb, unsigned long ino);
-> >>  struct inode *f2fs_iget_retry(struct super_block *sb, unsigned long ino);
-> >>  int try_to_free_nats(struct f2fs_sb_info *sbi, int nr_shrink);
-> >> -int update_inode(struct inode *inode, struct page *node_page);
-> >> -int update_inode_page(struct inode *inode);
-> >> +void update_inode(struct inode *inode, struct page *node_page);
-> >> +void update_inode_page(struct inode *inode);
-> >>  int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc);
-> >>  void f2fs_evict_inode(struct inode *inode);
-> >>  void handle_failed_inode(struct inode *inode);
-> >> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> >> index b4c4f2b..10d3c7c 100644
-> >> --- a/fs/f2fs/inode.c
-> >> +++ b/fs/f2fs/inode.c
-> >> @@ -360,14 +360,15 @@ struct inode *f2fs_iget_retry(struct super_block *sb, unsigned long ino)
-> >>  	return inode;
-> >>  }
-> >>
-> >> -int update_inode(struct inode *inode, struct page *node_page)
-> >> +void update_inode(struct inode *inode, struct page *node_page)
-> >>  {
-> >>  	struct f2fs_inode *ri;
-> >>  	struct extent_tree *et = F2FS_I(inode)->extent_tree;
-> >>
-> >> -	f2fs_inode_synced(inode);
-> >> -
-> >>  	f2fs_wait_on_page_writeback(node_page, NODE, true);
-> >> +	set_page_dirty(node_page);
-> >> +
-> >> +	f2fs_inode_synced(inode);
-> >>
-> >>  	ri = F2FS_INODE(node_page);
-> >>
-> >> @@ -426,10 +427,9 @@ int update_inode(struct inode *inode, struct page *node_page)
-> >>  	if (inode->i_nlink == 0)
-> >>  		clear_inline_node(node_page);
-> >>
-> >> -	return set_page_dirty(node_page);
-> >>  }
-> >>
-> >> -int update_inode_page(struct inode *inode)
-> >> +void update_inode_page(struct inode *inode)
-> >>  {
-> >>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> >>  	struct page *node_page;
-> >> @@ -444,11 +444,10 @@ int update_inode_page(struct inode *inode)
-> >>  		} else if (err != -ENOENT) {
-> >>  			f2fs_stop_checkpoint(sbi, false);
-> >>  		}
-> >> -		return 0;
-> >> +		return;
-> >>  	}
-> >> -	ret = update_inode(inode, node_page);
-> >> +	update_inode(inode, node_page);
-> >>  	f2fs_put_page(node_page, 1);
-> >> -	return ret;
-> >>  }
-> >>
-> >>  int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
-> >> --
-> >> 1.9.1
+"Each tag may be set or cleared independently of the others.  You can
+search for entries which have a particular tag set."
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+Doesn't completely remove the ambiguity, but I can't think of how to phrase
+that better ...
+
+> > +Normal pointers may be stored in the XArray directly.  They must be 4-byte
+> > +aligned, which is true for any pointer returned from :c:func:`kmalloc` and
+> > +:c:func:`alloc_page`.  It isn't true for arbitrary user-space pointers,
+> > +nor for function pointers.  You can store pointers to statically allocated
+> > +objects, as long as those objects have an alignment of at least 4.
+> 
+> This (above) is due to the internal usage of low bits for flags?
+
+Sort of ... if bit 0 is set then we're storing an integer (see below),
+and if bit 0 is clear and bit 1 is set, then it's an internal entry.
+
+But I don't want the implementation details to leak into the user manual.
+>From the user's point of view, they can store a pointer to anything they
+allocated with kmalloc.  If they want to store an arbitrary pointer,
+they're out of luck.
+
+> > +The XArray does not support storing :c:func:`IS_ERR` pointers; some
+> > +conflict with data values and others conflict with entries the XArray
+> > +uses for its own purposes.  If you need to store special values which
+> > +cannot be confused with real kernel pointers, the values 4, 8, ... 4092
+> > +are available.
+> 
+> or if I know that they values are errno-range values, I can just shift them
+> left by 2 to store them and then shift them right by 2 to use them?
+
+Yes, the values -4 to -4092 also make good error signals.
+
+> oh, or use the following function?
+> 
+> > +You can also store integers between 0 and ``LONG_MAX`` in the XArray.
+> > +You must first convert it into an entry using :c:func:`xa_mk_value`.
+> > +When you retrieve an entry from the XArray, you can check whether it is
+> > +a data value by calling :c:func:`xa_is_value`, and convert it back to
+> > +an integer by calling :c:func:`xa_to_value`.
+
+Yup, you could also store errors as integers, if you like.  Your choice :-)
+
+> > +You can enquire whether a tag is set on an entry by using
+> > +:c:func:`xa_get_tag`.  If the entry is not ``NULL``, you can set a tag
+> > +on it by using :c:func:`xa_set_tag` and remove the tag from an entry by
+> > +calling :c:func:`xa_clear_tag`.  You can ask whether any entry in the
+> 
+>                                                         an entry
+> 
+> > +XArray has a particular tag set by calling :c:func:`xa_tagged`.
+> 
+> or maybe I don't understand.  Does xa_tagged() test one entry and return its
+> "tagged" result/status?  or does it test (potentially) the entire array to search
+> for a particular tag value?
+
+It asks the question "Does any entry in the array have tag N set?"
+
+> > +If the xa_state is holding an %ENOMEM error, calling :c:func:`xas_nomem`
+> > +will attempt to allocate more memory using the specified gfp flags and
+> > +cache it in the xa_state for the next attempt.  The idea is that you take
+> > +the xa_lock, attempt the operation and drop the lock.  The operation
+> > +attempts to allocate memory while holding the lock, but it is more
+> > +likely to fail.  Once you have dropped the lock, :c:func:`xas_nomem`
+> > +can try harder to allocate more memory.  It will return ``true`` if it
+> > +is worth retrying the operation (ie that there was a memory error *and*
+> 
+>                          usually    i.e.
+> 
+> > +more memory was allocated.  If it has previously allocated memory, and
+> 
+>                    allocated).
+
+Thanks!
+
+> > +If you need to move to a different index in the XArray, call
+> > +:c:func:`xas_set`.  This reinitialises the cursor which will generally
+> 
+> I would put a comma .... here.......................^
+> but consult your $editor.  :)
+
+I'll ask her, but I think you're right :-)
+
+> Nicely done.  Thanks.
+
+Thanks for the review!  I think we're still struggling a little to
+talk about tags in an unambiguous way, but apart from that it feels
+pretty good.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-nilfs" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
