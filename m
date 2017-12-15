@@ -1,23 +1,22 @@
-From: "gaoxiang (P)" <gaoxiang25@huawei.com>
-Subject: Re: question about find_next_free_block in f2fs-tools
-Date: Fri, 15 Dec 2017 07:55:49 +0000
-Message-ID: <9047C53C18267742AB12E43B65C7F9F70BCB14B8@dggemi505-mbs.china.huawei.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH v4] f2fs: avoid dead loop in function
+ find_fsync_dnodes
+Date: Fri, 15 Dec 2017 15:56:56 +0800
+Message-ID: <1513324616-21058-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
  helo=mx.sourceforge.net)
  by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <gaoxiang25@huawei.com>) id 1ePkr7-0003RB-6B
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Dec 2017 07:56:29 +0000
-Received: from [45.249.212.255] (helo=huawei.com)
- by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ePkr4-0008JM-UZ
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Dec 2017 07:56:29 +0000
-Content-Language: zh-CN
+ (envelope-from <heyunlei@huawei.com>) id 1ePl4d-000345-De
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Dec 2017 08:10:27 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191])
+ by sfi-mx-3.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+ (Exim 4.89) id 1ePl4b-00083g-5m
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Dec 2017 08:10:27 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,108 +26,89 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "jaegeuk@kernel.org" <jaegeuk@kernel.org>
-Cc: hutj <hutj@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: ning.jia@huawei.com, heyunlei@huawei.com
 
-Hi Jaegeuk,
+Came across a dead loop in recovery like this:
 
-	ping.. I am reading f2fs-tools and doing some work on it. Could you give me some hints if section has 2 or more segments in f2fs?
-	1) the whole section should have the same type? I think so since GC operates sections and I have observed some clues in "get_new_segment":
+......
+[   24.680480s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597696
+[   24.698394s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597697
+[   24.724334s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724334s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724426s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+......
 
-	skip_left:
-	        hint = secno;
-	        segno = secno * sbi->segs_per_sec;
-	        zoneno = secno / sbi->secs_per_zone;
+Mount process will block in dead loop and fsck can do nothing with this
+error, This patch abandon recovery if node chain is cyclical.
 
-	It seems that the whole section type is depended on the first segment type in the whole section.
-	In that case the following code snippet makes sense:
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fs/f2fs/recovery.c | 27 +++++++++++++++++++--------
+ 1 file changed, 19 insertions(+), 8 deletions(-)
 
-	if (se->valid_blocks == 0 && !(segno % sbi->segs_per_sec)) {
-		...
-	}
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 7d63faf..f7fc2ed 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -106,6 +106,14 @@ static void del_fsync_inode(struct fsync_inode_entry *entry)
+ 	kmem_cache_free(fsync_entry_slab, entry);
+ }
+ 
++static void destroy_fsync_dnodes(struct list_head *head)
++{
++	struct fsync_inode_entry *entry, *tmp;
++
++	list_for_each_entry_safe(entry, tmp, head, list)
++		del_fsync_inode(entry);
++}
++
+ static int recover_dentry(struct inode *inode, struct page *ipage,
+ 						struct list_head *dir_list)
+ {
+@@ -239,6 +247,17 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 			return 0;
+ 
+ 		page = get_tmp_page(sbi, blkaddr);
++		if (PageChecked(page)) {
++			f2fs_msg(sbi->sb, KERN_ERR, "Abandon looped node block list");
++			destroy_fsync_dnodes(head);
++			break;
++		}
++
++		/*
++		 * it's not needed to clear PG_checked flag in temp page since we
++		 * will truncate all those pages in the end of recovery.
++		 */
++		SetPageChecked(page);
+ 
+ 		if (!is_recoverable_dnode(page))
+ 			break;
+@@ -288,14 +307,6 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 	return err;
+ }
+ 
+-static void destroy_fsync_dnodes(struct list_head *head)
+-{
+-	struct fsync_inode_entry *entry, *tmp;
+-
+-	list_for_each_entry_safe(entry, tmp, head, list)
+-		del_fsync_inode(entry);
+-}
+-
+ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
+ 			block_t blkaddr, struct dnode_of_data *dn)
+ {
+-- 
+1.9.1
 
-	However, I still cannot understand 
-
- 	if (se->type == type && !f2fs_test_bit(offset, (const char *)se->cur_valid_map))
- 		return 0;
-
-	It seems that "se" is not the first segment of the section? How to keep se->type valid? Could you give me some clues?
-
-	2) why should "move_curseg_info" be called at the end of sload. I guess bacause of the chain of forword recovery?
-
-Thanks
-
-> Hi Chao,
-> 
-> Thanks for your reply.
-> 
->> On 2017/12/9 14:29, hsiangkao--- via Linux-f2fs-devel wrote:
->>> Hi Jaegeuk and Chao,
->>>     I have a minor question about the following code snippet in find_next_free_block recently
->>> 		if (se->valid_blocks == 0 && !(segno % sbi->segs_per_sec)) {
->>> 			struct seg_entry *se2;
->>> 			unsigned int i;
->>> 
->>> 			for (i = 1; i < sbi->segs_per_sec; i++) {
->>> 				se2 = get_seg_entry(sbi, segno + i);
->>> 				if (se2->valid_blocks)
->>> 					break;
->>> 			}
->>> 			if (i == sbi->segs_per_sec)
->>> 				return 0;
->>> 		}
->>>     What does it do if a section has 2 or more segments?
->> 
->> It intends to use free section prior to used one?It is still hard for me to understand. :(
-> 
-> I guess if some section doesn't satisfy the above condition (means if some segment was used in the section), we just skip those free sections and fail in the worst case rather than fall back again in the case that SSR approach cannot allocate any block?
-> 
->> 
->>>     It seems that it succeeds only if the section is totally free? if not, do SSR instead? I have no idea about that. :(
->>>     And the code mainly for SSR follows, but I am confused when I associate that with the above...
->>> 		if (se->type == type &&
->>> 			!f2fs_test_bit(offset, (const char *)se->cur_valid_map))
->>> 			return 0;
->>>     Does that indicate segments of a section should have the same type?
->>>         but I could not find any mechanism to keep segments of a section in the same type.. 
->> 
->> I'm afraid there is no guarantee.
-> 
-> Hmm... I have no idea...
-> 
->> 
->>> 
->>>     And I could not understand what the commit message("fsck.f2fs: LFS alloc_type must have free segment after blkoff") means...
->>>     Why should the last of segment have no valid block in LFS mode?
->> 
->> LFS tries to do allocation from the first block to the last one in opened segment,
->> so if there is any valid block in that segment, there will be collision anyway.
->>
-> 
-> Yes, I could understand the LFS policy you explained.
-> However, the commit message says "LFS alloc_type must have free segment after blkoff" instead of "must have free blocks followed by blkoff".
-> That is what I'm confused. :(
-> 
-> 
-> Thanks.
-> 
->> Thanks,
->> 
->>> 
->>>     Could you take some time and give me some clues on it... :D
->>> 
->>> Thanks a lot.
->>> 
->>> Gao Xiang
->>> hsiangkao@...
->>> ------------------------------------------------------------------------------
->>> Check out the vibrant tech community on one of the world's most
->>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
->>> _______________________________________________
->>> Linux-f2fs-devel mailing list
->>> Linux-f2fs-devel@...
->>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>>
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
