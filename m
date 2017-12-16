@@ -1,192 +1,222 @@
-From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v5 70/78] brd: Convert to XArray
-Date: Fri, 15 Dec 2017 14:04:42 -0800
-Message-ID: <20171215220450.7899-71-willy@infradead.org>
-References: <20171215220450.7899-1-willy@infradead.org>
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20171215220450.7899-1-willy@infradead.org>
-Sender: owner-linux-mm@kvack.org
-To: linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, David Howells <dhowells@redhat.com>, Shaohua Li <shli@kernel.org>, Jens Axboe <axboe@kernel.dk>, Rehas Sachdeva <aquannie@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, linux-raid@vger.kernel.org
+From: Gao Xiang <hsiangkao@aol.com>
+Subject: [f2fs-dev][PATCH RFC] f2fs: refactor get_new_segment
+Date: Sat, 16 Dec 2017 16:32:52 +0800
+Message-ID: <20171216083252.5860-1-hsiangkao@aol.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: jaegeuk@kernel.org, chao@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, Gao Xiang <hsiangkao@aol.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+get_new_segment is too unclear to understand how it works.
+This patch refactor it in a straight-forward way and
+I think it is equal to the original one.
 
-Convert brd_pages from a radix tree to an XArray.  Simpler and smaller
-code; in particular another user of radix_tree_preload is eliminated.
+This patch also fixes two issues in the original get_new_segment:
+1) left_start could be overflowed when hint == 0 at first:
+	...
+		} else {
+			go_left = 1;
+*			left_start = hint - 1;
+		}
+	...
+*	while (test_bit(left_start, free_i->free_secmap)) {
+2) It will do find_next_zero_bit again when go_left == true and ALLOC_LEFT:
+	...
+find_other_zone:
+*	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
+	if (secno >= MAIN_SECS(sbi)) {
+		if (dir == ALLOC_RIGHT) {
+			...
+		} else {
+			go_left = 1;
+			...
+		}
+	}
+	if (go_left == 0)
+		goto skip_left;
+	...
+	if (i < NR_CURSEG_TYPE) {
+		/* zone is in user, try another */
+*		if (go_left)
+*			hint = zoneno * sbi->secs_per_zone - 1;
+		...
+		init = false;
+		goto find_other_zone;
+	}
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Signed-off-by: Gao Xiang <hsiangkao@aol.com>
 ---
- drivers/block/brd.c | 93 ++++++++++++++++-------------------------------------
- 1 file changed, 28 insertions(+), 65 deletions(-)
+ fs/f2fs/segment.c | 137 ++++++++++++++++++++++++++++++++----------------------
+ 1 file changed, 81 insertions(+), 56 deletions(-)
 
-diff --git a/drivers/block/brd.c b/drivers/block/brd.c
-index 8028a3a7e7fd..59a1af7aaa79 100644
---- a/drivers/block/brd.c
-+++ b/drivers/block/brd.c
-@@ -17,7 +17,7 @@
- #include <linux/bio.h>
- #include <linux/highmem.h>
- #include <linux/mutex.h>
--#include <linux/radix-tree.h>
-+#include <linux/xarray.h>
- #include <linux/fs.h>
- #include <linux/slab.h>
- #include <linux/backing-dev.h>
-@@ -29,9 +29,9 @@
- #define PAGE_SECTORS		(1 << PAGE_SECTORS_SHIFT)
- 
- /*
-- * Each block ramdisk device has a radix_tree brd_pages of pages that stores
-- * the pages containing the block device's contents. A brd page's ->index is
-- * its offset in PAGE_SIZE units. This is similar to, but in no way connected
-+ * Each block ramdisk device has an xarray brd_pages that stores the pages
-+ * containing the block device's contents. A brd page's ->index is its
-+ * offset in PAGE_SIZE units. This is similar to, but in no way connected
-  * with, the kernel's pagecache or buffer cache (which sit above our block
-  * device).
-  */
-@@ -41,13 +41,7 @@ struct brd_device {
- 	struct request_queue	*brd_queue;
- 	struct gendisk		*brd_disk;
- 	struct list_head	brd_list;
--
--	/*
--	 * Backing store of pages and lock to protect it. This is the contents
--	 * of the block device.
--	 */
--	spinlock_t		brd_lock;
--	struct radix_tree_root	brd_pages;
-+	struct xarray		brd_pages;
- };
- 
- /*
-@@ -62,17 +56,9 @@ static struct page *brd_lookup_page(struct brd_device *brd, sector_t sector)
- 	 * The page lifetime is protected by the fact that we have opened the
- 	 * device node -- brd pages will never be deleted under us, so we
- 	 * don't need any further locking or refcounting.
--	 *
--	 * This is strictly true for the radix-tree nodes as well (ie. we
--	 * don't actually need the rcu_read_lock()), however that is not a
--	 * documented feature of the radix-tree API so it is better to be
--	 * safe here (we don't have total exclusion from radix tree updates
--	 * here, only deletes).
- 	 */
--	rcu_read_lock();
- 	idx = sector >> PAGE_SECTORS_SHIFT; /* sector to page index */
--	page = radix_tree_lookup(&brd->brd_pages, idx);
--	rcu_read_unlock();
-+	page = xa_load(&brd->brd_pages, idx);
- 
- 	BUG_ON(page && page->index != idx);
- 
-@@ -87,7 +73,7 @@ static struct page *brd_lookup_page(struct brd_device *brd, sector_t sector)
- static struct page *brd_insert_page(struct brd_device *brd, sector_t sector)
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index c117e09..eea9d3f 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2047,82 +2047,107 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
+ 			unsigned int *newseg, bool new_sec, int dir)
  {
- 	pgoff_t idx;
--	struct page *page;
-+	struct page *curr, *page;
- 	gfp_t gfp_flags;
+ 	struct free_segmap_info *free_i = FREE_I(sbi);
+-	unsigned int segno, secno, zoneno;
++	unsigned int segno = *newseg, zoneno;
++	unsigned int secno = GET_SEC_FROM_SEG(sbi, segno);
+ 	unsigned int total_zones = MAIN_SECS(sbi) / sbi->secs_per_zone;
+-	unsigned int hint = GET_SEC_FROM_SEG(sbi, *newseg);
+-	unsigned int old_zoneno = GET_ZONE_FROM_SEG(sbi, *newseg);
+-	unsigned int left_start = hint;
+-	bool init = true;
+-	int go_left = 0;
++	unsigned int old_zoneno = GET_ZONE_FROM_SEC(sbi, secno);
++	bool may_again = true, actually_go_left = false;
+ 	int i;
  
- 	page = brd_lookup_page(brd, sector);
-@@ -108,62 +94,40 @@ static struct page *brd_insert_page(struct brd_device *brd, sector_t sector)
- 	if (!page)
- 		return NULL;
+ 	spin_lock(&free_i->segmap_lock);
  
--	if (radix_tree_preload(GFP_NOIO)) {
--		__free_page(page);
--		return NULL;
--	}
--
--	spin_lock(&brd->brd_lock);
- 	idx = sector >> PAGE_SECTORS_SHIFT;
- 	page->index = idx;
--	if (radix_tree_insert(&brd->brd_pages, idx, page)) {
-+	curr = xa_cmpxchg(&brd->brd_pages, idx, NULL, page, GFP_NOIO);
-+	if (curr) {
- 		__free_page(page);
--		page = radix_tree_lookup(&brd->brd_pages, idx);
--		BUG_ON(!page);
--		BUG_ON(page->index != idx);
-+		if (xa_err(curr)) {
-+			page = NULL;
-+		} else {
-+			page = curr;
-+			BUG_ON(!page);
-+			BUG_ON(page->index != idx);
-+		}
+-	if (!new_sec && ((*newseg + 1) % sbi->segs_per_sec)) {
++	/* first, attempt to find a segment in the current section */
++	if (!new_sec && ((segno + 1) % sbi->segs_per_sec)) {
++		unsigned end_segno = GET_SEG_FROM_SEC(sbi, secno + 1);
++
+ 		segno = find_next_zero_bit(free_i->free_segmap,
+-			GET_SEG_FROM_SEC(sbi, hint + 1), *newseg + 1);
+-		if (segno < GET_SEG_FROM_SEC(sbi, hint + 1))
+-			goto got_it;
++			end_segno, segno + 1);
++
++		if (segno < end_segno)
++			goto out;
  	}
--	spin_unlock(&brd->brd_lock);
--
--	radix_tree_preload_end();
+-find_other_zone:
+-	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
+-	if (secno >= MAIN_SECS(sbi)) {
+-		if (dir == ALLOC_RIGHT) {
+-			secno = find_next_zero_bit(free_i->free_secmap,
+-							MAIN_SECS(sbi), 0);
+-			f2fs_bug_on(sbi, secno >= MAIN_SECS(sbi));
+-		} else {
+-			go_left = 1;
+-			left_start = hint - 1;
++
++try_another_section:
++	if (likely(!actually_go_left)) {
++		/*
++		 * since ALLOC_LEFT takes much effort,
++		 * prefer to ALLOC_RIGHT first
++		 */
++		unsigned int new_secno = find_next_zero_bit(
++			free_i->free_secmap, MAIN_SECS(sbi), secno);
++
++		if (new_secno < MAIN_SECS(sbi)) {
++			secno = new_secno;
++			goto check_another_zone;
+ 		}
+ 	}
+-	if (go_left == 0)
+-		goto skip_left;
  
- 	return page;
- }
- 
- /*
-- * Free all backing store pages and radix tree. This must only be called when
-+ * Free all backing store pages and xarray.  This must only be called when
-  * there are no other users of the device.
-  */
--#define FREE_BATCH 16
- static void brd_free_pages(struct brd_device *brd)
- {
--	unsigned long pos = 0;
--	struct page *pages[FREE_BATCH];
--	int nr_pages;
--
--	do {
--		int i;
--
--		nr_pages = radix_tree_gang_lookup(&brd->brd_pages,
--				(void **)pages, pos, FREE_BATCH);
--
--		for (i = 0; i < nr_pages; i++) {
--			void *ret;
--
--			BUG_ON(pages[i]->index < pos);
--			pos = pages[i]->index;
--			ret = radix_tree_delete(&brd->brd_pages, pos);
--			BUG_ON(!ret || ret != pages[i]);
--			__free_page(pages[i]);
+-	while (test_bit(left_start, free_i->free_secmap)) {
+-		if (left_start > 0) {
+-			left_start--;
+-			continue;
 -		}
--
--		pos++;
-+	XA_STATE(xas, &brd->brd_pages, 0);
-+	struct page *page;
+-		left_start = find_next_zero_bit(free_i->free_secmap,
+-							MAIN_SECS(sbi), 0);
+-		f2fs_bug_on(sbi, left_start >= MAIN_SECS(sbi));
+-		break;
++	if (dir == ALLOC_LEFT) {
++		/* ALLOC_LEFT, no free sections on the right side */
++		actually_go_left = true;
++
++		while(secno)
++			if (!test_bit(--secno, free_i->free_secmap))
++				goto check_another_zone;
+ 	}
+-	secno = left_start;
+-skip_left:
+-	segno = GET_SEG_FROM_SEC(sbi, secno);
+-	zoneno = GET_ZONE_FROM_SEC(sbi, secno);
  
--		/*
--		 * This assumes radix_tree_gang_lookup always returns as
--		 * many pages as possible. If the radix-tree code changes,
--		 * so will this have to.
--		 */
--	} while (nr_pages == FREE_BATCH);
-+	/* lockdep can't know there are no other users */
-+	xas_lock(&xas);
-+	xas_for_each(&xas, page, ULONG_MAX) {
-+		BUG_ON(page->index != xas.xa_index);
-+		__free_page(page);
-+		xas_store(&xas, NULL);
-+	}
-+	xas_unlock(&xas);
- }
++	/*
++	 * when ALLOC_RIGHT and secno >= end_endno
++	 *   or  ALLOC_LEFT and secno == 0, we need do the last attempt
++	 * since the function should be returned with success
++	 */
++	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), 0);
++	f2fs_bug_on(sbi, secno >= MAIN_SECS(sbi));
++
++check_another_zone:
+ 	/* give up on finding another zone */
+-	if (!init)
+-		goto got_it;
+-	if (sbi->secs_per_zone == 1)
++	if (!may_again || sbi->secs_per_zone == 1)
+ 		goto got_it;
++
++	zoneno = GET_ZONE_FROM_SEC(sbi, secno);
+ 	if (zoneno == old_zoneno)
+ 		goto got_it;
+-	if (dir == ALLOC_LEFT) {
+-		if (!go_left && zoneno + 1 >= total_zones)
+-			goto got_it;
+-		if (go_left && zoneno == 0)
++
++	/*
++	 * since the following case will be likely to frequently happen,
++	 * leave it here rather than put together in the following loop
++	 */
++	if (dir == ALLOC_LEFT)
++		/*
++		 * I'm really confused why not select
++		 * zoneno * sbi->secs_per_zone - 1 in this case.
++		 * Okay, leave it as the origin
++		 */
++		if (!actually_go_left && zoneno + 1 >= total_zones)
+ 			goto got_it;
+-	}
++
+ 	for (i = 0; i < NR_CURSEG_TYPE; i++)
+-		if (CURSEG_I(sbi, i)->zone == zoneno)
+-			break;
++		/* the zone is in use, try another */
++		if (CURSEG_I(sbi, i)->zone == zoneno) {
++			/* try the neighbor (left or right) zone */
++			if (actually_go_left) {
++				/*
++				 * since ALLOC_LEFT and no way to get free on
++				 * the right side, it's safe to try the left
++				 * zone and won't find the same section again.
++				 */
++				if (zoneno == 0)
++					break;
++				secno = zoneno * sbi->secs_per_zone - 1;
++			} else if (zoneno + 1 >= total_zones) {
++				/* no way dir == ALLOC_LEFT at this time */
++				secno = 0;
++			} else
++				secno = (zoneno + 1) * sbi->secs_per_zone;
++
++			/* try another zone once at most */
++			may_again = false;
++			goto try_another_section;
++		}
  
- /*
-@@ -373,8 +337,7 @@ static struct brd_device *brd_alloc(int i)
- 	if (!brd)
- 		goto out;
- 	brd->brd_number		= i;
--	spin_lock_init(&brd->brd_lock);
--	INIT_RADIX_TREE(&brd->brd_pages, GFP_ATOMIC);
-+	xa_init(&brd->brd_pages);
- 
- 	brd->brd_queue = blk_alloc_queue(GFP_KERNEL);
- 	if (!brd->brd_queue)
+-	if (i < NR_CURSEG_TYPE) {
+-		/* zone is in user, try another */
+-		if (go_left)
+-			hint = zoneno * sbi->secs_per_zone - 1;
+-		else if (zoneno + 1 >= total_zones)
+-			hint = 0;
+-		else
+-			hint = (zoneno + 1) * sbi->secs_per_zone;
+-		init = false;
+-		goto find_other_zone;
+-	}
+ got_it:
++	segno = GET_SEG_FROM_SEC(sbi, secno);
++out:
+ 	/* set it as dirty segment in free segmap */
+ 	f2fs_bug_on(sbi, test_bit(segno, free_i->free_segmap));
+ 	__set_inuse(sbi, segno);
 -- 
-2.15.1
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+2.7.4
