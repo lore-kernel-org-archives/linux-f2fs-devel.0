@@ -1,56 +1,66 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v4] f2fs: obsolete free nid list approach
-Date: Mon, 18 Dec 2017 19:56:08 +0800
-Message-ID: <efa09a49-3e18-acd3-7deb-de543db5e550@huawei.com>
-References: <20171130113112.50058-1-yuchao0@huawei.com>
- <20171201073637.GC86192@jaegeuk-macbookpro.roam.corp.google.com>
- <2cb36fd5-462d-d415-5f0c-871272480813@huawei.com>
- <20171214192156.GA35234@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH v4] f2fs: avoid dead loop in function
+ find_fsync_dnodes
+Date: Mon, 18 Dec 2017 20:24:48 +0800
+Message-ID: <a4a82e39-daaa-3c80-cb54-aa33952565ce@huawei.com>
+References: <1513324616-21058-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171214192156.GA35234@jaegeuk-macbookpro.roam.corp.google.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+ helo=mx.sourceforge.net)
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <yuchao0@huawei.com>) id 1eQuTv-0006Km-Cc
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Dec 2017 12:25:19 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eQuTt-00078n-SA
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Dec 2017 12:25:19 +0000
+In-Reply-To: <1513324616-21058-1-git-send-email-heyunlei@huawei.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: ning.jia@huawei.com
 
-On 2017/12/15 3:21, Jaegeuk Kim wrote:
-> On 12/11, Chao Yu wrote:
->> Hi Jaegeuk,
->>
->> On 2017/12/1 15:36, Jaegeuk Kim wrote:
->>> Hi Chao,
->>>
->>> This is really hard to review and risky a lot to apply it shortly. Do we have a
->>
->> I can understand your concern.
->>
->>> strong reason we have to do this? The original design goal was to minimize
->>> allocation delay which is almost zero for now. Of course, I agreed that there'd
->>
->> I agreed, For nid allocation performance there will be no room to improve since
->> we have already used memory to exchange performance there.
->>
->> After applying this patch, I can encounter slight regression in scenario of
->> continuous file creation.
->>
->> Anyway, goal of this patch is not aiming at performance, instead, it intends to
->> reduce code complexity, and maybe, slightly improving performance of allocation
->> in low-memory environment. So actually, this is a trade-off problem.
->>
->> If we decide to use old approach, I think what can be improved is that if we run
->> out-of-memory, we can switch to nid bitmap searching in alloc_nid rather than
->> preloading free nid entry in build_free_nid whose performance is memory sensitive.
->> Thoughts?
+On 2017/12/15 15:56, Yunlei He wrote:
+> Came across a dead loop in recovery like this:
 > 
-> Hmm, in terms of performance, do we really suffer from memory pressure when
-> preloading free nids?
+> ......
+> [   24.680480s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597696
+> [   24.698394s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597697
+> [   24.724334s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> [   24.724334s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> [   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> [   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> [   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> [   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> [   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> [   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> [   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> [   24.724426s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> ......
+> 
+> Mount process will block in dead loop and fsck can do nothing with this
+> error, This patch abandon recovery if node chain is cyclical.
+> 
+> Signed-off-by: Yunlei He <heyunlei@huawei.com>
 
-Sorry for late reply, I'm on trip now. I guess it will, let me emulate low
-memory environment, and do intensive allocation test, will report to you if
-there is any progress.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
