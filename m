@@ -1,7 +1,7 @@
 From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH v3] fsck.f2fs: check and fix i_namelen to avoid double free
-Date: Mon, 18 Dec 2017 21:10:57 +0800
-Message-ID: <1513602657-162087-1-git-send-email-yunlong.song@huawei.com>
+Subject: [PATCH v4] fsck.f2fs: check and fix i_namelen to avoid double free
+Date: Mon, 18 Dec 2017 21:25:27 +0800
+Message-ID: <1513603527-163036-1-git-send-email-yunlong.song@huawei.com>
 References: <1513319130-114230-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,14 +12,18 @@ To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud
 Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
+v1 -> v2: use child_info to pass dentry namelen
+v2 -> v3: check child != NULL to include the F2FS_FT_ORPHAN file type
+v3 -> v4: fix the i_namelen problem of dump.f2fs
+
 Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 ---
- fsck/fsck.c | 26 +++++++++++++++++++++-----
+ fsck/fsck.c | 28 +++++++++++++++++++++++-----
  fsck/fsck.h |  3 ++-
- 2 files changed, 23 insertions(+), 6 deletions(-)
+ 2 files changed, 25 insertions(+), 6 deletions(-)
 
 diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 2212aa3..b52b6e4 100644
+index 2212aa3..5407cf2 100644
 --- a/fsck/fsck.c
 +++ b/fsck/fsck.c
 @@ -539,7 +539,7 @@ int fsck_chk_node_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
@@ -66,7 +70,16 @@ index 2212aa3..b52b6e4 100644
  					en, file_enc_name(&node_blk->i));
  	en[namelen] = '\0';
  	if (ftype == F2FS_FT_ORPHAN)
-@@ -1414,9 +1429,10 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, struct child_info *child,
+@@ -1098,6 +1113,8 @@ int convert_encrypted_name(unsigned char *name, int len,
+ 				unsigned char *new, int enc_name)
+ {
+ 	if (!enc_name) {
++		if (len > F2FS_NAME_LEN)
++			len = F2FS_NAME_LEN;
+ 		memcpy(new, name, len);
+ 		new[len] = 0;
+ 		return len;
+@@ -1414,9 +1431,10 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, struct child_info *child,
  				dentry, max, i, last_blk, enc_name);
  
  		blk_cnt = 1;
