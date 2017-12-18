@@ -1,58 +1,56 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH v2] fsck.f2fs: check nid range before use to
- avoid segmentation fault
-Date: Mon, 18 Dec 2017 19:53:45 +0800
-Message-ID: <1513598025-160615-1-git-send-email-yunlong.song@huawei.com>
-References: <1513319174-114303-1-git-send-email-yunlong.song@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v4] f2fs: obsolete free nid list approach
+Date: Mon, 18 Dec 2017 19:56:08 +0800
+Message-ID: <efa09a49-3e18-acd3-7deb-de543db5e550@huawei.com>
+References: <20171130113112.50058-1-yuchao0@huawei.com>
+ <20171201073637.GC86192@jaegeuk-macbookpro.roam.corp.google.com>
+ <2cb36fd5-462d-d415-5f0c-871272480813@huawei.com>
+ <20171214192156.GA35234@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
- helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yunlong.song@huawei.com>) id 1eQtzx-0002Qi-97
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Dec 2017 11:54:21 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sfi-mx-1.v28.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
- (Exim 4.89) id 1eQtzv-0008Hg-Gc
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Dec 2017 11:54:21 +0000
-In-Reply-To: <1513319174-114303-1-git-send-email-yunlong.song@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
-Cc: shengyong1@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, heyunlei@huawei.com, linux-fsdevel@vger.kernel.org, miaoxie@huawei.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171214192156.GA35234@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
----
- fsck/fsck.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2017/12/15 3:21, Jaegeuk Kim wrote:
+> On 12/11, Chao Yu wrote:
+>> Hi Jaegeuk,
+>>
+>> On 2017/12/1 15:36, Jaegeuk Kim wrote:
+>>> Hi Chao,
+>>>
+>>> This is really hard to review and risky a lot to apply it shortly. Do we have a
+>>
+>> I can understand your concern.
+>>
+>>> strong reason we have to do this? The original design goal was to minimize
+>>> allocation delay which is almost zero for now. Of course, I agreed that there'd
+>>
+>> I agreed, For nid allocation performance there will be no room to improve since
+>> we have already used memory to exchange performance there.
+>>
+>> After applying this patch, I can encounter slight regression in scenario of
+>> continuous file creation.
+>>
+>> Anyway, goal of this patch is not aiming at performance, instead, it intends to
+>> reduce code complexity, and maybe, slightly improving performance of allocation
+>> in low-memory environment. So actually, this is a trade-off problem.
+>>
+>> If we decide to use old approach, I think what can be improved is that if we run
+>> out-of-memory, we can switch to nid bitmap searching in alloc_nid rather than
+>> preloading free nid entry in build_free_nid whose performance is memory sensitive.
+>> Thoughts?
+> 
+> Hmm, in terms of performance, do we really suffer from memory pressure when
+> preloading free nids?
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 11b8b0b..faf0663 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -740,7 +740,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 	for (idx = 0; idx < 5; idx++) {
- 		u32 nid = le32_to_cpu(node_blk->i.i_nid[idx]);
- 
--		if (nid != 0) {
-+		if (nid != 0 && IS_VALID_NID(sbi, nid)) {
- 			struct node_info ni;
- 
- 			get_node_info(sbi, nid, &ni);
--- 
-1.8.5.2
+Sorry for late reply, I'm on trip now. I guess it will, let me emulate low
+memory environment, and do intensive allocation test, will report to you if
+there is any progress.
 
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+Thanks,
