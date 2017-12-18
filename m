@@ -1,268 +1,100 @@
-From: Hyunchul Lee <hyc.lee@gmail.com>
-Subject: Re: [PATCH 1/2] f2fs: pass down write hints to block
- layer for bufferd write
-Date: Mon, 18 Dec 2017 16:28:27 +0900
-Message-ID: <5A376E1B.6040201@gmail.com>
-References: <1511828607-624-1-git-send-email-hyc.lee@gmail.com>
- <d71418e1-d667-3dc6-9265-61db5d8f40bc@huawei.com>
- <5A2112A7.2070208@gmail.com>
- <1fa09755-7322-a886-c582-02e3d93d8f87@kernel.org> <5A2F3BC5.90803@gmail.com>
- <85f7fc1b-5286-c66f-6833-af1a44c5130f@huawei.com> <5A31D507.70304@gmail.com>
- <20171215020612.GF35234@jaegeuk-macbookpro.roam.corp.google.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: [PATCH v2] fsck.f2fs: check and fix i_namelen to avoid double free
+Date: Mon, 18 Dec 2017 19:15:17 +0800
+Message-ID: <1513595717-158685-1-git-send-email-yunlong.song@huawei.com>
+References: <1513319130-114230-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
- helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <hyc.lee@gmail.com>) id 1eQpqp-0008Ok-LF
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Dec 2017 07:28:39 +0000
-Received: from lgeamrelo11.lge.com ([156.147.23.51])
- by sfi-mx-2.v28.ch3.sourceforge.com with esmtp (Exim 4.89)
- id 1eQpql-0008DC-IS
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Dec 2017 07:28:39 +0000
-In-Reply-To: <20171215020612.GF35234@jaegeuk-macbookpro.roam.corp.google.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, Chao Yu <chao@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, kernel-team@lge.com, linux-fsdevel@vger.kernel.org, Hyunchul Lee <cheol.lee@lge.com>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1513319130-114230-1-git-send-email-yunlong.song@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+---
+ fsck/fsck.c | 23 ++++++++++++++++++-----
+ fsck/fsck.h |  3 ++-
+ 2 files changed, 20 insertions(+), 6 deletions(-)
 
-Agreed. If Chao agrees with this policy, I will implement it.
-
-Thanks for the comment.
-
-On 12/15/2017 11:06 AM, Jaegeuk Kim wrote:
-> On 12/14, Hyunchul Lee wrote:
->> Hi Jaegeuk,
->>
->> I need your comment about the fs_iohint mount option.
->>
->> a) w/o fs_iohint, propagate user hints to low layer.
->> b) w/ fs_iohint, ignore user hints, and use hints which is generated
->> with F2FS.
->>
->> Chao suggests this option. because user hints are more accurate than
->> file system.
->>
->> This is resonable, But I have some concerns about this option. 
->> The first thing is that blocks of a segments have different hints. This
->> could make GC less effective. 
->> The second is that the separation between LIFE_MEDIUM and LIFE_LONG is 
->> really needed. I think that difference between them is a little ambigous 
->> for users, and LIFE_SHORT and LIFE_EXTREME is converted to different 
->> hints by F2FS.
-> 
-> I think what we really can do would assign many user hints to our 3 DATA
-> logs likewise rw_hint_to_seg_type(), since it's just hints for user data.
-> Then, we can decide how to keep that as much as possible, since we have
-> another filesystem metadata such as meta and nodes. In addition, I don't
-> think we have to keep the original user-hints which makes F2FS logs be
-> messed up.
-> 
-> With that mind, I can think of the below cases. Especially, if user wants
-> to keep their io_hints, we'd better recommend to use direct_io w/o fs_iohints.
-> In order to keep this policy, I think fs_iohints would be better to be a
-> feature set by mkfs.f2fs and detected by sysfs entries for users.
-> 
-> 1) w/ fs_iohints
-> 
-> User                        F2FS               Block
-> -------------------------------------------------------------------
->                             Meta               WRITE_LIFE_MEDIUM
->                             HOT_NODE           WRITE_LIFE_NOTSET
->                             WARM_NODE          -'
->                             COLD_NODE          WRITE_LIFE_NONE
-> ioctl(cold)                 COLD_DATA          WRITE_LIFE_EXTREME
-> extention list              -'                 -'
-> WRITE_LIFE_EXTREME          -'                 -'
-> WRITE_LIFE_SHORT            HOT_DATA           WRITE_LIFE_SHORT
-> 
-> -- buffered_io
-> WRITE_LIFE_NOT_SET          WARM_DATA          WRITE_LIFE_LONG
-> WRITE_LIFE_NONE             -'                 -'
-> WRITE_LIFE_MEDIUM           -'                 -'
-> WRITE_LIFE_LONG             -'                 -'
-> 
-> -- direct_io (Not recommendable)
-> WRITE_LIFE_NOT_SET          WARM_DATA          WRITE_LIFE_NOT_SET
-> WRITE_LIFE_NONE             -'                 WRITE_LIFE_NONE
-> WRITE_LIFE_MEDIUM           -'                 WRITE_LIFE_MEDIUM
-> WRITE_LIFE_LONG             -'                 WRITE_LIFE_LONG
-> 
-> 2) w/o fs_iohints
-> 
-> User                        F2FS               Block
-> -------------------------------------------------------------------
->                             Meta               -
->                             HOT_NODE           -
->                             WARM_NODE          -
->                             COLD_NODE          -
-> ioctl(cold)                 COLD_DATA          -
-> extention list              -'                 -
-> 
-> -- buffered_io
-> WRITE_LIFE_EXTREME          COLD_DATA          -
-> WRITE_LIFE_SHORT            HOT_DATA           -
-> WRITE_LIFE_NOT_SET          WARM_DATA          -
-> WRITE_LIFE_NONE             -'                 -
-> WRITE_LIFE_MEDIUM           -'                 -
-> WRITE_LIFE_LONG             -'                 -
-> 
-> -- direct_io
-> WRITE_LIFE_EXTREME          COLD_DATA          WRITE_LIFE_EXTREME
-> WRITE_LIFE_SHORT            HOT_DATA           WRITE_LIFE_SHORT
-> WRITE_LIFE_NOT_SET          WARM_DATA          WRITE_LIFE_NOT_SET
-> WRITE_LIFE_NONE             -'                 WRITE_LIFE_NONE
-> WRITE_LIFE_MEDIUM           -'                 WRITE_LIFE_MEDIUM
-> WRITE_LIFE_LONG             -'                 WRITE_LIFE_LONG
-> 
-> 
-> Note that, I don't much care about how to manipulate streamid in nvme driver
-> in terms of LIFE_NONE or LIFE_NOTSET, since other drivers can handle them
-> in different ways. Taking a look at the definition, at least, we don't need
-> to assume that those are same at all. For example, if we can expolit this in
-> UFS driver, we can pass all the stream ids to the device as context ids.
-> 
-> Thanks,
-> 
->>
->> Thanks.
->>
->> On 12/12/2017 11:45 AM, Chao Yu wrote:
->>> Hi Hyunchul,
->>>
->>> On 2017/12/12 10:15, Hyunchul Lee wrote:
->>>> Hi Chao,
->>>>
->>>> On 12/11/2017 10:15 PM, Chao Yu wrote:
->>>>> Hi Hyunchul,
->>>>>
->>>>> On 2017/12/1 16:28, Hyunchul Lee wrote:
->>>>>> Hi Chao,
->>>>>>
->>>>>> On 11/30/2017 04:06 PM, Chao Yu wrote:
->>>>>>> Hi Hyunchul,
->>>>>>>
->>>>>>> On 2017/11/28 8:23, Hyunchul Lee wrote:
->>>>>>>> From: Hyunchul Lee <cheol.lee@lge.com>
->>>>>>>>
->>>>>>>> This implements which hint is passed down to block layer
->>>>>>>> for datas from the specific segment type.
->>>>>>>>
->>>>>>>> segment type                     hints
->>>>>>>> ------------                     -----
->>>>>>>> COLD_NODE & COLD_DATA            WRITE_LIFE_EXTREME
->>>>>>>> WARM_DATA                        WRITE_LIFE_NONE
->>>>>>>> HOT_NODE & WARM_NODE             WRITE_LIFE_LONG
->>>>>>>> HOT_DATA                         WRITE_LIFE_MEDIUM
->>>>>>>> META_DATA                        WRITE_LIFE_SHORT
->>>>>>>
->>>>>>> Just noticed, if our user do not give the hint via ioctl, f2fs can
->>>>>>> provider hint to lower layer according to hot/cold separation ability,
->>>>>>> it will be okay. But once user give his hint which may be more accurate
->>>>>>> than filesystem, hint converted by f2fs may be wrong.
->>>>>>>
->>>>>>> So what do you think of adding an option to control whether filesystem
->>>>>>> can convert hint user given?
->>>>>>>
->>>>>>
->>>>>> I think it is okay for LIFE_SHORT and LIFE_EXTREME. because they are 
->>>>>> converted to different hints.
->>>>>
->>>>> What I mean is introducing a mount option, e.g. fs_iohint,
->>>>> a) w/o fs_iohint, propagate file/inode io_hint to low layer.
->>>>> b) w/ fs_iohint, ignore file/inode io_hint, use io_hint which is generated
->>>>> with filesystem's private rule.
->>>>>
->>>>
->>>> Okay, I will implement this option and send this patch again.
->>>
->>> Let's wait for Jaegeuk's comments first?
->>>
->>>>
->>>> Without fs_iohint, Even if data blocks are moved due to GC, 
->>>> we should keep user hints. And if user hints are not given, 
->>>> any hints are not passed down to block layer, right?
->>>
->>> Hmm.. that will be a problem, IMO, we can store last user's io_hint into inode
->>> layout, so later when we trigger GC, we can use the last io_hint in inode rather
->>> than giving no hint or fs' hint.
->>>
->>> I think it needs to discuss with original author of IO hint, what is the IO hint
->>> policy when filesystem move block by itself after inode has been released in system.
->>>
->>> Thanks,
->>>
->>>>
->>>> Thank you for comments.
->>>>
->>>>> Thanks,
->>>>>
->>>>>>
->>>>>> file hint      segment type        io hint
->>>>>> ---------      ------------        -------
->>>>>> LIFE_SHORT     HOT_DATA            LIFE_MEDIUM
->>>>>> LIFE_MEDIUM    WARM_DATA           LIFE_NONE
->>>>>> LIFE_LONG      WARM_DATA           LIFE_NONE
->>>>>> LIFE_EXTREME   COLD_DATA           LIFE_EXTREME
->>>>>>
->>>>>> the problem is that LIFE_MEDIUM and LIFE_LONG are converted to 
->>>>>> the same hint, LIFE_NONE. I am not sure that the seperation between 
->>>>>> LIFE_MEDIUM and LIFE_LONG is really needed. Because I guess that the 
->>>>>> difference between them is a little ambigous for users, and if WARM_DATA 
->>>>>> segment has two different hints, it can makes GC non-efficient.
->>>>>>
->>>>>> I wonder your thought about this.
->>>>>>
->>>>>> Thanks.
->>>>>>
->>>>>>> Thanks,
->>>>>>>
->>>>>>>
->>>>>>
->>>>>> ------------------------------------------------------------------------------
->>>>>> Check out the vibrant tech community on one of the world's most
->>>>>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
->>>>>> _______________________________________________
->>>>>> Linux-f2fs-devel mailing list
->>>>>> Linux-f2fs-devel@lists.sourceforge.net
->>>>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>>>>>
->>>>>
->>>>
->>>> .
->>>>
->>>
->>>
->>> ------------------------------------------------------------------------------
->>> Check out the vibrant tech community on one of the world's most
->>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
->>> _______________________________________________
->>> Linux-f2fs-devel mailing list
->>> Linux-f2fs-devel@lists.sourceforge.net
->>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>>
-> 
-> ------------------------------------------------------------------------------
-> Check out the vibrant tech community on one of the world's most
-> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 2212aa3..f25799c 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -539,7 +539,7 @@ int fsck_chk_node_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
+ 
+ 		if (sanity_check_inode(sbi, node_blk))
+ 			goto err;
+-		fsck_chk_inode_blk(sbi, nid, ftype, node_blk, blk_cnt, &ni);
++		fsck_chk_inode_blk(sbi, nid, ftype, node_blk, blk_cnt, &ni, child);
+ 		quota_add_inode_usage(fsck->qctx, nid, &node_blk->i);
+ 	} else {
+ 		switch (ntype) {
+@@ -633,7 +633,7 @@ unmatched:
+ /* start with valid nid and blkaddr */
+ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 		enum FILE_TYPE ftype, struct f2fs_node *node_blk,
+-		u32 *blk_cnt, struct node_info *ni)
++		u32 *blk_cnt, struct node_info *ni, struct child_info *child_d)
+ {
+ 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
+ 	struct child_info child;
+@@ -850,8 +850,20 @@ skip_blkcnt_fix:
+ 	en = malloc(F2FS_NAME_LEN + 1);
+ 	ASSERT(en);
+ 
+-	namelen = convert_encrypted_name(node_blk->i.i_name,
+-					le32_to_cpu(node_blk->i.i_namelen),
++	namelen = le32_to_cpu(node_blk->i.i_namelen);
++	if (namelen > F2FS_NAME_LEN) {
++		ASSERT_MSG("ino: 0x%x has i_namelen: 0x%x, "
++				"but has %d characters for name",
++				nid, namelen, child_d->i_namelen);
++		if (c.fix_on) {
++			FIX_MSG("[0x%x] i_namelen=0x%x -> 0x%x", nid, namelen,
++				child_d->i_namelen);
++			node_blk->i.i_namelen = cpu_to_le32(child_d->i_namelen);
++			need_fix = 1;
++		}
++		namelen = child_d->i_namelen;
++	}
++	namelen = convert_encrypted_name(node_blk->i.i_name, namelen,
+ 					en, file_enc_name(&node_blk->i));
+ 	en[namelen] = '\0';
+ 	if (ftype == F2FS_FT_ORPHAN)
+@@ -1414,9 +1426,10 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, struct child_info *child,
+ 				dentry, max, i, last_blk, enc_name);
+ 
+ 		blk_cnt = 1;
++		child->i_namelen = name_len;
+ 		ret = fsck_chk_node_blk(sbi,
+ 				NULL, le32_to_cpu(dentry[i].ino),
+-				ftype, TYPE_INODE, &blk_cnt, NULL);
++				ftype, TYPE_INODE, &blk_cnt, child);
+ 
+ 		if (ret && c.fix_on) {
+ 			int j;
+diff --git a/fsck/fsck.h b/fsck/fsck.h
+index 0343fbd..d635c5a 100644
+--- a/fsck/fsck.h
++++ b/fsck/fsck.h
+@@ -54,6 +54,7 @@ struct child_info {
+ 	u32 pp_ino;		/*parent parent ino*/
+ 	struct extent_info ei;
+ 	u32 last_blk;
++	u32 i_namelen;  /* dentry namelen */
+ };
+ 
+ struct f2fs_fsck {
+@@ -128,7 +129,7 @@ extern int fsck_chk_node_blk(struct f2fs_sb_info *, struct f2fs_inode *, u32,
+ 		enum FILE_TYPE, enum NODE_TYPE, u32 *,
+ 		struct child_info *);
+ extern void fsck_chk_inode_blk(struct f2fs_sb_info *, u32, enum FILE_TYPE,
+-		struct f2fs_node *, u32 *, struct node_info *);
++		struct f2fs_node *, u32 *, struct node_info *, struct child_info *);
+ extern int fsck_chk_dnode_blk(struct f2fs_sb_info *, struct f2fs_inode *,
+ 		u32, enum FILE_TYPE, struct f2fs_node *, u32 *,
+ 		struct child_info *, struct node_info *);
+-- 
+1.8.5.2
