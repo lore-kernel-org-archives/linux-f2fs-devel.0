@@ -1,111 +1,343 @@
-From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: Storing errors in the XArray
-Date: Mon, 18 Dec 2017 16:27:39 -0800
-Message-ID: <d8390a61-9fd9-79a7-63e9-c5f343e0f339@infradead.org>
-References: <20171206004159.3755-1-willy@infradead.org>
- <20171206004159.3755-9-willy@infradead.org>
- <66ad068b-1973-ca41-7bbf-8a0634cc488d@infradead.org>
- <20171215171012.GA11918@bombadil.infradead.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH v2] f2fs: add an ioctl to disable GC for
+ specific file
+Date: Tue, 19 Dec 2017 14:52:04 -0800
+Message-ID: <20171219225204.GC23445@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20171208051555.76998-1-jaegeuk@kernel.org>
+ <20171208193723.GA87676@jaegeuk-macbookpro.roam.corp.google.com>
+ <ae9a4c6b-f277-b03c-f3cf-ef45a49de22f@huawei.com>
+ <20171214195027.GC35234@jaegeuk-macbookpro.roam.corp.google.com>
+ <a487da24-1744-5a6f-78d5-ea9df3946dcf@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171215171012.GA11918-PfSpb0PWhxZc2C7mugBRk2EX/6BAtgUQ@public.gmane.org>
-Content-Language: en-US
-Sender: linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Matthew Wilcox <willy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Cc: Matthew Wilcox <mawilcox-0li6OtcxBFHby3iVrkZq2A@public.gmane.org>, Ross Zwisler <ross.zwisler-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, Rehas Sachdeva <aquannie-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-xfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+ helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <jaegeuk@kernel.org>) id 1eRQk9-0003I1-9G
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Dec 2017 22:52:13 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eRQk7-0002WA-Nw
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Dec 2017 22:52:13 +0000
+Content-Disposition: inline
+In-Reply-To: <a487da24-1744-5a6f-78d5-ea9df3946dcf@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 12/15/2017 09:10 AM, Matthew Wilcox wrote:
-> On Mon, Dec 11, 2017 at 03:10:22PM -0800, Randy Dunlap wrote:
->>> +The XArray does not support storing :c:func:`IS_ERR` pointers; some
->>> +conflict with data values and others conflict with entries the XArray
->>> +uses for its own purposes.  If you need to store special values which
->>> +cannot be confused with real kernel pointers, the values 4, 8, ... 4092
->>> +are available.
->>
->> or if I know that they values are errno-range values, I can just shift them
->> left by 2 to store them and then shift them right by 2 to use them?
+On 12/18, Chao Yu wrote:
+> On 2017/12/15 3:50, Jaegeuk Kim wrote:
+> > On 12/12, Chao Yu wrote:
+> >> Hi Jaegeuk,
+> >>
+> >> On 2017/12/9 3:37, Jaegeuk Kim wrote:
+> >>> Change log from v1:
+> >>>  - fix bug in error handling of ioctl 
+> >>>
+> >>> >From b905e03d8aad7d25ecaf9bde05411a68d3d2460e Mon Sep 17 00:00:00 2001
+> >>> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>> Date: Thu, 7 Dec 2017 16:25:39 -0800
+> >>> Subject: [PATCH] f2fs: add an ioctl to disable GC for specific file
+> >>>
+> >>> This patch gives a flag to disable GC on given file, which would be useful, when
+> >>> user wants to keep its block map.
+> >>
+> >> Could you add some description about in which scenario userspace application
+> >> can use this ioctl, otherwise than android, other developers can get hint about
+> >> the usage of this interface, maybe later it can be used more wildly. ;)
+> > 
+> > The usecase would be somewhat hacky tho, it looks like 1) building a block map
+> > through fibmap, 2) storing the map in another partition, 3) using the map to
+> > overwrite data contents directly by low-level tools. In that case, we have to
+> > keep its block locations.
 > 
-> On further thought, I like this idea so much, it's worth writing helpers
-> for this usage.  And test-suite (also doubles as a demonstration of how
-> to use it).
-> 
-> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-> index c616e9319c7c..53aa251df57a 100644
-> --- a/include/linux/xarray.h
-> +++ b/include/linux/xarray.h
-> @@ -232,6 +232,39 @@ static inline bool xa_is_value(const void *entry)
->  	return (unsigned long)entry & 1;
->  }
->  
-> +/**
-> + * xa_mk_errno() - Create an XArray entry from an error number.
-> + * @error: Error number to store in XArray.
-> + *
-> + * Return: An entry suitable for storing in the XArray.
-> + */
-> +static inline void *xa_mk_errno(long error)
-> +{
-> +	return (void *)(error << 2);
-> +}
-> +
-> +/**
-> + * xa_to_errno() - Get error number stored in an XArray entry.
-> + * @entry: XArray entry.
-> + *
-> + * Return: The error number stored in the XArray entry.
-> + */
-> +static inline unsigned long xa_to_errno(const void *entry)
-> +{
-> +	return (long)entry >> 2;
-> +}
-> +
-> +/**
-> + * xa_is_errno() - Determine if an entry is an errno.
-> + * @entry: XArray entry.
-> + *
-> + * Return: True if the entry is an errno, false if it is a pointer.
-> + */
-> +static inline bool xa_is_errno(const void *entry)
-> +{
-> +	return (((unsigned long)entry & 3) == 0) && (entry > (void *)-4096);
+> That's so hacky, it will be better to add simple description in comment log. ;)
 
-	Some named mask bits would be ^^^ preferable there.
-#define MAX_ERRNO	4095 // from err.h
-	                                         && (entry >= (void *)-MAX_ERRNO);
+Actually, I don't want to add this kind of hacky example. :P
 
-> +}
-> +
->  /**
->   * xa_is_internal() - Is the entry an internal entry?
->   * @entry: Entry retrieved from the XArray
-> diff --git a/tools/testing/radix-tree/xarray-test.c b/tools/testing/radix-tree/xarray-test.c
-> index 43111786ebdd..b843cedf3988 100644
-> --- a/tools/testing/radix-tree/xarray-test.c
-> +++ b/tools/testing/radix-tree/xarray-test.c
-> @@ -29,7 +29,13 @@ void check_xa_err(struct xarray *xa)
->  	assert(xa_err(xa_store(xa, 1, xa_mk_value(0), GFP_KERNEL)) == 0);
->  	assert(xa_err(xa_store(xa, 1, NULL, 0)) == 0);
->  // kills the test-suite :-(
-> -//     assert(xa_err(xa_store(xa, 0, xa_mk_internal(0), 0)) == -EINVAL);
-> +//	assert(xa_err(xa_store(xa, 0, xa_mk_internal(0), 0)) == -EINVAL);
-> +
-> +	assert(xa_err(xa_store(xa, 0, xa_mk_errno(-ENOMEM), GFP_KERNEL)) == 0);
-> +	assert(xa_err(xa_load(xa, 0)) == 0);
-> +	assert(xa_is_errno(xa_load(xa, 0)) == true);
-> +	assert(xa_to_errno(xa_load(xa, 0)) == -ENOMEM);
-> +	xa_erase(xa, 0);
->  }
->  
->  void check_xa_tag(struct xarray *xa)
+> >>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>> ---
+> >>>  fs/f2fs/f2fs.h          | 17 ++++++++++++++++
+> >>>  fs/f2fs/file.c          | 54 +++++++++++++++++++++++++++++++++++++++++++++++++
+> >>>  fs/f2fs/gc.c            | 11 ++++++++++
+> >>>  fs/f2fs/gc.h            |  2 ++
+> >>>  fs/f2fs/sysfs.c         |  2 ++
+> >>>  include/linux/f2fs_fs.h |  1 +
+> >>>  6 files changed, 87 insertions(+)
+> >>>
+> >>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >>> index 82f1dc345505..dd76cbf02791 100644
+> >>> --- a/fs/f2fs/f2fs.h
+> >>> +++ b/fs/f2fs/f2fs.h
+> >>> @@ -375,6 +375,8 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
+> >>>  #define F2FS_IOC_FSGETXATTR		FS_IOC_FSGETXATTR
+> >>>  #define F2FS_IOC_FSSETXATTR		FS_IOC_FSSETXATTR
+> >>>  
+> >>> +#define F2FS_IOC_SET_DONTMOVE		_IO(F2FS_IOCTL_MAGIC, 13)
+> >>> +
+> >>>  struct f2fs_gc_range {
+> >>>  	u32 sync;
+> >>>  	u64 start;
+> >>> @@ -1129,6 +1131,9 @@ struct f2fs_sb_info {
+> >>>  	/* threshold for converting bg victims for fg */
+> >>>  	u64 fggc_threshold;
+> >>>  
+> >>> +	/* threshold for dontmove gc trials */
+> >>> +	u64 gc_dontmove;
+> >>> +
+> >>>  	/* maximum # of trials to find a victim segment for SSR and GC */
+> >>>  	unsigned int max_victim_search;
+> >>>  
+> >>> @@ -2104,6 +2109,7 @@ enum {
+> >>>  	FI_HOT_DATA,		/* indicate file is hot */
+> >>>  	FI_EXTRA_ATTR,		/* indicate file has extra attribute */
+> >>>  	FI_PROJ_INHERIT,	/* indicate file inherits projectid */
+> >>> +	FI_DONTMOVE,		/* indicate file should not be gced */
+> >>>  };
+> >>>  
+> >>>  static inline void __mark_inode_dirty_flag(struct inode *inode,
+> >>> @@ -2117,6 +2123,7 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
+> >>>  			return;
+> >>>  	case FI_DATA_EXIST:
+> >>>  	case FI_INLINE_DOTS:
+> >>> +	case FI_DONTMOVE:
+> >>>  		f2fs_mark_inode_dirty_sync(inode, true);
+> >>>  	}
+> >>>  }
+> >>> @@ -2225,6 +2232,8 @@ static inline void get_inline_info(struct inode *inode, struct f2fs_inode *ri)
+> >>>  		set_bit(FI_INLINE_DOTS, &fi->flags);
+> >>>  	if (ri->i_inline & F2FS_EXTRA_ATTR)
+> >>>  		set_bit(FI_EXTRA_ATTR, &fi->flags);
+> >>> +	if (ri->i_inline & F2FS_DONTMOVE)
+> >>> +		set_bit(FI_DONTMOVE, &fi->flags);
+> >>>  }
+> >>>  
+> >>>  static inline void set_raw_inline(struct inode *inode, struct f2fs_inode *ri)
+> >>> @@ -2243,6 +2252,8 @@ static inline void set_raw_inline(struct inode *inode, struct f2fs_inode *ri)
+> >>>  		ri->i_inline |= F2FS_INLINE_DOTS;
+> >>>  	if (is_inode_flag_set(inode, FI_EXTRA_ATTR))
+> >>>  		ri->i_inline |= F2FS_EXTRA_ATTR;
+> >>> +	if (is_inode_flag_set(inode, FI_DONTMOVE))
+> >>> +		ri->i_inline |= F2FS_DONTMOVE;
+> >>>  }
+> >>>  
+> >>>  static inline int f2fs_has_extra_attr(struct inode *inode)
+> >>> @@ -2288,6 +2299,11 @@ static inline int f2fs_has_inline_dots(struct inode *inode)
+> >>>  	return is_inode_flag_set(inode, FI_INLINE_DOTS);
+> >>>  }
+> >>>  
+> >>> +static inline bool f2fs_is_dontmove_file(struct inode *inode)
+> >>> +{
+> >>> +	return is_inode_flag_set(inode, FI_DONTMOVE);
+> >>> +}
+> >>> +
+> >>>  static inline bool f2fs_is_atomic_file(struct inode *inode)
+> >>>  {
+> >>>  	return is_inode_flag_set(inode, FI_ATOMIC_FILE);
+> >>> @@ -2503,6 +2519,7 @@ int truncate_hole(struct inode *inode, pgoff_t pg_start, pgoff_t pg_end);
+> >>>  void truncate_data_blocks_range(struct dnode_of_data *dn, int count);
+> >>>  long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
+> >>>  long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+> >>> +int f2fs_dontmove_control(struct inode *inode, bool inc);
+> >>>  
+> >>>  /*
+> >>>   * inode.c
+> >>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> >>> index 1db68f1bcd77..e232f8d91f6f 100644
+> >>> --- a/fs/f2fs/file.c
+> >>> +++ b/fs/f2fs/file.c
+> >>> @@ -2666,6 +2666,57 @@ static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
+> >>>  	return 0;
+> >>>  }
+> >>>  
+> >>> +int f2fs_dontmove_control(struct inode *inode, bool inc)
 > 
+> What's the purpose here? If GC tries to move block belong to unremovable inode,
+> we don't allow to set other inode as unremovable one?
+
+I just wanted to avoid infinite loop to move this during foreground GC case.
+
+> 
+> >>> +{
+> >>> +	struct f2fs_inode_info *fi = F2FS_I(inode);
+> >>> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> >>> +
+> >>> +	/* Use i_current_depth for normal file as a risk signal. */
+> >>> +	if (inc)
+> >>> +		f2fs_i_depth_write(inode, fi->i_current_depth + 1);
+> >>> +
+> >>> +	if (fi->i_current_depth > sbi->gc_dontmove) {
+> 
+> If we want to persist per-inode metadata, what about adding new field in inode
+> layout to store such metadata?
+
+I thought that this would not be such the important field which makes us extend
+inode fields.
 
 Thanks,
--- 
-~Randy
---
-To unsubscribe from this list: send the line "unsubscribe linux-nilfs" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+> 
+> Thanks,
+> 
+> >>> +		f2fs_msg(sbi->sb, KERN_WARNING,
+> >>> +			"%s: Enable GC = ino %lx after %x GC trials\n",
+> >>> +			__func__, inode->i_ino, fi->i_current_depth);
+> >>> +		return -EAGAIN;
+> >>> +	}
+> >>> +	return 0;
+> >>> +}
+> >>> +
+> >>> +static int f2fs_ioc_set_dontmove(struct file *filp)
+> >>> +{
+> >>> +	struct inode *inode = file_inode(filp);
+> >>> +	int ret;
+> >>> +
+> >>> +	if (!inode_owner_or_capable(inode))
+> >>> +		return -EACCES;
+> >>> +
+> >>> +	if (!S_ISREG(inode->i_mode))
+> >>> +		return -EINVAL;
+> >>> +
+> >>> +	if (f2fs_readonly(F2FS_I_SB(inode)->sb))
+> >>> +		return -EROFS;
+> >>> +
+> >>> +	inode_lock(inode);
+> >>> +
+> >>> +	if (f2fs_dontmove_control(inode, false)) {
+> >>> +		ret = -EAGAIN;
+> >>> +		goto out;
+> >>> +	}
+> >>> +
+> >>> +	ret = f2fs_convert_inline_inode(inode);
+> >>> +	if (ret)
+> >>> +		goto out;
+> >>> +
+> >>> +	set_inode_flag(inode, FI_DONTMOVE);
+> >>> +	ret = F2FS_I(inode)->i_current_depth;
+> >>> +	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+> >>> +out:
+> >>> +	inode_unlock(inode);
+> >>> +	return ret;
+> >>> +}
+> >>> +
+> >>>  long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+> >>>  {
+> >>>  	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
+> >>> @@ -2716,6 +2767,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+> >>>  		return f2fs_ioc_fsgetxattr(filp, arg);
+> >>>  	case F2FS_IOC_FSSETXATTR:
+> >>>  		return f2fs_ioc_fssetxattr(filp, arg);
+> >>> +	case F2FS_IOC_SET_DONTMOVE:
+> >>> +		return f2fs_ioc_set_dontmove(filp);
+> >>>  	default:
+> >>>  		return -ENOTTY;
+> >>>  	}
+> >>> @@ -2791,6 +2844,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+> >>>  	case F2FS_IOC_GET_FEATURES:
+> >>>  	case F2FS_IOC_FSGETXATTR:
+> >>>  	case F2FS_IOC_FSSETXATTR:
+> >>> +	case F2FS_IOC_SET_DONTMOVE:
+> >>>  		break;
+> >>>  	default:
+> >>>  		return -ENOIOCTLCMD;
+> >>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> >>> index 5d5bba462f26..263cb0b71ec8 100644
+> >>> --- a/fs/f2fs/gc.c
+> >>> +++ b/fs/f2fs/gc.c
+> >>> @@ -624,6 +624,11 @@ static void move_data_block(struct inode *inode, block_t bidx,
+> >>>  	if (f2fs_is_atomic_file(inode))
+> >>>  		goto out;
+> >>>  
+> >>> +	if (f2fs_is_dontmove_file(inode)) {
+> >>> +		f2fs_dontmove_control(inode, false);
+> >>> +		goto out;
+> >>> +	}
+> >>> +
+> >>>  	set_new_dnode(&dn, inode, NULL, NULL, 0);
+> >>>  	err = get_dnode_of_data(&dn, bidx, LOOKUP_NODE);
+> >>>  	if (err)
+> >>> @@ -720,6 +725,11 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+> >>>  
+> >>>  	if (f2fs_is_atomic_file(inode))
+> >>>  		goto out;
+> >>> +	if (f2fs_is_dontmove_file(inode)) {
+> >>> +		if (gc_type == FG_GC)
+> >>> +			f2fs_dontmove_control(inode, false);
+> >>> +		goto out;
+> >>> +	}
+> >>>  
+> >>>  	if (gc_type == BG_GC) {
+> >>>  		if (PageWriteback(page))
+> >>> @@ -1091,6 +1101,7 @@ void build_gc_manager(struct f2fs_sb_info *sbi)
+> >>>  
+> >>>  	sbi->fggc_threshold = div64_u64((main_count - ovp_count) *
+> >>>  				BLKS_PER_SEC(sbi), (main_count - resv_count));
+> >>> +	sbi->gc_dontmove = DEF_GC_FAILED_DONTMOVE;
+> >>>  
+> >>>  	/* give warm/cold data area from slower device */
+> >>>  	if (sbi->s_ndevs && sbi->segs_per_sec == 1)
+> >>> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+> >>> index 9325191fab2d..3fbb74253e52 100644
+> >>> --- a/fs/f2fs/gc.h
+> >>> +++ b/fs/f2fs/gc.h
+> >>> @@ -20,6 +20,8 @@
+> >>>  #define LIMIT_INVALID_BLOCK	40 /* percentage over total user space */
+> >>>  #define LIMIT_FREE_BLOCK	40 /* percentage over invalid + free space */
+> >>>  
+> >>> +#define DEF_GC_FAILED_DONTMOVE		1024
+> >>> +
+> >>>  /* Search max. number of dirty segments to select a victim segment */
+> >>>  #define DEF_MAX_VICTIM_SEARCH 4096 /* covers 8GB */
+> >>>  
+> >>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> >>> index 93c3364250dd..57dd6660936a 100644
+> >>> --- a/fs/f2fs/sysfs.c
+> >>> +++ b/fs/f2fs/sysfs.c
+> >>> @@ -300,6 +300,7 @@ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
+> >>>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
+> >>>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
+> >>>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
+> >>> +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_dontmove, gc_dontmove);
+> >>>  #ifdef CONFIG_F2FS_FAULT_INJECTION
+> >>>  F2FS_RW_ATTR(FAULT_INFO_RATE, f2fs_fault_info, inject_rate, inject_rate);
+> >>>  F2FS_RW_ATTR(FAULT_INFO_TYPE, f2fs_fault_info, inject_type, inject_type);
+> >>> @@ -348,6 +349,7 @@ static struct attribute *f2fs_attrs[] = {
+> >>>  	ATTR_LIST(idle_interval),
+> >>>  	ATTR_LIST(iostat_enable),
+> >>>  	ATTR_LIST(readdir_ra),
+> >>> +	ATTR_LIST(gc_dontmove),
+> >>>  #ifdef CONFIG_F2FS_FAULT_INJECTION
+> >>>  	ATTR_LIST(inject_rate),
+> >>>  	ATTR_LIST(inject_type),
+> >>> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+> >>> index 43e98d30d2df..fedb2698a8f7 100644
+> >>> --- a/include/linux/f2fs_fs.h
+> >>> +++ b/include/linux/f2fs_fs.h
+> >>> @@ -212,6 +212,7 @@ struct f2fs_extent {
+> >>>  #define F2FS_DATA_EXIST		0x08	/* file inline data exist flag */
+> >>>  #define F2FS_INLINE_DOTS	0x10	/* file having implicit dot dentries */
+> >>>  #define F2FS_EXTRA_ATTR		0x20	/* file having extra attribute */
+> >>> +#define F2FS_DONTMOVE		0x40	/* file should not be move */
+> >>>  
+> >>>  struct f2fs_inode {
+> >>>  	__le16 i_mode;			/* file mode */
+> >>>
+> > 
+> > .
+> > 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
