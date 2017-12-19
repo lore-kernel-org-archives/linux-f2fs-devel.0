@@ -1,116 +1,92 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH v4] fsck.f2fs: check and fix i_namelen to avoid double free
-Date: Mon, 18 Dec 2017 21:25:27 +0800
-Message-ID: <1513603527-163036-1-git-send-email-yunlong.song@huawei.com>
-References: <1513319130-114230-1-git-send-email-yunlong.song@huawei.com>
+From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Subject: Re: Naming of tag operations in the XArray
+Date: Mon, 18 Dec 2017 16:16:11 -0800
+Message-ID: <b337fe8a-ca53-5e00-cf85-a8c385b494cc@infradead.org>
+References: <20171206004159.3755-1-willy@infradead.org>
+ <20171206004159.3755-9-willy@infradead.org>
+ <66ad068b-1973-ca41-7bbf-8a0634cc488d@infradead.org>
+ <20171215042214.GA17444@bombadil.infradead.org>
+ <20171215123417.GA10348@bombadil.infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1513319130-114230-1-git-send-email-yunlong.song@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171215123417.GA10348-PfSpb0PWhxZc2C7mugBRk2EX/6BAtgUQ@public.gmane.org>
+Content-Language: en-US
+Sender: linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Matthew Wilcox <willy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Cc: Matthew Wilcox <mawilcox-0li6OtcxBFHby3iVrkZq2A@public.gmane.org>, Ross Zwisler <ross.zwisler-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, Rehas Sachdeva <aquannie-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-xfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-v1 -> v2: use child_info to pass dentry namelen
-v2 -> v3: check child != NULL to include the F2FS_FT_ORPHAN file type
-v3 -> v4: fix the i_namelen problem of dump.f2fs
+On 12/15/2017 04:34 AM, Matthew Wilcox wrote:
+> On Thu, Dec 14, 2017 at 08:22:14PM -0800, Matthew Wilcox wrote:
+>> On Mon, Dec 11, 2017 at 03:10:22PM -0800, Randy Dunlap wrote:
+>>>> +A freshly-initialised XArray contains a ``NULL`` pointer at every index.
+>>>> +Each non-``NULL`` entry in the array has three bits associated with
+>>>> +it called tags.  Each tag may be flipped on or off independently of
+>>>> +the others.  You can search for entries with a given tag set.
+>>>
+>>> Only tags that are set, or search for entries with some tag(s) cleared?
+>>> Or is that like a mathematical set?
+>>
+>> hmm ...
+>>
+>> "Each tag may be set or cleared independently of the others.  You can
+>> search for entries which have a particular tag set."
+>>
+>> Doesn't completely remove the ambiguity, but I can't think of how to phrase
+>> that better ...
+> 
+> Thinking about this some more ...
+> 
+> At the moment, the pieces of the API which deal with tags look like this:
+> 
+> bool xa_tagged(const struct xarray *, xa_tag_t)
+> bool xa_get_tag(struct xarray *, unsigned long index, xa_tag_t);
+> void xa_set_tag(struct xarray *, unsigned long index, xa_tag_t);
+> void xa_clear_tag(struct xarray *, unsigned long index, xa_tag_t);
+> int xa_get_tagged(struct xarray *, void **dst, unsigned long start,
+>                         unsigned long max, unsigned int n, xa_tag_t);
+> 
+> bool xas_get_tag(const struct xa_state *, xa_tag_t);
+> void xas_set_tag(const struct xa_state *, xa_tag_t);
+> void xas_clear_tag(const struct xa_state *, xa_tag_t);
+> void *xas_find_tag(struct xa_state *, unsigned long max, xa_tag_t);
+> xas_for_each_tag(xas, entry, max, tag) { }
+> 
+> (at some point there will be an xa_for_each_tag too, there just hasn't
+> been a user yet).
+> 
+> I'm always ambivalent about using the word 'get' in an API because it has
+> two common meanings; (increment a refcount) and (return the state).  How
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
----
- fsck/fsck.c | 28 +++++++++++++++++++++++-----
- fsck/fsck.h |  3 ++-
- 2 files changed, 25 insertions(+), 6 deletions(-)
+Yes, I get that.  But you usually wouldn't lock a tag AFAIK.
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 2212aa3..5407cf2 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -539,7 +539,7 @@ int fsck_chk_node_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
- 
- 		if (sanity_check_inode(sbi, node_blk))
- 			goto err;
--		fsck_chk_inode_blk(sbi, nid, ftype, node_blk, blk_cnt, &ni);
-+		fsck_chk_inode_blk(sbi, nid, ftype, node_blk, blk_cnt, &ni, child);
- 		quota_add_inode_usage(fsck->qctx, nid, &node_blk->i);
- 	} else {
- 		switch (ntype) {
-@@ -633,7 +633,7 @@ unmatched:
- /* start with valid nid and blkaddr */
- void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 		enum FILE_TYPE ftype, struct f2fs_node *node_blk,
--		u32 *blk_cnt, struct node_info *ni)
-+		u32 *blk_cnt, struct node_info *ni, struct child_info *child_d)
- {
- 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
- 	struct child_info child;
-@@ -850,8 +850,23 @@ skip_blkcnt_fix:
- 	en = malloc(F2FS_NAME_LEN + 1);
- 	ASSERT(en);
- 
--	namelen = convert_encrypted_name(node_blk->i.i_name,
--					le32_to_cpu(node_blk->i.i_namelen),
-+	namelen = le32_to_cpu(node_blk->i.i_namelen);
-+	if (namelen > F2FS_NAME_LEN) {
-+		if (child_d && child_d->i_namelen <= F2FS_NAME_LEN) {
-+			ASSERT_MSG("ino: 0x%x has i_namelen: 0x%x, "
-+					"but has %d characters for name",
-+					nid, namelen, child_d->i_namelen);
-+			if (c.fix_on) {
-+				FIX_MSG("[0x%x] i_namelen=0x%x -> 0x%x", nid, namelen,
-+					child_d->i_namelen);
-+				node_blk->i.i_namelen = cpu_to_le32(child_d->i_namelen);
-+				need_fix = 1;
-+			}
-+			namelen = child_d->i_namelen;
-+		} else
-+			namelen = F2FS_NAME_LEN;
-+	}
-+	namelen = convert_encrypted_name(node_blk->i.i_name, namelen,
- 					en, file_enc_name(&node_blk->i));
- 	en[namelen] = '\0';
- 	if (ftype == F2FS_FT_ORPHAN)
-@@ -1098,6 +1113,8 @@ int convert_encrypted_name(unsigned char *name, int len,
- 				unsigned char *new, int enc_name)
- {
- 	if (!enc_name) {
-+		if (len > F2FS_NAME_LEN)
-+			len = F2FS_NAME_LEN;
- 		memcpy(new, name, len);
- 		new[len] = 0;
- 		return len;
-@@ -1414,9 +1431,10 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, struct child_info *child,
- 				dentry, max, i, last_blk, enc_name);
- 
- 		blk_cnt = 1;
-+		child->i_namelen = name_len;
- 		ret = fsck_chk_node_blk(sbi,
- 				NULL, le32_to_cpu(dentry[i].ino),
--				ftype, TYPE_INODE, &blk_cnt, NULL);
-+				ftype, TYPE_INODE, &blk_cnt, child);
- 
- 		if (ret && c.fix_on) {
- 			int j;
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index 0343fbd..d635c5a 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -54,6 +54,7 @@ struct child_info {
- 	u32 pp_ino;		/*parent parent ino*/
- 	struct extent_info ei;
- 	u32 last_blk;
-+	u32 i_namelen;  /* dentry namelen */
- };
- 
- struct f2fs_fsck {
-@@ -128,7 +129,7 @@ extern int fsck_chk_node_blk(struct f2fs_sb_info *, struct f2fs_inode *, u32,
- 		enum FILE_TYPE, enum NODE_TYPE, u32 *,
- 		struct child_info *);
- extern void fsck_chk_inode_blk(struct f2fs_sb_info *, u32, enum FILE_TYPE,
--		struct f2fs_node *, u32 *, struct node_info *);
-+		struct f2fs_node *, u32 *, struct node_info *, struct child_info *);
- extern int fsck_chk_dnode_blk(struct f2fs_sb_info *, struct f2fs_inode *,
- 		u32, enum FILE_TYPE, struct f2fs_node *, u32 *,
- 		struct child_info *, struct node_info *);
+> would people feel about these names instead:
+
+I think that the original names are mostly better, except I do like
+xa_select() instead of xa_get_tagged().  But even that doesn't have
+to change.
+
+> bool xa_any_tagged(xa, tag);
+> bool xa_is_tagged(xa, index, tag);
+> void xa_tag(xa, index, tag);
+> void xa_untag(xa, index, tag);
+> int xa_select(xa, dst, start, max, n, tag);
+> 
+> bool xas_is_tagged(xas, tag);
+> void xas_tag(xas, tag);
+> void xas_untag(xas, tag);
+> void *xas_find_tag(xas, max, tag);
+> xas_for_each_tag(xas, entry, max, tag) { }
+> 
+> (the last two are unchanged)
+> 
+
+
 -- 
-1.8.5.2
+~Randy
+--
+To unsubscribe from this list: send the line "unsubscribe linux-nilfs" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
