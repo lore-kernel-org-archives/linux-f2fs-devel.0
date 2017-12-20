@@ -1,192 +1,344 @@
-From: "Gaoxiang (OS)" <gaoxiang25@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 Subject: Re: [f2fs-dev] [PATCH RFC] f2fs: clean up build_sit_entries
-Date: Wed, 20 Dec 2017 05:46:05 +0000
-Message-ID: <9047C53C18267742AB12E43B65C7F9F70BCB74CE@dggemi505-mbs.china.huawei.com>
+Date: Wed, 20 Dec 2017 12:39:03 -0800
+Message-ID: <20171220203903.GB52542@jaegeuk-macbookpro.roam.corp.google.com>
 References: <9047C53C18267742AB12E43B65C7F9F70BCB4020@dggemi505-mbs.china.huawei.com>
  <20171219234046.GF23445@jaegeuk-macbookpro.roam.corp.google.com>
  <9047C53C18267742AB12E43B65C7F9F70BCB6FC3@dggemi505-mbs.china.huawei.com>
  <20171220023122.GA35629@jaegeuk-macbookpro.roam.corp.google.com>
+ <9047C53C18267742AB12E43B65C7F9F70BCB70CF@dggemi505-mbs.china.huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20171220023122.GA35629@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: zh-CN
-Content-ID: <11EAB4670CAC944F958CB7D010AA9B08@huawei.com>
+Content-Disposition: inline
+In-Reply-To: <9047C53C18267742AB12E43B65C7F9F70BCB70CF@dggemi505-mbs.china.huawei.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
+To: "Gaoxiang (OS)" <gaoxiang25@huawei.com>
 Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "Duwei (Device OS)" <weidu.du@huawei.com>, "chao@kernel.org" <chao@kernel.org>, "Yuchao (T)" <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGkgSmFlZ2V1aywNCg0KRm9yIGNvbXBpbGVyIGxvb3Agb3B0aW1pemF0aW9uLCAgcmVmZXIgdG8g
-ICJsb29wIHVuc3dpdGNoaW5nIiBzZWN0aW9uIGluIA0KaHR0cHM6Ly96aHVhbmxhbi56aGlodS5j
-b20vcC8yMzMyNjc3NiAgIChDaGluZXNlIHN0YWNrIG92ZXJmbG93LWxpa2Ugd2Vic2l0ZSkNCmh0
-dHBzOi8vdHJhbnNsYXRlLmdvb2dsZS5jb20vdHJhbnNsYXRlP3NsPXpoLUNOJnRsPWVuJmpzPXkm
-cHJldj1fdCZobD16aC1DTiZpZT1VVEYtOCZ1PWh0dHBzJTNBJTJGJTJGemh1YW5sYW4uemhpaHUu
-Y29tJTJGcCUyRjIzMzI2Nzc2JmVkaXQtdGV4dD0mYWN0PXVybA0KDQpvcg0KDQpodHRwczovL2Vu
-Lndpa2lwZWRpYS5vcmcvd2lraS9Mb29wX3Vuc3dpdGNoaW5nDQpodHRwOi8vd3d3LmNvbXBpbGVy
-b3B0aW1pemF0aW9ucy5jb20vY2F0ZWdvcnkvdW5zd2l0Y2hpbmcuaHRtDQpodHRwczovL2djYy5n
-bnUub3JnL29ubGluZWRvY3MvZ2NjLTQuNC4yL2djYy9PcHRpbWl6ZS1PcHRpb25zLmh0bWwNCi1P
-Mw0KT3B0aW1pemUgeWV0IG1vcmUuIC1PMyB0dXJucyBvbiBhbGwgb3B0aW1pemF0aW9ucyBzcGVj
-aWZpZWQgYnkgLU8yIGFuZCBhbHNvIHR1cm5zIG9uIHRoZSAtZmlubGluZS1mdW5jdGlvbnMsIC1m
-dW5zd2l0Y2gtbG9vcHMsIC1mcHJlZGljdGl2ZS1jb21tb25pbmcsIC1mZ2NzZS1hZnRlci1yZWxv
-YWQgYW5kIC1mdHJlZS12ZWN0b3JpemUgb3B0aW9ucy4NCg0KRm9yIGJyYW5jaCBwcmVkaWN0b3Is
-IEkgdGhpbmsgaXQgaXMgbXVjaCBlYXNpZXIgdG8gcHJlZGljdCBhbmQgYW5hbHl6ZSB0byBwYXJh
-bGxlbGl6ZQ0Kd2hpbGUgKEEpewkJLy8gb25seSBvbmUgbWlzcw0KCS4uLg0KfQ0KDQppZiAoQikg
-ew0KCXdoaWxlIChBKSB7CS8vIG9ubHkgb25lIG1pc3MNCgkJLi4uDQoJfQ0KfQ0KDQpUaGFuDQoN
-CndoaWxlIChBKSB7DQoJLi4uDQoJaWYgKEIpIHsJCS8vIEEtPkItPkEtPkIgY3Jvc3NpbmcNCgkJ
-Li4uDQoJfQ0KfQ0KDQpGb3IgbW9zdCBvZiBwcm9jZXNzb3JzLg0KDQpPbiAyMDE3LzEyLzIwIDEw
-OjMxLCBKYWVnZXVrIEtpbSB3cm90ZToNCj4gT24gMTIvMjAsIEdhb3hpYW5nIChPUykgd3JvdGU6
-DQo+PiBIaSBKYWVnZXVrLA0KPj4NCj4+IE9uIDIwMTcvMTIvMjAgNzo0MCwgSmFlZ2V1ayBLaW0g
-d3JvdGU6DQo+Pj4gT24gMTIvMTcsIGdhb3hpYW5nIChQKSB3cm90ZToNCj4+Pj4gY2xlYW4gdXAg
-c29tZSByZWR1bmRhbnQgcmVwZWF0IGNvZGUgaW4gYnVpbGRfc2l0X2VudHJpZXMNCj4+Pj4gYW5k
-IHNlcGVyYXRlIHNvbWUgbG9naWMgaW50byBuZXcgZnVuY3Rpb25zOg0KPj4+PiAgICAtIGJ1aWxk
-X2Rpc2NhcmRfZW50cmllcw0KPj4+PiAgICAtIGJ1aWxkX3NlY19lbnRyaWVzDQo+Pj4NCj4+PiBU
-aGlzIHBhdGNoIG1ha2VzIGFub3RoZXIgYmlnIGxvb3AgcmVkdW5kYW50bHk/DQo+Pj4NCj4+ICJj
-b25kaXRpb24gJiBqdW1wIiBpcyB0aGUgZnVuZGFtZW50YWwgb2YgImlmIiBhbmQgbG9vcC4NCj4+
-IEluIHRoZSB3b3JzdCBjYXNlLCBib3RoIGYyZnNfZGlzY2FyZF9lbihzYmkpIGFuZCBzYmktPnNl
-Z3NfcGVyX3NlYyA+IDENCj4+IGFyZSB0cnVlLCBhbmQgSSB0aGluaywgd2UgaGF2ZToNCj4+IC0g
-dGhlIG9yaWdpbmFsIGFwcHJvYWNoOg0KPj4gCU1BSU5fU0VHUyAgIDwtLSBsb29wIGNvbmRpdGlv
-bg0KPj4gCU1BSU5fU0VHUyAgIDwtLSBmMmZzX2Rpc2NhcmRfZW4oc2JpKQ0KPj4gCU1BSU5fU0VH
-UyAgIDwtLSBzYmktPnNlZ3NfcGVyX3NlYyA+IDENCj4+DQo+PiAJc2l0c19pbl9jdXJzdW0oam91
-cm5hbCkgPC0tIGxvb3BfY29uZGl0aW9uDQo+PiAJc2l0c19pbl9jdXJzdW0oam91cm5hbCkgPC0t
-IGYyZnNfZGlzY2FyZF9lbihzYmkpDQo+PiAJc2l0c19pbl9jdXJzdW0oam91cm5hbCkgPC0tIHNi
-aS0+c2Vnc19wZXJfc2VjID4gMQ0KPj4gICAgICBpdCB0YWtlcyBhYm91dCAzKihNQUlOX1NFR1Mg
-KyBzaXRzX2luX2N1cnN1bShqb3VybmFsKSkganVtcHMgZWZmb3J0Lg0KPj4gLSB0aGlzIHBhdGNo
-Og0KPj4gCU1BSU5fU0VHUyAgIDwtLSBsb29wIGNvbmRpdGlvbg0KPj4gCXNpdHNfaW5fY3Vyc3Vt
-KGpvdXJuYWwpIDwtLSBsb29wX2NvbmRpdGlvbg0KPj4NCj4+IAlNQUlOX1NFR1MgICA8LS0gZjJm
-c19kaXNjYXJkX2VuKHNiaSkNCj4+IAlNQUlOX1NFR1MgICA8LS0gc2JpLT5zZWdzX3Blcl9zZWMg
-PiAxDQo+PiAgICAgIGl0IHRha2VzIGFib3VydCAzKk1BSU5fU0VHUyArIHNpdHNfaW5fY3Vyc3Vt
-KGpvdXJuYWwpIGp1bXBzIGVmZm9ydC4NCj4+DQo+PiBhbmQgaW4gdGhlIGJlc3QgY2FzZSwgYm90
-aCBmMmZzX2Rpc2NhcmRfZW4oc2JpKSBhbmQgc2JpLT5zZWdzX3Blcl9zZWMgPg0KPj4gMSBhcmUg
-ZmFsc2UsIGFuZCB3ZSBoYXZlOg0KPj4gLSB0aGlzIHBhdGNoDQo+PiAJTUFJTl9TRUdTICAgPC0t
-IGxvb3AgY29uZGl0aW9uDQo+Pg0KPj4gCXNpdHNfaW5fY3Vyc3VtKGpvdXJuYWwpIDwtLSBsb29w
-X2NvbmRpdGlvbg0KPj4gU2VlDQo+PiBodHRwczovL3N0YWNrb3ZlcmZsb3cuY29tL3F1ZXN0aW9u
-cy8xNDYyNzEwL2Nhbi1jLWNvbXBpbGVycy1vcHRpbWl6ZS1pZi1zdGF0ZW1lbnRzLWluc2lkZS1m
-b3ItbG9vcHMNCj4gDQo+IEludGVyZXN0aW5nIQ0KPiANCj4gV2hhdCBJIGNhbiB0aGluayBvZiB0
-aGUgd29yc3QgY2FzZSBsb29rcyBsaWtlOg0KPiANCj4gSW4gY3VycmVudCBjb2RlLA0KPiAJZm9y
-IChOKSB7DQo+IAkJZG9fc29tZXRoaW5nOw0KPiAJCWlmIChmMmZzX2Rpc2NhcmRfZW4oKSkNCj4g
-CQkJZG8gX3NvbWV0aGluZzsNCj4gCQlpZiAoc2JpLT5zZWdzX3Blcl9zZWMgPiAxKQ0KPiAJCQlk
-b19zb21ldGhpbmc7DQo+IAl9DQo+IAlmb3IgKHNpdHNfaW5fY3Vyc3VtKCkpIHsNCj4gCQlkb19z
-b21ldGhpbmc7DQo+IAkJaWYgKGYyZnNfZGlzY2FyZF9lbigpKQ0KPiAJCQlkbyBfc29tZXRoaW5n
-Ow0KPiAJCWlmIChzYmktPnNlZ3NfcGVyX3NlYyA+IDEpDQo+IAkJCWRvX3NvbWV0aGluZzsNCj4g
-CX0NCj4gPT4gTyhOICsgc2l0c19pbl9jdXJzdW0oKSkNCg0KSW4gdGhlIHdvcnN0IGNhc2UgSXRz
-IDMoMSAtLSBleGl0IGNvbmRpdGlvbiA8IE1BSU5fU0VHLCAyIC0tICBmMmZzX2Rpc2NhcmRfZW4o
-KSwgMyAtLSANCnNiaS0+c2Vnc19wZXJfc2VjID4gMSkgKk4gKyAzKnNpdHNfaW5fY3Vyc3VtKCkg
-aWYgY29uZGl0aW9uICYganVtcCANCmluc3R1Y3Rpb25zIGF0IHJ1bnRpbWUuDQoNCklmIHdlIHVz
-ZSBCaWcgTyBub3Rpb24sIHllcyBJIHRoaW5rIE8oTiArIHNpdHNfaW5fY3Vyc3VtKCkpDQoNCj4g
-DQo+IE9uY2UgY29tcGlsZXIgdW5yb2xsZWQgdGhlIGxvb3AsIHdlIGNhbiBleHBlY3QgbW9zdCBv
-ZiBqdW1wcyBjb3VsZCBiZSBoaXQgYnkNCj4gYnJhbmNoIHByZWRpY3Rvciwgc2luY2UgdGhlIGxv
-b3AgZG9lcyBub3QgaGF2ZSBtYW55IGJyYW5jaGVzLg0KDQpUaGUgY3VycmVudCBjb2RlLCBpZiB0
-aGUgY29tcGlsZXIgZGVjaWRlcyB0byB1bnJvbGwgdGhlIGxvb3AsIGl0IGNvdWxkIHVucm9sbCBp
-dCBpbnRvLCBJIGd1ZXNzDQogIAlmb3IgKE4pIHsNCiAgCQlkb19zb21ldGhpbmc7DQoJfQ0KCWlm
-IChmMmZzX2Rpc2NhcmRfZW4oKSkgew0KCQlmb3IoTikgew0KICAJCQlkbyBfc29tZXRoaW5nOw0K
-CQl9DQoJfQ0KCWlmIChzYmktPnNlZ3NfcGVyX3NlYyA+IDEpIHsNCgkJZm9yKE4pIHsNCgkJCWRv
-X3NvbWV0aGluZzsNCgkJfQ0KCX0NCgkuLi4NCgkvKiBleHRyYSAqLw0KCWZvciAoc2l0c19pbl9j
-dXJzdW0oKSkgew0KCQlkb19zb21ldGhpbmc7DQoJfQ0KCWlmIChmMmZzX2Rpc2NhcmRfZW4oKSkg
-ew0KCQlmb3IgKHNpdHNfaW5fY3Vyc3VtKCkpIHsNCgkJCWRvIF9zb21ldGhpbmc7DQoJCX0NCgl9
-DQoJaWYgKHNiaS0+c2Vnc19wZXJfc2VjID4gMSkgew0KCQlmb3IgKHNpdHNfaW5fY3Vyc3VtKCkp
-IHsNCgkJCWRvX3NvbWV0aGluZzsNCgkJfQ0KICAgICAgICAJfQ0KVGFraW5nIGJyYW5jaCBwcmVk
-aWN0b3IgaW50byBjb25zaWRlcmF0aW9uLCBJIHRoaW5rIHRoZSB1bnJvbGxlZCBvbmUgaXMgbW9y
-ZSBlYXNpZXIgdG8gcHJlZGljdA0KdGhhbiB0aGUgY3VycmVudCByb2xsZWQgb25lLiAoYXMgeW91
-IHNheSwgdGhlIGN1cnJlbnQgaGFzIG1vcmUgY29uZGl0aW9ucyBpbiB0aGUgbG9vcA0KYW5kIGEg
-ZXhpdCBjb25kaXRpb24gdG8gcHJlZGljdCkNCg0KPiANCj4gSW4gdGhlIHBhdGNoLA0KPiAJZm9y
-IChOKQ0KPiAJCWRvX3NvbWV0aGluZzsNCj4gCWZvciAoc2l0c19pbl9jdXJzdW0oKSkNCj4gCQlk
-b19zb21ldGhpbmc7DQo+IA0KPiAJaWYgKGYyZnNfZGlzY2FyZF9lbigpKSB7DQo+IAkJZm9yIChO
-KQ0KPiAJCQlkb19zb21ldGhpbmc7DQo+IAl9DQo+IAlpZiAoc2JpLT5zZWdzX3Blcl9zZWMgPiAx
-KSB7DQo+IAkJZm9yIChOKQ0KPiAJCQlkb19zb21ldGhpbmc7DQo+IAl9DQo+ID0+IE8oMypOICsg
-c2l0c19pbl9jdXJzdW0oKSkNCg0KSWYgd2UgdXNlIEJpZyBPIG5vdGlvbiwgSSB0aGluayBPKE4g
-KyBzaXRzX2luX2N1cnN1bSgpKSB0b28uDQoNCg0KPiANCj4gQlRXLCBidWlsZF9kaXNjYXJkX2Vu
-dHJpZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpKSBpcyBtb3JlIGxpa2VseSB0byBzcGxpdA0K
-PiB0aGUgbG9vcHMsIGFzIHlvdSBkZXNjcmliZS4NCj4gDQo+IEluIGJ1aWxkX2Rpc2NhcmRfZW50
-cmllcygpLA0KPiAJZm9yIChOKSB7DQo+IAkJaWYgKENQX1RSSU1NRURfRkxBRykNCj4gCQkJZG9f
-c29tZXRoaW5nOw0KPiAJCWVsc2UNCj4gCQkJZG9fc2VtZXRoaW5nX2Vsc2U7DQo+IAl9DQo+IFRo
-YW5rcywNCj4gDQoNCkkgdGhpbmsgc28sIHlldCBDUF9UUklNTUVEX0ZMQUcgY29tZXMgZnJvbSBh
-IGZ1bmN0aW9uIGFyZ3VtZW50LCBzbyBJIHRoaW5rIGNvbXBpbGVyDQpjYW5ub3QgZGVjaWRlIHdo
-ZXRoZXIgaXQgaXMgY29uc3RhbnQuDQoNCkkgdGhpbmsgaWYgd2UgY291bnQgdGhlIHJ1bnRpbWUg
-Y29uZGl0aW9uICYganVtcCBpbnN0cnVjdGlvbiBhdCBydW50aW1lLiANCnRoZSB1bnJvbGxzIGFi
-b3ZlIGFyZSBiZW5lZmljaWFsLCBJIHRoaW5rLg0KDQpUaGFua3MuDQoNCj4+DQo+PiBJbiBhZGR0
-aW9uLCB0aGlzIGFwcHJvYWNoIGlzIGVhc2llciB0byByZWFkIHRoYW4gdGhlIG9yaWdpbmFsDQo+
-PiBvbmUsIHNvIHNwbGl0dGluZyB0aGUgbG9vcCB3b3VsZCBiZSBiZW5lZmljaWFsLg0KPj4NCj4+
-IFRoYW5rcw0KPj4NCj4+Pj4NCj4+Pj4gTm90ZSB0aGF0ICJpZiAoZjJmc19kaXNjYXJkX2VuKHNi
-aSkpIiBhbmQgImlmIChzYmktPnNlZ3NfcGVyX3NlYyA+IDEpIg0KPj4+PiBhcmUgYWxsIHRha2Vu
-IG91dCBvZiB0aGUgbG9vcHMgdGhleSBhcmUgdW5jaGFuZ2FibGUuDQo+Pj4+DQo+Pj4+IFNpZ25l
-ZC1vZmYtYnk6IEdhbyBYaWFuZyA8Z2FveGlhbmcyNUBodWF3ZWkuY29tPg0KPj4+PiAtLS0NCj4+
-Pj4gICAgZnMvZjJmcy9zZWdtZW50LmMgfCA4MCArKysrKysrKysrKysrKysrKysrKysrKysrLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+Pj4+ICAgIDEgZmlsZSBjaGFuZ2VkLCAzNyBp
-bnNlcnRpb25zKCspLCA0MyBkZWxldGlvbnMoLSkNCj4+Pj4NCj4+Pj4gZGlmZiAtLWdpdCBhL2Zz
-L2YyZnMvc2VnbWVudC5jIGIvZnMvZjJmcy9zZWdtZW50LmMNCj4+Pj4gaW5kZXggNDBlMWQyMC4u
-YmNkOGE0MCAxMDA2NDQNCj4+Pj4gLS0tIGEvZnMvZjJmcy9zZWdtZW50LmMNCj4+Pj4gKysrIGIv
-ZnMvZjJmcy9zZWdtZW50LmMNCj4+Pj4gQEAgLTM0NzYsMTIgKzM0NzYsMzkgQEAgc3RhdGljIGlu
-dCBidWlsZF9jdXJzZWcoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpKQ0KPj4+PiAgICAJcmV0dXJu
-IHJlc3RvcmVfY3Vyc2VnX3N1bW1hcmllcyhzYmkpOw0KPj4+PiAgICB9DQo+Pj4+ICAgIA0KPj4+
-PiArc3RhdGljIHZvaWQgYnVpbGRfZGlzY2FyZF9lbnRyaWVzKHN0cnVjdCBmMmZzX3NiX2luZm8g
-KnNiaSkNCj4+Pj4gK3sNCj4+Pj4gKwl1bnNpZ25lZCBzZWdubzsNCj4+Pj4gKw0KPj4+PiArCWZv
-ciAoc2Vnbm8gPSAwOyBzZWdubyA8IE1BSU5fU0VHUyhzYmkpOyArK3NlZ25vKSB7DQo+Pj4+ICsJ
-CXN0cnVjdCBzZWdfZW50cnkgKnNlID0gZ2V0X3NlZ19lbnRyeShzYmksIHNlZ25vKTsNCj4+Pj4g
-Kw0KPj4+PiArCQlpZiAoaXNfc2V0X2NrcHRfZmxhZ3Moc2JpLCBDUF9UUklNTUVEX0ZMQUcpKQ0K
-Pj4+PiArCQkJbWVtc2V0KHNlLT5kaXNjYXJkX21hcCwgMHhmZiwgU0lUX1ZCTE9DS19NQVBfU0la
-RSk7DQo+Pj4+ICsJCWVsc2Ugew0KPj4+PiArCQkJbWVtY3B5KHNlLT5kaXNjYXJkX21hcCwgc2Ut
-PmN1cl92YWxpZF9tYXAsDQo+Pj4+ICsJCQkJU0lUX1ZCTE9DS19NQVBfU0laRSk7DQo+Pj4+ICsN
-Cj4+Pj4gKwkJCXNiaS0+ZGlzY2FyZF9ibGtzICs9IHNiaS0+YmxvY2tzX3Blcl9zZWcgLQ0KPj4+
-PiArCQkJCXNlLT52YWxpZF9ibG9ja3M7DQo+Pj4+ICsJCX0NCj4+Pj4gKwl9DQo+Pj4+ICt9DQo+
-Pj4+ICsNCj4+Pj4gK3N0YXRpYyB2b2lkIGJ1aWxkX3NlY19lbnRyaWVzKHN0cnVjdCBmMmZzX3Ni
-X2luZm8gKnNiaSkNCj4+Pj4gK3sNCj4+Pj4gKwl1bnNpZ25lZCBzZWdubzsNCj4+Pj4gKw0KPj4+
-PiArCWZvciAoc2Vnbm8gPSAwOyBzZWdubyA8IE1BSU5fU0VHUyhzYmkpOyArK3NlZ25vKQ0KPj4+
-PiArCQlnZXRfc2VjX2VudHJ5KHNiaSwgc2Vnbm8pLT52YWxpZF9ibG9ja3MgKz0NCj4+Pj4gKwkJ
-CWdldF9zZWdfZW50cnkoc2JpLCBzZWdubyktPnZhbGlkX2Jsb2NrczsNCj4+Pj4gK30NCj4+Pj4g
-Kw0KPj4+PiAgICBzdGF0aWMgdm9pZCBidWlsZF9zaXRfZW50cmllcyhzdHJ1Y3QgZjJmc19zYl9p
-bmZvICpzYmkpDQo+Pj4+ICAgIHsNCj4+Pj4gICAgCXN0cnVjdCBzaXRfaW5mbyAqc2l0X2kgPSBT
-SVRfSShzYmkpOw0KPj4+PiAgICAJc3RydWN0IGN1cnNlZ19pbmZvICpjdXJzZWcgPSBDVVJTRUdf
-SShzYmksIENVUlNFR19DT0xEX0RBVEEpOw0KPj4+PiAgICAJc3RydWN0IGYyZnNfam91cm5hbCAq
-am91cm5hbCA9IGN1cnNlZy0+am91cm5hbDsNCj4+Pj4gLQlzdHJ1Y3Qgc2VnX2VudHJ5ICpzZTsN
-Cj4+Pj4gICAgCXN0cnVjdCBmMmZzX3NpdF9lbnRyeSBzaXQ7DQo+Pj4+ICAgIAlpbnQgc2l0X2Js
-a19jbnQgPSBTSVRfQkxLX0NOVChzYmkpOw0KPj4+PiAgICAJdW5zaWduZWQgaW50IGksIHN0YXJ0
-LCBlbmQ7DQo+Pj4+IEBAIC0zNDk4LDY3ICszNTI1LDM0IEBAIHN0YXRpYyB2b2lkIGJ1aWxkX3Np
-dF9lbnRyaWVzKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSkNCj4+Pj4gICAgCQkJc3RydWN0IGYy
-ZnNfc2l0X2Jsb2NrICpzaXRfYmxrOw0KPj4+PiAgICAJCQlzdHJ1Y3QgcGFnZSAqcGFnZTsNCj4+
-Pj4gICAgDQo+Pj4+IC0JCQlzZSA9ICZzaXRfaS0+c2VudHJpZXNbc3RhcnRdOw0KPj4+PiAgICAJ
-CQlwYWdlID0gZ2V0X2N1cnJlbnRfc2l0X3BhZ2Uoc2JpLCBzdGFydCk7DQo+Pj4+ICAgIAkJCXNp
-dF9ibGsgPSAoc3RydWN0IGYyZnNfc2l0X2Jsb2NrICopcGFnZV9hZGRyZXNzKHBhZ2UpOw0KPj4+
-PiAgICAJCQlzaXQgPSBzaXRfYmxrLT5lbnRyaWVzW1NJVF9FTlRSWV9PRkZTRVQoc2l0X2ksIHN0
-YXJ0KV07DQo+Pj4+ICAgIAkJCWYyZnNfcHV0X3BhZ2UocGFnZSwgMSk7DQo+Pj4+ICAgIA0KPj4+
-PiAgICAJCQljaGVja19ibG9ja19jb3VudChzYmksIHN0YXJ0LCAmc2l0KTsNCj4+Pj4gLQkJCXNl
-Z19pbmZvX2Zyb21fcmF3X3NpdChzZSwgJnNpdCk7DQo+Pj4+IC0NCj4+Pj4gLQkJCS8qIGJ1aWxk
-IGRpc2NhcmQgbWFwIG9ubHkgb25lIHRpbWUgKi8NCj4+Pj4gLQkJCWlmIChmMmZzX2Rpc2NhcmRf
-ZW4oc2JpKSkgew0KPj4+PiAtCQkJCWlmIChpc19zZXRfY2twdF9mbGFncyhzYmksIENQX1RSSU1N
-RURfRkxBRykpIHsNCj4+Pj4gLQkJCQkJbWVtc2V0KHNlLT5kaXNjYXJkX21hcCwgMHhmZiwNCj4+
-Pj4gLQkJCQkJCVNJVF9WQkxPQ0tfTUFQX1NJWkUpOw0KPj4+PiAtCQkJCX0gZWxzZSB7DQo+Pj4+
-IC0JCQkJCW1lbWNweShzZS0+ZGlzY2FyZF9tYXAsDQo+Pj4+IC0JCQkJCQlzZS0+Y3VyX3ZhbGlk
-X21hcCwNCj4+Pj4gLQkJCQkJCVNJVF9WQkxPQ0tfTUFQX1NJWkUpOw0KPj4+PiAtCQkJCQlzYmkt
-PmRpc2NhcmRfYmxrcyArPQ0KPj4+PiAtCQkJCQkJc2JpLT5ibG9ja3NfcGVyX3NlZyAtDQo+Pj4+
-IC0JCQkJCQlzZS0+dmFsaWRfYmxvY2tzOw0KPj4+PiAtCQkJCX0NCj4+Pj4gLQkJCX0NCj4+Pj4g
-ICAgDQo+Pj4+IC0JCQlpZiAoc2JpLT5zZWdzX3Blcl9zZWMgPiAxKQ0KPj4+PiAtCQkJCWdldF9z
-ZWNfZW50cnkoc2JpLCBzdGFydCktPnZhbGlkX2Jsb2NrcyArPQ0KPj4+PiAtCQkJCQkJCXNlLT52
-YWxpZF9ibG9ja3M7DQo+Pj4+ICsJCQlzZWdfaW5mb19mcm9tX3Jhd19zaXQoJnNpdF9pLT5zZW50
-cmllc1tzdGFydF0sICZzaXQpOw0KPj4+PiAgICAJCX0NCj4+Pj4gICAgCQlzdGFydF9ibGsgKz0g
-cmVhZGVkOw0KPj4+PiAgICAJfSB3aGlsZSAoc3RhcnRfYmxrIDwgc2l0X2Jsa19jbnQpOw0KPj4+
-PiAgICANCj4+Pj4gICAgCWRvd25fcmVhZCgmY3Vyc2VnLT5qb3VybmFsX3J3c2VtKTsNCj4+Pj4g
-ICAgCWZvciAoaSA9IDA7IGkgPCBzaXRzX2luX2N1cnN1bShqb3VybmFsKTsgaSsrKSB7DQo+Pj4+
-IC0JCXVuc2lnbmVkIGludCBvbGRfdmFsaWRfYmxvY2tzOw0KPj4+PiAtDQo+Pj4+ICAgIAkJc3Rh
-cnQgPSBsZTMyX3RvX2NwdShzZWdub19pbl9qb3VybmFsKGpvdXJuYWwsIGkpKTsNCj4+Pj4gLQkJ
-c2UgPSAmc2l0X2ktPnNlbnRyaWVzW3N0YXJ0XTsNCj4+Pj4gICAgCQlzaXQgPSBzaXRfaW5fam91
-cm5hbChqb3VybmFsLCBpKTsNCj4+Pj4gICAgDQo+Pj4+IC0JCW9sZF92YWxpZF9ibG9ja3MgPSBz
-ZS0+dmFsaWRfYmxvY2tzOw0KPj4+PiAtDQo+Pj4+ICAgIAkJY2hlY2tfYmxvY2tfY291bnQoc2Jp
-LCBzdGFydCwgJnNpdCk7DQo+Pj4+IC0JCXNlZ19pbmZvX2Zyb21fcmF3X3NpdChzZSwgJnNpdCk7
-DQo+Pj4+IC0NCj4+Pj4gLQkJaWYgKGYyZnNfZGlzY2FyZF9lbihzYmkpKSB7DQo+Pj4+IC0JCQlp
-ZiAoaXNfc2V0X2NrcHRfZmxhZ3Moc2JpLCBDUF9UUklNTUVEX0ZMQUcpKSB7DQo+Pj4+IC0JCQkJ
-bWVtc2V0KHNlLT5kaXNjYXJkX21hcCwgMHhmZiwNCj4+Pj4gLQkJCQkJCQlTSVRfVkJMT0NLX01B
-UF9TSVpFKTsNCj4+Pj4gLQkJCX0gZWxzZSB7DQo+Pj4+IC0JCQkJbWVtY3B5KHNlLT5kaXNjYXJk
-X21hcCwgc2UtPmN1cl92YWxpZF9tYXAsDQo+Pj4+IC0JCQkJCQkJU0lUX1ZCTE9DS19NQVBfU0la
-RSk7DQo+Pj4+IC0JCQkJc2JpLT5kaXNjYXJkX2Jsa3MgKz0gb2xkX3ZhbGlkX2Jsb2NrcyAtDQo+
-Pj4+IC0JCQkJCQkJc2UtPnZhbGlkX2Jsb2NrczsNCj4+Pj4gLQkJCX0NCj4+Pj4gLQkJfQ0KPj4+
-PiAtDQo+Pj4+IC0JCWlmIChzYmktPnNlZ3NfcGVyX3NlYyA+IDEpDQo+Pj4+IC0JCQlnZXRfc2Vj
-X2VudHJ5KHNiaSwgc3RhcnQpLT52YWxpZF9ibG9ja3MgKz0NCj4+Pj4gLQkJCQlzZS0+dmFsaWRf
-YmxvY2tzIC0gb2xkX3ZhbGlkX2Jsb2NrczsNCj4+Pj4gKwkJc2VnX2luZm9fZnJvbV9yYXdfc2l0
-KCZzaXRfaS0+c2VudHJpZXNbc3RhcnRdLCAmc2l0KTsNCj4+Pj4gICAgCX0NCj4+Pj4gICAgCXVw
-X3JlYWQoJmN1cnNlZy0+am91cm5hbF9yd3NlbSk7DQo+Pj4+ICsNCj4+Pj4gKwkvKiBidWlsZCBk
-aXNjYXJkIG1hcCBvbmx5IG9uZSB0aW1lICovDQo+Pj4+ICsJaWYgKGYyZnNfZGlzY2FyZF9lbihz
-YmkpKQ0KPj4+PiArCQlidWlsZF9kaXNjYXJkX2VudHJpZXMoc2JpKTsNCj4+Pj4gKw0KPj4+PiAr
-CWlmIChzYmktPnNlZ3NfcGVyX3NlYyA+IDEpDQo+Pj4+ICsJCWJ1aWxkX3NlY19lbnRyaWVzKHNi
-aSk7DQo+Pj4+ICAgIH0NCj4+Pj4gICAgDQo+Pj4+ICAgIHN0YXRpYyB2b2lkIGluaXRfZnJlZV9z
-ZWdtYXAoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpKQ0KPj4+PiAtLSANCj4+Pj4gMi4xLjQNCg==
+On 12/20, Gaoxiang (OS) wrote:
+> Hi Jaegeuk,
+> 
+> On 2017/12/20 10:31, Jaegeuk Kim wrote:
+> > On 12/20, Gaoxiang (OS) wrote:
+> >> Hi Jaegeuk,
+> >>
+> >> On 2017/12/20 7:40, Jaegeuk Kim wrote:
+> >>> On 12/17, gaoxiang (P) wrote:
+> >>>> clean up some redundant repeat code in build_sit_entries
+> >>>> and seperate some logic into new functions:
+> >>>>    - build_discard_entries
+> >>>>    - build_sec_entries
+> >>>
+> >>> This patch makes another big loop redundantly?
+> >>>
+> >> "condition & jump" is the fundamental of "if" and loop.
+> >> In the worst case, both f2fs_discard_en(sbi) and sbi->segs_per_sec > 1
+> >> are true, and I think, we have:
+> >> - the original approach:
+> >> 	MAIN_SEGS   <-- loop condition
+> >> 	MAIN_SEGS   <-- f2fs_discard_en(sbi)
+> >> 	MAIN_SEGS   <-- sbi->segs_per_sec > 1
+> >>
+> >> 	sits_in_cursum(journal) <-- loop_condition
+> >> 	sits_in_cursum(journal) <-- f2fs_discard_en(sbi)
+> >> 	sits_in_cursum(journal) <-- sbi->segs_per_sec > 1
+> >>      it takes about 3*(MAIN_SEGS + sits_in_cursum(journal)) jumps effort.
+> >> - this patch:
+> >> 	MAIN_SEGS   <-- loop condition
+> >> 	sits_in_cursum(journal) <-- loop_condition
+> >>
+> >> 	MAIN_SEGS   <-- f2fs_discard_en(sbi)
+> >> 	MAIN_SEGS   <-- sbi->segs_per_sec > 1
+> >>      it takes abourt 3*MAIN_SEGS + sits_in_cursum(journal) jumps effort.
+> >>
+> >> and in the best case, both f2fs_discard_en(sbi) and sbi->segs_per_sec >
+> >> 1 are false, and we have:
+> >> - this patch
+> >> 	MAIN_SEGS   <-- loop condition
+> >>
+> >> 	sits_in_cursum(journal) <-- loop_condition
+> >> See
+> >> https://stackoverflow.com/questions/1462710/can-c-compilers-optimize-if-statements-inside-for-loops
+> > 
+> > Interesting!
+> > 
+> > What I can think of the worst case looks like:
+> > 
+> > In current code,
+> > 	for (N) {
+> > 		do_something;
+> > 		if (f2fs_discard_en())
+> > 			do _something;
+> > 		if (sbi->segs_per_sec > 1)
+> > 			do_something;
+> > 	}
+> > 	for (sits_in_cursum()) {
+> > 		do_something;
+> > 		if (f2fs_discard_en())
+> > 			do _something;
+> > 		if (sbi->segs_per_sec > 1)
+> > 			do_something;
+> > 	}
+> > => O(N + sits_in_cursum())
+> 
+> In the worst case Its 3(1 -- exit condition < MAIN_SEG, 2 --  f2fs_discard_en(), 3 -- 
+> sbi->segs_per_sec > 1) *N + 3*sits_in_cursum() if condition & jump 
+> instuctions at runtime.
+> 
+> If we use Big O notion, yes I think O(N + sits_in_cursum())
+> 
+> > 
+> > Once compiler unrolled the loop, we can expect most of jumps could be hit by
+> > branch predictor, since the loop does not have many branches.
+> 
+> The current code, if the compiler decides to unroll the loop, it could unroll it into, I guess
+>   	for (N) {
+>   		do_something;
+> 	}
+> 	if (f2fs_discard_en()) {
+> 		for(N) {
+>   			do _something;
+> 		}
+> 	}
+> 	if (sbi->segs_per_sec > 1) {
+> 		for(N) {
+> 			do_something;
+> 		}
+> 	}
+> 	...
+> 	for (sits_in_cursum()) {
+> 		do_something;
+> 	}
+> 	if (f2fs_discard_en()) {
+> 		for (N) {
+> 			do _something;
+> 		}
+> 	}
+> 	if (sbi->segs_per_sec > 1) {
+> 		for (N) {
+> 			do_something;
+> 		}
+>         	}
+
+Unrolled loop would be something like:
+	for (N/n) {
+		do_something #1;
+		if (f2fs_discard_en())
+			do_something;
+		if (sbi->segs_per_sec > 1)
+			do_something;
+		...
+		do_something #n;
+		if (f2fs_discard_en())
+			do_something;
+		if (sbi->segs_per_sec > 1)
+			do_something;
+	}
+
+And, branch predictor can avoid three branch conditions by BTB.
+
+do_something #1;
+  if (f2fs_discard_en())
+    do _something;
+      if (sbi->segs_per_sec > 1)
+        do_something;
+          do_something #2;
+            if (f2fs_discard_en())
+              do _something;
+                if (sbi->segs_per_sec > 1)
+                  do_something;
+                    ...
+                      do_something #N;
+                        if (f2fs_discard_en())
+                          do _something;
+                            if (sbi->segs_per_sec > 1)
+                              do_something;
+
+Anyway, I don't see huge benefit regarding to performance and code readability,
+but do worry about potential patch conflicts when backporting this.
+
+> Taking branch predictor into consideration, I think the unrolled one is more easier to predict
+> than the current rolled one. (as you say, the current has more conditions in the loop
+> and a exit condition to predict)
+> 
+> > 
+> > In the patch,
+> > 	for (N)
+> > 		do_something;
+> > 	for (sits_in_cursum())
+> > 		do_something;
+> > 
+> > 	if (f2fs_discard_en()) {
+> > 		for (N)
+> > 			do_something;
+> > 	}
+> > 	if (sbi->segs_per_sec > 1) {
+> > 		for (N)
+> > 			do_something;
+> > 	}
+> > => O(3*N + sits_in_cursum())
+> 
+> If we use Big O notion, I think O(N + sits_in_cursum()) too.
+> > 
+> > BTW, build_discard_entries(struct f2fs_sb_info *sbi) is more likely to split
+> > the loops, as you describe.
+> > 
+> > In build_discard_entries(),
+> > 	for (N) {
+> > 		if (CP_TRIMMED_FLAG)
+> > 			do_something;
+> > 		else
+> > 			do_semething_else;
+> > 	}
+> > Thanks,
+> > 
+> 
+> I think so, yet CP_TRIMMED_FLAG comes from a function argument, so I think compiler
+> cannot decide whether it is constant.
+> 
+> I think if we count the runtime condition & jump instruction at runtime. 
+> the unrolls above are beneficial, I think.
+> 
+> Thanks.
+> 
+> >>
+> >> In addtion, this approach is easier to read than the original
+> >> one, so splitting the loop would be beneficial.
+> >>
+> >> Thanks
+> >>
+> >>>>
+> >>>> Note that "if (f2fs_discard_en(sbi))" and "if (sbi->segs_per_sec > 1)"
+> >>>> are all taken out of the loops they are unchangable.
+> >>>>
+> >>>> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+> >>>> ---
+> >>>>    fs/f2fs/segment.c | 80 +++++++++++++++++++++++++------------------------------
+> >>>>    1 file changed, 37 insertions(+), 43 deletions(-)
+> >>>>
+> >>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >>>> index 40e1d20..bcd8a40 100644
+> >>>> --- a/fs/f2fs/segment.c
+> >>>> +++ b/fs/f2fs/segment.c
+> >>>> @@ -3476,12 +3476,39 @@ static int build_curseg(struct f2fs_sb_info *sbi)
+> >>>>    	return restore_curseg_summaries(sbi);
+> >>>>    }
+> >>>>    
+> >>>> +static void build_discard_entries(struct f2fs_sb_info *sbi)
+> >>>> +{
+> >>>> +	unsigned segno;
+> >>>> +
+> >>>> +	for (segno = 0; segno < MAIN_SEGS(sbi); ++segno) {
+> >>>> +		struct seg_entry *se = get_seg_entry(sbi, segno);
+> >>>> +
+> >>>> +		if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG))
+> >>>> +			memset(se->discard_map, 0xff, SIT_VBLOCK_MAP_SIZE);
+> >>>> +		else {
+> >>>> +			memcpy(se->discard_map, se->cur_valid_map,
+> >>>> +				SIT_VBLOCK_MAP_SIZE);
+> >>>> +
+> >>>> +			sbi->discard_blks += sbi->blocks_per_seg -
+> >>>> +				se->valid_blocks;
+> >>>> +		}
+> >>>> +	}
+> >>>> +}
+> >>>> +
+> >>>> +static void build_sec_entries(struct f2fs_sb_info *sbi)
+> >>>> +{
+> >>>> +	unsigned segno;
+> >>>> +
+> >>>> +	for (segno = 0; segno < MAIN_SEGS(sbi); ++segno)
+> >>>> +		get_sec_entry(sbi, segno)->valid_blocks +=
+> >>>> +			get_seg_entry(sbi, segno)->valid_blocks;
+> >>>> +}
+> >>>> +
+> >>>>    static void build_sit_entries(struct f2fs_sb_info *sbi)
+> >>>>    {
+> >>>>    	struct sit_info *sit_i = SIT_I(sbi);
+> >>>>    	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
+> >>>>    	struct f2fs_journal *journal = curseg->journal;
+> >>>> -	struct seg_entry *se;
+> >>>>    	struct f2fs_sit_entry sit;
+> >>>>    	int sit_blk_cnt = SIT_BLK_CNT(sbi);
+> >>>>    	unsigned int i, start, end;
+> >>>> @@ -3498,67 +3525,34 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
+> >>>>    			struct f2fs_sit_block *sit_blk;
+> >>>>    			struct page *page;
+> >>>>    
+> >>>> -			se = &sit_i->sentries[start];
+> >>>>    			page = get_current_sit_page(sbi, start);
+> >>>>    			sit_blk = (struct f2fs_sit_block *)page_address(page);
+> >>>>    			sit = sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, start)];
+> >>>>    			f2fs_put_page(page, 1);
+> >>>>    
+> >>>>    			check_block_count(sbi, start, &sit);
+> >>>> -			seg_info_from_raw_sit(se, &sit);
+> >>>> -
+> >>>> -			/* build discard map only one time */
+> >>>> -			if (f2fs_discard_en(sbi)) {
+> >>>> -				if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
+> >>>> -					memset(se->discard_map, 0xff,
+> >>>> -						SIT_VBLOCK_MAP_SIZE);
+> >>>> -				} else {
+> >>>> -					memcpy(se->discard_map,
+> >>>> -						se->cur_valid_map,
+> >>>> -						SIT_VBLOCK_MAP_SIZE);
+> >>>> -					sbi->discard_blks +=
+> >>>> -						sbi->blocks_per_seg -
+> >>>> -						se->valid_blocks;
+> >>>> -				}
+> >>>> -			}
+> >>>>    
+> >>>> -			if (sbi->segs_per_sec > 1)
+> >>>> -				get_sec_entry(sbi, start)->valid_blocks +=
+> >>>> -							se->valid_blocks;
+> >>>> +			seg_info_from_raw_sit(&sit_i->sentries[start], &sit);
+> >>>>    		}
+> >>>>    		start_blk += readed;
+> >>>>    	} while (start_blk < sit_blk_cnt);
+> >>>>    
+> >>>>    	down_read(&curseg->journal_rwsem);
+> >>>>    	for (i = 0; i < sits_in_cursum(journal); i++) {
+> >>>> -		unsigned int old_valid_blocks;
+> >>>> -
+> >>>>    		start = le32_to_cpu(segno_in_journal(journal, i));
+> >>>> -		se = &sit_i->sentries[start];
+> >>>>    		sit = sit_in_journal(journal, i);
+> >>>>    
+> >>>> -		old_valid_blocks = se->valid_blocks;
+> >>>> -
+> >>>>    		check_block_count(sbi, start, &sit);
+> >>>> -		seg_info_from_raw_sit(se, &sit);
+> >>>> -
+> >>>> -		if (f2fs_discard_en(sbi)) {
+> >>>> -			if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
+> >>>> -				memset(se->discard_map, 0xff,
+> >>>> -							SIT_VBLOCK_MAP_SIZE);
+> >>>> -			} else {
+> >>>> -				memcpy(se->discard_map, se->cur_valid_map,
+> >>>> -							SIT_VBLOCK_MAP_SIZE);
+> >>>> -				sbi->discard_blks += old_valid_blocks -
+> >>>> -							se->valid_blocks;
+> >>>> -			}
+> >>>> -		}
+> >>>> -
+> >>>> -		if (sbi->segs_per_sec > 1)
+> >>>> -			get_sec_entry(sbi, start)->valid_blocks +=
+> >>>> -				se->valid_blocks - old_valid_blocks;
+> >>>> +		seg_info_from_raw_sit(&sit_i->sentries[start], &sit);
+> >>>>    	}
+> >>>>    	up_read(&curseg->journal_rwsem);
+> >>>> +
+> >>>> +	/* build discard map only one time */
+> >>>> +	if (f2fs_discard_en(sbi))
+> >>>> +		build_discard_entries(sbi);
+> >>>> +
+> >>>> +	if (sbi->segs_per_sec > 1)
+> >>>> +		build_sec_entries(sbi);
+> >>>>    }
+> >>>>    
+> >>>>    static void init_free_segmap(struct f2fs_sb_info *sbi)
+> >>>> -- 
+> >>>> 2.1.4
