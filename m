@@ -1,344 +1,150 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH RFC] f2fs: clean up build_sit_entries
-Date: Wed, 20 Dec 2017 12:39:03 -0800
-Message-ID: <20171220203903.GB52542@jaegeuk-macbookpro.roam.corp.google.com>
-References: <9047C53C18267742AB12E43B65C7F9F70BCB4020@dggemi505-mbs.china.huawei.com>
- <20171219234046.GF23445@jaegeuk-macbookpro.roam.corp.google.com>
- <9047C53C18267742AB12E43B65C7F9F70BCB6FC3@dggemi505-mbs.china.huawei.com>
- <20171220023122.GA35629@jaegeuk-macbookpro.roam.corp.google.com>
- <9047C53C18267742AB12E43B65C7F9F70BCB70CF@dggemi505-mbs.china.huawei.com>
+Subject: [PATCH] f2fs: return error during fill_super
+Date: Wed, 20 Dec 2017 12:39:56 -0800
+Message-ID: <20171220203956.53166-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <9047C53C18267742AB12E43B65C7F9F70BCB70CF@dggemi505-mbs.china.huawei.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: "Gaoxiang (OS)" <gaoxiang25@huawei.com>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "Duwei (Device OS)" <weidu.du@huawei.com>, "chao@kernel.org" <chao@kernel.org>, "Yuchao (T)" <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+ helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <jaegeuk@kernel.org>) id 1eRl9n-0004mP-Tr
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 20 Dec 2017 20:40:03 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eRl9n-0001Zq-1P
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 20 Dec 2017 20:40:03 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-On 12/20, Gaoxiang (OS) wrote:
-> Hi Jaegeuk,
-> 
-> On 2017/12/20 10:31, Jaegeuk Kim wrote:
-> > On 12/20, Gaoxiang (OS) wrote:
-> >> Hi Jaegeuk,
-> >>
-> >> On 2017/12/20 7:40, Jaegeuk Kim wrote:
-> >>> On 12/17, gaoxiang (P) wrote:
-> >>>> clean up some redundant repeat code in build_sit_entries
-> >>>> and seperate some logic into new functions:
-> >>>>    - build_discard_entries
-> >>>>    - build_sec_entries
-> >>>
-> >>> This patch makes another big loop redundantly?
-> >>>
-> >> "condition & jump" is the fundamental of "if" and loop.
-> >> In the worst case, both f2fs_discard_en(sbi) and sbi->segs_per_sec > 1
-> >> are true, and I think, we have:
-> >> - the original approach:
-> >> 	MAIN_SEGS   <-- loop condition
-> >> 	MAIN_SEGS   <-- f2fs_discard_en(sbi)
-> >> 	MAIN_SEGS   <-- sbi->segs_per_sec > 1
-> >>
-> >> 	sits_in_cursum(journal) <-- loop_condition
-> >> 	sits_in_cursum(journal) <-- f2fs_discard_en(sbi)
-> >> 	sits_in_cursum(journal) <-- sbi->segs_per_sec > 1
-> >>      it takes about 3*(MAIN_SEGS + sits_in_cursum(journal)) jumps effort.
-> >> - this patch:
-> >> 	MAIN_SEGS   <-- loop condition
-> >> 	sits_in_cursum(journal) <-- loop_condition
-> >>
-> >> 	MAIN_SEGS   <-- f2fs_discard_en(sbi)
-> >> 	MAIN_SEGS   <-- sbi->segs_per_sec > 1
-> >>      it takes abourt 3*MAIN_SEGS + sits_in_cursum(journal) jumps effort.
-> >>
-> >> and in the best case, both f2fs_discard_en(sbi) and sbi->segs_per_sec >
-> >> 1 are false, and we have:
-> >> - this patch
-> >> 	MAIN_SEGS   <-- loop condition
-> >>
-> >> 	sits_in_cursum(journal) <-- loop_condition
-> >> See
-> >> https://stackoverflow.com/questions/1462710/can-c-compilers-optimize-if-statements-inside-for-loops
-> > 
-> > Interesting!
-> > 
-> > What I can think of the worst case looks like:
-> > 
-> > In current code,
-> > 	for (N) {
-> > 		do_something;
-> > 		if (f2fs_discard_en())
-> > 			do _something;
-> > 		if (sbi->segs_per_sec > 1)
-> > 			do_something;
-> > 	}
-> > 	for (sits_in_cursum()) {
-> > 		do_something;
-> > 		if (f2fs_discard_en())
-> > 			do _something;
-> > 		if (sbi->segs_per_sec > 1)
-> > 			do_something;
-> > 	}
-> > => O(N + sits_in_cursum())
-> 
-> In the worst case Its 3(1 -- exit condition < MAIN_SEG, 2 --  f2fs_discard_en(), 3 -- 
-> sbi->segs_per_sec > 1) *N + 3*sits_in_cursum() if condition & jump 
-> instuctions at runtime.
-> 
-> If we use Big O notion, yes I think O(N + sits_in_cursum())
-> 
-> > 
-> > Once compiler unrolled the loop, we can expect most of jumps could be hit by
-> > branch predictor, since the loop does not have many branches.
-> 
-> The current code, if the compiler decides to unroll the loop, it could unroll it into, I guess
->   	for (N) {
->   		do_something;
-> 	}
-> 	if (f2fs_discard_en()) {
-> 		for(N) {
->   			do _something;
-> 		}
-> 	}
-> 	if (sbi->segs_per_sec > 1) {
-> 		for(N) {
-> 			do_something;
-> 		}
-> 	}
-> 	...
-> 	for (sits_in_cursum()) {
-> 		do_something;
-> 	}
-> 	if (f2fs_discard_en()) {
-> 		for (N) {
-> 			do _something;
-> 		}
-> 	}
-> 	if (sbi->segs_per_sec > 1) {
-> 		for (N) {
-> 			do_something;
-> 		}
->         	}
+Let's avoid BUG_ON during fill_super, when on-disk was totall corrupted.
 
-Unrolled loop would be something like:
-	for (N/n) {
-		do_something #1;
-		if (f2fs_discard_en())
-			do_something;
-		if (sbi->segs_per_sec > 1)
-			do_something;
-		...
-		do_something #n;
-		if (f2fs_discard_en())
-			do_something;
-		if (sbi->segs_per_sec > 1)
-			do_something;
-	}
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/segment.c | 16 ++++++++++++----
+ fs/f2fs/segment.h | 22 ++++++++++++++++++----
+ 2 files changed, 30 insertions(+), 8 deletions(-)
 
-And, branch predictor can avoid three branch conditions by BTB.
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 40e1d20b8080..b03f65e5dfdc 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3476,7 +3476,7 @@ static int build_curseg(struct f2fs_sb_info *sbi)
+ 	return restore_curseg_summaries(sbi);
+ }
+ 
+-static void build_sit_entries(struct f2fs_sb_info *sbi)
++static int build_sit_entries(struct f2fs_sb_info *sbi)
+ {
+ 	struct sit_info *sit_i = SIT_I(sbi);
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
+@@ -3486,6 +3486,7 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
+ 	int sit_blk_cnt = SIT_BLK_CNT(sbi);
+ 	unsigned int i, start, end;
+ 	unsigned int readed, start_blk = 0;
++	int err = 0;
+ 
+ 	do {
+ 		readed = ra_meta_pages(sbi, start_blk, BIO_MAX_PAGES,
+@@ -3504,7 +3505,9 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
+ 			sit = sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, start)];
+ 			f2fs_put_page(page, 1);
+ 
+-			check_block_count(sbi, start, &sit);
++			err = check_block_count(sbi, start, &sit);
++			if (err)
++				return err;
+ 			seg_info_from_raw_sit(se, &sit);
+ 
+ 			/* build discard map only one time */
+@@ -3539,7 +3542,9 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
+ 
+ 		old_valid_blocks = se->valid_blocks;
+ 
+-		check_block_count(sbi, start, &sit);
++		err = check_block_count(sbi, start, &sit);
++		if (err)
++			break;
+ 		seg_info_from_raw_sit(se, &sit);
+ 
+ 		if (f2fs_discard_en(sbi)) {
+@@ -3559,6 +3564,7 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
+ 				se->valid_blocks - old_valid_blocks;
+ 	}
+ 	up_read(&curseg->journal_rwsem);
++	return err;
+ }
+ 
+ static void init_free_segmap(struct f2fs_sb_info *sbi)
+@@ -3733,7 +3739,9 @@ int build_segment_manager(struct f2fs_sb_info *sbi)
+ 		return err;
+ 
+ 	/* reinit free segmap based on SIT */
+-	build_sit_entries(sbi);
++	err = build_sit_entries(sbi);
++	if (err)
++		return err;
+ 
+ 	init_free_segmap(sbi);
+ 	err = build_dirty_segmap(sbi);
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index d1d394cdf61d..71a2aaa286df 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -655,7 +655,7 @@ static inline void verify_block_addr(struct f2fs_sb_info *sbi, block_t blk_addr)
+ /*
+  * Summary block is always treated as an invalid block
+  */
+-static inline void check_block_count(struct f2fs_sb_info *sbi,
++static inline int check_block_count(struct f2fs_sb_info *sbi,
+ 		int segno, struct f2fs_sit_entry *raw_sit)
+ {
+ #ifdef CONFIG_F2FS_CHECK_FS
+@@ -677,11 +677,25 @@ static inline void check_block_count(struct f2fs_sb_info *sbi,
+ 		cur_pos = next_pos;
+ 		is_valid = !is_valid;
+ 	} while (cur_pos < sbi->blocks_per_seg);
+-	BUG_ON(GET_SIT_VBLOCKS(raw_sit) != valid_blocks);
++
++	if (unlikely(GET_SIT_VBLOCKS(raw_sit) != valid_blocks)) {
++		f2fs_msg(sbi->sb, KERN_ERR,
++				"Mismatch valid blocks %d vs. %d",
++					GET_SIT_VBLOCKS(raw_sit), valid_blocks);
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
++		return -EINVAL;
++	}
+ #endif
+ 	/* check segment usage, and check boundary of a given segment number */
+-	f2fs_bug_on(sbi, GET_SIT_VBLOCKS(raw_sit) > sbi->blocks_per_seg
+-					|| segno > TOTAL_SEGS(sbi) - 1);
++	if (unlikely(GET_SIT_VBLOCKS(raw_sit) > sbi->blocks_per_seg
++					|| segno > TOTAL_SEGS(sbi) - 1)) {
++		f2fs_msg(sbi->sb, KERN_ERR,
++				"Wrong valid blocks %d or segno %u",
++					GET_SIT_VBLOCKS(raw_sit), segno);
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
++		return -EINVAL;
++	}
++	return 0;
+ }
+ 
+ static inline pgoff_t current_sit_addr(struct f2fs_sb_info *sbi,
+-- 
+2.15.0.531.g2ccb3012c9-goog
 
-do_something #1;
-  if (f2fs_discard_en())
-    do _something;
-      if (sbi->segs_per_sec > 1)
-        do_something;
-          do_something #2;
-            if (f2fs_discard_en())
-              do _something;
-                if (sbi->segs_per_sec > 1)
-                  do_something;
-                    ...
-                      do_something #N;
-                        if (f2fs_discard_en())
-                          do _something;
-                            if (sbi->segs_per_sec > 1)
-                              do_something;
 
-Anyway, I don't see huge benefit regarding to performance and code readability,
-but do worry about potential patch conflicts when backporting this.
-
-> Taking branch predictor into consideration, I think the unrolled one is more easier to predict
-> than the current rolled one. (as you say, the current has more conditions in the loop
-> and a exit condition to predict)
-> 
-> > 
-> > In the patch,
-> > 	for (N)
-> > 		do_something;
-> > 	for (sits_in_cursum())
-> > 		do_something;
-> > 
-> > 	if (f2fs_discard_en()) {
-> > 		for (N)
-> > 			do_something;
-> > 	}
-> > 	if (sbi->segs_per_sec > 1) {
-> > 		for (N)
-> > 			do_something;
-> > 	}
-> > => O(3*N + sits_in_cursum())
-> 
-> If we use Big O notion, I think O(N + sits_in_cursum()) too.
-> > 
-> > BTW, build_discard_entries(struct f2fs_sb_info *sbi) is more likely to split
-> > the loops, as you describe.
-> > 
-> > In build_discard_entries(),
-> > 	for (N) {
-> > 		if (CP_TRIMMED_FLAG)
-> > 			do_something;
-> > 		else
-> > 			do_semething_else;
-> > 	}
-> > Thanks,
-> > 
-> 
-> I think so, yet CP_TRIMMED_FLAG comes from a function argument, so I think compiler
-> cannot decide whether it is constant.
-> 
-> I think if we count the runtime condition & jump instruction at runtime. 
-> the unrolls above are beneficial, I think.
-> 
-> Thanks.
-> 
-> >>
-> >> In addtion, this approach is easier to read than the original
-> >> one, so splitting the loop would be beneficial.
-> >>
-> >> Thanks
-> >>
-> >>>>
-> >>>> Note that "if (f2fs_discard_en(sbi))" and "if (sbi->segs_per_sec > 1)"
-> >>>> are all taken out of the loops they are unchangable.
-> >>>>
-> >>>> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
-> >>>> ---
-> >>>>    fs/f2fs/segment.c | 80 +++++++++++++++++++++++++------------------------------
-> >>>>    1 file changed, 37 insertions(+), 43 deletions(-)
-> >>>>
-> >>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >>>> index 40e1d20..bcd8a40 100644
-> >>>> --- a/fs/f2fs/segment.c
-> >>>> +++ b/fs/f2fs/segment.c
-> >>>> @@ -3476,12 +3476,39 @@ static int build_curseg(struct f2fs_sb_info *sbi)
-> >>>>    	return restore_curseg_summaries(sbi);
-> >>>>    }
-> >>>>    
-> >>>> +static void build_discard_entries(struct f2fs_sb_info *sbi)
-> >>>> +{
-> >>>> +	unsigned segno;
-> >>>> +
-> >>>> +	for (segno = 0; segno < MAIN_SEGS(sbi); ++segno) {
-> >>>> +		struct seg_entry *se = get_seg_entry(sbi, segno);
-> >>>> +
-> >>>> +		if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG))
-> >>>> +			memset(se->discard_map, 0xff, SIT_VBLOCK_MAP_SIZE);
-> >>>> +		else {
-> >>>> +			memcpy(se->discard_map, se->cur_valid_map,
-> >>>> +				SIT_VBLOCK_MAP_SIZE);
-> >>>> +
-> >>>> +			sbi->discard_blks += sbi->blocks_per_seg -
-> >>>> +				se->valid_blocks;
-> >>>> +		}
-> >>>> +	}
-> >>>> +}
-> >>>> +
-> >>>> +static void build_sec_entries(struct f2fs_sb_info *sbi)
-> >>>> +{
-> >>>> +	unsigned segno;
-> >>>> +
-> >>>> +	for (segno = 0; segno < MAIN_SEGS(sbi); ++segno)
-> >>>> +		get_sec_entry(sbi, segno)->valid_blocks +=
-> >>>> +			get_seg_entry(sbi, segno)->valid_blocks;
-> >>>> +}
-> >>>> +
-> >>>>    static void build_sit_entries(struct f2fs_sb_info *sbi)
-> >>>>    {
-> >>>>    	struct sit_info *sit_i = SIT_I(sbi);
-> >>>>    	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
-> >>>>    	struct f2fs_journal *journal = curseg->journal;
-> >>>> -	struct seg_entry *se;
-> >>>>    	struct f2fs_sit_entry sit;
-> >>>>    	int sit_blk_cnt = SIT_BLK_CNT(sbi);
-> >>>>    	unsigned int i, start, end;
-> >>>> @@ -3498,67 +3525,34 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
-> >>>>    			struct f2fs_sit_block *sit_blk;
-> >>>>    			struct page *page;
-> >>>>    
-> >>>> -			se = &sit_i->sentries[start];
-> >>>>    			page = get_current_sit_page(sbi, start);
-> >>>>    			sit_blk = (struct f2fs_sit_block *)page_address(page);
-> >>>>    			sit = sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, start)];
-> >>>>    			f2fs_put_page(page, 1);
-> >>>>    
-> >>>>    			check_block_count(sbi, start, &sit);
-> >>>> -			seg_info_from_raw_sit(se, &sit);
-> >>>> -
-> >>>> -			/* build discard map only one time */
-> >>>> -			if (f2fs_discard_en(sbi)) {
-> >>>> -				if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
-> >>>> -					memset(se->discard_map, 0xff,
-> >>>> -						SIT_VBLOCK_MAP_SIZE);
-> >>>> -				} else {
-> >>>> -					memcpy(se->discard_map,
-> >>>> -						se->cur_valid_map,
-> >>>> -						SIT_VBLOCK_MAP_SIZE);
-> >>>> -					sbi->discard_blks +=
-> >>>> -						sbi->blocks_per_seg -
-> >>>> -						se->valid_blocks;
-> >>>> -				}
-> >>>> -			}
-> >>>>    
-> >>>> -			if (sbi->segs_per_sec > 1)
-> >>>> -				get_sec_entry(sbi, start)->valid_blocks +=
-> >>>> -							se->valid_blocks;
-> >>>> +			seg_info_from_raw_sit(&sit_i->sentries[start], &sit);
-> >>>>    		}
-> >>>>    		start_blk += readed;
-> >>>>    	} while (start_blk < sit_blk_cnt);
-> >>>>    
-> >>>>    	down_read(&curseg->journal_rwsem);
-> >>>>    	for (i = 0; i < sits_in_cursum(journal); i++) {
-> >>>> -		unsigned int old_valid_blocks;
-> >>>> -
-> >>>>    		start = le32_to_cpu(segno_in_journal(journal, i));
-> >>>> -		se = &sit_i->sentries[start];
-> >>>>    		sit = sit_in_journal(journal, i);
-> >>>>    
-> >>>> -		old_valid_blocks = se->valid_blocks;
-> >>>> -
-> >>>>    		check_block_count(sbi, start, &sit);
-> >>>> -		seg_info_from_raw_sit(se, &sit);
-> >>>> -
-> >>>> -		if (f2fs_discard_en(sbi)) {
-> >>>> -			if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
-> >>>> -				memset(se->discard_map, 0xff,
-> >>>> -							SIT_VBLOCK_MAP_SIZE);
-> >>>> -			} else {
-> >>>> -				memcpy(se->discard_map, se->cur_valid_map,
-> >>>> -							SIT_VBLOCK_MAP_SIZE);
-> >>>> -				sbi->discard_blks += old_valid_blocks -
-> >>>> -							se->valid_blocks;
-> >>>> -			}
-> >>>> -		}
-> >>>> -
-> >>>> -		if (sbi->segs_per_sec > 1)
-> >>>> -			get_sec_entry(sbi, start)->valid_blocks +=
-> >>>> -				se->valid_blocks - old_valid_blocks;
-> >>>> +		seg_info_from_raw_sit(&sit_i->sentries[start], &sit);
-> >>>>    	}
-> >>>>    	up_read(&curseg->journal_rwsem);
-> >>>> +
-> >>>> +	/* build discard map only one time */
-> >>>> +	if (f2fs_discard_en(sbi))
-> >>>> +		build_discard_entries(sbi);
-> >>>> +
-> >>>> +	if (sbi->segs_per_sec > 1)
-> >>>> +		build_sec_entries(sbi);
-> >>>>    }
-> >>>>    
-> >>>>    static void init_free_segmap(struct f2fs_sb_info *sbi)
-> >>>> -- 
-> >>>> 2.1.4
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
