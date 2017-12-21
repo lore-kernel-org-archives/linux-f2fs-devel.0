@@ -1,94 +1,72 @@
-From: heyunlei <heyunlei@huawei.com>
-Subject: Re: [PATCH v5] f2fs: avoid dead loop in function
- find_fsync_dnodes
-Date: Thu, 21 Dec 2017 03:45:50 +0000
-Message-ID: <42B685BFA705F94C860C6DD0752F0565482FD1C4@DGGEMA503-MBX.china.huawei.com>
-References: <1513746212-19454-1-git-send-email-heyunlei@huawei.com>
- <20171220210035.GC52542@jaegeuk-macbookpro.roam.corp.google.com>
+From: Knut Omang <knut.omang@oracle.com>
+Subject: Re: [PATCH v4 72/73] xfs: Convert mru cache to XArray
+Date: Thu, 21 Dec 2017 13:05:56 +0100
+Message-ID: <m337449tgb.fsf@oracle.com>
+References: <fd7130d7-9066-524e-1053-a61eeb27cb36@lge.com>
+	<Pine.LNX.4.44L0.1712081228430.1371-100000@iolanthe.rowland.org>
+	<20171208223654.GP5858@dastard> <1512838818.26342.7.camel@perches.com>
+	<20171211214300.GT5858@dastard> <1513030348.3036.5.camel@perches.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
- helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <heyunlei@huawei.com>) id 1eRro7-0002k2-1d
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Dec 2017 03:46:07 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187] helo=huawei.com)
- by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eRro5-0003ef-B6
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Dec 2017 03:46:06 +0000
-In-Reply-To: <20171220210035.GC52542@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: zh-CN
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: "Jianing (Euler)" <ning.jia@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Content-Type: text/plain
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <1513030348.3036.5.camel@perches.com> (Joe Perches's message of
+	"Mon, 11 Dec 2017 14:12:28 -0800")
+Sender: owner-linux-mm@kvack.org
+To: Joe Perches <joe@perches.com>
+Cc: Dave Chinner <david@fromorbit.com>, Alan Stern <stern@rowland.harvard.edu>, Byungchul Park <byungchul.park@lge.com>, Theodore Ts'o <tytso@mit.edu>, Matthew Wilcox <willy@infradead.org>, Matthew Wilcox <mawilcox@microsoft.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Jens Axboe <axboe@kernel.dk>, Rehas Sachdeva <aquannie@gmail.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@lge.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IEphZWdldWsgS2ltIFttYWls
-dG86amFlZ2V1a0BrZXJuZWwub3JnXQ0KPlNlbnQ6IFRodXJzZGF5LCBEZWNlbWJlciAyMSwgMjAx
-NyA1OjAxIEFNDQo+VG86IGhleXVubGVpDQo+Q2M6IFl1Y2hhbyAoVCk7IGxpbnV4LWYyZnMtZGV2
-ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0OyBXYW5nYmludGlhbjsgSmlhbmluZyAoRXVsZXIpDQo+
-U3ViamVjdDogUmU6IFtmMmZzLWRldl1bUEFUQ0ggdjVdIGYyZnM6IGF2b2lkIGRlYWQgbG9vcCBp
-biBmdW5jdGlvbiBmaW5kX2ZzeW5jX2Rub2Rlcw0KPg0KPkhpIFl1bmxlaSwNCkhpIEtpbaOsDQo+
-DQo+T24gMTIvMjAsIFl1bmxlaSBIZSB3cm90ZToNCj4+IHY0IC0+IHY1IHJldHVybiBlcnIgaW5z
-dGVhZCBkZXN0b3J5IGlub2RlIGxpc3QgZm9yIHR3byByZWFzb25zOg0KPj4gaS4gIGF2b2lkIGR1
-cGxpY2F0ZWQgZGVzdHJveSBpbm9kZSBsaXN0IGluIGZ1bmN0aW9uIHJlY292ZXJfZnN5bmNfZGF0
-YS4NCj4+IGlpLiByZXBvcnQgYW4gZXJyb3IgZm9yIHJlY292ZXJ5LCBhbmQgc2V0IG5lZWRfZnNj
-ayBmbGFnDQo+Pg0KPj4gQ2FtZSBhY3Jvc3MgYSBkZWFkIGxvb3AgaW4gcmVjb3ZlcnkgbGlrZSB0
-aGlzOg0KPj4NCj4+IC4uLi4uLg0KPj4gWyAgIDI0LjY4MDQ4MHNdW3BpZDozMjAsY3B1MCxpbml0
-XWZpbmRfZnN5bmNfZG5vZGVzOiBibGthZGRyID0xMzU5NzY5Ng0KPj4gWyAgIDI0LjY5ODM5NHNd
-W3BpZDozMjAsY3B1MCxpbml0XWZpbmRfZnN5bmNfZG5vZGVzOiBibGthZGRyID0xMzU5NzY5Nw0K
-Pj4gWyAgIDI0LjcyNDMzNHNdW3BpZDozMjAsY3B1MCxpbml0XWZpbmRfZnN5bmNfZG5vZGVzOiBi
-bGthZGRyID0xMzU5NzY5OA0KPj4gWyAgIDI0LjcyNDMzNHNdW3BpZDozMjAsY3B1MCxpbml0XWZp
-bmRfZnN5bmNfZG5vZGVzOiBibGthZGRyID0xMzU5NzY5OA0KPj4gWyAgIDI0LjcyNDM2NXNdW3Bp
-ZDozMjAsY3B1MCxpbml0XWZpbmRfZnN5bmNfZG5vZGVzOiBibGthZGRyID0xMzU5NzY5OA0KPj4g
-WyAgIDI0LjcyNDM2NXNdW3BpZDozMjAsY3B1MCxpbml0XWZpbmRfZnN5bmNfZG5vZGVzOiBibGth
-ZGRyID0xMzU5NzY5OA0KPj4gWyAgIDI0LjcyNDM2NXNdW3BpZDozMjAsY3B1MCxpbml0XWZpbmRf
-ZnN5bmNfZG5vZGVzOiBibGthZGRyID0xMzU5NzY5OA0KPj4gWyAgIDI0LjcyNDM5NXNdW3BpZDoz
-MjAsY3B1MCxpbml0XWZpbmRfZnN5bmNfZG5vZGVzOiBibGthZGRyID0xMzU5NzY5OA0KPj4gWyAg
-IDI0LjcyNDM5NXNdW3BpZDozMjAsY3B1MCxpbml0XWZpbmRfZnN5bmNfZG5vZGVzOiBibGthZGRy
-ID0xMzU5NzY5OA0KPj4gWyAgIDI0LjcyNDM5NXNdW3BpZDozMjAsY3B1MCxpbml0XWZpbmRfZnN5
-bmNfZG5vZGVzOiBibGthZGRyID0xMzU5NzY5OA0KPj4gWyAgIDI0LjcyNDM5NXNdW3BpZDozMjAs
-Y3B1MCxpbml0XWZpbmRfZnN5bmNfZG5vZGVzOiBibGthZGRyID0xMzU5NzY5OA0KPj4gWyAgIDI0
-LjcyNDQyNnNdW3BpZDozMjAsY3B1MCxpbml0XWZpbmRfZnN5bmNfZG5vZGVzOiBibGthZGRyID0x
-MzU5NzY5OA0KPj4gLi4uLi4uDQo+Pg0KPj4gTW91bnQgcHJvY2VzcyB3aWxsIGJsb2NrIGluIGRl
-YWQgbG9vcCBhbmQgZnNjayBjYW4gZG8gbm90aGluZyB3aXRoIHRoaXMNCj4+IGVycm9yLCBUaGlz
-IHBhdGNoIGFiYW5kb24gcmVjb3ZlcnkgaWYgbm9kZSBjaGFpbiBpcyBjeWNsaWNhbC4NCj4+DQo+
-PiBTaWduZWQtb2ZmLWJ5OiBZdW5sZWkgSGUgPGhleXVubGVpQGh1YXdlaS5jb20+DQo+PiAtLS0N
-Cj4+ICBmcy9mMmZzL3JlY292ZXJ5LmMgfCAxMSArKysrKysrKysrKw0KPj4gIDEgZmlsZSBjaGFu
-Z2VkLCAxMSBpbnNlcnRpb25zKCspDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvcmVjb3Zl
-cnkuYyBiL2ZzL2YyZnMvcmVjb3ZlcnkuYw0KPj4gaW5kZXggZDAyNWFhOC4uYTUzNWVjMiAxMDA2
-NDQNCj4+IC0tLSBhL2ZzL2YyZnMvcmVjb3ZlcnkuYw0KPj4gKysrIGIvZnMvZjJmcy9yZWNvdmVy
-eS5jDQo+PiBAQCAtMjE2LDYgKzIxNiwxNyBAQCBzdGF0aWMgaW50IGZpbmRfZnN5bmNfZG5vZGVz
-KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgc3RydWN0IGxpc3RfaGVhZCAqaGVhZCkNCj4+ICAJ
-CQlyZXR1cm4gMDsNCj4+DQo+PiAgCQlwYWdlID0gZ2V0X3RtcF9wYWdlKHNiaSwgYmxrYWRkcik7
-DQo+PiArCQlpZiAoUGFnZUNoZWNrZWQocGFnZSkpIHsNCj4+ICsJCQlmMmZzX21zZyhzYmktPnNi
-LCBLRVJOX0VSUiwgIkFiYW5kb24gbG9vcGVkIG5vZGUgYmxvY2sgbGlzdCIpOw0KPj4gKwkJCWVy
-ciA9IC1FSU5WQUw7DQo+DQo+SXMgdGhlcmUgYW55IHByb2JsZW0sIGlmIHdlIGJyZWFrIGhlcmUg
-d2l0aG91dCBlcnJvciwgc28gdGhhdCB3ZSBjb3VsZCByZWNvdmVyDQo+c29tZSBvZiB0aGUgaW5v
-ZGVzIGluIHRoZSBjaGFpbiBhcyBiZXN0IGVmZm9ydHM/DQoNCkkgdGhpbmsgaXQncyBhIGNvcm5l
-ciBjYXNlIGNhdXNlZCBieSBzb21lIHdlaXJkIHJlYXNvbi4gTWF5YmUgZGF0YSBpbiByZWNvdmVy
-IG5vZGUNCkNoYWluIGlzIGFsc28gcG9sbHV0ZWQgYW5kIHVucmVsaWFibGUuIFNvIEkgdGhpbmsg
-d2UnZCBiZXR0ZXIgYWJhbmRvbiB0aGlzIHJlY292ZXJ5LiAgDQoNClRoYW5rc6OsDQo+DQo+VGhh
-bmtzLA0KPg0KPj4gKwkJCWJyZWFrOw0KPj4gKwkJfQ0KPj4gKw0KPj4gKwkJLyoNCj4+ICsJCSAq
-IGl0J3Mgbm90IG5lZWRlZCB0byBjbGVhciBQR19jaGVja2VkIGZsYWcgaW4gdGVtcCBwYWdlIHNp
-bmNlIHdlDQo+PiArCQkgKiB3aWxsIHRydW5jYXRlIGFsbCB0aG9zZSBwYWdlcyBpbiB0aGUgZW5k
-IG9mIHJlY292ZXJ5Lg0KPj4gKwkJICovDQo+PiArCQlTZXRQYWdlQ2hlY2tlZChwYWdlKTsNCj4+
-DQo+PiAgCQlpZiAoIWlzX3JlY292ZXJhYmxlX2Rub2RlKHBhZ2UpKQ0KPj4gIAkJCWJyZWFrOw0K
-Pj4gLS0NCj4+IDEuOS4xDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQ2hlY2sgb3V0IHRoZSB2aWJy
-YW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0CmVuZ2FnaW5nIHRl
-Y2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwg
-bWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBz
-Oi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+Joe Perches <joe@perches.com> writes:
+
+> On Tue, 2017-12-12 at 08:43 +1100, Dave Chinner wrote:
+>> On Sat, Dec 09, 2017 at 09:00:18AM -0800, Joe Perches wrote:
+>> > On Sat, 2017-12-09 at 09:36 +1100, Dave Chinner wrote:
+>> > > 	1. Using lockdep_set_novalidate_class() for anything other
+>> > > 	than device->mutex will throw checkpatch warnings. Nice. (*)
+>> > []
+>> > > (*) checkpatch.pl is considered mostly harmful round here, too,
+>> > > but that's another rant....
+>> > 
+>> > How so?
+>> 
+>> Short story is that it barfs all over the slightly non-standard
+>> coding style used in XFS.
+> []
+>> This sort of stuff is just lowest-common-denominator noise - great
+>> for new code and/or inexperienced developers, but not for working
+>> with large bodies of existing code with slightly non-standard
+>> conventions.
+>
+> Completely reasonable.  Thanks.
+>
+> Do you get many checkpatch submitters for fs/xfs?
+>
+> If so, could probably do something about adding
+> a checkpatch file flag to the directory or equivalent.
+>
+> Maybe add something like:
+>
+> fs/xfs/.checkpatch
+>
+> where the contents turn off most everything
+
+I propose a more fine grained and configurable form of this in
+
+   https://lkml.org/lkml/2017/12/16/343
+
+that also handles sparse and other checkers in a similar way.
+
+Thanks,
+Knut
+
+> --
+> To unsubscribe, send a message with 'unsubscribe linux-mm' in
+> the body to majordomo@kvack.org.  For more info on Linux MM,
+> see: http://www.linux-mm.org/ .
+> Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
