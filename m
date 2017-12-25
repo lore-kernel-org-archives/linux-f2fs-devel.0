@@ -1,181 +1,104 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH] f2fs: avoid f2fs_gc dead loop
-Date: Mon, 25 Dec 2017 14:15:50 +0800
-Message-ID: <4ad03dc8-6517-f130-3d9e-6d6d17640ec5@huawei.com>
-References: <1514034550-149813-1-git-send-email-yunlong.song@huawei.com>
- <4202ea25-f40a-a4da-787b-86f5aa9b0311@huawei.com>
+From: Chen Rong <rongx.a.chen@intel.com>
+Subject: Re: xfstests: generic/342 run failed in f2fs
+Date: Mon, 25 Dec 2017 14:30:13 +0800
+Message-ID: <d20cb58e-6646-a7de-bff1-8b7783a30664@intel.com>
+References: <2d524305-ecb5-8600-a92a-d79b717b8d13@intel.com>
+ <e367054d-046d-d6e5-943c-7fbe10493029@sandeen.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
- helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yunlong.song@huawei.com>) id 1eTM3y-0002Xr-Ha
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 25 Dec 2017 06:16:38 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eTM3x-0004I9-BQ
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 25 Dec 2017 06:16:38 +0000
-In-Reply-To: <4202ea25-f40a-a4da-787b-86f5aa9b0311@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <fstests-owner@vger.kernel.org>
+In-Reply-To: <e367054d-046d-d6e5-943c-7fbe10493029@sandeen.net>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, heyunlei@huawei.com, linux-fsdevel@vger.kernel.org, miaoxie@huawei.com
+Sender: fstests-owner@vger.kernel.org
+To: Eric Sandeen <sandeen@sandeen.net>, fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: philip.li@intel.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-What if the application starts atomic write but forgets to commit, e.g. 
-bugs in application or the application
-is a malicious software itself?
 
-On 2017/12/25 11:44, Chao Yu wrote:
-> On 2017/12/23 21:09, Yunlong Song wrote:
->> For some corner case, f2fs_gc selects one target victim but cannot free
->> that victim segment due to some reason (e.g. the segment has some blocks
->> of atomic file which is not commited yet), in this case, the victim
-> File should not be atomic opened for long time since normally sqlite
-> transaction will finish quickly, so we can expect that gc loop could be
-> ended up soon, right?
->
-> Thanks,
->
->> segment may probably be selected over and over, and then f2fs_gc will
->> go to dead loop. This patch identifies the dead-loop segment, and skips
->> it in __get_victim next time.
+
+On 2017年12月25日 13:56, Eric Sandeen wrote:
+> On 12/24/17 9:28 PM, Chen Rong wrote:
+>> Hi, everyone:
 >>
->> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->> ---
->>   fs/f2fs/f2fs.h  |  8 ++++++++
->>   fs/f2fs/gc.c    | 34 ++++++++++++++++++++++++++++++++++
->>   fs/f2fs/super.c |  3 +++
->>   3 files changed, 45 insertions(+)
->>
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index ca6b0c9..b75851b 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -115,6 +115,13 @@ struct f2fs_mount_info {
->>   	unsigned int	opt;
->>   };
->>   
->> +struct gc_loop_info {
->> +	int count;
->> +	unsigned int segno;
->> +	unsigned long *segmap;
->> +};
->> +#define GC_LOOP_MAX 10
->> +
->>   #define F2FS_FEATURE_ENCRYPT		0x0001
->>   #define F2FS_FEATURE_BLKZONED		0x0002
->>   #define F2FS_FEATURE_ATOMIC_WRITE	0x0004
->> @@ -1125,6 +1132,7 @@ struct f2fs_sb_info {
->>   
->>   	/* threshold for converting bg victims for fg */
->>   	u64 fggc_threshold;
->> +	struct gc_loop_info gc_loop;
->>   
->>   	/* maximum # of trials to find a victim segment for SSR and GC */
->>   	unsigned int max_victim_search;
->> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->> index 5d5bba4..4ee9e1b 100644
->> --- a/fs/f2fs/gc.c
->> +++ b/fs/f2fs/gc.c
->> @@ -229,6 +229,10 @@ static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
->>   		if (no_fggc_candidate(sbi, secno))
->>   			continue;
->>   
->> +		if (sbi->gc_loop.segmap &&
->> +			test_bit(GET_SEG_FROM_SEC(sbi, secno), sbi->gc_loop.segmap))
->> +			continue;
->> +
->>   		clear_bit(secno, dirty_i->victim_secmap);
->>   		return GET_SEG_FROM_SEC(sbi, secno);
->>   	}
->> @@ -371,6 +375,9 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
->>   		if (gc_type == FG_GC && p.alloc_mode == LFS &&
->>   					no_fggc_candidate(sbi, secno))
->>   			goto next;
->> +		if (gc_type == FG_GC && p.alloc_mode == LFS &&
->> +			sbi->gc_loop.segmap && test_bit(segno, sbi->gc_loop.segmap))
->> +			goto next;
->>   
->>   		cost = get_gc_cost(sbi, segno, &p);
->>   
->> @@ -1042,6 +1049,27 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>   	seg_freed = do_garbage_collect(sbi, segno, &gc_list, gc_type);
->>   	if (gc_type == FG_GC && seg_freed == sbi->segs_per_sec)
->>   		sec_freed++;
->> +	else if (gc_type == FG_GC && seg_freed == 0) {
->> +		if (!sbi->gc_loop.segmap) {
->> +			sbi->gc_loop.segmap =
->> +				kvzalloc(f2fs_bitmap_size(MAIN_SEGS(sbi)), GFP_KERNEL);
->> +			sbi->gc_loop.count = 0;
->> +			sbi->gc_loop.segno = NULL_SEGNO;
->> +		}
->> +		if (segno == sbi->gc_loop.segno) {
->> +			if (sbi->gc_loop.count > GC_LOOP_MAX) {
->> +				f2fs_bug_on(sbi, 1);
->> +				set_bit(segno, sbi->gc_loop.segmap);
->> +				sbi->gc_loop.count = 0;
->> +				sbi->gc_loop.segno = NULL_SEGNO;
->> +			}
->> +			else
->> +				sbi->gc_loop.count++;
->> +		} else {
->> +			sbi->gc_loop.segno = segno;
->> +			sbi->gc_loop.count = 0;
->> +		}
->> +	}
->>   	total_freed += seg_freed;
->>   
->>   	if (gc_type == FG_GC)
->> @@ -1075,6 +1103,12 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>   
->>   	if (sync)
->>   		ret = sec_freed ? 0 : -EAGAIN;
->> +	if (sbi->gc_loop.segmap) {
->> +		kvfree(sbi->gc_loop.segmap);
->> +		sbi->gc_loop.segmap = NULL;
->> +		sbi->gc_loop.count = 0;
->> +		sbi->gc_loop.segno = NULL_SEGNO;
->> +	}
->>   	return ret;
->>   }
->>   
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index 031cb26..76f0b72 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -2562,6 +2562,9 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>   	sbi->last_valid_block_count = sbi->total_valid_block_count;
->>   	sbi->reserved_blocks = 0;
->>   	sbi->current_reserved_blocks = 0;
->> +	sbi->gc_loop.segmap = NULL;
->> +	sbi->gc_loop.count = 0;
->> +	sbi->gc_loop.segno = NULL_SEGNO;
->>   
->>   	for (i = 0; i < NR_INODE_TYPE; i++) {
->>   		INIT_LIST_HEAD(&sbi->inode_list[i]);
->>
+>> the issue as below:
+> First we need to look - what does the test do?
 >
-> .
+> # Test that if we rename a file, create a new file that has the old name of the
+> # other file and is a child of the same parent directory, fsync the new inode,
+> # power fail and mount the filesystem, we do not lose the first file and that
+> # file has the name it was renamed to.
 >
-
--- 
-Thanks,
-Yunlong Song
-
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> Ok, so it is a test of fsync'd file renames/creation over simulated device
+> failure, and wants to be sure that all files and file contents are as
+> expected if data integrity syscalls were made before the device failure.
+>
+>> # ./check generic/342
+>> FSTYP         -- f2fs
+>> PLATFORM      -- Linux/x86_64 node01 4.15.0-rc4
+>> MKFS_OPTIONS  -- /dev/sde1
+>> MOUNT_OPTIONS -- -o acl,user_xattr /dev/sde1 /tmp/test1
+>>
+>> generic/342      - output mismatch (see /home/ubuntu/git/xfstests-dev/results//generic/342.out.bad)
+>>      --- tests/generic/342.out   2017-12-13 13:47:20.144000000 -0500
+>>      +++ /home/ubuntu/git/xfstests-dev/results//generic/342.out.bad 2017-12-25 11:13:12.928000000 -0500
+>>      @@ -8,8 +8,7 @@
+>>       48c940ba3b8671d3d6ea74e4ccad8ca3  SCRATCH_MNT/a/bar
+>>       Directory a/ contents after log replay:
+>>       SCRATCH_MNT/a:
+>>      -bar
+> the test created foo, fsynced it, then renamed it to bar and created a
+> /new/ file also named foo, then fsynced the new file foo.
+>
+> Despite that 2nd fsync, the renamed file "bar" is not present in
+> your case.
+>
+> However, don't we really need to fsync the directory after
+> the rename and recreation to ensure persistence?
+>
+> iows:  does this patch make the test pass on f2fs?  It does
+> for me, and I think it's the only valid way to run the test:
+the patch works for me. but btrfs could pass the test without it, why so 
+different?
+> diff --git a/tests/generic/342 b/tests/generic/342
+> index ed64e05..6a9e5bd 100755
+> --- a/tests/generic/342
+> +++ b/tests/generic/342
+> @@ -68,6 +68,7 @@ sync
+>   mv $SCRATCH_MNT/a/foo $SCRATCH_MNT/a/bar
+>   $XFS_IO_PROG -f -c "pwrite -S 0xba 0 16K" $SCRATCH_MNT/a/foo | _filter_xfs_io
+>   $XFS_IO_PROG -c "fsync" $SCRATCH_MNT/a/foo
+> +$XFS_IO_PROG -c "fsync" $SCRATCH_MNT/a
+>   
+>   echo "File digests before log replay:"
+>   md5sum $SCRATCH_MNT/a/foo | _filter_scratch
+>
+> without an fsync of the parent dir, I don't think we can
+> guarantee that filename changes or additions will persist
+> on every filesystem.
+>
+>>       foo
+>>       File digests after log replay:
+>>       9e5d56a1f9b2c93589f9d55480f971a1  SCRATCH_MNT/a/foo
+>>      ...
+>>      (Run 'diff -u tests/generic/342.out /home/ubuntu/git/xfstests-dev/results//generic/342.out.bad'  to see the entire diff)
+> Generally best to do that suggested diff command to see if
+> there are any more pieces of changed/wrong test output.
+>
+>> Ran: generic/342
+>> Failures: generic/342
+>> Failed 1 of 1 tests
+>>
+>> Is it a problem with my computer or a already known issue with f2fs?
+> or a problem with the test itself ...
+cool!
+>
+> -Eric
+>   
+>> thanks!
+>>
+>> -- 
+>> To unsubscribe from this list: send the line "unsubscribe fstests" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
