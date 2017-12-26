@@ -1,51 +1,37 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: xfstests: generic/342 run failed in f2fs
-Date: Mon, 25 Dec 2017 11:31:02 -0500
-Message-ID: <20171225163102.GB14399@thunk.org>
-References: <2d524305-ecb5-8600-a92a-d79b717b8d13@intel.com>
- <e367054d-046d-d6e5-943c-7fbe10493029@sandeen.net>
- <d20cb58e-6646-a7de-bff1-8b7783a30664@intel.com>
- <d5ff659d-c659-ca47-3999-2f4b16629e42@sandeen.net>
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+Subject: Re: [PATCH v5 03/78] xarray: Add the xa_lock to the radix_tree_root
+Date: Tue, 26 Dec 2017 19:54:40 +0300
+Message-ID: <20171226165440.tv6inwa2fgk3bfy6@node.shutemov.name>
+References: <20171215220450.7899-1-willy@infradead.org>
+ <20171215220450.7899-4-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <fstests-owner@vger.kernel.org>
+Return-path: <owner-linux-mm@kvack.org>
 Content-Disposition: inline
-In-Reply-To: <d5ff659d-c659-ca47-3999-2f4b16629e42@sandeen.net>
-Sender: fstests-owner@vger.kernel.org
-To: Eric Sandeen <sandeen@sandeen.net>
-Cc: Chen Rong <rongx.a.chen@intel.com>, fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, philip.li@intel.com
+In-Reply-To: <20171215220450.7899-4-willy@infradead.org>
+Sender: owner-linux-mm@kvack.org
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Matthew Wilcox <mawilcox@microsoft.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, David Howells <dhowells@redhat.com>, Shaohua Li <shli@kernel.org>, Jens Axboe <axboe@kernel.dk>, Rehas Sachdeva <aquannie@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, linux-raid@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Sun, Dec 24, 2017 at 11:47:20PM -0800, Eric Sandeen wrote:
-> Filesystems are free to do /more/ than the minimum required by posix -
-> see ext4_sync_parent for example.  Or xfs_finish_rename, for synchronous
-> mounts:
+On Fri, Dec 15, 2017 at 02:03:35PM -0800, Matthew Wilcox wrote:
+> From: Matthew Wilcox <mawilcox@microsoft.com>
 > 
->          * If this is a synchronous mount, make sure that the rename transaction
->          * goes to disk before returning to the user.
->          */
->         if (tp->t_mountp->m_flags & (XFS_MOUNT_WSYNC|XFS_MOUNT_DIRSYNC))
->                 xfs_trans_set_sync(tp);
-> 
-> so behavior can be fs-dependent, or mount option dependent, etc.
-> 
-> But to be portable, if an app wants directory changes to be persistent
-> before proceeding, it must fsync the directory after making changes.
-> 
-> I don't know about f2fs's design intent, whether it guarantees more
-> than posix requires, but to guarantee that this test works on any posix
-> fs, I think that directory fsync is needed.
+> This results in no change in structure size on 64-bit x86 as it fits in
+> the padding between the gfp_t and the void *.
 
-Agreed that this is a test bug, and we should add the fsync to the
-parent directory.
+The patch does more than described in the subject and commit message. At first
+I was confused why do you need to touch idr here. It took few minutes to figure
+it out.
 
-It might also be a good idea for f2fs to do more, given that fsync is
-a slow enough operation that so long as you can make sure the fsync of
-the parent directory happens within the same atomic update as the
-child inode, you might as well give the more expansive guarantee.  But
-obviously that's up to the f2fs developers to decide whether they want
-to do that work.
+Could you please add more into commit message about lockname and xa_ locking
+interface since you introduce it here?
 
-Cheers,
+-- 
+ Kirill A. Shutemov
 
-      	     	       	       	    - Ted
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
