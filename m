@@ -1,92 +1,156 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: recover directory operations by fsync
-Date: Thu, 28 Dec 2017 08:22:17 -0800
-Message-ID: <20171228162217.42041-1-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Subject: Re: xfstests: generic/342 run failed in f2fs
+Date: Thu, 28 Dec 2017 08:29:57 -0800
+Message-ID: <20171228162957.GA37524@jaegeuk-macbookpro.roam.corp.google.com>
+References: <2d524305-ecb5-8600-a92a-d79b717b8d13@intel.com>
+ <e367054d-046d-d6e5-943c-7fbe10493029@sandeen.net>
+ <d20cb58e-6646-a7de-bff1-8b7783a30664@intel.com>
+ <d5ff659d-c659-ca47-3999-2f4b16629e42@sandeen.net>
+ <20171225163102.GB14399@thunk.org>
+ <20171227191130.GB13490@jaegeuk-macbookpro.roam.corp.google.com>
+ <20171228090903.GQ5858@dastard>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+ helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <jaegeuk@kernel.org>) id 1eUb4I-0003Ar-EX
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Dec 2017 16:30:06 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eUb4G-0004xN-4w
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Dec 2017 16:30:06 +0000
+Content-Disposition: inline
+In-Reply-To: <20171228090903.GQ5858@dastard>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Dave Chinner <david@fromorbit.com>
+Cc: Theodore Ts'o <tytso@mit.edu>, Chen Rong <rongx.a.chen@intel.com>, Eric Sandeen <sandeen@sandeen.net>, fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, philip.li@intel.com
 
-This fixes generic/342 which doesn't recover renamed file which was fsynced
-before. It will be done via another fsync on newly created file.
+On 12/28, Dave Chinner wrote:
+> On Wed, Dec 27, 2017 at 11:11:30AM -0800, Jaegeuk Kim wrote:
+> > On 12/25, Theodore Ts'o wrote:
+> > > On Sun, Dec 24, 2017 at 11:47:20PM -0800, Eric Sandeen wrote:
+> > > > Filesystems are free to do /more/ than the minimum required by posix -
+> > > > see ext4_sync_parent for example.  Or xfs_finish_rename, for synchronous
+> > > > mounts:
+> > > > 
+> > > >          * If this is a synchronous mount, make sure that the rename transaction
+> > > >          * goes to disk before returning to the user.
+> > > >          */
+> > > >         if (tp->t_mountp->m_flags & (XFS_MOUNT_WSYNC|XFS_MOUNT_DIRSYNC))
+> > > >                 xfs_trans_set_sync(tp);
+> > > > 
+> > > > so behavior can be fs-dependent, or mount option dependent, etc.
+> > > > 
+> > > > But to be portable, if an app wants directory changes to be persistent
+> > > > before proceeding, it must fsync the directory after making changes.
+> > > > 
+> > > > I don't know about f2fs's design intent, whether it guarantees more
+> > > > than posix requires, but to guarantee that this test works on any posix
+> > > > fs, I think that directory fsync is needed.
+> > > 
+> > > Agreed that this is a test bug, and we should add the fsync to the
+> > > parent directory.
+> > 
+> > Agreed too. Or, how about using "-o dirsync"?
+> > 
+> > > 
+> > > It might also be a good idea for f2fs to do more, given that fsync is
+> > > a slow enough operation that so long as you can make sure the fsync of
+> > > the parent directory happens within the same atomic update as the
+> > > child inode, you might as well give the more expansive guarantee.  But
+> > > obviously that's up to the f2fs developers to decide whether they want
+> > > to do that work.
+> > 
+> > Indeed. Actually, since one of our goals was to reduce fsync latencies for
+> > Android, we decided to support posix in a minimum way. In order to avoid
+> > complex directory updates recursively, however, we allowed the fsync on
+> > directories to trigger checkpoint requiring many IO operations.
+> 
+> So what you are really saying is that f2fs is not strictly ordered
+> w.r.t metadata crash consistency after fsync()? Wasn't that
+> considered a bug in btrfs that had to be fixed (and did get fixed)?
+> 
+> Oh, yeah, it's right there in the test commit history:
+> 
+> commit f02fe949113f35ae221ec1ab5c9959912f594bf4
+> Author: Filipe Manana <fdmanana@suse.com>
+> Date:   Tue Apr 5 11:47:55 2016 +1000
+> 
+>     generic: add test for fsync after renaming file
+>     
+>     Test that if we rename a file, create a new file that has the old name
+>     of the other file and is a child of the same parent directory, fsync the
+>     new inode, power fail and mount the filesystem, we do not lose the first
+>     file and that file has the name it was renamed to.
+>     
+>     This test is motivated by an issue found in btrfs which is fixed by the
+>     following patch for the linux kernel:
+>     
+>       "Btrfs: fix file loss caused by fsync after rename and new inode"
+>     
+>     Signed-off-by: Filipe Manana <fdmanana@suse.com>
+>     Reviewed-by: Eryu Guan <eguan@redhat.com>
+>     Signed-off-by: Dave Chinner <david@fromorbit.com>
+> 
+> There's a whole lot more detail in the kernel commit 2be63d5ce929
+> ("Btrfs: fix file loss on log replay after renaming a file and
+> fsync") but my point is that we considered this a btrfs filesystem
+> bug and so changing the test defeats it's purpose as a regression
+> test for the btrfs bug.
+> 
+> So IMO the test should not be changed. And I think we should be
+> consistent and consider this f2fs failure as a f2fs bug that needs
+> fixing to bring it's behaviour in line with xfs, ext4, and btrfs.
+> 
+> Remember this when quoting POSIX about fsync behaviour: Posix is a
+> terrible standard when it comes to data integrity. We go way, way
+> beyond what POSIX specifies as a valid fsync implementation (i.e.
+> posix allows "do nothing and return success" as a conformant
+> implementation). Ext4, XFS and btrfs all have strictly ordered
+> metadata crash recovery semantics and all of the crash recovery
+> tests expect this behaviour from the filesytem being tested. The
+> underlying intention is that by encoding it into these tests, all
+> widely used and future linux filesystems meet or exceed this crash
+> integrity requirement.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/dir.c   | 2 ++
- fs/f2fs/f2fs.h  | 2 ++
- fs/f2fs/file.c  | 3 +++
- fs/f2fs/namei.c | 4 ++++
- 4 files changed, 11 insertions(+)
+I just noticed that this test is not applied for generic filesystems,
+but for ones that support metadata_journaling. So, IMHO, we don't have
+to rely on POSIX too much here. Back to metadata_journalling, we indeed
+have to treat this as a bug in f2fs, since this recovery behavior sounds
+like defacto across the major filesystems.
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 724304dc6143..f00b5ed8c011 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -713,6 +713,8 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
- 
- 	f2fs_update_time(F2FS_I_SB(dir), REQ_TIME);
- 
-+	add_ino_entry(F2FS_I_SB(dir), dir->i_ino, TRANS_DIR_INO);
-+
- 	if (f2fs_has_inline_dentry(dir))
- 		return f2fs_delete_inline_entry(dentry, page, dir, inode);
- 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 398ed95d4036..b32eacf11270 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -181,6 +181,7 @@ enum {
- 	ORPHAN_INO,		/* for orphan ino list */
- 	APPEND_INO,		/* for append ino list */
- 	UPDATE_INO,		/* for update ino list */
-+	TRANS_DIR_INO,		/* for trasactions dir ino list */
- 	FLUSH_INO,		/* for multiple device flushing */
- 	MAX_INO_ENTRY,		/* max. list */
- };
-@@ -930,6 +931,7 @@ enum cp_reason_type {
- 	CP_NODE_NEED_CP,
- 	CP_FASTBOOT_MODE,
- 	CP_SPEC_LOG_NUM,
-+	CP_RECOVER_DIR,
- };
- 
- enum iostat_type {
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 5a3b9a07d72d..66a51e9fbe83 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -165,6 +165,9 @@ static inline enum cp_reason_type need_do_checkpoint(struct inode *inode)
- 		cp_reason = CP_FASTBOOT_MODE;
- 	else if (sbi->active_logs == 2)
- 		cp_reason = CP_SPEC_LOG_NUM;
-+	else if (need_dentry_mark(sbi, inode->i_ino) &&
-+		exist_written_data(sbi, F2FS_I(inode)->i_pino, TRANS_DIR_INO))
-+		cp_reason = CP_RECOVER_DIR;
- 
- 	return cp_reason;
- }
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index e3a0f4f65851..a885c6e659f8 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -935,6 +935,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		}
- 		f2fs_i_links_write(old_dir, false);
- 	}
-+	add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
- 
- 	f2fs_unlock_op(sbi);
- 
-@@ -1089,6 +1090,9 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	}
- 	f2fs_mark_inode_dirty_sync(new_dir, false);
- 
-+	add_ino_entry(sbi, old_dir->i_ino, TRANS_DIR_INO);
-+	add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
-+
- 	f2fs_unlock_op(sbi);
- 
- 	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir))
--- 
-2.15.0.531.g2ccb3012c9-goog
+I submitted a patch to address this, based on the hint by Ted.
+https://patchwork.kernel.org/patch/10135085/
+
+Thanks,
+
+> 
+> IOWs, changing the test is the wrong thing to do on many levels....
+> 
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
+> --
+> To unsubscribe from this list: send the line "unsubscribe fstests" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
