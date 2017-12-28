@@ -1,22 +1,27 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] fsck.f2fs: avoid wrong IS_VALID_BLK_ADDR
-Date: Wed, 27 Dec 2017 18:21:51 -0800
-Message-ID: <20171228022151.29522-1-jaegeuk@kernel.org>
+Subject: Re: [PATCH v5] f2fs: avoid dead loop in function
+ find_fsync_dnodes
+Date: Wed, 27 Dec 2017 18:37:31 -0800
+Message-ID: <20171228023731.GC13490@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1513746212-19454-1-git-send-email-heyunlei@huawei.com>
+ <b74925d3-4a2f-f363-497f-00e754891fb0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1eUNpX-0003wu-1k
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Dec 2017 02:21:59 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1eUO4g-0004Wr-Qw
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Dec 2017 02:37:38 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eUNpW-0002IP-5B
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Dec 2017 02:21:58 +0000
+ id 1eUO4f-0004J9-Me
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Dec 2017 02:37:38 +0000
+Content-Disposition: inline
+In-Reply-To: <b74925d3-4a2f-f363-497f-00e754891fb0@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,48 +31,73 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Cc: ning.jia@huawei.com, Yunlei He <heyunlei@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
 
-This patch avoids to check next free block offset in current segments, since we
-are using IS_VALID_BLK_ADDR during fsck which is able to be valid for a while.
-Let's just check this at the end of fsck.
+On 12/25, Chao Yu wrote:
+> On 2017/12/20 13:03, Yunlei He wrote:
+> > v4 -> v5 return err instead destory inode list for two reasons:
+> > i.  avoid duplicated destroy inode list in function recover_fsync_data.
+> > ii. report an error for recovery, and set need_fsck flag
+> 
+> fsck can't fix this issue so far, it doesn't work even we set need_fsck flag,
+> would it be better to just drop last dnode with corrupted next_blkaddr and try
+> our best to recover fsynced data?
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fsck/f2fs.h | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+Yup, agreed to this. There's no way to recover this, if we just return an error.
 
-diff --git a/fsck/f2fs.h b/fsck/f2fs.h
-index 34b2481..b7b6305 100644
---- a/fsck/f2fs.h
-+++ b/fsck/f2fs.h
-@@ -369,21 +369,12 @@ static inline bool IS_VALID_NID(struct f2fs_sb_info *sbi, u32 nid)
- 
- static inline bool IS_VALID_BLK_ADDR(struct f2fs_sb_info *sbi, u32 addr)
- {
--	int i;
--
- 	if (addr >= le64_to_cpu(F2FS_RAW_SUPER(sbi)->block_count) ||
- 				addr < SM_I(sbi)->main_blkaddr) {
- 		DBG(1, "block addr [0x%x]\n", addr);
- 		return 0;
- 	}
--
--	for (i = 0; i < NO_CHECK_TYPE; i++) {
--		struct curseg_info *curseg = CURSEG_I(sbi, i);
--
--		if (START_BLOCK(sbi, curseg->segno) +
--					curseg->next_blkoff == addr)
--			return 0;
--	}
-+	/* next block offset will be checked at the end of fsck. */
- 	return 1;
- }
- 
--- 
-2.15.0.531.g2ccb3012c9-goog
-
+> 
+> Thanks,
+> 
+> >         
+> > Came across a dead loop in recovery like this:
+> > 
+> > ......
+> > [   24.680480s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597696
+> > [   24.698394s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597697
+> > [   24.724334s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> > [   24.724334s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> > [   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> > [   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> > [   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> > [   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> > [   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> > [   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> > [   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> > [   24.724426s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+> > ......
+> > 
+> > Mount process will block in dead loop and fsck can do nothing with this
+> > error, This patch abandon recovery if node chain is cyclical.
+> > 
+> > Signed-off-by: Yunlei He <heyunlei@huawei.com>
+> > ---
+> >  fs/f2fs/recovery.c | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> > 
+> > diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> > index d025aa8..a535ec2 100644
+> > --- a/fs/f2fs/recovery.c
+> > +++ b/fs/f2fs/recovery.c
+> > @@ -216,6 +216,17 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
+> >  			return 0;
+> >  
+> >  		page = get_tmp_page(sbi, blkaddr);
+> > +		if (PageChecked(page)) {
+> > +			f2fs_msg(sbi->sb, KERN_ERR, "Abandon looped node block list");
+> > +			err = -EINVAL;
+> > +			break;
+> > +		}
+> > +
+> > +		/*
+> > +		 * it's not needed to clear PG_checked flag in temp page since we
+> > +		 * will truncate all those pages in the end of recovery.
+> > +		 */
+> > +		SetPageChecked(page);
+> >  
+> >  		if (!is_recoverable_dnode(page))
+> >  			break;
+> > 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
