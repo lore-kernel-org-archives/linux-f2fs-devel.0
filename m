@@ -1,355 +1,61 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2] f2fs: add an ioctl to disable GC for
- specific file
-Date: Wed, 27 Dec 2017 19:40:20 -0800
-Message-ID: <20171228034020.GF13490@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20171208051555.76998-1-jaegeuk@kernel.org>
- <20171208193723.GA87676@jaegeuk-macbookpro.roam.corp.google.com>
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: Re: xfstests: generic/342 run failed in f2fs
+Date: Wed, 27 Dec 2017 22:41:43 -0500
+Message-ID: <20171228034143.GA30269@thunk.org>
+References: <2d524305-ecb5-8600-a92a-d79b717b8d13@intel.com>
+ <e367054d-046d-d6e5-943c-7fbe10493029@sandeen.net>
+ <d20cb58e-6646-a7de-bff1-8b7783a30664@intel.com>
+ <d5ff659d-c659-ca47-3999-2f4b16629e42@sandeen.net>
+ <20171225163102.GB14399@thunk.org>
+ <20171227191130.GB13490@jaegeuk-macbookpro.roam.corp.google.com>
+ <ee17d403-6ede-e7a0-da54-baf276e1fc97@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
- helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1eUP3U-0005fP-JD
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Dec 2017 03:40:28 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eUP3T-0004a1-4R
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Dec 2017 03:40:28 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <fstests-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20171208193723.GA87676@jaegeuk-macbookpro.roam.corp.google.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <ee17d403-6ede-e7a0-da54-baf276e1fc97@huawei.com>
+Sender: fstests-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Eric Sandeen <sandeen@sandeen.net>, Chen Rong <rongx.a.chen@intel.com>, fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, philip.li@intel.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch gives a flag to disable GC on given file, which would be useful, when
-user wants to keep its block map. It also conducts in-place-update for dontmove
-file.
+On Thu, Dec 28, 2017 at 11:17:09AM +0800, Chao Yu wrote:
+> > Indeed. Actually, since one of our goals was to reduce fsync latencies for
+> > Android, we decided to support posix in a minimum way. In order to avoid
+> 
+> Agreed, in order to maximize performance of fsync regular file, we'd better
+> not change current sematic of f2fs' fsync so far, moreover, there is no
+> such requirement from upper layer application.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
+The cost of forcing an fsync on the parent directory only if the
+regular file was just created should really be minimal.  Most of the
+performance critical use cases for fsync() is after writing data on an
+already-existing file.
 
-Change log from v2:
- - change the naming from dontmove to pin_file
- - do in-place-update for pinned files
- - use union for i_current_depth with i_gc_failures
- - pass increasing i_gc_failures
+Even in the case where a package manager is writing, say, lots of
+newly created files followed by an fsync (such as a 21 megabyte docker
+binary) the overhead of including a handful of 4k metadata blocks for
+the containing directory to make sure /usr/bin/docker exists as part
+of the fsync() is in the noise compared to all of the other data
+blocks being written by the package manager.
 
- fs/f2fs/data.c          |  2 ++
- fs/f2fs/f2fs.h          | 29 +++++++++++++++++++++++++-
- fs/f2fs/file.c          | 54 +++++++++++++++++++++++++++++++++++++++++++++++++
- fs/f2fs/gc.c            | 11 ++++++++++
- fs/f2fs/gc.h            |  2 ++
- fs/f2fs/sysfs.c         |  2 ++
- include/linux/f2fs_fs.h |  9 ++++++++-
- 7 files changed, 107 insertions(+), 2 deletions(-)
+So I suspect the concerns of "oh, we can't provide the same guarantees
+as ext4 and f2fs" are a bit overblown here.  But ultimately, that's up
+to the f2fs developers...
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 7aca6ccd01f6..b9fab6186f28 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1394,6 +1394,8 @@ static inline bool need_inplace_update(struct f2fs_io_info *fio)
- {
- 	struct inode *inode = fio->page->mapping->host;
- 
-+	if (f2fs_is_pinned_file(inode))
-+		return true;
- 	if (S_ISDIR(inode->i_mode) || f2fs_is_atomic_file(inode))
- 		return false;
- 	if (is_cold_data(fio->page))
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 65a51b941146..398ed95d4036 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -376,6 +376,8 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
- #define F2FS_IOC_FSGETXATTR		FS_IOC_FSGETXATTR
- #define F2FS_IOC_FSSETXATTR		FS_IOC_FSSETXATTR
- 
-+#define F2FS_IOC_PIN_FILE		_IO(F2FS_IOCTL_MAGIC, 13)
-+
- struct f2fs_gc_range {
- 	u32 sync;
- 	u64 start;
-@@ -586,7 +588,10 @@ struct f2fs_inode_info {
- 	unsigned long i_flags;		/* keep an inode flags for ioctl */
- 	unsigned char i_advise;		/* use to give file attribute hints */
- 	unsigned char i_dir_level;	/* use for dentry level for large dir */
--	unsigned int i_current_depth;	/* use only in directory structure */
-+	union {
-+		unsigned int i_current_depth;	/* only for directory depth */
-+		unsigned short i_gc_failures;	/* only for regular file */
-+	};
- 	unsigned int i_pino;		/* parent inode number */
- 	umode_t i_acl_mode;		/* keep file acl mode temporarily */
- 
-@@ -1130,6 +1135,9 @@ struct f2fs_sb_info {
- 	/* threshold for converting bg victims for fg */
- 	u64 fggc_threshold;
- 
-+	/* threshold for gc trials on pinned files */
-+	u64 gc_pin_file_threshold;
-+
- 	/* maximum # of trials to find a victim segment for SSR and GC */
- 	unsigned int max_victim_search;
- 
-@@ -2119,6 +2127,7 @@ enum {
- 	FI_HOT_DATA,		/* indicate file is hot */
- 	FI_EXTRA_ATTR,		/* indicate file has extra attribute */
- 	FI_PROJ_INHERIT,	/* indicate file inherits projectid */
-+	FI_PIN_FILE,		/* indicate file should not be gced */
- };
- 
- static inline void __mark_inode_dirty_flag(struct inode *inode,
-@@ -2132,6 +2141,7 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
- 			return;
- 	case FI_DATA_EXIST:
- 	case FI_INLINE_DOTS:
-+	case FI_PIN_FILE:
- 		f2fs_mark_inode_dirty_sync(inode, true);
- 	}
- }
-@@ -2212,6 +2222,13 @@ static inline void f2fs_i_depth_write(struct inode *inode, unsigned int depth)
- 	f2fs_mark_inode_dirty_sync(inode, true);
- }
- 
-+static inline void f2fs_i_gc_failures_write(struct inode *inode,
-+					unsigned int count)
-+{
-+	F2FS_I(inode)->i_gc_failures = count;
-+	f2fs_mark_inode_dirty_sync(inode, true);
-+}
-+
- static inline void f2fs_i_xnid_write(struct inode *inode, nid_t xnid)
- {
- 	F2FS_I(inode)->i_xattr_nid = xnid;
-@@ -2240,6 +2257,8 @@ static inline void get_inline_info(struct inode *inode, struct f2fs_inode *ri)
- 		set_bit(FI_INLINE_DOTS, &fi->flags);
- 	if (ri->i_inline & F2FS_EXTRA_ATTR)
- 		set_bit(FI_EXTRA_ATTR, &fi->flags);
-+	if (ri->i_inline & F2FS_PIN_FILE)
-+		set_bit(FI_PIN_FILE, &fi->flags);
- }
- 
- static inline void set_raw_inline(struct inode *inode, struct f2fs_inode *ri)
-@@ -2258,6 +2277,8 @@ static inline void set_raw_inline(struct inode *inode, struct f2fs_inode *ri)
- 		ri->i_inline |= F2FS_INLINE_DOTS;
- 	if (is_inode_flag_set(inode, FI_EXTRA_ATTR))
- 		ri->i_inline |= F2FS_EXTRA_ATTR;
-+	if (is_inode_flag_set(inode, FI_PIN_FILE))
-+		ri->i_inline |= F2FS_PIN_FILE;
- }
- 
- static inline int f2fs_has_extra_attr(struct inode *inode)
-@@ -2303,6 +2324,11 @@ static inline int f2fs_has_inline_dots(struct inode *inode)
- 	return is_inode_flag_set(inode, FI_INLINE_DOTS);
- }
- 
-+static inline bool f2fs_is_pinned_file(struct inode *inode)
-+{
-+	return is_inode_flag_set(inode, FI_PIN_FILE);
-+}
-+
- static inline bool f2fs_is_atomic_file(struct inode *inode)
- {
- 	return is_inode_flag_set(inode, FI_ATOMIC_FILE);
-@@ -2518,6 +2544,7 @@ int truncate_hole(struct inode *inode, pgoff_t pg_start, pgoff_t pg_end);
- void truncate_data_blocks_range(struct dnode_of_data *dn, int count);
- long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
- long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
-+int f2fs_pin_file_control(struct inode *inode, bool inc);
- 
- /*
-  * inode.c
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 1db68f1bcd77..5a3b9a07d72d 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2666,6 +2666,57 @@ static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
- 	return 0;
- }
- 
-+int f2fs_pin_file_control(struct inode *inode, bool inc)
-+{
-+	struct f2fs_inode_info *fi = F2FS_I(inode);
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+
-+	/* Use i_gc_failures for normal file as a risk signal. */
-+	if (inc)
-+		f2fs_i_gc_failures_write(inode, fi->i_gc_failures + 1);
-+
-+	if (fi->i_gc_failures > sbi->gc_pin_file_threshold) {
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+			"%s: Enable GC = ino %lx after %x GC trials\n",
-+			__func__, inode->i_ino, fi->i_gc_failures);
-+		return -EAGAIN;
-+	}
-+	return 0;
-+}
-+
-+static int f2fs_ioc_pin_file(struct file *filp)
-+{
-+	struct inode *inode = file_inode(filp);
-+	int ret;
-+
-+	if (!inode_owner_or_capable(inode))
-+		return -EACCES;
-+
-+	if (!S_ISREG(inode->i_mode))
-+		return -EINVAL;
-+
-+	if (f2fs_readonly(F2FS_I_SB(inode)->sb))
-+		return -EROFS;
-+
-+	inode_lock(inode);
-+
-+	if (f2fs_pin_file_control(inode, false)) {
-+		ret = -EAGAIN;
-+		goto out;
-+	}
-+
-+	ret = f2fs_convert_inline_inode(inode);
-+	if (ret)
-+		goto out;
-+
-+	set_inode_flag(inode, FI_PIN_FILE);
-+	ret = F2FS_I(inode)->i_gc_failures;
-+	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
-+out:
-+	inode_unlock(inode);
-+	return ret;
-+}
-+
- long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
- 	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
-@@ -2716,6 +2767,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return f2fs_ioc_fsgetxattr(filp, arg);
- 	case F2FS_IOC_FSSETXATTR:
- 		return f2fs_ioc_fssetxattr(filp, arg);
-+	case F2FS_IOC_PIN_FILE:
-+		return f2fs_ioc_pin_file(filp);
- 	default:
- 		return -ENOTTY;
- 	}
-@@ -2791,6 +2844,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case F2FS_IOC_GET_FEATURES:
- 	case F2FS_IOC_FSGETXATTR:
- 	case F2FS_IOC_FSSETXATTR:
-+	case F2FS_IOC_PIN_FILE:
- 		break;
- 	default:
- 		return -ENOIOCTLCMD;
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 5d5bba462f26..9bffef153a12 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -624,6 +624,11 @@ static void move_data_block(struct inode *inode, block_t bidx,
- 	if (f2fs_is_atomic_file(inode))
- 		goto out;
- 
-+	if (f2fs_is_pinned_file(inode)) {
-+		f2fs_pin_file_control(inode, true);
-+		goto out;
-+	}
-+
- 	set_new_dnode(&dn, inode, NULL, NULL, 0);
- 	err = get_dnode_of_data(&dn, bidx, LOOKUP_NODE);
- 	if (err)
-@@ -720,6 +725,11 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
- 
- 	if (f2fs_is_atomic_file(inode))
- 		goto out;
-+	if (f2fs_is_pinned_file(inode)) {
-+		if (gc_type == FG_GC)
-+			f2fs_pin_file_control(inode, true);
-+		goto out;
-+	}
- 
- 	if (gc_type == BG_GC) {
- 		if (PageWriteback(page))
-@@ -1091,6 +1101,7 @@ void build_gc_manager(struct f2fs_sb_info *sbi)
- 
- 	sbi->fggc_threshold = div64_u64((main_count - ovp_count) *
- 				BLKS_PER_SEC(sbi), (main_count - resv_count));
-+	sbi->gc_pin_file_threshold = DEF_GC_FAILED_PINNED_FILES;
- 
- 	/* give warm/cold data area from slower device */
- 	if (sbi->s_ndevs && sbi->segs_per_sec == 1)
-diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-index 9325191fab2d..33310165cb78 100644
---- a/fs/f2fs/gc.h
-+++ b/fs/f2fs/gc.h
-@@ -20,6 +20,8 @@
- #define LIMIT_INVALID_BLOCK	40 /* percentage over total user space */
- #define LIMIT_FREE_BLOCK	40 /* percentage over invalid + free space */
- 
-+#define DEF_GC_FAILED_PINNED_FILES	1024
-+
- /* Search max. number of dirty segments to select a victim segment */
- #define DEF_MAX_VICTIM_SEARCH 4096 /* covers 8GB */
- 
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 581c7ce23c22..0e3253d7cb10 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -303,6 +303,7 @@ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
-+F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- F2FS_RW_ATTR(FAULT_INFO_RATE, f2fs_fault_info, inject_rate, inject_rate);
- F2FS_RW_ATTR(FAULT_INFO_TYPE, f2fs_fault_info, inject_type, inject_type);
-@@ -351,6 +352,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(idle_interval),
- 	ATTR_LIST(iostat_enable),
- 	ATTR_LIST(readdir_ra),
-+	ATTR_LIST(gc_pin_file_thresh),
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- 	ATTR_LIST(inject_rate),
- 	ATTR_LIST(inject_type),
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 43e98d30d2df..cfb522e6affc 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -212,6 +212,7 @@ struct f2fs_extent {
- #define F2FS_DATA_EXIST		0x08	/* file inline data exist flag */
- #define F2FS_INLINE_DOTS	0x10	/* file having implicit dot dentries */
- #define F2FS_EXTRA_ATTR		0x20	/* file having extra attribute */
-+#define F2FS_PIN_FILE		0x40	/* file should not be gced */
- 
- struct f2fs_inode {
- 	__le16 i_mode;			/* file mode */
-@@ -229,7 +230,13 @@ struct f2fs_inode {
- 	__le32 i_ctime_nsec;		/* change time in nano scale */
- 	__le32 i_mtime_nsec;		/* modification time in nano scale */
- 	__le32 i_generation;		/* file version (for NFS) */
--	__le32 i_current_depth;		/* only for directory depth */
-+	union {
-+		__le32 i_current_depth;	/* only for directory depth */
-+		__le16 i_gc_failures;	/*
-+					 * # of gc failures on pinned file.
-+					 * only for regular files.
-+					 */
-+	};
- 	__le32 i_xattr_nid;		/* nid to save xattr */
- 	__le32 i_flags;			/* file attributes */
- 	__le32 i_pino;			/* parent inode number */
--- 
-2.15.0.531.g2ccb3012c9-goog
+> > IMHO, as a quick fix, it seems we need to handle MS_DIRSYNC likewse xfs.
+> > #define MS_DIRSYNC      128     /* Directory modifications are synchronous */
+> 
+> We have supported that yet in commit b7e1d800031c ("f2fs: implement -o
+> dirsync"). ;)
 
+To be clear, we're not talking about dirsync mode where *all*
+directory modifications are synchronous.  What we're talking about
+here is the case where if you fsync() a regular file, and the regular
+file is newly created --- AND ONLY THAT CASE --- to make sure the
+parent directory is included in the set of metadata blocks updated by
+the fsync() against the regular file.
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+Best regards,
+
+						- Ted
