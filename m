@@ -1,306 +1,115 @@
-From: Hyunchul Lee <hyc.lee@gmail.com>
-Subject: Re: [PATCH 1/2] f2fs: pass down write hints to block
- layer for bufferd write
-Date: Thu, 28 Dec 2017 14:05:45 +0900
-Message-ID: <5A447BA9.4010008@gmail.com>
-References: <1511828607-624-1-git-send-email-hyc.lee@gmail.com>
- <d71418e1-d667-3dc6-9265-61db5d8f40bc@huawei.com>
- <5A2112A7.2070208@gmail.com>
- <1fa09755-7322-a886-c582-02e3d93d8f87@kernel.org> <5A2F3BC5.90803@gmail.com>
- <85f7fc1b-5286-c66f-6833-af1a44c5130f@huawei.com> <5A31D507.70304@gmail.com>
- <20171215020612.GF35234@jaegeuk-macbookpro.roam.corp.google.com>
- <50574d6d-b1fa-291a-0aae-c9006d6671d4@huawei.com>
- <20171228032630.GE13490@jaegeuk-macbookpro.roam.corp.google.com>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: xfstests: generic/342 run failed in f2fs
+Date: Thu, 28 Dec 2017 20:09:03 +1100
+Message-ID: <20171228090903.GQ5858@dastard>
+References: <2d524305-ecb5-8600-a92a-d79b717b8d13@intel.com>
+ <e367054d-046d-d6e5-943c-7fbe10493029@sandeen.net>
+ <d20cb58e-6646-a7de-bff1-8b7783a30664@intel.com>
+ <d5ff659d-c659-ca47-3999-2f4b16629e42@sandeen.net>
+ <20171225163102.GB14399@thunk.org>
+ <20171227191130.GB13490@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
- helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <hyc.lee@gmail.com>) id 1eUQOB-0001Lv-U1
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Dec 2017 05:05:55 +0000
-Received: from lgeamrelo11.lge.com ([156.147.23.51])
- by sfi-mx-4.v28.ch3.sourceforge.com with esmtp (Exim 4.89)
- id 1eUQO9-0000y0-9X
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Dec 2017 05:05:55 +0000
-In-Reply-To: <20171228032630.GE13490@jaegeuk-macbookpro.roam.corp.google.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, kernel-team@lge.com, linux-fsdevel@vger.kernel.org, Hyunchul Lee <cheol.lee@lge.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <fstests-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20171227191130.GB13490@jaegeuk-macbookpro.roam.corp.google.com>
+Sender: fstests-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Theodore Ts'o <tytso@mit.edu>, Eric Sandeen <sandeen@sandeen.net>, Chen Rong <rongx.a.chen@intel.com>, fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, philip.li@intel.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
-
-On 12/28/2017 12:26 PM, Jaegeuk Kim wrote:
-> On 12/23, Chao Yu wrote:
->> On 2017/12/15 10:06, Jaegeuk Kim wrote:
->>> On 12/14, Hyunchul Lee wrote:
->>>> Hi Jaegeuk,
->>>>
->>>> I need your comment about the fs_iohint mount option.
->>>>
->>>> a) w/o fs_iohint, propagate user hints to low layer.
->>>> b) w/ fs_iohint, ignore user hints, and use hints which is generated
->>>> with F2FS.
->>>>
->>>> Chao suggests this option. because user hints are more accurate than
->>>> file system.
->>>>
->>>> This is resonable, But I have some concerns about this option. 
->>>> The first thing is that blocks of a segments have different hints. This
->>>> could make GC less effective. 
->>>> The second is that the separation between LIFE_MEDIUM and LIFE_LONG is 
->>>> really needed. I think that difference between them is a little ambigous 
->>>> for users, and LIFE_SHORT and LIFE_EXTREME is converted to different 
->>>> hints by F2FS.
->>>
->>> I think what we really can do would assign many user hints to our 3 DATA
->>> logs likewise rw_hint_to_seg_type(), since it's just hints for user data.
->>> Then, we can decide how to keep that as much as possible, since we have
->>> another filesystem metadata such as meta and nodes. In addition, I don't
->>> think we have to keep the original user-hints which makes F2FS logs be
->>> messed up.
->>>
->>> With that mind, I can think of the below cases. Especially, if user wants
->>> to keep their io_hints, we'd better recommend to use direct_io w/o fs_iohints.
->>
->>
->>
->>> In order to keep this policy, I think fs_iohints would be better to be a
->>> feature set by mkfs.f2fs and detected by sysfs entries for users.
->>>
->>> 1) w/ fs_iohints
->>>
->>> User                        F2FS               Block
->>> -------------------------------------------------------------------
->>>                             Meta               WRITE_LIFE_MEDIUM
->>>                             HOT_NODE           WRITE_LIFE_NOTSET
->>>                             WARM_NODE          -'
->>>                             COLD_NODE          WRITE_LIFE_NONE
->>> ioctl(cold)                 COLD_DATA          WRITE_LIFE_EXTREME
->>> extention list              -'                 -'
->>> WRITE_LIFE_EXTREME          -'                 -'
->>> WRITE_LIFE_SHORT            HOT_DATA           WRITE_LIFE_SHORT
->>>
->>> -- buffered_io
->>> WRITE_LIFE_NOT_SET          WARM_DATA          WRITE_LIFE_LONG
->>> WRITE_LIFE_NONE             -'                 -'
->>> WRITE_LIFE_MEDIUM           -'                 -'
->>> WRITE_LIFE_LONG             -'                 -'
->>>
->>> -- direct_io (Not recommendable)
->>> WRITE_LIFE_NOT_SET          WARM_DATA          WRITE_LIFE_NOT_SET
->>> WRITE_LIFE_NONE             -'                 WRITE_LIFE_NONE
->>> WRITE_LIFE_MEDIUM           -'                 WRITE_LIFE_MEDIUM
->>> WRITE_LIFE_LONG             -'                 WRITE_LIFE_LONG
->>
->> Agreed with above IO hint mapping rule.
->>
->>>
->>> 2) w/o fs_iohints
->>>
->>> User                        F2FS               Block
->>> -------------------------------------------------------------------
->>>                             Meta               -
->>>                             HOT_NODE           -
->>>                             WARM_NODE          -
->>>                             COLD_NODE          -
->>> ioctl(cold)                 COLD_DATA          -
->>> extention list              -'                 -
->>>
->>> -- buffered_io
->>> WRITE_LIFE_EXTREME          COLD_DATA          -
->>> WRITE_LIFE_SHORT            HOT_DATA           -
->>> WRITE_LIFE_NOT_SET          WARM_DATA          -
->>> WRITE_LIFE_NONE             -'                 -
->>> WRITE_LIFE_MEDIUM           -'                 -
->>> WRITE_LIFE_LONG             -'                 -
->>
->> Now we recommend direct_io if user wants to give IO hint for storage, I suspect
->> that user would suffer performance regression issue w/o buffered IO.
->>
->> Another problem is that, now, in Android, it will be very hard to prompt
->> application to migrate their IO pattern from buffered IO to direct IO, one
->> possible way is distinguishing user data lifetime from FWK, e.g. set
->> WRITE_LIFE_SHORT for cache file or tmp file, set WRITE_LIFE_EXTREME for media file.
->>
->> In order to support buffered_io, would it be better to change mapping as below?
->>
->> -- buffered_io
->> WRITE_LIFE_EXTREME          COLD_DATA          WRITE_LIFE_EXTREME
->> WRITE_LIFE_SHORT            HOT_DATA           WRITE_LIFE_SHORT
->> WRITE_LIFE_NOT_SET          WARM_DATA          WRITE_LIFE_NOT_SET
->> WRITE_LIFE_NONE             -'                 -'
->> WRITE_LIFE_MEDIUM           -'                 -'
->> WRITE_LIFE_LONG             -'                 -'
+On Wed, Dec 27, 2017 at 11:11:30AM -0800, Jaegeuk Kim wrote:
+> On 12/25, Theodore Ts'o wrote:
+> > On Sun, Dec 24, 2017 at 11:47:20PM -0800, Eric Sandeen wrote:
+> > > Filesystems are free to do /more/ than the minimum required by posix -
+> > > see ext4_sync_parent for example.  Or xfs_finish_rename, for synchronous
+> > > mounts:
+> > > 
+> > >          * If this is a synchronous mount, make sure that the rename transaction
+> > >          * goes to disk before returning to the user.
+> > >          */
+> > >         if (tp->t_mountp->m_flags & (XFS_MOUNT_WSYNC|XFS_MOUNT_DIRSYNC))
+> > >                 xfs_trans_set_sync(tp);
+> > > 
+> > > so behavior can be fs-dependent, or mount option dependent, etc.
+> > > 
+> > > But to be portable, if an app wants directory changes to be persistent
+> > > before proceeding, it must fsync the directory after making changes.
+> > > 
+> > > I don't know about f2fs's design intent, whether it guarantees more
+> > > than posix requires, but to guarantee that this test works on any posix
+> > > fs, I think that directory fsync is needed.
+> > 
+> > Agreed that this is a test bug, and we should add the fsync to the
+> > parent directory.
 > 
-> Agreed, and it makes more sense that we'd better keep the write hints on
-> userdata given by applications.
+> Agreed too. Or, how about using "-o dirsync"?
 > 
-> BTW, since we couldn't get any performance numbers with these, how about
-> adding a mount option like "-o iohints=MODE" where MODE may be one of
-> "fs-based", "user-based", and "off"?
+> > 
+> > It might also be a good idea for f2fs to do more, given that fsync is
+> > a slow enough operation that so long as you can make sure the fsync of
+> > the parent directory happens within the same atomic update as the
+> > child inode, you might as well give the more expansive guarantee.  But
+> > obviously that's up to the f2fs developers to decide whether they want
+> > to do that work.
 > 
+> Indeed. Actually, since one of our goals was to reduce fsync latencies for
+> Android, we decided to support posix in a minimum way. In order to avoid
+> complex directory updates recursively, however, we allowed the fsync on
+> directories to trigger checkpoint requiring many IO operations.
 
-"fs-based" equals "with fs_iohints", "user-based" equals "without fs_iohints"
-+ Chao's suggest, and "off" means not passing down hints to block layer. right?
+So what you are really saying is that f2fs is not strictly ordered
+w.r.t metadata crash consistency after fsync()? Wasn't that
+considered a bug in btrfs that had to be fixed (and did get fixed)?
 
-Thanks.
+Oh, yeah, it's right there in the test commit history:
 
-> Thanks,
-> 
->>
->> Thanks,
->>
->>>
->>> -- direct_io
->>> WRITE_LIFE_EXTREME          COLD_DATA          WRITE_LIFE_EXTREME
->>> WRITE_LIFE_SHORT            HOT_DATA           WRITE_LIFE_SHORT
->>> WRITE_LIFE_NOT_SET          WARM_DATA          WRITE_LIFE_NOT_SET
->>> WRITE_LIFE_NONE             -'                 WRITE_LIFE_NONE
->>> WRITE_LIFE_MEDIUM           -'                 WRITE_LIFE_MEDIUM
->>> WRITE_LIFE_LONG             -'                 WRITE_LIFE_LONG
->>>
->>>
->>> Note that, I don't much care about how to manipulate streamid in nvme driver
->>> in terms of LIFE_NONE or LIFE_NOTSET, since other drivers can handle them
->>> in different ways. Taking a look at the definition, at least, we don't need
->>> to assume that those are same at all. For example, if we can expolit this in
->>> UFS driver, we can pass all the stream ids to the device as context ids.
->>>
->>> Thanks,
->>>
->>>>
->>>> Thanks.
->>>>
->>>> On 12/12/2017 11:45 AM, Chao Yu wrote:
->>>>> Hi Hyunchul,
->>>>>
->>>>> On 2017/12/12 10:15, Hyunchul Lee wrote:
->>>>>> Hi Chao,
->>>>>>
->>>>>> On 12/11/2017 10:15 PM, Chao Yu wrote:
->>>>>>> Hi Hyunchul,
->>>>>>>
->>>>>>> On 2017/12/1 16:28, Hyunchul Lee wrote:
->>>>>>>> Hi Chao,
->>>>>>>>
->>>>>>>> On 11/30/2017 04:06 PM, Chao Yu wrote:
->>>>>>>>> Hi Hyunchul,
->>>>>>>>>
->>>>>>>>> On 2017/11/28 8:23, Hyunchul Lee wrote:
->>>>>>>>>> From: Hyunchul Lee <cheol.lee@lge.com>
->>>>>>>>>>
->>>>>>>>>> This implements which hint is passed down to block layer
->>>>>>>>>> for datas from the specific segment type.
->>>>>>>>>>
->>>>>>>>>> segment type                     hints
->>>>>>>>>> ------------                     -----
->>>>>>>>>> COLD_NODE & COLD_DATA            WRITE_LIFE_EXTREME
->>>>>>>>>> WARM_DATA                        WRITE_LIFE_NONE
->>>>>>>>>> HOT_NODE & WARM_NODE             WRITE_LIFE_LONG
->>>>>>>>>> HOT_DATA                         WRITE_LIFE_MEDIUM
->>>>>>>>>> META_DATA                        WRITE_LIFE_SHORT
->>>>>>>>>
->>>>>>>>> Just noticed, if our user do not give the hint via ioctl, f2fs can
->>>>>>>>> provider hint to lower layer according to hot/cold separation ability,
->>>>>>>>> it will be okay. But once user give his hint which may be more accurate
->>>>>>>>> than filesystem, hint converted by f2fs may be wrong.
->>>>>>>>>
->>>>>>>>> So what do you think of adding an option to control whether filesystem
->>>>>>>>> can convert hint user given?
->>>>>>>>>
->>>>>>>>
->>>>>>>> I think it is okay for LIFE_SHORT and LIFE_EXTREME. because they are 
->>>>>>>> converted to different hints.
->>>>>>>
->>>>>>> What I mean is introducing a mount option, e.g. fs_iohint,
->>>>>>> a) w/o fs_iohint, propagate file/inode io_hint to low layer.
->>>>>>> b) w/ fs_iohint, ignore file/inode io_hint, use io_hint which is generated
->>>>>>> with filesystem's private rule.
->>>>>>>
->>>>>>
->>>>>> Okay, I will implement this option and send this patch again.
->>>>>
->>>>> Let's wait for Jaegeuk's comments first?
->>>>>
->>>>>>
->>>>>> Without fs_iohint, Even if data blocks are moved due to GC, 
->>>>>> we should keep user hints. And if user hints are not given, 
->>>>>> any hints are not passed down to block layer, right?
->>>>>
->>>>> Hmm.. that will be a problem, IMO, we can store last user's io_hint into inode
->>>>> layout, so later when we trigger GC, we can use the last io_hint in inode rather
->>>>> than giving no hint or fs' hint.
->>>>>
->>>>> I think it needs to discuss with original author of IO hint, what is the IO hint
->>>>> policy when filesystem move block by itself after inode has been released in system.
->>>>>
->>>>> Thanks,
->>>>>
->>>>>>
->>>>>> Thank you for comments.
->>>>>>
->>>>>>> Thanks,
->>>>>>>
->>>>>>>>
->>>>>>>> file hint      segment type        io hint
->>>>>>>> ---------      ------------        -------
->>>>>>>> LIFE_SHORT     HOT_DATA            LIFE_MEDIUM
->>>>>>>> LIFE_MEDIUM    WARM_DATA           LIFE_NONE
->>>>>>>> LIFE_LONG      WARM_DATA           LIFE_NONE
->>>>>>>> LIFE_EXTREME   COLD_DATA           LIFE_EXTREME
->>>>>>>>
->>>>>>>> the problem is that LIFE_MEDIUM and LIFE_LONG are converted to 
->>>>>>>> the same hint, LIFE_NONE. I am not sure that the seperation between 
->>>>>>>> LIFE_MEDIUM and LIFE_LONG is really needed. Because I guess that the 
->>>>>>>> difference between them is a little ambigous for users, and if WARM_DATA 
->>>>>>>> segment has two different hints, it can makes GC non-efficient.
->>>>>>>>
->>>>>>>> I wonder your thought about this.
->>>>>>>>
->>>>>>>> Thanks.
->>>>>>>>
->>>>>>>>> Thanks,
->>>>>>>>>
->>>>>>>>>
->>>>>>>>
->>>>>>>> ------------------------------------------------------------------------------
->>>>>>>> Check out the vibrant tech community on one of the world's most
->>>>>>>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
->>>>>>>> _______________________________________________
->>>>>>>> Linux-f2fs-devel mailing list
->>>>>>>> Linux-f2fs-devel@lists.sourceforge.net
->>>>>>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>>>>>>>
->>>>>>>
->>>>>>
->>>>>> .
->>>>>>
->>>>>
->>>>>
->>>>> ------------------------------------------------------------------------------
->>>>> Check out the vibrant tech community on one of the world's most
->>>>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
->>>>> _______________________________________________
->>>>> Linux-f2fs-devel mailing list
->>>>> Linux-f2fs-devel@lists.sourceforge.net
->>>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>>>>
->>>
->>> .
->>>
-> 
+commit f02fe949113f35ae221ec1ab5c9959912f594bf4
+Author: Filipe Manana <fdmanana@suse.com>
+Date:   Tue Apr 5 11:47:55 2016 +1000
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+    generic: add test for fsync after renaming file
+    
+    Test that if we rename a file, create a new file that has the old name
+    of the other file and is a child of the same parent directory, fsync the
+    new inode, power fail and mount the filesystem, we do not lose the first
+    file and that file has the name it was renamed to.
+    
+    This test is motivated by an issue found in btrfs which is fixed by the
+    following patch for the linux kernel:
+    
+      "Btrfs: fix file loss caused by fsync after rename and new inode"
+    
+    Signed-off-by: Filipe Manana <fdmanana@suse.com>
+    Reviewed-by: Eryu Guan <eguan@redhat.com>
+    Signed-off-by: Dave Chinner <david@fromorbit.com>
+
+There's a whole lot more detail in the kernel commit 2be63d5ce929
+("Btrfs: fix file loss on log replay after renaming a file and
+fsync") but my point is that we considered this a btrfs filesystem
+bug and so changing the test defeats it's purpose as a regression
+test for the btrfs bug.
+
+So IMO the test should not be changed. And I think we should be
+consistent and consider this f2fs failure as a f2fs bug that needs
+fixing to bring it's behaviour in line with xfs, ext4, and btrfs.
+
+Remember this when quoting POSIX about fsync behaviour: Posix is a
+terrible standard when it comes to data integrity. We go way, way
+beyond what POSIX specifies as a valid fsync implementation (i.e.
+posix allows "do nothing and return success" as a conformant
+implementation). Ext4, XFS and btrfs all have strictly ordered
+metadata crash recovery semantics and all of the crash recovery
+tests expect this behaviour from the filesytem being tested. The
+underlying intention is that by encoding it into these tests, all
+widely used and future linux filesystems meet or exceed this crash
+integrity requirement.
+
+IOWs, changing the test is the wrong thing to do on many levels....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
