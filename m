@@ -1,24 +1,23 @@
 From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH 2/2] fsck.f2fs: Remove unused ckpt_valid_map info
-Date: Fri, 29 Dec 2017 10:11:09 +0800
-Message-ID: <1514513469-9141-2-git-send-email-heyunlei@huawei.com>
-References: <1514513469-9141-1-git-send-email-heyunlei@huawei.com>
+Subject: [PATCH] f2fs: Search nat_block_bitmap to accelerate free
+ nids built process
+Date: Fri, 29 Dec 2017 10:17:31 +0800
+Message-ID: <1514513851-9288-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <heyunlei@huawei.com>) id 1eUkMC-0006Us-60
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Dec 2017 02:25:12 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
+ (envelope-from <heyunlei@huawei.com>) id 1eUkS6-0006yd-0W
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Dec 2017 02:31:18 +0000
+Received: from [45.249.212.35] (helo=huawei.com)
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eUkM7-0004Eb-U1
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Dec 2017 02:25:12 +0000
-In-Reply-To: <1514513469-9141-1-git-send-email-heyunlei@huawei.com>
+ id 1eUkS4-0006bH-QM
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Dec 2017 02:31:17 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,69 +30,130 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 Cc: ning.jia@huawei.com, heyunlei@huawei.com
 
-Remove unused ckpt_valid_map info.
+Search nat_block_bitmap to accelerate free nids built process.
 
 Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fsck/f2fs.h  |  6 ------
- fsck/mount.c | 12 +++---------
- 2 files changed, 3 insertions(+), 15 deletions(-)
+ fs/f2fs/f2fs.h |  3 ++-
+ fs/f2fs/node.c | 47 +++++++++++++++++++++++++++++++++--------------
+ 2 files changed, 35 insertions(+), 15 deletions(-)
 
-diff --git a/fsck/f2fs.h b/fsck/f2fs.h
-index 34b2481..58081bc 100644
---- a/fsck/f2fs.h
-+++ b/fsck/f2fs.h
-@@ -65,12 +65,6 @@ struct f2fs_nm_info {
- struct seg_entry {
- 	unsigned short valid_blocks;    /* # of valid blocks */
- 	unsigned char *cur_valid_map;   /* validity bitmap of blocks */
--	/*
--	 * # of valid blocks and the validity bitmap stored in the the last
--	 * checkpoint pack. This information is used by the SSR mode.
--	 */
--	unsigned short ckpt_valid_blocks;
--	unsigned char *ckpt_valid_map;
- 	unsigned char type;             /* segment type like CURSEG_XXX_TYPE */
- 	unsigned char orig_type;        /* segment type like CURSEG_XXX_TYPE */
- 	unsigned long long mtime;       /* modification time of the segment */
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 665fa4b..bab58aa 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -1086,10 +1086,7 @@ int build_sit_info(struct f2fs_sb_info *sbi)
- 	for (start = 0; start < TOTAL_SEGS(sbi); start++) {
- 		sit_i->sentries[start].cur_valid_map
- 			= calloc(SIT_VBLOCK_MAP_SIZE, 1);
--		sit_i->sentries[start].ckpt_valid_map
--			= calloc(SIT_VBLOCK_MAP_SIZE, 1);
--		if (!sit_i->sentries[start].cur_valid_map
--				|| !sit_i->sentries[start].ckpt_valid_map)
-+		if (!sit_i->sentries[start].cur_valid_map)
- 			return -ENOMEM;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 398ed95..afbe705 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -733,7 +733,8 @@ struct f2fs_nm_info {
+ 	spinlock_t nid_list_lock;	/* protect nid lists ops */
+ 	struct mutex build_lock;	/* lock for build free nids */
+ 	unsigned char (*free_nid_bitmap)[NAT_ENTRY_BITMAP_SIZE];
+-	unsigned char *nat_block_bitmap;
++	unsigned long *nat_block_bitmap;
++	unsigned int scaned_nat_blocks; /* # of nat blocks have been read */
+ 	unsigned short *free_nid_count;	/* free nid count of NAT block */
+ 
+ 	/* for checkpoint */
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 35b079d..e00d7a7 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1935,6 +1935,7 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
+ 	int i;
+ 
+ 	__set_bit_le(nat_ofs, nm_i->nat_block_bitmap);
++	nm_i->scaned_nat_blocks++;
+ 
+ 	i = start_nid % NAT_ENTRY_PER_BLOCK;
+ 
+@@ -2031,6 +2032,9 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
+ 			return;
  	}
  
-@@ -1396,9 +1393,7 @@ void seg_info_from_raw_sit(struct seg_entry *se,
- 		struct f2fs_sit_entry *raw_sit)
- {
- 	se->valid_blocks = GET_SIT_VBLOCKS(raw_sit);
--	se->ckpt_valid_blocks = GET_SIT_VBLOCKS(raw_sit);
- 	memcpy(se->cur_valid_map, raw_sit->valid_map, SIT_VBLOCK_MAP_SIZE);
--	memcpy(se->ckpt_valid_map, raw_sit->valid_map, SIT_VBLOCK_MAP_SIZE);
- 	se->type = GET_SIT_TYPE(raw_sit);
- 	se->orig_type = GET_SIT_TYPE(raw_sit);
- 	se->mtime = le64_to_cpu(raw_sit->mtime);
-@@ -2398,10 +2393,9 @@ void f2fs_do_umount(struct f2fs_sb_info *sbi)
- 	free(sbi->nm_info);
- 
- 	/* free sit_info */
--	for (i = 0; i < TOTAL_SEGS(sbi); i++) {
-+	for (i = 0; i < TOTAL_SEGS(sbi); i++)
- 		free(sit_i->sentries[i].cur_valid_map);
--		free(sit_i->sentries[i].ckpt_valid_map);
--	}
++	if (nm_i->scaned_nat_blocks == nm_i->nat_blocks)
++		return;
 +
- 	free(sit_i->sit_bitmap);
- 	free(sm_i->sit_info);
+ 	/* readahead nat pages to be scanned */
+ 	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nid), FREE_NID_PAGES,
+ 							META_NAT, true);
+@@ -2038,19 +2042,35 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
+ 	down_read(&nm_i->nat_tree_lock);
+ 
+ 	while (1) {
+-		if (!test_bit_le(NAT_BLOCK_OFFSET(nid),
+-						nm_i->nat_block_bitmap)) {
+-			struct page *page = get_current_nat_page(sbi, nid);
++		unsigned int start;
++		struct page *page;
+ 
+-			scan_nat_page(sbi, page, nid);
+-			f2fs_put_page(page, 1);
++		start = find_next_zero_bit(nm_i->nat_block_bitmap,
++				nm_i->nat_blocks, NAT_BLOCK_OFFSET(nid));
++
++		if (start >= nm_i->nat_blocks) {
++			if (nm_i->scaned_nat_blocks > nm_i->nat_blocks) {
++				f2fs_bug_on(sbi, 1);
++				break;
++			} else if (nm_i->scaned_nat_blocks == nm_i->nat_blocks){
++				break;
++			} else {
++				nid = 0;
++				continue;
++			}
+ 		}
+ 
+-		nid += (NAT_ENTRY_PER_BLOCK - (nid % NAT_ENTRY_PER_BLOCK));
+-		if (unlikely(nid >= nm_i->max_nid))
+-			nid = 0;
++		nid = start * NAT_ENTRY_PER_BLOCK;
++		page = get_current_nat_page(sbi, nid);
++		scan_nat_page(sbi, page, nid);
++		f2fs_put_page(page, 1);
++		nid += NAT_ENTRY_PER_BLOCK;
+ 
+-		if (++i >= FREE_NID_PAGES)
++		/* background or mount build, no more than 8 pages */
++		if ((!sync || mount) && ++i >= FREE_NID_PAGES)
++			break;
++		/* foreground build, until get free nids */
++		if (sync && !mount && nm_i->nid_cnt[FREE_NID])
+ 			break;
+ 	}
+ 
+@@ -2061,9 +2081,6 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
+ 	scan_curseg_cache(sbi);
+ 
+ 	up_read(&nm_i->nat_tree_lock);
+-
+-	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nm_i->next_scan_nid),
+-					nm_i->ra_nid_pages, META_NAT, false);
+ }
+ 
+ void build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
+@@ -2656,6 +2673,7 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
+ 	nat_segs = le32_to_cpu(sb_raw->segment_count_nat) >> 1;
+ 	nm_i->nat_blocks = nat_segs << le32_to_cpu(sb_raw->log_blocks_per_seg);
+ 	nm_i->max_nid = NAT_ENTRY_PER_BLOCK * nm_i->nat_blocks;
++	nm_i->scaned_nat_blocks = 0;
+ 
+ 	/* not used nids: 0, node, meta, (and root counted as valid node) */
+ 	nm_i->available_nids = nm_i->max_nid - sbi->total_valid_node_count -
+@@ -2705,14 +2723,15 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
+ static int init_free_nid_cache(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
++	unsigned int bitmap_size;
+ 
+ 	nm_i->free_nid_bitmap = f2fs_kvzalloc(sbi, nm_i->nat_blocks *
+ 					NAT_ENTRY_BITMAP_SIZE, GFP_KERNEL);
+ 	if (!nm_i->free_nid_bitmap)
+ 		return -ENOMEM;
+ 
+-	nm_i->nat_block_bitmap = f2fs_kvzalloc(sbi, nm_i->nat_blocks / 8,
+-								GFP_KERNEL);
++	bitmap_size = f2fs_bitmap_size(nm_i->nat_blocks);
++	nm_i->nat_block_bitmap = f2fs_kvzalloc(sbi, bitmap_size, GFP_KERNEL);
+ 	if (!nm_i->nat_block_bitmap)
+ 		return -ENOMEM;
  
 -- 
 1.9.1
