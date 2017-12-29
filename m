@@ -1,164 +1,191 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH] f2fs: Search nat_block_bitmap to accelerate free
- nids built process
-Date: Fri, 29 Dec 2017 10:17:31 +0800
-Message-ID: <1514513851-9288-1-git-send-email-heyunlei@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: add reserved blocks for root user
+Date: Fri, 29 Dec 2017 15:55:44 +0800
+Message-ID: <1d6b66be-121e-8654-15a6-0cae3d4a7ba9@huawei.com>
+References: <20171228021919.29397-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
- helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <heyunlei@huawei.com>) id 1eUkS6-0006yd-0W
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Dec 2017 02:31:18 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eUkS4-0006bH-QM
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Dec 2017 02:31:17 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
-Cc: ning.jia@huawei.com, heyunlei@huawei.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171228021919.29397-1-jaegeuk@kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Search nat_block_bitmap to accelerate free nids built process.
+On 2017/12/28 10:19, Jaegeuk Kim wrote:
+> This patch allows root to reserve some blocks via mount option.
+> 
+> "-o reserve_root=N" means N x 4KB-sized blocks for root only.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/f2fs.h  | 25 ++++++++++++++++++++-----
+>  fs/f2fs/super.c | 24 ++++++++++++++++++++++--
+>  fs/f2fs/sysfs.c |  5 ++++-
+>  3 files changed, 46 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 5bcd530dbae0..e2d859672147 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -95,6 +95,7 @@ extern char *fault_name[FAULT_MAX];
+>  #define F2FS_MOUNT_PRJQUOTA		0x00200000
+>  #define F2FS_MOUNT_QUOTA		0x00400000
+>  #define F2FS_MOUNT_INLINE_XATTR_SIZE	0x00800000
+> +#define F2FS_MOUNT_RESERVE_ROOT		0x01000000
+>  
+>  #define clear_opt(sbi, option)	((sbi)->mount_opt.opt &= ~F2FS_MOUNT_##option)
+>  #define set_opt(sbi, option)	((sbi)->mount_opt.opt |= F2FS_MOUNT_##option)
+> @@ -1557,6 +1558,12 @@ static inline bool f2fs_has_xattr_block(unsigned int ofs)
+>  	return ofs == XATTR_NODE_OFFSET;
+>  }
+>  
+> +static inline block_t reserve_root_limit(struct f2fs_sb_info *sbi)
+> +{
+> +	/* limit is 0.2% */
+> +	return (sbi->user_block_count << 1) / 100;
+> +}
+> +
+>  static inline void f2fs_i_blocks_write(struct inode *, block_t, bool, bool);
+>  static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+>  				 struct inode *inode, blkcnt_t *count)
+> @@ -1584,13 +1591,18 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+>  
+>  	spin_lock(&sbi->stat_lock);
+>  	sbi->total_valid_block_count += (block_t)(*count);
+> -	avail_user_block_count = sbi->user_block_count -
+> -					sbi->current_reserved_blocks;
+> +	avail_user_block_count = sbi->user_block_count;
+> +
+> +	if (!(test_opt(sbi, RESERVE_ROOT) && capable(CAP_SYS_RESOURCE)))
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fs/f2fs/f2fs.h |  3 ++-
- fs/f2fs/node.c | 47 +++++++++++++++++++++++++++++++++--------------
- 2 files changed, 35 insertions(+), 15 deletions(-)
+How about adding uid & gid verification also like ext4?
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 398ed95..afbe705 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -733,7 +733,8 @@ struct f2fs_nm_info {
- 	spinlock_t nid_list_lock;	/* protect nid lists ops */
- 	struct mutex build_lock;	/* lock for build free nids */
- 	unsigned char (*free_nid_bitmap)[NAT_ENTRY_BITMAP_SIZE];
--	unsigned char *nat_block_bitmap;
-+	unsigned long *nat_block_bitmap;
-+	unsigned int scaned_nat_blocks; /* # of nat blocks have been read */
- 	unsigned short *free_nid_count;	/* free nid count of NAT block */
- 
- 	/* for checkpoint */
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 35b079d..e00d7a7 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1935,6 +1935,7 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
- 	int i;
- 
- 	__set_bit_le(nat_ofs, nm_i->nat_block_bitmap);
-+	nm_i->scaned_nat_blocks++;
- 
- 	i = start_nid % NAT_ENTRY_PER_BLOCK;
- 
-@@ -2031,6 +2032,9 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
- 			return;
- 	}
- 
-+	if (nm_i->scaned_nat_blocks == nm_i->nat_blocks)
-+		return;
-+
- 	/* readahead nat pages to be scanned */
- 	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nid), FREE_NID_PAGES,
- 							META_NAT, true);
-@@ -2038,19 +2042,35 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
- 	down_read(&nm_i->nat_tree_lock);
- 
- 	while (1) {
--		if (!test_bit_le(NAT_BLOCK_OFFSET(nid),
--						nm_i->nat_block_bitmap)) {
--			struct page *page = get_current_nat_page(sbi, nid);
-+		unsigned int start;
-+		struct page *page;
- 
--			scan_nat_page(sbi, page, nid);
--			f2fs_put_page(page, 1);
-+		start = find_next_zero_bit(nm_i->nat_block_bitmap,
-+				nm_i->nat_blocks, NAT_BLOCK_OFFSET(nid));
-+
-+		if (start >= nm_i->nat_blocks) {
-+			if (nm_i->scaned_nat_blocks > nm_i->nat_blocks) {
-+				f2fs_bug_on(sbi, 1);
-+				break;
-+			} else if (nm_i->scaned_nat_blocks == nm_i->nat_blocks){
-+				break;
-+			} else {
-+				nid = 0;
-+				continue;
-+			}
- 		}
- 
--		nid += (NAT_ENTRY_PER_BLOCK - (nid % NAT_ENTRY_PER_BLOCK));
--		if (unlikely(nid >= nm_i->max_nid))
--			nid = 0;
-+		nid = start * NAT_ENTRY_PER_BLOCK;
-+		page = get_current_nat_page(sbi, nid);
-+		scan_nat_page(sbi, page, nid);
-+		f2fs_put_page(page, 1);
-+		nid += NAT_ENTRY_PER_BLOCK;
- 
--		if (++i >= FREE_NID_PAGES)
-+		/* background or mount build, no more than 8 pages */
-+		if ((!sync || mount) && ++i >= FREE_NID_PAGES)
-+			break;
-+		/* foreground build, until get free nids */
-+		if (sync && !mount && nm_i->nid_cnt[FREE_NID])
- 			break;
- 	}
- 
-@@ -2061,9 +2081,6 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
- 	scan_curseg_cache(sbi);
- 
- 	up_read(&nm_i->nat_tree_lock);
--
--	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nm_i->next_scan_nid),
--					nm_i->ra_nid_pages, META_NAT, false);
- }
- 
- void build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
-@@ -2656,6 +2673,7 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
- 	nat_segs = le32_to_cpu(sb_raw->segment_count_nat) >> 1;
- 	nm_i->nat_blocks = nat_segs << le32_to_cpu(sb_raw->log_blocks_per_seg);
- 	nm_i->max_nid = NAT_ENTRY_PER_BLOCK * nm_i->nat_blocks;
-+	nm_i->scaned_nat_blocks = 0;
- 
- 	/* not used nids: 0, node, meta, (and root counted as valid node) */
- 	nm_i->available_nids = nm_i->max_nid - sbi->total_valid_node_count -
-@@ -2705,14 +2723,15 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
- static int init_free_nid_cache(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
-+	unsigned int bitmap_size;
- 
- 	nm_i->free_nid_bitmap = f2fs_kvzalloc(sbi, nm_i->nat_blocks *
- 					NAT_ENTRY_BITMAP_SIZE, GFP_KERNEL);
- 	if (!nm_i->free_nid_bitmap)
- 		return -ENOMEM;
- 
--	nm_i->nat_block_bitmap = f2fs_kvzalloc(sbi, nm_i->nat_blocks / 8,
--								GFP_KERNEL);
-+	bitmap_size = f2fs_bitmap_size(nm_i->nat_blocks);
-+	nm_i->nat_block_bitmap = f2fs_kvzalloc(sbi, bitmap_size, GFP_KERNEL);
- 	if (!nm_i->nat_block_bitmap)
- 		return -ENOMEM;
- 
--- 
-1.9.1
+> +		avail_user_block_count -= sbi->current_reserved_blocks;
+> +
+>  	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
+>  		diff = sbi->total_valid_block_count - avail_user_block_count;
+> +		if (diff > *count)
+> +			diff = *count;
+>  		*count -= diff;
+>  		release = diff;
+> -		sbi->total_valid_block_count = avail_user_block_count;
+> +		sbi->total_valid_block_count -= diff;
+>  		if (!*count) {
+>  			spin_unlock(&sbi->stat_lock);
+>  			percpu_counter_sub(&sbi->alloc_valid_block_count, diff);
+> @@ -1780,8 +1792,11 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+>  	spin_lock(&sbi->stat_lock);
+>  
+>  	valid_block_count = sbi->total_valid_block_count + 1;
+> -	if (unlikely(valid_block_count + sbi->current_reserved_blocks >
+> -						sbi->user_block_count)) {
+> +
+> +	if (!(test_opt(sbi, RESERVE_ROOT) && capable(CAP_SYS_RESOURCE)))
+> +		valid_block_count += sbi->current_reserved_blocks;
+> +
+> +	if (unlikely(valid_block_count > sbi->user_block_count)) {
+>  		spin_unlock(&sbi->stat_lock);
+>  		goto enospc;
+>  	}
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index cb876d905ca5..a19e9f7bd908 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -107,6 +107,7 @@ enum {
+>  	Opt_noextent_cache,
+>  	Opt_noinline_data,
+>  	Opt_data_flush,
+> +	Opt_reserve_root,
+>  	Opt_mode,
+>  	Opt_io_size_bits,
+>  	Opt_fault_injection,
+> @@ -157,6 +158,7 @@ static match_table_t f2fs_tokens = {
+>  	{Opt_noextent_cache, "noextent_cache"},
+>  	{Opt_noinline_data, "noinline_data"},
+>  	{Opt_data_flush, "data_flush"},
+> +	{Opt_reserve_root, "reserve_root=%u"},
+>  	{Opt_mode, "mode=%s"},
+>  	{Opt_io_size_bits, "io_bits=%u"},
+>  	{Opt_fault_injection, "fault_injection=%u"},
+> @@ -488,6 +490,14 @@ static int parse_options(struct super_block *sb, char *options)
+>  		case Opt_data_flush:
+>  			set_opt(sbi, DATA_FLUSH);
+>  			break;
+> +		case Opt_reserve_root:
+> +			if (args->from && match_int(args, &arg))
+> +				return -EINVAL;
+> +			if (sbi->current_reserved_blocks > arg)
+> +				return -EINVAL;
+> +			sbi->current_reserved_blocks = arg;
 
+Previously, we have supported to reserve blocks in fs layer to adjust
+over-provision ratio dynamically by configuring sysfs interface, which can
+be used for reserving space of low level storage device for performance or
+flash lifetime.
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+I think reserve blocks for root user is another requirement which is
+different from above one, so I hope we can keep both of these two features
+available and usable, in order to keep previous one's backward
+compatibility and also try to support more various features in f2fs.
+
+Thanks,
+
+> +			set_opt(sbi, RESERVE_ROOT);
+> +			break;
+>  		case Opt_mode:
+>  			name = match_strdup(&args[0]);
+>  
+> @@ -1006,6 +1016,8 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
+>  
+>  	buf->f_blocks = total_count - start_count;
+>  	buf->f_bfree = user_block_count - valid_user_blocks(sbi) + ovp_count;
+> +	if (test_opt(sbi, RESERVE_ROOT))
+> +		buf->f_bfree += sbi->current_reserved_blocks;
+>  	buf->f_bavail = user_block_count - valid_user_blocks(sbi) -
+>  						sbi->current_reserved_blocks;
+>  
+> @@ -1136,6 +1148,9 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+>  	else if (test_opt(sbi, LFS))
+>  		seq_puts(seq, "lfs");
+>  	seq_printf(seq, ",active_logs=%u", sbi->active_logs);
+> +	if (test_opt(sbi, RESERVE_ROOT))
+> +		seq_printf(seq, ",reserve_root=%u",
+> +				sbi->current_reserved_blocks);
+>  	if (F2FS_IO_SIZE_BITS(sbi))
+>  		seq_printf(seq, ",io_size=%uKB", F2FS_IO_SIZE_KB(sbi));
+>  #ifdef CONFIG_F2FS_FAULT_INJECTION
+> @@ -2569,8 +2584,13 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  				le64_to_cpu(sbi->ckpt->valid_block_count);
+>  	sbi->last_valid_block_count = sbi->total_valid_block_count;
+>  	sbi->reserved_blocks = 0;
+> -	sbi->current_reserved_blocks = 0;
+> -
+> +	if (test_opt(sbi, RESERVE_ROOT) &&
+> +		sbi->current_reserved_blocks > reserve_root_limit(sbi)) {
+> +		sbi->current_reserved_blocks = reserve_root_limit(sbi);
+> +		f2fs_msg(sb, KERN_INFO,
+> +			"Reduce reserved blocks for root = %u\n",
+> +				sbi->current_reserved_blocks);
+> +	}
+>  	for (i = 0; i < NR_INODE_TYPE; i++) {
+>  		INIT_LIST_HEAD(&sbi->inode_list[i]);
+>  		spin_lock_init(&sbi->inode_lock[i]);
+> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> index 987b2736348c..33e159491b48 100644
+> --- a/fs/f2fs/sysfs.c
+> +++ b/fs/f2fs/sysfs.c
+> @@ -162,7 +162,10 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+>  #endif
+>  	if (a->struct_type == RESERVED_BLOCKS) {
+>  		spin_lock(&sbi->stat_lock);
+> -		if (t > (unsigned long)sbi->user_block_count) {
+> +		if (t > (unsigned long)sbi->user_block_count ||
+> +			(test_opt(sbi, RESERVE_ROOT) &&
+> +				(t < sbi->current_reserved_blocks ||
+> +				t > reserve_root_limit(sbi)))) {
+>  			spin_unlock(&sbi->stat_lock);
+>  			return -EINVAL;
+>  		}
+> 
