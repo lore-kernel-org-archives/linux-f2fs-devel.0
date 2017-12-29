@@ -1,23 +1,24 @@
 From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH 1/2] dump.f2fs: Retrun directly if blkaddr is not
- valid
-Date: Fri, 29 Dec 2017 10:11:08 +0800
-Message-ID: <1514513469-9141-1-git-send-email-heyunlei@huawei.com>
+Subject: [PATCH 2/2] fsck.f2fs: Remove unused ckpt_valid_map info
+Date: Fri, 29 Dec 2017 10:11:09 +0800
+Message-ID: <1514513469-9141-2-git-send-email-heyunlei@huawei.com>
+References: <1514513469-9141-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
+Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
  helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <heyunlei@huawei.com>) id 1eUkM9-0006rI-9V
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Dec 2017 02:25:09 +0000
+ (envelope-from <heyunlei@huawei.com>) id 1eUkMC-0006Us-60
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Dec 2017 02:25:12 +0000
 Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eUkM7-0002If-Sz
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Dec 2017 02:25:09 +0000
+ id 1eUkM7-0004Eb-U1
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Dec 2017 02:25:12 +0000
+In-Reply-To: <1514513469-9141-1-git-send-email-heyunlei@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,55 +31,70 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 Cc: ning.jia@huawei.com, heyunlei@huawei.com
 
-Retrun directly if blkaddr is not valid.
+Remove unused ckpt_valid_map info.
 
 Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fsck/dump.c  | 10 ++++++++++
- fsck/mount.c |  2 +-
- 2 files changed, 11 insertions(+), 1 deletion(-)
+ fsck/f2fs.h  |  6 ------
+ fsck/mount.c | 12 +++---------
+ 2 files changed, 3 insertions(+), 15 deletions(-)
 
-diff --git a/fsck/dump.c b/fsck/dump.c
-index 9f0993e..bf79e2f 100644
---- a/fsck/dump.c
-+++ b/fsck/dump.c
-@@ -586,6 +586,8 @@ int dump_info_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
- 	int type;
- 	struct f2fs_summary sum_entry;
- 	struct node_info ni, ino_ni;
-+	struct seg_entry *se;
-+	u32 offset;
- 	int ret = 0;
- 
- 	MSG(0, "\n== Dump data from block address ==\n\n");
-@@ -617,6 +619,14 @@ int dump_info_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
- 		return ret;
- 	}
- 
-+	se = get_seg_entry(sbi, GET_SEGNO(sbi, blk_addr));
-+	offset = OFFSET_IN_SEG(sbi, blk_addr);
-+
-+	if (f2fs_test_bit(offset, (const char *)se->cur_valid_map) == 0) {
-+		MSG(0, "\nblkaddr is not valid\n");
-+		return 0;
-+	}
-+
- 	type = get_sum_entry(sbi, blk_addr, &sum_entry);
- 	nid = le32_to_cpu(sum_entry.nid);
- 
+diff --git a/fsck/f2fs.h b/fsck/f2fs.h
+index 34b2481..58081bc 100644
+--- a/fsck/f2fs.h
++++ b/fsck/f2fs.h
+@@ -65,12 +65,6 @@ struct f2fs_nm_info {
+ struct seg_entry {
+ 	unsigned short valid_blocks;    /* # of valid blocks */
+ 	unsigned char *cur_valid_map;   /* validity bitmap of blocks */
+-	/*
+-	 * # of valid blocks and the validity bitmap stored in the the last
+-	 * checkpoint pack. This information is used by the SSR mode.
+-	 */
+-	unsigned short ckpt_valid_blocks;
+-	unsigned char *ckpt_valid_map;
+ 	unsigned char type;             /* segment type like CURSEG_XXX_TYPE */
+ 	unsigned char orig_type;        /* segment type like CURSEG_XXX_TYPE */
+ 	unsigned long long mtime;       /* modification time of the segment */
 diff --git a/fsck/mount.c b/fsck/mount.c
-index 678eeae..665fa4b 100644
+index 665fa4b..bab58aa 100644
 --- a/fsck/mount.c
 +++ b/fsck/mount.c
-@@ -1869,7 +1869,7 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left, int type)
- 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
- 	struct seg_entry *se;
- 	u32 segno;
--	u64 offset;
-+	u32 offset;
- 	int not_enough = 0;
- 	u64 end_blkaddr = (get_sb(segment_count_main) <<
- 			get_sb(log_blocks_per_seg)) + get_sb(main_blkaddr);
+@@ -1086,10 +1086,7 @@ int build_sit_info(struct f2fs_sb_info *sbi)
+ 	for (start = 0; start < TOTAL_SEGS(sbi); start++) {
+ 		sit_i->sentries[start].cur_valid_map
+ 			= calloc(SIT_VBLOCK_MAP_SIZE, 1);
+-		sit_i->sentries[start].ckpt_valid_map
+-			= calloc(SIT_VBLOCK_MAP_SIZE, 1);
+-		if (!sit_i->sentries[start].cur_valid_map
+-				|| !sit_i->sentries[start].ckpt_valid_map)
++		if (!sit_i->sentries[start].cur_valid_map)
+ 			return -ENOMEM;
+ 	}
+ 
+@@ -1396,9 +1393,7 @@ void seg_info_from_raw_sit(struct seg_entry *se,
+ 		struct f2fs_sit_entry *raw_sit)
+ {
+ 	se->valid_blocks = GET_SIT_VBLOCKS(raw_sit);
+-	se->ckpt_valid_blocks = GET_SIT_VBLOCKS(raw_sit);
+ 	memcpy(se->cur_valid_map, raw_sit->valid_map, SIT_VBLOCK_MAP_SIZE);
+-	memcpy(se->ckpt_valid_map, raw_sit->valid_map, SIT_VBLOCK_MAP_SIZE);
+ 	se->type = GET_SIT_TYPE(raw_sit);
+ 	se->orig_type = GET_SIT_TYPE(raw_sit);
+ 	se->mtime = le64_to_cpu(raw_sit->mtime);
+@@ -2398,10 +2393,9 @@ void f2fs_do_umount(struct f2fs_sb_info *sbi)
+ 	free(sbi->nm_info);
+ 
+ 	/* free sit_info */
+-	for (i = 0; i < TOTAL_SEGS(sbi); i++) {
++	for (i = 0; i < TOTAL_SEGS(sbi); i++)
+ 		free(sit_i->sentries[i].cur_valid_map);
+-		free(sit_i->sentries[i].ckpt_valid_map);
+-	}
++
+ 	free(sit_i->sit_bitmap);
+ 	free(sm_i->sit_info);
+ 
 -- 
 1.9.1
 
