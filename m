@@ -1,23 +1,23 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/2] f2fs: stop checkpoint only from fault
- injection
-Date: Thu, 28 Dec 2017 18:00:55 -0800
-Message-ID: <20171229020056.60558-1-jaegeuk@kernel.org>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH 1/2] dump.f2fs: Retrun directly if blkaddr is not
+ valid
+Date: Fri, 29 Dec 2017 10:11:08 +0800
+Message-ID: <1514513469-9141-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1eUjyt-0005b9-I6
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Dec 2017 02:01:07 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
+ (envelope-from <heyunlei@huawei.com>) id 1eUkM9-0006rI-9V
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Dec 2017 02:25:09 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eUjys-0003S6-Fe
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Dec 2017 02:01:07 +0000
+ id 1eUkM7-0002If-Sz
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Dec 2017 02:25:09 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,173 +27,60 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: ning.jia@huawei.com, heyunlei@huawei.com
 
-If we got EIO by block layer, we still can proceed since EIO can be recovered.
-But, if we injected stop_checkpoint, we must stop everything.
+Retrun directly if blkaddr is not valid.
 
-This should fix generic/441 failure in xfstests.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fs/f2fs/checkpoint.c | 16 ++++------------
- fs/f2fs/data.c       |  8 ++------
- fs/f2fs/f2fs.h       |  2 +-
- fs/f2fs/file.c       |  8 ++++----
- fs/f2fs/gc.c         |  2 +-
- fs/f2fs/inode.c      |  2 +-
- fs/f2fs/segment.c    |  2 +-
- 7 files changed, 14 insertions(+), 26 deletions(-)
+ fsck/dump.c  | 10 ++++++++++
+ fsck/mount.c |  2 +-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 14d2fedaf3ca..ce92243549dd 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -26,11 +26,10 @@
- static struct kmem_cache *ino_entry_slab;
- struct kmem_cache *inode_entry_slab;
+diff --git a/fsck/dump.c b/fsck/dump.c
+index 9f0993e..bf79e2f 100644
+--- a/fsck/dump.c
++++ b/fsck/dump.c
+@@ -586,6 +586,8 @@ int dump_info_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
+ 	int type;
+ 	struct f2fs_summary sum_entry;
+ 	struct node_info ni, ino_ni;
++	struct seg_entry *se;
++	u32 offset;
+ 	int ret = 0;
  
--void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi, bool end_io)
-+void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi)
- {
- 	set_ckpt_flags(sbi, CP_ERROR_FLAG);
--	if (!end_io)
--		f2fs_flush_merged_writes(sbi);
-+	f2fs_flush_merged_writes(sbi);
- }
- 
- /*
-@@ -89,18 +88,11 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
+ 	MSG(0, "\n== Dump data from block address ==\n\n");
+@@ -617,6 +619,14 @@ int dump_info_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
+ 		return ret;
  	}
  
- 	lock_page(page);
--	if (unlikely(page->mapping != mapping)) {
-+	/* If there is any IO error when accessing device, let's try again. */
-+	if (unlikely(page->mapping != mapping || !PageUptodate(page))) {
- 		f2fs_put_page(page, 1);
- 		goto repeat;
- 	}
--
--	/*
--	 * if there is any IO error when accessing device, make our filesystem
--	 * readonly and make sure do not write checkpoint with non-uptodate
--	 * meta page.
--	 */
--	if (unlikely(!PageUptodate(page)))
--		f2fs_stop_checkpoint(sbi, false);
- out:
- 	return page;
- }
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index b9fab6186f28..29523013c5a3 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -101,18 +101,14 @@ static void f2fs_write_end_io(struct bio *bio)
- 			ClearPagePrivate(page);
- 			unlock_page(page);
- 			mempool_free(page, sbi->write_io_dummy);
--
--			if (unlikely(bio->bi_status))
--				f2fs_stop_checkpoint(sbi, true);
- 			continue;
- 		}
- 
- 		fscrypt_pullback_bio_page(&page, true);
- 
--		if (unlikely(bio->bi_status)) {
-+		if (unlikely(bio->bi_status))
- 			mapping_set_error(page->mapping, -EIO);
--			f2fs_stop_checkpoint(sbi, true);
--		}
++	se = get_seg_entry(sbi, GET_SEGNO(sbi, blk_addr));
++	offset = OFFSET_IN_SEG(sbi, blk_addr);
 +
- 		dec_page_count(sbi, type);
- 		clear_cold_data(page);
- 		end_page_writeback(page);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index b32eacf11270..f06fb7b332c7 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2741,7 +2741,7 @@ int rw_hint_to_seg_type(enum rw_hint hint);
- /*
-  * checkpoint.c
-  */
--void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi, bool end_io);
-+void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi);
- struct page *grab_meta_page(struct f2fs_sb_info *sbi, pgoff_t index);
- struct page *get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index);
- struct page *get_tmp_page(struct f2fs_sb_info *sbi, pgoff_t index);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 66a51e9fbe83..7ccf3e7ff498 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1840,21 +1840,21 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
- 	case F2FS_GOING_DOWN_FULLSYNC:
- 		sb = freeze_bdev(sb->s_bdev);
- 		if (sb && !IS_ERR(sb)) {
--			f2fs_stop_checkpoint(sbi, false);
-+			f2fs_stop_checkpoint(sbi);
- 			thaw_bdev(sb->s_bdev, sb);
- 		}
- 		break;
- 	case F2FS_GOING_DOWN_METASYNC:
- 		/* do checkpoint only */
- 		f2fs_sync_fs(sb, 1);
--		f2fs_stop_checkpoint(sbi, false);
-+		f2fs_stop_checkpoint(sbi);
- 		break;
- 	case F2FS_GOING_DOWN_NOSYNC:
--		f2fs_stop_checkpoint(sbi, false);
-+		f2fs_stop_checkpoint(sbi);
- 		break;
- 	case F2FS_GOING_DOWN_METAFLUSH:
- 		sync_meta_pages(sbi, META, LONG_MAX, FS_META_IO);
--		f2fs_stop_checkpoint(sbi, false);
-+		f2fs_stop_checkpoint(sbi);
- 		break;
- 	default:
- 		ret = -EINVAL;
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 9bffef153a12..538396ea4d29 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -56,7 +56,7 @@ static int gc_thread_func(void *data)
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- 		if (time_to_inject(sbi, FAULT_CHECKPOINT)) {
- 			f2fs_show_injection_info(FAULT_CHECKPOINT);
--			f2fs_stop_checkpoint(sbi, false);
-+			f2fs_stop_checkpoint(sbi);
- 		}
- #endif
++	if (f2fs_test_bit(offset, (const char *)se->cur_valid_map) == 0) {
++		MSG(0, "\nblkaddr is not valid\n");
++		return 0;
++	}
++
+ 	type = get_sum_entry(sbi, blk_addr, &sum_entry);
+ 	nid = le32_to_cpu(sum_entry.nid);
  
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 234322889e65..daac3d142c2c 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -441,7 +441,7 @@ void update_inode_page(struct inode *inode)
- 			cond_resched();
- 			goto retry;
- 		} else if (err != -ENOENT) {
--			f2fs_stop_checkpoint(sbi, false);
-+			f2fs_stop_checkpoint(sbi);
- 		}
- 		return;
- 	}
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index b03f65e5dfdc..890d483ad21e 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -454,7 +454,7 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- 	if (time_to_inject(sbi, FAULT_CHECKPOINT)) {
- 		f2fs_show_injection_info(FAULT_CHECKPOINT);
--		f2fs_stop_checkpoint(sbi, false);
-+		f2fs_stop_checkpoint(sbi);
- 	}
- #endif
- 
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 678eeae..665fa4b 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -1869,7 +1869,7 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left, int type)
+ 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+ 	struct seg_entry *se;
+ 	u32 segno;
+-	u64 offset;
++	u32 offset;
+ 	int not_enough = 0;
+ 	u64 end_blkaddr = (get_sb(segment_count_main) <<
+ 			get_sb(log_blocks_per_seg)) + get_sb(main_blkaddr);
 -- 
-2.15.0.531.g2ccb3012c9-goog
+1.9.1
 
 
 ------------------------------------------------------------------------------
