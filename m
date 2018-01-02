@@ -1,366 +1,223 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: add an ioctl to disable GC for specific file
-Date: Tue, 2 Jan 2018 11:29:57 +0800
-Message-ID: <af60c951-4bc0-f65d-cf15-0cf5058e97ec@huawei.com>
-References: <20171208051555.76998-1-jaegeuk@kernel.org>
- <20171208193723.GA87676@jaegeuk-macbookpro.roam.corp.google.com>
- <20171228034020.GF13490@jaegeuk-macbookpro.roam.corp.google.com>
- <bbb9fa01-25c6-4e38-2b8b-30955f819fce@huawei.com>
- <20180101010743.GA77496@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH v3] f2fs: add reserved blocks for root user
+Date: Tue, 2 Jan 2018 14:25:55 +0800
+Message-ID: <3956a904-914e-6233-ab2c-c92db587537e@huawei.com>
+References: <20171228021919.29397-1-jaegeuk@kernel.org>
+ <20180101012953.GA81647@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180101010743.GA77496@jaegeuk-macbookpro.roam.corp.google.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+ helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <yuchao0@huawei.com>) id 1eWG1X-0007EM-6k
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 02 Jan 2018 06:26:07 +0000
+Received: from [45.249.212.35] (helo=huawei.com)
+ by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eWG1V-0000a5-2V
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 02 Jan 2018 06:26:07 +0000
+In-Reply-To: <20180101012953.GA81647@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/1/1 9:07, Jaegeuk Kim wrote:
-> On 12/29, Chao Yu wrote:
->> On 2017/12/28 11:40, Jaegeuk Kim wrote:
->>> This patch gives a flag to disable GC on given file, which would be useful, when
->>> user wants to keep its block map. It also conducts in-place-update for dontmove
->>> file.
->>
->> One question, we may encounter out-of-space during foreground GC if there
->> is too many data blocks of pinned files as they are removable.
->>
->> Do we need to record all segments which contain block of pinned file? and
->> then trigger foreground GC more early by adjust threshold in
->> has_not_enough_free_secs.
+On 2018/1/1 9:29, Jaegeuk Kim wrote:
+> This patch allows root to reserve some blocks via mount option.
 > 
-> This should be used only when application knows how this works. If not, I wanted
-> to just unset the flag as much as possible, as foreground GCs have been done for
+> "-o reserve_root=N" means N x 4KB-sized blocks for root only.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+> 
+> Change log from v2:
+>  - wrong submission. :P
+> 
+>  fs/f2fs/f2fs.h  | 26 ++++++++++++++++++++++----
+>  fs/f2fs/super.c | 26 +++++++++++++++++++++++---
+>  fs/f2fs/sysfs.c |  3 ++-
+>  3 files changed, 47 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 5f7f42267221..123d875f7293 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -95,6 +95,7 @@ extern char *fault_name[FAULT_MAX];
+>  #define F2FS_MOUNT_PRJQUOTA		0x00200000
+>  #define F2FS_MOUNT_QUOTA		0x00400000
+>  #define F2FS_MOUNT_INLINE_XATTR_SIZE	0x00800000
+> +#define F2FS_MOUNT_RESERVE_ROOT		0x01000000
+>  
+>  #define clear_opt(sbi, option)	((sbi)->mount_opt.opt &= ~F2FS_MOUNT_##option)
+>  #define set_opt(sbi, option)	((sbi)->mount_opt.opt |= F2FS_MOUNT_##option)
+> @@ -1110,6 +1111,7 @@ struct f2fs_sb_info {
+>  	block_t last_valid_block_count;		/* for recovery */
+>  	block_t reserved_blocks;		/* configurable reserved blocks */
+>  	block_t current_reserved_blocks;	/* current reserved blocks */
+> +	block_t root_reserved_blocks;		/* root reserved blocks */
+>  
+>  	unsigned int nquota_files;		/* # of quota sysfile */
+>  
+> @@ -1562,6 +1564,12 @@ static inline bool f2fs_has_xattr_block(unsigned int ofs)
+>  	return ofs == XATTR_NODE_OFFSET;
+>  }
+>  
+> +static inline block_t reserve_root_limit(struct f2fs_sb_info *sbi)
+> +{
+> +	/* limit is 0.2% */
 
-Well, how can we unset that flag? do we need an extra ioctl interface like
-F2FS_IOC_UNPIN_FILE? so that user can keep its data in unpinned file by
-calling that interface. Or user can only drop the flag by unlinking pinned
-file?
+Should be 2% according to below calculation?
+
+> +	return (sbi->user_block_count << 1) / 100;
+> +}
+> +
+>  static inline void f2fs_i_blocks_write(struct inode *, block_t, bool, bool);
+>  static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+>  				 struct inode *inode, blkcnt_t *count)
+> @@ -1591,11 +1599,17 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+>  	sbi->total_valid_block_count += (block_t)(*count);
+>  	avail_user_block_count = sbi->user_block_count -
+>  					sbi->current_reserved_blocks;
+> +
+> +	if (!(test_opt(sbi, RESERVE_ROOT) && capable(CAP_SYS_RESOURCE)))
+
+How about adding uid & gid verification also like ext4?
+
+As this is a mount option, in ->remount_fs, we should consider to recover
+original reserved block number if we encounter some error during remount.
 
 Thanks,
 
-> pinned file too frequently. I expect the usecase must be quite unusual with just
-> small number of files in short period likewise atomic files.
+> +		avail_user_block_count -= sbi->root_reserved_blocks;
+> +
+>  	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
+>  		diff = sbi->total_valid_block_count - avail_user_block_count;
+> +		if (diff > *count)
+> +			diff = *count;
+>  		*count -= diff;
+>  		release = diff;
+> -		sbi->total_valid_block_count = avail_user_block_count;
+> +		sbi->total_valid_block_count -= diff;
+>  		if (!*count) {
+>  			spin_unlock(&sbi->stat_lock);
+>  			percpu_counter_sub(&sbi->alloc_valid_block_count, diff);
+> @@ -1784,9 +1798,13 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+>  
+>  	spin_lock(&sbi->stat_lock);
+>  
+> -	valid_block_count = sbi->total_valid_block_count + 1;
+> -	if (unlikely(valid_block_count + sbi->current_reserved_blocks >
+> -						sbi->user_block_count)) {
+> +	valid_block_count = sbi->total_valid_block_count +
+> +					sbi->current_reserved_blocks + 1;
+> +
+> +	if (!(test_opt(sbi, RESERVE_ROOT) && capable(CAP_SYS_RESOURCE)))
+> +		valid_block_count += sbi->root_reserved_blocks;
+> +
+> +	if (unlikely(valid_block_count > sbi->user_block_count)) {
+>  		spin_unlock(&sbi->stat_lock);
+>  		goto enospc;
+>  	}
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index cb876d905ca5..9221b013db98 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -107,6 +107,7 @@ enum {
+>  	Opt_noextent_cache,
+>  	Opt_noinline_data,
+>  	Opt_data_flush,
+> +	Opt_reserve_root,
+>  	Opt_mode,
+>  	Opt_io_size_bits,
+>  	Opt_fault_injection,
+> @@ -157,6 +158,7 @@ static match_table_t f2fs_tokens = {
+>  	{Opt_noextent_cache, "noextent_cache"},
+>  	{Opt_noinline_data, "noinline_data"},
+>  	{Opt_data_flush, "data_flush"},
+> +	{Opt_reserve_root, "reserve_root=%u"},
+>  	{Opt_mode, "mode=%s"},
+>  	{Opt_io_size_bits, "io_bits=%u"},
+>  	{Opt_fault_injection, "fault_injection=%u"},
+> @@ -488,6 +490,12 @@ static int parse_options(struct super_block *sb, char *options)
+>  		case Opt_data_flush:
+>  			set_opt(sbi, DATA_FLUSH);
+>  			break;
+> +		case Opt_reserve_root:
+> +			if (args->from && match_int(args, &arg))
+> +				return -EINVAL;
+> +			sbi->root_reserved_blocks = arg;
+> +			set_opt(sbi, RESERVE_ROOT);
+> +			break;
+>  		case Opt_mode:
+>  			name = match_strdup(&args[0]);
+>  
+> @@ -1005,10 +1013,12 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
+>  	buf->f_bsize = sbi->blocksize;
+>  
+>  	buf->f_blocks = total_count - start_count;
+> -	buf->f_bfree = user_block_count - valid_user_blocks(sbi) + ovp_count;
+> +	buf->f_bfree = user_block_count - valid_user_blocks(sbi) -
+> +						sbi->current_reserved_blocks +
+> +						sbi->root_reserved_blocks;
+>  	buf->f_bavail = user_block_count - valid_user_blocks(sbi) -
+> -						sbi->current_reserved_blocks;
+> -
+> +						sbi->current_reserved_blocks -
+> +						sbi->root_reserved_blocks;
+>  	avail_node_count = sbi->total_node_count - sbi->nquota_files -
+>  						F2FS_RESERVED_NODE_NUM;
+>  
+> @@ -1136,6 +1146,9 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+>  	else if (test_opt(sbi, LFS))
+>  		seq_puts(seq, "lfs");
+>  	seq_printf(seq, ",active_logs=%u", sbi->active_logs);
+> +	if (test_opt(sbi, RESERVE_ROOT))
+> +		seq_printf(seq, ",reserve_root=%u",
+> +				sbi->root_reserved_blocks);
+>  	if (F2FS_IO_SIZE_BITS(sbi))
+>  		seq_printf(seq, ",io_size=%uKB", F2FS_IO_SIZE_KB(sbi));
+>  #ifdef CONFIG_F2FS_FAULT_INJECTION
+> @@ -2571,6 +2584,13 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  	sbi->reserved_blocks = 0;
+>  	sbi->current_reserved_blocks = 0;
+>  
+> +	if (test_opt(sbi, RESERVE_ROOT) &&
+> +		sbi->root_reserved_blocks > reserve_root_limit(sbi)) {
+> +		sbi->root_reserved_blocks = reserve_root_limit(sbi);
+> +		f2fs_msg(sb, KERN_INFO,
+> +			"Reduce reserved blocks for root = %u\n",
+> +				sbi->root_reserved_blocks);
+> +	}
+>  	for (i = 0; i < NR_INODE_TYPE; i++) {
+>  		INIT_LIST_HEAD(&sbi->inode_list[i]);
+>  		spin_lock_init(&sbi->inode_lock[i]);
+> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> index 7e15cbc5b8e1..41887e6ec1b3 100644
+> --- a/fs/f2fs/sysfs.c
+> +++ b/fs/f2fs/sysfs.c
+> @@ -162,7 +162,8 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+>  #endif
+>  	if (a->struct_type == RESERVED_BLOCKS) {
+>  		spin_lock(&sbi->stat_lock);
+> -		if (t > (unsigned long)sbi->user_block_count) {
+> +		if (t > (unsigned long)(sbi->user_block_count -
+> +					sbi->root_reserved_blocks)) {
+>  			spin_unlock(&sbi->stat_lock);
+>  			return -EINVAL;
+>  		}
 > 
-> Thanks,
-> 
->>
->> Thanks,
->>
->>>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>> ---
->>>
->>> Change log from v2:
->>>  - change the naming from dontmove to pin_file
->>>  - do in-place-update for pinned files
->>>  - use union for i_current_depth with i_gc_failures
->>>  - pass increasing i_gc_failures
->>>
->>>  fs/f2fs/data.c          |  2 ++
->>>  fs/f2fs/f2fs.h          | 29 +++++++++++++++++++++++++-
->>>  fs/f2fs/file.c          | 54 +++++++++++++++++++++++++++++++++++++++++++++++++
->>>  fs/f2fs/gc.c            | 11 ++++++++++
->>>  fs/f2fs/gc.h            |  2 ++
->>>  fs/f2fs/sysfs.c         |  2 ++
->>>  include/linux/f2fs_fs.h |  9 ++++++++-
->>>  7 files changed, 107 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>> index 7aca6ccd01f6..b9fab6186f28 100644
->>> --- a/fs/f2fs/data.c
->>> +++ b/fs/f2fs/data.c
->>> @@ -1394,6 +1394,8 @@ static inline bool need_inplace_update(struct f2fs_io_info *fio)
->>>  {
->>>  	struct inode *inode = fio->page->mapping->host;
->>>  
->>> +	if (f2fs_is_pinned_file(inode))
->>> +		return true;
->>>  	if (S_ISDIR(inode->i_mode) || f2fs_is_atomic_file(inode))
->>>  		return false;
->>>  	if (is_cold_data(fio->page))
->>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>> index 65a51b941146..398ed95d4036 100644
->>> --- a/fs/f2fs/f2fs.h
->>> +++ b/fs/f2fs/f2fs.h
->>> @@ -376,6 +376,8 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
->>>  #define F2FS_IOC_FSGETXATTR		FS_IOC_FSGETXATTR
->>>  #define F2FS_IOC_FSSETXATTR		FS_IOC_FSSETXATTR
->>>  
->>> +#define F2FS_IOC_PIN_FILE		_IO(F2FS_IOCTL_MAGIC, 13)
->>> +
->>>  struct f2fs_gc_range {
->>>  	u32 sync;
->>>  	u64 start;
->>> @@ -586,7 +588,10 @@ struct f2fs_inode_info {
->>>  	unsigned long i_flags;		/* keep an inode flags for ioctl */
->>>  	unsigned char i_advise;		/* use to give file attribute hints */
->>>  	unsigned char i_dir_level;	/* use for dentry level for large dir */
->>> -	unsigned int i_current_depth;	/* use only in directory structure */
->>> +	union {
->>> +		unsigned int i_current_depth;	/* only for directory depth */
->>> +		unsigned short i_gc_failures;	/* only for regular file */
->>> +	};
->>>  	unsigned int i_pino;		/* parent inode number */
->>>  	umode_t i_acl_mode;		/* keep file acl mode temporarily */
->>>  
->>> @@ -1130,6 +1135,9 @@ struct f2fs_sb_info {
->>>  	/* threshold for converting bg victims for fg */
->>>  	u64 fggc_threshold;
->>>  
->>> +	/* threshold for gc trials on pinned files */
->>> +	u64 gc_pin_file_threshold;
->>> +
->>>  	/* maximum # of trials to find a victim segment for SSR and GC */
->>>  	unsigned int max_victim_search;
->>>  
->>> @@ -2119,6 +2127,7 @@ enum {
->>>  	FI_HOT_DATA,		/* indicate file is hot */
->>>  	FI_EXTRA_ATTR,		/* indicate file has extra attribute */
->>>  	FI_PROJ_INHERIT,	/* indicate file inherits projectid */
->>> +	FI_PIN_FILE,		/* indicate file should not be gced */
->>>  };
->>>  
->>>  static inline void __mark_inode_dirty_flag(struct inode *inode,
->>> @@ -2132,6 +2141,7 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
->>>  			return;
->>>  	case FI_DATA_EXIST:
->>>  	case FI_INLINE_DOTS:
->>> +	case FI_PIN_FILE:
->>>  		f2fs_mark_inode_dirty_sync(inode, true);
->>>  	}
->>>  }
->>> @@ -2212,6 +2222,13 @@ static inline void f2fs_i_depth_write(struct inode *inode, unsigned int depth)
->>>  	f2fs_mark_inode_dirty_sync(inode, true);
->>>  }
->>>  
->>> +static inline void f2fs_i_gc_failures_write(struct inode *inode,
->>> +					unsigned int count)
->>> +{
->>> +	F2FS_I(inode)->i_gc_failures = count;
->>> +	f2fs_mark_inode_dirty_sync(inode, true);
->>> +}
->>> +
->>>  static inline void f2fs_i_xnid_write(struct inode *inode, nid_t xnid)
->>>  {
->>>  	F2FS_I(inode)->i_xattr_nid = xnid;
->>> @@ -2240,6 +2257,8 @@ static inline void get_inline_info(struct inode *inode, struct f2fs_inode *ri)
->>>  		set_bit(FI_INLINE_DOTS, &fi->flags);
->>>  	if (ri->i_inline & F2FS_EXTRA_ATTR)
->>>  		set_bit(FI_EXTRA_ATTR, &fi->flags);
->>> +	if (ri->i_inline & F2FS_PIN_FILE)
->>> +		set_bit(FI_PIN_FILE, &fi->flags);
->>>  }
->>>  
->>>  static inline void set_raw_inline(struct inode *inode, struct f2fs_inode *ri)
->>> @@ -2258,6 +2277,8 @@ static inline void set_raw_inline(struct inode *inode, struct f2fs_inode *ri)
->>>  		ri->i_inline |= F2FS_INLINE_DOTS;
->>>  	if (is_inode_flag_set(inode, FI_EXTRA_ATTR))
->>>  		ri->i_inline |= F2FS_EXTRA_ATTR;
->>> +	if (is_inode_flag_set(inode, FI_PIN_FILE))
->>> +		ri->i_inline |= F2FS_PIN_FILE;
->>>  }
->>>  
->>>  static inline int f2fs_has_extra_attr(struct inode *inode)
->>> @@ -2303,6 +2324,11 @@ static inline int f2fs_has_inline_dots(struct inode *inode)
->>>  	return is_inode_flag_set(inode, FI_INLINE_DOTS);
->>>  }
->>>  
->>> +static inline bool f2fs_is_pinned_file(struct inode *inode)
->>> +{
->>> +	return is_inode_flag_set(inode, FI_PIN_FILE);
->>> +}
->>> +
->>>  static inline bool f2fs_is_atomic_file(struct inode *inode)
->>>  {
->>>  	return is_inode_flag_set(inode, FI_ATOMIC_FILE);
->>> @@ -2518,6 +2544,7 @@ int truncate_hole(struct inode *inode, pgoff_t pg_start, pgoff_t pg_end);
->>>  void truncate_data_blocks_range(struct dnode_of_data *dn, int count);
->>>  long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
->>>  long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
->>> +int f2fs_pin_file_control(struct inode *inode, bool inc);
->>>  
->>>  /*
->>>   * inode.c
->>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>> index 1db68f1bcd77..5a3b9a07d72d 100644
->>> --- a/fs/f2fs/file.c
->>> +++ b/fs/f2fs/file.c
->>> @@ -2666,6 +2666,57 @@ static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
->>>  	return 0;
->>>  }
->>>  
->>> +int f2fs_pin_file_control(struct inode *inode, bool inc)
->>> +{
->>> +	struct f2fs_inode_info *fi = F2FS_I(inode);
->>> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->>> +
->>> +	/* Use i_gc_failures for normal file as a risk signal. */
->>> +	if (inc)
->>> +		f2fs_i_gc_failures_write(inode, fi->i_gc_failures + 1);
->>> +
->>> +	if (fi->i_gc_failures > sbi->gc_pin_file_threshold) {
->>> +		f2fs_msg(sbi->sb, KERN_WARNING,
->>> +			"%s: Enable GC = ino %lx after %x GC trials\n",
->>> +			__func__, inode->i_ino, fi->i_gc_failures);
->>> +		return -EAGAIN;
->>> +	}
->>> +	return 0;
->>> +}
->>> +
->>> +static int f2fs_ioc_pin_file(struct file *filp)
->>> +{
->>> +	struct inode *inode = file_inode(filp);
->>> +	int ret;
->>> +
->>> +	if (!inode_owner_or_capable(inode))
->>> +		return -EACCES;
->>> +
->>> +	if (!S_ISREG(inode->i_mode))
->>> +		return -EINVAL;
->>> +
->>> +	if (f2fs_readonly(F2FS_I_SB(inode)->sb))
->>> +		return -EROFS;
->>> +
->>> +	inode_lock(inode);
->>> +
->>> +	if (f2fs_pin_file_control(inode, false)) {
->>> +		ret = -EAGAIN;
->>> +		goto out;
->>> +	}
->>> +
->>> +	ret = f2fs_convert_inline_inode(inode);
->>> +	if (ret)
->>> +		goto out;
->>> +
->>> +	set_inode_flag(inode, FI_PIN_FILE);
->>> +	ret = F2FS_I(inode)->i_gc_failures;
->>> +	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
->>> +out:
->>> +	inode_unlock(inode);
->>> +	return ret;
->>> +}
->>> +
->>>  long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->>>  {
->>>  	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
->>> @@ -2716,6 +2767,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->>>  		return f2fs_ioc_fsgetxattr(filp, arg);
->>>  	case F2FS_IOC_FSSETXATTR:
->>>  		return f2fs_ioc_fssetxattr(filp, arg);
->>> +	case F2FS_IOC_PIN_FILE:
->>> +		return f2fs_ioc_pin_file(filp);
->>>  	default:
->>>  		return -ENOTTY;
->>>  	}
->>> @@ -2791,6 +2844,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->>>  	case F2FS_IOC_GET_FEATURES:
->>>  	case F2FS_IOC_FSGETXATTR:
->>>  	case F2FS_IOC_FSSETXATTR:
->>> +	case F2FS_IOC_PIN_FILE:
->>>  		break;
->>>  	default:
->>>  		return -ENOIOCTLCMD;
->>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>> index 5d5bba462f26..9bffef153a12 100644
->>> --- a/fs/f2fs/gc.c
->>> +++ b/fs/f2fs/gc.c
->>> @@ -624,6 +624,11 @@ static void move_data_block(struct inode *inode, block_t bidx,
->>>  	if (f2fs_is_atomic_file(inode))
->>>  		goto out;
->>>  
->>> +	if (f2fs_is_pinned_file(inode)) {
->>> +		f2fs_pin_file_control(inode, true);
->>> +		goto out;
->>> +	}
->>> +
->>>  	set_new_dnode(&dn, inode, NULL, NULL, 0);
->>>  	err = get_dnode_of_data(&dn, bidx, LOOKUP_NODE);
->>>  	if (err)
->>> @@ -720,6 +725,11 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->>>  
->>>  	if (f2fs_is_atomic_file(inode))
->>>  		goto out;
->>> +	if (f2fs_is_pinned_file(inode)) {
->>> +		if (gc_type == FG_GC)
->>> +			f2fs_pin_file_control(inode, true);
->>> +		goto out;
->>> +	}
->>>  
->>>  	if (gc_type == BG_GC) {
->>>  		if (PageWriteback(page))
->>> @@ -1091,6 +1101,7 @@ void build_gc_manager(struct f2fs_sb_info *sbi)
->>>  
->>>  	sbi->fggc_threshold = div64_u64((main_count - ovp_count) *
->>>  				BLKS_PER_SEC(sbi), (main_count - resv_count));
->>> +	sbi->gc_pin_file_threshold = DEF_GC_FAILED_PINNED_FILES;
->>>  
->>>  	/* give warm/cold data area from slower device */
->>>  	if (sbi->s_ndevs && sbi->segs_per_sec == 1)
->>> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
->>> index 9325191fab2d..33310165cb78 100644
->>> --- a/fs/f2fs/gc.h
->>> +++ b/fs/f2fs/gc.h
->>> @@ -20,6 +20,8 @@
->>>  #define LIMIT_INVALID_BLOCK	40 /* percentage over total user space */
->>>  #define LIMIT_FREE_BLOCK	40 /* percentage over invalid + free space */
->>>  
->>> +#define DEF_GC_FAILED_PINNED_FILES	1024
->>> +
->>>  /* Search max. number of dirty segments to select a victim segment */
->>>  #define DEF_MAX_VICTIM_SEARCH 4096 /* covers 8GB */
->>>  
->>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
->>> index 581c7ce23c22..0e3253d7cb10 100644
->>> --- a/fs/f2fs/sysfs.c
->>> +++ b/fs/f2fs/sysfs.c
->>> @@ -303,6 +303,7 @@ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
->>>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
->>>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
->>>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
->>> +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
->>>  #ifdef CONFIG_F2FS_FAULT_INJECTION
->>>  F2FS_RW_ATTR(FAULT_INFO_RATE, f2fs_fault_info, inject_rate, inject_rate);
->>>  F2FS_RW_ATTR(FAULT_INFO_TYPE, f2fs_fault_info, inject_type, inject_type);
->>> @@ -351,6 +352,7 @@ static struct attribute *f2fs_attrs[] = {
->>>  	ATTR_LIST(idle_interval),
->>>  	ATTR_LIST(iostat_enable),
->>>  	ATTR_LIST(readdir_ra),
->>> +	ATTR_LIST(gc_pin_file_thresh),
->>>  #ifdef CONFIG_F2FS_FAULT_INJECTION
->>>  	ATTR_LIST(inject_rate),
->>>  	ATTR_LIST(inject_type),
->>> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
->>> index 43e98d30d2df..cfb522e6affc 100644
->>> --- a/include/linux/f2fs_fs.h
->>> +++ b/include/linux/f2fs_fs.h
->>> @@ -212,6 +212,7 @@ struct f2fs_extent {
->>>  #define F2FS_DATA_EXIST		0x08	/* file inline data exist flag */
->>>  #define F2FS_INLINE_DOTS	0x10	/* file having implicit dot dentries */
->>>  #define F2FS_EXTRA_ATTR		0x20	/* file having extra attribute */
->>> +#define F2FS_PIN_FILE		0x40	/* file should not be gced */
->>>  
->>>  struct f2fs_inode {
->>>  	__le16 i_mode;			/* file mode */
->>> @@ -229,7 +230,13 @@ struct f2fs_inode {
->>>  	__le32 i_ctime_nsec;		/* change time in nano scale */
->>>  	__le32 i_mtime_nsec;		/* modification time in nano scale */
->>>  	__le32 i_generation;		/* file version (for NFS) */
->>> -	__le32 i_current_depth;		/* only for directory depth */
->>> +	union {
->>> +		__le32 i_current_depth;	/* only for directory depth */
->>> +		__le16 i_gc_failures;	/*
->>> +					 * # of gc failures on pinned file.
->>> +					 * only for regular files.
->>> +					 */
->>> +	};
->>>  	__le32 i_xattr_nid;		/* nid to save xattr */
->>>  	__le32 i_flags;			/* file attributes */
->>>  	__le32 i_pino;			/* parent inode number */
->>>
-> 
-> .
-> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
