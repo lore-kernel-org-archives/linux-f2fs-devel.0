@@ -1,27 +1,26 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev v2] [PATCH 1/2] f2fs: stop checkpoint only from fault
- injection
-Date: Tue, 2 Jan 2018 14:32:09 +0800
-Message-ID: <46618bcd-c097-33f1-6296-c77dccb586e9@huawei.com>
-References: <20171229020056.60558-1-jaegeuk@kernel.org>
- <665883a3-f065-e531-0730-c41b227df589@huawei.com>
- <20180101013106.GB81647@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [f2fs-dev] [PATCH v2] resize.f2fs: fix max_nat_bitmap_size
+ miscalculatation
+Date: Tue, 2 Jan 2018 14:32:59 +0800
+Message-ID: <63f1be4c-990a-b1b9-2998-978796b238c4@huawei.com>
+References: <9047C53C18267742AB12E43B65C7F9F70BCB8BD4@dggemi505-mbs.china.huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180101013106.GB81647@jaegeuk-macbookpro.roam.corp.google.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <9047C53C18267742AB12E43B65C7F9F70BCB8BD4@dggemi505-mbs.china.huawei.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: "Gaoxiang (OS)" <gaoxiang25@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, "chao@kernel.org" <chao@kernel.org>
+Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "Duwei (Device OS)" <weidu.du@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/1/1 9:31, Jaegeuk Kim wrote:
-> We can give another chance to write user data, which can resolve
-> generic/441.
+On 2017/12/22 12:20, Gaoxiang (OS) wrote:
+> For the same reason as "mkfs.f2fs: fix to calculate
+> left space of checkpoint page correctly",
+> this patch also fixes miscalculatation in resize.f2fs.
 > 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
