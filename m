@@ -1,207 +1,56 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v4] f2fs: add reserved blocks for root user
-Date: Tue, 2 Jan 2018 11:27:38 -0800
-Message-ID: <20180102192738.GB474@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20171228021919.29397-1-jaegeuk@kernel.org>
- <20180101012953.GA81647@jaegeuk-macbookpro.roam.corp.google.com>
+From: Matthew Wilcox <willy-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Subject: Re: [PATCH v5 03/78] xarray: Add the xa_lock to the radix_tree_root
+Date: Tue, 2 Jan 2018 14:41:37 -0800
+Message-ID: <20180102224137.GC20405@bombadil.infradead.org>
+References: <20171215220450.7899-1-willy@infradead.org>
+ <20171215220450.7899-4-willy@infradead.org>
+ <20171226165440.tv6inwa2fgk3bfy6@node.shutemov.name>
+ <20171227034340.GC24828@bombadil.infradead.org>
+ <20171227035815.GD24828@bombadil.infradead.org>
+ <20180102180155.GD4857@magnolia>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20180101012953.GA81647@jaegeuk-macbookpro.roam.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <20180102180155.GD4857@magnolia>
+Sender: linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "Darrick J. Wong" <darrick.wong-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: "Kirill A. Shutemov" <kirill-oKw7cIdHH8eLwutG50LtGA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthew Wilcox <mawilcox-0li6OtcxBFHby3iVrkZq2A@public.gmane.org>, Ross Zwisler <ross.zwisler-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, David Howells <dhowells-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Shaohua Li <shli-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>, Rehas Sachdeva <aquannie-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-xfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-raid-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch allows root to reserve some blocks via mount option.
+On Tue, Jan 02, 2018 at 10:01:55AM -0800, Darrick J. Wong wrote:
+> On Tue, Dec 26, 2017 at 07:58:15PM -0800, Matthew Wilcox wrote:
+> >         spin_lock_irqsave(&mapping->pages, flags);
+> >         __delete_from_page_cache(page, NULL);
+> >         spin_unlock_irqrestore(&mapping->pages, flags);
+> >
+> > More details here: https://9p.io/sys/doc/compiler.html
+> 
+> I read the link, and I understand (from section 3.3) that replacing
+> foo.bar.baz.goo with foo.goo is less typing, but otoh the first time I
+> read your example above I thought "we're passing (an array of pages |
+> something that doesn't have the word 'lock' in the name) to
+> spin_lock_irqsave? wtf?"
 
-"-o reserve_root=N" means N x 4KB-sized blocks for root only.
+I can see that being a bit jarring initially.  If you think about what
+object-oriented languages were offering in the nineties, this is basically
+C++ multiple-inheritance / Java interfaces.  So when I read the above
+example, I think "lock the mapping pages, delete from page cache, unlock
+the mapping pages", and I don't have a wtf moment.  It's just simpler to
+read than "lock the mapping pages lock", and less redundant.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
+> I suppose it does force me to go dig into whatever mapping->pages is to
+> figure out that there's an unnamed spinlock_t and that the compiler can
+> insert the appropriate pointer arithmetic, but now my brain trips over
+> 'pages' being at the end of the selector for parameter 1 which slows
+> down my review reading...
+> 
+> OTOH I guess it /did/ motivate me to click the link, so well played,
+> sir. :)
 
-Change log from v3:
- - fix 0.2% calculation
- - preserve reserve_root=%u from remount_fs
-
- fs/f2fs/f2fs.h  | 26 ++++++++++++++++++++++----
- fs/f2fs/super.c | 35 ++++++++++++++++++++++++++++++-----
- fs/f2fs/sysfs.c |  3 ++-
- 3 files changed, 54 insertions(+), 10 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 5f7f42267221..9dde05c62b1c 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -95,6 +95,7 @@ extern char *fault_name[FAULT_MAX];
- #define F2FS_MOUNT_PRJQUOTA		0x00200000
- #define F2FS_MOUNT_QUOTA		0x00400000
- #define F2FS_MOUNT_INLINE_XATTR_SIZE	0x00800000
-+#define F2FS_MOUNT_RESERVE_ROOT		0x01000000
- 
- #define clear_opt(sbi, option)	((sbi)->mount_opt.opt &= ~F2FS_MOUNT_##option)
- #define set_opt(sbi, option)	((sbi)->mount_opt.opt |= F2FS_MOUNT_##option)
-@@ -1110,6 +1111,7 @@ struct f2fs_sb_info {
- 	block_t last_valid_block_count;		/* for recovery */
- 	block_t reserved_blocks;		/* configurable reserved blocks */
- 	block_t current_reserved_blocks;	/* current reserved blocks */
-+	block_t root_reserved_blocks;		/* root reserved blocks */
- 
- 	unsigned int nquota_files;		/* # of quota sysfile */
- 
-@@ -1562,6 +1564,12 @@ static inline bool f2fs_has_xattr_block(unsigned int ofs)
- 	return ofs == XATTR_NODE_OFFSET;
- }
- 
-+static inline block_t reserve_root_limit(struct f2fs_sb_info *sbi)
-+{
-+	/* limit is 0.2% */
-+	return (sbi->user_block_count << 1) / 1000;
-+}
-+
- static inline void f2fs_i_blocks_write(struct inode *, block_t, bool, bool);
- static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
- 				 struct inode *inode, blkcnt_t *count)
-@@ -1591,11 +1599,17 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
- 	sbi->total_valid_block_count += (block_t)(*count);
- 	avail_user_block_count = sbi->user_block_count -
- 					sbi->current_reserved_blocks;
-+
-+	if (!(test_opt(sbi, RESERVE_ROOT) && capable(CAP_SYS_RESOURCE)))
-+		avail_user_block_count -= sbi->root_reserved_blocks;
-+
- 	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
- 		diff = sbi->total_valid_block_count - avail_user_block_count;
-+		if (diff > *count)
-+			diff = *count;
- 		*count -= diff;
- 		release = diff;
--		sbi->total_valid_block_count = avail_user_block_count;
-+		sbi->total_valid_block_count -= diff;
- 		if (!*count) {
- 			spin_unlock(&sbi->stat_lock);
- 			percpu_counter_sub(&sbi->alloc_valid_block_count, diff);
-@@ -1784,9 +1798,13 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
- 
- 	spin_lock(&sbi->stat_lock);
- 
--	valid_block_count = sbi->total_valid_block_count + 1;
--	if (unlikely(valid_block_count + sbi->current_reserved_blocks >
--						sbi->user_block_count)) {
-+	valid_block_count = sbi->total_valid_block_count +
-+					sbi->current_reserved_blocks + 1;
-+
-+	if (!(test_opt(sbi, RESERVE_ROOT) && capable(CAP_SYS_RESOURCE)))
-+		valid_block_count += sbi->root_reserved_blocks;
-+
-+	if (unlikely(valid_block_count > sbi->user_block_count)) {
- 		spin_unlock(&sbi->stat_lock);
- 		goto enospc;
- 	}
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index cb876d905ca5..3c62492b6a0d 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -107,6 +107,7 @@ enum {
- 	Opt_noextent_cache,
- 	Opt_noinline_data,
- 	Opt_data_flush,
-+	Opt_reserve_root,
- 	Opt_mode,
- 	Opt_io_size_bits,
- 	Opt_fault_injection,
-@@ -157,6 +158,7 @@ static match_table_t f2fs_tokens = {
- 	{Opt_noextent_cache, "noextent_cache"},
- 	{Opt_noinline_data, "noinline_data"},
- 	{Opt_data_flush, "data_flush"},
-+	{Opt_reserve_root, "reserve_root=%u"},
- 	{Opt_mode, "mode=%s"},
- 	{Opt_io_size_bits, "io_bits=%u"},
- 	{Opt_fault_injection, "fault_injection=%u"},
-@@ -488,6 +490,18 @@ static int parse_options(struct super_block *sb, char *options)
- 		case Opt_data_flush:
- 			set_opt(sbi, DATA_FLUSH);
- 			break;
-+		case Opt_reserve_root:
-+			if (args->from && match_int(args, &arg))
-+				return -EINVAL;
-+			if (test_opt(sbi, RESERVE_ROOT)) {
-+				f2fs_msg(sb, KERN_INFO,
-+					"Preserve previous reserve_root=%u",
-+					sbi->root_reserved_blocks);
-+			} else {
-+				sbi->root_reserved_blocks = arg;
-+				set_opt(sbi, RESERVE_ROOT);
-+			}
-+			break;
- 		case Opt_mode:
- 			name = match_strdup(&args[0]);
- 
-@@ -994,21 +1008,22 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	struct super_block *sb = dentry->d_sb;
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
- 	u64 id = huge_encode_dev(sb->s_bdev->bd_dev);
--	block_t total_count, user_block_count, start_count, ovp_count;
-+	block_t total_count, user_block_count, start_count;
- 	u64 avail_node_count;
- 
- 	total_count = le64_to_cpu(sbi->raw_super->block_count);
- 	user_block_count = sbi->user_block_count;
- 	start_count = le32_to_cpu(sbi->raw_super->segment0_blkaddr);
--	ovp_count = SM_I(sbi)->ovp_segments << sbi->log_blocks_per_seg;
- 	buf->f_type = F2FS_SUPER_MAGIC;
- 	buf->f_bsize = sbi->blocksize;
- 
- 	buf->f_blocks = total_count - start_count;
--	buf->f_bfree = user_block_count - valid_user_blocks(sbi) + ovp_count;
-+	buf->f_bfree = user_block_count - valid_user_blocks(sbi) -
-+						sbi->current_reserved_blocks +
-+						sbi->root_reserved_blocks;
- 	buf->f_bavail = user_block_count - valid_user_blocks(sbi) -
--						sbi->current_reserved_blocks;
--
-+						sbi->current_reserved_blocks -
-+						sbi->root_reserved_blocks;
- 	avail_node_count = sbi->total_node_count - sbi->nquota_files -
- 						F2FS_RESERVED_NODE_NUM;
- 
-@@ -1136,6 +1151,9 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 	else if (test_opt(sbi, LFS))
- 		seq_puts(seq, "lfs");
- 	seq_printf(seq, ",active_logs=%u", sbi->active_logs);
-+	if (test_opt(sbi, RESERVE_ROOT))
-+		seq_printf(seq, ",reserve_root=%u",
-+				sbi->root_reserved_blocks);
- 	if (F2FS_IO_SIZE_BITS(sbi))
- 		seq_printf(seq, ",io_size=%uKB", F2FS_IO_SIZE_KB(sbi));
- #ifdef CONFIG_F2FS_FAULT_INJECTION
-@@ -2571,6 +2589,13 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	sbi->reserved_blocks = 0;
- 	sbi->current_reserved_blocks = 0;
- 
-+	if (test_opt(sbi, RESERVE_ROOT) &&
-+		sbi->root_reserved_blocks > reserve_root_limit(sbi)) {
-+		sbi->root_reserved_blocks = reserve_root_limit(sbi);
-+		f2fs_msg(sb, KERN_INFO,
-+			"Reduce reserved blocks for root = %u\n",
-+				sbi->root_reserved_blocks);
-+	}
- 	for (i = 0; i < NR_INODE_TYPE; i++) {
- 		INIT_LIST_HEAD(&sbi->inode_list[i]);
- 		spin_lock_init(&sbi->inode_lock[i]);
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 7e15cbc5b8e1..41887e6ec1b3 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -162,7 +162,8 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
- #endif
- 	if (a->struct_type == RESERVED_BLOCKS) {
- 		spin_lock(&sbi->stat_lock);
--		if (t > (unsigned long)sbi->user_block_count) {
-+		if (t > (unsigned long)(sbi->user_block_count -
-+					sbi->root_reserved_blocks)) {
- 			spin_unlock(&sbi->stat_lock);
- 			return -EINVAL;
- 		}
--- 
-2.15.0.531.g2ccb3012c9-goog
+Now if only I can trick you into giving your ACK on patch 1,
+"xfs: Rename xa_ elements to ail_"
+--
+To unsubscribe from this list: send the line "unsubscribe linux-nilfs" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
