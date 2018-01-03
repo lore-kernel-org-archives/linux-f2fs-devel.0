@@ -1,39 +1,70 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 2/2] f2fs: clean up unneeded declaration
-Date: Wed, 3 Jan 2018 17:32:51 +0800
-Message-ID: <20180103093251.13597-2-yuchao0@huawei.com>
-References: <20180103093251.13597-1-yuchao0@huawei.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH] f2fs: update inode info to inode page for new
+ file
+Date: Wed, 3 Jan 2018 18:03:04 +0800
+Message-ID: <1514973784-16037-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180103093251.13597-1-yuchao0@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
+ helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <heyunlei@huawei.com>) id 1eWg6g-0000UW-BC
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 03 Jan 2018 10:17:10 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eWg6e-0001x7-AH
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 03 Jan 2018 10:17:10 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: ning.jia@huawei.com, heyunlei@huawei.com
 
-Commit 6afc662e68b5 ("f2fs: support flexible inline xattr size")
-declared f2fs_sb_has_flexible_inline_xattr in f2fs.h for latter being
-used in get_inline_xattr_addrs, but in latter version, related code
-has been changed, leave f2fs_sb_has_flexible_inline_xattr w/o any
-users. Let's remove it for cleanup.
+			|
+			| 1. creat a new file A ,(with dirty inode
+			|    && dirty inode page && xattr info)
+			| 2. backgroud wb write back file A inode
+	last checkpoint	|    page (without update from inode cache)
+			| 3. fsync file A, write back inode page of
+			|    file A with inode cache info
+			| 4. sudden power off before new checkpoint
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+In this case, recovery process will try to recover a zero inode
+page. Inline xattr flag of file A will be miss and xattr info
+will be taken as blkaddr index.
+
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fs/f2fs/f2fs.h | 1 -
- 1 file changed, 1 deletion(-)
+ fs/f2fs/dir.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ad19d29688ae..c082ae905f08 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2449,7 +2449,6 @@ static inline int get_extra_isize(struct inode *inode)
- 	return F2FS_I(inode)->i_extra_isize / sizeof(__le32);
- }
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 724304d..d04dcac 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -427,6 +427,8 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
+ 			remove_orphan_inode(F2FS_I_SB(dir), inode->i_ino);
+ 		f2fs_i_links_write(inode, true);
+ 	}
++
++	update_inode(inode, page);
+ 	return page;
  
--static inline int f2fs_sb_has_flexible_inline_xattr(struct super_block *sb);
- static inline int get_inline_xattr_addrs(struct inode *inode)
- {
- 	return F2FS_I(inode)->i_inline_xattr_size;
+ put_error:
 -- 
-2.15.0.55.gc2ece9dc4de6
+1.9.1
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
