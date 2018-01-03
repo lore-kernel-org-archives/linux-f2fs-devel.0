@@ -1,66 +1,90 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: check segment type before recover data
-Date: Wed, 3 Jan 2018 12:04:01 -0800
-Message-ID: <20180103200401.GC30014@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1514619768-134531-1-git-send-email-yunlong.song@huawei.com>
+Subject: Re: [PATCH 1/2] f2fs: use flexible array for
+ f2fs_checkpoint::sit_nat_version_bitmap
+Date: Wed, 3 Jan 2018 12:12:37 -0800
+Message-ID: <20180103201237.GD30014@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180103093251.13597-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+ helo=mx.sourceforge.net)
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <jaegeuk@kernel.org>) id 1eWpP5-0005fM-Tm
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 03 Jan 2018 20:12:47 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eWpP2-0001B9-6c
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 03 Jan 2018 20:12:47 +0000
 Content-Disposition: inline
-In-Reply-To: <1514619768-134531-1-git-send-email-yunlong.song@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>
-Cc: chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <20180103093251.13597-1-yuchao0@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 12/30, Yunlong Song wrote:
-> In some case, the node blocks has wrong blkaddr whose segment type is
-> NODE, e.g., recover inode has missing xattr flag and the blkaddr is in
-> the xattr range. Since fsck.f2fs does not check the recovery nodes, this
-> will cause __f2fs_replace_block change the curseg of node and do the
-> update_sit_entry(sbi, new_blkaddr, 1) with no next_blkoff refresh, as a
-> result, when recovery process write checkpoint and sync nodes, the
-> next_blkoff of curseg is used in the segment bit map, then it will
-> cause f2fs_bug_on. So let's check the segment type before recover data,
-> and stop recover if it is not in DATA segment.
-
-Then, why not checking this in __f2fs_replace_block()? And, you can do this,
-only if se->valid_blocks != 0 at this point.
-
+On 01/03, Chao Yu wrote:
+> If we need an array with variable size in the end of structure, we
+> can utilize flexible array feature which is supported in C99, so
+> let's change sit_nat_version_bitmap[] to flexible array in struct
+> f2fs_checkpoint for readability.
 > 
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
 > ---
->  fs/f2fs/recovery.c | 3 ++-
->  fs/f2fs/segment.h  | 3 +++
->  2 files changed, 5 insertions(+), 1 deletion(-)
+>  fs/f2fs/f2fs.h          | 4 ++--
+>  include/linux/f2fs_fs.h | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-> index 7d63faf..e8fee4a 100644
-> --- a/fs/f2fs/recovery.c
-> +++ b/fs/f2fs/recovery.c
-> @@ -478,7 +478,8 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
->  		}
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 83d1f697388b..ad19d29688ae 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1719,13 +1719,13 @@ static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
 >  
->  		/* dest is valid block, try to recover from src to dest */
-> -		if (is_valid_blkaddr(sbi, dest, META_POR)) {
-> +		if (is_valid_blkaddr(sbi, dest, META_POR) &&
-> +			is_data_blkaddr(sbi, dest)) {
+>  	if (__cp_payload(sbi) > 0) {
+>  		if (flag == NAT_BITMAP)
+> -			return &ckpt->sit_nat_version_bitmap;
+> +			return ckpt->sit_nat_version_bitmap;
+>  		else
+>  			return (unsigned char *)ckpt + F2FS_BLKSIZE;
+>  	} else {
+>  		offset = (flag == NAT_BITMAP) ?
+>  			le32_to_cpu(ckpt->sit_ver_bitmap_bytesize) : 0;
+> -		return &ckpt->sit_nat_version_bitmap + offset;
+> +		return ckpt->sit_nat_version_bitmap + offset;
+>  	}
+>  }
 >  
->  			if (src == NULL_ADDR) {
->  				err = reserve_new_block(&dn);
-> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> index 71a2aaa..5c5a215 100644
-> --- a/fs/f2fs/segment.h
-> +++ b/fs/f2fs/segment.h
-> @@ -115,6 +115,9 @@
->  #define SECTOR_TO_BLOCK(sectors)					\
->  	((sectors) >> F2FS_LOG_SECTORS_PER_BLOCK)
+> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+> index 43e98d30d2df..564f65fc192f 100644
+> --- a/include/linux/f2fs_fs.h
+> +++ b/include/linux/f2fs_fs.h
+> @@ -157,7 +157,7 @@ struct f2fs_checkpoint {
+>  	unsigned char alloc_type[MAX_ACTIVE_LOGS];
 >  
-> +#define is_data_blkaddr(sbi, blkaddr)	\
-> +	(IS_DATASEG(get_seg_entry(sbi, GET_SEGNO(sbi, blkaddr))->type))
-> +
+>  	/* SIT and NAT version bitmap */
+> -	unsigned char sit_nat_version_bitmap[1];
+> +	unsigned char sit_nat_version_bitmap[];
+
+I cannot find any benefit to do this. Moreover, it just makes the header
+structure be different from the one in f2fs-tools.
+
+>  } __packed;
+>  
 >  /*
->   * indicate a block allocation direction: RIGHT and LEFT.
->   * RIGHT means allocating new sections towards the end of volume.
 > -- 
-> 1.8.5.2
+> 2.15.0.55.gc2ece9dc4de6
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
