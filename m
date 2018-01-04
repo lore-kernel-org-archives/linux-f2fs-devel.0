@@ -1,23 +1,26 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH] dump.f2fs: Test blkaddr is valid or not in
- option '-b'
-Date: Thu, 4 Jan 2018 09:51:03 +0800
-Message-ID: <1515030663-21518-1-git-send-email-heyunlei@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: update inode info to inode page for
+ new file
+Date: Thu, 4 Jan 2018 11:02:28 +0800
+Message-ID: <d25e5722-774d-38e8-33d1-eab598ee276b@huawei.com>
+References: <1514973784-16037-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <heyunlei@huawei.com>) id 1eWuu9-0004Ct-Tu
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Jan 2018 02:05:13 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ (envelope-from <yuchao0@huawei.com>) id 1eWvo2-0005NZ-4m
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Jan 2018 03:02:58 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
  by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eWuu7-00061A-OS
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Jan 2018 02:05:13 +0000
+ id 1eWvo0-000189-3r
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Jan 2018 03:02:58 +0000
+In-Reply-To: <1514973784-16037-1-git-send-email-heyunlei@huawei.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,59 +30,57 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
-Cc: ning.jia@huawei.com, heyunlei@huawei.com
+To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: ning.jia@huawei.com
 
-Test blkaddr is valid or not in option '-b'
+On 2018/1/3 18:03, Yunlei He wrote:
+> 			|
+> 			| 1. creat a new file A ,(with dirty inode
+> 			|    && dirty inode page && xattr info)
+> 			| 2. backgroud wb write back file A inode
+> 	last checkpoint	|    page (without update from inode cache)
+> 			| 3. fsync file A, write back inode page of
+> 			|    file A with inode cache info
+> 			| 4. sudden power off before new checkpoint
+> 
+> In this case, recovery process will try to recover a zero inode
+> page. Inline xattr flag of file A will be miss and xattr info
+> will be taken as blkaddr index.
+> 
+> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+> ---
+>  fs/f2fs/dir.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> index 724304d..d04dcac 100644
+> --- a/fs/f2fs/dir.c
+> +++ b/fs/f2fs/dir.c
+> @@ -427,6 +427,8 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
+>  			remove_orphan_inode(F2FS_I_SB(dir), inode->i_ino);
+>  		f2fs_i_links_write(inode, true);
+>  	}
+> +
+> +	update_inode(inode, page);
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fsck/dump.c  | 9 +++++++++
- fsck/mount.c | 2 +-
- 2 files changed, 10 insertions(+), 1 deletion(-)
+That would cause memory copy overhead, how about always keeping consistent
+in-memory inode meta info with the data in recovering inode block as below:
 
-diff --git a/fsck/dump.c b/fsck/dump.c
-index 9f0993e..7ccb03f 100644
---- a/fsck/dump.c
-+++ b/fsck/dump.c
-@@ -586,6 +586,8 @@ int dump_info_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
- 	int type;
- 	struct f2fs_summary sum_entry;
- 	struct node_info ni, ino_ni;
-+	struct seg_entry *se;
-+	u32 offset;
- 	int ret = 0;
- 
- 	MSG(0, "\n== Dump data from block address ==\n\n");
-@@ -617,6 +619,13 @@ int dump_info_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
- 		return ret;
- 	}
- 
-+	se = get_seg_entry(sbi, GET_SEGNO(sbi, blk_addr));
-+	offset = OFFSET_IN_SEG(sbi, blk_addr);
-+
-+	if (f2fs_test_bit(offset, (const char *)se->cur_valid_map) == 0) {
-+		MSG(0, "\nblkaddr is not valid\n");
-+	}
-+
- 	type = get_sum_entry(sbi, blk_addr, &sum_entry);
- 	nid = le32_to_cpu(sum_entry.nid);
- 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 678eeae..665fa4b 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -1869,7 +1869,7 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left, int type)
- 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
- 	struct seg_entry *se;
- 	u32 segno;
--	u64 offset;
-+	u32 offset;
- 	int not_enough = 0;
- 	u64 end_blkaddr = (get_sb(segment_count_main) <<
- 			get_sb(log_blocks_per_seg)) + get_sb(main_blkaddr);
--- 
-1.9.1
+recover_inline_xattr()
+
+	if (ri->i_inline & F2FS_INLINE_XATTR) {
+		set_inode_flag(inode, FI_INLINE_XATTR);
+	} else {
+		clear_inode_flag(inode, FI_INLINE_XATTR);
+		goto update_inode;
+	}
+
+Thanks,
+
+>  	return page;
+>  
+>  put_error:
+> 
 
 
 ------------------------------------------------------------------------------
