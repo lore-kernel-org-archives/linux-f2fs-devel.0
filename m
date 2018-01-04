@@ -1,115 +1,154 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: support FIEMAP_FLAG_XATTR
-Date: Thu, 4 Jan 2018 18:09:20 +0800
-Message-ID: <20180104100920.22204-1-yuchao0@huawei.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH v6] f2fs: avoid dead loop in function
+ find_fsync_dnodes
+Date: Thu, 4 Jan 2018 18:01:04 +0800
+Message-ID: <1515060064-26600-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
+ helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <heyunlei@huawei.com>) id 1eX2YV-0002ok-4V
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Jan 2018 10:15:23 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eX2YT-0001T1-Ig
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Jan 2018 10:15:23 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: ning.jia@huawei.com, heyunlei@huawei.com
 
-This patch enables ->fiemap to handle FIEMAP_FLAG_XATTR flag for xattr
-mapping info lookup purpose.
+Came across a dead loop in recovery like this:
 
-It makes f2fs passing generic/425 test in fstest.
+......
+[   24.680480s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597696
+[   24.698394s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597697
+[   24.724334s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724334s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+[   24.724426s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+......
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Mount process will block in dead loop and fsck can do nothing with this
+error, This patch abandon recovery if node chain is cyclical.
+
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fs/f2fs/data.c | 65 ++++++++++++++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 61 insertions(+), 4 deletions(-)
+ fs/f2fs/recovery.c | 27 ++++++++++++++++++++++-----
+ 1 file changed, 22 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 71838f53734e..31e4fe17ea12 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1128,6 +1128,58 @@ static inline loff_t blk_to_logical(struct inode *inode, sector_t blk)
- 	return (blk << inode->i_blkbits);
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index cbeef73..318243c 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -221,11 +221,11 @@ static void recover_inode(struct inode *inode, struct page *page)
  }
  
-+static int f2fs_xattr_fiemap(struct inode *inode,
-+				struct fiemap_extent_info *fieinfo)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	struct page *page;
-+	struct node_info ni;
-+	__u64 phys = 0;
-+	__u64 length;
-+	__u32 flags = FIEMAP_EXTENT_LAST;
-+	int err = 0;
-+
-+	if (f2fs_has_inline_xattr(inode)) {
-+		int offset;
-+
-+		page = f2fs_grab_cache_page(NODE_MAPPING(sbi),
-+						inode->i_ino, false);
-+		if (!page)
-+			return -ENOMEM;
-+
-+		get_node_info(sbi, inode->i_ino, &ni);
-+
-+		phys = (__u64)blk_to_logical(inode, ni.blk_addr);
-+		offset = offsetof(struct f2fs_inode, i_addr) +
-+					sizeof(__le32) * (DEF_ADDRS_PER_INODE -
-+					F2FS_INLINE_XATTR_ADDRS(inode));
-+
-+		phys += offset;
-+		length = inline_xattr_size(inode);
-+
-+		f2fs_put_page(page, 1);
-+
-+		flags |= FIEMAP_EXTENT_DATA_INLINE;
-+	} else if (F2FS_I(inode)->i_xattr_nid) {
-+		page = f2fs_grab_cache_page(NODE_MAPPING(sbi),
-+					F2FS_I(inode)->i_xattr_nid, false);
-+		if (!page)
-+			return -ENOMEM;
-+
-+		get_node_info(sbi, F2FS_I(inode)->i_xattr_nid, &ni);
-+
-+		phys = (__u64)blk_to_logical(inode, ni.blk_addr);
-+		length = inode->i_sb->s_blocksize;
-+
-+		f2fs_put_page(page, 1);
-+	}
-+
-+	if (phys)
-+		err = fiemap_fill_next_extent(fieinfo, 0, phys, length, flags);
-+
-+	return (err < 0 ? err : 0);
-+}
-+
- int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 		u64 start, u64 len)
+ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+-				bool check_only)
++			bool check_only, block_t *looped_blkaddr)
  {
-@@ -1138,18 +1190,23 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 	u32 flags = 0;
- 	int ret = 0;
+ 	struct curseg_info *curseg;
+ 	struct page *page = NULL;
+-	block_t blkaddr;
++	block_t blkaddr, last_blkaddr;
+ 	int err = 0;
  
--	ret = fiemap_check_flags(fieinfo, FIEMAP_FLAG_SYNC);
-+	ret = fiemap_check_flags(fieinfo, FIEMAP_FLAG_SYNC | FIEMAP_FLAG_XATTR);
- 	if (ret)
- 		return ret;
+ 	/* get node pages in the current segment */
+@@ -239,6 +239,17 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 			return 0;
  
-+	inode_lock(inode);
+ 		page = get_tmp_page(sbi, blkaddr);
++		if (PageChecked(page)) {
++			f2fs_msg(sbi->sb, KERN_ERR, "Abandon looped node block list");
++			*looped_blkaddr = last_blkaddr;
++			break;
++		}
 +
-+	if (fieinfo->fi_flags & FIEMAP_FLAG_XATTR) {
-+		ret = f2fs_xattr_fiemap(inode, fieinfo);
-+		goto out;
-+	}
++		/*
++		 * it's not needed to clear PG_checked flag in temp page since we
++		 * will truncate all those pages in the end of recovery.
++		 */
++		SetPageChecked(page);
+ 
+ 		if (!is_recoverable_dnode(page))
+ 			break;
+@@ -279,6 +290,7 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 			entry->last_dentry = blkaddr;
+ next:
+ 		/* check next segment */
++		last_blkaddr = blkaddr;
+ 		blkaddr = next_blkaddr_of_node(page);
+ 		f2fs_put_page(page, 1);
+ 
+@@ -525,7 +537,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ }
+ 
+ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
+-						struct list_head *dir_list)
++				struct list_head *dir_list, block_t looped_blkaddr)
+ {
+ 	struct curseg_info *curseg;
+ 	struct page *page = NULL;
+@@ -577,6 +589,10 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
+ 		if (entry->blkaddr == blkaddr)
+ 			del_fsync_inode(entry);
+ next:
++		/* in case of looped node chain */
++		if (blkaddr == looped_blkaddr)
++			break;
 +
- 	if (f2fs_has_inline_data(inode)) {
- 		ret = f2fs_inline_data_fiemap(inode, fieinfo, start, len);
- 		if (ret != -EAGAIN)
--			return ret;
-+			goto out;
- 	}
+ 		/* check next segment */
+ 		blkaddr = next_blkaddr_of_node(page);
+ 		f2fs_put_page(page, 1);
+@@ -596,6 +612,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ 	bool need_writecp = false;
+ #ifdef CONFIG_QUOTA
+ 	int quota_enabled;
++	block_t looped_blkaddr = 0;
+ #endif
  
--	inode_lock(inode);
--
- 	if (logical_to_blk(inode, len) == 0)
- 		len = blk_to_logical(inode, 1);
+ 	if (s_flags & SB_RDONLY) {
+@@ -624,7 +641,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ 	mutex_lock(&sbi->cp_mutex);
  
+ 	/* step #1: find fsynced inode numbers */
+-	err = find_fsync_dnodes(sbi, &inode_list, check_only);
++	err = find_fsync_dnodes(sbi, &inode_list, check_only, &looped_blkaddr);
+ 	if (err || list_empty(&inode_list))
+ 		goto skip;
+ 
+@@ -636,7 +653,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ 	need_writecp = true;
+ 
+ 	/* step #2: recover data */
+-	err = recover_data(sbi, &inode_list, &dir_list);
++	err = recover_data(sbi, &inode_list, &dir_list, looped_blkaddr);
+ 	if (!err)
+ 		f2fs_bug_on(sbi, !list_empty(&inode_list));
+ skip:
 -- 
-2.15.0.55.gc2ece9dc4de6
+1.9.1
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
