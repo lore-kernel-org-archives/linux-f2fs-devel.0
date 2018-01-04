@@ -1,48 +1,34 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] dump.f2fs: Test blkaddr is valid or not in
- option '-b'
-Date: Thu, 4 Jan 2018 11:12:40 +0800
-Message-ID: <1c689b4f-4b23-9c9c-ce53-b7057c8a0365@huawei.com>
-References: <1515030663-21518-1-git-send-email-heyunlei@huawei.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: [PATCH v2] f2fs: check segment type in __f2fs_replace_block
+Date: Thu, 4 Jan 2018 11:48:25 +0800
+Message-ID: <1515037705-23984-1-git-send-email-yunlong.song@huawei.com>
+References: <1514619768-134531-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
- helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1eWvxh-0006za-Fn
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Jan 2018 03:12:57 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eWvxg-0003lI-7d
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Jan 2018 03:12:57 +0000
-In-Reply-To: <1515030663-21518-1-git-send-email-heyunlei@huawei.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: ning.jia@huawei.com
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1514619768-134531-1-git-send-email-yunlong.song@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/1/4 9:51, Yunlei He wrote:
-> Test blkaddr is valid or not in option '-b'
-> 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+---
+ fs/f2fs/segment.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 890d483..e3bbabf 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2719,6 +2719,8 @@ void __f2fs_replace_block(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 	se = get_seg_entry(sbi, segno);
+ 	type = se->type;
+ 
++	f2fs_bug_on(sbi, se->valid_blocks && IS_NODESEG(type));
++
+ 	down_write(&SM_I(sbi)->curseg_lock);
+ 
+ 	if (!recover_curseg) {
+-- 
+1.8.5.2
