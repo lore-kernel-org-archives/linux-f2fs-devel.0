@@ -1,126 +1,115 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: update inode info to inode page for
- new file
-Date: Thu, 4 Jan 2018 15:24:38 +0800
-Message-ID: <8c1d2178-8255-d0df-3419-86ad0d5ece53@huawei.com>
-References: <1514973784-16037-1-git-send-email-heyunlei@huawei.com>
- <d25e5722-774d-38e8-33d1-eab598ee276b@huawei.com>
- <42B685BFA705F94C860C6DD0752F056548304326@DGGEMA503-MBX.china.huawei.com>
- <20180104064620.GB51983@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: [PATCH] f2fs: support FIEMAP_FLAG_XATTR
+Date: Thu, 4 Jan 2018 18:09:20 +0800
+Message-ID: <20180104100920.22204-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
- helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1eWztt-0001l5-He
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Jan 2018 07:25:17 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eWzts-0005TJ-BH
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Jan 2018 07:25:17 +0000
-In-Reply-To: <20180104064620.GB51983@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, heyunlei <heyunlei@huawei.com>
-Cc: "Jianing (Euler)" <ning.jia@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/1/4 14:46, Jaegeuk Kim wrote:
-> On 01/04, heyunlei wrote:
->>
->>
->>> -----Original Message-----
->>> From: Yuchao (T)
->>> Sent: Thursday, January 04, 2018 11:02 AM
->>> To: heyunlei; jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
->>> Cc: Wangbintian; Jianing (Euler)
->>> Subject: Re: [f2fs-dev][PATCH] f2fs: update inode info to inode page for new file
->>>
->>> On 2018/1/3 18:03, Yunlei He wrote:
->>>> 			|
->>>> 			| 1. creat a new file A ,(with dirty inode
->>>> 			|    && dirty inode page && xattr info)
->>>> 			| 2. backgroud wb write back file A inode
->>>> 	last checkpoint	|    page (without update from inode cache)
->>>> 			| 3. fsync file A, write back inode page of
->>>> 			|    file A with inode cache info
->>>> 			| 4. sudden power off before new checkpoint
->>>>
->>>> In this case, recovery process will try to recover a zero inode
->>>> page. Inline xattr flag of file A will be miss and xattr info
->>>> will be taken as blkaddr index.
->>>>
->>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->>>> ---
->>>>  fs/f2fs/dir.c | 2 ++
->>>>  1 file changed, 2 insertions(+)
->>>>
->>>> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
->>>> index 724304d..d04dcac 100644
->>>> --- a/fs/f2fs/dir.c
->>>> +++ b/fs/f2fs/dir.c
->>>> @@ -427,6 +427,8 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
->>>>  			remove_orphan_inode(F2FS_I_SB(dir), inode->i_ino);
->>>>  		f2fs_i_links_write(inode, true);
->>>>  	}
->>>> +
->>>> +	update_inode(inode, page);
->>>
->>> That would cause memory copy overhead, how about always keeping consistent
->>> in-memory inode meta info with the data in recovering inode block as below:
->>>
->>> recover_inline_xattr()
->>>
->>> 	if (ri->i_inline & F2FS_INLINE_XATTR) {
->>> 		set_inode_flag(inode, FI_INLINE_XATTR);
->>> 	} else {
->>> 		clear_inode_flag(inode, FI_INLINE_XATTR);
->>> 		goto update_inode;
->>> 	}
-> 
-> Ah I see. That doesn't represent parallel things. :P
+This patch enables ->fiemap to handle FIEMAP_FLAG_XATTR flag for xattr
+mapping info lookup purpose.
 
-Please add, ;)
+It makes f2fs passing generic/425 test in fstest.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/data.c | 65 ++++++++++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 61 insertions(+), 4 deletions(-)
 
-Thanks,
-
-> 
->>>
->>> Thanks, 
->>
->> Okay, My f2fs module is not support flexible inline xattr size, this change is enough
->> for this problem.
-> 
-> Let me merge this patch with this.
-> 
-> Thanks,
-> 
->>
->> Thanks.
->>
->>>
->>>>  	return page;
->>>>
->>>>  put_error:
->>>>
-> 
-> .
-> 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 71838f53734e..31e4fe17ea12 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1128,6 +1128,58 @@ static inline loff_t blk_to_logical(struct inode *inode, sector_t blk)
+ 	return (blk << inode->i_blkbits);
+ }
+ 
++static int f2fs_xattr_fiemap(struct inode *inode,
++				struct fiemap_extent_info *fieinfo)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	struct page *page;
++	struct node_info ni;
++	__u64 phys = 0;
++	__u64 length;
++	__u32 flags = FIEMAP_EXTENT_LAST;
++	int err = 0;
++
++	if (f2fs_has_inline_xattr(inode)) {
++		int offset;
++
++		page = f2fs_grab_cache_page(NODE_MAPPING(sbi),
++						inode->i_ino, false);
++		if (!page)
++			return -ENOMEM;
++
++		get_node_info(sbi, inode->i_ino, &ni);
++
++		phys = (__u64)blk_to_logical(inode, ni.blk_addr);
++		offset = offsetof(struct f2fs_inode, i_addr) +
++					sizeof(__le32) * (DEF_ADDRS_PER_INODE -
++					F2FS_INLINE_XATTR_ADDRS(inode));
++
++		phys += offset;
++		length = inline_xattr_size(inode);
++
++		f2fs_put_page(page, 1);
++
++		flags |= FIEMAP_EXTENT_DATA_INLINE;
++	} else if (F2FS_I(inode)->i_xattr_nid) {
++		page = f2fs_grab_cache_page(NODE_MAPPING(sbi),
++					F2FS_I(inode)->i_xattr_nid, false);
++		if (!page)
++			return -ENOMEM;
++
++		get_node_info(sbi, F2FS_I(inode)->i_xattr_nid, &ni);
++
++		phys = (__u64)blk_to_logical(inode, ni.blk_addr);
++		length = inode->i_sb->s_blocksize;
++
++		f2fs_put_page(page, 1);
++	}
++
++	if (phys)
++		err = fiemap_fill_next_extent(fieinfo, 0, phys, length, flags);
++
++	return (err < 0 ? err : 0);
++}
++
+ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		u64 start, u64 len)
+ {
+@@ -1138,18 +1190,23 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 	u32 flags = 0;
+ 	int ret = 0;
+ 
+-	ret = fiemap_check_flags(fieinfo, FIEMAP_FLAG_SYNC);
++	ret = fiemap_check_flags(fieinfo, FIEMAP_FLAG_SYNC | FIEMAP_FLAG_XATTR);
+ 	if (ret)
+ 		return ret;
+ 
++	inode_lock(inode);
++
++	if (fieinfo->fi_flags & FIEMAP_FLAG_XATTR) {
++		ret = f2fs_xattr_fiemap(inode, fieinfo);
++		goto out;
++	}
++
+ 	if (f2fs_has_inline_data(inode)) {
+ 		ret = f2fs_inline_data_fiemap(inode, fieinfo, start, len);
+ 		if (ret != -EAGAIN)
+-			return ret;
++			goto out;
+ 	}
+ 
+-	inode_lock(inode);
+-
+ 	if (logical_to_blk(inode, len) == 0)
+ 		len = blk_to_logical(inode, 1);
+ 
+-- 
+2.15.0.55.gc2ece9dc4de6
