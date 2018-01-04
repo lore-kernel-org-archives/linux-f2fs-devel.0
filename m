@@ -1,108 +1,93 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: check segment type before recover data
-Date: Thu, 4 Jan 2018 09:38:02 +0800
-Message-ID: <d392d1e0-87b6-2854-a3ea-48eda239ea2f@huawei.com>
-References: <1514619768-134531-1-git-send-email-yunlong.song@huawei.com>
- <c57a26c9-da62-ca5c-b5a3-873d4f1f9ded@huawei.com>
- <83433157-6a26-07f8-0d36-dc16af6a7754@huawei.com>
+From: heyunlei <heyunlei@huawei.com>
+Subject: Re: [PATCH] f2fs: update inode info to inode page for
+ new file
+Date: Thu, 4 Jan 2018 01:54:32 +0000
+Message-ID: <42B685BFA705F94C860C6DD0752F056548304133@DGGEMA503-MBX.china.huawei.com>
+References: <1514973784-16037-1-git-send-email-heyunlei@huawei.com>
+ <20180103214410.GE30014@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <83433157-6a26-07f8-0d36-dc16af6a7754@huawei.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
+ helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <heyunlei@huawei.com>) id 1eWuk5-0003dl-0N
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Jan 2018 01:54:49 +0000
+Received: from szxga01-in.huawei.com ([45.249.212.187] helo=huawei.com)
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eWuk3-0001Y2-GZ
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Jan 2018 01:54:48 +0000
+In-Reply-To: <20180103214410.GE30014@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: zh-CN
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: "Jianing (Euler)" <ning.jia@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-On 2018/1/2 19:02, Yunlong Song wrote:
-> 
-> 
-> On 2018/1/2 14:49, Chao Yu wrote:
->> On 2017/12/30 15:42, Yunlong Song wrote:
->>> In some case, the node blocks has wrong blkaddr whose segment type is
->> You mean *data block* has wrong blkaddr whose segment type is NODE?
-> Yes.
->>
->>> NODE, e.g., recover inode has missing xattr flag and the blkaddr is in
->>> the xattr range. Since fsck.f2fs does not check the recovery nodes, this
->>> will cause __f2fs_replace_block change the curseg of node and do the
->>> update_sit_entry(sbi, new_blkaddr, 1) with no next_blkoff refresh, as a
->> Do you mean the root cause is that __f2fs_replace_block didn't update
->> next_blkoff?
-> No, it's not the root cause. The root cause may be something like DDR flip.
->>
->>> result, when recovery process write checkpoint and sync nodes, the
->>> next_blkoff of curseg is used in the segment bit map, then it will
->>> cause f2fs_bug_on. So let's check the segment type before recover data,
->>> and stop recover if it is not in DATA segment.
->> Sorry, I can't catch the whole cause and effect from you description, if
->> possible, could you give an example?
-> For example, the i_inline flag has F2FS_INLINE_XATTR, and the last 50 
-> i_addrs have xattr
-> context. But if DDR flips, the i_inline flag may miss F2FS_INLINE_XATTR, 
-> and the last 50 i_addrs
-> are considered as data block addr. If the xattr context is 0x1234, and 
-> 0x1234 happens to be
-> a valid block addr, and the block 0x1234 happens to be in a warm node 
-> segment. Then do_recover_data
-> will call f2fs_replace_block() with dest = 0x1234, which will change 
-> curseg of warm node to
-> 0x1234's segment, and make update_sit_entry(sbi, 0x1234, 1), the 
-> curseg->next_blkoff also
-> points to 0x1234's offset in its segment. When recovery process calls 
-> write_checkpoint, sync
-> nodes will write to 0x1234's offset of curseg warm node. The 
-> update_sit_entry will check that
-> offset and find the bitmap is already set to 1 and then calls f2fs_bug_on.
 
-Got you, thanks for the explanation. IMO, for better debug, what about
-adding f2fs_bug_on here to detect both software and hardware defect in
-upstream code? In production, I think you can use your original implementation.
 
-Thanks,
+>-----Original Message-----
+>From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+>Sent: Thursday, January 04, 2018 5:44 AM
+>To: heyunlei
+>Cc: Yuchao (T); linux-f2fs-devel@lists.sourceforge.net; Wangbintian; Jianing (Euler)
+>Subject: Re: [f2fs-dev][PATCH] f2fs: update inode info to inode page for new file
+>
+>On 01/03, Yunlei He wrote:
+>> 			|
+>> 			| 1. creat a new file A ,(with dirty inode
+>> 			|    && dirty inode page && xattr info)
+>> 			| 2. backgroud wb write back file A inode
+>> 	last checkpoint	|    page (without update from inode cache)
+>
+>f2fs_sync_inode_meta() would flush dirty inode cache, no?
 
-> 
+f2fs_sync_inode_meta() would flush dirty inode cache in write new checkpoint.
+But here bdi flusher would write back zero inode page without update from inode cache.
+
+Thanks.
+
+>
+>
+>> 			| 3. fsync file A, write back inode page of
+>> 			|    file A with inode cache info
+>> 			| 4. sudden power off before new checkpoint
 >>
->> Thanks,
+>> In this case, recovery process will try to recover a zero inode
+>> page. Inline xattr flag of file A will be miss and xattr info
+>> will be taken as blkaddr index.
 >>
->>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->>> ---
->>>   fs/f2fs/recovery.c | 3 ++-
->>>   fs/f2fs/segment.h  | 3 +++
->>>   2 files changed, 5 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
->>> index 7d63faf..e8fee4a 100644
->>> --- a/fs/f2fs/recovery.c
->>> +++ b/fs/f2fs/recovery.c
->>> @@ -478,7 +478,8 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
->>>   		}
->>>   
->>>   		/* dest is valid block, try to recover from src to dest */
->>> -		if (is_valid_blkaddr(sbi, dest, META_POR)) {
->>> +		if (is_valid_blkaddr(sbi, dest, META_POR) &&
->>> +			is_data_blkaddr(sbi, dest)) {
->>>   
->>>   			if (src == NULL_ADDR) {
->>>   				err = reserve_new_block(&dn);
->>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
->>> index 71a2aaa..5c5a215 100644
->>> --- a/fs/f2fs/segment.h
->>> +++ b/fs/f2fs/segment.h
->>> @@ -115,6 +115,9 @@
->>>   #define SECTOR_TO_BLOCK(sectors)					\
->>>   	((sectors) >> F2FS_LOG_SECTORS_PER_BLOCK)
->>>   
->>> +#define is_data_blkaddr(sbi, blkaddr)	\
->>> +	(IS_DATASEG(get_seg_entry(sbi, GET_SEGNO(sbi, blkaddr))->type))
->>> +
->>>   /*
->>>    * indicate a block allocation direction: RIGHT and LEFT.
->>>    * RIGHT means allocating new sections towards the end of volume.
->>>
+>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+>> ---
+>>  fs/f2fs/dir.c | 2 ++
+>>  1 file changed, 2 insertions(+)
 >>
->> .
+>> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+>> index 724304d..d04dcac 100644
+>> --- a/fs/f2fs/dir.c
+>> +++ b/fs/f2fs/dir.c
+>> @@ -427,6 +427,8 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
+>>  			remove_orphan_inode(F2FS_I_SB(dir), inode->i_ino);
+>>  		f2fs_i_links_write(inode, true);
+>>  	}
+>> +
+>> +	update_inode(inode, page);
+>>  	return page;
 >>
-> 
+>>  put_error:
+>> --
+>> 1.9.1
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
