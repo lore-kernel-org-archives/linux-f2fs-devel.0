@@ -1,27 +1,28 @@
-From: heyunlei <heyunlei@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
 Subject: Re: [PATCH v6] f2fs: avoid dead loop in function
  find_fsync_dnodes
-Date: Fri, 5 Jan 2018 01:51:46 +0000
-Message-ID: <42B685BFA705F94C860C6DD0752F056548305254@DGGEMA503-MBX.china.huawei.com>
+Date: Fri, 5 Jan 2018 11:19:26 +0800
+Message-ID: <fada5c19-a800-108d-2932-805170cad974@huawei.com>
 References: <1515060064-26600-1-git-send-email-heyunlei@huawei.com>
  <a8758838-c45d-8a02-a63e-4ebea0debfec@huawei.com>
+ <42B685BFA705F94C860C6DD0752F056548305254@DGGEMA503-MBX.china.huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <heyunlei@huawei.com>) id 1eXHAw-0007kq-PE
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 05 Jan 2018 01:52:02 +0000
-Received: from [45.249.212.255] (helo=huawei.com)
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1eXIXz-0006sX-46
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 05 Jan 2018 03:19:55 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eXHAu-0006hz-JM
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 05 Jan 2018 01:52:02 +0000
-In-Reply-To: <a8758838-c45d-8a02-a63e-4ebea0debfec@huawei.com>
-Content-Language: zh-CN
+ id 1eXIXv-0001p1-0x
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 05 Jan 2018 03:19:55 +0000
+In-Reply-To: <42B685BFA705F94C860C6DD0752F056548305254@DGGEMA503-MBX.china.huawei.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,157 +32,182 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "Yuchao (T)" <yuchao0@huawei.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: heyunlei <heyunlei@huawei.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 Cc: "Jianing (Euler)" <ning.jia@huawei.com>
 
+On 2018/1/5 9:51, heyunlei wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Yuchao (T)
+>> Sent: Friday, January 05, 2018 9:17 AM
+>> To: heyunlei; jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
+>> Cc: Wangbintian; Jianing (Euler)
+>> Subject: Re: [f2fs-dev][PATCH v6] f2fs: avoid dead loop in function find_fsync_dnodes
+>>
+>> On 2018/1/4 18:01, Yunlei He wrote:
+>>> Came across a dead loop in recovery like this:
+>>>
+>>> ......
+>>> [   24.680480s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597696
+>>> [   24.698394s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597697
+>>> [   24.724334s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+>>> [   24.724334s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+>>> [   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+>>> [   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+>>> [   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+>>> [   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+>>> [   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+>>> [   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+>>> [   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+>>> [   24.724426s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
+>>> ......
+>>>
+>>> Mount process will block in dead loop and fsck can do nothing with this
+>>> error, This patch abandon recovery if node chain is cyclical.
+>>>
+>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+>>> ---
+>>>  fs/f2fs/recovery.c | 27 ++++++++++++++++++++++-----
+>>>  1 file changed, 22 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+>>> index cbeef73..318243c 100644
+>>> --- a/fs/f2fs/recovery.c
+>>> +++ b/fs/f2fs/recovery.c
+>>> @@ -221,11 +221,11 @@ static void recover_inode(struct inode *inode, struct page *page)
+>>>  }
+>>>
+>>>  static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+>>> -				bool check_only)
+>>> +			bool check_only, block_t *looped_blkaddr)
+>>>  {
+>>>  	struct curseg_info *curseg;
+>>>  	struct page *page = NULL;
+>>> -	block_t blkaddr;
+>>> +	block_t blkaddr, last_blkaddr;
+>>>  	int err = 0;
+>>>
+>>>  	/* get node pages in the current segment */
+>>> @@ -239,6 +239,17 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+>>>  			return 0;
+>>>
+>>>  		page = get_tmp_page(sbi, blkaddr);
+>>> +		if (PageChecked(page)) {
+>>> +			f2fs_msg(sbi->sb, KERN_ERR, "Abandon looped node block list");
+>>> +			*looped_blkaddr = last_blkaddr;
+>>> +			break;
+>>> +		}
+>>> +
+>>> +		/*
+>>> +		 * it's not needed to clear PG_checked flag in temp page since we
+>>> +		 * will truncate all those pages in the end of recovery.
+>>> +		 */
+>>> +		SetPageChecked(page);
+>>
+>> All valid recoverable pages have been tagged with PG_checked flag, so in
+>> recover_data() we can only recover those tagged pages like:
+>>
+>>
+>> if (!is_recoverable_dnode(page) || !PageChecked(page))
+>> 	break;
+>>
+>> /* do recovery */
+>> ....
+>>
+>> ClearPageChecked(page);
+>>
+>> So the process can be more clear, right?
+>>
+>> Thanks,
+> 
+> Could these pages tagged with PG_checked flag been reclaimed in some extreme scenarios?
 
+Oh, yes, so that we need add reference on checked page to avoid reclaiming
+in previous solution, that will be a little bit complicated for that coner
+case.
 
->-----Original Message-----
->From: Yuchao (T)
->Sent: Friday, January 05, 2018 9:17 AM
->To: heyunlei; jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
->Cc: Wangbintian; Jianing (Euler)
->Subject: Re: [f2fs-dev][PATCH v6] f2fs: avoid dead loop in function find_fsync_dnodes
->
->On 2018/1/4 18:01, Yunlei He wrote:
->> Came across a dead loop in recovery like this:
->>
->> ......
->> [   24.680480s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597696
->> [   24.698394s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597697
->> [   24.724334s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
->> [   24.724334s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
->> [   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
->> [   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
->> [   24.724365s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
->> [   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
->> [   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
->> [   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
->> [   24.724395s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
->> [   24.724426s][pid:320,cpu0,init]find_fsync_dnodes: blkaddr =13597698
->> ......
->>
->> Mount process will block in dead loop and fsck can do nothing with this
->> error, This patch abandon recovery if node chain is cyclical.
->>
->> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->> ---
->>  fs/f2fs/recovery.c | 27 ++++++++++++++++++++++-----
->>  1 file changed, 22 insertions(+), 5 deletions(-)
->>
->> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
->> index cbeef73..318243c 100644
->> --- a/fs/f2fs/recovery.c
->> +++ b/fs/f2fs/recovery.c
->> @@ -221,11 +221,11 @@ static void recover_inode(struct inode *inode, struct page *page)
->>  }
->>
->>  static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
->> -				bool check_only)
->> +			bool check_only, block_t *looped_blkaddr)
->>  {
->>  	struct curseg_info *curseg;
->>  	struct page *page = NULL;
->> -	block_t blkaddr;
->> +	block_t blkaddr, last_blkaddr;
->>  	int err = 0;
->>
->>  	/* get node pages in the current segment */
->> @@ -239,6 +239,17 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
->>  			return 0;
->>
->>  		page = get_tmp_page(sbi, blkaddr);
->> +		if (PageChecked(page)) {
->> +			f2fs_msg(sbi->sb, KERN_ERR, "Abandon looped node block list");
->> +			*looped_blkaddr = last_blkaddr;
->> +			break;
->> +		}
->> +
->> +		/*
->> +		 * it's not needed to clear PG_checked flag in temp page since we
->> +		 * will truncate all those pages in the end of recovery.
->> +		 */
->> +		SetPageChecked(page);
->
->All valid recoverable pages have been tagged with PG_checked flag, so in
->recover_data() we can only recover those tagged pages like:
->
->
->if (!is_recoverable_dnode(page) || !PageChecked(page))
->	break;
->
->/* do recovery */
->....
->
->ClearPageChecked(page);
->
->So the process can be more clear, right?
->
->Thanks,
+According to your log, it looks node block's next_blkaddr is pointing to
+itself? how about just fixing that case only as below?
 
-Could these pages tagged with PG_checked flag been reclaimed in some extreme scenarios?
+if (blkaddr == next_blkaddr_of_node(page)) {
+	f2fs_bug_on(sbi, 1);
+	break;
+}
 
-Thanks.
+blkaddr = next_blkaddr_of_node(page);
+f2fs_put_page(page, 1);
 
->
+BTW, do you figure out the root cause, bit flipping of hardware?
+
+Thanks,
+
+> 
+> Thanks.
+> 
 >>
->>  		if ()
->>  			break;
->> @@ -279,6 +290,7 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
->>  			entry->last_dentry = blkaddr;
->>  next:
->>  		/* check next segment */
->> +		last_blkaddr = blkaddr;
->>  		blkaddr = next_blkaddr_of_node(page);
->>  		f2fs_put_page(page, 1);
->>
->> @@ -525,7 +537,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
->>  }
->>
->>  static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
->> -						struct list_head *dir_list)
->> +				struct list_head *dir_list, block_t looped_blkaddr)
->>  {
->>  	struct curseg_info *curseg;
->>  	struct page *page = NULL;
->> @@ -577,6 +589,10 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
->>  		if (entry->blkaddr == blkaddr)
->>  			del_fsync_inode(entry);
->>  next:
->> +		/* in case of looped node chain */
->> +		if (blkaddr == looped_blkaddr)
->> +			break;
->> +
->>  		/* check next segment */
->>  		blkaddr = next_blkaddr_of_node(page);
->>  		f2fs_put_page(page, 1);
->> @@ -596,6 +612,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
->>  	bool need_writecp = false;
->>  #ifdef CONFIG_QUOTA
->>  	int quota_enabled;
->> +	block_t looped_blkaddr = 0;
->>  #endif
->>
->>  	if (s_flags & SB_RDONLY) {
->> @@ -624,7 +641,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
->>  	mutex_lock(&sbi->cp_mutex);
->>
->>  	/* step #1: find fsynced inode numbers */
->> -	err = find_fsync_dnodes(sbi, &inode_list, check_only);
->> +	err = find_fsync_dnodes(sbi, &inode_list, check_only, &looped_blkaddr);
->>  	if (err || list_empty(&inode_list))
->>  		goto skip;
->>
->> @@ -636,7 +653,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
->>  	need_writecp = true;
->>
->>  	/* step #2: recover data */
->> -	err = recover_data(sbi, &inode_list, &dir_list);
->> +	err = recover_data(sbi, &inode_list, &dir_list, looped_blkaddr);
->>  	if (!err)
->>  		f2fs_bug_on(sbi, !list_empty(&inode_list));
->>  skip:
->>
+>>>
+>>>  		if ()
+>>>  			break;
+>>> @@ -279,6 +290,7 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+>>>  			entry->last_dentry = blkaddr;
+>>>  next:
+>>>  		/* check next segment */
+>>> +		last_blkaddr = blkaddr;
+>>>  		blkaddr = next_blkaddr_of_node(page);
+>>>  		f2fs_put_page(page, 1);
+>>>
+>>> @@ -525,7 +537,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+>>>  }
+>>>
+>>>  static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
+>>> -						struct list_head *dir_list)
+>>> +				struct list_head *dir_list, block_t looped_blkaddr)
+>>>  {
+>>>  	struct curseg_info *curseg;
+>>>  	struct page *page = NULL;
+>>> @@ -577,6 +589,10 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
+>>>  		if (entry->blkaddr == blkaddr)
+>>>  			del_fsync_inode(entry);
+>>>  next:
+>>> +		/* in case of looped node chain */
+>>> +		if (blkaddr == looped_blkaddr)
+>>> +			break;
+>>> +
+>>>  		/* check next segment */
+>>>  		blkaddr = next_blkaddr_of_node(page);
+>>>  		f2fs_put_page(page, 1);
+>>> @@ -596,6 +612,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+>>>  	bool need_writecp = false;
+>>>  #ifdef CONFIG_QUOTA
+>>>  	int quota_enabled;
+>>> +	block_t looped_blkaddr = 0;
+>>>  #endif
+>>>
+>>>  	if (s_flags & SB_RDONLY) {
+>>> @@ -624,7 +641,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+>>>  	mutex_lock(&sbi->cp_mutex);
+>>>
+>>>  	/* step #1: find fsynced inode numbers */
+>>> -	err = find_fsync_dnodes(sbi, &inode_list, check_only);
+>>> +	err = find_fsync_dnodes(sbi, &inode_list, check_only, &looped_blkaddr);
+>>>  	if (err || list_empty(&inode_list))
+>>>  		goto skip;
+>>>
+>>> @@ -636,7 +653,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+>>>  	need_writecp = true;
+>>>
+>>>  	/* step #2: recover data */
+>>> -	err = recover_data(sbi, &inode_list, &dir_list);
+>>> +	err = recover_data(sbi, &inode_list, &dir_list, looped_blkaddr);
+>>>  	if (!err)
+>>>  		f2fs_bug_on(sbi, !list_empty(&inode_list));
+>>>  skip:
+>>>
+> 
+> 
+> .
+> 
 
 
 ------------------------------------------------------------------------------
