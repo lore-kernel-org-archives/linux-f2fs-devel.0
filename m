@@ -1,62 +1,63 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: add reserved blocks for root user
-Date: Fri, 5 Jan 2018 16:04:49 +0800
-Message-ID: <805948ce-6ce7-5fb3-ab8a-38494e6a6fb1@huawei.com>
-References: <20180103185845.29953-1-jaegeuk@kernel.org>
- <20180103185845.29953-2-jaegeuk@kernel.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Subject: [PATCH -next] f2fs: make local functions static
+Date: Fri, 5 Jan 2018 09:41:20 +0000
+Message-ID: <1515145280-28626-1-git-send-email-weiyongjun1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180103185845.29953-2-jaegeuk@kernel.org>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: miaoxie@huawei.com, "Yuchao (T)" <yuchao0@huawei.com>, chao <chao@kernel.org>, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei <heyunlei@huawei.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
+Fixes the following sparse warnings:
 
+fs/f2fs/segment.c:887:6: warning:
+ symbol '__check_sit_bitmap' was not declared. Should it be static?
+fs/f2fs/segment.c:1327:6: warning:
+ symbol 'f2fs_wait_discard_bio' was not declared. Should it be static?
+fs/f2fs/super.c:1661:5: warning:
+ symbol 'f2fs_get_projid' was not declared. Should it be static?
 
-On 2018/1/4 2:58, Jaegeuk Kim wrote:
-> @@ -1590,11 +1598,17 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
->   	sbi->total_valid_block_count += (block_t)(*count);
->   	avail_user_block_count = sbi->user_block_count -
->   					sbi->current_reserved_blocks;
-> +
-> +	if (!(test_opt(sbi, RESERVE_ROOT) && capable(CAP_SYS_RESOURCE)))
-> +		avail_user_block_count -= sbi->root_reserved_blocks;
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ fs/f2fs/segment.c | 4 ++--
+ fs/f2fs/super.c | 2 +-
+ 2 file changed, 3 insertions(+), 3 deletions(-)
 
-Should better be:
-
-+	if (test_opt(sbi, RESERVE_ROOT) && !capable(CAP_SYS_RESOURCE))
-+		avail_user_block_count -= sbi->root_reserved_blocks;
-
-> @@ -1783,9 +1797,13 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
->   
->   	spin_lock(&sbi->stat_lock);
->   
-> -	valid_block_count = sbi->total_valid_block_count + 1;
-> -	if (unlikely(valid_block_count + sbi->current_reserved_blocks >
-> -						sbi->user_block_count)) {
-> +	valid_block_count = sbi->total_valid_block_count +
-> +					sbi->current_reserved_blocks + 1;
-> +
-
-> +	if (!(test_opt(sbi, RESERVE_ROOT) && capable(CAP_SYS_RESOURCE)))
-> +		valid_block_count += sbi->root_reserved_blocks;
-> +
-should better be:
-
-+	if (test_opt(sbi, RESERVE_ROOT) && !capable(CAP_SYS_RESOURCE))
-+		valid_block_count += sbi->root_reserved_blocks;
-
-
-> +	if (unlikely(valid_block_count > sbi->user_block_count)) {
->   		spin_unlock(&sbi->stat_lock);
->   		goto enospc;
->   	}
->
-
--- 
-Thanks,
-Yunlong Song
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index b03f65e..36bfd53 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -884,7 +884,7 @@ static void f2fs_submit_discard_endio(struct bio *bio)
+ 	bio_put(bio);
+ }
+ 
+-void __check_sit_bitmap(struct f2fs_sb_info *sbi,
++static void __check_sit_bitmap(struct f2fs_sb_info *sbi,
+ 				block_t start, block_t end)
+ {
+ #ifdef CONFIG_F2FS_CHECK_FS
+@@ -1324,7 +1324,7 @@ static void __wait_all_discard_cmd(struct f2fs_sb_info *sbi,
+ }
+ 
+ /* This should be covered by global mutex, &sit_i->sentry_lock */
+-void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
++static void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
+ {
+ 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+ 	struct discard_cmd *dc;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index f562307..9958fbf 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1658,7 +1658,7 @@ void f2fs_quota_off_umount(struct super_block *sb)
+ 		f2fs_quota_off(sb, type);
+ }
+ 
+-int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
++static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
+ {
+ 	*projid = F2FS_I(inode)->i_projid;
+ 	return 0;
