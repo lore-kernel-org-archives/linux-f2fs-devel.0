@@ -1,73 +1,127 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v2 05/11] fscrypt: split
- fscrypt_dummy_context_enabled() into supp/notsupp versions
-Date: Fri, 5 Jan 2018 21:49:44 -0500
-Message-ID: <20180106024944.GA2404@thunk.org>
-References: <20180105184502.48473-1-ebiggers3@gmail.com>
- <20180105184502.48473-6-ebiggers3@gmail.com>
- <20180105204009.GA72343@jaegeuk-macbookpro.roam.corp.google.com>
- <20180105211839.GB44929@gmail.com>
- <20180105213608.GB72343@jaegeuk-macbookpro.roam.corp.google.com>
- <20180105220149.GD44929@gmail.com>
- <20180106003950.GC72343@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v2] f2fs: support FIEMAP_FLAG_XATTR
+Date: Mon, 8 Jan 2018 18:48:09 +0800
+Message-ID: <20180108104809.108904-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
- helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <tytso@thunk.org>) id 1eXeYX-00043i-EM
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 06 Jan 2018 02:49:57 +0000
-Received: from imap.thunk.org ([74.207.234.97])
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eXeYV-0001CQ-TD
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 06 Jan 2018 02:49:57 +0000
-Content-Disposition: inline
-In-Reply-To: <20180106003950.GC72343@jaegeuk-macbookpro.roam.corp.google.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Eric Biggers <ebiggers@google.com>, Eric Biggers <ebiggers3@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Fri, Jan 05, 2018 at 04:39:50PM -0800, Jaegeuk Kim wrote:
-> 
-> Agreed that dummy'd be easy to go for now tho, doesn't it give any security
-> concern at all, even only for ext4 testing purpose? Is there a chance to hack
-> the mount option in runtime? BTW, it may be doable to build an encrypt root
-> inode having encrypted dentry of lost_found, given dummy_context in mke2fs.
-> I'm just curious whether or not it'd be worth to do.
+This patch enables ->fiemap to handle FIEMAP_FLAG_XATTR flag for xattr
+mapping info lookup purpose.
 
-It requires root to manipulate the mount option; and if you don't
-trust root, you've got other problems.
+It makes f2fs passing generic/425 test in fstest.
 
-The problem is that e2fsck needs to be able to repair a file system
-without having access to any of the file system keys.  And so if there
-is an orphaned inode (e.g., an inode which is not attached to any
-directory), we need to put it somewhere, and that's /lost+found.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v2: adjust f2fs_xattr_fiemap flow to handle the case that inline xattr and
+xattr node both exist.
+ fs/f2fs/data.c | 75 ++++++++++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 71 insertions(+), 4 deletions(-)
 
-I've considered making lost+found a magic directory which isn't
-directly linked into the root directory, and have a magic namei
-lookup.  There are downsides though; that would mean that the
-/lost+found filename has to be magic --- what to do if the user tries
-to create a lost+found directory, or rename the magic lost+found
-directory.
-
-Ultimately, i decided it wasn't worth the semantic and
-implementational complexity, especially since none of the primary use
-cases (Android, Chromeos, etc.) needed an encrypted root directory.
-
-      			  	       	  	    - Ted
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index cd988bc1922b..429764118604 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1129,6 +1129,68 @@ static inline loff_t blk_to_logical(struct inode *inode, sector_t blk)
+ 	return (blk << inode->i_blkbits);
+ }
+ 
++static int f2fs_xattr_fiemap(struct inode *inode,
++				struct fiemap_extent_info *fieinfo)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	struct page *page;
++	struct node_info ni;
++	__u64 phys = 0, len;
++	__u32 flags;
++	nid_t xnid = F2FS_I(inode)->i_xattr_nid;
++	int err = 0;
++
++	if (f2fs_has_inline_xattr(inode)) {
++		int offset;
++
++		page = f2fs_grab_cache_page(NODE_MAPPING(sbi),
++						inode->i_ino, false);
++		if (!page)
++			return -ENOMEM;
++
++		get_node_info(sbi, inode->i_ino, &ni);
++
++		phys = (__u64)blk_to_logical(inode, ni.blk_addr);
++		offset = offsetof(struct f2fs_inode, i_addr) +
++					sizeof(__le32) * (DEF_ADDRS_PER_INODE -
++					F2FS_INLINE_XATTR_ADDRS(inode));
++
++		phys += offset;
++		len = inline_xattr_size(inode);
++
++		f2fs_put_page(page, 1);
++
++		flags = FIEMAP_EXTENT_DATA_INLINE;
++
++		if (!xnid)
++			flags |= FIEMAP_EXTENT_LAST;
++
++		err = fiemap_fill_next_extent(fieinfo, 0, phys, len, flags);
++		if (err || err == 1)
++			return err;
++	}
++
++	if (xnid) {
++		page = f2fs_grab_cache_page(NODE_MAPPING(sbi), xnid, false);
++		if (!page)
++			return -ENOMEM;
++
++		get_node_info(sbi, xnid, &ni);
++
++		phys = (__u64)blk_to_logical(inode, ni.blk_addr);
++		len = inode->i_sb->s_blocksize;
++
++		f2fs_put_page(page, 1);
++
++		flags = FIEMAP_EXTENT_LAST;
++	}
++
++	if (phys)
++		err = fiemap_fill_next_extent(fieinfo, 0, phys, len, flags);
++
++	return (err < 0 ? err : 0);
++}
++
+ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		u64 start, u64 len)
+ {
+@@ -1139,18 +1201,23 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 	u32 flags = 0;
+ 	int ret = 0;
+ 
+-	ret = fiemap_check_flags(fieinfo, FIEMAP_FLAG_SYNC);
++	ret = fiemap_check_flags(fieinfo, FIEMAP_FLAG_SYNC | FIEMAP_FLAG_XATTR);
+ 	if (ret)
+ 		return ret;
+ 
++	inode_lock(inode);
++
++	if (fieinfo->fi_flags & FIEMAP_FLAG_XATTR) {
++		ret = f2fs_xattr_fiemap(inode, fieinfo);
++		goto out;
++	}
++
+ 	if (f2fs_has_inline_data(inode)) {
+ 		ret = f2fs_inline_data_fiemap(inode, fieinfo, start, len);
+ 		if (ret != -EAGAIN)
+-			return ret;
++			goto out;
+ 	}
+ 
+-	inode_lock(inode);
+-
+ 	if (logical_to_blk(inode, len) == 0)
+ 		len = blk_to_logical(inode, 1);
+ 
+-- 
+2.15.0.55.gc2ece9dc4de6
