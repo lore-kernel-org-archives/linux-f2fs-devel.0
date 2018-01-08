@@ -1,54 +1,202 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 3/4] f2fs: avoid high cpu usage in discard thread
-Date: Mon, 8 Jan 2018 18:48:33 +0800
-Message-ID: <20180108104834.108983-3-yuchao0@huawei.com>
-References: <20180108104834.108983-1-yuchao0@huawei.com>
+Subject: [PATCH 1/4] f2fs: support F2FS_IOC_PRECACHE_EXTENTS
+Date: Mon, 8 Jan 2018 18:48:31 +0800
+Message-ID: <20180108104834.108983-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180108104834.108983-1-yuchao0@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+ helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <yuchao0@huawei.com>) id 1eYUzO-0002Nz-TJ
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 08 Jan 2018 10:49:10 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eYUzN-0007LH-Nd
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 08 Jan 2018 10:49:10 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-We take very long time to finish generic/476, this is because we will
-check consistence of all discard entries in global rb tree while
-traversing all different granularity pending lists, even when the list
-is empty, in order to avoid that unneeded overhead, we have to skip
-the check when coming up an empty list.
-
-generic/476 time consumption:
-					cost
-Before patch & w/o consistence check	57s
-Before patch & w/ consistence check	1426s
-After patch				78s
+This patch introduces a new ioctl F2FS_IOC_PRECACHE_EXTENTS to precache
+extent info, in order to gain better performance during data/meta
+accessing.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/segment.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/f2fs/data.c | 27 +++++++++++++++++++++++++++
+ fs/f2fs/f2fs.h |  2 ++
+ fs/f2fs/file.c | 35 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 64 insertions(+)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index f2842a8a1341..4a40ef1326a9 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1204,6 +1204,8 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 		pend_list = &dcc->pend_list[i];
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 429764118604..f38e660bc889 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -920,6 +920,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ 	blkcnt_t prealloc;
+ 	struct extent_info ei = {0,0,0};
+ 	block_t blkaddr;
++	unsigned int start_pgofs;
  
- 		mutex_lock(&dcc->cmd_lock);
-+		if (list_empty(pend_list))
-+			goto next;
- 		f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
- 		blk_start_plug(&plug);
- 		list_for_each_entry_safe(dc, tmp, pend_list, list) {
-@@ -1222,6 +1224,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 				break;
- 		}
- 		blk_finish_plug(&plug);
-+next:
- 		mutex_unlock(&dcc->cmd_lock);
+ 	if (!maxblocks)
+ 		return 0;
+@@ -935,6 +936,8 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ 		map->m_pblk = ei.blk + pgofs - ei.fofs;
+ 		map->m_len = min((pgoff_t)maxblocks, ei.fofs + ei.len - pgofs);
+ 		map->m_flags = F2FS_MAP_MAPPED;
++		if (map->m_next_pgofs)
++			*map->m_next_pgofs = pgofs + map->m_len;
+ 		goto out;
+ 	}
  
- 		if (iter >= dpolicy->max_requests)
+@@ -957,6 +960,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ 		goto unlock_out;
+ 	}
+ 
++	start_pgofs = pgofs;
+ 	prealloc = 0;
+ 	last_ofs_in_node = ofs_in_node = dn.ofs_in_node;
+ 	end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
+@@ -990,6 +994,8 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ 				map->m_pblk = 0;
+ 				goto sync_out;
+ 			}
++			if (flag == F2FS_GET_BLOCK_PRECACHE)
++				goto sync_out;
+ 			if (flag == F2FS_GET_BLOCK_FIEMAP &&
+ 						blkaddr == NULL_ADDR) {
+ 				if (map->m_next_pgofs)
+@@ -1048,6 +1054,16 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ 	else if (dn.ofs_in_node < end_offset)
+ 		goto next_block;
+ 
++	if (flag == F2FS_GET_BLOCK_PRECACHE) {
++		if (map->m_flags & F2FS_MAP_MAPPED) {
++			unsigned int ofs = start_pgofs - map->m_lblk;
++
++			f2fs_update_extent_cache_range(&dn,
++				start_pgofs, map->m_pblk + ofs,
++				map->m_len - ofs);
++		}
++	}
++
+ 	f2fs_put_dnode(&dn);
+ 
+ 	if (create) {
+@@ -1057,6 +1073,17 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ 	goto next_dnode;
+ 
+ sync_out:
++	if (flag == F2FS_GET_BLOCK_PRECACHE) {
++		if (map->m_flags & F2FS_MAP_MAPPED) {
++			unsigned int ofs = start_pgofs - map->m_lblk;
++
++			f2fs_update_extent_cache_range(&dn,
++				start_pgofs, map->m_pblk + ofs,
++				map->m_len - ofs);
++		}
++		if (map->m_next_pgofs)
++			*map->m_next_pgofs = pgofs + 1;
++	}
+ 	f2fs_put_dnode(&dn);
+ unlock_out:
+ 	if (create) {
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 2f097139b8f7..14177cebc3e7 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -353,6 +353,7 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
+ 						struct f2fs_gc_range)
+ #define F2FS_IOC_GET_FEATURES		_IOR(F2FS_IOCTL_MAGIC, 12, __u32)
+ #define F2FS_IOC_SET_PIN_FILE		_IOW(F2FS_IOCTL_MAGIC, 13, __u32)
++#define F2FS_IOC_PRECACHE_EXTENTS	_IO(F2FS_IOCTL_MAGIC, 14)
+ 
+ #define F2FS_IOC_SET_ENCRYPTION_POLICY	FS_IOC_SET_ENCRYPTION_POLICY
+ #define F2FS_IOC_GET_ENCRYPTION_POLICY	FS_IOC_GET_ENCRYPTION_POLICY
+@@ -558,6 +559,7 @@ enum {
+ 	F2FS_GET_BLOCK_BMAP,
+ 	F2FS_GET_BLOCK_PRE_DIO,
+ 	F2FS_GET_BLOCK_PRE_AIO,
++	F2FS_GET_BLOCK_PRECACHE,
+ };
+ 
+ /*
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index e4078b32856c..14e75871acf3 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2734,6 +2734,38 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
+ 	return ret;
+ }
+ 
++static int f2fs_ioc_precache_extents(struct file *filp, unsigned long arg)
++{
++	struct inode *inode = file_inode(filp);
++	struct f2fs_inode_info *fi = F2FS_I(inode);
++	struct f2fs_map_blocks map;
++	pgoff_t next_pgofs;
++	loff_t end;
++	int err;
++
++	if (is_inode_flag_set(inode, FI_NO_EXTENT))
++		return -EOPNOTSUPP;
++
++	map.m_lblk = 0;
++	map.m_next_pgofs = &next_pgofs;
++	map.m_seg_type = NO_CHECK_TYPE;
++	end = F2FS_I_SB(inode)->max_file_blocks;
++
++	while (map.m_lblk < end) {
++		map.m_len = end - map.m_lblk;
++
++		down_write(&fi->dio_rwsem[WRITE]);
++		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_PRECACHE);
++		up_write(&fi->dio_rwsem[WRITE]);
++		if (err)
++			return err;
++
++		map.m_lblk = next_pgofs;
++	}
++
++	return 0;
++}
++
+ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ {
+ 	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
+@@ -2786,6 +2818,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		return f2fs_ioc_fssetxattr(filp, arg);
+ 	case F2FS_IOC_SET_PIN_FILE:
+ 		return f2fs_ioc_set_pin_file(filp, arg);
++	case F2FS_IOC_PRECACHE_EXTENTS:
++		return f2fs_ioc_precache_extents(filp, arg);
+ 	default:
+ 		return -ENOTTY;
+ 	}
+@@ -2862,6 +2896,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	case F2FS_IOC_FSGETXATTR:
+ 	case F2FS_IOC_FSSETXATTR:
+ 	case F2FS_IOC_SET_PIN_FILE:
++	case F2FS_IOC_PRECACHE_EXTENTS:
+ 		break;
+ 	default:
+ 		return -ENOIOCTLCMD;
 -- 
 2.15.0.55.gc2ece9dc4de6
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
