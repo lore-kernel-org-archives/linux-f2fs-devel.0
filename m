@@ -1,81 +1,130 @@
-From: Daeho Jeong <daeho.jeong@samsung.com>
-Subject: Re: [PATCH] f2fs: move set_cold_files after adding new
- node page in f2fs_create
-Date: Tue, 09 Jan 2018 11:05:15 +0000
-Message-ID: <20180109110515epcms1p46c7a239808f0875115954673c037fc89@epcms1p4>
-References: <affff153-1dc7-32f8-0285-2db5c11cf050@huawei.com>
- <1515457415-20645-1-git-send-email-daeho.jeong@samsung.com>
- <CGME20180109002317epcas2p1ecf6e4fbe5f80519cb4cede32a057e6e@epcms1p4>
-Reply-To: daeho.jeong@samsung.com
+From: Yufen Yu <yuyufen@huawei.com>
+Subject: [PATCH v2] f2fs: implement cgroup writeback support
+Date: Tue, 9 Jan 2018 19:33:39 +0800
+Message-ID: <20180109113339.26961-1-yuyufen@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
- helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <daeho.jeong@samsung.com>) id 1eYrif-0006q0-LJ
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 09 Jan 2018 11:05:25 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
- by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eYrid-0004pX-0I
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 09 Jan 2018 11:05:25 +0000
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
- by mailout4.samsung.com (KnoxPortal) with ESMTP id
- 20180109110515epoutp047d10f1e9ee24b3f9d3181b7570f0a8e5~IH4F-cFhP3012630126epoutp04b
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue,  9 Jan 2018 11:05:15 +0000 (GMT)
-In-Reply-To: <affff153-1dc7-32f8-0285-2db5c11cf050@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Yufen Yu <yuyufen@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGkgQ2hhbywKwqANCg0KPiA+wqBOb3cswqB3ZcKgc2V0wqBmbGFnc8Kgb2bCoGHCoG5ld2x5wqBj
-cmVhdGVkwqBpbm9kZcKgdXNpbmfCoHNldF9jb2xkX2ZpbGVzKCnCoGluDQo+ID7CoGFkdmFuY2XC
-oG9mwqBjcmVhdGluZ8KgYcKgbmV3wqBub2RlwqBwYWdlLsKgQnnCoHRoaXMswqBzb21lwqBpbm9k
-ZXPCoHdob3NlwqBub2RlDQo+wqA+IHBhZ2XCoGlzwqBub3TCoGNyZWF0ZWTCoHlldMKgY2FuwqBi
-ZcKgbGlua2VkwqBpbnRvwqB0aGXCoGdsb2JhbMKgZGlydHnCoGxpc3QuDQo+wqA+DQo+wqA+IElm
-wqB0aGXCoGNoZWNrcG9pbnTCoGlzwqBleGVjdXRlZMKgYXTCoHRoaXPCoG1vbWVudCzCoHRoZcKg
-aW5vZGXCoHdpbGzCoGJlwqB3cml0dGVuDQo+wqA+IGJhY2vCoGJ5wqB3cml0ZWJhY2tfc2luZ2xl
-X2lub2RlKCnCoGFuZMKgZmluYWxsecKgdXBkYXRlX2lub2RlX3BhZ2UoKcKgd2lsbA0KPsKgPiBm
-YWlswqB0b8KgZGV0YWNowqB0aGXCoGlub2RlwqBmcm9twqB0aGXCoGdsb2JhbMKgZGlydHnCoGxp
-c3TCoGJlY2F1c2XCoHRoZcKgaW5vZGUNCj7CoD4gZG9lc24ndMKgaGF2ZcKgYcKgbm9kZcKgcGFn
-ZS4NCj7CoD4NCj7CoD4gVGhlwqBwcm9ibGVtwqBpc8KgdGhhdMKgdGhlwqBpbm9kZSdzwqBzdGF0
-ZcKgaW7CoFZGU8KgbGF5ZXLCoHdpbGzCoGJlY29tZcKgY2xlYW4NCj7CoD4gYWZ0ZXLCoGV4ZWN1
-dGlvbsKgb2bCoHdyaXRlYmFja19zaW5nbGVfaW5vZGUoKcKgYW5kwqBpdCdzwqBzdGlsbMKgbGlu
-a2VkwqBpbg0KPsKgPiB0aGXCoGdsb2JhbMKgZGlydHnCoGxpc3TCoG9mwqBmMmZzwqBhbmTCoHRo
-aXPCoHdpbGzCoGNhdXNlwqBhwqBrZXJuZWzCoHBhbmljLg0KwqANCj4gQmVmb3JlwqBzZXRfY29s
-ZF9maWxlcyzCoEluwqBmMmZzX25ld19pbm9kZSzCoHdlwqB3aWxswqBhbHNvwqBkaXJ0ecKgaW5v
-ZGUswqBzb8KgaWYNCj4gd2XCoG9ubHnCoHJlbG9jYXRlwqBjb2RlwqBmaWxlwqBpbml0aWFsaXph
-dGlvbizCoHdvdWxkwqB3ZcKgc3VmZmVywqB0aGXCoHNhbWXCoGlzc3VlDQo+IGR1ZcKgdG/CoGJl
-bG93wqByZWFzb24/wqBJZsKgc28swqBpbnN0ZWFkLMKgaG93wqBhYm91dMKgY2hlY2vCoEZJX05F
-V19JTk9ERcKgZmxhZw0KPiBkdXJpbmfCoGdsb2JhbMKgZGlydHnCoGxpc3TCoGZsdXNoaW5nwqB0
-b8KgZGVjaWRlwqB3aGV0aGVywqB3ZcKgc2hvdWxkwqBmbHVzaMKgdGhhdA0KPiBpbm9kZT/CoEhv
-d8KgZG/CoHlvdcKgdGhpbms/DQrCoA0KPiBUaGFua3MsDQoNCk9vcHMsIEkgbWlzc2VkIGYyZnNf
-c2V0X2VuY3J5cHRlZF9pbm9kZSgpIGluIGYyZnNfbmV3X2lub2RlKCksIGJlY2F1c2Ugd2UNCnR1
-cm5lZCBvZmYgdGhlIGZpbGVzeXN0ZW0gZW5jcnlwdGlvbiBmZWF0dXJlLg0KDQpJZiB3ZSBza2lw
-IHRoZSBpbm9kZSB3aGljaCBpcyBzZXQgd2l0aCBGSV9ORVdfSU5PREUgZmxhZyBkdXJpbmcgZ2xv
-YmFsDQpkaXJ0eSBsaXN0IGZsdXNoaW5nIGluIGJsb2NrX29wZXJhdGlvbnMoKSwgd2UgbmVlZCB0
-byBpdGVyYXRlIGFnYWluIGFuZA0KYWdhaW4gaW4gYmxvY2tfb3BlcmF0aW9ucygpIHRpbGwgdGhl
-IG5ldyBpbm9kZSBpcyBhZGRlZCB0byBpdHMgcGFyZW50IGlub2RlDQphbmQgRklfTkVXX0lOT0RF
-IGZsYWcgaXMgY2xlYXJlZC4NCg0KSG93IGFib3V0IHRoYXQgd2UgZG9uJ3QgZG8gYW55dGhpbmcg
-Zm9yIHRoZSBpbm9kZSBoYXZpbmcgRklfTkVXX0lOT0RFIGZsYWcNCmluIGYyZnNfbWFya19pbm9k
-ZV9kaXJ0eV9zeW5jKCkgYW5kIGludm9rZSBmMmZzX21hcmtfaW5vZGVfZGlydHlfc3luYygpDQpy
-aWdodCBhZnRlciB3ZSBjbGVhciBGSV9ORVdfSU5PREUgZmxhZyBpbiB1cGRhdGVfcGFyZW50X21l
-dGFkYXRhKCk/DQoNClRoYW5rcywNCg0KDQoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpDaGVjayBv
-dXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QK
-ZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hk
-b3QKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgt
-ZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3Jn
-ZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgt
-ZjJmcy1kZXZlbAo=
+Cgroup writeback requires explicit support from the filesystem.
+f2fs's data and node writeback IOs go through __write_data_page,
+which sets fio for submiting IOs. So, we add io_wbc for fio,
+associate bios with blkcg by invoking wbc_init_bio() and
+account IOs issuing by wbc_account_io().
+In addtion, f2fs_fill_super() is updated to set SB_I_CGROUPWB.
+
+Meta writeback IOs is left alone by this patch and will always be
+attributed to the root cgroup.
+
+The results show that f2fs can throttle writeback nicely for
+data writing and file creating.
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Yufen Yu <yuyufen@huawei.com>
+---
+ fs/f2fs/data.c  | 12 ++++++++++--
+ fs/f2fs/f2fs.h  |  1 +
+ fs/f2fs/node.c  |  1 +
+ fs/f2fs/super.c |  1 +
+ 4 files changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 516fa0d..1b5b73a 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -169,6 +169,7 @@ static bool __same_bdev(struct f2fs_sb_info *sbi,
+  * Low-level block read/write IO operations.
+  */
+ static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
++				struct writeback_control *wbc,
+ 				int npages, bool is_read)
+ {
+ 	struct bio *bio;
+@@ -178,6 +179,8 @@ static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
+ 	f2fs_target_device(sbi, blk_addr, bio);
+ 	bio->bi_end_io = is_read ? f2fs_read_end_io : f2fs_write_end_io;
+ 	bio->bi_private = is_read ? NULL : sbi;
++	if (wbc)
++		wbc_init_bio(wbc, bio);
+ 
+ 	return bio;
+ }
+@@ -373,7 +376,8 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 	f2fs_trace_ios(fio, 0);
+ 
+ 	/* Allocate a new bio */
+-	bio = __bio_alloc(fio->sbi, fio->new_blkaddr, 1, is_read_io(fio->op));
++	bio = __bio_alloc(fio->sbi, fio->new_blkaddr, fio->io_wbc,
++				1, is_read_io(fio->op));
+ 
+ 	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
+ 		bio_put(bio);
+@@ -435,7 +439,7 @@ int f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 			dec_page_count(sbi, WB_DATA_TYPE(bio_page));
+ 			goto out_fail;
+ 		}
+-		io->bio = __bio_alloc(sbi, fio->new_blkaddr,
++		io->bio = __bio_alloc(sbi, fio->new_blkaddr, fio->io_wbc,
+ 						BIO_MAX_PAGES, false);
+ 		io->fio = *fio;
+ 	}
+@@ -445,6 +449,9 @@ int f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 		goto alloc_new;
+ 	}
+ 
++	if (fio->io_wbc)
++		wbc_account_io(fio->io_wbc, bio_page, PAGE_SIZE);
++
+ 	io->last_block_in_bio = fio->new_blkaddr;
+ 	f2fs_trace_ios(fio, 0);
+ 
+@@ -1508,6 +1515,7 @@ static int __write_data_page(struct page *page, bool *submitted,
+ 		.submitted = false,
+ 		.need_lock = LOCK_RETRY,
+ 		.io_type = io_type,
++		.io_wbc = wbc,
+ 	};
+ 
+ 	trace_f2fs_writepage(page, DATA);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 6abf26c..4887dde 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -957,6 +957,7 @@ struct f2fs_io_info {
+ 	int need_lock;		/* indicate we need to lock cp_rwsem */
+ 	bool in_list;		/* indicate fio is in io_list */
+ 	enum iostat_type io_type;	/* io type */
++	struct writeback_control *io_wbc; /* writeback control */
+ };
+ 
+ #define is_read_io(rw) ((rw) == READ)
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index d332275..e4f8bb0 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1336,6 +1336,7 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+ 		.encrypted_page = NULL,
+ 		.submitted = false,
+ 		.io_type = io_type,
++		.io_wbc = wbc,
+ 	};
+ 
+ 	trace_f2fs_writepage(page, NODE);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 708155d..deeba98 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2475,6 +2475,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	sb->s_flags = (sb->s_flags & ~SB_POSIXACL) |
+ 		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
+ 	memcpy(&sb->s_uuid, raw_super->uuid, sizeof(raw_super->uuid));
++	sb->s_iflags |= SB_I_CGROUPWB;
+ 
+ 	/* init f2fs-specific super block info */
+ 	sbi->valid_super_block = valid_super_block;
+-- 
+2.9.5
