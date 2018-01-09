@@ -1,29 +1,29 @@
 From: Daeho Jeong <daeho.jeong@samsung.com>
-Subject: [PATCH] f2fs: correct removexattr behavior for null
- valued extended attribute
-Date: Tue, 09 Jan 2018 09:22:57 +0900
-Message-ID: <1515457377-20597-1-git-send-email-daeho.jeong@samsung.com>
-References: <CGME20180109002241epcas1p46c06112eb4a2beef7ca377cbfe3b6e33@epcas1p4.samsung.com>
+Subject: [PATCH] f2fs: move set_cold_files after adding new node
+ page in f2fs_create
+Date: Tue, 09 Jan 2018 09:23:35 +0900
+Message-ID: <1515457415-20645-1-git-send-email-daeho.jeong@samsung.com>
+References: <CGME20180109002317epcas2p1ecf6e4fbe5f80519cb4cede32a057e6e@epcas2p1.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <daeho.jeong@samsung.com>) id 1eYhgq-0002f9-99
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 09 Jan 2018 00:22:52 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ (envelope-from <daeho.jeong@samsung.com>) id 1eYhhP-0005jj-KM
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 09 Jan 2018 00:23:27 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eYhgn-0007l4-S0
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 09 Jan 2018 00:22:52 +0000
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
- by mailout3.samsung.com (KnoxPortal) with ESMTP id
- 20180109002242epoutp03ced7bcd065fffa4dbad774621aecaa0c~H-HEj2IUc2324923249epoutp03D
+ id 1eYhhO-0000pz-3i
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 09 Jan 2018 00:23:27 +0000
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+ by mailout2.samsung.com (KnoxPortal) with ESMTP id
+ 20180109002318epoutp02e60b68ba0e16a6f80e2c5c2bd3debc8e~H-HmfahNZ3106431064epoutp02b
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue,  9 Jan 2018 00:22:42 +0000 (GMT)
+ Tue,  9 Jan 2018 00:23:18 +0000 (GMT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -36,32 +36,49 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 Cc: Youngjin Gil <youngjin.gil@samsung.com>
 
-__vfs_removexattr() transfers "NULL" value to the setxattr handler of
-the f2fs filesystem in order to remove the extended attribute. But,
-__f2fs_setxattr() just ignores the removal request when the value of
-the extended attribute is already NULL. We have to remove the extended
-attribute itself even if the value of that is already NULL.
+Now, we set flags of a newly created inode using set_cold_files() in
+advance of creating a new node page. By this, some inodes whose node
+page is not created yet can be linked into the global dirty list.
+
+If the checkpoint is executed at this moment, the inode will be written
+back by writeback_single_inode() and finally update_inode_page() will
+fail to detach the inode from the global dirty list because the inode
+doesn't have a node page.
+
+The problem is that the inode's state in VFS layer will become clean
+after execution of writeback_single_inode() and it's still linked in
+the global dirty list of f2fs and this will cause a kernel panic.
 
 Signed-off-by: Daeho Jeong <daeho.jeong@samsung.com>
 Signed-off-by: Youngjin Gil <youngjin.gil@samsung.com>
 Tested-by: Hobin Woo <hobin.woo@samsung.com>
 ---
- fs/f2fs/xattr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/namei.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-index ec8961e..2776618 100644
---- a/fs/f2fs/xattr.c
-+++ b/fs/f2fs/xattr.c
-@@ -598,7 +598,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
- 			goto exit;
- 		}
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 28bdf88..249dbef 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -201,9 +201,6 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 	if (IS_ERR(inode))
+ 		return PTR_ERR(inode);
  
--		if (f2fs_xattr_value_same(here, value, size))
-+		if (value && f2fs_xattr_value_same(here, value, size))
- 			goto exit;
- 	} else if ((flags & XATTR_REPLACE)) {
- 		error = -ENODATA;
+-	if (!test_opt(sbi, DISABLE_EXT_IDENTIFY))
+-		set_cold_files(sbi, inode, dentry->d_name.name);
+-
+ 	inode->i_op = &f2fs_file_inode_operations;
+ 	inode->i_fop = &f2fs_file_operations;
+ 	inode->i_mapping->a_ops = &f2fs_dblock_aops;
+@@ -213,6 +210,8 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 	err = f2fs_add_link(dentry, inode);
+ 	if (err)
+ 		goto out;
++	if (!test_opt(sbi, DISABLE_EXT_IDENTIFY))
++		set_cold_files(sbi, inode, dentry->d_name.name);
+ 	f2fs_unlock_op(sbi);
+ 
+ 	alloc_nid_done(sbi, ino);
 -- 
 1.9.1
 
