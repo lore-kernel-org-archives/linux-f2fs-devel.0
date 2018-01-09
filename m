@@ -1,90 +1,134 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] f2fs: move set_cold_files after adding new
- node page in f2fs_create
-Date: Tue, 9 Jan 2018 19:46:12 +0800
-Message-ID: <a1beaa08-d7cc-76c4-a02e-be522d32a91b@kernel.org>
-References: <affff153-1dc7-32f8-0285-2db5c11cf050@huawei.com>
- <1515457415-20645-1-git-send-email-daeho.jeong@samsung.com>
- <CGME20180109002317epcas2p1ecf6e4fbe5f80519cb4cede32a057e6e@epcms1p4>
- <20180109110515epcms1p46c7a239808f0875115954673c037fc89@epcms1p4>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH v2] f2fs: support FIEMAP_FLAG_XATTR
+Date: Tue, 9 Jan 2018 10:11:00 -0800
+Message-ID: <20180109181100.GA86686@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180108104809.108904-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
- helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <chao@kernel.org>) id 1eYsMI-0007lN-78
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 09 Jan 2018 11:46:22 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eYsMH-0000jl-9C
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 09 Jan 2018 11:46:22 +0000
-In-Reply-To: <20180109110515epcms1p46c7a239808f0875115954673c037fc89@epcms1p4>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: daeho.jeong@samsung.com, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180108104809.108904-1-yuchao0@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGkgRGFlaG8sCgpPbiAyMDE4LzEvOSAxOTowNSwgRGFlaG8gSmVvbmcgd3JvdGU6Cj4gSGkgQ2hh
-bywKPiDCoAo+IAo+Pj4gwqBOb3cswqB3ZcKgc2V0wqBmbGFnc8Kgb2bCoGHCoG5ld2x5wqBjcmVh
-dGVkwqBpbm9kZcKgdXNpbmfCoHNldF9jb2xkX2ZpbGVzKCnCoGluCj4+PiDCoGFkdmFuY2XCoG9m
-wqBjcmVhdGluZ8KgYcKgbmV3wqBub2RlwqBwYWdlLsKgQnnCoHRoaXMswqBzb21lwqBpbm9kZXPC
-oHdob3NlwqBub2RlCj4+IMKgPiBwYWdlwqBpc8Kgbm90wqBjcmVhdGVkwqB5ZXTCoGNhbsKgYmXC
-oGxpbmtlZMKgaW50b8KgdGhlwqBnbG9iYWzCoGRpcnR5wqBsaXN0Lgo+PiDCoD4KPj4gwqA+IElm
-wqB0aGXCoGNoZWNrcG9pbnTCoGlzwqBleGVjdXRlZMKgYXTCoHRoaXPCoG1vbWVudCzCoHRoZcKg
-aW5vZGXCoHdpbGzCoGJlwqB3cml0dGVuCj4+IMKgPiBiYWNrwqBiecKgd3JpdGViYWNrX3Npbmds
-ZV9pbm9kZSgpwqBhbmTCoGZpbmFsbHnCoHVwZGF0ZV9pbm9kZV9wYWdlKCnCoHdpbGwKPj4gwqA+
-IGZhaWzCoHRvwqBkZXRhY2jCoHRoZcKgaW5vZGXCoGZyb23CoHRoZcKgZ2xvYmFswqBkaXJ0ecKg
-bGlzdMKgYmVjYXVzZcKgdGhlwqBpbm9kZQo+PiDCoD4gZG9lc24ndMKgaGF2ZcKgYcKgbm9kZcKg
-cGFnZS4KPj4gwqA+Cj4+IMKgPiBUaGXCoHByb2JsZW3CoGlzwqB0aGF0wqB0aGXCoGlub2RlJ3PC
-oHN0YXRlwqBpbsKgVkZTwqBsYXllcsKgd2lsbMKgYmVjb21lwqBjbGVhbgo+PiDCoD4gYWZ0ZXLC
-oGV4ZWN1dGlvbsKgb2bCoHdyaXRlYmFja19zaW5nbGVfaW5vZGUoKcKgYW5kwqBpdCdzwqBzdGls
-bMKgbGlua2VkwqBpbgo+PiDCoD4gdGhlwqBnbG9iYWzCoGRpcnR5wqBsaXN0wqBvZsKgZjJmc8Kg
-YW5kwqB0aGlzwqB3aWxswqBjYXVzZcKgYcKga2VybmVswqBwYW5pYy4KPiDCoAo+PiBCZWZvcmXC
-oHNldF9jb2xkX2ZpbGVzLMKgSW7CoGYyZnNfbmV3X2lub2RlLMKgd2XCoHdpbGzCoGFsc2/CoGRp
-cnR5wqBpbm9kZSzCoHNvwqBpZgo+PiB3ZcKgb25secKgcmVsb2NhdGXCoGNvZGXCoGZpbGXCoGlu
-aXRpYWxpemF0aW9uLMKgd291bGTCoHdlwqBzdWZmZXLCoHRoZcKgc2FtZcKgaXNzdWUKPj4gZHVl
-wqB0b8KgYmVsb3fCoHJlYXNvbj/CoElmwqBzbyzCoGluc3RlYWQswqBob3fCoGFib3V0wqBjaGVj
-a8KgRklfTkVXX0lOT0RFwqBmbGFnCj4+IGR1cmluZ8KgZ2xvYmFswqBkaXJ0ecKgbGlzdMKgZmx1
-c2hpbmfCoHRvwqBkZWNpZGXCoHdoZXRoZXLCoHdlwqBzaG91bGTCoGZsdXNowqB0aGF0Cj4+IGlu
-b2RlP8KgSG93wqBkb8KgeW91wqB0aGluaz8KPiDCoAo+PiBUaGFua3MsCj4gCj4gT29wcywgSSBt
-aXNzZWQgZjJmc19zZXRfZW5jcnlwdGVkX2lub2RlKCkgaW4gZjJmc19uZXdfaW5vZGUoKSwgYmVj
-YXVzZSB3ZQo+IHR1cm5lZCBvZmYgdGhlIGZpbGVzeXN0ZW0gZW5jcnlwdGlvbiBmZWF0dXJlLgo+
-IAo+IElmIHdlIHNraXAgdGhlIGlub2RlIHdoaWNoIGlzIHNldCB3aXRoIEZJX05FV19JTk9ERSBm
-bGFnIGR1cmluZyBnbG9iYWwKPiBkaXJ0eSBsaXN0IGZsdXNoaW5nIGluIGJsb2NrX29wZXJhdGlv
-bnMoKSwgd2UgbmVlZCB0byBpdGVyYXRlIGFnYWluIGFuZAo+IGFnYWluIGluIGJsb2NrX29wZXJh
-dGlvbnMoKSB0aWxsIHRoZSBuZXcgaW5vZGUgaXMgYWRkZWQgdG8gaXRzIHBhcmVudCBpbm9kZQo+
-IGFuZCBGSV9ORVdfSU5PREUgZmxhZyBpcyBjbGVhcmVkLgoKT25lIHNvbHV0aW9uIGNhbiBiZSB0
-aGF0IG1vdmluZyB0aGF0IGlub2RlIHRvIHRlbXAgbGlzdCwgYWZ0ZXIgZmx1c2hpbmcgYWxsCm90
-aGVyIGlub2RlLCB0aGVuIG1vdmluZyB0aGVtIGJhY2sgdG8gb3JpZ2luYWwgb25lLgoKPiAKPiBI
-b3cgYWJvdXQgdGhhdCB3ZSBkb24ndCBkbyBhbnl0aGluZyBmb3IgdGhlIGlub2RlIGhhdmluZyBG
-SV9ORVdfSU5PREUgZmxhZwo+IGluIGYyZnNfbWFya19pbm9kZV9kaXJ0eV9zeW5jKCkgYW5kIGlu
-dm9rZSBmMmZzX21hcmtfaW5vZGVfZGlydHlfc3luYygpCj4gcmlnaHQgYWZ0ZXIgd2UgY2xlYXIg
-RklfTkVXX0lOT0RFIGZsYWcgaW4gdXBkYXRlX3BhcmVudF9tZXRhZGF0YSgpPwoKQWgsIEkgdGhp
-bmsgaXQgd2lsbCBiZSBiZXR0ZXIuIDopClBsZWFzZSBub3RpY2UgdGhhdCBmMmZzX2RvX3RtcGZp
-bGUgc2hvdWxkIGJlIGNvdmVyZWQgYXMgd2VsbCBsaWtlIHdlIGRpZCBpbgp1cGRhdGVfcGFyZW50
-X21ldGFkYXRhLgoKVGhhbmtzLAoKPiAKPiBUaGFua3MsCj4gCj4gCj4gCj4gCj4gLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tCj4gQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9u
-ZSBvZiB0aGUgd29ybGQncyBtb3N0Cj4gZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3Jn
-ISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QKPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwo+IExpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Cj4gTGlu
-dXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiBodHRwczovL2xpc3RzLnNvdXJj
-ZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCj4gCgotLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0KQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBv
-ZiB0aGUgd29ybGQncyBtb3N0CmVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0
-cDovL3NkbS5saW5rL3NsYXNoZG90Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2
-ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xp
-c3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+On 01/08, Chao Yu wrote:
+> This patch enables ->fiemap to handle FIEMAP_FLAG_XATTR flag for xattr
+> mapping info lookup purpose.
+> 
+> It makes f2fs passing generic/425 test in fstest.
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+> v2: adjust f2fs_xattr_fiemap flow to handle the case that inline xattr and
+> xattr node both exist.
+>  fs/f2fs/data.c | 75 ++++++++++++++++++++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 71 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index cd988bc1922b..429764118604 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1129,6 +1129,68 @@ static inline loff_t blk_to_logical(struct inode *inode, sector_t blk)
+>  	return (blk << inode->i_blkbits);
+>  }
+>  
+> +static int f2fs_xattr_fiemap(struct inode *inode,
+> +				struct fiemap_extent_info *fieinfo)
+> +{
+> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> +	struct page *page;
+> +	struct node_info ni;
+> +	__u64 phys = 0, len;
+> +	__u32 flags;
+> +	nid_t xnid = F2FS_I(inode)->i_xattr_nid;
+> +	int err = 0;
+> +
+> +	if (f2fs_has_inline_xattr(inode)) {
+> +		int offset;
+> +
+> +		page = f2fs_grab_cache_page(NODE_MAPPING(sbi),
+> +						inode->i_ino, false);
+> +		if (!page)
+> +			return -ENOMEM;
+> +
+> +		get_node_info(sbi, inode->i_ino, &ni);
+> +
+> +		phys = (__u64)blk_to_logical(inode, ni.blk_addr);
+> +		offset = offsetof(struct f2fs_inode, i_addr) +
+> +					sizeof(__le32) * (DEF_ADDRS_PER_INODE -
+> +					F2FS_INLINE_XATTR_ADDRS(inode));
+> +
+> +		phys += offset;
+> +		len = inline_xattr_size(inode);
+> +
+> +		f2fs_put_page(page, 1);
+> +
+> +		flags = FIEMAP_EXTENT_DATA_INLINE;
+> +
+> +		if (!xnid)
+> +			flags |= FIEMAP_EXTENT_LAST;
+> +
+> +		err = fiemap_fill_next_extent(fieinfo, 0, phys, len, flags);
+> +		if (err || err == 1)
+> +			return err;
+> +	}
+> +
+> +	if (xnid) {
+> +		page = f2fs_grab_cache_page(NODE_MAPPING(sbi), xnid, false);
+> +		if (!page)
+> +			return -ENOMEM;
+> +
+> +		get_node_info(sbi, xnid, &ni);
+> +
+> +		phys = (__u64)blk_to_logical(inode, ni.blk_addr);
+> +		len = inode->i_sb->s_blocksize;
+> +
+> +		f2fs_put_page(page, 1);
+> +
+> +		flags = FIEMAP_EXTENT_LAST;
+> +	}
+> +
+> +	if (phys)
+> +		err = fiemap_fill_next_extent(fieinfo, 0, phys, len, flags);
+> +
+> +	return (err < 0 ? err : 0);
+> +}
+> +
+>  int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>  		u64 start, u64 len)
+>  {
+> @@ -1139,18 +1201,23 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>  	u32 flags = 0;
+>  	int ret = 0;
+>  
+> -	ret = fiemap_check_flags(fieinfo, FIEMAP_FLAG_SYNC);
+> +	ret = fiemap_check_flags(fieinfo, FIEMAP_FLAG_SYNC | FIEMAP_FLAG_XATTR);
+>  	if (ret)
+>  		return ret;
+>  
+> +	inode_lock(inode);
+> +
+> +	if (fieinfo->fi_flags & FIEMAP_FLAG_XATTR) {
+> +		ret = f2fs_xattr_fiemap(inode, fieinfo);
+> +		goto out;
+> +	}
+> +
+
+We need to fix calling inode_lock() for the below block first?
+
+>  	if (f2fs_has_inline_data(inode)) {
+>  		ret = f2fs_inline_data_fiemap(inode, fieinfo, start, len);
+>  		if (ret != -EAGAIN)
+> -			return ret;
+> +			goto out;
+>  	}
+>  
+> -	inode_lock(inode);
+> -
+>  	if (logical_to_blk(inode, len) == 0)
+>  		len = blk_to_logical(inode, 1);
+>  
+> -- 
+> 2.15.0.55.gc2ece9dc4de6
