@@ -1,147 +1,54 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: implement cgroup writeback supprot
-Date: Tue, 9 Jan 2018 10:06:09 +0800
-Message-ID: <51a80cc9-5af7-fadc-e511-f95dfe57f860@huawei.com>
-References: <20180105062829.11236-1-yuyufen@huawei.com>
+Subject: Re: [PATCH -next] f2fs: make local functions static
+Date: Tue, 9 Jan 2018 10:08:47 +0800
+Message-ID: <cefe83fc-483e-6438-a4b4-1be0ae2fbfff@huawei.com>
+References: <1515145280-28626-1-git-send-email-weiyongjun1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180105062829.11236-1-yuyufen@huawei.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+ helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <yuchao0@huawei.com>) id 1eYjLz-0007nx-GB
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 09 Jan 2018 02:09:27 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eYjLy-0002Y2-A7
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 09 Jan 2018 02:09:27 +0000
+In-Reply-To: <1515145280-28626-1-git-send-email-weiyongjun1@huawei.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yufen Yu <yuyufen@huawei.com>, jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Wei Yongjun <weiyongjun1@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/1/5 14:28, Yufen Yu wrote:
-> Cgroup writeback requires explicit support from the filesystem.
-> f2fs's data and node writeback IOs go through __write_data_page,
-> which sets fio for submiting IOs. So, we add io_wbc for fio,
-> associate bios with blkcg by invoking wbc_init_bio() and
-> account IOs issuing by wbc_account_io().
-> In addtion, f2fs_fill_super() is updated to set SB_I_CGROUPWB.
+On 2018/1/5 17:41, Wei Yongjun wrote:
+> Fixes the following sparse warnings:
 > 
-> Meta writeback IOs is left alone by this patch and will always be
-> attributed to the root cgroup.
+> fs/f2fs/segment.c:887:6: warning:
+>  symbol '__check_sit_bitmap' was not declared. Should it be static?
+> fs/f2fs/segment.c:1327:6: warning:
+>  symbol 'f2fs_wait_discard_bio' was not declared. Should it be static?
+> fs/f2fs/super.c:1661:5: warning:
+>  symbol 'f2fs_get_projid' was not declared. Should it be static?
 > 
-> The results show that f2fs can throttle writeback nicely for
-> data writing and file creating.
-> 
-> Signed-off-by: Yufen Yu <yuyufen@huawei.com>
-> ---
->  fs/f2fs/data.c  | 11 +++++++++--
->  fs/f2fs/f2fs.h  |  1 +
->  fs/f2fs/node.c  |  1 +
->  fs/f2fs/super.c |  1 +
->  4 files changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 516fa0d..402df03 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -169,6 +169,7 @@ static bool __same_bdev(struct f2fs_sb_info *sbi,
->   * Low-level block read/write IO operations.
->   */
->  static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
-> +				struct writeback_control *wbc,
->  				int npages, bool is_read)
->  {
->  	struct bio *bio;
-> @@ -178,6 +179,8 @@ static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
->  	f2fs_target_device(sbi, blk_addr, bio);
->  	bio->bi_end_io = is_read ? f2fs_read_end_io : f2fs_write_end_io;
->  	bio->bi_private = is_read ? NULL : sbi;
-> +	if (wbc)
-> +		wbc_init_bio(wbc, bio);
->  
->  	return bio;
->  }
-> @@ -373,7 +376,8 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
->  	f2fs_trace_ios(fio, 0);
->  
->  	/* Allocate a new bio */
-> -	bio = __bio_alloc(fio->sbi, fio->new_blkaddr, 1, is_read_io(fio->op));
-> +	bio = __bio_alloc(fio->sbi, fio->new_blkaddr, fio->io_wbc,
-> +				1, is_read_io(fio->op));
->  
->  	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
->  		bio_put(bio);
-> @@ -435,7 +439,7 @@ int f2fs_submit_page_write(struct f2fs_io_info *fio)
->  			dec_page_count(sbi, WB_DATA_TYPE(bio_page));
->  			goto out_fail;
->  		}
-> -		io->bio = __bio_alloc(sbi, fio->new_blkaddr,
-> +		io->bio = __bio_alloc(sbi, fio->new_blkaddr, fio->io_wbc,
->  						BIO_MAX_PAGES, false);
->  		io->fio = *fio;
->  	}
-> @@ -443,6 +447,8 @@ int f2fs_submit_page_write(struct f2fs_io_info *fio)
->  	if (bio_add_page(io->bio, bio_page, PAGE_SIZE, 0) < PAGE_SIZE) {
->  		__submit_merged_bio(io);
->  		goto alloc_new;
-> +	} else if (fio->io_wbc) {
-> +		wbc_account_io(fio->io_wbc, bio_page, PAGE_SIZE);
->  	}
-
-if (bio_add_page()) {
-	__submit_merged_bio();
-	goto alloc_new;
-}
-
-if (fio->io_wbc)
-	wbc_account_io(fio->io_wbc, bio_page, PAGE_SIZE);
-
-Other part looks good to me.
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
 
->  
->  	io->last_block_in_bio = fio->new_blkaddr;
-> @@ -1508,6 +1514,7 @@ static int __write_data_page(struct page *page, bool *submitted,
->  		.submitted = false,
->  		.need_lock = LOCK_RETRY,
->  		.io_type = io_type,
-> +		.io_wbc = wbc,
->  	};
->  
->  	trace_f2fs_writepage(page, DATA);
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 6abf26c..4887dde 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -957,6 +957,7 @@ struct f2fs_io_info {
->  	int need_lock;		/* indicate we need to lock cp_rwsem */
->  	bool in_list;		/* indicate fio is in io_list */
->  	enum iostat_type io_type;	/* io type */
-> +	struct writeback_control *io_wbc; /* writeback control */
->  };
->  
->  #define is_read_io(rw) ((rw) == READ)
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index d332275..e4f8bb0 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1336,6 +1336,7 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
->  		.encrypted_page = NULL,
->  		.submitted = false,
->  		.io_type = io_type,
-> +		.io_wbc = wbc,
->  	};
->  
->  	trace_f2fs_writepage(page, NODE);
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 708155d..deeba98 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -2475,6 +2475,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->  	sb->s_flags = (sb->s_flags & ~SB_POSIXACL) |
->  		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
->  	memcpy(&sb->s_uuid, raw_super->uuid, sizeof(raw_super->uuid));
-> +	sb->s_iflags |= SB_I_CGROUPWB;
->  
->  	/* init f2fs-specific super block info */
->  	sbi->valid_super_block = valid_super_block;
-> 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
