@@ -1,68 +1,71 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: show precise # of blocks that
- user/root can use
-Date: Mon, 8 Jan 2018 19:23:11 +0800
-Message-ID: <8b4d0f60-3c5d-edce-f634-d8e489c79d59@huawei.com>
-References: <20180103185845.29953-1-jaegeuk@kernel.org>
- <7206fb17-4785-756c-9fef-39565adf8780@huawei.com>
+From: Daeho Jeong <daeho.jeong@samsung.com>
+Subject: [PATCH] f2fs: correct removexattr behavior for null
+ valued extended attribute
+Date: Tue, 09 Jan 2018 09:22:57 +0900
+Message-ID: <1515457377-20597-1-git-send-email-daeho.jeong@samsung.com>
+References: <CGME20180109002241epcas1p46c06112eb4a2beef7ca377cbfe3b6e33@epcas1p4.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <7206fb17-4785-756c-9fef-39565adf8780@huawei.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: miaoxie@huawei.com, chao <chao@kernel.org>, bintian.wang@huawei.com, heyunlei@huawei.com, "shengyong (A)" <shengyong1@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+ helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <daeho.jeong@samsung.com>) id 1eYhgq-0002f9-99
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 09 Jan 2018 00:22:52 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+ by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eYhgn-0007l4-S0
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 09 Jan 2018 00:22:52 +0000
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+ by mailout3.samsung.com (KnoxPortal) with ESMTP id
+ 20180109002242epoutp03ced7bcd065fffa4dbad774621aecaa0c~H-HEj2IUc2324923249epoutp03D
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue,  9 Jan 2018 00:22:42 +0000 (GMT)
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Youngjin Gil <youngjin.gil@samsung.com>
 
-On 2018/1/5 15:05, Yunlong Song wrote:
-> NACK
-> 
-> man statfs shows:
-> 
-> struct statfs {
->      ...
->      fsblkcnt_t   f_bfree;   /* free blocks in fs */
->      fsblkcnt_t   f_bavail;  /* free blocks available to
->                                      unprivileged user */
->      ...
-> }
-> 
-> f_bfree is free blocks in fs, so buf->bfree should be
-> 
-> buf->f_bfree = user_block_count - valid_user_blocks(sbi) + ovp_count;
+__vfs_removexattr() transfers "NULL" value to the setxattr handler of
+the f2fs filesystem in order to remove the extended attribute. But,
+__f2fs_setxattr() just ignores the removal request when the value of
+the extended attribute is already NULL. We have to remove the extended
+attribute itself even if the value of that is already NULL.
 
-As I checked, some filesystems reserving over-privision space like
-btrfs/xfs/ubifs, they will not calculate those space into f_bfree, IMO, we
-should follow their behavior to keep compatibility for old applications.
+Signed-off-by: Daeho Jeong <daeho.jeong@samsung.com>
+Signed-off-by: Youngjin Gil <youngjin.gil@samsung.com>
+Tested-by: Hobin Woo <hobin.woo@samsung.com>
+---
+ fs/f2fs/xattr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index ec8961e..2776618 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -598,7 +598,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+ 			goto exit;
+ 		}
+ 
+-		if (f2fs_xattr_value_same(here, value, size))
++		if (value && f2fs_xattr_value_same(here, value, size))
+ 			goto exit;
+ 	} else if ((flags & XATTR_REPLACE)) {
+ 		error = -ENODATA;
+-- 
+1.9.1
 
-> 
-> On 2018/1/4 2:58, Jaegeuk Kim wrote:
->> Let's show precise # of blocks that user/root can use through bavail and bfree
->> respectively.
->>
->> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->> ---
->>   fs/f2fs/super.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index 0a820ba55b10..4c1c99cf54ef 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -1005,9 +1005,9 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
->>   	buf->f_bsize = sbi->blocksize;
->>   
->>   	buf->f_blocks = total_count - start_count;
->> -	buf->f_bfree = user_block_count - valid_user_blocks(sbi) + ovp_count;
->> -	buf->f_bavail = user_block_count - valid_user_blocks(sbi) -
->> +	buf->f_bfree = user_block_count - valid_user_blocks(sbi) -
->>   						sbi->current_reserved_blocks;
->> +	buf->f_bavail = buf->f_bfree;
->>   
->>   	avail_node_count = sbi->total_node_count - sbi->nquota_files -
->>   						F2FS_RESERVED_NODE_NUM;
-> 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
