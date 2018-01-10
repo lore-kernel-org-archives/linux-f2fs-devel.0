@@ -1,24 +1,23 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 2/2] f2fs: speed up defragment on sparse file
-Date: Wed, 10 Jan 2018 18:18:52 +0800
-Message-ID: <20180110101852.12170-2-yuchao0@huawei.com>
-References: <20180110101852.12170-1-yuchao0@huawei.com>
+Subject: [PATCH 1/2] f2fs: fix to caclulate required free section
+ correctly
+Date: Wed, 10 Jan 2018 18:18:51 +0800
+Message-ID: <20180110101852.12170-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
  helo=mx.sourceforge.net)
  by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1eZDTc-0000FV-Sr
+ (envelope-from <yuchao0@huawei.com>) id 1eZDTc-0000FP-Py
  for linux-f2fs-devel@lists.sourceforge.net; Wed, 10 Jan 2018 10:19:20 +0000
 Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eZDTb-0007VT-GG
+ id 1eZDTb-0008W3-EL
  for linux-f2fs-devel@lists.sourceforge.net; Wed, 10 Jan 2018 10:19:20 +0000
-In-Reply-To: <20180110101852.12170-1-yuchao0@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,78 +30,58 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-We have supported to get next page offset with valid mapping crossing
-hole in f2fs_map_blocks, utilizing it to speed up defragment on sparse
-file.
+When calculating required free section during file defragmenting, we
+should skip holes in file, otherwise we will probably fail to defrag
+sparse file with large size.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/data.c |  6 +++++-
- fs/f2fs/file.c | 11 ++++++-----
- 2 files changed, 11 insertions(+), 6 deletions(-)
+ fs/f2fs/file.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 882b5acc2b6f..d671657ade8a 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1012,8 +1012,12 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 					*map->m_next_pgofs = pgofs + 1;
- 				goto sync_out;
- 			}
--			if (flag != F2FS_GET_BLOCK_FIEMAP)
-+			if (flag != F2FS_GET_BLOCK_FIEMAP) {
-+				/* for defragment case */
-+				if (map->m_next_pgofs)
-+					*map->m_next_pgofs = pgofs + 1;
- 				goto sync_out;
-+			}
- 		}
- 	}
- 
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 2fb3bab05872..ac22ecda7787 100644
+index 926757e6065c..2fb3bab05872 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -2086,10 +2086,10 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
- 					struct f2fs_defragment *range)
- {
- 	struct inode *inode = file_inode(filp);
--	struct f2fs_map_blocks map = { .m_next_pgofs = NULL,
--			.m_next_extent = NULL, .m_seg_type = NO_CHECK_TYPE };
-+	struct f2fs_map_blocks map = { .m_next_extent = NULL,
-+					.m_seg_type = NO_CHECK_TYPE };
- 	struct extent_info ei = {0,0,0};
--	pgoff_t pg_start, pg_end;
-+	pgoff_t pg_start, pg_end, next_pgofs;
- 	unsigned int blk_per_seg = sbi->blocks_per_seg;
- 	unsigned int total = 0, sec_num;
- 	block_t blk_end = 0;
-@@ -2123,6 +2123,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
- 	}
+@@ -2140,10 +2140,12 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
+ 			continue;
+ 		}
  
- 	map.m_lblk = pg_start;
-+	map.m_next_pgofs = &next_pgofs;
+-		if (blk_end && blk_end != map.m_pblk) {
++		if (blk_end && blk_end != map.m_pblk)
+ 			fragmented = true;
+-			break;
+-		}
++
++		/* record total count of block that we're going to move */
++		total += map.m_len;
++
+ 		blk_end = map.m_pblk + map.m_len;
+ 
+ 		map.m_lblk += map.m_len;
+@@ -2152,10 +2154,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
+ 	if (!fragmented)
+ 		goto out;
+ 
+-	map.m_lblk = pg_start;
+-	map.m_len = pg_end - pg_start;
+-
+-	sec_num = (map.m_len + BLKS_PER_SEC(sbi) - 1) / BLKS_PER_SEC(sbi);
++	sec_num = (total + BLKS_PER_SEC(sbi) - 1) / BLKS_PER_SEC(sbi);
  
  	/*
- 	 * lookup mapping info in dnode page cache, skip defragmenting if all
-@@ -2136,7 +2137,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
- 			goto out;
+ 	 * make sure there are enough free section for LFS allocation, this can
+@@ -2167,6 +2166,10 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
+ 		goto out;
+ 	}
  
- 		if (!(map.m_flags & F2FS_MAP_FLAGS)) {
--			map.m_lblk++;
-+			map.m_lblk = next_pgofs;
- 			continue;
- 		}
- 
-@@ -2181,7 +2182,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
- 			goto clear_out;
- 
- 		if (!(map.m_flags & F2FS_MAP_FLAGS)) {
--			map.m_lblk++;
-+			map.m_lblk = next_pgofs;
- 			continue;
- 		}
- 
++	map.m_lblk = pg_start;
++	map.m_len = pg_end - pg_start;
++	total = 0;
++
+ 	while (map.m_lblk < pg_end) {
+ 		pgoff_t idx;
+ 		int cnt = 0;
 -- 
 2.15.0.55.gc2ece9dc4de6
 
