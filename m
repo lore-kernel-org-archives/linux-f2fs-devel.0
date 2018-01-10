@@ -1,64 +1,33 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: handle newly created page when revoking inmem pages
-Date: Wed, 10 Jan 2018 14:43:19 +0800
-Message-ID: <aec4e374-a245-590e-8350-d1e1ada3b705@huawei.com>
-References: <CGME20180110024336epcas2p1003559800e7f1e59a79496fc5b79cf04@epcas2p1.samsung.com>
- <1515552234-27964-1-git-send-email-daeho.jeong@samsung.com>
+From: Daeho Jeong <daeho.jeong@samsung.com>
+Subject: Re: [PATCH] f2fs: handle newly created page when revoking inmem
+ pages
+Date: Wed, 10 Jan 2018 07:22:03 +0000
+Message-ID: <20180110072203epcms1p5590a9b8441e94174b461172222424455@epcms1p5>
+References: <aec4e374-a245-590e-8350-d1e1ada3b705@huawei.com>
+        <1515552234-27964-1-git-send-email-daeho.jeong@samsung.com>
+        <CGME20180110024336epcas2p1003559800e7f1e59a79496fc5b79cf04@epcms1p5>
+Reply-To: daeho.jeong@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1515552234-27964-1-git-send-email-daeho.jeong@samsung.com>
-Content-Language: en-US
+In-Reply-To: <aec4e374-a245-590e-8350-d1e1ada3b705@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daeho Jeong <daeho.jeong@samsung.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/1/10 10:43, Daeho Jeong wrote:
-> When committing inmem pages is successful, we revoke already committed
-> blocks in __revoke_inmem_pages() and finally replace the committed
-> ones with the old blocks using f2fs_replace_block(). However, if
-> the committed block was newly created one, the address of the old
-> block is NEW_ADDR and __f2fs_replace_block() cannot handle NEW_ADDR
-> as new_blkaddr properly and a kernel panic occurrs.
+Hi Chao,
 
-Good catch!
-
-> 
-> Signed-off-by: Daeho Jeong <daeho.jeong@samsung.com>
-> Tested-by: Shu Tan <shu.tan@samsung.com>
-> ---
->  fs/f2fs/segment.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index c117e09..463f420 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -248,7 +248,11 @@ static int __revoke_inmem_pages(struct inode *inode,
->  				goto next;
->  			}
->  			get_node_info(sbi, dn.nid, &ni);
-> -			f2fs_replace_block(sbi, &dn, dn.data_blkaddr,
-> +			if (cur->old_addr == NEW_ADDR) {
-> +				invalidate_blocks(sbi, dn.data_blkaddr);
-> +				f2fs_update_data_blkaddr(&dn, NULL_ADDR);
-
-Original intention here is to recover status to the timing before
-committing atomic write. As at that timing blkaddr in dnode should be
-cur->old_addr(NEW_ADDR), so we need to change to call:
-
-f2fs_update_data_blkaddr(&dn, NEW_ADDR);
-
-Otherwise, metadata will become inconsistent, because blkaddr value is
-NULL_ADDR means that current block is not preallocated, but
-total_valid_block_count has already been updated. Right?
-
-Thanks,
-
-> +			} else
-> +				f2fs_replace_block(sbi, &dn, dn.data_blkaddr,
->  					cur->old_addr, ni.version, true, true);
->  			f2fs_put_dnode(&dn);
->  		}
-> 
+> Original=C2=A0intention=C2=A0here=C2=A0is=C2=A0to=C2=A0recover=C2=A0statu=
+s=C2=A0to=C2=A0the=C2=A0timing=C2=A0before=0D=0A>=20committing=C2=A0atomic=
+=C2=A0write.=C2=A0As=C2=A0at=C2=A0that=C2=A0timing=C2=A0blkaddr=C2=A0in=C2=
+=A0dnode=C2=A0should=C2=A0be=0D=0A>=20cur->old_addr(NEW_ADDR),=C2=A0so=C2=
+=A0we=C2=A0need=C2=A0to=C2=A0change=C2=A0to=C2=A0call:=0D=0A=C2=A0=0D=0A>=
+=20f2fs_update_data_blkaddr(&dn,=C2=A0NEW_ADDR);=0D=0A=0D=0AOk,=20I'll=20ch=
+ange=20NULL_ADDR=20to=20NEW_ADDR.=0D=0A=0D=0AThanks,=0D=0A=C2=A0=0D=0A>=20O=
+therwise,=C2=A0metadata=C2=A0will=C2=A0become=C2=A0inconsistent,=C2=A0becau=
+se=C2=A0blkaddr=C2=A0value=C2=A0is=0D=0A>=20NULL_ADDR=C2=A0means=C2=A0that=
+=C2=A0current=C2=A0block=C2=A0is=C2=A0not=C2=A0preallocated,=C2=A0but=0D=0A=
+>=20total_valid_block_count=C2=A0has=C2=A0already=C2=A0been=C2=A0updated.=
+=C2=A0Right?=0D=0A=C2=A0=0D=0A>=20Thanks,=0D=0A=C2=A0=0D=0A=0D=0A=C2=A0=0D=
+=0A=C2=A0
