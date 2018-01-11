@@ -1,28 +1,87 @@
-From: =?UTF-8?B?7KCV64yA7Zi4?= <daeho.jeong@samsung.com>
-Subject: Re: [PATCH v2] f2fs: handle newly created page when revoking inmem
- pages
-Date: Thu, 11 Jan 2018 23:00:12 +0000
-Message-ID: <20180111230012epcms1p875c81785cb96a92ab7d4d5260d9e56b8@epcms1p8>
-References: <aa03f7b9-f694-3d2d-1465-0c0bb89b0367@huawei.com>
-        <1515629837-6735-1-git-send-email-daeho.jeong@samsung.com>
-        <33e722cc-d944-1587-8b39-42a117e04b73@huawei.com>
-        <CGME20180111001658epcas1p1e4a99f89bf1fabab2c22f46f939e3403@epcms1p8>
-Reply-To: daeho.jeong@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+From: Daeho Jeong <daeho.jeong@samsung.com>
+Subject: [PATCH] f2fs: prevent newly created inode from being dirtied
+ incorrectly
+Date: Fri, 12 Jan 2018 08:06:00 +0900
+Message-ID: <1515711960-10781-1-git-send-email-daeho.jeong@samsung.com>
+References: <CGME20180111230540epcas1p4c839d6dae432f5c1b388b43c17e0f649@epcas1p4.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <aa03f7b9-f694-3d2d-1465-0c0bb89b0367@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Daeho Jeong <daeho.jeong@samsung.com>, Youngjin Gil <youngjin.gil@samsung.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Yes, Chao, you're right. :)
+Now, we invoke f2fs_mark_inode_dirty_sync() to make an inode dirty in
+advance of creating a new node page for the inode. By this, some inodes
+whose node page is not created yet can be linked into the global dirty
+list.
 
-=C2=A0=0D=0A---------=20Original=20Message=20---------=0D=0ASender=20:=20Ch=
-ao=20Yu=C2=A0<yuchao0=40huawei.com>=0D=0ADate=20=20=20:=202018-01-11=2018:5=
-5=20(GMT+9)=0D=0ATitle=20=20:=20Re:=20=5BPATCH=20v2=5D=20f2fs:=20handle=20n=
-ewly=20created=20page=20when=20revoking=20inmem=20pages=0D=0A=C2=A0=0D=0A=
-=C2=A0=0D=0A>=20I=C2=A0guess=C2=A0Daeho=C2=A0want=C2=A0to=C2=A0say=C2=A0=22=
-Partially=C2=A0successful=22?=0D=0A=C2=A0=0D=0A>=20Thanks,=0D=0A=C2=A0=0D=
-=0A=C2=A0=0D=0A=C2=A0
+If the checkpoint is executed at this moment, the inode will be written
+back by writeback_single_inode() and finally update_inode_page() will
+fail to detach the inode from the global dirty list because the inode
+doesn't have a node page.
+
+The problem is that the inode's state in VFS layer will become clean
+after execution of writeback_single_inode() and it's still linked in
+the global dirty list of f2fs and this will cause a kernel panic.
+
+So, we will prevent the newly created inode from being dirtied during
+the FI_NEW_INODE flag of the inode is set. We will make it dirty
+right after the flag is cleared.
+
+Signed-off-by: Daeho Jeong <daeho.jeong@samsung.com>
+Signed-off-by: Youngjin Gil <youngjin.gil@samsung.com>
+Tested-by: Hobin Woo <hobin.woo@samsung.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/f2fs.h  | 1 +
+ fs/f2fs/inode.c | 3 +++
+ fs/f2fs/namei.c | 4 ++--
+ 3 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f4e094e..546c7d6 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2116,6 +2116,7 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
+ 	case FI_INLINE_XATTR:
+ 	case FI_INLINE_DATA:
+ 	case FI_INLINE_DENTRY:
++	case FI_NEW_INODE:
+ 		if (set)
+ 			return;
+ 	case FI_DATA_EXIST:
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index b4c4f2b..67dfa16 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -22,6 +22,9 @@
+ 
+ void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync)
+ {
++	if (is_inode_flag_set(inode, FI_NEW_INODE))
++		return;
++
+ 	if (f2fs_inode_dirtied(inode, sync))
+ 		return;
+ 
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 28bdf88..bedf225 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -74,12 +74,12 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
+ 	if (err)
+ 		goto fail_drop;
+ 
++	set_inode_flag(inode, FI_NEW_INODE);
++
+ 	/* If the directory encrypted, then we should encrypt the inode. */
+ 	if (f2fs_encrypted_inode(dir) && f2fs_may_encrypt(inode))
+ 		f2fs_set_encrypted_inode(inode);
+ 
+-	set_inode_flag(inode, FI_NEW_INODE);
+-
+ 	if (f2fs_sb_has_extra_attr(sbi->sb)) {
+ 		set_inode_flag(inode, FI_EXTRA_ATTR);
+ 		F2FS_I(inode)->i_extra_isize = F2FS_TOTAL_EXTRA_ATTR_SIZE;
+-- 
+1.9.1
