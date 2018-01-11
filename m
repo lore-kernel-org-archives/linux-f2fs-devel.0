@@ -1,25 +1,161 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: handle newly created page when revoking inmem
- pages
-Date: Thu, 11 Jan 2018 17:55:21 +0800
-Message-ID: <aa03f7b9-f694-3d2d-1465-0c0bb89b0367@huawei.com>
-References: <CGME20180111001658epcas1p1e4a99f89bf1fabab2c22f46f939e3403@epcas1p1.samsung.com>
- <1515629837-6735-1-git-send-email-daeho.jeong@samsung.com>
- <33e722cc-d944-1587-8b39-42a117e04b73@huawei.com>
+Subject: Re: [PATCH] f2fs: avoid hungtask when gc encrypted block
+ if io_bits is set
+Date: Thu, 11 Jan 2018 18:19:32 +0800
+Message-ID: <ab8f3330-3ac8-ebae-5f6b-3b06a7c6ee1f@huawei.com>
+References: <20180111035202.211809-1-shengyong1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <33e722cc-d944-1587-8b39-42a117e04b73@huawei.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+ helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <yuchao0@huawei.com>) id 1eZZxn-0007He-7z
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Jan 2018 10:19:59 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eZZxl-0000ki-8A
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Jan 2018 10:19:59 +0000
+In-Reply-To: <20180111035202.211809-1-shengyong1@huawei.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>, Daeho Jeong <daeho.jeong@samsung.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: heyunlei@huawei.com, Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/1/11 14:50, Yunlong Song wrote:
-> Should it be "When committing inmem pages is not successful" ?
+On 2018/1/11 11:52, Sheng Yong wrote:
+> When io_bits is set, gc encrypted block may trigger the following hungtask.
+> Since io_bits requires aligned block address, f2fs_submit_page_write may
+> return -EAGAIN if new_blkaddr does not satisify io_bits alignment.
+> 
+> So let's try to alloc new block address to make sure encrypted page could
+> be writeback.
+> 
+> [  246.751371] INFO: task kworker/u4:4:797 blocked for more than 90 seconds.
+> [  246.752423]       Not tainted 4.15.0-rc4+ #11
+> [  246.754176] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> [  246.755336] kworker/u4:4    D25448   797      2 0x80000000
+> [  246.755597] Workqueue: writeback wb_workfn (flush-7:0)
+> [  246.755616] Call Trace:
+> [  246.755695]  ? __schedule+0x322/0xa90
+> [  246.755761]  ? blk_init_request_from_bio+0x120/0x120
+> [  246.755773]  ? pci_mmcfg_check_reserved+0xb0/0xb0
+> [  246.755801]  ? __radix_tree_create+0x19e/0x200
+> [  246.755813]  ? delete_node+0x136/0x370
+> [  246.755838]  schedule+0x43/0xc0
+> [  246.755904]  io_schedule+0x17/0x40
+> [  246.755939]  wait_on_page_bit_common+0x17b/0x240
+> [  246.755950]  ? wake_page_function+0xa0/0xa0
+> [  246.755961]  ? add_to_page_cache_lru+0x160/0x160
+> [  246.755972]  ? page_cache_tree_insert+0x170/0x170
+> [  246.755983]  ? __lru_cache_add+0x96/0xb0
+> [  246.756086]  __filemap_fdatawait_range+0x14f/0x1c0
+> [  246.756097]  ? wait_on_page_bit_common+0x240/0x240
+> [  246.756120]  ? __wake_up_locked_key_bookmark+0x20/0x20
+> [  246.756167]  ? wait_on_all_pages_writeback+0xc9/0x100
+> [  246.756179]  ? __remove_ino_entry+0x120/0x120
+> [  246.756192]  ? wait_woken+0x100/0x100
+> [  246.756204]  filemap_fdatawait_range+0x9/0x20
+> [  246.756216]  write_checkpoint+0x18a1/0x1f00
+> [  246.756254]  ? blk_get_request+0x10/0x10
+> [  246.756265]  ? cpumask_next_and+0x43/0x60
+> [  246.756279]  ? f2fs_sync_inode_meta+0x160/0x160
+> [  246.756289]  ? remove_element.isra.4+0xa0/0xa0
+> [  246.756300]  ? __put_compound_page+0x40/0x40
+> [  246.756310]  ? f2fs_sync_fs+0xec/0x1c0
+> [  246.756320]  ? f2fs_sync_fs+0x120/0x1c0
+> [  246.756329]  f2fs_sync_fs+0x120/0x1c0
+> [  246.756357]  ? trace_event_raw_event_f2fs__page+0x260/0x260
+> [  246.756393]  ? ata_build_rw_tf+0x173/0x410
+> [  246.756397]  f2fs_balance_fs_bg+0x198/0x390
+> [  246.756405]  ? drop_inmem_page+0x230/0x230
+> [  246.756415]  ? ahci_qc_prep+0x1bb/0x2e0
+> [  246.756418]  ? ahci_qc_issue+0x1df/0x290
+> [  246.756422]  ? __accumulate_pelt_segments+0x42/0xd0
+> [  246.756426]  ? f2fs_write_node_pages+0xd1/0x380
+> [  246.756429]  f2fs_write_node_pages+0xd1/0x380
+> [  246.756437]  ? sync_node_pages+0x8f0/0x8f0
+> [  246.756440]  ? update_curr+0x53/0x220
+> [  246.756444]  ? __accumulate_pelt_segments+0xa2/0xd0
+> [  246.756448]  ? __update_load_avg_se.isra.39+0x349/0x360
+> [  246.756452]  ? do_writepages+0x2a/0xa0
+> [  246.756456]  do_writepages+0x2a/0xa0
+> [  246.756460]  __writeback_single_inode+0x70/0x490
+> [  246.756463]  ? check_preempt_wakeup+0x199/0x310
+> [  246.756467]  writeback_sb_inodes+0x2a2/0x660
+> [  246.756471]  ? is_empty_dir_inode+0x40/0x40
+> [  246.756474]  ? __writeback_single_inode+0x490/0x490
+> [  246.756477]  ? string+0xbf/0xf0
+> [  246.756480]  ? down_read_trylock+0x35/0x60
+> [  246.756484]  __writeback_inodes_wb+0x9f/0xf0
+> [  246.756488]  wb_writeback+0x41d/0x4b0
+> [  246.756492]  ? writeback_inodes_wb.constprop.55+0x150/0x150
+> [  246.756498]  ? set_worker_desc+0xf7/0x130
+> [  246.756502]  ? current_is_workqueue_rescuer+0x60/0x60
+> [  246.756511]  ? _find_next_bit+0x2c/0xa0
+> [  246.756514]  ? wb_workfn+0x400/0x5d0
+> [  246.756518]  wb_workfn+0x400/0x5d0
+> [  246.756521]  ? finish_task_switch+0xdf/0x2a0
+> [  246.756525]  ? inode_wait_for_writeback+0x30/0x30
+> [  246.756529]  process_one_work+0x3a7/0x6f0
+> [  246.756533]  worker_thread+0x82/0x750
+> [  246.756537]  kthread+0x16f/0x1c0
+> [  246.756541]  ? trace_event_raw_event_workqueue_work+0x110/0x110
+> [  246.756544]  ? kthread_create_worker_on_cpu+0xb0/0xb0
+> [  246.756548]  ret_from_fork+0x1f/0x30
+> 
+> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+> ---
+>  fs/f2fs/gc.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 33e79697e41c..8a7d6e74ecd5 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -690,8 +690,15 @@ static void move_data_block(struct inode *inode, block_t bidx,
+>  
+>  	fio.op = REQ_OP_WRITE;
+>  	fio.op_flags = REQ_SYNC;
+> -	fio.new_blkaddr = newaddr;
+> -	f2fs_submit_page_write(&fio);
+> +	do {
+> +		fio.new_blkaddr = newaddr;
+> +		err = f2fs_submit_page_write(&fio);
+> +		if (err == -EAGAIN) {
+> +			fio.old_blkaddr = newaddr;
+> +			allocate_data_block(fio.sbi, NULL, fio.old_blkaddr, &newaddr,
+> +					&sum, CURSEG_COLD_DATA, NULL, false);
 
-I guess Daeho want to say "Partially successful"?
+I'm afraid it breaks the rule that we need to allocate new block address
+first, and then get intermediate page cache in meta inode with index of new
+address, finally submit the bio. With this implementation, during
+writeback, other reader/writer can wait writeback status on the right
+intermediate page cache.
+
+Anyway, please check commit 4356e48e6437 ("f2fs crypto: fix incorrect
+positioning for GCing encrypted data page").
 
 Thanks,
+
+> +		}
+> +	} while (err == -EAGAIN);
+>  
+>  	f2fs_update_iostat(fio.sbi, FS_GC_DATA_IO, F2FS_BLKSIZE);
+>  
+> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
