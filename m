@@ -1,26 +1,24 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: avoid hungtask when gc encrypted block
- if io_bits is set
-Date: Thu, 11 Jan 2018 18:19:32 +0800
-Message-ID: <ab8f3330-3ac8-ebae-5f6b-3b06a7c6ee1f@huawei.com>
-References: <20180111035202.211809-1-shengyong1@huawei.com>
+From: "Gaoxiang (OS)" <gaoxiang25@huawei.com>
+Subject: [PATCH RFC v4] mkfs.f2fs: binary decision to calculate
+ SIT/NAT/SSA
+Date: Thu, 11 Jan 2018 11:19:01 +0000
+Message-ID: <9047C53C18267742AB12E43B65C7F9F70BCC8966@dggemi505-mbs.china.huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1eZZxn-0007He-7z
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Jan 2018 10:19:59 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
+ (envelope-from <gaoxiang25@huawei.com>) id 1eZatJ-0007wX-BV
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Jan 2018 11:19:25 +0000
+Received: from szxga03-in.huawei.com ([45.249.212.189] helo=huawei.com)
+ by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eZZxl-0000ki-8A
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Jan 2018 10:19:59 +0000
-In-Reply-To: <20180111035202.211809-1-shengyong1@huawei.com>
-Content-Language: en-US
+ id 1eZatG-0003jD-IC
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Jan 2018 11:19:25 +0000
+Content-Language: zh-CN
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,130 +28,273 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, "chao@kernel.org" <chao@kernel.org>, "Yuchao (T)" <yuchao0@huawei.com>
+Cc: "hsiangkao@aol.com" <hsiangkao@aol.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, heyunlei <heyunlei@huawei.com>, Shengyong <shengyong@huawei.com>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, hutj <hutj@huawei.com>
 
-On 2018/1/11 11:52, Sheng Yong wrote:
-> When io_bits is set, gc encrypted block may trigger the following hungtask.
-> Since io_bits requires aligned block address, f2fs_submit_page_write may
-> return -EAGAIN if new_blkaddr does not satisify io_bits alignment.
-> 
-> So let's try to alloc new block address to make sure encrypted page could
-> be writeback.
-> 
-> [  246.751371] INFO: task kworker/u4:4:797 blocked for more than 90 seconds.
-> [  246.752423]       Not tainted 4.15.0-rc4+ #11
-> [  246.754176] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> [  246.755336] kworker/u4:4    D25448   797      2 0x80000000
-> [  246.755597] Workqueue: writeback wb_workfn (flush-7:0)
-> [  246.755616] Call Trace:
-> [  246.755695]  ? __schedule+0x322/0xa90
-> [  246.755761]  ? blk_init_request_from_bio+0x120/0x120
-> [  246.755773]  ? pci_mmcfg_check_reserved+0xb0/0xb0
-> [  246.755801]  ? __radix_tree_create+0x19e/0x200
-> [  246.755813]  ? delete_node+0x136/0x370
-> [  246.755838]  schedule+0x43/0xc0
-> [  246.755904]  io_schedule+0x17/0x40
-> [  246.755939]  wait_on_page_bit_common+0x17b/0x240
-> [  246.755950]  ? wake_page_function+0xa0/0xa0
-> [  246.755961]  ? add_to_page_cache_lru+0x160/0x160
-> [  246.755972]  ? page_cache_tree_insert+0x170/0x170
-> [  246.755983]  ? __lru_cache_add+0x96/0xb0
-> [  246.756086]  __filemap_fdatawait_range+0x14f/0x1c0
-> [  246.756097]  ? wait_on_page_bit_common+0x240/0x240
-> [  246.756120]  ? __wake_up_locked_key_bookmark+0x20/0x20
-> [  246.756167]  ? wait_on_all_pages_writeback+0xc9/0x100
-> [  246.756179]  ? __remove_ino_entry+0x120/0x120
-> [  246.756192]  ? wait_woken+0x100/0x100
-> [  246.756204]  filemap_fdatawait_range+0x9/0x20
-> [  246.756216]  write_checkpoint+0x18a1/0x1f00
-> [  246.756254]  ? blk_get_request+0x10/0x10
-> [  246.756265]  ? cpumask_next_and+0x43/0x60
-> [  246.756279]  ? f2fs_sync_inode_meta+0x160/0x160
-> [  246.756289]  ? remove_element.isra.4+0xa0/0xa0
-> [  246.756300]  ? __put_compound_page+0x40/0x40
-> [  246.756310]  ? f2fs_sync_fs+0xec/0x1c0
-> [  246.756320]  ? f2fs_sync_fs+0x120/0x1c0
-> [  246.756329]  f2fs_sync_fs+0x120/0x1c0
-> [  246.756357]  ? trace_event_raw_event_f2fs__page+0x260/0x260
-> [  246.756393]  ? ata_build_rw_tf+0x173/0x410
-> [  246.756397]  f2fs_balance_fs_bg+0x198/0x390
-> [  246.756405]  ? drop_inmem_page+0x230/0x230
-> [  246.756415]  ? ahci_qc_prep+0x1bb/0x2e0
-> [  246.756418]  ? ahci_qc_issue+0x1df/0x290
-> [  246.756422]  ? __accumulate_pelt_segments+0x42/0xd0
-> [  246.756426]  ? f2fs_write_node_pages+0xd1/0x380
-> [  246.756429]  f2fs_write_node_pages+0xd1/0x380
-> [  246.756437]  ? sync_node_pages+0x8f0/0x8f0
-> [  246.756440]  ? update_curr+0x53/0x220
-> [  246.756444]  ? __accumulate_pelt_segments+0xa2/0xd0
-> [  246.756448]  ? __update_load_avg_se.isra.39+0x349/0x360
-> [  246.756452]  ? do_writepages+0x2a/0xa0
-> [  246.756456]  do_writepages+0x2a/0xa0
-> [  246.756460]  __writeback_single_inode+0x70/0x490
-> [  246.756463]  ? check_preempt_wakeup+0x199/0x310
-> [  246.756467]  writeback_sb_inodes+0x2a2/0x660
-> [  246.756471]  ? is_empty_dir_inode+0x40/0x40
-> [  246.756474]  ? __writeback_single_inode+0x490/0x490
-> [  246.756477]  ? string+0xbf/0xf0
-> [  246.756480]  ? down_read_trylock+0x35/0x60
-> [  246.756484]  __writeback_inodes_wb+0x9f/0xf0
-> [  246.756488]  wb_writeback+0x41d/0x4b0
-> [  246.756492]  ? writeback_inodes_wb.constprop.55+0x150/0x150
-> [  246.756498]  ? set_worker_desc+0xf7/0x130
-> [  246.756502]  ? current_is_workqueue_rescuer+0x60/0x60
-> [  246.756511]  ? _find_next_bit+0x2c/0xa0
-> [  246.756514]  ? wb_workfn+0x400/0x5d0
-> [  246.756518]  wb_workfn+0x400/0x5d0
-> [  246.756521]  ? finish_task_switch+0xdf/0x2a0
-> [  246.756525]  ? inode_wait_for_writeback+0x30/0x30
-> [  246.756529]  process_one_work+0x3a7/0x6f0
-> [  246.756533]  worker_thread+0x82/0x750
-> [  246.756537]  kthread+0x16f/0x1c0
-> [  246.756541]  ? trace_event_raw_event_workqueue_work+0x110/0x110
-> [  246.756544]  ? kthread_create_worker_on_cpu+0xb0/0xb0
-> [  246.756548]  ret_from_fork+0x1f/0x30
-> 
-> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
-> ---
->  fs/f2fs/gc.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 33e79697e41c..8a7d6e74ecd5 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -690,8 +690,15 @@ static void move_data_block(struct inode *inode, block_t bidx,
->  
->  	fio.op = REQ_OP_WRITE;
->  	fio.op_flags = REQ_SYNC;
-> -	fio.new_blkaddr = newaddr;
-> -	f2fs_submit_page_write(&fio);
-> +	do {
-> +		fio.new_blkaddr = newaddr;
-> +		err = f2fs_submit_page_write(&fio);
-> +		if (err == -EAGAIN) {
-> +			fio.old_blkaddr = newaddr;
-> +			allocate_data_block(fio.sbi, NULL, fio.old_blkaddr, &newaddr,
-> +					&sum, CURSEG_COLD_DATA, NULL, false);
+Use binary decision approach to calculate SIT/NAT/SSA segments
+it has some benefits when the partition size >= 512G:
 
-I'm afraid it breaks the rule that we need to allocate new block address
-first, and then get intermediate page cache in meta inode with index of new
-address, finally submit the bio. With this implementation, during
-writeback, other reader/writer can wait writeback status on the right
-intermediate page cache.
+                        (bsearch)
+psize   main_segments   main_seaments
+...
+512G    261509          261510
+ 1 T    523141          523143
+ 2 T    1046405         1046409
+ 4 T    2092783         2092791
+...
 
-Anyway, please check commit 4356e48e6437 ("f2fs crypto: fix incorrect
-positioning for GCing encrypted data page").
+and also has some difference for some specific partition sizes,
+such as 928M, 1844M, 2760M:
 
-Thanks,
+928M  (original) main zones: 454 total_meta_zones: 9
+                                 (2 CP + 2 SIT + 4 NAT + 1 SSA)
+     (the patch) main_zones: 455 total_meta_zones: 7
+                                 (2 CP + 2 SIT + 2 NAT + 1 SSA)
+   *rather than* main_zones: 456 total_meta_zones: 9
+                    = 465 > 464 (928M)
 
-> +		}
-> +	} while (err == -EAGAIN);
->  
->  	f2fs_update_iostat(fio.sbi, FS_GC_DATA_IO, F2FS_BLKSIZE);
->  
-> 
+since blocks_for_nat is related to main_segments now
+(there is no need to using 4 NATs since no more main segments).
+
+It also clarify that SIT/NAT/SSA are used for main segment area only.
+
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+Change log from v3:
+    - fix 32-bit integer overflow (eg. main_segments * c.blks_per_seg)
+    - fix ASSERT in f2fs_prepare_super_block, eg. For 928M mentioned in the commit message:
+                    main_zones: 455 total_meta_zones: 7   == 462 != 464
+                                 (2 CP + 2 SIT + 2 NAT + 1 SSA)
+    - test adds in this version:
+       i=0; while true; do dd if=/dev/zero of=test.img bs=1048576 seek=$((38+i)) count=0;
+       mkfs.f2fs test.img || break; fsck.f2fs test.img || break; i=$((i+2)); done
+Change log from v2:
+    - tighten binary search boundary (the lower bound is not as tight as the original one,
+      but very close and no more redundant code by this way.)
+    - some tests for this patch:
+       1) both can mkfs at the minimum partition size 38M and main segments are 11.
+       2) total binary search count optimize:
+                 v2       v3       main_segments_count
+         512M    8        2        248
+         1G      9        3        502
+         2G      8        3        1011
+         4G      10       4        2029
+         8G      11       4        4065
+         16G     10       4        8135
+         32G     12       5        16275
+         64G     14       7        32581
+         128G    15       7        65285
+         256G    16       8        130693
+         512G    18       8        261510
+         1024G   16       10       523143
+         2048G   19       11       1026409
+Change log from v1:
+    - use align_down instead of align_up in get_best_main_zones
+ mkfs/f2fs_format.c | 123 +++++++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 90 insertions(+), 33 deletions(-)
+
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index a130001..b4d560e 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -145,20 +145,87 @@ static void verify_cur_segs(void)
+ 		c.cur_seg[i] = next_zone(i - 1);
+ }
+ 
++static u_int32_t get_meta_zones(u_int32_t main_zones)
++{
++	u_int32_t main_segments, meta_segments;
++	u_int32_t sit_segments, blocks_for_nat;
++	u_int32_t max_sit_bitmap_size, max_nat_bitmap_size;
++	u_int32_t nat_segments, ssa_segments;
++
++	main_segments = c.segs_per_zone * main_zones;
++
++	sit_segments = SEG_ALIGN(SIZE_ALIGN(main_segments,
++		SIT_ENTRY_PER_BLOCK) /* blocks_for_sit */);
++
++	blocks_for_nat = SIZE_ALIGN((u_int64_t)
++		main_segments * c.blks_per_seg,
++		NAT_ENTRY_PER_BLOCK);
++
++	max_sit_bitmap_size = min((u_int32_t)MAX_SIT_BITMAP_SIZE,
++		sit_segments * c.blks_per_seg / 8);
++
++	/*
++	 * it's weird because for 1TB storage, payload is still not
++	 * used and max_nat_bitmap_blks is only 21472, which means
++	 * the total number of nodes is 21472 * 409 = 8782048
++	 */
++	if (max_sit_bitmap_size > MAX_SIT_BITMAP_SIZE_IN_CKPT)
++		max_nat_bitmap_size = CHECKSUM_OFFSET -
++				sizeof(struct f2fs_checkpoint) + 1;
++	else
++		max_nat_bitmap_size =
++			CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1
++			- max_sit_bitmap_size;
++
++	nat_segments = min(SEG_ALIGN(blocks_for_nat),
++		(max_nat_bitmap_size * 8) / c.blks_per_seg);
++
++	/* each main segment has a ssa block */
++	ssa_segments = SEG_ALIGN(main_segments);
++
++	meta_segments = (get_sb(segment_count_ckpt) +
++		sit_segments * 2 + nat_segments * 2 +
++		ssa_segments);
++
++	return ZONE_ALIGN((u_int64_t)meta_segments * c.blks_per_seg);
++}
++
++static u_int32_t get_best_main_zones(void)
++{
++	u_int32_t total_zones = get_sb(segment_count) / (c.segs_per_zone);
++	u_int32_t left = total_zones - get_meta_zones(total_zones),
++		right = total_zones - /* 2(CP + SIT + NAT) + SSA */
++			ZONE_ALIGN(7);
++	u_int32_t candicate = 0;
++
++	while (left <= right) {
++		u_int32_t main_zones = left + (right - left) / 2;
++		u_int32_t meta_zones = get_meta_zones(main_zones);
++
++		if (meta_zones + main_zones == total_zones)
++			return main_zones;
++
++		if (meta_zones + main_zones < total_zones) {
++			left = main_zones + 1;
++			candicate = main_zones;
++		} else
++			right = main_zones - 1;
++	}
++	return candicate;
++}
++
+ static int f2fs_prepare_super_block(void)
+ {
+ 	u_int32_t blk_size_bytes;
+ 	u_int32_t log_sectorsize, log_sectors_per_block;
+ 	u_int32_t log_blocksize, log_blks_per_seg;
+ 	u_int32_t segment_size_bytes, zone_size_bytes;
+-	u_int32_t sit_segments;
+-	u_int32_t blocks_for_sit, blocks_for_nat, blocks_for_ssa;
+-	u_int32_t total_valid_blks_available;
++	u_int32_t blocks_for_sit, blocks_for_nat;
+ 	u_int64_t zone_align_start_offset, diff;
+ 	u_int64_t total_meta_zones, total_meta_segments;
+ 	u_int32_t sit_bitmap_size, max_sit_bitmap_size;
+ 	u_int32_t max_nat_bitmap_size, max_nat_segments;
+-	u_int32_t total_zones;
++	u_int32_t main_zones, main_segments;
+ 	u_int32_t next_ino;
+ 	enum quota_type qtype;
+ 	int i;
+@@ -256,22 +323,19 @@ static int f2fs_prepare_super_block(void)
+ 	set_sb(sit_blkaddr, get_sb(segment0_blkaddr) +
+ 			get_sb(segment_count_ckpt) * c.blks_per_seg);
+ 
+-	blocks_for_sit = SIZE_ALIGN(get_sb(segment_count), SIT_ENTRY_PER_BLOCK);
++	/* try to do binary decision to get main_zones */
++	main_zones = get_best_main_zones();
++	main_segments = c.segs_per_zone * main_zones;
+ 
+-	sit_segments = SEG_ALIGN(blocks_for_sit);
+-
+-	set_sb(segment_count_sit, sit_segments * 2);
++	blocks_for_sit = SIZE_ALIGN(main_segments, SIT_ENTRY_PER_BLOCK);
++	set_sb(segment_count_sit, SEG_ALIGN(blocks_for_sit) * 2);
+ 
+ 	set_sb(nat_blkaddr, get_sb(sit_blkaddr) + get_sb(segment_count_sit) *
+ 			c.blks_per_seg);
+ 
+-	total_valid_blks_available = (get_sb(segment_count) -
+-			(get_sb(segment_count_ckpt) +
+-			get_sb(segment_count_sit))) * c.blks_per_seg;
+-
+-	blocks_for_nat = SIZE_ALIGN(total_valid_blks_available,
++	blocks_for_nat = SIZE_ALIGN((u_int64_t)
++			main_segments * c.blks_per_seg,
+ 			NAT_ENTRY_PER_BLOCK);
+-
+ 	set_sb(segment_count_nat, SEG_ALIGN(blocks_for_nat));
+ 	/*
+ 	 * The number of node segments should not be exceeded a "Threshold".
+@@ -312,16 +376,7 @@ static int f2fs_prepare_super_block(void)
+ 	set_sb(ssa_blkaddr, get_sb(nat_blkaddr) + get_sb(segment_count_nat) *
+ 			c.blks_per_seg);
+ 
+-	total_valid_blks_available = (get_sb(segment_count) -
+-			(get_sb(segment_count_ckpt) +
+-			get_sb(segment_count_sit) +
+-			get_sb(segment_count_nat))) *
+-			c.blks_per_seg;
+-
+-	blocks_for_ssa = total_valid_blks_available /
+-				c.blks_per_seg + 1;
+-
+-	set_sb(segment_count_ssa, SEG_ALIGN(blocks_for_ssa));
++	set_sb(segment_count_ssa, SEG_ALIGN(main_segments));
+ 
+ 	total_meta_segments = get_sb(segment_count_ckpt) +
+ 		get_sb(segment_count_sit) +
+@@ -354,10 +409,7 @@ static int f2fs_prepare_super_block(void)
+ 		}
+ 	}
+ 
+-	total_zones = get_sb(segment_count) / (c.segs_per_zone) -
+-							total_meta_zones;
+-
+-	set_sb(section_count, total_zones * c.secs_per_zone);
++	set_sb(section_count, main_zones * c.secs_per_zone);
+ 
+ 	set_sb(segment_count_main, get_sb(section_count) * c.segs_per_sec);
+ 
+@@ -373,6 +425,11 @@ static int f2fs_prepare_super_block(void)
+ 		return -1;
+ 	}
+ 
++	/* temporarily add this ASSERT for testing */
++	ASSERT(total_meta_zones == get_meta_zones(main_zones) &&
++		(total_meta_zones + main_zones) * c.segs_per_zone
++			<= get_sb(segment_count));
++
+ 	c.reserved_segments =
+ 			(2 * (100 / c.overprovision + 1) + 6)
+ 			* c.segs_per_sec;
+@@ -404,15 +461,15 @@ static int f2fs_prepare_super_block(void)
+ 					qtype, next_ino - 1);
+ 	}
+ 
+-	if (total_zones <= 6) {
++	if (main_zones <= 6) {
+ 		MSG(1, "\tError: %d zones: Need more zones "
+-			"by shrinking zone size\n", total_zones);
++			"by shrinking zone size\n", main_zones);
+ 		return -1;
+ 	}
+ 
+ 	if (c.heap) {
+ 		c.cur_seg[CURSEG_HOT_NODE] =
+-				last_section(last_zone(total_zones));
++				last_section(last_zone(main_zones));
+ 		c.cur_seg[CURSEG_WARM_NODE] = prev_zone(CURSEG_HOT_NODE);
+ 		c.cur_seg[CURSEG_COLD_NODE] = prev_zone(CURSEG_WARM_NODE);
+ 		c.cur_seg[CURSEG_HOT_DATA] = prev_zone(CURSEG_COLD_NODE);
+@@ -424,10 +481,10 @@ static int f2fs_prepare_super_block(void)
+ 		c.cur_seg[CURSEG_COLD_NODE] = next_zone(CURSEG_WARM_NODE);
+ 		c.cur_seg[CURSEG_HOT_DATA] = next_zone(CURSEG_COLD_NODE);
+ 		c.cur_seg[CURSEG_COLD_DATA] =
+-				max(last_zone((total_zones >> 2)),
++				max(last_zone((main_zones >> 2)),
+ 					next_zone(CURSEG_COLD_NODE));
+ 		c.cur_seg[CURSEG_WARM_DATA] =
+-				max(last_zone((total_zones >> 1)),
++				max(last_zone((main_zones >> 1)),
+ 					next_zone(CURSEG_COLD_DATA));
+ 	}
+ 
+-- 
+2.1.4
 
 
 ------------------------------------------------------------------------------
