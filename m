@@ -1,146 +1,239 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: [PATCH] f2fs: avoid hungtask when gc encrypted block if
- io_bits is set
-Date: Thu, 11 Jan 2018 11:52:02 +0800
-Message-ID: <20180111035202.211809-1-shengyong1@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH v2 1/4] f2fs: support F2FS_IOC_PRECACHE_EXTENTS
+Date: Wed, 10 Jan 2018 21:16:15 -0800
+Message-ID: <20180111051615.GC18352@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180110062441.16329-1-yuchao0@huawei.com>
+ <20180110192449.GB18352@jaegeuk-macbookpro.roam.corp.google.com>
+ <93a3d76b-9e17-0303-b191-023ac09e4ced@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
- helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <shengyong1@huawei.com>) id 1eZTux-0006nm-UW
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Jan 2018 03:52:39 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eZTuv-00045A-Dt
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Jan 2018 03:52:39 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: shengyong1@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <93a3d76b-9e17-0303-b191-023ac09e4ced@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-When io_bits is set, gc encrypted block may trigger the following hungtask.
-Since io_bits requires aligned block address, f2fs_submit_page_write may
-return -EAGAIN if new_blkaddr does not satisify io_bits alignment.
+On 01/11, Chao Yu wrote:
+> On 2018/1/11 3:24, Jaegeuk Kim wrote:
+> > On 01/10, Chao Yu wrote:
+> >> This patch introduces a new ioctl F2FS_IOC_PRECACHE_EXTENTS to precache
+> >> extent info like ext4, in order to gain better performance during
+> >> triggering AIO by eliminating synchronous waiting of mapping info.
+> >>
+> >> Referred commit: 7869a4a6c5ca ("ext4: add support for extent pre-caching")
+> >>
+> >> In addition, with newly added extent precache abilitiy, this patch add
+> >> to support FIEMAP_FLAG_CACHE in ->fiemap.
+> >>
+> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >> ---
+> >> v2:
+> >> - integrate extent precache related patches into this one.
+> >>  fs/f2fs/data.c | 33 +++++++++++++++++++++++++++++++++
+> >>  fs/f2fs/f2fs.h |  3 +++
+> >>  fs/f2fs/file.c | 39 +++++++++++++++++++++++++++++++++++++++
+> >>  3 files changed, 75 insertions(+)
+> >>
+> >> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> >> index 8c05e9a74427..d7d3b2b49907 100644
+> >> --- a/fs/f2fs/data.c
+> >> +++ b/fs/f2fs/data.c
+> >> @@ -927,6 +927,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+> >>  	blkcnt_t prealloc;
+> >>  	struct extent_info ei = {0,0,0};
+> >>  	block_t blkaddr;
+> >> +	unsigned int start_pgofs;
+> >>  
+> >>  	if (!maxblocks)
+> >>  		return 0;
+> >> @@ -942,6 +943,8 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+> >>  		map->m_pblk = ei.blk + pgofs - ei.fofs;
+> >>  		map->m_len = min((pgoff_t)maxblocks, ei.fofs + ei.len - pgofs);
+> >>  		map->m_flags = F2FS_MAP_MAPPED;
+> >> +		if (map->m_next_pgofs)
+> >> +			*map->m_next_pgofs = pgofs + map->m_len;
+> >>  		goto out;
+> >>  	}
+> >>  
+> >> @@ -964,6 +967,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+> >>  		goto unlock_out;
+> >>  	}
+> >>  
+> >> +	start_pgofs = pgofs;
+> >>  	prealloc = 0;
+> >>  	last_ofs_in_node = ofs_in_node = dn.ofs_in_node;
+> >>  	end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
+> >> @@ -997,6 +1001,8 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+> >>  				map->m_pblk = 0;
+> >>  				goto sync_out;
+> >>  			}
+> >> +			if (flag == F2FS_GET_BLOCK_PRECACHE)
+> >> +				goto sync_out;
+> >>  			if (flag == F2FS_GET_BLOCK_FIEMAP &&
+> >>  						blkaddr == NULL_ADDR) {
+> >>  				if (map->m_next_pgofs)
+> >> @@ -1055,6 +1061,16 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+> >>  	else if (dn.ofs_in_node < end_offset)
+> >>  		goto next_block;
+> >>  
+> >> +	if (flag == F2FS_GET_BLOCK_PRECACHE) {
+> >> +		if (map->m_flags & F2FS_MAP_MAPPED) {
+> >> +			unsigned int ofs = start_pgofs - map->m_lblk;
+> >> +
+> >> +			f2fs_update_extent_cache_range(&dn,
+> >> +				start_pgofs, map->m_pblk + ofs,
+> >> +				map->m_len - ofs);
+> >> +		}
+> >> +	}
+> >> +
+> >>  	f2fs_put_dnode(&dn);
+> >>  
+> >>  	if (create) {
+> >> @@ -1064,6 +1080,17 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+> >>  	goto next_dnode;
+> >>  
+> >>  sync_out:
+> >> +	if (flag == F2FS_GET_BLOCK_PRECACHE) {
+> >> +		if (map->m_flags & F2FS_MAP_MAPPED) {
+> >> +			unsigned int ofs = start_pgofs - map->m_lblk;
+> >> +
+> >> +			f2fs_update_extent_cache_range(&dn,
+> >> +				start_pgofs, map->m_pblk + ofs,
+> >> +				map->m_len - ofs);
+> >> +		}
+> >> +		if (map->m_next_pgofs)
+> >> +			*map->m_next_pgofs = pgofs + 1;
+> >> +	}
+> >>  	f2fs_put_dnode(&dn);
+> >>  unlock_out:
+> >>  	if (create) {
+> >> @@ -1210,6 +1237,12 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+> >>  
+> >>  	inode_lock(inode);
+> >>  
+> >> +	if (fieinfo->fi_flags & FIEMAP_FLAG_CACHE) {
+> >> +		ret = f2fs_precache_extents(inode);
+> > 
+> > We need to do inode_lock() in f2fs_precache_extents() after uncovering here?
+> 
+> > Uh? We don't need to cover fiemap_check_flags() by inode_lock().
+> 
+> Hmm, how about just following generic_block_fiemap using inode lock to
+> cover whole block_fiemap including fiemap_check_flags, that can avoid
+> leaving a hole in f2fs_fiemap after we add f2fs_precache_extents before
+> fiemap_check_flags.
 
-So let's try to alloc new block address to make sure encrypted page could
-be writeback.
+Do we really need inode_lock() for f2fs_precache_extents()? What about ioctl()
+then? I think we can precache extents like a salt to speed up actual fiemap, so
+we don't need inode_lock for that tho.
 
-[  246.751371] INFO: task kworker/u4:4:797 blocked for more than 90 seconds.
-[  246.752423]       Not tainted 4.15.0-rc4+ #11
-[  246.754176] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[  246.755336] kworker/u4:4    D25448   797      2 0x80000000
-[  246.755597] Workqueue: writeback wb_workfn (flush-7:0)
-[  246.755616] Call Trace:
-[  246.755695]  ? __schedule+0x322/0xa90
-[  246.755761]  ? blk_init_request_from_bio+0x120/0x120
-[  246.755773]  ? pci_mmcfg_check_reserved+0xb0/0xb0
-[  246.755801]  ? __radix_tree_create+0x19e/0x200
-[  246.755813]  ? delete_node+0x136/0x370
-[  246.755838]  schedule+0x43/0xc0
-[  246.755904]  io_schedule+0x17/0x40
-[  246.755939]  wait_on_page_bit_common+0x17b/0x240
-[  246.755950]  ? wake_page_function+0xa0/0xa0
-[  246.755961]  ? add_to_page_cache_lru+0x160/0x160
-[  246.755972]  ? page_cache_tree_insert+0x170/0x170
-[  246.755983]  ? __lru_cache_add+0x96/0xb0
-[  246.756086]  __filemap_fdatawait_range+0x14f/0x1c0
-[  246.756097]  ? wait_on_page_bit_common+0x240/0x240
-[  246.756120]  ? __wake_up_locked_key_bookmark+0x20/0x20
-[  246.756167]  ? wait_on_all_pages_writeback+0xc9/0x100
-[  246.756179]  ? __remove_ino_entry+0x120/0x120
-[  246.756192]  ? wait_woken+0x100/0x100
-[  246.756204]  filemap_fdatawait_range+0x9/0x20
-[  246.756216]  write_checkpoint+0x18a1/0x1f00
-[  246.756254]  ? blk_get_request+0x10/0x10
-[  246.756265]  ? cpumask_next_and+0x43/0x60
-[  246.756279]  ? f2fs_sync_inode_meta+0x160/0x160
-[  246.756289]  ? remove_element.isra.4+0xa0/0xa0
-[  246.756300]  ? __put_compound_page+0x40/0x40
-[  246.756310]  ? f2fs_sync_fs+0xec/0x1c0
-[  246.756320]  ? f2fs_sync_fs+0x120/0x1c0
-[  246.756329]  f2fs_sync_fs+0x120/0x1c0
-[  246.756357]  ? trace_event_raw_event_f2fs__page+0x260/0x260
-[  246.756393]  ? ata_build_rw_tf+0x173/0x410
-[  246.756397]  f2fs_balance_fs_bg+0x198/0x390
-[  246.756405]  ? drop_inmem_page+0x230/0x230
-[  246.756415]  ? ahci_qc_prep+0x1bb/0x2e0
-[  246.756418]  ? ahci_qc_issue+0x1df/0x290
-[  246.756422]  ? __accumulate_pelt_segments+0x42/0xd0
-[  246.756426]  ? f2fs_write_node_pages+0xd1/0x380
-[  246.756429]  f2fs_write_node_pages+0xd1/0x380
-[  246.756437]  ? sync_node_pages+0x8f0/0x8f0
-[  246.756440]  ? update_curr+0x53/0x220
-[  246.756444]  ? __accumulate_pelt_segments+0xa2/0xd0
-[  246.756448]  ? __update_load_avg_se.isra.39+0x349/0x360
-[  246.756452]  ? do_writepages+0x2a/0xa0
-[  246.756456]  do_writepages+0x2a/0xa0
-[  246.756460]  __writeback_single_inode+0x70/0x490
-[  246.756463]  ? check_preempt_wakeup+0x199/0x310
-[  246.756467]  writeback_sb_inodes+0x2a2/0x660
-[  246.756471]  ? is_empty_dir_inode+0x40/0x40
-[  246.756474]  ? __writeback_single_inode+0x490/0x490
-[  246.756477]  ? string+0xbf/0xf0
-[  246.756480]  ? down_read_trylock+0x35/0x60
-[  246.756484]  __writeback_inodes_wb+0x9f/0xf0
-[  246.756488]  wb_writeback+0x41d/0x4b0
-[  246.756492]  ? writeback_inodes_wb.constprop.55+0x150/0x150
-[  246.756498]  ? set_worker_desc+0xf7/0x130
-[  246.756502]  ? current_is_workqueue_rescuer+0x60/0x60
-[  246.756511]  ? _find_next_bit+0x2c/0xa0
-[  246.756514]  ? wb_workfn+0x400/0x5d0
-[  246.756518]  wb_workfn+0x400/0x5d0
-[  246.756521]  ? finish_task_switch+0xdf/0x2a0
-[  246.756525]  ? inode_wait_for_writeback+0x30/0x30
-[  246.756529]  process_one_work+0x3a7/0x6f0
-[  246.756533]  worker_thread+0x82/0x750
-[  246.756537]  kthread+0x16f/0x1c0
-[  246.756541]  ? trace_event_raw_event_workqueue_work+0x110/0x110
-[  246.756544]  ? kthread_create_worker_on_cpu+0xb0/0xb0
-[  246.756548]  ret_from_fork+0x1f/0x30
-
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
----
- fs/f2fs/gc.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 33e79697e41c..8a7d6e74ecd5 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -690,8 +690,15 @@ static void move_data_block(struct inode *inode, block_t bidx,
- 
- 	fio.op = REQ_OP_WRITE;
- 	fio.op_flags = REQ_SYNC;
--	fio.new_blkaddr = newaddr;
--	f2fs_submit_page_write(&fio);
-+	do {
-+		fio.new_blkaddr = newaddr;
-+		err = f2fs_submit_page_write(&fio);
-+		if (err == -EAGAIN) {
-+			fio.old_blkaddr = newaddr;
-+			allocate_data_block(fio.sbi, NULL, fio.old_blkaddr, &newaddr,
-+					&sum, CURSEG_COLD_DATA, NULL, false);
-+		}
-+	} while (err == -EAGAIN);
- 
- 	f2fs_update_iostat(fio.sbi, FS_GC_DATA_IO, F2FS_BLKSIZE);
- 
--- 
-2.11.0
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> 
+> Thanks,
+> 
+> > 
+> >> +		if (ret)
+> >> +			goto out;
+> >> +	}
+> >> +
+> >>  	ret = fiemap_check_flags(fieinfo, FIEMAP_FLAG_SYNC | FIEMAP_FLAG_XATTR);
+> >>  	if (ret)
+> >>  		goto out;
+> >> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >> index 3b3ddcdc98e9..73a751cdbac1 100644
+> >> --- a/fs/f2fs/f2fs.h
+> >> +++ b/fs/f2fs/f2fs.h
+> >> @@ -359,6 +359,7 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
+> >>  						struct f2fs_gc_range)
+> >>  #define F2FS_IOC_GET_FEATURES		_IOR(F2FS_IOCTL_MAGIC, 12, __u32)
+> >>  #define F2FS_IOC_SET_PIN_FILE		_IOW(F2FS_IOCTL_MAGIC, 13, __u32)
+> >> +#define F2FS_IOC_PRECACHE_EXTENTS	_IO(F2FS_IOCTL_MAGIC, 14)
+> >>  
+> >>  #define F2FS_IOC_SET_ENCRYPTION_POLICY	FS_IOC_SET_ENCRYPTION_POLICY
+> >>  #define F2FS_IOC_GET_ENCRYPTION_POLICY	FS_IOC_GET_ENCRYPTION_POLICY
+> >> @@ -564,6 +565,7 @@ enum {
+> >>  	F2FS_GET_BLOCK_BMAP,
+> >>  	F2FS_GET_BLOCK_PRE_DIO,
+> >>  	F2FS_GET_BLOCK_PRE_AIO,
+> >> +	F2FS_GET_BLOCK_PRECACHE,
+> >>  };
+> >>  
+> >>  /*
+> >> @@ -2567,6 +2569,7 @@ int f2fs_getattr(const struct path *path, struct kstat *stat,
+> >>  int f2fs_setattr(struct dentry *dentry, struct iattr *attr);
+> >>  int truncate_hole(struct inode *inode, pgoff_t pg_start, pgoff_t pg_end);
+> >>  void truncate_data_blocks_range(struct dnode_of_data *dn, int count);
+> >> +int f2fs_precache_extents(struct inode *inode);
+> >>  long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
+> >>  long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+> >>  int f2fs_pin_file_control(struct inode *inode, bool inc);
+> >> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> >> index e4078b32856c..6e30016f26ad 100644
+> >> --- a/fs/f2fs/file.c
+> >> +++ b/fs/f2fs/file.c
+> >> @@ -2734,6 +2734,42 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
+> >>  	return ret;
+> >>  }
+> >>  
+> >> +int f2fs_precache_extents(struct inode *inode)
+> >> +{
+> >> +	struct f2fs_inode_info *fi = F2FS_I(inode);
+> >> +	struct f2fs_map_blocks map;
+> >> +	pgoff_t next_pgofs;
+> >> +	loff_t end;
+> >> +	int err;
+> >> +
+> >> +	if (is_inode_flag_set(inode, FI_NO_EXTENT))
+> >> +		return -EOPNOTSUPP;
+> >> +
+> >> +	map.m_lblk = 0;
+> >> +	map.m_next_pgofs = &next_pgofs;
+> >> +	map.m_seg_type = NO_CHECK_TYPE;
+> >> +	end = F2FS_I_SB(inode)->max_file_blocks;
+> >> +
+> >> +	while (map.m_lblk < end) {
+> >> +		map.m_len = end - map.m_lblk;
+> >> +
+> >> +		down_write(&fi->dio_rwsem[WRITE]);
+> >> +		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_PRECACHE);
+> >> +		up_write(&fi->dio_rwsem[WRITE]);
+> >> +		if (err)
+> >> +			return err;
+> >> +
+> >> +		map.m_lblk = next_pgofs;
+> >> +	}
+> >> +
+> >> +	return err;
+> >> +}
+> >> +
+> >> +static int f2fs_ioc_precache_extents(struct file *filp, unsigned long arg)
+> >> +{
+> >> +	return f2fs_precache_extents(file_inode(filp));
+> >> +}
+> >> +
+> >>  long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+> >>  {
+> >>  	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
+> >> @@ -2786,6 +2822,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+> >>  		return f2fs_ioc_fssetxattr(filp, arg);
+> >>  	case F2FS_IOC_SET_PIN_FILE:
+> >>  		return f2fs_ioc_set_pin_file(filp, arg);
+> >> +	case F2FS_IOC_PRECACHE_EXTENTS:
+> >> +		return f2fs_ioc_precache_extents(filp, arg);
+> >>  	default:
+> >>  		return -ENOTTY;
+> >>  	}
+> >> @@ -2862,6 +2900,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+> >>  	case F2FS_IOC_FSGETXATTR:
+> >>  	case F2FS_IOC_FSSETXATTR:
+> >>  	case F2FS_IOC_SET_PIN_FILE:
+> >> +	case F2FS_IOC_PRECACHE_EXTENTS:
+> >>  		break;
+> >>  	default:
+> >>  		return -ENOIOCTLCMD;
+> >> -- 
+> >> 2.15.0.55.gc2ece9dc4de6
+> > 
+> > .
+> > 
