@@ -1,64 +1,60 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] common: support defrag test on f2fs
-Date: Thu, 11 Jan 2018 10:16:19 +0800
-Message-ID: <f20df6c3-380c-707d-f2b9-8751ad88d93b@huawei.com>
-References: <1515572690-11377-1-git-send-email-rongx.a.chen@intel.com>
+From: Sheng Yong <shengyong1@huawei.com>
+Subject: [PATCH 2/3] mkfs.f2fs: set seed for random checkpoint_ver
+Date: Thu, 11 Jan 2018 10:17:20 +0800
+Message-ID: <20180111021721.210437-2-shengyong1@huawei.com>
+References: <20180111021721.210437-1-shengyong1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <fstests-owner@vger.kernel.org>
-In-Reply-To: <1515572690-11377-1-git-send-email-rongx.a.chen@intel.com>
-Content-Language: en-US
-Sender: fstests-owner@vger.kernel.org
-To: Chen Rong <rongx.a.chen@intel.com>, fstests@vger.kernel.org
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+ helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <shengyong1@huawei.com>) id 1eZSRG-00069m-Pm
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Jan 2018 02:17:54 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eZSRF-0000BW-IO
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Jan 2018 02:17:54 +0000
+In-Reply-To: <20180111021721.210437-1-shengyong1@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: shengyong1@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/1/10 16:24, Chen Rong wrote:
-> f2fs-tools has a defragment tool, so we can test generic/324 on f2fs
+If seed is not set, rand always uses 1 as the default seed.
 
-+Cc f2fs mailing list
+Signed-off-by: Liu Xue <liuxueliu.liu@huawei.com>
+Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+---
+ mkfs/f2fs_format.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-defrag.f2fs can only do filesystem-level defragment, but it looks like
-generic/324 expects to execute file-level defragment, so we can not simply
-use that existing tool in this testcase.
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index a130001..9d7e180 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -574,6 +574,7 @@ static int f2fs_write_check_point_pack(void)
+ 	}
+ 
+ 	/* 1. cp page 1 of checkpoint pack 1 */
++	srand(time(NULL));
+ 	cp->checkpoint_ver = cpu_to_le64(rand() | 0x1);
+ 	set_cp(cur_node_segno[0], c.cur_seg[CURSEG_HOT_NODE]);
+ 	set_cp(cur_node_segno[1], c.cur_seg[CURSEG_WARM_NODE]);
+-- 
+2.11.0
 
-As I checked, actually, this modification does let this testcase passed, so
-isn't there any problem in verification flow of this testcase?
 
-Thanks,
-
-> 
-> Signed-off-by: Chen Rong <rongx.a.chen@intel.com>
-> ---
->  common/config | 1 +
->  common/defrag | 3 +++
->  2 files changed, 4 insertions(+)
-> 
-> diff --git a/common/config b/common/config
-> index d0fbfe5..71cb367 100644
-> --- a/common/config
-> +++ b/common/config
-> @@ -226,6 +226,7 @@ case "$HOSTOS" in
->          export MKFS_BTRFS_PROG="`set_btrfs_mkfs_prog_path_with_opts`"
->          export MKFS_F2FS_PROG="`set_prog_path mkfs.f2fs`"
->          export DUMP_F2FS_PROG="`set_prog_path dump.f2fs`"
-> +        export DEFRAG_F2FS_PROG="`set_prog_path defrag.f2fs`"
->          export BTRFS_UTIL_PROG="`set_prog_path btrfs`"
->          export BTRFS_SHOW_SUPER_PROG="`set_prog_path btrfs-show-super`"
->  	export BTRFS_CONVERT_PROG="`set_prog_path btrfs-convert`"
-> diff --git a/common/defrag b/common/defrag
-> index d279382..d54b89c 100644
-> --- a/common/defrag
-> +++ b/common/defrag
-> @@ -44,6 +44,9 @@ _require_defrag()
->      btrfs)
->  	DEFRAG_PROG="$BTRFS_UTIL_PROG filesystem defragment"
->  	;;
-> +    f2fs)
-> +	DEFRAG_PROG="$DEFRAG_F2FS_PROG"
-> +	;;
->      *)
->          _notrun "defragmentation not supported for fstype \"$FSTYP\""
->  	;;
-> 
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
