@@ -1,86 +1,146 @@
-From: Daeho Jeong <daeho.jeong@samsung.com>
-Subject: [PATCH] f2fs: prevent newly created inode from being dirtied
- incorrectly
-Date: Thu, 11 Jan 2018 11:26:19 +0900
-Message-ID: <1515637579-8360-1-git-send-email-daeho.jeong@samsung.com>
-References: <CGME20180111022559epcas2p4b188916d6259160ed9648c9265ce2c8a@epcas2p4.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Daeho Jeong <daeho.jeong@samsung.com>, Youngjin Gil <youngjin.gil@samsung.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Sheng Yong <shengyong1@huawei.com>
+Subject: [PATCH] f2fs: avoid hungtask when gc encrypted block if
+ io_bits is set
+Date: Thu, 11 Jan 2018 11:52:02 +0800
+Message-ID: <20180111035202.211809-1-shengyong1@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
+ helo=mx.sourceforge.net)
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <shengyong1@huawei.com>) id 1eZTux-0006nm-UW
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Jan 2018 03:52:39 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eZTuv-00045A-Dt
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Jan 2018 03:52:39 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: shengyong1@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-Now, we invoke f2fs_mark_inode_dirty_sync() to make an inode dirty in
-advance of creating a new node page for the inode. By this, some inodes
-whose node page is not created yet can be linked into the global dirty
-list.
+When io_bits is set, gc encrypted block may trigger the following hungtask.
+Since io_bits requires aligned block address, f2fs_submit_page_write may
+return -EAGAIN if new_blkaddr does not satisify io_bits alignment.
 
-If the checkpoint is executed at this moment, the inode will be written
-back by writeback_single_inode() and finally update_inode_page() will
-fail to detach the inode from the global dirty list because the inode
-doesn't have a node page.
+So let's try to alloc new block address to make sure encrypted page could
+be writeback.
 
-The problem is that the inode's state in VFS layer will become clean
-after execution of writeback_single_inode() and it's still linked in
-the global dirty list of f2fs and this will cause a kernel panic.
+[  246.751371] INFO: task kworker/u4:4:797 blocked for more than 90 seconds.
+[  246.752423]       Not tainted 4.15.0-rc4+ #11
+[  246.754176] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  246.755336] kworker/u4:4    D25448   797      2 0x80000000
+[  246.755597] Workqueue: writeback wb_workfn (flush-7:0)
+[  246.755616] Call Trace:
+[  246.755695]  ? __schedule+0x322/0xa90
+[  246.755761]  ? blk_init_request_from_bio+0x120/0x120
+[  246.755773]  ? pci_mmcfg_check_reserved+0xb0/0xb0
+[  246.755801]  ? __radix_tree_create+0x19e/0x200
+[  246.755813]  ? delete_node+0x136/0x370
+[  246.755838]  schedule+0x43/0xc0
+[  246.755904]  io_schedule+0x17/0x40
+[  246.755939]  wait_on_page_bit_common+0x17b/0x240
+[  246.755950]  ? wake_page_function+0xa0/0xa0
+[  246.755961]  ? add_to_page_cache_lru+0x160/0x160
+[  246.755972]  ? page_cache_tree_insert+0x170/0x170
+[  246.755983]  ? __lru_cache_add+0x96/0xb0
+[  246.756086]  __filemap_fdatawait_range+0x14f/0x1c0
+[  246.756097]  ? wait_on_page_bit_common+0x240/0x240
+[  246.756120]  ? __wake_up_locked_key_bookmark+0x20/0x20
+[  246.756167]  ? wait_on_all_pages_writeback+0xc9/0x100
+[  246.756179]  ? __remove_ino_entry+0x120/0x120
+[  246.756192]  ? wait_woken+0x100/0x100
+[  246.756204]  filemap_fdatawait_range+0x9/0x20
+[  246.756216]  write_checkpoint+0x18a1/0x1f00
+[  246.756254]  ? blk_get_request+0x10/0x10
+[  246.756265]  ? cpumask_next_and+0x43/0x60
+[  246.756279]  ? f2fs_sync_inode_meta+0x160/0x160
+[  246.756289]  ? remove_element.isra.4+0xa0/0xa0
+[  246.756300]  ? __put_compound_page+0x40/0x40
+[  246.756310]  ? f2fs_sync_fs+0xec/0x1c0
+[  246.756320]  ? f2fs_sync_fs+0x120/0x1c0
+[  246.756329]  f2fs_sync_fs+0x120/0x1c0
+[  246.756357]  ? trace_event_raw_event_f2fs__page+0x260/0x260
+[  246.756393]  ? ata_build_rw_tf+0x173/0x410
+[  246.756397]  f2fs_balance_fs_bg+0x198/0x390
+[  246.756405]  ? drop_inmem_page+0x230/0x230
+[  246.756415]  ? ahci_qc_prep+0x1bb/0x2e0
+[  246.756418]  ? ahci_qc_issue+0x1df/0x290
+[  246.756422]  ? __accumulate_pelt_segments+0x42/0xd0
+[  246.756426]  ? f2fs_write_node_pages+0xd1/0x380
+[  246.756429]  f2fs_write_node_pages+0xd1/0x380
+[  246.756437]  ? sync_node_pages+0x8f0/0x8f0
+[  246.756440]  ? update_curr+0x53/0x220
+[  246.756444]  ? __accumulate_pelt_segments+0xa2/0xd0
+[  246.756448]  ? __update_load_avg_se.isra.39+0x349/0x360
+[  246.756452]  ? do_writepages+0x2a/0xa0
+[  246.756456]  do_writepages+0x2a/0xa0
+[  246.756460]  __writeback_single_inode+0x70/0x490
+[  246.756463]  ? check_preempt_wakeup+0x199/0x310
+[  246.756467]  writeback_sb_inodes+0x2a2/0x660
+[  246.756471]  ? is_empty_dir_inode+0x40/0x40
+[  246.756474]  ? __writeback_single_inode+0x490/0x490
+[  246.756477]  ? string+0xbf/0xf0
+[  246.756480]  ? down_read_trylock+0x35/0x60
+[  246.756484]  __writeback_inodes_wb+0x9f/0xf0
+[  246.756488]  wb_writeback+0x41d/0x4b0
+[  246.756492]  ? writeback_inodes_wb.constprop.55+0x150/0x150
+[  246.756498]  ? set_worker_desc+0xf7/0x130
+[  246.756502]  ? current_is_workqueue_rescuer+0x60/0x60
+[  246.756511]  ? _find_next_bit+0x2c/0xa0
+[  246.756514]  ? wb_workfn+0x400/0x5d0
+[  246.756518]  wb_workfn+0x400/0x5d0
+[  246.756521]  ? finish_task_switch+0xdf/0x2a0
+[  246.756525]  ? inode_wait_for_writeback+0x30/0x30
+[  246.756529]  process_one_work+0x3a7/0x6f0
+[  246.756533]  worker_thread+0x82/0x750
+[  246.756537]  kthread+0x16f/0x1c0
+[  246.756541]  ? trace_event_raw_event_workqueue_work+0x110/0x110
+[  246.756544]  ? kthread_create_worker_on_cpu+0xb0/0xb0
+[  246.756548]  ret_from_fork+0x1f/0x30
 
-So, we will prevent the newly created inode from being dirtied during
-the FI_NEW_INODE flag of the inode is set. We will make it dirty
-right after the flag is cleared.
-
-Signed-off-by: Daeho Jeong <daeho.jeong@samsung.com>
-Signed-off-by: Youngjin Gil <youngjin.gil@samsung.com>
-Tested-by: Hobin Woo <hobin.woo@samsung.com>
+Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 ---
- fs/f2fs/f2fs.h  | 1 +
- fs/f2fs/inode.c | 3 +++
- fs/f2fs/namei.c | 4 ++--
- 3 files changed, 6 insertions(+), 2 deletions(-)
+ fs/f2fs/gc.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f4e094e..546c7d6 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2116,6 +2116,7 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
- 	case FI_INLINE_XATTR:
- 	case FI_INLINE_DATA:
- 	case FI_INLINE_DENTRY:
-+	case FI_NEW_INODE:
- 		if (set)
- 			return;
- 	case FI_DATA_EXIST:
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index b4c4f2b..67dfa16 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -22,6 +22,9 @@
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 33e79697e41c..8a7d6e74ecd5 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -690,8 +690,15 @@ static void move_data_block(struct inode *inode, block_t bidx,
  
- void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync)
- {
-+	if (is_inode_flag_set(inode, FI_NEW_INODE))
-+		return;
-+
- 	if (f2fs_inode_dirtied(inode, sync))
- 		return;
+ 	fio.op = REQ_OP_WRITE;
+ 	fio.op_flags = REQ_SYNC;
+-	fio.new_blkaddr = newaddr;
+-	f2fs_submit_page_write(&fio);
++	do {
++		fio.new_blkaddr = newaddr;
++		err = f2fs_submit_page_write(&fio);
++		if (err == -EAGAIN) {
++			fio.old_blkaddr = newaddr;
++			allocate_data_block(fio.sbi, NULL, fio.old_blkaddr, &newaddr,
++					&sum, CURSEG_COLD_DATA, NULL, false);
++		}
++	} while (err == -EAGAIN);
  
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 28bdf88..bedf225 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -74,12 +74,12 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 	if (err)
- 		goto fail_drop;
+ 	f2fs_update_iostat(fio.sbi, FS_GC_DATA_IO, F2FS_BLKSIZE);
  
-+	set_inode_flag(inode, FI_NEW_INODE);
-+
- 	/* If the directory encrypted, then we should encrypt the inode. */
- 	if (f2fs_encrypted_inode(dir) && f2fs_may_encrypt(inode))
- 		f2fs_set_encrypted_inode(inode);
- 
--	set_inode_flag(inode, FI_NEW_INODE);
--
- 	if (f2fs_sb_has_extra_attr(sbi->sb)) {
- 		set_inode_flag(inode, FI_EXTRA_ATTR);
- 		F2FS_I(inode)->i_extra_isize = F2FS_TOTAL_EXTRA_ATTR_SIZE;
 -- 
-1.9.1
+2.11.0
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
