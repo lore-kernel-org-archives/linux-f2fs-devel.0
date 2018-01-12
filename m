@@ -1,26 +1,28 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v2 00/11] fscrypt: symlink helpers and
- fscrypt.h cleanup
-Date: Thu, 11 Jan 2018 23:33:38 -0500
-Message-ID: <20180112043338.GA8249@thunk.org>
-References: <20180105184502.48473-1-ebiggers3@gmail.com>
+From: zhangzhikang <zhangzhikang1@huawei.com>
+Subject: =?gb2312?b?tPC4tDogIFtQQVRDSF0gZjJmczogcHJldmVudCBu?=
+ =?gb2312?b?ZXdseSBjcmVhdGVkIGlub2RlIGZyb20gYmVpbmcgZGlydGllZCBpbmNvcnJl?=
+ =?gb2312?b?Y3RseQ==?=
+Date: Fri, 12 Jan 2018 07:11:33 +0000
+Message-ID: <D642D0D599E2434C97EA15C58EE8D70E0832800E@DGGEMA501-MBX.china.huawei.com>
+References: <CGME20180111230540epcas1p4c839d6dae432f5c1b388b43c17e0f649@epcas1p4.samsung.com>
+ <1515711960-10781-1-git-send-email-daeho.jeong@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
  helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <tytso@thunk.org>) id 1eZsyK-00071C-Qx
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 12 Jan 2018 06:37:48 +0000
-Received: from imap.thunk.org ([74.207.234.97])
+ (envelope-from <zhangzhikang1@huawei.com>) id 1eZtVI-0001u0-Rj
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 12 Jan 2018 07:11:52 +0000
+Received: from szxga02-in.huawei.com ([45.249.212.188] helo=huawei.com)
  by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eZsyJ-0001lP-KM
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 12 Jan 2018 06:37:48 +0000
-Content-Disposition: inline
-In-Reply-To: <20180105184502.48473-1-ebiggers3@gmail.com>
+ id 1eZtVG-0002dP-On
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 12 Jan 2018 07:11:52 +0000
+In-Reply-To: <1515711960-10781-1-git-send-email-daeho.jeong@samsung.com>
+Content-Language: zh-CN
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,23 +32,75 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: Eric Biggers <ebiggers@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+To: Daeho Jeong <daeho.jeong@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Cc: "Jianing (Euler)" <ning.jia@huawei.com>, heyunlei <heyunlei@huawei.com>
 
-I've taken the v2 version of this series, plus the ext4-specific
-patches to use the new symlink helpers (from the v1 patch series).
-After testing and validating them, I included the patches to convert
-f2fs and ubifs to use the symlink helpers, so I could also grab the
-cleanup patches from the V1 series.
-
-Jaeguk, Richard, please let me know if you are OK with my taking the
-f2fs and ubifs changes in the fscrypt tree.  It seems like it would
-keep things simpler if we did that.
-
-Cheers,
-
-						- Ted
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+SGkgRGFlaG86DQoNCldlIGhhZCB0cmllZCB0byBtc2xlZXAoMTAwMDApIGFmdGVyIGYyZnNfbWFy
+a19pbm9kZV9kaXJ0eV9zeW5jKCkgaW4gY3JlYXRpbmcgYSBuZXcgZmlsZSwgYW5kIHRoZW4gd3Jp
+dGUgY2hlY2twb2ludCBpbiBhbm90aGVyIHRocmVhZC4NCkJ1dCBpdCBkaWRuJ3QgY2F1c2UgYSBr
+ZXJuZWwgcGFuaWMuDQoNClNvIGNhbiB5b3UgdGVsbCBtZSB3aGF0IHRlc3QgY2FzZSBkaWQgeW91
+IHVzZSwgYW5kIHByb3ZpZGUgdGhlIGNhbGwgdHJhY2U/DQoNClRoYW5rIHlvdSENCg0KQmVzdCBy
+ZWdhcmRzLA0KWmhpa2FuZyBaaGFuZw0KDQotLS0tLdPKvP7Urbz+LS0tLS0NCreivP7IyzogRGFl
+aG8gSmVvbmcgW21haWx0bzpkYWVoby5qZW9uZ0BzYW1zdW5nLmNvbV0gDQq3osvNyrG85DogMjAx
+OMTqMdTCMTLI1SA3OjA2DQrK1bz+yMs6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxp
+bnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0DQrW98ziOiBbZjJmcy1kZXZdIFtQ
+QVRDSF0gZjJmczogcHJldmVudCBuZXdseSBjcmVhdGVkIGlub2RlIGZyb20gYmVpbmcgZGlydGll
+ZCBpbmNvcnJlY3RseQ0KDQpOb3csIHdlIGludm9rZSBmMmZzX21hcmtfaW5vZGVfZGlydHlfc3lu
+YygpIHRvIG1ha2UgYW4gaW5vZGUgZGlydHkgaW4gYWR2YW5jZSBvZiBjcmVhdGluZyBhIG5ldyBu
+b2RlIHBhZ2UgZm9yIHRoZSBpbm9kZS4gQnkgdGhpcywgc29tZSBpbm9kZXMgd2hvc2Ugbm9kZSBw
+YWdlIGlzIG5vdCBjcmVhdGVkIHlldCBjYW4gYmUgbGlua2VkIGludG8gdGhlIGdsb2JhbCBkaXJ0
+eSBsaXN0Lg0KDQpJZiB0aGUgY2hlY2twb2ludCBpcyBleGVjdXRlZCBhdCB0aGlzIG1vbWVudCwg
+dGhlIGlub2RlIHdpbGwgYmUgd3JpdHRlbiBiYWNrIGJ5IHdyaXRlYmFja19zaW5nbGVfaW5vZGUo
+KSBhbmQgZmluYWxseSB1cGRhdGVfaW5vZGVfcGFnZSgpIHdpbGwgZmFpbCB0byBkZXRhY2ggdGhl
+IGlub2RlIGZyb20gdGhlIGdsb2JhbCBkaXJ0eSBsaXN0IGJlY2F1c2UgdGhlIGlub2RlIGRvZXNu
+J3QgaGF2ZSBhIG5vZGUgcGFnZS4NCg0KVGhlIHByb2JsZW0gaXMgdGhhdCB0aGUgaW5vZGUncyBz
+dGF0ZSBpbiBWRlMgbGF5ZXIgd2lsbCBiZWNvbWUgY2xlYW4gYWZ0ZXIgZXhlY3V0aW9uIG9mIHdy
+aXRlYmFja19zaW5nbGVfaW5vZGUoKSBhbmQgaXQncyBzdGlsbCBsaW5rZWQgaW4gdGhlIGdsb2Jh
+bCBkaXJ0eSBsaXN0IG9mIGYyZnMgYW5kIHRoaXMgd2lsbCBjYXVzZSBhIGtlcm5lbCBwYW5pYy4N
+Cg0KU28sIHdlIHdpbGwgcHJldmVudCB0aGUgbmV3bHkgY3JlYXRlZCBpbm9kZSBmcm9tIGJlaW5n
+IGRpcnRpZWQgZHVyaW5nIHRoZSBGSV9ORVdfSU5PREUgZmxhZyBvZiB0aGUgaW5vZGUgaXMgc2V0
+LiBXZSB3aWxsIG1ha2UgaXQgZGlydHkgcmlnaHQgYWZ0ZXIgdGhlIGZsYWcgaXMgY2xlYXJlZC4N
+Cg0KU2lnbmVkLW9mZi1ieTogRGFlaG8gSmVvbmcgPGRhZWhvLmplb25nQHNhbXN1bmcuY29tPg0K
+U2lnbmVkLW9mZi1ieTogWW91bmdqaW4gR2lsIDx5b3VuZ2ppbi5naWxAc2Ftc3VuZy5jb20+DQpU
+ZXN0ZWQtYnk6IEhvYmluIFdvbyA8aG9iaW4ud29vQHNhbXN1bmcuY29tPg0KUmV2aWV3ZWQtYnk6
+IENoYW8gWXUgPHl1Y2hhbzBAaHVhd2VpLmNvbT4NCi0tLQ0KIGZzL2YyZnMvZjJmcy5oICB8IDEg
+Kw0KIGZzL2YyZnMvaW5vZGUuYyB8IDMgKysrDQogZnMvZjJmcy9uYW1laS5jIHwgNCArKy0tDQog
+MyBmaWxlcyBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQoNCmRpZmYg
+LS1naXQgYS9mcy9mMmZzL2YyZnMuaCBiL2ZzL2YyZnMvZjJmcy5oIGluZGV4IGY0ZTA5NGUuLjU0
+NmM3ZDYgMTAwNjQ0DQotLS0gYS9mcy9mMmZzL2YyZnMuaA0KKysrIGIvZnMvZjJmcy9mMmZzLmgN
+CkBAIC0yMTE2LDYgKzIxMTYsNyBAQCBzdGF0aWMgaW5saW5lIHZvaWQgX19tYXJrX2lub2RlX2Rp
+cnR5X2ZsYWcoc3RydWN0IGlub2RlICppbm9kZSwNCiAJY2FzZSBGSV9JTkxJTkVfWEFUVFI6DQog
+CWNhc2UgRklfSU5MSU5FX0RBVEE6DQogCWNhc2UgRklfSU5MSU5FX0RFTlRSWToNCisJY2FzZSBG
+SV9ORVdfSU5PREU6DQogCQlpZiAoc2V0KQ0KIAkJCXJldHVybjsNCiAJY2FzZSBGSV9EQVRBX0VY
+SVNUOg0KZGlmZiAtLWdpdCBhL2ZzL2YyZnMvaW5vZGUuYyBiL2ZzL2YyZnMvaW5vZGUuYyBpbmRl
+eCBiNGM0ZjJiLi42N2RmYTE2IDEwMDY0NA0KLS0tIGEvZnMvZjJmcy9pbm9kZS5jDQorKysgYi9m
+cy9mMmZzL2lub2RlLmMNCkBAIC0yMiw2ICsyMiw5IEBADQogDQogdm9pZCBmMmZzX21hcmtfaW5v
+ZGVfZGlydHlfc3luYyhzdHJ1Y3QgaW5vZGUgKmlub2RlLCBib29sIHN5bmMpICB7DQorCWlmIChp
+c19pbm9kZV9mbGFnX3NldChpbm9kZSwgRklfTkVXX0lOT0RFKSkNCisJCXJldHVybjsNCisNCiAJ
+aWYgKGYyZnNfaW5vZGVfZGlydGllZChpbm9kZSwgc3luYykpDQogCQlyZXR1cm47DQogDQpkaWZm
+IC0tZ2l0IGEvZnMvZjJmcy9uYW1laS5jIGIvZnMvZjJmcy9uYW1laS5jIGluZGV4IDI4YmRmODgu
+LmJlZGYyMjUgMTAwNjQ0DQotLS0gYS9mcy9mMmZzL25hbWVpLmMNCisrKyBiL2ZzL2YyZnMvbmFt
+ZWkuYw0KQEAgLTc0LDEyICs3NCwxMiBAQCBzdGF0aWMgc3RydWN0IGlub2RlICpmMmZzX25ld19p
+bm9kZShzdHJ1Y3QgaW5vZGUgKmRpciwgdW1vZGVfdCBtb2RlKQ0KIAlpZiAoZXJyKQ0KIAkJZ290
+byBmYWlsX2Ryb3A7DQogDQorCXNldF9pbm9kZV9mbGFnKGlub2RlLCBGSV9ORVdfSU5PREUpOw0K
+Kw0KIAkvKiBJZiB0aGUgZGlyZWN0b3J5IGVuY3J5cHRlZCwgdGhlbiB3ZSBzaG91bGQgZW5jcnlw
+dCB0aGUgaW5vZGUuICovDQogCWlmIChmMmZzX2VuY3J5cHRlZF9pbm9kZShkaXIpICYmIGYyZnNf
+bWF5X2VuY3J5cHQoaW5vZGUpKQ0KIAkJZjJmc19zZXRfZW5jcnlwdGVkX2lub2RlKGlub2RlKTsN
+CiANCi0Jc2V0X2lub2RlX2ZsYWcoaW5vZGUsIEZJX05FV19JTk9ERSk7DQotDQogCWlmIChmMmZz
+X3NiX2hhc19leHRyYV9hdHRyKHNiaS0+c2IpKSB7DQogCQlzZXRfaW5vZGVfZmxhZyhpbm9kZSwg
+RklfRVhUUkFfQVRUUik7DQogCQlGMkZTX0koaW5vZGUpLT5pX2V4dHJhX2lzaXplID0gRjJGU19U
+T1RBTF9FWFRSQV9BVFRSX1NJWkU7DQotLQ0KMS45LjENCg0KDQotLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0NCkNoZWNrIG91dCB0aGUgdmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdv
+cmxkJ3MgbW9zdA0KZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3JnISBodHRwOi8vc2Rt
+Lmxpbmsvc2xhc2hkb3QNCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fDQpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdA0KTGludXgtZjJmcy1kZXZlbEBs
+aXN0cy5zb3VyY2Vmb3JnZS5uZXQNCmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3Rz
+L2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpDaGVjayBv
+dXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QK
+ZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hk
+b3QKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgt
+ZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3Jn
+ZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgt
+ZjJmcy1kZXZlbAo=
