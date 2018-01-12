@@ -1,87 +1,52 @@
-From: Daeho Jeong <daeho.jeong@samsung.com>
-Subject: [PATCH] f2fs: prevent newly created inode from being dirtied
- incorrectly
-Date: Fri, 12 Jan 2018 08:06:00 +0900
-Message-ID: <1515711960-10781-1-git-send-email-daeho.jeong@samsung.com>
-References: <CGME20180111230540epcas1p4c839d6dae432f5c1b388b43c17e0f649@epcas1p4.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Daeho Jeong <daeho.jeong@samsung.com>, Youngjin Gil <youngjin.gil@samsung.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH v2 00/11] fscrypt: symlink helpers and
+ fscrypt.h cleanup
+Date: Thu, 11 Jan 2018 23:33:38 -0500
+Message-ID: <20180112043338.GA8249@thunk.org>
+References: <20180105184502.48473-1-ebiggers3@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
+ helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <tytso@thunk.org>) id 1eZsyK-00071C-Qx
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 12 Jan 2018 06:37:48 +0000
+Received: from imap.thunk.org ([74.207.234.97])
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eZsyJ-0001lP-KM
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 12 Jan 2018 06:37:48 +0000
+Content-Disposition: inline
+In-Reply-To: <20180105184502.48473-1-ebiggers3@gmail.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: Eric Biggers <ebiggers@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
 
-Now, we invoke f2fs_mark_inode_dirty_sync() to make an inode dirty in
-advance of creating a new node page for the inode. By this, some inodes
-whose node page is not created yet can be linked into the global dirty
-list.
+I've taken the v2 version of this series, plus the ext4-specific
+patches to use the new symlink helpers (from the v1 patch series).
+After testing and validating them, I included the patches to convert
+f2fs and ubifs to use the symlink helpers, so I could also grab the
+cleanup patches from the V1 series.
 
-If the checkpoint is executed at this moment, the inode will be written
-back by writeback_single_inode() and finally update_inode_page() will
-fail to detach the inode from the global dirty list because the inode
-doesn't have a node page.
+Jaeguk, Richard, please let me know if you are OK with my taking the
+f2fs and ubifs changes in the fscrypt tree.  It seems like it would
+keep things simpler if we did that.
 
-The problem is that the inode's state in VFS layer will become clean
-after execution of writeback_single_inode() and it's still linked in
-the global dirty list of f2fs and this will cause a kernel panic.
+Cheers,
 
-So, we will prevent the newly created inode from being dirtied during
-the FI_NEW_INODE flag of the inode is set. We will make it dirty
-right after the flag is cleared.
+						- Ted
 
-Signed-off-by: Daeho Jeong <daeho.jeong@samsung.com>
-Signed-off-by: Youngjin Gil <youngjin.gil@samsung.com>
-Tested-by: Hobin Woo <hobin.woo@samsung.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/f2fs.h  | 1 +
- fs/f2fs/inode.c | 3 +++
- fs/f2fs/namei.c | 4 ++--
- 3 files changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f4e094e..546c7d6 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2116,6 +2116,7 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
- 	case FI_INLINE_XATTR:
- 	case FI_INLINE_DATA:
- 	case FI_INLINE_DENTRY:
-+	case FI_NEW_INODE:
- 		if (set)
- 			return;
- 	case FI_DATA_EXIST:
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index b4c4f2b..67dfa16 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -22,6 +22,9 @@
- 
- void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync)
- {
-+	if (is_inode_flag_set(inode, FI_NEW_INODE))
-+		return;
-+
- 	if (f2fs_inode_dirtied(inode, sync))
- 		return;
- 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 28bdf88..bedf225 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -74,12 +74,12 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 	if (err)
- 		goto fail_drop;
- 
-+	set_inode_flag(inode, FI_NEW_INODE);
-+
- 	/* If the directory encrypted, then we should encrypt the inode. */
- 	if (f2fs_encrypted_inode(dir) && f2fs_may_encrypt(inode))
- 		f2fs_set_encrypted_inode(inode);
- 
--	set_inode_flag(inode, FI_NEW_INODE);
--
- 	if (f2fs_sb_has_extra_attr(sbi->sb)) {
- 		set_inode_flag(inode, FI_EXTRA_ATTR);
- 		F2FS_I(inode)->i_extra_isize = F2FS_TOTAL_EXTRA_ATTR_SIZE;
--- 
-1.9.1
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
