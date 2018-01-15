@@ -1,7 +1,7 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix to drop all inmem pages correctly
-Date: Mon, 15 Jan 2018 17:16:46 +0800
-Message-ID: <20180115091646.46614-1-yuchao0@huawei.com>
+Subject: [PATCH] f2fs: support large nat bitmap
+Date: Mon, 15 Jan 2018 17:16:56 +0800
+Message-ID: <20180115091656.46703-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -10,49 +10,49 @@ To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-In commit 57864ae5ce3a ("f2fs: limit # of inmemory pages"), we have
-limited memory footprint of all inmem pages with 20% of total memory,
-otherwise, if we exceed the threshold, we will try to drop all inmem
-pages to avoid excessive memory pressure resulting in performance
-regression.
+Previously, we will store all nat version bitmap in checkpoint pack block,
+so our total node entry number has a limitation which caused total node
+number can not exceed (3900 * 8) block * 455 node/block = 14196000. So
+that once user wants to create more nodes in large size image, it becomes
+a bottleneck, that's unreasonable.
 
-But in some unrelated error paths, we will also drop all inmem pages,
-which should be wrong, fix it in this patch.
+This patch detects the new layout of nat/sit version bitmap in image in
+order to enable supporting large nat bitmap.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/data.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/f2fs/f2fs.h          | 6 ++++++
+ include/linux/f2fs_fs.h | 1 +
+ 2 files changed, 7 insertions(+)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 81fd4823a071..2db26388b6bf 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2078,7 +2078,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct page *page = NULL;
- 	pgoff_t index = ((unsigned long long) pos) >> PAGE_SHIFT;
--	bool need_balance = false;
-+	bool need_balance = false, drop_atomic = false;
- 	block_t blkaddr = NULL_ADDR;
- 	int err = 0;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index e4930d4f1218..d6c2c7c265a0 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1758,6 +1758,12 @@ static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
+ 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+ 	int offset;
  
-@@ -2087,6 +2087,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
- 	if (f2fs_is_atomic_file(inode) &&
- 			!available_free_memory(sbi, INMEM_PAGES)) {
- 		err = -ENOMEM;
-+		drop_atomic = true;
- 		goto fail;
- 	}
- 
-@@ -2167,7 +2168,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
- fail:
- 	f2fs_put_page(page, 1);
- 	f2fs_write_failed(mapping, pos + len);
--	if (f2fs_is_atomic_file(inode))
-+	if (drop_atomic)
- 		drop_inmem_pages_all(sbi);
- 	return err;
- }
++	if (is_set_ckpt_flags(sbi, CP_LARGE_NAT_BITMAP_FLAG)) {
++		offset = (flag == SIT_BITMAP) ?
++			le32_to_cpu(ckpt->nat_ver_bitmap_bytesize) : 0;
++		return &ckpt->sit_nat_version_bitmap + offset;
++	}
++
+ 	if (__cp_payload(sbi) > 0) {
+ 		if (flag == NAT_BITMAP)
+ 			return &ckpt->sit_nat_version_bitmap;
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index cfb522e6affc..7d71c75cebeb 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -117,6 +117,7 @@ struct f2fs_super_block {
+ /*
+  * For checkpoint
+  */
++#define CP_LARGE_NAT_BITMAP_FLAG	0x00000200
+ #define CP_TRIMMED_FLAG		0x00000100
+ #define CP_NAT_BITS_FLAG	0x00000080
+ #define CP_CRC_RECOVERY_FLAG	0x00000040
 -- 
 2.15.0.55.gc2ece9dc4de6
