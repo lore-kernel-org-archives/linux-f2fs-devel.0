@@ -1,24 +1,24 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 29/99] page cache: Convert
- filemap_range_has_page to XArray
-Date: Wed, 17 Jan 2018 12:20:53 -0800
-Message-ID: <20180117202203.19756-30-willy@infradead.org>
+Subject: [PATCH v6 62/99] dax: Convert dax_insert_pfn_mkwrite to
+ XArray
+Date: Wed, 17 Jan 2018 12:21:26 -0800
+Message-ID: <20180117202203.19756-63-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
  helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <willy@infradead.org>) id 1ebuEP-00033d-JB
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jan 2018 20:22:45 +0000
+ (envelope-from <willy@infradead.org>) id 1ebuEd-0002WV-Rb
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jan 2018 20:22:59 +0000
 Received: from bombadil.infradead.org ([65.50.211.133])
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ebuEO-0003wA-Vw
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jan 2018 20:22:45 +0000
+ id 1ebuEd-000306-3C
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jan 2018 20:22:59 +0000
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -34,38 +34,41 @@ Cc: linux-s390@vger.kernel.org, David Howells <dhowells@redhat.com>, linux-nilfs
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Instead of calling find_get_pages_range() and putting any reference,
-just use xa_find() to look for a page in the right range.
-
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- mm/filemap.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ fs/dax.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 2536fcacb5bc..cd01f353cf6a 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -461,18 +461,11 @@ bool filemap_range_has_page(struct address_space *mapping,
- {
- 	pgoff_t index = start_byte >> PAGE_SHIFT;
- 	pgoff_t end = end_byte >> PAGE_SHIFT;
--	struct page *page;
+diff --git a/fs/dax.c b/fs/dax.c
+index b66b8c896ed8..e6b25ef112f2 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -1497,21 +1497,21 @@ static int dax_insert_pfn_mkwrite(struct vm_fault *vmf,
+ 	void *entry;
+ 	int vmf_ret, error;
  
- 	if (end_byte < start_byte)
- 		return false;
- 
--	if (mapping->nrpages == 0)
--		return false;
--
--	if (!find_get_pages_range(mapping, &index, end, 1, &page))
--		return false;
--	put_page(page);
--	return true;
-+	return xa_find(&mapping->pages, &index, end, XA_PRESENT);
- }
- EXPORT_SYMBOL(filemap_range_has_page);
- 
+-	xa_lock_irq(&mapping->pages);
++	xas_lock_irq(&xas);
+ 	entry = get_unlocked_mapping_entry(&xas);
+ 	/* Did we race with someone splitting entry or so? */
+ 	if (!entry ||
+ 	    (pe_size == PE_SIZE_PTE && !dax_is_pte_entry(entry)) ||
+ 	    (pe_size == PE_SIZE_PMD && !dax_is_pmd_entry(entry))) {
+ 		put_unlocked_mapping_entry(&xas, entry);
+-		xa_unlock_irq(&mapping->pages);
++		xas_unlock_irq(&xas);
+ 		trace_dax_insert_pfn_mkwrite_no_entry(mapping->host, vmf,
+ 						      VM_FAULT_NOPAGE);
+ 		return VM_FAULT_NOPAGE;
+ 	}
+-	radix_tree_tag_set(&mapping->pages, index, PAGECACHE_TAG_DIRTY);
++	xas_set_tag(&xas, PAGECACHE_TAG_DIRTY);
+ 	entry = lock_slot(&xas);
+-	xa_unlock_irq(&mapping->pages);
++	xas_unlock_irq(&xas);
+ 	switch (pe_size) {
+ 	case PE_SIZE_PTE:
+ 		error = vm_insert_mixed_mkwrite(vmf->vma, vmf->address, pfn);
 -- 
 2.15.1
 
