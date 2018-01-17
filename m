@@ -1,26 +1,27 @@
-From: Chao Yu <yuchao0@huawei.com>
+From: Gao Xiang via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Subject: Re: [PATCH v2] mkfs.f2fs: expand scalability of nat
  bitmap
-Date: Wed, 17 Jan 2018 11:15:00 +0800
-Message-ID: <e8626c08-5041-83a2-18d9-5ec18f66aaed@huawei.com>
+Date: Wed, 17 Jan 2018 11:35:21 +0800
+Message-ID: <5664e1d3-640d-263a-d0df-e0d81dd81ace@aol.com>
 References: <20180115034840.28375-1-yuchao0@huawei.com>
  <20180117004723.GC22625@jaegeuk-macbookpro.roam.corp.google.com>
+ <e8626c08-5041-83a2-18d9-5ec18f66aaed@huawei.com>
+Reply-To: Gao Xiang <hsiangkao@aol.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1ebeC1-0003f9-4j
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jan 2018 03:15:13 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ebeBy-0005uN-Sd
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jan 2018 03:15:13 +0000
-In-Reply-To: <20180117004723.GC22625@jaegeuk-macbookpro.roam.corp.google.com>
+ (envelope-from <hsiangkao@aol.com>) id 1ebeVg-0006fG-7X
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jan 2018 03:35:32 +0000
+Received: from omr-a010e.mx.aol.com ([204.29.186.54])
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps (TLSv1:DHE-RSA-AES256-SHA:256)
+ (Exim 4.89) id 1ebeVe-00016F-83
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jan 2018 03:35:32 +0000
+In-Reply-To: <e8626c08-5041-83a2-18d9-5ec18f66aaed@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -31,335 +32,244 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-Hi Jaegeuk,
-
-On 2018/1/17 8:47, Jaegeuk Kim wrote:
-> Hi Chao,
-> 
-> On 01/15, Chao Yu wrote:
->> Previously, our total node number (nat_bitmap) and total nat segment count
->> will not monotonously increase along with image size, and max nat_bitmap size
->> is limited by "CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1", it is
->> with bad scalability when user wants to create more inode/node in larger image.
->>
->> So this patch tries to relieve the limitation, by default, limitting total nat
->> entry number with 20% of total block number.
->>
->> Before:
->> image_size(GB)	nat_bitmap	sit_bitmap	nat_segment	sit_segment
->> 16		3836		64		36		2
->> 32		3836		64		72		2
->> 64		3772		128		116		4
->> 128		3708		192		114		6
->> 256		3580		320		110		10
-
-As you see, nat_segment count will reduce when image size increases
-starting from 64GB, that means nat segment count will not monotonously
-increase when image size is increasing, so it would be better to active
-this when image size is larger than 32GB?
-
-IMO, configuring basic nid ratio to fixed value like ext4 ("free inode" :
-"free block" is about 1 : 4) would be better:
-a. It will be easy for user to predict nid count or nat segment count with
-fix-sized image;
-b. If user wants to reserve more nid count, we can support -N option in
-mkfs.f2fs to specify total nid count as user wish.
-
-How do you think?
-
-Thanks,
-
->> 512		3260		640		100		20
->> 1024		2684		1216		82		38
->> 2048		1468		2432		44		76
->> 4096		3900		4800		120		150
->>
->> After:
->> image_size(GB)	nat_bitmap	sit_bitmap	nat_segment	sit_segment
->> 16		256		64		8		2
->> 32		512		64		16		2
->> 64		960		128		30		4
->> 128		1856		192		58		6
->> 256		3712		320		116		10
-> 
-> Can we activate this, if size is larger than 256GB or something around that?
-> 
-> Thanks,
-> 
->> 512		7424		640		232		20
->> 1024		14787		1216		462		38
->> 2048		29504		2432		922		76
->> 4096		59008		4800		1844		150
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->> v2:
->> - add CP_LARGE_NAT_BITMAP_FLAG flag to indicate new layout of nat/sit bitmap.
->>  fsck/f2fs.h        | 19 +++++++++++++------
->>  fsck/resize.c      | 35 +++++++++++++++++------------------
->>  include/f2fs_fs.h  |  8 ++++++--
->>  lib/libf2fs.c      |  1 +
->>  mkfs/f2fs_format.c | 45 +++++++++++++++++++++++----------------------
->>  5 files changed, 60 insertions(+), 48 deletions(-)
->>
->> diff --git a/fsck/f2fs.h b/fsck/f2fs.h
->> index f5970d9dafc0..8a5ce365282d 100644
->> --- a/fsck/f2fs.h
->> +++ b/fsck/f2fs.h
->> @@ -239,6 +239,12 @@ static inline unsigned int ofs_of_node(struct f2fs_node *node_blk)
->>  	return flag >> OFFSET_BIT_SHIFT;
->>  }
->>  
->> +static inline bool is_set_ckpt_flags(struct f2fs_checkpoint *cp, unsigned int f)
->> +{
->> +	unsigned int ckpt_flags = le32_to_cpu(cp->ckpt_flags);
->> +	return ckpt_flags & f ? 1 : 0;
->> +}
->> +
->>  static inline unsigned long __bitmap_size(struct f2fs_sb_info *sbi, int flag)
->>  {
->>  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
->> @@ -256,6 +262,13 @@ static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
->>  {
->>  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
->>  	int offset;
->> +
->> +	if (is_set_ckpt_flags(ckpt, CP_LARGE_NAT_BITMAP_FLAG)) {
->> +		offset = (flag == SIT_BITMAP) ?
->> +			le32_to_cpu(ckpt->nat_ver_bitmap_bytesize) : 0;
->> +		return &ckpt->sit_nat_version_bitmap + offset;
->> +	}
->> +
->>  	if (le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_payload) > 0) {
->>  		if (flag == NAT_BITMAP)
->>  			return &ckpt->sit_nat_version_bitmap;
->> @@ -268,12 +281,6 @@ static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
->>  	}
->>  }
->>  
->> -static inline bool is_set_ckpt_flags(struct f2fs_checkpoint *cp, unsigned int f)
->> -{
->> -	unsigned int ckpt_flags = le32_to_cpu(cp->ckpt_flags);
->> -	return ckpt_flags & f ? 1 : 0;
->> -}
->> -
->>  static inline block_t __start_cp_addr(struct f2fs_sb_info *sbi)
->>  {
->>  	block_t start_addr = le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_blkaddr);
->> diff --git a/fsck/resize.c b/fsck/resize.c
->> index 143ad5d3c0a1..f3547c86f351 100644
->> --- a/fsck/resize.c
->> +++ b/fsck/resize.c
->> @@ -13,10 +13,10 @@ static int get_new_sb(struct f2fs_super_block *sb)
->>  {
->>  	u_int32_t zone_size_bytes, zone_align_start_offset;
->>  	u_int32_t blocks_for_sit, blocks_for_nat, blocks_for_ssa;
->> -	u_int32_t sit_segments, diff, total_meta_segments;
->> +	u_int32_t sit_segments, nat_segments, diff, total_meta_segments;
->>  	u_int32_t total_valid_blks_available;
->>  	u_int32_t sit_bitmap_size, max_sit_bitmap_size;
->> -	u_int32_t max_nat_bitmap_size, max_nat_segments;
->> +	u_int32_t max_nat_bitmap_size;
->>  	u_int32_t segment_size_bytes = 1 << (get_sb(log_blocksize) +
->>  					get_sb(log_blocks_per_seg));
->>  	u_int32_t blks_per_seg = 1 << get_sb(log_blocks_per_seg);
->> @@ -47,7 +47,15 @@ static int get_new_sb(struct f2fs_super_block *sb)
->>  			get_sb(segment_count_sit))) * blks_per_seg;
->>  	blocks_for_nat = SIZE_ALIGN(total_valid_blks_available,
->>  					NAT_ENTRY_PER_BLOCK);
->> -	set_sb(segment_count_nat, SEG_ALIGN(blocks_for_nat));
->> +	nat_segments = SEG_ALIGN(blocks_for_nat) *
->> +					DEFAULT_NAT_ENTRY_RATIO / 100;
->> +	set_sb(segment_count_nat, nat_segments ? nat_segments : 1);
->> +
->> +	max_nat_bitmap_size = (get_sb(segment_count_nat) <<
->> +					get_sb(log_blocks_per_seg)) / 8;
->> +	set_sb(segment_count_nat, get_sb(segment_count_nat) * 2);
->> +
->> +	c.large_nat_bitmap = 1;
->>  
->>  	sit_bitmap_size = ((get_sb(segment_count_sit) / 2) <<
->>  				get_sb(log_blocks_per_seg)) / 8;
->> @@ -56,25 +64,16 @@ static int get_new_sb(struct f2fs_super_block *sb)
->>  	else
->>  		max_sit_bitmap_size = sit_bitmap_size;
->>  
->> -	/*
->> -	 * It should be reserved minimum 1 segment for nat.
->> -	 * When sit is too large, we should expand cp area. It requires more pages for cp.
->> -	 */
->> -	if (max_sit_bitmap_size > MAX_SIT_BITMAP_SIZE_IN_CKPT) {
->> -		max_nat_bitmap_size = CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1;
->> -		set_sb(cp_payload, F2FS_BLK_ALIGN(max_sit_bitmap_size));
->> +	/* use cp_payload if free space of f2fs_checkpoint is not enough */
->> +	if (max_sit_bitmap_size + max_nat_bitmap_size >
->> +					MAX_BITMAP_SIZE_IN_CKPT) {
->> +		u_int32_t diff =  max_sit_bitmap_size + max_nat_bitmap_size -
->> +							MAX_BITMAP_SIZE_IN_CKPT;
->> +		set_sb(cp_payload, F2FS_BLK_ALIGN(diff));
->>  	} else {
->> -		max_nat_bitmap_size = CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1
->> -			- max_sit_bitmap_size;
->>  		set_sb(cp_payload, 0);
->>  	}
->>  
->> -	max_nat_segments = (max_nat_bitmap_size * 8) >>
->> -					get_sb(log_blocks_per_seg);
->> -
->> -	if (get_sb(segment_count_nat) > max_nat_segments)
->> -		set_sb(segment_count_nat, max_nat_segments);
->> -
->>  	set_sb(segment_count_nat, get_sb(segment_count_nat) * 2);
->>  
->>  	set_sb(ssa_blkaddr, get_sb(nat_blkaddr) +
->> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
->> index 4739085ed98f..edf351412702 100644
->> --- a/include/f2fs_fs.h
->> +++ b/include/f2fs_fs.h
->> @@ -362,6 +362,7 @@ struct f2fs_configuration {
->>  	int preen_mode;
->>  	int ro;
->>  	int preserve_limits;		/* preserve quota limits */
->> +	int large_nat_bitmap;
->>  	__le32 feature;			/* defined features */
->>  
->>  	/* defragmentation parameters */
->> @@ -613,6 +614,7 @@ struct f2fs_super_block {
->>  /*
->>   * For checkpoint
->>   */
->> +#define CP_LARGE_NAT_BITMAP_FLAG	0x00000200
->>  #define CP_TRIMMED_FLAG		0x00000100
->>  #define CP_NAT_BITS_FLAG	0x00000080
->>  #define CP_CRC_RECOVERY_FLAG	0x00000040
->> @@ -657,8 +659,8 @@ struct f2fs_checkpoint {
->>  	unsigned char sit_nat_version_bitmap[1];
->>  } __attribute__((packed));
->>  
->> -#define MAX_SIT_BITMAP_SIZE_IN_CKPT	\
->> -	(CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1 - 64)
->> +#define MAX_BITMAP_SIZE_IN_CKPT	\
->> +	(CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1)
->>  
->>  /*
->>   * For orphan inode management
->> @@ -846,6 +848,8 @@ struct f2fs_node {
->>  #define NAT_ENTRY_PER_BLOCK (PAGE_CACHE_SIZE / sizeof(struct f2fs_nat_entry))
->>  #define NAT_BLOCK_OFFSET(start_nid) (start_nid / NAT_ENTRY_PER_BLOCK)
->>  
->> +#define DEFAULT_NAT_ENTRY_RATIO		20
->> +
->>  #ifdef ANDROID_WINDOWS_HOST
->>  #pragma pack(1)
->>  #endif
->> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
->> index ffdbccb34627..e8b1842b7391 100644
->> --- a/lib/libf2fs.c
->> +++ b/lib/libf2fs.c
->> @@ -623,6 +623,7 @@ void f2fs_init_configuration(void)
->>  	c.ro = 0;
->>  	c.kd = -1;
->>  	c.dry_run = 0;
->> +	c.large_nat_bitmap = 0;
->>  	c.fixed_time = -1;
->>  }
->>  
->> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
->> index a13000184300..23eaf40c5962 100644
->> --- a/mkfs/f2fs_format.c
->> +++ b/mkfs/f2fs_format.c
->> @@ -151,13 +151,13 @@ static int f2fs_prepare_super_block(void)
->>  	u_int32_t log_sectorsize, log_sectors_per_block;
->>  	u_int32_t log_blocksize, log_blks_per_seg;
->>  	u_int32_t segment_size_bytes, zone_size_bytes;
->> -	u_int32_t sit_segments;
->> +	u_int32_t sit_segments, nat_segments;
->>  	u_int32_t blocks_for_sit, blocks_for_nat, blocks_for_ssa;
->>  	u_int32_t total_valid_blks_available;
->>  	u_int64_t zone_align_start_offset, diff;
->>  	u_int64_t total_meta_zones, total_meta_segments;
->>  	u_int32_t sit_bitmap_size, max_sit_bitmap_size;
->> -	u_int32_t max_nat_bitmap_size, max_nat_segments;
->> +	u_int32_t max_nat_bitmap_size;
->>  	u_int32_t total_zones;
->>  	u_int32_t next_ino;
->>  	enum quota_type qtype;
->> @@ -272,7 +272,18 @@ static int f2fs_prepare_super_block(void)
->>  	blocks_for_nat = SIZE_ALIGN(total_valid_blks_available,
->>  			NAT_ENTRY_PER_BLOCK);
->>  
->> -	set_sb(segment_count_nat, SEG_ALIGN(blocks_for_nat));
->> +	nat_segments = SEG_ALIGN(blocks_for_nat) *
->> +					DEFAULT_NAT_ENTRY_RATIO / 100;
->> +
->> +	set_sb(segment_count_nat, nat_segments ? nat_segments : 1);
->> +
->> +	max_nat_bitmap_size = (get_sb(segment_count_nat) <<
->> +					log_blks_per_seg) / 8;
->> +
->> +	set_sb(segment_count_nat, get_sb(segment_count_nat) * 2);
->> +
->> +	c.large_nat_bitmap = 1;
->> +
->>  	/*
->>  	 * The number of node segments should not be exceeded a "Threshold".
->>  	 * This number resizes NAT bitmap area in a CP page.
->> @@ -286,29 +297,16 @@ static int f2fs_prepare_super_block(void)
->>  	else
->>  		max_sit_bitmap_size = sit_bitmap_size;
->>  
->> -	/*
->> -	 * It should be reserved minimum 1 segment for nat.
->> -	 * When sit is too large, we should expand cp area. It requires more
->> -	 * pages for cp.
->> -	 */
->> -	if (max_sit_bitmap_size > MAX_SIT_BITMAP_SIZE_IN_CKPT) {
->> -		max_nat_bitmap_size = CHECKSUM_OFFSET -
->> -				sizeof(struct f2fs_checkpoint) + 1;
->> -		set_sb(cp_payload, F2FS_BLK_ALIGN(max_sit_bitmap_size));
->> +	/* use cp_payload if free space of f2fs_checkpoint is not enough */
->> +	if (max_sit_bitmap_size + max_nat_bitmap_size >
->> +					MAX_BITMAP_SIZE_IN_CKPT) {
->> +		u_int32_t diff =  max_sit_bitmap_size + max_nat_bitmap_size -
->> +							MAX_BITMAP_SIZE_IN_CKPT;
->> +		set_sb(cp_payload, F2FS_BLK_ALIGN(diff));
->>  	} else {
->> -		max_nat_bitmap_size =
->> -			CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1
->> -			- max_sit_bitmap_size;
->>  		set_sb(cp_payload, 0);
->>  	}
->>  
->> -	max_nat_segments = (max_nat_bitmap_size * 8) >> log_blks_per_seg;
->> -
->> -	if (get_sb(segment_count_nat) > max_nat_segments)
->> -		set_sb(segment_count_nat, max_nat_segments);
->> -
->> -	set_sb(segment_count_nat, get_sb(segment_count_nat) * 2);
->> -
->>  	set_sb(ssa_blkaddr, get_sb(nat_blkaddr) + get_sb(segment_count_nat) *
->>  			c.blks_per_seg);
->>  
->> @@ -622,6 +620,9 @@ static int f2fs_write_check_point_pack(void)
->>  	if (c.trimmed)
->>  		flags |= CP_TRIMMED_FLAG;
->>  
->> +	if (c.large_nat_bitmap)
->> +		flags |= CP_LARGE_NAT_BITMAP_FLAG;
->> +
->>  	set_cp(ckpt_flags, flags);
->>  	set_cp(cp_pack_start_sum, 1 + get_sb(cp_payload));
->>  	set_cp(valid_node_count, 1 + quota_inum);
->> -- 
->> 2.15.0.55.gc2ece9dc4de6
-> 
-> .
-> 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+SGkgQ2hhbyBZdSwKCgpPbiAyMDE4LzEvMTcgMTE6MTUsIENoYW8gWXUgd3JvdGU6Cj4gSGkgSmFl
+Z2V1aywKPgo+IE9uIDIwMTgvMS8xNyA4OjQ3LCBKYWVnZXVrIEtpbSB3cm90ZToKPj4gSGkgQ2hh
+bywKPj4KPj4gT24gMDEvMTUsIENoYW8gWXUgd3JvdGU6Cj4+PiBQcmV2aW91c2x5LCBvdXIgdG90
+YWwgbm9kZSBudW1iZXIgKG5hdF9iaXRtYXApIGFuZCB0b3RhbCBuYXQgc2VnbWVudCBjb3VudAo+
+Pj4gd2lsbCBub3QgbW9ub3Rvbm91c2x5IGluY3JlYXNlIGFsb25nIHdpdGggaW1hZ2Ugc2l6ZSwg
+YW5kIG1heCBuYXRfYml0bWFwIHNpemUKPj4+IGlzIGxpbWl0ZWQgYnkgIkNIRUNLU1VNX09GRlNF
+VCAtIHNpemVvZihzdHJ1Y3QgZjJmc19jaGVja3BvaW50KSArIDEiLCBpdCBpcwo+Pj4gd2l0aCBi
+YWQgc2NhbGFiaWxpdHkgd2hlbiB1c2VyIHdhbnRzIHRvIGNyZWF0ZSBtb3JlIGlub2RlL25vZGUg
+aW4gbGFyZ2VyIGltYWdlLgo+Pj4KPj4+IFNvIHRoaXMgcGF0Y2ggdHJpZXMgdG8gcmVsaWV2ZSB0
+aGUgbGltaXRhdGlvbiwgYnkgZGVmYXVsdCwgbGltaXR0aW5nIHRvdGFsIG5hdAo+Pj4gZW50cnkg
+bnVtYmVyIHdpdGggMjAlIG9mIHRvdGFsIGJsb2NrIG51bWJlci4KPj4+Cj4+PiBCZWZvcmU6Cj4+
+PiBpbWFnZV9zaXplKEdCKQluYXRfYml0bWFwCXNpdF9iaXRtYXAJbmF0X3NlZ21lbnQJc2l0X3Nl
+Z21lbnQKPj4+IDE2CQkzODM2CQk2NAkJMzYJCTIKPj4+IDMyCQkzODM2CQk2NAkJNzIJCTIKPj4+
+IDY0CQkzNzcyCQkxMjgJCTExNgkJNAo+Pj4gMTI4CQkzNzA4CQkxOTIJCTExNAkJNgo+Pj4gMjU2
+CQkzNTgwCQkzMjAJCTExMAkJMTAKPiBBcyB5b3Ugc2VlLCBuYXRfc2VnbWVudCBjb3VudCB3aWxs
+IHJlZHVjZSB3aGVuIGltYWdlIHNpemUgaW5jcmVhc2VzCj4gc3RhcnRpbmcgZnJvbSA2NEdCLCB0
+aGF0IG1lYW5zIG5hdCBzZWdtZW50IGNvdW50IHdpbGwgbm90IG1vbm90b25vdXNseQo+IGluY3Jl
+YXNlIHdoZW4gaW1hZ2Ugc2l6ZSBpcyBpbmNyZWFzaW5nLCBzbyBpdCB3b3VsZCBiZSBiZXR0ZXIg
+dG8gYWN0aXZlCj4gdGhpcyB3aGVuIGltYWdlIHNpemUgaXMgbGFyZ2VyIHRoYW4gMzJHQj8KPgo+
+IElNTywgY29uZmlndXJpbmcgYmFzaWMgbmlkIHJhdGlvIHRvIGZpeGVkIHZhbHVlIGxpa2UgZXh0
+NCAoImZyZWUgaW5vZGUiIDoKPiAiZnJlZSBibG9jayIgaXMgYWJvdXQgMSA6IDQpIHdvdWxkIGJl
+IGJldHRlcjoKPiBhLiBJdCB3aWxsIGJlIGVhc3kgZm9yIHVzZXIgdG8gcHJlZGljdCBuaWQgY291
+bnQgb3IgbmF0IHNlZ21lbnQgY291bnQgd2l0aAo+IGZpeC1zaXplZCBpbWFnZTsKPiBiLiBJZiB1
+c2VyIHdhbnRzIHRvIHJlc2VydmUgbW9yZSBuaWQgY291bnQsIHdlIGNhbiBzdXBwb3J0IC1OIG9w
+dGlvbiBpbgo+IG1rZnMuZjJmcyB0byBzcGVjaWZ5IHRvdGFsIG5pZCBjb3VudCBhcyB1c2VyIHdp
+c2guCkkgYWdyZWUgYmFjYXVzZSBpdCBpcyB3ZWlyZCBpZiBuYXQgc2VnbWVudCBjb3VudCBpcyBu
+b3QgbW9ub3Rvbm91c2x5IAppbmNyZWFzZWQsIGVzcGVjaWFsbHkgZm9yIHNlcnZlciB1c2Vycywg
+YW5kIGhvdyBhYm91dCBtb2RpZnlpbmcgbGlrZSB0aGlzPwozMkdCfnh4eEdCKGlmIChtYXhfc2l0
+X2JpdG1hcF9zaXplICsgbWF4X25hdF9iaXRtYXBfc2l6ZSB+ICg8PSkgCk1BWF9CSVRNQVBfU0la
+RV9JTl9DS1BUKSApIMKgwqAgLS0twqAgdXNlIHRoZSBvcmlnaW5hbCBuYXQgY2FsY3VsYXRpb24g
+dmVyc2lvbjsKID54eHggR0IgLS0tIHVzZSBDUF9MQVJHRV9OQVRfQklUTUFQX0ZMQUcgYW5kIHRo
+ZSBpbnRyb2R1Y2VkIHJhdGlvLgppZiB1c2VyLWRlZmluZWQgLU4gaXMgc3BlY2lmaWVkLCB1c2Ug
+dGhlIG5pZCBjb3VudCAoIG9yIHJhdGlvID8pIGluc3RlYWQgCm9mwqAgdGhlIGFib3ZlIGNhbGN1
+bGF0aW9uLgoKVGhhbmtzLAo+Cj4gSG93IGRvIHlvdSB0aGluaz8KPgo+IFRoYW5rcywKPgo+Pj4g
+NTEyCQkzMjYwCQk2NDAJCTEwMAkJMjAKPj4+IDEwMjQJCTI2ODQJCTEyMTYJCTgyCQkzOAo+Pj4g
+MjA0OAkJMTQ2OAkJMjQzMgkJNDQJCTc2Cj4+PiA0MDk2CQkzOTAwCQk0ODAwCQkxMjAJCTE1MAo+
+Pj4KPj4+IEFmdGVyOgo+Pj4gaW1hZ2Vfc2l6ZShHQikJbmF0X2JpdG1hcAlzaXRfYml0bWFwCW5h
+dF9zZWdtZW50CXNpdF9zZWdtZW50Cj4+PiAxNgkJMjU2CQk2NAkJOAkJMgo+Pj4gMzIJCTUxMgkJ
+NjQJCTE2CQkyCj4+PiA2NAkJOTYwCQkxMjgJCTMwCQk0Cj4+PiAxMjgJCTE4NTYJCTE5MgkJNTgJ
+CTYKPj4+IDI1NgkJMzcxMgkJMzIwCQkxMTYJCTEwCj4+IENhbiB3ZSBhY3RpdmF0ZSB0aGlzLCBp
+ZiBzaXplIGlzIGxhcmdlciB0aGFuIDI1NkdCIG9yIHNvbWV0aGluZyBhcm91bmQgdGhhdD8KPj4K
+Pj4gVGhhbmtzLAo+Pgo+Pj4gNTEyCQk3NDI0CQk2NDAJCTIzMgkJMjAKPj4+IDEwMjQJCTE0Nzg3
+CQkxMjE2CQk0NjIJCTM4Cj4+PiAyMDQ4CQkyOTUwNAkJMjQzMgkJOTIyCQk3Ngo+Pj4gNDA5NgkJ
+NTkwMDgJCTQ4MDAJCTE4NDQJCTE1MAo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IENoYW8gWXUgPHl1
+Y2hhbzBAaHVhd2VpLmNvbT4KPj4+IC0tLQo+Pj4gdjI6Cj4+PiAtIGFkZCBDUF9MQVJHRV9OQVRf
+QklUTUFQX0ZMQUcgZmxhZyB0byBpbmRpY2F0ZSBuZXcgbGF5b3V0IG9mIG5hdC9zaXQgYml0bWFw
+Lgo+Pj4gICBmc2NrL2YyZnMuaCAgICAgICAgfCAxOSArKysrKysrKysrKysrLS0tLS0tCj4+PiAg
+IGZzY2svcmVzaXplLmMgICAgICB8IDM1ICsrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0t
+LS0tCj4+PiAgIGluY2x1ZGUvZjJmc19mcy5oICB8ICA4ICsrKysrKy0tCj4+PiAgIGxpYi9saWJm
+MmZzLmMgICAgICB8ICAxICsKPj4+ICAgbWtmcy9mMmZzX2Zvcm1hdC5jIHwgNDUgKysrKysrKysr
+KysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4+PiAgIDUgZmlsZXMgY2hhbmdl
+ZCwgNjAgaW5zZXJ0aW9ucygrKSwgNDggZGVsZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBh
+L2ZzY2svZjJmcy5oIGIvZnNjay9mMmZzLmgKPj4+IGluZGV4IGY1OTcwZDlkYWZjMC4uOGE1Y2Uz
+NjUyODJkIDEwMDY0NAo+Pj4gLS0tIGEvZnNjay9mMmZzLmgKPj4+ICsrKyBiL2ZzY2svZjJmcy5o
+Cj4+PiBAQCAtMjM5LDYgKzIzOSwxMiBAQCBzdGF0aWMgaW5saW5lIHVuc2lnbmVkIGludCBvZnNf
+b2Zfbm9kZShzdHJ1Y3QgZjJmc19ub2RlICpub2RlX2JsaykKPj4+ICAgCXJldHVybiBmbGFnID4+
+IE9GRlNFVF9CSVRfU0hJRlQ7Cj4+PiAgIH0KPj4+ICAgCj4+PiArc3RhdGljIGlubGluZSBib29s
+IGlzX3NldF9ja3B0X2ZsYWdzKHN0cnVjdCBmMmZzX2NoZWNrcG9pbnQgKmNwLCB1bnNpZ25lZCBp
+bnQgZikKPj4+ICt7Cj4+PiArCXVuc2lnbmVkIGludCBja3B0X2ZsYWdzID0gbGUzMl90b19jcHUo
+Y3AtPmNrcHRfZmxhZ3MpOwo+Pj4gKwlyZXR1cm4gY2twdF9mbGFncyAmIGYgPyAxIDogMDsKPj4+
+ICt9Cj4+PiArCj4+PiAgIHN0YXRpYyBpbmxpbmUgdW5zaWduZWQgbG9uZyBfX2JpdG1hcF9zaXpl
+KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgaW50IGZsYWcpCj4+PiAgIHsKPj4+ICAgCXN0cnVj
+dCBmMmZzX2NoZWNrcG9pbnQgKmNrcHQgPSBGMkZTX0NLUFQoc2JpKTsKPj4+IEBAIC0yNTYsNiAr
+MjYyLDEzIEBAIHN0YXRpYyBpbmxpbmUgdm9pZCAqX19iaXRtYXBfcHRyKHN0cnVjdCBmMmZzX3Ni
+X2luZm8gKnNiaSwgaW50IGZsYWcpCj4+PiAgIHsKPj4+ICAgCXN0cnVjdCBmMmZzX2NoZWNrcG9p
+bnQgKmNrcHQgPSBGMkZTX0NLUFQoc2JpKTsKPj4+ICAgCWludCBvZmZzZXQ7Cj4+PiArCj4+PiAr
+CWlmIChpc19zZXRfY2twdF9mbGFncyhja3B0LCBDUF9MQVJHRV9OQVRfQklUTUFQX0ZMQUcpKSB7
+Cj4+PiArCQlvZmZzZXQgPSAoZmxhZyA9PSBTSVRfQklUTUFQKSA/Cj4+PiArCQkJbGUzMl90b19j
+cHUoY2twdC0+bmF0X3Zlcl9iaXRtYXBfYnl0ZXNpemUpIDogMDsKPj4+ICsJCXJldHVybiAmY2tw
+dC0+c2l0X25hdF92ZXJzaW9uX2JpdG1hcCArIG9mZnNldDsKPj4+ICsJfQo+Pj4gKwo+Pj4gICAJ
+aWYgKGxlMzJfdG9fY3B1KEYyRlNfUkFXX1NVUEVSKHNiaSktPmNwX3BheWxvYWQpID4gMCkgewo+
+Pj4gICAJCWlmIChmbGFnID09IE5BVF9CSVRNQVApCj4+PiAgIAkJCXJldHVybiAmY2twdC0+c2l0
+X25hdF92ZXJzaW9uX2JpdG1hcDsKPj4+IEBAIC0yNjgsMTIgKzI4MSw2IEBAIHN0YXRpYyBpbmxp
+bmUgdm9pZCAqX19iaXRtYXBfcHRyKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgaW50IGZsYWcp
+Cj4+PiAgIAl9Cj4+PiAgIH0KPj4+ICAgCj4+PiAtc3RhdGljIGlubGluZSBib29sIGlzX3NldF9j
+a3B0X2ZsYWdzKHN0cnVjdCBmMmZzX2NoZWNrcG9pbnQgKmNwLCB1bnNpZ25lZCBpbnQgZikKPj4+
+IC17Cj4+PiAtCXVuc2lnbmVkIGludCBja3B0X2ZsYWdzID0gbGUzMl90b19jcHUoY3AtPmNrcHRf
+ZmxhZ3MpOwo+Pj4gLQlyZXR1cm4gY2twdF9mbGFncyAmIGYgPyAxIDogMDsKPj4+IC19Cj4+PiAt
+Cj4+PiAgIHN0YXRpYyBpbmxpbmUgYmxvY2tfdCBfX3N0YXJ0X2NwX2FkZHIoc3RydWN0IGYyZnNf
+c2JfaW5mbyAqc2JpKQo+Pj4gICB7Cj4+PiAgIAlibG9ja190IHN0YXJ0X2FkZHIgPSBsZTMyX3Rv
+X2NwdShGMkZTX1JBV19TVVBFUihzYmkpLT5jcF9ibGthZGRyKTsKPj4+IGRpZmYgLS1naXQgYS9m
+c2NrL3Jlc2l6ZS5jIGIvZnNjay9yZXNpemUuYwo+Pj4gaW5kZXggMTQzYWQ1ZDNjMGExLi5mMzU0
+N2M4NmYzNTEgMTAwNjQ0Cj4+PiAtLS0gYS9mc2NrL3Jlc2l6ZS5jCj4+PiArKysgYi9mc2NrL3Jl
+c2l6ZS5jCj4+PiBAQCAtMTMsMTAgKzEzLDEwIEBAIHN0YXRpYyBpbnQgZ2V0X25ld19zYihzdHJ1
+Y3QgZjJmc19zdXBlcl9ibG9jayAqc2IpCj4+PiAgIHsKPj4+ICAgCXVfaW50MzJfdCB6b25lX3Np
+emVfYnl0ZXMsIHpvbmVfYWxpZ25fc3RhcnRfb2Zmc2V0Owo+Pj4gICAJdV9pbnQzMl90IGJsb2Nr
+c19mb3Jfc2l0LCBibG9ja3NfZm9yX25hdCwgYmxvY2tzX2Zvcl9zc2E7Cj4+PiAtCXVfaW50MzJf
+dCBzaXRfc2VnbWVudHMsIGRpZmYsIHRvdGFsX21ldGFfc2VnbWVudHM7Cj4+PiArCXVfaW50MzJf
+dCBzaXRfc2VnbWVudHMsIG5hdF9zZWdtZW50cywgZGlmZiwgdG90YWxfbWV0YV9zZWdtZW50czsK
+Pj4+ICAgCXVfaW50MzJfdCB0b3RhbF92YWxpZF9ibGtzX2F2YWlsYWJsZTsKPj4+ICAgCXVfaW50
+MzJfdCBzaXRfYml0bWFwX3NpemUsIG1heF9zaXRfYml0bWFwX3NpemU7Cj4+PiAtCXVfaW50MzJf
+dCBtYXhfbmF0X2JpdG1hcF9zaXplLCBtYXhfbmF0X3NlZ21lbnRzOwo+Pj4gKwl1X2ludDMyX3Qg
+bWF4X25hdF9iaXRtYXBfc2l6ZTsKPj4+ICAgCXVfaW50MzJfdCBzZWdtZW50X3NpemVfYnl0ZXMg
+PSAxIDw8IChnZXRfc2IobG9nX2Jsb2Nrc2l6ZSkgKwo+Pj4gICAJCQkJCWdldF9zYihsb2dfYmxv
+Y2tzX3Blcl9zZWcpKTsKPj4+ICAgCXVfaW50MzJfdCBibGtzX3Blcl9zZWcgPSAxIDw8IGdldF9z
+Yihsb2dfYmxvY2tzX3Blcl9zZWcpOwo+Pj4gQEAgLTQ3LDcgKzQ3LDE1IEBAIHN0YXRpYyBpbnQg
+Z2V0X25ld19zYihzdHJ1Y3QgZjJmc19zdXBlcl9ibG9jayAqc2IpCj4+PiAgIAkJCWdldF9zYihz
+ZWdtZW50X2NvdW50X3NpdCkpKSAqIGJsa3NfcGVyX3NlZzsKPj4+ICAgCWJsb2Nrc19mb3JfbmF0
+ID0gU0laRV9BTElHTih0b3RhbF92YWxpZF9ibGtzX2F2YWlsYWJsZSwKPj4+ICAgCQkJCQlOQVRf
+RU5UUllfUEVSX0JMT0NLKTsKPj4+IC0Jc2V0X3NiKHNlZ21lbnRfY291bnRfbmF0LCBTRUdfQUxJ
+R04oYmxvY2tzX2Zvcl9uYXQpKTsKPj4+ICsJbmF0X3NlZ21lbnRzID0gU0VHX0FMSUdOKGJsb2Nr
+c19mb3JfbmF0KSAqCj4+PiArCQkJCQlERUZBVUxUX05BVF9FTlRSWV9SQVRJTyAvIDEwMDsKPj4+
+ICsJc2V0X3NiKHNlZ21lbnRfY291bnRfbmF0LCBuYXRfc2VnbWVudHMgPyBuYXRfc2VnbWVudHMg
+OiAxKTsKPj4+ICsKPj4+ICsJbWF4X25hdF9iaXRtYXBfc2l6ZSA9IChnZXRfc2Ioc2VnbWVudF9j
+b3VudF9uYXQpIDw8Cj4+PiArCQkJCQlnZXRfc2IobG9nX2Jsb2Nrc19wZXJfc2VnKSkgLyA4Owo+
+Pj4gKwlzZXRfc2Ioc2VnbWVudF9jb3VudF9uYXQsIGdldF9zYihzZWdtZW50X2NvdW50X25hdCkg
+KiAyKTsKPj4+ICsKPj4+ICsJYy5sYXJnZV9uYXRfYml0bWFwID0gMTsKPj4+ICAgCj4+PiAgIAlz
+aXRfYml0bWFwX3NpemUgPSAoKGdldF9zYihzZWdtZW50X2NvdW50X3NpdCkgLyAyKSA8PAo+Pj4g
+ICAJCQkJZ2V0X3NiKGxvZ19ibG9ja3NfcGVyX3NlZykpIC8gODsKPj4+IEBAIC01NiwyNSArNjQs
+MTYgQEAgc3RhdGljIGludCBnZXRfbmV3X3NiKHN0cnVjdCBmMmZzX3N1cGVyX2Jsb2NrICpzYikK
+Pj4+ICAgCWVsc2UKPj4+ICAgCQltYXhfc2l0X2JpdG1hcF9zaXplID0gc2l0X2JpdG1hcF9zaXpl
+Owo+Pj4gICAKPj4+IC0JLyoKPj4+IC0JICogSXQgc2hvdWxkIGJlIHJlc2VydmVkIG1pbmltdW0g
+MSBzZWdtZW50IGZvciBuYXQuCj4+PiAtCSAqIFdoZW4gc2l0IGlzIHRvbyBsYXJnZSwgd2Ugc2hv
+dWxkIGV4cGFuZCBjcCBhcmVhLiBJdCByZXF1aXJlcyBtb3JlIHBhZ2VzIGZvciBjcC4KPj4+IC0J
+ICovCj4+PiAtCWlmIChtYXhfc2l0X2JpdG1hcF9zaXplID4gTUFYX1NJVF9CSVRNQVBfU0laRV9J
+Tl9DS1BUKSB7Cj4+PiAtCQltYXhfbmF0X2JpdG1hcF9zaXplID0gQ0hFQ0tTVU1fT0ZGU0VUIC0g
+c2l6ZW9mKHN0cnVjdCBmMmZzX2NoZWNrcG9pbnQpICsgMTsKPj4+IC0JCXNldF9zYihjcF9wYXls
+b2FkLCBGMkZTX0JMS19BTElHTihtYXhfc2l0X2JpdG1hcF9zaXplKSk7Cj4+PiArCS8qIHVzZSBj
+cF9wYXlsb2FkIGlmIGZyZWUgc3BhY2Ugb2YgZjJmc19jaGVja3BvaW50IGlzIG5vdCBlbm91Z2gg
+Ki8KPj4+ICsJaWYgKG1heF9zaXRfYml0bWFwX3NpemUgKyBtYXhfbmF0X2JpdG1hcF9zaXplID4K
+Pj4+ICsJCQkJCU1BWF9CSVRNQVBfU0laRV9JTl9DS1BUKSB7Cj4+PiArCQl1X2ludDMyX3QgZGlm
+ZiA9ICBtYXhfc2l0X2JpdG1hcF9zaXplICsgbWF4X25hdF9iaXRtYXBfc2l6ZSAtCj4+PiArCQkJ
+CQkJCU1BWF9CSVRNQVBfU0laRV9JTl9DS1BUOwo+Pj4gKwkJc2V0X3NiKGNwX3BheWxvYWQsIEYy
+RlNfQkxLX0FMSUdOKGRpZmYpKTsKPj4+ICAgCX0gZWxzZSB7Cj4+PiAtCQltYXhfbmF0X2JpdG1h
+cF9zaXplID0gQ0hFQ0tTVU1fT0ZGU0VUIC0gc2l6ZW9mKHN0cnVjdCBmMmZzX2NoZWNrcG9pbnQp
+ICsgMQo+Pj4gLQkJCS0gbWF4X3NpdF9iaXRtYXBfc2l6ZTsKPj4+ICAgCQlzZXRfc2IoY3BfcGF5
+bG9hZCwgMCk7Cj4+PiAgIAl9Cj4+PiAgIAo+Pj4gLQltYXhfbmF0X3NlZ21lbnRzID0gKG1heF9u
+YXRfYml0bWFwX3NpemUgKiA4KSA+Pgo+Pj4gLQkJCQkJZ2V0X3NiKGxvZ19ibG9ja3NfcGVyX3Nl
+Zyk7Cj4+PiAtCj4+PiAtCWlmIChnZXRfc2Ioc2VnbWVudF9jb3VudF9uYXQpID4gbWF4X25hdF9z
+ZWdtZW50cykKPj4+IC0JCXNldF9zYihzZWdtZW50X2NvdW50X25hdCwgbWF4X25hdF9zZWdtZW50
+cyk7Cj4+PiAtCj4+PiAgIAlzZXRfc2Ioc2VnbWVudF9jb3VudF9uYXQsIGdldF9zYihzZWdtZW50
+X2NvdW50X25hdCkgKiAyKTsKPj4+ICAgCj4+PiAgIAlzZXRfc2Ioc3NhX2Jsa2FkZHIsIGdldF9z
+YihuYXRfYmxrYWRkcikgKwo+Pj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvZjJmc19mcy5oIGIvaW5j
+bHVkZS9mMmZzX2ZzLmgKPj4+IGluZGV4IDQ3MzkwODVlZDk4Zi4uZWRmMzUxNDEyNzAyIDEwMDY0
+NAo+Pj4gLS0tIGEvaW5jbHVkZS9mMmZzX2ZzLmgKPj4+ICsrKyBiL2luY2x1ZGUvZjJmc19mcy5o
+Cj4+PiBAQCAtMzYyLDYgKzM2Miw3IEBAIHN0cnVjdCBmMmZzX2NvbmZpZ3VyYXRpb24gewo+Pj4g
+ICAJaW50IHByZWVuX21vZGU7Cj4+PiAgIAlpbnQgcm87Cj4+PiAgIAlpbnQgcHJlc2VydmVfbGlt
+aXRzOwkJLyogcHJlc2VydmUgcXVvdGEgbGltaXRzICovCj4+PiArCWludCBsYXJnZV9uYXRfYml0
+bWFwOwo+Pj4gICAJX19sZTMyIGZlYXR1cmU7CQkJLyogZGVmaW5lZCBmZWF0dXJlcyAqLwo+Pj4g
+ICAKPj4+ICAgCS8qIGRlZnJhZ21lbnRhdGlvbiBwYXJhbWV0ZXJzICovCj4+PiBAQCAtNjEzLDYg
+KzYxNCw3IEBAIHN0cnVjdCBmMmZzX3N1cGVyX2Jsb2NrIHsKPj4+ICAgLyoKPj4+ICAgICogRm9y
+IGNoZWNrcG9pbnQKPj4+ICAgICovCj4+PiArI2RlZmluZSBDUF9MQVJHRV9OQVRfQklUTUFQX0ZM
+QUcJMHgwMDAwMDIwMAo+Pj4gICAjZGVmaW5lIENQX1RSSU1NRURfRkxBRwkJMHgwMDAwMDEwMAo+
+Pj4gICAjZGVmaW5lIENQX05BVF9CSVRTX0ZMQUcJMHgwMDAwMDA4MAo+Pj4gICAjZGVmaW5lIENQ
+X0NSQ19SRUNPVkVSWV9GTEFHCTB4MDAwMDAwNDAKPj4+IEBAIC02NTcsOCArNjU5LDggQEAgc3Ry
+dWN0IGYyZnNfY2hlY2twb2ludCB7Cj4+PiAgIAl1bnNpZ25lZCBjaGFyIHNpdF9uYXRfdmVyc2lv
+bl9iaXRtYXBbMV07Cj4+PiAgIH0gX19hdHRyaWJ1dGVfXygocGFja2VkKSk7Cj4+PiAgIAo+Pj4g
+LSNkZWZpbmUgTUFYX1NJVF9CSVRNQVBfU0laRV9JTl9DS1BUCVwKPj4+IC0JKENIRUNLU1VNX09G
+RlNFVCAtIHNpemVvZihzdHJ1Y3QgZjJmc19jaGVja3BvaW50KSArIDEgLSA2NCkKPj4+ICsjZGVm
+aW5lIE1BWF9CSVRNQVBfU0laRV9JTl9DS1BUCVwKPj4+ICsJKENIRUNLU1VNX09GRlNFVCAtIHNp
+emVvZihzdHJ1Y3QgZjJmc19jaGVja3BvaW50KSArIDEpCj4+PiAgIAo+Pj4gICAvKgo+Pj4gICAg
+KiBGb3Igb3JwaGFuIGlub2RlIG1hbmFnZW1lbnQKPj4+IEBAIC04NDYsNiArODQ4LDggQEAgc3Ry
+dWN0IGYyZnNfbm9kZSB7Cj4+PiAgICNkZWZpbmUgTkFUX0VOVFJZX1BFUl9CTE9DSyAoUEFHRV9D
+QUNIRV9TSVpFIC8gc2l6ZW9mKHN0cnVjdCBmMmZzX25hdF9lbnRyeSkpCj4+PiAgICNkZWZpbmUg
+TkFUX0JMT0NLX09GRlNFVChzdGFydF9uaWQpIChzdGFydF9uaWQgLyBOQVRfRU5UUllfUEVSX0JM
+T0NLKQo+Pj4gICAKPj4+ICsjZGVmaW5lIERFRkFVTFRfTkFUX0VOVFJZX1JBVElPCQkyMAo+Pj4g
+Kwo+Pj4gICAjaWZkZWYgQU5EUk9JRF9XSU5ET1dTX0hPU1QKPj4+ICAgI3ByYWdtYSBwYWNrKDEp
+Cj4+PiAgICNlbmRpZgo+Pj4gZGlmZiAtLWdpdCBhL2xpYi9saWJmMmZzLmMgYi9saWIvbGliZjJm
+cy5jCj4+PiBpbmRleCBmZmRiY2NiMzQ2MjcuLmU4YjE4NDJiNzM5MSAxMDA2NDQKPj4+IC0tLSBh
+L2xpYi9saWJmMmZzLmMKPj4+ICsrKyBiL2xpYi9saWJmMmZzLmMKPj4+IEBAIC02MjMsNiArNjIz
+LDcgQEAgdm9pZCBmMmZzX2luaXRfY29uZmlndXJhdGlvbih2b2lkKQo+Pj4gICAJYy5ybyA9IDA7
+Cj4+PiAgIAljLmtkID0gLTE7Cj4+PiAgIAljLmRyeV9ydW4gPSAwOwo+Pj4gKwljLmxhcmdlX25h
+dF9iaXRtYXAgPSAwOwo+Pj4gICAJYy5maXhlZF90aW1lID0gLTE7Cj4+PiAgIH0KPj4+ICAgCj4+
+PiBkaWZmIC0tZ2l0IGEvbWtmcy9mMmZzX2Zvcm1hdC5jIGIvbWtmcy9mMmZzX2Zvcm1hdC5jCj4+
+PiBpbmRleCBhMTMwMDAxODQzMDAuLjIzZWFmNDBjNTk2MiAxMDA2NDQKPj4+IC0tLSBhL21rZnMv
+ZjJmc19mb3JtYXQuYwo+Pj4gKysrIGIvbWtmcy9mMmZzX2Zvcm1hdC5jCj4+PiBAQCAtMTUxLDEz
+ICsxNTEsMTMgQEAgc3RhdGljIGludCBmMmZzX3ByZXBhcmVfc3VwZXJfYmxvY2sodm9pZCkKPj4+
+ICAgCXVfaW50MzJfdCBsb2dfc2VjdG9yc2l6ZSwgbG9nX3NlY3RvcnNfcGVyX2Jsb2NrOwo+Pj4g
+ICAJdV9pbnQzMl90IGxvZ19ibG9ja3NpemUsIGxvZ19ibGtzX3Blcl9zZWc7Cj4+PiAgIAl1X2lu
+dDMyX3Qgc2VnbWVudF9zaXplX2J5dGVzLCB6b25lX3NpemVfYnl0ZXM7Cj4+PiAtCXVfaW50MzJf
+dCBzaXRfc2VnbWVudHM7Cj4+PiArCXVfaW50MzJfdCBzaXRfc2VnbWVudHMsIG5hdF9zZWdtZW50
+czsKPj4+ICAgCXVfaW50MzJfdCBibG9ja3NfZm9yX3NpdCwgYmxvY2tzX2Zvcl9uYXQsIGJsb2Nr
+c19mb3Jfc3NhOwo+Pj4gICAJdV9pbnQzMl90IHRvdGFsX3ZhbGlkX2Jsa3NfYXZhaWxhYmxlOwo+
+Pj4gICAJdV9pbnQ2NF90IHpvbmVfYWxpZ25fc3RhcnRfb2Zmc2V0LCBkaWZmOwo+Pj4gICAJdV9p
+bnQ2NF90IHRvdGFsX21ldGFfem9uZXMsIHRvdGFsX21ldGFfc2VnbWVudHM7Cj4+PiAgIAl1X2lu
+dDMyX3Qgc2l0X2JpdG1hcF9zaXplLCBtYXhfc2l0X2JpdG1hcF9zaXplOwo+Pj4gLQl1X2ludDMy
+X3QgbWF4X25hdF9iaXRtYXBfc2l6ZSwgbWF4X25hdF9zZWdtZW50czsKPj4+ICsJdV9pbnQzMl90
+IG1heF9uYXRfYml0bWFwX3NpemU7Cj4+PiAgIAl1X2ludDMyX3QgdG90YWxfem9uZXM7Cj4+PiAg
+IAl1X2ludDMyX3QgbmV4dF9pbm87Cj4+PiAgIAllbnVtIHF1b3RhX3R5cGUgcXR5cGU7Cj4+PiBA
+QCAtMjcyLDcgKzI3MiwxOCBAQCBzdGF0aWMgaW50IGYyZnNfcHJlcGFyZV9zdXBlcl9ibG9jayh2
+b2lkKQo+Pj4gICAJYmxvY2tzX2Zvcl9uYXQgPSBTSVpFX0FMSUdOKHRvdGFsX3ZhbGlkX2Jsa3Nf
+YXZhaWxhYmxlLAo+Pj4gICAJCQlOQVRfRU5UUllfUEVSX0JMT0NLKTsKPj4+ICAgCj4+PiAtCXNl
+dF9zYihzZWdtZW50X2NvdW50X25hdCwgU0VHX0FMSUdOKGJsb2Nrc19mb3JfbmF0KSk7Cj4+PiAr
+CW5hdF9zZWdtZW50cyA9IFNFR19BTElHTihibG9ja3NfZm9yX25hdCkgKgo+Pj4gKwkJCQkJREVG
+QVVMVF9OQVRfRU5UUllfUkFUSU8gLyAxMDA7Cj4+PiArCj4+PiArCXNldF9zYihzZWdtZW50X2Nv
+dW50X25hdCwgbmF0X3NlZ21lbnRzID8gbmF0X3NlZ21lbnRzIDogMSk7Cj4+PiArCj4+PiArCW1h
+eF9uYXRfYml0bWFwX3NpemUgPSAoZ2V0X3NiKHNlZ21lbnRfY291bnRfbmF0KSA8PAo+Pj4gKwkJ
+CQkJbG9nX2Jsa3NfcGVyX3NlZykgLyA4Owo+Pj4gKwo+Pj4gKwlzZXRfc2Ioc2VnbWVudF9jb3Vu
+dF9uYXQsIGdldF9zYihzZWdtZW50X2NvdW50X25hdCkgKiAyKTsKPj4+ICsKPj4+ICsJYy5sYXJn
+ZV9uYXRfYml0bWFwID0gMTsKPj4+ICsKPj4+ICAgCS8qCj4+PiAgIAkgKiBUaGUgbnVtYmVyIG9m
+IG5vZGUgc2VnbWVudHMgc2hvdWxkIG5vdCBiZSBleGNlZWRlZCBhICJUaHJlc2hvbGQiLgo+Pj4g
+ICAJICogVGhpcyBudW1iZXIgcmVzaXplcyBOQVQgYml0bWFwIGFyZWEgaW4gYSBDUCBwYWdlLgo+
+Pj4gQEAgLTI4NiwyOSArMjk3LDE2IEBAIHN0YXRpYyBpbnQgZjJmc19wcmVwYXJlX3N1cGVyX2Js
+b2NrKHZvaWQpCj4+PiAgIAllbHNlCj4+PiAgIAkJbWF4X3NpdF9iaXRtYXBfc2l6ZSA9IHNpdF9i
+aXRtYXBfc2l6ZTsKPj4+ICAgCj4+PiAtCS8qCj4+PiAtCSAqIEl0IHNob3VsZCBiZSByZXNlcnZl
+ZCBtaW5pbXVtIDEgc2VnbWVudCBmb3IgbmF0Lgo+Pj4gLQkgKiBXaGVuIHNpdCBpcyB0b28gbGFy
+Z2UsIHdlIHNob3VsZCBleHBhbmQgY3AgYXJlYS4gSXQgcmVxdWlyZXMgbW9yZQo+Pj4gLQkgKiBw
+YWdlcyBmb3IgY3AuCj4+PiAtCSAqLwo+Pj4gLQlpZiAobWF4X3NpdF9iaXRtYXBfc2l6ZSA+IE1B
+WF9TSVRfQklUTUFQX1NJWkVfSU5fQ0tQVCkgewo+Pj4gLQkJbWF4X25hdF9iaXRtYXBfc2l6ZSA9
+IENIRUNLU1VNX09GRlNFVCAtCj4+PiAtCQkJCXNpemVvZihzdHJ1Y3QgZjJmc19jaGVja3BvaW50
+KSArIDE7Cj4+PiAtCQlzZXRfc2IoY3BfcGF5bG9hZCwgRjJGU19CTEtfQUxJR04obWF4X3NpdF9i
+aXRtYXBfc2l6ZSkpOwo+Pj4gKwkvKiB1c2UgY3BfcGF5bG9hZCBpZiBmcmVlIHNwYWNlIG9mIGYy
+ZnNfY2hlY2twb2ludCBpcyBub3QgZW5vdWdoICovCj4+PiArCWlmIChtYXhfc2l0X2JpdG1hcF9z
+aXplICsgbWF4X25hdF9iaXRtYXBfc2l6ZSA+Cj4+PiArCQkJCQlNQVhfQklUTUFQX1NJWkVfSU5f
+Q0tQVCkgewo+Pj4gKwkJdV9pbnQzMl90IGRpZmYgPSAgbWF4X3NpdF9iaXRtYXBfc2l6ZSArIG1h
+eF9uYXRfYml0bWFwX3NpemUgLQo+Pj4gKwkJCQkJCQlNQVhfQklUTUFQX1NJWkVfSU5fQ0tQVDsK
+Pj4+ICsJCXNldF9zYihjcF9wYXlsb2FkLCBGMkZTX0JMS19BTElHTihkaWZmKSk7Cj4+PiAgIAl9
+IGVsc2Ugewo+Pj4gLQkJbWF4X25hdF9iaXRtYXBfc2l6ZSA9Cj4+PiAtCQkJQ0hFQ0tTVU1fT0ZG
+U0VUIC0gc2l6ZW9mKHN0cnVjdCBmMmZzX2NoZWNrcG9pbnQpICsgMQo+Pj4gLQkJCS0gbWF4X3Np
+dF9iaXRtYXBfc2l6ZTsKPj4+ICAgCQlzZXRfc2IoY3BfcGF5bG9hZCwgMCk7Cj4+PiAgIAl9Cj4+
+PiAgIAo+Pj4gLQltYXhfbmF0X3NlZ21lbnRzID0gKG1heF9uYXRfYml0bWFwX3NpemUgKiA4KSA+
+PiBsb2dfYmxrc19wZXJfc2VnOwo+Pj4gLQo+Pj4gLQlpZiAoZ2V0X3NiKHNlZ21lbnRfY291bnRf
+bmF0KSA+IG1heF9uYXRfc2VnbWVudHMpCj4+PiAtCQlzZXRfc2Ioc2VnbWVudF9jb3VudF9uYXQs
+IG1heF9uYXRfc2VnbWVudHMpOwo+Pj4gLQo+Pj4gLQlzZXRfc2Ioc2VnbWVudF9jb3VudF9uYXQs
+IGdldF9zYihzZWdtZW50X2NvdW50X25hdCkgKiAyKTsKPj4+IC0KPj4+ICAgCXNldF9zYihzc2Ff
+YmxrYWRkciwgZ2V0X3NiKG5hdF9ibGthZGRyKSArIGdldF9zYihzZWdtZW50X2NvdW50X25hdCkg
+Kgo+Pj4gICAJCQljLmJsa3NfcGVyX3NlZyk7Cj4+PiAgIAo+Pj4gQEAgLTYyMiw2ICs2MjAsOSBA
+QCBzdGF0aWMgaW50IGYyZnNfd3JpdGVfY2hlY2tfcG9pbnRfcGFjayh2b2lkKQo+Pj4gICAJaWYg
+KGMudHJpbW1lZCkKPj4+ICAgCQlmbGFncyB8PSBDUF9UUklNTUVEX0ZMQUc7Cj4+PiAgIAo+Pj4g
+KwlpZiAoYy5sYXJnZV9uYXRfYml0bWFwKQo+Pj4gKwkJZmxhZ3MgfD0gQ1BfTEFSR0VfTkFUX0JJ
+VE1BUF9GTEFHOwo+Pj4gKwo+Pj4gICAJc2V0X2NwKGNrcHRfZmxhZ3MsIGZsYWdzKTsKPj4+ICAg
+CXNldF9jcChjcF9wYWNrX3N0YXJ0X3N1bSwgMSArIGdldF9zYihjcF9wYXlsb2FkKSk7Cj4+PiAg
+IAlzZXRfY3AodmFsaWRfbm9kZV9jb3VudCwgMSArIHF1b3RhX2ludW0pOwo+Pj4gLS0gCj4+PiAy
+LjE1LjAuNTUuZ2MyZWNlOWRjNGRlNgo+PiAuCj4+Cj4KPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
+PiBDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3Js
+ZCdzIG1vc3QKPiBlbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0u
+bGluay9zbGFzaGRvdAo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKPiBMaW51eC1mMmZzLWRldmVs
+QGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+IGh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xp
+c3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQ2hl
+Y2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBt
+b3N0CmVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3Ns
+YXNoZG90Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxp
+bnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNl
+Zm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xp
+bnV4LWYyZnMtZGV2ZWwK
