@@ -1,23 +1,24 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 65/99] dax: Fix sparse warning
-Date: Wed, 17 Jan 2018 12:21:29 -0800
-Message-ID: <20180117202203.19756-66-willy@infradead.org>
+Subject: [PATCH v6 39/99] mm: Convert khugepaged_scan_shmem to
+ XArray
+Date: Wed, 17 Jan 2018 12:21:03 -0800
+Message-ID: <20180117202203.19756-40-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
  by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <willy@infradead.org>) id 1ebuEf-0003B9-7l
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jan 2018 20:23:01 +0000
+ (envelope-from <willy@infradead.org>) id 1ebuEU-00033r-2z
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jan 2018 20:22:50 +0000
 Received: from bombadil.infradead.org ([65.50.211.133])
- by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ebuEe-0002yo-EC
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jan 2018 20:23:01 +0000
+ id 1ebuET-0007h1-Df
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jan 2018 20:22:50 +0000
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,83 +34,57 @@ Cc: linux-s390@vger.kernel.org, David Howells <dhowells@redhat.com>, linux-nilfs
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-sparse doesn't know that follow_pte_pmd() conditionally acquires the ptl,
-because it's in a separate compilation unit.  Move follow_pte_pmd() to
-mm.h where sparse can see it.
+Slightly shorter and easier to read code.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- include/linux/mm.h | 15 ++++++++++++++-
- mm/memory.c        | 16 +---------------
- 2 files changed, 15 insertions(+), 16 deletions(-)
+ mm/khugepaged.c | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index fe1ee4313add..9c384c486edf 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1314,7 +1314,7 @@ int copy_page_range(struct mm_struct *dst, struct mm_struct *src,
- 			struct vm_area_struct *vma);
- void unmap_mapping_range(struct address_space *mapping,
- 		loff_t const holebegin, loff_t const holelen, int even_cows);
--int follow_pte_pmd(struct mm_struct *mm, unsigned long address,
-+int __follow_pte_pmd(struct mm_struct *mm, unsigned long address,
- 			     unsigned long *start, unsigned long *end,
- 			     pte_t **ptepp, pmd_t **pmdpp, spinlock_t **ptlp);
- int follow_pfn(struct vm_area_struct *vma, unsigned long address,
-@@ -1324,6 +1324,19 @@ int follow_phys(struct vm_area_struct *vma, unsigned long address,
- int generic_access_phys(struct vm_area_struct *vma, unsigned long addr,
- 			void *buf, int len, int write);
- 
-+static inline int follow_pte_pmd(struct mm_struct *mm, unsigned long address,
-+			     unsigned long *start, unsigned long *end,
-+			     pte_t **ptepp, pmd_t **pmdpp, spinlock_t **ptlp)
-+{
-+	int res;
-+
-+	/* (void) is needed to make gcc happy */
-+	(void) __cond_lock(*ptlp,
-+			   !(res = __follow_pte_pmd(mm, address, start, end,
-+						    ptepp, pmdpp, ptlp)));
-+	return res;
-+}
-+
- static inline void unmap_shared_mapping_range(struct address_space *mapping,
- 		loff_t const holebegin, loff_t const holelen)
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 9f49d0cd61c2..15f1b2d81a69 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1534,8 +1534,7 @@ static void khugepaged_scan_shmem(struct mm_struct *mm,
+ 		pgoff_t start, struct page **hpage)
  {
-diff --git a/mm/memory.c b/mm/memory.c
-index ca5674cbaff2..66184601ac03 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4201,7 +4201,7 @@ int __pmd_alloc(struct mm_struct *mm, pud_t *pud, unsigned long address)
- }
- #endif /* __PAGETABLE_PMD_FOLDED */
- 
--static int __follow_pte_pmd(struct mm_struct *mm, unsigned long address,
-+int __follow_pte_pmd(struct mm_struct *mm, unsigned long address,
- 			    unsigned long *start, unsigned long *end,
- 			    pte_t **ptepp, pmd_t **pmdpp, spinlock_t **ptlp)
- {
-@@ -4278,20 +4278,6 @@ static inline int follow_pte(struct mm_struct *mm, unsigned long address,
- 	return res;
- }
- 
--int follow_pte_pmd(struct mm_struct *mm, unsigned long address,
--			     unsigned long *start, unsigned long *end,
--			     pte_t **ptepp, pmd_t **pmdpp, spinlock_t **ptlp)
--{
--	int res;
+ 	struct page *page = NULL;
+-	struct radix_tree_iter iter;
+-	void **slot;
++	XA_STATE(xas, &mapping->pages, start);
+ 	int present, swap;
+ 	int node = NUMA_NO_NODE;
+ 	int result = SCAN_SUCCEED;
+@@ -1544,17 +1543,11 @@ static void khugepaged_scan_shmem(struct mm_struct *mm,
+ 	swap = 0;
+ 	memset(khugepaged_node_load, 0, sizeof(khugepaged_node_load));
+ 	rcu_read_lock();
+-	radix_tree_for_each_slot(slot, &mapping->pages, &iter, start) {
+-		if (iter.index >= start + HPAGE_PMD_NR)
+-			break;
 -
--	/* (void) is needed to make gcc happy */
--	(void) __cond_lock(*ptlp,
--			   !(res = __follow_pte_pmd(mm, address, start, end,
--						    ptepp, pmdpp, ptlp)));
--	return res;
--}
--EXPORT_SYMBOL(follow_pte_pmd);
--
- /**
-  * follow_pfn - look up PFN at a user virtual address
-  * @vma: memory mapping
+-		page = radix_tree_deref_slot(slot);
+-		if (radix_tree_deref_retry(page)) {
+-			slot = radix_tree_iter_retry(&iter);
++	xas_for_each(&xas, page, start + HPAGE_PMD_NR - 1) {
++		if (xas_retry(&xas, page))
+ 			continue;
+-		}
+ 
+-		if (radix_tree_exception(page)) {
++		if (xa_is_value(page)) {
+ 			if (++swap > khugepaged_max_ptes_swap) {
+ 				result = SCAN_EXCEED_SWAP_PTE;
+ 				break;
+@@ -1593,7 +1586,7 @@ static void khugepaged_scan_shmem(struct mm_struct *mm,
+ 		present++;
+ 
+ 		if (need_resched()) {
+-			slot = radix_tree_iter_resume(slot, &iter);
++			xas_pause(&xas);
+ 			cond_resched_rcu();
+ 		}
+ 	}
 -- 
 2.15.1
 
