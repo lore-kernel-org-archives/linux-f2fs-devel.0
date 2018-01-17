@@ -1,23 +1,23 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 16/99] xarray: Add xas_create_range
-Date: Wed, 17 Jan 2018 12:20:40 -0800
-Message-ID: <20180117202203.19756-17-willy@infradead.org>
+Subject: [PATCH v6 65/99] dax: Fix sparse warning
+Date: Wed, 17 Jan 2018 12:21:29 -0800
+Message-ID: <20180117202203.19756-66-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <willy@infradead.org>) id 1ebuEJ-0002Mv-Ll
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jan 2018 20:22:39 +0000
+ (envelope-from <willy@infradead.org>) id 1ebuEf-0003B9-7l
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jan 2018 20:23:01 +0000
 Received: from bombadil.infradead.org ([65.50.211.133])
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ebuEI-0003vr-TV
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jan 2018 20:22:39 +0000
+ id 1ebuEe-0002yo-EC
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jan 2018 20:23:01 +0000
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,61 +33,83 @@ Cc: linux-s390@vger.kernel.org, David Howells <dhowells@redhat.com>, linux-nilfs
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-This hopefully temporary function is useful for users who have not yet
-been converted to multi-index entries.
+sparse doesn't know that follow_pte_pmd() conditionally acquires the ptl,
+because it's in a separate compilation unit.  Move follow_pte_pmd() to
+mm.h where sparse can see it.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- include/linux/xarray.h |  2 ++
- lib/xarray.c           | 22 ++++++++++++++++++++++
- 2 files changed, 24 insertions(+)
+ include/linux/mm.h | 15 ++++++++++++++-
+ mm/memory.c        | 16 +---------------
+ 2 files changed, 15 insertions(+), 16 deletions(-)
 
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index 01ce313fc00e..acb6d02ff194 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -705,6 +705,8 @@ void xas_init_tags(const struct xa_state *);
- bool xas_nomem(struct xa_state *, gfp_t);
- void xas_pause(struct xa_state *);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index fe1ee4313add..9c384c486edf 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1314,7 +1314,7 @@ int copy_page_range(struct mm_struct *dst, struct mm_struct *src,
+ 			struct vm_area_struct *vma);
+ void unmap_mapping_range(struct address_space *mapping,
+ 		loff_t const holebegin, loff_t const holelen, int even_cows);
+-int follow_pte_pmd(struct mm_struct *mm, unsigned long address,
++int __follow_pte_pmd(struct mm_struct *mm, unsigned long address,
+ 			     unsigned long *start, unsigned long *end,
+ 			     pte_t **ptepp, pmd_t **pmdpp, spinlock_t **ptlp);
+ int follow_pfn(struct vm_area_struct *vma, unsigned long address,
+@@ -1324,6 +1324,19 @@ int follow_phys(struct vm_area_struct *vma, unsigned long address,
+ int generic_access_phys(struct vm_area_struct *vma, unsigned long addr,
+ 			void *buf, int len, int write);
  
-+void xas_create_range(struct xa_state *, unsigned long max);
-+
- /**
-  * xas_reload() - Refetch an entry from the xarray.
-  * @xas: XArray operation state.
-diff --git a/lib/xarray.c b/lib/xarray.c
-index e8ece1fff9fd..c044373d6893 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -612,6 +612,28 @@ void *xas_create(struct xa_state *xas)
- }
- EXPORT_SYMBOL_GPL(xas_create);
- 
-+/**
-+ * xas_create_range() - Ensure that stores to this range will succeed
-+ * @xas: XArray operation state.
-+ * @max: The highest index to create a slot for.
-+ *
-+ * Creates all of the slots in the range between the current position of
-+ * @xas and @max.  This is for the benefit of users who have not yet been
-+ * converted to multi-index entries.
-+ *
-+ * The implementation is naive.
-+ */
-+void xas_create_range(struct xa_state *xas, unsigned long max)
++static inline int follow_pte_pmd(struct mm_struct *mm, unsigned long address,
++			     unsigned long *start, unsigned long *end,
++			     pte_t **ptepp, pmd_t **pmdpp, spinlock_t **ptlp)
 +{
-+	XA_STATE(tmp, xas->xa, xas->xa_index);
++	int res;
 +
-+	do {
-+		xas_create(&tmp);
-+		xas_set(&tmp, tmp.xa_index + XA_CHUNK_SIZE);
-+	} while (tmp.xa_index < max);
++	/* (void) is needed to make gcc happy */
++	(void) __cond_lock(*ptlp,
++			   !(res = __follow_pte_pmd(mm, address, start, end,
++						    ptepp, pmdpp, ptlp)));
++	return res;
 +}
-+EXPORT_SYMBOL_GPL(xas_create_range);
 +
- static void store_siblings(struct xa_state *xas, void *entry, void *curr,
- 				int *countp, int *valuesp)
+ static inline void unmap_shared_mapping_range(struct address_space *mapping,
+ 		loff_t const holebegin, loff_t const holelen)
  {
+diff --git a/mm/memory.c b/mm/memory.c
+index ca5674cbaff2..66184601ac03 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4201,7 +4201,7 @@ int __pmd_alloc(struct mm_struct *mm, pud_t *pud, unsigned long address)
+ }
+ #endif /* __PAGETABLE_PMD_FOLDED */
+ 
+-static int __follow_pte_pmd(struct mm_struct *mm, unsigned long address,
++int __follow_pte_pmd(struct mm_struct *mm, unsigned long address,
+ 			    unsigned long *start, unsigned long *end,
+ 			    pte_t **ptepp, pmd_t **pmdpp, spinlock_t **ptlp)
+ {
+@@ -4278,20 +4278,6 @@ static inline int follow_pte(struct mm_struct *mm, unsigned long address,
+ 	return res;
+ }
+ 
+-int follow_pte_pmd(struct mm_struct *mm, unsigned long address,
+-			     unsigned long *start, unsigned long *end,
+-			     pte_t **ptepp, pmd_t **pmdpp, spinlock_t **ptlp)
+-{
+-	int res;
+-
+-	/* (void) is needed to make gcc happy */
+-	(void) __cond_lock(*ptlp,
+-			   !(res = __follow_pte_pmd(mm, address, start, end,
+-						    ptepp, pmdpp, ptlp)));
+-	return res;
+-}
+-EXPORT_SYMBOL(follow_pte_pmd);
+-
+ /**
+  * follow_pfn - look up PFN at a user virtual address
+  * @vma: memory mapping
 -- 
 2.15.1
 
