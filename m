@@ -1,33 +1,73 @@
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Subject: Re: [PATCH v6 20/99] ida: Convert to XArray
-Date: Wed, 17 Jan 2018 22:17:55 +0100
-Message-ID: <e8c42206-e4d7-dda3-2bb7-2c1faa6ff5be@physik.fu-berlin.de>
-References: <20180117202203.19756-1-willy@infradead.org>
- <20180117202203.19756-21-willy@infradead.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v2] f2fs: stop gc/discard thread after fs shutdown
+Date: Thu, 18 Jan 2018 17:23:29 +0800
+Message-ID: <20180118092329.96305-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <20180117202203.19756-21-willy@infradead.org>
-Content-Language: en-US
-Sender: linux-sh-owner@vger.kernel.org
-To: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Matthew!
+Once filesystem shuts down, daemons like gc/discard thread should be
+aware of it, and do exit, in addtion, drop all cached pending discard
+commands and turn off real-time discard mode.
 
-On 01/17/2018 09:20 PM, Matthew Wilcox wrote:
-> Use the xarray infrstructure like we used the radix tree infrastructure.
-> This lets us get rid of idr_get_free() from the radix tree code.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v2:
+- fix to stop daemons with the right way.
+ fs/f2fs/f2fs.h    | 1 +
+ fs/f2fs/file.c    | 7 +++++++
+ fs/f2fs/segment.c | 5 +++++
+ 3 files changed, 13 insertions(+)
 
-There's a typo: infrstructure => infratructure
-
-Cheers,
-Adrian
-
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 5396583b7c85..057e987fa916 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2732,6 +2732,7 @@ void invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr);
+ bool is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr);
+ void init_discard_policy(struct discard_policy *dpolicy, int discard_type,
+ 						unsigned int granularity);
++void drop_discard_cmd(struct f2fs_sb_info *sbi);
+ void stop_discard_thread(struct f2fs_sb_info *sbi);
+ bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi);
+ void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index f1b5cc6a86bd..d7721debebb9 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1881,6 +1881,13 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
++
++	stop_gc_thread(sbi);
++	stop_discard_thread(sbi);
++
++	drop_discard_cmd(sbi);
++	clear_opt(sbi, DISCARD);
++
+ 	f2fs_update_time(sbi, REQ_TIME);
+ out:
+ 	mnt_drop_write_file(filp);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index a0f36b2761e9..9f7a932c60f5 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1263,6 +1263,11 @@ static bool __drop_discard_cmd(struct f2fs_sb_info *sbi)
+ 	return dropped;
+ }
+ 
++void drop_discard_cmd(struct f2fs_sb_info *sbi)
++{
++	__drop_discard_cmd(sbi);
++}
++
+ static unsigned int __wait_one_discard_bio(struct f2fs_sb_info *sbi,
+ 							struct discard_cmd *dc)
+ {
 -- 
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer - glaubitz@debian.org
-`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+2.15.0.55.gc2ece9dc4de6
