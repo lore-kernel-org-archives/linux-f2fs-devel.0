@@ -1,36 +1,66 @@
-From: Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v6 00/99] XArray version 6
-Date: Thu, 18 Jan 2018 09:02:11 -0800
-Message-ID: <20180118170211.GB23800@bombadil.infradead.org>
-References: <20180117202203.19756-1-willy@infradead.org>
- <20180118160749.GP13726@twin.jikos.cz>
- <20180118164843.GA23800@bombadil.infradead.org>
- <20180118165612.GS13726@twin.jikos.cz>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] fsck.f2fs: avoid quota fix causing roll-forward
+ drop
+Date: Thu, 18 Jan 2018 22:31:10 -0800
+Message-ID: <20180119063110.1952-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20180118165612.GS13726@twin.jikos.cz>
-Sender: owner-linux-mm@kvack.org
-To: dsterba@suse.cz, linux-kernel@vger.kernel.org, Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
+ helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <jaegeuk@kernel.org>) id 1ecQCs-0005ZX-M0
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 19 Jan 2018 06:31:18 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1ecQCr-0000ww-V4
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 19 Jan 2018 06:31:18 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-On Thu, Jan 18, 2018 at 05:56:12PM +0100, David Sterba wrote:
-> On Thu, Jan 18, 2018 at 08:48:43AM -0800, Matthew Wilcox wrote:
-> > Thank you!  I shall attempt to debug.  Was this with a btrfs root
-> > filesystem?  I'm most suspicious of those patches right now, since they've
-> > received next to no testing.  I'm going to put together a smaller patchset
-> > which just does the page cache conversion and nothing else in the hope
-> > that we can get that merged this year.
-> 
-> No, the root is ext3 and there was no btrfs filesytem mounted at the
-> time.
+If we write checkpoint, we'll drop roll-forward recovery, since crc in
+checkpoint will be changed. Let's avoid it as much as possible.
 
-Found it; I was missing a prerequisite patch.  New (smaller) patch series
-coming soon.
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fsck/fsck.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 1211729..ebd21d0 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -1690,12 +1690,10 @@ int fsck_chk_quota_files(struct f2fs_sb_info *sbi)
+ 							qtype, ino);
+ 			f2fs_filesize_update(sbi, ino, 0);
+ 			ret = quota_write_inode(sbi, qtype);
+-			if (!ret) {
+-				c.bug_on = 1;
++			if (!ret)
+ 				DBG(1, "OK\n");
+-			} else {
++			else
+ 				ASSERT_MSG("Unable to write quota file");
+-			}
+ 		} else {
+ 			ASSERT_MSG("Quota file is missing or invalid"
+ 					" quota file content found.");
+-- 
+2.15.0.531.g2ccb3012c9-goog
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
