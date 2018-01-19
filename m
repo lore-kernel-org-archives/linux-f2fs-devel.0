@@ -1,66 +1,154 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] fsck.f2fs: avoid quota fix causing roll-forward
- drop
-Date: Thu, 18 Jan 2018 22:31:10 -0800
-Message-ID: <20180119063110.1952-1-jaegeuk@kernel.org>
+From: Weichao Guo <guoweichao@huawei.com>
+Subject: [PATCH RFC] f2fs: add PRE2 to mark segments free to one checkpoint but obsolete to the other
+Date: Sat, 20 Jan 2018 07:29:03 +0800
+Message-ID: <20180119232903.40922-1-guoweichao@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
- helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1ecQCs-0005ZX-M0
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 19 Jan 2018 06:31:18 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ecQCr-0000ww-V4
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 19 Jan 2018 06:31:18 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: jaegeuk@kernel.org, chao@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, heyunlei@huawei.com, Weichao Guo <guoweichao@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If we write checkpoint, we'll drop roll-forward recovery, since crc in
-checkpoint will be changed. Let's avoid it as much as possible.
+Currently, we set prefree segments as free ones after writing
+a checkpoint, then believe the segments could be used safely.
+However, if a sudden power-off coming and the newer checkpoint
+corrupted due to hardware issues at the same time, we will try
+to use the old checkpoint and may face an inconsistent file
+system status.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+How about add an PRE2 status for prefree segments, and make
+sure the segments could be used safely to both checkpoints?
+Or any better solutions? Or this is not a problem?
+
+Look forward to your comments!
+
+Signed-off-by: Weichao Guo <guoweichao@huawei.com>
 ---
- fsck/fsck.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ fs/f2fs/gc.c      | 11 +++++++++--
+ fs/f2fs/segment.c | 21 ++++++++++++++++++---
+ fs/f2fs/segment.h |  6 ++++++
+ 3 files changed, 33 insertions(+), 5 deletions(-)
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 1211729..ebd21d0 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -1690,12 +1690,10 @@ int fsck_chk_quota_files(struct f2fs_sb_info *sbi)
- 							qtype, ino);
- 			f2fs_filesize_update(sbi, ino, 0);
- 			ret = quota_write_inode(sbi, qtype);
--			if (!ret) {
--				c.bug_on = 1;
-+			if (!ret)
- 				DBG(1, "OK\n");
--			} else {
-+			else
- 				ASSERT_MSG("Unable to write quota file");
--			}
- 		} else {
- 			ASSERT_MSG("Quota file is missing or invalid"
- 					" quota file content found.");
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 33e7969..153e3ea 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1030,7 +1030,12 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+ 		 * threshold, we can make them free by checkpoint. Then, we
+ 		 * secure free segments which doesn't need fggc any more.
+ 		 */
+-		if (prefree_segments(sbi)) {
++		if (prefree_segments(sbi) || prefree2_segments(sbi)) {
++			ret = write_checkpoint(sbi, &cpc);
++			if (ret)
++				goto stop;
++		}
++		if (has_not_enough_free_secs(sbi, 0, 0) && prefree2_segments(sbi)) {
+ 			ret = write_checkpoint(sbi, &cpc);
+ 			if (ret)
+ 				goto stop;
+@@ -1063,8 +1068,10 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+ 			goto gc_more;
+ 		}
+ 
+-		if (gc_type == FG_GC)
++		if (gc_type == FG_GC) {
++			ret = write_checkpoint(sbi, &cpc);
+ 			ret = write_checkpoint(sbi, &cpc);
++		}
+ 	}
+ stop:
+ 	SIT_I(sbi)->last_victim[ALLOC_NEXT] = 0;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 2e8e054d..9dec445 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1606,7 +1606,7 @@ static void set_prefree_as_free_segments(struct f2fs_sb_info *sbi)
+ 	unsigned int segno;
+ 
+ 	mutex_lock(&dirty_i->seglist_lock);
+-	for_each_set_bit(segno, dirty_i->dirty_segmap[PRE], MAIN_SEGS(sbi))
++	for_each_set_bit(segno, dirty_i->dirty_segmap[PRE2], MAIN_SEGS(sbi))
+ 		__set_test_and_free(sbi, segno);
+ 	mutex_unlock(&dirty_i->seglist_lock);
+ }
+@@ -1617,13 +1617,17 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	struct list_head *head = &dcc->entry_list;
+ 	struct discard_entry *entry, *this;
+ 	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
+-	unsigned long *prefree_map = dirty_i->dirty_segmap[PRE];
++	unsigned long *prefree_map;
+ 	unsigned int start = 0, end = -1;
+ 	unsigned int secno, start_segno;
+ 	bool force = (cpc->reason & CP_DISCARD);
++	int phase = 0;
++	enum dirty_type dirty_type = PRE2;
+ 
+ 	mutex_lock(&dirty_i->seglist_lock);
+ 
++next_step:
++	prefree_map = dirty_i->dirty_segmap[dirty_type];
+ 	while (1) {
+ 		int i;
+ 		start = find_next_bit(prefree_map, MAIN_SEGS(sbi), end + 1);
+@@ -1635,7 +1639,7 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 		for (i = start; i < end; i++)
+ 			clear_bit(i, prefree_map);
+ 
+-		dirty_i->nr_dirty[PRE] -= end - start;
++		dirty_i->nr_dirty[dirty_type] -= end - start;
+ 
+ 		if (!test_opt(sbi, DISCARD))
+ 			continue;
+@@ -1663,6 +1667,16 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 		else
+ 			end = start - 1;
+ 	}
++	if (phase == 0) {
++		/* status change: PRE -> PRE2 */
++		for_each_set_bit(segno, dirty_i->dirty_segmap[PRE], MAIN_SEGS(sbi))
++			if (!test_and_set_bit(segno, prefree_map))
++				dirty_i->nr_dirty[PRE2]++;
++
++		phase = 1;
++		dirty_type = PRE;
++		goto next_step;
++	}
+ 	mutex_unlock(&dirty_i->seglist_lock);
+ 
+ 	/* send small discards */
+@@ -2245,6 +2259,7 @@ static void change_curseg(struct f2fs_sb_info *sbi, int type)
+ 
+ 	mutex_lock(&dirty_i->seglist_lock);
+ 	__remove_dirty_segment(sbi, new_segno, PRE);
++	__remove_dirty_segment(sbi, new_segno, PRE2);
+ 	__remove_dirty_segment(sbi, new_segno, DIRTY);
+ 	mutex_unlock(&dirty_i->seglist_lock);
+ 
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 71a2aaa..f702726 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -263,6 +263,7 @@ enum dirty_type {
+ 	DIRTY_COLD_NODE,	/* dirty segments assigned as cold node logs */
+ 	DIRTY,			/* to count # of dirty segments */
+ 	PRE,			/* to count # of entirely obsolete segments */
++	PRE2,			/* to count # of the segments free to one checkpoint but obsolete to the other checkpoint */
+ 	NR_DIRTY_TYPE
+ };
+ 
+@@ -477,6 +478,11 @@ static inline unsigned int prefree_segments(struct f2fs_sb_info *sbi)
+ 	return DIRTY_I(sbi)->nr_dirty[PRE];
+ }
+ 
++static inline unsigned int prefree2_segments(struct f2fs_sb_info *sbi)
++{
++	return DIRTY_I(sbi)->nr_dirty[PRE2];
++}
++
+ static inline unsigned int dirty_segments(struct f2fs_sb_info *sbi)
+ {
+ 	return DIRTY_I(sbi)->nr_dirty[DIRTY_HOT_DATA] +
 -- 
-2.15.0.531.g2ccb3012c9-goog
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+2.10.1
