@@ -1,11 +1,8 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2] f2fs: correct removexattr behavior for
- null valued extended attribute
-Date: Fri, 19 Jan 2018 20:24:17 -0800
-Message-ID: <20180120042417.GA20450@jaegeuk-macbookpro.roam.corp.google.com>
-References: <CGME20180110022428epcas1p23c04b97cbd6df91e6721e7c400449f2e@epcas1p2.samsung.com>
- <1515551087-24651-1-git-send-email-daeho.jeong@samsung.com>
- <6b2070c9-8c4b-ac8c-9346-e21bc99e7dc7@huawei.com>
+Subject: [PATCH 2/2] f2fs: recover some i_inline flags
+Date: Fri, 19 Jan 2018 20:26:43 -0800
+Message-ID: <20180120042643.20717-2-jaegeuk@kernel.org>
+References: <20180120042643.20717-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -14,15 +11,14 @@ Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
  helo=mx.sourceforge.net)
  by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1eckhc-0006Ni-KL
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 20 Jan 2018 04:24:24 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1eckk0-0006Qf-Kj
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 20 Jan 2018 04:26:52 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eckhb-0000uF-Mo
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 20 Jan 2018 04:24:24 +0000
-Content-Disposition: inline
-In-Reply-To: <6b2070c9-8c4b-ac8c-9346-e21bc99e7dc7@huawei.com>
+ id 1eckjz-0000zF-RS
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 20 Jan 2018 04:26:52 +0000
+In-Reply-To: <20180120042643.20717-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,56 +28,39 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-On 01/17, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> Forgot to merge this patch? ;)
+This fixes lost i_inline flags during roll-forward.
 
-Weird. I didn't get this patch before.
-Is this a full patch?
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/recovery.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-> 
-> On 2018/1/10 10:24, Daeho Jeong wrote:
-> > __vfs_removexattr() transfers "NULL" value to the setxattr handler of
-> > the f2fs filesystem in order to remove the extended attribute. But,
-> > __f2fs_setxattr() just ignores the removal request when the value of
-> > the extended attribute is already NULL. We have to remove the extended
-> > attribute itself even if the value of that is already NULL.
-> > 
-> > We can reporduce this bug with the below:
-> > 
-> > 1. touch file
-> > 2. setfattr -n "user.foo" file
-> > 3. setfattr -x "user.foo" file
-> > 4. getfattr -d file
-> >> user.foo
-> > 
-> > Signed-off-by: Daeho Jeong <daeho.jeong@samsung.com>
-> > Signed-off-by: Youngjin Gil <youngjin.gil@samsung.com>
-> > Tested-by: Hobin Woo <hobin.woo@samsung.com>
-> > Tested-by: Chao Yu <yuchao0@huawei.com>
-> > Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> > ---
-> >  fs/f2fs/xattr.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-> > index ec8961e..2776618 100644
-> > --- a/fs/f2fs/xattr.c
-> > +++ b/fs/f2fs/xattr.c
-> > @@ -598,7 +598,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
-> >  			goto exit;
-> >  		}
-> >  
-> > -		if (f2fs_xattr_value_same(here, value, size))
-> > +		if (value && f2fs_xattr_value_same(here, value, size))
-> >  			goto exit;
-> >  	} else if ((flags & XATTR_REPLACE)) {
-> >  		error = -ENODATA;
-> > 
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index cbeef73bc4dd..2354f1e05e19 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -211,6 +211,15 @@ static void recover_inode(struct inode *inode, struct page *page)
+ 
+ 	F2FS_I(inode)->i_advise = raw->i_advise;
+ 
++	if (raw->i_inline & F2FS_PIN_FILE)
++		set_inode_flag(inode, FI_PIN_FILE);
++	if (raw->i_inline & F2FS_DATA_EXIST)
++		set_inode_flag(inode, FI_DATA_EXIST);
++	else
++		clear_inode_flag(inode, FI_DATA_EXIST);
++	if (!(raw->i_inline & F2FS_INLINE_DOTS))
++		clear_inode_flag(inode, FI_INLINE_DOTS);
++
+ 	if (file_enc_name(inode))
+ 		name = "<encrypted>";
+ 	else
+-- 
+2.15.0.531.g2ccb3012c9-goog
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
