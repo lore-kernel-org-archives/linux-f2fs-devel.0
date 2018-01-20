@@ -1,28 +1,25 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH v2] f2fs: correct removexattr behavior for
- null valued extended attribute
-Date: Sat, 20 Jan 2018 15:50:28 +0800
-Message-ID: <446b267f-7017-7df8-93d9-c0ead3f5ab0b@kernel.org>
-References: <CGME20180110022428epcas1p23c04b97cbd6df91e6721e7c400449f2e@epcas1p2.samsung.com>
- <1515551087-24651-1-git-send-email-daeho.jeong@samsung.com>
- <6b2070c9-8c4b-ac8c-9346-e21bc99e7dc7@huawei.com>
- <20180120042417.GA20450@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH 1/2] f2fs: allow to recover node blocks given
+ updated checkpoint
+Date: Sat, 20 Jan 2018 17:29:05 +0800
+Message-ID: <a5568772-c2e1-441f-0182-7f226a162226@kernel.org>
+References: <20180120042643.20717-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <chao@kernel.org>) id 1ecnvF-0007dB-Ij
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 20 Jan 2018 07:50:41 +0000
+ (envelope-from <chao@kernel.org>) id 1ecpSk-000365-L2
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 20 Jan 2018 09:29:22 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ecnvE-0007Hv-Lm
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 20 Jan 2018 07:50:41 +0000
-In-Reply-To: <20180120042417.GA20450@jaegeuk-macbookpro.roam.corp.google.com>
+ id 1ecpSi-0003dc-GQ
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 20 Jan 2018 09:29:22 +0000
+In-Reply-To: <20180120042643.20717-1-jaegeuk@kernel.org>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,70 +30,43 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/1/20 12:24, Jaegeuk Kim wrote:
-> On 01/17, Chao Yu wrote:
->> Hi Jaegeuk,
->>
->> Forgot to merge this patch? ;)
+On 2018/1/20 12:26, Jaegeuk Kim wrote:
+> If fsck.f2fs changes crc, we have no way to recover some inode blocks by roll-
+> forward recovery. Let's relax the condition to recover them.
+
+As this is fsck case only, what about writing checkpoint with special flag
+for such case, and relax the condition if flag was set, so, for normal case,
+it can avoid recovering obsolete data.
+
+Thanks,
+
 > 
-> Weird. I didn't get this patch before.
-
-I'm sure it has been sent to f2fs mailing list, may be it's been junked?
-
-Anyway, I just resent it for Daeho Jeong, please check it.
-
-> Is this a full patch?
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/node.h | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
->>
->> On 2018/1/10 10:24, Daeho Jeong wrote:
->>> __vfs_removexattr() transfers "NULL" value to the setxattr handler of
->>> the f2fs filesystem in order to remove the extended attribute. But,
->>> __f2fs_setxattr() just ignores the removal request when the value of
->>> the extended attribute is already NULL. We have to remove the extended
->>> attribute itself even if the value of that is already NULL.
->>>
->>> We can reporduce this bug with the below:
->>>
->>> 1. touch file
->>> 2. setfattr -n "user.foo" file
->>> 3. setfattr -x "user.foo" file
->>> 4. getfattr -d file
->>>> user.foo
->>>
->>> Signed-off-by: Daeho Jeong <daeho.jeong@samsung.com>
->>> Signed-off-by: Youngjin Gil <youngjin.gil@samsung.com>
->>> Tested-by: Hobin Woo <hobin.woo@samsung.com>
->>> Tested-by: Chao Yu <yuchao0@huawei.com>
->>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->>> ---
->>>  fs/f2fs/xattr.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
->>> index ec8961e..2776618 100644
->>> --- a/fs/f2fs/xattr.c
->>> +++ b/fs/f2fs/xattr.c
->>> @@ -598,7 +598,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
->>>  			goto exit;
->>>  		}
->>>  
->>> -		if (f2fs_xattr_value_same(here, value, size))
->>> +		if (value && f2fs_xattr_value_same(here, value, size))
->>>  			goto exit;
->>>  	} else if ((flags & XATTR_REPLACE)) {
->>>  		error = -ENODATA;
->>>
-> 
-> ------------------------------------------------------------------------------
-> Check out the vibrant tech community on one of the world's most
-> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+> index 0ee3e5ff49a3..15280eeb24ea 100644
+> --- a/fs/f2fs/node.h
+> +++ b/fs/f2fs/node.h
+> @@ -305,10 +305,11 @@ static inline bool is_recoverable_dnode(struct page *page)
+>  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(F2FS_P_SB(page));
+>  	__u64 cp_ver = cur_cp_version(ckpt);
+>  
+> -	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG))
+> +	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG)) {
+>  		cp_ver |= (cur_cp_crc(ckpt) << 32);
+> -
+> -	return cp_ver == cpver_of_node(page);
+> +		return cp_ver == cpver_of_node(page);
+> +	}
+> +	return (cp_ver << 32) == (cpver_of_node(page) << 32);
+>  }
+>  
+>  /*
 > 
 
 ------------------------------------------------------------------------------
