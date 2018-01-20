@@ -1,26 +1,26 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/2 v2] f2fs: allow to recover node blocks
- given updated checkpoint
-Date: Sat, 20 Jan 2018 14:05:28 -0800
-Message-ID: <20180120220528.GB28167@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH 2/2 v2] f2fs: recover some i_inline flags
+Date: Sat, 20 Jan 2018 14:06:16 -0800
+Message-ID: <20180120220616.GC28167@jaegeuk-macbookpro.roam.corp.google.com>
 References: <20180120042643.20717-1-jaegeuk@kernel.org>
+ <20180120042643.20717-2-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
  helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1ed1Ga-0001UV-6C
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 20 Jan 2018 22:05:36 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1ed1HL-0001Sk-LK
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 20 Jan 2018 22:06:23 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ed1GY-0006nB-DK
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 20 Jan 2018 22:05:36 +0000
+ id 1ed1HK-00033m-Qz
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 20 Jan 2018 22:06:23 +0000
 Content-Disposition: inline
-In-Reply-To: <20180120042643.20717-1-jaegeuk@kernel.org>
+In-Reply-To: <20180120042643.20717-2-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,59 +32,62 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-If fsck.f2fs changes crc, we have no way to recover some inode blocks by roll-
-forward recovery. Let's relax the condition to recover them.
+This fixes lost i_inline flags during roll-forward.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
 
 Change log from v1:
- - add a new checkpoint flag to handle this
+ - add a new function to recover the flag
+ - fix missing pin_file unset
 
- fs/f2fs/checkpoint.c    | 1 +
- fs/f2fs/node.h          | 4 ++++
- include/linux/f2fs_fs.h | 1 +
- 3 files changed, 6 insertions(+)
+ fs/f2fs/recovery.c | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 9c7596f7daae..512dca8abc7d 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1157,6 +1157,7 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 
- 	/* set this flag to activate crc|cp_ver for recovery */
- 	__set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG);
-+	__clear_ckpt_flags(ckpt, CP_NOCRC_RECOVERY_FLAG);
- 
- 	spin_unlock_irqrestore(&sbi->cp_lock, flags);
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index cbeef73bc4dd..337f3363f48f 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -195,6 +195,20 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
+ 	return err;
  }
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index 0ee3e5ff49a3..081ef0d672bf 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -305,6 +305,10 @@ static inline bool is_recoverable_dnode(struct page *page)
- 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(F2FS_P_SB(page));
- 	__u64 cp_ver = cur_cp_version(ckpt);
  
-+	/* Don't care crc part, if fsck.f2fs sets it. */
-+	if (__is_set_ckpt_flags(ckpt, CP_NOCRC_RECOVERY_FLAG))
-+		return (cp_ver << 32) == (cpver_of_node(page) << 32);
++static void recover_inline_flags(struct inode *inode, struct f2fs_inode *ri)
++{
++	if (ri->i_inline & F2FS_PIN_FILE)
++		set_inode_flag(inode, FI_PIN_FILE);
++	else
++		clear_inode_flag(inode, FI_PIN_FILE);
++	if (ri->i_inline & F2FS_DATA_EXIST)
++		set_inode_flag(inode, FI_DATA_EXIST);
++	else
++		clear_inode_flag(inode, FI_DATA_EXIST);
++	if (!(ri->i_inline & F2FS_INLINE_DOTS))
++		clear_inode_flag(inode, FI_INLINE_DOTS);
++}
 +
- 	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG))
- 		cp_ver |= (cur_cp_crc(ckpt) << 32);
+ static void recover_inode(struct inode *inode, struct page *page)
+ {
+ 	struct f2fs_inode *raw = F2FS_INODE(page);
+@@ -211,13 +225,16 @@ static void recover_inode(struct inode *inode, struct page *page)
  
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index cfb522e6affc..6eed677b6d9a 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -117,6 +117,7 @@ struct f2fs_super_block {
- /*
-  * For checkpoint
-  */
-+#define CP_NOCRC_RECOVERY_FLAG	0x00000200
- #define CP_TRIMMED_FLAG		0x00000100
- #define CP_NAT_BITS_FLAG	0x00000080
- #define CP_CRC_RECOVERY_FLAG	0x00000040
+ 	F2FS_I(inode)->i_advise = raw->i_advise;
+ 
++	recover_inline_flags(inode, raw);
++
+ 	if (file_enc_name(inode))
+ 		name = "<encrypted>";
+ 	else
+ 		name = F2FS_INODE(page)->i_name;
+ 
+-	f2fs_msg(inode->i_sb, KERN_NOTICE, "recover_inode: ino = %x, name = %s",
+-			ino_of_node(page), name);
++	f2fs_msg(inode->i_sb, KERN_NOTICE,
++		"recover_inode: ino = %x, name = %s, inline = %x",
++			ino_of_node(page), name, raw->i_inline);
+ }
+ 
+ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
 -- 
 2.15.0.531.g2ccb3012c9-goog
 
