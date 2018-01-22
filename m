@@ -1,361 +1,347 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v5] f2fs: add an ioctl to disable GC for specific file
-Date: Mon, 22 Jan 2018 14:59:09 -0800
-Message-ID: <20180122225909.GA47727@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20171208051555.76998-1-jaegeuk@kernel.org>
- <20171208193723.GA87676@jaegeuk-macbookpro.roam.corp.google.com>
- <20171228034020.GF13490@jaegeuk-macbookpro.roam.corp.google.com>
- <20180103032151.GC3995@jaegeuk-macbookpro.roam.corp.google.com>
- <20180116235719.GA22470@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH v2] mkfs.f2fs: expand scalability of nat bitmap
+Date: Mon, 22 Jan 2018 15:00:29 -0800
+Message-ID: <20180122230029.GB47727@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180115034840.28375-1-yuchao0@huawei.com>
+ <20180117004723.GC22625@jaegeuk-macbookpro.roam.corp.google.com>
+ <e8626c08-5041-83a2-18d9-5ec18f66aaed@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180116235719.GA22470@jaegeuk-macbookpro.roam.corp.google.com>
+In-Reply-To: <e8626c08-5041-83a2-18d9-5ec18f66aaed@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch gives a flag to disable GC on given file, which would be useful, when
-user wants to keep its block map. It also conducts in-place-update for dontmove
-file.
+On 01/17, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> On 2018/1/17 8:47, Jaegeuk Kim wrote:
+> > Hi Chao,
+> > 
+> > On 01/15, Chao Yu wrote:
+> >> Previously, our total node number (nat_bitmap) and total nat segment count
+> >> will not monotonously increase along with image size, and max nat_bitmap size
+> >> is limited by "CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1", it is
+> >> with bad scalability when user wants to create more inode/node in larger image.
+> >>
+> >> So this patch tries to relieve the limitation, by default, limitting total nat
+> >> entry number with 20% of total block number.
+> >>
+> >> Before:
+> >> image_size(GB)	nat_bitmap	sit_bitmap	nat_segment	sit_segment
+> >> 16		3836		64		36		2
+> >> 32		3836		64		72		2
+> >> 64		3772		128		116		4
+> >> 128		3708		192		114		6
+> >> 256		3580		320		110		10
+> 
+> As you see, nat_segment count will reduce when image size increases
+> starting from 64GB, that means nat segment count will not monotonously
+> increase when image size is increasing, so it would be better to active
+> this when image size is larger than 32GB?
+> 
+> IMO, configuring basic nid ratio to fixed value like ext4 ("free inode" :
+> "free block" is about 1 : 4) would be better:
+> a. It will be easy for user to predict nid count or nat segment count with
+> fix-sized image;
+> b. If user wants to reserve more nid count, we can support -N option in
+> mkfs.f2fs to specify total nid count as user wish.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
+My concern is about a CTS failure in terms of # of free inodes.
 
-Change log from v1:
- - unset pin_file, if # of trials exceeds a threshold
- - increase the threshold to 2048
+Thanks,
 
- fs/f2fs/data.c          |  2 ++
- fs/f2fs/f2fs.h          | 29 ++++++++++++++++-
- fs/f2fs/file.c          | 83 +++++++++++++++++++++++++++++++++++++++++++++++++
- fs/f2fs/gc.c            | 11 +++++++
- fs/f2fs/gc.h            |  2 ++
- fs/f2fs/sysfs.c         |  2 ++
- include/linux/f2fs_fs.h |  9 +++++-
- 7 files changed, 136 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index cde2a3264b4c..945f15607484 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1479,6 +1479,8 @@ static inline bool need_inplace_update(struct f2fs_io_info *fio)
- {
- 	struct inode *inode = fio->page->mapping->host;
- 
-+	if (f2fs_is_pinned_file(inode))
-+		return true;
- 	if (S_ISDIR(inode->i_mode) || f2fs_is_atomic_file(inode))
- 		return false;
- 	if (is_cold_data(fio->page))
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 1b2b0acbc83d..d5090b4d2633 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -356,6 +356,8 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
- #define F2FS_IOC_GARBAGE_COLLECT_RANGE	_IOW(F2FS_IOCTL_MAGIC, 11,	\
- 						struct f2fs_gc_range)
- #define F2FS_IOC_GET_FEATURES		_IOR(F2FS_IOCTL_MAGIC, 12, __u32)
-+#define F2FS_IOC_SET_PIN_FILE		_IOW(F2FS_IOCTL_MAGIC, 13, __u32)
-+#define F2FS_IOC_GET_PIN_FILE		_IOR(F2FS_IOCTL_MAGIC, 14, __u32)
- 
- #define F2FS_IOC_SET_ENCRYPTION_POLICY	FS_IOC_SET_ENCRYPTION_POLICY
- #define F2FS_IOC_GET_ENCRYPTION_POLICY	FS_IOC_GET_ENCRYPTION_POLICY
-@@ -593,7 +595,10 @@ struct f2fs_inode_info {
- 	unsigned long i_flags;		/* keep an inode flags for ioctl */
- 	unsigned char i_advise;		/* use to give file attribute hints */
- 	unsigned char i_dir_level;	/* use for dentry level for large dir */
--	unsigned int i_current_depth;	/* use only in directory structure */
-+	union {
-+		unsigned int i_current_depth;	/* only for directory depth */
-+		unsigned short i_gc_failures;	/* only for regular file */
-+	};
- 	unsigned int i_pino;		/* parent inode number */
- 	umode_t i_acl_mode;		/* keep file acl mode temporarily */
- 
-@@ -1142,6 +1147,9 @@ struct f2fs_sb_info {
- 	/* threshold for converting bg victims for fg */
- 	u64 fggc_threshold;
- 
-+	/* threshold for gc trials on pinned files */
-+	u64 gc_pin_file_threshold;
-+
- 	/* maximum # of trials to find a victim segment for SSR and GC */
- 	unsigned int max_victim_search;
- 
-@@ -2141,6 +2149,7 @@ enum {
- 	FI_HOT_DATA,		/* indicate file is hot */
- 	FI_EXTRA_ATTR,		/* indicate file has extra attribute */
- 	FI_PROJ_INHERIT,	/* indicate file inherits projectid */
-+	FI_PIN_FILE,		/* indicate file should not be gced */
- };
- 
- static inline void __mark_inode_dirty_flag(struct inode *inode,
-@@ -2155,6 +2164,7 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
- 			return;
- 	case FI_DATA_EXIST:
- 	case FI_INLINE_DOTS:
-+	case FI_PIN_FILE:
- 		f2fs_mark_inode_dirty_sync(inode, true);
- 	}
- }
-@@ -2235,6 +2245,13 @@ static inline void f2fs_i_depth_write(struct inode *inode, unsigned int depth)
- 	f2fs_mark_inode_dirty_sync(inode, true);
- }
- 
-+static inline void f2fs_i_gc_failures_write(struct inode *inode,
-+					unsigned int count)
-+{
-+	F2FS_I(inode)->i_gc_failures = count;
-+	f2fs_mark_inode_dirty_sync(inode, true);
-+}
-+
- static inline void f2fs_i_xnid_write(struct inode *inode, nid_t xnid)
- {
- 	F2FS_I(inode)->i_xattr_nid = xnid;
-@@ -2263,6 +2280,8 @@ static inline void get_inline_info(struct inode *inode, struct f2fs_inode *ri)
- 		set_bit(FI_INLINE_DOTS, &fi->flags);
- 	if (ri->i_inline & F2FS_EXTRA_ATTR)
- 		set_bit(FI_EXTRA_ATTR, &fi->flags);
-+	if (ri->i_inline & F2FS_PIN_FILE)
-+		set_bit(FI_PIN_FILE, &fi->flags);
- }
- 
- static inline void set_raw_inline(struct inode *inode, struct f2fs_inode *ri)
-@@ -2281,6 +2300,8 @@ static inline void set_raw_inline(struct inode *inode, struct f2fs_inode *ri)
- 		ri->i_inline |= F2FS_INLINE_DOTS;
- 	if (is_inode_flag_set(inode, FI_EXTRA_ATTR))
- 		ri->i_inline |= F2FS_EXTRA_ATTR;
-+	if (is_inode_flag_set(inode, FI_PIN_FILE))
-+		ri->i_inline |= F2FS_PIN_FILE;
- }
- 
- static inline int f2fs_has_extra_attr(struct inode *inode)
-@@ -2326,6 +2347,11 @@ static inline int f2fs_has_inline_dots(struct inode *inode)
- 	return is_inode_flag_set(inode, FI_INLINE_DOTS);
- }
- 
-+static inline bool f2fs_is_pinned_file(struct inode *inode)
-+{
-+	return is_inode_flag_set(inode, FI_PIN_FILE);
-+}
-+
- static inline bool f2fs_is_atomic_file(struct inode *inode)
- {
- 	return is_inode_flag_set(inode, FI_ATOMIC_FILE);
-@@ -2540,6 +2566,7 @@ int truncate_hole(struct inode *inode, pgoff_t pg_start, pgoff_t pg_end);
- void truncate_data_blocks_range(struct dnode_of_data *dn, int count);
- long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
- long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
-+int f2fs_pin_file_control(struct inode *inode, bool inc);
- 
- /*
-  * inode.c
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 05779077cbf2..493457a200b1 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2672,6 +2672,83 @@ static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
- 	return 0;
- }
- 
-+int f2fs_pin_file_control(struct inode *inode, bool inc)
-+{
-+	struct f2fs_inode_info *fi = F2FS_I(inode);
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+
-+	/* Use i_gc_failures for normal file as a risk signal. */
-+	if (inc)
-+		f2fs_i_gc_failures_write(inode, fi->i_gc_failures + 1);
-+
-+	if (fi->i_gc_failures > sbi->gc_pin_file_threshold) {
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+			"%s: Enable GC = ino %lx after %x GC trials\n",
-+			__func__, inode->i_ino, fi->i_gc_failures);
-+		clear_inode_flag(inode, FI_PIN_FILE);
-+		return -EAGAIN;
-+	}
-+	return 0;
-+}
-+
-+static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
-+{
-+	struct inode *inode = file_inode(filp);
-+	__u32 pin;
-+	int ret = 0;
-+
-+	if (!inode_owner_or_capable(inode))
-+		return -EACCES;
-+
-+	if (get_user(pin, (__u32 __user *)arg))
-+		return -EFAULT;
-+
-+	if (!S_ISREG(inode->i_mode))
-+		return -EINVAL;
-+
-+	if (f2fs_readonly(F2FS_I_SB(inode)->sb))
-+		return -EROFS;
-+
-+	ret = mnt_want_write_file(filp);
-+	if (ret)
-+		return ret;
-+
-+	inode_lock(inode);
-+
-+	if (!pin) {
-+		clear_inode_flag(inode, FI_PIN_FILE);
-+		F2FS_I(inode)->i_gc_failures = 1;
-+		goto done;
-+	}
-+
-+	if (f2fs_pin_file_control(inode, false)) {
-+		ret = -EAGAIN;
-+		goto out;
-+	}
-+	ret = f2fs_convert_inline_inode(inode);
-+	if (ret)
-+		goto out;
-+
-+	set_inode_flag(inode, FI_PIN_FILE);
-+	ret = F2FS_I(inode)->i_gc_failures;
-+done:
-+	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
-+out:
-+	inode_unlock(inode);
-+	mnt_drop_write_file(filp);
-+	return ret;
-+}
-+
-+static int f2fs_ioc_get_pin_file(struct file *filp, unsigned long arg)
-+{
-+	struct inode *inode = file_inode(filp);
-+	__u32 pin = 0;
-+
-+	if (is_inode_flag_set(inode, FI_PIN_FILE))
-+		pin = F2FS_I(inode)->i_gc_failures;
-+	return put_user(pin, (u32 __user *)arg);
-+}
-+
- long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
- 	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
-@@ -2722,6 +2799,10 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return f2fs_ioc_fsgetxattr(filp, arg);
- 	case F2FS_IOC_FSSETXATTR:
- 		return f2fs_ioc_fssetxattr(filp, arg);
-+	case F2FS_IOC_GET_PIN_FILE:
-+		return f2fs_ioc_get_pin_file(filp, arg);
-+	case F2FS_IOC_SET_PIN_FILE:
-+		return f2fs_ioc_set_pin_file(filp, arg);
- 	default:
- 		return -ENOTTY;
- 	}
-@@ -2797,6 +2878,8 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case F2FS_IOC_GET_FEATURES:
- 	case F2FS_IOC_FSGETXATTR:
- 	case F2FS_IOC_FSSETXATTR:
-+	case F2FS_IOC_GET_PIN_FILE:
-+	case F2FS_IOC_SET_PIN_FILE:
- 		break;
- 	default:
- 		return -ENOIOCTLCMD;
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index d844dcb80570..33e79697e41c 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -624,6 +624,11 @@ static void move_data_block(struct inode *inode, block_t bidx,
- 	if (f2fs_is_atomic_file(inode))
- 		goto out;
- 
-+	if (f2fs_is_pinned_file(inode)) {
-+		f2fs_pin_file_control(inode, true);
-+		goto out;
-+	}
-+
- 	set_new_dnode(&dn, inode, NULL, NULL, 0);
- 	err = get_dnode_of_data(&dn, bidx, LOOKUP_NODE);
- 	if (err)
-@@ -720,6 +725,11 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
- 
- 	if (f2fs_is_atomic_file(inode))
- 		goto out;
-+	if (f2fs_is_pinned_file(inode)) {
-+		if (gc_type == FG_GC)
-+			f2fs_pin_file_control(inode, true);
-+		goto out;
-+	}
- 
- 	if (gc_type == BG_GC) {
- 		if (PageWriteback(page))
-@@ -1091,6 +1101,7 @@ void build_gc_manager(struct f2fs_sb_info *sbi)
- 
- 	sbi->fggc_threshold = div64_u64((main_count - ovp_count) *
- 				BLKS_PER_SEC(sbi), (main_count - resv_count));
-+	sbi->gc_pin_file_threshold = DEF_GC_FAILED_PINNED_FILES;
- 
- 	/* give warm/cold data area from slower device */
- 	if (sbi->s_ndevs && sbi->segs_per_sec == 1)
-diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-index 9325191fab2d..b0045d4c8d1e 100644
---- a/fs/f2fs/gc.h
-+++ b/fs/f2fs/gc.h
-@@ -20,6 +20,8 @@
- #define LIMIT_INVALID_BLOCK	40 /* percentage over total user space */
- #define LIMIT_FREE_BLOCK	40 /* percentage over invalid + free space */
- 
-+#define DEF_GC_FAILED_PINNED_FILES	2048
-+
- /* Search max. number of dirty segments to select a victim segment */
- #define DEF_MAX_VICTIM_SEARCH 4096 /* covers 8GB */
- 
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index ab6028c332aa..41887e6ec1b3 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -301,6 +301,7 @@ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
-+F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- F2FS_RW_ATTR(FAULT_INFO_RATE, f2fs_fault_info, inject_rate, inject_rate);
- F2FS_RW_ATTR(FAULT_INFO_TYPE, f2fs_fault_info, inject_type, inject_type);
-@@ -349,6 +350,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(idle_interval),
- 	ATTR_LIST(iostat_enable),
- 	ATTR_LIST(readdir_ra),
-+	ATTR_LIST(gc_pin_file_thresh),
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- 	ATTR_LIST(inject_rate),
- 	ATTR_LIST(inject_type),
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 43e98d30d2df..cfb522e6affc 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -212,6 +212,7 @@ struct f2fs_extent {
- #define F2FS_DATA_EXIST		0x08	/* file inline data exist flag */
- #define F2FS_INLINE_DOTS	0x10	/* file having implicit dot dentries */
- #define F2FS_EXTRA_ATTR		0x20	/* file having extra attribute */
-+#define F2FS_PIN_FILE		0x40	/* file should not be gced */
- 
- struct f2fs_inode {
- 	__le16 i_mode;			/* file mode */
-@@ -229,7 +230,13 @@ struct f2fs_inode {
- 	__le32 i_ctime_nsec;		/* change time in nano scale */
- 	__le32 i_mtime_nsec;		/* modification time in nano scale */
- 	__le32 i_generation;		/* file version (for NFS) */
--	__le32 i_current_depth;		/* only for directory depth */
-+	union {
-+		__le32 i_current_depth;	/* only for directory depth */
-+		__le16 i_gc_failures;	/*
-+					 * # of gc failures on pinned file.
-+					 * only for regular files.
-+					 */
-+	};
- 	__le32 i_xattr_nid;		/* nid to save xattr */
- 	__le32 i_flags;			/* file attributes */
- 	__le32 i_pino;			/* parent inode number */
--- 
-2.15.0.531.g2ccb3012c9-goog
+> 
+> How do you think?
+> 
+> Thanks,
+> 
+> >> 512		3260		640		100		20
+> >> 1024		2684		1216		82		38
+> >> 2048		1468		2432		44		76
+> >> 4096		3900		4800		120		150
+> >>
+> >> After:
+> >> image_size(GB)	nat_bitmap	sit_bitmap	nat_segment	sit_segment
+> >> 16		256		64		8		2
+> >> 32		512		64		16		2
+> >> 64		960		128		30		4
+> >> 128		1856		192		58		6
+> >> 256		3712		320		116		10
+> > 
+> > Can we activate this, if size is larger than 256GB or something around that?
+> > 
+> > Thanks,
+> > 
+> >> 512		7424		640		232		20
+> >> 1024		14787		1216		462		38
+> >> 2048		29504		2432		922		76
+> >> 4096		59008		4800		1844		150
+> >>
+> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >> ---
+> >> v2:
+> >> - add CP_LARGE_NAT_BITMAP_FLAG flag to indicate new layout of nat/sit bitmap.
+> >>  fsck/f2fs.h        | 19 +++++++++++++------
+> >>  fsck/resize.c      | 35 +++++++++++++++++------------------
+> >>  include/f2fs_fs.h  |  8 ++++++--
+> >>  lib/libf2fs.c      |  1 +
+> >>  mkfs/f2fs_format.c | 45 +++++++++++++++++++++++----------------------
+> >>  5 files changed, 60 insertions(+), 48 deletions(-)
+> >>
+> >> diff --git a/fsck/f2fs.h b/fsck/f2fs.h
+> >> index f5970d9dafc0..8a5ce365282d 100644
+> >> --- a/fsck/f2fs.h
+> >> +++ b/fsck/f2fs.h
+> >> @@ -239,6 +239,12 @@ static inline unsigned int ofs_of_node(struct f2fs_node *node_blk)
+> >>  	return flag >> OFFSET_BIT_SHIFT;
+> >>  }
+> >>  
+> >> +static inline bool is_set_ckpt_flags(struct f2fs_checkpoint *cp, unsigned int f)
+> >> +{
+> >> +	unsigned int ckpt_flags = le32_to_cpu(cp->ckpt_flags);
+> >> +	return ckpt_flags & f ? 1 : 0;
+> >> +}
+> >> +
+> >>  static inline unsigned long __bitmap_size(struct f2fs_sb_info *sbi, int flag)
+> >>  {
+> >>  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+> >> @@ -256,6 +262,13 @@ static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
+> >>  {
+> >>  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+> >>  	int offset;
+> >> +
+> >> +	if (is_set_ckpt_flags(ckpt, CP_LARGE_NAT_BITMAP_FLAG)) {
+> >> +		offset = (flag == SIT_BITMAP) ?
+> >> +			le32_to_cpu(ckpt->nat_ver_bitmap_bytesize) : 0;
+> >> +		return &ckpt->sit_nat_version_bitmap + offset;
+> >> +	}
+> >> +
+> >>  	if (le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_payload) > 0) {
+> >>  		if (flag == NAT_BITMAP)
+> >>  			return &ckpt->sit_nat_version_bitmap;
+> >> @@ -268,12 +281,6 @@ static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
+> >>  	}
+> >>  }
+> >>  
+> >> -static inline bool is_set_ckpt_flags(struct f2fs_checkpoint *cp, unsigned int f)
+> >> -{
+> >> -	unsigned int ckpt_flags = le32_to_cpu(cp->ckpt_flags);
+> >> -	return ckpt_flags & f ? 1 : 0;
+> >> -}
+> >> -
+> >>  static inline block_t __start_cp_addr(struct f2fs_sb_info *sbi)
+> >>  {
+> >>  	block_t start_addr = le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_blkaddr);
+> >> diff --git a/fsck/resize.c b/fsck/resize.c
+> >> index 143ad5d3c0a1..f3547c86f351 100644
+> >> --- a/fsck/resize.c
+> >> +++ b/fsck/resize.c
+> >> @@ -13,10 +13,10 @@ static int get_new_sb(struct f2fs_super_block *sb)
+> >>  {
+> >>  	u_int32_t zone_size_bytes, zone_align_start_offset;
+> >>  	u_int32_t blocks_for_sit, blocks_for_nat, blocks_for_ssa;
+> >> -	u_int32_t sit_segments, diff, total_meta_segments;
+> >> +	u_int32_t sit_segments, nat_segments, diff, total_meta_segments;
+> >>  	u_int32_t total_valid_blks_available;
+> >>  	u_int32_t sit_bitmap_size, max_sit_bitmap_size;
+> >> -	u_int32_t max_nat_bitmap_size, max_nat_segments;
+> >> +	u_int32_t max_nat_bitmap_size;
+> >>  	u_int32_t segment_size_bytes = 1 << (get_sb(log_blocksize) +
+> >>  					get_sb(log_blocks_per_seg));
+> >>  	u_int32_t blks_per_seg = 1 << get_sb(log_blocks_per_seg);
+> >> @@ -47,7 +47,15 @@ static int get_new_sb(struct f2fs_super_block *sb)
+> >>  			get_sb(segment_count_sit))) * blks_per_seg;
+> >>  	blocks_for_nat = SIZE_ALIGN(total_valid_blks_available,
+> >>  					NAT_ENTRY_PER_BLOCK);
+> >> -	set_sb(segment_count_nat, SEG_ALIGN(blocks_for_nat));
+> >> +	nat_segments = SEG_ALIGN(blocks_for_nat) *
+> >> +					DEFAULT_NAT_ENTRY_RATIO / 100;
+> >> +	set_sb(segment_count_nat, nat_segments ? nat_segments : 1);
+> >> +
+> >> +	max_nat_bitmap_size = (get_sb(segment_count_nat) <<
+> >> +					get_sb(log_blocks_per_seg)) / 8;
+> >> +	set_sb(segment_count_nat, get_sb(segment_count_nat) * 2);
+> >> +
+> >> +	c.large_nat_bitmap = 1;
+> >>  
+> >>  	sit_bitmap_size = ((get_sb(segment_count_sit) / 2) <<
+> >>  				get_sb(log_blocks_per_seg)) / 8;
+> >> @@ -56,25 +64,16 @@ static int get_new_sb(struct f2fs_super_block *sb)
+> >>  	else
+> >>  		max_sit_bitmap_size = sit_bitmap_size;
+> >>  
+> >> -	/*
+> >> -	 * It should be reserved minimum 1 segment for nat.
+> >> -	 * When sit is too large, we should expand cp area. It requires more pages for cp.
+> >> -	 */
+> >> -	if (max_sit_bitmap_size > MAX_SIT_BITMAP_SIZE_IN_CKPT) {
+> >> -		max_nat_bitmap_size = CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1;
+> >> -		set_sb(cp_payload, F2FS_BLK_ALIGN(max_sit_bitmap_size));
+> >> +	/* use cp_payload if free space of f2fs_checkpoint is not enough */
+> >> +	if (max_sit_bitmap_size + max_nat_bitmap_size >
+> >> +					MAX_BITMAP_SIZE_IN_CKPT) {
+> >> +		u_int32_t diff =  max_sit_bitmap_size + max_nat_bitmap_size -
+> >> +							MAX_BITMAP_SIZE_IN_CKPT;
+> >> +		set_sb(cp_payload, F2FS_BLK_ALIGN(diff));
+> >>  	} else {
+> >> -		max_nat_bitmap_size = CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1
+> >> -			- max_sit_bitmap_size;
+> >>  		set_sb(cp_payload, 0);
+> >>  	}
+> >>  
+> >> -	max_nat_segments = (max_nat_bitmap_size * 8) >>
+> >> -					get_sb(log_blocks_per_seg);
+> >> -
+> >> -	if (get_sb(segment_count_nat) > max_nat_segments)
+> >> -		set_sb(segment_count_nat, max_nat_segments);
+> >> -
+> >>  	set_sb(segment_count_nat, get_sb(segment_count_nat) * 2);
+> >>  
+> >>  	set_sb(ssa_blkaddr, get_sb(nat_blkaddr) +
+> >> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+> >> index 4739085ed98f..edf351412702 100644
+> >> --- a/include/f2fs_fs.h
+> >> +++ b/include/f2fs_fs.h
+> >> @@ -362,6 +362,7 @@ struct f2fs_configuration {
+> >>  	int preen_mode;
+> >>  	int ro;
+> >>  	int preserve_limits;		/* preserve quota limits */
+> >> +	int large_nat_bitmap;
+> >>  	__le32 feature;			/* defined features */
+> >>  
+> >>  	/* defragmentation parameters */
+> >> @@ -613,6 +614,7 @@ struct f2fs_super_block {
+> >>  /*
+> >>   * For checkpoint
+> >>   */
+> >> +#define CP_LARGE_NAT_BITMAP_FLAG	0x00000200
+> >>  #define CP_TRIMMED_FLAG		0x00000100
+> >>  #define CP_NAT_BITS_FLAG	0x00000080
+> >>  #define CP_CRC_RECOVERY_FLAG	0x00000040
+> >> @@ -657,8 +659,8 @@ struct f2fs_checkpoint {
+> >>  	unsigned char sit_nat_version_bitmap[1];
+> >>  } __attribute__((packed));
+> >>  
+> >> -#define MAX_SIT_BITMAP_SIZE_IN_CKPT	\
+> >> -	(CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1 - 64)
+> >> +#define MAX_BITMAP_SIZE_IN_CKPT	\
+> >> +	(CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1)
+> >>  
+> >>  /*
+> >>   * For orphan inode management
+> >> @@ -846,6 +848,8 @@ struct f2fs_node {
+> >>  #define NAT_ENTRY_PER_BLOCK (PAGE_CACHE_SIZE / sizeof(struct f2fs_nat_entry))
+> >>  #define NAT_BLOCK_OFFSET(start_nid) (start_nid / NAT_ENTRY_PER_BLOCK)
+> >>  
+> >> +#define DEFAULT_NAT_ENTRY_RATIO		20
+> >> +
+> >>  #ifdef ANDROID_WINDOWS_HOST
+> >>  #pragma pack(1)
+> >>  #endif
+> >> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+> >> index ffdbccb34627..e8b1842b7391 100644
+> >> --- a/lib/libf2fs.c
+> >> +++ b/lib/libf2fs.c
+> >> @@ -623,6 +623,7 @@ void f2fs_init_configuration(void)
+> >>  	c.ro = 0;
+> >>  	c.kd = -1;
+> >>  	c.dry_run = 0;
+> >> +	c.large_nat_bitmap = 0;
+> >>  	c.fixed_time = -1;
+> >>  }
+> >>  
+> >> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+> >> index a13000184300..23eaf40c5962 100644
+> >> --- a/mkfs/f2fs_format.c
+> >> +++ b/mkfs/f2fs_format.c
+> >> @@ -151,13 +151,13 @@ static int f2fs_prepare_super_block(void)
+> >>  	u_int32_t log_sectorsize, log_sectors_per_block;
+> >>  	u_int32_t log_blocksize, log_blks_per_seg;
+> >>  	u_int32_t segment_size_bytes, zone_size_bytes;
+> >> -	u_int32_t sit_segments;
+> >> +	u_int32_t sit_segments, nat_segments;
+> >>  	u_int32_t blocks_for_sit, blocks_for_nat, blocks_for_ssa;
+> >>  	u_int32_t total_valid_blks_available;
+> >>  	u_int64_t zone_align_start_offset, diff;
+> >>  	u_int64_t total_meta_zones, total_meta_segments;
+> >>  	u_int32_t sit_bitmap_size, max_sit_bitmap_size;
+> >> -	u_int32_t max_nat_bitmap_size, max_nat_segments;
+> >> +	u_int32_t max_nat_bitmap_size;
+> >>  	u_int32_t total_zones;
+> >>  	u_int32_t next_ino;
+> >>  	enum quota_type qtype;
+> >> @@ -272,7 +272,18 @@ static int f2fs_prepare_super_block(void)
+> >>  	blocks_for_nat = SIZE_ALIGN(total_valid_blks_available,
+> >>  			NAT_ENTRY_PER_BLOCK);
+> >>  
+> >> -	set_sb(segment_count_nat, SEG_ALIGN(blocks_for_nat));
+> >> +	nat_segments = SEG_ALIGN(blocks_for_nat) *
+> >> +					DEFAULT_NAT_ENTRY_RATIO / 100;
+> >> +
+> >> +	set_sb(segment_count_nat, nat_segments ? nat_segments : 1);
+> >> +
+> >> +	max_nat_bitmap_size = (get_sb(segment_count_nat) <<
+> >> +					log_blks_per_seg) / 8;
+> >> +
+> >> +	set_sb(segment_count_nat, get_sb(segment_count_nat) * 2);
+> >> +
+> >> +	c.large_nat_bitmap = 1;
+> >> +
+> >>  	/*
+> >>  	 * The number of node segments should not be exceeded a "Threshold".
+> >>  	 * This number resizes NAT bitmap area in a CP page.
+> >> @@ -286,29 +297,16 @@ static int f2fs_prepare_super_block(void)
+> >>  	else
+> >>  		max_sit_bitmap_size = sit_bitmap_size;
+> >>  
+> >> -	/*
+> >> -	 * It should be reserved minimum 1 segment for nat.
+> >> -	 * When sit is too large, we should expand cp area. It requires more
+> >> -	 * pages for cp.
+> >> -	 */
+> >> -	if (max_sit_bitmap_size > MAX_SIT_BITMAP_SIZE_IN_CKPT) {
+> >> -		max_nat_bitmap_size = CHECKSUM_OFFSET -
+> >> -				sizeof(struct f2fs_checkpoint) + 1;
+> >> -		set_sb(cp_payload, F2FS_BLK_ALIGN(max_sit_bitmap_size));
+> >> +	/* use cp_payload if free space of f2fs_checkpoint is not enough */
+> >> +	if (max_sit_bitmap_size + max_nat_bitmap_size >
+> >> +					MAX_BITMAP_SIZE_IN_CKPT) {
+> >> +		u_int32_t diff =  max_sit_bitmap_size + max_nat_bitmap_size -
+> >> +							MAX_BITMAP_SIZE_IN_CKPT;
+> >> +		set_sb(cp_payload, F2FS_BLK_ALIGN(diff));
+> >>  	} else {
+> >> -		max_nat_bitmap_size =
+> >> -			CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1
+> >> -			- max_sit_bitmap_size;
+> >>  		set_sb(cp_payload, 0);
+> >>  	}
+> >>  
+> >> -	max_nat_segments = (max_nat_bitmap_size * 8) >> log_blks_per_seg;
+> >> -
+> >> -	if (get_sb(segment_count_nat) > max_nat_segments)
+> >> -		set_sb(segment_count_nat, max_nat_segments);
+> >> -
+> >> -	set_sb(segment_count_nat, get_sb(segment_count_nat) * 2);
+> >> -
+> >>  	set_sb(ssa_blkaddr, get_sb(nat_blkaddr) + get_sb(segment_count_nat) *
+> >>  			c.blks_per_seg);
+> >>  
+> >> @@ -622,6 +620,9 @@ static int f2fs_write_check_point_pack(void)
+> >>  	if (c.trimmed)
+> >>  		flags |= CP_TRIMMED_FLAG;
+> >>  
+> >> +	if (c.large_nat_bitmap)
+> >> +		flags |= CP_LARGE_NAT_BITMAP_FLAG;
+> >> +
+> >>  	set_cp(ckpt_flags, flags);
+> >>  	set_cp(cp_pack_start_sum, 1 + get_sb(cp_payload));
+> >>  	set_cp(valid_node_count, 1 + quota_inum);
+> >> -- 
+> >> 2.15.0.55.gc2ece9dc4de6
+> > 
+> > .
+> > 
