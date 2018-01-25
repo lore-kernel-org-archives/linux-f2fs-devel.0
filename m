@@ -1,28 +1,22 @@
-From: "Gaoxiang (OS)" <gaoxiang25@huawei.com>
-Subject: Re: [PATCH RFC v2] f2fs: flush cp pack except cp page2
- at first
-Date: Thu, 25 Jan 2018 08:45:46 +0000
-Message-ID: <9047C53C18267742AB12E43B65C7F9F70BCD2EE2@dggemi505-mbs.china.huawei.com>
-References: <9047C53C18267742AB12E43B65C7F9F70BCD2DE9@dggemi505-mbs.china.huawei.com>
- <c6974458-a5eb-8fad-e7db-644136333f49@huawei.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH v3] f2fs: rebuild sit page from sit info in mem
+Date: Thu, 25 Jan 2018 17:27:11 +0800
+Message-ID: <1516872431-689-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <gaoxiang25@huawei.com>) id 1eedAb-00018b-JG
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Jan 2018 08:46:05 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187] helo=huawei.com)
+ (envelope-from <heyunlei@huawei.com>) id 1eee2c-00036X-Cs
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Jan 2018 09:41:54 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
  by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eedAY-0003Ms-S0
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Jan 2018 08:46:05 +0000
-In-Reply-To: <c6974458-a5eb-8fad-e7db-644136333f49@huawei.com>
-Content-Language: zh-CN
-Content-ID: <61659B0FADC739499343799F95B5CFD8@huawei.com>
+ id 1eee2a-0005DX-3x
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Jan 2018 09:41:54 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,280 +26,155 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "Yuchao (T)" <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, hutj <hutj@huawei.com>, "Duwei (Device OS)" <weidu.du@huawei.com>, heyunlei <heyunlei@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: ning.jia@huawei.com, heyunlei@huawei.com
 
-Hi Chao,
+This patch rebuild sit page from sit info in mem instead
+of issue a read io.
 
-On 2018/1/25 16:18, Chao Yu wrote:
-> On 2018/1/25 15:05, Gaoxiang (OS) wrote:
->> Previously, we attempt to flush the whole cp pack in a single bio,
->> however, when suddenly powering off at this time, we could get into
->> an extreme scenario that cp page1 and cp page2 are updated and
->> latest, but payload or current summaries are still partially outdated.
->> (see reliable write in the UFS specification)
->>
->> This patch submits the whole cp pack except cp page2 at first,
->> and then writes the cp page2 with an extra independent
->> bio with pre-io barrier.
->>
->> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
->> ---
->> Change log from v1:
->>    - Apply the review comments from Chao
->>    - time data from "finish block_ops" to " finish checkpoint" (tested on ARM64 with TOSHIBA 128GB UFS):
->>       Before patch: 0.002273  0.001973  0.002789  0.005159  0.002050
->>       After patch: 0.002502  0.001624  0.002487  0.003049  0.002696
-> 
-> Looks not very stable.
-> 
-The raw time is as follows, actually I think the time depends on the CPU 
-, CPU schedule and some other conditions...
+I test this method and the result is as below:
 
-We drop REQ_PREFLUSH and REQ_FUA in the first bio and the second bio is
-only 4k..  It would not have obvious performance difference, I think.
+Pre:
+ mmc_perf_test-12061 [001] ...1   976.819992: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = start flush sit
+ mmc_perf_test-12061 [001] ...1   976.856446: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = end flush sit
+ mmc_perf_test-12061 [003] ...1   998.976946: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = start flush sit
+ mmc_perf_test-12061 [003] ...1   999.023269: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = end flush sit
+ mmc_perf_test-12061 [003] ...1  1022.060772: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = start flush sit
+ mmc_perf_test-12061 [003] ...1  1022.111034: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = end flush sit
+ mmc_perf_test-12061 [002] ...1  1070.127643: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = start flush sit
+ mmc_perf_test-12061 [003] ...1  1070.187352: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = end flush sit
+ mmc_perf_test-12061 [003] ...1  1095.942124: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = start flush sit
+ mmc_perf_test-12061 [003] ...1  1095.995975: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = end flush sit
+ mmc_perf_test-12061 [003] ...1  1122.535091: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = start flush sit
+ mmc_perf_test-12061 [003] ...1  1122.586521: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = end flush sit
+ mmc_perf_test-12061 [001] ...1  1147.897487: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = start flush sit
+ mmc_perf_test-12061 [001] ...1  1147.959438: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = end flush sit
+ mmc_perf_test-12061 [003] ...1  1177.926951: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = start flush sit
+ mmc_perf_test-12061 [002] ...1  1177.976823: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = end flush sit
+ mmc_perf_test-12061 [002] ...1  1204.176087: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = start flush sit
+ mmc_perf_test-12061 [002] ...1  1204.239046: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = end flush sit
 
-before:
-    kworker/u16:3-220   [003] ...1   378.093580: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = start block_ops
-    kworker/u16:3-220   [003] ...1   378.095468: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish block_ops
-    kworker/u16:3-220   [003] ...1   378.097741: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish checkpoint (1)
-    kworker/u16:1-97    [003] ...1   438.190720: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = start block_ops
-    kworker/u16:1-97    [003] ...1   438.192693: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish block_ops
-    kworker/u16:1-97    [003] ...1   438.195540: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish checkpoint (2)
-    kworker/u16:4-238   [001] ...1   498.301875: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = start block_ops
-    kworker/u16:4-238   [001] ...1   498.304664: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish block_ops
-    kworker/u16:4-238   [001] ...1   498.308997: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish checkpoint (3)
-    kworker/u16:4-238   [002] ...1   558.414151: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = start block_ops
-    kworker/u16:4-238   [002] ...1   558.417236: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish block_ops
-    kworker/u16:4-238   [002] ...1   558.422395: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish checkpoint (4)
-    kworker/u16:4-238   [001] ...1   618.525854: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = start block_ops
-    kworker/u16:4-238   [001] ...1   618.527882: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish block_ops
-    kworker/u16:4-238   [000] ...1   618.529932: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish checkpoint (5)
-    kworker/u16:4-238   [002] ...1   678.639271: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = start block_ops
-    kworker/u16:4-238   [002] ...1   678.644787: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish block_ops
-    kworker/u16:4-238   [003] ...1   678.651480: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish checkpoint (6)
-    kworker/u16:1-97    [002] ...1   738.765589: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = start block_ops
-    kworker/u16:1-97    [002] ...1   738.767638: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish block_ops
-    kworker/u16:1-97    [000] ...1   738.770752: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish checkpoint (7)
-    kworker/u16:4-238   [003] ...1   798.895281: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = start block_ops
-    kworker/u16:4-238   [003] ...1   798.897615: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish block_ops
-    kworker/u16:4-238   [001] ...1   798.902006: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish checkpoint (8)
-    kworker/u16:1-97    [003] ...1   859.021172: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = start block_ops
-    kworker/u16:1-97    [003] ...1   859.022934: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish block_ops
-    kworker/u16:1-97    [003] ...1   859.024095: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish checkpoint (9)
-    kworker/u16:3-220   [002] ...1   919.133620: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = start block_ops
-    kworker/u16:3-220   [002] ...1   919.135558: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish block_ops
-    kworker/u16:3-220   [002] ...1   919.137182: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish checkpoint (10)
+Some sit flush consume more than 50ms.
 
-after:
-    kworker/u16:3-222   [000] ...1   137.820152: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = start block_ops
-    kworker/u16:3-222   [000] ...1   137.822471: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish block_ops
-    kworker/u16:3-222   [000] ...1   137.824973: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish checkpoint (1)
-    kworker/u16:1-96    [002] ...1   197.917060: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = start block_ops
-    kworker/u16:1-96    [002] ...1   197.919031: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish block_ops
-    kworker/u16:1-96    [002] ...1   197.920655: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish checkpoint (2)
-    kworker/u16:1-96    [002] ...1   258.013014: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = start block_ops
-    kworker/u16:1-96    [002] ...1   258.014914: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish block_ops
-    kworker/u16:1-96    [002] ...1   258.017401: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish checkpoint (3)
-    kworker/u16:0-6     [002] ...1   318.109930: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = start block_ops
-    kworker/u16:0-6     [002] ...1   318.111908: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish block_ops
-    kworker/u16:0-6     [002] ...1   318.114957: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish checkpoint (4)
-    kworker/u16:1-96    [003] ...1   378.222490: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = start block_ops
-    kworker/u16:1-96    [003] ...1   378.224729: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish block_ops
-    kworker/u16:1-96    [002] ...1   378.227425: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish checkpoint (5)
-    kworker/u16:1-96    [001] ...1   438.334204: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = start block_ops
-    kworker/u16:1-96    [001] ...1   438.337002: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish block_ops
-    kworker/u16:1-96    [001] ...1   438.341479: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish checkpoint (6)
-    kworker/u16:1-96    [002] ...1   498.462207: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = start block_ops
-    kworker/u16:1-96    [002] ...1   498.465213: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish block_ops
-    kworker/u16:1-96    [003] ...1   498.469858: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish checkpoint (7)
-    kworker/u16:0-6     [003] ...1   558.589039: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = start block_ops
-    kworker/u16:0-6     [003] ...1   558.591138: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish block_ops
-    kworker/u16:0-6     [002] ...1   558.594847: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish checkpoint (8)
-    kworker/u16:3-222   [003] ...1   618.702535: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = start block_ops
-    kworker/u16:3-222   [003] ...1   618.708222: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish block_ops
-    kworker/u16:3-222   [003] ...1   618.724619: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish checkpoint (9)
-    kworker/u16:3-222   [002] ...1   678.830550: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = start block_ops
-    kworker/u16:3-222   [002] ...1   678.832785: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish block_ops
-    kworker/u16:3-222   [002] ...1   678.835356: f2fs_write_checkpoint: 
-dev = (259,44), checkpoint for Sync, state = finish checkpoint (10)
->>   fs/f2fs/checkpoint.c | 41 ++++++++++++++++++++++++++++++++++++-----
->>   1 file changed, 36 insertions(+), 5 deletions(-)
->>
->> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->> index 14d2fed..70deb09 100644
->> --- a/fs/f2fs/checkpoint.c
->> +++ b/fs/f2fs/checkpoint.c
->> @@ -300,6 +300,36 @@ static int f2fs_write_meta_pages(struct address_space *mapping,
->>   	return 0;
->>   }
->>   
->> +static void commit_checkpoint_with_barrier(struct f2fs_sb_info *sbi,
-> 
-> Minor, {commit,sync}_checkpoint will be OK to me, since we will decide to
-> keep barrier in more deep places according to NOBARRIER mount option,
-> instead of this function.
-OK, I agree.
+Now:
+mmc_perf_test-2187  [007] ...1   196.840684: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = start flush sit
+mmc_perf_test-2187  [007] ...1   196.841258: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = end flush sit
+mmc_perf_test-2187  [007] ...1   219.430582: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = start flush sit
+mmc_perf_test-2187  [007] ...1   219.431144: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = end flush sit
+mmc_perf_test-2187  [002] ...1   243.638678: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = start flush sit
+mmc_perf_test-2187  [000] ...1   243.638980: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = end flush sit
+mmc_perf_test-2187  [002] ...1   265.392180: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = start flush sit
+mmc_perf_test-2187  [002] ...1   265.392245: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = end flush sit
+mmc_perf_test-2187  [000] ...1   290.309051: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = start flush sit
+mmc_perf_test-2187  [000] ...1   290.309116: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = end flush sit
+mmc_perf_test-2187  [003] ...1   317.144209: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = start flush sit
+mmc_perf_test-2187  [003] ...1   317.145913: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = end flush sit
+mmc_perf_test-2187  [005] ...1   343.224954: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = start flush sit
+mmc_perf_test-2187  [005] ...1   343.225574: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = end flush sit
+mmc_perf_test-2187  [000] ...1   370.239846: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = start flush sit
+mmc_perf_test-2187  [000] ...1   370.241138: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = end flush sit
+mmc_perf_test-2187  [001] ...1   397.029043: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = start flush sit
+mmc_perf_test-2187  [001] ...1   397.030750: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = end flush sit
+mmc_perf_test-2187  [003] ...1   425.386377: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = start flush sit
+mmc_perf_test-2187  [003] ...1   425.387735: f2fs_write_checkpoint: dev = (259,44), checkpoint for Sync, state = end flush sit
 
-> 
->> +	void *src, block_t blk_addr)
->> +{
->> +	struct writeback_control wbc = {
->> +		.for_reclaim = 0,
->> +	};
->> +	struct page *page = grab_meta_page(sbi, blk_addr);
->> +	int err;
->> +
->> +	memcpy(page_address(page), src, PAGE_SIZE);
->> +	set_page_dirty(page);
->> +
->> +	f2fs_wait_on_page_writeback(page, META, true);
->> +	BUG_ON(PageWriteback(page));
->> +	if (unlikely(!clear_page_dirty_for_io(page)))
->> +		BUG();
-> 
-> f2fs_bug_on(sbi, PageWriteback(page));
-Will fix.
+Most sit flush consume no more than 1ms.
 
-> f2fs_bug_on(sbi, unlikely(!clear_page_dirty_for_io(page)));
->
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fs/f2fs/segment.c | 19 +++++--------------
+ fs/f2fs/segment.h | 29 +++++++++++++++++++++++++++--
+ 2 files changed, 32 insertions(+), 16 deletions(-)
 
-I attempt to use
-if (unlikely(!clear_page_dirty_for_io(page))
-     f2fs_bug_on(1);
-since It is better to contain judgement only for assert-like functions 
-(In case that clear_page_dirty_for_io could be omited by changing BUG_ON 
-definition in the future).
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index e5739ce..e448b75 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3113,28 +3113,19 @@ static struct page *get_next_sit_page(struct f2fs_sb_info *sbi,
+ 					unsigned int start)
+ {
+ 	struct sit_info *sit_i = SIT_I(sbi);
+-	struct page *src_page, *dst_page;
++	struct page *page;
+ 	pgoff_t src_off, dst_off;
+-	void *src_addr, *dst_addr;
+ 
+ 	src_off = current_sit_addr(sbi, start);
+ 	dst_off = next_sit_addr(sbi, src_off);
+ 
+-	/* get current sit block page without lock */
+-	src_page = get_meta_page(sbi, src_off);
+-	dst_page = grab_meta_page(sbi, dst_off);
+-	f2fs_bug_on(sbi, PageDirty(src_page));
+-
+-	src_addr = page_address(src_page);
+-	dst_addr = page_address(dst_page);
+-	memcpy(dst_addr, src_addr, PAGE_SIZE);
+-
+-	set_page_dirty(dst_page);
+-	f2fs_put_page(src_page, 1);
++	page = grab_meta_page(sbi, dst_off);
++	seg_info_to_sit_page(sbi, page, start);
+ 
++	set_page_dirty(page);
+ 	set_to_next_sit(sit_i, start);
+ 
+-	return dst_page;
++	return page;
+ }
+ 
+ static struct sit_entry_set *grab_sit_entry_set(void)
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 1a807e6..f11c4bc 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -348,16 +348,41 @@ static inline void seg_info_from_raw_sit(struct seg_entry *se,
+ 	se->mtime = le64_to_cpu(rs->mtime);
+ }
+ 
+-static inline void seg_info_to_raw_sit(struct seg_entry *se,
++static inline void __seg_info_to_raw_sit(struct seg_entry *se,
+ 					struct f2fs_sit_entry *rs)
+ {
+ 	unsigned short raw_vblocks = (se->type << SIT_VBLOCKS_SHIFT) |
+ 					se->valid_blocks;
+ 	rs->vblocks = cpu_to_le16(raw_vblocks);
+ 	memcpy(rs->valid_map, se->cur_valid_map, SIT_VBLOCK_MAP_SIZE);
++	rs->mtime = cpu_to_le64(se->mtime);
++}
++
++static inline void seg_info_to_sit_page(struct f2fs_sb_info *sbi,
++				struct page *page, unsigned int start)
++{
++	struct f2fs_sit_block *raw_sit;
++	struct seg_entry *se;
++	struct f2fs_sit_entry *rs;
++	unsigned int end = min(start + SIT_ENTRY_PER_BLOCK,
++					(unsigned long)MAIN_SEGS(sbi));
++	int i;
++
++	raw_sit = (struct f2fs_sit_block *)page_address(page);
++	for (i = 0; i < end - start; i++) {
++		rs = &raw_sit->entries[i];
++		se = get_seg_entry(sbi, start + i);
++		__seg_info_to_raw_sit(se, rs);
++	}
++}
++
++static inline void seg_info_to_raw_sit(struct seg_entry *se,
++					struct f2fs_sit_entry *rs)
++{
++	__seg_info_to_raw_sit(se, rs);
++
+ 	memcpy(se->ckpt_valid_map, rs->valid_map, SIT_VBLOCK_MAP_SIZE);
+ 	se->ckpt_valid_blocks = se->valid_blocks;
+-	rs->mtime = cpu_to_le64(se->mtime);
+ }
+ 
+ static inline unsigned int find_next_inuse(struct free_segmap_info *free_i,
+-- 
+1.9.1
 
->> +
->> +	/* writeout cp page2 */
-> 
-> Please keep defined terms as the same in all places:
-> 
-> s/cp page2/cp pack 2 page
-> 
->> +	err = __f2fs_write_meta_page(page, &wbc, FS_CP_META_IO);
->> +	if (err) {
->> +		f2fs_put_page(page, 1);
->> +		f2fs_stop_checkpoint(sbi, false);
->> +		return;
-> 
-> How about f2fs_bug_on(sbi, err), since we should not fail in
-> __f2fs_write_meta_page, right?
-OK, will fix in that way.
-
-> 
->> +	}
->> +	f2fs_put_page(page, 0);
->> +
->> +	/* submit checkpoint with barrier */
->> +	f2fs_submit_merged_write(sbi, META_FLUSH);
->> +}
->> +
->>   long sync_meta_pages(struct f2fs_sb_info *sbi, enum page_type type,
->>   				long nr_to_write, enum iostat_type io_type)
->>   {
->> @@ -1297,9 +1327,6 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->>   		start_blk += NR_CURSEG_NODE_TYPE;
->>   	}
->>   
->> -	/* writeout checkpoint block */
->> -	update_meta_page(sbi, ckpt, start_blk);
->> -
->>   	/* wait for previous submitted node/meta pages writeback */
->>   	wait_on_all_pages_writeback(sbi);
->>   
->> @@ -1313,12 +1340,16 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->>   	sbi->last_valid_block_count = sbi->total_valid_block_count;
->>   	percpu_counter_set(&sbi->alloc_valid_block_count, 0);
->>   
->> -	/* Here, we only have one bio having CP pack */
->> -	sync_meta_pages(sbi, META_FLUSH, LONG_MAX, FS_CP_META_IO);
->> +	/* Here, we have one bio having CP pack except cp page2 */
->> +	sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
->>   
->>   	/* wait for previous submitted meta pages writeback */
->>   	wait_on_all_pages_writeback(sbi);
-> 
-> /* wait for previous submitted meta pages writeback */
-> if (!test_opt(sbi, NOBARRIER)
-> 	wait_on_all_pages_writeback(sbi);
-> 
-OK.
-
-Thanks,
-
-> Thanks,
-> 
->>   
->> +	/* barrier and flush checkpoint cp page2 */
->> +	commit_checkpoint_with_barrier(sbi, ckpt, start_blk);
->> +	wait_on_all_pages_writeback(sbi);
->> +
->>   	release_ino_entry(sbi, false);
->>   
->>   	if (unlikely(f2fs_cp_error(sbi)))
->>
-> 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
