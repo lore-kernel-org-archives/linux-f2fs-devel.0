@@ -1,46 +1,23 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v3] f2fs: rebuild sit page from sit info in
- mem
-Date: Thu, 25 Jan 2018 18:21:45 +0800
-Message-ID: <ba5dfd19-91d6-852a-d5a9-8c128277d675@huawei.com>
-References: <1516872431-689-1-git-send-email-heyunlei@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: flush cp pack except cp pack 2 page
+ at first
+Date: Thu, 25 Jan 2018 18:22:17 +0800
+Message-ID: <c5d7116f-6213-d176-2062-452f7a9c7371@huawei.com>
+References: <9047C53C18267742AB12E43B65C7F9F70BCD2F67@dggemi505-mbs.china.huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
- helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1eeefi-00042I-P7
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Jan 2018 10:22:18 +0000
-Received: from [45.249.212.32] (helo=huawei.com)
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eeeff-0001jy-4Z
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Jan 2018 10:22:18 +0000
-In-Reply-To: <1516872431-689-1-git-send-email-heyunlei@huawei.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <9047C53C18267742AB12E43B65C7F9F70BCD2F67@dggemi505-mbs.china.huawei.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: ning.jia@huawei.com
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: "Gaoxiang (OS)" <gaoxiang25@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, heyunlei <heyunlei@huawei.com>, hutj <hutj@huawei.com>, "Duwei (Device OS)" <weidu.du@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/1/25 17:27, Yunlei He wrote:
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+On 2018/1/25 17:52, Gaoxiang (OS) wrote:
+> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
