@@ -1,141 +1,107 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs-tools: support inode creation time
-Date: Thu, 25 Jan 2018 14:58:45 +0800
-Message-ID: <20180125065845.63302-1-yuchao0@huawei.com>
+From: "Gaoxiang (OS)" <gaoxiang25@huawei.com>
+Subject: [f2fs-dev] [PATCH RFC v2] f2fs: flush cp pack except cp page2 at
+ first
+Date: Thu, 25 Jan 2018 07:05:11 +0000
+Message-ID: <9047C53C18267742AB12E43B65C7F9F70BCD2DE9@dggemi505-mbs.china.huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
- helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1eebV1-0006gl-Ia
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Jan 2018 06:59:03 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eebV0-0000Po-22
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Jan 2018 06:59:03 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Language: zh-CN
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, "Yuchao (T)" <yuchao0@huawei.com>
+Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, heyunlei <heyunlei@huawei.com>, hutj <hutj@huawei.com>, "Duwei (Device OS)" <weidu.du@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch supports inode_crtime feature to enable recording inode
-creation time in inode layout.
+Previously, we attempt to flush the whole cp pack in a single bio,
+however, when suddenly powering off at this time, we could get into
+an extreme scenario that cp page1 and cp page2 are updated and
+latest, but payload or current summaries are still partially outdated.
+(see reliable write in the UFS specification)
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+This patch submits the whole cp pack except cp page2 at first,
+and then writes the cp page2 with an extra independent
+bio with pre-io barrier.
+
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
-v2:
-- fix address alignment issue.
- fsck/mount.c            | 7 +++++++
- include/f2fs_fs.h       | 5 ++++-
- mkfs/f2fs_format.c      | 5 +++++
- mkfs/f2fs_format_main.c | 7 +++++++
- 4 files changed, 23 insertions(+), 1 deletion(-)
+Change log from v1:
+  - Apply the review comments from Chao
+  - time data from "finish block_ops" to " finish checkpoint" (tested on ARM64 with TOSHIBA 128GB UFS):
+     Before patch: 0.002273  0.001973  0.002789  0.005159  0.002050
+     After patch: 0.002502  0.001624  0.002487  0.003049  0.002696
+ fs/f2fs/checkpoint.c | 41 ++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 36 insertions(+), 5 deletions(-)
 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index fe0d510b019a..54eb061e4ffe 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -233,6 +233,10 @@ void print_inode_info(struct f2fs_sb_info *sbi,
- 			DISP_u32(inode, i_projid);
- 		if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM))
- 			DISP_u32(inode, i_inode_checksum);
-+		if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CRTIME)) {
-+			DISP_u64(inode, i_crtime);
-+			DISP_u32(inode, i_crtime_nsec);
-+		}
- 	}
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 14d2fed..70deb09 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -300,6 +300,36 @@ static int f2fs_write_meta_pages(struct address_space *mapping,
+ 	return 0;
+ }
  
- 	DISP_u32(inode, i_addr[ofs]);		/* Pointers to data blocks */
-@@ -453,6 +457,9 @@ void print_sb_state(struct f2fs_super_block *sb)
- 	if (f & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
- 		MSG(0, "%s", " quota_ino");
- 	}
-+	if (f & cpu_to_le32(F2FS_FEATURE_INODE_CRTIME)) {
-+		MSG(0, "%s", " inode_crtime");
-+	}
- 	MSG(0, "\n");
- 	MSG(0, "Info: superblock encrypt level = %d, salt = ",
- 					sb->encryption_level);
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 67f31d8ed982..053ccbe2eaf6 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -550,6 +550,7 @@ enum {
- #define F2FS_FEATURE_INODE_CHKSUM	0x0020
- #define F2FS_FEATURE_FLEXIBLE_INLINE_XATTR	0x0040
- #define F2FS_FEATURE_QUOTA_INO		0x0080
-+#define F2FS_FEATURE_INODE_CRTIME	0x0100
- 
- #define MAX_VOLUME_NAME		512
- 
-@@ -785,8 +786,10 @@ struct f2fs_inode {
- 			__le16 i_inline_xattr_size;	/* inline xattr size, unit: 4 bytes */
- 			__le32 i_projid;	/* project id */
- 			__le32 i_inode_checksum;/* inode meta checksum */
-+			__le64 i_crtime;	/* creation time */
-+			__le32 i_crtime_nsec;	/* creation time in nano scale */
- 			__le32 i_extra_end[0];	/* for attribute size calculation */
--		};
-+		} __attribute__((packed));
- 		__le32 i_addr[DEF_ADDRS_PER_INODE];	/* Pointers to data blocks */
- 	};
- 	__le32 i_nid[5];		/* direct(2), indirect(2),
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index 9d7e18039a88..0fc8b30296ef 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -1021,6 +1021,11 @@ static int f2fs_write_root_inode(void)
- 	if (c.feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA))
- 		raw_node->i.i_projid = cpu_to_le32(F2FS_DEF_PROJID);
- 
-+	if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CRTIME)) {
-+		raw_node->i.i_crtime = cpu_to_le32(time(NULL));
-+		raw_node->i.i_crtime_nsec = 0;
-+	}
++static void commit_checkpoint_with_barrier(struct f2fs_sb_info *sbi,
++	void *src, block_t blk_addr)
++{
++	struct writeback_control wbc = {
++		.for_reclaim = 0,
++	};
++	struct page *page = grab_meta_page(sbi, blk_addr);
++	int err;
 +
- 	data_blk_nor = get_sb(main_blkaddr) +
- 		c.cur_seg[CURSEG_HOT_DATA] * c.blks_per_seg;
- 	raw_node->i.i_addr[get_extra_isize(raw_node)] = cpu_to_le32(data_blk_nor);
-diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
-index e41bcb1a9d0c..e522b2f33562 100644
---- a/mkfs/f2fs_format_main.c
-+++ b/mkfs/f2fs_format_main.c
-@@ -92,6 +92,8 @@ static void parse_feature(const char *features)
- 		c.feature |= cpu_to_le32(F2FS_FEATURE_FLEXIBLE_INLINE_XATTR);
- 	} else if (!strcmp(features, "quota")) {
- 		c.feature |= cpu_to_le32(F2FS_FEATURE_QUOTA_INO);
-+	} else if (!strcmp(features, "inode_crtime")) {
-+		c.feature |= cpu_to_le32(F2FS_FEATURE_INODE_CRTIME);
- 	} else {
- 		MSG(0, "Error: Wrong features\n");
- 		mkfs_usage();
-@@ -187,6 +189,11 @@ static void f2fs_parse_options(int argc, char *argv[])
- 				"enabled with extra attr feature\n");
- 			exit(1);
- 		}
-+		if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CRTIME)) {
-+			MSG(0, "\tInfo: inode crtime feature should always been"
-+				"enabled with extra attr feature\n");
-+			exit(1);
-+		}
++	memcpy(page_address(page), src, PAGE_SIZE);
++	set_page_dirty(page);
++
++	f2fs_wait_on_page_writeback(page, META, true);
++	BUG_ON(PageWriteback(page));
++	if (unlikely(!clear_page_dirty_for_io(page)))
++		BUG();
++
++	/* writeout cp page2 */
++	err = __f2fs_write_meta_page(page, &wbc, FS_CP_META_IO);
++	if (err) {
++		f2fs_put_page(page, 1);
++		f2fs_stop_checkpoint(sbi, false);
++		return;
++	}
++	f2fs_put_page(page, 0);
++
++	/* submit checkpoint with barrier */
++	f2fs_submit_merged_write(sbi, META_FLUSH);
++}
++
+ long sync_meta_pages(struct f2fs_sb_info *sbi, enum page_type type,
+ 				long nr_to_write, enum iostat_type io_type)
+ {
+@@ -1297,9 +1327,6 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 		start_blk += NR_CURSEG_NODE_TYPE;
  	}
  
- 	if (optind >= argc) {
+-	/* writeout checkpoint block */
+-	update_meta_page(sbi, ckpt, start_blk);
+-
+ 	/* wait for previous submitted node/meta pages writeback */
+ 	wait_on_all_pages_writeback(sbi);
+ 
+@@ -1313,12 +1340,16 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	sbi->last_valid_block_count = sbi->total_valid_block_count;
+ 	percpu_counter_set(&sbi->alloc_valid_block_count, 0);
+ 
+-	/* Here, we only have one bio having CP pack */
+-	sync_meta_pages(sbi, META_FLUSH, LONG_MAX, FS_CP_META_IO);
++	/* Here, we have one bio having CP pack except cp page2 */
++	sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
+ 
+ 	/* wait for previous submitted meta pages writeback */
+ 	wait_on_all_pages_writeback(sbi);
+ 
++	/* barrier and flush checkpoint cp page2 */
++	commit_checkpoint_with_barrier(sbi, ckpt, start_blk);
++	wait_on_all_pages_writeback(sbi);
++
+ 	release_ino_entry(sbi, false);
+ 
+ 	if (unlikely(f2fs_cp_error(sbi)))
 -- 
-2.15.0.55.gc2ece9dc4de6
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+2.1.4
