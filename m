@@ -1,22 +1,27 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v2] f2fs: rebuild sit page from sit info in mem
-Date: Thu, 25 Jan 2018 11:53:49 +0800
-Message-ID: <1516852429-27641-1-git-send-email-heyunlei@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v2] f2fs: support inode creation time
+Date: Thu, 25 Jan 2018 14:52:01 +0800
+Message-ID: <a5f57da1-5bc6-ed5f-771b-4ef79d40d38f@huawei.com>
+References: <20180122152652.11475-1-chao@kernel.org>
+ <20180124053856.GA88761@jaegeuk-macbookpro.roam.corp.google.com>
+ <7c0526b9-0363-57dd-c20f-42e1a080d503@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <heyunlei@huawei.com>) id 1eeYpv-0002wk-Al
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Jan 2018 04:08:27 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1eebOS-00047C-Oc
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Jan 2018 06:52:16 +0000
 Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eeYpt-0003Y8-L8
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Jan 2018 04:08:27 +0000
+ id 1eebOQ-0005kj-Et
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Jan 2018 06:52:16 +0000
+In-Reply-To: <7c0526b9-0363-57dd-c20f-42e1a080d503@kernel.org>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,93 +31,217 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
-Cc: ning.jia@huawei.com, heyunlei@huawei.com
+To: Chao Yu <chao@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch rebuild sit page from sit info in mem instead
-of issue a read io.
+On 2018/1/24 22:59, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> On 2018/1/24 13:38, Jaegeuk Kim wrote:
+>> On 01/22, Chao Yu wrote:
+>>> From: Chao Yu <yuchao0@huawei.com>
+>>>
+>>> This patch adds creation time field in inode layout to support showing
+>>> kstat.btime in ->statx.
+>>
+>> Hi Chao,
+>>
+>> Could you please check this patch again? I reverted this due to kernel panic.
+> 
+> I can't reproduce it, could you show me your call stack?
+> 
+> And, could you please have a try with kernel patch only?
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fs/f2fs/segment.c | 19 +++++--------------
- fs/f2fs/segment.h | 24 ++++++++++++++++++++++++
- 2 files changed, 29 insertions(+), 14 deletions(-)
+Sigh, it's address alignment issue, which will make sizeof(f2fs_node)
+exceeding 4096... let me resend the patch.
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index e5739ce..e448b75 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3113,28 +3113,19 @@ static struct page *get_next_sit_page(struct f2fs_sb_info *sbi,
- 					unsigned int start)
- {
- 	struct sit_info *sit_i = SIT_I(sbi);
--	struct page *src_page, *dst_page;
-+	struct page *page;
- 	pgoff_t src_off, dst_off;
--	void *src_addr, *dst_addr;
- 
- 	src_off = current_sit_addr(sbi, start);
- 	dst_off = next_sit_addr(sbi, src_off);
- 
--	/* get current sit block page without lock */
--	src_page = get_meta_page(sbi, src_off);
--	dst_page = grab_meta_page(sbi, dst_off);
--	f2fs_bug_on(sbi, PageDirty(src_page));
--
--	src_addr = page_address(src_page);
--	dst_addr = page_address(dst_page);
--	memcpy(dst_addr, src_addr, PAGE_SIZE);
--
--	set_page_dirty(dst_page);
--	f2fs_put_page(src_page, 1);
-+	page = grab_meta_page(sbi, dst_off);
-+	seg_info_to_sit_page(sbi, page, start);
- 
-+	set_page_dirty(page);
- 	set_to_next_sit(sit_i, start);
- 
--	return dst_page;
-+	return page;
- }
- 
- static struct sit_entry_set *grab_sit_entry_set(void)
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 1a807e6..ee39fd6 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -348,6 +348,30 @@ static inline void seg_info_from_raw_sit(struct seg_entry *se,
- 	se->mtime = le64_to_cpu(rs->mtime);
- }
- 
-+static inline void seg_info_to_sit_page(struct f2fs_sb_info *sbi,
-+				struct page *page, unsigned int start)
-+{
-+	struct f2fs_sit_block *raw_sit;
-+	unsigned short raw_vblocks;
-+	struct seg_entry *se;
-+	struct f2fs_sit_entry *rs;
-+	unsigned int end = min(start + SIT_ENTRY_PER_BLOCK,
-+					(unsigned long)MAIN_SEGS(sbi));
-+	int i;
-+
-+	raw_sit = (struct f2fs_sit_block *)page_address(page);
-+	for (i = 0; i < end - start; i++) {
-+		rs = &raw_sit->entries[i];
-+		se = get_seg_entry(sbi, start + i);
-+		raw_vblocks = (se->type << SIT_VBLOCKS_SHIFT) |
-+						se->valid_blocks;
-+		rs->vblocks = cpu_to_le16(raw_vblocks);
-+		memcpy(rs->valid_map, se->cur_valid_map,
-+						SIT_VBLOCK_MAP_SIZE);
-+		rs->mtime = cpu_to_le64(se->mtime);
-+	}
-+}
-+
- static inline void seg_info_to_raw_sit(struct seg_entry *se,
- 					struct f2fs_sit_entry *rs)
- {
--- 
-1.9.1
+Thanks,
+
+> 
+> Thanks,
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>> ---
+>>> v2:
+>>> - add missing sysfs entry.
+>>>  fs/f2fs/f2fs.h          |  7 +++++++
+>>>  fs/f2fs/file.c          |  9 +++++++++
+>>>  fs/f2fs/inode.c         | 16 ++++++++++++++++
+>>>  fs/f2fs/namei.c         |  3 ++-
+>>>  fs/f2fs/sysfs.c         |  7 +++++++
+>>>  include/linux/f2fs_fs.h |  2 ++
+>>>  6 files changed, 43 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>> index b7ba496af28f..6300ac5bcbe4 100644
+>>> --- a/fs/f2fs/f2fs.h
+>>> +++ b/fs/f2fs/f2fs.h
+>>> @@ -124,6 +124,7 @@ struct f2fs_mount_info {
+>>>  #define F2FS_FEATURE_INODE_CHKSUM	0x0020
+>>>  #define F2FS_FEATURE_FLEXIBLE_INLINE_XATTR	0x0040
+>>>  #define F2FS_FEATURE_QUOTA_INO		0x0080
+>>> +#define F2FS_FEATURE_INODE_CRTIME	0x0100
+>>>  
+>>>  #define F2FS_HAS_FEATURE(sb, mask)					\
+>>>  	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
+>>> @@ -635,6 +636,7 @@ struct f2fs_inode_info {
+>>>  	int i_extra_isize;		/* size of extra space located in i_addr */
+>>>  	kprojid_t i_projid;		/* id for project quota */
+>>>  	int i_inline_xattr_size;	/* inline xattr size */
+>>> +	struct timespec i_crtime;	/* inode creation time */
+>>>  };
+>>>  
+>>>  static inline void get_extent_info(struct extent_info *ext,
+>>> @@ -3205,6 +3207,11 @@ static inline int f2fs_sb_has_quota_ino(struct super_block *sb)
+>>>  	return F2FS_HAS_FEATURE(sb, F2FS_FEATURE_QUOTA_INO);
+>>>  }
+>>>  
+>>> +static inline int f2fs_sb_has_inode_crtime(struct super_block *sb)
+>>> +{
+>>> +	return F2FS_HAS_FEATURE(sb, F2FS_FEATURE_INODE_CRTIME);
+>>> +}
+>>> +
+>>>  #ifdef CONFIG_BLK_DEV_ZONED
+>>>  static inline int get_blkz_type(struct f2fs_sb_info *sbi,
+>>>  			struct block_device *bdev, block_t blkaddr)
+>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>>> index b9b1efe61d29..0873ba12ebc6 100644
+>>> --- a/fs/f2fs/file.c
+>>> +++ b/fs/f2fs/file.c
+>>> @@ -672,8 +672,17 @@ int f2fs_getattr(const struct path *path, struct kstat *stat,
+>>>  {
+>>>  	struct inode *inode = d_inode(path->dentry);
+>>>  	struct f2fs_inode_info *fi = F2FS_I(inode);
+>>> +	struct f2fs_inode *ri;
+>>>  	unsigned int flags;
+>>>  
+>>> +	if (f2fs_has_extra_attr(inode) &&
+>>> +			f2fs_sb_has_inode_crtime(inode->i_sb) &&
+>>> +			F2FS_FITS_IN_INODE(ri, fi->i_extra_isize, i_crtime)) {
+>>> +		stat->result_mask |= STATX_BTIME;
+>>> +		stat->btime.tv_sec = fi->i_crtime.tv_sec;
+>>> +		stat->btime.tv_nsec = fi->i_crtime.tv_nsec;
+>>> +	}
+>>> +
+>>>  	flags = fi->i_flags & (FS_FL_USER_VISIBLE | FS_PROJINHERIT_FL);
+>>>  	if (flags & FS_APPEND_FL)
+>>>  		stat->attributes |= STATX_ATTR_APPEND;
+>>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+>>> index 1dc77a40d0ad..99ee72bff628 100644
+>>> --- a/fs/f2fs/inode.c
+>>> +++ b/fs/f2fs/inode.c
+>>> @@ -278,6 +278,13 @@ static int do_read_inode(struct inode *inode)
+>>>  		i_projid = F2FS_DEF_PROJID;
+>>>  	fi->i_projid = make_kprojid(&init_user_ns, i_projid);
+>>>  
+>>> +	if (f2fs_has_extra_attr(inode) && f2fs_sb_has_inode_crtime(sbi->sb) &&
+>>> +			F2FS_FITS_IN_INODE(ri, fi->i_extra_isize, i_crtime)) {
+>>> +		fi->i_crtime.tv_sec = le64_to_cpu(ri->i_crtime);
+>>> +		fi->i_crtime.tv_nsec = le32_to_cpu(ri->i_crtime_nsec);
+>>> +	}
+>>> +
+>>> +
+>>>  	f2fs_put_page(node_page, 1);
+>>>  
+>>>  	stat_inc_inline_xattr(inode);
+>>> @@ -421,6 +428,15 @@ void update_inode(struct inode *inode, struct page *node_page)
+>>>  						F2FS_I(inode)->i_projid);
+>>>  			ri->i_projid = cpu_to_le32(i_projid);
+>>>  		}
+>>> +
+>>> +		if (f2fs_sb_has_inode_crtime(F2FS_I_SB(inode)->sb) &&
+>>> +			F2FS_FITS_IN_INODE(ri, F2FS_I(inode)->i_extra_isize,
+>>> +								i_crtime)) {
+>>> +			ri->i_crtime =
+>>> +				cpu_to_le64(F2FS_I(inode)->i_crtime.tv_sec);
+>>> +			ri->i_crtime_nsec =
+>>> +				cpu_to_le32(F2FS_I(inode)->i_crtime.tv_nsec);
+>>> +		}
+>>>  	}
+>>>  
+>>>  	__set_inode_rdev(inode, ri);
+>>> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+>>> index 3ee97ba9d2d7..c4c94c7e9f4f 100644
+>>> --- a/fs/f2fs/namei.c
+>>> +++ b/fs/f2fs/namei.c
+>>> @@ -50,7 +50,8 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
+>>>  
+>>>  	inode->i_ino = ino;
+>>>  	inode->i_blocks = 0;
+>>> -	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
+>>> +	inode->i_mtime = inode->i_atime = inode->i_ctime =
+>>> +			F2FS_I(inode)->i_crtime = current_time(inode);
+>>>  	inode->i_generation = sbi->s_next_generation++;
+>>>  
+>>>  	err = insert_inode_locked(inode);
+>>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+>>> index 41887e6ec1b3..d978c7b6ea04 100644
+>>> --- a/fs/f2fs/sysfs.c
+>>> +++ b/fs/f2fs/sysfs.c
+>>> @@ -113,6 +113,9 @@ static ssize_t features_show(struct f2fs_attr *a,
+>>>  	if (f2fs_sb_has_quota_ino(sb))
+>>>  		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
+>>>  				len ? ", " : "", "quota_ino");
+>>> +	if (f2fs_sb_has_inode_crtime(sb))
+>>> +		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
+>>> +				len ? ", " : "", "inode_crtime");
+>>>  	len += snprintf(buf + len, PAGE_SIZE - len, "\n");
+>>>  	return len;
+>>>  }
+>>> @@ -232,6 +235,7 @@ enum feat_id {
+>>>  	FEAT_INODE_CHECKSUM,
+>>>  	FEAT_FLEXIBLE_INLINE_XATTR,
+>>>  	FEAT_QUOTA_INO,
+>>> +	FEAT_INODE_CRTIME,
+>>>  };
+>>>  
+>>>  static ssize_t f2fs_feature_show(struct f2fs_attr *a,
+>>> @@ -246,6 +250,7 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
+>>>  	case FEAT_INODE_CHECKSUM:
+>>>  	case FEAT_FLEXIBLE_INLINE_XATTR:
+>>>  	case FEAT_QUOTA_INO:
+>>> +	case FEAT_INODE_CRTIME:
+>>>  		return snprintf(buf, PAGE_SIZE, "supported\n");
+>>>  	}
+>>>  	return 0;
+>>> @@ -323,6 +328,7 @@ F2FS_FEATURE_RO_ATTR(project_quota, FEAT_PROJECT_QUOTA);
+>>>  F2FS_FEATURE_RO_ATTR(inode_checksum, FEAT_INODE_CHECKSUM);
+>>>  F2FS_FEATURE_RO_ATTR(flexible_inline_xattr, FEAT_FLEXIBLE_INLINE_XATTR);
+>>>  F2FS_FEATURE_RO_ATTR(quota_ino, FEAT_QUOTA_INO);
+>>> +F2FS_FEATURE_RO_ATTR(inode_crtime, FEAT_INODE_CRTIME);
+>>>  
+>>>  #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
+>>>  static struct attribute *f2fs_attrs[] = {
+>>> @@ -376,6 +382,7 @@ static struct attribute *f2fs_feat_attrs[] = {
+>>>  	ATTR_LIST(inode_checksum),
+>>>  	ATTR_LIST(flexible_inline_xattr),
+>>>  	ATTR_LIST(quota_ino),
+>>> +	ATTR_LIST(inode_crtime),
+>>>  	NULL,
+>>>  };
+>>>  
+>>> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+>>> index 6eed677b6d9a..73af22dc300a 100644
+>>> --- a/include/linux/f2fs_fs.h
+>>> +++ b/include/linux/f2fs_fs.h
+>>> @@ -253,6 +253,8 @@ struct f2fs_inode {
+>>>  			__le16 i_inline_xattr_size;	/* inline xattr size, unit: 4 bytes */
+>>>  			__le32 i_projid;	/* project id */
+>>>  			__le32 i_inode_checksum;/* inode meta checksum */
+>>> +			__le64 i_crtime;	/* creation time */
+>>> +			__le32 i_crtime_nsec;	/* creation time in nano scale */
+>>>  			__le32 i_extra_end[0];	/* for attribute size calculation */
+>>>  		};
+>>>  		__le32 i_addr[DEF_ADDRS_PER_INODE];	/* Pointers to data blocks */
+>>> -- 
+>>> 2.14.1.145.gb3622a4ee
+> 
+> .
+> 
 
 
 ------------------------------------------------------------------------------
