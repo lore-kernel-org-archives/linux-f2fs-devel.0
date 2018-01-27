@@ -1,27 +1,25 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] fsck: fix missing endian conversion
-Date: Sat, 27 Jan 2018 13:47:33 +0800
-Message-ID: <dfd5bfa2-6ec5-750f-6bbd-91f661e1c61b@huawei.com>
-References: <1516959075-9717-1-git-send-email-heyunlei@huawei.com>
- <50db9265-b9e0-4975-dd67-681b4cc8e0d1@huawei.com>
- <42B685BFA705F94C860C6DD0752F05654831990C@DGGEMA503-MBX.china.huawei.com>
+Subject: [PATCH 2/2] f2fs: fix to check extent cache in
+ f2fs_drop_extent_tree
+Date: Sat, 27 Jan 2018 17:29:49 +0800
+Message-ID: <20180127092949.26616-2-yuchao0@huawei.com>
+References: <20180127092949.26616-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
+Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1efJLO-0004mr-GP
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 27 Jan 2018 05:48:02 +0000
-Received: from [45.249.212.32] (helo=huawei.com)
- by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1efMoL-0005X6-1w
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 27 Jan 2018 09:30:09 +0000
+Received: from [45.249.212.35] (helo=huawei.com)
+ by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1efJLM-0002pa-I3
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 27 Jan 2018 05:48:02 +0000
-In-Reply-To: <42B685BFA705F94C860C6DD0752F05654831990C@DGGEMA503-MBX.china.huawei.com>
-Content-Language: en-US
+ id 1efMoJ-00042h-Dh
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 27 Jan 2018 09:30:08 +0000
+In-Reply-To: <20180127092949.26616-1-yuchao0@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,53 +29,49 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: heyunlei <heyunlei@huawei.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
-Cc: "Jianing (Euler)" <ning.jia@huawei.com>
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/1/27 11:53, heyunlei wrote:
-> 
-> 
->> -----Original Message-----
->> From: Yuchao (T)
->> Sent: Saturday, January 27, 2018 11:30 AM
->> To: heyunlei; jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
->> Cc: Wangbintian; Jianing (Euler)
->> Subject: Re: [f2fs-dev][PATCH] fsck: fix missing endian conversion
->>
->> On 2018/1/26 17:31, Yunlei He wrote:
->>> This patch fix missing endian conversion in function
->>> build_nat_area_bitmap
->>
->> I note that there are some missing cases for f2fs_nat_entry::blocik_addr,
->> how about fixing them in this patch too?
-> 
-> 2224                 /* Clear the original bit and count */
-> 2225                 if (fsck->entries[nid].block_addr != 0x0) {
-> 
-> You mean here? I checked the whole function and found only here
-> exist this problem. Because of comparing with zero, so I didn't change
-> here in previous patch. 
+If noextent_cache mount option is on, we will never initialize extent tree
+in inode, but still we're going to access it in f2fs_drop_extent_tree,
+result in kernel panic as below:
 
-Yes, how about just using if (f2fs_nat_entry::blocik_addr) in both
-write_nat_bits and build_nat_area_bitmap.
+ BUG: unable to handle kernel NULL pointer dereference at 0000000000000038
+ IP: _raw_write_lock+0xc/0x30
+ Call Trace:
+  ? f2fs_drop_extent_tree+0x41/0x70 [f2fs]
+  f2fs_fallocate+0x5a0/0xdd0 [f2fs]
+  ? common_file_perm+0x47/0xc0
+  ? apparmor_file_permission+0x1a/0x20
+  vfs_fallocate+0x15b/0x290
+  SyS_fallocate+0x44/0x70
+  do_syscall_64+0x6e/0x160
+  entry_SYSCALL64_slow_path+0x25/0x25
 
-Thanks,
+This patch fixes to check extent cache status before using in
+f2fs_drop_extent_tree.
 
-> 
-> Thanks.  
-> 
-> 2226                         fsck->chk.valid_nat_entry_cnt--;
-> 2227                         f2fs_clear_bit(nid, fsck->nat_area_bitmap);
-> 2228                         if (le32_to_cpu(fsck->entries[nid].ino) == nid)
-> 2229                                 fsck->nat_valid_inode_cnt--;
-> 2230                 }
-> 
->>
->> Thanks,
-> 
-> 
-> .
-> 
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/extent_cache.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index ff2352a0ed15..aff6c2ed1c02 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -706,6 +706,9 @@ void f2fs_drop_extent_tree(struct inode *inode)
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct extent_tree *et = F2FS_I(inode)->extent_tree;
+ 
++	if (!f2fs_may_extent_tree(inode))
++		return;
++
+ 	set_inode_flag(inode, FI_NO_EXTENT);
+ 
+ 	write_lock(&et->lock);
+-- 
+2.15.0.55.gc2ece9dc4de6
 
 
 ------------------------------------------------------------------------------
