@@ -1,25 +1,25 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] fsck.f2fs: read ahead xattr & direct node
- blocks
-Date: Mon, 29 Jan 2018 15:44:21 +0800
-Message-ID: <24af195c-8ae3-32fd-a3dc-07c6d272644e@huawei.com>
-References: <1517195760-30323-1-git-send-email-heyunlei@huawei.com>
+Subject: Re: [PATCH v2] fsck.f2fs: reduce mem alloc during read
+ sit block
+Date: Mon, 29 Jan 2018 15:56:54 +0800
+Message-ID: <981167a2-1aab-ce8e-8a19-93817d8f594f@huawei.com>
+References: <1517196482-444-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1eg4AT-0006RS-0d
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 29 Jan 2018 07:47:53 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1eg4Jg-0007pR-86
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 29 Jan 2018 07:57:24 +0000
 Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eg4AQ-0006x7-RK
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 29 Jan 2018 07:47:52 +0000
-In-Reply-To: <1517195760-30323-1-git-send-email-heyunlei@huawei.com>
+ id 1eg4Je-0003t6-0l
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 29 Jan 2018 07:57:24 +0000
+In-Reply-To: <1517196482-444-1-git-send-email-heyunlei@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,148 +33,267 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: ning.jia@huawei.com
 
-On 2018/1/29 11:16, Yunlei He wrote:
-> This patch read ahead xattr & direct node blocks, and
-> keep the order:
-> 
-> 1. check data blocks
-> 2. readahead xattr block
-> 3. fsck xattr block
-> 4. readahead {d,id,did}node block
-> 5. fsck {d,id,did}node block
-> 
-> With above order, we can avoid unneeded readahead before
-> sub-directory iterated traversing or encountering error.
+On 2018/1/29 11:28, Yunlei He wrote:
+> This patch reduce mem alloc during read sit block
 > 
 > Signed-off-by: Yunlei He <heyunlei@huawei.com>
 > ---
->  fsck/fsck.c | 66 ++++++++++++++++++++++++++++++++++++++++---------------------
->  1 file changed, 44 insertions(+), 22 deletions(-)
+>  fsck/fsck.c  |  9 ++++++---
+>  fsck/fsck.h  |  4 ++--
+>  fsck/mount.c | 42 +++++++++++++++++++++++-------------------
+>  3 files changed, 31 insertions(+), 24 deletions(-)
 > 
 > diff --git a/fsck/fsck.c b/fsck/fsck.c
-> index 6c1b9a7..5c33892 100644
+> index 6c1b9a7..d5c18d3 100644
 > --- a/fsck/fsck.c
 > +++ b/fsck/fsck.c
-> @@ -621,6 +621,29 @@ unmatched:
->  	child->state |= FSCK_UNMATCHED_EXTENT;
+> @@ -1895,25 +1895,28 @@ static void fix_nat_entries(struct f2fs_sb_info *sbi)
+>  static void flush_curseg_sit_entries(struct f2fs_sb_info *sbi)
+>  {
+>  	struct sit_info *sit_i = SIT_I(sbi);
+> +	struct f2fs_sit_block *sit_blk;
+>  	int i;
+>  
+> +	sit_blk = calloc(BLOCK_SZ, 1);
+> +	ASSERT(sit_blk);
+
+Minor thing, one more blank line would be better here to keep good coding
+style.
+
+>  	/* update curseg sit entries, since we may change
+>  	 * a segment type in move_curseg_info
+>  	 */
+>  	for (i = 0; i < NO_CHECK_TYPE; i++) {
+>  		struct curseg_info *curseg = CURSEG_I(sbi, i);
+> -		struct f2fs_sit_block *sit_blk;
+>  		struct f2fs_sit_entry *sit;
+>  		struct seg_entry *se;
+>  
+>  		se = get_seg_entry(sbi, curseg->segno);
+> -		sit_blk = get_current_sit_page(sbi, curseg->segno);
+> +		get_current_sit_page(sbi, curseg->segno, sit_blk);
+>  		sit = &sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, curseg->segno)];
+>  		sit->vblocks = cpu_to_le16((se->type << SIT_VBLOCKS_SHIFT) |
+>  							se->valid_blocks);
+>  		rewrite_current_sit_page(sbi, curseg->segno, sit_blk);
+> -		free(sit_blk);
+>  	}
+> +
+> +	free(sit_blk);
 >  }
 >  
-> +void fsck_reada_node_block(struct f2fs_sb_info *sbi, u32 nid)
-> +{
-> +	struct node_info ni;
-> +
-> +	if (nid != 0 && IS_VALID_NID(sbi, nid)) {
-> +		get_node_info(sbi, nid, &ni);
-> +		if (IS_VALID_BLK_ADDR(sbi, ni.blk_addr))
-> +			dev_reada_block(ni.blk_addr);
-> +	}
-> +}
-> +
-> +void fsck_reada_all_direct_node_blocks(struct f2fs_sb_info *sbi,
-> +						struct f2fs_node *node_blk)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < NIDS_PER_BLOCK; i++) {
-> +		u32 nid = le32_to_cpu(node_blk->in.nid[i]);
-> +
-> +		fsck_reada_node_block(sbi, nid);
-> +	}
-> +}
-> +
->  /* start with valid nid and blkaddr */
->  void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
->  		enum FILE_TYPE ftype, struct f2fs_node *node_blk,
-> @@ -680,15 +703,6 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
->  		}
+>  static void fix_checkpoint(struct f2fs_sb_info *sbi)
+> diff --git a/fsck/fsck.h b/fsck/fsck.h
+> index d635c5a..648c2db 100644
+> --- a/fsck/fsck.h
+> +++ b/fsck/fsck.h
+> @@ -182,8 +182,8 @@ extern void update_nat_blkaddr(struct f2fs_sb_info *, nid_t, nid_t, block_t);
+>  extern void print_raw_sb_info(struct f2fs_super_block *);
+>  
+>  extern u32 get_free_segments(struct f2fs_sb_info *);
+> -extern struct f2fs_sit_block *get_current_sit_page(struct f2fs_sb_info *,
+> -			unsigned int);
+> +extern void get_current_sit_page(struct f2fs_sb_info *,
+> +			unsigned int, struct f2fs_sit_block *);
+>  extern void rewrite_current_sit_page(struct f2fs_sb_info *, unsigned int,
+>  			struct f2fs_sit_block *);
+>  
+> diff --git a/fsck/mount.c b/fsck/mount.c
+> index fe0d510..dd62861 100644
+> --- a/fsck/mount.c
+> +++ b/fsck/mount.c
+> @@ -1324,17 +1324,14 @@ static inline void check_seg_range(struct f2fs_sb_info *sbi, unsigned int segno)
+>  	ASSERT(segno <= end_segno);
+>  }
+>  
+> -struct f2fs_sit_block *get_current_sit_page(struct f2fs_sb_info *sbi,
+> -						unsigned int segno)
+> +void get_current_sit_page(struct f2fs_sb_info *sbi,
+> +			unsigned int segno, struct f2fs_sit_block *sit_blk)
+>  {
+>  	struct sit_info *sit_i = SIT_I(sbi);
+>  	unsigned int offset = SIT_BLOCK_OFFSET(sit_i, segno);
+>  	block_t blk_addr = sit_i->sit_base_addr + offset;
+> -	struct f2fs_sit_block *sit_blk;
+>  	int ret;
+>  
+> -	sit_blk = calloc(BLOCK_SZ, 1);
+> -	ASSERT(sit_blk);
+>  	check_seg_range(sbi, segno);
+>  
+>  	/* calculate sit block address */
+> @@ -1343,8 +1340,6 @@ struct f2fs_sit_block *get_current_sit_page(struct f2fs_sb_info *sbi,
+>  
+>  	ret = dev_read_block(sit_blk, blk_addr);
+>  	ASSERT(ret >= 0);
+> -
+> -	return sit_blk;
+>  }
+>  
+>  void rewrite_current_sit_page(struct f2fs_sb_info *sbi,
+> @@ -1607,22 +1602,24 @@ void build_sit_entries(struct f2fs_sb_info *sbi)
+>  	struct sit_info *sit_i = SIT_I(sbi);
+>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
+>  	struct f2fs_journal *journal = &curseg->sum_blk->journal;
+> +	struct f2fs_sit_block *sit_blk;
+>  	struct seg_entry *se;
+>  	struct f2fs_sit_entry sit;
+>  	unsigned int i, segno;
+>  
+> +	sit_blk = calloc(BLOCK_SZ, 1);
+> +	ASSERT(sit_blk);
+
+Ditto,
+
+>  	for (segno = 0; segno < TOTAL_SEGS(sbi); segno++) {
+>  		se = &sit_i->sentries[segno];
+> -		struct f2fs_sit_block *sit_blk;
+>  
+> -		sit_blk = get_current_sit_page(sbi, segno);
+> +		get_current_sit_page(sbi, segno, sit_blk);
+>  		sit = sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, segno)];
+> -		free(sit_blk);
+>  
+>  		check_block_count(sbi, segno, &sit);
+>  		seg_info_from_raw_sit(se, &sit);
 >  	}
 >  
-> -	if (fsck_chk_xattr_blk(sbi, nid,
-> -			le32_to_cpu(node_blk->i.i_xattr_nid), blk_cnt) &&
-> -			c.fix_on) {
-> -		node_blk->i.i_xattr_nid = 0;
-> -		need_fix = 1;
-> -		FIX_MSG("Remove xattr block: 0x%x, x_nid = 0x%x",
-> -				nid, le32_to_cpu(node_blk->i.i_xattr_nid));
-> -	}
-> -
->  	if (ftype == F2FS_FT_CHRDEV || ftype == F2FS_FT_BLKDEV ||
->  			ftype == F2FS_FT_FIFO || ftype == F2FS_FT_SOCK)
->  		goto check;
-> @@ -736,19 +750,6 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
->  		goto check;
+> +	free(sit_blk);
+
+Ditto,
+
+>  	for (i = 0; i < sits_in_cursum(journal); i++) {
+>  		segno = le32_to_cpu(segno_in_journal(journal, i));
+>  		se = &sit_i->sentries[segno];
+> @@ -1714,24 +1711,26 @@ void rewrite_sit_area_bitmap(struct f2fs_sb_info *sbi)
+>  	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
+>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
+>  	struct sit_info *sit_i = SIT_I(sbi);
+> +	struct f2fs_sit_block *sit_blk;
+>  	unsigned int segno = 0;
+>  	struct f2fs_summary_block *sum = curseg->sum_blk;
+>  	char *ptr = NULL;
+>  
+> +	sit_blk = calloc(BLOCK_SZ, 1);
+> +	ASSERT(sit_blk);
+
+Ditto,
+
+>  	/* remove sit journal */
+>  	sum->journal.n_sits = 0;
+>  
+>  	ptr = fsck->main_area_bitmap;
+>  
+>  	for (segno = 0; segno < TOTAL_SEGS(sbi); segno++) {
+> -		struct f2fs_sit_block *sit_blk;
+>  		struct f2fs_sit_entry *sit;
+>  		struct seg_entry *se;
+>  		u16 valid_blocks = 0;
+>  		u16 type;
+>  		int i;
+>  
+> -		sit_blk = get_current_sit_page(sbi, segno);
+> +		get_current_sit_page(sbi, segno, sit_blk);
+>  		sit = &sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, segno)];
+>  		memcpy(sit->valid_map, ptr, SIT_VBLOCK_MAP_SIZE);
+>  
+> @@ -1751,10 +1750,11 @@ void rewrite_sit_area_bitmap(struct f2fs_sb_info *sbi)
+>  		sit->vblocks = cpu_to_le16((type << SIT_VBLOCKS_SHIFT) |
+>  								valid_blocks);
+>  		rewrite_current_sit_page(sbi, segno, sit_blk);
+> -		free(sit_blk);
+>  
+>  		ptr += SIT_VBLOCK_MAP_SIZE;
+>  	}
+> +
+> +	free(sit_blk);
+>  }
+>  
+>  static int flush_sit_journal_entries(struct f2fs_sb_info *sbi)
+> @@ -1762,18 +1762,20 @@ static int flush_sit_journal_entries(struct f2fs_sb_info *sbi)
+>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
+>  	struct f2fs_journal *journal = &curseg->sum_blk->journal;
+>  	struct sit_info *sit_i = SIT_I(sbi);
+> +	struct f2fs_sit_block *sit_blk;
+>  	unsigned int segno;
+>  	int i;
+>  
+> +	sit_blk = calloc(BLOCK_SZ, 1);
+> +	ASSERT(sit_blk);
+
+Ditto,
+
+>  	for (i = 0; i < sits_in_cursum(journal); i++) {
+> -		struct f2fs_sit_block *sit_blk;
+>  		struct f2fs_sit_entry *sit;
+>  		struct seg_entry *se;
+>  
+>  		segno = segno_in_journal(journal, i);
+>  		se = get_seg_entry(sbi, segno);
+>  
+> -		sit_blk = get_current_sit_page(sbi, segno);
+> +		get_current_sit_page(sbi, segno, sit_blk);
+>  		sit = &sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, segno)];
+>  
+>  		memcpy(sit->valid_map, se->cur_valid_map, SIT_VBLOCK_MAP_SIZE);
+> @@ -1782,9 +1784,9 @@ static int flush_sit_journal_entries(struct f2fs_sb_info *sbi)
+>  		sit->mtime = cpu_to_le64(se->mtime);
+>  
+>  		rewrite_current_sit_page(sbi, segno, sit_blk);
+> -		free(sit_blk);
 >  	}
 >  
-> -	/* readahead node blocks */
-> -	for (idx = 0; idx < 5; idx++) {
-> -		u32 nid = le32_to_cpu(node_blk->i.i_nid[idx]);
-> -
-> -		if (nid != 0 && IS_VALID_NID(sbi, nid)) {
-> -			struct node_info ni;
-> -
-> -			get_node_info(sbi, nid, &ni);
-> -			if (IS_VALID_BLK_ADDR(sbi, ni.blk_addr))
-> -				dev_reada_block(ni.blk_addr);
-> -		}
-> -	}
-> -
->  	/* init extent info */
->  	get_extent_info(&child.ei, &node_blk->i.i_ext);
->  	child.last_blk = 0;
-> @@ -778,6 +779,23 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
->  		}
->  	}
+> +	free(sit_blk);
+>  	journal->n_sits = 0;
+>  	return i;
+>  }
+> @@ -1839,12 +1841,14 @@ void flush_sit_entries(struct f2fs_sb_info *sbi)
+>  {
+>  	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
+>  	struct sit_info *sit_i = SIT_I(sbi);
+> +	struct f2fs_sit_block *sit_blk;
+>  	unsigned int segno = 0;
+>  	u32 free_segs = 0;
 >  
-> +	/* readahead node blocks */
-> +	fsck_reada_node_block(sbi, le32_to_cpu(node_blk->i.i_xattr_nid));
+> +	sit_blk = calloc(BLOCK_SZ, 1);
+> +	ASSERT(sit_blk);
 
-> 2. readahead xattr block
-> 3. fsck xattr block
+Ditto,
 
-if (fsck_chk_xattr_blk()) {
-...
-}
+Otherwise, please add:
 
-Expect that, it looks good to me.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
 
-> +	for (idx = 0; idx < 5; idx++) {
-> +		u32 nid = le32_to_cpu(node_blk->i.i_nid[idx]);
-> +		fsck_reada_node_block(sbi, nid);
-> +	}
-> +
-> +
-> +	if (fsck_chk_xattr_blk(sbi, nid,
-> +			le32_to_cpu(node_blk->i.i_xattr_nid), blk_cnt) &&
-> +			c.fix_on) {
-> +		node_blk->i.i_xattr_nid = 0;
-> +		need_fix = 1;
-> +		FIX_MSG("Remove xattr block: 0x%x, x_nid = 0x%x",
-> +				nid, le32_to_cpu(node_blk->i.i_xattr_nid));
-> +	}
-> +
->  	/* check node blocks in inode */
->  	for (idx = 0; idx < 5; idx++) {
->  		nid_t i_nid = le32_to_cpu(node_blk->i.i_nid[idx]);
-> @@ -997,6 +1015,8 @@ int fsck_chk_idnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
->  	int need_fix = 0, ret;
->  	int i = 0;
+>  	/* update free segments */
+>  	for (segno = 0; segno < TOTAL_SEGS(sbi); segno++) {
+> -		struct f2fs_sit_block *sit_blk;
+>  		struct f2fs_sit_entry *sit;
+>  		struct seg_entry *se;
 >  
-> +	fsck_reada_all_direct_node_blocks(sbi, node_blk);
-> +
->  	for (i = 0; i < NIDS_PER_BLOCK; i++) {
->  		if (le32_to_cpu(node_blk->in.nid[i]) == 0x0)
->  			goto skip;
-> @@ -1037,6 +1057,8 @@ int fsck_chk_didnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
->  	int i = 0;
->  	int need_fix = 0, ret = 0;
+> @@ -1853,19 +1857,19 @@ void flush_sit_entries(struct f2fs_sb_info *sbi)
+>  		if (!se->dirty)
+>  			continue;
 >  
-> +	fsck_reada_all_direct_node_blocks(sbi, node_blk);
-> +
->  	for (i = 0; i < NIDS_PER_BLOCK; i++) {
->  		if (le32_to_cpu(node_blk->in.nid[i]) == 0x0)
->  			goto skip;
+> -		sit_blk = get_current_sit_page(sbi, segno);
+> +		get_current_sit_page(sbi, segno, sit_blk);
+>  		sit = &sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, segno)];
+>  		memcpy(sit->valid_map, se->cur_valid_map, SIT_VBLOCK_MAP_SIZE);
+>  		sit->vblocks = cpu_to_le16((se->type << SIT_VBLOCKS_SHIFT) |
+>  							se->valid_blocks);
+>  		rewrite_current_sit_page(sbi, segno, sit_blk);
+> -		free(sit_blk);
+>  
+>  		if (se->valid_blocks == 0x0 &&
+>  				!IS_CUR_SEGNO(sbi, segno, NO_CHECK_TYPE))
+>  			free_segs++;
+>  	}
+>  
+> +	free(sit_blk);
+>  	set_cp(free_segment_count, free_segs);
+>  }
+>  
 > 
 
 
