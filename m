@@ -1,75 +1,88 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: add sanity check for quota sysfile ino
-Date: Mon, 29 Jan 2018 16:29:33 +0800
-Message-ID: <20180129082933.64556-1-yuchao0@huawei.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: Re: [PATCH] f2fs: fix heap mode to reset it back
+Date: Mon, 29 Jan 2018 16:31:26 +0800
+Message-ID: <607de57c-f5d8-2f22-b79d-4966a8516d1e@huawei.com>
+References: <1517197065-156255-1-git-send-email-yunlong.song@huawei.com>
+ <f89279f2-f397-f8b6-57e7-2e5c39d6256f@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
- helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1eg4pJ-0000Qw-LT
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 29 Jan 2018 08:30:05 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eg4pI-00068r-85
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 29 Jan 2018 08:30:05 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <f89279f2-f397-f8b6-57e7-2e5c39d6256f@huawei.com>
+Content-Language: en-US
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Add missing sanity check for quota sysfile ino.
+The old commit allocates hot data & nodes in the beginning of partition 
+both for heap and
+noheap mode. But from the commit message, the heap mode should be like 
+before, i.e.,
+allocate hot data & nodes from curseg to left.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/super.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+On 2018/1/29 16:12, Chao Yu wrote:
+> Hi Yunlong,
+>
+> On 2018/1/29 11:37, Yunlong Song wrote:
+>> Commit 7a20b8a61eff81bdb7097a578752a74860e9d142 ("f2fs: allocate node
+>> and hot data in the beginning of partition") introduces another mount
+>> option, heap, to reset it back. But it does not do anything for heap
+>> mode, so fix it.
+> I think Jaegeuk did three things in that patch:
+> a) add missing heap mount option handling in ->show_options.
+> b) set noheap by default.
+> c) change allocation policy to the one that allocate hotdata & nodes in the
+> front of main are intensively.
+>
+> They could be separated, independent, and I don't see such intention that
+> we can only use c) the new introduced allocation policy in noheap mode.
+>
+> Anyway, I think Jaegeuk can help to double check that.
+>
+> Thanks,
+>
+>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>> ---
+>>   fs/f2fs/gc.c      | 5 +++--
+>>   fs/f2fs/segment.c | 3 ++-
+>>   2 files changed, 5 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>> index aa720cc..b9d93fd 100644
+>> --- a/fs/f2fs/gc.c
+>> +++ b/fs/f2fs/gc.c
+>> @@ -191,8 +191,9 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
+>>   	if (gc_type != FG_GC && p->max_search > sbi->max_victim_search)
+>>   		p->max_search = sbi->max_victim_search;
+>>   
+>> -	/* let's select beginning hot/small space first */
+>> -	if (type == CURSEG_HOT_DATA || IS_NODESEG(type))
+>> +	/* let's select beginning hot/small space first in no_heap mode*/
+>> +	if (test_opt(sbi, NOHEAP) &&
+>> +		(type == CURSEG_HOT_DATA || IS_NODESEG(type)))
+>>   		p->offset = 0;
+>>   	else
+>>   		p->offset = SIT_I(sbi)->last_victim[p->gc_mode];
+>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>> index e5739ce..77a48c4 100644
+>> --- a/fs/f2fs/segment.c
+>> +++ b/fs/f2fs/segment.c
+>> @@ -2167,7 +2167,8 @@ static unsigned int __get_next_segno(struct f2fs_sb_info *sbi, int type)
+>>   	if (sbi->segs_per_sec != 1)
+>>   		return CURSEG_I(sbi, type)->segno;
+>>   
+>> -	if (type == CURSEG_HOT_DATA || IS_NODESEG(type))
+>> +	if (test_opt(sbi, NOHEAP) &&
+>> +		(type == CURSEG_HOT_DATA || IS_NODESEG(type)))
+>>   		return 0;
+>>   
+>>   	if (SIT_I(sbi)->last_victim[ALLOC_NEXT])
+>>
+>
+> .
+>
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 368f63d7bad2..6011071688ca 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2116,6 +2116,25 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 		return 1;
- 	}
- 
-+	/* check quota sysfile ino info */
-+	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
-+		if (le32_to_cpu(raw_super->qf_ino[0]) != 4 ||
-+			le32_to_cpu(raw_super->qf_ino[1]) != 5) {
-+			f2fs_msg(sb, KERN_INFO,
-+				"Invalid Quota Ino: user_ino(%u), grp_ino(%u)",
-+				le32_to_cpu(raw_super->qf_ino[0]),
-+				le32_to_cpu(raw_super->qf_ino[1]));
-+			return 1;
-+		}
-+		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA) &&
-+			le32_to_cpu(raw_super->qf_ino[2]) != 6) {
-+			f2fs_msg(sb, KERN_INFO,
-+				"Invalid Quota Ino: prj_ino(%u)",
-+				le32_to_cpu(raw_super->qf_ino[2]));
-+			return 1;
-+		}
-+	}
-+
- 	if (le32_to_cpu(raw_super->segment_count) > F2FS_MAX_SEGMENT) {
- 		f2fs_msg(sb, KERN_INFO,
- 			"Invalid segment count (%u)",
 -- 
-2.15.0.55.gc2ece9dc4de6
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+Thanks,
+Yunlong Song
