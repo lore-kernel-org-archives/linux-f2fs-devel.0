@@ -1,7 +1,7 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] dump.f2fs: support to dump dirent from blkaddr
-Date: Tue, 30 Jan 2018 19:23:12 +0800
-Message-ID: <20180130112312.55592-1-yuchao0@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [GIT PULL] f2fs update for 4.16-rc1
+Date: Tue, 30 Jan 2018 14:32:20 -0800
+Message-ID: <20180130223220.GB65489@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,13 +10,14 @@ Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
  helo=mx.sourceforge.net)
  by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1egU10-0001DN-O1
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 30 Jan 2018 11:23:50 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ (envelope-from <jaegeuk@kernel.org>) id 1egeS3-0005Ee-Qy
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 30 Jan 2018 22:32:27 +0000
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1egU0x-0003aM-Cm
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 30 Jan 2018 11:23:50 +0000
+ id 1egeS2-0000i2-Mi
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 30 Jan 2018 22:32:27 +0000
+Content-Disposition: inline
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,163 +27,187 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: shengyong1@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
 
-This patch adds to support to dump dirent info based on block address
-from dentry data block or inline dentry node.
+Hi Linux,
 
-[dump_dentry_block: 627] Inline Dentry block:
-[dump_dentry_block: 650] bitmap pos[0x0] name[.] len[0x1] hash[0x0] ino[0x4] type[0x2]
-[dump_dentry_block: 650] bitmap pos[0x1] name[..] len[0x2] hash[0x0] ino[0x3] type[0x2]
+Could you please consider the below pull request?
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2:
-- Sheng Yong reports a print issue when filename is encrypted, fix it.
- fsck/dump.c | 99 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
+Thanks,
 
-diff --git a/fsck/dump.c b/fsck/dump.c
-index 32b68c932356..9210161559be 100644
---- a/fsck/dump.c
-+++ b/fsck/dump.c
-@@ -10,6 +10,7 @@
-  */
- #include <inttypes.h>
- 
-+#include "node.h"
- #include "fsck.h"
- #include "xattr.h"
- #ifdef HAVE_ATTR_XATTR_H
-@@ -581,6 +582,97 @@ static void dump_node_offset(u32 blk_addr)
- 	free(node_blk);
- }
- 
-+static int has_dirent(u32 blk_addr, int is_inline, int *enc_name)
-+{
-+	struct f2fs_node *node_blk;
-+	int ret, is_dentry = 0;
-+
-+	node_blk = calloc(BLOCK_SZ, 1);
-+	ASSERT(node_blk);
-+
-+	ret = dev_read_block(node_blk, blk_addr);
-+	ASSERT(ret >= 0);
-+
-+	if (IS_INODE(node_blk) && S_ISDIR(le16_to_cpu(node_blk->i.i_mode)))
-+		is_dentry = 1;
-+
-+	if (is_inline && !(node_blk->i.i_inline & F2FS_INLINE_DENTRY))
-+		is_dentry = 0;
-+
-+	*enc_name = file_is_encrypt(&node_blk->i);
-+
-+	free(node_blk);
-+
-+	return is_dentry;
-+}
-+
-+static void dump_dirent(u32 blk_addr, int is_inline, int enc_name)
-+{
-+	struct f2fs_dentry_ptr d;
-+	void *inline_dentry, *blk;
-+	int ret, i = 0;
-+
-+	blk = calloc(BLOCK_SZ, 1);
-+	ASSERT(blk);
-+
-+	ret = dev_read_block(blk, blk_addr);
-+	ASSERT(ret >= 0);
-+
-+	if (is_inline) {
-+		inline_dentry = inline_data_addr((struct f2fs_node *)blk);
-+		make_dentry_ptr(&d, blk, inline_dentry, 2);
-+	} else {
-+		make_dentry_ptr(&d, NULL, blk, 1);
-+	}
-+
-+	DBG(1, "%sDentry block:\n", is_inline ? "Inline " : "");
-+
-+	while (i < d.max) {
-+		struct f2fs_dir_entry *de;
-+		unsigned char en[F2FS_NAME_LEN + 1];
-+		u16 en_len, name_len;
-+		int enc;
-+
-+		if (!test_bit_le(i, d.bitmap)) {
-+			i++;
-+			continue;
-+		}
-+
-+		de = &d.dentry[i];
-+
-+		if (!de->name_len) {
-+			i++;
-+			continue;
-+		}
-+
-+		name_len = le16_to_cpu(de->name_len);
-+		enc = enc_name;
-+
-+		if (de->file_type == F2FS_FT_DIR) {
-+			if ((d.filename[i][0] == '.' && name_len == 1) ||
-+				(d.filename[i][0] == '.' &&
-+				d.filename[i][1] == '.' && name_len == 2)) {
-+				enc = 0;
-+			}
-+		}
-+
-+		en_len = convert_encrypted_name(d.filename[i],
-+				le16_to_cpu(de->name_len), en, enc);
-+		en[en_len] = '\0';
-+
-+		DBG(1, "bitmap pos[0x%x] name[%s] len[0x%x] hash[0x%x] ino[0x%x] type[0x%x]\n",
-+				i, en,
-+				le16_to_cpu(de->name_len),
-+				le32_to_cpu(de->hash_code),
-+				le32_to_cpu(de->ino),
-+				de->file_type);
-+
-+		i += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
-+	}
-+
-+	free(blk);
-+}
-+
- int dump_info_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
- {
- 	nid_t nid;
-@@ -589,6 +681,7 @@ int dump_info_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
- 	struct node_info ni, ino_ni;
- 	struct seg_entry *se;
- 	u32 offset;
-+	int enc_name;
- 	int ret = 0;
- 
- 	MSG(0, "\n== Dump data from block address ==\n\n");
-@@ -667,12 +760,18 @@ int dump_info_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
- 		dump_node_from_blkaddr(sbi, ino_ni.blk_addr);
- 		dump_data_offset(sbi, ni.blk_addr,
- 			le16_to_cpu(sum_entry.ofs_in_node));
-+
-+		if (has_dirent(ino_ni.blk_addr, 0, &enc_name))
-+			dump_dirent(blk_addr, 0, enc_name);
- 	} else {
- 		MSG(0, "FS Userdata Area: Node block from 0x%x\n", blk_addr);
- 		if (ni.ino == ni.nid) {
- 			MSG(0, " - Inode block       : id = 0x%x from 0x%x\n",
- 					ni.ino, ino_ni.blk_addr);
- 			dump_node_from_blkaddr(sbi, ino_ni.blk_addr);
-+
-+			if (has_dirent(ino_ni.blk_addr, 1, &enc_name))
-+				dump_dirent(blk_addr, 1, enc_name);
- 		} else {
- 			MSG(0, " - Node block        : id = 0x%x from 0x%x\n",
- 					nid, ni.blk_addr);
--- 
-2.15.0.55.gc2ece9dc4de6
+The following changes since commit ace52288edf0cb5e7a52b681f057f86224c49c27:
 
+  Merge tag 'for-linus-20171218' of git://git.infradead.org/linux-mtd (2017-12-18 16:18:01 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-4.16-rc1
+
+for you to fetch changes up to 1c1d35df71104c76a4a2e25862926f22c334c9d6:
+
+  f2fs: support inode creation time (2018-01-25 14:10:39 -0800)
+
+----------------------------------------------------------------
+f2fs-for-4.16-rc1
+
+In this round, we've followed up to support some generic features such as
+cgroup, block reservation, linking fscrypt_ops, delivering write_hints,
+and some ioctls. And, we could fix some corner cases in terms of power-cut
+recovery and subtle deadlocks.
+
+Enhancement:
+ - bitmap operations to handle NAT blocks
+ - readahead to improve readdir speed
+ - switch to use fscrypt_*
+ - apply write hints for direct IO
+ - add reserve_root=%u,resuid=%u,resgid=%u to reserve blocks for root/uid/gid
+ - modify b_avail and b_free to consider root reserved blocks
+ - support cgroup writeback
+ - support FIEMAP_FLAG_XATTR for fibmap
+ - add F2FS_IOC_PRECACHE_EXTENTS to pre-cache extents
+ - add F2FS_IOC_{GET/SET}_PIN_FILE to pin LBAs for data blocks
+ - support inode creation time
+
+Bug fix:
+ - sysfile-based quota operations
+ - memory footprint accounting
+ - allow to write data on partial preallocation case
+ - fix deadlock case on fallocate
+ - fix to handle fill_super errors
+ - fix missing inode updates of fsync'ed file
+ - recover renamed file which was fsycn'ed before
+ - drop inmemory pages in corner error case
+ - keep last_disk_size correctly
+ - recover missing i_inline flags during roll-forward
+
+Various clean-up patches were added as well.
+
+----------------------------------------------------------------
+Chao Yu (32):
+      f2fs: reserve nid resource for quota sysfile
+      f2fs: remove unneeded memory footprint accounting
+      f2fs: fix lock dependency in between dio_rwsem & i_mmap_sem
+      f2fs: inject fault to kzalloc
+      f2fs: inject fault to kvmalloc
+      f2fs: spread f2fs_k{m,z}alloc
+      f2fs: fix error handling in fill_super
+      f2fs: clean up hash codes
+      f2fs: clean up f2fs_map_blocks
+      f2fs: don't return value in truncate_data_blocks_range
+      f2fs: fix potential hangtask in f2fs_trace_pid
+      f2fs: continue to do direct IO if we only preallocate partial blocks
+      f2fs: clean up unneeded declaration
+      f2fs: avoid high cpu usage in discard thread
+      f2fs: remove unused pend_list_tag
+      f2fs: fix to caclulate required free section correctly
+      f2fs: fix to cover f2fs_inline_data_fiemap with inode_lock
+      f2fs: support FIEMAP_FLAG_XATTR
+      f2fs: support F2FS_IOC_PRECACHE_EXTENTS
+      f2fs: speed up defragment on sparse file
+      f2fs: fix to drop all inmem pages correctly
+      f2fs: clean up error path of fill_super
+      f2fs: kill F2FS_INLINE_XATTR_ADDRS for cleanup
+      f2fs: fix to update last_disk_size correctly
+      f2fs: split need_inplace_update
+      f2fs: hanlde error case in f2fs_ioc_shutdown
+      f2fs: stop gc/discard thread after fs shutdown
+      f2fs: drop page cache after fs shutdown
+      f2fs: use GFP_F2FS_ZERO for cleanup
+      f2fs: clean up duplicated assignment in init_discard_policy
+      f2fs: stop issuing discard if fs is readonly
+      f2fs: support inode creation time
+
+Daeho Jeong (3):
+      f2fs: handle newly created page when revoking inmem pages
+      f2fs: prevent newly created inode from being dirtied incorrectly
+      f2fs: correct removexattr behavior for null valued extended attribute
+
+Elena Reshetova (1):
+      posix_acl: convert posix_acl.a_refcount from atomic_t to refcount_t
+
+Eric Biggers (5):
+      f2fs: switch to fscrypt_file_open()
+      f2fs: switch to fscrypt_prepare_link()
+      f2fs: switch to fscrypt_prepare_rename()
+      f2fs: switch to fscrypt_prepare_lookup()
+      f2fs: switch to fscrypt_prepare_setattr()
+
+Hyunchul Lee (1):
+      f2fs: apply write hints to select the type of segment for direct write
+
+Jaegeuk Kim (12):
+      f2fs: return error during fill_super
+      f2fs: recover directory operations by fsync
+      f2fs: fix missing error number for xattr operation
+      f2fs: skip stop_checkpoint for user data writes
+      f2fs: enable quota at remount from r to w
+      f2fs: show precise # of blocks that user/root can use
+      f2fs: add reserved blocks for root user
+      f2fs: add resgid and resuid to reserve root blocks
+      f2fs: add an ioctl to disable GC for specific file
+      f2fs: allow quota to use reserved blocks
+      f2fs: recover some i_inline flags
+      f2fs: allow to recover node blocks given updated checkpoint
+
+LiFan (4):
+      f2fs: fix concurrent problem for updating free bitmap
+      f2fs: remove an excess variable
+      f2fs: remove a redundant conditional expression
+      f2fs: use unlikely for release case
+
+Sheng Yong (4):
+      f2fs: introduce sysfs readdir_ra to readahead inode block in readdir
+      f2fs: still write data if preallocate only partial blocks
+      f2fs: remove unused parameter
+      f2fs: avoid hungtask when GC encrypted block if io_bits is set
+
+Wei Yongjun (1):
+      f2fs: make local functions static
+
+Yufen Yu (1):
+      f2fs: implement cgroup writeback support
+
+Yunlei He (6):
+      f2fs: no need to read nat block if nat_block_bitmap is set
+      f2fs: no need return value in restore summary process
+      f2fs: fix an error case of missing update inode page
+      f2fs: update inode info to inode page for new file
+      f2fs: check node page again in write end io
+      f2fs: rebuild sit page from sit info in mem
+
+Yunlong Song (1):
+      f2fs: check segment type in __f2fs_replace_block
+
+Zhikang Zhang (1):
+      f2fs: remove repeated f2fs_bug_on
+
+ Documentation/ABI/testing/sysfs-fs-f2fs |   6 +
+ fs/f2fs/acl.c                           |   2 +-
+ fs/f2fs/checkpoint.c                    |  10 +-
+ fs/f2fs/data.c                          | 299 +++++++++++++++++++++++++++-----
+ fs/f2fs/debug.c                         |  12 +-
+ fs/f2fs/dir.c                           |   6 +
+ fs/f2fs/f2fs.h                          | 201 +++++++++++++++------
+ fs/f2fs/file.c                          | 248 ++++++++++++++++++++------
+ fs/f2fs/gc.c                            |  18 +-
+ fs/f2fs/gc.h                            |   2 +
+ fs/f2fs/inode.c                         |  34 +++-
+ fs/f2fs/namei.c                         |  67 +++----
+ fs/f2fs/node.c                          | 149 ++++++++--------
+ fs/f2fs/node.h                          |   4 +
+ fs/f2fs/recovery.c                      |  27 ++-
+ fs/f2fs/segment.c                       | 129 +++++++-------
+ fs/f2fs/segment.h                       |  92 +++++-----
+ fs/f2fs/super.c                         | 142 ++++++++++++---
+ fs/f2fs/sysfs.c                         |  14 +-
+ fs/f2fs/trace.c                         |  12 +-
+ fs/f2fs/xattr.c                         |  12 +-
+ fs/posix_acl.c                          |   6 +-
+ include/linux/f2fs_fs.h                 |  14 +-
+ include/linux/posix_acl.h               |   7 +-
+ include/trace/events/f2fs.h             |   3 +-
+ 25 files changed, 1064 insertions(+), 452 deletions(-)
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
