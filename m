@@ -1,172 +1,113 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: "Gaoxiang (OS)" <gaoxiang25@huawei.com>
 Subject: Re: [f2fs-dev] [PATCH v3] f2fs: flush cp pack except cp pack 2 page
  at first
-Date: Tue, 30 Jan 2018 18:39:49 -0800
-Message-ID: <20180131023949.GB87929@jaegeuk-macbookpro.roam.corp.google.com>
+Date: Wed, 31 Jan 2018 02:43:41 +0000
+Message-ID: <9047C53C18267742AB12E43B65C7F9F70BCE44AE@dggemi505-mbx.china.huawei.com>
 References: <9047C53C18267742AB12E43B65C7F9F70BCD2F67@dggemi505-mbs.china.huawei.com>
  <20180125220600.GB22514@jaegeuk-macbookpro.roam.corp.google.com>
  <cd1124ea-707a-4f33-10a0-5478082479df@huawei.com>
  <9047C53C18267742AB12E43B65C7F9F70BCD37C5@dggemi505-mbs.china.huawei.com>
  <20180131021821.GC86468@jaegeuk-macbookpro.roam.corp.google.com>
  <9047C53C18267742AB12E43B65C7F9F70BCE43DE@dggemi505-mbx.china.huawei.com>
+ <20180131023949.GB87929@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <9047C53C18267742AB12E43B65C7F9F70BCE43DE@dggemi505-mbx.china.huawei.com>
+In-Reply-To: <20180131023949.GB87929@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: zh-CN
+Content-ID: <D2EB0D629C4F80439FA64FBB49484256@huawei.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
-To: "Gaoxiang (OS)" <gaoxiang25@huawei.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: "Yuchao (T)" <yuchao0@huawei.com>, Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, heyunlei <heyunlei@huawei.com>, hutj <hutj@huawei.com>, "Duwei (Device OS)" <weidu.du@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 01/31, Gaoxiang (OS) wrote:
-> Hi Jaegeuk,
-> 
-> On 2018/1/31 10:18, Jaegeuk Kim wrote:
-> > On 01/26, Gaoxiang (OS) wrote:
-> >> Hi Jaegeuk and Chao,
-> >>
-> >> On 2018/1/26 9:36, Chao Yu wrote:
-> >>> On 2018/1/26 6:06, Jaegeuk Kim wrote:
-> >>>>
-> >>>> Then, we don't need to wait for this as well as wait_on_all_pages_writeback()
-> >>>> in the early stage in do_checkpoint()?
-> >>>>
-> >>>> So, it seems like we can modify like below:
-> >>>>
-> >>>> ---
-> >>>> 1. while (get_pages())
-> >>>> 	sync_meta_pages()
-> >>>> 2. if (enabled_nat_bits())
-> >>>> 	while (get_pages())
-> >>>> 		sync_meta_pages()
-> >>>>
-> >>>> 3. wait_on_all_pages_writeback()
-> >>>>    -> remove
-> >>>
-> >>> Would meta area across two devices? if it would, we need to wait all meta
-> >>> be persisted in second device before f2fs_flush_device_cache?
-> >>>
-> >>>>
-> >>>> 4. f2fs_flush_device_cache()
-> > 
-> >        -> remove
-> > 
-> >>>>
-> >>>> 5. update_meta_page() <- for first cp_block
-> >>>>
-> >>>> 6. update_meta_page()... <- payload
-> >>>>
-> >>>> 7. orphan writes
-> >>>>
-> >>>> 8. node_summary writes
-> >>>>
-> >>>> 9. update_meta_page() <- for last cp_block
-> >>>>    -> remove
-> >>>
-> >>
-> >> -       /* writeout checkpoint block */
-> >> -       update_meta_page(sbi, ckpt, start_blk);
-> >> -
-> >> -       /* wait for previous submitted node/meta pages writeback */
-> >> -       wait_on_all_pages_writeback(sbi);
-> >> -
-> >> -       if (unlikely(f2fs_cp_error(sbi)))
-> >> -               return -EIO;
-> >> -
-> >> Could also be removed, too?
-> >>
-> >>           filemap_fdatawait_range(NODE_MAPPING(sbi), 0, LLONG_MAX);
-> >>           filemap_fdatawait_range(META_MAPPING(sbi), 0, LLONG_MAX);
-> > 
-> >       -> remove
-> > 
-> > Hmm, think so.
-> > 
-> >>
-> >>
-> >>> 9.1 sync_meta_pages(META) to make sure all meta IOs are issued.
-> >>>
-> >>
-> >> If I understand correctly, I have the same questions with Chao.
-> >> It seems that META doesn't have another flush mechanism (eg. flush
-> >> thread) other than sync_meta_pages?
-> > 
-> >     9.2 f2fs_flush_device_cache(), if we have multiple devices.
-> > 
-> >>
-> >>>>
-> >>>> 10. wait_on_all_pages_writeback()
-> > 
-> >      10.1. (f2fs_cp_error())
-> >      	    return -EIO;
-> > 
-> >>>>
-> >>>> ----
-> >>>> Add) 11. commit_checkpoint()
-> >>>>     - update_meta_page() <- for last cp_block
-> >>>>     - sync_meta_pages(META_FLUSH)
-> >>>>
-> >>>> We don't need to wait for page_writeback any more.
-> >>>>
-> >>
-> >>
-> >> Apart from that, I think we should "wait_on_all_pages_writeback(sbi);"
-> >> after META_FLUSH in case for pulluting the next checkpoint when the last
-> >> cp block is failed to write with FUA?
-> > 
-> > Next cp block won't be written by 10.1.
-> > 
-> 
-> I think that 10.1 ensures the cp pack before the last cp_block was done.
-> However, what if the last cp block writes fail later without FUA?
-
-Without FUA? The last cp_block is written by FUA, no?
-
-> Should we need to ensure the last cp block going into device medium 
-> rather than device cache before switching to go into the next checkpoint 
-> (I mean we need to ensure writing to medium and then unblock_operation
-> and quit write_checkpoint and go on fs operations)?
-> 
-> Other parts seems OK for me :), I will sort out and resent a new patch.
-> 
-> Thanks,
-> 
-> >>
-> >>
-> >> Thanks all,
-> >>
-> >>>>>    
-> >>>>> @@ -1313,10 +1337,15 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >>>>>    	sbi->last_valid_block_count = sbi->total_valid_block_count;
-> >>>>>    	percpu_counter_set(&sbi->alloc_valid_block_count, 0);
-> >>>>>    
-> >>>>> -	/* Here, we only have one bio having CP pack */
-> >>>>> -	sync_meta_pages(sbi, META_FLUSH, LONG_MAX, FS_CP_META_IO);
-> >>>>> +	/* Here, we have one bio having CP pack except cp pack 2 page */
-> >>>>> +	sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
-> >>>>>    
-> >>>>>    	/* wait for previous submitted meta pages writeback */
-> >>>>> +	if (!test_opt(sbi, NOBARRIER))
-> >>>>
-> >>>> The above has nothing to do with this patch.
-> >>>
-> >>> We only need to use wait_on_all_pages_writeback to keep writeback order of
-> >>> previous metadata and last cp pack metadata if barrier is on?
-> >>>
-> >>> Thanks,
-> >>>
-> >>>>
-> >>>>> +		wait_on_all_pages_writeback(sbi);
-> >>>>> +
-> >>>>> +	/* barrier and flush checkpoint cp pack 2 page */
-> >>>>> +	commit_checkpoint(sbi, ckpt, start_blk);
-> >>>>>    	wait_on_all_pages_writeback(sbi);
-> >>>>>    
-> >>>>>    	release_ino_entry(sbi, false);
-> >>>>> -- 
-> >>>>> 2.1.4
-> >>>>
-> >>>> .
-> >>>>
-> >>>
+SGkgSmFlZ2V1aywNCg0KT24gMjAxOC8xLzMxIDEwOjM5LCBKYWVnZXVrIEtpbSB3cm90ZToNCj4g
+T24gMDEvMzEsIEdhb3hpYW5nIChPUykgd3JvdGU6DQo+PiBIaSBKYWVnZXVrLA0KPj4NCj4+IE9u
+IDIwMTgvMS8zMSAxMDoxOCwgSmFlZ2V1ayBLaW0gd3JvdGU6DQo+Pj4gT24gMDEvMjYsIEdhb3hp
+YW5nIChPUykgd3JvdGU6DQo+Pj4+IEhpIEphZWdldWsgYW5kIENoYW8sDQo+Pj4+DQo+Pj4+IE9u
+IDIwMTgvMS8yNiA5OjM2LCBDaGFvIFl1IHdyb3RlOg0KPj4+Pj4gT24gMjAxOC8xLzI2IDY6MDYs
+IEphZWdldWsgS2ltIHdyb3RlOg0KPj4+Pj4+DQo+Pj4+Pj4gVGhlbiwgd2UgZG9uJ3QgbmVlZCB0
+byB3YWl0IGZvciB0aGlzIGFzIHdlbGwgYXMgd2FpdF9vbl9hbGxfcGFnZXNfd3JpdGViYWNrKCkN
+Cj4+Pj4+PiBpbiB0aGUgZWFybHkgc3RhZ2UgaW4gZG9fY2hlY2twb2ludCgpPw0KPj4+Pj4+DQo+
+Pj4+Pj4gU28sIGl0IHNlZW1zIGxpa2Ugd2UgY2FuIG1vZGlmeSBsaWtlIGJlbG93Og0KPj4+Pj4+
+DQo+Pj4+Pj4gLS0tDQo+Pj4+Pj4gMS4gd2hpbGUgKGdldF9wYWdlcygpKQ0KPj4+Pj4+IAlzeW5j
+X21ldGFfcGFnZXMoKQ0KPj4+Pj4+IDIuIGlmIChlbmFibGVkX25hdF9iaXRzKCkpDQo+Pj4+Pj4g
+CXdoaWxlIChnZXRfcGFnZXMoKSkNCj4+Pj4+PiAJCXN5bmNfbWV0YV9wYWdlcygpDQo+Pj4+Pj4N
+Cj4+Pj4+PiAzLiB3YWl0X29uX2FsbF9wYWdlc193cml0ZWJhY2soKQ0KPj4+Pj4+ICAgICAtPiBy
+ZW1vdmUNCj4+Pj4+DQo+Pj4+PiBXb3VsZCBtZXRhIGFyZWEgYWNyb3NzIHR3byBkZXZpY2VzPyBp
+ZiBpdCB3b3VsZCwgd2UgbmVlZCB0byB3YWl0IGFsbCBtZXRhDQo+Pj4+PiBiZSBwZXJzaXN0ZWQg
+aW4gc2Vjb25kIGRldmljZSBiZWZvcmUgZjJmc19mbHVzaF9kZXZpY2VfY2FjaGU/DQo+Pj4+Pg0K
+Pj4+Pj4+DQo+Pj4+Pj4gNC4gZjJmc19mbHVzaF9kZXZpY2VfY2FjaGUoKQ0KPj4+DQo+Pj4gICAg
+ICAgICAtPiByZW1vdmUNCj4+Pg0KPj4+Pj4+DQo+Pj4+Pj4gNS4gdXBkYXRlX21ldGFfcGFnZSgp
+IDwtIGZvciBmaXJzdCBjcF9ibG9jaw0KPj4+Pj4+DQo+Pj4+Pj4gNi4gdXBkYXRlX21ldGFfcGFn
+ZSgpLi4uIDwtIHBheWxvYWQNCj4+Pj4+Pg0KPj4+Pj4+IDcuIG9ycGhhbiB3cml0ZXMNCj4+Pj4+
+Pg0KPj4+Pj4+IDguIG5vZGVfc3VtbWFyeSB3cml0ZXMNCj4+Pj4+Pg0KPj4+Pj4+IDkuIHVwZGF0
+ZV9tZXRhX3BhZ2UoKSA8LSBmb3IgbGFzdCBjcF9ibG9jaw0KPj4+Pj4+ICAgICAtPiByZW1vdmUN
+Cj4+Pj4+DQo+Pj4+DQo+Pj4+IC0gICAgICAgLyogd3JpdGVvdXQgY2hlY2twb2ludCBibG9jayAq
+Lw0KPj4+PiAtICAgICAgIHVwZGF0ZV9tZXRhX3BhZ2Uoc2JpLCBja3B0LCBzdGFydF9ibGspOw0K
+Pj4+PiAtDQo+Pj4+IC0gICAgICAgLyogd2FpdCBmb3IgcHJldmlvdXMgc3VibWl0dGVkIG5vZGUv
+bWV0YSBwYWdlcyB3cml0ZWJhY2sgKi8NCj4+Pj4gLSAgICAgICB3YWl0X29uX2FsbF9wYWdlc193
+cml0ZWJhY2soc2JpKTsNCj4+Pj4gLQ0KPj4+PiAtICAgICAgIGlmICh1bmxpa2VseShmMmZzX2Nw
+X2Vycm9yKHNiaSkpKQ0KPj4+PiAtICAgICAgICAgICAgICAgcmV0dXJuIC1FSU87DQo+Pj4+IC0N
+Cj4+Pj4gQ291bGQgYWxzbyBiZSByZW1vdmVkLCB0b28/DQo+Pj4+DQo+Pj4+ICAgICAgICAgICAg
+ZmlsZW1hcF9mZGF0YXdhaXRfcmFuZ2UoTk9ERV9NQVBQSU5HKHNiaSksIDAsIExMT05HX01BWCk7
+DQo+Pj4+ICAgICAgICAgICAgZmlsZW1hcF9mZGF0YXdhaXRfcmFuZ2UoTUVUQV9NQVBQSU5HKHNi
+aSksIDAsIExMT05HX01BWCk7DQo+Pj4NCj4+PiAgICAgICAgLT4gcmVtb3ZlDQo+Pj4NCj4+PiBI
+bW0sIHRoaW5rIHNvLg0KPj4+DQo+Pj4+DQo+Pj4+DQo+Pj4+PiA5LjEgc3luY19tZXRhX3BhZ2Vz
+KE1FVEEpIHRvIG1ha2Ugc3VyZSBhbGwgbWV0YSBJT3MgYXJlIGlzc3VlZC4NCj4+Pj4+DQo+Pj4+
+DQo+Pj4+IElmIEkgdW5kZXJzdGFuZCBjb3JyZWN0bHksIEkgaGF2ZSB0aGUgc2FtZSBxdWVzdGlv
+bnMgd2l0aCBDaGFvLg0KPj4+PiBJdCBzZWVtcyB0aGF0IE1FVEEgZG9lc24ndCBoYXZlIGFub3Ro
+ZXIgZmx1c2ggbWVjaGFuaXNtIChlZy4gZmx1c2gNCj4+Pj4gdGhyZWFkKSBvdGhlciB0aGFuIHN5
+bmNfbWV0YV9wYWdlcz8NCj4+Pg0KPj4+ICAgICAgOS4yIGYyZnNfZmx1c2hfZGV2aWNlX2NhY2hl
+KCksIGlmIHdlIGhhdmUgbXVsdGlwbGUgZGV2aWNlcy4NCj4+Pg0KPj4+Pg0KPj4+Pj4+DQo+Pj4+
+Pj4gMTAuIHdhaXRfb25fYWxsX3BhZ2VzX3dyaXRlYmFjaygpDQo+Pj4NCj4+PiAgICAgICAxMC4x
+LiAoZjJmc19jcF9lcnJvcigpKQ0KPj4+ICAgICAgIAkgICAgcmV0dXJuIC1FSU87DQo+Pj4NCj4+
+Pj4+Pg0KPj4+Pj4+IC0tLS0NCj4+Pj4+PiBBZGQpIDExLiBjb21taXRfY2hlY2twb2ludCgpDQo+
+Pj4+Pj4gICAgICAtIHVwZGF0ZV9tZXRhX3BhZ2UoKSA8LSBmb3IgbGFzdCBjcF9ibG9jaw0KPj4+
+Pj4+ICAgICAgLSBzeW5jX21ldGFfcGFnZXMoTUVUQV9GTFVTSCkNCj4+Pj4+Pg0KPj4+Pj4+IFdl
+IGRvbid0IG5lZWQgdG8gd2FpdCBmb3IgcGFnZV93cml0ZWJhY2sgYW55IG1vcmUuDQo+Pj4+Pj4N
+Cj4+Pj4NCj4+Pj4NCj4+Pj4gQXBhcnQgZnJvbSB0aGF0LCBJIHRoaW5rIHdlIHNob3VsZCAid2Fp
+dF9vbl9hbGxfcGFnZXNfd3JpdGViYWNrKHNiaSk7Ig0KPj4+PiBhZnRlciBNRVRBX0ZMVVNIIGlu
+IGNhc2UgZm9yIHB1bGx1dGluZyB0aGUgbmV4dCBjaGVja3BvaW50IHdoZW4gdGhlIGxhc3QNCj4+
+Pj4gY3AgYmxvY2sgaXMgZmFpbGVkIHRvIHdyaXRlIHdpdGggRlVBPw0KPj4+DQo+Pj4gTmV4dCBj
+cCBibG9jayB3b24ndCBiZSB3cml0dGVuIGJ5IDEwLjEuDQo+Pj4NCj4+DQo+PiBJIHRoaW5rIHRo
+YXQgMTAuMSBlbnN1cmVzIHRoZSBjcCBwYWNrIGJlZm9yZSB0aGUgbGFzdCBjcF9ibG9jayB3YXMg
+ZG9uZS4NCj4+IEhvd2V2ZXIsIHdoYXQgaWYgdGhlIGxhc3QgY3AgYmxvY2sgd3JpdGVzIGZhaWwg
+bGF0ZXIgd2l0aG91dCBGVUE/DQo+IA0KPiBXaXRob3V0IEZVQT8gVGhlIGxhc3QgY3BfYmxvY2sg
+aXMgd3JpdHRlbiBieSBGVUEsIG5vPw0KDQpxdW90ZSAiDQpBcGFydCBmcm9tIHRoYXQsIEkgdGhp
+bmsgd2Ugc2hvdWxkICJ3YWl0X29uX2FsbF9wYWdlc193cml0ZWJhY2soc2JpKTsiDQphZnRlciBN
+RVRBX0ZMVVNIIGluIGNhc2UgZm9yIHB1bGx1dGluZyB0aGUgbmV4dCBjaGVja3BvaW50IHdoZW4g
+dGhlIGxhc3QNCmNwIGJsb2NrIGlzIGZhaWxlZCB0byB3cml0ZSB3aXRoIEZVQT8NCiINCg0Kd2hh
+dCBJIG1lYW50IGlzIHRoYXQgdGhlIGxhc3QgY3BfYmxvY2sgc2hvdWxkIGJlIHdyaXR0ZW4gYnkg
+RlVBLg0Kd2UgbmVlZCB0byB1c2UgTUVUQV9GTFVTSCB0byB3cml0ZSBsYXN0IGNwX2Jsb2NrLCBy
+aWdodD8gOikNCg0KVGhhbmtzLA0KDQo+IA0KPj4gU2hvdWxkIHdlIG5lZWQgdG8gZW5zdXJlIHRo
+ZSBsYXN0IGNwIGJsb2NrIGdvaW5nIGludG8gZGV2aWNlIG1lZGl1bQ0KPj4gcmF0aGVyIHRoYW4g
+ZGV2aWNlIGNhY2hlIGJlZm9yZSBzd2l0Y2hpbmcgdG8gZ28gaW50byB0aGUgbmV4dCBjaGVja3Bv
+aW50DQo+PiAoSSBtZWFuIHdlIG5lZWQgdG8gZW5zdXJlIHdyaXRpbmcgdG8gbWVkaXVtIGFuZCB0
+aGVuIHVuYmxvY2tfb3BlcmF0aW9uDQo+PiBhbmQgcXVpdCB3cml0ZV9jaGVja3BvaW50IGFuZCBn
+byBvbiBmcyBvcGVyYXRpb25zKT8NCj4+DQo+PiBPdGhlciBwYXJ0cyBzZWVtcyBPSyBmb3IgbWUg
+OiksIEkgd2lsbCBzb3J0IG91dCBhbmQgcmVzZW50IGEgbmV3IHBhdGNoLg0KPj4NCj4+IFRoYW5r
+cywNCj4+DQo+Pj4+DQo+Pj4+DQo+Pj4+IFRoYW5rcyBhbGwsDQo+Pj4+DQo+Pj4+Pj4+ICAgICAN
+Cj4+Pj4+Pj4gQEAgLTEzMTMsMTAgKzEzMzcsMTUgQEAgc3RhdGljIGludCBkb19jaGVja3BvaW50
+KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgc3RydWN0IGNwX2NvbnRyb2wgKmNwYykNCj4+Pj4+
+Pj4gICAgIAlzYmktPmxhc3RfdmFsaWRfYmxvY2tfY291bnQgPSBzYmktPnRvdGFsX3ZhbGlkX2Js
+b2NrX2NvdW50Ow0KPj4+Pj4+PiAgICAgCXBlcmNwdV9jb3VudGVyX3NldCgmc2JpLT5hbGxvY192
+YWxpZF9ibG9ja19jb3VudCwgMCk7DQo+Pj4+Pj4+ICAgICANCj4+Pj4+Pj4gLQkvKiBIZXJlLCB3
+ZSBvbmx5IGhhdmUgb25lIGJpbyBoYXZpbmcgQ1AgcGFjayAqLw0KPj4+Pj4+PiAtCXN5bmNfbWV0
+YV9wYWdlcyhzYmksIE1FVEFfRkxVU0gsIExPTkdfTUFYLCBGU19DUF9NRVRBX0lPKTsNCj4+Pj4+
+Pj4gKwkvKiBIZXJlLCB3ZSBoYXZlIG9uZSBiaW8gaGF2aW5nIENQIHBhY2sgZXhjZXB0IGNwIHBh
+Y2sgMiBwYWdlICovDQo+Pj4+Pj4+ICsJc3luY19tZXRhX3BhZ2VzKHNiaSwgTUVUQSwgTE9OR19N
+QVgsIEZTX0NQX01FVEFfSU8pOw0KPj4+Pj4+PiAgICAgDQo+Pj4+Pj4+ICAgICAJLyogd2FpdCBm
+b3IgcHJldmlvdXMgc3VibWl0dGVkIG1ldGEgcGFnZXMgd3JpdGViYWNrICovDQo+Pj4+Pj4+ICsJ
+aWYgKCF0ZXN0X29wdChzYmksIE5PQkFSUklFUikpDQo+Pj4+Pj4NCj4+Pj4+PiBUaGUgYWJvdmUg
+aGFzIG5vdGhpbmcgdG8gZG8gd2l0aCB0aGlzIHBhdGNoLg0KPj4+Pj4NCj4+Pj4+IFdlIG9ubHkg
+bmVlZCB0byB1c2Ugd2FpdF9vbl9hbGxfcGFnZXNfd3JpdGViYWNrIHRvIGtlZXAgd3JpdGViYWNr
+IG9yZGVyIG9mDQo+Pj4+PiBwcmV2aW91cyBtZXRhZGF0YSBhbmQgbGFzdCBjcCBwYWNrIG1ldGFk
+YXRhIGlmIGJhcnJpZXIgaXMgb24/DQo+Pj4+Pg0KPj4+Pj4gVGhhbmtzLA0KPj4+Pj4NCj4+Pj4+
+Pg0KPj4+Pj4+PiArCQl3YWl0X29uX2FsbF9wYWdlc193cml0ZWJhY2soc2JpKTsNCj4+Pj4+Pj4g
+Kw0KPj4+Pj4+PiArCS8qIGJhcnJpZXIgYW5kIGZsdXNoIGNoZWNrcG9pbnQgY3AgcGFjayAyIHBh
+Z2UgKi8NCj4+Pj4+Pj4gKwljb21taXRfY2hlY2twb2ludChzYmksIGNrcHQsIHN0YXJ0X2Jsayk7
+DQo+Pj4+Pj4+ICAgICAJd2FpdF9vbl9hbGxfcGFnZXNfd3JpdGViYWNrKHNiaSk7DQo+Pj4+Pj4+
+ICAgICANCj4+Pj4+Pj4gICAgIAlyZWxlYXNlX2lub19lbnRyeShzYmksIGZhbHNlKTsNCj4+Pj4+
+Pj4gLS0gDQo+Pj4+Pj4+IDIuMS40DQo+Pj4+Pj4NCj4+Pj4+PiAuDQo+Pj4+Pj4NCj4+Pj4+DQo=
