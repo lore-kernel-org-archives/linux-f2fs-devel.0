@@ -1,68 +1,37 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] fsck.f2fs: allow -p without value
-Date: Tue, 30 Jan 2018 17:26:07 -0800
-Message-ID: <20180131012607.85117-1-jaegeuk@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to clear CP_TRIMMED_FLAG
+Date: Wed, 31 Jan 2018 09:30:34 +0800
+Message-ID: <20180131013034.107225-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
- helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1eghAG-00015M-1b
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 31 Jan 2018 01:26:16 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eghAF-0007Ox-8w
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 31 Jan 2018 01:26:15 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch allows -p without value.
+Once CP_TRIMMED_FLAG is set, after a reboot, we will never issue discard
+before LBA becomes invalid again, fix it by clearing the flag in
+checkpoint without CP_TRIMMED reason.
 
-Suggested-by: Pavol Cupka <pavol.cupka@gmail.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Fixes: 1f43e2ad7bff ("f2fs: introduce CP_TRIMMED_FLAG to avoid unneeded discard")
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fsck/main.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/f2fs/checkpoint.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fsck/main.c b/fsck/main.c
-index f35d01d..804f71a 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -184,13 +184,13 @@ void f2fs_parse_options(int argc, char *argv[])
- 				 *  0: default level, the same as -a
- 				 *  1: check meta
- 				 */
--				if (optarg[0] == '-') {
-+				if (optarg[0] == '-' || !is_digits(optarg) ||
-+							optind == argc) {
-+					MSG(0, "Info: Use default preen mode\n");
- 					c.preen_mode = PREEN_MODE_0;
-+					c.auto_fix = 1;
- 					optind--;
- 					break;
--				} else if (!is_digits(optarg)) {
--					err = EWRONG_OPT;
--					break;
- 				}
- 				c.preen_mode = atoi(optarg);
- 				if (c.preen_mode < 0)
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 998fe1d0213b..65becae99b84 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1166,6 +1166,8 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 
+ 	if (cpc->reason & CP_TRIMMED)
+ 		__set_ckpt_flags(ckpt, CP_TRIMMED_FLAG);
++	else
++		__clear_ckpt_flags(ckpt, CP_TRIMMED_FLAG);
+ 
+ 	if (cpc->reason & CP_UMOUNT)
+ 		__set_ckpt_flags(ckpt, CP_UMOUNT_FLAG);
 -- 
-2.15.0.531.g2ccb3012c9-goog
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+2.15.0.55.gc2ece9dc4de6
