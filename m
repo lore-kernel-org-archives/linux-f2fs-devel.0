@@ -1,55 +1,193 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: add sanity check for quota sysfile ino
-Date: Wed, 31 Jan 2018 13:57:38 -0800
-Message-ID: <20180131215738.GA12901@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180129082933.64556-1-yuchao0@huawei.com>
- <20180131013556.GE65489@jaegeuk-macbookpro.roam.corp.google.com>
- <f27cbf43-eb34-5e21-8016-c1a17203cf0b@huawei.com>
- <20180131023607.GA87929@jaegeuk-macbookpro.roam.corp.google.com>
- <edc49b65-2f18-26a2-a97d-ee89143e7ece@huawei.com>
- <20180131034914.GA93573@jaegeuk-macbookpro.roam.corp.google.com>
- <6afe7ac1-904a-49e6-69f2-7de487936731@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: flush cp pack except cp pack 2 page
+ at first
+Date: Wed, 31 Jan 2018 14:09:19 -0800
+Message-ID: <20180131220919.GB12901@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180131021821.GC86468@jaegeuk-macbookpro.roam.corp.google.com>
+ <9047C53C18267742AB12E43B65C7F9F70BCE43DE@dggemi505-mbx.china.huawei.com>
+ <20180131023949.GB87929@jaegeuk-macbookpro.roam.corp.google.com>
+ <9047C53C18267742AB12E43B65C7F9F70BCE44AE@dggemi505-mbx.china.huawei.com>
+ <20180131025221.GC87929@jaegeuk-macbookpro.roam.corp.google.com>
+ <9047C53C18267742AB12E43B65C7F9F70BCE451F@dggemi505-mbx.china.huawei.com>
+ <20180131025949.GA90561@jaegeuk-macbookpro.roam.corp.google.com>
+ <cf4301b5-48ae-00fd-6b0d-26f886ae926b@huawei.com>
+ <20180131035131.GB93573@jaegeuk-macbookpro.roam.corp.google.com>
+ <56370690-0c2d-232e-c5fb-5d0c5eb2f8db@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <6afe7ac1-904a-49e6-69f2-7de487936731@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <56370690-0c2d-232e-c5fb-5d0c5eb2f8db@huawei.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+Cc: "Gaoxiang (OS)" <gaoxiang25@huawei.com>, Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, heyunlei <heyunlei@huawei.com>, hutj <hutj@huawei.com>, "Duwei (Device OS)" <weidu.du@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 On 01/31, Chao Yu wrote:
-> On 2018/1/31 11:49, Jaegeuk Kim wrote:
+> On 2018/1/31 11:51, Jaegeuk Kim wrote:
 > > On 01/31, Chao Yu wrote:
-> >> On 2018/1/31 10:36, Jaegeuk Kim wrote:
-> >>> On 01/31, Chao Yu wrote:
-> >>>> On 2018/1/31 9:35, Jaegeuk Kim wrote:
-> >>>>> On 01/29, Chao Yu wrote:
-> >>>>>> Add missing sanity check for quota sysfile ino.
+> >> On 2018/1/31 10:59, Jaegeuk Kim wrote:
+> >>> On 01/31, Gaoxiang (OS) wrote:
+> >>>>
+> >>>>
+> >>>> On 2018/1/31 10:52, Jaegeuk Kim wrote:
+> >>>>> On 01/31, Gaoxiang (OS) wrote:
+> >>>>>> Hi Jaegeuk,
+> >>>>>>
+> >>>>>> On 2018/1/31 10:39, Jaegeuk Kim wrote:
+> >>>>>>> On 01/31, Gaoxiang (OS) wrote:
+> >>>>>>>> Hi Jaegeuk,
+> >>>>>>>>
+> >>>>>>>> On 2018/1/31 10:18, Jaegeuk Kim wrote:
+> >>>>>>>>> On 01/26, Gaoxiang (OS) wrote:
+> >>>>>>>>>> Hi Jaegeuk and Chao,
+> >>>>>>>>>>
+> >>>>>>>>>> On 2018/1/26 9:36, Chao Yu wrote:
+> >>>>>>>>>>> On 2018/1/26 6:06, Jaegeuk Kim wrote:
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> Then, we don't need to wait for this as well as wait_on_all_pages_writeback()
+> >>>>>>>>>>>> in the early stage in do_checkpoint()?
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> So, it seems like we can modify like below:
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> ---
+> >>>>>>>>>>>> 1. while (get_pages())
+> >>>>>>>>>>>> 	sync_meta_pages()
+> >>>>>>>>>>>> 2. if (enabled_nat_bits())
+> >>>>>>>>>>>> 	while (get_pages())
+> >>>>>>>>>>>> 		sync_meta_pages()
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> 3. wait_on_all_pages_writeback()
+> >>>>>>>>>>>>      -> remove
+> >>>>>>>>>>>
+> >>>>>>>>>>> Would meta area across two devices? if it would, we need to wait all meta
+> >>>>>>>>>>> be persisted in second device before f2fs_flush_device_cache?
+> >>>>>>>>>>>
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> 4. f2fs_flush_device_cache()
+> >>>>>>>>>
+> >>>>>>>>>          -> remove
+> >>>>>>>>>
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> 5. update_meta_page() <- for first cp_block
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> 6. update_meta_page()... <- payload
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> 7. orphan writes
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> 8. node_summary writes
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> 9. update_meta_page() <- for last cp_block
+> >>>>>>>>>>>>      -> remove
+> >>>>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>> -       /* writeout checkpoint block */
+> >>>>>>>>>> -       update_meta_page(sbi, ckpt, start_blk);
+> >>>>>>>>>> -
+> >>>>>>>>>> -       /* wait for previous submitted node/meta pages writeback */
+> >>>>>>>>>> -       wait_on_all_pages_writeback(sbi);
+> >>>>>>>>>> -
+> >>>>>>>>>> -       if (unlikely(f2fs_cp_error(sbi)))
+> >>>>>>>>>> -               return -EIO;
+> >>>>>>>>>> -
+> >>>>>>>>>> Could also be removed, too?
+> >>>>>>>>>>
+> >>>>>>>>>>             filemap_fdatawait_range(NODE_MAPPING(sbi), 0, LLONG_MAX);
+> >>>>>>>>>>             filemap_fdatawait_range(META_MAPPING(sbi), 0, LLONG_MAX);
+> >>>>>>>>>
+> >>>>>>>>>         -> remove
+> >>>>>>>>>
+> >>>>>>>>> Hmm, think so.
+> >>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>>> 9.1 sync_meta_pages(META) to make sure all meta IOs are issued.
+> >>>>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>> If I understand correctly, I have the same questions with Chao.
+> >>>>>>>>>> It seems that META doesn't have another flush mechanism (eg. flush
+> >>>>>>>>>> thread) other than sync_meta_pages?
+> >>>>>>>>>
+> >>>>>>>>>       9.2 f2fs_flush_device_cache(), if we have multiple devices.
+> >>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> 10. wait_on_all_pages_writeback()
+> >>>>>>>>>
+> >>>>>>>>>        10.1. (f2fs_cp_error())
+> >>>>>>>>>        	    return -EIO;
+> >>>>>>>>>
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> ----
+> >>>>>>>>>>>> Add) 11. commit_checkpoint()
+> >>>>>>>>>>>>       - update_meta_page() <- for last cp_block
+> >>>>>>>>>>>>       - sync_meta_pages(META_FLUSH)
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> We don't need to wait for page_writeback any more.
+> >>>>>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>> Apart from that, I think we should "wait_on_all_pages_writeback(sbi);"
+> >>>>>>>>>> after META_FLUSH in case for pulluting the next checkpoint when the last
+> >>>>>>>>>> cp block is failed to write with FUA?
+> >>>>>>>>>
+> >>>>>>>>> Next cp block won't be written by 10.1.
+> >>>>>>>>>
+> >>>>>>>>
+> >>>>>>>> I think that 10.1 ensures the cp pack before the last cp_block was done.
+> >>>>>>>> However, what if the last cp block writes fail later without FUA?
+> >>>>>>>
+> >>>>>>> Without FUA? The last cp_block is written by FUA, no?
+> >>>>>>
+> >>>>>> quote "
+> >>>>>> Apart from that, I think we should "wait_on_all_pages_writeback(sbi);"
+> >>>>>> after META_FLUSH in case for pulluting the next checkpoint when the last
+> >>>>>> cp block is failed to write with FUA?
+> >>>>>> "
+> >>>>>>
+> >>>>>> what I meant is that the last cp_block should be written by FUA.
+> >>>>>> we need to use META_FLUSH to write last cp_block, right? :)
 > >>>>>
-> >>>>> We don't need to limit the specific inode numbers for quota files, since
-> >>>>> we may be able to set any inode numbers later. How about checkint the
-> >>>>> numbers are allocated as quota?
+> >>>>> Add) 11. commit_checkpoint()
+> >>>>>       - update_meta_page() <- for last cp_block
+> >>>>>       - sync_meta_pages(META_FLUSH)
+> >>>>>
+> >>>>> What do you mean? I added META_FLUSH.
+> >>>>>
+> >>>>> 9.1 sync_meta_pages(META);
+> >>>>>   -> 10. wait_on_all_pages_writeback();
+> >>>>>    -> 11. sync_meta_pages(META_FLUSH);
+> >>>>>
+> >>>>>      -> 9.1 sync_meta_pages(META);
+> >>>>>        -> 10. wait_on_all_pages_writeback();
+> >>>>>          -> 10.1 f2fs_cp_error() -> return -EIO;
+> >>>>>
+> >>>>
+> >>>> What I mean is
+> >>>> should we need to ensure FUA writing to medium (using the last
+> >>>> "wait_on_all_pages_writeback(sbi)") and then unblock_operation
+> >>>> ,quit write_checkpoint, go on fs operations
+> >>>>
+> >>>> 11. commit_checkpoint()
+> >>>> - update_meta_page() <- for last cp_block
+> >>>> - sync_meta_pages(META_FLUSH)
+> >>>> *12. wait_on_all_pages_writeback() *
 > >>>
-> >>> If quota_ino is set, f2fs_enable_quotas() will be failed, if its ino is invalid.
-> >>> It'd be also fine, if we have no inode numbers there. What I mean was we may need
-> >>> to consider reallocating or deallocating inode numbers later.
+> >>> I'm saying we don't need this.
 > >>
-> >> Oh, so that it will be better to do more check & repair in fsck tools, right?
+> >> I think we need this, because w/o this end_io can be called after
+> >> f2fs_cp_error, then we can not be aware of result of last IO in
+> >> current checkpoint.
 > > 
-> > What is the rule that you're considering? We're already checking quota inodes
-> > in fsck.f2fs.
+> > Sigh, why do we have to get this error? The next checkpoint won't be
+> > succeeded.
 > 
-> The case that qf_ino[] is corrupted, I didn't see it can be relinked to
-> corresponding quota inode by fsck, am I missing something?
+> This interface should be synchronized, if checkpoint failed, but user get
+> a return value indicates successful, that would be inconsistent.
 
-We can check its basic metadata such as i_mode? Or, in order to do that
-entirely, we need to add file truncation and creationg in fsck.f2fs, which
-was too complicated to add before.
-Any idea?
-
-Thanks,
+Well, write_checkpoint doesn't have to be synchronous. Oh, we'd better add
+an async parameter to determine waiting the last end_io. For example, f2fs_gc
+path doesn't need to wait for it, whereas f2fs_sync_fs(sync=1) needs to wait it.
 
 > 
 > Thanks,
@@ -60,92 +198,61 @@ Thanks,
 > >>
 > >>>
 > >>>>
-> >>>> Do you mean:
-> >>>>
-> >>>> 	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
-> >>>> 		if (!le32_to_cpu(raw_super->qf_ino[0]) ||
-> >>>> 			!le32_to_cpu(raw_super->qf_ino[1])) {
-> >>>> 			f2fs_msg(sb, KERN_INFO,
-> >>>> 				"Invalid Quota Ino: user_ino(%u), grp_ino(%u)",
-> >>>> 				le32_to_cpu(raw_super->qf_ino[0]),
-> >>>> 				le32_to_cpu(raw_super->qf_ino[1]));
-> >>>> 			return 1;
-> >>>> 		}
-> >>>> 		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA) &&
-> >>>> 			!le32_to_cpu(raw_super->qf_ino[2])) {
-> >>>> 			f2fs_msg(sb, KERN_INFO,
-> >>>> 				"Invalid Quota Ino: prj_ino(%u)",
-> >>>> 				le32_to_cpu(raw_super->qf_ino[2]));
-> >>>> 			return 1;
-> >>>> 		}
-> >>>> 	}
-> >>>>
-> >>>> I think it's equal to:
-> >>>>
-> >>>> 	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
-> >>>> 		unsigned int qf_cnt = 0;
-> >>>> 		if (qf_ino[0])
-> >>>> 			qf_cnt++;
-> >>>> 		if (qf_ino[1])
-> >>>> 			qf_cnt++;
-> >>>> 		if (qf_cnt != 2) {
-> >>>> 			f2fs_msg();
-> >>>> 			return 1;
-> >>>> 		}
-> >>>> 		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA)) {
-> >>>> 			if (qf_ino[2])
-> >>>> 				qf_cnt++;
-> >>>> 			if (qf_cnt != 3) {
-> >>>> 				f2fs_msg();
-> >>>> 				return 1;
-> >>>> 			}
-> >>>> 		}
-> >>>> 	}
+> >>>> Sorry about my expression is not clear.
 > >>>>
 > >>>> Thanks,
 > >>>>
-> >>>>>
 > >>>>>>
-> >>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >>>>>> ---
-> >>>>>>  fs/f2fs/super.c | 19 +++++++++++++++++++
-> >>>>>>  1 file changed, 19 insertions(+)
+> >>>>>> Thanks,
 > >>>>>>
-> >>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> >>>>>> index 368f63d7bad2..6011071688ca 100644
-> >>>>>> --- a/fs/f2fs/super.c
-> >>>>>> +++ b/fs/f2fs/super.c
-> >>>>>> @@ -2116,6 +2116,25 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
-> >>>>>>  		return 1;
-> >>>>>>  	}
-> >>>>>>  
-> >>>>>> +	/* check quota sysfile ino info */
-> >>>>>> +	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
-> >>>>>> +		if (le32_to_cpu(raw_super->qf_ino[0]) != 4 ||
-> >>>>>> +			le32_to_cpu(raw_super->qf_ino[1]) != 5) {
-> >>>>>> +			f2fs_msg(sb, KERN_INFO,
-> >>>>>> +				"Invalid Quota Ino: user_ino(%u), grp_ino(%u)",
-> >>>>>> +				le32_to_cpu(raw_super->qf_ino[0]),
-> >>>>>> +				le32_to_cpu(raw_super->qf_ino[1]));
-> >>>>>> +			return 1;
-> >>>>>> +		}
-> >>>>>> +		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA) &&
-> >>>>>> +			le32_to_cpu(raw_super->qf_ino[2]) != 6) {
-> >>>>>> +			f2fs_msg(sb, KERN_INFO,
-> >>>>>> +				"Invalid Quota Ino: prj_ino(%u)",
-> >>>>>> +				le32_to_cpu(raw_super->qf_ino[2]));
-> >>>>>> +			return 1;
-> >>>>>> +		}
-> >>>>>> +	}
-> >>>>>> +
-> >>>>>>  	if (le32_to_cpu(raw_super->segment_count) > F2FS_MAX_SEGMENT) {
-> >>>>>>  		f2fs_msg(sb, KERN_INFO,
-> >>>>>>  			"Invalid segment count (%u)",
-> >>>>>> -- 
-> >>>>>> 2.15.0.55.gc2ece9dc4de6
-> >>>>>
-> >>>>> .
-> >>>>>
+> >>>>>>>
+> >>>>>>>> Should we need to ensure the last cp block going into device medium
+> >>>>>>>> rather than device cache before switching to go into the next checkpoint
+> >>>>>>>> (I mean we need to ensure writing to medium and then unblock_operation
+> >>>>>>>> and quit write_checkpoint and go on fs operations)?
+> >>>>>>>>
+> >>>>>>>> Other parts seems OK for me :), I will sort out and resent a new patch.
+> >>>>>>>>
+> >>>>>>>> Thanks,
+> >>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>> Thanks all,
+> >>>>>>>>>>
+> >>>>>>>>>>>>>      
+> >>>>>>>>>>>>> @@ -1313,10 +1337,15 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>>>>>>>>>>>      	sbi->last_valid_block_count = sbi->total_valid_block_count;
+> >>>>>>>>>>>>>      	percpu_counter_set(&sbi->alloc_valid_block_count, 0);
+> >>>>>>>>>>>>>      
+> >>>>>>>>>>>>> -	/* Here, we only have one bio having CP pack */
+> >>>>>>>>>>>>> -	sync_meta_pages(sbi, META_FLUSH, LONG_MAX, FS_CP_META_IO);
+> >>>>>>>>>>>>> +	/* Here, we have one bio having CP pack except cp pack 2 page */
+> >>>>>>>>>>>>> +	sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
+> >>>>>>>>>>>>>      
+> >>>>>>>>>>>>>      	/* wait for previous submitted meta pages writeback */
+> >>>>>>>>>>>>> +	if (!test_opt(sbi, NOBARRIER))
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> The above has nothing to do with this patch.
+> >>>>>>>>>>>
+> >>>>>>>>>>> We only need to use wait_on_all_pages_writeback to keep writeback order of
+> >>>>>>>>>>> previous metadata and last cp pack metadata if barrier is on?
+> >>>>>>>>>>>
+> >>>>>>>>>>> Thanks,
+> >>>>>>>>>>>
+> >>>>>>>>>>>>
+> >>>>>>>>>>>>> +		wait_on_all_pages_writeback(sbi);
+> >>>>>>>>>>>>> +
+> >>>>>>>>>>>>> +	/* barrier and flush checkpoint cp pack 2 page */
+> >>>>>>>>>>>>> +	commit_checkpoint(sbi, ckpt, start_blk);
+> >>>>>>>>>>>>>      	wait_on_all_pages_writeback(sbi);
+> >>>>>>>>>>>>>      
+> >>>>>>>>>>>>>      	release_ino_entry(sbi, false);
+> >>>>>>>>>>>>> -- 
+> >>>>>>>>>>>>> 2.1.4
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> .
+> >>>>>>>>>>>>
+> >>>>>>>>>>>
 > >>>
 > >>> .
 > >>>
