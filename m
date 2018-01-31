@@ -1,285 +1,151 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] fsck.f2fs: reduce mem alloc during read sit
- block
-Date: Tue, 30 Jan 2018 18:05:33 -0800
-Message-ID: <20180131020533.GB86468@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1517196134-30520-1-git-send-email-heyunlei@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: flush cp pack except cp pack 2 page
+ at first
+Date: Tue, 30 Jan 2018 18:18:21 -0800
+Message-ID: <20180131021821.GC86468@jaegeuk-macbookpro.roam.corp.google.com>
+References: <9047C53C18267742AB12E43B65C7F9F70BCD2F67@dggemi505-mbs.china.huawei.com>
+ <20180125220600.GB22514@jaegeuk-macbookpro.roam.corp.google.com>
+ <cd1124ea-707a-4f33-10a0-5478082479df@huawei.com>
+ <9047C53C18267742AB12E43B65C7F9F70BCD37C5@dggemi505-mbs.china.huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
- helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1eghmP-0001qc-0h
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 31 Jan 2018 02:05:41 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eghmN-0000Re-Jf
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 31 Jan 2018 02:05:40 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1517196134-30520-1-git-send-email-heyunlei@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>
-Cc: ning.jia@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <9047C53C18267742AB12E43B65C7F9F70BCD37C5@dggemi505-mbs.china.huawei.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: "Gaoxiang (OS)" <gaoxiang25@huawei.com>
+Cc: "Yuchao (T)" <yuchao0@huawei.com>, Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, heyunlei <heyunlei@huawei.com>, hutj <hutj@huawei.com>, "Duwei (Device OS)" <weidu.du@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 01/29, Yunlei He wrote:
-> This patch reduce mem alloc during read sit block
+On 01/26, Gaoxiang (OS) wrote:
+> Hi Jaegeuk and Chao,
 > 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> ---
->  fsck/fsck.c  |  9 ++++++---
->  fsck/fsck.h  |  4 ++--
->  fsck/mount.c | 45 ++++++++++++++++++++++++++-------------------
->  3 files changed, 34 insertions(+), 24 deletions(-)
+> On 2018/1/26 9:36, Chao Yu wrote:
+> > On 2018/1/26 6:06, Jaegeuk Kim wrote:
+> >>
+> >> Then, we don't need to wait for this as well as wait_on_all_pages_writeback()
+> >> in the early stage in do_checkpoint()?
+> >>
+> >> So, it seems like we can modify like below:
+> >>
+> >> ---
+> >> 1. while (get_pages())
+> >> 	sync_meta_pages()
+> >> 2. if (enabled_nat_bits())
+> >> 	while (get_pages())
+> >> 		sync_meta_pages()
+> >>
+> >> 3. wait_on_all_pages_writeback()
+> >>   -> remove
+> > 
+> > Would meta area across two devices? if it would, we need to wait all meta
+> > be persisted in second device before f2fs_flush_device_cache?
+> > 
+> >>
+> >> 4. f2fs_flush_device_cache()
+
+      -> remove
+
+> >>
+> >> 5. update_meta_page() <- for first cp_block
+> >>
+> >> 6. update_meta_page()... <- payload
+> >>
+> >> 7. orphan writes
+> >>
+> >> 8. node_summary writes
+> >>
+> >> 9. update_meta_page() <- for last cp_block
+> >>   -> remove
+> > 
 > 
-> diff --git a/fsck/fsck.c b/fsck/fsck.c
-> index 6c1b9a7..d5c18d3 100644
-> --- a/fsck/fsck.c
-> +++ b/fsck/fsck.c
-> @@ -1895,25 +1895,28 @@ static void fix_nat_entries(struct f2fs_sb_info *sbi)
->  static void flush_curseg_sit_entries(struct f2fs_sb_info *sbi)
->  {
->  	struct sit_info *sit_i = SIT_I(sbi);
-> +	struct f2fs_sit_block *sit_blk;
->  	int i;
->  
-> +	sit_blk = calloc(BLOCK_SZ, 1);
-> +	ASSERT(sit_blk);
->  	/* update curseg sit entries, since we may change
->  	 * a segment type in move_curseg_info
->  	 */
->  	for (i = 0; i < NO_CHECK_TYPE; i++) {
->  		struct curseg_info *curseg = CURSEG_I(sbi, i);
-> -		struct f2fs_sit_block *sit_blk;
->  		struct f2fs_sit_entry *sit;
->  		struct seg_entry *se;
->  
->  		se = get_seg_entry(sbi, curseg->segno);
-> -		sit_blk = get_current_sit_page(sbi, curseg->segno);
-> +		get_current_sit_page(sbi, curseg->segno, sit_blk);
->  		sit = &sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, curseg->segno)];
->  		sit->vblocks = cpu_to_le16((se->type << SIT_VBLOCKS_SHIFT) |
->  							se->valid_blocks);
->  		rewrite_current_sit_page(sbi, curseg->segno, sit_blk);
-> -		free(sit_blk);
->  	}
-> +
-> +	free(sit_blk);
->  }
->  
->  static void fix_checkpoint(struct f2fs_sb_info *sbi)
-> diff --git a/fsck/fsck.h b/fsck/fsck.h
-> index d635c5a..648c2db 100644
-> --- a/fsck/fsck.h
-> +++ b/fsck/fsck.h
-> @@ -182,8 +182,8 @@ extern void update_nat_blkaddr(struct f2fs_sb_info *, nid_t, nid_t, block_t);
->  extern void print_raw_sb_info(struct f2fs_super_block *);
->  
->  extern u32 get_free_segments(struct f2fs_sb_info *);
-> -extern struct f2fs_sit_block *get_current_sit_page(struct f2fs_sb_info *,
-> -			unsigned int);
-> +extern void get_current_sit_page(struct f2fs_sb_info *,
-> +			unsigned int, struct f2fs_sit_block *);
->  extern void rewrite_current_sit_page(struct f2fs_sb_info *, unsigned int,
->  			struct f2fs_sit_block *);
->  
-> diff --git a/fsck/mount.c b/fsck/mount.c
-> index fe0d510..247bc96 100644
-> --- a/fsck/mount.c
-> +++ b/fsck/mount.c
-> @@ -1324,17 +1324,14 @@ static inline void check_seg_range(struct f2fs_sb_info *sbi, unsigned int segno)
->  	ASSERT(segno <= end_segno);
->  }
->  
-> -struct f2fs_sit_block *get_current_sit_page(struct f2fs_sb_info *sbi,
-> -						unsigned int segno)
-> +void get_current_sit_page(struct f2fs_sb_info *sbi,
-> +			unsigned int segno, struct f2fs_sit_block *sit_blk)
->  {
->  	struct sit_info *sit_i = SIT_I(sbi);
->  	unsigned int offset = SIT_BLOCK_OFFSET(sit_i, segno);
->  	block_t blk_addr = sit_i->sit_base_addr + offset;
-> -	struct f2fs_sit_block *sit_blk;
->  	int ret;
->  
-> -	sit_blk = calloc(BLOCK_SZ, 1);
-> -	ASSERT(sit_blk);
->  	check_seg_range(sbi, segno);
->  
->  	/* calculate sit block address */
-> @@ -1343,10 +1340,11 @@ struct f2fs_sit_block *get_current_sit_page(struct f2fs_sb_info *sbi,
->  
->  	ret = dev_read_block(sit_blk, blk_addr);
->  	ASSERT(ret >= 0);
+> -       /* writeout checkpoint block */
+> -       update_meta_page(sbi, ckpt, start_blk);
 > -
-> -	return sit_blk;
->  }
->  
-> +void get_current_nat_page(struct f2fs_sb_info *sbi,
-> +			)
-> +
+> -       /* wait for previous submitted node/meta pages writeback */
+> -       wait_on_all_pages_writeback(sbi);
+> -
+> -       if (unlikely(f2fs_cp_error(sbi)))
+> -               return -EIO;
+> -
+> Could also be removed, too?
+> 
+>          filemap_fdatawait_range(NODE_MAPPING(sbi), 0, LLONG_MAX);
+>          filemap_fdatawait_range(META_MAPPING(sbi), 0, LLONG_MAX);
 
-I removed this. :(
+     -> remove
 
->  void rewrite_current_sit_page(struct f2fs_sb_info *sbi,
->  			unsigned int segno, struct f2fs_sit_block *sit_blk)
->  {
-> @@ -1607,22 +1605,24 @@ void build_sit_entries(struct f2fs_sb_info *sbi)
->  	struct sit_info *sit_i = SIT_I(sbi);
->  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
->  	struct f2fs_journal *journal = &curseg->sum_blk->journal;
-> +	struct f2fs_sit_block *sit_blk;
->  	struct seg_entry *se;
->  	struct f2fs_sit_entry sit;
->  	unsigned int i, segno;
->  
-> +	sit_blk = calloc(BLOCK_SZ, 1);
-> +	ASSERT(sit_blk);
->  	for (segno = 0; segno < TOTAL_SEGS(sbi); segno++) {
->  		se = &sit_i->sentries[segno];
-> -		struct f2fs_sit_block *sit_blk;
->  
-> -		sit_blk = get_current_sit_page(sbi, segno);
-> +		get_current_sit_page(sbi, segno, sit_blk);
->  		sit = sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, segno)];
-> -		free(sit_blk);
->  
->  		check_block_count(sbi, segno, &sit);
->  		seg_info_from_raw_sit(se, &sit);
->  	}
->  
-> +	free(sit_blk);
->  	for (i = 0; i < sits_in_cursum(journal); i++) {
->  		segno = le32_to_cpu(segno_in_journal(journal, i));
->  		se = &sit_i->sentries[segno];
-> @@ -1714,24 +1714,26 @@ void rewrite_sit_area_bitmap(struct f2fs_sb_info *sbi)
->  	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
->  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
->  	struct sit_info *sit_i = SIT_I(sbi);
-> +	struct f2fs_sit_block *sit_blk;
->  	unsigned int segno = 0;
->  	struct f2fs_summary_block *sum = curseg->sum_blk;
->  	char *ptr = NULL;
->  
-> +	sit_blk = calloc(BLOCK_SZ, 1);
-> +	ASSERT(sit_blk);
->  	/* remove sit journal */
->  	sum->journal.n_sits = 0;
->  
->  	ptr = fsck->main_area_bitmap;
->  
->  	for (segno = 0; segno < TOTAL_SEGS(sbi); segno++) {
-> -		struct f2fs_sit_block *sit_blk;
->  		struct f2fs_sit_entry *sit;
->  		struct seg_entry *se;
->  		u16 valid_blocks = 0;
->  		u16 type;
->  		int i;
->  
-> -		sit_blk = get_current_sit_page(sbi, segno);
-> +		get_current_sit_page(sbi, segno, sit_blk);
->  		sit = &sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, segno)];
->  		memcpy(sit->valid_map, ptr, SIT_VBLOCK_MAP_SIZE);
->  
-> @@ -1751,10 +1753,11 @@ void rewrite_sit_area_bitmap(struct f2fs_sb_info *sbi)
->  		sit->vblocks = cpu_to_le16((type << SIT_VBLOCKS_SHIFT) |
->  								valid_blocks);
->  		rewrite_current_sit_page(sbi, segno, sit_blk);
-> -		free(sit_blk);
->  
->  		ptr += SIT_VBLOCK_MAP_SIZE;
->  	}
-> +
-> +	free(sit_blk);
->  }
->  
->  static int flush_sit_journal_entries(struct f2fs_sb_info *sbi)
-> @@ -1762,18 +1765,20 @@ static int flush_sit_journal_entries(struct f2fs_sb_info *sbi)
->  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
->  	struct f2fs_journal *journal = &curseg->sum_blk->journal;
->  	struct sit_info *sit_i = SIT_I(sbi);
-> +	struct f2fs_sit_block *sit_blk;
->  	unsigned int segno;
->  	int i;
->  
-> +	sit_blk = calloc(BLOCK_SZ, 1);
-> +	ASSERT(sit_blk);
->  	for (i = 0; i < sits_in_cursum(journal); i++) {
-> -		struct f2fs_sit_block *sit_blk;
->  		struct f2fs_sit_entry *sit;
->  		struct seg_entry *se;
->  
->  		segno = segno_in_journal(journal, i);
->  		se = get_seg_entry(sbi, segno);
->  
-> -		sit_blk = get_current_sit_page(sbi, segno);
-> +		get_current_sit_page(sbi, segno, sit_blk);
->  		sit = &sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, segno)];
->  
->  		memcpy(sit->valid_map, se->cur_valid_map, SIT_VBLOCK_MAP_SIZE);
-> @@ -1782,9 +1787,9 @@ static int flush_sit_journal_entries(struct f2fs_sb_info *sbi)
->  		sit->mtime = cpu_to_le64(se->mtime);
->  
->  		rewrite_current_sit_page(sbi, segno, sit_blk);
-> -		free(sit_blk);
->  	}
->  
-> +	free(sit_blk);
->  	journal->n_sits = 0;
->  	return i;
->  }
-> @@ -1839,12 +1844,14 @@ void flush_sit_entries(struct f2fs_sb_info *sbi)
->  {
->  	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
->  	struct sit_info *sit_i = SIT_I(sbi);
-> +	struct f2fs_sit_block *sit_blk;
->  	unsigned int segno = 0;
->  	u32 free_segs = 0;
->  
-> +	sit_blk = calloc(BLOCK_SZ, 1);
-> +	ASSERT(sit_blk);
->  	/* update free segments */
->  	for (segno = 0; segno < TOTAL_SEGS(sbi); segno++) {
-> -		struct f2fs_sit_block *sit_blk;
->  		struct f2fs_sit_entry *sit;
->  		struct seg_entry *se;
->  
-> @@ -1853,19 +1860,19 @@ void flush_sit_entries(struct f2fs_sb_info *sbi)
->  		if (!se->dirty)
->  			continue;
->  
-> -		sit_blk = get_current_sit_page(sbi, segno);
-> +		get_current_sit_page(sbi, segno, sit_blk);
->  		sit = &sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, segno)];
->  		memcpy(sit->valid_map, se->cur_valid_map, SIT_VBLOCK_MAP_SIZE);
->  		sit->vblocks = cpu_to_le16((se->type << SIT_VBLOCKS_SHIFT) |
->  							se->valid_blocks);
->  		rewrite_current_sit_page(sbi, segno, sit_blk);
-> -		free(sit_blk);
->  
->  		if (se->valid_blocks == 0x0 &&
->  				!IS_CUR_SEGNO(sbi, segno, NO_CHECK_TYPE))
->  			free_segs++;
->  	}
->  
-> +	free(sit_blk);
->  	set_cp(free_segment_count, free_segs);
->  }
->  
-> -- 
-> 1.9.1
+Hmm, think so.
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> 
+> 
+> > 9.1 sync_meta_pages(META) to make sure all meta IOs are issued.
+> > 
+> 
+> If I understand correctly, I have the same questions with Chao.
+> It seems that META doesn't have another flush mechanism (eg. flush 
+> thread) other than sync_meta_pages?
+
+   9.2 f2fs_flush_device_cache(), if we have multiple devices.
+
+> 
+> >>
+> >> 10. wait_on_all_pages_writeback()
+
+    10.1. (f2fs_cp_error())
+    	    return -EIO;
+
+> >>
+> >> ----
+> >> Add) 11. commit_checkpoint()
+> >>    - update_meta_page() <- for last cp_block
+> >>    - sync_meta_pages(META_FLUSH)
+> >>
+> >> We don't need to wait for page_writeback any more.
+> >>
+> 
+> 
+> Apart from that, I think we should "wait_on_all_pages_writeback(sbi);" 
+> after META_FLUSH in case for pulluting the next checkpoint when the last 
+> cp block is failed to write with FUA?
+
+Next cp block won't be written by 10.1.
+
+> 
+> 
+> Thanks all,
+> 
+> >>>   
+> >>> @@ -1313,10 +1337,15 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>   	sbi->last_valid_block_count = sbi->total_valid_block_count;
+> >>>   	percpu_counter_set(&sbi->alloc_valid_block_count, 0);
+> >>>   
+> >>> -	/* Here, we only have one bio having CP pack */
+> >>> -	sync_meta_pages(sbi, META_FLUSH, LONG_MAX, FS_CP_META_IO);
+> >>> +	/* Here, we have one bio having CP pack except cp pack 2 page */
+> >>> +	sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
+> >>>   
+> >>>   	/* wait for previous submitted meta pages writeback */
+> >>> +	if (!test_opt(sbi, NOBARRIER))
+> >>
+> >> The above has nothing to do with this patch.
+> > 
+> > We only need to use wait_on_all_pages_writeback to keep writeback order of
+> > previous metadata and last cp pack metadata if barrier is on?
+> > 
+> > Thanks,
+> > 
+> >>
+> >>> +		wait_on_all_pages_writeback(sbi);
+> >>> +
+> >>> +	/* barrier and flush checkpoint cp pack 2 page */
+> >>> +	commit_checkpoint(sbi, ckpt, start_blk);
+> >>>   	wait_on_all_pages_writeback(sbi);
+> >>>   
+> >>>   	release_ino_entry(sbi, false);
+> >>> -- 
+> >>> 2.1.4
+> >>
+> >> .
+> >>
+> > 
