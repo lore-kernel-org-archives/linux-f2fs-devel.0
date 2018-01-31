@@ -1,28 +1,27 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
-Date: Wed, 31 Jan 2018 14:15:31 -0800
-Message-ID: <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180127094301.29154-1-yuchao0@huawei.com>
- <20180127094301.29154-2-yuchao0@huawei.com>
- <20180131020213.GA86468@jaegeuk-macbookpro.roam.corp.google.com>
- <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
+Subject: Re: [PATCH v2 3/3] f2fs: Add the 'whint_mode' mount
+ option to f2fs documentation
+Date: Wed, 31 Jan 2018 14:19:57 -0800
+Message-ID: <20180131221957.GD12901@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1517366219-22166-1-git-send-email-hyc.lee@gmail.com>
+ <1517366219-22166-4-git-send-email-hyc.lee@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1eh0fN-0000l4-U8
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 31 Jan 2018 22:15:41 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1eh0jd-0001XV-Cv
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 31 Jan 2018 22:20:05 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eh0fJ-0001Xm-Nj
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 31 Jan 2018 22:15:41 +0000
+ id 1eh0jc-0001hM-1I
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 31 Jan 2018 22:20:05 +0000
 Content-Disposition: inline
-In-Reply-To: <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
+In-Reply-To: <1517366219-22166-4-git-send-email-hyc.lee@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,107 +31,42 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Hyunchul Lee <hyc.lee@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, kernel-team@lge.com, linux-fsdevel@vger.kernel.org, Hyunchul Lee <cheol.lee@lge.com>
 
-On 01/31, Chao Yu wrote:
-> On 2018/1/31 10:02, Jaegeuk Kim wrote:
-> > What if we want to add more entries in addition to node_checksum? Do we have
-> > to add a new feature flag at every time? How about adding a layout value instead
-> 
-> Hmm.. for previous implementation, IMO, we'd better add a new feature flag at
-> every time, otherwise, w/ extra_nsize only, in current image, we can know a
-> valid range of extended area in node block, but we don't know which
-> fields/features are valid/enabled or not.
-> 
-> One more thing is that if we can add one feature flag for each field, we got one
-> more chance to disable it dynamically.
-> 
-> > of extra_nsize? For example, layout #1 means node_checksum with extra_nsize=X?
-> > 
-> > 
-> > What does 1017 mean? We need to make this structure more flexibly for new
-> 
-> Yes, using raw 1017 is not appropriate here.
-> 
-> > entries. Like this?
-> > 		union {
-> > 			struct node_v1;
-> > 			struct node_v2;
-> > 			struct node_v3;
-> > 			...
-> > 			struct direct_node dn;
-> > 			struct indirect_node in;
-> > 		};
-> > 	};
-> > 
-> > 	struct node_v1 {
-> > 		__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
-> > 		__le32 node_checksum;
-> > 	}
-> > 
-> > 	struct node_v2 {
-> > 		__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=500];
-> 
-> Hmm.. If we only need to add one more 4 bytes field in struct node_v2, but
-> V2_NSIZE is defined as fixed 500, there must be 492 bytes wasted.
-> 
-> Or we can define V2_NSIZE as 8, but if there comes more and more extended
-> fields, node version count can be a large number, it results in complicated
-> version recognization and handling.
-> 
-> One more question is how can we control which fields are valid or not in
-> comp[Vx_NSIZE]?
-> 
-> 
-> Anyway, what I'm thinking is maybe we can restructure layout of node block like
-> the one used by f2fs_inode:
-> 
-> struct f2fs_node {
-> 	union {
-> 		struct f2fs_inode i;
-> 		union {
-> 			struct {
-> 				__le32 node_checksum;
-> 				__le32 feature_field_1;
-> 				__le32 feature_field_2;
-> 				....
-> 				__le32 addr[];
-> 				
-> 			};
-> 			struct direct_node dn;
-> 			struct indirect_node in;
-> 		};
-> 	};
-> 	struct node_footer footer;
-> } __packed;
-> 
-> Moving all extended fields to the head of f2fs_node, so we don't have to use
-> macro to indicate actual size of addr.
+Hi Hyunchul,
 
-Thinking what'd be the best way. My concern is, once getting more entries, we
-can't set each of features individually. Like the second entry should have
-enabled node_checksum, which we may not want to do.
+I've added the policy in the Doc as wel.
 
+Thanks,
+
+On 01/31, Hyunchul Lee wrote:
+> From: Hyunchul Lee <cheol.lee@lge.com>
 > 
-> Thanks,
+> Signed-off-by: Hyunchul Lee <cheol.lee@lge.com>
+> ---
+>  Documentation/filesystems/f2fs.txt | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> > 		__le32 comp[V2_NSIZE];
-> > 	}
-> > 	...
-> > 
-> >> +			};
-> >> +			struct direct_node dn;
-> >> +			struct indirect_node in;
-> >> +		};
-> >>  	};
-> >>  	struct node_footer footer;
-> >>  } __packed;
-> >> -- 
-> >> 2.15.0.55.gc2ece9dc4de6
-> > 
-> > .
-> > 
+> diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+> index 13c2ff0..414a160 100644
+> --- a/Documentation/filesystems/f2fs.txt
+> +++ b/Documentation/filesystems/f2fs.txt
+> @@ -174,6 +174,12 @@ offgrpjquota           Turn off group journelled quota.
+>  offprjjquota           Turn off project journelled quota.
+>  quota                  Enable plain user disk quota accounting.
+>  noquota                Disable all plain disk quota option.
+> +whint_mode=%s          Control which write hints are passed down to block
+> +                       layer. This supports "off", "user-based", and
+> +                       "fs-based".  In "off" mode (default), f2fs does not pass
+> +                       down hints. In "user-based" mode, f2fs tries to pass
+> +                       down hints given by users. And in "fs-based" mode, f2fs
+> +                       passes down hints with its policy.
+>  
+>  ================================================================================
+>  DEBUGFS ENTRIES
+> -- 
+> 1.9.1
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
