@@ -1,383 +1,172 @@
-From: Hyunchul Lee <hyc.lee@gmail.com>
-Subject: [PATCH v2 1/3] f2fs: support passing down write hints
- given by users to block layer
-Date: Wed, 31 Jan 2018 11:36:57 +0900
-Message-ID: <1517366219-22166-2-git-send-email-hyc.lee@gmail.com>
-References: <1517366219-22166-1-git-send-email-hyc.lee@gmail.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: flush cp pack except cp pack 2 page
+ at first
+Date: Tue, 30 Jan 2018 18:39:49 -0800
+Message-ID: <20180131023949.GB87929@jaegeuk-macbookpro.roam.corp.google.com>
+References: <9047C53C18267742AB12E43B65C7F9F70BCD2F67@dggemi505-mbs.china.huawei.com>
+ <20180125220600.GB22514@jaegeuk-macbookpro.roam.corp.google.com>
+ <cd1124ea-707a-4f33-10a0-5478082479df@huawei.com>
+ <9047C53C18267742AB12E43B65C7F9F70BCD37C5@dggemi505-mbs.china.huawei.com>
+ <20180131021821.GC86468@jaegeuk-macbookpro.roam.corp.google.com>
+ <9047C53C18267742AB12E43B65C7F9F70BCE43DE@dggemi505-mbx.china.huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
- helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <hyc.lee@gmail.com>) id 1egiGv-00032c-Dy
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 31 Jan 2018 02:37:13 +0000
-Received: from lgeamrelo11.lge.com ([156.147.23.51])
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtp (Exim 4.89)
- id 1egiGs-0001W3-OP
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 31 Jan 2018 02:37:13 +0000
-In-Reply-To: <1517366219-22166-1-git-send-email-hyc.lee@gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc: linux-fsdevel@vger.kernel.org, kernel-team@lge.com, Hyunchul Lee <cheol.lee@lge.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <9047C53C18267742AB12E43B65C7F9F70BCE43DE@dggemi505-mbx.china.huawei.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: "Gaoxiang (OS)" <gaoxiang25@huawei.com>
+Cc: "Yuchao (T)" <yuchao0@huawei.com>, Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, heyunlei <heyunlei@huawei.com>, hutj <hutj@huawei.com>, "Duwei (Device OS)" <weidu.du@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Hyunchul Lee <cheol.lee@lge.com>
+On 01/31, Gaoxiang (OS) wrote:
+> Hi Jaegeuk,
+> 
+> On 2018/1/31 10:18, Jaegeuk Kim wrote:
+> > On 01/26, Gaoxiang (OS) wrote:
+> >> Hi Jaegeuk and Chao,
+> >>
+> >> On 2018/1/26 9:36, Chao Yu wrote:
+> >>> On 2018/1/26 6:06, Jaegeuk Kim wrote:
+> >>>>
+> >>>> Then, we don't need to wait for this as well as wait_on_all_pages_writeback()
+> >>>> in the early stage in do_checkpoint()?
+> >>>>
+> >>>> So, it seems like we can modify like below:
+> >>>>
+> >>>> ---
+> >>>> 1. while (get_pages())
+> >>>> 	sync_meta_pages()
+> >>>> 2. if (enabled_nat_bits())
+> >>>> 	while (get_pages())
+> >>>> 		sync_meta_pages()
+> >>>>
+> >>>> 3. wait_on_all_pages_writeback()
+> >>>>    -> remove
+> >>>
+> >>> Would meta area across two devices? if it would, we need to wait all meta
+> >>> be persisted in second device before f2fs_flush_device_cache?
+> >>>
+> >>>>
+> >>>> 4. f2fs_flush_device_cache()
+> > 
+> >        -> remove
+> > 
+> >>>>
+> >>>> 5. update_meta_page() <- for first cp_block
+> >>>>
+> >>>> 6. update_meta_page()... <- payload
+> >>>>
+> >>>> 7. orphan writes
+> >>>>
+> >>>> 8. node_summary writes
+> >>>>
+> >>>> 9. update_meta_page() <- for last cp_block
+> >>>>    -> remove
+> >>>
+> >>
+> >> -       /* writeout checkpoint block */
+> >> -       update_meta_page(sbi, ckpt, start_blk);
+> >> -
+> >> -       /* wait for previous submitted node/meta pages writeback */
+> >> -       wait_on_all_pages_writeback(sbi);
+> >> -
+> >> -       if (unlikely(f2fs_cp_error(sbi)))
+> >> -               return -EIO;
+> >> -
+> >> Could also be removed, too?
+> >>
+> >>           filemap_fdatawait_range(NODE_MAPPING(sbi), 0, LLONG_MAX);
+> >>           filemap_fdatawait_range(META_MAPPING(sbi), 0, LLONG_MAX);
+> > 
+> >       -> remove
+> > 
+> > Hmm, think so.
+> > 
+> >>
+> >>
+> >>> 9.1 sync_meta_pages(META) to make sure all meta IOs are issued.
+> >>>
+> >>
+> >> If I understand correctly, I have the same questions with Chao.
+> >> It seems that META doesn't have another flush mechanism (eg. flush
+> >> thread) other than sync_meta_pages?
+> > 
+> >     9.2 f2fs_flush_device_cache(), if we have multiple devices.
+> > 
+> >>
+> >>>>
+> >>>> 10. wait_on_all_pages_writeback()
+> > 
+> >      10.1. (f2fs_cp_error())
+> >      	    return -EIO;
+> > 
+> >>>>
+> >>>> ----
+> >>>> Add) 11. commit_checkpoint()
+> >>>>     - update_meta_page() <- for last cp_block
+> >>>>     - sync_meta_pages(META_FLUSH)
+> >>>>
+> >>>> We don't need to wait for page_writeback any more.
+> >>>>
+> >>
+> >>
+> >> Apart from that, I think we should "wait_on_all_pages_writeback(sbi);"
+> >> after META_FLUSH in case for pulluting the next checkpoint when the last
+> >> cp block is failed to write with FUA?
+> > 
+> > Next cp block won't be written by 10.1.
+> > 
+> 
+> I think that 10.1 ensures the cp pack before the last cp_block was done.
+> However, what if the last cp block writes fail later without FUA?
 
-Add the 'whint_mode' mount option that controls which write
-hints are passed down to block layer. There are "off" and
-"user-based" mode. The default mode is "off".
+Without FUA? The last cp_block is written by FUA, no?
 
-1) whint_mode=off. F2FS only passes down WRITE_LIFE_NOT_SET.
-
-2) whint_mode=user-based. F2FS tries to pass down hints given
-by users.
-
-User                  F2FS                     Block
-----                  ----                     -----
-                      META                     WRITE_LIFE_NOT_SET
-                      HOT_NODE                 "
-                      WARM_NODE                "
-                      COLD_NODE                "
-ioctl(COLD)           COLD_DATA                WRITE_LIFE_EXTREME
-extension list        "                        "
-
--- buffered io
-WRITE_LIFE_EXTREME    COLD_DATA                WRITE_LIFE_EXTREME
-WRITE_LIFE_SHORT      HOT_DATA                 WRITE_LIFE_SHORT
-WRITE_LIFE_NOT_SET    WARM_DATA                WRITE_LIFE_NOT_SET
-WRITE_LIFE_NONE       "                        "
-WRITE_LIFE_MEDIUM     "                        "
-WRITE_LIFE_LONG       "                        "
-
--- direct io
-WRITE_LIFE_EXTREME    COLD_DATA                WRITE_LIFE_EXTREME
-WRITE_LIFE_SHORT      HOT_DATA                 WRITE_LIFE_SHORT
-WRITE_LIFE_NOT_SET    WARM_DATA                WRITE_LIFE_NOT_SET
-WRITE_LIFE_NONE       "                        WRITE_LIFE_NONE
-WRITE_LIFE_MEDIUM     "                        WRITE_LIFE_MEDIUM
-WRITE_LIFE_LONG       "                        WRITE_LIFE_LONG
-
-Many thanks to Chao Yu and Jaegeuk Kim for comments to
-implement this patch.
-
-Signed-off-by: Hyunchul Lee <cheol.lee@lge.com>
----
-v2:
- - Set "whint_mode" to off if "active_logs" is two or four
- - Use a local variable to check "whint_mode" instead of sbi->whint_mode
-   in f2fs_direct_IO
- - Fix comments about rw_hint_to_seg_type()
-
- fs/f2fs/data.c    | 28 +++++++++++++++++++++-----
- fs/f2fs/f2fs.h    |  9 +++++++++
- fs/f2fs/segment.c | 59 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/f2fs/super.c   | 30 +++++++++++++++++++++++++++-
- 4 files changed, 120 insertions(+), 6 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 6cba74e..726b0ef 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -175,15 +175,22 @@ static bool __same_bdev(struct f2fs_sb_info *sbi,
-  */
- static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
- 				struct writeback_control *wbc,
--				int npages, bool is_read)
-+				int npages, bool is_read,
-+				enum page_type type, enum temp_type temp)
- {
- 	struct bio *bio;
- 
- 	bio = f2fs_bio_alloc(sbi, npages, true);
- 
- 	f2fs_target_device(sbi, blk_addr, bio);
--	bio->bi_end_io = is_read ? f2fs_read_end_io : f2fs_write_end_io;
--	bio->bi_private = is_read ? NULL : sbi;
-+	if (is_read) {
-+		bio->bi_end_io = f2fs_read_end_io;
-+		bio->bi_private = NULL;
-+	} else {
-+		bio->bi_end_io = f2fs_write_end_io;
-+		bio->bi_private = sbi;
-+		bio->bi_write_hint = io_type_to_rw_hint(sbi, type, temp);
-+	}
- 	if (wbc)
- 		wbc_init_bio(wbc, bio);
- 
-@@ -382,7 +389,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
- 
- 	/* Allocate a new bio */
- 	bio = __bio_alloc(fio->sbi, fio->new_blkaddr, fio->io_wbc,
--				1, is_read_io(fio->op));
-+				1, is_read_io(fio->op), fio->type, fio->temp);
- 
- 	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
- 		bio_put(bio);
-@@ -445,7 +452,8 @@ int f2fs_submit_page_write(struct f2fs_io_info *fio)
- 			goto out_fail;
- 		}
- 		io->bio = __bio_alloc(sbi, fio->new_blkaddr, fio->io_wbc,
--						BIO_MAX_PAGES, false);
-+						BIO_MAX_PAGES, false,
-+						fio->type, fio->temp);
- 		io->fio = *fio;
- 	}
- 
-@@ -2287,10 +2295,13 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- {
- 	struct address_space *mapping = iocb->ki_filp->f_mapping;
- 	struct inode *inode = mapping->host;
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	size_t count = iov_iter_count(iter);
- 	loff_t offset = iocb->ki_pos;
- 	int rw = iov_iter_rw(iter);
- 	int err;
-+	enum rw_hint hint;
-+	int whint_mode = sbi->whint_mode;
- 
- 	err = check_direct_IO(inode, iter, offset);
- 	if (err)
-@@ -2301,11 +2312,18 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 
- 	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
- 
-+	if (rw == WRITE && whint_mode == WHINT_MODE_OFF) {
-+		hint = iocb->ki_hint;
-+		iocb->ki_hint = WRITE_LIFE_NOT_SET;
-+	}
-+
- 	down_read(&F2FS_I(inode)->dio_rwsem[rw]);
- 	err = blockdev_direct_IO(iocb, inode, iter, get_data_block_dio);
- 	up_read(&F2FS_I(inode)->dio_rwsem[rw]);
- 
- 	if (rw == WRITE) {
-+		if (whint_mode == WHINT_MODE_OFF)
-+			iocb->ki_hint = hint;
- 		if (err > 0) {
- 			f2fs_update_iostat(F2FS_I_SB(inode), APP_DIRECT_IO,
- 									err);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 6300ac5..475637d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1037,6 +1037,11 @@ enum {
- 	MAX_TIME,
- };
- 
-+enum {
-+	WHINT_MODE_OFF,		/* not pass down write hints */
-+	WHINT_MODE_USER,	/* try to pass down hints given by users */
-+};
-+
- struct f2fs_sb_info {
- 	struct super_block *sb;			/* pointer to VFS super block */
- 	struct proc_dir_entry *s_proc;		/* proc entry */
-@@ -1220,6 +1225,8 @@ struct f2fs_sb_info {
- 	char *s_qf_names[MAXQUOTAS];
- 	int s_jquota_fmt;			/* Format of quota to use */
- #endif
-+	/* For which write hints are passed down to block layer */
-+	int whint_mode;
- };
- 
- #ifdef CONFIG_F2FS_FAULT_INJECTION
-@@ -2768,6 +2775,8 @@ int lookup_journal_in_cursum(struct f2fs_journal *journal, int type,
- int __init create_segment_manager_caches(void);
- void destroy_segment_manager_caches(void);
- int rw_hint_to_seg_type(enum rw_hint hint);
-+enum rw_hint io_type_to_rw_hint(struct f2fs_sb_info *sbi, enum page_type type,
-+				enum temp_type temp);
- 
- /*
-  * checkpoint.c
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index b16a8e6..840c8ff 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2455,6 +2455,62 @@ int rw_hint_to_seg_type(enum rw_hint hint)
- 	}
- }
- 
-+/* This returns write hints for each segment type. This hints will be
-+ * passed down to block layer. There are mapping tables which depend on
-+ * the mount option 'whint_mode'.
-+ *
-+ * 1) whint_mode=off. F2FS only passes down WRITE_LIFE_NOT_SET.
-+ *
-+ * 2) whint_mode=user-based. F2FS tries to pass down hints given by users.
-+ *
-+ * User                  F2FS                     Block
-+ * ----                  ----                     -----
-+ *                       META                     WRITE_LIFE_NOT_SET
-+ *                       HOT_NODE                 "
-+ *                       WARM_NODE                "
-+ *                       COLD_NODE                "
-+ * ioctl(COLD)           COLD_DATA                WRITE_LIFE_EXTREME
-+ * extension list        "                        "
-+ *
-+ * -- buffered io
-+ * WRITE_LIFE_EXTREME    COLD_DATA                WRITE_LIFE_EXTREME
-+ * WRITE_LIFE_SHORT      HOT_DATA                 WRITE_LIFE_SHORT
-+ * WRITE_LIFE_NOT_SET    WARM_DATA                WRITE_LIFE_NOT_SET
-+ * WRITE_LIFE_NONE       "                        "
-+ * WRITE_LIFE_MEDIUM     "                        "
-+ * WRITE_LIFE_LONG       "                        "
-+ *
-+ * -- direct io
-+ * WRITE_LIFE_EXTREME    COLD_DATA                WRITE_LIFE_EXTREME
-+ * WRITE_LIFE_SHORT      HOT_DATA                 WRITE_LIFE_SHORT
-+ * WRITE_LIFE_NOT_SET    WARM_DATA                WRITE_LIFE_NOT_SET
-+ * WRITE_LIFE_NONE       "                        WRITE_LIFE_NONE
-+ * WRITE_LIFE_MEDIUM     "                        WRITE_LIFE_MEDIUM
-+ * WRITE_LIFE_LONG       "                        WRITE_LIFE_LONG
-+ *
-+ */
-+
-+enum rw_hint io_type_to_rw_hint(struct f2fs_sb_info *sbi,
-+				enum page_type type, enum temp_type temp)
-+{
-+	if (sbi->whint_mode == WHINT_MODE_USER) {
-+		if (type == DATA) {
-+			switch (temp) {
-+			case COLD:
-+				return WRITE_LIFE_EXTREME;
-+			case HOT:
-+				return WRITE_LIFE_SHORT;
-+			default:
-+				return WRITE_LIFE_NOT_SET;
-+			}
-+		} else {
-+			return WRITE_LIFE_NOT_SET;
-+		}
-+	} else {
-+		return WRITE_LIFE_NOT_SET;
-+	}
-+}
-+
- static int __get_segment_type_2(struct f2fs_io_info *fio)
- {
- 	if (fio->type == DATA)
-@@ -2642,6 +2698,7 @@ void write_meta_page(struct f2fs_sb_info *sbi, struct page *page,
- 	struct f2fs_io_info fio = {
- 		.sbi = sbi,
- 		.type = META,
-+		.temp = HOT,
- 		.op = REQ_OP_WRITE,
- 		.op_flags = REQ_SYNC | REQ_META | REQ_PRIO,
- 		.old_blkaddr = page->index,
-@@ -2690,6 +2747,8 @@ int rewrite_data_page(struct f2fs_io_info *fio)
- 	int err;
- 
- 	fio->new_blkaddr = fio->old_blkaddr;
-+	/* i/o temperature is needed for passing down write hints */
-+	__get_segment_type(fio);
- 	stat_inc_inplace_blocks(fio->sbi);
- 
- 	err = f2fs_submit_page_bio(fio);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 8173ae6..139547d 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -129,6 +129,7 @@ enum {
- 	Opt_jqfmt_vfsold,
- 	Opt_jqfmt_vfsv0,
- 	Opt_jqfmt_vfsv1,
-+	Opt_whint,
- 	Opt_err,
- };
- 
-@@ -182,6 +183,7 @@ enum {
- 	{Opt_jqfmt_vfsold, "jqfmt=vfsold"},
- 	{Opt_jqfmt_vfsv0, "jqfmt=vfsv0"},
- 	{Opt_jqfmt_vfsv1, "jqfmt=vfsv1"},
-+	{Opt_whint, "whint_mode=%s"},
- 	{Opt_err, NULL},
- };
- 
-@@ -679,6 +681,22 @@ static int parse_options(struct super_block *sb, char *options)
- 					"quota operations not supported");
- 			break;
- #endif
-+		case Opt_whint:
-+			name = match_strdup(&args[0]);
-+			if (!name)
-+				return -ENOMEM;
-+			if (strlen(name) == 10 &&
-+					!strncmp(name, "user-based", 10)) {
-+				sbi->whint_mode = WHINT_MODE_USER;
-+			} else if (strlen(name) == 3 &&
-+					!strncmp(name, "off", 3)) {
-+				sbi->whint_mode = WHINT_MODE_OFF;
-+			} else {
-+				kfree(name);
-+				return -EINVAL;
-+			}
-+			kfree(name);
-+			break;
- 		default:
- 			f2fs_msg(sb, KERN_ERR,
- 				"Unrecognized mount option \"%s\" or missing value",
-@@ -715,6 +733,12 @@ static int parse_options(struct super_block *sb, char *options)
- 			return -EINVAL;
- 		}
- 	}
-+
-+	/* Not pass down write hints if the number of active logs is lesser
-+	 * than NR_CURSEG_TYPE.
-+	 */
-+	if (sbi->active_logs != NR_CURSEG_TYPE)
-+		sbi->whint_mode = WHINT_MODE_OFF;
- 	return 0;
- }
- 
-@@ -1225,6 +1249,8 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_puts(seq, ",prjquota");
- #endif
- 	f2fs_show_quota_options(seq, sbi->sb);
-+	if (sbi->whint_mode == WHINT_MODE_USER)
-+		seq_printf(seq, ",whint_mode=%s", "user-based");
- 
- 	return 0;
- }
-@@ -1234,6 +1260,7 @@ static void default_options(struct f2fs_sb_info *sbi)
- 	/* init some FS parameters */
- 	sbi->active_logs = NR_CURSEG_TYPE;
- 	sbi->inline_xattr_size = DEFAULT_INLINE_XATTR_ADDRS;
-+	sbi->whint_mode = WHINT_MODE_OFF;
- 
- 	set_opt(sbi, BG_GC);
- 	set_opt(sbi, INLINE_XATTR);
-@@ -1274,6 +1301,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	bool need_restart_gc = false;
- 	bool need_stop_gc = false;
- 	bool no_extent_cache = !test_opt(sbi, EXTENT_CACHE);
-+	int old_whint_mode = sbi->whint_mode;
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- 	struct f2fs_fault_info ffi = sbi->fault_info;
- #endif
-@@ -1373,7 +1401,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 		need_stop_gc = true;
- 	}
- 
--	if (*flags & SB_RDONLY) {
-+	if (*flags & SB_RDONLY || sbi->whint_mode != old_whint_mode) {
- 		writeback_inodes_sb(sb, WB_REASON_SYNC);
- 		sync_inodes_sb(sb);
- 
--- 
-1.9.1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> Should we need to ensure the last cp block going into device medium 
+> rather than device cache before switching to go into the next checkpoint 
+> (I mean we need to ensure writing to medium and then unblock_operation
+> and quit write_checkpoint and go on fs operations)?
+> 
+> Other parts seems OK for me :), I will sort out and resent a new patch.
+> 
+> Thanks,
+> 
+> >>
+> >>
+> >> Thanks all,
+> >>
+> >>>>>    
+> >>>>> @@ -1313,10 +1337,15 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>>>    	sbi->last_valid_block_count = sbi->total_valid_block_count;
+> >>>>>    	percpu_counter_set(&sbi->alloc_valid_block_count, 0);
+> >>>>>    
+> >>>>> -	/* Here, we only have one bio having CP pack */
+> >>>>> -	sync_meta_pages(sbi, META_FLUSH, LONG_MAX, FS_CP_META_IO);
+> >>>>> +	/* Here, we have one bio having CP pack except cp pack 2 page */
+> >>>>> +	sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
+> >>>>>    
+> >>>>>    	/* wait for previous submitted meta pages writeback */
+> >>>>> +	if (!test_opt(sbi, NOBARRIER))
+> >>>>
+> >>>> The above has nothing to do with this patch.
+> >>>
+> >>> We only need to use wait_on_all_pages_writeback to keep writeback order of
+> >>> previous metadata and last cp pack metadata if barrier is on?
+> >>>
+> >>> Thanks,
+> >>>
+> >>>>
+> >>>>> +		wait_on_all_pages_writeback(sbi);
+> >>>>> +
+> >>>>> +	/* barrier and flush checkpoint cp pack 2 page */
+> >>>>> +	commit_checkpoint(sbi, ckpt, start_blk);
+> >>>>>    	wait_on_all_pages_writeback(sbi);
+> >>>>>    
+> >>>>>    	release_ino_entry(sbi, false);
+> >>>>> -- 
+> >>>>> 2.1.4
+> >>>>
+> >>>> .
+> >>>>
+> >>>
