@@ -1,76 +1,104 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: read ahead nat blocks && flush more
- continuous nat io
-Date: Wed, 31 Jan 2018 18:45:39 +0800
-Message-ID: <13b1c615-e250-74bf-9cea-5e3a06aef926@huawei.com>
-References: <1517383938-21055-1-git-send-email-heyunlei@huawei.com>
+From: "Gaoxiang (OS)" <gaoxiang25@huawei.com>
+Subject: [f2fs-dev] [PATCH] f2fs: use crc ^ cp_ver instead of crc | cp_ver
+ for recovery
+Date: Wed, 31 Jan 2018 16:16:25 +0000
+Message-ID: <9047C53C18267742AB12E43B65C7F9F70BCE5C21@dggemi505-mbx.china.huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
- helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1egptz-0004yA-Qa
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 31 Jan 2018 10:46:03 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1egptt-0004oh-GX
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 31 Jan 2018 10:46:03 +0000
-In-Reply-To: <1517383938-21055-1-git-send-email-heyunlei@huawei.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Wei Fang <fangwei1@huawei.com>
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Language: zh-CN
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, "Yuchao (T)" <yuchao0@huawei.com>
+Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, heyunlei <heyunlei@huawei.com>, Gao Xiang <hsiangkao@aol.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Yunlei, Wei Fang,
+This patch add a flag CP_CRC_RECOVERY_XOR_FLAG to use XORed crc ^ cp_ver
+since crc | cp_ver is more likely to get a collision or become 11..1111 | cp_ver.
 
-On 2018/1/31 15:32, Yunlei He wrote:
-> This patch including two changes:
-> 1. We introduce nat journal to cache nat blocks which has less
-> dirty nat entries, nat entry sets are ranked by dirty nat entry
-> count if the count less than NAT_JOURNAL_ENTRIES. This method
-> will break the continuity of nat blocks write back order, and
-> this patch make a change of that prior to flush continuous nat
-> blocks.
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+ fs/f2fs/checkpoint.c    |  4 ++--
+ fs/f2fs/node.h          | 16 +++++++++++-----
+ fs/f2fs/segment.c       |  3 ++-
+ include/linux/f2fs_fs.h |  1 +
+ 4 files changed, 16 insertions(+), 8 deletions(-)
 
-If we start to flush NAT blocks which is contiguous, but if there is very few
-entries are dirty, we are facing bigger WA which may cause worse effect than
-random 4K NAT block writes.
-
-Or do you have numbers?
-
-> 
-> 2. Add read ahead nat blocks in case of a lot of serial synchronized
-> read as below:
-
-Looks LBAs are discrete? Can you check below comment?
-
-> +	list_for_each_entry_safe(set, tmp, &sets, set_list) {
-> +		block_t blk_addr;
-> +
-> +		nats_to_journal += set->entry_cnt;
-> +
-> +		if (nats_to_journal > NAT_JOURNAL_ENTRIES ||
-> +						set->continue_io) {
-> +			blk_addr = current_nat_addr(sbi,
-> +					set->set * NAT_ENTRY_PER_BLOCK);
-
-Actually, ra_meta_pages only accept nat block offset instead of blkaddr.
-
-Thanks,
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 8b0945b..9e7e63b 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1157,8 +1157,8 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
+ 		__set_ckpt_flags(ckpt, CP_FSCK_FLAG);
+ 
+-	/* set this flag to activate crc|cp_ver for recovery */
+-	__set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG);
++	/* set this flag to activate crc^cp_ver for recovery */
++	__set_ckpt_flags(ckpt, CP_CRC_RECOVERY_XOR_FLAG);
+ 	__clear_ckpt_flags(ckpt, CP_NOCRC_RECOVERY_FLAG);
+ 
+ 	spin_unlock_irqrestore(&sbi->cp_lock, flags);
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index 081ef0d..7b9489f 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -293,8 +293,11 @@ static inline void fill_node_footer_blkaddr(struct page *page, block_t blkaddr)
+ 	struct f2fs_node *rn = F2FS_NODE(page);
+ 	__u64 cp_ver = cur_cp_version(ckpt);
+ 
+-	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG))
+-		cp_ver |= (cur_cp_crc(ckpt) << 32);
++	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_XOR_FLAG))
++		cp_ver ^= cur_cp_crc(ckpt) << 32;
++	/* for backward compatibility */
++	else if (unlikely(__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG)))
++		cp_ver |= cur_cp_crc(ckpt) << 32;
+ 
+ 	rn->footer.cp_ver = cpu_to_le64(cp_ver);
+ 	rn->footer.next_blkaddr = cpu_to_le32(blkaddr);
+@@ -307,10 +310,13 @@ static inline bool is_recoverable_dnode(struct page *page)
+ 
+ 	/* Don't care crc part, if fsck.f2fs sets it. */
+ 	if (__is_set_ckpt_flags(ckpt, CP_NOCRC_RECOVERY_FLAG))
+-		return (cp_ver << 32) == (cpver_of_node(page) << 32);
++		return (__u32)cp_ver == (__u32)cpver_of_node(page);
+ 
+-	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG))
+-		cp_ver |= (cur_cp_crc(ckpt) << 32);
++	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_XOR_FLAG))
++		cp_ver ^= cur_cp_crc(ckpt) << 32;
++	/* for backward compatibility */
++	else if (unlikely(__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG)))
++		cp_ver |= cur_cp_crc(ckpt) << 32;
+ 
+ 	return cp_ver == cpver_of_node(page);
+ }
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 205b0d9..64d0c1f 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2316,7 +2316,8 @@ static void allocate_segment_by_default(struct f2fs_sb_info *sbi,
+ 
+ 	if (force)
+ 		new_curseg(sbi, type, true);
+-	else if (!is_set_ckpt_flags(sbi, CP_CRC_RECOVERY_FLAG) &&
++	else if (!(is_set_ckpt_flags(sbi, CP_CRC_RECOVERY_FLAG) ||
++		is_set_ckpt_flags(sbi, CP_CRC_RECOVERY_XOR_FLAG)) &&
+ 					type == CURSEG_WARM_NODE)
+ 		new_curseg(sbi, type, false);
+ 	else if (curseg->alloc_type == LFS && is_next_segment_free(sbi, type))
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index f7f0990..07ddf4b 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -117,6 +117,7 @@ struct f2fs_super_block {
+ /*
+  * For checkpoint
+  */
++#define CP_CRC_RECOVERY_XOR_FLAG	0x00000800
+ #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
+ #define CP_NOCRC_RECOVERY_FLAG	0x00000200
+ #define CP_TRIMMED_FLAG		0x00000100
+-- 
+2.1.4
