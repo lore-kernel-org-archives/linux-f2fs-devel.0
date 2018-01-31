@@ -1,261 +1,139 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: flush cp pack except cp pack 2 page
- at first
-Date: Wed, 31 Jan 2018 14:09:19 -0800
-Message-ID: <20180131220919.GB12901@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180131021821.GC86468@jaegeuk-macbookpro.roam.corp.google.com>
- <9047C53C18267742AB12E43B65C7F9F70BCE43DE@dggemi505-mbx.china.huawei.com>
- <20180131023949.GB87929@jaegeuk-macbookpro.roam.corp.google.com>
- <9047C53C18267742AB12E43B65C7F9F70BCE44AE@dggemi505-mbx.china.huawei.com>
- <20180131025221.GC87929@jaegeuk-macbookpro.roam.corp.google.com>
- <9047C53C18267742AB12E43B65C7F9F70BCE451F@dggemi505-mbx.china.huawei.com>
- <20180131025949.GA90561@jaegeuk-macbookpro.roam.corp.google.com>
- <cf4301b5-48ae-00fd-6b0d-26f886ae926b@huawei.com>
- <20180131035131.GB93573@jaegeuk-macbookpro.roam.corp.google.com>
- <56370690-0c2d-232e-c5fb-5d0c5eb2f8db@huawei.com>
+Subject: Re: [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
+Date: Wed, 31 Jan 2018 14:15:31 -0800
+Message-ID: <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180127094301.29154-1-yuchao0@huawei.com>
+ <20180127094301.29154-2-yuchao0@huawei.com>
+ <20180131020213.GA86468@jaegeuk-macbookpro.roam.corp.google.com>
+ <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
+ helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <jaegeuk@kernel.org>) id 1eh0fN-0000l4-U8
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 31 Jan 2018 22:15:41 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eh0fJ-0001Xm-Nj
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 31 Jan 2018 22:15:41 +0000
 Content-Disposition: inline
-In-Reply-To: <56370690-0c2d-232e-c5fb-5d0c5eb2f8db@huawei.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
+In-Reply-To: <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Chao Yu <yuchao0@huawei.com>
-Cc: "Gaoxiang (OS)" <gaoxiang25@huawei.com>, Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, heyunlei <heyunlei@huawei.com>, hutj <hutj@huawei.com>, "Duwei (Device OS)" <weidu.du@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 On 01/31, Chao Yu wrote:
-> On 2018/1/31 11:51, Jaegeuk Kim wrote:
-> > On 01/31, Chao Yu wrote:
-> >> On 2018/1/31 10:59, Jaegeuk Kim wrote:
-> >>> On 01/31, Gaoxiang (OS) wrote:
-> >>>>
-> >>>>
-> >>>> On 2018/1/31 10:52, Jaegeuk Kim wrote:
-> >>>>> On 01/31, Gaoxiang (OS) wrote:
-> >>>>>> Hi Jaegeuk,
-> >>>>>>
-> >>>>>> On 2018/1/31 10:39, Jaegeuk Kim wrote:
-> >>>>>>> On 01/31, Gaoxiang (OS) wrote:
-> >>>>>>>> Hi Jaegeuk,
-> >>>>>>>>
-> >>>>>>>> On 2018/1/31 10:18, Jaegeuk Kim wrote:
-> >>>>>>>>> On 01/26, Gaoxiang (OS) wrote:
-> >>>>>>>>>> Hi Jaegeuk and Chao,
-> >>>>>>>>>>
-> >>>>>>>>>> On 2018/1/26 9:36, Chao Yu wrote:
-> >>>>>>>>>>> On 2018/1/26 6:06, Jaegeuk Kim wrote:
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> Then, we don't need to wait for this as well as wait_on_all_pages_writeback()
-> >>>>>>>>>>>> in the early stage in do_checkpoint()?
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> So, it seems like we can modify like below:
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> ---
-> >>>>>>>>>>>> 1. while (get_pages())
-> >>>>>>>>>>>> 	sync_meta_pages()
-> >>>>>>>>>>>> 2. if (enabled_nat_bits())
-> >>>>>>>>>>>> 	while (get_pages())
-> >>>>>>>>>>>> 		sync_meta_pages()
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> 3. wait_on_all_pages_writeback()
-> >>>>>>>>>>>>      -> remove
-> >>>>>>>>>>>
-> >>>>>>>>>>> Would meta area across two devices? if it would, we need to wait all meta
-> >>>>>>>>>>> be persisted in second device before f2fs_flush_device_cache?
-> >>>>>>>>>>>
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> 4. f2fs_flush_device_cache()
-> >>>>>>>>>
-> >>>>>>>>>          -> remove
-> >>>>>>>>>
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> 5. update_meta_page() <- for first cp_block
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> 6. update_meta_page()... <- payload
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> 7. orphan writes
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> 8. node_summary writes
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> 9. update_meta_page() <- for last cp_block
-> >>>>>>>>>>>>      -> remove
-> >>>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> -       /* writeout checkpoint block */
-> >>>>>>>>>> -       update_meta_page(sbi, ckpt, start_blk);
-> >>>>>>>>>> -
-> >>>>>>>>>> -       /* wait for previous submitted node/meta pages writeback */
-> >>>>>>>>>> -       wait_on_all_pages_writeback(sbi);
-> >>>>>>>>>> -
-> >>>>>>>>>> -       if (unlikely(f2fs_cp_error(sbi)))
-> >>>>>>>>>> -               return -EIO;
-> >>>>>>>>>> -
-> >>>>>>>>>> Could also be removed, too?
-> >>>>>>>>>>
-> >>>>>>>>>>             filemap_fdatawait_range(NODE_MAPPING(sbi), 0, LLONG_MAX);
-> >>>>>>>>>>             filemap_fdatawait_range(META_MAPPING(sbi), 0, LLONG_MAX);
-> >>>>>>>>>
-> >>>>>>>>>         -> remove
-> >>>>>>>>>
-> >>>>>>>>> Hmm, think so.
-> >>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>>> 9.1 sync_meta_pages(META) to make sure all meta IOs are issued.
-> >>>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> If I understand correctly, I have the same questions with Chao.
-> >>>>>>>>>> It seems that META doesn't have another flush mechanism (eg. flush
-> >>>>>>>>>> thread) other than sync_meta_pages?
-> >>>>>>>>>
-> >>>>>>>>>       9.2 f2fs_flush_device_cache(), if we have multiple devices.
-> >>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> 10. wait_on_all_pages_writeback()
-> >>>>>>>>>
-> >>>>>>>>>        10.1. (f2fs_cp_error())
-> >>>>>>>>>        	    return -EIO;
-> >>>>>>>>>
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> ----
-> >>>>>>>>>>>> Add) 11. commit_checkpoint()
-> >>>>>>>>>>>>       - update_meta_page() <- for last cp_block
-> >>>>>>>>>>>>       - sync_meta_pages(META_FLUSH)
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> We don't need to wait for page_writeback any more.
-> >>>>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> Apart from that, I think we should "wait_on_all_pages_writeback(sbi);"
-> >>>>>>>>>> after META_FLUSH in case for pulluting the next checkpoint when the last
-> >>>>>>>>>> cp block is failed to write with FUA?
-> >>>>>>>>>
-> >>>>>>>>> Next cp block won't be written by 10.1.
-> >>>>>>>>>
-> >>>>>>>>
-> >>>>>>>> I think that 10.1 ensures the cp pack before the last cp_block was done.
-> >>>>>>>> However, what if the last cp block writes fail later without FUA?
-> >>>>>>>
-> >>>>>>> Without FUA? The last cp_block is written by FUA, no?
-> >>>>>>
-> >>>>>> quote "
-> >>>>>> Apart from that, I think we should "wait_on_all_pages_writeback(sbi);"
-> >>>>>> after META_FLUSH in case for pulluting the next checkpoint when the last
-> >>>>>> cp block is failed to write with FUA?
-> >>>>>> "
-> >>>>>>
-> >>>>>> what I meant is that the last cp_block should be written by FUA.
-> >>>>>> we need to use META_FLUSH to write last cp_block, right? :)
-> >>>>>
-> >>>>> Add) 11. commit_checkpoint()
-> >>>>>       - update_meta_page() <- for last cp_block
-> >>>>>       - sync_meta_pages(META_FLUSH)
-> >>>>>
-> >>>>> What do you mean? I added META_FLUSH.
-> >>>>>
-> >>>>> 9.1 sync_meta_pages(META);
-> >>>>>   -> 10. wait_on_all_pages_writeback();
-> >>>>>    -> 11. sync_meta_pages(META_FLUSH);
-> >>>>>
-> >>>>>      -> 9.1 sync_meta_pages(META);
-> >>>>>        -> 10. wait_on_all_pages_writeback();
-> >>>>>          -> 10.1 f2fs_cp_error() -> return -EIO;
-> >>>>>
-> >>>>
-> >>>> What I mean is
-> >>>> should we need to ensure FUA writing to medium (using the last
-> >>>> "wait_on_all_pages_writeback(sbi)") and then unblock_operation
-> >>>> ,quit write_checkpoint, go on fs operations
-> >>>>
-> >>>> 11. commit_checkpoint()
-> >>>> - update_meta_page() <- for last cp_block
-> >>>> - sync_meta_pages(META_FLUSH)
-> >>>> *12. wait_on_all_pages_writeback() *
-> >>>
-> >>> I'm saying we don't need this.
-> >>
-> >> I think we need this, because w/o this end_io can be called after
-> >> f2fs_cp_error, then we can not be aware of result of last IO in
-> >> current checkpoint.
-> > 
-> > Sigh, why do we have to get this error? The next checkpoint won't be
-> > succeeded.
+> On 2018/1/31 10:02, Jaegeuk Kim wrote:
+> > What if we want to add more entries in addition to node_checksum? Do we have
+> > to add a new feature flag at every time? How about adding a layout value instead
 > 
-> This interface should be synchronized, if checkpoint failed, but user get
-> a return value indicates successful, that would be inconsistent.
+> Hmm.. for previous implementation, IMO, we'd better add a new feature flag at
+> every time, otherwise, w/ extra_nsize only, in current image, we can know a
+> valid range of extended area in node block, but we don't know which
+> fields/features are valid/enabled or not.
+> 
+> One more thing is that if we can add one feature flag for each field, we got one
+> more chance to disable it dynamically.
+> 
+> > of extra_nsize? For example, layout #1 means node_checksum with extra_nsize=X?
+> > 
+> > 
+> > What does 1017 mean? We need to make this structure more flexibly for new
+> 
+> Yes, using raw 1017 is not appropriate here.
+> 
+> > entries. Like this?
+> > 		union {
+> > 			struct node_v1;
+> > 			struct node_v2;
+> > 			struct node_v3;
+> > 			...
+> > 			struct direct_node dn;
+> > 			struct indirect_node in;
+> > 		};
+> > 	};
+> > 
+> > 	struct node_v1 {
+> > 		__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
+> > 		__le32 node_checksum;
+> > 	}
+> > 
+> > 	struct node_v2 {
+> > 		__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=500];
+> 
+> Hmm.. If we only need to add one more 4 bytes field in struct node_v2, but
+> V2_NSIZE is defined as fixed 500, there must be 492 bytes wasted.
+> 
+> Or we can define V2_NSIZE as 8, but if there comes more and more extended
+> fields, node version count can be a large number, it results in complicated
+> version recognization and handling.
+> 
+> One more question is how can we control which fields are valid or not in
+> comp[Vx_NSIZE]?
+> 
+> 
+> Anyway, what I'm thinking is maybe we can restructure layout of node block like
+> the one used by f2fs_inode:
+> 
+> struct f2fs_node {
+> 	union {
+> 		struct f2fs_inode i;
+> 		union {
+> 			struct {
+> 				__le32 node_checksum;
+> 				__le32 feature_field_1;
+> 				__le32 feature_field_2;
+> 				....
+> 				__le32 addr[];
+> 				
+> 			};
+> 			struct direct_node dn;
+> 			struct indirect_node in;
+> 		};
+> 	};
+> 	struct node_footer footer;
+> } __packed;
+> 
+> Moving all extended fields to the head of f2fs_node, so we don't have to use
+> macro to indicate actual size of addr.
 
-Well, write_checkpoint doesn't have to be synchronous. Oh, we'd better add
-an async parameter to determine waiting the last end_io. For example, f2fs_gc
-path doesn't need to wait for it, whereas f2fs_sync_fs(sync=1) needs to wait it.
+Thinking what'd be the best way. My concern is, once getting more entries, we
+can't set each of features individually. Like the second entry should have
+enabled node_checksum, which we may not want to do.
 
 > 
 > Thanks,
 > 
+> > 		__le32 comp[V2_NSIZE];
+> > 	}
+> > 	...
 > > 
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>>>
-> >>>> Sorry about my expression is not clear.
-> >>>>
-> >>>> Thanks,
-> >>>>
-> >>>>>>
-> >>>>>> Thanks,
-> >>>>>>
-> >>>>>>>
-> >>>>>>>> Should we need to ensure the last cp block going into device medium
-> >>>>>>>> rather than device cache before switching to go into the next checkpoint
-> >>>>>>>> (I mean we need to ensure writing to medium and then unblock_operation
-> >>>>>>>> and quit write_checkpoint and go on fs operations)?
-> >>>>>>>>
-> >>>>>>>> Other parts seems OK for me :), I will sort out and resent a new patch.
-> >>>>>>>>
-> >>>>>>>> Thanks,
-> >>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> Thanks all,
-> >>>>>>>>>>
-> >>>>>>>>>>>>>      
-> >>>>>>>>>>>>> @@ -1313,10 +1337,15 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >>>>>>>>>>>>>      	sbi->last_valid_block_count = sbi->total_valid_block_count;
-> >>>>>>>>>>>>>      	percpu_counter_set(&sbi->alloc_valid_block_count, 0);
-> >>>>>>>>>>>>>      
-> >>>>>>>>>>>>> -	/* Here, we only have one bio having CP pack */
-> >>>>>>>>>>>>> -	sync_meta_pages(sbi, META_FLUSH, LONG_MAX, FS_CP_META_IO);
-> >>>>>>>>>>>>> +	/* Here, we have one bio having CP pack except cp pack 2 page */
-> >>>>>>>>>>>>> +	sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
-> >>>>>>>>>>>>>      
-> >>>>>>>>>>>>>      	/* wait for previous submitted meta pages writeback */
-> >>>>>>>>>>>>> +	if (!test_opt(sbi, NOBARRIER))
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> The above has nothing to do with this patch.
-> >>>>>>>>>>>
-> >>>>>>>>>>> We only need to use wait_on_all_pages_writeback to keep writeback order of
-> >>>>>>>>>>> previous metadata and last cp pack metadata if barrier is on?
-> >>>>>>>>>>>
-> >>>>>>>>>>> Thanks,
-> >>>>>>>>>>>
-> >>>>>>>>>>>>
-> >>>>>>>>>>>>> +		wait_on_all_pages_writeback(sbi);
-> >>>>>>>>>>>>> +
-> >>>>>>>>>>>>> +	/* barrier and flush checkpoint cp pack 2 page */
-> >>>>>>>>>>>>> +	commit_checkpoint(sbi, ckpt, start_blk);
-> >>>>>>>>>>>>>      	wait_on_all_pages_writeback(sbi);
-> >>>>>>>>>>>>>      
-> >>>>>>>>>>>>>      	release_ino_entry(sbi, false);
-> >>>>>>>>>>>>> -- 
-> >>>>>>>>>>>>> 2.1.4
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> .
-> >>>>>>>>>>>>
-> >>>>>>>>>>>
-> >>>
-> >>> .
-> >>>
+> >> +			};
+> >> +			struct direct_node dn;
+> >> +			struct indirect_node in;
+> >> +		};
+> >>  	};
+> >>  	struct node_footer footer;
+> >>  } __packed;
+> >> -- 
+> >> 2.15.0.55.gc2ece9dc4de6
 > > 
 > > .
 > > 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
