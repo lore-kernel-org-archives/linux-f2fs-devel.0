@@ -1,151 +1,110 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: flush cp pack except cp pack 2 page
- at first
-Date: Tue, 30 Jan 2018 18:18:21 -0800
-Message-ID: <20180131021821.GC86468@jaegeuk-macbookpro.roam.corp.google.com>
-References: <9047C53C18267742AB12E43B65C7F9F70BCD2F67@dggemi505-mbs.china.huawei.com>
- <20180125220600.GB22514@jaegeuk-macbookpro.roam.corp.google.com>
- <cd1124ea-707a-4f33-10a0-5478082479df@huawei.com>
- <9047C53C18267742AB12E43B65C7F9F70BCD37C5@dggemi505-mbs.china.huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: fix heap mode to reset it back
+Date: Wed, 31 Jan 2018 10:19:42 +0800
+Message-ID: <5a27e12a-bdbf-d69d-633d-d1be085b46e9@huawei.com>
+References: <1517197065-156255-1-git-send-email-yunlong.song@huawei.com>
+ <f89279f2-f397-f8b6-57e7-2e5c39d6256f@huawei.com>
+ <607de57c-f5d8-2f22-b79d-4966a8516d1e@huawei.com>
+ <eeff0d39-b51e-a992-864a-b2e00c5c7135@huawei.com>
+ <20180131013946.GF65489@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <9047C53C18267742AB12E43B65C7F9F70BCD37C5@dggemi505-mbs.china.huawei.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: "Gaoxiang (OS)" <gaoxiang25@huawei.com>
-Cc: "Yuchao (T)" <yuchao0@huawei.com>, Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, heyunlei <heyunlei@huawei.com>, hutj <hutj@huawei.com>, "Duwei (Device OS)" <weidu.du@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180131013946.GF65489@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Yunlong Song <yunlong.song@huawei.com>, chao@kernel.org, yunlong.song@icloud.com, miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 01/26, Gaoxiang (OS) wrote:
-> Hi Jaegeuk and Chao,
+On 2018/1/31 9:39, Jaegeuk Kim wrote:
+> On 01/29, Chao Yu wrote:
+>> On 2018/1/29 16:31, Yunlong Song wrote:
+>>> The old commit allocates hot data & nodes in the beginning of partition 
+>>> both for heap and
+>>> noheap mode. But from the commit message, the heap mode should be like 
+>>> before, i.e.,
+>>> allocate hot data & nodes from curseg to left.
+>>
+>> Let's ping Jaegeuk to check that, :)
 > 
-> On 2018/1/26 9:36, Chao Yu wrote:
-> > On 2018/1/26 6:06, Jaegeuk Kim wrote:
-> >>
-> >> Then, we don't need to wait for this as well as wait_on_all_pages_writeback()
-> >> in the early stage in do_checkpoint()?
-> >>
-> >> So, it seems like we can modify like below:
-> >>
-> >> ---
-> >> 1. while (get_pages())
-> >> 	sync_meta_pages()
-> >> 2. if (enabled_nat_bits())
-> >> 	while (get_pages())
-> >> 		sync_meta_pages()
-> >>
-> >> 3. wait_on_all_pages_writeback()
-> >>   -> remove
-> > 
-> > Would meta area across two devices? if it would, we need to wait all meta
-> > be persisted in second device before f2fs_flush_device_cache?
-> > 
-> >>
-> >> 4. f2fs_flush_device_cache()
+> Yup, I missed to add this condition. :)
 
-      -> remove
+Alright, if so, it needs to Cc stable mailing list, as this patch should
+fix to reset back allocation policy of heap mode in old kernel too.
 
-> >>
-> >> 5. update_meta_page() <- for first cp_block
-> >>
-> >> 6. update_meta_page()... <- payload
-> >>
-> >> 7. orphan writes
-> >>
-> >> 8. node_summary writes
-> >>
-> >> 9. update_meta_page() <- for last cp_block
-> >>   -> remove
-> > 
-> 
-> -       /* writeout checkpoint block */
-> -       update_meta_page(sbi, ckpt, start_blk);
-> -
-> -       /* wait for previous submitted node/meta pages writeback */
-> -       wait_on_all_pages_writeback(sbi);
-> -
-> -       if (unlikely(f2fs_cp_error(sbi)))
-> -               return -EIO;
-> -
-> Could also be removed, too?
-> 
->          filemap_fdatawait_range(NODE_MAPPING(sbi), 0, LLONG_MAX);
->          filemap_fdatawait_range(META_MAPPING(sbi), 0, LLONG_MAX);
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-     -> remove
-
-Hmm, think so.
+Thanks,
 
 > 
+>>
+>> Thanks,
+>>
+>>>
+>>> On 2018/1/29 16:12, Chao Yu wrote:
+>>>> Hi Yunlong,
+>>>>
+>>>> On 2018/1/29 11:37, Yunlong Song wrote:
+>>>>> Commit 7a20b8a61eff81bdb7097a578752a74860e9d142 ("f2fs: allocate node
+>>>>> and hot data in the beginning of partition") introduces another mount
+>>>>> option, heap, to reset it back. But it does not do anything for heap
+>>>>> mode, so fix it.
+>>>> I think Jaegeuk did three things in that patch:
+>>>> a) add missing heap mount option handling in ->show_options.
+>>>> b) set noheap by default.
+>>>> c) change allocation policy to the one that allocate hotdata & nodes in the
+>>>> front of main are intensively.
+>>>>
+>>>> They could be separated, independent, and I don't see such intention that
+>>>> we can only use c) the new introduced allocation policy in noheap mode.
+>>>>
+>>>> Anyway, I think Jaegeuk can help to double check that.
+>>>>
+>>>> Thanks,
+>>>>
+>>>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>>>>> ---
+>>>>>   fs/f2fs/gc.c      | 5 +++--
+>>>>>   fs/f2fs/segment.c | 3 ++-
+>>>>>   2 files changed, 5 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>>>> index aa720cc..b9d93fd 100644
+>>>>> --- a/fs/f2fs/gc.c
+>>>>> +++ b/fs/f2fs/gc.c
+>>>>> @@ -191,8 +191,9 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
+>>>>>   	if (gc_type != FG_GC && p->max_search > sbi->max_victim_search)
+>>>>>   		p->max_search = sbi->max_victim_search;
+>>>>>   
+>>>>> -	/* let's select beginning hot/small space first */
+>>>>> -	if (type == CURSEG_HOT_DATA || IS_NODESEG(type))
+>>>>> +	/* let's select beginning hot/small space first in no_heap mode*/
+>>>>> +	if (test_opt(sbi, NOHEAP) &&
+>>>>> +		(type == CURSEG_HOT_DATA || IS_NODESEG(type)))
+>>>>>   		p->offset = 0;
+>>>>>   	else
+>>>>>   		p->offset = SIT_I(sbi)->last_victim[p->gc_mode];
+>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>>> index e5739ce..77a48c4 100644
+>>>>> --- a/fs/f2fs/segment.c
+>>>>> +++ b/fs/f2fs/segment.c
+>>>>> @@ -2167,7 +2167,8 @@ static unsigned int __get_next_segno(struct f2fs_sb_info *sbi, int type)
+>>>>>   	if (sbi->segs_per_sec != 1)
+>>>>>   		return CURSEG_I(sbi, type)->segno;
+>>>>>   
+>>>>> -	if (type == CURSEG_HOT_DATA || IS_NODESEG(type))
+>>>>> +	if (test_opt(sbi, NOHEAP) &&
+>>>>> +		(type == CURSEG_HOT_DATA || IS_NODESEG(type)))
+>>>>>   		return 0;
+>>>>>   
+>>>>>   	if (SIT_I(sbi)->last_victim[ALLOC_NEXT])
+>>>>>
+>>>>
+>>>> .
+>>>>
+>>>
 > 
-> > 9.1 sync_meta_pages(META) to make sure all meta IOs are issued.
-> > 
+> .
 > 
-> If I understand correctly, I have the same questions with Chao.
-> It seems that META doesn't have another flush mechanism (eg. flush 
-> thread) other than sync_meta_pages?
-
-   9.2 f2fs_flush_device_cache(), if we have multiple devices.
-
-> 
-> >>
-> >> 10. wait_on_all_pages_writeback()
-
-    10.1. (f2fs_cp_error())
-    	    return -EIO;
-
-> >>
-> >> ----
-> >> Add) 11. commit_checkpoint()
-> >>    - update_meta_page() <- for last cp_block
-> >>    - sync_meta_pages(META_FLUSH)
-> >>
-> >> We don't need to wait for page_writeback any more.
-> >>
-> 
-> 
-> Apart from that, I think we should "wait_on_all_pages_writeback(sbi);" 
-> after META_FLUSH in case for pulluting the next checkpoint when the last 
-> cp block is failed to write with FUA?
-
-Next cp block won't be written by 10.1.
-
-> 
-> 
-> Thanks all,
-> 
-> >>>   
-> >>> @@ -1313,10 +1337,15 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >>>   	sbi->last_valid_block_count = sbi->total_valid_block_count;
-> >>>   	percpu_counter_set(&sbi->alloc_valid_block_count, 0);
-> >>>   
-> >>> -	/* Here, we only have one bio having CP pack */
-> >>> -	sync_meta_pages(sbi, META_FLUSH, LONG_MAX, FS_CP_META_IO);
-> >>> +	/* Here, we have one bio having CP pack except cp pack 2 page */
-> >>> +	sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
-> >>>   
-> >>>   	/* wait for previous submitted meta pages writeback */
-> >>> +	if (!test_opt(sbi, NOBARRIER))
-> >>
-> >> The above has nothing to do with this patch.
-> > 
-> > We only need to use wait_on_all_pages_writeback to keep writeback order of
-> > previous metadata and last cp pack metadata if barrier is on?
-> > 
-> > Thanks,
-> > 
-> >>
-> >>> +		wait_on_all_pages_writeback(sbi);
-> >>> +
-> >>> +	/* barrier and flush checkpoint cp pack 2 page */
-> >>> +	commit_checkpoint(sbi, ckpt, start_blk);
-> >>>   	wait_on_all_pages_writeback(sbi);
-> >>>   
-> >>>   	release_ino_entry(sbi, false);
-> >>> -- 
-> >>> 2.1.4
-> >>
-> >> .
-> >>
-> > 
