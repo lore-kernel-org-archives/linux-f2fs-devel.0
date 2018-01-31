@@ -1,117 +1,96 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: add sanity check for quota sysfile ino
-Date: Tue, 30 Jan 2018 18:36:07 -0800
-Message-ID: <20180131023607.GA87929@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180129082933.64556-1-yuchao0@huawei.com>
- <20180131013556.GE65489@jaegeuk-macbookpro.roam.corp.google.com>
- <f27cbf43-eb34-5e21-8016-c1a17203cf0b@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <f27cbf43-eb34-5e21-8016-c1a17203cf0b@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+From: Hyunchul Lee <hyc.lee@gmail.com>
+Subject: [PATCH v2 0/3] f2fs: support passing down write hints to block layer
+Date: Wed, 31 Jan 2018 11:36:56 +0900
+Message-ID: <1517366219-22166-1-git-send-email-hyc.lee@gmail.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, kernel-team@lge.com, Hyunchul Lee <cheol.lee@lge.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 01/31, Chao Yu wrote:
-> On 2018/1/31 9:35, Jaegeuk Kim wrote:
-> > On 01/29, Chao Yu wrote:
-> >> Add missing sanity check for quota sysfile ino.
-> > 
-> > We don't need to limit the specific inode numbers for quota files, since
-> > we may be able to set any inode numbers later. How about checkint the
-> > numbers are allocated as quota?
+From: Hyunchul Lee <cheol.lee@lge.com>
 
-If quota_ino is set, f2fs_enable_quotas() will be failed, if its ino is invalid.
-It'd be also fine, if we have no inode numbers there. What I mean was we may need
-to consider reallocating or deallocating inode numbers later.
+Changes since version 1:
+ - Set 'whint_mode' to off if 'active_logs' is two or four 
+ - Minor fixes suggested by Chao
 
-> 
-> Do you mean:
-> 
-> 	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
-> 		if (!le32_to_cpu(raw_super->qf_ino[0]) ||
-> 			!le32_to_cpu(raw_super->qf_ino[1])) {
-> 			f2fs_msg(sb, KERN_INFO,
-> 				"Invalid Quota Ino: user_ino(%u), grp_ino(%u)",
-> 				le32_to_cpu(raw_super->qf_ino[0]),
-> 				le32_to_cpu(raw_super->qf_ino[1]));
-> 			return 1;
-> 		}
-> 		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA) &&
-> 			!le32_to_cpu(raw_super->qf_ino[2])) {
-> 			f2fs_msg(sb, KERN_INFO,
-> 				"Invalid Quota Ino: prj_ino(%u)",
-> 				le32_to_cpu(raw_super->qf_ino[2]));
-> 			return 1;
-> 		}
-> 	}
-> 
-> I think it's equal to:
-> 
-> 	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
-> 		unsigned int qf_cnt = 0;
-> 		if (qf_ino[0])
-> 			qf_cnt++;
-> 		if (qf_ino[1])
-> 			qf_cnt++;
-> 		if (qf_cnt != 2) {
-> 			f2fs_msg();
-> 			return 1;
-> 		}
-> 		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA)) {
-> 			if (qf_ino[2])
-> 				qf_cnt++;
-> 			if (qf_cnt != 3) {
-> 				f2fs_msg();
-> 				return 1;
-> 			}
-> 		}
-> 	}
-> 
-> Thanks,
-> 
-> > 
-> >>
-> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >> ---
-> >>  fs/f2fs/super.c | 19 +++++++++++++++++++
-> >>  1 file changed, 19 insertions(+)
-> >>
-> >> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> >> index 368f63d7bad2..6011071688ca 100644
-> >> --- a/fs/f2fs/super.c
-> >> +++ b/fs/f2fs/super.c
-> >> @@ -2116,6 +2116,25 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
-> >>  		return 1;
-> >>  	}
-> >>  
-> >> +	/* check quota sysfile ino info */
-> >> +	if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_QUOTA_INO)) {
-> >> +		if (le32_to_cpu(raw_super->qf_ino[0]) != 4 ||
-> >> +			le32_to_cpu(raw_super->qf_ino[1]) != 5) {
-> >> +			f2fs_msg(sb, KERN_INFO,
-> >> +				"Invalid Quota Ino: user_ino(%u), grp_ino(%u)",
-> >> +				le32_to_cpu(raw_super->qf_ino[0]),
-> >> +				le32_to_cpu(raw_super->qf_ino[1]));
-> >> +			return 1;
-> >> +		}
-> >> +		if (raw_super->feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA) &&
-> >> +			le32_to_cpu(raw_super->qf_ino[2]) != 6) {
-> >> +			f2fs_msg(sb, KERN_INFO,
-> >> +				"Invalid Quota Ino: prj_ino(%u)",
-> >> +				le32_to_cpu(raw_super->qf_ino[2]));
-> >> +			return 1;
-> >> +		}
-> >> +	}
-> >> +
-> >>  	if (le32_to_cpu(raw_super->segment_count) > F2FS_MAX_SEGMENT) {
-> >>  		f2fs_msg(sb, KERN_INFO,
-> >>  			"Invalid segment count (%u)",
-> >> -- 
-> >> 2.15.0.55.gc2ece9dc4de6
-> > 
-> > .
-> > 
+This set implements passing down write hints to block layer with the
+following mapping. This mapping equals the conclusion from discussion in
+the link, https://sourceforge.net/p/linux-f2fs/mailman/message/36170969/
+
+But there are two exceptions. (1) the 'iohint_mode' mount option is changed
+to 'whint_mode'. (2) in "user-based" mode, WRITE_LIFE_EXTREME is passed
+down instead of WRITE_LIFE_NOT_SET for files flagged with ioctl(COLD) and 
+extension list.
+
+1) whint_mode=off. F2FS only passes down WRITE_LIFE_NOT_SET.
+
+2) whint_mode=user-based. F2FS tries to pass down hints given by
+users.
+
+User                  F2FS                     Block
+----                  ----                     -----
+                      META                     WRITE_LIFE_NOT_SET
+                      HOT_NODE                 "
+                      WARM_NODE                "
+                      COLD_NODE                "
+*ioctl(COLD)           COLD_DATA                WRITE_LIFE_EXTREME
+*extension list        "                        "
+
+-- buffered io
+WRITE_LIFE_EXTREME    COLD_DATA                WRITE_LIFE_EXTREME
+WRITE_LIFE_SHORT      HOT_DATA                 WRITE_LIFE_SHORT
+WRITE_LIFE_NOT_SET    WARM_DATA                WRITE_LIFE_NOT_SET
+WRITE_LIFE_NONE       "                        "
+WRITE_LIFE_MEDIUM     "                        "
+WRITE_LIFE_LONG       "                        "
+
+-- direct io
+WRITE_LIFE_EXTREME    COLD_DATA                WRITE_LIFE_EXTREME
+WRITE_LIFE_SHORT      HOT_DATA                 WRITE_LIFE_SHORT
+WRITE_LIFE_NOT_SET    WARM_DATA                WRITE_LIFE_NOT_SET
+WRITE_LIFE_NONE       "                        WRITE_LIFE_NONE
+WRITE_LIFE_MEDIUM     "                        WRITE_LIFE_MEDIUM
+WRITE_LIFE_LONG       "                        WRITE_LIFE_LONG
+
+3) whint_mode=fs-based. F2FS passes down hints with its policy.
+
+User                  F2FS                     Block
+----                  ----                     -----
+                      META                     WRITE_LIFE_MEDIUM;
+                      HOT_NODE                 WRITE_LIFE_NOT_SET
+                      WARM_NODE                "
+                      COLD_NODE                WRITE_LIFE_NONE
+ioctl(COLD)           COLD_DATA                WRITE_LIFE_EXTREME
+extension list        "                        "
+
+-- buffered io
+WRITE_LIFE_EXTREME    COLD_DATA                WRITE_LIFE_EXTREME
+WRITE_LIFE_SHORT      HOT_DATA                 WRITE_LIFE_SHORT
+WRITE_LIFE_NOT_SET    WARM_DATA                WRITE_LIFE_LONG
+WRITE_LIFE_NONE       "                        "
+WRITE_LIFE_MEDIUM     "                        "
+WRITE_LIFE_LONG       "                        "
+
+-- direct io
+WRITE_LIFE_EXTREME    COLD_DATA                WRITE_LIFE_EXTREME
+WRITE_LIFE_SHORT      HOT_DATA                 WRITE_LIFE_SHORT
+WRITE_LIFE_NOT_SET    WARM_DATA                WRITE_LIFE_NOT_SET
+WRITE_LIFE_NONE       "                        WRITE_LIFE_NONE
+WRITE_LIFE_MEDIUM     "                        WRITE_LIFE_MEDIUM
+WRITE_LIFE_LONG       "                        WRITE_LIFE_LONG
+
+Hyunchul Lee (3):
+  f2fs: support passing down write hints given by users to block layer
+  f2fs: support passing down write hints to block layer with F2FS policy
+  f2fs: Add the 'whint_mode' mount option to f2fs documentation
+
+ Documentation/filesystems/f2fs.txt |  6 +++
+ fs/f2fs/data.c                     | 28 +++++++++--
+ fs/f2fs/f2fs.h                     | 10 ++++
+ fs/f2fs/segment.c                  | 98 ++++++++++++++++++++++++++++++++++++++
+ fs/f2fs/super.c                    | 35 +++++++++++++-
+ 5 files changed, 171 insertions(+), 6 deletions(-)
+
+-- 
+1.9.1
