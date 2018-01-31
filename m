@@ -1,110 +1,97 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: fix heap mode to reset it back
-Date: Wed, 31 Jan 2018 10:19:42 +0800
-Message-ID: <5a27e12a-bdbf-d69d-633d-d1be085b46e9@huawei.com>
-References: <1517197065-156255-1-git-send-email-yunlong.song@huawei.com>
- <f89279f2-f397-f8b6-57e7-2e5c39d6256f@huawei.com>
- <607de57c-f5d8-2f22-b79d-4966a8516d1e@huawei.com>
- <eeff0d39-b51e-a992-864a-b2e00c5c7135@huawei.com>
- <20180131013946.GF65489@jaegeuk-macbookpro.roam.corp.google.com>
+From: "Gaoxiang (OS)" <gaoxiang25@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: flush cp pack except cp pack 2 page
+ at first
+Date: Wed, 31 Jan 2018 02:32:34 +0000
+Message-ID: <9047C53C18267742AB12E43B65C7F9F70BCE43DE@dggemi505-mbx.china.huawei.com>
+References: <9047C53C18267742AB12E43B65C7F9F70BCD2F67@dggemi505-mbs.china.huawei.com>
+ <20180125220600.GB22514@jaegeuk-macbookpro.roam.corp.google.com>
+ <cd1124ea-707a-4f33-10a0-5478082479df@huawei.com>
+ <9047C53C18267742AB12E43B65C7F9F70BCD37C5@dggemi505-mbs.china.huawei.com>
+ <20180131021821.GC86468@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180131013946.GF65489@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20180131021821.GC86468@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: zh-CN
+Content-ID: <17EEAD19C3A194429DFF7C338372AF14@huawei.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Yunlong Song <yunlong.song@huawei.com>, chao@kernel.org, yunlong.song@icloud.com, miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Cc: "Yuchao (T)" <yuchao0@huawei.com>, Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, heyunlei <heyunlei@huawei.com>, hutj <hutj@huawei.com>, "Duwei (Device OS)" <weidu.du@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/1/31 9:39, Jaegeuk Kim wrote:
-> On 01/29, Chao Yu wrote:
->> On 2018/1/29 16:31, Yunlong Song wrote:
->>> The old commit allocates hot data & nodes in the beginning of partition 
->>> both for heap and
->>> noheap mode. But from the commit message, the heap mode should be like 
->>> before, i.e.,
->>> allocate hot data & nodes from curseg to left.
->>
->> Let's ping Jaegeuk to check that, :)
-> 
-> Yup, I missed to add this condition. :)
-
-Alright, if so, it needs to Cc stable mailing list, as this patch should
-fix to reset back allocation policy of heap mode in old kernel too.
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
-
-> 
->>
->> Thanks,
->>
->>>
->>> On 2018/1/29 16:12, Chao Yu wrote:
->>>> Hi Yunlong,
->>>>
->>>> On 2018/1/29 11:37, Yunlong Song wrote:
->>>>> Commit 7a20b8a61eff81bdb7097a578752a74860e9d142 ("f2fs: allocate node
->>>>> and hot data in the beginning of partition") introduces another mount
->>>>> option, heap, to reset it back. But it does not do anything for heap
->>>>> mode, so fix it.
->>>> I think Jaegeuk did three things in that patch:
->>>> a) add missing heap mount option handling in ->show_options.
->>>> b) set noheap by default.
->>>> c) change allocation policy to the one that allocate hotdata & nodes in the
->>>> front of main are intensively.
->>>>
->>>> They could be separated, independent, and I don't see such intention that
->>>> we can only use c) the new introduced allocation policy in noheap mode.
->>>>
->>>> Anyway, I think Jaegeuk can help to double check that.
->>>>
->>>> Thanks,
->>>>
->>>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->>>>> ---
->>>>>   fs/f2fs/gc.c      | 5 +++--
->>>>>   fs/f2fs/segment.c | 3 ++-
->>>>>   2 files changed, 5 insertions(+), 3 deletions(-)
->>>>>
->>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>>>> index aa720cc..b9d93fd 100644
->>>>> --- a/fs/f2fs/gc.c
->>>>> +++ b/fs/f2fs/gc.c
->>>>> @@ -191,8 +191,9 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
->>>>>   	if (gc_type != FG_GC && p->max_search > sbi->max_victim_search)
->>>>>   		p->max_search = sbi->max_victim_search;
->>>>>   
->>>>> -	/* let's select beginning hot/small space first */
->>>>> -	if (type == CURSEG_HOT_DATA || IS_NODESEG(type))
->>>>> +	/* let's select beginning hot/small space first in no_heap mode*/
->>>>> +	if (test_opt(sbi, NOHEAP) &&
->>>>> +		(type == CURSEG_HOT_DATA || IS_NODESEG(type)))
->>>>>   		p->offset = 0;
->>>>>   	else
->>>>>   		p->offset = SIT_I(sbi)->last_victim[p->gc_mode];
->>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>>> index e5739ce..77a48c4 100644
->>>>> --- a/fs/f2fs/segment.c
->>>>> +++ b/fs/f2fs/segment.c
->>>>> @@ -2167,7 +2167,8 @@ static unsigned int __get_next_segno(struct f2fs_sb_info *sbi, int type)
->>>>>   	if (sbi->segs_per_sec != 1)
->>>>>   		return CURSEG_I(sbi, type)->segno;
->>>>>   
->>>>> -	if (type == CURSEG_HOT_DATA || IS_NODESEG(type))
->>>>> +	if (test_opt(sbi, NOHEAP) &&
->>>>> +		(type == CURSEG_HOT_DATA || IS_NODESEG(type)))
->>>>>   		return 0;
->>>>>   
->>>>>   	if (SIT_I(sbi)->last_victim[ALLOC_NEXT])
->>>>>
->>>>
->>>> .
->>>>
->>>
-> 
-> .
-> 
+SGkgSmFlZ2V1aywNCg0KT24gMjAxOC8xLzMxIDEwOjE4LCBKYWVnZXVrIEtpbSB3cm90ZToNCj4g
+T24gMDEvMjYsIEdhb3hpYW5nIChPUykgd3JvdGU6DQo+PiBIaSBKYWVnZXVrIGFuZCBDaGFvLA0K
+Pj4NCj4+IE9uIDIwMTgvMS8yNiA5OjM2LCBDaGFvIFl1IHdyb3RlOg0KPj4+IE9uIDIwMTgvMS8y
+NiA2OjA2LCBKYWVnZXVrIEtpbSB3cm90ZToNCj4+Pj4NCj4+Pj4gVGhlbiwgd2UgZG9uJ3QgbmVl
+ZCB0byB3YWl0IGZvciB0aGlzIGFzIHdlbGwgYXMgd2FpdF9vbl9hbGxfcGFnZXNfd3JpdGViYWNr
+KCkNCj4+Pj4gaW4gdGhlIGVhcmx5IHN0YWdlIGluIGRvX2NoZWNrcG9pbnQoKT8NCj4+Pj4NCj4+
+Pj4gU28sIGl0IHNlZW1zIGxpa2Ugd2UgY2FuIG1vZGlmeSBsaWtlIGJlbG93Og0KPj4+Pg0KPj4+
+PiAtLS0NCj4+Pj4gMS4gd2hpbGUgKGdldF9wYWdlcygpKQ0KPj4+PiAJc3luY19tZXRhX3BhZ2Vz
+KCkNCj4+Pj4gMi4gaWYgKGVuYWJsZWRfbmF0X2JpdHMoKSkNCj4+Pj4gCXdoaWxlIChnZXRfcGFn
+ZXMoKSkNCj4+Pj4gCQlzeW5jX21ldGFfcGFnZXMoKQ0KPj4+Pg0KPj4+PiAzLiB3YWl0X29uX2Fs
+bF9wYWdlc193cml0ZWJhY2soKQ0KPj4+PiAgICAtPiByZW1vdmUNCj4+Pg0KPj4+IFdvdWxkIG1l
+dGEgYXJlYSBhY3Jvc3MgdHdvIGRldmljZXM/IGlmIGl0IHdvdWxkLCB3ZSBuZWVkIHRvIHdhaXQg
+YWxsIG1ldGENCj4+PiBiZSBwZXJzaXN0ZWQgaW4gc2Vjb25kIGRldmljZSBiZWZvcmUgZjJmc19m
+bHVzaF9kZXZpY2VfY2FjaGU/DQo+Pj4NCj4+Pj4NCj4+Pj4gNC4gZjJmc19mbHVzaF9kZXZpY2Vf
+Y2FjaGUoKQ0KPiANCj4gICAgICAgIC0+IHJlbW92ZQ0KPiANCj4+Pj4NCj4+Pj4gNS4gdXBkYXRl
+X21ldGFfcGFnZSgpIDwtIGZvciBmaXJzdCBjcF9ibG9jaw0KPj4+Pg0KPj4+PiA2LiB1cGRhdGVf
+bWV0YV9wYWdlKCkuLi4gPC0gcGF5bG9hZA0KPj4+Pg0KPj4+PiA3LiBvcnBoYW4gd3JpdGVzDQo+
+Pj4+DQo+Pj4+IDguIG5vZGVfc3VtbWFyeSB3cml0ZXMNCj4+Pj4NCj4+Pj4gOS4gdXBkYXRlX21l
+dGFfcGFnZSgpIDwtIGZvciBsYXN0IGNwX2Jsb2NrDQo+Pj4+ICAgIC0+IHJlbW92ZQ0KPj4+DQo+
+Pg0KPj4gLSAgICAgICAvKiB3cml0ZW91dCBjaGVja3BvaW50IGJsb2NrICovDQo+PiAtICAgICAg
+IHVwZGF0ZV9tZXRhX3BhZ2Uoc2JpLCBja3B0LCBzdGFydF9ibGspOw0KPj4gLQ0KPj4gLSAgICAg
+ICAvKiB3YWl0IGZvciBwcmV2aW91cyBzdWJtaXR0ZWQgbm9kZS9tZXRhIHBhZ2VzIHdyaXRlYmFj
+ayAqLw0KPj4gLSAgICAgICB3YWl0X29uX2FsbF9wYWdlc193cml0ZWJhY2soc2JpKTsNCj4+IC0N
+Cj4+IC0gICAgICAgaWYgKHVubGlrZWx5KGYyZnNfY3BfZXJyb3Ioc2JpKSkpDQo+PiAtICAgICAg
+ICAgICAgICAgcmV0dXJuIC1FSU87DQo+PiAtDQo+PiBDb3VsZCBhbHNvIGJlIHJlbW92ZWQsIHRv
+bz8NCj4+DQo+PiAgICAgICAgICAgZmlsZW1hcF9mZGF0YXdhaXRfcmFuZ2UoTk9ERV9NQVBQSU5H
+KHNiaSksIDAsIExMT05HX01BWCk7DQo+PiAgICAgICAgICAgZmlsZW1hcF9mZGF0YXdhaXRfcmFu
+Z2UoTUVUQV9NQVBQSU5HKHNiaSksIDAsIExMT05HX01BWCk7DQo+IA0KPiAgICAgICAtPiByZW1v
+dmUNCj4gDQo+IEhtbSwgdGhpbmsgc28uDQo+IA0KPj4NCj4+DQo+Pj4gOS4xIHN5bmNfbWV0YV9w
+YWdlcyhNRVRBKSB0byBtYWtlIHN1cmUgYWxsIG1ldGEgSU9zIGFyZSBpc3N1ZWQuDQo+Pj4NCj4+
+DQo+PiBJZiBJIHVuZGVyc3RhbmQgY29ycmVjdGx5LCBJIGhhdmUgdGhlIHNhbWUgcXVlc3Rpb25z
+IHdpdGggQ2hhby4NCj4+IEl0IHNlZW1zIHRoYXQgTUVUQSBkb2Vzbid0IGhhdmUgYW5vdGhlciBm
+bHVzaCBtZWNoYW5pc20gKGVnLiBmbHVzaA0KPj4gdGhyZWFkKSBvdGhlciB0aGFuIHN5bmNfbWV0
+YV9wYWdlcz8NCj4gDQo+ICAgICA5LjIgZjJmc19mbHVzaF9kZXZpY2VfY2FjaGUoKSwgaWYgd2Ug
+aGF2ZSBtdWx0aXBsZSBkZXZpY2VzLg0KPiANCj4+DQo+Pj4+DQo+Pj4+IDEwLiB3YWl0X29uX2Fs
+bF9wYWdlc193cml0ZWJhY2soKQ0KPiANCj4gICAgICAxMC4xLiAoZjJmc19jcF9lcnJvcigpKQ0K
+PiAgICAgIAkgICAgcmV0dXJuIC1FSU87DQo+IA0KPj4+Pg0KPj4+PiAtLS0tDQo+Pj4+IEFkZCkg
+MTEuIGNvbW1pdF9jaGVja3BvaW50KCkNCj4+Pj4gICAgIC0gdXBkYXRlX21ldGFfcGFnZSgpIDwt
+IGZvciBsYXN0IGNwX2Jsb2NrDQo+Pj4+ICAgICAtIHN5bmNfbWV0YV9wYWdlcyhNRVRBX0ZMVVNI
+KQ0KPj4+Pg0KPj4+PiBXZSBkb24ndCBuZWVkIHRvIHdhaXQgZm9yIHBhZ2Vfd3JpdGViYWNrIGFu
+eSBtb3JlLg0KPj4+Pg0KPj4NCj4+DQo+PiBBcGFydCBmcm9tIHRoYXQsIEkgdGhpbmsgd2Ugc2hv
+dWxkICJ3YWl0X29uX2FsbF9wYWdlc193cml0ZWJhY2soc2JpKTsiDQo+PiBhZnRlciBNRVRBX0ZM
+VVNIIGluIGNhc2UgZm9yIHB1bGx1dGluZyB0aGUgbmV4dCBjaGVja3BvaW50IHdoZW4gdGhlIGxh
+c3QNCj4+IGNwIGJsb2NrIGlzIGZhaWxlZCB0byB3cml0ZSB3aXRoIEZVQT8NCj4gDQo+IE5leHQg
+Y3AgYmxvY2sgd29uJ3QgYmUgd3JpdHRlbiBieSAxMC4xLg0KPiANCg0KSSB0aGluayB0aGF0IDEw
+LjEgZW5zdXJlcyB0aGUgY3AgcGFjayBiZWZvcmUgdGhlIGxhc3QgY3BfYmxvY2sgd2FzIGRvbmUu
+DQpIb3dldmVyLCB3aGF0IGlmIHRoZSBsYXN0IGNwIGJsb2NrIHdyaXRlcyBmYWlsIGxhdGVyIHdp
+dGhvdXQgRlVBPw0KU2hvdWxkIHdlIG5lZWQgdG8gZW5zdXJlIHRoZSBsYXN0IGNwIGJsb2NrIGdv
+aW5nIGludG8gZGV2aWNlIG1lZGl1bSANCnJhdGhlciB0aGFuIGRldmljZSBjYWNoZSBiZWZvcmUg
+c3dpdGNoaW5nIHRvIGdvIGludG8gdGhlIG5leHQgY2hlY2twb2ludCANCihJIG1lYW4gd2UgbmVl
+ZCB0byBlbnN1cmUgd3JpdGluZyB0byBtZWRpdW0gYW5kIHRoZW4gdW5ibG9ja19vcGVyYXRpb24N
+CmFuZCBxdWl0IHdyaXRlX2NoZWNrcG9pbnQgYW5kIGdvIG9uIGZzIG9wZXJhdGlvbnMpPw0KDQpP
+dGhlciBwYXJ0cyBzZWVtcyBPSyBmb3IgbWUgOiksIEkgd2lsbCBzb3J0IG91dCBhbmQgcmVzZW50
+IGEgbmV3IHBhdGNoLg0KDQpUaGFua3MsDQoNCj4+DQo+Pg0KPj4gVGhhbmtzIGFsbCwNCj4+DQo+
+Pj4+PiAgICANCj4+Pj4+IEBAIC0xMzEzLDEwICsxMzM3LDE1IEBAIHN0YXRpYyBpbnQgZG9fY2hl
+Y2twb2ludChzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIHN0cnVjdCBjcF9jb250cm9sICpjcGMp
+DQo+Pj4+PiAgICAJc2JpLT5sYXN0X3ZhbGlkX2Jsb2NrX2NvdW50ID0gc2JpLT50b3RhbF92YWxp
+ZF9ibG9ja19jb3VudDsNCj4+Pj4+ICAgIAlwZXJjcHVfY291bnRlcl9zZXQoJnNiaS0+YWxsb2Nf
+dmFsaWRfYmxvY2tfY291bnQsIDApOw0KPj4+Pj4gICAgDQo+Pj4+PiAtCS8qIEhlcmUsIHdlIG9u
+bHkgaGF2ZSBvbmUgYmlvIGhhdmluZyBDUCBwYWNrICovDQo+Pj4+PiAtCXN5bmNfbWV0YV9wYWdl
+cyhzYmksIE1FVEFfRkxVU0gsIExPTkdfTUFYLCBGU19DUF9NRVRBX0lPKTsNCj4+Pj4+ICsJLyog
+SGVyZSwgd2UgaGF2ZSBvbmUgYmlvIGhhdmluZyBDUCBwYWNrIGV4Y2VwdCBjcCBwYWNrIDIgcGFn
+ZSAqLw0KPj4+Pj4gKwlzeW5jX21ldGFfcGFnZXMoc2JpLCBNRVRBLCBMT05HX01BWCwgRlNfQ1Bf
+TUVUQV9JTyk7DQo+Pj4+PiAgICANCj4+Pj4+ICAgIAkvKiB3YWl0IGZvciBwcmV2aW91cyBzdWJt
+aXR0ZWQgbWV0YSBwYWdlcyB3cml0ZWJhY2sgKi8NCj4+Pj4+ICsJaWYgKCF0ZXN0X29wdChzYmks
+IE5PQkFSUklFUikpDQo+Pj4+DQo+Pj4+IFRoZSBhYm92ZSBoYXMgbm90aGluZyB0byBkbyB3aXRo
+IHRoaXMgcGF0Y2guDQo+Pj4NCj4+PiBXZSBvbmx5IG5lZWQgdG8gdXNlIHdhaXRfb25fYWxsX3Bh
+Z2VzX3dyaXRlYmFjayB0byBrZWVwIHdyaXRlYmFjayBvcmRlciBvZg0KPj4+IHByZXZpb3VzIG1l
+dGFkYXRhIGFuZCBsYXN0IGNwIHBhY2sgbWV0YWRhdGEgaWYgYmFycmllciBpcyBvbj8NCj4+Pg0K
+Pj4+IFRoYW5rcywNCj4+Pg0KPj4+Pg0KPj4+Pj4gKwkJd2FpdF9vbl9hbGxfcGFnZXNfd3JpdGVi
+YWNrKHNiaSk7DQo+Pj4+PiArDQo+Pj4+PiArCS8qIGJhcnJpZXIgYW5kIGZsdXNoIGNoZWNrcG9p
+bnQgY3AgcGFjayAyIHBhZ2UgKi8NCj4+Pj4+ICsJY29tbWl0X2NoZWNrcG9pbnQoc2JpLCBja3B0
+LCBzdGFydF9ibGspOw0KPj4+Pj4gICAgCXdhaXRfb25fYWxsX3BhZ2VzX3dyaXRlYmFjayhzYmkp
+Ow0KPj4+Pj4gICAgDQo+Pj4+PiAgICAJcmVsZWFzZV9pbm9fZW50cnkoc2JpLCBmYWxzZSk7DQo+
+Pj4+PiAtLSANCj4+Pj4+IDIuMS40DQo+Pj4+DQo+Pj4+IC4NCj4+Pj4NCj4+Pg0K
