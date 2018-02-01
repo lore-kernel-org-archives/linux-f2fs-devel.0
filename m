@@ -1,73 +1,127 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: mmotm 2018-01-31-16-51 uploaded (f2fs)
-Date: Wed, 31 Jan 2018 18:51:35 -0800
-Message-ID: <b764819a-a7d6-6976-bc46-eab972566309@infradead.org>
-References: <5a7264b1.mqPv/eshq6wqQFu6%akpm@linux-foundation.org>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: use crc ^ cp_ver instead of crc | cp_ver
+ for recovery
+Date: Thu, 1 Feb 2018 21:27:42 +0800
+Message-ID: <c3444561-9c65-97ce-4bf6-c7f16270d96a@kernel.org>
+References: <9047C53C18267742AB12E43B65C7F9F70BCE5C21@dggemi505-mbx.china.huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
- helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <rdunlap@infradead.org>) id 1eh4yf-0006cP-H8
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 01 Feb 2018 02:51:53 +0000
-Received: from bombadil.infradead.org ([65.50.211.133])
- by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eh4yb-0003xV-1o
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 01 Feb 2018 02:51:53 +0000
-In-Reply-To: <5a7264b1.mqPv/eshq6wqQFu6%akpm@linux-foundation.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <9047C53C18267742AB12E43B65C7F9F70BCE5C21@dggemi505-mbx.china.huawei.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, broonie@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: "Gaoxiang (OS)" <gaoxiang25@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, "Yuchao (T)" <yuchao0@huawei.com>
+Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, heyunlei <heyunlei@huawei.com>, Gao Xiang <hsiangkao@aol.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 01/31/2018 04:52 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2018-01-31-16-51 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
-> You will need quilt to apply these patches to the latest Linus release (4.x
-> or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> http://ozlabs.org/~akpm/mmotm/series
-> 
-> The file broken-out.tar.gz contains two datestamp files: .DATE and
-> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> followed by the base kernel version against which this patch series is to
-> be applied.
+Hi Xiang,
 
-It looks like this build error is not from an mmotm patch but from mainline
-or linux-next:
+On 2018/2/1 0:16, Gaoxiang (OS) wrote:
+> This patch add a flag CP_CRC_RECOVERY_XOR_FLAG to use XORed crc ^ cp_ver
+> since crc | cp_ver is more likely to get a collision or become 11..1111 | cp_ver.
 
-on i386:
-../fs/f2fs/super.c: In function 'f2fs_fill_super':
-../fs/f2fs/super.c:2563:18: error: 'SB_I_CGROUPWB' undeclared (first use in this function)
-  sb->s_iflags |= SB_I_CGROUPWB;
-                  ^
+FYI, we have discussed about this before:
 
-Anyway, it's an unknown value.
+https://patchwork.kernel.org/patch/9342639/
 
--- 
-~Randy
+At that time, cp_ver will always be initialized with 1, so there is almost a
+little chance to use high 32 bits, result in less collision, so I think it
+will be OK.
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+But now, cp_ver will be initialized with a random 64 bits value, then the
+collision will be increased, I agree that xor method will be better, but I'm
+not sure we should use this, since layout change makes complicated handling
+in codes for back compatibility.
+
+And do you encounter any incorrect recovery, or is there any following feature
+rely on this?
+
+Thanks,
+
+> 
+> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+> ---
+>  fs/f2fs/checkpoint.c    |  4 ++--
+>  fs/f2fs/node.h          | 16 +++++++++++-----
+>  fs/f2fs/segment.c       |  3 ++-
+>  include/linux/f2fs_fs.h |  1 +
+>  4 files changed, 16 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 8b0945b..9e7e63b 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1157,8 +1157,8 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
+>  		__set_ckpt_flags(ckpt, CP_FSCK_FLAG);
+>  
+> -	/* set this flag to activate crc|cp_ver for recovery */
+> -	__set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG);
+> +	/* set this flag to activate crc^cp_ver for recovery */
+> +	__set_ckpt_flags(ckpt, CP_CRC_RECOVERY_XOR_FLAG);
+>  	__clear_ckpt_flags(ckpt, CP_NOCRC_RECOVERY_FLAG);
+>  
+>  	spin_unlock_irqrestore(&sbi->cp_lock, flags);
+> diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+> index 081ef0d..7b9489f 100644
+> --- a/fs/f2fs/node.h
+> +++ b/fs/f2fs/node.h
+> @@ -293,8 +293,11 @@ static inline void fill_node_footer_blkaddr(struct page *page, block_t blkaddr)
+>  	struct f2fs_node *rn = F2FS_NODE(page);
+>  	__u64 cp_ver = cur_cp_version(ckpt);
+>  
+> -	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG))
+> -		cp_ver |= (cur_cp_crc(ckpt) << 32);
+> +	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_XOR_FLAG))
+> +		cp_ver ^= cur_cp_crc(ckpt) << 32;
+> +	/* for backward compatibility */
+> +	else if (unlikely(__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG)))
+> +		cp_ver |= cur_cp_crc(ckpt) << 32;
+>  
+>  	rn->footer.cp_ver = cpu_to_le64(cp_ver);
+>  	rn->footer.next_blkaddr = cpu_to_le32(blkaddr);
+> @@ -307,10 +310,13 @@ static inline bool is_recoverable_dnode(struct page *page)
+>  
+>  	/* Don't care crc part, if fsck.f2fs sets it. */
+>  	if (__is_set_ckpt_flags(ckpt, CP_NOCRC_RECOVERY_FLAG))
+> -		return (cp_ver << 32) == (cpver_of_node(page) << 32);
+> +		return (__u32)cp_ver == (__u32)cpver_of_node(page);
+>  
+> -	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG))
+> -		cp_ver |= (cur_cp_crc(ckpt) << 32);
+> +	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_XOR_FLAG))
+> +		cp_ver ^= cur_cp_crc(ckpt) << 32;
+> +	/* for backward compatibility */
+> +	else if (unlikely(__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG)))
+> +		cp_ver |= cur_cp_crc(ckpt) << 32;
+>  
+>  	return cp_ver == cpver_of_node(page);
+>  }
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 205b0d9..64d0c1f 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -2316,7 +2316,8 @@ static void allocate_segment_by_default(struct f2fs_sb_info *sbi,
+>  
+>  	if (force)
+>  		new_curseg(sbi, type, true);
+> -	else if (!is_set_ckpt_flags(sbi, CP_CRC_RECOVERY_FLAG) &&
+> +	else if (!(is_set_ckpt_flags(sbi, CP_CRC_RECOVERY_FLAG) ||
+> +		is_set_ckpt_flags(sbi, CP_CRC_RECOVERY_XOR_FLAG)) &&
+>  					type == CURSEG_WARM_NODE)
+>  		new_curseg(sbi, type, false);
+>  	else if (curseg->alloc_type == LFS && is_next_segment_free(sbi, type))
+> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+> index f7f0990..07ddf4b 100644
+> --- a/include/linux/f2fs_fs.h
+> +++ b/include/linux/f2fs_fs.h
+> @@ -117,6 +117,7 @@ struct f2fs_super_block {
+>  /*
+>   * For checkpoint
+>   */
+> +#define CP_CRC_RECOVERY_XOR_FLAG	0x00000800
+>  #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
+>  #define CP_NOCRC_RECOVERY_FLAG	0x00000200
+>  #define CP_TRIMMED_FLAG		0x00000100
+> 
