@@ -1,155 +1,149 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
-Date: Thu, 1 Feb 2018 22:20:42 +0800
-Message-ID: <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
-References: <20180127094301.29154-1-yuchao0@huawei.com>
- <20180127094301.29154-2-yuchao0@huawei.com>
- <20180131020213.GA86468@jaegeuk-macbookpro.roam.corp.google.com>
- <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
- <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH] f2fs: use crc ^ cp_ver instead of crc |
+ cp_ver for recovery
+Date: Thu, 1 Feb 2018 22:29:15 +0800
+Message-ID: <84228ad0-b71c-dc49-5326-80e98d15ddd1@kernel.org>
+References: <9047C53C18267742AB12E43B65C7F9F70BCE5C21@dggemi505-mbx.china.huawei.com>
+ <c3444561-9c65-97ce-4bf6-c7f16270d96a@kernel.org>
+ <d93d629f-f24c-2e8d-51c0-5c7860d517c2@huawei.com>
+ <b4337b94-3f9c-9e18-3fff-76d230db576c@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+ helo=mx.sourceforge.net)
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <chao@kernel.org>) id 1ehFs3-0005C7-Hk
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 01 Feb 2018 14:29:47 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1ehFrx-0006Dv-Dg
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 01 Feb 2018 14:29:47 +0000
+In-Reply-To: <b4337b94-3f9c-9e18-3fff-76d230db576c@huawei.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Gao Xiang <gaoxiang25@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, "Yuchao (T)" <yuchao0@huawei.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Gao Xiang <hsiangkao@aol.com>, heyunlei <heyunlei@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-
-
-On 2018/2/1 6:15, Jaegeuk Kim wrote:
-> On 01/31, Chao Yu wrote:
->> On 2018/1/31 10:02, Jaegeuk Kim wrote:
->>> What if we want to add more entries in addition to node_checksum? Do we have
->>> to add a new feature flag at every time? How about adding a layout value instead
->>
->> Hmm.. for previous implementation, IMO, we'd better add a new feature flag at
->> every time, otherwise, w/ extra_nsize only, in current image, we can know a
->> valid range of extended area in node block, but we don't know which
->> fields/features are valid/enabled or not.
->>
->> One more thing is that if we can add one feature flag for each field, we got one
->> more chance to disable it dynamically.
->>
->>> of extra_nsize? For example, layout #1 means node_checksum with extra_nsize=X?
->>>
->>>
->>> What does 1017 mean? We need to make this structure more flexibly for new
->>
->> Yes, using raw 1017 is not appropriate here.
->>
->>> entries. Like this?
->>> 		union {
->>> 			struct node_v1;
->>> 			struct node_v2;
->>> 			struct node_v3;
->>> 			...
->>> 			struct direct_node dn;
->>> 			struct indirect_node in;
->>> 		};
->>> 	};
->>>
->>> 	struct node_v1 {
->>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
->>> 		__le32 node_checksum;
->>> 	}
->>>
->>> 	struct node_v2 {
->>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=500];
->>
->> Hmm.. If we only need to add one more 4 bytes field in struct node_v2, but
->> V2_NSIZE is defined as fixed 500, there must be 492 bytes wasted.
->>
->> Or we can define V2_NSIZE as 8, but if there comes more and more extended
->> fields, node version count can be a large number, it results in complicated
->> version recognization and handling.
->>
->> One more question is how can we control which fields are valid or not in
->> comp[Vx_NSIZE]?
->>
->>
->> Anyway, what I'm thinking is maybe we can restructure layout of node block like
->> the one used by f2fs_inode:
->>
->> struct f2fs_node {
->> 	union {
->> 		struct f2fs_inode i;
->> 		union {
->> 			struct {
->> 				__le32 node_checksum;
->> 				__le32 feature_field_1;
->> 				__le32 feature_field_2;
->> 				....
->> 				__le32 addr[];
->> 				
->> 			};
->> 			struct direct_node dn;
->> 			struct indirect_node in;
->> 		};
->> 	};
->> 	struct node_footer footer;
->> } __packed;
->>
->> Moving all extended fields to the head of f2fs_node, so we don't have to use
->> macro to indicate actual size of addr.
-> 
-> Thinking what'd be the best way. My concern is, once getting more entries, we
-
-OK, I think we need more discussion.. ;)
-
-> can't set each of features individually. Like the second entry should have
-
-Oh, that will be hard. If we have to avoid that, we have to tag in somewhere
-e.g. f2fs_inode::i_flags2 to indicate which new field in f2fs_node is valid, for
-example:
-
-#define F2FS_NODE_CHECKSUM	0x0001
-#define F2FS_NODE_FIELD1	0x0002
-#define F2FS_NODE_FIELD2	0x0004
-
-	union {
-		struct {
-			__le32 node_checksum;
-			__le32 field_1;
-			__le32 field_2;
-			....
-			__le32 addr[];
-		};
-		struct direct_node dn;
-		struct indirect_node in;
-	};
-
-f2fs_inode::i_flags2 = F2FS_NODE_CHECKSUM | F2FS_NODE_FIELD1
-indicates that f2fs_node::node_checksum and f2fs_node::field_1 are valid;
-
-f2fs_inode::i_flags2 = F2FS_NODE_FIELD1 | F2FS_NODE_FIELD2
-indicates that f2fs_node::field_1 and f2fs_node::field_2 are valid.
-
-Any thoughts?
-
-Thanks,
-
-> enabled node_checksum, which we may not want to do.
-> 
->>
->> Thanks,
->>
->>> 		__le32 comp[V2_NSIZE];
->>> 	}
->>> 	...
->>>
->>>> +			};
->>>> +			struct direct_node dn;
->>>> +			struct indirect_node in;
->>>> +		};
->>>>  	};
->>>>  	struct node_footer footer;
->>>>  } __packed;
->>>> -- 
->>>> 2.15.0.55.gc2ece9dc4de6
->>>
->>> .
->>>
+T24gMjAxOC8yLzEgMjI6MDYsIEdhbyBYaWFuZyB3cm90ZToKPiAKPiAKPiBPbiAyMDE4LzIvMSAy
+MTo1NywgR2FvIFhpYW5nIHdyb3RlOgo+PiBIaSBDaGFvLAo+Pgo+PiBPbiAyMDE4LzIvMSAyMToy
+NywgQ2hhbyBZdSB3cm90ZToKPj4+IEhpIFhpYW5nLAo+Pj4KPj4+IE9uIDIwMTgvMi8xIDA6MTYs
+IEdhb3hpYW5nIChPUykgd3JvdGU6Cj4+Pj4gVGhpcyBwYXRjaCBhZGQgYSBmbGFnIENQX0NSQ19S
+RUNPVkVSWV9YT1JfRkxBRyB0byB1c2UgWE9SZWQgY3JjIF4gY3BfdmVyCj4+Pj4gc2luY2UgY3Jj
+IHwgY3BfdmVyIGlzIG1vcmUgbGlrZWx5IHRvIGdldCBhIGNvbGxpc2lvbiBvciBiZWNvbWUgMTEu
+LjExMTEgfCBjcF92ZXIuCj4+Pgo+Pj4gRllJLCB3ZSBoYXZlIGRpc2N1c3NlZCBhYm91dCB0aGlz
+IGJlZm9yZToKPj4+Cj4+PiBodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzkzNDI2
+MzkvCj4+Pgo+Pj4gQXQgdGhhdCB0aW1lLCBjcF92ZXIgd2lsbCBhbHdheXMgYmUgaW5pdGlhbGl6
+ZWQgd2l0aCAxLCBzbyB0aGVyZSBpcyBhbG1vc3QgYQo+Pj4gbGl0dGxlIGNoYW5jZSB0byB1c2Ug
+aGlnaCAzMiBiaXRzLCByZXN1bHQgaW4gbGVzcyBjb2xsaXNpb24sIHNvIEkgdGhpbmsgaXQKPj4+
+IHdpbGwgYmUgT0suCj4+Pgo+Pj4gQnV0IG5vdywgY3BfdmVyIHdpbGwgYmUgaW5pdGlhbGl6ZWQg
+d2l0aCBhIHJhbmRvbSA2NCBiaXRzIHZhbHVlLCB0aGVuIHRoZQo+Pj4gY29sbGlzaW9uIHdpbGwg
+YmUgaW5jcmVhc2VkLCBJIGFncmVlIHRoYXQgeG9yIG1ldGhvZCB3aWxsIGJlIGJldHRlciwgYnV0
+IEknbQo+Pj4gbm90IHN1cmUgd2Ugc2hvdWxkIHVzZSB0aGlzLCBzaW5jZSBsYXlvdXQgY2hhbmdl
+IG1ha2VzIGNvbXBsaWNhdGVkIGhhbmRsaW5nCj4+PiBpbiBjb2RlcyBmb3IgYmFjayBjb21wYXRp
+YmlsaXR5Lgo+Pj4KPj4+IEFuZCBkbyB5b3UgZW5jb3VudGVyIGFueSBpbmNvcnJlY3QgcmVjb3Zl
+cnksIG9yIGlzIHRoZXJlIGFueSBmb2xsb3dpbmcgZmVhdHVyZQo+Pj4gcmVseSBvbiB0aGlzPwo+
+Pgo+IAo+IAo+IAo+PiBOby4uLiBJIGp1c3QgbG9va2VkIGF0IG5vZGVfZm9vdGVyIGJlY2F1c2Ug
+b2YgYW5vdGhlciB3b3JrIGFuZCBzYXcgdGhpcyBwYXJ0IG9mIGNvZGUgYnkgY2hhbmNlLgo+PiBJ
+IHRoaW5rIFhPUi1lZCBjYWxjdWxhdGlvbiBpcyBtdWNoIGJldHRlciBpbiBtYXRoZW1hdGljcywg
+YW5kIHR5cGljYWwgbWV0aG9kIGZvciBtaXhpbmcgdHdvIHZhbHVlcyAoZWcuIFhPUiBlbmNyeXB0
+aW9uKSBpcyBhbHNvIFhPUi1lZCBjYWxjdWxhdGlvbiByYXRoZXIgdGhhbiBPUi1lZC4uLgoKWWVz
+LCBJIHRoaW5rIHNvLgoKPj4KPj4gVGhhbmtzLAo+Pgo+IAo+IEJUVywKPiAiVGhlIGNyYyBpcyBh
+bHJlYWR5IHJhbmRvbSBlbm91Z2gsIGJ1dCBoYXMgMzJiaXRzIG9ubHkuCj4gVGhlIGNwX3ZlciBp
+cyBub3QgZWFzeSB0byB1c2Ugb3ZlciAzMmJpdHMsIHNvIHdlIGRvbid0IG5lZWQgdG8ga2VlcCB0
+aGUgb3RoZXIKPiAzMmJpdHMgdW50b3VjaGVkIGluIG1vc3Qgb2YgbGlmZS4iCj4gCj4gSSBvYnNl
+cnZlIGNwX3ZlcihpZiB0aGUgaGlnaCAzMiBiaXRzIGFyZSAwKSBeIGNyYyA9PSBjcF92ZXIgfCBj
+cmMsIGJ1dAoKV2UgY2FuIHVzZSB0aGlzIGNhbGN1bGF0aW9uIHNpbmNlIGNwX3ZlciBpcyBjb21w
+bGV0ZSA2NC1iaXRzIHJhbmRvbSBudW1iZXIgbm93LgoKVGhhbmtzLAoKPiBpZiBjcF92ZXIgaXMg
+b3ZlciAzMmJpdHMsIC4uLgo+IAo+IC4uLmhtbW0uLi4KPiAKPiBUaGFua3MsCj4gCj4+Pgo+Pj4g
+VGhhbmtzLAo+Pj4KPj4+Pgo+Pj4+IFNpZ25lZC1vZmYtYnk6IEdhbyBYaWFuZyA8Z2FveGlhbmcy
+NUBodWF3ZWkuY29tPgo+Pj4+IC0tLQo+Pj4+IMKgIGZzL2YyZnMvY2hlY2twb2ludC5jwqDCoMKg
+IHzCoCA0ICsrLS0KPj4+PiDCoCBmcy9mMmZzL25vZGUuaMKgwqDCoMKgwqDCoMKgwqDCoCB8IDE2
+ICsrKysrKysrKysrLS0tLS0KPj4+PiDCoCBmcy9mMmZzL3NlZ21lbnQuY8KgwqDCoMKgwqDCoCB8
+wqAgMyArKy0KPj4+PiDCoCBpbmNsdWRlL2xpbnV4L2YyZnNfZnMuaCB8wqAgMSArCj4+Pj4gwqAg
+NCBmaWxlcyBjaGFuZ2VkLCAxNiBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQo+Pj4+Cj4+
+Pj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvY2hlY2twb2ludC5jIGIvZnMvZjJmcy9jaGVja3BvaW50
+LmMKPj4+PiBpbmRleCA4YjA5NDViLi45ZTdlNjNiIDEwMDY0NAo+Pj4+IC0tLSBhL2ZzL2YyZnMv
+Y2hlY2twb2ludC5jCj4+Pj4gKysrIGIvZnMvZjJmcy9jaGVja3BvaW50LmMKPj4+PiBAQCAtMTE1
+Nyw4ICsxMTU3LDggQEAgc3RhdGljIHZvaWQgdXBkYXRlX2NrcHRfZmxhZ3Moc3RydWN0IGYyZnNf
+c2JfaW5mbyAqc2JpLCBzdHJ1Y3QgY3BfY29udHJvbCAqY3BjKQo+Pj4+IMKgwqDCoMKgwqAgaWYg
+KGlzX3NiaV9mbGFnX3NldChzYmksIFNCSV9ORUVEX0ZTQ0spKQo+Pj4+IMKgwqDCoMKgwqDCoMKg
+wqDCoCBfX3NldF9ja3B0X2ZsYWdzKGNrcHQsIENQX0ZTQ0tfRkxBRyk7Cj4+Pj4gLcKgwqDCoCAv
+KiBzZXQgdGhpcyBmbGFnIHRvIGFjdGl2YXRlIGNyY3xjcF92ZXIgZm9yIHJlY292ZXJ5ICovCj4+
+Pj4gLcKgwqDCoCBfX3NldF9ja3B0X2ZsYWdzKGNrcHQsIENQX0NSQ19SRUNPVkVSWV9GTEFHKTsK
+Pj4+PiArwqDCoMKgIC8qIHNldCB0aGlzIGZsYWcgdG8gYWN0aXZhdGUgY3JjXmNwX3ZlciBmb3Ig
+cmVjb3ZlcnkgKi8KPj4+PiArwqDCoMKgIF9fc2V0X2NrcHRfZmxhZ3MoY2twdCwgQ1BfQ1JDX1JF
+Q09WRVJZX1hPUl9GTEFHKTsKPj4+PiDCoMKgwqDCoMKgIF9fY2xlYXJfY2twdF9mbGFncyhja3B0
+LCBDUF9OT0NSQ19SRUNPVkVSWV9GTEFHKTsKPj4+PiDCoMKgwqDCoMKgIHNwaW5fdW5sb2NrX2ly
+cXJlc3RvcmUoJnNiaS0+Y3BfbG9jaywgZmxhZ3MpOwo+Pj4+IGRpZmYgLS1naXQgYS9mcy9mMmZz
+L25vZGUuaCBiL2ZzL2YyZnMvbm9kZS5oCj4+Pj4gaW5kZXggMDgxZWYwZC4uN2I5NDg5ZiAxMDA2
+NDQKPj4+PiAtLS0gYS9mcy9mMmZzL25vZGUuaAo+Pj4+ICsrKyBiL2ZzL2YyZnMvbm9kZS5oCj4+
+Pj4gQEAgLTI5Myw4ICsyOTMsMTEgQEAgc3RhdGljIGlubGluZSB2b2lkIGZpbGxfbm9kZV9mb290
+ZXJfYmxrYWRkcihzdHJ1Y3QgcGFnZSAqcGFnZSwgYmxvY2tfdCBibGthZGRyKQo+Pj4+IMKgwqDC
+oMKgwqAgc3RydWN0IGYyZnNfbm9kZSAqcm4gPSBGMkZTX05PREUocGFnZSk7Cj4+Pj4gwqDCoMKg
+wqDCoCBfX3U2NCBjcF92ZXIgPSBjdXJfY3BfdmVyc2lvbihja3B0KTsKPj4+PiAtwqDCoMKgIGlm
+IChfX2lzX3NldF9ja3B0X2ZsYWdzKGNrcHQsIENQX0NSQ19SRUNPVkVSWV9GTEFHKSkKPj4+PiAt
+wqDCoMKgwqDCoMKgwqAgY3BfdmVyIHw9IChjdXJfY3BfY3JjKGNrcHQpIDw8IDMyKTsKPj4+PiAr
+wqDCoMKgIGlmIChfX2lzX3NldF9ja3B0X2ZsYWdzKGNrcHQsIENQX0NSQ19SRUNPVkVSWV9YT1Jf
+RkxBRykpCj4+Pj4gK8KgwqDCoMKgwqDCoMKgIGNwX3ZlciBePSBjdXJfY3BfY3JjKGNrcHQpIDw8
+IDMyOwo+Pj4+ICvCoMKgwqAgLyogZm9yIGJhY2t3YXJkIGNvbXBhdGliaWxpdHkgKi8KPj4+PiAr
+wqDCoMKgIGVsc2UgaWYgKHVubGlrZWx5KF9faXNfc2V0X2NrcHRfZmxhZ3MoY2twdCwgQ1BfQ1JD
+X1JFQ09WRVJZX0ZMQUcpKSkKPj4+PiArwqDCoMKgwqDCoMKgwqAgY3BfdmVyIHw9IGN1cl9jcF9j
+cmMoY2twdCkgPDwgMzI7Cj4+Pj4gwqDCoMKgwqDCoCBybi0+Zm9vdGVyLmNwX3ZlciA9IGNwdV90
+b19sZTY0KGNwX3Zlcik7Cj4+Pj4gwqDCoMKgwqDCoCBybi0+Zm9vdGVyLm5leHRfYmxrYWRkciA9
+IGNwdV90b19sZTMyKGJsa2FkZHIpOwo+Pj4+IEBAIC0zMDcsMTAgKzMxMCwxMyBAQCBzdGF0aWMg
+aW5saW5lIGJvb2wgaXNfcmVjb3ZlcmFibGVfZG5vZGUoc3RydWN0IHBhZ2UgKnBhZ2UpCj4+Pj4g
+wqDCoMKgwqDCoCAvKiBEb24ndCBjYXJlIGNyYyBwYXJ0LCBpZiBmc2NrLmYyZnMgc2V0cyBpdC4g
+Ki8KPj4+PiDCoMKgwqDCoMKgIGlmIChfX2lzX3NldF9ja3B0X2ZsYWdzKGNrcHQsIENQX05PQ1JD
+X1JFQ09WRVJZX0ZMQUcpKQo+Pj4+IC3CoMKgwqDCoMKgwqDCoCByZXR1cm4gKGNwX3ZlciA8PCAz
+MikgPT0gKGNwdmVyX29mX25vZGUocGFnZSkgPDwgMzIpOwo+Pj4+ICvCoMKgwqDCoMKgwqDCoCBy
+ZXR1cm4gKF9fdTMyKWNwX3ZlciA9PSAoX191MzIpY3B2ZXJfb2Zfbm9kZShwYWdlKTsKPj4+PiAt
+wqDCoMKgIGlmIChfX2lzX3NldF9ja3B0X2ZsYWdzKGNrcHQsIENQX0NSQ19SRUNPVkVSWV9GTEFH
+KSkKPj4+PiAtwqDCoMKgwqDCoMKgwqAgY3BfdmVyIHw9IChjdXJfY3BfY3JjKGNrcHQpIDw8IDMy
+KTsKPj4+PiArwqDCoMKgIGlmIChfX2lzX3NldF9ja3B0X2ZsYWdzKGNrcHQsIENQX0NSQ19SRUNP
+VkVSWV9YT1JfRkxBRykpCj4+Pj4gK8KgwqDCoMKgwqDCoMKgIGNwX3ZlciBePSBjdXJfY3BfY3Jj
+KGNrcHQpIDw8IDMyOwo+Pj4+ICvCoMKgwqAgLyogZm9yIGJhY2t3YXJkIGNvbXBhdGliaWxpdHkg
+Ki8KPj4+PiArwqDCoMKgIGVsc2UgaWYgKHVubGlrZWx5KF9faXNfc2V0X2NrcHRfZmxhZ3MoY2tw
+dCwgQ1BfQ1JDX1JFQ09WRVJZX0ZMQUcpKSkKPj4+PiArwqDCoMKgwqDCoMKgwqAgY3BfdmVyIHw9
+IGN1cl9jcF9jcmMoY2twdCkgPDwgMzI7Cj4+Pj4gwqDCoMKgwqDCoCByZXR1cm4gY3BfdmVyID09
+IGNwdmVyX29mX25vZGUocGFnZSk7Cj4+Pj4gwqAgfQo+Pj4+IGRpZmYgLS1naXQgYS9mcy9mMmZz
+L3NlZ21lbnQuYyBiL2ZzL2YyZnMvc2VnbWVudC5jCj4+Pj4gaW5kZXggMjA1YjBkOS4uNjRkMGMx
+ZiAxMDA2NDQKPj4+PiAtLS0gYS9mcy9mMmZzL3NlZ21lbnQuYwo+Pj4+ICsrKyBiL2ZzL2YyZnMv
+c2VnbWVudC5jCj4+Pj4gQEAgLTIzMTYsNyArMjMxNiw4IEBAIHN0YXRpYyB2b2lkIGFsbG9jYXRl
+X3NlZ21lbnRfYnlfZGVmYXVsdChzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksCj4+Pj4gwqDCoMKg
+wqDCoCBpZiAoZm9yY2UpCj4+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgIG5ld19jdXJzZWcoc2JpLCB0
+eXBlLCB0cnVlKTsKPj4+PiAtwqDCoMKgIGVsc2UgaWYgKCFpc19zZXRfY2twdF9mbGFncyhzYmks
+IENQX0NSQ19SRUNPVkVSWV9GTEFHKSAmJgo+Pj4+ICvCoMKgwqAgZWxzZSBpZiAoIShpc19zZXRf
+Y2twdF9mbGFncyhzYmksIENQX0NSQ19SRUNPVkVSWV9GTEFHKSB8fAo+Pj4+ICvCoMKgwqDCoMKg
+wqDCoCBpc19zZXRfY2twdF9mbGFncyhzYmksIENQX0NSQ19SRUNPVkVSWV9YT1JfRkxBRykpICYm
+Cj4+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHR5cGUgPT0g
+Q1VSU0VHX1dBUk1fTk9ERSkKPj4+PiDCoMKgwqDCoMKgwqDCoMKgwqAgbmV3X2N1cnNlZyhzYmks
+IHR5cGUsIGZhbHNlKTsKPj4+PiDCoMKgwqDCoMKgIGVsc2UgaWYgKGN1cnNlZy0+YWxsb2NfdHlw
+ZSA9PSBMRlMgJiYgaXNfbmV4dF9zZWdtZW50X2ZyZWUoc2JpLCB0eXBlKSkKPj4+PiBkaWZmIC0t
+Z2l0IGEvaW5jbHVkZS9saW51eC9mMmZzX2ZzLmggYi9pbmNsdWRlL2xpbnV4L2YyZnNfZnMuaAo+
+Pj4+IGluZGV4IGY3ZjA5OTAuLjA3ZGRmNGIgMTAwNjQ0Cj4+Pj4gLS0tIGEvaW5jbHVkZS9saW51
+eC9mMmZzX2ZzLmgKPj4+PiArKysgYi9pbmNsdWRlL2xpbnV4L2YyZnNfZnMuaAo+Pj4+IEBAIC0x
+MTcsNiArMTE3LDcgQEAgc3RydWN0IGYyZnNfc3VwZXJfYmxvY2sgewo+Pj4+IMKgIC8qCj4+Pj4g
+wqDCoCAqIEZvciBjaGVja3BvaW50Cj4+Pj4gwqDCoCAqLwo+Pj4+ICsjZGVmaW5lIENQX0NSQ19S
+RUNPVkVSWV9YT1JfRkxBR8KgwqDCoCAweDAwMDAwODAwCj4+Pj4gwqAgI2RlZmluZSBDUF9MQVJH
+RV9OQVRfQklUTUFQX0ZMQUfCoMKgwqAgMHgwMDAwMDQwMAo+Pj4+IMKgICNkZWZpbmUgQ1BfTk9D
+UkNfUkVDT1ZFUllfRkxBR8KgwqDCoCAweDAwMDAwMjAwCj4+Pj4gwqAgI2RlZmluZSBDUF9UUklN
+TUVEX0ZMQUfCoMKgwqDCoMKgwqDCoCAweDAwMDAwMTAwCj4+Pj4KCi0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLQpDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3
+b3JsZCdzIG1vc3QKZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3JnISBodHRwOi8vc2Rt
+Lmxpbmsvc2xhc2hkb3QKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0
+cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlz
+dGluZm8vbGludXgtZjJmcy1kZXZlbAo=
