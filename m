@@ -1,136 +1,98 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH 2/2] f2fs: add GC_WRITTEN_PAGE to gc atomic file
-Date: Sat, 3 Feb 2018 10:47:48 +0800
-Message-ID: <1517626068-49739-2-git-send-email-yunlong.song@huawei.com>
-References: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
+From: Weichao Guo <guoweichao@huawei.com>
+Subject: [PATCH] f2fs: report cp block corrupted
+Date: Sat, 3 Feb 2018 20:12:53 +0800
+Message-ID: <20180203121253.112629-1-guoweichao@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+ helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <guoweichao@huawei.com>) id 1ehp5j-0007uY-0d
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 03 Feb 2018 04:06:15 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1ehp5h-0008Bd-J5
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 03 Feb 2018 04:06:14 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-This patch enables to gc atomic file by adding GC_WRITTEN_PAGE to
-identify the gced pages of atomic file, which can avoid
-register_inmem_page in set_page_dirty, so the gced pages will not mix
-with the inmem pages.
+There is a potential inconsistent metadata case due to a cp block
+crc invalid in the latest checkpoint caused by hardware issues:
+1) write nodes into segment x;
+2) write checkpoint A;
+3) remove nodes in segment x;
+4) write checkpoint B;
+5) issue discard or write datas into segment x;
+6) sudden power-cut;
+7) use checkpoint A after reboot as checkpoint B is invalid
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+This inconsistency may be found after several reboots long time later
+and the kernel log about cp block crc invalid has disappeared. This
+makes the root cause of the inconsistency is hard to locate. Let us
+separate such other part issues from f2fs logical bugs in debug version.
+
+Signed-off-by: Weichao Guo <guoweichao@huawei.com>
 ---
- fs/f2fs/data.c    |  7 ++++++-
- fs/f2fs/gc.c      | 25 ++++++++++++++++++-------
- fs/f2fs/segment.h |  3 +++
- 3 files changed, 27 insertions(+), 8 deletions(-)
+ fs/f2fs/checkpoint.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index edafcb6..5e1fc5d 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -120,6 +120,10 @@ static void f2fs_write_end_io(struct bio *bio)
- 
- 		dec_page_count(sbi, type);
- 		clear_cold_data(page);
-+		if (IS_GC_WRITTEN_PAGE(page)) {
-+			set_page_private(page, 0);
-+			ClearPagePrivate(page);
-+		}
- 		end_page_writeback(page);
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 512dca8..15baba75 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -730,6 +730,7 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
+ 	unsigned long blk_size = sbi->blocksize;
+ 	size_t crc_offset = 0;
+ 	__u32 crc = 0;
++	int err = 0;
+
+ 	*cp_page = get_meta_page(sbi, cp_addr);
+ 	*cp_block = (struct f2fs_checkpoint *)page_address(*cp_page);
+@@ -737,18 +738,22 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
+ 	crc_offset = le32_to_cpu((*cp_block)->checksum_offset);
+ 	if (crc_offset > (blk_size - sizeof(__le32))) {
+ 		f2fs_msg(sbi->sb, KERN_WARNING,
+-			"invalid crc_offset: %zu", crc_offset);
+-		return -EINVAL;
++			"invalid crc_offset: %zu at blk_addr: 0x%x",
++				crc_offset, cp_addr);
++		err = -EINVAL;
++		f2fs_bug_on(sbi, 1);
  	}
- 	if (!get_pages(sbi, F2FS_WB_CP_DATA) &&
-@@ -2418,7 +2422,8 @@ static int f2fs_set_data_page_dirty(struct page *page)
- 	if (!PageUptodate(page))
- 		SetPageUptodate(page);
- 
--	if (f2fs_is_atomic_file(inode) && !f2fs_is_commit_atomic_write(inode)) {
-+	if (f2fs_is_atomic_file(inode) && !f2fs_is_commit_atomic_write(inode)
-+		&& !IS_GC_WRITTEN_PAGE(page)) {
- 		if (!IS_ATOMIC_WRITTEN_PAGE(page)) {
- 			register_inmem_page(inode, page);
- 			return 1;
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 84ab3ff..9d54ddb 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -622,10 +622,6 @@ static void move_data_block(struct inode *inode, block_t bidx,
- 	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
- 		goto out;
- 
--	if (f2fs_is_atomic_file(inode) &&
--		!f2fs_is_commit_atomic_write(inode))
--		goto out;
--
- 	if (f2fs_is_pinned_file(inode)) {
- 		f2fs_pin_file_control(inode, true);
- 		goto out;
-@@ -680,6 +676,12 @@ static void move_data_block(struct inode *inode, block_t bidx,
- 		goto put_page_out;
+
+ 	crc = cur_cp_crc(*cp_block);
+ 	if (!f2fs_crc_valid(sbi, crc, *cp_block, crc_offset)) {
+-		f2fs_msg(sbi->sb, KERN_WARNING, "invalid crc value");
+-		return -EINVAL;
++		f2fs_msg(sbi->sb, KERN_WARNING,
++			"invalid crc value at blk_addr: 0x%x", cp_addr);
++		err = -EINVAL;
++		f2fs_bug_on(sbi, 1);
  	}
- 
-+	if (f2fs_is_atomic_file(inode) &&
-+		!f2fs_is_commit_atomic_write(inode) &&
-+		!IS_GC_WRITTEN_PAGE(fio.encrypted_page)) {
-+		set_page_private(fio.encrypted_page, (unsigned long)GC_WRITTEN_PAGE);
-+		SetPagePrivate(fio.encrypted_page);
-+	}
- 	set_page_dirty(fio.encrypted_page);
- 	f2fs_wait_on_page_writeback(fio.encrypted_page, DATA, true);
- 	if (clear_page_dirty_for_io(fio.encrypted_page))
-@@ -730,9 +732,6 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
- 	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
- 		goto out;
- 
--	if (f2fs_is_atomic_file(inode) &&
--		!f2fs_is_commit_atomic_write(inode))
--		goto out;
- 	if (f2fs_is_pinned_file(inode)) {
- 		if (gc_type == FG_GC)
- 			f2fs_pin_file_control(inode, true);
-@@ -742,6 +741,12 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
- 	if (gc_type == BG_GC) {
- 		if (PageWriteback(page))
- 			goto out;
-+		if (f2fs_is_atomic_file(inode) &&
-+			!f2fs_is_commit_atomic_write(inode) &&
-+			!IS_GC_WRITTEN_PAGE(page)) {
-+			set_page_private(page, (unsigned long)GC_WRITTEN_PAGE);
-+			SetPagePrivate(page);
-+		}
- 		set_page_dirty(page);
- 		set_cold_data(page);
- 	} else {
-@@ -762,6 +767,12 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
- 		int err;
- 
- retry:
-+		if (f2fs_is_atomic_file(inode) &&
-+			!f2fs_is_commit_atomic_write(inode) &&
-+			!IS_GC_WRITTEN_PAGE(page)) {
-+			set_page_private(page, (unsigned long)GC_WRITTEN_PAGE);
-+			SetPagePrivate(page);
-+		}
- 		set_page_dirty(page);
- 		f2fs_wait_on_page_writeback(page, DATA, true);
- 		if (clear_page_dirty_for_io(page)) {
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index f11c4bc..f0a6432 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -203,11 +203,14 @@ struct segment_allocation {
-  */
- #define ATOMIC_WRITTEN_PAGE		((unsigned long)-1)
- #define DUMMY_WRITTEN_PAGE		((unsigned long)-2)
-+#define GC_WRITTEN_PAGE		((unsigned long)-3)
- 
- #define IS_ATOMIC_WRITTEN_PAGE(page)			\
- 		(page_private(page) == (unsigned long)ATOMIC_WRITTEN_PAGE)
- #define IS_DUMMY_WRITTEN_PAGE(page)			\
- 		(page_private(page) == (unsigned long)DUMMY_WRITTEN_PAGE)
-+#define IS_GC_WRITTEN_PAGE(page)			\
-+		(page_private(page) == (unsigned long)GC_WRITTEN_PAGE)
- 
- struct inmem_pages {
- 	struct list_head list;
--- 
-1.8.5.2
+
+ 	*version = cur_cp_version(*cp_block);
+-	return 0;
++	return err;
+ }
+
+ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
+--
+2.10.1
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
