@@ -1,94 +1,136 @@
 From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH 1/2] f2fs: enable to gc page whose inode already
- atomic commit
-Date: Sat, 3 Feb 2018 10:47:47 +0800
-Message-ID: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
+Subject: [PATCH 2/2] f2fs: add GC_WRITTEN_PAGE to gc atomic file
+Date: Sat, 3 Feb 2018 10:47:48 +0800
+Message-ID: <1517626068-49739-2-git-send-email-yunlong.song@huawei.com>
+References: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
- helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yunlong.song@huawei.com>) id 1ehnsF-00007v-69
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 03 Feb 2018 02:48:15 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ehnsC-0005X3-VT
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 03 Feb 2018 02:48:15 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
-Cc: shengyong1@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, heyunlei@huawei.com, linux-fsdevel@vger.kernel.org, miaoxie@huawei.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If inode has already started to atomic commit, then set_page_dirty will
-not mix the gc pages with the inmem atomic pages, so the page can be
-gced safely.
+This patch enables to gc atomic file by adding GC_WRITTEN_PAGE to
+identify the gced pages of atomic file, which can avoid
+register_inmem_page in set_page_dirty, so the gced pages will not mix
+with the inmem pages.
 
 Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 ---
- fs/f2fs/data.c | 5 ++---
- fs/f2fs/gc.c   | 6 ++++--
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ fs/f2fs/data.c    |  7 ++++++-
+ fs/f2fs/gc.c      | 25 ++++++++++++++++++-------
+ fs/f2fs/segment.h |  3 +++
+ 3 files changed, 27 insertions(+), 8 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 7435830..edafcb6 100644
+index edafcb6..5e1fc5d 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -1580,14 +1580,13 @@ bool should_update_outplace(struct inode *inode, struct f2fs_io_info *fio)
- 		return true;
- 	if (S_ISDIR(inode->i_mode))
- 		return true;
--	if (f2fs_is_atomic_file(inode))
--		return true;
- 	if (fio) {
- 		if (is_cold_data(fio->page))
- 			return true;
- 		if (IS_ATOMIC_WRITTEN_PAGE(fio->page))
- 			return true;
--	}
-+	} else if (f2fs_is_atomic_file(inode))
-+		return true;
- 	return false;
- }
+@@ -120,6 +120,10 @@ static void f2fs_write_end_io(struct bio *bio)
  
+ 		dec_page_count(sbi, type);
+ 		clear_cold_data(page);
++		if (IS_GC_WRITTEN_PAGE(page)) {
++			set_page_private(page, 0);
++			ClearPagePrivate(page);
++		}
+ 		end_page_writeback(page);
+ 	}
+ 	if (!get_pages(sbi, F2FS_WB_CP_DATA) &&
+@@ -2418,7 +2422,8 @@ static int f2fs_set_data_page_dirty(struct page *page)
+ 	if (!PageUptodate(page))
+ 		SetPageUptodate(page);
+ 
+-	if (f2fs_is_atomic_file(inode) && !f2fs_is_commit_atomic_write(inode)) {
++	if (f2fs_is_atomic_file(inode) && !f2fs_is_commit_atomic_write(inode)
++		&& !IS_GC_WRITTEN_PAGE(page)) {
+ 		if (!IS_ATOMIC_WRITTEN_PAGE(page)) {
+ 			register_inmem_page(inode, page);
+ 			return 1;
 diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index b9d93fd..84ab3ff 100644
+index 84ab3ff..9d54ddb 100644
 --- a/fs/f2fs/gc.c
 +++ b/fs/f2fs/gc.c
-@@ -622,7 +622,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
+@@ -622,10 +622,6 @@ static void move_data_block(struct inode *inode, block_t bidx,
  	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
  		goto out;
  
--	if (f2fs_is_atomic_file(inode))
-+	if (f2fs_is_atomic_file(inode) &&
-+		!f2fs_is_commit_atomic_write(inode))
- 		goto out;
- 
+-	if (f2fs_is_atomic_file(inode) &&
+-		!f2fs_is_commit_atomic_write(inode))
+-		goto out;
+-
  	if (f2fs_is_pinned_file(inode)) {
-@@ -729,7 +730,8 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+ 		f2fs_pin_file_control(inode, true);
+ 		goto out;
+@@ -680,6 +676,12 @@ static void move_data_block(struct inode *inode, block_t bidx,
+ 		goto put_page_out;
+ 	}
+ 
++	if (f2fs_is_atomic_file(inode) &&
++		!f2fs_is_commit_atomic_write(inode) &&
++		!IS_GC_WRITTEN_PAGE(fio.encrypted_page)) {
++		set_page_private(fio.encrypted_page, (unsigned long)GC_WRITTEN_PAGE);
++		SetPagePrivate(fio.encrypted_page);
++	}
+ 	set_page_dirty(fio.encrypted_page);
+ 	f2fs_wait_on_page_writeback(fio.encrypted_page, DATA, true);
+ 	if (clear_page_dirty_for_io(fio.encrypted_page))
+@@ -730,9 +732,6 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
  	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
  		goto out;
  
--	if (f2fs_is_atomic_file(inode))
-+	if (f2fs_is_atomic_file(inode) &&
-+		!f2fs_is_commit_atomic_write(inode))
- 		goto out;
+-	if (f2fs_is_atomic_file(inode) &&
+-		!f2fs_is_commit_atomic_write(inode))
+-		goto out;
  	if (f2fs_is_pinned_file(inode)) {
  		if (gc_type == FG_GC)
+ 			f2fs_pin_file_control(inode, true);
+@@ -742,6 +741,12 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+ 	if (gc_type == BG_GC) {
+ 		if (PageWriteback(page))
+ 			goto out;
++		if (f2fs_is_atomic_file(inode) &&
++			!f2fs_is_commit_atomic_write(inode) &&
++			!IS_GC_WRITTEN_PAGE(page)) {
++			set_page_private(page, (unsigned long)GC_WRITTEN_PAGE);
++			SetPagePrivate(page);
++		}
+ 		set_page_dirty(page);
+ 		set_cold_data(page);
+ 	} else {
+@@ -762,6 +767,12 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+ 		int err;
+ 
+ retry:
++		if (f2fs_is_atomic_file(inode) &&
++			!f2fs_is_commit_atomic_write(inode) &&
++			!IS_GC_WRITTEN_PAGE(page)) {
++			set_page_private(page, (unsigned long)GC_WRITTEN_PAGE);
++			SetPagePrivate(page);
++		}
+ 		set_page_dirty(page);
+ 		f2fs_wait_on_page_writeback(page, DATA, true);
+ 		if (clear_page_dirty_for_io(page)) {
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index f11c4bc..f0a6432 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -203,11 +203,14 @@ struct segment_allocation {
+  */
+ #define ATOMIC_WRITTEN_PAGE		((unsigned long)-1)
+ #define DUMMY_WRITTEN_PAGE		((unsigned long)-2)
++#define GC_WRITTEN_PAGE		((unsigned long)-3)
+ 
+ #define IS_ATOMIC_WRITTEN_PAGE(page)			\
+ 		(page_private(page) == (unsigned long)ATOMIC_WRITTEN_PAGE)
+ #define IS_DUMMY_WRITTEN_PAGE(page)			\
+ 		(page_private(page) == (unsigned long)DUMMY_WRITTEN_PAGE)
++#define IS_GC_WRITTEN_PAGE(page)			\
++		(page_private(page) == (unsigned long)GC_WRITTEN_PAGE)
+ 
+ struct inmem_pages {
+ 	struct list_head list;
 -- 
 1.8.5.2
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
