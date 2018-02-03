@@ -1,22 +1,23 @@
-From: Weichao Guo <guoweichao@huawei.com>
-Subject: [PATCH] f2fs: report cp block corrupted
-Date: Sat, 3 Feb 2018 20:12:53 +0800
-Message-ID: <20180203121253.112629-1-guoweichao@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to handle looped node chain during
+ recovery
+Date: Sat, 3 Feb 2018 17:44:39 +0800
+Message-ID: <20180203094439.3913-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
  helo=mx.sourceforge.net)
  by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <guoweichao@huawei.com>) id 1ehp5j-0007uY-0d
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 03 Feb 2018 04:06:15 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1ehuNi-0006aM-7A
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 03 Feb 2018 09:45:10 +0000
 Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ehp5h-0008Bd-J5
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 03 Feb 2018 04:06:14 +0000
+ id 1ehuNg-0002Ud-1G
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 03 Feb 2018 09:45:10 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,71 +27,56 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: Yunlei He <heyunlei@huawei.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-There is a potential inconsistent metadata case due to a cp block
-crc invalid in the latest checkpoint caused by hardware issues:
-1) write nodes into segment x;
-2) write checkpoint A;
-3) remove nodes in segment x;
-4) write checkpoint B;
-5) issue discard or write datas into segment x;
-6) sudden power-cut;
-7) use checkpoint A after reboot as checkpoint B is invalid
+There is no checksum in node block now, so bit-transition from hardware
+can make node_footer.next_blkaddr being corrupted w/o any detection,
+result in node chain becoming looped one.
 
-This inconsistency may be found after several reboots long time later
-and the kernel log about cp block crc invalid has disappeared. This
-makes the root cause of the inconsistency is hard to locate. Let us
-separate such other part issues from f2fs logical bugs in debug version.
+For this condition, during recovery, in order to avoid running into dead
+loop, let's detect it and just skip out.
 
-Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/checkpoint.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ fs/f2fs/recovery.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 512dca8..15baba75 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -730,6 +730,7 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
- 	unsigned long blk_size = sbi->blocksize;
- 	size_t crc_offset = 0;
- 	__u32 crc = 0;
-+	int err = 0;
-
- 	*cp_page = get_meta_page(sbi, cp_addr);
- 	*cp_block = (struct f2fs_checkpoint *)page_address(*cp_page);
-@@ -737,18 +738,22 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
- 	crc_offset = le32_to_cpu((*cp_block)->checksum_offset);
- 	if (crc_offset > (blk_size - sizeof(__le32))) {
- 		f2fs_msg(sbi->sb, KERN_WARNING,
--			"invalid crc_offset: %zu", crc_offset);
--		return -EINVAL;
-+			"invalid crc_offset: %zu at blk_addr: 0x%x",
-+				crc_offset, cp_addr);
-+		err = -EINVAL;
-+		f2fs_bug_on(sbi, 1);
- 	}
-
- 	crc = cur_cp_crc(*cp_block);
- 	if (!f2fs_crc_valid(sbi, crc, *cp_block, crc_offset)) {
--		f2fs_msg(sbi->sb, KERN_WARNING, "invalid crc value");
--		return -EINVAL;
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+			"invalid crc value at blk_addr: 0x%x", cp_addr);
-+		err = -EINVAL;
-+		f2fs_bug_on(sbi, 1);
- 	}
-
- 	*version = cur_cp_version(*cp_block);
--	return 0;
-+	return err;
- }
-
- static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
---
-2.10.1
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index b6d1ec620a8c..60dd0cee4820 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -243,6 +243,9 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 	struct curseg_info *curseg;
+ 	struct page *page = NULL;
+ 	block_t blkaddr;
++	unsigned int loop_cnt = 0;
++	unsigned int free_blocks = sbi->user_block_count -
++					valid_user_blocks(sbi);
+ 	int err = 0;
+ 
+ 	/* get node pages in the current segment */
+@@ -295,6 +298,17 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 		if (IS_INODE(page) && is_dent_dnode(page))
+ 			entry->last_dentry = blkaddr;
+ next:
++		/* sanity check in order to detect looped node chain */
++		if (++loop_cnt >= free_blocks ||
++			blkaddr == next_blkaddr_of_node(page)) {
++			f2fs_msg(sbi->sb, KERN_NOTICE,
++				"%s: detect looped node chain, "
++				"blkaddr:%u, next:%u",
++				__func__, blkaddr, next_blkaddr_of_node(page));
++			err = -EINVAL;
++			break;
++		}
++
+ 		/* check next segment */
+ 		blkaddr = next_blkaddr_of_node(page);
+ 		f2fs_put_page(page, 1);
+-- 
+2.15.0.55.gc2ece9dc4de6
 
 
 ------------------------------------------------------------------------------
