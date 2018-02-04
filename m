@@ -1,87 +1,91 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: [GIT PULL] fscrypt updates for 4.16
-Date: Sat, 3 Feb 2018 19:35:32 -0500
-Message-ID: <20180204003532.GA13997@thunk.org>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: f2fs on top ov LV
+Date: Sun, 4 Feb 2018 22:54:23 +0800
+Message-ID: <2d1573a8-f783-2c27-61ab-8de412993b04@kernel.org>
+References: <20180202172947.GA3981@lazy.lzy>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
+ helo=mx.sourceforge.net)
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <chao@kernel.org>) id 1eiLgx-0000wg-5b
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 04 Feb 2018 14:54:51 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eiLgt-0001GN-7K
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 04 Feb 2018 14:54:51 +0000
+In-Reply-To: <20180202172947.GA3981@lazy.lzy>
+Content-Language: en-US
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Piergiorgio Sartor <piergiorgio.sartor@nexgo.de>, linux-f2fs-devel@lists.sourceforge.net
 
-Note: there will be a merge conflict; please just take the chunk
-which calls fscrypt_encrypt_symlink() from the fscrypt tree.  This
-will end up dropping the kzalloc() -> f2fs_kzalloc() change, which
-means the fscrypt-specific allocation won't get tested by f2fs's
-kmalloc error injection system; which is fine.
+Hi,
 
-The ubifs and f2fs changes have been reviewed by their respective
-maintainers and I got their approval to run all of these changes
-through the fscrypt tree.
+On 2018/2/3 1:29, Piergiorgio Sartor wrote:
+> Hi all,
+> 
+> I'm planning to prepare a Linux installation
+> on an USB flash drive.
+> 
+> The idea is to have /boot (with ext, since grub2
+> does not support f2fs yet) and / with f2fs.
+> Both on the USB flash drive while /home will be
+> somewhere else.
+> 
+> Now, I've a backup tool exploiting lvm snapshots
+> and I would like to use it.
+> 
+> This means / will be on top of an LV.
+> 
+> Does it make any sense to have f2fs over lvm?
+> Will still be some benefits from f2fs in this
+> setup?
 
-	      			      	 - Ted
-					 
-The following changes since commit 1291a0d5049dbc06baaaf66a9ff3f53db493b19b:
+I think it's OK to build f2fs image based on lvm, and IMO, there
+will be no difference when building image on lvm partition or raw
+partition, since f2fs won't be aware of lvm.
 
-  Linux 4.15-rc4 (2017-12-17 18:59:59 -0800)
+> 
+> How about snapshots? Could they cause problems?
+> Usually the filesystem mounted from lvm snapshot
+> has consistency issues, which are they usually
+> solved by journal.
+> I guess f2fs should be fine, but I would like to
+> confirm with experts here.
 
-are available in the git repository at:
+f2fs supports fsfreeze and roll-forward recovery, so I think
+it's fine to use lvm snapshot on f2fs image.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tytso/fscrypt.git tags/fscrypt_for_linus
+> 
+> Of course, one possibility would be to use f2fs
+> on the raw partition, waiting for snapshot to
+> be implemented.
+> What's the plan about this?
 
-for you to fetch changes up to 0b1dfa4cc6c60052b2c30ead316fa84c46d3c43c:
+It's in todo list, but it's not critical for us to implement
+this feature as in usual android scenario there is no strong
+demand to use this feature.
 
-  fscrypt: fix build with pre-4.6 gcc versions (2018-02-01 10:51:18 -0500)
+Thanks,
 
-----------------------------------------------------------------
-Refactor support for encrypted symlinks to move common code to fscrypt.
+> 
+> Thanks a lot for any answers,
+> 
+> bye,
+> 
 
-----------------------------------------------------------------
-Eric Biggers (26):
-      fscrypt: move fscrypt_has_encryption_key() to supp/notsupp headers
-      fscrypt: move fscrypt_control_page() to supp/notsupp headers
-      fscrypt: move fscrypt_info_cachep declaration to fscrypt_private.h
-      fscrypt: move fscrypt_ctx declaration to fscrypt_supp.h
-      fscrypt: split fscrypt_dummy_context_enabled() into supp/notsupp versions
-      fscrypt: move fscrypt_operations declaration to fscrypt_supp.h
-      fscrypt: move fscrypt_valid_enc_modes() to fscrypt_private.h
-      fscrypt: move fscrypt_is_dot_dotdot() to fs/crypto/fname.c
-      fscrypt: trim down fscrypt.h includes
-      fscrypt: new helper functions for ->symlink()
-      fscrypt: new helper function - fscrypt_get_symlink()
-      ext4: switch to fscrypt ->symlink() helper functions
-      ext4: switch to fscrypt_get_symlink()
-      f2fs: switch to fscrypt ->symlink() helper functions
-      f2fs: switch to fscrypt_get_symlink()
-      ubifs: free the encrypted symlink target
-      ubifs: switch to fscrypt ->symlink() helper functions
-      ubifs: switch to fscrypt_get_symlink()
-      fscrypt: remove fscrypt_fname_usr_to_disk()
-      fscrypt: move fscrypt_symlink_data to fscrypt_private.h
-      fscrypt: calculate NUL-padding length in one place only
-      fscrypt: define fscrypt_fname_alloc_buffer() to be for presented names
-      fscrypt: fix up fscrypt_fname_encrypted_size() for internal use
-      fscrypt: document symlink length restriction
-      fscrypt: remove 'ci' parameter from fscrypt_put_encryption_info()
-      fscrypt: fix build with pre-4.6 gcc versions
-
- Documentation/filesystems/fscrypt.rst |  10 ++++-
- fs/crypto/crypto.c                    |   1 +
- fs/crypto/fname.c                     | 140 +++++++++++++++++++++++++++----------------------------------
- fs/crypto/fscrypt_private.h           |  31 ++++++++++++++
- fs/crypto/hooks.c                     | 158 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/crypto/keyinfo.c                   |  17 ++------
- fs/ext4/namei.c                       |  58 +++++++-------------------
- fs/ext4/super.c                       |   4 +-
- fs/ext4/symlink.c                     |  43 +++----------------
- fs/f2fs/inode.c                       |   2 +-
- fs/f2fs/namei.c                       | 132 +++++++++++----------------------------------------------
- fs/ubifs/dir.c                        |  63 +++++++---------------------
- fs/ubifs/file.c                       |  36 +---------------
- fs/ubifs/super.c                      |   4 +-
- include/linux/fscrypt.h               | 174 +++++++++++++++++++++++++++++-----------------------------------------------
- include/linux/fscrypt_notsupp.h       |  59 ++++++++++++++++++--------
- include/linux/fscrypt_supp.h          |  68 +++++++++++++++++++++++++++---
- 17 files changed, 500 insertions(+), 500 deletions(-)
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
