@@ -1,25 +1,28 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH 1/2] f2fs: enable to gc page whose inode
- already atomic commit
-Date: Sun, 4 Feb 2018 22:56:37 +0800
-Message-ID: <a094cd40-d042-2a43-4e9a-e34c31e61d28@kernel.org>
-References: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
+Subject: Re: [PATCH] f2fs: fix to handle looped node chain during
+ recovery
+Date: Sun, 4 Feb 2018 23:14:21 +0800
+Message-ID: <250b6aaa-84ab-13b6-0da0-f47ba9b65b35@kernel.org>
+References: <20180203094439.3913-1-yuchao0@huawei.com>
+ <6fe55970-6e30-d144-86d4-68d6fbd80cf3@aol.com>
+ <3a4a4906-1f2a-197a-bfe1-f636f9b5243c@aol.com>
+ <34884138-31e6-566d-5be3-d62f61a3416e@aol.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <chao@kernel.org>) id 1eiLj9-0000u6-GX
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 04 Feb 2018 14:57:07 +0000
+ (envelope-from <chao@kernel.org>) id 1eiM0I-0005Uz-P1
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 04 Feb 2018 15:14:50 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eiLj7-00034e-Je
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 04 Feb 2018 14:57:07 +0000
-In-Reply-To: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
+ id 1eiM0H-0003Y7-Ji
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 04 Feb 2018 15:14:50 +0000
+In-Reply-To: <34884138-31e6-566d-5be3-d62f61a3416e@aol.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -30,79 +33,104 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
-Cc: shengyong1@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, heyunlei@huawei.com, miaoxie@huawei.com
+To: Gao Xiang <hsiangkao@aol.com>, Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org, Yunlei He <heyunlei@huawei.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/2/3 10:47, Yunlong Song wrote:
-> If inode has already started to atomic commit, then set_page_dirty will
-> not mix the gc pages with the inmem atomic pages, so the page can be
-> gced safely.
-
-Let's avoid Ccing fs mailing list if the patch didn't change vfs common
-codes.
-
-As you know, the problem here is mixed dnode block flushing w/o writebacking
-gced data block, result in making transaction unintegrated.
-
-So how about just using dio_rwsem[WRITE] during atomic committing to exclude
-GCing data block of atomic opened file?
-
-Thanks,
-
-> 
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> ---
->  fs/f2fs/data.c | 5 ++---
->  fs/f2fs/gc.c   | 6 ++++--
->  2 files changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 7435830..edafcb6 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1580,14 +1580,13 @@ bool should_update_outplace(struct inode *inode, struct f2fs_io_info *fio)
->  		return true;
->  	if (S_ISDIR(inode->i_mode))
->  		return true;
-> -	if (f2fs_is_atomic_file(inode))
-> -		return true;
->  	if (fio) {
->  		if (is_cold_data(fio->page))
->  			return true;
->  		if (IS_ATOMIC_WRITTEN_PAGE(fio->page))
->  			return true;
-> -	}
-> +	} else if (f2fs_is_atomic_file(inode))
-> +		return true;
->  	return false;
->  }
->  
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index b9d93fd..84ab3ff 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -622,7 +622,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
->  	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->  		goto out;
->  
-> -	if (f2fs_is_atomic_file(inode))
-> +	if (f2fs_is_atomic_file(inode) &&
-> +		!f2fs_is_commit_atomic_write(inode))
->  		goto out;
->  
->  	if (f2fs_is_pinned_file(inode)) {
-> @@ -729,7 +730,8 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->  	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->  		goto out;
->  
-> -	if (f2fs_is_atomic_file(inode))
-> +	if (f2fs_is_atomic_file(inode) &&
-> +		!f2fs_is_commit_atomic_write(inode))
->  		goto out;
->  	if (f2fs_is_pinned_file(inode)) {
->  		if (gc_type == FG_GC)
-> 
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+V2VsbCwgdGhhdCdzIGNsYXNzaWMgYWxnb3JpdGhtIGZvciBjaGVja2luZyBsb29wIGluIGEgbGlz
+dCwgYXMgd2VsbCBhcwpvdGhlciBvbmUgd2Uga25vdywgaW4gb3JkZXIgdG8gZGVjcmVhc2UgdGlt
+ZSBjb21wbGV4aXR5IG9mIHRoZXNlIGFsZ29yaXRobXMsCnRoZWlyIGltcGxlbWVudGF0aW9ucyBh
+cmUgYSBsaXR0bGUgbW9yZSBjb21wbGV4LgoKQnV0IElNTywgdGhlIGlzc3VlIHdlIGFyZSB0cnlp
+bmcgdG8gZml4IGlzIHJlYWxseSBhIGNvcm5lciBjYXNlLCBhbmQgdGhlCnBlcmZvcm1hbmNlIGlu
+IHRoYXQgcGF0aCBpcyBub3Qgc3VjaCBjcml0aWNhbCwgc28gSSBqdXN0IGludGVuZCB0byBmaXgg
+aXQKd2l0aCBmZXdlc3QgY29kZXMuCgpPbiAyMDE4LzIvMyAxOTozNiwgR2FvIFhpYW5nIHZpYSBM
+aW51eC1mMmZzLWRldmVsIHdyb3RlOgo+IAo+IFNvcnJ5LCBJIHNhdyB0aGUgcmVsYXRlZCBjb2Rl
+IGVudGlyZWx5LCBwbGVhc2UgaWdub3JlIHRoZXNlIHJlcGxpZXMuCj4gCj4gCj4gT24gMjAxOC8y
+LzMgMTg6NDUsIEdhbyBYaWFuZyB3cm90ZToKPj4KPj4KPj4gT24gMjAxOC8yLzMgMTg6MzUsIEdh
+byBYaWFuZyB3cm90ZToKPj4+IEhpIENoYW8gYW5kIFl1bkxlaSwKPj4+Cj4+Pgo+Pj4gT24gMjAx
+OC8yLzMgMTc6NDQsIENoYW8gWXUgd3JvdGU6Cj4+Pj4gVGhlcmUgaXMgbm8gY2hlY2tzdW0gaW4g
+bm9kZSBibG9jayBub3csIHNvIGJpdC10cmFuc2l0aW9uIGZyb20gaGFyZHdhcmUKPj4+PiBjYW4g
+bWFrZSBub2RlX2Zvb3Rlci5uZXh0X2Jsa2FkZHIgYmVpbmcgY29ycnVwdGVkIHcvbyBhbnkgZGV0
+ZWN0aW9uLAo+Pj4+IHJlc3VsdCBpbiBub2RlIGNoYWluIGJlY29taW5nIGxvb3BlZCBvbmUuCj4+
+Pj4KPj4+PiBGb3IgdGhpcyBjb25kaXRpb24sIGR1cmluZyByZWNvdmVyeSwgaW4gb3JkZXIgdG8g
+YXZvaWQgcnVubmluZyBpbnRvIGRlYWQKPj4+PiBsb29wLCBsZXQncyBkZXRlY3QgaXQgYW5kIGp1
+c3Qgc2tpcCBvdXQuCj4+Pj4KPj4+PiBTaWduZWQtb2ZmLWJ5OiBZdW5sZWkgSGUgPGhleXVubGVp
+QGh1YXdlaS5jb20+Cj4+Pj4gU2lnbmVkLW9mZi1ieTogQ2hhbyBZdSA8eXVjaGFvMEBodWF3ZWku
+Y29tPgo+Pj4+IC0tLQo+Pj4+IMKgIGZzL2YyZnMvcmVjb3ZlcnkuYyB8IDE0ICsrKysrKysrKysr
+KysrCj4+Pj4gwqAgMSBmaWxlIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKykKPj4+Pgo+Pj4+IGRp
+ZmYgLS1naXQgYS9mcy9mMmZzL3JlY292ZXJ5LmMgYi9mcy9mMmZzL3JlY292ZXJ5LmMKPj4+PiBp
+bmRleCBiNmQxZWM2MjBhOGMuLjYwZGQwY2VlNDgyMCAxMDA2NDQKPj4+PiAtLS0gYS9mcy9mMmZz
+L3JlY292ZXJ5LmMKPj4+PiArKysgYi9mcy9mMmZzL3JlY292ZXJ5LmMKPj4+PiBAQCAtMjQzLDYg
+KzI0Myw5IEBAIHN0YXRpYyBpbnQgZmluZF9mc3luY19kbm9kZXMoc3RydWN0IGYyZnNfc2JfaW5m
+byAqc2JpLCBzdHJ1Y3QgbGlzdF9oZWFkICpoZWFkLAo+Pj4+IMKgwqDCoMKgwqAgc3RydWN0IGN1
+cnNlZ19pbmZvICpjdXJzZWc7Cj4+Pj4gwqDCoMKgwqDCoCBzdHJ1Y3QgcGFnZSAqcGFnZSA9IE5V
+TEw7Cj4+Pj4gwqDCoMKgwqDCoCBibG9ja190IGJsa2FkZHI7Cj4+Pj4gK8KgwqDCoCB1bnNpZ25l
+ZCBpbnQgbG9vcF9jbnQgPSAwOwo+Pj4+ICvCoMKgwqAgdW5zaWduZWQgaW50IGZyZWVfYmxvY2tz
+ID0gc2JpLT51c2VyX2Jsb2NrX2NvdW50IC0KPj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgdmFsaWRfdXNlcl9ibG9ja3Moc2JpKTsKPj4+IFRoZXJlIGV4aXN0cyBh
+bm90aGVyIHdheSB0byBkZXRlY3QgbG9vcCBtb3JlIGZhc3RlciBidXQgb25seSB1c2luZyB0d28g
+dmFyaWFibGVzLgo+Pj4gVGhlIGFsZ29yaXRobSBpcyBkZXNjcmliZWQgYXMgc2ltcGx5ICJCIGdv
+ZXMgZm9yd2FyZCBhIHN0ZXBzIG9ubHkgQSBnb2VzIGZvcndhcmRzIDIgc3RlcHMiLgo+PiAiQiBn
+b2VzIGZvcndhcmQgYSBzdGVwIG9ubHkgd2hlbiBBIGdvZXMgZm9yd2FyZCAyKG9yIGNvbnN0YW50
+IHgsIG1vcmUgdGhhbiAxKSBzdGVwcyIuCj4+Cj4+PiBGb3IgZXhhbXBsZToKPj4+IDEpCj4+PiDC
+oMKgIDEgwqAgMsKgIDPCoCA0wqDCoCA1IMKgIDYgwqAgwqAgNwo+Pj4gwqDCoCB8wqAgwqDCoMKg
+wqDCoMKgwqDCoCDCoCBcwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIC8KPj4+IMKgwqAgfCDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIMKgwqAgXC0tLS0tLS8KPj4+IMKgIEEsIEIKPj4+IDIpCj4+PiDC
+oMKgIDHCoCAywqAgM8KgIDTCoMKgIDUgwqAgNiDCoCDCoCA3Cj4+PiDCoCDCoCB8wqDCoCB8wqDC
+oMKgwqDCoCDCoCBcwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIC8KPj4+IMKgwqAgQsKgwqAgQcKg
+wqDCoMKgIMKgwqAgXC0tLS0tLS8KPj4+IMKgMykKPj4+IMKgwqAgMcKgIDLCoCAzwqAgNMKgwqAg
+NSDCoCA2IMKgIMKgIDcKPj4+IMKgIMKgwqDCoMKgIHwgwqDCoCB8wqDCoMKgwqAgXMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCAvCj4+PiDCoMKgwqDCoMKgIELCoMKgIEHCoMKgIMKgwqAgXC0tLS0t
+LS8KPj4+IMKgIDQpCj4+PiDCoMKgIDHCoCAywqAgM8KgIDTCoMKgIDUgwqAgNiDCoCDCoCA3Cj4+
+PiDCoCDCoMKgwqDCoCB8IMKgwqDCoMKgwqAgfFzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgLwo+
+Pj4gwqDCoMKgwqDCoCBCwqAgwqAgwqAgQSBcLS0tLS0tLwo+Pj4gNSkuLi4uCj4+Pgo+Pgo+Pgo+
+PiBTb3JyeSwgaXQgc2VlbXMgdGhlIGVuY29kZWQgZGlhZ3JhbSBpcyBpbiBhIG1lc3MsIEkgdHJ5
+IGFnYWluLgo+PiAxKQo+PiDCoMKgIDEgLT4gMiAtPiAzIC0+IDQgLT4gNSAtPsKgIDYgLT4gNwo+
+PiDCoMKgIHzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFzCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgLwo+PiDCoMKgIHzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgXC0tLS0tPC0t
+LS0tLwo+PiDCoCBBLCBCCj4+IDIpCj4+IMKgwqAgMSAtPiAyIC0+IDMgLT4gNCAtPiA1IC0+wqAg
+NiAtPiA3Cj4+IMKgwqAgfMKgwqDCoCB8wqDCoMKgwqDCoMKgwqDCoMKgIFzCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgLwo+PiDCoMKgIHzCoMKgwqAgfMKgwqDCoMKgwqDCoMKgwqDCoMKgIFwtLS0t
+LTwtLS0tLS8KPj4gwqDCoCBCwqDCoMKgIEEKPj4gMykKPj4gwqDCoCAxIC0+IDIgLT4gMyAtPiA0
+IC0+IDUgLT7CoCA2IC0+IDcKPj4gwqDCoMKgwqDCoMKgwqAgfMKgwqDCoCB8wqDCoMKgwqAgXMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAvCj4+IMKgwqDCoMKgwqDCoMKgIHzCoMKgwqAgfMKgwqDC
+oMKgwqAgXC0tLS0tPC0tLS0tLwo+PiDCoMKgwqDCoMKgwqDCoCBCwqDCoMKgIEEKPj4gNCkKPj4g
+wqDCoCAxIC0+IDIgLT4gMyAtPiA0IC0+IDUgLT7CoCA2IC0+IDcKPj4gwqDCoMKgwqDCoMKgwqAg
+fMKgwqDCoMKgwqDCoMKgwqAgfFzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgLwo+PiDCoMKgwqDC
+oMKgwqDCoCB8wqDCoMKgwqDCoMKgwqDCoCB8IFwtLS0tLTwtLS0tLS8KPj4gwqDCoMKgwqDCoMKg
+wqAgQsKgwqDCoMKgwqDCoMKgwqAgQQo+PiA1KS4uLi4KPj4gaWYgQiBjYXRjaHMgdXAgQSwgdGhl
+cmUgZXhpc3RzIGEgY3ljbGUuCj4+Cj4+Cj4+IFRoYW5rcywKPj4+IEIgd2lsbCBlcXVhbCBBIG9y
+IGJleW91ZCBBIGlmIGFuZCBvbmx5IGlmIHRoZXJlIGhhcyBhIGN5Y2xlLgo+Pj4gSXQncyBhIG1v
+cmUgZmFzdGVyIGFsZ29yaXRobS4gOkQKPj4+Cj4+PiBUaGFua3MsCj4+Pgo+Pj4+IMKgwqDCoMKg
+wqAgaW50IGVyciA9IDA7Cj4+Pj4gwqAgwqDCoMKgwqDCoCAvKiBnZXQgbm9kZSBwYWdlcyBpbiB0
+aGUgY3VycmVudCBzZWdtZW50ICovCj4+Pj4gQEAgLTI5NSw2ICsyOTgsMTcgQEAgc3RhdGljIGlu
+dCBmaW5kX2ZzeW5jX2Rub2RlcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIHN0cnVjdCBsaXN0
+X2hlYWQgKmhlYWQsCj4+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChJU19JTk9ERShwYWdlKSAm
+JiBpc19kZW50X2Rub2RlKHBhZ2UpKQo+Pj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGVu
+dHJ5LT5sYXN0X2RlbnRyeSA9IGJsa2FkZHI7Cj4+Pj4gwqAgbmV4dDoKPj4+PiArwqDCoMKgwqDC
+oMKgwqAgLyogc2FuaXR5IGNoZWNrIGluIG9yZGVyIHRvIGRldGVjdCBsb29wZWQgbm9kZSBjaGFp
+biAqLwo+Pj4+ICvCoMKgwqDCoMKgwqDCoCBpZiAoKytsb29wX2NudCA+PSBmcmVlX2Jsb2NrcyB8
+fAo+Pj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGJsa2FkZHIgPT0gbmV4dF9ibGthZGRyX29m
+X25vZGUocGFnZSkpIHsKPj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBmMmZzX21zZyhzYmkt
+PnNiLCBLRVJOX05PVElDRSwKPj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICIl
+czogZGV0ZWN0IGxvb3BlZCBub2RlIGNoYWluLCAiCj4+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCAiYmxrYWRkcjoldSwgbmV4dDoldSIsCj4+Pj4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCBfX2Z1bmNfXywgYmxrYWRkciwgbmV4dF9ibGthZGRyX29mX25vZGUocGFn
+ZSkpOwo+Pj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGVyciA9IC1FSU5WQUw7Cj4+Pj4gK8Kg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgYnJlYWs7Cj4+Pj4gK8KgwqDCoMKgwqDCoMKgIH0KPj4+PiAr
+Cj4+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgIC8qIGNoZWNrIG5leHQgc2VnbWVudCAqLwo+Pj4+IMKg
+wqDCoMKgwqDCoMKgwqDCoCBibGthZGRyID0gbmV4dF9ibGthZGRyX29mX25vZGUocGFnZSk7Cj4+
+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgIGYyZnNfcHV0X3BhZ2UocGFnZSwgMSk7Cj4+Pgo+Pgo+IAo+
+IAo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+IENoZWNrIG91dCB0aGUgdmlicmFudCB0ZWNoIGNv
+bW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAo+IGVuZ2FnaW5nIHRlY2ggc2l0ZXMs
+IFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cj4gX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiBMaW51eC1mMmZzLWRldmVsIG1haWxp
+bmcgbGlzdAo+IExpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cj4gaHR0cHM6
+Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAoK
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUgdmlicmFudCB0ZWNoIGNvbW11bml0
+eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRv
+dC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdApfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51
+eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZv
+cmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
