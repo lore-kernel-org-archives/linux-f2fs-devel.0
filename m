@@ -1,24 +1,25 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: f2fs on top ov LV
-Date: Sun, 4 Feb 2018 22:54:23 +0800
-Message-ID: <2d1573a8-f783-2c27-61ab-8de412993b04@kernel.org>
-References: <20180202172947.GA3981@lazy.lzy>
+Subject: Re: [PATCH 1/2] f2fs: enable to gc page whose inode
+ already atomic commit
+Date: Sun, 4 Feb 2018 22:56:37 +0800
+Message-ID: <a094cd40-d042-2a43-4e9a-e34c31e61d28@kernel.org>
+References: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
+Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
  helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <chao@kernel.org>) id 1eiLgx-0000wg-5b
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 04 Feb 2018 14:54:51 +0000
+ (envelope-from <chao@kernel.org>) id 1eiLj9-0000u6-GX
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 04 Feb 2018 14:57:07 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eiLgt-0001GN-7K
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 04 Feb 2018 14:54:51 +0000
-In-Reply-To: <20180202172947.GA3981@lazy.lzy>
+ id 1eiLj7-00034e-Je
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 04 Feb 2018 14:57:07 +0000
+In-Reply-To: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -29,61 +30,77 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Piergiorgio Sartor <piergiorgio.sartor@nexgo.de>, linux-f2fs-devel@lists.sourceforge.net
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
+Cc: shengyong1@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, heyunlei@huawei.com, miaoxie@huawei.com
 
-Hi,
+On 2018/2/3 10:47, Yunlong Song wrote:
+> If inode has already started to atomic commit, then set_page_dirty will
+> not mix the gc pages with the inmem atomic pages, so the page can be
+> gced safely.
 
-On 2018/2/3 1:29, Piergiorgio Sartor wrote:
-> Hi all,
-> 
-> I'm planning to prepare a Linux installation
-> on an USB flash drive.
-> 
-> The idea is to have /boot (with ext, since grub2
-> does not support f2fs yet) and / with f2fs.
-> Both on the USB flash drive while /home will be
-> somewhere else.
-> 
-> Now, I've a backup tool exploiting lvm snapshots
-> and I would like to use it.
-> 
-> This means / will be on top of an LV.
-> 
-> Does it make any sense to have f2fs over lvm?
-> Will still be some benefits from f2fs in this
-> setup?
+Let's avoid Ccing fs mailing list if the patch didn't change vfs common
+codes.
 
-I think it's OK to build f2fs image based on lvm, and IMO, there
-will be no difference when building image on lvm partition or raw
-partition, since f2fs won't be aware of lvm.
+As you know, the problem here is mixed dnode block flushing w/o writebacking
+gced data block, result in making transaction unintegrated.
 
-> 
-> How about snapshots? Could they cause problems?
-> Usually the filesystem mounted from lvm snapshot
-> has consistency issues, which are they usually
-> solved by journal.
-> I guess f2fs should be fine, but I would like to
-> confirm with experts here.
-
-f2fs supports fsfreeze and roll-forward recovery, so I think
-it's fine to use lvm snapshot on f2fs image.
-
-> 
-> Of course, one possibility would be to use f2fs
-> on the raw partition, waiting for snapshot to
-> be implemented.
-> What's the plan about this?
-
-It's in todo list, but it's not critical for us to implement
-this feature as in usual android scenario there is no strong
-demand to use this feature.
+So how about just using dio_rwsem[WRITE] during atomic committing to exclude
+GCing data block of atomic opened file?
 
 Thanks,
 
 > 
-> Thanks a lot for any answers,
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> ---
+>  fs/f2fs/data.c | 5 ++---
+>  fs/f2fs/gc.c   | 6 ++++--
+>  2 files changed, 6 insertions(+), 5 deletions(-)
 > 
-> bye,
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 7435830..edafcb6 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1580,14 +1580,13 @@ bool should_update_outplace(struct inode *inode, struct f2fs_io_info *fio)
+>  		return true;
+>  	if (S_ISDIR(inode->i_mode))
+>  		return true;
+> -	if (f2fs_is_atomic_file(inode))
+> -		return true;
+>  	if (fio) {
+>  		if (is_cold_data(fio->page))
+>  			return true;
+>  		if (IS_ATOMIC_WRITTEN_PAGE(fio->page))
+>  			return true;
+> -	}
+> +	} else if (f2fs_is_atomic_file(inode))
+> +		return true;
+>  	return false;
+>  }
+>  
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index b9d93fd..84ab3ff 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -622,7 +622,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
+>  	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+>  		goto out;
+>  
+> -	if (f2fs_is_atomic_file(inode))
+> +	if (f2fs_is_atomic_file(inode) &&
+> +		!f2fs_is_commit_atomic_write(inode))
+>  		goto out;
+>  
+>  	if (f2fs_is_pinned_file(inode)) {
+> @@ -729,7 +730,8 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+>  	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+>  		goto out;
+>  
+> -	if (f2fs_is_atomic_file(inode))
+> +	if (f2fs_is_atomic_file(inode) &&
+> +		!f2fs_is_commit_atomic_write(inode))
+>  		goto out;
+>  	if (f2fs_is_pinned_file(inode)) {
+>  		if (gc_type == FG_GC)
 > 
 
 ------------------------------------------------------------------------------
