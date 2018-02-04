@@ -1,140 +1,87 @@
-From: Gao Xiang <hsiangkao@aol.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to handle looped node chain during
- recovery
-Date: Sat, 3 Feb 2018 19:36:19 +0800
-Message-ID: <34884138-31e6-566d-5be3-d62f61a3416e@aol.com>
-References: <20180203094439.3913-1-yuchao0@huawei.com>
- <6fe55970-6e30-d144-86d4-68d6fbd80cf3@aol.com>
- <3a4a4906-1f2a-197a-bfe1-f636f9b5243c@aol.com>
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: [GIT PULL] fscrypt updates for 4.16
+Date: Sat, 3 Feb 2018 19:35:32 -0500
+Message-ID: <20180204003532.GA13997@thunk.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <3a4a4906-1f2a-197a-bfe1-f636f9b5243c@aol.com>
-Content-Language: en-US
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org, Yunlei He <heyunlei@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
+Note: there will be a merge conflict; please just take the chunk
+which calls fscrypt_encrypt_symlink() from the fscrypt tree.  This
+will end up dropping the kzalloc() -> f2fs_kzalloc() change, which
+means the fscrypt-specific allocation won't get tested by f2fs's
+kmalloc error injection system; which is fine.
 
-Sorry, I saw the related code entirely, please ignore these replies.
+The ubifs and f2fs changes have been reviewed by their respective
+maintainers and I got their approval to run all of these changes
+through the fscrypt tree.
 
+	      			      	 - Ted
+					 
+The following changes since commit 1291a0d5049dbc06baaaf66a9ff3f53db493b19b:
 
-On 2018/2/3 18:45, Gao Xiang wrote:
->
->
-> On 2018/2/3 18:35, Gao Xiang wrote:
->> Hi Chao and YunLei,
->>
->>
->> On 2018/2/3 17:44, Chao Yu wrote:
->>> There is no checksum in node block now, so bit-transition from hardware
->>> can make node_footer.next_blkaddr being corrupted w/o any detection,
->>> result in node chain becoming looped one.
->>>
->>> For this condition, during recovery, in order to avoid running into 
->>> dead
->>> loop, let's detect it and just skip out.
->>>
->>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>> ---
->>>   fs/f2fs/recovery.c | 14 ++++++++++++++
->>>   1 file changed, 14 insertions(+)
->>>
->>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
->>> index b6d1ec620a8c..60dd0cee4820 100644
->>> --- a/fs/f2fs/recovery.c
->>> +++ b/fs/f2fs/recovery.c
->>> @@ -243,6 +243,9 @@ static int find_fsync_dnodes(struct f2fs_sb_info 
->>> *sbi, struct list_head *head,
->>>       struct curseg_info *curseg;
->>>       struct page *page = NULL;
->>>       block_t blkaddr;
->>> +    unsigned int loop_cnt = 0;
->>> +    unsigned int free_blocks = sbi->user_block_count -
->>> +                    valid_user_blocks(sbi);
->> There exists another way to detect loop more faster but only using 
->> two variables.
->> The algorithm is described as simply "B goes forward a steps only A 
->> goes forwards 2 steps".
-> "B goes forward a step only when A goes forward 2(or constant x, more 
-> than 1) steps".
->
->> For example:
->> 1)
->>    1   2  3  4   5   6     7
->>    |             \             /
->>    |                \------/
->>   A, B
->> 2)
->>    1  2  3  4   5   6     7
->>     |   |        \             /
->>    B   A        \------/
->>  3)
->>    1  2  3  4   5   6     7
->>        |    |     \             /
->>       B   A      \------/
->>   4)
->>    1  2  3  4   5   6     7
->>        |       |\             /
->>       B      A \------/
->> 5)....
->>
->
->
-> Sorry, it seems the encoded diagram is in a mess, I try again.
-> 1)
->    1 -> 2 -> 3 -> 4 -> 5 ->  6 -> 7
->    |               \             /
->    |                \-----<-----/
->   A, B
-> 2)
->    1 -> 2 -> 3 -> 4 -> 5 ->  6 -> 7
->    |    |          \             /
->    |    |           \-----<-----/
->    B    A
-> 3)
->    1 -> 2 -> 3 -> 4 -> 5 ->  6 -> 7
->         |    |     \             /
->         |    |      \-----<-----/
->         B    A
-> 4)
->    1 -> 2 -> 3 -> 4 -> 5 ->  6 -> 7
->         |         |\             /
->         |         | \-----<-----/
->         B         A
-> 5)....
-> if B catchs up A, there exists a cycle.
->
->
-> Thanks,
->> B will equal A or beyoud A if and only if there has a cycle.
->> It's a more faster algorithm. :D
->>
->> Thanks,
->>
->>>       int err = 0;
->>>         /* get node pages in the current segment */
->>> @@ -295,6 +298,17 @@ static int find_fsync_dnodes(struct 
->>> f2fs_sb_info *sbi, struct list_head *head,
->>>           if (IS_INODE(page) && is_dent_dnode(page))
->>>               entry->last_dentry = blkaddr;
->>>   next:
->>> +        /* sanity check in order to detect looped node chain */
->>> +        if (++loop_cnt >= free_blocks ||
->>> +            blkaddr == next_blkaddr_of_node(page)) {
->>> +            f2fs_msg(sbi->sb, KERN_NOTICE,
->>> +                "%s: detect looped node chain, "
->>> +                "blkaddr:%u, next:%u",
->>> +                __func__, blkaddr, next_blkaddr_of_node(page));
->>> +            err = -EINVAL;
->>> +            break;
->>> +        }
->>> +
->>>           /* check next segment */
->>>           blkaddr = next_blkaddr_of_node(page);
->>>           f2fs_put_page(page, 1);
->>
->
+  Linux 4.15-rc4 (2017-12-17 18:59:59 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tytso/fscrypt.git tags/fscrypt_for_linus
+
+for you to fetch changes up to 0b1dfa4cc6c60052b2c30ead316fa84c46d3c43c:
+
+  fscrypt: fix build with pre-4.6 gcc versions (2018-02-01 10:51:18 -0500)
+
+----------------------------------------------------------------
+Refactor support for encrypted symlinks to move common code to fscrypt.
+
+----------------------------------------------------------------
+Eric Biggers (26):
+      fscrypt: move fscrypt_has_encryption_key() to supp/notsupp headers
+      fscrypt: move fscrypt_control_page() to supp/notsupp headers
+      fscrypt: move fscrypt_info_cachep declaration to fscrypt_private.h
+      fscrypt: move fscrypt_ctx declaration to fscrypt_supp.h
+      fscrypt: split fscrypt_dummy_context_enabled() into supp/notsupp versions
+      fscrypt: move fscrypt_operations declaration to fscrypt_supp.h
+      fscrypt: move fscrypt_valid_enc_modes() to fscrypt_private.h
+      fscrypt: move fscrypt_is_dot_dotdot() to fs/crypto/fname.c
+      fscrypt: trim down fscrypt.h includes
+      fscrypt: new helper functions for ->symlink()
+      fscrypt: new helper function - fscrypt_get_symlink()
+      ext4: switch to fscrypt ->symlink() helper functions
+      ext4: switch to fscrypt_get_symlink()
+      f2fs: switch to fscrypt ->symlink() helper functions
+      f2fs: switch to fscrypt_get_symlink()
+      ubifs: free the encrypted symlink target
+      ubifs: switch to fscrypt ->symlink() helper functions
+      ubifs: switch to fscrypt_get_symlink()
+      fscrypt: remove fscrypt_fname_usr_to_disk()
+      fscrypt: move fscrypt_symlink_data to fscrypt_private.h
+      fscrypt: calculate NUL-padding length in one place only
+      fscrypt: define fscrypt_fname_alloc_buffer() to be for presented names
+      fscrypt: fix up fscrypt_fname_encrypted_size() for internal use
+      fscrypt: document symlink length restriction
+      fscrypt: remove 'ci' parameter from fscrypt_put_encryption_info()
+      fscrypt: fix build with pre-4.6 gcc versions
+
+ Documentation/filesystems/fscrypt.rst |  10 ++++-
+ fs/crypto/crypto.c                    |   1 +
+ fs/crypto/fname.c                     | 140 +++++++++++++++++++++++++++----------------------------------
+ fs/crypto/fscrypt_private.h           |  31 ++++++++++++++
+ fs/crypto/hooks.c                     | 158 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/crypto/keyinfo.c                   |  17 ++------
+ fs/ext4/namei.c                       |  58 +++++++-------------------
+ fs/ext4/super.c                       |   4 +-
+ fs/ext4/symlink.c                     |  43 +++----------------
+ fs/f2fs/inode.c                       |   2 +-
+ fs/f2fs/namei.c                       | 132 +++++++++++----------------------------------------------
+ fs/ubifs/dir.c                        |  63 +++++++---------------------
+ fs/ubifs/file.c                       |  36 +---------------
+ fs/ubifs/super.c                      |   4 +-
+ include/linux/fscrypt.h               | 174 +++++++++++++++++++++++++++++-----------------------------------------------
+ include/linux/fscrypt_notsupp.h       |  59 ++++++++++++++++++--------
+ include/linux/fscrypt_supp.h          |  68 +++++++++++++++++++++++++++---
+ 17 files changed, 500 insertions(+), 500 deletions(-)
