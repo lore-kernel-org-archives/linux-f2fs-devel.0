@@ -1,24 +1,25 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: report cp block corrupted
-Date: Mon, 5 Feb 2018 15:41:21 +0800
-Message-ID: <1334a3ac-9775-dd12-1019-0f8c7b3d7cef@huawei.com>
-References: <20180205101816.179878-1-guoweichao@huawei.com>
+Subject: Re: [PATCH] f2fs: no need to flush NAT bits if no enough
+ space
+Date: Mon, 5 Feb 2018 15:42:17 +0800
+Message-ID: <ba8ff04c-fd94-2ce3-d69b-2731df9fa7b3@huawei.com>
+References: <20180205143050.190788-1-guoweichao@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
  helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1eibPK-0004Kp-Up
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 05 Feb 2018 07:41:42 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1eibQN-0004kS-AT
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 05 Feb 2018 07:42:47 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eibPI-00022D-MM
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 05 Feb 2018 07:41:42 +0000
-In-Reply-To: <20180205101816.179878-1-guoweichao@huawei.com>
+ id 1eibQK-0000pF-RX
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 05 Feb 2018 07:42:47 +0000
+In-Reply-To: <20180205143050.190788-1-guoweichao@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -32,29 +33,39 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Weichao Guo <guoweichao@huawei.com>, jaegeuk@kernel.org
 Cc: heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/2/5 18:18, Weichao Guo wrote:
-> There is a potential inconsistent metadata case due to a cp block
-> crc invalid in the latest checkpoint caused by hardware issues:
-> 1) write nodes into segment x;
-> 2) write checkpoint A;
-> 3) remove nodes in segment x;
-> 4) write checkpoint B;
-> 5) issue discard or write datas into segment x;
-> 6) sudden power-cut;
-> 7) use checkpoint A after reboot as checkpoint B is invalid
+On 2018/2/5 22:30, Weichao Guo wrote:
+> NAT bits are saved at spare space in CP pack. Flushed NAT bits
+> may be overwritten by the CP pack if there is no enough space
+> for NAT bits. And NAT bits will be obsolesced at next mount time
+> if crc|cp_ver not matched. So just skip to flush NAT bits in such
+> needless cases.
 > 
-> This inconsistency may be found after several reboots long time later
-> and the kernel log about cp block crc invalid has disappeared. This
-> makes the root cause of the inconsistency is hard to locate. Let us
-> separate such other part issues from f2fs logical bugs in debug version.
+> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+> ---
+>  fs/f2fs/checkpoint.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 0eaafb8..bdc03c9 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1248,7 +1248,9 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  	start_blk = __start_cp_next_addr(sbi);
+>  
+>  	/* write nat bits */
+> -	if (enabled_nat_bits(sbi, cpc)) {
+> +	if (enabled_nat_bits(sbi, cpc) &&
+> +			le32_to_cpu(ckpt->cp_pack_total_block_count) <=
+> +			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks) {
 
-Need a Signed-off here?
+Have checked this condition in update_ckpt_flags, right?
 
-Anyway,
+thanks,
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
+>  		__u64 cp_ver = cur_cp_version(ckpt);
+>  		block_t blk;
+>  
+> 
 
 
 ------------------------------------------------------------------------------
