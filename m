@@ -1,26 +1,22 @@
-From: guoweichao <guoweichao@huawei.com>
-Subject: Re: [PATCH] f2fs: no need to flush NAT bits if no enough
- space
-Date: Mon, 5 Feb 2018 15:49:00 +0800
-Message-ID: <824dd408-68b0-0a53-75b2-cd36c4412709@huawei.com>
-References: <20180205143050.190788-1-guoweichao@huawei.com>
- <ba8ff04c-fd94-2ce3-d69b-2731df9fa7b3@huawei.com>
+From: Weichao Guo <guoweichao@huawei.com>
+Subject: [PATCH v3] f2fs: report cp block corrupted
+Date: Tue, 6 Feb 2018 00:00:32 +0800
+Message-ID: <20180205160032.146034-1-guoweichao@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
  by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <guoweichao@huawei.com>) id 1eibWz-0004sy-Qi
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 05 Feb 2018 07:49:37 +0000
+ (envelope-from <guoweichao@huawei.com>) id 1eibao-00050W-KC
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 05 Feb 2018 07:53:34 +0000
 Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eibWx-00011K-KT
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 05 Feb 2018 07:49:37 +0000
-In-Reply-To: <ba8ff04c-fd94-2ce3-d69b-2731df9fa7b3@huawei.com>
+ id 1eiban-0003Xh-68
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 05 Feb 2018 07:53:34 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,52 +26,55 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org
+To: jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
+There is a potential inconsistent metadata case due to a cp block
+crc invalid in the latest checkpoint caused by hardware issues:
+1) write nodes into segment x;
+2) write checkpoint A;
+3) remove nodes in segment x;
+4) write checkpoint B;
+5) issue discard or write datas into segment x;
+6) sudden power-cut;
+7) use checkpoint A after reboot as checkpoint B is invalid
 
+This inconsistency may be found after several reboots long time later
+and the kernel log about cp block crc invalid has disappeared. This
+makes the root cause of the inconsistency is hard to locate. Let us
+separate such other part issues from f2fs logical bugs in debug version.
 
-On 2018/2/5 15:42, Chao Yu wrote:
-> On 2018/2/5 22:30, Weichao Guo wrote:
->> NAT bits are saved at spare space in CP pack. Flushed NAT bits
->> may be overwritten by the CP pack if there is no enough space
->> for NAT bits. And NAT bits will be obsolesced at next mount time
->> if crc|cp_ver not matched. So just skip to flush NAT bits in such
->> needless cases.
->>
->> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
->> ---
->>  fs/f2fs/checkpoint.c | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->> index 0eaafb8..bdc03c9 100644
->> --- a/fs/f2fs/checkpoint.c
->> +++ b/fs/f2fs/checkpoint.c
->> @@ -1248,7 +1248,9 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->>  	start_blk = __start_cp_next_addr(sbi);
->>  
->>  	/* write nat bits */
->> -	if (enabled_nat_bits(sbi, cpc)) {
->> +	if (enabled_nat_bits(sbi, cpc) &&
->> +			le32_to_cpu(ckpt->cp_pack_total_block_count) <=
->> +			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks) {
-> 
-> Have checked this condition in update_ckpt_flags, right?
-Oh,yes. It's my mistake.
+Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+---
+ fs/f2fs/checkpoint.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Thanks,
-> 
-> thanks,
-> 
->>  		__u64 cp_ver = cur_cp_version(ckpt);
->>  		block_t blk;
->>  
->>
-> 
-> 
-> .
-> 
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 8b0945b..16ba96a 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -737,13 +737,17 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
+ 	crc_offset = le32_to_cpu((*cp_block)->checksum_offset);
+ 	if (crc_offset > (blk_size - sizeof(__le32))) {
+ 		f2fs_msg(sbi->sb, KERN_WARNING,
+-			"invalid crc_offset: %zu", crc_offset);
++			"invalid crc_offset: %zu at blk_addr: 0x%x",
++				crc_offset, cp_addr);
++		f2fs_bug_on(sbi, 1);
+ 		return -EINVAL;
+ 	}
+ 
+ 	crc = cur_cp_crc(*cp_block);
+ 	if (!f2fs_crc_valid(sbi, crc, *cp_block, crc_offset)) {
+-		f2fs_msg(sbi->sb, KERN_WARNING, "invalid crc value");
++		f2fs_msg(sbi->sb, KERN_WARNING,
++			"invalid crc value at blk_addr: 0x%x", cp_addr);
++		f2fs_bug_on(sbi, 1);
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.10.1
 
 
 ------------------------------------------------------------------------------
