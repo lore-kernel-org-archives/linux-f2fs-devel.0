@@ -1,72 +1,135 @@
-From: guoweichao <guoweichao@huawei.com>
-Subject: Re: [PATCH] f2fs: no need to flush NAT bits if no enough
- space
-Date: Mon, 5 Feb 2018 14:29:02 +0800
-Message-ID: <052906a5-7199-a98c-6348-7f145c99d3b2@huawei.com>
-References: <20180205143050.190788-1-guoweichao@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 1/2] f2fs: enable to gc page whose inode already atomic
+ commit
+Date: Mon, 5 Feb 2018 14:29:59 +0800
+Message-ID: <312d70f3-b1ae-9ced-44cb-fde83de362ff@huawei.com>
+References: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
+ <a094cd40-d042-2a43-4e9a-e34c31e61d28@kernel.org>
+ <f4e7b403-4945-a7f9-6bdc-214dc61c9160@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
- helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <guoweichao@huawei.com>) id 1eiaHm-0003B2-H3
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 05 Feb 2018 06:29:50 +0000
-Received: from [45.249.212.32] (helo=huawei.com)
- by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eiaHk-0000Lo-4U
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 05 Feb 2018 06:29:50 +0000
-In-Reply-To: <20180205143050.190788-1-guoweichao@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <f4e7b403-4945-a7f9-6bdc-214dc61c9160@huawei.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yunlong Song <yunlong.song@huawei.com>, Chao Yu <chao@kernel.org>, jaegeuk@kernel.org, yunlong.song@icloud.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
+On 2018/2/5 10:53, Yunlong Song wrote:
+> Is it necessary to add a lock here? What's the problem of this patch (no 
+> lock at all)? Anyway, the problem is expected to be fixed asap, since 
+> attackers can easily write an app with only atomic start and no atomic 
+> commit, which will cause f2fs run into loop gc if the disk layout is 
+> much fragmented, since f2fs_gc will select the same target victim all 
+> the time (e.g. one block of target victim belongs to the opened atomic 
+> file, and it will not be moved and do_garbage_collect will finally 
+> return 0, and that victim is selected again next time) and goto gc_more 
+> time and time again, which will block all the fs ops (all the fs ops 
+> will hang up in f2fs_balance_fs).
 
-On 2018/2/5 22:30, Weichao Guo wrote:
-> NAT bits are saved at spare space in CP pack. Flushed NAT bits
-> may be overwritten by the CP pack if there is no enough space
-> for NAT bits. And NAT bits will be obsolesced at next mount time
-Sorry, there is a typo here. 'obsolesced' should be obsolete.
+Hmm.. w/ original commit log and implementation, I supposed that the patch
+intended to fix to make atomic write be isolated from other IOs like GC
+triggered writes...
+
+Alright, we have discuss the problem before in below link:
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1571951.html
+
+I meant, for example:
+
+f2fs_ioc_start_atomic_write()
+inode->atomic_open_time = get_mtime();
+
+f2fs_ioc_commit_atomic_write()
+inode->atomic_open_time = 0;
+
+f2fs_balance_fs_bg()
+for_each_atomic_open_file()
+	if (inode->atomic_open_time &&
+			inode->atomic_open_time > threshold) {
+		drop_inmem_pages();
+		f2fs_msg();
+	}
+
+threshold = 30s
+
+Any thoughts?
 
 Thanks,
 
-> if crc|cp_ver not matched. So just skip to flush NAT bits in such
-> needless cases.
 > 
-> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
-> ---
->  fs/f2fs/checkpoint.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> On 2018/2/4 22:56, Chao Yu wrote:
+>> On 2018/2/3 10:47, Yunlong Song wrote:
+>>> If inode has already started to atomic commit, then set_page_dirty will
+>>> not mix the gc pages with the inmem atomic pages, so the page can be
+>>> gced safely.
+>>
+>> Let's avoid Ccing fs mailing list if the patch didn't change vfs common
+>> codes.
+>>
+>> As you know, the problem here is mixed dnode block flushing w/o writebacking
+>> gced data block, result in making transaction unintegrated.
+>>
+>> So how about just using dio_rwsem[WRITE] during atomic committing to exclude
+>> GCing data block of atomic opened file?
+>>
+>> Thanks,
+>>
+>>>
+>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>>> ---
+>>>   fs/f2fs/data.c | 5 ++---
+>>>   fs/f2fs/gc.c   | 6 ++++--
+>>>   2 files changed, 6 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>> index 7435830..edafcb6 100644
+>>> --- a/fs/f2fs/data.c
+>>> +++ b/fs/f2fs/data.c
+>>> @@ -1580,14 +1580,13 @@ bool should_update_outplace(struct inode *inode, struct f2fs_io_info *fio)
+>>>   		return true;
+>>>   	if (S_ISDIR(inode->i_mode))
+>>>   		return true;
+>>> -	if (f2fs_is_atomic_file(inode))
+>>> -		return true;
+>>>   	if (fio) {
+>>>   		if (is_cold_data(fio->page))
+>>>   			return true;
+>>>   		if (IS_ATOMIC_WRITTEN_PAGE(fio->page))
+>>>   			return true;
+>>> -	}
+>>> +	} else if (f2fs_is_atomic_file(inode))
+>>> +		return true;
+>>>   	return false;
+>>>   }
+>>>   
+>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>> index b9d93fd..84ab3ff 100644
+>>> --- a/fs/f2fs/gc.c
+>>> +++ b/fs/f2fs/gc.c
+>>> @@ -622,7 +622,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
+>>>   	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+>>>   		goto out;
+>>>   
+>>> -	if (f2fs_is_atomic_file(inode))
+>>> +	if (f2fs_is_atomic_file(inode) &&
+>>> +		!f2fs_is_commit_atomic_write(inode))
+>>>   		goto out;
+>>>   
+>>>   	if (f2fs_is_pinned_file(inode)) {
+>>> @@ -729,7 +730,8 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+>>>   	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+>>>   		goto out;
+>>>   
+>>> -	if (f2fs_is_atomic_file(inode))
+>>> +	if (f2fs_is_atomic_file(inode) &&
+>>> +		!f2fs_is_commit_atomic_write(inode))
+>>>   		goto out;
+>>>   	if (f2fs_is_pinned_file(inode)) {
+>>>   		if (gc_type == FG_GC)
+>>>
+>>
+>> .
+>>
 > 
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index 0eaafb8..bdc03c9 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -1248,7 +1248,9 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->  	start_blk = __start_cp_next_addr(sbi);
->  
->  	/* write nat bits */
-> -	if (enabled_nat_bits(sbi, cpc)) {
-> +	if (enabled_nat_bits(sbi, cpc) &&
-> +			le32_to_cpu(ckpt->cp_pack_total_block_count) <=
-> +			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks) {
->  		__u64 cp_ver = cur_cp_version(ckpt);
->  		block_t blk;
->  
-> 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
