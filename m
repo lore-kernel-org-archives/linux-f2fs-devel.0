@@ -1,82 +1,169 @@
-From: Junling Zheng <zhengjunling@huawei.com>
-Subject: [PATCH] dump.f2fs: correct the seg type in ssa_dump
-Date: Tue, 6 Feb 2018 16:47:14 +0800
-Message-ID: <20180206084714.136306-1-zhengjunling@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
- helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <zhengjunling@huawei.com>) id 1eiyuh-0008N1-N4
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Feb 2018 08:47:39 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eiyug-0006kt-9V
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Feb 2018 08:47:39 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+From: Jin Qian <jinqian@android.com>
+Subject: [PATCHv2 1/1] ext4/f2fs: don't put symlink in pagecache into highmem
+Date: Tue,  6 Feb 2018 15:53:53 -0800
+Message-ID: <20180206235354.79591-1-jinqian@android.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>, Chao Yu <chao2.yu@samsung.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@poochiereds.net>, "J. Bruce Fields" <bfields@fieldses.org>, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Cc: Jin Qian <jinqian@google.com>, linux-stable <stable@vger.kernel.org>, Jin Qian <jinqian@android.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Fix the mixed using of "ret" in ssa_dump.
+From: Jin Qian <jinqian@google.com>
 
-Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+partial backport from 21fc61c73c3903c4c312d0802da01ec2b323d174 upstream
+to v4.4 to prevent virt_to_page on highmem.
+
+ext4_encrypted_follow_link uses kmap() for cpage
+  caddr = kmap(cpage);
+
+_ext4_fname_disk_to_usr calls virt_to_page on the kmapped address.
+  _ext4_fname_disk_to_usr()
+    ext4_fname_decrypt()
+      sg_init_one()
+        sg_init_one(&src_sg, iname->name, iname->len);
+          sg_set_page(sg, virt_to_page(buf), buflen, offset_in_page(buf));
+
+Cc: linux-stable <stable@vger.kernel.org> # 4.4.y
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Jin Qian <jinqian@google.com>
+Signed-off-by: Jin Qian <jinqian@android.com>
 ---
- fsck/dump.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ fs/ext4/inode.c    |  1 +
+ fs/ext4/namei.c    |  1 +
+ fs/ext4/symlink.c  | 10 +++-------
+ fs/f2fs/inode.c    |  1 +
+ fs/f2fs/namei.c    |  5 ++---
+ fs/inode.c         |  6 ++++++
+ include/linux/fs.h |  1 +
+ 7 files changed, 15 insertions(+), 10 deletions(-)
 
-diff --git a/fsck/dump.c b/fsck/dump.c
-index 8772a62..23e4f47 100644
---- a/fsck/dump.c
-+++ b/fsck/dump.c
-@@ -195,7 +195,7 @@ void ssa_dump(struct f2fs_sb_info *sbi, int start_ssa, int end_ssa)
- {
- 	struct f2fs_summary_block *sum_blk;
- 	char buf[BUF_SZ];
--	int segno, i, ret;
-+	int segno, type, i, ret;
- 	int fd;
- 
- 	fd = open("dump_ssa", O_CREAT|O_WRONLY|O_TRUNC, 0666);
-@@ -208,10 +208,10 @@ void ssa_dump(struct f2fs_sb_info *sbi, int start_ssa, int end_ssa)
- 	ASSERT(ret >= 0);
- 
- 	for (segno = start_ssa; segno < end_ssa; segno++) {
--		sum_blk = get_sum_block(sbi, segno, &ret);
-+		sum_blk = get_sum_block(sbi, segno, &type);
- 
- 		memset(buf, 0, BUF_SZ);
--		switch (ret) {
-+		switch (type) {
- 		case SEG_TYPE_CUR_NODE:
- 			snprintf(buf, BUF_SZ, "\n\nsegno: %x, Current Node\n", segno);
- 			break;
-@@ -240,8 +240,8 @@ void ssa_dump(struct f2fs_sb_info *sbi, int start_ssa, int end_ssa)
- 			ret = write(fd, buf, strlen(buf));
- 			ASSERT(ret >= 0);
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 4df1cb19a243..f0cabc8c96cb 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -4417,6 +4417,7 @@ struct inode *ext4_iget(struct super_block *sb, unsigned long ino)
+ 			inode->i_op = &ext4_symlink_inode_operations;
+ 			ext4_set_aops(inode);
  		}
--		if (ret == SEG_TYPE_NODE || ret == SEG_TYPE_DATA ||
--					ret == SEG_TYPE_MAX)
-+		if (type == SEG_TYPE_NODE || type == SEG_TYPE_DATA ||
-+					type == SEG_TYPE_MAX)
- 			free(sum_blk);
++		inode_nohighmem(inode);
+ 	} else if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode) ||
+ 	      S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode)) {
+ 		inode->i_op = &ext4_special_inode_operations;
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 4c36dca486cc..32960b3ecd4f 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -3151,6 +3151,7 @@ static int ext4_symlink(struct inode *dir,
+ 	if ((disk_link.len > EXT4_N_BLOCKS * 4)) {
+ 		if (!encryption_required)
+ 			inode->i_op = &ext4_symlink_inode_operations;
++		inode_nohighmem(inode);
+ 		ext4_set_aops(inode);
+ 		/*
+ 		 * We cannot call page_symlink() with transaction started
+diff --git a/fs/ext4/symlink.c b/fs/ext4/symlink.c
+index e8e7af62ac95..287c3980fa0b 100644
+--- a/fs/ext4/symlink.c
++++ b/fs/ext4/symlink.c
+@@ -45,7 +45,7 @@ static const char *ext4_encrypted_follow_link(struct dentry *dentry, void **cook
+ 		cpage = read_mapping_page(inode->i_mapping, 0, NULL);
+ 		if (IS_ERR(cpage))
+ 			return ERR_CAST(cpage);
+-		caddr = kmap(cpage);
++		caddr = page_address(cpage);
+ 		caddr[size] = 0;
  	}
- 	close(fd);
+ 
+@@ -75,16 +75,12 @@ static const char *ext4_encrypted_follow_link(struct dentry *dentry, void **cook
+ 	/* Null-terminate the name */
+ 	if (res <= plen)
+ 		paddr[res] = '\0';
+-	if (cpage) {
+-		kunmap(cpage);
++	if (cpage)
+ 		page_cache_release(cpage);
+-	}
+ 	return *cookie = paddr;
+ errout:
+-	if (cpage) {
+-		kunmap(cpage);
++	if (cpage)
+ 		page_cache_release(cpage);
+-	}
+ 	kfree(paddr);
+ 	return ERR_PTR(res);
+ }
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 97e20decacb4..5528801a5baf 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -202,6 +202,7 @@ make_now:
+ 			inode->i_op = &f2fs_encrypted_symlink_inode_operations;
+ 		else
+ 			inode->i_op = &f2fs_symlink_inode_operations;
++		inode_nohighmem(inode);
+ 		inode->i_mapping->a_ops = &f2fs_dblock_aops;
+ 	} else if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode) ||
+ 			S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode)) {
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 2c32110f9fc0..484df6850747 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -351,6 +351,7 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+ 		inode->i_op = &f2fs_encrypted_symlink_inode_operations;
+ 	else
+ 		inode->i_op = &f2fs_symlink_inode_operations;
++	inode_nohighmem(inode);
+ 	inode->i_mapping->a_ops = &f2fs_dblock_aops;
+ 
+ 	f2fs_lock_op(sbi);
+@@ -942,7 +943,7 @@ static const char *f2fs_encrypted_follow_link(struct dentry *dentry, void **cook
+ 	cpage = read_mapping_page(inode->i_mapping, 0, NULL);
+ 	if (IS_ERR(cpage))
+ 		return ERR_CAST(cpage);
+-	caddr = kmap(cpage);
++	caddr = page_address(cpage);
+ 	caddr[size] = 0;
+ 
+ 	/* Symlink is encrypted */
+@@ -982,13 +983,11 @@ static const char *f2fs_encrypted_follow_link(struct dentry *dentry, void **cook
+ 	/* Null-terminate the name */
+ 	paddr[res] = '\0';
+ 
+-	kunmap(cpage);
+ 	page_cache_release(cpage);
+ 	return *cookie = paddr;
+ errout:
+ 	kfree(cstr.name);
+ 	f2fs_fname_crypto_free_buffer(&pstr);
+-	kunmap(cpage);
+ 	page_cache_release(cpage);
+ 	return ERR_PTR(res);
+ }
+diff --git a/fs/inode.c b/fs/inode.c
+index b0edef500590..b95615f3fc50 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2028,3 +2028,9 @@ void inode_set_flags(struct inode *inode, unsigned int flags,
+ 				  new_flags) != old_flags));
+ }
+ EXPORT_SYMBOL(inode_set_flags);
++
++void inode_nohighmem(struct inode *inode)
++{
++	mapping_set_gfp_mask(inode->i_mapping, GFP_USER);
++}
++EXPORT_SYMBOL(inode_nohighmem);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c8decb7075d6..f746a59fcc88 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3066,5 +3066,6 @@ static inline bool dir_relax(struct inode *inode)
+ }
+ 
+ extern bool path_noexec(const struct path *path);
++extern void inode_nohighmem(struct inode *inode);
+ 
+ #endif /* _LINUX_FS_H */
 -- 
-2.15.1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+2.16.0.rc1.238.g530d649a79-goog
