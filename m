@@ -1,24 +1,22 @@
 From: Sheng Yong <shengyong1@huawei.com>
-Subject: [RFC PATCH 2/5] f2fs-tools: init f2fs_configuration as 0
-Date: Tue, 6 Feb 2018 12:31:22 +0800
-Message-ID: <20180206043125.134191-3-shengyong1@huawei.com>
-References: <20180206043125.134191-1-shengyong1@huawei.com>
+Subject: [RFC PATCH 0/5] f2fs-tools: introduce lost+found feature
+Date: Tue, 6 Feb 2018 12:31:20 +0800
+Message-ID: <20180206043125.134191-1-shengyong1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <shengyong1@huawei.com>) id 1eiuvE-0006iv-2m
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Feb 2018 04:31:56 +0000
+ (envelope-from <shengyong1@huawei.com>) id 1eiuv8-0003MY-TQ
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Feb 2018 04:31:50 +0000
 Received: from [45.249.212.32] (helo=huawei.com)
- by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eiuvC-00007E-Ry
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Feb 2018 04:31:56 +0000
-In-Reply-To: <20180206043125.134191-1-shengyong1@huawei.com>
+ id 1eiuv7-0005JP-R8
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Feb 2018 04:31:50 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,66 +29,107 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: heyunlei@huawei.com, miaoxie@huawei.com, shengyong1@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
----
- lib/libf2fs.c | 18 ++----------------
- 1 file changed, 2 insertions(+), 16 deletions(-)
-
-diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index e8b1842..0c684d5 100644
---- a/lib/libf2fs.c
-+++ b/lib/libf2fs.c
-@@ -586,24 +586,17 @@ void f2fs_init_configuration(void)
- {
- 	int i;
- 
-+	memset(&c, 0, sizeof(struct f2fs_configuration));
- 	c.ndevs = 1;
--	c.total_sectors = 0;
--	c.sector_size = 0;
- 	c.sectors_per_blk = DEFAULT_SECTORS_PER_BLOCK;
- 	c.blks_per_seg = DEFAULT_BLOCKS_PER_SEGMENT;
- 	c.rootdev_name = get_rootdev();
- 	c.wanted_total_sectors = -1;
--	c.zoned_mode = 0;
--	c.zoned_model = 0;
--	c.zone_blocks = 0;
--#ifdef WITH_ANDROID
--	c.preserve_limits = 0;
--#else
-+#ifndef WITH_ANDROID
- 	c.preserve_limits = 1;
- #endif
- 
- 	for (i = 0; i < MAX_DEVICES; i++) {
--		memset(&c.devices[i], 0, sizeof(struct device_info));
- 		c.devices[i].fd = -1;
- 		c.devices[i].sector_size = DEFAULT_SECTOR_SIZE;
- 		c.devices[i].end_blkaddr = -1;
-@@ -611,19 +604,12 @@ void f2fs_init_configuration(void)
- 	}
- 
- 	/* calculated by overprovision ratio */
--	c.reserved_segments = 0;
--	c.overprovision = 0;
- 	c.segs_per_sec = 1;
- 	c.secs_per_zone = 1;
- 	c.segs_per_zone = 1;
--	c.heap = 0;
- 	c.vol_label = "";
- 	c.trim = 1;
--	c.trimmed = 0;
--	c.ro = 0;
- 	c.kd = -1;
--	c.dry_run = 0;
--	c.large_nat_bitmap = 0;
- 	c.fixed_time = -1;
- }
- 
--- 
-2.11.0
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+Q29tbWl0IDM5MGZlNTg3YjEgKCJmc2NrLmYyZnM6IHN1cHBvcnQgcmVzdG9yZSBsb3N0IGZpbGVz
+IGludG8KLi9sb3N0X2ZvdW5kLyIpIHJlc3RvcmVzIHVucmVhY2hhYmxlIGZpbGVzLCB3aGljaCBo
+YXZlIG5vIHBhcmVudCBkaXJlY3RvcnkKb3IgdGhlaXIgcGFyZW50IGRpcmVjdG9yaWVzIGFyZSBy
+ZW1vdmVkIGJ5IGZzY2ssIHRvIC4vbG9zdF9mb3VuZCBkaXJlY3RvcnkuCgpIb3dldmVyLCBpdCBo
+YXMgc2V2ZXJhbCBsaW1pdGF0aW9uczoKICAxLiAuL2xvc3RfZm91bmQgZGlyIGRvZXMgbm90IGxv
+Y2F0ZSBpbnNpZGUgZjJmcywgdGh1cyBpdCBtYXkgbmVlZHMKICAgICBhbm90aGVyIHBhcnRpdGlv
+biB0byBzYXZlIC4vbG9zdF9mb3VuZC4KICAyLiBlbmNyeXB0ZWQgZmlsZXMgYXJlIG5vdCBzdXBw
+b3J0ZWQgdG8gYmUgcmVzdG9yZWQuCiAgMy4gc29tZSB4YXR0cnMgbWF5IGJlIGxvc3QsIGl0IGRl
+cGVuZHMgb24gd2hldGhlciBkdW1wX25vZGUoKSBlbmFibGVzCiAgICAgZHVtcGluZyBzdWNoIHhh
+dHRycy4KICA0LiBub3Qgc3VwcG9ydCByZXN0b3JpbmcgZmlsZXMgb24gQW5kcm9pZCBkZXZpY2Vz
+ICh0aGUgc2FtZSByZWFzb24gYXMKICAgICAjMSkuCgpJbiBvcmRlciB0byBhZGRyZXNzIHRoZSBh
+Ym92ZSBsaW1pdGF0aW9ucywgdGhlIGxvc3QrZm91bmQgZmVhdHVyZSBpcwppbnRyb2R1Y2VkLiBU
+aGlzIGlzIGFuIGV4dDQtc3R5bGUgbG9zdCtmb3VuZC4gSXQgdHJpZXMgdG8gcmVzdG9yZQp1bnJl
+YWNoYWJsZSBmaWxlcyBpbnRvIC9sb3N0K2ZvdW5kIGRpcmVjdG9yeSBpbnNpZGUgZjJmcy4KCklm
+IGxvc3QrZm91bmQgZmVhdHVyZSBpcyBzd2l0Y2hlZCBvbiB3aGVuIG1rZnMsIC9sb3N0K2ZvdW5k
+IGRpcmVjdG9yeSBpcwpjcmVhdGVkIGJ5IG1rZnMuIEl0IGNhbiBhbHNvIGJlIGNyZWF0ZWQgYnkg
+bWtkaXIgbWFudWFsbHkuIEl0IHNob3VsZCBiZQpsb2NhdGVkIHJpZ2h0IHVuZGVyIHJvb3QgZGly
+ZWN0b3J5LgoKSWYgZnNjayBkZXRlY3RzIHVucmVhY2hhYmxlIG5pZHMsIGl0IHNjYW5zIGFsbCB0
+aGVzZSBuaWRzLCBhbmQgc2tpcHMgbm9uLQppbm9kZSBvciBkaXJlY3RvcnkgaW5vZGUgbm9kZXMu
+IEZvciB0aGUgbGVmdCBuaWRzLCB0aGV5IGFyZSBhbGwgZmlsZSBpbm9kZXMuCkZzY2sgdGhlbiBj
+aGVja3MgdGhlc2UgaW5vZGVzIGFuZCB1cGRhdGUgY29ycmVzcG9uZGluZyBjb3VudGVycyBhbmQg
+Yml0bWFwcy4KCkZyb20gbm93IG9uLCB0aGUgZmlsZXN5c3RlbSBpcyBpbiBhICJjb25zaXN0ZW50
+IiBzdGF0ZSwgZnNjayBjYW4gYWxsb2NhdGUKYmxvY2tzIHNhZmVseSBhbmQgc3RhcnQgcmVjb25u
+ZWN0aW5nIGZpbGVzIHRvIGxvc3QrZm91bmQuIFRoZSByZWNvbm5lY3Rpb24KYWRkcyBuZXcgZGVu
+dHJ5IGluIGxvc3QrZm91bmQgYW5kIHVwZGF0ZSBtZXRhZGF0YSAoaV9uYW1lLCBpX3Bpbm8pIG9m
+IGZpbGUKaW5vZGUuIElmIHJlY29ubmVjdGlvbiBmYWlscywgZnNjayB3aWxsIGNsZWFyIHRoZSBj
+b3VudGVycyBhbmQgYml0bWFwcy4KRmlsZXMgcmVjb25uZWN0ZWQgdG8gbG9zdCtmb3VuZCB3aWxs
+IGJlIHJlbmFtZWQgYWZ0ZXIgaXRzIGlubyBudW1iZXIuCgpIb3dldmVyLCBiZWNhdXNlIG9mIGxv
+c3QrZm91bmQgZGlyZWN0b3J5LCBmMmZzIHNob3VsZCBhdm9pZCB0byBlbmNyeXB0aW5nCnJvb3Qg
+ZGlyZWN0b3J5LiBTbyBmMmZzIHNob3VsZCBhbHNvIGNoZWNrIGlmIGxvc3QrZm91bmQgZmVhdHVy
+ZSBpcyBlbmFibGVkCm9yIG5vdC4KCkkgY3JlYXRlIGEgdGVzdGNhc2Ugd2hpY2ggaW5qZWN0cyBm
+YXVsdHMgdG8gZ2VuZXJhdGUgdW5yZWFjaGFibGUgbmlkcy4KCiQgbWtmcy5mMmZzIC1PIGxvc3Qr
+Zm91bmQgLU8gZW5jcnlwdCB0ZXN0LmltZwokIHRyZWUgL2RhdGEKL2RhdGEK4pSc4pSA4pSAIGRp
+cgrilILCoMKgIOKUnOKUgOKUgCBmb28K4pSCwqDCoCDilJTilIDilIAgc3ViZGlyCuKUgsKgwqAg
+ICAgIOKUlOKUgOKUgCBiYXIK4pSc4pSA4pSAIGVuY3J5cHQtZGlyCuKUgsKgwqAg4pSc4pSA4pSA
+IGZvbwrilILCoMKgIOKUlOKUgOKUgCBzdWJkaXIK4pSCwqDCoCAgICAg4pSU4pSA4pSAIGJhcgri
+lJTilIDilIAgbG9zdCtmb3VuZAoKSW5qZWN0IG5hdF9lbnRyeS0+YmxrX2FkZHIgb2YgZGlyL2Vu
+Y3J5cHQtZGlyIHRvIDAuCgokIGZzY2suZjJmcyAtZiB0ZXN0LmltZwpJbmZvOiBGb3JjZSB0byBm
+aXggY29ycnVwdGlvbgpJbmZvOiBTZWdtZW50cyBwZXIgc2VjdGlvbiA9IDEKSW5mbzogU2VjdGlv
+bnMgcGVyIHpvbmUgPSAxCkluZm86IHNlY3RvciBzaXplID0gNTEyCkluZm86IHRvdGFsIHNlY3Rv
+cnMgPSAyMDQ4MDAgKDEwMCBNQikKSW5mbzogTUtGUyB2ZXJzaW9uCiAgIkxpbnV4IHZlcnNpb24g
+NC4xMC4wLTQyLWdlbmVyaWMgKGJ1aWxkZEBsZ3cwMS1hbWQ2NC0wMTIpIChnY2MgdmVyc2lvbiA2
+LjMuMCAyMDE3MDQwNiAoVWJ1bnR1IDYuMy4wLTEydWJ1bnR1MikgKSAjNDYtVWJ1bnR1IFNNUCBN
+b24gRGVjIDQgMTQ6Mzg6MDEgVVRDIDIwMTciCkluZm86IEZTQ0sgdmVyc2lvbgogIGZyb20gIkxp
+bnV4IHZlcnNpb24gNC4xMC4wLTQyLWdlbmVyaWMgKGJ1aWxkZEBsZ3cwMS1hbWQ2NC0wMTIpIChn
+Y2MgdmVyc2lvbiA2LjMuMCAyMDE3MDQwNiAoVWJ1bnR1IDYuMy4wLTEydWJ1bnR1MikgKSAjNDYt
+VWJ1bnR1IFNNUCBNb24gRGVjIDQgMTQ6Mzg6MDEgVVRDIDIwMTciCiAgICB0byAiTGludXggdmVy
+c2lvbiA0LjEwLjAtNDItZ2VuZXJpYyAoYnVpbGRkQGxndzAxLWFtZDY0LTAxMikgKGdjYyB2ZXJz
+aW9uIDYuMy4wIDIwMTcwNDA2IChVYnVudHUgNi4zLjAtMTJ1YnVudHUyKSApICM0Ni1VYnVudHUg
+U01QIE1vbiBEZWMgNCAxNDozODowMSBVVEMgMjAxNyIKSW5mbzogc3VwZXJibG9jayBmZWF0dXJl
+cyA9IDIwMSA6ICBlbmNyeXB0IGxvc3QrZm91bmQKSW5mbzogc3VwZXJibG9jayBlbmNyeXB0IGxl
+dmVsID0gMCwgc2FsdCA9IDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwCkluZm86IHRv
+dGFsIEZTIHNlY3RvcnMgPSAyMDQ4MDAgKDEwMCBNQikKSW5mbzogQ0tQVCB2ZXJzaW9uID0gMjk5
+NWY5ZDMKSW5mbzogRm91bmQgdmFsaWQgbmF0X2JpdHMgaW4gY2hlY2twb2ludApJbmZvOiBjaGVj
+a3BvaW50IHN0YXRlID0gMWM1IDogIHRyaW1tZWQgbmF0X2JpdHMgY3JjIGNvbXBhY3RlZF9zdW1t
+YXJ5IHVubW91bnQKW0FTU0VSVF0gKHNhbml0eV9jaGVja19uaWQ6IDM4NikgIC0tPiBuaWRbMHg1
+XSBpbm8gaXMgMApbRklYXSAoX19jaGtfZGVudHJpZXM6MTQ1NikgIC0tPiBVbmxpbmsgWzB4NV0g
+LSBkaXIgbGVuWzB4M10sIHR5cGVbMHgyXQpbQVNTRVJUXSAoc2FuaXR5X2NoZWNrX25pZDogMzg2
+KSAgLS0+IG5pZFsweGRdIGlubyBpcyAwCltGSVhdIChfX2Noa19kZW50cmllczoxNDU2KSAgLS0+
+IFVubGluayBbMHhkXSAtIGVuY3J5cHQtZGlyIGxlblsweGJdLCB0eXBlWzB4Ml0KW0FTU0VSVF0g
+KGZzY2tfY2hrX2lub2RlX2JsazogODk1KSAgLS0+IGlubzogMHgzIGlfbGlua3M6IDUsIHJlYWwg
+bGlua3M6IDMKW0ZJWF0gKGZzY2tfY2hrX2lub2RlX2JsazogOTAwKSAgLS0+IERpcjogMHgzIGlf
+bGlua3M9IDB4NSAtPiAweDMKCk5JRFsweDZdIGlzIHVucmVhY2hhYmxlCk5JRFsweDddIGlzIHVu
+cmVhY2hhYmxlCk5JRFsweDhdIGlzIHVucmVhY2hhYmxlCk5JRFsweDldIGlzIHVucmVhY2hhYmxl
+Ck5JRFsweGFdIGlzIHVucmVhY2hhYmxlCk5JRFsweGJdIGlzIHVucmVhY2hhYmxlCk5JRFsweGNd
+IGlzIHVucmVhY2hhYmxlCk5JRFsweGVdIGlzIHVucmVhY2hhYmxlCk5JRFsweGZdIGlzIHVucmVh
+Y2hhYmxlCk5JRFsweDEwXSBpcyB1bnJlYWNoYWJsZQoKW0ZTQ0tdIFJlY29ubmVjdCA0IGZpbGVz
+IHRvIGxvc3QrZm91bmQKW0ZTQ0tdIFVucmVhY2hhYmxlIG5hdCBlbnRyaWVzICAgICAgICAgICAg
+ICAgICAgICAgICAgW0ZhaWxdIFsweGFdCltGU0NLXSBTSVQgdmFsaWQgYmxvY2sgYml0bWFwIGNo
+ZWNraW5nICAgICAgICAgICAgICAgIFtGYWlsXQpbRlNDS10gSGFyZCBsaW5rIGNoZWNraW5nIGZv
+ciByZWd1bGFyIGZpbGUgICAgICAgICAgICBbT2suLl0gWzB4MF0KW0ZTQ0tdIHZhbGlkX2Jsb2Nr
+X2NvdW50IG1hdGNoaW5nIHdpdGggQ1AgICAgICAgICAgICAgW0ZhaWxdIFsweGM1Nl0KW0ZTQ0td
+IHZhbGlkX25vZGVfY291bnQgbWF0Y2luZyB3aXRoIENQIChkZSBsb29rdXApICAgW0ZhaWxdIFsw
+eGFdCltGU0NLXSB2YWxpZF9ub2RlX2NvdW50IG1hdGNpbmcgd2l0aCBDUCAobmF0IGxvb2t1cCkg
+IFtGYWlsXSBbMHhjXQpbRlNDS10gdmFsaWRfaW5vZGVfY291bnQgbWF0Y2hlZCB3aXRoIENQICAg
+ICAgICAgICAgICBbRmFpbF0gWzB4Nl0KW0ZTQ0tdIGZyZWUgc2VnbWVudF9jb3VudCBtYXRjaGVk
+IHdpdGggQ1AgICAgICAgICAgICAgW09rLi5dIFsweDFlXQpbRlNDS10gbmV4dCBibG9jayBvZmZz
+ZXQgaXMgZnJlZSAgICAgICAgICAgICAgICAgICAgICBbT2suLl0KW0ZTQ0tdIGZpeGluZyBTSVQg
+dHlwZXMKW0ZTQ0tdIG90aGVyIGNvcnJ1cHRlZCBidWdzICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgW0ZhaWxdCltGSVhdIChudWxsaWZ5X25hdF9lbnRyeToyMDY0KSAgLS0+IFJlbW92ZSBuaWQg
+WzB4Yl0gaW4gTkFUCltGSVhdIChudWxsaWZ5X25hdF9lbnRyeToyMDY0KSAgLS0+IFJlbW92ZSBu
+aWQgWzB4Zl0gaW4gTkFUCkluZm86IFdyaXRlIHZhbGlkIG5hdF9iaXRzIGluIGNoZWNrcG9pbnQK
+CkRvbmUuCgokIHRyZWUgL2RhdGEKL2RhdGEvCuKUlOKUgOKUgCBsb3N0K2ZvdW5kCiAgICDilJzi
+lIDilIAgMTIKICAgIOKUnOKUgOKUgCAxNAogICAg4pSc4pSA4pSAIDE2CiAgICDilJTilIDilIAg
+NgoKQW55IGNvbW1lbnRzIGFuZCB0ZXN0cyBhcmUgYXBwcmVjaWF0ZWQuCgpUaGFua3MsClNoZW5n
+CgpTaGVuZyBZb25nICg1KToKICBta2ZzLmYyZnM6IGludHJvZHVjZSBta2ZzIHBhcmFtZXRlcnMg
+aW4gZjJmc19jb25maWd1cmF0aW9uCiAgZjJmcy10b29sczogaW5pdCBmMmZzX2NvbmZpZ3VyYXRp
+b24gd2l0IGFzIDAKICBmc2NrLmYyZnM6IGludGVncmF0ZSBzYW5pdHlfY2hlY2tfaW5vZGUgdG8g
+X19jaGVja19pbm9kZV9tb2RlCiAgbWtmcy5mMmZzOiBjcmVhdGUgbG9zdCtmb3VuZCBkaXJlY3Rv
+cnkKICBmc2NrLmYyZnM6IHJlY29ubmVjdCB1bnJlYWNoYWJsZSBmaWxlcyB0byBsb3N0K2ZvdW5k
+CgogZnNjay9kaXIuYyAgICAgICAgICAgICAgfCAgMTkgKystCiBmc2NrL2ZzY2suYyAgICAgICAg
+ICAgICB8IDQwMiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKyst
+LS0KIGZzY2svZnNjay5oICAgICAgICAgICAgIHwgICAzICsKIGZzY2svbW91bnQuYyAgICAgICAg
+ICAgIHwgICA1ICsKIGluY2x1ZGUvZjJmc19mcy5oICAgICAgIHwgIDExICsrCiBsaWIvbGliZjJm
+cy5jICAgICAgICAgICB8ICAxOCArLS0KIG1rZnMvZjJmc19mb3JtYXQuYyAgICAgIHwgMjUxICsr
+KysrKysrKysrKysrKysrKysrKysrKysrLS0tLQogbWtmcy9mMmZzX2Zvcm1hdF9tYWluLmMgfCAg
+IDIgKwogOCBmaWxlcyBjaGFuZ2VkLCA2MzkgaW5zZXJ0aW9ucygrKSwgNzIgZGVsZXRpb25zKC0p
+CgotLSAKMi4xMS4wCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUgdmlicmFu
+dCB0ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2luZyB0ZWNo
+IHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdApfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1h
+aWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczov
+L2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
