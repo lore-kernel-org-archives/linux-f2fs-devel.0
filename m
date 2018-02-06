@@ -1,25 +1,24 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH] f2fs: add fi->commit_lock to protect commit GCed
- pages
-Date: Tue, 6 Feb 2018 11:49:49 +0800
-Message-ID: <1517888990-96478-1-git-send-email-yunlong.song@huawei.com>
-References: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
+From: Sheng Yong <shengyong1@huawei.com>
+Subject: [RFC PATCH 2/2] f2fs: introduce lost+found feature
+Date: Tue, 6 Feb 2018 12:31:18 +0800
+Message-ID: <20180206043118.134137-3-shengyong1@huawei.com>
+References: <20180206043118.134137-1-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
  helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yunlong.song@huawei.com>) id 1eiuH7-0002N3-5n
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Feb 2018 03:50:29 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
+ (envelope-from <shengyong1@huawei.com>) id 1eiuv4-00009O-BS
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Feb 2018 04:31:46 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eiuH5-0006ln-20
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Feb 2018 03:50:29 +0000
-In-Reply-To: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
+ id 1eiuv2-0004CK-Rk
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Feb 2018 04:31:46 +0000
+In-Reply-To: <20180206043118.134137-1-shengyong1@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,203 +28,69 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
-Cc: shengyong1@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, heyunlei@huawei.com, miaoxie@huawei.com
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: heyunlei@huawei.com, miaoxie@huawei.com, shengyong1@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-This patch adds fi->commit_lock to avoid the case that GCed node pages
-are committed but GCed data pages are not committed. This can avoid the
-db file run into inconsistent state when sudden-power-off happens if
-data pages of atomic file is allowed to be GCed before.
+Introduce lost+found feature. The lost+found is a directory which saves
+unreachable files. If f2fsck finds a file which has no parent, or the
+parent is removed by f2fsck, the file will be placed in lost+found
+directory.
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+According fscrypt policy, lost+found could not be encrypted. As a
+result, the root directory cannot be encrypted. So if lost+found
+feature is enabled, let's avoid to encrypt root directory.
+
+Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 ---
- fs/f2fs/f2fs.h  |  1 +
- fs/f2fs/file.c  | 15 ++++++++++++--
- fs/f2fs/gc.c    | 61 +++++++++++++++++++++++++++++++++++++--------------------
- fs/f2fs/super.c |  1 +
- 4 files changed, 55 insertions(+), 23 deletions(-)
+ fs/f2fs/f2fs.h  |  2 ++
+ fs/f2fs/super.c | 12 ++++++++++++
+ 2 files changed, 14 insertions(+)
 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index dbe87c7..b58a8f2 100644
+index a60d56a96f9b..d9c9be6ea5d5 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -628,6 +628,7 @@ struct f2fs_inode_info {
- 	struct list_head inmem_pages;	/* inmemory pages managed by f2fs */
- 	struct task_struct *inmem_task;	/* store inmemory task */
- 	struct mutex inmem_lock;	/* lock for inmemory pages */
-+	struct mutex commit_lock;	/* lock for commit GCed pages */
- 	struct extent_tree *extent_tree;	/* cached extent_tree entry */
- 	struct rw_semaphore dio_rwsem[2];/* avoid racing between dio and gc */
- 	struct rw_semaphore i_mmap_sem;
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 672a542..7e14724 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -202,6 +202,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- {
- 	struct inode *inode = file->f_mapping->host;
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	nid_t ino = inode->i_ino;
- 	int ret = 0;
- 	enum cp_reason_type cp_reason = 0;
-@@ -219,11 +220,13 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 	/* if fdatasync is triggered, let's do in-place-update */
- 	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
- 		set_inode_flag(inode, FI_NEED_IPU);
-+	mutex_lock(&fi->commit_lock);
- 	ret = file_write_and_wait_range(file, start, end);
- 	clear_inode_flag(inode, FI_NEED_IPU);
+@@ -125,6 +125,7 @@ struct f2fs_mount_info {
+ #define F2FS_FEATURE_FLEXIBLE_INLINE_XATTR	0x0040
+ #define F2FS_FEATURE_QUOTA_INO		0x0080
+ #define F2FS_FEATURE_INODE_CRTIME	0x0100
++#define F2FS_FEATURE_LOST_FOUND		0x0200
  
- 	if (ret) {
- 		trace_f2fs_sync_file_exit(inode, cp_reason, datasync, ret);
-+		mutex_unlock(&fi->commit_lock);
- 		return ret;
- 	}
+ #define F2FS_HAS_FEATURE(sb, mask)					\
+ 	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
+@@ -3186,6 +3187,7 @@ F2FS_FEATURE_FUNCS(inode_chksum, INODE_CHKSUM);
+ F2FS_FEATURE_FUNCS(flexible_inline_xattr, FLEXIBLE_INLINE_XATTR);
+ F2FS_FEATURE_FUNCS(quota_ino, QUOTA_INO);
+ F2FS_FEATURE_FUNCS(inode_crtime, INODE_CRTIME);
++F2FS_FEATURE_FUNCS(lost_found, LOST_FOUND);
  
-@@ -244,8 +247,11 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 			goto go_write;
- 
- 		if (is_inode_flag_set(inode, FI_UPDATE_WRITE) ||
--				exist_written_data(sbi, ino, UPDATE_INO))
-+				exist_written_data(sbi, ino, UPDATE_INO)) {
-+			mutex_unlock(&fi->commit_lock);
- 			goto flush_out;
-+		}
-+		mutex_unlock(&fi->commit_lock);
- 		goto out;
- 	}
- go_write:
-@@ -268,16 +274,20 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 		try_to_fix_pino(inode);
- 		clear_inode_flag(inode, FI_APPEND_WRITE);
- 		clear_inode_flag(inode, FI_UPDATE_WRITE);
-+		mutex_unlock(&fi->commit_lock);
- 		goto out;
- 	}
- sync_nodes:
- 	ret = fsync_node_pages(sbi, inode, &wbc, atomic);
--	if (ret)
-+	if (ret) {
-+		mutex_unlock(&fi->commit_lock);
- 		goto out;
-+	}
- 
- 	/* if cp_error was enabled, we should avoid infinite loop */
- 	if (unlikely(f2fs_cp_error(sbi))) {
- 		ret = -EIO;
-+		mutex_unlock(&fi->commit_lock);
- 		goto out;
- 	}
- 
-@@ -286,6 +296,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 		f2fs_write_inode(inode, NULL);
- 		goto sync_nodes;
- 	}
-+	mutex_unlock(&fi->commit_lock);
- 
- 	/*
- 	 * If it's atomic_write, it's just fine to keep write ordering. So
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 9d54ddb..b98aff5 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -676,13 +676,20 @@ static void move_data_block(struct inode *inode, block_t bidx,
- 		goto put_page_out;
- 	}
- 
--	if (f2fs_is_atomic_file(inode) &&
--		!f2fs_is_commit_atomic_write(inode) &&
--		!IS_GC_WRITTEN_PAGE(fio.encrypted_page)) {
--		set_page_private(fio.encrypted_page, (unsigned long)GC_WRITTEN_PAGE);
--		SetPagePrivate(fio.encrypted_page);
--	}
--	set_page_dirty(fio.encrypted_page);
-+	if (f2fs_is_atomic_file(inode)) {
-+		struct f2fs_inode_info *fi = F2FS_I(inode);
-+
-+		mutex_lock(&fi->commit_lock);
-+		if (!f2fs_is_commit_atomic_write(inode) &&
-+			!IS_GC_WRITTEN_PAGE(fio.encrypted_page)) {
-+			set_page_private(fio.encrypted_page,
-+				(unsigned long)GC_WRITTEN_PAGE);
-+			SetPagePrivate(fio.encrypted_page);
-+		}
-+		set_page_dirty(fio.encrypted_page);
-+		mutex_unlock(&fi->commit_lock);
-+	} else
-+		set_page_dirty(fio.encrypted_page);
- 	f2fs_wait_on_page_writeback(fio.encrypted_page, DATA, true);
- 	if (clear_page_dirty_for_io(fio.encrypted_page))
- 		dec_page_count(fio.sbi, F2FS_DIRTY_META);
-@@ -741,13 +748,19 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
- 	if (gc_type == BG_GC) {
- 		if (PageWriteback(page))
- 			goto out;
--		if (f2fs_is_atomic_file(inode) &&
--			!f2fs_is_commit_atomic_write(inode) &&
--			!IS_GC_WRITTEN_PAGE(page)) {
--			set_page_private(page, (unsigned long)GC_WRITTEN_PAGE);
--			SetPagePrivate(page);
--		}
--		set_page_dirty(page);
-+		if (f2fs_is_atomic_file(inode)) {
-+			struct f2fs_inode_info *fi = F2FS_I(inode);
-+
-+			mutex_lock(&fi->commit_lock);
-+			if (!f2fs_is_commit_atomic_write(inode) &&
-+				!IS_GC_WRITTEN_PAGE(page)) {
-+				set_page_private(page, (unsigned long)GC_WRITTEN_PAGE);
-+				SetPagePrivate(page);
-+			}
-+			set_page_dirty(page);
-+			mutex_unlock(&fi->commit_lock);
-+		} else
-+			set_page_dirty(page);
- 		set_cold_data(page);
- 	} else {
- 		struct f2fs_io_info fio = {
-@@ -767,13 +780,19 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
- 		int err;
- 
- retry:
--		if (f2fs_is_atomic_file(inode) &&
--			!f2fs_is_commit_atomic_write(inode) &&
--			!IS_GC_WRITTEN_PAGE(page)) {
--			set_page_private(page, (unsigned long)GC_WRITTEN_PAGE);
--			SetPagePrivate(page);
--		}
--		set_page_dirty(page);
-+		if (f2fs_is_atomic_file(inode)) {
-+			struct f2fs_inode_info *fi = F2FS_I(inode);
-+
-+			mutex_lock(&fi->commit_lock);
-+			if (!f2fs_is_commit_atomic_write(inode) &&
-+				!IS_GC_WRITTEN_PAGE(page)) {
-+				set_page_private(page, (unsigned long)GC_WRITTEN_PAGE);
-+				SetPagePrivate(page);
-+			}
-+			set_page_dirty(page);
-+			mutex_unlock(&fi->commit_lock);
-+		} else
-+			set_page_dirty(page);
- 		f2fs_wait_on_page_writeback(page, DATA, true);
- 		if (clear_page_dirty_for_io(page)) {
- 			inode_dec_dirty_pages(inode);
+ #ifdef CONFIG_BLK_DEV_ZONED
+ static inline int get_blkz_type(struct f2fs_sb_info *sbi,
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 7966cf7..ed6afd1 100644
+index b39ab55ab1b5..5f536e878d21 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -772,6 +772,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
- 	INIT_LIST_HEAD(&fi->inmem_ilist);
- 	INIT_LIST_HEAD(&fi->inmem_pages);
- 	mutex_init(&fi->inmem_lock);
-+	mutex_init(&fi->commit_lock);
- 	init_rwsem(&fi->dio_rwsem[READ]);
- 	init_rwsem(&fi->dio_rwsem[WRITE]);
- 	init_rwsem(&fi->i_mmap_sem);
+@@ -1797,6 +1797,18 @@ static int f2fs_get_context(struct inode *inode, void *ctx, size_t len)
+ static int f2fs_set_context(struct inode *inode, const void *ctx, size_t len,
+ 							void *fs_data)
+ {
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++
++	/*
++	 * Encrypting the root directory is not allowed because f2fsck
++	 * expects lost+found directory to exist and remain unencrypted
++	 * if LOST_FOUND feature is enabled.
++	 *
++	 */
++	if (f2fs_sb_has_lost_found(sbi->sb) &&
++			inode->i_ino == F2FS_ROOT_INO(sbi))
++		return -EPERM;
++
+ 	return f2fs_setxattr(inode, F2FS_XATTR_INDEX_ENCRYPTION,
+ 				F2FS_XATTR_NAME_ENCRYPTION_CONTEXT,
+ 				ctx, len, fs_data, XATTR_CREATE);
 -- 
-1.8.5.2
+2.11.0
 
 
 ------------------------------------------------------------------------------
