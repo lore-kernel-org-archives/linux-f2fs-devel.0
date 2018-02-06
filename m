@@ -1,33 +1,25 @@
 From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH 1/2] f2fs: enable to gc page whose inode
- already atomic commit
-Date: Tue, 6 Feb 2018 10:15:09 +0800
-Message-ID: <11fcb5ec-eb91-7d55-2ea4-41cc4f4ca0f4@huawei.com>
+Subject: [PATCH] f2fs: add fi->commit_lock to protect commit GCed
+ pages
+Date: Tue, 6 Feb 2018 11:49:49 +0800
+Message-ID: <1517888990-96478-1-git-send-email-yunlong.song@huawei.com>
 References: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
- <a094cd40-d042-2a43-4e9a-e34c31e61d28@kernel.org>
- <f4e7b403-4945-a7f9-6bdc-214dc61c9160@huawei.com>
- <312d70f3-b1ae-9ced-44cb-fde83de362ff@huawei.com>
- <b39adaf3-f727-e6ad-ef0d-4789cdc38de5@huawei.com>
- <f3c1c01d-3d82-5546-7aec-73c2e69cd17a@huawei.com>
- <3182ade9-4153-9e47-f8a5-5c87371a3900@huawei.com>
- <6716d2f9-ee89-0f30-2332-5aee48530a12@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yunlong.song@huawei.com>) id 1eispn-0005io-HJ
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Feb 2018 02:18:11 +0000
+ (envelope-from <yunlong.song@huawei.com>) id 1eiuH7-0002N3-5n
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Feb 2018 03:50:29 +0000
 Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eispl-0006eR-Lp
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Feb 2018 02:18:11 +0000
-In-Reply-To: <6716d2f9-ee89-0f30-2332-5aee48530a12@huawei.com>
-Content-Language: en-US
+ id 1eiuH5-0006ln-20
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Feb 2018 03:50:29 +0000
+In-Reply-To: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -37,155 +29,203 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>, Chao Yu <chao@kernel.org>, jaegeuk@kernel.org, yunlong.song@icloud.com
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
 Cc: shengyong1@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, heyunlei@huawei.com, miaoxie@huawei.com
 
-OK, now I got it, thanks for the explanation. Then the point is to avoid
-set_page_dirty between file_write_and_wait_range and fsync_node_pages,
-so we can lock before file_write_and_wait_range and unlock after 
-fsync_node_pages, and lock before set_page_dirty and unlock after
-set_page_dirty. These patches and the locks can make sure the GCed data
-pages are all committed to nand flash with their nodes.
+This patch adds fi->commit_lock to avoid the case that GCed node pages
+are committed but GCed data pages are not committed. This can avoid the
+db file run into inconsistent state when sudden-power-off happens if
+data pages of atomic file is allowed to be GCed before.
 
-On 2018/2/5 19:10, Chao Yu wrote:
-> On 2018/2/5 17:37, Yunlong Song wrote:
->>
->>> OK, details as I explained before:
->>>
->>> atomic_commit				GC
->>> - file_write_and_wait_range
->>> 					- move_data_block
->>> 					 - f2fs_submit_page_write
->>> 					  - f2fs_update_data_blkaddr
->>> 					   - set_page_dirty
->>>    - fsync_node_pages
->>>
->>> 1. atomic writes data page #1 & update node #1
->>> 2. GC data page #2 & update node #2
->>> 3. page #1 & node #1 & #2 can be committed into nand flash before page #2 be
->>> committed.
->>>
->>> After a sudden pow-cut, database transaction will be inconsistent. So I think
->>> there will be better to exclude gc/atomic_write to each other, with a lock
->>> instead of flag checking.
->>>
->>
->> I do not understand why this transaction is inconsistent, is it a
->> problem that page #2 is not committed into nand flash? Since normal
-> 
-> Yes, node #2 contains newly updated LBAx of page #2, but if page #2 is not
-> committed to LBAx, after recovery, page #2 's block address in node #2 will
-> point to LBAx which contains random data, result in corrupted db file.
-> 
->> gc also has this problem:
->>
->> Suppose that there is db file A, f2fs_gc moves data page #1 of db file
->> A. But if write checkpoint only commit node page #1 and then a sudden
-> 
-> f2fs will ensure GCed data being persisted during checkpoint, so migrated page
-> #1 and updated node #1 will both be committed in this checkpoint.
-> 
-> Please check WB_DATA_TYPE macro to see how we define data type that cp
-> guarantees to writeback.
-> 
->> power-cut happens. Data page #1 is not committed to nand flash, but
->> node page #1 is committed. Is the db transaction broken and
->> inconsistent?
->>
->> Come back to your example, I think data page 2 of atomic file does not
->> belong to this transaction, so even node page 2 is committed, it is just
-> 
-> If node #2 is committed only, it will be harmful to db transaction due to the
-> reason I said above.
-> 
-> Thanks,
-> 
->> the same problem as what I have listed above(db file A), and it does not
->> break this transaction.
->>
->>> Thanks,
->>>
->>>>>>>
->>>>>>> So how about just using dio_rwsem[WRITE] during atomic committing to exclude
->>>>>>> GCing data block of atomic opened file?
->>>>>>>
->>>>>>> Thanks,
->>>>>>>
->>>>>>>>
->>>>>>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->>>>>>>> ---
->>>>>>>>      fs/f2fs/data.c | 5 ++---
->>>>>>>>      fs/f2fs/gc.c   | 6 ++++--
->>>>>>>>      2 files changed, 6 insertions(+), 5 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>>>>>>> index 7435830..edafcb6 100644
->>>>>>>> --- a/fs/f2fs/data.c
->>>>>>>> +++ b/fs/f2fs/data.c
->>>>>>>> @@ -1580,14 +1580,13 @@ bool should_update_outplace(struct inode *inode, struct f2fs_io_info *fio)
->>>>>>>>      		return true;
->>>>>>>>      	if (S_ISDIR(inode->i_mode))
->>>>>>>>      		return true;
->>>>>>>> -	if (f2fs_is_atomic_file(inode))
->>>>>>>> -		return true;
->>>>>>>>      	if (fio) {
->>>>>>>>      		if (is_cold_data(fio->page))
->>>>>>>>      			return true;
->>>>>>>>      		if (IS_ATOMIC_WRITTEN_PAGE(fio->page))
->>>>>>>>      			return true;
->>>>>>>> -	}
->>>>>>>> +	} else if (f2fs_is_atomic_file(inode))
->>>>>>>> +		return true;
->>>>>>>>      	return false;
->>>>>>>>      }
->>>>>>>>      
->>>>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>>>>>>> index b9d93fd..84ab3ff 100644
->>>>>>>> --- a/fs/f2fs/gc.c
->>>>>>>> +++ b/fs/f2fs/gc.c
->>>>>>>> @@ -622,7 +622,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
->>>>>>>>      	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->>>>>>>>      		goto out;
->>>>>>>>      
->>>>>>>> -	if (f2fs_is_atomic_file(inode))
->>>>>>>> +	if (f2fs_is_atomic_file(inode) &&
->>>>>>>> +		!f2fs_is_commit_atomic_write(inode))
->>>>>>>>      		goto out;
->>>>>>>>      
->>>>>>>>      	if (f2fs_is_pinned_file(inode)) {
->>>>>>>> @@ -729,7 +730,8 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->>>>>>>>      	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->>>>>>>>      		goto out;
->>>>>>>>      
->>>>>>>> -	if (f2fs_is_atomic_file(inode))
->>>>>>>> +	if (f2fs_is_atomic_file(inode) &&
->>>>>>>> +		!f2fs_is_commit_atomic_write(inode))
->>>>>>>>      		goto out;
->>>>>>>>      	if (f2fs_is_pinned_file(inode)) {
->>>>>>>>      		if (gc_type == FG_GC)
->>>>>>>>
->>>>>>>
->>>>>>> .
->>>>>>>
->>>>>>
->>>>>
->>>>>
->>>>> .
->>>>>
->>>>
->>>
->>>
->>> .
->>>
->>
-> 
-> 
-> .
-> 
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+---
+ fs/f2fs/f2fs.h  |  1 +
+ fs/f2fs/file.c  | 15 ++++++++++++--
+ fs/f2fs/gc.c    | 61 +++++++++++++++++++++++++++++++++++++--------------------
+ fs/f2fs/super.c |  1 +
+ 4 files changed, 55 insertions(+), 23 deletions(-)
 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index dbe87c7..b58a8f2 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -628,6 +628,7 @@ struct f2fs_inode_info {
+ 	struct list_head inmem_pages;	/* inmemory pages managed by f2fs */
+ 	struct task_struct *inmem_task;	/* store inmemory task */
+ 	struct mutex inmem_lock;	/* lock for inmemory pages */
++	struct mutex commit_lock;	/* lock for commit GCed pages */
+ 	struct extent_tree *extent_tree;	/* cached extent_tree entry */
+ 	struct rw_semaphore dio_rwsem[2];/* avoid racing between dio and gc */
+ 	struct rw_semaphore i_mmap_sem;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 672a542..7e14724 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -202,6 +202,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ {
+ 	struct inode *inode = file->f_mapping->host;
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 	nid_t ino = inode->i_ino;
+ 	int ret = 0;
+ 	enum cp_reason_type cp_reason = 0;
+@@ -219,11 +220,13 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 	/* if fdatasync is triggered, let's do in-place-update */
+ 	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
+ 		set_inode_flag(inode, FI_NEED_IPU);
++	mutex_lock(&fi->commit_lock);
+ 	ret = file_write_and_wait_range(file, start, end);
+ 	clear_inode_flag(inode, FI_NEED_IPU);
+ 
+ 	if (ret) {
+ 		trace_f2fs_sync_file_exit(inode, cp_reason, datasync, ret);
++		mutex_unlock(&fi->commit_lock);
+ 		return ret;
+ 	}
+ 
+@@ -244,8 +247,11 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 			goto go_write;
+ 
+ 		if (is_inode_flag_set(inode, FI_UPDATE_WRITE) ||
+-				exist_written_data(sbi, ino, UPDATE_INO))
++				exist_written_data(sbi, ino, UPDATE_INO)) {
++			mutex_unlock(&fi->commit_lock);
+ 			goto flush_out;
++		}
++		mutex_unlock(&fi->commit_lock);
+ 		goto out;
+ 	}
+ go_write:
+@@ -268,16 +274,20 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 		try_to_fix_pino(inode);
+ 		clear_inode_flag(inode, FI_APPEND_WRITE);
+ 		clear_inode_flag(inode, FI_UPDATE_WRITE);
++		mutex_unlock(&fi->commit_lock);
+ 		goto out;
+ 	}
+ sync_nodes:
+ 	ret = fsync_node_pages(sbi, inode, &wbc, atomic);
+-	if (ret)
++	if (ret) {
++		mutex_unlock(&fi->commit_lock);
+ 		goto out;
++	}
+ 
+ 	/* if cp_error was enabled, we should avoid infinite loop */
+ 	if (unlikely(f2fs_cp_error(sbi))) {
+ 		ret = -EIO;
++		mutex_unlock(&fi->commit_lock);
+ 		goto out;
+ 	}
+ 
+@@ -286,6 +296,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 		f2fs_write_inode(inode, NULL);
+ 		goto sync_nodes;
+ 	}
++	mutex_unlock(&fi->commit_lock);
+ 
+ 	/*
+ 	 * If it's atomic_write, it's just fine to keep write ordering. So
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 9d54ddb..b98aff5 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -676,13 +676,20 @@ static void move_data_block(struct inode *inode, block_t bidx,
+ 		goto put_page_out;
+ 	}
+ 
+-	if (f2fs_is_atomic_file(inode) &&
+-		!f2fs_is_commit_atomic_write(inode) &&
+-		!IS_GC_WRITTEN_PAGE(fio.encrypted_page)) {
+-		set_page_private(fio.encrypted_page, (unsigned long)GC_WRITTEN_PAGE);
+-		SetPagePrivate(fio.encrypted_page);
+-	}
+-	set_page_dirty(fio.encrypted_page);
++	if (f2fs_is_atomic_file(inode)) {
++		struct f2fs_inode_info *fi = F2FS_I(inode);
++
++		mutex_lock(&fi->commit_lock);
++		if (!f2fs_is_commit_atomic_write(inode) &&
++			!IS_GC_WRITTEN_PAGE(fio.encrypted_page)) {
++			set_page_private(fio.encrypted_page,
++				(unsigned long)GC_WRITTEN_PAGE);
++			SetPagePrivate(fio.encrypted_page);
++		}
++		set_page_dirty(fio.encrypted_page);
++		mutex_unlock(&fi->commit_lock);
++	} else
++		set_page_dirty(fio.encrypted_page);
+ 	f2fs_wait_on_page_writeback(fio.encrypted_page, DATA, true);
+ 	if (clear_page_dirty_for_io(fio.encrypted_page))
+ 		dec_page_count(fio.sbi, F2FS_DIRTY_META);
+@@ -741,13 +748,19 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+ 	if (gc_type == BG_GC) {
+ 		if (PageWriteback(page))
+ 			goto out;
+-		if (f2fs_is_atomic_file(inode) &&
+-			!f2fs_is_commit_atomic_write(inode) &&
+-			!IS_GC_WRITTEN_PAGE(page)) {
+-			set_page_private(page, (unsigned long)GC_WRITTEN_PAGE);
+-			SetPagePrivate(page);
+-		}
+-		set_page_dirty(page);
++		if (f2fs_is_atomic_file(inode)) {
++			struct f2fs_inode_info *fi = F2FS_I(inode);
++
++			mutex_lock(&fi->commit_lock);
++			if (!f2fs_is_commit_atomic_write(inode) &&
++				!IS_GC_WRITTEN_PAGE(page)) {
++				set_page_private(page, (unsigned long)GC_WRITTEN_PAGE);
++				SetPagePrivate(page);
++			}
++			set_page_dirty(page);
++			mutex_unlock(&fi->commit_lock);
++		} else
++			set_page_dirty(page);
+ 		set_cold_data(page);
+ 	} else {
+ 		struct f2fs_io_info fio = {
+@@ -767,13 +780,19 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+ 		int err;
+ 
+ retry:
+-		if (f2fs_is_atomic_file(inode) &&
+-			!f2fs_is_commit_atomic_write(inode) &&
+-			!IS_GC_WRITTEN_PAGE(page)) {
+-			set_page_private(page, (unsigned long)GC_WRITTEN_PAGE);
+-			SetPagePrivate(page);
+-		}
+-		set_page_dirty(page);
++		if (f2fs_is_atomic_file(inode)) {
++			struct f2fs_inode_info *fi = F2FS_I(inode);
++
++			mutex_lock(&fi->commit_lock);
++			if (!f2fs_is_commit_atomic_write(inode) &&
++				!IS_GC_WRITTEN_PAGE(page)) {
++				set_page_private(page, (unsigned long)GC_WRITTEN_PAGE);
++				SetPagePrivate(page);
++			}
++			set_page_dirty(page);
++			mutex_unlock(&fi->commit_lock);
++		} else
++			set_page_dirty(page);
+ 		f2fs_wait_on_page_writeback(page, DATA, true);
+ 		if (clear_page_dirty_for_io(page)) {
+ 			inode_dec_dirty_pages(inode);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 7966cf7..ed6afd1 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -772,6 +772,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ 	INIT_LIST_HEAD(&fi->inmem_ilist);
+ 	INIT_LIST_HEAD(&fi->inmem_pages);
+ 	mutex_init(&fi->inmem_lock);
++	mutex_init(&fi->commit_lock);
+ 	init_rwsem(&fi->dio_rwsem[READ]);
+ 	init_rwsem(&fi->dio_rwsem[WRITE]);
+ 	init_rwsem(&fi->i_mmap_sem);
 -- 
-Thanks,
-Yunlong Song
+1.8.5.2
 
 
 ------------------------------------------------------------------------------
