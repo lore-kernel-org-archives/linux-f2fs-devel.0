@@ -1,8 +1,7 @@
 From: Sheng Yong <shengyong1@huawei.com>
-Subject: [RFC PATCH 2/2] f2fs: introduce lost+found feature
-Date: Tue, 6 Feb 2018 12:31:18 +0800
-Message-ID: <20180206043118.134137-3-shengyong1@huawei.com>
-References: <20180206043118.134137-1-shengyong1@huawei.com>
+Subject: [RFC PATCH 0/2] f2fs: introduce lost+found feature
+Date: Tue, 6 Feb 2018 12:31:16 +0800
+Message-ID: <20180206043118.134137-1-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,14 +10,13 @@ Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
  helo=mx.sourceforge.net)
  by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <shengyong1@huawei.com>) id 1eiuv4-00009O-BS
+ (envelope-from <shengyong1@huawei.com>) id 1eiuv4-00009I-6a
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Feb 2018 04:31:46 +0000
 Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
  by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eiuv2-0004CK-Rk
+ id 1eiuv2-0004CL-RC
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Feb 2018 04:31:46 +0000
-In-Reply-To: <20180206043118.134137-1-shengyong1@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,64 +29,27 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: heyunlei@huawei.com, miaoxie@huawei.com, shengyong1@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-Introduce lost+found feature. The lost+found is a directory which saves
-unreachable files. If f2fsck finds a file which has no parent, or the
-parent is removed by f2fsck, the file will be placed in lost+found
-directory.
+This patchset introduces lost+found feature in f2fs. If the feature is
+enabled, f2fs should avoid to encrypting root directory.
 
-According fscrypt policy, lost+found could not be encrypted. As a
-result, the root directory cannot be encrypted. So if lost+found
-feature is enabled, let's avoid to encrypt root directory.
+For more information, please check the mail "f2fs-tools: introduce lost+
+found feature".
 
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
----
- fs/f2fs/f2fs.h  |  2 ++
- fs/f2fs/super.c | 12 ++++++++++++
- 2 files changed, 14 insertions(+)
+Thanks,
+Sheng
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index a60d56a96f9b..d9c9be6ea5d5 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -125,6 +125,7 @@ struct f2fs_mount_info {
- #define F2FS_FEATURE_FLEXIBLE_INLINE_XATTR	0x0040
- #define F2FS_FEATURE_QUOTA_INO		0x0080
- #define F2FS_FEATURE_INODE_CRTIME	0x0100
-+#define F2FS_FEATURE_LOST_FOUND		0x0200
- 
- #define F2FS_HAS_FEATURE(sb, mask)					\
- 	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
-@@ -3186,6 +3187,7 @@ F2FS_FEATURE_FUNCS(inode_chksum, INODE_CHKSUM);
- F2FS_FEATURE_FUNCS(flexible_inline_xattr, FLEXIBLE_INLINE_XATTR);
- F2FS_FEATURE_FUNCS(quota_ino, QUOTA_INO);
- F2FS_FEATURE_FUNCS(inode_crtime, INODE_CRTIME);
-+F2FS_FEATURE_FUNCS(lost_found, LOST_FOUND);
- 
- #ifdef CONFIG_BLK_DEV_ZONED
- static inline int get_blkz_type(struct f2fs_sb_info *sbi,
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index b39ab55ab1b5..5f536e878d21 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1797,6 +1797,18 @@ static int f2fs_get_context(struct inode *inode, void *ctx, size_t len)
- static int f2fs_set_context(struct inode *inode, const void *ctx, size_t len,
- 							void *fs_data)
- {
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+
-+	/*
-+	 * Encrypting the root directory is not allowed because f2fsck
-+	 * expects lost+found directory to exist and remain unencrypted
-+	 * if LOST_FOUND feature is enabled.
-+	 *
-+	 */
-+	if (f2fs_sb_has_lost_found(sbi->sb) &&
-+			inode->i_ino == F2FS_ROOT_INO(sbi))
-+		return -EPERM;
-+
- 	return f2fs_setxattr(inode, F2FS_XATTR_INDEX_ENCRYPTION,
- 				F2FS_XATTR_NAME_ENCRYPTION_CONTEXT,
- 				ctx, len, fs_data, XATTR_CREATE);
+Sheng Yong (2):
+  f2fs: clean up f2fs_sb_has_xxx functions
+  f2fs: introduce lost+found feature
+
+ fs/f2fs/data.c    |  2 +-
+ fs/f2fs/f2fs.h    | 53 +++++++++++++++--------------------------------------
+ fs/f2fs/file.c    |  6 +++---
+ fs/f2fs/segment.c |  4 ++--
+ fs/f2fs/super.c   | 26 +++++++++++++++++++-------
+ fs/f2fs/sysfs.c   |  4 ++--
+ 6 files changed, 42 insertions(+), 53 deletions(-)
+
 -- 
 2.11.0
 
