@@ -1,26 +1,23 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCHv2 1/1] ext4/f2fs: don't put symlink in
- pagecache into highmem
-Date: Wed, 7 Feb 2018 12:06:04 -0800
-Message-ID: <20180207200604.GB15309@kroah.com>
-References: <20180206235354.79591-1-jinqian@android.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] fsck.f2fs: fix to check all the types of current
+ offsets
+Date: Wed,  7 Feb 2018 17:40:22 -0800
+Message-ID: <20180208014022.46972-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
  helo=mx.sourceforge.net)
- by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <gregkh@linuxfoundation.org>) id 1ejX76-0001m5-Up
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 07 Feb 2018 21:18:44 +0000
-Received: from mail.linuxfoundation.org ([140.211.169.12])
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ (envelope-from <jaegeuk@kernel.org>) id 1ejbCT-000089-6P
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 08 Feb 2018 01:40:33 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ejX75-00066T-VM
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 07 Feb 2018 21:18:44 +0000
-Content-Disposition: inline
-In-Reply-To: <20180206235354.79591-1-jinqian@android.com>
+ id 1ejbCR-0007Dp-1n
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 08 Feb 2018 01:40:33 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,40 +27,33 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jin Qian <jinqian@android.com>
-Cc: Changman Lee <cm224.lee@samsung.com>, Chao Yu <chao2.yu@samsung.com>, Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org, linux-stable <stable@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, "J. Bruce Fields" <bfields@fieldses.org>, Andreas Dilger <adilger.kernel@dilger.ca>, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Jeff Layton <jlayton@poochiereds.net>, linux-ext4@vger.kernel.org
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Some minor nits for when you send your next patch for stable:
+We can change the next block offsets sometimes, so we have to check it's
+free or not all the time. This fixes that SSR type makes a hole for it.
 
-On Tue, Feb 06, 2018 at 03:53:53PM -0800, Jin Qian wrote:
-> From: Jin Qian <jinqian@google.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fsck/fsck.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The original patch was written by Al Viro, please do not take the
-original authorship off, that's not good.
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 29823a1..0a37f7a 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -2021,7 +2021,7 @@ int check_curseg_offset(struct f2fs_sb_info *sbi)
+ 			return -EINVAL;
+ 		}
+ 		if (curseg->alloc_type == SSR)
+-			return 0;
++			continue;
+ 
+ 		nblocks = sbi->blocks_per_seg;
+ 		for (j = curseg->next_blkoff + 1; j < nblocks; j++) {
+-- 
+2.15.0.531.g2ccb3012c9-goog
 
-> partial backport from 21fc61c73c3903c4c312d0802da01ec2b323d174 upstream
-> to v4.4 to prevent virt_to_page on highmem.
-> 
-> ext4_encrypted_follow_link uses kmap() for cpage
->   caddr = kmap(cpage);
-> 
-> _ext4_fname_disk_to_usr calls virt_to_page on the kmapped address.
->   _ext4_fname_disk_to_usr()
->     ext4_fname_decrypt()
->       sg_init_one()
->         sg_init_one(&src_sg, iname->name, iname->len);
->           sg_set_page(sg, virt_to_page(buf), buflen, offset_in_page(buf));
-> 
-> Cc: linux-stable <stable@vger.kernel.org> # 4.4.y
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> Signed-off-by: Jin Qian <jinqian@google.com>
-> Signed-off-by: Jin Qian <jinqian@android.com>
-
-Why did you sign off on this twice?
-
-thanks,
-
-greg k-h
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
