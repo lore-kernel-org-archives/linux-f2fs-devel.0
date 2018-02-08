@@ -1,26 +1,26 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [RFC PATCH 2/5] f2fs-tools: init f2fs_configuration
- as 0
-Date: Thu, 8 Feb 2018 21:32:17 +0800
-Message-ID: <adbc971b-834e-4789-2593-1b1f58781311@kernel.org>
+Subject: Re: [RFC PATCH 3/5] fsck.f2fs: integrate
+ sanity_check_inode to __check_inode_mode
+Date: Thu, 8 Feb 2018 21:44:46 +0800
+Message-ID: <5ee01435-23fa-028e-68b8-44964027ff78@kernel.org>
 References: <20180206043125.134191-1-shengyong1@huawei.com>
- <20180206043125.134191-3-shengyong1@huawei.com>
+ <20180206043125.134191-4-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <chao@kernel.org>) id 1ejmJh-0006OX-Ly
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 08 Feb 2018 13:32:45 +0000
+ (envelope-from <chao@kernel.org>) id 1ejmVj-00067h-4k
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 08 Feb 2018 13:45:11 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ejmJg-0004D2-NT
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 08 Feb 2018 13:32:45 +0000
-In-Reply-To: <20180206043125.134191-3-shengyong1@huawei.com>
+ id 1ejmVh-0003Ky-6h
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 08 Feb 2018 13:45:11 +0000
+In-Reply-To: <20180206043125.134191-4-shengyong1@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -35,11 +35,72 @@ To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: miaoxie@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
 On 2018/2/6 12:31, Sheng Yong wrote:
+> In sanity_check_nid, __check_inode_mode will check i_mode value of an
+> inode. So integrate sanity_check_inode to __check_inode_mode to clean
+> up the code.
+> 
 > Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+> ---
+>  fsck/fsck.c | 26 +++++---------------------
+>  1 file changed, 5 insertions(+), 21 deletions(-)
+> 
+> diff --git a/fsck/fsck.c b/fsck/fsck.c
+> index 29823a1..fcaab14 100644
+> --- a/fsck/fsck.c
+> +++ b/fsck/fsck.c
+> @@ -334,6 +334,11 @@ static int __check_inode_mode(u32 nid, enum FILE_TYPE ftype, u32 mode)
+>  {
+>  	if (ftype >= F2FS_FT_MAX)
+>  		return 0;
+> +	/* f2fs_iget will return -EIO if mode is not valid file type */
+> +	if (!S_ISLNK(mode) && !S_ISREG(mode) && !S_ISDIR(mode) &&
+> +	    !S_ISCHR(mode) && !S_ISBLK(mode) && !S_ISFIFO(mode) &&
+> +	    !S_ISSOCK(mode))
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Need an extra error message for this case instead of below one.
 
 Thanks,
+
+> +		goto err;
+>  	if (S_ISLNK(mode) && ftype != F2FS_FT_SYMLINK)
+>  		goto err;
+>  	if (S_ISREG(mode) && ftype != F2FS_FT_REG_FILE)
+> @@ -465,25 +470,6 @@ static int sanity_check_nid(struct f2fs_sb_info *sbi, u32 nid,
+>  	return 0;
+>  }
+>  
+> -static int sanity_check_inode(struct f2fs_sb_info *sbi, struct f2fs_node *node)
+> -{
+> -	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
+> -	struct f2fs_inode *fi = &node->i;
+> -
+> -	if (!(le16_to_cpu(fi->i_mode) & S_IFMT)) {
+> -		ASSERT_MSG("i_mode is not valid. [0x%x]", le16_to_cpu(fi->i_mode));
+> -		goto remove_node;
+> -	}
+> -
+> -	return 0;
+> -
+> -remove_node:
+> -	f2fs_set_bit(le32_to_cpu(node->footer.ino), fsck->nat_area_bitmap);
+> -	fsck->chk.valid_blk_cnt--;
+> -	fsck->chk.valid_node_cnt--;
+> -	return -EINVAL;
+> -}
+> -
+>  static int fsck_chk_xattr_blk(struct f2fs_sb_info *sbi, u32 ino,
+>  					u32 x_nid, u32 *blk_cnt)
+>  {
+> @@ -528,8 +514,6 @@ int fsck_chk_node_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
+>  	if (ntype == TYPE_INODE) {
+>  		struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
+>  
+> -		if (sanity_check_inode(sbi, node_blk))
+> -			goto err;
+>  		fsck_chk_inode_blk(sbi, nid, ftype, node_blk, blk_cnt, &ni, child);
+>  		quota_add_inode_usage(fsck->qctx, nid, &node_blk->i);
+>  	} else {
+> 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
