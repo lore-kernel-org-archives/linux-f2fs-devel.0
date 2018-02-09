@@ -1,29 +1,28 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH] f2fs: add fi->commit_lock to protect commit
- GCed pages
-Date: Fri, 9 Feb 2018 20:56:56 +0800
-Message-ID: <a2f431bf-ac2f-0b03-6b7f-aeb51e815e17@huawei.com>
-References: <1517626068-49739-1-git-send-email-yunlong.song@huawei.com>
- <1517888990-96478-1-git-send-email-yunlong.song@huawei.com>
- <4493cbf2-6f37-6c04-a012-4b2516b3b4e7@kernel.org>
- <134848f9-2dd6-0efa-3ccf-3c29eeaf5534@huawei.com>
- <ae9a153e-4e9a-648d-3804-2a1e4a21a9c1@kernel.org>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [RFC PATCH 1/5] mkfs.f2fs: introduce mkfs parameters
+ in f2fs_configuration
+Date: Fri, 9 Feb 2018 20:59:56 +0800
+Message-ID: <1174c684-0e11-3957-82b6-7c3833138b23@kernel.org>
+References: <20180206043125.134191-1-shengyong1@huawei.com>
+ <20180206043125.134191-2-shengyong1@huawei.com>
+ <0cf30d18-1ccf-f09e-2f9a-79e2673cd00b@kernel.org>
+ <1176eb0b-1c70-8982-be2f-b453af9ed773@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yunlong.song@huawei.com>) id 1ek8Gy-0002iZ-UL
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Feb 2018 12:59:24 +0000
-Received: from [45.249.212.32] (helo=huawei.com)
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ (envelope-from <chao@kernel.org>) id 1ek8Hr-0002Mm-Tz
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Feb 2018 13:00:19 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ek8Gv-0004n0-Ob
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Feb 2018 12:59:24 +0000
-In-Reply-To: <ae9a153e-4e9a-648d-3804-2a1e4a21a9c1@kernel.org>
+ id 1ek8Hq-0007yt-Om
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Feb 2018 13:00:19 +0000
+In-Reply-To: <1176eb0b-1c70-8982-be2f-b453af9ed773@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -34,133 +33,50 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, heyunlei@huawei.com, miaoxie@huawei.com
+To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com, hyojun@google.com
+Cc: miaoxie@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-As what I point in last mail, if the atomic file is not committed
-yet, gc_data_segment will register_inmem_page the GCed data pages.
-This will cause these data pages written twice, the first write
-happens in move_data_page->do_write_data_page, and the second
-write happens in later __commit_inmem_pages->do_write_data_page.
-
-On 2018/2/9 20:44, Chao Yu wrote:
-> On 2018/2/8 11:11, Yunlong Song wrote:
->> Then the GCed data pages are totally mixed with the inmem atomic pages,
-> 
-> If we add dio_rwsem, GC flow is exclude with atomic write flow. There
-> will be not race case to mix GCed page into atomic pages.
-> 
-> Or you mean:
-> 
-> 					- gc_data_segment
-> 					 - move_data_page
-> 					  - f2fs_is_atomic_file
-> - f2fs_ioc_start_atomic_write
->   - set_inode_flag(inode, FI_ATOMIC_FILE);
-> 					  - f2fs_set_data_page_dirty
-> 					   - register_inmem_page
-> 
-> In this case, GCed page can be mixed into database transaction, but could
-> it cause any problem except break rule of isolation for transaction.
-> 
->> this will cause the atomic commit ops write the GCed data pages twice
->> (the first write happens in GC).
->>
->> How about using the early two patches to separate the inmem data pages
->> and GCed data pages, and use dio_rwsem instead of this patch to fix the
->> dnode page problem (dnode page commited but data page are not committed
->> for the GCed page)?
-> 
-> Could we fix the race case first, based on that fixing, and then find the
-> place that we can improve?
-> 
->>
->>
->> On 2018/2/7 20:16, Chao Yu wrote:
->>> On 2018/2/6 11:49, Yunlong Song wrote:
->>>> This patch adds fi->commit_lock to avoid the case that GCed node pages
->>>> are committed but GCed data pages are not committed. This can avoid the
->>>> db file run into inconsistent state when sudden-power-off happens if
->>>> data pages of atomic file is allowed to be GCed before.
->>>
->>> do_fsync:                GC:
->>> - mutex_lock(&fi->commit_lock);
->>>                      - lock_page()
->>>                       - mutex_lock(&fi->commit_lock);
->>>    - lock_page()
->>>
->>>
->>> Well, please consider lock dependency & code complexity, IMO, reuse
->>> fi->dio_rwsem[WRITE] will be enough as below:
->>>
->>> ---
->>>    fs/f2fs/file.c | 3 +++
->>>    fs/f2fs/gc.c   | 5 -----
->>>    2 files changed, 3 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>> index 672a542e5464..1bdc11feb8d0 100644
->>> --- a/fs/f2fs/file.c
->>> +++ b/fs/f2fs/file.c
->>> @@ -1711,6 +1711,8 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
->>>
->>>        inode_lock(inode);
->>>
->>> +    down_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
->>> +
->>>        if (f2fs_is_volatile_file(inode))
->>>            goto err_out;
->>>
->>> @@ -1729,6 +1731,7 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
->>>            ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 1, false);
->>>        }
->>>    err_out:
->>> +    up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
->>>        inode_unlock(inode);
->>>        mnt_drop_write_file(filp);
->>>        return ret;
->>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>> index b9d93fd532a9..e49416283563 100644
->>> --- a/fs/f2fs/gc.c
->>> +++ b/fs/f2fs/gc.c
->>> @@ -622,9 +622,6 @@ static void move_data_block(struct inode *inode, block_t bidx,
->>>        if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->>>            goto out;
->>>
->>> -    if (f2fs_is_atomic_file(inode))
->>> -        goto out;
-> 
-> Seems that we need this check.
-> 
->>> -
->>>        if (f2fs_is_pinned_file(inode)) {
->>>            f2fs_pin_file_control(inode, true);
->>>            goto out;
->>> @@ -729,8 +726,6 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->>>        if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->>>            goto out;
->>>
->>> -    if (f2fs_is_atomic_file(inode))
->>> -        goto out;
-> 
-> Ditto.
-> 
-> Thanks,
-> 
->>>        if (f2fs_is_pinned_file(inode)) {
->>>            if (gc_type == FG_GC)
->>>                f2fs_pin_file_control(inode, true);
->>>
->>
-> 
-> .
-> 
-
--- 
-Thanks,
-Yunlong Song
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+SGkgU2hlbmcgWW9uZywKCk9uIDIwMTgvMi85IDExOjIxLCBTaGVuZyBZb25nIHdyb3RlOgo+IEhp
+LCBDaGFvCj4gCj4gQWRkIEh5b2p1bi4KPiAKPiBPbiAyMDE4LzIvOCAyMTozMCwgQ2hhbyBZdSB3
+cm90ZToKPj4gT24gMjAxOC8yLzYgMTI6MzEsIFNoZW5nIFlvbmcgd3JvdGU6Cj4+PiDCoMKgwqDC
+oMKgIC8qIG9ubHkgcm9vdCBpbm9kZSB3YXMgd3JpdHRlbiBiZWZvcmUgdHJ1bmNhdGluZyBkbm9k
+ZXMgKi8KPj4+IMKgwqDCoMKgwqAgbGFzdF9pbm9kZV9wb3MgPSBzdGFydF9pbm9kZV9wb3MgKwo+
+Pj4gLcKgwqDCoMKgwqDCoMKgIGMuY3VyX3NlZ1tDVVJTRUdfSE9UX05PREVdICogYy5ibGtzX3Bl
+cl9zZWcgKyBxdW90YV9pbnVtOwo+Pj4gK8KgwqDCoMKgwqDCoMKgIGMuY3VyX3NlZ1tDVVJTRUdf
+SE9UX05PREVdICogYy5ibGtzX3Blcl9zZWcgKyBjLnF1b3RhX2ludW07Cj4+Cj4+IC0gZjJmc19j
+cmVhdGVfcm9vdF9kaXIKPj4gwqAgLSBmMmZzX3dyaXRlX3Jvb3RfaW5vZGUKPj4gwqDCoCAtIGRp
+c2NhcmRfb2Jzb2xldGVfZG5vZGUKPj4gwqDCoMKgwqAgYWNjZXNzIGMucXVvdGFfaW51bQo+PiDC
+oCAtIGYyZnNfd3JpdGVfcWZfaW5vZGUKPj4gwqDCoMKgIHVwZGF0ZSBjLnF1b3RhX2ludW0KPj4K
+Pj4gU2hvdWxkIGMucXVvdGFfaW51bSBiZSBpbml0aWFsaXplZCBtb3JlIGVhcmx5Pwo+IAo+IEkg
+dGhpbmsgd2Ugc2hvdWxkIG9ubHkgY291bnQgcXVvdGEgaW5vZGVzIGlmIHRoeWUgYXJlIGFscmVh
+ZHkgaW5pdGlhbGl6ZWQuCj4gT3RoZXJ3aXNlLCBpZiBxdW90YV9pbm8gaXMgbm90IGVuYWJsZWQs
+IHRoZXJlIGlzIG9ubHkgb25lIGlub2RlIChyb290KSBpbgo+IENVUlNFR19IT1RfTk9ERSwgYW5k
+IHR3byBibG9ja3MgbmV4dCB0byByb290IGlub2RlIHdpbGwgbm90IGJlIGRpc2NhcmRlZC4KCklN
+Tywgd2UgbmVlZCB0byBtb3ZlIGRpc2NhcmRfb2Jzb2xldGVfZG5vZGUgaW4gdG8gZjJmc19jcmVh
+dGVfcm9vdF9kaXIgYXMgYmVsb3c6CgotIGYyZnNfY3JlYXRlX3Jvb3RfZGlyCiAtIGYyZnNfd3Jp
+dGVfcm9vdF9pbm9kZQogLSBmMmZzX3dyaXRlX3FmX2lub2RlCiAtIGRpc2NhcmRfb2Jzb2xldGVf
+ZG5vZGUKClNvIHRoZSBsYXN0IG9ic29sZXRlIHBvc2l0aW9uIGNhbiBiZSBjYWxjdWxhdGVkIGNv
+cnJlY3RseS4KClRoYW5rcywKCj4gCj4gSSdtIGEgYml0IGNvbmZ1c2VkIGFib3V0IHRoZSBgb2Zm
+c2V0JyBzY2FsZSBpbiBkaXNjYXJkX29ic29sZXRlX2Rub2RlLgo+IEl0IHNlZW1zIGBpZiAob2Zm
+c2V0ID49IHN0YXJ0X2lub2RlX3BvcyB8fCBvZmZzZXQgPD0gbGFzdF9pbm9kZV9wb3MpJwo+IHdp
+bGwgYWx3YXlzIGJlIHRydWU/Cj4gCj4gSGksIEh5b2p1biwgY291bGQgeW91IHBsZWFzZSBhbHNv
+IGhhdmUgYSBsb29rIGF0IHRoaXMsIHRoYW5rcyA6KQo+IAo+IGRpZmYgLS1naXQgYS9ta2ZzL2Yy
+ZnNfZm9ybWF0LmMgYi9ta2ZzL2YyZnNfZm9ybWF0LmMKPiBpbmRleCAwZmM4YjMwLi42YzlhZTIy
+IDEwMDY0NAo+IC0tLSBhL21rZnMvZjJmc19mb3JtYXQuYwo+ICsrKyBiL21rZnMvZjJmc19mb3Jt
+YXQuYwo+IEBAIC05NjMsNyArOTYzLDcgQEAgc3RhdGljIGludCBkaXNjYXJkX29ic29sZXRlX2Ru
+b2RlKHN0cnVjdCBmMmZzX25vZGUgKnJhd19ub2RlLCB1X2ludDY0X3Qgb2Zmc2V0KQo+IMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIG9mZnNldCA9IG5leHRfYmxrYWRkcjsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgLyogc2hvdWxkIGF2b2lkIHJlY3Vyc2l2ZSBjaGFpbiBkdWUgdG8gc3RhbGUgZGF0YSAqLwo+
+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChvZmZzZXQgPj0gc3RhcnRfaW5vZGVf
+cG9zIHx8IG9mZnNldCA8PSBsYXN0X2lub2RlX3BvcykKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCBpZiAob2Zmc2V0IDw9IGxhc3RfaW5vZGVfcG9zKQo+IMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgYnJlYWs7Cj4gwqDCoMKgwqDCoMKgwqAgfSB3
+aGlsZSAoMSk7Cj4gCj4gdGhhbmtzLAo+IFNoZW5nCj4+Cj4+IFRoYW5rcywKPj4KPj4gLgo+Pgo+
+IAoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUgdmlicmFudCB0ZWNoIGNvbW11
+bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFz
+aGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdApfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApM
+aW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJj
+ZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
