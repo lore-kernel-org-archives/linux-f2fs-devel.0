@@ -1,28 +1,28 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [RFC PATCH 1/5] mkfs.f2fs: introduce mkfs parameters
- in f2fs_configuration
-Date: Fri, 9 Feb 2018 20:59:56 +0800
-Message-ID: <1174c684-0e11-3957-82b6-7c3833138b23@kernel.org>
+Subject: Re: [RFC PATCH 4/5] mkfs.f2fs: create lost+found
+ directory
+Date: Fri, 9 Feb 2018 21:13:56 +0800
+Message-ID: <413ec5fe-ace6-db96-ea92-abf21a3ab4bb@kernel.org>
 References: <20180206043125.134191-1-shengyong1@huawei.com>
- <20180206043125.134191-2-shengyong1@huawei.com>
- <0cf30d18-1ccf-f09e-2f9a-79e2673cd00b@kernel.org>
- <1176eb0b-1c70-8982-be2f-b453af9ed773@huawei.com>
+ <20180206043125.134191-5-shengyong1@huawei.com>
+ <dfbb59fc-d2c7-09d6-960c-8f3fc8163081@kernel.org>
+ <9eb99d32-5e33-d7ad-d8f6-a1ad3d721086@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <chao@kernel.org>) id 1ek8Hr-0002Mm-Tz
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Feb 2018 13:00:19 +0000
+ (envelope-from <chao@kernel.org>) id 1ek8VN-0002T3-2N
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Feb 2018 13:14:17 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ek8Hq-0007yt-Om
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Feb 2018 13:00:19 +0000
-In-Reply-To: <1176eb0b-1c70-8982-be2f-b453af9ed773@huawei.com>
+ id 1ek8VM-0008TP-Ad
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Feb 2018 13:14:17 +0000
+In-Reply-To: <9eb99d32-5e33-d7ad-d8f6-a1ad3d721086@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,50 +33,38 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com, hyojun@google.com
-Cc: miaoxie@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: heyunlei@huawei.com, miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-SGkgU2hlbmcgWW9uZywKCk9uIDIwMTgvMi85IDExOjIxLCBTaGVuZyBZb25nIHdyb3RlOgo+IEhp
-LCBDaGFvCj4gCj4gQWRkIEh5b2p1bi4KPiAKPiBPbiAyMDE4LzIvOCAyMTozMCwgQ2hhbyBZdSB3
-cm90ZToKPj4gT24gMjAxOC8yLzYgMTI6MzEsIFNoZW5nIFlvbmcgd3JvdGU6Cj4+PiDCoMKgwqDC
-oMKgIC8qIG9ubHkgcm9vdCBpbm9kZSB3YXMgd3JpdHRlbiBiZWZvcmUgdHJ1bmNhdGluZyBkbm9k
-ZXMgKi8KPj4+IMKgwqDCoMKgwqAgbGFzdF9pbm9kZV9wb3MgPSBzdGFydF9pbm9kZV9wb3MgKwo+
-Pj4gLcKgwqDCoMKgwqDCoMKgIGMuY3VyX3NlZ1tDVVJTRUdfSE9UX05PREVdICogYy5ibGtzX3Bl
-cl9zZWcgKyBxdW90YV9pbnVtOwo+Pj4gK8KgwqDCoMKgwqDCoMKgIGMuY3VyX3NlZ1tDVVJTRUdf
-SE9UX05PREVdICogYy5ibGtzX3Blcl9zZWcgKyBjLnF1b3RhX2ludW07Cj4+Cj4+IC0gZjJmc19j
-cmVhdGVfcm9vdF9kaXIKPj4gwqAgLSBmMmZzX3dyaXRlX3Jvb3RfaW5vZGUKPj4gwqDCoCAtIGRp
-c2NhcmRfb2Jzb2xldGVfZG5vZGUKPj4gwqDCoMKgwqAgYWNjZXNzIGMucXVvdGFfaW51bQo+PiDC
-oCAtIGYyZnNfd3JpdGVfcWZfaW5vZGUKPj4gwqDCoMKgIHVwZGF0ZSBjLnF1b3RhX2ludW0KPj4K
-Pj4gU2hvdWxkIGMucXVvdGFfaW51bSBiZSBpbml0aWFsaXplZCBtb3JlIGVhcmx5Pwo+IAo+IEkg
-dGhpbmsgd2Ugc2hvdWxkIG9ubHkgY291bnQgcXVvdGEgaW5vZGVzIGlmIHRoeWUgYXJlIGFscmVh
-ZHkgaW5pdGlhbGl6ZWQuCj4gT3RoZXJ3aXNlLCBpZiBxdW90YV9pbm8gaXMgbm90IGVuYWJsZWQs
-IHRoZXJlIGlzIG9ubHkgb25lIGlub2RlIChyb290KSBpbgo+IENVUlNFR19IT1RfTk9ERSwgYW5k
-IHR3byBibG9ja3MgbmV4dCB0byByb290IGlub2RlIHdpbGwgbm90IGJlIGRpc2NhcmRlZC4KCklN
-Tywgd2UgbmVlZCB0byBtb3ZlIGRpc2NhcmRfb2Jzb2xldGVfZG5vZGUgaW4gdG8gZjJmc19jcmVh
-dGVfcm9vdF9kaXIgYXMgYmVsb3c6CgotIGYyZnNfY3JlYXRlX3Jvb3RfZGlyCiAtIGYyZnNfd3Jp
-dGVfcm9vdF9pbm9kZQogLSBmMmZzX3dyaXRlX3FmX2lub2RlCiAtIGRpc2NhcmRfb2Jzb2xldGVf
-ZG5vZGUKClNvIHRoZSBsYXN0IG9ic29sZXRlIHBvc2l0aW9uIGNhbiBiZSBjYWxjdWxhdGVkIGNv
-cnJlY3RseS4KClRoYW5rcywKCj4gCj4gSSdtIGEgYml0IGNvbmZ1c2VkIGFib3V0IHRoZSBgb2Zm
-c2V0JyBzY2FsZSBpbiBkaXNjYXJkX29ic29sZXRlX2Rub2RlLgo+IEl0IHNlZW1zIGBpZiAob2Zm
-c2V0ID49IHN0YXJ0X2lub2RlX3BvcyB8fCBvZmZzZXQgPD0gbGFzdF9pbm9kZV9wb3MpJwo+IHdp
-bGwgYWx3YXlzIGJlIHRydWU/Cj4gCj4gSGksIEh5b2p1biwgY291bGQgeW91IHBsZWFzZSBhbHNv
-IGhhdmUgYSBsb29rIGF0IHRoaXMsIHRoYW5rcyA6KQo+IAo+IGRpZmYgLS1naXQgYS9ta2ZzL2Yy
-ZnNfZm9ybWF0LmMgYi9ta2ZzL2YyZnNfZm9ybWF0LmMKPiBpbmRleCAwZmM4YjMwLi42YzlhZTIy
-IDEwMDY0NAo+IC0tLSBhL21rZnMvZjJmc19mb3JtYXQuYwo+ICsrKyBiL21rZnMvZjJmc19mb3Jt
-YXQuYwo+IEBAIC05NjMsNyArOTYzLDcgQEAgc3RhdGljIGludCBkaXNjYXJkX29ic29sZXRlX2Ru
-b2RlKHN0cnVjdCBmMmZzX25vZGUgKnJhd19ub2RlLCB1X2ludDY0X3Qgb2Zmc2V0KQo+IMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgIG9mZnNldCA9IG5leHRfYmxrYWRkcjsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgLyogc2hvdWxkIGF2b2lkIHJlY3Vyc2l2ZSBjaGFpbiBkdWUgdG8gc3RhbGUgZGF0YSAqLwo+
-IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChvZmZzZXQgPj0gc3RhcnRfaW5vZGVf
-cG9zIHx8IG9mZnNldCA8PSBsYXN0X2lub2RlX3BvcykKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoCBpZiAob2Zmc2V0IDw9IGxhc3RfaW5vZGVfcG9zKQo+IMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgYnJlYWs7Cj4gwqDCoMKgwqDCoMKgwqAgfSB3
-aGlsZSAoMSk7Cj4gCj4gdGhhbmtzLAo+IFNoZW5nCj4+Cj4+IFRoYW5rcywKPj4KPj4gLgo+Pgo+
-IAoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUgdmlicmFudCB0ZWNoIGNvbW11
-bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFz
-aGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdApfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApM
-aW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJj
-ZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+Hi Sheng Yong,
+
+On 2018/2/9 11:21, Sheng Yong wrote:
+> Hi, Chao
+> 
+> On 2018/2/8 23:08, Chao Yu wrote:
+>> On 2018/2/6 12:31, Sheng Yong wrote:
+>>> This patch introduces a new feature F2FS_FEATURE_LOST_FOUND. It can be
+>>> switched on by indicating a new option `lost+found' with -O. If
+>>
+>> Not sure, do we need to change this option to 'lost_found' to follow other
+>> generic -O options?
+> 
+> I'm also not sure about this, since there is already a `lost_found' in fsck :(
+
+Change 'lost_found' to 'lost+found' in fsck to unify the output path?
+
+>> Do not need to update this whole slot?
+> 
+> What do you mean by updating the whole slot? Two slots used by "lost+found"
+> are filled.
+
+'lost+found' takes two slots, but we need only fill all contents in first slot
+and filename & bitmap of these two slots, as in both kernel/userspace sides,
+we will skip updating & travelling second and later slots during add_link & lookup.
+Let's keep consistent with the behavior.
+
+Thanks,
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
