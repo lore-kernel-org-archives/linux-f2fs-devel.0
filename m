@@ -1,195 +1,159 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2] f2fs: introduce "strict_fsync" for posix
- standard fsync
-Date: Fri, 9 Feb 2018 16:44:57 -0800
-Message-ID: <20180210004457.GA1885@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180202083333.104786-1-zhengjunling@huawei.com>
+Subject: Re: [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
+Date: Fri, 9 Feb 2018 17:41:40 -0800
+Message-ID: <20180210014140.GB1885@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180127094301.29154-1-yuchao0@huawei.com>
+ <20180127094301.29154-2-yuchao0@huawei.com>
+ <20180131020213.GA86468@jaegeuk-macbookpro.roam.corp.google.com>
+ <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
+ <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
+ <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
- helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1ekJHv-000491-UJ
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 10 Feb 2018 00:45:07 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ekJHr-0002aZ-Tm
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 10 Feb 2018 00:45:07 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180202083333.104786-1-zhengjunling@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Junling Zheng <zhengjunling@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <chao@kernel.org>
+Cc: Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 02/02, Junling Zheng wrote:
-> Commit "0a007b97aad6"(f2fs: recover directory operations by fsync)
-> fixed xfstest generic/342 case, but it also increased the written
-> data and caused the performance degradation. In most cases, there's
-> no need to do so heavily fsync actually.
+On 02/01, Chao Yu wrote:
 > 
-> So we introduce a new mount option "strict_fsync" to control the
-> policy of fsync. It's set by default, and means that fsync follows
-> POSIX semantics. And "nostrict_fsync" means that the behaviour is
-> in line with xfs, ext4 and btrfs, where generic/342 will pass.
+> 
+> On 2018/2/1 6:15, Jaegeuk Kim wrote:
+> > On 01/31, Chao Yu wrote:
+> >> On 2018/1/31 10:02, Jaegeuk Kim wrote:
+> >>> What if we want to add more entries in addition to node_checksum? Do we have
+> >>> to add a new feature flag at every time? How about adding a layout value instead
+> >>
+> >> Hmm.. for previous implementation, IMO, we'd better add a new feature flag at
+> >> every time, otherwise, w/ extra_nsize only, in current image, we can know a
+> >> valid range of extended area in node block, but we don't know which
+> >> fields/features are valid/enabled or not.
+> >>
+> >> One more thing is that if we can add one feature flag for each field, we got one
+> >> more chance to disable it dynamically.
+> >>
+> >>> of extra_nsize? For example, layout #1 means node_checksum with extra_nsize=X?
+> >>>
+> >>>
+> >>> What does 1017 mean? We need to make this structure more flexibly for new
+> >>
+> >> Yes, using raw 1017 is not appropriate here.
+> >>
+> >>> entries. Like this?
+> >>> 		union {
+> >>> 			struct node_v1;
+> >>> 			struct node_v2;
+> >>> 			struct node_v3;
+> >>> 			...
+> >>> 			struct direct_node dn;
+> >>> 			struct indirect_node in;
+> >>> 		};
+> >>> 	};
+> >>>
+> >>> 	struct node_v1 {
+> >>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
+> >>> 		__le32 node_checksum;
+> >>> 	}
+> >>>
+> >>> 	struct node_v2 {
+> >>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=500];
+> >>
+> >> Hmm.. If we only need to add one more 4 bytes field in struct node_v2, but
+> >> V2_NSIZE is defined as fixed 500, there must be 492 bytes wasted.
+> >>
+> >> Or we can define V2_NSIZE as 8, but if there comes more and more extended
+> >> fields, node version count can be a large number, it results in complicated
+> >> version recognization and handling.
+> >>
+> >> One more question is how can we control which fields are valid or not in
+> >> comp[Vx_NSIZE]?
+> >>
+> >>
+> >> Anyway, what I'm thinking is maybe we can restructure layout of node block like
+> >> the one used by f2fs_inode:
+> >>
+> >> struct f2fs_node {
+> >> 	union {
+> >> 		struct f2fs_inode i;
+> >> 		union {
+> >> 			struct {
+> >> 				__le32 node_checksum;
+> >> 				__le32 feature_field_1;
+> >> 				__le32 feature_field_2;
+> >> 				....
+> >> 				__le32 addr[];
+> >> 				
+> >> 			};
+> >> 			struct direct_node dn;
+> >> 			struct indirect_node in;
+> >> 		};
+> >> 	};
+> >> 	struct node_footer footer;
+> >> } __packed;
+> >>
+> >> Moving all extended fields to the head of f2fs_node, so we don't have to use
+> >> macro to indicate actual size of addr.
+> > 
+> > Thinking what'd be the best way. My concern is, once getting more entries, we
+> 
+> OK, I think we need more discussion.. ;)
+> 
+> > can't set each of features individually. Like the second entry should have
+> 
+> Oh, that will be hard. If we have to avoid that, we have to tag in somewhere
+> e.g. f2fs_inode::i_flags2 to indicate which new field in f2fs_node is valid, for
+> example:
+> 
+> #define F2FS_NODE_CHECKSUM	0x0001
+> #define F2FS_NODE_FIELD1	0x0002
+> #define F2FS_NODE_FIELD2	0x0004
+> 
+> 	union {
+> 		struct {
+> 			__le32 node_checksum;
+> 			__le32 field_1;
+> 			__le32 field_2;
+> 			....
+> 			__le32 addr[];
+> 		};
+> 		struct direct_node dn;
+> 		struct indirect_node in;
+> 	};
+> 
+> f2fs_inode::i_flags2 = F2FS_NODE_CHECKSUM | F2FS_NODE_FIELD1
+> indicates that f2fs_node::node_checksum and f2fs_node::field_1 are valid;
+> 
+> f2fs_inode::i_flags2 = F2FS_NODE_FIELD1 | F2FS_NODE_FIELD2
+> indicates that f2fs_node::field_1 and f2fs_node::field_2 are valid.
 
-How about adding "fsync=%s" to give another chance for fsync policies?
-
-Thanks,
+So, that's why I thought we may need a sort of each formats.
 
 > 
-> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
-> Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  Documentation/filesystems/f2fs.txt |  4 ++++
->  fs/f2fs/dir.c                      |  3 ++-
->  fs/f2fs/f2fs.h                     |  1 +
->  fs/f2fs/file.c                     |  3 ++-
->  fs/f2fs/namei.c                    |  9 ++++++---
->  fs/f2fs/super.c                    | 13 +++++++++++++
->  6 files changed, 28 insertions(+), 5 deletions(-)
+> Any thoughts?
 > 
-> diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-> index 0caf7da0a532..c484ce8d1f4c 100644
-> --- a/Documentation/filesystems/f2fs.txt
-> +++ b/Documentation/filesystems/f2fs.txt
-> @@ -180,6 +180,10 @@ whint_mode=%s          Control which write hints are passed down to block
->                         down hints. In "user-based" mode, f2fs tries to pass
->                         down hints given by users. And in "fs-based" mode, f2fs
->                         passes down hints with its policy.
-> +{,no}strict_fsync      Control the policy of fsync. Set "strict_fsync" by default,
-> +                       which means that fsync will follow POSIX semantics. Use
-> +                       "nostrict_fsync" if you expect fsync to behave in line with
-> +                       xfs, ext4 and btrfs, where xfstest generic/342 will pass.
->  
->  ================================================================================
->  DEBUGFS ENTRIES
-> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> index f00b5ed8c011..7487b7e77a36 100644
-> --- a/fs/f2fs/dir.c
-> +++ b/fs/f2fs/dir.c
-> @@ -713,7 +713,8 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
->  
->  	f2fs_update_time(F2FS_I_SB(dir), REQ_TIME);
->  
-> -	add_ino_entry(F2FS_I_SB(dir), dir->i_ino, TRANS_DIR_INO);
-> +	if (!test_opt(F2FS_I_SB(dir), STRICT_FSYNC))
-> +		add_ino_entry(F2FS_I_SB(dir), dir->i_ino, TRANS_DIR_INO);
->  
->  	if (f2fs_has_inline_dentry(dir))
->  		return f2fs_delete_inline_entry(dentry, page, dir, inode);
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index dbe87c7a266e..8cf914d12f17 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -97,6 +97,7 @@ extern char *fault_name[FAULT_MAX];
->  #define F2FS_MOUNT_QUOTA		0x00400000
->  #define F2FS_MOUNT_INLINE_XATTR_SIZE	0x00800000
->  #define F2FS_MOUNT_RESERVE_ROOT		0x01000000
-> +#define F2FS_MOUNT_STRICT_FSYNC		0x02000000
->  
->  #define clear_opt(sbi, option)	((sbi)->mount_opt.opt &= ~F2FS_MOUNT_##option)
->  #define set_opt(sbi, option)	((sbi)->mount_opt.opt |= F2FS_MOUNT_##option)
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 672a542e5464..9b39254f5b48 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -165,7 +165,8 @@ static inline enum cp_reason_type need_do_checkpoint(struct inode *inode)
->  		cp_reason = CP_FASTBOOT_MODE;
->  	else if (sbi->active_logs == 2)
->  		cp_reason = CP_SPEC_LOG_NUM;
-> -	else if (need_dentry_mark(sbi, inode->i_ino) &&
-> +	else if (!test_opt(sbi, STRICT_FSYNC) &&
-> +		need_dentry_mark(sbi, inode->i_ino) &&
->  		exist_written_data(sbi, F2FS_I(inode)->i_pino, TRANS_DIR_INO))
->  		cp_reason = CP_RECOVER_DIR;
->  
-> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index c4c94c7e9f4f..ef86ae327f91 100644
-> --- a/fs/f2fs/namei.c
-> +++ b/fs/f2fs/namei.c
-> @@ -936,7 +936,8 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
->  		}
->  		f2fs_i_links_write(old_dir, false);
->  	}
-> -	add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
-> +	if (!test_opt(sbi, STRICT_FSYNC))
-> +		add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
->  
->  	f2fs_unlock_op(sbi);
->  
-> @@ -1091,8 +1092,10 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
->  	}
->  	f2fs_mark_inode_dirty_sync(new_dir, false);
->  
-> -	add_ino_entry(sbi, old_dir->i_ino, TRANS_DIR_INO);
-> -	add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
-> +	if (!test_opt(sbi, STRICT_FSYNC)) {
-> +		add_ino_entry(sbi, old_dir->i_ino, TRANS_DIR_INO);
-> +		add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
-> +	}
->  
->  	f2fs_unlock_op(sbi);
->  
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 7966cf7bfb8e..3066fc9d8985 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -130,6 +130,8 @@ enum {
->  	Opt_jqfmt_vfsv0,
->  	Opt_jqfmt_vfsv1,
->  	Opt_whint,
-> +	Opt_strict_fsync,
-> +	Opt_nostrict_fsync,
->  	Opt_err,
->  };
->  
-> @@ -184,6 +186,8 @@ static match_table_t f2fs_tokens = {
->  	{Opt_jqfmt_vfsv0, "jqfmt=vfsv0"},
->  	{Opt_jqfmt_vfsv1, "jqfmt=vfsv1"},
->  	{Opt_whint, "whint_mode=%s"},
-> +	{Opt_strict_fsync, "strict_fsync"},
-> +	{Opt_nostrict_fsync, "nostrict_fsync"},
->  	{Opt_err, NULL},
->  };
->  
-> @@ -700,6 +704,12 @@ static int parse_options(struct super_block *sb, char *options)
->  			}
->  			kfree(name);
->  			break;
-> +		case Opt_strict_fsync:
-> +			set_opt(sbi, STRICT_FSYNC);
-> +			break;
-> +		case Opt_nostrict_fsync:
-> +			clear_opt(sbi, STRICT_FSYNC);
-> +			break;
->  		default:
->  			f2fs_msg(sb, KERN_ERR,
->  				"Unrecognized mount option \"%s\" or missing value",
-> @@ -1296,6 +1306,9 @@ static void default_options(struct f2fs_sb_info *sbi)
->  	set_opt(sbi, POSIX_ACL);
->  #endif
->  
-> +	/* POSIX standard fsync */
-> +	set_opt(sbi, STRICT_FSYNC);
-> +
->  #ifdef CONFIG_F2FS_FAULT_INJECTION
->  	f2fs_build_fault_attr(sbi, 0);
->  #endif
-> -- 
-> 2.15.1
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> Thanks,
+> 
+> > enabled node_checksum, which we may not want to do.
+> > 
+> >>
+> >> Thanks,
+> >>
+> >>> 		__le32 comp[V2_NSIZE];
+> >>> 	}
+> >>> 	...
+> >>>
+> >>>> +			};
+> >>>> +			struct direct_node dn;
+> >>>> +			struct indirect_node in;
+> >>>> +		};
+> >>>>  	};
+> >>>>  	struct node_footer footer;
+> >>>>  } __packed;
+> >>>> -- 
+> >>>> 2.15.0.55.gc2ece9dc4de6
+> >>>
+> >>> .
+> >>>
