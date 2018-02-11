@@ -1,27 +1,28 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: remove unneed reada during build free
- nids
-Date: Sun, 11 Feb 2018 11:12:22 +0800
-Message-ID: <4ef3567d-247f-a631-9b21-37701ed9f238@huawei.com>
-References: <1518148722-31212-1-git-send-email-heyunlei@huawei.com>
- <eb931c4a-7d7b-22f8-0ef8-ddd2fa880781@kernel.org>
- <42B685BFA705F94C860C6DD0752F05654832E9FF@DGGEMA503-MBX.china.huawei.com>
+Subject: Re: Cold log explanation
+Date: Sun, 11 Feb 2018 11:16:06 +0800
+Message-ID: <25fc9bc6-d022-97ac-1cbc-c4015ae1373e@huawei.com>
+References: <20180210154519.GA11491@lazy.lzy>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
  helo=mx.sourceforge.net)
  by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1eki42-00069x-D1
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 11 Feb 2018 03:12:26 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1eki7P-0006EP-NO
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 11 Feb 2018 03:15:55 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eki40-0002mc-TR
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 11 Feb 2018 03:12:26 +0000
-In-Reply-To: <42B685BFA705F94C860C6DD0752F05654832E9FF@DGGEMA503-MBX.china.huawei.com>
+ id 1eki7N-0002JV-JM
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 11 Feb 2018 03:15:55 +0000
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+ by Forcepoint Email with ESMTP id 85E201B6C1A29
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sun, 11 Feb 2018 11:15:34 +0800 (CST)
+In-Reply-To: <20180210154519.GA11491@lazy.lzy>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -32,56 +33,34 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: heyunlei <heyunlei@huawei.com>, Chao Yu <chao@kernel.org>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: Piergiorgio Sartor <piergiorgio.sartor@nexgo.de>, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/2/11 9:55, heyunlei wrote:
+On 2018/2/10 23:45, Piergiorgio Sartor wrote:
+> Hi all,
 > 
+> I noticed that "mkfs.f2fs" has an option, "-e",
+> to store certain files into the "cold log".
 > 
->> -----Original Message-----
->> From: Chao Yu [mailto:chao@kernel.org]
->> Sent: Friday, February 09, 2018 9:37 PM
->> To: heyunlei; jaegeuk@kernel.org; Yuchao (T); linux-f2fs-devel@lists.sourceforge.net
->> Subject: Re: [f2fs-dev] [PATCH] f2fs: remove unneed reada during build free nids
->>
->> On 2018/2/9 11:58, Yunlei He wrote:
->>> This patch remove unneed reada during build free nids.
->>> If few nids left, three will introduce a lot of no hit
->>> read io.
->>
->> I guess it is due to be lack of commit c1fe3e981440 ("Revert "f2fs:
->> reuse nids more aggressively""), before that commit, we will update
->> .next_scan_nid randomly instead of updating it ascendingly, then
->> during __build_free_nids we may readahead NAT pages starting from
->> random position.
-> 
-> I think commit c1fe3e981440 will reduce fragment of nat area, it
-> will locate all used nids at the left head of nat area, which I think
-> will do benefit to WA ?
+> First, basic question, what is the "cold log" or,
+> better, what is the differnce between the "normal"
+> ("warm", I guess) log and this one.
 
-Yup, IMO, it can reduce WA. ;)
+Could you check this paper of fast15? :)
 
-Also, there is another patch intends to reduce WA by adjusting allocation
-policy of free nid.
-
-FYI
-
-https://patchwork.kernel.org/patch/10084653/
+https://www.usenix.org/conference/fast15/technical-sessions/presentation/lee
 
 > 
-> e.g, if we have used 10000 nids, which will hold 10000/455 blocks at least.
-> Without this commit, the blocks taken for nids will expansion, may be 10000
-> blocks in the worst case, at this time, if we update node info, we will produce 
-> more nat IOs?
+> Second, it is possible to disable this list *after*
+> filesystem creation?
+> Maybe even with it mounted?
 
-That's right.
+I'm working on this feature via sysfs, will send it out soon.
 
 Thanks,
 
 > 
->>
->> Could try that commit to check IO again?
->>
->> Thanks,
+> Thanks a lot in advance,
+> 
 
 
 ------------------------------------------------------------------------------
