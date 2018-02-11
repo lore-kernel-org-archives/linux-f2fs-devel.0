@@ -1,38 +1,26 @@
-From: Piergiorgio Sartor <piergiorgio.sartor@nexgo.de>
-Subject: Cold log explanation
-Date: Sat, 10 Feb 2018 16:45:20 +0100
-Message-ID: <20180210154519.GA11491@lazy.lzy>
+From: Sheng Yong <shengyong1@huawei.com>
+Subject: Re: [RFC PATCH 0/2] f2fs: introduce lost+found feature
+Date: Sun, 11 Feb 2018 09:53:01 +0800
+Message-ID: <75d0e560-9293-2671-3a92-d601bfde9981@huawei.com>
+References: <20180206043118.134137-1-shengyong1@huawei.com>
+ <20180210025006.GB6020@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <piergiorgio.sartor@nexgo.de>) id 1ekXLL-0001Th-NW
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 10 Feb 2018 15:45:35 +0000
-Received: from vsmx012.vodafonemail.xion.oxcs.net ([153.92.174.90])
+ (envelope-from <shengyong1@huawei.com>) id 1ekgpg-0002Eu-48
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 11 Feb 2018 01:53:32 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
  by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ekXLJ-0007JZ-PK
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 10 Feb 2018 15:45:35 +0000
-Received: from vsmx004.vodafonemail.xion.oxcs.net (unknown [192.168.75.198])
- by mta-8-out.mta.xion.oxcs.net (Postfix) with ESMTP id C360F8CDE3F
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 10 Feb 2018 15:45:25 +0000 (UTC)
-Received: from lazy.lzy (unknown [217.84.7.214])
- by mta-8-out.mta.xion.oxcs.net (Postfix) with ESMTPA id 987AACDFA6
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 10 Feb 2018 15:45:23 +0000 (UTC)
-Received: from lazy.lzy (localhost [127.0.0.1])
- by lazy.lzy (8.15.2/8.14.5) with ESMTPS id w1AFjKaj011515
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO)
- for <linux-f2fs-devel@lists.sourceforge.net>; Sat, 10 Feb 2018 16:45:22 +0100
-Received: (from red@localhost)
- by lazy.lzy (8.15.2/8.15.2/Submit) id w1AFjK0b011514
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 10 Feb 2018 16:45:20 +0100
-Content-Disposition: inline
+ id 1ekgpe-0000Sa-Hb
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 11 Feb 2018 01:53:32 +0000
+In-Reply-To: <20180210025006.GB6020@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -42,26 +30,51 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: heyunlei@huawei.com, miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-Hi all,
+Hi, Jaegeuk
 
-I noticed that "mkfs.f2fs" has an option, "-e",
-to store certain files into the "cold log".
+On 2018/2/10 10:50, Jaegeuk Kim wrote:
+> On 02/06, Sheng Yong wrote:
+>> This patchset introduces lost+found feature in f2fs. If the feature is
+>> enabled, f2fs should avoid to encrypting root directory.
+> 
+> In that case, we need to add test_dummy_encryption likewise ext4.
+> 
+If the test_dummy_encryption is only used for some a testcase, I think
+it's ok not to add it. The lost_found feature is not enabled by default,
+so if we don't specify "-O lost_found" for mkfs, root directory is allowed
+to be encrypted. If I miss something, please let me know :)
 
-First, basic question, what is the "cold log" or,
-better, what is the differnce between the "normal"
-("warm", I guess) log and this one.
+thanks,
+Sheng
 
-Second, it is possible to disable this list *after*
-filesystem creation?
-Maybe even with it mounted?
+>>
+>> For more information, please check the mail "f2fs-tools: introduce lost+
+>> found feature".
+>>
+>> Thanks,
+>> Sheng
+>>
+>> Sheng Yong (2):
+>>    f2fs: clean up f2fs_sb_has_xxx functions
+>>    f2fs: introduce lost+found feature
+>>
+>>   fs/f2fs/data.c    |  2 +-
+>>   fs/f2fs/f2fs.h    | 53 +++++++++++++++--------------------------------------
+>>   fs/f2fs/file.c    |  6 +++---
+>>   fs/f2fs/segment.c |  4 ++--
+>>   fs/f2fs/super.c   | 26 +++++++++++++++++++-------
+>>   fs/f2fs/sysfs.c   |  4 ++--
+>>   6 files changed, 42 insertions(+), 53 deletions(-)
+>>
+>> -- 
+>> 2.11.0
+> 
+> .
+> 
 
-Thanks a lot in advance,
-
--- 
-
-piergiorgio
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
