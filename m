@@ -1,26 +1,28 @@
-From: Junling Zheng <zhengjunling@huawei.com>
-Subject: Re: [PATCH v2] f2fs: introduce "strict_fsync" for posix
- standard fsync
-Date: Sun, 11 Feb 2018 10:37:54 +0800
-Message-ID: <b41911c9-4ae4-1918-f865-0a49e2a4a9f2@huawei.com>
-References: <20180202083333.104786-1-zhengjunling@huawei.com>
- <20180210004457.GA1885@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: remove unneed reada during build free
+ nids
+Date: Sun, 11 Feb 2018 11:12:22 +0800
+Message-ID: <4ef3567d-247f-a631-9b21-37701ed9f238@huawei.com>
+References: <1518148722-31212-1-git-send-email-heyunlei@huawei.com>
+ <eb931c4a-7d7b-22f8-0ef8-ddd2fa880781@kernel.org>
+ <42B685BFA705F94C860C6DD0752F05654832E9FF@DGGEMA503-MBX.china.huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <zhengjunling@huawei.com>) id 1ekhXW-0002rn-SO
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 11 Feb 2018 02:38:50 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1eki42-00069x-D1
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 11 Feb 2018 03:12:26 +0000
 Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ekhXV-0003X0-Ps
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 11 Feb 2018 02:38:50 +0000
-In-Reply-To: <20180210004457.GA1885@jaegeuk-macbookpro.roam.corp.google.com>
+ id 1eki40-0002mc-TR
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 11 Feb 2018 03:12:26 +0000
+In-Reply-To: <42B685BFA705F94C860C6DD0752F05654832E9FF@DGGEMA503-MBX.china.huawei.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,47 +32,56 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: heyunlei <heyunlei@huawei.com>, Chao Yu <chao@kernel.org>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-Hi, Jaegeuk
-
-On 2018/2/10 8:44, Jaegeuk Kim wrote:
-> On 02/02, Junling Zheng wrote:
->> Commit "0a007b97aad6"(f2fs: recover directory operations by fsync)
->> fixed xfstest generic/342 case, but it also increased the written
->> data and caused the performance degradation. In most cases, there's
->> no need to do so heavily fsync actually.
->>
->> So we introduce a new mount option "strict_fsync" to control the
->> policy of fsync. It's set by default, and means that fsync follows
->> POSIX semantics. And "nostrict_fsync" means that the behaviour is
->> in line with xfs, ext4 and btrfs, where generic/342 will pass.
+On 2018/2/11 9:55, heyunlei wrote:
 > 
-> How about adding "fsync=%s" to give another chance for fsync policies?
 > 
+>> -----Original Message-----
+>> From: Chao Yu [mailto:chao@kernel.org]
+>> Sent: Friday, February 09, 2018 9:37 PM
+>> To: heyunlei; jaegeuk@kernel.org; Yuchao (T); linux-f2fs-devel@lists.sourceforge.net
+>> Subject: Re: [f2fs-dev] [PATCH] f2fs: remove unneed reada during build free nids
+>>
+>> On 2018/2/9 11:58, Yunlei He wrote:
+>>> This patch remove unneed reada during build free nids.
+>>> If few nids left, three will introduce a lot of no hit
+>>> read io.
+>>
+>> I guess it is due to be lack of commit c1fe3e981440 ("Revert "f2fs:
+>> reuse nids more aggressively""), before that commit, we will update
+>> .next_scan_nid randomly instead of updating it ascendingly, then
+>> during __build_free_nids we may readahead NAT pages starting from
+>> random position.
+> 
+> I think commit c1fe3e981440 will reduce fragment of nat area, it
+> will locate all used nids at the left head of nat area, which I think
+> will do benefit to WA ?
 
-OK, I'll give patch v3 to change to "fsync=%s" format.
-BTW, which policy do u think should be the default behavior for f2fs? Posix
-or ext4?
+Yup, IMO, it can reduce WA. ;)
 
-Thanks
-Junling
+Also, there is another patch intends to reduce WA by adjusting allocation
+policy of free nid.
 
-> Thanks,
+FYI
+
+https://patchwork.kernel.org/patch/10084653/
+
+> 
+> e.g, if we have used 10000 nids, which will hold 10000/455 blocks at least.
+> Without this commit, the blocks taken for nids will expansion, may be 10000
+> blocks in the worst case, at this time, if we update node info, we will produce 
+> more nat IOs?
+
+That's right.
+
+Thanks,
+
 > 
 >>
->> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
->> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  Documentation/filesystems/f2fs.txt |  4 ++++
->>  fs/f2fs/dir.c                      |  3 ++-
->>  fs/f2fs/f2fs.h                     |  1 +
->>  fs/f2fs/file.c                     |  3 ++-
->>  fs/f2fs/namei.c                    |  9 ++++++---
->>  fs/f2fs/super.c                    | 13 +++++++++++++
->>  6 files changed, 28 insertions(+), 5 deletions(-)
+>> Could try that commit to check IO again?
 >>
+>> Thanks,
 
 
 ------------------------------------------------------------------------------
