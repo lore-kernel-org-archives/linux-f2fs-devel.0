@@ -1,28 +1,27 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2] f2fs: introduce "strict_fsync" for posix
- standard fsync
-Date: Sun, 11 Feb 2018 16:07:18 -0800
-Message-ID: <20180212000718.GA44666@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180202083333.104786-1-zhengjunling@huawei.com>
- <20180210004457.GA1885@jaegeuk-macbookpro.roam.corp.google.com>
- <b41911c9-4ae4-1918-f865-0a49e2a4a9f2@huawei.com>
+Subject: Re: [RFC PATCH 0/2] f2fs: introduce lost+found feature
+Date: Sun, 11 Feb 2018 16:10:14 -0800
+Message-ID: <20180212001014.GB44666@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180206043118.134137-1-shengyong1@huawei.com>
+ <20180210025006.GB6020@jaegeuk-macbookpro.roam.corp.google.com>
+ <75d0e560-9293-2671-3a92-d601bfde9981@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-3.v28.ch3.sourceforge.com ([172.29.28.193]
+Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
  helo=mx.sourceforge.net)
- by sfs-ml-2.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1el1eY-0005aG-0l
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 12 Feb 2018 00:07:26 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1el1hO-0000Cz-0n
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 12 Feb 2018 00:10:22 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.ch3.sourceforge.com with esmtps
+ by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1el1eX-00053d-1g
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 12 Feb 2018 00:07:25 +0000
+ id 1el1hN-0002pb-6h
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 12 Feb 2018 00:10:21 +0000
 Content-Disposition: inline
-In-Reply-To: <b41911c9-4ae4-1918-f865-0a49e2a4a9f2@huawei.com>
+In-Reply-To: <75d0e560-9293-2671-3a92-d601bfde9981@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,54 +31,56 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Junling Zheng <zhengjunling@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Sheng Yong <shengyong1@huawei.com>
+Cc: heyunlei@huawei.com, miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 02/11, Junling Zheng wrote:
+On 02/11, Sheng Yong wrote:
 > Hi, Jaegeuk
 > 
-> On 2018/2/10 8:44, Jaegeuk Kim wrote:
-> > On 02/02, Junling Zheng wrote:
-> >> Commit "0a007b97aad6"(f2fs: recover directory operations by fsync)
-> >> fixed xfstest generic/342 case, but it also increased the written
-> >> data and caused the performance degradation. In most cases, there's
-> >> no need to do so heavily fsync actually.
-> >>
-> >> So we introduce a new mount option "strict_fsync" to control the
-> >> policy of fsync. It's set by default, and means that fsync follows
-> >> POSIX semantics. And "nostrict_fsync" means that the behaviour is
-> >> in line with xfs, ext4 and btrfs, where generic/342 will pass.
+> On 2018/2/10 10:50, Jaegeuk Kim wrote:
+> > On 02/06, Sheng Yong wrote:
+> > > This patchset introduces lost+found feature in f2fs. If the feature is
+> > > enabled, f2fs should avoid to encrypting root directory.
 > > 
-> > How about adding "fsync=%s" to give another chance for fsync policies?
+> > In that case, we need to add test_dummy_encryption likewise ext4.
 > > 
-> 
-> OK, I'll give patch v3 to change to "fsync=%s" format.
-> BTW, which policy do u think should be the default behavior for f2fs? Posix
-> or ext4?
+> If the test_dummy_encryption is only used for some a testcase, I think
+> it's ok not to add it. The lost_found feature is not enabled by default,
+> so if we don't specify "-O lost_found" for mkfs, root directory is allowed
+> to be encrypted. If I miss something, please let me know :)
 
-The default should be like ext4 as fsync=strict. We may add fsync=posix for
-this.
+No, we have to be able to test lost_found with encryption. :)
 
 Thanks,
 
 > 
-> Thanks
-> Junling
+> thanks,
+> Sheng
 > 
-> > Thanks,
+> > > 
+> > > For more information, please check the mail "f2fs-tools: introduce lost+
+> > > found feature".
+> > > 
+> > > Thanks,
+> > > Sheng
+> > > 
+> > > Sheng Yong (2):
+> > >    f2fs: clean up f2fs_sb_has_xxx functions
+> > >    f2fs: introduce lost+found feature
+> > > 
+> > >   fs/f2fs/data.c    |  2 +-
+> > >   fs/f2fs/f2fs.h    | 53 +++++++++++++++--------------------------------------
+> > >   fs/f2fs/file.c    |  6 +++---
+> > >   fs/f2fs/segment.c |  4 ++--
+> > >   fs/f2fs/super.c   | 26 +++++++++++++++++++-------
+> > >   fs/f2fs/sysfs.c   |  4 ++--
+> > >   6 files changed, 42 insertions(+), 53 deletions(-)
+> > > 
+> > > -- 
+> > > 2.11.0
 > > 
-> >>
-> >> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
-> >> Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> >> ---
-> >>  Documentation/filesystems/f2fs.txt |  4 ++++
-> >>  fs/f2fs/dir.c                      |  3 ++-
-> >>  fs/f2fs/f2fs.h                     |  1 +
-> >>  fs/f2fs/file.c                     |  3 ++-
-> >>  fs/f2fs/namei.c                    |  9 ++++++---
-> >>  fs/f2fs/super.c                    | 13 +++++++++++++
-> >>  6 files changed, 28 insertions(+), 5 deletions(-)
-> >>
+> > .
+> > 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
