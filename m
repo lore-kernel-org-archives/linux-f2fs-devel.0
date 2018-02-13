@@ -1,26 +1,25 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH v3] f2fs: introduce "fsync={posix,
- strict}" mount options
-Date: Tue, 13 Feb 2018 22:51:59 +0800
-Message-ID: <42f3e2a9-2bf6-bd4b-e731-2eb763a9a12f@kernel.org>
-References: <20180213105714.128197-1-zhengjunling@huawei.com>
+From: Ashlie Martinez <ashmrtn@utexas.edu>
+Subject: fsck.f2fs result parsing
+Date: Tue, 13 Feb 2018 13:46:40 -0600
+Message-ID: <CAFk8rvbSG-+=x-wNmPtGsxYcJr5PD1rmg0fd09Bs-VHmSuL0Ow@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sfi-mx-2.v28.ch3.sourceforge.com ([172.29.28.192]
  helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <chao@kernel.org>) id 1elbwK-0002ta-TC
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Feb 2018 14:52:12 +0000
-Received: from mail.kernel.org ([198.145.29.99])
+ (envelope-from <ashmrtn@utexas.edu>) id 1elgtQ-000822-5Z
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Feb 2018 20:09:32 +0000
+Received: from mail-vk0-f65.google.com ([209.85.213.65])
  by sfi-mx-2.v28.ch3.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1elbwJ-0006O1-Pb
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Feb 2018 14:52:12 +0000
-In-Reply-To: <20180213105714.128197-1-zhengjunling@huawei.com>
-Content-Language: en-US
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.89)
+ id 1elgtO-0004KH-DI
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Feb 2018 20:09:32 +0000
+Received: by mail-vk0-f65.google.com with SMTP id t126so4401645vkb.11
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 13 Feb 2018 12:09:30 -0800 (PST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,175 +29,27 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Junling Zheng <zhengjunling@huawei.com>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/2/13 18:57, Junling Zheng wrote:
-> Commit "0a007b97aad6"(f2fs: recover directory operations by fsync)
-> fixed xfstest generic/342 case, but it also increased the written
-> data and caused the performance degradation. In most cases, there's
-> no need to do so heavy fsync actually.
-> 
-> So we introduce two new mount options "fsync={posix,strict}" to
-> control the policy of fsync. "fsync=posix" is set by default, and
-> means that f2fs uses a light fsync, which follows POSIX semantics.
-> And "fsync=strict" means that it's a heavy fsync, which behaves in
-> line with xfs, ext4 and btrfs, where generic/342 will pass, but the
-> performance will regress.
-> 
-> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
-> ---
-> Changes from v2:
->  - Change to "fsync={posix,strict}" format
->  - Set "fsync=posix" default
-> Changes from v1:
->  - Add document modify
->  - Add reviewer
->  Documentation/filesystems/f2fs.txt |  7 +++++++
->  fs/f2fs/dir.c                      |  3 ++-
->  fs/f2fs/f2fs.h                     |  1 +
->  fs/f2fs/file.c                     |  3 ++-
->  fs/f2fs/namei.c                    |  9 ++++++---
->  fs/f2fs/super.c                    | 10 ++++++++++
->  6 files changed, 28 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-> index 0caf7da0a532..c00d40655bbc 100644
-> --- a/Documentation/filesystems/f2fs.txt
-> +++ b/Documentation/filesystems/f2fs.txt
-> @@ -180,6 +180,13 @@ whint_mode=%s          Control which write hints are passed down to block
->                         down hints. In "user-based" mode, f2fs tries to pass
->                         down hints given by users. And in "fs-based" mode, f2fs
->                         passes down hints with its policy.
-> +fsync=%s               Control the policy of fsync. This supports "posix" and
-> +                       "strict" modes. In "posix" mode, which is default, fsync
-> +                       will follow POSIX semantics and does a light operation to
-> +                       improve the filesystem performance. In "strict" mode, fsync
-> +                       will be heavy and behaves in line with xfs, ext4 and btrfs,
-> +                       where xfstest generic/342 will pass, but the performance
-> +                       will regress.
->  
->  ================================================================================
->  DEBUGFS ENTRIES
-> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> index f00b5ed8c011..37d1259f1b92 100644
-> --- a/fs/f2fs/dir.c
-> +++ b/fs/f2fs/dir.c
-> @@ -713,7 +713,8 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
->  
->  	f2fs_update_time(F2FS_I_SB(dir), REQ_TIME);
->  
-> -	add_ino_entry(F2FS_I_SB(dir), dir->i_ino, TRANS_DIR_INO);
-> +	if (test_opt(F2FS_I_SB(dir), STRICT_FSYNC))
-> +		add_ino_entry(F2FS_I_SB(dir), dir->i_ino, TRANS_DIR_INO);
->  
->  	if (f2fs_has_inline_dentry(dir))
->  		return f2fs_delete_inline_entry(dentry, page, dir, inode);
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index dbe87c7a266e..8cf914d12f17 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -97,6 +97,7 @@ extern char *fault_name[FAULT_MAX];
->  #define F2FS_MOUNT_QUOTA		0x00400000
->  #define F2FS_MOUNT_INLINE_XATTR_SIZE	0x00800000
->  #define F2FS_MOUNT_RESERVE_ROOT		0x01000000
-> +#define F2FS_MOUNT_STRICT_FSYNC		0x02000000
->  
->  #define clear_opt(sbi, option)	((sbi)->mount_opt.opt &= ~F2FS_MOUNT_##option)
->  #define set_opt(sbi, option)	((sbi)->mount_opt.opt |= F2FS_MOUNT_##option)
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 672a542e5464..509b3e045247 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -165,7 +165,8 @@ static inline enum cp_reason_type need_do_checkpoint(struct inode *inode)
->  		cp_reason = CP_FASTBOOT_MODE;
->  	else if (sbi->active_logs == 2)
->  		cp_reason = CP_SPEC_LOG_NUM;
-> -	else if (need_dentry_mark(sbi, inode->i_ino) &&
-> +	else if (test_opt(sbi, STRICT_FSYNC) &&
-> +		need_dentry_mark(sbi, inode->i_ino) &&
->  		exist_written_data(sbi, F2FS_I(inode)->i_pino, TRANS_DIR_INO))
->  		cp_reason = CP_RECOVER_DIR;
->  
-> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index c4c94c7e9f4f..5a385b8ab172 100644
-> --- a/fs/f2fs/namei.c
-> +++ b/fs/f2fs/namei.c
-> @@ -936,7 +936,8 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
->  		}
->  		f2fs_i_links_write(old_dir, false);
->  	}
-> -	add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
-> +	if (test_opt(sbi, STRICT_FSYNC))
-> +		add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
->  
->  	f2fs_unlock_op(sbi);
->  
-> @@ -1091,8 +1092,10 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
->  	}
->  	f2fs_mark_inode_dirty_sync(new_dir, false);
->  
-> -	add_ino_entry(sbi, old_dir->i_ino, TRANS_DIR_INO);
-> -	add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
-> +	if (test_opt(sbi, STRICT_FSYNC)) {
-> +		add_ino_entry(sbi, old_dir->i_ino, TRANS_DIR_INO);
-> +		add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
-> +	}
->  
->  	f2fs_unlock_op(sbi);
->  
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 7966cf7bfb8e..8429e7b3cc7f 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -130,6 +130,8 @@ enum {
->  	Opt_jqfmt_vfsv0,
->  	Opt_jqfmt_vfsv1,
->  	Opt_whint,
-> +	Opt_posix_fsync,
-> +	Opt_strict_fsync,
+Hello,
 
-Opt_fsync_mode,
+I am a student at the University of Texas at Austin's CS department
+and I am working on a new, record-and-replay, file system agnostic
+crash consistency test harness called CrashMonkey [1][2]. As part of
+this project, I need to run various file system checkers and return
+one of several different enums that represents the results of the file
+system checker run. The basic result enums mirror those in the man
+page for fsck(8), and include values for "no errors found", "errors
+corrected", "errors left uncorrected", and a catch-all "other error".
 
->  	Opt_err,
->  };
->  
-> @@ -184,6 +186,8 @@ static match_table_t f2fs_tokens = {
->  	{Opt_jqfmt_vfsv0, "jqfmt=vfsv0"},
->  	{Opt_jqfmt_vfsv1, "jqfmt=vfsv1"},
->  	{Opt_whint, "whint_mode=%s"},
-> +	{Opt_posix_fsync, "fsync=posix"},
-> +	{Opt_strict_fsync, "fsync=strict"},
+The man page for fsck.f2fs shows that it only returns either 0 or -1
+for "success" or "failure". Is there any way I could parse some of the
+output of fsck.f2fs (either stdout or stderr) to determine the outcome
+of fsck.f2fs so that it can be categorized into the enums given above?
+If so, where should I look for the relevant strings to parse for?
 
-{Opt_fsync_mode, "fsync=%s"},
-
->  	{Opt_err, NULL},
->  };
->  
-> @@ -700,6 +704,12 @@ static int parse_options(struct super_block *sb, char *options)
->  			}
->  			kfree(name);
->  			break;
-> +		case Opt_posix_fsync:
-> +			clear_opt(sbi, STRICT_FSYNC);
-> +			break;
-> +		case Opt_strict_fsync:
-> +			set_opt(sbi, STRICT_FSYNC);
-> +			break;
-
-case Opt_fsync_mode:
-
-if ()
-	sbi->fsync_mode = F2FS_STRICT_FSYNC_MODE;
-else if()
-	sbi->fsync_mode = F2FS_POSIX_FSYNC_MODE;
-
-Thanks,
-
->  		default:
->  			f2fs_msg(sb, KERN_ERR,
->  				"Unrecognized mount option \"%s\" or missing value",
-> 
+[1] https://github.com/utsaslab/crashmonkey
+[2] https://www.usenix.org/conference/hotstorage17/program/presentation/martinez
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
