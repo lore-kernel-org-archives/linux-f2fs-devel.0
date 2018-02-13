@@ -1,31 +1,32 @@
-From: guoweichao <guoweichao@huawei.com>
-Subject: Re: [PATCH v3] f2fs: report cp block corrupted
-Date: Tue, 13 Feb 2018 10:49:24 +0800
-Message-ID: <4a3a653a-e31c-80a7-eb27-b603d8ccb4bd@huawei.com>
-References: <20180205160032.146034-1-guoweichao@huawei.com>
- <20180211233243.GA43276@jaegeuk-macbookpro.roam.corp.google.com>
- <cec8b92d-bf18-906b-708f-00bd62208fea@huawei.com>
- <20180212023204.GA49849@jaegeuk-macbookpro.roam.corp.google.com>
- <371fd4cc-7ae3-595b-5163-ed0664a3b093@huawei.com>
- <20180212034040.GA51289@jaegeuk-macbookpro.roam.corp.google.com>
- <2e3356bf-3cc6-7373-497a-d2d10216a190@huawei.com>
- <20180212180327.GB59510@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
+Date: Tue, 13 Feb 2018 15:34:51 +0800
+Message-ID: <558ea6b1-e57d-5910-d931-a47f143cca25@huawei.com>
+References: <20180127094301.29154-1-yuchao0@huawei.com>
+ <20180127094301.29154-2-yuchao0@huawei.com>
+ <20180131020213.GA86468@jaegeuk-macbookpro.roam.corp.google.com>
+ <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
+ <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
+ <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
+ <20180210014140.GB1885@jaegeuk-macbookpro.roam.corp.google.com>
+ <5f22d645-001d-a132-f0bd-2dba1f6daaea@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
+Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
  helo=mx.sourceforge.net)
- by sfs-ml-3.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <guoweichao@huawei.com>) id 1elQfL-0004Wk-OA
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Feb 2018 02:49:55 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1elV6N-0002CC-Fx
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Feb 2018 07:34:07 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1elQfJ-0004Xu-Gq
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Feb 2018 02:49:55 +0000
-In-Reply-To: <20180212180327.GB59510@jaegeuk-macbookpro.roam.corp.google.com>
+ id 1elV6L-00017h-AV
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Feb 2018 07:34:07 +0000
+In-Reply-To: <5f22d645-001d-a132-f0bd-2dba1f6daaea@kernel.org>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,122 +36,190 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
+Hi Jaegeuk,
 
-
-On 2018/2/13 2:03, Jaegeuk Kim wrote:
-> On 02/12, guoweichao wrote:
->>
->>
->> On 2018/2/12 11:40, Jaegeuk Kim wrote:
->>> On 02/12, guoweichao wrote:
->>>>
->>>>
->>>> On 2018/2/12 10:32, Jaegeuk Kim wrote:
->>>>> On 02/12, guoweichao wrote:
->>>>>> Hi Jaegeuk,
->>>>>>
->>>>>> On 2018/2/12 7:32, Jaegeuk Kim wrote:
->>>>>>> On 02/06, Weichao Guo wrote:
->>>>>>>> There is a potential inconsistent metadata case due to a cp block
->>>>>>>> crc invalid in the latest checkpoint caused by hardware issues:
->>>>>>>> 1) write nodes into segment x;
->>>>>>>> 2) write checkpoint A;
->>>>>>>> 3) remove nodes in segment x;
->>>>>>>> 4) write checkpoint B;
->>>>>>>> 5) issue discard or write datas into segment x;
->>>>>>>> 6) sudden power-cut;
->>>>>>>> 7) use checkpoint A after reboot as checkpoint B is invalid
->>>>>>>>
->>>>>>>> This inconsistency may be found after several reboots long time later
->>>>>>>> and the kernel log about cp block crc invalid has disappeared. This
->>>>>>>> makes the root cause of the inconsistency is hard to locate. Let us
->>>>>>>> separate such other part issues from f2fs logical bugs in debug version.
->>>>>>>>
->>>>>>>> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
->>>>>>>> ---
->>>>>>>>  fs/f2fs/checkpoint.c | 8 ++++++--
->>>>>>>>  1 file changed, 6 insertions(+), 2 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->>>>>>>> index 8b0945b..16ba96a 100644
->>>>>>>> --- a/fs/f2fs/checkpoint.c
->>>>>>>> +++ b/fs/f2fs/checkpoint.c
->>>>>>>> @@ -737,13 +737,17 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
->>>>>>>>  	crc_offset = le32_to_cpu((*cp_block)->checksum_offset);
->>>>>>>>  	if (crc_offset > (blk_size - sizeof(__le32))) {
->>>>>>>>  		f2fs_msg(sbi->sb, KERN_WARNING,
->>>>>>>> -			"invalid crc_offset: %zu", crc_offset);
->>>>>>>> +			"invalid crc_offset: %zu at blk_addr: 0x%x",
->>>>>>>> +				crc_offset, cp_addr);
->>>>>>>> +		f2fs_bug_on(sbi, 1);
->>>>>>>
->>>>>>> I don't think we can use bug_on here, since we're easily getting this when
->>>>>>> power-cut happened in the middle of checkpoint pack writes, which is an expected
->>>>>>> behavior. Hmm, we need to consider another way to detect that.
->>>>>> We only check CP block crc here. The two CP blocks may have different CP versions when
->>>>>> power-cut happened, but their crc value should be valid. IMO, this patch will trigger a
->>>>>> bug_on only when some external issues cause CP block crc invalid as one 4K page is
->>>>>> persisted atomically.
->>>>>
->>>>> Huh? This checks crc_offset, not crc? Unfortunately, my simple fault injection
->>>>> test gave this bug_on within a day. The below bug_on seems what you're saying
->>>>> about tho.
->>>> oh sorry, I didn't notice the code line carefully. But which fault injection trigger
->>>> this bug_on? The crc_offset is also parts of the CP block, it seems power-cut happened
->>>> in middle of writing checkpoint should not produce an invalid crc_offset.
+On 2018/2/10 10:52, Chao Yu wrote:
+> On 2018/2/10 9:41, Jaegeuk Kim wrote:
+>> On 02/01, Chao Yu wrote:
 >>>
->>> The second cp block can have stale data used by previous part of checkpoint.
->> Yes, but in all CP packs, a cp block crc_offset should always be CHECKSUM_OFFSET
->> which is configured at mkfs, right? I'm still not figure out why crc_offset invalid
->> in the stale data of previous part of checkpoint?
+>>>
+>>> On 2018/2/1 6:15, Jaegeuk Kim wrote:
+>>>> On 01/31, Chao Yu wrote:
+>>>>> On 2018/1/31 10:02, Jaegeuk Kim wrote:
+>>>>>> What if we want to add more entries in addition to node_checksum? Do we have
+>>>>>> to add a new feature flag at every time? How about adding a layout value instead
+>>>>>
+>>>>> Hmm.. for previous implementation, IMO, we'd better add a new feature flag at
+>>>>> every time, otherwise, w/ extra_nsize only, in current image, we can know a
+>>>>> valid range of extended area in node block, but we don't know which
+>>>>> fields/features are valid/enabled or not.
+>>>>>
+>>>>> One more thing is that if we can add one feature flag for each field, we got one
+>>>>> more chance to disable it dynamically.
+>>>>>
+>>>>>> of extra_nsize? For example, layout #1 means node_checksum with extra_nsize=X?
+>>>>>>
+>>>>>>
+>>>>>> What does 1017 mean? We need to make this structure more flexibly for new
+>>>>>
+>>>>> Yes, using raw 1017 is not appropriate here.
+>>>>>
+>>>>>> entries. Like this?
+>>>>>> 		union {
+>>>>>> 			struct node_v1;
+>>>>>> 			struct node_v2;
+>>>>>> 			struct node_v3;
+>>>>>> 			...
+>>>>>> 			struct direct_node dn;
+>>>>>> 			struct indirect_node in;
+>>>>>> 		};
+>>>>>> 	};
+>>>>>>
+>>>>>> 	struct node_v1 {
+>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
+>>>>>> 		__le32 node_checksum;
+>>>>>> 	}
+>>>>>>
+>>>>>> 	struct node_v2 {
+>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=500];
+>>>>>
+>>>>> Hmm.. If we only need to add one more 4 bytes field in struct node_v2, but
+>>>>> V2_NSIZE is defined as fixed 500, there must be 492 bytes wasted.
+>>>>>
+>>>>> Or we can define V2_NSIZE as 8, but if there comes more and more extended
+>>>>> fields, node version count can be a large number, it results in complicated
+>>>>> version recognization and handling.
+>>>>>
+>>>>> One more question is how can we control which fields are valid or not in
+>>>>> comp[Vx_NSIZE]?
+>>>>>
+>>>>>
+>>>>> Anyway, what I'm thinking is maybe we can restructure layout of node block like
+>>>>> the one used by f2fs_inode:
+>>>>>
+>>>>> struct f2fs_node {
+>>>>> 	union {
+>>>>> 		struct f2fs_inode i;
+>>>>> 		union {
+>>>>> 			struct {
+>>>>> 				__le32 node_checksum;
+>>>>> 				__le32 feature_field_1;
+>>>>> 				__le32 feature_field_2;
+>>>>> 				....
+>>>>> 				__le32 addr[];
+>>>>> 				
+>>>>> 			};
+>>>>> 			struct direct_node dn;
+>>>>> 			struct indirect_node in;
+>>>>> 		};
+>>>>> 	};
+>>>>> 	struct node_footer footer;
+>>>>> } __packed;
+>>>>>
+>>>>> Moving all extended fields to the head of f2fs_node, so we don't have to use
+>>>>> macro to indicate actual size of addr.
+>>>>
+>>>> Thinking what'd be the best way. My concern is, once getting more entries, we
+>>>
+>>> OK, I think we need more discussion.. ;)
+>>>
+>>>> can't set each of features individually. Like the second entry should have
+>>>
+>>> Oh, that will be hard. If we have to avoid that, we have to tag in somewhere
+>>> e.g. f2fs_inode::i_flags2 to indicate which new field in f2fs_node is valid, for
+>>> example:
+>>>
+>>> #define F2FS_NODE_CHECKSUM	0x0001
+>>> #define F2FS_NODE_FIELD1	0x0002
+>>> #define F2FS_NODE_FIELD2	0x0004
+>>>
+>>> 	union {
+>>> 		struct {
+>>> 			__le32 node_checksum;
+>>> 			__le32 field_1;
+>>> 			__le32 field_2;
+>>> 			....
+>>> 			__le32 addr[];
+>>> 		};
+>>> 		struct direct_node dn;
+>>> 		struct indirect_node in;
+>>> 	};
+>>>
+>>> f2fs_inode::i_flags2 = F2FS_NODE_CHECKSUM | F2FS_NODE_FIELD1
+>>> indicates that f2fs_node::node_checksum and f2fs_node::field_1 are valid;
+>>>
+>>> f2fs_inode::i_flags2 = F2FS_NODE_FIELD1 | F2FS_NODE_FIELD2
+>>> indicates that f2fs_node::field_1 and f2fs_node::field_2 are valid.
+>>
+>> So, that's why I thought we may need a sort of each formats.
 > 
-> The second block position can be varied by some ckpt flags, so that we could get
-> it from previous summary block for example.
-Got it. How about adding a magic number at a specific position of CP block? In such a way,
-We can distinguish a broken CP block from other type of blocks in a checkpoint.
+> Hmm.. if we have two new added fields, there are (2 << 2) combinations
+> of all formats, as:
+> 
+> struct original {
+> 	__le32 data[DEF_ADDRS_PER_BLOCK];
+> }
+> 
+> struct node_v1 {
+> 	__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
+> 	__le32 field_1;
+> }
+> 
+> struct node_v2 {
+> 	__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=1];
+> 	__le32 field_2;
+> }
+> 
+> struct node_v2 {
+> 	__le32 data[DEF_ADDRS_PER_BLOCK - V3_NSIZE=2];
+> 	__le32 field_1;
+> 	__le32 field_2;
+> }
+> 
+> If we add more new fields, the node version will increase sharply due
+> to there is (n << 2) combination with n fields. Right? Any thoughts to
+> reduce maintaining overhead on those node versions structures?
+
+Do you have time to explain more about the design of multiple version structure
+for node block, I'm still be confused about two things:
+1. what will we do if we want to add one new field in node structure.
+2. how can we recognize which fields are valid and which ones are invalid.
 
 Thanks,
+
 > 
 > Thanks,
 > 
 >>
->> Thanks,
 >>>
->>>>
->>>> Thanks,
+>>> Any thoughts?
+>>>
+>>> Thanks,
+>>>
+>>>> enabled node_checksum, which we may not want to do.
 >>>>
 >>>>>
+>>>>> Thanks,
+>>>>>
+>>>>>> 		__le32 comp[V2_NSIZE];
+>>>>>> 	}
+>>>>>> 	...
 >>>>>>
->>>>>> Thanks,
->>>>>>>
->>>>>>> Thanks,
->>>>>>>
->>>>>>>>  		return -EINVAL;
->>>>>>>>  	}
->>>>>>>>  
->>>>>>>>  	crc = cur_cp_crc(*cp_block);
->>>>>>>>  	if (!f2fs_crc_valid(sbi, crc, *cp_block, crc_offset)) {
->>>>>>>> -		f2fs_msg(sbi->sb, KERN_WARNING, "invalid crc value");
->>>>>>>> +		f2fs_msg(sbi->sb, KERN_WARNING,
->>>>>>>> +			"invalid crc value at blk_addr: 0x%x", cp_addr);
->>>>>>>> +		f2fs_bug_on(sbi, 1);
->>>>>>>>  		return -EINVAL;
->>>>>>>>  	}
->>>>>>>>  
->>>>>>>> -- 
->>>>>>>> 2.10.1
->>>>>>>
->>>>>>> .
->>>>>>>
->>>>>
->>>>> .
->>>>>
->>>
->>> .
->>>
+>>>>>>> +			};
+>>>>>>> +			struct direct_node dn;
+>>>>>>> +			struct indirect_node in;
+>>>>>>> +		};
+>>>>>>>  	};
+>>>>>>>  	struct node_footer footer;
+>>>>>>>  } __packed;
+>>>>>>> -- 
+>>>>>>> 2.15.0.55.gc2ece9dc4de6
+>>>>>>
+>>>>>> .
+>>>>>>
 > 
 > .
 > 
