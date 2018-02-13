@@ -1,31 +1,28 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
-Date: Tue, 13 Feb 2018 15:34:51 +0800
-Message-ID: <558ea6b1-e57d-5910-d931-a47f143cca25@huawei.com>
-References: <20180127094301.29154-1-yuchao0@huawei.com>
- <20180127094301.29154-2-yuchao0@huawei.com>
- <20180131020213.GA86468@jaegeuk-macbookpro.roam.corp.google.com>
- <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
- <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
- <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
- <20180210014140.GB1885@jaegeuk-macbookpro.roam.corp.google.com>
- <5f22d645-001d-a132-f0bd-2dba1f6daaea@kernel.org>
+Subject: Re: [PATCH v2] f2fs: introduce "strict_fsync" for posix
+ standard fsync
+Date: Tue, 13 Feb 2018 17:52:41 +0800
+Message-ID: <089d134b-914b-3bbe-507b-3d59ba018a4d@huawei.com>
+References: <20180202083333.104786-1-zhengjunling@huawei.com>
+ <20180210004457.GA1885@jaegeuk-macbookpro.roam.corp.google.com>
+ <b41911c9-4ae4-1918-f865-0a49e2a4a9f2@huawei.com>
+ <20180212000718.GA44666@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sfi-mx-1.v28.ch3.sourceforge.com ([172.29.28.191]
+Received: from sfi-mx-4.v28.ch3.sourceforge.com ([172.29.28.194]
  helo=mx.sourceforge.net)
- by sfs-ml-4.v29.ch3.sourceforge.com with esmtps
+ by sfs-ml-1.v29.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1elV6N-0002CC-Fx
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Feb 2018 07:34:07 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-1.v28.ch3.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1elXGW-0000zz-Rv
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Feb 2018 09:52:44 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sfi-mx-4.v28.ch3.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1elV6L-00017h-AV
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Feb 2018 07:34:07 +0000
-In-Reply-To: <5f22d645-001d-a132-f0bd-2dba1f6daaea@kernel.org>
+ id 1elXGV-0003yo-82
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Feb 2018 09:52:44 +0000
+In-Reply-To: <20180212000718.GA44666@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -36,157 +33,50 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Junling Zheng <zhengjunling@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
 Hi Jaegeuk,
 
-On 2018/2/10 10:52, Chao Yu wrote:
-> On 2018/2/10 9:41, Jaegeuk Kim wrote:
->> On 02/01, Chao Yu wrote:
->>>
->>>
->>> On 2018/2/1 6:15, Jaegeuk Kim wrote:
->>>> On 01/31, Chao Yu wrote:
->>>>> On 2018/1/31 10:02, Jaegeuk Kim wrote:
->>>>>> What if we want to add more entries in addition to node_checksum? Do we have
->>>>>> to add a new feature flag at every time? How about adding a layout value instead
->>>>>
->>>>> Hmm.. for previous implementation, IMO, we'd better add a new feature flag at
->>>>> every time, otherwise, w/ extra_nsize only, in current image, we can know a
->>>>> valid range of extended area in node block, but we don't know which
->>>>> fields/features are valid/enabled or not.
->>>>>
->>>>> One more thing is that if we can add one feature flag for each field, we got one
->>>>> more chance to disable it dynamically.
->>>>>
->>>>>> of extra_nsize? For example, layout #1 means node_checksum with extra_nsize=X?
->>>>>>
->>>>>>
->>>>>> What does 1017 mean? We need to make this structure more flexibly for new
->>>>>
->>>>> Yes, using raw 1017 is not appropriate here.
->>>>>
->>>>>> entries. Like this?
->>>>>> 		union {
->>>>>> 			struct node_v1;
->>>>>> 			struct node_v2;
->>>>>> 			struct node_v3;
->>>>>> 			...
->>>>>> 			struct direct_node dn;
->>>>>> 			struct indirect_node in;
->>>>>> 		};
->>>>>> 	};
->>>>>>
->>>>>> 	struct node_v1 {
->>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
->>>>>> 		__le32 node_checksum;
->>>>>> 	}
->>>>>>
->>>>>> 	struct node_v2 {
->>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=500];
->>>>>
->>>>> Hmm.. If we only need to add one more 4 bytes field in struct node_v2, but
->>>>> V2_NSIZE is defined as fixed 500, there must be 492 bytes wasted.
->>>>>
->>>>> Or we can define V2_NSIZE as 8, but if there comes more and more extended
->>>>> fields, node version count can be a large number, it results in complicated
->>>>> version recognization and handling.
->>>>>
->>>>> One more question is how can we control which fields are valid or not in
->>>>> comp[Vx_NSIZE]?
->>>>>
->>>>>
->>>>> Anyway, what I'm thinking is maybe we can restructure layout of node block like
->>>>> the one used by f2fs_inode:
->>>>>
->>>>> struct f2fs_node {
->>>>> 	union {
->>>>> 		struct f2fs_inode i;
->>>>> 		union {
->>>>> 			struct {
->>>>> 				__le32 node_checksum;
->>>>> 				__le32 feature_field_1;
->>>>> 				__le32 feature_field_2;
->>>>> 				....
->>>>> 				__le32 addr[];
->>>>> 				
->>>>> 			};
->>>>> 			struct direct_node dn;
->>>>> 			struct indirect_node in;
->>>>> 		};
->>>>> 	};
->>>>> 	struct node_footer footer;
->>>>> } __packed;
->>>>>
->>>>> Moving all extended fields to the head of f2fs_node, so we don't have to use
->>>>> macro to indicate actual size of addr.
->>>>
->>>> Thinking what'd be the best way. My concern is, once getting more entries, we
->>>
->>> OK, I think we need more discussion.. ;)
->>>
->>>> can't set each of features individually. Like the second entry should have
->>>
->>> Oh, that will be hard. If we have to avoid that, we have to tag in somewhere
->>> e.g. f2fs_inode::i_flags2 to indicate which new field in f2fs_node is valid, for
->>> example:
->>>
->>> #define F2FS_NODE_CHECKSUM	0x0001
->>> #define F2FS_NODE_FIELD1	0x0002
->>> #define F2FS_NODE_FIELD2	0x0004
->>>
->>> 	union {
->>> 		struct {
->>> 			__le32 node_checksum;
->>> 			__le32 field_1;
->>> 			__le32 field_2;
->>> 			....
->>> 			__le32 addr[];
->>> 		};
->>> 		struct direct_node dn;
->>> 		struct indirect_node in;
->>> 	};
->>>
->>> f2fs_inode::i_flags2 = F2FS_NODE_CHECKSUM | F2FS_NODE_FIELD1
->>> indicates that f2fs_node::node_checksum and f2fs_node::field_1 are valid;
->>>
->>> f2fs_inode::i_flags2 = F2FS_NODE_FIELD1 | F2FS_NODE_FIELD2
->>> indicates that f2fs_node::field_1 and f2fs_node::field_2 are valid.
+On 2018/2/12 8:07, Jaegeuk Kim wrote:
+> On 02/11, Junling Zheng wrote:
+>> Hi, Jaegeuk
 >>
->> So, that's why I thought we may need a sort of each formats.
-> 
-> Hmm.. if we have two new added fields, there are (2 << 2) combinations
-> of all formats, as:
-> 
-> struct original {
-> 	__le32 data[DEF_ADDRS_PER_BLOCK];
-> }
-> 
-> struct node_v1 {
-> 	__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
-> 	__le32 field_1;
-> }
-> 
-> struct node_v2 {
-> 	__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=1];
-> 	__le32 field_2;
-> }
-> 
-> struct node_v2 {
-> 	__le32 data[DEF_ADDRS_PER_BLOCK - V3_NSIZE=2];
-> 	__le32 field_1;
-> 	__le32 field_2;
-> }
-> 
-> If we add more new fields, the node version will increase sharply due
-> to there is (n << 2) combination with n fields. Right? Any thoughts to
-> reduce maintaining overhead on those node versions structures?
+>> On 2018/2/10 8:44, Jaegeuk Kim wrote:
+>>> On 02/02, Junling Zheng wrote:
+>>>> Commit "0a007b97aad6"(f2fs: recover directory operations by fsync)
+>>>> fixed xfstest generic/342 case, but it also increased the written
+>>>> data and caused the performance degradation. In most cases, there's
+>>>> no need to do so heavily fsync actually.
+>>>>
+>>>> So we introduce a new mount option "strict_fsync" to control the
+>>>> policy of fsync. It's set by default, and means that fsync follows
+>>>> POSIX semantics. And "nostrict_fsync" means that the behaviour is
+>>>> in line with xfs, ext4 and btrfs, where generic/342 will pass.
+>>>
+>>> How about adding "fsync=%s" to give another chance for fsync policies?
 
-Do you have time to explain more about the design of multiple version structure
-for node block, I'm still be confused about two things:
-1. what will we do if we want to add one new field in node structure.
-2. how can we recognize which fields are valid and which ones are invalid.
+Agreed.
+
+>>>
+>>
+>> OK, I'll give patch v3 to change to "fsync=%s" format.
+>> BTW, which policy do u think should be the default behavior for f2fs? Posix
+>> or ext4?
+> 
+> The default should be like ext4 as fsync=strict. We may add fsync=posix for
+> this.
+
+I'd like to suggest using fsync=posix option by default, because in most popular
+in-used scenario of f2fs: android, all users of filesystem are posix-compliant,
+so there is no such requirement that fs needs do more than posix as generic/342
+restricted.
+
+The performance of fsync=strict mode regressed as expected, so if we enable
+fsync=strict mode by default, I suspect it may make f2fs losing some kinds of
+benchmark competition.
+
+How do you think?
 
 Thanks,
 
@@ -194,32 +84,23 @@ Thanks,
 > Thanks,
 > 
 >>
->>>
->>> Any thoughts?
->>>
+>> Thanks
+>> Junling
+>>
 >>> Thanks,
 >>>
->>>> enabled node_checksum, which we may not want to do.
 >>>>
->>>>>
->>>>> Thanks,
->>>>>
->>>>>> 		__le32 comp[V2_NSIZE];
->>>>>> 	}
->>>>>> 	...
->>>>>>
->>>>>>> +			};
->>>>>>> +			struct direct_node dn;
->>>>>>> +			struct indirect_node in;
->>>>>>> +		};
->>>>>>>  	};
->>>>>>>  	struct node_footer footer;
->>>>>>>  } __packed;
->>>>>>> -- 
->>>>>>> 2.15.0.55.gc2ece9dc4de6
->>>>>>
->>>>>> .
->>>>>>
+>>>> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+>>>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>>>> ---
+>>>>  Documentation/filesystems/f2fs.txt |  4 ++++
+>>>>  fs/f2fs/dir.c                      |  3 ++-
+>>>>  fs/f2fs/f2fs.h                     |  1 +
+>>>>  fs/f2fs/file.c                     |  3 ++-
+>>>>  fs/f2fs/namei.c                    |  9 ++++++---
+>>>>  fs/f2fs/super.c                    | 13 +++++++++++++
+>>>>  6 files changed, 28 insertions(+), 5 deletions(-)
+>>>>
 > 
 > .
 > 
