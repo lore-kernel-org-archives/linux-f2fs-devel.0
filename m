@@ -1,22 +1,23 @@
 From: Sheng Yong <shengyong1@huawei.com>
-Subject: [RFC PATCH v2 0/7] f2fs-tools: introduce
- F2FS_FEATURE_LOST_FOUND feature
-Date: Fri, 23 Feb 2018 11:17:54 +0800
-Message-ID: <20180223031801.231805-1-shengyong1@huawei.com>
+Subject: [RFC PATCH v2 1/7] fsck.f2fs: fix typo
+Date: Fri, 23 Feb 2018 11:17:55 +0800
+Message-ID: <20180223031801.231805-2-shengyong1@huawei.com>
+References: <20180223031801.231805-1-shengyong1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <shengyong1@huawei.com>) id 1ep3sU-0004BZ-9T
+ (envelope-from <shengyong1@huawei.com>) id 1ep3sU-00042c-5p
  for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Feb 2018 03:18:30 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=huawei.com) by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ helo=huawei.com) by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1ep3sS-00071U-Cj
+ id 1ep3sS-0004Ow-6n
  for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Feb 2018 03:18:30 +0000
+In-Reply-To: <20180223031801.231805-1-shengyong1@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,77 +30,28 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: hyojun@google.com, miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-djItPnYxOgogICogZGlzY2FyZCBvYnNvbGV0ZSBkbm9kZXMgYWZ0ZXIgYWxsIGlub2RlcyBhcmUg
-Y3JlYXRlZC4KICAqIGFkZCBuZXcgZXJyb3IgbWVzc2FnZSBpZiBmaWxlIHR5cGUgKGlfbW9kZSkg
-aXMgdG90YWxseSB3cm9uZy4KICAqIGNoYW5nZSAiLU8gbG9zdCtmb3VuZCIgdG8gIi1PIGxvc3Rf
-Zm91bmQiLgogICogb25seSBzZXQgZmlsZW5hbWUgYW5kIGJpdG1hcCBpbiB0aGUgc2Vjb25kIHNs
-b3Qgb2YgbG9zdCtmb3VuZCBkZW50cnkuCiAgKiBoYW5kbGUgaW5vZGVfY3J0aW1lIHdoZW4gY3Jl
-YXRpbmcgbG9zdCtmb3VuZCBpbm9kZS4KICAqIGZpeCBlbmRpYWluIGlzc3VlLgogICogZml4IG1l
-bW9yeSBsZWFrIGluIGZzY2tfZmFpbGVkX3JlY29ubmVjdF9maWxle19kbm9kZXxfaWRub2RlfF9k
-aWRub2RlfS4KICAqIHRyYW5zbGF0ZSBpX21vZGUgdG8gRklMRV9UWVBFIGluc3RlYWQgb2YgRjJG
-U19GVF9SRUdfRklMRSB3aGVuCiAgICByZWNvbm5lY3RpbmcgZmlsZXMuCiAgKiBnZXRfbm9kZV9p
-bmZvKCkgcmVhZHMgbmF0IGJsb2NrIGFnYWluIGlmIG5hdCBlbnRyeSBpcyBpbnZhbGlkLgotLS1v
-PC0tLQoKQ29tbWl0IDM5MGZlNTg3YjEgKCJmc2NrLmYyZnM6IHN1cHBvcnQgcmVzdG9yZSBsb3N0
-IGZpbGVzIGludG8KLi9sb3N0X2ZvdW5kLyIpIHJlc3RvcmVzIHVucmVhY2hhYmxlIGZpbGVzLCB3
-aGljaCBoYXZlIG5vIHBhcmVudCBkaXJlY3RvcnkKb3IgdGhlaXIgcGFyZW50IGRpcmVjdG9yaWVz
-IGFyZSByZW1vdmVkIGJ5IGZzY2ssIHRvIC4vbG9zdF9mb3VuZCBkaXJlY3RvcnkuCgpIb3dldmVy
-LCBpdCBoYXMgc2V2ZXJhbCBsaW1pdGF0aW9uczoKICAxLiAuL2xvc3RfZm91bmQgZGlyIGRvZXMg
-bm90IGxvY2F0ZSBpbnNpZGUgZjJmcywgdGh1cyBpdCBtYXkgbmVlZHMKICAgICBhbm90aGVyIHBh
-cnRpdGlvbiB0byBzYXZlIC4vbG9zdF9mb3VuZC4KICAyLiBlbmNyeXB0ZWQgZmlsZXMgYXJlIG5v
-dCBzdXBwb3J0ZWQgdG8gYmUgcmVzdG9yZWQuCiAgMy4gc29tZSB4YXR0cnMgbWF5IGJlIGxvc3Qs
-IGl0IGRlcGVuZHMgb24gd2hldGhlciBkdW1wX25vZGUoKSBlbmFibGVzCiAgICAgZHVtcGluZyBz
-dWNoIHhhdHRycy4KICA0LiBub3Qgc3VwcG9ydCByZXN0b3JpbmcgZmlsZXMgb24gQW5kcm9pZCBk
-ZXZpY2VzICh0aGUgc2FtZSByZWFzb24gYXMKICAgICAjMSkuCgpJbiBvcmRlciB0byBhZGRyZXNz
-IHRoZSBhYm92ZSBsaW1pdGF0aW9ucywgdGhlIExPU1RfRk9VTkQgZmVhdHVyZSBpcwppbnRyb2R1
-Y2VkLiBUaGlzIGlzIGFuIGV4dDQtc3R5bGUgbG9zdCtmb3VuZC4gSXQgdHJpZXMgdG8gcmVzdG9y
-ZQp1bnJlYWNoYWJsZSBmaWxlcyBpbnRvIC9sb3N0K2ZvdW5kIGRpcmVjdG9yeSBpbnNpZGUgZjJm
-cy4KCklmIExPU1RfRk9VTkQgZmVhdHVyZSBpcyBzd2l0Y2hlZCBvbiB3aGVuIG1rZnMsIC9sb3N0
-K2ZvdW5kIGRpcmVjdG9yeSBpcwpjcmVhdGVkIGJ5IG1rZnMuIEl0IGNhbiBhbHNvIGJlIGNyZWF0
-ZWQgYnkgbWtkaXIgbWFudWFsbHkuIEl0IHNob3VsZCBiZQpsb2NhdGVkIHJpZ2h0IHVuZGVyIHJv
-b3QgZGlyZWN0b3J5LgoKSWYgZnNjayBkZXRlY3RzIHVucmVhY2hhYmxlIG5pZHMsIGl0IHNjYW5z
-IGFsbCB0aGVzZSBuaWRzLCBhbmQgc2tpcHMgbm9uLQppbm9kZSBvciBkaXJlY3RvcnkgaW5vZGUg
-bm9kZXMuIEZvciB0aGUgbGVmdCBuaWRzLCB0aGV5IGFyZSBhbGwgZmlsZSBpbm9kZXMuCkZzY2sg
-dGhlbiBjaGVja3MgdGhlc2UgaW5vZGVzIGFuZCB1cGRhdGUgY29ycmVzcG9uZGluZyBjb3VudGVy
-cyBhbmQgYml0bWFwcy4KCkZyb20gbm93IG9uLCB0aGUgZmlsZXN5c3RlbSBpcyBpbiBhICJjb25z
-aXN0ZW50IiBzdGF0ZSwgZnNjayBjYW4gYWxsb2NhdGUKYmxvY2tzIHNhZmVseSBhbmQgc3RhcnQg
-cmVjb25uZWN0aW5nIGZpbGVzIHRvIGxvc3QrZm91bmQuIFRoZSByZWNvbm5lY3Rpb24KYWRkcyBu
-ZXcgZGVudHJ5IGluIGxvc3QrZm91bmQgYW5kIHVwZGF0ZSBtZXRhZGF0YSAoaV9uYW1lLCBpX3Bp
-bm8pIG9mIGZpbGUKaW5vZGUuIElmIHJlY29ubmVjdGlvbiBmYWlscywgZnNjayB3aWxsIGNsZWFy
-IHRoZSBjb3VudGVycyBhbmQgYml0bWFwcy4KRmlsZXMgcmVjb25uZWN0ZWQgdG8gbG9zdCtmb3Vu
-ZCB3aWxsIGJlIHJlbmFtZWQgYWZ0ZXIgaXRzIGlubyBudW1iZXIuCgpIb3dldmVyLCBiZWNhdXNl
-IG9mIGxvc3QrZm91bmQgZGlyZWN0b3J5LCBmMmZzIHNob3VsZCBhdm9pZCB0byBlbmNyeXB0aW5n
-CnJvb3QgZGlyZWN0b3J5LiBTbyBmMmZzIHNob3VsZCBhbHNvIGNoZWNrIGlmIExPU1RfRk9VTkQg
-ZmVhdHVyZSBpcyBlbmFibGVkCm9yIG5vdC4KCkkgY3JlYXRlIHRlc3RjYXNlcyB3aGljaCBpbmpl
-Y3QgZmF1bHRzIHRvIGdlbmVyYXRlIHVucmVhY2hhYmxlIG5pZHMuIFRvCmVuYWJsZSBMT1NUX0ZP
-VU5ELCB3ZSBzaG91bGQgZ2l2ZSAiLU8gbG9zdF9mb3VuZCIgdG8gbWtmcy4KCgkjIG1rZnMuZjJm
-cyAtTyBsb3N0X2ZvdW5kIC1PIGVuY3J5cHQgdGVzdC5pbWcKCSMgdHJlZSAvZGF0YS8KCS9kYXRh
-LwoJ4pSc4pSA4pSAIGRpcgoJ4pSCwqDCoCDilJzilIDilIAgZm9vCgnilILCoMKgIOKUlOKUgOKU
-gCBzdWJkaXIKCeKUgsKgwqAgICAgIOKUlOKUgOKUgCBiYXIKCeKUnOKUgOKUgCBlbmNyeXB0LWRp
-cgoJ4pSCwqDCoCDilJzilIDilIAgZW5jcnlwdC1mb28KCeKUgsKgwqAg4pSU4pSA4pSAIGVuY3J5
-cHQtc3ViZGlyCgnilILCoMKgICAgICDilJTilIDilIAgZW5jcnlwdC1iYXIKCeKUlOKUgOKUgCBs
-b3N0K2ZvdW5kCgoJNSBkaXJlY3RvcmllcywgNCBmaWxlcwoKVGVzdGNhc2VzOgoxKSBjb3JydXB0
-IG5hdF9lbnRyeS0+YmxrX2FkZHIgb2YgZGlyIFtQQVNTXQoyKSBjb3JydXB0IG5hdF9lbnRyeS0+
-YmxrX2FkZHIgb2YgZW5jcnlwdC1kaXIgW1BBU1NdCjMpIHJlbW92ZSBsb3N0K2ZvdW5kLCB0aGVu
-IGNvcnJ1cHQgbmF0X2VudHJ5LT5ibGtfYWRkciBvZiBkaXIgW1BBU1NdCgpBbnkgY29tbWVudHMg
-YW5kIHRlc3RzIGFyZSBhcHByZWNpYXRlZC4KClRoYW5rcywKU2hlbmcKCgpTaGVuZyBZb25nICg3
-KToKICBmc2NrLmYyZnM6IGZpeCB0eXBvCiAgbWtmcy5mMmZzOiBpbnRyb2R1Y2UgbWtmcyBwYXJh
-bWV0ZXJzIGluIGYyZnNfY29uZmlndXJhdGlvbgogIGYyZnMtdG9vbHM6IGluaXQgZjJmc19jb25m
-aWd1cmF0aW9uIGFzIDAKICBmc2NrLmYyZnM6IGludGVncmF0ZSBzYW5pdHlfY2hlY2tfaW5vZGUg
-dG8gX19jaGVja19pbm9kZV9tb2RlCiAgbWtmcy5mMmZzOiBjcmVhdGUgbG9zdCtmb3VuZCBkaXJl
-Y3RvcnkKICBmc2NrLmYyZnM6IHJlYWQgbmF0IGJsb2NrIGlmIG5hdCBlbnRyeSBpcyBpbnZhbGlk
-CiAgZnNjay5mMmZzOiByZWNvbm5lY3QgdW5yZWFjaGFibGUgZmlsZXMgdG8gbG9zdCtmb3VuZAoK
-IGZzY2svZGlyLmMgICAgICAgICAgICAgIHwgIDE5ICsrLQogZnNjay9mc2NrLmMgICAgICAgICAg
-ICAgfCA0MjEgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0t
-CiBmc2NrL2ZzY2suaCAgICAgICAgICAgICB8ICAgMyArCiBmc2NrL21haW4uYyAgICAgICAgICAg
-ICB8ICAgMiArLQogZnNjay9tb3VudC5jICAgICAgICAgICAgfCAgIDkgKy0KIGluY2x1ZGUvZjJm
-c19mcy5oICAgICAgIHwgIDExICsrCiBsaWIvbGliZjJmcy5jICAgICAgICAgICB8ICAxOCArLS0K
-IG1rZnMvZjJmc19mb3JtYXQuYyAgICAgIHwgMjkxICsrKysrKysrKysrKysrKysrKysrKysrKysr
-Ky0tLS0tLQogbWtmcy9mMmZzX2Zvcm1hdF9tYWluLmMgfCAgIDIgKwogOSBmaWxlcyBjaGFuZ2Vk
-LCA2ODYgaW5zZXJ0aW9ucygrKSwgOTAgZGVsZXRpb25zKC0pCgotLSAKMi4xNC4xCgoKLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUgdmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBv
-bmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmch
-IGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZz
-LWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5l
-dC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+---
+ fsck/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fsck/main.c b/fsck/main.c
+index 804f71a..bbf82c3 100644
+--- a/fsck/main.c
++++ b/fsck/main.c
+@@ -137,7 +137,7 @@ static void error_out(char *prog)
+ 	else if (!strcmp("sload.f2fs", prog))
+ 		sload_usage();
+ 	else
+-		MSG(0, "\nWrong progam.\n");
++		MSG(0, "\nWrong program.\n");
+ }
+ 
+ void f2fs_parse_options(int argc, char *argv[])
+-- 
+2.14.1
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
