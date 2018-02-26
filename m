@@ -1,33 +1,16 @@
 From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH] f2fs: allocate buffer for decrypting filename to
- avoid panic
-Date: Sat, 24 Feb 2018 17:14:58 +0800
-Message-ID: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
+Subject: [PATCH v2] f2fs: allocate buffer for decrypting filename to avoid panic
+Date: Mon, 26 Feb 2018 10:57:55 +0800
+Message-ID: <1519613876-153437-1-git-send-email-yunlong.song@huawei.com>
+References: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yunlong.song@huawei.com>) id 1epVvh-000GW6-RU
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 24 Feb 2018 09:15:41 +0000
-Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=huawei.com) by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1epVvY-0000xj-FK
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 24 Feb 2018 09:15:40 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, heyunlei@huawei.com, miaoxie@huawei.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 In some platforms (such as arm), high memory is used, then the
 decrypting filename will cause panic, the reason see commit
@@ -55,33 +38,29 @@ for decrypting filename"):
   (SyS_getdents64+0x64/0xcc) from [<c0105ba0>] (ret_fast_syscall+0x0/0x30)
 
 Howerver, later patches:
-commit 922ec355f86365388203672119b5bca346a45085 ("f2fs crypto: avoid
-unneeded memory allocation when {en/de}crypting symlink")
 commit e06f86e61d7a67fe6e826010f57aa39c674f4b1b ("f2fs crypto: avoid
 unneeded memory allocation in ->readdir")
 
-reverts the codes, which causes panic again in arm, so let's add the old
-patch again.
+reverts the codes, which causes panic again in arm, so let's add part of
+the old patch again for dentry page.
 
 Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 ---
- fs/f2fs/dir.c   |  7 +++++++
- fs/f2fs/namei.c | 10 +++++++++-
- 2 files changed, 16 insertions(+), 1 deletion(-)
+ fs/f2fs/dir.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index f00b5ed..c0cf3e7b 100644
+index f00b5ed..23fff48 100644
 --- a/fs/f2fs/dir.c
 +++ b/fs/f2fs/dir.c
-@@ -825,9 +825,16 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+@@ -825,9 +825,15 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
  			int save_len = fstr->len;
  			int err;
  
-+			de_name.name = kmalloc(de_name.len, GFP_NOFS);
++			de_name.name = kmemdup(d->filename[bit_pos],
++				de_name.len, GFP_NOFS);
 +			if (!de_name.name)
 +				return -ENOMEM;
-+
-+			memcpy(de_name.name, d->filename[bit_pos], de_name.len);
 +
  			err = fscrypt_fname_disk_to_usr(d->inode,
  						(u32)de->hash_code, 0,
@@ -90,46 +69,5 @@ index f00b5ed..c0cf3e7b 100644
  			if (err)
  				return err;
  
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index c4c94c7..2cb70c1 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -1170,8 +1170,13 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
- 
- 	/* Symlink is encrypted */
- 	sd = (struct fscrypt_symlink_data *)caddr;
--	cstr.name = sd->encrypted_path;
- 	cstr.len = le16_to_cpu(sd->len);
-+	cstr.name = kmalloc(cstr.len, GFP_NOFS);
-+	if (!cstr.name) {
-+		res = -ENOMEM;
-+		goto errout;
-+	}
-+	memcpy(cstr.name, sd->encrypted_path, cstr.len);
- 
- 	/* this is broken symlink case */
- 	if (unlikely(cstr.len == 0)) {
-@@ -1198,6 +1203,8 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
- 		goto errout;
- 	}
- 
-+	kfree(cstr.name);
-+
- 	paddr = pstr.name;
- 
- 	/* Null-terminate the name */
-@@ -1207,6 +1214,7 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
- 	set_delayed_call(done, kfree_link, paddr);
- 	return paddr;
- errout:
-+	kfree(cstr.name);
- 	fscrypt_fname_free_buffer(&pstr);
- 	put_page(cpage);
- 	return ERR_PTR(res);
 -- 
 1.8.5.2
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
