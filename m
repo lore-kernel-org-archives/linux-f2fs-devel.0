@@ -1,144 +1,273 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: allocate buffer for decrypting filename to avoid
- panic
-Date: Mon, 26 Feb 2018 11:42:00 +0800
-Message-ID: <e1e07be3-2291-ada6-da67-47aa7f73f1df@huawei.com>
-References: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
- <20180224183230.GA933@zzz.localdomain>
+Subject: Re: [PATCH 2/2] f2fs: expose extension_list sysfs entry
+Date: Mon, 26 Feb 2018 16:26:14 +0800
+Message-ID: <7b5be9af-4f85-2130-edd1-2701876e9670@huawei.com>
+References: <20180211145321.11285-1-chao@kernel.org>
+ <20180211145321.11285-2-chao@kernel.org>
+ <20180225092904.GB13378@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180224183230.GA933@zzz.localdomain>
+In-Reply-To: <20180225092904.GB13378@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Eric Biggers <ebiggers3@gmail.com>, Yunlong Song <yunlong.song@huawei.com>
-Cc: jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com, miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Eric, Yunlong,
+Hi Jaegeuk,
 
-On 2018/2/25 2:32, Eric Biggers wrote:
-> Hi Yunlong,
+On 2018/2/25 17:29, Jaegeuk Kim wrote:
+> On 02/11, Chao Yu wrote:
+>> From: Chao Yu <yuchao0@huawei.com>
+>>
+>> This patch adds a sysfs entry 'extension_list' to support lookup/
+>> add/delete item in extension list.
 > 
-> On Sat, Feb 24, 2018 at 05:14:58PM +0800, Yunlong Song wrote:
->> In some platforms (such as arm), high memory is used, then the
->> decrypting filename will cause panic, the reason see commit
->> 569cf1876a32e574ba8a7fb825cd91bafd003882 ("f2fs crypto: allocate buffer
->> for decrypting filename"):
->>
->>  We got dentry pages from high_mem, and its address space directly goes into the
->>  decryption path via f2fs_fname_disk_to_usr.
->>  But, sg_init_one assumes the address is not from high_mem, so we can get this
->>  panic since it doesn't call kmap_high but kunmap_high is triggered at the end.
->>
->>  kernel BUG at ../../../../../../kernel/mm/highmem.c:290!
->>  Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
->>  ...
->>   (kunmap_high+0xb0/0xb8) from [<c0114534>] (__kunmap_atomic+0xa0/0xa4)
->>   (__kunmap_atomic+0xa0/0xa4) from [<c035f028>] (blkcipher_walk_done+0x128/0x1ec)
->>   (blkcipher_walk_done+0x128/0x1ec) from [<c0366c24>] (crypto_cbc_decrypt+0xc0/0x170)
->>   (crypto_cbc_decrypt+0xc0/0x170) from [<c0367148>] (crypto_cts_decrypt+0xc0/0x114)
->>   (crypto_cts_decrypt+0xc0/0x114) from [<c035ea98>] (async_decrypt+0x40/0x48)
->>   (async_decrypt+0x40/0x48) from [<c032ca34>] (f2fs_fname_disk_to_usr+0x124/0x304)
->>   (f2fs_fname_disk_to_usr+0x124/0x304) from [<c03056fc>] (f2fs_fill_dentries+0xac/0x188)
->>   (f2fs_fill_dentries+0xac/0x188) from [<c03059c8>] (f2fs_readdir+0x1f0/0x300)
->>   (f2fs_readdir+0x1f0/0x300) from [<c0218054>] (vfs_readdir+0x90/0xb4)
->>   (vfs_readdir+0x90/0xb4) from [<c0218418>] (SyS_getdents64+0x64/0xcc)
->>   (SyS_getdents64+0x64/0xcc) from [<c0105ba0>] (ret_fast_syscall+0x0/0x30)
->>
->> Howerver, later patches:
->> commit 922ec355f86365388203672119b5bca346a45085 ("f2fs crypto: avoid
->> unneeded memory allocation when {en/de}crypting symlink")
->> commit e06f86e61d7a67fe6e826010f57aa39c674f4b1b ("f2fs crypto: avoid
->> unneeded memory allocation in ->readdir")
->>
->> reverts the codes, which causes panic again in arm, so let's add the old
->> patch again.
->>
->> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->> ---
->>  fs/f2fs/dir.c   |  7 +++++++
->>  fs/f2fs/namei.c | 10 +++++++++-
->>  2 files changed, 16 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
->> index f00b5ed..c0cf3e7b 100644
->> --- a/fs/f2fs/dir.c
->> +++ b/fs/f2fs/dir.c
->> @@ -825,9 +825,16 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
->>  			int save_len = fstr->len;
->>  			int err;
->>  
->> +			de_name.name = kmalloc(de_name.len, GFP_NOFS);
->> +			if (!de_name.name)
->> +				return -ENOMEM;
->> +
->> +			memcpy(de_name.name, d->filename[bit_pos], de_name.len);
->> +
->>  			err = fscrypt_fname_disk_to_usr(d->inode,
->>  						(u32)de->hash_code, 0,
->>  						&de_name, fstr);
->> +			kfree(de_name.name);
->>  			if (err)
->>  				return err;
->>  
->> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
->> index c4c94c7..2cb70c1 100644
->> --- a/fs/f2fs/namei.c
->> +++ b/fs/f2fs/namei.c
->> @@ -1170,8 +1170,13 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
->>  
->>  	/* Symlink is encrypted */
->>  	sd = (struct fscrypt_symlink_data *)caddr;
->> -	cstr.name = sd->encrypted_path;
->>  	cstr.len = le16_to_cpu(sd->len);
->> +	cstr.name = kmalloc(cstr.len, GFP_NOFS);
->> +	if (!cstr.name) {
->> +		res = -ENOMEM;
->> +		goto errout;
->> +	}
->> +	memcpy(cstr.name, sd->encrypted_path, cstr.len);
->>  
->>  	/* this is broken symlink case */
->>  	if (unlikely(cstr.len == 0)) {
->> @@ -1198,6 +1203,8 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
->>  		goto errout;
->>  	}
->>  
->> +	kfree(cstr.name);
->> +
->>  	paddr = pstr.name;
->>  
->>  	/* Null-terminate the name */
->> @@ -1207,6 +1214,7 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
->>  	set_delayed_call(done, kfree_link, paddr);
->>  	return paddr;
->>  errout:
->> +	kfree(cstr.name);
->>  	fscrypt_fname_free_buffer(&pstr);
->>  	put_page(cpage);
->>  	return ERR_PTR(res);
->> -- 
->> 1.8.5.2
->>
+> Hi Chao,
 > 
-> The pagecache for symlinks in f2fs already uses lowmem only, so the change to
-> ->get_link() isn't needed.  Also that part of the patch doesn't apply to
-> upstream.
-> 
-> For directories we may need your fix.  Note: kmalloc + memcpy should be replaced
-> with kmemdup.  But alternatively, directory pages could be restricted to lowmem
+> We need Doc change as well.
 
-I'd like to suggest to use f2fs_kmalloc, so that we can deploy memory allocation
-failure injection functionality in all places of f2fs, which can help to check
-error handling in those places.
+Oh, right, let me add it.
 
 Thanks,
 
-> which would match ext4.
 > 
-> Eric
+> Thanks,
+> 
+>>
+>> Lookup:
+>> cat /sys/fs/f2fs/<device>/extentsion_list
+>>
+>> Add:
+>> echo 'extension' > /sys/fs/f2fs/<device>/extentsion_list
+>>
+>> Delete:
+>> echo '!extension' > /sys/fs/f2fs/<device>/extentsion_list
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/f2fs.h          |  4 +++-
+>>  fs/f2fs/file.c          |  4 ++--
+>>  fs/f2fs/namei.c         | 42 +++++++++++++++++++++++++++++++++++++++---
+>>  fs/f2fs/super.c         |  2 +-
+>>  fs/f2fs/sysfs.c         | 40 ++++++++++++++++++++++++++++++++++++++++
+>>  include/linux/f2fs_fs.h |  3 ++-
+>>  6 files changed, 87 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 0332c44a1d93..030436be2a35 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -1048,7 +1048,7 @@ struct f2fs_sb_info {
+>>  	struct super_block *sb;			/* pointer to VFS super block */
+>>  	struct proc_dir_entry *s_proc;		/* proc entry */
+>>  	struct f2fs_super_block *raw_super;	/* raw super block pointer */
+>> -	struct mutex sb_lock;			/* lock for raw super block */
+>> +	struct rw_semaphore sb_lock;		/* lock for raw super block */
+>>  	int valid_super_block;			/* valid super block no */
+>>  	unsigned long s_flag;				/* flags for sbi */
+>>  
+>> @@ -2612,6 +2612,8 @@ void handle_failed_inode(struct inode *inode);
+>>  /*
+>>   * namei.c
+>>   */
+>> +int update_extension_list(struct f2fs_sb_info *sbi, const char *name,
+>> +								bool set);
+>>  struct dentry *f2fs_get_parent(struct dentry *child);
+>>  
+>>  /*
+>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>> index f26a0bd17469..f64bcd0a7f73 100644
+>> --- a/fs/f2fs/file.c
+>> +++ b/fs/f2fs/file.c
+>> @@ -1969,7 +1969,7 @@ static int f2fs_ioc_get_encryption_pwsalt(struct file *filp, unsigned long arg)
+>>  	if (err)
+>>  		return err;
+>>  
+>> -	mutex_lock(&sbi->sb_lock);
+>> +	down_write(&sbi->sb_lock);
+>>  
+>>  	if (uuid_is_nonzero(sbi->raw_super->encrypt_pw_salt))
+>>  		goto got_it;
+>> @@ -1988,7 +1988,7 @@ static int f2fs_ioc_get_encryption_pwsalt(struct file *filp, unsigned long arg)
+>>  									16))
+>>  		err = -EFAULT;
+>>  out_err:
+>> -	mutex_unlock(&sbi->sb_lock);
+>> +	up_write(&sbi->sb_lock);
+>>  	mnt_drop_write_file(filp);
+>>  	return err;
+>>  }
+>> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+>> index c4c94c7e9f4f..fa8e5c06ba39 100644
+>> --- a/fs/f2fs/namei.c
+>> +++ b/fs/f2fs/namei.c
+>> @@ -171,16 +171,52 @@ static int is_multimedia_file(const unsigned char *s, const char *sub)
+>>  static inline void set_cold_files(struct f2fs_sb_info *sbi, struct inode *inode,
+>>  		const unsigned char *name)
+>>  {
+>> -	int i;
+>> -	__u8 (*extlist)[8] = sbi->raw_super->extension_list;
+>> +	__u8 (*extlist)[F2FS_EXTENSION_LEN] = sbi->raw_super->extension_list;
+>> +	int i, count;
+>> +
+>> +	down_read(&sbi->sb_lock);
+>> +
+>> +	count = le32_to_cpu(sbi->raw_super->extension_count);
+>>  
+>> -	int count = le32_to_cpu(sbi->raw_super->extension_count);
+>>  	for (i = 0; i < count; i++) {
+>>  		if (is_multimedia_file(name, extlist[i])) {
+>>  			file_set_cold(inode);
+>>  			break;
+>>  		}
+>>  	}
+>> +
+>> +	up_read(&sbi->sb_lock);
+>> +}
+>> +
+>> +int update_extension_list(struct f2fs_sb_info *sbi, const char *name, bool set)
+>> +{
+>> +	__u8 (*extlist)[F2FS_EXTENSION_LEN] = sbi->raw_super->extension_list;
+>> +	int count = le32_to_cpu(sbi->raw_super->extension_count);
+>> +	int i;
+>> +
+>> +	for (i = 0; i < count; i++) {
+>> +		if (strcmp(name, extlist[i]))
+>> +			continue;
+>> +
+>> +		if (set)
+>> +			return -EINVAL;
+>> +
+>> +		memcpy(extlist[i], extlist[i + 1],
+>> +				F2FS_EXTENSION_LEN * (count - i - 1));
+>> +		memset(extlist[count - 1], 0, F2FS_EXTENSION_LEN);
+>> +		sbi->raw_super->extension_count = cpu_to_le32(count - 1);
+>> +		return 0;
+>> +	}
+>> +
+>> +	if (!set)
+>> +		return -EINVAL;
+>> +
+>> +	if (count == F2FS_MAX_EXTENSION)
+>> +		return -EINVAL;
+>> +
+>> +	strncpy(extlist[count], name, strlen(name));
+>> +	sbi->raw_super->extension_count = cpu_to_le32(count + 1);
+>> +	return 0;
+>>  }
+>>  
+>>  static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index 1b49ad477dd9..9b17355434f6 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -2233,7 +2233,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+>>  	sbi->dirty_device = 0;
+>>  	spin_lock_init(&sbi->dev_lock);
+>>  
+>> -	mutex_init(&sbi->sb_lock);
+>> +	init_rwsem(&sbi->sb_lock);
+>>  }
+>>  
+>>  static int init_percpu_info(struct f2fs_sb_info *sbi)
+>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+>> index 374ee5c82f94..d27b28e602a6 100644
+>> --- a/fs/f2fs/sysfs.c
+>> +++ b/fs/f2fs/sysfs.c
+>> @@ -136,6 +136,18 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
+>>  	if (!ptr)
+>>  		return -EINVAL;
+>>  
+>> +	if (!strcmp(a->attr.name, "extension_list")) {
+>> +		__u8 (*extlist)[F2FS_EXTENSION_LEN] =
+>> +					sbi->raw_super->extension_list;
+>> +		int count = le32_to_cpu(sbi->raw_super->extension_count);
+>> +		int len = 0, i;
+>> +
+>> +		for (i = 0; i < count; i++)
+>> +			len += snprintf(buf + len, PAGE_SIZE - len, "%s\n",
+>> +								extlist[i]);
+>> +		return len;
+>> +	}
+>> +
+>>  	ui = (unsigned int *)(ptr + a->offset);
+>>  
+>>  	return snprintf(buf, PAGE_SIZE, "%u\n", *ui);
+>> @@ -154,6 +166,32 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+>>  	if (!ptr)
+>>  		return -EINVAL;
+>>  
+>> +	if (!strcmp(a->attr.name, "extension_list")) {
+>> +		const char *name = strim((char *)buf);
+>> +		bool set = true;
+>> +
+>> +		if (name[0] == '!') {
+>> +			name++;
+>> +			set = false;
+>> +		}
+>> +
+>> +		if (strlen(name) >= F2FS_EXTENSION_LEN)
+>> +			return -EINVAL;
+>> +
+>> +		down_write(&sbi->sb_lock);
+>> +
+>> +		ret = update_extension_list(sbi, name, set);
+>> +		if (ret)
+>> +			goto out;
+>> +
+>> +		ret = f2fs_commit_super(sbi, false);
+>> +		if (ret)
+>> +			update_extension_list(sbi, name, !set);
+>> +out:
+>> +		up_write(&sbi->sb_lock);
+>> +		return ret ? ret : count;
+>> +	}
+>> +
+>>  	ui = (unsigned int *)(ptr + a->offset);
+>>  
+>>  	ret = kstrtoul(skip_spaces(buf), 0, &t);
+>> @@ -307,6 +345,7 @@ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
+>>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
+>>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
+>>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
+>> +F2FS_RW_ATTR(F2FS_SBI, f2fs_super_block, extension_list, extension_list);
+>>  #ifdef CONFIG_F2FS_FAULT_INJECTION
+>>  F2FS_RW_ATTR(FAULT_INFO_RATE, f2fs_fault_info, inject_rate, inject_rate);
+>>  F2FS_RW_ATTR(FAULT_INFO_TYPE, f2fs_fault_info, inject_type, inject_type);
+>> @@ -357,6 +396,7 @@ static struct attribute *f2fs_attrs[] = {
+>>  	ATTR_LIST(iostat_enable),
+>>  	ATTR_LIST(readdir_ra),
+>>  	ATTR_LIST(gc_pin_file_thresh),
+>> +	ATTR_LIST(extension_list),
+>>  #ifdef CONFIG_F2FS_FAULT_INJECTION
+>>  	ATTR_LIST(inject_rate),
+>>  	ATTR_LIST(inject_type),
+>> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+>> index f7f09907e69d..3d03f51282ac 100644
+>> --- a/include/linux/f2fs_fs.h
+>> +++ b/include/linux/f2fs_fs.h
+>> @@ -21,6 +21,7 @@
+>>  #define F2FS_BLKSIZE			4096	/* support only 4KB block */
+>>  #define F2FS_BLKSIZE_BITS		12	/* bits for F2FS_BLKSIZE */
+>>  #define F2FS_MAX_EXTENSION		64	/* # of extension entries */
+>> +#define F2FS_EXTENSION_LEN		8	/* max size of extension */
+>>  #define F2FS_BLK_ALIGN(x)	(((x) + F2FS_BLKSIZE - 1) >> F2FS_BLKSIZE_BITS)
+>>  
+>>  #define NULL_ADDR		((block_t)0)	/* used as block_t addresses */
+>> @@ -102,7 +103,7 @@ struct f2fs_super_block {
+>>  	__u8 uuid[16];			/* 128-bit uuid for volume */
+>>  	__le16 volume_name[MAX_VOLUME_NAME];	/* volume name */
+>>  	__le32 extension_count;		/* # of extensions below */
+>> -	__u8 extension_list[F2FS_MAX_EXTENSION][8];	/* extension array */
+>> +	__u8 extension_list[F2FS_MAX_EXTENSION][F2FS_EXTENSION_LEN];/* extension array */
+>>  	__le32 cp_payload;
+>>  	__u8 version[VERSION_LEN];	/* the kernel version */
+>>  	__u8 init_version[VERSION_LEN];	/* the initial kernel version */
+>> -- 
+>> 2.14.1.145.gb3622a4ee
 > 
 > .
 > 
