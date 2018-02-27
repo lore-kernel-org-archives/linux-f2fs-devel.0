@@ -1,49 +1,82 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v3] f2fs: in-memory inode checksum when
- checking consistency
-Date: Tue, 27 Feb 2018 18:37:14 +0800
-Message-ID: <b0fb67ac-a620-68df-0472-26f08433e344@huawei.com>
-References: <20180226192843.26680-1-guoweichao@huawei.com>
+Subject: Re: [PATCH v2] f2fs: allocate buffer for decrypting filename to avoid
+ panic
+Date: Tue, 27 Feb 2018 18:40:39 +0800
+Message-ID: <6dae7b72-3ce4-1b5b-37ff-821d15de7101@huawei.com>
+References: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
+ <1519613876-153437-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1eqcZn-005dbF-63
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Feb 2018 10:33:39 +0000
-Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=huawei.com) by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eqcZk-0044Wu-2l
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Feb 2018 10:33:37 +0000
-In-Reply-To: <20180226192843.26680-1-guoweichao@huawei.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1519613876-153437-1-git-send-email-yunlong.song@huawei.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Weichao Guo <guoweichao@huawei.com>, jaegeuk@kernel.org
-Cc: heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/2/27 3:28, Weichao Guo wrote:
-> Enable in-memory inode checksum to protect metadata blocks
-> from in-memory scribbles only when checking consistency with
-> no performance requirements.
+On 2018/2/26 10:57, Yunlong Song wrote:
+> In some platforms (such as arm), high memory is used, then the
+> decrypting filename will cause panic, the reason see commit
+> 569cf1876a32e574ba8a7fb825cd91bafd003882 ("f2fs crypto: allocate buffer
+> for decrypting filename"):
 > 
-> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+>  We got dentry pages from high_mem, and its address space directly goes into the
+>  decryption path via f2fs_fname_disk_to_usr.
+>  But, sg_init_one assumes the address is not from high_mem, so we can get this
+>  panic since it doesn't call kmap_high but kunmap_high is triggered at the end.
+> 
+>  kernel BUG at ../../../../../../kernel/mm/highmem.c:290!
+>  Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+>  ...
+>   (kunmap_high+0xb0/0xb8) from [<c0114534>] (__kunmap_atomic+0xa0/0xa4)
+>   (__kunmap_atomic+0xa0/0xa4) from [<c035f028>] (blkcipher_walk_done+0x128/0x1ec)
+>   (blkcipher_walk_done+0x128/0x1ec) from [<c0366c24>] (crypto_cbc_decrypt+0xc0/0x170)
+>   (crypto_cbc_decrypt+0xc0/0x170) from [<c0367148>] (crypto_cts_decrypt+0xc0/0x114)
+>   (crypto_cts_decrypt+0xc0/0x114) from [<c035ea98>] (async_decrypt+0x40/0x48)
+>   (async_decrypt+0x40/0x48) from [<c032ca34>] (f2fs_fname_disk_to_usr+0x124/0x304)
+>   (f2fs_fname_disk_to_usr+0x124/0x304) from [<c03056fc>] (f2fs_fill_dentries+0xac/0x188)
+>   (f2fs_fill_dentries+0xac/0x188) from [<c03059c8>] (f2fs_readdir+0x1f0/0x300)
+>   (f2fs_readdir+0x1f0/0x300) from [<c0218054>] (vfs_readdir+0x90/0xb4)
+>   (vfs_readdir+0x90/0xb4) from [<c0218418>] (SyS_getdents64+0x64/0xcc)
+>   (SyS_getdents64+0x64/0xcc) from [<c0105ba0>] (ret_fast_syscall+0x0/0x30)
+> 
+> Howerver, later patches:
+> commit e06f86e61d7a67fe6e826010f57aa39c674f4b1b ("f2fs crypto: avoid
+> unneeded memory allocation in ->readdir")
+> 
+> reverts the codes, which causes panic again in arm, so let's add part of
+> the old patch again for dentry page.
+> 
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> ---
+>  fs/f2fs/dir.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> index f00b5ed..23fff48 100644
+> --- a/fs/f2fs/dir.c
+> +++ b/fs/f2fs/dir.c
+> @@ -825,9 +825,15 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+>  			int save_len = fstr->len;
+>  			int err;
+>  
+> +			de_name.name = kmemdup(d->filename[bit_pos],
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+How about using f2fs_kmalloc + memcpy here?
 
 Thanks,
 
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> +				de_name.len, GFP_NOFS);
+> +			if (!de_name.name)
+> +				return -ENOMEM;
+> +
+>  			err = fscrypt_fname_disk_to_usr(d->inode,
+>  						(u32)de->hash_code, 0,
+>  						&de_name, fstr);
+> +			kfree(de_name.name);
+>  			if (err)
+>  				return err;
+>  
+> 
