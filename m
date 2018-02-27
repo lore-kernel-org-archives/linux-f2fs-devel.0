@@ -1,294 +1,212 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: support hot file extension
-Date: Tue, 27 Feb 2018 19:41:25 +0800
-Message-ID: <20180227114125.58964-1-yuchao0@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
+Date: Tue, 27 Feb 2018 22:16:58 +0800
+Message-ID: <3782ed9e-741d-d711-3937-bc8127566982@kernel.org>
+References: <20180127094301.29154-1-yuchao0@huawei.com>
+ <20180127094301.29154-2-yuchao0@huawei.com>
+ <20180131020213.GA86468@jaegeuk-macbookpro.roam.corp.google.com>
+ <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
+ <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
+ <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
+ <20180210014140.GB1885@jaegeuk-macbookpro.roam.corp.google.com>
+ <5f22d645-001d-a132-f0bd-2dba1f6daaea@kernel.org>
+ <558ea6b1-e57d-5910-d931-a47f143cca25@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <558ea6b1-e57d-5910-d931-a47f143cca25@huawei.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+To: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch supports to recognize hot file extension in f2fs, so that we
-can allocate proper hot segment location for its data, which can lead to
-better hot/cold seperation in filesystem.
+Ping,
 
-In addition, we changes a bit on query/add/del operation method for
-extension_list sysfs entry as below:
-
-- Query: cat /sys/fs/f2fs/<disk>/extension_list
-- Add: echo 'extension' > /sys/fs/f2fs/<disk>/extension_list
-- Del: echo '!extension' > /sys/fs/f2fs/<disk>/extension_list
-- Add: echo '[h/c]extension' > /sys/fs/f2fs/<disk>/extension_list
-- Del: echo '[h/c]!extension' > /sys/fs/f2fs/<disk>/extension_list
-- [h] means add/del hot file extension
-- [c] means add/del cold file extension
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- Documentation/ABI/testing/sysfs-fs-f2fs |  6 ++-
- fs/f2fs/f2fs.h                          |  6 ++-
- fs/f2fs/namei.c                         | 79 ++++++++++++++++++++++++---------
- fs/f2fs/sysfs.c                         | 30 ++++++++++---
- include/linux/f2fs_fs.h                 |  3 +-
- 5 files changed, 94 insertions(+), 30 deletions(-)
-
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 7fa84e349ad9..540553c933b6 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -199,5 +199,7 @@ Contact:	"Chao Yu" <yuchao0@huawei.com>
- Description:
- 		 Used to control configure extension list:
- 		 - Query: cat /sys/fs/f2fs/<disk>/extension_list
--		 - Add: echo 'extension' > /sys/fs/f2fs/<disk>/extension_list
--		 - Del: echo '!extension' > /sys/fs/f2fs/<disk>/extension_list
-+		 - Add: echo '[h/c]extension' > /sys/fs/f2fs/<disk>/extension_list
-+		 - Del: echo '[h/c]!extension' > /sys/fs/f2fs/<disk>/extension_list
-+		 - [h] means add/del hot file extension
-+		 - [c] means add/del cold file extension
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 2e9b257dda70..6c643b367f2e 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -581,6 +581,7 @@ enum {
- #define FADVISE_ENCRYPT_BIT	0x04
- #define FADVISE_ENC_NAME_BIT	0x08
- #define FADVISE_KEEP_SIZE_BIT	0x10
-+#define FADVISE_HOT_BIT		0x20
- 
- #define file_is_cold(inode)	is_file(inode, FADVISE_COLD_BIT)
- #define file_wrong_pino(inode)	is_file(inode, FADVISE_LOST_PINO_BIT)
-@@ -595,6 +596,9 @@ enum {
- #define file_set_enc_name(inode) set_file(inode, FADVISE_ENC_NAME_BIT)
- #define file_keep_isize(inode)	is_file(inode, FADVISE_KEEP_SIZE_BIT)
- #define file_set_keep_isize(inode) set_file(inode, FADVISE_KEEP_SIZE_BIT)
-+#define file_is_hot(inode)	is_file(inode, FADVISE_HOT_BIT)
-+#define file_set_hot(inode)	set_file(inode, FADVISE_HOT_BIT)
-+#define file_clear_hot(inode)	clear_file(inode, FADVISE_HOT_BIT)
- 
- #define DEF_DIR_LEVEL		0
- 
-@@ -2638,7 +2642,7 @@ void handle_failed_inode(struct inode *inode);
-  * namei.c
-  */
- int update_extension_list(struct f2fs_sb_info *sbi, const char *name,
--								bool set);
-+							bool hot, bool set);
- struct dentry *f2fs_get_parent(struct dentry *child);
- 
- /*
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 7b8f8b13bca9..639422d8af48 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -142,7 +142,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 	return ERR_PTR(err);
- }
- 
--static int is_multimedia_file(const unsigned char *s, const char *sub)
-+static int is_extension_exist(const unsigned char *s, const char *sub)
- {
- 	size_t slen = strlen(s);
- 	size_t sublen = strlen(sub);
-@@ -168,33 +168,59 @@ static int is_multimedia_file(const unsigned char *s, const char *sub)
- /*
-  * Set multimedia files as cold files for hot/cold data separation
-  */
--static inline void set_cold_files(struct f2fs_sb_info *sbi, struct inode *inode,
-+static inline void set_file_temperature(struct f2fs_sb_info *sbi, struct inode *inode,
- 		const unsigned char *name)
- {
- 	__u8 (*extlist)[F2FS_EXTENSION_LEN] = sbi->raw_super->extension_list;
--	int i, count;
-+	int i, cold_count, hot_count;
- 
- 	down_read(&sbi->sb_lock);
- 
--	count = le32_to_cpu(sbi->raw_super->extension_count);
-+	cold_count = le32_to_cpu(sbi->raw_super->extension_count);
-+	hot_count = sbi->raw_super->hot_ext_count;
- 
--	for (i = 0; i < count; i++) {
--		if (is_multimedia_file(name, extlist[i])) {
-+	for (i = 0; i < cold_count + hot_count; i++) {
-+		if (!is_extension_exist(name, extlist[i]))
-+			continue;
-+		if (i < cold_count)
- 			file_set_cold(inode);
--			break;
--		}
-+		else
-+			file_set_hot(inode);
-+		break;
- 	}
- 
- 	up_read(&sbi->sb_lock);
- }
- 
--int update_extension_list(struct f2fs_sb_info *sbi, const char *name, bool set)
-+int update_extension_list(struct f2fs_sb_info *sbi, const char *name,
-+							bool hot, bool set)
- {
- 	__u8 (*extlist)[F2FS_EXTENSION_LEN] = sbi->raw_super->extension_list;
--	int count = le32_to_cpu(sbi->raw_super->extension_count);
-+	int cold_count = le32_to_cpu(sbi->raw_super->extension_count);
-+	int hot_count = sbi->raw_super->hot_ext_count;
-+	int total_count = cold_count + hot_count;
-+	int start, count;
- 	int i;
- 
--	for (i = 0; i < count; i++) {
-+	if (set) {
-+		if (total_count == F2FS_MAX_EXTENSION)
-+			return -EINVAL;
-+	} else {
-+		if (!hot && !cold_count)
-+			return -EINVAL;
-+		if (hot && !hot_count)
-+			return -EINVAL;
-+	}
-+
-+	if (hot) {
-+		start = cold_count;
-+		count = total_count;
-+	} else {
-+		start = 0;
-+		count = cold_count;
-+	}
-+
-+	for (i = start; i < count; i++) {
- 		if (strcmp(name, extlist[i]))
- 			continue;
- 
-@@ -202,20 +228,33 @@ int update_extension_list(struct f2fs_sb_info *sbi, const char *name, bool set)
- 			return -EINVAL;
- 
- 		memcpy(extlist[i], extlist[i + 1],
--				F2FS_EXTENSION_LEN * (count - i - 1));
--		memset(extlist[count - 1], 0, F2FS_EXTENSION_LEN);
--		sbi->raw_super->extension_count = cpu_to_le32(count - 1);
-+				F2FS_EXTENSION_LEN * (total_count - i - 1));
-+		memset(extlist[total_count - 1], 0, F2FS_EXTENSION_LEN);
-+		if (hot)
-+			sbi->raw_super->hot_ext_count = hot_count - 1;
-+		else
-+			sbi->raw_super->extension_count =
-+						cpu_to_le32(cold_count - 1);
- 		return 0;
- 	}
- 
- 	if (!set)
- 		return -EINVAL;
- 
--	if (count == F2FS_MAX_EXTENSION)
--		return -EINVAL;
--
--	strncpy(extlist[count], name, strlen(name));
--	sbi->raw_super->extension_count = cpu_to_le32(count + 1);
-+	if (hot) {
-+		strncpy(extlist[count], name, strlen(name));
-+		sbi->raw_super->hot_ext_count = hot_count + 1;
-+	} else {
-+		char buf[F2FS_MAX_EXTENSION][F2FS_EXTENSION_LEN];
-+
-+		memcpy(buf, &extlist[cold_count],
-+				F2FS_EXTENSION_LEN * hot_count);
-+		memset(extlist[cold_count], 0, F2FS_EXTENSION_LEN);
-+		strncpy(extlist[cold_count], name, strlen(name));
-+		memcpy(&extlist[cold_count + 1], buf,
-+				F2FS_EXTENSION_LEN * hot_count);
-+		sbi->raw_super->extension_count = cpu_to_le32(cold_count + 1);
-+	}
- 	return 0;
- }
- 
-@@ -239,7 +278,7 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
- 		return PTR_ERR(inode);
- 
- 	if (!test_opt(sbi, DISABLE_EXT_IDENTIFY))
--		set_cold_files(sbi, inode, dentry->d_name.name);
-+		set_file_temperature(sbi, inode, dentry->d_name.name);
- 
- 	inode->i_op = &f2fs_file_inode_operations;
- 	inode->i_fop = &f2fs_file_operations;
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index b5ddeefca59a..e185155b655c 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -145,10 +145,19 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
- 	if (!strcmp(a->attr.name, "extension_list")) {
- 		__u8 (*extlist)[F2FS_EXTENSION_LEN] =
- 					sbi->raw_super->extension_list;
--		int count = le32_to_cpu(sbi->raw_super->extension_count);
-+		int cold_count = le32_to_cpu(sbi->raw_super->extension_count);
-+		int hot_count = sbi->raw_super->hot_ext_count;
- 		int len = 0, i;
- 
--		for (i = 0; i < count; i++)
-+		len += snprintf(buf + len, PAGE_SIZE - len,
-+						"cold file extenstion:\n");
-+		for (i = 0; i < cold_count; i++)
-+			len += snprintf(buf + len, PAGE_SIZE - len, "%s\n",
-+								extlist[i]);
-+
-+		len += snprintf(buf + len, PAGE_SIZE - len,
-+						"hot file extenstion:\n");
-+		for (i = cold_count; i < cold_count + hot_count; i++)
- 			len += snprintf(buf + len, PAGE_SIZE - len, "%s\n",
- 								extlist[i]);
- 		return len;
-@@ -174,9 +183,18 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
- 
- 	if (!strcmp(a->attr.name, "extension_list")) {
- 		const char *name = strim((char *)buf);
--		bool set = true;
-+		bool set = true, hot;
-+
-+		if (!strncmp(name, "[h]", 3))
-+			hot = true;
-+		else if (!strncmp(name, "[c]", 3))
-+			hot = false;
-+		else
-+			return -EINVAL;
-+
-+		name += 3;
- 
--		if (name[0] == '!') {
-+		if (*name == '!') {
- 			name++;
- 			set = false;
- 		}
-@@ -186,13 +204,13 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
- 
- 		down_write(&sbi->sb_lock);
- 
--		ret = update_extension_list(sbi, name, set);
-+		ret = update_extension_list(sbi, name, hot, set);
- 		if (ret)
- 			goto out;
- 
- 		ret = f2fs_commit_super(sbi, false);
- 		if (ret)
--			update_extension_list(sbi, name, !set);
-+			update_extension_list(sbi, name, hot, !set);
- out:
- 		up_write(&sbi->sb_lock);
- 		return ret ? ret : count;
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index c52f6081891b..c6859efb597c 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -113,7 +113,8 @@ struct f2fs_super_block {
- 	struct f2fs_device devs[MAX_DEVICES];	/* device list */
- 	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
- 	__le16 extra_nsize;		/* extra node size */
--	__u8 reserved[313];		/* valid reserved region */
-+	__u8 hot_ext_count;		/* # of hot file extension */
-+	__u8 reserved[312];		/* valid reserved region */
- } __packed;
- 
- /*
--- 
-2.15.0.55.gc2ece9dc4de6
+On 2018/2/13 15:34, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> On 2018/2/10 10:52, Chao Yu wrote:
+>> On 2018/2/10 9:41, Jaegeuk Kim wrote:
+>>> On 02/01, Chao Yu wrote:
+>>>>
+>>>>
+>>>> On 2018/2/1 6:15, Jaegeuk Kim wrote:
+>>>>> On 01/31, Chao Yu wrote:
+>>>>>> On 2018/1/31 10:02, Jaegeuk Kim wrote:
+>>>>>>> What if we want to add more entries in addition to node_checksum? Do we have
+>>>>>>> to add a new feature flag at every time? How about adding a layout value instead
+>>>>>>
+>>>>>> Hmm.. for previous implementation, IMO, we'd better add a new feature flag at
+>>>>>> every time, otherwise, w/ extra_nsize only, in current image, we can know a
+>>>>>> valid range of extended area in node block, but we don't know which
+>>>>>> fields/features are valid/enabled or not.
+>>>>>>
+>>>>>> One more thing is that if we can add one feature flag for each field, we got one
+>>>>>> more chance to disable it dynamically.
+>>>>>>
+>>>>>>> of extra_nsize? For example, layout #1 means node_checksum with extra_nsize=X?
+>>>>>>>
+>>>>>>>
+>>>>>>> What does 1017 mean? We need to make this structure more flexibly for new
+>>>>>>
+>>>>>> Yes, using raw 1017 is not appropriate here.
+>>>>>>
+>>>>>>> entries. Like this?
+>>>>>>> 		union {
+>>>>>>> 			struct node_v1;
+>>>>>>> 			struct node_v2;
+>>>>>>> 			struct node_v3;
+>>>>>>> 			...
+>>>>>>> 			struct direct_node dn;
+>>>>>>> 			struct indirect_node in;
+>>>>>>> 		};
+>>>>>>> 	};
+>>>>>>>
+>>>>>>> 	struct node_v1 {
+>>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
+>>>>>>> 		__le32 node_checksum;
+>>>>>>> 	}
+>>>>>>>
+>>>>>>> 	struct node_v2 {
+>>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=500];
+>>>>>>
+>>>>>> Hmm.. If we only need to add one more 4 bytes field in struct node_v2, but
+>>>>>> V2_NSIZE is defined as fixed 500, there must be 492 bytes wasted.
+>>>>>>
+>>>>>> Or we can define V2_NSIZE as 8, but if there comes more and more extended
+>>>>>> fields, node version count can be a large number, it results in complicated
+>>>>>> version recognization and handling.
+>>>>>>
+>>>>>> One more question is how can we control which fields are valid or not in
+>>>>>> comp[Vx_NSIZE]?
+>>>>>>
+>>>>>>
+>>>>>> Anyway, what I'm thinking is maybe we can restructure layout of node block like
+>>>>>> the one used by f2fs_inode:
+>>>>>>
+>>>>>> struct f2fs_node {
+>>>>>> 	union {
+>>>>>> 		struct f2fs_inode i;
+>>>>>> 		union {
+>>>>>> 			struct {
+>>>>>> 				__le32 node_checksum;
+>>>>>> 				__le32 feature_field_1;
+>>>>>> 				__le32 feature_field_2;
+>>>>>> 				....
+>>>>>> 				__le32 addr[];
+>>>>>> 				
+>>>>>> 			};
+>>>>>> 			struct direct_node dn;
+>>>>>> 			struct indirect_node in;
+>>>>>> 		};
+>>>>>> 	};
+>>>>>> 	struct node_footer footer;
+>>>>>> } __packed;
+>>>>>>
+>>>>>> Moving all extended fields to the head of f2fs_node, so we don't have to use
+>>>>>> macro to indicate actual size of addr.
+>>>>>
+>>>>> Thinking what'd be the best way. My concern is, once getting more entries, we
+>>>>
+>>>> OK, I think we need more discussion.. ;)
+>>>>
+>>>>> can't set each of features individually. Like the second entry should have
+>>>>
+>>>> Oh, that will be hard. If we have to avoid that, we have to tag in somewhere
+>>>> e.g. f2fs_inode::i_flags2 to indicate which new field in f2fs_node is valid, for
+>>>> example:
+>>>>
+>>>> #define F2FS_NODE_CHECKSUM	0x0001
+>>>> #define F2FS_NODE_FIELD1	0x0002
+>>>> #define F2FS_NODE_FIELD2	0x0004
+>>>>
+>>>> 	union {
+>>>> 		struct {
+>>>> 			__le32 node_checksum;
+>>>> 			__le32 field_1;
+>>>> 			__le32 field_2;
+>>>> 			....
+>>>> 			__le32 addr[];
+>>>> 		};
+>>>> 		struct direct_node dn;
+>>>> 		struct indirect_node in;
+>>>> 	};
+>>>>
+>>>> f2fs_inode::i_flags2 = F2FS_NODE_CHECKSUM | F2FS_NODE_FIELD1
+>>>> indicates that f2fs_node::node_checksum and f2fs_node::field_1 are valid;
+>>>>
+>>>> f2fs_inode::i_flags2 = F2FS_NODE_FIELD1 | F2FS_NODE_FIELD2
+>>>> indicates that f2fs_node::field_1 and f2fs_node::field_2 are valid.
+>>>
+>>> So, that's why I thought we may need a sort of each formats.
+>>
+>> Hmm.. if we have two new added fields, there are (2 << 2) combinations
+>> of all formats, as:
+>>
+>> struct original {
+>> 	__le32 data[DEF_ADDRS_PER_BLOCK];
+>> }
+>>
+>> struct node_v1 {
+>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
+>> 	__le32 field_1;
+>> }
+>>
+>> struct node_v2 {
+>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=1];
+>> 	__le32 field_2;
+>> }
+>>
+>> struct node_v2 {
+>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V3_NSIZE=2];
+>> 	__le32 field_1;
+>> 	__le32 field_2;
+>> }
+>>
+>> If we add more new fields, the node version will increase sharply due
+>> to there is (n << 2) combination with n fields. Right? Any thoughts to
+>> reduce maintaining overhead on those node versions structures?
+> 
+> Do you have time to explain more about the design of multiple version structure
+> for node block, I'm still be confused about two things:
+> 1. what will we do if we want to add one new field in node structure.
+> 2. how can we recognize which fields are valid and which ones are invalid.
+> 
+> Thanks,
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>> Any thoughts?
+>>>>
+>>>> Thanks,
+>>>>
+>>>>> enabled node_checksum, which we may not want to do.
+>>>>>
+>>>>>>
+>>>>>> Thanks,
+>>>>>>
+>>>>>>> 		__le32 comp[V2_NSIZE];
+>>>>>>> 	}
+>>>>>>> 	...
+>>>>>>>
+>>>>>>>> +			};
+>>>>>>>> +			struct direct_node dn;
+>>>>>>>> +			struct indirect_node in;
+>>>>>>>> +		};
+>>>>>>>>  	};
+>>>>>>>>  	struct node_footer footer;
+>>>>>>>>  } __packed;
+>>>>>>>> -- 
+>>>>>>>> 2.15.0.55.gc2ece9dc4de6
+>>>>>>>
+>>>>>>> .
+>>>>>>>
+>>
+>> .
+>>
+> 
