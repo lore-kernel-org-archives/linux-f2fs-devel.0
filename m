@@ -1,216 +1,89 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
-Date: Tue, 27 Feb 2018 21:34:01 -0800
-Message-ID: <20180228053401.GA86647@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180127094301.29154-1-yuchao0@huawei.com>
- <20180127094301.29154-2-yuchao0@huawei.com>
- <20180131020213.GA86468@jaegeuk-macbookpro.roam.corp.google.com>
- <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
- <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
- <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
- <20180210014140.GB1885@jaegeuk-macbookpro.roam.corp.google.com>
- <5f22d645-001d-a132-f0bd-2dba1f6daaea@kernel.org>
- <558ea6b1-e57d-5910-d931-a47f143cca25@huawei.com>
- <3782ed9e-741d-d711-3937-bc8127566982@kernel.org>
+Subject: Re: [PATCH v4] Revert "f2fs crypto: avoid unneeded memory allocation
+ in ->readdir"
+Date: Tue, 27 Feb 2018 21:48:10 -0800
+Message-ID: <20180228054810.GB86647@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
+ <1519787857-107910-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <3782ed9e-741d-d711-3937-bc8127566982@kernel.org>
+In-Reply-To: <1519787857-107910-1-git-send-email-yunlong.song@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao@kernel.org>
-Cc: Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Yunlong Song <yunlong.song@huawei.com>
+Cc: chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 02/27, Chao Yu wrote:
-> Ping,
+Hi Yunlong,
+
+As Eric pointed out, how do you think using nohighmem for directory likewise
+ext4, which looks like more efficient? Actually, we don't need to do this in
+most of recent kernels, right?
+
+Thanks,
+
+On 02/28, Yunlong Song wrote:
+> This reverts commit e06f86e61d7a67fe6e826010f57aa39c674f4b1b.
 > 
-> On 2018/2/13 15:34, Chao Yu wrote:
-> > Hi Jaegeuk,
-> > 
-> > On 2018/2/10 10:52, Chao Yu wrote:
-> >> On 2018/2/10 9:41, Jaegeuk Kim wrote:
-> >>> On 02/01, Chao Yu wrote:
-> >>>>
-> >>>>
-> >>>> On 2018/2/1 6:15, Jaegeuk Kim wrote:
-> >>>>> On 01/31, Chao Yu wrote:
-> >>>>>> On 2018/1/31 10:02, Jaegeuk Kim wrote:
-> >>>>>>> What if we want to add more entries in addition to node_checksum? Do we have
-> >>>>>>> to add a new feature flag at every time? How about adding a layout value instead
-> >>>>>>
-> >>>>>> Hmm.. for previous implementation, IMO, we'd better add a new feature flag at
-> >>>>>> every time, otherwise, w/ extra_nsize only, in current image, we can know a
-> >>>>>> valid range of extended area in node block, but we don't know which
-> >>>>>> fields/features are valid/enabled or not.
-> >>>>>>
-> >>>>>> One more thing is that if we can add one feature flag for each field, we got one
-> >>>>>> more chance to disable it dynamically.
-> >>>>>>
-> >>>>>>> of extra_nsize? For example, layout #1 means node_checksum with extra_nsize=X?
-> >>>>>>>
-> >>>>>>>
-> >>>>>>> What does 1017 mean? We need to make this structure more flexibly for new
-> >>>>>>
-> >>>>>> Yes, using raw 1017 is not appropriate here.
-> >>>>>>
-> >>>>>>> entries. Like this?
-> >>>>>>> 		union {
-> >>>>>>> 			struct node_v1;
-> >>>>>>> 			struct node_v2;
-> >>>>>>> 			struct node_v3;
-> >>>>>>> 			...
-> >>>>>>> 			struct direct_node dn;
-> >>>>>>> 			struct indirect_node in;
-> >>>>>>> 		};
-> >>>>>>> 	};
-> >>>>>>>
-> >>>>>>> 	struct node_v1 {
-> >>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
-> >>>>>>> 		__le32 node_checksum;
-> >>>>>>> 	}
-> >>>>>>>
-> >>>>>>> 	struct node_v2 {
-> >>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=500];
-> >>>>>>
-> >>>>>> Hmm.. If we only need to add one more 4 bytes field in struct node_v2, but
-> >>>>>> V2_NSIZE is defined as fixed 500, there must be 492 bytes wasted.
-> >>>>>>
-> >>>>>> Or we can define V2_NSIZE as 8, but if there comes more and more extended
-> >>>>>> fields, node version count can be a large number, it results in complicated
-> >>>>>> version recognization and handling.
-> >>>>>>
-> >>>>>> One more question is how can we control which fields are valid or not in
-> >>>>>> comp[Vx_NSIZE]?
-> >>>>>>
-> >>>>>>
-> >>>>>> Anyway, what I'm thinking is maybe we can restructure layout of node block like
-> >>>>>> the one used by f2fs_inode:
-> >>>>>>
-> >>>>>> struct f2fs_node {
-> >>>>>> 	union {
-> >>>>>> 		struct f2fs_inode i;
-> >>>>>> 		union {
-> >>>>>> 			struct {
-> >>>>>> 				__le32 node_checksum;
-> >>>>>> 				__le32 feature_field_1;
-> >>>>>> 				__le32 feature_field_2;
-> >>>>>> 				....
-> >>>>>> 				__le32 addr[];
-> >>>>>> 				
-> >>>>>> 			};
-> >>>>>> 			struct direct_node dn;
-> >>>>>> 			struct indirect_node in;
-> >>>>>> 		};
-> >>>>>> 	};
-> >>>>>> 	struct node_footer footer;
-> >>>>>> } __packed;
-> >>>>>>
-> >>>>>> Moving all extended fields to the head of f2fs_node, so we don't have to use
-> >>>>>> macro to indicate actual size of addr.
-> >>>>>
-> >>>>> Thinking what'd be the best way. My concern is, once getting more entries, we
-> >>>>
-> >>>> OK, I think we need more discussion.. ;)
-> >>>>
-> >>>>> can't set each of features individually. Like the second entry should have
-> >>>>
-> >>>> Oh, that will be hard. If we have to avoid that, we have to tag in somewhere
-> >>>> e.g. f2fs_inode::i_flags2 to indicate which new field in f2fs_node is valid, for
-> >>>> example:
-> >>>>
-> >>>> #define F2FS_NODE_CHECKSUM	0x0001
-> >>>> #define F2FS_NODE_FIELD1	0x0002
-> >>>> #define F2FS_NODE_FIELD2	0x0004
-> >>>>
-> >>>> 	union {
-> >>>> 		struct {
-> >>>> 			__le32 node_checksum;
-> >>>> 			__le32 field_1;
-> >>>> 			__le32 field_2;
-> >>>> 			....
-> >>>> 			__le32 addr[];
-> >>>> 		};
-> >>>> 		struct direct_node dn;
-> >>>> 		struct indirect_node in;
-> >>>> 	};
-> >>>>
-> >>>> f2fs_inode::i_flags2 = F2FS_NODE_CHECKSUM | F2FS_NODE_FIELD1
-> >>>> indicates that f2fs_node::node_checksum and f2fs_node::field_1 are valid;
-> >>>>
-> >>>> f2fs_inode::i_flags2 = F2FS_NODE_FIELD1 | F2FS_NODE_FIELD2
-> >>>> indicates that f2fs_node::field_1 and f2fs_node::field_2 are valid.
-> >>>
-> >>> So, that's why I thought we may need a sort of each formats.
-> >>
-> >> Hmm.. if we have two new added fields, there are (2 << 2) combinations
-> >> of all formats, as:
-> >>
-> >> struct original {
-> >> 	__le32 data[DEF_ADDRS_PER_BLOCK];
-> >> }
-> >>
-> >> struct node_v1 {
-> >> 	__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
-> >> 	__le32 field_1;
-> >> }
-> >>
-> >> struct node_v2 {
-> >> 	__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=1];
-> >> 	__le32 field_2;
-> >> }
-> >>
-> >> struct node_v2 {
-> >> 	__le32 data[DEF_ADDRS_PER_BLOCK - V3_NSIZE=2];
-> >> 	__le32 field_1;
-> >> 	__le32 field_2;
-> >> }
-> >>
-> >> If we add more new fields, the node version will increase sharply due
-> >> to there is (n << 2) combination with n fields. Right? Any thoughts to
-> >> reduce maintaining overhead on those node versions structures?
-> > 
-> > Do you have time to explain more about the design of multiple version structure
-> > for node block, I'm still be confused about two things:
-> > 1. what will we do if we want to add one new field in node structure.
-> > 2. how can we recognize which fields are valid and which ones are invalid.
-
-Can we discuss this in LSF/MM, if we get an invitation letter? :P
-
-> > 
-> > Thanks,
-> > 
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>>>
-> >>>> Any thoughts?
-> >>>>
-> >>>> Thanks,
-> >>>>
-> >>>>> enabled node_checksum, which we may not want to do.
-> >>>>>
-> >>>>>>
-> >>>>>> Thanks,
-> >>>>>>
-> >>>>>>> 		__le32 comp[V2_NSIZE];
-> >>>>>>> 	}
-> >>>>>>> 	...
-> >>>>>>>
-> >>>>>>>> +			};
-> >>>>>>>> +			struct direct_node dn;
-> >>>>>>>> +			struct indirect_node in;
-> >>>>>>>> +		};
-> >>>>>>>>  	};
-> >>>>>>>>  	struct node_footer footer;
-> >>>>>>>>  } __packed;
-> >>>>>>>> -- 
-> >>>>>>>> 2.15.0.55.gc2ece9dc4de6
-> >>>>>>>
-> >>>>>>> .
-> >>>>>>>
-> >>
-> >> .
-> >>
-> > 
+> Conflicts:
+> 	fs/f2fs/dir.c
+> 
+> In some platforms (such as arm), high memory is used, then the
+> decrypting filename will cause panic, the reason see commit
+> 569cf1876a32e574ba8a7fb825cd91bafd003882 ("f2fs crypto: allocate buffer
+> for decrypting filename"):
+> 
+>  We got dentry pages from high_mem, and its address space directly goes into the
+>  decryption path via f2fs_fname_disk_to_usr.
+>  But, sg_init_one assumes the address is not from high_mem, so we can get this
+>  panic since it doesn't call kmap_high but kunmap_high is triggered at the end.
+> 
+>  kernel BUG at ../../../../../../kernel/mm/highmem.c:290!
+>  Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+>  ...
+>   (kunmap_high+0xb0/0xb8) from [<c0114534>] (__kunmap_atomic+0xa0/0xa4)
+>   (__kunmap_atomic+0xa0/0xa4) from [<c035f028>] (blkcipher_walk_done+0x128/0x1ec)
+>   (blkcipher_walk_done+0x128/0x1ec) from [<c0366c24>] (crypto_cbc_decrypt+0xc0/0x170)
+>   (crypto_cbc_decrypt+0xc0/0x170) from [<c0367148>] (crypto_cts_decrypt+0xc0/0x114)
+>   (crypto_cts_decrypt+0xc0/0x114) from [<c035ea98>] (async_decrypt+0x40/0x48)
+>   (async_decrypt+0x40/0x48) from [<c032ca34>] (f2fs_fname_disk_to_usr+0x124/0x304)
+>   (f2fs_fname_disk_to_usr+0x124/0x304) from [<c03056fc>] (f2fs_fill_dentries+0xac/0x188)
+>   (f2fs_fill_dentries+0xac/0x188) from [<c03059c8>] (f2fs_readdir+0x1f0/0x300)
+>   (f2fs_readdir+0x1f0/0x300) from [<c0218054>] (vfs_readdir+0x90/0xb4)
+>   (vfs_readdir+0x90/0xb4) from [<c0218418>] (SyS_getdents64+0x64/0xcc)
+>   (SyS_getdents64+0x64/0xcc) from [<c0105ba0>] (ret_fast_syscall+0x0/0x30)
+> 
+> Howerver, later patch:
+> commit e06f86e61d7a ("f2fs crypto: avoid unneeded memory allocation in ->readdir")
+> reverts the codes, which causes panic again in arm, so fix it back to the old version.
+> 
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/dir.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> index f00b5ed..de2e295 100644
+> --- a/fs/f2fs/dir.c
+> +++ b/fs/f2fs/dir.c
+> @@ -825,9 +825,16 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+>  			int save_len = fstr->len;
+>  			int err;
+>  
+> +			de_name.name = f2fs_kmalloc(sbi, de_name.len, GFP_NOFS);
+> +			if (!de_name.name)
+> +				return -ENOMEM;
+> +
+> +			memcpy(de_name.name, d->filename[bit_pos], de_name.len);
+> +
+>  			err = fscrypt_fname_disk_to_usr(d->inode,
+>  						(u32)de->hash_code, 0,
+>  						&de_name, fstr);
+> +			kfree(de_name.name);
+>  			if (err)
+>  				return err;
+>  
+> -- 
+> 1.8.5.2
