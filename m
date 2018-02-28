@@ -1,230 +1,363 @@
-From: Junling Zheng <zhengjunling@huawei.com>
-Subject: [PATCH v4] f2fs: introduce mount option for fsync mode
-Date: Wed, 28 Feb 2018 20:09:13 +0800
-Message-ID: <20180228120913.175915-1-zhengjunling@huawei.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: [PATCH] f2fs: don't put dentry page in pagecache into highmem
+Date: Wed, 28 Feb 2018 20:31:52 +0800
+Message-ID: <1519821112-137593-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <zhengjunling@huawei.com>) id 1er0Y8-001TwE-JS
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Feb 2018 12:09:32 +0000
-Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=huawei.com) by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1er0Y5-009PZA-Kd
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Feb 2018 12:09:32 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Commit "0a007b97aad6"(f2fs: recover directory operations by fsync)
-fixed xfstest generic/342 case, but it also increased the written
-data and caused the performance degradation. In most cases, there's
-no need to do so heavy fsync actually.
+Previous dentry page uses highmem, which will cause panic in platforms
+using highmem (such as arm), since the address space of dentry pages
+from highmem directly goes into the decryption path via the function
+fscrypt_fname_disk_to_usr. But sg_init_one assumes the address is not
+from highmem, and then cause panic since it doesn't call kmap_high but
+kunmap_high is triggered at the end. To fix this problem in a simple
+way, this patch avoids to put dentry page in pagecache into highmem.
 
-So we introduce new mount option "fsync_mode={posix,strict}" to
-control the policy of fsync. "fsync_mode=posix" is set by default,
-and means that f2fs uses a light fsync, which follows POSIX semantics.
-And "fsync_mode=strict" means that it's a heavy fsync, which behaves
-in line with xfs, ext4 and btrfs, where generic/342 will pass, but
-the performance will regress.
-
-Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 ---
-Changes from v3:
- - add fsync_mode in sbi to record fsync mode
- - keep the extensibility for fsync_mode
-Changes from v2:
- - Change to "fsync={posix,strict}" format
- - Set "fsync=posix" default
-Changes from v1:
- - Add document modify
- - Add reviewer
- Documentation/filesystems/f2fs.txt |  7 +++++++
- fs/f2fs/dir.c                      |  3 ++-
- fs/f2fs/f2fs.h                     |  8 ++++++++
- fs/f2fs/file.c                     |  3 ++-
- fs/f2fs/namei.c                    |  9 ++++++---
- fs/f2fs/super.c                    | 24 ++++++++++++++++++++++++
- 6 files changed, 49 insertions(+), 5 deletions(-)
+ fs/f2fs/dir.c           | 23 +++++------------------
+ fs/f2fs/f2fs.h          |  6 ------
+ fs/f2fs/inline.c        |  3 +--
+ fs/f2fs/inode.c         |  2 +-
+ fs/f2fs/namei.c         | 14 +-------------
+ fs/f2fs/recovery.c      | 11 +++++------
+ include/linux/f2fs_fs.h |  1 -
+ 7 files changed, 13 insertions(+), 47 deletions(-)
 
-diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-index 0409c47584ea..514e44983a8e 100644
---- a/Documentation/filesystems/f2fs.txt
-+++ b/Documentation/filesystems/f2fs.txt
-@@ -182,6 +182,13 @@ whint_mode=%s          Control which write hints are passed down to block
-                        passes down hints with its policy.
- alloc_mode=%s          Adjust block allocation policy, which supports "reuse"
-                        and "default".
-+fsync_mode=%s          Control the policy of fsync. Currently supports "posix"
-+                       and "strict". In "posix" mode, which is default, fsync
-+                       will follow POSIX semantics and does a light operation
-+                       to improve the filesystem performance. In "strict" mode,
-+                       fsync will be heavy and behaves in line with xfs, ext4
-+                       and btrfs, where xfstest generic/342 will pass, but the
-+                       performance will regress.
- 
- ================================================================================
- DEBUGFS ENTRIES
 diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index f00b5ed8c011..cce8ce11c2cc 100644
+index f00b5ed..797eb05 100644
 --- a/fs/f2fs/dir.c
 +++ b/fs/f2fs/dir.c
-@@ -713,7 +713,8 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+@@ -94,14 +94,12 @@ static struct f2fs_dir_entry *find_in_block(struct page *dentry_page,
+ 	struct f2fs_dir_entry *de;
+ 	struct f2fs_dentry_ptr d;
  
- 	f2fs_update_time(F2FS_I_SB(dir), REQ_TIME);
+-	dentry_blk = (struct f2fs_dentry_block *)kmap(dentry_page);
++	dentry_blk = (struct f2fs_dentry_block *)page_address(dentry_page);
  
--	add_ino_entry(F2FS_I_SB(dir), dir->i_ino, TRANS_DIR_INO);
-+	if (F2FS_I_SB(dir)->fsync_mode == FSYNC_MODE_STRICT)
-+		add_ino_entry(F2FS_I_SB(dir), dir->i_ino, TRANS_DIR_INO);
+ 	make_dentry_ptr_block(NULL, &d, dentry_blk);
+ 	de = find_target_dentry(fname, namehash, max_slots, &d);
+ 	if (de)
+ 		*res_page = dentry_page;
+-	else
+-		kunmap(dentry_page);
  
- 	if (f2fs_has_inline_dentry(dir))
- 		return f2fs_delete_inline_entry(dentry, page, dir, inode);
+ 	return de;
+ }
+@@ -287,7 +285,6 @@ ino_t f2fs_inode_by_name(struct inode *dir, const struct qstr *qstr,
+ 	de = f2fs_find_entry(dir, qstr, page);
+ 	if (de) {
+ 		res = le32_to_cpu(de->ino);
+-		f2fs_dentry_kunmap(dir, *page);
+ 		f2fs_put_page(*page, 0);
+ 	}
+ 
+@@ -302,7 +299,6 @@ void f2fs_set_link(struct inode *dir, struct f2fs_dir_entry *de,
+ 	f2fs_wait_on_page_writeback(page, type, true);
+ 	de->ino = cpu_to_le32(inode->i_ino);
+ 	set_de_type(de, inode->i_mode);
+-	f2fs_dentry_kunmap(dir, page);
+ 	set_page_dirty(page);
+ 
+ 	dir->i_mtime = dir->i_ctime = current_time(dir);
+@@ -350,13 +346,11 @@ static int make_empty_dir(struct inode *inode,
+ 	if (IS_ERR(dentry_page))
+ 		return PTR_ERR(dentry_page);
+ 
+-	dentry_blk = kmap_atomic(dentry_page);
++	dentry_blk = page_address(dentry_page);
+ 
+ 	make_dentry_ptr_block(NULL, &d, dentry_blk);
+ 	do_make_empty_dir(inode, parent, &d);
+ 
+-	kunmap_atomic(dentry_blk);
+-
+ 	set_page_dirty(dentry_page);
+ 	f2fs_put_page(dentry_page, 1);
+ 	return 0;
+@@ -547,13 +541,12 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
+ 		if (IS_ERR(dentry_page))
+ 			return PTR_ERR(dentry_page);
+ 
+-		dentry_blk = kmap(dentry_page);
++		dentry_blk = page_address(dentry_page);
+ 		bit_pos = room_for_filename(&dentry_blk->dentry_bitmap,
+ 						slots, NR_DENTRY_IN_BLOCK);
+ 		if (bit_pos < NR_DENTRY_IN_BLOCK)
+ 			goto add_dentry;
+ 
+-		kunmap(dentry_page);
+ 		f2fs_put_page(dentry_page, 1);
+ 	}
+ 
+@@ -588,7 +581,6 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
+ 	if (inode)
+ 		up_write(&F2FS_I(inode)->i_sem);
+ 
+-	kunmap(dentry_page);
+ 	f2fs_put_page(dentry_page, 1);
+ 
+ 	return err;
+@@ -642,7 +634,6 @@ int __f2fs_add_link(struct inode *dir, const struct qstr *name,
+ 		F2FS_I(dir)->task = NULL;
+ 	}
+ 	if (de) {
+-		f2fs_dentry_kunmap(dir, page);
+ 		f2fs_put_page(page, 0);
+ 		err = -EEXIST;
+ 	} else if (IS_ERR(page)) {
+@@ -730,7 +721,6 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+ 	bit_pos = find_next_bit_le(&dentry_blk->dentry_bitmap,
+ 			NR_DENTRY_IN_BLOCK,
+ 			0);
+-	kunmap(page); /* kunmap - pair of f2fs_find_entry */
+ 	set_page_dirty(page);
+ 
+ 	dir->i_ctime = dir->i_mtime = current_time(dir);
+@@ -775,7 +765,7 @@ bool f2fs_empty_dir(struct inode *dir)
+ 				return false;
+ 		}
+ 
+-		dentry_blk = kmap_atomic(dentry_page);
++		dentry_blk = page_address(dentry_page);
+ 		if (bidx == 0)
+ 			bit_pos = 2;
+ 		else
+@@ -783,7 +773,6 @@ bool f2fs_empty_dir(struct inode *dir)
+ 		bit_pos = find_next_bit_le(&dentry_blk->dentry_bitmap,
+ 						NR_DENTRY_IN_BLOCK,
+ 						bit_pos);
+-		kunmap_atomic(dentry_blk);
+ 
+ 		f2fs_put_page(dentry_page, 1);
+ 
+@@ -901,19 +890,17 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
+ 			}
+ 		}
+ 
+-		dentry_blk = kmap(dentry_page);
++		dentry_blk = page_address(dentry_page);
+ 
+ 		make_dentry_ptr_block(inode, &d, dentry_blk);
+ 
+ 		err = f2fs_fill_dentries(ctx, &d,
+ 				n * NR_DENTRY_IN_BLOCK, &fstr);
+ 		if (err) {
+-			kunmap(dentry_page);
+ 			f2fs_put_page(dentry_page, 1);
+ 			break;
+ 		}
+ 
+-		kunmap(dentry_page);
+ 		f2fs_put_page(dentry_page, 1);
+ 	}
+ out_free:
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index e4a782b23e66..b85dcfb30bac 100644
+index dbe87c7..d57b7dd 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -1052,6 +1052,11 @@ enum {
- 	ALLOC_MODE_REUSE,	/* reuse segments as much as possible */
- };
- 
-+enum fsync_mode {
-+	FSYNC_MODE_POSIX,	/* fsync follows posix semantics */
-+	FSYNC_MODE_STRICT,	/* fsync behaves in line with ext4 */
-+};
-+
- struct f2fs_sb_info {
- 	struct super_block *sb;			/* pointer to VFS super block */
- 	struct proc_dir_entry *s_proc;		/* proc entry */
-@@ -1241,6 +1246,9 @@ struct f2fs_sb_info {
- 
- 	/* segment allocation policy */
- 	int alloc_mode;
-+
-+	/* fsync policy */
-+	int fsync_mode;
- };
- 
- #ifdef CONFIG_F2FS_FAULT_INJECTION
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 6a202e5a6386..99fa207fc310 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -165,7 +165,8 @@ static inline enum cp_reason_type need_do_checkpoint(struct inode *inode)
- 		cp_reason = CP_FASTBOOT_MODE;
- 	else if (sbi->active_logs == 2)
- 		cp_reason = CP_SPEC_LOG_NUM;
--	else if (need_dentry_mark(sbi, inode->i_ino) &&
-+	else if (sbi->fsync_mode == FSYNC_MODE_STRICT &&
-+		need_dentry_mark(sbi, inode->i_ino) &&
- 		exist_written_data(sbi, F2FS_I(inode)->i_pino, TRANS_DIR_INO))
- 		cp_reason = CP_RECOVER_DIR;
- 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 75135191a73d..010fc9a4a589 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -977,7 +977,8 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		}
- 		f2fs_i_links_write(old_dir, false);
- 	}
--	add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
-+	if (sbi->fsync_mode == FSYNC_MODE_STRICT)
-+		add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
- 
- 	f2fs_unlock_op(sbi);
- 
-@@ -1132,8 +1133,10 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	}
- 	f2fs_mark_inode_dirty_sync(new_dir, false);
- 
--	add_ino_entry(sbi, old_dir->i_ino, TRANS_DIR_INO);
--	add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
-+	if (sbi->fsync_mode == FSYNC_MODE_STRICT) {
-+		add_ino_entry(sbi, old_dir->i_ino, TRANS_DIR_INO);
-+		add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
-+	}
- 
- 	f2fs_unlock_op(sbi);
- 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 359dc031fb8c..67c07de87dad 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -131,6 +131,7 @@ enum {
- 	Opt_jqfmt_vfsv1,
- 	Opt_whint,
- 	Opt_alloc,
-+	Opt_fsync,
- 	Opt_err,
- };
- 
-@@ -186,6 +187,7 @@ static match_table_t f2fs_tokens = {
- 	{Opt_jqfmt_vfsv1, "jqfmt=vfsv1"},
- 	{Opt_whint, "whint_mode=%s"},
- 	{Opt_alloc, "alloc_mode=%s"},
-+	{Opt_fsync, "fsync_mode=%s"},
- 	{Opt_err, NULL},
- };
- 
-@@ -719,6 +721,22 @@ static int parse_options(struct super_block *sb, char *options)
- 			}
- 			kfree(name);
- 			break;
-+		case Opt_fsync:
-+			name = match_strdup(&args[0]);
-+			if (!name)
-+				return -ENOMEM;
-+			if (strlen(name) == 5 &&
-+					!strncmp(name, "posix", 5)) {
-+				sbi->fsync_mode = FSYNC_MODE_POSIX;
-+			} else if (strlen(name) == 6 &&
-+					!strncmp(name, "strict", 6)) {
-+				sbi->fsync_mode = FSYNC_MODE_STRICT;
-+			} else {
-+				kfree(name);
-+				return -EINVAL;
-+			}
-+			kfree(name);
-+			break;
- 		default:
- 			f2fs_msg(sb, KERN_ERR,
- 				"Unrecognized mount option \"%s\" or missing value",
-@@ -1287,6 +1305,11 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_printf(seq, ",alloc_mode=%s", "default");
- 	else if (sbi->alloc_mode == ALLOC_MODE_REUSE)
- 		seq_printf(seq, ",alloc_mode=%s", "reuse");
-+
-+	if (sbi->fsync_mode == FSYNC_MODE_POSIX)
-+		seq_printf(seq, ",fsync_mode=%s", "posix");
-+	else if (sbi->fsync_mode == FSYNC_MODE_STRICT)
-+		seq_printf(seq, ",fsync_mode=%s", "strict");
- 	return 0;
+@@ -2413,12 +2413,6 @@ static inline int f2fs_has_inline_dentry(struct inode *inode)
+ 	return is_inode_flag_set(inode, FI_INLINE_DENTRY);
  }
  
-@@ -1297,6 +1320,7 @@ static void default_options(struct f2fs_sb_info *sbi)
- 	sbi->inline_xattr_size = DEFAULT_INLINE_XATTR_ADDRS;
- 	sbi->whint_mode = WHINT_MODE_OFF;
- 	sbi->alloc_mode = ALLOC_MODE_DEFAULT;
-+	sbi->fsync_mode = FSYNC_MODE_POSIX;
- 	sbi->readdir_ra = 1;
+-static inline void f2fs_dentry_kunmap(struct inode *dir, struct page *page)
+-{
+-	if (!f2fs_has_inline_dentry(dir))
+-		kunmap(page);
+-}
+-
+ static inline int is_file(struct inode *inode, int type)
+ {
+ 	return F2FS_I(inode)->i_advise & type;
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 90e38d8..3b77d64 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -369,7 +369,7 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
+ 	f2fs_wait_on_page_writeback(page, DATA, true);
+ 	zero_user_segment(page, MAX_INLINE_DATA(dir), PAGE_SIZE);
  
- 	set_opt(sbi, BG_GC);
+-	dentry_blk = kmap_atomic(page);
++	dentry_blk = page_address(page);
+ 
+ 	make_dentry_ptr_inline(dir, &src, inline_dentry);
+ 	make_dentry_ptr_block(dir, &dst, dentry_blk);
+@@ -386,7 +386,6 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
+ 	memcpy(dst.dentry, src.dentry, SIZE_OF_DIR_ENTRY * src.max);
+ 	memcpy(dst.filename, src.filename, src.max * F2FS_SLOT_LEN);
+ 
+-	kunmap_atomic(dentry_blk);
+ 	if (!PageUptodate(page))
+ 		SetPageUptodate(page);
+ 	set_page_dirty(page);
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 89c838b..10be247 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -328,7 +328,7 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+ 		inode->i_op = &f2fs_dir_inode_operations;
+ 		inode->i_fop = &f2fs_dir_operations;
+ 		inode->i_mapping->a_ops = &f2fs_dblock_aops;
+-		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_HIGH_ZERO);
++		inode_nohighmem(inode);
+ 	} else if (S_ISLNK(inode->i_mode)) {
+ 		if (f2fs_encrypted_inode(inode))
+ 			inode->i_op = &f2fs_encrypted_symlink_inode_operations;
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index c4c94c7..2754af7 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -317,7 +317,6 @@ static int __recover_dot_dentries(struct inode *dir, nid_t pino)
+ 
+ 	de = f2fs_find_entry(dir, &dot, &page);
+ 	if (de) {
+-		f2fs_dentry_kunmap(dir, page);
+ 		f2fs_put_page(page, 0);
+ 	} else if (IS_ERR(page)) {
+ 		err = PTR_ERR(page);
+@@ -330,7 +329,6 @@ static int __recover_dot_dentries(struct inode *dir, nid_t pino)
+ 
+ 	de = f2fs_find_entry(dir, &dotdot, &page);
+ 	if (de) {
+-		f2fs_dentry_kunmap(dir, page);
+ 		f2fs_put_page(page, 0);
+ 	} else if (IS_ERR(page)) {
+ 		err = PTR_ERR(page);
+@@ -377,7 +375,6 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+ 	}
+ 
+ 	ino = le32_to_cpu(de->ino);
+-	f2fs_dentry_kunmap(dir, page);
+ 	f2fs_put_page(page, 0);
+ 
+ 	inode = f2fs_iget(dir->i_sb, ino);
+@@ -452,7 +449,6 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+ 	err = acquire_orphan_inode(sbi);
+ 	if (err) {
+ 		f2fs_unlock_op(sbi);
+-		f2fs_dentry_kunmap(dir, page);
+ 		f2fs_put_page(page, 0);
+ 		goto fail;
+ 	}
+@@ -613,7 +609,7 @@ static int f2fs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	inode->i_op = &f2fs_dir_inode_operations;
+ 	inode->i_fop = &f2fs_dir_operations;
+ 	inode->i_mapping->a_ops = &f2fs_dblock_aops;
+-	mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_HIGH_ZERO);
++	inode_nohighmem(inode);
+ 
+ 	set_inode_flag(inode, FI_INC_LINK);
+ 	f2fs_lock_op(sbi);
+@@ -931,7 +927,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 			f2fs_set_link(old_inode, old_dir_entry,
+ 						old_dir_page, new_dir);
+ 		} else {
+-			f2fs_dentry_kunmap(old_inode, old_dir_page);
+ 			f2fs_put_page(old_dir_page, 0);
+ 		}
+ 		f2fs_i_links_write(old_dir, false);
+@@ -947,7 +942,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ put_out_dir:
+ 	f2fs_unlock_op(sbi);
+ 	if (new_page) {
+-		f2fs_dentry_kunmap(new_dir, new_page);
+ 		f2fs_put_page(new_page, 0);
+ 	}
+ out_whiteout:
+@@ -955,11 +949,9 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 		iput(whiteout);
+ out_dir:
+ 	if (old_dir_entry) {
+-		f2fs_dentry_kunmap(old_inode, old_dir_page);
+ 		f2fs_put_page(old_dir_page, 0);
+ 	}
+ out_old:
+-	f2fs_dentry_kunmap(old_dir, old_page);
+ 	f2fs_put_page(old_page, 0);
+ out:
+ 	return err;
+@@ -1101,19 +1093,15 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	return 0;
+ out_new_dir:
+ 	if (new_dir_entry) {
+-		f2fs_dentry_kunmap(new_inode, new_dir_page);
+ 		f2fs_put_page(new_dir_page, 0);
+ 	}
+ out_old_dir:
+ 	if (old_dir_entry) {
+-		f2fs_dentry_kunmap(old_inode, old_dir_page);
+ 		f2fs_put_page(old_dir_page, 0);
+ 	}
+ out_new:
+-	f2fs_dentry_kunmap(new_dir, new_page);
+ 	f2fs_put_page(new_page, 0);
+ out_old:
+-	f2fs_dentry_kunmap(old_dir, old_page);
+ 	f2fs_put_page(old_page, 0);
+ out:
+ 	return err;
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 337f336..c5e5c45 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -144,7 +144,7 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
+ retry:
+ 	de = __f2fs_find_entry(dir, &fname, &page);
+ 	if (de && inode->i_ino == le32_to_cpu(de->ino))
+-		goto out_unmap_put;
++		goto out_put;
+ 
+ 	if (de) {
+ 		einode = f2fs_iget_retry(inode->i_sb, le32_to_cpu(de->ino));
+@@ -153,19 +153,19 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
+ 			err = PTR_ERR(einode);
+ 			if (err == -ENOENT)
+ 				err = -EEXIST;
+-			goto out_unmap_put;
++			goto out_put;
+ 		}
+ 
+ 		err = dquot_initialize(einode);
+ 		if (err) {
+ 			iput(einode);
+-			goto out_unmap_put;
++			goto out_put;
+ 		}
+ 
+ 		err = acquire_orphan_inode(F2FS_I_SB(inode));
+ 		if (err) {
+ 			iput(einode);
+-			goto out_unmap_put;
++			goto out_put;
+ 		}
+ 		f2fs_delete_entry(de, page, dir, einode);
+ 		iput(einode);
+@@ -180,8 +180,7 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
+ 		goto retry;
+ 	goto out;
+ 
+-out_unmap_put:
+-	f2fs_dentry_kunmap(dir, page);
++out_put:
+ 	f2fs_put_page(page, 0);
+ out:
+ 	if (file_enc_name(inode))
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index f7f0990..96c9bdb 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -46,7 +46,6 @@
+ 
+ /* This flag is used by node and meta inodes, and by recovery */
+ #define GFP_F2FS_ZERO		(GFP_NOFS | __GFP_ZERO)
+-#define GFP_F2FS_HIGH_ZERO	(GFP_NOFS | __GFP_ZERO | __GFP_HIGHMEM)
+ 
+ /*
+  * For further optimization on multi-head logs, on-disk layout supports maximum
 -- 
-2.15.1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+1.8.5.2
