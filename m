@@ -1,25 +1,30 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH] f2fs: Reduce zoned block device memory usage
-Date: Tue, 20 Feb 2018 18:39:05 -0800
-Message-ID: <20180221023905.GA13864@infradead.org>
-References: <20180220060610.12588-1-damien.lemoal@wdc.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v2] f2fs: introduce "strict_fsync" for posix
+ standard fsync
+Date: Wed, 28 Feb 2018 14:50:11 +0800
+Message-ID: <ae28aa8e-f753-38c1-121a-c2680745468b@huawei.com>
+References: <20180202083333.104786-1-zhengjunling@huawei.com>
+ <20180210004457.GA1885@jaegeuk-macbookpro.roam.corp.google.com>
+ <b41911c9-4ae4-1918-f865-0a49e2a4a9f2@huawei.com>
+ <20180212000718.GA44666@jaegeuk-macbookpro.roam.corp.google.com>
+ <089d134b-914b-3bbe-507b-3d59ba018a4d@huawei.com>
+ <20180228044907.GA81737@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89) (envelope-from
- <BATV+53e37238c2b78c0cda71+5295+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1eqvLi-008PIR-U5
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Feb 2018 06:36:23 +0000
-Received: from [172.30.20.11] (helo=bombadil.infradead.org)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eoKcy-0007Z3-3d
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Feb 2018 02:59:29 +0000
-Content-Disposition: inline
-In-Reply-To: <20180220060610.12588-1-damien.lemoal@wdc.com>
+ (envelope-from <yuchao0@huawei.com>) id 1eqvVC-008Q12-PT
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Feb 2018 06:46:10 +0000
+Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
+ helo=huawei.com) by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eqvVA-007GOP-FX
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Feb 2018 06:46:10 +0000
+In-Reply-To: <20180228044907.GA81737@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,27 +34,93 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Damien Le Moal <damien.lemoal@wdc.com>
-Cc: linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Tue, Feb 20, 2018 at 03:06:10PM +0900, Damien Le Moal wrote:
-> For a zoned block device mount, an array of zone types for the device is
-> allocated and initialized in order to determine if a section is stored
-> on a sequential zone (zone reset needed) or a conventional zone (no zone
-> reset needed and regular discard applies). Considering this usage, the
-> zone types stored in memory can be replaced with a bitmap to indicate
-> equivalent information, that is, if a zone is sequential or not. This
-> reduces the memory usage for the device mount by roughly 8 (on a 14TB
-> disk with zones of 256 MB, the zone type array consumes 13x4KB pages
-> while the bitmap uses only 2x4KB pages.
+On 2018/2/28 12:49, Jaegeuk Kim wrote:
+> On 02/13, Chao Yu wrote:
+>> Hi Jaegeuk,
+>>
+>> On 2018/2/12 8:07, Jaegeuk Kim wrote:
+>>> On 02/11, Junling Zheng wrote:
+>>>> Hi, Jaegeuk
+>>>>
+>>>> On 2018/2/10 8:44, Jaegeuk Kim wrote:
+>>>>> On 02/02, Junling Zheng wrote:
+>>>>>> Commit "0a007b97aad6"(f2fs: recover directory operations by fsync)
+>>>>>> fixed xfstest generic/342 case, but it also increased the written
+>>>>>> data and caused the performance degradation. In most cases, there's
+>>>>>> no need to do so heavily fsync actually.
+>>>>>>
+>>>>>> So we introduce a new mount option "strict_fsync" to control the
+>>>>>> policy of fsync. It's set by default, and means that fsync follows
+>>>>>> POSIX semantics. And "nostrict_fsync" means that the behaviour is
+>>>>>> in line with xfs, ext4 and btrfs, where generic/342 will pass.
+>>>>>
+>>>>> How about adding "fsync=%s" to give another chance for fsync policies?
+>>
+>> Agreed.
+>>
+>>>>>
+>>>>
+>>>> OK, I'll give patch v3 to change to "fsync=%s" format.
+>>>> BTW, which policy do u think should be the default behavior for f2fs? Posix
+>>>> or ext4?
+>>>
+>>> The default should be like ext4 as fsync=strict. We may add fsync=posix for
+>>> this.
+>>
+>> I'd like to suggest using fsync=posix option by default, because in most popular
+>> in-used scenario of f2fs: android, all users of filesystem are posix-compliant,
+>> so there is no such requirement that fs needs do more than posix as generic/342
+>> restricted.
+>>
+>> The performance of fsync=strict mode regressed as expected, so if we enable
+>> fsync=strict mode by default, I suspect it may make f2fs losing some kinds of
+>> benchmark competition.
+>>
+>> How do you think?
 > 
-> This patch changes the f2fs_dev_info structure blkz_type field to the
-> bitmap blkz_seq. Access to this bitmap is done using the function
-> f2fs_blkz_is_seq(), which is a rewrite of the function get_blkz_type().
+> Okay, I have no objection on that.
 
-Is there any way we could just provide a block layer helper to
-figure this out so that the file system code could be simplified even
-more?
+Well to hear that, so let's wait Junling to update the patch. ;)
+
+Thanks,
+
+> 
+> Thanks,
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>> Thanks,
+>>>
+>>>>
+>>>> Thanks
+>>>> Junling
+>>>>
+>>>>> Thanks,
+>>>>>
+>>>>>>
+>>>>>> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+>>>>>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>>>>>> ---
+>>>>>>  Documentation/filesystems/f2fs.txt |  4 ++++
+>>>>>>  fs/f2fs/dir.c                      |  3 ++-
+>>>>>>  fs/f2fs/f2fs.h                     |  1 +
+>>>>>>  fs/f2fs/file.c                     |  3 ++-
+>>>>>>  fs/f2fs/namei.c                    |  9 ++++++---
+>>>>>>  fs/f2fs/super.c                    | 13 +++++++++++++
+>>>>>>  6 files changed, 28 insertions(+), 5 deletions(-)
+>>>>>>
+>>>
+>>> .
+>>>
+> 
+> .
+> 
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
