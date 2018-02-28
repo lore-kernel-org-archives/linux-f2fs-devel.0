@@ -1,89 +1,55 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v4] Revert "f2fs crypto: avoid unneeded memory allocation
- in ->readdir"
-Date: Tue, 27 Feb 2018 21:48:10 -0800
-Message-ID: <20180228054810.GB86647@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
- <1519787857-107910-1-git-send-email-yunlong.song@huawei.com>
+Subject: Re: [PATCH v3] f2fs: in-memory inode checksum when
+ checking consistency
+Date: Tue, 27 Feb 2018 21:59:10 -0800
+Message-ID: <20180228055910.GA88091@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180226192843.26680-1-guoweichao@huawei.com>
+ <b0fb67ac-a620-68df-0472-26f08433e344@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <jaegeuk@kernel.org>) id 1equlq-0018wg-FM
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Feb 2018 05:59:18 +0000
+Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
+ helo=mail.kernel.org) by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1equlo-005ohY-Rk
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Feb 2018 05:59:18 +0000
 Content-Disposition: inline
-In-Reply-To: <1519787857-107910-1-git-send-email-yunlong.song@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>
-Cc: chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <b0fb67ac-a620-68df-0472-26f08433e344@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Yunlong,
+On 02/27, Chao Yu wrote:
+> On 2018/2/27 3:28, Weichao Guo wrote:
+> > Enable in-memory inode checksum to protect metadata blocks
+> > from in-memory scribbles only when checking consistency with
+> > no performance requirements.
+> > 
+> > Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+> 
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-As Eric pointed out, how do you think using nohighmem for directory likewise
-ext4, which looks like more efficient? Actually, we don't need to do this in
-most of recent kernels, right?
+This gives a panic easily by fsstress. Could you please check it again?
 
 Thanks,
 
-On 02/28, Yunlong Song wrote:
-> This reverts commit e06f86e61d7a67fe6e826010f57aa39c674f4b1b.
 > 
-> Conflicts:
-> 	fs/f2fs/dir.c
-> 
-> In some platforms (such as arm), high memory is used, then the
-> decrypting filename will cause panic, the reason see commit
-> 569cf1876a32e574ba8a7fb825cd91bafd003882 ("f2fs crypto: allocate buffer
-> for decrypting filename"):
-> 
->  We got dentry pages from high_mem, and its address space directly goes into the
->  decryption path via f2fs_fname_disk_to_usr.
->  But, sg_init_one assumes the address is not from high_mem, so we can get this
->  panic since it doesn't call kmap_high but kunmap_high is triggered at the end.
-> 
->  kernel BUG at ../../../../../../kernel/mm/highmem.c:290!
->  Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
->  ...
->   (kunmap_high+0xb0/0xb8) from [<c0114534>] (__kunmap_atomic+0xa0/0xa4)
->   (__kunmap_atomic+0xa0/0xa4) from [<c035f028>] (blkcipher_walk_done+0x128/0x1ec)
->   (blkcipher_walk_done+0x128/0x1ec) from [<c0366c24>] (crypto_cbc_decrypt+0xc0/0x170)
->   (crypto_cbc_decrypt+0xc0/0x170) from [<c0367148>] (crypto_cts_decrypt+0xc0/0x114)
->   (crypto_cts_decrypt+0xc0/0x114) from [<c035ea98>] (async_decrypt+0x40/0x48)
->   (async_decrypt+0x40/0x48) from [<c032ca34>] (f2fs_fname_disk_to_usr+0x124/0x304)
->   (f2fs_fname_disk_to_usr+0x124/0x304) from [<c03056fc>] (f2fs_fill_dentries+0xac/0x188)
->   (f2fs_fill_dentries+0xac/0x188) from [<c03059c8>] (f2fs_readdir+0x1f0/0x300)
->   (f2fs_readdir+0x1f0/0x300) from [<c0218054>] (vfs_readdir+0x90/0xb4)
->   (vfs_readdir+0x90/0xb4) from [<c0218418>] (SyS_getdents64+0x64/0xcc)
->   (SyS_getdents64+0x64/0xcc) from [<c0105ba0>] (ret_fast_syscall+0x0/0x30)
-> 
-> Howerver, later patch:
-> commit e06f86e61d7a ("f2fs crypto: avoid unneeded memory allocation in ->readdir")
-> reverts the codes, which causes panic again in arm, so fix it back to the old version.
-> 
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/dir.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> index f00b5ed..de2e295 100644
-> --- a/fs/f2fs/dir.c
-> +++ b/fs/f2fs/dir.c
-> @@ -825,9 +825,16 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
->  			int save_len = fstr->len;
->  			int err;
->  
-> +			de_name.name = f2fs_kmalloc(sbi, de_name.len, GFP_NOFS);
-> +			if (!de_name.name)
-> +				return -ENOMEM;
-> +
-> +			memcpy(de_name.name, d->filename[bit_pos], de_name.len);
-> +
->  			err = fscrypt_fname_disk_to_usr(d->inode,
->  						(u32)de->hash_code, 0,
->  						&de_name, fstr);
-> +			kfree(de_name.name);
->  			if (err)
->  				return err;
->  
-> -- 
-> 1.8.5.2
+> Thanks,
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
