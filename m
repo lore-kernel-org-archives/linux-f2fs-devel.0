@@ -1,29 +1,25 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2] f2fs: introduce "strict_fsync" for posix
- standard fsync
-Date: Tue, 27 Feb 2018 20:49:07 -0800
-Message-ID: <20180228044907.GA81737@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180202083333.104786-1-zhengjunling@huawei.com>
- <20180210004457.GA1885@jaegeuk-macbookpro.roam.corp.google.com>
- <b41911c9-4ae4-1918-f865-0a49e2a4a9f2@huawei.com>
- <20180212000718.GA44666@jaegeuk-macbookpro.roam.corp.google.com>
- <089d134b-914b-3bbe-507b-3d59ba018a4d@huawei.com>
+Subject: Re: [PATCH] f2fs: report cp block corrupted & add a
+ backup of cp2
+Date: Tue, 27 Feb 2018 20:57:35 -0800
+Message-ID: <20180228045735.GB81737@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180226154429.3292-1-guoweichao@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <jaegeuk@kernel.org>) id 1eqtg5-001Fqg-9n
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Feb 2018 04:49:17 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1eqtoF-008Ep9-6N
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Feb 2018 04:57:43 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=mail.kernel.org) by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ helo=mail.kernel.org) by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eqtg1-006lbf-KW
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Feb 2018 04:49:17 +0000
+ id 1eqtoD-005bj1-Pc
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Feb 2018 04:57:43 +0000
 Content-Disposition: inline
-In-Reply-To: <089d134b-914b-3bbe-507b-3d59ba018a4d@huawei.com>
+In-Reply-To: <20180226154429.3292-1-guoweichao@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,83 +29,89 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Weichao Guo <guoweichao@huawei.com>
+Cc: heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 02/13, Chao Yu wrote:
-> Hi Jaegeuk,
+On 02/26, Weichao Guo wrote:
+> There is a potential inconsistent metadata case due to a cp block
+> crc invalid in the latest checkpoint caused by hardware issues:
+> 1) write nodes into segment x;
+> 2) write checkpoint A;
+> 3) remove nodes in segment x;
+> 4) write checkpoint B;
+> 5) issue discard or write datas into segment x;
+> 6) sudden power-cut;
+> 7) use checkpoint A after reboot as checkpoint B is invalid
 > 
-> On 2018/2/12 8:07, Jaegeuk Kim wrote:
-> > On 02/11, Junling Zheng wrote:
-> >> Hi, Jaegeuk
-> >>
-> >> On 2018/2/10 8:44, Jaegeuk Kim wrote:
-> >>> On 02/02, Junling Zheng wrote:
-> >>>> Commit "0a007b97aad6"(f2fs: recover directory operations by fsync)
-> >>>> fixed xfstest generic/342 case, but it also increased the written
-> >>>> data and caused the performance degradation. In most cases, there's
-> >>>> no need to do so heavily fsync actually.
-> >>>>
-> >>>> So we introduce a new mount option "strict_fsync" to control the
-> >>>> policy of fsync. It's set by default, and means that fsync follows
-> >>>> POSIX semantics. And "nostrict_fsync" means that the behaviour is
-> >>>> in line with xfs, ext4 and btrfs, where generic/342 will pass.
-> >>>
-> >>> How about adding "fsync=%s" to give another chance for fsync policies?
-> 
-> Agreed.
-> 
-> >>>
-> >>
-> >> OK, I'll give patch v3 to change to "fsync=%s" format.
-> >> BTW, which policy do u think should be the default behavior for f2fs? Posix
-> >> or ext4?
-> > 
-> > The default should be like ext4 as fsync=strict. We may add fsync=posix for
-> > this.
-> 
-> I'd like to suggest using fsync=posix option by default, because in most popular
-> in-used scenario of f2fs: android, all users of filesystem are posix-compliant,
-> so there is no such requirement that fs needs do more than posix as generic/342
-> restricted.
-> 
-> The performance of fsync=strict mode regressed as expected, so if we enable
-> fsync=strict mode by default, I suspect it may make f2fs losing some kinds of
-> benchmark competition.
-> 
-> How do you think?
+> This inconsistency may be found after several reboots long time
+> later and the kernel log about cp block crc invalid has disappeared.
+> This makes the root cause of the inconsistency is hard to locate.
+> Let us separate such other part issues from f2fs logical bugs in
+> debug version, and try to validate the checkpoint with the backup
+> when cp2 is corrupted.
 
-Okay, I have no objection on that.
-
-Thanks,
+How can you guarantee it happened caused by real power-cut during checkpoint?
+Does it really make sense to write addition block at every checkpoint?
 
 > 
-> Thanks,
+> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+> ---
+>  fs/f2fs/checkpoint.c | 27 +++++++++++++++++++++++----
+>  1 file changed, 23 insertions(+), 4 deletions(-)
 > 
-> > 
-> > Thanks,
-> > 
-> >>
-> >> Thanks
-> >> Junling
-> >>
-> >>> Thanks,
-> >>>
-> >>>>
-> >>>> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
-> >>>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> >>>> ---
-> >>>>  Documentation/filesystems/f2fs.txt |  4 ++++
-> >>>>  fs/f2fs/dir.c                      |  3 ++-
-> >>>>  fs/f2fs/f2fs.h                     |  1 +
-> >>>>  fs/f2fs/file.c                     |  3 ++-
-> >>>>  fs/f2fs/namei.c                    |  9 ++++++---
-> >>>>  fs/f2fs/super.c                    | 13 +++++++++++++
-> >>>>  6 files changed, 28 insertions(+), 5 deletions(-)
-> >>>>
-> > 
-> > .
-> > 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 512dca8..81c4acd 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -761,15 +761,29 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
+>  
+>  	err = get_checkpoint_version(sbi, cp_addr, &cp_block,
+>  					&cp_page_1, version);
+> -	if (err)
+> +	if (err) {
+> +		f2fs_msg(sbi->sb, KERN_WARNING,
+> +			"corrupted cp1 at blk_addr: 0x%x", cp_addr);
+> +		f2fs_bug_on(sbi, 1);
+>  		goto invalid_cp1;
+> +	}
+>  	pre_version = *version;
+>  
+>  	cp_addr += le32_to_cpu(cp_block->cp_pack_total_block_count) - 1;
+>  	err = get_checkpoint_version(sbi, cp_addr, &cp_block,
+>  					&cp_page_2, version);
+> -	if (err)
+> -		goto invalid_cp2;
+> +	if (err) {
+> +		err = get_checkpoint_version(sbi, cp_addr + 1, &cp_block,
+> +							&cp_page_2, version);
+> +		if (err) {
+> +			goto invalid_cp2;
+> +		}
+> +		else if (*version == pre_version) {
+> +			f2fs_msg(sbi->sb, KERN_WARNING,
+> +				"corrupted cp2 at blk_addr: 0x%x", cp_addr);
+> +			f2fs_bug_on(sbi, 1);
+> +		}
+> +	}
+>  	cur_version = *version;
+>  
+>  	if (cur_version == pre_version) {
+> @@ -1302,7 +1316,12 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  	}
+>  
+>  	/* writeout checkpoint block */
+> -	update_meta_page(sbi, ckpt, start_blk);
+> +	update_meta_page(sbi, ckpt, start_blk++);
+> +	/* writeout a backup of cp2 if available */
+> +	if (!enabled_nat_bits(sbi, cpc) ||
+> +		(ckpt->cp_pack_total_block_count + 1 <=
+> +			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks))
+> +		update_meta_page(sbi, ckpt, start_blk);
+>  
+>  	/* wait for previous submitted node/meta pages writeback */
+>  	wait_on_all_pages_writeback(sbi);
+> -- 
+> 2.10.1
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
