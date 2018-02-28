@@ -1,221 +1,311 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 1/2] mkfs.f2fs: support hot file extension
-Date: Wed, 28 Feb 2018 17:03:43 +0800
-Message-ID: <20180228090344.33741-1-yuchao0@huawei.com>
+Subject: [PATCH v2] f2fs: support hot file extension
+Date: Wed, 28 Feb 2018 17:07:27 +0800
+Message-ID: <20180228090727.34138-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <yuchao0@huawei.com>) id 1eqxez-001PUl-Er
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Feb 2018 09:04:25 +0000
-Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=huawei.com) by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1eqxet-008Txv-3t
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Feb 2018 09:04:25 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch adds new option '-E' to accept user configured hot file
-extension, in order to let kernel module handle hot/cold file's datas
-separately better.
+This patch supports to recognize hot file extension in f2fs, so that we
+can allocate proper hot segment location for its data, which can lead to
+better hot/cold seperation in filesystem.
+
+In addition, we changes a bit on query/add/del operation method for
+extension_list sysfs entry as below:
+
+- Query: cat /sys/fs/f2fs/<disk>/extension_list
+- Add: echo 'extension' > /sys/fs/f2fs/<disk>/extension_list
+- Del: echo '!extension' > /sys/fs/f2fs/<disk>/extension_list
+- Add: echo '[h/c]extension' > /sys/fs/f2fs/<disk>/extension_list
+- Del: echo '[h/c]!extension' > /sys/fs/f2fs/<disk>/extension_list
+- [h] means add/del hot file extension
+- [c] means add/del cold file extension
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- include/f2fs_fs.h       |  2 +-
- mkfs/f2fs_format.c      | 83 +++++++++++++++++++++++++++++++++----------------
- mkfs/f2fs_format_main.c | 16 +++++++---
- 3 files changed, 68 insertions(+), 33 deletions(-)
+v2:
+- fix to use hot data segment for hot file's data.
+ Documentation/ABI/testing/sysfs-fs-f2fs |  6 ++-
+ fs/f2fs/f2fs.h                          |  6 ++-
+ fs/f2fs/namei.c                         | 79 ++++++++++++++++++++++++---------
+ fs/f2fs/segment.c                       |  3 +-
+ fs/f2fs/sysfs.c                         | 30 ++++++++++---
+ include/linux/f2fs_fs.h                 |  3 +-
+ 6 files changed, 96 insertions(+), 31 deletions(-)
 
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 9968c917afcc..0e21d1ec53e5 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -347,7 +347,7 @@ struct f2fs_configuration {
- 	int32_t dump_fd;
- 	struct device_info devices[MAX_DEVICES];
- 	int ndevs;
--	char *extension_list;
-+	char *extension_list[2];
- 	const char *rootdev_name;
- 	int dbg_lv;
- 	int show_dentry;
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index 7a3617d4837b..3fc2f05437dd 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -68,6 +68,15 @@ const char *media_ext_lists[] = {
- 	NULL
- };
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 7fa84e349ad9..540553c933b6 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -199,5 +199,7 @@ Contact:	"Chao Yu" <yuchao0@huawei.com>
+ Description:
+ 		 Used to control configure extension list:
+ 		 - Query: cat /sys/fs/f2fs/<disk>/extension_list
+-		 - Add: echo 'extension' > /sys/fs/f2fs/<disk>/extension_list
+-		 - Del: echo '!extension' > /sys/fs/f2fs/<disk>/extension_list
++		 - Add: echo '[h/c]extension' > /sys/fs/f2fs/<disk>/extension_list
++		 - Del: echo '[h/c]!extension' > /sys/fs/f2fs/<disk>/extension_list
++		 - [h] means add/del hot file extension
++		 - [c] means add/del cold file extension
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 8024ad1ce689..a9881ddb16f5 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -578,6 +578,7 @@ enum {
+ #define FADVISE_ENCRYPT_BIT	0x04
+ #define FADVISE_ENC_NAME_BIT	0x08
+ #define FADVISE_KEEP_SIZE_BIT	0x10
++#define FADVISE_HOT_BIT		0x20
  
-+const char *hot_ext_lists[] = {
-+	NULL
-+};
-+
-+const char **default_ext_list[] = {
-+	media_ext_lists,
-+	hot_ext_lists
-+};
-+
- static bool is_extension_exist(const char *name)
- {
- 	int i;
-@@ -83,44 +92,64 @@ static bool is_extension_exist(const char *name)
+ #define file_is_cold(inode)	is_file(inode, FADVISE_COLD_BIT)
+ #define file_wrong_pino(inode)	is_file(inode, FADVISE_LOST_PINO_BIT)
+@@ -592,6 +593,9 @@ enum {
+ #define file_set_enc_name(inode) set_file(inode, FADVISE_ENC_NAME_BIT)
+ #define file_keep_isize(inode)	is_file(inode, FADVISE_KEEP_SIZE_BIT)
+ #define file_set_keep_isize(inode) set_file(inode, FADVISE_KEEP_SIZE_BIT)
++#define file_is_hot(inode)	is_file(inode, FADVISE_HOT_BIT)
++#define file_set_hot(inode)	set_file(inode, FADVISE_HOT_BIT)
++#define file_clear_hot(inode)	clear_file(inode, FADVISE_HOT_BIT)
  
- static void cure_extension_list(void)
- {
--	const char **extlist = media_ext_lists;
--	char *ext_str = c.extension_list;
-+	const char **extlist;
-+	char *ext_str;
- 	char *ue;
- 	int name_len;
--	int i = 0;
-+	int i, pos = 0;
+ #define DEF_DIR_LEVEL		0
  
- 	set_sb(extension_count, 0);
- 	memset(sb->extension_list, 0, sizeof(sb->extension_list));
+@@ -2622,7 +2626,7 @@ void handle_failed_inode(struct inode *inode);
+  * namei.c
+  */
+ int update_extension_list(struct f2fs_sb_info *sbi, const char *name,
+-								bool set);
++							bool hot, bool set);
+ struct dentry *f2fs_get_parent(struct dentry *child);
  
--	while (*extlist) {
--		name_len = strlen(*extlist);
--		memcpy(sb->extension_list[i++], *extlist, name_len);
--		extlist++;
--	}
--	set_sb(extension_count, i);
--
--	if (!ext_str)
--		return;
-+	for (i = 0; i < 2; i++) {
-+		ext_str = c.extension_list[i];
-+		extlist = default_ext_list[i];
- 
--	/* add user ext list */
--	ue = strtok(ext_str, ", ");
--	while (ue != NULL) {
--		name_len = strlen(ue);
--		if (name_len >= 8) {
--			MSG(0, "\tWarn: Extension name (%s) is too long\n", ue);
--			goto next;
-+		while (*extlist) {
-+			printf("default: i:%u, extlist:%s\n", i, *extlist);
-+			name_len = strlen(*extlist);
-+			memcpy(sb->extension_list[pos++], *extlist, name_len);
-+			extlist++;
- 		}
--		if (!is_extension_exist(ue))
--			memcpy(sb->extension_list[i++], ue, name_len);
-+		if (i == 0)
-+			set_sb(extension_count, pos);
-+		else
-+			sb->hot_ext_count = pos - get_sb(extension_count);;
-+		if (i == 1)
-+			printf("1hot count:%d\n", sb->hot_ext_count);
-+		else
-+			printf("1cold count:%d\n", get_sb(extension_count));
-+		if (!ext_str)
-+			continue;
-+
-+		/* add user ext list */
-+		ue = strtok(ext_str, ", ");
-+		while (ue != NULL) {
-+			printf("private: i:%u, extlist:%s\n", i, ue);
-+			name_len = strlen(ue);
-+			if (name_len >= 8) {
-+				MSG(0, "\tWarn: Extension name (%s) is too long\n", ue);
-+				goto next;
-+			}
-+			if (!is_extension_exist(ue))
-+				memcpy(sb->extension_list[pos++], ue, name_len);
- next:
--		ue = strtok(NULL, ", ");
--		if (i >= F2FS_MAX_EXTENSION)
--			break;
--	}
-+			ue = strtok(NULL, ", ");
-+			if (pos >= F2FS_MAX_EXTENSION)
-+				break;
-+		}
- 
--	set_sb(extension_count, i);
-+		if (i == 0)
-+			set_sb(extension_count, pos);
-+		else
-+			sb->hot_ext_count = pos - get_sb(extension_count);
-+		if (i == 1)
-+			printf("2hot count:%d\n", sb->hot_ext_count);
-+		else
-+			printf("2cold count:%d\n", get_sb(extension_count));
- 
--	free(c.extension_list);
-+		free(c.extension_list[i]);
-+	}
+ /*
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index fa8e5c06ba39..b747fb832eed 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -142,7 +142,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
+ 	return ERR_PTR(err);
  }
  
- static void verify_cur_segs(void)
-diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
-index 46a6335e833e..c051ba2f20b3 100644
---- a/mkfs/f2fs_format_main.c
-+++ b/mkfs/f2fs_format_main.c
-@@ -44,7 +44,8 @@ static void mkfs_usage()
- 	MSG(0, "  -a heap-based allocation [default:0]\n");
- 	MSG(0, "  -c [device path] up to 7 devices excepts meta device\n");
- 	MSG(0, "  -d debug level [default:0]\n");
--	MSG(0, "  -e [extension list] e.g. \"mp3,gif,mov\"\n");
-+	MSG(0, "  -e [cold file ext list] e.g. \"mp3,gif,mov\"\n");
-+	MSG(0, "  -E [hot file ext list] e.g. \"db\"\n");
- 	MSG(0, "  -f force overwrite the exist filesystem\n");
- 	MSG(0, "  -i extended node bitmap, node ratio is 20%% by default\n");
- 	MSG(0, "  -l label\n");
-@@ -69,8 +70,10 @@ static void f2fs_show_info()
- 		MSG(0, "Info: Disable heap-based policy\n");
- 
- 	MSG(0, "Info: Debug level = %d\n", c.dbg_lv);
--	if (c.extension_list)
--		MSG(0, "Info: Add new extension list\n");
-+	if (c.extension_list[0])
-+		MSG(0, "Info: Add new cold file extension list\n");
-+	if (c.extension_list[1])
-+		MSG(0, "Info: Add new hot file extension list\n");
- 
- 	if (c.vol_label)
- 		MSG(0, "Info: Label = %s\n", c.vol_label);
-@@ -109,7 +112,7 @@ static void parse_feature(const char *features)
- 
- static void f2fs_parse_options(int argc, char *argv[])
+-static int is_multimedia_file(const unsigned char *s, const char *sub)
++static int is_extension_exist(const unsigned char *s, const char *sub)
  {
--	static const char *option_string = "qa:c:d:e:il:mo:O:s:S:z:t:f";
-+	static const char *option_string = "qa:c:d:e:E:il:mo:O:s:S:z:t:f";
- 	int32_t option=0;
+ 	size_t slen = strlen(s);
+ 	size_t sublen = strlen(sub);
+@@ -168,33 +168,59 @@ static int is_multimedia_file(const unsigned char *s, const char *sub)
+ /*
+  * Set multimedia files as cold files for hot/cold data separation
+  */
+-static inline void set_cold_files(struct f2fs_sb_info *sbi, struct inode *inode,
++static inline void set_file_temperature(struct f2fs_sb_info *sbi, struct inode *inode,
+ 		const unsigned char *name)
+ {
+ 	__u8 (*extlist)[F2FS_EXTENSION_LEN] = sbi->raw_super->extension_list;
+-	int i, count;
++	int i, cold_count, hot_count;
  
- 	while ((option = getopt(argc,argv,option_string)) != EOF) {
-@@ -137,7 +140,10 @@ static void f2fs_parse_options(int argc, char *argv[])
- 			c.dbg_lv = atoi(optarg);
- 			break;
- 		case 'e':
--			c.extension_list = strdup(optarg);
-+			c.extension_list[0] = strdup(optarg);
-+			break;
-+		case 'E':
-+			c.extension_list[1] = strdup(optarg);
- 			break;
- 		case 'i':
- 			MSG(0, "Warning: extend node bitmap feature needs 4.16+ kernel support\n");
+ 	down_read(&sbi->sb_lock);
+ 
+-	count = le32_to_cpu(sbi->raw_super->extension_count);
++	cold_count = le32_to_cpu(sbi->raw_super->extension_count);
++	hot_count = sbi->raw_super->hot_ext_count;
+ 
+-	for (i = 0; i < count; i++) {
+-		if (is_multimedia_file(name, extlist[i])) {
++	for (i = 0; i < cold_count + hot_count; i++) {
++		if (!is_extension_exist(name, extlist[i]))
++			continue;
++		if (i < cold_count)
+ 			file_set_cold(inode);
+-			break;
+-		}
++		else
++			file_set_hot(inode);
++		break;
+ 	}
+ 
+ 	up_read(&sbi->sb_lock);
+ }
+ 
+-int update_extension_list(struct f2fs_sb_info *sbi, const char *name, bool set)
++int update_extension_list(struct f2fs_sb_info *sbi, const char *name,
++							bool hot, bool set)
+ {
+ 	__u8 (*extlist)[F2FS_EXTENSION_LEN] = sbi->raw_super->extension_list;
+-	int count = le32_to_cpu(sbi->raw_super->extension_count);
++	int cold_count = le32_to_cpu(sbi->raw_super->extension_count);
++	int hot_count = sbi->raw_super->hot_ext_count;
++	int total_count = cold_count + hot_count;
++	int start, count;
+ 	int i;
+ 
+-	for (i = 0; i < count; i++) {
++	if (set) {
++		if (total_count == F2FS_MAX_EXTENSION)
++			return -EINVAL;
++	} else {
++		if (!hot && !cold_count)
++			return -EINVAL;
++		if (hot && !hot_count)
++			return -EINVAL;
++	}
++
++	if (hot) {
++		start = cold_count;
++		count = total_count;
++	} else {
++		start = 0;
++		count = cold_count;
++	}
++
++	for (i = start; i < count; i++) {
+ 		if (strcmp(name, extlist[i]))
+ 			continue;
+ 
+@@ -202,20 +228,33 @@ int update_extension_list(struct f2fs_sb_info *sbi, const char *name, bool set)
+ 			return -EINVAL;
+ 
+ 		memcpy(extlist[i], extlist[i + 1],
+-				F2FS_EXTENSION_LEN * (count - i - 1));
+-		memset(extlist[count - 1], 0, F2FS_EXTENSION_LEN);
+-		sbi->raw_super->extension_count = cpu_to_le32(count - 1);
++				F2FS_EXTENSION_LEN * (total_count - i - 1));
++		memset(extlist[total_count - 1], 0, F2FS_EXTENSION_LEN);
++		if (hot)
++			sbi->raw_super->hot_ext_count = hot_count - 1;
++		else
++			sbi->raw_super->extension_count =
++						cpu_to_le32(cold_count - 1);
+ 		return 0;
+ 	}
+ 
+ 	if (!set)
+ 		return -EINVAL;
+ 
+-	if (count == F2FS_MAX_EXTENSION)
+-		return -EINVAL;
+-
+-	strncpy(extlist[count], name, strlen(name));
+-	sbi->raw_super->extension_count = cpu_to_le32(count + 1);
++	if (hot) {
++		strncpy(extlist[count], name, strlen(name));
++		sbi->raw_super->hot_ext_count = hot_count + 1;
++	} else {
++		char buf[F2FS_MAX_EXTENSION][F2FS_EXTENSION_LEN];
++
++		memcpy(buf, &extlist[cold_count],
++				F2FS_EXTENSION_LEN * hot_count);
++		memset(extlist[cold_count], 0, F2FS_EXTENSION_LEN);
++		strncpy(extlist[cold_count], name, strlen(name));
++		memcpy(&extlist[cold_count + 1], buf,
++				F2FS_EXTENSION_LEN * hot_count);
++		sbi->raw_super->extension_count = cpu_to_le32(cold_count + 1);
++	}
+ 	return 0;
+ }
+ 
+@@ -239,7 +278,7 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 		return PTR_ERR(inode);
+ 
+ 	if (!test_opt(sbi, DISABLE_EXT_IDENTIFY))
+-		set_cold_files(sbi, inode, dentry->d_name.name);
++		set_file_temperature(sbi, inode, dentry->d_name.name);
+ 
+ 	inode->i_op = &f2fs_file_inode_operations;
+ 	inode->i_fop = &f2fs_file_operations;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index bda2ad048ea0..7b981efa3693 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2588,7 +2588,8 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
+ 
+ 		if (is_cold_data(fio->page) || file_is_cold(inode))
+ 			return CURSEG_COLD_DATA;
+-		if (is_inode_flag_set(inode, FI_HOT_DATA))
++		if (file_is_hot(inode) ||
++				is_inode_flag_set(inode, FI_HOT_DATA))
+ 			return CURSEG_HOT_DATA;
+ 		return rw_hint_to_seg_type(inode->i_write_hint);
+ 	} else {
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index d27b28e602a6..23a2d8d66c43 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -139,10 +139,19 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
+ 	if (!strcmp(a->attr.name, "extension_list")) {
+ 		__u8 (*extlist)[F2FS_EXTENSION_LEN] =
+ 					sbi->raw_super->extension_list;
+-		int count = le32_to_cpu(sbi->raw_super->extension_count);
++		int cold_count = le32_to_cpu(sbi->raw_super->extension_count);
++		int hot_count = sbi->raw_super->hot_ext_count;
+ 		int len = 0, i;
+ 
+-		for (i = 0; i < count; i++)
++		len += snprintf(buf + len, PAGE_SIZE - len,
++						"cold file extenstion:\n");
++		for (i = 0; i < cold_count; i++)
++			len += snprintf(buf + len, PAGE_SIZE - len, "%s\n",
++								extlist[i]);
++
++		len += snprintf(buf + len, PAGE_SIZE - len,
++						"hot file extenstion:\n");
++		for (i = cold_count; i < cold_count + hot_count; i++)
+ 			len += snprintf(buf + len, PAGE_SIZE - len, "%s\n",
+ 								extlist[i]);
+ 		return len;
+@@ -168,9 +177,18 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+ 
+ 	if (!strcmp(a->attr.name, "extension_list")) {
+ 		const char *name = strim((char *)buf);
+-		bool set = true;
++		bool set = true, hot;
++
++		if (!strncmp(name, "[h]", 3))
++			hot = true;
++		else if (!strncmp(name, "[c]", 3))
++			hot = false;
++		else
++			return -EINVAL;
++
++		name += 3;
+ 
+-		if (name[0] == '!') {
++		if (*name == '!') {
+ 			name++;
+ 			set = false;
+ 		}
+@@ -180,13 +198,13 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+ 
+ 		down_write(&sbi->sb_lock);
+ 
+-		ret = update_extension_list(sbi, name, set);
++		ret = update_extension_list(sbi, name, hot, set);
+ 		if (ret)
+ 			goto out;
+ 
+ 		ret = f2fs_commit_super(sbi, false);
+ 		if (ret)
+-			update_extension_list(sbi, name, !set);
++			update_extension_list(sbi, name, hot, !set);
+ out:
+ 		up_write(&sbi->sb_lock);
+ 		return ret ? ret : count;
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index 3d03f51282ac..44f531d27eaa 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -112,7 +112,8 @@ struct f2fs_super_block {
+ 	__u8 encrypt_pw_salt[16];	/* Salt used for string2key algorithm */
+ 	struct f2fs_device devs[MAX_DEVICES];	/* device list */
+ 	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
+-	__u8 reserved[315];		/* valid reserved region */
++	__u8 hot_ext_count;		/* # of hot file extension */
++	__u8 reserved[314];		/* valid reserved region */
+ } __packed;
+ 
+ /*
 -- 
 2.15.0.55.gc2ece9dc4de6
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
