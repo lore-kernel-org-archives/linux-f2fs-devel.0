@@ -1,62 +1,164 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: fix to restore whint_mode in ->remount_fs
-Date: Thu, 1 Mar 2018 10:54:54 +0800
-Message-ID: <7b8a2429-974d-e6d0-f5cc-9bd12a09ebf9@huawei.com>
-References: <20180228140120.8758-1-chao@kernel.org>
- <20180301024515.GB18665@jaegeuk-macbookpro.roam.corp.google.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH 1/5 v2] f2fs: add mount option for segment
+ allocation policy
+Date: Wed, 28 Feb 2018 18:53:55 -0800
+Message-ID: <20180301025355.GD18665@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180226174731.26679-1-jaegeuk@kernel.org>
+ <20180228050925.GC81737@jaegeuk-macbookpro.roam.corp.google.com>
+ <4c1efe8d-fbb1-e865-482b-8d2546879638@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180301024515.GB18665@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <4c1efe8d-fbb1-e865-482b-8d2546879638@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
-
-On 2018/3/1 10:45, Jaegeuk Kim wrote:
-> On 02/28, Chao Yu wrote:
->> From: Chao Yu <yuchao0@huawei.com>
->>
->> If we fail in ->remount_fs, it needs to restore old whint_mode as other
->> mount options.
->>
->> Fixes: e25afe01822f ("f2fs: support passing down write hints given by users to block layer")
+On 02/28, Chao Yu wrote:
+> On 2018/2/28 13:09, Jaegeuk Kim wrote:
+> > Change log from v1:
+> >  - add doc :)
+> > 
+> > This patch adds an mount option, "alloc_mode=%s" having two options, "default"
+> > and "reuse".
+> > 
+> > In "alloc_mode=reuse" case, f2fs starts to allocate segments from 0'th segment
+> > all the time to reassign segments. It'd be useful for small-sized eMMC parts.
 > 
-> Hi Chao,
-> 
-> It was not merged, so please allow me to integrate this into the original
-> patch.
+> We have to restore old alloc_mode if we encounter any failure in ->remount, right?
 
-No problem, please go ahead. ;)
-
-Thanks,
+Yup, done.
 
 > 
 > Thanks,
 > 
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/super.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index 89abe4087e66..8a93f78efca2 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -1512,6 +1512,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
->>  		sbi->s_qf_names[i] = s_qf_names[i];
->>  	}
->>  #endif
->> +	sbi->whint_mode = old_whint_mode;
->>  	sbi->mount_opt = org_mount_opt;
->>  	sbi->active_logs = active_logs;
->>  	sb->s_flags = old_sb_flags;
->> -- 
->> 2.14.1.145.gb3622a4ee
-> 
-> .
-> 
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  Documentation/filesystems/f2fs.txt |  2 ++
+> >  fs/f2fs/f2fs.h                     |  8 ++++++++
+> >  fs/f2fs/segment.c                  |  5 +++++
+> >  fs/f2fs/super.c                    | 24 ++++++++++++++++++++++++
+> >  4 files changed, 39 insertions(+)
+> > 
+> > diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+> > index 0caf7da0a532..0409c47584ea 100644
+> > --- a/Documentation/filesystems/f2fs.txt
+> > +++ b/Documentation/filesystems/f2fs.txt
+> > @@ -180,6 +180,8 @@ whint_mode=%s          Control which write hints are passed down to block
+> >                         down hints. In "user-based" mode, f2fs tries to pass
+> >                         down hints given by users. And in "fs-based" mode, f2fs
+> >                         passes down hints with its policy.
+> > +alloc_mode=%s          Adjust block allocation policy, which supports "reuse"
+> > +                       and "default".
+> >  
+> >  ================================================================================
+> >  DEBUGFS ENTRIES
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index f68ece08b5a2..d1bfdf691afc 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -1043,6 +1043,11 @@ enum {
+> >  	WHINT_MODE_FS,		/* pass down hints with F2FS policy */
+> >  };
+> >  
+> > +enum {
+> > +	ALLOC_MODE_DEFAULT,	/* stay default */
+> > +	ALLOC_MODE_REUSE,	/* reuse segments as much as possible */
+> > +};
+> > +
+> >  struct f2fs_sb_info {
+> >  	struct super_block *sb;			/* pointer to VFS super block */
+> >  	struct proc_dir_entry *s_proc;		/* proc entry */
+> > @@ -1229,6 +1234,9 @@ struct f2fs_sb_info {
+> >  #endif
+> >  	/* For which write hints are passed down to block layer */
+> >  	int whint_mode;
+> > +
+> > +	/* segment allocation policy */
+> > +	int alloc_mode;
+> >  };
+> >  
+> >  #ifdef CONFIG_F2FS_FAULT_INJECTION
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 0646d5de8cd0..5e5e2936a26a 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -2170,6 +2170,11 @@ static unsigned int __get_next_segno(struct f2fs_sb_info *sbi, int type)
+> >  
+> >  	if (SIT_I(sbi)->last_victim[ALLOC_NEXT])
+> >  		return SIT_I(sbi)->last_victim[ALLOC_NEXT];
+> > +
+> > +	/* find segments from 0 to reuse freed segments */
+> > +	if (sbi->alloc_mode == ALLOC_MODE_REUSE)
+> > +		return 0;
+> > +
+> >  	return CURSEG_I(sbi, type)->segno;
+> >  }
+> >  
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index 2d832866720c..1345ef167140 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -130,6 +130,7 @@ enum {
+> >  	Opt_jqfmt_vfsv0,
+> >  	Opt_jqfmt_vfsv1,
+> >  	Opt_whint,
+> > +	Opt_alloc,
+> >  	Opt_err,
+> >  };
+> >  
+> > @@ -184,6 +185,7 @@ static match_table_t f2fs_tokens = {
+> >  	{Opt_jqfmt_vfsv0, "jqfmt=vfsv0"},
+> >  	{Opt_jqfmt_vfsv1, "jqfmt=vfsv1"},
+> >  	{Opt_whint, "whint_mode=%s"},
+> > +	{Opt_alloc, "alloc_mode=%s"},
+> >  	{Opt_err, NULL},
+> >  };
+> >  
+> > @@ -700,6 +702,23 @@ static int parse_options(struct super_block *sb, char *options)
+> >  			}
+> >  			kfree(name);
+> >  			break;
+> > +		case Opt_alloc:
+> > +			name = match_strdup(&args[0]);
+> > +			if (!name)
+> > +				return -ENOMEM;
+> > +
+> > +			if (strlen(name) == 7 &&
+> > +					!strncmp(name, "default", 7)) {
+> > +				sbi->alloc_mode = ALLOC_MODE_DEFAULT;
+> > +			} else if (strlen(name) == 5 &&
+> > +					!strncmp(name, "reuse", 5)) {
+> > +				sbi->alloc_mode = ALLOC_MODE_REUSE;
+> > +			} else {
+> > +				kfree(name);
+> > +				return -EINVAL;
+> > +			}
+> > +			kfree(name);
+> > +			break;
+> >  		default:
+> >  			f2fs_msg(sb, KERN_ERR,
+> >  				"Unrecognized mount option \"%s\" or missing value",
+> > @@ -1264,6 +1283,10 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+> >  	else if (sbi->whint_mode == WHINT_MODE_FS)
+> >  		seq_printf(seq, ",whint_mode=%s", "fs-based");
+> >  
+> > +	if (sbi->alloc_mode == ALLOC_MODE_DEFAULT)
+> > +		seq_printf(seq, ",alloc_mode=%s", "default");
+> > +	else if (sbi->alloc_mode == ALLOC_MODE_REUSE)
+> > +		seq_printf(seq, ",alloc_mode=%s", "reuse");
+> >  	return 0;
+> >  }
+> >  
+> > @@ -1273,6 +1296,7 @@ static void default_options(struct f2fs_sb_info *sbi)
+> >  	sbi->active_logs = NR_CURSEG_TYPE;
+> >  	sbi->inline_xattr_size = DEFAULT_INLINE_XATTR_ADDRS;
+> >  	sbi->whint_mode = WHINT_MODE_OFF;
+> > +	sbi->alloc_mode = ALLOC_MODE_DEFAULT;
+> >  
+> >  	set_opt(sbi, BG_GC);
+> >  	set_opt(sbi, INLINE_XATTR);
+> > 
