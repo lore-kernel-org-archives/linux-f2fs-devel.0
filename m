@@ -1,164 +1,124 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 1/5 v2] f2fs: add mount option for segment
- allocation policy
-Date: Wed, 28 Feb 2018 18:53:55 -0800
-Message-ID: <20180301025355.GD18665@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180226174731.26679-1-jaegeuk@kernel.org>
- <20180228050925.GC81737@jaegeuk-macbookpro.roam.corp.google.com>
- <4c1efe8d-fbb1-e865-482b-8d2546879638@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v4] Revert "f2fs crypto: avoid unneeded memory allocation
+ in ->readdir"
+Date: Thu, 1 Mar 2018 11:02:55 +0800
+Message-ID: <7836e341-f2ad-0037-6efc-9927a82e51dd@huawei.com>
+References: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
+ <1519787857-107910-1-git-send-email-yunlong.song@huawei.com>
+ <20180228054810.GB86647@jaegeuk-macbookpro.roam.corp.google.com>
+ <c36a6024-209c-b660-ba61-e681a98e6f3b@huawei.com>
+ <20180301025009.GC18665@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4c1efe8d-fbb1-e865-482b-8d2546879638@kernel.org>
+In-Reply-To: <20180301025009.GC18665@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Yunlong Song <yunlong.song@huawei.com>, chao@kernel.org, yunlong.song@icloud.com, miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 02/28, Chao Yu wrote:
-> On 2018/2/28 13:09, Jaegeuk Kim wrote:
-> > Change log from v1:
-> >  - add doc :)
-> > 
-> > This patch adds an mount option, "alloc_mode=%s" having two options, "default"
-> > and "reuse".
-> > 
-> > In "alloc_mode=reuse" case, f2fs starts to allocate segments from 0'th segment
-> > all the time to reassign segments. It'd be useful for small-sized eMMC parts.
+On 2018/3/1 10:50, Jaegeuk Kim wrote:
+> On 02/28, Chao Yu wrote:
+>> Hi Jaegeuk,
+>>
+>> On 2018/2/28 13:48, Jaegeuk Kim wrote:
+>>> Hi Yunlong,
+>>>
+>>> As Eric pointed out, how do you think using nohighmem for directory likewise
+>>
+>> I'd like to ask, at the beginning, why we choose to use highmem for dentry page?
+>> any history reason there?
 > 
-> We have to restore old alloc_mode if we encounter any failure in ->remount, right?
+> There was no huge preference on it based on performance. I just wanted not to
+> abuse lowmem.
 
-Yup, done.
+Got you, thanks for explanation.
+
+Thanks,
 
 > 
 > Thanks,
 > 
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  Documentation/filesystems/f2fs.txt |  2 ++
-> >  fs/f2fs/f2fs.h                     |  8 ++++++++
-> >  fs/f2fs/segment.c                  |  5 +++++
-> >  fs/f2fs/super.c                    | 24 ++++++++++++++++++++++++
-> >  4 files changed, 39 insertions(+)
-> > 
-> > diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-> > index 0caf7da0a532..0409c47584ea 100644
-> > --- a/Documentation/filesystems/f2fs.txt
-> > +++ b/Documentation/filesystems/f2fs.txt
-> > @@ -180,6 +180,8 @@ whint_mode=%s          Control which write hints are passed down to block
-> >                         down hints. In "user-based" mode, f2fs tries to pass
-> >                         down hints given by users. And in "fs-based" mode, f2fs
-> >                         passes down hints with its policy.
-> > +alloc_mode=%s          Adjust block allocation policy, which supports "reuse"
-> > +                       and "default".
-> >  
-> >  ================================================================================
-> >  DEBUGFS ENTRIES
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index f68ece08b5a2..d1bfdf691afc 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -1043,6 +1043,11 @@ enum {
-> >  	WHINT_MODE_FS,		/* pass down hints with F2FS policy */
-> >  };
-> >  
-> > +enum {
-> > +	ALLOC_MODE_DEFAULT,	/* stay default */
-> > +	ALLOC_MODE_REUSE,	/* reuse segments as much as possible */
-> > +};
-> > +
-> >  struct f2fs_sb_info {
-> >  	struct super_block *sb;			/* pointer to VFS super block */
-> >  	struct proc_dir_entry *s_proc;		/* proc entry */
-> > @@ -1229,6 +1234,9 @@ struct f2fs_sb_info {
-> >  #endif
-> >  	/* For which write hints are passed down to block layer */
-> >  	int whint_mode;
-> > +
-> > +	/* segment allocation policy */
-> > +	int alloc_mode;
-> >  };
-> >  
-> >  #ifdef CONFIG_F2FS_FAULT_INJECTION
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index 0646d5de8cd0..5e5e2936a26a 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -2170,6 +2170,11 @@ static unsigned int __get_next_segno(struct f2fs_sb_info *sbi, int type)
-> >  
-> >  	if (SIT_I(sbi)->last_victim[ALLOC_NEXT])
-> >  		return SIT_I(sbi)->last_victim[ALLOC_NEXT];
-> > +
-> > +	/* find segments from 0 to reuse freed segments */
-> > +	if (sbi->alloc_mode == ALLOC_MODE_REUSE)
-> > +		return 0;
-> > +
-> >  	return CURSEG_I(sbi, type)->segno;
-> >  }
-> >  
-> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > index 2d832866720c..1345ef167140 100644
-> > --- a/fs/f2fs/super.c
-> > +++ b/fs/f2fs/super.c
-> > @@ -130,6 +130,7 @@ enum {
-> >  	Opt_jqfmt_vfsv0,
-> >  	Opt_jqfmt_vfsv1,
-> >  	Opt_whint,
-> > +	Opt_alloc,
-> >  	Opt_err,
-> >  };
-> >  
-> > @@ -184,6 +185,7 @@ static match_table_t f2fs_tokens = {
-> >  	{Opt_jqfmt_vfsv0, "jqfmt=vfsv0"},
-> >  	{Opt_jqfmt_vfsv1, "jqfmt=vfsv1"},
-> >  	{Opt_whint, "whint_mode=%s"},
-> > +	{Opt_alloc, "alloc_mode=%s"},
-> >  	{Opt_err, NULL},
-> >  };
-> >  
-> > @@ -700,6 +702,23 @@ static int parse_options(struct super_block *sb, char *options)
-> >  			}
-> >  			kfree(name);
-> >  			break;
-> > +		case Opt_alloc:
-> > +			name = match_strdup(&args[0]);
-> > +			if (!name)
-> > +				return -ENOMEM;
-> > +
-> > +			if (strlen(name) == 7 &&
-> > +					!strncmp(name, "default", 7)) {
-> > +				sbi->alloc_mode = ALLOC_MODE_DEFAULT;
-> > +			} else if (strlen(name) == 5 &&
-> > +					!strncmp(name, "reuse", 5)) {
-> > +				sbi->alloc_mode = ALLOC_MODE_REUSE;
-> > +			} else {
-> > +				kfree(name);
-> > +				return -EINVAL;
-> > +			}
-> > +			kfree(name);
-> > +			break;
-> >  		default:
-> >  			f2fs_msg(sb, KERN_ERR,
-> >  				"Unrecognized mount option \"%s\" or missing value",
-> > @@ -1264,6 +1283,10 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
-> >  	else if (sbi->whint_mode == WHINT_MODE_FS)
-> >  		seq_printf(seq, ",whint_mode=%s", "fs-based");
-> >  
-> > +	if (sbi->alloc_mode == ALLOC_MODE_DEFAULT)
-> > +		seq_printf(seq, ",alloc_mode=%s", "default");
-> > +	else if (sbi->alloc_mode == ALLOC_MODE_REUSE)
-> > +		seq_printf(seq, ",alloc_mode=%s", "reuse");
-> >  	return 0;
-> >  }
-> >  
-> > @@ -1273,6 +1296,7 @@ static void default_options(struct f2fs_sb_info *sbi)
-> >  	sbi->active_logs = NR_CURSEG_TYPE;
-> >  	sbi->inline_xattr_size = DEFAULT_INLINE_XATTR_ADDRS;
-> >  	sbi->whint_mode = WHINT_MODE_OFF;
-> > +	sbi->alloc_mode = ALLOC_MODE_DEFAULT;
-> >  
-> >  	set_opt(sbi, BG_GC);
-> >  	set_opt(sbi, INLINE_XATTR);
-> > 
+>>
+>>> ext4, which looks like more efficient? Actually, we don't need to do this in
+>>> most of recent kernels, right?
+>>
+>> It's OK to me to keep a line with ext4.
+>>
+>> Thanks,
+>>
+>>>
+>>> Thanks,
+>>>
+>>> On 02/28, Yunlong Song wrote:
+>>>> This reverts commit e06f86e61d7a67fe6e826010f57aa39c674f4b1b.
+>>>>
+>>>> Conflicts:
+>>>> 	fs/f2fs/dir.c
+>>>>
+>>>> In some platforms (such as arm), high memory is used, then the
+>>>> decrypting filename will cause panic, the reason see commit
+>>>> 569cf1876a32e574ba8a7fb825cd91bafd003882 ("f2fs crypto: allocate buffer
+>>>> for decrypting filename"):
+>>>>
+>>>>  We got dentry pages from high_mem, and its address space directly goes into the
+>>>>  decryption path via f2fs_fname_disk_to_usr.
+>>>>  But, sg_init_one assumes the address is not from high_mem, so we can get this
+>>>>  panic since it doesn't call kmap_high but kunmap_high is triggered at the end.
+>>>>
+>>>>  kernel BUG at ../../../../../../kernel/mm/highmem.c:290!
+>>>>  Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+>>>>  ...
+>>>>   (kunmap_high+0xb0/0xb8) from [<c0114534>] (__kunmap_atomic+0xa0/0xa4)
+>>>>   (__kunmap_atomic+0xa0/0xa4) from [<c035f028>] (blkcipher_walk_done+0x128/0x1ec)
+>>>>   (blkcipher_walk_done+0x128/0x1ec) from [<c0366c24>] (crypto_cbc_decrypt+0xc0/0x170)
+>>>>   (crypto_cbc_decrypt+0xc0/0x170) from [<c0367148>] (crypto_cts_decrypt+0xc0/0x114)
+>>>>   (crypto_cts_decrypt+0xc0/0x114) from [<c035ea98>] (async_decrypt+0x40/0x48)
+>>>>   (async_decrypt+0x40/0x48) from [<c032ca34>] (f2fs_fname_disk_to_usr+0x124/0x304)
+>>>>   (f2fs_fname_disk_to_usr+0x124/0x304) from [<c03056fc>] (f2fs_fill_dentries+0xac/0x188)
+>>>>   (f2fs_fill_dentries+0xac/0x188) from [<c03059c8>] (f2fs_readdir+0x1f0/0x300)
+>>>>   (f2fs_readdir+0x1f0/0x300) from [<c0218054>] (vfs_readdir+0x90/0xb4)
+>>>>   (vfs_readdir+0x90/0xb4) from [<c0218418>] (SyS_getdents64+0x64/0xcc)
+>>>>   (SyS_getdents64+0x64/0xcc) from [<c0105ba0>] (ret_fast_syscall+0x0/0x30)
+>>>>
+>>>> Howerver, later patch:
+>>>> commit e06f86e61d7a ("f2fs crypto: avoid unneeded memory allocation in ->readdir")
+>>>> reverts the codes, which causes panic again in arm, so fix it back to the old version.
+>>>>
+>>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>>>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>>>> ---
+>>>>  fs/f2fs/dir.c | 7 +++++++
+>>>>  1 file changed, 7 insertions(+)
+>>>>
+>>>> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+>>>> index f00b5ed..de2e295 100644
+>>>> --- a/fs/f2fs/dir.c
+>>>> +++ b/fs/f2fs/dir.c
+>>>> @@ -825,9 +825,16 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+>>>>  			int save_len = fstr->len;
+>>>>  			int err;
+>>>>  
+>>>> +			de_name.name = f2fs_kmalloc(sbi, de_name.len, GFP_NOFS);
+>>>> +			if (!de_name.name)
+>>>> +				return -ENOMEM;
+>>>> +
+>>>> +			memcpy(de_name.name, d->filename[bit_pos], de_name.len);
+>>>> +
+>>>>  			err = fscrypt_fname_disk_to_usr(d->inode,
+>>>>  						(u32)de->hash_code, 0,
+>>>>  						&de_name, fstr);
+>>>> +			kfree(de_name.name);
+>>>>  			if (err)
+>>>>  				return err;
+>>>>  
+>>>> -- 
+>>>> 1.8.5.2
+>>>
+>>> .
+>>>
+> 
+> .
+> 
