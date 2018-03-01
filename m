@@ -1,124 +1,70 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v4] Revert "f2fs crypto: avoid unneeded memory allocation
- in ->readdir"
-Date: Thu, 1 Mar 2018 11:02:55 +0800
-Message-ID: <7836e341-f2ad-0037-6efc-9927a82e51dd@huawei.com>
-References: <1519463698-60555-1-git-send-email-yunlong.song@huawei.com>
- <1519787857-107910-1-git-send-email-yunlong.song@huawei.com>
- <20180228054810.GB86647@jaegeuk-macbookpro.roam.corp.google.com>
- <c36a6024-209c-b660-ba61-e681a98e6f3b@huawei.com>
- <20180301025009.GC18665@jaegeuk-macbookpro.roam.corp.google.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH 1/2] f2fs: wrap sb_rdonly with f2fs_readonly
+Date: Thu,  1 Mar 2018 23:40:31 +0800
+Message-ID: <20180301154032.6325-1-chao@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180301025009.GC18665@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Yunlong Song <yunlong.song@huawei.com>, chao@kernel.org, yunlong.song@icloud.com, miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/3/1 10:50, Jaegeuk Kim wrote:
-> On 02/28, Chao Yu wrote:
->> Hi Jaegeuk,
->>
->> On 2018/2/28 13:48, Jaegeuk Kim wrote:
->>> Hi Yunlong,
->>>
->>> As Eric pointed out, how do you think using nohighmem for directory likewise
->>
->> I'd like to ask, at the beginning, why we choose to use highmem for dentry page?
->> any history reason there?
-> 
-> There was no huge preference on it based on performance. I just wanted not to
-> abuse lowmem.
+From: Chao Yu <yuchao0@huawei.com>
 
-Got you, thanks for explanation.
+Use f2fs_readonly to wrap sb_rdonly for cleanup, and spread it in
+all places.
 
-Thanks,
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/f2fs.h  | 4 ++--
+ fs/f2fs/super.c | 6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-> 
-> Thanks,
-> 
->>
->>> ext4, which looks like more efficient? Actually, we don't need to do this in
->>> most of recent kernels, right?
->>
->> It's OK to me to keep a line with ext4.
->>
->> Thanks,
->>
->>>
->>> Thanks,
->>>
->>> On 02/28, Yunlong Song wrote:
->>>> This reverts commit e06f86e61d7a67fe6e826010f57aa39c674f4b1b.
->>>>
->>>> Conflicts:
->>>> 	fs/f2fs/dir.c
->>>>
->>>> In some platforms (such as arm), high memory is used, then the
->>>> decrypting filename will cause panic, the reason see commit
->>>> 569cf1876a32e574ba8a7fb825cd91bafd003882 ("f2fs crypto: allocate buffer
->>>> for decrypting filename"):
->>>>
->>>>  We got dentry pages from high_mem, and its address space directly goes into the
->>>>  decryption path via f2fs_fname_disk_to_usr.
->>>>  But, sg_init_one assumes the address is not from high_mem, so we can get this
->>>>  panic since it doesn't call kmap_high but kunmap_high is triggered at the end.
->>>>
->>>>  kernel BUG at ../../../../../../kernel/mm/highmem.c:290!
->>>>  Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
->>>>  ...
->>>>   (kunmap_high+0xb0/0xb8) from [<c0114534>] (__kunmap_atomic+0xa0/0xa4)
->>>>   (__kunmap_atomic+0xa0/0xa4) from [<c035f028>] (blkcipher_walk_done+0x128/0x1ec)
->>>>   (blkcipher_walk_done+0x128/0x1ec) from [<c0366c24>] (crypto_cbc_decrypt+0xc0/0x170)
->>>>   (crypto_cbc_decrypt+0xc0/0x170) from [<c0367148>] (crypto_cts_decrypt+0xc0/0x114)
->>>>   (crypto_cts_decrypt+0xc0/0x114) from [<c035ea98>] (async_decrypt+0x40/0x48)
->>>>   (async_decrypt+0x40/0x48) from [<c032ca34>] (f2fs_fname_disk_to_usr+0x124/0x304)
->>>>   (f2fs_fname_disk_to_usr+0x124/0x304) from [<c03056fc>] (f2fs_fill_dentries+0xac/0x188)
->>>>   (f2fs_fill_dentries+0xac/0x188) from [<c03059c8>] (f2fs_readdir+0x1f0/0x300)
->>>>   (f2fs_readdir+0x1f0/0x300) from [<c0218054>] (vfs_readdir+0x90/0xb4)
->>>>   (vfs_readdir+0x90/0xb4) from [<c0218418>] (SyS_getdents64+0x64/0xcc)
->>>>   (SyS_getdents64+0x64/0xcc) from [<c0105ba0>] (ret_fast_syscall+0x0/0x30)
->>>>
->>>> Howerver, later patch:
->>>> commit e06f86e61d7a ("f2fs crypto: avoid unneeded memory allocation in ->readdir")
->>>> reverts the codes, which causes panic again in arm, so fix it back to the old version.
->>>>
->>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->>>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->>>> ---
->>>>  fs/f2fs/dir.c | 7 +++++++
->>>>  1 file changed, 7 insertions(+)
->>>>
->>>> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
->>>> index f00b5ed..de2e295 100644
->>>> --- a/fs/f2fs/dir.c
->>>> +++ b/fs/f2fs/dir.c
->>>> @@ -825,9 +825,16 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
->>>>  			int save_len = fstr->len;
->>>>  			int err;
->>>>  
->>>> +			de_name.name = f2fs_kmalloc(sbi, de_name.len, GFP_NOFS);
->>>> +			if (!de_name.name)
->>>> +				return -ENOMEM;
->>>> +
->>>> +			memcpy(de_name.name, d->filename[bit_pos], de_name.len);
->>>> +
->>>>  			err = fscrypt_fname_disk_to_usr(d->inode,
->>>>  						(u32)de->hash_code, 0,
->>>>  						&de_name, fstr);
->>>> +			kfree(de_name.name);
->>>>  			if (err)
->>>>  				return err;
->>>>  
->>>> -- 
->>>> 1.8.5.2
->>>
->>> .
->>>
-> 
-> .
-> 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f6dc70666ebb..ae0671b60e3f 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2467,9 +2467,9 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+ 	return ret;
+ }
+ 
+-static inline int f2fs_readonly(struct super_block *sb)
++static inline bool f2fs_readonly(struct super_block *sb)
+ {
+-	return sb->s_flags & SB_RDONLY;
++	return sb_rdonly(sb);
+ }
+ 
+ static inline bool f2fs_cp_error(struct f2fs_sb_info *sbi)
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 30b93ad44b9d..d8357ba19159 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -336,7 +336,7 @@ static int f2fs_check_quota_options(struct f2fs_sb_info *sbi)
+ 			"QUOTA feature is enabled, so ignore jquota_fmt");
+ 		sbi->s_jquota_fmt = 0;
+ 	}
+-	if (f2fs_sb_has_quota_ino(sbi->sb) && sb_rdonly(sbi->sb)) {
++	if (f2fs_sb_has_quota_ino(sbi->sb) && f2fs_readonly(sbi->sb)) {
+ 		f2fs_msg(sbi->sb, KERN_INFO,
+ 			 "Filesystem with quota feature cannot be mounted RDWR "
+ 			 "without CONFIG_QUOTA");
+@@ -2805,7 +2805,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	 * Turn on quotas which were not enabled for read-only mounts if
+ 	 * filesystem has quota feature, so that they are updated correctly.
+ 	 */
+-	if (f2fs_sb_has_quota_ino(sb) && !sb_rdonly(sb)) {
++	if (f2fs_sb_has_quota_ino(sb) && !f2fs_readonly(sb)) {
+ 		err = f2fs_enable_quotas(sb);
+ 		if (err) {
+ 			f2fs_msg(sb, KERN_ERR,
+@@ -2890,7 +2890,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 
+ free_meta:
+ #ifdef CONFIG_QUOTA
+-	if (f2fs_sb_has_quota_ino(sb) && !sb_rdonly(sb))
++	if (f2fs_sb_has_quota_ino(sb) && !f2fs_readonly(sb))
+ 		f2fs_quota_off_umount(sbi->sb);
+ #endif
+ 	f2fs_sync_inode_meta(sbi);
+-- 
+2.14.1.145.gb3622a4ee
