@@ -1,49 +1,201 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: fix to restore whint_mode in ->remount_fs
-Date: Wed, 28 Feb 2018 18:45:15 -0800
-Message-ID: <20180301024515.GB18665@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180228140120.8758-1-chao@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v3 1/2] mkfs.f2fs: support hot file extension
+Date: Thu, 1 Mar 2018 10:48:47 +0800
+Message-ID: <20180301024847.102769-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180228140120.8758-1-chao@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 02/28, Chao Yu wrote:
-> From: Chao Yu <yuchao0@huawei.com>
-> 
-> If we fail in ->remount_fs, it needs to restore old whint_mode as other
-> mount options.
-> 
-> Fixes: e25afe01822f ("f2fs: support passing down write hints given by users to block layer")
+This patch adds new option '-E' to accept user configured hot file
+extension, in order to let kernel module handle hot/cold file's datas
+separately better.
 
-Hi Chao,
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v3:
+- remove debug log.
+ include/f2fs_fs.h       |  5 ++--
+ mkfs/f2fs_format.c      | 74 +++++++++++++++++++++++++++++++------------------
+ mkfs/f2fs_format_main.c | 16 +++++++----
+ 3 files changed, 61 insertions(+), 34 deletions(-)
 
-It was not merged, so please allow me to integrate this into the original
-patch.
-
-Thanks,
-
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/super.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 89abe4087e66..8a93f78efca2 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1512,6 +1512,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
->  		sbi->s_qf_names[i] = s_qf_names[i];
->  	}
->  #endif
-> +	sbi->whint_mode = old_whint_mode;
->  	sbi->mount_opt = org_mount_opt;
->  	sbi->active_logs = active_logs;
->  	sb->s_flags = old_sb_flags;
-> -- 
-> 2.14.1.145.gb3622a4ee
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index ca4522d54de2..be0a2da8f950 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -347,7 +347,7 @@ struct f2fs_configuration {
+ 	int32_t dump_fd;
+ 	struct device_info devices[MAX_DEVICES];
+ 	int ndevs;
+-	char *extension_list;
++	char *extension_list[2];
+ 	const char *rootdev_name;
+ 	int dbg_lv;
+ 	int show_dentry;
+@@ -614,7 +614,8 @@ struct f2fs_super_block {
+ 	__u8 encrypt_pw_salt[16];	/* Salt used for string2key algorithm */
+ 	struct f2fs_device devs[MAX_DEVICES];	/* device list */
+ 	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
+-	__u8 reserved[315];		/* valid reserved region */
++	__u8 hot_ext_count;		/* # of hot file extension */
++	__u8 reserved[314];		/* valid reserved region */
+ } __attribute__((packed));
+ 
+ /*
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index c9492f6bc986..befa80066d81 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -68,6 +68,15 @@ const char *media_ext_lists[] = {
+ 	NULL
+ };
+ 
++const char *hot_ext_lists[] = {
++	NULL
++};
++
++const char **default_ext_list[] = {
++	media_ext_lists,
++	hot_ext_lists
++};
++
+ static bool is_extension_exist(const char *name)
+ {
+ 	int i;
+@@ -83,44 +92,55 @@ static bool is_extension_exist(const char *name)
+ 
+ static void cure_extension_list(void)
+ {
+-	const char **extlist = media_ext_lists;
+-	char *ext_str = c.extension_list;
++	const char **extlist;
++	char *ext_str;
+ 	char *ue;
+ 	int name_len;
+-	int i = 0;
++	int i, pos = 0;
+ 
+ 	set_sb(extension_count, 0);
+ 	memset(sb->extension_list, 0, sizeof(sb->extension_list));
+ 
+-	while (*extlist) {
+-		name_len = strlen(*extlist);
+-		memcpy(sb->extension_list[i++], *extlist, name_len);
+-		extlist++;
+-	}
+-	set_sb(extension_count, i);
+-
+-	if (!ext_str)
+-		return;
++	for (i = 0; i < 2; i++) {
++		ext_str = c.extension_list[i];
++		extlist = default_ext_list[i];
+ 
+-	/* add user ext list */
+-	ue = strtok(ext_str, ", ");
+-	while (ue != NULL) {
+-		name_len = strlen(ue);
+-		if (name_len >= 8) {
+-			MSG(0, "\tWarn: Extension name (%s) is too long\n", ue);
+-			goto next;
++		while (*extlist) {
++			name_len = strlen(*extlist);
++			memcpy(sb->extension_list[pos++], *extlist, name_len);
++			extlist++;
+ 		}
+-		if (!is_extension_exist(ue))
+-			memcpy(sb->extension_list[i++], ue, name_len);
++		if (i == 0)
++			set_sb(extension_count, pos);
++		else
++			sb->hot_ext_count = pos - get_sb(extension_count);;
++
++		if (!ext_str)
++			continue;
++
++		/* add user ext list */
++		ue = strtok(ext_str, ", ");
++		while (ue != NULL) {
++			name_len = strlen(ue);
++			if (name_len >= 8) {
++				MSG(0, "\tWarn: Extension name (%s) is too long\n", ue);
++				goto next;
++			}
++			if (!is_extension_exist(ue))
++				memcpy(sb->extension_list[pos++], ue, name_len);
+ next:
+-		ue = strtok(NULL, ", ");
+-		if (i >= F2FS_MAX_EXTENSION)
+-			break;
+-	}
++			ue = strtok(NULL, ", ");
++			if (pos >= F2FS_MAX_EXTENSION)
++				break;
++		}
+ 
+-	set_sb(extension_count, i);
++		if (i == 0)
++			set_sb(extension_count, pos);
++		else
++			sb->hot_ext_count = pos - get_sb(extension_count);
+ 
+-	free(c.extension_list);
++		free(c.extension_list[i]);
++	}
+ }
+ 
+ static void verify_cur_segs(void)
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index 120eeba91007..4a52a24cd297 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -44,7 +44,8 @@ static void mkfs_usage()
+ 	MSG(0, "  -a heap-based allocation [default:0]\n");
+ 	MSG(0, "  -c [device path] up to 7 devices excepts meta device\n");
+ 	MSG(0, "  -d debug level [default:0]\n");
+-	MSG(0, "  -e [extension list] e.g. \"mp3,gif,mov\"\n");
++	MSG(0, "  -e [cold file ext list] e.g. \"mp3,gif,mov\"\n");
++	MSG(0, "  -E [hot file ext list] e.g. \"db\"\n");
+ 	MSG(0, "  -f force overwrite the exist filesystem\n");
+ 	MSG(0, "  -i extended node bitmap, node ratio is 20%% by default\n");
+ 	MSG(0, "  -l label\n");
+@@ -69,8 +70,10 @@ static void f2fs_show_info()
+ 		MSG(0, "Info: Disable heap-based policy\n");
+ 
+ 	MSG(0, "Info: Debug level = %d\n", c.dbg_lv);
+-	if (c.extension_list)
+-		MSG(0, "Info: Add new extension list\n");
++	if (c.extension_list[0])
++		MSG(0, "Info: Add new cold file extension list\n");
++	if (c.extension_list[1])
++		MSG(0, "Info: Add new hot file extension list\n");
+ 
+ 	if (c.vol_label)
+ 		MSG(0, "Info: Label = %s\n", c.vol_label);
+@@ -103,7 +106,7 @@ static void parse_feature(const char *features)
+ 
+ static void f2fs_parse_options(int argc, char *argv[])
+ {
+-	static const char *option_string = "qa:c:d:e:il:mo:O:s:S:z:t:f";
++	static const char *option_string = "qa:c:d:e:E:il:mo:O:s:S:z:t:f";
+ 	int32_t option=0;
+ 
+ 	while ((option = getopt(argc,argv,option_string)) != EOF) {
+@@ -131,7 +134,10 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 			c.dbg_lv = atoi(optarg);
+ 			break;
+ 		case 'e':
+-			c.extension_list = strdup(optarg);
++			c.extension_list[0] = strdup(optarg);
++			break;
++		case 'E':
++			c.extension_list[1] = strdup(optarg);
+ 			break;
+ 		case 'i':
+ 			c.large_nat_bitmap = 1;
+-- 
+2.15.0.55.gc2ece9dc4de6
