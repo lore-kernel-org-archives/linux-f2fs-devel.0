@@ -1,59 +1,49 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 4/5] f2fs: issue discard aggressively in the gc_urgent
- mode
-Date: Wed, 28 Feb 2018 18:37:20 -0800
-Message-ID: <20180301023720.GA18665@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180226174731.26679-1-jaegeuk@kernel.org>
- <20180226174731.26679-4-jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: fix to restore whint_mode in ->remount_fs
+Date: Wed, 28 Feb 2018 18:45:15 -0800
+Message-ID: <20180301024515.GB18665@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180228140120.8758-1-chao@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180226174731.26679-4-jaegeuk@kernel.org>
+In-Reply-To: <20180228140120.8758-1-chao@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Change log from v1:
-- relax more to issue discard commands
+On 02/28, Chao Yu wrote:
+> From: Chao Yu <yuchao0@huawei.com>
+> 
+> If we fail in ->remount_fs, it needs to restore old whint_mode as other
+> mount options.
+> 
+> Fixes: e25afe01822f ("f2fs: support passing down write hints given by users to block layer")
 
-This patch avoids to skip discard commands when user sets gc_urgent mode.
+Hi Chao,
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/segment.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+It was not merged, so please allow me to integrate this into the original
+patch.
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 5e5e2936a26a..1e3dd3de4ecc 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1411,12 +1411,11 @@ static int issue_discard_thread(void *data)
- 		if (kthread_should_stop())
- 			return 0;
- 
--		if (dcc->discard_wake) {
-+		if (dcc->discard_wake)
- 			dcc->discard_wake = 0;
--			if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
--				init_discard_policy(&dpolicy,
--							DPOLICY_FORCE, 1);
--		}
-+
-+		if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
-+			init_discard_policy(&dpolicy, DPOLICY_FORCE, 1);
- 
- 		sb_start_intwrite(sbi->sb);
- 
-@@ -1727,7 +1726,7 @@ void init_discard_policy(struct discard_policy *dpolicy,
- 	} else if (discard_type == DPOLICY_FORCE) {
- 		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
- 		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
--		dpolicy->io_aware = true;
-+		dpolicy->io_aware = false;
- 	} else if (discard_type == DPOLICY_FSTRIM) {
- 		dpolicy->io_aware = false;
- 	} else if (discard_type == DPOLICY_UMOUNT) {
--- 
-2.15.0.531.g2ccb3012c9-goog
+Thanks,
+
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/super.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 89abe4087e66..8a93f78efca2 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -1512,6 +1512,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+>  		sbi->s_qf_names[i] = s_qf_names[i];
+>  	}
+>  #endif
+> +	sbi->whint_mode = old_whint_mode;
+>  	sbi->mount_opt = org_mount_opt;
+>  	sbi->active_logs = active_logs;
+>  	sb->s_flags = old_sb_flags;
+> -- 
+> 2.14.1.145.gb3622a4ee
