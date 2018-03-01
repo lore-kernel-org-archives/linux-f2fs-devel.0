@@ -1,209 +1,59 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2 1/2] mkfs.f2fs: support hot file extension
-Date: Thu, 1 Mar 2018 09:24:09 +0800
-Message-ID: <20180301012409.93726-1-yuchao0@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 4/5] f2fs: issue discard aggressively in the gc_urgent
+ mode
+Date: Wed, 28 Feb 2018 18:37:20 -0800
+Message-ID: <20180301023720.GA18665@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180226174731.26679-1-jaegeuk@kernel.org>
+ <20180226174731.26679-4-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180226174731.26679-4-jaegeuk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch adds new option '-E' to accept user configured hot file
-extension, in order to let kernel module handle hot/cold file's datas
-separately better.
+Change log from v1:
+- relax more to issue discard commands
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+This patch avoids to skip discard commands when user sets gc_urgent mode.
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
-v2: fix to add missing f2fs_super_block layout modification.
- include/f2fs_fs.h       |  5 +--
- mkfs/f2fs_format.c      | 83 +++++++++++++++++++++++++++++++++----------------
- mkfs/f2fs_format_main.c | 16 +++++++---
- 3 files changed, 70 insertions(+), 34 deletions(-)
+ fs/f2fs/segment.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index ca4522d54de2..be0a2da8f950 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -347,7 +347,7 @@ struct f2fs_configuration {
- 	int32_t dump_fd;
- 	struct device_info devices[MAX_DEVICES];
- 	int ndevs;
--	char *extension_list;
-+	char *extension_list[2];
- 	const char *rootdev_name;
- 	int dbg_lv;
- 	int show_dentry;
-@@ -614,7 +614,8 @@ struct f2fs_super_block {
- 	__u8 encrypt_pw_salt[16];	/* Salt used for string2key algorithm */
- 	struct f2fs_device devs[MAX_DEVICES];	/* device list */
- 	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
--	__u8 reserved[315];		/* valid reserved region */
-+	__u8 hot_ext_count;		/* # of hot file extension */
-+	__u8 reserved[314];		/* valid reserved region */
- } __attribute__((packed));
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 5e5e2936a26a..1e3dd3de4ecc 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1411,12 +1411,11 @@ static int issue_discard_thread(void *data)
+ 		if (kthread_should_stop())
+ 			return 0;
  
- /*
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index c9492f6bc986..3e20b8fc7bd1 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -68,6 +68,15 @@ const char *media_ext_lists[] = {
- 	NULL
- };
- 
-+const char *hot_ext_lists[] = {
-+	NULL
-+};
+-		if (dcc->discard_wake) {
++		if (dcc->discard_wake)
+ 			dcc->discard_wake = 0;
+-			if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
+-				init_discard_policy(&dpolicy,
+-							DPOLICY_FORCE, 1);
+-		}
 +
-+const char **default_ext_list[] = {
-+	media_ext_lists,
-+	hot_ext_lists
-+};
-+
- static bool is_extension_exist(const char *name)
- {
- 	int i;
-@@ -83,44 +92,64 @@ static bool is_extension_exist(const char *name)
++		if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
++			init_discard_policy(&dpolicy, DPOLICY_FORCE, 1);
  
- static void cure_extension_list(void)
- {
--	const char **extlist = media_ext_lists;
--	char *ext_str = c.extension_list;
-+	const char **extlist;
-+	char *ext_str;
- 	char *ue;
- 	int name_len;
--	int i = 0;
-+	int i, pos = 0;
+ 		sb_start_intwrite(sbi->sb);
  
- 	set_sb(extension_count, 0);
- 	memset(sb->extension_list, 0, sizeof(sb->extension_list));
- 
--	while (*extlist) {
--		name_len = strlen(*extlist);
--		memcpy(sb->extension_list[i++], *extlist, name_len);
--		extlist++;
--	}
--	set_sb(extension_count, i);
--
--	if (!ext_str)
--		return;
-+	for (i = 0; i < 2; i++) {
-+		ext_str = c.extension_list[i];
-+		extlist = default_ext_list[i];
- 
--	/* add user ext list */
--	ue = strtok(ext_str, ", ");
--	while (ue != NULL) {
--		name_len = strlen(ue);
--		if (name_len >= 8) {
--			MSG(0, "\tWarn: Extension name (%s) is too long\n", ue);
--			goto next;
-+		while (*extlist) {
-+			printf("default: i:%u, extlist:%s\n", i, *extlist);
-+			name_len = strlen(*extlist);
-+			memcpy(sb->extension_list[pos++], *extlist, name_len);
-+			extlist++;
- 		}
--		if (!is_extension_exist(ue))
--			memcpy(sb->extension_list[i++], ue, name_len);
-+		if (i == 0)
-+			set_sb(extension_count, pos);
-+		else
-+			sb->hot_ext_count = pos - get_sb(extension_count);;
-+		if (i == 1)
-+			printf("1hot count:%d\n", sb->hot_ext_count);
-+		else
-+			printf("1cold count:%d\n", get_sb(extension_count));
-+		if (!ext_str)
-+			continue;
-+
-+		/* add user ext list */
-+		ue = strtok(ext_str, ", ");
-+		while (ue != NULL) {
-+			printf("private: i:%u, extlist:%s\n", i, ue);
-+			name_len = strlen(ue);
-+			if (name_len >= 8) {
-+				MSG(0, "\tWarn: Extension name (%s) is too long\n", ue);
-+				goto next;
-+			}
-+			if (!is_extension_exist(ue))
-+				memcpy(sb->extension_list[pos++], ue, name_len);
- next:
--		ue = strtok(NULL, ", ");
--		if (i >= F2FS_MAX_EXTENSION)
--			break;
--	}
-+			ue = strtok(NULL, ", ");
-+			if (pos >= F2FS_MAX_EXTENSION)
-+				break;
-+		}
- 
--	set_sb(extension_count, i);
-+		if (i == 0)
-+			set_sb(extension_count, pos);
-+		else
-+			sb->hot_ext_count = pos - get_sb(extension_count);
-+		if (i == 1)
-+			printf("2hot count:%d\n", sb->hot_ext_count);
-+		else
-+			printf("2cold count:%d\n", get_sb(extension_count));
- 
--	free(c.extension_list);
-+		free(c.extension_list[i]);
-+	}
- }
- 
- static void verify_cur_segs(void)
-diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
-index 120eeba91007..4a52a24cd297 100644
---- a/mkfs/f2fs_format_main.c
-+++ b/mkfs/f2fs_format_main.c
-@@ -44,7 +44,8 @@ static void mkfs_usage()
- 	MSG(0, "  -a heap-based allocation [default:0]\n");
- 	MSG(0, "  -c [device path] up to 7 devices excepts meta device\n");
- 	MSG(0, "  -d debug level [default:0]\n");
--	MSG(0, "  -e [extension list] e.g. \"mp3,gif,mov\"\n");
-+	MSG(0, "  -e [cold file ext list] e.g. \"mp3,gif,mov\"\n");
-+	MSG(0, "  -E [hot file ext list] e.g. \"db\"\n");
- 	MSG(0, "  -f force overwrite the exist filesystem\n");
- 	MSG(0, "  -i extended node bitmap, node ratio is 20%% by default\n");
- 	MSG(0, "  -l label\n");
-@@ -69,8 +70,10 @@ static void f2fs_show_info()
- 		MSG(0, "Info: Disable heap-based policy\n");
- 
- 	MSG(0, "Info: Debug level = %d\n", c.dbg_lv);
--	if (c.extension_list)
--		MSG(0, "Info: Add new extension list\n");
-+	if (c.extension_list[0])
-+		MSG(0, "Info: Add new cold file extension list\n");
-+	if (c.extension_list[1])
-+		MSG(0, "Info: Add new hot file extension list\n");
- 
- 	if (c.vol_label)
- 		MSG(0, "Info: Label = %s\n", c.vol_label);
-@@ -103,7 +106,7 @@ static void parse_feature(const char *features)
- 
- static void f2fs_parse_options(int argc, char *argv[])
- {
--	static const char *option_string = "qa:c:d:e:il:mo:O:s:S:z:t:f";
-+	static const char *option_string = "qa:c:d:e:E:il:mo:O:s:S:z:t:f";
- 	int32_t option=0;
- 
- 	while ((option = getopt(argc,argv,option_string)) != EOF) {
-@@ -131,7 +134,10 @@ static void f2fs_parse_options(int argc, char *argv[])
- 			c.dbg_lv = atoi(optarg);
- 			break;
- 		case 'e':
--			c.extension_list = strdup(optarg);
-+			c.extension_list[0] = strdup(optarg);
-+			break;
-+		case 'E':
-+			c.extension_list[1] = strdup(optarg);
- 			break;
- 		case 'i':
- 			c.large_nat_bitmap = 1;
+@@ -1727,7 +1726,7 @@ void init_discard_policy(struct discard_policy *dpolicy,
+ 	} else if (discard_type == DPOLICY_FORCE) {
+ 		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+ 		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+-		dpolicy->io_aware = true;
++		dpolicy->io_aware = false;
+ 	} else if (discard_type == DPOLICY_FSTRIM) {
+ 		dpolicy->io_aware = false;
+ 	} else if (discard_type == DPOLICY_UMOUNT) {
 -- 
-2.15.0.55.gc2ece9dc4de6
+2.15.0.531.g2ccb3012c9-goog
