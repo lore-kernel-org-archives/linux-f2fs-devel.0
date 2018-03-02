@@ -1,183 +1,176 @@
-From: Hyunchul Lee <hyc.lee@gmail.com>
-Subject: [PATCH] f2fs: add nowait aio support
-Date: Fri,  2 Mar 2018 16:48:34 +0900
-Message-ID: <1519976914-32491-1-git-send-email-hyc.lee@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc: Goldwyn Rodrigues <rgoldwyn@suse.com>, Christoph Hellwig <hch@lst.de>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-team@lge.com, Hyunchul Lee <cheol.lee@lge.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Eric Biggers via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Subject: [PATCH] fscrypt: add Speck128/256 support
+Date: Fri,  2 Mar 2018 11:56:10 -0800
+Message-ID: <20180302195610.153581-1-ebiggers@google.com>
+Reply-To: Eric Biggers <ebiggers@google.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <ebiggers@google.com>) id 1esK5s-0003MC-5G
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 04 Mar 2018 03:13:48 +0000
+Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
+ helo=mail-io0-f179.google.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.89)
+ id 1esK2U-0007Gd-EH
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 04 Mar 2018 03:10:20 +0000
+Received: by mail-io0-f179.google.com with SMTP id g21so14510710ioj.5
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat, 03 Mar 2018 19:10:18 -0800 (PST)
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-fscrypt@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
+Cc: Michael Halcrow <mhalcrow@google.com>, David Gstir <david@sigma-star.at>, Greg Kaiser <gkaiser@google.com>, Eric Biggers <ebiggers@google.com>, Richard Weinberger <richard@nod.at>, Patrik Torstensson <totte@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, linux-crypto@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org, Paul Crowley <paulcrowley@google.com>
 
-From: Hyunchul Lee <cheol.lee@lge.com>
+Hello, here's a patch which adds Speck128/256 support to fscrypt, for
+ext4/f2fs/ubifs encryption.  Note that this can be applied independently
+of the patches that added Speck to the crypto API since there is no hard
+dependency, but the crypto API support is needed for Speck-encrypted
+files to work.  The crypto API patches can be found in linux-next via
+cryptodev/master.  Commit da7a0ab5b4ba ("crypto: speck - add support for
+the Speck block cipher") with CONFIG_CRYPTO_SPECK enabled is sufficient
+for basic testing, but for testing on ARM the NEON-accelerated version
+should be applied and enabled as well.
 
-This patch adds nowait aio support[1].
+-----8<-----
 
-Return EAGAIN if any of the following checks fail for direct I/O:
-  - i_rwsem is not lockable
-  - Blocks are not allocated at the write location
+fscrypt currently only supports AES encryption.  However, many low-end
+mobile devices have older CPUs that don't have AES instructions, e.g.
+the ARMv8 Cryptography Extensions.  Currently, user data on such devices
+is not being encrypted because AES is not fast enough, even when the
+NEON bit-sliced implementation of AES is used.
 
-And xfstests generic/471 is passed.
+Therefore, this patch provides an alternative to AES by updating fscrypt
+to support the Speck block cipher.
 
- [1]: 6be96d "Introduce RWF_NOWAIT and FMODE_AIO_NOWAIT"
+Separate patches added Speck to the crypto API; more details about the
+choice of Speck can be found in those patches.  Note in particular that
+we can't use ChaCha20 as previously proposed, since it would, in
+general, be insecure to use a stream cipher in this context.
 
-Signed-off-by: Hyunchul Lee <cheol.lee@lge.com>
+The generic Speck implementation is not especially fast, but Speck can
+be greatly accelerated using general-purpose vector instructions, e.g.
+ARM NEON.  As an example, on a device with an ARMv7 processor, the
+NEON-accelerated Speck128/256-XTS was 108 MB/s for both encryption and
+decryption, while AES-256-XTS (with the NEON bit-sliced implementation)
+was only 41 MB/s encryption and 37 MB/s decryption.
+
+There are multiple variants of Speck.  This patch only adds support for
+Speck128/256, which is the variant with a 128-bit block size and 256-bit
+key size -- the same as AES-256.  This is believed to be the most secure
+variant of Speck, and it's only about 6% slower than Speck128/128.
+
+Speck64/128 is also a contender, since it's at least 20% faster than
+Speck128/256 (having 20% fewer rounds), and can be even faster on CPUs
+that can't efficiently do the 64-bit operations needed for Speck128.
+But, ARM NEON supports the needed 64-bit operations even on 32-bit CPUs,
+and Speck128/256 appears to be fast enough for our targeted use cases.
+So, it makes sense to support Speck128/256 in fscrypt anyway, even if
+there's a possibility that Speck64/128 support would be added later.
+
+The chosen modes of operation are XTS for contents and CTS-CBC for
+filenames.  These are the same modes recommended for AES currently.
+
+This patch intentionally does *not* make CONFIG_FS_ENCRYPTION select
+CONFIG_CRYPTO_SPECK.  Thus, people will have to enable Speck support
+themselves if needed.  This is firstly because we shouldn't bloat the
+FS_ENCRYPTION dependencies with every new cipher, especially ones that
+aren't recommended for most users.  It's also because CRYPTO_SPECK just
+refers to the generic implementation, which won't be fast enough for
+many users; in practice, they'll need to enable a vectorized
+implementation such as CRYPTO_SPECK_NEON to get acceptable performance.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/data.c | 36 +++++++++++++++++++++++++++---------
- fs/f2fs/f2fs.h |  8 ++++++++
- fs/f2fs/file.c | 35 +++++++++++++++++++++++++++++------
- 3 files changed, 64 insertions(+), 15 deletions(-)
+ Documentation/filesystems/fscrypt.rst | 10 ++++++++++
+ fs/crypto/fscrypt_private.h           |  4 ++++
+ fs/crypto/keyinfo.c                   |  2 ++
+ include/uapi/linux/fs.h               |  2 ++
+ 4 files changed, 18 insertions(+)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 6c3c978..9a550c5 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -839,13 +839,6 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
- 	return 0;
+diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
+index cfbc18f0d9c9..c99465965512 100644
+--- a/Documentation/filesystems/fscrypt.rst
++++ b/Documentation/filesystems/fscrypt.rst
+@@ -191,11 +191,21 @@ Currently, the following pairs of encryption modes are supported:
+ 
+ - AES-256-XTS for contents and AES-256-CTS-CBC for filenames
+ - AES-128-CBC for contents and AES-128-CTS-CBC for filenames
++- Speck128/256-XTS for contents and Speck128/256-CTS-CBC for filenames
+ 
+ It is strongly recommended to use AES-256-XTS for contents encryption.
+ AES-128-CBC was added only for low-powered embedded devices with
+ crypto accelerators such as CAAM or CESA that do not support XTS.
+ 
++Similarly, Speck128/256 support was only added for older or low-end
++CPUs which cannot do AES fast enough -- especially ARM CPUs which have
++NEON instructions but not the Cryptography Extensions.  It is not
++recommended to use Speck on CPUs that have AES instructions.
++Nevertheless, to use Speck, CONFIG_CRYPTO_SPECK must be enabled.  It
++is strongly recommended to enable any available architecture-specific
++implementations of Speck as well, e.g. CONFIG_CRYPTO_SPECK_NEON for
++ARM, since they can be much faster than the generic implementation.
++
+ New encryption modes can be added relatively easily, without changes
+ to individual filesystems.  However, authenticated encryption (AE)
+ modes are not currently supported because of the difficulty of dealing
+diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
+index fb96e493167b..bf0bbba783f8 100644
+--- a/fs/crypto/fscrypt_private.h
++++ b/fs/crypto/fscrypt_private.h
+@@ -91,6 +91,10 @@ static inline bool fscrypt_valid_enc_modes(u32 contents_mode,
+ 	    filenames_mode == FS_ENCRYPTION_MODE_AES_256_CTS)
+ 		return true;
+ 
++	if (contents_mode == FS_ENCRYPTION_MODE_SPECK128_256_XTS &&
++	    filenames_mode == FS_ENCRYPTION_MODE_SPECK128_256_CTS)
++		return true;
++
+ 	return false;
  }
  
--static inline bool __force_buffered_io(struct inode *inode, int rw)
--{
--	return (f2fs_encrypted_file(inode) ||
--			(rw == WRITE && test_opt(F2FS_I_SB(inode), LFS)) ||
--			F2FS_I_SB(inode)->s_ndevs);
--}
--
- int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
- {
- 	struct inode *inode = file_inode(iocb->ki_filp);
-@@ -877,7 +870,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+diff --git a/fs/crypto/keyinfo.c b/fs/crypto/keyinfo.c
+index 05f5ee1f0705..96a1eae9e51d 100644
+--- a/fs/crypto/keyinfo.c
++++ b/fs/crypto/keyinfo.c
+@@ -135,6 +135,8 @@ static const struct {
+ 					     FS_AES_128_CBC_KEY_SIZE },
+ 	[FS_ENCRYPTION_MODE_AES_128_CTS] = { "cts(cbc(aes))",
+ 					     FS_AES_128_CTS_KEY_SIZE },
++	[FS_ENCRYPTION_MODE_SPECK128_256_XTS] = { "xts(speck128)", 64 },
++	[FS_ENCRYPTION_MODE_SPECK128_256_CTS] = { "cts(cbc(speck128))", 32 },
+ };
  
- 	if (direct_io) {
- 		map.m_seg_type = rw_hint_to_seg_type(iocb->ki_hint);
--		flag = __force_buffered_io(inode, WRITE) ?
-+		flag = f2fs_force_buffered_io(inode, WRITE) ?
- 					F2FS_GET_BLOCK_PRE_AIO :
- 					F2FS_GET_BLOCK_PRE_DIO;
- 		goto map_blocks;
-@@ -1121,6 +1114,31 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 	return err;
- }
+ static int determine_cipher_type(struct fscrypt_info *ci, struct inode *inode,
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index d2a8313fabd7..0b6e07ee63a6 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -275,6 +275,8 @@ struct fsxattr {
+ #define FS_ENCRYPTION_MODE_AES_256_CTS		4
+ #define FS_ENCRYPTION_MODE_AES_128_CBC		5
+ #define FS_ENCRYPTION_MODE_AES_128_CTS		6
++#define FS_ENCRYPTION_MODE_SPECK128_256_XTS	7
++#define FS_ENCRYPTION_MODE_SPECK128_256_CTS	8
  
-+bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len)
-+{
-+	struct f2fs_map_blocks map;
-+	block_t last_lblk;
-+	int err;
-+
-+	if (pos + len > i_size_read(inode))
-+		return false;
-+
-+	map.m_lblk = F2FS_BYTES_TO_BLK(pos);
-+	map.m_next_pgofs = 0;
-+	map.m_next_extent = NULL;
-+	map.m_seg_type = NO_CHECK_TYPE;
-+	last_lblk = F2FS_BYTES_TO_BLK(pos + len) + 1;
-+
-+	while (map.m_lblk < last_lblk) {
-+		map.m_len = last_lblk - map.m_lblk;
-+		err = f2fs_map_blocks(inode, &map, 0, 0);
-+		if (err || map.m_len == 0)
-+			return false;
-+		map.m_lblk += map.m_len;
-+	}
-+	return true;
-+}
-+
- static int __get_data_block(struct inode *inode, sector_t iblock,
- 			struct buffer_head *bh, int create, int flag,
- 			pgoff_t *next_pgofs, int seg_type)
-@@ -2306,7 +2324,7 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	if (err)
- 		return err;
- 
--	if (__force_buffered_io(inode, rw))
-+	if (f2fs_force_buffered_io(inode, rw))
- 		return 0;
- 
- 	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f6dc706..351226e 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2875,6 +2875,7 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
- int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
- 			struct page *page, enum migrate_mode mode);
- #endif
-+bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len);
- 
- /*
-  * gc.c
-@@ -3259,4 +3260,11 @@ static inline bool f2fs_may_encrypt(struct inode *inode)
- #endif
- }
- 
-+static inline bool f2fs_force_buffered_io(struct inode *inode, int rw)
-+{
-+	return (f2fs_encrypted_file(inode) ||
-+			(rw == WRITE && test_opt(F2FS_I_SB(inode), LFS)) ||
-+			F2FS_I_SB(inode)->s_ndevs);
-+}
-+
- #endif
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 6a202e5..1051edd 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -479,6 +479,9 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
- 
- 	if (err)
- 		return err;
-+
-+	filp->f_mode |= FMODE_NOWAIT;
-+
- 	return dquot_file_open(inode, filp);
- }
- 
-@@ -2895,7 +2898,15 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	if (unlikely(f2fs_cp_error(F2FS_I_SB(inode))))
- 		return -EIO;
- 
--	inode_lock(inode);
-+	if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIRECT))
-+		return -EINVAL;
-+
-+	if (!inode_trylock(inode)) {
-+		if (iocb->ki_flags & IOCB_NOWAIT)
-+			return -EAGAIN;
-+		inode_lock(inode);
-+	}
-+
- 	ret = generic_write_checks(iocb, from);
- 	if (ret > 0) {
- 		int err;
-@@ -2903,11 +2914,23 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		if (iov_iter_fault_in_readable(from, iov_iter_count(from)))
- 			set_inode_flag(inode, FI_NO_PREALLOC);
- 
--		err = f2fs_preallocate_blocks(iocb, from);
--		if (err) {
--			clear_inode_flag(inode, FI_NO_PREALLOC);
--			inode_unlock(inode);
--			return err;
-+		if ((iocb->ki_flags & IOCB_NOWAIT) &&
-+			(iocb->ki_flags & IOCB_DIRECT)) {
-+				if (!f2fs_overwrite_io(inode, iocb->ki_pos,
-+						iov_iter_count(from)) ||
-+					f2fs_has_inline_data(inode) ||
-+					f2fs_force_buffered_io(inode, WRITE)) {
-+						inode_unlock(inode);
-+						return -EAGAIN;
-+				}
-+
-+		} else {
-+			err = f2fs_preallocate_blocks(iocb, from);
-+			if (err) {
-+				clear_inode_flag(inode, FI_NO_PREALLOC);
-+				inode_unlock(inode);
-+				return err;
-+			}
- 		}
- 		blk_start_plug(&plug);
- 		ret = __generic_file_write_iter(iocb, from);
+ struct fscrypt_policy {
+ 	__u8 version;
 -- 
-1.9.1
+2.16.2.395.g2e18187dfd-goog
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
