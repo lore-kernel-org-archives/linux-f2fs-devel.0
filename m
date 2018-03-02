@@ -1,52 +1,38 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 2/2] f2fs: fix to restore old mount option in ->remount_fs
-Date: Thu,  1 Mar 2018 23:40:32 +0800
-Message-ID: <20180301154032.6325-2-chao@kernel.org>
-References: <20180301154032.6325-1-chao@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180301154032.6325-1-chao@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: =?GB2312?B?0e/Qob3j?= <wbaodfrguan@hotmail.com>
+Subject: =?gb2312?b?0MXT/r+qxrE=?=
+Date: Fri, 2 Mar 2018 08:37:04 +0800
+Message-ID: <E1erYhD-000MTh-5R@sfs-ml-3.v29.lw.sourceforge.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ (envelope-from <wbaodfrguan@hotmail.com>) id 1erYhC-000MTa-3b
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 02 Mar 2018 00:37:10 +0000
+Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
+ helo=hotmail.com) by sfi-mx-2.v28.lw.sourceforge.com with esmtp
+ (Exim 4.89) id 1erYh8-000all-EK
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 02 Mar 2018 00:37:10 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-From: Chao Yu <yuchao0@huawei.com>
-
-This patch fixes to restore old mount option once we encounter failure
-in ->remount_fs.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/super.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index d8357ba19159..36c5e582c1f2 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1340,6 +1340,11 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	bool no_extent_cache = !test_opt(sbi, EXTENT_CACHE);
- 	int old_whint_mode = sbi->whint_mode;
- 	int old_alloc_mode = sbi->alloc_mode;
-+	int old_inline_xattr_size = sbi->inline_xattr_size;
-+	block_t old_root_reserved_blocks = sbi->root_reserved_blocks;
-+	kuid_t old_resuid = sbi->s_resuid;
-+	kgid_t old_resgid = sbi->s_resgid;
-+	int old_write_io_size_bits = sbi->write_io_size_bits;
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- 	struct f2fs_fault_info ffi = sbi->fault_info;
- #endif
-@@ -1489,6 +1494,11 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 		sbi->s_qf_names[i] = s_qf_names[i];
- 	}
- #endif
-+	sbi->write_io_size_bits = old_write_io_size_bits;
-+	sbi->s_resgid = old_resgid;
-+	sbi->s_resuid = old_resuid;
-+	sbi->root_reserved_blocks = old_root_reserved_blocks;
-+	sbi->inline_xattr_size = old_inline_xattr_size;
- 	sbi->alloc_mode = old_alloc_mode;
- 	sbi->whint_mode = old_whint_mode;
- 	sbi->mount_opt = org_mount_opt;
--- 
-2.14.1.145.gb3622a4ee
+xOO6w6Ohsb65q8u+v8nS1LT6wO3Iq7n6uPe12Mf41PbWtcuw16jTw7eixrGjrMbVzajU9ta1y7C3
+osaxo6y148r908W73aOs1ebKtdPQ0KfR6dakuvO4tr/uo6zQ6NKqwarPtaO6MTM2NzAwNjI0NzXR
+7tTGo6i+rcDto6nOotDFzay6xaO6MTM2NzAwNjI0NzUKCgrQxdP+v6rGsSCzz9DFv6rGsSAgILOk
+xtq6z9f30+S/7AoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUgdmlicmFudCB0
+ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2luZyB0ZWNoIHNp
+dGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdApfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxp
+bmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xp
+c3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
