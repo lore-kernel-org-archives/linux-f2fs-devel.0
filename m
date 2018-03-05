@@ -1,9 +1,8 @@
-From: Eric Biggers via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Subject: [PATCH] fscrypt: add Speck128/256 support
-Date: Fri,  2 Mar 2018 11:56:10 -0800
-Message-ID: <20180302195610.153581-1-ebiggers@google.com>
-Reply-To: Eric Biggers <ebiggers@google.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH v2] f2fs: check blkaddr more accuratly before
+ issue a bio
+Date: Mon, 5 Mar 2018 15:07:06 +0800
+Message-ID: <1520233626-2330-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,17 +10,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <ebiggers@google.com>) id 1esK5s-0003MC-5G
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 04 Mar 2018 03:13:48 +0000
+ (envelope-from <heyunlei@huawei.com>) id 1eskQP-001mEl-6q
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 05 Mar 2018 07:20:45 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=mail-io0-f179.google.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.89)
- id 1esK2U-0007Gd-EH
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 04 Mar 2018 03:10:20 +0000
-Received: by mail-io0-f179.google.com with SMTP id g21so14510710ioj.5
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 03 Mar 2018 19:10:18 -0800 (PST)
+ helo=huawei.com) by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
+ id 1eskQJ-001bCi-F0
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 05 Mar 2018 07:20:45 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,144 +26,117 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-fscrypt@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
-Cc: Michael Halcrow <mhalcrow@google.com>, David Gstir <david@sigma-star.at>, Greg Kaiser <gkaiser@google.com>, Eric Biggers <ebiggers@google.com>, Richard Weinberger <richard@nod.at>, Patrik Torstensson <totte@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, linux-crypto@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org, Paul Crowley <paulcrowley@google.com>
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: heyunlei@huawei.com
 
-Hello, here's a patch which adds Speck128/256 support to fscrypt, for
-ext4/f2fs/ubifs encryption.  Note that this can be applied independently
-of the patches that added Speck to the crypto API since there is no hard
-dependency, but the crypto API support is needed for Speck-encrypted
-files to work.  The crypto API patches can be found in linux-next via
-cryptodev/master.  Commit da7a0ab5b4ba ("crypto: speck - add support for
-the Speck block cipher") with CONFIG_CRYPTO_SPECK enabled is sufficient
-for basic testing, but for testing on ARM the NEON-accelerated version
-should be applied and enabled as well.
+This patch check blkaddr more accuratly before issue a
+write or read bio.
 
------8<-----
-
-fscrypt currently only supports AES encryption.  However, many low-end
-mobile devices have older CPUs that don't have AES instructions, e.g.
-the ARMv8 Cryptography Extensions.  Currently, user data on such devices
-is not being encrypted because AES is not fast enough, even when the
-NEON bit-sliced implementation of AES is used.
-
-Therefore, this patch provides an alternative to AES by updating fscrypt
-to support the Speck block cipher.
-
-Separate patches added Speck to the crypto API; more details about the
-choice of Speck can be found in those patches.  Note in particular that
-we can't use ChaCha20 as previously proposed, since it would, in
-general, be insecure to use a stream cipher in this context.
-
-The generic Speck implementation is not especially fast, but Speck can
-be greatly accelerated using general-purpose vector instructions, e.g.
-ARM NEON.  As an example, on a device with an ARMv7 processor, the
-NEON-accelerated Speck128/256-XTS was 108 MB/s for both encryption and
-decryption, while AES-256-XTS (with the NEON bit-sliced implementation)
-was only 41 MB/s encryption and 37 MB/s decryption.
-
-There are multiple variants of Speck.  This patch only adds support for
-Speck128/256, which is the variant with a 128-bit block size and 256-bit
-key size -- the same as AES-256.  This is believed to be the most secure
-variant of Speck, and it's only about 6% slower than Speck128/128.
-
-Speck64/128 is also a contender, since it's at least 20% faster than
-Speck128/256 (having 20% fewer rounds), and can be even faster on CPUs
-that can't efficiently do the 64-bit operations needed for Speck128.
-But, ARM NEON supports the needed 64-bit operations even on 32-bit CPUs,
-and Speck128/256 appears to be fast enough for our targeted use cases.
-So, it makes sense to support Speck128/256 in fscrypt anyway, even if
-there's a possibility that Speck64/128 support would be added later.
-
-The chosen modes of operation are XTS for contents and CTS-CBC for
-filenames.  These are the same modes recommended for AES currently.
-
-This patch intentionally does *not* make CONFIG_FS_ENCRYPTION select
-CONFIG_CRYPTO_SPECK.  Thus, people will have to enable Speck support
-themselves if needed.  This is firstly because we shouldn't bloat the
-FS_ENCRYPTION dependencies with every new cipher, especially ones that
-aren't recommended for most users.  It's also because CRYPTO_SPECK just
-refers to the generic implementation, which won't be fast enough for
-many users; in practice, they'll need to enable a vectorized
-implementation such as CRYPTO_SPECK_NEON to get acceptable performance.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- Documentation/filesystems/fscrypt.rst | 10 ++++++++++
- fs/crypto/fscrypt_private.h           |  4 ++++
- fs/crypto/keyinfo.c                   |  2 ++
- include/uapi/linux/fs.h               |  2 ++
- 4 files changed, 18 insertions(+)
+ fs/f2fs/checkpoint.c |  2 ++
+ fs/f2fs/data.c       |  5 +++--
+ fs/f2fs/f2fs.h       |  1 +
+ fs/f2fs/segment.h    | 29 +++++++++++++++++++++++++----
+ 4 files changed, 31 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
-index cfbc18f0d9c9..c99465965512 100644
---- a/Documentation/filesystems/fscrypt.rst
-+++ b/Documentation/filesystems/fscrypt.rst
-@@ -191,11 +191,21 @@ Currently, the following pairs of encryption modes are supported:
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 5b2db75..bf77946 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -68,6 +68,7 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
+ 		.old_blkaddr = index,
+ 		.new_blkaddr = index,
+ 		.encrypted_page = NULL,
++		.is_meta = is_meta,
+ 	};
  
- - AES-256-XTS for contents and AES-256-CTS-CBC for filenames
- - AES-128-CBC for contents and AES-128-CTS-CBC for filenames
-+- Speck128/256-XTS for contents and Speck128/256-CTS-CBC for filenames
+ 	if (unlikely(!is_meta))
+@@ -162,6 +163,7 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
+ 		.op_flags = sync ? (REQ_META | REQ_PRIO) : REQ_RAHEAD,
+ 		.encrypted_page = NULL,
+ 		.in_list = false,
++		.is_meta = (type != META_POR),
+ 	};
+ 	struct blk_plug plug;
  
- It is strongly recommended to use AES-256-XTS for contents encryption.
- AES-128-CBC was added only for low-powered embedded devices with
- crypto accelerators such as CAAM or CESA that do not support XTS.
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 6c3c978..de036e8 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -383,6 +383,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 	struct page *page = fio->encrypted_page ?
+ 			fio->encrypted_page : fio->page;
  
-+Similarly, Speck128/256 support was only added for older or low-end
-+CPUs which cannot do AES fast enough -- especially ARM CPUs which have
-+NEON instructions but not the Cryptography Extensions.  It is not
-+recommended to use Speck on CPUs that have AES instructions.
-+Nevertheless, to use Speck, CONFIG_CRYPTO_SPECK must be enabled.  It
-+is strongly recommended to enable any available architecture-specific
-+implementations of Speck as well, e.g. CONFIG_CRYPTO_SPECK_NEON for
-+ARM, since they can be much faster than the generic implementation.
-+
- New encryption modes can be added relatively easily, without changes
- to individual filesystems.  However, authenticated encryption (AE)
- modes are not currently supported because of the difficulty of dealing
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index fb96e493167b..bf0bbba783f8 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -91,6 +91,10 @@ static inline bool fscrypt_valid_enc_modes(u32 contents_mode,
- 	    filenames_mode == FS_ENCRYPTION_MODE_AES_256_CTS)
- 		return true;
++	verify_block_addr(fio, fio->new_blkaddr);
+ 	trace_f2fs_submit_page_bio(page, fio);
+ 	f2fs_trace_ios(fio, 0);
  
-+	if (contents_mode == FS_ENCRYPTION_MODE_SPECK128_256_XTS &&
-+	    filenames_mode == FS_ENCRYPTION_MODE_SPECK128_256_CTS)
-+		return true;
-+
- 	return false;
+@@ -428,8 +429,8 @@ int f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 	}
+ 
+ 	if (fio->old_blkaddr != NEW_ADDR)
+-		verify_block_addr(sbi, fio->old_blkaddr);
+-	verify_block_addr(sbi, fio->new_blkaddr);
++		verify_block_addr(fio, fio->old_blkaddr);
++	verify_block_addr(fio, fio->new_blkaddr);
+ 
+ 	bio_page = fio->encrypted_page ? fio->encrypted_page : fio->page;
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f6dc706..842adea 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -980,6 +980,7 @@ struct f2fs_io_info {
+ 	bool submitted;		/* indicate IO submission */
+ 	int need_lock;		/* indicate we need to lock cp_rwsem */
+ 	bool in_list;		/* indicate fio is in io_list */
++	bool is_meta;		/* indicate borrow meta inode mapping or not */
+ 	enum iostat_type io_type;	/* io type */
+ 	struct writeback_control *io_wbc; /* writeback control */
+ };
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index dbb774aa..dabe400 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -632,10 +632,31 @@ static inline void check_seg_range(struct f2fs_sb_info *sbi, unsigned int segno)
+ 	f2fs_bug_on(sbi, segno > TOTAL_SEGS(sbi) - 1);
  }
  
-diff --git a/fs/crypto/keyinfo.c b/fs/crypto/keyinfo.c
-index 05f5ee1f0705..96a1eae9e51d 100644
---- a/fs/crypto/keyinfo.c
-+++ b/fs/crypto/keyinfo.c
-@@ -135,6 +135,8 @@ static const struct {
- 					     FS_AES_128_CBC_KEY_SIZE },
- 	[FS_ENCRYPTION_MODE_AES_128_CTS] = { "cts(cbc(aes))",
- 					     FS_AES_128_CTS_KEY_SIZE },
-+	[FS_ENCRYPTION_MODE_SPECK128_256_XTS] = { "xts(speck128)", 64 },
-+	[FS_ENCRYPTION_MODE_SPECK128_256_CTS] = { "cts(cbc(speck128))", 32 },
- };
+-static inline void verify_block_addr(struct f2fs_sb_info *sbi, block_t blk_addr)
+-{
+-	BUG_ON(blk_addr < SEG0_BLKADDR(sbi)
+-			|| blk_addr >= MAX_BLKADDR(sbi));
++static inline void verify_block_addr(struct f2fs_io_info *fio, block_t blk_addr)
++{
++	struct f2fs_sb_info *sbi = fio->sbi;
++	enum page_type btype = PAGE_TYPE_OF_BIO(fio->type);
++	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
++	block_t seg0_blkaddr = le32_to_cpu(raw_super->segment0_blkaddr);
++	block_t main_blkaddr = le32_to_cpu(raw_super->main_blkaddr);
++	block_t max_blkaddr = (le32_to_cpu(raw_super->segment_count)
++				<< sbi->log_blocks_per_seg) + seg0_blkaddr;
++
++	if (is_read_io(fio->op)) {
++		if (btype == META && fio->is_meta)
++			BUG_ON(blk_addr < seg0_blkaddr
++				|| blk_addr >= main_blkaddr);
++		else
++			BUG_ON(blk_addr < main_blkaddr
++				|| blk_addr >= max_blkaddr);
++	} else {
++		if (btype == META)
++			BUG_ON(blk_addr < seg0_blkaddr
++				|| blk_addr >= main_blkaddr);
++		else
++			BUG_ON(blk_addr < main_blkaddr
++				|| blk_addr >= max_blkaddr);
++	}
+ }
  
- static int determine_cipher_type(struct fscrypt_info *ci, struct inode *inode,
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index d2a8313fabd7..0b6e07ee63a6 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -275,6 +275,8 @@ struct fsxattr {
- #define FS_ENCRYPTION_MODE_AES_256_CTS		4
- #define FS_ENCRYPTION_MODE_AES_128_CBC		5
- #define FS_ENCRYPTION_MODE_AES_128_CTS		6
-+#define FS_ENCRYPTION_MODE_SPECK128_256_XTS	7
-+#define FS_ENCRYPTION_MODE_SPECK128_256_CTS	8
- 
- struct fscrypt_policy {
- 	__u8 version;
+ /*
 -- 
-2.16.2.395.g2e18187dfd-goog
+1.9.1
 
 
 ------------------------------------------------------------------------------
