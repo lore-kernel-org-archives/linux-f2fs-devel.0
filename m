@@ -1,26 +1,27 @@
-From: heyunlei <heyunlei@huawei.com>
-Subject: Re: [PATCH v2] f2fs: check blkaddr more accuratly before
- issue a bio
-Date: Mon, 5 Mar 2018 11:35:43 +0000
-Message-ID: <42B685BFA705F94C860C6DD0752F0565483437D5@DGGEMA503-MBX.china.huawei.com>
-References: <1520233626-2330-1-git-send-email-heyunlei@huawei.com>
- <20180305102404.GD4311@codeaurora.org>
+From: "dnsqhk" <qq@723292855.com>
+Subject: [SPAM] TO:linux-f2fs-devel 
+	=?utf-8?B?4piFIDIwMTjvvIjnrKzljYHkupTlsYrvvInljJfkuqzlm73pmYXmsb3ovablsZXop4g=?=
+	会 （Auto China 2018）★  （上P4/C50-mD）
+Date: Mon, 5 Mar 2018 12:07:46 +0000 (UTC)
+Message-ID: <20180305200917257118@zhhty.com>
+Reply-To: EmailQunFa@163.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <heyunlei@huawei.com>) id 1esoPh-000SR7-Tg
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 05 Mar 2018 11:36:17 +0000
+ (envelope-from <xo@zhhty.com>) id 1esovv-000T0K-DN
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 05 Mar 2018 12:09:35 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=huawei.com) by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1esoPd-001nTT-8I
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 05 Mar 2018 11:36:17 +0000
-In-Reply-To: <20180305102404.GD4311@codeaurora.org>
-Content-Language: zh-CN
+ helo=zhhty.com) by sfi-mx-2.v28.lw.sourceforge.com with esmtp
+ (Exim 4.89) id 1esovp-001VaK-4Q
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 05 Mar 2018 12:09:35 +0000
+Received: from veewxsz (unknown [74.204.225.255])
+ by zhhty with SMTP id ZzeJv0K1NOer5GDQ.1
+ for <linux-f2fs-devel@lists.sourceforge.net>; Mon, 05 Mar 2018 20:09:17 +0800
+Date: Sat, 18 Aug 2018 08:18:18 +0800
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,150 +31,101 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Sahitya Tummala <stummala@codeaurora.org>
-Cc: "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: linux-f2fs-devel@lists.sourceforge.net
 
-
-
->-----Original Message-----
->From: Sahitya Tummala [mailto:stummala@codeaurora.org]
->Sent: Monday, March 05, 2018 6:24 PM
->To: heyunlei
->Cc: jaegeuk@kernel.org; Yuchao (T); linux-f2fs-devel@lists.sourceforge.net
->Subject: Re: [f2fs-dev] [PATCH v2] f2fs: check blkaddr more accuratly before issue a bio
->
->On Mon, Mar 05, 2018 at 03:07:06PM +0800, Yunlei He wrote:
->> This patch check blkaddr more accuratly before issue a
->> write or read bio.
->>
->> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->> ---
->>  fs/f2fs/checkpoint.c |  2 ++
->>  fs/f2fs/data.c       |  5 +++--
->>  fs/f2fs/f2fs.h       |  1 +
->>  fs/f2fs/segment.h    | 29 +++++++++++++++++++++++++----
->>  4 files changed, 31 insertions(+), 6 deletions(-)
->>
->> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->> index 5b2db75..bf77946 100644
->> --- a/fs/f2fs/checkpoint.c
->> +++ b/fs/f2fs/checkpoint.c
->> @@ -68,6 +68,7 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
->>  		.old_blkaddr = index,
->>  		.new_blkaddr = index,
->>  		.encrypted_page = NULL,
->> +		.is_meta = is_meta,
->>  	};
->>
->>  	if (unlikely(!is_meta))
->> @@ -162,6 +163,7 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
->>  		.op_flags = sync ? (REQ_META | REQ_PRIO) : REQ_RAHEAD,
->>  		.encrypted_page = NULL,
->>  		.in_list = false,
->> +		.is_meta = (type != META_POR),
->>  	};
->>  	struct blk_plug plug;
->>
->> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->> index 6c3c978..de036e8 100644
->> --- a/fs/f2fs/data.c
->> +++ b/fs/f2fs/data.c
->> @@ -383,6 +383,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
->>  	struct page *page = fio->encrypted_page ?
->>  			fio->encrypted_page : fio->page;
->>
->> +	verify_block_addr(fio, fio->new_blkaddr);
->>  	trace_f2fs_submit_page_bio(page, fio);
->>  	f2fs_trace_ios(fio, 0);
->>
->> @@ -428,8 +429,8 @@ int f2fs_submit_page_write(struct f2fs_io_info *fio)
->>  	}
->>
->>  	if (fio->old_blkaddr != NEW_ADDR)
->> -		verify_block_addr(sbi, fio->old_blkaddr);
->> -	verify_block_addr(sbi, fio->new_blkaddr);
->> +		verify_block_addr(fio, fio->old_blkaddr);
->> +	verify_block_addr(fio, fio->new_blkaddr);
->>
->>  	bio_page = fio->encrypted_page ? fio->encrypted_page : fio->page;
->>
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index f6dc706..842adea 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -980,6 +980,7 @@ struct f2fs_io_info {
->>  	bool submitted;		/* indicate IO submission */
->>  	int need_lock;		/* indicate we need to lock cp_rwsem */
->>  	bool in_list;		/* indicate fio is in io_list */
->> +	bool is_meta;		/* indicate borrow meta inode mapping or not */
->>  	enum iostat_type io_type;	/* io type */
->>  	struct writeback_control *io_wbc; /* writeback control */
->>  };
->> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
->> index dbb774aa..dabe400 100644
->> --- a/fs/f2fs/segment.h
->> +++ b/fs/f2fs/segment.h
->> @@ -632,10 +632,31 @@ static inline void check_seg_range(struct f2fs_sb_info *sbi, unsigned int segno)
->>  	f2fs_bug_on(sbi, segno > TOTAL_SEGS(sbi) - 1);
->>  }
->>
->> -static inline void verify_block_addr(struct f2fs_sb_info *sbi, block_t blk_addr)
->> -{
->> -	BUG_ON(blk_addr < SEG0_BLKADDR(sbi)
->> -			|| blk_addr >= MAX_BLKADDR(sbi));
->> +static inline void verify_block_addr(struct f2fs_io_info *fio, block_t blk_addr)
->> +{
->> +	struct f2fs_sb_info *sbi = fio->sbi;
->> +	enum page_type btype = PAGE_TYPE_OF_BIO(fio->type);
->> +	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
->> +	block_t seg0_blkaddr = le32_to_cpu(raw_super->segment0_blkaddr);
->> +	block_t main_blkaddr = le32_to_cpu(raw_super->main_blkaddr);
->> +	block_t max_blkaddr = (le32_to_cpu(raw_super->segment_count)
->> +				<< sbi->log_blocks_per_seg) + seg0_blkaddr;
->
->Why not use the existing macros - MAIN_BLKADDR, SEG0_BLKADDR and MAX_BLKADDR?
-
-Some read io during mount process will issue before segment manager init, which will
-conduct panic.
-
-Thanks.
->
->> +
->> +	if (is_read_io(fio->op)) {
->> +		if (btype == META && fio->is_meta)
->> +			BUG_ON(blk_addr < seg0_blkaddr
->> +				|| blk_addr >= main_blkaddr);
->> +		else
->> +			BUG_ON(blk_addr < main_blkaddr
->> +				|| blk_addr >= max_blkaddr);
->> +	} else {
->> +		if (btype == META)
->> +			BUG_ON(blk_addr < seg0_blkaddr
->> +				|| blk_addr >= main_blkaddr);
->> +		else
->> +			BUG_ON(blk_addr < main_blkaddr
->> +				|| blk_addr >= max_blkaddr);
->> +	}
->>  }
->>
->>  /*
->> --
->> 1.9.1
->>
->>
->> ------------------------------------------------------------------------------
->> Check out the vibrant tech community on one of the world's most
->> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->
->--
->--
->Sent by a consultant of the Qualcomm Innovation Center, Inc.
->The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+DQrvvIjlj4LlsZXlkqjor6LkuJPnlKjpgq7nrrHvvJoxMjgwOTM5NUBxcS5jb23vvIkNCuOAgOOA
+gA0KMjAxOO+8iOesrOWNgeS6lOWxiu+8ieWMl+S6rOWbvemZheaxvei9puWxleiniOS8miDvvIhB
+dXRvIENoaW5hIDIwMTjvvIkNCuOAgOOAgA0K44CA44CADQril4Yg5bGV5Lya5pe26Ze077yaICAy
+MDE45bm0MDTmnIgyMS0tMjnml6UgDQril4Yg5bGV5Lya5Zyw54K577yaICDkuK3lm73lm73pmYXl
+sZXop4jkuK3lv4PvvIjmlrDppobvvIvogIHppobvvIkNCg0K4peGIOWxleS8muS4u+mimO+8miAg
+5rG96L2m6K6p5pyq5p2l5pu0576O5aW9DQril4Yg5bGV5Lya57qn5Yir77yaICDlhajnkIPmnIDp
+h43opoHnmoRB57qn6L2m5bGVDQrjgIDjgIANCuKXhiDlsZXkvJrpnaLnp6/vvJogIDIz5LiH5bmz
+57Gz77yI5LiK5bGK77yJDQril4Yg6KeC5LyX5Lq65pWw77yaICA4MOS4h+S6uuasoe+8iOS4iuWx
+iu+8iQ0K4peGIOWxleS8muWRqOacn++8miAg5Lik5bm05LiA5bGKIA0K44CA44CADQril4Yg5ZKo
+6K+i55S16K+d77yaICA0MDAwLTY4MC04NjDvvIjovaw4MTQ05oiWNTIyMO+8ie+8myAxMzktMTAz
+MS04MTQ044CBMTMxLTI2NjItNTIwNi4gDQril4Yg5Zyo57q/5a6i5pyN77yaICBRUS/pgq7nrrHv
+vJoxMjgwOTM5NSNxcS5jb23vvJsg5b6u5L+h77yaeW9uZGV4cG/vvJsg5b6u5Y2a77yaaHR0cDov
+L3dlaWJvLmNvbS95aW5nZGVodWl6aGFuIA0K44CA44CADQrjgIDjgIANCuOAkOOAgEZvcmV3b3Jk
+44CA5YmN6KiA44CA44CRDQoJCQ0K44CA44CA5pyJ552A5LqM5Y2B5aSa5bm05Y6G5Y+y55qE4oCc
+5YyX5Lqs5Zu96ZmF5rG96L2m5bGV6KeI5Lya77yIQXV0byBDaGluYe+8ieKAne+8jOiHs+S7iuW3
+sui/nue7reaIkOWKn+S4vuWKnuS6huWNgeWbm+Wxiu+8jOaYr+WFqOeQg+axvei9puS4mueVjOWc
+qOS4reWbveavj+S4pOW5tOS4gOasoeeahOmHjeimgeWxleekuua0u+WKqOOAguS+neaJmOS4reWb
+veW3qOWkp+eahOaxvei9pua2iOi0ueW4guWcuuWSjOW/q+mAn+WPkeWxleeahOS4reWbveaxvei9
+puW3peS4mu+8jOWMl+S6rOWbvemZheaxvei9puWxleiniOS8muWcqOWxleiniOinhOaooeOAgeWb
+vemZheWMluawtOWHhuOAgeWxleWTgei0qOmHj+S7peWPiuWcqOWFqOeQg+eahOW9seWTjeWKm+mA
+kOWxiuaPkOmrmO+8jOWPl+WIsOS4reWkluaxvei9pueVjOOAgeaWsOmXu+eVjOWSjOekvuS8muWQ
+hOeVjOeahOmrmOW6puWFs+azqOWSjOenr+aegeWPguS4juOAguS8l+WkmuWbvemZheefpeWQjeax
+vei9puWFrOWPuOWwhuWMl+S6rOWbvemZheaxvei9puWxleiniOS8muWIl+S4uuWFqOeQg+acgOmH
+jeimgeeahOWbvemZhee6p+i9puWxle+8jOS4reWbveacrOWcn+axvei9puS8geS4muS5n+WwhuWM
+l+S6rOWbvemZheaxvei9puWxleiniOS8muS9nOS4uuWxleekuuiHquS4u+efpeivhuWTgeeJjOOA
+geaOqOWHuuacgOaWsOenkeaKgOaIkOaenOeahOmmlumAieW5s+WPsOOAguS6jOWNgeWkmuW5tOad
+pe+8jOWMl+S6rOWbvemZheaxvei9puWxleiniOS8muWni+e7iOWdmuaMgeWxleWTgeeyvuOAgeWT
+geeJjOWFqOOAgeWbvemZheWMlueahOWKnuWxleeQhuW/teWSjOeJueiJsu+8jOiHtOWKm+S6juaJ
+k+mAoOS4uuS4reWkluaxvei9puS8geS4muWxleekuuW9ouixoeOAgeaOqOW5v+WTgeeJjOOAgeS/
+g+i/m+S6pOa1geiejeWQiOOAgeayn+mAmuS/oeaBr+aKgOacr+eahOW5s+WPsOOAgg0K44CA44CA
+DQrjgIDjgIDlnKjlhajnkIPmsb3ovabkuJrnvJPmhaLlpI3oi4/nmoTku4rlpKnvvIzigJwyMDE4
+77yI56ys5Y2B5LqU5bGK77yJ5YyX5Lqs5Zu96ZmF5rG96L2m5bGV6KeI5Lya4oCd5pyJ5L+h5b+D
+57un57ut5Lul5Lit5Zu95oyB57ut57mB6I2j55qE5rG96L2m5biC5Zy65ZKM5Yib5paw5Y+R5bGV
+55qE5Lit5Zu95rG96L2m5bel5Lia5Li66IOM5pmv77yM5pC65omL5Zu95YaF5aSW5rG96L2m5Lia
+55WM5ZCM5LuB77yM5Li65L+D6L+b5Lit5aSW5rG96L2m5Lia55WM55qE5Lqk5rWB5LiO5ZCI5L2c
+44CB5Li65Lit5aSW5rG96L2m5Lia55qE5oyv5YW05ZKM5Y+R5bGV5YGa5Ye65paw55qE6LSh54yu
+44CCDQrjgIDjgIANCuOAgOOAgOaIkeS7rOivmumCgOS4reWkluaxvei9puWOguWVhuenr+aegeWP
+guWKoOKAnDIwMTjvvIjnrKzljYHkupTlsYrvvInljJfkuqzlm73pmYXmsb3ovablsZXop4jkvJri
+gJ3vvIzkuZ/ng63or5rmrKLov47kuK3lpJblqpLkvZPnmoTorrDogIXlsYrml7bliLDlnLrlj4Lo
+p4LjgIHmiqXpgZPjgILlgJ/mraTmnLrkvJrvvIzmiJHku6zkuZ/lr7nnpL7kvJrlkITnlYzplb/m
+nJ/ku6XmnaXlr7nljJfkuqzovablsZXnmoTng63mg4XlhbPms6jlkozlpKflipvmlK/mjIHooajn
+pLrmhJ/osKLvvIENCuOAgOOAgA0K44CA44CADQrjgJDjgIBFeGhpYml0b3Jz44CA5Y+C5bGV5Y2V
+5L2N44CA44CRDQrjgIDjgIANCuKXhiDkuZjnlKjovabjgIHllYbnlKjovabliLbpgKDljoLjgIHl
+lYblrrYgDQril4Yg5rG96L2m6Zu26YOo5Lu25Yi26YCg5Y6C44CB5ZWG5a62IA0K4peGIOi9puWP
+iuebuOWFs+S6p+WTgeiuvuiuoeacuuaehCANCuKXhiDmsb3ovaboo4XppbDnlKjlk4HjgIHmtojo
+tLnlk4HllYblrrYgDQril4Yg6YeR6J6N5pyN5Yqh5py65p6EIA0K4peGIOaxvei9puWPiuebuOWF
+s+S6p+WTgeWVhui0uOWFrOWPuCANCuKXhiDmsb3ovabooYzkuJrlj4rnm7jlhbPlqpLkvZMNCuOA
+gOOAgA0K44CA44CADQrjgJDjgIBFeGhpYml0b3JzIHJhbmdl44CA5Y+C5bGV6IyD5Zu044CA44CR
+DQrjgIDjgIANCuKXhiDlkITnp43nsbvlnovnmoTmsb3ovabvvIjljIXmi6zovb/ovabjgIHllYbn
+lKjovablj4rkuJPnlKjovabvvIkgDQril4Yg5ZCE56eN57G75Z6L55qE5qaC5b+16L2mIA0K4peG
+IOWQhOenjeaxvei9pumbtumDqOS7tuOAgeaAu+aIkOOAgeaooeWdl+WPiuezu+e7nyANCuKXhiDl
+kITnp43msb3ovabliLbpgKDorr7lpIfvvIzlt6Xoibroo4XlpIcgDQril4Yg5ZCE56eN5qOA5rWL
+44CB5rWL6K+V44CB5a6e6aqM5Luq5Zmo5ZKM6K6+5aSHIA0K4peGIOiuoeeul+acuuW8gOWPkeiu
+vuiuoeezu+e7n+WPiuW6lOeUqOaKgOacryANCuKXhiDmsb3ovablt6XkuJrnlJ/kuqfnmoTmlrDl
+t6XoibrjgIHmlrDmnZDmlpkgDQril4Yg5rG96L2m5bel5Lia5paw6IO95rqQ5oqA5pyv5LiO5Lqn
+5ZOBIA0K4peGIOaxvei9puW3peS4mueOr+S/neaKgOacr+S4juS6p+WTgSANCuKXhiDlkITnp43m
+sb3ovabnlKjlk4HjgIHoo4XppbDku7YgDQril4Yg5ZCE56eN5rG96L2m57u05L+u6K6+5aSHDQrj
+gIDjgIANCuOAgOOAgA0K44CQ44CARXhoaWJpdG9ycyBwcm9jZXNz44CA5Y+C5bGV56iL5bqP44CA
+44CRDQoJCQ0KMe+8juivt+WQhOWPguWxleWNleS9jeiupOecn+Whq+WGmeOAiuWPguWxleeUs+iv
+t+ihqOOAi++8iOingeihqDHvvInlkozlsZXlk4HmuIXljZXvvIjop4Hooagy77yJ77yM5LqOMjAx
+N+W5tDA55pyIMzDml6XliY3kvKDnnJ/oh7Pnp5jkuablpITjgILlkITlj4LlsZXljZXkvY3pmo/n
+lLPor7fooajlr4TpgIHkuqflk4HmoLfmnKzmiJbor7TmmI7kuabkuKTku73vvJsNCjLvvI7np5jk
+uablpITmlLbliLDlj4LlsZXljZXkvY3nlLPor7fooajlkozlsZXlk4HmuIXljZXlkI7vvIzlsIbk
+vJrlkIzmnInlhbPpg6jpl6jlr7nlsZXlk4Hov5vooYzlrqHmn6XvvIzlrqHmn6XlkIjmoLzlkI7v
+vIznlLHlpKfkvJrnp5jkuablpITmoLjlj5Hlj4LlsZXnoa7orqTkuabvvIzlj4LlsZXmiYvlhozn
+rYnmnInlhbPotYTmlpnvvJsNCjPvvI7lj4LlsZXljZXkvY3mlLbliLDnp5jkuablpITnmoTjgIrl
+j4LlsZXnoa7orqTkuabjgIvlkI7vvIzmjInopoHmsYLlsIbnm7jlhbPotLnnlKjmsYfoh7PmjIfl
+rprpk7booYzotKbmiLfvvIzlubbmjInliIbphY3nmoTlsZXlnLDov5vooYzlsZXlj7Dorr7orqHl
+kozlkITpobnlh4blpIflt6XkvZzjgIINCuOAgOOAgA0K44CA44CADQrjgJDjgIBFeGhpYml0aW9u
+IENvbnRhY3TjgIDlj4LlsZXogZTnu5zjgIDjgJENCuOAgOOAgA0K5pyJ5YWz5Y6C5ZWG5Y+C5bGV
+4oCcQXV0byBDaGluYSDljJfkuqzovablsZXigJ3kuovlrpzvvIwNCuaVrOivt+iBlOe7nOWkp+S8
+muenmOS5puWkhOKAlOKAlA0K44CA44CADQrmmKDlvrflm73pmYXkvJrlsZXpm4blm6LkuK3lm73k
+u6PooajlpIQg44CO5LiH5ZWG6L6J5pigIOW+t+i+vuWkqeS4i+OAjw0K5YWo5Zu957uf5LiA5a6i
+5pyN54Ot57q/77yaIDQwMDAtNTgwLTg1MC7vvIjliIbmnLrvvJo4MTQ05oiWNTIyMO+8ieOAgA0K
+5YWo5Zu957uf5LiA5oql5ZCN5LiT57q/77yaIDQwMDAtNjgwLTg2MC7vvIjlhbzkvKDnnJ/vvIkN
+CuWPguWxlemhvumXru+8miDnjovlhYjnlJ8g77yI5omL5py677yaMTM5LTEwMzEtODE0NO+8iQ0K
+5Zyo57q/5a6i5pyN77yaIFFRL+mCrueuse+8mjEyODA5Mzk1I3FxLmNvbe+8myDlvq7kv6HvvJp5
+b25kZXhwb++8myDlvq7ljZrvvJpodHRwOi8vd2VpYm8uY29tL3lpbmdkZWh1aXpoYW4NCuOAgOOA
+gA0K44CA44CADQrjgIDjgIDjgIDjgIDjgIDjgIDjgIDjgIDjgIDjgIDjgJQg5pig5b635Lya5bGV
+IC8g6K+a6YKA5Y+C5YqgMjAxOOW5tOW6puadg+WogeWunuaViOWTgeeJjOebm+S8mu+5ng0K44CA
+44CADQrjgIDjgIANCuOAkCDlhazkvJflubPlj7Ag44CRDQrjgIDjgIANCuW+ruS/oe+8miDlj4Ll
+sZXmtojmga8g77yISUTvvJpDYW5aaGFuWGlhb1hp77yJ4oCU4oCUIOWTgeeJjOaJqeW8oOeahOW5
+s+WPsOOAgOW4guWcuuW8gOaLk+eahOahpeaigQ0K5b6u5L+h77yaIOWxleWVhuS5i+WutiDvvIhJ
+RO+8mlpoYW5TaGFuZ1poaUppYe+8ieKAlOKAlCDkuLrlsZXllYbmj5DkvpvmnIDkvbPokKXlnLDj
+gIDkuLrpmIHkuIvokKXpgKDlj4LlsZXku7flgLwNCuOAgOOAgA0K44CA44CADQotLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0K55m+5LiH576k5Y+R57O7
+57uffOS4uuaCqOWPkemAgXzlpoLkuI3luIzmnJvlho3mlLbliLDmraTooYzkuJrotYTorq986K+3
+5Zue5aSN4oCc6YCA6K6iK+WMl+S6rOi9puWxleKAneiHs+mCrueusTEwNTU4MDA4MTJAcXEuY29t
+DQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVu
+aXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0CmVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNo
+ZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Ckxp
+bnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNl
+Zm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
