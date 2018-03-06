@@ -1,22 +1,23 @@
 From: Sheng Yong <shengyong1@huawei.com>
-Subject: [RFC PATCH v3] f2fs: introduce F2FS_FEATURE_LOST_FOUND
- feature
-Date: Tue, 6 Mar 2018 11:39:04 +0800
-Message-ID: <20180306033904.122540-1-shengyong1@huawei.com>
+Subject: [RFC PATCH v3 1/2] mkfs.f2fs: create lost+found directory
+Date: Tue, 6 Mar 2018 11:39:39 +0800
+Message-ID: <20180306033940.122604-2-shengyong1@huawei.com>
+References: <20180306033940.122604-1-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- (envelope-from <shengyong1@huawei.com>) id 1et3Rv-003EJp-8D
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Mar 2018 03:39:35 +0000
+ (envelope-from <shengyong1@huawei.com>) id 1et3SU-000dx8-4C
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Mar 2018 03:40:10 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=huawei.com) by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ helo=huawei.com) by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.89)
- id 1et3Rr-001wiZ-Oo
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Mar 2018 03:39:35 +0000
+ id 1et3SR-002NLe-7L
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Mar 2018 03:40:09 +0000
+In-Reply-To: <20180306033940.122604-1-shengyong1@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,321 +28,424 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: ebiggers@google.com, miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-This patch introduces a new feature, F2FS_FEATURE_LOST_FOUND, which
-is set by mkfs. It creates a directory named lost+found, which saves
-unreachable files. If fsck finds a file which has no parent, or its
-parent is removed by fsck, the file will be placed under lost+found
-directory by fsck.
+This patch introduces a new feature F2FS_FEATURE_LOST_FOUND. It can be
+switched on by indicating `-O lost_found'. If LOST_FOUND feature is
+enabled, an empty directory lost+found is created by mkfs.
 
-lost+found directory could not be encrypted. As a result, the root
-directory cannot be encrypted too. So if LOST_FOUND feature is enabled,
-let's avoid to encrypt root directory.
-
-This patch also introduces a new mount option `test_dummy_encryption'
-to allow fscrypt to create a fake fscrypt context. This is used by
-xfstests.
+This is a preparation for fsck. During fsck, the directory is used to
+save unreachable files, which have no parent directory or their parent
+directory is removed by fsck. Encrypted files are also allowed to be
+saved here.
 
 Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 ---
-v3->v2:
- * fix test_dummy_encryption
-v2->v1:
- * introduce new mount option test_dummy_encryption
- * add sysfs entry for LOST_FOUND feature
+ fsck/mount.c            |   3 +
+ include/f2fs_fs.h       |   6 ++
+ mkfs/f2fs_format.c      | 223 +++++++++++++++++++++++++++++++++++++++++++++---
+ mkfs/f2fs_format_main.c |   2 +
+ 4 files changed, 222 insertions(+), 12 deletions(-)
 
- fs/f2fs/dir.c   |  6 ++++--
- fs/f2fs/f2fs.h  | 17 +++++++++++++++++
- fs/f2fs/namei.c |  9 ++++++---
- fs/f2fs/super.c | 56 +++++++++++++++++++++++++++++++++++++++++++++++++++-----
- fs/f2fs/sysfs.c |  7 +++++++
- 5 files changed, 85 insertions(+), 10 deletions(-)
-
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 797eb05cb538..7f908be8d525 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -361,6 +361,7 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
- 			struct page *dpage)
- {
- 	struct page *page;
-+	int encrypt = DUMMY_ENCRYPTION_ENABLED(F2FS_I_SB(dir));
- 	int err;
- 
- 	if (is_inode_flag_set(inode, FI_NEW_INODE)) {
-@@ -387,7 +388,8 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
- 		if (err)
- 			goto put_error;
- 
--		if (f2fs_encrypted_inode(dir) && f2fs_may_encrypt(inode)) {
-+		if ((f2fs_encrypted_inode(dir) || encrypt) &&
-+					f2fs_may_encrypt(inode)) {
- 			err = fscrypt_inherit_context(dir, inode, page, false);
- 			if (err)
- 				goto put_error;
-@@ -402,7 +404,7 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
- 
- 	if (new_name) {
- 		init_dent_inode(new_name, page);
--		if (f2fs_encrypted_inode(dir))
-+		if (f2fs_encrypted_inode(dir) || encrypt)
- 			file_set_enc_name(inode);
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 7c3f312..b8e7643 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -460,6 +460,9 @@ void print_sb_state(struct f2fs_super_block *sb)
+ 	if (f & cpu_to_le32(F2FS_FEATURE_INODE_CRTIME)) {
+ 		MSG(0, "%s", " inode_crtime");
  	}
++	if (f & cpu_to_le32(F2FS_FEATURE_LOST_FOUND)) {
++		MSG(0, "%s", " lost_found");
++	}
+ 	MSG(0, "\n");
+ 	MSG(0, "Info: superblock encrypt level = %d, salt = ",
+ 					sb->encryption_level);
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index ca4522d..093c402 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -291,6 +291,8 @@ static inline uint64_t bswap_64(uint64_t val)
  
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f6dc70666ebb..77af79d0376b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -125,6 +125,7 @@ struct f2fs_mount_info {
+ #define VERSION_LEN	256
+ 
++#define LPF "lost+found"
++
+ enum f2fs_config_func {
+ 	MKFS,
+ 	FSCK,
+@@ -369,6 +371,9 @@ struct f2fs_configuration {
+ 	u_int32_t next_free_nid;
+ 	u_int32_t quota_inum;
+ 	u_int32_t quota_dnum;
++	u_int32_t lpf_inum;
++	u_int32_t lpf_dnum;
++	u_int32_t lpf_ino;
+ 
+ 	/* defragmentation parameters */
+ 	int defrag_shrink;
+@@ -557,6 +562,7 @@ enum {
  #define F2FS_FEATURE_FLEXIBLE_INLINE_XATTR	0x0040
  #define F2FS_FEATURE_QUOTA_INO		0x0080
  #define F2FS_FEATURE_INODE_CRTIME	0x0100
 +#define F2FS_FEATURE_LOST_FOUND		0x0200
  
- #define F2FS_HAS_FEATURE(sb, mask)					\
- 	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
-@@ -1052,6 +1053,15 @@ enum {
- 	ALLOC_MODE_REUSE,	/* reuse segments as much as possible */
- };
+ #define MAX_VOLUME_NAME		512
  
-+#define F2FS_MF_TEST_DUMMY_ENCRYPTION	0x0001
-+
-+#ifdef CONFIG_F2FS_FS_ENCRYPTION
-+#define DUMMY_ENCRYPTION_ENABLED(sbi) (unlikely((sbi)->mount_flags & \
-+						F2FS_MF_TEST_DUMMY_ENCRYPTION))
-+#else
-+#define DUMMY_ENCRYPTION_ENABLED(sbi) (0)
-+#endif
-+
- struct f2fs_sb_info {
- 	struct super_block *sb;			/* pointer to VFS super block */
- 	struct proc_dir_entry *s_proc;		/* proc entry */
-@@ -1241,6 +1251,8 @@ struct f2fs_sb_info {
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index c9492f6..d277740 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -426,6 +426,9 @@ static int f2fs_prepare_super_block(void)
+ 					qtype, c.next_free_nid - 1);
+ 	}
  
- 	/* segment allocation policy */
- 	int alloc_mode;
++	if (c.feature & cpu_to_le32(F2FS_FEATURE_LOST_FOUND))
++		c.lpf_ino = c.next_free_nid++;
 +
-+	unsigned int mount_flags;
- };
+ 	if (total_zones <= 6) {
+ 		MSG(1, "\tError: %d zones: Need more zones "
+ 			"by shrinking zone size\n", total_zones);
+@@ -608,9 +611,10 @@ static int f2fs_write_check_point_pack(void)
+ 		set_cp(cur_data_segno[i], 0xffffffff);
+ 	}
  
- #ifdef CONFIG_F2FS_FAULT_INJECTION
-@@ -3201,6 +3213,10 @@ static inline bool f2fs_bio_encrypted(struct bio *bio)
- static inline int f2fs_sb_has_##name(struct super_block *sb) \
- { \
- 	return F2FS_HAS_FEATURE(sb, F2FS_FEATURE_##flagname); \
-+} \
-+static inline int f2fs_sb_set_##name(struct super_block *sb) \
-+{ \
-+	return F2FS_SET_FEATURE(sb, F2FS_FEATURE_##flagname); \
+-	set_cp(cur_node_blkoff[0], 1 + c.quota_inum);
+-	set_cp(cur_data_blkoff[0], 1 + c.quota_dnum);
+-	set_cp(valid_block_count, 2 + c.quota_inum + c.quota_dnum);
++	set_cp(cur_node_blkoff[0], 1 + c.quota_inum + c.lpf_inum);
++	set_cp(cur_data_blkoff[0], 1 + c.quota_dnum + c.lpf_dnum);
++	set_cp(valid_block_count, 2 + c.quota_inum + c.quota_dnum +
++			c.lpf_inum + c.lpf_dnum);
+ 	set_cp(rsvd_segment_count, c.reserved_segments);
+ 	set_cp(overprov_segment_count, (get_sb(segment_count_main) -
+ 			get_cp(rsvd_segment_count)) *
+@@ -642,8 +646,8 @@ static int f2fs_write_check_point_pack(void)
+ 
+ 	set_cp(ckpt_flags, flags);
+ 	set_cp(cp_pack_start_sum, 1 + get_sb(cp_payload));
+-	set_cp(valid_node_count, 1 + c.quota_inum);
+-	set_cp(valid_inode_count, 1 + c.quota_inum);
++	set_cp(valid_node_count, 1 + c.quota_inum + c.lpf_inum);
++	set_cp(valid_inode_count, 1 + c.quota_inum + c.lpf_inum);
+ 	set_cp(next_free_nid, c.next_free_nid);
+ 	set_cp(sit_ver_bitmap_bytesize, ((get_sb(segment_count_sit) / 2) <<
+ 			get_sb(log_blocks_per_seg)) / 8);
+@@ -702,7 +706,7 @@ static int f2fs_write_check_point_pack(void)
+ 	SET_SUM_TYPE((&sum->footer), SUM_TYPE_DATA);
+ 
+ 	journal = &sum->journal;
+-	journal->n_nats = cpu_to_le16(1 + c.quota_inum);
++	journal->n_nats = cpu_to_le16(1 + c.quota_inum + c.lpf_inum);
+ 	journal->nat_j.entries[0].nid = sb->root_ino;
+ 	journal->nat_j.entries[0].ne.version = 0;
+ 	journal->nat_j.entries[0].ne.ino = sb->root_ino;
+@@ -723,6 +727,16 @@ static int f2fs_write_check_point_pack(void)
+ 		i++;
+ 	}
+ 
++	if (c.lpf_inum) {
++		journal->nat_j.entries[i].nid = cpu_to_le32(c.lpf_ino);
++		journal->nat_j.entries[i].ne.version = 0;
++		journal->nat_j.entries[i].ne.ino = cpu_to_le32(c.lpf_ino);
++		journal->nat_j.entries[i].ne.block_addr = cpu_to_le32(
++				get_sb(main_blkaddr) +
++				get_cp(cur_node_segno[0]) *
++				c.blks_per_seg + i);
++	}
++
+ 	memcpy(sum_compact_p, &journal->n_nats, SUM_JOURNAL_SIZE);
+ 	sum_compact_p += SUM_JOURNAL_SIZE;
+ 
+@@ -732,10 +746,13 @@ static int f2fs_write_check_point_pack(void)
+ 	journal->sit_j.entries[0].segno = cp->cur_node_segno[0];
+ 	journal->sit_j.entries[0].se.vblocks =
+ 				cpu_to_le16((CURSEG_HOT_NODE << 10) |
+-						(1 + c.quota_inum));
++						(1 + c.quota_inum + c.lpf_inum));
+ 	f2fs_set_bit(0, (char *)journal->sit_j.entries[0].se.valid_map);
+ 	for (i = 1; i <= c.quota_inum; i++)
+ 		f2fs_set_bit(i, (char *)journal->sit_j.entries[0].se.valid_map);
++	if (c.lpf_inum)
++		f2fs_set_bit(i, (char *)journal->sit_j.entries[0].se.valid_map);
++
+ 	journal->sit_j.entries[1].segno = cp->cur_node_segno[1];
+ 	journal->sit_j.entries[1].se.vblocks =
+ 				cpu_to_le16((CURSEG_WARM_NODE << 10));
+@@ -747,10 +764,12 @@ static int f2fs_write_check_point_pack(void)
+ 	journal->sit_j.entries[3].segno = cp->cur_data_segno[0];
+ 	journal->sit_j.entries[3].se.vblocks =
+ 				cpu_to_le16((CURSEG_HOT_DATA << 10) |
+-						(1 + c.quota_dnum));
++						(1 + c.quota_dnum + c.lpf_dnum));
+ 	f2fs_set_bit(0, (char *)journal->sit_j.entries[3].se.valid_map);
+ 	for (i = 1; i <= c.quota_dnum; i++)
+ 		f2fs_set_bit(i, (char *)journal->sit_j.entries[3].se.valid_map);
++	if (c.lpf_dnum)
++		f2fs_set_bit(i, (char *)journal->sit_j.entries[3].se.valid_map);
+ 
+ 	journal->sit_j.entries[4].segno = cp->cur_data_segno[1];
+ 	journal->sit_j.entries[4].se.vblocks =
+@@ -780,6 +799,11 @@ static int f2fs_write_check_point_pack(void)
+ 		off += QUOTA_DATA(qtype);
+ 	}
+ 
++	if (c.lpf_dnum) {
++		(sum_entry + off)->nid = cpu_to_le32(c.lpf_ino);
++		(sum_entry + off)->ofs_in_node = 0;
++	}
++
+ 	/* warm data summary, nothing to do */
+ 	/* cold data summary, nothing to do */
+ 
+@@ -804,6 +828,11 @@ static int f2fs_write_check_point_pack(void)
+ 		sum->entries[1 + i].ofs_in_node = 0;
+ 		i++;
+ 	}
++	if (c.lpf_inum) {
++		i++;
++		sum->entries[i].nid = cpu_to_le32(c.lpf_ino);
++		sum->entries[i].ofs_in_node = 0;
++	}
+ 
+ 	cp_seg_blk++;
+ 	DBG(1, "\tWriting Segment summary for HOT_NODE, at offset 0x%08"PRIx64"\n",
+@@ -963,7 +992,7 @@ static int f2fs_discard_obsolete_dnode(void)
+ 	offset += c.cur_seg[CURSEG_WARM_NODE] * c.blks_per_seg;
+ 
+ 	last_inode_pos = start_inode_pos +
+-		c.cur_seg[CURSEG_HOT_NODE] * c.blks_per_seg + c.quota_inum;
++		c.cur_seg[CURSEG_HOT_NODE] * c.blks_per_seg + c.quota_inum + c.lpf_inum;
+ 
+ 	do {
+ 		if (offset < get_sb(main_blkaddr) || offset >= end_blkaddr)
+@@ -1016,7 +1045,10 @@ static int f2fs_write_root_inode(void)
+ 			c.blks_per_seg + 1);
+ 
+ 	raw_node->i.i_mode = cpu_to_le16(0x41ed);
+-	raw_node->i.i_links = cpu_to_le32(2);
++	if (c.lpf_ino)
++		raw_node->i.i_links = cpu_to_le32(3);
++	else
++		raw_node->i.i_links = cpu_to_le32(2);
+ 	raw_node->i.i_uid = cpu_to_le32(getuid());
+ 	raw_node->i.i_gid = cpu_to_le32(getgid());
+ 
+@@ -1122,10 +1154,16 @@ static int f2fs_write_default_quota(int qtype, unsigned int blkaddr,
+ 	dqblk.dqb_pad = cpu_to_le32(0);
+ 	dqblk.dqb_ihardlimit = cpu_to_le64(0);
+ 	dqblk.dqb_isoftlimit = cpu_to_le64(0);
+-	dqblk.dqb_curinodes = cpu_to_le64(1);
++	if (c.lpf_ino)
++		dqblk.dqb_curinodes = cpu_to_le64(2);
++	else
++		dqblk.dqb_curinodes = cpu_to_le64(1);
+ 	dqblk.dqb_bhardlimit = cpu_to_le64(0);
+ 	dqblk.dqb_bsoftlimit = cpu_to_le64(0);
+-	dqblk.dqb_curspace = cpu_to_le64(4096);
++	if (c.lpf_ino)
++		dqblk.dqb_curspace = cpu_to_le64(8192);
++	else
++		dqblk.dqb_curspace = cpu_to_le64(4096);
+ 	dqblk.dqb_btime = cpu_to_le64(0);
+ 	dqblk.dqb_itime = cpu_to_le64(0);
+ 
+@@ -1300,6 +1338,142 @@ static int f2fs_update_nat_root(void)
+ 	return 0;
  }
  
- F2FS_FEATURE_FUNCS(encrypt, ENCRYPT);
-@@ -3211,6 +3227,7 @@ F2FS_FEATURE_FUNCS(inode_chksum, INODE_CHKSUM);
- F2FS_FEATURE_FUNCS(flexible_inline_xattr, FLEXIBLE_INLINE_XATTR);
- F2FS_FEATURE_FUNCS(quota_ino, QUOTA_INO);
- F2FS_FEATURE_FUNCS(inode_crtime, INODE_CRTIME);
-+F2FS_FEATURE_FUNCS(lost_found, LOST_FOUND);
- 
- #ifdef CONFIG_BLK_DEV_ZONED
- static inline int get_blkz_type(struct f2fs_sb_info *sbi,
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 318dfe870cb5..5dd6a112e13d 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -78,7 +78,8 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 	set_inode_flag(inode, FI_NEW_INODE);
- 
- 	/* If the directory encrypted, then we should encrypt the inode. */
--	if (f2fs_encrypted_inode(dir) && f2fs_may_encrypt(inode))
-+	if ((f2fs_encrypted_inode(dir) || DUMMY_ENCRYPTION_ENABLED(sbi)) &&
-+				f2fs_may_encrypt(inode))
- 		f2fs_set_encrypted_inode(inode);
- 
- 	if (f2fs_sb_has_extra_attr(sbi->sb)) {
-@@ -788,10 +789,12 @@ static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
- 
- static int f2fs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
- {
--	if (unlikely(f2fs_cp_error(F2FS_I_SB(dir))))
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
-+
-+	if (unlikely(f2fs_cp_error(sbi)))
- 		return -EIO;
- 
--	if (f2fs_encrypted_inode(dir)) {
-+	if (f2fs_encrypted_inode(dir) || DUMMY_ENCRYPTION_ENABLED(sbi)) {
- 		int err = fscrypt_get_encryption_info(dir);
- 		if (err)
- 			return err;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 30b93ad44b9d..dd796bfb1004 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -131,6 +131,7 @@ enum {
- 	Opt_jqfmt_vfsv1,
- 	Opt_whint,
- 	Opt_alloc,
-+	Opt_test_dummy_encryption,
- 	Opt_err,
- };
- 
-@@ -186,6 +187,7 @@ static match_table_t f2fs_tokens = {
- 	{Opt_jqfmt_vfsv1, "jqfmt=vfsv1"},
- 	{Opt_whint, "whint_mode=%s"},
- 	{Opt_alloc, "alloc_mode=%s"},
-+	{Opt_test_dummy_encryption, "test_dummy_encryption"},
- 	{Opt_err, NULL},
- };
- 
-@@ -719,6 +721,18 @@ static int parse_options(struct super_block *sb, char *options)
- 			}
- 			kfree(name);
- 			break;
-+#ifdef CONFIG_F2FS_FS_ENCRYPTION
-+		case Opt_test_dummy_encryption:
-+			sbi->mount_flags |= F2FS_MF_TEST_DUMMY_ENCRYPTION;
-+			f2fs_msg(sb, KERN_INFO,
-+					"Test dummy encryption mode enabled");
-+			break;
-+#else
-+		case Opt_test_dummy_encryption:
-+			f2fs_msg(sb, KERN_INFO,
-+					"Test dummy encryption mount option ignored");
-+			break;
-+#endif
- 		default:
- 			f2fs_msg(sb, KERN_ERR,
- 				"Unrecognized mount option \"%s\" or missing value",
-@@ -1282,6 +1296,10 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_printf(seq, ",whint_mode=%s", "user-based");
- 	else if (sbi->whint_mode == WHINT_MODE_FS)
- 		seq_printf(seq, ",whint_mode=%s", "fs-based");
-+#ifdef CONFIG_F2FS_FS_ENCRYPTION
-+	if (sbi->mount_flags & F2FS_MF_TEST_DUMMY_ENCRYPTION)
-+		seq_puts(seq, ",test_dummy_encryption");
-+#endif
- 
- 	if (sbi->alloc_mode == ALLOC_MODE_DEFAULT)
- 		seq_printf(seq, ",alloc_mode=%s", "default");
-@@ -1865,11 +1883,28 @@ static int f2fs_get_context(struct inode *inode, void *ctx, size_t len)
- static int f2fs_set_context(struct inode *inode, const void *ctx, size_t len,
- 							void *fs_data)
- {
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+
-+	/*
-+	 * Encrypting the root directory is not allowed because fsck
-+	 * expects lost+found directory to exist and remain unencrypted
-+	 * if LOST_FOUND feature is enabled.
-+	 *
-+	 */
-+	if (f2fs_sb_has_lost_found(sbi->sb) &&
-+			inode->i_ino == F2FS_ROOT_INO(sbi))
-+		return -EPERM;
-+
- 	return f2fs_setxattr(inode, F2FS_XATTR_INDEX_ENCRYPTION,
- 				F2FS_XATTR_NAME_ENCRYPTION_CONTEXT,
- 				ctx, len, fs_data, XATTR_CREATE);
- }
- 
-+static bool f2fs_dummy_context(struct inode *inode)
++static block_t f2fs_add_default_dentry_lpf(void)
 +{
-+	return DUMMY_ENCRYPTION_ENABLED(F2FS_I_SB(inode));
++	struct f2fs_dentry_block *dent_blk;
++	block_t data_blk_offset;
++
++	dent_blk = calloc(F2FS_BLKSIZE, 1);
++	if (dent_blk == NULL) {
++		MSG(1, "\tError: Calloc Failed for dent_blk!!!\n");
++		return 0;
++	}
++
++	dent_blk->dentry[0].hash_code = 0;
++	dent_blk->dentry[0].ino = cpu_to_le32(c.lpf_ino);
++	dent_blk->dentry[0].name_len = cpu_to_le16(1);
++	dent_blk->dentry[0].file_type = F2FS_FT_DIR;
++	memcpy(dent_blk->filename[0], ".", 1);
++
++	dent_blk->dentry[1].hash_code = 0;
++	dent_blk->dentry[1].ino = sb->root_ino;
++	dent_blk->dentry[1].name_len = cpu_to_le16(2);
++	dent_blk->dentry[1].file_type = F2FS_FT_DIR;
++	memcpy(dent_blk->filename[1], "..", 2);
++
++	test_and_set_bit_le(0, dent_blk->dentry_bitmap);
++	test_and_set_bit_le(1, dent_blk->dentry_bitmap);
++
++	data_blk_offset = get_sb(main_blkaddr);
++	data_blk_offset += c.cur_seg[CURSEG_HOT_DATA] * c.blks_per_seg +
++		1 + c.quota_dnum;
++
++	DBG(1, "\tWriting default dentry lost+found, at offset 0x%08"PRIx64"\n",
++			data_blk_offset);
++	if (dev_write_block(dent_blk, data_blk_offset)) {
++		MSG(1, "\tError While writing the dentry_blk to disk!!!\n");
++		free(dent_blk);
++		return 0;
++	}
++
++	free(dent_blk);
++	c.lpf_dnum++;
++	return data_blk_offset;
 +}
 +
- static unsigned f2fs_max_namelen(struct inode *inode)
++static int f2fs_write_lpf_inode(void)
++{
++	struct f2fs_node *raw_node;
++	u_int64_t blk_size_bytes, main_area_node_seg_blk_offset;
++	block_t data_blk_nor;
++	int err = 0;
++
++	ASSERT(c.lpf_ino);
++
++	raw_node = calloc(F2FS_BLKSIZE, 1);
++	if (raw_node == NULL) {
++		MSG(1, "\tError: Calloc Failed for raw_node!!!\n");
++		return -1;
++	}
++
++	raw_node->footer.nid = cpu_to_le32(c.lpf_ino);
++	raw_node->footer.ino = raw_node->footer.nid;
++	raw_node->footer.cp_ver = cpu_to_le64(1);
++	raw_node->footer.next_blkaddr = cpu_to_le32(
++			get_sb(main_blkaddr) +
++			c.cur_seg[CURSEG_HOT_NODE] * c.blks_per_seg +
++			1 + c.quota_inum + 1);
++
++	raw_node->i.i_mode = cpu_to_le16(0x41c0); /* 0700 */
++	raw_node->i.i_links = cpu_to_le32(2);
++	raw_node->i.i_uid = cpu_to_le32(getuid());
++	raw_node->i.i_gid = cpu_to_le32(getgid());
++
++	blk_size_bytes = 1 << get_sb(log_blocksize);
++	raw_node->i.i_size = cpu_to_le64(1 * blk_size_bytes);
++	raw_node->i.i_blocks = cpu_to_le64(2);
++
++	raw_node->i.i_atime = cpu_to_le32(time(NULL));
++	raw_node->i.i_atime_nsec = 0;
++	raw_node->i.i_ctime = cpu_to_le32(time(NULL));
++	raw_node->i.i_ctime_nsec = 0;
++	raw_node->i.i_mtime = cpu_to_le32(time(NULL));
++	raw_node->i.i_mtime_nsec = 0;
++	raw_node->i.i_generation = 0;
++	raw_node->i.i_xattr_nid = 0;
++	raw_node->i.i_flags = 0;
++	raw_node->i.i_pino = le32_to_cpu(sb->root_ino);
++	raw_node->i.i_namelen = le32_to_cpu(strlen(LPF));
++	memcpy(raw_node->i.i_name, LPF, strlen(LPF));
++	raw_node->i.i_current_depth = cpu_to_le32(1);
++	raw_node->i.i_dir_level = DEF_DIR_LEVEL;
++
++	if (c.feature & cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR)) {
++		raw_node->i.i_inline = F2FS_EXTRA_ATTR;
++		raw_node->i.i_extra_isize =
++			cpu_to_le16(F2FS_TOTAL_EXTRA_ATTR_SIZE);
++	}
++
++	if (c.feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA))
++		raw_node->i.i_projid = cpu_to_le32(F2FS_DEF_PROJID);
++
++	if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CRTIME)) {
++		raw_node->i.i_crtime = cpu_to_le32(time(NULL));
++		raw_node->i.i_crtime_nsec = 0;
++	}
++
++	data_blk_nor = f2fs_add_default_dentry_lpf();
++	if (data_blk_nor == 0) {
++		MSG(1, "\tError: Failed to add default dentries for lost+found!!!\n");
++		err = -1;
++		goto exit;
++	}
++	raw_node->i.i_addr[get_extra_isize(raw_node)] = cpu_to_le32(data_blk_nor);
++
++	if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM))
++		raw_node->i.i_inode_checksum =
++			cpu_to_le32(f2fs_inode_chksum(raw_node));
++
++	main_area_node_seg_blk_offset = get_sb(main_blkaddr);
++	main_area_node_seg_blk_offset += c.cur_seg[CURSEG_HOT_NODE] *
++		c.blks_per_seg + c.quota_inum + 1;
++
++	DBG(1, "\tWriting lost+found inode (hot node), %x %x %x at offset 0x%08"PRIu64"\n",
++			get_sb(main_blkaddr),
++			c.cur_seg[CURSEG_HOT_NODE],
++			c.blks_per_seg, main_area_node_seg_blk_offset);
++	if (dev_write_block(raw_node, main_area_node_seg_blk_offset)) {
++		MSG(1, "\tError: While writing the raw_node to disk!!!\n");
++		err = -1;
++		goto exit;
++	}
++
++	c.lpf_inum++;
++exit:
++	free(raw_node);
++	return err;
++}
++
+ static int f2fs_add_default_dentry_root(void)
  {
- 	return S_ISLNK(inode->i_mode) ?
-@@ -1880,6 +1915,7 @@ static const struct fscrypt_operations f2fs_cryptops = {
- 	.key_prefix	= "f2fs:",
- 	.get_context	= f2fs_get_context,
- 	.set_context	= f2fs_set_context,
-+	.dummy_context	= f2fs_dummy_context,
- 	.empty_dir	= f2fs_empty_dir,
- 	.max_namelen	= f2fs_max_namelen,
- };
-@@ -2696,6 +2732,12 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	struct f2fs_dentry_block *dent_blk = NULL;
+@@ -1327,6 +1501,23 @@ static int f2fs_add_default_dentry_root(void)
+ 	test_and_set_bit_le(0, dent_blk->dentry_bitmap);
+ 	test_and_set_bit_le(1, dent_blk->dentry_bitmap);
+ 
++	if (c.lpf_ino) {
++		int len = strlen(LPF);
++		f2fs_hash_t hash = f2fs_dentry_hash((unsigned char *)LPF, len);
++
++		dent_blk->dentry[2].hash_code = cpu_to_le32(hash);
++		dent_blk->dentry[2].ino = cpu_to_le32(c.lpf_ino);
++		dent_blk->dentry[2].name_len = cpu_to_le16(len);
++		dent_blk->dentry[2].file_type = F2FS_FT_DIR;
++		memcpy(dent_blk->filename[2], LPF, F2FS_SLOT_LEN);
++
++		memcpy(dent_blk->filename[3], LPF + F2FS_SLOT_LEN,
++				len - F2FS_SLOT_LEN);
++
++		test_and_set_bit_le(2, dent_blk->dentry_bitmap);
++		test_and_set_bit_le(3, dent_blk->dentry_bitmap);
++	}
++
+ 	data_blk_offset = get_sb(main_blkaddr);
+ 	data_blk_offset += c.cur_seg[CURSEG_HOT_DATA] *
+ 				c.blks_per_seg;
+@@ -1364,6 +1555,14 @@ static int f2fs_create_root_dir(void)
  		}
  	}
  
-+	if (DUMMY_ENCRYPTION_ENABLED(sbi) && !f2fs_readonly(sb) &&
-+				!f2fs_sb_has_encrypt(sb)) {
-+		f2fs_sb_set_encrypt(sb);
-+		recovery = 1;
++	if (c.feature & cpu_to_le32(F2FS_FEATURE_LOST_FOUND)) {
++		err = f2fs_write_lpf_inode();
++		if (err < 0) {
++			MSG(1, "\tError: Failed to write lost+found inode!!!\n");
++			goto exit;
++		}
 +	}
 +
- 	/* get an inode for meta space */
- 	sbi->meta_inode = f2fs_iget(sb, F2FS_META_INO(sbi));
- 	if (IS_ERR(sbi->meta_inode)) {
-@@ -2870,12 +2912,16 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	}
- 	kfree(options);
- 
--	/* recover broken superblock */
-+	/* recover broken superblock or enable encrypt feature */
- 	if (recovery) {
--		err = f2fs_commit_super(sbi, true);
--		f2fs_msg(sb, KERN_INFO,
--			"Try to recover %dth superblock, ret: %d",
--			sbi->valid_super_block ? 1 : 2, err);
-+		if (sbi->mount_flags & F2FS_MF_TEST_DUMMY_ENCRYPTION) {
-+			f2fs_commit_super(sbi, false);
-+		} else {
-+			err = f2fs_commit_super(sbi, true);
-+			f2fs_msg(sb, KERN_INFO,
-+				"Try to recover %dth superblock, ret: %d",
-+				sbi->valid_super_block ? 1 : 2, err);
-+		}
- 	}
- 
- 	f2fs_join_shrinker(sbi);
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 23a2d8d66c43..53c6785c1916 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -116,6 +116,9 @@ static ssize_t features_show(struct f2fs_attr *a,
- 	if (f2fs_sb_has_inode_crtime(sb))
- 		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
- 				len ? ", " : "", "inode_crtime");
-+	if (f2fs_sb_has_lost_found(sb))
-+		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+				len ? ", " : "", "lost_found");
- 	len += snprintf(buf + len, PAGE_SIZE - len, "\n");
- 	return len;
- }
-@@ -292,6 +295,7 @@ enum feat_id {
- 	FEAT_FLEXIBLE_INLINE_XATTR,
- 	FEAT_QUOTA_INO,
- 	FEAT_INODE_CRTIME,
-+	FEAT_LOST_FOUND,
- };
- 
- static ssize_t f2fs_feature_show(struct f2fs_attr *a,
-@@ -307,6 +311,7 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
- 	case FEAT_FLEXIBLE_INLINE_XATTR:
- 	case FEAT_QUOTA_INO:
- 	case FEAT_INODE_CRTIME:
-+	case FEAT_LOST_FOUND:
- 		return snprintf(buf, PAGE_SIZE, "supported\n");
- 	}
- 	return 0;
-@@ -386,6 +391,7 @@ F2FS_FEATURE_RO_ATTR(inode_checksum, FEAT_INODE_CHECKSUM);
- F2FS_FEATURE_RO_ATTR(flexible_inline_xattr, FEAT_FLEXIBLE_INLINE_XATTR);
- F2FS_FEATURE_RO_ATTR(quota_ino, FEAT_QUOTA_INO);
- F2FS_FEATURE_RO_ATTR(inode_crtime, FEAT_INODE_CRTIME);
-+F2FS_FEATURE_RO_ATTR(lost_found, FEAT_LOST_FOUND);
- 
- #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
- static struct attribute *f2fs_attrs[] = {
-@@ -441,6 +447,7 @@ static struct attribute *f2fs_feat_attrs[] = {
- 	ATTR_LIST(flexible_inline_xattr),
- 	ATTR_LIST(quota_ino),
- 	ATTR_LIST(inode_crtime),
-+	ATTR_LIST(lost_found),
- 	NULL,
- };
- 
+ #ifndef WITH_ANDROID
+ 	err = f2fs_discard_obsolete_dnode();
+ 	if (err < 0) {
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index 120eeba..aeda5f4 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -95,6 +95,8 @@ static void parse_feature(const char *features)
+ 		c.feature |= cpu_to_le32(F2FS_FEATURE_QUOTA_INO);
+ 	} else if (!strcmp(features, "inode_crtime")) {
+ 		c.feature |= cpu_to_le32(F2FS_FEATURE_INODE_CRTIME);
++	} else if (!strcmp(features, "lost_found")) {
++		c.feature |= cpu_to_le32(F2FS_FEATURE_LOST_FOUND);
+ 	} else {
+ 		MSG(0, "Error: Wrong features\n");
+ 		mkfs_usage();
 -- 
 2.14.1
 
