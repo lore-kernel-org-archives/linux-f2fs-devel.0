@@ -1,22 +1,22 @@
 From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v2] dump.f2fs: fix a wrong report for dump an {d,
- id, did}node
-Date: Wed, 7 Mar 2018 11:59:54 +0800
-Message-ID: <1520395194-20843-1-git-send-email-heyunlei@huawei.com>
+Subject: [PATCH] f2fs: Don't overwrite all types of node to keep
+ node chain
+Date: Wed, 7 Mar 2018 16:22:50 +0800
+Message-ID: <1520410970-21987-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <heyunlei@huawei.com>) id 1etQSG-001Evy-Ph
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 07 Mar 2018 04:13:28 +0000
+ (envelope-from <heyunlei@huawei.com>) id 1etUYm-0019fi-Ss
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 07 Mar 2018 08:36:28 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
  helo=huawei.com) by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1etQSE-003DWE-O5
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 07 Mar 2018 04:13:28 +0000
+ id 1etUYk-003J3t-5u
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 07 Mar 2018 08:36:28 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,95 +29,31 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 Cc: heyunlei@huawei.com
 
-fix a wrong report for dump an {d,id,did}node like this:
-
-[print_node_info: 283] Node ID [0x6820:26656] is direct node or indirect node.
-[0]                     [0x 16b6684 : 23815812]
-[1]                     [0x 16b6685 : 23815813]
-[2]                     [0x 16b6686 : 23815814]
-[3]                     [0x 16b6687 : 23815815]
-[4]                     [0x 16b6688 : 23815816]
-[5]                     [0x 16b6689 : 23815817]
-[6]                     [0x 16b668a : 23815818]
-[7]                     [0x 16b668b : 23815819]
-[8]                     [0x 16b668c : 23815820]
-[9]                     [0x 16b668d : 23815821]
-[10]                    [0x 16b668e : 23815822]
-Invalid (i)node block
+Currently, we enable node SSR by default, and mixed
+different types of node segment to do SSR more intensively.
+Although reuse warm node is not allowed, warm node chain
+will be destroyed by errors introduced by other types
+node chain. So we'd better forbid reusing all types
+of node to keep warm node chain.
 
 Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fsck/dump.c | 29 +++++++++++++++++++----------
- 1 file changed, 19 insertions(+), 10 deletions(-)
+ fs/f2fs/segment.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fsck/dump.c b/fsck/dump.c
-index 23e4f47..9236a43 100644
---- a/fsck/dump.c
-+++ b/fsck/dump.c
-@@ -475,6 +475,18 @@ dump:
- 	}
- }
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index f61c77b..570e02d 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1862,7 +1862,7 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+ 			sbi->discard_blks--;
  
-+static bool is_sit_bitmap_set(struct f2fs_sb_info *sbi, u32 blk_addr)
-+{
-+	struct seg_entry *se;
-+	u32 offset;
-+
-+	se = get_seg_entry(sbi, GET_SEGNO(sbi, blk_addr));
-+	offset = OFFSET_IN_SEG(sbi, blk_addr);
-+
-+	return f2fs_test_bit(offset,
-+			(const char *)se->cur_valid_map) != 0;
-+}
-+
- void dump_node(struct f2fs_sb_info *sbi, nid_t nid, int force)
- {
- 	struct node_info ni;
-@@ -492,15 +504,18 @@ void dump_node(struct f2fs_sb_info *sbi, nid_t nid, int force)
- 
- 	if (ni.blk_addr == 0x0)
- 		MSG(force, "Invalid nat entry\n\n");
-+	else if (!is_sit_bitmap_set(sbi, ni.blk_addr))
-+		MSG(force, "Invalid node blk addr\n\n");
- 
- 	DBG(1, "node_blk.footer.ino [0x%x]\n", le32_to_cpu(node_blk->footer.ino));
- 	DBG(1, "node_blk.footer.nid [0x%x]\n", le32_to_cpu(node_blk->footer.nid));
- 
- 	if (le32_to_cpu(node_blk->footer.ino) == ni.ino &&
--			le32_to_cpu(node_blk->footer.nid) == ni.nid &&
--			ni.ino == ni.nid) {
-+			le32_to_cpu(node_blk->footer.nid) == ni.nid) {
- 		print_node_info(sbi, node_blk, force);
--		dump_file(sbi, &ni, node_blk, force);
-+
-+		if (ni.ino == ni.nid)
-+			dump_file(sbi, &ni, node_blk, force);
- 	} else {
- 		print_node_info(sbi, node_blk, force);
- 		MSG(force, "Invalid (i)node block\n\n");
-@@ -678,8 +693,6 @@ int dump_info_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
- 	int type;
- 	struct f2fs_summary sum_entry;
- 	struct node_info ni, ino_ni;
--	struct seg_entry *se;
--	u32 offset;
- 	int enc_name;
- 	int ret = 0;
- 
-@@ -712,12 +725,8 @@ int dump_info_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
- 		return ret;
- 	}
- 
--	se = get_seg_entry(sbi, GET_SEGNO(sbi, blk_addr));
--	offset = OFFSET_IN_SEG(sbi, blk_addr);
--
--	if (f2fs_test_bit(offset, (const char *)se->cur_valid_map) == 0) {
-+	if (!is_sit_bitmap_set(sbi, blk_addr))
- 		MSG(0, "\nblkaddr is not valid\n");
--	}
- 
- 	type = get_sum_entry(sbi, blk_addr, &sum_entry);
- 	nid = le32_to_cpu(sum_entry.nid);
+ 		/* don't overwrite by SSR to keep node chain */
+-		if (se->type == CURSEG_WARM_NODE) {
++		if (IS_NODESEG(se->type)) {
+ 			if (!f2fs_test_and_set_bit(offset, se->ckpt_valid_map))
+ 				se->ckpt_valid_blocks++;
+ 		}
 -- 
 1.9.1
 
