@@ -1,27 +1,21 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: Re: [PATCH] dump.f2fs: fix a wrong report for dump an {d, id,
- did}node
-Date: Wed, 7 Mar 2018 11:50:32 +0800
-Message-ID: <8379033e-34cf-8d5c-fd2a-4b5f50d2f9a3@huawei.com>
-References: <1520390480-20367-1-git-send-email-heyunlei@huawei.com>
- <cd3969a5-3ae8-261c-da20-c7a7b14c408c@huawei.com>
- <42B685BFA705F94C860C6DD0752F056548345281@DGGEMA503-MBX.china.huawei.com>
+From: Junling Zheng <zhengjunling@huawei.com>
+Subject: [PATCH v5] f2fs: introduce mount option for fsync mode
+Date: Wed, 7 Mar 2018 12:07:49 +0800
+Message-ID: <20180307040749.217513-1-zhengjunling@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <shengyong1@huawei.com>) id 1etQ6X-00179i-SM
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 07 Mar 2018 03:51:01 +0000
+ (envelope-from <zhengjunling@huawei.com>) id 1etQNF-005QDH-33
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 07 Mar 2018 04:08:17 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=huawei.com) by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ helo=huawei.com) by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1etQ6V-003C9I-AO
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 07 Mar 2018 03:51:01 +0000
-In-Reply-To: <42B685BFA705F94C860C6DD0752F056548345281@DGGEMA503-MBX.china.huawei.com>
-Content-Language: en-US
+ id 1etQNA-002oK1-HS
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 07 Mar 2018 04:08:16 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,124 +25,222 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: heyunlei <heyunlei@huawei.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "Yuchao (T)" <yuchao0@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
+Commit "0a007b97aad6"(f2fs: recover directory operations by fsync)
+fixed xfstest generic/342 case, but it also increased the written
+data and caused the performance degradation. In most cases, there's
+no need to do so heavy fsync actually.
 
+So we introduce new mount option "fsync_mode={posix,strict}" to
+control the policy of fsync. "fsync_mode=posix" is set by default,
+and means that f2fs uses a light fsync, which follows POSIX semantics.
+And "fsync_mode=strict" means that it's a heavy fsync, which behaves
+in line with xfs, ext4 and btrfs, where generic/342 will pass, but
+the performance will regress.
 
-On 2018/3/7 11:30, heyunlei wrote:
-> 
-> 
->> -----Original Message-----
->> From: shengyong (A)
->> Sent: Wednesday, March 07, 2018 11:21 AM
->> To: heyunlei; jaegeuk@kernel.org; Yuchao (T); linux-f2fs-devel@lists.sourceforge.net
->> Subject: Re: [f2fs-dev] [PATCH] dump.f2fs: fix a wrong report for dump an {d, id, did}node
->>
->> Hi, Yunlei,
->>
->> On 2018/3/7 10:41, Yunlei He wrote:
->>> fix a wrong report for dump an {d,id,did}node like this:
->>>
->>> [print_node_info: 283] Node ID [0x6820:26656] is direct node or indirect node.
->>> [0]                     [0x 16b6684 : 23815812]
->>> [1]                     [0x 16b6685 : 23815813]
->>> [2]                     [0x 16b6686 : 23815814]
->>> [3]                     [0x 16b6687 : 23815815]
->>> [4]                     [0x 16b6688 : 23815816]
->>> [5]                     [0x 16b6689 : 23815817]
->>> [6]                     [0x 16b668a : 23815818]
->>> [7]                     [0x 16b668b : 23815819]
->>> [8]                     [0x 16b668c : 23815820]
->>> [9]                     [0x 16b668d : 23815821]
->>> [10]                    [0x 16b668e : 23815822]
->>> Invalid (i)node block
->>>
->>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->>> ---
->>>    fsck/dump.c | 25 ++++++++++++++++---------
->>>    1 file changed, 16 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/fsck/dump.c b/fsck/dump.c
->>> index 23e4f47..5abdd6d 100644
->>> --- a/fsck/dump.c
->>> +++ b/fsck/dump.c
->>> @@ -475,6 +475,18 @@ dump:
->>>    	}
->>>    }
->>>
->>> +static bool is_sit_bitmap_set(struct f2fs_sb_info *sbi, u32 blk_addr)
->>> +{
->>> +	struct seg_entry *se;
->>> +	u32 offset;
->>> +
->>> +	se = get_seg_entry(sbi, GET_SEGNO(sbi, blk_addr));
->>> +	offset = OFFSET_IN_SEG(sbi, blk_addr);
->>> +
->>> +	return f2fs_test_bit(offset,
->>> +			(const char *)se->cur_valid_map) != 0;
->>> +}
->>> +
->>>    void dump_node(struct f2fs_sb_info *sbi, nid_t nid, int force)
->>>    {
->>>    	struct node_info ni;
->>> @@ -492,13 +504,14 @@ void dump_node(struct f2fs_sb_info *sbi, nid_t nid, int force)
->>>
->>>    	if (ni.blk_addr == 0x0)
->>>    		MSG(force, "Invalid nat entry\n\n");
->>> +	else if (!is_sit_bitmap_set(sbi, ni.blk_addr))
->>> +		MSG(force, "Invalid node blk addr\n\n");
->>>
->>>    	DBG(1, "node_blk.footer.ino [0x%x]\n", le32_to_cpu(node_blk->footer.ino));
->>>    	DBG(1, "node_blk.footer.nid [0x%x]\n", le32_to_cpu(node_blk->footer.nid));
->>>
->>>    	if (le32_to_cpu(node_blk->footer.ino) == ni.ino &&
->>> -			le32_to_cpu(node_blk->footer.nid) == ni.nid &&
->>> -			ni.ino == ni.nid) {
->>> +			le32_to_cpu(node_blk->footer.nid) == ni.nid) {
->>
->> I think we should not remove "ni.ino == ni.nid" here. dump_file() can only be
->> called on inode.
->>
->> Thanks,
->> Sheng
->>
->>>    		print_node_info(sbi, node_blk, force);
-> 
-> How about move the judgement before dump_file?
-> 
-OK. We could do that :)
+Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+---
+Changes from v4:
+ - restore old fsync_mode if fail to remount
+Changes from v3:
+ - add fsync_mode in sbi to record fsync mode
+ - keep the extensibility for fsync_mode
+Changes from v2:
+ - Change to "fsync={posix,strict}" format
+ - Set "fsync=posix" default
+Changes from v1:
+ - Add document modify
+ - Add reviewer
+ Documentation/filesystems/f2fs.txt |  7 +++++++
+ fs/f2fs/dir.c                      |  3 ++-
+ fs/f2fs/f2fs.h                     |  8 ++++++++
+ fs/f2fs/file.c                     |  3 ++-
+ fs/f2fs/namei.c                    |  9 ++++++---
+ fs/f2fs/super.c                    | 26 ++++++++++++++++++++++++++
+ 6 files changed, 51 insertions(+), 5 deletions(-)
 
-thanks,
-Sheng
-
-> Thanks.
->>>    		dump_file(sbi, &ni, node_blk, force);
->>>    	} else {
->>> @@ -678,8 +691,6 @@ int dump_info_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
->>>    	int type;
->>>    	struct f2fs_summary sum_entry;
->>>    	struct node_info ni, ino_ni;
->>> -	struct seg_entry *se;
->>> -	u32 offset;
->>>    	int enc_name;
->>>    	int ret = 0;
->>>
->>> @@ -712,12 +723,8 @@ int dump_info_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
->>>    		return ret;
->>>    	}
->>>
->>> -	se = get_seg_entry(sbi, GET_SEGNO(sbi, blk_addr));
->>> -	offset = OFFSET_IN_SEG(sbi, blk_addr);
->>> -
->>> -	if (f2fs_test_bit(offset, (const char *)se->cur_valid_map) == 0) {
->>> +	if (!is_sit_bitmap_set(sbi, blk_addr))
->>>    		MSG(0, "\nblkaddr is not valid\n");
->>> -	}
->>>
->>>    	type = get_sum_entry(sbi, blk_addr, &sum_entry);
->>>    	nid = le32_to_cpu(sum_entry.nid);
->>>
-> 
+diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+index 0409c47584ea..514e44983a8e 100644
+--- a/Documentation/filesystems/f2fs.txt
++++ b/Documentation/filesystems/f2fs.txt
+@@ -182,6 +182,13 @@ whint_mode=%s          Control which write hints are passed down to block
+                        passes down hints with its policy.
+ alloc_mode=%s          Adjust block allocation policy, which supports "reuse"
+                        and "default".
++fsync_mode=%s          Control the policy of fsync. Currently supports "posix"
++                       and "strict". In "posix" mode, which is default, fsync
++                       will follow POSIX semantics and does a light operation
++                       to improve the filesystem performance. In "strict" mode,
++                       fsync will be heavy and behaves in line with xfs, ext4
++                       and btrfs, where xfstest generic/342 will pass, but the
++                       performance will regress.
+ 
+ ================================================================================
+ DEBUGFS ENTRIES
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 797eb05cb538..87c51709bc48 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -704,7 +704,8 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+ 
+ 	f2fs_update_time(F2FS_I_SB(dir), REQ_TIME);
+ 
+-	add_ino_entry(F2FS_I_SB(dir), dir->i_ino, TRANS_DIR_INO);
++	if (F2FS_I_SB(dir)->fsync_mode == FSYNC_MODE_STRICT)
++		add_ino_entry(F2FS_I_SB(dir), dir->i_ino, TRANS_DIR_INO);
+ 
+ 	if (f2fs_has_inline_dentry(dir))
+ 		return f2fs_delete_inline_entry(dentry, page, dir, inode);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f6dc70666ebb..da31daa3585f 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1052,6 +1052,11 @@ enum {
+ 	ALLOC_MODE_REUSE,	/* reuse segments as much as possible */
+ };
+ 
++enum fsync_mode {
++	FSYNC_MODE_POSIX,	/* fsync follows posix semantics */
++	FSYNC_MODE_STRICT,	/* fsync behaves in line with ext4 */
++};
++
+ struct f2fs_sb_info {
+ 	struct super_block *sb;			/* pointer to VFS super block */
+ 	struct proc_dir_entry *s_proc;		/* proc entry */
+@@ -1241,6 +1246,9 @@ struct f2fs_sb_info {
+ 
+ 	/* segment allocation policy */
+ 	int alloc_mode;
++
++	/* fsync policy */
++	int fsync_mode;
+ };
+ 
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 6a202e5a6386..99fa207fc310 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -165,7 +165,8 @@ static inline enum cp_reason_type need_do_checkpoint(struct inode *inode)
+ 		cp_reason = CP_FASTBOOT_MODE;
+ 	else if (sbi->active_logs == 2)
+ 		cp_reason = CP_SPEC_LOG_NUM;
+-	else if (need_dentry_mark(sbi, inode->i_ino) &&
++	else if (sbi->fsync_mode == FSYNC_MODE_STRICT &&
++		need_dentry_mark(sbi, inode->i_ino) &&
+ 		exist_written_data(sbi, F2FS_I(inode)->i_pino, TRANS_DIR_INO))
+ 		cp_reason = CP_RECOVER_DIR;
+ 
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 318dfe870cb5..9d7df9f99332 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -972,7 +972,8 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 		}
+ 		f2fs_i_links_write(old_dir, false);
+ 	}
+-	add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
++	if (sbi->fsync_mode == FSYNC_MODE_STRICT)
++		add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
+ 
+ 	f2fs_unlock_op(sbi);
+ 
+@@ -1124,8 +1125,10 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	}
+ 	f2fs_mark_inode_dirty_sync(new_dir, false);
+ 
+-	add_ino_entry(sbi, old_dir->i_ino, TRANS_DIR_INO);
+-	add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
++	if (sbi->fsync_mode == FSYNC_MODE_STRICT) {
++		add_ino_entry(sbi, old_dir->i_ino, TRANS_DIR_INO);
++		add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
++	}
+ 
+ 	f2fs_unlock_op(sbi);
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 30b93ad44b9d..0bcbd5f410d3 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -131,6 +131,7 @@ enum {
+ 	Opt_jqfmt_vfsv1,
+ 	Opt_whint,
+ 	Opt_alloc,
++	Opt_fsync,
+ 	Opt_err,
+ };
+ 
+@@ -186,6 +187,7 @@ static match_table_t f2fs_tokens = {
+ 	{Opt_jqfmt_vfsv1, "jqfmt=vfsv1"},
+ 	{Opt_whint, "whint_mode=%s"},
+ 	{Opt_alloc, "alloc_mode=%s"},
++	{Opt_fsync, "fsync_mode=%s"},
+ 	{Opt_err, NULL},
+ };
+ 
+@@ -719,6 +721,22 @@ static int parse_options(struct super_block *sb, char *options)
+ 			}
+ 			kfree(name);
+ 			break;
++		case Opt_fsync:
++			name = match_strdup(&args[0]);
++			if (!name)
++				return -ENOMEM;
++			if (strlen(name) == 5 &&
++					!strncmp(name, "posix", 5)) {
++				sbi->fsync_mode = FSYNC_MODE_POSIX;
++			} else if (strlen(name) == 6 &&
++					!strncmp(name, "strict", 6)) {
++				sbi->fsync_mode = FSYNC_MODE_STRICT;
++			} else {
++				kfree(name);
++				return -EINVAL;
++			}
++			kfree(name);
++			break;
+ 		default:
+ 			f2fs_msg(sb, KERN_ERR,
+ 				"Unrecognized mount option \"%s\" or missing value",
+@@ -1287,6 +1305,11 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+ 		seq_printf(seq, ",alloc_mode=%s", "default");
+ 	else if (sbi->alloc_mode == ALLOC_MODE_REUSE)
+ 		seq_printf(seq, ",alloc_mode=%s", "reuse");
++
++	if (sbi->fsync_mode == FSYNC_MODE_POSIX)
++		seq_printf(seq, ",fsync_mode=%s", "posix");
++	else if (sbi->fsync_mode == FSYNC_MODE_STRICT)
++		seq_printf(seq, ",fsync_mode=%s", "strict");
+ 	return 0;
+ }
+ 
+@@ -1297,6 +1320,7 @@ static void default_options(struct f2fs_sb_info *sbi)
+ 	sbi->inline_xattr_size = DEFAULT_INLINE_XATTR_ADDRS;
+ 	sbi->whint_mode = WHINT_MODE_OFF;
+ 	sbi->alloc_mode = ALLOC_MODE_DEFAULT;
++	sbi->fsync_mode = FSYNC_MODE_POSIX;
+ 	sbi->readdir_ra = 1;
+ 
+ 	set_opt(sbi, BG_GC);
+@@ -1340,6 +1364,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 	bool no_extent_cache = !test_opt(sbi, EXTENT_CACHE);
+ 	int old_whint_mode = sbi->whint_mode;
+ 	int old_alloc_mode = sbi->alloc_mode;
++	int old_fsync_mode = sbi->fsync_mode;
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+ 	struct f2fs_fault_info ffi = sbi->fault_info;
+ #endif
+@@ -1489,6 +1514,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 		sbi->s_qf_names[i] = s_qf_names[i];
+ 	}
+ #endif
++	sbi->fsync_mode = old_fsync_mode;
+ 	sbi->alloc_mode = old_alloc_mode;
+ 	sbi->whint_mode = old_whint_mode;
+ 	sbi->mount_opt = org_mount_opt;
+-- 
+2.15.1
 
 
 ------------------------------------------------------------------------------
