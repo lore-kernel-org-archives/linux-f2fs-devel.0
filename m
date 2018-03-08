@@ -1,24 +1,23 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: check blkaddr more accuratly before
- issue a bio
-Date: Thu, 8 Mar 2018 09:44:57 +0800
-Message-ID: <845b3fef-9b08-0bbb-70a6-752a434c6a41@huawei.com>
-References: <1520233626-2330-1-git-send-email-heyunlei@huawei.com>
+Subject: Re: [PATCH] f2fs: add nowait aio support
+Date: Thu, 8 Mar 2018 11:27:37 +0800
+Message-ID: <dac1ca36-613b-a60a-9321-b2bc18f9da3f@huawei.com>
+References: <1519976914-32491-1-git-send-email-hyc.lee@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1etkch-001Uhx-EY
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 08 Mar 2018 01:45:35 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1etmDl-0071zQ-0s
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 08 Mar 2018 03:27:57 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
  helo=huawei.com) by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1etkcZ-0039s7-66
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 08 Mar 2018 01:45:32 +0000
-In-Reply-To: <1520233626-2330-1-git-send-email-heyunlei@huawei.com>
+ id 1etmDf-003Bnr-5G
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 08 Mar 2018 03:27:53 +0000
+In-Reply-To: <1519976914-32491-1-git-send-email-hyc.lee@gmail.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -29,125 +28,190 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Hyunchul Lee <hyc.lee@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, kernel-team@lge.com, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, Hyunchul Lee <cheol.lee@lge.com>
 
-On 2018/3/5 15:07, Yunlei He wrote:
-> This patch check blkaddr more accuratly before issue a
-> write or read bio.
+On 2018/3/2 15:48, Hyunchul Lee wrote:
+> From: Hyunchul Lee <cheol.lee@lge.com>
 > 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+> This patch adds nowait aio support[1].
+> 
+> Return EAGAIN if any of the following checks fail for direct I/O:
+>   - i_rwsem is not lockable
+>   - Blocks are not allocated at the write location
+> 
+> And xfstests generic/471 is passed.
+> 
+>  [1]: 6be96d "Introduce RWF_NOWAIT and FMODE_AIO_NOWAIT"
+> 
+> Signed-off-by: Hyunchul Lee <cheol.lee@lge.com>
 > ---
->  fs/f2fs/checkpoint.c |  2 ++
->  fs/f2fs/data.c       |  5 +++--
->  fs/f2fs/f2fs.h       |  1 +
->  fs/f2fs/segment.h    | 29 +++++++++++++++++++++++++----
->  4 files changed, 31 insertions(+), 6 deletions(-)
+>  fs/f2fs/data.c | 36 +++++++++++++++++++++++++++---------
+>  fs/f2fs/f2fs.h |  8 ++++++++
+>  fs/f2fs/file.c | 35 +++++++++++++++++++++++++++++------
+>  3 files changed, 64 insertions(+), 15 deletions(-)
 > 
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index 5b2db75..bf77946 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -68,6 +68,7 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
->  		.old_blkaddr = index,
->  		.new_blkaddr = index,
->  		.encrypted_page = NULL,
-> +		.is_meta = is_meta,
->  	};
->  
->  	if (unlikely(!is_meta))
-> @@ -162,6 +163,7 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
->  		.op_flags = sync ? (REQ_META | REQ_PRIO) : REQ_RAHEAD,
->  		.encrypted_page = NULL,
->  		.in_list = false,
-> +		.is_meta = (type != META_POR),
->  	};
->  	struct blk_plug plug;
->  
 > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 6c3c978..de036e8 100644
+> index 6c3c978..9a550c5 100644
 > --- a/fs/f2fs/data.c
 > +++ b/fs/f2fs/data.c
-> @@ -383,6 +383,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
->  	struct page *page = fio->encrypted_page ?
->  			fio->encrypted_page : fio->page;
->  
-> +	verify_block_addr(fio, fio->new_blkaddr);
->  	trace_f2fs_submit_page_bio(page, fio);
->  	f2fs_trace_ios(fio, 0);
->  
-> @@ -428,8 +429,8 @@ int f2fs_submit_page_write(struct f2fs_io_info *fio)
->  	}
->  
->  	if (fio->old_blkaddr != NEW_ADDR)
-> -		verify_block_addr(sbi, fio->old_blkaddr);
-> -	verify_block_addr(sbi, fio->new_blkaddr);
-> +		verify_block_addr(fio, fio->old_blkaddr);
-> +	verify_block_addr(fio, fio->new_blkaddr);
->  
->  	bio_page = fio->encrypted_page ? fio->encrypted_page : fio->page;
->  
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index f6dc706..842adea 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -980,6 +980,7 @@ struct f2fs_io_info {
->  	bool submitted;		/* indicate IO submission */
->  	int need_lock;		/* indicate we need to lock cp_rwsem */
->  	bool in_list;		/* indicate fio is in io_list */
-> +	bool is_meta;		/* indicate borrow meta inode mapping or not */
->  	enum iostat_type io_type;	/* io type */
->  	struct writeback_control *io_wbc; /* writeback control */
->  };
-> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> index dbb774aa..dabe400 100644
-> --- a/fs/f2fs/segment.h
-> +++ b/fs/f2fs/segment.h
-> @@ -632,10 +632,31 @@ static inline void check_seg_range(struct f2fs_sb_info *sbi, unsigned int segno)
->  	f2fs_bug_on(sbi, segno > TOTAL_SEGS(sbi) - 1);
+> @@ -839,13 +839,6 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
+>  	return 0;
 >  }
 >  
-> -static inline void verify_block_addr(struct f2fs_sb_info *sbi, block_t blk_addr)
+> -static inline bool __force_buffered_io(struct inode *inode, int rw)
 > -{
-> -	BUG_ON(blk_addr < SEG0_BLKADDR(sbi)
-> -			|| blk_addr >= MAX_BLKADDR(sbi));
-> +static inline void verify_block_addr(struct f2fs_io_info *fio, block_t blk_addr)
+> -	return (f2fs_encrypted_file(inode) ||
+> -			(rw == WRITE && test_opt(F2FS_I_SB(inode), LFS)) ||
+> -			F2FS_I_SB(inode)->s_ndevs);
+> -}
+> -
+>  int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+>  {
+>  	struct inode *inode = file_inode(iocb->ki_filp);
+> @@ -877,7 +870,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+>  
+>  	if (direct_io) {
+>  		map.m_seg_type = rw_hint_to_seg_type(iocb->ki_hint);
+> -		flag = __force_buffered_io(inode, WRITE) ?
+> +		flag = f2fs_force_buffered_io(inode, WRITE) ?
+>  					F2FS_GET_BLOCK_PRE_AIO :
+>  					F2FS_GET_BLOCK_PRE_DIO;
+>  		goto map_blocks;
+> @@ -1121,6 +1114,31 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>  	return err;
+>  }
+>  
+> +bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len)
 > +{
-> +	struct f2fs_sb_info *sbi = fio->sbi;
-> +	enum page_type btype = PAGE_TYPE_OF_BIO(fio->type);
-> +	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
-> +	block_t seg0_blkaddr = le32_to_cpu(raw_super->segment0_blkaddr);
-> +	block_t main_blkaddr = le32_to_cpu(raw_super->main_blkaddr);
-> +	block_t max_blkaddr = (le32_to_cpu(raw_super->segment_count)
-> +				<< sbi->log_blocks_per_seg) + seg0_blkaddr;
+> +	struct f2fs_map_blocks map;
+> +	block_t last_lblk;
+> +	int err;
 > +
-> +	if (is_read_io(fio->op)) {
-> +		if (btype == META && fio->is_meta)
-> +			BUG_ON(blk_addr < seg0_blkaddr
-> +				|| blk_addr >= main_blkaddr);
-> +		else
-> +			BUG_ON(blk_addr < main_blkaddr
-> +				|| blk_addr >= max_blkaddr);
-> +	} else {
-> +		if (btype == META)
-> +			BUG_ON(blk_addr < seg0_blkaddr
-> +				|| blk_addr >= main_blkaddr);
-> +		else
-> +			BUG_ON(blk_addr < main_blkaddr
-> +				|| blk_addr >= max_blkaddr);
+> +	if (pos + len > i_size_read(inode))
+> +		return false;
+> +
+> +	map.m_lblk = F2FS_BYTES_TO_BLK(pos);
+> +	map.m_next_pgofs = 0;
+> +	map.m_next_extent = NULL;
+> +	map.m_seg_type = NO_CHECK_TYPE;
+> +	last_lblk = F2FS_BYTES_TO_BLK(pos + len) + 1;
+> +
+> +	while (map.m_lblk < last_lblk) {
+> +		map.m_len = last_lblk - map.m_lblk;
+> +		err = f2fs_map_blocks(inode, &map, 0, 0);
+> +		if (err || map.m_len == 0)
+> +			return false;
+> +		map.m_lblk += map.m_len;
 > +	}
+> +	return true;
+> +}
+> +
+>  static int __get_data_block(struct inode *inode, sector_t iblock,
+>  			struct buffer_head *bh, int create, int flag,
+>  			pgoff_t *next_pgofs, int seg_type)
+> @@ -2306,7 +2324,7 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>  	if (err)
+>  		return err;
+>  
+> -	if (__force_buffered_io(inode, rw))
+> +	if (f2fs_force_buffered_io(inode, rw))
+>  		return 0;
+>  
+>  	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index f6dc706..351226e 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -2875,6 +2875,7 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
+>  int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
+>  			struct page *page, enum migrate_mode mode);
+>  #endif
+> +bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len);
+>  
+>  /*
+>   * gc.c
+> @@ -3259,4 +3260,11 @@ static inline bool f2fs_may_encrypt(struct inode *inode)
+>  #endif
+>  }
+>  
+> +static inline bool f2fs_force_buffered_io(struct inode *inode, int rw)
+> +{
+> +	return (f2fs_encrypted_file(inode) ||
+> +			(rw == WRITE && test_opt(F2FS_I_SB(inode), LFS)) ||
+> +			F2FS_I_SB(inode)->s_ndevs);
+> +}
+> +
+>  #endif
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 6a202e5..1051edd 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -479,6 +479,9 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
+>  
+>  	if (err)
+>  		return err;
+> +
+> +	filp->f_mode |= FMODE_NOWAIT;
+> +
+>  	return dquot_file_open(inode, filp);
+>  }
+>  
+> @@ -2895,7 +2898,15 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  	if (unlikely(f2fs_cp_error(F2FS_I_SB(inode))))
+>  		return -EIO;
+>  
+> -	inode_lock(inode);
+> +	if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIRECT))
+> +		return -EINVAL;
 
-How about:
+EOPNOTSUPP to keep line with ext4?
 
-	if (btype == META && (!is_read_io || fio->is_meta))
-		check_meta_area_range;
-	else
-		check_main_area_range;
+> +
+> +	if (!inode_trylock(inode)) {
+> +		if (iocb->ki_flags & IOCB_NOWAIT)
+> +			return -EAGAIN;
+> +		inode_lock(inode);
+> +	}
+> +
+>  	ret = generic_write_checks(iocb, from);
+>  	if (ret > 0) {
+>  		int err;
+> @@ -2903,11 +2914,23 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  		if (iov_iter_fault_in_readable(from, iov_iter_count(from)))
+>  			set_inode_flag(inode, FI_NO_PREALLOC);
+>  
+> -		err = f2fs_preallocate_blocks(iocb, from);
+> -		if (err) {
+> -			clear_inode_flag(inode, FI_NO_PREALLOC);
+> -			inode_unlock(inode);
+> -			return err;
+> +		if ((iocb->ki_flags & IOCB_NOWAIT) &&
+> +			(iocb->ki_flags & IOCB_DIRECT)) {
+> +				if (!f2fs_overwrite_io(inode, iocb->ki_pos,
+> +						iov_iter_count(from)) ||
+> +					f2fs_has_inline_data(inode) ||
+> +					f2fs_force_buffered_io(inode, WRITE)) {
+> +						inode_unlock(inode);
+> +						return -EAGAIN;
+> +				}
+> +
+> +		} else {
+> +			err = f2fs_preallocate_blocks(iocb, from);
+> +			if (err) {
+> +				clear_inode_flag(inode, FI_NO_PREALLOC);
+> +				inode_unlock(inode);
+> +				return err;
+> +			}
+
+Do we need to change down_read to down_read_trylock in f2fs_direct_IO when we
+use 'nowait' mode of aio?
 
 Thanks,
 
->  }
->  
->  /*
+>  		}
+>  		blk_start_plug(&plug);
+>  		ret = __generic_file_write_iter(iocb, from);
 > 
 
 
