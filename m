@@ -1,25 +1,22 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v3] f2fs: check blkaddr more accuratly before
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH v3] f2fs: check blkaddr more accuratly before
  issue a bio
-Date: Thu, 8 Mar 2018 17:12:28 +0800
-Message-ID: <80ab844e-12c4-4e93-3e55-f14bf994d184@huawei.com>
-References: <1520497753-29066-1-git-send-email-heyunlei@huawei.com>
+Date: Thu, 8 Mar 2018 16:29:13 +0800
+Message-ID: <1520497753-29066-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1etrbS-0006jR-E9
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 08 Mar 2018 09:12:46 +0000
+ (envelope-from <heyunlei@huawei.com>) id 1etr8n-0005p3-12
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 08 Mar 2018 08:43:09 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=huawei.com) by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ helo=huawei.com) by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1etrbQ-003nHg-Eh
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 08 Mar 2018 09:12:46 +0000
-In-Reply-To: <1520497753-29066-1-git-send-email-heyunlei@huawei.com>
-Content-Language: en-US
+ id 1etr8T-003UB4-PT
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 08 Mar 2018 08:43:05 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,17 +26,125 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: heyunlei@huawei.com
 
-On 2018/3/8 16:29, Yunlei He wrote:
-> This patch check blkaddr more accuratly before issue a
-> write or read bio.
-> 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+This patch check blkaddr more accuratly before issue a
+write or read bio.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fs/f2fs/checkpoint.c |  2 ++
+ fs/f2fs/data.c       |  5 +++--
+ fs/f2fs/f2fs.h       |  1 +
+ fs/f2fs/segment.h    | 25 +++++++++++++++++++------
+ 4 files changed, 25 insertions(+), 8 deletions(-)
 
-Thanks,
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 5b2db75..bf77946 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -68,6 +68,7 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
+ 		.old_blkaddr = index,
+ 		.new_blkaddr = index,
+ 		.encrypted_page = NULL,
++		.is_meta = is_meta,
+ 	};
+ 
+ 	if (unlikely(!is_meta))
+@@ -162,6 +163,7 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
+ 		.op_flags = sync ? (REQ_META | REQ_PRIO) : REQ_RAHEAD,
+ 		.encrypted_page = NULL,
+ 		.in_list = false,
++		.is_meta = (type != META_POR),
+ 	};
+ 	struct blk_plug plug;
+ 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 6c3c978..de036e8 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -383,6 +383,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 	struct page *page = fio->encrypted_page ?
+ 			fio->encrypted_page : fio->page;
+ 
++	verify_block_addr(fio, fio->new_blkaddr);
+ 	trace_f2fs_submit_page_bio(page, fio);
+ 	f2fs_trace_ios(fio, 0);
+ 
+@@ -428,8 +429,8 @@ int f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 	}
+ 
+ 	if (fio->old_blkaddr != NEW_ADDR)
+-		verify_block_addr(sbi, fio->old_blkaddr);
+-	verify_block_addr(sbi, fio->new_blkaddr);
++		verify_block_addr(fio, fio->old_blkaddr);
++	verify_block_addr(fio, fio->new_blkaddr);
+ 
+ 	bio_page = fio->encrypted_page ? fio->encrypted_page : fio->page;
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f6dc706..842adea 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -980,6 +980,7 @@ struct f2fs_io_info {
+ 	bool submitted;		/* indicate IO submission */
+ 	int need_lock;		/* indicate we need to lock cp_rwsem */
+ 	bool in_list;		/* indicate fio is in io_list */
++	bool is_meta;		/* indicate borrow meta inode mapping or not */
+ 	enum iostat_type io_type;	/* io type */
+ 	struct writeback_control *io_wbc; /* writeback control */
+ };
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index dbb774aa..3325d07 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -53,13 +53,19 @@
+ 	 ((secno) == CURSEG_I(sbi, CURSEG_COLD_NODE)->segno /		\
+ 	  (sbi)->segs_per_sec))	\
+ 
+-#define MAIN_BLKADDR(sbi)	(SM_I(sbi)->main_blkaddr)
+-#define SEG0_BLKADDR(sbi)	(SM_I(sbi)->seg0_blkaddr)
++#define MAIN_BLKADDR(sbi)						\
++	(SM_I(sbi) ? SM_I(sbi)->main_blkaddr : 				\
++		le32_to_cpu(F2FS_RAW_SUPER(sbi)->main_blkaddr))
++#define SEG0_BLKADDR(sbi)						\
++	(SM_I(sbi) ? SM_I(sbi)->seg0_blkaddr : 				\
++		le32_to_cpu(F2FS_RAW_SUPER(sbi)->segment0_blkaddr))
+ 
+ #define MAIN_SEGS(sbi)	(SM_I(sbi)->main_segments)
+ #define MAIN_SECS(sbi)	((sbi)->total_sections)
+ 
+-#define TOTAL_SEGS(sbi)	(SM_I(sbi)->segment_count)
++#define TOTAL_SEGS(sbi)							\
++	(SM_I(sbi) ? SM_I(sbi)->segment_count : 				\
++		le32_to_cpu(F2FS_RAW_SUPER(sbi)->segment_count))
+ #define TOTAL_BLKS(sbi)	(TOTAL_SEGS(sbi) << (sbi)->log_blocks_per_seg)
+ 
+ #define MAX_BLKADDR(sbi)	(SEG0_BLKADDR(sbi) + TOTAL_BLKS(sbi))
+@@ -632,10 +638,17 @@ static inline void check_seg_range(struct f2fs_sb_info *sbi, unsigned int segno)
+ 	f2fs_bug_on(sbi, segno > TOTAL_SEGS(sbi) - 1);
+ }
+ 
+-static inline void verify_block_addr(struct f2fs_sb_info *sbi, block_t blk_addr)
++static inline void verify_block_addr(struct f2fs_io_info *fio, block_t blk_addr)
+ {
+-	BUG_ON(blk_addr < SEG0_BLKADDR(sbi)
+-			|| blk_addr >= MAX_BLKADDR(sbi));
++	struct f2fs_sb_info *sbi = fio->sbi;
++
++	if (PAGE_TYPE_OF_BIO(fio->type) == META &&
++				(!is_read_io(fio->op) || fio->is_meta))
++		BUG_ON(blk_addr < SEG0_BLKADDR(sbi) ||
++				blk_addr >= MAIN_BLKADDR(sbi));
++	else
++		BUG_ON(blk_addr < MAIN_BLKADDR(sbi) ||
++				blk_addr >= MAX_BLKADDR(sbi));
+ }
+ 
+ /*
+-- 
+1.9.1
 
 
 ------------------------------------------------------------------------------
