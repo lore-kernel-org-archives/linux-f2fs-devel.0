@@ -1,27 +1,22 @@
-From: guoweichao <guoweichao@huawei.com>
-Subject: Re: [PATCH v4] f2fs: support in-memory inode checksum
- when checking consistency
-Date: Thu, 8 Mar 2018 21:22:07 +0800
-Message-ID: <ad03da98-ea37-7b94-2b36-18eea6f67917@huawei.com>
-References: <20180307211040.219117-1-guoweichao@huawei.com>
- <472de3e0-b4e9-d2e3-67d2-a0f060f5f06e@huawei.com>
- <3553bd60-494f-92a0-7368-aacd6bfd3f99@huawei.com>
- <c04d8c15-dbeb-ccf5-eb5c-0be4a976e3ef@huawei.com>
+From: Weichao Guo <guoweichao@huawei.com>
+Subject: [PATCH v5] f2fs: support in-memory inode checksum when
+ checking consistency
+Date: Fri, 9 Mar 2018 05:31:42 +0800
+Message-ID: <20180308213142.2917-1-guoweichao@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <guoweichao@huawei.com>) id 1etvVG-0002br-MI
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 08 Mar 2018 13:22:38 +0000
+ (envelope-from <guoweichao@huawei.com>) id 1etvYe-0001f4-Hd
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 08 Mar 2018 13:26:08 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=huawei.com) by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ helo=huawei.com) by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1etvVE-004NdB-9N
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 08 Mar 2018 13:22:38 +0000
-In-Reply-To: <c04d8c15-dbeb-ccf5-eb5c-0be4a976e3ef@huawei.com>
+ id 1etvYZ-0049VR-FG
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 08 Mar 2018 13:26:05 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,67 +26,75 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org
+To: yuchao0@huawei.com, jaegeuk@kernel.org
 Cc: heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Chao,
+Only enable in-memory inode checksum to protect metadata blocks
+from in-memory scribbles when checking consistency, which has no
+performance requirements.
+---
+ fs/f2fs/inode.c |  7 +++++++
+ fs/f2fs/node.c  | 10 +++++++++-
+ 2 files changed, 16 insertions(+), 1 deletion(-)
 
-On 2018/3/8 17:11, Chao Yu wrote:
-> Hi Weichao,
-> 
-> On 2018/3/8 15:56, guoweichao wrote:
->> Hi Chao,
->>
->> On 2018/3/8 14:15, Chao Yu wrote:
->>> On 2018/3/8 5:10, Weichao Guo wrote:
->>>> Only enable in-memory inode checksum to protect metadata blocks
->>>> from in-memory scribbles when checking consistency, which has no
->>>> performance requirements.
->>>
->>> Once we modify the node page of inode, we will call set_page_dirty, not sure,
->>> can you check that we can just call f2fs_inode_chksum_set in set_page_dirty?
->>>
->> In most cases, we call set_page_dirty after modifying the node page of inode.
->> But in the case of update_inode, set_page_dirty is called before modifying the node page.
-> 
-> IIRC, we can not change that order, but we can add addition
-> f2fs_inode_chksum_set in the end of update_inode.
-> 
->> And in fsync_node_pages, if the node page of inode is already dirtied, set_page_dirty will
->> be skipped.
-I reviewed this case: we call __write_node_page after set dentry/fsync flag in node footer of
-the inode page, and no need to update inode checksum here. It's safe.
-
-Another case is f2fs_do_tmpfile, when init_inode_metadata, if inode is not in FI_NEW_INODE state,
-cold bit in the node footer is set and there is no set_page_dirty followed.
-IMO, the inode should be FI_NEW_INODE in init_inode_metada when creating temp file.
-So we don't have to worry about it.
-
-Thanks,
-> 
-> We can handle that exception by adding f2fs_inode_chksum_set there too.
-> 
-> Thanks,
-> 
->>
->> IMO, calling f2fs_inode_chksum_set in set_page_dirty is more clear and reasonable.
->> Can we add or move set_page_dirty in the exceptional cases?
->>
->> Thank,
->>
->>> Thanks,
->>>
->>>
->>> .
->>>
->>
->>
->> .
->>
-> 
-> 
-> .
-> 
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 205add3..e405b28 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -159,8 +159,12 @@ bool f2fs_inode_chksum_verify(struct f2fs_sb_info *sbi, struct page *page)
+ 	struct f2fs_inode *ri;
+ 	__u32 provided, calculated;
+ 
++#ifdef CONFIG_F2FS_CHECK_FS
++	if (!f2fs_enable_inode_chksum(sbi, page))
++#else
+ 	if (!f2fs_enable_inode_chksum(sbi, page) ||
+ 			PageDirty(page) || PageWriteback(page))
++#endif
+ 		return true;
+ 
+ 	ri = &F2FS_NODE(page)->i;
+@@ -445,6 +449,9 @@ void update_inode(struct inode *inode, struct page *node_page)
+ 	if (inode->i_nlink == 0)
+ 		clear_inline_node(node_page);
+ 
++#ifdef CONFIG_F2FS_CHECK_FS
++	f2fs_inode_chksum_set(F2FS_I_SB(inode), node_page);
++#endif
+ }
+ 
+ void update_inode_page(struct inode *inode)
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 177c438..6107935 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1113,8 +1113,12 @@ static int read_node_page(struct page *page, int op_flags)
+ 		.encrypted_page = NULL,
+ 	};
+ 
+-	if (PageUptodate(page))
++	if (PageUptodate(page)) {
++#ifdef CONFIG_F2FS_CHECK_FS
++		f2fs_bug_on(sbi, !f2fs_inode_chksum_verify(sbi, page));
++#endif
+ 		return LOCKED_PAGE;
++	}
+ 
+ 	get_node_info(sbi, page->index, &ni);
+ 
+@@ -1731,6 +1735,10 @@ static int f2fs_set_node_page_dirty(struct page *page)
+ 
+ 	if (!PageUptodate(page))
+ 		SetPageUptodate(page);
++#ifdef CONFIG_F2FS_CHECK_FS
++	if (IS_INODE(page))
++		f2fs_inode_chksum_set(F2FS_P_SB(page), page);
++#endif
+ 	if (!PageDirty(page)) {
+ 		f2fs_set_page_dirty_nobuffers(page);
+ 		inc_page_count(F2FS_P_SB(page), F2FS_DIRTY_NODES);
+-- 
+2.10.1
 
 
 ------------------------------------------------------------------------------
