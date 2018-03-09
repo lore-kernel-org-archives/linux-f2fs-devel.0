@@ -1,23 +1,23 @@
 From: Sheng Yong <shengyong1@huawei.com>
-Subject: [RFC PATCH v4 1/3] f2fs: introduce
- F2FS_FEATURE_LOST_FOUND feature
-Date: Fri, 9 Mar 2018 15:53:10 +0800
-Message-ID: <20180309075312.62357-2-shengyong1@huawei.com>
+Subject: [RFC PATCH v4 2/3] f2fs: introduce a new mount option
+ test_dummy_encryption
+Date: Fri, 9 Mar 2018 15:53:11 +0800
+Message-ID: <20180309075312.62357-3-shengyong1@huawei.com>
 References: <20180309075312.62357-1-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <shengyong1@huawei.com>) id 1euCqU-0005IR-7M
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Mar 2018 07:53:42 +0000
+ (envelope-from <shengyong1@huawei.com>) id 1euCqV-0005lj-4W
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Mar 2018 07:53:43 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=huawei.com) by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ helo=huawei.com) by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1euCqS-009nqi-8T
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Mar 2018 07:53:42 +0000
+ id 1euCqS-009Epx-NB
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Mar 2018 07:53:43 +0000
 In-Reply-To: <20180309075312.62357-1-shengyong1@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -31,112 +31,181 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com, ebiggers@google.com, tytso@mit.edu
 Cc: linux-fscrypt@vger.kernel.org, miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-This patch introduces a new feature, F2FS_FEATURE_LOST_FOUND, which
-is set by mkfs. mkfs creates a directory named lost+found, which saves
-unreachable files. If fsck finds a file which has no parent, or its
-parent is removed by fsck, the file will be placed under lost+found
-directory by fsck.
-
-lost+found directory could not be encrypted. As a result, the root
-directory cannot be encrypted too. So if LOST_FOUND feature is enabled,
-let's avoid to encrypt root directory.
+This patch introduces a new mount option `test_dummy_encryption' to
+allow fscrypt to create a fake fscrypt context. This is used by xfstests.
 
 Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 ---
- fs/f2fs/f2fs.h  |  2 ++
- fs/f2fs/super.c | 12 ++++++++++++
- fs/f2fs/sysfs.c |  7 +++++++
- 3 files changed, 21 insertions(+)
+ fs/f2fs/dir.c   |  4 +++-
+ fs/f2fs/f2fs.h  | 11 +++++++++++
+ fs/f2fs/namei.c |  9 ++++++---
+ fs/f2fs/super.c | 31 +++++++++++++++++++++++++++++++
+ 4 files changed, 51 insertions(+), 4 deletions(-)
 
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 797eb05cb538..73ddc35fba4f 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -361,6 +361,7 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
+ 			struct page *dpage)
+ {
+ 	struct page *page;
++	int dummy_encrypt = DUMMY_ENCRYPTION_ENABLED(F2FS_I_SB(dir));
+ 	int err;
+ 
+ 	if (is_inode_flag_set(inode, FI_NEW_INODE)) {
+@@ -387,7 +388,8 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
+ 		if (err)
+ 			goto put_error;
+ 
+-		if (f2fs_encrypted_inode(dir) && f2fs_may_encrypt(inode)) {
++		if ((f2fs_encrypted_inode(dir) || dummy_encrypt) &&
++					f2fs_may_encrypt(inode)) {
+ 			err = fscrypt_inherit_context(dir, inode, page, false);
+ 			if (err)
+ 				goto put_error;
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f6dc70666ebb..31f39ab7fce4 100644
+index 31f39ab7fce4..c0dbd8b6050b 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -125,6 +125,7 @@ struct f2fs_mount_info {
- #define F2FS_FEATURE_FLEXIBLE_INLINE_XATTR	0x0040
- #define F2FS_FEATURE_QUOTA_INO		0x0080
- #define F2FS_FEATURE_INODE_CRTIME	0x0100
-+#define F2FS_FEATURE_LOST_FOUND		0x0200
+@@ -1053,6 +1053,15 @@ enum {
+ 	ALLOC_MODE_REUSE,	/* reuse segments as much as possible */
+ };
  
- #define F2FS_HAS_FEATURE(sb, mask)					\
- 	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
-@@ -3211,6 +3212,7 @@ F2FS_FEATURE_FUNCS(inode_chksum, INODE_CHKSUM);
- F2FS_FEATURE_FUNCS(flexible_inline_xattr, FLEXIBLE_INLINE_XATTR);
- F2FS_FEATURE_FUNCS(quota_ino, QUOTA_INO);
- F2FS_FEATURE_FUNCS(inode_crtime, INODE_CRTIME);
-+F2FS_FEATURE_FUNCS(lost_found, LOST_FOUND);
++#define F2FS_MF_TEST_DUMMY_ENCRYPTION	0x0001
++
++#ifdef CONFIG_F2FS_FS_ENCRYPTION
++#define DUMMY_ENCRYPTION_ENABLED(sbi) (unlikely((sbi)->mount_flags & \
++						F2FS_MF_TEST_DUMMY_ENCRYPTION))
++#else
++#define DUMMY_ENCRYPTION_ENABLED(sbi) (0)
++#endif
++
+ struct f2fs_sb_info {
+ 	struct super_block *sb;			/* pointer to VFS super block */
+ 	struct proc_dir_entry *s_proc;		/* proc entry */
+@@ -1242,6 +1251,8 @@ struct f2fs_sb_info {
  
- #ifdef CONFIG_BLK_DEV_ZONED
- static inline int get_blkz_type(struct f2fs_sb_info *sbi,
+ 	/* segment allocation policy */
+ 	int alloc_mode;
++
++	unsigned int mount_flags;
+ };
+ 
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 318dfe870cb5..5dd6a112e13d 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -78,7 +78,8 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
+ 	set_inode_flag(inode, FI_NEW_INODE);
+ 
+ 	/* If the directory encrypted, then we should encrypt the inode. */
+-	if (f2fs_encrypted_inode(dir) && f2fs_may_encrypt(inode))
++	if ((f2fs_encrypted_inode(dir) || DUMMY_ENCRYPTION_ENABLED(sbi)) &&
++				f2fs_may_encrypt(inode))
+ 		f2fs_set_encrypted_inode(inode);
+ 
+ 	if (f2fs_sb_has_extra_attr(sbi->sb)) {
+@@ -788,10 +789,12 @@ static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
+ 
+ static int f2fs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
+ {
+-	if (unlikely(f2fs_cp_error(F2FS_I_SB(dir))))
++	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
++
++	if (unlikely(f2fs_cp_error(sbi)))
+ 		return -EIO;
+ 
+-	if (f2fs_encrypted_inode(dir)) {
++	if (f2fs_encrypted_inode(dir) || DUMMY_ENCRYPTION_ENABLED(sbi)) {
+ 		int err = fscrypt_get_encryption_info(dir);
+ 		if (err)
+ 			return err;
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 30b93ad44b9d..b9a6b97c3bd3 100644
+index b9a6b97c3bd3..345e4f63f6fc 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -1865,6 +1865,18 @@ static int f2fs_get_context(struct inode *inode, void *ctx, size_t len)
- static int f2fs_set_context(struct inode *inode, const void *ctx, size_t len,
- 							void *fs_data)
- {
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+
-+	/*
-+	 * Encrypting the root directory is not allowed because fsck
-+	 * expects lost+found directory to exist and remain unencrypted
-+	 * if LOST_FOUND feature is enabled.
-+	 *
-+	 */
-+	if (f2fs_sb_has_lost_found(sbi->sb) &&
-+			inode->i_ino == F2FS_ROOT_INO(sbi))
-+		return -EPERM;
-+
- 	return f2fs_setxattr(inode, F2FS_XATTR_INDEX_ENCRYPTION,
- 				F2FS_XATTR_NAME_ENCRYPTION_CONTEXT,
+@@ -131,6 +131,7 @@ enum {
+ 	Opt_jqfmt_vfsv1,
+ 	Opt_whint,
+ 	Opt_alloc,
++	Opt_test_dummy_encryption,
+ 	Opt_err,
+ };
+ 
+@@ -186,6 +187,7 @@ static match_table_t f2fs_tokens = {
+ 	{Opt_jqfmt_vfsv1, "jqfmt=vfsv1"},
+ 	{Opt_whint, "whint_mode=%s"},
+ 	{Opt_alloc, "alloc_mode=%s"},
++	{Opt_test_dummy_encryption, "test_dummy_encryption"},
+ 	{Opt_err, NULL},
+ };
+ 
+@@ -719,6 +721,16 @@ static int parse_options(struct super_block *sb, char *options)
+ 			}
+ 			kfree(name);
+ 			break;
++		case Opt_test_dummy_encryption:
++#ifdef CONFIG_F2FS_FS_ENCRYPTION
++			sbi->mount_flags |= F2FS_MF_TEST_DUMMY_ENCRYPTION;
++			f2fs_msg(sb, KERN_INFO,
++					"Test dummy encryption mode enabled");
++#else
++			f2fs_msg(sb, KERN_INFO,
++					"Test dummy encryption mount option ignored");
++#endif
++			break;
+ 		default:
+ 			f2fs_msg(sb, KERN_ERR,
+ 				"Unrecognized mount option \"%s\" or missing value",
+@@ -1282,6 +1294,10 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+ 		seq_printf(seq, ",whint_mode=%s", "user-based");
+ 	else if (sbi->whint_mode == WHINT_MODE_FS)
+ 		seq_printf(seq, ",whint_mode=%s", "fs-based");
++#ifdef CONFIG_F2FS_FS_ENCRYPTION
++	if (sbi->mount_flags & F2FS_MF_TEST_DUMMY_ENCRYPTION)
++		seq_puts(seq, ",test_dummy_encryption");
++#endif
+ 
+ 	if (sbi->alloc_mode == ALLOC_MODE_DEFAULT)
+ 		seq_printf(seq, ",alloc_mode=%s", "default");
+@@ -1882,6 +1898,11 @@ static int f2fs_set_context(struct inode *inode, const void *ctx, size_t len,
  				ctx, len, fs_data, XATTR_CREATE);
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 23a2d8d66c43..53c6785c1916 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -116,6 +116,9 @@ static ssize_t features_show(struct f2fs_attr *a,
- 	if (f2fs_sb_has_inode_crtime(sb))
- 		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
- 				len ? ", " : "", "inode_crtime");
-+	if (f2fs_sb_has_lost_found(sb))
-+		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
-+				len ? ", " : "", "lost_found");
- 	len += snprintf(buf + len, PAGE_SIZE - len, "\n");
- 	return len;
  }
-@@ -292,6 +295,7 @@ enum feat_id {
- 	FEAT_FLEXIBLE_INLINE_XATTR,
- 	FEAT_QUOTA_INO,
- 	FEAT_INODE_CRTIME,
-+	FEAT_LOST_FOUND,
+ 
++static bool f2fs_dummy_context(struct inode *inode)
++{
++	return DUMMY_ENCRYPTION_ENABLED(F2FS_I_SB(inode));
++}
++
+ static unsigned f2fs_max_namelen(struct inode *inode)
+ {
+ 	return S_ISLNK(inode->i_mode) ?
+@@ -1892,6 +1913,7 @@ static const struct fscrypt_operations f2fs_cryptops = {
+ 	.key_prefix	= "f2fs:",
+ 	.get_context	= f2fs_get_context,
+ 	.set_context	= f2fs_set_context,
++	.dummy_context	= f2fs_dummy_context,
+ 	.empty_dir	= f2fs_empty_dir,
+ 	.max_namelen	= f2fs_max_namelen,
  };
+@@ -2620,6 +2642,15 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	if (err)
+ 		goto free_options;
  
- static ssize_t f2fs_feature_show(struct f2fs_attr *a,
-@@ -307,6 +311,7 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
- 	case FEAT_FLEXIBLE_INLINE_XATTR:
- 	case FEAT_QUOTA_INO:
- 	case FEAT_INODE_CRTIME:
-+	case FEAT_LOST_FOUND:
- 		return snprintf(buf, PAGE_SIZE, "supported\n");
- 	}
- 	return 0;
-@@ -386,6 +391,7 @@ F2FS_FEATURE_RO_ATTR(inode_checksum, FEAT_INODE_CHECKSUM);
- F2FS_FEATURE_RO_ATTR(flexible_inline_xattr, FEAT_FLEXIBLE_INLINE_XATTR);
- F2FS_FEATURE_RO_ATTR(quota_ino, FEAT_QUOTA_INO);
- F2FS_FEATURE_RO_ATTR(inode_crtime, FEAT_INODE_CRTIME);
-+F2FS_FEATURE_RO_ATTR(lost_found, FEAT_LOST_FOUND);
- 
- #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
- static struct attribute *f2fs_attrs[] = {
-@@ -441,6 +447,7 @@ static struct attribute *f2fs_feat_attrs[] = {
- 	ATTR_LIST(flexible_inline_xattr),
- 	ATTR_LIST(quota_ino),
- 	ATTR_LIST(inode_crtime),
-+	ATTR_LIST(lost_found),
- 	NULL,
- };
- 
++	if (DUMMY_ENCRYPTION_ENABLED(sbi) &&
++			(sb_rdonly(sb) || !f2fs_sb_has_encrypt(sb))) {
++		f2fs_msg(sb, KERN_ERR,
++			"Encrypt feature is off or filesystem is read-only");
++		err = -EINVAL;
++		retry = false;
++		goto free_options;
++	}
++
+ 	sbi->max_file_blocks = max_file_blocks();
+ 	sb->s_maxbytes = sbi->max_file_blocks <<
+ 				le32_to_cpu(raw_super->log_blocksize);
 -- 
 2.14.1
 
