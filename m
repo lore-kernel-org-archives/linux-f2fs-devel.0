@@ -1,9 +1,8 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: [RFC PATCH v4 2/3] f2fs: introduce a new mount option
- test_dummy_encryption
-Date: Fri, 9 Mar 2018 15:53:11 +0800
-Message-ID: <20180309075312.62357-3-shengyong1@huawei.com>
-References: <20180309075312.62357-1-shengyong1@huawei.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH v2] f2fs: introduce a method to make nat journal
+ more fresh
+Date: Fri, 9 Mar 2018 17:53:17 +0800
+Message-ID: <1520589197-30137-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,14 +10,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <shengyong1@huawei.com>) id 1euCqV-0005lj-4W
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Mar 2018 07:53:43 +0000
+ (envelope-from <heyunlei@huawei.com>) id 1euEvP-000491-56
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Mar 2018 10:06:55 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
  helo=huawei.com) by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1euCqS-009Epx-NB
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Mar 2018 07:53:43 +0000
-In-Reply-To: <20180309075312.62357-1-shengyong1@huawei.com>
+ id 1euEvL-00AGgm-St
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Mar 2018 10:06:55 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,186 +26,171 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, ebiggers@google.com, tytso@mit.edu
-Cc: linux-fscrypt@vger.kernel.org, miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: heyunlei@huawei.com, zhangdianfang@huawei.com
 
-This patch introduces a new mount option `test_dummy_encryption' to
-allow fscrypt to create a fake fscrypt context. This is used by xfstests.
+This patch introduce a method to make nat journal more fresh:
+i.  sort set list using dirty entry number and cp version
+    average value.
+ii. if meet with cache hit, update average version valus with
+    current cp version.
 
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+With this patch, newly modified nat set will flush to journal,
+and flush old nat set with same dirty entry number to nat area.
+
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fs/f2fs/dir.c   |  4 +++-
- fs/f2fs/f2fs.h  | 11 +++++++++++
- fs/f2fs/namei.c |  9 ++++++---
- fs/f2fs/super.c | 31 +++++++++++++++++++++++++++++++
- 4 files changed, 51 insertions(+), 4 deletions(-)
+ fs/f2fs/node.c | 40 ++++++++++++++++++++++++++--------------
+ fs/f2fs/node.h |  2 ++
+ 2 files changed, 28 insertions(+), 14 deletions(-)
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 797eb05cb538..73ddc35fba4f 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -361,6 +361,7 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
- 			struct page *dpage)
- {
- 	struct page *page;
-+	int dummy_encrypt = DUMMY_ENCRYPTION_ENABLED(F2FS_I_SB(dir));
- 	int err;
- 
- 	if (is_inode_flag_set(inode, FI_NEW_INODE)) {
-@@ -387,7 +388,8 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
- 		if (err)
- 			goto put_error;
- 
--		if (f2fs_encrypted_inode(dir) && f2fs_may_encrypt(inode)) {
-+		if ((f2fs_encrypted_inode(dir) || dummy_encrypt) &&
-+					f2fs_may_encrypt(inode)) {
- 			err = fscrypt_inherit_context(dir, inode, page, false);
- 			if (err)
- 				goto put_error;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 31f39ab7fce4..c0dbd8b6050b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1053,6 +1053,15 @@ enum {
- 	ALLOC_MODE_REUSE,	/* reuse segments as much as possible */
- };
- 
-+#define F2FS_MF_TEST_DUMMY_ENCRYPTION	0x0001
-+
-+#ifdef CONFIG_F2FS_FS_ENCRYPTION
-+#define DUMMY_ENCRYPTION_ENABLED(sbi) (unlikely((sbi)->mount_flags & \
-+						F2FS_MF_TEST_DUMMY_ENCRYPTION))
-+#else
-+#define DUMMY_ENCRYPTION_ENABLED(sbi) (0)
-+#endif
-+
- struct f2fs_sb_info {
- 	struct super_block *sb;			/* pointer to VFS super block */
- 	struct proc_dir_entry *s_proc;		/* proc entry */
-@@ -1242,6 +1251,8 @@ struct f2fs_sb_info {
- 
- 	/* segment allocation policy */
- 	int alloc_mode;
-+
-+	unsigned int mount_flags;
- };
- 
- #ifdef CONFIG_F2FS_FAULT_INJECTION
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 318dfe870cb5..5dd6a112e13d 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -78,7 +78,8 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 	set_inode_flag(inode, FI_NEW_INODE);
- 
- 	/* If the directory encrypted, then we should encrypt the inode. */
--	if (f2fs_encrypted_inode(dir) && f2fs_may_encrypt(inode))
-+	if ((f2fs_encrypted_inode(dir) || DUMMY_ENCRYPTION_ENABLED(sbi)) &&
-+				f2fs_may_encrypt(inode))
- 		f2fs_set_encrypted_inode(inode);
- 
- 	if (f2fs_sb_has_extra_attr(sbi->sb)) {
-@@ -788,10 +789,12 @@ static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
- 
- static int f2fs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
- {
--	if (unlikely(f2fs_cp_error(F2FS_I_SB(dir))))
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
-+
-+	if (unlikely(f2fs_cp_error(sbi)))
- 		return -EIO;
- 
--	if (f2fs_encrypted_inode(dir)) {
-+	if (f2fs_encrypted_inode(dir) || DUMMY_ENCRYPTION_ENABLED(sbi)) {
- 		int err = fscrypt_get_encryption_info(dir);
- 		if (err)
- 			return err;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index b9a6b97c3bd3..345e4f63f6fc 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -131,6 +131,7 @@ enum {
- 	Opt_jqfmt_vfsv1,
- 	Opt_whint,
- 	Opt_alloc,
-+	Opt_test_dummy_encryption,
- 	Opt_err,
- };
- 
-@@ -186,6 +187,7 @@ static match_table_t f2fs_tokens = {
- 	{Opt_jqfmt_vfsv1, "jqfmt=vfsv1"},
- 	{Opt_whint, "whint_mode=%s"},
- 	{Opt_alloc, "alloc_mode=%s"},
-+	{Opt_test_dummy_encryption, "test_dummy_encryption"},
- 	{Opt_err, NULL},
- };
- 
-@@ -719,6 +721,16 @@ static int parse_options(struct super_block *sb, char *options)
- 			}
- 			kfree(name);
- 			break;
-+		case Opt_test_dummy_encryption:
-+#ifdef CONFIG_F2FS_FS_ENCRYPTION
-+			sbi->mount_flags |= F2FS_MF_TEST_DUMMY_ENCRYPTION;
-+			f2fs_msg(sb, KERN_INFO,
-+					"Test dummy encryption mode enabled");
-+#else
-+			f2fs_msg(sb, KERN_INFO,
-+					"Test dummy encryption mount option ignored");
-+#endif
-+			break;
- 		default:
- 			f2fs_msg(sb, KERN_ERR,
- 				"Unrecognized mount option \"%s\" or missing value",
-@@ -1282,6 +1294,10 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_printf(seq, ",whint_mode=%s", "user-based");
- 	else if (sbi->whint_mode == WHINT_MODE_FS)
- 		seq_printf(seq, ",whint_mode=%s", "fs-based");
-+#ifdef CONFIG_F2FS_FS_ENCRYPTION
-+	if (sbi->mount_flags & F2FS_MF_TEST_DUMMY_ENCRYPTION)
-+		seq_puts(seq, ",test_dummy_encryption");
-+#endif
- 
- 	if (sbi->alloc_mode == ALLOC_MODE_DEFAULT)
- 		seq_printf(seq, ",alloc_mode=%s", "default");
-@@ -1882,6 +1898,11 @@ static int f2fs_set_context(struct inode *inode, const void *ctx, size_t len,
- 				ctx, len, fs_data, XATTR_CREATE);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 177c438..844bdda 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -193,8 +193,8 @@ static void __del_from_nat_cache(struct f2fs_nm_info *nm_i, struct nat_entry *e)
+ 	__free_nat_entry(e);
  }
  
-+static bool f2fs_dummy_context(struct inode *inode)
-+{
-+	return DUMMY_ENCRYPTION_ENABLED(F2FS_I_SB(inode));
-+}
-+
- static unsigned f2fs_max_namelen(struct inode *inode)
+-static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
+-						struct nat_entry *ne)
++static void __set_nat_cache_dirty(struct f2fs_sb_info *sbi, bool remove_journal,
++			struct f2fs_nm_info *nm_i, struct nat_entry *ne)
  {
- 	return S_ISLNK(inode->i_mode) ?
-@@ -1892,6 +1913,7 @@ static const struct fscrypt_operations f2fs_cryptops = {
- 	.key_prefix	= "f2fs:",
- 	.get_context	= f2fs_get_context,
- 	.set_context	= f2fs_set_context,
-+	.dummy_context	= f2fs_dummy_context,
- 	.empty_dir	= f2fs_empty_dir,
- 	.max_namelen	= f2fs_max_namelen,
- };
-@@ -2620,6 +2642,15 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	if (err)
- 		goto free_options;
+ 	nid_t set = NAT_BLOCK_OFFSET(ne->ni.nid);
+ 	struct nat_entry_set *head;
+@@ -207,9 +207,17 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
+ 		INIT_LIST_HEAD(&head->set_list);
+ 		head->set = set;
+ 		head->entry_cnt = 0;
++		head->to_journal = false;
++		head->cp_ver = cur_cp_version(F2FS_CKPT(sbi));
+ 		f2fs_radix_tree_insert(&nm_i->nat_set_root, set, head);
+ 	}
  
-+	if (DUMMY_ENCRYPTION_ENABLED(sbi) &&
-+			(sb_rdonly(sb) || !f2fs_sb_has_encrypt(sb))) {
-+		f2fs_msg(sb, KERN_ERR,
-+			"Encrypt feature is off or filesystem is read-only");
-+		err = -EINVAL;
-+		retry = false;
-+		goto free_options;
-+	}
++	/* journal hit case, try to locate set in journal */
++	if (!remove_journal && head->to_journal)
++		head->cp_ver = div_u64(head->cp_ver, head->entry_cnt + 1) *
++			head->entry_cnt + div_u64(cur_cp_version(F2FS_CKPT(sbi)),
++				head->entry_cnt + 1);
 +
- 	sbi->max_file_blocks = max_file_blocks();
- 	sb->s_maxbytes = sbi->max_file_blocks <<
- 				le32_to_cpu(raw_super->log_blocksize);
+ 	if (get_nat_flag(ne, IS_DIRTY))
+ 		goto refresh_list;
+ 
+@@ -357,7 +365,7 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+ 	nat_set_blkaddr(e, new_blkaddr);
+ 	if (new_blkaddr == NEW_ADDR || new_blkaddr == NULL_ADDR)
+ 		set_nat_flag(e, IS_CHECKPOINTED, false);
+-	__set_nat_cache_dirty(nm_i, e);
++	__set_nat_cache_dirty(sbi, false, nm_i, e);
+ 
+ 	/* update fsync_mark if its inode nat entry is still alive */
+ 	if (ni->nid != ni->ino)
+@@ -2395,14 +2403,14 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
+ 			spin_unlock(&nm_i->nid_list_lock);
+ 		}
+ 
+-		__set_nat_cache_dirty(nm_i, ne);
++		__set_nat_cache_dirty(sbi, true, nm_i, ne);
+ 	}
+ 	update_nats_in_cursum(journal, -i);
+ 	up_write(&curseg->journal_rwsem);
+ }
+ 
+-static void __adjust_nat_entry_set(struct nat_entry_set *nes,
+-						struct list_head *head, int max)
++static void __adjust_nat_entry_set(struct f2fs_sb_info *sbi,
++		struct nat_entry_set *nes, struct list_head *head, int max)
+ {
+ 	struct nat_entry_set *cur;
+ 
+@@ -2410,7 +2418,9 @@ static void __adjust_nat_entry_set(struct nat_entry_set *nes,
+ 		goto add_out;
+ 
+ 	list_for_each_entry(cur, head, set_list) {
+-		if (cur->entry_cnt >= nes->entry_cnt) {
++		if (cur->entry_cnt > nes->entry_cnt ||
++			(cur->entry_cnt == nes->entry_cnt &&
++			cur->cp_ver < nes->cp_ver)) {
+ 			list_add(&nes->set_list, cur->set_list.prev);
+ 			return;
+ 		}
+@@ -2458,7 +2468,6 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+ 	struct f2fs_journal *journal = curseg->journal;
+ 	nid_t start_nid = set->set * NAT_ENTRY_PER_BLOCK;
+-	bool to_journal = true;
+ 	struct f2fs_nat_block *nat_blk;
+ 	struct nat_entry *ne, *cur;
+ 	struct page *page = NULL;
+@@ -2468,11 +2477,14 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 	 * #1, flush nat entries to journal in current hot data summary block.
+ 	 * #2, flush nat entries to nat page.
+ 	 */
++
++	set->to_journal = true;
++
+ 	if (enabled_nat_bits(sbi, cpc) ||
+ 		!__has_cursum_space(journal, set->entry_cnt, NAT_JOURNAL))
+-		to_journal = false;
++		set->to_journal = false;
+ 
+-	if (to_journal) {
++	if (set->to_journal) {
+ 		down_write(&curseg->journal_rwsem);
+ 	} else {
+ 		page = get_next_nat_page(sbi, start_nid);
+@@ -2488,7 +2500,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 
+ 		f2fs_bug_on(sbi, nat_get_blkaddr(ne) == NEW_ADDR);
+ 
+-		if (to_journal) {
++		if (set->to_journal) {
+ 			offset = lookup_journal_in_cursum(journal,
+ 							NAT_JOURNAL, nid, 1);
+ 			f2fs_bug_on(sbi, offset < 0);
+@@ -2509,7 +2521,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 		}
+ 	}
+ 
+-	if (to_journal) {
++	if (set->to_journal) {
+ 		up_write(&curseg->journal_rwsem);
+ 	} else {
+ 		__update_nat_bits(sbi, start_nid, page);
+@@ -2517,7 +2529,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 	}
+ 
+ 	/* Allow dirty nats by node block allocation in write_begin */
+-	if (!set->entry_cnt) {
++	if (!set->to_journal || cpc->reason & CP_UMOUNT) {
+ 		radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
+ 		kmem_cache_free(nat_entry_set_slab, set);
+ 	}
+@@ -2556,7 +2568,7 @@ void flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 		unsigned idx;
+ 		set_idx = setvec[found - 1]->set + 1;
+ 		for (idx = 0; idx < found; idx++)
+-			__adjust_nat_entry_set(setvec[idx], &sets,
++			__adjust_nat_entry_set(sbi, setvec[idx], &sets,
+ 						MAX_NAT_JENTRIES(journal));
+ 	}
+ 
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index 081ef0d..76afb24 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -149,6 +149,8 @@ struct nat_entry_set {
+ 	struct list_head entry_list;	/* link with dirty nat entries */
+ 	nid_t set;			/* set number*/
+ 	unsigned int entry_cnt;		/* the # of nat entries in set */
++	__u64 cp_ver;			/* cp version of this set modify */
++	bool to_journal;		/* set flush to journal */
+ };
+ 
+ struct free_nid {
 -- 
-2.14.1
+1.9.1
 
 
 ------------------------------------------------------------------------------
