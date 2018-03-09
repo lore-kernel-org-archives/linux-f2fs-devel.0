@@ -1,34 +1,64 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v3] f2fs: add nowait aio support
-Date: Fri, 9 Mar 2018 09:11:48 +0800
-Message-ID: <0ca9e2b7-eb63-65f3-ee70-a8cf5b90debf@huawei.com>
-References: <1520505278-24735-1-git-send-email-hyc.lee@gmail.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: avoid selinux denial on CAP_SYS_RESOURCE
+Date: Thu,  8 Mar 2018 20:49:00 -0800
+Message-ID: <20180309044900.39677-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1520505278-24735-1-git-send-email-hyc.lee@gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hyunchul Lee <hyc.lee@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-team@lge.com, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, Hyunchul Lee <cheol.lee@lge.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1eu9xt-0005Ge-CY
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Mar 2018 04:49:09 +0000
+Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
+ helo=mail.kernel.org) by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1eu9xo-0088gt-Qr
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Mar 2018 04:49:06 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-On 2018/3/8 18:34, Hyunchul Lee wrote:
-> From: Hyunchul Lee <cheol.lee@lge.com>
-> 
-> This patch adds nowait aio support[1].
-> 
-> Return EAGAIN if any of the following checks fail for direct I/O:
->   - i_rwsem is not lockable
->   - Blocks are not allocated at the write location
-> 
-> And xfstests generic/471 is passed.
-> 
->  [1]: 6be96d "Introduce RWF_NOWAIT and FMODE_AIO_NOWAIT"
-> 
-> Signed-off-by: Hyunchul Lee <cheol.lee@lge.com>
+This fixes CAP_SYS_RESOURCE denial of selinux when using resgid.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/f2fs.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f6dc70666ebb..3d12277fbe9e 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1607,13 +1607,13 @@ static inline bool __allow_reserved_blocks(struct f2fs_sb_info *sbi,
+ 		return false;
+ 	if (IS_NOQUOTA(inode))
+ 		return true;
+-	if (capable(CAP_SYS_RESOURCE))
+-		return true;
+ 	if (uid_eq(sbi->s_resuid, current_fsuid()))
+ 		return true;
+ 	if (!gid_eq(sbi->s_resgid, GLOBAL_ROOT_GID) &&
+ 					in_group_p(sbi->s_resgid))
+ 		return true;
++	if (capable(CAP_SYS_RESOURCE))
++		return true;
+ 	return false;
+ }
+ 
+-- 
+2.15.0.531.g2ccb3012c9-goog
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
