@@ -1,22 +1,25 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v2] f2fs: introduce a method to make nat journal
- more fresh
-Date: Fri, 9 Mar 2018 17:53:17 +0800
-Message-ID: <1520589197-30137-1-git-send-email-heyunlei@huawei.com>
+From: heyunlei <heyunlei@huawei.com>
+Subject: Re: [PATCH v3] f2fs: check blkaddr more accuratly before
+ issue a bio
+Date: Fri, 9 Mar 2018 10:08:34 +0000
+Message-ID: <42B685BFA705F94C860C6DD0752F056548348E30@DGGEMA503-MBX.china.huawei.com>
+References: <1520589133-30033-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <heyunlei@huawei.com>) id 1euEvP-000491-56
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Mar 2018 10:06:55 +0000
+ (envelope-from <heyunlei@huawei.com>) id 1euExK-0006bx-Sq
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Mar 2018 10:08:54 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
  helo=huawei.com) by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1euEvL-00AGgm-St
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Mar 2018 10:06:55 +0000
+ id 1euExI-00AJER-W6
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Mar 2018 10:08:54 +0000
+In-Reply-To: <1520589133-30033-1-git-send-email-heyunlei@huawei.com>
+Content-Language: zh-CN
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,171 +29,138 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
-Cc: heyunlei@huawei.com, zhangdianfang@huawei.com
+To: heyunlei <heyunlei@huawei.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "Yuchao (T)" <yuchao0@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Cc: "Zhangdianfang (Euler)" <zhangdianfang@huawei.com>
 
-This patch introduce a method to make nat journal more fresh:
-i.  sort set list using dirty entry number and cp version
-    average value.
-ii. if meet with cache hit, update average version valus with
-    current cp version.
 
-With this patch, newly modified nat set will flush to journal,
-and flush old nat set with same dirty entry number to nat area.
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fs/f2fs/node.c | 40 ++++++++++++++++++++++++++--------------
- fs/f2fs/node.h |  2 ++
- 2 files changed, 28 insertions(+), 14 deletions(-)
+>-----Original Message-----
+>From: heyunlei
+>Sent: Friday, March 09, 2018 5:52 PM
+>To: jaegeuk@kernel.org; Yuchao (T); linux-f2fs-devel@lists.sourceforge.net
+>Cc: Wangbintian; Zhangdianfang (Euler); heyunlei
+>Subject: [f2fs-dev][PATCH v3] f2fs: check blkaddr more accuratly before issue a bio
+>
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 177c438..844bdda 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -193,8 +193,8 @@ static void __del_from_nat_cache(struct f2fs_nm_info *nm_i, struct nat_entry *e)
- 	__free_nat_entry(e);
- }
- 
--static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
--						struct nat_entry *ne)
-+static void __set_nat_cache_dirty(struct f2fs_sb_info *sbi, bool remove_journal,
-+			struct f2fs_nm_info *nm_i, struct nat_entry *ne)
- {
- 	nid_t set = NAT_BLOCK_OFFSET(ne->ni.nid);
- 	struct nat_entry_set *head;
-@@ -207,9 +207,17 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
- 		INIT_LIST_HEAD(&head->set_list);
- 		head->set = set;
- 		head->entry_cnt = 0;
-+		head->to_journal = false;
-+		head->cp_ver = cur_cp_version(F2FS_CKPT(sbi));
- 		f2fs_radix_tree_insert(&nm_i->nat_set_root, set, head);
- 	}
- 
-+	/* journal hit case, try to locate set in journal */
-+	if (!remove_journal && head->to_journal)
-+		head->cp_ver = div_u64(head->cp_ver, head->entry_cnt + 1) *
-+			head->entry_cnt + div_u64(cur_cp_version(F2FS_CKPT(sbi)),
-+				head->entry_cnt + 1);
-+
- 	if (get_nat_flag(ne, IS_DIRTY))
- 		goto refresh_list;
- 
-@@ -357,7 +365,7 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
- 	nat_set_blkaddr(e, new_blkaddr);
- 	if (new_blkaddr == NEW_ADDR || new_blkaddr == NULL_ADDR)
- 		set_nat_flag(e, IS_CHECKPOINTED, false);
--	__set_nat_cache_dirty(nm_i, e);
-+	__set_nat_cache_dirty(sbi, false, nm_i, e);
- 
- 	/* update fsync_mark if its inode nat entry is still alive */
- 	if (ni->nid != ni->ino)
-@@ -2395,14 +2403,14 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
- 			spin_unlock(&nm_i->nid_list_lock);
- 		}
- 
--		__set_nat_cache_dirty(nm_i, ne);
-+		__set_nat_cache_dirty(sbi, true, nm_i, ne);
- 	}
- 	update_nats_in_cursum(journal, -i);
- 	up_write(&curseg->journal_rwsem);
- }
- 
--static void __adjust_nat_entry_set(struct nat_entry_set *nes,
--						struct list_head *head, int max)
-+static void __adjust_nat_entry_set(struct f2fs_sb_info *sbi,
-+		struct nat_entry_set *nes, struct list_head *head, int max)
- {
- 	struct nat_entry_set *cur;
- 
-@@ -2410,7 +2418,9 @@ static void __adjust_nat_entry_set(struct nat_entry_set *nes,
- 		goto add_out;
- 
- 	list_for_each_entry(cur, head, set_list) {
--		if (cur->entry_cnt >= nes->entry_cnt) {
-+		if (cur->entry_cnt > nes->entry_cnt ||
-+			(cur->entry_cnt == nes->entry_cnt &&
-+			cur->cp_ver < nes->cp_ver)) {
- 			list_add(&nes->set_list, cur->set_list.prev);
- 			return;
- 		}
-@@ -2458,7 +2468,6 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
- 	struct f2fs_journal *journal = curseg->journal;
- 	nid_t start_nid = set->set * NAT_ENTRY_PER_BLOCK;
--	bool to_journal = true;
- 	struct f2fs_nat_block *nat_blk;
- 	struct nat_entry *ne, *cur;
- 	struct page *page = NULL;
-@@ -2468,11 +2477,14 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
- 	 * #1, flush nat entries to journal in current hot data summary block.
- 	 * #2, flush nat entries to nat page.
- 	 */
-+
-+	set->to_journal = true;
-+
- 	if (enabled_nat_bits(sbi, cpc) ||
- 		!__has_cursum_space(journal, set->entry_cnt, NAT_JOURNAL))
--		to_journal = false;
-+		set->to_journal = false;
- 
--	if (to_journal) {
-+	if (set->to_journal) {
- 		down_write(&curseg->journal_rwsem);
- 	} else {
- 		page = get_next_nat_page(sbi, start_nid);
-@@ -2488,7 +2500,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
- 
- 		f2fs_bug_on(sbi, nat_get_blkaddr(ne) == NEW_ADDR);
- 
--		if (to_journal) {
-+		if (set->to_journal) {
- 			offset = lookup_journal_in_cursum(journal,
- 							NAT_JOURNAL, nid, 1);
- 			f2fs_bug_on(sbi, offset < 0);
-@@ -2509,7 +2521,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
- 		}
- 	}
- 
--	if (to_journal) {
-+	if (set->to_journal) {
- 		up_write(&curseg->journal_rwsem);
- 	} else {
- 		__update_nat_bits(sbi, start_nid, page);
-@@ -2517,7 +2529,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
- 	}
- 
- 	/* Allow dirty nats by node block allocation in write_begin */
--	if (!set->entry_cnt) {
-+	if (!set->to_journal || cpc->reason & CP_UMOUNT) {
- 		radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
- 		kmem_cache_free(nat_entry_set_slab, set);
- 	}
-@@ -2556,7 +2568,7 @@ void flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 		unsigned idx;
- 		set_idx = setvec[found - 1]->set + 1;
- 		for (idx = 0; idx < found; idx++)
--			__adjust_nat_entry_set(setvec[idx], &sets,
-+			__adjust_nat_entry_set(sbi, setvec[idx], &sets,
- 						MAX_NAT_JENTRIES(journal));
- 	}
- 
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index 081ef0d..76afb24 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -149,6 +149,8 @@ struct nat_entry_set {
- 	struct list_head entry_list;	/* link with dirty nat entries */
- 	nid_t set;			/* set number*/
- 	unsigned int entry_cnt;		/* the # of nat entries in set */
-+	__u64 cp_ver;			/* cp version of this set modify */
-+	bool to_journal;		/* set flush to journal */
- };
- 
- struct free_nid {
--- 
-1.9.1
+I'm sorry that resend this email, please ignore this!
+
+Thanks.
+>This patch check blkaddr more accuratly before issue a
+>write or read bio.
+>
+>Signed-off-by: Yunlei He <heyunlei@huawei.com>
+>---
+> fs/f2fs/checkpoint.c |  2 ++
+> fs/f2fs/data.c       |  5 +++--
+> fs/f2fs/f2fs.h       |  1 +
+> fs/f2fs/segment.h    | 25 +++++++++++++++++++------
+> 4 files changed, 25 insertions(+), 8 deletions(-)
+>
+>diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>index 5b2db75..bf77946 100644
+>--- a/fs/f2fs/checkpoint.c
+>+++ b/fs/f2fs/checkpoint.c
+>@@ -68,6 +68,7 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
+> 		.old_blkaddr = index,
+> 		.new_blkaddr = index,
+> 		.encrypted_page = NULL,
+>+		.is_meta = is_meta,
+> 	};
+>
+> 	if (unlikely(!is_meta))
+>@@ -162,6 +163,7 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
+> 		.op_flags = sync ? (REQ_META | REQ_PRIO) : REQ_RAHEAD,
+> 		.encrypted_page = NULL,
+> 		.in_list = false,
+>+		.is_meta = (type != META_POR),
+> 	};
+> 	struct blk_plug plug;
+>
+>diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>index 6c3c978..de036e8 100644
+>--- a/fs/f2fs/data.c
+>+++ b/fs/f2fs/data.c
+>@@ -383,6 +383,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+> 	struct page *page = fio->encrypted_page ?
+> 			fio->encrypted_page : fio->page;
+>
+>+	verify_block_addr(fio, fio->new_blkaddr);
+> 	trace_f2fs_submit_page_bio(page, fio);
+> 	f2fs_trace_ios(fio, 0);
+>
+>@@ -428,8 +429,8 @@ int f2fs_submit_page_write(struct f2fs_io_info *fio)
+> 	}
+>
+> 	if (fio->old_blkaddr != NEW_ADDR)
+>-		verify_block_addr(sbi, fio->old_blkaddr);
+>-	verify_block_addr(sbi, fio->new_blkaddr);
+>+		verify_block_addr(fio, fio->old_blkaddr);
+>+	verify_block_addr(fio, fio->new_blkaddr);
+>
+> 	bio_page = fio->encrypted_page ? fio->encrypted_page : fio->page;
+>
+>diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>index f6dc706..842adea 100644
+>--- a/fs/f2fs/f2fs.h
+>+++ b/fs/f2fs/f2fs.h
+>@@ -980,6 +980,7 @@ struct f2fs_io_info {
+> 	bool submitted;		/* indicate IO submission */
+> 	int need_lock;		/* indicate we need to lock cp_rwsem */
+> 	bool in_list;		/* indicate fio is in io_list */
+>+	bool is_meta;		/* indicate borrow meta inode mapping or not */
+> 	enum iostat_type io_type;	/* io type */
+> 	struct writeback_control *io_wbc; /* writeback control */
+> };
+>diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+>index dbb774aa..3325d07 100644
+>--- a/fs/f2fs/segment.h
+>+++ b/fs/f2fs/segment.h
+>@@ -53,13 +53,19 @@
+> 	 ((secno) == CURSEG_I(sbi, CURSEG_COLD_NODE)->segno /		\
+> 	  (sbi)->segs_per_sec))	\
+>
+>-#define MAIN_BLKADDR(sbi)	(SM_I(sbi)->main_blkaddr)
+>-#define SEG0_BLKADDR(sbi)	(SM_I(sbi)->seg0_blkaddr)
+>+#define MAIN_BLKADDR(sbi)						\
+>+	(SM_I(sbi) ? SM_I(sbi)->main_blkaddr : 				\
+>+		le32_to_cpu(F2FS_RAW_SUPER(sbi)->main_blkaddr))
+>+#define SEG0_BLKADDR(sbi)						\
+>+	(SM_I(sbi) ? SM_I(sbi)->seg0_blkaddr : 				\
+>+		le32_to_cpu(F2FS_RAW_SUPER(sbi)->segment0_blkaddr))
+>
+> #define MAIN_SEGS(sbi)	(SM_I(sbi)->main_segments)
+> #define MAIN_SECS(sbi)	((sbi)->total_sections)
+>
+>-#define TOTAL_SEGS(sbi)	(SM_I(sbi)->segment_count)
+>+#define TOTAL_SEGS(sbi)							\
+>+	(SM_I(sbi) ? SM_I(sbi)->segment_count : 				\
+>+		le32_to_cpu(F2FS_RAW_SUPER(sbi)->segment_count))
+> #define TOTAL_BLKS(sbi)	(TOTAL_SEGS(sbi) << (sbi)->log_blocks_per_seg)
+>
+> #define MAX_BLKADDR(sbi)	(SEG0_BLKADDR(sbi) + TOTAL_BLKS(sbi))
+>@@ -632,10 +638,17 @@ static inline void check_seg_range(struct f2fs_sb_info *sbi, unsigned int segno)
+> 	f2fs_bug_on(sbi, segno > TOTAL_SEGS(sbi) - 1);
+> }
+>
+>-static inline void verify_block_addr(struct f2fs_sb_info *sbi, block_t blk_addr)
+>+static inline void verify_block_addr(struct f2fs_io_info *fio, block_t blk_addr)
+> {
+>-	BUG_ON(blk_addr < SEG0_BLKADDR(sbi)
+>-			|| blk_addr >= MAX_BLKADDR(sbi));
+>+	struct f2fs_sb_info *sbi = fio->sbi;
+>+
+>+	if (PAGE_TYPE_OF_BIO(fio->type) == META &&
+>+				(!is_read_io(fio->op) || fio->is_meta))
+>+		BUG_ON(blk_addr < SEG0_BLKADDR(sbi) ||
+>+				blk_addr >= MAIN_BLKADDR(sbi));
+>+	else
+>+		BUG_ON(blk_addr < MAIN_BLKADDR(sbi) ||
+>+				blk_addr >= MAX_BLKADDR(sbi));
+> }
+>
+> /*
+>--
+>1.9.1
 
 
 ------------------------------------------------------------------------------
