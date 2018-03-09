@@ -1,92 +1,120 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: remove unneeded set_cold_node()
-Date: Fri, 9 Mar 2018 14:24:22 +0800
-Message-ID: <20180309062422.71686-1-yuchao0@huawei.com>
+From: guoweichao <guoweichao@huawei.com>
+Subject: Re: [PATCH v5] f2fs: support in-memory inode checksum
+ when checking consistency
+Date: Fri, 9 Mar 2018 14:42:30 +0800
+Message-ID: <5b6fc02e-c61b-973d-3b0b-f5861f946eab@huawei.com>
+References: <20180308213142.2917-1-guoweichao@huawei.com>
+ <3aa888f1-d99b-3c7d-d3cd-46f83995ee4c@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <guoweichao@huawei.com>) id 1euBkA-0007z0-D2
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Mar 2018 06:43:06 +0000
+Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
+ helo=huawei.com) by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1euBjs-008oLL-W7
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Mar 2018 06:43:03 +0000
+In-Reply-To: <3aa888f1-d99b-3c7d-d3cd-46f83995ee4c@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org
+Cc: heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-When setting COLD_BIT_SHIFT flag in node block, we only need to call
-set_cold_node() in new_node_page() and recover_inode_page() during
-node page initialization. So remove unneeded set_cold_node() in other
-places.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/dir.c   | 2 --
- fs/f2fs/inode.c | 1 -
- fs/f2fs/node.c  | 3 ++-
- fs/f2fs/node.h  | 4 ++--
- 4 files changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 3644db9177cb..9a0d103b5052 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -396,8 +396,6 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
- 		page = get_node_page(F2FS_I_SB(dir), inode->i_ino);
- 		if (IS_ERR(page))
- 			return page;
--
--		set_cold_node(inode, page);
- 	}
- 
- 	if (new_name) {
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 2e397473e69b..c85cccc2e800 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -462,7 +462,6 @@ void update_inode(struct inode *inode, struct page *node_page)
- 	}
- 
- 	__set_inode_rdev(inode, ri);
--	set_cold_node(inode, node_page);
- 
- 	/* deleted inode */
- 	if (inode->i_nlink == 0)
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 7817080236e0..43cab3ab14a5 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1079,7 +1079,7 @@ struct page *new_node_page(struct dnode_of_data *dn, unsigned int ofs)
- 
- 	f2fs_wait_on_page_writeback(page, NODE, true);
- 	fill_node_footer(page, dn->nid, dn->inode->i_ino, ofs, true);
--	set_cold_node(dn->inode, page);
-+	set_cold_node(page, S_ISDIR(dn->inode->i_mode));
- 	if (!PageUptodate(page))
- 		SetPageUptodate(page);
- 	if (set_page_dirty(page))
-@@ -2322,6 +2322,7 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
- 	if (!PageUptodate(ipage))
- 		SetPageUptodate(ipage);
- 	fill_node_footer(ipage, ino, ino, 0, true);
-+	set_cold_node(page, false);
- 
- 	src = F2FS_INODE(page);
- 	dst = F2FS_INODE(ipage);
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index b051196b5d5b..d105c4154544 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -425,12 +425,12 @@ static inline void clear_inline_node(struct page *page)
- 	ClearPageChecked(page);
- }
- 
--static inline void set_cold_node(struct inode *inode, struct page *page)
-+static inline void set_cold_node(struct page *page, bool is_dir)
- {
- 	struct f2fs_node *rn = F2FS_NODE(page);
- 	unsigned int flag = le32_to_cpu(rn->footer.flag);
- 
--	if (S_ISDIR(inode->i_mode))
-+	if (is_dir)
- 		flag &= ~(0x1 << COLD_BIT_SHIFT);
- 	else
- 		flag |= (0x1 << COLD_BIT_SHIFT);
--- 
-2.15.0.55.gc2ece9dc4de6
+On 2018/3/9 13:49, Chao Yu wrote:
+> On 2018/3/9 5:31, Weichao Guo wrote:
+>> Only enable in-memory inode checksum to protect metadata blocks
+>> from in-memory scribbles when checking consistency, which has no
+>> performance requirements.
+> 
+> Signed-off-by?
+Sorry for this mistake.
+I will send a new version of this patch.
+Thanks,
+> 
+> Thanks,
+> 
+>> ---
+>>  fs/f2fs/inode.c |  7 +++++++
+>>  fs/f2fs/node.c  | 10 +++++++++-
+>>  2 files changed, 16 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+>> index 205add3..e405b28 100644
+>> --- a/fs/f2fs/inode.c
+>> +++ b/fs/f2fs/inode.c
+>> @@ -159,8 +159,12 @@ bool f2fs_inode_chksum_verify(struct f2fs_sb_info *sbi, struct page *page)
+>>  	struct f2fs_inode *ri;
+>>  	__u32 provided, calculated;
+>>  
+>> +#ifdef CONFIG_F2FS_CHECK_FS
+>> +	if (!f2fs_enable_inode_chksum(sbi, page))
+>> +#else
+>>  	if (!f2fs_enable_inode_chksum(sbi, page) ||
+>>  			PageDirty(page) || PageWriteback(page))
+>> +#endif
+>>  		return true;
+>>  
+>>  	ri = &F2FS_NODE(page)->i;
+>> @@ -445,6 +449,9 @@ void update_inode(struct inode *inode, struct page *node_page)
+>>  	if (inode->i_nlink == 0)
+>>  		clear_inline_node(node_page);
+>>  
+>> +#ifdef CONFIG_F2FS_CHECK_FS
+>> +	f2fs_inode_chksum_set(F2FS_I_SB(inode), node_page);
+>> +#endif
+>>  }
+>>  
+>>  void update_inode_page(struct inode *inode)
+>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+>> index 177c438..6107935 100644
+>> --- a/fs/f2fs/node.c
+>> +++ b/fs/f2fs/node.c
+>> @@ -1113,8 +1113,12 @@ static int read_node_page(struct page *page, int op_flags)
+>>  		.encrypted_page = NULL,
+>>  	};
+>>  
+>> -	if (PageUptodate(page))
+>> +	if (PageUptodate(page)) {
+>> +#ifdef CONFIG_F2FS_CHECK_FS
+>> +		f2fs_bug_on(sbi, !f2fs_inode_chksum_verify(sbi, page));
+>> +#endif
+>>  		return LOCKED_PAGE;
+>> +	}
+>>  
+>>  	get_node_info(sbi, page->index, &ni);
+>>  
+>> @@ -1731,6 +1735,10 @@ static int f2fs_set_node_page_dirty(struct page *page)
+>>  
+>>  	if (!PageUptodate(page))
+>>  		SetPageUptodate(page);
+>> +#ifdef CONFIG_F2FS_CHECK_FS
+>> +	if (IS_INODE(page))
+>> +		f2fs_inode_chksum_set(F2FS_P_SB(page), page);
+>> +#endif
+>>  	if (!PageDirty(page)) {
+>>  		f2fs_set_page_dirty_nobuffers(page);
+>>  		inc_page_count(F2FS_P_SB(page), F2FS_DIRTY_NODES);
+>>
+> 
+> 
+> .
+> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
