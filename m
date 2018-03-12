@@ -1,21 +1,27 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: align memory boundary for bitops
-Date: Fri,  9 Mar 2018 18:03:48 -0800
-Message-ID: <20180310020348.69129-1-jaegeuk@kernel.org>
+From: Sheng Yong <shengyong1@huawei.com>
+Subject: Re: [RFC PATCH v4 2/3] f2fs: introduce a new mount
+ option test_dummy_encryption
+Date: Mon, 12 Mar 2018 09:13:30 +0800
+Message-ID: <83749420-f06b-29eb-9085-0d801a42b655@huawei.com>
+References: <20180309075312.62357-1-shengyong1@huawei.com>
+ <20180309075312.62357-3-shengyong1@huawei.com>
+ <854155bc-8a20-89b1-95b3-ac3c66217c9e@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1euTrd-00040A-Aa
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 10 Mar 2018 02:04:01 +0000
+ (envelope-from <shengyong1@huawei.com>) id 1evC2L-0007fq-95
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 12 Mar 2018 01:14:01 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=mail.kernel.org) by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ helo=huawei.com) by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1euTrZ-00GXau-TO
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 10 Mar 2018 02:04:01 +0000
+ id 1evC2I-002UqA-OQ
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 12 Mar 2018 01:14:01 +0000
+In-Reply-To: <854155bc-8a20-89b1-95b3-ac3c66217c9e@kernel.org>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -25,91 +31,82 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org, yuchao0@huawei.com, ebiggers@google.com, tytso@mit.edu
+Cc: linux-fscrypt@vger.kernel.org, miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-For example, in arm64, free_nid_bitmap should be aligned to word size in order
-to use bit operations.
+Hi, Chao
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/f2fs.h          |  2 +-
- fs/f2fs/node.c          | 20 +++++++++++++++++---
- include/linux/f2fs_fs.h |  4 ++++
- 3 files changed, 22 insertions(+), 4 deletions(-)
+On 2018/3/9 20:32, Chao Yu wrote:
+> On 2018/3/9 15:53, Sheng Yong wrote:
+>> This patch introduces a new mount option `test_dummy_encryption' to
+>> allow fscrypt to create a fake fscrypt context. This is used by xfstests.
+> 
+> It needs to add doc for this new mount option.
+>
+Oh. Right, I'll update the doc.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 88f2b420de27..641b4b98d373 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -766,7 +766,7 @@ struct f2fs_nm_info {
- 	unsigned int nid_cnt[MAX_NID_STATE];	/* the number of free node id */
- 	spinlock_t nid_list_lock;	/* protect nid lists ops */
- 	struct mutex build_lock;	/* lock for build free nids */
--	unsigned char (*free_nid_bitmap)[NAT_ENTRY_BITMAP_SIZE];
-+	unsigned char **free_nid_bitmap;
- 	unsigned char *nat_block_bitmap;
- 	unsigned short *free_nid_count;	/* free nid count of NAT block */
- 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index b86e2b15b619..f7886b46478d 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2708,12 +2708,20 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
- static int init_free_nid_cache(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
-+	int i;
- 
--	nm_i->free_nid_bitmap = f2fs_kvzalloc(sbi, nm_i->nat_blocks *
--					NAT_ENTRY_BITMAP_SIZE, GFP_KERNEL);
-+	nm_i->free_nid_bitmap = f2fs_kzalloc(sbi, nm_i->nat_blocks *
-+				sizeof(unsigned char *), GFP_KERNEL);
- 	if (!nm_i->free_nid_bitmap)
- 		return -ENOMEM;
- 
-+	for (i = 0; i < nm_i->nat_blocks; i++) {
-+		nm_i->free_nid_bitmap[i] = f2fs_kvzalloc(sbi,
-+				NAT_ENTRY_BITMAP_SIZE_ALIGNED, GFP_KERNEL);
-+		if (!nm_i->free_nid_bitmap)
-+			return -ENOMEM;
-+	}
-+
- 	nm_i->nat_block_bitmap = f2fs_kvzalloc(sbi, nm_i->nat_blocks / 8,
- 								GFP_KERNEL);
- 	if (!nm_i->nat_block_bitmap)
-@@ -2804,7 +2812,13 @@ void destroy_node_manager(struct f2fs_sb_info *sbi)
- 	up_write(&nm_i->nat_tree_lock);
- 
- 	kvfree(nm_i->nat_block_bitmap);
--	kvfree(nm_i->free_nid_bitmap);
-+	if (nm_i->free_nid_bitmap) {
-+		int i;
-+
-+		for (i = 0; i < nm_i->nat_blocks; i++)
-+			kvfree(nm_i->free_nid_bitmap[i]);
-+		kfree(nm_i->free_nid_bitmap);
-+	}
- 	kvfree(nm_i->free_nid_count);
- 
- 	kfree(nm_i->nat_bitmap);
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 124787e8db58..aa5db8b5521a 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -305,6 +305,10 @@ struct f2fs_node {
-  */
- #define NAT_ENTRY_PER_BLOCK (PAGE_SIZE / sizeof(struct f2fs_nat_entry))
- #define NAT_ENTRY_BITMAP_SIZE	((NAT_ENTRY_PER_BLOCK + 7) / 8)
-+#define NAT_ENTRY_BITMAP_SIZE_ALIGNED				\
-+	((NAT_ENTRY_BITMAP_SIZE + BITS_PER_LONG - 1) /		\
-+	BITS_PER_LONG * BITS_PER_LONG)
-+
- 
- struct f2fs_nat_entry {
- 	__u8 version;		/* latest version of cached nat entry */
--- 
-2.15.0.531.g2ccb3012c9-goog
+>>
+[...]
+>>   static int f2fs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
+>>   {
+>> -	if (unlikely(f2fs_cp_error(F2FS_I_SB(dir))))
+>> +	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
+>> +
+>> +	if (unlikely(f2fs_cp_error(sbi)))
+>>   		return -EIO;
+>>   
+>> -	if (f2fs_encrypted_inode(dir)) {
+>> +	if (f2fs_encrypted_inode(dir) || DUMMY_ENCRYPTION_ENABLED(sbi)) {
+> 
+> Why we need to add this condition here?
+> 
+I think it's both OK if we add the check or not. But since commit 304eecc3462e ("f2fs crypto:
+check encryption for tmpfile) add f2fs_encrypt_inode() to check encryption earlier, IMO, we
+should do the same check if test_dummy_encryption is enabled according to the semantic.
+
+>>   		int err = fscrypt_get_encryption_info(dir);
+>>   		if (err)
+>>   			return err;
+[...]
+>> @@ -2620,6 +2642,15 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>   	if (err)
+>>   		goto free_options;
+>>   
+>> +	if (DUMMY_ENCRYPTION_ENABLED(sbi) &&
+>> +			(sb_rdonly(sb) || !f2fs_sb_has_encrypt(sb))) {
+> 
+> Use f2fs_readonly() here which can wrap sb_rdonly()?
+> OK.
+
+>> +		f2fs_msg(sb, KERN_ERR,
+>> +			"Encrypt feature is off or filesystem is read-only");
+>> +		err = -EINVAL;
+>> +		retry = false;
+>> +		goto free_options;
+>> +	}
+> 
+> How about moving this check into parse_options(), so we can check this condition
+> in remount_fs() too.
+> 
+OK.
+
+Thanks,
+Sheng
+
+> Thanks,
+> 
+>> +
+>>   	sbi->max_file_blocks = max_file_blocks();
+>>   	sb->s_maxbytes = sbi->max_file_blocks <<
+>>   				le32_to_cpu(raw_super->log_blocksize);
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-fscrypt" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> .
+> 
 
 
 ------------------------------------------------------------------------------
