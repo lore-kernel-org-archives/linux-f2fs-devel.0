@@ -1,31 +1,22 @@
-From: "Arseniy Skvortsov" <ettavolt@gmail.com>
-Subject: fsck.f2fs fails with "can't find valid checkpoint"
-Date: Wed, 14 Mar 2018 09:07:45 +0300
-Message-ID: <op.zfura7xx6r7ij4@ptits-lt.lan>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH v3] f2fs: introduce a method to make nat journal
+ more fresh
+Date: Wed, 14 Mar 2018 14:33:29 +0800
+Message-ID: <1521009209-3956-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"; DelSp="yes"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ettavolt@gmail.com>) id 1evzZs-0002Gy-DS
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 14 Mar 2018 06:07:56 +0000
+ (envelope-from <heyunlei@huawei.com>) id 1ew0Bn-0005to-G0
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 14 Mar 2018 06:47:07 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=mail-lf0-f66.google.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1evzZn-00Ds9l-2h
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 14 Mar 2018 06:07:53 +0000
-Received: by mail-lf0-f66.google.com with SMTP id y2-v6so836096lfc.5
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 13 Mar 2018 23:07:54 -0700 (PDT)
-Received: from ptits-lt.lan (128-70-247-232.broadband.corbina.ru.
- [128.70.247.232])
- by smtp.gmail.com with ESMTPSA id c74-v6sm438502lfe.96.2018.03.13.23.07.46
- for <linux-f2fs-devel@lists.sourceforge.net>
- (version=TLS1_2 cipher=AES128-SHA bits=128/128);
- Tue, 13 Mar 2018 23:07:46 -0700 (PDT)
+ helo=huawei.com) by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1ew0Bh-00DtsO-Ax
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 14 Mar 2018 06:47:04 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,33 +26,194 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: heyunlei@huawei.com, zhangdianfang@huawei.com
 
-SGVsbG8sCgpJJ3ZlIGdvdCBhIHByb2JsZW0gdmVyeSBzaW1pbGFyIHRvICAKaHR0cHM6Ly9zb3Vy
-Y2Vmb3JnZS5uZXQvcC9saW51eC1mMmZzL21haWxtYW4vbWVzc2FnZS8zNTkzMTk2MC8sIGp1c3Qg
-dGhhdCAgCnRoZXJlIGlzIG5vIGVuY3J5cHRpb24uCllvdSBjYW4gdGFrZSBpbWFnZSBvZiBlbnRp
-cmUgU1NEIGZyb20gIApodHRwczovL3JnLmV0dGF2b2x0Lm5sL2Z0cC9wdWJsaWMvMzJHQi5iaW4u
-eHogKDI1ODU1NzE5NTg0IGJ5dGVzLCBzaG91bGQgIApoYXZlIHplcm9lZCB0aGUgZGlzayBiZWZv
-cmUgaW5zdGFsbGF0aW9u4oCmKSAoc2l0ZSBtYXkgYmUgdW5hdmFpbGFibGUgZHVyaW5nICAKRE5T
-IHVwZGF0ZSkuIENvbnRhaW5zIEdQVCB3aXRoIEVTUCBhbmQgcm9vdCBwYXJ0aXRpb24gc28geW91
-IGNhbiB0cnkgdG8gIApib290IGlmIHlvdSB3aXNoLgpUaGVyZSBpcyBub3RoaW5nIHByaXZhdGUg
-ZXhjZXB0IGZvciBwYXNzd29yZHMgb2Ygc3VkbyB1c2VyIGFuZCBXaUZpLiA6KQpXaGVuIHRoZSBw
-cm9ibGVtIGhhcHBlbmVkLCB0aGUgc2Vzc2lvbiB3YXMgbGlrZTogYm9vdCwgY2hhbmdlIHRoZSBu
-YW1lIG9mICAKc29tZSBmb2xkZXIgb3IgZmlsZSwgcnVuIE9PIHByZXNlbnRhdGlvbiwgY2xlYW5s
-eSBzaHV0ZG93bi4KSSdtIGdvaW5nIHRvIGtlZXAgdGhpcyBkaXNrIGludGFjdCBmb3IgYSB3aGls
-ZS4gSWYgeW91J2QgbGlrZSB0byB0cnkgIAphbnl0aGluZyBvbiBpdCBqdXN0IHRlbGwgbWUgd2hh
-dC4KClAuUy4gSWYgaXQgaGVscHMsIEkgd2FzIG9ic2VydmluZyBzaW1pbGFyIGlzc3VlIGVhcmxp
-ZXIgb24gNC45IGtlcm5lbCBmcm9tICAKQXJjaCBhbmQgcGxhaW4gZG0tY3J5cHQgcGFydGl0aW9u
-LiBFdmVyeXRpbWUgaXQgaGFwcGVuZWQgYWZ0ZXIgSSd2ZSBib290ZWQgIApsaXZlIHN0aWNrLCBt
-b3VudGVkIHJvb3QsIGVkaXRlZCBmc3RhYi9jcnlwdGFiLCB1bm1vdW50ZWQgcm9vdCAoYnV0ICAK
-aGF2ZW4ndCBkZXRhY2hlZCBkbSBkZXZpY2UsIG5vdCBzdXJlIGlmIHN5c3RlbSBkb2VzIHRoaXMg
-aXRzZWxmKSBhbmQgIApyZWJvb3RlZC4gU2luY2UgdGhlbiBJIHdhcyBydW5uaW5nIHRoZSBzYW1l
-IHNldHVwIG9uIDQuOS43MyB3aXRoIHNvbWUgIApiaWdnZXIgd3JpdGVzIHRvIGYyZnMgcGFydGl0
-aW9uLiBJdCBzdXJ2aXZlZCBzZXZlcmFsIHVuY2xlYW4gcG93ZXJvZmZzLgoKLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tCkNoZWNrIG91dCB0aGUgdmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUgb2Yg
-dGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6
-Ly9zZG0ubGluay9zbGFzaGRvdApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVs
-QGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0
-cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+This patch introduce a method to make nat journal more fresh:
+i.  sort set list using dirty entry number and cp version
+    average value.
+ii. if meet with cache hit, update average version valus with
+    current cp version.
+
+With this patch, newly modified nat set will flush to journal,
+and flush old nat set with same dirty entry number to nat area.
+
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fs/f2fs/node.c | 45 ++++++++++++++++++++++++++-------------------
+ fs/f2fs/node.h |  4 +++-
+ 2 files changed, 29 insertions(+), 20 deletions(-)
+
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 177c438..74f6079 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -193,8 +193,8 @@ static void __del_from_nat_cache(struct f2fs_nm_info *nm_i, struct nat_entry *e)
+ 	__free_nat_entry(e);
+ }
+ 
+-static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
+-						struct nat_entry *ne)
++static void __set_nat_cache_dirty(struct f2fs_sb_info *sbi, bool remove_journal,
++			struct f2fs_nm_info *nm_i, struct nat_entry *ne)
+ {
+ 	nid_t set = NAT_BLOCK_OFFSET(ne->ni.nid);
+ 	struct nat_entry_set *head;
+@@ -207,9 +207,15 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
+ 		INIT_LIST_HEAD(&head->set_list);
+ 		head->set = set;
+ 		head->entry_cnt = 0;
++		head->cp_ver = 0;
+ 		f2fs_radix_tree_insert(&nm_i->nat_set_root, set, head);
+ 	}
+ 
++	/* journal hit case, try to locate set in journal */
++	if (!remove_journal && head->entry_cnt <= NAT_JOURNAL_ENTRIES)
++		head->cp_ver += div_u64(cur_cp_version(F2FS_CKPT(sbi)),
++							NAT_JOURNAL_ENTRIES);
++
+ 	if (get_nat_flag(ne, IS_DIRTY))
+ 		goto refresh_list;
+ 
+@@ -217,10 +223,7 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
+ 	head->entry_cnt++;
+ 	set_nat_flag(ne, IS_DIRTY, true);
+ refresh_list:
+-	if (nat_get_blkaddr(ne) == NEW_ADDR)
+-		list_del_init(&ne->list);
+-	else
+-		list_move_tail(&ne->list, &head->entry_list);
++	list_move_tail(&ne->list, &head->entry_list);
+ }
+ 
+ static void __clear_nat_cache_dirty(struct f2fs_nm_info *nm_i,
+@@ -357,7 +360,8 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+ 	nat_set_blkaddr(e, new_blkaddr);
+ 	if (new_blkaddr == NEW_ADDR || new_blkaddr == NULL_ADDR)
+ 		set_nat_flag(e, IS_CHECKPOINTED, false);
+-	__set_nat_cache_dirty(nm_i, e);
++	if (new_blkaddr != NEW_ADDR)
++		__set_nat_cache_dirty(sbi, false, nm_i, e);
+ 
+ 	/* update fsync_mark if its inode nat entry is still alive */
+ 	if (ni->nid != ni->ino)
+@@ -2395,14 +2399,14 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
+ 			spin_unlock(&nm_i->nid_list_lock);
+ 		}
+ 
+-		__set_nat_cache_dirty(nm_i, ne);
++		__set_nat_cache_dirty(sbi, true, nm_i, ne);
+ 	}
+ 	update_nats_in_cursum(journal, -i);
+ 	up_write(&curseg->journal_rwsem);
+ }
+ 
+-static void __adjust_nat_entry_set(struct nat_entry_set *nes,
+-						struct list_head *head, int max)
++static void __adjust_nat_entry_set(struct f2fs_sb_info *sbi,
++		struct nat_entry_set *nes, struct list_head *head, int max)
+ {
+ 	struct nat_entry_set *cur;
+ 
+@@ -2410,7 +2414,9 @@ static void __adjust_nat_entry_set(struct nat_entry_set *nes,
+ 		goto add_out;
+ 
+ 	list_for_each_entry(cur, head, set_list) {
+-		if (cur->entry_cnt >= nes->entry_cnt) {
++		if (cur->entry_cnt > nes->entry_cnt ||
++			(cur->entry_cnt == nes->entry_cnt &&
++			cur->cp_ver < nes->cp_ver)) {
+ 			list_add(&nes->set_list, cur->set_list.prev);
+ 			return;
+ 		}
+@@ -2458,7 +2464,6 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+ 	struct f2fs_journal *journal = curseg->journal;
+ 	nid_t start_nid = set->set * NAT_ENTRY_PER_BLOCK;
+-	bool to_journal = true;
+ 	struct f2fs_nat_block *nat_blk;
+ 	struct nat_entry *ne, *cur;
+ 	struct page *page = NULL;
+@@ -2468,11 +2473,14 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 	 * #1, flush nat entries to journal in current hot data summary block.
+ 	 * #2, flush nat entries to nat page.
+ 	 */
++
++	set->to_journal = true;
++
+ 	if (enabled_nat_bits(sbi, cpc) ||
+ 		!__has_cursum_space(journal, set->entry_cnt, NAT_JOURNAL))
+-		to_journal = false;
++		set->to_journal = false;
+ 
+-	if (to_journal) {
++	if (set->to_journal) {
+ 		down_write(&curseg->journal_rwsem);
+ 	} else {
+ 		page = get_next_nat_page(sbi, start_nid);
+@@ -2488,7 +2496,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 
+ 		f2fs_bug_on(sbi, nat_get_blkaddr(ne) == NEW_ADDR);
+ 
+-		if (to_journal) {
++		if (set->to_journal) {
+ 			offset = lookup_journal_in_cursum(journal,
+ 							NAT_JOURNAL, nid, 1);
+ 			f2fs_bug_on(sbi, offset < 0);
+@@ -2509,7 +2517,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 		}
+ 	}
+ 
+-	if (to_journal) {
++	if (set->to_journal) {
+ 		up_write(&curseg->journal_rwsem);
+ 	} else {
+ 		__update_nat_bits(sbi, start_nid, page);
+@@ -2517,7 +2525,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 	}
+ 
+ 	/* Allow dirty nats by node block allocation in write_begin */
+-	if (!set->entry_cnt) {
++	if (!set->to_journal) {
+ 		radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
+ 		kmem_cache_free(nat_entry_set_slab, set);
+ 	}
+@@ -2556,7 +2564,7 @@ void flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 		unsigned idx;
+ 		set_idx = setvec[found - 1]->set + 1;
+ 		for (idx = 0; idx < found; idx++)
+-			__adjust_nat_entry_set(setvec[idx], &sets,
++			__adjust_nat_entry_set(sbi, setvec[idx], &sets,
+ 						MAX_NAT_JENTRIES(journal));
+ 	}
+ 
+@@ -2565,7 +2573,6 @@ void flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 		__flush_nat_entry_set(sbi, set, cpc);
+ 
+ 	up_write(&nm_i->nat_tree_lock);
+-	/* Allow dirty nats by node block allocation in write_begin */
+ }
+ 
+ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index 081ef0d..3cf9c8b6 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -148,7 +148,9 @@ struct nat_entry_set {
+ 	struct list_head set_list;	/* link with other nat sets */
+ 	struct list_head entry_list;	/* link with dirty nat entries */
+ 	nid_t set;			/* set number*/
+-	unsigned int entry_cnt;		/* the # of nat entries in set */
++	unsigned int entry_cnt:9;	/* the # of nat entries in set */
++	unsigned int to_journal:1;	/* set flush to journal */
++	__u64 cp_ver;			/* cp version of this set modify */
+ };
+ 
+ struct free_nid {
+-- 
+1.9.1
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
