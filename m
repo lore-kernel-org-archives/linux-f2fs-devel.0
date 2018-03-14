@@ -1,219 +1,76 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v3] f2fs: introduce a method to make nat journal
- more fresh
-Date: Wed, 14 Mar 2018 14:33:29 +0800
-Message-ID: <1521009209-3956-1-git-send-email-heyunlei@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid selinux denial on CAP_SYS_RESOURCE
+Date: Wed, 14 Mar 2018 21:07:56 +0800
+Message-ID: <76907981-6aae-f80c-e5fd-6de9127394f4@kernel.org>
+References: <20180309044900.39677-1-jaegeuk@kernel.org>
+ <5ec9338e-1522-2b6a-99c2-ffe70b7a06a9@huawei.com>
+ <20180309215705.GB56123@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <heyunlei@huawei.com>) id 1ew0Bn-0005to-G0
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 14 Mar 2018 06:47:07 +0000
-Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=huawei.com) by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1ew0Bh-00DtsO-Ax
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 14 Mar 2018 06:47:04 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
-Cc: heyunlei@huawei.com, zhangdianfang@huawei.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180309215705.GB56123@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch introduce a method to make nat journal more fresh:
-i.  sort set list using dirty entry number and cp version
-    average value.
-ii. if meet with cache hit, update average version valus with
-    current cp version.
+On 2018/3/10 5:57, Jaegeuk Kim wrote:
+> On 03/09, Chao Yu wrote:
+>> On 2018/3/9 12:49, Jaegeuk Kim wrote:
+>>> This fixes CAP_SYS_RESOURCE denial of selinux when using resgid.
+>>
+>> A little confusion, if capable(CAP_SYS_RESOURCE) is false, we still have chance
+>> to return true for below resuid & resgid cases, right?
+> 
+> I didn't dig it deeply tho, it seems selinux log came up when capable() is
+> failed in the first place. We actually didn't need to show it up, since next
+> resgid will give mostly true.
 
-With this patch, newly modified nat set will flush to journal,
-and flush old nat set with same dirty entry number to nat area.
+Got it, how about adding this reason into commit message? Anyway,
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fs/f2fs/node.c | 45 ++++++++++++++++++++++++++-------------------
- fs/f2fs/node.h |  4 +++-
- 2 files changed, 29 insertions(+), 20 deletions(-)
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 177c438..74f6079 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -193,8 +193,8 @@ static void __del_from_nat_cache(struct f2fs_nm_info *nm_i, struct nat_entry *e)
- 	__free_nat_entry(e);
- }
- 
--static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
--						struct nat_entry *ne)
-+static void __set_nat_cache_dirty(struct f2fs_sb_info *sbi, bool remove_journal,
-+			struct f2fs_nm_info *nm_i, struct nat_entry *ne)
- {
- 	nid_t set = NAT_BLOCK_OFFSET(ne->ni.nid);
- 	struct nat_entry_set *head;
-@@ -207,9 +207,15 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
- 		INIT_LIST_HEAD(&head->set_list);
- 		head->set = set;
- 		head->entry_cnt = 0;
-+		head->cp_ver = 0;
- 		f2fs_radix_tree_insert(&nm_i->nat_set_root, set, head);
- 	}
- 
-+	/* journal hit case, try to locate set in journal */
-+	if (!remove_journal && head->entry_cnt <= NAT_JOURNAL_ENTRIES)
-+		head->cp_ver += div_u64(cur_cp_version(F2FS_CKPT(sbi)),
-+							NAT_JOURNAL_ENTRIES);
-+
- 	if (get_nat_flag(ne, IS_DIRTY))
- 		goto refresh_list;
- 
-@@ -217,10 +223,7 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
- 	head->entry_cnt++;
- 	set_nat_flag(ne, IS_DIRTY, true);
- refresh_list:
--	if (nat_get_blkaddr(ne) == NEW_ADDR)
--		list_del_init(&ne->list);
--	else
--		list_move_tail(&ne->list, &head->entry_list);
-+	list_move_tail(&ne->list, &head->entry_list);
- }
- 
- static void __clear_nat_cache_dirty(struct f2fs_nm_info *nm_i,
-@@ -357,7 +360,8 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
- 	nat_set_blkaddr(e, new_blkaddr);
- 	if (new_blkaddr == NEW_ADDR || new_blkaddr == NULL_ADDR)
- 		set_nat_flag(e, IS_CHECKPOINTED, false);
--	__set_nat_cache_dirty(nm_i, e);
-+	if (new_blkaddr != NEW_ADDR)
-+		__set_nat_cache_dirty(sbi, false, nm_i, e);
- 
- 	/* update fsync_mark if its inode nat entry is still alive */
- 	if (ni->nid != ni->ino)
-@@ -2395,14 +2399,14 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
- 			spin_unlock(&nm_i->nid_list_lock);
- 		}
- 
--		__set_nat_cache_dirty(nm_i, ne);
-+		__set_nat_cache_dirty(sbi, true, nm_i, ne);
- 	}
- 	update_nats_in_cursum(journal, -i);
- 	up_write(&curseg->journal_rwsem);
- }
- 
--static void __adjust_nat_entry_set(struct nat_entry_set *nes,
--						struct list_head *head, int max)
-+static void __adjust_nat_entry_set(struct f2fs_sb_info *sbi,
-+		struct nat_entry_set *nes, struct list_head *head, int max)
- {
- 	struct nat_entry_set *cur;
- 
-@@ -2410,7 +2414,9 @@ static void __adjust_nat_entry_set(struct nat_entry_set *nes,
- 		goto add_out;
- 
- 	list_for_each_entry(cur, head, set_list) {
--		if (cur->entry_cnt >= nes->entry_cnt) {
-+		if (cur->entry_cnt > nes->entry_cnt ||
-+			(cur->entry_cnt == nes->entry_cnt &&
-+			cur->cp_ver < nes->cp_ver)) {
- 			list_add(&nes->set_list, cur->set_list.prev);
- 			return;
- 		}
-@@ -2458,7 +2464,6 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
- 	struct f2fs_journal *journal = curseg->journal;
- 	nid_t start_nid = set->set * NAT_ENTRY_PER_BLOCK;
--	bool to_journal = true;
- 	struct f2fs_nat_block *nat_blk;
- 	struct nat_entry *ne, *cur;
- 	struct page *page = NULL;
-@@ -2468,11 +2473,14 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
- 	 * #1, flush nat entries to journal in current hot data summary block.
- 	 * #2, flush nat entries to nat page.
- 	 */
-+
-+	set->to_journal = true;
-+
- 	if (enabled_nat_bits(sbi, cpc) ||
- 		!__has_cursum_space(journal, set->entry_cnt, NAT_JOURNAL))
--		to_journal = false;
-+		set->to_journal = false;
- 
--	if (to_journal) {
-+	if (set->to_journal) {
- 		down_write(&curseg->journal_rwsem);
- 	} else {
- 		page = get_next_nat_page(sbi, start_nid);
-@@ -2488,7 +2496,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
- 
- 		f2fs_bug_on(sbi, nat_get_blkaddr(ne) == NEW_ADDR);
- 
--		if (to_journal) {
-+		if (set->to_journal) {
- 			offset = lookup_journal_in_cursum(journal,
- 							NAT_JOURNAL, nid, 1);
- 			f2fs_bug_on(sbi, offset < 0);
-@@ -2509,7 +2517,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
- 		}
- 	}
- 
--	if (to_journal) {
-+	if (set->to_journal) {
- 		up_write(&curseg->journal_rwsem);
- 	} else {
- 		__update_nat_bits(sbi, start_nid, page);
-@@ -2517,7 +2525,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
- 	}
- 
- 	/* Allow dirty nats by node block allocation in write_begin */
--	if (!set->entry_cnt) {
-+	if (!set->to_journal) {
- 		radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
- 		kmem_cache_free(nat_entry_set_slab, set);
- 	}
-@@ -2556,7 +2564,7 @@ void flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 		unsigned idx;
- 		set_idx = setvec[found - 1]->set + 1;
- 		for (idx = 0; idx < found; idx++)
--			__adjust_nat_entry_set(setvec[idx], &sets,
-+			__adjust_nat_entry_set(sbi, setvec[idx], &sets,
- 						MAX_NAT_JENTRIES(journal));
- 	}
- 
-@@ -2565,7 +2573,6 @@ void flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 		__flush_nat_entry_set(sbi, set, cpc);
- 
- 	up_write(&nm_i->nat_tree_lock);
--	/* Allow dirty nats by node block allocation in write_begin */
- }
- 
- static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index 081ef0d..3cf9c8b6 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -148,7 +148,9 @@ struct nat_entry_set {
- 	struct list_head set_list;	/* link with other nat sets */
- 	struct list_head entry_list;	/* link with dirty nat entries */
- 	nid_t set;			/* set number*/
--	unsigned int entry_cnt;		/* the # of nat entries in set */
-+	unsigned int entry_cnt:9;	/* the # of nat entries in set */
-+	unsigned int to_journal:1;	/* set flush to journal */
-+	__u64 cp_ver;			/* cp version of this set modify */
- };
- 
- struct free_nid {
--- 
-1.9.1
+Thanks,
 
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fs/f2fs/f2fs.h | 4 ++--
+>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>> index f6dc70666ebb..3d12277fbe9e 100644
+>>> --- a/fs/f2fs/f2fs.h
+>>> +++ b/fs/f2fs/f2fs.h
+>>> @@ -1607,13 +1607,13 @@ static inline bool __allow_reserved_blocks(struct f2fs_sb_info *sbi,
+>>>  		return false;
+>>>  	if (IS_NOQUOTA(inode))
+>>>  		return true;
+>>> -	if (capable(CAP_SYS_RESOURCE))
+>>> -		return true;
+>>>  	if (uid_eq(sbi->s_resuid, current_fsuid()))
+>>>  		return true;
+>>>  	if (!gid_eq(sbi->s_resgid, GLOBAL_ROOT_GID) &&
+>>>  					in_group_p(sbi->s_resgid))
+>>>  		return true;
+>>> +	if (capable(CAP_SYS_RESOURCE))
+>>> +		return true;
+>>>  	return false;
+>>>  }
+>>>  
+>>>
+> 
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
