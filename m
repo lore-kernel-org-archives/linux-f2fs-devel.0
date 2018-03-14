@@ -1,20 +1,25 @@
-From: =?GB2312?B?0e/Qob3j?= <wbaodfrguan@hotmail.com>
-Subject: =?gb2312?b?0MXT/r+qxrE=?=
-Date: Wed, 14 Mar 2018 09:15:37 +0800
-Message-ID: <E1evv1U-0002qx-KK@sfs-ml-4.v29.lw.sourceforge.com>
+From: Junling Zheng <zhengjunling@huawei.com>
+Subject: Re: [PATCH 2/2] tools: sg_write_buffer: add
+ sg_write_buffer for FFU
+Date: Wed, 14 Mar 2018 10:10:09 +0800
+Message-ID: <13db1403-b00d-4f4c-29a3-66cd35e86b01@huawei.com>
+References: <20180314000839.33075-1-jaegeuk@kernel.org>
+ <20180314000839.33075-2-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <wbaodfrguan@hotmail.com>) id 1evv1T-0002qr-VJ
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 14 Mar 2018 01:16:07 +0000
+ (envelope-from <zhengjunling@huawei.com>) id 1evvsF-00081N-28
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 14 Mar 2018 02:10:39 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=hotmail.com) by sfi-mx-1.v28.lw.sourceforge.com with esmtp
- (Exim 4.90_1) id 1evv1R-00ADbQ-Ke
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 14 Mar 2018 01:16:07 +0000
+ helo=huawei.com) by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1evvs7-00DhYq-MK
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 14 Mar 2018 02:10:35 +0000
+In-Reply-To: <20180314000839.33075-2-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -24,15 +29,27 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: Hyojun Kim <hyojun@google.com>, Jaegeuk Kim <jaegeuk@google.com>
 
-xOO6w6Ohsb65q8u+v8nS1LT6wO3Iq7n6uPe12Mf41PbWtcuw16jTw7eixrGjrMbVzajU9ta1y7C3
-osaxo6y148r908W73aOs1ebKtdPQ0KfR6dakuvO4tr/uo6zQ6NKqwarPtaO6MTM2NzAwNjI0NzXR
-7tTGo6i+rcDto6nOotDFzay6xaO6MTM2NzAwNjI0NzUKCgrQxdP+v6rGsSCzz9DFv6rGsSAgILOk
-xtq6z9f30+S/7AoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUgdmlicmFudCB0
-ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2luZyB0ZWNoIHNp
-dGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdApfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxp
-bmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xp
-c3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+Hi, Hyojun, Jaegeuk,
+
+On 2018/3/14 8:08, Jaegeuk Kim wrote:
+> From: Hyojun Kim <hyojun@google.com>
+> 
+> sg_write_buffer sources are added for FFU.
+> 
+> Signed-off-by: Hyojun Kim <hyojun@google.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@google.com>
+> ---
+>  tools/sg_write_buffer/Android.bp                   |   27 +
+
+Maybe it's better to change Android.bp into Makefile.am ?
+
+Thanks,
+Junling
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
