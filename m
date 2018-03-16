@@ -1,28 +1,22 @@
-From: heyunlei <heyunlei@huawei.com>
-Subject: Re: [PATCH v3] f2fs: introduce a method to make nat
- journal more fresh
-Date: Fri, 16 Mar 2018 09:52:22 +0000
-Message-ID: <42B685BFA705F94C860C6DD0752F0565483566FE@DGGEMA503-MBS.china.huawei.com>
-References: <1521009209-3956-1-git-send-email-heyunlei@huawei.com>
- <e5b8cdfa-6ca2-fb1b-04fd-d595d1812741@huawei.com>
- <42B685BFA705F94C860C6DD0752F056548355634@DGGEMA503-MBS.china.huawei.com>
- <c2cc0532-6280-d9fc-8ce9-caa6c7c9ec2f@huawei.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH v4] f2fs: introduce a method to make nat journal
+ more fresh
+Date: Fri, 16 Mar 2018 18:24:57 +0800
+Message-ID: <1521195897-28018-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <heyunlei@huawei.com>) id 1ewm2X-0006XU-Ow
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Mar 2018 09:52:45 +0000
+ (envelope-from <heyunlei@huawei.com>) id 1ewml3-0000mm-EU
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Mar 2018 10:38:45 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=huawei.com) by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ helo=huawei.com) by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1ewm2V-0010bb-EF
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Mar 2018 09:52:45 +0000
-In-Reply-To: <c2cc0532-6280-d9fc-8ce9-caa6c7c9ec2f@huawei.com>
-Content-Language: zh-CN
+ id 1ewml0-00FPQq-SX
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Mar 2018 10:38:45 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,174 +26,184 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "Yuchao (T)" <yuchao0@huawei.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
-Cc: "Zhangdianfang (Euler)" <zhangdianfang@huawei.com>
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: heyunlei@huawei.com
 
-DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IFl1Y2hhbyAoVCkNCj5TZW50
-OiBGcmlkYXksIE1hcmNoIDE2LCAyMDE4IDU6NDcgUE0NCj5UbzogaGV5dW5sZWk7IGphZWdldWtA
-a2VybmVsLm9yZzsgbGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQNCj5DYzog
-V2FuZ2JpbnRpYW47IFpoYW5nZGlhbmZhbmcgKEV1bGVyKQ0KPlN1YmplY3Q6IFJlOiBbZjJmcy1k
-ZXZdW1BBVENIIHYzXSBmMmZzOiBpbnRyb2R1Y2UgYSBtZXRob2QgdG8gbWFrZSBuYXQgam91cm5h
-bCBtb3JlIGZyZXNoDQo+DQo+T24gMjAxOC8zLzE2IDE3OjE0LCBoZXl1bmxlaSB3cm90ZToNCj4+
-DQo+Pg0KPj4+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+Pj4gRnJvbTogWXVjaGFvIChU
-KQ0KPj4+IFNlbnQ6IEZyaWRheSwgTWFyY2ggMTYsIDIwMTggNDo0OSBQTQ0KPj4+IFRvOiBoZXl1
-bmxlaTsgamFlZ2V1a0BrZXJuZWwub3JnOyBsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZv
-cmdlLm5ldA0KPj4+IENjOiBXYW5nYmludGlhbjsgWmhhbmdkaWFuZmFuZyAoRXVsZXIpDQo+Pj4g
-U3ViamVjdDogUmU6IFtmMmZzLWRldl1bUEFUQ0ggdjNdIGYyZnM6IGludHJvZHVjZSBhIG1ldGhv
-ZCB0byBtYWtlIG5hdCBqb3VybmFsIG1vcmUgZnJlc2gNCj4+Pg0KPj4+DQo+Pj4NCj4+PiBPbiAy
-MDE4LzMvMTQgMTQ6MzMsIFl1bmxlaSBIZSB3cm90ZToNCj4+Pj4gVGhpcyBwYXRjaCBpbnRyb2R1
-Y2UgYSBtZXRob2QgdG8gbWFrZSBuYXQgam91cm5hbCBtb3JlIGZyZXNoOg0KPj4+PiBpLiAgc29y
-dCBzZXQgbGlzdCB1c2luZyBkaXJ0eSBlbnRyeSBudW1iZXIgYW5kIGNwIHZlcnNpb24NCj4+Pj4g
-ICAgIGF2ZXJhZ2UgdmFsdWUuDQo+Pj4+IGlpLiBpZiBtZWV0IHdpdGggY2FjaGUgaGl0LCB1cGRh
-dGUgYXZlcmFnZSB2ZXJzaW9uIHZhbHVzIHdpdGgNCj4+Pj4gICAgIGN1cnJlbnQgY3AgdmVyc2lv
-bi4NCj4+Pj4NCj4+Pj4gV2l0aCB0aGlzIHBhdGNoLCBuZXdseSBtb2RpZmllZCBuYXQgc2V0IHdp
-bGwgZmx1c2ggdG8gam91cm5hbCwNCj4+Pj4gYW5kIGZsdXNoIG9sZCBuYXQgc2V0IHdpdGggc2Ft
-ZSBkaXJ0eSBlbnRyeSBudW1iZXIgdG8gbmF0IGFyZWEuDQo+Pj4+DQo+Pj4+IFNpZ25lZC1vZmYt
-Ynk6IFl1bmxlaSBIZSA8aGV5dW5sZWlAaHVhd2VpLmNvbT4NCj4+Pj4gLS0tDQo+Pj4+ICBmcy9m
-MmZzL25vZGUuYyB8IDQ1ICsrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0t
-LS0tLQ0KPj4+PiAgZnMvZjJmcy9ub2RlLmggfCAgNCArKystDQo+Pj4+ICAyIGZpbGVzIGNoYW5n
-ZWQsIDI5IGluc2VydGlvbnMoKyksIDIwIGRlbGV0aW9ucygtKQ0KPj4+Pg0KPj4+PiBkaWZmIC0t
-Z2l0IGEvZnMvZjJmcy9ub2RlLmMgYi9mcy9mMmZzL25vZGUuYw0KPj4+PiBpbmRleCAxNzdjNDM4
-Li43NGY2MDc5IDEwMDY0NA0KPj4+PiAtLS0gYS9mcy9mMmZzL25vZGUuYw0KPj4+PiArKysgYi9m
-cy9mMmZzL25vZGUuYw0KPj4+PiBAQCAtMTkzLDggKzE5Myw4IEBAIHN0YXRpYyB2b2lkIF9fZGVs
-X2Zyb21fbmF0X2NhY2hlKHN0cnVjdCBmMmZzX25tX2luZm8gKm5tX2ksIHN0cnVjdCBuYXRfZW50
-cnkgKmUpDQo+Pj4+ICAJX19mcmVlX25hdF9lbnRyeShlKTsNCj4+Pj4gIH0NCj4+Pj4NCj4+Pj4g
-LXN0YXRpYyB2b2lkIF9fc2V0X25hdF9jYWNoZV9kaXJ0eShzdHJ1Y3QgZjJmc19ubV9pbmZvICpu
-bV9pLA0KPj4+PiAtCQkJCQkJc3RydWN0IG5hdF9lbnRyeSAqbmUpDQo+Pj4+ICtzdGF0aWMgdm9p
-ZCBfX3NldF9uYXRfY2FjaGVfZGlydHkoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBib29sIHJl
-bW92ZV9qb3VybmFsLA0KPj4+PiArCQkJc3RydWN0IGYyZnNfbm1faW5mbyAqbm1faSwgc3RydWN0
-IG5hdF9lbnRyeSAqbmUpDQo+Pj4+ICB7DQo+Pj4+ICAJbmlkX3Qgc2V0ID0gTkFUX0JMT0NLX09G
-RlNFVChuZS0+bmkubmlkKTsNCj4+Pj4gIAlzdHJ1Y3QgbmF0X2VudHJ5X3NldCAqaGVhZDsNCj4+
-Pj4gQEAgLTIwNyw5ICsyMDcsMTUgQEAgc3RhdGljIHZvaWQgX19zZXRfbmF0X2NhY2hlX2RpcnR5
-KHN0cnVjdCBmMmZzX25tX2luZm8gKm5tX2ksDQo+Pj4+ICAJCUlOSVRfTElTVF9IRUFEKCZoZWFk
-LT5zZXRfbGlzdCk7DQo+Pj4+ICAJCWhlYWQtPnNldCA9IHNldDsNCj4+Pj4gIAkJaGVhZC0+ZW50
-cnlfY250ID0gMDsNCj4+Pj4gKwkJaGVhZC0+Y3BfdmVyID0gMDsNCj4+Pj4gIAkJZjJmc19yYWRp
-eF90cmVlX2luc2VydCgmbm1faS0+bmF0X3NldF9yb290LCBzZXQsIGhlYWQpOw0KPj4+PiAgCX0N
-Cj4+Pj4NCj4+Pj4gKwkvKiBqb3VybmFsIGhpdCBjYXNlLCB0cnkgdG8gbG9jYXRlIHNldCBpbiBq
-b3VybmFsICovDQo+Pj4+ICsJaWYgKCFyZW1vdmVfam91cm5hbCAmJiBoZWFkLT5lbnRyeV9jbnQg
-PD0gTkFUX0pPVVJOQUxfRU5UUklFUykNCj4+Pj4gKwkJaGVhZC0+Y3BfdmVyICs9IGRpdl91NjQo
-Y3VyX2NwX3ZlcnNpb24oRjJGU19DS1BUKHNiaSkpLA0KPj4+PiArCQkJCQkJCU5BVF9KT1VSTkFM
-X0VOVFJJRVMpOw0KPj4+PiArDQo+Pj4+ICAJaWYgKGdldF9uYXRfZmxhZyhuZSwgSVNfRElSVFkp
-KQ0KPj4+PiAgCQlnb3RvIHJlZnJlc2hfbGlzdDsNCj4+Pg0KPj4+IAllbHNlIHsNCj4+PiAJCXVw
-ZGF0ZSBoZWFkIHZlcnNpb24gaGVyZT8NCj4+PiAJfQ0KPj4NCj4+IE9rYXksIGlmIG9uZSBuYXQg
-ZW50cnkgdXBkYXRlIG1vcmUgdGhhbiBvbmNlLCBoZXJlIHdpbGwgYmUgb3ZlcmZsb3cuDQo+Pg0K
-Pj4+DQo+Pj4+DQo+Pj4+IEBAIC0yMTcsMTAgKzIyMyw3IEBAIHN0YXRpYyB2b2lkIF9fc2V0X25h
-dF9jYWNoZV9kaXJ0eShzdHJ1Y3QgZjJmc19ubV9pbmZvICpubV9pLA0KPj4+PiAgCWhlYWQtPmVu
-dHJ5X2NudCsrOw0KPj4+PiAgCXNldF9uYXRfZmxhZyhuZSwgSVNfRElSVFksIHRydWUpOw0KPj4+
-PiAgcmVmcmVzaF9saXN0Og0KPj4+PiAtCWlmIChuYXRfZ2V0X2Jsa2FkZHIobmUpID09IE5FV19B
-RERSKQ0KPj4+PiAtCQlsaXN0X2RlbF9pbml0KCZuZS0+bGlzdCk7DQo+Pj4+IC0JZWxzZQ0KPj4+
-PiAtCQlsaXN0X21vdmVfdGFpbCgmbmUtPmxpc3QsICZoZWFkLT5lbnRyeV9saXN0KTsNCj4+Pj4g
-KwlsaXN0X21vdmVfdGFpbCgmbmUtPmxpc3QsICZoZWFkLT5lbnRyeV9saXN0KTsNCj4+Pg0KPj4+
-IEZvciBORVdfQUREUiBjYXNlLCB3aHkgd2UgbmVlZCB0byB0cmFjayB0aGlzIG5hdCBlbnRyeSBp
-biBlbnRyeV9saXN0Pw0KPj4NCj4+IElmIG5ld19ibGthZGRyID09IE5FV19BRERSLCB3ZSBkb24n
-dCBuZWVkIHRvIGNhbGwgX19zZXRfbmF0X2NhY2hlX2RpcnR5Og0KPg0KPkJ1dCBzdWNoIGVudHJ5
-IGlzIHN0aWxsIGluIGNsZWFuIGxpc3QsIHNocmlua2VyIGNhbiBlYXNpbHkgcmVtb3ZlIGl0IGlu
-DQo+b3V0LW9mLW1lbW9yeSBjb25kaXRpb24uDQoNClllcywgeW91IGFyZSByaWdodCwgbXkgdGVz
-dCBkb2Vzbid0IGNvdmVyIGxvdyBtZW1vcnkgY2FzZS4gSSAnbGwgc2VuZCBhIG5ldyB2ZXJzaW9u
-Lg0KDQpUaGFua3MuDQoNCj4NCj5UaGFua3MsDQo+DQo+PiAJaSAgbmF0IGVudHJ5IHdpdGggTkVX
-X0FERFIgd2lsbCBpbmNyZWFzZSBkaXJ0eSBuYXQgZW50cnkgY291bnQgaW4gbmF0IHNldKOsd2hp
-Y2ggd2lsbCBjYXVzZQ0KPj4gICAgICAgYSBuYXQgc2V0IGhhcyBsYXJnZSBuYXQgZW50cnkgY291
-bnSjqG1vc3QgaXMgTkVXX0FERFKjqaOsIGJ1dCBmZXdlciBvZiBuYXQgZW50cmllcyBzaG91bGQN
-Cj4+IAkgIGJlIHdyaXR0ZW4gYmFjayBpbiB0aGlzIGNoZWNrcG9pbnQNCj4+ICAgICBpaSAgbmF0
-IGVudHJ5IHdpdGggTkVXX0FERFIgd2lsbCBjYWxsIF9fc2V0X25hdF9jYWNoZV9kaXJ0eSBhZ2Fp
-biwgd2hlbiB3ZSB3cml0ZSBiYWNrIGl0cyBub2RlDQo+PiAgICAgICBwYWdlLCBpbiB0aGlzIHRp
-bWUsIG5ld19ibGthZGRyICE9IE5FV19BRERSDQo+PiBTbywgSSB0aGluayB3ZSdkIGJldHRlciBi
-eXBhc3MgX3NldF9uYXRfY2FjaGVfZGlydHkgaWYgYmxrYWRkciA9PSBORVdfQUREUg0KPj4NCj4+
-IFRoYW5rcy4NCj4+DQo+Pj4NCj4+Pj4gIH0NCj4+Pj4NCj4+Pj4gIHN0YXRpYyB2b2lkIF9fY2xl
-YXJfbmF0X2NhY2hlX2RpcnR5KHN0cnVjdCBmMmZzX25tX2luZm8gKm5tX2ksDQo+Pj4+IEBAIC0z
-NTcsNyArMzYwLDggQEAgc3RhdGljIHZvaWQgc2V0X25vZGVfYWRkcihzdHJ1Y3QgZjJmc19zYl9p
-bmZvICpzYmksIHN0cnVjdCBub2RlX2luZm8gKm5pLA0KPj4+PiAgCW5hdF9zZXRfYmxrYWRkcihl
-LCBuZXdfYmxrYWRkcik7DQo+Pj4+ICAJaWYgKG5ld19ibGthZGRyID09IE5FV19BRERSIHx8IG5l
-d19ibGthZGRyID09IE5VTExfQUREUikNCj4+Pj4gIAkJc2V0X25hdF9mbGFnKGUsIElTX0NIRUNL
-UE9JTlRFRCwgZmFsc2UpOw0KPj4+PiAtCV9fc2V0X25hdF9jYWNoZV9kaXJ0eShubV9pLCBlKTsN
-Cj4+Pj4gKwlpZiAobmV3X2Jsa2FkZHIgIT0gTkVXX0FERFIpDQo+Pj4+ICsJCV9fc2V0X25hdF9j
-YWNoZV9kaXJ0eShzYmksIGZhbHNlLCBubV9pLCBlKTsNCj4+Pj4NCj4+Pj4gIAkvKiB1cGRhdGUg
-ZnN5bmNfbWFyayBpZiBpdHMgaW5vZGUgbmF0IGVudHJ5IGlzIHN0aWxsIGFsaXZlICovDQo+Pj4+
-ICAJaWYgKG5pLT5uaWQgIT0gbmktPmlubykNCj4+Pj4gQEAgLTIzOTUsMTQgKzIzOTksMTQgQEAg
-c3RhdGljIHZvaWQgcmVtb3ZlX25hdHNfaW5fam91cm5hbChzdHJ1Y3QgZjJmc19zYl9pbmZvICpz
-YmkpDQo+Pj4+ICAJCQlzcGluX3VubG9jaygmbm1faS0+bmlkX2xpc3RfbG9jayk7DQo+Pj4+ICAJ
-CX0NCj4+Pj4NCj4+Pj4gLQkJX19zZXRfbmF0X2NhY2hlX2RpcnR5KG5tX2ksIG5lKTsNCj4+Pj4g
-KwkJX19zZXRfbmF0X2NhY2hlX2RpcnR5KHNiaSwgdHJ1ZSwgbm1faSwgbmUpOw0KPj4+PiAgCX0N
-Cj4+Pj4gIAl1cGRhdGVfbmF0c19pbl9jdXJzdW0oam91cm5hbCwgLWkpOw0KPj4+PiAgCXVwX3dy
-aXRlKCZjdXJzZWctPmpvdXJuYWxfcndzZW0pOw0KPj4+PiAgfQ0KPj4+Pg0KPj4+PiAtc3RhdGlj
-IHZvaWQgX19hZGp1c3RfbmF0X2VudHJ5X3NldChzdHJ1Y3QgbmF0X2VudHJ5X3NldCAqbmVzLA0K
-Pj4+PiAtCQkJCQkJc3RydWN0IGxpc3RfaGVhZCAqaGVhZCwgaW50IG1heCkNCj4+Pj4gK3N0YXRp
-YyB2b2lkIF9fYWRqdXN0X25hdF9lbnRyeV9zZXQoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLA0K
-Pj4+PiArCQlzdHJ1Y3QgbmF0X2VudHJ5X3NldCAqbmVzLCBzdHJ1Y3QgbGlzdF9oZWFkICpoZWFk
-LCBpbnQgbWF4KQ0KPj4+PiAgew0KPj4+PiAgCXN0cnVjdCBuYXRfZW50cnlfc2V0ICpjdXI7DQo+
-Pj4+DQo+Pj4+IEBAIC0yNDEwLDcgKzI0MTQsOSBAQCBzdGF0aWMgdm9pZCBfX2FkanVzdF9uYXRf
-ZW50cnlfc2V0KHN0cnVjdCBuYXRfZW50cnlfc2V0ICpuZXMsDQo+Pj4+ICAJCWdvdG8gYWRkX291
-dDsNCj4+Pj4NCj4+Pj4gIAlsaXN0X2Zvcl9lYWNoX2VudHJ5KGN1ciwgaGVhZCwgc2V0X2xpc3Qp
-IHsNCj4+Pj4gLQkJaWYgKGN1ci0+ZW50cnlfY250ID49IG5lcy0+ZW50cnlfY250KSB7DQo+Pj4+
-ICsJCWlmIChjdXItPmVudHJ5X2NudCA+IG5lcy0+ZW50cnlfY250IHx8DQo+Pj4+ICsJCQkoY3Vy
-LT5lbnRyeV9jbnQgPT0gbmVzLT5lbnRyeV9jbnQgJiYNCj4+Pj4gKwkJCWN1ci0+Y3BfdmVyIDwg
-bmVzLT5jcF92ZXIpKSB7DQo+Pj4+ICAJCQlsaXN0X2FkZCgmbmVzLT5zZXRfbGlzdCwgY3VyLT5z
-ZXRfbGlzdC5wcmV2KTsNCj4+Pj4gIAkJCXJldHVybjsNCj4+Pj4gIAkJfQ0KPj4+PiBAQCAtMjQ1
-OCw3ICsyNDY0LDYgQEAgc3RhdGljIHZvaWQgX19mbHVzaF9uYXRfZW50cnlfc2V0KHN0cnVjdCBm
-MmZzX3NiX2luZm8gKnNiaSwNCj4+Pj4gIAlzdHJ1Y3QgY3Vyc2VnX2luZm8gKmN1cnNlZyA9IENV
-UlNFR19JKHNiaSwgQ1VSU0VHX0hPVF9EQVRBKTsNCj4+Pj4gIAlzdHJ1Y3QgZjJmc19qb3VybmFs
-ICpqb3VybmFsID0gY3Vyc2VnLT5qb3VybmFsOw0KPj4+PiAgCW5pZF90IHN0YXJ0X25pZCA9IHNl
-dC0+c2V0ICogTkFUX0VOVFJZX1BFUl9CTE9DSzsNCj4+Pj4gLQlib29sIHRvX2pvdXJuYWwgPSB0
-cnVlOw0KPj4+PiAgCXN0cnVjdCBmMmZzX25hdF9ibG9jayAqbmF0X2JsazsNCj4+Pj4gIAlzdHJ1
-Y3QgbmF0X2VudHJ5ICpuZSwgKmN1cjsNCj4+Pj4gIAlzdHJ1Y3QgcGFnZSAqcGFnZSA9IE5VTEw7
-DQo+Pj4+IEBAIC0yNDY4LDExICsyNDczLDE0IEBAIHN0YXRpYyB2b2lkIF9fZmx1c2hfbmF0X2Vu
-dHJ5X3NldChzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksDQo+Pj4+ICAJICogIzEsIGZsdXNoIG5h
-dCBlbnRyaWVzIHRvIGpvdXJuYWwgaW4gY3VycmVudCBob3QgZGF0YSBzdW1tYXJ5IGJsb2NrLg0K
-Pj4+PiAgCSAqICMyLCBmbHVzaCBuYXQgZW50cmllcyB0byBuYXQgcGFnZS4NCj4+Pj4gIAkgKi8N
-Cj4+Pj4gKw0KPj4+PiArCXNldC0+dG9fam91cm5hbCA9IHRydWU7DQo+Pj4+ICsNCj4+Pj4gIAlp
-ZiAoZW5hYmxlZF9uYXRfYml0cyhzYmksIGNwYykgfHwNCj4+Pj4gIAkJIV9faGFzX2N1cnN1bV9z
-cGFjZShqb3VybmFsLCBzZXQtPmVudHJ5X2NudCwgTkFUX0pPVVJOQUwpKQ0KPj4+PiAtCQl0b19q
-b3VybmFsID0gZmFsc2U7DQo+Pj4+ICsJCXNldC0+dG9fam91cm5hbCA9IGZhbHNlOw0KPj4+Pg0K
-Pj4+PiAtCWlmICh0b19qb3VybmFsKSB7DQo+Pj4+ICsJaWYgKHNldC0+dG9fam91cm5hbCkgew0K
-Pj4+PiAgCQlkb3duX3dyaXRlKCZjdXJzZWctPmpvdXJuYWxfcndzZW0pOw0KPj4+PiAgCX0gZWxz
-ZSB7DQo+Pj4+ICAJCXBhZ2UgPSBnZXRfbmV4dF9uYXRfcGFnZShzYmksIHN0YXJ0X25pZCk7DQo+
-Pj4+IEBAIC0yNDg4LDcgKzI0OTYsNyBAQCBzdGF0aWMgdm9pZCBfX2ZsdXNoX25hdF9lbnRyeV9z
-ZXQoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLA0KPj4+Pg0KPj4+PiAgCQlmMmZzX2J1Z19vbihz
-YmksIG5hdF9nZXRfYmxrYWRkcihuZSkgPT0gTkVXX0FERFIpOw0KPj4+Pg0KPj4+PiAtCQlpZiAo
-dG9fam91cm5hbCkgew0KPj4+PiArCQlpZiAoc2V0LT50b19qb3VybmFsKSB7DQo+Pj4+ICAJCQlv
-ZmZzZXQgPSBsb29rdXBfam91cm5hbF9pbl9jdXJzdW0oam91cm5hbCwNCj4+Pj4gIAkJCQkJCQlO
-QVRfSk9VUk5BTCwgbmlkLCAxKTsNCj4+Pj4gIAkJCWYyZnNfYnVnX29uKHNiaSwgb2Zmc2V0IDwg
-MCk7DQo+Pj4+IEBAIC0yNTA5LDcgKzI1MTcsNyBAQCBzdGF0aWMgdm9pZCBfX2ZsdXNoX25hdF9l
-bnRyeV9zZXQoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLA0KPj4+PiAgCQl9DQo+Pj4+ICAJfQ0K
-Pj4+Pg0KPj4+PiAtCWlmICh0b19qb3VybmFsKSB7DQo+Pj4+ICsJaWYgKHNldC0+dG9fam91cm5h
-bCkgew0KPj4+PiAgCQl1cF93cml0ZSgmY3Vyc2VnLT5qb3VybmFsX3J3c2VtKTsNCj4+Pj4gIAl9
-IGVsc2Ugew0KPj4+PiAgCQlfX3VwZGF0ZV9uYXRfYml0cyhzYmksIHN0YXJ0X25pZCwgcGFnZSk7
-DQo+Pj4+IEBAIC0yNTE3LDcgKzI1MjUsNyBAQCBzdGF0aWMgdm9pZCBfX2ZsdXNoX25hdF9lbnRy
-eV9zZXQoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLA0KPj4+PiAgCX0NCj4+Pj4NCj4+Pj4gIAkv
-KiBBbGxvdyBkaXJ0eSBuYXRzIGJ5IG5vZGUgYmxvY2sgYWxsb2NhdGlvbiBpbiB3cml0ZV9iZWdp
-biAqLw0KPj4+PiAtCWlmICghc2V0LT5lbnRyeV9jbnQpIHsNCj4+Pj4gKwlpZiAoIXNldC0+dG9f
-am91cm5hbCkgew0KPj4+DQo+Pj4gaWYgKCFzZXQtPnRvX2pvdXJuYWwgJiYgIXNldC0+ZW50cnlf
-Y250KSA/DQo+Pj4NCj4+PiBUaGFua3MsDQo+Pj4NCj4+Pj4gIAkJcmFkaXhfdHJlZV9kZWxldGUo
-Jk5NX0koc2JpKS0+bmF0X3NldF9yb290LCBzZXQtPnNldCk7DQo+Pj4+ICAJCWttZW1fY2FjaGVf
-ZnJlZShuYXRfZW50cnlfc2V0X3NsYWIsIHNldCk7DQo+Pj4+ICAJfQ0KPj4+PiBAQCAtMjU1Niw3
-ICsyNTY0LDcgQEAgdm9pZCBmbHVzaF9uYXRfZW50cmllcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpz
-YmksIHN0cnVjdCBjcF9jb250cm9sICpjcGMpDQo+Pj4+ICAJCXVuc2lnbmVkIGlkeDsNCj4+Pj4g
-IAkJc2V0X2lkeCA9IHNldHZlY1tmb3VuZCAtIDFdLT5zZXQgKyAxOw0KPj4+PiAgCQlmb3IgKGlk
-eCA9IDA7IGlkeCA8IGZvdW5kOyBpZHgrKykNCj4+Pj4gLQkJCV9fYWRqdXN0X25hdF9lbnRyeV9z
-ZXQoc2V0dmVjW2lkeF0sICZzZXRzLA0KPj4+PiArCQkJX19hZGp1c3RfbmF0X2VudHJ5X3NldChz
-YmksIHNldHZlY1tpZHhdLCAmc2V0cywNCj4+Pj4gIAkJCQkJCU1BWF9OQVRfSkVOVFJJRVMoam91
-cm5hbCkpOw0KPj4+PiAgCX0NCj4+Pj4NCj4+Pj4gQEAgLTI1NjUsNyArMjU3Myw2IEBAIHZvaWQg
-Zmx1c2hfbmF0X2VudHJpZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1Y3QgY3BfY29u
-dHJvbCAqY3BjKQ0KPj4+PiAgCQlfX2ZsdXNoX25hdF9lbnRyeV9zZXQoc2JpLCBzZXQsIGNwYyk7
-DQo+Pj4+DQo+Pj4+ICAJdXBfd3JpdGUoJm5tX2ktPm5hdF90cmVlX2xvY2spOw0KPj4+PiAtCS8q
-IEFsbG93IGRpcnR5IG5hdHMgYnkgbm9kZSBibG9jayBhbGxvY2F0aW9uIGluIHdyaXRlX2JlZ2lu
-ICovDQo+Pj4+ICB9DQo+Pj4+DQo+Pj4+ICBzdGF0aWMgaW50IF9fZ2V0X25hdF9iaXRtYXBzKHN0
-cnVjdCBmMmZzX3NiX2luZm8gKnNiaSkNCj4+Pj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvbm9kZS5o
-IGIvZnMvZjJmcy9ub2RlLmgNCj4+Pj4gaW5kZXggMDgxZWYwZC4uM2NmOWM4YjYgMTAwNjQ0DQo+
-Pj4+IC0tLSBhL2ZzL2YyZnMvbm9kZS5oDQo+Pj4+ICsrKyBiL2ZzL2YyZnMvbm9kZS5oDQo+Pj4+
-IEBAIC0xNDgsNyArMTQ4LDkgQEAgc3RydWN0IG5hdF9lbnRyeV9zZXQgew0KPj4+PiAgCXN0cnVj
-dCBsaXN0X2hlYWQgc2V0X2xpc3Q7CS8qIGxpbmsgd2l0aCBvdGhlciBuYXQgc2V0cyAqLw0KPj4+
-PiAgCXN0cnVjdCBsaXN0X2hlYWQgZW50cnlfbGlzdDsJLyogbGluayB3aXRoIGRpcnR5IG5hdCBl
-bnRyaWVzICovDQo+Pj4+ICAJbmlkX3Qgc2V0OwkJCS8qIHNldCBudW1iZXIqLw0KPj4+PiAtCXVu
-c2lnbmVkIGludCBlbnRyeV9jbnQ7CQkvKiB0aGUgIyBvZiBuYXQgZW50cmllcyBpbiBzZXQgKi8N
-Cj4+Pj4gKwl1bnNpZ25lZCBpbnQgZW50cnlfY250Ojk7CS8qIHRoZSAjIG9mIG5hdCBlbnRyaWVz
-IGluIHNldCAqLw0KPj4+PiArCXVuc2lnbmVkIGludCB0b19qb3VybmFsOjE7CS8qIHNldCBmbHVz
-aCB0byBqb3VybmFsICovDQo+Pj4+ICsJX191NjQgY3BfdmVyOwkJCS8qIGNwIHZlcnNpb24gb2Yg
-dGhpcyBzZXQgbW9kaWZ5ICovDQo+Pj4+ICB9Ow0KPj4+Pg0KPj4+PiAgc3RydWN0IGZyZWVfbmlk
-IHsNCj4+Pj4NCj4+DQoNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpDaGVjayBvdXQgdGhlIHZpYnJh
-bnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKZW5nYWdpbmcgdGVj
-aCBzaXRlcywgU2xhc2hkb3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBt
-YWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6
-Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+This patch introduce a method to make nat journal more fresh:
+i.  sort set list using dirty entry number and cp version
+    average value.
+ii. if meet with cache hit, update average version valus with
+    current cp version.
+
+With this patch, newly modified nat set will flush to journal,
+and flush old nat set with same dirty entry number to nat area.
+
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fs/f2fs/node.c | 39 ++++++++++++++++++++++++---------------
+ fs/f2fs/node.h |  4 +++-
+ 2 files changed, 27 insertions(+), 16 deletions(-)
+
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 177c438..c511ef6 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -193,8 +193,8 @@ static void __del_from_nat_cache(struct f2fs_nm_info *nm_i, struct nat_entry *e)
+ 	__free_nat_entry(e);
+ }
+ 
+-static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
+-						struct nat_entry *ne)
++static void __set_nat_cache_dirty(struct f2fs_sb_info *sbi, bool remove_journal,
++			struct f2fs_nm_info *nm_i, struct nat_entry *ne)
+ {
+ 	nid_t set = NAT_BLOCK_OFFSET(ne->ni.nid);
+ 	struct nat_entry_set *head;
+@@ -207,12 +207,18 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
+ 		INIT_LIST_HEAD(&head->set_list);
+ 		head->set = set;
+ 		head->entry_cnt = 0;
++		head->cp_ver = 0;
+ 		f2fs_radix_tree_insert(&nm_i->nat_set_root, set, head);
+ 	}
+ 
+ 	if (get_nat_flag(ne, IS_DIRTY))
+ 		goto refresh_list;
+ 
++	/* journal hit case, try to locate set in journal */
++	if (!remove_journal && head->entry_cnt <= NAT_JOURNAL_ENTRIES)
++		head->cp_ver += div_u64(cur_cp_version(F2FS_CKPT(sbi)),
++							NAT_JOURNAL_ENTRIES);
++
+ 	nm_i->dirty_nat_cnt++;
+ 	head->entry_cnt++;
+ 	set_nat_flag(ne, IS_DIRTY, true);
+@@ -357,7 +363,7 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+ 	nat_set_blkaddr(e, new_blkaddr);
+ 	if (new_blkaddr == NEW_ADDR || new_blkaddr == NULL_ADDR)
+ 		set_nat_flag(e, IS_CHECKPOINTED, false);
+-	__set_nat_cache_dirty(nm_i, e);
++	__set_nat_cache_dirty(sbi, false, nm_i, e);
+ 
+ 	/* update fsync_mark if its inode nat entry is still alive */
+ 	if (ni->nid != ni->ino)
+@@ -2395,14 +2401,14 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
+ 			spin_unlock(&nm_i->nid_list_lock);
+ 		}
+ 
+-		__set_nat_cache_dirty(nm_i, ne);
++		__set_nat_cache_dirty(sbi, true, nm_i, ne);
+ 	}
+ 	update_nats_in_cursum(journal, -i);
+ 	up_write(&curseg->journal_rwsem);
+ }
+ 
+-static void __adjust_nat_entry_set(struct nat_entry_set *nes,
+-						struct list_head *head, int max)
++static void __adjust_nat_entry_set(struct f2fs_sb_info *sbi,
++		struct nat_entry_set *nes, struct list_head *head, int max)
+ {
+ 	struct nat_entry_set *cur;
+ 
+@@ -2410,7 +2416,9 @@ static void __adjust_nat_entry_set(struct nat_entry_set *nes,
+ 		goto add_out;
+ 
+ 	list_for_each_entry(cur, head, set_list) {
+-		if (cur->entry_cnt >= nes->entry_cnt) {
++		if (cur->entry_cnt > nes->entry_cnt ||
++			(cur->entry_cnt == nes->entry_cnt &&
++			cur->cp_ver < nes->cp_ver)) {
+ 			list_add(&nes->set_list, cur->set_list.prev);
+ 			return;
+ 		}
+@@ -2458,7 +2466,6 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+ 	struct f2fs_journal *journal = curseg->journal;
+ 	nid_t start_nid = set->set * NAT_ENTRY_PER_BLOCK;
+-	bool to_journal = true;
+ 	struct f2fs_nat_block *nat_blk;
+ 	struct nat_entry *ne, *cur;
+ 	struct page *page = NULL;
+@@ -2468,11 +2475,14 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 	 * #1, flush nat entries to journal in current hot data summary block.
+ 	 * #2, flush nat entries to nat page.
+ 	 */
++
++	set->to_journal = true;
++
+ 	if (enabled_nat_bits(sbi, cpc) ||
+ 		!__has_cursum_space(journal, set->entry_cnt, NAT_JOURNAL))
+-		to_journal = false;
++		set->to_journal = false;
+ 
+-	if (to_journal) {
++	if (set->to_journal) {
+ 		down_write(&curseg->journal_rwsem);
+ 	} else {
+ 		page = get_next_nat_page(sbi, start_nid);
+@@ -2488,7 +2498,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 
+ 		f2fs_bug_on(sbi, nat_get_blkaddr(ne) == NEW_ADDR);
+ 
+-		if (to_journal) {
++		if (set->to_journal) {
+ 			offset = lookup_journal_in_cursum(journal,
+ 							NAT_JOURNAL, nid, 1);
+ 			f2fs_bug_on(sbi, offset < 0);
+@@ -2509,7 +2519,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 		}
+ 	}
+ 
+-	if (to_journal) {
++	if (set->to_journal) {
+ 		up_write(&curseg->journal_rwsem);
+ 	} else {
+ 		__update_nat_bits(sbi, start_nid, page);
+@@ -2517,7 +2527,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 	}
+ 
+ 	/* Allow dirty nats by node block allocation in write_begin */
+-	if (!set->entry_cnt) {
++	if (!set->to_journal && !set->entry_cnt) {
+ 		radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
+ 		kmem_cache_free(nat_entry_set_slab, set);
+ 	}
+@@ -2556,7 +2566,7 @@ void flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 		unsigned idx;
+ 		set_idx = setvec[found - 1]->set + 1;
+ 		for (idx = 0; idx < found; idx++)
+-			__adjust_nat_entry_set(setvec[idx], &sets,
++			__adjust_nat_entry_set(sbi, setvec[idx], &sets,
+ 						MAX_NAT_JENTRIES(journal));
+ 	}
+ 
+@@ -2565,7 +2575,6 @@ void flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 		__flush_nat_entry_set(sbi, set, cpc);
+ 
+ 	up_write(&nm_i->nat_tree_lock);
+-	/* Allow dirty nats by node block allocation in write_begin */
+ }
+ 
+ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index 081ef0d..3cf9c8b6 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -148,7 +148,9 @@ struct nat_entry_set {
+ 	struct list_head set_list;	/* link with other nat sets */
+ 	struct list_head entry_list;	/* link with dirty nat entries */
+ 	nid_t set;			/* set number*/
+-	unsigned int entry_cnt;		/* the # of nat entries in set */
++	unsigned int entry_cnt:9;	/* the # of nat entries in set */
++	unsigned int to_journal:1;	/* set flush to journal */
++	__u64 cp_ver;			/* cp version of this set modify */
+ };
+ 
+ struct free_nid {
+-- 
+1.9.1
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
