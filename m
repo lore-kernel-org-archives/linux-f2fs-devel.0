@@ -1,22 +1,20 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: [RFC PATCH v5 0/3] f2fs: introduce
- F2FS_FEATURE_LOST_FOUND feature
-Date: Thu, 15 Mar 2018 18:51:40 +0800
-Message-ID: <20180315105143.133050-1-shengyong1@huawei.com>
+From: lujht243gtthw3@few.com
+Subject: =?gb2312?b?tPq/qtX9uea3osax?=
+Date: Fri, 16 Mar 2018 16:07:15 +0800
+Message-ID: <E1ewkOf-0002ZH-P3@sfs-ml-2.v29.lw.sourceforge.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <shengyong1@huawei.com>) id 1ewQUd-000462-39
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 15 Mar 2018 10:52:19 +0000
-Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=huawei.com) by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1ewQUb-00CJhq-AY
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 15 Mar 2018 10:52:18 +0000
+ (envelope-from <lujht243gtthw3@few.com>) id 1ewkOe-0002ZB-W0
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Mar 2018 08:07:28 +0000
+Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201] helo=few.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtp (Exim 4.90_1)
+ id 1ewkOc-00EnOq-OZ
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Mar 2018 08:07:28 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,54 +24,15 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, ebiggers@google.com, tytso@mit.edu
-Cc: linux-fscrypt@vger.kernel.org, miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-v5->v4:
-  * add doc for new mount option test_dummy_encryption
-  * move test_dummy_encryption flag to f2fs_mount_info
-  * move DUMMY_ENCRYPTION_ENABLED check to parse_option
-  * remove readonly check since we don't enable encrypt feature forcely
-v4->v3:
-  * split f2fs patch into 2: one for LOST_FOUND feature, another for
-    test_dummy_encryption
-  * do not set enc_name if dir is not encrypted
-  * do not allow mounting with test_dummy_encryption if encrypt feature
-    is not set
-v3->v2:
-  * fix test_dummy_encryption
-v2->v1:
-  * introduce new mount option test_dummy_encryption
-  * add sysfs entry for LOST_FOUND feature
----8<---
-
-This patchset introduces LOST_FOUND feature in f2fs. If the feature is
-enabled, f2fs should avoid to encrypt root directory.
-
-A new mount option "test_dummy_encryption" is introduced, this is used by
-xfstests.
-
-Thanks,
-Sheng
-
-Sheng Yong (3):
-  f2fs: introduce F2FS_FEATURE_LOST_FOUND feature
-  f2fs: introduce a new mount option test_dummy_encryption
-  ext4: do not allow mount with test_dummy_encryption if encrypt not set
-
- Documentation/filesystems/f2fs.txt |  2 ++
- fs/ext4/super.c                    |  7 +++----
- fs/f2fs/dir.c                      |  4 +++-
- fs/f2fs/f2fs.h                     | 10 ++++++++++
- fs/f2fs/namei.c                    |  9 ++++++---
- fs/f2fs/super.c                    | 40 ++++++++++++++++++++++++++++++++++++++
- fs/f2fs/sysfs.c                    |  7 +++++++
- 7 files changed, 71 insertions(+), 8 deletions(-)
-
--- 
-2.16.2
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+xPq6w6O6ztK5q8u+09C497XY0NDStdT21rXLsKG2xtXNqC/XqNPDobfLsKGkxrGjuwq587mry77I
+59PQ0OjSqru2063AtLXn0+vO0sGqz7Wjuseuvq3A7SAxMzcxMzU0MzMzNCAgUVGjujE0ODI2MDI2
+NjEKCqOo1Nq0y9ejxPqjutDCxOq/7MDWoaLJ7czlvaG/taGiysLStcuz0MSjqQoKLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUgdmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUg
+b2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0
+dHA6Ly9zZG0ubGluay9zbGFzaGRvdApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRl
+dmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9s
+aXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
