@@ -1,353 +1,257 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH] f2fs: don't put dentry page in pagecache into highmem
-Date: Mon, 19 Mar 2018 14:27:12 +0800
-Message-ID: <28cc7e73-be85-8bd4-7ccf-34a495fc1931@huawei.com>
-References: <1519821112-137593-1-git-send-email-yunlong.song@huawei.com>
- <2b5f342b-70e4-04cd-c4ed-13c8abd06af8@huawei.com>
- <20180319062357.GA82358@jaegeuk-macbookpro.roam.corp.google.com>
+From: heyunlei <heyunlei@huawei.com>
+Subject: Re: [PATCH v3] f2fs: introduce a method to make nat
+ journal more fresh
+Date: Mon, 19 Mar 2018 08:46:00 +0000
+Message-ID: <42B685BFA705F94C860C6DD0752F0565483573F3@DGGEMA503-MBS.china.huawei.com>
+References: <1521009209-3956-1-git-send-email-heyunlei@huawei.com>
+ <e5b8cdfa-6ca2-fb1b-04fd-d595d1812741@huawei.com>
+ <42B685BFA705F94C860C6DD0752F056548355634@DGGEMA503-MBS.china.huawei.com>
+ <c2cc0532-6280-d9fc-8ce9-caa6c7c9ec2f@huawei.com>
+ <42B685BFA705F94C860C6DD0752F0565483566FE@DGGEMA503-MBS.china.huawei.com>
+ <dacdd0e0-2aaa-ca4d-3871-8c4c11abcb0d@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180319062357.GA82358@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <heyunlei@huawei.com>) id 1exqR6-0006f3-4S
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Mar 2018 08:46:32 +0000
+Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
+ helo=huawei.com) by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1exqR2-006rFb-Sy
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Mar 2018 08:46:32 +0000
+In-Reply-To: <dacdd0e0-2aaa-ca4d-3871-8c4c11abcb0d@huawei.com>
+Content-Language: zh-CN
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: "Yuchao (T)" <yuchao0@huawei.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Cc: "Zhangdianfang (Euler)" <zhangdianfang@huawei.com>
 
-OK, got it.
-
-On 2018/3/19 14:23, Jaegeuk Kim wrote:
-> On 03/19, Yunlong Song wrote:
->> Hi, Jaegeuk,
->>      I find this patch is removed from current branch of dev-test
->> recently, why? Any bugs?
-> Moved into the beginning of the tree for cherry-picking into f2fs-stable.
->
-> Thanks,
->
->> On 2018/2/28 20:31, Yunlong Song wrote:
->>> Previous dentry page uses highmem, which will cause panic in platforms
->>> using highmem (such as arm), since the address space of dentry pages
->>> from highmem directly goes into the decryption path via the function
->>> fscrypt_fname_disk_to_usr. But sg_init_one assumes the address is not
->>> from highmem, and then cause panic since it doesn't call kmap_high but
->>> kunmap_high is triggered at the end. To fix this problem in a simple
->>> way, this patch avoids to put dentry page in pagecache into highmem.
->>>
->>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->>> ---
->>>    fs/f2fs/dir.c           | 23 +++++------------------
->>>    fs/f2fs/f2fs.h          |  6 ------
->>>    fs/f2fs/inline.c        |  3 +--
->>>    fs/f2fs/inode.c         |  2 +-
->>>    fs/f2fs/namei.c         | 14 +-------------
->>>    fs/f2fs/recovery.c      | 11 +++++------
->>>    include/linux/f2fs_fs.h |  1 -
->>>    7 files changed, 13 insertions(+), 47 deletions(-)
->>>
->>> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
->>> index f00b5ed..797eb05 100644
->>> --- a/fs/f2fs/dir.c
->>> +++ b/fs/f2fs/dir.c
->>> @@ -94,14 +94,12 @@ static struct f2fs_dir_entry *find_in_block(struct page *dentry_page,
->>>    	struct f2fs_dir_entry *de;
->>>    	struct f2fs_dentry_ptr d;
->>> -	dentry_blk = (struct f2fs_dentry_block *)kmap(dentry_page);
->>> +	dentry_blk = (struct f2fs_dentry_block *)page_address(dentry_page);
->>>    	make_dentry_ptr_block(NULL, &d, dentry_blk);
->>>    	de = find_target_dentry(fname, namehash, max_slots, &d);
->>>    	if (de)
->>>    		*res_page = dentry_page;
->>> -	else
->>> -		kunmap(dentry_page);
->>>    	return de;
->>>    }
->>> @@ -287,7 +285,6 @@ ino_t f2fs_inode_by_name(struct inode *dir, const struct qstr *qstr,
->>>    	de = f2fs_find_entry(dir, qstr, page);
->>>    	if (de) {
->>>    		res = le32_to_cpu(de->ino);
->>> -		f2fs_dentry_kunmap(dir, *page);
->>>    		f2fs_put_page(*page, 0);
->>>    	}
->>> @@ -302,7 +299,6 @@ void f2fs_set_link(struct inode *dir, struct f2fs_dir_entry *de,
->>>    	f2fs_wait_on_page_writeback(page, type, true);
->>>    	de->ino = cpu_to_le32(inode->i_ino);
->>>    	set_de_type(de, inode->i_mode);
->>> -	f2fs_dentry_kunmap(dir, page);
->>>    	set_page_dirty(page);
->>>    	dir->i_mtime = dir->i_ctime = current_time(dir);
->>> @@ -350,13 +346,11 @@ static int make_empty_dir(struct inode *inode,
->>>    	if (IS_ERR(dentry_page))
->>>    		return PTR_ERR(dentry_page);
->>> -	dentry_blk = kmap_atomic(dentry_page);
->>> +	dentry_blk = page_address(dentry_page);
->>>    	make_dentry_ptr_block(NULL, &d, dentry_blk);
->>>    	do_make_empty_dir(inode, parent, &d);
->>> -	kunmap_atomic(dentry_blk);
->>> -
->>>    	set_page_dirty(dentry_page);
->>>    	f2fs_put_page(dentry_page, 1);
->>>    	return 0;
->>> @@ -547,13 +541,12 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
->>>    		if (IS_ERR(dentry_page))
->>>    			return PTR_ERR(dentry_page);
->>> -		dentry_blk = kmap(dentry_page);
->>> +		dentry_blk = page_address(dentry_page);
->>>    		bit_pos = room_for_filename(&dentry_blk->dentry_bitmap,
->>>    						slots, NR_DENTRY_IN_BLOCK);
->>>    		if (bit_pos < NR_DENTRY_IN_BLOCK)
->>>    			goto add_dentry;
->>> -		kunmap(dentry_page);
->>>    		f2fs_put_page(dentry_page, 1);
->>>    	}
->>> @@ -588,7 +581,6 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
->>>    	if (inode)
->>>    		up_write(&F2FS_I(inode)->i_sem);
->>> -	kunmap(dentry_page);
->>>    	f2fs_put_page(dentry_page, 1);
->>>    	return err;
->>> @@ -642,7 +634,6 @@ int __f2fs_add_link(struct inode *dir, const struct qstr *name,
->>>    		F2FS_I(dir)->task = NULL;
->>>    	}
->>>    	if (de) {
->>> -		f2fs_dentry_kunmap(dir, page);
->>>    		f2fs_put_page(page, 0);
->>>    		err = -EEXIST;
->>>    	} else if (IS_ERR(page)) {
->>> @@ -730,7 +721,6 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
->>>    	bit_pos = find_next_bit_le(&dentry_blk->dentry_bitmap,
->>>    			NR_DENTRY_IN_BLOCK,
->>>    			0);
->>> -	kunmap(page); /* kunmap - pair of f2fs_find_entry */
->>>    	set_page_dirty(page);
->>>    	dir->i_ctime = dir->i_mtime = current_time(dir);
->>> @@ -775,7 +765,7 @@ bool f2fs_empty_dir(struct inode *dir)
->>>    				return false;
->>>    		}
->>> -		dentry_blk = kmap_atomic(dentry_page);
->>> +		dentry_blk = page_address(dentry_page);
->>>    		if (bidx == 0)
->>>    			bit_pos = 2;
->>>    		else
->>> @@ -783,7 +773,6 @@ bool f2fs_empty_dir(struct inode *dir)
->>>    		bit_pos = find_next_bit_le(&dentry_blk->dentry_bitmap,
->>>    						NR_DENTRY_IN_BLOCK,
->>>    						bit_pos);
->>> -		kunmap_atomic(dentry_blk);
->>>    		f2fs_put_page(dentry_page, 1);
->>> @@ -901,19 +890,17 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
->>>    			}
->>>    		}
->>> -		dentry_blk = kmap(dentry_page);
->>> +		dentry_blk = page_address(dentry_page);
->>>    		make_dentry_ptr_block(inode, &d, dentry_blk);
->>>    		err = f2fs_fill_dentries(ctx, &d,
->>>    				n * NR_DENTRY_IN_BLOCK, &fstr);
->>>    		if (err) {
->>> -			kunmap(dentry_page);
->>>    			f2fs_put_page(dentry_page, 1);
->>>    			break;
->>>    		}
->>> -		kunmap(dentry_page);
->>>    		f2fs_put_page(dentry_page, 1);
->>>    	}
->>>    out_free:
->>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>> index dbe87c7..d57b7dd 100644
->>> --- a/fs/f2fs/f2fs.h
->>> +++ b/fs/f2fs/f2fs.h
->>> @@ -2413,12 +2413,6 @@ static inline int f2fs_has_inline_dentry(struct inode *inode)
->>>    	return is_inode_flag_set(inode, FI_INLINE_DENTRY);
->>>    }
->>> -static inline void f2fs_dentry_kunmap(struct inode *dir, struct page *page)
->>> -{
->>> -	if (!f2fs_has_inline_dentry(dir))
->>> -		kunmap(page);
->>> -}
->>> -
->>>    static inline int is_file(struct inode *inode, int type)
->>>    {
->>>    	return F2FS_I(inode)->i_advise & type;
->>> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
->>> index 90e38d8..3b77d64 100644
->>> --- a/fs/f2fs/inline.c
->>> +++ b/fs/f2fs/inline.c
->>> @@ -369,7 +369,7 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
->>>    	f2fs_wait_on_page_writeback(page, DATA, true);
->>>    	zero_user_segment(page, MAX_INLINE_DATA(dir), PAGE_SIZE);
->>> -	dentry_blk = kmap_atomic(page);
->>> +	dentry_blk = page_address(page);
->>>    	make_dentry_ptr_inline(dir, &src, inline_dentry);
->>>    	make_dentry_ptr_block(dir, &dst, dentry_blk);
->>> @@ -386,7 +386,6 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
->>>    	memcpy(dst.dentry, src.dentry, SIZE_OF_DIR_ENTRY * src.max);
->>>    	memcpy(dst.filename, src.filename, src.max * F2FS_SLOT_LEN);
->>> -	kunmap_atomic(dentry_blk);
->>>    	if (!PageUptodate(page))
->>>    		SetPageUptodate(page);
->>>    	set_page_dirty(page);
->>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->>> index 89c838b..10be247 100644
->>> --- a/fs/f2fs/inode.c
->>> +++ b/fs/f2fs/inode.c
->>> @@ -328,7 +328,7 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
->>>    		inode->i_op = &f2fs_dir_inode_operations;
->>>    		inode->i_fop = &f2fs_dir_operations;
->>>    		inode->i_mapping->a_ops = &f2fs_dblock_aops;
->>> -		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_HIGH_ZERO);
->>> +		inode_nohighmem(inode);
->>>    	} else if (S_ISLNK(inode->i_mode)) {
->>>    		if (f2fs_encrypted_inode(inode))
->>>    			inode->i_op = &f2fs_encrypted_symlink_inode_operations;
->>> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
->>> index c4c94c7..2754af7 100644
->>> --- a/fs/f2fs/namei.c
->>> +++ b/fs/f2fs/namei.c
->>> @@ -317,7 +317,6 @@ static int __recover_dot_dentries(struct inode *dir, nid_t pino)
->>>    	de = f2fs_find_entry(dir, &dot, &page);
->>>    	if (de) {
->>> -		f2fs_dentry_kunmap(dir, page);
->>>    		f2fs_put_page(page, 0);
->>>    	} else if (IS_ERR(page)) {
->>>    		err = PTR_ERR(page);
->>> @@ -330,7 +329,6 @@ static int __recover_dot_dentries(struct inode *dir, nid_t pino)
->>>    	de = f2fs_find_entry(dir, &dotdot, &page);
->>>    	if (de) {
->>> -		f2fs_dentry_kunmap(dir, page);
->>>    		f2fs_put_page(page, 0);
->>>    	} else if (IS_ERR(page)) {
->>>    		err = PTR_ERR(page);
->>> @@ -377,7 +375,6 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
->>>    	}
->>>    	ino = le32_to_cpu(de->ino);
->>> -	f2fs_dentry_kunmap(dir, page);
->>>    	f2fs_put_page(page, 0);
->>>    	inode = f2fs_iget(dir->i_sb, ino);
->>> @@ -452,7 +449,6 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
->>>    	err = acquire_orphan_inode(sbi);
->>>    	if (err) {
->>>    		f2fs_unlock_op(sbi);
->>> -		f2fs_dentry_kunmap(dir, page);
->>>    		f2fs_put_page(page, 0);
->>>    		goto fail;
->>>    	}
->>> @@ -613,7 +609,7 @@ static int f2fs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
->>>    	inode->i_op = &f2fs_dir_inode_operations;
->>>    	inode->i_fop = &f2fs_dir_operations;
->>>    	inode->i_mapping->a_ops = &f2fs_dblock_aops;
->>> -	mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_HIGH_ZERO);
->>> +	inode_nohighmem(inode);
->>>    	set_inode_flag(inode, FI_INC_LINK);
->>>    	f2fs_lock_op(sbi);
->>> @@ -931,7 +927,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
->>>    			f2fs_set_link(old_inode, old_dir_entry,
->>>    						old_dir_page, new_dir);
->>>    		} else {
->>> -			f2fs_dentry_kunmap(old_inode, old_dir_page);
->>>    			f2fs_put_page(old_dir_page, 0);
->>>    		}
->>>    		f2fs_i_links_write(old_dir, false);
->>> @@ -947,7 +942,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
->>>    put_out_dir:
->>>    	f2fs_unlock_op(sbi);
->>>    	if (new_page) {
->>> -		f2fs_dentry_kunmap(new_dir, new_page);
->>>    		f2fs_put_page(new_page, 0);
->>>    	}
->>>    out_whiteout:
->>> @@ -955,11 +949,9 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
->>>    		iput(whiteout);
->>>    out_dir:
->>>    	if (old_dir_entry) {
->>> -		f2fs_dentry_kunmap(old_inode, old_dir_page);
->>>    		f2fs_put_page(old_dir_page, 0);
->>>    	}
->>>    out_old:
->>> -	f2fs_dentry_kunmap(old_dir, old_page);
->>>    	f2fs_put_page(old_page, 0);
->>>    out:
->>>    	return err;
->>> @@ -1101,19 +1093,15 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
->>>    	return 0;
->>>    out_new_dir:
->>>    	if (new_dir_entry) {
->>> -		f2fs_dentry_kunmap(new_inode, new_dir_page);
->>>    		f2fs_put_page(new_dir_page, 0);
->>>    	}
->>>    out_old_dir:
->>>    	if (old_dir_entry) {
->>> -		f2fs_dentry_kunmap(old_inode, old_dir_page);
->>>    		f2fs_put_page(old_dir_page, 0);
->>>    	}
->>>    out_new:
->>> -	f2fs_dentry_kunmap(new_dir, new_page);
->>>    	f2fs_put_page(new_page, 0);
->>>    out_old:
->>> -	f2fs_dentry_kunmap(old_dir, old_page);
->>>    	f2fs_put_page(old_page, 0);
->>>    out:
->>>    	return err;
->>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
->>> index 337f336..c5e5c45 100644
->>> --- a/fs/f2fs/recovery.c
->>> +++ b/fs/f2fs/recovery.c
->>> @@ -144,7 +144,7 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
->>>    retry:
->>>    	de = __f2fs_find_entry(dir, &fname, &page);
->>>    	if (de && inode->i_ino == le32_to_cpu(de->ino))
->>> -		goto out_unmap_put;
->>> +		goto out_put;
->>>    	if (de) {
->>>    		einode = f2fs_iget_retry(inode->i_sb, le32_to_cpu(de->ino));
->>> @@ -153,19 +153,19 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
->>>    			err = PTR_ERR(einode);
->>>    			if (err == -ENOENT)
->>>    				err = -EEXIST;
->>> -			goto out_unmap_put;
->>> +			goto out_put;
->>>    		}
->>>    		err = dquot_initialize(einode);
->>>    		if (err) {
->>>    			iput(einode);
->>> -			goto out_unmap_put;
->>> +			goto out_put;
->>>    		}
->>>    		err = acquire_orphan_inode(F2FS_I_SB(inode));
->>>    		if (err) {
->>>    			iput(einode);
->>> -			goto out_unmap_put;
->>> +			goto out_put;
->>>    		}
->>>    		f2fs_delete_entry(de, page, dir, einode);
->>>    		iput(einode);
->>> @@ -180,8 +180,7 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
->>>    		goto retry;
->>>    	goto out;
->>> -out_unmap_put:
->>> -	f2fs_dentry_kunmap(dir, page);
->>> +out_put:
->>>    	f2fs_put_page(page, 0);
->>>    out:
->>>    	if (file_enc_name(inode))
->>> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
->>> index f7f0990..96c9bdb 100644
->>> --- a/include/linux/f2fs_fs.h
->>> +++ b/include/linux/f2fs_fs.h
->>> @@ -46,7 +46,6 @@
->>>    /* This flag is used by node and meta inodes, and by recovery */
->>>    #define GFP_F2FS_ZERO		(GFP_NOFS | __GFP_ZERO)
->>> -#define GFP_F2FS_HIGH_ZERO	(GFP_NOFS | __GFP_ZERO | __GFP_HIGHMEM)
->>>    /*
->>>     * For further optimization on multi-head logs, on-disk layout supports maximum
->>>
->> -- 
->> Thanks,
->> Yunlong Song
-> .
->
-
--- 
-Thanks,
-Yunlong Song
+DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IFl1Y2hhbyAoVCkNCj5TZW50
+OiBNb25kYXksIE1hcmNoIDE5LCAyMDE4IDEwOjEwIEFNDQo+VG86IGhleXVubGVpOyBqYWVnZXVr
+QGtlcm5lbC5vcmc7IGxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0DQo+Q2M6
+IFdhbmdiaW50aWFuOyBaaGFuZ2RpYW5mYW5nIChFdWxlcikNCj5TdWJqZWN0OiBSZTogW2YyZnMt
+ZGV2XVtQQVRDSCB2M10gZjJmczogaW50cm9kdWNlIGEgbWV0aG9kIHRvIG1ha2UgbmF0IGpvdXJu
+YWwgbW9yZSBmcmVzaA0KPg0KPk9uIDIwMTgvMy8xNiAxNzo1MiwgaGV5dW5sZWkgd3JvdGU6DQo+
+Pg0KPj4NCj4+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPj4+IEZyb206IFl1Y2hhbyAo
+VCkNCj4+PiBTZW50OiBGcmlkYXksIE1hcmNoIDE2LCAyMDE4IDU6NDcgUE0NCj4+PiBUbzogaGV5
+dW5sZWk7IGphZWdldWtAa2VybmVsLm9yZzsgbGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vm
+b3JnZS5uZXQNCj4+PiBDYzogV2FuZ2JpbnRpYW47IFpoYW5nZGlhbmZhbmcgKEV1bGVyKQ0KPj4+
+IFN1YmplY3Q6IFJlOiBbZjJmcy1kZXZdW1BBVENIIHYzXSBmMmZzOiBpbnRyb2R1Y2UgYSBtZXRo
+b2QgdG8gbWFrZSBuYXQgam91cm5hbCBtb3JlIGZyZXNoDQo+Pj4NCj4+PiBPbiAyMDE4LzMvMTYg
+MTc6MTQsIGhleXVubGVpIHdyb3RlOg0KPj4+Pg0KPj4+Pg0KPj4+Pj4gLS0tLS1PcmlnaW5hbCBN
+ZXNzYWdlLS0tLS0NCj4+Pj4+IEZyb206IFl1Y2hhbyAoVCkNCj4+Pj4+IFNlbnQ6IEZyaWRheSwg
+TWFyY2ggMTYsIDIwMTggNDo0OSBQTQ0KPj4+Pj4gVG86IGhleXVubGVpOyBqYWVnZXVrQGtlcm5l
+bC5vcmc7IGxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0DQo+Pj4+PiBDYzog
+V2FuZ2JpbnRpYW47IFpoYW5nZGlhbmZhbmcgKEV1bGVyKQ0KPj4+Pj4gU3ViamVjdDogUmU6IFtm
+MmZzLWRldl1bUEFUQ0ggdjNdIGYyZnM6IGludHJvZHVjZSBhIG1ldGhvZCB0byBtYWtlIG5hdCBq
+b3VybmFsIG1vcmUgZnJlc2gNCj4+Pj4+DQo+Pj4+Pg0KPj4+Pj4NCj4+Pj4+IE9uIDIwMTgvMy8x
+NCAxNDozMywgWXVubGVpIEhlIHdyb3RlOg0KPj4+Pj4+IFRoaXMgcGF0Y2ggaW50cm9kdWNlIGEg
+bWV0aG9kIHRvIG1ha2UgbmF0IGpvdXJuYWwgbW9yZSBmcmVzaDoNCj4+Pj4+PiBpLiAgc29ydCBz
+ZXQgbGlzdCB1c2luZyBkaXJ0eSBlbnRyeSBudW1iZXIgYW5kIGNwIHZlcnNpb24NCj4+Pj4+PiAg
+ICAgYXZlcmFnZSB2YWx1ZS4NCj4+Pj4+PiBpaS4gaWYgbWVldCB3aXRoIGNhY2hlIGhpdCwgdXBk
+YXRlIGF2ZXJhZ2UgdmVyc2lvbiB2YWx1cyB3aXRoDQo+Pj4+Pj4gICAgIGN1cnJlbnQgY3AgdmVy
+c2lvbi4NCj4+Pj4+Pg0KPj4+Pj4+IFdpdGggdGhpcyBwYXRjaCwgbmV3bHkgbW9kaWZpZWQgbmF0
+IHNldCB3aWxsIGZsdXNoIHRvIGpvdXJuYWwsDQo+Pj4+Pj4gYW5kIGZsdXNoIG9sZCBuYXQgc2V0
+IHdpdGggc2FtZSBkaXJ0eSBlbnRyeSBudW1iZXIgdG8gbmF0IGFyZWEuDQo+Pj4+Pj4NCj4+Pj4+
+PiBTaWduZWQtb2ZmLWJ5OiBZdW5sZWkgSGUgPGhleXVubGVpQGh1YXdlaS5jb20+DQo+Pj4+Pj4g
+LS0tDQo+Pj4+Pj4gIGZzL2YyZnMvbm9kZS5jIHwgNDUgKysrKysrKysrKysrKysrKysrKysrKysr
+KystLS0tLS0tLS0tLS0tLS0tLS0tDQo+Pj4+Pj4gIGZzL2YyZnMvbm9kZS5oIHwgIDQgKysrLQ0K
+Pj4+Pj4+ICAyIGZpbGVzIGNoYW5nZWQsIDI5IGluc2VydGlvbnMoKyksIDIwIGRlbGV0aW9ucygt
+KQ0KPj4+Pj4+DQo+Pj4+Pj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvbm9kZS5jIGIvZnMvZjJmcy9u
+b2RlLmMNCj4+Pj4+PiBpbmRleCAxNzdjNDM4Li43NGY2MDc5IDEwMDY0NA0KPj4+Pj4+IC0tLSBh
+L2ZzL2YyZnMvbm9kZS5jDQo+Pj4+Pj4gKysrIGIvZnMvZjJmcy9ub2RlLmMNCj4+Pj4+PiBAQCAt
+MTkzLDggKzE5Myw4IEBAIHN0YXRpYyB2b2lkIF9fZGVsX2Zyb21fbmF0X2NhY2hlKHN0cnVjdCBm
+MmZzX25tX2luZm8gKm5tX2ksIHN0cnVjdCBuYXRfZW50cnkgKmUpDQo+Pj4+Pj4gIAlfX2ZyZWVf
+bmF0X2VudHJ5KGUpOw0KPj4+Pj4+ICB9DQo+Pj4+Pj4NCj4+Pj4+PiAtc3RhdGljIHZvaWQgX19z
+ZXRfbmF0X2NhY2hlX2RpcnR5KHN0cnVjdCBmMmZzX25tX2luZm8gKm5tX2ksDQo+Pj4+Pj4gLQkJ
+CQkJCXN0cnVjdCBuYXRfZW50cnkgKm5lKQ0KPj4+Pj4+ICtzdGF0aWMgdm9pZCBfX3NldF9uYXRf
+Y2FjaGVfZGlydHkoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBib29sIHJlbW92ZV9qb3VybmFs
+LA0KPj4+Pj4+ICsJCQlzdHJ1Y3QgZjJmc19ubV9pbmZvICpubV9pLCBzdHJ1Y3QgbmF0X2VudHJ5
+ICpuZSkNCj4+Pj4+PiAgew0KPj4+Pj4+ICAJbmlkX3Qgc2V0ID0gTkFUX0JMT0NLX09GRlNFVChu
+ZS0+bmkubmlkKTsNCj4+Pj4+PiAgCXN0cnVjdCBuYXRfZW50cnlfc2V0ICpoZWFkOw0KPj4+Pj4+
+IEBAIC0yMDcsOSArMjA3LDE1IEBAIHN0YXRpYyB2b2lkIF9fc2V0X25hdF9jYWNoZV9kaXJ0eShz
+dHJ1Y3QgZjJmc19ubV9pbmZvICpubV9pLA0KPj4+Pj4+ICAJCUlOSVRfTElTVF9IRUFEKCZoZWFk
+LT5zZXRfbGlzdCk7DQo+Pj4+Pj4gIAkJaGVhZC0+c2V0ID0gc2V0Ow0KPj4+Pj4+ICAJCWhlYWQt
+PmVudHJ5X2NudCA9IDA7DQo+Pj4+Pj4gKwkJaGVhZC0+Y3BfdmVyID0gMDsNCj4+Pj4+PiAgCQlm
+MmZzX3JhZGl4X3RyZWVfaW5zZXJ0KCZubV9pLT5uYXRfc2V0X3Jvb3QsIHNldCwgaGVhZCk7DQo+
+Pj4+Pj4gIAl9DQo+Pj4+Pj4NCj4+Pj4+PiArCS8qIGpvdXJuYWwgaGl0IGNhc2UsIHRyeSB0byBs
+b2NhdGUgc2V0IGluIGpvdXJuYWwgKi8NCj4+Pj4+PiArCWlmICghcmVtb3ZlX2pvdXJuYWwgJiYg
+aGVhZC0+ZW50cnlfY250IDw9IE5BVF9KT1VSTkFMX0VOVFJJRVMpDQo+Pj4+Pj4gKwkJaGVhZC0+
+Y3BfdmVyICs9IGRpdl91NjQoY3VyX2NwX3ZlcnNpb24oRjJGU19DS1BUKHNiaSkpLA0KPj4+Pj4+
+ICsJCQkJCQkJTkFUX0pPVVJOQUxfRU5UUklFUyk7DQo+Pj4+Pj4gKw0KPj4+Pj4+ICAJaWYgKGdl
+dF9uYXRfZmxhZyhuZSwgSVNfRElSVFkpKQ0KPj4+Pj4+ICAJCWdvdG8gcmVmcmVzaF9saXN0Ow0K
+Pj4+Pj4NCj4+Pj4+IAllbHNlIHsNCj4+Pj4+IAkJdXBkYXRlIGhlYWQgdmVyc2lvbiBoZXJlPw0K
+Pj4+Pj4gCX0NCj4+Pj4NCj4+Pj4gT2theSwgaWYgb25lIG5hdCBlbnRyeSB1cGRhdGUgbW9yZSB0
+aGFuIG9uY2UsIGhlcmUgd2lsbCBiZSBvdmVyZmxvdy4NCj4+Pj4NCj4+Pj4+DQo+Pj4+Pj4NCj4+
+Pj4+PiBAQCAtMjE3LDEwICsyMjMsNyBAQCBzdGF0aWMgdm9pZCBfX3NldF9uYXRfY2FjaGVfZGly
+dHkoc3RydWN0IGYyZnNfbm1faW5mbyAqbm1faSwNCj4+Pj4+PiAgCWhlYWQtPmVudHJ5X2NudCsr
+Ow0KPj4+Pj4+ICAJc2V0X25hdF9mbGFnKG5lLCBJU19ESVJUWSwgdHJ1ZSk7DQo+Pj4+Pj4gIHJl
+ZnJlc2hfbGlzdDoNCj4+Pj4+PiAtCWlmIChuYXRfZ2V0X2Jsa2FkZHIobmUpID09IE5FV19BRERS
+KQ0KPj4+Pj4+IC0JCWxpc3RfZGVsX2luaXQoJm5lLT5saXN0KTsNCj4+Pj4+PiAtCWVsc2UNCj4+
+Pj4+PiAtCQlsaXN0X21vdmVfdGFpbCgmbmUtPmxpc3QsICZoZWFkLT5lbnRyeV9saXN0KTsNCj4+
+Pj4+PiArCWxpc3RfbW92ZV90YWlsKCZuZS0+bGlzdCwgJmhlYWQtPmVudHJ5X2xpc3QpOw0KPj4+
+Pj4NCj4+Pj4+IEZvciBORVdfQUREUiBjYXNlLCB3aHkgd2UgbmVlZCB0byB0cmFjayB0aGlzIG5h
+dCBlbnRyeSBpbiBlbnRyeV9saXN0Pw0KPj4+Pg0KPj4+PiBJZiBuZXdfYmxrYWRkciA9PSBORVdf
+QUREUiwgd2UgZG9uJ3QgbmVlZCB0byBjYWxsIF9fc2V0X25hdF9jYWNoZV9kaXJ0eToNCj4+Pg0K
+Pj4+IEJ1dCBzdWNoIGVudHJ5IGlzIHN0aWxsIGluIGNsZWFuIGxpc3QsIHNocmlua2VyIGNhbiBl
+YXNpbHkgcmVtb3ZlIGl0IGluDQo+Pj4gb3V0LW9mLW1lbW9yeSBjb25kaXRpb24uDQo+Pg0KPj4g
+WWVzLCB5b3UgYXJlIHJpZ2h0LCBteSB0ZXN0IGRvZXNuJ3QgY292ZXIgbG93IG1lbW9yeSBjYXNl
+LiBJICdsbCBzZW5kIGEgbmV3IHZlcnNpb24uDQo+DQo+SG93IGFib3V0IGFkZGluZyBiZWxvdyBw
+YXRjaCBiZWZvcmUgY3VycmVudCBvbmU/DQo+DQo+U3ViamVjdDogW1BBVENIXSBmMmZzOiBkb24n
+dCB0cmFjayBuZXcgbmF0IGVudHJ5IGluIG5hdCBzZXQNCj4NCj5OYXQgZW50cnkgc2V0IGlzIHVz
+ZWQgb25seSBpbiBjaGVja3BvaW50KCksIGFuZCBkdXJpbmcgY2hlY2twb2ludCgpIHdlDQo+d29u
+J3QgZmx1c2ggbmV3IG5hdCBlbnRyeSB3aXRoIHVuYWxsb2NhdGVkIGFkZHJlc3MsIHNvIHdlIGRv
+bid0IG5lZWQgdG8NCj5hZGQgbmV3IG5hdCBlbnRyeSBpbnRvIG5hdCBzZXQsIHRoZW4gbmF0X2Vu
+dHJ5X3NldDo6ZW50cnlfY250IGNhbg0KPmluZGljYXRlIGFjdHVhbCBlbnRyeSBjb3VudCB3ZSBu
+ZWVkIHRvIGZsdXNoIGluIGNoZWNrcG9pbnQoKS4NCj4NCj4tLS0NCj4gZnMvZjJmcy9ub2RlLmMg
+fCAyMCArKysrKysrKysrKysrKysrLS0tLQ0KPiAxIGZpbGUgY2hhbmdlZCwgMTYgaW5zZXJ0aW9u
+cygrKSwgNCBkZWxldGlvbnMoLSkNCj4NCj5kaWZmIC0tZ2l0IGEvZnMvZjJmcy9ub2RlLmMgYi9m
+cy9mMmZzL25vZGUuYw0KPmluZGV4IDlkZWRkNGI1ZTA3Ny4uMTBjZDg4MzhjOTVjIDEwMDY0NA0K
+Pi0tLSBhL2ZzL2YyZnMvbm9kZS5jDQo+KysrIGIvZnMvZjJmcy9ub2RlLmMNCj5AQCAtMTkzLDgg
+KzE5Myw4IEBAIHN0YXRpYyB2b2lkIF9fZGVsX2Zyb21fbmF0X2NhY2hlKHN0cnVjdCBmMmZzX25t
+X2luZm8gKm5tX2ksIHN0cnVjdCBuYXRfZW50cnkgKmUpDQo+IAlfX2ZyZWVfbmF0X2VudHJ5KGUp
+Ow0KPiB9DQo+DQo+LXN0YXRpYyB2b2lkIF9fc2V0X25hdF9jYWNoZV9kaXJ0eShzdHJ1Y3QgZjJm
+c19ubV9pbmZvICpubV9pLA0KPi0JCQkJCQlzdHJ1Y3QgbmF0X2VudHJ5ICpuZSkNCj4rc3RhdGlj
+IHN0cnVjdCBuYXRfZW50cnlfc2V0ICpfX2dyYWJfbmF0X2VudHJ5X3NldChzdHJ1Y3QgZjJmc19u
+bV9pbmZvICpubV9pLA0KPisJCQkJCQkJc3RydWN0IG5hdF9lbnRyeSAqbmUpDQo+IHsNCj4gCW5p
+ZF90IHNldCA9IE5BVF9CTE9DS19PRkZTRVQobmUtPm5pLm5pZCk7DQo+IAlzdHJ1Y3QgbmF0X2Vu
+dHJ5X3NldCAqaGVhZDsNCj5AQCAtMjA5LDE1ICsyMDksMjcgQEAgc3RhdGljIHZvaWQgX19zZXRf
+bmF0X2NhY2hlX2RpcnR5KHN0cnVjdCBmMmZzX25tX2luZm8gKm5tX2ksDQo+IAkJaGVhZC0+ZW50
+cnlfY250ID0gMDsNCj4gCQlmMmZzX3JhZGl4X3RyZWVfaW5zZXJ0KCZubV9pLT5uYXRfc2V0X3Jv
+b3QsIHNldCwgaGVhZCk7DQo+IAl9DQo+KwlyZXR1cm4gaGVhZDsNCj4rfQ0KPisNCj4rc3RhdGlj
+IHZvaWQgX19zZXRfbmF0X2NhY2hlX2RpcnR5KHN0cnVjdCBmMmZzX25tX2luZm8gKm5tX2ksDQo+
+KwkJCQkJCXN0cnVjdCBuYXRfZW50cnkgKm5lKQ0KPit7DQo+KwlzdHJ1Y3QgbmF0X2VudHJ5X3Nl
+dCAqaGVhZDsNCj4rCWJvb2wgbmV3X25lID0gbmF0X2dldF9ibGthZGRyKG5lKSA9PSBORVdfQURE
+UjsNCj4rDQo+KwlpZiAoIW5ld19uZSkNCj4rCQloZWFkID0gX19ncmFiX25hdF9lbnRyeV9zZXQo
+bm1faSwgbmUpOw0KPg0KPiAJaWYgKGdldF9uYXRfZmxhZyhuZSwgSVNfRElSVFkpKQ0KPiAJCWdv
+dG8gcmVmcmVzaF9saXN0Ow0KPg0KPiAJbm1faS0+ZGlydHlfbmF0X2NudCsrOw0KPi0JaGVhZC0+
+ZW50cnlfY250Kys7DQo+KwlpZiAoIW5ld19uZSkNCj4rCQloZWFkLT5lbnRyeV9jbnQrKzsNCj4g
+CXNldF9uYXRfZmxhZyhuZSwgSVNfRElSVFksIHRydWUpOw0KPiByZWZyZXNoX2xpc3Q6DQo+LQlp
+ZiAobmF0X2dldF9ibGthZGRyKG5lKSA9PSBORVdfQUREUikNCj4rCWlmIChuZXdfbmUpDQo+IAkJ
+bGlzdF9kZWxfaW5pdCgmbmUtPmxpc3QpOw0KPiAJZWxzZQ0KPiAJCWxpc3RfbW92ZV90YWlsKCZu
+ZS0+bGlzdCwgJmhlYWQtPmVudHJ5X2xpc3QpOw0KDQpPa2F5LCBpdCBsb29rcyBnb29kIHRvIG1l
+Lg0KDQpUaGFua3MuDQo+LS0NCj4yLjE1LjAuNTUuZ2MyZWNlOWRjNGRlNg0KPg0KPlRoYW5rcywN
+Cj4NCj4+DQo+PiBUaGFua3MuDQo+Pg0KPj4+DQo+Pj4gVGhhbmtzLA0KPj4+DQo+Pj4+IAlpICBu
+YXQgZW50cnkgd2l0aCBORVdfQUREUiB3aWxsIGluY3JlYXNlIGRpcnR5IG5hdCBlbnRyeSBjb3Vu
+dCBpbiBuYXQgc2V0o6x3aGljaCB3aWxsIGNhdXNlDQo+Pj4+ICAgICAgIGEgbmF0IHNldCBoYXMg
+bGFyZ2UgbmF0IGVudHJ5IGNvdW50o6htb3N0IGlzIE5FV19BRERSo6mjrCBidXQgZmV3ZXIgb2Yg
+bmF0IGVudHJpZXMgc2hvdWxkDQo+Pj4+IAkgIGJlIHdyaXR0ZW4gYmFjayBpbiB0aGlzIGNoZWNr
+cG9pbnQNCj4+Pj4gICAgIGlpICBuYXQgZW50cnkgd2l0aCBORVdfQUREUiB3aWxsIGNhbGwgX19z
+ZXRfbmF0X2NhY2hlX2RpcnR5IGFnYWluLCB3aGVuIHdlIHdyaXRlIGJhY2sgaXRzIG5vZGUNCj4+
+Pj4gICAgICAgcGFnZSwgaW4gdGhpcyB0aW1lLCBuZXdfYmxrYWRkciAhPSBORVdfQUREUg0KPj4+
+PiBTbywgSSB0aGluayB3ZSdkIGJldHRlciBieXBhc3MgX3NldF9uYXRfY2FjaGVfZGlydHkgaWYg
+YmxrYWRkciA9PSBORVdfQUREUg0KPj4+Pg0KPj4+PiBUaGFua3MuDQo+Pj4+DQo+Pj4+Pg0KPj4+
+Pj4+ICB9DQo+Pj4+Pj4NCj4+Pj4+PiAgc3RhdGljIHZvaWQgX19jbGVhcl9uYXRfY2FjaGVfZGly
+dHkoc3RydWN0IGYyZnNfbm1faW5mbyAqbm1faSwNCj4+Pj4+PiBAQCAtMzU3LDcgKzM2MCw4IEBA
+IHN0YXRpYyB2b2lkIHNldF9ub2RlX2FkZHIoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1
+Y3Qgbm9kZV9pbmZvICpuaSwNCj4+Pj4+PiAgCW5hdF9zZXRfYmxrYWRkcihlLCBuZXdfYmxrYWRk
+cik7DQo+Pj4+Pj4gIAlpZiAobmV3X2Jsa2FkZHIgPT0gTkVXX0FERFIgfHwgbmV3X2Jsa2FkZHIg
+PT0gTlVMTF9BRERSKQ0KPj4+Pj4+ICAJCXNldF9uYXRfZmxhZyhlLCBJU19DSEVDS1BPSU5URUQs
+IGZhbHNlKTsNCj4+Pj4+PiAtCV9fc2V0X25hdF9jYWNoZV9kaXJ0eShubV9pLCBlKTsNCj4+Pj4+
+PiArCWlmIChuZXdfYmxrYWRkciAhPSBORVdfQUREUikNCj4+Pj4+PiArCQlfX3NldF9uYXRfY2Fj
+aGVfZGlydHkoc2JpLCBmYWxzZSwgbm1faSwgZSk7DQo+Pj4+Pj4NCj4+Pj4+PiAgCS8qIHVwZGF0
+ZSBmc3luY19tYXJrIGlmIGl0cyBpbm9kZSBuYXQgZW50cnkgaXMgc3RpbGwgYWxpdmUgKi8NCj4+
+Pj4+PiAgCWlmIChuaS0+bmlkICE9IG5pLT5pbm8pDQo+Pj4+Pj4gQEAgLTIzOTUsMTQgKzIzOTks
+MTQgQEAgc3RhdGljIHZvaWQgcmVtb3ZlX25hdHNfaW5fam91cm5hbChzdHJ1Y3QgZjJmc19zYl9p
+bmZvICpzYmkpDQo+Pj4+Pj4gIAkJCXNwaW5fdW5sb2NrKCZubV9pLT5uaWRfbGlzdF9sb2NrKTsN
+Cj4+Pj4+PiAgCQl9DQo+Pj4+Pj4NCj4+Pj4+PiAtCQlfX3NldF9uYXRfY2FjaGVfZGlydHkobm1f
+aSwgbmUpOw0KPj4+Pj4+ICsJCV9fc2V0X25hdF9jYWNoZV9kaXJ0eShzYmksIHRydWUsIG5tX2ks
+IG5lKTsNCj4+Pj4+PiAgCX0NCj4+Pj4+PiAgCXVwZGF0ZV9uYXRzX2luX2N1cnN1bShqb3VybmFs
+LCAtaSk7DQo+Pj4+Pj4gIAl1cF93cml0ZSgmY3Vyc2VnLT5qb3VybmFsX3J3c2VtKTsNCj4+Pj4+
+PiAgfQ0KPj4+Pj4+DQo+Pj4+Pj4gLXN0YXRpYyB2b2lkIF9fYWRqdXN0X25hdF9lbnRyeV9zZXQo
+c3RydWN0IG5hdF9lbnRyeV9zZXQgKm5lcywNCj4+Pj4+PiAtCQkJCQkJc3RydWN0IGxpc3RfaGVh
+ZCAqaGVhZCwgaW50IG1heCkNCj4+Pj4+PiArc3RhdGljIHZvaWQgX19hZGp1c3RfbmF0X2VudHJ5
+X3NldChzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksDQo+Pj4+Pj4gKwkJc3RydWN0IG5hdF9lbnRy
+eV9zZXQgKm5lcywgc3RydWN0IGxpc3RfaGVhZCAqaGVhZCwgaW50IG1heCkNCj4+Pj4+PiAgew0K
+Pj4+Pj4+ICAJc3RydWN0IG5hdF9lbnRyeV9zZXQgKmN1cjsNCj4+Pj4+Pg0KPj4+Pj4+IEBAIC0y
+NDEwLDcgKzI0MTQsOSBAQCBzdGF0aWMgdm9pZCBfX2FkanVzdF9uYXRfZW50cnlfc2V0KHN0cnVj
+dCBuYXRfZW50cnlfc2V0ICpuZXMsDQo+Pj4+Pj4gIAkJZ290byBhZGRfb3V0Ow0KPj4+Pj4+DQo+
+Pj4+Pj4gIAlsaXN0X2Zvcl9lYWNoX2VudHJ5KGN1ciwgaGVhZCwgc2V0X2xpc3QpIHsNCj4+Pj4+
+PiAtCQlpZiAoY3VyLT5lbnRyeV9jbnQgPj0gbmVzLT5lbnRyeV9jbnQpIHsNCj4+Pj4+PiArCQlp
+ZiAoY3VyLT5lbnRyeV9jbnQgPiBuZXMtPmVudHJ5X2NudCB8fA0KPj4+Pj4+ICsJCQkoY3VyLT5l
+bnRyeV9jbnQgPT0gbmVzLT5lbnRyeV9jbnQgJiYNCj4+Pj4+PiArCQkJY3VyLT5jcF92ZXIgPCBu
+ZXMtPmNwX3ZlcikpIHsNCj4+Pj4+PiAgCQkJbGlzdF9hZGQoJm5lcy0+c2V0X2xpc3QsIGN1ci0+
+c2V0X2xpc3QucHJldik7DQo+Pj4+Pj4gIAkJCXJldHVybjsNCj4+Pj4+PiAgCQl9DQo+Pj4+Pj4g
+QEAgLTI0NTgsNyArMjQ2NCw2IEBAIHN0YXRpYyB2b2lkIF9fZmx1c2hfbmF0X2VudHJ5X3NldChz
+dHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksDQo+Pj4+Pj4gIAlzdHJ1Y3QgY3Vyc2VnX2luZm8gKmN1
+cnNlZyA9IENVUlNFR19JKHNiaSwgQ1VSU0VHX0hPVF9EQVRBKTsNCj4+Pj4+PiAgCXN0cnVjdCBm
+MmZzX2pvdXJuYWwgKmpvdXJuYWwgPSBjdXJzZWctPmpvdXJuYWw7DQo+Pj4+Pj4gIAluaWRfdCBz
+dGFydF9uaWQgPSBzZXQtPnNldCAqIE5BVF9FTlRSWV9QRVJfQkxPQ0s7DQo+Pj4+Pj4gLQlib29s
+IHRvX2pvdXJuYWwgPSB0cnVlOw0KPj4+Pj4+ICAJc3RydWN0IGYyZnNfbmF0X2Jsb2NrICpuYXRf
+YmxrOw0KPj4+Pj4+ICAJc3RydWN0IG5hdF9lbnRyeSAqbmUsICpjdXI7DQo+Pj4+Pj4gIAlzdHJ1
+Y3QgcGFnZSAqcGFnZSA9IE5VTEw7DQo+Pj4+Pj4gQEAgLTI0NjgsMTEgKzI0NzMsMTQgQEAgc3Rh
+dGljIHZvaWQgX19mbHVzaF9uYXRfZW50cnlfc2V0KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwN
+Cj4+Pj4+PiAgCSAqICMxLCBmbHVzaCBuYXQgZW50cmllcyB0byBqb3VybmFsIGluIGN1cnJlbnQg
+aG90IGRhdGEgc3VtbWFyeSBibG9jay4NCj4+Pj4+PiAgCSAqICMyLCBmbHVzaCBuYXQgZW50cmll
+cyB0byBuYXQgcGFnZS4NCj4+Pj4+PiAgCSAqLw0KPj4+Pj4+ICsNCj4+Pj4+PiArCXNldC0+dG9f
+am91cm5hbCA9IHRydWU7DQo+Pj4+Pj4gKw0KPj4+Pj4+ICAJaWYgKGVuYWJsZWRfbmF0X2JpdHMo
+c2JpLCBjcGMpIHx8DQo+Pj4+Pj4gIAkJIV9faGFzX2N1cnN1bV9zcGFjZShqb3VybmFsLCBzZXQt
+PmVudHJ5X2NudCwgTkFUX0pPVVJOQUwpKQ0KPj4+Pj4+IC0JCXRvX2pvdXJuYWwgPSBmYWxzZTsN
+Cj4+Pj4+PiArCQlzZXQtPnRvX2pvdXJuYWwgPSBmYWxzZTsNCj4+Pj4+Pg0KPj4+Pj4+IC0JaWYg
+KHRvX2pvdXJuYWwpIHsNCj4+Pj4+PiArCWlmIChzZXQtPnRvX2pvdXJuYWwpIHsNCj4+Pj4+PiAg
+CQlkb3duX3dyaXRlKCZjdXJzZWctPmpvdXJuYWxfcndzZW0pOw0KPj4+Pj4+ICAJfSBlbHNlIHsN
+Cj4+Pj4+PiAgCQlwYWdlID0gZ2V0X25leHRfbmF0X3BhZ2Uoc2JpLCBzdGFydF9uaWQpOw0KPj4+
+Pj4+IEBAIC0yNDg4LDcgKzI0OTYsNyBAQCBzdGF0aWMgdm9pZCBfX2ZsdXNoX25hdF9lbnRyeV9z
+ZXQoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLA0KPj4+Pj4+DQo+Pj4+Pj4gIAkJZjJmc19idWdf
+b24oc2JpLCBuYXRfZ2V0X2Jsa2FkZHIobmUpID09IE5FV19BRERSKTsNCj4+Pj4+Pg0KPj4+Pj4+
+IC0JCWlmICh0b19qb3VybmFsKSB7DQo+Pj4+Pj4gKwkJaWYgKHNldC0+dG9fam91cm5hbCkgew0K
+Pj4+Pj4+ICAJCQlvZmZzZXQgPSBsb29rdXBfam91cm5hbF9pbl9jdXJzdW0oam91cm5hbCwNCj4+
+Pj4+PiAgCQkJCQkJCU5BVF9KT1VSTkFMLCBuaWQsIDEpOw0KPj4+Pj4+ICAJCQlmMmZzX2J1Z19v
+bihzYmksIG9mZnNldCA8IDApOw0KPj4+Pj4+IEBAIC0yNTA5LDcgKzI1MTcsNyBAQCBzdGF0aWMg
+dm9pZCBfX2ZsdXNoX25hdF9lbnRyeV9zZXQoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLA0KPj4+
+Pj4+ICAJCX0NCj4+Pj4+PiAgCX0NCj4+Pj4+Pg0KPj4+Pj4+IC0JaWYgKHRvX2pvdXJuYWwpIHsN
+Cj4+Pj4+PiArCWlmIChzZXQtPnRvX2pvdXJuYWwpIHsNCj4+Pj4+PiAgCQl1cF93cml0ZSgmY3Vy
+c2VnLT5qb3VybmFsX3J3c2VtKTsNCj4+Pj4+PiAgCX0gZWxzZSB7DQo+Pj4+Pj4gIAkJX191cGRh
+dGVfbmF0X2JpdHMoc2JpLCBzdGFydF9uaWQsIHBhZ2UpOw0KPj4+Pj4+IEBAIC0yNTE3LDcgKzI1
+MjUsNyBAQCBzdGF0aWMgdm9pZCBfX2ZsdXNoX25hdF9lbnRyeV9zZXQoc3RydWN0IGYyZnNfc2Jf
+aW5mbyAqc2JpLA0KPj4+Pj4+ICAJfQ0KPj4+Pj4+DQo+Pj4+Pj4gIAkvKiBBbGxvdyBkaXJ0eSBu
+YXRzIGJ5IG5vZGUgYmxvY2sgYWxsb2NhdGlvbiBpbiB3cml0ZV9iZWdpbiAqLw0KPj4+Pj4+IC0J
+aWYgKCFzZXQtPmVudHJ5X2NudCkgew0KPj4+Pj4+ICsJaWYgKCFzZXQtPnRvX2pvdXJuYWwpIHsN
+Cj4+Pj4+DQo+Pj4+PiBpZiAoIXNldC0+dG9fam91cm5hbCAmJiAhc2V0LT5lbnRyeV9jbnQpID8N
+Cj4+Pj4+DQo+Pj4+PiBUaGFua3MsDQo+Pj4+Pg0KPj4+Pj4+ICAJCXJhZGl4X3RyZWVfZGVsZXRl
+KCZOTV9JKHNiaSktPm5hdF9zZXRfcm9vdCwgc2V0LT5zZXQpOw0KPj4+Pj4+ICAJCWttZW1fY2Fj
+aGVfZnJlZShuYXRfZW50cnlfc2V0X3NsYWIsIHNldCk7DQo+Pj4+Pj4gIAl9DQo+Pj4+Pj4gQEAg
+LTI1NTYsNyArMjU2NCw3IEBAIHZvaWQgZmx1c2hfbmF0X2VudHJpZXMoc3RydWN0IGYyZnNfc2Jf
+aW5mbyAqc2JpLCBzdHJ1Y3QgY3BfY29udHJvbCAqY3BjKQ0KPj4+Pj4+ICAJCXVuc2lnbmVkIGlk
+eDsNCj4+Pj4+PiAgCQlzZXRfaWR4ID0gc2V0dmVjW2ZvdW5kIC0gMV0tPnNldCArIDE7DQo+Pj4+
+Pj4gIAkJZm9yIChpZHggPSAwOyBpZHggPCBmb3VuZDsgaWR4KyspDQo+Pj4+Pj4gLQkJCV9fYWRq
+dXN0X25hdF9lbnRyeV9zZXQoc2V0dmVjW2lkeF0sICZzZXRzLA0KPj4+Pj4+ICsJCQlfX2FkanVz
+dF9uYXRfZW50cnlfc2V0KHNiaSwgc2V0dmVjW2lkeF0sICZzZXRzLA0KPj4+Pj4+ICAJCQkJCQlN
+QVhfTkFUX0pFTlRSSUVTKGpvdXJuYWwpKTsNCj4+Pj4+PiAgCX0NCj4+Pj4+Pg0KPj4+Pj4+IEBA
+IC0yNTY1LDcgKzI1NzMsNiBAQCB2b2lkIGZsdXNoX25hdF9lbnRyaWVzKHN0cnVjdCBmMmZzX3Ni
+X2luZm8gKnNiaSwgc3RydWN0IGNwX2NvbnRyb2wgKmNwYykNCj4+Pj4+PiAgCQlfX2ZsdXNoX25h
+dF9lbnRyeV9zZXQoc2JpLCBzZXQsIGNwYyk7DQo+Pj4+Pj4NCj4+Pj4+PiAgCXVwX3dyaXRlKCZu
+bV9pLT5uYXRfdHJlZV9sb2NrKTsNCj4+Pj4+PiAtCS8qIEFsbG93IGRpcnR5IG5hdHMgYnkgbm9k
+ZSBibG9jayBhbGxvY2F0aW9uIGluIHdyaXRlX2JlZ2luICovDQo+Pj4+Pj4gIH0NCj4+Pj4+Pg0K
+Pj4+Pj4+ICBzdGF0aWMgaW50IF9fZ2V0X25hdF9iaXRtYXBzKHN0cnVjdCBmMmZzX3NiX2luZm8g
+KnNiaSkNCj4+Pj4+PiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9ub2RlLmggYi9mcy9mMmZzL25vZGUu
+aA0KPj4+Pj4+IGluZGV4IDA4MWVmMGQuLjNjZjljOGI2IDEwMDY0NA0KPj4+Pj4+IC0tLSBhL2Zz
+L2YyZnMvbm9kZS5oDQo+Pj4+Pj4gKysrIGIvZnMvZjJmcy9ub2RlLmgNCj4+Pj4+PiBAQCAtMTQ4
+LDcgKzE0OCw5IEBAIHN0cnVjdCBuYXRfZW50cnlfc2V0IHsNCj4+Pj4+PiAgCXN0cnVjdCBsaXN0
+X2hlYWQgc2V0X2xpc3Q7CS8qIGxpbmsgd2l0aCBvdGhlciBuYXQgc2V0cyAqLw0KPj4+Pj4+ICAJ
+c3RydWN0IGxpc3RfaGVhZCBlbnRyeV9saXN0OwkvKiBsaW5rIHdpdGggZGlydHkgbmF0IGVudHJp
+ZXMgKi8NCj4+Pj4+PiAgCW5pZF90IHNldDsJCQkvKiBzZXQgbnVtYmVyKi8NCj4+Pj4+PiAtCXVu
+c2lnbmVkIGludCBlbnRyeV9jbnQ7CQkvKiB0aGUgIyBvZiBuYXQgZW50cmllcyBpbiBzZXQgKi8N
+Cj4+Pj4+PiArCXVuc2lnbmVkIGludCBlbnRyeV9jbnQ6OTsJLyogdGhlICMgb2YgbmF0IGVudHJp
+ZXMgaW4gc2V0ICovDQo+Pj4+Pj4gKwl1bnNpZ25lZCBpbnQgdG9fam91cm5hbDoxOwkvKiBzZXQg
+Zmx1c2ggdG8gam91cm5hbCAqLw0KPj4+Pj4+ICsJX191NjQgY3BfdmVyOwkJCS8qIGNwIHZlcnNp
+b24gb2YgdGhpcyBzZXQgbW9kaWZ5ICovDQo+Pj4+Pj4gIH07DQo+Pj4+Pj4NCj4+Pj4+PiAgc3Ry
+dWN0IGZyZWVfbmlkIHsNCj4+Pj4+Pg0KPj4+Pg0KPj4NCg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+CkNoZWNrIG91dCB0aGUgdmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxk
+J3MgbW9zdAplbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGlu
+ay9zbGFzaGRvdApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNv
+dXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5m
+by9saW51eC1mMmZzLWRldmVsCg==
