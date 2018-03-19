@@ -1,71 +1,68 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: Set GF_NOFS in read_cache_page_gfp while doing
- f2fs_quota_read
-Date: Mon, 19 Mar 2018 10:36:26 +0800
-Message-ID: <173fc1c2-bc17-2167-cfda-3217fff8789f@huawei.com>
-References: <1521206633-21378-1-git-send-email-riteshh@codeaurora.org>
- <1521206633-21378-2-git-send-email-riteshh@codeaurora.org>
+Subject: Re: [PATCH 2/2] tools: sg_write_buffer: add
+ sg_write_buffer for FFU
+Date: Mon, 19 Mar 2018 10:40:11 +0800
+Message-ID: <4d49ef62-6c86-774f-ac9c-709c61d9c1d3@huawei.com>
+References: <20180314000839.33075-1-jaegeuk@kernel.org>
+ <20180314000839.33075-2-jaegeuk@kernel.org>
+ <3e63efd4-99bd-4352-b3fd-a24658beccb7@huawei.com>
+ <20180317045957.GA52997@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1521206633-21378-2-git-send-email-riteshh@codeaurora.org>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1exkj1-0007D9-C2
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Mar 2018 02:40:39 +0000
+Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
+ helo=huawei.com) by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1exkiz-001qQE-FW
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Mar 2018 02:40:39 +0000
+In-Reply-To: <20180317045957.GA52997@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ritesh Harjani <riteshh@codeaurora.org>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Cc: stummala@codeaurora.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Hyojun Kim <hyojun@google.com>, Jaegeuk Kim <jaegeuk@google.com>, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/3/16 21:23, Ritesh Harjani wrote:
-> Quota code itself is serializing the operations by taking mutex_lock.
-> It seems a below deadlock can happen if GF_NOFS is not used in
-> f2fs_quota_read
+On 2018/3/17 12:59, Jaegeuk Kim wrote:
+> On 03/16, Chao Yu wrote:
+>> Hi Jaegeuk,
+>>
+>> On 2018/3/14 8:08, Jaegeuk Kim wrote:
+>>> From: Hyojun Kim <hyojun@google.com>
+>>>
+>>> sg_write_buffer sources are added for FFU.
+>>
+>> Could you please explain more details about why we need to add those source
+>> codes? ;)
 > 
-> __switch_to+0x88
-> __schedule+0x5b0
-> schedule+0x78
-> schedule_preempt_disabled+0x20
-> __mutex_lock_slowpath+0xdc   		//mutex owner is itself
-> mutex_lock+0x2c
-> dquot_commit+0x30			//mutex_lock(&dqopt->dqio_mutex);
-> dqput+0xe0
-> __dquot_drop+0x80
-> dquot_drop+0x48
-> f2fs_evict_inode+0x218
-> evict+0xa8
-> dispose_list+0x3c
-> prune_icache_sb+0x58
-> super_cache_scan+0xf4
-> do_shrink_slab+0x208
-> shrink_slab.part.40+0xac
-> shrink_zone+0x1b0
-> do_try_to_free_pages+0x25c
-> try_to_free_pages+0x164
-> __alloc_pages_nodemask+0x534
-> do_read_cache_page+0x6c
-> read_cache_page+0x14
-> f2fs_quota_read+0xa4
-> read_blk+0x54
-> find_tree_dqentry+0xe4
-> find_tree_dqentry+0xb8
-> find_tree_dqentry+0xb8
-> find_tree_dqentry+0xb8
-> qtree_read_dquot+0x68
-> v2_read_dquot+0x24
-> dquot_acquire+0x5c			// mutex_lock(&dqopt->dqio_mutex);
-> dqget+0x238
-> __dquot_initialize+0xd4
-> dquot_initialize+0x10
-> dquot_file_open+0x34
-> f2fs_file_open+0x6c
-> do_dentry_open+0x1e4
-> vfs_open+0x6c
-> path_openat+0xa20
-> do_filp_open+0x4c
-> do_sys_open+0x178
-> 
-> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+> We need this for FFU. What else do we need?
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+You mean Field Firmware Update?
+
+Oh, I don't know, just be curious to know how f2fs using these drive to do FFU.
 
 Thanks,
+
+> 
+>>
+>> Thanks,
+> 
+> .
+> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
