@@ -1,9 +1,10 @@
-From: Ju Hyung Park <qkrwngud825@gmail.com>
-Subject: Re: [PATCH 1/4] mkfs.f2fs: update extension lists
-Date: Mon, 19 Mar 2018 12:53:06 +0900
-Message-ID: <CAD14+f3dRxjabWjzNQiOwCrqVyd-CjetcBGK-F+n=X5gEXp7ig@mail.gmail.com>
-References: <20180317150257.123927-1-qkrwngud825@gmail.com>
- <1988f12a-351a-c137-2fc3-b68ce0aefc31@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: don't put dentry page in pagecache
+ into highmem
+Date: Sun, 18 Mar 2018 23:23:57 -0700
+Message-ID: <20180319062357.GA82358@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1519821112-137593-1-git-send-email-yunlong.song@huawei.com>
+ <2b5f342b-70e4-04cd-c4ed-13c8abd06af8@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,18 +12,15 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <qkrwngud825@gmail.com>) id 1exlrH-0001so-AP
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Mar 2018 03:53:15 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1exoDG-00045t-8a
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Mar 2018 06:24:06 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=mail-vk0-f66.google.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1exlrF-002coS-EA
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Mar 2018 03:53:15 +0000
-Received: by mail-vk0-f66.google.com with SMTP id x5so8333951vkd.7
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 18 Mar 2018 20:53:13 -0700 (PDT)
-In-Reply-To: <1988f12a-351a-c137-2fc3-b68ce0aefc31@huawei.com>
+ helo=mail.kernel.org) by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1exoDD-0038tY-ET
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Mar 2018 06:24:06 +0000
+Content-Disposition: inline
+In-Reply-To: <2b5f342b-70e4-04cd-c4ed-13c8abd06af8@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,188 +30,338 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Yunlong Song <yunlong.song@huawei.com>
+Cc: yunlong.song@icloud.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, heyunlei@huawei.com, miaoxie@huawei.com
 
-Hi Chao,
+On 03/19, Yunlong Song wrote:
+> Hi, Jaegeuk,
+>     I find this patch is removed from current branch of dev-test
+> recently, why? Any bugs?
 
-> Do you run this script in android environment to get the cold type?
-Yes, both on Ubuntu and Android(on /data with root permission).
+Moved into the beginning of the tree for cherry-picking into f2fs-stable.
 
-> Actually, I doubt that '+1M' condition can't indicate that the file is cold or
-> not, and after run this script in my cell phone,
-Would it make sense to set a file that's < 1M as cold?
-I didn't think so. Please let me know if I'm wrong.
+Thanks,
 
-> I didn't see so many type as your patch adds.
-Of course, most of those were added from vlc and p7zip.
-There are tons more, but I added ones that are most common.
-While I personally don't have that much many types myself as well,
-I can easily see one having those extensions stored under f2fs.
-
-Previous list was not enough, imo.
-(After running the command, I've added exo and ?dex files for Android.)
-
-> If that is a common cold file type list that user may not do random updates in
-> the file after its creation,
-That's exactly what I intended.
-
-> I suggest that we can add one common list instead
-> of changing old one controlled by mkfs option
-The new list is superset of the old list.
-A few extensions were removed as those are mostly deprecated formats
-and to make room for much more important extensions to be added such as m4a.
-
-Thanks.
-
-
-On Mon, Mar 19, 2018 at 12:42 PM, Chao Yu <yuchao0@huawei.com> wrote:
-> Hi Park,
->
-> On 2018/3/17 23:02, Park Ju Hyung wrote:
->> Those formats are large in size and rarely updated.
->>
->> Formats such as tar and zip were intentionally excluded as
->> those are capable of random updates.
->>
->> (Added from vlc, p7zip and running
->> 'find . -type f -size +1M |
->>     while read FILE; do echo ${FILE##*.}; done |
->>     sort | uniq -c | sort -nr'
->> manually)
->
-> Do you run this script in android environment to get the cold type?
->
-> Actually, I doubt that '+1M' condition can't indicate that the file is cold or
-> not, and after run this script in my cell phone, I didn't see so many type as
-> your patch adds.
->
-> If that is a common cold file type list that user may not do random updates in
-> the file after its creation, I suggest that we can add one common list instead
-> of changing old one controlled by mkfs option, anyway, to use which one, the
-> option can be decided by user.
->
+> 
+> On 2018/2/28 20:31, Yunlong Song wrote:
+> > Previous dentry page uses highmem, which will cause panic in platforms
+> > using highmem (such as arm), since the address space of dentry pages
+> > from highmem directly goes into the decryption path via the function
+> > fscrypt_fname_disk_to_usr. But sg_init_one assumes the address is not
+> > from highmem, and then cause panic since it doesn't call kmap_high but
+> > kunmap_high is triggered at the end. To fix this problem in a simple
+> > way, this patch avoids to put dentry page in pagecache into highmem.
+> > 
+> > Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> > ---
+> >   fs/f2fs/dir.c           | 23 +++++------------------
+> >   fs/f2fs/f2fs.h          |  6 ------
+> >   fs/f2fs/inline.c        |  3 +--
+> >   fs/f2fs/inode.c         |  2 +-
+> >   fs/f2fs/namei.c         | 14 +-------------
+> >   fs/f2fs/recovery.c      | 11 +++++------
+> >   include/linux/f2fs_fs.h |  1 -
+> >   7 files changed, 13 insertions(+), 47 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> > index f00b5ed..797eb05 100644
+> > --- a/fs/f2fs/dir.c
+> > +++ b/fs/f2fs/dir.c
+> > @@ -94,14 +94,12 @@ static struct f2fs_dir_entry *find_in_block(struct page *dentry_page,
+> >   	struct f2fs_dir_entry *de;
+> >   	struct f2fs_dentry_ptr d;
+> > -	dentry_blk = (struct f2fs_dentry_block *)kmap(dentry_page);
+> > +	dentry_blk = (struct f2fs_dentry_block *)page_address(dentry_page);
+> >   	make_dentry_ptr_block(NULL, &d, dentry_blk);
+> >   	de = find_target_dentry(fname, namehash, max_slots, &d);
+> >   	if (de)
+> >   		*res_page = dentry_page;
+> > -	else
+> > -		kunmap(dentry_page);
+> >   	return de;
+> >   }
+> > @@ -287,7 +285,6 @@ ino_t f2fs_inode_by_name(struct inode *dir, const struct qstr *qstr,
+> >   	de = f2fs_find_entry(dir, qstr, page);
+> >   	if (de) {
+> >   		res = le32_to_cpu(de->ino);
+> > -		f2fs_dentry_kunmap(dir, *page);
+> >   		f2fs_put_page(*page, 0);
+> >   	}
+> > @@ -302,7 +299,6 @@ void f2fs_set_link(struct inode *dir, struct f2fs_dir_entry *de,
+> >   	f2fs_wait_on_page_writeback(page, type, true);
+> >   	de->ino = cpu_to_le32(inode->i_ino);
+> >   	set_de_type(de, inode->i_mode);
+> > -	f2fs_dentry_kunmap(dir, page);
+> >   	set_page_dirty(page);
+> >   	dir->i_mtime = dir->i_ctime = current_time(dir);
+> > @@ -350,13 +346,11 @@ static int make_empty_dir(struct inode *inode,
+> >   	if (IS_ERR(dentry_page))
+> >   		return PTR_ERR(dentry_page);
+> > -	dentry_blk = kmap_atomic(dentry_page);
+> > +	dentry_blk = page_address(dentry_page);
+> >   	make_dentry_ptr_block(NULL, &d, dentry_blk);
+> >   	do_make_empty_dir(inode, parent, &d);
+> > -	kunmap_atomic(dentry_blk);
+> > -
+> >   	set_page_dirty(dentry_page);
+> >   	f2fs_put_page(dentry_page, 1);
+> >   	return 0;
+> > @@ -547,13 +541,12 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
+> >   		if (IS_ERR(dentry_page))
+> >   			return PTR_ERR(dentry_page);
+> > -		dentry_blk = kmap(dentry_page);
+> > +		dentry_blk = page_address(dentry_page);
+> >   		bit_pos = room_for_filename(&dentry_blk->dentry_bitmap,
+> >   						slots, NR_DENTRY_IN_BLOCK);
+> >   		if (bit_pos < NR_DENTRY_IN_BLOCK)
+> >   			goto add_dentry;
+> > -		kunmap(dentry_page);
+> >   		f2fs_put_page(dentry_page, 1);
+> >   	}
+> > @@ -588,7 +581,6 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
+> >   	if (inode)
+> >   		up_write(&F2FS_I(inode)->i_sem);
+> > -	kunmap(dentry_page);
+> >   	f2fs_put_page(dentry_page, 1);
+> >   	return err;
+> > @@ -642,7 +634,6 @@ int __f2fs_add_link(struct inode *dir, const struct qstr *name,
+> >   		F2FS_I(dir)->task = NULL;
+> >   	}
+> >   	if (de) {
+> > -		f2fs_dentry_kunmap(dir, page);
+> >   		f2fs_put_page(page, 0);
+> >   		err = -EEXIST;
+> >   	} else if (IS_ERR(page)) {
+> > @@ -730,7 +721,6 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+> >   	bit_pos = find_next_bit_le(&dentry_blk->dentry_bitmap,
+> >   			NR_DENTRY_IN_BLOCK,
+> >   			0);
+> > -	kunmap(page); /* kunmap - pair of f2fs_find_entry */
+> >   	set_page_dirty(page);
+> >   	dir->i_ctime = dir->i_mtime = current_time(dir);
+> > @@ -775,7 +765,7 @@ bool f2fs_empty_dir(struct inode *dir)
+> >   				return false;
+> >   		}
+> > -		dentry_blk = kmap_atomic(dentry_page);
+> > +		dentry_blk = page_address(dentry_page);
+> >   		if (bidx == 0)
+> >   			bit_pos = 2;
+> >   		else
+> > @@ -783,7 +773,6 @@ bool f2fs_empty_dir(struct inode *dir)
+> >   		bit_pos = find_next_bit_le(&dentry_blk->dentry_bitmap,
+> >   						NR_DENTRY_IN_BLOCK,
+> >   						bit_pos);
+> > -		kunmap_atomic(dentry_blk);
+> >   		f2fs_put_page(dentry_page, 1);
+> > @@ -901,19 +890,17 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
+> >   			}
+> >   		}
+> > -		dentry_blk = kmap(dentry_page);
+> > +		dentry_blk = page_address(dentry_page);
+> >   		make_dentry_ptr_block(inode, &d, dentry_blk);
+> >   		err = f2fs_fill_dentries(ctx, &d,
+> >   				n * NR_DENTRY_IN_BLOCK, &fstr);
+> >   		if (err) {
+> > -			kunmap(dentry_page);
+> >   			f2fs_put_page(dentry_page, 1);
+> >   			break;
+> >   		}
+> > -		kunmap(dentry_page);
+> >   		f2fs_put_page(dentry_page, 1);
+> >   	}
+> >   out_free:
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index dbe87c7..d57b7dd 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -2413,12 +2413,6 @@ static inline int f2fs_has_inline_dentry(struct inode *inode)
+> >   	return is_inode_flag_set(inode, FI_INLINE_DENTRY);
+> >   }
+> > -static inline void f2fs_dentry_kunmap(struct inode *dir, struct page *page)
+> > -{
+> > -	if (!f2fs_has_inline_dentry(dir))
+> > -		kunmap(page);
+> > -}
+> > -
+> >   static inline int is_file(struct inode *inode, int type)
+> >   {
+> >   	return F2FS_I(inode)->i_advise & type;
+> > diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+> > index 90e38d8..3b77d64 100644
+> > --- a/fs/f2fs/inline.c
+> > +++ b/fs/f2fs/inline.c
+> > @@ -369,7 +369,7 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
+> >   	f2fs_wait_on_page_writeback(page, DATA, true);
+> >   	zero_user_segment(page, MAX_INLINE_DATA(dir), PAGE_SIZE);
+> > -	dentry_blk = kmap_atomic(page);
+> > +	dentry_blk = page_address(page);
+> >   	make_dentry_ptr_inline(dir, &src, inline_dentry);
+> >   	make_dentry_ptr_block(dir, &dst, dentry_blk);
+> > @@ -386,7 +386,6 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
+> >   	memcpy(dst.dentry, src.dentry, SIZE_OF_DIR_ENTRY * src.max);
+> >   	memcpy(dst.filename, src.filename, src.max * F2FS_SLOT_LEN);
+> > -	kunmap_atomic(dentry_blk);
+> >   	if (!PageUptodate(page))
+> >   		SetPageUptodate(page);
+> >   	set_page_dirty(page);
+> > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> > index 89c838b..10be247 100644
+> > --- a/fs/f2fs/inode.c
+> > +++ b/fs/f2fs/inode.c
+> > @@ -328,7 +328,7 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+> >   		inode->i_op = &f2fs_dir_inode_operations;
+> >   		inode->i_fop = &f2fs_dir_operations;
+> >   		inode->i_mapping->a_ops = &f2fs_dblock_aops;
+> > -		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_HIGH_ZERO);
+> > +		inode_nohighmem(inode);
+> >   	} else if (S_ISLNK(inode->i_mode)) {
+> >   		if (f2fs_encrypted_inode(inode))
+> >   			inode->i_op = &f2fs_encrypted_symlink_inode_operations;
+> > diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> > index c4c94c7..2754af7 100644
+> > --- a/fs/f2fs/namei.c
+> > +++ b/fs/f2fs/namei.c
+> > @@ -317,7 +317,6 @@ static int __recover_dot_dentries(struct inode *dir, nid_t pino)
+> >   	de = f2fs_find_entry(dir, &dot, &page);
+> >   	if (de) {
+> > -		f2fs_dentry_kunmap(dir, page);
+> >   		f2fs_put_page(page, 0);
+> >   	} else if (IS_ERR(page)) {
+> >   		err = PTR_ERR(page);
+> > @@ -330,7 +329,6 @@ static int __recover_dot_dentries(struct inode *dir, nid_t pino)
+> >   	de = f2fs_find_entry(dir, &dotdot, &page);
+> >   	if (de) {
+> > -		f2fs_dentry_kunmap(dir, page);
+> >   		f2fs_put_page(page, 0);
+> >   	} else if (IS_ERR(page)) {
+> >   		err = PTR_ERR(page);
+> > @@ -377,7 +375,6 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+> >   	}
+> >   	ino = le32_to_cpu(de->ino);
+> > -	f2fs_dentry_kunmap(dir, page);
+> >   	f2fs_put_page(page, 0);
+> >   	inode = f2fs_iget(dir->i_sb, ino);
+> > @@ -452,7 +449,6 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+> >   	err = acquire_orphan_inode(sbi);
+> >   	if (err) {
+> >   		f2fs_unlock_op(sbi);
+> > -		f2fs_dentry_kunmap(dir, page);
+> >   		f2fs_put_page(page, 0);
+> >   		goto fail;
+> >   	}
+> > @@ -613,7 +609,7 @@ static int f2fs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+> >   	inode->i_op = &f2fs_dir_inode_operations;
+> >   	inode->i_fop = &f2fs_dir_operations;
+> >   	inode->i_mapping->a_ops = &f2fs_dblock_aops;
+> > -	mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_HIGH_ZERO);
+> > +	inode_nohighmem(inode);
+> >   	set_inode_flag(inode, FI_INC_LINK);
+> >   	f2fs_lock_op(sbi);
+> > @@ -931,7 +927,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+> >   			f2fs_set_link(old_inode, old_dir_entry,
+> >   						old_dir_page, new_dir);
+> >   		} else {
+> > -			f2fs_dentry_kunmap(old_inode, old_dir_page);
+> >   			f2fs_put_page(old_dir_page, 0);
+> >   		}
+> >   		f2fs_i_links_write(old_dir, false);
+> > @@ -947,7 +942,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+> >   put_out_dir:
+> >   	f2fs_unlock_op(sbi);
+> >   	if (new_page) {
+> > -		f2fs_dentry_kunmap(new_dir, new_page);
+> >   		f2fs_put_page(new_page, 0);
+> >   	}
+> >   out_whiteout:
+> > @@ -955,11 +949,9 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+> >   		iput(whiteout);
+> >   out_dir:
+> >   	if (old_dir_entry) {
+> > -		f2fs_dentry_kunmap(old_inode, old_dir_page);
+> >   		f2fs_put_page(old_dir_page, 0);
+> >   	}
+> >   out_old:
+> > -	f2fs_dentry_kunmap(old_dir, old_page);
+> >   	f2fs_put_page(old_page, 0);
+> >   out:
+> >   	return err;
+> > @@ -1101,19 +1093,15 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+> >   	return 0;
+> >   out_new_dir:
+> >   	if (new_dir_entry) {
+> > -		f2fs_dentry_kunmap(new_inode, new_dir_page);
+> >   		f2fs_put_page(new_dir_page, 0);
+> >   	}
+> >   out_old_dir:
+> >   	if (old_dir_entry) {
+> > -		f2fs_dentry_kunmap(old_inode, old_dir_page);
+> >   		f2fs_put_page(old_dir_page, 0);
+> >   	}
+> >   out_new:
+> > -	f2fs_dentry_kunmap(new_dir, new_page);
+> >   	f2fs_put_page(new_page, 0);
+> >   out_old:
+> > -	f2fs_dentry_kunmap(old_dir, old_page);
+> >   	f2fs_put_page(old_page, 0);
+> >   out:
+> >   	return err;
+> > diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> > index 337f336..c5e5c45 100644
+> > --- a/fs/f2fs/recovery.c
+> > +++ b/fs/f2fs/recovery.c
+> > @@ -144,7 +144,7 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
+> >   retry:
+> >   	de = __f2fs_find_entry(dir, &fname, &page);
+> >   	if (de && inode->i_ino == le32_to_cpu(de->ino))
+> > -		goto out_unmap_put;
+> > +		goto out_put;
+> >   	if (de) {
+> >   		einode = f2fs_iget_retry(inode->i_sb, le32_to_cpu(de->ino));
+> > @@ -153,19 +153,19 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
+> >   			err = PTR_ERR(einode);
+> >   			if (err == -ENOENT)
+> >   				err = -EEXIST;
+> > -			goto out_unmap_put;
+> > +			goto out_put;
+> >   		}
+> >   		err = dquot_initialize(einode);
+> >   		if (err) {
+> >   			iput(einode);
+> > -			goto out_unmap_put;
+> > +			goto out_put;
+> >   		}
+> >   		err = acquire_orphan_inode(F2FS_I_SB(inode));
+> >   		if (err) {
+> >   			iput(einode);
+> > -			goto out_unmap_put;
+> > +			goto out_put;
+> >   		}
+> >   		f2fs_delete_entry(de, page, dir, einode);
+> >   		iput(einode);
+> > @@ -180,8 +180,7 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
+> >   		goto retry;
+> >   	goto out;
+> > -out_unmap_put:
+> > -	f2fs_dentry_kunmap(dir, page);
+> > +out_put:
+> >   	f2fs_put_page(page, 0);
+> >   out:
+> >   	if (file_enc_name(inode))
+> > diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+> > index f7f0990..96c9bdb 100644
+> > --- a/include/linux/f2fs_fs.h
+> > +++ b/include/linux/f2fs_fs.h
+> > @@ -46,7 +46,6 @@
+> >   /* This flag is used by node and meta inodes, and by recovery */
+> >   #define GFP_F2FS_ZERO		(GFP_NOFS | __GFP_ZERO)
+> > -#define GFP_F2FS_HIGH_ZERO	(GFP_NOFS | __GFP_ZERO | __GFP_HIGHMEM)
+> >   /*
+> >    * For further optimization on multi-head logs, on-disk layout supports maximum
+> > 
+> 
+> -- 
 > Thanks,
->
->>
->> Signed-off-by: Park Ju Hyung <qkrwngud825@gmail.com>
->> ---
->>  mkfs/f2fs_format.c | 86 ++++++++++++++++++++++++++++++++++++++++--------------
->>  1 file changed, 64 insertions(+), 22 deletions(-)
->>
->> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
->> index 65692bb..3c7ce16 100644
->> --- a/mkfs/f2fs_format.c
->> +++ b/mkfs/f2fs_format.c
->> @@ -37,34 +37,76 @@ struct f2fs_checkpoint *cp;
->>
->>  static unsigned int quotatype_bits = 0;
->>
->> -const char *media_ext_lists[] = {
->> -     "jpg",
->> -     "gif",
->> -     "png",
->> +const char *cold_ext_lists[] = {
->> +     /* video */
->>       "avi",
->>       "divx",
->> -     "mp4",
->> -     "mp3",
->> -     "3gp",
->> -     "wmv",
->> -     "wma",
->> -     "mpeg",
->> +     "flv",
->> +     "m2ts",
->> +     "m4p",
->> +     "m4v",
->>       "mkv",
->>       "mov",
->> -     "asx",
->> -     "asf",
->> -     "wmx",
->> -     "svi",
->> -     "wvx",
->> -     "wm",
->> +     "mp4",
->> +     "mpeg",
->> +     "mpeg4",
->>       "mpg",
->> -     "mpe",
->> -     "rm",
->>       "ogg",
->> +     "ogm",
->> +     "ogv",
->> +     "ts",
->> +     "vob",
->> +     "wmb",
->> +     "wmv",
->> +     "webm",
->> +
->> +     /* audio */
->> +     "aac",
->> +     "ac3",
->> +     "dts",
->> +     "flac",
->> +     "m4a",
->> +     "mka",
->> +     "mp3",
->> +     "oga",
->> +     "wav",
->> +     "wma",
->> +
->> +     /* image */
->> +     "bmp",
->> +     "gif",
->> +     "jpg",
->>       "jpeg",
->> -     "video",
->> -     "apk",  /* for android system */
->> -     "so",   /* for android system */
->> +     "png",
->> +     "svg",
->> +     "webp",
->> +
->> +     /* archive */
->> +     "7z",
->> +     "a",
->> +     "deb",
->> +     "gz",
->> +     "gzip",
->> +     "iso",
->> +     "jar",
->> +     "lzma",
->> +     "rar",
->> +     "tgz",
->> +     "txz",
->> +     "udf",
->> +     "xz",
->> +
->> +     /* other */
->> +     "pdf",
->> +     "ttf",
->> +     "ttc",
->> +
->> +     /* android */
->> +     "apk",
->> +     "exo", // YouTube
->> +     "odex", // Android RunTime
->> +     "vdex", // Android RunTime
->> +     "so",
->>       NULL
->>  };
->>
->> @@ -74,7 +116,7 @@ const char *hot_ext_lists[] = {
->>  };
->>
->>  const char **default_ext_list[] = {
->> -     media_ext_lists,
->> +     cold_ext_lists,
->>       hot_ext_lists
->>  };
->>
->>
->
+> Yunlong Song
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
