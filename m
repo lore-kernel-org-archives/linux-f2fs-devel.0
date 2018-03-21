@@ -1,94 +1,247 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 2/2] f2fs: don't track new nat entry in nat set
-Date: Tue, 20 Mar 2018 23:08:30 +0800
-Message-ID: <20180320150830.2630-2-chao@kernel.org>
-References: <20180320150830.2630-1-chao@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180320150830.2630-1-chao@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>, Yunlei He <heyunlei@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
-
 From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 1/4] mkfs.f2fs: update extension lists
+Date: Wed, 21 Mar 2018 20:00:30 +0800
+Message-ID: <4ad8459b-2e69-e385-ee3a-f4e1ba33167c@huawei.com>
+References: <20180317150257.123927-1-qkrwngud825@gmail.com>
+ <1988f12a-351a-c137-2fc3-b68ce0aefc31@huawei.com>
+ <CAD14+f3dRxjabWjzNQiOwCrqVyd-CjetcBGK-F+n=X5gEXp7ig@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1eycR0-0003Ll-T9
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Mar 2018 12:01:38 +0000
+Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
+ helo=huawei.com) by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1eycQt-008jiG-Bh
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Mar 2018 12:01:38 +0000
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+ by Forcepoint Email with ESMTP id 9DA653AD22B2
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 21 Mar 2018 20:00:57 +0800 (CST)
+In-Reply-To: <CAD14+f3dRxjabWjzNQiOwCrqVyd-CjetcBGK-F+n=X5gEXp7ig@mail.gmail.com>
+Content-Language: en-US
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Ju Hyung Park <qkrwngud825@gmail.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Nat entry set is used only in checkpoint(), and during checkpoint() we
-won't flush new nat entry with unallocated address, so we don't need to
-add new nat entry into nat set, then nat_entry_set::entry_cnt can
-indicate actual entry count we need to flush in checkpoint().
+Hi Park,
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/node.c | 29 +++++++++++++++++++++++++----
- fs/f2fs/node.h |  1 +
- 2 files changed, 26 insertions(+), 4 deletions(-)
+Sorry for late replying.
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index ecfc2465da9b..9a99243054ba 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -193,8 +193,8 @@ static void __del_from_nat_cache(struct f2fs_nm_info *nm_i, struct nat_entry *e)
- 	__free_nat_entry(e);
- }
- 
--static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
--						struct nat_entry *ne)
-+static struct nat_entry_set *__grab_nat_entry_set(struct f2fs_nm_info *nm_i,
-+							struct nat_entry *ne)
- {
- 	nid_t set = NAT_BLOCK_OFFSET(ne->ni.nid);
- 	struct nat_entry_set *head;
-@@ -209,15 +209,36 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
- 		head->entry_cnt = 0;
- 		f2fs_radix_tree_insert(&nm_i->nat_set_root, set, head);
- 	}
-+	return head;
-+}
-+
-+static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
-+						struct nat_entry *ne)
-+{
-+	struct nat_entry_set *head;
-+	bool new_ne = nat_get_blkaddr(ne) == NEW_ADDR;
-+
-+	if (!new_ne)
-+		head = __grab_nat_entry_set(nm_i, ne);
-+
-+	/*
-+	 * update entry_cnt in below condition:
-+	 * 1. update NEW_ADDR to valid block address;
-+	 * 2. update old block address to new one;
-+	 */
-+	if (!new_ne && (get_nat_flag(ne, IS_PREALLOC) ||
-+				!get_nat_flag(ne, IS_DIRTY)))
-+		head->entry_cnt++;
-+
-+	set_nat_flag(ne, IS_PREALLOC, new_ne);
- 
- 	if (get_nat_flag(ne, IS_DIRTY))
- 		goto refresh_list;
- 
- 	nm_i->dirty_nat_cnt++;
--	head->entry_cnt++;
- 	set_nat_flag(ne, IS_DIRTY, true);
- refresh_list:
--	if (nat_get_blkaddr(ne) == NEW_ADDR)
-+	if (new_ne)
- 		list_del_init(&ne->list);
- 	else
- 		list_move_tail(&ne->list, &head->entry_list);
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index e593b4d78be2..b95e49e4a928 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -44,6 +44,7 @@ enum {
- 	HAS_FSYNCED_INODE,	/* is the inode fsynced before? */
- 	HAS_LAST_FSYNC,		/* has the latest node fsync mark? */
- 	IS_DIRTY,		/* this nat entry is dirty? */
-+	IS_PREALLOC,		/* nat entry is preallocated */
- };
- 
- /*
--- 
-2.16.2.17.g38e79b1fd
+On 2018/3/19 11:53, Ju Hyung Park wrote:
+> Hi Chao,
+> 
+>> Do you run this script in android environment to get the cold type?
+> Yes, both on Ubuntu and Android(on /data with root permission).
+> 
+>> Actually, I doubt that '+1M' condition can't indicate that the file is cold or
+>> not, and after run this script in my cell phone,
+> Would it make sense to set a file that's < 1M as cold?
+
+Like .so?
+
+> I didn't think so. Please let me know if I'm wrong.
+> 
+>> I didn't see so many type as your patch adds.
+> Of course, most of those were added from vlc and p7zip.
+> There are tons more, but I added ones that are most common.
+> While I personally don't have that much many types myself as well,
+> I can easily see one having those extensions stored under f2fs.
+> 
+> Previous list was not enough, imo.
+> (After running the command, I've added exo and ?dex files for Android.)
+> 
+>> If that is a common cold file type list that user may not do random updates in
+>> the file after its creation,
+> That's exactly what I intended.
+> 
+>> I suggest that we can add one common list instead
+>> of changing old one controlled by mkfs option
+> The new list is superset of the old list.
+> A few extensions were removed as those are mostly deprecated formats
+> and to make room for much more important extensions to be added such as m4a.
+
+I agree that we'd better support the superset list of common static file, but
+also I hope there is flexible usage of common list, old list and self defined
+list, so I think we'd better leave enough free space of cold list to let user
+define private cold file type extension as they wish, meanwhile support an
+option to make user have a chance to choose the common list or old list.
+
+How do you think?
+
+Hi Jaegeuk, what's your opinion?
+
+Thanks,
+
+> 
+> Thanks.
+> 
+> 
+> On Mon, Mar 19, 2018 at 12:42 PM, Chao Yu <yuchao0@huawei.com> wrote:
+>> Hi Park,
+>>
+>> On 2018/3/17 23:02, Park Ju Hyung wrote:
+>>> Those formats are large in size and rarely updated.
+>>>
+>>> Formats such as tar and zip were intentionally excluded as
+>>> those are capable of random updates.
+>>>
+>>> (Added from vlc, p7zip and running
+>>> 'find . -type f -size +1M |
+>>>     while read FILE; do echo ${FILE##*.}; done |
+>>>     sort | uniq -c | sort -nr'
+>>> manually)
+>>
+>> Do you run this script in android environment to get the cold type?
+>>
+>> Actually, I doubt that '+1M' condition can't indicate that the file is cold or
+>> not, and after run this script in my cell phone, I didn't see so many type as
+>> your patch adds.
+>>
+>> If that is a common cold file type list that user may not do random updates in
+>> the file after its creation, I suggest that we can add one common list instead
+>> of changing old one controlled by mkfs option, anyway, to use which one, the
+>> option can be decided by user.
+>>
+>> Thanks,
+>>
+>>>
+>>> Signed-off-by: Park Ju Hyung <qkrwngud825@gmail.com>
+>>> ---
+>>>  mkfs/f2fs_format.c | 86 ++++++++++++++++++++++++++++++++++++++++--------------
+>>>  1 file changed, 64 insertions(+), 22 deletions(-)
+>>>
+>>> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+>>> index 65692bb..3c7ce16 100644
+>>> --- a/mkfs/f2fs_format.c
+>>> +++ b/mkfs/f2fs_format.c
+>>> @@ -37,34 +37,76 @@ struct f2fs_checkpoint *cp;
+>>>
+>>>  static unsigned int quotatype_bits = 0;
+>>>
+>>> -const char *media_ext_lists[] = {
+>>> -     "jpg",
+>>> -     "gif",
+>>> -     "png",
+>>> +const char *cold_ext_lists[] = {
+>>> +     /* video */
+>>>       "avi",
+>>>       "divx",
+>>> -     "mp4",
+>>> -     "mp3",
+>>> -     "3gp",
+>>> -     "wmv",
+>>> -     "wma",
+>>> -     "mpeg",
+>>> +     "flv",
+>>> +     "m2ts",
+>>> +     "m4p",
+>>> +     "m4v",
+>>>       "mkv",
+>>>       "mov",
+>>> -     "asx",
+>>> -     "asf",
+>>> -     "wmx",
+>>> -     "svi",
+>>> -     "wvx",
+>>> -     "wm",
+>>> +     "mp4",
+>>> +     "mpeg",
+>>> +     "mpeg4",
+>>>       "mpg",
+>>> -     "mpe",
+>>> -     "rm",
+>>>       "ogg",
+>>> +     "ogm",
+>>> +     "ogv",
+>>> +     "ts",
+>>> +     "vob",
+>>> +     "wmb",
+>>> +     "wmv",
+>>> +     "webm",
+>>> +
+>>> +     /* audio */
+>>> +     "aac",
+>>> +     "ac3",
+>>> +     "dts",
+>>> +     "flac",
+>>> +     "m4a",
+>>> +     "mka",
+>>> +     "mp3",
+>>> +     "oga",
+>>> +     "wav",
+>>> +     "wma",
+>>> +
+>>> +     /* image */
+>>> +     "bmp",
+>>> +     "gif",
+>>> +     "jpg",
+>>>       "jpeg",
+>>> -     "video",
+>>> -     "apk",  /* for android system */
+>>> -     "so",   /* for android system */
+>>> +     "png",
+>>> +     "svg",
+>>> +     "webp",
+>>> +
+>>> +     /* archive */
+>>> +     "7z",
+>>> +     "a",
+>>> +     "deb",
+>>> +     "gz",
+>>> +     "gzip",
+>>> +     "iso",
+>>> +     "jar",
+>>> +     "lzma",
+>>> +     "rar",
+>>> +     "tgz",
+>>> +     "txz",
+>>> +     "udf",
+>>> +     "xz",
+>>> +
+>>> +     /* other */
+>>> +     "pdf",
+>>> +     "ttf",
+>>> +     "ttc",
+>>> +
+>>> +     /* android */
+>>> +     "apk",
+>>> +     "exo", // YouTube
+>>> +     "odex", // Android RunTime
+>>> +     "vdex", // Android RunTime
+>>> +     "so",
+>>>       NULL
+>>>  };
+>>>
+>>> @@ -74,7 +116,7 @@ const char *hot_ext_lists[] = {
+>>>  };
+>>>
+>>>  const char **default_ext_list[] = {
+>>> -     media_ext_lists,
+>>> +     cold_ext_lists,
+>>>       hot_ext_lists
+>>>  };
+>>>
+>>>
+>>
+> 
+> .
+> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
