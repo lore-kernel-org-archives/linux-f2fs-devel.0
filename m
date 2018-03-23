@@ -1,7 +1,8 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] resize.f2fs: fix access out-of memory boundary
-Date: Fri, 23 Mar 2018 09:32:31 -0700
-Message-ID: <20180323163231.40244-1-jaegeuk@kernel.org>
+From: Eric Biggers <ebiggers3@gmail.com>
+Subject: [PATCH 00/14] fscrypt: improved logging and other
+ cleanups
+Date: Fri, 23 Mar 2018 12:23:44 -0700
+Message-ID: <20180323192358.95691-1-ebiggers3@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -9,13 +10,17 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1ezPcP-000780-9k
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Mar 2018 16:32:41 +0000
+ (envelope-from <ebiggers3@gmail.com>) id 1ezSPB-0002sp-24
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Mar 2018 19:31:13 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=mail.kernel.org) by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1ezPcN-00GByd-Uz
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Mar 2018 16:32:41 +0000
+ helo=mail-pg0-f66.google.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1ezSP9-00Djgt-4L
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Mar 2018 19:31:12 +0000
+Received: by mail-pg0-f66.google.com with SMTP id d1so4951215pgv.2
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 23 Mar 2018 12:31:11 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -25,68 +30,68 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-fscrypt@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org, linux-mtd@lists.infradead.org, Eric Biggers <ebiggers@google.com>, linux-f2fs-devel@lists.sourceforge.net
 
-This fixes out-of memory boundary on nat_bitmap, when resizing small to
-large partition.
+From: Eric Biggers <ebiggers@google.com>
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fsck/f2fs.h  |  1 +
- fsck/mount.c | 13 +++++++++----
- 2 files changed, 10 insertions(+), 4 deletions(-)
+Hi, here's yet another round of cleanups for fscrypt.  Please consider
+for v4.17.
 
-diff --git a/fsck/f2fs.h b/fsck/f2fs.h
-index 8a5ce36..d0e08aa 100644
---- a/fsck/f2fs.h
-+++ b/fsck/f2fs.h
-@@ -50,6 +50,7 @@ struct node_info {
- 
- struct f2fs_nm_info {
- 	block_t nat_blkaddr;
-+	block_t nat_blocks;
- 	nid_t max_nid;
- 	nid_t init_scan_nid;
- 	nid_t next_scan_nid;
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 545f862..a925bb9 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -998,7 +998,12 @@ void write_nat_bits(struct f2fs_sb_info *sbi,
- 				(seg_off << get_sb(log_blocks_per_seg) << 1) +
- 				(i & ((1 << get_sb(log_blocks_per_seg)) - 1)));
- 
--		if (f2fs_test_bit(i, nm_i->nat_bitmap))
-+		/*
-+		 * Should consider new nat_blocks is larger than old
-+		 * nm_i->nat_blocks, since nm_i->nat_bitmap is based on
-+		 * old one.
-+		 */
-+		if (i < nm_i->nat_blocks && f2fs_test_bit(i, nm_i->nat_bitmap))
- 			blkaddr += (1 << get_sb(log_blocks_per_seg));
- 
- 		ret = dev_read_block(nat_block, blkaddr);
-@@ -1037,14 +1042,14 @@ int init_node_manager(struct f2fs_sb_info *sbi)
- 	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	unsigned char *version_bitmap;
--	unsigned int nat_segs, nat_blocks;
-+	unsigned int nat_segs;
- 
- 	nm_i->nat_blkaddr = get_sb(nat_blkaddr);
- 
- 	/* segment_count_nat includes pair segment so divide to 2. */
- 	nat_segs = get_sb(segment_count_nat) >> 1;
--	nat_blocks = nat_segs << get_sb(log_blocks_per_seg);
--	nm_i->max_nid = NAT_ENTRY_PER_BLOCK * nat_blocks;
-+	nm_i->nat_blocks = nat_segs << get_sb(log_blocks_per_seg);
-+	nm_i->max_nid = NAT_ENTRY_PER_BLOCK * nm_i->nat_blocks;
- 	nm_i->fcnt = 0;
- 	nm_i->nat_cnt = 0;
- 	nm_i->init_scan_nid = get_cp(next_free_nid);
+Patches 1-11 remove some unnecessary or redundant code from a number of
+different places; nothing particularly noteworthy.
+
+Patch 12 switches the existing warning and error messages in fscrypt
+over to use a common logging function, which is ratelimited and includes
+the filesystem name (->s_id) when available as well as a consistent
+prefix of "fscrypt:".
+
+Patches 13-14 are optimizations and cleanups for key lookup and key
+derivation.  They are extracted from the patch "fscrypt: refactor
+finding and deriving key" I had originally sent as part of the series
+"fscrypt: filesystem-level keyring and v2 policy support".  But I think
+they're useful changes by themselves, so no need to wait on them.
+
+This series can also be retrieved from git at
+https://github.com/ebiggers/linux, branch "fscrypt_2018-03-23".  Note
+that it's on top of a few other fscrypt patches I've sent out this
+cycle:
+
+    fscrypt: clean up after fscrypt_prepare_lookup() conversions
+    fs, fscrypt: only define ->s_cop when FS_ENCRYPTION is enabled
+    fscrypt: add Speck128/256 support
+
+Eric Biggers (14):
+  fscrypt: remove unnecessary NULL check when allocating skcipher
+  fscrypt: remove error messages for skcipher_request_alloc() failure
+  fscrypt: remove WARN_ON_ONCE() when decryption fails
+  fscrypt: remove stale comment from fscrypt_d_revalidate()
+  fscrypt: don't clear flags on crypto transform
+  fscrypt: don't special-case EOPNOTSUPP from
+    fscrypt_get_encryption_info()
+  fscrypt: drop max_namelen check from fname_decrypt()
+  fscrypt: drop empty name check from fname_decrypt()
+  fscrypt: make fscrypt_operations.max_namelen an integer
+  fscrypt: remove unnecessary check for non-logon key type
+  fscrypt: remove internal key size constants
+  fscrypt: use a common logging function
+  fscrypt: separate key lookup from key derivation
+  fscrypt: only derive the needed portion of the key
+
+ fs/crypto/bio.c              |   6 +-
+ fs/crypto/crypto.c           |  35 ++++--
+ fs/crypto/fname.c            |  32 ++----
+ fs/crypto/fscrypt_private.h  |  18 ++--
+ fs/crypto/hooks.c            |   5 +-
+ fs/crypto/keyinfo.c          | 202 ++++++++++++++++++-----------------
+ fs/ext4/super.c              |   8 +-
+ fs/f2fs/super.c              |   8 +-
+ fs/ubifs/crypto.c            |  10 +-
+ include/linux/fscrypt_supp.h |   2 +-
+ 10 files changed, 161 insertions(+), 165 deletions(-)
+
 -- 
-2.15.0.531.g2ccb3012c9-goog
+2.17.0.rc0.231.g781580f067-goog
 
 
 ------------------------------------------------------------------------------
