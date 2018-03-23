@@ -1,26 +1,28 @@
 From: Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH 00/14] fscrypt: improved logging and other
- cleanups
-Date: Fri, 23 Mar 2018 12:23:44 -0700
-Message-ID: <20180323192358.95691-1-ebiggers3@gmail.com>
+Subject: [PATCH 01/14] fscrypt: remove unnecessary NULL check
+ when allocating skcipher
+Date: Fri, 23 Mar 2018 12:23:45 -0700
+Message-ID: <20180323192358.95691-2-ebiggers3@gmail.com>
+References: <20180323192358.95691-1-ebiggers3@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers3@gmail.com>) id 1ezSPB-0002sp-24
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Mar 2018 19:31:13 +0000
+ (envelope-from <ebiggers3@gmail.com>) id 1ezSPI-00022W-1s
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Mar 2018 19:31:20 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=mail-pg0-f66.google.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ helo=mail-pl0-f66.google.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1ezSP9-00Djgt-4L
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Mar 2018 19:31:12 +0000
-Received: by mail-pg0-f66.google.com with SMTP id d1so4951215pgv.2
+ id 1ezSPG-00GdY7-Jr
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Mar 2018 19:31:19 +0000
+Received: by mail-pl0-f66.google.com with SMTP id p9-v6so8035465pls.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 23 Mar 2018 12:31:11 -0700 (PDT)
+ Fri, 23 Mar 2018 12:31:18 -0700 (PDT)
+In-Reply-To: <20180323192358.95691-1-ebiggers3@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,61 +37,29 @@ Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org, linux-mtd@list
 
 From: Eric Biggers <ebiggers@google.com>
 
-Hi, here's yet another round of cleanups for fscrypt.  Please consider
-for v4.17.
+crypto_alloc_skcipher() returns an ERR_PTR() on failure, not NULL.
+Remove the unnecessary check for NULL.
 
-Patches 1-11 remove some unnecessary or redundant code from a number of
-different places; nothing particularly noteworthy.
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/crypto/keyinfo.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Patch 12 switches the existing warning and error messages in fscrypt
-over to use a common logging function, which is ratelimited and includes
-the filesystem name (->s_id) when available as well as a consistent
-prefix of "fscrypt:".
-
-Patches 13-14 are optimizations and cleanups for key lookup and key
-derivation.  They are extracted from the patch "fscrypt: refactor
-finding and deriving key" I had originally sent as part of the series
-"fscrypt: filesystem-level keyring and v2 policy support".  But I think
-they're useful changes by themselves, so no need to wait on them.
-
-This series can also be retrieved from git at
-https://github.com/ebiggers/linux, branch "fscrypt_2018-03-23".  Note
-that it's on top of a few other fscrypt patches I've sent out this
-cycle:
-
-    fscrypt: clean up after fscrypt_prepare_lookup() conversions
-    fs, fscrypt: only define ->s_cop when FS_ENCRYPTION is enabled
-    fscrypt: add Speck128/256 support
-
-Eric Biggers (14):
-  fscrypt: remove unnecessary NULL check when allocating skcipher
-  fscrypt: remove error messages for skcipher_request_alloc() failure
-  fscrypt: remove WARN_ON_ONCE() when decryption fails
-  fscrypt: remove stale comment from fscrypt_d_revalidate()
-  fscrypt: don't clear flags on crypto transform
-  fscrypt: don't special-case EOPNOTSUPP from
-    fscrypt_get_encryption_info()
-  fscrypt: drop max_namelen check from fname_decrypt()
-  fscrypt: drop empty name check from fname_decrypt()
-  fscrypt: make fscrypt_operations.max_namelen an integer
-  fscrypt: remove unnecessary check for non-logon key type
-  fscrypt: remove internal key size constants
-  fscrypt: use a common logging function
-  fscrypt: separate key lookup from key derivation
-  fscrypt: only derive the needed portion of the key
-
- fs/crypto/bio.c              |   6 +-
- fs/crypto/crypto.c           |  35 ++++--
- fs/crypto/fname.c            |  32 ++----
- fs/crypto/fscrypt_private.h  |  18 ++--
- fs/crypto/hooks.c            |   5 +-
- fs/crypto/keyinfo.c          | 202 ++++++++++++++++++-----------------
- fs/ext4/super.c              |   8 +-
- fs/f2fs/super.c              |   8 +-
- fs/ubifs/crypto.c            |  10 +-
- include/linux/fscrypt_supp.h |   2 +-
- 10 files changed, 161 insertions(+), 165 deletions(-)
-
+diff --git a/fs/crypto/keyinfo.c b/fs/crypto/keyinfo.c
+index 96a1eae9e51d..8099388f5581 100644
+--- a/fs/crypto/keyinfo.c
++++ b/fs/crypto/keyinfo.c
+@@ -320,8 +320,8 @@ int fscrypt_get_encryption_info(struct inode *inode)
+ 		goto out;
+ 	}
+ 	ctfm = crypto_alloc_skcipher(cipher_str, 0, 0);
+-	if (!ctfm || IS_ERR(ctfm)) {
+-		res = ctfm ? PTR_ERR(ctfm) : -ENOMEM;
++	if (IS_ERR(ctfm)) {
++		res = PTR_ERR(ctfm);
+ 		pr_debug("%s: error %d (inode %lu) allocating crypto tfm\n",
+ 			 __func__, res, inode->i_ino);
+ 		goto out;
 -- 
 2.17.0.rc0.231.g781580f067-goog
 
