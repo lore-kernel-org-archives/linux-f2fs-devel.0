@@ -1,21 +1,21 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v2] f2fs: rebuild get_node_path function
-Date: Thu, 22 Mar 2018 11:31:42 +0800
-Message-ID: <1521689502-6040-1-git-send-email-heyunlei@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] resize.f2fs: fix access out-of memory boundary
+Date: Fri, 23 Mar 2018 09:32:31 -0700
+Message-ID: <20180323163231.40244-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <heyunlei@huawei.com>) id 1eyrAV-0007iW-PW
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 22 Mar 2018 03:45:35 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1ezPcP-000780-9k
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Mar 2018 16:32:41 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=huawei.com) by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ helo=mail.kernel.org) by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1eyrAT-0080mb-Lt
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 22 Mar 2018 03:45:35 +0000
+ id 1ezPcN-00GByd-Uz
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Mar 2018 16:32:41 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -25,89 +25,68 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
-Cc: heyunlei@huawei.com
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch rebuild get_node_path function, no logic changes.
+This fixes out-of memory boundary on nat_bitmap, when resizing small to
+large partition.
 
-v1->v2: '<' has higher priority than '-='
-
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/node.c | 28 ++++++----------------------
- 1 file changed, 6 insertions(+), 22 deletions(-)
+ fsck/f2fs.h  |  1 +
+ fsck/mount.c | 13 +++++++++----
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index c511ef6..b8f2577 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -526,46 +526,31 @@ static int get_node_path(struct inode *inode, long block,
+diff --git a/fsck/f2fs.h b/fsck/f2fs.h
+index 8a5ce36..d0e08aa 100644
+--- a/fsck/f2fs.h
++++ b/fsck/f2fs.h
+@@ -50,6 +50,7 @@ struct node_info {
  
- 	if (block < direct_index) {
- 		offset[n] = block;
--		goto got;
--	}
--	block -= direct_index;
--	if (block < direct_blks) {
-+	} else if ((block -= direct_index) < direct_blks) {
- 		offset[n++] = NODE_DIR1_BLOCK;
- 		noffset[n] = 1;
- 		offset[n] = block;
- 		level = 1;
--		goto got;
--	}
--	block -= direct_blks;
--	if (block < direct_blks) {
-+	} else if ((block -= direct_blks) < direct_blks) {
- 		offset[n++] = NODE_DIR2_BLOCK;
- 		noffset[n] = 2;
- 		offset[n] = block;
- 		level = 1;
--		goto got;
--	}
--	block -= direct_blks;
--	if (block < indirect_blks) {
-+	} else if ((block -= direct_blks) < indirect_blks) {
- 		offset[n++] = NODE_IND1_BLOCK;
- 		noffset[n] = 3;
- 		offset[n++] = block / direct_blks;
- 		noffset[n] = 4 + offset[n - 1];
- 		offset[n] = block % direct_blks;
- 		level = 2;
--		goto got;
--	}
--	block -= indirect_blks;
--	if (block < indirect_blks) {
-+	} else if ((block -= indirect_blks) < indirect_blks) {
- 		offset[n++] = NODE_IND2_BLOCK;
- 		noffset[n] = 4 + dptrs_per_blk;
- 		offset[n++] = block / direct_blks;
- 		noffset[n] = 5 + dptrs_per_blk + offset[n - 1];
- 		offset[n] = block % direct_blks;
- 		level = 2;
--		goto got;
--	}
--	block -= indirect_blks;
--	if (block < dindirect_blks) {
-+	} else if ((block -= indirect_blks) < dindirect_blks) {
- 		offset[n++] = NODE_DIND_BLOCK;
- 		noffset[n] = 5 + (dptrs_per_blk * 2);
- 		offset[n++] = block / indirect_blks;
-@@ -577,11 +562,10 @@ static int get_node_path(struct inode *inode, long block,
- 			      offset[n - 1];
- 		offset[n] = block % direct_blks;
- 		level = 3;
--		goto got;
- 	} else {
- 		return -E2BIG;
- 	}
--got:
-+
- 	return level;
- }
+ struct f2fs_nm_info {
+ 	block_t nat_blkaddr;
++	block_t nat_blocks;
+ 	nid_t max_nid;
+ 	nid_t init_scan_nid;
+ 	nid_t next_scan_nid;
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 545f862..a925bb9 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -998,7 +998,12 @@ void write_nat_bits(struct f2fs_sb_info *sbi,
+ 				(seg_off << get_sb(log_blocks_per_seg) << 1) +
+ 				(i & ((1 << get_sb(log_blocks_per_seg)) - 1)));
  
+-		if (f2fs_test_bit(i, nm_i->nat_bitmap))
++		/*
++		 * Should consider new nat_blocks is larger than old
++		 * nm_i->nat_blocks, since nm_i->nat_bitmap is based on
++		 * old one.
++		 */
++		if (i < nm_i->nat_blocks && f2fs_test_bit(i, nm_i->nat_bitmap))
+ 			blkaddr += (1 << get_sb(log_blocks_per_seg));
+ 
+ 		ret = dev_read_block(nat_block, blkaddr);
+@@ -1037,14 +1042,14 @@ int init_node_manager(struct f2fs_sb_info *sbi)
+ 	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	unsigned char *version_bitmap;
+-	unsigned int nat_segs, nat_blocks;
++	unsigned int nat_segs;
+ 
+ 	nm_i->nat_blkaddr = get_sb(nat_blkaddr);
+ 
+ 	/* segment_count_nat includes pair segment so divide to 2. */
+ 	nat_segs = get_sb(segment_count_nat) >> 1;
+-	nat_blocks = nat_segs << get_sb(log_blocks_per_seg);
+-	nm_i->max_nid = NAT_ENTRY_PER_BLOCK * nat_blocks;
++	nm_i->nat_blocks = nat_segs << get_sb(log_blocks_per_seg);
++	nm_i->max_nid = NAT_ENTRY_PER_BLOCK * nm_i->nat_blocks;
+ 	nm_i->fcnt = 0;
+ 	nm_i->nat_cnt = 0;
+ 	nm_i->init_scan_nid = get_cp(next_free_nid);
 -- 
-1.9.1
+2.15.0.531.g2ccb3012c9-goog
 
 
 ------------------------------------------------------------------------------
