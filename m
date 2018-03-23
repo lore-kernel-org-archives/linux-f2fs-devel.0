@@ -1,27 +1,27 @@
 From: Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH 06/14] fscrypt: don't special-case EOPNOTSUPP
- from fscrypt_get_encryption_info()
-Date: Fri, 23 Mar 2018 12:23:50 -0700
-Message-ID: <20180323192358.95691-7-ebiggers3@gmail.com>
+Subject: [PATCH 07/14] fscrypt: drop max_namelen check from
+ fname_decrypt()
+Date: Fri, 23 Mar 2018 12:23:51 -0700
+Message-ID: <20180323192358.95691-8-ebiggers3@gmail.com>
 References: <20180323192358.95691-1-ebiggers3@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers3@gmail.com>) id 1ezSPM-0002u8-16
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Mar 2018 19:31:24 +0000
+ (envelope-from <ebiggers3@gmail.com>) id 1ezSPN-00023R-0N
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Mar 2018 19:31:25 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=mail-pg0-f66.google.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ helo=mail-pf0-f195.google.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1ezSPK-00GdYH-M5
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Mar 2018 19:31:23 +0000
-Received: by mail-pg0-f66.google.com with SMTP id y63so1813577pgy.12
+ id 1ezSPL-00DUCL-J8
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Mar 2018 19:31:24 +0000
+Received: by mail-pf0-f195.google.com with SMTP id 123so5109052pfe.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 23 Mar 2018 12:31:22 -0700 (PDT)
+ Fri, 23 Mar 2018 12:31:23 -0700 (PDT)
 In-Reply-To: <20180323192358.95691-1-ebiggers3@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -37,31 +37,40 @@ Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org, linux-mtd@list
 
 From: Eric Biggers <ebiggers@google.com>
 
-In fscrypt_setup_filename(), remove the unnecessary check for
-fscrypt_get_encryption_info() returning EOPNOTSUPP.  There's no reason
-to handle this error differently from any other.  I think there may have
-been some confusion because the "notsupp" version of
-fscrypt_get_encryption_info() returns EOPNOTSUPP -- but that's not
-applicable from inside fs/crypto/.
+fname_decrypt() returns an error if the input filename is longer than
+the inode's ->max_namelen() as given by the filesystem.  But, this
+doesn't actually make sense because the filesystem provided the input
+filename in the first place, where it was subject to the filesystem's
+limits.  And fscrypt_decrypt() has no internal limit itself.
+
+Thus, remove this unnecessary check.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/crypto/fname.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/crypto/fname.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
 diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-index 3b5164b159cb..8088a606c0aa 100644
+index 8088a606c0aa..cc9590b5f371 100644
 --- a/fs/crypto/fname.c
 +++ b/fs/crypto/fname.c
-@@ -335,7 +335,7 @@ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
- 		return 0;
- 	}
- 	ret = fscrypt_get_encryption_info(dir);
--	if (ret && ret != -EOPNOTSUPP)
-+	if (ret)
- 		return ret;
+@@ -93,14 +93,11 @@ static int fname_decrypt(struct inode *inode,
+ 	struct skcipher_request *req = NULL;
+ 	DECLARE_CRYPTO_WAIT(wait);
+ 	struct scatterlist src_sg, dst_sg;
+-	struct fscrypt_info *ci = inode->i_crypt_info;
+-	struct crypto_skcipher *tfm = ci->ci_ctfm;
++	struct crypto_skcipher *tfm = inode->i_crypt_info->ci_ctfm;
+ 	int res = 0;
+ 	char iv[FS_CRYPTO_BLOCK_SIZE];
+-	unsigned lim;
  
- 	if (dir->i_crypt_info) {
+-	lim = inode->i_sb->s_cop->max_namelen(inode);
+-	if (iname->len <= 0 || iname->len > lim)
++	if (iname->len <= 0)
+ 		return -EIO;
+ 
+ 	/* Allocate request */
 -- 
 2.17.0.rc0.231.g781580f067-goog
 
