@@ -1,27 +1,27 @@
 From: Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH 01/14] fscrypt: remove unnecessary NULL check
- when allocating skcipher
-Date: Fri, 23 Mar 2018 12:23:45 -0700
-Message-ID: <20180323192358.95691-2-ebiggers3@gmail.com>
+Subject: [PATCH 03/14] fscrypt: remove WARN_ON_ONCE() when
+ decryption fails
+Date: Fri, 23 Mar 2018 12:23:47 -0700
+Message-ID: <20180323192358.95691-4-ebiggers3@gmail.com>
 References: <20180323192358.95691-1-ebiggers3@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers3@gmail.com>) id 1ezSPI-00022W-1s
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Mar 2018 19:31:20 +0000
+ (envelope-from <ebiggers3@gmail.com>) id 1ezSPJ-0002tZ-F4
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Mar 2018 19:31:21 +0000
 Received: from sfi-lb-mx.v20.lw.sourceforge.com ([172.30.20.201]
- helo=mail-pl0-f66.google.com)
+ helo=mail-pf0-f196.google.com)
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1ezSPG-00GdY7-Jr
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Mar 2018 19:31:19 +0000
-Received: by mail-pl0-f66.google.com with SMTP id p9-v6so8035465pls.2
+ id 1ezSPI-00GdYA-1Y
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Mar 2018 19:31:21 +0000
+Received: by mail-pf0-f196.google.com with SMTP id a16so5105985pfn.9
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 23 Mar 2018 12:31:18 -0700 (PDT)
+ Fri, 23 Mar 2018 12:31:20 -0700 (PDT)
 In-Reply-To: <20180323192358.95691-1-ebiggers3@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -37,29 +37,38 @@ Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org, linux-mtd@list
 
 From: Eric Biggers <ebiggers@google.com>
 
-crypto_alloc_skcipher() returns an ERR_PTR() on failure, not NULL.
-Remove the unnecessary check for NULL.
+If decrypting a block fails, fscrypt did a WARN_ON_ONCE().  But WARN is
+meant for kernel bugs, which this isn't; this could be hit by fuzzers
+using fault injection, for example.  Also, there is already a proper
+warning message logged in fscrypt_do_page_crypto(), so the WARN doesn't
+add much.
+
+Just remove the unnessary WARN.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/crypto/keyinfo.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/crypto/bio.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/fs/crypto/keyinfo.c b/fs/crypto/keyinfo.c
-index 96a1eae9e51d..8099388f5581 100644
---- a/fs/crypto/keyinfo.c
-+++ b/fs/crypto/keyinfo.c
-@@ -320,8 +320,8 @@ int fscrypt_get_encryption_info(struct inode *inode)
- 		goto out;
+diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
+index 0d5e6a569d58..771c8684826b 100644
+--- a/fs/crypto/bio.c
++++ b/fs/crypto/bio.c
+@@ -43,12 +43,10 @@ static void completion_pages(struct work_struct *work)
+ 		int ret = fscrypt_decrypt_page(page->mapping->host, page,
+ 				PAGE_SIZE, 0, page->index);
+ 
+-		if (ret) {
+-			WARN_ON_ONCE(1);
++		if (ret)
+ 			SetPageError(page);
+-		} else {
++		else
+ 			SetPageUptodate(page);
+-		}
+ 		unlock_page(page);
  	}
- 	ctfm = crypto_alloc_skcipher(cipher_str, 0, 0);
--	if (!ctfm || IS_ERR(ctfm)) {
--		res = ctfm ? PTR_ERR(ctfm) : -ENOMEM;
-+	if (IS_ERR(ctfm)) {
-+		res = PTR_ERR(ctfm);
- 		pr_debug("%s: error %d (inode %lu) allocating crypto tfm\n",
- 			 __func__, res, inode->i_ino);
- 		goto out;
+ 	fscrypt_release_ctx(ctx);
 -- 
 2.17.0.rc0.231.g781580f067-goog
 
