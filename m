@@ -1,25 +1,25 @@
-From: heyunlei <heyunlei@huawei.com>
-Subject: Re: [PATCH v2] f2fs: rebuild get_node_path function
-Date: Wed, 28 Mar 2018 01:46:40 +0000
-Message-ID: <42B685BFA705F94C860C6DD0752F05654835C6BA@DGGEMA503-MBS.china.huawei.com>
-References: <1521689502-6040-1-git-send-email-heyunlei@huawei.com>
- <be57d93a-93c3-4b13-58d1-ed348eb2bc28@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: Add a segment type check in inplace
+ write
+Date: Wed, 28 Mar 2018 09:59:08 +0800
+Message-ID: <f763e375-0838-e3e4-7db8-13a5915ebbbf@huawei.com>
+References: <1522056743-7126-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <heyunlei@huawei.com>) id 1f10B3-0003Pg-2i
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Mar 2018 01:47:01 +0000
-Received: from szxga03-in.huawei.com ([45.249.212.189] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1f10N8-0003zL-IF
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Mar 2018 01:59:30 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f10B0-00Ewho-Hq
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Mar 2018 01:47:00 +0000
-In-Reply-To: <be57d93a-93c3-4b13-58d1-ed348eb2bc28@huawei.com>
-Content-Language: zh-CN
+ id 1f10N6-00AjSE-5X
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Mar 2018 01:59:30 +0000
+In-Reply-To: <1522056743-7126-1-git-send-email-heyunlei@huawei.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,63 +29,45 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "Yuchao (T)" <yuchao0@huawei.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IFl1Y2hhbyAoVCkNCj5TZW50
-OiBXZWRuZXNkYXksIE1hcmNoIDI4LCAyMDE4IDk6NDEgQU0NCj5UbzogaGV5dW5sZWk7IGphZWdl
-dWtAa2VybmVsLm9yZzsgbGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQNCj5D
-YzogV2FuZ2JpbnRpYW4NCj5TdWJqZWN0OiBSZTogW2YyZnMtZGV2XVtQQVRDSCB2Ml0gZjJmczog
-cmVidWlsZCBnZXRfbm9kZV9wYXRoIGZ1bmN0aW9uDQo+DQo+T24gMjAxOC8zLzIyIDExOjMxLCBZ
-dW5sZWkgSGUgd3JvdGU6DQo+PiBUaGlzIHBhdGNoIHJlYnVpbGQgZ2V0X25vZGVfcGF0aCBmdW5j
-dGlvbiwgbm8gbG9naWMgY2hhbmdlcy4NCj4+DQo+PiB2MS0+djI6ICc8JyBoYXMgaGlnaGVyIHBy
-aW9yaXR5IHRoYW4gJy09Jw0KPg0KPkl0IGxvb2tzIHRoYXQgYWZ0ZXIgdGhlIGNsZWFudXAsIHRo
-ZSBjb2RlIGxvZ2ljIHdvdWxkIG5vdCBiZSBtb3JlIHVuZGVyc3RhbmRhYmxlDQo+dGhhbiBiZWZv
-cmUsIHNpbmNlIHdlJ2QgYmV0dGVyIHRvIGF2b2lkIGRvaW5nIGNhbGN1bGF0aW9uIGluc2lkZSBp
-ZiBjb25kaXRpb24uDQo+DQoNCkhlcmUgSSBqdXN0IHJlZmVyIHRvIGNvZGUgaW4gZnVuY3Rpb24g
-ZXh0Ml9ibG9ja190b19wYXRoDQoNClRoYW5rc6OsDQoNCj5UaGFua3MsDQo+DQo+Pg0KPj4gU2ln
-bmVkLW9mZi1ieTogWXVubGVpIEhlIDxoZXl1bmxlaUBodWF3ZWkuY29tPg0KPj4gLS0tDQo+PiAg
-ZnMvZjJmcy9ub2RlLmMgfCAyOCArKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+PiAgMSBm
-aWxlIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKSwgMjIgZGVsZXRpb25zKC0pDQo+Pg0KPj4gZGlm
-ZiAtLWdpdCBhL2ZzL2YyZnMvbm9kZS5jIGIvZnMvZjJmcy9ub2RlLmMNCj4+IGluZGV4IGM1MTFl
-ZjYuLmI4ZjI1NzcgMTAwNjQ0DQo+PiAtLS0gYS9mcy9mMmZzL25vZGUuYw0KPj4gKysrIGIvZnMv
-ZjJmcy9ub2RlLmMNCj4+IEBAIC01MjYsNDYgKzUyNiwzMSBAQCBzdGF0aWMgaW50IGdldF9ub2Rl
-X3BhdGgoc3RydWN0IGlub2RlICppbm9kZSwgbG9uZyBibG9jaywNCj4+DQo+PiAgCWlmIChibG9j
-ayA8IGRpcmVjdF9pbmRleCkgew0KPj4gIAkJb2Zmc2V0W25dID0gYmxvY2s7DQo+PiAtCQlnb3Rv
-IGdvdDsNCj4+IC0JfQ0KPj4gLQlibG9jayAtPSBkaXJlY3RfaW5kZXg7DQo+PiAtCWlmIChibG9j
-ayA8IGRpcmVjdF9ibGtzKSB7DQo+PiArCX0gZWxzZSBpZiAoKGJsb2NrIC09IGRpcmVjdF9pbmRl
-eCkgPCBkaXJlY3RfYmxrcykgew0KPj4gIAkJb2Zmc2V0W24rK10gPSBOT0RFX0RJUjFfQkxPQ0s7
-DQo+PiAgCQlub2Zmc2V0W25dID0gMTsNCj4+ICAJCW9mZnNldFtuXSA9IGJsb2NrOw0KPj4gIAkJ
-bGV2ZWwgPSAxOw0KPj4gLQkJZ290byBnb3Q7DQo+PiAtCX0NCj4+IC0JYmxvY2sgLT0gZGlyZWN0
-X2Jsa3M7DQo+PiAtCWlmIChibG9jayA8IGRpcmVjdF9ibGtzKSB7DQo+PiArCX0gZWxzZSBpZiAo
-KGJsb2NrIC09IGRpcmVjdF9ibGtzKSA8IGRpcmVjdF9ibGtzKSB7DQo+PiAgCQlvZmZzZXRbbisr
-XSA9IE5PREVfRElSMl9CTE9DSzsNCj4+ICAJCW5vZmZzZXRbbl0gPSAyOw0KPj4gIAkJb2Zmc2V0
-W25dID0gYmxvY2s7DQo+PiAgCQlsZXZlbCA9IDE7DQo+PiAtCQlnb3RvIGdvdDsNCj4+IC0JfQ0K
-Pj4gLQlibG9jayAtPSBkaXJlY3RfYmxrczsNCj4+IC0JaWYgKGJsb2NrIDwgaW5kaXJlY3RfYmxr
-cykgew0KPj4gKwl9IGVsc2UgaWYgKChibG9jayAtPSBkaXJlY3RfYmxrcykgPCBpbmRpcmVjdF9i
-bGtzKSB7DQo+PiAgCQlvZmZzZXRbbisrXSA9IE5PREVfSU5EMV9CTE9DSzsNCj4+ICAJCW5vZmZz
-ZXRbbl0gPSAzOw0KPj4gIAkJb2Zmc2V0W24rK10gPSBibG9jayAvIGRpcmVjdF9ibGtzOw0KPj4g
-IAkJbm9mZnNldFtuXSA9IDQgKyBvZmZzZXRbbiAtIDFdOw0KPj4gIAkJb2Zmc2V0W25dID0gYmxv
-Y2sgJSBkaXJlY3RfYmxrczsNCj4+ICAJCWxldmVsID0gMjsNCj4+IC0JCWdvdG8gZ290Ow0KPj4g
-LQl9DQo+PiAtCWJsb2NrIC09IGluZGlyZWN0X2Jsa3M7DQo+PiAtCWlmIChibG9jayA8IGluZGly
-ZWN0X2Jsa3MpIHsNCj4+ICsJfSBlbHNlIGlmICgoYmxvY2sgLT0gaW5kaXJlY3RfYmxrcykgPCBp
-bmRpcmVjdF9ibGtzKSB7DQo+PiAgCQlvZmZzZXRbbisrXSA9IE5PREVfSU5EMl9CTE9DSzsNCj4+
-ICAJCW5vZmZzZXRbbl0gPSA0ICsgZHB0cnNfcGVyX2JsazsNCj4+ICAJCW9mZnNldFtuKytdID0g
-YmxvY2sgLyBkaXJlY3RfYmxrczsNCj4+ICAJCW5vZmZzZXRbbl0gPSA1ICsgZHB0cnNfcGVyX2Js
-ayArIG9mZnNldFtuIC0gMV07DQo+PiAgCQlvZmZzZXRbbl0gPSBibG9jayAlIGRpcmVjdF9ibGtz
-Ow0KPj4gIAkJbGV2ZWwgPSAyOw0KPj4gLQkJZ290byBnb3Q7DQo+PiAtCX0NCj4+IC0JYmxvY2sg
-LT0gaW5kaXJlY3RfYmxrczsNCj4+IC0JaWYgKGJsb2NrIDwgZGluZGlyZWN0X2Jsa3MpIHsNCj4+
-ICsJfSBlbHNlIGlmICgoYmxvY2sgLT0gaW5kaXJlY3RfYmxrcykgPCBkaW5kaXJlY3RfYmxrcykg
-ew0KPj4gIAkJb2Zmc2V0W24rK10gPSBOT0RFX0RJTkRfQkxPQ0s7DQo+PiAgCQlub2Zmc2V0W25d
-ID0gNSArIChkcHRyc19wZXJfYmxrICogMik7DQo+PiAgCQlvZmZzZXRbbisrXSA9IGJsb2NrIC8g
-aW5kaXJlY3RfYmxrczsNCj4+IEBAIC01NzcsMTEgKzU2MiwxMCBAQCBzdGF0aWMgaW50IGdldF9u
-b2RlX3BhdGgoc3RydWN0IGlub2RlICppbm9kZSwgbG9uZyBibG9jaywNCj4+ICAJCQkgICAgICBv
-ZmZzZXRbbiAtIDFdOw0KPj4gIAkJb2Zmc2V0W25dID0gYmxvY2sgJSBkaXJlY3RfYmxrczsNCj4+
-ICAJCWxldmVsID0gMzsNCj4+IC0JCWdvdG8gZ290Ow0KPj4gIAl9IGVsc2Ugew0KPj4gIAkJcmV0
-dXJuIC1FMkJJRzsNCj4+ICAJfQ0KPj4gLWdvdDoNCj4+ICsNCj4+ICAJcmV0dXJuIGxldmVsOw0K
-Pj4gIH0NCj4+DQo+Pg0KDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQ2hlY2sgb3V0IHRoZSB2aWJy
-YW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0CmVuZ2FnaW5nIHRl
-Y2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwg
-bWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBz
-Oi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+On 2018/3/26 17:32, Yunlei He wrote:
+> This patch add a segment type check in IPU, in
+> case of something wrong with blkadd in dnode.
+> 
+> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks,
+
+> ---
+>  fs/f2fs/segment.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index f61c77b..c55942c 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -2790,10 +2790,15 @@ void write_data_page(struct dnode_of_data *dn, struct f2fs_io_info *fio)
+>  int rewrite_data_page(struct f2fs_io_info *fio)
+>  {
+>  	int err;
+> +	struct f2fs_sb_info *sbi = fio->sbi;
+>  
+>  	fio->new_blkaddr = fio->old_blkaddr;
+>  	/* i/o temperature is needed for passing down write hints */
+>  	__get_segment_type(fio);
+> +
+> +	f2fs_bug_on(sbi, !IS_DATASEG(get_seg_entry(sbi,
+> +			GET_SEGNO(sbi, fio->new_blkaddr))->type));
+> +
+>  	stat_inc_inplace_blocks(fio->sbi);
+>  
+>  	err = f2fs_submit_page_bio(fio);
+> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
