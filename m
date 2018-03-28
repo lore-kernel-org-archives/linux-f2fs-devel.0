@@ -1,24 +1,25 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: Add a segment type check in inplace
- write
-Date: Wed, 28 Mar 2018 09:59:08 +0800
-Message-ID: <f763e375-0838-e3e4-7db8-13a5915ebbbf@huawei.com>
-References: <1522056743-7126-1-git-send-email-heyunlei@huawei.com>
+Subject: Re: [PATCH v2] f2fs: rebuild get_node_path function
+Date: Wed, 28 Mar 2018 10:13:12 +0800
+Message-ID: <9799e6a7-5f2a-557b-3a3e-cefd0e3c2881@huawei.com>
+References: <1521689502-6040-1-git-send-email-heyunlei@huawei.com>
+ <be57d93a-93c3-4b13-58d1-ed348eb2bc28@huawei.com>
+ <42B685BFA705F94C860C6DD0752F05654835C6BA@DGGEMA503-MBS.china.huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="gbk"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1f10N8-0003zL-IF
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Mar 2018 01:59:30 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1f10an-0007OZ-6Q
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Mar 2018 02:13:37 +0000
 Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f10N6-00AjSE-5X
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Mar 2018 01:59:30 +0000
-In-Reply-To: <1522056743-7126-1-git-send-email-heyunlei@huawei.com>
+ id 1f10al-00Ey70-7t
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Mar 2018 02:13:37 +0000
+In-Reply-To: <42B685BFA705F94C860C6DD0752F05654835C6BA@DGGEMA503-MBS.china.huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -29,45 +30,66 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: heyunlei <heyunlei@huawei.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-On 2018/3/26 17:32, Yunlei He wrote:
-> This patch add a segment type check in IPU, in
-> case of something wrong with blkadd in dnode.
-> 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
-
-> ---
->  fs/f2fs/segment.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index f61c77b..c55942c 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -2790,10 +2790,15 @@ void write_data_page(struct dnode_of_data *dn, struct f2fs_io_info *fio)
->  int rewrite_data_page(struct f2fs_io_info *fio)
->  {
->  	int err;
-> +	struct f2fs_sb_info *sbi = fio->sbi;
->  
->  	fio->new_blkaddr = fio->old_blkaddr;
->  	/* i/o temperature is needed for passing down write hints */
->  	__get_segment_type(fio);
-> +
-> +	f2fs_bug_on(sbi, !IS_DATASEG(get_seg_entry(sbi,
-> +			GET_SEGNO(sbi, fio->new_blkaddr))->type));
-> +
->  	stat_inc_inplace_blocks(fio->sbi);
->  
->  	err = f2fs_submit_page_bio(fio);
-> 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+T24gMjAxOC8zLzI4IDk6NDYsIGhleXVubGVpIHdyb3RlOgo+IAo+IAo+PiAtLS0tLU9yaWdpbmFs
+IE1lc3NhZ2UtLS0tLQo+PiBGcm9tOiBZdWNoYW8gKFQpCj4+IFNlbnQ6IFdlZG5lc2RheSwgTWFy
+Y2ggMjgsIDIwMTggOTo0MSBBTQo+PiBUbzogaGV5dW5sZWk7IGphZWdldWtAa2VybmVsLm9yZzsg
+bGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPj4gQ2M6IFdhbmdiaW50aWFu
+Cj4+IFN1YmplY3Q6IFJlOiBbZjJmcy1kZXZdW1BBVENIIHYyXSBmMmZzOiByZWJ1aWxkIGdldF9u
+b2RlX3BhdGggZnVuY3Rpb24KPj4KPj4gT24gMjAxOC8zLzIyIDExOjMxLCBZdW5sZWkgSGUgd3Jv
+dGU6Cj4+PiBUaGlzIHBhdGNoIHJlYnVpbGQgZ2V0X25vZGVfcGF0aCBmdW5jdGlvbiwgbm8gbG9n
+aWMgY2hhbmdlcy4KPj4+Cj4+PiB2MS0+djI6ICc8JyBoYXMgaGlnaGVyIHByaW9yaXR5IHRoYW4g
+Jy09Jwo+Pgo+PiBJdCBsb29rcyB0aGF0IGFmdGVyIHRoZSBjbGVhbnVwLCB0aGUgY29kZSBsb2dp
+YyB3b3VsZCBub3QgYmUgbW9yZSB1bmRlcnN0YW5kYWJsZQo+PiB0aGFuIGJlZm9yZSwgc2luY2Ug
+d2UnZCBiZXR0ZXIgdG8gYXZvaWQgZG9pbmcgY2FsY3VsYXRpb24gaW5zaWRlIGlmIGNvbmRpdGlv
+bi4KPj4KPiAKPiBIZXJlIEkganVzdCByZWZlciB0byBjb2RlIGluIGZ1bmN0aW9uIGV4dDJfYmxv
+Y2tfdG9fcGF0aAoKR290IGl0LCBmb3IgYmV0dGVyIHJlYWRhYmlsaXR5LCBsZXQncyBqdXN0IGtl
+ZXAgY3VycmVudCBjb2RlIHN0eWxlLgoKVGhhbmtzLAoKPiAKPiBUaGFua3OjrAo+IAo+PiBUaGFu
+a3MsCj4+Cj4+Pgo+Pj4gU2lnbmVkLW9mZi1ieTogWXVubGVpIEhlIDxoZXl1bmxlaUBodWF3ZWku
+Y29tPgo+Pj4gLS0tCj4+PiAgZnMvZjJmcy9ub2RlLmMgfCAyOCArKysrKystLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tCj4+PiAgMSBmaWxlIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKSwgMjIgZGVsZXRp
+b25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvbm9kZS5jIGIvZnMvZjJmcy9ub2Rl
+LmMKPj4+IGluZGV4IGM1MTFlZjYuLmI4ZjI1NzcgMTAwNjQ0Cj4+PiAtLS0gYS9mcy9mMmZzL25v
+ZGUuYwo+Pj4gKysrIGIvZnMvZjJmcy9ub2RlLmMKPj4+IEBAIC01MjYsNDYgKzUyNiwzMSBAQCBz
+dGF0aWMgaW50IGdldF9ub2RlX3BhdGgoc3RydWN0IGlub2RlICppbm9kZSwgbG9uZyBibG9jaywK
+Pj4+Cj4+PiAgCWlmIChibG9jayA8IGRpcmVjdF9pbmRleCkgewo+Pj4gIAkJb2Zmc2V0W25dID0g
+YmxvY2s7Cj4+PiAtCQlnb3RvIGdvdDsKPj4+IC0JfQo+Pj4gLQlibG9jayAtPSBkaXJlY3RfaW5k
+ZXg7Cj4+PiAtCWlmIChibG9jayA8IGRpcmVjdF9ibGtzKSB7Cj4+PiArCX0gZWxzZSBpZiAoKGJs
+b2NrIC09IGRpcmVjdF9pbmRleCkgPCBkaXJlY3RfYmxrcykgewo+Pj4gIAkJb2Zmc2V0W24rK10g
+PSBOT0RFX0RJUjFfQkxPQ0s7Cj4+PiAgCQlub2Zmc2V0W25dID0gMTsKPj4+ICAJCW9mZnNldFtu
+XSA9IGJsb2NrOwo+Pj4gIAkJbGV2ZWwgPSAxOwo+Pj4gLQkJZ290byBnb3Q7Cj4+PiAtCX0KPj4+
+IC0JYmxvY2sgLT0gZGlyZWN0X2Jsa3M7Cj4+PiAtCWlmIChibG9jayA8IGRpcmVjdF9ibGtzKSB7
+Cj4+PiArCX0gZWxzZSBpZiAoKGJsb2NrIC09IGRpcmVjdF9ibGtzKSA8IGRpcmVjdF9ibGtzKSB7
+Cj4+PiAgCQlvZmZzZXRbbisrXSA9IE5PREVfRElSMl9CTE9DSzsKPj4+ICAJCW5vZmZzZXRbbl0g
+PSAyOwo+Pj4gIAkJb2Zmc2V0W25dID0gYmxvY2s7Cj4+PiAgCQlsZXZlbCA9IDE7Cj4+PiAtCQln
+b3RvIGdvdDsKPj4+IC0JfQo+Pj4gLQlibG9jayAtPSBkaXJlY3RfYmxrczsKPj4+IC0JaWYgKGJs
+b2NrIDwgaW5kaXJlY3RfYmxrcykgewo+Pj4gKwl9IGVsc2UgaWYgKChibG9jayAtPSBkaXJlY3Rf
+YmxrcykgPCBpbmRpcmVjdF9ibGtzKSB7Cj4+PiAgCQlvZmZzZXRbbisrXSA9IE5PREVfSU5EMV9C
+TE9DSzsKPj4+ICAJCW5vZmZzZXRbbl0gPSAzOwo+Pj4gIAkJb2Zmc2V0W24rK10gPSBibG9jayAv
+IGRpcmVjdF9ibGtzOwo+Pj4gIAkJbm9mZnNldFtuXSA9IDQgKyBvZmZzZXRbbiAtIDFdOwo+Pj4g
+IAkJb2Zmc2V0W25dID0gYmxvY2sgJSBkaXJlY3RfYmxrczsKPj4+ICAJCWxldmVsID0gMjsKPj4+
+IC0JCWdvdG8gZ290Owo+Pj4gLQl9Cj4+PiAtCWJsb2NrIC09IGluZGlyZWN0X2Jsa3M7Cj4+PiAt
+CWlmIChibG9jayA8IGluZGlyZWN0X2Jsa3MpIHsKPj4+ICsJfSBlbHNlIGlmICgoYmxvY2sgLT0g
+aW5kaXJlY3RfYmxrcykgPCBpbmRpcmVjdF9ibGtzKSB7Cj4+PiAgCQlvZmZzZXRbbisrXSA9IE5P
+REVfSU5EMl9CTE9DSzsKPj4+ICAJCW5vZmZzZXRbbl0gPSA0ICsgZHB0cnNfcGVyX2JsazsKPj4+
+ICAJCW9mZnNldFtuKytdID0gYmxvY2sgLyBkaXJlY3RfYmxrczsKPj4+ICAJCW5vZmZzZXRbbl0g
+PSA1ICsgZHB0cnNfcGVyX2JsayArIG9mZnNldFtuIC0gMV07Cj4+PiAgCQlvZmZzZXRbbl0gPSBi
+bG9jayAlIGRpcmVjdF9ibGtzOwo+Pj4gIAkJbGV2ZWwgPSAyOwo+Pj4gLQkJZ290byBnb3Q7Cj4+
+PiAtCX0KPj4+IC0JYmxvY2sgLT0gaW5kaXJlY3RfYmxrczsKPj4+IC0JaWYgKGJsb2NrIDwgZGlu
+ZGlyZWN0X2Jsa3MpIHsKPj4+ICsJfSBlbHNlIGlmICgoYmxvY2sgLT0gaW5kaXJlY3RfYmxrcykg
+PCBkaW5kaXJlY3RfYmxrcykgewo+Pj4gIAkJb2Zmc2V0W24rK10gPSBOT0RFX0RJTkRfQkxPQ0s7
+Cj4+PiAgCQlub2Zmc2V0W25dID0gNSArIChkcHRyc19wZXJfYmxrICogMik7Cj4+PiAgCQlvZmZz
+ZXRbbisrXSA9IGJsb2NrIC8gaW5kaXJlY3RfYmxrczsKPj4+IEBAIC01NzcsMTEgKzU2MiwxMCBA
+QCBzdGF0aWMgaW50IGdldF9ub2RlX3BhdGgoc3RydWN0IGlub2RlICppbm9kZSwgbG9uZyBibG9j
+aywKPj4+ICAJCQkgICAgICBvZmZzZXRbbiAtIDFdOwo+Pj4gIAkJb2Zmc2V0W25dID0gYmxvY2sg
+JSBkaXJlY3RfYmxrczsKPj4+ICAJCWxldmVsID0gMzsKPj4+IC0JCWdvdG8gZ290Owo+Pj4gIAl9
+IGVsc2Ugewo+Pj4gIAkJcmV0dXJuIC1FMkJJRzsKPj4+ICAJfQo+Pj4gLWdvdDoKPj4+ICsKPj4+
+ICAJcmV0dXJuIGxldmVsOwo+Pj4gIH0KPj4+Cj4+Pgo+IAoKCi0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LQpDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3Js
+ZCdzIG1vc3QKZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3JnISBodHRwOi8vc2RtLmxp
+bmsvc2xhc2hkb3QKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5z
+b3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGlu
+Zm8vbGludXgtZjJmcy1kZXZlbAo=
