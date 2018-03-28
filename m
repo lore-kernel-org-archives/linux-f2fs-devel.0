@@ -1,25 +1,31 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: rebuild get_node_path function
-Date: Wed, 28 Mar 2018 10:13:12 +0800
-Message-ID: <9799e6a7-5f2a-557b-3a3e-cefd0e3c2881@huawei.com>
-References: <1521689502-6040-1-git-send-email-heyunlei@huawei.com>
- <be57d93a-93c3-4b13-58d1-ed348eb2bc28@huawei.com>
- <42B685BFA705F94C860C6DD0752F05654835C6BA@DGGEMA503-MBS.china.huawei.com>
+Subject: Re: [PATCH 1/4] mkfs.f2fs: update extension lists
+Date: Wed, 28 Mar 2018 10:40:36 +0800
+Message-ID: <e0a45c16-0304-ef6b-2677-766c441af7b1@huawei.com>
+References: <20180317150257.123927-1-qkrwngud825@gmail.com>
+ <1988f12a-351a-c137-2fc3-b68ce0aefc31@huawei.com>
+ <CAD14+f3dRxjabWjzNQiOwCrqVyd-CjetcBGK-F+n=X5gEXp7ig@mail.gmail.com>
+ <4ad8459b-2e69-e385-ee3a-f4e1ba33167c@huawei.com>
+ <CAD14+f39mNqATcAyrbq-QN4hOh9QU=ZxRFTv3SyHOPDfdZDGkA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1f10an-0007OZ-6Q
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Mar 2018 02:13:37 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1f111L-0007oR-R5
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Mar 2018 02:41:03 +0000
 Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f10al-00Ey70-7t
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Mar 2018 02:13:37 +0000
-In-Reply-To: <42B685BFA705F94C860C6DD0752F05654835C6BA@DGGEMA503-MBS.china.huawei.com>
+ id 1f111H-00AoPH-Cc
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Mar 2018 02:41:03 +0000
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+ by Forcepoint Email with ESMTP id CCE8273454D6B
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 28 Mar 2018 10:40:39 +0800 (CST)
+In-Reply-To: <CAD14+f39mNqATcAyrbq-QN4hOh9QU=ZxRFTv3SyHOPDfdZDGkA@mail.gmail.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -30,66 +36,275 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: heyunlei <heyunlei@huawei.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: Ju Hyung Park <qkrwngud825@gmail.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-T24gMjAxOC8zLzI4IDk6NDYsIGhleXVubGVpIHdyb3RlOgo+IAo+IAo+PiAtLS0tLU9yaWdpbmFs
-IE1lc3NhZ2UtLS0tLQo+PiBGcm9tOiBZdWNoYW8gKFQpCj4+IFNlbnQ6IFdlZG5lc2RheSwgTWFy
-Y2ggMjgsIDIwMTggOTo0MSBBTQo+PiBUbzogaGV5dW5sZWk7IGphZWdldWtAa2VybmVsLm9yZzsg
-bGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPj4gQ2M6IFdhbmdiaW50aWFu
-Cj4+IFN1YmplY3Q6IFJlOiBbZjJmcy1kZXZdW1BBVENIIHYyXSBmMmZzOiByZWJ1aWxkIGdldF9u
-b2RlX3BhdGggZnVuY3Rpb24KPj4KPj4gT24gMjAxOC8zLzIyIDExOjMxLCBZdW5sZWkgSGUgd3Jv
-dGU6Cj4+PiBUaGlzIHBhdGNoIHJlYnVpbGQgZ2V0X25vZGVfcGF0aCBmdW5jdGlvbiwgbm8gbG9n
-aWMgY2hhbmdlcy4KPj4+Cj4+PiB2MS0+djI6ICc8JyBoYXMgaGlnaGVyIHByaW9yaXR5IHRoYW4g
-Jy09Jwo+Pgo+PiBJdCBsb29rcyB0aGF0IGFmdGVyIHRoZSBjbGVhbnVwLCB0aGUgY29kZSBsb2dp
-YyB3b3VsZCBub3QgYmUgbW9yZSB1bmRlcnN0YW5kYWJsZQo+PiB0aGFuIGJlZm9yZSwgc2luY2Ug
-d2UnZCBiZXR0ZXIgdG8gYXZvaWQgZG9pbmcgY2FsY3VsYXRpb24gaW5zaWRlIGlmIGNvbmRpdGlv
-bi4KPj4KPiAKPiBIZXJlIEkganVzdCByZWZlciB0byBjb2RlIGluIGZ1bmN0aW9uIGV4dDJfYmxv
-Y2tfdG9fcGF0aAoKR290IGl0LCBmb3IgYmV0dGVyIHJlYWRhYmlsaXR5LCBsZXQncyBqdXN0IGtl
-ZXAgY3VycmVudCBjb2RlIHN0eWxlLgoKVGhhbmtzLAoKPiAKPiBUaGFua3OjrAo+IAo+PiBUaGFu
-a3MsCj4+Cj4+Pgo+Pj4gU2lnbmVkLW9mZi1ieTogWXVubGVpIEhlIDxoZXl1bmxlaUBodWF3ZWku
-Y29tPgo+Pj4gLS0tCj4+PiAgZnMvZjJmcy9ub2RlLmMgfCAyOCArKysrKystLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tCj4+PiAgMSBmaWxlIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKSwgMjIgZGVsZXRp
-b25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvbm9kZS5jIGIvZnMvZjJmcy9ub2Rl
-LmMKPj4+IGluZGV4IGM1MTFlZjYuLmI4ZjI1NzcgMTAwNjQ0Cj4+PiAtLS0gYS9mcy9mMmZzL25v
-ZGUuYwo+Pj4gKysrIGIvZnMvZjJmcy9ub2RlLmMKPj4+IEBAIC01MjYsNDYgKzUyNiwzMSBAQCBz
-dGF0aWMgaW50IGdldF9ub2RlX3BhdGgoc3RydWN0IGlub2RlICppbm9kZSwgbG9uZyBibG9jaywK
-Pj4+Cj4+PiAgCWlmIChibG9jayA8IGRpcmVjdF9pbmRleCkgewo+Pj4gIAkJb2Zmc2V0W25dID0g
-YmxvY2s7Cj4+PiAtCQlnb3RvIGdvdDsKPj4+IC0JfQo+Pj4gLQlibG9jayAtPSBkaXJlY3RfaW5k
-ZXg7Cj4+PiAtCWlmIChibG9jayA8IGRpcmVjdF9ibGtzKSB7Cj4+PiArCX0gZWxzZSBpZiAoKGJs
-b2NrIC09IGRpcmVjdF9pbmRleCkgPCBkaXJlY3RfYmxrcykgewo+Pj4gIAkJb2Zmc2V0W24rK10g
-PSBOT0RFX0RJUjFfQkxPQ0s7Cj4+PiAgCQlub2Zmc2V0W25dID0gMTsKPj4+ICAJCW9mZnNldFtu
-XSA9IGJsb2NrOwo+Pj4gIAkJbGV2ZWwgPSAxOwo+Pj4gLQkJZ290byBnb3Q7Cj4+PiAtCX0KPj4+
-IC0JYmxvY2sgLT0gZGlyZWN0X2Jsa3M7Cj4+PiAtCWlmIChibG9jayA8IGRpcmVjdF9ibGtzKSB7
-Cj4+PiArCX0gZWxzZSBpZiAoKGJsb2NrIC09IGRpcmVjdF9ibGtzKSA8IGRpcmVjdF9ibGtzKSB7
-Cj4+PiAgCQlvZmZzZXRbbisrXSA9IE5PREVfRElSMl9CTE9DSzsKPj4+ICAJCW5vZmZzZXRbbl0g
-PSAyOwo+Pj4gIAkJb2Zmc2V0W25dID0gYmxvY2s7Cj4+PiAgCQlsZXZlbCA9IDE7Cj4+PiAtCQln
-b3RvIGdvdDsKPj4+IC0JfQo+Pj4gLQlibG9jayAtPSBkaXJlY3RfYmxrczsKPj4+IC0JaWYgKGJs
-b2NrIDwgaW5kaXJlY3RfYmxrcykgewo+Pj4gKwl9IGVsc2UgaWYgKChibG9jayAtPSBkaXJlY3Rf
-YmxrcykgPCBpbmRpcmVjdF9ibGtzKSB7Cj4+PiAgCQlvZmZzZXRbbisrXSA9IE5PREVfSU5EMV9C
-TE9DSzsKPj4+ICAJCW5vZmZzZXRbbl0gPSAzOwo+Pj4gIAkJb2Zmc2V0W24rK10gPSBibG9jayAv
-IGRpcmVjdF9ibGtzOwo+Pj4gIAkJbm9mZnNldFtuXSA9IDQgKyBvZmZzZXRbbiAtIDFdOwo+Pj4g
-IAkJb2Zmc2V0W25dID0gYmxvY2sgJSBkaXJlY3RfYmxrczsKPj4+ICAJCWxldmVsID0gMjsKPj4+
-IC0JCWdvdG8gZ290Owo+Pj4gLQl9Cj4+PiAtCWJsb2NrIC09IGluZGlyZWN0X2Jsa3M7Cj4+PiAt
-CWlmIChibG9jayA8IGluZGlyZWN0X2Jsa3MpIHsKPj4+ICsJfSBlbHNlIGlmICgoYmxvY2sgLT0g
-aW5kaXJlY3RfYmxrcykgPCBpbmRpcmVjdF9ibGtzKSB7Cj4+PiAgCQlvZmZzZXRbbisrXSA9IE5P
-REVfSU5EMl9CTE9DSzsKPj4+ICAJCW5vZmZzZXRbbl0gPSA0ICsgZHB0cnNfcGVyX2JsazsKPj4+
-ICAJCW9mZnNldFtuKytdID0gYmxvY2sgLyBkaXJlY3RfYmxrczsKPj4+ICAJCW5vZmZzZXRbbl0g
-PSA1ICsgZHB0cnNfcGVyX2JsayArIG9mZnNldFtuIC0gMV07Cj4+PiAgCQlvZmZzZXRbbl0gPSBi
-bG9jayAlIGRpcmVjdF9ibGtzOwo+Pj4gIAkJbGV2ZWwgPSAyOwo+Pj4gLQkJZ290byBnb3Q7Cj4+
-PiAtCX0KPj4+IC0JYmxvY2sgLT0gaW5kaXJlY3RfYmxrczsKPj4+IC0JaWYgKGJsb2NrIDwgZGlu
-ZGlyZWN0X2Jsa3MpIHsKPj4+ICsJfSBlbHNlIGlmICgoYmxvY2sgLT0gaW5kaXJlY3RfYmxrcykg
-PCBkaW5kaXJlY3RfYmxrcykgewo+Pj4gIAkJb2Zmc2V0W24rK10gPSBOT0RFX0RJTkRfQkxPQ0s7
-Cj4+PiAgCQlub2Zmc2V0W25dID0gNSArIChkcHRyc19wZXJfYmxrICogMik7Cj4+PiAgCQlvZmZz
-ZXRbbisrXSA9IGJsb2NrIC8gaW5kaXJlY3RfYmxrczsKPj4+IEBAIC01NzcsMTEgKzU2MiwxMCBA
-QCBzdGF0aWMgaW50IGdldF9ub2RlX3BhdGgoc3RydWN0IGlub2RlICppbm9kZSwgbG9uZyBibG9j
-aywKPj4+ICAJCQkgICAgICBvZmZzZXRbbiAtIDFdOwo+Pj4gIAkJb2Zmc2V0W25dID0gYmxvY2sg
-JSBkaXJlY3RfYmxrczsKPj4+ICAJCWxldmVsID0gMzsKPj4+IC0JCWdvdG8gZ290Owo+Pj4gIAl9
-IGVsc2Ugewo+Pj4gIAkJcmV0dXJuIC1FMkJJRzsKPj4+ICAJfQo+Pj4gLWdvdDoKPj4+ICsKPj4+
-ICAJcmV0dXJuIGxldmVsOwo+Pj4gIH0KPj4+Cj4+Pgo+IAoKCi0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LQpDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3Js
-ZCdzIG1vc3QKZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3JnISBodHRwOi8vc2RtLmxp
-bmsvc2xhc2hkb3QKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5z
-b3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGlu
-Zm8vbGludXgtZjJmcy1kZXZlbAo=
+Hi Park,
+
+On 2018/3/24 14:55, Ju Hyung Park wrote:
+> Hi Chao,
+> 
+> Sorry myself as well for the late reply :)
+> Got caught up with something.
+> 
+>> Like .so?
+> 
+> Yeah, that makes sense.
+> I've reran the command without the size limit.
+> 
+>>From Ubuntu, I think we can add '*.pyc' files as it's compiled Python
+> bytecode format.
+>>From Android, I saw some new '*.cnt' files which are just jpeg files.
+> Notably, Facebook, Skype, Tumblr and Twitter uses it.
+> 
+> Everything else seemed not that much interesting.
+> 
+>> I agree that we'd better support the superset list of common static file, but
+>> also I hope there is flexible usage of common list, old list and self defined
+>> list, so I think we'd better leave enough free space of cold list to let user
+>> define private cold file type extension as they wish, meanwhile support an
+>> option to make user have a chance to choose the common list or old list.
+> 
+> If I understood you correctly, you want to leave an option for the old list
+> so that users have more room to add many more extensions, correct?
+
+Yup.
+
+> 
+> If so, how about just leaving the old list and move the new ones to
+> the kernel code?
+
+Do you mean we need add a new option to enable common list? e.g.
+
+-o extlist=classic means we enable thin cold/hot file type list, mostly we
+recommended enable this in android system.
+-o extlist=full means we enable full cold/hot file type list, it is recommended
+in other system, like server or pc.
+
+Like this?
+
+Thanks,
+
+> As I said in the previous comment, I don't think it makes sense to
+> ship new lists only to at the time of mkfs.
+> We can ship new lists as we update f2fs kernel code.
+> 
+> While the new version of f2fs allows users to dynamically add or
+> remove extensions,
+> it doesn't ship the new common lists.
+> 
+> Thanks.
+> 
+> On Wed, Mar 21, 2018 at 9:00 PM, Chao Yu <yuchao0@huawei.com> wrote:
+>> Hi Park,
+>>
+>> Sorry for late replying.
+>>
+>> On 2018/3/19 11:53, Ju Hyung Park wrote:
+>>> Hi Chao,
+>>>
+>>>> Do you run this script in android environment to get the cold type?
+>>> Yes, both on Ubuntu and Android(on /data with root permission).
+>>>
+>>>> Actually, I doubt that '+1M' condition can't indicate that the file is cold or
+>>>> not, and after run this script in my cell phone,
+>>> Would it make sense to set a file that's < 1M as cold?
+>>
+>> Like .so?
+>>
+>>> I didn't think so. Please let me know if I'm wrong.
+>>>
+>>>> I didn't see so many type as your patch adds.
+>>> Of course, most of those were added from vlc and p7zip.
+>>> There are tons more, but I added ones that are most common.
+>>> While I personally don't have that much many types myself as well,
+>>> I can easily see one having those extensions stored under f2fs.
+>>>
+>>> Previous list was not enough, imo.
+>>> (After running the command, I've added exo and ?dex files for Android.)
+>>>
+>>>> If that is a common cold file type list that user may not do random updates in
+>>>> the file after its creation,
+>>> That's exactly what I intended.
+>>>
+>>>> I suggest that we can add one common list instead
+>>>> of changing old one controlled by mkfs option
+>>> The new list is superset of the old list.
+>>> A few extensions were removed as those are mostly deprecated formats
+>>> and to make room for much more important extensions to be added such as m4a.
+>>
+>> I agree that we'd better support the superset list of common static file, but
+>> also I hope there is flexible usage of common list, old list and self defined
+>> list, so I think we'd better leave enough free space of cold list to let user
+>> define private cold file type extension as they wish, meanwhile support an
+>> option to make user have a chance to choose the common list or old list.
+>>
+>> How do you think?
+>>
+>> Hi Jaegeuk, what's your opinion?
+>>
+>> Thanks,
+>>
+>>>
+>>> Thanks.
+>>>
+>>>
+>>> On Mon, Mar 19, 2018 at 12:42 PM, Chao Yu <yuchao0@huawei.com> wrote:
+>>>> Hi Park,
+>>>>
+>>>> On 2018/3/17 23:02, Park Ju Hyung wrote:
+>>>>> Those formats are large in size and rarely updated.
+>>>>>
+>>>>> Formats such as tar and zip were intentionally excluded as
+>>>>> those are capable of random updates.
+>>>>>
+>>>>> (Added from vlc, p7zip and running
+>>>>> 'find . -type f -size +1M |
+>>>>>     while read FILE; do echo ${FILE##*.}; done |
+>>>>>     sort | uniq -c | sort -nr'
+>>>>> manually)
+>>>>
+>>>> Do you run this script in android environment to get the cold type?
+>>>>
+>>>> Actually, I doubt that '+1M' condition can't indicate that the file is cold or
+>>>> not, and after run this script in my cell phone, I didn't see so many type as
+>>>> your patch adds.
+>>>>
+>>>> If that is a common cold file type list that user may not do random updates in
+>>>> the file after its creation, I suggest that we can add one common list instead
+>>>> of changing old one controlled by mkfs option, anyway, to use which one, the
+>>>> option can be decided by user.
+>>>>
+>>>> Thanks,
+>>>>
+>>>>>
+>>>>> Signed-off-by: Park Ju Hyung <qkrwngud825@gmail.com>
+>>>>> ---
+>>>>>  mkfs/f2fs_format.c | 86 ++++++++++++++++++++++++++++++++++++++++--------------
+>>>>>  1 file changed, 64 insertions(+), 22 deletions(-)
+>>>>>
+>>>>> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+>>>>> index 65692bb..3c7ce16 100644
+>>>>> --- a/mkfs/f2fs_format.c
+>>>>> +++ b/mkfs/f2fs_format.c
+>>>>> @@ -37,34 +37,76 @@ struct f2fs_checkpoint *cp;
+>>>>>
+>>>>>  static unsigned int quotatype_bits = 0;
+>>>>>
+>>>>> -const char *media_ext_lists[] = {
+>>>>> -     "jpg",
+>>>>> -     "gif",
+>>>>> -     "png",
+>>>>> +const char *cold_ext_lists[] = {
+>>>>> +     /* video */
+>>>>>       "avi",
+>>>>>       "divx",
+>>>>> -     "mp4",
+>>>>> -     "mp3",
+>>>>> -     "3gp",
+>>>>> -     "wmv",
+>>>>> -     "wma",
+>>>>> -     "mpeg",
+>>>>> +     "flv",
+>>>>> +     "m2ts",
+>>>>> +     "m4p",
+>>>>> +     "m4v",
+>>>>>       "mkv",
+>>>>>       "mov",
+>>>>> -     "asx",
+>>>>> -     "asf",
+>>>>> -     "wmx",
+>>>>> -     "svi",
+>>>>> -     "wvx",
+>>>>> -     "wm",
+>>>>> +     "mp4",
+>>>>> +     "mpeg",
+>>>>> +     "mpeg4",
+>>>>>       "mpg",
+>>>>> -     "mpe",
+>>>>> -     "rm",
+>>>>>       "ogg",
+>>>>> +     "ogm",
+>>>>> +     "ogv",
+>>>>> +     "ts",
+>>>>> +     "vob",
+>>>>> +     "wmb",
+>>>>> +     "wmv",
+>>>>> +     "webm",
+>>>>> +
+>>>>> +     /* audio */
+>>>>> +     "aac",
+>>>>> +     "ac3",
+>>>>> +     "dts",
+>>>>> +     "flac",
+>>>>> +     "m4a",
+>>>>> +     "mka",
+>>>>> +     "mp3",
+>>>>> +     "oga",
+>>>>> +     "wav",
+>>>>> +     "wma",
+>>>>> +
+>>>>> +     /* image */
+>>>>> +     "bmp",
+>>>>> +     "gif",
+>>>>> +     "jpg",
+>>>>>       "jpeg",
+>>>>> -     "video",
+>>>>> -     "apk",  /* for android system */
+>>>>> -     "so",   /* for android system */
+>>>>> +     "png",
+>>>>> +     "svg",
+>>>>> +     "webp",
+>>>>> +
+>>>>> +     /* archive */
+>>>>> +     "7z",
+>>>>> +     "a",
+>>>>> +     "deb",
+>>>>> +     "gz",
+>>>>> +     "gzip",
+>>>>> +     "iso",
+>>>>> +     "jar",
+>>>>> +     "lzma",
+>>>>> +     "rar",
+>>>>> +     "tgz",
+>>>>> +     "txz",
+>>>>> +     "udf",
+>>>>> +     "xz",
+>>>>> +
+>>>>> +     /* other */
+>>>>> +     "pdf",
+>>>>> +     "ttf",
+>>>>> +     "ttc",
+>>>>> +
+>>>>> +     /* android */
+>>>>> +     "apk",
+>>>>> +     "exo", // YouTube
+>>>>> +     "odex", // Android RunTime
+>>>>> +     "vdex", // Android RunTime
+>>>>> +     "so",
+>>>>>       NULL
+>>>>>  };
+>>>>>
+>>>>> @@ -74,7 +116,7 @@ const char *hot_ext_lists[] = {
+>>>>>  };
+>>>>>
+>>>>>  const char **default_ext_list[] = {
+>>>>> -     media_ext_lists,
+>>>>> +     cold_ext_lists,
+>>>>>       hot_ext_lists
+>>>>>  };
+>>>>>
+>>>>>
+>>>>
+>>>
+>>> .
+>>>
+>>
+> 
+> .
+> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
