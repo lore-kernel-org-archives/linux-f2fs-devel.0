@@ -1,23 +1,22 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v10 53/62] dax: dax_insert_mapping_entry always
- succeeds
-Date: Thu, 29 Mar 2018 20:42:36 -0700
-Message-ID: <20180330034245.10462-54-willy@infradead.org>
+Subject: [PATCH v10 15/62] xarray: Add xas_create_range
+Date: Thu, 29 Mar 2018 20:41:58 -0700
+Message-ID: <20180330034245.10462-16-willy@infradead.org>
 References: <20180330034245.10462-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1f1kwf-0004Pj-V8
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:17 +0000
+ (envelope-from <willy@infradead.org>) id 1f1kwk-00084X-DB
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:22 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f1kwe-001iQ1-F2
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:17 +0000
+ id 1f1kwj-001iRJ-3K
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:22 +0000
 In-Reply-To: <20180330034245.10462-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,67 +32,61 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-It does not return an error, so we don't need to check the return value
-for IS_ERR().
+This hopefully temporary function is useful for users who have not yet
+been converted to multi-index entries.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/dax.c | 16 +---------------
- 1 file changed, 1 insertion(+), 15 deletions(-)
+ include/linux/xarray.h |  2 ++
+ lib/xarray.c           | 22 ++++++++++++++++++++++
+ 2 files changed, 24 insertions(+)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 371d50a1c14e..3bd9f624c1f8 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -994,18 +994,12 @@ static int dax_load_hole(struct address_space *mapping, void *entry,
- 	struct inode *inode = mapping->host;
- 	unsigned long vaddr = vmf->address;
- 	int ret = VM_FAULT_NOPAGE;
--	void *entry2;
- 	pfn_t pfn = pfn_to_pfn_t(my_zero_pfn(vaddr));
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index 998a5bc0cbac..18ea970ca67d 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -761,6 +761,8 @@ void xas_init_tags(const struct xa_state *);
+ bool xas_nomem(struct xa_state *, gfp_t);
+ void xas_pause(struct xa_state *);
  
--	entry2 = dax_insert_mapping_entry(mapping, vmf, entry, pfn,
-+	dax_insert_mapping_entry(mapping, vmf, entry, pfn,
- 			DAX_ZERO_PAGE, false);
--	if (IS_ERR(entry2)) {
--		ret = VM_FAULT_SIGBUS;
--		goto out;
--	}
- 
- 	vm_insert_mixed(vmf->vma, vaddr, pfn);
--out:
- 	trace_dax_load_hole(inode, vmf, ret);
- 	return ret;
++void xas_create_range(struct xa_state *, unsigned long max);
++
+ /**
+  * xas_reload() - Refetch an entry from the xarray.
+  * @xas: XArray operation state.
+diff --git a/lib/xarray.c b/lib/xarray.c
+index 7574bafbc6ff..653ab0555673 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -626,6 +626,28 @@ void *xas_create(struct xa_state *xas)
  }
-@@ -1315,10 +1309,6 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ EXPORT_SYMBOL_GPL(xas_create);
  
- 		entry = dax_insert_mapping_entry(mapping, vmf, entry, pfn,
- 						 0, write && !sync);
--		if (IS_ERR(entry)) {
--			error = PTR_ERR(entry);
--			goto error_finish_iomap;
--		}
- 
- 		/*
- 		 * If we are doing synchronous page fault and inode needs fsync,
-@@ -1402,8 +1392,6 @@ static int dax_pmd_load_hole(struct vm_fault *vmf, struct iomap *iomap,
- 	pfn = page_to_pfn_t(zero_page);
- 	ret = dax_insert_mapping_entry(mapping, vmf, entry, pfn,
- 			DAX_PMD | DAX_ZERO_PAGE, false);
--	if (IS_ERR(ret))
--		goto fallback;
- 
- 	ptl = pmd_lock(vmf->vma->vm_mm, vmf->pmd);
- 	if (!pmd_none(*(vmf->pmd))) {
-@@ -1525,8 +1513,6 @@ static int dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 
- 		entry = dax_insert_mapping_entry(mapping, vmf, entry, pfn,
- 						DAX_PMD, write && !sync);
--		if (IS_ERR(entry))
--			goto finish_iomap;
- 
- 		/*
- 		 * If we are doing synchronous page fault and inode needs fsync,
++/**
++ * xas_create_range() - Ensure that stores to this range will succeed
++ * @xas: XArray operation state.
++ * @max: The highest index to create a slot for.
++ *
++ * Creates all of the slots in the range between the current position of
++ * @xas and @max.  This is for the benefit of users who have not yet been
++ * converted to multi-index entries.
++ *
++ * The implementation is naive.
++ */
++void xas_create_range(struct xa_state *xas, unsigned long max)
++{
++	XA_STATE(tmp, xas->xa, xas->xa_index);
++
++	do {
++		xas_create(&tmp);
++		xas_set(&tmp, tmp.xa_index + XA_CHUNK_SIZE);
++	} while (tmp.xa_index < max);
++}
++EXPORT_SYMBOL_GPL(xas_create_range);
++
+ static void store_siblings(struct xa_state *xas, void *entry, void *curr,
+ 				int *countp, int *valuesp)
+ {
 -- 
 2.16.2
 
