@@ -1,88 +1,479 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: remain written times to update inode during fsync
-Date: Fri, 30 Mar 2018 18:54:17 +0800
-Message-ID: <f25729ee-cd16-0029-a8ff-1daa5b82dd06@huawei.com>
-References: <20180330055126.36202-1-jaegeuk@kernel.org>
+Subject: Re: [PATCH 1/4] mkfs.f2fs: update extension lists
+Date: Fri, 30 Mar 2018 19:19:31 +0800
+Message-ID: <6b05b240-d7d4-246f-6f44-1f6ded47c0d8@huawei.com>
+References: <20180317150257.123927-1-qkrwngud825@gmail.com>
+ <1988f12a-351a-c137-2fc3-b68ce0aefc31@huawei.com>
+ <CAD14+f3dRxjabWjzNQiOwCrqVyd-CjetcBGK-F+n=X5gEXp7ig@mail.gmail.com>
+ <4ad8459b-2e69-e385-ee3a-f4e1ba33167c@huawei.com>
+ <CAD14+f39mNqATcAyrbq-QN4hOh9QU=ZxRFTv3SyHOPDfdZDGkA@mail.gmail.com>
+ <e0a45c16-0304-ef6b-2677-766c441af7b1@huawei.com>
+ <CAD14+f0i8xGMc6pLCDtsJKjXBWRfAe-Vsg61L29BLPQqu1eSoQ@mail.gmail.com>
+ <f6617835-9d90-8fde-0f9f-37cf47f190b5@huawei.com>
+ <CAD14+f3YGY_sVSgDDpEU_0FHrEp+9LZQzDFXcA=A9PSw=4soSA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180330055126.36202-1-jaegeuk@kernel.org>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1f1s4N-0002SR-N9
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 11:19:43 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1f1s4K-003GLO-2B
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 11:19:43 +0000
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+ by Forcepoint Email with ESMTP id 0892B902D8111
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 30 Mar 2018 19:19:29 +0800 (CST)
+In-Reply-To: <CAD14+f3YGY_sVSgDDpEU_0FHrEp+9LZQzDFXcA=A9PSw=4soSA@mail.gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Ju Hyung Park <qkrwngud825@gmail.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Jaegeuk,
+Hi Park,
 
-On 2018/3/30 13:51, Jaegeuk Kim wrote:
-> This fixes xfstests/generic/392.
+On 2018/3/29 23:54, Ju Hyung Park wrote:
+> Hi Chao,
+> 
+>> I think this is real hardcoded one
+> 
+> Agreed, but I can't figure out a better way of doing this.
+> I still don't think fixing it at mkfs point isn't a good idea.
+> 
+> Doing this entirely on the userspace also won't make much sense since
+> I would not trust the distros to ship "good extension lists".
 
-Hmm... Could you please give more details about this issue and solution in
-commit message, since I can catch up the solution only with the code.
+Hmm, if user can not trust these recommended extension list, we can introduce
+mount option to let user to choose to disable all these default extensions, and
+do the configuration with -e to add their own extensions. Once they want to
+update the list, sysfs entry will be recommended to make change.
+
+> 
+>> which will be hard to configure with if user
+>> don't want this list at all.
+> 
+> The new list is very conservative.
+> Stuffs like .tar and .zip, which most users won't randomly write to,
+> were excluded intentionally just by the fact that
+> those are *capable* of random updates.
+> Even compression methods like .bz2 were excluded since those are
+> consisted of independent compressed blocks,
+> which would mean random updates might be possible.
+> 
+> I don't see why anyone would want to disable any of those,
+> (even video editors won't be able to randomly write on mp4/mkv files)
+> but they are still free to do so with the sysfs interface.
+
+Of course, but I doubt that in some private system, people may define .mp4 as
+own extension of one kind of non-audio file, and do not need to add this type
+extension, I think our filesystem should consider to allow user's custom
+extension, instead of current hardcoded one.
+
+As I said, now we'd better to add a option in mkfs to disable default list
+first. If you have time to work on this, I'm glad to review the patch.;)
+
+> 
+> The way I see it is that doing this in the kernel's default
+> should be fine with almost every single users.
+> 
+>> we have to use mount option
+> 
+> Adding a mount option to bypass and disable
+> any sort of kernelspace / mkfs list would be also nice.
+> 
+>> We can add an new mkfs option to disable old common list,
+> 
+> This would be also nice.
+> The current code only appends user's list on the existing list.
+> 
+>> then user can
+>> enable/disable cold/hot file type as they prefer on mkfs/run-time.
+> 
+> My point was that most users won't even know that the list has
+> changed from f2fs-tools.
+> Some users won't even aware of cold/hot concept in f2fs.
+> If we do this from the kernel, just using the latest version of f2fs
+> will bring their extension list up-to-date.
+> 
+>> One question, how can you handle the conflict in between old list generated
+>> during mkfs and new common list in run-time kernel?
+> 
+> Valid point, but I think the added overhead of comparing both lists,
+> possibly re-comparing the same extension, would be negligible.
+> Can strcmp'ing ~70 entries be a considerable amount of overhead?
+
+What I mean is we'd better to unify the list into one place, now, I think
+default place in super block is not bad. If we add one hardcoded list, we will
+hard to know which one is deleted by user.
+
+Before:
+thin: .mp4, .mp3...
+
+User disable .mp4 extension
+thin list: .mp3...
+.mp4 will not be treated as cold file.
+
+After:
+thin: .mp4, .mp3...
+rich: .mp4, .mp3...
+
+User disable .mp4 extension
+thin list: .mp3...
+rich list: .mp4, .mp3...
+
+.mp4 will still be treated as cold file, since it is in rich list
+
+Although, we can tag .mp4 is non-cold file in thin list, but after that, the
+code logic become more complicate, and layout is be more mess.
 
 Thanks,
 
 > 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/f2fs.h  | 15 +++++++++++++++
->  fs/f2fs/inode.c |  4 ++++
->  2 files changed, 19 insertions(+)
+> Thanks.
 > 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 000f93f6767e..675c39d85111 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -664,6 +664,7 @@ struct f2fs_inode_info {
->  	kprojid_t i_projid;		/* id for project quota */
->  	int i_inline_xattr_size;	/* inline xattr size */
->  	struct timespec i_crtime;	/* inode creation time */
-> +	struct timespec i_disk_time[4];	/* inode disk times */
->  };
->  
->  static inline void get_extent_info(struct extent_info *ext,
-> @@ -2457,6 +2458,11 @@ static inline void clear_file(struct inode *inode, int type)
->  	f2fs_mark_inode_dirty_sync(inode, true);
->  }
->  
-> +static inline bool time_equal(struct timespec a, struct timespec b)
-> +{
-> +	return (a.tv_sec == b.tv_sec) && (a.tv_nsec == b.tv_nsec);
-> +}
-> +
->  static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
->  {
->  	bool ret;
-> @@ -2474,6 +2480,15 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
->  			i_size_read(inode) & ~PAGE_MASK)
->  		return false;
->  
-> +	if (!time_equal(F2FS_I(inode)->i_disk_time[0], inode->i_atime))
-> +		return false;
-> +	if (!time_equal(F2FS_I(inode)->i_disk_time[1], inode->i_ctime))
-> +		return false;
-> +	if (!time_equal(F2FS_I(inode)->i_disk_time[2], inode->i_mtime))
-> +		return false;
-> +	if (!time_equal(F2FS_I(inode)->i_disk_time[3], F2FS_I(inode)->i_crtime))
-> +		return false;
-> +
->  	down_read(&F2FS_I(inode)->i_sem);
->  	ret = F2FS_I(inode)->last_disk_size == i_size_read(inode);
->  	up_read(&F2FS_I(inode)->i_sem);
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index 401f09ccce7e..70aba580f4b0 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -444,6 +444,10 @@ void update_inode(struct inode *inode, struct page *node_page)
->  	if (inode->i_nlink == 0)
->  		clear_inline_node(node_page);
->  
-> +	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
-> +	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
-> +	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
-> +	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
->  }
->  
->  void update_inode_page(struct inode *inode)
+> On Thu, Mar 29, 2018 at 1:04 PM, Chao Yu <yuchao0@huawei.com> wrote:
+>> Hi Park,
+>>
+>> On 2018/3/29 10:18, Ju Hyung Park wrote:
+>>> Hi Chao.
+>>>
+>>>> Do you mean we need add a new option to enable common list?
+>>>
+>>> No. I meant to move the list to the kernelspace's fs/f2fs or
+>>> include/linux/f2fs_fs.h.
+>>
+>> I think this is real hardcoded one, which will be hard to configure with if user
+>> don't want this list at all. How can you disable partial type in this common
+>> list? we have to use mount option or sysfs entry to do this at every mount time...
+>>
+>>> This eliminates the concern of the list getting too big and exceeding
+>>> the 64 limit,
+>>> and we can modify the list upon shipping new versions of f2fs.
+>>>
+>>> As I complained multiple times before,
+>>> I simply don't think that this list should be hardcoded at the time of mkfs.
+>>>
+>>> While users can still dynamically add/remove some extensions,
+>>> they can still have an older version of the "common list",
+>>> which then they have to use the sysfs interface everytime
+>>> whenever we update this list on mkfs.f2fs.
+>>
+>> We can add an new mkfs option to disable old common list, then user can
+>> enable/disable cold/hot file type as they prefer on mkfs/run-time.
+>>
+>>>
+>>> I'm not proposing to remove the list altogether in mkfs.f2fs.
+>>> I'm proposing to leave the old list in f2fs-tools, and write the new
+>>> list to the kernelspace code.
+>>> This way, older version of f2fs will still remain properly working.
+>>
+>> One question, how can you handle the conflict in between old list generated
+>> during mkfs and new common list in run-time kernel?
+>>
+>> Thanks,
+>>
+>>>
+>>> I'd love to hear Jaegeuk's thoughts on this.
+>>>
+>>>> -o extlist=classic means we enable thin cold/hot file type list, mostly we
+>>>> recommended enable this in android system.
+>>>
+>>> I strongly disagree with this.
+>>> Even more so with the case of Android,
+>>> the users/OEMs won't typically add more entries.
+>>>
+>>> And the new list is very relevant on Android as well imo.
+>>>
+>>> Thanks.
+>>>
+>>> On Wed, Mar 28, 2018 at 11:40 AM, Chao Yu <yuchao0@huawei.com> wrote:
+>>>> Hi Park,
+>>>>
+>>>> On 2018/3/24 14:55, Ju Hyung Park wrote:
+>>>>> Hi Chao,
+>>>>>
+>>>>> Sorry myself as well for the late reply :)
+>>>>> Got caught up with something.
+>>>>>
+>>>>>> Like .so?
+>>>>>
+>>>>> Yeah, that makes sense.
+>>>>> I've reran the command without the size limit.
+>>>>>
+>>>>> >From Ubuntu, I think we can add '*.pyc' files as it's compiled Python
+>>>>> bytecode format.
+>>>>> >From Android, I saw some new '*.cnt' files which are just jpeg files.
+>>>>> Notably, Facebook, Skype, Tumblr and Twitter uses it.
+>>>>>
+>>>>> Everything else seemed not that much interesting.
+>>>>>
+>>>>>> I agree that we'd better support the superset list of common static file, but
+>>>>>> also I hope there is flexible usage of common list, old list and self defined
+>>>>>> list, so I think we'd better leave enough free space of cold list to let user
+>>>>>> define private cold file type extension as they wish, meanwhile support an
+>>>>>> option to make user have a chance to choose the common list or old list.
+>>>>>
+>>>>> If I understood you correctly, you want to leave an option for the old list
+>>>>> so that users have more room to add many more extensions, correct?
+>>>>
+>>>> Yup.
+>>>>
+>>>>>
+>>>>> If so, how about just leaving the old list and move the new ones to
+>>>>> the kernel code?
+>>>>
+>>>> Do you mean we need add a new option to enable common list? e.g.
+>>>>
+>>>> -o extlist=classic means we enable thin cold/hot file type list, mostly we
+>>>> recommended enable this in android system.
+>>>> -o extlist=full means we enable full cold/hot file type list, it is recommended
+>>>> in other system, like server or pc.
+>>>>
+>>>> Like this?
+>>>>
+>>>> Thanks,
+>>>>
+>>>>> As I said in the previous comment, I don't think it makes sense to
+>>>>> ship new lists only to at the time of mkfs.
+>>>>> We can ship new lists as we update f2fs kernel code.
+>>>>>
+>>>>> While the new version of f2fs allows users to dynamically add or
+>>>>> remove extensions,
+>>>>> it doesn't ship the new common lists.
+>>>>>
+>>>>> Thanks.
+>>>>>
+>>>>> On Wed, Mar 21, 2018 at 9:00 PM, Chao Yu <yuchao0@huawei.com> wrote:
+>>>>>> Hi Park,
+>>>>>>
+>>>>>> Sorry for late replying.
+>>>>>>
+>>>>>> On 2018/3/19 11:53, Ju Hyung Park wrote:
+>>>>>>> Hi Chao,
+>>>>>>>
+>>>>>>>> Do you run this script in android environment to get the cold type?
+>>>>>>> Yes, both on Ubuntu and Android(on /data with root permission).
+>>>>>>>
+>>>>>>>> Actually, I doubt that '+1M' condition can't indicate that the file is cold or
+>>>>>>>> not, and after run this script in my cell phone,
+>>>>>>> Would it make sense to set a file that's < 1M as cold?
+>>>>>>
+>>>>>> Like .so?
+>>>>>>
+>>>>>>> I didn't think so. Please let me know if I'm wrong.
+>>>>>>>
+>>>>>>>> I didn't see so many type as your patch adds.
+>>>>>>> Of course, most of those were added from vlc and p7zip.
+>>>>>>> There are tons more, but I added ones that are most common.
+>>>>>>> While I personally don't have that much many types myself as well,
+>>>>>>> I can easily see one having those extensions stored under f2fs.
+>>>>>>>
+>>>>>>> Previous list was not enough, imo.
+>>>>>>> (After running the command, I've added exo and ?dex files for Android.)
+>>>>>>>
+>>>>>>>> If that is a common cold file type list that user may not do random updates in
+>>>>>>>> the file after its creation,
+>>>>>>> That's exactly what I intended.
+>>>>>>>
+>>>>>>>> I suggest that we can add one common list instead
+>>>>>>>> of changing old one controlled by mkfs option
+>>>>>>> The new list is superset of the old list.
+>>>>>>> A few extensions were removed as those are mostly deprecated formats
+>>>>>>> and to make room for much more important extensions to be added such as m4a.
+>>>>>>
+>>>>>> I agree that we'd better support the superset list of common static file, but
+>>>>>> also I hope there is flexible usage of common list, old list and self defined
+>>>>>> list, so I think we'd better leave enough free space of cold list to let user
+>>>>>> define private cold file type extension as they wish, meanwhile support an
+>>>>>> option to make user have a chance to choose the common list or old list.
+>>>>>>
+>>>>>> How do you think?
+>>>>>>
+>>>>>> Hi Jaegeuk, what's your opinion?
+>>>>>>
+>>>>>> Thanks,
+>>>>>>
+>>>>>>>
+>>>>>>> Thanks.
+>>>>>>>
+>>>>>>>
+>>>>>>> On Mon, Mar 19, 2018 at 12:42 PM, Chao Yu <yuchao0@huawei.com> wrote:
+>>>>>>>> Hi Park,
+>>>>>>>>
+>>>>>>>> On 2018/3/17 23:02, Park Ju Hyung wrote:
+>>>>>>>>> Those formats are large in size and rarely updated.
+>>>>>>>>>
+>>>>>>>>> Formats such as tar and zip were intentionally excluded as
+>>>>>>>>> those are capable of random updates.
+>>>>>>>>>
+>>>>>>>>> (Added from vlc, p7zip and running
+>>>>>>>>> 'find . -type f -size +1M |
+>>>>>>>>>     while read FILE; do echo ${FILE##*.}; done |
+>>>>>>>>>     sort | uniq -c | sort -nr'
+>>>>>>>>> manually)
+>>>>>>>>
+>>>>>>>> Do you run this script in android environment to get the cold type?
+>>>>>>>>
+>>>>>>>> Actually, I doubt that '+1M' condition can't indicate that the file is cold or
+>>>>>>>> not, and after run this script in my cell phone, I didn't see so many type as
+>>>>>>>> your patch adds.
+>>>>>>>>
+>>>>>>>> If that is a common cold file type list that user may not do random updates in
+>>>>>>>> the file after its creation, I suggest that we can add one common list instead
+>>>>>>>> of changing old one controlled by mkfs option, anyway, to use which one, the
+>>>>>>>> option can be decided by user.
+>>>>>>>>
+>>>>>>>> Thanks,
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: Park Ju Hyung <qkrwngud825@gmail.com>
+>>>>>>>>> ---
+>>>>>>>>>  mkfs/f2fs_format.c | 86 ++++++++++++++++++++++++++++++++++++++++--------------
+>>>>>>>>>  1 file changed, 64 insertions(+), 22 deletions(-)
+>>>>>>>>>
+>>>>>>>>> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+>>>>>>>>> index 65692bb..3c7ce16 100644
+>>>>>>>>> --- a/mkfs/f2fs_format.c
+>>>>>>>>> +++ b/mkfs/f2fs_format.c
+>>>>>>>>> @@ -37,34 +37,76 @@ struct f2fs_checkpoint *cp;
+>>>>>>>>>
+>>>>>>>>>  static unsigned int quotatype_bits = 0;
+>>>>>>>>>
+>>>>>>>>> -const char *media_ext_lists[] = {
+>>>>>>>>> -     "jpg",
+>>>>>>>>> -     "gif",
+>>>>>>>>> -     "png",
+>>>>>>>>> +const char *cold_ext_lists[] = {
+>>>>>>>>> +     /* video */
+>>>>>>>>>       "avi",
+>>>>>>>>>       "divx",
+>>>>>>>>> -     "mp4",
+>>>>>>>>> -     "mp3",
+>>>>>>>>> -     "3gp",
+>>>>>>>>> -     "wmv",
+>>>>>>>>> -     "wma",
+>>>>>>>>> -     "mpeg",
+>>>>>>>>> +     "flv",
+>>>>>>>>> +     "m2ts",
+>>>>>>>>> +     "m4p",
+>>>>>>>>> +     "m4v",
+>>>>>>>>>       "mkv",
+>>>>>>>>>       "mov",
+>>>>>>>>> -     "asx",
+>>>>>>>>> -     "asf",
+>>>>>>>>> -     "wmx",
+>>>>>>>>> -     "svi",
+>>>>>>>>> -     "wvx",
+>>>>>>>>> -     "wm",
+>>>>>>>>> +     "mp4",
+>>>>>>>>> +     "mpeg",
+>>>>>>>>> +     "mpeg4",
+>>>>>>>>>       "mpg",
+>>>>>>>>> -     "mpe",
+>>>>>>>>> -     "rm",
+>>>>>>>>>       "ogg",
+>>>>>>>>> +     "ogm",
+>>>>>>>>> +     "ogv",
+>>>>>>>>> +     "ts",
+>>>>>>>>> +     "vob",
+>>>>>>>>> +     "wmb",
+>>>>>>>>> +     "wmv",
+>>>>>>>>> +     "webm",
+>>>>>>>>> +
+>>>>>>>>> +     /* audio */
+>>>>>>>>> +     "aac",
+>>>>>>>>> +     "ac3",
+>>>>>>>>> +     "dts",
+>>>>>>>>> +     "flac",
+>>>>>>>>> +     "m4a",
+>>>>>>>>> +     "mka",
+>>>>>>>>> +     "mp3",
+>>>>>>>>> +     "oga",
+>>>>>>>>> +     "wav",
+>>>>>>>>> +     "wma",
+>>>>>>>>> +
+>>>>>>>>> +     /* image */
+>>>>>>>>> +     "bmp",
+>>>>>>>>> +     "gif",
+>>>>>>>>> +     "jpg",
+>>>>>>>>>       "jpeg",
+>>>>>>>>> -     "video",
+>>>>>>>>> -     "apk",  /* for android system */
+>>>>>>>>> -     "so",   /* for android system */
+>>>>>>>>> +     "png",
+>>>>>>>>> +     "svg",
+>>>>>>>>> +     "webp",
+>>>>>>>>> +
+>>>>>>>>> +     /* archive */
+>>>>>>>>> +     "7z",
+>>>>>>>>> +     "a",
+>>>>>>>>> +     "deb",
+>>>>>>>>> +     "gz",
+>>>>>>>>> +     "gzip",
+>>>>>>>>> +     "iso",
+>>>>>>>>> +     "jar",
+>>>>>>>>> +     "lzma",
+>>>>>>>>> +     "rar",
+>>>>>>>>> +     "tgz",
+>>>>>>>>> +     "txz",
+>>>>>>>>> +     "udf",
+>>>>>>>>> +     "xz",
+>>>>>>>>> +
+>>>>>>>>> +     /* other */
+>>>>>>>>> +     "pdf",
+>>>>>>>>> +     "ttf",
+>>>>>>>>> +     "ttc",
+>>>>>>>>> +
+>>>>>>>>> +     /* android */
+>>>>>>>>> +     "apk",
+>>>>>>>>> +     "exo", // YouTube
+>>>>>>>>> +     "odex", // Android RunTime
+>>>>>>>>> +     "vdex", // Android RunTime
+>>>>>>>>> +     "so",
+>>>>>>>>>       NULL
+>>>>>>>>>  };
+>>>>>>>>>
+>>>>>>>>> @@ -74,7 +116,7 @@ const char *hot_ext_lists[] = {
+>>>>>>>>>  };
+>>>>>>>>>
+>>>>>>>>>  const char **default_ext_list[] = {
+>>>>>>>>> -     media_ext_lists,
+>>>>>>>>> +     cold_ext_lists,
+>>>>>>>>>       hot_ext_lists
+>>>>>>>>>  };
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>
+>>>>>>> .
+>>>>>>>
+>>>>>>
+>>>>>
+>>>>> .
+>>>>>
+>>>>
+>>>
+>>> .
+>>>
+>>
 > 
+> .
+> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
