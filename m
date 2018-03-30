@@ -1,7 +1,8 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v10 45/62] shmem: Comment fixups
-Date: Thu, 29 Mar 2018 20:42:28 -0700
-Message-ID: <20180330034245.10462-46-willy@infradead.org>
+Subject: [PATCH v10 57/62] dax: Convert dax_layout_busy_page to
+ XArray
+Date: Thu, 29 Mar 2018 20:42:40 -0700
+Message-ID: <20180330034245.10462-58-willy@infradead.org>
 References: <20180330034245.10462-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,13 +11,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1f1kwg-0001Mc-3A
+ (envelope-from <willy@infradead.org>) id 1f1kwg-0001Ng-JJ
  for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:18 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f1kwe-004tQS-OZ
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:17 +0000
+ id 1f1kwf-001iQw-7r
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:18 +0000
 In-Reply-To: <20180330034245.10462-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -32,66 +33,98 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Remove the last mentions of radix tree from various comments.
+Instead of using a pagevec, just use the XArray iterators.  Add a
+conditional rescheduling point which probably should have been there in
+the original.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- mm/shmem.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/dax.c | 54 ++++++++++++++++++++----------------------------------
+ 1 file changed, 20 insertions(+), 34 deletions(-)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index cffb3b6294b7..4735f8ebeb46 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -752,7 +752,7 @@ void shmem_unlock_mapping(struct address_space *mapping)
- }
- 
- /*
-- * Remove range of pages and swap entries from radix tree, and free them.
-+ * Remove range of pages and swap entries from page cache, and free them.
-  * If !unfalloc, truncate or punch hole; if unfalloc, undo failed fallocate.
+diff --git a/fs/dax.c b/fs/dax.c
+index 54ec283f5031..825bf153f499 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -607,11 +607,10 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
   */
- static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
-@@ -1127,10 +1127,10 @@ static int shmem_unuse_inode(struct shmem_inode_info *info,
- 		 * We needed to drop mutex to make that restrictive page
- 		 * allocation, but the inode might have been freed while we
- 		 * dropped it: although a racing shmem_evict_inode() cannot
--		 * complete without emptying the radix_tree, our page lock
-+		 * complete without emptying the page cache, our page lock
- 		 * on this swapcache page is not enough to prevent that -
- 		 * free_swap_and_cache() of our swap entry will only
--		 * trylock_page(), removing swap from radix_tree whatever.
-+		 * trylock_page(), removing swap from page cache whatever.
- 		 *
- 		 * We must not proceed to shmem_add_to_page_cache() if the
- 		 * inode has been freed, but of course we cannot rely on
-@@ -1196,7 +1196,7 @@ int shmem_unuse(swp_entry_t swap, struct page *page)
- 			false);
- 	if (error)
- 		goto out;
--	/* No radix_tree_preload: swap entry keeps a place for page in tree */
-+	/* No memory allocation: swap entry occupies the slot for the page */
- 	error = -EAGAIN;
+ struct page *dax_layout_busy_page(struct address_space *mapping)
+ {
+-	pgoff_t	indices[PAGEVEC_SIZE];
++	XA_STATE(xas, &mapping->i_pages, 0);
++	void *entry;
++	unsigned int scanned = 0;
+ 	struct page *page = NULL;
+-	struct pagevec pvec;
+-	pgoff_t	index, end;
+-	unsigned i;
  
- 	mutex_lock(&shmem_swaplist_mutex);
-@@ -1875,7 +1875,7 @@ alloc_nohuge:		page = shmem_alloc_and_acct_page(gfp, inode,
- 		spin_unlock_irq(&info->lock);
- 		goto repeat;
+ 	/*
+ 	 * In the 'limited' case get_user_pages() for dax is disabled.
+@@ -622,9 +621,6 @@ struct page *dax_layout_busy_page(struct address_space *mapping)
+ 	if (!dax_mapping(mapping) || !mapping_mapped(mapping))
+ 		return NULL;
+ 
+-	pagevec_init(&pvec);
+-	index = 0;
+-	end = -1;
+ 	/*
+ 	 * Flush dax_layout_lock() sections to ensure all possible page
+ 	 * references have been taken, or otherwise arrange for faults
+@@ -634,36 +630,26 @@ struct page *dax_layout_busy_page(struct address_space *mapping)
+ 	unmap_mapping_range(mapping, 0, 0, 1);
+ 	synchronize_rcu();
+ 
+-	while (index < end && pagevec_lookup_entries(&pvec, mapping, index,
+-				min(end - index, (pgoff_t)PAGEVEC_SIZE),
+-				indices)) {
+-		for (i = 0; i < pagevec_count(&pvec); i++) {
+-			struct page *pvec_ent = pvec.pages[i];
+-			void *entry;
+-
+-			index = indices[i];
+-			if (index >= end)
+-				break;
+-
+-			if (!xa_is_value(pvec_ent))
+-				continue;
+-
+-			xa_lock_irq(&mapping->i_pages);
+-			entry = get_unlocked_mapping_entry(mapping, index, NULL);
+-			if (entry)
+-				page = dax_busy_page(entry);
+-			put_unlocked_mapping_entry(mapping, index, entry);
+-			xa_unlock_irq(&mapping->i_pages);
+-			if (page)
+-				break;
+-		}
+-		pagevec_remove_exceptionals(&pvec);
+-		pagevec_release(&pvec);
+-		index++;
+-
++	xas_lock_irq(&xas);
++	xas_for_each(&xas, entry, ULONG_MAX) {
++		if (!xa_is_value(entry))
++			continue;
++		if (unlikely(dax_is_locked(entry)))
++			entry = get_unlocked_entry(&xas);
++		if (entry)
++			page = dax_busy_page(entry);
++		put_unlocked_entry(&xas, entry);
+ 		if (page)
+ 			break;
++		if (++scanned % XA_CHECK_SCHED)
++			continue;
++
++		xas_pause(&xas);
++		xas_unlock_irq(&xas);
++		cond_resched();
++		xas_lock_irq(&xas);
  	}
--	if (error == -EEXIST)	/* from above or from radix_tree_insert */
-+	if (error == -EEXIST)
- 		goto repeat;
- 	return error;
++	xas_unlock_irq(&xas);
+ 	return page;
  }
-@@ -2487,7 +2487,7 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- }
- 
- /*
-- * llseek SEEK_DATA or SEEK_HOLE through the radix_tree.
-+ * llseek SEEK_DATA or SEEK_HOLE through the page cache.
-  */
- static pgoff_t shmem_seek_hole_data(struct address_space *mapping,
- 				    pgoff_t index, pgoff_t end, int whence)
+ EXPORT_SYMBOL_GPL(dax_layout_busy_page);
 -- 
 2.16.2
 
