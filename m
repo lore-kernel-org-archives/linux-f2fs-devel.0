@@ -1,22 +1,22 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v10 47/62] fs: Convert buffer to XArray
-Date: Thu, 29 Mar 2018 20:42:30 -0700
-Message-ID: <20180330034245.10462-48-willy@infradead.org>
+Subject: [PATCH v10 31/62] mm: Convert page migration to XArray
+Date: Thu, 29 Mar 2018 20:42:14 -0700
+Message-ID: <20180330034245.10462-32-willy@infradead.org>
 References: <20180330034245.10462-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1f1kwp-000871-Uh
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:27 +0000
+ (envelope-from <willy@infradead.org>) id 1f1kwm-0004RW-04
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:24 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f1kwo-004tUH-KD
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:27 +0000
+ id 1f1kwk-004tRz-Jn
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:23 +0000
 In-Reply-To: <20180330034245.10462-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -32,59 +32,131 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Mostly comment fixes, but one use of __xa_set_tag.
-
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/buffer.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ mm/migrate.c | 41 ++++++++++++++++-------------------------
+ 1 file changed, 16 insertions(+), 25 deletions(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index f3059f929dd6..5c798ecf7a39 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -585,7 +585,7 @@ void mark_buffer_dirty_inode(struct buffer_head *bh, struct inode *inode)
- EXPORT_SYMBOL(mark_buffer_dirty_inode);
+diff --git a/mm/migrate.c b/mm/migrate.c
+index bdef905b1737..16fbbffec185 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -323,7 +323,7 @@ void __migration_entry_wait(struct mm_struct *mm, pte_t *ptep,
+ 	page = migration_entry_to_page(entry);
  
- /*
-- * Mark the page dirty, and set it dirty in the radix tree, and mark the inode
-+ * Mark the page dirty, and set it dirty in the page cache, and mark the inode
-  * dirty.
-  *
-  * If warn is true, then emit a warning if the page is not uptodate and has
-@@ -602,8 +602,8 @@ void __set_page_dirty(struct page *page, struct address_space *mapping,
- 	if (page->mapping) {	/* Race with truncate? */
- 		WARN_ON_ONCE(warn && !PageUptodate(page));
- 		account_page_dirtied(page, mapping);
--		radix_tree_tag_set(&mapping->i_pages,
--				page_index(page), PAGECACHE_TAG_DIRTY);
-+		__xa_set_tag(&mapping->i_pages, page_index(page),
-+				PAGECACHE_TAG_DIRTY);
+ 	/*
+-	 * Once radix-tree replacement of page migration started, page_count
++	 * Once page cache replacement of page migration started, page_count
+ 	 * *must* be zero. And, we don't want to call wait_on_page_locked()
+ 	 * against a page without get_page().
+ 	 * So, we use get_page_unless_zero(), here. Even failed, page fault
+@@ -438,10 +438,10 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 		struct buffer_head *head, enum migrate_mode mode,
+ 		int extra_count)
+ {
++	XA_STATE(xas, &mapping->i_pages, page_index(page));
+ 	struct zone *oldzone, *newzone;
+ 	int dirty;
+ 	int expected_count = 1 + extra_count;
+-	void **pslot;
+ 
+ 	/*
+ 	 * Device public or private pages have an extra refcount as they are
+@@ -467,21 +467,16 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 	oldzone = page_zone(page);
+ 	newzone = page_zone(newpage);
+ 
+-	xa_lock_irq(&mapping->i_pages);
+-
+-	pslot = radix_tree_lookup_slot(&mapping->i_pages,
+- 					page_index(page));
++	xas_lock_irq(&xas);
+ 
+ 	expected_count += 1 + page_has_private(page);
+-	if (page_count(page) != expected_count ||
+-		radix_tree_deref_slot_protected(pslot,
+-					&mapping->i_pages.xa_lock) != page) {
+-		xa_unlock_irq(&mapping->i_pages);
++	if (page_count(page) != expected_count || xas_load(&xas) != page) {
++		xas_unlock_irq(&xas);
+ 		return -EAGAIN;
  	}
- 	xa_unlock_irqrestore(&mapping->i_pages, flags);
+ 
+ 	if (!page_ref_freeze(page, expected_count)) {
+-		xa_unlock_irq(&mapping->i_pages);
++		xas_unlock_irq(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+@@ -495,7 +490,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 	if (mode == MIGRATE_ASYNC && head &&
+ 			!buffer_migrate_lock_buffers(head, mode)) {
+ 		page_ref_unfreeze(page, expected_count);
+-		xa_unlock_irq(&mapping->i_pages);
++		xas_unlock_irq(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+@@ -523,7 +518,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 		SetPageDirty(newpage);
+ 	}
+ 
+-	radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
++	xas_store(&xas, newpage);
+ 
+ 	/*
+ 	 * Drop cache reference from old page by unfreezing
+@@ -532,7 +527,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 	 */
+ 	page_ref_unfreeze(page, expected_count - 1);
+ 
+-	xa_unlock(&mapping->i_pages);
++	xas_unlock(&xas);
+ 	/* Leave irq disabled to prevent preemption while updating stats */
+ 
+ 	/*
+@@ -572,22 +567,18 @@ EXPORT_SYMBOL(migrate_page_move_mapping);
+ int migrate_huge_page_move_mapping(struct address_space *mapping,
+ 				   struct page *newpage, struct page *page)
+ {
++	XA_STATE(xas, &mapping->i_pages, page_index(page));
+ 	int expected_count;
+-	void **pslot;
+-
+-	xa_lock_irq(&mapping->i_pages);
+-
+-	pslot = radix_tree_lookup_slot(&mapping->i_pages, page_index(page));
+ 
++	xas_lock_irq(&xas);
+ 	expected_count = 2 + page_has_private(page);
+-	if (page_count(page) != expected_count ||
+-		radix_tree_deref_slot_protected(pslot, &mapping->i_pages.xa_lock) != page) {
+-		xa_unlock_irq(&mapping->i_pages);
++	if (page_count(page) != expected_count || xas_load(&xas) != page) {
++		xas_unlock_irq(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+ 	if (!page_ref_freeze(page, expected_count)) {
+-		xa_unlock_irq(&mapping->i_pages);
++		xas_unlock_irq(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+@@ -596,11 +587,11 @@ int migrate_huge_page_move_mapping(struct address_space *mapping,
+ 
+ 	get_page(newpage);
+ 
+-	radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
++	xas_store(&xas, newpage);
+ 
+ 	page_ref_unfreeze(page, expected_count - 1);
+ 
+-	xa_unlock_irq(&mapping->i_pages);
++	xas_unlock_irq(&xas);
+ 
+ 	return MIGRATEPAGE_SUCCESS;
  }
-@@ -1066,7 +1066,7 @@ __getblk_slow(struct block_device *bdev, sector_t block,
-  * The relationship between dirty buffers and dirty pages:
-  *
-  * Whenever a page has any dirty buffers, the page's dirty bit is set, and
-- * the page is tagged dirty in its radix tree.
-+ * the page is tagged dirty in the page cache.
-  *
-  * At all times, the dirtiness of the buffers represents the dirtiness of
-  * subsections of the page.  If the page has buffers, the page dirty bit is
-@@ -1089,9 +1089,9 @@ __getblk_slow(struct block_device *bdev, sector_t block,
-  * mark_buffer_dirty - mark a buffer_head as needing writeout
-  * @bh: the buffer_head to mark dirty
-  *
-- * mark_buffer_dirty() will set the dirty bit against the buffer, then set its
-- * backing page dirty, then tag the page as dirty in its address_space's radix
-- * tree and then attach the address_space's inode to its superblock's dirty
-+ * mark_buffer_dirty() will set the dirty bit against the buffer, then set
-+ * its backing page dirty, then tag the page as dirty in the page cache
-+ * and then attach the address_space's inode to its superblock's dirty
-  * inode list.
-  *
-  * mark_buffer_dirty() is atomic.  It takes bh->b_page->mapping->private_lock,
 -- 
 2.16.2
 
