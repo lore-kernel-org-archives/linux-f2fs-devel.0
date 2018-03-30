@@ -1,23 +1,22 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v10 34/62] mm: Convert khugepaged_scan_shmem to
- XArray
-Date: Thu, 29 Mar 2018 20:42:17 -0700
-Message-ID: <20180330034245.10462-35-willy@infradead.org>
+Subject: [PATCH v10 48/62] fs: Convert writeback to XArray
+Date: Thu, 29 Mar 2018 20:42:31 -0700
+Message-ID: <20180330034245.10462-49-willy@infradead.org>
 References: <20180330034245.10462-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1f1kwf-0007yE-UD
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:17 +0000
+ (envelope-from <willy@infradead.org>) id 1f1kwe-0001LS-NH
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:16 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f1kwe-001iOs-FZ
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:17 +0000
+ id 1f1kwd-002yJi-Dn
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:16 +0000
 In-Reply-To: <20180330034245.10462-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,57 +32,62 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Slightly shorter and easier to read code.
+A couple of short loops.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- mm/khugepaged.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
+ fs/fs-writeback.c | 25 +++++++++----------------
+ 1 file changed, 9 insertions(+), 16 deletions(-)
 
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 193bacac91a8..7c6343db7de0 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1542,8 +1542,7 @@ static void khugepaged_scan_shmem(struct mm_struct *mm,
- 		pgoff_t start, struct page **hpage)
- {
- 	struct page *page = NULL;
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 4b12ba70a895..7d90d3beb591 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -339,9 +339,9 @@ static void inode_switch_wbs_work_fn(struct work_struct *work)
+ 	struct address_space *mapping = inode->i_mapping;
+ 	struct bdi_writeback *old_wb = inode->i_wb;
+ 	struct bdi_writeback *new_wb = isw->new_wb;
 -	struct radix_tree_iter iter;
++	XA_STATE(xas, &mapping->i_pages, 0);
++	struct page *page;
+ 	bool switched = false;
 -	void **slot;
-+	XA_STATE(xas, &mapping->i_pages, start);
- 	int present, swap;
- 	int node = NUMA_NO_NODE;
- 	int result = SCAN_SUCCEED;
-@@ -1552,17 +1551,11 @@ static void khugepaged_scan_shmem(struct mm_struct *mm,
- 	swap = 0;
- 	memset(khugepaged_node_load, 0, sizeof(khugepaged_node_load));
- 	rcu_read_lock();
--	radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, start) {
--		if (iter.index >= start + HPAGE_PMD_NR)
--			break;
--
--		page = radix_tree_deref_slot(slot);
--		if (radix_tree_deref_retry(page)) {
--			slot = radix_tree_iter_retry(&iter);
-+	xas_for_each(&xas, page, start + HPAGE_PMD_NR - 1) {
-+		if (xas_retry(&xas, page))
- 			continue;
--		}
  
--		if (radix_tree_exception(page)) {
-+		if (xa_is_value(page)) {
- 			if (++swap > khugepaged_max_ptes_swap) {
- 				result = SCAN_EXCEED_SWAP_PTE;
- 				break;
-@@ -1601,7 +1594,7 @@ static void khugepaged_scan_shmem(struct mm_struct *mm,
- 		present++;
- 
- 		if (need_resched()) {
--			slot = radix_tree_iter_resume(slot, &iter);
-+			xas_pause(&xas);
- 			cond_resched_rcu();
+ 	/*
+ 	 * By the time control reaches here, RCU grace period has passed
+@@ -375,25 +375,18 @@ static void inode_switch_wbs_work_fn(struct work_struct *work)
+ 	 * to possibly dirty pages while PAGECACHE_TAG_WRITEBACK points to
+ 	 * pages actually under writeback.
+ 	 */
+-	radix_tree_for_each_tagged(slot, &mapping->i_pages, &iter, 0,
+-				   PAGECACHE_TAG_DIRTY) {
+-		struct page *page = radix_tree_deref_slot_protected(slot,
+-						&mapping->i_pages.xa_lock);
+-		if (likely(page) && PageDirty(page)) {
++	xas_for_each_tag(&xas, page, ULONG_MAX, PAGECACHE_TAG_DIRTY) {
++		if (PageDirty(page)) {
+ 			dec_wb_stat(old_wb, WB_RECLAIMABLE);
+ 			inc_wb_stat(new_wb, WB_RECLAIMABLE);
  		}
  	}
+ 
+-	radix_tree_for_each_tagged(slot, &mapping->i_pages, &iter, 0,
+-				   PAGECACHE_TAG_WRITEBACK) {
+-		struct page *page = radix_tree_deref_slot_protected(slot,
+-						&mapping->i_pages.xa_lock);
+-		if (likely(page)) {
+-			WARN_ON_ONCE(!PageWriteback(page));
+-			dec_wb_stat(old_wb, WB_WRITEBACK);
+-			inc_wb_stat(new_wb, WB_WRITEBACK);
+-		}
++	xas_set(&xas, 0);
++	xas_for_each_tag(&xas, page, ULONG_MAX, PAGECACHE_TAG_WRITEBACK) {
++		WARN_ON_ONCE(!PageWriteback(page));
++		dec_wb_stat(old_wb, WB_WRITEBACK);
++		inc_wb_stat(new_wb, WB_WRITEBACK);
+ 	}
+ 
+ 	wb_get(new_wb);
 -- 
 2.16.2
 
