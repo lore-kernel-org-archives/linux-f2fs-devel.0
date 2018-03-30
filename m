@@ -1,7 +1,7 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v10 12/62] xarray: Add xa_extract
-Date: Thu, 29 Mar 2018 20:41:55 -0700
-Message-ID: <20180330034245.10462-13-willy@infradead.org>
+Subject: [PATCH v10 36/62] shmem: Convert replace to XArray
+Date: Thu, 29 Mar 2018 20:42:19 -0700
+Message-ID: <20180330034245.10462-37-willy@infradead.org>
 References: <20180330034245.10462-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,12 +10,12 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1f1kwg-0007yR-7K
+ (envelope-from <willy@infradead.org>) id 1f1kwg-0007zB-Tr
  for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:18 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f1kwe-001iQ2-OY
+ id 1f1kwf-004tRI-Hk
  for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:18 +0000
 In-Reply-To: <20180330034245.10462-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
@@ -32,120 +32,77 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-This function combines the functionality of radix_tree_gang_lookup() and
-radix_tree_gang_lookup_tagged().  It extracts entries matching the
-specified filter into a normal array.
+shmem_radix_tree_replace() is renamed to shmem_xa_replace() and
+converted to use the XArray API.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- include/linux/xarray.h |  2 ++
- lib/xarray.c           | 80 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 82 insertions(+)
+ mm/shmem.c | 22 ++++++++--------------
+ 1 file changed, 8 insertions(+), 14 deletions(-)
 
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index c8b3645c6760..864f16660785 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -227,6 +227,8 @@ void *xa_find(struct xarray *xa, unsigned long *index,
- 		unsigned long max, xa_tag_t) __attribute__((nonnull(2)));
- void *xa_find_after(struct xarray *xa, unsigned long *index,
- 		unsigned long max, xa_tag_t) __attribute__((nonnull(2)));
-+unsigned int xa_extract(struct xarray *, void **dst, unsigned long start,
-+		unsigned long max, unsigned int n, xa_tag_t);
- 
- /**
-  * xa_init() - Initialise an empty XArray.
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 73cf4c984c2d..77133bc5419f 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -1402,6 +1402,86 @@ void *xa_find_after(struct xarray *xa, unsigned long *indexp,
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 5cb52a797ea0..fced882e0b7a 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -321,24 +321,20 @@ void shmem_uncharge(struct inode *inode, long pages)
  }
- EXPORT_SYMBOL(xa_find_after);
  
-+static unsigned int xas_extract_present(struct xa_state *xas, void **dst,
-+			unsigned long max, unsigned int n)
-+{
-+	void *entry;
-+	unsigned int i = 0;
-+
-+	rcu_read_lock();
-+	xas_for_each(xas, entry, max) {
-+		if (xas_retry(xas, entry))
-+			continue;
-+		dst[i++] = entry;
-+		if (i == n)
-+			break;
-+	}
-+	rcu_read_unlock();
-+
-+	return i;
-+}
-+
-+static unsigned int xas_extract_tag(struct xa_state *xas, void **dst,
-+			unsigned long max, unsigned int n, xa_tag_t tag)
-+{
-+	void *entry;
-+	unsigned int i = 0;
-+
-+	rcu_read_lock();
-+	xas_for_each_tag(xas, entry, max, tag) {
-+		if (xas_retry(xas, entry))
-+			continue;
-+		dst[i++] = entry;
-+		if (i == n)
-+			break;
-+	}
-+	rcu_read_unlock();
-+
-+	return i;
-+}
-+
-+/**
-+ * xa_extract() - Copy selected entries from the XArray into a normal array.
-+ * @xa: The source XArray to copy from.
-+ * @dst: The buffer to copy entries into.
-+ * @start: The first index in the XArray eligible to be selected.
-+ * @max: The last index in the XArray eligible to be selected.
-+ * @n: The maximum number of entries to copy.
-+ * @filter: Selection criterion.
-+ *
-+ * Copies up to @n entries that match @filter from the XArray.  The
-+ * copied entries will have indices between @start and @max, inclusive.
-+ *
-+ * The @filter may be an XArray tag value, in which case entries which are
-+ * tagged with that tag will be copied.  It may also be %XA_PRESENT, in
-+ * which case non-NULL entries will be copied.
-+ *
-+ * The entries returned may not represent a snapshot of the XArray at a
-+ * moment in time.  For example, if another thread stores to index 5, then
-+ * index 10, calling xa_extract() may return the old contents of index 5
-+ * and the new contents of index 10.  Indices not modified while this
-+ * function is running will not be skipped.
-+ *
-+ * If you need stronger guarantees, holding the xa_lock across calls to this
-+ * function will prevent concurrent modification.
-+ *
-+ * Context: Any context.  Takes and releases the RCU lock.
-+ * Return: The number of entries copied.
-+ */
-+unsigned int xa_extract(struct xarray *xa, void **dst, unsigned long start,
-+			unsigned long max, unsigned int n, xa_tag_t filter)
-+{
-+	XA_STATE(xas, xa, start);
-+
-+	if (!n)
-+		return 0;
-+
-+	if ((__force unsigned int)filter < XA_MAX_TAGS)
-+		return xas_extract_tag(&xas, dst, max, n, filter);
-+	return xas_extract_present(&xas, dst, max, n);
-+}
-+EXPORT_SYMBOL(xa_extract);
-+
- #ifdef XA_DEBUG
- void xa_dump_node(const struct xa_node *node)
+ /*
+- * Replace item expected in radix tree by a new item, while holding tree lock.
++ * Replace item expected in xarray by a new item, while holding xa_lock.
+  */
+-static int shmem_radix_tree_replace(struct address_space *mapping,
++static int shmem_xa_replace(struct address_space *mapping,
+ 			pgoff_t index, void *expected, void *replacement)
  {
+-	struct radix_tree_node *node;
+-	void **pslot;
++	XA_STATE(xas, &mapping->i_pages, index);
+ 	void *item;
+ 
+ 	VM_BUG_ON(!expected);
+ 	VM_BUG_ON(!replacement);
+-	item = __radix_tree_lookup(&mapping->i_pages, index, &node, &pslot);
+-	if (!item)
+-		return -ENOENT;
++	item = xas_load(&xas);
+ 	if (item != expected)
+ 		return -ENOENT;
+-	__radix_tree_replace(&mapping->i_pages, node, pslot,
+-			     replacement, NULL);
++	xas_store(&xas, replacement);
+ 	return 0;
+ }
+ 
+@@ -614,8 +610,7 @@ static int shmem_add_to_page_cache(struct page *page,
+ 	} else if (!expected) {
+ 		error = radix_tree_insert(&mapping->i_pages, index, page);
+ 	} else {
+-		error = shmem_radix_tree_replace(mapping, index, expected,
+-								 page);
++		error = shmem_xa_replace(mapping, index, expected, page);
+ 	}
+ 
+ 	if (!error) {
+@@ -644,7 +639,7 @@ static void shmem_delete_from_page_cache(struct page *page, void *radswap)
+ 	VM_BUG_ON_PAGE(PageCompound(page), page);
+ 
+ 	xa_lock_irq(&mapping->i_pages);
+-	error = shmem_radix_tree_replace(mapping, page->index, page, radswap);
++	error = shmem_xa_replace(mapping, page->index, page, radswap);
+ 	page->mapping = NULL;
+ 	mapping->nrpages--;
+ 	__dec_node_page_state(page, NR_FILE_PAGES);
+@@ -1562,8 +1557,7 @@ static int shmem_replace_page(struct page **pagep, gfp_t gfp,
+ 	 * a nice clean interface for us to replace oldpage by newpage there.
+ 	 */
+ 	xa_lock_irq(&swap_mapping->i_pages);
+-	error = shmem_radix_tree_replace(swap_mapping, swap_index, oldpage,
+-								   newpage);
++	error = shmem_xa_replace(swap_mapping, swap_index, oldpage, newpage);
+ 	if (!error) {
+ 		__inc_node_page_state(newpage, NR_FILE_PAGES);
+ 		__dec_node_page_state(oldpage, NR_FILE_PAGES);
 -- 
 2.16.2
 
