@@ -1,7 +1,7 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v10 52/62] dax: Fix use of zero page
-Date: Thu, 29 Mar 2018 20:42:35 -0700
-Message-ID: <20180330034245.10462-53-willy@infradead.org>
+Subject: [PATCH v10 32/62] mm: Convert huge_memory to XArray
+Date: Thu, 29 Mar 2018 20:42:15 -0700
+Message-ID: <20180330034245.10462-33-willy@infradead.org>
 References: <20180330034245.10462-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,13 +10,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1f1kwe-0007wm-Ly
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:16 +0000
+ (envelope-from <willy@infradead.org>) id 1f1kwd-0007wD-Bm
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:15 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f1kwd-004tQM-Ac
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:16 +0000
+ id 1f1kwc-002yJb-2Q
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:15 +0000
 In-Reply-To: <20180330034245.10462-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -32,37 +32,64 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Use my_zero_pfn instead of ZERO_PAGE, and pass the vaddr to it so it
-works on MIPS and s390.
+Quite a straightforward conversion.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/dax.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ mm/huge_memory.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index de40ecc9bfd6..371d50a1c14e 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -994,17 +994,9 @@ static int dax_load_hole(struct address_space *mapping, void *entry,
- 	struct inode *inode = mapping->host;
- 	unsigned long vaddr = vmf->address;
- 	int ret = VM_FAULT_NOPAGE;
--	struct page *zero_page;
- 	void *entry2;
--	pfn_t pfn;
--
--	zero_page = ZERO_PAGE(0);
--	if (unlikely(!zero_page)) {
--		ret = VM_FAULT_OOM;
--		goto out;
--	}
-+	pfn_t pfn = pfn_to_pfn_t(my_zero_pfn(vaddr));
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 2aff58624886..56559ee1cb13 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2443,13 +2443,13 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+ 	ClearPageCompound(head);
+ 	/* See comment in __split_huge_page_tail() */
+ 	if (PageAnon(head)) {
+-		/* Additional pin to radix tree of swap cache */
++		/* Additional pin to swap cache */
+ 		if (PageSwapCache(head))
+ 			page_ref_add(head, 2);
+ 		else
+ 			page_ref_inc(head);
+ 	} else {
+-		/* Additional pin to radix tree */
++		/* Additional pin to page cache */
+ 		page_ref_add(head, 2);
+ 		xa_unlock(&head->mapping->i_pages);
+ 	}
+@@ -2561,7 +2561,7 @@ bool can_split_huge_page(struct page *page, int *pextra_pins)
+ {
+ 	int extra_pins;
  
--	pfn = page_to_pfn_t(zero_page);
- 	entry2 = dax_insert_mapping_entry(mapping, vmf, entry, pfn,
- 			DAX_ZERO_PAGE, false);
- 	if (IS_ERR(entry2)) {
+-	/* Additional pins from radix tree */
++	/* Additional pins from page cache */
+ 	if (PageAnon(page))
+ 		extra_pins = PageSwapCache(page) ? HPAGE_PMD_NR : 0;
+ 	else
+@@ -2657,17 +2657,14 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
+ 	spin_lock_irqsave(zone_lru_lock(page_zone(head)), flags);
+ 
+ 	if (mapping) {
+-		void **pslot;
++		XA_STATE(xas, &mapping->i_pages, page_index(head));
+ 
+-		xa_lock(&mapping->i_pages);
+-		pslot = radix_tree_lookup_slot(&mapping->i_pages,
+-				page_index(head));
+ 		/*
+-		 * Check if the head page is present in radix tree.
++		 * Check if the head page is present in page cache.
+ 		 * We assume all tail are present too, if head is there.
+ 		 */
+-		if (radix_tree_deref_slot_protected(pslot,
+-					&mapping->i_pages.xa_lock) != head)
++		xa_lock(&mapping->i_pages);
++		if (xas_load(&xas) != head)
+ 			goto fail;
+ 	}
+ 
 -- 
 2.16.2
 
