@@ -1,8 +1,8 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v10 24/62] page cache: Convert
- filemap_range_has_page to XArray
-Date: Thu, 29 Mar 2018 20:42:07 -0700
-Message-ID: <20180330034245.10462-25-willy@infradead.org>
+Subject: [PATCH v10 58/62] dax: Convert __dax_invalidate_entry to
+ XArray
+Date: Thu, 29 Mar 2018 20:42:41 -0700
+Message-ID: <20180330034245.10462-59-willy@infradead.org>
 References: <20180330034245.10462-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,13 +11,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1f1kwe-0004PC-AV
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:16 +0000
+ (envelope-from <willy@infradead.org>) id 1f1kwg-0004Q1-LS
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:18 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f1kwc-00FCz4-W5
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:16 +0000
+ id 1f1kwf-004tRG-8b
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:18 +0000
 In-Reply-To: <20180330034245.10462-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,58 +33,54 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Instead of calling find_get_pages_range() and putting any reference,
-use xas_find() to iterate over any entries in the range, skipping the
-shadow/swap entries.
+Avoids walking the radix tree multiple times looking for tags.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- mm/filemap.c | 26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
+ fs/dax.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 86c83014c909..9bc417913269 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -458,20 +458,30 @@ EXPORT_SYMBOL(filemap_flush);
- bool filemap_range_has_page(struct address_space *mapping,
- 			   loff_t start_byte, loff_t end_byte)
+diff --git a/fs/dax.c b/fs/dax.c
+index 825bf153f499..9602db13aa65 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -657,27 +657,28 @@ EXPORT_SYMBOL_GPL(dax_layout_busy_page);
+ static int __dax_invalidate_entry(struct address_space *mapping,
+ 					  pgoff_t index, bool trunc)
  {
--	pgoff_t index = start_byte >> PAGE_SHIFT;
--	pgoff_t end = end_byte >> PAGE_SHIFT;
- 	struct page *page;
-+	XA_STATE(xas, &mapping->i_pages, start_byte >> PAGE_SHIFT);
-+	pgoff_t max = end_byte >> PAGE_SHIFT;
++	XA_STATE(xas, &mapping->i_pages, index);
+ 	int ret = 0;
+ 	void *entry;
+-	struct radix_tree_root *pages = &mapping->i_pages;
  
- 	if (end_byte < start_byte)
- 		return false;
- 
--	if (mapping->nrpages == 0)
--		return false;
-+	rcu_read_lock();
-+	do {
-+		page = xas_find(&xas, max);
-+		if (xas_retry(&xas, page))
-+			continue;
-+		/* Shadow entries don't count */
-+		if (xa_is_value(page))
-+			continue;
-+		/*
-+		 * We don't need to try to pin this page; we're about to
-+		 * release the RCU lock anyway.  It is enough to know that
-+		 * there was a page here recently.
-+		 */
-+	} while (0);
-+	rcu_read_unlock();
- 
--	if (!find_get_pages_range(mapping, &index, end, 1, &page))
--		return false;
--	put_page(page);
--	return true;
-+	return page != NULL;
+-	xa_lock_irq(pages);
+-	entry = get_unlocked_mapping_entry(mapping, index, NULL);
++	xas_lock_irq(&xas);
++	entry = get_unlocked_entry(&xas);
+ 	if (!entry || WARN_ON_ONCE(!xa_is_value(entry)))
+ 		goto out;
+ 	if (!trunc &&
+-	    (radix_tree_tag_get(pages, index, PAGECACHE_TAG_DIRTY) ||
+-	     radix_tree_tag_get(pages, index, PAGECACHE_TAG_TOWRITE)))
++	    (xas_get_tag(&xas, PAGECACHE_TAG_DIRTY) ||
++	     xas_get_tag(&xas, PAGECACHE_TAG_TOWRITE)))
+ 		goto out;
+ 	dax_disassociate_entry(entry, mapping, trunc);
+-	radix_tree_delete(pages, index);
++	xas_store(&xas, NULL);
+ 	mapping->nrexceptional--;
+ 	ret = 1;
+ out:
+-	put_unlocked_mapping_entry(mapping, index, entry);
+-	xa_unlock_irq(pages);
++	put_unlocked_entry(&xas, entry);
++	xas_unlock_irq(&xas);
+ 	return ret;
  }
- EXPORT_SYMBOL(filemap_range_has_page);
- 
++
+ /*
+  * Delete DAX entry at @index from @mapping.  Wait for it
+  * to be unlocked before deleting it.
 -- 
 2.16.2
 
