@@ -1,22 +1,22 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v10 23/62] page cache: Remove stray radix comment
-Date: Thu, 29 Mar 2018 20:42:06 -0700
-Message-ID: <20180330034245.10462-24-willy@infradead.org>
+Subject: [PATCH v10 47/62] fs: Convert buffer to XArray
+Date: Thu, 29 Mar 2018 20:42:30 -0700
+Message-ID: <20180330034245.10462-48-willy@infradead.org>
 References: <20180330034245.10462-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1f1kwf-0004Pc-PT
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:17 +0000
+ (envelope-from <willy@infradead.org>) id 1f1kwp-000871-Uh
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:27 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f1kwe-001iNl-EN
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:17 +0000
+ id 1f1kwo-004tUH-KD
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:27 +0000
 In-Reply-To: <20180330034245.10462-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -32,24 +32,59 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
+Mostly comment fixes, but one use of __xa_set_tag.
+
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- mm/filemap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/buffer.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 0635e9cdbc06..86c83014c909 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2579,7 +2579,7 @@ static struct page *do_read_cache_page(struct address_space *mapping,
- 			put_page(page);
- 			if (err == -EEXIST)
- 				goto repeat;
--			/* Presumably ENOMEM for radix tree node */
-+			/* Presumably ENOMEM for xarray node */
- 			return ERR_PTR(err);
- 		}
+diff --git a/fs/buffer.c b/fs/buffer.c
+index f3059f929dd6..5c798ecf7a39 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -585,7 +585,7 @@ void mark_buffer_dirty_inode(struct buffer_head *bh, struct inode *inode)
+ EXPORT_SYMBOL(mark_buffer_dirty_inode);
  
+ /*
+- * Mark the page dirty, and set it dirty in the radix tree, and mark the inode
++ * Mark the page dirty, and set it dirty in the page cache, and mark the inode
+  * dirty.
+  *
+  * If warn is true, then emit a warning if the page is not uptodate and has
+@@ -602,8 +602,8 @@ void __set_page_dirty(struct page *page, struct address_space *mapping,
+ 	if (page->mapping) {	/* Race with truncate? */
+ 		WARN_ON_ONCE(warn && !PageUptodate(page));
+ 		account_page_dirtied(page, mapping);
+-		radix_tree_tag_set(&mapping->i_pages,
+-				page_index(page), PAGECACHE_TAG_DIRTY);
++		__xa_set_tag(&mapping->i_pages, page_index(page),
++				PAGECACHE_TAG_DIRTY);
+ 	}
+ 	xa_unlock_irqrestore(&mapping->i_pages, flags);
+ }
+@@ -1066,7 +1066,7 @@ __getblk_slow(struct block_device *bdev, sector_t block,
+  * The relationship between dirty buffers and dirty pages:
+  *
+  * Whenever a page has any dirty buffers, the page's dirty bit is set, and
+- * the page is tagged dirty in its radix tree.
++ * the page is tagged dirty in the page cache.
+  *
+  * At all times, the dirtiness of the buffers represents the dirtiness of
+  * subsections of the page.  If the page has buffers, the page dirty bit is
+@@ -1089,9 +1089,9 @@ __getblk_slow(struct block_device *bdev, sector_t block,
+  * mark_buffer_dirty - mark a buffer_head as needing writeout
+  * @bh: the buffer_head to mark dirty
+  *
+- * mark_buffer_dirty() will set the dirty bit against the buffer, then set its
+- * backing page dirty, then tag the page as dirty in its address_space's radix
+- * tree and then attach the address_space's inode to its superblock's dirty
++ * mark_buffer_dirty() will set the dirty bit against the buffer, then set
++ * its backing page dirty, then tag the page as dirty in the page cache
++ * and then attach the address_space's inode to its superblock's dirty
+  * inode list.
+  *
+  * mark_buffer_dirty() is atomic.  It takes bh->b_page->mapping->private_lock,
 -- 
 2.16.2
 
