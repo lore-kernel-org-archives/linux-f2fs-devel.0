@@ -1,211 +1,75 @@
-From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v10 28/62] mm: Convert add_to_swap_cache to XArray
-Date: Thu, 29 Mar 2018 20:42:11 -0700
-Message-ID: <20180330034245.10462-29-willy@infradead.org>
-References: <20180330034245.10462-1-willy@infradead.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1f1kxP-0008GX-0e
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:44:03 +0000
-Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f1kxN-002yME-Jk
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:44:02 +0000
-In-Reply-To: <20180330034245.10462-1-willy@infradead.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Matthew Wilcox <mawilcox@microsoft.com>, James Simmons <jsimmons@infradead.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Andreas Dilger <andreas.dilger@intel.com>, Nicholas Piggin <npiggin@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, Oleg Drokin <oleg.drokin@intel.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, Mike Kravetz <mike.kravetz@oracle.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: remain written times to update inode during fsync
+Date: Thu, 29 Mar 2018 22:51:26 -0700
+Message-ID: <20180330055126.36202-1-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+This fixes xfstests/generic/392.
 
-Combine __add_to_swap_cache and add_to_swap_cache into one function
-since there is no more need to preload.
-
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- mm/swap_state.c | 93 ++++++++++++++++++---------------------------------------
- 1 file changed, 29 insertions(+), 64 deletions(-)
+ fs/f2fs/f2fs.h  | 15 +++++++++++++++
+ fs/f2fs/inode.c |  4 ++++
+ 2 files changed, 19 insertions(+)
 
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index fe079756bb18..53e27894c1bc 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -107,14 +107,15 @@ void show_swap_cache_info(void)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 000f93f6767e..675c39d85111 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -664,6 +664,7 @@ struct f2fs_inode_info {
+ 	kprojid_t i_projid;		/* id for project quota */
+ 	int i_inline_xattr_size;	/* inline xattr size */
+ 	struct timespec i_crtime;	/* inode creation time */
++	struct timespec i_disk_time[4];	/* inode disk times */
+ };
+ 
+ static inline void get_extent_info(struct extent_info *ext,
+@@ -2457,6 +2458,11 @@ static inline void clear_file(struct inode *inode, int type)
+ 	f2fs_mark_inode_dirty_sync(inode, true);
  }
  
- /*
-- * __add_to_swap_cache resembles add_to_page_cache_locked on swapper_space,
-+ * add_to_swap_cache resembles add_to_page_cache_locked on swapper_space,
-  * but sets SwapCache flag and private instead of mapping and index.
-  */
--int __add_to_swap_cache(struct page *page, swp_entry_t entry)
-+int add_to_swap_cache(struct page *page, swp_entry_t entry, gfp_t gfp)
++static inline bool time_equal(struct timespec a, struct timespec b)
++{
++	return (a.tv_sec == b.tv_sec) && (a.tv_nsec == b.tv_nsec);
++}
++
+ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
  {
--	int error, i, nr = hpage_nr_pages(page);
--	struct address_space *address_space;
-+	struct address_space *address_space = swap_address_space(entry);
- 	pgoff_t idx = swp_offset(entry);
-+	XA_STATE(xas, &address_space->i_pages, idx);
-+	unsigned long i, nr = 1UL << compound_order(page);
+ 	bool ret;
+@@ -2474,6 +2480,15 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+ 			i_size_read(inode) & ~PAGE_MASK)
+ 		return false;
  
- 	VM_BUG_ON_PAGE(!PageLocked(page), page);
- 	VM_BUG_ON_PAGE(PageSwapCache(page), page);
-@@ -123,50 +124,30 @@ int __add_to_swap_cache(struct page *page, swp_entry_t entry)
- 	page_ref_add(page, nr);
- 	SetPageSwapCache(page);
++	if (!time_equal(F2FS_I(inode)->i_disk_time[0], inode->i_atime))
++		return false;
++	if (!time_equal(F2FS_I(inode)->i_disk_time[1], inode->i_ctime))
++		return false;
++	if (!time_equal(F2FS_I(inode)->i_disk_time[2], inode->i_mtime))
++		return false;
++	if (!time_equal(F2FS_I(inode)->i_disk_time[3], F2FS_I(inode)->i_crtime))
++		return false;
++
+ 	down_read(&F2FS_I(inode)->i_sem);
+ 	ret = F2FS_I(inode)->last_disk_size == i_size_read(inode);
+ 	up_read(&F2FS_I(inode)->i_sem);
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 401f09ccce7e..70aba580f4b0 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -444,6 +444,10 @@ void update_inode(struct inode *inode, struct page *node_page)
+ 	if (inode->i_nlink == 0)
+ 		clear_inline_node(node_page);
  
--	address_space = swap_address_space(entry);
--	xa_lock_irq(&address_space->i_pages);
--	for (i = 0; i < nr; i++) {
--		set_page_private(page + i, entry.val + i);
--		error = radix_tree_insert(&address_space->i_pages,
--					  idx + i, page + i);
--		if (unlikely(error))
--			break;
--	}
--	if (likely(!error)) {
-+	do {
-+		xas_lock_irq(&xas);
-+		xas_create_range(&xas, idx + nr - 1);
-+		if (xas_error(&xas))
-+			goto unlock;
-+		for (i = 0; i < nr; i++) {
-+			VM_BUG_ON_PAGE(xas.xa_index != idx + i, page);
-+			set_page_private(page + i, entry.val + i);
-+			xas_store(&xas, page + i);
-+			xas_next(&xas);
-+		}
- 		address_space->nrpages += nr;
- 		__mod_node_page_state(page_pgdat(page), NR_FILE_PAGES, nr);
- 		ADD_CACHE_INFO(add_total, nr);
--	} else {
--		/*
--		 * Only the context which have set SWAP_HAS_CACHE flag
--		 * would call add_to_swap_cache().
--		 * So add_to_swap_cache() doesn't returns -EEXIST.
--		 */
--		VM_BUG_ON(error == -EEXIST);
--		set_page_private(page + i, 0UL);
--		while (i--) {
--			radix_tree_delete(&address_space->i_pages, idx + i);
--			set_page_private(page + i, 0UL);
--		}
--		ClearPageSwapCache(page);
--		page_ref_sub(page, nr);
--	}
--	xa_unlock_irq(&address_space->i_pages);
-+unlock:
-+		xas_unlock_irq(&xas);
-+	} while (xas_nomem(&xas, gfp));
- 
--	return error;
--}
--
--
--int add_to_swap_cache(struct page *page, swp_entry_t entry, gfp_t gfp_mask)
--{
--	int error;
-+	if (!xas_error(&xas))
-+		return 0;
- 
--	error = radix_tree_maybe_preload_order(gfp_mask, compound_order(page));
--	if (!error) {
--		error = __add_to_swap_cache(page, entry);
--		radix_tree_preload_end();
--	}
--	return error;
-+	ClearPageSwapCache(page);
-+	page_ref_sub(page, nr);
-+	return xas_error(&xas);
++	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
++	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
++	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
++	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
  }
  
- /*
-@@ -220,7 +201,7 @@ int add_to_swap(struct page *page)
- 		goto fail;
- 
- 	/*
--	 * Radix-tree node allocations from PF_MEMALLOC contexts could
-+	 * XArray node allocations from PF_MEMALLOC contexts could
- 	 * completely exhaust the page allocator. __GFP_NOMEMALLOC
- 	 * stops emergency reserves from being allocated.
- 	 *
-@@ -232,7 +213,6 @@ int add_to_swap(struct page *page)
- 	 */
- 	err = add_to_swap_cache(page, entry,
- 			__GFP_HIGH|__GFP_NOMEMALLOC|__GFP_NOWARN);
--	/* -ENOMEM radix-tree allocation failure */
- 	if (err)
- 		/*
- 		 * add_to_swap_cache() doesn't return -EEXIST, so we can safely
-@@ -426,19 +406,11 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 				break;		/* Out of memory */
- 		}
- 
--		/*
--		 * call radix_tree_preload() while we can wait.
--		 */
--		err = radix_tree_maybe_preload(gfp_mask & GFP_KERNEL);
--		if (err)
--			break;
--
- 		/*
- 		 * Swap entry may have been freed since our caller observed it.
- 		 */
- 		err = swapcache_prepare(entry);
- 		if (err == -EEXIST) {
--			radix_tree_preload_end();
- 			/*
- 			 * We might race against get_swap_page() and stumble
- 			 * across a SWAP_HAS_CACHE swap_map entry whose page
-@@ -446,26 +418,19 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 			 */
- 			cond_resched();
- 			continue;
--		}
--		if (err) {		/* swp entry is obsolete ? */
--			radix_tree_preload_end();
-+		} else if (err)		/* swp entry is obsolete ? */
- 			break;
--		}
- 
--		/* May fail (-ENOMEM) if radix-tree node allocation failed. */
-+		/* May fail (-ENOMEM) if XArray node allocation failed. */
- 		__SetPageLocked(new_page);
- 		__SetPageSwapBacked(new_page);
--		err = __add_to_swap_cache(new_page, entry);
-+		err = add_to_swap_cache(new_page, entry, gfp_mask & GFP_KERNEL);
- 		if (likely(!err)) {
--			radix_tree_preload_end();
--			/*
--			 * Initiate read into locked page and return.
--			 */
-+			/* Initiate read into locked page */
- 			lru_cache_add_anon(new_page);
- 			*new_page_allocated = true;
- 			return new_page;
- 		}
--		radix_tree_preload_end();
- 		__ClearPageLocked(new_page);
- 		/*
- 		 * add_to_swap_cache() doesn't return -EEXIST, so we can safely
+ void update_inode_page(struct inode *inode)
 -- 
-2.16.2
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+2.15.0.531.g2ccb3012c9-goog
