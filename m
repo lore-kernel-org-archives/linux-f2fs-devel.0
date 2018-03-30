@@ -1,7 +1,8 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v10 13/62] xarray: Add xa_destroy
-Date: Thu, 29 Mar 2018 20:41:56 -0700
-Message-ID: <20180330034245.10462-14-willy@infradead.org>
+Subject: [PATCH v10 29/62] mm: Convert delete_from_swap_cache to
+ XArray
+Date: Thu, 29 Mar 2018 20:42:12 -0700
+Message-ID: <20180330034245.10462-30-willy@infradead.org>
 References: <20180330034245.10462-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,13 +11,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1f1kwl-0004RP-DU
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:23 +0000
+ (envelope-from <willy@infradead.org>) id 1f1kwg-0004Pn-0Q
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:18 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f1kwk-002yKc-4A
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:23 +0000
+ id 1f1kwe-001iOr-Fr
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Mar 2018 03:43:17 +0000
 In-Reply-To: <20180330034245.10462-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -32,66 +33,105 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-This function frees all the internal memory allocated to the xarray
-and reinitialises it to be empty.
+Both callers of __delete_from_swap_cache have the swp_entry_t already,
+so pass that in to make constructing the XA_STATE easier.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- include/linux/xarray.h |  1 +
- lib/xarray.c           | 28 ++++++++++++++++++++++++++++
- 2 files changed, 29 insertions(+)
+ include/linux/swap.h |  5 +++--
+ mm/swap_state.c      | 24 ++++++++++--------------
+ mm/vmscan.c          |  2 +-
+ 3 files changed, 14 insertions(+), 17 deletions(-)
 
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index 864f16660785..cd451a293905 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -229,6 +229,7 @@ void *xa_find_after(struct xarray *xa, unsigned long *index,
- 		unsigned long max, xa_tag_t) __attribute__((nonnull(2)));
- unsigned int xa_extract(struct xarray *, void **dst, unsigned long start,
- 		unsigned long max, unsigned int n, xa_tag_t);
-+void xa_destroy(struct xarray *);
- 
- /**
-  * xa_init() - Initialise an empty XArray.
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 77133bc5419f..940d22d8e76c 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -1482,6 +1482,34 @@ unsigned int xa_extract(struct xarray *xa, void **dst, unsigned long start,
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index dab96af23d96..0b6a47a46c55 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -404,7 +404,7 @@ extern void show_swap_cache_info(void);
+ extern int add_to_swap(struct page *page);
+ extern int add_to_swap_cache(struct page *, swp_entry_t, gfp_t);
+ extern int __add_to_swap_cache(struct page *page, swp_entry_t entry);
+-extern void __delete_from_swap_cache(struct page *);
++extern void __delete_from_swap_cache(struct page *, swp_entry_t entry);
+ extern void delete_from_swap_cache(struct page *);
+ extern void free_page_and_swap_cache(struct page *);
+ extern void free_pages_and_swap_cache(struct page **, int);
+@@ -564,7 +564,8 @@ static inline int add_to_swap_cache(struct page *page, swp_entry_t entry,
+ 	return -1;
  }
- EXPORT_SYMBOL(xa_extract);
  
-+/**
-+ * xa_destroy() - Free all internal data structures.
-+ * @xa: XArray.
-+ *
-+ * After calling this function, the XArray is empty and has freed all memory
-+ * allocated for its internal data structures.  You are responsible for
-+ * freeing the objects referenced by the XArray.
-+ *
-+ * Context: Any context.  Takes and releases the xa_lock, interrupt-safe.
-+ */
-+void xa_destroy(struct xarray *xa)
-+{
-+	XA_STATE(xas, xa, 0);
-+	unsigned long flags;
-+	void *entry;
-+
-+	xas.xa_node = NULL;
-+	xas_lock_irqsave(&xas, flags);
-+	entry = xa_head_locked(xa);
-+	RCU_INIT_POINTER(xa->xa_head, NULL);
-+	xas_init_tags(&xas);
-+	/* lockdep checks we're still holding the lock in xas_free_nodes() */
-+	if (xa_is_node(entry))
-+		xas_free_nodes(&xas, xa_to_node(entry));
-+	xas_unlock_irqrestore(&xas, flags);
-+}
-+EXPORT_SYMBOL(xa_destroy);
-+
- #ifdef XA_DEBUG
- void xa_dump_node(const struct xa_node *node)
+-static inline void __delete_from_swap_cache(struct page *page)
++static inline void __delete_from_swap_cache(struct page *page,
++							swp_entry_t entry)
  {
+ }
+ 
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index 53e27894c1bc..a0a562fbc65f 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -154,23 +154,22 @@ int add_to_swap_cache(struct page *page, swp_entry_t entry, gfp_t gfp)
+  * This must be called only on pages that have
+  * been verified to be in the swap cache.
+  */
+-void __delete_from_swap_cache(struct page *page)
++void __delete_from_swap_cache(struct page *page, swp_entry_t entry)
+ {
+-	struct address_space *address_space;
++	struct address_space *address_space = swap_address_space(entry);
+ 	int i, nr = hpage_nr_pages(page);
+-	swp_entry_t entry;
+-	pgoff_t idx;
++	pgoff_t idx = swp_offset(entry);
++	XA_STATE(xas, &address_space->i_pages, idx);
+ 
+ 	VM_BUG_ON_PAGE(!PageLocked(page), page);
+ 	VM_BUG_ON_PAGE(!PageSwapCache(page), page);
+ 	VM_BUG_ON_PAGE(PageWriteback(page), page);
+ 
+-	entry.val = page_private(page);
+-	address_space = swap_address_space(entry);
+-	idx = swp_offset(entry);
+ 	for (i = 0; i < nr; i++) {
+-		radix_tree_delete(&address_space->i_pages, idx + i);
++		void *entry = xas_store(&xas, NULL);
++		VM_BUG_ON_PAGE(entry != page + i, entry);
+ 		set_page_private(page + i, 0);
++		xas_next(&xas);
+ 	}
+ 	ClearPageSwapCache(page);
+ 	address_space->nrpages -= nr;
+@@ -246,14 +245,11 @@ int add_to_swap(struct page *page)
+  */
+ void delete_from_swap_cache(struct page *page)
+ {
+-	swp_entry_t entry;
+-	struct address_space *address_space;
+-
+-	entry.val = page_private(page);
++	swp_entry_t entry = { .val = page_private(page) };
++	struct address_space *address_space = swap_address_space(entry);
+ 
+-	address_space = swap_address_space(entry);
+ 	xa_lock_irq(&address_space->i_pages);
+-	__delete_from_swap_cache(page);
++	__delete_from_swap_cache(page, entry);
+ 	xa_unlock_irq(&address_space->i_pages);
+ 
+ 	put_swap_page(page, entry);
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 4e57f97c579b..e42d3fdb38fe 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -721,7 +721,7 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
+ 	if (PageSwapCache(page)) {
+ 		swp_entry_t swap = { .val = page_private(page) };
+ 		mem_cgroup_swapout(page, swap);
+-		__delete_from_swap_cache(page);
++		__delete_from_swap_cache(page, swap);
+ 		xa_unlock_irqrestore(&mapping->i_pages, flags);
+ 		put_swap_page(page, swap);
+ 	} else {
 -- 
 2.16.2
 
