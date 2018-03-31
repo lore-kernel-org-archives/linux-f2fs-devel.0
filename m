@@ -1,140 +1,54 @@
-From: Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: [PATCH v10 43/62] memfd: Convert shmem_tag_pins to
- XArray
-Date: Fri, 30 Mar 2018 17:05:05 -0700
-Message-ID: <39ea3393-c3d7-07c3-a072-344f3a65cef3@oracle.com>
-References: <20180330034245.10462-1-willy@infradead.org>
- <20180330034245.10462-44-willy@infradead.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <mike.kravetz@oracle.com>) id 1f24T7-0007sV-6z
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 31 Mar 2018 00:34:05 +0000
-Received: from userp2130.oracle.com ([156.151.31.86])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f24T5-006Q6G-B1
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 31 Mar 2018 00:34:05 +0000
-In-Reply-To: <20180330034245.10462-44-willy@infradead.org>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Matthew Wilcox <mawilcox@microsoft.com>, James Simmons <jsimmons@infradead.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Andreas Dilger <andreas.dilger@intel.com>, Nicholas Piggin <npiggin@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, Oleg Drokin <oleg.drokin@intel.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: truncate preallocated blocks in error case
+Date: Fri, 30 Mar 2018 18:57:10 -0700
+Message-ID: <20180331015710.72893-1-jaegeuk@kernel.org>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, stable@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 03/29/2018 08:42 PM, Matthew Wilcox wrote:
-> From: Matthew Wilcox <mawilcox@microsoft.com>
-> 
-> Simplify the locking by taking the spinlock while we walk the tree on
-> the assumption that many acquires and releases of the lock will be
-> worse than holding the lock for a (potentially) long time.
+If write is failed, we must deallocate the blocks that we couldn't write.
 
-I see this change made in several of the patches and do not have a
-specific issue with it.  As part of the XArray implementation you
-have XA_CHECK_SCHED = 4096.   So, we drop locks and do a cond_resched
-after XA_CHECK_SCHED iterations.  Just curious how you came up with
-that number.  Apologies in advance if this was discussed in a previous
-round of reviews.
+Cc: stable@vger.kernel.org
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/file.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-> 
-> We could replicate the same locking behaviour with the xarray, but would
-> have to be careful that the xa_node wasn't RCU-freed under us before we
-> took the lock.
-> 
-> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-
-I did not do a detailed review of the XArray implementation.  Only looked
-at the provided interfaces and their intended uses.  If the interfaces work
-as specified, the changes here are fine.
-
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
-
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 8068b015ece5..f18f62dd60a3 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2911,6 +2911,8 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 
+ 	ret = generic_write_checks(iocb, from);
+ 	if (ret > 0) {
++		bool preallocated = false;
++		size_t target_size;
+ 		int err;
+ 
+ 		if (iov_iter_fault_in_readable(from, iov_iter_count(from)))
+@@ -2927,6 +2929,9 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 				}
+ 
+ 		} else {
++			preallocated = true;
++			target_size = iocb->ki_pos + iov_iter_count(from);
++
+ 			err = f2fs_preallocate_blocks(iocb, from);
+ 			if (err) {
+ 				clear_inode_flag(inode, FI_NO_PREALLOC);
+@@ -2939,6 +2944,10 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		blk_finish_plug(&plug);
+ 		clear_inode_flag(inode, FI_NO_PREALLOC);
+ 
++		/* if we couldn't write data, we should deallocate blocks. */
++		if (preallocated && i_size_read(inode) < target_size)
++			f2fs_truncate(inode);
++
+ 		if (ret > 0)
+ 			f2fs_update_iostat(F2FS_I_SB(inode), APP_WRITE_IO, ret);
+ 	}
 -- 
-Mike Kravetz
-
-> ---
->  mm/memfd.c | 43 ++++++++++++++++++-------------------------
->  1 file changed, 18 insertions(+), 25 deletions(-)
-> 
-> diff --git a/mm/memfd.c b/mm/memfd.c
-> index 4cf7401cb09c..3b299d72df78 100644
-> --- a/mm/memfd.c
-> +++ b/mm/memfd.c
-> @@ -21,7 +21,7 @@
->  #include <uapi/linux/memfd.h>
->  
->  /*
-> - * We need a tag: a new tag would expand every radix_tree_node by 8 bytes,
-> + * We need a tag: a new tag would expand every xa_node by 8 bytes,
->   * so reuse a tag which we firmly believe is never set or cleared on shmem.
->   */
->  #define SHMEM_TAG_PINNED        PAGECACHE_TAG_TOWRITE
-> @@ -29,35 +29,28 @@
->  
->  static void shmem_tag_pins(struct address_space *mapping)
->  {
-> -	struct radix_tree_iter iter;
-> -	void __rcu **slot;
-> -	pgoff_t start;
-> +	XA_STATE(xas, &mapping->i_pages, 0);
->  	struct page *page;
-> +	unsigned int tagged = 0;
->  
->  	lru_add_drain();
-> -	start = 0;
-> -	rcu_read_lock();
-> -
-> -	radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, start) {
-> -		page = radix_tree_deref_slot(slot);
-> -		if (!page || radix_tree_exception(page)) {
-> -			if (radix_tree_deref_retry(page)) {
-> -				slot = radix_tree_iter_retry(&iter);
-> -				continue;
-> -			}
-> -		} else if (page_count(page) - page_mapcount(page) > 1) {
-> -			xa_lock_irq(&mapping->i_pages);
-> -			radix_tree_tag_set(&mapping->i_pages, iter.index,
-> -					   SHMEM_TAG_PINNED);
-> -			xa_unlock_irq(&mapping->i_pages);
-> -		}
->  
-> -		if (need_resched()) {
-> -			slot = radix_tree_iter_resume(slot, &iter);
-> -			cond_resched_rcu();
-> -		}
-> +	xas_lock_irq(&xas);
-> +	xas_for_each(&xas, page, ULONG_MAX) {
-> +		if (xa_is_value(page))
-> +			continue;
-> +		if (page_count(page) - page_mapcount(page) > 1)
-> +			xas_set_tag(&xas, SHMEM_TAG_PINNED);
-> +
-> +		if (++tagged % XA_CHECK_SCHED)
-> +			continue;
-> +
-> +		xas_pause(&xas);
-> +		xas_unlock_irq(&xas);
-> +		cond_resched();
-> +		xas_lock_irq(&xas);
->  	}
-> -	rcu_read_unlock();
-> +	xas_unlock_irq(&xas);
->  }
->  
->  /*
-> 
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+2.15.0.531.g2ccb3012c9-goog
