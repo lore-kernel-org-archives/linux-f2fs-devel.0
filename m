@@ -1,14 +1,11 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] libf2fs: reset wanted_total_sectors by new
- sector_size
-Date: Mon, 2 Apr 2018 15:19:23 +0800
-Message-ID: <f9465bc9-714d-2a9c-684d-0351ceb82724@huawei.com>
-References: <20180327171908.15092-1-jaegeuk@kernel.org>
- <7561e573-9d88-60f0-868f-4a4b59d588cb@huawei.com>
- <50951b88-ccfc-836c-34c0-7347ff1f747a@huawei.com>
- <d49db6fe-d3db-9dc6-d4ce-5955b0dd01c3@huawei.com>
- <d2baabc6-e4cb-0bdc-fccb-fe3b0cdc813e@huawei.com>
- <20180330153909.GA44823@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH] f2fs: reserve bits for fs-verity
+Date: Mon, 2 Apr 2018 18:07:10 +0800
+Message-ID: <ec343a28-ad47-a494-ea36-c8fef72d3480@huawei.com>
+References: <20180328181509.199870-1-ebiggers@google.com>
+ <9ccabf5b-46ef-aa46-bdb8-6fcd96792ed0@huawei.com>
+ <20180330164136.GE44823@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180330183420.GA180083@google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -16,14 +13,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1f2tl5-0002uM-7k
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 02 Apr 2018 07:20:03 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1f2wNK-0004CI-Oo
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 02 Apr 2018 10:07:42 +0000
 Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f2tl2-008nfq-Ia
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 02 Apr 2018 07:20:03 +0000
-In-Reply-To: <20180330153909.GA44823@jaegeuk-macbookpro.roam.corp.google.com>
+ id 1f2wNG-008xkD-7r
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 02 Apr 2018 10:07:42 +0000
+In-Reply-To: <20180330183420.GA180083@google.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -34,152 +31,122 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Junling Zheng <zhengjunling@huawei.com>
-Cc: katao <katao@xiaomi.com>, Jaegeuk Kim <jaegeuk@google.com>, linux-f2fs-devel@lists.sourceforge.net
+To: Eric Biggers <ebiggers@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Theodore Ts'o <tytso@mit.edu>, linux-fscrypt@vger.kernel.org, Michael Halcrow <mhalcrow@google.com>, Victor Hsieh <victorhsieh@google.com>, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/3/30 23:39, Jaegeuk Kim wrote:
-> On 03/30, Junling Zheng wrote:
->> On 2018/3/30 19:26, Chao Yu wrote:
->>> On 2018/3/30 18:51, Junling Zheng wrote:
->>>> Hi,
->>>>
->>>> On 2018/3/30 17:28, Chao Yu wrote:
->>>>> Hi All,
->>>>>
->>>>> On 2018/3/28 1:19, Jaegeuk Kim wrote:
->>>>>> From: katao <katao@xiaomi.com>
->>>>>>
->>>>>> The args of wanted_total_sectors is calculated based
->>>>>> on the DEFAULT_SECTOR_SIZE(512Bytes).get_device_info(i)
->>>>>> may be reset dev_sector_size, we should reset the number
->>>>>> of wanted_total_sectors.
->>>>>>
->>>>>> This bug was reported to Google Issue Tracker.
->>>>>> Link: https://issuetracker.google.com/issues/76407663
->>>>>
->>>>> I don't think this is the right way, since now we have changed previous
->>>>> sector_counter's meaning, some applications, for example, like xfstests will get
->>>>> device's real sector size via blockdev --getsize64, then calculate total wanted
->>>>> sector count by total_wanted_size / real_sector_size, if we changed default
->>>>> sector size to 512bytes, xfstests will pass a wrong sector number, result in
->>>>> getting wrong partition size.
->>>>>
->>>>> For something worse, in order to get the correct sector number, we have to
->>>>> change the way of calculation method of xfstests for new mkfs, but how can
->>>>> xfstests know the current version of mkfs is new or old...
->>>>>
->>>>> I think the change didn't consider backward compatibility of mkfs, so, in order
->>>>> to keep that, we'd better to let user pass the right sector number based on
->>>>> their device, or we can introduce a new parameter to indicate user wanted total
->>>>> size.
->>>>>
->>>>> How do you think?
->>>>>
->>>>
->>>> Agree. It's not backward-compatible. Most users can pass the correct sector number
->>>> calculated by the real sector size. For those very few users using 512B despite of
->>>> the actual sector size, all we need to do is informing them the real sector size.
+Hi Eric and Jaegeuk,
+
+On 2018/3/31 2:34, Eric Biggers wrote:
+> Hi Chao and Jaegeuk,
+> 
+> On Fri, Mar 30, 2018 at 09:41:36AM -0700, Jaegeuk Kim wrote:
+>> On 03/30, Chao Yu wrote:
+>>> Hi Eric,
 >>>
->>> The problem is via passed sector number, we can't know user has already knew the
->>> real sector size or not, so we don't have any chance to info them.
+>>> On 2018/3/29 2:15, Eric Biggers wrote:
+>>>> Reserve an F2FS feature flag and inode flag for fs-verity.  This is an
+>>>> in-development feature that is planned be discussed at LSF/MM 2018 [1].
+>>>> It will provide file-based integrity and authenticity for read-only
+>>>> files.  Most code will be in a filesystem-independent module, with
+>>>> smaller changes needed to individual filesystems that opt-in to
+>>>> supporting the feature.  An early prototype supporting F2FS is available
+>>>> [2].  Reserving the F2FS on-disk bits for fs-verity will prevent users
+>>>> of the prototype from conflicting with other new F2FS features.
+>>>>
+>>>> Note that we're reserving the inode flag in f2fs_inode.i_advise, which
+>>>> isn't really appropriate since it's not a hint or advice.  But
+>>>> ->i_advise is already being used to hold the 'encrypt' flag; and F2FS's
+>>>> ->i_flags uses the generic FS_* values, so it seems ->i_flags can't be
+>>>> used for an F2FS-specific flag without additional work to remove the
+>>>> assumption that ->i_flags uses the generic flags namespace.
 >>>
+>>> At a glance, this is a VFS feature, can we search free slot, and define
+>>> FS_VERITY_FL like other generic flags, so we can intergrate this flag into
+>>> f2fs_inode::i_flags?
 >>
->> Yeah, we can't guess users' behaviors. And only when wanted size is over device size,
->> we can inform users the real sector size.
+>> Do we need to get/set this bit of i_flags to user? And, f2fs doesn't synchronize
+>> it with inode block update. I think this should be set by internal f2fs
+>> operations likewise fscrypt.
+>>
 > 
-> So, current problem would be that wanted_total_sectors is given by:
-> - device sector size in xfstests
-> - 4KB in fs_mgr in Android
-> - 512B in recovery in Android
+> The fs-verity inode flag won't be modifiable using FS_IOC_SETFLAGS.  Like
+
+Verity flag can also be wrapped by FS_FL_USER_MODIFIABLE like for FS_ENCRYPT_FL?
+
+> fscrypt, it will only be possible to set it using a dedicated ioctl (tentatively
+> called FS_IOC_ENABLE_VERITY), and it won't be supported to clear the bit once
+> set, short of deleting and re-creating the file.  So it doesn't really matter
+> where the bit goes in the on-disk inode, it just needs to go somewhere.  I'm
+> just hesitant to reserve a flag in the UAPI flags namespace which is really more
+> "owned" by ext4 than by f2fs, so has more implications than just f2fs as we
+> would effectively be reserving the flag for ext4's on-disk format too.
+
+IMO, because this is a VFS feature, it will be better that we can put it in more
+generic place, also user can check this bit in generic way (via
+FS_IOC_GETFLAGS), and then for other filesystem who wants add this feature, that
+will be simple to place this bit.
+
+What I can see is, for encryption feature:
+
+vfs::i_flags
+#define FS_ENCRYPT_FL                   0x00000800 /* Encrypted file */
+
+ext4:i_flags
+#define EXT4_ENCRYPT_FL			0x00000800 /* encrypted file */
+
+f2fs::i_advice
+#define FADVISE_ENCRYPT_BIT	0x04
+
+It's very wired that f2fs didn't use well defined FS_ENCRYPT_FL bit position,
+result in that we leave a hole in on-disk i_flags, and if we want to show the
+same 'encrypted' flags status in FS_IOC_GETFLAGS, we need to change more codes.
+
+Anyway, I just ask why not let generic status goes into i_flags, and private
+status goes into i_advices?
+
 > 
-> And, my concern is why user always needs to think about sector_size to give
-> target image size, and I thought 512B would be good to set as a default smallest
-> value.
-
-Of course, IMO, the most direct way is let user pass image size to mkfs.f2fs
-instead of caculated sector size, I think that will make all happy.
-
+> I do think the flag *should* go in i_flags rather than i_advise, but I think the
+> assumption that f2fs's inode flags namespace matches ext4's would first need to
+> be removed so as to not tie the on-disk formats of different filesystems
+> together.
 > 
-> Setting it 512B by default can give some confusion to users tho, it won't hurt
-> the existing partitions or images. So, I bet users will get noticed quickly,
-> when formatting new partition under this rule.
+>>>
+>>> And how about applying this patch inside the patchset of new fsverity feature?
+>>> Since once fsverity feature has some design modification, I worry about that may
+>>> be we need to change this bit? result in disk layout incompatibility.
+>>
+>> The whole body is not fully mergeable, so once reserving the bits first, we can
+>> support it f2fs-tools and prepare the feature in advance. Based on previous
+>> fscrypt experience, I don't expect we need to modify or drop these dramatically
+>> later.
+>>
+>> Any thoughts?
 
-For those f2fs users, who makes image based on non-512B sector device, once they
-upgrade mkfs.f2fs, they will encounter this issue, that may make bad reputation.
+Since I don't know current progress of this feature development, I hope this
+feature will not be against by vfs developers or suffer design change after we
+reserved bit for it. :)
 
-For interface in f2fs private ioctl, sysfs entry, or syscall, we keep the rule
-that once we want to do some change on it, we will not change the old interface
-directly, instead, introduce a new one to keep backward compatibility of old
-one. Still, I hope we can keep that rule in mkfs.f2fs parameter.
-
+>>
 > 
-> For xfstests, we're able to add another testcase in /f2fs to check this is
-> applied or not by simply testing some wanted_total_sectors numbers on
-> different sector sizes.
+> Yep, the full patchset isn't ready to be merged upstream yet.  Other parts of
+> the API/ABI such as the fs-verity metadata format, the ioctl numbers, and the
+> semantics of accessing such files is subject to change.  We know we'll need a
+> superblock feature flag and a per-inode bit in any case, though.  Personally I'd
+> prefer to wait for the full patchset too, but we have people who want to start
+> using the prototype of the feature already, so having f2fs-tools support the
+> feature flag and having the bits not conflict with other f2fs features will be
+> helpful.
 
-But, for people who upgrade mkfs but not the newly introduced testcase will
-encounter this issue.
-
-I just make xfstests as an example, I doubt there will be more user/application
-on phone/server/pc scenario may be impacted by this.
+Oh, so we want a stable on-disk layout, so image for experience will contain
+fsverity bit in stable position, after formal android released, image with
+fsverity feature can still be valid, right?
 
 Thanks,
 
 > 
 > Thanks,
 > 
->>
->>> Thanks,
->>>
->>>>
->>>> Thanks,
->>>> Junling
->>>>
->>>>> Thanks,
->>>>>
->>>>>>
->>>>>> Signed-off-by: katao <katao@xiaomi.com>
->>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@google.com>
->>>>>> ---
->>>>>>  lib/libf2fs.c | 9 ++++++++-
->>>>>>  1 file changed, 8 insertions(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
->>>>>> index 0c684d5..5f11796 100644
->>>>>> --- a/lib/libf2fs.c
->>>>>> +++ b/lib/libf2fs.c
->>>>>> @@ -799,8 +799,15 @@ int get_device_info(int i)
->>>>>>  #ifdef BLKSSZGET
->>>>>>  		if (ioctl(fd, BLKSSZGET, &sector_size) < 0)
->>>>>>  			MSG(0, "\tError: Using the default sector size\n");
->>>>>> -		else if (dev->sector_size < sector_size)
->>>>>> +		else if (dev->sector_size < sector_size){
->>>>>> +			/*
->>>>>> +			 * wanted_total_sectors need to be reset by new
->>>>>> +			 * sector_size.
->>>>>> +			 */
->>>>>> +			c.wanted_total_sectors = (c.wanted_total_sectors *
->>>>>> +						dev->sector_size) / sector_size;
->>>>>>  			dev->sector_size = sector_size;
->>>>>> +		}
->>>>>>  #endif
->>>>>>  #ifdef BLKGETSIZE64
->>>>>>  		if (ioctl(fd, BLKGETSIZE64, &dev->total_sectors) < 0) {
->>>>>>
->>>>>
->>>>>
->>>>> .
->>>>>
->>>>
->>>>
->>>>
->>>> .
->>>>
->>>
->>>
->>> .
->>>
->>
+> Eric
 > 
 > .
 > 
