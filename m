@@ -1,11 +1,8 @@
-From: Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v10 43/62] memfd: Convert shmem_tag_pins to
- XArray
-Date: Fri, 30 Mar 2018 19:11:11 -0700
-Message-ID: <20180331021111.GB13332@bombadil.infradead.org>
-References: <20180330034245.10462-1-willy@infradead.org>
- <20180330034245.10462-44-willy@infradead.org>
- <39ea3393-c3d7-07c3-a072-344f3a65cef3@oracle.com>
+From: Junling Zheng <zhengjunling@huawei.com>
+Subject: [PATCH] mkfs.f2fs: support multiple features with one
+ "-O"
+Date: Mon, 2 Apr 2018 12:19:15 +0800
+Message-ID: <20180402041915.168646-1-zhengjunling@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -13,15 +10,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1f25zf-0003da-Kr
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 31 Mar 2018 02:11:47 +0000
-Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (envelope-from <zhengjunling@huawei.com>) id 1f2qwa-0003Jb-AK
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 02 Apr 2018 04:19:44 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f25zc-003mbN-Ho
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 31 Mar 2018 02:11:47 +0000
-Content-Disposition: inline
-In-Reply-To: <39ea3393-c3d7-07c3-a072-344f3a65cef3@oracle.com>
+ id 1f2qwW-008gQs-4L
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 02 Apr 2018 04:19:44 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,38 +26,70 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Matthew Wilcox <mawilcox@microsoft.com>, James Simmons <jsimmons@infradead.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Andreas Dilger <andreas.dilger@intel.com>, Nicholas Piggin <npiggin@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, Oleg Drokin <oleg.drokin@intel.com>, linux-mm@kvack.org, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-fsdevel@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Fri, Mar 30, 2018 at 05:05:05PM -0700, Mike Kravetz wrote:
-> On 03/29/2018 08:42 PM, Matthew Wilcox wrote:
-> > From: Matthew Wilcox <mawilcox@microsoft.com>
-> > 
-> > Simplify the locking by taking the spinlock while we walk the tree on
-> > the assumption that many acquires and releases of the lock will be
-> > worse than holding the lock for a (potentially) long time.
-> 
-> I see this change made in several of the patches and do not have a
-> specific issue with it.  As part of the XArray implementation you
-> have XA_CHECK_SCHED = 4096.   So, we drop locks and do a cond_resched
-> after XA_CHECK_SCHED iterations.  Just curious how you came up with
-> that number.  Apologies in advance if this was discussed in a previous
-> round of reviews.
+Now one "-O" option can support multiple features separated
+by a comma or blank, such as:
+feature1,feature2,... or "feature1 feature2 ..."
 
-It comes from two places, the current implementations of
-tag_pages_for_writeback() and find_swap_entry().  I have no idea if it's
-the optimal number for anybody, but it's the only number that anyone
-was using.  I'll have no problem if somebody suggests we tweak the number
-in the future.
+Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+---
+ mkfs/f2fs_format_main.c | 30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
 
-> I did not do a detailed review of the XArray implementation.  Only looked
-> at the provided interfaces and their intended uses.  If the interfaces work
-> as specified, the changes here are fine.
-> 
-> Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index 741600e..76ff296 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -80,10 +80,8 @@ static void f2fs_show_info()
+ 	MSG(0, "Info: Trim is %s\n", c.trim ? "enabled": "disabled");
+ }
+ 
+-static void parse_feature(const char *features)
++static void set_feature_bits(char *features)
+ {
+-	while (*features == ' ')
+-		features++;
+ 	if (!strcmp(features, "encrypt")) {
+ 		c.feature |= cpu_to_le32(F2FS_FEATURE_ENCRYPT);
+ 	} else if (!strcmp(features, "verity")) {
+@@ -108,6 +106,32 @@ static void parse_feature(const char *features)
+ 	}
+ }
+ 
++static void parse_feature(const char *features)
++{
++	char *buf, *sub, *next;
++
++	buf = calloc(strlen(features) + 1, sizeof(char));
++	ASSERT(buf);
++	strncpy(buf, features, strlen(features) + 1);
++
++	for (sub = buf; sub && *sub; sub = next ? next + 1 : NULL) {
++		/* Skip the beginning blanks */
++		while (*sub && *sub == ' ')
++			sub++;
++		next = sub;
++		/* Skip a feature word */
++		while (*next && *next != ' ' && *next != ',')
++			next++;
++
++		if (*next == 0)
++			next = NULL;
++		else
++			*next = 0;
++
++		set_feature_bits(sub);
++	}
++}
++
+ static void f2fs_parse_options(int argc, char *argv[])
+ {
+ 	static const char *option_string = "qa:c:d:e:E:il:mo:O:s:S:z:t:f";
+-- 
+2.16.2
 
-That is all I can ask for, and it's the most valuable thing.  Thanks,
-Mike!
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
