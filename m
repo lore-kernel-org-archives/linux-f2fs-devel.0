@@ -1,49 +1,130 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: fix to show encrypt flag in FS_IOC_GETFLAGS
-Date: Mon, 2 Apr 2018 13:21:05 -0700
-Message-ID: <20180402202105.GB19195@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180402102446.32832-1-yuchao0@huawei.com>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH] f2fs: reserve bits for fs-verity
+Date: Tue, 3 Apr 2018 07:49:59 +1000
+Message-ID: <20180402214959.GG18129@dastard>
+References: <20180328181509.199870-1-ebiggers@google.com>
+ <9ccabf5b-46ef-aa46-bdb8-6fcd96792ed0@huawei.com>
+ <20180330164136.GE44823@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180330183420.GA180083@google.com>
+ <ec343a28-ad47-a494-ea36-c8fef72d3480@huawei.com>
+ <20180402184837.GA59810@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <david@fromorbit.com>) id 1f37ab-0005v5-Bl
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 02 Apr 2018 22:06:09 +0000
+Received: from ipmail06.adl2.internode.on.net ([150.101.137.129])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtp (Exim 4.90_1)
+ id 1f37aZ-009ew9-Af
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 02 Apr 2018 22:06:09 +0000
 Content-Disposition: inline
-In-Reply-To: <20180402102446.32832-1-yuchao0@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <20180402184837.GA59810@google.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Eric Biggers <ebiggers@google.com>
+Cc: Theodore Ts'o <tytso@mit.edu>, Michael Halcrow <mhalcrow@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org, Victor Hsieh <victorhsieh@google.com>
 
-On 04/02, Chao Yu wrote:
-> This patch fixes to show encrypt flag in FS_IOC_GETFLAGS like ext4 does.
-
-Actually, we have to show internal flags owned by f2fs, not generic ones.
-We may need to define all of them separately?
-
+On Mon, Apr 02, 2018 at 11:48:37AM -0700, Eric Biggers wrote:
+> [+Cc linux-ext4, linux-fsdevel]
 > 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/file.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
+> On Mon, Apr 02, 2018 at 06:07:10PM +0800, Chao Yu wrote:
+> > Hi Eric and Jaegeuk,
+> > 
+> > On 2018/3/31 2:34, Eric Biggers wrote:
+> > > Hi Chao and Jaegeuk,
+> > > 
+> > > On Fri, Mar 30, 2018 at 09:41:36AM -0700, Jaegeuk Kim wrote:
+> > >> On 03/30, Chao Yu wrote:
+> > >>> Hi Eric,
+> > >>>
+> > >>> On 2018/3/29 2:15, Eric Biggers wrote:
+> > >>>> Reserve an F2FS feature flag and inode flag for fs-verity.  This is an
+> > >>>> in-development feature that is planned be discussed at LSF/MM 2018 [1].
+> > >>>> It will provide file-based integrity and authenticity for read-only
+> > >>>> files.  Most code will be in a filesystem-independent module, with
+> > >>>> smaller changes needed to individual filesystems that opt-in to
+> > >>>> supporting the feature.  An early prototype supporting F2FS is available
+> > >>>> [2].  Reserving the F2FS on-disk bits for fs-verity will prevent users
+> > >>>> of the prototype from conflicting with other new F2FS features.
+> > >>>>
+> > >>>> Note that we're reserving the inode flag in f2fs_inode.i_advise, which
+> > >>>> isn't really appropriate since it's not a hint or advice.  But
+> > >>>> ->i_advise is already being used to hold the 'encrypt' flag; and F2FS's
+> > >>>> ->i_flags uses the generic FS_* values, so it seems ->i_flags can't be
+> > >>>> used for an F2FS-specific flag without additional work to remove the
+> > >>>> assumption that ->i_flags uses the generic flags namespace.
+> > >>>
+> > >>> At a glance, this is a VFS feature, can we search free slot, and define
+> > >>> FS_VERITY_FL like other generic flags, so we can intergrate this flag into
+> > >>> f2fs_inode::i_flags?
+> > >>
+> > >> Do we need to get/set this bit of i_flags to user? And, f2fs doesn't synchronize
+> > >> it with inode block update. I think this should be set by internal f2fs
+> > >> operations likewise fscrypt.
+> > >>
+> > > 
+> > > The fs-verity inode flag won't be modifiable using FS_IOC_SETFLAGS.  Like
+> > 
+> > Verity flag can also be wrapped by FS_FL_USER_MODIFIABLE like for FS_ENCRYPT_FL?
+> > 
+> > > fscrypt, it will only be possible to set it using a dedicated ioctl (tentatively
+> > > called FS_IOC_ENABLE_VERITY), and it won't be supported to clear the bit once
+> > > set, short of deleting and re-creating the file.  So it doesn't really matter
+> > > where the bit goes in the on-disk inode, it just needs to go somewhere.  I'm
+> > > just hesitant to reserve a flag in the UAPI flags namespace which is really more
+> > > "owned" by ext4 than by f2fs, so has more implications than just f2fs as we
+> > > would effectively be reserving the flag for ext4's on-disk format too.
+> > 
+> > IMO, because this is a VFS feature, it will be better that we can put it in more
+> > generic place, also user can check this bit in generic way (via
+> > FS_IOC_GETFLAGS), and then for other filesystem who wants add this feature, that
+> > will be simple to place this bit.
+> > 
+> > What I can see is, for encryption feature:
+> > 
+> > vfs::i_flags
+> > #define FS_ENCRYPT_FL                   0x00000800 /* Encrypted file */
+> > 
+> > ext4:i_flags
+> > #define EXT4_ENCRYPT_FL			0x00000800 /* encrypted file */
+> > 
+> > f2fs::i_advice
+> > #define FADVISE_ENCRYPT_BIT	0x04
+> > 
+> > It's very wired that f2fs didn't use well defined FS_ENCRYPT_FL bit position,
+> > result in that we leave a hole in on-disk i_flags, and if we want to show the
+> > same 'encrypted' flags status in FS_IOC_GETFLAGS, we need to change more codes.
+> > 
+> > Anyway, I just ask why not let generic status goes into i_flags, and private
+> > status goes into i_advices?
 > 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 8068b015ece5..271fadadaa36 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -1584,8 +1584,13 @@ static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
->  {
->  	struct inode *inode = file_inode(filp);
->  	struct f2fs_inode_info *fi = F2FS_I(inode);
-> -	unsigned int flags = fi->i_flags &
-> -			(FS_FL_USER_VISIBLE | FS_PROJINHERIT_FL);
-> +	unsigned int flags = fi->i_flags;
-> +
-> +	if (file_is_encrypt(inode))
-> +		flags |= FS_ENCRYPT_FL;
-> +
-> +	flags &= FS_FL_USER_VISIBLE | FS_PROJINHERIT_FL;
-> +
->  	return put_user(flags, (int __user *)arg);
->  }
->  
-> -- 
-> 2.15.0.55.gc2ece9dc4de6
+> Ted and others, what would you say about allocating FS_VERITY_FL as one of the
+> unused ext4 / "VFS" inode flags like 0x01000000, or maybe 0x00000400 if the
+> compression flags aren't being used anymore?
+> 
+> I do wish that we separated the on-disk flags namespaces from the
+> FS_IOC_GETFLAGS/FS_IOC_SETFLAGS namespace though...  Then adding the flag to
+
+Use FS_IOC_{GS}ETXATTR instead?. I'ts not tied to an on-disk format.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
