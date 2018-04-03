@@ -1,16 +1,10 @@
-From: Eric Biggers via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Subject: Re: [PATCH] f2fs: reserve bits for fs-verity
-Date: Mon, 2 Apr 2018 15:58:25 -0700
-Message-ID: <20180402225825.GD59810@google.com>
-References: <20180328181509.199870-1-ebiggers@google.com>
- <9ccabf5b-46ef-aa46-bdb8-6fcd96792ed0@huawei.com>
- <20180330164136.GE44823@jaegeuk-macbookpro.roam.corp.google.com>
- <20180330183420.GA180083@google.com>
- <ec343a28-ad47-a494-ea36-c8fef72d3480@huawei.com>
- <20180402184837.GA59810@google.com>
- <20180402214959.GG18129@dastard>
-Reply-To: Eric Biggers <ebiggers@google.com>
+From: Junling Zheng <zhengjunling@huawei.com>
+Subject: Re: [PATCH] mkfs.f2fs: support multiple features with
+ one "-O"
+Date: Tue, 3 Apr 2018 10:15:09 +0800
+Message-ID: <f06ed174-dddd-7312-53eb-b9eb2979092b@huawei.com>
+References: <20180402041915.168646-1-zhengjunling@huawei.com>
+ <a4db4fff-8b2b-e443-40d5-641f7f691906@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -18,18 +12,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@google.com>) id 1f38PP-0000Om-H9
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 02 Apr 2018 22:58:39 +0000
-Received: from mail-pl0-f44.google.com ([209.85.160.44])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1f38PL-000xwA-1u
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 02 Apr 2018 22:58:39 +0000
-Received: by mail-pl0-f44.google.com with SMTP id c21-v6so2545972plz.10
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 02 Apr 2018 15:58:34 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20180402214959.GG18129@dastard>
+ (envelope-from <zhengjunling@huawei.com>) id 1f3BUb-0002rg-Ir
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Apr 2018 02:16:13 +0000
+Received: from [45.249.212.35] (helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1f3BUY-009sd3-TK
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Apr 2018 02:16:13 +0000
+In-Reply-To: <a4db4fff-8b2b-e443-40d5-641f7f691906@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -39,106 +29,88 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Dave Chinner <david@fromorbit.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, Michael Halcrow <mhalcrow@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org, Victor Hsieh <victorhsieh@google.com>
+To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Tue, Apr 03, 2018 at 07:49:59AM +1000, Dave Chinner wrote:
-> On Mon, Apr 02, 2018 at 11:48:37AM -0700, Eric Biggers wrote:
-> > [+Cc linux-ext4, linux-fsdevel]
-> > 
-> > On Mon, Apr 02, 2018 at 06:07:10PM +0800, Chao Yu wrote:
-> > > Hi Eric and Jaegeuk,
-> > > 
-> > > On 2018/3/31 2:34, Eric Biggers wrote:
-> > > > Hi Chao and Jaegeuk,
-> > > > 
-> > > > On Fri, Mar 30, 2018 at 09:41:36AM -0700, Jaegeuk Kim wrote:
-> > > >> On 03/30, Chao Yu wrote:
-> > > >>> Hi Eric,
-> > > >>>
-> > > >>> On 2018/3/29 2:15, Eric Biggers wrote:
-> > > >>>> Reserve an F2FS feature flag and inode flag for fs-verity.  This is an
-> > > >>>> in-development feature that is planned be discussed at LSF/MM 2018 [1].
-> > > >>>> It will provide file-based integrity and authenticity for read-only
-> > > >>>> files.  Most code will be in a filesystem-independent module, with
-> > > >>>> smaller changes needed to individual filesystems that opt-in to
-> > > >>>> supporting the feature.  An early prototype supporting F2FS is available
-> > > >>>> [2].  Reserving the F2FS on-disk bits for fs-verity will prevent users
-> > > >>>> of the prototype from conflicting with other new F2FS features.
-> > > >>>>
-> > > >>>> Note that we're reserving the inode flag in f2fs_inode.i_advise, which
-> > > >>>> isn't really appropriate since it's not a hint or advice.  But
-> > > >>>> ->i_advise is already being used to hold the 'encrypt' flag; and F2FS's
-> > > >>>> ->i_flags uses the generic FS_* values, so it seems ->i_flags can't be
-> > > >>>> used for an F2FS-specific flag without additional work to remove the
-> > > >>>> assumption that ->i_flags uses the generic flags namespace.
-> > > >>>
-> > > >>> At a glance, this is a VFS feature, can we search free slot, and define
-> > > >>> FS_VERITY_FL like other generic flags, so we can intergrate this flag into
-> > > >>> f2fs_inode::i_flags?
-> > > >>
-> > > >> Do we need to get/set this bit of i_flags to user? And, f2fs doesn't synchronize
-> > > >> it with inode block update. I think this should be set by internal f2fs
-> > > >> operations likewise fscrypt.
-> > > >>
-> > > > 
-> > > > The fs-verity inode flag won't be modifiable using FS_IOC_SETFLAGS.  Like
-> > > 
-> > > Verity flag can also be wrapped by FS_FL_USER_MODIFIABLE like for FS_ENCRYPT_FL?
-> > > 
-> > > > fscrypt, it will only be possible to set it using a dedicated ioctl (tentatively
-> > > > called FS_IOC_ENABLE_VERITY), and it won't be supported to clear the bit once
-> > > > set, short of deleting and re-creating the file.  So it doesn't really matter
-> > > > where the bit goes in the on-disk inode, it just needs to go somewhere.  I'm
-> > > > just hesitant to reserve a flag in the UAPI flags namespace which is really more
-> > > > "owned" by ext4 than by f2fs, so has more implications than just f2fs as we
-> > > > would effectively be reserving the flag for ext4's on-disk format too.
-> > > 
-> > > IMO, because this is a VFS feature, it will be better that we can put it in more
-> > > generic place, also user can check this bit in generic way (via
-> > > FS_IOC_GETFLAGS), and then for other filesystem who wants add this feature, that
-> > > will be simple to place this bit.
-> > > 
-> > > What I can see is, for encryption feature:
-> > > 
-> > > vfs::i_flags
-> > > #define FS_ENCRYPT_FL                   0x00000800 /* Encrypted file */
-> > > 
-> > > ext4:i_flags
-> > > #define EXT4_ENCRYPT_FL			0x00000800 /* encrypted file */
-> > > 
-> > > f2fs::i_advice
-> > > #define FADVISE_ENCRYPT_BIT	0x04
-> > > 
-> > > It's very wired that f2fs didn't use well defined FS_ENCRYPT_FL bit position,
-> > > result in that we leave a hole in on-disk i_flags, and if we want to show the
-> > > same 'encrypted' flags status in FS_IOC_GETFLAGS, we need to change more codes.
-> > > 
-> > > Anyway, I just ask why not let generic status goes into i_flags, and private
-> > > status goes into i_advices?
-> > 
-> > Ted and others, what would you say about allocating FS_VERITY_FL as one of the
-> > unused ext4 / "VFS" inode flags like 0x01000000, or maybe 0x00000400 if the
-> > compression flags aren't being used anymore?
-> > 
-> > I do wish that we separated the on-disk flags namespaces from the
-> > FS_IOC_GETFLAGS/FS_IOC_SETFLAGS namespace though...  Then adding the flag to
+Hi, Chao
+
+On 2018/4/2 21:35, Chao Yu wrote:
+> On 2018/4/2 12:19, Junling Zheng wrote:
+>> Now one "-O" option can support multiple features separated
+>> by a comma or blank, such as:
+>> feature1,feature2,... or "feature1 feature2 ..."
 > 
-> Use FS_IOC_{GS}ETXATTR instead?. I'ts not tied to an on-disk format.
+> At a glance, can last sector number be parsed as feature name?
 > 
 
-Yes, that API is better -- though, *setting* the fs-verity bit will likely be
-done through its own ioctl (tentatively called FS_IOC_ENABLE_VERITY) as it will
-involve more work than simply flipping the bit.  So for *getting* it we maybe
-should just add it as a statx attribute, and not use the GETFLAGS or GETXATTR
-ioctls at all.
+No, we should use quotation marks to wrap whole features while separating them with blanks.
 
-But right now the real problem is that f2fs is using the FS_* namespace for its
-on-disk ->i_flags (other than a few in the f2fs-specific ->i_advise), which
-gives the impression that all new f2fs on-disk flags need to be exposed through
-FS_IOC_GETFLAGS/SETFLAGS, and also reserved for ext4 as well...
+Thanks,
+Junling
 
-Eric
+> Thanks,
+> 
+>>
+>> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+>> ---
+>>  mkfs/f2fs_format_main.c | 30 +++++++++++++++++++++++++++---
+>>  1 file changed, 27 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+>> index 741600e..76ff296 100644
+>> --- a/mkfs/f2fs_format_main.c
+>> +++ b/mkfs/f2fs_format_main.c
+>> @@ -80,10 +80,8 @@ static void f2fs_show_info()
+>>  	MSG(0, "Info: Trim is %s\n", c.trim ? "enabled": "disabled");
+>>  }
+>>  
+>> -static void parse_feature(const char *features)
+>> +static void set_feature_bits(char *features)
+>>  {
+>> -	while (*features == ' ')
+>> -		features++;
+>>  	if (!strcmp(features, "encrypt")) {
+>>  		c.feature |= cpu_to_le32(F2FS_FEATURE_ENCRYPT);
+>>  	} else if (!strcmp(features, "verity")) {
+>> @@ -108,6 +106,32 @@ static void parse_feature(const char *features)
+>>  	}
+>>  }
+>>  
+>> +static void parse_feature(const char *features)
+>> +{
+>> +	char *buf, *sub, *next;
+>> +
+>> +	buf = calloc(strlen(features) + 1, sizeof(char));
+>> +	ASSERT(buf);
+>> +	strncpy(buf, features, strlen(features) + 1);
+>> +
+>> +	for (sub = buf; sub && *sub; sub = next ? next + 1 : NULL) {
+>> +		/* Skip the beginning blanks */
+>> +		while (*sub && *sub == ' ')
+>> +			sub++;
+>> +		next = sub;
+>> +		/* Skip a feature word */
+>> +		while (*next && *next != ' ' && *next != ',')
+>> +			next++;
+>> +
+>> +		if (*next == 0)
+>> +			next = NULL;
+>> +		else
+>> +			*next = 0;
+>> +
+>> +		set_feature_bits(sub);
+>> +	}
+>> +}
+>> +
+>>  static void f2fs_parse_options(int argc, char *argv[])
+>>  {
+>>  	static const char *option_string = "qa:c:d:e:E:il:mo:O:s:S:z:t:f";
+>>
+> 
+> .
+> 
+
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
