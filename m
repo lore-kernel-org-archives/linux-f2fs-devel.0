@@ -1,61 +1,121 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: fix to show encrypt flag in FS_IOC_GETFLAGS
-Date: Tue, 3 Apr 2018 15:14:40 +0800
-Message-ID: <3f76800a-8b68-b378-8b03-c14248966be4@huawei.com>
-References: <20180402102446.32832-1-yuchao0@huawei.com>
- <20180402202105.GB19195@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH v2] f2fs: remain written times to update inode during
+ fsync
+Date: Tue, 3 Apr 2018 15:17:38 +0800
+Message-ID: <d67b0a31-ef40-e981-729b-b93758d88ccd@huawei.com>
+References: <20180330055126.36202-1-jaegeuk@kernel.org>
+ <20180330163036.GC44823@jaegeuk-macbookpro.roam.corp.google.com>
+ <90a3d827-5447-437b-b742-79e7084e4a2c@huawei.com>
+ <20180403052310.GB57227@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180402202105.GB19195@jaegeuk-macbookpro.roam.corp.google.com>
+In-Reply-To: <20180403052310.GB57227@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/4/3 4:21, Jaegeuk Kim wrote:
-> On 04/02, Chao Yu wrote:
->> This patch fixes to show encrypt flag in FS_IOC_GETFLAGS like ext4 does.
+On 2018/4/3 13:23, Jaegeuk Kim wrote:
+> On 04/03, Chao Yu wrote:
+>> On 2018/3/31 0:30, Jaegeuk Kim wrote:
+>>> Change log from v1:
+>>>  - add more description
+>>>
+>>> This fixes xfstests/generic/392.
+>>>
+>>> The failure was caused by different times between 1) one marked in the last
+>>> fsync(2) call and 2) the other given by roll-forward recovery after power-cut.
+>>> The reason was that we skipped updating inode block at 1), since its i_size
+>>> was recoverable along with 4KB-aligned data writes, which was fixed by:
+>>>   "f2fs: fix a wrong condition in f2fs_skip_inode_update"
+>>>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fs/f2fs/f2fs.h  | 15 +++++++++++++++
+>>>  fs/f2fs/inode.c |  4 ++++
+>>>  2 files changed, 19 insertions(+)
+>>>
+>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>> index 000f93f6767e..675c39d85111 100644
+>>> --- a/fs/f2fs/f2fs.h
+>>> +++ b/fs/f2fs/f2fs.h
+>>> @@ -664,6 +664,7 @@ struct f2fs_inode_info {
+>>>  	kprojid_t i_projid;		/* id for project quota */
+>>>  	int i_inline_xattr_size;	/* inline xattr size */
+>>>  	struct timespec i_crtime;	/* inode creation time */
+>>> +	struct timespec i_disk_time[4];	/* inode disk times */
+>>>  };
+>>>  
+>>>  static inline void get_extent_info(struct extent_info *ext,
+>>> @@ -2457,6 +2458,11 @@ static inline void clear_file(struct inode *inode, int type)
+>>>  	f2fs_mark_inode_dirty_sync(inode, true);
+>>>  }
+>>>  
+>>> +static inline bool time_equal(struct timespec a, struct timespec b)
+>>> +{
+>>> +	return (a.tv_sec == b.tv_sec) && (a.tv_nsec == b.tv_nsec);
+>>> +}
+>>
+>> We can use existing timespec_equal in <linux/time.h> instead of defining a
+>> duplicated one?
 > 
-> Actually, we have to show internal flags owned by f2fs, not generic ones.
-> We may need to define all of them separately?
+> It is defined with const parameters.
 
-Agreed, I wrote a patch, could check that? and in that patch, do we need to
-delete flag definition f2fs don't use?
+I didn't get it, const keyword can used to protect parameter not to be changed
+in that function, that will be more safe, so it will be better to use that one?
 
 Thanks,
 
 > 
 >>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/file.c | 9 +++++++--
->>  1 file changed, 7 insertions(+), 2 deletions(-)
+>>> +
+>>>  static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+>>>  {
+>>>  	bool ret;
+>>> @@ -2474,6 +2480,15 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+>>>  			i_size_read(inode) & ~PAGE_MASK)
+>>>  		return false;
+>>>  
+>>> +	if (!time_equal(F2FS_I(inode)->i_disk_time[0], inode->i_atime))
+>>> +		return false;
+>>> +	if (!time_equal(F2FS_I(inode)->i_disk_time[1], inode->i_ctime))
+>>> +		return false;
+>>> +	if (!time_equal(F2FS_I(inode)->i_disk_time[2], inode->i_mtime))
+>>> +		return false;
+>>> +	if (!time_equal(F2FS_I(inode)->i_disk_time[3], F2FS_I(inode)->i_crtime))
+>>> +		return false;
+>>> +
+>>>  	down_read(&F2FS_I(inode)->i_sem);
+>>>  	ret = F2FS_I(inode)->last_disk_size == i_size_read(inode);
+>>>  	up_read(&F2FS_I(inode)->i_sem);
+>>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+>>> index 401f09ccce7e..70aba580f4b0 100644
+>>> --- a/fs/f2fs/inode.c
+>>> +++ b/fs/f2fs/inode.c
+>>> @@ -444,6 +444,10 @@ void update_inode(struct inode *inode, struct page *node_page)
+>>>  	if (inode->i_nlink == 0)
+>>>  		clear_inline_node(node_page);
+>>>  
+>>> +	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
+>>> +	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
+>>> +	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
+>>> +	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
 >>
->> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->> index 8068b015ece5..271fadadaa36 100644
->> --- a/fs/f2fs/file.c
->> +++ b/fs/f2fs/file.c
->> @@ -1584,8 +1584,13 @@ static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
->>  {
->>  	struct inode *inode = file_inode(filp);
->>  	struct f2fs_inode_info *fi = F2FS_I(inode);
->> -	unsigned int flags = fi->i_flags &
->> -			(FS_FL_USER_VISIBLE | FS_PROJINHERIT_FL);
->> +	unsigned int flags = fi->i_flags;
->> +
->> +	if (file_is_encrypt(inode))
->> +		flags |= FS_ENCRYPT_FL;
->> +
->> +	flags &= FS_FL_USER_VISIBLE | FS_PROJINHERIT_FL;
->> +
->>  	return put_user(flags, (int __user *)arg);
->>  }
->>  
->> -- 
->> 2.15.0.55.gc2ece9dc4de6
+>> We need initialize them in do_read_inode?
+> 
+> Done.
+> Thanks,
+> 
+>>
+>> Thanks,
+>>
+>>>  }
+>>>  
+>>>  void update_inode_page(struct inode *inode)
+>>>
 > 
 > .
 > 
