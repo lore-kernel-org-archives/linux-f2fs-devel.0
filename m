@@ -1,24 +1,24 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: truncate preallocated blocks in error case
-Date: Tue, 3 Apr 2018 10:40:36 +0800
-Message-ID: <62b2179c-655c-8246-6321-7ac8e5ea089e@huawei.com>
-References: <20180331015710.72893-1-jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: make assignment of t->dentry_bitmap more readable
+Date: Tue, 3 Apr 2018 10:42:11 +0800
+Message-ID: <b68f7f6c-0a3b-f1f2-41a0-2b03c7681944@huawei.com>
+References: <1522671740-92824-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20180331015710.72893-1-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1522671740-92824-1-git-send-email-yunlong.song@huawei.com>
 Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: stable@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/3/31 9:57, Jaegeuk Kim wrote:
-> If write is failed, we must deallocate the blocks that we couldn't write.
+On 2018/4/2 20:22, Yunlong Song wrote:
+> In make_dentry_ptr_block, it is confused with "&" for t->dentry_bitmap
+> but without "&" for t->dentry, so delete "&" to make code more readable.
 > 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
