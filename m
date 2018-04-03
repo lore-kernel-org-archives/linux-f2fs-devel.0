@@ -1,100 +1,206 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: remain written times to update inode during
- fsync
-Date: Tue, 3 Apr 2018 10:29:11 +0800
-Message-ID: <90a3d827-5447-437b-b742-79e7084e4a2c@huawei.com>
-References: <20180330055126.36202-1-jaegeuk@kernel.org>
- <20180330163036.GC44823@jaegeuk-macbookpro.roam.corp.google.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [GIT PULL] f2fs update for 4.16-rc1
+Date: Tue, 3 Apr 2018 12:29:19 +1000
+Message-ID: <20180403122919.3c503f74@canb.auug.org.au>
+References: <20180130223220.GB65489@jaegeuk-macbookpro.roam.corp.google.com>
+        <20180131095446.443670dc@canb.auug.org.au>
+        <20180131002535.GD65489@jaegeuk-macbookpro.roam.corp.google.com>
+        <20180201092551.759f32be@canb.auug.org.au>
+        <20180314101704.51aaae7f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/6D4vWARE+glh+6FsOjzXU2."; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180330163036.GC44823@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
+In-Reply-To: <20180314101704.51aaae7f@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yufen Yu <yuyufen@huawei.com>, Tejun Heo <tj@kernel.org>, David Sterba <dsterba@suse.cz>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/3/31 0:30, Jaegeuk Kim wrote:
-> Change log from v1:
->  - add more description
-> 
-> This fixes xfstests/generic/392.
-> 
-> The failure was caused by different times between 1) one marked in the last
-> fsync(2) call and 2) the other given by roll-forward recovery after power-cut.
-> The reason was that we skipped updating inode block at 1), since its i_size
-> was recoverable along with 4KB-aligned data writes, which was fixed by:
->   "f2fs: fix a wrong condition in f2fs_skip_inode_update"
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+--Sig_/6D4vWARE+glh+6FsOjzXU2.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+Ping?
+
+On Wed, 14 Mar 2018 10:17:04 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Thu, 1 Feb 2018 09:25:51 +1100 Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
+> >
+> > On Tue, 30 Jan 2018 16:25:35 -0800 Jaegeuk Kim <jaegeuk@kernel.org> wro=
+te: =20
+> > >
+> > > On 01/31, Stephen Rothwell wrote:   =20
+> > > >=20
+> > > > On Tue, 30 Jan 2018 14:32:20 -0800 Jaegeuk Kim <jaegeuk@kernel.org>=
+ wrote:     =20
+> > > > >
+> > > > > Could you please consider the below pull request?
+> > > > >=20
+> > > > > Thanks,
+> > > > >=20
+> > > > > The following changes since commit ace52288edf0cb5e7a52b681f057f8=
+6224c49c27:
+> > > > >=20
+> > > > >   Merge tag 'for-linus-20171218' of git://git.infradead.org/linux=
+-mtd (2017-12-18 16:18:01 -0800)
+> > > > >=20
+> > > > > are available in the Git repository at:
+> > > > >=20
+> > > > >   git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git =
+tags/f2fs-for-4.16-rc1
+> > > > >=20
+> > > > > for you to fetch changes up to 1c1d35df71104c76a4a2e25862926f22c3=
+34c9d6:
+> > > > >=20
+> > > > >   f2fs: support inode creation time (2018-01-25 14:10:39 -0800)  =
+   =20
+> > > >=20
+> > > > This has an interesting conflict with the btrfs tree:
+> > > >=20
+> > > > -------------------------------------------------------------------=
+----
+> > > > After merging the f2fs tree, today's linux-next build (x86_64
+> > > > allmodconfig) failed like this:
+> > > >=20
+> > > > /home/sfr/next/next/fs/f2fs/super.c: In function 'f2fs_fill_super':
+> > > > /home/sfr/next/next/fs/f2fs/super.c:2563:18: error: 'SB_I_CGROUPWB'=
+ undeclared (first use in this function); did you mean 'S_CGROUPWB'?
+> > > >   sb->s_iflags |=3D SB_I_CGROUPWB;
+> > > >                   ^~~~~~~~~~~~~
+> > > >                   S_CGROUPWB
+> > > >=20
+> > > > Caused by commit
+> > > >=20
+> > > >   578c647879f7 ("f2fs: implement cgroup writeback support")
+> > > >=20
+> > > > interacting with commit
+> > > >=20
+> > > >   34934189a3dd ("cgroup, writeback: replace SB_I_CGROUPWB with per-=
+inode S_CGROUPWB"
+> > > >=20
+> > > > from the btrfs tree.
+> > > >=20
+> > > > I have reverted the f2fs tree commit for today, but a better resolu=
+tion
+> > > > would be appreciated.
+> > > > -------------------------------------------------------------------=
+----
+> > > >=20
+> > > > I have seen no response to the above email and have been reverting =
+that
+> > > > commit since Jan 18.     =20
+> > >=20
+> > > I think this can be addressed by:
+> > >=20
+> > > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> > > index 89c838bfb067..c743b73976d0 100644
+> > > --- a/fs/f2fs/inode.c
+> > > +++ b/fs/f2fs/inode.c
+> > > @@ -48,9 +48,10 @@ void f2fs_set_inode_flags(struct inode *inode)
+> > >                 new_fl |=3D S_DIRSYNC;
+> > >         if (f2fs_encrypted_inode(inode))
+> > >                 new_fl |=3D S_ENCRYPTED;
+> > > +       new_fl |=3D S_CGROUPWB;
+> > >         inode_set_flags(inode, new_fl,
+> > >                         S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSY=
+NC|
+> > > -                       S_ENCRYPTED);
+> > > +                       S_ENCRYPTED|S_CGROUPWB);
+> > >  }
+> > >=20
+> > >  static void __get_inode_rdev(struct inode *inode, struct f2fs_inode =
+*ri)
+> > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > > index 8173ae688814..ebcd58476fc7 100644
+> > > --- a/fs/f2fs/super.c
+> > > +++ b/fs/f2fs/super.c
+> > > @@ -2560,7 +2560,6 @@ static int f2fs_fill_super(struct super_block *=
+sb, void *data, int silent)
+> > >         sb->s_flags =3D (sb->s_flags & ~SB_POSIXACL) |
+> > >                 (test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
+> > >         memcpy(&sb->s_uuid, raw_super->uuid, sizeof(raw_super->uuid));
+> > > -       sb->s_iflags |=3D SB_I_CGROUPWB;
+> > >=20
+> > >         /* init f2fs-specific super block info */
+> > >         sbi->valid_super_block =3D valid_super_block;
+> > >    =20
+> >=20
+> > I have applied that (by hand) as a merge fix patch for the merge of teh
+> > btrfs tree for today.  Thanks for the resolution. =20
+>=20
+> I am still applying this to the merge of the btrfs tree every day ...
+>=20
+> Commit
+>   578c647879f7 ("f2fs: implement cgroup writeback support")
+> was merged into Linus' tree on Jan 31.
+>=20
+> Here is the actual merge fix patch:
+>=20
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 1 Feb 2018 09:21:06 +1100
+> Subject: [PATCH] f2fs: fixup for cgroup/writeback change
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > ---
->  fs/f2fs/f2fs.h  | 15 +++++++++++++++
->  fs/f2fs/inode.c |  4 ++++
->  2 files changed, 19 insertions(+)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 000f93f6767e..675c39d85111 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -664,6 +664,7 @@ struct f2fs_inode_info {
->  	kprojid_t i_projid;		/* id for project quota */
->  	int i_inline_xattr_size;	/* inline xattr size */
->  	struct timespec i_crtime;	/* inode creation time */
-> +	struct timespec i_disk_time[4];	/* inode disk times */
->  };
->  
->  static inline void get_extent_info(struct extent_info *ext,
-> @@ -2457,6 +2458,11 @@ static inline void clear_file(struct inode *inode, int type)
->  	f2fs_mark_inode_dirty_sync(inode, true);
->  }
->  
-> +static inline bool time_equal(struct timespec a, struct timespec b)
-> +{
-> +	return (a.tv_sec == b.tv_sec) && (a.tv_nsec == b.tv_nsec);
-> +}
-
-We can use existing timespec_equal in <linux/time.h> instead of defining a
-duplicated one?
-
-> +
->  static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
->  {
->  	bool ret;
-> @@ -2474,6 +2480,15 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
->  			i_size_read(inode) & ~PAGE_MASK)
->  		return false;
->  
-> +	if (!time_equal(F2FS_I(inode)->i_disk_time[0], inode->i_atime))
-> +		return false;
-> +	if (!time_equal(F2FS_I(inode)->i_disk_time[1], inode->i_ctime))
-> +		return false;
-> +	if (!time_equal(F2FS_I(inode)->i_disk_time[2], inode->i_mtime))
-> +		return false;
-> +	if (!time_equal(F2FS_I(inode)->i_disk_time[3], F2FS_I(inode)->i_crtime))
-> +		return false;
-> +
->  	down_read(&F2FS_I(inode)->i_sem);
->  	ret = F2FS_I(inode)->last_disk_size == i_size_read(inode);
->  	up_read(&F2FS_I(inode)->i_sem);
+>  fs/f2fs/inode.c | 3 ++-
+>  fs/f2fs/super.c | 1 -
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>=20
 > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index 401f09ccce7e..70aba580f4b0 100644
+> index 205add3d0f3a..f34652c4288f 100644
 > --- a/fs/f2fs/inode.c
 > +++ b/fs/f2fs/inode.c
-> @@ -444,6 +444,10 @@ void update_inode(struct inode *inode, struct page *node_page)
->  	if (inode->i_nlink == 0)
->  		clear_inline_node(node_page);
->  
-> +	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
-> +	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
-> +	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
-> +	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
-
-We need initialize them in do_read_inode?
-
-Thanks,
-
+> @@ -48,9 +48,10 @@ void f2fs_set_inode_flags(struct inode *inode)
+>  		new_fl |=3D S_DIRSYNC;
+>  	if (f2fs_encrypted_inode(inode))
+>  		new_fl |=3D S_ENCRYPTED;
+> +	new_fl |=3D S_CGROUPWB;
+>  	inode_set_flags(inode, new_fl,
+>  			S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC|
+> -			S_ENCRYPTED);
+> +			S_ENCRYPTED|S_CGROUPWB);
 >  }
->  
->  void update_inode_page(struct inode *inode)
-> 
+> =20
+>  static void __get_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 8173ae688814..ebcd58476fc7 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -2560,7 +2560,6 @@ static int f2fs_fill_super(struct super_block *sb, =
+void *data, int silent)
+>  	sb->s_flags =3D (sb->s_flags & ~SB_POSIXACL) |
+>  		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
+>  	memcpy(&sb->s_uuid, raw_super->uuid, sizeof(raw_super->uuid));
+> -	sb->s_iflags |=3D SB_I_CGROUPWB;
+> =20
+>  	/* init f2fs-specific super block info */
+>  	sbi->valid_super_block =3D valid_super_block;
+> --=20
+> 2.15.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/6D4vWARE+glh+6FsOjzXU2.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrC5v8ACgkQAVBC80lX
+0Gzikgf/QdTzz7lCg1m1zQQchknDi13qqNeVtH8t4iZTKY1N35uP2OLT9LF1TVDu
+QRKCoSGrWIOIVGIVcxYQieGyjWonEAp0/i1kYNFn8uOvUiKaqVIRg+iB2ajBAL0k
+DW3lRoraqrGyjZx171UXdMaAWYkG3xB42lWbRZ1UwQT9ITEO+a9rZmSw24Skebu4
+sDxl5Di5tr3R/C2DqRGRkRY5Q5l5S1qcmBR/+0CcOJKdtDXhT51HalCSeKb0uW81
+gCOJvu7P+zEGjntOEI+zcOR/cfyl4sVDr1WoieFqcpPcqpNqfxAmza02pJYV5aJm
+jTwkV9qbYtzWHWmLJlok3lboj0G3kg==
+=kGqX
+-----END PGP SIGNATURE-----
+
+--Sig_/6D4vWARE+glh+6FsOjzXU2.--
