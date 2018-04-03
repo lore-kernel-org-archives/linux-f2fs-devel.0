@@ -1,149 +1,308 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] libf2fs: reset wanted_total_sectors by new
- sector_size
-Date: Tue, 3 Apr 2018 13:56:38 +0800
-Message-ID: <7c0c792f-93e1-a1c9-8ad3-5f94199bdba8@huawei.com>
-References: <20180327171908.15092-1-jaegeuk@kernel.org>
- <7561e573-9d88-60f0-868f-4a4b59d588cb@huawei.com>
- <50951b88-ccfc-836c-34c0-7347ff1f747a@huawei.com>
- <d49db6fe-d3db-9dc6-d4ce-5955b0dd01c3@huawei.com>
- <d2baabc6-e4cb-0bdc-fccb-fe3b0cdc813e@huawei.com>
- <20180330153909.GA44823@jaegeuk-macbookpro.roam.corp.google.com>
- <f9465bc9-714d-2a9c-684d-0351ceb82724@huawei.com>
- <20180402200336.GA19195@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: [PATCH] f2fs: introduce private inode status mapping
+Date: Tue, 3 Apr 2018 15:08:17 +0800
+Message-ID: <20180403070817.113923-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1f3EwT-0004TG-Rh
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Apr 2018 05:57:13 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f3EwP-006pv4-Jy
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Apr 2018 05:57:13 +0000
-In-Reply-To: <20180402200336.GA19195@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: katao <katao@xiaomi.com>, Jaegeuk Kim <jaegeuk@google.com>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/4/3 4:03, Jaegeuk Kim wrote:
-> On 04/02, Chao Yu wrote:
->> On 2018/3/30 23:39, Jaegeuk Kim wrote:
->>> On 03/30, Junling Zheng wrote:
->>>> On 2018/3/30 19:26, Chao Yu wrote:
->>>>> On 2018/3/30 18:51, Junling Zheng wrote:
->>>>>> Hi,
->>>>>>
->>>>>> On 2018/3/30 17:28, Chao Yu wrote:
->>>>>>> Hi All,
->>>>>>>
->>>>>>> On 2018/3/28 1:19, Jaegeuk Kim wrote:
->>>>>>>> From: katao <katao@xiaomi.com>
->>>>>>>>
->>>>>>>> The args of wanted_total_sectors is calculated based
->>>>>>>> on the DEFAULT_SECTOR_SIZE(512Bytes).get_device_info(i)
->>>>>>>> may be reset dev_sector_size, we should reset the number
->>>>>>>> of wanted_total_sectors.
->>>>>>>>
->>>>>>>> This bug was reported to Google Issue Tracker.
->>>>>>>> Link: https://issuetracker.google.com/issues/76407663
->>>>>>>
->>>>>>> I don't think this is the right way, since now we have changed previous
->>>>>>> sector_counter's meaning, some applications, for example, like xfstests will get
->>>>>>> device's real sector size via blockdev --getsize64, then calculate total wanted
->>>>>>> sector count by total_wanted_size / real_sector_size, if we changed default
->>>>>>> sector size to 512bytes, xfstests will pass a wrong sector number, result in
->>>>>>> getting wrong partition size.
->>>>>>>
->>>>>>> For something worse, in order to get the correct sector number, we have to
->>>>>>> change the way of calculation method of xfstests for new mkfs, but how can
->>>>>>> xfstests know the current version of mkfs is new or old...
->>>>>>>
->>>>>>> I think the change didn't consider backward compatibility of mkfs, so, in order
->>>>>>> to keep that, we'd better to let user pass the right sector number based on
->>>>>>> their device, or we can introduce a new parameter to indicate user wanted total
->>>>>>> size.
->>>>>>>
->>>>>>> How do you think?
->>>>>>>
->>>>>>
->>>>>> Agree. It's not backward-compatible. Most users can pass the correct sector number
->>>>>> calculated by the real sector size. For those very few users using 512B despite of
->>>>>> the actual sector size, all we need to do is informing them the real sector size.
->>>>>
->>>>> The problem is via passed sector number, we can't know user has already knew the
->>>>> real sector size or not, so we don't have any chance to info them.
->>>>>
->>>>
->>>> Yeah, we can't guess users' behaviors. And only when wanted size is over device size,
->>>> we can inform users the real sector size.
->>>
->>> So, current problem would be that wanted_total_sectors is given by:
->>> - device sector size in xfstests
->>> - 4KB in fs_mgr in Android
->>> - 512B in recovery in Android
->>>
->>> And, my concern is why user always needs to think about sector_size to give
->>> target image size, and I thought 512B would be good to set as a default smallest
->>> value.
->>
->> Of course, IMO, the most direct way is let user pass image size to mkfs.f2fs
->> instead of caculated sector size, I think that will make all happy.
-> 
-> No, it can become too large number.
-> 
->>
->>>
->>> Setting it 512B by default can give some confusion to users tho, it won't hurt
->>> the existing partitions or images. So, I bet users will get noticed quickly,
->>> when formatting new partition under this rule.
->>
->> For those f2fs users, who makes image based on non-512B sector device, once they
->> upgrade mkfs.f2fs, they will encounter this issue, that may make bad reputation.
->>
->> For interface in f2fs private ioctl, sysfs entry, or syscall, we keep the rule
->> that once we want to do some change on it, we will not change the old interface
->> directly, instead, introduce a new one to keep backward compatibility of old
->> one. Still, I hope we can keep that rule in mkfs.f2fs parameter.
-> 
-> Okay, so in order to give more flexible ways, it'd be fine to add
-> wanted_sector_size by "-w" so that we could blow out all the existing concern
-> like this.
+Previously, we use generic FS_*_FL defined by vfs to indicate inode status
+for each bit of i_flags, so f2fs's flag status definition is tied to vfs'
+one, it will be hard for f2fs to reuse bits f2fs never used to indicate
+new status..
 
-That's better.
+In order to solve this issue, we introduce private inode status mapping,
+Note, for these bits have already been persisted into disk, we should
+never change their definition, for other ones, we can remap them for
+later new coming status.
 
-> 
-> From: katao <katao@xiaomi.com>
-> Date: Tue, 27 Mar 2018 13:25:46 +0800
-> Subject: [PATCH] libf2fs,mkfs.f2fs: add wanted_sector_size for
->  wanted_total_sectors
-> 
-> The wanted_total_sectors was determined by device sector size, but sometimes
-> we don't know precise sector_size by default. So, let's give wanted_sector_size
-> in such the ambiguous situation.
-> 
-> Signed-off-by: katao <katao@xiaomi.com>
-> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@google.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/f2fs.h  | 57 ++++++++++++++++++++++++++++++++++++++++++++++++++++++---
+ fs/f2fs/file.c  | 54 +++++++++++++++++++++++-------------------------------
+ fs/f2fs/inode.c | 12 ++++++------
+ fs/f2fs/namei.c |  6 +++---
+ fs/f2fs/super.c |  4 ++--
+ 5 files changed, 88 insertions(+), 45 deletions(-)
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 675c39d85111..277ec0172a40 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2156,9 +2156,60 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
+ 	*addr ^= mask;
+ }
+ 
+-#define F2FS_REG_FLMASK		(~(FS_DIRSYNC_FL | FS_TOPDIR_FL))
+-#define F2FS_OTHER_FLMASK	(FS_NODUMP_FL | FS_NOATIME_FL)
+-#define F2FS_FL_INHERITED	(FS_PROJINHERIT_FL)
++/*
++ * Inode flags
++ */
++#define	F2FS_SECRM_FL			0x00000001 /* Secure deletion */
++#define	F2FS_UNRM_FL			0x00000002 /* Undelete */
++#define	F2FS_COMPR_FL			0x00000004 /* Compress file */
++#define F2FS_SYNC_FL			0x00000008 /* Synchronous updates */
++#define F2FS_IMMUTABLE_FL		0x00000010 /* Immutable file */
++#define F2FS_APPEND_FL			0x00000020 /* writes to file may only append */
++#define F2FS_NODUMP_FL			0x00000040 /* do not dump file */
++#define F2FS_NOATIME_FL			0x00000080 /* do not update atime */
++/* Reserved for compression usage... */
++#define F2FS_DIRTY_FL			0x00000100
++#define F2FS_COMPRBLK_FL		0x00000200 /* One or more compressed clusters */
++#define F2FS_NOCOMPR_FL			0x00000400 /* Don't compress */
++#define F2FS_ENCRYPT_FL			0x00000800 /* encrypted file */
++/* End compression flags --- maybe not all used */
++#define F2FS_INDEX_FL			0x00001000 /* hash-indexed directory */
++#define F2FS_IMAGIC_FL			0x00002000 /* AFS directory */
++#define F2FS_JOURNAL_DATA_FL		0x00004000 /* file data should be journaled */
++#define F2FS_NOTAIL_FL			0x00008000 /* file tail should not be merged */
++#define F2FS_DIRSYNC_FL			0x00010000 /* dirsync behaviour (directories only) */
++#define F2FS_TOPDIR_FL			0x00020000 /* Top of directory hierarchies*/
++#define F2FS_HUGE_FILE_FL               0x00040000 /* Set to each huge file */
++#define F2FS_EXTENTS_FL			0x00080000 /* Inode uses extents */
++#define F2FS_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
++#define F2FS_EOFBLOCKS_FL		0x00400000 /* Blocks allocated beyond EOF */
++#define F2FS_INLINE_DATA_FL		0x10000000 /* Inode has inline data. */
++#define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
++#define F2FS_RESERVED_FL		0x80000000 /* reserved for ext4 lib */
++
++#define F2FS_FL_USER_VISIBLE		0x304BDFFF /* User visible flags */
++#define F2FS_FL_USER_MODIFIABLE		0x204BC0FF /* User modifiable flags */
++
++/* Flags we can manipulate with through F2FS_IOC_FSSETXATTR */
++#define F2FS_FL_XFLAG_VISIBLE		(F2FS_SYNC_FL | \
++					 F2FS_IMMUTABLE_FL | \
++					 F2FS_APPEND_FL | \
++					 F2FS_NODUMP_FL | \
++					 F2FS_NOATIME_FL | \
++					 F2FS_PROJINHERIT_FL)
++
++/* Flags that should be inherited by new inodes from their parent. */
++#define F2FS_FL_INHERITED (F2FS_SECRM_FL | F2FS_UNRM_FL | F2FS_COMPR_FL |\
++			   F2FS_SYNC_FL | F2FS_NODUMP_FL | F2FS_NOATIME_FL |\
++			   F2FS_NOCOMPR_FL | F2FS_JOURNAL_DATA_FL |\
++			   F2FS_NOTAIL_FL | F2FS_DIRSYNC_FL |\
++			   F2FS_PROJINHERIT_FL)
++
++/* Flags that are appropriate for regular files (all but dir-specific ones). */
++#define F2FS_REG_FLMASK		(~(F2FS_DIRSYNC_FL | F2FS_TOPDIR_FL))
++
++/* Flags that are appropriate for non-directories/regular files. */
++#define F2FS_OTHER_FLMASK	(F2FS_NODUMP_FL | F2FS_NOATIME_FL)
+ 
+ static inline __u32 f2fs_mask_flags(umode_t mode, __u32 flags)
+ {
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 6b94f19b3fa8..7b8fb31086c3 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -686,16 +686,16 @@ int f2fs_getattr(const struct path *path, struct kstat *stat,
+ 		stat->btime.tv_nsec = fi->i_crtime.tv_nsec;
+ 	}
+ 
+-	flags = fi->i_flags & (FS_FL_USER_VISIBLE | FS_PROJINHERIT_FL);
+-	if (flags & FS_APPEND_FL)
++	flags = fi->i_flags & (F2FS_FL_USER_VISIBLE | F2FS_PROJINHERIT_FL);
++	if (flags & F2FS_APPEND_FL)
+ 		stat->attributes |= STATX_ATTR_APPEND;
+-	if (flags & FS_COMPR_FL)
++	if (flags & F2FS_COMPR_FL)
+ 		stat->attributes |= STATX_ATTR_COMPRESSED;
+ 	if (f2fs_encrypted_inode(inode))
+ 		stat->attributes |= STATX_ATTR_ENCRYPTED;
+-	if (flags & FS_IMMUTABLE_FL)
++	if (flags & F2FS_IMMUTABLE_FL)
+ 		stat->attributes |= STATX_ATTR_IMMUTABLE;
+-	if (flags & FS_NODUMP_FL)
++	if (flags & F2FS_NODUMP_FL)
+ 		stat->attributes |= STATX_ATTR_NODUMP;
+ 
+ 	stat->attributes_mask |= (STATX_ATTR_APPEND |
+@@ -1585,7 +1585,7 @@ static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
+ 	struct inode *inode = file_inode(filp);
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 	unsigned int flags = fi->i_flags &
+-			(FS_FL_USER_VISIBLE | FS_PROJINHERIT_FL);
++			(F2FS_FL_USER_VISIBLE | F2FS_PROJINHERIT_FL);
+ 	return put_user(flags, (int __user *)arg);
+ }
+ 
+@@ -1602,15 +1602,15 @@ static int __f2fs_ioc_setflags(struct inode *inode, unsigned int flags)
+ 
+ 	oldflags = fi->i_flags;
+ 
+-	if ((flags ^ oldflags) & (FS_APPEND_FL | FS_IMMUTABLE_FL))
++	if ((flags ^ oldflags) & (F2FS_APPEND_FL | F2FS_IMMUTABLE_FL))
+ 		if (!capable(CAP_LINUX_IMMUTABLE))
+ 			return -EPERM;
+ 
+-	flags = flags & (FS_FL_USER_MODIFIABLE | FS_PROJINHERIT_FL);
+-	flags |= oldflags & ~(FS_FL_USER_MODIFIABLE | FS_PROJINHERIT_FL);
++	flags = flags & (F2FS_FL_USER_MODIFIABLE | F2FS_PROJINHERIT_FL);
++	flags |= oldflags & ~(F2FS_FL_USER_MODIFIABLE | F2FS_PROJINHERIT_FL);
+ 	fi->i_flags = flags;
+ 
+-	if (fi->i_flags & FS_PROJINHERIT_FL)
++	if (fi->i_flags & F2FS_PROJINHERIT_FL)
+ 		set_inode_flag(inode, FI_PROJ_INHERIT);
+ 	else
+ 		clear_inode_flag(inode, FI_PROJ_INHERIT);
+@@ -2601,17 +2601,17 @@ static inline __u32 f2fs_iflags_to_xflags(unsigned long iflags)
+ {
+ 	__u32 xflags = 0;
+ 
+-	if (iflags & FS_SYNC_FL)
++	if (iflags & F2FS_SYNC_FL)
+ 		xflags |= FS_XFLAG_SYNC;
+-	if (iflags & FS_IMMUTABLE_FL)
++	if (iflags & F2FS_IMMUTABLE_FL)
+ 		xflags |= FS_XFLAG_IMMUTABLE;
+-	if (iflags & FS_APPEND_FL)
++	if (iflags & F2FS_APPEND_FL)
+ 		xflags |= FS_XFLAG_APPEND;
+-	if (iflags & FS_NODUMP_FL)
++	if (iflags & F2FS_NODUMP_FL)
+ 		xflags |= FS_XFLAG_NODUMP;
+-	if (iflags & FS_NOATIME_FL)
++	if (iflags & F2FS_NOATIME_FL)
+ 		xflags |= FS_XFLAG_NOATIME;
+-	if (iflags & FS_PROJINHERIT_FL)
++	if (iflags & F2FS_PROJINHERIT_FL)
+ 		xflags |= FS_XFLAG_PROJINHERIT;
+ 	return xflags;
+ }
+@@ -2620,31 +2620,23 @@ static inline __u32 f2fs_iflags_to_xflags(unsigned long iflags)
+ 				  FS_XFLAG_APPEND | FS_XFLAG_NODUMP | \
+ 				  FS_XFLAG_NOATIME | FS_XFLAG_PROJINHERIT)
+ 
+-/* Flags we can manipulate with through EXT4_IOC_FSSETXATTR */
+-#define F2FS_FL_XFLAG_VISIBLE		(FS_SYNC_FL | \
+-					 FS_IMMUTABLE_FL | \
+-					 FS_APPEND_FL | \
+-					 FS_NODUMP_FL | \
+-					 FS_NOATIME_FL | \
+-					 FS_PROJINHERIT_FL)
+-
+ /* Transfer xflags flags to internal */
+ static inline unsigned long f2fs_xflags_to_iflags(__u32 xflags)
+ {
+ 	unsigned long iflags = 0;
+ 
+ 	if (xflags & FS_XFLAG_SYNC)
+-		iflags |= FS_SYNC_FL;
++		iflags |= F2FS_SYNC_FL;
+ 	if (xflags & FS_XFLAG_IMMUTABLE)
+-		iflags |= FS_IMMUTABLE_FL;
++		iflags |= F2FS_IMMUTABLE_FL;
+ 	if (xflags & FS_XFLAG_APPEND)
+-		iflags |= FS_APPEND_FL;
++		iflags |= F2FS_APPEND_FL;
+ 	if (xflags & FS_XFLAG_NODUMP)
+-		iflags |= FS_NODUMP_FL;
++		iflags |= F2FS_NODUMP_FL;
+ 	if (xflags & FS_XFLAG_NOATIME)
+-		iflags |= FS_NOATIME_FL;
++		iflags |= F2FS_NOATIME_FL;
+ 	if (xflags & FS_XFLAG_PROJINHERIT)
+-		iflags |= FS_PROJINHERIT_FL;
++		iflags |= F2FS_PROJINHERIT_FL;
+ 
+ 	return iflags;
+ }
+@@ -2657,7 +2649,7 @@ static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
+ 
+ 	memset(&fa, 0, sizeof(struct fsxattr));
+ 	fa.fsx_xflags = f2fs_iflags_to_xflags(fi->i_flags &
+-				(FS_FL_USER_VISIBLE | FS_PROJINHERIT_FL));
++				(F2FS_FL_USER_VISIBLE | F2FS_PROJINHERIT_FL));
+ 
+ 	if (f2fs_sb_has_project_quota(inode->i_sb))
+ 		fa.fsx_projid = (__u32)from_kprojid(&init_user_ns,
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 21d444feec2c..ecd4c9ab18db 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -36,15 +36,15 @@ void f2fs_set_inode_flags(struct inode *inode)
+ 	unsigned int flags = F2FS_I(inode)->i_flags;
+ 	unsigned int new_fl = 0;
+ 
+-	if (flags & FS_SYNC_FL)
++	if (flags & F2FS_SYNC_FL)
+ 		new_fl |= S_SYNC;
+-	if (flags & FS_APPEND_FL)
++	if (flags & F2FS_APPEND_FL)
+ 		new_fl |= S_APPEND;
+-	if (flags & FS_IMMUTABLE_FL)
++	if (flags & F2FS_IMMUTABLE_FL)
+ 		new_fl |= S_IMMUTABLE;
+-	if (flags & FS_NOATIME_FL)
++	if (flags & F2FS_NOATIME_FL)
+ 		new_fl |= S_NOATIME;
+-	if (flags & FS_DIRSYNC_FL)
++	if (flags & F2FS_DIRSYNC_FL)
+ 		new_fl |= S_DIRSYNC;
+ 	if (f2fs_encrypted_inode(inode))
+ 		new_fl |= S_ENCRYPTED;
+@@ -272,7 +272,7 @@ static int do_read_inode(struct inode *inode)
+ 	if (!need_inode_block_update(sbi, inode->i_ino))
+ 		fi->last_disk_size = inode->i_size;
+ 
+-	if (fi->i_flags & FS_PROJINHERIT_FL)
++	if (fi->i_flags & F2FS_PROJINHERIT_FL)
+ 		set_inode_flag(inode, FI_PROJ_INHERIT);
+ 
+ 	if (f2fs_has_extra_attr(inode) && f2fs_sb_has_project_quota(sbi->sb) &&
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index d5098efe577c..98a7979f5fd9 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -61,7 +61,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
+ 	}
+ 
+ 	if (f2fs_sb_has_project_quota(sbi->sb) &&
+-		(F2FS_I(dir)->i_flags & FS_PROJINHERIT_FL))
++		(F2FS_I(dir)->i_flags & F2FS_PROJINHERIT_FL))
+ 		F2FS_I(inode)->i_projid = F2FS_I(dir)->i_projid;
+ 	else
+ 		F2FS_I(inode)->i_projid = make_kprojid(&init_user_ns,
+@@ -116,9 +116,9 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
+ 		f2fs_mask_flags(mode, F2FS_I(dir)->i_flags & F2FS_FL_INHERITED);
+ 
+ 	if (S_ISDIR(inode->i_mode))
+-		F2FS_I(inode)->i_flags |= FS_INDEX_FL;
++		F2FS_I(inode)->i_flags |= F2FS_INDEX_FL;
+ 
+-	if (F2FS_I(inode)->i_flags & FS_PROJINHERIT_FL)
++	if (F2FS_I(inode)->i_flags & F2FS_PROJINHERIT_FL)
+ 		set_inode_flag(inode, FI_PROJ_INHERIT);
+ 
+ 	trace_f2fs_new_inode(inode, 0);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 42d564c5ccd0..d01c11f5e9c1 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1800,7 +1800,7 @@ static int f2fs_quota_on(struct super_block *sb, int type, int format_id,
+ 	inode = d_inode(path->dentry);
+ 
+ 	inode_lock(inode);
+-	F2FS_I(inode)->i_flags |= FS_NOATIME_FL | FS_IMMUTABLE_FL;
++	F2FS_I(inode)->i_flags |= F2FS_NOATIME_FL | F2FS_IMMUTABLE_FL;
+ 	inode_set_flags(inode, S_NOATIME | S_IMMUTABLE,
+ 					S_NOATIME | S_IMMUTABLE);
+ 	inode_unlock(inode);
+@@ -1824,7 +1824,7 @@ static int f2fs_quota_off(struct super_block *sb, int type)
+ 		goto out_put;
+ 
+ 	inode_lock(inode);
+-	F2FS_I(inode)->i_flags &= ~(FS_NOATIME_FL | FS_IMMUTABLE_FL);
++	F2FS_I(inode)->i_flags &= ~(F2FS_NOATIME_FL | F2FS_IMMUTABLE_FL);
+ 	inode_set_flags(inode, 0, S_NOATIME | S_IMMUTABLE);
+ 	inode_unlock(inode);
+ 	f2fs_mark_inode_dirty_sync(inode, false);
+-- 
+2.15.0.55.gc2ece9dc4de6
