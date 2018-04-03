@@ -1,121 +1,134 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: remain written times to update inode during
- fsync
-Date: Tue, 3 Apr 2018 15:17:38 +0800
-Message-ID: <d67b0a31-ef40-e981-729b-b93758d88ccd@huawei.com>
-References: <20180330055126.36202-1-jaegeuk@kernel.org>
- <20180330163036.GC44823@jaegeuk-macbookpro.roam.corp.google.com>
- <90a3d827-5447-437b-b742-79e7084e4a2c@huawei.com>
- <20180403052310.GB57227@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH] mkfs.f2fs: support multiple features with
+ one "-O"
+Date: Tue, 3 Apr 2018 17:24:12 +0800
+Message-ID: <dd1b7eff-3b60-891b-48f4-0f029ef44507@huawei.com>
+References: <20180402041915.168646-1-zhengjunling@huawei.com>
+ <a4db4fff-8b2b-e443-40d5-641f7f691906@kernel.org>
+ <f06ed174-dddd-7312-53eb-b9eb2979092b@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180403052310.GB57227@jaegeuk-macbookpro.roam.corp.google.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1f3IBP-0004Xf-8C
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Apr 2018 09:24:51 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1f3IBJ-006ken-JA
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Apr 2018 09:24:51 +0000
+In-Reply-To: <f06ed174-dddd-7312-53eb-b9eb2979092b@huawei.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Junling Zheng <zhengjunling@huawei.com>, Chao Yu <chao@kernel.org>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/4/3 13:23, Jaegeuk Kim wrote:
-> On 04/03, Chao Yu wrote:
->> On 2018/3/31 0:30, Jaegeuk Kim wrote:
->>> Change log from v1:
->>>  - add more description
+Hi Junling,
+
+On 2018/4/3 10:15, Junling Zheng wrote:
+> Hi, Chao
+> 
+> On 2018/4/2 21:35, Chao Yu wrote:
+>> On 2018/4/2 12:19, Junling Zheng wrote:
+>>> Now one "-O" option can support multiple features separated
+>>> by a comma or blank, such as:
+>>> feature1,feature2,... or "feature1 feature2 ..."
+>>
+>> At a glance, can last sector number be parsed as feature name?
+>>
+> 
+> No, we should use quotation marks to wrap whole features while separating them with blanks.
+
+Sorry, that's right.
+
+> 
+> Thanks,
+> Junling
+> 
+>> Thanks,
+>>
 >>>
->>> This fixes xfstests/generic/392.
->>>
->>> The failure was caused by different times between 1) one marked in the last
->>> fsync(2) call and 2) the other given by roll-forward recovery after power-cut.
->>> The reason was that we skipped updating inode block at 1), since its i_size
->>> was recoverable along with 4KB-aligned data writes, which was fixed by:
->>>   "f2fs: fix a wrong condition in f2fs_skip_inode_update"
->>>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
 >>> ---
->>>  fs/f2fs/f2fs.h  | 15 +++++++++++++++
->>>  fs/f2fs/inode.c |  4 ++++
->>>  2 files changed, 19 insertions(+)
+>>>  mkfs/f2fs_format_main.c | 30 +++++++++++++++++++++++++++---
+>>>  1 file changed, 27 insertions(+), 3 deletions(-)
 >>>
->>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>> index 000f93f6767e..675c39d85111 100644
->>> --- a/fs/f2fs/f2fs.h
->>> +++ b/fs/f2fs/f2fs.h
->>> @@ -664,6 +664,7 @@ struct f2fs_inode_info {
->>>  	kprojid_t i_projid;		/* id for project quota */
->>>  	int i_inline_xattr_size;	/* inline xattr size */
->>>  	struct timespec i_crtime;	/* inode creation time */
->>> +	struct timespec i_disk_time[4];	/* inode disk times */
->>>  };
->>>  
->>>  static inline void get_extent_info(struct extent_info *ext,
->>> @@ -2457,6 +2458,11 @@ static inline void clear_file(struct inode *inode, int type)
->>>  	f2fs_mark_inode_dirty_sync(inode, true);
+>>> diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+>>> index 741600e..76ff296 100644
+>>> --- a/mkfs/f2fs_format_main.c
+>>> +++ b/mkfs/f2fs_format_main.c
+>>> @@ -80,10 +80,8 @@ static void f2fs_show_info()
+>>>  	MSG(0, "Info: Trim is %s\n", c.trim ? "enabled": "disabled");
 >>>  }
 >>>  
->>> +static inline bool time_equal(struct timespec a, struct timespec b)
+>>> -static void parse_feature(const char *features)
+>>> +static void set_feature_bits(char *features)
+>>>  {
+>>> -	while (*features == ' ')
+>>> -		features++;
+>>>  	if (!strcmp(features, "encrypt")) {
+>>>  		c.feature |= cpu_to_le32(F2FS_FEATURE_ENCRYPT);
+>>>  	} else if (!strcmp(features, "verity")) {
+>>> @@ -108,6 +106,32 @@ static void parse_feature(const char *features)
+>>>  	}
+>>>  }
+>>>  
+>>> +static void parse_feature(const char *features)
 >>> +{
->>> +	return (a.tv_sec == b.tv_sec) && (a.tv_nsec == b.tv_nsec);
->>> +}
->>
->> We can use existing timespec_equal in <linux/time.h> instead of defining a
->> duplicated one?
-> 
-> It is defined with const parameters.
+>>> +	char *buf, *sub, *next;
+>>> +
+>>> +	buf = calloc(strlen(features) + 1, sizeof(char));
+>>> +	ASSERT(buf);
+>>> +	strncpy(buf, features, strlen(features) + 1);
+>>> +
+>>> +	for (sub = buf; sub && *sub; sub = next ? next + 1 : NULL) {
+>>> +		/* Skip the beginning blanks */
+>>> +		while (*sub && *sub == ' ')
+>>> +			sub++;
+>>> +		next = sub;
+>>> +		/* Skip a feature word */
+>>> +		while (*next && *next != ' ' && *next != ',')
+>>> +			next++;
+>>> +
+>>> +		if (*next == 0)
+>>> +			next = NULL;
+>>> +		else
+>>> +			*next = 0;
+>>> +
+>>> +		set_feature_bits(sub);
+>>> +	}
 
-I didn't get it, const keyword can used to protect parameter not to be changed
-in that function, that will be more safe, so it will be better to use that one?
+free(buf);?
 
 Thanks,
 
-> 
->>
+>>> +}
 >>> +
->>>  static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+>>>  static void f2fs_parse_options(int argc, char *argv[])
 >>>  {
->>>  	bool ret;
->>> @@ -2474,6 +2480,15 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
->>>  			i_size_read(inode) & ~PAGE_MASK)
->>>  		return false;
->>>  
->>> +	if (!time_equal(F2FS_I(inode)->i_disk_time[0], inode->i_atime))
->>> +		return false;
->>> +	if (!time_equal(F2FS_I(inode)->i_disk_time[1], inode->i_ctime))
->>> +		return false;
->>> +	if (!time_equal(F2FS_I(inode)->i_disk_time[2], inode->i_mtime))
->>> +		return false;
->>> +	if (!time_equal(F2FS_I(inode)->i_disk_time[3], F2FS_I(inode)->i_crtime))
->>> +		return false;
->>> +
->>>  	down_read(&F2FS_I(inode)->i_sem);
->>>  	ret = F2FS_I(inode)->last_disk_size == i_size_read(inode);
->>>  	up_read(&F2FS_I(inode)->i_sem);
->>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->>> index 401f09ccce7e..70aba580f4b0 100644
->>> --- a/fs/f2fs/inode.c
->>> +++ b/fs/f2fs/inode.c
->>> @@ -444,6 +444,10 @@ void update_inode(struct inode *inode, struct page *node_page)
->>>  	if (inode->i_nlink == 0)
->>>  		clear_inline_node(node_page);
->>>  
->>> +	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
->>> +	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
->>> +	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
->>> +	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
->>
->> We need initialize them in do_read_inode?
-> 
-> Done.
-> Thanks,
-> 
->>
->> Thanks,
->>
->>>  }
->>>  
->>>  void update_inode_page(struct inode *inode)
+>>>  	static const char *option_string = "qa:c:d:e:E:il:mo:O:s:S:z:t:f";
 >>>
+>>
+>> .
+>>
+> 
+> 
 > 
 > .
 > 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
