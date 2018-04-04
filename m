@@ -1,157 +1,59 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: remain written times to update inode during
- fsync
-Date: Wed, 4 Apr 2018 09:27:05 +0800
-Message-ID: <bde39003-062a-e9dd-d5e0-927ae0a15f7e@huawei.com>
-References: <20180330055126.36202-1-jaegeuk@kernel.org>
- <20180330163036.GC44823@jaegeuk-macbookpro.roam.corp.google.com>
- <90a3d827-5447-437b-b742-79e7084e4a2c@huawei.com>
- <20180403052310.GB57227@jaegeuk-macbookpro.roam.corp.google.com>
- <d67b0a31-ef40-e981-729b-b93758d88ccd@huawei.com>
- <20180403160808.GA68167@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: [PATCH] mkfs.f2fs: fix incorrect cold data location
+Date: Wed, 4 Apr 2018 10:49:14 +0800
+Message-ID: <20180404024914.60177-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180403160808.GA68167@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1f3YVK-0000JC-KH
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Apr 2018 02:50:30 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1f3YVG-007xfi-KN
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Apr 2018 02:50:30 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/4/4 0:08, Jaegeuk Kim wrote:
-> On 04/03, Chao Yu wrote:
->> On 2018/4/3 13:23, Jaegeuk Kim wrote:
->>> On 04/03, Chao Yu wrote:
->>>> On 2018/3/31 0:30, Jaegeuk Kim wrote:
->>>>> Change log from v1:
->>>>>  - add more description
->>>>>
->>>>> This fixes xfstests/generic/392.
->>>>>
->>>>> The failure was caused by different times between 1) one marked in the last
->>>>> fsync(2) call and 2) the other given by roll-forward recovery after power-cut.
->>>>> The reason was that we skipped updating inode block at 1), since its i_size
->>>>> was recoverable along with 4KB-aligned data writes, which was fixed by:
->>>>>   "f2fs: fix a wrong condition in f2fs_skip_inode_update"
->>>>>
->>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>> ---
->>>>>  fs/f2fs/f2fs.h  | 15 +++++++++++++++
->>>>>  fs/f2fs/inode.c |  4 ++++
->>>>>  2 files changed, 19 insertions(+)
->>>>>
->>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>>> index 000f93f6767e..675c39d85111 100644
->>>>> --- a/fs/f2fs/f2fs.h
->>>>> +++ b/fs/f2fs/f2fs.h
->>>>> @@ -664,6 +664,7 @@ struct f2fs_inode_info {
->>>>>  	kprojid_t i_projid;		/* id for project quota */
->>>>>  	int i_inline_xattr_size;	/* inline xattr size */
->>>>>  	struct timespec i_crtime;	/* inode creation time */
->>>>> +	struct timespec i_disk_time[4];	/* inode disk times */
->>>>>  };
->>>>>  
->>>>>  static inline void get_extent_info(struct extent_info *ext,
->>>>> @@ -2457,6 +2458,11 @@ static inline void clear_file(struct inode *inode, int type)
->>>>>  	f2fs_mark_inode_dirty_sync(inode, true);
->>>>>  }
->>>>>  
->>>>> +static inline bool time_equal(struct timespec a, struct timespec b)
->>>>> +{
->>>>> +	return (a.tv_sec == b.tv_sec) && (a.tv_nsec == b.tv_nsec);
->>>>> +}
->>>>
->>>> We can use existing timespec_equal in <linux/time.h> instead of defining a
->>>> duplicated one?
->>>
->>> It is defined with const parameters.
->>
->> I didn't get it, const keyword can used to protect parameter not to be changed
->> in that function, that will be more safe, so it will be better to use that one?
-> 
-> Oh, I just made a mistake when testing timespec_equal().
-> I really need more recess time. :P
+If last_zone((total_zones >> 2)) is equal or less than
+next_zone(CURSEG_COLD_NODE), cold data area will be located in the
+same position with hot data, fixes it.
 
-Work is hard, right, we'd better keep having enough rest. :)
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ mkfs/f2fs_format.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Change log from v3:
->  - use timespec_equal()
-> 
-> This fixes xfstests/generic/392.
-> 
-> The failure was caused by different times between 1) one marked in the last
-> fsync(2) call and 2) the other given by roll-forward recovery after power-cut.
-> The reason was that we skipped updating inode block at 1), since its i_size
-> was recoverable along with 4KB-aligned data writes, which was fixed by:
->   "f2fs: fix a wrong condition in f2fs_skip_inode_update"
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 65692bbe083a..8885f632371d 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -471,7 +471,7 @@ static int f2fs_prepare_super_block(void)
+ 		c.cur_seg[CURSEG_HOT_DATA] = next_zone(CURSEG_COLD_NODE);
+ 		c.cur_seg[CURSEG_COLD_DATA] =
+ 				max(last_zone((total_zones >> 2)),
+-					next_zone(CURSEG_COLD_NODE));
++					next_zone(CURSEG_HOT_DATA));
+ 		c.cur_seg[CURSEG_WARM_DATA] =
+ 				max(last_zone((total_zones >> 1)),
+ 					next_zone(CURSEG_COLD_DATA));
+-- 
+2.15.0.55.gc2ece9dc4de6
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Thanks,
-
-> ---
->  fs/f2fs/f2fs.h  | 11 +++++++++++
->  fs/f2fs/inode.c |  8 ++++++++
->  2 files changed, 19 insertions(+)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 7102d3965fea..1df7f10476d6 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -664,6 +664,7 @@ struct f2fs_inode_info {
->  	kprojid_t i_projid;		/* id for project quota */
->  	int i_inline_xattr_size;	/* inline xattr size */
->  	struct timespec i_crtime;	/* inode creation time */
-> +	struct timespec i_disk_time[4];	/* inode disk times */
->  };
->  
->  static inline void get_extent_info(struct extent_info *ext,
-> @@ -2474,6 +2475,16 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
->  			i_size_read(inode) & ~PAGE_MASK)
->  		return false;
->  
-> +	if (!timespec_equal(F2FS_I(inode)->i_disk_time, &inode->i_atime))
-> +		return false;
-> +	if (!timespec_equal(F2FS_I(inode)->i_disk_time + 1, &inode->i_ctime))
-> +		return false;
-> +	if (!timespec_equal(F2FS_I(inode)->i_disk_time + 2, &inode->i_mtime))
-> +		return false;
-> +	if (!timespec_equal(F2FS_I(inode)->i_disk_time + 3,
-> +						&F2FS_I(inode)->i_crtime))
-> +		return false;
-> +
->  	down_read(&F2FS_I(inode)->i_sem);
->  	ret = F2FS_I(inode)->last_disk_size == i_size_read(inode);
->  	up_read(&F2FS_I(inode)->i_sem);
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index 401f09ccce7e..e0d9e8f27ed2 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -284,6 +284,10 @@ static int do_read_inode(struct inode *inode)
->  		fi->i_crtime.tv_nsec = le32_to_cpu(ri->i_crtime_nsec);
->  	}
->  
-> +	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
-> +	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
-> +	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
-> +	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
->  	f2fs_put_page(node_page, 1);
->  
->  	stat_inc_inline_xattr(inode);
-> @@ -444,6 +448,10 @@ void update_inode(struct inode *inode, struct page *node_page)
->  	if (inode->i_nlink == 0)
->  		clear_inline_node(node_page);
->  
-> +	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
-> +	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
-> +	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
-> +	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
->  }
->  
->  void update_inode_page(struct inode *inode)
-> 
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
