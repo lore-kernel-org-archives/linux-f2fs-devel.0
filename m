@@ -1,63 +1,75 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: enlarge block plug coverage
-Date: Wed, 4 Apr 2018 20:51:15 -0700
-Message-ID: <20180405035115.GC50337@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180404085404.82184-1-yuchao0@huawei.com>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v10 00/62] Convert page cache to XArray
+Date: Wed, 4 Apr 2018 20:52:00 -0700
+Message-ID: <20180405035200.GE9301@bombadil.infradead.org>
+References: <20180330034245.10462-1-willy@infradead.org>
+ <ff6a317f-920b-62c7-9a7a-9bf235371d41@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <willy@infradead.org>) id 1f3vwv-0003Ro-VA
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 05 Apr 2018 03:52:33 +0000
+Received: from bombadil.infradead.org ([198.137.202.133])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1f3vwq-009VeR-DV
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 05 Apr 2018 03:52:33 +0000
 Content-Disposition: inline
-In-Reply-To: <20180404085404.82184-1-yuchao0@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <ff6a317f-920b-62c7-9a7a-9bf235371d41@oracle.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Matthew Wilcox <mawilcox@microsoft.com>, James Simmons <jsimmons@infradead.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Andreas Dilger <andreas.dilger@intel.com>, Nicholas Piggin <npiggin@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, Oleg Drokin <oleg.drokin@intel.com>, linux-mm@kvack.org, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-fsdevel@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-On 04/04, Chao Yu wrote:
-> This patch enlarges block plug coverage in __issue_discard_cmd, in
-> order to collect more pending bios before issuing them, to avoid
-> being disturbed by previous discard I/O in IO aware discard mode.
+On Wed, Apr 04, 2018 at 09:35:46AM -0700, Mike Kravetz wrote:
+> Running with this XArray series on top of next-20180329 consistently 'hangs'
+> on shutdown looping (?forever?) in tag_pages_for_writeback/xas_for_each_tag.
+> All I have to do is make sure there is some activity on the ext4 fs before
+> shutdown.  Not sure if this is a 'next-20180329' issue or XArray issue.
+> But the fact that we are looping in xas_for_each_tag looks suspicious.
 
-Hmm, then we need to wait for huge discard IO for over 10 secs, which
-will affect following read/write IOs accordingly. In order to avoid that,
-we actually need to limit the discard size.
+Thanks for your help debugging this!  Particularly collecting the xa_dump.
+I got bit by the undefined behaviour of shifting by BITS_PER_LONG,
+but of course it was subtle.
 
-Thanks,
+The userspace testing framework wasn't catching this for a couple of
+reasons; I'll work on making sure it catches this kind of thing in
+the future.
 
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/segment.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 8f0b5ba46315..4287e208c040 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -1208,10 +1208,12 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->  		pend_list = &dcc->pend_list[i];
->  
->  		mutex_lock(&dcc->cmd_lock);
-> +
-> +		blk_start_plug(&plug);
-> +
->  		if (list_empty(pend_list))
->  			goto next;
->  		f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
-> -		blk_start_plug(&plug);
->  		list_for_each_entry_safe(dc, tmp, pend_list, list) {
->  			f2fs_bug_on(sbi, dc->state != D_PREP);
->  
-> @@ -1227,8 +1229,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->  			if (++iter >= dpolicy->max_requests)
->  				break;
->  		}
-> -		blk_finish_plug(&plug);
->  next:
-> +		blk_finish_plug(&plug);
-> +
->  		mutex_unlock(&dcc->cmd_lock);
->  
->  		if (iter >= dpolicy->max_requests)
-> -- 
-> 2.15.0.55.gc2ece9dc4de6
+I'll fold this in and post a v11 later this week or early next week.
+
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index eac04922eba2..f5b7e507a86f 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -904,9 +929,12 @@ static inline unsigned int xas_find_chunk(struct xa_state *xas, bool advance,
+ 	if (advance)
+ 		offset++;
+ 	if (XA_CHUNK_SIZE == BITS_PER_LONG) {
+-		unsigned long data = *addr & (~0UL << offset);
+-		if (data)
+-			return __ffs(data);
++		if (offset < XA_CHUNK_SIZE) {
++			unsigned long data = *addr & (~0UL << offset);
++
++			if (data)
++				return __ffs(data);
++		}
+ 		return XA_CHUNK_SIZE;
+ 	}
+ 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
