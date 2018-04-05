@@ -1,10 +1,9 @@
-From: Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: [PATCH v10 00/62] Convert page cache to XArray
-Date: Thu, 5 Apr 2018 11:33:29 -0700
-Message-ID: <e2b37818-53bf-8e38-82c5-d05ac2804420@oracle.com>
-References: <20180330034245.10462-1-willy@infradead.org>
- <ff6a317f-920b-62c7-9a7a-9bf235371d41@oracle.com>
- <20180405035200.GE9301@bombadil.infradead.org>
+From: Eric Biggers via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Subject: [PATCH] common/config: support f2fs-tools v1.9 and later
+Date: Thu,  5 Apr 2018 15:19:01 -0700
+Message-ID: <20180405221901.41861-1-ebiggers@google.com>
+Reply-To: Eric Biggers <ebiggers@google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -12,15 +11,16 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <mike.kravetz@oracle.com>) id 1f49i9-0006pH-Ot
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 05 Apr 2018 18:34:13 +0000
-Received: from userp2120.oracle.com ([156.151.31.85])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f49i7-00AQZS-TL
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 05 Apr 2018 18:34:13 +0000
-In-Reply-To: <20180405035200.GE9301@bombadil.infradead.org>
-Content-Language: en-US
+ (envelope-from <ebiggers@google.com>) id 1f4DFn-00036l-Hc
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 05 Apr 2018 22:21:11 +0000
+Received: from mail-pl0-f66.google.com ([209.85.160.66])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1f4DFl-00E5Up-RO
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 05 Apr 2018 22:21:11 +0000
+Received: by mail-pl0-f66.google.com with SMTP id s10-v6so19313193plp.0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 05 Apr 2018 15:21:09 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,54 +30,52 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Matthew Wilcox <mawilcox@microsoft.com>, James Simmons <jsimmons@infradead.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Andreas Dilger <andreas.dilger@intel.com>, Nicholas Piggin <npiggin@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, Oleg Drokin <oleg.drokin@intel.com>, linux-mm@kvack.org, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-fsdevel@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>
+To: fstests@vger.kernel.org
+Cc: Eric Biggers <ebiggers@google.com>, linux-f2fs-devel@lists.sourceforge.net
 
-On 04/04/2018 08:52 PM, Matthew Wilcox wrote:
-> On Wed, Apr 04, 2018 at 09:35:46AM -0700, Mike Kravetz wrote:
->> Running with this XArray series on top of next-20180329 consistently 'hangs'
->> on shutdown looping (?forever?) in tag_pages_for_writeback/xas_for_each_tag.
->> All I have to do is make sure there is some activity on the ext4 fs before
->> shutdown.  Not sure if this is a 'next-20180329' issue or XArray issue.
->> But the fact that we are looping in xas_for_each_tag looks suspicious.
-> 
-> Thanks for your help debugging this!  Particularly collecting the xa_dump.
-> I got bit by the undefined behaviour of shifting by BITS_PER_LONG,
-> but of course it was subtle.
-> 
-> The userspace testing framework wasn't catching this for a couple of
-> reasons; I'll work on making sure it catches this kind of thing in
-> the future.
-> 
-> I'll fold this in and post a v11 later this week or early next week.
+Pass the -f option to mkfs.f2fs when it appears to support it.  This is
+required by f2fs-tools v1.9 and later in order to format the filesystem
+even when an existing filesystem is detected.  But earlier versions did
+not accept this option.
 
-Nice!  Added patch and it solves the hangs I observed.
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ common/config | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
+diff --git a/common/config b/common/config
+index 20f0e5f3..7c046a78 100644
+--- a/common/config
++++ b/common/config
+@@ -94,10 +94,11 @@ set_prog_path()
+ 	type -P $1
+ }
+ 
+-# Handle mkfs.btrfs which does (or does not) require -f to overwrite
+-set_btrfs_mkfs_prog_path_with_opts()
++# Handle mkfs.$fstyp which does (or does not) require -f to overwrite
++set_mkfs_prog_path_with_opts()
+ {
+-	p=`set_prog_path mkfs.btrfs`
++	local fstyp=$1
++	local p=`set_prog_path mkfs.$fstyp`
+ 	if [ "$p" != "" ] && grep -q 'force overwrite' $p; then
+ 		echo "$p -f"
+ 	else
+@@ -223,8 +224,8 @@ case "$HOSTOS" in
+         export MKFS_XFS_PROG="`set_prog_path mkfs.xfs`"
+         export MKFS_EXT4_PROG="`set_prog_path mkfs.ext4`"
+         export MKFS_UDF_PROG="`set_prog_path mkudffs`"
+-        export MKFS_BTRFS_PROG="`set_btrfs_mkfs_prog_path_with_opts`"
+-        export MKFS_F2FS_PROG="`set_prog_path mkfs.f2fs`"
++        export MKFS_BTRFS_PROG="`set_mkfs_prog_path_with_opts btrfs`"
++        export MKFS_F2FS_PROG="`set_mkfs_prog_path_with_opts f2fs`"
+         export DUMP_F2FS_PROG="`set_prog_path dump.f2fs`"
+         export BTRFS_UTIL_PROG="`set_prog_path btrfs`"
+         export BTRFS_SHOW_SUPER_PROG="`set_prog_path btrfs-show-super`"
 -- 
-Mike Kravetz
+2.17.0.484.g0c8726318c-goog
 
-> 
-> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-> index eac04922eba2..f5b7e507a86f 100644
-> --- a/include/linux/xarray.h
-> +++ b/include/linux/xarray.h
-> @@ -904,9 +929,12 @@ static inline unsigned int xas_find_chunk(struct xa_state *xas, bool advance,
->  	if (advance)
->  		offset++;
->  	if (XA_CHUNK_SIZE == BITS_PER_LONG) {
-> -		unsigned long data = *addr & (~0UL << offset);
-> -		if (data)
-> -			return __ffs(data);
-> +		if (offset < XA_CHUNK_SIZE) {
-> +			unsigned long data = *addr & (~0UL << offset);
-> +
-> +			if (data)
-> +				return __ffs(data);
-> +		}
->  		return XA_CHUNK_SIZE;
->  	}
->  
-> 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
