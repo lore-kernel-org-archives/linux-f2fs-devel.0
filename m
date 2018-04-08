@@ -1,26 +1,25 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 1/2] f2fs: stop issue discard if something
- wrong with f2fs
-Date: Sun, 8 Apr 2018 18:01:25 +0800
-Message-ID: <d7da7cf0-38bc-817e-0e86-106441b54a6b@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH 2/2] f2fs: let discard thread wait a little
+ longer if dev is busy
+Date: Sun, 8 Apr 2018 19:01:25 +0800
+Message-ID: <10980e48-287c-635b-8dd5-464c8fc76a7a@kernel.org>
 References: <1523171471-538-1-git-send-email-heyunlei@huawei.com>
- <8ca9f7d4-d56a-7a1c-a245-a973bfe02649@huawei.com>
- <42B685BFA705F94C860C6DD0752F056548361FDC@DGGEMA503-MBS.china.huawei.com>
+ <1523171471-538-2-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1f5794-0003p1-60
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 10:01:58 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ (envelope-from <chao@kernel.org>) id 1f584p-0006ED-0Y
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 11:01:39 +0000
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f578z-002weD-PU
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 10:01:58 +0000
-In-Reply-To: <42B685BFA705F94C860C6DD0752F056548361FDC@DGGEMA503-MBS.china.huawei.com>
+ id 1f584n-0031d5-Jt
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 11:01:38 +0000
+In-Reply-To: <1523171471-538-2-git-send-email-heyunlei@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -31,50 +30,22 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: heyunlei <heyunlei@huawei.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-T24gMjAxOC80LzggMTc6MTksIGhleXVubGVpIHdyb3RlOgo+IAo+IAo+PiAtLS0tLU9yaWdpbmFs
-IE1lc3NhZ2UtLS0tLQo+PiBGcm9tOiBZdWNoYW8gKFQpCj4+IFNlbnQ6IFN1bmRheSwgQXByaWwg
-MDgsIDIwMTggNDoyNiBQTQo+PiBUbzogaGV5dW5sZWk7IGphZWdldWtAa2VybmVsLm9yZzsgbGlu
-dXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPj4gQ2M6IFdhbmdiaW50aWFuCj4+
-IFN1YmplY3Q6IFJlOiBbZjJmcy1kZXZdW1BBVENIIDEvMl0gZjJmczogc3RvcCBpc3N1ZSBkaXNj
-YXJkIGlmIHNvbWV0aGluZyB3cm9uZyB3aXRoIGYyZnMKPj4KPj4gT24gMjAxOC80LzggMTU6MTEs
-IFl1bmxlaSBIZSB3cm90ZToKPj4+IFRoaXMgcGF0Y2ggc3RvcCBkaXNjYXJkIHRocmVhZCB0byBp
-c3N1ZSBkaXNjYXJkIGlvIGlmCj4+PiBzb21ldGhpbmcgd3Jvbmcgd2l0aCBmMmZzLCB3aGljaCBp
-cyBzaW1pbGFyIHRvIGZzdHJpbS4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBZdW5sZWkgSGUgPGhl
-eXVubGVpQGh1YXdlaS5jb20+Cj4+PiAtLS0KPj4+ICBmcy9mMmZzL3NlZ21lbnQuYyB8IDUgKysr
-KysKPj4+ICAxIGZpbGUgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspCj4+Pgo+Pj4gZGlmZiAtLWdp
-dCBhL2ZzL2YyZnMvc2VnbWVudC5jIGIvZnMvZjJmcy9zZWdtZW50LmMKPj4+IGluZGV4IDU4NTRj
-YzQuLmY3NWY1MDMgMTAwNjQ0Cj4+PiAtLS0gYS9mcy9mMmZzL3NlZ21lbnQuYwo+Pj4gKysrIGIv
-ZnMvZjJmcy9zZWdtZW50LmMKPj4+IEBAIC0xNDEwLDYgKzE0MTAsMTEgQEAgc3RhdGljIGludCBp
-c3N1ZV9kaXNjYXJkX3RocmVhZCh2b2lkICpkYXRhKQo+Pj4gIAkJCWNvbnRpbnVlOwo+Pj4gIAkJ
-aWYgKGt0aHJlYWRfc2hvdWxkX3N0b3AoKSkKPj4+ICAJCQlyZXR1cm4gMDsKPj4+ICsJCWlmIChp
-c19zYmlfZmxhZ19zZXQoc2JpLCBTQklfTkVFRF9GU0NLKSkgewo+Pj4gKwkJCWYyZnNfbXNnKHNi
-aS0+c2IsIEtFUk5fV0FSTklORywKPj4+ICsJCQkJIkZvdW5kIEZTIGNvcnJ1cHRpb24sIHJ1biBm
-c2NrIHRvIGZpeC4iKTsKPj4KPj4gX19nZXRfbmF0X2JpdG1hcHMgY2FuIHNldCB0aGlzIGZsYWcg
-ZHVyaW5nIG1vdW50aW5nPyBzbyBpdHMgbWVhbmluZyBpcyBub3Qgb25seQo+PiBpbmRpY2F0ZSB0
-aGUgaW1hZ2UgaXMgY29ycnVwdGVkIGJ1dCBhbHNvIG1lYW4gdGhhdCB3ZSBuZWVkIHJ1biBmc2Nr
-IHRvIHJlY292ZXIKPj4gc3RhdHVzIGxpa2UgbmF0IGJpdG1hcHM/Cj4gCj4gWWVzo6xuYXQgYml0
-bWFwcyB3aWxsIHNldCBTQklfTkVFRF9GU0NLIGluIHR3byBjYXNlczoKPiAKPiBpLiAgIG5vIHBs
-YWNlIHRvIHdyaXRlIG5hdCBiaXRzICAoZnNjayBhbHNvIGZhaWxlZCB0byByZWNvdmVyKQo+IGlp
-LiAgIG1vdW50IHByb2Nlc3Mgd2l0aCBmYWlsZWQgY3AgdmVyc2lvbiB2ZXJpZnkgICAoc3VkZGVu
-IHBvd2VyIG9mZiBvciBzb21lIGh3IHJlYXNvbnMpCj4gCj4gQ291bGQgd2UgZG8gcmVjb3ZlciBu
-YXQgYml0bWFwcyBzdGF0dXMgbm90IGJ5IGZzY2sgYnV0IGtlcm5lbCBzZWxmIGR1cmluZyBtb3Vu
-dGluZz8KCldlIGNvdWxkLCBidXQgZHVyaW5nIHJlYnVpbGRpbmcgbmF0IGJpdG1hcCwgd2UgbmVl
-ZCB0byB0cmF2ZWwgYWxsIG5hdCBibG9ja3MsIGlmCnN5c3RlbSBvd25zIGh1Z2UgbnVtYmVyIG9m
-IG5hdCBlbnRyeSwgd2Ugd2lsbCBzdWZmZXIgbG9uZyBsYXRlbmN5IGluIG1vdW50L3Vtb3VudC4K
-Ck9yIHdlIGNhbiBzcGxpdCB0aGF0IGZsYWcgdG8gdHdvIHRvIGluZGljYXRlIGRpZmZlcmVudCBt
-ZWFuaW5nPwoKPiAKPiBPdGhlciBwbGFjZXMgc2V0IFNCSV9ORUVEX0ZTQ0sgZmxhZyBub3cgYWxs
-IGluZGljYXRlIHRoZSBpbWFnZSBoYXMgc29tZXRoaW5nIHdyb25nLgo+IAo+IEJUVywgc2hvdWxk
-IHdlIG1vdmUgdGhlIGp1ZGdtZW50IHRvIGZ1bmN0aW9uIF9faXNzdWVfZGlzY2FyZF9jbWQgaW4g
-b3JkZXIgdG8gY292ZXIgdW1vdW50IHByb2Nlc3M/CgpXZSBjYW4gYWRkIGl0IGluIGJvdGggcGxh
-Y2VzLgoKVGhhbmtzLAoKPiAKPiBUaGFua3MuCj4gCj4+Cj4+IFRoYW5rcywKPj4KPj4+ICsJCQlj
-b250aW51ZTsKPj4+ICsJCX0KPj4+Cj4+PiAgCQlpZiAoZGNjLT5kaXNjYXJkX3dha2UpCj4+PiAg
-CQkJZGNjLT5kaXNjYXJkX3dha2UgPSAwOwo+Pj4KPiAKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
-Q2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQn
-cyBtb3N0CmVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5r
-L3NsYXNoZG90Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291
-cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZv
-L2xpbnV4LWYyZnMtZGV2ZWwK
+On 2018/4/8 15:11, Yunlei He wrote:
+> This patch modify discard thread wait policy as below:
+> 	issued       io_interrupted     wait time(ms)
+> 1.        8                 0               50
+> 2.      (0,8)               1               50
+> 3.        0                 1              500 (dev is busy)
+> 4.        0                 0            60000 (no candidates)
+> 
+> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks,
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
