@@ -1,7 +1,7 @@
 From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH] f2fs: remove nested usage of plug list
-Date: Sun, 8 Apr 2018 10:52:09 +0800
-Message-ID: <1523155929-17542-1-git-send-email-heyunlei@huawei.com>
+Subject: [PATCH v2] f2fs: remove nested usage of plug list
+Date: Sun, 8 Apr 2018 10:59:46 +0800
+Message-ID: <1523156386-25729-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -9,13 +9,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <heyunlei@huawei.com>) id 1f50ep-0001LL-W8
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 03:06:20 +0000
-Received: from [45.249.212.32] (helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <heyunlei@huawei.com>) id 1f50mL-0001rY-8u
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 03:14:05 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f50en-00EuwH-Ko
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 03:06:19 +0000
+ id 1f50mJ-009ZTM-CP
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 03:14:05 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -42,14 +42,22 @@ which may conduct performance decrease in our platform
 
 Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fs/f2fs/file.c | 2 --
- 1 file changed, 2 deletions(-)
+ fs/f2fs/file.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 6b94f19..6ce27ab 100644
+index 6b94f19..977c800 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -2939,9 +2939,7 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+@@ -2894,7 +2894,6 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct inode *inode = file_inode(file);
+-	struct blk_plug plug;
+ 	ssize_t ret;
+ 
+ 	if (unlikely(f2fs_cp_error(F2FS_I_SB(inode))))
+@@ -2939,9 +2938,7 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
  				return err;
  			}
  		}
