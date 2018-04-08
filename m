@@ -1,25 +1,22 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] mkfs.f2fs: introduce new option V to show
- version
-Date: Sun, 8 Apr 2018 14:17:42 +0800
-Message-ID: <44a38d89-a101-6dae-9cf8-0d5eba7ed51e@huawei.com>
-References: <20180408021506.26500-1-shengyong1@huawei.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH 1/2] f2fs: stop issue discard if something wrong
+ with f2fs
+Date: Sun, 8 Apr 2018 15:11:10 +0800
+Message-ID: <1523171471-538-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1f53eM-00075v-Ba
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 06:18:02 +0000
-Received: from [45.249.212.32] (helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <heyunlei@huawei.com>) id 1f54hg-0000Fg-Bo
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 07:25:32 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f53eK-00FBwW-KK
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 06:18:02 +0000
-In-Reply-To: <20180408021506.26500-1-shengyong1@huawei.com>
-Content-Language: en-US
+ id 1f54he-009w1c-8B
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 07:25:32 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,21 +26,34 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org
-Cc: ebiggers@google.com, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/4/8 10:15, Sheng Yong wrote:
-> This patch introduces a new option -V to show the version of mkfs.f2fs
-> and exit after that.
+This patch stop discard thread to issue discard io if
+something wrong with f2fs, which is similar to fstrim.
 
-BTW, should we add -V for other misc tools?
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fs/f2fs/segment.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-> 
-> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 5854cc4..f75f503 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1410,6 +1410,11 @@ static int issue_discard_thread(void *data)
+ 			continue;
+ 		if (kthread_should_stop())
+ 			return 0;
++		if (is_sbi_flag_set(sbi, SBI_NEED_FSCK)) {
++			f2fs_msg(sbi->sb, KERN_WARNING,
++				"Found FS corruption, run fsck to fix.");
++			continue;
++		}
+ 
+ 		if (dcc->discard_wake)
+ 			dcc->discard_wake = 0;
+-- 
+1.9.1
 
 
 ------------------------------------------------------------------------------
