@@ -1,22 +1,21 @@
 From: Sheng Yong <shengyong1@huawei.com>
-Subject: [PATCH] resize.f2fs: clear CP_COMPACT_SUM_FLAG when
- rebuilding checkpoint
-Date: Sun, 8 Apr 2018 10:14:29 +0800
-Message-ID: <20180408021429.26448-1-shengyong1@huawei.com>
+Subject: [PATCH] mkfs.f2fs: introduce new option V to show version
+Date: Sun, 8 Apr 2018 10:15:06 +0800
+Message-ID: <20180408021506.26500-1-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <shengyong1@huawei.com>) id 1f4zqy-00063h-F1
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 02:14:48 +0000
-Received: from [45.249.212.32] (helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <shengyong1@huawei.com>) id 1f4zrm-0001Y9-7d
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 02:15:38 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f4zqv-000PNT-Uc
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 02:14:48 +0000
+ id 1f4zrh-009UOY-Ad
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 02:15:38 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,29 +26,48 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: ebiggers@google.com, linux-f2fs-devel@lists.sourceforge.net
 
-Resize rebuilds checkpoint with 6 summary blocks, so if
-CP_COMPACT_SUM_FLAG is set in the old checkpoint, clear it.
+This patch introduces a new option -V to show the version of mkfs.f2fs
+and exit after that.
 
 Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 ---
- fsck/resize.c | 2 ++
- 1 file changed, 2 insertions(+)
+ mkfs/f2fs_format_main.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/fsck/resize.c b/fsck/resize.c
-index 7643511..019da71 100644
---- a/fsck/resize.c
-+++ b/fsck/resize.c
-@@ -504,6 +504,8 @@ static void rebuild_checkpoint(struct f2fs_sb_info *sbi,
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index 3c70513..3520882 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -58,6 +58,7 @@ static void mkfs_usage()
+ 	MSG(0, "  -t 0: nodiscard, 1: discard [default:1]\n");
+ 	MSG(0, "  -w wanted sector size\n");
+ 	MSG(0, "  -z # of sections per zone [default:1]\n");
++	MSG(0, "  -V print the version number and exit\n");
+ 	MSG(0, "sectors: number of sectors. [default: determined by device size]\n");
+ 	exit(1);
+ }
+@@ -136,7 +137,7 @@ static void parse_feature(const char *features)
  
- 	/* update nat_bits flag */
- 	flags = update_nat_bits_flags(new_sb, cp, get_cp(ckpt_flags));
-+	if (flags & CP_COMPACT_SUM_FLAG)
-+		flags &= ~CP_COMPACT_SUM_FLAG;
- 	set_cp(ckpt_flags, flags);
+ static void f2fs_parse_options(int argc, char *argv[])
+ {
+-	static const char *option_string = "qa:c:d:e:E:il:mo:O:s:S:z:t:fw:";
++	static const char *option_string = "qa:c:d:e:E:il:mo:O:s:S:z:t:fw:V";
+ 	int32_t option=0;
  
- 	memcpy(new_cp, cp, (unsigned char *)cp->sit_nat_version_bitmap -
+ 	while ((option = getopt(argc,argv,option_string)) != EOF) {
+@@ -209,6 +210,10 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 		case 'w':
+ 			c.wanted_sector_size = atoi(optarg);
+ 			break;
++		case 'V':
++			MSG(0, "mkfs.f2fs %s (%s)\n",
++					F2FS_TOOLS_VERSION, F2FS_TOOLS_DATE);
++			exit(0);
+ 		default:
+ 			MSG(0, "\tError: Unknown option %c\n",option);
+ 			mkfs_usage();
 -- 
 2.14.1
 
