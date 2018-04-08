@@ -1,76 +1,56 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v2] f2fs: remove nested usage of plug list
-Date: Sun, 8 Apr 2018 10:59:46 +0800
-Message-ID: <1523156386-25729-1-git-send-email-heyunlei@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: remove unneeded F2FS_PROJINHERIT_FL
+Date: Sun, 8 Apr 2018 11:25:53 +0800
+Message-ID: <20180408032553.23203-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <heyunlei@huawei.com>) id 1f50mL-0001rY-8u
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 03:14:05 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f50mJ-009ZTM-CP
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 03:14:05 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
--f2fs_file_write_iter
-  -blk_start_plug
-    -__generic_file_write_iter
-	...
-	  -do_blockdev_direct_IO
-	    -blk_start_plug
-		...
-	    -blk_finish_plug
-	...
-  -blk_finish_plug
+Now F2FS_FL_USER_VISIBLE and F2FS_FL_USER_MODIFIABLE has included
+F2FS_PROJINHERIT_FL, so remove unneeded F2FS_PROJINHERIT_FL when
+using visible/modifiable flag macro.
 
-which may conduct performance decrease in our platform
-
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/file.c | 3 ---
- 1 file changed, 3 deletions(-)
+ fs/f2fs/file.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 6b94f19..977c800 100644
+index 82a01f0aaa33..3fd485395f9d 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -2894,7 +2894,6 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- {
- 	struct file *file = iocb->ki_filp;
- 	struct inode *inode = file_inode(file);
--	struct blk_plug plug;
- 	ssize_t ret;
+@@ -686,7 +686,7 @@ int f2fs_getattr(const struct path *path, struct kstat *stat,
+ 		stat->btime.tv_nsec = fi->i_crtime.tv_nsec;
+ 	}
  
- 	if (unlikely(f2fs_cp_error(F2FS_I_SB(inode))))
-@@ -2939,9 +2938,7 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 				return err;
- 			}
- 		}
--		blk_start_plug(&plug);
- 		ret = __generic_file_write_iter(iocb, from);
--		blk_finish_plug(&plug);
- 		clear_inode_flag(inode, FI_NO_PREALLOC);
+-	flags = fi->i_flags & (F2FS_FL_USER_VISIBLE | F2FS_PROJINHERIT_FL);
++	flags = fi->i_flags & F2FS_FL_USER_VISIBLE;
+ 	if (flags & F2FS_APPEND_FL)
+ 		stat->attributes |= STATX_ATTR_APPEND;
+ 	if (flags & F2FS_COMPR_FL)
+@@ -1606,8 +1606,8 @@ static int __f2fs_ioc_setflags(struct inode *inode, unsigned int flags)
+ 		if (!capable(CAP_LINUX_IMMUTABLE))
+ 			return -EPERM;
  
- 		/* if we couldn't write data, we should deallocate blocks. */
+-	flags = flags & (F2FS_FL_USER_MODIFIABLE | F2FS_PROJINHERIT_FL);
+-	flags |= oldflags & ~(F2FS_FL_USER_MODIFIABLE | F2FS_PROJINHERIT_FL);
++	flags = flags & F2FS_FL_USER_MODIFIABLE;
++	flags |= oldflags & ~F2FS_FL_USER_MODIFIABLE;
+ 	fi->i_flags = flags;
+ 
+ 	if (fi->i_flags & F2FS_PROJINHERIT_FL)
+@@ -2649,7 +2649,7 @@ static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
+ 
+ 	memset(&fa, 0, sizeof(struct fsxattr));
+ 	fa.fsx_xflags = f2fs_iflags_to_xflags(fi->i_flags &
+-				(F2FS_FL_USER_VISIBLE | F2FS_PROJINHERIT_FL));
++				F2FS_FL_USER_VISIBLE);
+ 
+ 	if (f2fs_sb_has_project_quota(inode->i_sb))
+ 		fa.fsx_projid = (__u32)from_kprojid(&init_user_ns,
 -- 
-1.9.1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+2.15.0.55.gc2ece9dc4de6
