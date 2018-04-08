@@ -1,9 +1,8 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [RESEND PATCH] f2fs: no need to take the address of
- the array of sb->s_uuid
-Date: Sun, 8 Apr 2018 09:45:54 +0800
-Message-ID: <984bbb23-8e08-db35-c9ff-a8874c7a836c@huawei.com>
-References: <94ebbd85-1b8d-927a-ae94-93aa6ded4e23@huawei.com>
+From: Sheng Yong <shengyong1@huawei.com>
+Subject: [PATCH] resize.f2fs: clear CP_COMPACT_SUM_FLAG when
+ rebuilding checkpoint
+Date: Sun, 8 Apr 2018 10:14:29 +0800
+Message-ID: <20180408021429.26448-1-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,15 +10,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1f4zPO-0004P1-B1
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 01:46:18 +0000
+ (envelope-from <shengyong1@huawei.com>) id 1f4zqy-00063h-F1
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 02:14:48 +0000
 Received: from [45.249.212.32] (helo=huawei.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f4zPL-002DNY-Um
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 01:46:18 +0000
-In-Reply-To: <94ebbd85-1b8d-927a-ae94-93aa6ded4e23@huawei.com>
-Content-Language: en-US
+ id 1f4zqv-000PNT-Uc
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Apr 2018 02:14:48 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,18 +26,32 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Gao Xiang <gaoxiang25@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, "chao@kernel.org" <chao@kernel.org>
-Cc: Gao Xiang <hsiangkao@aol.com>, hutj <hutj@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/4/5 11:58, Gao Xiang wrote:
-> Keep in line with the common case since it is some weird
-> to take the address of an array again.
-> 
-> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+Resize rebuilds checkpoint with 6 summary blocks, so if
+CP_COMPACT_SUM_FLAG is set in the old checkpoint, clear it.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+---
+ fsck/resize.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks,
+diff --git a/fsck/resize.c b/fsck/resize.c
+index 7643511..019da71 100644
+--- a/fsck/resize.c
++++ b/fsck/resize.c
+@@ -504,6 +504,8 @@ static void rebuild_checkpoint(struct f2fs_sb_info *sbi,
+ 
+ 	/* update nat_bits flag */
+ 	flags = update_nat_bits_flags(new_sb, cp, get_cp(ckpt_flags));
++	if (flags & CP_COMPACT_SUM_FLAG)
++		flags &= ~CP_COMPACT_SUM_FLAG;
+ 	set_cp(ckpt_flags, flags);
+ 
+ 	memcpy(new_cp, cp, (unsigned char *)cp->sit_nat_version_bitmap -
+-- 
+2.14.1
 
 
 ------------------------------------------------------------------------------
