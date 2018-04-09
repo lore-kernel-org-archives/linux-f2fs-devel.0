@@ -1,64 +1,97 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
-Date: Mon, 9 Apr 2018 11:38:27 -0700
-Message-ID: <20180409183827.GD17558@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180409015815.235943-1-minchan@kernel.org>
- <20180409024925.GA21889@bombadil.infradead.org>
- <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
- <20180409111403.GA31652@bombadil.infradead.org>
- <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
+From: Eric Biggers via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Subject: [PATCH v2] common/config: support f2fs-tools v1.9 and
+ later
+Date: Mon,  9 Apr 2018 11:55:39 -0700
+Message-ID: <20180409185539.183689-1-ebiggers@google.com>
+Reply-To: Eric Biggers <ebiggers@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Minchan Kim <minchan@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Christopher Lameter <cl@linux.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>, Chris Fries <cfries@google.com>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <ebiggers@google.com>) id 1f5byl-0007QF-PK
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Apr 2018 18:57:23 +0000
+Received: from mail-pl0-f66.google.com ([209.85.160.66])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1f5byk-005ijw-7E
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Apr 2018 18:57:23 +0000
+Received: by mail-pl0-f66.google.com with SMTP id e22-v6so3981464plj.12
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 09 Apr 2018 11:57:22 -0700 (PDT)
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: fstests@vger.kernel.org
+Cc: Eric Biggers <ebiggers@google.com>, Theodore Ts'o <tytso@mit.edu>, linux-f2fs-devel@lists.sourceforge.net
 
-On 04/09, Minchan Kim wrote:
-> On Mon, Apr 09, 2018 at 04:14:03AM -0700, Matthew Wilcox wrote:
-> > On Mon, Apr 09, 2018 at 12:09:30PM +0900, Minchan Kim wrote:
-> > > On Sun, Apr 08, 2018 at 07:49:25PM -0700, Matthew Wilcox wrote:
-> > > > On Mon, Apr 09, 2018 at 10:58:15AM +0900, Minchan Kim wrote:
-> > > > > It assumes shadow entry of radix tree relies on the init state
-> > > > > that node->private_list allocated should be list_empty state.
-> > > > > Currently, it's initailized in SLAB constructor which means
-> > > > > node of radix tree would be initialized only when *slub allocates
-> > > > > new page*, not *new object*. So, if some FS or subsystem pass
-> > > > > gfp_mask to __GFP_ZERO, slub allocator will do memset blindly.
-> > > > 
-> > > > Wait, what?  Who's declaring their radix tree with GFP_ZERO flags?
-> > > > I don't see anyone using INIT_RADIX_TREE or RADIX_TREE or RADIX_TREE_INIT
-> > > > with GFP_ZERO.
-> > > 
-> > > Look at fs/f2fs/inode.c
-> > > mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
-> > > 
-> > > __add_to_page_cache_locked
-> > >   radix_tree_maybe_preload
-> > > 
-> > > add_to_page_cache_lru
-> > > 
-> > > What's the wrong with setting __GFP_ZERO with mapping->gfp_mask?
-> > 
-> > Because it's a stupid thing to do.  Pages are allocated and then filled
-> > from disk.  Zeroing them before DMAing to them is just a waste of time.
-> 
-> Every FSes do address_space to read pages from storage? I'm not sure.
-> 
-> If you're right, we need to insert WARN_ON to catch up __GFP_ZERO
-> on mapping_set_gfp_mask at the beginning and remove all of those
-> stupid thins. 
-> 
-> Jaegeuk, why do you need __GFP_ZERO? Could you explain?
+Pass the -f option to mkfs.f2fs when it appears to support it.  This is
+required by f2fs-tools v1.9 and later in order to format the filesystem
+even when an existing filesystem is detected.  But earlier versions did
+not accept this option.
 
-Comment says "__GFP_ZERO returns a zeroed page on success."
+mkfs.f2fs doesn't yet have an option to print its version number.  So,
+to detect a new enough version we grep for -f in the help output.  This
+also works for mkfs.btrfs, so we switch that over to the same method
+rather than grepping for "force overwrite" in the binary.
 
-The f2fs maintains two inodes to manage some metadata in the page cache,
-which requires zeroed data when introducing a new structure. It's not
-a big deal to avoid __GFP_ZERO for whatever performance reasons tho, does
-it only matters with f2fs?
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
 
-Thanks,
+v2: switch to grepping for -f in the help output
+
+ common/config | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
+
+diff --git a/common/config b/common/config
+index 20f0e5f3..cc318069 100644
+--- a/common/config
++++ b/common/config
+@@ -94,11 +94,16 @@ set_prog_path()
+ 	type -P $1
+ }
+ 
+-# Handle mkfs.btrfs which does (or does not) require -f to overwrite
+-set_btrfs_mkfs_prog_path_with_opts()
++# Handle mkfs.$fstyp which does (or does not) require -f to overwrite
++set_mkfs_prog_path_with_opts()
+ {
+-	p=`set_prog_path mkfs.btrfs`
+-	if [ "$p" != "" ] && grep -q 'force overwrite' $p; then
++	local fstyp=$1
++	local p=`set_prog_path mkfs.$fstyp`
++
++	# Note: mkfs.f2fs doesn't support the --help option yet, but it doesn't
++	# matter since it also prints the help when an invalid option is given.
++	if [ "$p" != "" ] && \
++		$p --help |& grep -q "[[:space:]]-f[[:space:]|]"; then
+ 		echo "$p -f"
+ 	else
+ 		echo $p
+@@ -223,8 +228,8 @@ case "$HOSTOS" in
+         export MKFS_XFS_PROG="`set_prog_path mkfs.xfs`"
+         export MKFS_EXT4_PROG="`set_prog_path mkfs.ext4`"
+         export MKFS_UDF_PROG="`set_prog_path mkudffs`"
+-        export MKFS_BTRFS_PROG="`set_btrfs_mkfs_prog_path_with_opts`"
+-        export MKFS_F2FS_PROG="`set_prog_path mkfs.f2fs`"
++        export MKFS_BTRFS_PROG="`set_mkfs_prog_path_with_opts btrfs`"
++        export MKFS_F2FS_PROG="`set_mkfs_prog_path_with_opts f2fs`"
+         export DUMP_F2FS_PROG="`set_prog_path dump.f2fs`"
+         export BTRFS_UTIL_PROG="`set_prog_path btrfs`"
+         export BTRFS_SHOW_SUPER_PROG="`set_prog_path btrfs-show-super`"
+-- 
+2.17.0.484.g0c8726318c-goog
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
