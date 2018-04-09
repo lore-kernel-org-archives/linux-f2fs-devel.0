@@ -1,97 +1,113 @@
-From: Eric Biggers via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Subject: [PATCH v2] common/config: support f2fs-tools v1.9 and
- later
-Date: Mon,  9 Apr 2018 11:55:39 -0700
-Message-ID: <20180409185539.183689-1-ebiggers@google.com>
-Reply-To: Eric Biggers <ebiggers@google.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@google.com>) id 1f5byl-0007QF-PK
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Apr 2018 18:57:23 +0000
-Received: from mail-pl0-f66.google.com ([209.85.160.66])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1f5byk-005ijw-7E
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Apr 2018 18:57:23 +0000
-Received: by mail-pl0-f66.google.com with SMTP id e22-v6so3981464plj.12
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 09 Apr 2018 11:57:22 -0700 (PDT)
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: fstests@vger.kernel.org
-Cc: Eric Biggers <ebiggers@google.com>, Theodore Ts'o <tytso@mit.edu>, linux-f2fs-devel@lists.sourceforge.net
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: don't use GFP_ZERO for page caches
+Date: Mon,  9 Apr 2018 12:00:12 -0700
+Message-ID: <20180409190012.21552-1-jaegeuk@kernel.org>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Chao Yu <yuchao0@huawei.com>, stable@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Pass the -f option to mkfs.f2fs when it appears to support it.  This is
-required by f2fs-tools v1.9 and later in order to format the filesystem
-even when an existing filesystem is detected.  But earlier versions did
-not accept this option.
+From: Chao Yu <yuchao0@huawei.com>
 
-mkfs.f2fs doesn't yet have an option to print its version number.  So,
-to detect a new enough version we grep for -f in the help output.  This
-also works for mkfs.btrfs, so we switch that over to the same method
-rather than grepping for "force overwrite" in the binary.
+Related to https://lkml.org/lkml/2018/4/8/661
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Sometimes, we need to write meta data to new allocated block address,
+then we will allocate a zeroed page in inner inode's address space, and
+fill partial data in it, and leave other place with zero value which means
+some fields are initial status.
+
+There are two inner inodes (meta inode and node inode) setting __GFP_ZERO,
+I have just checked them, for both of them, we can avoid using __GFP_ZERO,
+and do initialization by ourselves to avoid unneeded/redundant zeroing
+from mm.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
+ fs/f2fs/inode.c    | 4 ++--
+ fs/f2fs/node.c     | 6 ++++--
+ fs/f2fs/node.h     | 7 ++-----
+ fs/f2fs/recovery.c | 3 +--
+ 4 files changed, 9 insertions(+), 11 deletions(-)
 
-v2: switch to grepping for -f in the help output
-
- common/config | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
-
-diff --git a/common/config b/common/config
-index 20f0e5f3..cc318069 100644
---- a/common/config
-+++ b/common/config
-@@ -94,11 +94,16 @@ set_prog_path()
- 	type -P $1
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 417c9dcd0269..87535bf63421 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -320,10 +320,10 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+ make_now:
+ 	if (ino == F2FS_NODE_INO(sbi)) {
+ 		inode->i_mapping->a_ops = &f2fs_node_aops;
+-		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
++		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
+ 	} else if (ino == F2FS_META_INO(sbi)) {
+ 		inode->i_mapping->a_ops = &f2fs_meta_aops;
+-		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
++		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
+ 	} else if (S_ISREG(inode->i_mode)) {
+ 		inode->i_op = &f2fs_file_inode_operations;
+ 		inode->i_fop = &f2fs_file_operations;
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 9a99243054ba..6fc3311820ec 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1096,7 +1096,8 @@ struct page *new_node_page(struct dnode_of_data *dn, unsigned int ofs)
+ 	set_node_addr(sbi, &new_ni, NEW_ADDR, false);
+ 
+ 	f2fs_wait_on_page_writeback(page, NODE, true);
+-	fill_node_footer(page, dn->nid, dn->inode->i_ino, ofs, true);
++	memset(F2FS_NODE(page), 0, PAGE_SIZE);
++	fill_node_footer(page, dn->nid, dn->inode->i_ino, ofs);
+ 	set_cold_node(page, S_ISDIR(dn->inode->i_mode));
+ 	if (!PageUptodate(page))
+ 		SetPageUptodate(page);
+@@ -2311,7 +2312,8 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
+ 
+ 	if (!PageUptodate(ipage))
+ 		SetPageUptodate(ipage);
+-	fill_node_footer(ipage, ino, ino, 0, true);
++	memset(F2FS_NODE(page), 0, PAGE_SIZE);
++	fill_node_footer(ipage, ino, ino, 0);
+ 	set_cold_node(page, false);
+ 
+ 	src = F2FS_INODE(page);
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index b95e49e4a928..42cd081114ab 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -263,15 +263,12 @@ static inline block_t next_blkaddr_of_node(struct page *node_page)
  }
  
--# Handle mkfs.btrfs which does (or does not) require -f to overwrite
--set_btrfs_mkfs_prog_path_with_opts()
-+# Handle mkfs.$fstyp which does (or does not) require -f to overwrite
-+set_mkfs_prog_path_with_opts()
+ static inline void fill_node_footer(struct page *page, nid_t nid,
+-				nid_t ino, unsigned int ofs, bool reset)
++				nid_t ino, unsigned int ofs)
  {
--	p=`set_prog_path mkfs.btrfs`
--	if [ "$p" != "" ] && grep -q 'force overwrite' $p; then
-+	local fstyp=$1
-+	local p=`set_prog_path mkfs.$fstyp`
-+
-+	# Note: mkfs.f2fs doesn't support the --help option yet, but it doesn't
-+	# matter since it also prints the help when an invalid option is given.
-+	if [ "$p" != "" ] && \
-+		$p --help |& grep -q "[[:space:]]-f[[:space:]|]"; then
- 		echo "$p -f"
- 	else
- 		echo $p
-@@ -223,8 +228,8 @@ case "$HOSTOS" in
-         export MKFS_XFS_PROG="`set_prog_path mkfs.xfs`"
-         export MKFS_EXT4_PROG="`set_prog_path mkfs.ext4`"
-         export MKFS_UDF_PROG="`set_prog_path mkudffs`"
--        export MKFS_BTRFS_PROG="`set_btrfs_mkfs_prog_path_with_opts`"
--        export MKFS_F2FS_PROG="`set_prog_path mkfs.f2fs`"
-+        export MKFS_BTRFS_PROG="`set_mkfs_prog_path_with_opts btrfs`"
-+        export MKFS_F2FS_PROG="`set_mkfs_prog_path_with_opts f2fs`"
-         export DUMP_F2FS_PROG="`set_prog_path dump.f2fs`"
-         export BTRFS_UTIL_PROG="`set_prog_path btrfs`"
-         export BTRFS_SHOW_SUPER_PROG="`set_prog_path btrfs-show-super`"
+ 	struct f2fs_node *rn = F2FS_NODE(page);
+ 	unsigned int old_flag = 0;
+ 
+-	if (reset)
+-		memset(rn, 0, sizeof(*rn));
+-	else
+-		old_flag = le32_to_cpu(rn->footer.flag);
++	old_flag = le32_to_cpu(rn->footer.flag);
+ 
+ 	rn->footer.nid = cpu_to_le32(nid);
+ 	rn->footer.ino = cpu_to_le32(ino);
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 1b23d3febe4c..de24f3247aa5 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -540,8 +540,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 	}
+ 
+ 	copy_node_footer(dn.node_page, page);
+-	fill_node_footer(dn.node_page, dn.nid, ni.ino,
+-					ofs_of_node(page), false);
++	fill_node_footer(dn.node_page, dn.nid, ni.ino, ofs_of_node(page));
+ 	set_page_dirty(dn.node_page);
+ err:
+ 	f2fs_put_dnode(&dn);
 -- 
-2.17.0.484.g0c8726318c-goog
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+2.15.0.531.g2ccb3012c9-goog
