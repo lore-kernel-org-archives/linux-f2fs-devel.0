@@ -1,137 +1,109 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: don't split checkpoint in fstrim
-Date: Mon, 9 Apr 2018 10:25:23 +0800
-Message-ID: <20180409022523.79671-1-yuchao0@huawei.com>
+Subject: Re: [PATCH] common/config: support f2fs-tools v1.9 and
+ later
+Date: Mon, 9 Apr 2018 10:33:40 +0800
+Message-ID: <21e04a3c-9099-609f-9581-a50465ec4c50@huawei.com>
+References: <20180405221901.41861-1-ebiggers@google.com>
+ <20180407152952.GP30836@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1f5Md1-0001zJ-6m
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Apr 2018 02:33:55 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1f5Mcy-00BWuO-KU
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Apr 2018 02:33:55 +0000
+In-Reply-To: <20180407152952.GP30836@localhost.localdomain>
+Content-Language: en-US
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Eryu Guan <guaneryu@gmail.com>, Eric Biggers <ebiggers@google.com>
+Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Now, we issue discard asynchronously in separated thread instead of in
-checkpoint, after that, we won't encounter long latency in checkpoint
-due to huge number of synchronous discard command handling, so, we don't
-need to split checkpoint to do trim in batch, merge it and obsolete
-related sysfs entry.
+On 2018/4/7 23:29, Eryu Guan wrote:
+> On Thu, Apr 05, 2018 at 03:19:01PM -0700, Eric Biggers wrote:
+>> Pass the -f option to mkfs.f2fs when it appears to support it.  This is
+>> required by f2fs-tools v1.9 and later in order to format the filesystem
+>> even when an existing filesystem is detected.  But earlier versions did
+>> not accept this option.
+>>
+>> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> 
+> Looks fine to me, but I'd like an ACK from f2fs developers.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2: correct end boundary.
- Documentation/ABI/testing/sysfs-fs-f2fs |  1 +
- fs/f2fs/f2fs.h                          |  5 -----
- fs/f2fs/segment.c                       | 37 ++++++++++-----------------------
- fs/f2fs/sysfs.c                         |  3 +++
- 4 files changed, 15 insertions(+), 31 deletions(-)
+Acked-by: Chao Yu <yuchao0@huawei.com>
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 540553c933b6..372b88f4e706 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -101,6 +101,7 @@ Date:		February 2015
- Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
- Description:
- 		 Controls the trimming rate in batch mode.
-+		 <deprecated>
- 
- What:		/sys/fs/f2fs/<disk>/cp_interval
- Date:		October 2015
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 0aaf70955c77..f414f7ab8ddb 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -178,11 +178,6 @@ enum {
- #define	CP_DISCARD	0x00000010
- #define CP_TRIMMED	0x00000020
- 
--#define DEF_BATCHED_TRIM_SECTIONS	2048
--#define BATCHED_TRIM_SEGMENTS(sbi)	\
--		(GET_SEG_FROM_SEC(sbi, SM_I(sbi)->trim_sections))
--#define BATCHED_TRIM_BLOCKS(sbi)	\
--		(BATCHED_TRIM_SEGMENTS(sbi) << (sbi)->log_blocks_per_seg)
- #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
- #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
- #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 2aff7834d821..16c10dea8aad 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2424,7 +2424,7 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
- {
- 	__u64 start = F2FS_BYTES_TO_BLK(range->start);
- 	__u64 end = start + F2FS_BYTES_TO_BLK(range->len) - 1;
--	unsigned int start_segno, end_segno, cur_segno;
-+	unsigned int start_segno, end_segno;
- 	block_t start_block, end_block;
- 	struct cp_control cpc;
- 	struct discard_policy dpolicy;
-@@ -2450,33 +2450,20 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
- 
- 	cpc.reason = CP_DISCARD;
- 	cpc.trim_minlen = max_t(__u64, 1, F2FS_BYTES_TO_BLK(range->minlen));
-+	cpc.trim_start = start_segno;
-+	cpc.trim_end = end_segno;
- 
--	/* do checkpoint to issue discard commands safely */
--	for (cur_segno = start_segno; cur_segno <= end_segno;
--					cur_segno = cpc.trim_end + 1) {
--		cpc.trim_start = cur_segno;
--
--		if (sbi->discard_blks == 0)
--			break;
--		else if (sbi->discard_blks < BATCHED_TRIM_BLOCKS(sbi))
--			cpc.trim_end = end_segno;
--		else
--			cpc.trim_end = min_t(unsigned int,
--				rounddown(cur_segno +
--				BATCHED_TRIM_SEGMENTS(sbi),
--				sbi->segs_per_sec) - 1, end_segno);
--
--		mutex_lock(&sbi->gc_mutex);
--		err = write_checkpoint(sbi, &cpc);
--		mutex_unlock(&sbi->gc_mutex);
--		if (err)
--			break;
-+	if (sbi->discard_blks == 0)
-+		goto out;
- 
--		schedule();
--	}
-+	mutex_lock(&sbi->gc_mutex);
-+	err = write_checkpoint(sbi, &cpc);
-+	mutex_unlock(&sbi->gc_mutex);
-+	if (err)
-+		goto out;
- 
- 	start_block = START_BLOCK(sbi, start_segno);
--	end_block = START_BLOCK(sbi, min(cur_segno, end_segno) + 1);
-+	end_block = START_BLOCK(sbi, end_segno + 1);
- 
- 	init_discard_policy(&dpolicy, DPOLICY_FSTRIM, cpc.trim_minlen);
- 	__issue_discard_cmd_range(sbi, &dpolicy, start_block, end_block);
-@@ -3869,8 +3856,6 @@ int build_segment_manager(struct f2fs_sb_info *sbi)
- 	sm_info->min_hot_blocks = DEF_MIN_HOT_BLOCKS;
- 	sm_info->min_ssr_sections = reserved_sections(sbi);
- 
--	sm_info->trim_sections = DEF_BATCHED_TRIM_SECTIONS;
--
- 	INIT_LIST_HEAD(&sm_info->sit_entry_set);
- 
- 	init_rwsem(&sm_info->curseg_lock);
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index ab54990d057d..2130d9b031a2 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -251,6 +251,9 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
- 		return count;
- 	}
- 
-+	if (!strcmp(a->attr.name, "trim_sections"))
-+		return -EINVAL;
-+
- 	*ui = t;
- 
- 	if (!strcmp(a->attr.name, "iostat_enable") && *ui == 0)
--- 
-2.15.0.55.gc2ece9dc4de6
+Thanks,
+
+> 
+>> ---
+>>  common/config | 11 ++++++-----
+>>  1 file changed, 6 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/common/config b/common/config
+>> index 20f0e5f3..7c046a78 100644
+>> --- a/common/config
+>> +++ b/common/config
+>> @@ -94,10 +94,11 @@ set_prog_path()
+>>  	type -P $1
+>>  }
+>>  
+>> -# Handle mkfs.btrfs which does (or does not) require -f to overwrite
+>> -set_btrfs_mkfs_prog_path_with_opts()
+>> +# Handle mkfs.$fstyp which does (or does not) require -f to overwrite
+>> +set_mkfs_prog_path_with_opts()
+>>  {
+>> -	p=`set_prog_path mkfs.btrfs`
+>> +	local fstyp=$1
+>> +	local p=`set_prog_path mkfs.$fstyp`
+>>  	if [ "$p" != "" ] && grep -q 'force overwrite' $p; then
+> 
+> Also grep the "$p -h" output instead of the binary file?
+> 
+> Thanks,
+> Eryu
+> 
+>>  		echo "$p -f"
+>>  	else
+>> @@ -223,8 +224,8 @@ case "$HOSTOS" in
+>>          export MKFS_XFS_PROG="`set_prog_path mkfs.xfs`"
+>>          export MKFS_EXT4_PROG="`set_prog_path mkfs.ext4`"
+>>          export MKFS_UDF_PROG="`set_prog_path mkudffs`"
+>> -        export MKFS_BTRFS_PROG="`set_btrfs_mkfs_prog_path_with_opts`"
+>> -        export MKFS_F2FS_PROG="`set_prog_path mkfs.f2fs`"
+>> +        export MKFS_BTRFS_PROG="`set_mkfs_prog_path_with_opts btrfs`"
+>> +        export MKFS_F2FS_PROG="`set_mkfs_prog_path_with_opts f2fs`"
+>>          export DUMP_F2FS_PROG="`set_prog_path dump.f2fs`"
+>>          export BTRFS_UTIL_PROG="`set_prog_path btrfs`"
+>>          export BTRFS_SHOW_SUPER_PROG="`set_prog_path btrfs-show-super`"
+>> -- 
+>> 2.17.0.484.g0c8726318c-goog
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe fstests" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> --
+> To unsubscribe from this list: send the line "unsubscribe fstests" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
