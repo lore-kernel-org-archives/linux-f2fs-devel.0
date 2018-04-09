@@ -1,74 +1,55 @@
-From: David Sterba <dsterba@suse.cz>
-Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
-Date: Mon, 9 Apr 2018 17:34:09 +0200
-Message-ID: <20180409153409.nqsklemu3igacgbj@twin.jikos.cz>
-References: <20180409015815.235943-1-minchan@kernel.org>
- <20180409024925.GA21889@bombadil.infradead.org>
- <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
- <20180409111403.GA31652@bombadil.infradead.org>
- <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
- <7706245c-2661-f28b-f7f9-8f11e1ae932b@huawei.com>
- <20180409124852.GE21835@dhcp22.suse.cz>
- <20180409134114.GA30963@bombadil.infradead.org>
- <20180409135215.GH21835@dhcp22.suse.cz>
-Reply-To: dsterba@suse.cz
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] mkfs.f2fs: introduce new option V to show
+ version
+Date: Mon, 9 Apr 2018 10:55:03 -0700
+Message-ID: <20180409175503.GA17558@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180408021506.26500-1-shengyong1@huawei.com>
+ <44a38d89-a101-6dae-9cf8-0d5eba7ed51e@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1f5b0Z-0003cB-WA
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Apr 2018 17:55:12 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1f5b0Y-00CqY5-DN
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Apr 2018 17:55:11 +0000
 Content-Disposition: inline
-In-Reply-To: <20180409135215.GH21835@dhcp22.suse.cz>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Chao Yu <yuchao0@huawei.com>, Minchan Kim <minchan@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Christopher Lameter <cl@linux.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>, Chris Fries <cfries@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <44a38d89-a101-6dae-9cf8-0d5eba7ed51e@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: ebiggers@google.com, linux-f2fs-devel@lists.sourceforge.net
 
-On Mon, Apr 09, 2018 at 03:52:15PM +0200, Michal Hocko wrote:
-> On Mon 09-04-18 06:41:14, Matthew Wilcox wrote:
-> > On Mon, Apr 09, 2018 at 02:48:52PM +0200, Michal Hocko wrote:
-> > > On Mon 09-04-18 20:25:06, Chao Yu wrote:
-> > > [...]
-> > > > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> > > > index c85cccc2e800..cc63f8c448f0 100644
-> > > > --- a/fs/f2fs/inode.c
-> > > > +++ b/fs/f2fs/inode.c
-> > > > @@ -339,10 +339,10 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
-> > > >  make_now:
-> > > >  	if (ino == F2FS_NODE_INO(sbi)) {
-> > > >  		inode->i_mapping->a_ops = &f2fs_node_aops;
-> > > > -		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
-> > > > +		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
-> > > 
-> > > An unrelated question. Why do you make all allocations for the mapping
-> > > NOFS automatically? What kind of reclaim recursion problems are you
-> > > trying to prevent?
+On 04/08, Chao Yu wrote:
+> On 2018/4/8 10:15, Sheng Yong wrote:
+> > This patch introduces a new option -V to show the version of mkfs.f2fs
+> > and exit after that.
+> 
+> BTW, should we add -V for other misc tools?
+
+Yes, could you please add this for others?
+
+> 
 > > 
-> > It's worth noting that this is endemic in filesystems.
+> > Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 > 
-> Yes, and I have strong suspicion that this is a mindless copy&pasting...
-> Well, xfs had a good reason for it in the past - mostly to handle deep
-> call stacks on complicated storage setups in the past when we used to
-> trigger IO from the direct reclaim. I am not sure whether there are
-> other reasons to keep the status quo except for finding somebody brave
-> enough to post the patch, do all the due testing.
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
 > 
-> > $ git grep mapping_set_gfp_mask.*FS
-> > drivers/block/loop.c:   mapping_set_gfp_mask(mapping, lo->old_gfp_mask & ~(__GFP_IO|__GFP_FS));
-> > fs/btrfs/disk-io.c:     mapping_set_gfp_mask(fs_info->btree_inode->i_mapping, GFP_NOFS);
+> Thanks,
 
-Thi was added in 1561deda687eef0
-(https://git.kernel.org/linus/1561deda687eef0e9506) and probably after a
-deadlock report.
-
-The changelog mentions the potential recursion from fs -> allocation -> fs,
-but I'm not sure if this still happens on the MM side today.
-
-For the filesystem part, I think the key functions of the callchain are
-still there.
-
-The code was been added in 2011 and the 2nd hunk of the patch added a
-code that's not present today AFAICS, so this is worth revisiting.
-
-I still don't understand how it's related to the GFP_HIGHUSER_MOVABLE,
-this patch is from time where the metadata pages were possibly allocated
-from HIGHMEM but this was removed later in a65917156e345946db
-(https://git.kernel.org/linus/a65917156e345946db).
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
