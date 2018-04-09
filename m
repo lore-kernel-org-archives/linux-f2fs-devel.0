@@ -1,58 +1,116 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH] f2fs: use cur_map instead of ckpt_map
-Date: Mon, 9 Apr 2018 19:36:35 +0800
-Message-ID: <1523273795-2913-1-git-send-email-heyunlei@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
+Date: Mon, 9 Apr 2018 20:25:06 +0800
+Message-ID: <7706245c-2661-f28b-f7f9-8f11e1ae932b@huawei.com>
+References: <20180409015815.235943-1-minchan@kernel.org>
+ <20180409024925.GA21889@bombadil.infradead.org>
+ <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
+ <20180409111403.GA31652@bombadil.infradead.org>
+ <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <heyunlei@huawei.com>) id 1f5VKC-0005lm-Ad
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Apr 2018 11:51:04 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f5VKA-0030Uc-9p
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Apr 2018 11:51:04 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
-Cc: zhangdianfang@huawei.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Minchan Kim <minchan@kernel.org>, Matthew Wilcox <willy@infradead.org>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Christopher Lameter <cl@linux.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>, Chris Fries <cfries@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch use cur_map instead of ckpt_map for easy to
-understand, no functional change.
+On 2018/4/9 19:25, Minchan Kim wrote:
+> On Mon, Apr 09, 2018 at 04:14:03AM -0700, Matthew Wilcox wrote:
+>> On Mon, Apr 09, 2018 at 12:09:30PM +0900, Minchan Kim wrote:
+>>> On Sun, Apr 08, 2018 at 07:49:25PM -0700, Matthew Wilcox wrote:
+>>>> On Mon, Apr 09, 2018 at 10:58:15AM +0900, Minchan Kim wrote:
+>>>>> It assumes shadow entry of radix tree relies on the init state
+>>>>> that node->private_list allocated should be list_empty state.
+>>>>> Currently, it's initailized in SLAB constructor which means
+>>>>> node of radix tree would be initialized only when *slub allocates
+>>>>> new page*, not *new object*. So, if some FS or subsystem pass
+>>>>> gfp_mask to __GFP_ZERO, slub allocator will do memset blindly.
+>>>>
+>>>> Wait, what?  Who's declaring their radix tree with GFP_ZERO flags?
+>>>> I don't see anyone using INIT_RADIX_TREE or RADIX_TREE or RADIX_TREE_INIT
+>>>> with GFP_ZERO.
+>>>
+>>> Look at fs/f2fs/inode.c
+>>> mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+>>>
+>>> __add_to_page_cache_locked
+>>>   radix_tree_maybe_preload
+>>>
+>>> add_to_page_cache_lru
+>>>
+>>> What's the wrong with setting __GFP_ZERO with mapping->gfp_mask?
+>>
+>> Because it's a stupid thing to do.  Pages are allocated and then filled
+>> from disk.  Zeroing them before DMAing to them is just a waste of time.
+> 
+> Every FSes do address_space to read pages from storage? I'm not sure.
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
+No, sometimes, we need to write meta data to new allocated block address,
+then we will allocate a zeroed page in inner inode's address space, and
+fill partial data in it, and leave other place with zero value which means
+some fields are initial status.
+
+There are two inner inodes (meta inode and node inode) setting __GFP_ZERO,
+I have just checked them, for both of them, we can avoid using __GFP_ZERO,
+and do initialization by ourselves to avoid unneeded/redundant zeroing
+from mm.
+
+To Jaegeuk, if I missed something, please let me know.
+
 ---
- fs/f2fs/segment.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/inode.c | 4 ++--
+ fs/f2fs/node.c  | 2 ++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 5854cc4..f5d0499 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1559,7 +1559,7 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
- 
- 	/* SIT_VBLOCK_MAP_SIZE should be multiple of sizeof(unsigned long) */
- 	for (i = 0; i < entries; i++)
--		dmap[i] = force ? ~ckpt_map[i] & ~discard_map[i] :
-+		dmap[i] = force ? ~cur_map[i] & ~discard_map[i] :
- 				(cur_map[i] ^ ckpt_map[i]) & ckpt_map[i];
- 
- 	while (force || SM_I(sbi)->dcc_info->nr_discards <=
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index c85cccc2e800..cc63f8c448f0 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -339,10 +339,10 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+ make_now:
+ 	if (ino == F2FS_NODE_INO(sbi)) {
+ 		inode->i_mapping->a_ops = &f2fs_node_aops;
+-		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
++		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
+ 	} else if (ino == F2FS_META_INO(sbi)) {
+ 		inode->i_mapping->a_ops = &f2fs_meta_aops;
+-		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
++		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
+ 	} else if (S_ISREG(inode->i_mode)) {
+ 		inode->i_op = &f2fs_file_inode_operations;
+ 		inode->i_fop = &f2fs_file_operations;
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 9dedd4b5e077..31e5ecf98ffd 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1078,6 +1078,7 @@ struct page *new_node_page(struct dnode_of_data *dn, unsigned int ofs)
+ 	set_node_addr(sbi, &new_ni, NEW_ADDR, false);
+
+ 	f2fs_wait_on_page_writeback(page, NODE, true);
++	memset(F2FS_NODE(page), 0, PAGE_SIZE);
+ 	fill_node_footer(page, dn->nid, dn->inode->i_ino, ofs, true);
+ 	set_cold_node(page, S_ISDIR(dn->inode->i_mode));
+ 	if (!PageUptodate(page))
+@@ -2321,6 +2322,7 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
+
+ 	if (!PageUptodate(ipage))
+ 		SetPageUptodate(ipage);
++	memset(F2FS_NODE(page), 0, PAGE_SIZE);
+ 	fill_node_footer(ipage, ino, ino, 0, true);
+ 	set_cold_node(page, false);
+
 -- 
-1.9.1
 
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> 
+> If you're right, we need to insert WARN_ON to catch up __GFP_ZERO
+> on mapping_set_gfp_mask at the beginning and remove all of those
+> stupid thins. 
+> 
+> Jaegeuk, why do you need __GFP_ZERO? Could you explain?
+> 
+> .
+> 
