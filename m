@@ -1,67 +1,134 @@
-From: Michal Hocko <mhocko@kernel.org>
+From: Minchan Kim <minchan@kernel.org>
 Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
-Date: Mon, 9 Apr 2018 15:52:15 +0200
-Message-ID: <20180409135215.GH21835@dhcp22.suse.cz>
+Date: Mon, 9 Apr 2018 23:49:58 +0900
+Message-ID: <20180409144958.GA211679@rodete-laptop-imager.corp.google.com>
 References: <20180409015815.235943-1-minchan@kernel.org>
  <20180409024925.GA21889@bombadil.infradead.org>
  <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
  <20180409111403.GA31652@bombadil.infradead.org>
  <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
  <7706245c-2661-f28b-f7f9-8f11e1ae932b@huawei.com>
- <20180409124852.GE21835@dhcp22.suse.cz>
- <20180409134114.GA30963@bombadil.infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180409134114.GA30963@bombadil.infradead.org>
+In-Reply-To: <7706245c-2661-f28b-f7f9-8f11e1ae932b@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Chao Yu <yuchao0@huawei.com>, Minchan Kim <minchan@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Christopher Lameter <cl@linux.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>, Chris Fries <cfries@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Matthew Wilcox <willy@infradead.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Christopher Lameter <cl@linux.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>, Chris Fries <cfries@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Mon 09-04-18 06:41:14, Matthew Wilcox wrote:
-> On Mon, Apr 09, 2018 at 02:48:52PM +0200, Michal Hocko wrote:
-> > On Mon 09-04-18 20:25:06, Chao Yu wrote:
-> > [...]
-> > > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> > > index c85cccc2e800..cc63f8c448f0 100644
-> > > --- a/fs/f2fs/inode.c
-> > > +++ b/fs/f2fs/inode.c
-> > > @@ -339,10 +339,10 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
-> > >  make_now:
-> > >  	if (ino == F2FS_NODE_INO(sbi)) {
-> > >  		inode->i_mapping->a_ops = &f2fs_node_aops;
-> > > -		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
-> > > +		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
+On Mon, Apr 09, 2018 at 08:25:06PM +0800, Chao Yu wrote:
+> On 2018/4/9 19:25, Minchan Kim wrote:
+> > On Mon, Apr 09, 2018 at 04:14:03AM -0700, Matthew Wilcox wrote:
+> >> On Mon, Apr 09, 2018 at 12:09:30PM +0900, Minchan Kim wrote:
+> >>> On Sun, Apr 08, 2018 at 07:49:25PM -0700, Matthew Wilcox wrote:
+> >>>> On Mon, Apr 09, 2018 at 10:58:15AM +0900, Minchan Kim wrote:
+> >>>>> It assumes shadow entry of radix tree relies on the init state
+> >>>>> that node->private_list allocated should be list_empty state.
+> >>>>> Currently, it's initailized in SLAB constructor which means
+> >>>>> node of radix tree would be initialized only when *slub allocates
+> >>>>> new page*, not *new object*. So, if some FS or subsystem pass
+> >>>>> gfp_mask to __GFP_ZERO, slub allocator will do memset blindly.
+> >>>>
+> >>>> Wait, what?  Who's declaring their radix tree with GFP_ZERO flags?
+> >>>> I don't see anyone using INIT_RADIX_TREE or RADIX_TREE or RADIX_TREE_INIT
+> >>>> with GFP_ZERO.
+> >>>
+> >>> Look at fs/f2fs/inode.c
+> >>> mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+> >>>
+> >>> __add_to_page_cache_locked
+> >>>   radix_tree_maybe_preload
+> >>>
+> >>> add_to_page_cache_lru
+> >>>
+> >>> What's the wrong with setting __GFP_ZERO with mapping->gfp_mask?
+> >>
+> >> Because it's a stupid thing to do.  Pages are allocated and then filled
+> >> from disk.  Zeroing them before DMAing to them is just a waste of time.
 > > 
-> > An unrelated question. Why do you make all allocations for the mapping
-> > NOFS automatically? What kind of reclaim recursion problems are you
-> > trying to prevent?
+> > Every FSes do address_space to read pages from storage? I'm not sure.
 > 
-> It's worth noting that this is endemic in filesystems.
+> No, sometimes, we need to write meta data to new allocated block address,
+> then we will allocate a zeroed page in inner inode's address space, and
+> fill partial data in it, and leave other place with zero value which means
+> some fields are initial status.
 
-Yes, and I have strong suspicion that this is a mindless copy&pasting...
-Well, xfs had a good reason for it in the past - mostly to handle deep
-call stacks on complicated storage setups in the past when we used to
-trigger IO from the direct reclaim. I am not sure whether there are
-other reasons to keep the status quo except for finding somebody brave
-enough to post the patch, do all the due testing.
+Thanks for the explaining.
 
-> $ git grep mapping_set_gfp_mask.*FS
-> drivers/block/loop.c:   mapping_set_gfp_mask(mapping, lo->old_gfp_mask & ~(__GFP_IO|__GFP_FS));
-> fs/btrfs/disk-io.c:     mapping_set_gfp_mask(fs_info->btree_inode->i_mapping, GFP_NOFS);
-> fs/f2fs/inode.c:                mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
-> fs/f2fs/inode.c:                mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
-> fs/gfs2/glock.c:                mapping_set_gfp_mask(mapping, GFP_NOFS);
-> fs/gfs2/ops_fstype.c:   mapping_set_gfp_mask(mapping, GFP_NOFS);
-> fs/jfs/jfs_imap.c:      mapping_set_gfp_mask(ip->i_mapping, GFP_NOFS);
-> fs/jfs/super.c: mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
-> fs/nilfs2/gcinode.c:    mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
-> fs/nilfs2/page.c:       mapping_set_gfp_mask(mapping, GFP_NOFS);
-> fs/reiserfs/xattr.c:    mapping_set_gfp_mask(mapping, GFP_NOFS);
-> fs/xfs/xfs_iops.c:      mapping_set_gfp_mask(inode->i_mapping, (gfp_mask & ~(__GFP_FS)));
+> 
+> There are two inner inodes (meta inode and node inode) setting __GFP_ZERO,
+> I have just checked them, for both of them, we can avoid using __GFP_ZERO,
+> and do initialization by ourselves to avoid unneeded/redundant zeroing
+> from mm.
 
--- 
-Michal Hocko
-SUSE Labs
+Yub, it would be desirable for f2fs. Please go ahead for f2fs side.
+However, I think current problem is orthgonal. Now, the problem is
+radix_tree_node allocation is bind to page cache allocation.
+Why does FS cannot allocate page cache with __GFP_ZERO?
+I agree if the concern is only performance matter as Matthew mentioned.
+But it is beyond that because it shouldn't do due to limitation
+of workingset shadow entry implementation. I think such coupling is
+not a good idea.
+
+I think right approach to abstract shadow entry in radix_tree is
+to mask off __GFP_ZERO in radix_tree's allocation APIs.
+
+> 
+> To Jaegeuk, if I missed something, please let me know.
+> 
+> ---
+>  fs/f2fs/inode.c | 4 ++--
+>  fs/f2fs/node.c  | 2 ++
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index c85cccc2e800..cc63f8c448f0 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -339,10 +339,10 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+>  make_now:
+>  	if (ino == F2FS_NODE_INO(sbi)) {
+>  		inode->i_mapping->a_ops = &f2fs_node_aops;
+> -		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+> +		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
+>  	} else if (ino == F2FS_META_INO(sbi)) {
+>  		inode->i_mapping->a_ops = &f2fs_meta_aops;
+> -		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+> +		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
+>  	} else if (S_ISREG(inode->i_mode)) {
+>  		inode->i_op = &f2fs_file_inode_operations;
+>  		inode->i_fop = &f2fs_file_operations;
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 9dedd4b5e077..31e5ecf98ffd 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1078,6 +1078,7 @@ struct page *new_node_page(struct dnode_of_data *dn, unsigned int ofs)
+>  	set_node_addr(sbi, &new_ni, NEW_ADDR, false);
+> 
+>  	f2fs_wait_on_page_writeback(page, NODE, true);
+> +	memset(F2FS_NODE(page), 0, PAGE_SIZE);
+>  	fill_node_footer(page, dn->nid, dn->inode->i_ino, ofs, true);
+>  	set_cold_node(page, S_ISDIR(dn->inode->i_mode));
+>  	if (!PageUptodate(page))
+> @@ -2321,6 +2322,7 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
+> 
+>  	if (!PageUptodate(ipage))
+>  		SetPageUptodate(ipage);
+> +	memset(F2FS_NODE(page), 0, PAGE_SIZE);
+>  	fill_node_footer(ipage, ino, ino, 0, true);
+>  	set_cold_node(page, false);
+> 
+> -- 
+> 
+> > 
+> > If you're right, we need to insert WARN_ON to catch up __GFP_ZERO
+> > on mapping_set_gfp_mask at the beginning and remove all of those
+> > stupid thins. 
+> > 
+> > Jaegeuk, why do you need __GFP_ZERO? Could you explain?
+> > 
+> > .
+> > 
+> 
