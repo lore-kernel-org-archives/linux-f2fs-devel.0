@@ -1,84 +1,64 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: enlarge block plug coverage
-Date: Mon, 9 Apr 2018 11:02:41 -0700
-Message-ID: <20180409180241.GC17558@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180404085404.82184-1-yuchao0@huawei.com>
- <20180405035115.GC50337@jaegeuk-macbookpro.roam.corp.google.com>
- <03c21c2f-cb0e-dbd4-b48a-95c2678964d1@huawei.com>
+Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
+Date: Mon, 9 Apr 2018 11:38:27 -0700
+Message-ID: <20180409183827.GD17558@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180409015815.235943-1-minchan@kernel.org>
+ <20180409024925.GA21889@bombadil.infradead.org>
+ <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
+ <20180409111403.GA31652@bombadil.infradead.org>
+ <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <03c21c2f-cb0e-dbd4-b48a-95c2678964d1@huawei.com>
+In-Reply-To: <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+To: Minchan Kim <minchan@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>, Christopher Lameter <cl@linux.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>, Chris Fries <cfries@google.com>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 04/08, Chao Yu wrote:
-> On 2018/4/5 11:51, Jaegeuk Kim wrote:
-> > On 04/04, Chao Yu wrote:
-> >> This patch enlarges block plug coverage in __issue_discard_cmd, in
-> >> order to collect more pending bios before issuing them, to avoid
-> >> being disturbed by previous discard I/O in IO aware discard mode.
+On 04/09, Minchan Kim wrote:
+> On Mon, Apr 09, 2018 at 04:14:03AM -0700, Matthew Wilcox wrote:
+> > On Mon, Apr 09, 2018 at 12:09:30PM +0900, Minchan Kim wrote:
+> > > On Sun, Apr 08, 2018 at 07:49:25PM -0700, Matthew Wilcox wrote:
+> > > > On Mon, Apr 09, 2018 at 10:58:15AM +0900, Minchan Kim wrote:
+> > > > > It assumes shadow entry of radix tree relies on the init state
+> > > > > that node->private_list allocated should be list_empty state.
+> > > > > Currently, it's initailized in SLAB constructor which means
+> > > > > node of radix tree would be initialized only when *slub allocates
+> > > > > new page*, not *new object*. So, if some FS or subsystem pass
+> > > > > gfp_mask to __GFP_ZERO, slub allocator will do memset blindly.
+> > > > 
+> > > > Wait, what?  Who's declaring their radix tree with GFP_ZERO flags?
+> > > > I don't see anyone using INIT_RADIX_TREE or RADIX_TREE or RADIX_TREE_INIT
+> > > > with GFP_ZERO.
+> > > 
+> > > Look at fs/f2fs/inode.c
+> > > mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+> > > 
+> > > __add_to_page_cache_locked
+> > >   radix_tree_maybe_preload
+> > > 
+> > > add_to_page_cache_lru
+> > > 
+> > > What's the wrong with setting __GFP_ZERO with mapping->gfp_mask?
 > > 
-> > Hmm, then we need to wait for huge discard IO for over 10 secs, which
+> > Because it's a stupid thing to do.  Pages are allocated and then filled
+> > from disk.  Zeroing them before DMAing to them is just a waste of time.
 > 
-> We found that total discard latency is rely on total discard number we issued
-> last time instead of range or length discard covered. IMO, if we don't change
-> .max_requests value, we will not suffer longer latency.
+> Every FSes do address_space to read pages from storage? I'm not sure.
 > 
-> > will affect following read/write IOs accordingly. In order to avoid that,
-> > we actually need to limit the discard size.
+> If you're right, we need to insert WARN_ON to catch up __GFP_ZERO
+> on mapping_set_gfp_mask at the beginning and remove all of those
+> stupid thins. 
 > 
-> If you are worry about I/O interference in between discard and rw, I suggest to
-> decrease .max_requests value.
+> Jaegeuk, why do you need __GFP_ZERO? Could you explain?
 
-What do you mean? This will produce more pending requests in the queue?
+Comment says "__GFP_ZERO returns a zeroed page on success."
 
-> 
-> Thanks,
-> 
-> > 
-> > Thanks,
-> > 
-> >>
-> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >> ---
-> >>  fs/f2fs/segment.c | 7 +++++--
-> >>  1 file changed, 5 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >> index 8f0b5ba46315..4287e208c040 100644
-> >> --- a/fs/f2fs/segment.c
-> >> +++ b/fs/f2fs/segment.c
-> >> @@ -1208,10 +1208,12 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> >>  		pend_list = &dcc->pend_list[i];
-> >>  
-> >>  		mutex_lock(&dcc->cmd_lock);
-> >> +
-> >> +		blk_start_plug(&plug);
-> >> +
-> >>  		if (list_empty(pend_list))
-> >>  			goto next;
-> >>  		f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
-> >> -		blk_start_plug(&plug);
-> >>  		list_for_each_entry_safe(dc, tmp, pend_list, list) {
-> >>  			f2fs_bug_on(sbi, dc->state != D_PREP);
-> >>  
-> >> @@ -1227,8 +1229,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> >>  			if (++iter >= dpolicy->max_requests)
-> >>  				break;
-> >>  		}
-> >> -		blk_finish_plug(&plug);
-> >>  next:
-> >> +		blk_finish_plug(&plug);
-> >> +
-> >>  		mutex_unlock(&dcc->cmd_lock);
-> >>  
-> >>  		if (iter >= dpolicy->max_requests)
-> >> -- 
-> >> 2.15.0.55.gc2ece9dc4de6
-> > 
-> > .
-> > 
+The f2fs maintains two inodes to manage some metadata in the page cache,
+which requires zeroed data when introducing a new structure. It's not
+a big deal to avoid __GFP_ZERO for whatever performance reasons tho, does
+it only matters with f2fs?
+
+Thanks,
