@@ -1,22 +1,22 @@
 From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH] fsck.f2fs: recover nat bits feature default by
- fsck
-Date: Mon, 9 Apr 2018 11:34:41 +0800
-Message-ID: <1523244881-13125-1-git-send-email-heyunlei@huawei.com>
+Subject: [PATCH] f2fs: disable nat bits without setting
+ SBI_NEED_FSCK
+Date: Mon, 9 Apr 2018 11:40:49 +0800
+Message-ID: <1523245249-16260-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <heyunlei@huawei.com>) id 1f5Nnb-0004su-O9
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Apr 2018 03:48:55 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <heyunlei@huawei.com>) id 1f5Ntm-00031p-Rs
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Apr 2018 03:55:18 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f5Nna-002OL3-0U
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Apr 2018 03:48:55 +0000
+ id 1f5Ntl-00GrD4-0C
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Apr 2018 03:55:18 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,62 +29,27 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 Cc: zhangdianfang@huawei.com
 
-Now, nat bits feature is enabled by default, we will
-meet with the following scenarios:
-
-i.   disabled, without CP_NAT_BITS_FLAG, if fsck find some
-     fs errors, fix or write new checkpoint will then enable it.
-ii.  enabled, with CP_NAT_BITS_FLAG, in the case of sudden
-     power off, bitmap will get lost but CP_NAT_BITS_FLAG
-     still exist, fsck will recover bitmap in f2fs_do_mount.
-iii. enabled, with CP_NAT_BITS_FLAG, both of bitmap and
-     CP_NAT_BITS_FLAG will get lost if not enough space for
-     nat bits or nat bits check failed during mounting.
-     SBI_NEED_FSCK is set, fsck will recover flag and bitmap
-     before next mount.
-
-SBI_NEED_FSCK means fs is corrupted, is not suitable for
-nat bits disabled. This patch try to recover nat bits all
-by fsck, no need set SBI_NEED_FSCK flag in kernel.
+nat bits feature is recover default by fsck, no need to
+set SBI_NEED_FSCK flag.
 
 Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fsck/mount.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ fs/f2fs/f2fs.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index e5574c5..2361ee0 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -2389,7 +2389,7 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
- 	}
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 1df7f10..0ffaefc2 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1520,8 +1520,6 @@ static inline void disable_nat_bits(struct f2fs_sb_info *sbi, bool lock)
+ {
+ 	unsigned long flags;
  
- 	/* Check nat_bits */
--	if (c.func != DUMP && is_set_ckpt_flags(cp, CP_NAT_BITS_FLAG)) {
-+	if (c.func != DUMP) {
- 		u_int32_t nat_bits_bytes, nat_bits_blocks;
- 		__le64 *kaddr;
- 		u_int32_t blk;
-@@ -2406,10 +2406,15 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
- 		kaddr = malloc(PAGE_SIZE);
- 		ret = dev_read_block(kaddr, blk);
- 		ASSERT(ret >= 0);
--		if (*kaddr != get_cp_crc(cp))
--			write_nat_bits(sbi, sb, cp, sbi->cur_cp);
--		else
--			MSG(0, "Info: Found valid nat_bits in checkpoint\n");
-+		if(is_set_ckpt_flags(cp, CP_NAT_BITS_FLAG)) {
-+			if (*kaddr != get_cp_crc(cp))
-+				write_nat_bits(sbi, sb, cp, sbi->cur_cp);
-+			else
-+				MSG(0, "Info: Found valid nat_bits in checkpoint\n");
-+		} else if (c.func == FSCK){
-+			ASSERT_MSG("Need to recover nat_bits.");
-+			c.fix_on = 1;
-+		}
- 		free(kaddr);
- 	}
- 	return 0;
+-	set_sbi_flag(sbi, SBI_NEED_FSCK);
+-
+ 	if (lock)
+ 		spin_lock_irqsave(&sbi->cp_lock, flags);
+ 	__clear_ckpt_flags(F2FS_CKPT(sbi), CP_NAT_BITS_FLAG);
 -- 
 1.9.1
 
