@@ -1,7 +1,7 @@
-From: Michal Hocko <mhocko@kernel.org>
+From: Johannes Weiner <hannes@cmpxchg.org>
 Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
-Date: Tue, 10 Apr 2018 14:33:06 +0200
-Message-ID: <20180410123306.GI21835@dhcp22.suse.cz>
+Date: Tue, 10 Apr 2018 08:39:46 -0400
+Message-ID: <20180410123946.GA6334@cmpxchg.org>
 References: <20180409015815.235943-1-minchan@kernel.org>
  <20180409024925.GA21889@bombadil.infradead.org>
  <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
@@ -18,10 +18,10 @@ Content-Disposition: inline
 In-Reply-To: <20180410120528.GB22118@bombadil.infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Matthew Wilcox <willy@infradead.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Minchan Kim <minchan@kernel.org>, Christopher Lameter <cl@linux.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>, Chris Fries <cfries@google.com>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Cc: Michal Hocko <mhocko@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Minchan Kim <minchan@kernel.org>, Christopher Lameter <cl@linux.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>, Chris Fries <cfries@google.com>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Tue 10-04-18 05:05:28, Matthew Wilcox wrote:
+On Tue, Apr 10, 2018 at 05:05:28AM -0700, Matthew Wilcox wrote:
 > On Tue, Apr 10, 2018 at 10:26:43AM +0200, Michal Hocko wrote:
 > > On Mon 09-04-18 12:40:44, Matthew Wilcox wrote:
 > > > The problem is that the mapping gfp flags are used not only for allocating
@@ -42,9 +42,8 @@ On Tue 10-04-18 05:05:28, Matthew Wilcox wrote:
 > state, then the user will restore the object to that state when it frees
 > the object to slab.
 
-And that is fundamentally subtle semantic and leads to bugs. So we
-should reconsider whether that is really worth keeping for the radix
-tree.
+Fully agreed. I'm surprised there is so much pushback to what Willy is
+saying here, this stuff has been established for years.
 
 > > Are you going to blacklist all potential gfp flags that come
 > > from the mapping? This is just unmaintainable! If anything this should
@@ -57,11 +56,5 @@ tree.
 > 
 > -	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
 > +	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
-> 
-> correct?
 
-Something like that, yes.
-
--- 
-Michal Hocko
-SUSE Labs
+That looks reasonable to me.
