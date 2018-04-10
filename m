@@ -1,7 +1,7 @@
-From: Matthew Wilcox <willy@infradead.org>
+From: Michal Hocko <mhocko@kernel.org>
 Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
-Date: Tue, 10 Apr 2018 05:05:28 -0700
-Message-ID: <20180410120528.GB22118@bombadil.infradead.org>
+Date: Tue, 10 Apr 2018 14:33:06 +0200
+Message-ID: <20180410123306.GI21835@dhcp22.suse.cz>
 References: <20180409015815.235943-1-minchan@kernel.org>
  <20180409024925.GA21889@bombadil.infradead.org>
  <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
@@ -10,46 +10,58 @@ References: <20180409015815.235943-1-minchan@kernel.org>
  <20180409183827.GD17558@jaegeuk-macbookpro.roam.corp.google.com>
  <20180409194044.GA15295@bombadil.infradead.org>
  <20180410082643.GX21835@dhcp22.suse.cz>
+ <20180410120528.GB22118@bombadil.infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180410082643.GX21835@dhcp22.suse.cz>
+In-Reply-To: <20180410120528.GB22118@bombadil.infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michal Hocko <mhocko@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Minchan Kim <minchan@kernel.org>, Christopher Lameter <cl@linux.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>, Chris Fries <cfries@google.com>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Tue, Apr 10, 2018 at 10:26:43AM +0200, Michal Hocko wrote:
-> On Mon 09-04-18 12:40:44, Matthew Wilcox wrote:
-> > The problem is that the mapping gfp flags are used not only for allocating
-> > pages, but also for allocating the page cache data structures that hold
-> > the pages.  F2FS is the only filesystem that set the __GFP_ZERO bit,
-> > so it's the first time anyone's noticed that the page cache passes the
-> > __GFP_ZERO bit through to the radix tree allocation routines, which
-> > causes the radix tree nodes to be zeroed instead of constructed.
+On Tue 10-04-18 05:05:28, Matthew Wilcox wrote:
+> On Tue, Apr 10, 2018 at 10:26:43AM +0200, Michal Hocko wrote:
+> > On Mon 09-04-18 12:40:44, Matthew Wilcox wrote:
+> > > The problem is that the mapping gfp flags are used not only for allocating
+> > > pages, but also for allocating the page cache data structures that hold
+> > > the pages.  F2FS is the only filesystem that set the __GFP_ZERO bit,
+> > > so it's the first time anyone's noticed that the page cache passes the
+> > > __GFP_ZERO bit through to the radix tree allocation routines, which
+> > > causes the radix tree nodes to be zeroed instead of constructed.
+> > > 
+> > > I think the right solution to this is:
 > > 
-> > I think the right solution to this is:
+> > This just hides the underlying problem that the node is not fully and
+> > properly initialized. Relying on the previous released state is just too
+> > subtle.
 > 
-> This just hides the underlying problem that the node is not fully and
-> properly initialized. Relying on the previous released state is just too
-> subtle.
+> That's the fundamental design of slab-with-constructors.  The user provides
+> a constructor, so all newly allocagted objects are initialised to a known
+> state, then the user will restore the object to that state when it frees
+> the object to slab.
 
-That's the fundamental design of slab-with-constructors.  The user provides
-a constructor, so all newly allocagted objects are initialised to a known
-state, then the user will restore the object to that state when it frees
-the object to slab.
+And that is fundamentally subtle semantic and leads to bugs. So we
+should reconsider whether that is really worth keeping for the radix
+tree.
 
-> Are you going to blacklist all potential gfp flags that come
-> from the mapping? This is just unmaintainable! If anything this should
-> be an explicit & with the allowed set of allowed flags.
+> > Are you going to blacklist all potential gfp flags that come
+> > from the mapping? This is just unmaintainable! If anything this should
+> > be an explicit & with the allowed set of allowed flags.
+> 
+> Oh, I agree that using the set of flags used to allocate the page
+> in order to allocate the radix tree nodes is a pretty horrible idea.
+> 
+> Your suggestion, then, is:
+> 
+> -	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
+> +	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
+> 
+> correct?
 
-Oh, I agree that using the set of flags used to allocate the page
-in order to allocate the radix tree nodes is a pretty horrible idea.
+Something like that, yes.
 
-Your suggestion, then, is:
-
--	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
-+	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
-
-correct?
+-- 
+Michal Hocko
+SUSE Labs
