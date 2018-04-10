@@ -1,88 +1,119 @@
-From: heyunlei <heyunlei@huawei.com>
-Subject: Re: [PATCH v3] f2fs: stop issue discard if something
- wrong with f2fs
-Date: Tue, 10 Apr 2018 02:46:38 +0000
-Message-ID: <42B685BFA705F94C860C6DD0752F056548363715@DGGEMA503-MBS.china.huawei.com>
-References: <1523273251-29871-1-git-send-email-heyunlei@huawei.com>
- <c303bb52-c464-a122-e5ff-c95f5f7abecf@huawei.com>
+From: Minchan Kim <minchan@kernel.org>
+Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
+Date: Tue, 10 Apr 2018 11:59:03 +0900
+Message-ID: <20180410025903.GA38000@rodete-desktop-imager.corp.google.com>
+References: <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
+ <20180409111403.GA31652@bombadil.infradead.org>
+ <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
+ <7706245c-2661-f28b-f7f9-8f11e1ae932b@huawei.com>
+ <20180409144958.GA211679@rodete-laptop-imager.corp.google.com>
+ <20180409152032.GB11756@bombadil.infradead.org>
+ <20180409230409.GA214542@rodete-desktop-imager.corp.google.com>
+ <20180410011211.GA31282@bombadil.infradead.org>
+ <20180410023339.GB214542@rodete-desktop-imager.corp.google.com>
+ <20180410024152.GC31282@bombadil.infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <heyunlei@huawei.com>) id 1f5jJE-0004su-3i
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Apr 2018 02:47:00 +0000
-Received: from szxga02-in.huawei.com ([45.249.212.188] helo=huawei.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f5jJB-006NMp-Gk
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Apr 2018 02:47:00 +0000
-In-Reply-To: <c303bb52-c464-a122-e5ff-c95f5f7abecf@huawei.com>
-Content-Language: zh-CN
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "Yuchao (T)" <yuchao0@huawei.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
-Cc: "Zhangdianfang (Euler)" <zhangdianfang@huawei.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180410024152.GC31282@bombadil.infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Christopher Lameter <cl@linux.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>, Chris Fries <cfries@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
+On Mon, Apr 09, 2018 at 07:41:52PM -0700, Matthew Wilcox wrote:
+> On Tue, Apr 10, 2018 at 11:33:39AM +0900, Minchan Kim wrote:
+> > @@ -522,7 +532,7 @@ EXPORT_SYMBOL(radix_tree_preload);
+> >   */
+> >  int radix_tree_maybe_preload(gfp_t gfp_mask)
+> >  {
+> > -	if (gfpflags_allow_blocking(gfp_mask))
+> > +	if (gfpflags_allow_blocking(gfp_mask) && !(gfp_mask & __GFP_ZERO))
+> >  		return __radix_tree_preload(gfp_mask, RADIX_TREE_PRELOAD_SIZE);
+> >  	/* Preloading doesn't help anything with this gfp mask, skip it */
+> >  	preempt_disable();
+> 
+> No, you've completely misunderstood what's going on in this function.
 
+Okay, I hope this version clear current concerns.
 
->-----Original Message-----
->From: Yuchao (T)
->Sent: Tuesday, April 10, 2018 10:36 AM
->To: heyunlei; jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
->Cc: Wangbintian; Zhangdianfang (Euler)
->Subject: Re: [f2fs-dev][PATCH v3] f2fs: stop issue discard if something wrong with f2fs
->
->On 2018/4/9 19:27, Yunlei He wrote:
->> This patch stop async thread and umount process to issue discard
->> if something wrong with f2fs, which is similar to fstrim.
->>
->> v1->v2: add fs error check in not only discard thread but also umount process
->> v2->v3: remove redundant error message
->>
->> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->> ---
->>  fs/f2fs/segment.c | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index 5854cc4..e31d506 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -1202,6 +1202,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->>  	int i, iter = 0, issued = 0;
->>  	bool io_interrupted = false;
->>
->> +	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
->> +		return issued;
->
->Hmm.. except here, I mean we'd better add it into issue_discard_thread too?
+>From fb37c41b90f7d3ead1798e5cb7baef76709afd94 Mon Sep 17 00:00:00 2001
+From: Minchan Kim <minchan@kernel.org>
+Date: Tue, 10 Apr 2018 11:54:57 +0900
+Subject: [PATCH v3] mm: workingset: fix NULL ptr dereference
 
-Async thread will also use this function to issue discard, besides, in this case
-__issue_discard_cmd will return zero to async thread, thread will wait max 
-Interval 60s. Anything I missed?
+It assumes shadow entries of radix tree rely on the init state
+that node->private_list allocated newly is list_empty state
+for the working. Currently, it's initailized in SLAB constructor
+which means node of radix tree would be initialized only when
+*slub allocates new page*, not *slub alloctes new object*.
 
-Thanks.
+If some FS or subsystem pass gfp_mask to __GFP_ZERO, that means
+newly allocated node can have !list_empty(node->private_list)
+by memset of slab allocator. It ends up calling NULL deference
+at workingset_update_node by failing list_empty check.
 
->
->Thanks,
->
->> +
->>  	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
->>  		if (i + 1 < dpolicy->granularity)
->>  			break;
->>
+This patch fixes it.
 
+Fixes: 449dd6984d0e ("mm: keep page cache radix tree nodes in check")
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <yuchao0@huawei.com>
+Cc: Christopher Lameter <cl@linux.com>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Reported-by: Chris Fries <cfries@google.com>
+Signed-off-by: Minchan Kim <minchan@kernel.org>
+---
+ lib/radix-tree.c | 9 +++++++++
+ mm/filemap.c     | 5 +++--
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+diff --git a/lib/radix-tree.c b/lib/radix-tree.c
+index da9e10c827df..7569e637dbaa 100644
+--- a/lib/radix-tree.c
++++ b/lib/radix-tree.c
+@@ -470,6 +470,15 @@ static __must_check int __radix_tree_preload(gfp_t gfp_mask, unsigned nr)
+ 	struct radix_tree_node *node;
+ 	int ret = -ENOMEM;
+ 
++	/*
++	 * New allocate node must have node->private_list as INIT_LIST_HEAD
++	 * state by workingset shadow memory implementation.
++	 * If user pass  __GFP_ZERO by mistake, slab allocator will clear
++	 * node->private_list, which makes a BUG. Rather than going Oops,
++	 * just fix and warn about it.
++	 */
++	if (WARN_ON(gfp_mask & __GFP_ZERO))
++		gfp_mask &= ~__GFP_ZERO;
+ 	/*
+ 	 * Nodes preloaded by one cgroup can be be used by another cgroup, so
+ 	 * they should never be accounted to any particular memory cgroup.
+diff --git a/mm/filemap.c b/mm/filemap.c
+index ab77e19ab09c..b6de9d691c8a 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -786,7 +786,7 @@ int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask)
+ 	VM_BUG_ON_PAGE(!PageLocked(new), new);
+ 	VM_BUG_ON_PAGE(new->mapping, new);
+ 
+-	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
++	error = radix_tree_preload(gfp_mask & ~(__GFP_HIGHMEM | __GFP_ZERO));
+ 	if (!error) {
+ 		struct address_space *mapping = old->mapping;
+ 		void (*freepage)(struct page *);
+@@ -842,7 +842,8 @@ static int __add_to_page_cache_locked(struct page *page,
+ 			return error;
+ 	}
+ 
+-	error = radix_tree_maybe_preload(gfp_mask & ~__GFP_HIGHMEM);
++	error = radix_tree_maybe_preload(gfp_mask &
++					~(__GFP_HIGHMEM | __GFP_ZERO));
+ 	if (error) {
+ 		if (!huge)
+ 			mem_cgroup_cancel_charge(page, memcg, false);
+-- 
+2.17.0.484.g0c8726318c-goog
