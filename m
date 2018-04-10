@@ -1,31 +1,55 @@
 From: Matthew Wilcox <willy@infradead.org>
 Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
-Date: Tue, 10 Apr 2018 04:56:51 -0700
-Message-ID: <20180410115651.GA22118@bombadil.infradead.org>
-References: <20180409111403.GA31652@bombadil.infradead.org>
+Date: Tue, 10 Apr 2018 05:05:28 -0700
+Message-ID: <20180410120528.GB22118@bombadil.infradead.org>
+References: <20180409015815.235943-1-minchan@kernel.org>
+ <20180409024925.GA21889@bombadil.infradead.org>
+ <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
+ <20180409111403.GA31652@bombadil.infradead.org>
  <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
- <7706245c-2661-f28b-f7f9-8f11e1ae932b@huawei.com>
- <20180409144958.GA211679@rodete-laptop-imager.corp.google.com>
- <20180409152032.GB11756@bombadil.infradead.org>
- <20180409230409.GA214542@rodete-desktop-imager.corp.google.com>
- <20180410011211.GA31282@bombadil.infradead.org>
- <20180410023339.GB214542@rodete-desktop-imager.corp.google.com>
- <20180410024152.GC31282@bombadil.infradead.org>
- <20180410025903.GA38000@rodete-desktop-imager.corp.google.com>
+ <20180409183827.GD17558@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180409194044.GA15295@bombadil.infradead.org>
+ <20180410082643.GX21835@dhcp22.suse.cz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180410025903.GA38000@rodete-desktop-imager.corp.google.com>
+In-Reply-To: <20180410082643.GX21835@dhcp22.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Minchan Kim <minchan@kernel.org>
-Cc: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Christopher Lameter <cl@linux.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>, Chris Fries <cfries@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Minchan Kim <minchan@kernel.org>, Christopher Lameter <cl@linux.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>, Chris Fries <cfries@google.com>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Tue, Apr 10, 2018 at 11:59:03AM +0900, Minchan Kim wrote:
-> Okay, I hope this version clear current concerns.
+On Tue, Apr 10, 2018 at 10:26:43AM +0200, Michal Hocko wrote:
+> On Mon 09-04-18 12:40:44, Matthew Wilcox wrote:
+> > The problem is that the mapping gfp flags are used not only for allocating
+> > pages, but also for allocating the page cache data structures that hold
+> > the pages.  F2FS is the only filesystem that set the __GFP_ZERO bit,
+> > so it's the first time anyone's noticed that the page cache passes the
+> > __GFP_ZERO bit through to the radix tree allocation routines, which
+> > causes the radix tree nodes to be zeroed instead of constructed.
+> > 
+> > I think the right solution to this is:
+> 
+> This just hides the underlying problem that the node is not fully and
+> properly initialized. Relying on the previous released state is just too
+> subtle.
 
-It doesn't.  The right place to warn about GFP_ZERO used with a
-constructor is _slab_, like the patch I already sent.  We have no idea
-what other places might have the same bug, and slab is the only place
-to catch that.
+That's the fundamental design of slab-with-constructors.  The user provides
+a constructor, so all newly allocagted objects are initialised to a known
+state, then the user will restore the object to that state when it frees
+the object to slab.
+
+> Are you going to blacklist all potential gfp flags that come
+> from the mapping? This is just unmaintainable! If anything this should
+> be an explicit & with the allowed set of allowed flags.
+
+Oh, I agree that using the set of flags used to allocate the page
+in order to allocate the radix tree nodes is a pretty horrible idea.
+
+Your suggestion, then, is:
+
+-	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
++	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
+
+correct?
