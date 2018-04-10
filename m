@@ -1,71 +1,126 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v3] f2fs: stop issue discard if something
- wrong with f2fs
-Date: Tue, 10 Apr 2018 10:36:12 +0800
-Message-ID: <c303bb52-c464-a122-e5ff-c95f5f7abecf@huawei.com>
-References: <1523273251-29871-1-git-send-email-heyunlei@huawei.com>
+From: Minchan Kim <minchan@kernel.org>
+Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
+Date: Tue, 10 Apr 2018 11:39:10 +0900
+Message-ID: <20180410023910.GC214542@rodete-desktop-imager.corp.google.com>
+References: <20180409024925.GA21889@bombadil.infradead.org>
+ <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
+ <20180409111403.GA31652@bombadil.infradead.org>
+ <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
+ <7706245c-2661-f28b-f7f9-8f11e1ae932b@huawei.com>
+ <20180409144958.GA211679@rodete-laptop-imager.corp.google.com>
+ <20180409152032.GB11756@bombadil.infradead.org>
+ <20180409230409.GA214542@rodete-desktop-imager.corp.google.com>
+ <20180410011211.GA31282@bombadil.infradead.org>
+ <20180410023339.GB214542@rodete-desktop-imager.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1f5j9F-0002bb-QX
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Apr 2018 02:36:41 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f5j9D-00DZwm-Jm
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Apr 2018 02:36:41 +0000
-In-Reply-To: <1523273251-29871-1-git-send-email-heyunlei@huawei.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: zhangdianfang@huawei.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180410023339.GB214542@rodete-desktop-imager.corp.google.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Christopher Lameter <cl@linux.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>, Chris Fries <cfries@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/4/9 19:27, Yunlei He wrote:
-> This patch stop async thread and umount process to issue discard
-> if something wrong with f2fs, which is similar to fstrim.
+On Tue, Apr 10, 2018 at 11:33:39AM +0900, Minchan Kim wrote:
+> On Mon, Apr 09, 2018 at 06:12:11PM -0700, Matthew Wilcox wrote:
+> > On Tue, Apr 10, 2018 at 08:04:09AM +0900, Minchan Kim wrote:
+> > > On Mon, Apr 09, 2018 at 08:20:32AM -0700, Matthew Wilcox wrote:
+> > > > I don't think this is something the radix tree should know about.
+> > > 
+> > > Because shadow entry implementation is hidden by radix tree implemetation.
+> > > IOW, radix tree user cannot know how it works.
+> > 
+> > I have no idea what you mean.
+> > 
+> > > > SLAB should be checking for it (the patch I posted earlier in this
+> > > 
+> > > I don't think it's right approach. SLAB constructor can initialize
+> > > some metadata for slab page populated as well as page zeroing.
+> > > However, __GFP_ZERO means only clearing pages, not metadata.
+> > > So it's different semantic. No need to mix out.
+> > 
+> > No, __GFP_ZERO is specified to clear the allocated memory whether
+> > you're allocating from alloc_pages or from slab.  What makes no sense
+> > is allocating an object from slab with a constructor *and* __GFP_ZERO.
+> > They're in conflict, and slab can't fulfill both of those requirements.
 > 
-> v1->v2: add fs error check in not only discard thread but also umount process
-> v2->v3: remove redundant error message
+> It's a stable material. If you really think it does make sense,
+> please submit patch separately.
 > 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+> > 
+> > > > thread), but the right place to filter this out is in the caller of
+> > > > radix_tree_maybe_preload -- it's already filtering out HIGHMEM pages,
+> > > > and should filter out GFP_ZERO too.
+> > > 
+> > > radix_tree_[maybe]_preload is exported API, which are error-prone
+> > > for out of modules or upcoming customers.
+> > > 
+> > > More proper place is __radix_tree_preload.
+> > 
+> > I could not disagree with you more.  It is the responsibility of the
+> > callers of radix_tree_preload to avoid calling it with nonsense flags
+> > like __GFP_DMA, __GFP_HIGHMEM or __GFP_ZERO.
+> 
+> How about this?
+> 
+> It would fix current problem and warn potential bugs as well.
+> radix_tree_preload already has done such warning and
+> radix_tree_maybe_preload has skipping for misbehaivor gfp.
+> 
+> From 27ecf7a009d3570d1155c528c7f08040ede68ed3 Mon Sep 17 00:00:00 2001
+> From: Minchan Kim <minchan@kernel.org>
+> Date: Tue, 10 Apr 2018 11:20:11 +0900
+> Subject: [PATCH v2] mm: workingset: fix NULL ptr dereference
+> 
+> It assumes shadow entries of radix tree rely on the init state
+> that node->private_list allocated newly is list_empty state
+> for the working. Currently, it's initailized in SLAB constructor
+> which means node of radix tree would be initialized only when
+> *slub allocates new page*, not *slub alloctes new object*.
+> 
+> If some FS or subsystem pass gfp_mask to __GFP_ZERO, that means
+> newly allocated node can have !list_empty(node->private_list)
+> by memset of slab allocator. It ends up calling NULL deference
+> at workingset_update_node by failing list_empty check.
+> 
+> This patch fixes it.
+> 
+> Fixes: 449dd6984d0e ("mm: keep page cache radix tree nodes in check")
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+> Cc: Chao Yu <yuchao0@huawei.com>
+> Cc: Christopher Lameter <cl@linux.com>
+> Cc: linux-fsdevel@vger.kernel.org
+> Reported-by: Chris Fries <cfries@google.com>
+> Signed-off-by: Minchan Kim <minchan@kernel.org>
 > ---
->  fs/f2fs/segment.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  lib/radix-tree.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 5854cc4..e31d506 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -1202,6 +1202,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->  	int i, iter = 0, issued = 0;
->  	bool io_interrupted = false;
->  
-> +	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
-> +		return issued;
+> diff --git a/lib/radix-tree.c b/lib/radix-tree.c
+> index da9e10c827df..9d68f2a7888e 100644
+> --- a/lib/radix-tree.c
+> +++ b/lib/radix-tree.c
+> @@ -511,6 +511,16 @@ int radix_tree_preload(gfp_t gfp_mask)
+>  {
+>  	/* Warn on non-sensical use... */
+>  	WARN_ON_ONCE(!gfpflags_allow_blocking(gfp_mask));
+> +	/*
+> +	 * New allocate node must have node->private_list as INIT_LIST_HEAD
+> +	 * state by workingset shadow memory implementation.
+> +	 * If user pass  __GFP_ZERO by mistake, slab allocator will clear
+> +	 * node->private_list, which makes a BUG. Rather than going Oops,
+> +	 * just fix and warn about it.
+> +	 */
+> +	if (WARN_ON(gfp_mask & __GFP_ZERO))
+> +		gfp_mask &= ~GFP_ZERO
+ 
+Build fail.
 
-Hmm.. except here, I mean we'd better add it into issue_discard_thread too?
+If others are okay for this patch, I will resend fixed patch with stable mark.
+I will wait feedback from others.
 
-Thanks,
-
-> +
->  	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
->  		if (i + 1 < dpolicy->granularity)
->  			break;
-> 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+Thanks.
