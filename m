@@ -1,60 +1,112 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: turn down IO priority of discard from
- background
-Date: Tue, 10 Apr 2018 15:43:09 +0800
-Message-ID: <20180410074309.13531-1-yuchao0@huawei.com>
+From: Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
+Date: Tue, 10 Apr 2018 10:26:43 +0200
+Message-ID: <20180410082643.GX21835@dhcp22.suse.cz>
+References: <20180409015815.235943-1-minchan@kernel.org>
+ <20180409024925.GA21889@bombadil.infradead.org>
+ <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
+ <20180409111403.GA31652@bombadil.infradead.org>
+ <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
+ <20180409183827.GD17558@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180409194044.GA15295@bombadil.infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1f5nw9-0003Jo-L4
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Apr 2018 07:43:29 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f5nw7-006oml-Hj
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Apr 2018 07:43:29 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180409194044.GA15295@bombadil.infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Minchan Kim <minchan@kernel.org>, Christopher Lameter <cl@linux.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>, Chris Fries <cfries@google.com>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-In order to avoid interfering normal r/w IO, let's turn down IO
-priority of discard issued from background.
+On Mon 09-04-18 12:40:44, Matthew Wilcox wrote:
+> On Mon, Apr 09, 2018 at 11:38:27AM -0700, Jaegeuk Kim wrote:
+> > On 04/09, Minchan Kim wrote:
+> > > On Mon, Apr 09, 2018 at 04:14:03AM -0700, Matthew Wilcox wrote:
+> > > > On Mon, Apr 09, 2018 at 12:09:30PM +0900, Minchan Kim wrote:
+> > > > > On Sun, Apr 08, 2018 at 07:49:25PM -0700, Matthew Wilcox wrote:
+> > > > > > On Mon, Apr 09, 2018 at 10:58:15AM +0900, Minchan Kim wrote:
+> > > > > > > It assumes shadow entry of radix tree relies on the init state
+> > > > > > > that node->private_list allocated should be list_empty state.
+> > > > > > > Currently, it's initailized in SLAB constructor which means
+> > > > > > > node of radix tree would be initialized only when *slub allocates
+> > > > > > > new page*, not *new object*. So, if some FS or subsystem pass
+> > > > > > > gfp_mask to __GFP_ZERO, slub allocator will do memset blindly.
+> > > > > > 
+> > > > > > Wait, what?  Who's declaring their radix tree with GFP_ZERO flags?
+> > > > > > I don't see anyone using INIT_RADIX_TREE or RADIX_TREE or RADIX_TREE_INIT
+> > > > > > with GFP_ZERO.
+> > > > > 
+> > > > > Look at fs/f2fs/inode.c
+> > > > > mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+> > > > > 
+> > > > > __add_to_page_cache_locked
+> > > > >   radix_tree_maybe_preload
+> > > > > 
+> > > > > add_to_page_cache_lru
+> > > > > 
+> > > > > What's the wrong with setting __GFP_ZERO with mapping->gfp_mask?
+> > > > 
+> > > > Because it's a stupid thing to do.  Pages are allocated and then filled
+> > > > from disk.  Zeroing them before DMAing to them is just a waste of time.
+> > > 
+> > > Every FSes do address_space to read pages from storage? I'm not sure.
+> > > 
+> > > If you're right, we need to insert WARN_ON to catch up __GFP_ZERO
+> > > on mapping_set_gfp_mask at the beginning and remove all of those
+> > > stupid thins. 
+> > > 
+> > > Jaegeuk, why do you need __GFP_ZERO? Could you explain?
+> > 
+> > Comment says "__GFP_ZERO returns a zeroed page on success."
+> > 
+> > The f2fs maintains two inodes to manage some metadata in the page cache,
+> > which requires zeroed data when introducing a new structure. It's not
+> > a big deal to avoid __GFP_ZERO for whatever performance reasons tho, does
+> > it only matters with f2fs?
+> 
+> This isn't a performance issue.
+> 
+> The problem is that the mapping gfp flags are used not only for allocating
+> pages, but also for allocating the page cache data structures that hold
+> the pages.  F2FS is the only filesystem that set the __GFP_ZERO bit,
+> so it's the first time anyone's noticed that the page cache passes the
+> __GFP_ZERO bit through to the radix tree allocation routines, which
+> causes the radix tree nodes to be zeroed instead of constructed.
+> 
+> I think the right solution to this is:
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2:
-- correct commit message.
- fs/f2fs/segment.c | 1 +
- 1 file changed, 1 insertion(+)
+This just hides the underlying problem that the node is not fully and
+properly initialized. Relying on the previous released state is just too
+subtle. Are you going to blacklist all potential gfp flags that come
+from the mapping? This is just unmaintainable! If anything this should
+be an explicit & with the allowed set of allowed flags.
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index aabe0d6b8307..5e708debeb9c 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1723,6 +1723,7 @@ void init_discard_policy(struct discard_policy *dpolicy,
- 		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
- 		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
- 		dpolicy->io_aware = true;
-+		dpolicy->sync = false;
- 	} else if (discard_type == DPOLICY_FORCE) {
- 		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
- 		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index c2147682f4c3..a87a523eea8e 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -785,7 +785,7 @@ int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask)
+>  	VM_BUG_ON_PAGE(!PageLocked(new), new);
+>  	VM_BUG_ON_PAGE(new->mapping, new);
+>  
+> -	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
+> +	error = radix_tree_preload(gfp_mask & ~(__GFP_HIGHMEM | __GFP_ZERO));
+>  	if (!error) {
+>  		struct address_space *mapping = old->mapping;
+>  		void (*freepage)(struct page *);
+> @@ -841,7 +841,8 @@ static int __add_to_page_cache_locked(struct page *page,
+>  			return error;
+>  	}
+>  
+> -	error = radix_tree_maybe_preload(gfp_mask & ~__GFP_HIGHMEM);
+> +	error = radix_tree_maybe_preload(gfp_mask &
+> +			~(__GFP_HIGHMEM | __GFP_ZERO));
+>  	if (error) {
+>  		if (!huge)
+>  			mem_cgroup_cancel_charge(page, memcg, false);
+
 -- 
-2.15.0.55.gc2ece9dc4de6
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+Michal Hocko
+SUSE Labs
