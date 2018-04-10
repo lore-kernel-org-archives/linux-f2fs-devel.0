@@ -1,150 +1,120 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: don't use GFP_ZERO for page caches
-Date: Mon, 9 Apr 2018 23:40:50 -0700
-Message-ID: <20180410064050.GA61388@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180409190012.21552-1-jaegeuk@kernel.org>
- <20180409204244.GA25905@jaegeuk-macbookpro.roam.corp.google.com>
- <20180410032934.GA47598@jaegeuk-macbookpro.roam.corp.google.com>
- <b891c25a-e95e-15ff-faf9-f263bbe05eb3@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: enlarge block plug coverage
+Date: Tue, 10 Apr 2018 15:22:47 +0800
+Message-ID: <ff3990f2-5785-045e-30c5-62a9f8352d74@huawei.com>
+References: <20180404085404.82184-1-yuchao0@huawei.com>
+ <20180405035115.GC50337@jaegeuk-macbookpro.roam.corp.google.com>
+ <03c21c2f-cb0e-dbd4-b48a-95c2678964d1@huawei.com>
+ <20180409180241.GC17558@jaegeuk-macbookpro.roam.corp.google.com>
+ <967b8819-da9a-b609-6a22-db8df5c7ec6c@huawei.com>
+ <20180410041033.GE47598@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <b891c25a-e95e-15ff-faf9-f263bbe05eb3@huawei.com>
+In-Reply-To: <20180410041033.GE47598@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 04/10, Chao Yu wrote:
-> On 2018/4/10 11:29, Jaegeuk Kim wrote:
-> > Change log from v2:
-> >  - consider IO error case when dealing with metapage
-> >  - memset by fill_node_footer
-> > 
-> > Change log from v1:
-> >  - don't memset for recovered page
-> >  
-> > Related to https://lkml.org/lkml/2018/4/8/661
-> > 
-> > Sometimes, we need to write meta data to new allocated block address,
-> > then we will allocate a zeroed page in inner inode's address space, and
-> > fill partial data in it, and leave other place with zero value which means
-> > some fields are initial status.
-> > 
-> > There are two inner inodes (meta inode and node inode) setting __GFP_ZERO,
-> > I have just checked them, for both of them, we can avoid using __GFP_ZERO,
-> > and do initialization by ourselves to avoid unneeded/redundant zeroing
-> > from mm.
-> > 
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/checkpoint.c | 4 +++-
-> >  fs/f2fs/inode.c      | 4 ++--
-> >  fs/f2fs/segment.c    | 3 +++
-> >  fs/f2fs/segment.h    | 1 +
-> >  4 files changed, 9 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> > index bf779461df13..2e23b953d304 100644
-> > --- a/fs/f2fs/checkpoint.c
-> > +++ b/fs/f2fs/checkpoint.c
-> > @@ -100,8 +100,10 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
-> >  	 * readonly and make sure do not write checkpoint with non-uptodate
-> >  	 * meta page.
-> >  	 */
-> > -	if (unlikely(!PageUptodate(page)))
-> > +	if (unlikely(!PageUptodate(page))) {
-> > +		memset(page_address(page), 0, PAGE_SIZE);
-> >  		f2fs_stop_checkpoint(sbi, false);
-> > +	}
-> >  out:
-> >  	return page;
-> >  }
-> > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> > index 417c9dcd0269..87535bf63421 100644
-> > --- a/fs/f2fs/inode.c
-> > +++ b/fs/f2fs/inode.c
-> > @@ -320,10 +320,10 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
-> >  make_now:
-> >  	if (ino == F2FS_NODE_INO(sbi)) {
-> >  		inode->i_mapping->a_ops = &f2fs_node_aops;
-> > -		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
-> > +		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
-> >  	} else if (ino == F2FS_META_INO(sbi)) {
-> >  		inode->i_mapping->a_ops = &f2fs_meta_aops;
-> > -		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
-> > +		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
-> >  	} else if (S_ISREG(inode->i_mode)) {
-> >  		inode->i_op = &f2fs_file_inode_operations;
-> >  		inode->i_fop = &f2fs_file_operations;
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index a4b8e3e24ccb..1f5db557ab96 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -2021,6 +2021,7 @@ static void write_current_sum_page(struct f2fs_sb_info *sbi,
-> >  	struct f2fs_summary_block *dst;
-> >  
-> >  	dst = (struct f2fs_summary_block *)page_address(page);
-> > +	memset(dst, 0, PAGE_SIZE);
+On 2018/4/10 12:10, Jaegeuk Kim wrote:
+> On 04/10, Chao Yu wrote:
+>> On 2018/4/10 2:02, Jaegeuk Kim wrote:
+>>> On 04/08, Chao Yu wrote:
+>>>> On 2018/4/5 11:51, Jaegeuk Kim wrote:
+>>>>> On 04/04, Chao Yu wrote:
+>>>>>> This patch enlarges block plug coverage in __issue_discard_cmd, in
+>>>>>> order to collect more pending bios before issuing them, to avoid
+>>>>>> being disturbed by previous discard I/O in IO aware discard mode.
+>>>>>
+>>>>> Hmm, then we need to wait for huge discard IO for over 10 secs, which
+>>>>
+>>>> We found that total discard latency is rely on total discard number we issued
+>>>> last time instead of range or length discard covered. IMO, if we don't change
+>>>> .max_requests value, we will not suffer longer latency.
+>>>>
+>>>>> will affect following read/write IOs accordingly. In order to avoid that,
+>>>>> we actually need to limit the discard size.
+>>
+>> Do you mean limit discard count or discard length?
 > 
-> We will fill all summary page later, so we don't need initialize it?
+> Both of them.
+> 
+>>
+>>>>
+>>>> If you are worry about I/O interference in between discard and rw, I suggest to
+>>>> decrease .max_requests value.
+>>>
+>>> What do you mean? This will produce more pending requests in the queue?
+>>
+>> I mean after applying this patch, we can queue more discard IOs in plug inside
+>> task, otherwise, previous issued discard in block layer can make is_idle() be false,
+>> then it can stop IO awared user to issue pending discard command.
+> 
+> Then, unplug will issue lots of discard commands, which affects the following rw
+> latencies. My preference would be issuing discard commands one by one as much as
+> possible.
 
-I'd like to reserve the uninitialzed space as zeros for future reference.
+Hmm.. for you concern, we can turn down IO priority of discard from background?
+
+Thanks,
 
 > 
-> >  
-> >  	mutex_lock(&curseg->curseg_mutex);
-> >  
-> > @@ -3117,6 +3118,7 @@ static void write_compacted_summaries(struct f2fs_sb_info *sbi, block_t blkaddr)
-> >  
-> >  	page = grab_meta_page(sbi, blkaddr++);
-> >  	kaddr = (unsigned char *)page_address(page);
-> > +	memset(kaddr, 0, PAGE_SIZE);
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>> Thanks,
+>>>>
+>>>>>
+>>>>> Thanks,
+>>>>>
+>>>>>>
+>>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>>>> ---
+>>>>>>  fs/f2fs/segment.c | 7 +++++--
+>>>>>>  1 file changed, 5 insertions(+), 2 deletions(-)
+>>>>>>
+>>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>>>> index 8f0b5ba46315..4287e208c040 100644
+>>>>>> --- a/fs/f2fs/segment.c
+>>>>>> +++ b/fs/f2fs/segment.c
+>>>>>> @@ -1208,10 +1208,12 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+>>>>>>  		pend_list = &dcc->pend_list[i];
+>>>>>>  
+>>>>>>  		mutex_lock(&dcc->cmd_lock);
+>>>>>> +
+>>>>>> +		blk_start_plug(&plug);
+>>>>>> +
+>>>>>>  		if (list_empty(pend_list))
+>>>>>>  			goto next;
+>>>>>>  		f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
+>>>>>> -		blk_start_plug(&plug);
+>>>>>>  		list_for_each_entry_safe(dc, tmp, pend_list, list) {
+>>>>>>  			f2fs_bug_on(sbi, dc->state != D_PREP);
+>>>>>>  
+>>>>>> @@ -1227,8 +1229,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+>>>>>>  			if (++iter >= dpolicy->max_requests)
+>>>>>>  				break;
+>>>>>>  		}
+>>>>>> -		blk_finish_plug(&plug);
+>>>>>>  next:
+>>>>>> +		blk_finish_plug(&plug);
+>>>>>> +
+>>>>>>  		mutex_unlock(&dcc->cmd_lock);
+>>>>>>  
+>>>>>>  		if (iter >= dpolicy->max_requests)
+>>>>>> -- 
+>>>>>> 2.15.0.55.gc2ece9dc4de6
+>>>>>
+>>>>> .
+>>>>>
+>>>
+>>> .
+>>>
 > 
-> I checked here, we will not use uninitialized space due to:
+> .
 > 
-> read_compacted_summaries()
-> {
-> ...
-> 	if (offset + SUMMARY_SIZE <= PAGE_SIZE - SUM_FOOTER_SIZE)
-> 		continue;
-> ...
-> }
-> 
-> Are we safe here?
-> 
-> >  
-> >  	/* Step 1: write nat cache */
-> >  	seg_i = CURSEG_I(sbi, CURSEG_HOT_DATA);
-> > @@ -3141,6 +3143,7 @@ static void write_compacted_summaries(struct f2fs_sb_info *sbi, block_t blkaddr)
-> >  			if (!page) {
-> >  				page = grab_meta_page(sbi, blkaddr++);
-> >  				kaddr = (unsigned char *)page_address(page);
-> > +				memset(kaddr, 0, PAGE_SIZE);
-> 
-> Ditto.
-> 
-> >  				written_size = 0;
-> >  			}
-> >  			summary = (struct f2fs_summary *)(kaddr + written_size);
-> > diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> > index 3325d0769723..492ad0c86fa9 100644
-> > --- a/fs/f2fs/segment.h
-> > +++ b/fs/f2fs/segment.h
-> > @@ -375,6 +375,7 @@ static inline void seg_info_to_sit_page(struct f2fs_sb_info *sbi,
-> >  	int i;
-> >  
-> >  	raw_sit = (struct f2fs_sit_block *)page_address(page);
-> > +	memset(raw_sit, 0, PAGE_SIZE);
-> 
-> I suspect that root cause of panic is that we don't memset here?
-> 
-> Thanks,
-> 
-> >  	for (i = 0; i < end - start; i++) {
-> >  		rs = &raw_sit->entries[i];
-> >  		se = get_seg_entry(sbi, start + i);
-> > 
