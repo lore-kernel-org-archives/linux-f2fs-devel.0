@@ -1,109 +1,216 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: enlarge block plug coverage
-Date: Mon, 9 Apr 2018 21:10:33 -0700
-Message-ID: <20180410041033.GE47598@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180404085404.82184-1-yuchao0@huawei.com>
- <20180405035115.GC50337@jaegeuk-macbookpro.roam.corp.google.com>
- <03c21c2f-cb0e-dbd4-b48a-95c2678964d1@huawei.com>
- <20180409180241.GC17558@jaegeuk-macbookpro.roam.corp.google.com>
- <967b8819-da9a-b609-6a22-db8df5c7ec6c@huawei.com>
+Subject: Re: [PATCH v4] f2fs: introduce a method to make nat
+ journal more fresh
+Date: Mon, 9 Apr 2018 21:14:00 -0700
+Message-ID: <20180410041400.GF47598@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1521195897-28018-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1f5kfY-0001eS-Re
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Apr 2018 04:14:08 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1f5kfX-006Ufc-47
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Apr 2018 04:14:08 +0000
 Content-Disposition: inline
-In-Reply-To: <967b8819-da9a-b609-6a22-db8df5c7ec6c@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <1521195897-28018-1-git-send-email-heyunlei@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Yunlei He <heyunlei@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 04/10, Chao Yu wrote:
-> On 2018/4/10 2:02, Jaegeuk Kim wrote:
-> > On 04/08, Chao Yu wrote:
-> >> On 2018/4/5 11:51, Jaegeuk Kim wrote:
-> >>> On 04/04, Chao Yu wrote:
-> >>>> This patch enlarges block plug coverage in __issue_discard_cmd, in
-> >>>> order to collect more pending bios before issuing them, to avoid
-> >>>> being disturbed by previous discard I/O in IO aware discard mode.
-> >>>
-> >>> Hmm, then we need to wait for huge discard IO for over 10 secs, which
-> >>
-> >> We found that total discard latency is rely on total discard number we issued
-> >> last time instead of range or length discard covered. IMO, if we don't change
-> >> .max_requests value, we will not suffer longer latency.
-> >>
-> >>> will affect following read/write IOs accordingly. In order to avoid that,
-> >>> we actually need to limit the discard size.
-> 
-> Do you mean limit discard count or discard length?
+Yunlei,
 
-Both of them.
+Could you please post all the related patches including Chao's diff?
 
+On 03/16, Yunlei He wrote:
+> This patch introduce a method to make nat journal more fresh:
+> i.  sort set list using dirty entry number and cp version
+>     average value.
+> ii. if meet with cache hit, update average version valus with
+>     current cp version.
 > 
-> >>
-> >> If you are worry about I/O interference in between discard and rw, I suggest to
-> >> decrease .max_requests value.
-> > 
-> > What do you mean? This will produce more pending requests in the queue?
+> With this patch, newly modified nat set will flush to journal,
+> and flush old nat set with same dirty entry number to nat area.
 > 
-> I mean after applying this patch, we can queue more discard IOs in plug inside
-> task, otherwise, previous issued discard in block layer can make is_idle() be false,
-> then it can stop IO awared user to issue pending discard command.
+> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+> ---
+>  fs/f2fs/node.c | 39 ++++++++++++++++++++++++---------------
+>  fs/f2fs/node.h |  4 +++-
+>  2 files changed, 27 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 177c438..c511ef6 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -193,8 +193,8 @@ static void __del_from_nat_cache(struct f2fs_nm_info *nm_i, struct nat_entry *e)
+>  	__free_nat_entry(e);
+>  }
+>  
+> -static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
+> -						struct nat_entry *ne)
+> +static void __set_nat_cache_dirty(struct f2fs_sb_info *sbi, bool remove_journal,
+> +			struct f2fs_nm_info *nm_i, struct nat_entry *ne)
+>  {
+>  	nid_t set = NAT_BLOCK_OFFSET(ne->ni.nid);
+>  	struct nat_entry_set *head;
+> @@ -207,12 +207,18 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
+>  		INIT_LIST_HEAD(&head->set_list);
+>  		head->set = set;
+>  		head->entry_cnt = 0;
+> +		head->cp_ver = 0;
+>  		f2fs_radix_tree_insert(&nm_i->nat_set_root, set, head);
+>  	}
+>  
+>  	if (get_nat_flag(ne, IS_DIRTY))
+>  		goto refresh_list;
+>  
+> +	/* journal hit case, try to locate set in journal */
+> +	if (!remove_journal && head->entry_cnt <= NAT_JOURNAL_ENTRIES)
+> +		head->cp_ver += div_u64(cur_cp_version(F2FS_CKPT(sbi)),
+> +							NAT_JOURNAL_ENTRIES);
+> +
+>  	nm_i->dirty_nat_cnt++;
+>  	head->entry_cnt++;
+>  	set_nat_flag(ne, IS_DIRTY, true);
+> @@ -357,7 +363,7 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+>  	nat_set_blkaddr(e, new_blkaddr);
+>  	if (new_blkaddr == NEW_ADDR || new_blkaddr == NULL_ADDR)
+>  		set_nat_flag(e, IS_CHECKPOINTED, false);
+> -	__set_nat_cache_dirty(nm_i, e);
+> +	__set_nat_cache_dirty(sbi, false, nm_i, e);
+>  
+>  	/* update fsync_mark if its inode nat entry is still alive */
+>  	if (ni->nid != ni->ino)
+> @@ -2395,14 +2401,14 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
+>  			spin_unlock(&nm_i->nid_list_lock);
+>  		}
+>  
+> -		__set_nat_cache_dirty(nm_i, ne);
+> +		__set_nat_cache_dirty(sbi, true, nm_i, ne);
+>  	}
+>  	update_nats_in_cursum(journal, -i);
+>  	up_write(&curseg->journal_rwsem);
+>  }
+>  
+> -static void __adjust_nat_entry_set(struct nat_entry_set *nes,
+> -						struct list_head *head, int max)
+> +static void __adjust_nat_entry_set(struct f2fs_sb_info *sbi,
+> +		struct nat_entry_set *nes, struct list_head *head, int max)
+>  {
+>  	struct nat_entry_set *cur;
+>  
+> @@ -2410,7 +2416,9 @@ static void __adjust_nat_entry_set(struct nat_entry_set *nes,
+>  		goto add_out;
+>  
+>  	list_for_each_entry(cur, head, set_list) {
+> -		if (cur->entry_cnt >= nes->entry_cnt) {
+> +		if (cur->entry_cnt > nes->entry_cnt ||
+> +			(cur->entry_cnt == nes->entry_cnt &&
+> +			cur->cp_ver < nes->cp_ver)) {
+>  			list_add(&nes->set_list, cur->set_list.prev);
+>  			return;
+>  		}
+> @@ -2458,7 +2466,6 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+>  	struct f2fs_journal *journal = curseg->journal;
+>  	nid_t start_nid = set->set * NAT_ENTRY_PER_BLOCK;
+> -	bool to_journal = true;
+>  	struct f2fs_nat_block *nat_blk;
+>  	struct nat_entry *ne, *cur;
+>  	struct page *page = NULL;
+> @@ -2468,11 +2475,14 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+>  	 * #1, flush nat entries to journal in current hot data summary block.
+>  	 * #2, flush nat entries to nat page.
+>  	 */
+> +
+> +	set->to_journal = true;
+> +
+>  	if (enabled_nat_bits(sbi, cpc) ||
+>  		!__has_cursum_space(journal, set->entry_cnt, NAT_JOURNAL))
+> -		to_journal = false;
+> +		set->to_journal = false;
+>  
+> -	if (to_journal) {
+> +	if (set->to_journal) {
+>  		down_write(&curseg->journal_rwsem);
+>  	} else {
+>  		page = get_next_nat_page(sbi, start_nid);
+> @@ -2488,7 +2498,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+>  
+>  		f2fs_bug_on(sbi, nat_get_blkaddr(ne) == NEW_ADDR);
+>  
+> -		if (to_journal) {
+> +		if (set->to_journal) {
+>  			offset = lookup_journal_in_cursum(journal,
+>  							NAT_JOURNAL, nid, 1);
+>  			f2fs_bug_on(sbi, offset < 0);
+> @@ -2509,7 +2519,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+>  		}
+>  	}
+>  
+> -	if (to_journal) {
+> +	if (set->to_journal) {
+>  		up_write(&curseg->journal_rwsem);
+>  	} else {
+>  		__update_nat_bits(sbi, start_nid, page);
+> @@ -2517,7 +2527,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+>  	}
+>  
+>  	/* Allow dirty nats by node block allocation in write_begin */
+> -	if (!set->entry_cnt) {
+> +	if (!set->to_journal && !set->entry_cnt) {
+>  		radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
+>  		kmem_cache_free(nat_entry_set_slab, set);
+>  	}
+> @@ -2556,7 +2566,7 @@ void flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  		unsigned idx;
+>  		set_idx = setvec[found - 1]->set + 1;
+>  		for (idx = 0; idx < found; idx++)
+> -			__adjust_nat_entry_set(setvec[idx], &sets,
+> +			__adjust_nat_entry_set(sbi, setvec[idx], &sets,
+>  						MAX_NAT_JENTRIES(journal));
+>  	}
+>  
+> @@ -2565,7 +2575,6 @@ void flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  		__flush_nat_entry_set(sbi, set, cpc);
+>  
+>  	up_write(&nm_i->nat_tree_lock);
+> -	/* Allow dirty nats by node block allocation in write_begin */
+>  }
+>  
+>  static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
+> diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+> index 081ef0d..3cf9c8b6 100644
+> --- a/fs/f2fs/node.h
+> +++ b/fs/f2fs/node.h
+> @@ -148,7 +148,9 @@ struct nat_entry_set {
+>  	struct list_head set_list;	/* link with other nat sets */
+>  	struct list_head entry_list;	/* link with dirty nat entries */
+>  	nid_t set;			/* set number*/
+> -	unsigned int entry_cnt;		/* the # of nat entries in set */
+> +	unsigned int entry_cnt:9;	/* the # of nat entries in set */
+> +	unsigned int to_journal:1;	/* set flush to journal */
+> +	__u64 cp_ver;			/* cp version of this set modify */
+>  };
+>  
+>  struct free_nid {
+> -- 
+> 1.9.1
 
-Then, unplug will issue lots of discard commands, which affects the following rw
-latencies. My preference would be issuing discard commands one by one as much as
-possible.
-
-> 
-> Thanks,
-> 
-> > 
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>> Thanks,
-> >>>
-> >>>>
-> >>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >>>> ---
-> >>>>  fs/f2fs/segment.c | 7 +++++--
-> >>>>  1 file changed, 5 insertions(+), 2 deletions(-)
-> >>>>
-> >>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >>>> index 8f0b5ba46315..4287e208c040 100644
-> >>>> --- a/fs/f2fs/segment.c
-> >>>> +++ b/fs/f2fs/segment.c
-> >>>> @@ -1208,10 +1208,12 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> >>>>  		pend_list = &dcc->pend_list[i];
-> >>>>  
-> >>>>  		mutex_lock(&dcc->cmd_lock);
-> >>>> +
-> >>>> +		blk_start_plug(&plug);
-> >>>> +
-> >>>>  		if (list_empty(pend_list))
-> >>>>  			goto next;
-> >>>>  		f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
-> >>>> -		blk_start_plug(&plug);
-> >>>>  		list_for_each_entry_safe(dc, tmp, pend_list, list) {
-> >>>>  			f2fs_bug_on(sbi, dc->state != D_PREP);
-> >>>>  
-> >>>> @@ -1227,8 +1229,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> >>>>  			if (++iter >= dpolicy->max_requests)
-> >>>>  				break;
-> >>>>  		}
-> >>>> -		blk_finish_plug(&plug);
-> >>>>  next:
-> >>>> +		blk_finish_plug(&plug);
-> >>>> +
-> >>>>  		mutex_unlock(&dcc->cmd_lock);
-> >>>>  
-> >>>>  		if (iter >= dpolicy->max_requests)
-> >>>> -- 
-> >>>> 2.15.0.55.gc2ece9dc4de6
-> >>>
-> >>> .
-> >>>
-> > 
-> > .
-> > 
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
