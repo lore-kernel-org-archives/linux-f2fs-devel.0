@@ -1,56 +1,87 @@
-From: Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
-Date: Mon, 9 Apr 2018 18:12:11 -0700
-Message-ID: <20180410011211.GA31282@bombadil.infradead.org>
-References: <20180409015815.235943-1-minchan@kernel.org>
- <20180409024925.GA21889@bombadil.infradead.org>
- <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
- <20180409111403.GA31652@bombadil.infradead.org>
- <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
- <7706245c-2661-f28b-f7f9-8f11e1ae932b@huawei.com>
- <20180409144958.GA211679@rodete-laptop-imager.corp.google.com>
- <20180409152032.GB11756@bombadil.infradead.org>
- <20180409230409.GA214542@rodete-desktop-imager.corp.google.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: don't use GFP_ZERO for page caches
+Date: Mon, 9 Apr 2018 18:35:45 -0700
+Message-ID: <20180410013545.GA45603@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180409190012.21552-1-jaegeuk@kernel.org>
+ <20180409204244.GA25905@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180409230409.GA214542@rodete-desktop-imager.corp.google.com>
+In-Reply-To: <20180409204244.GA25905@jaegeuk-macbookpro.roam.corp.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Minchan Kim <minchan@kernel.org>
-Cc: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Christopher Lameter <cl@linux.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>, Chris Fries <cfries@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Tue, Apr 10, 2018 at 08:04:09AM +0900, Minchan Kim wrote:
-> On Mon, Apr 09, 2018 at 08:20:32AM -0700, Matthew Wilcox wrote:
-> > I don't think this is something the radix tree should know about.
+On 04/09, Jaegeuk Kim wrote:
+> Change log from v1:
+>  - don't memset for recovered page
 > 
-> Because shadow entry implementation is hidden by radix tree implemetation.
-> IOW, radix tree user cannot know how it works.
-
-I have no idea what you mean.
-
-> > SLAB should be checking for it (the patch I posted earlier in this
+> Related to https://lkml.org/lkml/2018/4/8/661
 > 
-> I don't think it's right approach. SLAB constructor can initialize
-> some metadata for slab page populated as well as page zeroing.
-> However, __GFP_ZERO means only clearing pages, not metadata.
-> So it's different semantic. No need to mix out.
-
-No, __GFP_ZERO is specified to clear the allocated memory whether
-you're allocating from alloc_pages or from slab.  What makes no sense
-is allocating an object from slab with a constructor *and* __GFP_ZERO.
-They're in conflict, and slab can't fulfill both of those requirements.
-
-> > thread), but the right place to filter this out is in the caller of
-> > radix_tree_maybe_preload -- it's already filtering out HIGHMEM pages,
-> > and should filter out GFP_ZERO too.
+> Sometimes, we need to write meta data to new allocated block address,
+> then we will allocate a zeroed page in inner inode's address space, and
+> fill partial data in it, and leave other place with zero value which means
+> some fields are initial status.
 > 
-> radix_tree_[maybe]_preload is exported API, which are error-prone
-> for out of modules or upcoming customers.
-> 
-> More proper place is __radix_tree_preload.
+> There are two inner inodes (meta inode and node inode) setting __GFP_ZERO,
+> I have just checked them, for both of them, we can avoid using __GFP_ZERO,
+> and do initialization by ourselves to avoid unneeded/redundant zeroing
+> from mm.
 
-I could not disagree with you more.  It is the responsibility of the
-callers of radix_tree_preload to avoid calling it with nonsense flags
-like __GFP_DMA, __GFP_HIGHMEM or __GFP_ZERO.
+Okay, it seems we're missing some more places to reset the memory, since
+I'm still getting a panic. :(
+
+Thanks,
+
+> 
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/inode.c | 4 ++--
+>  fs/f2fs/node.c  | 3 ++-
+>  2 files changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index 417c9dcd0269..87535bf63421 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -320,10 +320,10 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+>  make_now:
+>  	if (ino == F2FS_NODE_INO(sbi)) {
+>  		inode->i_mapping->a_ops = &f2fs_node_aops;
+> -		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+> +		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
+>  	} else if (ino == F2FS_META_INO(sbi)) {
+>  		inode->i_mapping->a_ops = &f2fs_meta_aops;
+> -		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+> +		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
+>  	} else if (S_ISREG(inode->i_mode)) {
+>  		inode->i_op = &f2fs_file_inode_operations;
+>  		inode->i_fop = &f2fs_file_operations;
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 9a99243054ba..5a4469093e43 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1096,7 +1096,8 @@ struct page *new_node_page(struct dnode_of_data *dn, unsigned int ofs)
+>  	set_node_addr(sbi, &new_ni, NEW_ADDR, false);
+>  
+>  	f2fs_wait_on_page_writeback(page, NODE, true);
+> -	fill_node_footer(page, dn->nid, dn->inode->i_ino, ofs, true);
+> +	memset(F2FS_NODE(page), 0, PAGE_SIZE);
+> +	fill_node_footer(page, dn->nid, dn->inode->i_ino, ofs, false);
+>  	set_cold_node(page, S_ISDIR(dn->inode->i_mode));
+>  	if (!PageUptodate(page))
+>  		SetPageUptodate(page);
+> -- 
+> 2.15.0.531.g2ccb3012c9-goog
+> 
+> 
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
