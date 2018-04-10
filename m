@@ -1,7 +1,11 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v2] f2fs: use cur_map instead of ckpt_map
-Date: Tue, 10 Apr 2018 10:50:31 +0800
-Message-ID: <1523328631-6658-1-git-send-email-heyunlei@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v3] f2fs: stop issue discard if something
+ wrong with f2fs
+Date: Tue, 10 Apr 2018 11:12:25 +0800
+Message-ID: <45c2b065-f462-9553-d969-ff853c993b6b@huawei.com>
+References: <1523273251-29871-1-git-send-email-heyunlei@huawei.com>
+ <c303bb52-c464-a122-e5ff-c95f5f7abecf@huawei.com>
+ <42B685BFA705F94C860C6DD0752F056548363715@DGGEMA503-MBS.china.huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -9,13 +13,15 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <heyunlei@huawei.com>) id 1f5jaa-0004Gk-Ss
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Apr 2018 03:04:56 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1f5ji7-0004jJ-Mo
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Apr 2018 03:12:43 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f5jaZ-0014on-2F
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Apr 2018 03:04:56 +0000
+ id 1f5ji5-004EHV-D7
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Apr 2018 03:12:43 +0000
+In-Reply-To: <42B685BFA705F94C860C6DD0752F056548363715@DGGEMA503-MBS.china.huawei.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -25,37 +31,69 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
-Cc: zhangdianfang@huawei.com
+To: heyunlei <heyunlei@huawei.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Cc: "Zhangdianfang (Euler)" <zhangdianfang@huawei.com>
 
-In flush_sit_entries::add_discard_addrs path, cur_map and ckpt_map
-are the same, but in exist_trim_candidates::add_discard_addrs,
-cur_map is updated one, and newer than ckpt_map, so we need to use
-cur_map to check whether there are discard candidates.
+On 2018/4/10 10:46, heyunlei wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Yuchao (T)
+>> Sent: Tuesday, April 10, 2018 10:36 AM
+>> To: heyunlei; jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
+>> Cc: Wangbintian; Zhangdianfang (Euler)
+>> Subject: Re: [f2fs-dev][PATCH v3] f2fs: stop issue discard if something wrong with f2fs
+>>
+>> On 2018/4/9 19:27, Yunlei He wrote:
+>>> This patch stop async thread and umount process to issue discard
+>>> if something wrong with f2fs, which is similar to fstrim.
+>>>
+>>> v1->v2: add fs error check in not only discard thread but also umount process
+>>> v2->v3: remove redundant error message
+>>>
+>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+>>> ---
+>>>  fs/f2fs/segment.c | 3 +++
+>>>  1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>> index 5854cc4..e31d506 100644
+>>> --- a/fs/f2fs/segment.c
+>>> +++ b/fs/f2fs/segment.c
+>>> @@ -1202,6 +1202,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+>>>  	int i, iter = 0, issued = 0;
+>>>  	bool io_interrupted = false;
+>>>
+>>> +	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
+>>> +		return issued;
+>>
+>> Hmm.. except here, I mean we'd better add it into issue_discard_thread too?
+> 
+> Async thread will also use this function to issue discard, besides, in this case
+> __issue_discard_cmd will return zero to async thread, thread will wait max 
+> Interval 60s. Anything I missed?
 
-v1->v2: one problem of check discard candidates reported by Chao,
-besides, update commit message.
+There is still locking overhead from sb_{start,end}_intwrite, although it's tiny,
+but since there is no way to revert NEED_FSCK status, so just let discard thread
+be aware of this to walk around is OK.
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fs/f2fs/segment.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 5854cc4..f5d0499 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1559,7 +1559,7 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
- 
- 	/* SIT_VBLOCK_MAP_SIZE should be multiple of sizeof(unsigned long) */
- 	for (i = 0; i < entries; i++)
--		dmap[i] = force ? ~ckpt_map[i] & ~discard_map[i] :
-+		dmap[i] = force ? ~cur_map[i] & ~discard_map[i] :
- 				(cur_map[i] ^ ckpt_map[i]) & ckpt_map[i];
- 
- 	while (force || SM_I(sbi)->dcc_info->nr_discards <=
--- 
-1.9.1
+> 
+> Thanks.
+> 
+>>
+>> Thanks,
+>>
+>>> +
+>>>  	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
+>>>  		if (i + 1 < dpolicy->granularity)
+>>>  			break;
+>>>
+> 
+> 
+> .
+> 
 
 
 ------------------------------------------------------------------------------
