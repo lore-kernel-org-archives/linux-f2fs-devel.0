@@ -1,139 +1,56 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: enlarge block plug coverage
-Date: Thu, 12 Apr 2018 21:07:02 -0700
-Message-ID: <20180413040702.GC59368@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180404085404.82184-1-yuchao0@huawei.com>
- <20180405035115.GC50337@jaegeuk-macbookpro.roam.corp.google.com>
- <03c21c2f-cb0e-dbd4-b48a-95c2678964d1@huawei.com>
- <20180409180241.GC17558@jaegeuk-macbookpro.roam.corp.google.com>
- <967b8819-da9a-b609-6a22-db8df5c7ec6c@huawei.com>
- <20180410041033.GE47598@jaegeuk-macbookpro.roam.corp.google.com>
- <ff3990f2-5785-045e-30c5-62a9f8352d74@huawei.com>
- <20180413010615.GA53401@jaegeuk-macbookpro.roam.corp.google.com>
- <fd5b56ef-4f27-65b7-d3a2-71ef4425b452@huawei.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Subject: Re: Symlink not persisted even after fsync
+Date: Fri, 13 Apr 2018 08:52:19 +0300
+Message-ID: <CAOQ4uxhK6DQxTdipX2SP2t1960PrRt66+k3FVxQqwTBs-67cQA@mail.gmail.com>
+References: <CA+EzBbCbRsZ=2qkBYjGVZQAVmUz34ky8vDOB7HxqRCrgymzysQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <fd5b56ef-4f27-65b7-d3a2-71ef4425b452@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-btrfs-owner@vger.kernel.org>
+In-Reply-To: <CA+EzBbCbRsZ=2qkBYjGVZQAVmUz34ky8vDOB7HxqRCrgymzysQ@mail.gmail.com>
+Sender: linux-btrfs-owner@vger.kernel.org
+To: Jayashree Mohan <jayashree2912@gmail.com>
+Cc: linux-btrfs <linux-btrfs@vger.kernel.org>, fstests <fstests@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, Vijaychidambaram Velayudhan Pillai <vijay@cs.utexas.edu>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 04/13, Chao Yu wrote:
-> On 2018/4/13 9:06, Jaegeuk Kim wrote:
-> > On 04/10, Chao Yu wrote:
-> >> On 2018/4/10 12:10, Jaegeuk Kim wrote:
-> >>> On 04/10, Chao Yu wrote:
-> >>>> On 2018/4/10 2:02, Jaegeuk Kim wrote:
-> >>>>> On 04/08, Chao Yu wrote:
-> >>>>>> On 2018/4/5 11:51, Jaegeuk Kim wrote:
-> >>>>>>> On 04/04, Chao Yu wrote:
-> >>>>>>>> This patch enlarges block plug coverage in __issue_discard_cmd, in
-> >>>>>>>> order to collect more pending bios before issuing them, to avoid
-> >>>>>>>> being disturbed by previous discard I/O in IO aware discard mode.
-> >>>>>>>
-> >>>>>>> Hmm, then we need to wait for huge discard IO for over 10 secs, which
-> >>>>>>
-> >>>>>> We found that total discard latency is rely on total discard number we issued
-> >>>>>> last time instead of range or length discard covered. IMO, if we don't change
-> >>>>>> .max_requests value, we will not suffer longer latency.
-> >>>>>>
-> >>>>>>> will affect following read/write IOs accordingly. In order to avoid that,
-> >>>>>>> we actually need to limit the discard size.
-> >>>>
-> >>>> Do you mean limit discard count or discard length?
-> >>>
-> >>> Both of them.
-> >>>
-> >>>>
-> >>>>>>
-> >>>>>> If you are worry about I/O interference in between discard and rw, I suggest to
-> >>>>>> decrease .max_requests value.
-> >>>>>
-> >>>>> What do you mean? This will produce more pending requests in the queue?
-> >>>>
-> >>>> I mean after applying this patch, we can queue more discard IOs in plug inside
-> >>>> task, otherwise, previous issued discard in block layer can make is_idle() be false,
-> >>>> then it can stop IO awared user to issue pending discard command.
-> >>>
-> >>> Then, unplug will issue lots of discard commands, which affects the following rw
-> >>> latencies. My preference would be issuing discard commands one by one as much as
-> >>> possible.
-> >>
-> >> Hmm.. for you concern, we can turn down IO priority of discard from background?
-> > 
-> > That makes much more sense to me. :P
-> 
-> Then, this patch which enlarge plug coverage will not still a problem, right? ;)
+On Thu, Apr 12, 2018 at 8:51 PM, Jayashree Mohan
+<jayashree2912@gmail.com> wrote:
+> Hi,
+>
+> We came across what seems to be a crash consistency bug on btrfs and
+> f2fs. When we create a symlink for a file and fsync the symlink, on
+> recovery from crash, the fsync-ed file is missing.
+>
+> You can reproduce this behaviour using this minimal workload :
+>
+> 1. symlink (foo, bar)
+> 2. open bar
+> 3. fsync bar
+> ----crash here----
+>
+> When we recover, we find that file bar is missing. This behaviour
+> seems unexpected as the fsynced file is lost on a crash. ext4 and xfs
+> correctly recovers file bar. This seems like a bug. If not, could you
+> explain why?
+>
 
-This is different one.
+Not a bug.
 
-> 
-> Thanks,
-> 
-> > 
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>>>
-> >>>> Thanks,
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>> Thanks,
-> >>>>>>
-> >>>>>>>
-> >>>>>>> Thanks,
-> >>>>>>>
-> >>>>>>>>
-> >>>>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >>>>>>>> ---
-> >>>>>>>>  fs/f2fs/segment.c | 7 +++++--
-> >>>>>>>>  1 file changed, 5 insertions(+), 2 deletions(-)
-> >>>>>>>>
-> >>>>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >>>>>>>> index 8f0b5ba46315..4287e208c040 100644
-> >>>>>>>> --- a/fs/f2fs/segment.c
-> >>>>>>>> +++ b/fs/f2fs/segment.c
-> >>>>>>>> @@ -1208,10 +1208,12 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> >>>>>>>>  		pend_list = &dcc->pend_list[i];
-> >>>>>>>>  
-> >>>>>>>>  		mutex_lock(&dcc->cmd_lock);
-> >>>>>>>> +
-> >>>>>>>> +		blk_start_plug(&plug);
-> >>>>>>>> +
-> >>>>>>>>  		if (list_empty(pend_list))
-> >>>>>>>>  			goto next;
-> >>>>>>>>  		f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
-> >>>>>>>> -		blk_start_plug(&plug);
-> >>>>>>>>  		list_for_each_entry_safe(dc, tmp, pend_list, list) {
-> >>>>>>>>  			f2fs_bug_on(sbi, dc->state != D_PREP);
-> >>>>>>>>  
-> >>>>>>>> @@ -1227,8 +1229,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> >>>>>>>>  			if (++iter >= dpolicy->max_requests)
-> >>>>>>>>  				break;
-> >>>>>>>>  		}
-> >>>>>>>> -		blk_finish_plug(&plug);
-> >>>>>>>>  next:
-> >>>>>>>> +		blk_finish_plug(&plug);
-> >>>>>>>> +
-> >>>>>>>>  		mutex_unlock(&dcc->cmd_lock);
-> >>>>>>>>  
-> >>>>>>>>  		if (iter >= dpolicy->max_requests)
-> >>>>>>>> -- 
-> >>>>>>>> 2.15.0.55.gc2ece9dc4de6
-> >>>>>>>
-> >>>>>>> .
-> >>>>>>>
-> >>>>>
-> >>>>> .
-> >>>>>
-> >>>
-> >>> .
-> >>>
-> > 
-> > .
-> > 
+>From man 2 fsync:
+
+"Calling  fsync() does not necessarily ensure that the entry in the
+ directory containing the file has also reached disk.  For that an
+ explicit fsync() on a file descriptor for the directory is also needed."
+
+There is a reason why this behavior is not being reproduces in
+ext4/xfs, but you should be able to reproduce a similar issue
+like this:
+
+1. symlink (foo, bar.tmp)
+2. open bar.tmp
+3. fsync bar.tmp
+4. rename(bar.tmp, bar)
+5. fsync bar
+----crash here----
+
+Thanks,
+Amir.
