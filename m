@@ -1,151 +1,166 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: enlarge block plug coverage
-Date: Fri, 13 Apr 2018 15:13:55 +0800
-Message-ID: <dbbfa423-cf66-eb0b-1102-d00f9c7d396d@huawei.com>
-References: <20180404085404.82184-1-yuchao0@huawei.com>
- <20180405035115.GC50337@jaegeuk-macbookpro.roam.corp.google.com>
- <03c21c2f-cb0e-dbd4-b48a-95c2678964d1@huawei.com>
- <20180409180241.GC17558@jaegeuk-macbookpro.roam.corp.google.com>
- <967b8819-da9a-b609-6a22-db8df5c7ec6c@huawei.com>
- <20180410041033.GE47598@jaegeuk-macbookpro.roam.corp.google.com>
- <ff3990f2-5785-045e-30c5-62a9f8352d74@huawei.com>
- <20180413010615.GA53401@jaegeuk-macbookpro.roam.corp.google.com>
- <fd5b56ef-4f27-65b7-d3a2-71ef4425b452@huawei.com>
- <20180413040702.GC59368@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH] fsck.f2fs: recover nat bits feature default
+ by fsck
+Date: Fri, 13 Apr 2018 15:37:12 +0800
+Message-ID: <931f736e-eeee-6a2e-5c84-c0ba75314f33@huawei.com>
+References: <1523244881-13125-1-git-send-email-heyunlei@huawei.com>
+ <20180410040047.GD47598@jaegeuk-macbookpro.roam.corp.google.com>
+ <42B685BFA705F94C860C6DD0752F056548363846@DGGEMA503-MBS.china.huawei.com>
+ <20180413003706.GA51348@jaegeuk-macbookpro.roam.corp.google.com>
+ <bed5e036-9b1e-f1a0-0621-bf88c4ce2470@huawei.com>
+ <20180413035925.GA59368@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180413040702.GC59368@jaegeuk-macbookpro.roam.corp.google.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1f6tHV-00017O-4e
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Apr 2018 07:38:01 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1f6tHF-005NTm-Lq
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Apr 2018 07:38:01 +0000
+In-Reply-To: <20180413035925.GA59368@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: "Zhangdianfang (Euler)" <zhangdianfang@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-On 2018/4/13 12:07, Jaegeuk Kim wrote:
+On 2018/4/13 11:59, Jaegeuk Kim wrote:
 > On 04/13, Chao Yu wrote:
->> On 2018/4/13 9:06, Jaegeuk Kim wrote:
->>> On 04/10, Chao Yu wrote:
->>>> On 2018/4/10 12:10, Jaegeuk Kim wrote:
->>>>> On 04/10, Chao Yu wrote:
->>>>>> On 2018/4/10 2:02, Jaegeuk Kim wrote:
->>>>>>> On 04/08, Chao Yu wrote:
->>>>>>>> On 2018/4/5 11:51, Jaegeuk Kim wrote:
->>>>>>>>> On 04/04, Chao Yu wrote:
->>>>>>>>>> This patch enlarges block plug coverage in __issue_discard_cmd, in
->>>>>>>>>> order to collect more pending bios before issuing them, to avoid
->>>>>>>>>> being disturbed by previous discard I/O in IO aware discard mode.
->>>>>>>>>
->>>>>>>>> Hmm, then we need to wait for huge discard IO for over 10 secs, which
->>>>>>>>
->>>>>>>> We found that total discard latency is rely on total discard number we issued
->>>>>>>> last time instead of range or length discard covered. IMO, if we don't change
->>>>>>>> .max_requests value, we will not suffer longer latency.
->>>>>>>>
->>>>>>>>> will affect following read/write IOs accordingly. In order to avoid that,
->>>>>>>>> we actually need to limit the discard size.
->>>>>>
->>>>>> Do you mean limit discard count or discard length?
->>>>>
->>>>> Both of them.
->>>>>
->>>>>>
->>>>>>>>
->>>>>>>> If you are worry about I/O interference in between discard and rw, I suggest to
->>>>>>>> decrease .max_requests value.
->>>>>>>
->>>>>>> What do you mean? This will produce more pending requests in the queue?
->>>>>>
->>>>>> I mean after applying this patch, we can queue more discard IOs in plug inside
->>>>>> task, otherwise, previous issued discard in block layer can make is_idle() be false,
->>>>>> then it can stop IO awared user to issue pending discard command.
->>>>>
->>>>> Then, unplug will issue lots of discard commands, which affects the following rw
->>>>> latencies. My preference would be issuing discard commands one by one as much as
->>>>> possible.
+>> On 2018/4/13 8:37, Jaegeuk Kim wrote:
+>>> On 04/10, heyunlei wrote:
 >>>>
->>>> Hmm.. for you concern, we can turn down IO priority of discard from background?
+>>>>
+>>>>> -----Original Message-----
+>>>>> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+>>>>> Sent: Tuesday, April 10, 2018 12:01 PM
+>>>>> To: heyunlei
+>>>>> Cc: Yuchao (T); linux-f2fs-devel@lists.sourceforge.net; Wangbintian; Zhangdianfang (Euler)
+>>>>> Subject: Re: [f2fs-dev][PATCH] fsck.f2fs: recover nat bits feature default by fsck
+>>>>>
+>>>>> On 04/09, Yunlei He wrote:
+>>>>>> Now, nat bits feature is enabled by default, we will
+>>>>>> meet with the following scenarios:
+>>>>>>
+>>>>>> i.   disabled, without CP_NAT_BITS_FLAG, if fsck find some
+>>>>>>      fs errors, fix or write new checkpoint will then enable it.
+>>>>>> ii.  enabled, with CP_NAT_BITS_FLAG, in the case of sudden
+>>>>>>      power off, bitmap will get lost but CP_NAT_BITS_FLAG
+>>>>>>      still exist, fsck will recover bitmap in f2fs_do_mount.
+>>>>>> iii. enabled, with CP_NAT_BITS_FLAG, both of bitmap and
+>>>>>>      CP_NAT_BITS_FLAG will get lost if not enough space for
+>>>>>>      nat bits or nat bits check failed during mounting.
+>>>>>>      SBI_NEED_FSCK is set, fsck will recover flag and bitmap
+>>>>>>      before next mount.
+>>>>>>
+>>>>>> SBI_NEED_FSCK means fs is corrupted, is not suitable for
+>>>>>> nat bits disabled. This patch try to recover nat bits all
+>>>>>> by fsck, no need set SBI_NEED_FSCK flag in kernel.
+>>>>>>
+>>>>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+>>>>>> ---
+>>>>>>  fsck/mount.c | 15 ++++++++++-----
+>>>>>>  1 file changed, 10 insertions(+), 5 deletions(-)
+>>>>>>
+>>>>>> diff --git a/fsck/mount.c b/fsck/mount.c
+>>>>>> index e5574c5..2361ee0 100644
+>>>>>> --- a/fsck/mount.c
+>>>>>> +++ b/fsck/mount.c
+>>>>>> @@ -2389,7 +2389,7 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
+>>>>>>  	}
+>>>>>>
+>>>>>>  	/* Check nat_bits */
+>>>>>> -	if (c.func != DUMP && is_set_ckpt_flags(cp, CP_NAT_BITS_FLAG)) {
+>>>>>> +	if (c.func != DUMP) {
+>>>>>>  		u_int32_t nat_bits_bytes, nat_bits_blocks;
+>>>>>>  		__le64 *kaddr;
+>>>>>>  		u_int32_t blk;
+>>>>>> @@ -2406,10 +2406,15 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
+>>>>>>  		kaddr = malloc(PAGE_SIZE);
+>>>>>>  		ret = dev_read_block(kaddr, blk);
+>>>>>>  		ASSERT(ret >= 0);
+>>>>>> -		if (*kaddr != get_cp_crc(cp))
+>>>>>> -			write_nat_bits(sbi, sb, cp, sbi->cur_cp);
+>>>>>> -		else
+>>>>>> -			MSG(0, "Info: Found valid nat_bits in checkpoint\n");
+>>>>>> +		if(is_set_ckpt_flags(cp, CP_NAT_BITS_FLAG)) {
+>>>>>> +			if (*kaddr != get_cp_crc(cp))
+>>>>>> +				write_nat_bits(sbi, sb, cp, sbi->cur_cp);
+>>>>>> +			else
+>>>>>> +				MSG(0, "Info: Found valid nat_bits in checkpoint\n");
+>>>>>> +		} else if (c.func == FSCK){
+>>>>>> +			ASSERT_MSG("Need to recover nat_bits.");
+>>>>>> +			c.fix_on = 1;
+>>>>>
+>>>>> What if kernel doesn't support this?
+>>>>
+>>>> Fix or write checkpoint now will enable nat bits by default if cp space is enough,
+>>>> So maybe it will not affect kernel not supporting nat bits?
 >>>
->>> That makes much more sense to me. :P
+>>> I don't think we really need this, since it mixes up whole thing.
 >>
->> Then, this patch which enlarge plug coverage will not still a problem, right? ;)
+>> IIUC, Yunlei just want use a flag to detect *real* data corruption on-line, then
+>> it can be a condition to end up issuing discard from background/umount/fstrim to
+>> prevent further data losing.
+>>
+>> For that, as I suggested before, we can split in-memory SBI_NEED_FSCK to
+>> SBI_LOSE_NAT_BIT and SBI_NEED_FSCK, for backward compatibility, on-disk flag can
+>> still be old one as below:
+>>
+>> update_ckpt_flags()
+>>
+>> if (SBI_NEED_FSCK || SBI_LOSE_NAT_BIT)
+>> 	set_cp_flag(CP_FSCK_FLAG)
+>>
+>> How about that?
 > 
-> This is different one.
+> I don't think we need to add more complexity here which will give another bug
+> later. Blocking discards would make sense tho, I don't think nat_bits should
+> be together with it.
 
-Yup, if there will be no IO interference as you concerned before, can we accept
-it now?
+We need a more clear flag to indicate that filesystem is corrupted to decide
+blocking discard, instead of using current flag which includes a state indicate
+losing nat_bits.
+
+So what's your opinion? keep as it is?
 
 Thanks,
 
+> 
+> Thanks,
 > 
 >>
 >> Thanks,
 >>
 >>>
 >>>>
->>>> Thanks,
->>>>
 >>>>>
->>>>>>
->>>>>> Thanks,
->>>>>>
->>>>>>>
->>>>>>>>
->>>>>>>> Thanks,
->>>>>>>>
->>>>>>>>>
->>>>>>>>> Thanks,
->>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>>>>>>>> ---
->>>>>>>>>>  fs/f2fs/segment.c | 7 +++++--
->>>>>>>>>>  1 file changed, 5 insertions(+), 2 deletions(-)
->>>>>>>>>>
->>>>>>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>>>>>>>> index 8f0b5ba46315..4287e208c040 100644
->>>>>>>>>> --- a/fs/f2fs/segment.c
->>>>>>>>>> +++ b/fs/f2fs/segment.c
->>>>>>>>>> @@ -1208,10 +1208,12 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->>>>>>>>>>  		pend_list = &dcc->pend_list[i];
->>>>>>>>>>  
->>>>>>>>>>  		mutex_lock(&dcc->cmd_lock);
->>>>>>>>>> +
->>>>>>>>>> +		blk_start_plug(&plug);
->>>>>>>>>> +
->>>>>>>>>>  		if (list_empty(pend_list))
->>>>>>>>>>  			goto next;
->>>>>>>>>>  		f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
->>>>>>>>>> -		blk_start_plug(&plug);
->>>>>>>>>>  		list_for_each_entry_safe(dc, tmp, pend_list, list) {
->>>>>>>>>>  			f2fs_bug_on(sbi, dc->state != D_PREP);
->>>>>>>>>>  
->>>>>>>>>> @@ -1227,8 +1229,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->>>>>>>>>>  			if (++iter >= dpolicy->max_requests)
->>>>>>>>>>  				break;
->>>>>>>>>>  		}
->>>>>>>>>> -		blk_finish_plug(&plug);
->>>>>>>>>>  next:
->>>>>>>>>> +		blk_finish_plug(&plug);
->>>>>>>>>> +
->>>>>>>>>>  		mutex_unlock(&dcc->cmd_lock);
->>>>>>>>>>  
->>>>>>>>>>  		if (iter >= dpolicy->max_requests)
->>>>>>>>>> -- 
->>>>>>>>>> 2.15.0.55.gc2ece9dc4de6
->>>>>>>>>
->>>>>>>>> .
->>>>>>>>>
->>>>>>>
->>>>>>> .
->>>>>>>
->>>>>
->>>>> .
->>>>>
+>>>>>> +		}
+>>>>>>  		free(kaddr);
+>>>>>>  	}
+>>>>>>  	return 0;
+>>>>>> --
+>>>>>> 1.9.1
 >>>
 >>> .
 >>>
 > 
 > .
 > 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
