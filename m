@@ -1,166 +1,221 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] fsck.f2fs: recover nat bits feature default
- by fsck
-Date: Fri, 13 Apr 2018 15:37:12 +0800
-Message-ID: <931f736e-eeee-6a2e-5c84-c0ba75314f33@huawei.com>
-References: <1523244881-13125-1-git-send-email-heyunlei@huawei.com>
- <20180410040047.GD47598@jaegeuk-macbookpro.roam.corp.google.com>
- <42B685BFA705F94C860C6DD0752F056548363846@DGGEMA503-MBS.china.huawei.com>
- <20180413003706.GA51348@jaegeuk-macbookpro.roam.corp.google.com>
- <bed5e036-9b1e-f1a0-0621-bf88c4ce2470@huawei.com>
- <20180413035925.GA59368@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
+Date: Fri, 13 Apr 2018 16:40:20 +0800
+Message-ID: <bd8580f5-a5a1-5e0a-ea01-088cffb441e4@huawei.com>
+References: <20180127094301.29154-1-yuchao0@huawei.com>
+ <20180127094301.29154-2-yuchao0@huawei.com>
+ <20180131020213.GA86468@jaegeuk-macbookpro.roam.corp.google.com>
+ <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
+ <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
+ <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
+ <20180210014140.GB1885@jaegeuk-macbookpro.roam.corp.google.com>
+ <5f22d645-001d-a132-f0bd-2dba1f6daaea@kernel.org>
+ <558ea6b1-e57d-5910-d931-a47f143cca25@huawei.com>
+ <3782ed9e-741d-d711-3937-bc8127566982@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1f6tHV-00017O-4e
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Apr 2018 07:38:01 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f6tHF-005NTm-Lq
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Apr 2018 07:38:01 +0000
-In-Reply-To: <20180413035925.GA59368@jaegeuk-macbookpro.roam.corp.google.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <3782ed9e-741d-d711-3937-bc8127566982@kernel.org>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: "Zhangdianfang (Euler)" <zhangdianfang@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/4/13 11:59, Jaegeuk Kim wrote:
-> On 04/13, Chao Yu wrote:
->> On 2018/4/13 8:37, Jaegeuk Kim wrote:
->>> On 04/10, heyunlei wrote:
->>>>
->>>>
->>>>> -----Original Message-----
->>>>> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
->>>>> Sent: Tuesday, April 10, 2018 12:01 PM
->>>>> To: heyunlei
->>>>> Cc: Yuchao (T); linux-f2fs-devel@lists.sourceforge.net; Wangbintian; Zhangdianfang (Euler)
->>>>> Subject: Re: [f2fs-dev][PATCH] fsck.f2fs: recover nat bits feature default by fsck
+Ping again..
+
+Do you have time to discuss this?
+
+On 2018/2/27 22:16, Chao Yu wrote:
+> Ping,
+> 
+> On 2018/2/13 15:34, Chao Yu wrote:
+>> Hi Jaegeuk,
+>>
+>> On 2018/2/10 10:52, Chao Yu wrote:
+>>> On 2018/2/10 9:41, Jaegeuk Kim wrote:
+>>>> On 02/01, Chao Yu wrote:
 >>>>>
->>>>> On 04/09, Yunlei He wrote:
->>>>>> Now, nat bits feature is enabled by default, we will
->>>>>> meet with the following scenarios:
->>>>>>
->>>>>> i.   disabled, without CP_NAT_BITS_FLAG, if fsck find some
->>>>>>      fs errors, fix or write new checkpoint will then enable it.
->>>>>> ii.  enabled, with CP_NAT_BITS_FLAG, in the case of sudden
->>>>>>      power off, bitmap will get lost but CP_NAT_BITS_FLAG
->>>>>>      still exist, fsck will recover bitmap in f2fs_do_mount.
->>>>>> iii. enabled, with CP_NAT_BITS_FLAG, both of bitmap and
->>>>>>      CP_NAT_BITS_FLAG will get lost if not enough space for
->>>>>>      nat bits or nat bits check failed during mounting.
->>>>>>      SBI_NEED_FSCK is set, fsck will recover flag and bitmap
->>>>>>      before next mount.
->>>>>>
->>>>>> SBI_NEED_FSCK means fs is corrupted, is not suitable for
->>>>>> nat bits disabled. This patch try to recover nat bits all
->>>>>> by fsck, no need set SBI_NEED_FSCK flag in kernel.
->>>>>>
->>>>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->>>>>> ---
->>>>>>  fsck/mount.c | 15 ++++++++++-----
->>>>>>  1 file changed, 10 insertions(+), 5 deletions(-)
->>>>>>
->>>>>> diff --git a/fsck/mount.c b/fsck/mount.c
->>>>>> index e5574c5..2361ee0 100644
->>>>>> --- a/fsck/mount.c
->>>>>> +++ b/fsck/mount.c
->>>>>> @@ -2389,7 +2389,7 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
->>>>>>  	}
->>>>>>
->>>>>>  	/* Check nat_bits */
->>>>>> -	if (c.func != DUMP && is_set_ckpt_flags(cp, CP_NAT_BITS_FLAG)) {
->>>>>> +	if (c.func != DUMP) {
->>>>>>  		u_int32_t nat_bits_bytes, nat_bits_blocks;
->>>>>>  		__le64 *kaddr;
->>>>>>  		u_int32_t blk;
->>>>>> @@ -2406,10 +2406,15 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
->>>>>>  		kaddr = malloc(PAGE_SIZE);
->>>>>>  		ret = dev_read_block(kaddr, blk);
->>>>>>  		ASSERT(ret >= 0);
->>>>>> -		if (*kaddr != get_cp_crc(cp))
->>>>>> -			write_nat_bits(sbi, sb, cp, sbi->cur_cp);
->>>>>> -		else
->>>>>> -			MSG(0, "Info: Found valid nat_bits in checkpoint\n");
->>>>>> +		if(is_set_ckpt_flags(cp, CP_NAT_BITS_FLAG)) {
->>>>>> +			if (*kaddr != get_cp_crc(cp))
->>>>>> +				write_nat_bits(sbi, sb, cp, sbi->cur_cp);
->>>>>> +			else
->>>>>> +				MSG(0, "Info: Found valid nat_bits in checkpoint\n");
->>>>>> +		} else if (c.func == FSCK){
->>>>>> +			ASSERT_MSG("Need to recover nat_bits.");
->>>>>> +			c.fix_on = 1;
 >>>>>
->>>>> What if kernel doesn't support this?
+>>>>> On 2018/2/1 6:15, Jaegeuk Kim wrote:
+>>>>>> On 01/31, Chao Yu wrote:
+>>>>>>> On 2018/1/31 10:02, Jaegeuk Kim wrote:
+>>>>>>>> What if we want to add more entries in addition to node_checksum? Do we have
+>>>>>>>> to add a new feature flag at every time? How about adding a layout value instead
+>>>>>>>
+>>>>>>> Hmm.. for previous implementation, IMO, we'd better add a new feature flag at
+>>>>>>> every time, otherwise, w/ extra_nsize only, in current image, we can know a
+>>>>>>> valid range of extended area in node block, but we don't know which
+>>>>>>> fields/features are valid/enabled or not.
+>>>>>>>
+>>>>>>> One more thing is that if we can add one feature flag for each field, we got one
+>>>>>>> more chance to disable it dynamically.
+>>>>>>>
+>>>>>>>> of extra_nsize? For example, layout #1 means node_checksum with extra_nsize=X?
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> What does 1017 mean? We need to make this structure more flexibly for new
+>>>>>>>
+>>>>>>> Yes, using raw 1017 is not appropriate here.
+>>>>>>>
+>>>>>>>> entries. Like this?
+>>>>>>>> 		union {
+>>>>>>>> 			struct node_v1;
+>>>>>>>> 			struct node_v2;
+>>>>>>>> 			struct node_v3;
+>>>>>>>> 			...
+>>>>>>>> 			struct direct_node dn;
+>>>>>>>> 			struct indirect_node in;
+>>>>>>>> 		};
+>>>>>>>> 	};
+>>>>>>>>
+>>>>>>>> 	struct node_v1 {
+>>>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
+>>>>>>>> 		__le32 node_checksum;
+>>>>>>>> 	}
+>>>>>>>>
+>>>>>>>> 	struct node_v2 {
+>>>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=500];
+>>>>>>>
+>>>>>>> Hmm.. If we only need to add one more 4 bytes field in struct node_v2, but
+>>>>>>> V2_NSIZE is defined as fixed 500, there must be 492 bytes wasted.
+>>>>>>>
+>>>>>>> Or we can define V2_NSIZE as 8, but if there comes more and more extended
+>>>>>>> fields, node version count can be a large number, it results in complicated
+>>>>>>> version recognization and handling.
+>>>>>>>
+>>>>>>> One more question is how can we control which fields are valid or not in
+>>>>>>> comp[Vx_NSIZE]?
+>>>>>>>
+>>>>>>>
+>>>>>>> Anyway, what I'm thinking is maybe we can restructure layout of node block like
+>>>>>>> the one used by f2fs_inode:
+>>>>>>>
+>>>>>>> struct f2fs_node {
+>>>>>>> 	union {
+>>>>>>> 		struct f2fs_inode i;
+>>>>>>> 		union {
+>>>>>>> 			struct {
+>>>>>>> 				__le32 node_checksum;
+>>>>>>> 				__le32 feature_field_1;
+>>>>>>> 				__le32 feature_field_2;
+>>>>>>> 				....
+>>>>>>> 				__le32 addr[];
+>>>>>>> 				
+>>>>>>> 			};
+>>>>>>> 			struct direct_node dn;
+>>>>>>> 			struct indirect_node in;
+>>>>>>> 		};
+>>>>>>> 	};
+>>>>>>> 	struct node_footer footer;
+>>>>>>> } __packed;
+>>>>>>>
+>>>>>>> Moving all extended fields to the head of f2fs_node, so we don't have to use
+>>>>>>> macro to indicate actual size of addr.
+>>>>>>
+>>>>>> Thinking what'd be the best way. My concern is, once getting more entries, we
+>>>>>
+>>>>> OK, I think we need more discussion.. ;)
+>>>>>
+>>>>>> can't set each of features individually. Like the second entry should have
+>>>>>
+>>>>> Oh, that will be hard. If we have to avoid that, we have to tag in somewhere
+>>>>> e.g. f2fs_inode::i_flags2 to indicate which new field in f2fs_node is valid, for
+>>>>> example:
+>>>>>
+>>>>> #define F2FS_NODE_CHECKSUM	0x0001
+>>>>> #define F2FS_NODE_FIELD1	0x0002
+>>>>> #define F2FS_NODE_FIELD2	0x0004
+>>>>>
+>>>>> 	union {
+>>>>> 		struct {
+>>>>> 			__le32 node_checksum;
+>>>>> 			__le32 field_1;
+>>>>> 			__le32 field_2;
+>>>>> 			....
+>>>>> 			__le32 addr[];
+>>>>> 		};
+>>>>> 		struct direct_node dn;
+>>>>> 		struct indirect_node in;
+>>>>> 	};
+>>>>>
+>>>>> f2fs_inode::i_flags2 = F2FS_NODE_CHECKSUM | F2FS_NODE_FIELD1
+>>>>> indicates that f2fs_node::node_checksum and f2fs_node::field_1 are valid;
+>>>>>
+>>>>> f2fs_inode::i_flags2 = F2FS_NODE_FIELD1 | F2FS_NODE_FIELD2
+>>>>> indicates that f2fs_node::field_1 and f2fs_node::field_2 are valid.
 >>>>
->>>> Fix or write checkpoint now will enable nat bits by default if cp space is enough,
->>>> So maybe it will not affect kernel not supporting nat bits?
+>>>> So, that's why I thought we may need a sort of each formats.
 >>>
->>> I don't think we really need this, since it mixes up whole thing.
+>>> Hmm.. if we have two new added fields, there are (2 << 2) combinations
+>>> of all formats, as:
+>>>
+>>> struct original {
+>>> 	__le32 data[DEF_ADDRS_PER_BLOCK];
+>>> }
+>>>
+>>> struct node_v1 {
+>>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
+>>> 	__le32 field_1;
+>>> }
+>>>
+>>> struct node_v2 {
+>>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=1];
+>>> 	__le32 field_2;
+>>> }
+>>>
+>>> struct node_v2 {
+>>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V3_NSIZE=2];
+>>> 	__le32 field_1;
+>>> 	__le32 field_2;
+>>> }
+>>>
+>>> If we add more new fields, the node version will increase sharply due
+>>> to there is (n << 2) combination with n fields. Right? Any thoughts to
+>>> reduce maintaining overhead on those node versions structures?
 >>
->> IIUC, Yunlei just want use a flag to detect *real* data corruption on-line, then
->> it can be a condition to end up issuing discard from background/umount/fstrim to
->> prevent further data losing.
->>
->> For that, as I suggested before, we can split in-memory SBI_NEED_FSCK to
->> SBI_LOSE_NAT_BIT and SBI_NEED_FSCK, for backward compatibility, on-disk flag can
->> still be old one as below:
->>
->> update_ckpt_flags()
->>
->> if (SBI_NEED_FSCK || SBI_LOSE_NAT_BIT)
->> 	set_cp_flag(CP_FSCK_FLAG)
->>
->> How about that?
-> 
-> I don't think we need to add more complexity here which will give another bug
-> later. Blocking discards would make sense tho, I don't think nat_bits should
-> be together with it.
-
-We need a more clear flag to indicate that filesystem is corrupted to decide
-blocking discard, instead of using current flag which includes a state indicate
-losing nat_bits.
-
-So what's your opinion? keep as it is?
-
-Thanks,
-
-> 
-> Thanks,
-> 
+>> Do you have time to explain more about the design of multiple version structure
+>> for node block, I'm still be confused about two things:
+>> 1. what will we do if we want to add one new field in node structure.
+>> 2. how can we recognize which fields are valid and which ones are invalid.
 >>
 >> Thanks,
 >>
 >>>
+>>> Thanks,
+>>>
 >>>>
 >>>>>
->>>>>> +		}
->>>>>>  		free(kaddr);
->>>>>>  	}
->>>>>>  	return 0;
->>>>>> --
->>>>>> 1.9.1
+>>>>> Any thoughts?
+>>>>>
+>>>>> Thanks,
+>>>>>
+>>>>>> enabled node_checksum, which we may not want to do.
+>>>>>>
+>>>>>>>
+>>>>>>> Thanks,
+>>>>>>>
+>>>>>>>> 		__le32 comp[V2_NSIZE];
+>>>>>>>> 	}
+>>>>>>>> 	...
+>>>>>>>>
+>>>>>>>>> +			};
+>>>>>>>>> +			struct direct_node dn;
+>>>>>>>>> +			struct indirect_node in;
+>>>>>>>>> +		};
+>>>>>>>>>  	};
+>>>>>>>>>  	struct node_footer footer;
+>>>>>>>>>  } __packed;
+>>>>>>>>> -- 
+>>>>>>>>> 2.15.0.55.gc2ece9dc4de6
+>>>>>>>>
+>>>>>>>> .
+>>>>>>>>
 >>>
 >>> .
 >>>
+>>
 > 
 > .
 > 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
