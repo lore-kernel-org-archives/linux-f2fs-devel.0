@@ -1,55 +1,59 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: change le32 to le16 of
- f2fs_inode->i_extra_size
-Date: Fri, 13 Apr 2018 17:27:16 +0800
-Message-ID: <6612631b-6c2c-1b97-0f85-b5bccd97813e@huawei.com>
-References: <1523638954-17272-1-git-send-email-zhangzhikang1@huawei.com>
+From: Vijay Chidambaram <vijay@cs.utexas.edu>
+Subject: Re: Symlink not persisted even after fsync
+Date: Fri, 13 Apr 2018 07:57:07 -0500
+Message-ID: <CAPaz=E+b3-qO-G6ur0bGnocOwo+E8MhXwNSRVmQ7WuF1Pw=HMQ@mail.gmail.com>
+References: <CA+EzBbCbRsZ=2qkBYjGVZQAVmUz34ky8vDOB7HxqRCrgymzysQ@mail.gmail.com>
+ <CAOQ4uxhK6DQxTdipX2SP2t1960PrRt66+k3FVxQqwTBs-67cQA@mail.gmail.com>
+Reply-To: vijay@cs.utexas.edu
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1f6v08-0002tM-Tl
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Apr 2018 09:28:12 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f6uzt-00AnAY-0q
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Apr 2018 09:28:12 +0000
-In-Reply-To: <1523638954-17272-1-git-send-email-zhangzhikang1@huawei.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Zhikang Zhang <zhangzhikang1@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-btrfs-owner@vger.kernel.org>
+In-Reply-To: <CAOQ4uxhK6DQxTdipX2SP2t1960PrRt66+k3FVxQqwTBs-67cQA@mail.gmail.com>
+Sender: linux-btrfs-owner@vger.kernel.org
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jayashree Mohan <jayashree2912@gmail.com>, linux-btrfs <linux-btrfs@vger.kernel.org>, fstests <fstests@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/4/14 1:02, Zhikang Zhang wrote:
-> In the structure of f2fs_inode, i_extra_size's type is __le16,
-> so we should keep type consistent when using it.
+Hi Amir,
 
-Good catch!
+Thanks for the reply!
 
-Needs to add:
+On Fri, Apr 13, 2018 at 12:52 AM, Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> Not a bug.
+>
+> From man 2 fsync:
+>
+> "Calling  fsync() does not necessarily ensure that the entry in the
+>  directory containing the file has also reached disk.  For that an
+>  explicit fsync() on a file descriptor for the directory is also needed."
 
-Fixes: 704956ecf5bc ("f2fs: support inode checksum")
+Are we understanding this right:
 
-> 
-> Signed-off-by: Zhikang Zhang <zhangzhikang1@huawei.com>
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+ext4 and xfs fsync the parent directory if a sym link file is
+fsync-ed. But btrfs does not. Is this what we are seeing?
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+I agree that fsync of a file does not mean fsync of its directory
+entry, but it seems odd to do it for regular files and not for sym
+links. We do not see this behavior if we use a regular file instead of
+a sym link file.
+
+> There is a reason why this behavior is not being reproduces in
+> ext4/xfs, but you should be able to reproduce a similar issue
+> like this:
+>
+>
+> 1. symlink (foo, bar.tmp)
+> 2. open bar.tmp
+> 3. fsync bar.tmp
+> 4. rename(bar.tmp, bar)
+> 5. fsync bar
+> ----crash here----
+
+I'm guessing xfs/ext4 detect the symlink-fsync pattern and fsync the
+parent dir in our workload, but would miss it because of the rename in
+the workload you provided?
 
 Thanks,
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+Vijay Chidambaram
+http://www.cs.utexas.edu/~vijay/
