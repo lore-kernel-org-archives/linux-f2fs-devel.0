@@ -1,57 +1,139 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: set deadline to drop expired inmem pages
-Date: Thu, 12 Apr 2018 21:05:25 -0700
-Message-ID: <20180413040525.GB59368@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180408081312.6190-1-yuchao0@huawei.com>
- <09fd3144-d1c5-ca02-178d-b467d6fbe0e1@huawei.com>
- <20180413010433.GB51348@jaegeuk-macbookpro.roam.corp.google.com>
- <bb7d3b60-0629-ea80-c4ae-976a76abb034@huawei.com>
+Subject: Re: [PATCH] f2fs: enlarge block plug coverage
+Date: Thu, 12 Apr 2018 21:07:02 -0700
+Message-ID: <20180413040702.GC59368@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180404085404.82184-1-yuchao0@huawei.com>
+ <20180405035115.GC50337@jaegeuk-macbookpro.roam.corp.google.com>
+ <03c21c2f-cb0e-dbd4-b48a-95c2678964d1@huawei.com>
+ <20180409180241.GC17558@jaegeuk-macbookpro.roam.corp.google.com>
+ <967b8819-da9a-b609-6a22-db8df5c7ec6c@huawei.com>
+ <20180410041033.GE47598@jaegeuk-macbookpro.roam.corp.google.com>
+ <ff3990f2-5785-045e-30c5-62a9f8352d74@huawei.com>
+ <20180413010615.GA53401@jaegeuk-macbookpro.roam.corp.google.com>
+ <fd5b56ef-4f27-65b7-d3a2-71ef4425b452@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <bb7d3b60-0629-ea80-c4ae-976a76abb034@huawei.com>
+In-Reply-To: <fd5b56ef-4f27-65b7-d3a2-71ef4425b452@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Chao Yu <yuchao0@huawei.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 On 04/13, Chao Yu wrote:
-> On 2018/4/13 9:04, Jaegeuk Kim wrote:
+> On 2018/4/13 9:06, Jaegeuk Kim wrote:
 > > On 04/10, Chao Yu wrote:
-> >> Hi Jaegeuk,
-> >>
-> >> On 2018/4/8 16:13, Chao Yu wrote:
-> >>> f2fs doesn't allow abuse on atomic write class interface, so except
-> >>> limiting in-mem pages' total memory usage capacity, we need to limit
-> >>> start-commit time as well, otherwise we may run into infinite loop
-> >>> during foreground GC because target blocks in victim segment are
-> >>> belong to atomic opened file for long time.
+> >> On 2018/4/10 12:10, Jaegeuk Kim wrote:
+> >>> On 04/10, Chao Yu wrote:
+> >>>> On 2018/4/10 2:02, Jaegeuk Kim wrote:
+> >>>>> On 04/08, Chao Yu wrote:
+> >>>>>> On 2018/4/5 11:51, Jaegeuk Kim wrote:
+> >>>>>>> On 04/04, Chao Yu wrote:
+> >>>>>>>> This patch enlarges block plug coverage in __issue_discard_cmd, in
+> >>>>>>>> order to collect more pending bios before issuing them, to avoid
+> >>>>>>>> being disturbed by previous discard I/O in IO aware discard mode.
+> >>>>>>>
+> >>>>>>> Hmm, then we need to wait for huge discard IO for over 10 secs, which
+> >>>>>>
+> >>>>>> We found that total discard latency is rely on total discard number we issued
+> >>>>>> last time instead of range or length discard covered. IMO, if we don't change
+> >>>>>> .max_requests value, we will not suffer longer latency.
+> >>>>>>
+> >>>>>>> will affect following read/write IOs accordingly. In order to avoid that,
+> >>>>>>> we actually need to limit the discard size.
+> >>>>
+> >>>> Do you mean limit discard count or discard length?
 > >>>
-> >>> Now, we will check the condition with f2fs_balance_fs_bg in
-> >>> background threads, once if user doesn't commit data exceeding 30
-> >>> seconds, we will drop all cached data, so I expect it can keep our
-> >>> system running safely to prevent Dos attack.
+> >>> Both of them.
+> >>>
+> >>>>
+> >>>>>>
+> >>>>>> If you are worry about I/O interference in between discard and rw, I suggest to
+> >>>>>> decrease .max_requests value.
+> >>>>>
+> >>>>> What do you mean? This will produce more pending requests in the queue?
+> >>>>
+> >>>> I mean after applying this patch, we can queue more discard IOs in plug inside
+> >>>> task, otherwise, previous issued discard in block layer can make is_idle() be false,
+> >>>> then it can stop IO awared user to issue pending discard command.
+> >>>
+> >>> Then, unplug will issue lots of discard commands, which affects the following rw
+> >>> latencies. My preference would be issuing discard commands one by one as much as
+> >>> possible.
 > >>
-> >> Is it worth to add this patch to avoid abuse on atomic write interface by user?
+> >> Hmm.. for you concern, we can turn down IO priority of discard from background?
 > > 
-> > Hmm, hope to see a real problem first in this case.
+> > That makes much more sense to me. :P
 > 
-> I think this can be a more critical security leak instead of a potential issue
-> which we can wait for someone reporting that can be too late.
-> 
-> For example, user can simply write a huge file whose data spread in all f2fs
-> segments, once user open that file as atomic, foreground GC will suffer
-> deadloop, causing denying any further service of f2fs.
+> Then, this patch which enlarge plug coverage will not still a problem, right? ;)
 
-How can you guarantee it won't happen within 30sec? If you want to avoid that,
-you have to take a look at foreground gc.
+This is different one.
 
 > 
 > Thanks,
 > 
 > > 
+> >>
 > >> Thanks,
+> >>
+> >>>
+> >>>>
+> >>>> Thanks,
+> >>>>
+> >>>>>
+> >>>>>>
+> >>>>>> Thanks,
+> >>>>>>
+> >>>>>>>
+> >>>>>>> Thanks,
+> >>>>>>>
+> >>>>>>>>
+> >>>>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >>>>>>>> ---
+> >>>>>>>>  fs/f2fs/segment.c | 7 +++++--
+> >>>>>>>>  1 file changed, 5 insertions(+), 2 deletions(-)
+> >>>>>>>>
+> >>>>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >>>>>>>> index 8f0b5ba46315..4287e208c040 100644
+> >>>>>>>> --- a/fs/f2fs/segment.c
+> >>>>>>>> +++ b/fs/f2fs/segment.c
+> >>>>>>>> @@ -1208,10 +1208,12 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >>>>>>>>  		pend_list = &dcc->pend_list[i];
+> >>>>>>>>  
+> >>>>>>>>  		mutex_lock(&dcc->cmd_lock);
+> >>>>>>>> +
+> >>>>>>>> +		blk_start_plug(&plug);
+> >>>>>>>> +
+> >>>>>>>>  		if (list_empty(pend_list))
+> >>>>>>>>  			goto next;
+> >>>>>>>>  		f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
+> >>>>>>>> -		blk_start_plug(&plug);
+> >>>>>>>>  		list_for_each_entry_safe(dc, tmp, pend_list, list) {
+> >>>>>>>>  			f2fs_bug_on(sbi, dc->state != D_PREP);
+> >>>>>>>>  
+> >>>>>>>> @@ -1227,8 +1229,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >>>>>>>>  			if (++iter >= dpolicy->max_requests)
+> >>>>>>>>  				break;
+> >>>>>>>>  		}
+> >>>>>>>> -		blk_finish_plug(&plug);
+> >>>>>>>>  next:
+> >>>>>>>> +		blk_finish_plug(&plug);
+> >>>>>>>> +
+> >>>>>>>>  		mutex_unlock(&dcc->cmd_lock);
+> >>>>>>>>  
+> >>>>>>>>  		if (iter >= dpolicy->max_requests)
+> >>>>>>>> -- 
+> >>>>>>>> 2.15.0.55.gc2ece9dc4de6
+> >>>>>>>
+> >>>>>>> .
+> >>>>>>>
+> >>>>>
+> >>>>> .
+> >>>>>
+> >>>
+> >>> .
+> >>>
 > > 
 > > .
 > > 
