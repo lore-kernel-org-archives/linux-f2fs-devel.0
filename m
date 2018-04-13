@@ -1,22 +1,29 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v5] f2fs: stop issue discard if something wrong
- with f2fs
-Date: Fri, 13 Apr 2018 11:08:05 +0800
-Message-ID: <1523588885-9704-1-git-send-email-heyunlei@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] fsck.f2fs: recover nat bits feature default
+ by fsck
+Date: Thu, 12 Apr 2018 20:59:25 -0700
+Message-ID: <20180413035925.GA59368@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1523244881-13125-1-git-send-email-heyunlei@huawei.com>
+ <20180410040047.GD47598@jaegeuk-macbookpro.roam.corp.google.com>
+ <42B685BFA705F94C860C6DD0752F056548363846@DGGEMA503-MBS.china.huawei.com>
+ <20180413003706.GA51348@jaegeuk-macbookpro.roam.corp.google.com>
+ <bed5e036-9b1e-f1a0-0621-bf88c4ce2470@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <heyunlei@huawei.com>) id 1f6pIA-0006Lm-0M
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Apr 2018 03:22:26 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <jaegeuk@kernel.org>) id 1f6ps5-0001Kf-UX
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Apr 2018 03:59:33 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f6pI8-004aI4-DS
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Apr 2018 03:22:25 +0000
+ id 1f6ps3-00Cs7t-Re
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Apr 2018 03:59:33 +0000
+Content-Disposition: inline
+In-Reply-To: <bed5e036-9b1e-f1a0-0621-bf88c4ce2470@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,49 +33,118 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
-Cc: zhangdianfang@huawei.com
+To: Chao Yu <yuchao0@huawei.com>
+Cc: "Zhangdianfang (Euler)" <zhangdianfang@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-v4->v5: move data corruption check to __submit_discard_cmd, in order to
-control discard io submitted more accurately, besides, increase async
-thread wait time if data corruption detected.
+On 04/13, Chao Yu wrote:
+> On 2018/4/13 8:37, Jaegeuk Kim wrote:
+> > On 04/10, heyunlei wrote:
+> >>
+> >>
+> >>> -----Original Message-----
+> >>> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> >>> Sent: Tuesday, April 10, 2018 12:01 PM
+> >>> To: heyunlei
+> >>> Cc: Yuchao (T); linux-f2fs-devel@lists.sourceforge.net; Wangbintian; Zhangdianfang (Euler)
+> >>> Subject: Re: [f2fs-dev][PATCH] fsck.f2fs: recover nat bits feature default by fsck
+> >>>
+> >>> On 04/09, Yunlei He wrote:
+> >>>> Now, nat bits feature is enabled by default, we will
+> >>>> meet with the following scenarios:
+> >>>>
+> >>>> i.   disabled, without CP_NAT_BITS_FLAG, if fsck find some
+> >>>>      fs errors, fix or write new checkpoint will then enable it.
+> >>>> ii.  enabled, with CP_NAT_BITS_FLAG, in the case of sudden
+> >>>>      power off, bitmap will get lost but CP_NAT_BITS_FLAG
+> >>>>      still exist, fsck will recover bitmap in f2fs_do_mount.
+> >>>> iii. enabled, with CP_NAT_BITS_FLAG, both of bitmap and
+> >>>>      CP_NAT_BITS_FLAG will get lost if not enough space for
+> >>>>      nat bits or nat bits check failed during mounting.
+> >>>>      SBI_NEED_FSCK is set, fsck will recover flag and bitmap
+> >>>>      before next mount.
+> >>>>
+> >>>> SBI_NEED_FSCK means fs is corrupted, is not suitable for
+> >>>> nat bits disabled. This patch try to recover nat bits all
+> >>>> by fsck, no need set SBI_NEED_FSCK flag in kernel.
+> >>>>
+> >>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+> >>>> ---
+> >>>>  fsck/mount.c | 15 ++++++++++-----
+> >>>>  1 file changed, 10 insertions(+), 5 deletions(-)
+> >>>>
+> >>>> diff --git a/fsck/mount.c b/fsck/mount.c
+> >>>> index e5574c5..2361ee0 100644
+> >>>> --- a/fsck/mount.c
+> >>>> +++ b/fsck/mount.c
+> >>>> @@ -2389,7 +2389,7 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
+> >>>>  	}
+> >>>>
+> >>>>  	/* Check nat_bits */
+> >>>> -	if (c.func != DUMP && is_set_ckpt_flags(cp, CP_NAT_BITS_FLAG)) {
+> >>>> +	if (c.func != DUMP) {
+> >>>>  		u_int32_t nat_bits_bytes, nat_bits_blocks;
+> >>>>  		__le64 *kaddr;
+> >>>>  		u_int32_t blk;
+> >>>> @@ -2406,10 +2406,15 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
+> >>>>  		kaddr = malloc(PAGE_SIZE);
+> >>>>  		ret = dev_read_block(kaddr, blk);
+> >>>>  		ASSERT(ret >= 0);
+> >>>> -		if (*kaddr != get_cp_crc(cp))
+> >>>> -			write_nat_bits(sbi, sb, cp, sbi->cur_cp);
+> >>>> -		else
+> >>>> -			MSG(0, "Info: Found valid nat_bits in checkpoint\n");
+> >>>> +		if(is_set_ckpt_flags(cp, CP_NAT_BITS_FLAG)) {
+> >>>> +			if (*kaddr != get_cp_crc(cp))
+> >>>> +				write_nat_bits(sbi, sb, cp, sbi->cur_cp);
+> >>>> +			else
+> >>>> +				MSG(0, "Info: Found valid nat_bits in checkpoint\n");
+> >>>> +		} else if (c.func == FSCK){
+> >>>> +			ASSERT_MSG("Need to recover nat_bits.");
+> >>>> +			c.fix_on = 1;
+> >>>
+> >>> What if kernel doesn't support this?
+> >>
+> >> Fix or write checkpoint now will enable nat bits by default if cp space is enough,
+> >> So maybe it will not affect kernel not supporting nat bits?
+> > 
+> > I don't think we really need this, since it mixes up whole thing.
+> 
+> IIUC, Yunlei just want use a flag to detect *real* data corruption on-line, then
+> it can be a condition to end up issuing discard from background/umount/fstrim to
+> prevent further data losing.
+> 
+> For that, as I suggested before, we can split in-memory SBI_NEED_FSCK to
+> SBI_LOSE_NAT_BIT and SBI_NEED_FSCK, for backward compatibility, on-disk flag can
+> still be old one as below:
+> 
+> update_ckpt_flags()
+> 
+> if (SBI_NEED_FSCK || SBI_LOSE_NAT_BIT)
+> 	set_cp_flag(CP_FSCK_FLAG)
+> 
+> How about that?
 
-This patch stop async thread and umount process to issue discard
-if something wrong with f2fs, which is similar to fstrim.
+I don't think we need to add more complexity here which will give another bug
+later. Blocking discards would make sense tho, I don't think nat_bits should
+be together with it.
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fs/f2fs/segment.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Thanks,
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index d923ef5..991d1a2 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -929,6 +929,9 @@ static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
- 	if (dc->state != D_PREP)
- 		return;
- 
-+	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
-+		return;
-+
- 	trace_f2fs_issue_discard(dc->bdev, dc->start, dc->len);
- 
- 	dc->error = __blkdev_issue_discard(dc->bdev,
-@@ -1410,6 +1413,10 @@ static int issue_discard_thread(void *data)
- 			continue;
- 		if (kthread_should_stop())
- 			return 0;
-+		if (is_sbi_flag_set(sbi, SBI_NEED_FSCK)) {
-+			wait_ms = dpolicy.max_interval;
-+			continue;
-+		}
- 
- 		if (dcc->discard_wake)
- 			dcc->discard_wake = 0;
--- 
-1.9.1
-
+> 
+> Thanks,
+> 
+> > 
+> >>
+> >>>
+> >>>> +		}
+> >>>>  		free(kaddr);
+> >>>>  	}
+> >>>>  	return 0;
+> >>>> --
+> >>>> 1.9.1
+> > 
+> > .
+> > 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
