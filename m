@@ -1,23 +1,23 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v11 36/63] shmem: Convert shmem_confirm_swap to
- XArray
-Date: Sat, 14 Apr 2018 07:12:49 -0700
-Message-ID: <20180414141316.7167-37-willy@infradead.org>
+Subject: [PATCH v11 23/63] page cache: Convert
+ filemap_range_has_page to XArray
+Date: Sat, 14 Apr 2018 07:12:36 -0700
+Message-ID: <20180414141316.7167-24-willy@infradead.org>
 References: <20180414141316.7167-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1f7NiG-0006eQ-Gt
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:07:40 +0000
+ (envelope-from <willy@infradead.org>) id 1f7NiJ-0006sK-AK
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:07:43 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f7NiF-004UgE-8B
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:07:40 +0000
+ id 1f7NiI-004UgE-3r
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:07:43 +0000
 In-Reply-To: <20180414141316.7167-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,31 +33,58 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-xa_load has its own RCU locking, so we can eliminate it here.
+Instead of calling find_get_pages_range() and putting any reference,
+use xas_find() to iterate over any entries in the range, skipping the
+shadow/swap entries.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- mm/shmem.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ mm/filemap.c | 26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index b538cd71f772..5b8a2d944a0c 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -348,12 +348,7 @@ static int shmem_xa_replace(struct address_space *mapping,
- static bool shmem_confirm_swap(struct address_space *mapping,
- 			       pgoff_t index, swp_entry_t swap)
+diff --git a/mm/filemap.c b/mm/filemap.c
+index bf231ebadb86..b260c83751b8 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -458,20 +458,30 @@ EXPORT_SYMBOL(filemap_flush);
+ bool filemap_range_has_page(struct address_space *mapping,
+ 			   loff_t start_byte, loff_t end_byte)
  {
--	void *item;
--
--	rcu_read_lock();
--	item = radix_tree_lookup(&mapping->i_pages, index);
--	rcu_read_unlock();
--	return item == swp_to_radix_entry(swap);
-+	return xa_load(&mapping->i_pages, index) == swp_to_radix_entry(swap);
- }
+-	pgoff_t index = start_byte >> PAGE_SHIFT;
+-	pgoff_t end = end_byte >> PAGE_SHIFT;
+ 	struct page *page;
++	XA_STATE(xas, &mapping->i_pages, start_byte >> PAGE_SHIFT);
++	pgoff_t max = end_byte >> PAGE_SHIFT;
  
- /*
+ 	if (end_byte < start_byte)
+ 		return false;
+ 
+-	if (mapping->nrpages == 0)
+-		return false;
++	rcu_read_lock();
++	do {
++		page = xas_find(&xas, max);
++		if (xas_retry(&xas, page))
++			continue;
++		/* Shadow entries don't count */
++		if (xa_is_value(page))
++			continue;
++		/*
++		 * We don't need to try to pin this page; we're about to
++		 * release the RCU lock anyway.  It is enough to know that
++		 * there was a page here recently.
++		 */
++	} while (0);
++	rcu_read_unlock();
+ 
+-	if (!find_get_pages_range(mapping, &index, end, 1, &page))
+-		return false;
+-	put_page(page);
+-	return true;
++	return page != NULL;
+ }
+ EXPORT_SYMBOL(filemap_range_has_page);
+ 
 -- 
 2.17.0
 
