@@ -1,22 +1,22 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v11 31/63] mm: Convert huge_memory to XArray
-Date: Sat, 14 Apr 2018 07:12:44 -0700
-Message-ID: <20180414141316.7167-32-willy@infradead.org>
+Subject: [PATCH v11 11/63] xarray: Add xa_extract
+Date: Sat, 14 Apr 2018 07:12:24 -0700
+Message-ID: <20180414141316.7167-12-willy@infradead.org>
 References: <20180414141316.7167-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1f7NhU-0004vT-C2
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:06:52 +0000
+ (envelope-from <willy@infradead.org>) id 1f7NhV-0006Tm-UL
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:06:53 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f7NhS-004UgE-J0
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:06:52 +0000
+ id 1f7NhU-004UgE-Io
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:06:53 +0000
 In-Reply-To: <20180414141316.7167-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -32,64 +32,120 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Quite a straightforward conversion.
+This function combines the functionality of radix_tree_gang_lookup() and
+radix_tree_gang_lookup_tagged().  It extracts entries matching the
+specified filter into a normal array.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- mm/huge_memory.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ include/linux/xarray.h |  2 ++
+ lib/xarray.c           | 80 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 82 insertions(+)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 14ed6ee5e02f..f2d6b53cb8e9 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2442,13 +2442,13 @@ static void __split_huge_page(struct page *page, struct list_head *list,
- 	ClearPageCompound(head);
- 	/* See comment in __split_huge_page_tail() */
- 	if (PageAnon(head)) {
--		/* Additional pin to radix tree of swap cache */
-+		/* Additional pin to swap cache */
- 		if (PageSwapCache(head))
- 			page_ref_add(head, 2);
- 		else
- 			page_ref_inc(head);
- 	} else {
--		/* Additional pin to radix tree */
-+		/* Additional pin to page cache */
- 		page_ref_add(head, 2);
- 		xa_unlock(&head->mapping->i_pages);
- 	}
-@@ -2560,7 +2560,7 @@ bool can_split_huge_page(struct page *page, int *pextra_pins)
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index 4162dadef9b2..4ee606957019 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -227,6 +227,8 @@ void *xa_find(struct xarray *xa, unsigned long *index,
+ 		unsigned long max, xa_tag_t) __attribute__((nonnull(2)));
+ void *xa_find_after(struct xarray *xa, unsigned long *index,
+ 		unsigned long max, xa_tag_t) __attribute__((nonnull(2)));
++unsigned int xa_extract(struct xarray *, void **dst, unsigned long start,
++		unsigned long max, unsigned int n, xa_tag_t);
+ 
+ /**
+  * xa_init() - Initialise an empty XArray.
+diff --git a/lib/xarray.c b/lib/xarray.c
+index 73cf4c984c2d..77133bc5419f 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -1402,6 +1402,86 @@ void *xa_find_after(struct xarray *xa, unsigned long *indexp,
+ }
+ EXPORT_SYMBOL(xa_find_after);
+ 
++static unsigned int xas_extract_present(struct xa_state *xas, void **dst,
++			unsigned long max, unsigned int n)
++{
++	void *entry;
++	unsigned int i = 0;
++
++	rcu_read_lock();
++	xas_for_each(xas, entry, max) {
++		if (xas_retry(xas, entry))
++			continue;
++		dst[i++] = entry;
++		if (i == n)
++			break;
++	}
++	rcu_read_unlock();
++
++	return i;
++}
++
++static unsigned int xas_extract_tag(struct xa_state *xas, void **dst,
++			unsigned long max, unsigned int n, xa_tag_t tag)
++{
++	void *entry;
++	unsigned int i = 0;
++
++	rcu_read_lock();
++	xas_for_each_tag(xas, entry, max, tag) {
++		if (xas_retry(xas, entry))
++			continue;
++		dst[i++] = entry;
++		if (i == n)
++			break;
++	}
++	rcu_read_unlock();
++
++	return i;
++}
++
++/**
++ * xa_extract() - Copy selected entries from the XArray into a normal array.
++ * @xa: The source XArray to copy from.
++ * @dst: The buffer to copy entries into.
++ * @start: The first index in the XArray eligible to be selected.
++ * @max: The last index in the XArray eligible to be selected.
++ * @n: The maximum number of entries to copy.
++ * @filter: Selection criterion.
++ *
++ * Copies up to @n entries that match @filter from the XArray.  The
++ * copied entries will have indices between @start and @max, inclusive.
++ *
++ * The @filter may be an XArray tag value, in which case entries which are
++ * tagged with that tag will be copied.  It may also be %XA_PRESENT, in
++ * which case non-NULL entries will be copied.
++ *
++ * The entries returned may not represent a snapshot of the XArray at a
++ * moment in time.  For example, if another thread stores to index 5, then
++ * index 10, calling xa_extract() may return the old contents of index 5
++ * and the new contents of index 10.  Indices not modified while this
++ * function is running will not be skipped.
++ *
++ * If you need stronger guarantees, holding the xa_lock across calls to this
++ * function will prevent concurrent modification.
++ *
++ * Context: Any context.  Takes and releases the RCU lock.
++ * Return: The number of entries copied.
++ */
++unsigned int xa_extract(struct xarray *xa, void **dst, unsigned long start,
++			unsigned long max, unsigned int n, xa_tag_t filter)
++{
++	XA_STATE(xas, xa, start);
++
++	if (!n)
++		return 0;
++
++	if ((__force unsigned int)filter < XA_MAX_TAGS)
++		return xas_extract_tag(&xas, dst, max, n, filter);
++	return xas_extract_present(&xas, dst, max, n);
++}
++EXPORT_SYMBOL(xa_extract);
++
+ #ifdef XA_DEBUG
+ void xa_dump_node(const struct xa_node *node)
  {
- 	int extra_pins;
- 
--	/* Additional pins from radix tree */
-+	/* Additional pins from page cache */
- 	if (PageAnon(page))
- 		extra_pins = PageSwapCache(page) ? HPAGE_PMD_NR : 0;
- 	else
-@@ -2656,17 +2656,14 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- 	spin_lock_irqsave(zone_lru_lock(page_zone(head)), flags);
- 
- 	if (mapping) {
--		void **pslot;
-+		XA_STATE(xas, &mapping->i_pages, page_index(head));
- 
--		xa_lock(&mapping->i_pages);
--		pslot = radix_tree_lookup_slot(&mapping->i_pages,
--				page_index(head));
- 		/*
--		 * Check if the head page is present in radix tree.
-+		 * Check if the head page is present in page cache.
- 		 * We assume all tail are present too, if head is there.
- 		 */
--		if (radix_tree_deref_slot_protected(pslot,
--					&mapping->i_pages.xa_lock) != head)
-+		xa_lock(&mapping->i_pages);
-+		if (xas_load(&xas) != head)
- 			goto fail;
- 	}
- 
 -- 
 2.17.0
 
