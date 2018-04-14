@@ -1,62 +1,140 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v5] f2fs: introduce a method to make nat
- journal more fresh
-Date: Fri, 13 Apr 2018 17:48:00 -0700
-Message-ID: <20180414004800.GA35840@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1523344306-16493-1-git-send-email-heyunlei@huawei.com>
- <527e85f8-e407-1897-9929-b9a8be53f557@huawei.com>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: Symlink not persisted even after fsync
+Date: Sat, 14 Apr 2018 11:20:17 +1000
+Message-ID: <20180414012017.GF5572@dastard>
+References: <CA+EzBbCbRsZ=2qkBYjGVZQAVmUz34ky8vDOB7HxqRCrgymzysQ@mail.gmail.com>
+ <CAOQ4uxhK6DQxTdipX2SP2t1960PrRt66+k3FVxQqwTBs-67cQA@mail.gmail.com>
+ <CAPaz=E+-baGSWhL3nD-8X4jn6rKdn2AVGLeqWh3EY5Nh-RodRA@mail.gmail.com>
+ <CAOQ4uxhRoAnxr36Cy1pov+ExnNJ8Y+inmUc7chD77ONPt=u9qw@mail.gmail.com>
+ <CA+EzBbCFURDs77xiL3ECf7+4irrywbmD1HdsUSUYE_oeonbo8A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1f79MT-0004XS-Bt
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 00:48:13 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f79MR-00GQWp-Jh
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 00:48:13 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-btrfs-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <527e85f8-e407-1897-9929-b9a8be53f557@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: zhangdianfang@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <CA+EzBbCFURDs77xiL3ECf7+4irrywbmD1HdsUSUYE_oeonbo8A@mail.gmail.com>
+Sender: linux-btrfs-owner@vger.kernel.org
+To: Jayashree Mohan <jayashree2912@gmail.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, Vijaychidambaram Velayudhan Pillai <vijay@cs.utexas.edu>, linux-btrfs <linux-btrfs@vger.kernel.org>, fstests <fstests@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-I removed this patch in my test branch, since it simply gave a kernel panic.
-Please test before sending patches.
-
-repro
-1. encrypt a dir
-2. dd to create 10MB-sized file in the dir
-
-On 04/12, Chao Yu wrote:
-> On 2018/4/10 15:11, Yunlei He wrote:
-> > This patch introduce a method to make nat journal more fresh:
-> > i.  sort set list using dirty entry number and cp version
-> >     average value.
-> > ii. if meet with cache hit, update average version valus with
-> >     current cp version.
-> > 
-> > With this patch, newly modified nat set will flush to journal,
-> > and flush old nat set with same dirty entry number to nat area.
-> > 
-> > Signed-off-by: Yunlei He <heyunlei@huawei.com>
+On Fri, Apr 13, 2018 at 09:39:27AM -0500, Jayashree Mohan wrote:
+> Hey Dave,
 > 
-> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> Thanks for clarifying the crash recovery semantics of strictly
+> metadata ordered filesystems. We had a follow-up question in this
+> case.
 > 
-> Thanks,
+> On Fri, Apr 13, 2018 at 8:16 AM, Amir Goldstein <amir73il@gmail.com> wrote:
+> > On Fri, Apr 13, 2018 at 3:54 PM, Vijay Chidambaram <vijay@cs.utexas.edu> wrote:
+> >> Hi Amir,
+> >>
+> >> Thanks for the reply!
+> >>
+> >> On Fri, Apr 13, 2018 at 12:52 AM, Amir Goldstein <amir73il@gmail.com> wrote:
+> >>>
+> >>> Not a bug.
+> >>>
+> >>> From man 2 fsync:
+> >>>
+> >>> "Calling  fsync() does not necessarily ensure that the entry in the
+> >>>  directory containing the file has also reached disk.  For that an
+> >>>  explicit fsync() on a file descriptor for the directory is also needed."
+> >>
+> >>
+> >> Are we understanding this right:
+> >>
+> >> ext4 and xfs fsync the parent directory if a sym link file is fsync-ed. But
+> >> btrfs does not. Is this what we are seeing?
+> >
+> > Nope.
+> >
+> > You are seeing an unintentional fsync of parent, because both
+> > parent update and symlink update are metadata updates that are
+> > tracked by the same transaction.
+> >
+> > fsync of symlink forces the current transaction to the journal,
+> > pulling in the parent update with it.
+> >
+> >
+> >>
+> >> I agree that fsync of a file does not mean fsync of its directory entry, but
+> >> it seems odd to do it for regular files and not for sym links. We do not see
+> >> this behavior if we use a regular file instead of a sym link file.
+> >>
+> >
+> > fsync of regular file behaves differently than fsync of non regular file.
+> > I suggest this read:
+> > https://thunk.org/tytso/blog/2009/03/12/delayed-allocation-and-the-zero-length-file-problem/
+> >
+> >>>
+> >>> There is a reason why this behavior is not being reproduces in
+> >>> ext4/xfs, but you should be able to reproduce a similar issue
+> >>> like this:
+> >>>
+> >>>
+> >>> 1. symlink (foo, bar.tmp)
+> >>> 2. open bar.tmp
+> >>> 3. fsync bar.tmp
+> >>> 4. rename(bar.tmp, bar)
+> >>> 5. fsync bar
+> >>> ----crash here----
+> >>
+> 
+> Going by your argument that all previous transactions that referenced
+> the file being fsync-ed needs to be committed, should we expect xfs
+> (and ext4) to persist file bar in this case?
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+No, that's not what I'm implying. I'm implying that there is
+specific ordering dependencies that govern this behaviour, and
+assuming that what the fsync man page says about files applies to
+symlinks is not a valid assumption because files and symlinks are
+not equivalent objects.
+
+In these cases, you first have to ask "what are we actually running
+fsync on?"
+
+The fsync is being performed on the inode the symlink points to, not
+the symlink. You can't directly open a symlink to fsync the symlink.
+
+Then you have to ask "what is the dependency chain between the
+parent directory, the symlink and the file it points to?"
+
+the short answer is that symlinks have no direct relationship to the
+object they point to. i.e. symlinks contain a path, not a reference
+to a specific filesystem object.
+
+IOWs, symlinks are really a directory construct, not a file.
+However, there is no ordering dependency between a symlink and what
+it points to. symlinks contain a path which needs to be resolved to
+find out what it points to, and that may not even exist. Files have
+no reference to symlinks that point at them, so there's no way we
+can create an ordering dependency between file updates and any
+symlink that points to them.
+
+Directories, OTOH, contain a pointer to a reference counted object
+(an inode) in their dirents. hence if you add/remove directory
+dirents that point to an inode, you also have to modify the inode
+link counts as it records how many directory entries point at it.
+That's a bi-directional atomic modification ordering dependency
+between directories and inodes they point at.
+
+So when we look at symlinks, the parent directory has a ordering
+dependency with the symlink inode, not whatever is found by
+resolving the path in the symlink data. IOWs, there is no ordering
+relationship between the symlink's parent directory and whatever the
+symlink points at. i.e. it's a one-way relationship, and so there is
+no reverse ordering dependency that requires fsync() on the file to
+force synchronisation of a symlink it knows nothing about.
+
+i.e. the ordering dependency that exists with symlinks is between
+the symlink and it's parent directory, not whatever the symlink
+points to. Hence fsyncing whatever the symlink points to does not
+guarantee that the symlink is made stable because the symlink is not
+part of the dependency chain of the object being fsync()d....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
