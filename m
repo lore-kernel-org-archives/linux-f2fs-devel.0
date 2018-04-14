@@ -1,23 +1,23 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v11 59/63] dax: Return fault code from
- dax_load_hole
-Date: Sat, 14 Apr 2018 07:13:12 -0700
-Message-ID: <20180414141316.7167-60-willy@infradead.org>
+Subject: [PATCH v11 56/63] dax: Convert __dax_invalidate_entry to
+ XArray
+Date: Sat, 14 Apr 2018 07:13:09 -0700
+Message-ID: <20180414141316.7167-57-willy@infradead.org>
 References: <20180414141316.7167-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1f7Nid-0005AC-M8
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:08:03 +0000
+ (envelope-from <willy@infradead.org>) id 1f7Nic-0006jH-9P
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:08:02 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f7Nic-004UgE-Et
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:08:03 +0000
+ id 1f7Nia-004UgE-VT
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:08:02 +0000
 In-Reply-To: <20180414141316.7167-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,43 +33,54 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-dax_load_hole was swallowing the errors from vm_insert_mixed().
-Use vmf_insert_mixed() instead to get a vm_fault_t, and convert
-dax_load_hole() to the vm_fault_t convention.
+Avoids walking the radix tree multiple times looking for tags.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/dax.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ fs/dax.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
 diff --git a/fs/dax.c b/fs/dax.c
-index bcc3fd05ab03..44785346c02f 100644
+index 19ac013204a1..b68b2f81fa47 100644
 --- a/fs/dax.c
 +++ b/fs/dax.c
-@@ -808,18 +808,19 @@ static int dax_iomap_pfn(struct iomap *iomap, loff_t pos, size_t size,
-  * If this page is ever written to we will re-fault and change the mapping to
-  * point to real DAX storage instead.
-  */
--static int dax_load_hole(struct xa_state *xas, struct address_space *mapping,
--		void **entry, struct vm_fault *vmf)
-+static vm_fault_t dax_load_hole(struct xa_state *xas,
-+		struct address_space *mapping, void **entry,
-+		struct vm_fault *vmf)
+@@ -586,27 +586,28 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
+ static int __dax_invalidate_entry(struct address_space *mapping,
+ 					  pgoff_t index, bool trunc)
  {
- 	struct inode *inode = mapping->host;
- 	unsigned long vaddr = vmf->address;
--	int ret = VM_FAULT_NOPAGE;
-+	vm_fault_t ret;
- 	pfn_t pfn = pfn_to_pfn_t(my_zero_pfn(vaddr));
++	XA_STATE(xas, &mapping->i_pages, index);
+ 	int ret = 0;
+ 	void *entry;
+-	struct radix_tree_root *pages = &mapping->i_pages;
  
- 	*entry = dax_insert_entry(xas, mapping, *entry, pfn, DAX_ZERO_PAGE,
- 			false);
- 
--	vm_insert_mixed(vmf->vma, vaddr, pfn);
-+	ret = vmf_insert_mixed(vmf->vma, vaddr, pfn);
- 	trace_dax_load_hole(inode, vmf, ret);
+-	xa_lock_irq(pages);
+-	entry = get_unlocked_mapping_entry(mapping, index, NULL);
++	xas_lock_irq(&xas);
++	entry = get_unlocked_entry(&xas);
+ 	if (!entry || WARN_ON_ONCE(!xa_is_value(entry)))
+ 		goto out;
+ 	if (!trunc &&
+-	    (radix_tree_tag_get(pages, index, PAGECACHE_TAG_DIRTY) ||
+-	     radix_tree_tag_get(pages, index, PAGECACHE_TAG_TOWRITE)))
++	    (xas_get_tag(&xas, PAGECACHE_TAG_DIRTY) ||
++	     xas_get_tag(&xas, PAGECACHE_TAG_TOWRITE)))
+ 		goto out;
+ 	dax_disassociate_entry(entry, mapping, trunc);
+-	radix_tree_delete(pages, index);
++	xas_store(&xas, NULL);
+ 	mapping->nrexceptional--;
+ 	ret = 1;
+ out:
+-	put_unlocked_mapping_entry(mapping, index, entry);
+-	xa_unlock_irq(pages);
++	put_unlocked_entry(&xas, entry);
++	xas_unlock_irq(&xas);
  	return ret;
  }
++
+ /*
+  * Delete DAX entry at @index from @mapping.  Wait for it
+  * to be unlocked before deleting it.
 -- 
 2.17.0
 
