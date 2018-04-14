@@ -1,22 +1,23 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v11 47/63] fs: Convert writeback to XArray
-Date: Sat, 14 Apr 2018 07:13:00 -0700
-Message-ID: <20180414141316.7167-48-willy@infradead.org>
+Subject: [PATCH v11 52/63] dax: dax_insert_mapping_entry always
+ succeeds
+Date: Sat, 14 Apr 2018 07:13:05 -0700
+Message-ID: <20180414141316.7167-53-willy@infradead.org>
 References: <20180414141316.7167-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1f7NjB-0006n9-Ll
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:08:37 +0000
+ (envelope-from <willy@infradead.org>) id 1f7NjD-0006zh-3u
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:08:39 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f7NjA-004UgE-Di
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:08:37 +0000
+ id 1f7NjB-004UgE-Rb
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:08:39 +0000
 In-Reply-To: <20180414141316.7167-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -32,62 +33,67 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-A couple of short loops.
+It does not return an error, so we don't need to check the return value
+for IS_ERR().
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/fs-writeback.c | 25 +++++++++----------------
- 1 file changed, 9 insertions(+), 16 deletions(-)
+ fs/dax.c | 16 +---------------
+ 1 file changed, 1 insertion(+), 15 deletions(-)
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 18e7807c74ea..87a2827721e0 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -339,9 +339,9 @@ static void inode_switch_wbs_work_fn(struct work_struct *work)
- 	struct address_space *mapping = inode->i_mapping;
- 	struct bdi_writeback *old_wb = inode->i_wb;
- 	struct bdi_writeback *new_wb = isw->new_wb;
--	struct radix_tree_iter iter;
-+	XA_STATE(xas, &mapping->i_pages, 0);
-+	struct page *page;
- 	bool switched = false;
--	void **slot;
+diff --git a/fs/dax.c b/fs/dax.c
+index b0efb0a9604a..c6086e7566c3 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -909,18 +909,12 @@ static int dax_load_hole(struct address_space *mapping, void *entry,
+ 	struct inode *inode = mapping->host;
+ 	unsigned long vaddr = vmf->address;
+ 	int ret = VM_FAULT_NOPAGE;
+-	void *entry2;
+ 	pfn_t pfn = pfn_to_pfn_t(my_zero_pfn(vaddr));
  
- 	/*
- 	 * By the time control reaches here, RCU grace period has passed
-@@ -375,25 +375,18 @@ static void inode_switch_wbs_work_fn(struct work_struct *work)
- 	 * to possibly dirty pages while PAGECACHE_TAG_WRITEBACK points to
- 	 * pages actually under writeback.
- 	 */
--	radix_tree_for_each_tagged(slot, &mapping->i_pages, &iter, 0,
--				   PAGECACHE_TAG_DIRTY) {
--		struct page *page = radix_tree_deref_slot_protected(slot,
--						&mapping->i_pages.xa_lock);
--		if (likely(page) && PageDirty(page)) {
-+	xas_for_each_tag(&xas, page, ULONG_MAX, PAGECACHE_TAG_DIRTY) {
-+		if (PageDirty(page)) {
- 			dec_wb_stat(old_wb, WB_RECLAIMABLE);
- 			inc_wb_stat(new_wb, WB_RECLAIMABLE);
- 		}
- 	}
+-	entry2 = dax_insert_mapping_entry(mapping, vmf, entry, pfn,
++	dax_insert_mapping_entry(mapping, vmf, entry, pfn,
+ 			DAX_ZERO_PAGE, false);
+-	if (IS_ERR(entry2)) {
+-		ret = VM_FAULT_SIGBUS;
+-		goto out;
+-	}
  
--	radix_tree_for_each_tagged(slot, &mapping->i_pages, &iter, 0,
--				   PAGECACHE_TAG_WRITEBACK) {
--		struct page *page = radix_tree_deref_slot_protected(slot,
--						&mapping->i_pages.xa_lock);
--		if (likely(page)) {
--			WARN_ON_ONCE(!PageWriteback(page));
--			dec_wb_stat(old_wb, WB_WRITEBACK);
--			inc_wb_stat(new_wb, WB_WRITEBACK);
+ 	vm_insert_mixed(vmf->vma, vaddr, pfn);
+-out:
+ 	trace_dax_load_hole(inode, vmf, ret);
+ 	return ret;
+ }
+@@ -1230,10 +1224,6 @@ static int dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ 
+ 		entry = dax_insert_mapping_entry(mapping, vmf, entry, pfn,
+ 						 0, write && !sync);
+-		if (IS_ERR(entry)) {
+-			error = PTR_ERR(entry);
+-			goto error_finish_iomap;
 -		}
-+	xas_set(&xas, 0);
-+	xas_for_each_tag(&xas, page, ULONG_MAX, PAGECACHE_TAG_WRITEBACK) {
-+		WARN_ON_ONCE(!PageWriteback(page));
-+		dec_wb_stat(old_wb, WB_WRITEBACK);
-+		inc_wb_stat(new_wb, WB_WRITEBACK);
- 	}
  
- 	wb_get(new_wb);
+ 		/*
+ 		 * If we are doing synchronous page fault and inode needs fsync,
+@@ -1317,8 +1307,6 @@ static int dax_pmd_load_hole(struct vm_fault *vmf, struct iomap *iomap,
+ 	pfn = page_to_pfn_t(zero_page);
+ 	ret = dax_insert_mapping_entry(mapping, vmf, entry, pfn,
+ 			DAX_PMD | DAX_ZERO_PAGE, false);
+-	if (IS_ERR(ret))
+-		goto fallback;
+ 
+ 	ptl = pmd_lock(vmf->vma->vm_mm, vmf->pmd);
+ 	if (!pmd_none(*(vmf->pmd))) {
+@@ -1440,8 +1428,6 @@ static int dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ 
+ 		entry = dax_insert_mapping_entry(mapping, vmf, entry, pfn,
+ 						DAX_PMD, write && !sync);
+-		if (IS_ERR(entry))
+-			goto finish_iomap;
+ 
+ 		/*
+ 		 * If we are doing synchronous page fault and inode needs fsync,
 -- 
 2.17.0
 
