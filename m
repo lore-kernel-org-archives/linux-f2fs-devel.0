@@ -1,22 +1,23 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v11 12/63] xarray: Add xa_destroy
-Date: Sat, 14 Apr 2018 07:12:25 -0700
-Message-ID: <20180414141316.7167-13-willy@infradead.org>
+Subject: [PATCH v11 36/63] shmem: Convert shmem_confirm_swap to
+ XArray
+Date: Sat, 14 Apr 2018 07:12:49 -0700
+Message-ID: <20180414141316.7167-37-willy@infradead.org>
 References: <20180414141316.7167-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1f7NiH-0006rv-Ty
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:07:41 +0000
+ (envelope-from <willy@infradead.org>) id 1f7NiG-0006eQ-Gt
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:07:40 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f7NiG-004UgE-Mq
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:07:41 +0000
+ id 1f7NiF-004UgE-8B
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:07:40 +0000
 In-Reply-To: <20180414141316.7167-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -32,66 +33,31 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-This function frees all the internal memory allocated to the xarray
-and reinitialises it to be empty.
+xa_load has its own RCU locking, so we can eliminate it here.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- include/linux/xarray.h |  1 +
- lib/xarray.c           | 28 ++++++++++++++++++++++++++++
- 2 files changed, 29 insertions(+)
+ mm/shmem.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index 4ee606957019..00f74b962def 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -229,6 +229,7 @@ void *xa_find_after(struct xarray *xa, unsigned long *index,
- 		unsigned long max, xa_tag_t) __attribute__((nonnull(2)));
- unsigned int xa_extract(struct xarray *, void **dst, unsigned long start,
- 		unsigned long max, unsigned int n, xa_tag_t);
-+void xa_destroy(struct xarray *);
- 
- /**
-  * xa_init() - Initialise an empty XArray.
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 77133bc5419f..940d22d8e76c 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -1482,6 +1482,34 @@ unsigned int xa_extract(struct xarray *xa, void **dst, unsigned long start,
- }
- EXPORT_SYMBOL(xa_extract);
- 
-+/**
-+ * xa_destroy() - Free all internal data structures.
-+ * @xa: XArray.
-+ *
-+ * After calling this function, the XArray is empty and has freed all memory
-+ * allocated for its internal data structures.  You are responsible for
-+ * freeing the objects referenced by the XArray.
-+ *
-+ * Context: Any context.  Takes and releases the xa_lock, interrupt-safe.
-+ */
-+void xa_destroy(struct xarray *xa)
-+{
-+	XA_STATE(xas, xa, 0);
-+	unsigned long flags;
-+	void *entry;
-+
-+	xas.xa_node = NULL;
-+	xas_lock_irqsave(&xas, flags);
-+	entry = xa_head_locked(xa);
-+	RCU_INIT_POINTER(xa->xa_head, NULL);
-+	xas_init_tags(&xas);
-+	/* lockdep checks we're still holding the lock in xas_free_nodes() */
-+	if (xa_is_node(entry))
-+		xas_free_nodes(&xas, xa_to_node(entry));
-+	xas_unlock_irqrestore(&xas, flags);
-+}
-+EXPORT_SYMBOL(xa_destroy);
-+
- #ifdef XA_DEBUG
- void xa_dump_node(const struct xa_node *node)
+diff --git a/mm/shmem.c b/mm/shmem.c
+index b538cd71f772..5b8a2d944a0c 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -348,12 +348,7 @@ static int shmem_xa_replace(struct address_space *mapping,
+ static bool shmem_confirm_swap(struct address_space *mapping,
+ 			       pgoff_t index, swp_entry_t swap)
  {
+-	void *item;
+-
+-	rcu_read_lock();
+-	item = radix_tree_lookup(&mapping->i_pages, index);
+-	rcu_read_unlock();
+-	return item == swp_to_radix_entry(swap);
++	return xa_load(&mapping->i_pages, index) == swp_to_radix_entry(swap);
+ }
+ 
+ /*
 -- 
 2.17.0
 
