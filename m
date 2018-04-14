@@ -1,99 +1,62 @@
-From: Jayashree Mohan <jayashree2912@gmail.com>
-Subject: Re: Symlink not persisted even after fsync
-Date: Fri, 13 Apr 2018 09:39:27 -0500
-Message-ID: <CA+EzBbCFURDs77xiL3ECf7+4irrywbmD1HdsUSUYE_oeonbo8A@mail.gmail.com>
-References: <CA+EzBbCbRsZ=2qkBYjGVZQAVmUz34ky8vDOB7HxqRCrgymzysQ@mail.gmail.com>
- <CAOQ4uxhK6DQxTdipX2SP2t1960PrRt66+k3FVxQqwTBs-67cQA@mail.gmail.com>
- <CAPaz=E+-baGSWhL3nD-8X4jn6rKdn2AVGLeqWh3EY5Nh-RodRA@mail.gmail.com> <CAOQ4uxhRoAnxr36Cy1pov+ExnNJ8Y+inmUc7chD77ONPt=u9qw@mail.gmail.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH v5] f2fs: introduce a method to make nat
+ journal more fresh
+Date: Fri, 13 Apr 2018 17:48:00 -0700
+Message-ID: <20180414004800.GA35840@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1523344306-16493-1-git-send-email-heyunlei@huawei.com>
+ <527e85f8-e407-1897-9929-b9a8be53f557@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-btrfs-owner@vger.kernel.org>
-In-Reply-To: <CAOQ4uxhRoAnxr36Cy1pov+ExnNJ8Y+inmUc7chD77ONPt=u9qw@mail.gmail.com>
-Sender: linux-btrfs-owner@vger.kernel.org
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Vijaychidambaram Velayudhan Pillai <vijay@cs.utexas.edu>, linux-btrfs <linux-btrfs@vger.kernel.org>, fstests <fstests@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, Dave Chinner <david@fromorbit.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1f79MT-0004XS-Bt
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 00:48:13 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1f79MR-00GQWp-Jh
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 00:48:13 +0000
+Content-Disposition: inline
+In-Reply-To: <527e85f8-e407-1897-9929-b9a8be53f557@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: zhangdianfang@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-Hey Dave,
+I removed this patch in my test branch, since it simply gave a kernel panic.
+Please test before sending patches.
 
-Thanks for clarifying the crash recovery semantics of strictly
-metadata ordered filesystems. We had a follow-up question in this
-case.
+repro
+1. encrypt a dir
+2. dd to create 10MB-sized file in the dir
 
-On Fri, Apr 13, 2018 at 8:16 AM, Amir Goldstein <amir73il@gmail.com> wrote:
-> On Fri, Apr 13, 2018 at 3:54 PM, Vijay Chidambaram <vijay@cs.utexas.edu> wrote:
->> Hi Amir,
->>
->> Thanks for the reply!
->>
->> On Fri, Apr 13, 2018 at 12:52 AM, Amir Goldstein <amir73il@gmail.com> wrote:
->>>
->>> Not a bug.
->>>
->>> From man 2 fsync:
->>>
->>> "Calling  fsync() does not necessarily ensure that the entry in the
->>>  directory containing the file has also reached disk.  For that an
->>>  explicit fsync() on a file descriptor for the directory is also needed."
->>
->>
->> Are we understanding this right:
->>
->> ext4 and xfs fsync the parent directory if a sym link file is fsync-ed. But
->> btrfs does not. Is this what we are seeing?
->
-> Nope.
->
-> You are seeing an unintentional fsync of parent, because both
-> parent update and symlink update are metadata updates that are
-> tracked by the same transaction.
->
-> fsync of symlink forces the current transaction to the journal,
-> pulling in the parent update with it.
->
->
->>
->> I agree that fsync of a file does not mean fsync of its directory entry, but
->> it seems odd to do it for regular files and not for sym links. We do not see
->> this behavior if we use a regular file instead of a sym link file.
->>
->
-> fsync of regular file behaves differently than fsync of non regular file.
-> I suggest this read:
-> https://thunk.org/tytso/blog/2009/03/12/delayed-allocation-and-the-zero-length-file-problem/
->
->>>
->>> There is a reason why this behavior is not being reproduces in
->>> ext4/xfs, but you should be able to reproduce a similar issue
->>> like this:
->>>
->>>
->>> 1. symlink (foo, bar.tmp)
->>> 2. open bar.tmp
->>> 3. fsync bar.tmp
->>> 4. rename(bar.tmp, bar)
->>> 5. fsync bar
->>> ----crash here----
->>
-
-Going by your argument that all previous transactions that referenced
-the file being fsync-ed needs to be committed, should we expect xfs
-(and ext4) to persist file bar in this case?
-
-If that's expected, I'd like to bring to your notice that file bar is
-not persisted in both xfs and ext4. Is there any other detail we
-should be considering in this scenario?
-
-
->>
->> I'm guessing xfs/ext4 detect the symlink-fsync pattern and fsync the parent
->> dir in our workload, but would miss it because of the rename in the workload
->> you provided?
->>
->
-> No pattern detecting by xfs/ext4 AFAIK.
-> rename does not change metadata of victim, so fsync(bar)
-> may (depending on fs) trigger no metadata transaction commit.
->
+On 04/12, Chao Yu wrote:
+> On 2018/4/10 15:11, Yunlei He wrote:
+> > This patch introduce a method to make nat journal more fresh:
+> > i.  sort set list using dirty entry number and cp version
+> >     average value.
+> > ii. if meet with cache hit, update average version valus with
+> >     current cp version.
+> > 
+> > With this patch, newly modified nat set will flush to journal,
+> > and flush old nat set with same dirty entry number to nat area.
+> > 
+> > Signed-off-by: Yunlei He <heyunlei@huawei.com>
+> 
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> 
 > Thanks,
-> Amir.
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
