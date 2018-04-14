@@ -1,8 +1,8 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v11 56/63] dax: Convert __dax_invalidate_entry to
+Subject: [PATCH v11 21/63] page cache: Convert delete_batch to
  XArray
-Date: Sat, 14 Apr 2018 07:13:09 -0700
-Message-ID: <20180414141316.7167-57-willy@infradead.org>
+Date: Sat, 14 Apr 2018 07:12:34 -0700
+Message-ID: <20180414141316.7167-22-willy@infradead.org>
 References: <20180414141316.7167-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,13 +11,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1f7Nic-0006jH-9P
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:08:02 +0000
+ (envelope-from <willy@infradead.org>) id 1f7Nit-0006l5-60
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:08:19 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f7Nia-004UgE-VT
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:08:02 +0000
+ id 1f7Nid-004UgE-SJ
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:08:19 +0000
 In-Reply-To: <20180414141316.7167-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,54 +33,92 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Avoids walking the radix tree multiple times looking for tags.
+Rename the function from page_cache_tree_delete_batch to just
+page_cache_delete_batch.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/dax.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ mm/filemap.c | 28 +++++++++++++---------------
+ 1 file changed, 13 insertions(+), 15 deletions(-)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 19ac013204a1..b68b2f81fa47 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -586,27 +586,28 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
- static int __dax_invalidate_entry(struct address_space *mapping,
- 					  pgoff_t index, bool trunc)
- {
-+	XA_STATE(xas, &mapping->i_pages, index);
- 	int ret = 0;
- 	void *entry;
--	struct radix_tree_root *pages = &mapping->i_pages;
+diff --git a/mm/filemap.c b/mm/filemap.c
+index faadf138bfc4..f85cdda6744f 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -275,7 +275,7 @@ void delete_from_page_cache(struct page *page)
+ EXPORT_SYMBOL(delete_from_page_cache);
  
--	xa_lock_irq(pages);
--	entry = get_unlocked_mapping_entry(mapping, index, NULL);
-+	xas_lock_irq(&xas);
-+	entry = get_unlocked_entry(&xas);
- 	if (!entry || WARN_ON_ONCE(!xa_is_value(entry)))
- 		goto out;
- 	if (!trunc &&
--	    (radix_tree_tag_get(pages, index, PAGECACHE_TAG_DIRTY) ||
--	     radix_tree_tag_get(pages, index, PAGECACHE_TAG_TOWRITE)))
-+	    (xas_get_tag(&xas, PAGECACHE_TAG_DIRTY) ||
-+	     xas_get_tag(&xas, PAGECACHE_TAG_TOWRITE)))
- 		goto out;
- 	dax_disassociate_entry(entry, mapping, trunc);
--	radix_tree_delete(pages, index);
-+	xas_store(&xas, NULL);
- 	mapping->nrexceptional--;
- 	ret = 1;
- out:
--	put_unlocked_mapping_entry(mapping, index, entry);
--	xa_unlock_irq(pages);
-+	put_unlocked_entry(&xas, entry);
-+	xas_unlock_irq(&xas);
- 	return ret;
- }
-+
  /*
-  * Delete DAX entry at @index from @mapping.  Wait for it
-  * to be unlocked before deleting it.
+- * page_cache_tree_delete_batch - delete several pages from page cache
++ * page_cache_delete_batch - delete several pages from page cache
+  * @mapping: the mapping to which pages belong
+  * @pvec: pagevec with pages to delete
+  *
+@@ -288,23 +288,18 @@ EXPORT_SYMBOL(delete_from_page_cache);
+  *
+  * The function expects the i_pages lock to be held.
+  */
+-static void
+-page_cache_tree_delete_batch(struct address_space *mapping,
++static void page_cache_delete_batch(struct address_space *mapping,
+ 			     struct pagevec *pvec)
+ {
+-	struct radix_tree_iter iter;
+-	void **slot;
++	XA_STATE(xas, &mapping->i_pages, pvec->pages[0]->index);
+ 	int total_pages = 0;
+ 	int i = 0, tail_pages = 0;
+ 	struct page *page;
+-	pgoff_t start;
+ 
+-	start = pvec->pages[0]->index;
+-	radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, start) {
++	mapping_set_update(&xas, mapping);
++	xas_for_each(&xas, page, ULONG_MAX) {
+ 		if (i >= pagevec_count(pvec) && !tail_pages)
+ 			break;
+-		page = radix_tree_deref_slot_protected(slot,
+-						       &mapping->i_pages.xa_lock);
+ 		if (xa_is_value(page))
+ 			continue;
+ 		if (!tail_pages) {
+@@ -313,8 +308,11 @@ page_cache_tree_delete_batch(struct address_space *mapping,
+ 			 * have our pages locked so they are protected from
+ 			 * being removed.
+ 			 */
+-			if (page != pvec->pages[i])
++			if (page != pvec->pages[i]) {
++				VM_BUG_ON_PAGE(page->index >
++						pvec->pages[i]->index, page);
+ 				continue;
++			}
+ 			WARN_ON_ONCE(!PageLocked(page));
+ 			if (PageTransHuge(page) && !PageHuge(page))
+ 				tail_pages = HPAGE_PMD_NR - 1;
+@@ -325,11 +323,11 @@ page_cache_tree_delete_batch(struct address_space *mapping,
+ 			 */
+ 			i++;
+ 		} else {
++			VM_BUG_ON_PAGE(page->index + HPAGE_PMD_NR - tail_pages
++					!= pvec->pages[i]->index, page);
+ 			tail_pages--;
+ 		}
+-		radix_tree_clear_tags(&mapping->i_pages, iter.node, slot);
+-		__radix_tree_replace(&mapping->i_pages, iter.node, slot, NULL,
+-				workingset_lookup_update(mapping));
++		xas_store(&xas, NULL);
+ 		total_pages++;
+ 	}
+ 	mapping->nrpages -= total_pages;
+@@ -350,7 +348,7 @@ void delete_from_page_cache_batch(struct address_space *mapping,
+ 
+ 		unaccount_page_cache_page(mapping, pvec->pages[i]);
+ 	}
+-	page_cache_tree_delete_batch(mapping, pvec);
++	page_cache_delete_batch(mapping, pvec);
+ 	xa_unlock_irqrestore(&mapping->i_pages, flags);
+ 
+ 	for (i = 0; i < pagevec_count(pvec); i++)
 -- 
 2.17.0
 
