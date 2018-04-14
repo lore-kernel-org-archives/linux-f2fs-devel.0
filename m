@@ -1,22 +1,23 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v11 46/63] fs: Convert buffer to XArray
-Date: Sat, 14 Apr 2018 07:12:59 -0700
-Message-ID: <20180414141316.7167-47-willy@infradead.org>
+Subject: [PATCH v11 39/63] shmem: Convert shmem_alloc_hugepage to
+ XArray
+Date: Sat, 14 Apr 2018 07:12:52 -0700
+Message-ID: <20180414141316.7167-40-willy@infradead.org>
 References: <20180414141316.7167-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1f7Ni6-0006cB-W4
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:07:30 +0000
+ (envelope-from <willy@infradead.org>) id 1f7Ni5-0006pi-Hw
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:07:29 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f7Ni5-004UgE-Og
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:07:30 +0000
+ id 1f7Ni4-004UgE-8l
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:07:29 +0000
 In-Reply-To: <20180414141316.7167-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -32,59 +33,46 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Mostly comment fixes, but one use of __xa_set_tag.
+xa_find() is a slightly easier API to use than
+radix_tree_gang_lookup_slot() because it contains its own RCU locking.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/buffer.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ mm/shmem.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index fda79261aa08..2dcca4263b5c 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -562,7 +562,7 @@ void mark_buffer_dirty_inode(struct buffer_head *bh, struct inode *inode)
- EXPORT_SYMBOL(mark_buffer_dirty_inode);
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 8d24d59b0e67..985c5cdec7f7 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1425,23 +1425,17 @@ static struct page *shmem_alloc_hugepage(gfp_t gfp,
+ 		struct shmem_inode_info *info, pgoff_t index)
+ {
+ 	struct vm_area_struct pvma;
+-	struct inode *inode = &info->vfs_inode;
+-	struct address_space *mapping = inode->i_mapping;
+-	pgoff_t idx, hindex;
+-	void __rcu **results;
++	struct address_space *mapping = info->vfs_inode.i_mapping;
++	pgoff_t hindex;
+ 	struct page *page;
  
- /*
-- * Mark the page dirty, and set it dirty in the radix tree, and mark the inode
-+ * Mark the page dirty, and set it dirty in the page cache, and mark the inode
-  * dirty.
-  *
-  * If warn is true, then emit a warning if the page is not uptodate and has
-@@ -579,8 +579,8 @@ void __set_page_dirty(struct page *page, struct address_space *mapping,
- 	if (page->mapping) {	/* Race with truncate? */
- 		WARN_ON_ONCE(warn && !PageUptodate(page));
- 		account_page_dirtied(page, mapping);
--		radix_tree_tag_set(&mapping->i_pages,
--				page_index(page), PAGECACHE_TAG_DIRTY);
-+		__xa_set_tag(&mapping->i_pages, page_index(page),
-+				PAGECACHE_TAG_DIRTY);
- 	}
- 	xa_unlock_irqrestore(&mapping->i_pages, flags);
- }
-@@ -1043,7 +1043,7 @@ __getblk_slow(struct block_device *bdev, sector_t block,
-  * The relationship between dirty buffers and dirty pages:
-  *
-  * Whenever a page has any dirty buffers, the page's dirty bit is set, and
-- * the page is tagged dirty in its radix tree.
-+ * the page is tagged dirty in the page cache.
-  *
-  * At all times, the dirtiness of the buffers represents the dirtiness of
-  * subsections of the page.  If the page has buffers, the page dirty bit is
-@@ -1066,9 +1066,9 @@ __getblk_slow(struct block_device *bdev, sector_t block,
-  * mark_buffer_dirty - mark a buffer_head as needing writeout
-  * @bh: the buffer_head to mark dirty
-  *
-- * mark_buffer_dirty() will set the dirty bit against the buffer, then set its
-- * backing page dirty, then tag the page as dirty in its address_space's radix
-- * tree and then attach the address_space's inode to its superblock's dirty
-+ * mark_buffer_dirty() will set the dirty bit against the buffer, then set
-+ * its backing page dirty, then tag the page as dirty in the page cache
-+ * and then attach the address_space's inode to its superblock's dirty
-  * inode list.
-  *
-  * mark_buffer_dirty() is atomic.  It takes bh->b_page->mapping->private_lock,
+ 	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGE_PAGECACHE))
+ 		return NULL;
+ 
+ 	hindex = round_down(index, HPAGE_PMD_NR);
+-	rcu_read_lock();
+-	if (radix_tree_gang_lookup_slot(&mapping->i_pages, &results, &idx,
+-				hindex, 1) && idx < hindex + HPAGE_PMD_NR) {
+-		rcu_read_unlock();
++	if (xa_find(&mapping->i_pages, &hindex, hindex + HPAGE_PMD_NR - 1,
++								XA_PRESENT))
+ 		return NULL;
+-	}
+-	rcu_read_unlock();
+ 
+ 	shmem_pseudo_vma_init(&pvma, info, hindex);
+ 	page = alloc_pages_vma(gfp | __GFP_COMP | __GFP_NORETRY | __GFP_NOWARN,
 -- 
 2.17.0
 
