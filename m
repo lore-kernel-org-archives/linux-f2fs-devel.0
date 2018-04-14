@@ -1,23 +1,22 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v11 63/63] radix tree: Remove
- radix_tree_clear_tags
-Date: Sat, 14 Apr 2018 07:13:16 -0700
-Message-ID: <20180414141316.7167-64-willy@infradead.org>
+Subject: [PATCH v11 60/63] page cache: Finish XArray conversion
+Date: Sat, 14 Apr 2018 07:13:13 -0700
+Message-ID: <20180414141316.7167-61-willy@infradead.org>
 References: <20180414141316.7167-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1f7Nhx-0006oA-Ne
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:07:21 +0000
+ (envelope-from <willy@infradead.org>) id 1f7Nhz-0006Zz-6Y
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:07:23 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f7Nhw-004UgE-8O
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:07:21 +0000
+ id 1f7Nhx-004UgE-VG
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:07:23 +0000
 In-Reply-To: <20180414141316.7167-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,133 +32,41 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-The page cache was the only user of this interface and it has now
-been converted to the XArray.  Transform the test into a test of
-xas_init_tags().
+With no more radix tree API users left, we can drop the GFP flags
+and use xa_init() instead of INIT_RADIX_TREE().
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- include/linux/radix-tree.h           |  2 --
- lib/radix-tree.c                     | 13 -----------
- tools/testing/radix-tree/main.c      | 12 +++++------
- tools/testing/radix-tree/tag_check.c | 32 +++++++++++++---------------
- 4 files changed, 21 insertions(+), 38 deletions(-)
+ fs/inode.c      | 2 +-
+ mm/swap_state.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
-index ceff6856470a..3f778e3beba6 100644
---- a/include/linux/radix-tree.h
-+++ b/include/linux/radix-tree.h
-@@ -255,8 +255,6 @@ void radix_tree_iter_delete(struct radix_tree_root *,
- 			struct radix_tree_iter *iter, void __rcu **slot);
- void *radix_tree_delete_item(struct radix_tree_root *, unsigned long, void *);
- void *radix_tree_delete(struct radix_tree_root *, unsigned long);
--void radix_tree_clear_tags(struct radix_tree_root *, struct radix_tree_node *,
--			   void __rcu **slot);
- unsigned int radix_tree_gang_lookup(const struct radix_tree_root *,
- 			void **results, unsigned long first_index,
- 			unsigned int max_items);
-diff --git a/lib/radix-tree.c b/lib/radix-tree.c
-index f15b9ee000b8..13a2eb2baddc 100644
---- a/lib/radix-tree.c
-+++ b/lib/radix-tree.c
-@@ -1709,19 +1709,6 @@ void *radix_tree_delete(struct radix_tree_root *root, unsigned long index)
- }
- EXPORT_SYMBOL(radix_tree_delete);
+diff --git a/fs/inode.c b/fs/inode.c
+index 13ceb98c3bd3..d40c1c16febe 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -348,7 +348,7 @@ EXPORT_SYMBOL(inc_nlink);
  
--void radix_tree_clear_tags(struct radix_tree_root *root,
--			   struct radix_tree_node *node,
--			   void __rcu **slot)
--{
--	if (node) {
--		unsigned int tag, offset = get_slot_offset(node, slot);
--		for (tag = 0; tag < RADIX_TREE_MAX_TAGS; tag++)
--			node_tag_clear(root, node, tag, offset);
--	} else {
--		root_tag_clear_all(root);
--	}
--}
--
- /**
-  *	radix_tree_tagged - test whether any items in the tree are tagged
-  *	@root:		radix tree root
-diff --git a/tools/testing/radix-tree/main.c b/tools/testing/radix-tree/main.c
-index 257f3f8aacaa..13987313311c 100644
---- a/tools/testing/radix-tree/main.c
-+++ b/tools/testing/radix-tree/main.c
-@@ -35,12 +35,12 @@ void __gang_check(unsigned long middle, long down, long up, int chunk, int hop)
- 
- void gang_check(void)
+ static void __address_space_init_once(struct address_space *mapping)
  {
--	__gang_check(1 << 30, 128, 128, 35, 2);
--	__gang_check(1 << 31, 128, 128, 32, 32);
--	__gang_check(1 << 31, 128, 128, 32, 100);
--	__gang_check(1 << 31, 128, 128, 17, 7);
--	__gang_check(0xffff0000, 0, 65536, 17, 7);
--	__gang_check(0xfffffffe, 1, 1, 17, 7);
-+	__gang_check(1UL << 30, 128, 128, 35, 2);
-+	__gang_check(1UL << 31, 128, 128, 32, 32);
-+	__gang_check(1UL << 31, 128, 128, 32, 100);
-+	__gang_check(1UL << 31, 128, 128, 17, 7);
-+	__gang_check(0xffff0000UL, 0, 65536, 17, 7);
-+	__gang_check(0xfffffffeUL, 1, 1, 17, 7);
- }
- 
- void __big_gang_check(void)
-diff --git a/tools/testing/radix-tree/tag_check.c b/tools/testing/radix-tree/tag_check.c
-index 543181e4847b..340bc4f72f34 100644
---- a/tools/testing/radix-tree/tag_check.c
-+++ b/tools/testing/radix-tree/tag_check.c
-@@ -331,29 +331,27 @@ static void single_check(void)
- 	item_kill_tree(&tree);
- }
- 
--void radix_tree_clear_tags_test(void)
-+void init_tags_test(void)
- {
-+	DEFINE_XARRAY(tree);
-+	XA_STATE(xas, &tree, 0);
- 	unsigned long index;
--	struct radix_tree_node *node;
--	struct radix_tree_iter iter;
--	void **slot;
-+	void *entry;
- 
--	RADIX_TREE(tree, GFP_KERNEL);
--
--	item_insert(&tree, 0);
--	item_tag_set(&tree, 0, 0);
--	__radix_tree_lookup(&tree, 0, &node, &slot);
--	radix_tree_clear_tags(&tree, node, slot);
--	assert(item_tag_get(&tree, 0, 0) == 0);
-+	xa_store(&tree, 0, xa_mk_value(0), GFP_KERNEL);
-+	item_tag_set(&tree, 0, XA_TAG_0);
-+	xas_load(&xas);
-+	xas_init_tags(&xas);
-+	assert(item_tag_get(&tree, 0, XA_TAG_0) == 0);
- 
- 	for (index = 0; index < 1000; index++) {
--		item_insert(&tree, index);
--		item_tag_set(&tree, index, 0);
-+		xa_store(&tree, index, xa_mk_value(index), GFP_KERNEL);
-+		item_tag_set(&tree, index, XA_TAG_0);
- 	}
- 
--	radix_tree_for_each_slot(slot, &tree, &iter, 0) {
--		radix_tree_clear_tags(&tree, iter.node, slot);
--		assert(item_tag_get(&tree, iter.index, 0) == 0);
-+	xas_for_each(&xas, entry, ULONG_MAX) {
-+		xas_init_tags(&xas);
-+		assert(item_tag_get(&tree, xas.xa_index, XA_TAG_0) == 0);
- 	}
- 
- 	item_kill_tree(&tree);
-@@ -376,5 +374,5 @@ void tag_check(void)
- 	thrash_tags();
- 	rcu_barrier();
- 	printv(2, "after thrash_tags: %d allocated\n", nr_allocated);
--	radix_tree_clear_tags_test();
-+	init_tags_test();
- }
+-	INIT_RADIX_TREE(&mapping->i_pages, GFP_ATOMIC | __GFP_ACCOUNT);
++	xa_init_flags(&mapping->i_pages, XA_FLAGS_LOCK_IRQ);
+ 	init_rwsem(&mapping->i_mmap_rwsem);
+ 	INIT_LIST_HEAD(&mapping->private_list);
+ 	spin_lock_init(&mapping->private_lock);
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index a0a562fbc65f..208a95ad00e6 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -599,7 +599,7 @@ int init_swap_address_space(unsigned int type, unsigned long nr_pages)
+ 		return -ENOMEM;
+ 	for (i = 0; i < nr; i++) {
+ 		space = spaces + i;
+-		INIT_RADIX_TREE(&space->i_pages, GFP_ATOMIC|__GFP_NOWARN);
++		xa_init_flags(&space->i_pages, XA_FLAGS_LOCK_IRQ);
+ 		atomic_set(&space->i_mmap_writable, 0);
+ 		space->a_ops = &swap_aops;
+ 		/* swap cache doesn't use writeback related tags */
 -- 
 2.17.0
 
