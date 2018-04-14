@@ -1,22 +1,23 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v11 51/63] dax: Fix use of zero page
-Date: Sat, 14 Apr 2018 07:13:04 -0700
-Message-ID: <20180414141316.7167-52-willy@infradead.org>
+Subject: [PATCH v11 42/63] memfd: Convert shmem_wait_for_pins to
+ XArray
+Date: Sat, 14 Apr 2018 07:12:55 -0700
+Message-ID: <20180414141316.7167-43-willy@infradead.org>
 References: <20180414141316.7167-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1f7NiQ-0006tc-0J
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:07:50 +0000
+ (envelope-from <willy@infradead.org>) id 1f7NiR-0006gp-IN
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:07:51 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f7NiO-004UgE-PG
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:07:49 +0000
+ id 1f7NiQ-004UgE-6v
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Apr 2018 16:07:51 +0000
 In-Reply-To: <20180414141316.7167-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -32,37 +33,108 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Use my_zero_pfn instead of ZERO_PAGE, and pass the vaddr to it so it
-works on MIPS and s390.
+Simplify the locking by taking the spinlock while we walk the tree on
+the assumption that many acquires and releases of the lock will be worse
+than holding the lock while we process an entire batch of pages.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
 ---
- fs/dax.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ mm/shmem.c | 59 ++++++++++++++++++++++--------------------------------
+ 1 file changed, 24 insertions(+), 35 deletions(-)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index e014c99b21fd..b0efb0a9604a 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -909,17 +909,9 @@ static int dax_load_hole(struct address_space *mapping, void *entry,
- 	struct inode *inode = mapping->host;
- 	unsigned long vaddr = vmf->address;
- 	int ret = VM_FAULT_NOPAGE;
--	struct page *zero_page;
- 	void *entry2;
--	pfn_t pfn;
--
--	zero_page = ZERO_PAGE(0);
--	if (unlikely(!zero_page)) {
--		ret = VM_FAULT_OOM;
--		goto out;
--	}
-+	pfn_t pfn = pfn_to_pfn_t(my_zero_pfn(vaddr));
+diff --git a/mm/shmem.c b/mm/shmem.c
+index e1a0d1c7513e..017340fe933d 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2627,9 +2627,7 @@ static void shmem_tag_pins(struct address_space *mapping)
+  */
+ static int shmem_wait_for_pins(struct address_space *mapping)
+ {
+-	struct radix_tree_iter iter;
+-	void **slot;
+-	pgoff_t start;
++	XA_STATE(xas, &mapping->i_pages, 0);
+ 	struct page *page;
+ 	int error, scan;
  
--	pfn = page_to_pfn_t(zero_page);
- 	entry2 = dax_insert_mapping_entry(mapping, vmf, entry, pfn,
- 			DAX_ZERO_PAGE, false);
- 	if (IS_ERR(entry2)) {
+@@ -2637,7 +2635,9 @@ static int shmem_wait_for_pins(struct address_space *mapping)
+ 
+ 	error = 0;
+ 	for (scan = 0; scan <= LAST_SCAN; scan++) {
+-		if (!radix_tree_tagged(&mapping->i_pages, SHMEM_TAG_PINNED))
++		unsigned int tagged = 0;
++
++		if (!xas_tagged(&xas, SHMEM_TAG_PINNED))
+ 			break;
+ 
+ 		if (!scan)
+@@ -2645,45 +2645,34 @@ static int shmem_wait_for_pins(struct address_space *mapping)
+ 		else if (schedule_timeout_killable((HZ << scan) / 200))
+ 			scan = LAST_SCAN;
+ 
+-		start = 0;
+-		rcu_read_lock();
+-		radix_tree_for_each_tagged(slot, &mapping->i_pages, &iter,
+-					   start, SHMEM_TAG_PINNED) {
+-
+-			page = radix_tree_deref_slot(slot);
+-			if (radix_tree_exception(page)) {
+-				if (radix_tree_deref_retry(page)) {
+-					slot = radix_tree_iter_retry(&iter);
+-					continue;
+-				}
+-
+-				page = NULL;
+-			}
+-
+-			if (page &&
+-			    page_count(page) - page_mapcount(page) != 1) {
+-				if (scan < LAST_SCAN)
+-					goto continue_resched;
+-
++		xas_set(&xas, 0);
++		xas_lock_irq(&xas);
++		xas_for_each_tag(&xas, page, ULONG_MAX, SHMEM_TAG_PINNED) {
++			bool clear = true;
++			if (xa_is_value(page))
++				continue;
++			if (page_count(page) - page_mapcount(page) != 1) {
+ 				/*
+ 				 * On the last scan, we clean up all those tags
+ 				 * we inserted; but make a note that we still
+ 				 * found pages pinned.
+ 				 */
+-				error = -EBUSY;
++				if (scan == LAST_SCAN)
++					error = -EBUSY;
++				else
++					clear = false;
+ 			}
++			if (clear)
++				xas_clear_tag(&xas, SHMEM_TAG_PINNED);
++			if (++tagged % XA_CHECK_SCHED)
++				continue;
+ 
+-			xa_lock_irq(&mapping->i_pages);
+-			radix_tree_tag_clear(&mapping->i_pages,
+-					     iter.index, SHMEM_TAG_PINNED);
+-			xa_unlock_irq(&mapping->i_pages);
+-continue_resched:
+-			if (need_resched()) {
+-				slot = radix_tree_iter_resume(slot, &iter);
+-				cond_resched_rcu();
+-			}
++			xas_pause(&xas);
++			xas_unlock_irq(&xas);
++			cond_resched();
++			xas_lock_irq(&xas);
+ 		}
+-		rcu_read_unlock();
++		xas_unlock_irq(&xas);
+ 	}
+ 
+ 	return error;
 -- 
 2.17.0
 
