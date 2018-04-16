@@ -1,8 +1,9 @@
 From: Eric Biggers via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
-Subject: [PATCH 1/2] fscrypt: allow synchronous bio decryption
-Date: Mon, 16 Apr 2018 12:31:46 -0700
-Message-ID: <20180416193147.104555-2-ebiggers@google.com>
+Subject: [PATCH 2/2] f2fs: refactor read path to allow multiple
+ postprocessing steps
+Date: Mon, 16 Apr 2018 12:31:47 -0700
+Message-ID: <20180416193147.104555-3-ebiggers@google.com>
 References: <20180416193147.104555-1-ebiggers@google.com>
 Reply-To: Eric Biggers <ebiggers@google.com>
 Mime-Version: 1.0
@@ -10,18 +11,18 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@google.com>) id 1f89sf-0004dz-79
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Apr 2018 19:33:37 +0000
+ (envelope-from <ebiggers@google.com>) id 1f89sh-0001X7-DR
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Apr 2018 19:33:39 +0000
 Received: from mail-pl0-f66.google.com ([209.85.160.66])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1f89sd-001wcZ-AW
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Apr 2018 19:33:37 +0000
-Received: by mail-pl0-f66.google.com with SMTP id t22-v6so1967822plo.7
+ id 1f89sf-009LML-IP
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Apr 2018 19:33:39 +0000
+Received: by mail-pl0-f66.google.com with SMTP id 91-v6so10596950pld.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 16 Apr 2018 12:33:35 -0700 (PDT)
+ Mon, 16 Apr 2018 12:33:37 -0700 (PDT)
 In-Reply-To: <20180416193147.104555-1-ebiggers@google.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -35,212 +36,380 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: Michael Halcrow <mhalcrow@google.com>, linux-fscrypt@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Victor Hsieh <victorhsieh@google.com>, Eric Biggers <ebiggers@google.com>
 
-Currently, fscrypt provides fscrypt_decrypt_bio_pages() which decrypts a
-bio's pages asynchronously, then unlocks them afterwards.  But, this
-assumes that decryption is the last "postprocessing step" for the bio,
-so it's incompatible with additional postprocessing steps such as
-authenticity verification after decryption.
+Currently f2fs's ->readpage() and ->readpages() assume that either the
+data undergoes no postprocessing, or decryption only.  But with
+fs-verity, there will be an additional authenticity verification step,
+and it may be needed either by itself, or combined with decryption.
 
-Therefore, rename the existing fscrypt_decrypt_bio_pages() to
-fscrypt_enqueue_decrypt_bio().  Then, add fscrypt_decrypt_bio() which
-decrypts the pages in the bio synchronously without unlocking the pages,
-nor setting them Uptodate; and add fscrypt_enqueue_decrypt_work(), which
-enqueues work on the fscrypt_read_workqueue.  The new functions will be
-used by filesystems that support both fscrypt and fs-verity.
+To support this, store a 'struct bio_post_read_ctx' in ->bi_private
+which contains a work struct, a bitmask of postprocessing steps that are
+enabled, and an indicator of the current step.  The bio completion
+routine, if there was no I/O error, enqueues the first postprocessing
+step.  When that completes, it continues to the next step.  Pages that
+fail any postprocessing step have PageError set.  Once all steps have
+completed, pages without PageError set are set Uptodate, and all pages
+are unlocked.
+
+Also replace f2fs_encrypted_file() with a new function
+f2fs_post_read_required() in places like direct I/O and garbage
+collection that really should be testing whether the file needs special
+I/O processing, not whether it is encrypted specifically.
+
+This may also be useful for other future f2fs features such as
+compression.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/crypto/bio.c                 | 35 +++++++++++++++++++++------------
- fs/crypto/crypto.c              |  8 +++++++-
- fs/crypto/fscrypt_private.h     |  1 -
- fs/ext4/readpage.c              |  2 +-
- fs/f2fs/data.c                  |  2 +-
- include/linux/fscrypt_notsupp.h | 13 +++++++++---
- include/linux/fscrypt_supp.h    |  5 ++++-
- 7 files changed, 45 insertions(+), 21 deletions(-)
+ fs/f2fs/data.c   | 163 +++++++++++++++++++++++++++++++++++------------
+ fs/f2fs/f2fs.h   |  12 +++-
+ fs/f2fs/file.c   |   4 +-
+ fs/f2fs/gc.c     |   6 +-
+ fs/f2fs/inline.c |   2 +-
+ fs/f2fs/super.c  |   6 ++
+ 6 files changed, 144 insertions(+), 49 deletions(-)
 
-diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
-index 0d5e6a569d58..0959044c5cee 100644
---- a/fs/crypto/bio.c
-+++ b/fs/crypto/bio.c
-@@ -26,15 +26,8 @@
- #include <linux/namei.h>
- #include "fscrypt_private.h"
- 
--/*
-- * Call fscrypt_decrypt_page on every single page, reusing the encryption
-- * context.
-- */
--static void completion_pages(struct work_struct *work)
-+static void __fscrypt_decrypt_bio(struct bio *bio, bool done)
- {
--	struct fscrypt_ctx *ctx =
--		container_of(work, struct fscrypt_ctx, r.work);
--	struct bio *bio = ctx->r.bio;
- 	struct bio_vec *bv;
- 	int i;
- 
-@@ -46,22 +39,38 @@ static void completion_pages(struct work_struct *work)
- 		if (ret) {
- 			WARN_ON_ONCE(1);
- 			SetPageError(page);
--		} else {
-+		} else if (done) {
- 			SetPageUptodate(page);
- 		}
--		unlock_page(page);
-+		if (done)
-+			unlock_page(page);
- 	}
-+}
-+
-+void fscrypt_decrypt_bio(struct bio *bio)
-+{
-+	__fscrypt_decrypt_bio(bio, false);
-+}
-+EXPORT_SYMBOL(fscrypt_decrypt_bio);
-+
-+static void completion_pages(struct work_struct *work)
-+{
-+	struct fscrypt_ctx *ctx =
-+		container_of(work, struct fscrypt_ctx, r.work);
-+	struct bio *bio = ctx->r.bio;
-+
-+	__fscrypt_decrypt_bio(bio, true);
- 	fscrypt_release_ctx(ctx);
- 	bio_put(bio);
- }
- 
--void fscrypt_decrypt_bio_pages(struct fscrypt_ctx *ctx, struct bio *bio)
-+void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx, struct bio *bio)
- {
- 	INIT_WORK(&ctx->r.work, completion_pages);
- 	ctx->r.bio = bio;
--	queue_work(fscrypt_read_workqueue, &ctx->r.work);
-+	fscrypt_enqueue_decrypt_work(&ctx->r.work);
- }
--EXPORT_SYMBOL(fscrypt_decrypt_bio_pages);
-+EXPORT_SYMBOL(fscrypt_enqueue_decrypt_bio);
- 
- void fscrypt_pullback_bio_page(struct page **page, bool restore)
- {
-diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
-index ce654526c0fb..0758d32ad01b 100644
---- a/fs/crypto/crypto.c
-+++ b/fs/crypto/crypto.c
-@@ -45,12 +45,18 @@ static mempool_t *fscrypt_bounce_page_pool = NULL;
- static LIST_HEAD(fscrypt_free_ctxs);
- static DEFINE_SPINLOCK(fscrypt_ctx_lock);
- 
--struct workqueue_struct *fscrypt_read_workqueue;
-+static struct workqueue_struct *fscrypt_read_workqueue;
- static DEFINE_MUTEX(fscrypt_init_mutex);
- 
- static struct kmem_cache *fscrypt_ctx_cachep;
- struct kmem_cache *fscrypt_info_cachep;
- 
-+void fscrypt_enqueue_decrypt_work(struct work_struct *work)
-+{
-+	queue_work(fscrypt_read_workqueue, work);
-+}
-+EXPORT_SYMBOL(fscrypt_enqueue_decrypt_work);
-+
- /**
-  * fscrypt_release_ctx() - Releases an encryption context
-  * @ctx: The encryption context to release.
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index ad6722bae8b7..4012558f6115 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -97,7 +97,6 @@ static inline bool fscrypt_valid_enc_modes(u32 contents_mode,
- /* crypto.c */
- extern struct kmem_cache *fscrypt_info_cachep;
- extern int fscrypt_initialize(unsigned int cop_flags);
--extern struct workqueue_struct *fscrypt_read_workqueue;
- extern int fscrypt_do_page_crypto(const struct inode *inode,
- 				  fscrypt_direction_t rw, u64 lblk_num,
- 				  struct page *src_page,
-diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-index 9ffa6fad18db..19b87a8de6ff 100644
---- a/fs/ext4/readpage.c
-+++ b/fs/ext4/readpage.c
-@@ -77,7 +77,7 @@ static void mpage_end_io(struct bio *bio)
- 		if (bio->bi_status) {
- 			fscrypt_release_ctx(bio->bi_private);
- 		} else {
--			fscrypt_decrypt_bio_pages(bio->bi_private, bio);
-+			fscrypt_enqueue_decrypt_bio(bio->bi_private, bio);
- 			return;
- 		}
- 	}
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 02237d4d91f5..39225519de1c 100644
+index 39225519de1c..ec70de0cd1d5 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -66,7 +66,7 @@ static void f2fs_read_end_io(struct bio *bio)
- 		if (bio->bi_status) {
- 			fscrypt_release_ctx(bio->bi_private);
- 		} else {
--			fscrypt_decrypt_bio_pages(bio->bi_private, bio);
-+			fscrypt_enqueue_decrypt_bio(bio->bi_private, bio);
- 			return;
- 		}
+@@ -30,6 +30,9 @@
+ #include "trace.h"
+ #include <trace/events/f2fs.h>
+ 
++static struct kmem_cache *bio_post_read_ctx_cache;
++static mempool_t *bio_post_read_ctx_pool;
++
+ static bool __is_cp_guaranteed(struct page *page)
+ {
+ 	struct address_space *mapping = page->mapping;
+@@ -50,11 +53,77 @@ static bool __is_cp_guaranteed(struct page *page)
+ 	return false;
+ }
+ 
+-static void f2fs_read_end_io(struct bio *bio)
++/* postprocessing steps for read bios */
++enum bio_post_read_step {
++	STEP_INITIAL = 0,
++	STEP_DECRYPT,
++};
++
++struct bio_post_read_ctx {
++	struct bio *bio;
++	struct work_struct work;
++	unsigned int cur_step;
++	unsigned int enabled_steps;
++};
++
++static void __read_end_io(struct bio *bio)
+ {
+-	struct bio_vec *bvec;
++	struct page *page;
++	struct bio_vec *bv;
+ 	int i;
+ 
++	bio_for_each_segment_all(bv, bio, i) {
++		page = bv->bv_page;
++
++		/* PG_error was set if any post_read step failed */
++		if (bio->bi_status || PageError(page)) {
++			ClearPageUptodate(page);
++			SetPageError(page);
++		} else {
++			SetPageUptodate(page);
++		}
++		unlock_page(page);
++	}
++	if (bio->bi_private)
++		mempool_free(bio->bi_private, bio_post_read_ctx_pool);
++	bio_put(bio);
++}
++
++static void bio_post_read_processing(struct bio_post_read_ctx *ctx);
++
++static void decrypt_work(struct work_struct *work)
++{
++	struct bio_post_read_ctx *ctx =
++		container_of(work, struct bio_post_read_ctx, work);
++
++	fscrypt_decrypt_bio(ctx->bio);
++
++	bio_post_read_processing(ctx);
++}
++
++static void bio_post_read_processing(struct bio_post_read_ctx *ctx)
++{
++	switch (++ctx->cur_step) {
++	case STEP_DECRYPT:
++		if (ctx->enabled_steps & (1 << STEP_DECRYPT)) {
++			INIT_WORK(&ctx->work, decrypt_work);
++			fscrypt_enqueue_decrypt_work(&ctx->work);
++			return;
++		}
++		ctx->cur_step++;
++		/* fall-through */
++	default:
++		__read_end_io(ctx->bio);
++	}
++}
++
++static bool f2fs_bio_post_read_required(struct bio *bio)
++{
++	return bio->bi_private && !bio->bi_status;
++}
++
++static void f2fs_read_end_io(struct bio *bio)
++{
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+ 	if (time_to_inject(F2FS_P_SB(bio_first_page_all(bio)), FAULT_IO)) {
+ 		f2fs_show_injection_info(FAULT_IO);
+@@ -62,28 +131,15 @@ static void f2fs_read_end_io(struct bio *bio)
  	}
-diff --git a/include/linux/fscrypt_notsupp.h b/include/linux/fscrypt_notsupp.h
-index 44b50c04bae9..9770be37c9d4 100644
---- a/include/linux/fscrypt_notsupp.h
-+++ b/include/linux/fscrypt_notsupp.h
-@@ -25,6 +25,10 @@ static inline bool fscrypt_dummy_context_enabled(struct inode *inode)
+ #endif
+ 
+-	if (f2fs_bio_encrypted(bio)) {
+-		if (bio->bi_status) {
+-			fscrypt_release_ctx(bio->bi_private);
+-		} else {
+-			fscrypt_enqueue_decrypt_bio(bio->bi_private, bio);
+-			return;
+-		}
+-	}
+-
+-	bio_for_each_segment_all(bvec, bio, i) {
+-		struct page *page = bvec->bv_page;
++	if (f2fs_bio_post_read_required(bio)) {
++		struct bio_post_read_ctx *ctx = bio->bi_private;
+ 
+-		if (!bio->bi_status) {
+-			if (!PageUptodate(page))
+-				SetPageUptodate(page);
+-		} else {
+-			ClearPageUptodate(page);
+-			SetPageError(page);
+-		}
+-		unlock_page(page);
++		ctx->cur_step = STEP_INITIAL;
++		bio_post_read_processing(ctx);
++		return;
+ 	}
+-	bio_put(bio);
++
++	__read_end_io(bio);
  }
  
- /* crypto.c */
-+static inline void fscrypt_enqueue_decrypt_work(struct work_struct *work)
+ static void f2fs_write_end_io(struct bio *bio)
+@@ -481,29 +537,33 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
+ 							 unsigned nr_pages)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	struct fscrypt_ctx *ctx = NULL;
+ 	struct bio *bio;
+-
+-	if (f2fs_encrypted_file(inode)) {
+-		ctx = fscrypt_get_ctx(inode, GFP_NOFS);
+-		if (IS_ERR(ctx))
+-			return ERR_CAST(ctx);
+-
+-		/* wait the page to be moved by cleaning */
+-		f2fs_wait_on_block_writeback(sbi, blkaddr);
+-	}
++	struct bio_post_read_ctx *ctx;
++	unsigned int post_read_steps = 0;
+ 
+ 	bio = f2fs_bio_alloc(sbi, min_t(int, nr_pages, BIO_MAX_PAGES), false);
+-	if (!bio) {
+-		if (ctx)
+-			fscrypt_release_ctx(ctx);
++	if (!bio)
+ 		return ERR_PTR(-ENOMEM);
+-	}
+ 	f2fs_target_device(sbi, blkaddr, bio);
+ 	bio->bi_end_io = f2fs_read_end_io;
+-	bio->bi_private = ctx;
+ 	bio_set_op_attrs(bio, REQ_OP_READ, 0);
+ 
++	if (f2fs_encrypted_file(inode))
++		post_read_steps |= 1 << STEP_DECRYPT;
++	if (post_read_steps) {
++		ctx = mempool_alloc(bio_post_read_ctx_pool, GFP_NOFS);
++		if (!ctx) {
++			bio_put(bio);
++			return ERR_PTR(-ENOMEM);
++		}
++		ctx->bio = bio;
++		ctx->enabled_steps = post_read_steps;
++		bio->bi_private = ctx;
++
++		/* wait the page to be moved by cleaning */
++		f2fs_wait_on_block_writeback(sbi, blkaddr);
++	}
++
+ 	return bio;
+ }
+ 
+@@ -1525,7 +1585,7 @@ static int encrypt_one_page(struct f2fs_io_info *fio)
+ 	if (!f2fs_encrypted_file(inode))
+ 		return 0;
+ 
+-	/* wait for GCed encrypted page writeback */
++	/* wait for GCed page writeback via META_MAPPING */
+ 	f2fs_wait_on_block_writeback(fio->sbi, fio->old_blkaddr);
+ 
+ retry_encrypt:
+@@ -2222,8 +2282,8 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+ 
+ 	f2fs_wait_on_page_writeback(page, DATA, false);
+ 
+-	/* wait for GCed encrypted page writeback */
+-	if (f2fs_encrypted_file(inode))
++	/* wait for GCed page writeback via META_MAPPING */
++	if (f2fs_post_read_required(inode))
+ 		f2fs_wait_on_block_writeback(sbi, blkaddr);
+ 
+ 	if (len == PAGE_SIZE || PageUptodate(page))
+@@ -2555,3 +2615,26 @@ const struct address_space_operations f2fs_dblock_aops = {
+ 	.migratepage    = f2fs_migrate_page,
+ #endif
+ };
++
++int __init f2fs_init_post_read_processing(void)
 +{
++	bio_post_read_ctx_cache = KMEM_CACHE(bio_post_read_ctx, 0);
++	if (!bio_post_read_ctx_cache)
++		goto fail;
++	bio_post_read_ctx_pool =
++		mempool_create_slab_pool(128, bio_post_read_ctx_cache);
++	if (!bio_post_read_ctx_pool)
++		goto fail_free_cache;
++	return 0;
++
++fail_free_cache:
++	kmem_cache_destroy(bio_post_read_ctx_cache);
++fail:
++	return -ENOMEM;
 +}
 +
- static inline struct fscrypt_ctx *fscrypt_get_ctx(const struct inode *inode,
- 						  gfp_t gfp_flags)
- {
-@@ -160,10 +164,13 @@ static inline bool fscrypt_match_name(const struct fscrypt_name *fname,
- }
- 
- /* bio.c */
--static inline void fscrypt_decrypt_bio_pages(struct fscrypt_ctx *ctx,
--					     struct bio *bio)
-+static inline void fscrypt_decrypt_bio(struct bio *bio)
++void __exit f2fs_destroy_post_read_processing(void)
 +{
++	mempool_destroy(bio_post_read_ctx_pool);
++	kmem_cache_destroy(bio_post_read_ctx_cache);
 +}
-+
-+static inline void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx,
-+					       struct bio *bio)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 1df7f10476d6..ea92c18db624 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2858,6 +2858,8 @@ void destroy_checkpoint_caches(void);
+ /*
+  * data.c
+  */
++int f2fs_init_post_read_processing(void);
++void f2fs_destroy_post_read_processing(void);
+ void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type);
+ void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
+ 				struct inode *inode, nid_t ino, pgoff_t idx,
+@@ -3218,9 +3220,13 @@ static inline void f2fs_set_encrypted_inode(struct inode *inode)
+ #endif
+ }
+ 
+-static inline bool f2fs_bio_encrypted(struct bio *bio)
++/*
++ * Returns true if the reads of the inode's data need to undergo some
++ * postprocessing step, like decryption or authenticity verification.
++ */
++static inline bool f2fs_post_read_required(struct inode *inode)
  {
--	return;
+-	return bio->bi_private != NULL;
++	return f2fs_encrypted_file(inode);
  }
  
- static inline void fscrypt_pullback_bio_page(struct page **page, bool restore)
-diff --git a/include/linux/fscrypt_supp.h b/include/linux/fscrypt_supp.h
-index 477a7a6504d2..2c9a86ac5e83 100644
---- a/include/linux/fscrypt_supp.h
-+++ b/include/linux/fscrypt_supp.h
-@@ -59,6 +59,7 @@ static inline bool fscrypt_dummy_context_enabled(struct inode *inode)
- }
+ #define F2FS_FEATURE_FUNCS(name, flagname) \
+@@ -3288,7 +3294,7 @@ static inline bool f2fs_may_encrypt(struct inode *inode)
  
- /* crypto.c */
-+extern void fscrypt_enqueue_decrypt_work(struct work_struct *);
- extern struct fscrypt_ctx *fscrypt_get_ctx(const struct inode *, gfp_t);
- extern void fscrypt_release_ctx(struct fscrypt_ctx *);
- extern struct page *fscrypt_encrypt_page(const struct inode *, struct page *,
-@@ -188,7 +189,9 @@ static inline bool fscrypt_match_name(const struct fscrypt_name *fname,
+ static inline bool f2fs_force_buffered_io(struct inode *inode, int rw)
+ {
+-	return (f2fs_encrypted_file(inode) ||
++	return (f2fs_post_read_required(inode) ||
+ 			(rw == WRITE && test_opt(F2FS_I_SB(inode), LFS)) ||
+ 			F2FS_I_SB(inode)->s_ndevs);
  }
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 6b94f19b3fa8..cc08956334a0 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -110,8 +110,8 @@ static int f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 	/* fill the page */
+ 	f2fs_wait_on_page_writeback(page, DATA, false);
  
- /* bio.c */
--extern void fscrypt_decrypt_bio_pages(struct fscrypt_ctx *, struct bio *);
-+extern void fscrypt_decrypt_bio(struct bio *);
-+extern void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx,
-+					struct bio *bio);
- extern void fscrypt_pullback_bio_page(struct page **, bool);
- extern int fscrypt_zeroout_range(const struct inode *, pgoff_t, sector_t,
- 				 unsigned int);
+-	/* wait for GCed encrypted page writeback */
+-	if (f2fs_encrypted_file(inode))
++	/* wait for GCed page writeback via META_MAPPING */
++	if (f2fs_post_read_required(inode))
+ 		f2fs_wait_on_block_writeback(sbi, dn.data_blkaddr);
+ 
+ out_sem:
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 9327411fd93b..70418b34c5f6 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -850,8 +850,8 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 			if (IS_ERR(inode) || is_bad_inode(inode))
+ 				continue;
+ 
+-			/* if encrypted inode, let's go phase 3 */
+-			if (f2fs_encrypted_file(inode)) {
++			/* if inode uses special I/O path, let's go phase 3 */
++			if (f2fs_post_read_required(inode)) {
+ 				add_gc_inode(gc_list, inode);
+ 				continue;
+ 			}
+@@ -899,7 +899,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 
+ 			start_bidx = start_bidx_of_node(nofs, inode)
+ 								+ ofs_in_node;
+-			if (f2fs_encrypted_file(inode))
++			if (f2fs_post_read_required(inode))
+ 				move_data_block(inode, start_bidx, segno, off);
+ 			else
+ 				move_data_page(inode, start_bidx, gc_type,
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 265da200daa8..767e41d944c6 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -25,7 +25,7 @@ bool f2fs_may_inline_data(struct inode *inode)
+ 	if (i_size_read(inode) > MAX_INLINE_DATA(inode))
+ 		return false;
+ 
+-	if (f2fs_encrypted_file(inode))
++	if (f2fs_post_read_required(inode))
+ 		return false;
+ 
+ 	return true;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 42d564c5ccd0..f31643718c76 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3092,8 +3092,13 @@ static int __init init_f2fs_fs(void)
+ 	err = f2fs_create_root_stats();
+ 	if (err)
+ 		goto free_filesystem;
++	err = f2fs_init_post_read_processing();
++	if (err)
++		goto free_root_stats;
+ 	return 0;
+ 
++free_root_stats:
++	f2fs_destroy_root_stats();
+ free_filesystem:
+ 	unregister_filesystem(&f2fs_fs_type);
+ free_shrinker:
+@@ -3116,6 +3121,7 @@ static int __init init_f2fs_fs(void)
+ 
+ static void __exit exit_f2fs_fs(void)
+ {
++	f2fs_destroy_post_read_processing();
+ 	f2fs_destroy_root_stats();
+ 	unregister_filesystem(&f2fs_fs_type);
+ 	unregister_shrinker(&f2fs_shrinker_info);
 -- 
 2.17.0.484.g0c8726318c-goog
 
