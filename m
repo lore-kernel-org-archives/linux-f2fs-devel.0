@@ -1,134 +1,99 @@
-From: "LiFan" <fanofcode.li@samsung.com>
-Subject: [PATCH] f2fs: Copy summary entries in bulk
-Date: Mon, 16 Apr 2018 19:48:40 +0800
-Message-ID: <000a01d3d578$fc23c1f0$f46b45d0$@samsung.com>
-References: <CGME20180416111043epcas5p3ea799775cd4117bd80a4207982f98548@epcas5p3.samsung.com>
- <000801d3d573$856747d0$9035d770$@samsung.com>
- <000901d3d575$fdbba760$f932f620$@samsung.com>
+From: Vijay Chidambaram <vijay@cs.utexas.edu>
+Subject: Re: Symlink not persisted even after fsync
+Date: Mon, 16 Apr 2018 10:09:53 -0500
+Message-ID: <CAPaz=ELD_yNNGbE=XVfCXYewcAVQ2Zf-MY9UCPq51KVNBgK+xg@mail.gmail.com>
+References: <CAPaz=E+-baGSWhL3nD-8X4jn6rKdn2AVGLeqWh3EY5Nh-RodRA@mail.gmail.com>
+ <CAOQ4uxhRoAnxr36Cy1pov+ExnNJ8Y+inmUc7chD77ONPt=u9qw@mail.gmail.com>
+ <CA+EzBbCFURDs77xiL3ECf7+4irrywbmD1HdsUSUYE_oeonbo8A@mail.gmail.com>
+ <20180414012017.GF5572@dastard> <CAPaz=EJrOc7dBE+gBf=Gx0W-4_q0GwTrRhchquPveWs-m-Djeg@mail.gmail.com>
+ <20180414215529.GG5572@dastard> <20180415011735.GB21830@thunk.org>
+ <CAHWVdUXAyyeTGNXrtTTc+tUbA3t9TUjJPSF=M4Cetj4+d1w3eQ@mail.gmail.com>
+ <20180415141338.GA22870@thunk.org> <CAPaz=ELkYavvWYuMg=t+L_nSZ7fZ8CkaZr-qfGVN3QfydbOh7w@mail.gmail.com>
+ <20180416055231.GB22870@thunk.org>
+Reply-To: vijay@cs.utexas.edu
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <fanofcode.li@samsung.com>) id 1f82e4-0006m9-SQ
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Apr 2018 11:50:05 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f82e2-000gzk-1a
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Apr 2018 11:50:04 +0000
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
- by mailout3.samsung.com (KnoxPortal) with ESMTP id
- 20180416114950epoutp0311ee70ab21a57f7a06e8dc01c61f1706~l6DtsmGxC0474804748epoutp03w
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 16 Apr 2018 11:49:50 +0000 (GMT)
-In-Reply-To: <000901d3d575$fdbba760$f932f620$@samsung.com>
-Content-Language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Chao Yu' <yuchao0@huawei.com>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-btrfs-owner@vger.kernel.org>
+In-Reply-To: <20180416055231.GB22870@thunk.org>
+Sender: linux-btrfs-owner@vger.kernel.org
+To: "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc: Dave Chinner <david@fromorbit.com>, Jayashree Mohan <jayashree2912@gmail.com>, Amir Goldstein <amir73il@gmail.com>, linux-btrfs <linux-btrfs@vger.kernel.org>, fstests <fstests@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Copy summary entries in bulk in write_compacted_summaries().
-And zero the blank part of page after writing the summaries
-to the page.
+On Mon, Apr 16, 2018 at 12:52 AM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> On Sun, Apr 15, 2018 at 07:10:52PM -0500, Vijay Chidambaram wrote:
+>>
+>> I don't think this is what the paper's ext3-fast does. All the paper
+>> says is if you have a file system where the fsync of a file persisted
+>> only data related to that file, it would increase performance.
+>> ext3-fast is the name given to such a file system. Note that we do not
+>> present a design of ext3-fast or analyze it in any detail. In fact, we
+>> explicitly say "The ext3-fast file system (derived from inferences
+>> provided by ALICE) seems interesting for application safety, though
+>> further investigation is required into the validity of its design."
+>
+> Well, says that it's based on ext3's data=journal "Abstract Persistent
+> Model".  It's true that a design was not proposed --- but if you
+> don't propose a design, how do you know what the performance is or
+> whether it's even practical?  That's one of those things I find
+> extremely distasteful in the paper.  Sure, I can model a faster than
+> light interstellar engine ala Star Trek's Warp Drive --- and I can
+> talk about it having, say, better performance than a reaction drive.
+> But it doesn't tell us anything useful about whether it can be built,
+> or whether it's even useful to dream about it.
+>
+> To me, that part of the paper, really read as, "watch as I wave my
+> hands around widely, that they never leave the ends of my arms!"
 
-Signed-off-by: Fan li <fanofcode.li@samsung.com>
----
- fs/f2fs/segment.c | 38 ++++++++++++++++++++++----------------
- 1 file changed, 22 insertions(+), 16 deletions(-)
+I partially understand where you are coming from, but your argument
+seems to boil down to "don't say anything until you have worked out
+every detail". I don't agree with this. Yes, it was speculative, but
+we did have a fairly clear disclaimer.
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 3bc77c2..a08b2a8 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3103,14 +3103,12 @@ static void write_compacted_summaries(struct f2fs_sb_info *sbi, block_t blkaddr)
- {
- 	struct page *page;
- 	unsigned char *kaddr;
--	struct f2fs_summary *summary;
- 	struct curseg_info *seg_i;
- 	int written_size = 0;
--	int i, j;
-+	int i;
- 
- 	page = grab_meta_page(sbi, blkaddr++);
- 	kaddr = (unsigned char *)page_address(page);
--	memset(kaddr, 0, PAGE_SIZE);
- 
- 	/* Step 1: write nat cache */
- 	seg_i = CURSEG_I(sbi, CURSEG_HOT_DATA);
-@@ -3124,34 +3122,42 @@ static void write_compacted_summaries(struct f2fs_sb_info *sbi, block_t blkaddr)
- 
- 	/* Step 3: write summary entries */
- 	for (i = CURSEG_HOT_DATA; i <= CURSEG_COLD_DATA; i++) {
--		unsigned short blkoff;
-+		unsigned short blkoff, page_cap, summary_cnt;
-+
- 		seg_i = CURSEG_I(sbi, i);
- 		if (sbi->ckpt->alloc_type[i] == SSR)
- 			blkoff = sbi->blocks_per_seg;
- 		else
- 			blkoff = curseg_blkoff(sbi, i);
- 
--		for (j = 0; j < blkoff; j++) {
-+		while (blkoff) {
- 			if (!page) {
- 				page = grab_meta_page(sbi, blkaddr++);
- 				kaddr = (unsigned char *)page_address(page);
--				memset(kaddr, 0, PAGE_SIZE);
- 				written_size = 0;
- 			}
--			summary = (struct f2fs_summary *)(kaddr + written_size);
--			*summary = seg_i->sum_blk->entries[j];
--			written_size += SUMMARY_SIZE;
- 
--			if (written_size + SUMMARY_SIZE <= PAGE_SIZE -
--							SUM_FOOTER_SIZE)
--				continue;
--
--			set_page_dirty(page);
--			f2fs_put_page(page, 1);
--			page = NULL;
-+			page_cap = (PAGE_SIZE - SUM_FOOTER_SIZE - written_size)
-+						/ SUMMARY_SIZE;
-+			summary_cnt = min(page_cap, blkoff);
-+			memcpy(kaddr + written_size, seg_i->sum_blk->entries,
-+						summary_cnt * SUMMARY_SIZE);
-+			written_size += summary_cnt * SUMMARY_SIZE;
-+			blkoff -= summary_cnt;
-+
-+			if (page_cap == summary_cnt) {
-+				memset(kaddr + written_size, 0,
-+						PAGE_SIZE - written_size);
-+				set_page_dirty(page);
-+				f2fs_put_page(page, 1);
-+				page = NULL;
-+			}
- 		}
- 	}
-+
- 	if (page) {
-+		memset(kaddr + written_size, 0,
-+				PAGE_SIZE - written_size);
- 		set_page_dirty(page);
- 		f2fs_put_page(page, 1);
- 	}
--- 
-2.7.4
+To the point about it being obvious: you might be surprised at how
+many people outside this community take it for granted that if you
+fsync a file, only that file's contents and metadata will be persisted
+:) So it was obvious to you, but truly shocking for many.
 
+Btw, ext3-fast is what led to our CCFS work in FAST 17:
+http://www.cs.utexas.edu/~vijay/papers/fast17-c2fs.pdf. In this paper,
+we do show that if you divide your application writes into streams, it
+is possible to persist only the data/metadata of one stream,
+independent of the IO being done in other streams. So as it turned
+out, it wasn't an impossible file-system design.
 
+But we digress. I think we both agree that researchers should engage
+more with the file-system community.
 
+>
+>> Thanks! As I mentioned before, this is useful. I have a follow-up
+>> question. Consider the following workload:
+>>
+>>  creat foo
+>>  link (foo, A/bar)
+>>  fsync(foo)
+>>  crash
+>>
+>> In this case, after the file system recovers, do we expect foo's link
+>> count to be 2 or 1? I would say 2, but POSIX is silent on this, so
+>> thought I would confirm. The tricky part here is we are not calling
+>> fsync() on directory A.
+>>
+>> In this case, its not a symlink; its a hard link, so I would say the
+>> link count for foo should be 2. But btrfs and F2FS show link count of
+>> 1 after a crash.
+>
+> Well, is the link count accurate?  That is to say, does A/bar exist?
+> I would think that the requirement that the file system be self
+> consistent is the most important consideration.
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+There are two ways to look at this.
+
+1. A/bar does not exist, link count is 1, and so it is not a bug.
+
+2. We are calling fsync on the inode when the inode's link count is 2.
+So it should persist the inode plus the dependency that is A/bar. The
+file system after a crash should show both A/bar and the file with
+link count 2. This is what ext4, xfs, and F2FS do.
+
+We've posted separately to figure out what semantics btrfs supports.
