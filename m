@@ -1,72 +1,72 @@
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-Subject: Re: Symlink not persisted even after fsync
-Date: Mon, 16 Apr 2018 01:52:31 -0400
-Message-ID: <20180416055231.GB22870@thunk.org>
-References: <CAPaz=E+-baGSWhL3nD-8X4jn6rKdn2AVGLeqWh3EY5Nh-RodRA@mail.gmail.com>
- <CAOQ4uxhRoAnxr36Cy1pov+ExnNJ8Y+inmUc7chD77ONPt=u9qw@mail.gmail.com>
- <CA+EzBbCFURDs77xiL3ECf7+4irrywbmD1HdsUSUYE_oeonbo8A@mail.gmail.com>
- <20180414012017.GF5572@dastard>
- <CAPaz=EJrOc7dBE+gBf=Gx0W-4_q0GwTrRhchquPveWs-m-Djeg@mail.gmail.com>
- <20180414215529.GG5572@dastard>
- <20180415011735.GB21830@thunk.org>
- <CAHWVdUXAyyeTGNXrtTTc+tUbA3t9TUjJPSF=M4Cetj4+d1w3eQ@mail.gmail.com>
- <20180415141338.GA22870@thunk.org>
- <CAPaz=ELkYavvWYuMg=t+L_nSZ7fZ8CkaZr-qfGVN3QfydbOh7w@mail.gmail.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH] f2fs: allocate hot_data for atomic write more
+ strictly
+Date: Mon, 16 Apr 2018 19:34:16 +0800
+Message-ID: <1523878456-5058-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-btrfs-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAPaz=ELkYavvWYuMg=t+L_nSZ7fZ8CkaZr-qfGVN3QfydbOh7w@mail.gmail.com>
-Sender: linux-btrfs-owner@vger.kernel.org
-To: Vijay Chidambaram <vijay@cs.utexas.edu>
-Cc: Dave Chinner <david@fromorbit.com>, Jayashree Mohan <jayashree2912@gmail.com>, Amir Goldstein <amir73il@gmail.com>, linux-btrfs <linux-btrfs@vger.kernel.org>, fstests <fstests@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <heyunlei@huawei.com>) id 1f82cv-0006gR-Ni
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Apr 2018 11:48:53 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1f82cn-00BdWr-NO
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Apr 2018 11:48:53 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: zhangdianfang@huawei.com
 
-On Sun, Apr 15, 2018 at 07:10:52PM -0500, Vijay Chidambaram wrote:
-> 
-> I don't think this is what the paper's ext3-fast does. All the paper
-> says is if you have a file system where the fsync of a file persisted
-> only data related to that file, it would increase performance.
-> ext3-fast is the name given to such a file system. Note that we do not
-> present a design of ext3-fast or analyze it in any detail. In fact, we
-> explicitly say "The ext3-fast file system (derived from inferences
-> provided by ALICE) seems interesting for application safety, though
-> further investigation is required into the validity of its design."
+If a file not set type as hot, has dirty pages more than
+threshold 64 before starting atomic write, may be lose hot
+flag.
 
-Well, says that it's based on ext3's data=journal "Abstract Persistent
-Model".  It's true that a design was not proposed --- but if you
-don't propose a design, how do you know what the performance is or
-whether it's even practical?  That's one of those things I find
-extremely distasteful in the paper.  Sure, I can model a faster than
-light interstellar engine ala Star Trek's Warp Drive --- and I can
-talk about it having, say, better performance than a reaction drive.
-But it doesn't tell us anything useful about whether it can be built,
-or whether it's even useful to dream about it.
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fs/f2fs/file.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-To me, that part of the paper, really read as, "watch as I wave my
-hands around widely, that they never leave the ends of my arms!"
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 79eeed5..bf61e20 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1685,7 +1685,6 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+ 		goto out;
+ 
+ 	set_inode_flag(inode, FI_ATOMIC_FILE);
+-	set_inode_flag(inode, FI_HOT_DATA);
+ 	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+ 
+ 	if (!get_dirty_pages(inode))
+@@ -1697,11 +1696,11 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+ 	ret = filemap_write_and_wait_range(inode->i_mapping, 0, LLONG_MAX);
+ 	if (ret) {
+ 		clear_inode_flag(inode, FI_ATOMIC_FILE);
+-		clear_inode_flag(inode, FI_HOT_DATA);
+ 		goto out;
+ 	}
+ 
+ inc_stat:
++	set_inode_flag(inode, FI_HOT_DATA);
+ 	F2FS_I(inode)->inmem_task = current;
+ 	stat_inc_atomic_write(inode);
+ 	stat_update_max_atomic_write(inode);
+-- 
+1.9.1
 
-> Thanks! As I mentioned before, this is useful. I have a follow-up
-> question. Consider the following workload:
-> 
->  creat foo
->  link (foo, A/bar)
->  fsync(foo)
->  crash
-> 
-> In this case, after the file system recovers, do we expect foo's link
-> count to be 2 or 1? I would say 2, but POSIX is silent on this, so
-> thought I would confirm. The tricky part here is we are not calling
-> fsync() on directory A.
-> 
-> In this case, its not a symlink; its a hard link, so I would say the
-> link count for foo should be 2. But btrfs and F2FS show link count of
-> 1 after a crash.
 
-Well, is the link count accurate?  That is to say, does A/bar exist?
-I would think that the requirement that the file system be self
-consistent is the most important consideration.
-
-Cheers,
-
-							- Ted
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
