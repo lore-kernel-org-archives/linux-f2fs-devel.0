@@ -1,250 +1,154 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
-Date: Tue, 17 Apr 2018 15:11:05 +0800
-Message-ID: <6b8a1fa6-8f83-82f8-5136-d711c9048e09@huawei.com>
-References: <20180127094301.29154-2-yuchao0@huawei.com>
- <20180131020213.GA86468@jaegeuk-macbookpro.roam.corp.google.com>
- <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
- <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
- <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
- <20180210014140.GB1885@jaegeuk-macbookpro.roam.corp.google.com>
- <5f22d645-001d-a132-f0bd-2dba1f6daaea@kernel.org>
- <558ea6b1-e57d-5910-d931-a47f143cca25@huawei.com>
- <3782ed9e-741d-d711-3937-bc8127566982@kernel.org>
- <bd8580f5-a5a1-5e0a-ea01-088cffb441e4@huawei.com>
- <20180417033858.GB76077@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH] f2fs: Copy summary entries in bulk
+Date: Tue, 17 Apr 2018 16:12:03 +0800
+Message-ID: <61a94754-f84e-9927-79d6-324bf7b67de7@huawei.com>
+References: <CGME20180416111043epcas5p3ea799775cd4117bd80a4207982f98548@epcas5p3.samsung.com>
+ <000801d3d573$856747d0$9035d770$@samsung.com>
+ <000901d3d575$fdbba760$f932f620$@samsung.com>
+ <000a01d3d578$fc23c1f0$f46b45d0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180417033858.GB76077@jaegeuk-macbookpro.roam.corp.google.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1f8Ljn-0004FJ-TN
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Apr 2018 08:13:15 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1f8Lip-008nCs-GK
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Apr 2018 08:13:15 +0000
+In-Reply-To: <000a01d3d578$fc23c1f0$f46b45d0$@samsung.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: LiFan <fanofcode.li@samsung.com>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/4/17 11:38, Jaegeuk Kim wrote:
-> On 04/13, Chao Yu wrote:
->> Ping again..
->>
->> Do you have time to discuss this?
+On 2018/4/16 19:48, LiFan wrote:
+> Copy summary entries in bulk in write_compacted_summaries().
+> And zero the blank part of page after writing the summaries
+> to the page.
 > 
-> We may need a time to have a chat in person. Do you have any chance to visit
-> US?
+> Signed-off-by: Fan li <fanofcode.li@samsung.com>
+> ---
+>  fs/f2fs/segment.c | 38 ++++++++++++++++++++++----------------
+>  1 file changed, 22 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 3bc77c2..a08b2a8 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -3103,14 +3103,12 @@ static void write_compacted_summaries(struct f2fs_sb_info *sbi, block_t blkaddr)
+>  {
+>  	struct page *page;
+>  	unsigned char *kaddr;
+> -	struct f2fs_summary *summary;
+>  	struct curseg_info *seg_i;
+>  	int written_size = 0;
+> -	int i, j;
+> +	int i;
+>  
+>  	page = grab_meta_page(sbi, blkaddr++);
+>  	kaddr = (unsigned char *)page_address(page);
+> -	memset(kaddr, 0, PAGE_SIZE);
+>  
+>  	/* Step 1: write nat cache */
+>  	seg_i = CURSEG_I(sbi, CURSEG_HOT_DATA);
+> @@ -3124,34 +3122,42 @@ static void write_compacted_summaries(struct f2fs_sb_info *sbi, block_t blkaddr)
+>  
+>  	/* Step 3: write summary entries */
+>  	for (i = CURSEG_HOT_DATA; i <= CURSEG_COLD_DATA; i++) {
+> -		unsigned short blkoff;
+> +		unsigned short blkoff, page_cap, summary_cnt;
 
-I prefer to, just count on LSF, but...
+blkoff = 0;
 
-I think I need to find a conference which is opened in US first.
+> +
+>  		seg_i = CURSEG_I(sbi, i);
+>  		if (sbi->ckpt->alloc_type[i] == SSR)
+>  			blkoff = sbi->blocks_per_seg;
 
-Just checked events.linuxfoundation.org, and didn't find any suitable conference
-I could attend recently in US.
+max = sbi->blocks_per_seg;
 
-Location: US
-Apr 18-20 Boston, Could Foundry Summit
-Apr 23-25 Park City, LSF
-Sep 24-26 Nashville, API strategy & practice
-Oct 10-11 New York, Open FinTech Forum
-Dec 11-13 Seattle, KubeCon & CloudNativeCon
+>  		else
+>  			blkoff = curseg_blkoff(sbi, i);
 
-Any other conferences?
+max = curseg_blkoff(sbi, i);
+
+>  
+> -		for (j = 0; j < blkoff; j++) {
+> +		while (blkoff) {
+
+while (blkoff < max)
+
+>  			if (!page) {
+>  				page = grab_meta_page(sbi, blkaddr++);
+>  				kaddr = (unsigned char *)page_address(page);
+> -				memset(kaddr, 0, PAGE_SIZE);
+>  				written_size = 0;
+>  			}
+> -			summary = (struct f2fs_summary *)(kaddr + written_size);
+> -			*summary = seg_i->sum_blk->entries[j];
+> -			written_size += SUMMARY_SIZE;
+>  
+> -			if (written_size + SUMMARY_SIZE <= PAGE_SIZE -
+> -							SUM_FOOTER_SIZE)
+> -				continue;
+> -
+> -			set_page_dirty(page);
+> -			f2fs_put_page(page, 1);
+> -			page = NULL;
+> +			page_cap = (PAGE_SIZE - SUM_FOOTER_SIZE - written_size)
+> +						/ SUMMARY_SIZE;
+> +			summary_cnt = min(page_cap, blkoff);
+
+summary_cnt = min(page_cap, max - blkoff);
+
+> +			memcpy(kaddr + written_size, seg_i->sum_blk->entries,
+
+memcpy(kaddr + written_size, seg_i->sum_blk->entries + blkoff
+
+> +						summary_cnt * SUMMARY_SIZE);
+
+blkoff += summary_cnt;
+
+> +			written_size += summary_cnt * SUMMARY_SIZE;
+> +			blkoff -= summary_cnt;
+
+removed.
 
 Thanks,
 
+> +
+> +			if (page_cap == summary_cnt) {
+> +				memset(kaddr + written_size, 0,
+> +						PAGE_SIZE - written_size);
+> +				set_page_dirty(page);
+> +				f2fs_put_page(page, 1);
+> +				page = NULL;
+> +			}
+>  		}
+>  	}
+> +
+>  	if (page) {
+> +		memset(kaddr + written_size, 0,
+> +				PAGE_SIZE - written_size);
+>  		set_page_dirty(page);
+>  		f2fs_put_page(page, 1);
+>  	}
 > 
->>
->> On 2018/2/27 22:16, Chao Yu wrote:
->>> Ping,
->>>
->>> On 2018/2/13 15:34, Chao Yu wrote:
->>>> Hi Jaegeuk,
->>>>
->>>> On 2018/2/10 10:52, Chao Yu wrote:
->>>>> On 2018/2/10 9:41, Jaegeuk Kim wrote:
->>>>>> On 02/01, Chao Yu wrote:
->>>>>>>
->>>>>>>
->>>>>>> On 2018/2/1 6:15, Jaegeuk Kim wrote:
->>>>>>>> On 01/31, Chao Yu wrote:
->>>>>>>>> On 2018/1/31 10:02, Jaegeuk Kim wrote:
->>>>>>>>>> What if we want to add more entries in addition to node_checksum? Do we have
->>>>>>>>>> to add a new feature flag at every time? How about adding a layout value instead
->>>>>>>>>
->>>>>>>>> Hmm.. for previous implementation, IMO, we'd better add a new feature flag at
->>>>>>>>> every time, otherwise, w/ extra_nsize only, in current image, we can know a
->>>>>>>>> valid range of extended area in node block, but we don't know which
->>>>>>>>> fields/features are valid/enabled or not.
->>>>>>>>>
->>>>>>>>> One more thing is that if we can add one feature flag for each field, we got one
->>>>>>>>> more chance to disable it dynamically.
->>>>>>>>>
->>>>>>>>>> of extra_nsize? For example, layout #1 means node_checksum with extra_nsize=X?
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> What does 1017 mean? We need to make this structure more flexibly for new
->>>>>>>>>
->>>>>>>>> Yes, using raw 1017 is not appropriate here.
->>>>>>>>>
->>>>>>>>>> entries. Like this?
->>>>>>>>>> 		union {
->>>>>>>>>> 			struct node_v1;
->>>>>>>>>> 			struct node_v2;
->>>>>>>>>> 			struct node_v3;
->>>>>>>>>> 			...
->>>>>>>>>> 			struct direct_node dn;
->>>>>>>>>> 			struct indirect_node in;
->>>>>>>>>> 		};
->>>>>>>>>> 	};
->>>>>>>>>>
->>>>>>>>>> 	struct node_v1 {
->>>>>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
->>>>>>>>>> 		__le32 node_checksum;
->>>>>>>>>> 	}
->>>>>>>>>>
->>>>>>>>>> 	struct node_v2 {
->>>>>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=500];
->>>>>>>>>
->>>>>>>>> Hmm.. If we only need to add one more 4 bytes field in struct node_v2, but
->>>>>>>>> V2_NSIZE is defined as fixed 500, there must be 492 bytes wasted.
->>>>>>>>>
->>>>>>>>> Or we can define V2_NSIZE as 8, but if there comes more and more extended
->>>>>>>>> fields, node version count can be a large number, it results in complicated
->>>>>>>>> version recognization and handling.
->>>>>>>>>
->>>>>>>>> One more question is how can we control which fields are valid or not in
->>>>>>>>> comp[Vx_NSIZE]?
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> Anyway, what I'm thinking is maybe we can restructure layout of node block like
->>>>>>>>> the one used by f2fs_inode:
->>>>>>>>>
->>>>>>>>> struct f2fs_node {
->>>>>>>>> 	union {
->>>>>>>>> 		struct f2fs_inode i;
->>>>>>>>> 		union {
->>>>>>>>> 			struct {
->>>>>>>>> 				__le32 node_checksum;
->>>>>>>>> 				__le32 feature_field_1;
->>>>>>>>> 				__le32 feature_field_2;
->>>>>>>>> 				....
->>>>>>>>> 				__le32 addr[];
->>>>>>>>> 				
->>>>>>>>> 			};
->>>>>>>>> 			struct direct_node dn;
->>>>>>>>> 			struct indirect_node in;
->>>>>>>>> 		};
->>>>>>>>> 	};
->>>>>>>>> 	struct node_footer footer;
->>>>>>>>> } __packed;
->>>>>>>>>
->>>>>>>>> Moving all extended fields to the head of f2fs_node, so we don't have to use
->>>>>>>>> macro to indicate actual size of addr.
->>>>>>>>
->>>>>>>> Thinking what'd be the best way. My concern is, once getting more entries, we
->>>>>>>
->>>>>>> OK, I think we need more discussion.. ;)
->>>>>>>
->>>>>>>> can't set each of features individually. Like the second entry should have
->>>>>>>
->>>>>>> Oh, that will be hard. If we have to avoid that, we have to tag in somewhere
->>>>>>> e.g. f2fs_inode::i_flags2 to indicate which new field in f2fs_node is valid, for
->>>>>>> example:
->>>>>>>
->>>>>>> #define F2FS_NODE_CHECKSUM	0x0001
->>>>>>> #define F2FS_NODE_FIELD1	0x0002
->>>>>>> #define F2FS_NODE_FIELD2	0x0004
->>>>>>>
->>>>>>> 	union {
->>>>>>> 		struct {
->>>>>>> 			__le32 node_checksum;
->>>>>>> 			__le32 field_1;
->>>>>>> 			__le32 field_2;
->>>>>>> 			....
->>>>>>> 			__le32 addr[];
->>>>>>> 		};
->>>>>>> 		struct direct_node dn;
->>>>>>> 		struct indirect_node in;
->>>>>>> 	};
->>>>>>>
->>>>>>> f2fs_inode::i_flags2 = F2FS_NODE_CHECKSUM | F2FS_NODE_FIELD1
->>>>>>> indicates that f2fs_node::node_checksum and f2fs_node::field_1 are valid;
->>>>>>>
->>>>>>> f2fs_inode::i_flags2 = F2FS_NODE_FIELD1 | F2FS_NODE_FIELD2
->>>>>>> indicates that f2fs_node::field_1 and f2fs_node::field_2 are valid.
->>>>>>
->>>>>> So, that's why I thought we may need a sort of each formats.
->>>>>
->>>>> Hmm.. if we have two new added fields, there are (2 << 2) combinations
->>>>> of all formats, as:
->>>>>
->>>>> struct original {
->>>>> 	__le32 data[DEF_ADDRS_PER_BLOCK];
->>>>> }
->>>>>
->>>>> struct node_v1 {
->>>>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
->>>>> 	__le32 field_1;
->>>>> }
->>>>>
->>>>> struct node_v2 {
->>>>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=1];
->>>>> 	__le32 field_2;
->>>>> }
->>>>>
->>>>> struct node_v2 {
->>>>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V3_NSIZE=2];
->>>>> 	__le32 field_1;
->>>>> 	__le32 field_2;
->>>>> }
->>>>>
->>>>> If we add more new fields, the node version will increase sharply due
->>>>> to there is (n << 2) combination with n fields. Right? Any thoughts to
->>>>> reduce maintaining overhead on those node versions structures?
->>>>
->>>> Do you have time to explain more about the design of multiple version structure
->>>> for node block, I'm still be confused about two things:
->>>> 1. what will we do if we want to add one new field in node structure.
->>>> 2. how can we recognize which fields are valid and which ones are invalid.
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>> Thanks,
->>>>>
->>>>>>
->>>>>>>
->>>>>>> Any thoughts?
->>>>>>>
->>>>>>> Thanks,
->>>>>>>
->>>>>>>> enabled node_checksum, which we may not want to do.
->>>>>>>>
->>>>>>>>>
->>>>>>>>> Thanks,
->>>>>>>>>
->>>>>>>>>> 		__le32 comp[V2_NSIZE];
->>>>>>>>>> 	}
->>>>>>>>>> 	...
->>>>>>>>>>
->>>>>>>>>>> +			};
->>>>>>>>>>> +			struct direct_node dn;
->>>>>>>>>>> +			struct indirect_node in;
->>>>>>>>>>> +		};
->>>>>>>>>>>  	};
->>>>>>>>>>>  	struct node_footer footer;
->>>>>>>>>>>  } __packed;
->>>>>>>>>>> -- 
->>>>>>>>>>> 2.15.0.55.gc2ece9dc4de6
->>>>>>>>>>
->>>>>>>>>> .
->>>>>>>>>>
->>>>>
->>>>> .
->>>>>
->>>>
->>>
->>> .
->>>
-> 
-> .
-> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
