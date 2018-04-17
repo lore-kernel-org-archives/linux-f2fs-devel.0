@@ -1,95 +1,225 @@
-From: Vijay Chidambaram <vijay@cs.utexas.edu>
-Subject: Re: Symlink not persisted even after fsync
-Date: Mon, 16 Apr 2018 21:56:36 -0500
-Message-ID: <CAPaz=ELss9aV71StqYLzjRuHNpkQ=WmWWrcUwd2igydkjCrh9g@mail.gmail.com>
-References: <CAPaz=E+-baGSWhL3nD-8X4jn6rKdn2AVGLeqWh3EY5Nh-RodRA@mail.gmail.com>
- <CAOQ4uxhRoAnxr36Cy1pov+ExnNJ8Y+inmUc7chD77ONPt=u9qw@mail.gmail.com>
- <CA+EzBbCFURDs77xiL3ECf7+4irrywbmD1HdsUSUYE_oeonbo8A@mail.gmail.com>
- <20180414012017.GF5572@dastard> <CAPaz=EJrOc7dBE+gBf=Gx0W-4_q0GwTrRhchquPveWs-m-Djeg@mail.gmail.com>
- <20180414215529.GG5572@dastard> <20180415011735.GB21830@thunk.org>
- <CAHWVdUXAyyeTGNXrtTTc+tUbA3t9TUjJPSF=M4Cetj4+d1w3eQ@mail.gmail.com>
- <20180415141338.GA22870@thunk.org> <CAPaz=ELkYavvWYuMg=t+L_nSZ7fZ8CkaZr-qfGVN3QfydbOh7w@mail.gmail.com>
- <20180417000736.GI23861@dastard>
-Reply-To: vijay@cs.utexas.edu
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
+Date: Mon, 16 Apr 2018 20:38:58 -0700
+Message-ID: <20180417033858.GB76077@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180127094301.29154-2-yuchao0@huawei.com>
+ <20180131020213.GA86468@jaegeuk-macbookpro.roam.corp.google.com>
+ <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
+ <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
+ <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
+ <20180210014140.GB1885@jaegeuk-macbookpro.roam.corp.google.com>
+ <5f22d645-001d-a132-f0bd-2dba1f6daaea@kernel.org>
+ <558ea6b1-e57d-5910-d931-a47f143cca25@huawei.com>
+ <3782ed9e-741d-d711-3937-bc8127566982@kernel.org>
+ <bd8580f5-a5a1-5e0a-ea01-088cffb441e4@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-btrfs-owner@vger.kernel.org>
-In-Reply-To: <20180417000736.GI23861@dastard>
-Sender: linux-btrfs-owner@vger.kernel.org
-To: Dave Chinner <david@fromorbit.com>
-Cc: "Theodore Y. Ts'o" <tytso@mit.edu>, Jayashree Mohan <jayashree2912@gmail.com>, Amir Goldstein <amir73il@gmail.com>, linux-btrfs <linux-btrfs@vger.kernel.org>, fstests <fstests@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <bd8580f5-a5a1-5e0a-ea01-088cffb441e4@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Mon, Apr 16, 2018 at 7:07 PM, Dave Chinner <david@fromorbit.com> wrote:
-> On Sun, Apr 15, 2018 at 07:10:52PM -0500, Vijay Chidambaram wrote:
->> Thanks! As I mentioned before, this is useful. I have a follow-up
->> question. Consider the following workload:
->>
->>  creat foo
->>  link (foo, A/bar)
->>  fsync(foo)
->>  crash
->>
->> In this case, after the file system recovers, do we expect foo's link
->> count to be 2 or 1?
->
-> So, strictly ordered behaviour:
->
-> create foo:
->         - creates dirent in inode B and new inode A in an atomic
->           transaction sequence #1
->
-> link foo -> A/bar
->         - creates dirent in inode C and bumps inode A link count in
->           an atomic transaction seqeunce #2.
->
-> fsync foo
->         - looks at inode A, sees it's "last modification" sequence
->           counter as #2
->         - flushes all transactions up to and including #2 to the
->           journal.
->
-> See the dependency chain? Both the inodes and dirents in the create
-> operation and the link operation are chained to the inode foo via
-> the atomic transactions. Hence when we flush foo, we also flush the
-> dependent changes because of the change atomicity requirements....
->
->> I would say 2,
->
-> Correct, for strict ordering. But....
->
->> but POSIX is silent on this,
->
-> Well, it's not silent, POSIX explicitly allows for fsync() to do
-> nothing and report success. Hence we can't really look to POSIX to
-> define how fsync() should behave.
->
->> so
->> thought I would confirm. The tricky part here is we are not calling
->> fsync() on directory A.
->
-> Right. But directory A has a dependent change linked to foo. If we
-> fsync() foo, we are persisting the link count change in that file,
-> and hence all the other changes related to that link count change
-> must also be flushed. Similarly, all the cahnges related to the
-> creation on foo must be flushed, too.
->
->> In this case, its not a symlink; its a hard link, so I would say the
->> link count for foo should be 2.
->
-> Right - that's the "reference counted object dependency" I refered
-> to. i.e. it's a bi-direction atomic dependency - either we show both
-> the new dirent and the link count change, or we show neither of
-> them.  Hence fsync on one object implies that we are also persisting
-> the related changes in the other object, too.
->
->> But btrfs and F2FS show link count of
->> 1 after a crash.
->
-> That may be valid if the dirent A/bar does not exist after recovery,
-> but it also means fsync() hasn't actually guaranteed inode changes
-> made prior to the fsync to be persistent on disk. i.e. that's a
-> violation of ordered metadata semantics and probably a bug.
+On 04/13, Chao Yu wrote:
+> Ping again..
+> 
+> Do you have time to discuss this?
 
-Great, this matches our understanding perfectly. We have separately
-posted to the btrfs mailing list to confirm it is a bug. Thanks!
+We may need a time to have a chat in person. Do you have any chance to visit
+US?
+
+> 
+> On 2018/2/27 22:16, Chao Yu wrote:
+> > Ping,
+> > 
+> > On 2018/2/13 15:34, Chao Yu wrote:
+> >> Hi Jaegeuk,
+> >>
+> >> On 2018/2/10 10:52, Chao Yu wrote:
+> >>> On 2018/2/10 9:41, Jaegeuk Kim wrote:
+> >>>> On 02/01, Chao Yu wrote:
+> >>>>>
+> >>>>>
+> >>>>> On 2018/2/1 6:15, Jaegeuk Kim wrote:
+> >>>>>> On 01/31, Chao Yu wrote:
+> >>>>>>> On 2018/1/31 10:02, Jaegeuk Kim wrote:
+> >>>>>>>> What if we want to add more entries in addition to node_checksum? Do we have
+> >>>>>>>> to add a new feature flag at every time? How about adding a layout value instead
+> >>>>>>>
+> >>>>>>> Hmm.. for previous implementation, IMO, we'd better add a new feature flag at
+> >>>>>>> every time, otherwise, w/ extra_nsize only, in current image, we can know a
+> >>>>>>> valid range of extended area in node block, but we don't know which
+> >>>>>>> fields/features are valid/enabled or not.
+> >>>>>>>
+> >>>>>>> One more thing is that if we can add one feature flag for each field, we got one
+> >>>>>>> more chance to disable it dynamically.
+> >>>>>>>
+> >>>>>>>> of extra_nsize? For example, layout #1 means node_checksum with extra_nsize=X?
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>> What does 1017 mean? We need to make this structure more flexibly for new
+> >>>>>>>
+> >>>>>>> Yes, using raw 1017 is not appropriate here.
+> >>>>>>>
+> >>>>>>>> entries. Like this?
+> >>>>>>>> 		union {
+> >>>>>>>> 			struct node_v1;
+> >>>>>>>> 			struct node_v2;
+> >>>>>>>> 			struct node_v3;
+> >>>>>>>> 			...
+> >>>>>>>> 			struct direct_node dn;
+> >>>>>>>> 			struct indirect_node in;
+> >>>>>>>> 		};
+> >>>>>>>> 	};
+> >>>>>>>>
+> >>>>>>>> 	struct node_v1 {
+> >>>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
+> >>>>>>>> 		__le32 node_checksum;
+> >>>>>>>> 	}
+> >>>>>>>>
+> >>>>>>>> 	struct node_v2 {
+> >>>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=500];
+> >>>>>>>
+> >>>>>>> Hmm.. If we only need to add one more 4 bytes field in struct node_v2, but
+> >>>>>>> V2_NSIZE is defined as fixed 500, there must be 492 bytes wasted.
+> >>>>>>>
+> >>>>>>> Or we can define V2_NSIZE as 8, but if there comes more and more extended
+> >>>>>>> fields, node version count can be a large number, it results in complicated
+> >>>>>>> version recognization and handling.
+> >>>>>>>
+> >>>>>>> One more question is how can we control which fields are valid or not in
+> >>>>>>> comp[Vx_NSIZE]?
+> >>>>>>>
+> >>>>>>>
+> >>>>>>> Anyway, what I'm thinking is maybe we can restructure layout of node block like
+> >>>>>>> the one used by f2fs_inode:
+> >>>>>>>
+> >>>>>>> struct f2fs_node {
+> >>>>>>> 	union {
+> >>>>>>> 		struct f2fs_inode i;
+> >>>>>>> 		union {
+> >>>>>>> 			struct {
+> >>>>>>> 				__le32 node_checksum;
+> >>>>>>> 				__le32 feature_field_1;
+> >>>>>>> 				__le32 feature_field_2;
+> >>>>>>> 				....
+> >>>>>>> 				__le32 addr[];
+> >>>>>>> 				
+> >>>>>>> 			};
+> >>>>>>> 			struct direct_node dn;
+> >>>>>>> 			struct indirect_node in;
+> >>>>>>> 		};
+> >>>>>>> 	};
+> >>>>>>> 	struct node_footer footer;
+> >>>>>>> } __packed;
+> >>>>>>>
+> >>>>>>> Moving all extended fields to the head of f2fs_node, so we don't have to use
+> >>>>>>> macro to indicate actual size of addr.
+> >>>>>>
+> >>>>>> Thinking what'd be the best way. My concern is, once getting more entries, we
+> >>>>>
+> >>>>> OK, I think we need more discussion.. ;)
+> >>>>>
+> >>>>>> can't set each of features individually. Like the second entry should have
+> >>>>>
+> >>>>> Oh, that will be hard. If we have to avoid that, we have to tag in somewhere
+> >>>>> e.g. f2fs_inode::i_flags2 to indicate which new field in f2fs_node is valid, for
+> >>>>> example:
+> >>>>>
+> >>>>> #define F2FS_NODE_CHECKSUM	0x0001
+> >>>>> #define F2FS_NODE_FIELD1	0x0002
+> >>>>> #define F2FS_NODE_FIELD2	0x0004
+> >>>>>
+> >>>>> 	union {
+> >>>>> 		struct {
+> >>>>> 			__le32 node_checksum;
+> >>>>> 			__le32 field_1;
+> >>>>> 			__le32 field_2;
+> >>>>> 			....
+> >>>>> 			__le32 addr[];
+> >>>>> 		};
+> >>>>> 		struct direct_node dn;
+> >>>>> 		struct indirect_node in;
+> >>>>> 	};
+> >>>>>
+> >>>>> f2fs_inode::i_flags2 = F2FS_NODE_CHECKSUM | F2FS_NODE_FIELD1
+> >>>>> indicates that f2fs_node::node_checksum and f2fs_node::field_1 are valid;
+> >>>>>
+> >>>>> f2fs_inode::i_flags2 = F2FS_NODE_FIELD1 | F2FS_NODE_FIELD2
+> >>>>> indicates that f2fs_node::field_1 and f2fs_node::field_2 are valid.
+> >>>>
+> >>>> So, that's why I thought we may need a sort of each formats.
+> >>>
+> >>> Hmm.. if we have two new added fields, there are (2 << 2) combinations
+> >>> of all formats, as:
+> >>>
+> >>> struct original {
+> >>> 	__le32 data[DEF_ADDRS_PER_BLOCK];
+> >>> }
+> >>>
+> >>> struct node_v1 {
+> >>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
+> >>> 	__le32 field_1;
+> >>> }
+> >>>
+> >>> struct node_v2 {
+> >>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=1];
+> >>> 	__le32 field_2;
+> >>> }
+> >>>
+> >>> struct node_v2 {
+> >>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V3_NSIZE=2];
+> >>> 	__le32 field_1;
+> >>> 	__le32 field_2;
+> >>> }
+> >>>
+> >>> If we add more new fields, the node version will increase sharply due
+> >>> to there is (n << 2) combination with n fields. Right? Any thoughts to
+> >>> reduce maintaining overhead on those node versions structures?
+> >>
+> >> Do you have time to explain more about the design of multiple version structure
+> >> for node block, I'm still be confused about two things:
+> >> 1. what will we do if we want to add one new field in node structure.
+> >> 2. how can we recognize which fields are valid and which ones are invalid.
+> >>
+> >> Thanks,
+> >>
+> >>>
+> >>> Thanks,
+> >>>
+> >>>>
+> >>>>>
+> >>>>> Any thoughts?
+> >>>>>
+> >>>>> Thanks,
+> >>>>>
+> >>>>>> enabled node_checksum, which we may not want to do.
+> >>>>>>
+> >>>>>>>
+> >>>>>>> Thanks,
+> >>>>>>>
+> >>>>>>>> 		__le32 comp[V2_NSIZE];
+> >>>>>>>> 	}
+> >>>>>>>> 	...
+> >>>>>>>>
+> >>>>>>>>> +			};
+> >>>>>>>>> +			struct direct_node dn;
+> >>>>>>>>> +			struct indirect_node in;
+> >>>>>>>>> +		};
+> >>>>>>>>>  	};
+> >>>>>>>>>  	struct node_footer footer;
+> >>>>>>>>>  } __packed;
+> >>>>>>>>> -- 
+> >>>>>>>>> 2.15.0.55.gc2ece9dc4de6
+> >>>>>>>>
+> >>>>>>>> .
+> >>>>>>>>
+> >>>
+> >>> .
+> >>>
+> >>
+> > 
+> > .
+> > 
