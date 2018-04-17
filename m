@@ -1,225 +1,89 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
-Date: Mon, 16 Apr 2018 20:38:58 -0700
-Message-ID: <20180417033858.GB76077@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180127094301.29154-2-yuchao0@huawei.com>
- <20180131020213.GA86468@jaegeuk-macbookpro.roam.corp.google.com>
- <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
- <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
- <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
- <20180210014140.GB1885@jaegeuk-macbookpro.roam.corp.google.com>
- <5f22d645-001d-a132-f0bd-2dba1f6daaea@kernel.org>
- <558ea6b1-e57d-5910-d931-a47f143cca25@huawei.com>
- <3782ed9e-741d-d711-3937-bc8127566982@kernel.org>
- <bd8580f5-a5a1-5e0a-ea01-088cffb441e4@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: set deadline to drop expired inmem pages
+Date: Tue, 17 Apr 2018 14:44:22 +0800
+Message-ID: <b4aba32d-e57a-add4-19d5-7d19a8ccd90c@huawei.com>
+References: <20180408081312.6190-1-yuchao0@huawei.com>
+ <09fd3144-d1c5-ca02-178d-b467d6fbe0e1@huawei.com>
+ <20180413010433.GB51348@jaegeuk-macbookpro.roam.corp.google.com>
+ <bb7d3b60-0629-ea80-c4ae-976a76abb034@huawei.com>
+ <20180413040525.GB59368@jaegeuk-macbookpro.roam.corp.google.com>
+ <51d2e16a-3a69-71ef-86f5-aee63cd6731c@huawei.com>
+ <20180416201603.GA76077@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <bd8580f5-a5a1-5e0a-ea01-088cffb441e4@huawei.com>
+In-Reply-To: <20180416201603.GA76077@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 04/13, Chao Yu wrote:
-> Ping again..
+On 2018/4/17 4:16, Jaegeuk Kim wrote:
+> On 04/13, Chao Yu wrote:
+>> On 2018/4/13 12:05, Jaegeuk Kim wrote:
+>>> On 04/13, Chao Yu wrote:
+>>>> On 2018/4/13 9:04, Jaegeuk Kim wrote:
+>>>>> On 04/10, Chao Yu wrote:
+>>>>>> Hi Jaegeuk,
+>>>>>>
+>>>>>> On 2018/4/8 16:13, Chao Yu wrote:
+>>>>>>> f2fs doesn't allow abuse on atomic write class interface, so except
+>>>>>>> limiting in-mem pages' total memory usage capacity, we need to limit
+>>>>>>> start-commit time as well, otherwise we may run into infinite loop
+>>>>>>> during foreground GC because target blocks in victim segment are
+>>>>>>> belong to atomic opened file for long time.
+>>>>>>>
+>>>>>>> Now, we will check the condition with f2fs_balance_fs_bg in
+>>>>>>> background threads, once if user doesn't commit data exceeding 30
+>>>>>>> seconds, we will drop all cached data, so I expect it can keep our
+>>>>>>> system running safely to prevent Dos attack.
+>>>>>>
+>>>>>> Is it worth to add this patch to avoid abuse on atomic write interface by user?
+>>>>>
+>>>>> Hmm, hope to see a real problem first in this case.
+>>>>
+>>>> I think this can be a more critical security leak instead of a potential issue
+>>>> which we can wait for someone reporting that can be too late.
+>>>>
+>>>> For example, user can simply write a huge file whose data spread in all f2fs
+>>>> segments, once user open that file as atomic, foreground GC will suffer
+>>>> deadloop, causing denying any further service of f2fs.
+>>>
+>>> How can you guarantee it won't happen within 30sec? If you want to avoid that,
+>>
+>> Now the value is smaller than generic hang task threshold in order to avoid
+>> foreground GC helding gc_mutex too long, we can tune that parameter?
+>>
+>>> you have to take a look at foreground gc.
+>>
+>> What do you mean? let GC moves blocks of atomic write opened file?
 > 
-> Do you have time to discuss this?
+> I thought that we first need to detect when foreground GC is stuck by such the
+> huge number of atomic writes. Then, we need to do something like dropping all
+> the atomic writes.
 
-We may need a time to have a chat in person. Do you have any chance to visit
-US?
+Yup, that will be reasonable. :)
+
+Thanks,
 
 > 
-> On 2018/2/27 22:16, Chao Yu wrote:
-> > Ping,
-> > 
-> > On 2018/2/13 15:34, Chao Yu wrote:
-> >> Hi Jaegeuk,
-> >>
-> >> On 2018/2/10 10:52, Chao Yu wrote:
-> >>> On 2018/2/10 9:41, Jaegeuk Kim wrote:
-> >>>> On 02/01, Chao Yu wrote:
-> >>>>>
-> >>>>>
-> >>>>> On 2018/2/1 6:15, Jaegeuk Kim wrote:
-> >>>>>> On 01/31, Chao Yu wrote:
-> >>>>>>> On 2018/1/31 10:02, Jaegeuk Kim wrote:
-> >>>>>>>> What if we want to add more entries in addition to node_checksum? Do we have
-> >>>>>>>> to add a new feature flag at every time? How about adding a layout value instead
-> >>>>>>>
-> >>>>>>> Hmm.. for previous implementation, IMO, we'd better add a new feature flag at
-> >>>>>>> every time, otherwise, w/ extra_nsize only, in current image, we can know a
-> >>>>>>> valid range of extended area in node block, but we don't know which
-> >>>>>>> fields/features are valid/enabled or not.
-> >>>>>>>
-> >>>>>>> One more thing is that if we can add one feature flag for each field, we got one
-> >>>>>>> more chance to disable it dynamically.
-> >>>>>>>
-> >>>>>>>> of extra_nsize? For example, layout #1 means node_checksum with extra_nsize=X?
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>> What does 1017 mean? We need to make this structure more flexibly for new
-> >>>>>>>
-> >>>>>>> Yes, using raw 1017 is not appropriate here.
-> >>>>>>>
-> >>>>>>>> entries. Like this?
-> >>>>>>>> 		union {
-> >>>>>>>> 			struct node_v1;
-> >>>>>>>> 			struct node_v2;
-> >>>>>>>> 			struct node_v3;
-> >>>>>>>> 			...
-> >>>>>>>> 			struct direct_node dn;
-> >>>>>>>> 			struct indirect_node in;
-> >>>>>>>> 		};
-> >>>>>>>> 	};
-> >>>>>>>>
-> >>>>>>>> 	struct node_v1 {
-> >>>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
-> >>>>>>>> 		__le32 node_checksum;
-> >>>>>>>> 	}
-> >>>>>>>>
-> >>>>>>>> 	struct node_v2 {
-> >>>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=500];
-> >>>>>>>
-> >>>>>>> Hmm.. If we only need to add one more 4 bytes field in struct node_v2, but
-> >>>>>>> V2_NSIZE is defined as fixed 500, there must be 492 bytes wasted.
-> >>>>>>>
-> >>>>>>> Or we can define V2_NSIZE as 8, but if there comes more and more extended
-> >>>>>>> fields, node version count can be a large number, it results in complicated
-> >>>>>>> version recognization and handling.
-> >>>>>>>
-> >>>>>>> One more question is how can we control which fields are valid or not in
-> >>>>>>> comp[Vx_NSIZE]?
-> >>>>>>>
-> >>>>>>>
-> >>>>>>> Anyway, what I'm thinking is maybe we can restructure layout of node block like
-> >>>>>>> the one used by f2fs_inode:
-> >>>>>>>
-> >>>>>>> struct f2fs_node {
-> >>>>>>> 	union {
-> >>>>>>> 		struct f2fs_inode i;
-> >>>>>>> 		union {
-> >>>>>>> 			struct {
-> >>>>>>> 				__le32 node_checksum;
-> >>>>>>> 				__le32 feature_field_1;
-> >>>>>>> 				__le32 feature_field_2;
-> >>>>>>> 				....
-> >>>>>>> 				__le32 addr[];
-> >>>>>>> 				
-> >>>>>>> 			};
-> >>>>>>> 			struct direct_node dn;
-> >>>>>>> 			struct indirect_node in;
-> >>>>>>> 		};
-> >>>>>>> 	};
-> >>>>>>> 	struct node_footer footer;
-> >>>>>>> } __packed;
-> >>>>>>>
-> >>>>>>> Moving all extended fields to the head of f2fs_node, so we don't have to use
-> >>>>>>> macro to indicate actual size of addr.
-> >>>>>>
-> >>>>>> Thinking what'd be the best way. My concern is, once getting more entries, we
-> >>>>>
-> >>>>> OK, I think we need more discussion.. ;)
-> >>>>>
-> >>>>>> can't set each of features individually. Like the second entry should have
-> >>>>>
-> >>>>> Oh, that will be hard. If we have to avoid that, we have to tag in somewhere
-> >>>>> e.g. f2fs_inode::i_flags2 to indicate which new field in f2fs_node is valid, for
-> >>>>> example:
-> >>>>>
-> >>>>> #define F2FS_NODE_CHECKSUM	0x0001
-> >>>>> #define F2FS_NODE_FIELD1	0x0002
-> >>>>> #define F2FS_NODE_FIELD2	0x0004
-> >>>>>
-> >>>>> 	union {
-> >>>>> 		struct {
-> >>>>> 			__le32 node_checksum;
-> >>>>> 			__le32 field_1;
-> >>>>> 			__le32 field_2;
-> >>>>> 			....
-> >>>>> 			__le32 addr[];
-> >>>>> 		};
-> >>>>> 		struct direct_node dn;
-> >>>>> 		struct indirect_node in;
-> >>>>> 	};
-> >>>>>
-> >>>>> f2fs_inode::i_flags2 = F2FS_NODE_CHECKSUM | F2FS_NODE_FIELD1
-> >>>>> indicates that f2fs_node::node_checksum and f2fs_node::field_1 are valid;
-> >>>>>
-> >>>>> f2fs_inode::i_flags2 = F2FS_NODE_FIELD1 | F2FS_NODE_FIELD2
-> >>>>> indicates that f2fs_node::field_1 and f2fs_node::field_2 are valid.
-> >>>>
-> >>>> So, that's why I thought we may need a sort of each formats.
-> >>>
-> >>> Hmm.. if we have two new added fields, there are (2 << 2) combinations
-> >>> of all formats, as:
-> >>>
-> >>> struct original {
-> >>> 	__le32 data[DEF_ADDRS_PER_BLOCK];
-> >>> }
-> >>>
-> >>> struct node_v1 {
-> >>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
-> >>> 	__le32 field_1;
-> >>> }
-> >>>
-> >>> struct node_v2 {
-> >>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=1];
-> >>> 	__le32 field_2;
-> >>> }
-> >>>
-> >>> struct node_v2 {
-> >>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V3_NSIZE=2];
-> >>> 	__le32 field_1;
-> >>> 	__le32 field_2;
-> >>> }
-> >>>
-> >>> If we add more new fields, the node version will increase sharply due
-> >>> to there is (n << 2) combination with n fields. Right? Any thoughts to
-> >>> reduce maintaining overhead on those node versions structures?
-> >>
-> >> Do you have time to explain more about the design of multiple version structure
-> >> for node block, I'm still be confused about two things:
-> >> 1. what will we do if we want to add one new field in node structure.
-> >> 2. how can we recognize which fields are valid and which ones are invalid.
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>> Thanks,
-> >>>
-> >>>>
-> >>>>>
-> >>>>> Any thoughts?
-> >>>>>
-> >>>>> Thanks,
-> >>>>>
-> >>>>>> enabled node_checksum, which we may not want to do.
-> >>>>>>
-> >>>>>>>
-> >>>>>>> Thanks,
-> >>>>>>>
-> >>>>>>>> 		__le32 comp[V2_NSIZE];
-> >>>>>>>> 	}
-> >>>>>>>> 	...
-> >>>>>>>>
-> >>>>>>>>> +			};
-> >>>>>>>>> +			struct direct_node dn;
-> >>>>>>>>> +			struct indirect_node in;
-> >>>>>>>>> +		};
-> >>>>>>>>>  	};
-> >>>>>>>>>  	struct node_footer footer;
-> >>>>>>>>>  } __packed;
-> >>>>>>>>> -- 
-> >>>>>>>>> 2.15.0.55.gc2ece9dc4de6
-> >>>>>>>>
-> >>>>>>>> .
-> >>>>>>>>
-> >>>
-> >>> .
-> >>>
-> >>
-> > 
-> > .
-> > 
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>> Thanks,
+>>>>
+>>>>>
+>>>>>> Thanks,
+>>>>>
+>>>>> .
+>>>>>
+>>>
+>>> .
+>>>
+> 
+> .
+> 
