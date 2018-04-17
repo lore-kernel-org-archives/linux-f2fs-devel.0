@@ -1,66 +1,105 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: check if inmem_pages list is empty
- correctly
-Date: Tue, 17 Apr 2018 17:55:14 +0800
-Message-ID: <79719f3d-fa2f-786e-a7bd-e2c3096b5010@huawei.com>
-References: <20180417091227.33702-1-shengyong1@huawei.com>
+Subject: Re: [PATCH] f2fs: set deadline to drop expired inmem pages
+Date: Tue, 17 Apr 2018 19:45:47 +0800
+Message-ID: <aea6b6f2-e4c4-5818-ab51-fba5f755f4e0@huawei.com>
+References: <20180408081312.6190-1-yuchao0@huawei.com>
+ <09fd3144-d1c5-ca02-178d-b467d6fbe0e1@huawei.com>
+ <20180413010433.GB51348@jaegeuk-macbookpro.roam.corp.google.com>
+ <bb7d3b60-0629-ea80-c4ae-976a76abb034@huawei.com>
+ <20180413040525.GB59368@jaegeuk-macbookpro.roam.corp.google.com>
+ <51d2e16a-3a69-71ef-86f5-aee63cd6731c@huawei.com>
+ <20180416201603.GA76077@jaegeuk-macbookpro.roam.corp.google.com>
+ <b4aba32d-e57a-add4-19d5-7d19a8ccd90c@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1f8NPB-0003yX-1c
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Apr 2018 10:00:05 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f8NKx-00CBzx-AM
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Apr 2018 10:00:04 +0000
-In-Reply-To: <20180417091227.33702-1-shengyong1@huawei.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <b4aba32d-e57a-add4-19d5-7d19a8ccd90c@huawei.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/4/17 17:12, Sheng Yong wrote:
-> `cur' will never be NULL, we should check inmem_pages list instead.
+On 2018/4/17 14:44, Chao Yu wrote:
+> On 2018/4/17 4:16, Jaegeuk Kim wrote:
+>> On 04/13, Chao Yu wrote:
+>>> On 2018/4/13 12:05, Jaegeuk Kim wrote:
+>>>> On 04/13, Chao Yu wrote:
+>>>>> On 2018/4/13 9:04, Jaegeuk Kim wrote:
+>>>>>> On 04/10, Chao Yu wrote:
+>>>>>>> Hi Jaegeuk,
+>>>>>>>
+>>>>>>> On 2018/4/8 16:13, Chao Yu wrote:
+>>>>>>>> f2fs doesn't allow abuse on atomic write class interface, so except
+>>>>>>>> limiting in-mem pages' total memory usage capacity, we need to limit
+>>>>>>>> start-commit time as well, otherwise we may run into infinite loop
+>>>>>>>> during foreground GC because target blocks in victim segment are
+>>>>>>>> belong to atomic opened file for long time.
+>>>>>>>>
+>>>>>>>> Now, we will check the condition with f2fs_balance_fs_bg in
+>>>>>>>> background threads, once if user doesn't commit data exceeding 30
+>>>>>>>> seconds, we will drop all cached data, so I expect it can keep our
+>>>>>>>> system running safely to prevent Dos attack.
+>>>>>>>
+>>>>>>> Is it worth to add this patch to avoid abuse on atomic write interface by user?
+>>>>>>
+>>>>>> Hmm, hope to see a real problem first in this case.
+>>>>>
+>>>>> I think this can be a more critical security leak instead of a potential issue
+>>>>> which we can wait for someone reporting that can be too late.
+>>>>>
+>>>>> For example, user can simply write a huge file whose data spread in all f2fs
+>>>>> segments, once user open that file as atomic, foreground GC will suffer
+>>>>> deadloop, causing denying any further service of f2fs.
+>>>>
+>>>> How can you guarantee it won't happen within 30sec? If you want to avoid that,
+>>>
+>>> Now the value is smaller than generic hang task threshold in order to avoid
+>>> foreground GC helding gc_mutex too long, we can tune that parameter?
+>>>
+>>>> you have to take a look at foreground gc.
+>>>
+>>> What do you mean? let GC moves blocks of atomic write opened file?
+>>
+>> I thought that we first need to detect when foreground GC is stuck by such the
+>> huge number of atomic writes. Then, we need to do something like dropping all
+>> the atomic writes.
 > 
-> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+> Yup, that will be reasonable. :)
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+If we drop all atomic writes, for those atomic write who act very normal, it
+will case them losing all cached data without any hint like error return value.
+So should we just:
+
+- drop expired inmem pages.
+- or set FI_DROP_ATOMIC flag, return -EIO during atomic_commit, and reset the flag.
 
 Thanks,
 
-> ---
->  fs/f2fs/segment.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 5854cc4e1d67..bf9dab55b370 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -328,7 +328,7 @@ void drop_inmem_page(struct inode *inode, struct page *page)
->  			break;
->  	}
->  
-> -	f2fs_bug_on(sbi, !cur || cur->page != page);
-> +	f2fs_bug_on(sbi, list_empty(head) || cur->page != page);
->  	list_del(&cur->list);
->  	mutex_unlock(&fi->inmem_lock);
->  
+> Thanks,
 > 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+>>
+>>>
+>>> Thanks,
+>>>
+>>>>
+>>>>>
+>>>>> Thanks,
+>>>>>
+>>>>>>
+>>>>>>> Thanks,
+>>>>>>
+>>>>>> .
+>>>>>>
+>>>>
+>>>> .
+>>>>
+>>
+>> .
+>>
+> 
+> 
+> .
+> 
