@@ -1,109 +1,256 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: set deadline to drop expired inmem pages
-Date: Tue, 17 Apr 2018 21:14:44 -0700
-Message-ID: <20180418041444.GA32135@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180408081312.6190-1-yuchao0@huawei.com>
- <09fd3144-d1c5-ca02-178d-b467d6fbe0e1@huawei.com>
- <20180413010433.GB51348@jaegeuk-macbookpro.roam.corp.google.com>
- <bb7d3b60-0629-ea80-c4ae-976a76abb034@huawei.com>
- <20180413040525.GB59368@jaegeuk-macbookpro.roam.corp.google.com>
- <51d2e16a-3a69-71ef-86f5-aee63cd6731c@huawei.com>
- <20180416201603.GA76077@jaegeuk-macbookpro.roam.corp.google.com>
- <b4aba32d-e57a-add4-19d5-7d19a8ccd90c@huawei.com>
- <aea6b6f2-e4c4-5818-ab51-fba5f755f4e0@huawei.com>
+Subject: Re: [PATCH 1/2] fscrypt: allow synchronous bio decryption
+Date: Tue, 17 Apr 2018 21:22:33 -0700
+Message-ID: <20180418042233.GA33088@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180416193147.104555-1-ebiggers@google.com>
+ <20180416193147.104555-2-ebiggers@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1f8ecE-0006mH-Az
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 18 Apr 2018 04:22:42 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1f8ecC-00G9PG-Le
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 18 Apr 2018 04:22:42 +0000
 Content-Disposition: inline
-In-Reply-To: <aea6b6f2-e4c4-5818-ab51-fba5f755f4e0@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <20180416193147.104555-2-ebiggers@google.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Eric Biggers <ebiggers@google.com>
+Cc: Michael Halcrow <mhalcrow@google.com>, linux-fscrypt@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Victor Hsieh <victorhsieh@google.com>, linux-f2fs-devel@lists.sourceforge.net
 
-On 04/17, Chao Yu wrote:
-> On 2018/4/17 14:44, Chao Yu wrote:
-> > On 2018/4/17 4:16, Jaegeuk Kim wrote:
-> >> On 04/13, Chao Yu wrote:
-> >>> On 2018/4/13 12:05, Jaegeuk Kim wrote:
-> >>>> On 04/13, Chao Yu wrote:
-> >>>>> On 2018/4/13 9:04, Jaegeuk Kim wrote:
-> >>>>>> On 04/10, Chao Yu wrote:
-> >>>>>>> Hi Jaegeuk,
-> >>>>>>>
-> >>>>>>> On 2018/4/8 16:13, Chao Yu wrote:
-> >>>>>>>> f2fs doesn't allow abuse on atomic write class interface, so except
-> >>>>>>>> limiting in-mem pages' total memory usage capacity, we need to limit
-> >>>>>>>> start-commit time as well, otherwise we may run into infinite loop
-> >>>>>>>> during foreground GC because target blocks in victim segment are
-> >>>>>>>> belong to atomic opened file for long time.
-> >>>>>>>>
-> >>>>>>>> Now, we will check the condition with f2fs_balance_fs_bg in
-> >>>>>>>> background threads, once if user doesn't commit data exceeding 30
-> >>>>>>>> seconds, we will drop all cached data, so I expect it can keep our
-> >>>>>>>> system running safely to prevent Dos attack.
-> >>>>>>>
-> >>>>>>> Is it worth to add this patch to avoid abuse on atomic write interface by user?
-> >>>>>>
-> >>>>>> Hmm, hope to see a real problem first in this case.
-> >>>>>
-> >>>>> I think this can be a more critical security leak instead of a potential issue
-> >>>>> which we can wait for someone reporting that can be too late.
-> >>>>>
-> >>>>> For example, user can simply write a huge file whose data spread in all f2fs
-> >>>>> segments, once user open that file as atomic, foreground GC will suffer
-> >>>>> deadloop, causing denying any further service of f2fs.
-> >>>>
-> >>>> How can you guarantee it won't happen within 30sec? If you want to avoid that,
-> >>>
-> >>> Now the value is smaller than generic hang task threshold in order to avoid
-> >>> foreground GC helding gc_mutex too long, we can tune that parameter?
-> >>>
-> >>>> you have to take a look at foreground gc.
-> >>>
-> >>> What do you mean? let GC moves blocks of atomic write opened file?
-> >>
-> >> I thought that we first need to detect when foreground GC is stuck by such the
-> >> huge number of atomic writes. Then, we need to do something like dropping all
-> >> the atomic writes.
-> > 
-> > Yup, that will be reasonable. :)
+On 04/16, Eric Biggers wrote:
+> Currently, fscrypt provides fscrypt_decrypt_bio_pages() which decrypts a
+> bio's pages asynchronously, then unlocks them afterwards.  But, this
+> assumes that decryption is the last "postprocessing step" for the bio,
+> so it's incompatible with additional postprocessing steps such as
+> authenticity verification after decryption.
 > 
-> If we drop all atomic writes, for those atomic write who act very normal, it
-> will case them losing all cached data without any hint like error return value.
-> So should we just:
-> 
-> - drop expired inmem pages.
-> - or set FI_DROP_ATOMIC flag, return -EIO during atomic_commit, and reset the flag.
+> Therefore, rename the existing fscrypt_decrypt_bio_pages() to
+> fscrypt_enqueue_decrypt_bio().  Then, add fscrypt_decrypt_bio() which
+> decrypts the pages in the bio synchronously without unlocking the pages,
+> nor setting them Uptodate; and add fscrypt_enqueue_decrypt_work(), which
+> enqueues work on the fscrypt_read_workqueue.  The new functions will be
+> used by filesystems that support both fscrypt and fs-verity.
 
-Like FI_ATOMIC_REVOKE_REQUEST in atomic_commit?
+Hi Ted,
+
+In order to prepare further work on fsverity, if you don't mind, can I queue
+this patch in f2fs.git and upstream later?
+Let me know, if you have any concern.
+
+Thanks,
 
 > 
-> Thanks,
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  fs/crypto/bio.c                 | 35 +++++++++++++++++++++------------
+>  fs/crypto/crypto.c              |  8 +++++++-
+>  fs/crypto/fscrypt_private.h     |  1 -
+>  fs/ext4/readpage.c              |  2 +-
+>  fs/f2fs/data.c                  |  2 +-
+>  include/linux/fscrypt_notsupp.h | 13 +++++++++---
+>  include/linux/fscrypt_supp.h    |  5 ++++-
+>  7 files changed, 45 insertions(+), 21 deletions(-)
 > 
-> > 
-> > Thanks,
-> > 
-> >>
-> >>>
-> >>> Thanks,
-> >>>
-> >>>>
-> >>>>>
-> >>>>> Thanks,
-> >>>>>
-> >>>>>>
-> >>>>>>> Thanks,
-> >>>>>>
-> >>>>>> .
-> >>>>>>
-> >>>>
-> >>>> .
-> >>>>
-> >>
-> >> .
-> >>
-> > 
-> > 
-> > .
-> > 
+> diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
+> index 0d5e6a569d58..0959044c5cee 100644
+> --- a/fs/crypto/bio.c
+> +++ b/fs/crypto/bio.c
+> @@ -26,15 +26,8 @@
+>  #include <linux/namei.h>
+>  #include "fscrypt_private.h"
+>  
+> -/*
+> - * Call fscrypt_decrypt_page on every single page, reusing the encryption
+> - * context.
+> - */
+> -static void completion_pages(struct work_struct *work)
+> +static void __fscrypt_decrypt_bio(struct bio *bio, bool done)
+>  {
+> -	struct fscrypt_ctx *ctx =
+> -		container_of(work, struct fscrypt_ctx, r.work);
+> -	struct bio *bio = ctx->r.bio;
+>  	struct bio_vec *bv;
+>  	int i;
+>  
+> @@ -46,22 +39,38 @@ static void completion_pages(struct work_struct *work)
+>  		if (ret) {
+>  			WARN_ON_ONCE(1);
+>  			SetPageError(page);
+> -		} else {
+> +		} else if (done) {
+>  			SetPageUptodate(page);
+>  		}
+> -		unlock_page(page);
+> +		if (done)
+> +			unlock_page(page);
+>  	}
+> +}
+> +
+> +void fscrypt_decrypt_bio(struct bio *bio)
+> +{
+> +	__fscrypt_decrypt_bio(bio, false);
+> +}
+> +EXPORT_SYMBOL(fscrypt_decrypt_bio);
+> +
+> +static void completion_pages(struct work_struct *work)
+> +{
+> +	struct fscrypt_ctx *ctx =
+> +		container_of(work, struct fscrypt_ctx, r.work);
+> +	struct bio *bio = ctx->r.bio;
+> +
+> +	__fscrypt_decrypt_bio(bio, true);
+>  	fscrypt_release_ctx(ctx);
+>  	bio_put(bio);
+>  }
+>  
+> -void fscrypt_decrypt_bio_pages(struct fscrypt_ctx *ctx, struct bio *bio)
+> +void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx, struct bio *bio)
+>  {
+>  	INIT_WORK(&ctx->r.work, completion_pages);
+>  	ctx->r.bio = bio;
+> -	queue_work(fscrypt_read_workqueue, &ctx->r.work);
+> +	fscrypt_enqueue_decrypt_work(&ctx->r.work);
+>  }
+> -EXPORT_SYMBOL(fscrypt_decrypt_bio_pages);
+> +EXPORT_SYMBOL(fscrypt_enqueue_decrypt_bio);
+>  
+>  void fscrypt_pullback_bio_page(struct page **page, bool restore)
+>  {
+> diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+> index ce654526c0fb..0758d32ad01b 100644
+> --- a/fs/crypto/crypto.c
+> +++ b/fs/crypto/crypto.c
+> @@ -45,12 +45,18 @@ static mempool_t *fscrypt_bounce_page_pool = NULL;
+>  static LIST_HEAD(fscrypt_free_ctxs);
+>  static DEFINE_SPINLOCK(fscrypt_ctx_lock);
+>  
+> -struct workqueue_struct *fscrypt_read_workqueue;
+> +static struct workqueue_struct *fscrypt_read_workqueue;
+>  static DEFINE_MUTEX(fscrypt_init_mutex);
+>  
+>  static struct kmem_cache *fscrypt_ctx_cachep;
+>  struct kmem_cache *fscrypt_info_cachep;
+>  
+> +void fscrypt_enqueue_decrypt_work(struct work_struct *work)
+> +{
+> +	queue_work(fscrypt_read_workqueue, work);
+> +}
+> +EXPORT_SYMBOL(fscrypt_enqueue_decrypt_work);
+> +
+>  /**
+>   * fscrypt_release_ctx() - Releases an encryption context
+>   * @ctx: The encryption context to release.
+> diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
+> index ad6722bae8b7..4012558f6115 100644
+> --- a/fs/crypto/fscrypt_private.h
+> +++ b/fs/crypto/fscrypt_private.h
+> @@ -97,7 +97,6 @@ static inline bool fscrypt_valid_enc_modes(u32 contents_mode,
+>  /* crypto.c */
+>  extern struct kmem_cache *fscrypt_info_cachep;
+>  extern int fscrypt_initialize(unsigned int cop_flags);
+> -extern struct workqueue_struct *fscrypt_read_workqueue;
+>  extern int fscrypt_do_page_crypto(const struct inode *inode,
+>  				  fscrypt_direction_t rw, u64 lblk_num,
+>  				  struct page *src_page,
+> diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+> index 9ffa6fad18db..19b87a8de6ff 100644
+> --- a/fs/ext4/readpage.c
+> +++ b/fs/ext4/readpage.c
+> @@ -77,7 +77,7 @@ static void mpage_end_io(struct bio *bio)
+>  		if (bio->bi_status) {
+>  			fscrypt_release_ctx(bio->bi_private);
+>  		} else {
+> -			fscrypt_decrypt_bio_pages(bio->bi_private, bio);
+> +			fscrypt_enqueue_decrypt_bio(bio->bi_private, bio);
+>  			return;
+>  		}
+>  	}
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 02237d4d91f5..39225519de1c 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -66,7 +66,7 @@ static void f2fs_read_end_io(struct bio *bio)
+>  		if (bio->bi_status) {
+>  			fscrypt_release_ctx(bio->bi_private);
+>  		} else {
+> -			fscrypt_decrypt_bio_pages(bio->bi_private, bio);
+> +			fscrypt_enqueue_decrypt_bio(bio->bi_private, bio);
+>  			return;
+>  		}
+>  	}
+> diff --git a/include/linux/fscrypt_notsupp.h b/include/linux/fscrypt_notsupp.h
+> index 44b50c04bae9..9770be37c9d4 100644
+> --- a/include/linux/fscrypt_notsupp.h
+> +++ b/include/linux/fscrypt_notsupp.h
+> @@ -25,6 +25,10 @@ static inline bool fscrypt_dummy_context_enabled(struct inode *inode)
+>  }
+>  
+>  /* crypto.c */
+> +static inline void fscrypt_enqueue_decrypt_work(struct work_struct *work)
+> +{
+> +}
+> +
+>  static inline struct fscrypt_ctx *fscrypt_get_ctx(const struct inode *inode,
+>  						  gfp_t gfp_flags)
+>  {
+> @@ -160,10 +164,13 @@ static inline bool fscrypt_match_name(const struct fscrypt_name *fname,
+>  }
+>  
+>  /* bio.c */
+> -static inline void fscrypt_decrypt_bio_pages(struct fscrypt_ctx *ctx,
+> -					     struct bio *bio)
+> +static inline void fscrypt_decrypt_bio(struct bio *bio)
+> +{
+> +}
+> +
+> +static inline void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx,
+> +					       struct bio *bio)
+>  {
+> -	return;
+>  }
+>  
+>  static inline void fscrypt_pullback_bio_page(struct page **page, bool restore)
+> diff --git a/include/linux/fscrypt_supp.h b/include/linux/fscrypt_supp.h
+> index 477a7a6504d2..2c9a86ac5e83 100644
+> --- a/include/linux/fscrypt_supp.h
+> +++ b/include/linux/fscrypt_supp.h
+> @@ -59,6 +59,7 @@ static inline bool fscrypt_dummy_context_enabled(struct inode *inode)
+>  }
+>  
+>  /* crypto.c */
+> +extern void fscrypt_enqueue_decrypt_work(struct work_struct *);
+>  extern struct fscrypt_ctx *fscrypt_get_ctx(const struct inode *, gfp_t);
+>  extern void fscrypt_release_ctx(struct fscrypt_ctx *);
+>  extern struct page *fscrypt_encrypt_page(const struct inode *, struct page *,
+> @@ -188,7 +189,9 @@ static inline bool fscrypt_match_name(const struct fscrypt_name *fname,
+>  }
+>  
+>  /* bio.c */
+> -extern void fscrypt_decrypt_bio_pages(struct fscrypt_ctx *, struct bio *);
+> +extern void fscrypt_decrypt_bio(struct bio *);
+> +extern void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx,
+> +					struct bio *bio);
+>  extern void fscrypt_pullback_bio_page(struct page **, bool);
+>  extern int fscrypt_zeroout_range(const struct inode *, pgoff_t, sector_t,
+>  				 unsigned int);
+> -- 
+> 2.17.0.484.g0c8726318c-goog
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
