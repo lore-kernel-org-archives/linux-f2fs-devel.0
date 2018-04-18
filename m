@@ -1,68 +1,190 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 1/5] f2fs: fix race in between GC and atomic open
-Date: Wed, 18 Apr 2018 17:53:16 +0800
-Message-ID: <d063b5db-7cd6-fbcd-1ece-f3e764b02c23@huawei.com>
-References: <20180418094505.98888-1-yuchao0@huawei.com>
+From: Eric Biggers via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Subject: Re: [PATCH 2/2] f2fs: refactor read path to allow
+ multiple postprocessing steps
+Date: Wed, 18 Apr 2018 10:18:15 -0700
+Message-ID: <20180418171815.GA118681@google.com>
+References: <20180416193147.104555-1-ebiggers@google.com>
+ <20180416193147.104555-3-ebiggers@google.com>
+ <2ccf62e8-070a-7ddc-77a3-cb5ba9347bba@huawei.com>
+ <20180417174221.GB7428@google.com>
+ <7552c5d3-59fa-69fc-5c76-59d1cff00a1d@huawei.com>
+Reply-To: Eric Biggers <ebiggers@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180418094505.98888-1-yuchao0@huawei.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <ebiggers@google.com>) id 1f8qiw-0007lU-Ah
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 18 Apr 2018 17:18:26 +0000
+Received: from mail-pf0-f179.google.com ([209.85.192.179])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1f8qiu-0015rF-En
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 18 Apr 2018 17:18:26 +0000
+Received: by mail-pf0-f179.google.com with SMTP id z9so1231811pfe.6
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 18 Apr 2018 10:18:24 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <7552c5d3-59fa-69fc-5c76-59d1cff00a1d@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: "Theodore Y . Ts'o" <tytso@mit.edu>, Michael Halcrow <mhalcrow@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Victor Hsieh <victorhsieh@google.com>
 
-Hi all,
+Hi Chao,
 
-Please ignore this patch, I just sent this before, sorry.
+On Wed, Apr 18, 2018 at 02:27:32PM +0800, Chao Yu wrote:
+> Hi Eric,
+> 
+> On 2018/4/18 1:42, Eric Biggers wrote:
+> > Hi Chao,
+> > 
+> > On Tue, Apr 17, 2018 at 05:13:12PM +0800, Chao Yu wrote:
+> >>> +
+> >>> +static void bio_post_read_processing(struct bio_post_read_ctx *ctx);
+> >>> +
+> >>> +static void decrypt_work(struct work_struct *work)
+> >>> +{
+> >>> +	struct bio_post_read_ctx *ctx =
+> >>> +		container_of(work, struct bio_post_read_ctx, work);
+> >>> +
+> >>> +	fscrypt_decrypt_bio(ctx->bio);
+> >>> +
+> >>> +	bio_post_read_processing(ctx);
+> >>> +}
+> >>> +
+> >>> +static void bio_post_read_processing(struct bio_post_read_ctx *ctx)
+> >>> +{
+> >>> +	switch (++ctx->cur_step) {
+> >>> +	case STEP_DECRYPT:
+> >>> +		if (ctx->enabled_steps & (1 << STEP_DECRYPT)) {
+> >>> +			INIT_WORK(&ctx->work, decrypt_work);
+> >>> +			fscrypt_enqueue_decrypt_work(&ctx->work);
+> >>> +			return;
+> >>> +		}
+> >>> +		ctx->cur_step++;
+> >>> +		/* fall-through */
+> >>> +	default:
+> >>> +		__read_end_io(ctx->bio);
+> >>> +	}
+> >>
+> >> How about introducing __bio_post_read_processing()
+> >>
+> >> switch (step) {
+> >> case STEP_DECRYPT:
+> >> 	...
+> >> 	break;
+> >> case STEP_COMPRESS:
+> >> 	...
+> >> 	break;
+> >> case STEP_GENERIC:
+> >> 	__read_end_io;
+> >> 	break;
+> >> ...
+> >> }
+> >>
+> >> Then we can customize flexible read processes like:
+> >>
+> >> bio_post_read_processing()
+> >> {
+> >> 	if (encrypt_enabled)
+> >> 		__bio_post_read_processing(, STEP_DECRYPT);
+> >> 	if (compress_enabled)
+> >> 		__bio_post_read_processing(, STEP_COMPRESS);
+> >> 	__bio_post_read_processing(, STEP_GENERIC);
+> >> }
+> >>
+> >> Or other flow.
+> > 
+> > If I understand correctly, you're suggesting that all the steps be done in a
+> > single workqueue item?  The problem with that is that the verity work will
+> 
+> Yup,
+> 
+> > require I/O to the file to read hashes, which may need STEP_DECRYPT.  Hence,
+> > decryption and verity will need separate workqueues.
+> 
+> For decryption and verity, the needs separated data, I agree that we can not
+> merge the work into one workqueue.
+> 
+> As you mentioned in commit message, it can be used by compression later, so I
+> just thought that for decryption and decompression, maybe we can do those work
+> sequentially in one workqueue?
+> 
 
-Thanks,
+Sure.  I'm not sure what you're asking me to do, though, since f2fs compression
+doesn't exist yet.  If/when there are multiple steps that can be combined, then
+bio_post_read_processing() can be updated to schedule them together.
 
-On 2018/4/18 17:45, Chao Yu wrote:
-> Thread					GC thread
-> - f2fs_ioc_start_atomic_write
->  - get_dirty_pages
->  - filemap_write_and_wait_range
-> 					- f2fs_gc
-> 					 - do_garbage_collect
-> 					  - gc_data_segment
-> 					   - move_data_page
-> 					    - f2fs_is_atomic_file
-> 					    - set_page_dirty
->  - set_inode_flag(, FI_ATOMIC_FILE)
+> > 
+> >>> @@ -481,29 +537,33 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
+> >>>  							 unsigned nr_pages)
+> >>>  {
+> >>>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> >>> -	struct fscrypt_ctx *ctx = NULL;
+> >>>  	struct bio *bio;
+> >>> -
+> >>> -	if (f2fs_encrypted_file(inode)) {
+> >>> -		ctx = fscrypt_get_ctx(inode, GFP_NOFS);
+> >>> -		if (IS_ERR(ctx))
+> >>> -			return ERR_CAST(ctx);
+> >>> -
+> >>> -		/* wait the page to be moved by cleaning */
+> >>> -		f2fs_wait_on_block_writeback(sbi, blkaddr);
+> >>> -	}
+> >>> +	struct bio_post_read_ctx *ctx;
+> >>> +	unsigned int post_read_steps = 0;
+> >>>  
+> >>>  	bio = f2fs_bio_alloc(sbi, min_t(int, nr_pages, BIO_MAX_PAGES), false);
+> >>> -	if (!bio) {
+> >>> -		if (ctx)
+> >>> -			fscrypt_release_ctx(ctx);
+> >>> +	if (!bio)
+> >>>  		return ERR_PTR(-ENOMEM);
+> >>> -	}
+> >>>  	f2fs_target_device(sbi, blkaddr, bio);
+> >>>  	bio->bi_end_io = f2fs_read_end_io;
+> >>> -	bio->bi_private = ctx;
+> >>
+> >> bio->bi_private = NULL;
+> >>
+> > 
+> > I don't see why.  ->bi_private is NULL by default.
 > 
-> Dirty data page can still be generated by GC in race condition as
-> above call stack.
+> As we will check bi_private in read_end_io anyway, if it is not NULL, we will
+> parse it as an ctx, am I missing something?
 > 
-> This patch adds fi->dio_rwsem[WRITE] in f2fs_ioc_start_atomic_write
-> to avoid such race.
+
+We're allocating a new bio.  New bios have NULL ->bi_private.
+
+> Thanks,
 > 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/file.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 78b3a58cfe21..408471bf4799 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -1677,6 +1677,8 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
->  
->  	inode_lock(inode);
->  
-> +	down_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
-> +
->  	if (f2fs_is_atomic_file(inode))
->  		goto out;
->  
-> @@ -1702,6 +1704,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
->  	stat_inc_atomic_write(inode);
->  	stat_update_max_atomic_write(inode);
->  out:
-> +	up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
->  	inode_unlock(inode);
->  	mnt_drop_write_file(filp);
->  	return ret;
-> 
+> > 
+> >>> +	bio_post_read_ctx_pool =
+> >>> +		mempool_create_slab_pool(128, bio_post_read_ctx_cache);
+> >>
+> >> #define MAX_POST_READ_CACHE_SIZE	128
+> >>
+> > 
+> > Yes, that makes sense.
+> > 
+
+Actually it's the number of contexts preallocated in the mempool, so I'm going
+to call it NUM_PREALLOC_POST_READ_CTXS.  It's similar to
+'num_prealloc_crypto_ctxs' in fs/crypto/crypto.c.
+
+Eric
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
