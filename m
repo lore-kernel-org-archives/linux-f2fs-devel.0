@@ -1,21 +1,22 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] fsck.f2fs: add -O features to tune the bits
-Date: Thu, 19 Apr 2018 13:54:32 -0700
-Message-ID: <20180419205432.21624-1-jaegeuk@kernel.org>
+Subject: [PATCH] mkfs.f2fs: factor out feature table from
+ mkfs.f2fs
+Date: Thu, 19 Apr 2018 13:56:16 -0700
+Message-ID: <20180419205616.22105-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1f9GZn-0004IO-6A
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Apr 2018 20:54:43 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1f9GbR-0007ux-Tu
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Apr 2018 20:56:25 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f9GZl-00GnF1-Ck
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Apr 2018 20:54:43 +0000
+ id 1f9GbQ-002zPP-Fx
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Apr 2018 20:56:25 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,169 +29,199 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch add -O features for fsck.f2fs in order to tune the feature bits.
-Currently, it supports -O encrypt only.
+This patch makes feature bit work be global in f2fs-tools.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fsck/fsck.h   |  1 +
- fsck/main.c   |  9 ++++++++-
- fsck/mount.c  | 39 ++++++++++++++++++++++++++++++++++++++-
- fsck/resize.c | 18 +-----------------
- 4 files changed, 48 insertions(+), 19 deletions(-)
+ include/f2fs_fs.h       | 77 +++++++++++++++++++++++++++++++++++++++++
+ mkfs/f2fs_format_main.c | 67 ++---------------------------------
+ 2 files changed, 80 insertions(+), 64 deletions(-)
 
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index 8e133fa..3e13fc6 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -176,6 +176,7 @@ extern void move_curseg_info(struct f2fs_sb_info *, u64);
- extern void write_curseg_info(struct f2fs_sb_info *);
- extern int find_next_free_block(struct f2fs_sb_info *, u64 *, int, int);
- extern void write_checkpoint(struct f2fs_sb_info *);
-+extern void write_superblock(struct f2fs_super_block *);
- extern void update_data_blkaddr(struct f2fs_sb_info *, nid_t, u16, block_t);
- extern void update_nat_blkaddr(struct f2fs_sb_info *, nid_t, nid_t, block_t);
- 
-diff --git a/fsck/main.c b/fsck/main.c
-index 9256d21..c4dd8b1 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -28,6 +28,8 @@ struct f2fs_fsck gfsck;
- extern struct sparse_file *f2fs_sparse_file;
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index 54ac1c8..a1274fd 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -40,6 +40,14 @@
+ #include <linux/blkzoned.h>
  #endif
  
-+INIT_FEATURE_TABLE;
++#ifdef HAVE_STDLIB_H
++#include <stdlib.h>
++#endif
 +
- static char *absolute_path(const char *file)
- {
- 	char *ret;
-@@ -54,6 +56,7 @@ void fsck_usage()
- 	MSG(0, "  -d debug level [default:0]\n");
- 	MSG(0, "  -f check/fix entire partition\n");
- 	MSG(0, "  -g add default options\n");
-+	MSG(0, "  -O feature1[feature2,feature3,...] e.g. \"encrypt\"\n");
- 	MSG(0, "  -p preen mode [default:0 the same as -a [0|1]]\n");
- 	MSG(0, "  -S sparse_mode\n");
- 	MSG(0, "  -t show directory tree\n");
-@@ -180,7 +183,7 @@ void f2fs_parse_options(int argc, char *argv[])
- 	}
- 
- 	if (!strcmp("fsck.f2fs", prog)) {
--		const char *option_string = ":ad:fg:p:q:StyV";
-+		const char *option_string = ":ad:fg:O:p:q:StyV";
- 		int opt = 0;
- 		struct option long_opt[] = {
- 			{"dry-run", no_argument, 0, 1},
-@@ -203,6 +206,10 @@ void f2fs_parse_options(int argc, char *argv[])
- 				if (!strcmp(optarg, "android"))
- 					c.defset = CONF_ANDROID;
- 				break;
-+			case 'O':
-+				if (parse_feature(feature_table, optarg))
-+					fsck_usage();
-+				break;
- 			case 'p':
- 				/* preen mode has different levels:
- 				 *  0: default level, the same as -a
-diff --git a/fsck/mount.c b/fsck/mount.c
-index e5574c5..b374b46 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -2144,6 +2144,22 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
- 	ASSERT(ret >= 0);
++#ifdef HAVE_STRING_H
++#include <string.h>
++#endif
++
+ #ifdef HAVE_LIBSELINUX
+ #include <selinux/selinux.h>
+ #include <selinux/label.h>
+@@ -1307,4 +1315,73 @@ static inline void show_version(const char *prog)
+ 	MSG(0, "%s %s (%s)\n", prog, F2FS_TOOLS_VERSION, F2FS_TOOLS_DATE);
  }
  
-+void write_superblock(struct f2fs_super_block *new_sb)
++struct feature {
++	char *name;
++	u32  mask;
++};
++
++#define INIT_FEATURE_TABLE						\
++struct feature feature_table[] = {					\
++	{ "encrypt",			F2FS_FEATURE_ENCRYPT },		\
++	{ "extra_attr",			F2FS_FEATURE_EXTRA_ATTR },	\
++	{ "project_quota",		F2FS_FEATURE_PRJQUOTA },	\
++	{ "inode_checksum",		F2FS_FEATURE_INODE_CHKSUM },	\
++	{ "flexible_inline_xattr",	F2FS_FEATURE_FLEXIBLE_INLINE_XATTR },\
++	{ "quota",			F2FS_FEATURE_QUOTA_INO },	\
++	{ "inode_crtime",		F2FS_FEATURE_INODE_CRTIME },	\
++	{ "lost_found",			F2FS_FEATURE_LOST_FOUND },	\
++	{ "verity",			F2FS_FEATURE_VERITY },	/* reserved */ \
++	{ NULL,				0x0},				\
++};
++
++static inline u32 feature_map(struct feature *table, char *feature)
 +{
-+	int index, ret;
-+	u_int8_t *buf;
++	struct feature *p;
++	for (p = table; p->name && strcmp(p->name, feature); p++)
++		;
++	return p->mask;
++}
 +
-+	buf = calloc(BLOCK_SZ, 1);
++static inline int set_feature_bits(struct feature *table, char *features)
++{
++	u32 mask = feature_map(table, features);
++	if (mask) {
++		c.feature |= cpu_to_le32(mask);
++	} else {
++		MSG(0, "Error: Wrong features %s\n", features);
++		return -1;
++	}
++	return 0;
++}
 +
-+	memcpy(buf + F2FS_SUPER_OFFSET, new_sb, sizeof(*new_sb));
-+	for (index = 0; index < 2; index++) {
-+		ret = dev_write_block(buf, index);
-+		ASSERT(ret >= 0);
++static inline int parse_feature(struct feature *table, const char *features)
++{
++	char *buf, *sub, *next;
++
++	buf = calloc(strlen(features) + 1, sizeof(char));
++	ASSERT(buf);
++	strncpy(buf, features, strlen(features) + 1);
++
++	for (sub = buf; sub && *sub; sub = next ? next + 1 : NULL) {
++		/* Skip the beginning blanks */
++		while (*sub && *sub == ' ')
++			sub++;
++		next = sub;
++		/* Skip a feature word */
++		while (*next && *next != ' ' && *next != ',')
++			next++;
++
++		if (*next == 0)
++			next = NULL;
++		else
++			*next = 0;
++
++		if (set_feature_bits(table, sub)) {
++			free(buf);
++			return -1;
++		}
 +	}
 +	free(buf);
-+	DBG(0, "Info: Done to rebuild superblock\n");
++	return 0;
 +}
-+
- void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
+ #endif	/*__F2FS_FS_H */
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index 4e39fbd..8af70a2 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -37,23 +37,7 @@ extern struct sparse_file *f2fs_sparse_file;
+ extern struct f2fs_configuration c;
+ static int force_overwrite = 0;
+ 
+-struct feature {
+-	char *name;
+-	u32  mask;
+-};
+-
+-struct feature feature_table[] = {
+-	{ "encrypt",			F2FS_FEATURE_ENCRYPT },
+-	{ "extra_attr",			F2FS_FEATURE_EXTRA_ATTR },
+-	{ "project_quota",		F2FS_FEATURE_PRJQUOTA },
+-	{ "inode_checksum",		F2FS_FEATURE_INODE_CHKSUM },
+-	{ "flexible_inline_xattr",	F2FS_FEATURE_FLEXIBLE_INLINE_XATTR },
+-	{ "quota",			F2FS_FEATURE_QUOTA_INO },
+-	{ "inode_crtime",		F2FS_FEATURE_INODE_CRTIME },
+-	{ "lost_found",			F2FS_FEATURE_LOST_FOUND },
+-	{ "verity",			F2FS_FEATURE_VERITY },	/* reserved */
+-	{ NULL,				0x0},
+-};
++INIT_FEATURE_TABLE;
+ 
+ static void mkfs_usage()
  {
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
-@@ -2314,6 +2330,26 @@ static int check_sector_size(struct f2fs_super_block *sb)
- 	return 0;
+@@ -104,52 +88,6 @@ static void f2fs_show_info()
+ 		MSG(0, "Info: Set conf for android\n");
  }
  
-+static void tune_sb_features(struct f2fs_sb_info *sbi)
-+{
-+	int sb_changed = 0;
-+	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
-+
-+	if (!(sb->feature & cpu_to_le32(F2FS_FEATURE_ENCRYPT)) &&
-+			c.feature & cpu_to_le32(F2FS_FEATURE_ENCRYPT)) {
-+		sb->feature |= cpu_to_le32(F2FS_FEATURE_ENCRYPT);
-+		MSG(0, "Info: Set Encryption feature\n");
-+		sb_changed = 1;
-+	}
-+	/* TODO: quota needs to allocate inode numbers */
-+
-+	c.feature = sb->feature;
-+	if (!sb_changed)
-+		return;
-+
-+	write_superblock(sb);
-+}
-+
- int f2fs_do_mount(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_checkpoint *cp = NULL;
-@@ -2365,7 +2401,8 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
- 	}
- 
- 	c.bug_on = 0;
--	c.feature = sb->feature;
-+
-+	tune_sb_features(sbi);
- 
- 	/* precompute checksum seed for metadata */
- 	if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM))
-diff --git a/fsck/resize.c b/fsck/resize.c
-index 019da71..d285dd7 100644
---- a/fsck/resize.c
-+++ b/fsck/resize.c
-@@ -569,22 +569,6 @@ static void rebuild_checkpoint(struct f2fs_sb_info *sbi,
- 	DBG(0, "Info: Done to rebuild checkpoint blocks\n");
- }
- 
--static void rebuild_superblock(struct f2fs_super_block *new_sb)
+-static inline u32 feature_map(char *feature)
 -{
--	int index, ret;
--	u_int8_t *buf;
--
--	buf = calloc(BLOCK_SZ, 1);
--
--	memcpy(buf + F2FS_SUPER_OFFSET, new_sb, sizeof(*new_sb));
--	for (index = 0; index < 2; index++) {
--		ret = dev_write_block(buf, index);
--		ASSERT(ret >= 0);
--	}
--	free(buf);
--	DBG(0, "Info: Done to rebuild superblock\n");
+-	struct feature *p;
+-	for (p = feature_table; p->name && strcmp(p->name, feature); p++)
+-		;
+-	return p->mask;
 -}
 -
- int f2fs_resize(struct f2fs_sb_info *sbi)
+-static void set_feature_bits(char *features)
+-{
+-	u32 mask = feature_map(features);
+-	if (mask) {
+-		c.feature |= cpu_to_le32(mask);
+-	} else {
+-		MSG(0, "Error: Wrong features %s\n", features);
+-		mkfs_usage();
+-	}
+-}
+-
+-static void parse_feature(const char *features)
+-{
+-	char *buf, *sub, *next;
+-
+-	buf = calloc(strlen(features) + 1, sizeof(char));
+-	ASSERT(buf);
+-	strncpy(buf, features, strlen(features) + 1);
+-
+-	for (sub = buf; sub && *sub; sub = next ? next + 1 : NULL) {
+-		/* Skip the beginning blanks */
+-		while (*sub && *sub == ' ')
+-			sub++;
+-		next = sub;
+-		/* Skip a feature word */
+-		while (*next && *next != ' ' && *next != ',')
+-			next++;
+-
+-		if (*next == 0)
+-			next = NULL;
+-		else
+-			*next = 0;
+-
+-		set_feature_bits(sub);
+-	}
+-	free(buf);
+-}
+-
+ static void add_default_options(void)
  {
- 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
-@@ -636,6 +620,6 @@ int f2fs_resize(struct f2fs_sb_info *sbi)
- 	migrate_nat(sbi, new_sb);
- 	migrate_sit(sbi, new_sb, offset_seg);
- 	rebuild_checkpoint(sbi, new_sb, offset_seg);
--	rebuild_superblock(new_sb);
-+	write_superblock(new_sb);
- 	return 0;
- }
+ 	switch (c.defset) {
+@@ -221,7 +159,8 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 			c.overprovision = atof(optarg);
+ 			break;
+ 		case 'O':
+-			parse_feature(optarg);
++			if (parse_feature(feature_table, optarg))
++				mkfs_usage();
+ 			break;
+ 		case 's':
+ 			c.segs_per_sec = atoi(optarg);
 -- 
 2.17.0.484.g0c8726318c-goog
 
