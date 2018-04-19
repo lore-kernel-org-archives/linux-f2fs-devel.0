@@ -1,8 +1,14 @@
-From: Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH] f2fs: call unlock_new_inode() before
- d_instantiate()
-Date: Wed, 18 Apr 2018 15:48:42 -0700
-Message-ID: <20180418224842.195203-1-ebiggers3@gmail.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH 2/2] f2fs: refactor read path to allow
+ multiple postprocessing steps
+Date: Thu, 19 Apr 2018 22:41:07 +0800
+Message-ID: <65b37bf0-fac7-b05d-99cb-79194e98622e@kernel.org>
+References: <20180416193147.104555-1-ebiggers@google.com>
+ <20180416193147.104555-3-ebiggers@google.com>
+ <2ccf62e8-070a-7ddc-77a3-cb5ba9347bba@huawei.com>
+ <20180417174221.GB7428@google.com>
+ <7552c5d3-59fa-69fc-5c76-59d1cff00a1d@huawei.com>
+ <20180418171815.GA118681@google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,16 +16,15 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers3@gmail.com>) id 1f8vtc-00077A-LD
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 18 Apr 2018 22:49:48 +0000
-Received: from mail-pl0-f66.google.com ([209.85.160.66])
+ (envelope-from <chao@kernel.org>) id 1f9AkV-0007aO-L8
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Apr 2018 14:41:23 +0000
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1f8vta-0028yt-Ol
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 18 Apr 2018 22:49:48 +0000
-Received: by mail-pl0-f66.google.com with SMTP id e7-v6so1994671plt.6
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 18 Apr 2018 15:49:46 -0700 (PDT)
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1f9AkS-004zmr-VY
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Apr 2018 14:41:23 +0000
+In-Reply-To: <20180418171815.GA118681@google.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,76 +34,183 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc: linux-fsdevel@vger.kernel.org, Eric Biggers <ebiggers@google.com>
+To: Eric Biggers <ebiggers@google.com>, Chao Yu <yuchao0@huawei.com>
+Cc: "Theodore Y . Ts'o" <tytso@mit.edu>, Michael Halcrow <mhalcrow@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Victor Hsieh <victorhsieh@google.com>
 
-From: Eric Biggers <ebiggers@google.com>
+Hi Eric and Jaegeuk,
 
-xfstest generic/429 sometimes hangs on f2fs, caused by a thread being
-unable to take a directory's i_rwsem for write in vfs_rmdir().  In the
-test, one thread repeatedly creates and removes a directory, and other
-threads repeatedly look up a file in the directory.  The bug is that
-f2fs_mkdir() calls d_instantiate() before unlock_new_inode(), resulting
-in the directory inode being exposed to lookups before it has been fully
-initialized.  And with CONFIG_DEBUG_LOCK_ALLOC, unlock_new_inode()
-reinitializes ->i_rwsem, corrupting its state when it is already held.
+On 2018/4/19 1:18, Eric Biggers via Linux-f2fs-devel wrote:
+> Hi Chao,
+> 
+> On Wed, Apr 18, 2018 at 02:27:32PM +0800, Chao Yu wrote:
+>> Hi Eric,
+>>
+>> On 2018/4/18 1:42, Eric Biggers wrote:
+>>> Hi Chao,
+>>>
+>>> On Tue, Apr 17, 2018 at 05:13:12PM +0800, Chao Yu wrote:
+>>>>> +
+>>>>> +static void bio_post_read_processing(struct bio_post_read_ctx *ctx);
+>>>>> +
+>>>>> +static void decrypt_work(struct work_struct *work)
+>>>>> +{
+>>>>> +	struct bio_post_read_ctx *ctx =
+>>>>> +		container_of(work, struct bio_post_read_ctx, work);
+>>>>> +
+>>>>> +	fscrypt_decrypt_bio(ctx->bio);
+>>>>> +
+>>>>> +	bio_post_read_processing(ctx);
+>>>>> +}
+>>>>> +
+>>>>> +static void bio_post_read_processing(struct bio_post_read_ctx *ctx)
+>>>>> +{
+>>>>> +	switch (++ctx->cur_step) {
+>>>>> +	case STEP_DECRYPT:
+>>>>> +		if (ctx->enabled_steps & (1 << STEP_DECRYPT)) {
+>>>>> +			INIT_WORK(&ctx->work, decrypt_work);
+>>>>> +			fscrypt_enqueue_decrypt_work(&ctx->work);
+>>>>> +			return;
+>>>>> +		}
+>>>>> +		ctx->cur_step++;
+>>>>> +		/* fall-through */
+>>>>> +	default:
+>>>>> +		__read_end_io(ctx->bio);
+>>>>> +	}
+>>>>
+>>>> How about introducing __bio_post_read_processing()
+>>>>
+>>>> switch (step) {
+>>>> case STEP_DECRYPT:
+>>>> 	...
+>>>> 	break;
+>>>> case STEP_COMPRESS:
+>>>> 	...
+>>>> 	break;
+>>>> case STEP_GENERIC:
+>>>> 	__read_end_io;
+>>>> 	break;
+>>>> ...
+>>>> }
+>>>>
+>>>> Then we can customize flexible read processes like:
+>>>>
+>>>> bio_post_read_processing()
+>>>> {
+>>>> 	if (encrypt_enabled)
+>>>> 		__bio_post_read_processing(, STEP_DECRYPT);
+>>>> 	if (compress_enabled)
+>>>> 		__bio_post_read_processing(, STEP_COMPRESS);
+>>>> 	__bio_post_read_processing(, STEP_GENERIC);
+>>>> }
+>>>>
+>>>> Or other flow.
+>>>
+>>> If I understand correctly, you're suggesting that all the steps be done in a
+>>> single workqueue item?  The problem with that is that the verity work will
+>>
+>> Yup,
+>>
+>>> require I/O to the file to read hashes, which may need STEP_DECRYPT.  Hence,
+>>> decryption and verity will need separate workqueues.
+>>
+>> For decryption and verity, the needs separated data, I agree that we can not
+>> merge the work into one workqueue.
+>>
+>> As you mentioned in commit message, it can be used by compression later, so I
+>> just thought that for decryption and decompression, maybe we can do those work
+>> sequentially in one workqueue?
+>>
+> 
+> Sure.  I'm not sure what you're asking me to do, though, since f2fs compression
 
-Fix it by calling unlock_new_inode() before d_instantiate().  This
-matches what other filesystems do.
+Oh, I just want to make codes be more scalability, once we want to add more
+features which will need a background task, we can easily add one more case
+handler in the function to support it.
 
-Fixes: 57397d86c62d ("f2fs: add inode operations for special inodes")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/f2fs/namei.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> doesn't exist yet.  If/when there are multiple steps that can be combined, then
+> bio_post_read_processing() can be updated to schedule them together.
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index d5098efe577c..3a7ed962d2f7 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -294,8 +294,8 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
- 
- 	alloc_nid_done(sbi, ino);
- 
--	d_instantiate(dentry, inode);
- 	unlock_new_inode(inode);
-+	d_instantiate(dentry, inode);
- 
- 	if (IS_DIRSYNC(dir))
- 		f2fs_sync_fs(sbi->sb, 1);
-@@ -597,8 +597,8 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
- 	err = page_symlink(inode, disk_link.name, disk_link.len);
- 
- err_out:
--	d_instantiate(dentry, inode);
- 	unlock_new_inode(inode);
-+	d_instantiate(dentry, inode);
- 
- 	/*
- 	 * Let's flush symlink data in order to avoid broken symlink as much as
-@@ -661,8 +661,8 @@ static int f2fs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- 
- 	alloc_nid_done(sbi, inode->i_ino);
- 
--	d_instantiate(dentry, inode);
- 	unlock_new_inode(inode);
-+	d_instantiate(dentry, inode);
- 
- 	if (IS_DIRSYNC(dir))
- 		f2fs_sync_fs(sbi->sb, 1);
-@@ -713,8 +713,8 @@ static int f2fs_mknod(struct inode *dir, struct dentry *dentry,
- 
- 	alloc_nid_done(sbi, inode->i_ino);
- 
--	d_instantiate(dentry, inode);
- 	unlock_new_inode(inode);
-+	d_instantiate(dentry, inode);
- 
- 	if (IS_DIRSYNC(dir))
- 		f2fs_sync_fs(sbi->sb, 1);
--- 
-2.17.0.484.g0c8726318c-goog
+Alright, please go ahead with original design.
 
+> 
+>>>
+>>>>> @@ -481,29 +537,33 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
+>>>>>  							 unsigned nr_pages)
+>>>>>  {
+>>>>>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>>>>> -	struct fscrypt_ctx *ctx = NULL;
+>>>>>  	struct bio *bio;
+>>>>> -
+>>>>> -	if (f2fs_encrypted_file(inode)) {
+>>>>> -		ctx = fscrypt_get_ctx(inode, GFP_NOFS);
+>>>>> -		if (IS_ERR(ctx))
+>>>>> -			return ERR_CAST(ctx);
+>>>>> -
+>>>>> -		/* wait the page to be moved by cleaning */
+>>>>> -		f2fs_wait_on_block_writeback(sbi, blkaddr);
+>>>>> -	}
+>>>>> +	struct bio_post_read_ctx *ctx;
+>>>>> +	unsigned int post_read_steps = 0;
+>>>>>  
+>>>>>  	bio = f2fs_bio_alloc(sbi, min_t(int, nr_pages, BIO_MAX_PAGES), false);
+>>>>> -	if (!bio) {
+>>>>> -		if (ctx)
+>>>>> -			fscrypt_release_ctx(ctx);
+>>>>> +	if (!bio)
+>>>>>  		return ERR_PTR(-ENOMEM);
+>>>>> -	}
+>>>>>  	f2fs_target_device(sbi, blkaddr, bio);
+>>>>>  	bio->bi_end_io = f2fs_read_end_io;
+>>>>> -	bio->bi_private = ctx;
+>>>>
+>>>> bio->bi_private = NULL;
+>>>>
+>>>
+>>> I don't see why.  ->bi_private is NULL by default.
+>>
+>> As we will check bi_private in read_end_io anyway, if it is not NULL, we will
+>> parse it as an ctx, am I missing something?
+>>
+> 
+> We're allocating a new bio.  New bios have NULL ->bi_private.
+
+What I concern is that since we will port last developed code to old kernel by
+ourselves, I don't want to make f2fs code rely on block layer code's robust, so
+I'd like to NULL bi_private by f2fs.
+
+I checked history of bio_init(), seems that it started to initialize bi_private
+from very early version. So, alright, for new kernel, it's will not cause any
+problem.
+
+Thanks,
+
+> 
+>> Thanks,
+>>
+>>>
+>>>>> +	bio_post_read_ctx_pool =
+>>>>> +		mempool_create_slab_pool(128, bio_post_read_ctx_cache);
+>>>>
+>>>> #define MAX_POST_READ_CACHE_SIZE	128
+>>>>
+>>>
+>>> Yes, that makes sense.
+>>>
+> 
+> Actually it's the number of contexts preallocated in the mempool, so I'm going
+> to call it NUM_PREALLOC_POST_READ_CTXS.  It's similar to
+> 'num_prealloc_crypto_ctxs' in fs/crypto/crypto.c.
+> 
+> Eric
+> 
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
