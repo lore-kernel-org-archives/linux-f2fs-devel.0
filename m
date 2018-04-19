@@ -1,9 +1,7 @@
-From: Eric Biggers <ebiggers3@gmail.com>
-Subject: [xfstests-bld PATCH 2/2] test-appliance: add 'encrypt'
- config for f2fs
-Date: Thu, 19 Apr 2018 13:50:20 -0700
-Message-ID: <20180419205020.16868-2-ebiggers3@gmail.com>
-References: <20180419205020.16868-1-ebiggers3@gmail.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] fsck.f2fs: add -O features to tune the bits
+Date: Thu, 19 Apr 2018 13:54:32 -0700
+Message-ID: <20180419205432.21624-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,17 +9,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers3@gmail.com>) id 1f9GXJ-00048W-M6
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Apr 2018 20:52:09 +0000
-Received: from mail-pl0-f66.google.com ([209.85.160.66])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1f9GXI-00603n-2b
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Apr 2018 20:52:09 +0000
-Received: by mail-pl0-f66.google.com with SMTP id e7-v6so3945527plt.6
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 19 Apr 2018 13:52:07 -0700 (PDT)
-In-Reply-To: <20180419205020.16868-1-ebiggers3@gmail.com>
+ (envelope-from <jaegeuk@kernel.org>) id 1f9GZn-0004IO-6A
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Apr 2018 20:54:43 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1f9GZl-00GnF1-Ck
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Apr 2018 20:54:43 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,67 +25,172 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Eric Biggers <ebiggers@google.com>, fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-From: Eric Biggers <ebiggers@google.com>
+This patch add -O features for fsck.f2fs in order to tune the feature bits.
+Currently, it supports -O encrypt only.
 
-Allow testing f2fs using the test_dummy_encryption mount option,
-available with f2fs in kernel 4.17 and later.  E.g.,
-
-    gce-xfstests -c f2fs/encrypt -g auto
-
-This is the f2fs equivalent of ext4/encrypt.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- .../test-appliance/files/root/fs/f2fs/cfg/all.list   |  1 +
- .../test-appliance/files/root/fs/f2fs/cfg/encrypt    |  5 +++++
- .../test-appliance/files/root/fs/f2fs/config         | 12 ++++++++++++
- 3 files changed, 18 insertions(+)
- create mode 100644 kvm-xfstests/test-appliance/files/root/fs/f2fs/cfg/encrypt
+ fsck/fsck.h   |  1 +
+ fsck/main.c   |  9 ++++++++-
+ fsck/mount.c  | 39 ++++++++++++++++++++++++++++++++++++++-
+ fsck/resize.c | 18 +-----------------
+ 4 files changed, 48 insertions(+), 19 deletions(-)
 
-diff --git a/kvm-xfstests/test-appliance/files/root/fs/f2fs/cfg/all.list b/kvm-xfstests/test-appliance/files/root/fs/f2fs/cfg/all.list
-index 4ad96d5..bc796ff 100644
---- a/kvm-xfstests/test-appliance/files/root/fs/f2fs/cfg/all.list
-+++ b/kvm-xfstests/test-appliance/files/root/fs/f2fs/cfg/all.list
-@@ -1 +1,2 @@
- default
-+encrypt
-diff --git a/kvm-xfstests/test-appliance/files/root/fs/f2fs/cfg/encrypt b/kvm-xfstests/test-appliance/files/root/fs/f2fs/cfg/encrypt
-new file mode 100644
-index 0000000..0e4e8ab
---- /dev/null
-+++ b/kvm-xfstests/test-appliance/files/root/fs/f2fs/cfg/encrypt
-@@ -0,0 +1,5 @@
-+SIZE=small
-+export MKFS_OPTIONS="-O encrypt"
-+export F2FS_MOUNT_OPTIONS="test_dummy_encryption"
-+REQUIRE_FEATURE=encryption
-+TESTNAME="F2FS encryption"
-diff --git a/kvm-xfstests/test-appliance/files/root/fs/f2fs/config b/kvm-xfstests/test-appliance/files/root/fs/f2fs/config
-index 94c402b..3857d5d 100644
---- a/kvm-xfstests/test-appliance/files/root/fs/f2fs/config
-+++ b/kvm-xfstests/test-appliance/files/root/fs/f2fs/config
-@@ -33,6 +33,18 @@ function setup_mount_opts()
-     if test -n "$MNTOPTS" ; then
- 	F2FS_MOUNT_OPTIONS+="${F2FS_MOUNT_OPTIONS:+,}$MNTOPTS"
-     fi
-+    if echo ",$F2FS_MOUNT_OPTIONS," | grep -q ',test_dummy_encryption,'; then
-+	local mode='\x00\x00\x00\x00'
-+	local raw="$(printf ""\\\\x%02x"" $(seq 0 63))"
-+	if lscpu | grep "Byte Order" | grep -q Little ; then
-+	    local size='\x40\x00\x00\x00'
-+	else
-+	    local size='\x00\x00\x00\x40'
-+	fi
-+	local key="${mode}${raw}${size}"
-+	keyctl new_session >& /dev/null
-+	echo -n -e "${key}" | keyctl padd logon fscrypt:4242424242424242 @s >& /dev/null
-+    fi
-     export F2FS_MOUNT_OPTIONS="${F2FS_MOUNT_OPTIONS:+-o }$F2FS_MOUNT_OPTIONS"
+diff --git a/fsck/fsck.h b/fsck/fsck.h
+index 8e133fa..3e13fc6 100644
+--- a/fsck/fsck.h
++++ b/fsck/fsck.h
+@@ -176,6 +176,7 @@ extern void move_curseg_info(struct f2fs_sb_info *, u64);
+ extern void write_curseg_info(struct f2fs_sb_info *);
+ extern int find_next_free_block(struct f2fs_sb_info *, u64 *, int, int);
+ extern void write_checkpoint(struct f2fs_sb_info *);
++extern void write_superblock(struct f2fs_super_block *);
+ extern void update_data_blkaddr(struct f2fs_sb_info *, nid_t, u16, block_t);
+ extern void update_nat_blkaddr(struct f2fs_sb_info *, nid_t, nid_t, block_t);
+ 
+diff --git a/fsck/main.c b/fsck/main.c
+index 9256d21..c4dd8b1 100644
+--- a/fsck/main.c
++++ b/fsck/main.c
+@@ -28,6 +28,8 @@ struct f2fs_fsck gfsck;
+ extern struct sparse_file *f2fs_sparse_file;
+ #endif
+ 
++INIT_FEATURE_TABLE;
++
+ static char *absolute_path(const char *file)
+ {
+ 	char *ret;
+@@ -54,6 +56,7 @@ void fsck_usage()
+ 	MSG(0, "  -d debug level [default:0]\n");
+ 	MSG(0, "  -f check/fix entire partition\n");
+ 	MSG(0, "  -g add default options\n");
++	MSG(0, "  -O feature1[feature2,feature3,...] e.g. \"encrypt\"\n");
+ 	MSG(0, "  -p preen mode [default:0 the same as -a [0|1]]\n");
+ 	MSG(0, "  -S sparse_mode\n");
+ 	MSG(0, "  -t show directory tree\n");
+@@ -180,7 +183,7 @@ void f2fs_parse_options(int argc, char *argv[])
+ 	}
+ 
+ 	if (!strcmp("fsck.f2fs", prog)) {
+-		const char *option_string = ":ad:fg:p:q:StyV";
++		const char *option_string = ":ad:fg:O:p:q:StyV";
+ 		int opt = 0;
+ 		struct option long_opt[] = {
+ 			{"dry-run", no_argument, 0, 1},
+@@ -203,6 +206,10 @@ void f2fs_parse_options(int argc, char *argv[])
+ 				if (!strcmp(optarg, "android"))
+ 					c.defset = CONF_ANDROID;
+ 				break;
++			case 'O':
++				if (parse_feature(feature_table, optarg))
++					fsck_usage();
++				break;
+ 			case 'p':
+ 				/* preen mode has different levels:
+ 				 *  0: default level, the same as -a
+diff --git a/fsck/mount.c b/fsck/mount.c
+index e5574c5..b374b46 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -2144,6 +2144,22 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
+ 	ASSERT(ret >= 0);
  }
  
++void write_superblock(struct f2fs_super_block *new_sb)
++{
++	int index, ret;
++	u_int8_t *buf;
++
++	buf = calloc(BLOCK_SZ, 1);
++
++	memcpy(buf + F2FS_SUPER_OFFSET, new_sb, sizeof(*new_sb));
++	for (index = 0; index < 2; index++) {
++		ret = dev_write_block(buf, index);
++		ASSERT(ret >= 0);
++	}
++	free(buf);
++	DBG(0, "Info: Done to rebuild superblock\n");
++}
++
+ void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
+ {
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+@@ -2314,6 +2330,26 @@ static int check_sector_size(struct f2fs_super_block *sb)
+ 	return 0;
+ }
+ 
++static void tune_sb_features(struct f2fs_sb_info *sbi)
++{
++	int sb_changed = 0;
++	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
++
++	if (!(sb->feature & cpu_to_le32(F2FS_FEATURE_ENCRYPT)) &&
++			c.feature & cpu_to_le32(F2FS_FEATURE_ENCRYPT)) {
++		sb->feature |= cpu_to_le32(F2FS_FEATURE_ENCRYPT);
++		MSG(0, "Info: Set Encryption feature\n");
++		sb_changed = 1;
++	}
++	/* TODO: quota needs to allocate inode numbers */
++
++	c.feature = sb->feature;
++	if (!sb_changed)
++		return;
++
++	write_superblock(sb);
++}
++
+ int f2fs_do_mount(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_checkpoint *cp = NULL;
+@@ -2365,7 +2401,8 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
+ 	}
+ 
+ 	c.bug_on = 0;
+-	c.feature = sb->feature;
++
++	tune_sb_features(sbi);
+ 
+ 	/* precompute checksum seed for metadata */
+ 	if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM))
+diff --git a/fsck/resize.c b/fsck/resize.c
+index 019da71..d285dd7 100644
+--- a/fsck/resize.c
++++ b/fsck/resize.c
+@@ -569,22 +569,6 @@ static void rebuild_checkpoint(struct f2fs_sb_info *sbi,
+ 	DBG(0, "Info: Done to rebuild checkpoint blocks\n");
+ }
+ 
+-static void rebuild_superblock(struct f2fs_super_block *new_sb)
+-{
+-	int index, ret;
+-	u_int8_t *buf;
+-
+-	buf = calloc(BLOCK_SZ, 1);
+-
+-	memcpy(buf + F2FS_SUPER_OFFSET, new_sb, sizeof(*new_sb));
+-	for (index = 0; index < 2; index++) {
+-		ret = dev_write_block(buf, index);
+-		ASSERT(ret >= 0);
+-	}
+-	free(buf);
+-	DBG(0, "Info: Done to rebuild superblock\n");
+-}
+-
+ int f2fs_resize(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+@@ -636,6 +620,6 @@ int f2fs_resize(struct f2fs_sb_info *sbi)
+ 	migrate_nat(sbi, new_sb);
+ 	migrate_sit(sbi, new_sb, offset_seg);
+ 	rebuild_checkpoint(sbi, new_sb, offset_seg);
+-	rebuild_superblock(new_sb);
++	write_superblock(new_sb);
+ 	return 0;
+ }
 -- 
 2.17.0.484.g0c8726318c-goog
 
