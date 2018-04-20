@@ -1,29 +1,25 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: use cur_map instead of ckpt_map
-Date: Fri, 20 Apr 2018 15:36:48 +0800
-Message-ID: <aad323ea-6a35-77df-d47e-2f5edfede705@huawei.com>
-References: <1523328631-6658-1-git-send-email-heyunlei@huawei.com>
- <20180412223700.GA46603@jaegeuk-macbookpro.roam.corp.google.com>
- <d0d71e2a-962f-c987-4bc9-9ccbd234529e@huawei.com>
- <42B685BFA705F94C860C6DD0752F056548377BBD@DGGEMA503-MBS.china.huawei.com>
- <20180420032644.GF39280@jaegeuk-macbookpro.roam.corp.google.com>
- <06e5b8aa-c26a-d78d-5d94-79e0bdd522a0@huawei.com>
- <20180420034048.GI39280@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH] f2fs: sepearte hot/cold in free nid
+Date: Fri, 20 Apr 2018 17:35:54 +0800
+Message-ID: <f3074a26-01ca-6f8d-fe01-de713296f069@huawei.com>
+References: <20180420015231.90679-1-yuchao0@huawei.com>
+ <20180420033752.GH39280@jaegeuk-macbookpro.roam.corp.google.com>
+ <4dd1cddd-02da-6ecb-de91-a21feea6f99c@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1f9QbW-0000cW-I5
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 07:37:10 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1f9ScT-0008NK-LX
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 09:46:17 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f9QbT-00BUH4-TP
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 07:37:10 +0000
-In-Reply-To: <20180420034048.GI39280@jaegeuk-macbookpro.roam.corp.google.com>
+ id 1f9ScN-004Tm3-DE
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 09:46:17 +0000
+In-Reply-To: <4dd1cddd-02da-6ecb-de91-a21feea6f99c@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -35,112 +31,208 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: "Zhangdianfang (Euler)" <zhangdianfang@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/4/20 11:40, Jaegeuk Kim wrote:
-> On 04/20, Chao Yu wrote:
->> On 2018/4/20 11:26, Jaegeuk Kim wrote:
->>> On 04/20, heyunlei wrote:
->>>>
->>>>
->>>>> -----Original Message-----
->>>>> From: Yuchao (T)
->>>>> Sent: Friday, April 13, 2018 9:12 AM
->>>>> To: Jaegeuk Kim; heyunlei
->>>>> Cc: linux-f2fs-devel@lists.sourceforge.net; Wangbintian; Zhangdianfang (Euler)
->>>>> Subject: Re: [f2fs-dev][PATCH v2] f2fs: use cur_map instead of ckpt_map
->>>>>
->>>>> On 2018/4/13 6:37, Jaegeuk Kim wrote:
->>>>>> On 04/10, Yunlei He wrote:
->>>>>>> In flush_sit_entries::add_discard_addrs path, cur_map and ckpt_map
->>>>>>> are the same, but in exist_trim_candidates::add_discard_addrs,
->>>>>>> cur_map is updated one, and newer than ckpt_map, so we need to use
->>>>>>> cur_map to check whether there are discard candidates.
->>>>>>>
->>>>>>> v1->v2: one problem of check discard candidates reported by Chao,
->>>>>>> besides, update commit message.
->>>>>>>
->>>>>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->>>>>>> ---
->>>>>>>  fs/f2fs/segment.c | 2 +-
->>>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>>>>> index 5854cc4..f5d0499 100644
->>>>>>> --- a/fs/f2fs/segment.c
->>>>>>> +++ b/fs/f2fs/segment.c
->>>>>>> @@ -1559,7 +1559,7 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
->>>>>>>
->>>>>>>  	/* SIT_VBLOCK_MAP_SIZE should be multiple of sizeof(unsigned long) */
->>>>>>>  	for (i = 0; i < entries; i++)
->>>>>>> -		dmap[i] = force ? ~ckpt_map[i] & ~discard_map[i] :
->>>>>>> +		dmap[i] = force ? ~cur_map[i] & ~discard_map[i] :
->>>>>>
->>>>>> NAK. We're able to loose data for roll-forward recovery.
->>>> Ping
->>>>
->>>> Thanks.
->>>>>
->>>>> Actually, in fstrim flow (force == 1), cur_map is complete the same as ckpt_map.
->>>>> Do you suffer data corruption during testing this patch?
+On 2018/4/20 12:04, Chao Yu wrote:
+> On 2018/4/20 11:37, Jaegeuk Kim wrote:
+>> On 04/20, Chao Yu wrote:
+>>> As most indirect node, dindirect node, and xattr node won't be updated
+>>> after they are created, but inode node and other direct node will change
+>>> more frequently, so store their nat entries mixedly in whole nat table
+>>> will suffer:
+>>> - fragment nat table soon due to different update rate
+>>> - more nat block update due to fragmented nat table
 >>>
->>> So, we don't need this patch, IIUC.
+>>> In order to solve above issue, we're trying to separate whole nat table to
+>>> two part:
+>>> a. Hot free nid area:
+>>>  - range: [nid #0, nid #x)
+>>>  - store node block address for
+>>>    * inode node
+>>>    * other direct node
+>>> b. Cold free nid area:
+>>>  - range: [nid #x, max nid)
+>>>  - store node block address for
+>>>    * indirect node
+>>>    * dindirect node
+>>>    * xattr node
+>>>
+>>> Allocation strategy example:
+>>>
+>>> Free nid: '-'
+>>> Used nid: '='
+>>>
+>>> 1. Initial status:
+>>> Free Nids:	|-----------------------------------------------------------------------|
+>>> 		^		^					^		^
+>>> Alloc Range:	|---------------|					|---------------|
+>>> 		hot_start	hot_end					cold_start	cold_end
+>>>
+>>> 2. Free nids have ran out:
+>>> Free Nids:	|===============-----------------------------------------===============|
+>>> 		^		^					^		^
+>>> Alloc Range:	|===============|					|===============|
+>>> 		hot_start	hot_end					cold_start	cold_end
+>>>
+>>> 3. Expand hot/cold area range:
+>>> Free Nids:	|===============-----------------------------------------===============|
+>>> 		^				^	^				^
+>>> Alloc Range:	|===============----------------|	|----------------===============|
+>>> 		hot_start			hot_end	cold_start			cold_end
+>>>
+>>> 4. Hot free nids have ran out:
+>>> Free Nids:	|===============================-------------------------===============|
+>>> 		^				^	^				^
+>>> Alloc Range:	|===============================|	|----------------===============|
+>>> 		hot_start			hot_end	cold_start			cold_end
+>>>
+>>> 5. Expand hot area range, hot/cold area boundary has been fixed:
+>>> Free Nids:	|===============================-------------------------===============|
+>>> 		^					^				^
+>>> Alloc Range:	|===============================--------|----------------===============|
+>>> 		hot_start				hot_end(cold_start)		cold_end
+>>>
+>>> Run xfstests with generic/*:
+>>>
+>>> before
+>>> node_write:	169660
+>>> cp_count:	60118
+>>> node/cp		2.82
+>>>
+>>> after:
+>>> node_write:	159145
+>>> cp_count:	84501
+>>> node/cp:	2.64
 >>
->> No, in precheck flow, we haven't flush cur_map to ckpt_map, so they are different.
+>> Nice trial tho, I don't see much benefit on this huge patch. I guess we may be
+>> able to find an efficient way to achieve this issue rather than changing whole
+>> stable codes.
 > 
-> Then, what if power-cut happens between exist_trim_candidates() and
-> do_checkpoint()?
-
-For example:
-1. write data block to block address #N
-2. write checkpoint				cur_map:1, ckpt_map:1
-3. punch data block in block address #N		cur_map:0, ckpt_map:1
-4. call fstrim with range [0, X], X > N
-5. exist_trim_candidates should check cur_map to decide whether we need a
-checkpoint and further discard? otherwise we will fail to trim suitable candidates?
-
-I have one other question:
-
-Discard should be issued after a checkpoint, right? except below codes:
-
-		if (NM_I(sbi)->dirty_nat_cnt == 0 &&
-				SIT_I(sbi)->dirty_sentries == 0 &&
-				prefree_segments(sbi) == 0) {
-			flush_sit_entries(sbi, cpc);
-			clear_prefree_segments(sbi, cpc);
-			unblock_operations(sbi);
-			goto out;
-		}
-
-Why can we call flush_sit_entries & clear_prefree_segments without checkpoint?
-
-Thanks,
-
+> IMO, based on this, later, we can add more allocation policy to manage free nid
+> resource to get more benefit.
+> 
+> If you worry about code stability, we can queue this patch in dev-test branch to
+> test this longer time.
 > 
 >>
->> - fstrim
->>  - exist_trim_candidates
->>   - add_discard_addrs
->>
->>>
->>>>>
->>>>> Thanks,
->>>>>
->>>>>>
->>>>>>>  				(cur_map[i] ^ ckpt_map[i]) & ckpt_map[i];
->>>>>>>
->>>>>>>  	while (force || SM_I(sbi)->dcc_info->nr_discards <=
->>>>>>> --
->>>>>>> 1.9.1
->>>>>>
->>>>>> .
->>>>>>
->>>
->>> .
->>>
+>> How about getting a free nid in the list from head or tail separately?
 > 
-> .
+> I don't think this can get benefit from long time used image, since nat table
+> will be fragmented anyway, then we won't know free nid in head or in tail comes
+> from hot nat block or cold nat block.
 > 
+> Anyway, I will have a try.
+
+A quick test result with below patch:
+
+node_write:187837, cp_count:76431
+
+>From 9f88ea8a36a74f1d3ed8df57ceffb1b8ae41a161 Mon Sep 17 00:00:00 2001
+From: Chao Yu <yuchao0@huawei.com>
+Date: Fri, 20 Apr 2018 16:18:26 +0800
+Subject: [PATCH] f2fs: separate hot/cold free nid simply
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/f2fs.h  |  2 +-
+ fs/f2fs/namei.c |  2 +-
+ fs/f2fs/node.c  | 14 +++++++++-----
+ fs/f2fs/xattr.c |  2 +-
+ 4 files changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 7651a118faa3..adca5e8bc19a 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2800,7 +2800,7 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, struct
+inode *inode,
+ int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc,
+ 			bool do_balance, enum iostat_type io_type);
+ void build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount);
+-bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid);
++bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid, bool hot);
+ void alloc_nid_done(struct f2fs_sb_info *sbi, nid_t nid);
+ void alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid);
+ int try_to_free_nids(struct f2fs_sb_info *sbi, int nr_shrink);
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 3d59149590f7..bbf6edbb7298 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -37,7 +37,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t
+mode)
+ 		return ERR_PTR(-ENOMEM);
+
+ 	f2fs_lock_op(sbi);
+-	if (!alloc_nid(sbi, &ino)) {
++	if (!alloc_nid(sbi, &ino, true)) {
+ 		f2fs_unlock_op(sbi);
+ 		err = -ENOSPC;
+ 		goto fail;
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index ea231f8a0cce..bbaae2f3461e 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -631,7 +631,7 @@ int get_dnode_of_data(struct dnode_of_data *dn, pgoff_t
+index, int mode)
+
+ 		if (!nids[i] && mode == ALLOC_NODE) {
+ 			/* alloc new node */
+-			if (!alloc_nid(sbi, &(nids[i]))) {
++			if (!alloc_nid(sbi, &(nids[i]), i == 1)) {
+ 				err = -ENOSPC;
+ 				goto release_pages;
+ 			}
+@@ -2108,7 +2108,7 @@ void build_free_nids(struct f2fs_sb_info *sbi, bool sync,
+bool mount)
+  * from second parameter of this function.
+  * The returned nid could be used ino as well as nid when inode is created.
+  */
+-bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
++bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid, bool hot)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct free_nid *i = NULL;
+@@ -2129,8 +2129,12 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
+ 	/* We should not use stale free nids created by build_free_nids */
+ 	if (nm_i->nid_cnt[FREE_NID] && !on_build_free_nids(nm_i)) {
+ 		f2fs_bug_on(sbi, list_empty(&nm_i->free_nid_list));
+-		i = list_first_entry(&nm_i->free_nid_list,
+-					struct free_nid, list);
++		if (hot)
++			i = list_first_entry(&nm_i->free_nid_list,
++						struct free_nid, list);
++		else
++			i = list_last_entry(&nm_i->free_nid_list,
++						struct free_nid, list);
+ 		*nid = i->nid;
+
+ 		__move_free_nid(sbi, i, FREE_NID, PREALLOC_NID);
+@@ -2275,7 +2279,7 @@ int recover_xattr_data(struct inode *inode, struct page *page)
+
+ recover_xnid:
+ 	/* 2: update xattr nid in inode */
+-	if (!alloc_nid(sbi, &new_xnid))
++	if (!alloc_nid(sbi, &new_xnid, false))
+ 		return -ENOSPC;
+
+ 	set_new_dnode(&dn, inode, NULL, NULL, new_xnid);
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index d847b2b11659..46c090614563 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -398,7 +398,7 @@ static inline int write_all_xattrs(struct inode *inode,
+__u32 hsize,
+ 	int err = 0;
+
+ 	if (hsize > inline_size && !F2FS_I(inode)->i_xattr_nid)
+-		if (!alloc_nid(sbi, &new_nid))
++		if (!alloc_nid(sbi, &new_nid, false))
+ 			return -ENOSPC;
+
+ 	/* write to inline xattr */
+-- 
+2.15.0.55.gc2ece9dc4de6
+
 
 
 ------------------------------------------------------------------------------
