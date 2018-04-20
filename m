@@ -1,10 +1,9 @@
 From: heyunlei <heyunlei@huawei.com>
-Subject: Re: [PATCH v2] f2fs: use cur_map instead of ckpt_map
-Date: Fri, 20 Apr 2018 01:41:00 +0000
-Message-ID: <42B685BFA705F94C860C6DD0752F056548377BBD@DGGEMA503-MBS.china.huawei.com>
-References: <1523328631-6658-1-git-send-email-heyunlei@huawei.com>
- <20180412223700.GA46603@jaegeuk-macbookpro.roam.corp.google.com>
- <d0d71e2a-962f-c987-4bc9-9ccbd234529e@huawei.com>
+Subject: Re: [PATCH v5] f2fs: stop issue discard if something
+ wrong with f2fs
+Date: Fri, 20 Apr 2018 01:41:33 +0000
+Message-ID: <42B685BFA705F94C860C6DD0752F056548377BCA@DGGEMA503-MBS.china.huawei.com>
+References: <1523588885-9704-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -12,14 +11,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <heyunlei@huawei.com>) id 1f9L39-0000xC-OT
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 01:41:19 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <heyunlei@huawei.com>) id 1f9L3f-0000z6-9u
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 01:41:51 +0000
+Received: from [45.249.212.255] (helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f9L37-006dht-06
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 01:41:19 +0000
-In-Reply-To: <d0d71e2a-962f-c987-4bc9-9ccbd234529e@huawei.com>
+ id 1f9L3d-00HTwH-3y
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 01:41:51 +0000
+In-Reply-To: <1523588885-9704-1-git-send-email-heyunlei@huawei.com>
 Content-Language: zh-CN
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -30,63 +29,61 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "Yuchao (T)" <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: "Zhangdianfang (Euler)" <zhangdianfang@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: heyunlei <heyunlei@huawei.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "Yuchao (T)" <yuchao0@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Cc: "Zhangdianfang (Euler)" <zhangdianfang@huawei.com>
 
 
 
 >-----Original Message-----
->From: Yuchao (T)
->Sent: Friday, April 13, 2018 9:12 AM
->To: Jaegeuk Kim; heyunlei
->Cc: linux-f2fs-devel@lists.sourceforge.net; Wangbintian; Zhangdianfang (Euler)
->Subject: Re: [f2fs-dev][PATCH v2] f2fs: use cur_map instead of ckpt_map
+>From: heyunlei
+>Sent: Friday, April 13, 2018 11:08 AM
+>To: jaegeuk@kernel.org; Yuchao (T); linux-f2fs-devel@lists.sourceforge.net
+>Cc: Wangbintian; heyunlei; Zhangdianfang (Euler)
+>Subject: [f2fs-dev][PATCH v5] f2fs: stop issue discard if something wrong with f2fs
 >
->On 2018/4/13 6:37, Jaegeuk Kim wrote:
->> On 04/10, Yunlei He wrote:
->>> In flush_sit_entries::add_discard_addrs path, cur_map and ckpt_map
->>> are the same, but in exist_trim_candidates::add_discard_addrs,
->>> cur_map is updated one, and newer than ckpt_map, so we need to use
->>> cur_map to check whether there are discard candidates.
->>>
->>> v1->v2: one problem of check discard candidates reported by Chao,
->>> besides, update commit message.
->>>
->>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->>> ---
->>>  fs/f2fs/segment.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>> index 5854cc4..f5d0499 100644
->>> --- a/fs/f2fs/segment.c
->>> +++ b/fs/f2fs/segment.c
->>> @@ -1559,7 +1559,7 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
->>>
->>>  	/* SIT_VBLOCK_MAP_SIZE should be multiple of sizeof(unsigned long) */
->>>  	for (i = 0; i < entries; i++)
->>> -		dmap[i] = force ? ~ckpt_map[i] & ~discard_map[i] :
->>> +		dmap[i] = force ? ~cur_map[i] & ~discard_map[i] :
->>
->> NAK. We're able to loose data for roll-forward recovery.
+>v4->v5: move data corruption check to __submit_discard_cmd, in order to
+>control discard io submitted more accurately, besides, increase async
+>thread wait time if data corruption detected.
+>
+>This patch stop async thread and umount process to issue discard
+>if something wrong with f2fs, which is similar to fstrim.
+>
+>Signed-off-by: Yunlei He <heyunlei@huawei.com>
+>---
+> fs/f2fs/segment.c | 7 +++++++
+> 1 file changed, 7 insertions(+)
+
 Ping
 
 Thanks.
 >
->Actually, in fstrim flow (force == 1), cur_map is complete the same as ckpt_map.
->Do you suffer data corruption during testing this patch?
+>diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>index d923ef5..991d1a2 100644
+>--- a/fs/f2fs/segment.c
+>+++ b/fs/f2fs/segment.c
+>@@ -929,6 +929,9 @@ static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
+> 	if (dc->state != D_PREP)
+> 		return;
 >
->Thanks,
+>+	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
+>+		return;
+>+
+> 	trace_f2fs_issue_discard(dc->bdev, dc->start, dc->len);
 >
->>
->>>  				(cur_map[i] ^ ckpt_map[i]) & ckpt_map[i];
->>>
->>>  	while (force || SM_I(sbi)->dcc_info->nr_discards <=
->>> --
->>> 1.9.1
->>
->> .
->>
+> 	dc->error = __blkdev_issue_discard(dc->bdev,
+>@@ -1410,6 +1413,10 @@ static int issue_discard_thread(void *data)
+> 			continue;
+> 		if (kthread_should_stop())
+> 			return 0;
+>+		if (is_sbi_flag_set(sbi, SBI_NEED_FSCK)) {
+>+			wait_ms = dpolicy.max_interval;
+>+			continue;
+>+		}
+>
+> 		if (dcc->discard_wake)
+> 			dcc->discard_wake = 0;
+>--
+>1.9.1
 
 
 ------------------------------------------------------------------------------
