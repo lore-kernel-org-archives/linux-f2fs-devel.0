@@ -1,10 +1,10 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] fsck.f2fs: add -O features to tune the bits
-Date: Thu, 19 Apr 2018 19:52:16 -0700
-Message-ID: <20180420025216.GA36912@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180419205432.21624-1-jaegeuk@kernel.org>
- <185f5873-dd55-82f2-7e81-fa67ef78480e@huawei.com>
- <13c34f59-6f6a-8252-0a9f-effccbcd6db0@huawei.com>
+Subject: Re: [PATCH v2 1/2] fscrypt: allow synchronous bio
+ decryption
+Date: Thu, 19 Apr 2018 20:06:38 -0700
+Message-ID: <20180420030638.GA39280@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180418180948.152031-1-ebiggers@google.com>
+ <20180418180948.152031-2-ebiggers@google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -12,15 +12,15 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1f9M9x-0006h2-8F
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 02:52:25 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1f9MNr-0007Ks-MQ
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 03:06:47 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f9M9v-006jO6-9b
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 02:52:25 +0000
+ id 1f9MNq-003j5k-5S
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 03:06:47 +0000
 Content-Disposition: inline
-In-Reply-To: <13c34f59-6f6a-8252-0a9f-effccbcd6db0@huawei.com>
+In-Reply-To: <20180418180948.152031-2-ebiggers@google.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,212 +30,221 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Eric Biggers <ebiggers@google.com>
+Cc: Michael Halcrow <mhalcrow@google.com>, linux-fscrypt@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Victor Hsieh <victorhsieh@google.com>, linux-f2fs-devel@lists.sourceforge.net
 
-On 04/20, Chao Yu wrote:
-> On 2018/4/20 9:46, Junling Zheng wrote:
-> > Hi, Jaegeuk
-> > 
-> > On 2018/4/20 4:54, Jaegeuk Kim wrote:
-> >> This patch add -O features for fsck.f2fs in order to tune the feature bits.
-> >> Currently, it supports -O encrypt only.
-> >>
-> > 
-> > Shall we introduce a new tool like tune.f2fs to tune the parameters of f2fs?
-> > Maybe we will tune others parameters in the future, not only features bits in sb :)
-
-Of course, that'd be better. But, I don't have strong motivation to add it
-for now. In order to tune one feature flag, do we have to say we need another
-tool?
-
-> 
-> Agreed, one concern is we'd better separate tune functionality from fsck, other
-> is that it will be more comfortable to use misc tools for the user changed their
-> fs from extx to f2fs.
-
-That's very likely to be a TODO item. ;)
-
+Queued in f2fs/dev.
 Thanks,
 
+On 04/18, Eric Biggers wrote:
+> Currently, fscrypt provides fscrypt_decrypt_bio_pages() which decrypts a
+> bio's pages asynchronously, then unlocks them afterwards.  But, this
+> assumes that decryption is the last "postprocessing step" for the bio,
+> so it's incompatible with additional postprocessing steps such as
+> authenticity verification after decryption.
 > 
-> Thanks,
+> Therefore, rename the existing fscrypt_decrypt_bio_pages() to
+> fscrypt_enqueue_decrypt_bio().  Then, add fscrypt_decrypt_bio() which
+> decrypts the pages in the bio synchronously without unlocking the pages,
+> nor setting them Uptodate; and add fscrypt_enqueue_decrypt_work(), which
+> enqueues work on the fscrypt_read_workqueue.  The new functions will be
+> used by filesystems that support both fscrypt and fs-verity.
 > 
-> > 
-> >> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >> ---
-> >>  fsck/fsck.h   |  1 +
-> >>  fsck/main.c   |  9 ++++++++-
-> >>  fsck/mount.c  | 39 ++++++++++++++++++++++++++++++++++++++-
-> >>  fsck/resize.c | 18 +-----------------
-> >>  4 files changed, 48 insertions(+), 19 deletions(-)
-> >>
-> >> diff --git a/fsck/fsck.h b/fsck/fsck.h
-> >> index 8e133fa..3e13fc6 100644
-> >> --- a/fsck/fsck.h
-> >> +++ b/fsck/fsck.h
-> >> @@ -176,6 +176,7 @@ extern void move_curseg_info(struct f2fs_sb_info *, u64);
-> >>  extern void write_curseg_info(struct f2fs_sb_info *);
-> >>  extern int find_next_free_block(struct f2fs_sb_info *, u64 *, int, int);
-> >>  extern void write_checkpoint(struct f2fs_sb_info *);
-> >> +extern void write_superblock(struct f2fs_super_block *);
-> >>  extern void update_data_blkaddr(struct f2fs_sb_info *, nid_t, u16, block_t);
-> >>  extern void update_nat_blkaddr(struct f2fs_sb_info *, nid_t, nid_t, block_t);
-> >>  
-> >> diff --git a/fsck/main.c b/fsck/main.c
-> >> index 9256d21..c4dd8b1 100644
-> >> --- a/fsck/main.c
-> >> +++ b/fsck/main.c
-> >> @@ -28,6 +28,8 @@ struct f2fs_fsck gfsck;
-> >>  extern struct sparse_file *f2fs_sparse_file;
-> >>  #endif
-> >>  
-> >> +INIT_FEATURE_TABLE;
-> >> +
-> >>  static char *absolute_path(const char *file)
-> >>  {
-> >>  	char *ret;
-> >> @@ -54,6 +56,7 @@ void fsck_usage()
-> >>  	MSG(0, "  -d debug level [default:0]\n");
-> >>  	MSG(0, "  -f check/fix entire partition\n");
-> >>  	MSG(0, "  -g add default options\n");
-> >> +	MSG(0, "  -O feature1[feature2,feature3,...] e.g. \"encrypt\"\n");
-> >>  	MSG(0, "  -p preen mode [default:0 the same as -a [0|1]]\n");
-> >>  	MSG(0, "  -S sparse_mode\n");
-> >>  	MSG(0, "  -t show directory tree\n");
-> >> @@ -180,7 +183,7 @@ void f2fs_parse_options(int argc, char *argv[])
-> >>  	}
-> >>  
-> >>  	if (!strcmp("fsck.f2fs", prog)) {
-> >> -		const char *option_string = ":ad:fg:p:q:StyV";
-> >> +		const char *option_string = ":ad:fg:O:p:q:StyV";
-> >>  		int opt = 0;
-> >>  		struct option long_opt[] = {
-> >>  			{"dry-run", no_argument, 0, 1},
-> >> @@ -203,6 +206,10 @@ void f2fs_parse_options(int argc, char *argv[])
-> >>  				if (!strcmp(optarg, "android"))
-> >>  					c.defset = CONF_ANDROID;
-> >>  				break;
-> >> +			case 'O':
-> >> +				if (parse_feature(feature_table, optarg))
-> >> +					fsck_usage();
-> >> +				break;
-> >>  			case 'p':
-> >>  				/* preen mode has different levels:
-> >>  				 *  0: default level, the same as -a
-> >> diff --git a/fsck/mount.c b/fsck/mount.c
-> >> index e5574c5..b374b46 100644
-> >> --- a/fsck/mount.c
-> >> +++ b/fsck/mount.c
-> >> @@ -2144,6 +2144,22 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
-> >>  	ASSERT(ret >= 0);
-> >>  }
-> >>  
-> >> +void write_superblock(struct f2fs_super_block *new_sb)
-> >> +{
-> >> +	int index, ret;
-> >> +	u_int8_t *buf;
-> >> +
-> >> +	buf = calloc(BLOCK_SZ, 1);
-> >> +
-> >> +	memcpy(buf + F2FS_SUPER_OFFSET, new_sb, sizeof(*new_sb));
-> >> +	for (index = 0; index < 2; index++) {
-> >> +		ret = dev_write_block(buf, index);
-> >> +		ASSERT(ret >= 0);
-> >> +	}
-> >> +	free(buf);
-> >> +	DBG(0, "Info: Done to rebuild superblock\n");
-> >> +}
-> >> +
-> >>  void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
-> >>  {
-> >>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
-> >> @@ -2314,6 +2330,26 @@ static int check_sector_size(struct f2fs_super_block *sb)
-> >>  	return 0;
-> >>  }
-> >>  
-> >> +static void tune_sb_features(struct f2fs_sb_info *sbi)
-> >> +{
-> >> +	int sb_changed = 0;
-> >> +	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
-> >> +
-> >> +	if (!(sb->feature & cpu_to_le32(F2FS_FEATURE_ENCRYPT)) &&
-> >> +			c.feature & cpu_to_le32(F2FS_FEATURE_ENCRYPT)) {
-> >> +		sb->feature |= cpu_to_le32(F2FS_FEATURE_ENCRYPT);
-> >> +		MSG(0, "Info: Set Encryption feature\n");
-> >> +		sb_changed = 1;
-> >> +	}
-> >> +	/* TODO: quota needs to allocate inode numbers */
-> >> +
-> >> +	c.feature = sb->feature;
-> >> +	if (!sb_changed)
-> >> +		return;
-> >> +
-> >> +	write_superblock(sb);
-> >> +}
-> >> +
-> >>  int f2fs_do_mount(struct f2fs_sb_info *sbi)
-> >>  {
-> >>  	struct f2fs_checkpoint *cp = NULL;
-> >> @@ -2365,7 +2401,8 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
-> >>  	}
-> >>  
-> >>  	c.bug_on = 0;
-> >> -	c.feature = sb->feature;
-> >> +
-> >> +	tune_sb_features(sbi);
-> >>  
-> >>  	/* precompute checksum seed for metadata */
-> >>  	if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM))
-> >> diff --git a/fsck/resize.c b/fsck/resize.c
-> >> index 019da71..d285dd7 100644
-> >> --- a/fsck/resize.c
-> >> +++ b/fsck/resize.c
-> >> @@ -569,22 +569,6 @@ static void rebuild_checkpoint(struct f2fs_sb_info *sbi,
-> >>  	DBG(0, "Info: Done to rebuild checkpoint blocks\n");
-> >>  }
-> >>  
-> >> -static void rebuild_superblock(struct f2fs_super_block *new_sb)
-> >> -{
-> >> -	int index, ret;
-> >> -	u_int8_t *buf;
-> >> -
-> >> -	buf = calloc(BLOCK_SZ, 1);
-> >> -
-> >> -	memcpy(buf + F2FS_SUPER_OFFSET, new_sb, sizeof(*new_sb));
-> >> -	for (index = 0; index < 2; index++) {
-> >> -		ret = dev_write_block(buf, index);
-> >> -		ASSERT(ret >= 0);
-> >> -	}
-> >> -	free(buf);
-> >> -	DBG(0, "Info: Done to rebuild superblock\n");
-> >> -}
-> >> -
-> >>  int f2fs_resize(struct f2fs_sb_info *sbi)
-> >>  {
-> >>  	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
-> >> @@ -636,6 +620,6 @@ int f2fs_resize(struct f2fs_sb_info *sbi)
-> >>  	migrate_nat(sbi, new_sb);
-> >>  	migrate_sit(sbi, new_sb, offset_seg);
-> >>  	rebuild_checkpoint(sbi, new_sb, offset_seg);
-> >> -	rebuild_superblock(new_sb);
-> >> +	write_superblock(new_sb);
-> >>  	return 0;
-> >>  }
-> >>
-> > 
-> > 
-> > 
-> > ------------------------------------------------------------------------------
-> > Check out the vibrant tech community on one of the world's most
-> > engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> > 
-> > .
-> > 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  fs/crypto/bio.c                 | 35 +++++++++++++++++++++------------
+>  fs/crypto/crypto.c              |  8 +++++++-
+>  fs/crypto/fscrypt_private.h     |  1 -
+>  fs/ext4/readpage.c              |  2 +-
+>  fs/f2fs/data.c                  |  2 +-
+>  include/linux/fscrypt_notsupp.h | 13 +++++++++---
+>  include/linux/fscrypt_supp.h    |  5 ++++-
+>  7 files changed, 45 insertions(+), 21 deletions(-)
+> 
+> diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
+> index 0d5e6a569d58..0959044c5cee 100644
+> --- a/fs/crypto/bio.c
+> +++ b/fs/crypto/bio.c
+> @@ -26,15 +26,8 @@
+>  #include <linux/namei.h>
+>  #include "fscrypt_private.h"
+>  
+> -/*
+> - * Call fscrypt_decrypt_page on every single page, reusing the encryption
+> - * context.
+> - */
+> -static void completion_pages(struct work_struct *work)
+> +static void __fscrypt_decrypt_bio(struct bio *bio, bool done)
+>  {
+> -	struct fscrypt_ctx *ctx =
+> -		container_of(work, struct fscrypt_ctx, r.work);
+> -	struct bio *bio = ctx->r.bio;
+>  	struct bio_vec *bv;
+>  	int i;
+>  
+> @@ -46,22 +39,38 @@ static void completion_pages(struct work_struct *work)
+>  		if (ret) {
+>  			WARN_ON_ONCE(1);
+>  			SetPageError(page);
+> -		} else {
+> +		} else if (done) {
+>  			SetPageUptodate(page);
+>  		}
+> -		unlock_page(page);
+> +		if (done)
+> +			unlock_page(page);
+>  	}
+> +}
+> +
+> +void fscrypt_decrypt_bio(struct bio *bio)
+> +{
+> +	__fscrypt_decrypt_bio(bio, false);
+> +}
+> +EXPORT_SYMBOL(fscrypt_decrypt_bio);
+> +
+> +static void completion_pages(struct work_struct *work)
+> +{
+> +	struct fscrypt_ctx *ctx =
+> +		container_of(work, struct fscrypt_ctx, r.work);
+> +	struct bio *bio = ctx->r.bio;
+> +
+> +	__fscrypt_decrypt_bio(bio, true);
+>  	fscrypt_release_ctx(ctx);
+>  	bio_put(bio);
+>  }
+>  
+> -void fscrypt_decrypt_bio_pages(struct fscrypt_ctx *ctx, struct bio *bio)
+> +void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx, struct bio *bio)
+>  {
+>  	INIT_WORK(&ctx->r.work, completion_pages);
+>  	ctx->r.bio = bio;
+> -	queue_work(fscrypt_read_workqueue, &ctx->r.work);
+> +	fscrypt_enqueue_decrypt_work(&ctx->r.work);
+>  }
+> -EXPORT_SYMBOL(fscrypt_decrypt_bio_pages);
+> +EXPORT_SYMBOL(fscrypt_enqueue_decrypt_bio);
+>  
+>  void fscrypt_pullback_bio_page(struct page **page, bool restore)
+>  {
+> diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+> index ce654526c0fb..0758d32ad01b 100644
+> --- a/fs/crypto/crypto.c
+> +++ b/fs/crypto/crypto.c
+> @@ -45,12 +45,18 @@ static mempool_t *fscrypt_bounce_page_pool = NULL;
+>  static LIST_HEAD(fscrypt_free_ctxs);
+>  static DEFINE_SPINLOCK(fscrypt_ctx_lock);
+>  
+> -struct workqueue_struct *fscrypt_read_workqueue;
+> +static struct workqueue_struct *fscrypt_read_workqueue;
+>  static DEFINE_MUTEX(fscrypt_init_mutex);
+>  
+>  static struct kmem_cache *fscrypt_ctx_cachep;
+>  struct kmem_cache *fscrypt_info_cachep;
+>  
+> +void fscrypt_enqueue_decrypt_work(struct work_struct *work)
+> +{
+> +	queue_work(fscrypt_read_workqueue, work);
+> +}
+> +EXPORT_SYMBOL(fscrypt_enqueue_decrypt_work);
+> +
+>  /**
+>   * fscrypt_release_ctx() - Releases an encryption context
+>   * @ctx: The encryption context to release.
+> diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
+> index ad6722bae8b7..4012558f6115 100644
+> --- a/fs/crypto/fscrypt_private.h
+> +++ b/fs/crypto/fscrypt_private.h
+> @@ -97,7 +97,6 @@ static inline bool fscrypt_valid_enc_modes(u32 contents_mode,
+>  /* crypto.c */
+>  extern struct kmem_cache *fscrypt_info_cachep;
+>  extern int fscrypt_initialize(unsigned int cop_flags);
+> -extern struct workqueue_struct *fscrypt_read_workqueue;
+>  extern int fscrypt_do_page_crypto(const struct inode *inode,
+>  				  fscrypt_direction_t rw, u64 lblk_num,
+>  				  struct page *src_page,
+> diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+> index 9ffa6fad18db..19b87a8de6ff 100644
+> --- a/fs/ext4/readpage.c
+> +++ b/fs/ext4/readpage.c
+> @@ -77,7 +77,7 @@ static void mpage_end_io(struct bio *bio)
+>  		if (bio->bi_status) {
+>  			fscrypt_release_ctx(bio->bi_private);
+>  		} else {
+> -			fscrypt_decrypt_bio_pages(bio->bi_private, bio);
+> +			fscrypt_enqueue_decrypt_bio(bio->bi_private, bio);
+>  			return;
+>  		}
+>  	}
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 02237d4d91f5..39225519de1c 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -66,7 +66,7 @@ static void f2fs_read_end_io(struct bio *bio)
+>  		if (bio->bi_status) {
+>  			fscrypt_release_ctx(bio->bi_private);
+>  		} else {
+> -			fscrypt_decrypt_bio_pages(bio->bi_private, bio);
+> +			fscrypt_enqueue_decrypt_bio(bio->bi_private, bio);
+>  			return;
+>  		}
+>  	}
+> diff --git a/include/linux/fscrypt_notsupp.h b/include/linux/fscrypt_notsupp.h
+> index 44b50c04bae9..9770be37c9d4 100644
+> --- a/include/linux/fscrypt_notsupp.h
+> +++ b/include/linux/fscrypt_notsupp.h
+> @@ -25,6 +25,10 @@ static inline bool fscrypt_dummy_context_enabled(struct inode *inode)
+>  }
+>  
+>  /* crypto.c */
+> +static inline void fscrypt_enqueue_decrypt_work(struct work_struct *work)
+> +{
+> +}
+> +
+>  static inline struct fscrypt_ctx *fscrypt_get_ctx(const struct inode *inode,
+>  						  gfp_t gfp_flags)
+>  {
+> @@ -160,10 +164,13 @@ static inline bool fscrypt_match_name(const struct fscrypt_name *fname,
+>  }
+>  
+>  /* bio.c */
+> -static inline void fscrypt_decrypt_bio_pages(struct fscrypt_ctx *ctx,
+> -					     struct bio *bio)
+> +static inline void fscrypt_decrypt_bio(struct bio *bio)
+> +{
+> +}
+> +
+> +static inline void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx,
+> +					       struct bio *bio)
+>  {
+> -	return;
+>  }
+>  
+>  static inline void fscrypt_pullback_bio_page(struct page **page, bool restore)
+> diff --git a/include/linux/fscrypt_supp.h b/include/linux/fscrypt_supp.h
+> index 477a7a6504d2..2c9a86ac5e83 100644
+> --- a/include/linux/fscrypt_supp.h
+> +++ b/include/linux/fscrypt_supp.h
+> @@ -59,6 +59,7 @@ static inline bool fscrypt_dummy_context_enabled(struct inode *inode)
+>  }
+>  
+>  /* crypto.c */
+> +extern void fscrypt_enqueue_decrypt_work(struct work_struct *);
+>  extern struct fscrypt_ctx *fscrypt_get_ctx(const struct inode *, gfp_t);
+>  extern void fscrypt_release_ctx(struct fscrypt_ctx *);
+>  extern struct page *fscrypt_encrypt_page(const struct inode *, struct page *,
+> @@ -188,7 +189,9 @@ static inline bool fscrypt_match_name(const struct fscrypt_name *fname,
+>  }
+>  
+>  /* bio.c */
+> -extern void fscrypt_decrypt_bio_pages(struct fscrypt_ctx *, struct bio *);
+> +extern void fscrypt_decrypt_bio(struct bio *);
+> +extern void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx,
+> +					struct bio *bio);
+>  extern void fscrypt_pullback_bio_page(struct page **, bool);
+>  extern int fscrypt_zeroout_range(const struct inode *, pgoff_t, sector_t,
+>  				 unsigned int);
+> -- 
+> 2.17.0.484.g0c8726318c-goog
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
