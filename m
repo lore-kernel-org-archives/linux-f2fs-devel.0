@@ -1,157 +1,98 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 4/5] f2fs: show GC failure info in debugfs
-Date: Fri, 20 Apr 2018 11:24:00 +0800
-Message-ID: <357d4213-1e0b-3934-1e9a-a6ea8ee6020a@huawei.com>
-References: <20180418094505.98888-1-yuchao0@huawei.com>
- <20180418094505.98888-4-yuchao0@huawei.com>
- <20180420031525.GD39280@jaegeuk-macbookpro.roam.corp.google.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH v2] f2fs: use cur_map instead of ckpt_map
+Date: Thu, 19 Apr 2018 20:26:44 -0700
+Message-ID: <20180420032644.GF39280@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1523328631-6658-1-git-send-email-heyunlei@huawei.com>
+ <20180412223700.GA46603@jaegeuk-macbookpro.roam.corp.google.com>
+ <d0d71e2a-962f-c987-4bc9-9ccbd234529e@huawei.com>
+ <42B685BFA705F94C860C6DD0752F056548377BBD@DGGEMA503-MBS.china.huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180420031525.GD39280@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1f9MhN-0008Da-R5
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 03:26:57 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1f9MhH-006ms8-65
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 03:26:57 +0000
+Content-Disposition: inline
+In-Reply-To: <42B685BFA705F94C860C6DD0752F056548377BBD@DGGEMA503-MBS.china.huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: heyunlei <heyunlei@huawei.com>
+Cc: "Zhangdianfang (Euler)" <zhangdianfang@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-On 2018/4/20 11:15, Jaegeuk Kim wrote:
-> On 04/18, Chao Yu wrote:
->> This patch adds to show GC failure information in debugfs, now it just
->> shows count of failure caused by atomic write.
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/debug.c |  5 +++++
->>  fs/f2fs/f2fs.h  |  1 +
->>  fs/f2fs/gc.c    | 13 +++++++------
->>  fs/f2fs/gc.h    |  2 +-
->>  4 files changed, 14 insertions(+), 7 deletions(-)
->>
->> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
->> index a66107b5cfff..715beb85e9db 100644
->> --- a/fs/f2fs/debug.c
->> +++ b/fs/f2fs/debug.c
->> @@ -104,6 +104,8 @@ static void update_general_status(struct f2fs_sb_info *sbi)
->>  	si->avail_nids = NM_I(sbi)->available_nids;
->>  	si->alloc_nids = NM_I(sbi)->nid_cnt[PREALLOC_NID];
->>  	si->bg_gc = sbi->bg_gc;
->> +	si->bg_atomic = sbi->gc_thread->atomic_file[BG_GC];
->> +	si->fg_atomic = sbi->gc_thread->atomic_file[FG_GC];
+On 04/20, heyunlei wrote:
 > 
-> Need to change the naming like skipped_atomic_files?
+> 
+> >-----Original Message-----
+> >From: Yuchao (T)
+> >Sent: Friday, April 13, 2018 9:12 AM
+> >To: Jaegeuk Kim; heyunlei
+> >Cc: linux-f2fs-devel@lists.sourceforge.net; Wangbintian; Zhangdianfang (Euler)
+> >Subject: Re: [f2fs-dev][PATCH v2] f2fs: use cur_map instead of ckpt_map
+> >
+> >On 2018/4/13 6:37, Jaegeuk Kim wrote:
+> >> On 04/10, Yunlei He wrote:
+> >>> In flush_sit_entries::add_discard_addrs path, cur_map and ckpt_map
+> >>> are the same, but in exist_trim_candidates::add_discard_addrs,
+> >>> cur_map is updated one, and newer than ckpt_map, so we need to use
+> >>> cur_map to check whether there are discard candidates.
+> >>>
+> >>> v1->v2: one problem of check discard candidates reported by Chao,
+> >>> besides, update commit message.
+> >>>
+> >>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+> >>> ---
+> >>>  fs/f2fs/segment.c | 2 +-
+> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >>> index 5854cc4..f5d0499 100644
+> >>> --- a/fs/f2fs/segment.c
+> >>> +++ b/fs/f2fs/segment.c
+> >>> @@ -1559,7 +1559,7 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
+> >>>
+> >>>  	/* SIT_VBLOCK_MAP_SIZE should be multiple of sizeof(unsigned long) */
+> >>>  	for (i = 0; i < entries; i++)
+> >>> -		dmap[i] = force ? ~ckpt_map[i] & ~discard_map[i] :
+> >>> +		dmap[i] = force ? ~cur_map[i] & ~discard_map[i] :
+> >>
+> >> NAK. We're able to loose data for roll-forward recovery.
+> Ping
+> 
+> Thanks.
+> >
+> >Actually, in fstrim flow (force == 1), cur_map is complete the same as ckpt_map.
+> >Do you suffer data corruption during testing this patch?
 
-OK
+So, we don't need this patch, IIUC.
 
-> 
->>  	si->util_free = (int)(free_user_blocks(sbi) >> sbi->log_blocks_per_seg)
->>  		* 100 / (int)(sbi->user_block_count >> sbi->log_blocks_per_seg)
->>  		/ 2;
->> @@ -342,6 +344,9 @@ static int stat_show(struct seq_file *s, void *v)
->>  				si->bg_data_blks);
->>  		seq_printf(s, "  - node blocks : %d (%d)\n", si->node_blks,
->>  				si->bg_node_blks);
->> +		seq_printf(s, "Failure : atomic write %d (%d)\n",
-> 
-> It's not failure.
+> >
+> >Thanks,
+> >
+> >>
+> >>>  				(cur_map[i] ^ ckpt_map[i]) & ckpt_map[i];
+> >>>
+> >>>  	while (force || SM_I(sbi)->dcc_info->nr_discards <=
+> >>> --
+> >>> 1.9.1
+> >>
+> >> .
+> >>
 
-Alright... just skip..
-
-> 
->> +				si->bg_atomic + si->fg_atomic,
->> +				si->bg_atomic);
->>  		seq_puts(s, "\nExtent Cache:\n");
->>  		seq_printf(s, "  - Hit Count: L1-1:%llu L1-2:%llu L2:%llu\n",
->>  				si->hit_largest, si->hit_cached,
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index 3453288d6a71..567c6bb57ae3 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -3003,6 +3003,7 @@ struct f2fs_stat_info {
->>  	int bg_node_segs, bg_data_segs;
->>  	int tot_blks, data_blks, node_blks;
->>  	int bg_data_blks, bg_node_blks;
->> +	unsigned int bg_atomic, fg_atomic;
->>  	int curseg[NR_CURSEG_TYPE];
->>  	int cursec[NR_CURSEG_TYPE];
->>  	int curzone[NR_CURSEG_TYPE];
->> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->> index 495876ca62b6..da89ca16a55d 100644
->> --- a/fs/f2fs/gc.c
->> +++ b/fs/f2fs/gc.c
->> @@ -135,7 +135,8 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
->>  	gc_th->gc_urgent = 0;
->>  	gc_th->gc_wake= 0;
->>  
->> -	gc_th->atomic_file = 0;
->> +	gc_th->atomic_file[BG_GC] = 0;
->> +	gc_th->atomic_file[FG_GC] = 0;
-> 
-> Need to merge the previous patch with this.
-
-Let me merge them. :)
-
-Thanks,
-
-> 
->>  
->>  	sbi->gc_thread = gc_th;
->>  	init_waitqueue_head(&sbi->gc_thread->gc_wait_queue_head);
->> @@ -633,7 +634,7 @@ static void move_data_block(struct inode *inode, block_t bidx,
->>  		goto out;
->>  
->>  	if (f2fs_is_atomic_file(inode)) {
->> -		F2FS_I_SB(inode)->gc_thread->atomic_file++;
->> +		F2FS_I_SB(inode)->gc_thread->atomic_file[gc_type]++;
->>  		goto out;
->>  	}
->>  
->> @@ -742,7 +743,7 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->>  		goto out;
->>  
->>  	if (f2fs_is_atomic_file(inode)) {
->> -		F2FS_I_SB(inode)->gc_thread->atomic_file++;
->> +		F2FS_I_SB(inode)->gc_thread->atomic_file[gc_type]++;
->>  		goto out;
->>  	}
->>  	if (f2fs_is_pinned_file(inode)) {
->> @@ -1024,7 +1025,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>  		.ilist = LIST_HEAD_INIT(gc_list.ilist),
->>  		.iroot = RADIX_TREE_INIT(GFP_NOFS),
->>  	};
->> -	unsigned int last_atomic_file = sbi->gc_thread->atomic_file;
->> +	unsigned int last_atomic_file = sbi->gc_thread->atomic_file[FG_GC];
->>  	unsigned int skipped_round = 0, round = 0;
->>  
->>  	trace_f2fs_gc_begin(sbi->sb, sync, background,
->> @@ -1078,9 +1079,9 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>  	total_freed += seg_freed;
->>  
->>  	if (gc_type == FG_GC) {
->> -		if (sbi->gc_thread->atomic_file > last_atomic_file)
->> +		if (sbi->gc_thread->atomic_file[FG_GC] > last_atomic_file)
->>  			skipped_round++;
->> -		last_atomic_file = sbi->gc_thread->atomic_file;
->> +		last_atomic_file = sbi->gc_thread->atomic_file[FG_GC];
->>  		round++;
->>  	}
->>  
->> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
->> index bc1d21d46ae7..a6cffe6b249b 100644
->> --- a/fs/f2fs/gc.h
->> +++ b/fs/f2fs/gc.h
->> @@ -41,7 +41,7 @@ struct f2fs_gc_kthread {
->>  	unsigned int gc_wake;
->>  
->>  	/* for stuck statistic */
->> -	unsigned int atomic_file;
->> +	unsigned int atomic_file[2];
->>  };
->>  
->>  struct gc_inode_list {
->> -- 
->> 2.15.0.55.gc2ece9dc4de6
-> 
-> .
-> 
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
