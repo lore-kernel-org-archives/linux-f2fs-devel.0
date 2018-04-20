@@ -1,36 +1,13 @@
-From: syzbot <syzbot+0a725420475916460f12@syzkaller.appspotmail.com>
-Subject: KASAN: slab-out-of-bounds Read in build_segment_manager
-Date: Fri, 20 Apr 2018 09:55:02 -0700
-Message-ID: <00000000000092512b056a4a8c76@google.com>
+From: syzbot <syzbot+83699adeb2d13579c31e@syzkaller.appspotmail.com>
+Subject: BUG: unable to handle kernel paging request in build_segment_manager
+Date: Fri, 20 Apr 2018 11:02:01 -0700
+Message-ID: <00000000000021d960056a4b7c6f@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"; DelSp="yes"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from
- <3ZhvaWgkbAOEVbcNDOOHUDSSLG.JRRJOHXVHUFRQWHQW.FRP@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
- id 1f9ZJV-0001Nn-Lt
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 16:55:09 +0000
-Received: from mail-io0-f199.google.com ([209.85.223.199])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1f9ZJT-0080xr-R4
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 16:55:09 +0000
-Received: by mail-io0-f199.google.com with SMTP id o17-v6so7679711iob.12
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 20 Apr 2018 09:55:07 -0700 (PDT)
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, yuchao0@huawei.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 Hello,
 
@@ -38,19 +15,19 @@ syzbot hit the following crash on upstream commit
 87ef12027b9b1dd0e0b12cf311fbcb19f9d92539 (Wed Apr 18 19:48:17 2018 +0000)
 Merge tag 'ceph-for-4.17-rc2' of git://github.com/ceph/ceph-client
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=0a725420475916460f12
+https://syzkaller.appspot.com/bug?extid=83699adeb2d13579c31e
 
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4726415475867648
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5805208181407744
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5230577728880640
+https://syzkaller.appspot.com/x/repro.syz?id=6005073343676416
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=4759744422084608
+https://syzkaller.appspot.com/x/log.txt?id=6555047731134464
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=1808800213120130118
 compiler: gcc (GCC) 8.0.1 20180413 (experimental)
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+0a725420475916460f12@syzkaller.appspotmail.com
+Reported-by: syzbot+83699adeb2d13579c31e@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
@@ -58,25 +35,29 @@ If you forward the report, please keep this part and the footer.
 F2FS-fs (loop0): Magic Mismatch, valid(0xf2f52010) - read(0x0)
 F2FS-fs (loop0): Can't find valid F2FS filesystem in 1th superblock
 F2FS-fs (loop0): invalid crc value
-==================================================================
-BUG: KASAN: slab-out-of-bounds in build_sit_entries fs/f2fs/segment.c:3653  
-[inline]
-BUG: KASAN: slab-out-of-bounds in build_segment_manager+0xb92d/0xbf70  
-fs/f2fs/segment.c:3852
-Read of size 4 at addr ffff8801ac7b66e0 by task syzkaller806281/4519
-
-CPU: 0 PID: 4519 Comm: syzkaller806281 Not tainted 4.17.0-rc1+ #8
+BUG: unable to handle kernel paging request at ffffed006b2a50c0
+PGD 21ffee067 P4D 21ffee067 PUD 21fbeb067 PMD 0
+Oops: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 0 PID: 4514 Comm: syzkaller989480 Not tainted 4.17.0-rc1+ #8
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
+RIP: 0010:build_sit_entries fs/f2fs/segment.c:3653 [inline]
+RIP: 0010:build_segment_manager+0x7ef7/0xbf70 fs/f2fs/segment.c:3852
+RSP: 0018:ffff8801b102e5b0 EFLAGS: 00010a06
+RAX: 1ffff1006b2a50c0 RBX: 0000000000000004 RCX: 0000000000000001
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8801ac74243e
+RBP: ffff8801b102f410 R08: ffff8801acbd46c0 R09: fffffbfff14d9af8
+R10: fffffbfff14d9af8 R11: ffff8801acbd46c0 R12: ffff8801ac742a80
+R13: ffff8801d9519100 R14: dffffc0000000000 R15: ffff880359528600
+FS:  0000000001e04880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffed006b2a50c0 CR3: 00000001ac6ac000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
-  build_sit_entries fs/f2fs/segment.c:3653 [inline]
-  build_segment_manager+0xb92d/0xbf70 fs/f2fs/segment.c:3852
   f2fs_fill_super+0x4095/0x7bf0 fs/f2fs/super.c:2803
   mount_bdev+0x30c/0x3e0 fs/super.c:1165
   f2fs_mount+0x34/0x40 fs/f2fs/super.c:3020
@@ -91,64 +72,21 @@ Call Trace:
   __x64_sys_mount+0xbe/0x150 fs/namespace.c:3074
   do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4477ca
-RSP: 002b:00007fff69213888 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000020000b70 RCX: 00000000004477ca
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007fff692138c0
-RBP: 0000000000000064 R08: 0000000020016600 R09: 000000000000000a
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000064
-R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
-
-Allocated by task 2845:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
-  getname_flags+0xd0/0x5a0 fs/namei.c:140
-  getname+0x19/0x20 fs/namei.c:211
-  do_sys_open+0x39a/0x740 fs/open.c:1087
-  __do_sys_open fs/open.c:1111 [inline]
-  __se_sys_open fs/open.c:1106 [inline]
-  __x64_sys_open+0x7e/0xc0 fs/open.c:1106
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 2845:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
-  putname+0xf2/0x130 fs/namei.c:261
-  do_sys_open+0x554/0x740 fs/open.c:1102
-  __do_sys_open fs/open.c:1111 [inline]
-  __se_sys_open fs/open.c:1106 [inline]
-  __x64_sys_open+0x7e/0xc0 fs/open.c:1106
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801ac7b69c0
-  which belongs to the cache names_cache of size 4096
-The buggy address is located 736 bytes to the left of
-  4096-byte region [ffff8801ac7b69c0, ffff8801ac7b79c0)
-The buggy address belongs to the page:
-page:ffffea0006b1ed80 count:1 mapcount:0 mapping:ffff8801ac7b69c0 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffff8801ac7b69c0 0000000000000000 0000000100000001
-raw: ffffea0006b1f7a0 ffffea0006b1eea0 ffff8801da988dc0 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801ac7b6580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8801ac7b6600: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff8801ac7b6680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-                                                        ^
-  ffff8801ac7b6700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8801ac7b6780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
+RIP: 0033:0x443d6a
+RSP: 002b:00007ffd312813c8 EFLAGS: 00000297 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000c00 RCX: 0000000000443d6a
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffd312813d0
+RBP: 0000000000000003 R08: 0000000020016a00 R09: 000000000000000a
+R10: 0000000000000000 R11: 0000000000000297 R12: 0000000000000004
+R13: 0000000000402c60 R14: 0000000000000000 R15: 0000000000000000
+Code: 48 89 55 80 48 8b 50 36 48 89 55 88 48 8b 50 3e 48 89 55 90 48 8b 50  
+46 48 89 55 98 0f b7 40 4e 66 89 45 a0 4c 89 f8 48 c1 e8 03 <42> 0f b6 04  
+30 84 c0 74 08 3c 03 0f 8e 1d 3a 00 00 41 0f b7 07
+RIP: build_sit_entries fs/f2fs/segment.c:3653 [inline] RSP: ffff8801b102e5b0
+RIP: build_segment_manager+0x7ef7/0xbf70 fs/f2fs/segment.c:3852 RSP:  
+ffff8801b102e5b0
+CR2: ffffed006b2a50c0
+---[ end trace a2034989e196ff17 ]---
 
 
 ---
@@ -171,7 +109,3 @@ If it's a one-off invalid bug report, please reply with:
 Note: if the crash happens again, it will cause creation of a new bug  
 report.
 Note: all commands must start from beginning of the line in the email body.
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
