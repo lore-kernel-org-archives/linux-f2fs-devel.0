@@ -1,98 +1,221 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2] f2fs: use cur_map instead of ckpt_map
-Date: Thu, 19 Apr 2018 20:26:44 -0700
-Message-ID: <20180420032644.GF39280@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1523328631-6658-1-git-send-email-heyunlei@huawei.com>
- <20180412223700.GA46603@jaegeuk-macbookpro.roam.corp.google.com>
- <d0d71e2a-962f-c987-4bc9-9ccbd234529e@huawei.com>
- <42B685BFA705F94C860C6DD0752F056548377BBD@DGGEMA503-MBS.china.huawei.com>
+Subject: Re: [PATCH 3/5] f2fs: avoid stucking GC due to atomic write
+Date: Thu, 19 Apr 2018 20:27:57 -0700
+Message-ID: <20180420032757.GG39280@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180418094505.98888-1-yuchao0@huawei.com>
+ <20180418094505.98888-3-yuchao0@huawei.com>
+ <20180420031238.GC39280@jaegeuk-macbookpro.roam.corp.google.com>
+ <bc1936b6-52ee-cf29-4773-9a5b9bb68f29@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1f9MhN-0008Da-R5
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 03:26:57 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f9MhH-006ms8-65
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 03:26:57 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <42B685BFA705F94C860C6DD0752F056548377BBD@DGGEMA503-MBS.china.huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: heyunlei <heyunlei@huawei.com>
-Cc: "Zhangdianfang (Euler)" <zhangdianfang@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+In-Reply-To: <bc1936b6-52ee-cf29-4773-9a5b9bb68f29@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 04/20, heyunlei wrote:
+On 04/20, Chao Yu wrote:
+> On 2018/4/20 11:12, Jaegeuk Kim wrote:
+> > On 04/18, Chao Yu wrote:
+> >> f2fs doesn't allow abuse on atomic write class interface, so except
+> >> limiting in-mem pages' total memory usage capacity, we need to limit
+> >> atomic-write usage as well when filesystem is seriously fragmented,
+> >> otherwise we may run into infinite loop during foreground GC because
+> >> target blocks in victim segment are belong to atomic opened file for
+> >> long time.
+> >>
+> >> Now, we will detect failure due to atomic write in foreground GC, if
+> >> the count exceeds threshold, we will drop all atomic written data in
+> >> cache, by this, I expect it can keep our system running safely to
+> >> prevent Dos attack.
+> >>
+> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >> ---
+> >>  fs/f2fs/f2fs.h    |  1 +
+> >>  fs/f2fs/file.c    |  5 +++++
+> >>  fs/f2fs/gc.c      | 27 +++++++++++++++++++++++----
+> >>  fs/f2fs/gc.h      |  3 +++
+> >>  fs/f2fs/segment.c |  1 +
+> >>  fs/f2fs/segment.h |  2 ++
+> >>  6 files changed, 35 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >> index c1c3a1d11186..3453288d6a71 100644
+> >> --- a/fs/f2fs/f2fs.h
+> >> +++ b/fs/f2fs/f2fs.h
+> >> @@ -2249,6 +2249,7 @@ enum {
+> >>  	FI_EXTRA_ATTR,		/* indicate file has extra attribute */
+> >>  	FI_PROJ_INHERIT,	/* indicate file inherits projectid */
+> >>  	FI_PIN_FILE,		/* indicate file should not be gced */
+> >> +	FI_ATOMIC_REVOKE_REQUEST,/* indicate atomic committed data has been dropped */
+> >>  };
+> >>  
+> >>  static inline void __mark_inode_dirty_flag(struct inode *inode,
+> >> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> >> index 7c90ded5a431..cddd9aee1bb2 100644
+> >> --- a/fs/f2fs/file.c
+> >> +++ b/fs/f2fs/file.c
+> >> @@ -1698,6 +1698,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+> >>  skip_flush:
+> >>  	set_inode_flag(inode, FI_HOT_DATA);
+> >>  	set_inode_flag(inode, FI_ATOMIC_FILE);
+> >> +	clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+> >>  	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+> >>  
+> >>  	F2FS_I(inode)->inmem_task = current;
+> >> @@ -1746,6 +1747,10 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+> >>  		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 1, false);
+> >>  	}
+> >>  err_out:
+> >> +	if (is_inode_flag_set(inode, FI_ATOMIC_REVOKE_REQUEST)) {
+> >> +		clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+> >> +		ret = -EINVAL;
+> >> +	}
+> >>  	up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
+> >>  	inode_unlock(inode);
+> >>  	mnt_drop_write_file(filp);
+> >> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> >> index bfb7a4a3a929..495876ca62b6 100644
+> >> --- a/fs/f2fs/gc.c
+> >> +++ b/fs/f2fs/gc.c
+> >> @@ -135,6 +135,8 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
+> >>  	gc_th->gc_urgent = 0;
+> >>  	gc_th->gc_wake= 0;
+> >>  
+> >> +	gc_th->atomic_file = 0;
+> >> +
+> >>  	sbi->gc_thread = gc_th;
+> >>  	init_waitqueue_head(&sbi->gc_thread->gc_wait_queue_head);
+> >>  	sbi->gc_thread->f2fs_gc_task = kthread_run(gc_thread_func, sbi,
+> >> @@ -603,7 +605,7 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+> >>   * This can be used to move blocks, aka LBAs, directly on disk.
+> >>   */
+> >>  static void move_data_block(struct inode *inode, block_t bidx,
+> >> -					unsigned int segno, int off)
+> >> +				int gc_type, unsigned int segno, int off)
+> >>  {
+> >>  	struct f2fs_io_info fio = {
+> >>  		.sbi = F2FS_I_SB(inode),
+> >> @@ -630,8 +632,10 @@ static void move_data_block(struct inode *inode, block_t bidx,
+> >>  	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+> >>  		goto out;
+> >>  
+> >> -	if (f2fs_is_atomic_file(inode))
+> >> +	if (f2fs_is_atomic_file(inode)) {
+> >> +		F2FS_I_SB(inode)->gc_thread->atomic_file++;
+> >>  		goto out;
+> >> +	}
+> >>  
+> >>  	if (f2fs_is_pinned_file(inode)) {
+> >>  		f2fs_pin_file_control(inode, true);
+> >> @@ -737,8 +741,10 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+> >>  	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+> >>  		goto out;
+> >>  
+> >> -	if (f2fs_is_atomic_file(inode))
+> >> +	if (f2fs_is_atomic_file(inode)) {
+> >> +		F2FS_I_SB(inode)->gc_thread->atomic_file++;
+> >>  		goto out;
+> >> +	}
+> >>  	if (f2fs_is_pinned_file(inode)) {
+> >>  		if (gc_type == FG_GC)
+> >>  			f2fs_pin_file_control(inode, true);
+> >> @@ -900,7 +906,8 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+> >>  			start_bidx = start_bidx_of_node(nofs, inode)
+> >>  								+ ofs_in_node;
+> >>  			if (f2fs_encrypted_file(inode))
+> >> -				move_data_block(inode, start_bidx, segno, off);
+> >> +				move_data_block(inode, start_bidx, gc_type,
+> >> +								segno, off);
+> >>  			else
+> >>  				move_data_page(inode, start_bidx, gc_type,
+> >>  								segno, off);
+> >> @@ -1017,6 +1024,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+> >>  		.ilist = LIST_HEAD_INIT(gc_list.ilist),
+> >>  		.iroot = RADIX_TREE_INIT(GFP_NOFS),
+> >>  	};
+> >> +	unsigned int last_atomic_file = sbi->gc_thread->atomic_file;
+> >> +	unsigned int skipped_round = 0, round = 0;
+> >>  
+> >>  	trace_f2fs_gc_begin(sbi->sb, sync, background,
+> >>  				get_pages(sbi, F2FS_DIRTY_NODES),
+> >> @@ -1068,11 +1077,21 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+> >>  		sec_freed++;
+> >>  	total_freed += seg_freed;
+> >>  
+> >> +	if (gc_type == FG_GC) {
+> >> +		if (sbi->gc_thread->atomic_file > last_atomic_file)
+> >> +			skipped_round++;
+> >> +		last_atomic_file = sbi->gc_thread->atomic_file;
+> > 
+> > How about resetting ->atomic_file to zero?
 > 
+> Since we will show this stat number through sysfs entry, it'd better to keep its
+> data?
+
+Alright, but we need to manage overflow?
+
 > 
-> >-----Original Message-----
-> >From: Yuchao (T)
-> >Sent: Friday, April 13, 2018 9:12 AM
-> >To: Jaegeuk Kim; heyunlei
-> >Cc: linux-f2fs-devel@lists.sourceforge.net; Wangbintian; Zhangdianfang (Euler)
-> >Subject: Re: [f2fs-dev][PATCH v2] f2fs: use cur_map instead of ckpt_map
-> >
-> >On 2018/4/13 6:37, Jaegeuk Kim wrote:
-> >> On 04/10, Yunlei He wrote:
-> >>> In flush_sit_entries::add_discard_addrs path, cur_map and ckpt_map
-> >>> are the same, but in exist_trim_candidates::add_discard_addrs,
-> >>> cur_map is updated one, and newer than ckpt_map, so we need to use
-> >>> cur_map to check whether there are discard candidates.
-> >>>
-> >>> v1->v2: one problem of check discard candidates reported by Chao,
-> >>> besides, update commit message.
-> >>>
-> >>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> >>> ---
-> >>>  fs/f2fs/segment.c | 2 +-
-> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >>> index 5854cc4..f5d0499 100644
-> >>> --- a/fs/f2fs/segment.c
-> >>> +++ b/fs/f2fs/segment.c
-> >>> @@ -1559,7 +1559,7 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
-> >>>
-> >>>  	/* SIT_VBLOCK_MAP_SIZE should be multiple of sizeof(unsigned long) */
-> >>>  	for (i = 0; i < entries; i++)
-> >>> -		dmap[i] = force ? ~ckpt_map[i] & ~discard_map[i] :
-> >>> +		dmap[i] = force ? ~cur_map[i] & ~discard_map[i] :
-> >>
-> >> NAK. We're able to loose data for roll-forward recovery.
-> Ping
+> Thanks,
 > 
-> Thanks.
-> >
-> >Actually, in fstrim flow (force == 1), cur_map is complete the same as ckpt_map.
-> >Do you suffer data corruption during testing this patch?
-
-So, we don't need this patch, IIUC.
-
-> >
-> >Thanks,
-> >
-> >>
-> >>>  				(cur_map[i] ^ ckpt_map[i]) & ckpt_map[i];
-> >>>
-> >>>  	while (force || SM_I(sbi)->dcc_info->nr_discards <=
-> >>> --
-> >>> 1.9.1
-> >>
-> >> .
-> >>
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> > 
+> >> +		round++;
+> >> +	}
+> >> +
+> >>  	if (gc_type == FG_GC)
+> >>  		sbi->cur_victim_sec = NULL_SEGNO;
+> >>  
+> >>  	if (!sync) {
+> >>  		if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
+> >> +			if (skipped_round > MAX_SKIP_ATOMIC_COUNT &&
+> >> +				skipped_round * 2 >= round)
+> >> +				drop_inmem_pages_all(sbi);
+> >>  			segno = NULL_SEGNO;
+> >>  			goto gc_more;
+> >>  		}
+> >> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+> >> index b0045d4c8d1e..bc1d21d46ae7 100644
+> >> --- a/fs/f2fs/gc.h
+> >> +++ b/fs/f2fs/gc.h
+> >> @@ -39,6 +39,9 @@ struct f2fs_gc_kthread {
+> >>  	unsigned int gc_idle;
+> >>  	unsigned int gc_urgent;
+> >>  	unsigned int gc_wake;
+> >> +
+> >> +	/* for stuck statistic */
+> >> +	unsigned int atomic_file;
+> >>  };
+> >>  
+> >>  struct gc_inode_list {
+> >> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >> index d809f731bfd1..831cefa088bc 100644
+> >> --- a/fs/f2fs/segment.c
+> >> +++ b/fs/f2fs/segment.c
+> >> @@ -287,6 +287,7 @@ void drop_inmem_pages_all(struct f2fs_sb_info *sbi)
+> >>  	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+> >>  
+> >>  	if (inode) {
+> >> +		set_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+> >>  		drop_inmem_pages(inode);
+> >>  		iput(inode);
+> >>  	}
+> >> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> >> index 492ad0c86fa9..7702b054689c 100644
+> >> --- a/fs/f2fs/segment.h
+> >> +++ b/fs/f2fs/segment.h
+> >> @@ -215,6 +215,8 @@ struct segment_allocation {
+> >>  #define IS_DUMMY_WRITTEN_PAGE(page)			\
+> >>  		(page_private(page) == (unsigned long)DUMMY_WRITTEN_PAGE)
+> >>  
+> >> +#define MAX_SKIP_ATOMIC_COUNT			16
+> >> +
+> >>  struct inmem_pages {
+> >>  	struct list_head list;
+> >>  	struct page *page;
+> >> -- 
+> >> 2.15.0.55.gc2ece9dc4de6
+> > 
+> > .
+> > 
