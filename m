@@ -1,25 +1,23 @@
-From: heyunlei <heyunlei@huawei.com>
-Subject: Re: [PATCH v5] f2fs: stop issue discard if something
- wrong with f2fs
-Date: Fri, 20 Apr 2018 01:41:33 +0000
-Message-ID: <42B685BFA705F94C860C6DD0752F056548377BCA@DGGEMA503-MBS.china.huawei.com>
-References: <1523588885-9704-1-git-send-email-heyunlei@huawei.com>
+From: Junling Zheng <zhengjunling@huawei.com>
+Subject: Re: [PATCH] fsck.f2fs: add -O features to tune the bits
+Date: Fri, 20 Apr 2018 09:46:10 +0800
+Message-ID: <185f5873-dd55-82f2-7e81-fa67ef78480e@huawei.com>
+References: <20180419205432.21624-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <heyunlei@huawei.com>) id 1f9L3f-0000z6-9u
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 01:41:51 +0000
-Received: from [45.249.212.255] (helo=huawei.com)
+ (envelope-from <zhengjunling@huawei.com>) id 1f9L8E-0003jB-0E
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 01:46:34 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f9L3d-00HTwH-3y
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 01:41:51 +0000
-In-Reply-To: <1523588885-9704-1-git-send-email-heyunlei@huawei.com>
-Content-Language: zh-CN
+ id 1f9L8C-00HUFT-Aa
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Apr 2018 01:46:33 +0000
+In-Reply-To: <20180419205432.21624-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,61 +27,180 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: heyunlei <heyunlei@huawei.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "Yuchao (T)" <yuchao0@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
-Cc: "Zhangdianfang (Euler)" <zhangdianfang@huawei.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
+Hi, Jaegeuk
 
+On 2018/4/20 4:54, Jaegeuk Kim wrote:
+> This patch add -O features for fsck.f2fs in order to tune the feature bits.
+> Currently, it supports -O encrypt only.
+> 
 
->-----Original Message-----
->From: heyunlei
->Sent: Friday, April 13, 2018 11:08 AM
->To: jaegeuk@kernel.org; Yuchao (T); linux-f2fs-devel@lists.sourceforge.net
->Cc: Wangbintian; heyunlei; Zhangdianfang (Euler)
->Subject: [f2fs-dev][PATCH v5] f2fs: stop issue discard if something wrong with f2fs
->
->v4->v5: move data corruption check to __submit_discard_cmd, in order to
->control discard io submitted more accurately, besides, increase async
->thread wait time if data corruption detected.
->
->This patch stop async thread and umount process to issue discard
->if something wrong with f2fs, which is similar to fstrim.
->
->Signed-off-by: Yunlei He <heyunlei@huawei.com>
->---
-> fs/f2fs/segment.c | 7 +++++++
-> 1 file changed, 7 insertions(+)
+Shall we introduce a new tool like tune.f2fs to tune the parameters of f2fs?
+Maybe we will tune others parameters in the future, not only features bits in sb :)
 
-Ping
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fsck/fsck.h   |  1 +
+>  fsck/main.c   |  9 ++++++++-
+>  fsck/mount.c  | 39 ++++++++++++++++++++++++++++++++++++++-
+>  fsck/resize.c | 18 +-----------------
+>  4 files changed, 48 insertions(+), 19 deletions(-)
+> 
+> diff --git a/fsck/fsck.h b/fsck/fsck.h
+> index 8e133fa..3e13fc6 100644
+> --- a/fsck/fsck.h
+> +++ b/fsck/fsck.h
+> @@ -176,6 +176,7 @@ extern void move_curseg_info(struct f2fs_sb_info *, u64);
+>  extern void write_curseg_info(struct f2fs_sb_info *);
+>  extern int find_next_free_block(struct f2fs_sb_info *, u64 *, int, int);
+>  extern void write_checkpoint(struct f2fs_sb_info *);
+> +extern void write_superblock(struct f2fs_super_block *);
+>  extern void update_data_blkaddr(struct f2fs_sb_info *, nid_t, u16, block_t);
+>  extern void update_nat_blkaddr(struct f2fs_sb_info *, nid_t, nid_t, block_t);
+>  
+> diff --git a/fsck/main.c b/fsck/main.c
+> index 9256d21..c4dd8b1 100644
+> --- a/fsck/main.c
+> +++ b/fsck/main.c
+> @@ -28,6 +28,8 @@ struct f2fs_fsck gfsck;
+>  extern struct sparse_file *f2fs_sparse_file;
+>  #endif
+>  
+> +INIT_FEATURE_TABLE;
+> +
+>  static char *absolute_path(const char *file)
+>  {
+>  	char *ret;
+> @@ -54,6 +56,7 @@ void fsck_usage()
+>  	MSG(0, "  -d debug level [default:0]\n");
+>  	MSG(0, "  -f check/fix entire partition\n");
+>  	MSG(0, "  -g add default options\n");
+> +	MSG(0, "  -O feature1[feature2,feature3,...] e.g. \"encrypt\"\n");
+>  	MSG(0, "  -p preen mode [default:0 the same as -a [0|1]]\n");
+>  	MSG(0, "  -S sparse_mode\n");
+>  	MSG(0, "  -t show directory tree\n");
+> @@ -180,7 +183,7 @@ void f2fs_parse_options(int argc, char *argv[])
+>  	}
+>  
+>  	if (!strcmp("fsck.f2fs", prog)) {
+> -		const char *option_string = ":ad:fg:p:q:StyV";
+> +		const char *option_string = ":ad:fg:O:p:q:StyV";
+>  		int opt = 0;
+>  		struct option long_opt[] = {
+>  			{"dry-run", no_argument, 0, 1},
+> @@ -203,6 +206,10 @@ void f2fs_parse_options(int argc, char *argv[])
+>  				if (!strcmp(optarg, "android"))
+>  					c.defset = CONF_ANDROID;
+>  				break;
+> +			case 'O':
+> +				if (parse_feature(feature_table, optarg))
+> +					fsck_usage();
+> +				break;
+>  			case 'p':
+>  				/* preen mode has different levels:
+>  				 *  0: default level, the same as -a
+> diff --git a/fsck/mount.c b/fsck/mount.c
+> index e5574c5..b374b46 100644
+> --- a/fsck/mount.c
+> +++ b/fsck/mount.c
+> @@ -2144,6 +2144,22 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
+>  	ASSERT(ret >= 0);
+>  }
+>  
+> +void write_superblock(struct f2fs_super_block *new_sb)
+> +{
+> +	int index, ret;
+> +	u_int8_t *buf;
+> +
+> +	buf = calloc(BLOCK_SZ, 1);
+> +
+> +	memcpy(buf + F2FS_SUPER_OFFSET, new_sb, sizeof(*new_sb));
+> +	for (index = 0; index < 2; index++) {
+> +		ret = dev_write_block(buf, index);
+> +		ASSERT(ret >= 0);
+> +	}
+> +	free(buf);
+> +	DBG(0, "Info: Done to rebuild superblock\n");
+> +}
+> +
+>  void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
+>  {
+>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+> @@ -2314,6 +2330,26 @@ static int check_sector_size(struct f2fs_super_block *sb)
+>  	return 0;
+>  }
+>  
+> +static void tune_sb_features(struct f2fs_sb_info *sbi)
+> +{
+> +	int sb_changed = 0;
+> +	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+> +
+> +	if (!(sb->feature & cpu_to_le32(F2FS_FEATURE_ENCRYPT)) &&
+> +			c.feature & cpu_to_le32(F2FS_FEATURE_ENCRYPT)) {
+> +		sb->feature |= cpu_to_le32(F2FS_FEATURE_ENCRYPT);
+> +		MSG(0, "Info: Set Encryption feature\n");
+> +		sb_changed = 1;
+> +	}
+> +	/* TODO: quota needs to allocate inode numbers */
+> +
+> +	c.feature = sb->feature;
+> +	if (!sb_changed)
+> +		return;
+> +
+> +	write_superblock(sb);
+> +}
+> +
+>  int f2fs_do_mount(struct f2fs_sb_info *sbi)
+>  {
+>  	struct f2fs_checkpoint *cp = NULL;
+> @@ -2365,7 +2401,8 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
+>  	}
+>  
+>  	c.bug_on = 0;
+> -	c.feature = sb->feature;
+> +
+> +	tune_sb_features(sbi);
+>  
+>  	/* precompute checksum seed for metadata */
+>  	if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM))
+> diff --git a/fsck/resize.c b/fsck/resize.c
+> index 019da71..d285dd7 100644
+> --- a/fsck/resize.c
+> +++ b/fsck/resize.c
+> @@ -569,22 +569,6 @@ static void rebuild_checkpoint(struct f2fs_sb_info *sbi,
+>  	DBG(0, "Info: Done to rebuild checkpoint blocks\n");
+>  }
+>  
+> -static void rebuild_superblock(struct f2fs_super_block *new_sb)
+> -{
+> -	int index, ret;
+> -	u_int8_t *buf;
+> -
+> -	buf = calloc(BLOCK_SZ, 1);
+> -
+> -	memcpy(buf + F2FS_SUPER_OFFSET, new_sb, sizeof(*new_sb));
+> -	for (index = 0; index < 2; index++) {
+> -		ret = dev_write_block(buf, index);
+> -		ASSERT(ret >= 0);
+> -	}
+> -	free(buf);
+> -	DBG(0, "Info: Done to rebuild superblock\n");
+> -}
+> -
+>  int f2fs_resize(struct f2fs_sb_info *sbi)
+>  {
+>  	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+> @@ -636,6 +620,6 @@ int f2fs_resize(struct f2fs_sb_info *sbi)
+>  	migrate_nat(sbi, new_sb);
+>  	migrate_sit(sbi, new_sb, offset_seg);
+>  	rebuild_checkpoint(sbi, new_sb, offset_seg);
+> -	rebuild_superblock(new_sb);
+> +	write_superblock(new_sb);
+>  	return 0;
+>  }
+> 
 
-Thanks.
->
->diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->index d923ef5..991d1a2 100644
->--- a/fs/f2fs/segment.c
->+++ b/fs/f2fs/segment.c
->@@ -929,6 +929,9 @@ static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
-> 	if (dc->state != D_PREP)
-> 		return;
->
->+	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
->+		return;
->+
-> 	trace_f2fs_issue_discard(dc->bdev, dc->start, dc->len);
->
-> 	dc->error = __blkdev_issue_discard(dc->bdev,
->@@ -1410,6 +1413,10 @@ static int issue_discard_thread(void *data)
-> 			continue;
-> 		if (kthread_should_stop())
-> 			return 0;
->+		if (is_sbi_flag_set(sbi, SBI_NEED_FSCK)) {
->+			wait_ms = dpolicy.max_interval;
->+			continue;
->+		}
->
-> 		if (dcc->discard_wake)
-> 			dcc->discard_wake = 0;
->--
->1.9.1
 
 
 ------------------------------------------------------------------------------
