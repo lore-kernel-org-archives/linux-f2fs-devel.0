@@ -1,13 +1,36 @@
-From: syzbot <syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com>
-Subject: kernel BUG at fs/f2fs/segment.c:LINE!
-Date: Sat, 21 Apr 2018 04:02:01 -0700
-Message-ID: <000000000000f57ef4056a59bb4d@google.com>
+From: syzbot <syzbot+d154ec99402c6f628887@syzkaller.appspotmail.com>
+Subject: kernel BUG at fs/f2fs/node.c:LINE!
+Date: Sat, 21 Apr 2018 06:02:01 -0700
+Message-ID: <0000000000001a6aa2056a5b695c@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"; DelSp="yes"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from
+ <3STbbWgkbAP4y45qgrrkxgvvoj.muumrk0ykxiutzktz.ius@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
+ id 1f9s9Y-00055v-Vc
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 21 Apr 2018 13:02:08 +0000
+Received: from mail-it0-f72.google.com ([209.85.214.72])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1f9s9X-000pSN-A2
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 21 Apr 2018 13:02:08 +0000
+Received: by mail-it0-f72.google.com with SMTP id r7-v6so4425914ith.5
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat, 21 Apr 2018 06:02:07 -0700 (PDT)
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, yuchao0@huawei.com
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 Hello,
 
@@ -16,85 +39,81 @@ syzbot hit the following crash on upstream commit
 Merge branch 'fixes' of  
 git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=bf9253040425feb155ad
+https://syzkaller.appspot.com/bug?extid=d154ec99402c6f628887
 
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5414336294027264
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5692130282438656
+https://syzkaller.appspot.com/x/repro.syz?id=5471683234234368
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5095924598571008
+https://syzkaller.appspot.com/x/log.txt?id=5436660795834368
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=1808800213120130118
 compiler: gcc (GCC) 8.0.1 20180413 (experimental)
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com
+Reported-by: syzbot+d154ec99402c6f628887@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
+F2FS-fs (loop0): Magic Mismatch, valid(0xf2f52010) - read(0x0)
+F2FS-fs (loop0): Can't find valid F2FS filesystem in 1th superblock
 F2FS-fs (loop0): invalid crc value
-F2FS-fs (loop0): Try to recover 1th superblock, ret: 0
-F2FS-fs (loop0): Mounted with checkpoint version = d
-F2FS-fs (loop0): Bitmap was wrongly cleared, blk:9740
 ------------[ cut here ]------------
-kernel BUG at fs/f2fs/segment.c:1884!
+kernel BUG at fs/f2fs/node.c:1185!
 invalid opcode: 0000 [#1] SMP KASAN
 Dumping ftrace buffer:
     (ftrace buffer empty)
 Modules linked in:
-CPU: 1 PID: 4508 Comm: syz-executor0 Not tainted 4.17.0-rc1+ #10
+CPU: 1 PID: 4549 Comm: syzkaller704305 Not tainted 4.17.0-rc1+ #10
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:update_sit_entry+0x1215/0x1590 fs/f2fs/segment.c:1882
-RSP: 0018:ffff8801af526708 EFLAGS: 00010282
-RAX: ffffed0035ea4cc0 RBX: ffff8801ad454f90 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff82eeb87e RDI: ffffed0035ea4cb6
-RBP: ffff8801af526760 R08: ffff8801ad4a2480 R09: ffffed003b5e4f90
-R10: ffffed003b5e4f90 R11: ffff8801daf27c87 R12: ffff8801adb8d380
-R13: 0000000000000001 R14: 0000000000000008 R15: 00000000ffffffff
-FS:  00000000014af940(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+RIP: 0010:__get_node_page+0xb68/0x16e0 fs/f2fs/node.c:1185
+RSP: 0018:ffff8801d960e820 EFLAGS: 00010293
+RAX: ffff8801d88205c0 RBX: 0000000000000003 RCX: ffffffff82f6cc06
+RDX: 0000000000000000 RSI: ffffffff82f6d5e8 RDI: 0000000000000004
+RBP: ffff8801d960ec30 R08: ffff8801d88205c0 R09: ffffed003b5e46c2
+R10: 0000000000000003 R11: 0000000000000003 R12: ffff8801a86e00c0
+R13: 0000000000000001 R14: ffff8801a86e0530 R15: ffff8801d9745240
+FS:  000000000072c880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f06bc223000 CR3: 00000001adb02000 CR4: 00000000001406e0
+CR2: 00007f3d403209b8 CR3: 00000001d8f3f000 CR4: 00000000001406e0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  allocate_data_block+0x66f/0x2050 fs/f2fs/segment.c:2663
-  do_write_page+0x105/0x1b0 fs/f2fs/segment.c:2727
-  write_node_page+0x129/0x350 fs/f2fs/segment.c:2770
-  __write_node_page+0x7da/0x1370 fs/f2fs/node.c:1398
-  sync_node_pages+0x18cf/0x1eb0 fs/f2fs/node.c:1652
-  block_operations+0x429/0xa60 fs/f2fs/checkpoint.c:1088
-  write_checkpoint+0x3ba/0x5380 fs/f2fs/checkpoint.c:1405
-  f2fs_sync_fs+0x2fb/0x6a0 fs/f2fs/super.c:1077
-  __sync_filesystem fs/sync.c:39 [inline]
-  sync_filesystem+0x265/0x310 fs/sync.c:67
-  generic_shutdown_super+0xd7/0x520 fs/super.c:429
-  kill_block_super+0xa4/0x100 fs/super.c:1191
-  kill_f2fs_super+0x9f/0xd0 fs/f2fs/super.c:3030
-  deactivate_locked_super+0x97/0x100 fs/super.c:316
-  deactivate_super+0x188/0x1b0 fs/super.c:347
-  cleanup_mnt+0xbf/0x160 fs/namespace.c:1174
-  __cleanup_mnt+0x16/0x20 fs/namespace.c:1181
-  task_work_run+0x1e4/0x290 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
-  exit_to_usermode_loop+0x2bd/0x310 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
-  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
+  get_node_page fs/f2fs/node.c:1237 [inline]
+  truncate_xattr_node+0x152/0x2e0 fs/f2fs/node.c:1014
+  remove_inode_page+0x200/0xaf0 fs/f2fs/node.c:1039
+  f2fs_evict_inode+0xe86/0x1710 fs/f2fs/inode.c:547
+  evict+0x4a6/0x960 fs/inode.c:557
+  iput_final fs/inode.c:1519 [inline]
+  iput+0x62d/0xa80 fs/inode.c:1545
+  f2fs_fill_super+0x5f4e/0x7bf0 fs/f2fs/super.c:2849
+  mount_bdev+0x30c/0x3e0 fs/super.c:1164
+  f2fs_mount+0x34/0x40 fs/f2fs/super.c:3020
+  mount_fs+0xae/0x328 fs/super.c:1267
+  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:1027 [inline]
+  do_new_mount fs/namespace.c:2518 [inline]
+  do_mount+0x564/0x3070 fs/namespace.c:2848
+  ksys_mount+0x12d/0x140 fs/namespace.c:3064
+  __do_sys_mount fs/namespace.c:3078 [inline]
+  __se_sys_mount fs/namespace.c:3075 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457d97
-RSP: 002b:00007ffd46f9c8e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000457d97
-RDX: 00000000014b09a3 RSI: 0000000000000002 RDI: 00007ffd46f9da50
-RBP: 00007ffd46f9da50 R08: 0000000000000000 R09: 0000000000000009
-R10: 0000000000000005 R11: 0000000000000246 R12: 00000000014b0940
-R13: 0000000000000000 R14: 0000000000000002 R15: 000000000000658e
-Code: c6 40 d6 f2 87 e8 5c 1d f6 ff 0f 0b e8 15 96 80 fe 8b 4d d0 48 8b 7d  
-b8 48 c7 c2 20 d7 f2 87 48 c7 c6 40 d6 f2 87 e8 3b 1d f6 ff <0f> 0b e8 e4  
-f0 bc fe e9 73 ef ff ff 4c 89 ef e8 d7 f0 bc fe e9
-RIP: update_sit_entry+0x1215/0x1590 fs/f2fs/segment.c:1882 RSP:  
-ffff8801af526708
----[ end trace f498328bb02610a2 ]---
+RIP: 0033:0x443dea
+RSP: 002b:00007ffcc7882368 EFLAGS: 00000297 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000c00 RCX: 0000000000443dea
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffcc7882370
+RBP: 0000000000000003 R08: 0000000020016a00 R09: 000000000000000a
+R10: 0000000000000000 R11: 0000000000000297 R12: 0000000000000004
+R13: 0000000000402ce0 R14: 0000000000000000 R15: 0000000000000000
+Code: ff e9 4f fa ff ff e8 58 5a 82 fe 48 89 df e8 70 ee 9d fe e9 73 f8 ff  
+ff e8 46 5a 82 fe 4d 8d 66 ff e9 5a f9 ff ff e8 38 5a 82 fe <0f> 0b 41 bc  
+b6 ff ff ff e9 e2 fc ff ff 48 89 95 08 fc ff ff e8
+RIP: __get_node_page+0xb68/0x16e0 fs/f2fs/node.c:1185 RSP: ffff8801d960e820
+---[ end trace 4edbeb71f002bb76 ]---
 
 
 ---
@@ -117,3 +136,7 @@ If it's a one-off invalid bug report, please reply with:
 Note: if the crash happens again, it will cause creation of a new bug  
 report.
 Note: all commands must start from beginning of the line in the email body.
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
