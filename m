@@ -1,22 +1,22 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] fsck.f2fs: fix stack overflow when reading out
- nat block
-Date: Fri, 20 Apr 2018 19:15:46 -0700
-Message-ID: <20180421021546.73327-1-jaegeuk@kernel.org>
+Subject: [PATCH] Revert "f2fs: introduce
+ f2fs_set_page_dirty_nobuffer"
+Date: Fri, 20 Apr 2018 21:08:25 -0700
+Message-ID: <20180421040825.77660-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1f9i4B-0002va-Aw
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 21 Apr 2018 02:15:55 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1f9jpD-0007OD-KM
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 21 Apr 2018 04:08:35 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f9i49-005XEI-VV
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 21 Apr 2018 02:15:55 +0000
+ id 1f9jpC-005drt-7x
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 21 Apr 2018 04:08:35 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,63 +26,118 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-The size of nat_block is less then 4KB, resulting in stack overflow by dev_read.
+This patch reverts copied f2fs_set_page_dirty_nobuffer to use generic function
+for stability.
+
+This reverts commit fe76b796fc5194cc3d57265002e3a748566d073f.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fsck/mount.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ fs/f2fs/checkpoint.c |  2 +-
+ fs/f2fs/data.c       | 33 +--------------------------------
+ fs/f2fs/f2fs.h       |  1 -
+ fs/f2fs/node.c       |  2 +-
+ 4 files changed, 3 insertions(+), 35 deletions(-)
 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index b374b46..7e936dc 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -907,7 +907,7 @@ static int f2fs_init_nid_bitmap(struct f2fs_sb_info *sbi)
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
- 	struct f2fs_summary_block *sum = curseg->sum_blk;
- 	struct f2fs_journal *journal = &sum->journal;
--	struct f2fs_nat_block nat_block;
-+	struct f2fs_nat_block *nat_block;
- 	block_t start_blk;
- 	nid_t nid;
- 	int i;
-@@ -922,18 +922,22 @@ static int f2fs_init_nid_bitmap(struct f2fs_sb_info *sbi)
- 	/* arbitrarily set 0 bit */
- 	f2fs_set_bit(0, nm_i->nid_bitmap);
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 2e23b953d304..8fc55d42ba25 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -384,7 +384,7 @@ static int f2fs_set_meta_page_dirty(struct page *page)
+ 	if (!PageUptodate(page))
+ 		SetPageUptodate(page);
+ 	if (!PageDirty(page)) {
+-		f2fs_set_page_dirty_nobuffers(page);
++		__set_page_dirty_nobuffers(page);
+ 		inc_page_count(F2FS_P_SB(page), F2FS_DIRTY_META);
+ 		SetPagePrivate(page);
+ 		f2fs_trace_pid(page);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index d32bf363cb60..5477fc09c3cd 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -19,8 +19,6 @@
+ #include <linux/bio.h>
+ #include <linux/prefetch.h>
+ #include <linux/uio.h>
+-#include <linux/mm.h>
+-#include <linux/memcontrol.h>
+ #include <linux/cleancache.h>
+ #include <linux/sched/signal.h>
  
--	memset((void *)&nat_block, 0, sizeof(struct f2fs_nat_block));
-+	nat_block = malloc(F2FS_BLKSIZE);
-+	if (!nat_block) {
-+		free(nm_i->nid_bitmap);
-+		return -ENOMEM;
-+	}
- 
- 	for (nid = 0; nid < nm_i->max_nid; nid++) {
- 		if (!(nid % NAT_ENTRY_PER_BLOCK)) {
- 			int ret;
- 
- 			start_blk = current_nat_addr(sbi, nid);
--			ret = dev_read_block((void *)&nat_block, start_blk);
-+			ret = dev_read_block(nat_block, start_blk);
- 			ASSERT(ret >= 0);
- 		}
- 
--		if (nat_block.entries[nid % NAT_ENTRY_PER_BLOCK].block_addr)
-+		if (nat_block->entries[nid % NAT_ENTRY_PER_BLOCK].block_addr)
- 			f2fs_set_bit(nid, nm_i->nid_bitmap);
- 	}
- 
-@@ -945,6 +949,7 @@ static int f2fs_init_nid_bitmap(struct f2fs_sb_info *sbi)
- 		if (addr != NULL_ADDR)
- 			f2fs_set_bit(nid, nm_i->nid_bitmap);
- 	}
-+	free(nat_block);
- 	return 0;
+@@ -2471,35 +2469,6 @@ int f2fs_release_page(struct page *page, gfp_t wait)
+ 	return 1;
  }
  
+-/*
+- * This was copied from __set_page_dirty_buffers which gives higher performance
+- * in very high speed storages. (e.g., pmem)
+- */
+-void f2fs_set_page_dirty_nobuffers(struct page *page)
+-{
+-	struct address_space *mapping = page->mapping;
+-	unsigned long flags;
+-
+-	if (unlikely(!mapping))
+-		return;
+-
+-	spin_lock(&mapping->private_lock);
+-	lock_page_memcg(page);
+-	SetPageDirty(page);
+-	spin_unlock(&mapping->private_lock);
+-
+-	xa_lock_irqsave(&mapping->i_pages, flags);
+-	WARN_ON_ONCE(!PageUptodate(page));
+-	account_page_dirtied(page, mapping);
+-	radix_tree_tag_set(&mapping->i_pages,
+-			page_index(page), PAGECACHE_TAG_DIRTY);
+-	xa_unlock_irqrestore(&mapping->i_pages, flags);
+-	unlock_page_memcg(page);
+-
+-	__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
+-	return;
+-}
+-
+ static int f2fs_set_data_page_dirty(struct page *page)
+ {
+ 	struct address_space *mapping = page->mapping;
+@@ -2523,7 +2492,7 @@ static int f2fs_set_data_page_dirty(struct page *page)
+ 	}
+ 
+ 	if (!PageDirty(page)) {
+-		f2fs_set_page_dirty_nobuffers(page);
++		__set_page_dirty_nobuffers(page);
+ 		update_dirty_page(inode, page);
+ 		return 1;
+ 	}
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 0c72908f3185..9f2bc78a9f5b 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2939,7 +2939,6 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 			u64 start, u64 len);
+ bool should_update_inplace(struct inode *inode, struct f2fs_io_info *fio);
+ bool should_update_outplace(struct inode *inode, struct f2fs_io_info *fio);
+-void f2fs_set_page_dirty_nobuffers(struct page *page);
+ int __f2fs_write_data_pages(struct address_space *mapping,
+ 						struct writeback_control *wbc,
+ 						enum iostat_type io_type);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index f202398e20ea..ae83ca9d2d31 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1753,7 +1753,7 @@ static int f2fs_set_node_page_dirty(struct page *page)
+ 	if (!PageUptodate(page))
+ 		SetPageUptodate(page);
+ 	if (!PageDirty(page)) {
+-		f2fs_set_page_dirty_nobuffers(page);
++		__set_page_dirty_nobuffers(page);
+ 		inc_page_count(F2FS_P_SB(page), F2FS_DIRTY_NODES);
+ 		SetPagePrivate(page);
+ 		f2fs_trace_pid(page);
 -- 
 2.17.0.484.g0c8726318c-goog
 
