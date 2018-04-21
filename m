@@ -1,64 +1,60 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: [PATCH] f2fs: remove duplicated dquot_initialize and fix
- error handling
-Date: Sat, 21 Apr 2018 14:12:50 +0800
-Message-ID: <20180421061250.69728-1-shengyong1@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <shengyong1@huawei.com>) id 1f9llq-0005FE-JW
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 21 Apr 2018 06:13:14 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1f9llm-000P3M-Hc
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 21 Apr 2018 06:13:14 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: check cap_resource only for data blocks
+Date: Fri, 20 Apr 2018 23:53:08 -0700
+Message-ID: <20180421065308.84211-1-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch removes duplicated dquot_initialize in recover_orphan_inode(),
-and fix the error handling if dquot_initialize fails.
+This patch changes the rule to check cap_resource for data blocks, not inode
+or node blocks in order to avoid selinux denial.
 
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/checkpoint.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/f2fs/f2fs.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 2e23b953d304..b1e61a125cc7 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -589,10 +589,11 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
- 	}
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 9f2bc78a9f5b..8f3ad9662d13 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1611,7 +1611,7 @@ static inline bool f2fs_has_xattr_block(unsigned int ofs)
+ }
  
- 	err = dquot_initialize(inode);
--	if (err)
-+	if (err) {
-+		iput(inode);
- 		goto err_out;
-+	}
+ static inline bool __allow_reserved_blocks(struct f2fs_sb_info *sbi,
+-					struct inode *inode)
++					struct inode *inode, bool cap)
+ {
+ 	if (!inode)
+ 		return true;
+@@ -1624,7 +1624,7 @@ static inline bool __allow_reserved_blocks(struct f2fs_sb_info *sbi,
+ 	if (!gid_eq(F2FS_OPTION(sbi).s_resgid, GLOBAL_ROOT_GID) &&
+ 					in_group_p(F2FS_OPTION(sbi).s_resgid))
+ 		return true;
+-	if (capable(CAP_SYS_RESOURCE))
++	if (cap && capable(CAP_SYS_RESOURCE))
+ 		return true;
+ 	return false;
+ }
+@@ -1659,7 +1659,7 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+ 	avail_user_block_count = sbi->user_block_count -
+ 					sbi->current_reserved_blocks;
  
--	dquot_initialize(inode);
- 	clear_nlink(inode);
+-	if (!__allow_reserved_blocks(sbi, inode))
++	if (!__allow_reserved_blocks(sbi, inode, true))
+ 		avail_user_block_count -= F2FS_OPTION(sbi).root_reserved_blocks;
  
- 	/* truncate all the data during iput */
+ 	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
+@@ -1866,7 +1866,7 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+ 	valid_block_count = sbi->total_valid_block_count +
+ 					sbi->current_reserved_blocks + 1;
+ 
+-	if (!__allow_reserved_blocks(sbi, inode))
++	if (!__allow_reserved_blocks(sbi, inode, false))
+ 		valid_block_count += F2FS_OPTION(sbi).root_reserved_blocks;
+ 
+ 	if (unlikely(valid_block_count > sbi->user_block_count)) {
 -- 
-2.14.1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+2.17.0.484.g0c8726318c-goog
