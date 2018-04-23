@@ -1,11 +1,7 @@
-From: Goldwyn Rodrigues <rgoldwyn@suse.de>
-Subject: Re: [PATCH v11 10/63] xarray: Add xa_for_each
-Date: Sun, 22 Apr 2018 15:33:23 -0500
-Message-ID: <3c759f62-a1fa-9bdd-9b02-7c4e1d2b3adb@suse.de>
-References: <20180414141316.7167-1-willy@infradead.org>
- <20180414141316.7167-11-willy@infradead.org>
- <35a3318d-69d7-a10c-1515-98ea6b59fb99@suse.de>
- <20180421013406.GM10788@bombadil.infradead.org>
+From: Sheng Yong <shengyong1@huawei.com>
+Subject: [PATCH] f2fs: do not check F2FS_INLINE_DOTS in recover
+Date: Mon, 23 Apr 2018 10:29:13 +0800
+Message-ID: <20180423022913.131398-1-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -13,14 +9,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <rgoldwyn@suse.de>) id 1fALg2-0004hc-St
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 22 Apr 2018 20:33:38 +0000
-Received: from mx2.suse.de ([195.135.220.15])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1:ECDHE-RSA-AES256-SHA:256) (Exim 4.90_1) id 1fALg0-00ArNS-Gz
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 22 Apr 2018 20:33:38 +0000
-In-Reply-To: <20180421013406.GM10788@bombadil.infradead.org>
-Content-Language: en-US
+ (envelope-from <shengyong1@huawei.com>) id 1fARFG-00047C-15
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 23 Apr 2018 02:30:22 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fARFE-0034Ya-02
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 23 Apr 2018 02:30:21 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,29 +25,33 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Matthew Wilcox <mawilcox@microsoft.com>, James Simmons <jsimmons@infradead.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Andreas Dilger <andreas.dilger@intel.com>, Nicholas Piggin <npiggin@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, Oleg Drokin <oleg.drokin@intel.com>, linux-mm@kvack.org, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-fsdevel@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Mike Kravetz <mike.kravetz@oracle.com>
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
+Only dir may have F2FS_INLINE_DOTS flag, so there is no need to check
+the flag in recover flow.
 
+Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+---
+ fs/f2fs/recovery.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-On 04/20/2018 08:34 PM, Matthew Wilcox wrote:
-> On Fri, Apr 20, 2018 at 07:00:47AM -0500, Goldwyn Rodrigues wrote:
-
->> This function name sounds like you are performing the operation for each
->> tag.
->>
->> Can it be called xas_for_each_tagged() or xas_tag_for_each() instead?
-> 
-> I hadn't thought of that interpretation.  Yes, that makes sense.
-> Should we also rename xas_find_tag -> xas_find_tagged and xas_next_tag
-> -> xas_next_tagged?
-
-Yup. The family of functions that work with one tag should be renamed. I
-am fine with the names suggested.
-
-
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 1b23d3febe4c..709dd4daaf29 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -204,8 +204,6 @@ static void recover_inline_flags(struct inode *inode, struct f2fs_inode *ri)
+ 		set_inode_flag(inode, FI_DATA_EXIST);
+ 	else
+ 		clear_inode_flag(inode, FI_DATA_EXIST);
+-	if (!(ri->i_inline & F2FS_INLINE_DOTS))
+-		clear_inode_flag(inode, FI_INLINE_DOTS);
+ }
+ 
+ static void recover_inode(struct inode *inode, struct page *page)
 -- 
-Goldwyn
+2.14.1
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
