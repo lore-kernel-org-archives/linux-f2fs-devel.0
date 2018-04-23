@@ -1,77 +1,63 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH v2] f2fs: wait IO writeback in commit_inmem_pages()
-Date: Mon, 23 Apr 2018 23:14:25 +0800
-Message-ID: <20180423151425.5019-1-chao@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Eric Biggers <ebiggers3@gmail.com>
+Subject: [PATCH] f2fs: fix features filename in sysfs
+ documentation
+Date: Mon, 23 Apr 2018 10:26:30 -0700
+Message-ID: <20180423172630.201062-1-ebiggers3@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <ebiggers3@gmail.com>) id 1fAfFF-0000Yg-M3
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 23 Apr 2018 17:27:17 +0000
+Received: from mail-pf0-f194.google.com ([209.85.192.194])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1fAfFD-0061RI-SI
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 23 Apr 2018 17:27:17 +0000
+Received: by mail-pf0-f194.google.com with SMTP id j5so9874705pfh.2
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 23 Apr 2018 10:27:15 -0700 (PDT)
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Eric Biggers <ebiggers@google.com>
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Eric Biggers <ebiggers@google.com>
 
-Thread A				Thread B
-- f2fs_ioc_commit_atomic_write
- - commit_inmem_pages
-  - f2fs_submit_merged_write_cond
-  : write data
-					- write_checkpoint
-					 - do_checkpoint
-					 : commit all node within CP
-					 -> SPO
-  - f2fs_do_sync_file
-   - file_write_and_wait_range
-   : wait data writeback
+The file is called "features", not "feature".
 
-In above race condition, data/node can be flushed in reversed order when
-coming a checkpoint before f2fs_do_sync_file, after SPOR, it results in
-atomic written data being corrupted.
-
-This patch adds filemap_fdatawait() in commit_inmem_pages() to keep data
-and node of atomic file being flushed orderly.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
-v2:
-- clean up codes suggested by Jaegeuk.
- fs/f2fs/file.c    | 4 ++++
- fs/f2fs/segment.c | 2 ++
- 2 files changed, 6 insertions(+)
+ Documentation/ABI/testing/sysfs-fs-f2fs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index bac059474342..0cfa65c21d3f 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -217,6 +217,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 540553c933b6..50a34bacb1ab 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -140,7 +140,7 @@ Contact:	"Shuoran Liu" <liushuoran@huawei.com>
+ Description:
+ 		 Shows total written kbytes issued to disk.
  
- 	trace_f2fs_sync_file_enter(inode);
- 
-+	if (atomic)
-+		goto write_done;
-+
- 	/* if fdatasync is triggered, let's do in-place-update */
- 	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
- 		set_inode_flag(inode, FI_NEED_IPU);
-@@ -228,6 +231,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 		return ret;
- 	}
- 
-+write_done:
- 	/* if the inode is dirty, let's recover all the time */
- 	if (!f2fs_skip_inode_update(inode, datasync)) {
- 		f2fs_write_inode(inode, NULL);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 710d817c4350..31336fc54d8e 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -419,6 +419,8 @@ static int __commit_inmem_pages(struct inode *inode)
- 		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
- 	} else {
- 		__revoke_inmem_pages(inode, &revoke_list, false, false);
-+
-+		err = filemap_fdatawait(inode->i_mapping);
- 	}
- 
- 	return err;
+-What:		/sys/fs/f2fs/<disk>/feature
++What:		/sys/fs/f2fs/<disk>/features
+ Date:		July 2017
+ Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
+ Description:
 -- 
-2.16.2.17.g38e79b1fd
+2.17.0.484.g0c8726318c-goog
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
