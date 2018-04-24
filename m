@@ -1,82 +1,121 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: kernel BUG at fs/f2fs/node.c:LINE!
-Date: Tue, 24 Apr 2018 10:27:59 -0600
-Message-ID: <20180424162759.GA66918@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180424062000.GA57884@jaegeuk-macbookpro.roam.corp.google.com>
- <000000000000ae37a6056a9273f6@google.com>
- <CACT4Y+b2UgpGHDdfPgu3vp1MR8feL16C=HXsQwx7TC2-3U=0Sg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1fB0nY-0004zJ-Af
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 24 Apr 2018 16:28:08 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fB0nW-00DN3C-Rh
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 24 Apr 2018 16:28:08 +0000
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+b2UgpGHDdfPgu3vp1MR8feL16C=HXsQwx7TC2-3U=0Sg@mail.gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, syzkaller-bugs <syzkaller-bugs@googlegroups.com>, LKML <linux-kernel@vger.kernel.org>, syzbot <syzbot+d154ec99402c6f628887@syzkaller.appspotmail.com>
+Subject: [PATCH] f2fs: avoid bug_on on corrupted inode
+Date: Tue, 24 Apr 2018 13:47:18 -0600
+Message-ID: <20180424194718.71944-1-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 04/24, Dmitry Vyukov wrote:
-> On Tue, Apr 24, 2018 at 8:42 AM, syzbot
-> <syzbot+d154ec99402c6f628887@syzkaller.appspotmail.com> wrote:
-> > Hello,
-> >
-> > syzbot tried to test the proposed patch but build/boot failed:
-> >
-> > failed to create VM pool: failed to create GCE image: failed to get create
-> > image operation operation-1524552040215-56a926ecc71d9-3edfeb8b-8abca81c:
-> > googleapi: Error 403: Rate Limit Exceeded, rateLimitExceeded
-> >
-> >
-> > Tested on git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/dev
-> > commit
-> > b549e322861b99f1862fb5f08dfb5e5753a38635 (Sat Apr 21 06:44:59 2018 +0000)
-> > f2fs: check cap_resource only for data blocks
-> >
-> > compiler: gcc (GCC) 8.0.1 20180413 (experimental)
-> > Patch: https://syzkaller.appspot.com/x/patch.diff?id=5565179303559168
-> > Kernel config:
-> > https://syzkaller.appspot.com/x/.config?id=1808800213120130118
-> 
-> Hi Jaegeuk,
-> 
-> Re the last failure (rate limiting), now should be fixed with:
-> https://github.com/google/syzkaller/commit/e2f4bf8f3818d49baf0f3789add75d5fd506ad8d
-> which adds some backoff-and-retry logic.
-> 
-> Re the first one, do I understand it correctly that dev-test already
-> contains the fix that you want to test?
-> We did not foresee such case initially, but you are not the first one
-> to try this. I've added support for testing without a patch now:
-> https://github.com/google/syzkaller/commit/9366d03f001170479319878905031f63d4377c46
-> and updated the docs:
-> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#testing-patches
-> 
-> So now this should work:
-> 
-> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
-> dev-test
+syzbot has tested the proposed patch but the reproducer still triggered crash:
+kernel BUG at fs/f2fs/inode.c:LINE!
 
-Cool! Thank you so much.
+F2FS-fs (loop1): invalid crc value
+F2FS-fs (loop5): Magic Mismatch, valid(0xf2f52010) - read(0x0)
+F2FS-fs (loop5): Can't find valid F2FS filesystem in 1th superblock
+F2FS-fs (loop5): invalid crc value
+------------[ cut here ]------------
+kernel BUG at fs/f2fs/inode.c:238!
+invalid opcode: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 4886 Comm: syz-executor1 Not tainted 4.17.0-rc1+ #1
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:do_read_inode fs/f2fs/inode.c:238 [inline]
+RIP: 0010:f2fs_iget+0x3307/0x3ca0 fs/f2fs/inode.c:313
+RSP: 0018:ffff8801c44a70e8 EFLAGS: 00010293
+RAX: ffff8801ce208040 RBX: ffff8801b3621080 RCX: ffffffff82eace18
+F2FS-fs (loop2): Magic Mismatch, valid(0xf2f52010) - read(0x0)
+RDX: 0000000000000000 RSI: ffffffff82eaf047 RDI: 0000000000000007
+RBP: ffff8801c44a7410 R08: ffff8801ce208040 R09: ffffed0039ee4176
+R10: ffffed0039ee4176 R11: ffff8801cf720bb7 R12: ffff8801c0efa000
+R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
+FS:  00007f753aa9d700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+------------[ cut here ]------------
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+kernel BUG at fs/f2fs/inode.c:238!
+CR2: 0000000001b03018 CR3: 00000001c8b74000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ f2fs_fill_super+0x4377/0x7bf0 fs/f2fs/super.c:2842
+ mount_bdev+0x30c/0x3e0 fs/super.c:1165
+ f2fs_mount+0x34/0x40 fs/f2fs/super.c:3020
+ mount_fs+0xae/0x328 fs/super.c:1268
+ vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+ vfs_kern_mount fs/namespace.c:1027 [inline]
+ do_new_mount fs/namespace.c:2517 [inline]
+ do_mount+0x564/0x3070 fs/namespace.c:2847
+ ksys_mount+0x12d/0x140 fs/namespace.c:3063
+ __do_sys_mount fs/namespace.c:3077 [inline]
+ __se_sys_mount fs/namespace.c:3074 [inline]
+ __x64_sys_mount+0xbe/0x150 fs/namespace.c:3074
+ do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457daa
+RSP: 002b:00007f753aa9cba8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000000 RCX: 0000000000457daa
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f753aa9cbf0
+RBP: 0000000000000064 R08: 0000000020016a00 R09: 0000000020000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
+R13: 0000000000000064 R14: 00000000006fcb80 R15: 0000000000000000
+RIP: do_read_inode fs/f2fs/inode.c:238 [inline] RSP: ffff8801c44a70e8
+RIP: f2fs_iget+0x3307/0x3ca0 fs/f2fs/inode.c:313 RSP: ffff8801c44a70e8
+invalid opcode: 0000 [#2] SMP KASAN
+---[ end trace 1cbcbec2156680bc ]---
 
+Reported-and-tested-by: syzbot+41a1b341571f0952badb@syzkaller.appspotmail.com
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/inode.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 414b1ede642b..7f2fe4574c48 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -185,6 +185,21 @@ void f2fs_inode_chksum_set(struct f2fs_sb_info *sbi, struct page *page)
+ 	ri->i_inode_checksum = cpu_to_le32(f2fs_inode_chksum(sbi, page));
+ }
+ 
++static bool sanity_check_inode(struct inode *inode)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++
++	if (f2fs_sb_has_flexible_inline_xattr(sbi->sb)
++			&& !f2fs_has_extra_attr(inode)) {
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
++		f2fs_msg(sbi->sb, KERN_WARNING,
++			"%s: corrupted inode ino=%lx, run fsck to fix.",
++			__func__, inode->i_ino);
++		return false;
++	}
++	return true;
++}
++
+ static int do_read_inode(struct inode *inode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+@@ -235,7 +250,6 @@ static int do_read_inode(struct inode *inode)
+ 					le16_to_cpu(ri->i_extra_isize) : 0;
+ 
+ 	if (f2fs_sb_has_flexible_inline_xattr(sbi->sb)) {
+-		f2fs_bug_on(sbi, !f2fs_has_extra_attr(inode));
+ 		fi->i_inline_xattr_size = le16_to_cpu(ri->i_inline_xattr_size);
+ 	} else if (f2fs_has_inline_xattr(inode) ||
+ 				f2fs_has_inline_dentry(inode)) {
+@@ -313,6 +327,10 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+ 	ret = do_read_inode(inode);
+ 	if (ret)
+ 		goto bad_inode;
++	if (!sanity_check_inode(inode)) {
++		ret = -EINVAL;
++		goto bad_inode;
++	}
+ make_now:
+ 	if (ino == F2FS_NODE_INO(sbi)) {
+ 		inode->i_mapping->a_ops = &f2fs_node_aops;
+-- 
+2.17.0.484.g0c8726318c-goog
