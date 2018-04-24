@@ -1,12 +1,34 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: give message and set need_fsck given broken node id
-Date: Mon, 23 Apr 2018 23:55:11 -0600
-Message-ID: <20180424055511.56685-1-jaegeuk@kernel.org>
+Subject: Re: kernel BUG at fs/f2fs/node.c:LINE!
+Date: Tue, 24 Apr 2018 00:01:37 -0600
+Message-ID: <20180424060137.GA57142@jaegeuk-macbookpro.roam.corp.google.com>
+References: <0000000000001a6aa2056a5b695c@google.com>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="/9DWx/yDrRhgMJTb"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <0000000000001a6aa2056a5b695c@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: syzbot <syzbot+d154ec99402c6f628887@syzkaller.appspotmail.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, yuchao0@huawei.com
 List-Id: linux-f2fs-devel.lists.sourceforge.net
+
+
+--/9DWx/yDrRhgMJTb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
+
+
+--/9DWx/yDrRhgMJTb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="0001-f2fs-give-message-and-set-need_fsck-given-broken-nod.patch"
+
+>From 65b966f58e8264477da6c8b70703ce362cb1f8f0 Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Mon, 23 Apr 2018 23:02:31 -0600
+Subject: [PATCH] f2fs: give message and set need_fsck given broken node id
 
 syzbot hit the following crash on upstream commit
 83beed7b2b26f232d782127792dd0cd4362fdc41 (Fri Apr 20 17:56:32 2018 +0000)
@@ -193,3 +215,6 @@ index 3a3d38b3e9ec..2dd34cd980b1 100644
  	if (!page)
 -- 
 2.17.0.484.g0c8726318c-goog
+
+
+--/9DWx/yDrRhgMJTb--
