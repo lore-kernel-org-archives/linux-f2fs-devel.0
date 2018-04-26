@@ -1,62 +1,92 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 5/5] f2fs: enforce fsync_mode=strict for
- renamed directory
-Date: Thu, 26 Apr 2018 09:32:24 -0600
-Message-ID: <20180426153224.GE68594@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180425054613.2700-1-jaegeuk@kernel.org>
- <20180425054613.2700-5-jaegeuk@kernel.org>
- <42858ef4-c1b8-c83e-4b47-39e28e161e16@kernel.org>
+Subject: Re: [PATCH] f2fs: fix to wait IO writeback in __revoke_inmem_pages()
+Date: Thu, 26 Apr 2018 09:48:17 -0600
+Message-ID: <20180426154817.GF68594@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180426083247.86337-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <42858ef4-c1b8-c83e-4b47-39e28e161e16@kernel.org>
+In-Reply-To: <20180426083247.86337-1-yuchao0@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 04/25, Chao Yu wrote:
-> On 2018/4/25 13:46, Jaegeuk Kim wrote:
-> > This is to give a option for user to be able to recover B/foo in the below
-> > case.
-> > 
-> > mkdir A
-> > sync()
-> > rename(A, B)
-> > creat (B/foo)
-> > fsync (B/foo)
-> > ---crash---
+On 04/26, Chao Yu wrote:
+> Thread A				Thread B
+> - f2fs_ioc_commit_atomic_write
+>  - commit_inmem_pages
+>   - f2fs_submit_merged_write_cond
+>   : write data
+> 					- write_checkpoint
+> 					 - do_checkpoint
+> 					 : commit all node within CP
+> 					 -> SPO
+>   - f2fs_do_sync_file
+>    - file_write_and_wait_range
+>    : wait data writeback
 > 
-> That makes sense, IMO, it will be better to cover cross rename case as well?
+> In above race condition, data/node can be flushed in reversed order when
+> coming a checkpoint before f2fs_do_sync_file, after SPOR, it results in
+> atomic written data being corrupted.
 
-file_lost_pino(old_inode) seems covering that.
+Wait, what is the problem here? Thread B could succeed checkpoint, there is
+no problem. If it fails, there is no fsync mark where we can recover it, so
+we can just ignore the last written data as nothing.
 
 > 
-> Thanks,
+> This patch adds f2fs_wait_on_page_writeback in __revoke_inmem_pages() to
+> keep data and node of atomic file being flushed orderly.
 > 
-> > 
-> > Sugessted-by: Velayudhan Pillai <vijay@cs.utexas.edu>
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/namei.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> > index b5f404674cad..fef6e3ab2135 100644
-> > --- a/fs/f2fs/namei.c
-> > +++ b/fs/f2fs/namei.c
-> > @@ -973,8 +973,11 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
-> >  			f2fs_put_page(old_dir_page, 0);
-> >  		f2fs_i_links_write(old_dir, false);
-> >  	}
-> > -	if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_STRICT)
-> > +	if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_STRICT) {
-> >  		add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
-> > +		if (S_ISDIR(old_inode->i_mode))
-> > +			add_ino_entry(sbi, old_inode->i_ino, TRANS_DIR_INO);
-> > +	}
-> >  
-> >  	f2fs_unlock_op(sbi);
-> >  
-> > 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/file.c    | 4 ++++
+>  fs/f2fs/segment.c | 3 +++
+>  2 files changed, 7 insertions(+)
+> 
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index be7578774a47..a352804af244 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -217,6 +217,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>  
+>  	trace_f2fs_sync_file_enter(inode);
+>  
+> +	if (atomic)
+> +		goto write_done;
+> +
+>  	/* if fdatasync is triggered, let's do in-place-update */
+>  	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
+>  		set_inode_flag(inode, FI_NEED_IPU);
+> @@ -228,6 +231,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>  		return ret;
+>  	}
+>  
+> +write_done:
+>  	/* if the inode is dirty, let's recover all the time */
+>  	if (!f2fs_skip_inode_update(inode, datasync)) {
+>  		f2fs_write_inode(inode, NULL);
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 584483426584..9ca3d0a43d93 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -230,6 +230,8 @@ static int __revoke_inmem_pages(struct inode *inode,
+>  
+>  		lock_page(page);
+>  
+> +		f2fs_wait_on_page_writeback(page, DATA, true);
+> +
+>  		if (recover) {
+>  			struct dnode_of_data dn;
+>  			struct node_info ni;
+> @@ -415,6 +417,7 @@ static int __commit_inmem_pages(struct inode *inode)
+>  		/* drop all uncommitted pages */
+>  		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
+>  	} else {
+> +		/* wait all committed IOs writeback and release them from list */
+>  		__revoke_inmem_pages(inode, &revoke_list, false, false);
+>  	}
+>  
+> -- 
+> 2.15.0.55.gc2ece9dc4de6
