@@ -1,75 +1,83 @@
-From: Tao Bao via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Subject: [PATCH] libf2fs: Track AOSP libsparse API change.
-Date: Thu, 26 Apr 2018 00:40:09 -0700
-Message-ID: <20180426074009.36270-1-tbao@google.com>
-Reply-To: Tao Bao <tbao@google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to wait IO writeback in __revoke_inmem_pages()
+Date: Thu, 26 Apr 2018 16:32:47 +0800
+Message-ID: <20180426083247.86337-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from
- <3hoLhWgQKEO0iQPdVddVaT.RdbaXcjm-UrUh-STkTaaXhih.hdjgRTUdgVT.cTi@flex--tbao.bounces.google.com>)
- id 1fBbuF-0003Md-CV
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 Apr 2018 08:05:31 +0000
-Received: from mail-io0-f202.google.com ([209.85.223.202])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1fBbuD-0087tz-RR
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 Apr 2018 08:05:31 +0000
-Received: by mail-io0-f202.google.com with SMTP id a193-v6so17087374ioa.23
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 26 Apr 2018 01:05:29 -0700 (PDT)
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net, tbao@google.com
-Cc: jaegeuk@google.com
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-The libsparse in AOSP is updating the type for 'len', from 'int' to
-'size_t', in the callback parameter of sparse_file_foreach_chunk(). The
-value represents a chunk size, which could be legitimately larger than
-INT_MAX. This patch tracks the libsparse API change.
+Thread A				Thread B
+- f2fs_ioc_commit_atomic_write
+ - commit_inmem_pages
+  - f2fs_submit_merged_write_cond
+  : write data
+					- write_checkpoint
+					 - do_checkpoint
+					 : commit all node within CP
+					 -> SPO
+  - f2fs_do_sync_file
+   - file_write_and_wait_range
+   : wait data writeback
 
-The change is guarded with SPARSE_CALLBACK_USES_SIZE_T that's exposed as
-part of the libsparse change. This allows f2fs-tools to keep working
-against older libsparse versions.
+In above race condition, data/node can be flushed in reversed order when
+coming a checkpoint before f2fs_do_sync_file, after SPOR, it results in
+atomic written data being corrupted.
 
-Signed-off-by: Tao Bao <tbao@google.com>
+This patch adds f2fs_wait_on_page_writeback in __revoke_inmem_pages() to
+keep data and node of atomic file being flushed orderly.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- lib/libf2fs_io.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ fs/f2fs/file.c    | 4 ++++
+ fs/f2fs/segment.c | 3 +++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
-index 4781517..76d283d 100644
---- a/lib/libf2fs_io.c
-+++ b/lib/libf2fs_io.c
-@@ -114,8 +114,13 @@ static int sparse_write_blk(__u64 block, int count, const void *buf)
- 	return 0;
- }
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index be7578774a47..a352804af244 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -217,6 +217,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
  
-+#ifdef SPARSE_CALLBACK_USES_SIZE_T
-+static int sparse_import_segment(void *UNUSED(priv), const void *data,
-+		size_t len, unsigned int block, unsigned int nr_blocks)
-+#else
- static int sparse_import_segment(void *UNUSED(priv), const void *data, int len,
- 		unsigned int block, unsigned int nr_blocks)
-+#endif
- {
- 	/* Ignore chunk headers, only write the data */
- 	if (!nr_blocks || len % F2FS_BLKSIZE)
+ 	trace_f2fs_sync_file_enter(inode);
+ 
++	if (atomic)
++		goto write_done;
++
+ 	/* if fdatasync is triggered, let's do in-place-update */
+ 	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
+ 		set_inode_flag(inode, FI_NEED_IPU);
+@@ -228,6 +231,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 		return ret;
+ 	}
+ 
++write_done:
+ 	/* if the inode is dirty, let's recover all the time */
+ 	if (!f2fs_skip_inode_update(inode, datasync)) {
+ 		f2fs_write_inode(inode, NULL);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 584483426584..9ca3d0a43d93 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -230,6 +230,8 @@ static int __revoke_inmem_pages(struct inode *inode,
+ 
+ 		lock_page(page);
+ 
++		f2fs_wait_on_page_writeback(page, DATA, true);
++
+ 		if (recover) {
+ 			struct dnode_of_data dn;
+ 			struct node_info ni;
+@@ -415,6 +417,7 @@ static int __commit_inmem_pages(struct inode *inode)
+ 		/* drop all uncommitted pages */
+ 		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
+ 	} else {
++		/* wait all committed IOs writeback and release them from list */
+ 		__revoke_inmem_pages(inode, &revoke_list, false, false);
+ 	}
+ 
 -- 
-2.17.0.484.g0c8726318c-goog
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+2.15.0.55.gc2ece9dc4de6
