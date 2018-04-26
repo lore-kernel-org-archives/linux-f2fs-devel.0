@@ -1,7 +1,8 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 4/5] f2fs: sanity check for total valid blocks
-Date: Thu, 26 Apr 2018 09:27:11 -0600
-Message-ID: <20180426152711.GC68594@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [f2fs-dev] [PATCH 4/5 v2] f2fs: sanity check for total valid
+ blocks
+Date: Thu, 26 Apr 2018 09:29:32 -0600
+Message-ID: <20180426152932.GD68594@jaegeuk-macbookpro.roam.corp.google.com>
 References: <20180425054613.2700-1-jaegeuk@kernel.org>
  <20180425054613.2700-4-jaegeuk@kernel.org>
  <e9ccab38-0773-156f-67b1-0374b0aeb6ed@kernel.org>
@@ -15,151 +16,146 @@ To: Chao Yu <chao@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 04/25, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> This patch makes generic/008 failed, because for fallocate case, total valid
-> block count can not be calculated by gathering valid_blocks of all sit entries.
+This patch enhances sanity check for SIT entries.
 
-Yeah, I got that too, and I've been testing to change it by valid_node_count,
-which works for syzbot case as well.
+syzbot hit the following crash on upstream commit
+83beed7b2b26f232d782127792dd0cd4362fdc41 (Fri Apr 20 17:56:32 2018 +0000)
+Merge branch 'fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
+syzbot dashboard link: https://syzkaller.appspot.com/bug?extid=bf9253040425feb155ad
 
-> 
-> Thanks,
-> 
-> On 2018/4/25 13:46, Jaegeuk Kim wrote:
-> > This patch enhances sanity check for SIT entries.
-> > 
-> > syzbot hit the following crash on upstream commit
-> > 83beed7b2b26f232d782127792dd0cd4362fdc41 (Fri Apr 20 17:56:32 2018 +0000)
-> > Merge branch 'fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
-> > syzbot dashboard link: https://syzkaller.appspot.com/bug?extid=bf9253040425feb155ad
-> > 
-> > syzkaller reproducer: https://syzkaller.appspot.com/x/repro.syz?id=5692130282438656
-> > Raw console output: https://syzkaller.appspot.com/x/log.txt?id=5095924598571008
-> > Kernel config: https://syzkaller.appspot.com/x/.config?id=1808800213120130118
-> > compiler: gcc (GCC) 8.0.1 20180413 (experimental)
-> > 
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com
-> > It will help syzbot understand when the bug is fixed. See footer for details.
-> > If you forward the report, please keep this part and the footer.
-> > 
-> > F2FS-fs (loop0): invalid crc value
-> > F2FS-fs (loop0): Try to recover 1th superblock, ret: 0
-> > F2FS-fs (loop0): Mounted with checkpoint version = d
-> > F2FS-fs (loop0): Bitmap was wrongly cleared, blk:9740
-> > ------------[ cut here ]------------
-> > kernel BUG at fs/f2fs/segment.c:1884!
-> > invalid opcode: 0000 [#1] SMP KASAN
-> > Dumping ftrace buffer:
-> >    (ftrace buffer empty)
-> > Modules linked in:
-> > CPU: 1 PID: 4508 Comm: syz-executor0 Not tainted 4.17.0-rc1+ #10
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > RIP: 0010:update_sit_entry+0x1215/0x1590 fs/f2fs/segment.c:1882
-> > RSP: 0018:ffff8801af526708 EFLAGS: 00010282
-> > RAX: ffffed0035ea4cc0 RBX: ffff8801ad454f90 RCX: 0000000000000000
-> > RDX: 0000000000000000 RSI: ffffffff82eeb87e RDI: ffffed0035ea4cb6
-> > RBP: ffff8801af526760 R08: ffff8801ad4a2480 R09: ffffed003b5e4f90
-> > R10: ffffed003b5e4f90 R11: ffff8801daf27c87 R12: ffff8801adb8d380
-> > R13: 0000000000000001 R14: 0000000000000008 R15: 00000000ffffffff
-> > FS:  00000000014af940(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00007f06bc223000 CR3: 00000001adb02000 CR4: 00000000001406e0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >  allocate_data_block+0x66f/0x2050 fs/f2fs/segment.c:2663
-> >  do_write_page+0x105/0x1b0 fs/f2fs/segment.c:2727
-> >  write_node_page+0x129/0x350 fs/f2fs/segment.c:2770
-> >  __write_node_page+0x7da/0x1370 fs/f2fs/node.c:1398
-> >  sync_node_pages+0x18cf/0x1eb0 fs/f2fs/node.c:1652
-> >  block_operations+0x429/0xa60 fs/f2fs/checkpoint.c:1088
-> >  write_checkpoint+0x3ba/0x5380 fs/f2fs/checkpoint.c:1405
-> >  f2fs_sync_fs+0x2fb/0x6a0 fs/f2fs/super.c:1077
-> >  __sync_filesystem fs/sync.c:39 [inline]
-> >  sync_filesystem+0x265/0x310 fs/sync.c:67
-> >  generic_shutdown_super+0xd7/0x520 fs/super.c:429
-> >  kill_block_super+0xa4/0x100 fs/super.c:1191
-> >  kill_f2fs_super+0x9f/0xd0 fs/f2fs/super.c:3030
-> >  deactivate_locked_super+0x97/0x100 fs/super.c:316
-> >  deactivate_super+0x188/0x1b0 fs/super.c:347
-> >  cleanup_mnt+0xbf/0x160 fs/namespace.c:1174
-> >  __cleanup_mnt+0x16/0x20 fs/namespace.c:1181
-> >  task_work_run+0x1e4/0x290 kernel/task_work.c:113
-> >  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
-> >  exit_to_usermode_loop+0x2bd/0x310 arch/x86/entry/common.c:166
-> >  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-> >  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
-> >  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
-> >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > RIP: 0033:0x457d97
-> > RSP: 002b:00007ffd46f9c8e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-> > RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000457d97
-> > RDX: 00000000014b09a3 RSI: 0000000000000002 RDI: 00007ffd46f9da50
-> > RBP: 00007ffd46f9da50 R08: 0000000000000000 R09: 0000000000000009
-> > R10: 0000000000000005 R11: 0000000000000246 R12: 00000000014b0940
-> > R13: 0000000000000000 R14: 0000000000000002 R15: 000000000000658e
-> > RIP: update_sit_entry+0x1215/0x1590 fs/f2fs/segment.c:1882 RSP: ffff8801af526708
-> > ---[ end trace f498328bb02610a2 ]---
-> > 
-> > Reported-and-tested-by: syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com
-> > Reported-and-tested-by: syzbot+7d6d31d3bc702f566ce3@syzkaller.appspotmail.com
-> > Reported-and-tested-by: syzbot+0a725420475916460f12@syzkaller.appspotmail.com
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/segment.c | 13 +++++++++++++
-> >  1 file changed, 13 insertions(+)
-> > 
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index 20250b88bf51..a55647f61232 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -3612,6 +3612,7 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
-> >  	unsigned int i, start, end;
-> >  	unsigned int readed, start_blk = 0;
-> >  	int err = 0;
-> > +	block_t total_valid_blocks = 0;
-> >  
-> >  	do {
-> >  		readed = ra_meta_pages(sbi, start_blk, BIO_MAX_PAGES,
-> > @@ -3634,6 +3635,7 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
-> >  			if (err)
-> >  				return err;
-> >  			seg_info_from_raw_sit(se, &sit);
-> > +			total_valid_blocks += se->valid_blocks;
-> >  
-> >  			/* build discard map only one time */
-> >  			if (f2fs_discard_en(sbi)) {
-> > @@ -3675,11 +3677,13 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
-> >  		sit = sit_in_journal(journal, i);
-> >  
-> >  		old_valid_blocks = se->valid_blocks;
-> > +		total_valid_blocks -= old_valid_blocks;
-> >  
-> >  		err = check_block_count(sbi, start, &sit);
-> >  		if (err)
-> >  			break;
-> >  		seg_info_from_raw_sit(se, &sit);
-> > +		total_valid_blocks += se->valid_blocks;
-> >  
-> >  		if (f2fs_discard_en(sbi)) {
-> >  			if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
-> > @@ -3698,6 +3702,15 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
-> >  				se->valid_blocks - old_valid_blocks;
-> >  	}
-> >  	up_read(&curseg->journal_rwsem);
-> > +
-> > +	if (!err && total_valid_blocks != valid_user_blocks(sbi)) {
-> > +		f2fs_msg(sbi->sb, KERN_ERR,
-> > +			"SIT is corrupted %u vs %u",
-> > +			total_valid_blocks, valid_user_blocks(sbi));
-> > +		set_sbi_flag(sbi, SBI_NEED_FSCK);
-> > +		err = -EINVAL;
-> > +	}
-> > +
-> >  	return err;
-> >  }
-> >  
-> > 
+syzkaller reproducer: https://syzkaller.appspot.com/x/repro.syz?id=5692130282438656
+Raw console output: https://syzkaller.appspot.com/x/log.txt?id=5095924598571008
+Kernel config: https://syzkaller.appspot.com/x/.config?id=1808800213120130118
+compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for details.
+If you forward the report, please keep this part and the footer.
+
+F2FS-fs (loop0): invalid crc value
+F2FS-fs (loop0): Try to recover 1th superblock, ret: 0
+F2FS-fs (loop0): Mounted with checkpoint version = d
+F2FS-fs (loop0): Bitmap was wrongly cleared, blk:9740
+------------[ cut here ]------------
+kernel BUG at fs/f2fs/segment.c:1884!
+invalid opcode: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 4508 Comm: syz-executor0 Not tainted 4.17.0-rc1+ #10
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:update_sit_entry+0x1215/0x1590 fs/f2fs/segment.c:1882
+RSP: 0018:ffff8801af526708 EFLAGS: 00010282
+RAX: ffffed0035ea4cc0 RBX: ffff8801ad454f90 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff82eeb87e RDI: ffffed0035ea4cb6
+RBP: ffff8801af526760 R08: ffff8801ad4a2480 R09: ffffed003b5e4f90
+R10: ffffed003b5e4f90 R11: ffff8801daf27c87 R12: ffff8801adb8d380
+R13: 0000000000000001 R14: 0000000000000008 R15: 00000000ffffffff
+FS:  00000000014af940(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f06bc223000 CR3: 00000001adb02000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ allocate_data_block+0x66f/0x2050 fs/f2fs/segment.c:2663
+ do_write_page+0x105/0x1b0 fs/f2fs/segment.c:2727
+ write_node_page+0x129/0x350 fs/f2fs/segment.c:2770
+ __write_node_page+0x7da/0x1370 fs/f2fs/node.c:1398
+ sync_node_pages+0x18cf/0x1eb0 fs/f2fs/node.c:1652
+ block_operations+0x429/0xa60 fs/f2fs/checkpoint.c:1088
+ write_checkpoint+0x3ba/0x5380 fs/f2fs/checkpoint.c:1405
+ f2fs_sync_fs+0x2fb/0x6a0 fs/f2fs/super.c:1077
+ __sync_filesystem fs/sync.c:39 [inline]
+ sync_filesystem+0x265/0x310 fs/sync.c:67
+ generic_shutdown_super+0xd7/0x520 fs/super.c:429
+ kill_block_super+0xa4/0x100 fs/super.c:1191
+ kill_f2fs_super+0x9f/0xd0 fs/f2fs/super.c:3030
+ deactivate_locked_super+0x97/0x100 fs/super.c:316
+ deactivate_super+0x188/0x1b0 fs/super.c:347
+ cleanup_mnt+0xbf/0x160 fs/namespace.c:1174
+ __cleanup_mnt+0x16/0x20 fs/namespace.c:1181
+ task_work_run+0x1e4/0x290 kernel/task_work.c:113
+ tracehook_notify_resume include/linux/tracehook.h:191 [inline]
+ exit_to_usermode_loop+0x2bd/0x310 arch/x86/entry/common.c:166
+ prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+ syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+ do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457d97
+RSP: 002b:00007ffd46f9c8e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000457d97
+RDX: 00000000014b09a3 RSI: 0000000000000002 RDI: 00007ffd46f9da50
+RBP: 00007ffd46f9da50 R08: 0000000000000000 R09: 0000000000000009
+R10: 0000000000000005 R11: 0000000000000246 R12: 00000000014b0940
+R13: 0000000000000000 R14: 0000000000000002 R15: 000000000000658e
+RIP: update_sit_entry+0x1215/0x1590 fs/f2fs/segment.c:1882 RSP: ffff8801af526708
+---[ end trace f498328bb02610a2 ]---
+
+Reported-and-tested-by: syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com
+Reported-and-tested-by: syzbot+7d6d31d3bc702f566ce3@syzkaller.appspotmail.com
+Reported-and-tested-by: syzbot+0a725420475916460f12@syzkaller.appspotmail.com
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+
+Change log from v1:
+ - check valid node count
+
+ fs/f2fs/segment.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 20250b88bf51..c60f87822e9c 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3612,6 +3612,7 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+ 	unsigned int i, start, end;
+ 	unsigned int readed, start_blk = 0;
+ 	int err = 0;
++	block_t total_node_blocks = 0;
+ 
+ 	do {
+ 		readed = ra_meta_pages(sbi, start_blk, BIO_MAX_PAGES,
+@@ -3634,6 +3635,8 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+ 			if (err)
+ 				return err;
+ 			seg_info_from_raw_sit(se, &sit);
++			if (IS_NODESEG(se->type))
++				total_node_blocks += se->valid_blocks;
+ 
+ 			/* build discard map only one time */
+ 			if (f2fs_discard_en(sbi)) {
+@@ -3675,11 +3678,15 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+ 		sit = sit_in_journal(journal, i);
+ 
+ 		old_valid_blocks = se->valid_blocks;
++		if (IS_NODESEG(se->type))
++			total_node_blocks -= old_valid_blocks;
+ 
+ 		err = check_block_count(sbi, start, &sit);
+ 		if (err)
+ 			break;
+ 		seg_info_from_raw_sit(se, &sit);
++		if (IS_NODESEG(se->type))
++			total_node_blocks += se->valid_blocks;
+ 
+ 		if (f2fs_discard_en(sbi)) {
+ 			if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
+@@ -3698,6 +3705,15 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+ 				se->valid_blocks - old_valid_blocks;
+ 	}
+ 	up_read(&curseg->journal_rwsem);
++
++	if (!err && total_node_blocks != valid_node_count(sbi)) {
++		f2fs_msg(sbi->sb, KERN_ERR,
++			"SIT is corrupted node# %u vs %u",
++			total_node_blocks, valid_node_count(sbi));
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
++		err = -EINVAL;
++	}
++
+ 	return err;
+ }
+ 
+-- 
+2.17.0.484.g0c8726318c-goog
