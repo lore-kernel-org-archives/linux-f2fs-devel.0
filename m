@@ -1,139 +1,94 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH v2] f2fs: build free nid bitmap during flush
- nat entries
-Date: Wed, 25 Apr 2018 21:28:54 +0800
-Message-ID: <c2f56c29-0463-e31b-758b-f518f6f5ab8e@kernel.org>
-References: <1524642268-10134-1-git-send-email-heyunlei@huawei.com>
- <42B685BFA705F94C860C6DD0752F05654837EC0D@DGGEMA503-MBS.china.huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v2] f2fs: wait IO writeback in commit_inmem_pages()
+Date: Thu, 26 Apr 2018 09:36:44 +0800
+Message-ID: <6e6fecdc-9411-09b6-a13a-ec0395826556@huawei.com>
+References: <20180423151425.5019-1-chao@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1fBKTv-0008LM-JX
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 Apr 2018 13:29:11 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fBKTt-00BVOr-AH
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 Apr 2018 13:29:11 +0000
-In-Reply-To: <42B685BFA705F94C860C6DD0752F05654837EC0D@DGGEMA503-MBS.china.huawei.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180423151425.5019-1-chao@kernel.org>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: heyunlei <heyunlei@huawei.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "Yuchao (T)" <yuchao0@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
-Cc: "Zhangdianfang (Euler)" <zhangdianfang@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/4/25 16:07, heyunlei wrote:
-> 
-> 
->> -----Original Message-----
->> From: heyunlei
->> Sent: Wednesday, April 25, 2018 3:44 PM
->> To: jaegeuk@kernel.org; Yuchao (T); linux-f2fs-devel@lists.sourceforge.net
->> Cc: Wangbintian; heyunlei; Zhangdianfang (Euler)
->> Subject: [f2fs-dev][PATCH v2] f2fs: build free nid bitmap during flush nat entries
->>
->> This patch introduce free nid bitmap build during flush
->> nat entries in order to reduce synchronous read in the
->> process of build free nids.
->>
->> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->> ---
->> fs/f2fs/node.c | 11 ++++++++---
->> 1 file changed, 8 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
->> index f202398..681552b 100644
->> --- a/fs/f2fs/node.c
->> +++ b/fs/f2fs/node.c
->> @@ -1947,7 +1947,7 @@ static void remove_free_nid(struct f2fs_sb_info *sbi, nid_t nid)
->> }
->>
->> static void scan_nat_page(struct f2fs_sb_info *sbi,
->> -			struct page *nat_page, nid_t start_nid)
->> +		struct page *nat_page, nid_t start_nid, bool in_build)
->> {
->> 	struct f2fs_nm_info *nm_i = NM_I(sbi);
->> 	struct f2fs_nat_block *nat_blk = page_address(nat_page);
->> @@ -1955,6 +1955,9 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
->> 	unsigned int nat_ofs = NAT_BLOCK_OFFSET(start_nid);
->> 	int i;
->>
->> +	if (!test_bit_le(nat_ofs, nm_i->nat_block_bitmap))
->> +		return;
->> +
-> Sorry that it should be:
-> 	if (test_bit_le(nat_ofs, nm_i->nat_block_bitmap))
-> 		return;
-> 
-> Thanks.
->> 	__set_bit_le(nat_ofs, nm_i->nat_block_bitmap);
->>
->> 	i = start_nid % NAT_ENTRY_PER_BLOCK;
->> @@ -1966,7 +1969,8 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
->> 		blk_addr = le32_to_cpu(nat_blk->entries[i].block_addr);
->> 		f2fs_bug_on(sbi, blk_addr == NEW_ADDR);
->> 		if (blk_addr == NULL_ADDR) {
->> -			add_free_nid(sbi, start_nid, true, true);
->> +			if (in_build)
->> +				add_free_nid(sbi, start_nid, true, true);
+Hi Jaegeuk,
 
-We should call update_free_nid_bitmap instead of skipping add_free_nid, so how
-about:
+I just look into this flow again, found that in previous patch ("f2fs: fix to
+wait page writeback during revoking atomic write") we have already called
+f2fs_wait_on_page_writeback in __revoke_inmem_pages, so we don't need to call
+redundant filemap_fdatawait here.
 
-if (update_bitmap) {
-	spin_lock;
-	update_free_nid_bitmap;
-	spin_unlock;
-} else {
-	add_free_nid;
-}
+Anyway, let me merge these two patches.
 
 Thanks,
 
->> 		} else {
->> 			spin_lock(&NM_I(sbi)->nid_list_lock);
->> 			update_free_nid_bitmap(sbi, start_nid, false, true);
->> @@ -2063,7 +2067,7 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
->> 						nm_i->nat_block_bitmap)) {
->> 			struct page *page = get_current_nat_page(sbi, nid);
->>
->> -			scan_nat_page(sbi, page, nid);
->> +			scan_nat_page(sbi, page, nid, true);
->> 			f2fs_put_page(page, 1);
->> 		}
->>
->> @@ -2534,6 +2538,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
->> 	if (to_journal) {
->> 		up_write(&curseg->journal_rwsem);
->> 	} else {
->> +		scan_nat_page(sbi, page, start_nid, false);
->> 		__update_nat_bits(sbi, start_nid, page);
->> 		f2fs_put_page(page, 1);
->> 	}
->> --
->> 1.9.1
+On 2018/4/23 23:14, Chao Yu wrote:
+> From: Chao Yu <yuchao0@huawei.com>
 > 
+> Thread A				Thread B
+> - f2fs_ioc_commit_atomic_write
+>  - commit_inmem_pages
+>   - f2fs_submit_merged_write_cond
+>   : write data
+> 					- write_checkpoint
+> 					 - do_checkpoint
+> 					 : commit all node within CP
+> 					 -> SPO
+>   - f2fs_do_sync_file
+>    - file_write_and_wait_range
+>    : wait data writeback
 > 
-> ------------------------------------------------------------------------------
-> Check out the vibrant tech community on one of the world's most
-> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> In above race condition, data/node can be flushed in reversed order when
+> coming a checkpoint before f2fs_do_sync_file, after SPOR, it results in
+> atomic written data being corrupted.
 > 
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> This patch adds filemap_fdatawait() in commit_inmem_pages() to keep data
+> and node of atomic file being flushed orderly.
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+> v2:
+> - clean up codes suggested by Jaegeuk.
+>  fs/f2fs/file.c    | 4 ++++
+>  fs/f2fs/segment.c | 2 ++
+>  2 files changed, 6 insertions(+)
+> 
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index bac059474342..0cfa65c21d3f 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -217,6 +217,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>  
+>  	trace_f2fs_sync_file_enter(inode);
+>  
+> +	if (atomic)
+> +		goto write_done;
+> +
+>  	/* if fdatasync is triggered, let's do in-place-update */
+>  	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
+>  		set_inode_flag(inode, FI_NEED_IPU);
+> @@ -228,6 +231,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>  		return ret;
+>  	}
+>  
+> +write_done:
+>  	/* if the inode is dirty, let's recover all the time */
+>  	if (!f2fs_skip_inode_update(inode, datasync)) {
+>  		f2fs_write_inode(inode, NULL);
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 710d817c4350..31336fc54d8e 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -419,6 +419,8 @@ static int __commit_inmem_pages(struct inode *inode)
+>  		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
+>  	} else {
+>  		__revoke_inmem_pages(inode, &revoke_list, false, false);
+> +
+> +		err = filemap_fdatawait(inode->i_mapping);
+>  	}
+>  
+>  	return err;
+> 
