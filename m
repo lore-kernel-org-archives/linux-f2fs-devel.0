@@ -1,22 +1,27 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v3] f2fs: build free nid bitmap during flush nat
- entries
-Date: Thu, 26 Apr 2018 14:06:56 +0800
-Message-ID: <1524722816-2218-1-git-send-email-heyunlei@huawei.com>
+From: Tao Bao via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Subject: [PATCH] libf2fs: Track AOSP libsparse API change.
+Date: Thu, 26 Apr 2018 00:40:09 -0700
+Message-ID: <20180426074009.36270-1-tbao@google.com>
+Reply-To: Tao Bao <tbao@google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <heyunlei@huawei.com>) id 1fBaHd-0003CV-Dg
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 Apr 2018 06:21:33 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
+ (envelope-from
+ <3hoLhWgQKEO0iQPdVddVaT.RdbaXcjm-UrUh-STkTaaXhih.hdjgRTUdgVT.cTi@flex--tbao.bounces.google.com>)
+ id 1fBbuF-0003Md-CV
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 Apr 2018 08:05:31 +0000
+Received: from mail-io0-f202.google.com ([209.85.223.202])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fBaHb-0081KB-5n
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 Apr 2018 06:21:33 +0000
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1fBbuD-0087tz-RR
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 Apr 2018 08:05:31 +0000
+Received: by mail-io0-f202.google.com with SMTP id a193-v6so17087374ioa.23
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 26 Apr 2018 01:05:29 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,76 +31,43 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
-Cc: zhangdianfang@huawei.com
+To: linux-f2fs-devel@lists.sourceforge.net, tbao@google.com
+Cc: jaegeuk@google.com
 
-This patch introduce free nid bitmap build during flush
-nat entries in order to reduce synchronous read in the
-process of build free nids.
+The libsparse in AOSP is updating the type for 'len', from 'int' to
+'size_t', in the callback parameter of sparse_file_foreach_chunk(). The
+value represents a chunk size, which could be legitimately larger than
+INT_MAX. This patch tracks the libsparse API change.
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
+The change is guarded with SPARSE_CALLBACK_USES_SIZE_T that's exposed as
+part of the libsparse change. This allows f2fs-tools to keep working
+against older libsparse versions.
+
+Signed-off-by: Tao Bao <tbao@google.com>
 ---
- fs/f2fs/node.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ lib/libf2fs_io.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index f202398..cc825a4 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1947,7 +1947,7 @@ static void remove_free_nid(struct f2fs_sb_info *sbi, nid_t nid)
+diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
+index 4781517..76d283d 100644
+--- a/lib/libf2fs_io.c
++++ b/lib/libf2fs_io.c
+@@ -114,8 +114,13 @@ static int sparse_write_blk(__u64 block, int count, const void *buf)
+ 	return 0;
  }
  
- static void scan_nat_page(struct f2fs_sb_info *sbi,
--			struct page *nat_page, nid_t start_nid)
-+		struct page *nat_page, nid_t start_nid, bool in_build)
++#ifdef SPARSE_CALLBACK_USES_SIZE_T
++static int sparse_import_segment(void *UNUSED(priv), const void *data,
++		size_t len, unsigned int block, unsigned int nr_blocks)
++#else
+ static int sparse_import_segment(void *UNUSED(priv), const void *data, int len,
+ 		unsigned int block, unsigned int nr_blocks)
++#endif
  {
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct f2fs_nat_block *nat_blk = page_address(nat_page);
-@@ -1955,6 +1955,9 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
- 	unsigned int nat_ofs = NAT_BLOCK_OFFSET(start_nid);
- 	int i;
- 
-+	if (test_bit_le(nat_ofs, nm_i->nat_block_bitmap))
-+		return;
-+
- 	__set_bit_le(nat_ofs, nm_i->nat_block_bitmap);
- 
- 	i = start_nid % NAT_ENTRY_PER_BLOCK;
-@@ -1966,7 +1969,14 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
- 		blk_addr = le32_to_cpu(nat_blk->entries[i].block_addr);
- 		f2fs_bug_on(sbi, blk_addr == NEW_ADDR);
- 		if (blk_addr == NULL_ADDR) {
--			add_free_nid(sbi, start_nid, true, true);
-+			if (in_build) {
-+				add_free_nid(sbi, start_nid, true, true);
-+			} else {
-+				spin_lock(&NM_I(sbi)->nid_list_lock);
-+				update_free_nid_bitmap(sbi,
-+						start_nid, true, true);
-+				spin_unlock(&NM_I(sbi)->nid_list_lock);
-+			}
- 		} else {
- 			spin_lock(&NM_I(sbi)->nid_list_lock);
- 			update_free_nid_bitmap(sbi, start_nid, false, true);
-@@ -2063,7 +2073,7 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
- 						nm_i->nat_block_bitmap)) {
- 			struct page *page = get_current_nat_page(sbi, nid);
- 
--			scan_nat_page(sbi, page, nid);
-+			scan_nat_page(sbi, page, nid, true);
- 			f2fs_put_page(page, 1);
- 		}
- 
-@@ -2534,6 +2544,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
- 	if (to_journal) {
- 		up_write(&curseg->journal_rwsem);
- 	} else {
-+		scan_nat_page(sbi, page, start_nid, false);
- 		__update_nat_bits(sbi, start_nid, page);
- 		f2fs_put_page(page, 1);
- 	}
+ 	/* Ignore chunk headers, only write the data */
+ 	if (!nr_blocks || len % F2FS_BLKSIZE)
 -- 
-1.9.1
+2.17.0.484.g0c8726318c-goog
 
 
 ------------------------------------------------------------------------------
