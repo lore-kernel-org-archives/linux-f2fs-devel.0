@@ -1,7 +1,7 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix to wait IO writeback in __revoke_inmem_pages()
-Date: Thu, 26 Apr 2018 16:32:47 +0800
-Message-ID: <20180426083247.86337-1-yuchao0@huawei.com>
+Subject: [PATCH 1/2] f2fs: treat volatile file's data as hot one
+Date: Thu, 26 Apr 2018 17:05:50 +0800
+Message-ID: <20180426090551.92364-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -10,74 +10,60 @@ To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Thread A				Thread B
-- f2fs_ioc_commit_atomic_write
- - commit_inmem_pages
-  - f2fs_submit_merged_write_cond
-  : write data
-					- write_checkpoint
-					 - do_checkpoint
-					 : commit all node within CP
-					 -> SPO
-  - f2fs_do_sync_file
-   - file_write_and_wait_range
-   : wait data writeback
+Volatile file's data will be updated oftenly, so it'd better to place
+its data into hot data segment.
 
-In above race condition, data/node can be flushed in reversed order when
-coming a checkpoint before f2fs_do_sync_file, after SPOR, it results in
-atomic written data being corrupted.
-
-This patch adds f2fs_wait_on_page_writeback in __revoke_inmem_pages() to
-keep data and node of atomic file being flushed orderly.
+In addition, for atomic file, we change to check FI_ATOMIC_FILE instead
+of FI_HOT_DATA to make code readability better.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/file.c    | 4 ++++
- fs/f2fs/segment.c | 3 +++
- 2 files changed, 7 insertions(+)
+ fs/f2fs/file.c    | 2 --
+ fs/f2fs/segment.c | 5 +++--
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index be7578774a47..a352804af244 100644
+index e88d94846d50..05b2045888a3 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -217,6 +217,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 
- 	trace_f2fs_sync_file_enter(inode);
- 
-+	if (atomic)
-+		goto write_done;
-+
- 	/* if fdatasync is triggered, let's do in-place-update */
- 	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
- 		set_inode_flag(inode, FI_NEED_IPU);
-@@ -228,6 +231,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 		return ret;
- 	}
- 
-+write_done:
- 	/* if the inode is dirty, let's recover all the time */
- 	if (!f2fs_skip_inode_update(inode, datasync)) {
- 		f2fs_write_inode(inode, NULL);
+@@ -1700,7 +1700,6 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+ 	if (ret)
+ 		goto out;
+ skip_flush:
+-	set_inode_flag(inode, FI_HOT_DATA);
+ 	set_inode_flag(inode, FI_ATOMIC_FILE);
+ 	clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+ 	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+@@ -1744,7 +1743,6 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+ 		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
+ 		if (!ret) {
+ 			clear_inode_flag(inode, FI_ATOMIC_FILE);
+-			clear_inode_flag(inode, FI_HOT_DATA);
+ 			stat_dec_atomic_write(inode);
+ 		}
+ 	} else {
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 584483426584..9ca3d0a43d93 100644
+index 1fc23572067d..e339a5ff381f 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -230,6 +230,8 @@ static int __revoke_inmem_pages(struct inode *inode,
+@@ -314,7 +314,6 @@ void drop_inmem_pages(struct inode *inode)
+ 	mutex_unlock(&fi->inmem_lock);
  
- 		lock_page(page);
+ 	clear_inode_flag(inode, FI_ATOMIC_FILE);
+-	clear_inode_flag(inode, FI_HOT_DATA);
+ 	stat_dec_atomic_write(inode);
+ }
  
-+		f2fs_wait_on_page_writeback(page, DATA, true);
-+
- 		if (recover) {
- 			struct dnode_of_data dn;
- 			struct node_info ni;
-@@ -415,6 +417,7 @@ static int __commit_inmem_pages(struct inode *inode)
- 		/* drop all uncommitted pages */
- 		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
+@@ -1637,7 +1636,9 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
+ 		if (is_cold_data(fio->page) || file_is_cold(inode))
+ 			return CURSEG_COLD_DATA;
+ 		if (file_is_hot(inode) ||
+-				is_inode_flag_set(inode, FI_HOT_DATA))
++				is_inode_flag_set(inode, FI_HOT_DATA) ||
++				is_inode_flag_set(inode, FI_ATOMIC_FILE) ||
++				is_inode_flag_set(inode, FI_VOLATILE_FILE))
+ 			return CURSEG_HOT_DATA;
+ 		return rw_hint_to_seg_type(inode->i_write_hint);
  	} else {
-+		/* wait all committed IOs writeback and release them from list */
- 		__revoke_inmem_pages(inode, &revoke_list, false, false);
- 	}
- 
 -- 
 2.15.0.55.gc2ece9dc4de6
