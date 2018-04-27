@@ -1,105 +1,408 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH 4/5 v2] f2fs: sanity check for total valid
- blocks
-Date: Fri, 27 Apr 2018 09:52:25 +0800
-Message-ID: <34cca0ad-3cfd-9115-0f42-11d73d415a20@huawei.com>
-References: <20180425054613.2700-1-jaegeuk@kernel.org>
- <20180425054613.2700-4-jaegeuk@kernel.org>
- <e9ccab38-0773-156f-67b1-0374b0aeb6ed@kernel.org>
- <20180426152932.GD68594@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH v2] f2fs: fix to avoid race during access gc_thread
+ pointer
+Date: Fri, 27 Apr 2018 10:04:44 +0800
+Message-ID: <96ccc4d2-8360-14c2-6d98-6fdf35255b65@huawei.com>
+References: <20180424024214.83177-1-yuchao0@huawei.com>
+ <20180426160359.GH68594@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180426152932.GD68594@jaegeuk-macbookpro.roam.corp.google.com>
+In-Reply-To: <20180426160359.GH68594@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/4/26 23:29, Jaegeuk Kim wrote:
-> This patch enhances sanity check for SIT entries.
+On 2018/4/27 0:03, Jaegeuk Kim wrote:
+> On 04/24, Chao Yu wrote:
+>> Thread A			Thread B		Thread C
+>> - f2fs_remount
+>>  - stop_gc_thread
+>> 				- f2fs_sbi_store
+>> 							- issue_discard_thread
+>>    sbi->gc_thread = NULL;
+>> 				  sbi->gc_thread->gc_wake = 1
+>> 							  access sbi->gc_thread->gc_urgent
+>>
+>> Previously, we allocate memory for sbi->gc_thread based on background
+>> gc thread mount option, the memory can be released if we turn off
+>> that mount option, but still there are several places access gc_thread
+>> pointer without considering race condition, result in NULL point
+>> dereference.
 > 
-> syzbot hit the following crash on upstream commit
-> 83beed7b2b26f232d782127792dd0cd4362fdc41 (Fri Apr 20 17:56:32 2018 +0000)
-> Merge branch 'fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
-> syzbot dashboard link: https://syzkaller.appspot.com/bug?extid=bf9253040425feb155ad
-> 
-> syzkaller reproducer: https://syzkaller.appspot.com/x/repro.syz?id=5692130282438656
-> Raw console output: https://syzkaller.appspot.com/x/log.txt?id=5095924598571008
-> Kernel config: https://syzkaller.appspot.com/x/.config?id=1808800213120130118
-> compiler: gcc (GCC) 8.0.1 20180413 (experimental)
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for details.
-> If you forward the report, please keep this part and the footer.
-> 
-> F2FS-fs (loop0): invalid crc value
-> F2FS-fs (loop0): Try to recover 1th superblock, ret: 0
-> F2FS-fs (loop0): Mounted with checkpoint version = d
-> F2FS-fs (loop0): Bitmap was wrongly cleared, blk:9740
-> ------------[ cut here ]------------
-> kernel BUG at fs/f2fs/segment.c:1884!
-> invalid opcode: 0000 [#1] SMP KASAN
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in:
-> CPU: 1 PID: 4508 Comm: syz-executor0 Not tainted 4.17.0-rc1+ #10
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> RIP: 0010:update_sit_entry+0x1215/0x1590 fs/f2fs/segment.c:1882
-> RSP: 0018:ffff8801af526708 EFLAGS: 00010282
-> RAX: ffffed0035ea4cc0 RBX: ffff8801ad454f90 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: ffffffff82eeb87e RDI: ffffed0035ea4cb6
-> RBP: ffff8801af526760 R08: ffff8801ad4a2480 R09: ffffed003b5e4f90
-> R10: ffffed003b5e4f90 R11: ffff8801daf27c87 R12: ffff8801adb8d380
-> R13: 0000000000000001 R14: 0000000000000008 R15: 00000000ffffffff
-> FS:  00000000014af940(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f06bc223000 CR3: 00000001adb02000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  allocate_data_block+0x66f/0x2050 fs/f2fs/segment.c:2663
->  do_write_page+0x105/0x1b0 fs/f2fs/segment.c:2727
->  write_node_page+0x129/0x350 fs/f2fs/segment.c:2770
->  __write_node_page+0x7da/0x1370 fs/f2fs/node.c:1398
->  sync_node_pages+0x18cf/0x1eb0 fs/f2fs/node.c:1652
->  block_operations+0x429/0xa60 fs/f2fs/checkpoint.c:1088
->  write_checkpoint+0x3ba/0x5380 fs/f2fs/checkpoint.c:1405
->  f2fs_sync_fs+0x2fb/0x6a0 fs/f2fs/super.c:1077
->  __sync_filesystem fs/sync.c:39 [inline]
->  sync_filesystem+0x265/0x310 fs/sync.c:67
->  generic_shutdown_super+0xd7/0x520 fs/super.c:429
->  kill_block_super+0xa4/0x100 fs/super.c:1191
->  kill_f2fs_super+0x9f/0xd0 fs/f2fs/super.c:3030
->  deactivate_locked_super+0x97/0x100 fs/super.c:316
->  deactivate_super+0x188/0x1b0 fs/super.c:347
->  cleanup_mnt+0xbf/0x160 fs/namespace.c:1174
->  __cleanup_mnt+0x16/0x20 fs/namespace.c:1181
->  task_work_run+0x1e4/0x290 kernel/task_work.c:113
->  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
->  exit_to_usermode_loop+0x2bd/0x310 arch/x86/entry/common.c:166
->  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
->  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
->  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x457d97
-> RSP: 002b:00007ffd46f9c8e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000457d97
-> RDX: 00000000014b09a3 RSI: 0000000000000002 RDI: 00007ffd46f9da50
-> RBP: 00007ffd46f9da50 R08: 0000000000000000 R09: 0000000000000009
-> R10: 0000000000000005 R11: 0000000000000246 R12: 00000000014b0940
-> R13: 0000000000000000 R14: 0000000000000002 R15: 000000000000658e
-> RIP: update_sit_entry+0x1215/0x1590 fs/f2fs/segment.c:1882 RSP: ffff8801af526708
-> ---[ end trace f498328bb02610a2 ]---
-> 
-> Reported-and-tested-by: syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com
-> Reported-and-tested-by: syzbot+7d6d31d3bc702f566ce3@syzkaller.appspotmail.com
-> Reported-and-tested-by: syzbot+0a725420475916460f12@syzkaller.appspotmail.com
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> Do we just need to check &sb->s_umount in f2fs_sbi_store() and
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Better,
+
+> issue_discard_thread?
+
+There is more cases can be called from different scenarios:
+- select_policy()
+- need_SSR()
 
 Thanks,
+
+> 
+>>
+>> In order to fix this issue, keep gc_thread structure valid in sbi all
+>> the time instead of alloc/free it dynamically.
+>>
+>> In addition, add a rw semaphore to exclude rw operation in fields of
+>> gc_thread.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>> v2:
+>> - add a rw semaphore to exclude rw operation suggested by Jaegeuk.
+>>  fs/f2fs/debug.c   |  3 +--
+>>  fs/f2fs/f2fs.h    |  9 ++++++-
+>>  fs/f2fs/gc.c      | 78 ++++++++++++++++++++++++++++++++++++-------------------
+>>  fs/f2fs/gc.h      |  1 +
+>>  fs/f2fs/segment.c | 10 +++++--
+>>  fs/f2fs/super.c   | 26 +++++++++++++------
+>>  fs/f2fs/sysfs.c   | 26 ++++++++++++++-----
+>>  7 files changed, 107 insertions(+), 46 deletions(-)
+>>
+>> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+>> index a66107b5cfff..0fbd674c66fb 100644
+>> --- a/fs/f2fs/debug.c
+>> +++ b/fs/f2fs/debug.c
+>> @@ -221,8 +221,7 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
+>>  	si->cache_mem = 0;
+>>  
+>>  	/* build gc */
+>> -	if (sbi->gc_thread)
+>> -		si->cache_mem += sizeof(struct f2fs_gc_kthread);
+>> +	si->cache_mem += sizeof(struct f2fs_gc_kthread);
+>>  
+>>  	/* build merge flush thread */
+>>  	if (SM_I(sbi)->fcc_info)
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 8f3ad9662d13..75d3b4875429 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -1412,6 +1412,11 @@ static inline struct sit_info *SIT_I(struct f2fs_sb_info *sbi)
+>>  	return (struct sit_info *)(SM_I(sbi)->sit_info);
+>>  }
+>>  
+>> +static inline struct f2fs_gc_kthread *GC_I(struct f2fs_sb_info *sbi)
+>> +{
+>> +	return (struct f2fs_gc_kthread *)(sbi->gc_thread);
+>> +}
+>> +
+>>  static inline struct free_segmap_info *FREE_I(struct f2fs_sb_info *sbi)
+>>  {
+>>  	return (struct free_segmap_info *)(SM_I(sbi)->free_info);
+>> @@ -2954,8 +2959,10 @@ bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len);
+>>  /*
+>>   * gc.c
+>>   */
+>> +int init_gc_context(struct f2fs_sb_info *sbi);
+>> +void destroy_gc_context(struct f2fs_sb_info * sbi);
+>>  int start_gc_thread(struct f2fs_sb_info *sbi);
+>> -void stop_gc_thread(struct f2fs_sb_info *sbi);
+>> +bool stop_gc_thread(struct f2fs_sb_info *sbi);
+>>  block_t start_bidx_of_node(unsigned int node_ofs, struct inode *inode);
+>>  int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background,
+>>  			unsigned int segno);
+>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>> index 70418b34c5f6..2febb84b2fd6 100644
+>> --- a/fs/f2fs/gc.c
+>> +++ b/fs/f2fs/gc.c
+>> @@ -26,8 +26,8 @@
+>>  static int gc_thread_func(void *data)
+>>  {
+>>  	struct f2fs_sb_info *sbi = data;
+>> -	struct f2fs_gc_kthread *gc_th = sbi->gc_thread;
+>> -	wait_queue_head_t *wq = &sbi->gc_thread->gc_wait_queue_head;
+>> +	struct f2fs_gc_kthread *gc_th = GC_I(sbi);
+>> +	wait_queue_head_t *wq = &gc_th->gc_wait_queue_head;
+>>  	unsigned int wait_ms;
+>>  
+>>  	wait_ms = gc_th->min_sleep_time;
+>> @@ -114,17 +114,15 @@ static int gc_thread_func(void *data)
+>>  	return 0;
+>>  }
+>>  
+>> -int start_gc_thread(struct f2fs_sb_info *sbi)
+>> +int init_gc_context(struct f2fs_sb_info *sbi)
+>>  {
+>>  	struct f2fs_gc_kthread *gc_th;
+>> -	dev_t dev = sbi->sb->s_bdev->bd_dev;
+>> -	int err = 0;
+>>  
+>>  	gc_th = f2fs_kmalloc(sbi, sizeof(struct f2fs_gc_kthread), GFP_KERNEL);
+>> -	if (!gc_th) {
+>> -		err = -ENOMEM;
+>> -		goto out;
+>> -	}
+>> +	if (!gc_th)
+>> +		return -ENOMEM;
+>> +
+>> +	gc_th->f2fs_gc_task = NULL;
+>>  
+>>  	gc_th->urgent_sleep_time = DEF_GC_THREAD_URGENT_SLEEP_TIME;
+>>  	gc_th->min_sleep_time = DEF_GC_THREAD_MIN_SLEEP_TIME;
+>> @@ -135,35 +133,59 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
+>>  	gc_th->gc_urgent = 0;
+>>  	gc_th->gc_wake= 0;
+>>  
+>> +	init_rwsem(&gc_th->gc_rwsem);
+>> +
+>>  	sbi->gc_thread = gc_th;
+>> -	init_waitqueue_head(&sbi->gc_thread->gc_wait_queue_head);
+>> -	sbi->gc_thread->f2fs_gc_task = kthread_run(gc_thread_func, sbi,
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +void destroy_gc_context(struct f2fs_sb_info *sbi)
+>> +{
+>> +	kfree(GC_I(sbi));
+>> +	sbi->gc_thread = NULL;
+>> +}
+>> +
+>> +int start_gc_thread(struct f2fs_sb_info *sbi)
+>> +{
+>> +	struct f2fs_gc_kthread *gc_th = GC_I(sbi);
+>> +	dev_t dev = sbi->sb->s_bdev->bd_dev;
+>> +	int err = 0;
+>> +
+>> +	init_waitqueue_head(&gc_th->gc_wait_queue_head);
+>> +	gc_th->f2fs_gc_task = kthread_run(gc_thread_func, sbi,
+>>  			"f2fs_gc-%u:%u", MAJOR(dev), MINOR(dev));
+>>  	if (IS_ERR(gc_th->f2fs_gc_task)) {
+>>  		err = PTR_ERR(gc_th->f2fs_gc_task);
+>> -		kfree(gc_th);
+>> -		sbi->gc_thread = NULL;
+>> +		gc_th->f2fs_gc_task = NULL;
+>>  	}
+>> -out:
+>> +
+>>  	return err;
+>>  }
+>>  
+>> -void stop_gc_thread(struct f2fs_sb_info *sbi)
+>> +bool stop_gc_thread(struct f2fs_sb_info *sbi)
+>>  {
+>> -	struct f2fs_gc_kthread *gc_th = sbi->gc_thread;
+>> -	if (!gc_th)
+>> -		return;
+>> -	kthread_stop(gc_th->f2fs_gc_task);
+>> -	kfree(gc_th);
+>> -	sbi->gc_thread = NULL;
+>> +	struct f2fs_gc_kthread *gc_th = GC_I(sbi);
+>> +	bool stopped = false;
+>> +
+>> +	down_write(&gc_th->gc_rwsem);
+>> +	if (gc_th->f2fs_gc_task) {
+>> +		kthread_stop(gc_th->f2fs_gc_task);
+>> +		gc_th->f2fs_gc_task = NULL;
+>> +		stopped = true;
+>> +	}
+>> +	up_write(&gc_th->gc_rwsem);
+>> +
+>> +	return stopped;
+>>  }
+>>  
+>>  static int select_gc_type(struct f2fs_gc_kthread *gc_th, int gc_type)
+>>  {
+>>  	int gc_mode = (gc_type == BG_GC) ? GC_CB : GC_GREEDY;
+>>  
+>> -	if (!gc_th)
+>> -		return gc_mode;
+>> +	down_read(&gc_th->gc_rwsem);
+>> +	if (!gc_th->f2fs_gc_task)
+>> +		goto out;
+>>  
+>>  	if (gc_th->gc_idle) {
+>>  		if (gc_th->gc_idle == 1)
+>> @@ -173,6 +195,8 @@ static int select_gc_type(struct f2fs_gc_kthread *gc_th, int gc_type)
+>>  	}
+>>  	if (gc_th->gc_urgent)
+>>  		gc_mode = GC_GREEDY;
+>> +out:
+>> +	up_read(&gc_th->gc_rwsem);
+>>  	return gc_mode;
+>>  }
+>>  
+>> @@ -187,17 +211,19 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
+>>  		p->max_search = dirty_i->nr_dirty[type];
+>>  		p->ofs_unit = 1;
+>>  	} else {
+>> -		p->gc_mode = select_gc_type(sbi->gc_thread, gc_type);
+>> +		p->gc_mode = select_gc_type(GC_I(sbi), gc_type);
+>>  		p->dirty_segmap = dirty_i->dirty_segmap[DIRTY];
+>>  		p->max_search = dirty_i->nr_dirty[DIRTY];
+>>  		p->ofs_unit = sbi->segs_per_sec;
+>>  	}
+>>  
+>>  	/* we need to check every dirty segments in the FG_GC case */
+>> -	if (gc_type != FG_GC &&
+>> -			(sbi->gc_thread && !sbi->gc_thread->gc_urgent) &&
+>> +	down_read(&GC_I(sbi)->gc_rwsem);
+>> +	if (gc_type != FG_GC && GC_I(sbi)->f2fs_gc_task &&
+>> +			!GC_I(sbi)->gc_urgent &&
+>>  			p->max_search > sbi->max_victim_search)
+>>  		p->max_search = sbi->max_victim_search;
+>> +	up_read(&GC_I(sbi)->gc_rwsem);
+>>  
+>>  	/* let's select beginning hot/small space first in no_heap mode*/
+>>  	if (test_opt(sbi, NOHEAP) &&
+>> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+>> index b0045d4c8d1e..9a5b273328c2 100644
+>> --- a/fs/f2fs/gc.h
+>> +++ b/fs/f2fs/gc.h
+>> @@ -26,6 +26,7 @@
+>>  #define DEF_MAX_VICTIM_SEARCH 4096 /* covers 8GB */
+>>  
+>>  struct f2fs_gc_kthread {
+>> +	struct rw_semaphore gc_rwsem;		/* semaphore for f2fs_gc_task */
+>>  	struct task_struct *f2fs_gc_task;
+>>  	wait_queue_head_t gc_wait_queue_head;
+>>  
+>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>> index 5960768d26df..f787eea1b2f6 100644
+>> --- a/fs/f2fs/segment.c
+>> +++ b/fs/f2fs/segment.c
+>> @@ -177,8 +177,12 @@ bool need_SSR(struct f2fs_sb_info *sbi)
+>>  
+>>  	if (test_opt(sbi, LFS))
+>>  		return false;
+>> -	if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
+>> +	down_read(&GC_I(sbi)->gc_rwsem);
+>> +	if (GC_I(sbi)->f2fs_gc_task && GC_I(sbi)->gc_urgent) {
+>> +		down_read(&GC_I(sbi)->gc_rwsem);
+>>  		return true;
+>> +	}
+>> +	up_read(&GC_I(sbi)->gc_rwsem);
+>>  
+>>  	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
+>>  			SM_I(sbi)->min_ssr_sections + reserved_sections(sbi));
+>> @@ -1425,8 +1429,10 @@ static int issue_discard_thread(void *data)
+>>  		if (dcc->discard_wake)
+>>  			dcc->discard_wake = 0;
+>>  
+>> -		if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
+>> +		down_read(&GC_I(sbi)->gc_rwsem);
+>> +		if (GC_I(sbi)->f2fs_gc_task && GC_I(sbi)->gc_urgent)
+>>  			init_discard_policy(&dpolicy, DPOLICY_FORCE, 1);
+>> +		up_read(&GC_I(sbi)->gc_rwsem);
+>>  
+>>  		sb_start_intwrite(sbi->sb);
+>>  
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index dedb8e50b440..199f29dce86d 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -1044,6 +1044,7 @@ static void f2fs_put_super(struct super_block *sb)
+>>  	kfree(sbi->raw_super);
+>>  
+>>  	destroy_device_list(sbi);
+>> +	destroy_gc_context(sbi);
+>>  	mempool_destroy(sbi->write_io_dummy);
+>>  #ifdef CONFIG_QUOTA
+>>  	for (i = 0; i < MAXQUOTAS; i++)
+>> @@ -1476,15 +1477,18 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+>>  	 * option. Also sync the filesystem.
+>>  	 */
+>>  	if ((*flags & SB_RDONLY) || !test_opt(sbi, BG_GC)) {
+>> -		if (sbi->gc_thread) {
+>> -			stop_gc_thread(sbi);
+>> -			need_restart_gc = true;
+>> +		need_restart_gc = stop_gc_thread(sbi);
+>> +	} else {
+>> +		down_write(&GC_I(sbi)->gc_rwsem);
+>> +		if (!GC_I(sbi)->f2fs_gc_task) {
+>> +			err = start_gc_thread(sbi);
+>> +			if (err) {
+>> +				up_write(&GC_I(sbi)->gc_rwsem);
+>> +				goto restore_opts;
+>> +			}
+>> +			need_stop_gc = true;
+>>  		}
+>> -	} else if (!sbi->gc_thread) {
+>> -		err = start_gc_thread(sbi);
+>> -		if (err)
+>> -			goto restore_opts;
+>> -		need_stop_gc = true;
+>> +		up_write(&GC_I(sbi)->gc_rwsem);
+>>  	}
+>>  
+>>  	if (*flags & SB_RDONLY ||
+>> @@ -2771,6 +2775,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>  		goto free_meta_inode;
+>>  	}
+>>  
+>> +	err = init_gc_context(sbi);
+>> +	if (err)
+>> +		goto free_checkpoint;
+>> +
+>>  	/* Initialize device list */
+>>  	err = f2fs_scan_devices(sbi);
+>>  	if (err) {
+>> @@ -2981,6 +2989,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>  	destroy_segment_manager(sbi);
+>>  free_devices:
+>>  	destroy_device_list(sbi);
+>> +	destroy_gc_context(sbi);
+>> +free_checkpoint:
+>>  	kfree(sbi->ckpt);
+>>  free_meta_inode:
+>>  	make_bad_inode(sbi->meta_inode);
+>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+>> index 2c53de9251be..b8d09935e43f 100644
+>> --- a/fs/f2fs/sysfs.c
+>> +++ b/fs/f2fs/sysfs.c
+>> @@ -46,7 +46,7 @@ struct f2fs_attr {
+>>  static unsigned char *__struct_ptr(struct f2fs_sb_info *sbi, int struct_type)
+>>  {
+>>  	if (struct_type == GC_THREAD)
+>> -		return (unsigned char *)sbi->gc_thread;
+>> +		return (unsigned char *)GC_I(sbi);
+>>  	else if (struct_type == SM_INFO)
+>>  		return (unsigned char *)SM_I(sbi);
+>>  	else if (struct_type == DCC_INFO)
+>> @@ -248,16 +248,28 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+>>  	if (!strcmp(a->attr.name, "trim_sections"))
+>>  		return -EINVAL;
+>>  
+>> -	*ui = t;
+>> -
+>> -	if (!strcmp(a->attr.name, "iostat_enable") && *ui == 0)
+>> +	if (!strcmp(a->attr.name, "iostat_enable") && t == 0)
+>>  		f2fs_reset_iostat(sbi);
+>> -	if (!strcmp(a->attr.name, "gc_urgent") && t == 1 && sbi->gc_thread) {
+>> -		sbi->gc_thread->gc_wake = 1;
+>> -		wake_up_interruptible_all(&sbi->gc_thread->gc_wait_queue_head);
+>> +
+>> +	if (a->struct_type == GC_THREAD) {
+>> +		down_write(&GC_I(sbi)->gc_rwsem);
+>> +		if (!GC_I(sbi)->f2fs_gc_task) {
+>> +			up_write(&GC_I(sbi)->gc_rwsem);
+>> +			return -EINVAL;
+>> +		}
+>> +	}
+>> +
+>> +	if (!strcmp(a->attr.name, "gc_urgent") && t == 1) {
+>> +		GC_I(sbi)->gc_wake = 1;
+>> +		wake_up_interruptible_all(&GC_I(sbi)->gc_wait_queue_head);
+>>  		wake_up_discard_thread(sbi, true);
+>>  	}
+>>  
+>> +	*ui = t;
+>> +
+>> +	if (a->struct_type == GC_THREAD)
+>> +		up_write(&GC_I(sbi)->gc_rwsem);
+>> +
+>>  	return count;
+>>  }
+>>  
+>> -- 
+>> 2.15.0.55.gc2ece9dc4de6
+> 
+> .
+> 
