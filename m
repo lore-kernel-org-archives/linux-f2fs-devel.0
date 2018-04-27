@@ -1,62 +1,73 @@
-From: kbuild test robot <lkp@intel.com>
-Subject: [f2fs:dev-test 40/41] fs/f2fs/segment.c:1601:6: sparse:
- symbol 'release_discard_addr' was not declared. Should it be static?
-Date: Fri, 27 Apr 2018 03:57:31 +0800
-Message-ID: <201804270303.VPJ9nTL4%fengguang.wu@intel.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH 5/5] f2fs: enforce fsync_mode=strict for
+ renamed directory
+Date: Fri, 27 Apr 2018 09:41:18 +0800
+Message-ID: <9e18815d-1ad0-51ae-512b-b5751dfe2e07@huawei.com>
+References: <20180425054613.2700-1-jaegeuk@kernel.org>
+ <20180425054613.2700-5-jaegeuk@kernel.org>
+ <42858ef4-c1b8-c83e-4b47-39e28e161e16@kernel.org>
+ <20180426153224.GE68594@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <fengguang.wu@intel.com>) id 1fBn2H-0007pO-I0
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 Apr 2018 19:58:33 +0000
-Received: from mga09.intel.com ([134.134.136.24])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fBn2B-00DCA3-69
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 Apr 2018 19:58:33 +0000
-Content-Disposition: inline
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>, Chao Yu <chao@kernel.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, kbuild-all@01.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180426153224.GE68594@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
-head:   57ef368c8663e2198fadc0cfecdf67e0fe11e65a
-commit: 6f89409e87ce2a41baa5650c978857f306c02859 [40/41] f2fs: introduce release_discard_addr() for cleanup
-reproduce:
-        # apt-get install sparse
-        git checkout 6f89409e87ce2a41baa5650c978857f306c02859
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
+On 2018/4/26 23:32, Jaegeuk Kim wrote:
+> On 04/25, Chao Yu wrote:
+>> On 2018/4/25 13:46, Jaegeuk Kim wrote:
+>>> This is to give a option for user to be able to recover B/foo in the below
+>>> case.
+>>>
+>>> mkdir A
+>>> sync()
+>>> rename(A, B)
+>>> creat (B/foo)
+>>> fsync (B/foo)
+>>> ---crash---
+>>
+>> That makes sense, IMO, it will be better to cover cross rename case as well?
+> 
+> file_lost_pino(old_inode) seems covering that.
 
+Confirmed.
 
-sparse warnings: (new ones prefixed by >>)
+Thanks,
 
-   fs/f2fs/segment.c:1052:26: sparse: expression using sizeof(void)
-   fs/f2fs/segment.c:1052:26: sparse: expression using sizeof(void)
->> fs/f2fs/segment.c:1601:6: sparse: symbol 'release_discard_addr' was not declared. Should it be static?
-   fs/f2fs/segment.c:2420:27: sparse: expression using sizeof(void)
-   fs/f2fs/segment.h:373:28: sparse: expression using sizeof(void)
-   fs/f2fs/segment.h:373:28: sparse: expression using sizeof(void)
-   fs/f2fs/segment.c:3368:36: sparse: expression using sizeof(void)
-   fs/f2fs/segment.c:3368:36: sparse: expression using sizeof(void)
-
-Please review and possibly fold the followup patch.
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>> Sugessted-by: Velayudhan Pillai <vijay@cs.utexas.edu>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fs/f2fs/namei.c | 5 ++++-
+>>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+>>> index b5f404674cad..fef6e3ab2135 100644
+>>> --- a/fs/f2fs/namei.c
+>>> +++ b/fs/f2fs/namei.c
+>>> @@ -973,8 +973,11 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+>>>  			f2fs_put_page(old_dir_page, 0);
+>>>  		f2fs_i_links_write(old_dir, false);
+>>>  	}
+>>> -	if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_STRICT)
+>>> +	if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_STRICT) {
+>>>  		add_ino_entry(sbi, new_dir->i_ino, TRANS_DIR_INO);
+>>> +		if (S_ISDIR(old_inode->i_mode))
+>>> +			add_ino_entry(sbi, old_inode->i_ino, TRANS_DIR_INO);
+>>> +	}
+>>>  
+>>>  	f2fs_unlock_op(sbi);
+>>>  
+>>>
+> 
+> .
+> 
