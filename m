@@ -1,124 +1,128 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 2/2] Revert "f2fs: add ovp valid_blocks check for bg gc
- victim to fg_gc"
-Date: Fri, 27 Apr 2018 10:55:46 +0800
-Message-ID: <8989c3fe-2218-b368-6f8d-e6ba36189236@huawei.com>
-References: <20180426090551.92364-1-yuchao0@huawei.com>
- <20180426090551.92364-2-yuchao0@huawei.com>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v11 19/63] page cache: Convert page deletion
+ to XArray
+Date: Thu, 26 Apr 2018 19:58:11 -0700
+Message-ID: <20180427025811.GA14502@bombadil.infradead.org>
+References: <20180414141316.7167-1-willy@infradead.org>
+ <20180414141316.7167-20-willy@infradead.org>
+ <979c1602-42e3-349d-a5e4-d28de14112dd@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180426090551.92364-2-yuchao0@huawei.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <willy@infradead.org>) id 1fBtar-0006UD-VQ
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Apr 2018 02:58:41 +0000
+Received: from bombadil.infradead.org ([198.137.202.133])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fBtap-00BEcF-SW
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Apr 2018 02:58:41 +0000
+Content-Disposition: inline
+In-Reply-To: <979c1602-42e3-349d-a5e4-d28de14112dd@suse.de>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Matthew Wilcox <mawilcox@microsoft.com>, James Simmons <jsimmons@infradead.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Andreas Dilger <andreas.dilger@intel.com>, Nicholas Piggin <npiggin@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, Oleg Drokin <oleg.drokin@intel.com>, linux-mm@kvack.org, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-fsdevel@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Mike Kravetz <mike.kravetz@oracle.com>
 
-Hi Jaegeuk,
+On Fri, Apr 20, 2018 at 07:00:57AM -0500, Goldwyn Rodrigues wrote:
+> On 04/14/2018 09:12 AM, Matthew Wilcox wrote:
+> >  
+> > -	for (i = 0; i < nr; i++) {
+> > -		struct radix_tree_node *node;
+> > -		void **slot;
+> > -
+> > -		__radix_tree_lookup(&mapping->i_pages, page->index + i,
+> > -				    &node, &slot);
+> > -
+> > -		VM_BUG_ON_PAGE(!node && nr != 1, page);
+> > -
+> > -		radix_tree_clear_tags(&mapping->i_pages, node, slot);
+> > -		__radix_tree_replace(&mapping->i_pages, node, slot, shadow,
+> > -				workingset_lookup_update(mapping));
+> > +	i = nr;
+> > +repeat:
+> > +	xas_store(&xas, shadow);
+> > +	xas_init_tags(&xas);
+> > +	if (--i) {
+> > +		xas_next(&xas);
+> > +		goto repeat;
+> >  	}
+> 
+> Can this be converted into a do {} while (or even for) loop instead?
+> Loops are easier to read and understand in such a situation.
 
-Missed this patch, or any problem in it?
+I wish I'd fixed this up earlier because our peers made fun of me at
+LSFMM for this loop ;-)
 
-Thanks,
+The obvious way to write this loop is:
 
-On 2018/4/26 17:05, Chao Yu wrote:
-> For extreme case:
-> 10 section, op = 10%, no_fggc_threshold = 90%
-> All section usage: 85% 85% 85% 85% 90% 90% 95% 95% 95% 95%
-> 
-> During foreground GC, if we skip select dirty section whose usage
-> is larger than no_fggc_threshold, we can only recycle 80% invalid
-> space from four 85% usage sections and two 90% usage sections,
-> result in encountering out-of-space issue.
-> 
-> This reverts commit e93b9865251a0503d83fd570e7d5a7c8bc351715 to
-> fix this issue, besides, we keep the logic that we scan all dirty
-> section when searching a victim, so that GC can select victim with
-> least valid blocks.
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/f2fs.h    |  3 ---
->  fs/f2fs/gc.c      | 16 ----------------
->  fs/f2fs/segment.h |  9 ---------
->  3 files changed, 28 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 64e3677998d8..9f8b327272df 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1192,9 +1192,6 @@ struct f2fs_sb_info {
->  	struct f2fs_gc_kthread	*gc_thread;	/* GC thread */
->  	unsigned int cur_victim_sec;		/* current victim section num */
->  
-> -	/* threshold for converting bg victims for fg */
-> -	u64 fggc_threshold;
-> -
->  	/* threshold for gc trials on pinned files */
->  	u64 gc_pin_file_threshold;
->  
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 3134dd781252..62eba4a71123 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -263,10 +263,6 @@ static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
->  	for_each_set_bit(secno, dirty_i->victim_secmap, MAIN_SECS(sbi)) {
->  		if (sec_usage_check(sbi, secno))
->  			continue;
-> -
-> -		if (no_fggc_candidate(sbi, secno))
-> -			continue;
-> -
->  		clear_bit(secno, dirty_i->victim_secmap);
->  		return GET_SEG_FROM_SEC(sbi, secno);
->  	}
-> @@ -406,9 +402,6 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
->  			goto next;
->  		if (gc_type == BG_GC && test_bit(secno, dirty_i->victim_secmap))
->  			goto next;
-> -		if (gc_type == FG_GC && p.alloc_mode == LFS &&
-> -					no_fggc_candidate(sbi, secno))
-> -			goto next;
->  
->  		cost = get_gc_cost(sbi, segno, &p);
->  
-> @@ -1152,17 +1145,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->  
->  void build_gc_manager(struct f2fs_sb_info *sbi)
->  {
-> -	u64 main_count, resv_count, ovp_count;
-> -
->  	DIRTY_I(sbi)->v_ops = &default_v_ops;
->  
-> -	/* threshold of # of valid blocks in a section for victims of FG_GC */
-> -	main_count = SM_I(sbi)->main_segments << sbi->log_blocks_per_seg;
-> -	resv_count = SM_I(sbi)->reserved_segments << sbi->log_blocks_per_seg;
-> -	ovp_count = SM_I(sbi)->ovp_segments << sbi->log_blocks_per_seg;
-> -
-> -	sbi->fggc_threshold = div64_u64((main_count - ovp_count) *
-> -				BLKS_PER_SEC(sbi), (main_count - resv_count));
->  	sbi->gc_pin_file_threshold = DEF_GC_FAILED_PINNED_FILES;
->  
->  	/* give warm/cold data area from slower device */
-> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> index 7702b054689c..c385daabcb67 100644
-> --- a/fs/f2fs/segment.h
-> +++ b/fs/f2fs/segment.h
-> @@ -774,15 +774,6 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
->  				- (base + 1) + type;
->  }
->  
-> -static inline bool no_fggc_candidate(struct f2fs_sb_info *sbi,
-> -						unsigned int secno)
-> -{
-> -	if (get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true) >
-> -						sbi->fggc_threshold)
-> -		return true;
-> -	return false;
-> -}
-> -
->  static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int secno)
->  {
->  	if (IS_CURSEC(sbi, secno) || (sbi->cur_victim_sec == secno))
-> 
+        for (i = 0; i < nr; i++) {
+-               struct radix_tree_node *node;
+-               void **slot;
+-
+-               __radix_tree_lookup(&mapping->i_pages, page->index + i,
+-                                   &node, &slot);
+-
+-               VM_BUG_ON_PAGE(!node && nr != 1, page);
+-
+-               radix_tree_clear_tags(&mapping->i_pages, node, slot);
+-               __radix_tree_replace(&mapping->i_pages, node, slot, shadow,
+-                               workingset_lookup_update(mapping));
++               xas_store(&xas, shadow);
++               xas_init_tags(&xas);
++               xas_next(&xas);
+        }
+
+But since we're storing the same value to every entry and the range is
+a power of two, there's a better way to rewrite this:
+
+ {
+-       int i, nr;
++       XA_STATE(xas, &mapping->i_pages, page->index);
++       unsigned int nr = 1;
+
+-       /* hugetlb pages are represented by one entry in the radix tree */
+-       nr = PageHuge(page) ? 1 : hpage_nr_pages(page);
++       mapping_set_update(&xas, mapping);
++
++       /* hugetlb pages are represented by a single entry in the xarray */
++       if (!PageHuge(page)) {
++               xas_set_order(&xas, page->index, compound_order(page));
++               nr = 1U << compound_order(page);
++       }
+
+        VM_BUG_ON_PAGE(!PageLocked(page), page);
+        VM_BUG_ON_PAGE(PageTail(page), page);
+        VM_BUG_ON_PAGE(nr != 1 && shadow, page);
+
+-       for (i = 0; i < nr; i++) {
+-               struct radix_tree_node *node;
+-               void **slot;
+-
+-               __radix_tree_lookup(&mapping->i_pages, page->index + i,
+-                                   &node, &slot);
+-
+-               VM_BUG_ON_PAGE(!node && nr != 1, page);
+-
+-               radix_tree_clear_tags(&mapping->i_pages, node, slot);
+-               __radix_tree_replace(&mapping->i_pages, node, slot, shadow,
+-                               workingset_lookup_update(mapping));
+-       }
++       xas_store(&xas, shadow);
++       xas_init_tags(&xas);
+
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
