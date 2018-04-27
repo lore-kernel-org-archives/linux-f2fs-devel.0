@@ -1,70 +1,124 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [RFC PATCH f2fs] f2fs: release_discard_addr() can be
- static
-Date: Fri, 27 Apr 2018 10:38:39 +0800
-Message-ID: <ceab8f88-be4b-a69e-c121-be5b4036d2ee@huawei.com>
-References: <201804270303.VPJ9nTL4%fengguang.wu@intel.com>
- <20180426195731.GA71397@xian>
+Subject: Re: [PATCH 2/2] Revert "f2fs: add ovp valid_blocks check for bg gc
+ victim to fg_gc"
+Date: Fri, 27 Apr 2018 10:55:46 +0800
+Message-ID: <8989c3fe-2218-b368-6f8d-e6ba36189236@huawei.com>
+References: <20180426090551.92364-1-yuchao0@huawei.com>
+ <20180426090551.92364-2-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fBtHf-0005cY-Qj
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Apr 2018 02:38:51 +0000
-Received: from [45.249.212.32] (helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fBtHe-00DWl9-4v
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Apr 2018 02:38:51 +0000
-In-Reply-To: <20180426195731.GA71397@xian>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180426090551.92364-2-yuchao0@huawei.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: kbuild test robot <lkp@intel.com>, Chao Yu <chao@kernel.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, kbuild-all@01.org, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Fengguang, thanks for the fix.
+Hi Jaegeuk,
 
-To Jaegeuk, could you please merge it to original patch?
+Missed this patch, or any problem in it?
 
 Thanks,
 
-On 2018/4/27 3:57, kbuild test robot wrote:
+On 2018/4/26 17:05, Chao Yu wrote:
+> For extreme case:
+> 10 section, op = 10%, no_fggc_threshold = 90%
+> All section usage: 85% 85% 85% 85% 90% 90% 95% 95% 95% 95%
 > 
-> Fixes: 6f89409e87ce ("f2fs: introduce release_discard_addr() for cleanup")
-> Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+> During foreground GC, if we skip select dirty section whose usage
+> is larger than no_fggc_threshold, we can only recycle 80% invalid
+> space from four 85% usage sections and two 90% usage sections,
+> result in encountering out-of-space issue.
+> 
+> This reverts commit e93b9865251a0503d83fd570e7d5a7c8bc351715 to
+> fix this issue, besides, we keep the logic that we scan all dirty
+> section when searching a victim, so that GC can select victim with
+> least valid blocks.
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
 > ---
->  segment.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  fs/f2fs/f2fs.h    |  3 ---
+>  fs/f2fs/gc.c      | 16 ----------------
+>  fs/f2fs/segment.h |  9 ---------
+>  3 files changed, 28 deletions(-)
 > 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 8652cfd..a0fce5e 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -1598,7 +1598,7 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
->  	return false;
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 64e3677998d8..9f8b327272df 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1192,9 +1192,6 @@ struct f2fs_sb_info {
+>  	struct f2fs_gc_kthread	*gc_thread;	/* GC thread */
+>  	unsigned int cur_victim_sec;		/* current victim section num */
+>  
+> -	/* threshold for converting bg victims for fg */
+> -	u64 fggc_threshold;
+> -
+>  	/* threshold for gc trials on pinned files */
+>  	u64 gc_pin_file_threshold;
+>  
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 3134dd781252..62eba4a71123 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -263,10 +263,6 @@ static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
+>  	for_each_set_bit(secno, dirty_i->victim_secmap, MAIN_SECS(sbi)) {
+>  		if (sec_usage_check(sbi, secno))
+>  			continue;
+> -
+> -		if (no_fggc_candidate(sbi, secno))
+> -			continue;
+> -
+>  		clear_bit(secno, dirty_i->victim_secmap);
+>  		return GET_SEG_FROM_SEC(sbi, secno);
+>  	}
+> @@ -406,9 +402,6 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+>  			goto next;
+>  		if (gc_type == BG_GC && test_bit(secno, dirty_i->victim_secmap))
+>  			goto next;
+> -		if (gc_type == FG_GC && p.alloc_mode == LFS &&
+> -					no_fggc_candidate(sbi, secno))
+> -			goto next;
+>  
+>  		cost = get_gc_cost(sbi, segno, &p);
+>  
+> @@ -1152,17 +1145,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>  
+>  void build_gc_manager(struct f2fs_sb_info *sbi)
+>  {
+> -	u64 main_count, resv_count, ovp_count;
+> -
+>  	DIRTY_I(sbi)->v_ops = &default_v_ops;
+>  
+> -	/* threshold of # of valid blocks in a section for victims of FG_GC */
+> -	main_count = SM_I(sbi)->main_segments << sbi->log_blocks_per_seg;
+> -	resv_count = SM_I(sbi)->reserved_segments << sbi->log_blocks_per_seg;
+> -	ovp_count = SM_I(sbi)->ovp_segments << sbi->log_blocks_per_seg;
+> -
+> -	sbi->fggc_threshold = div64_u64((main_count - ovp_count) *
+> -				BLKS_PER_SEC(sbi), (main_count - resv_count));
+>  	sbi->gc_pin_file_threshold = DEF_GC_FAILED_PINNED_FILES;
+>  
+>  	/* give warm/cold data area from slower device */
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index 7702b054689c..c385daabcb67 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -774,15 +774,6 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
+>  				- (base + 1) + type;
 >  }
 >  
-> -void release_discard_addr(struct discard_entry *entry)
-> +static void release_discard_addr(struct discard_entry *entry)
+> -static inline bool no_fggc_candidate(struct f2fs_sb_info *sbi,
+> -						unsigned int secno)
+> -{
+> -	if (get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true) >
+> -						sbi->fggc_threshold)
+> -		return true;
+> -	return false;
+> -}
+> -
+>  static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int secno)
 >  {
->  	list_del(&entry->list);
->  	kmem_cache_free(discard_entry_slab, entry);
+>  	if (IS_CURSEC(sbi, secno) || (sbi->cur_victim_sec == secno))
 > 
-> .
-> 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
