@@ -1,66 +1,121 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [RFC PATCH] f2fs-tools: introduce tune.f2fs
-Date: Fri, 27 Apr 2018 10:32:11 +0800
-Message-ID: <11707e83-2478-f6d6-bc7e-c19cd44a55c2@huawei.com>
-References: <13c34f59-6f6a-8252-0a9f-effccbcd6db0@huawei.com>
- <20180423073202.150763-1-zhengjunling@huawei.com>
- <40f78225-7a7d-e761-2e84-f357b7fecf2e@huawei.com>
- <20180426161315.GK68594@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH] f2fs: fix to wait IO writeback in __revoke_inmem_pages()
+Date: Fri, 27 Apr 2018 10:37:27 +0800
+Message-ID: <3cae6be6-365d-8e48-b1db-8b04f96634e4@huawei.com>
+References: <20180426083247.86337-1-yuchao0@huawei.com>
+ <20180426154817.GF68594@jaegeuk-macbookpro.roam.corp.google.com>
+ <7810a3a3-70f3-9b37-e64a-f26dba72b0f9@kernel.org>
+ <20180426163651.GL68594@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fBtBW-0007AM-Am
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Apr 2018 02:32:30 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fBtBU-00BCuU-7e
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Apr 2018 02:32:30 +0000
-In-Reply-To: <20180426161315.GK68594@jaegeuk-macbookpro.roam.corp.google.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180426163651.GL68594@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Junling Zheng <zhengjunling@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/4/27 0:13, Jaegeuk Kim wrote:
-> On 04/26, Junling Zheng wrote:
->> Ping...
+On 2018/4/27 0:36, Jaegeuk Kim wrote:
+> On 04/26, Chao Yu wrote:
+>> On 2018/4/26 23:48, Jaegeuk Kim wrote:
+>>> On 04/26, Chao Yu wrote:
+>>>> Thread A				Thread B
+>>>> - f2fs_ioc_commit_atomic_write
+>>>>  - commit_inmem_pages
+>>>>   - f2fs_submit_merged_write_cond
+>>>>   : write data
+>>>> 					- write_checkpoint
+>>>> 					 - do_checkpoint
+>>>> 					 : commit all node within CP
+>>>> 					 -> SPO
+>>>>   - f2fs_do_sync_file
+>>>>    - file_write_and_wait_range
+>>>>    : wait data writeback
+>>>>
+>>>> In above race condition, data/node can be flushed in reversed order when
+>>>> coming a checkpoint before f2fs_do_sync_file, after SPOR, it results in
+>>>> atomic written data being corrupted.
+>>>
+>>> Wait, what is the problem here? Thread B could succeed checkpoint, there is
+>>> no problem. If it fails, there is no fsync mark where we can recover it, so
 >>
->> On 2018/4/23 15:32, Junling Zheng wrote:
->>> Introduce tune.f2fs tool to change the f2fs parameters.
->>> Currently this tool only supports adding or removing encrypt
->>> feature bit in superblock.
+>> Node is flushed by checkpoint before data, with reversed order, that's the problem.
 > 
-> What is the purpose of this empty tune.f2fs? How can we say we have this
-> tool to users? You have to design what kind of things to support first.
+> What do you mean? Data should be in disk, in order to proceed checkpoint.
 
-I checked very initial tune2fs.c, it only supports very few parameters tuning
-functionality, but, can not say that is a bad start to introduce the misc tool.
+1. thread A: commit_inmem_pages submit data into block layer, but haven't waited
+it writeback.
+2. thread A: commit_inmem_pages update related node.
+3. thread B: do checkpoint, flush all nodes to disk
+4. SPOR
 
-+       fprintf (stderr, "Usage: %s [-c max-mounts-count] [-e errors-behavior] "
-+                "[-i interval[d|m]]\n"
-+                "\t[-l] [-m reserved-blocks-percent] device\n", program_name);
-
-Maybe tuning 1. extension list, 2. multi device name later? just guess.
-
-Using fsck.f2fs to tune parameter, IMO, maybe a little confuse for user to
-understand the tool's functionality.
+Then, atomic file becomes corrupted since nodes is flushed before data.
 
 Thanks,
 
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> 
+>>
+>> Thanks,
+>>
+>>> we can just ignore the last written data as nothing.
+>>>
+>>>>
+>>>> This patch adds f2fs_wait_on_page_writeback in __revoke_inmem_pages() to
+>>>> keep data and node of atomic file being flushed orderly.
+>>>>
+>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>> ---
+>>>>  fs/f2fs/file.c    | 4 ++++
+>>>>  fs/f2fs/segment.c | 3 +++
+>>>>  2 files changed, 7 insertions(+)
+>>>>
+>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>>>> index be7578774a47..a352804af244 100644
+>>>> --- a/fs/f2fs/file.c
+>>>> +++ b/fs/f2fs/file.c
+>>>> @@ -217,6 +217,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>>>>  
+>>>>  	trace_f2fs_sync_file_enter(inode);
+>>>>  
+>>>> +	if (atomic)
+>>>> +		goto write_done;
+>>>> +
+>>>>  	/* if fdatasync is triggered, let's do in-place-update */
+>>>>  	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
+>>>>  		set_inode_flag(inode, FI_NEED_IPU);
+>>>> @@ -228,6 +231,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>>>>  		return ret;
+>>>>  	}
+>>>>  
+>>>> +write_done:
+>>>>  	/* if the inode is dirty, let's recover all the time */
+>>>>  	if (!f2fs_skip_inode_update(inode, datasync)) {
+>>>>  		f2fs_write_inode(inode, NULL);
+>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>> index 584483426584..9ca3d0a43d93 100644
+>>>> --- a/fs/f2fs/segment.c
+>>>> +++ b/fs/f2fs/segment.c
+>>>> @@ -230,6 +230,8 @@ static int __revoke_inmem_pages(struct inode *inode,
+>>>>  
+>>>>  		lock_page(page);
+>>>>  
+>>>> +		f2fs_wait_on_page_writeback(page, DATA, true);
+>>>> +
+>>>>  		if (recover) {
+>>>>  			struct dnode_of_data dn;
+>>>>  			struct node_info ni;
+>>>> @@ -415,6 +417,7 @@ static int __commit_inmem_pages(struct inode *inode)
+>>>>  		/* drop all uncommitted pages */
+>>>>  		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
+>>>>  	} else {
+>>>> +		/* wait all committed IOs writeback and release them from list */
+>>>>  		__revoke_inmem_pages(inode, &revoke_list, false, false);
+>>>>  	}
+>>>>  
+>>>> -- 
+>>>> 2.15.0.55.gc2ece9dc4de6
+> 
+> .
+> 
