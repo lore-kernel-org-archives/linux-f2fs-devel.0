@@ -1,8 +1,8 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] libf2fs: Track AOSP libsparse API change.
-Date: Mon, 30 Apr 2018 13:45:23 -0700
-Message-ID: <20180430204523.GA6129@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180426074009.36270-1-tbao@google.com>
+From: Eric Biggers <ebiggers3@gmail.com>
+Subject: [PATCH v2 00/15] fscrypt: improved logging and other
+ cleanups
+Date: Mon, 30 Apr 2018 15:51:34 -0700
+Message-ID: <20180430225149.183514-1-ebiggers3@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,15 +10,16 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1fDFfv-0005fI-SK
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Apr 2018 20:45:31 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fDFfu-00G3q4-6C
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Apr 2018 20:45:31 +0000
-Content-Disposition: inline
-In-Reply-To: <20180426074009.36270-1-tbao@google.com>
+ (envelope-from <ebiggers3@gmail.com>) id 1fDHis-0002vU-Nq
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Apr 2018 22:56:42 +0000
+Received: from mail-pf0-f175.google.com ([209.85.192.175])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1fDHir-00E6tq-Aj
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Apr 2018 22:56:42 +0000
+Received: by mail-pf0-f175.google.com with SMTP id q22so7870378pff.11
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 30 Apr 2018 15:56:41 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,56 +29,65 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Tao Bao <tbao@google.com>
-Cc: jaegeuk@google.com, linux-f2fs-devel@lists.sourceforge.net
+To: linux-fscrypt@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org, linux-mtd@lists.infradead.org, Eric Biggers <ebiggers@google.com>, linux-f2fs-devel@lists.sourceforge.net
 
-Merged.
-Thanks,
+From: Eric Biggers <ebiggers@google.com>
 
-On 04/26, Tao Bao via Linux-f2fs-devel wrote:
-> The libsparse in AOSP is updating the type for 'len', from 'int' to
-> 'size_t', in the callback parameter of sparse_file_foreach_chunk(). The
-> value represents a chunk size, which could be legitimately larger than
-> INT_MAX. This patch tracks the libsparse API change.
-> 
-> The change is guarded with SPARSE_CALLBACK_USES_SIZE_T that's exposed as
-> part of the libsparse change. This allows f2fs-tools to keep working
-> against older libsparse versions.
-> 
-> Signed-off-by: Tao Bao <tbao@google.com>
-> ---
->  lib/libf2fs_io.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
-> index 4781517..76d283d 100644
-> --- a/lib/libf2fs_io.c
-> +++ b/lib/libf2fs_io.c
-> @@ -114,8 +114,13 @@ static int sparse_write_blk(__u64 block, int count, const void *buf)
->  	return 0;
->  }
->  
-> +#ifdef SPARSE_CALLBACK_USES_SIZE_T
-> +static int sparse_import_segment(void *UNUSED(priv), const void *data,
-> +		size_t len, unsigned int block, unsigned int nr_blocks)
-> +#else
->  static int sparse_import_segment(void *UNUSED(priv), const void *data, int len,
->  		unsigned int block, unsigned int nr_blocks)
-> +#endif
->  {
->  	/* Ignore chunk headers, only write the data */
->  	if (!nr_blocks || len % F2FS_BLKSIZE)
-> -- 
-> 2.17.0.484.g0c8726318c-goog
-> 
-> 
-> ------------------------------------------------------------------------------
-> Check out the vibrant tech community on one of the world's most
-> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+Hello, here's yet another round of cleanups for fscrypt.  Please
+consider for v4.18.  These are all patches I've sent out previously.
+The series is based on v4.17-rc3.
+
+Patches 1-12 mostly remove unnecessary or redundant code from a number
+of different places; nothing particularly noteworthy.  Note: to avoid a
+merge conflict with f2fs/dev, I've dropped the patch
+"fscrypt: remove WARN_ON_ONCE() when decryption fails".
+
+Patch 13 switches the existing warning and error messages in fscrypt
+over to use a common logging function, which is ratelimited and includes
+the filesystem name (->s_id) when available as well as a consistent
+prefix of "fscrypt:".
+
+Patches 14-15 are optimizations and cleanups for key lookup and key
+derivation.  They are extracted from the patch "fscrypt: refactor
+finding and deriving key" I had originally sent as part of the series
+"fscrypt: filesystem-level keyring and v2 policy support".  But I think
+they're useful changes by themselves, so no need to wait on them.
+
+Eric Biggers (15):
+  fs, fscrypt: only define ->s_cop when FS_ENCRYPTION is enabled
+  fscrypt: clean up after fscrypt_prepare_lookup() conversions
+  fscrypt: remove unnecessary NULL check when allocating skcipher
+  fscrypt: remove error messages for skcipher_request_alloc() failure
+  fscrypt: remove stale comment from fscrypt_d_revalidate()
+  fscrypt: don't clear flags on crypto transform
+  fscrypt: don't special-case EOPNOTSUPP from
+    fscrypt_get_encryption_info()
+  fscrypt: drop max_namelen check from fname_decrypt()
+  fscrypt: drop empty name check from fname_decrypt()
+  fscrypt: make fscrypt_operations.max_namelen an integer
+  fscrypt: remove unnecessary check for non-logon key type
+  fscrypt: remove internal key size constants
+  fscrypt: use a common logging function
+  fscrypt: separate key lookup from key derivation
+  fscrypt: only derive the needed portion of the key
+
+ fs/crypto/crypto.c              |  36 ++++--
+ fs/crypto/fname.c               |  32 ++---
+ fs/crypto/fscrypt_private.h     |  19 +--
+ fs/crypto/hooks.c               |   5 +-
+ fs/crypto/keyinfo.c             | 200 +++++++++++++++++---------------
+ fs/ext4/super.c                 |   8 +-
+ fs/f2fs/super.c                 |   8 +-
+ fs/ubifs/crypto.c               |  10 +-
+ include/linux/fs.h              |   4 +-
+ include/linux/fscrypt_notsupp.h |  10 --
+ include/linux/fscrypt_supp.h    |  16 +--
+ 11 files changed, 161 insertions(+), 187 deletions(-)
+
+-- 
+2.17.0.441.gb46fe60e1d-goog
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
