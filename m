@@ -1,26 +1,26 @@
 From: Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH 04/15] fscrypt: remove error messages for
- skcipher_request_alloc() failure
-Date: Mon, 30 Apr 2018 15:51:38 -0700
-Message-ID: <20180430225149.183514-5-ebiggers3@gmail.com>
+Subject: [PATCH 02/15] fscrypt: clean up after
+ fscrypt_prepare_lookup() conversions
+Date: Mon, 30 Apr 2018 15:51:36 -0700
+Message-ID: <20180430225149.183514-3-ebiggers3@gmail.com>
 References: <20180430225149.183514-1-ebiggers3@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers3@gmail.com>) id 1fDHiz-0001jW-J6
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Apr 2018 22:56:49 +0000
-Received: from mail-pg0-f65.google.com ([74.125.83.65])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <ebiggers3@gmail.com>) id 1fDHiy-0002wF-3O
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Apr 2018 22:56:48 +0000
+Received: from mail-pg0-f67.google.com ([74.125.83.67])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1fDHiy-00GBIo-8e
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Apr 2018 22:56:49 +0000
-Received: by mail-pg0-f65.google.com with SMTP id m21-v6so7255969pgv.8
+ id 1fDHiw-000Ex0-BW
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Apr 2018 22:56:48 +0000
+Received: by mail-pg0-f67.google.com with SMTP id i29-v6so7244667pgn.12
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 30 Apr 2018 15:56:48 -0700 (PDT)
+ Mon, 30 Apr 2018 15:56:46 -0700 (PDT)
 In-Reply-To: <20180430225149.183514-1-ebiggers3@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -36,64 +36,89 @@ Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org, linux-mtd@list
 
 From: Eric Biggers <ebiggers@google.com>
 
-skcipher_request_alloc() can only fail due to lack of memory, and in
-that case the memory allocator will have already printed a detailed
-error message.  Thus, remove the redundant error messages from fscrypt.
+Now that all filesystems have been converted to use
+fscrypt_prepare_lookup(), we can remove the fscrypt_set_d_op() and
+fscrypt_set_encrypted_dentry() functions as well as un-export
+fscrypt_d_ops.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/crypto/crypto.c |  6 +-----
- fs/crypto/fname.c  | 10 ++--------
- 2 files changed, 3 insertions(+), 13 deletions(-)
+ fs/crypto/crypto.c              |  1 -
+ fs/crypto/fscrypt_private.h     |  1 +
+ include/linux/fscrypt_notsupp.h | 10 ----------
+ include/linux/fscrypt_supp.h    | 14 --------------
+ 4 files changed, 1 insertion(+), 25 deletions(-)
 
 diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
-index f2b2d8408a01..58761d816751 100644
+index ce654526c0fb..f2b2d8408a01 100644
 --- a/fs/crypto/crypto.c
 +++ b/fs/crypto/crypto.c
-@@ -156,12 +156,8 @@ int fscrypt_do_page_crypto(const struct inode *inode, fscrypt_direction_t rw,
- 	}
+@@ -353,7 +353,6 @@ static int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
+ const struct dentry_operations fscrypt_d_ops = {
+ 	.d_revalidate = fscrypt_d_revalidate,
+ };
+-EXPORT_SYMBOL(fscrypt_d_ops);
  
- 	req = skcipher_request_alloc(tfm, gfp_flags);
--	if (!req) {
--		printk_ratelimited(KERN_ERR
--				"%s: crypto_request_alloc() failed\n",
--				__func__);
-+	if (!req)
- 		return -ENOMEM;
--	}
+ void fscrypt_restore_control_page(struct page *page)
+ {
+diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
+index ad6722bae8b7..fb96e493167b 100644
+--- a/fs/crypto/fscrypt_private.h
++++ b/fs/crypto/fscrypt_private.h
+@@ -106,6 +106,7 @@ extern int fscrypt_do_page_crypto(const struct inode *inode,
+ 				  gfp_t gfp_flags);
+ extern struct page *fscrypt_alloc_bounce_page(struct fscrypt_ctx *ctx,
+ 					      gfp_t gfp_flags);
++extern const struct dentry_operations fscrypt_d_ops;
  
- 	skcipher_request_set_callback(
- 		req, CRYPTO_TFM_REQ_MAY_BACKLOG | CRYPTO_TFM_REQ_MAY_SLEEP,
-diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-index e33f3d3c5ade..3b5164b159cb 100644
---- a/fs/crypto/fname.c
-+++ b/fs/crypto/fname.c
-@@ -59,11 +59,8 @@ int fname_encrypt(struct inode *inode, const struct qstr *iname,
+ /* fname.c */
+ extern int fname_encrypt(struct inode *inode, const struct qstr *iname,
+diff --git a/include/linux/fscrypt_notsupp.h b/include/linux/fscrypt_notsupp.h
+index 44b50c04bae9..25b6492de6e5 100644
+--- a/include/linux/fscrypt_notsupp.h
++++ b/include/linux/fscrypt_notsupp.h
+@@ -64,16 +64,6 @@ static inline void fscrypt_restore_control_page(struct page *page)
+ 	return;
+ }
  
- 	/* Set up the encryption request */
- 	req = skcipher_request_alloc(tfm, GFP_NOFS);
--	if (!req) {
--		printk_ratelimited(KERN_ERR
--			"%s: skcipher_request_alloc() failed\n", __func__);
-+	if (!req)
- 		return -ENOMEM;
--	}
- 	skcipher_request_set_callback(req,
- 			CRYPTO_TFM_REQ_MAY_BACKLOG | CRYPTO_TFM_REQ_MAY_SLEEP,
- 			crypto_req_done, &wait);
-@@ -108,11 +105,8 @@ static int fname_decrypt(struct inode *inode,
+-static inline void fscrypt_set_d_op(struct dentry *dentry)
+-{
+-	return;
+-}
+-
+-static inline void fscrypt_set_encrypted_dentry(struct dentry *dentry)
+-{
+-	return;
+-}
+-
+ /* policy.c */
+ static inline int fscrypt_ioctl_set_policy(struct file *filp,
+ 					   const void __user *arg)
+diff --git a/include/linux/fscrypt_supp.h b/include/linux/fscrypt_supp.h
+index 477a7a6504d2..c9c2cc26bc62 100644
+--- a/include/linux/fscrypt_supp.h
++++ b/include/linux/fscrypt_supp.h
+@@ -74,20 +74,6 @@ static inline struct page *fscrypt_control_page(struct page *page)
  
- 	/* Allocate request */
- 	req = skcipher_request_alloc(tfm, GFP_NOFS);
--	if (!req) {
--		printk_ratelimited(KERN_ERR
--			"%s: crypto_request_alloc() failed\n",  __func__);
-+	if (!req)
- 		return -ENOMEM;
--	}
- 	skcipher_request_set_callback(req,
- 		CRYPTO_TFM_REQ_MAY_BACKLOG | CRYPTO_TFM_REQ_MAY_SLEEP,
- 		crypto_req_done, &wait);
+ extern void fscrypt_restore_control_page(struct page *);
+ 
+-extern const struct dentry_operations fscrypt_d_ops;
+-
+-static inline void fscrypt_set_d_op(struct dentry *dentry)
+-{
+-	d_set_d_op(dentry, &fscrypt_d_ops);
+-}
+-
+-static inline void fscrypt_set_encrypted_dentry(struct dentry *dentry)
+-{
+-	spin_lock(&dentry->d_lock);
+-	dentry->d_flags |= DCACHE_ENCRYPTED_WITH_KEY;
+-	spin_unlock(&dentry->d_lock);
+-}
+-
+ /* policy.c */
+ extern int fscrypt_ioctl_set_policy(struct file *, const void __user *);
+ extern int fscrypt_ioctl_get_policy(struct file *, void __user *);
 -- 
 2.17.0.441.gb46fe60e1d-goog
 
