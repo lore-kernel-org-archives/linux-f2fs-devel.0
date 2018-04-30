@@ -1,79 +1,44 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [RFC PATCH] f2fs-tools: introduce tune.f2fs
-Date: Fri, 27 Apr 2018 19:49:46 -0700
-Message-ID: <20180428024946.GE10595@jaegeuk-macbookpro.roam.corp.google.com>
-References: <13c34f59-6f6a-8252-0a9f-effccbcd6db0@huawei.com>
- <20180423073202.150763-1-zhengjunling@huawei.com>
- <40f78225-7a7d-e761-2e84-f357b7fecf2e@huawei.com>
- <20180426161315.GK68594@jaegeuk-macbookpro.roam.corp.google.com>
- <11707e83-2478-f6d6-bc7e-c19cd44a55c2@huawei.com>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] f2fs: fix spelling mistake: "extenstion" -> "extension"
+Date: Mon, 30 Apr 2018 16:27:44 +0100
+Message-ID: <20180430152744.9927-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1fCFvx-0003S1-RI
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 28 Apr 2018 02:49:57 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fCFvu-000979-Hw
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 28 Apr 2018 02:49:57 +0000
-Content-Disposition: inline
-In-Reply-To: <11707e83-2478-f6d6-bc7e-c19cd44a55c2@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 04/27, Chao Yu wrote:
-> On 2018/4/27 0:13, Jaegeuk Kim wrote:
-> > On 04/26, Junling Zheng wrote:
-> >> Ping...
-> >>
-> >> On 2018/4/23 15:32, Junling Zheng wrote:
-> >>> Introduce tune.f2fs tool to change the f2fs parameters.
-> >>> Currently this tool only supports adding or removing encrypt
-> >>> feature bit in superblock.
-> > 
-> > What is the purpose of this empty tune.f2fs? How can we say we have this
-> > tool to users? You have to design what kind of things to support first.
-> 
-> I checked very initial tune2fs.c, it only supports very few parameters tuning
-> functionality, but, can not say that is a bad start to introduce the misc tool.
-> 
-> +       fprintf (stderr, "Usage: %s [-c max-mounts-count] [-e errors-behavior] "
-> +                "[-i interval[d|m]]\n"
-> +                "\t[-l] [-m reserved-blocks-percent] device\n", program_name);
+From: Colin Ian King <colin.king@canonical.com>
 
-I don't think We have to follow that.
+Trivial fix to spelling mistake in extension list text
 
-> 
-> Maybe tuning 1. extension list, 2. multi device name later? just guess.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/f2fs/sysfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-First of all, does it make sense to unset feature bits? I don't think so.
-
-Agreed to your suggestion where:
-1. feature set
-  - enable system quota
-2. extension list
-3. multi device name -- which may be really big trial
-
-> 
-> Using fsck.f2fs to tune parameter, IMO, maybe a little confuse for user to
-> understand the tool's functionality.
-> 
-> Thanks,
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index f33a56d6e6dd..d9050caff80c 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -147,13 +147,13 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
+ 		int len = 0, i;
+ 
+ 		len += snprintf(buf + len, PAGE_SIZE - len,
+-						"cold file extenstion:\n");
++						"cold file extension:\n");
+ 		for (i = 0; i < cold_count; i++)
+ 			len += snprintf(buf + len, PAGE_SIZE - len, "%s\n",
+ 								extlist[i]);
+ 
+ 		len += snprintf(buf + len, PAGE_SIZE - len,
+-						"hot file extenstion:\n");
++						"hot file extension:\n");
+ 		for (i = cold_count; i < cold_count + hot_count; i++)
+ 			len += snprintf(buf + len, PAGE_SIZE - len, "%s\n",
+ 								extlist[i]);
+-- 
+2.17.0
