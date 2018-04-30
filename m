@@ -1,26 +1,26 @@
 From: Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH 09/15] fscrypt: drop empty name check from
- fname_decrypt()
-Date: Mon, 30 Apr 2018 15:51:43 -0700
-Message-ID: <20180430225149.183514-10-ebiggers3@gmail.com>
+Subject: [PATCH 11/15] fscrypt: remove unnecessary check for
+ non-logon key type
+Date: Mon, 30 Apr 2018 15:51:45 -0700
+Message-ID: <20180430225149.183514-12-ebiggers3@gmail.com>
 References: <20180430225149.183514-1-ebiggers3@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers3@gmail.com>) id 1fDHj3-0001lB-Sq
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Apr 2018 22:56:53 +0000
-Received: from mail-pf0-f196.google.com ([209.85.192.196])
+ (envelope-from <ebiggers3@gmail.com>) id 1fDHj5-0002y0-LL
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Apr 2018 22:56:55 +0000
+Received: from mail-pg0-f66.google.com ([74.125.83.66])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1fDHj2-00E6uP-LE
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Apr 2018 22:56:53 +0000
-Received: by mail-pf0-f196.google.com with SMTP id e9so3885527pfi.4
+ id 1fDHj4-00E6uT-DZ
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Apr 2018 22:56:55 +0000
+Received: by mail-pg0-f66.google.com with SMTP id g20-v6so580669pgv.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 30 Apr 2018 15:56:52 -0700 (PDT)
+ Mon, 30 Apr 2018 15:56:54 -0700 (PDT)
 In-Reply-To: <20180430225149.183514-1-ebiggers3@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -36,31 +36,32 @@ Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org, linux-mtd@list
 
 From: Eric Biggers <ebiggers@google.com>
 
-fname_decrypt() is validating that the encrypted filename is nonempty.
-However, earlier a stronger precondition was already enforced: the
-encrypted filename must be at least 16 (FS_CRYPTO_BLOCK_SIZE) bytes.
-
-Drop the redundant check for an empty filename.
+We're passing 'key_type_logon' to request_key(), so the found key is
+guaranteed to be of type "logon".  Thus, there is no reason to check
+later that the key is really a "logon" key.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/crypto/fname.c | 3 ---
- 1 file changed, 3 deletions(-)
+ fs/crypto/keyinfo.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-index cc9590b5f371..c4eb3a235ae4 100644
---- a/fs/crypto/fname.c
-+++ b/fs/crypto/fname.c
-@@ -97,9 +97,6 @@ static int fname_decrypt(struct inode *inode,
- 	int res = 0;
- 	char iv[FS_CRYPTO_BLOCK_SIZE];
+diff --git a/fs/crypto/keyinfo.c b/fs/crypto/keyinfo.c
+index 0f6a65c6483b..0b48aa469453 100644
+--- a/fs/crypto/keyinfo.c
++++ b/fs/crypto/keyinfo.c
+@@ -89,12 +89,6 @@ static int validate_user_key(struct fscrypt_info *crypt_info,
+ 		return PTR_ERR(keyring_key);
+ 	down_read(&keyring_key->sem);
  
--	if (iname->len <= 0)
--		return -EIO;
--
- 	/* Allocate request */
- 	req = skcipher_request_alloc(tfm, GFP_NOFS);
- 	if (!req)
+-	if (keyring_key->type != &key_type_logon) {
+-		printk_once(KERN_WARNING
+-				"%s: key type must be logon\n", __func__);
+-		res = -ENOKEY;
+-		goto out;
+-	}
+ 	ukp = user_key_payload_locked(keyring_key);
+ 	if (!ukp) {
+ 		/* key was revoked before we acquired its semaphore */
 -- 
 2.17.0.441.gb46fe60e1d-goog
 
