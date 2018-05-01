@@ -1,21 +1,31 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs-tools: get kernel version via uname(2)
-Date: Tue,  1 May 2018 14:14:24 -0700
-Message-ID: <20180501211424.46491-1-jaegeuk@kernel.org>
+Subject: Re: [PATCH v2] f2fs-tools: get kernel version via
+ uname(2)
+Date: Tue, 1 May 2018 15:55:28 -0700
+Message-ID: <20180501225528.GA63516@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180501211424.46491-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1fDcba-0007ie-AX
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 01 May 2018 21:14:34 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1fDeBR-0000uO-B9
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 01 May 2018 22:55:41 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fDcbY-00FHYe-E6
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 01 May 2018 21:14:34 +0000
+ id 1fDeBL-004SWk-AL
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 01 May 2018 22:55:41 +0000
+Received: from localhost (unknown [104.132.1.88])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 94E84236F2
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue,  1 May 2018 22:55:29 +0000 (UTC)
+Content-Disposition: inline
+In-Reply-To: <20180501211424.46491-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,18 +36,33 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+
+Change log from v1:
+ - fix build error by checking sys/utsname.h
 
 This patch introduces uname(2) to get kernel version.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
+ configure.ac       |  1 +
  fsck/mount.c       |  2 +-
  include/f2fs_fs.h  |  1 +
- lib/libf2fs.c      | 14 ++++++++++++++
+ lib/libf2fs.c      | 20 ++++++++++++++++++++
  mkfs/f2fs_format.c |  2 +-
- 4 files changed, 17 insertions(+), 2 deletions(-)
+ 5 files changed, 24 insertions(+), 2 deletions(-)
 
+diff --git a/configure.ac b/configure.ac
+index 64c156e..a3ff12b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -102,6 +102,7 @@ AC_CHECK_HEADERS(m4_flatten([
+ 	sys/syscall.h
+ 	sys/mount.h
+ 	sys/sysmacros.h
++	sys/utsname.h
+ 	sys/xattr.h
+ 	unistd.h
+ ]))
 diff --git a/fsck/mount.c b/fsck/mount.c
 index e4ca0b8..61ea0ea 100644
 --- a/fsck/mount.c
@@ -64,23 +89,26 @@ index 8ed9db1..e800004 100644
  
  static inline bool f2fs_has_extra_isize(struct f2fs_inode *inode)
 diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index 19491b6..9410732 100644
+index 19491b6..5ef0214 100644
 --- a/lib/libf2fs.c
 +++ b/lib/libf2fs.c
-@@ -27,6 +27,7 @@
+@@ -27,6 +27,9 @@
  #ifdef HAVE_SYS_SYSMACROS_H
  #include <sys/sysmacros.h>
  #endif
++#ifdef HAVE_SYS_UTSNAME_H
 +#include <sys/utsname.h>
++#endif
  #ifndef WITH_ANDROID
  #ifdef HAVE_SCSI_SG_H
  #include <scsi/sg.h>
-@@ -740,6 +741,17 @@ void get_kernel_version(__u8 *version)
+@@ -740,6 +743,21 @@ void get_kernel_version(__u8 *version)
  	memset(version + i, 0, VERSION_LEN + 1 - i);
  }
  
 +void get_kernel_uname_version(__u8 *version)
 +{
++#ifdef HAVE_SYS_UTSNAME_H
 +	struct utsname buf;
 +
 +	memset(version, 0, VERSION_LEN);
@@ -89,11 +117,14 @@ index 19491b6..9410732 100644
 +
 +	snprintf((char *)version,
 +		VERSION_LEN, "%s %s", buf.release, buf.version);
++#else
++	memset(version, 0, VERSION_LEN);
++#endif
 +}
  
  #if defined(__linux__) && defined(_IO) && !defined(BLKGETSIZE)
  #define BLKGETSIZE	_IO(0x12,96)
-@@ -796,7 +808,9 @@ int get_device_info(int i)
+@@ -796,7 +814,9 @@ int get_device_info(int i)
  	}
  
  	if (c.kd == -1) {
