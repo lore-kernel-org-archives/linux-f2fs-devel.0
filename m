@@ -1,45 +1,41 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs-tools: get kernel version via uname(2)
-Date: Fri, 4 May 2018 18:07:16 +0800
-Message-ID: <5025d6f1-aba0-85a0-2922-ecbb5bd64fc4@huawei.com>
-References: <20180501211424.46491-1-jaegeuk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fEXcj-0001ZN-Bj
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 04 May 2018 10:07:33 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fEXcf-001v91-NR
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 04 May 2018 10:07:32 +0000
-In-Reply-To: <20180501211424.46491-1-jaegeuk@kernel.org>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: avoid fsync() failure caused by EAGAIN in writepage()
+Date: Fri,  4 May 2018 10:52:10 -0700
+Message-ID: <20180504175210.26903-1-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/5/2 5:14, Jaegeuk Kim wrote:
-> This patch introduces uname(2) to get kernel version.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+pageout() in MM traslates EAGAIN, so calls handle_write_error()
+ -> mapping_set_error() -> set_bit(AS_EIO, ...).
+ file_write_and_wait_range() will see EIO error, which is critical
+ to return value of fsync() followed by atomic_write failure to user.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/data.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Thanks,
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 5477fc09c3cd..ac8720fa5868 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1904,7 +1904,13 @@ static int __write_data_page(struct page *page, bool *submitted,
+ 
+ redirty_out:
+ 	redirty_page_for_writepage(wbc, page);
+-	if (!err)
++	/*
++	 * pageout() in MM traslates EAGAIN, so calls handle_write_error()
++	 * -> mapping_set_error() -> set_bit(AS_EIO, ...).
++	 * file_write_and_wait_range() will see EIO error, which is critical
++	 * to return value of fsync() followed by atomic_write failure to user.
++	 */
++	if (!err || wbc->for_reclaim)
+ 		return AOP_WRITEPAGE_ACTIVATE;
+ 	unlock_page(page);
+ 	return err;
+-- 
+2.17.0.484.g0c8726318c-goog
