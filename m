@@ -1,132 +1,140 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 2/2] Revert "f2fs: add ovp valid_blocks check for bg gc
- victim to fg_gc"
-Date: Sat, 5 May 2018 13:37:05 +0800
-Message-ID: <00acefbf-9ad3-c81e-257a-fab74799a19c@huawei.com>
-References: <20180426090551.92364-1-yuchao0@huawei.com>
- <20180426090551.92364-2-yuchao0@huawei.com>
- <8989c3fe-2218-b368-6f8d-e6ba36189236@huawei.com>
+Subject: [PATCH v3] f2fs: fix to avoid race during access gc_thread pointer
+Date: Sat, 5 May 2018 18:02:01 +0800
+Message-ID: <20180505100201.49818-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <8989c3fe-2218-b368-6f8d-e6ba36189236@huawei.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Ping,
+Thread A			Thread B		Thread C
+- f2fs_remount
+ - stop_gc_thread
+				- f2fs_sbi_store
+							- issue_discard_thread
+   sbi->gc_thread = NULL;
+				  sbi->gc_thread->gc_wake = 1
+							  access sbi->gc_thread->gc_urgent
 
-On 2018/4/27 10:55, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> Missed this patch, or any problem in it?
-> 
-> Thanks,
-> 
-> On 2018/4/26 17:05, Chao Yu wrote:
->> For extreme case:
->> 10 section, op = 10%, no_fggc_threshold = 90%
->> All section usage: 85% 85% 85% 85% 90% 90% 95% 95% 95% 95%
->>
->> During foreground GC, if we skip select dirty section whose usage
->> is larger than no_fggc_threshold, we can only recycle 80% invalid
->> space from four 85% usage sections and two 90% usage sections,
->> result in encountering out-of-space issue.
->>
->> This reverts commit e93b9865251a0503d83fd570e7d5a7c8bc351715 to
->> fix this issue, besides, we keep the logic that we scan all dirty
->> section when searching a victim, so that GC can select victim with
->> least valid blocks.
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/f2fs.h    |  3 ---
->>  fs/f2fs/gc.c      | 16 ----------------
->>  fs/f2fs/segment.h |  9 ---------
->>  3 files changed, 28 deletions(-)
->>
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index 64e3677998d8..9f8b327272df 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -1192,9 +1192,6 @@ struct f2fs_sb_info {
->>  	struct f2fs_gc_kthread	*gc_thread;	/* GC thread */
->>  	unsigned int cur_victim_sec;		/* current victim section num */
->>  
->> -	/* threshold for converting bg victims for fg */
->> -	u64 fggc_threshold;
->> -
->>  	/* threshold for gc trials on pinned files */
->>  	u64 gc_pin_file_threshold;
->>  
->> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->> index 3134dd781252..62eba4a71123 100644
->> --- a/fs/f2fs/gc.c
->> +++ b/fs/f2fs/gc.c
->> @@ -263,10 +263,6 @@ static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
->>  	for_each_set_bit(secno, dirty_i->victim_secmap, MAIN_SECS(sbi)) {
->>  		if (sec_usage_check(sbi, secno))
->>  			continue;
->> -
->> -		if (no_fggc_candidate(sbi, secno))
->> -			continue;
->> -
->>  		clear_bit(secno, dirty_i->victim_secmap);
->>  		return GET_SEG_FROM_SEC(sbi, secno);
->>  	}
->> @@ -406,9 +402,6 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
->>  			goto next;
->>  		if (gc_type == BG_GC && test_bit(secno, dirty_i->victim_secmap))
->>  			goto next;
->> -		if (gc_type == FG_GC && p.alloc_mode == LFS &&
->> -					no_fggc_candidate(sbi, secno))
->> -			goto next;
->>  
->>  		cost = get_gc_cost(sbi, segno, &p);
->>  
->> @@ -1152,17 +1145,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>  
->>  void build_gc_manager(struct f2fs_sb_info *sbi)
->>  {
->> -	u64 main_count, resv_count, ovp_count;
->> -
->>  	DIRTY_I(sbi)->v_ops = &default_v_ops;
->>  
->> -	/* threshold of # of valid blocks in a section for victims of FG_GC */
->> -	main_count = SM_I(sbi)->main_segments << sbi->log_blocks_per_seg;
->> -	resv_count = SM_I(sbi)->reserved_segments << sbi->log_blocks_per_seg;
->> -	ovp_count = SM_I(sbi)->ovp_segments << sbi->log_blocks_per_seg;
->> -
->> -	sbi->fggc_threshold = div64_u64((main_count - ovp_count) *
->> -				BLKS_PER_SEC(sbi), (main_count - resv_count));
->>  	sbi->gc_pin_file_threshold = DEF_GC_FAILED_PINNED_FILES;
->>  
->>  	/* give warm/cold data area from slower device */
->> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
->> index 7702b054689c..c385daabcb67 100644
->> --- a/fs/f2fs/segment.h
->> +++ b/fs/f2fs/segment.h
->> @@ -774,15 +774,6 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
->>  				- (base + 1) + type;
->>  }
->>  
->> -static inline bool no_fggc_candidate(struct f2fs_sb_info *sbi,
->> -						unsigned int secno)
->> -{
->> -	if (get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true) >
->> -						sbi->fggc_threshold)
->> -		return true;
->> -	return false;
->> -}
->> -
->>  static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int secno)
->>  {
->>  	if (IS_CURSEC(sbi, secno) || (sbi->cur_victim_sec == secno))
->>
-> 
-> 
-> .
-> 
+Previously, we allocate memory for sbi->gc_thread based on background
+gc thread mount option, the memory can be released if we turn off
+that mount option, but still there are several places access gc_thread
+pointer without considering race condition, result in NULL point
+dereference.
+
+In order to fix this issue, use sb->s_umount to exclude those operations
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v3:
+- use sb->s_umount to make all race cases exclusive.
+ fs/f2fs/gc.c      |  4 ++++
+ fs/f2fs/segment.c | 11 ++++++++++-
+ fs/f2fs/sysfs.c   | 14 +++++++++++---
+ 3 files changed, 25 insertions(+), 4 deletions(-)
+
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 9bb2ddbbed1e..d7d469f9be0a 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -187,17 +187,21 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
+ 		p->max_search = dirty_i->nr_dirty[type];
+ 		p->ofs_unit = 1;
+ 	} else {
++		down_read(&sbi->sb->s_umount);
+ 		p->gc_mode = select_gc_type(sbi->gc_thread, gc_type);
++		up_read(&sbi->sb->s_umount);
+ 		p->dirty_segmap = dirty_i->dirty_segmap[DIRTY];
+ 		p->max_search = dirty_i->nr_dirty[DIRTY];
+ 		p->ofs_unit = sbi->segs_per_sec;
+ 	}
+ 
+ 	/* we need to check every dirty segments in the FG_GC case */
++	down_read(&sbi->sb->s_umount);
+ 	if (gc_type != FG_GC &&
+ 			(sbi->gc_thread && !sbi->gc_thread->gc_urgent) &&
+ 			p->max_search > sbi->max_victim_search)
+ 		p->max_search = sbi->max_victim_search;
++	up_read(&sbi->sb->s_umount);
+ 
+ 	/* let's select beginning hot/small space first in no_heap mode*/
+ 	if (test_opt(sbi, NOHEAP) &&
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 320cc1c57246..74e184ab0544 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -174,11 +174,18 @@ bool need_SSR(struct f2fs_sb_info *sbi)
+ 	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
+ 	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
+ 	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
++	bool gc_urgent = false;
+ 
+ 	if (test_opt(sbi, LFS))
+ 		return false;
++
++	down_read(&sbi->sb->s_umount);
+ 	if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
+-		return true;
++		gc_urgent = true;
++	up_read(&sbi->sb->s_umount);
++
++	if (gc_urgent)
++		return false;
+ 
+ 	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
+ 			SM_I(sbi)->min_ssr_sections + reserved_sections(sbi));
+@@ -1421,8 +1428,10 @@ static int issue_discard_thread(void *data)
+ 		if (dcc->discard_wake)
+ 			dcc->discard_wake = 0;
+ 
++		down_read(&sbi->sb->s_umount);
+ 		if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
+ 			init_discard_policy(&dpolicy, DPOLICY_FORCE, 1);
++		up_read(&sbi->sb->s_umount);
+ 
+ 		sb_start_intwrite(sbi->sb);
+ 
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 6d8d8f41e517..1cba68812b32 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -173,6 +173,7 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+ 	unsigned long t;
+ 	unsigned int *ui;
+ 	ssize_t ret;
++	bool gc_entry = (a->struct_type == GC_THREAD);
+ 
+ 	ptr = __struct_ptr(sbi, a->struct_type);
+ 	if (!ptr)
+@@ -248,16 +249,23 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+ 	if (!strcmp(a->attr.name, "trim_sections"))
+ 		return -EINVAL;
+ 
+-	*ui = t;
+-
+-	if (!strcmp(a->attr.name, "iostat_enable") && *ui == 0)
++	if (!strcmp(a->attr.name, "iostat_enable") && t == 0)
+ 		f2fs_reset_iostat(sbi);
++
++	if (gc_entry)
++		down_read(&sbi->sb->s_umount);
++
+ 	if (!strcmp(a->attr.name, "gc_urgent") && t == 1 && sbi->gc_thread) {
+ 		sbi->gc_thread->gc_wake = 1;
+ 		wake_up_interruptible_all(&sbi->gc_thread->gc_wait_queue_head);
+ 		wake_up_discard_thread(sbi, true);
+ 	}
+ 
++	*ui = t;
++
++	if (gc_entry)
++		up_read(&sbi->sb->s_umount);
++
+ 	return count;
+ }
+ 
+-- 
+2.17.0.391.g1f1cddd558b5
