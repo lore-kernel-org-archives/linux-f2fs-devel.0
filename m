@@ -1,82 +1,176 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 1/3] f2fs: fix to initialize i_current_depth according to inode type
-Date: Sat, 5 May 2018 18:03:02 +0800
-Message-ID: <20180505100304.50029-1-yuchao0@huawei.com>
+Subject: [PATCH 2/3] f2fs: introduce GC_I for cleanup
+Date: Sat, 5 May 2018 18:03:03 +0800
+Message-ID: <20180505100304.50029-2-yuchao0@huawei.com>
+References: <20180505100304.50029-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180505100304.50029-1-yuchao0@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-i_current_depth is used only for directory inode, but its space is
-shared with i_gc_failures field used for regular inode, in order to
-avoid affecting i_gc_failures' value, this patch fixes to initialize
-the union's fields according to inode type.
+Introduce GC_I to replace sbi->gc_thread for cleanup, no logic changes.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/inode.c | 12 +++++++++---
- fs/f2fs/namei.c |  3 +++
- fs/f2fs/super.c |  1 -
- 3 files changed, 12 insertions(+), 4 deletions(-)
+ fs/f2fs/debug.c   |  2 +-
+ fs/f2fs/f2fs.h    |  5 +++++
+ fs/f2fs/gc.c      | 14 +++++++-------
+ fs/f2fs/segment.c |  4 ++--
+ fs/f2fs/super.c   |  4 ++--
+ fs/f2fs/sysfs.c   |  8 ++++----
+ 6 files changed, 21 insertions(+), 16 deletions(-)
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 7f2fe4574c48..3a74a1cf3264 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -232,8 +232,10 @@ static int do_read_inode(struct inode *inode)
- 	inode->i_ctime.tv_nsec = le32_to_cpu(ri->i_ctime_nsec);
- 	inode->i_mtime.tv_nsec = le32_to_cpu(ri->i_mtime_nsec);
- 	inode->i_generation = le32_to_cpu(ri->i_generation);
--
--	fi->i_current_depth = le32_to_cpu(ri->i_current_depth);
-+	if (S_ISDIR(inode->i_mode))
-+		fi->i_current_depth = le32_to_cpu(ri->i_current_depth);
-+	else if (S_ISREG(inode->i_mode))
-+		fi->i_gc_failures = le16_to_cpu(ri->i_gc_failures);
- 	fi->i_xattr_nid = le32_to_cpu(ri->i_xattr_nid);
- 	fi->i_flags = le32_to_cpu(ri->i_flags);
- 	fi->flags = 0;
-@@ -422,7 +424,11 @@ void update_inode(struct inode *inode, struct page *node_page)
- 	ri->i_atime_nsec = cpu_to_le32(inode->i_atime.tv_nsec);
- 	ri->i_ctime_nsec = cpu_to_le32(inode->i_ctime.tv_nsec);
- 	ri->i_mtime_nsec = cpu_to_le32(inode->i_mtime.tv_nsec);
--	ri->i_current_depth = cpu_to_le32(F2FS_I(inode)->i_current_depth);
-+	if (S_ISDIR(inode->i_mode))
-+		ri->i_current_depth =
-+			cpu_to_le32(F2FS_I(inode)->i_current_depth);
-+	else if (S_ISREG(inode->i_mode))
-+		ri->i_gc_failures = cpu_to_le16(F2FS_I(inode)->i_gc_failures);
- 	ri->i_xattr_nid = cpu_to_le32(F2FS_I(inode)->i_xattr_nid);
- 	ri->i_flags = cpu_to_le32(F2FS_I(inode)->i_flags);
- 	ri->i_pino = cpu_to_le32(F2FS_I(inode)->i_pino);
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index fef6e3ab2135..bcfc4219b29e 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -54,6 +54,9 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 			F2FS_I(inode)->i_crtime = current_time(inode);
- 	inode->i_generation = sbi->s_next_generation++;
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index a66107b5cfff..d92a01cb420c 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -221,7 +221,7 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
+ 	si->cache_mem = 0;
  
-+	if (S_ISDIR(inode->i_mode))
-+		F2FS_I(inode)->i_current_depth = 1;
+ 	/* build gc */
+-	if (sbi->gc_thread)
++	if (GC_I(sbi))
+ 		si->cache_mem += sizeof(struct f2fs_gc_kthread);
+ 
+ 	/* build merge flush thread */
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 80490a7991a7..06ca1e218c01 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1411,6 +1411,11 @@ static inline struct sit_info *SIT_I(struct f2fs_sb_info *sbi)
+ 	return (struct sit_info *)(SM_I(sbi)->sit_info);
+ }
+ 
++static inline struct f2fs_gc_kthread *GC_I(struct f2fs_sb_info *sbi)
++{
++	return (struct f2fs_gc_kthread *)(sbi->gc_thread);
++}
 +
- 	err = insert_inode_locked(inode);
- 	if (err) {
- 		err = -EINVAL;
+ static inline struct free_segmap_info *FREE_I(struct f2fs_sb_info *sbi)
+ {
+ 	return (struct free_segmap_info *)(SM_I(sbi)->free_info);
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index d7d469f9be0a..812189dd06e5 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -26,8 +26,8 @@
+ static int gc_thread_func(void *data)
+ {
+ 	struct f2fs_sb_info *sbi = data;
+-	struct f2fs_gc_kthread *gc_th = sbi->gc_thread;
+-	wait_queue_head_t *wq = &sbi->gc_thread->gc_wait_queue_head;
++	struct f2fs_gc_kthread *gc_th = GC_I(sbi);
++	wait_queue_head_t *wq = &gc_th->gc_wait_queue_head;
+ 	unsigned int wait_ms;
+ 
+ 	wait_ms = gc_th->min_sleep_time;
+@@ -136,8 +136,8 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
+ 	gc_th->gc_wake= 0;
+ 
+ 	sbi->gc_thread = gc_th;
+-	init_waitqueue_head(&sbi->gc_thread->gc_wait_queue_head);
+-	sbi->gc_thread->f2fs_gc_task = kthread_run(gc_thread_func, sbi,
++	init_waitqueue_head(&gc_th->gc_wait_queue_head);
++	gc_th->f2fs_gc_task = kthread_run(gc_thread_func, sbi,
+ 			"f2fs_gc-%u:%u", MAJOR(dev), MINOR(dev));
+ 	if (IS_ERR(gc_th->f2fs_gc_task)) {
+ 		err = PTR_ERR(gc_th->f2fs_gc_task);
+@@ -150,7 +150,7 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
+ 
+ void stop_gc_thread(struct f2fs_sb_info *sbi)
+ {
+-	struct f2fs_gc_kthread *gc_th = sbi->gc_thread;
++	struct f2fs_gc_kthread *gc_th = GC_I(sbi);
+ 	if (!gc_th)
+ 		return;
+ 	kthread_stop(gc_th->f2fs_gc_task);
+@@ -188,7 +188,7 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
+ 		p->ofs_unit = 1;
+ 	} else {
+ 		down_read(&sbi->sb->s_umount);
+-		p->gc_mode = select_gc_type(sbi->gc_thread, gc_type);
++		p->gc_mode = select_gc_type(GC_I(sbi), gc_type);
+ 		up_read(&sbi->sb->s_umount);
+ 		p->dirty_segmap = dirty_i->dirty_segmap[DIRTY];
+ 		p->max_search = dirty_i->nr_dirty[DIRTY];
+@@ -198,7 +198,7 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
+ 	/* we need to check every dirty segments in the FG_GC case */
+ 	down_read(&sbi->sb->s_umount);
+ 	if (gc_type != FG_GC &&
+-			(sbi->gc_thread && !sbi->gc_thread->gc_urgent) &&
++			(GC_I(sbi) && !GC_I(sbi)->gc_urgent) &&
+ 			p->max_search > sbi->max_victim_search)
+ 		p->max_search = sbi->max_victim_search;
+ 	up_read(&sbi->sb->s_umount);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 74e184ab0544..ef7d46c106df 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -180,7 +180,7 @@ bool need_SSR(struct f2fs_sb_info *sbi)
+ 		return false;
+ 
+ 	down_read(&sbi->sb->s_umount);
+-	if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
++	if (GC_I(sbi) && GC_I(sbi)->gc_urgent)
+ 		gc_urgent = true;
+ 	up_read(&sbi->sb->s_umount);
+ 
+@@ -1429,7 +1429,7 @@ static int issue_discard_thread(void *data)
+ 			dcc->discard_wake = 0;
+ 
+ 		down_read(&sbi->sb->s_umount);
+-		if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
++		if (GC_I(sbi) && GC_I(sbi)->gc_urgent)
+ 			init_discard_policy(&dpolicy, DPOLICY_FORCE, 1);
+ 		up_read(&sbi->sb->s_umount);
+ 
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index c8e5fe5d71fe..8e5f0a178f5d 100644
+index 8e5f0a178f5d..77ad8aa7c1ed 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -826,7 +826,6 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+@@ -1475,11 +1475,11 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 	 * option. Also sync the filesystem.
+ 	 */
+ 	if ((*flags & SB_RDONLY) || !test_opt(sbi, BG_GC)) {
+-		if (sbi->gc_thread) {
++		if (GC_I(sbi)) {
+ 			stop_gc_thread(sbi);
+ 			need_restart_gc = true;
+ 		}
+-	} else if (!sbi->gc_thread) {
++	} else if (!GC_I(sbi)) {
+ 		err = start_gc_thread(sbi);
+ 		if (err)
+ 			goto restore_opts;
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 1cba68812b32..9999b9f53ed2 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -46,7 +46,7 @@ struct f2fs_attr {
+ static unsigned char *__struct_ptr(struct f2fs_sb_info *sbi, int struct_type)
+ {
+ 	if (struct_type == GC_THREAD)
+-		return (unsigned char *)sbi->gc_thread;
++		return (unsigned char *)GC_I(sbi);
+ 	else if (struct_type == SM_INFO)
+ 		return (unsigned char *)SM_I(sbi);
+ 	else if (struct_type == DCC_INFO)
+@@ -255,9 +255,9 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+ 	if (gc_entry)
+ 		down_read(&sbi->sb->s_umount);
  
- 	/* Initialize f2fs-specific inode info */
- 	atomic_set(&fi->dirty_pages, 0);
--	fi->i_current_depth = 1;
- 	init_rwsem(&fi->i_sem);
- 	INIT_LIST_HEAD(&fi->dirty_list);
- 	INIT_LIST_HEAD(&fi->gdirty_list);
+-	if (!strcmp(a->attr.name, "gc_urgent") && t == 1 && sbi->gc_thread) {
+-		sbi->gc_thread->gc_wake = 1;
+-		wake_up_interruptible_all(&sbi->gc_thread->gc_wait_queue_head);
++	if (!strcmp(a->attr.name, "gc_urgent") && t == 1 && GC_I(sbi)) {
++		GC_I(sbi)->gc_wake = 1;
++		wake_up_interruptible_all(&GC_I(sbi)->gc_wait_queue_head);
+ 		wake_up_discard_thread(sbi, true);
+ 	}
+ 
 -- 
 2.17.0.391.g1f1cddd558b5
