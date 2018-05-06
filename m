@@ -1,176 +1,67 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH v3] f2fs: fix to avoid race during access gc_thread
- pointer
-Date: Sat, 5 May 2018 22:55:21 +0800
-Message-ID: <7eab0f8b-740e-37c9-c4fd-e03ac3573aa1@kernel.org>
-References: <20180505100201.49818-1-yuchao0@huawei.com>
+From: Adam Borowski <kilobyte@angband.pl>
+Subject: [PATCH] libf2fs: quote non-printables when displaying
+ "disk model"
+Date: Mon,  7 May 2018 00:50:14 +0200
+Message-ID: <20180506225014.28201-1-kilobyte@angband.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180505100201.49818-1-yuchao0@huawei.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <kilobyte@angband.pl>) id 1fFSmM-0003PL-KZ
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 06 May 2018 23:09:18 +0000
+Received: from tartarus.angband.pl ([89.206.35.136])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fFSmK-009Vh9-5H
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 06 May 2018 23:09:18 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: Adam Borowski <kilobyte@angband.pl>
 
-On 2018/5/5 18:02, Chao Yu wrote:
-> Thread A			Thread B		Thread C
-> - f2fs_remount
->  - stop_gc_thread
-> 				- f2fs_sbi_store
-> 							- issue_discard_thread
->    sbi->gc_thread = NULL;
-> 				  sbi->gc_thread->gc_wake = 1
-> 							  access sbi->gc_thread->gc_urgent
-> 
-> Previously, we allocate memory for sbi->gc_thread based on background
-> gc thread mount option, the memory can be released if we turn off
-> that mount option, but still there are several places access gc_thread
-> pointer without considering race condition, result in NULL point
-> dereference.
-> 
-> In order to fix this issue, use sb->s_umount to exclude those operations
+One offender I own has:
+STORAGE DEVICE  1404x05xe3x07QGENEx00%x00x00x00x00x00x00x00x00x00x00x00x00x170x04
 
-I encounter deadlock with this patch
+I limited it to pure ASCII only, but you might want to allow high-bit bytes,
+either validating UTF-8 or assuming that mojibake is not as bad as beep and
+zeroes as in the above example.  Or, cutting off at the first control
+character might be a good alternative too.
 
- dump_stack+0x5f/0x86
- __lock_acquire+0xff7/0x10e0
- lock_acquire+0xae/0x220
- down_read+0x38/0x60			try lock s_umount again
- need_SSR+0x5d/0x160 [f2fs]
- allocate_segment_by_default+0xb7/0x1c0 [f2fs]
- allocate_data_block+0x183/0x4c0 [f2fs]
- do_write_page+0x52/0x80 [f2fs]
- write_data_page+0x4a/0xd0 [f2fs]
- do_write_data_page+0x327/0x630 [f2fs]
- __write_data_page+0x34b/0x800 [f2fs]
- __f2fs_write_data_pages+0x3f1/0x8e0 [f2fs]
- f2fs_write_data_pages+0x27/0x30 [f2fs]
- do_writepages+0x1a/0x70
- __writeback_single_inode+0x55/0x7e0
- writeback_sb_inodes+0x21b/0x490
- __writeback_inodes_wb+0x7c/0xb0	trylock_super has alread hold s_umount
- wb_writeback+0x3e2/0x580
- wb_workfn+0x251/0x6b0
- process_one_work+0x196/0x550
- worker_thread+0x31/0x360
- kthread+0xe3/0x110
- ret_from_fork+0x2e/0x38
+Signed-off-by: Adam Borowski <kilobyte@angband.pl>
+---
+ lib/libf2fs.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-So, is it better to introduce private lock to avoid the race condition?
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index 5ef0214..8782afc 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -884,8 +884,9 @@ int get_device_info(int i)
+ 
+ 			MSG(0, "Info: [%s] Disk Model: ",
+ 					dev->path);
+-			while (reply_buffer[i] != '`' && i < 80)
+-				printf("%c", reply_buffer[i++]);
++			for (; reply_buffer[i] != '`' && i < 80; i++)
++				printf((reply_buffer[i] >= ' ' && reply_buffer[i] < 127) ?
++				       "%c" : "x%02x", reply_buffer[i]);
+ 			printf("\n");
+ 		}
+ #endif
+-- 
+2.17.0
 
-Thanks,
 
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
-> v3:
-> - use sb->s_umount to make all race cases exclusive.
->  fs/f2fs/gc.c      |  4 ++++
->  fs/f2fs/segment.c | 11 ++++++++++-
->  fs/f2fs/sysfs.c   | 14 +++++++++++---
->  3 files changed, 25 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 9bb2ddbbed1e..d7d469f9be0a 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -187,17 +187,21 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
->  		p->max_search = dirty_i->nr_dirty[type];
->  		p->ofs_unit = 1;
->  	} else {
-> +		down_read(&sbi->sb->s_umount);
->  		p->gc_mode = select_gc_type(sbi->gc_thread, gc_type);
-> +		up_read(&sbi->sb->s_umount);
->  		p->dirty_segmap = dirty_i->dirty_segmap[DIRTY];
->  		p->max_search = dirty_i->nr_dirty[DIRTY];
->  		p->ofs_unit = sbi->segs_per_sec;
->  	}
->  
->  	/* we need to check every dirty segments in the FG_GC case */
-> +	down_read(&sbi->sb->s_umount);
->  	if (gc_type != FG_GC &&
->  			(sbi->gc_thread && !sbi->gc_thread->gc_urgent) &&
->  			p->max_search > sbi->max_victim_search)
->  		p->max_search = sbi->max_victim_search;
-> +	up_read(&sbi->sb->s_umount);
->  
->  	/* let's select beginning hot/small space first in no_heap mode*/
->  	if (test_opt(sbi, NOHEAP) &&
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 320cc1c57246..74e184ab0544 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -174,11 +174,18 @@ bool need_SSR(struct f2fs_sb_info *sbi)
->  	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
->  	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
->  	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
-> +	bool gc_urgent = false;
->  
->  	if (test_opt(sbi, LFS))
->  		return false;
-> +
-> +	down_read(&sbi->sb->s_umount);
->  	if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
-> -		return true;
-> +		gc_urgent = true;
-> +	up_read(&sbi->sb->s_umount);
-> +
-> +	if (gc_urgent)
-> +		return false;
->  
->  	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
->  			SM_I(sbi)->min_ssr_sections + reserved_sections(sbi));
-> @@ -1421,8 +1428,10 @@ static int issue_discard_thread(void *data)
->  		if (dcc->discard_wake)
->  			dcc->discard_wake = 0;
->  
-> +		down_read(&sbi->sb->s_umount);
->  		if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
->  			init_discard_policy(&dpolicy, DPOLICY_FORCE, 1);
-> +		up_read(&sbi->sb->s_umount);
->  
->  		sb_start_intwrite(sbi->sb);
->  
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index 6d8d8f41e517..1cba68812b32 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -173,6 +173,7 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
->  	unsigned long t;
->  	unsigned int *ui;
->  	ssize_t ret;
-> +	bool gc_entry = (a->struct_type == GC_THREAD);
->  
->  	ptr = __struct_ptr(sbi, a->struct_type);
->  	if (!ptr)
-> @@ -248,16 +249,23 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
->  	if (!strcmp(a->attr.name, "trim_sections"))
->  		return -EINVAL;
->  
-> -	*ui = t;
-> -
-> -	if (!strcmp(a->attr.name, "iostat_enable") && *ui == 0)
-> +	if (!strcmp(a->attr.name, "iostat_enable") && t == 0)
->  		f2fs_reset_iostat(sbi);
-> +
-> +	if (gc_entry)
-> +		down_read(&sbi->sb->s_umount);
-> +
->  	if (!strcmp(a->attr.name, "gc_urgent") && t == 1 && sbi->gc_thread) {
->  		sbi->gc_thread->gc_wake = 1;
->  		wake_up_interruptible_all(&sbi->gc_thread->gc_wait_queue_head);
->  		wake_up_discard_thread(sbi, true);
->  	}
->  
-> +	*ui = t;
-> +
-> +	if (gc_entry)
-> +		up_read(&sbi->sb->s_umount);
-> +
->  	return count;
->  }
->  
-> 
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
