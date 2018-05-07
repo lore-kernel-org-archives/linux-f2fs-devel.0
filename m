@@ -1,126 +1,195 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [RFC PATCH] f2fs-tools: introduce tune.f2fs
-Date: Mon, 7 May 2018 20:25:14 +0800
-Message-ID: <3be5fc55-96ac-b70e-5a1f-ef3d7ea84e23@huawei.com>
-References: <13c34f59-6f6a-8252-0a9f-effccbcd6db0@huawei.com>
- <20180423073202.150763-1-zhengjunling@huawei.com>
- <40f78225-7a7d-e761-2e84-f357b7fecf2e@huawei.com>
- <20180426161315.GK68594@jaegeuk-macbookpro.roam.corp.google.com>
- <11707e83-2478-f6d6-bc7e-c19cd44a55c2@huawei.com>
- <20180428024946.GE10595@jaegeuk-macbookpro.roam.corp.google.com>
- <367bf3b0-461d-eada-89ff-817cfb3c7fd3@huawei.com>
- <20180504190607.GE27993@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: [PATCH v4] f2fs: fix to avoid race during access gc_thread pointer
+Date: Mon, 7 May 2018 20:26:59 +0800
+Message-ID: <20180507122659.86536-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fFfCu-0003Ul-I0
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 May 2018 12:25:32 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fFfCs-00Ac4G-LE
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 May 2018 12:25:32 +0000
-In-Reply-To: <20180504190607.GE27993@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/5/5 3:06, Jaegeuk Kim wrote:
-> On 05/02, Chao Yu wrote:
->> On 2018/4/28 10:49, Jaegeuk Kim wrote:
->>> On 04/27, Chao Yu wrote:
->>>> On 2018/4/27 0:13, Jaegeuk Kim wrote:
->>>>> On 04/26, Junling Zheng wrote:
->>>>>> Ping...
->>>>>>
->>>>>> On 2018/4/23 15:32, Junling Zheng wrote:
->>>>>>> Introduce tune.f2fs tool to change the f2fs parameters.
->>>>>>> Currently this tool only supports adding or removing encrypt
->>>>>>> feature bit in superblock.
->>>>>
->>>>> What is the purpose of this empty tune.f2fs? How can we say we have this
->>>>> tool to users? You have to design what kind of things to support first.
->>>>
->>>> I checked very initial tune2fs.c, it only supports very few parameters tuning
->>>> functionality, but, can not say that is a bad start to introduce the misc tool.
->>>>
->>>> +       fprintf (stderr, "Usage: %s [-c max-mounts-count] [-e errors-behavior] "
->>>> +                "[-i interval[d|m]]\n"
->>>> +                "\t[-l] [-m reserved-blocks-percent] device\n", program_name);
->>>
->>> I don't think We have to follow that.
->>>
->>>>
->>>> Maybe tuning 1. extension list, 2. multi device name later? just guess.
->>>
->>> First of all, does it make sense to unset feature bits? I don't think so.
->>
->> Some features can be turned off in a initial image? like encrypted, extra_attr,
->> checksum...?
-> 
-> Any reason to do thtat? And, we need to find all the files whether there is
+Thread A			Thread B		Thread C
+- f2fs_remount
+ - stop_gc_thread
+				- f2fs_sbi_store
+							- issue_discard_thread
+   sbi->gc_thread = NULL;
+				  sbi->gc_thread->gc_wake = 1
+							  access sbi->gc_thread->gc_urgent
 
-Not very sure, just checked tune2fs, and found them in manual, guessing that
-there came demand from user who want to disable some feature in a formatted
-partition?
+Previously, we allocate memory for sbi->gc_thread based on background
+gc thread mount option, the memory can be released if we turn off
+that mount option, but still there are several places access gc_thread
+pointer without considering race condition, result in NULL point
+dereference.
 
-> any encrypted file.
-> 
->>
->>>
->>> Agreed to your suggestion where:
->>> 1. feature set
->>>   - enable system quota
->>> 2. extension list
->>> 3. multi device name -- which may be really big trial
->>
->> So what's our plan now? fill those features into fsck when we need them?
-> 
-> No. If you want to add tune.f2fs, I'd like to see some demand, or very useful
-> features like this. I just want to avoid introducing an (almost) empty tool.
+In order to fix this issue, introduce gc_rwsem to exclude those operations.
 
-Yeah, I see.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v4:
+- use introduced sbi.gc_rwsem lock instead of sb.s_umount.
+ fs/f2fs/f2fs.h    |  1 +
+ fs/f2fs/gc.c      |  4 ++++
+ fs/f2fs/segment.c | 11 ++++++++++-
+ fs/f2fs/super.c   | 19 ++++++++++++++-----
+ fs/f2fs/sysfs.c   | 14 +++++++++++---
+ 5 files changed, 40 insertions(+), 9 deletions(-)
 
-Maybe we can support below options except feature/extension_list/device_name.
--Q quota-options	set,clear user/group/prjquota sysfile inode.
--U UUID			set,clear uuid
--L volume-label		set,clear volume name
-
-Thanks,
-
-> 
-> Thanks,
-> 
->>
->> Thanks,
->>
->>>
->>>>
->>>> Using fsck.f2fs to tune parameter, IMO, maybe a little confuse for user to
->>>> understand the tool's functionality.
->>>>
->>>> Thanks,
->>>
->>> .
->>>
-> 
-> .
-> 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 80490a7991a7..e238d0ea0be7 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1191,6 +1191,7 @@ struct f2fs_sb_info {
+ 
+ 	/* for cleaning operations */
+ 	struct mutex gc_mutex;			/* mutex for GC */
++	struct rw_semaphore gc_rwsem;		/* rw semaphore for gc_thread */
+ 	struct f2fs_gc_kthread	*gc_thread;	/* GC thread */
+ 	unsigned int cur_victim_sec;		/* current victim section num */
+ 
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 9bb2ddbbed1e..b74714be7be7 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -187,17 +187,21 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
+ 		p->max_search = dirty_i->nr_dirty[type];
+ 		p->ofs_unit = 1;
+ 	} else {
++		down_read(&sbi->gc_rwsem);
+ 		p->gc_mode = select_gc_type(sbi->gc_thread, gc_type);
++		up_read(&sbi->gc_rwsem);
+ 		p->dirty_segmap = dirty_i->dirty_segmap[DIRTY];
+ 		p->max_search = dirty_i->nr_dirty[DIRTY];
+ 		p->ofs_unit = sbi->segs_per_sec;
+ 	}
+ 
+ 	/* we need to check every dirty segments in the FG_GC case */
++	down_read(&sbi->gc_rwsem);
+ 	if (gc_type != FG_GC &&
+ 			(sbi->gc_thread && !sbi->gc_thread->gc_urgent) &&
+ 			p->max_search > sbi->max_victim_search)
+ 		p->max_search = sbi->max_victim_search;
++	up_read(&sbi->gc_rwsem);
+ 
+ 	/* let's select beginning hot/small space first in no_heap mode*/
+ 	if (test_opt(sbi, NOHEAP) &&
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 320cc1c57246..33d146939048 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -174,11 +174,18 @@ bool need_SSR(struct f2fs_sb_info *sbi)
+ 	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
+ 	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
+ 	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
++	bool gc_urgent = false;
+ 
+ 	if (test_opt(sbi, LFS))
+ 		return false;
++
++	down_read(&sbi->gc_rwsem);
+ 	if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
+-		return true;
++		gc_urgent = true;
++	up_read(&sbi->gc_rwsem);
++
++	if (gc_urgent)
++		return false;
+ 
+ 	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
+ 			SM_I(sbi)->min_ssr_sections + reserved_sections(sbi));
+@@ -1421,8 +1428,10 @@ static int issue_discard_thread(void *data)
+ 		if (dcc->discard_wake)
+ 			dcc->discard_wake = 0;
+ 
++		down_read(&sbi->gc_rwsem);
+ 		if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
+ 			init_discard_policy(&dpolicy, DPOLICY_FORCE, 1);
++		up_read(&sbi->gc_rwsem);
+ 
+ 		sb_start_intwrite(sbi->sb);
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index c8e5fe5d71fe..294be9e92aee 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1476,15 +1476,23 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 	 * option. Also sync the filesystem.
+ 	 */
+ 	if ((*flags & SB_RDONLY) || !test_opt(sbi, BG_GC)) {
++		down_write(&sbi->gc_rwsem);
+ 		if (sbi->gc_thread) {
+ 			stop_gc_thread(sbi);
+ 			need_restart_gc = true;
+ 		}
+-	} else if (!sbi->gc_thread) {
+-		err = start_gc_thread(sbi);
+-		if (err)
+-			goto restore_opts;
+-		need_stop_gc = true;
++		up_write(&sbi->gc_rwsem);
++	} else {
++		down_write(&sbi->gc_rwsem);
++		if (!sbi->gc_thread) {
++			err = start_gc_thread(sbi);
++			if (err) {
++				up_write(&sbi->gc_rwsem);
++				goto restore_opts;
++			}
++			need_stop_gc = true;
++		}
++		up_write(&sbi->gc_rwsem);
+ 	}
+ 
+ 	if (*flags & SB_RDONLY ||
+@@ -2802,6 +2810,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	}
+ 
+ 	init_rwsem(&sbi->cp_rwsem);
++	init_rwsem(&sbi->gc_rwsem);
+ 	init_waitqueue_head(&sbi->cp_wait);
+ 	init_sb_info(sbi);
+ 
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 6d8d8f41e517..34c542dbc459 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -173,6 +173,7 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+ 	unsigned long t;
+ 	unsigned int *ui;
+ 	ssize_t ret;
++	bool gc_entry = (a->struct_type == GC_THREAD);
+ 
+ 	ptr = __struct_ptr(sbi, a->struct_type);
+ 	if (!ptr)
+@@ -248,16 +249,23 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+ 	if (!strcmp(a->attr.name, "trim_sections"))
+ 		return -EINVAL;
+ 
+-	*ui = t;
+-
+-	if (!strcmp(a->attr.name, "iostat_enable") && *ui == 0)
++	if (!strcmp(a->attr.name, "iostat_enable") && t == 0)
+ 		f2fs_reset_iostat(sbi);
++
++	if (gc_entry)
++		down_read(&sbi->gc_rwsem);
++
+ 	if (!strcmp(a->attr.name, "gc_urgent") && t == 1 && sbi->gc_thread) {
+ 		sbi->gc_thread->gc_wake = 1;
+ 		wake_up_interruptible_all(&sbi->gc_thread->gc_wait_queue_head);
+ 		wake_up_discard_thread(sbi, true);
+ 	}
+ 
++	*ui = t;
++
++	if (gc_entry)
++		up_read(&sbi->gc_rwsem);
++
+ 	return count;
+ }
+ 
+-- 
+2.17.0.391.g1f1cddd558b5
