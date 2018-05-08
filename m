@@ -1,71 +1,116 @@
-From: Junling Zheng <zhengjunling@huawei.com>
-Subject: Re: [PATCH] sload.f2fs: give correct file type
-Date: Tue, 8 May 2018 10:11:57 +0800
-Message-ID: <f2305d45-7866-801a-328a-a0574ea504be@huawei.com>
-References: <20180507185833.76359-1-jaegeuk@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to wait atomic pages writeback in block_operations()
+Date: Tue, 8 May 2018 10:40:37 +0800
+Message-ID: <20180508024037.16636-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <zhengjunling@huawei.com>) id 1fFs6m-0007k2-2O
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 08 May 2018 02:12:04 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fFs6j-00BCb1-Kc
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 08 May 2018 02:12:03 +0000
-In-Reply-To: <20180507185833.76359-1-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
-Cc: Lianjun Huang <huanglianjun@vivo.com>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi, Jaegeuk
+1. thread A: commit_inmem_pages submit data into block layer, but
+haven't waited it writeback.
+2. thread A: commit_inmem_pages update related node.
+3. thread B: do checkpoint, flush all nodes to disk.
+4. SPOR
 
-My previous patch (sload.f2fs: fix the missing of bit mask for file type) had
-already fix this bug :)
+Then, atomic file becomes corrupted since nodes is flushed before data.
 
-Thanks,
-Junling
+This patch fixes to try to wait all atomic pages writeback in
+block_operations().
 
-On 2018/5/8 2:58, Jaegeuk Kim wrote:
-> From: Lianjun Huang <huanglianjun@vivo.com>
-> 
-> This fixes permission error due to wrong file type.
-> 
-> Signed-off-by: Lianjun Huang <huanglianjun@vivo.com>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fsck/sload.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fsck/sload.c b/fsck/sload.c
-> index 2842f2c..2fb13f2 100644
-> --- a/fsck/sload.c
-> +++ b/fsck/sload.c
-> @@ -106,7 +106,7 @@ static int set_perms_and_caps(struct dentry *de)
->  
->  	/* Permissions */
->  	if (fs_config_func != NULL) {
-> -		fs_config_func(mnt_path, S_ISDIR(de->mode),
-> +		fs_config_func(mnt_path, de->file_type == F2FS_FT_DIR,
->  				c.target_out_dir, &uid, &gid, &imode,
->  				&capabilities);
->  		de->uid = uid & 0xffff;
-> 
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/checkpoint.c |  4 +++-
+ fs/f2fs/data.c       |  2 ++
+ fs/f2fs/f2fs.h       |  2 ++
+ fs/f2fs/segment.c    | 17 +++++++++++++++++
+ 4 files changed, 24 insertions(+), 1 deletion(-)
 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 33d2da006789..d53d53f55c51 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1067,6 +1067,8 @@ static int block_operations(struct f2fs_sb_info *sbi)
+ 		goto retry_flush_dents;
+ 	}
+ 
++	wait_inmem_pages_writeback(sbi);
++
+ 	/*
+ 	 * POR: we should ensure that there are no dirty node pages
+ 	 * until finishing nat/sit flush. inode->i_blocks can be updated.
+@@ -1115,7 +1117,7 @@ static void unblock_operations(struct f2fs_sb_info *sbi)
+ 	f2fs_unlock_all(sbi);
+ }
+ 
+-static void wait_on_all_pages_writeback(struct f2fs_sb_info *sbi)
++void wait_on_all_pages_writeback(struct f2fs_sb_info *sbi)
+ {
+ 	DEFINE_WAIT(wait);
+ 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 5a979b5ee278..c181f58948c0 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -48,6 +48,8 @@ static bool __is_cp_guaranteed(struct page *page)
+ 	if (inode->i_ino == F2FS_META_INO(sbi) ||
+ 			inode->i_ino ==  F2FS_NODE_INO(sbi) ||
+ 			S_ISDIR(inode->i_mode) ||
++			(S_ISREG(inode->i_mode) &&
++			is_inode_flag_set(inode, FI_ATOMIC_FILE)) ||
+ 			is_cold_data(page))
+ 		return true;
+ 	return false;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index bda9c3ce08ef..adfd512ae4a1 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2839,6 +2839,7 @@ void destroy_node_manager_caches(void);
+ bool need_SSR(struct f2fs_sb_info *sbi);
+ void register_inmem_page(struct inode *inode, struct page *page);
+ void drop_inmem_pages_all(struct f2fs_sb_info *sbi, bool gc_failure);
++void wait_inmem_pages_writeback(struct f2fs_sb_info *sbi);
+ void drop_inmem_pages(struct inode *inode);
+ void drop_inmem_page(struct inode *inode, struct page *page);
+ int commit_inmem_pages(struct inode *inode);
+@@ -2926,6 +2927,7 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi);
+ void update_dirty_page(struct inode *inode, struct page *page);
+ void remove_dirty_inode(struct inode *inode);
+ int sync_dirty_inodes(struct f2fs_sb_info *sbi, enum inode_type type);
++void wait_on_all_pages_writeback(struct f2fs_sb_info *sbi);
+ int write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc);
+ void init_ino_entry_info(struct f2fs_sb_info *sbi);
+ int __init create_checkpoint_caches(void);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 24b71d450374..e8a81cbd6808 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -305,6 +305,23 @@ void drop_inmem_pages_all(struct f2fs_sb_info *sbi, bool gc_failure)
+ 	goto next;
+ }
+ 
++void wait_inmem_pages_writeback(struct f2fs_sb_info *sbi)
++{
++	struct list_head *head = &sbi->inode_list[ATOMIC_FILE];
++	struct f2fs_inode_info *fi;
++
++	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
++	list_for_each_entry(fi, head, inmem_ilist) {
++		if (!down_read_trylock(&fi->i_gc_rwsem[WRITE])) {
++			spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
++			wait_on_all_pages_writeback(sbi);
++			return;
++		}
++		up_read(&fi->i_gc_rwsem[WRITE]);
++	}
++	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
++}
++
+ void drop_inmem_pages(struct inode *inode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-- 
+2.17.0.391.g1f1cddd558b5
