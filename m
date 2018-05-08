@@ -1,147 +1,77 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: fix to wait IO writeback in __revoke_inmem_pages()
-Date: Tue, 8 May 2018 10:54:40 +0800
-Message-ID: <f986a4d9-e2d4-17d6-7179-53d353fae90d@huawei.com>
-References: <20180426083247.86337-1-yuchao0@huawei.com>
- <20180426154817.GF68594@jaegeuk-macbookpro.roam.corp.google.com>
- <7810a3a3-70f3-9b37-e64a-f26dba72b0f9@kernel.org>
- <20180426163651.GL68594@jaegeuk-macbookpro.roam.corp.google.com>
- <3cae6be6-365d-8e48-b1db-8b04f96634e4@huawei.com>
- <20180507204630.GB83867@jaegeuk-macbookpro.roam.corp.google.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] sload.f2fs: give correct file type
+Date: Mon, 7 May 2018 19:54:46 -0700
+Message-ID: <20180508025446.GA17507@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180507185833.76359-1-jaegeuk@kernel.org>
+ <f2305d45-7866-801a-328a-a0574ea504be@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180507204630.GB83867@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1fFsmF-0001HV-Ut
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 08 May 2018 02:54:55 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fFsmE-008vMc-39
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 08 May 2018 02:54:55 +0000
+Content-Disposition: inline
+In-Reply-To: <f2305d45-7866-801a-328a-a0574ea504be@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Junling Zheng <zhengjunling@huawei.com>
+Cc: Lianjun Huang <huanglianjun@vivo.com>, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/5/8 4:46, Jaegeuk Kim wrote:
-> On 04/27, Chao Yu wrote:
->> On 2018/4/27 0:36, Jaegeuk Kim wrote:
->>> On 04/26, Chao Yu wrote:
->>>> On 2018/4/26 23:48, Jaegeuk Kim wrote:
->>>>> On 04/26, Chao Yu wrote:
->>>>>> Thread A				Thread B
->>>>>> - f2fs_ioc_commit_atomic_write
->>>>>>  - commit_inmem_pages
->>>>>>   - f2fs_submit_merged_write_cond
->>>>>>   : write data
->>>>>> 					- write_checkpoint
->>>>>> 					 - do_checkpoint
->>>>>> 					 : commit all node within CP
->>>>>> 					 -> SPO
->>>>>>   - f2fs_do_sync_file
->>>>>>    - file_write_and_wait_range
->>>>>>    : wait data writeback
->>>>>>
->>>>>> In above race condition, data/node can be flushed in reversed order when
->>>>>> coming a checkpoint before f2fs_do_sync_file, after SPOR, it results in
->>>>>> atomic written data being corrupted.
->>>>>
->>>>> Wait, what is the problem here? Thread B could succeed checkpoint, there is
->>>>> no problem. If it fails, there is no fsync mark where we can recover it, so
->>>>
->>>> Node is flushed by checkpoint before data, with reversed order, that's the problem.
->>>
->>> What do you mean? Data should be in disk, in order to proceed checkpoint.
->>
->> 1. thread A: commit_inmem_pages submit data into block layer, but haven't waited
->> it writeback.
->> 2. thread A: commit_inmem_pages update related node.
->> 3. thread B: do checkpoint, flush all nodes to disk
+On 05/08, Junling Zheng wrote:
+> Hi, Jaegeuk
 > 
-> How about, in block_operations(),
-> 
-> 	down_read_trylock(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> 	if (fail)
-> 		wait_on_all_pages_writeback(F2FS_WB_DATA);
-> 	else
-> 		up_read(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> My previous patch (sload.f2fs: fix the missing of bit mask for file type) had
+> already fix this bug :)
 
-I sent one patch for that, could you check it?
-
-Adding wait_on_all_pages_writeback in block_operations() can make checkpoint()
-wait pages writeback one more time, which break IO flow, so what's your concern
-here?
-
-Thanks,
+I guessed it before, but this is also reasonable to me where de->file_type
+is based on F2FS_FT_DIR.
 
 > 
+> Thanks,
+> Junling
 > 
->> 4. SPOR
->>
->> Then, atomic file becomes corrupted since nodes is flushed before data.
->>
->> Thanks,
->>
->>>
->>>>
->>>> Thanks,
->>>>
->>>>> we can just ignore the last written data as nothing.
->>>>>
->>>>>>
->>>>>> This patch adds f2fs_wait_on_page_writeback in __revoke_inmem_pages() to
->>>>>> keep data and node of atomic file being flushed orderly.
->>>>>>
->>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>>>> ---
->>>>>>  fs/f2fs/file.c    | 4 ++++
->>>>>>  fs/f2fs/segment.c | 3 +++
->>>>>>  2 files changed, 7 insertions(+)
->>>>>>
->>>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>>>>> index be7578774a47..a352804af244 100644
->>>>>> --- a/fs/f2fs/file.c
->>>>>> +++ b/fs/f2fs/file.c
->>>>>> @@ -217,6 +217,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
->>>>>>  
->>>>>>  	trace_f2fs_sync_file_enter(inode);
->>>>>>  
->>>>>> +	if (atomic)
->>>>>> +		goto write_done;
->>>>>> +
->>>>>>  	/* if fdatasync is triggered, let's do in-place-update */
->>>>>>  	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
->>>>>>  		set_inode_flag(inode, FI_NEED_IPU);
->>>>>> @@ -228,6 +231,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
->>>>>>  		return ret;
->>>>>>  	}
->>>>>>  
->>>>>> +write_done:
->>>>>>  	/* if the inode is dirty, let's recover all the time */
->>>>>>  	if (!f2fs_skip_inode_update(inode, datasync)) {
->>>>>>  		f2fs_write_inode(inode, NULL);
->>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>>>> index 584483426584..9ca3d0a43d93 100644
->>>>>> --- a/fs/f2fs/segment.c
->>>>>> +++ b/fs/f2fs/segment.c
->>>>>> @@ -230,6 +230,8 @@ static int __revoke_inmem_pages(struct inode *inode,
->>>>>>  
->>>>>>  		lock_page(page);
->>>>>>  
->>>>>> +		f2fs_wait_on_page_writeback(page, DATA, true);
->>>>>> +
->>>>>>  		if (recover) {
->>>>>>  			struct dnode_of_data dn;
->>>>>>  			struct node_info ni;
->>>>>> @@ -415,6 +417,7 @@ static int __commit_inmem_pages(struct inode *inode)
->>>>>>  		/* drop all uncommitted pages */
->>>>>>  		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
->>>>>>  	} else {
->>>>>> +		/* wait all committed IOs writeback and release them from list */
->>>>>>  		__revoke_inmem_pages(inode, &revoke_list, false, false);
->>>>>>  	}
->>>>>>  
->>>>>> -- 
->>>>>> 2.15.0.55.gc2ece9dc4de6
->>>
->>> .
->>>
+> On 2018/5/8 2:58, Jaegeuk Kim wrote:
+> > From: Lianjun Huang <huanglianjun@vivo.com>
+> > 
+> > This fixes permission error due to wrong file type.
+> > 
+> > Signed-off-by: Lianjun Huang <huanglianjun@vivo.com>
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fsck/sload.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/fsck/sload.c b/fsck/sload.c
+> > index 2842f2c..2fb13f2 100644
+> > --- a/fsck/sload.c
+> > +++ b/fsck/sload.c
+> > @@ -106,7 +106,7 @@ static int set_perms_and_caps(struct dentry *de)
+> >  
+> >  	/* Permissions */
+> >  	if (fs_config_func != NULL) {
+> > -		fs_config_func(mnt_path, S_ISDIR(de->mode),
+> > +		fs_config_func(mnt_path, de->file_type == F2FS_FT_DIR,
+> >  				c.target_out_dir, &uid, &gid, &imode,
+> >  				&capabilities);
+> >  		de->uid = uid & 0xffff;
+> > 
 > 
-> .
-> 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
