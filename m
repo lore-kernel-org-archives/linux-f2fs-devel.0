@@ -1,273 +1,153 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v4] f2fs: fix to avoid race during access gc_thread
- pointer
-Date: Tue, 8 May 2018 11:21:40 +0800
-Message-ID: <7dd32541-0a0c-615e-5b38-2c5f1f714b5e@huawei.com>
-References: <20180507122659.86536-1-yuchao0@huawei.com>
- <20180507213610.GC83867@jaegeuk-macbookpro.roam.corp.google.com>
- <afc69260-b07d-107a-20e2-132c171ce85f@huawei.com>
- <20180508031748.GB17507@jaegeuk-macbookpro.roam.corp.google.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: fix to wait IO writeback in __revoke_inmem_pages()
+Date: Mon, 7 May 2018 20:31:55 -0700
+Message-ID: <20180508033155.GC17507@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180426083247.86337-1-yuchao0@huawei.com>
+ <20180426154817.GF68594@jaegeuk-macbookpro.roam.corp.google.com>
+ <7810a3a3-70f3-9b37-e64a-f26dba72b0f9@kernel.org>
+ <20180426163651.GL68594@jaegeuk-macbookpro.roam.corp.google.com>
+ <3cae6be6-365d-8e48-b1db-8b04f96634e4@huawei.com>
+ <20180507204630.GB83867@jaegeuk-macbookpro.roam.corp.google.com>
+ <f986a4d9-e2d4-17d6-7179-53d353fae90d@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180508031748.GB17507@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <f986a4d9-e2d4-17d6-7179-53d353fae90d@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/5/8 11:17, Jaegeuk Kim wrote:
-> On 05/08, Chao Yu wrote:
->> On 2018/5/8 5:36, Jaegeuk Kim wrote:
->>> On 05/07, Chao Yu wrote:
->>>> Thread A			Thread B		Thread C
->>>> - f2fs_remount
->>>>  - stop_gc_thread
->>>> 				- f2fs_sbi_store
->>>> 							- issue_discard_thread
->>>>    sbi->gc_thread = NULL;
->>>> 				  sbi->gc_thread->gc_wake = 1
->>>> 							  access sbi->gc_thread->gc_urgent
->>>>
->>>> Previously, we allocate memory for sbi->gc_thread based on background
->>>> gc thread mount option, the memory can be released if we turn off
->>>> that mount option, but still there are several places access gc_thread
->>>> pointer without considering race condition, result in NULL point
->>>> dereference.
->>>>
->>>> In order to fix this issue, introduce gc_rwsem to exclude those operations.
->>>>
->>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>> ---
->>>> v4:
->>>> - use introduced sbi.gc_rwsem lock instead of sb.s_umount.
->>>
->>> We can use this first.
->>>
->>> >From e62e8d3ece6ee8a4aeac8ffd6161d25851f8b3f0 Mon Sep 17 00:00:00 2001
->>> From: Jaegeuk Kim <jaegeuk@kernel.org>
->>> Date: Mon, 7 May 2018 14:22:40 -0700
->>> Subject: [PATCH] f2fs: introduce sbi->gc_mode to determine the policy
->>>
->>> This is to avoid sbi->gc_thread pointer access.
->>>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>> ---
->>>  fs/f2fs/f2fs.h    |  8 ++++++++
->>>  fs/f2fs/gc.c      | 28 ++++++++++++----------------
->>>  fs/f2fs/gc.h      |  2 --
->>>  fs/f2fs/segment.c |  4 ++--
->>>  fs/f2fs/sysfs.c   | 33 +++++++++++++++++++++++++--------
->>>  5 files changed, 47 insertions(+), 28 deletions(-)
->>>
->>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>> index 80490a7991a7..779d8b26878c 100644
->>> --- a/fs/f2fs/f2fs.h
->>> +++ b/fs/f2fs/f2fs.h
->>> @@ -1065,6 +1065,13 @@ enum {
->>>  	MAX_TIME,
->>>  };
->>>  
->>> +enum {
->>> +	GC_NORMAL,
->>> +	GC_IDLE_CB,
->>> +	GC_IDLE_GREEDY,
->>> +	GC_URGENT,
->>> +};
->>> +
->>>  enum {
->>>  	WHINT_MODE_OFF,		/* not pass down write hints */
->>>  	WHINT_MODE_USER,	/* try to pass down hints given by users */
->>> @@ -1193,6 +1200,7 @@ struct f2fs_sb_info {
->>>  	struct mutex gc_mutex;			/* mutex for GC */
->>>  	struct f2fs_gc_kthread	*gc_thread;	/* GC thread */
->>>  	unsigned int cur_victim_sec;		/* current victim section num */
->>> +	unsigned int gc_mode;			/* current GC state */
->>>  
->>>  	/* threshold for gc trials on pinned files */
->>>  	u64 gc_pin_file_threshold;
->>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>> index 9bb2ddbbed1e..7ec8ea75dfde 100644
->>> --- a/fs/f2fs/gc.c
->>> +++ b/fs/f2fs/gc.c
->>> @@ -76,7 +76,7 @@ static int gc_thread_func(void *data)
->>>  		 * invalidated soon after by user update or deletion.
->>>  		 * So, I'd like to wait some time to collect dirty segments.
->>>  		 */
->>> -		if (gc_th->gc_urgent) {
->>> +		if (sbi->gc_mode == GC_URGENT) {
->>>  			wait_ms = gc_th->urgent_sleep_time;
->>>  			mutex_lock(&sbi->gc_mutex);
->>>  			goto do_gc;
->>> @@ -131,8 +131,6 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
->>>  	gc_th->max_sleep_time = DEF_GC_THREAD_MAX_SLEEP_TIME;
->>>  	gc_th->no_gc_sleep_time = DEF_GC_THREAD_NOGC_SLEEP_TIME;
->>>  
->>> -	gc_th->gc_idle = 0;
->>> -	gc_th->gc_urgent = 0;
->>>  	gc_th->gc_wake= 0;
->>>  
->>>  	sbi->gc_thread = gc_th;
->>> @@ -158,21 +156,19 @@ void stop_gc_thread(struct f2fs_sb_info *sbi)
->>>  	sbi->gc_thread = NULL;
->>>  }
->>>  
->>> -static int select_gc_type(struct f2fs_gc_kthread *gc_th, int gc_type)
->>> +static int select_gc_type(struct f2fs_sb_info *sbi, int gc_type)
->>>  {
->>>  	int gc_mode = (gc_type == BG_GC) ? GC_CB : GC_GREEDY;
->>>  
->>> -	if (!gc_th)
->>> -		return gc_mode;
->>> -
->>> -	if (gc_th->gc_idle) {
->>> -		if (gc_th->gc_idle == 1)
->>> -			gc_mode = GC_CB;
->>> -		else if (gc_th->gc_idle == 2)
->>> -			gc_mode = GC_GREEDY;
->>> -	}
->>> -	if (gc_th->gc_urgent)
->>> +	switch (sbi->gc_mode) {
->>> +	case GC_IDLE_CB:
->>> +		gc_mode = GC_CB;
->>> +		break;
->>> +	case GC_IDLE_GREEDY:
->>> +	case GC_URGENT:
->>>  		gc_mode = GC_GREEDY;
->>> +		break;
->>> +	}
->>>  	return gc_mode;
->>>  }
->>>  
->>> @@ -187,7 +183,7 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
->>>  		p->max_search = dirty_i->nr_dirty[type];
->>>  		p->ofs_unit = 1;
->>>  	} else {
->>> -		p->gc_mode = select_gc_type(sbi->gc_thread, gc_type);
->>> +		p->gc_mode = select_gc_type(sbi, gc_type);
->>>  		p->dirty_segmap = dirty_i->dirty_segmap[DIRTY];
->>>  		p->max_search = dirty_i->nr_dirty[DIRTY];
->>>  		p->ofs_unit = sbi->segs_per_sec;
->>> @@ -195,7 +191,7 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
->>>  
->>>  	/* we need to check every dirty segments in the FG_GC case */
->>>  	if (gc_type != FG_GC &&
->>> -			(sbi->gc_thread && !sbi->gc_thread->gc_urgent) &&
->>> +			(sbi->gc_mode != GC_URGENT) &&
->>>  			p->max_search > sbi->max_victim_search)
->>>  		p->max_search = sbi->max_victim_search;
->>>  
->>> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
->>> index b0045d4c8d1e..c8619e408009 100644
->>> --- a/fs/f2fs/gc.h
->>> +++ b/fs/f2fs/gc.h
->>> @@ -36,8 +36,6 @@ struct f2fs_gc_kthread {
->>>  	unsigned int no_gc_sleep_time;
->>>  
->>>  	/* for changing gc mode */
->>> -	unsigned int gc_idle;
->>> -	unsigned int gc_urgent;
->>>  	unsigned int gc_wake;
->>>  };
->>>  
->>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>> index 503a98abdb2f..5a7ed06291e0 100644
->>> --- a/fs/f2fs/segment.c
->>> +++ b/fs/f2fs/segment.c
->>> @@ -177,7 +177,7 @@ bool need_SSR(struct f2fs_sb_info *sbi)
->>>  
->>>  	if (test_opt(sbi, LFS))
->>>  		return false;
->>> -	if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
->>> +	if (sbi->gc_mode == GC_URGENT)
->>>  		return true;
->>>  
->>>  	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
->>> @@ -1418,7 +1418,7 @@ static int issue_discard_thread(void *data)
->>>  		if (dcc->discard_wake)
->>>  			dcc->discard_wake = 0;
->>>  
->>> -		if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
->>> +		if (sbi->gc_mode == GC_URGENT)
->>>  			init_discard_policy(&dpolicy, DPOLICY_FORCE, 1);
->>>  
->>>  		sb_start_intwrite(sbi->sb);
->>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
->>> index 6d8d8f41e517..dd940d156af6 100644
->>> --- a/fs/f2fs/sysfs.c
->>> +++ b/fs/f2fs/sysfs.c
->>> @@ -248,16 +248,33 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
->>>  	if (!strcmp(a->attr.name, "trim_sections"))
->>>  		return -EINVAL;
->>>  
->>> +	if (!strcmp(a->attr.name, "gc_urgent")) {
->>> +		if (t >= 1) {
->>> +			sbi->gc_mode = GC_URGENT;
->>> +			if (sbi->gc_thread) {
->>> +				wake_up_interruptible_all(
->>> +					&sbi->gc_thread->gc_wait_queue_head);
->>> +				wake_up_discard_thread(sbi, true);
->>> +			}
->>> +		} else {
->>> +			sbi->gc_mode = GC_NORMAL;
->>> +		}
->>> +		return count;
->>> +	}
->>> +	if (!strcmp(a->attr.name, "gc_idle")) {
->>> +		if (t == GC_IDLE_CB)
->>> +			sbi->gc_mode = GC_IDLE_CB;
->>> +		else if (t == GC_IDLE_GREEDY)
->>> +			sbi->gc_mode = GC_IDLE_GREEDY;
->>> +		else
->>> +			sbi->gc_mode = GC_NORMAL;
->>> +		return count;
->>> +	}
->>> +
->>>  	*ui = t;
->>>  
->>>  	if (!strcmp(a->attr.name, "iostat_enable") && *ui == 0)
->>>  		f2fs_reset_iostat(sbi);
->>> -	if (!strcmp(a->attr.name, "gc_urgent") && t == 1 && sbi->gc_thread) {
->>> -		sbi->gc_thread->gc_wake = 1;
->>> -		wake_up_interruptible_all(&sbi->gc_thread->gc_wait_queue_head);
->>> -		wake_up_discard_thread(sbi, true);
->>> -	}
->>> -
->>>  	return count;
->>>  }
->>>  
->>> @@ -349,8 +366,8 @@ F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_urgent_sleep_time,
->>>  F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_min_sleep_time, min_sleep_time);
->>>  F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_max_sleep_time, max_sleep_time);
->>>  F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_no_gc_sleep_time, no_gc_sleep_time);
->>
->> All above parameters will be accessed via '*ui = t;', in order to avoid that, we
->> need to move all gc_* configuration fields into sbi, so leaving f2fs_gc_kthread
->> all most empty.
+On 05/08, Chao Yu wrote:
+> On 2018/5/8 4:46, Jaegeuk Kim wrote:
+> > On 04/27, Chao Yu wrote:
+> >> On 2018/4/27 0:36, Jaegeuk Kim wrote:
+> >>> On 04/26, Chao Yu wrote:
+> >>>> On 2018/4/26 23:48, Jaegeuk Kim wrote:
+> >>>>> On 04/26, Chao Yu wrote:
+> >>>>>> Thread A				Thread B
+> >>>>>> - f2fs_ioc_commit_atomic_write
+> >>>>>>  - commit_inmem_pages
+> >>>>>>   - f2fs_submit_merged_write_cond
+> >>>>>>   : write data
+> >>>>>> 					- write_checkpoint
+> >>>>>> 					 - do_checkpoint
+> >>>>>> 					 : commit all node within CP
+> >>>>>> 					 -> SPO
+> >>>>>>   - f2fs_do_sync_file
+> >>>>>>    - file_write_and_wait_range
+> >>>>>>    : wait data writeback
+> >>>>>>
+> >>>>>> In above race condition, data/node can be flushed in reversed order when
+> >>>>>> coming a checkpoint before f2fs_do_sync_file, after SPOR, it results in
+> >>>>>> atomic written data being corrupted.
+> >>>>>
+> >>>>> Wait, what is the problem here? Thread B could succeed checkpoint, there is
+> >>>>> no problem. If it fails, there is no fsync mark where we can recover it, so
+> >>>>
+> >>>> Node is flushed by checkpoint before data, with reversed order, that's the problem.
+> >>>
+> >>> What do you mean? Data should be in disk, in order to proceed checkpoint.
+> >>
+> >> 1. thread A: commit_inmem_pages submit data into block layer, but haven't waited
+> >> it writeback.
+> >> 2. thread A: commit_inmem_pages update related node.
+> >> 3. thread B: do checkpoint, flush all nodes to disk
+> > 
+> > How about, in block_operations(),
+> > 
+> > 	down_read_trylock(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> > 	if (fail)
+> > 		wait_on_all_pages_writeback(F2FS_WB_DATA);
+> > 	else
+> > 		up_read(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
 > 
-> What I said was to use down_read(&sbi->sb->s_umount); in sysfs.c on top of this.
+> I sent one patch for that, could you check it?
+> 
+> Adding wait_on_all_pages_writeback in block_operations() can make checkpoint()
+> wait pages writeback one more time, which break IO flow, so what's your concern
+> here?
 
-Oh, sorry, I didn't realize that, let me update my patch.
+Performance. And I can see wait_on_all_pages_writeback() waits only for
+F2FS_WB_CP_DATA in checkpoint()?
 
-Thanks,
 
 > 
->> IMO, just merge my v1 patch is OK? since that patch makes better
->> encapsulation, so that background GC related parameter can still locate in
->> independent f2fs_gc_kthread structure rather in common f2fs_sb_info structure.
->>
->> Thanks,
->>
->>> -F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_idle, gc_idle);
->>> -F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_urgent, gc_urgent);
->>> +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_idle, gc_mode);
->>> +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_urgent, gc_mode);
->>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, reclaim_segments, rec_prefree_segments);
->>>  F2FS_RW_ATTR(DCC_INFO, discard_cmd_control, max_small_discards, max_discards);
->>>  F2FS_RW_ATTR(DCC_INFO, discard_cmd_control, discard_granularity, discard_granularity);
->>>
+> Thanks,
 > 
-> .
-> 
+> > 
+> > 
+> >> 4. SPOR
+> >>
+> >> Then, atomic file becomes corrupted since nodes is flushed before data.
+> >>
+> >> Thanks,
+> >>
+> >>>
+> >>>>
+> >>>> Thanks,
+> >>>>
+> >>>>> we can just ignore the last written data as nothing.
+> >>>>>
+> >>>>>>
+> >>>>>> This patch adds f2fs_wait_on_page_writeback in __revoke_inmem_pages() to
+> >>>>>> keep data and node of atomic file being flushed orderly.
+> >>>>>>
+> >>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >>>>>> ---
+> >>>>>>  fs/f2fs/file.c    | 4 ++++
+> >>>>>>  fs/f2fs/segment.c | 3 +++
+> >>>>>>  2 files changed, 7 insertions(+)
+> >>>>>>
+> >>>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> >>>>>> index be7578774a47..a352804af244 100644
+> >>>>>> --- a/fs/f2fs/file.c
+> >>>>>> +++ b/fs/f2fs/file.c
+> >>>>>> @@ -217,6 +217,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+> >>>>>>  
+> >>>>>>  	trace_f2fs_sync_file_enter(inode);
+> >>>>>>  
+> >>>>>> +	if (atomic)
+> >>>>>> +		goto write_done;
+> >>>>>> +
+> >>>>>>  	/* if fdatasync is triggered, let's do in-place-update */
+> >>>>>>  	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
+> >>>>>>  		set_inode_flag(inode, FI_NEED_IPU);
+> >>>>>> @@ -228,6 +231,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+> >>>>>>  		return ret;
+> >>>>>>  	}
+> >>>>>>  
+> >>>>>> +write_done:
+> >>>>>>  	/* if the inode is dirty, let's recover all the time */
+> >>>>>>  	if (!f2fs_skip_inode_update(inode, datasync)) {
+> >>>>>>  		f2fs_write_inode(inode, NULL);
+> >>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >>>>>> index 584483426584..9ca3d0a43d93 100644
+> >>>>>> --- a/fs/f2fs/segment.c
+> >>>>>> +++ b/fs/f2fs/segment.c
+> >>>>>> @@ -230,6 +230,8 @@ static int __revoke_inmem_pages(struct inode *inode,
+> >>>>>>  
+> >>>>>>  		lock_page(page);
+> >>>>>>  
+> >>>>>> +		f2fs_wait_on_page_writeback(page, DATA, true);
+> >>>>>> +
+> >>>>>>  		if (recover) {
+> >>>>>>  			struct dnode_of_data dn;
+> >>>>>>  			struct node_info ni;
+> >>>>>> @@ -415,6 +417,7 @@ static int __commit_inmem_pages(struct inode *inode)
+> >>>>>>  		/* drop all uncommitted pages */
+> >>>>>>  		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
+> >>>>>>  	} else {
+> >>>>>> +		/* wait all committed IOs writeback and release them from list */
+> >>>>>>  		__revoke_inmem_pages(inode, &revoke_list, false, false);
+> >>>>>>  	}
+> >>>>>>  
+> >>>>>> -- 
+> >>>>>> 2.15.0.55.gc2ece9dc4de6
+> >>>
+> >>> .
+> >>>
+> > 
+> > .
+> > 
