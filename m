@@ -1,12 +1,9 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] fs: f2fs: Adding new return type vm_fault_t
-Date: Mon, 14 May 2018 11:47:18 +0800
-Message-ID: <5f78798c-ecdc-6f07-a334-55710f7f223f@huawei.com>
-References: <20180414201001.GA20256@jordon-HP-15-Notebook-PC>
- <86005c7f-136e-998d-e756-327b5df4d776@huawei.com>
- <CAFqt6zZbci2FZPdTRCdhpTu0h=uguCnk+0q_602O6tz66oePxQ@mail.gmail.com>
- <20180510162305.GA49708@jaegeuk-macbookpro.roam.corp.google.com>
- <CAFqt6zbDNUo-rzWeLES_Z-TmhL9Yy-Qs_RbsCjn0zvhkM-rEOw@mail.gmail.com>
+Subject: Re: [RFC PATCH] f2fs-tools: fix blocks allocation
+ direction inside segment
+Date: Mon, 14 May 2018 16:09:01 +0800
+Message-ID: <95fbd76a-a4ec-e678-a074-e95612ba37bf@huawei.com>
+References: <20180508141659.118390-1-zhengjunling@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -14,14 +11,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fI4Sb-0006wi-8c
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 14 May 2018 03:47:41 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1fI8Xq-0005PG-AB
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 14 May 2018 08:09:22 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fI4SZ-005j7M-9c
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 14 May 2018 03:47:41 +0000
-In-Reply-To: <CAFqt6zbDNUo-rzWeLES_Z-TmhL9Yy-Qs_RbsCjn0zvhkM-rEOw@mail.gmail.com>
+ id 1fI8Xn-000pHX-C0
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 14 May 2018 08:09:22 +0000
+In-Reply-To: <20180508141659.118390-1-zhengjunling@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -32,46 +29,57 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Souptick Joarder <jrdr.linux@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net
+To: Junling Zheng <zhengjunling@huawei.com>, jaegeuk@kernel.org
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/5/11 1:12, Souptick Joarder wrote:
-> On Thu, May 10, 2018 at 9:53 PM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
->> On 05/10, Souptick Joarder wrote:
->>> On Mon, Apr 16, 2018 at 7:17 AM, Chao Yu <yuchao0@huawei.com> wrote:
->>>> On 2018/4/15 4:10, Souptick Joarder wrote:
->>>>> Use new return type vm_fault_t for page_mkwrite
->>>>> and fault handler.
->>>>>
->>>>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->>>>> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
->>>>
->>>> Acked-by: Chao Yu <yuchao0@huawei.com>
->>>>
->>>
->>> Chao, If no further comment, we would like to get this patch
+On 2018/5/8 22:16, Junling Zheng wrote:
+> This fixes the block allocation direction from left to right inside
+> one segment despite of the direction of segment allocation.
 
-No further comment, no matter queuing in Jaegeuk's tree or other one's tree is
-OK to me. ;)
+Hmm.. there is no such restriction that we have to keep misc tools' allocation
+algorithm line with kernel one, so I suggest that let's just keep original
+codes. Jaegeuk, what's your opinion?
 
 Thanks,
 
->>> queued for 4.18.
->>
->> Hi Souptick,
->>
->> Is this one of your patch series?
->> I already queued it towards 4.18:
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev-test&id=f8fcb679cfbeb2076c547364929182babdd69a50
->>
->> Thanks,
 > 
-> Thanks.
-> Not exactly part of patch series. But we are trickling patches to
-> individual maintainers of each drivers/ filesystems to merge it in
-> linus tree.
+> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+> ---
+>  fsck/mount.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
 > 
+> diff --git a/fsck/mount.c b/fsck/mount.c
+> index 1396a2e..38d2aa2 100644
+> --- a/fsck/mount.c
+> +++ b/fsck/mount.c
+> @@ -1921,13 +1921,13 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left, int type)
+>  
+>  		if (se->valid_blocks == sbi->blocks_per_seg ||
+>  				IS_CUR_SEGNO(sbi, segno, type)) {
+> -			*to = left ? START_BLOCK(sbi, segno) - 1:
+> +			*to = left ? START_BLOCK(sbi, segno - 1) :
+>  						START_BLOCK(sbi, segno + 1);
+>  			continue;
+>  		}
+>  
+>  		if (se->valid_blocks == 0 && not_enough) {
+> -			*to = left ? START_BLOCK(sbi, segno) - 1:
+> +			*to = left ? START_BLOCK(sbi, segno - 1) :
+>  						START_BLOCK(sbi, segno + 1);
+>  			continue;
+>  		}
+> @@ -1949,7 +1949,10 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left, int type)
+>  			!f2fs_test_bit(offset, (const char *)se->cur_valid_map))
+>  			return 0;
+>  
+> -		*to = left ? *to - 1: *to + 1;
+> +		if (!(OFFSET_IN_SEG(sbi, *to + 1)) && left)
+> +			*to = START_BLOCK(sbi, segno - 1);
+> +		else
+> +			*to = *to + 1;
+>  	}
+>  	return -1;
+>  }
 > 
 
 
