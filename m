@@ -1,88 +1,43 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [RFC PATCH] f2fs-tools: fix blocks allocation
- direction inside segment
-Date: Mon, 14 May 2018 16:09:01 +0800
-Message-ID: <95fbd76a-a4ec-e678-a074-e95612ba37bf@huawei.com>
-References: <20180508141659.118390-1-zhengjunling@huawei.com>
+From: Sahitya Tummala <stummala@codeaurora.org>
+Subject: Re: [PATCH] f2fs: Fix deadlock in shutdown ioctl
+Date: Tue, 15 May 2018 13:27:47 +0530
+Message-ID: <20180515075747.GA6293@codeaurora.org>
+References: <1525958444-5579-1-git-send-email-stummala@codeaurora.org>
+ <de6f040b-81d3-7f52-2482-135d11200788@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fI8Xq-0005PG-AB
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 14 May 2018 08:09:22 +0000
-Received: from [45.249.212.32] (helo=huawei.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fI8Xn-000pHX-C0
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 14 May 2018 08:09:22 +0000
-In-Reply-To: <20180508141659.118390-1-zhengjunling@huawei.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Junling Zheng <zhengjunling@huawei.com>, jaegeuk@kernel.org
-Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <de6f040b-81d3-7f52-2482-135d11200788@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/5/8 22:16, Junling Zheng wrote:
-> This fixes the block allocation direction from left to right inside
-> one segment despite of the direction of segment allocation.
-
-Hmm.. there is no such restriction that we have to keep misc tools' allocation
-algorithm line with kernel one, so I suggest that let's just keep original
-codes. Jaegeuk, what's your opinion?
-
-Thanks,
-
+On Mon, May 14, 2018 at 11:39:42AM +0800, Chao Yu wrote:
+> On 2018/5/10 21:20, Sahitya Tummala wrote:
+> > f2fs_ioc_shutdown() ioctl gets stuck in the below path
+> > when going down with full sync (F2FS_GOING_DOWN_FULLSYNC)
+> > option.
+> > 
+> > __switch_to+0x90/0xc4
+> > percpu_down_write+0x8c/0xc0
+> > freeze_super+0xec/0x1e4
+> > freeze_bdev+0xc4/0xcc
+> > f2fs_ioctl+0xc0c/0x1ce0
+> > f2fs_compat_ioctl+0x98/0x1f0
+> > 
+> > Fix this by not holding write access during this ioctl.
 > 
-> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
-> ---
->  fsck/mount.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fsck/mount.c b/fsck/mount.c
-> index 1396a2e..38d2aa2 100644
-> --- a/fsck/mount.c
-> +++ b/fsck/mount.c
-> @@ -1921,13 +1921,13 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left, int type)
->  
->  		if (se->valid_blocks == sbi->blocks_per_seg ||
->  				IS_CUR_SEGNO(sbi, segno, type)) {
-> -			*to = left ? START_BLOCK(sbi, segno) - 1:
-> +			*to = left ? START_BLOCK(sbi, segno - 1) :
->  						START_BLOCK(sbi, segno + 1);
->  			continue;
->  		}
->  
->  		if (se->valid_blocks == 0 && not_enough) {
-> -			*to = left ? START_BLOCK(sbi, segno) - 1:
-> +			*to = left ? START_BLOCK(sbi, segno - 1) :
->  						START_BLOCK(sbi, segno + 1);
->  			continue;
->  		}
-> @@ -1949,7 +1949,10 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left, int type)
->  			!f2fs_test_bit(offset, (const char *)se->cur_valid_map))
->  			return 0;
->  
-> -		*to = left ? *to - 1: *to + 1;
-> +		if (!(OFFSET_IN_SEG(sbi, *to + 1)) && left)
-> +			*to = START_BLOCK(sbi, segno - 1);
-> +		else
-> +			*to = *to + 1;
->  	}
->  	return -1;
->  }
-> 
+> I think we can just remove lock coverage for F2FS_GOING_DOWN_FULLSYNC path, for
+> other path, we need to keep as it is.
+>
 
+Thanks, I thought about it too but then I checked that XFS shutdown ioctl is
+not taking any lock for this ioctl. Hence, I followed the same in F2FS.
+Do you know why XFS is not taking any lock? Is it really needed in shutdown
+ioctl?
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+--
+Sent by a consultant of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
