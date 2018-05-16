@@ -1,91 +1,56 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2 1/3] f2fs: fix to initialize i_current_depth according
- to inode type
-Date: Tue, 15 May 2018 19:01:09 +0800
-Message-ID: <8ca4c55e-26c4-f3a4-6bc9-ad423aeec264@huawei.com>
-References: <20180515105025.66420-1-yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: Fix deadlock in shutdown ioctl
+Date: Wed, 16 May 2018 14:48:42 +0800
+Message-ID: <67bd2926-6851-0544-c24a-85dfa72aa70f@huawei.com>
+References: <1525958444-5579-1-git-send-email-stummala@codeaurora.org>
+ <de6f040b-81d3-7f52-2482-135d11200788@huawei.com>
+ <20180515075747.GA6293@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180515105025.66420-1-yuchao0@huawei.com>
+In-Reply-To: <20180515075747.GA6293@codeaurora.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+To: Sahitya Tummala <stummala@codeaurora.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Sorry, I sent the wrong patch, please ignore this one.
+On 2018/5/15 15:57, Sahitya Tummala wrote:
+> On Mon, May 14, 2018 at 11:39:42AM +0800, Chao Yu wrote:
+>> On 2018/5/10 21:20, Sahitya Tummala wrote:
+>>> f2fs_ioc_shutdown() ioctl gets stuck in the below path
+>>> when going down with full sync (F2FS_GOING_DOWN_FULLSYNC)
+>>> option.
+>>>
+>>> __switch_to+0x90/0xc4
+>>> percpu_down_write+0x8c/0xc0
+>>> freeze_super+0xec/0x1e4
+>>> freeze_bdev+0xc4/0xcc
+>>> f2fs_ioctl+0xc0c/0x1ce0
+>>> f2fs_compat_ioctl+0x98/0x1f0
+>>>
+>>> Fix this by not holding write access during this ioctl.
+>>
+>> I think we can just remove lock coverage for F2FS_GOING_DOWN_FULLSYNC path, for
+>> other path, we need to keep as it is.
+>>
+> 
+> Thanks, I thought about it too but then I checked that XFS shutdown ioctl is
+> not taking any lock for this ioctl. Hence, I followed the same in F2FS.
+> Do you know why XFS is not taking any lock? 
 
-On 2018/5/15 18:50, Chao Yu wrote:
-> i_current_depth is used only for directory inode, but its space is
-> shared with i_gc_failures field used for regular inode, in order to
-> avoid affecting i_gc_failures' value, this patch fixes to initialize
-> the union's fields according to inode type.
+I don't know. :(
+
+> Is it really needed in shutdown ioctl?
+
+IMO, yes, we should keep freeze and remount be aware of the shutdown operation.
+
+Thanks,
+
 > 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
-> v2:
-> - rebase code.
->  fs/f2fs/inode.c | 12 +++++++++---
->  fs/f2fs/namei.c |  3 +++
->  fs/f2fs/super.c |  1 -
->  3 files changed, 12 insertions(+), 4 deletions(-)
+> --
+> Sent by a consultant of the Qualcomm Innovation Center, Inc.
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
 > 
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index 7f2fe4574c48..3a74a1cf3264 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -232,8 +232,10 @@ static int do_read_inode(struct inode *inode)
->  	inode->i_ctime.tv_nsec = le32_to_cpu(ri->i_ctime_nsec);
->  	inode->i_mtime.tv_nsec = le32_to_cpu(ri->i_mtime_nsec);
->  	inode->i_generation = le32_to_cpu(ri->i_generation);
-> -
-> -	fi->i_current_depth = le32_to_cpu(ri->i_current_depth);
-> +	if (S_ISDIR(inode->i_mode))
-> +		fi->i_current_depth = le32_to_cpu(ri->i_current_depth);
-> +	else if (S_ISREG(inode->i_mode))
-> +		fi->i_gc_failures = le16_to_cpu(ri->i_gc_failures);
->  	fi->i_xattr_nid = le32_to_cpu(ri->i_xattr_nid);
->  	fi->i_flags = le32_to_cpu(ri->i_flags);
->  	fi->flags = 0;
-> @@ -422,7 +424,11 @@ void update_inode(struct inode *inode, struct page *node_page)
->  	ri->i_atime_nsec = cpu_to_le32(inode->i_atime.tv_nsec);
->  	ri->i_ctime_nsec = cpu_to_le32(inode->i_ctime.tv_nsec);
->  	ri->i_mtime_nsec = cpu_to_le32(inode->i_mtime.tv_nsec);
-> -	ri->i_current_depth = cpu_to_le32(F2FS_I(inode)->i_current_depth);
-> +	if (S_ISDIR(inode->i_mode))
-> +		ri->i_current_depth =
-> +			cpu_to_le32(F2FS_I(inode)->i_current_depth);
-> +	else if (S_ISREG(inode->i_mode))
-> +		ri->i_gc_failures = cpu_to_le16(F2FS_I(inode)->i_gc_failures);
->  	ri->i_xattr_nid = cpu_to_le32(F2FS_I(inode)->i_xattr_nid);
->  	ri->i_flags = cpu_to_le32(F2FS_I(inode)->i_flags);
->  	ri->i_pino = cpu_to_le32(F2FS_I(inode)->i_pino);
-> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index fef6e3ab2135..bcfc4219b29e 100644
-> --- a/fs/f2fs/namei.c
-> +++ b/fs/f2fs/namei.c
-> @@ -54,6 +54,9 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
->  			F2FS_I(inode)->i_crtime = current_time(inode);
->  	inode->i_generation = sbi->s_next_generation++;
->  
-> +	if (S_ISDIR(inode->i_mode))
-> +		F2FS_I(inode)->i_current_depth = 1;
-> +
->  	err = insert_inode_locked(inode);
->  	if (err) {
->  		err = -EINVAL;
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 294be9e92aee..55ccc2eaaa2e 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -826,7 +826,6 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
->  
->  	/* Initialize f2fs-specific inode info */
->  	atomic_set(&fi->dirty_pages, 0);
-> -	fi->i_current_depth = 1;
->  	init_rwsem(&fi->i_sem);
->  	INIT_LIST_HEAD(&fi->dirty_list);
->  	INIT_LIST_HEAD(&fi->gdirty_list);
 > 
