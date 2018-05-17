@@ -1,53 +1,68 @@
-From: Sahitya Tummala <stummala@codeaurora.org>
-Subject: [PATCH v2] f2fs: Fix deadlock in shutdown ioctl
-Date: Thu, 17 May 2018 13:33:31 +0530
-Message-ID: <1526544211-26218-1-git-send-email-stummala@codeaurora.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Junling Zheng <zhengjunling@huawei.com>
+Subject: Re: [PATCH] fsck.f2fs: do umount to free memory in
+ out_err
+Date: Thu, 17 May 2018 18:12:14 +0800
+Message-ID: <540974fb-a702-471b-2bfd-7b737463522d@huawei.com>
+References: <20180517075704.168718-1-zhengjunling@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <zhengjunling@huawei.com>) id 1fJFtT-00089g-Dv
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 May 2018 10:12:19 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fJFtR-0074R3-99
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 May 2018 10:12:19 +0000
+In-Reply-To: <20180517075704.168718-1-zhengjunling@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-f2fs_ioc_shutdown() ioctl gets stuck in the below path
-when issued with F2FS_GOING_DOWN_FULLSYNC option.
+Sorry, this patch has a bug:
 
-__switch_to+0x90/0xc4
-percpu_down_write+0x8c/0xc0
-freeze_super+0xec/0x1e4
-freeze_bdev+0xc4/0xcc
-f2fs_ioctl+0xc0c/0x1ce0
-f2fs_compat_ioctl+0x98/0x1f0
+If f2fs_do_mount fails in validate_super_block or get_valid_checkpoint,
+then we should only free sbi->ckpt and sbi->raw_super :(
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
----
-v2:
-remove lock coverage for only F2FS_GOING_DOWN_FULLSYNC case as suggested by Chao.
+On 2018/5/17 15:57, Junling Zheng wrote:
+> Call f2fs_do_umount to free memory in out_err branch.
+> 
+> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+> ---
+>  fsck/main.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/fsck/main.c b/fsck/main.c
+> index c4dd8b1..870f2d8 100644
+> --- a/fsck/main.c
+> +++ b/fsck/main.c
+> @@ -844,9 +844,6 @@ retry:
+>  	return 0;
+>  
+>  out_err:
+> -	if (sbi->ckpt)
+> -		free(sbi->ckpt);
+> -	if (sbi->raw_super)
+> -		free(sbi->raw_super);
+> +	f2fs_do_umount(sbi);
+>  	return ret;
+>  }
+> 
 
- fs/f2fs/file.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 6b94f19..5a132c9 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1857,6 +1857,7 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
- 
- 	switch (in) {
- 	case F2FS_GOING_DOWN_FULLSYNC:
-+		mnt_drop_write_file(filp);
- 		sb = freeze_bdev(sb->s_bdev);
- 		if (IS_ERR(sb)) {
- 			ret = PTR_ERR(sb);
-@@ -1894,7 +1895,8 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
- 
- 	f2fs_update_time(sbi, REQ_TIME);
- out:
--	mnt_drop_write_file(filp);
-+	if (in != F2FS_GOING_DOWN_FULLSYNC)
-+		mnt_drop_write_file(filp);
- 	return ret;
- }
- 
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
