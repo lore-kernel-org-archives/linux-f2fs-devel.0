@@ -1,73 +1,54 @@
-From: Chandan Rajendra <chandan@linux.vnet.ibm.com>
-Subject: Re: Hung task when executing generic/256 test
-Date: Fri, 18 May 2018 10:56:05 +0530
-Message-ID: <7833966.PD9W5pZvT2@localhost.localdomain>
-References: <2479794.CdILPghxpW@localhost.localdomain>
- <20180518005103.GA33876@jaegeuk-macbookpro.roam.corp.google.com>
- <82af3e21-4e57-07e1-28c5-fdf034dc3a27@huawei.com>
+From: Sahitya Tummala <stummala@codeaurora.org>
+Subject: Re: [PATCH v2] f2fs: Fix deadlock in shutdown ioctl
+Date: Fri, 18 May 2018 13:09:53 +0530
+Message-ID: <20180518073953.GC6293@codeaurora.org>
+References: <1526544211-26218-1-git-send-email-stummala@codeaurora.org>
+ <b7d045f3-f37b-46da-3c1c-2b6d99efc9e7@huawei.com>
+ <20180518010826.GC33876@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.vnet.ibm.com>) id 1fJXtE-0001Xl-EX
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 18 May 2018 05:25:16 +0000
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
- helo=mx0a-001b2d01.pphosted.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fJXtC-00BBVA-Rl
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 18 May 2018 05:25:16 +0000
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
- by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id
- w4I5P4rQ023457
- for <linux-f2fs-devel@lists.sourceforge.net>; Fri, 18 May 2018 01:25:04 -0400
-Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
- by mx0b-001b2d01.pphosted.com with ESMTP id 2j1kfm28nu-1
- (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>; Fri, 18 May 2018 01:25:03 -0400
-Received: from localhost
- by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
- Violators will be prosecuted
- for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.vnet.ibm.com>;
- Fri, 18 May 2018 06:24:26 +0100
-In-Reply-To: <82af3e21-4e57-07e1-28c5-fdf034dc3a27@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180518010826.GC33876@jaegeuk-macbookpro.roam.corp.google.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Friday, May 18, 2018 6:44:43 AM IST Chao Yu wrote:
-> On 2018/5/18 8:51, Jaegeuk Kim wrote:
-> > On 05/08, Chandan Rajendra wrote:
-> >> Hi,
-> >>
-> >> The following "Hung task" information is seen when executing generic/256 test
-> >> on next-20180503.
-> > 
-> > Hi Chandan,
-> > 
-> > Is this still happening? Since I don't see this in my local test.
+On Thu, May 17, 2018 at 06:08:26PM -0700, Jaegeuk Kim wrote:
 > 
-> With last dev-test codes, I can't reproduce this bug..
+> if (in == F2FS_GOING_DOWN_FULLSYNC) {
+> 	sb = freeze_bdev();
+> 	if (IS_ERR(sb))
+> 		return PTR_ERR(sb);
+> 	if (unlikely(!sb))
+> 		return -EINVAL;
+> }
 > 
-> Could you have a try with codes in dev-test branch of Jaegeuk's tree?
+> ret = mnt_want_write_file();
 
-I am unable to recreate the problem With the sources at dev-test branch.
+It will be stuck/blocked here as freeze_bdev() now holds the write 
+lock for all the cases including SB_FREEZE_WRITE. As freeze_bdev()
+holds the write lock, I think f2fs_stop_checkpoint() should be safe
+even without mnt_want_write_file().
 
--- 
-chandan
+I have posted v3 as per Chao's comments to exclude mnt_want_write_file()
+for F2FS_GOING_DOWN_FULLSYNC case.
+Please check and let me know if there are any further comments.
 
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> ...
+> switch() {
+> case F2FS_GOING_DOWN_FULLSYNC:
+> 	f2fs_stop_checkpoint();
+> 	dhaw_bdev();
+> 	break;
+> ...
+> }
+> 
+> drop:
+> ...
+> 
+> 
+--
+Sent by a consultant of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
