@@ -1,124 +1,45 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: Hung task when executing generic/256 test
-Date: Fri, 18 May 2018 09:14:43 +0800
-Message-ID: <82af3e21-4e57-07e1-28c5-fdf034dc3a27@huawei.com>
-References: <2479794.CdILPghxpW@localhost.localdomain>
- <20180518005103.GA33876@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH 1/3] f2fs: fix to wait page writeback during revoking
+ atomic write
+Date: Fri, 18 May 2018 09:26:33 +0800
+Message-ID: <56edfbcd-b400-d68e-9a4a-6b063bdb008f@huawei.com>
+References: <20180423023615.33247-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fJTyz-0007pH-Mu
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 18 May 2018 01:14:57 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fJTyv-008zZp-M1
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 18 May 2018 01:14:57 +0000
-In-Reply-To: <20180518005103.GA33876@jaegeuk-macbookpro.roam.corp.google.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180423023615.33247-1-yuchao0@huawei.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chandan Rajendra <chandan@linux.vnet.ibm.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/5/18 8:51, Jaegeuk Kim wrote:
-> On 05/08, Chandan Rajendra wrote:
->> Hi,
->>
->> The following "Hung task" information is seen when executing generic/256 test
->> on next-20180503.
-> 
-> Hi Chandan,
-> 
-> Is this still happening? Since I don't see this in my local test.
+Hi Jaegeuk,
 
-With last dev-test codes, I can't reproduce this bug..
+Could you recheck this patch?
 
-Could you have a try with codes in dev-test branch of Jaegeuk's tree?
-
-Thanks,
-
+On 2018/4/23 10:36, Chao Yu wrote:
+> After revoking atomic write, related LBA can be reused by others, so we
+> need to wait page writeback before reusing the LBA, in order to avoid
+> interference between old atomic written in-flight IO and new IO.
 > 
-> Thanks,
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/segment.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
->>
->> [ 1964.025145] F2FS-fs (loop1): Mounted with checkpoint version = 22d8b4fd
->> [ 2212.833962] INFO: task umount:16199 blocked for more than 120 seconds.
->> [ 2212.835736]       Tainted: G        W         4.17.0-rc3-next-20180503-04271-g6eb58cf86baa #1
->> [ 2212.837944] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->> [ 2212.840002] umount          D14184 16199  16195 0x00000000
->> [ 2212.841470] Call Trace:
->> [ 2212.842211]  ? __schedule+0x28a/0xad0
->> [ 2212.843234]  schedule+0x2f/0x90
->> [ 2212.844122]  io_schedule+0x12/0x40
->> [ 2212.845071]  wait_on_page_bit_common+0xe2/0x160
->> [ 2212.846159]  ? page_cache_tree_insert+0x130/0x130
->> [ 2212.846827]  __filemap_fdatawait_range+0xe5/0x150
->> [ 2212.847473]  ? sync_inodes_sb+0x1ff/0x450
->> [ 2212.848050]  filemap_fdatawait_keep_errors+0x1a/0x40
->> [ 2212.848751]  sync_inodes_sb+0x262/0x450
->> [ 2212.849282]  sync_filesystem+0x57/0x90
->> [ 2212.849821]  generic_shutdown_super+0x22/0x100
->> [ 2212.850435]  kill_block_super+0x21/0x50
->> [ 2212.850989]  deactivate_locked_super+0x2f/0x70
->> [ 2212.851596]  cleanup_mnt+0x3b/0x70
->> [ 2212.852092]  task_work_run+0xa1/0xd0
->> [ 2212.852580]  exit_to_usermode_loop+0x83/0x90
->> [ 2212.853185]  do_syscall_64+0x157/0x180
->> [ 2212.853725]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->> [ 2212.854420] RIP: 0033:0x7fadbca7d357
->> [ 2212.854935] Code: Bad RIP value.
->> [ 2212.855384] RSP: 002b:00007ffe15b2bbb8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
->> [ 2212.856418] RAX: 0000000000000000 RBX: 0000561162acc2d0 RCX: 00007fadbca7d357
->> [ 2212.857393] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 0000561162ad1390
->> [ 2212.858391] RBP: 0000000000000000 R08: 000000000000fef8 R09: 0000feff00000000
->> [ 2212.859367] R10: 0000000000000000 R11: 0000000000000246 R12: 0000561162ad1390
->> [ 2212.860345] R13: 00007fadbd8231a4 R14: 0000561162acc4b0 R15: 00007ffe15b2be28
->>
->> The following is the contents of the xfstests' local.config file,
->>
->> # F2FS
->> export TEST_DEV=/dev/loop0
->> export TEST_DIR=/mnt/xfstest-test
->> export SCRATCH_DEV=/dev/loop1
->> export SCRATCH_MNT=/mnt/xfstest-scratch
->> MKFS_OPTIONS="-O encrypt"
->> MOUNT_OPTIONS="-o test_dummy_encryption"
->>
->> -- 
->> chandan
->>
->>
->> ------------------------------------------------------------------------------
->> Check out the vibrant tech community on one of the world's most
->> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index cba59fc58eb6..24299f81f80d 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -231,6 +231,8 @@ static int __revoke_inmem_pages(struct inode *inode,
+>  
+>  		lock_page(page);
+>  
+> +		f2fs_wait_on_page_writeback(page, DATA, true);
+> +
+>  		if (recover) {
+>  			struct dnode_of_data dn;
+>  			struct node_info ni;
 > 
-> ------------------------------------------------------------------------------
-> Check out the vibrant tech community on one of the world's most
-> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
