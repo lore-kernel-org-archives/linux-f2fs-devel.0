@@ -1,24 +1,25 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: disable loading f2fs module on PAGE_SIZE > 4KB
-Date: Thu, 17 May 2018 18:10:19 -0700
-Message-ID: <20180518011019.GD33876@jaegeuk-macbookpro.roam.corp.google.com>
-References: <CADxRZqwoXGgm-n0jFa19CnCrsso7ASoLw9a_j=M-h5jnWOMvwg@mail.gmail.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: Hung task when executing generic/256 test
+Date: Fri, 18 May 2018 09:14:43 +0800
+Message-ID: <82af3e21-4e57-07e1-28c5-fdf034dc3a27@huawei.com>
+References: <2479794.CdILPghxpW@localhost.localdomain>
+ <20180518005103.GA33876@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1fJTue-0000lG-4a
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 18 May 2018 01:10:28 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1fJTyz-0007pH-Mu
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 18 May 2018 01:14:57 +0000
+Received: from [45.249.212.35] (helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fJTuc-00AywO-MM
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 18 May 2018 01:10:28 +0000
-Content-Disposition: inline
-In-Reply-To: <CADxRZqwoXGgm-n0jFa19CnCrsso7ASoLw9a_j=M-h5jnWOMvwg@mail.gmail.com>
+ id 1fJTyv-008zZp-M1
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 18 May 2018 01:14:57 +0000
+In-Reply-To: <20180518005103.GA33876@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,62 +29,84 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Anatoly Pugachev <matorola@gmail.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Chandan Rajendra <chandan@linux.vnet.ibm.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-On 05/16, Anatoly Pugachev wrote:
-> Hello!
+On 2018/5/18 8:51, Jaegeuk Kim wrote:
+> On 05/08, Chandan Rajendra wrote:
+>> Hi,
+>>
+>> The following "Hung task" information is seen when executing generic/256 test
+>> on next-20180503.
 > 
-> The following patch disables loading of f2fs module on architectures
-> which have PAGE_SIZE > 4096 , since it is impossible to mount f2fs on
-> such architectures , log messages are:
+> Hi Chandan,
 > 
-> root@ttip:/1/mator/xfstests-dev# mount -t f2fs /dev/vdiskb1 /mnt
-> mount: /mnt: wrong fs type, bad option, bad superblock on
-> /dev/vdiskb1, missing codepage or helper program, or other error.
-> root@ttip:/1/mator/xfstests-dev# file -s /dev/vdiskb1
-> /dev/vdiskb1: F2FS filesystem,
-> UUID=1d8b9ca4-2389-4910-af3b-10998969f09c, volume name ""
-> 
-> May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Invalid
-> page_cache_size (8192), supports only 4KB
-> May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Can't find valid F2FS
-> filesystem in 1th superblock
-> May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Invalid
-> page_cache_size (8192), supports only 4KB
-> May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Can't find valid F2FS
-> filesystem in 2th superblock
-> May 15 18:03:13 ttip kernel: F2FS-fs (vdiskb1): Invalid
-> page_cache_size (8192), supports only 4KB
-> 
-> which was introduced by git commit 5c9b469295fb6b10d98923eab5e79c4edb80ed20
-> 
-> tested on git kernel v4.17-rc5-20-g21b9f1c7e319
-> 
-> Signed-off-by: Anatoly Pugachev <matorola@gmail.com>
-> ---
-> 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 42d564c5ccd0..3071771bf261 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -3063,6 +3063,11 @@ static int __init init_f2fs_fs(void)
->  {
->         int err;
-> 
-> +       if (PAGE_SIZE > 4096) {
+> Is this still happening? Since I don't see this in my local test.
 
-It looks like
-	if (PAGE_SIZE != F2FS_BLKSIZE)
+With last dev-test codes, I can't reproduce this bug..
 
+Could you have a try with codes in dev-test branch of Jaegeuk's tree?
 
-> +               printk("F2FS not supported on PAGE_SIZE > 4096\n");
-> +               return -1;
-> +       }
-> +
->         f2fs_build_trace_ios();
+Thanks,
+
 > 
->         err = init_inodecache();
+> Thanks,
+> 
+>>
+>> [ 1964.025145] F2FS-fs (loop1): Mounted with checkpoint version = 22d8b4fd
+>> [ 2212.833962] INFO: task umount:16199 blocked for more than 120 seconds.
+>> [ 2212.835736]       Tainted: G        W         4.17.0-rc3-next-20180503-04271-g6eb58cf86baa #1
+>> [ 2212.837944] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>> [ 2212.840002] umount          D14184 16199  16195 0x00000000
+>> [ 2212.841470] Call Trace:
+>> [ 2212.842211]  ? __schedule+0x28a/0xad0
+>> [ 2212.843234]  schedule+0x2f/0x90
+>> [ 2212.844122]  io_schedule+0x12/0x40
+>> [ 2212.845071]  wait_on_page_bit_common+0xe2/0x160
+>> [ 2212.846159]  ? page_cache_tree_insert+0x130/0x130
+>> [ 2212.846827]  __filemap_fdatawait_range+0xe5/0x150
+>> [ 2212.847473]  ? sync_inodes_sb+0x1ff/0x450
+>> [ 2212.848050]  filemap_fdatawait_keep_errors+0x1a/0x40
+>> [ 2212.848751]  sync_inodes_sb+0x262/0x450
+>> [ 2212.849282]  sync_filesystem+0x57/0x90
+>> [ 2212.849821]  generic_shutdown_super+0x22/0x100
+>> [ 2212.850435]  kill_block_super+0x21/0x50
+>> [ 2212.850989]  deactivate_locked_super+0x2f/0x70
+>> [ 2212.851596]  cleanup_mnt+0x3b/0x70
+>> [ 2212.852092]  task_work_run+0xa1/0xd0
+>> [ 2212.852580]  exit_to_usermode_loop+0x83/0x90
+>> [ 2212.853185]  do_syscall_64+0x157/0x180
+>> [ 2212.853725]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>> [ 2212.854420] RIP: 0033:0x7fadbca7d357
+>> [ 2212.854935] Code: Bad RIP value.
+>> [ 2212.855384] RSP: 002b:00007ffe15b2bbb8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+>> [ 2212.856418] RAX: 0000000000000000 RBX: 0000561162acc2d0 RCX: 00007fadbca7d357
+>> [ 2212.857393] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 0000561162ad1390
+>> [ 2212.858391] RBP: 0000000000000000 R08: 000000000000fef8 R09: 0000feff00000000
+>> [ 2212.859367] R10: 0000000000000000 R11: 0000000000000246 R12: 0000561162ad1390
+>> [ 2212.860345] R13: 00007fadbd8231a4 R14: 0000561162acc4b0 R15: 00007ffe15b2be28
+>>
+>> The following is the contents of the xfstests' local.config file,
+>>
+>> # F2FS
+>> export TEST_DEV=/dev/loop0
+>> export TEST_DIR=/mnt/xfstest-test
+>> export SCRATCH_DEV=/dev/loop1
+>> export SCRATCH_MNT=/mnt/xfstest-scratch
+>> MKFS_OPTIONS="-O encrypt"
+>> MOUNT_OPTIONS="-o test_dummy_encryption"
+>>
+>> -- 
+>> chandan
+>>
+>>
+>> ------------------------------------------------------------------------------
+>> Check out the vibrant tech community on one of the world's most
+>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+>> _______________________________________________
+>> Linux-f2fs-devel mailing list
+>> Linux-f2fs-devel@lists.sourceforge.net
+>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 > 
 > ------------------------------------------------------------------------------
 > Check out the vibrant tech community on one of the world's most
@@ -92,6 +115,9 @@ It looks like
 > Linux-f2fs-devel mailing list
 > Linux-f2fs-devel@lists.sourceforge.net
 > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
+> 
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
