@@ -1,54 +1,99 @@
-From: Sahitya Tummala <stummala@codeaurora.org>
-Subject: Re: [PATCH v2] f2fs: Fix deadlock in shutdown ioctl
-Date: Fri, 18 May 2018 13:09:53 +0530
-Message-ID: <20180518073953.GC6293@codeaurora.org>
-References: <1526544211-26218-1-git-send-email-stummala@codeaurora.org>
- <b7d045f3-f37b-46da-3c1c-2b6d99efc9e7@huawei.com>
- <20180518010826.GC33876@jaegeuk-macbookpro.roam.corp.google.com>
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+Subject: Re: [PATCH v2 00/15] fscrypt: improved logging and other
+ cleanups
+Date: Sun, 20 May 2018 20:55:48 -0400
+Message-ID: <20180521005548.GB4464@thunk.org>
+References: <20180430225149.183514-1-ebiggers3@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <tytso@thunk.org>) id 1fKZ7Q-0002kx-8C
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 May 2018 00:56:08 +0000
+Received: from imap.thunk.org ([74.207.234.97])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fKZ7M-00EmyJ-TK
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 May 2018 00:56:08 +0000
 Content-Disposition: inline
-In-Reply-To: <20180518010826.GC33876@jaegeuk-macbookpro.roam.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <20180430225149.183514-1-ebiggers3@gmail.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: Eric Biggers <ebiggers@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org, Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org
 
-On Thu, May 17, 2018 at 06:08:26PM -0700, Jaegeuk Kim wrote:
+On Mon, Apr 30, 2018 at 03:51:34PM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> if (in == F2FS_GOING_DOWN_FULLSYNC) {
-> 	sb = freeze_bdev();
-> 	if (IS_ERR(sb))
-> 		return PTR_ERR(sb);
-> 	if (unlikely(!sb))
-> 		return -EINVAL;
-> }
+> Hello, here's yet another round of cleanups for fscrypt.  Please
+> consider for v4.18.  These are all patches I've sent out previously.
+> The series is based on v4.17-rc3.
 > 
-> ret = mnt_want_write_file();
+> Patches 1-12 mostly remove unnecessary or redundant code from a number
+> of different places; nothing particularly noteworthy.  Note: to avoid a
+> merge conflict with f2fs/dev, I've dropped the patch
+> "fscrypt: remove WARN_ON_ONCE() when decryption fails".
+> 
+> Patch 13 switches the existing warning and error messages in fscrypt
+> over to use a common logging function, which is ratelimited and includes
+> the filesystem name (->s_id) when available as well as a consistent
+> prefix of "fscrypt:".
+> 
+> Patches 14-15 are optimizations and cleanups for key lookup and key
+> derivation.  They are extracted from the patch "fscrypt: refactor
+> finding and deriving key" I had originally sent as part of the series
+> "fscrypt: filesystem-level keyring and v2 policy support".  But I think
+> they're useful changes by themselves, so no need to wait on them.
 
-It will be stuck/blocked here as freeze_bdev() now holds the write 
-lock for all the cases including SB_FREEZE_WRITE. As freeze_bdev()
-holds the write lock, I think f2fs_stop_checkpoint() should be safe
-even without mnt_want_write_file().
+Thanks, I've applied this patch series.
 
-I have posted v3 as per Chao's comments to exclude mnt_want_write_file()
-for F2FS_GOING_DOWN_FULLSYNC case.
-Please check and let me know if there are any further comments.
+						- Ted
 
-> ...
-> switch() {
-> case F2FS_GOING_DOWN_FULLSYNC:
-> 	f2fs_stop_checkpoint();
-> 	dhaw_bdev();
-> 	break;
-> ...
-> }
+> Eric Biggers (15):
+>   fs, fscrypt: only define ->s_cop when FS_ENCRYPTION is enabled
+>   fscrypt: clean up after fscrypt_prepare_lookup() conversions
+>   fscrypt: remove unnecessary NULL check when allocating skcipher
+>   fscrypt: remove error messages for skcipher_request_alloc() failure
+>   fscrypt: remove stale comment from fscrypt_d_revalidate()
+>   fscrypt: don't clear flags on crypto transform
+>   fscrypt: don't special-case EOPNOTSUPP from
+>     fscrypt_get_encryption_info()
+>   fscrypt: drop max_namelen check from fname_decrypt()
+>   fscrypt: drop empty name check from fname_decrypt()
+>   fscrypt: make fscrypt_operations.max_namelen an integer
+>   fscrypt: remove unnecessary check for non-logon key type
+>   fscrypt: remove internal key size constants
+>   fscrypt: use a common logging function
+>   fscrypt: separate key lookup from key derivation
+>   fscrypt: only derive the needed portion of the key
 > 
-> drop:
-> ...
+>  fs/crypto/crypto.c              |  36 ++++--
+>  fs/crypto/fname.c               |  32 ++---
+>  fs/crypto/fscrypt_private.h     |  19 +--
+>  fs/crypto/hooks.c               |   5 +-
+>  fs/crypto/keyinfo.c             | 200 +++++++++++++++++---------------
+>  fs/ext4/super.c                 |   8 +-
+>  fs/f2fs/super.c                 |   8 +-
+>  fs/ubifs/crypto.c               |  10 +-
+>  include/linux/fs.h              |   4 +-
+>  include/linux/fscrypt_notsupp.h |  10 --
+>  include/linux/fscrypt_supp.h    |  16 +--
+>  11 files changed, 161 insertions(+), 187 deletions(-)
 > 
+> -- 
+> 2.17.0.441.gb46fe60e1d-goog
 > 
---
-Sent by a consultant of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
