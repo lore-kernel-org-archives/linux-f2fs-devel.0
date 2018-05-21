@@ -1,25 +1,26 @@
 From: Ross Zwisler <ross.zwisler@linux.intel.com>
-Subject: Re: [PATCH v11 53/63] dax: Rename some functions
-Date: Sun, 20 May 2018 22:42:36 -0600
-Message-ID: <20180521044236.GC27043@linux.intel.com>
+Subject: Re: [PATCH v11 54/63] dax: Hash on XArray instead of
+ mapping
+Date: Sun, 20 May 2018 22:47:56 -0600
+Message-ID: <20180521044756.GD27043@linux.intel.com>
 References: <20180414141316.7167-1-willy@infradead.org>
- <20180414141316.7167-54-willy@infradead.org>
+ <20180414141316.7167-55-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ross.zwisler@linux.intel.com>) id 1fKcej-0003j7-96
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 May 2018 04:42:45 +0000
-Received: from mga07.intel.com ([134.134.136.100])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <ross.zwisler@linux.intel.com>) id 1fKckF-0004l4-7l
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 May 2018 04:48:27 +0000
+Received: from [192.55.52.136] (helo=mga12.intel.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fKceh-00Bn2L-W3
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 May 2018 04:42:45 +0000
+ id 1fKckA-00Adzr-VV
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 May 2018 04:48:27 +0000
 Content-Disposition: inline
-In-Reply-To: <20180414141316.7167-54-willy@infradead.org>
+In-Reply-To: <20180414141316.7167-55-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,45 +33,15 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Matthew Wilcox <willy@infradead.org>
 Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Matthew Wilcox <mawilcox@microsoft.com>, James Simmons <jsimmons@infradead.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Andreas Dilger <andreas.dilger@intel.com>, Nicholas Piggin <npiggin@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, Oleg Drokin <oleg.drokin@intel.com>, linux-mm@kvack.org, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-fsdevel@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, Mike Kravetz <mike.kravetz@oracle.com>
 
-On Sat, Apr 14, 2018 at 07:13:06AM -0700, Matthew Wilcox wrote:
+On Sat, Apr 14, 2018 at 07:13:07AM -0700, Matthew Wilcox wrote:
 > From: Matthew Wilcox <mawilcox@microsoft.com>
 > 
-> Remove mentions of 'radix' and 'radix tree'.  Simplify some names by
-> dropping the word 'mapping'.
-> 
-> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+> Since the XArray is embedded in the struct address_space, this contains
+> exactly as much entropy as the address of the mapping.
 
-
-> @@ -74,18 +74,18 @@ fs_initcall(init_dax_wait_table);
->  #define DAX_ZERO_PAGE	(1UL << 2)
->  #define DAX_EMPTY	(1UL << 3)
->  
-> -static unsigned long dax_radix_pfn(void *entry)
-> +static unsigned long dax_to_pfn(void *entry)
->  {
->  	return xa_to_value(entry) >> DAX_SHIFT;
->  }
->  
-> -static void *dax_radix_locked_entry(unsigned long pfn, unsigned long flags)
-> +static void *dax_mk_locked(unsigned long pfn, unsigned long flags)
-
-Let's continue to use whole words in function names instead of abbreviations
-for readability.  Can you please s/dax_mk_locked/dax_make_locked/ ?
-
-I do realize that the xarray function is xa_mk_value() (which I also think is
-perhaps too brief for readability), but in the rest of DAX we use full words
-everywhere.
-
-> @@ -1519,15 +1517,14 @@ int dax_iomap_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
->  }
->  EXPORT_SYMBOL_GPL(dax_iomap_fault);
->  
-> -/**
-> +/*
-
-Let's leave the double ** so that the function is picked up properly by
-the documentation system, and so it's consistent with the rest of the
-functions.
+I agree that they both have the same amount of entropy, but what's the
+benefit?  It doesn't seem like this changes any behavior, fixes any bugs or
+makes things any simpler?
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
