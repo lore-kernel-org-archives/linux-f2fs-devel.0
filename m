@@ -1,64 +1,253 @@
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-Subject: Re: [PATCH v11 53/63] dax: Rename some functions
-Date: Tue, 22 May 2018 15:39:55 -0600
-Message-ID: <20180522213955.GB12733@linux.intel.com>
-References: <20180414141316.7167-1-willy@infradead.org>
- <20180414141316.7167-54-willy@infradead.org>
- <20180521044236.GC27043@linux.intel.com>
- <20180521101139.GA20878@bombadil.infradead.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ross.zwisler@linux.intel.com>) id 1fLF0o-0008O3-BK
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 22 May 2018 21:40:06 +0000
-Received: from mga17.intel.com ([192.55.52.151])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fLF0n-00G34V-0N
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 22 May 2018 21:40:06 +0000
-Content-Disposition: inline
-In-Reply-To: <20180521101139.GA20878@bombadil.infradead.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Matthew Wilcox <mawilcox@microsoft.com>, James Simmons <jsimmons@infradead.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Andreas Dilger <andreas.dilger@intel.com>, Nicholas Piggin <npiggin@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, Oleg Drokin <oleg.drokin@intel.com>, linux-mm@kvack.org, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-fsdevel@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, Mike Kravetz <mike.kravetz@oracle.com>
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH 1/2] f2fs: clean up with is_valid_blkaddr()
+Date: Wed, 23 May 2018 22:25:08 +0800
+Message-ID: <20180523142509.17905-1-chao@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Mon, May 21, 2018 at 03:11:39AM -0700, Matthew Wilcox wrote:
-> On Sun, May 20, 2018 at 10:42:36PM -0600, Ross Zwisler wrote:
+From: Chao Yu <yuchao0@huawei.com>
 
-> > > @@ -1519,15 +1517,14 @@ int dax_iomap_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(dax_iomap_fault);
-> > >  
-> > > -/**
-> > > +/*
-> > 
-> > Let's leave the double ** so that the function is picked up properly by
-> > the documentation system, and so it's consistent with the rest of the
-> > functions.
-> 
-> This function is static.  I think it's worth keeping the documentation,
-> but making it part of the exported kernel API documentation is confusing.
+- rename is_valid_blkaddr() to is_valid_meta_blkaddr() for readability.
+- introduce is_valid_blkaddr() for cleanup.
 
-Ah, fair enough.
+No logic change in this patch.
 
-> By the way, nothing at all in fs/dax.c is picked up by the documentation
-> system today.  We should probably fix that ... did you want to look at it
-> or shall I propose a patch to anchor it somewhere?
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/checkpoint.c |  4 ++--
+ fs/f2fs/data.c       | 18 +++++-------------
+ fs/f2fs/f2fs.h       |  9 ++++++++-
+ fs/f2fs/file.c       |  2 +-
+ fs/f2fs/inode.c      |  2 +-
+ fs/f2fs/node.c       |  5 ++---
+ fs/f2fs/recovery.c   |  6 +++---
+ fs/f2fs/segment.c    |  4 ++--
+ fs/f2fs/segment.h    |  2 +-
+ 9 files changed, 25 insertions(+), 27 deletions(-)
 
-If you have time for it that would be awesome.
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 33d2da006789..e38221d96564 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -119,7 +119,7 @@ struct page *get_tmp_page(struct f2fs_sb_info *sbi, pgoff_t index)
+ 	return __get_meta_page(sbi, index, false);
+ }
+ 
+-bool is_valid_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr, int type)
++bool is_valid_meta_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr, int type)
+ {
+ 	switch (type) {
+ 	case META_NAT:
+@@ -175,7 +175,7 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
+ 	blk_start_plug(&plug);
+ 	for (; nrpages-- > 0; blkno++) {
+ 
+-		if (!is_valid_blkaddr(sbi, blkno, type))
++		if (!is_valid_meta_blkaddr(sbi, blkno, type))
+ 			goto out;
+ 
+ 		switch (type) {
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index c368e651d3fd..feb4c224b305 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -428,7 +428,7 @@ int f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 		spin_unlock(&io->io_lock);
+ 	}
+ 
+-	if (fio->old_blkaddr != NEW_ADDR)
++	if (is_valid_blkaddr(fio->old_blkaddr))
+ 		verify_block_addr(fio, fio->old_blkaddr);
+ 	verify_block_addr(fio, fio->new_blkaddr);
+ 
+@@ -984,7 +984,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ next_block:
+ 	blkaddr = datablock_addr(dn.inode, dn.node_page, dn.ofs_in_node);
+ 
+-	if (blkaddr == NEW_ADDR || blkaddr == NULL_ADDR) {
++	if (!is_valid_blkaddr(blkaddr)) {
+ 		if (create) {
+ 			if (unlikely(f2fs_cp_error(sbi))) {
+ 				err = -EIO;
+@@ -1619,15 +1619,6 @@ static inline bool need_inplace_update(struct f2fs_io_info *fio)
+ 	return should_update_inplace(inode, fio);
+ }
+ 
+-static inline bool valid_ipu_blkaddr(struct f2fs_io_info *fio)
+-{
+-	if (fio->old_blkaddr == NEW_ADDR)
+-		return false;
+-	if (fio->old_blkaddr == NULL_ADDR)
+-		return false;
+-	return true;
+-}
+-
+ int do_write_data_page(struct f2fs_io_info *fio)
+ {
+ 	struct page *page = fio->page;
+@@ -1642,7 +1633,7 @@ int do_write_data_page(struct f2fs_io_info *fio)
+ 			f2fs_lookup_extent_cache(inode, page->index, &ei)) {
+ 		fio->old_blkaddr = ei.blk + page->index - ei.fofs;
+ 
+-		if (valid_ipu_blkaddr(fio)) {
++		if (is_valid_blkaddr(fio->old_blkaddr)) {
+ 			ipu_force = true;
+ 			fio->need_lock = LOCK_DONE;
+ 			goto got_it;
+@@ -1669,7 +1660,8 @@ int do_write_data_page(struct f2fs_io_info *fio)
+ 	 * If current allocation needs SSR,
+ 	 * it had better in-place writes for updated data.
+ 	 */
+-	if (ipu_force || (valid_ipu_blkaddr(fio) && need_inplace_update(fio))) {
++	if (ipu_force || (is_valid_blkaddr(fio->old_blkaddr) &&
++					need_inplace_update(fio))) {
+ 		err = encrypt_one_page(fio);
+ 		if (err)
+ 			goto out_writepage;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 76d8de0f21a7..49cd6c30843c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2658,6 +2658,13 @@ static inline void f2fs_update_iostat(struct f2fs_sb_info *sbi,
+ 	spin_unlock(&sbi->iostat_lock);
+ }
+ 
++static inline bool is_valid_blkaddr(block_t blkaddr)
++{
++	if (blkaddr == NEW_ADDR || blkaddr == NULL_ADDR)
++		return false;
++	return true;
++}
++
+ /*
+  * file.c
+  */
+@@ -2878,7 +2885,7 @@ void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi, bool end_io);
+ struct page *grab_meta_page(struct f2fs_sb_info *sbi, pgoff_t index);
+ struct page *get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index);
+ struct page *get_tmp_page(struct f2fs_sb_info *sbi, pgoff_t index);
+-bool is_valid_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr, int type);
++bool is_valid_meta_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr, int type);
+ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
+ 			int type, bool sync);
+ void ra_meta_pages_cond(struct f2fs_sb_info *sbi, pgoff_t index);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index da13ea3e190a..b569c7c5db6d 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -352,7 +352,7 @@ static bool __found_offset(block_t blkaddr, pgoff_t dirty, pgoff_t pgofs,
+ 	switch (whence) {
+ 	case SEEK_DATA:
+ 		if ((blkaddr == NEW_ADDR && dirty == pgofs) ||
+-			(blkaddr != NEW_ADDR && blkaddr != NULL_ADDR))
++			is_valid_blkaddr(blkaddr))
+ 			return true;
+ 		break;
+ 	case SEEK_HOLE:
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 4b9dce9029ac..ffb7e8266db9 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -72,7 +72,7 @@ static bool __written_first_block(struct f2fs_inode *ri)
+ {
+ 	block_t addr = le32_to_cpu(ri->i_addr[offset_in_addr(ri)]);
+ 
+-	if (addr != NEW_ADDR && addr != NULL_ADDR)
++	if (is_valid_blkaddr(addr))
+ 		return true;
+ 	return false;
+ }
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 62ce49984a9e..67b3e89975af 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -379,8 +379,7 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+ 			new_blkaddr == NULL_ADDR);
+ 	f2fs_bug_on(sbi, nat_get_blkaddr(e) == NEW_ADDR &&
+ 			new_blkaddr == NEW_ADDR);
+-	f2fs_bug_on(sbi, nat_get_blkaddr(e) != NEW_ADDR &&
+-			nat_get_blkaddr(e) != NULL_ADDR &&
++	f2fs_bug_on(sbi, is_valid_blkaddr(nat_get_blkaddr(e)) &&
+ 			new_blkaddr == NEW_ADDR);
+ 
+ 	/* increment version no as node is removed */
+@@ -391,7 +390,7 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+ 
+ 	/* change address */
+ 	nat_set_blkaddr(e, new_blkaddr);
+-	if (new_blkaddr == NEW_ADDR || new_blkaddr == NULL_ADDR)
++	if (!is_valid_blkaddr(new_blkaddr))
+ 		set_nat_flag(e, IS_CHECKPOINTED, false);
+ 	__set_nat_cache_dirty(nm_i, e);
+ 
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 709dd4daaf29..bb519ba2558e 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -252,7 +252,7 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 	while (1) {
+ 		struct fsync_inode_entry *entry;
+ 
+-		if (!is_valid_blkaddr(sbi, blkaddr, META_POR))
++		if (!is_valid_meta_blkaddr(sbi, blkaddr, META_POR))
+ 			return 0;
+ 
+ 		page = get_tmp_page(sbi, blkaddr);
+@@ -506,7 +506,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 		}
+ 
+ 		/* dest is valid block, try to recover from src to dest */
+-		if (is_valid_blkaddr(sbi, dest, META_POR)) {
++		if (is_valid_meta_blkaddr(sbi, dest, META_POR)) {
+ 
+ 			if (src == NULL_ADDR) {
+ 				err = reserve_new_block(&dn);
+@@ -567,7 +567,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
+ 	while (1) {
+ 		struct fsync_inode_entry *entry;
+ 
+-		if (!is_valid_blkaddr(sbi, blkaddr, META_POR))
++		if (!is_valid_meta_blkaddr(sbi, blkaddr, META_POR))
+ 			break;
+ 
+ 		ra_meta_pages_cond(sbi, blkaddr);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 5816ab471c41..ce60378cf93c 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1954,7 +1954,7 @@ bool is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr)
+ 	struct seg_entry *se;
+ 	bool is_cp = false;
+ 
+-	if (blkaddr == NEW_ADDR || blkaddr == NULL_ADDR)
++	if (!is_valid_blkaddr(blkaddr))
+ 		return true;
+ 
+ 	down_read(&sit_i->sentry_lock);
+@@ -2948,7 +2948,7 @@ void f2fs_wait_on_block_writeback(struct f2fs_sb_info *sbi, block_t blkaddr)
+ {
+ 	struct page *cpage;
+ 
+-	if (blkaddr == NEW_ADDR || blkaddr == NULL_ADDR)
++	if (!is_valid_blkaddr(blkaddr))
+ 		return;
+ 
+ 	cpage = find_lock_page(META_MAPPING(sbi), blkaddr);
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index c385daabcb67..c574131ac7e1 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -85,7 +85,7 @@
+ 	(GET_SEGOFF_FROM_SEG0(sbi, blk_addr) & ((sbi)->blocks_per_seg - 1))
+ 
+ #define GET_SEGNO(sbi, blk_addr)					\
+-	((((blk_addr) == NULL_ADDR) || ((blk_addr) == NEW_ADDR)) ?	\
++	((!is_valid_blkaddr(blk_addr)) ?			\
+ 	NULL_SEGNO : GET_L2R_SEGNO(FREE_I(sbi),			\
+ 		GET_SEGNO_FROM_SEG0(sbi, blk_addr)))
+ #define BLKS_PER_SEC(sbi)					\
+-- 
+2.16.2.17.g38e79b1fd
