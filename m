@@ -1,9 +1,8 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 2/2] f2fs: detect synchronous writeback more
- earlier
-Date: Wed, 23 May 2018 22:25:09 +0800
-Message-ID: <20180523142509.17905-2-chao@kernel.org>
-References: <20180523142509.17905-1-chao@kernel.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] mkfs.f2fs: not allow to format too small sized
+ partition
+Date: Wed, 23 May 2018 18:17:40 -0700
+Message-ID: <20180524011740.86838-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,14 +10,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1fLUhr-0007O2-5a
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 May 2018 14:25:35 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1fLet5-0002Dn-Qv
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 May 2018 01:17:51 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fLUhk-00EGis-2m
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 May 2018 14:25:35 +0000
-In-Reply-To: <20180523142509.17905-1-chao@kernel.org>
+ id 1fLet4-001F5n-J9
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 May 2018 01:17:51 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,51 +26,51 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-From: Chao Yu <yuchao0@huawei.com>
+For example, if we want to format 40MB image, it'll give 12 segments for main
+area. And, it assigns 6 for current segments, 11 for ovp segments, and 10 for
+reserved segments. So, we have 5 free segments, which we can't handle:
+ # of free segments < # of reserved segments.
 
-This patch changes to detect synchronous writeback more earlier before,
-in order to avoid unnecessary page writeback before exiting asynchronous
-writeback.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Reported-by: Daniel Rosenberg <drosen@google.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/data.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ mkfs/f2fs_format.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index feb4c224b305..91cbf20b448a 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1919,6 +1919,13 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 			struct page *page = pvec.pages[i];
- 			bool submitted = false;
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 0a99a77..3ab5236 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -408,18 +408,19 @@ static int f2fs_prepare_super_block(void)
+ 	if (c.overprovision == 0)
+ 		c.overprovision = get_best_overprovision(sb);
  
-+			/* give a priority to WB_SYNC threads */
-+			if (atomic_read(&F2FS_M_SB(mapping)->wb_sync_req) &&
-+					wbc->sync_mode == WB_SYNC_NONE) {
-+				done = 1;
-+				break;
-+			}
++	c.reserved_segments =
++			(2 * (100 / c.overprovision + 1) + NR_CURSEG_TYPE)
++			* c.segs_per_sec;
 +
- 			done_index = page->index;
- retry_write:
- 			lock_page(page);
-@@ -1973,9 +1980,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 				last_idx = page->index;
- 			}
+ 	if (c.overprovision == 0 || c.total_segments < F2FS_MIN_SEGMENTS ||
+ 		(c.devices[0].total_sectors *
+ 			c.sector_size < zone_align_start_offset) ||
+-		(get_sb(segment_count_main) - 2) < c.reserved_segments) {
++		(get_sb(segment_count_main) - NR_CURSEG_TYPE) <
++						c.reserved_segments) {
+ 		MSG(0, "\tError: Device size is not sufficient for F2FS volume\n");
+ 		return -1;
+ 	}
  
--			/* give a priority to WB_SYNC threads */
--			if ((atomic_read(&F2FS_M_SB(mapping)->wb_sync_req) ||
--					--wbc->nr_to_write <= 0) &&
-+			if (--wbc->nr_to_write <= 0 &&
- 					wbc->sync_mode == WB_SYNC_NONE) {
- 				done = 1;
- 				break;
+-	c.reserved_segments =
+-			(2 * (100 / c.overprovision + 1) + 6)
+-			* c.segs_per_sec;
+-
+ 	uuid_generate(sb->uuid);
+ 
+ 	/* precompute checksum seed for metadata */
 -- 
-2.16.2.17.g38e79b1fd
+2.17.0.441.gb46fe60e1d-goog
 
 
 ------------------------------------------------------------------------------
