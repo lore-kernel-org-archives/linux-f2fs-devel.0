@@ -1,78 +1,103 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] mkfs.f2fs: not allow to format too small sized
- partition
-Date: Wed, 23 May 2018 18:17:40 -0700
-Message-ID: <20180524011740.86838-1-jaegeuk@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: keep migration IO order in LFS mode
+Date: Thu, 24 May 2018 20:44:17 +0800
+Message-ID: <20180524124417.70964-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1fLet5-0002Dn-Qv
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 May 2018 01:17:51 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fLet4-001F5n-J9
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 May 2018 01:17:51 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>, Yunlong Song <yunlong.song@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-For example, if we want to format 40MB image, it'll give 12 segments for main
-area. And, it assigns 6 for current segments, 11 for ovp segments, and 10 for
-reserved segments. So, we have 5 free segments, which we can't handle:
- # of free segments < # of reserved segments.
+For non-migration IO, we will keep order of data/node blocks' submitting
+as allocation sequence by sorting IOs in per log io_list list, but for
+migration IO, it could be out-of-order.
 
-Reported-by: Daniel Rosenberg <drosen@google.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+In LFS mode, we should keep all IOs including migration IO be ordered,
+so that this patch fixes to add an additional lock to keep submitting
+order.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 ---
- mkfs/f2fs_format.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ fs/f2fs/f2fs.h    | 2 ++
+ fs/f2fs/gc.c      | 5 +++++
+ fs/f2fs/segment.c | 5 +++++
+ fs/f2fs/super.c   | 1 +
+ 4 files changed, 13 insertions(+)
 
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index 0a99a77..3ab5236 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -408,18 +408,19 @@ static int f2fs_prepare_super_block(void)
- 	if (c.overprovision == 0)
- 		c.overprovision = get_best_overprovision(sb);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index e06b622ba661..233e00068472 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1127,6 +1127,8 @@ struct f2fs_sb_info {
+ 	struct f2fs_bio_info *write_io[NR_PAGE_TYPE];	/* for write bios */
+ 	struct mutex wio_mutex[NR_PAGE_TYPE - 1][NR_TEMP_TYPE];
+ 						/* bio ordering for NODE/DATA */
++	/* keep migration IO order for LFS mode */
++	struct rw_semaphore io_order_lock;
+ 	mempool_t *write_io_dummy;		/* Dummy pages */
  
-+	c.reserved_segments =
-+			(2 * (100 / c.overprovision + 1) + NR_CURSEG_TYPE)
-+			* c.segs_per_sec;
+ 	/* for checkpoint */
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 5ef3233c38d2..fca1d3745535 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -653,6 +653,9 @@ static void move_data_block(struct inode *inode, block_t bidx,
+ 	fio.page = page;
+ 	fio.new_blkaddr = fio.old_blkaddr = dn.data_blkaddr;
+ 
++	if (test_opt(fio.sbi, LFS))
++		down_write(&fio.sbi->io_order_lock);
 +
- 	if (c.overprovision == 0 || c.total_segments < F2FS_MIN_SEGMENTS ||
- 		(c.devices[0].total_sectors *
- 			c.sector_size < zone_align_start_offset) ||
--		(get_sb(segment_count_main) - 2) < c.reserved_segments) {
-+		(get_sb(segment_count_main) - NR_CURSEG_TYPE) <
-+						c.reserved_segments) {
- 		MSG(0, "\tError: Device size is not sufficient for F2FS volume\n");
- 		return -1;
+ 	allocate_data_block(fio.sbi, NULL, fio.old_blkaddr, &newaddr,
+ 					&sum, CURSEG_COLD_DATA, NULL, false);
+ 
+@@ -709,6 +712,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
+ put_page_out:
+ 	f2fs_put_page(fio.encrypted_page, 1);
+ recover_block:
++	if (test_opt(fio.sbi, LFS))
++		up_write(&fio.sbi->io_order_lock);
+ 	if (err)
+ 		__f2fs_replace_block(fio.sbi, &sum, newaddr, fio.old_blkaddr,
+ 								true, true);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 697e7f8464b4..6b688e2d0b5d 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2749,7 +2749,10 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
+ {
+ 	int type = __get_segment_type(fio);
+ 	int err;
++	bool keep_order = (test_opt(fio->sbi, LFS) && type == CURSEG_COLD_DATA);
+ 
++	if (keep_order)
++		down_read(&fio->sbi->io_order_lock);
+ reallocate:
+ 	allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
+ 			&fio->new_blkaddr, sum, type, fio, true);
+@@ -2762,6 +2765,8 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
+ 	} else if (!err) {
+ 		update_device_state(fio);
  	}
++	if (keep_order)
++		up_read(&fio->sbi->io_order_lock);
+ }
  
--	c.reserved_segments =
--			(2 * (100 / c.overprovision + 1) + 6)
--			* c.segs_per_sec;
--
- 	uuid_generate(sb->uuid);
+ void write_meta_page(struct f2fs_sb_info *sbi, struct page *page,
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 8e5f0a178f5d..1b42fc7e4b29 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2365,6 +2365,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+ 	for (i = 0; i < NR_PAGE_TYPE - 1; i++)
+ 		for (j = HOT; j < NR_TEMP_TYPE; j++)
+ 			mutex_init(&sbi->wio_mutex[i][j]);
++	init_rwsem(&sbi->io_order_lock);
+ 	spin_lock_init(&sbi->cp_lock);
  
- 	/* precompute checksum seed for metadata */
+ 	sbi->dirty_device = 0;
 -- 
-2.17.0.441.gb46fe60e1d-goog
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+2.17.0.391.g1f1cddd558b5
