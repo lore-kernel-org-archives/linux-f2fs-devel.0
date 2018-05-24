@@ -1,103 +1,103 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: keep migration IO order in LFS mode
-Date: Thu, 24 May 2018 20:44:17 +0800
-Message-ID: <20180524124417.70964-1-yuchao0@huawei.com>
+From: Adam Borowski <kilobyte@angband.pl>
+Subject: [PATCH v2] libf2fs: read "disk model" from SCSI ioctl
+ the same way kernel does
+Date: Thu, 24 May 2018 23:17:01 +0200
+Message-ID: <20180524211700.r2r2hybkzwhxs3du@angband.pl>
+References: <20180506225014.28201-1-kilobyte@angband.pl>
+ <20180507215811.GA90393@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>, Yunlong Song <yunlong.song@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <kilobyte@angband.pl>) id 1fLxbj-0001eg-Q2
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 May 2018 21:17:11 +0000
+Received: from tartarus.angband.pl ([89.206.35.136])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fLxbh-00GkEh-It
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 May 2018 21:17:11 +0000
+Content-Disposition: inline
+In-Reply-To: <20180507215811.GA90393@jaegeuk-macbookpro.roam.corp.google.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-For non-migration IO, we will keep order of data/node blocks' submitting
-as allocation sequence by sorting IOs in per log io_list list, but for
-migration IO, it could be out-of-order.
+On Mon, May 07, 2018 at 02:58:11PM -0700, Jaegeuk Kim wrote:
+> On 05/07, Adam Borowski wrote:
+> > One offender I own has:
+> > STORAGE DEVICE  1404x05xe3x07QGENEx00%x00x00x00x00x00x00x00x00x00x00x00x00x170x04
+> > 
+> > I limited it to pure ASCII only, but you might want to allow high-bit bytes,
+> > either validating UTF-8 or assuming that mojibake is not as bad as beep and
+> > zeroes as in the above example.  Or, cutting off at the first control
+> > character might be a good alternative too.
+> 
+> How about printing only valid characters here? In my virtualbox, this is
+> showing garbage characters.
 
-In LFS mode, we should keep all IOs including migration IO be ordered,
-so that this patch fixes to add an additional lock to keep submitting
-order.
+I dug more, and it turns out that both the old way and what I had proposed
+are totally wrong.  This field is not a real (ie, zero-terminated) string,
+and its length is 16 bytes rather than 64 as in current code.  I went
+through all SD card readers and USB sticks I had at hand, and indeed the
+value is always padded with spaces.  Stuff past byte 16 might be zeroes,
+spaces or garbage -- for real (SATA) disks it's clean, for USB stuff it
+tends to be junk.  There's a four-byte "rev" field that's sometimes
+interesting, but even if we want to print it, it would require a separator.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+So, here's another stab:
+
+-- >8 --
+Subject: libf2fs: read "disk model" from SCSI ioctl the same way kernel does
+
+Ref: drivers/scsi/scsi_scan.c scsi_add_lun()
+
+Ie, fixed-width 16 bytes, assumed to be filled with spaces -- NOT
+null-terminated; comments suggest that in some cases this field can be
+truncated and filled with nulls but printf is fine with that.
+
+The old code did read up to 64 characters, which produced garbage for
+at least some USB-attached card readers.  It also special-cased '`'
+character which the kernel does not.
+
+Signed-off-by: Adam Borowski <kilobyte@angband.pl>
 ---
- fs/f2fs/f2fs.h    | 2 ++
- fs/f2fs/gc.c      | 5 +++++
- fs/f2fs/segment.c | 5 +++++
- fs/f2fs/super.c   | 1 +
- 4 files changed, 13 insertions(+)
+ lib/libf2fs.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index e06b622ba661..233e00068472 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1127,6 +1127,8 @@ struct f2fs_sb_info {
- 	struct f2fs_bio_info *write_io[NR_PAGE_TYPE];	/* for write bios */
- 	struct mutex wio_mutex[NR_PAGE_TYPE - 1][NR_TEMP_TYPE];
- 						/* bio ordering for NODE/DATA */
-+	/* keep migration IO order for LFS mode */
-+	struct rw_semaphore io_order_lock;
- 	mempool_t *write_io_dummy;		/* Dummy pages */
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index 5ef0214..38480c5 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -880,13 +880,8 @@ int get_device_info(int i)
+ 		io_hdr.timeout = 1000;
  
- 	/* for checkpoint */
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 5ef3233c38d2..fca1d3745535 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -653,6 +653,9 @@ static void move_data_block(struct inode *inode, block_t bidx,
- 	fio.page = page;
- 	fio.new_blkaddr = fio.old_blkaddr = dn.data_blkaddr;
- 
-+	if (test_opt(fio.sbi, LFS))
-+		down_write(&fio.sbi->io_order_lock);
-+
- 	allocate_data_block(fio.sbi, NULL, fio.old_blkaddr, &newaddr,
- 					&sum, CURSEG_COLD_DATA, NULL, false);
- 
-@@ -709,6 +712,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
- put_page_out:
- 	f2fs_put_page(fio.encrypted_page, 1);
- recover_block:
-+	if (test_opt(fio.sbi, LFS))
-+		up_write(&fio.sbi->io_order_lock);
- 	if (err)
- 		__f2fs_replace_block(fio.sbi, &sum, newaddr, fio.old_blkaddr,
- 								true, true);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 697e7f8464b4..6b688e2d0b5d 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2749,7 +2749,10 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
- {
- 	int type = __get_segment_type(fio);
- 	int err;
-+	bool keep_order = (test_opt(fio->sbi, LFS) && type == CURSEG_COLD_DATA);
- 
-+	if (keep_order)
-+		down_read(&fio->sbi->io_order_lock);
- reallocate:
- 	allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
- 			&fio->new_blkaddr, sum, type, fio, true);
-@@ -2762,6 +2765,8 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
- 	} else if (!err) {
- 		update_device_state(fio);
- 	}
-+	if (keep_order)
-+		up_read(&fio->sbi->io_order_lock);
- }
- 
- void write_meta_page(struct f2fs_sb_info *sbi, struct page *page,
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 8e5f0a178f5d..1b42fc7e4b29 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2365,6 +2365,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
- 	for (i = 0; i < NR_PAGE_TYPE - 1; i++)
- 		for (j = HOT; j < NR_TEMP_TYPE; j++)
- 			mutex_init(&sbi->wio_mutex[i][j]);
-+	init_rwsem(&sbi->io_order_lock);
- 	spin_lock_init(&sbi->cp_lock);
- 
- 	sbi->dirty_device = 0;
+ 		if (!ioctl(fd, SG_IO, &io_hdr)) {
+-			int i = 16;
+-
+-			MSG(0, "Info: [%s] Disk Model: ",
+-					dev->path);
+-			while (reply_buffer[i] != '`' && i < 80)
+-				printf("%c", reply_buffer[i++]);
+-			printf("\n");
++			MSG(0, "Info: [%s] Disk Model: %.16s\n",
++					dev->path, reply_buffer+16);
+ 		}
+ #endif
+ 	} else {
 -- 
-2.17.0.391.g1f1cddd558b5
+2.17.0
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
