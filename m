@@ -1,214 +1,224 @@
-From: Chao Yu <yuchao0@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 Subject: Re: [PATCH] f2fs: let fstrim issue discard commands in lower priority
-Date: Fri, 25 May 2018 14:04:26 +0800
-Message-ID: <49c7b50e-eb10-b8f7-a5e3-68f621374d7f@huawei.com>
+Date: Thu, 24 May 2018 23:18:51 -0700
+Message-ID: <20180525061851.GA38511@jaegeuk-macbookpro.roam.corp.google.com>
 References: <20180525051031.36443-1-jaegeuk@kernel.org>
+ <49c7b50e-eb10-b8f7-a5e3-68f621374d7f@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180525051031.36443-1-jaegeuk@kernel.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <49c7b50e-eb10-b8f7-a5e3-68f621374d7f@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
-
-On 2018/5/25 13:10, Jaegeuk Kim wrote:
-> The fstrim gathers huge number of large discard commands, and tries to issue
-> without IO awareness, which results in long user-perceive IO latencies on
-> READ, WRITE, and FLUSH in UFS. We've observed some of commands take several
-> seconds due to long discard latency.
+On 05/25, Chao Yu wrote:
+> Hi Jaegeuk,
 > 
-> This patch limits the maximum size to 2MB per candidate, and check IO congestion
-> when issuing them to disk.
+> On 2018/5/25 13:10, Jaegeuk Kim wrote:
+> > The fstrim gathers huge number of large discard commands, and tries to issue
+> > without IO awareness, which results in long user-perceive IO latencies on
+> > READ, WRITE, and FLUSH in UFS. We've observed some of commands take several
+> > seconds due to long discard latency.
+> > 
+> > This patch limits the maximum size to 2MB per candidate, and check IO congestion
+> > when issuing them to disk.
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/f2fs.h    |   4 +-
+> >  fs/f2fs/segment.c | 123 +++++++++++++++++++++++-----------------------
+> >  2 files changed, 64 insertions(+), 63 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 3bddf13794d9..75ae7fc86ae8 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -178,6 +178,7 @@ enum {
+> >  
+> >  #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
+> >  #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
+> > +#define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
+> >  #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
+> >  #define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
+> >  #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
+> > @@ -698,7 +699,8 @@ static inline void set_extent_info(struct extent_info *ei, unsigned int fofs,
+> >  static inline bool __is_discard_mergeable(struct discard_info *back,
+> >  						struct discard_info *front)
+> >  {
+> > -	return back->lstart + back->len == front->lstart;
+> > +	return (back->lstart + back->len == front->lstart) &&
+> > +		(back->len + front->len < DEF_MAX_DISCARD_LEN);
+> >  }
+> >  
+> >  static inline bool __is_discard_back_mergeable(struct discard_info *cur,
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 843fc2e6d41c..ba996d4091bc 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -1139,68 +1139,6 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+> >  	return 0;
+> >  }
+> >  
+> > -static void __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
+> > -					struct discard_policy *dpolicy,
+> > -					unsigned int start, unsigned int end)
+> > -{
+> > -	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+> > -	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
+> > -	struct rb_node **insert_p = NULL, *insert_parent = NULL;
+> > -	struct discard_cmd *dc;
+> > -	struct blk_plug plug;
+> > -	int issued;
+> > -
+> > -next:
+> > -	issued = 0;
+> > -
+> > -	mutex_lock(&dcc->cmd_lock);
+> > -	f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
+> > -
+> > -	dc = (struct discard_cmd *)__lookup_rb_tree_ret(&dcc->root,
+> > -					NULL, start,
+> > -					(struct rb_entry **)&prev_dc,
+> > -					(struct rb_entry **)&next_dc,
+> > -					&insert_p, &insert_parent, true);
+> > -	if (!dc)
+> > -		dc = next_dc;
+> > -
+> > -	blk_start_plug(&plug);
+> > -
+> > -	while (dc && dc->lstart <= end) {
+> > -		struct rb_node *node;
+> > -
+> > -		if (dc->len < dpolicy->granularity)
+> > -			goto skip;
+> > -
+> > -		if (dc->state != D_PREP) {
+> > -			list_move_tail(&dc->list, &dcc->fstrim_list);
+> > -			goto skip;
+> > -		}
+> > -
+> > -		__submit_discard_cmd(sbi, dpolicy, dc);
+> > -
+> > -		if (++issued >= dpolicy->max_requests) {
+> > -			start = dc->lstart + dc->len;
+> > -
+> > -			blk_finish_plug(&plug);
+> > -			mutex_unlock(&dcc->cmd_lock);
+> > -
+> > -			schedule();
+> > -
+> > -			goto next;
+> > -		}
+> > -skip:
+> > -		node = rb_next(&dc->rb_node);
+> > -		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
+> > -
+> > -		if (fatal_signal_pending(current))
+> > -			break;
+> > -	}
+> > -
+> > -	blk_finish_plug(&plug);
+> > -	mutex_unlock(&dcc->cmd_lock);
+> > -}
+> > -
+> >  static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >  					struct discard_policy *dpolicy)
+> >  {
+> > @@ -2397,6 +2335,67 @@ bool exist_trim_candidates(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >  	return has_candidate;
+> >  }
+> >  
+> > +static void __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
+> > +					struct discard_policy *dpolicy,
+> > +					unsigned int start, unsigned int end)
+> > +{
+> > +	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+> > +	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
+> > +	struct rb_node **insert_p = NULL, *insert_parent = NULL;
+> > +	struct discard_cmd *dc;
+> > +	struct blk_plug plug;
+> > +	int issued;
 > 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/f2fs.h    |   4 +-
->  fs/f2fs/segment.c | 123 +++++++++++++++++++++++-----------------------
->  2 files changed, 64 insertions(+), 63 deletions(-)
+> unsigned int cur = start;
 > 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 3bddf13794d9..75ae7fc86ae8 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -178,6 +178,7 @@ enum {
->  
->  #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
->  #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
-> +#define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
->  #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
->  #define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
->  #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
-> @@ -698,7 +699,8 @@ static inline void set_extent_info(struct extent_info *ei, unsigned int fofs,
->  static inline bool __is_discard_mergeable(struct discard_info *back,
->  						struct discard_info *front)
->  {
-> -	return back->lstart + back->len == front->lstart;
-> +	return (back->lstart + back->len == front->lstart) &&
-> +		(back->len + front->len < DEF_MAX_DISCARD_LEN);
->  }
->  
->  static inline bool __is_discard_back_mergeable(struct discard_info *cur,
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 843fc2e6d41c..ba996d4091bc 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -1139,68 +1139,6 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
->  	return 0;
->  }
->  
-> -static void __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
-> -					struct discard_policy *dpolicy,
-> -					unsigned int start, unsigned int end)
-> -{
-> -	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-> -	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
-> -	struct rb_node **insert_p = NULL, *insert_parent = NULL;
-> -	struct discard_cmd *dc;
-> -	struct blk_plug plug;
-> -	int issued;
-> -
-> -next:
-> -	issued = 0;
-> -
-> -	mutex_lock(&dcc->cmd_lock);
-> -	f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
-> -
-> -	dc = (struct discard_cmd *)__lookup_rb_tree_ret(&dcc->root,
-> -					NULL, start,
-> -					(struct rb_entry **)&prev_dc,
-> -					(struct rb_entry **)&next_dc,
-> -					&insert_p, &insert_parent, true);
-> -	if (!dc)
-> -		dc = next_dc;
-> -
-> -	blk_start_plug(&plug);
-> -
-> -	while (dc && dc->lstart <= end) {
-> -		struct rb_node *node;
-> -
-> -		if (dc->len < dpolicy->granularity)
-> -			goto skip;
-> -
-> -		if (dc->state != D_PREP) {
-> -			list_move_tail(&dc->list, &dcc->fstrim_list);
-> -			goto skip;
-> -		}
-> -
-> -		__submit_discard_cmd(sbi, dpolicy, dc);
-> -
-> -		if (++issued >= dpolicy->max_requests) {
-> -			start = dc->lstart + dc->len;
-> -
-> -			blk_finish_plug(&plug);
-> -			mutex_unlock(&dcc->cmd_lock);
-> -
-> -			schedule();
-> -
-> -			goto next;
-> -		}
-> -skip:
-> -		node = rb_next(&dc->rb_node);
-> -		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
-> -
-> -		if (fatal_signal_pending(current))
-> -			break;
-> -	}
-> -
-> -	blk_finish_plug(&plug);
-> -	mutex_unlock(&dcc->cmd_lock);
-> -}
-> -
->  static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->  					struct discard_policy *dpolicy)
->  {
-> @@ -2397,6 +2335,67 @@ bool exist_trim_candidates(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->  	return has_candidate;
->  }
->  
-> +static void __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
-> +					struct discard_policy *dpolicy,
-> +					unsigned int start, unsigned int end)
-> +{
-> +	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-> +	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
-> +	struct rb_node **insert_p = NULL, *insert_parent = NULL;
-> +	struct discard_cmd *dc;
-> +	struct blk_plug plug;
-> +	int issued;
+> > +
+> > +next:
+> > +	issued = 0;
+> > +
+> > +	mutex_lock(&dcc->cmd_lock);
+> > +	f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
+> > +
+> > +	dc = (struct discard_cmd *)__lookup_rb_tree_ret(&dcc->root,
+> > +					NULL, start,
+> 
+> NULL, cur,
+> 
+> > +					(struct rb_entry **)&prev_dc,
+> > +					(struct rb_entry **)&next_dc,
+> > +					&insert_p, &insert_parent, true);
+> > +	if (!dc)
+> > +		dc = next_dc;
+> > +
+> > +	blk_start_plug(&plug);
+> > +
+> > +	while (dc && dc->lstart <= end) {
+> > +		struct rb_node *node;
+> > +
+> > +		if (dc->len < dpolicy->granularity)
+> > +			goto skip;
+> > +
+> > +		if (dc->state != D_PREP) {
+> > +			list_move_tail(&dc->list, &dcc->fstrim_list);
+> > +			goto skip;
+> > +		}
+> > +
+> > +		__submit_discard_cmd(sbi, dpolicy, dc);
+> > +
+> > +		if (++issued >= dpolicy->max_requests) {
+> > +			start = dc->lstart + dc->len;
+> 
+> cur = dc->lstart + dc->len;
+> 
+> > +
+> > +			blk_finish_plug(&plug);
+> > +			mutex_unlock(&dcc->cmd_lock);
+> > +			__wait_all_discard_cmd(sbi, dpolicy);
+> 
+> How about moving __wait_discard_cmd_range(sbi, &dpolicy, start, end) from
+> f2fs_trim_fs here, this can avoid wait non-fstrim discard commands.
 
-unsigned int cur = start;
+The key here is to avoid any outstanding discard commands.
 
-> +
-> +next:
-> +	issued = 0;
-> +
-> +	mutex_lock(&dcc->cmd_lock);
-> +	f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
-> +
-> +	dc = (struct discard_cmd *)__lookup_rb_tree_ret(&dcc->root,
-> +					NULL, start,
+> 
+> > +			congestion_wait(BLK_RW_ASYNC, HZ/50);
+> 
+> What about using msleep(dpolicy->min_interval) instead?
 
-NULL, cur,
-
-> +					(struct rb_entry **)&prev_dc,
-> +					(struct rb_entry **)&next_dc,
-> +					&insert_p, &insert_parent, true);
-> +	if (!dc)
-> +		dc = next_dc;
-> +
-> +	blk_start_plug(&plug);
-> +
-> +	while (dc && dc->lstart <= end) {
-> +		struct rb_node *node;
-> +
-> +		if (dc->len < dpolicy->granularity)
-> +			goto skip;
-> +
-> +		if (dc->state != D_PREP) {
-> +			list_move_tail(&dc->list, &dcc->fstrim_list);
-> +			goto skip;
-> +		}
-> +
-> +		__submit_discard_cmd(sbi, dpolicy, dc);
-> +
-> +		if (++issued >= dpolicy->max_requests) {
-> +			start = dc->lstart + dc->len;
-
-cur = dc->lstart + dc->len;
-
-> +
-> +			blk_finish_plug(&plug);
-> +			mutex_unlock(&dcc->cmd_lock);
-> +			__wait_all_discard_cmd(sbi, dpolicy);
-
-How about moving __wait_discard_cmd_range(sbi, &dpolicy, start, end) from
-f2fs_trim_fs here, this can avoid wait non-fstrim discard commands.
-
-> +			congestion_wait(BLK_RW_ASYNC, HZ/50);
-
-What about using msleep(dpolicy->min_interval) instead?
+We need to detect congestion in block layer.
 
 Thanks,
 
-> +			goto next;
-> +		}
-> +skip:
-> +		node = rb_next(&dc->rb_node);
-> +		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
-> +
-> +		if (fatal_signal_pending(current))
-> +			break;
-> +	}
-> +
-> +	blk_finish_plug(&plug);
-> +	mutex_unlock(&dcc->cmd_lock);
-> +}
-> +
->  int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
->  {
->  	__u64 start = F2FS_BYTES_TO_BLK(range->start);
 > 
+> Thanks,
+> 
+> > +			goto next;
+> > +		}
+> > +skip:
+> > +		node = rb_next(&dc->rb_node);
+> > +		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
+> > +
+> > +		if (fatal_signal_pending(current))
+> > +			break;
+> > +	}
+> > +
+> > +	blk_finish_plug(&plug);
+> > +	mutex_unlock(&dcc->cmd_lock);
+> > +}
+> > +
+> >  int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+> >  {
+> >  	__u64 start = F2FS_BYTES_TO_BLK(range->start);
+> > 
