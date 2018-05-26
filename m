@@ -1,92 +1,50 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH v2] f2fs-tools: fix to match with the start_sector
-Date: Sat, 26 May 2018 16:13:45 +0800
-Message-ID: <cc0f0f06-18b7-92a5-cd43-825732cddcaf@huawei.com>
-References: <1525425645-127945-1-git-send-email-yunlong.song@huawei.com>
- <1525659336-145433-1-git-send-email-yunlong.song@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 1/2] f2fs: fix to don't trigger writeback during recovery
+Date: Sat, 26 May 2018 18:03:34 +0800
+Message-ID: <20180526100335.63001-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1525659336-145433-1-git-send-email-yunlong.song@huawei.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>, Yunlei He <heyunlei@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-ping...
+- f2fs_fill_super
+ - recover_fsync_data
+  - recover_data
+   - del_fsync_inode
+    - iput
+     - iput_final
+      - write_inode_now
+       - f2fs_write_inode
+        - f2fs_balance_fs
+         - f2fs_balance_fs_bg
+          - sync_dirty_inodes
 
-On 2018/5/7 10:15, Yunlong Song wrote:
-> f2fs-tools uses ioctl BLKSSZGET to get sector_size, however, this ioctl
-> will return a value which may be larger than 512 (according to the value
-> of q->limits.logical_block_size), then this will be inconsistent with
-> the start_sector, since start_sector is got from ioctl HDIO_GETGEO and
-> is always in 512 size unit for a sector. To fix this problem, just
-> change the sector_size to the default value when computing with
-> start_sector. And fix sectors_per_blk as well.
->
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> ---
->   fsck/resize.c      |  4 ++--
->   mkfs/f2fs_format.c | 12 ++++++------
->   2 files changed, 8 insertions(+), 8 deletions(-)
->
-> diff --git a/fsck/resize.c b/fsck/resize.c
-> index d285dd7..ada2155 100644
-> --- a/fsck/resize.c
-> +++ b/fsck/resize.c
-> @@ -27,10 +27,10 @@ static int get_new_sb(struct f2fs_super_block *sb)
->   
->   	zone_size_bytes = segment_size_bytes * segs_per_zone;
->   	zone_align_start_offset =
-> -		(c.start_sector * c.sector_size +
-> +		(c.start_sector * DEFAULT_SECTOR_SIZE +
->   		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
->   		zone_size_bytes * zone_size_bytes -
-> -		c.start_sector * c.sector_size;
-> +		c.start_sector * DEFAULT_SECTOR_SIZE;
->   
->   	set_sb(segment_count, (c.target_sectors * c.sector_size -
->   				zone_align_start_offset) / segment_size_bytes /
-> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-> index 0a99a77..ced5fea 100644
-> --- a/mkfs/f2fs_format.c
-> +++ b/mkfs/f2fs_format.c
-> @@ -212,18 +212,18 @@ static int f2fs_prepare_super_block(void)
->   	set_sb(block_count, c.total_sectors >> log_sectors_per_block);
->   
->   	zone_align_start_offset =
-> -		(c.start_sector * c.sector_size +
-> +		(c.start_sector * DEFAULT_SECTOR_SIZE +
->   		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
->   		zone_size_bytes * zone_size_bytes -
-> -		c.start_sector * c.sector_size;
-> +		c.start_sector * DEFAULT_SECTOR_SIZE;
->   
-> -	if (c.start_sector % c.sectors_per_blk) {
-> +	if (c.start_sector % DEFAULT_SECTORS_PER_BLOCK) {
->   		MSG(1, "\t%s: Align start sector number to the page unit\n",
->   				c.zoned_mode ? "FAIL" : "WARN");
->   		MSG(1, "\ti.e., start sector: %d, ofs:%d (sects/page: %d)\n",
->   				c.start_sector,
-> -				c.start_sector % c.sectors_per_blk,
-> -				c.sectors_per_blk);
-> +				c.start_sector % DEFAULT_SECTORS_PER_BLOCK,
-> +				DEFAULT_SECTORS_PER_BLOCK);
->   		if (c.zoned_mode)
->   			return -1;
->   	}
-> @@ -235,7 +235,7 @@ static int f2fs_prepare_super_block(void)
->   					get_sb(segment0_blkaddr));
->   
->   	if (c.zoned_mode && (get_sb(segment0_blkaddr) + c.start_sector /
-> -					c.sectors_per_blk) % c.zone_blocks) {
-> +					DEFAULT_SECTORS_PER_BLOCK) % c.zone_blocks) {
->   		MSG(1, "\tError: Unaligned segment0 block address %u\n",
->   				get_sb(segment0_blkaddr));
->   		return -1;
+With data_flush mount option, during recovery, in order to avoid entering
+above writeback flow, let's detect recovery status and do skip in
+f2fs_balance_fs_bg.
 
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fs/f2fs/segment.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 7dc59ae05e94..76947f2856bf 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -486,6 +486,9 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
+ 
+ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+ {
++	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
++		return;
++
+ 	/* try to shrink extent cache when there is no enough memory */
+ 	if (!available_free_memory(sbi, EXTENT_CACHE))
+ 		f2fs_shrink_extent_tree(sbi, EXTENT_CACHE_SHRINK_NUMBER);
 -- 
-Thanks,
-Yunlong Song
+2.17.0.391.g1f1cddd558b5
