@@ -1,24 +1,24 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 2/2] f2fs: clean up with
- clear_radix_tree_dirty_tag
-Date: Sat, 26 May 2018 18:03:35 +0800
-Message-ID: <20180526100335.63001-2-yuchao0@huawei.com>
-References: <20180526100335.63001-1-yuchao0@huawei.com>
+From: Junling Zheng <zhengjunling@huawei.com>
+Subject: Re: [PATCH] f2fs-tools: fix overflow bug of start_sector
+ when computing zone_align_start_offset
+Date: Sat, 26 May 2018 19:27:47 +0800
+Message-ID: <74a1a174-f7fe-4c96-6d60-62345355f070@huawei.com>
+References: <1527322189-114752-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fMW3X-000213-FE
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 26 May 2018 10:04:11 +0000
+ (envelope-from <zhengjunling@huawei.com>) id 1fMXMi-0001km-9T
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 26 May 2018 11:28:04 +0000
 Received: from [45.249.212.32] (helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fMW3V-004RUU-H9
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 26 May 2018 10:04:11 +0000
-In-Reply-To: <20180526100335.63001-1-yuchao0@huawei.com>
+ id 1fMXMg-001Iok-4e
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 26 May 2018 11:28:04 +0000
+In-Reply-To: <1527322189-114752-1-git-send-email-yunlong.song@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,132 +28,71 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
+Cc: miaoxie@huawei.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Introduce clear_radix_tree_dirty_tag to include common codes for cleanup.
+No neet to change zone_align_start_offset to u64, because zone_align_start_offset is always
+smaller than zone_size_bytes, which is u32.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/data.c   | 11 +++++++++++
- fs/f2fs/dir.c    |  8 +-------
- fs/f2fs/f2fs.h   |  1 +
- fs/f2fs/inline.c |  7 +------
- fs/f2fs/node.c   | 12 ++----------
- 5 files changed, 16 insertions(+), 23 deletions(-)
+Thanks,
+Junling
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 98a12526e3d0..9d3e2e1c1e33 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2594,6 +2594,17 @@ const struct address_space_operations f2fs_dblock_aops = {
- #endif
- };
- 
-+void clear_radix_tree_dirty_tag(struct page *page)
-+{
-+	struct address_space *mapping = page_mapping(page);
-+	unsigned long flags;
-+
-+	xa_lock_irqsave(&mapping->i_pages, flags);
-+	radix_tree_tag_clear(&mapping->i_pages, page_index(page),
-+						PAGECACHE_TAG_DIRTY);
-+	xa_unlock_irqrestore(&mapping->i_pages, flags);
-+}
-+
- int __init f2fs_init_post_read_processing(void)
- {
- 	bio_post_read_ctx_cache = KMEM_CACHE(bio_post_read_ctx, 0);
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 8c9c2f31b253..e20539ba0554 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -698,8 +698,6 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
- 	struct	f2fs_dentry_block *dentry_blk;
- 	unsigned int bit_pos;
- 	int slots = GET_DENTRY_SLOTS(le16_to_cpu(dentry->name_len));
--	struct address_space *mapping = page_mapping(page);
--	unsigned long flags;
- 	int i;
- 
- 	f2fs_update_time(F2FS_I_SB(dir), REQ_TIME);
-@@ -732,11 +730,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
- 
- 	if (bit_pos == NR_DENTRY_IN_BLOCK &&
- 			!truncate_hole(dir, page->index, page->index + 1)) {
--		xa_lock_irqsave(&mapping->i_pages, flags);
--		radix_tree_tag_clear(&mapping->i_pages, page_index(page),
--				     PAGECACHE_TAG_DIRTY);
--		xa_unlock_irqrestore(&mapping->i_pages, flags);
--
-+		clear_radix_tree_dirty_tag(page);
- 		clear_page_dirty_for_io(page);
- 		ClearPagePrivate(page);
- 		ClearPageUptodate(page);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 659c63dae81c..da43959b725a 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2966,6 +2966,7 @@ int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
- 			struct page *page, enum migrate_mode mode);
- #endif
- bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len);
-+void clear_radix_tree_dirty_tag(struct page *page);
- 
- /*
-  * gc.c
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 1eaa2049eafa..83e6881fd21e 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -204,8 +204,6 @@ int f2fs_write_inline_data(struct inode *inode, struct page *page)
- {
- 	void *src_addr, *dst_addr;
- 	struct dnode_of_data dn;
--	struct address_space *mapping = page_mapping(page);
--	unsigned long flags;
- 	int err;
- 
- 	set_new_dnode(&dn, inode, NULL, NULL, 0);
-@@ -227,10 +225,7 @@ int f2fs_write_inline_data(struct inode *inode, struct page *page)
- 	kunmap_atomic(src_addr);
- 	set_page_dirty(dn.inode_page);
- 
--	xa_lock_irqsave(&mapping->i_pages, flags);
--	radix_tree_tag_clear(&mapping->i_pages, page_index(page),
--			     PAGECACHE_TAG_DIRTY);
--	xa_unlock_irqrestore(&mapping->i_pages, flags);
-+	clear_radix_tree_dirty_tag(page);
- 
- 	set_inode_flag(inode, FI_APPEND_WRITE);
- 	set_inode_flag(inode, FI_DATA_EXIST);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 67b3e89975af..59041acbf7ac 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -102,18 +102,10 @@ bool available_free_memory(struct f2fs_sb_info *sbi, int type)
- 
- static void clear_node_page_dirty(struct page *page)
- {
--	struct address_space *mapping = page->mapping;
--	unsigned int long flags;
--
- 	if (PageDirty(page)) {
--		xa_lock_irqsave(&mapping->i_pages, flags);
--		radix_tree_tag_clear(&mapping->i_pages,
--				page_index(page),
--				PAGECACHE_TAG_DIRTY);
--		xa_unlock_irqrestore(&mapping->i_pages, flags);
--
-+		clear_radix_tree_dirty_tag(page);
- 		clear_page_dirty_for_io(page);
--		dec_page_count(F2FS_M_SB(mapping), F2FS_DIRTY_NODES);
-+		dec_page_count(F2FS_P_SB(page), F2FS_DIRTY_NODES);
- 	}
- 	ClearPageUptodate(page);
- }
--- 
-2.17.0.391.g1f1cddd558b5
+On 2018/5/26 16:09, Yunlong Song wrote:
+> zone_align_start_offset should be u64, but config.start_sector is u32,
+> so it may be overflow when computing zone_align_start_offset.
+> 
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> ---
+>  fsck/resize.c      | 7 ++++---
+>  mkfs/f2fs_format.c | 4 ++--
+>  2 files changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fsck/resize.c b/fsck/resize.c
+> index d285dd7..8ac7d45 100644
+> --- a/fsck/resize.c
+> +++ b/fsck/resize.c
+> @@ -11,7 +11,8 @@
+>  
+>  static int get_new_sb(struct f2fs_super_block *sb)
+>  {
+> -	u_int32_t zone_size_bytes, zone_align_start_offset;
+> +	u_int32_t zone_size_bytes;
+> +	u_int64_t zone_align_start_offset;
+>  	u_int32_t blocks_for_sit, blocks_for_nat, blocks_for_ssa;
+>  	u_int32_t sit_segments, nat_segments, diff, total_meta_segments;
+>  	u_int32_t total_valid_blks_available;
+> @@ -27,10 +28,10 @@ static int get_new_sb(struct f2fs_super_block *sb)
+>  
+>  	zone_size_bytes = segment_size_bytes * segs_per_zone;
+>  	zone_align_start_offset =
+> -		(c.start_sector * c.sector_size +
+> +		((u_int64_t) c.start_sector * c.sector_size +
+>  		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
+>  		zone_size_bytes * zone_size_bytes -
+> -		c.start_sector * c.sector_size;
+> +		(u_int64_t) c.start_sector * c.sector_size;
+>  
+>  	set_sb(segment_count, (c.target_sectors * c.sector_size -
+>  				zone_align_start_offset) / segment_size_bytes /
+> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+> index 0a99a77..f045e23 100644
+> --- a/mkfs/f2fs_format.c
+> +++ b/mkfs/f2fs_format.c
+> @@ -212,10 +212,10 @@ static int f2fs_prepare_super_block(void)
+>  	set_sb(block_count, c.total_sectors >> log_sectors_per_block);
+>  
+>  	zone_align_start_offset =
+> -		(c.start_sector * c.sector_size +
+> +		((u_int64_t) c.start_sector * c.sector_size +
+>  		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
+>  		zone_size_bytes * zone_size_bytes -
+> -		c.start_sector * c.sector_size;
+> +		(u_int64_t) c.start_sector * c.sector_size;
+>  
+>  	if (c.start_sector % c.sectors_per_blk) {
+>  		MSG(1, "\t%s: Align start sector number to the page unit\n",
+> 
+
 
 
 ------------------------------------------------------------------------------
