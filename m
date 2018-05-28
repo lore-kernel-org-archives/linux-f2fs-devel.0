@@ -1,22 +1,22 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 1/2] f2fs: fix to let caller retry allocating
- block address
-Date: Mon, 28 May 2018 23:47:18 +0800
-Message-ID: <20180528154719.22920-1-chao@kernel.org>
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+Subject: Cleaning up f2fs's use of the symbol namespace
+Date: Mon, 28 May 2018 16:05:20 -0400
+Message-ID: <20180528200520.GA12213@thunk.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1fNKN1-0006gS-IO
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 May 2018 15:47:39 +0000
-Received: from mail.kernel.org ([198.145.29.99])
+ (envelope-from <tytso@thunk.org>) id 1fNOOc-0005Qr-F4
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 May 2018 20:05:34 +0000
+Received: from imap.thunk.org ([74.207.234.97])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fNKMz-007X5F-JY
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 May 2018 15:47:39 +0000
+ id 1fNOOZ-007kzh-Vw
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 May 2018 20:05:34 +0000
+Content-Disposition: inline
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,227 +26,177 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-From: Chao Yu <yuchao0@huawei.com>
+Hi, I was looking at f2fs's sources recently, and I noticed that there
+is a very large number of non-static symbols which don't have a f2fs
+prefix.  There's well over a hundred (see attached below).
 
-Configure io_bits with 2 and enable LFS mode, generic/013 reports below dmesg:
+As one example, in fs/f2fs/dir.c there is:
 
-BUG: unable to handle kernel NULL pointer dereference at 00000104
-*pdpt = 0000000029b7b001 *pde = 0000000000000000
-Oops: 0002 [#1] PREEMPT SMP
-Modules linked in: crc32_generic zram f2fs(O) rfcomm bnep bluetooth ecdh_generic snd_intel8x0 snd_ac97_codec ac97_bus snd_pcm snd_seq_midi snd_seq_midi_event snd_rawmidi snd_seq pcbc joydev snd_seq_device aesni_intel snd_timer aes_i586 snd crypto_simd cryptd soundcore i2c_piix4 serio_raw mac_hid video parport_pc ppdev lp parport hid_generic psmouse usbhid hid e1000
-CPU: 0 PID: 11161 Comm: fsstress Tainted: G           O      4.17.0-rc2 #38
-Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-EIP: f2fs_submit_page_write+0x28d/0x550 [f2fs]
-EFLAGS: 00010206 CPU: 0
-EAX: e863dcd8 EBX: 00000000 ECX: 00000100 EDX: 00000200
-ESI: e863dcf4 EDI: f6f82768 EBP: e863dbb0 ESP: e863db74
- DS: 007b ES: 007b FS: 00d8 GS: 0033 SS: 0068
-CR0: 80050033 CR2: 00000104 CR3: 29a62020 CR4: 000406f0
-Call Trace:
- do_write_page+0x6f/0xc0 [f2fs]
- write_data_page+0x4a/0xd0 [f2fs]
- do_write_data_page+0x327/0x630 [f2fs]
- __write_data_page+0x34b/0x820 [f2fs]
- __f2fs_write_data_pages+0x42d/0x8c0 [f2fs]
- f2fs_write_data_pages+0x27/0x30 [f2fs]
- do_writepages+0x1a/0x70
- __filemap_fdatawrite_range+0x94/0xd0
- filemap_write_and_wait_range+0x3d/0xa0
- __generic_file_write_iter+0x11a/0x1f0
- f2fs_file_write_iter+0xdd/0x3b0 [f2fs]
- __vfs_write+0xd2/0x150
- vfs_write+0x9b/0x190
- ksys_write+0x45/0x90
- sys_write+0x16/0x20
- do_fast_syscall_32+0xaa/0x22c
- entry_SYSENTER_32+0x4c/0x7b
-EIP: 0xb7fc8c51
-EFLAGS: 00000246 CPU: 0
-EAX: ffffffda EBX: 00000003 ECX: 09cde000 EDX: 00001000
-ESI: 00000003 EDI: 00001000 EBP: 00000000 ESP: bfbded38
- DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b
-Code: e8 f9 77 34 c9 8b 45 e0 8b 80 b8 00 00 00 39 45 d8 0f 84 bb 02 00 00 8b 45 e0 8b 80 b8 00 00 00 8d 50 d8 8b 08 89 55 f0 8b 50 04 <89> 51 04 89 0a c7 00 00 01 00 00 c7 40 04 00 02 00 00 8b 45 dc
-EIP: f2fs_submit_page_write+0x28d/0x550 [f2fs] SS:ESP: 0068:e863db74
-CR2: 0000000000000104
----[ end trace 4cac79c0d1305ee6 ]---
+unsigned char get_de_type(struct f2fs_dir_entry *de)
 
-allocate_data_block will submit all sequential pending IOs sorted by a
-FIFO list, If we failed to submit other user's IO due to unaligned write,
-we will retry to allocate new block address for current IO, then it will
-initialize fio.list again, if fio was in the list before, it can break
-FIFO list, result in above panic.
+This function is clearly only useful for f2fs, but it has a generic
+name.  This means that if any other file system tries to have the same
+symbol name, there will be a symbol conflict and the kernel would not
+successfully build.  It also means that when someone is looking f2fs
+sources, it's not at all obvious whether a function such as
+read_data_page(), invalidate_blocks(), is a generic kernel function
+found in the fs, mm, or block layers, or a f2fs specific function.
 
-Thread A			Thread B
-- do_write_page
- - allocate_data_block
-  - list_add_tail
-  : fioA cached in FIFO list.
-				- do_write_page
-				 - allocate_data_block
-				  - list_add_tail
-				  : fioB cached in FIFO list.
-				 - f2fs_submit_page_write
-				 : fail to submit IO
-				 - allocate_data_block
-				  - INIT_LIST_HEAD
- - f2fs_submit_page_write
-  - list_del  <-- NULL pointer dereference
+You might want to fix this at some point.  Hopefully Kent's bcachefs
+isn't similarly using genericly named functions, since that might
+cause conflicts with f2fs's functions --- but just as this would be a
+problem that we would rightly insist that Kent fix, this is something
+that we should have rightly insisted that f2fs should have fixed
+before it was integrated into the mainline kernel.
 
-This patch adds fio.retry parameter to indicate failure status for each
-IO, and avoid bailing out if there is still pending IO in FIFO list for
-fixing.
+Cheers,
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/data.c    | 14 ++++++--------
- fs/f2fs/f2fs.h    |  3 ++-
- fs/f2fs/gc.c      |  5 +++--
- fs/f2fs/segment.c | 11 ++++++-----
- 4 files changed, 17 insertions(+), 16 deletions(-)
+						- Ted
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 31c2edb217ec..97e6df852f37 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -462,13 +462,12 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
- 	return 0;
- }
- 
--int f2fs_submit_page_write(struct f2fs_io_info *fio)
-+void f2fs_submit_page_write(struct f2fs_io_info *fio)
- {
- 	struct f2fs_sb_info *sbi = fio->sbi;
- 	enum page_type btype = PAGE_TYPE_OF_BIO(fio->type);
- 	struct f2fs_bio_info *io = sbi->write_io[btype] + fio->temp;
- 	struct page *bio_page;
--	int err = 0;
- 
- 	f2fs_bug_on(sbi, is_read_io(fio->op));
- 
-@@ -478,7 +477,7 @@ int f2fs_submit_page_write(struct f2fs_io_info *fio)
- 		spin_lock(&io->io_lock);
- 		if (list_empty(&io->io_list)) {
- 			spin_unlock(&io->io_lock);
--			goto out_fail;
-+			goto out;
- 		}
- 		fio = list_first_entry(&io->io_list,
- 						struct f2fs_io_info, list);
-@@ -505,9 +504,9 @@ int f2fs_submit_page_write(struct f2fs_io_info *fio)
- 	if (io->bio == NULL) {
- 		if ((fio->type == DATA || fio->type == NODE) &&
- 				fio->new_blkaddr & F2FS_IO_SIZE_MASK(sbi)) {
--			err = -EAGAIN;
- 			dec_page_count(sbi, WB_DATA_TYPE(bio_page));
--			goto out_fail;
-+			fio->retry = true;
-+			goto skip;
- 		}
- 		io->bio = __bio_alloc(sbi, fio->new_blkaddr, fio->io_wbc,
- 						BIO_MAX_PAGES, false,
-@@ -527,12 +526,11 @@ int f2fs_submit_page_write(struct f2fs_io_info *fio)
- 	f2fs_trace_ios(fio, 0);
- 
- 	trace_f2fs_submit_page_write(fio->page, fio);
--
-+skip:
- 	if (fio->in_list)
- 		goto next;
--out_fail:
-+out:
- 	up_write(&io->io_rwsem);
--	return err;
- }
- 
- static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index da43959b725a..c8e7f34ca290 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1011,6 +1011,7 @@ struct f2fs_io_info {
- 	int need_lock;		/* indicate we need to lock cp_rwsem */
- 	bool in_list;		/* indicate fio is in io_list */
- 	bool is_meta;		/* indicate borrow meta inode mapping or not */
-+	bool retry;		/* need to reallocate block address */
- 	enum iostat_type io_type;	/* io type */
- 	struct writeback_control *io_wbc; /* writeback control */
- };
-@@ -2930,7 +2931,7 @@ void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
- 				enum page_type type);
- void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi);
- int f2fs_submit_page_bio(struct f2fs_io_info *fio);
--int f2fs_submit_page_write(struct f2fs_io_info *fio);
-+void f2fs_submit_page_write(struct f2fs_io_info *fio);
- struct block_device *f2fs_target_device(struct f2fs_sb_info *sbi,
- 			block_t blk_addr, struct bio *bio);
- int f2fs_target_device_index(struct f2fs_sb_info *sbi, block_t blkaddr);
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 885032fc3a61..5e632ed27dcd 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -603,6 +603,7 @@ static void move_data_block(struct inode *inode, block_t bidx,
- 		.op_flags = 0,
- 		.encrypted_page = NULL,
- 		.in_list = false,
-+		.retry = false,
- 	};
- 	struct dnode_of_data dn;
- 	struct f2fs_summary sum;
-@@ -697,8 +698,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
- 	fio.op = REQ_OP_WRITE;
- 	fio.op_flags = REQ_SYNC;
- 	fio.new_blkaddr = newaddr;
--	err = f2fs_submit_page_write(&fio);
--	if (err) {
-+	f2fs_submit_page_write(&fio);
-+	if (fio.retry) {
- 		if (PageWriteback(fio.encrypted_page))
- 			end_page_writeback(fio.encrypted_page);
- 		goto put_page_out;
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 76947f2856bf..50c781448a72 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2715,6 +2715,7 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 
- 		INIT_LIST_HEAD(&fio->list);
- 		fio->in_list = true;
-+		fio->retry = false;
- 		io = sbi->write_io[fio->type] + fio->temp;
- 		spin_lock(&io->io_lock);
- 		list_add_tail(&fio->list, &io->io_list);
-@@ -2750,7 +2751,6 @@ static void update_device_state(struct f2fs_io_info *fio)
- static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
- {
- 	int type = __get_segment_type(fio);
--	int err;
- 	bool keep_order = (test_opt(fio->sbi, LFS) && type == CURSEG_COLD_DATA);
- 
- 	if (keep_order)
-@@ -2760,13 +2760,14 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
- 			&fio->new_blkaddr, sum, type, fio, true);
- 
- 	/* writeout dirty page into bdev */
--	err = f2fs_submit_page_write(fio);
--	if (err == -EAGAIN) {
-+	f2fs_submit_page_write(fio);
-+	if (fio->retry) {
- 		fio->old_blkaddr = fio->new_blkaddr;
- 		goto reallocate;
--	} else if (!err) {
--		update_device_state(fio);
- 	}
-+
-+	update_device_state(fio);
-+
- 	if (keep_order)
- 		up_read(&fio->sbi->io_order_lock);
- }
--- 
-2.16.2.17.g38e79b1fd
+
+acquire_orphan_inode
+add_ino_entry
+add_orphan_inode
+allocate_data_block
+allocate_new_segments
+alloc_nid
+alloc_nid_done
+alloc_nid_failed
+available_free_memory
+build_free_nids
+build_gc_manager
+build_node_manager
+build_segment_manager
+__check_rb_tree_consistence
+clear_prefree_segments
+commit_inmem_pages
+create_checkpoint_caches
+create_extent_cache
+create_flush_cmd_control
+create_node_manager_caches
+create_segment_manager_caches
+destroy_checkpoint_caches
+destroy_extent_cache
+destroy_flush_cmd_control
+destroy_node_manager
+destroy_node_manager_caches
+destroy_segment_manager
+destroy_segment_manager_caches
+do_make_empty_dir
+do_write_data_page
+drop_discard_cmd
+drop_inmem_page
+drop_inmem_pages
+drop_inmem_pages_all
+exist_trim_candidates
+exist_written_data
+find_data_page
+find_in_inline_dir
+find_target_dentry
+flush_nat_entries
+flush_sit_entries
+fsync_node_pages
+get_de_type
+get_dnode_of_data
+get_lock_data_page
+get_meta_page
+get_new_data_page
+get_next_page_offset
+get_node_info
+get_node_page
+get_node_page_ra
+get_read_data_page
+get_sum_page
+get_tmp_page
+get_valid_checkpoint
+grab_meta_page
+handle_failed_inode
+init_discard_policy
+init_extent_cache_info
+init_inode_metadata
+init_ino_entry_info
+invalidate_blocks
+io_type_to_rw_hint
+is_checkpointed_data
+is_checkpointed_node
+is_dirty_device
+is_valid_blkaddr
+lookup_journal_in_cursum
+__lookup_rb_tree
+__lookup_rb_tree_for_insert
+__lookup_rb_tree_ret
+make_empty_inline_dir
+move_node_page
+need_dentry_mark
+need_inode_block_update
+need_SSR
+new_inode_page
+new_node_page
+npages_for_summary_flush
+ra_meta_pages
+ra_meta_pages_cond
+ra_node_page
+read_inline_data
+recover_fsync_data
+recover_inline_data
+recover_inline_xattr
+recover_inode_page
+recover_orphan_inodes
+recover_xattr_data
+register_inmem_page
+release_discard_addrs
+release_ino_entry
+release_orphan_inode
+remove_dirty_inode
+remove_inode_page
+remove_ino_entry
+remove_orphan_inode
+reserve_new_block
+reserve_new_blocks
+restore_node_summary
+rewrite_data_page
+room_for_filename
+rw_hint_to_seg_type
+sanity_check_ckpt
+set_data_blkaddr
+set_de_type
+set_dirty_device
+should_update_inplace
+should_update_outplace
+space_for_roll_forward
+start_bidx_of_node
+start_gc_thread
+stop_discard_thread
+stop_gc_thread
+sync_dirty_inodes
+sync_meta_pages
+sync_node_pages
+truncate_blocks
+truncate_data_blocks
+truncate_data_blocks_range
+truncate_hole
+truncate_inline_inode
+truncate_inode_blocks
+truncate_xattr_node
+try_to_free_nats
+try_to_free_nids
+update_dirty_page
+update_extension_list
+update_inode
+update_inode_page
+update_meta_page
+update_parent_metadata
+wait_on_node_pages_writeback
+write_checkpoint
+write_data_page
+write_data_summaries
+write_meta_page
+write_node_page
+write_node_summaries
+
 
 
 ------------------------------------------------------------------------------
