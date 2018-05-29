@@ -1,68 +1,168 @@
-From: youngjun yoo <youngjun.willow@gmail.com>
-Subject: [PATCH 1/3] fs: f2fs: changed variable type of offset
- "unsigned" to "loff_t"
-Date: Wed, 30 May 2018 04:21:14 +0900
-Message-ID: <20180529192114.GA7728@willow72>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willow72@willow72>) id 1fNkZY-0002Td-Hx
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 29 May 2018 19:46:20 +0000
-Received: from [210.115.226.247] (helo=willow72)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtp (Exim 4.90_1)
- id 1fNkZX-006IOY-8E
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 29 May 2018 19:46:20 +0000
-Content-Disposition: inline
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegenk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: issue discard commands proactively in high fs utilization
+Date: Tue, 29 May 2018 13:50:48 -0700
+Message-ID: <20180529205048.39694-1-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-clean up checkpatch warning:
-WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
+In the high utilization like over 80%, we don't expect huge # of large discard
+commands, but do many small pending discards which affects FTL GCs a lot.
+Let's issue them in that case.
 
-Signed-off-by: youngjun yoo <youngjun.willow@gmail.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/file.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/f2fs.h    |  3 +-
+ fs/f2fs/segment.c | 71 ++++++++++++++++++++++++++---------------------
+ 2 files changed, 40 insertions(+), 34 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index cc08956..5ae120f 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -95,7 +95,7 @@ static int f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- 	/* page is wholly or partially inside EOF */
- 	if (((loff_t)(page->index + 1) << PAGE_SHIFT) >
- 						i_size_read(inode)) {
--		unsigned offset;
-+		loff_t offset;
- 		offset = i_size_read(inode) & ~PAGE_MASK;
- 		zero_user_segment(page, offset, PAGE_SIZE);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index e852ac9472c6..27231fe8a6b2 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -186,6 +186,7 @@ enum {
+ #define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
+ #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
+ #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
++#define DEF_DISCARD_URGENT_UTIL		80	/* do more discard over 80% */
+ #define DEF_CP_INTERVAL			60	/* 60 secs */
+ #define DEF_IDLE_INTERVAL		5	/* 5 secs */
+ 
+@@ -2777,8 +2778,6 @@ int f2fs_flush_device_cache(struct f2fs_sb_info *sbi);
+ void destroy_flush_cmd_control(struct f2fs_sb_info *sbi, bool free);
+ void invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr);
+ bool is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr);
+-void init_discard_policy(struct discard_policy *dpolicy, int discard_type,
+-						unsigned int granularity);
+ void drop_discard_cmd(struct f2fs_sb_info *sbi);
+ void stop_discard_thread(struct f2fs_sb_info *sbi);
+ bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 6e40e536dae0..8c1f7a6bf178 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -915,6 +915,38 @@ static void __check_sit_bitmap(struct f2fs_sb_info *sbi,
+ #endif
+ }
+ 
++static void __init_discard_policy(struct f2fs_sb_info *sbi,
++				struct discard_policy *dpolicy,
++				int discard_type, unsigned int granularity)
++{
++	/* common policy */
++	dpolicy->type = discard_type;
++	dpolicy->sync = true;
++	dpolicy->granularity = granularity;
++
++	dpolicy->max_requests = DEF_MAX_DISCARD_REQUEST;
++	dpolicy->io_aware_gran = MAX_PLIST_NUM;
++
++	if (discard_type == DPOLICY_BG) {
++		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
++		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
++		dpolicy->io_aware = true;
++		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
++			dpolicy->granularity = 1;
++			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
++		}
++	} else if (discard_type == DPOLICY_FORCE) {
++		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
++		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
++		dpolicy->io_aware = false;
++	} else if (discard_type == DPOLICY_FSTRIM) {
++		dpolicy->io_aware = false;
++	} else if (discard_type == DPOLICY_UMOUNT) {
++		dpolicy->io_aware = false;
++	}
++}
++
++
+ /* this function is copied from blkdev_issue_discard from block/blk-lib.c */
+ static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
+ 						struct discard_policy *dpolicy,
+@@ -1278,9 +1310,9 @@ static void __wait_all_discard_cmd(struct f2fs_sb_info *sbi,
  	}
-@@ -539,7 +539,7 @@ void truncate_data_blocks(struct dnode_of_data *dn)
- static int truncate_partial_data_page(struct inode *inode, u64 from,
- 								bool cache_only)
+ 
+ 	/* wait all */
+-	init_discard_policy(&dp, DPOLICY_FSTRIM, 1);
++	__init_discard_policy(sbi, &dp, DPOLICY_FSTRIM, 1);
+ 	__wait_discard_cmd_range(sbi, &dp, 0, UINT_MAX);
+-	init_discard_policy(&dp, DPOLICY_UMOUNT, 1);
++	__init_discard_policy(sbi, &dp, DPOLICY_UMOUNT, 1);
+ 	__wait_discard_cmd_range(sbi, &dp, 0, UINT_MAX);
+ }
+ 
+@@ -1326,7 +1358,8 @@ bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi)
+ 	struct discard_policy dpolicy;
+ 	bool dropped;
+ 
+-	init_discard_policy(&dpolicy, DPOLICY_UMOUNT, dcc->discard_granularity);
++	__init_discard_policy(sbi, &dpolicy, DPOLICY_UMOUNT,
++					dcc->discard_granularity);
+ 	__issue_discard_cmd(sbi, &dpolicy);
+ 	dropped = __drop_discard_cmd(sbi);
+ 
+@@ -1347,7 +1380,7 @@ static int issue_discard_thread(void *data)
+ 	set_freezable();
+ 
+ 	do {
+-		init_discard_policy(&dpolicy, DPOLICY_BG,
++		__init_discard_policy(sbi, &dpolicy, DPOLICY_BG,
+ 					dcc->discard_granularity);
+ 
+ 		wait_event_interruptible_timeout(*q,
+@@ -1365,7 +1398,7 @@ static int issue_discard_thread(void *data)
+ 			dcc->discard_wake = 0;
+ 
+ 		if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
+-			init_discard_policy(&dpolicy, DPOLICY_FORCE, 1);
++			__init_discard_policy(sbi, &dpolicy, DPOLICY_FORCE, 1);
+ 
+ 		sb_start_intwrite(sbi->sb);
+ 
+@@ -1658,32 +1691,6 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	wake_up_discard_thread(sbi, false);
+ }
+ 
+-void init_discard_policy(struct discard_policy *dpolicy,
+-				int discard_type, unsigned int granularity)
+-{
+-	/* common policy */
+-	dpolicy->type = discard_type;
+-	dpolicy->sync = true;
+-	dpolicy->granularity = granularity;
+-
+-	dpolicy->max_requests = DEF_MAX_DISCARD_REQUEST;
+-	dpolicy->io_aware_gran = MAX_PLIST_NUM;
+-
+-	if (discard_type == DPOLICY_BG) {
+-		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+-		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+-		dpolicy->io_aware = true;
+-	} else if (discard_type == DPOLICY_FORCE) {
+-		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+-		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+-		dpolicy->io_aware = false;
+-	} else if (discard_type == DPOLICY_FSTRIM) {
+-		dpolicy->io_aware = false;
+-	} else if (discard_type == DPOLICY_UMOUNT) {
+-		dpolicy->io_aware = false;
+-	}
+-}
+-
+ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
  {
--	unsigned offset = from & (PAGE_SIZE - 1);
-+	loff_t offset = from & (PAGE_SIZE - 1);
- 	pgoff_t index = from >> PAGE_SHIFT;
- 	struct address_space *mapping = inode->i_mapping;
- 	struct page *page;
+ 	dev_t dev = sbi->sb->s_bdev->bd_dev;
+@@ -2442,7 +2449,7 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+ 	start_block = START_BLOCK(sbi, start_segno);
+ 	end_block = START_BLOCK(sbi, min(cur_segno, end_segno) + 1);
+ 
+-	init_discard_policy(&dpolicy, DPOLICY_FSTRIM, cpc.trim_minlen);
++	__init_discard_policy(sbi, &dpolicy, DPOLICY_FSTRIM, cpc.trim_minlen);
+ 	__issue_discard_cmd_range(sbi, &dpolicy, start_block, end_block);
+ 	trimmed = __wait_discard_cmd_range(sbi, &dpolicy,
+ 					start_block, end_block);
 -- 
-2.7.4
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+2.17.0.441.gb46fe60e1d-goog
