@@ -1,20 +1,21 @@
 From: youngjun yoo <youngjun.willow@gmail.com>
-Subject: [PATCH 3/3] fs: f2fs: insert space around that ':' and ', '
-Date: Wed, 30 May 2018 04:34:58 +0900
-Message-ID: <20180529193458.GA8924@willow72>
+Subject: [PATCH 2/3] fs: f2fs: add missing blank lines after
+ declarations
+Date: Wed, 30 May 2018 04:33:07 +0900
+Message-ID: <20180529193307.GA8686@willow72>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willow72@willow72>) id 1fNkOj-0001kF-45
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 29 May 2018 19:35:09 +0000
+ (envelope-from <willow72@willow72>) id 1fNkUi-0002yF-DE
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 29 May 2018 19:41:20 +0000
 Received: from [210.115.226.247] (helo=willow72)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtp (Exim 4.90_1)
- id 1fNkOh-009QqK-Nl
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 29 May 2018 19:35:09 +0000
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtp (Exim 4.90_1)
+ id 1fNkUh-009CHk-4S
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 29 May 2018 19:41:20 +0000
 Content-Disposition: inline
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -26,38 +27,44 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vgr.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-clean up checkpatch error:
-ERROR: space required after that ':'
-ERROR: space required after that ','
+clean up checkpatch warning:
+WARNING: Missing a blank line after declarations
+
 Signed-off-by: youngjun yoo <youngjun.willow@gmail.com>
 ---
- fs/f2fs/file.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/file.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index df8b02b..fcf26b4 100644
+index 5ae120f..df8b02b 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -1476,7 +1476,7 @@ static int expand_inode_data(struct inode *inode, loff_t offset,
- 		last_off = map.m_lblk + map.m_len - 1;
+@@ -96,6 +96,7 @@ static int f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 	if (((loff_t)(page->index + 1) << PAGE_SHIFT) >
+ 						i_size_read(inode)) {
+ 		loff_t offset;
++
+ 		offset = i_size_read(inode) & ~PAGE_MASK;
+ 		zero_user_segment(page, offset, PAGE_SIZE);
+ 	}
+@@ -412,6 +413,7 @@ static loff_t f2fs_seek_block(struct file *file, loff_t offset, int whence)
+ 				dn.ofs_in_node++, pgofs++,
+ 				data_ofs = (loff_t)pgofs << PAGE_SHIFT) {
+ 			block_t blkaddr;
++
+ 			blkaddr = datablock_addr(dn.inode,
+ 					dn.node_page, dn.ofs_in_node);
  
- 		/* update new size to the failed position */
--		new_size = (last_off == pg_end) ? offset + len:
-+		new_size = (last_off == pg_end) ? offset + len :
- 					(loff_t)(last_off + 1) << PAGE_SHIFT;
- 	} else {
- 		new_size = ((loff_t)pg_end << PAGE_SHIFT) + off_end;
-@@ -2113,7 +2113,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
- 	struct inode *inode = file_inode(filp);
- 	struct f2fs_map_blocks map = { .m_next_extent = NULL,
- 					.m_seg_type = NO_CHECK_TYPE };
--	struct extent_info ei = {0,0,0};
-+	struct extent_info ei = {0, 0, 0};
- 	pgoff_t pg_start, pg_end, next_pgofs;
- 	unsigned int blk_per_seg = sbi->blocks_per_seg;
- 	unsigned int total = 0, sec_num;
+@@ -502,6 +504,7 @@ void truncate_data_blocks_range(struct dnode_of_data *dn, int count)
+ 
+ 	for (; count > 0; count--, addr++, dn->ofs_in_node++) {
+ 		block_t blkaddr = le32_to_cpu(*addr);
++
+ 		if (blkaddr == NULL_ADDR)
+ 			continue;
+ 
 -- 
 2.7.4
 
