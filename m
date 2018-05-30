@@ -1,25 +1,25 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 3/3] fs: f2fs: insert space around that ':' and
- ', '
-Date: Wed, 30 May 2018 22:29:32 +0800
-Message-ID: <c88f3186-2767-acbc-5daf-026cb06ac54b@kernel.org>
-References: <20180529193458.GA8924@willow72>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: issue discard commands proactively in
+ high fs utilization
+Date: Wed, 30 May 2018 22:29:58 +0800
+Message-ID: <c179f3d9-1742-8f98-2c68-6c7d19c3cda4@kernel.org>
+References: <20180529205048.39694-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180529193458.GA8924@willow72>
+In-Reply-To: <20180529205048.39694-1-jaegeuk@kernel.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: youngjun yoo <youngjun.willow@gmail.com>, jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/5/30 3:34, youngjun yoo wrote:
-> clean up checkpatch error:
-> ERROR: space required after that ':'
-> ERROR: space required after that ','
-> Signed-off-by: youngjun yoo <youngjun.willow@gmail.com>
+On 2018/5/30 4:50, Jaegeuk Kim wrote:
+> In the high utilization like over 80%, we don't expect huge # of large discard
+> commands, but do many small pending discards which affects FTL GCs a lot.
+> Let's issue them in that case.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
