@@ -1,168 +1,104 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: issue discard commands proactively in high fs utilization
-Date: Tue, 29 May 2018 13:50:48 -0700
-Message-ID: <20180529205048.39694-1-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Subject: Re: [PATCH] f2fs-tools: fix overflow bug of start_sector
+ when computing zone_align_start_offset
+Date: Tue, 29 May 2018 19:33:57 -0700
+Message-ID: <20180530023357.GB39056@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1527322189-114752-1-git-send-email-yunlong.song@huawei.com>
+ <a6732361-57a7-249b-ba75-3dd5e5bb18a2@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1fNqwA-0002lm-H2
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 30 May 2018 02:34:06 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fNqw8-00768k-Ms
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 30 May 2018 02:34:06 +0000
+Content-Disposition: inline
+In-Reply-To: <a6732361-57a7-249b-ba75-3dd5e5bb18a2@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: yunlong.song@icloud.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, miaoxie@huawei.com
 
-In the high utilization like over 80%, we don't expect huge # of large discard
-commands, but do many small pending discards which affects FTL GCs a lot.
-Let's issue them in that case.
+On 05/28, Chao Yu wrote:
+> On 2018/5/26 16:09, Yunlong Song wrote:
+> > zone_align_start_offset should be u64, but config.start_sector is u32,
+> > so it may be overflow when computing zone_align_start_offset.
+> 
+> Could you rebase this patch on top of "f2fs-tools: fix to match with the
+> start_sector"?
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/f2fs.h    |  3 +-
- fs/f2fs/segment.c | 71 ++++++++++++++++++++++++++---------------------
- 2 files changed, 40 insertions(+), 34 deletions(-)
+Yes, please. I updated dev-test. :P
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index e852ac9472c6..27231fe8a6b2 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -186,6 +186,7 @@ enum {
- #define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
- #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
- #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
-+#define DEF_DISCARD_URGENT_UTIL		80	/* do more discard over 80% */
- #define DEF_CP_INTERVAL			60	/* 60 secs */
- #define DEF_IDLE_INTERVAL		5	/* 5 secs */
- 
-@@ -2777,8 +2778,6 @@ int f2fs_flush_device_cache(struct f2fs_sb_info *sbi);
- void destroy_flush_cmd_control(struct f2fs_sb_info *sbi, bool free);
- void invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr);
- bool is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr);
--void init_discard_policy(struct discard_policy *dpolicy, int discard_type,
--						unsigned int granularity);
- void drop_discard_cmd(struct f2fs_sb_info *sbi);
- void stop_discard_thread(struct f2fs_sb_info *sbi);
- bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 6e40e536dae0..8c1f7a6bf178 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -915,6 +915,38 @@ static void __check_sit_bitmap(struct f2fs_sb_info *sbi,
- #endif
- }
- 
-+static void __init_discard_policy(struct f2fs_sb_info *sbi,
-+				struct discard_policy *dpolicy,
-+				int discard_type, unsigned int granularity)
-+{
-+	/* common policy */
-+	dpolicy->type = discard_type;
-+	dpolicy->sync = true;
-+	dpolicy->granularity = granularity;
-+
-+	dpolicy->max_requests = DEF_MAX_DISCARD_REQUEST;
-+	dpolicy->io_aware_gran = MAX_PLIST_NUM;
-+
-+	if (discard_type == DPOLICY_BG) {
-+		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
-+		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
-+		dpolicy->io_aware = true;
-+		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
-+			dpolicy->granularity = 1;
-+			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
-+		}
-+	} else if (discard_type == DPOLICY_FORCE) {
-+		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
-+		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
-+		dpolicy->io_aware = false;
-+	} else if (discard_type == DPOLICY_FSTRIM) {
-+		dpolicy->io_aware = false;
-+	} else if (discard_type == DPOLICY_UMOUNT) {
-+		dpolicy->io_aware = false;
-+	}
-+}
-+
-+
- /* this function is copied from blkdev_issue_discard from block/blk-lib.c */
- static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
- 						struct discard_policy *dpolicy,
-@@ -1278,9 +1310,9 @@ static void __wait_all_discard_cmd(struct f2fs_sb_info *sbi,
- 	}
- 
- 	/* wait all */
--	init_discard_policy(&dp, DPOLICY_FSTRIM, 1);
-+	__init_discard_policy(sbi, &dp, DPOLICY_FSTRIM, 1);
- 	__wait_discard_cmd_range(sbi, &dp, 0, UINT_MAX);
--	init_discard_policy(&dp, DPOLICY_UMOUNT, 1);
-+	__init_discard_policy(sbi, &dp, DPOLICY_UMOUNT, 1);
- 	__wait_discard_cmd_range(sbi, &dp, 0, UINT_MAX);
- }
- 
-@@ -1326,7 +1358,8 @@ bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi)
- 	struct discard_policy dpolicy;
- 	bool dropped;
- 
--	init_discard_policy(&dpolicy, DPOLICY_UMOUNT, dcc->discard_granularity);
-+	__init_discard_policy(sbi, &dpolicy, DPOLICY_UMOUNT,
-+					dcc->discard_granularity);
- 	__issue_discard_cmd(sbi, &dpolicy);
- 	dropped = __drop_discard_cmd(sbi);
- 
-@@ -1347,7 +1380,7 @@ static int issue_discard_thread(void *data)
- 	set_freezable();
- 
- 	do {
--		init_discard_policy(&dpolicy, DPOLICY_BG,
-+		__init_discard_policy(sbi, &dpolicy, DPOLICY_BG,
- 					dcc->discard_granularity);
- 
- 		wait_event_interruptible_timeout(*q,
-@@ -1365,7 +1398,7 @@ static int issue_discard_thread(void *data)
- 			dcc->discard_wake = 0;
- 
- 		if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
--			init_discard_policy(&dpolicy, DPOLICY_FORCE, 1);
-+			__init_discard_policy(sbi, &dpolicy, DPOLICY_FORCE, 1);
- 
- 		sb_start_intwrite(sbi->sb);
- 
-@@ -1658,32 +1691,6 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	wake_up_discard_thread(sbi, false);
- }
- 
--void init_discard_policy(struct discard_policy *dpolicy,
--				int discard_type, unsigned int granularity)
--{
--	/* common policy */
--	dpolicy->type = discard_type;
--	dpolicy->sync = true;
--	dpolicy->granularity = granularity;
--
--	dpolicy->max_requests = DEF_MAX_DISCARD_REQUEST;
--	dpolicy->io_aware_gran = MAX_PLIST_NUM;
--
--	if (discard_type == DPOLICY_BG) {
--		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
--		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
--		dpolicy->io_aware = true;
--	} else if (discard_type == DPOLICY_FORCE) {
--		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
--		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
--		dpolicy->io_aware = false;
--	} else if (discard_type == DPOLICY_FSTRIM) {
--		dpolicy->io_aware = false;
--	} else if (discard_type == DPOLICY_UMOUNT) {
--		dpolicy->io_aware = false;
--	}
--}
--
- static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
- {
- 	dev_t dev = sbi->sb->s_bdev->bd_dev;
-@@ -2442,7 +2449,7 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
- 	start_block = START_BLOCK(sbi, start_segno);
- 	end_block = START_BLOCK(sbi, min(cur_segno, end_segno) + 1);
- 
--	init_discard_policy(&dpolicy, DPOLICY_FSTRIM, cpc.trim_minlen);
-+	__init_discard_policy(sbi, &dpolicy, DPOLICY_FSTRIM, cpc.trim_minlen);
- 	__issue_discard_cmd_range(sbi, &dpolicy, start_block, end_block);
- 	trimmed = __wait_discard_cmd_range(sbi, &dpolicy,
- 					start_block, end_block);
--- 
-2.17.0.441.gb46fe60e1d-goog
+> 
+> Thanks,
+> 
+> > 
+> > Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> > ---
+> >  fsck/resize.c      | 7 ++++---
+> >  mkfs/f2fs_format.c | 4 ++--
+> >  2 files changed, 6 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/fsck/resize.c b/fsck/resize.c
+> > index d285dd7..8ac7d45 100644
+> > --- a/fsck/resize.c
+> > +++ b/fsck/resize.c
+> > @@ -11,7 +11,8 @@
+> >  
+> >  static int get_new_sb(struct f2fs_super_block *sb)
+> >  {
+> > -	u_int32_t zone_size_bytes, zone_align_start_offset;
+> > +	u_int32_t zone_size_bytes;
+> > +	u_int64_t zone_align_start_offset;
+> >  	u_int32_t blocks_for_sit, blocks_for_nat, blocks_for_ssa;
+> >  	u_int32_t sit_segments, nat_segments, diff, total_meta_segments;
+> >  	u_int32_t total_valid_blks_available;
+> > @@ -27,10 +28,10 @@ static int get_new_sb(struct f2fs_super_block *sb)
+> >  
+> >  	zone_size_bytes = segment_size_bytes * segs_per_zone;
+> >  	zone_align_start_offset =
+> > -		(c.start_sector * c.sector_size +
+> > +		((u_int64_t) c.start_sector * c.sector_size +
+> >  		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
+> >  		zone_size_bytes * zone_size_bytes -
+> > -		c.start_sector * c.sector_size;
+> > +		(u_int64_t) c.start_sector * c.sector_size;
+> >  
+> >  	set_sb(segment_count, (c.target_sectors * c.sector_size -
+> >  				zone_align_start_offset) / segment_size_bytes /
+> > diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+> > index 0a99a77..f045e23 100644
+> > --- a/mkfs/f2fs_format.c
+> > +++ b/mkfs/f2fs_format.c
+> > @@ -212,10 +212,10 @@ static int f2fs_prepare_super_block(void)
+> >  	set_sb(block_count, c.total_sectors >> log_sectors_per_block);
+> >  
+> >  	zone_align_start_offset =
+> > -		(c.start_sector * c.sector_size +
+> > +		((u_int64_t) c.start_sector * c.sector_size +
+> >  		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
+> >  		zone_size_bytes * zone_size_bytes -
+> > -		c.start_sector * c.sector_size;
+> > +		(u_int64_t) c.start_sector * c.sector_size;
+> >  
+> >  	if (c.start_sector % c.sectors_per_blk) {
+> >  		MSG(1, "\t%s: Align start sector number to the page unit\n",
+> > 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
