@@ -1,30 +1,27 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH 3/3] f2fs: clean up symbol namespace
-Date: Wed, 30 May 2018 22:30:33 +0800
-Message-ID: <7ba169c6-cdf4-3639-6fc2-1c106f479ada@kernel.org>
-References: <20180529162041.16005-1-chao@kernel.org>
- <20180529162041.16005-3-chao@kernel.org>
- <20180530040859.GC39056@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH rebase] f2fs-tools: fix overflow bug of start_sector when
+ computing zone_align_start_offset
+Date: Wed, 30 May 2018 22:30:53 +0800
+Message-ID: <2c8079d6-af80-52c0-5359-6c09c6cab416@kernel.org>
+References: <1527322189-114752-1-git-send-email-yunlong.song@huawei.com>
+ <1527663509-143986-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180530040859.GC39056@jaegeuk-macbookpro.roam.corp.google.com>
+In-Reply-To: <1527663509-143986-1-git-send-email-yunlong.song@huawei.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
-
-On 2018/5/30 12:09, Jaegeuk Kim wrote:
-> Hi Chao,
+On 2018/5/30 14:58, Yunlong Song wrote:
+> zone_align_start_offset should be u64, but config.start_sector is u32,
+> so it may be overflow when computing zone_align_start_offset.
 > 
-> Thank you for the work.
-> I resolved some conflicts and modified some function names.
-> Please take a look at this.
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 
-This diff looks good to me. ;)
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
