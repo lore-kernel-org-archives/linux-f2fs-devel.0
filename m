@@ -1,14 +1,14 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: let sync node IO interrupt async one
-Date: Thu, 31 May 2018 17:55:37 +0800
-Message-ID: <20180531095537.53898-1-yuchao0@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH RESEND] f2fs: let sync node IO interrupt async one
+Date: Thu, 31 May 2018 22:47:02 +0800
+Message-ID: <20180531144702.21377-1-chao@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
+
+From: Chao Yu <yuchao0@huawei.com>
 
 Although mixed sync/async IOs can have continuous LBA, as they have
 different IO priority, block IO scheduler will add them into different
@@ -31,10 +31,10 @@ Signed-off-by: Chao Yu <yuchao0@huawei.com>
  7 files changed, 32 insertions(+), 9 deletions(-)
 
 diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 40b39db317ea..9624a8f7254b 100644
+index c7ffa1e0e021..07e2f1514a21 100644
 --- a/fs/f2fs/checkpoint.c
 +++ b/fs/f2fs/checkpoint.c
-@@ -1089,7 +1089,9 @@ static int block_operations(struct f2fs_sb_info *sbi)
+@@ -1079,7 +1079,9 @@ static int block_operations(struct f2fs_sb_info *sbi)
  
  	if (get_pages(sbi, F2FS_DIRTY_NODES)) {
  		up_write(&sbi->node_write);
@@ -86,10 +86,10 @@ index a2e30c403ef2..8f931d699287 100644
  	 * if some pages were truncated, we cannot guarantee its mapping->host
  	 * to detect pending bios.
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 1f1dd5d7d453..656fe4bd16d5 100644
+index f167d01443fe..4c09e770a0a3 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -1204,7 +1204,7 @@ struct f2fs_sb_info {
+@@ -1201,7 +1201,7 @@ struct f2fs_sb_info {
  	struct percpu_counter alloc_valid_block_count;
  
  	/* writeback control */
@@ -99,10 +99,10 @@ index 1f1dd5d7d453..656fe4bd16d5 100644
  	/* valid inode count */
  	struct percpu_counter total_valid_inode_count;
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index b7b8ae92abbe..f8a728f81622 100644
+index 74c326442565..16fd50abbf40 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -273,7 +273,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+@@ -274,7 +274,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
  		goto out;
  	}
  sync_nodes:
@@ -144,7 +144,7 @@ index 2a97ce7bc91d..9093be6e7a7d 100644
  
  /*
 diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 513f03d823b6..29030afecdb9 100644
+index 513f03d823b6..374bd123aa3e 100644
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
 @@ -1596,21 +1596,28 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
@@ -183,7 +183,7 @@ index 513f03d823b6..29030afecdb9 100644
  	if (get_pages(sbi, F2FS_DIRTY_NODES) < nr_pages_to_skip(sbi, NODE))
  		goto skip_write;
  
-+	if (atomic_read(&sbi->wb_sync_req))
++	if (atomic_read(&sbi->wb_sync_req[NODE]))
 +		goto skip_write;
 +
  	trace_f2fs_writepages(mapping->host, wbc, NODE);
@@ -204,4 +204,4 @@ index 25863cec143a..73d7d7e51a61 100644
  	INIT_LIST_HEAD(&sbi->s_list);
  	mutex_init(&sbi->umount_mutex);
 -- 
-2.17.0.391.g1f1cddd558b5
+2.16.2.17.g38e79b1fd
