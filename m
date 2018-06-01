@@ -1,25 +1,22 @@
-From: heyunlei <heyunlei@huawei.com>
-Subject: Re: [PATCH RFC] Revert "f2fs: avoid cpu lockup"
-Date: Fri, 1 Jun 2018 07:42:56 +0000
-Message-ID: <42B685BFA705F94C860C6DD0752F056548D4AC79@dggemm510-mbx.china.huawei.com>
-References: <1527755549-22660-1-git-send-email-heyunlei@huawei.com>
- <20180531175618.GA9718@jaegeuk-macbookpro.roam.corp.google.com>
+From: Sahitya Tummala <stummala@codeaurora.org>
+Subject: deadlock during writeback when using f2fs filesystem
+Date: Fri, 1 Jun 2018 15:02:35 +0530
+Message-ID: <20180601093235.GA12489@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <heyunlei@huawei.com>) id 1fOeiO-0001cF-60
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Jun 2018 07:43:12 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <stummala@codeaurora.org>) id 1fOgQa-0008WL-0W
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Jun 2018 09:32:56 +0000
+Received: from smtp.codeaurora.org ([198.145.29.96])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fOeiM-004cZU-5e
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Jun 2018 07:43:12 +0000
-In-Reply-To: <20180531175618.GA9718@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: zh-CN
+ id 1fOgQX-004rMU-6f
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Jun 2018 09:32:55 +0000
+Content-Disposition: inline
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,61 +26,86 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: "Zhangdianfang (Euler)" <zhangdianfang@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: vinmenon@codeaurora.org
 
-DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IEphZWdldWsgS2ltIFttYWls
-dG86amFlZ2V1a0BrZXJuZWwub3JnXQ0KPlNlbnQ6IEZyaWRheSwgSnVuZSAwMSwgMjAxOCAxOjU2
-IEFNDQo+VG86IGhleXVubGVpDQo+Q2M6IFl1Y2hhbyAoVCk7IGxpbnV4LWYyZnMtZGV2ZWxAbGlz
-dHMuc291cmNlZm9yZ2UubmV0OyBXYW5nYmludGlhbjsgWmhhbmdkaWFuZmFuZyAoRXVsZXIpDQo+
-U3ViamVjdDogUmU6IFtmMmZzLWRldl1bUEFUQ0ggUkZDXSBSZXZlcnQgImYyZnM6IGF2b2lkIGNw
-dSBsb2NrdXAiDQo+DQo+SGkgWXVubGVpLA0KPg0KSGkgSmFlZ2V1a6OsDQo+T24gMDUvMzEsIFl1
-bmxlaSBIZSB3cm90ZToNCj4+IFRoaXMgcmV2ZXJ0cyBjb21taXQgNGRiMDhkMDE2Y2NlZGI1Yjk3
-ODY5NzI0YTA5Njk5MGFjYWQ1OTY4NSB0bw0KPj4gZml4IGh1bmd0YXNrIHByb2JsZW0gd2hpY2gg
-Y2FuIGJlIHJlcHJvZHVjZWQgYXMgZm9sbG93Og0KPj4NCj4+IFRocmVhZCAwfjM6DQo+Pg0KPj4g
-d2hpbGUgdHJ1ZQ0KPj4gZG8NCj4+IAl0b3VjaCAveHh4L3Rlc3QvZmlsZV94eHgNCj4+IGRvbmUN
-Cj4+DQo+PiBUaHJlYWQgNSB3cml0ZSBhIG5ldyBjaGVja3BvaW50IGV2ZXJ5IHRocmVlIHNlY29u
-ZHMuDQo+Pg0KPj4gSW4gdGhlIG1lYW50aW1lLCBmaW8gc3RhcnQgMTYgdGhyZWFkcyBmb3IgcmFu
-ZHdyaXRlLg0KPj4NCj4+IFdpdGggbXkgZGVidWcgaW5mbywgY3ljbGVzIG51bSB3aWxsIGV4Y2Vl
-ZCAxMDAwIGluIGZ1bmN0aW9uDQo+PiBmMmZzX3N5bmNfZGlydHlfaW5vZGVzLCBhbmQgbW9zdCBv
-ZiBjeWNsZSB3aWxsIGJlIGRyb3BwZWQNCj4+IGludG8gY29uZ2VzdGlvbl93YWl0KCkgYW5kIHNs
-ZWVwIG1vcmUgdGhhbiAyMG1zLg0KPg0KPk9yaWdpbmFsIHBhdGNoIHRyaWVzIHRvIGZpeCB3YXRj
-aGRvZyB3aGljaCBzeW5jX2RpcnR5X2lub2RlcygpIGdyYWJzIG9uZQ0KPmNwdSBmb3IgYSBsb25n
-IHRpbWUuIEhhdmUgeW91IHRyaWVkIHJlcHJvZHVjZSB0aGF0IGFzIHdlbGw/DQo+DQoNCkkgaGF2
-ZSB0ZXN0IHRoaXMgcGF0Y2ggd2l0aCBpbmNyZWFzaW5nIHRvdWNoIGZpbGUgdGhyZWFkcyB0byAz
-MqOsYW5kIG90aGVyIHJlbWFpbg0Kc2FtZSBhcyBwcmV2aW91cywgQnV0IEkgaGF2ZSBub3QgcmVw
-cm9kdWNlIHlvdXIgcHJvYmxlbS4gDQoNCkJlc2lkZXMsIEkgdHJ5IHRvIHRlc3QgdGhlIGNvZGUg
-anVzdCByZW1vdmUgdGhpcyBsaW5lOg0KCQljb25nZXN0aW9uX3dhaXQoQkxLX1JXX0FTWU5DLCBI
-Wi81MCk7DQoNCkl0J3MgYWxzbyBvayB0byBteSB0ZXN0LCBhbmQgY3ljbGUgbnVtIHJlZHVjZWQg
-dG8gPCAzDQoNClRoYW5rcy4NCg0KPlRoYW5rcywNCj4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBZ
-dW5sZWkgSGUgPGhleXVubGVpQGh1YXdlaS5jb20+DQo+PiAtLS0NCj4+ICBmcy9mMmZzL2NoZWNr
-cG9pbnQuYyB8IDEwIC0tLS0tLS0tLS0NCj4+ICAxIGZpbGUgY2hhbmdlZCwgMTAgZGVsZXRpb25z
-KC0pDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvY2hlY2twb2ludC5jIGIvZnMvZjJmcy9j
-aGVja3BvaW50LmMNCj4+IGluZGV4IDhlYjE4NGMuLjc2ZTE4NTYgMTAwNjQ0DQo+PiAtLS0gYS9m
-cy9mMmZzL2NoZWNrcG9pbnQuYw0KPj4gKysrIGIvZnMvZjJmcy9jaGVja3BvaW50LmMNCj4+IEBA
-IC05NDQsNyArOTQ0LDYgQEAgaW50IGYyZnNfc3luY19kaXJ0eV9pbm9kZXMoc3RydWN0IGYyZnNf
-c2JfaW5mbyAqc2JpLCBlbnVtIGlub2RlX3R5cGUgdHlwZSkNCj4+ICAJc3RydWN0IGlub2RlICpp
-bm9kZTsNCj4+ICAJc3RydWN0IGYyZnNfaW5vZGVfaW5mbyAqZmk7DQo+PiAgCWJvb2wgaXNfZGly
-ID0gKHR5cGUgPT0gRElSX0lOT0RFKTsNCj4+IC0JdW5zaWduZWQgbG9uZyBpbm8gPSAwOw0KPj4N
-Cj4+ICAJdHJhY2VfZjJmc19zeW5jX2RpcnR5X2lub2Rlc19lbnRlcihzYmktPnNiLCBpc19kaXIs
-DQo+PiAgCQkJCWdldF9wYWdlcyhzYmksIGlzX2RpciA/DQo+PiBAQCAtOTY3LDggKzk2Niw2IEBA
-IGludCBmMmZzX3N5bmNfZGlydHlfaW5vZGVzKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgZW51
-bSBpbm9kZV90eXBlIHR5cGUpDQo+PiAgCWlub2RlID0gaWdyYWIoJmZpLT52ZnNfaW5vZGUpOw0K
-Pj4gIAlzcGluX3VubG9jaygmc2JpLT5pbm9kZV9sb2NrW3R5cGVdKTsNCj4+ICAJaWYgKGlub2Rl
-KSB7DQo+PiAtCQl1bnNpZ25lZCBsb25nIGN1cl9pbm8gPSBpbm9kZS0+aV9pbm87DQo+PiAtDQo+
-PiAgCQlpZiAoaXNfZGlyKQ0KPj4gIAkJCUYyRlNfSShpbm9kZSktPmNwX3Rhc2sgPSBjdXJyZW50
-Ow0KPj4NCj4+IEBAIC05NzgsMTMgKzk3NSw2IEBAIGludCBmMmZzX3N5bmNfZGlydHlfaW5vZGVz
-KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgZW51bSBpbm9kZV90eXBlIHR5cGUpDQo+PiAgCQkJ
-RjJGU19JKGlub2RlKS0+Y3BfdGFzayA9IE5VTEw7DQo+Pg0KPj4gIAkJaXB1dChpbm9kZSk7DQo+
-PiAtCQkvKiBXZSBuZWVkIHRvIGdpdmUgY3B1IHRvIGFub3RoZXIgd3JpdGVycy4gKi8NCj4+IC0J
-CWlmIChpbm8gPT0gY3VyX2lubykgew0KPj4gLQkJCWNvbmdlc3Rpb25fd2FpdChCTEtfUldfQVNZ
-TkMsIEhaLzUwKTsNCj4+IC0JCQljb25kX3Jlc2NoZWQoKTsNCj4+IC0JCX0gZWxzZSB7DQo+PiAt
-CQkJaW5vID0gY3VyX2lubzsNCj4+IC0JCX0NCj4+ICAJfSBlbHNlIHsNCj4+ICAJCS8qDQo+PiAg
-CQkgKiBXZSBzaG91bGQgc3VibWl0IGJpbywgc2luY2UgaXQgZXhpc3RzIHNldmVyYWwNCj4+IC0t
-DQo+PiAxLjkuMQ0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUgdmlicmFudCB0
-ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2luZyB0ZWNoIHNp
-dGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdApfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxp
-bmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xp
-c3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+Hi,
+
+We are observing a deadlock scenario during FS writeback under low-memory
+condition with F2FS filesystem.
+
+Here is the callstack of this scenario -
+
+shrink_inactive_list()
+shrink_node_memcg.isra.74()
+shrink_node()
+shrink_zones(inline)
+do_try_to_free_pages(inline)
+try_to_free_pages()
+__perform_reclaim(inline)
+__alloc_pages_direct_reclaim(inline)
+__alloc_pages_slowpath(inline)
+no_zone()
+__alloc_pages(inline)
+__alloc_pages_node(inline)
+alloc_pages_node(inline)
+__page_cache_alloc(inline)
+pagecache_get_page()
+find_or_create_page(inline)
+grab_cache_page(inline)
+f2fs_grab_cache_page(inline)
+__get_node_page.part.32()
+__get_node_page(inline)
+get_node_page()
+update_inode_page()
+f2fs_write_inode()
+write_inode(inline)
+__writeback_single_inode()
+writeback_sb_inodes()
+__writeback_inodes_wb()
+wb_writeback()
+wb_do_writeback(inline)
+wb_workfn()
+
+The writeback thread is entering into the direct reclaim path due to low-memory and is
+getting stuck in shrink_inactive_list(), as shrink_inactive_list() is inturn waiting for
+writeback to happen for the dirty pages present in the inactive list.
+
+Do you think we can use GFP_NOWAIT for node mapping gfp_mask so that we can avoid direct
+reclaim path in the writeback context? As we may now see allocation failures with this flag,
+do you see any risk or issue in using it w.r.t F2FS FS and writeback?
+Appreciate your suggestions on this.
+
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 89c838b..d3daf3b 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -316,7 +316,7 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+ make_now:
+        if (ino == F2FS_NODE_INO(sbi)) {
+                inode->i_mapping->a_ops = &f2fs_node_aops;
+-               mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
++               mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_NODE_MAPPING);
+        } else if (ino == F2FS_META_INO(sbi)) {
+                inode->i_mapping->a_ops = &f2fs_meta_aops;
+                mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index 58aecb6..bb985cd 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -47,6 +47,7 @@
+ /* This flag is used by node and meta inodes, and by recovery */
+ #define GFP_F2FS_ZERO          (GFP_NOFS | __GFP_ZERO)
+ #define GFP_F2FS_HIGH_ZERO     (GFP_NOFS | __GFP_ZERO | __GFP_HIGHMEM)
++#define GFP_F2FS_NODE_MAPPING  (GFP_NOWAIT | __GFP_IO | __GFP_ZERO)
+
+Thanks,
+Sahitya.
+-- 
+--
+Sent by a consultant of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
