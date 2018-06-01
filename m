@@ -1,80 +1,93 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: deadlock during writeback when using f2fs filesystem
-Date: Fri, 1 Jun 2018 13:27:39 +0200
-Message-ID: <20180601112739.GA15278@dhcp22.suse.cz>
-References: <20180601093235.GA12489@codeaurora.org>
- <20180601102609.GZ15278@dhcp22.suse.cz>
- <20180601112050.GB12489@codeaurora.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH RFC] Revert "f2fs: avoid cpu lockup"
+Date: Fri, 1 Jun 2018 11:35:08 -0700
+Message-ID: <20180601183508.GA44432@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1527755549-22660-1-git-send-email-heyunlei@huawei.com>
+ <20180531175618.GA9718@jaegeuk-macbookpro.roam.corp.google.com>
+ <42B685BFA705F94C860C6DD0752F056548D4AC79@dggemm510-mbx.china.huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1fOotT-0007kX-IR
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Jun 2018 18:35:19 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fOotR-004YXR-Nt
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Jun 2018 18:35:19 +0000
 Content-Disposition: inline
-In-Reply-To: <20180601112050.GB12489@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sahitya Tummala <stummala@codeaurora.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, vinmenon@codeaurora.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <42B685BFA705F94C860C6DD0752F056548D4AC79@dggemm510-mbx.china.huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: heyunlei <heyunlei@huawei.com>
+Cc: "Zhangdianfang (Euler)" <zhangdianfang@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-On Fri 01-06-18 16:50:50, Sahitya Tummala wrote:
-> On Fri, Jun 01, 2018 at 12:26:09PM +0200, Michal Hocko wrote:
-> > On Fri 01-06-18 15:02:35, Sahitya Tummala wrote:
-> > > Hi,
-> > > 
-> > > We are observing a deadlock scenario during FS writeback under low-memory
-> > > condition with F2FS filesystem.
-> > > 
-> > > Here is the callstack of this scenario -
-> > > 
-> > > shrink_inactive_list()
-> > > shrink_node_memcg.isra.74()
-> > > shrink_node()
-> > > shrink_zones(inline)
-> > > do_try_to_free_pages(inline)
-> > > try_to_free_pages()
-> > > __perform_reclaim(inline)
-> > > __alloc_pages_direct_reclaim(inline)
-> > > __alloc_pages_slowpath(inline)
-> > > no_zone()
-> > > __alloc_pages(inline)
-> > > __alloc_pages_node(inline)
-> > > alloc_pages_node(inline)
-> > > __page_cache_alloc(inline)
-> > > pagecache_get_page()
-> > > find_or_create_page(inline)
-> > > grab_cache_page(inline)
-> > > f2fs_grab_cache_page(inline)
-> > > __get_node_page.part.32()
-> > > __get_node_page(inline)
-> > > get_node_page()
-> > > update_inode_page()
-> > > f2fs_write_inode()
-> > > write_inode(inline)
-> > > __writeback_single_inode()
-> > > writeback_sb_inodes()
-> > > __writeback_inodes_wb()
-> > > wb_writeback()
-> > > wb_do_writeback(inline)
-> > > wb_workfn()
-> > > 
-> > > The writeback thread is entering into the direct reclaim path due to low-memory and is
-> > > getting stuck in shrink_inactive_list(), as shrink_inactive_list() is inturn waiting for
-> > > writeback to happen for the dirty pages present in the inactive list.
-> > 
-> > shrink_page_list waits only for writeback pages when we are in the memcg
-> > reclaim. The above seems to be the global reclaim though. Moreover
-> > GFP_F2FS_ZERO is GFP_NOFS so we are not waiting for writeback pages at
-> > all. Are you sure the above is really a deadlock?
-> > 
-> 
-> Let me correct my statement. It could be more of a livelock scenario.
-> 
-> The direct reclaim path is not doing any writeback here, so the GFP_NOFS doesn't
-> make any difference. In this case, the direct reclaim has to reclaim ~32 pages,
-> which it picks up from the tail of the list. All of those tail pages are dirty
-> and since direct reclaim path can't do any writeback, it just loops picking and
-> skipping them.
-
-But there are surely other pages on the LRU list, aren't they?
--- 
-Michal Hocko
-SUSE Labs
+T24gMDYvMDEsIGhleXVubGVpIHdyb3RlOgo+IAo+IAo+ID4tLS0tLU9yaWdpbmFsIE1lc3NhZ2Ut
+LS0tLQo+ID5Gcm9tOiBKYWVnZXVrIEtpbSBbbWFpbHRvOmphZWdldWtAa2VybmVsLm9yZ10KPiA+
+U2VudDogRnJpZGF5LCBKdW5lIDAxLCAyMDE4IDE6NTYgQU0KPiA+VG86IGhleXVubGVpCj4gPkNj
+OiBZdWNoYW8gKFQpOyBsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldDsgV2Fu
+Z2JpbnRpYW47IFpoYW5nZGlhbmZhbmcgKEV1bGVyKQo+ID5TdWJqZWN0OiBSZTogW2YyZnMtZGV2
+XVtQQVRDSCBSRkNdIFJldmVydCAiZjJmczogYXZvaWQgY3B1IGxvY2t1cCIKPiA+Cj4gPkhpIFl1
+bmxlaSwKPiA+Cj4gSGkgSmFlZ2V1a++8jAo+ID5PbiAwNS8zMSwgWXVubGVpIEhlIHdyb3RlOgo+
+ID4+IFRoaXMgcmV2ZXJ0cyBjb21taXQgNGRiMDhkMDE2Y2NlZGI1Yjk3ODY5NzI0YTA5Njk5MGFj
+YWQ1OTY4NSB0bwo+ID4+IGZpeCBodW5ndGFzayBwcm9ibGVtIHdoaWNoIGNhbiBiZSByZXByb2R1
+Y2VkIGFzIGZvbGxvdzoKPiA+Pgo+ID4+IFRocmVhZCAwfjM6Cj4gPj4KPiA+PiB3aGlsZSB0cnVl
+Cj4gPj4gZG8KPiA+PiAJdG91Y2ggL3h4eC90ZXN0L2ZpbGVfeHh4Cj4gPj4gZG9uZQo+ID4+Cj4g
+Pj4gVGhyZWFkIDUgd3JpdGUgYSBuZXcgY2hlY2twb2ludCBldmVyeSB0aHJlZSBzZWNvbmRzLgo+
+ID4+Cj4gPj4gSW4gdGhlIG1lYW50aW1lLCBmaW8gc3RhcnQgMTYgdGhyZWFkcyBmb3IgcmFuZHdy
+aXRlLgo+ID4+Cj4gPj4gV2l0aCBteSBkZWJ1ZyBpbmZvLCBjeWNsZXMgbnVtIHdpbGwgZXhjZWVk
+IDEwMDAgaW4gZnVuY3Rpb24KPiA+PiBmMmZzX3N5bmNfZGlydHlfaW5vZGVzLCBhbmQgbW9zdCBv
+ZiBjeWNsZSB3aWxsIGJlIGRyb3BwZWQKPiA+PiBpbnRvIGNvbmdlc3Rpb25fd2FpdCgpIGFuZCBz
+bGVlcCBtb3JlIHRoYW4gMjBtcy4KPiA+Cj4gPk9yaWdpbmFsIHBhdGNoIHRyaWVzIHRvIGZpeCB3
+YXRjaGRvZyB3aGljaCBzeW5jX2RpcnR5X2lub2RlcygpIGdyYWJzIG9uZQo+ID5jcHUgZm9yIGEg
+bG9uZyB0aW1lLiBIYXZlIHlvdSB0cmllZCByZXByb2R1Y2UgdGhhdCBhcyB3ZWxsPwo+ID4KPiAK
+PiBJIGhhdmUgdGVzdCB0aGlzIHBhdGNoIHdpdGggaW5jcmVhc2luZyB0b3VjaCBmaWxlIHRocmVh
+ZHMgdG8gMzLvvIxhbmQgb3RoZXIgcmVtYWluCj4gc2FtZSBhcyBwcmV2aW91cywgQnV0IEkgaGF2
+ZSBub3QgcmVwcm9kdWNlIHlvdXIgcHJvYmxlbS4gCj4gCj4gQmVzaWRlcywgSSB0cnkgdG8gdGVz
+dCB0aGUgY29kZSBqdXN0IHJlbW92ZSB0aGlzIGxpbmU6Cj4gCQljb25nZXN0aW9uX3dhaXQoQkxL
+X1JXX0FTWU5DLCBIWi81MCk7Cj4gCj4gSXQncyBhbHNvIG9rIHRvIG15IHRlc3QsIGFuZCBjeWNs
+ZSBudW0gcmVkdWNlZCB0byA8IDMKCllvdSBtYXkgYmUgYWJsZSB0byBhZGQgdGhyZXNob2xkIGhl
+cmU/Cgo+IAo+IFRoYW5rcy4KPiAKPiA+VGhhbmtzLAo+ID4KPiA+Pgo+ID4+IFNpZ25lZC1vZmYt
+Ynk6IFl1bmxlaSBIZSA8aGV5dW5sZWlAaHVhd2VpLmNvbT4KPiA+PiAtLS0KPiA+PiAgZnMvZjJm
+cy9jaGVja3BvaW50LmMgfCAxMCAtLS0tLS0tLS0tCj4gPj4gIDEgZmlsZSBjaGFuZ2VkLCAxMCBk
+ZWxldGlvbnMoLSkKPiA+Pgo+ID4+IGRpZmYgLS1naXQgYS9mcy9mMmZzL2NoZWNrcG9pbnQuYyBi
+L2ZzL2YyZnMvY2hlY2twb2ludC5jCj4gPj4gaW5kZXggOGViMTg0Yy4uNzZlMTg1NiAxMDA2NDQK
+PiA+PiAtLS0gYS9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+ID4+ICsrKyBiL2ZzL2YyZnMvY2hlY2tw
+b2ludC5jCj4gPj4gQEAgLTk0NCw3ICs5NDQsNiBAQCBpbnQgZjJmc19zeW5jX2RpcnR5X2lub2Rl
+cyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIGVudW0gaW5vZGVfdHlwZSB0eXBlKQo+ID4+ICAJ
+c3RydWN0IGlub2RlICppbm9kZTsKPiA+PiAgCXN0cnVjdCBmMmZzX2lub2RlX2luZm8gKmZpOwo+
+ID4+ICAJYm9vbCBpc19kaXIgPSAodHlwZSA9PSBESVJfSU5PREUpOwo+ID4+IC0JdW5zaWduZWQg
+bG9uZyBpbm8gPSAwOwo+ID4+Cj4gPj4gIAl0cmFjZV9mMmZzX3N5bmNfZGlydHlfaW5vZGVzX2Vu
+dGVyKHNiaS0+c2IsIGlzX2RpciwKPiA+PiAgCQkJCWdldF9wYWdlcyhzYmksIGlzX2RpciA/Cj4g
+Pj4gQEAgLTk2Nyw4ICs5NjYsNiBAQCBpbnQgZjJmc19zeW5jX2RpcnR5X2lub2RlcyhzdHJ1Y3Qg
+ZjJmc19zYl9pbmZvICpzYmksIGVudW0gaW5vZGVfdHlwZSB0eXBlKQo+ID4+ICAJaW5vZGUgPSBp
+Z3JhYigmZmktPnZmc19pbm9kZSk7Cj4gPj4gIAlzcGluX3VubG9jaygmc2JpLT5pbm9kZV9sb2Nr
+W3R5cGVdKTsKPiA+PiAgCWlmIChpbm9kZSkgewo+ID4+IC0JCXVuc2lnbmVkIGxvbmcgY3VyX2lu
+byA9IGlub2RlLT5pX2lubzsKPiA+PiAtCj4gPj4gIAkJaWYgKGlzX2RpcikKPiA+PiAgCQkJRjJG
+U19JKGlub2RlKS0+Y3BfdGFzayA9IGN1cnJlbnQ7Cj4gPj4KPiA+PiBAQCAtOTc4LDEzICs5NzUs
+NiBAQCBpbnQgZjJmc19zeW5jX2RpcnR5X2lub2RlcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmks
+IGVudW0gaW5vZGVfdHlwZSB0eXBlKQo+ID4+ICAJCQlGMkZTX0koaW5vZGUpLT5jcF90YXNrID0g
+TlVMTDsKPiA+Pgo+ID4+ICAJCWlwdXQoaW5vZGUpOwo+ID4+IC0JCS8qIFdlIG5lZWQgdG8gZ2l2
+ZSBjcHUgdG8gYW5vdGhlciB3cml0ZXJzLiAqLwo+ID4+IC0JCWlmIChpbm8gPT0gY3VyX2lubykg
+ewo+ID4+IC0JCQljb25nZXN0aW9uX3dhaXQoQkxLX1JXX0FTWU5DLCBIWi81MCk7Cj4gPj4gLQkJ
+CWNvbmRfcmVzY2hlZCgpOwo+ID4+IC0JCX0gZWxzZSB7Cj4gPj4gLQkJCWlubyA9IGN1cl9pbm87
+Cj4gPj4gLQkJfQo+ID4+ICAJfSBlbHNlIHsKPiA+PiAgCQkvKgo+ID4+ICAJCSAqIFdlIHNob3Vs
+ZCBzdWJtaXQgYmlvLCBzaW5jZSBpdCBleGlzdHMgc2V2ZXJhbAo+ID4+IC0tCj4gPj4gMS45LjEK
+Ci0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5p
+dHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hk
+b3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGlu
+dXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vm
+b3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
