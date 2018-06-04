@@ -1,22 +1,27 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: [PATCH] resize.f2fs: skip cursegs when finding next free
- block
-Date: Mon, 4 Jun 2018 16:14:36 +0800
-Message-ID: <20180604081436.146277-1-shengyong1@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH RFC] Revert "f2fs: avoid cpu lockup"
+Date: Mon, 4 Jun 2018 18:06:14 +0800
+Message-ID: <52452ca2-d4d5-30cc-1591-b2a67797bcb5@huawei.com>
+References: <1527755549-22660-1-git-send-email-heyunlei@huawei.com>
+ <20180531175618.GA9718@jaegeuk-macbookpro.roam.corp.google.com>
+ <42B685BFA705F94C860C6DD0752F056548D4AC79@dggemm510-mbx.china.huawei.com>
+ <20180601183508.GA44432@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <shengyong1@huawei.com>) id 1fPkdt-0007G8-Un
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Jun 2018 08:15:05 +0000
-Received: from [45.249.212.32] (helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1fPmOQ-0003wJ-7v
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Jun 2018 10:07:14 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fPkdp-00HVnP-Qm
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Jun 2018 08:15:05 +0000
+ id 1fPmOO-000Nig-4P
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Jun 2018 10:07:14 +0000
+In-Reply-To: <20180601183508.GA44432@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,94 +31,69 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, heyunlei <heyunlei@huawei.com>
+Cc: "Zhangdianfang (Euler)" <zhangdianfang@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-resize.f2fs (f2fs_defragment) tries to migrate blocks to new positions.
-However, if a curseg is selected, and f2fs_defragment is broken by any
-error, curseg->next_blkoff is left not updated.
-
-To avoid this, we skip cursegs when finding next free block.
-
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
----
- fsck/f2fs.h  | 5 +----
- fsck/fsck.c  | 2 +-
- fsck/mount.c | 8 +++-----
- 3 files changed, 5 insertions(+), 10 deletions(-)
-
-diff --git a/fsck/f2fs.h b/fsck/f2fs.h
-index d0e08aa..d216444 100644
---- a/fsck/f2fs.h
-+++ b/fsck/f2fs.h
-@@ -380,16 +380,13 @@ static inline bool IS_VALID_BLK_ADDR(struct f2fs_sb_info *sbi, u32 addr)
- 	return 1;
- }
- 
--static inline int IS_CUR_SEGNO(struct f2fs_sb_info *sbi, u32 segno, int type)
-+static inline int IS_CUR_SEGNO(struct f2fs_sb_info *sbi, u32 segno)
- {
- 	int i;
- 
- 	for (i = 0; i < NO_CHECK_TYPE; i++) {
- 		struct curseg_info *curseg = CURSEG_I(sbi, i);
- 
--		if (type == i)
--			continue;
--
- 		if (segno == curseg->segno)
- 			return 1;
- 	}
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 5b6dbc8..8145199 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -1741,7 +1741,7 @@ int fsck_chk_meta(struct f2fs_sb_info *sbi)
- 		se = get_seg_entry(sbi, i);
- 		if (se->valid_blocks != 0)
- 			sit_valid_segs++;
--		else if (IS_CUR_SEGNO(sbi, i, NO_CHECK_TYPE)) {
-+		else if (IS_CUR_SEGNO(sbi, i)) {
- 			/* curseg has not been written back to device */
- 			MSG(1, "\tInfo: curseg %u is counted in valid segs\n", i);
- 			sit_valid_segs++;
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 0a30adb..8d4704e 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -35,8 +35,7 @@ u32 get_free_segments(struct f2fs_sb_info *sbi)
- 	for (i = 0; i < TOTAL_SEGS(sbi); i++) {
- 		struct seg_entry *se = get_seg_entry(sbi, i);
- 
--		if (se->valid_blocks == 0x0 &&
--				!IS_CUR_SEGNO(sbi, i, NO_CHECK_TYPE))
-+		if (se->valid_blocks == 0x0 && !IS_CUR_SEGNO(sbi, i))
- 			free_segs++;
- 	}
- 	return free_segs;
-@@ -1891,8 +1890,7 @@ void flush_sit_entries(struct f2fs_sb_info *sbi)
- 							se->valid_blocks);
- 		rewrite_current_sit_page(sbi, segno, sit_blk);
- 
--		if (se->valid_blocks == 0x0 &&
--				!IS_CUR_SEGNO(sbi, segno, NO_CHECK_TYPE))
-+		if (se->valid_blocks == 0x0 && !IS_CUR_SEGNO(sbi, segno))
- 			free_segs++;
- 	}
- 
-@@ -1922,7 +1920,7 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left, int type)
- 		se = get_seg_entry(sbi, segno);
- 
- 		if (se->valid_blocks == sbi->blocks_per_seg ||
--				IS_CUR_SEGNO(sbi, segno, type)) {
-+				IS_CUR_SEGNO(sbi, segno)) {
- 			*to = left ? START_BLOCK(sbi, segno) - 1:
- 						START_BLOCK(sbi, segno + 1);
- 			continue;
--- 
-2.17.0
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+T24gMjAxOC82LzIgMjozNSwgSmFlZ2V1ayBLaW0gd3JvdGU6Cj4gT24gMDYvMDEsIGhleXVubGVp
+IHdyb3RlOgo+Pgo+Pgo+Pj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0KPj4+IEZyb206IEph
+ZWdldWsgS2ltIFttYWlsdG86amFlZ2V1a0BrZXJuZWwub3JnXQo+Pj4gU2VudDogRnJpZGF5LCBK
+dW5lIDAxLCAyMDE4IDE6NTYgQU0KPj4+IFRvOiBoZXl1bmxlaQo+Pj4gQ2M6IFl1Y2hhbyAoVCk7
+IGxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0OyBXYW5nYmludGlhbjsgWmhh
+bmdkaWFuZmFuZyAoRXVsZXIpCj4+PiBTdWJqZWN0OiBSZTogW2YyZnMtZGV2XVtQQVRDSCBSRkNd
+IFJldmVydCAiZjJmczogYXZvaWQgY3B1IGxvY2t1cCIKPj4+Cj4+PiBIaSBZdW5sZWksCj4+Pgo+
+PiBIaSBKYWVnZXVr77yMCj4+PiBPbiAwNS8zMSwgWXVubGVpIEhlIHdyb3RlOgo+Pj4+IFRoaXMg
+cmV2ZXJ0cyBjb21taXQgNGRiMDhkMDE2Y2NlZGI1Yjk3ODY5NzI0YTA5Njk5MGFjYWQ1OTY4NSB0
+bwo+Pj4+IGZpeCBodW5ndGFzayBwcm9ibGVtIHdoaWNoIGNhbiBiZSByZXByb2R1Y2VkIGFzIGZv
+bGxvdzoKPj4+Pgo+Pj4+IFRocmVhZCAwfjM6Cj4+Pj4KPj4+PiB3aGlsZSB0cnVlCj4+Pj4gZG8K
+Pj4+PiAJdG91Y2ggL3h4eC90ZXN0L2ZpbGVfeHh4Cj4+Pj4gZG9uZQo+Pj4+Cj4+Pj4gVGhyZWFk
+IDUgd3JpdGUgYSBuZXcgY2hlY2twb2ludCBldmVyeSB0aHJlZSBzZWNvbmRzLgo+Pj4+Cj4+Pj4g
+SW4gdGhlIG1lYW50aW1lLCBmaW8gc3RhcnQgMTYgdGhyZWFkcyBmb3IgcmFuZHdyaXRlLgo+Pj4+
+Cj4+Pj4gV2l0aCBteSBkZWJ1ZyBpbmZvLCBjeWNsZXMgbnVtIHdpbGwgZXhjZWVkIDEwMDAgaW4g
+ZnVuY3Rpb24KPj4+PiBmMmZzX3N5bmNfZGlydHlfaW5vZGVzLCBhbmQgbW9zdCBvZiBjeWNsZSB3
+aWxsIGJlIGRyb3BwZWQKPj4+PiBpbnRvIGNvbmdlc3Rpb25fd2FpdCgpIGFuZCBzbGVlcCBtb3Jl
+IHRoYW4gMjBtcy4KPj4+Cj4+PiBPcmlnaW5hbCBwYXRjaCB0cmllcyB0byBmaXggd2F0Y2hkb2cg
+d2hpY2ggc3luY19kaXJ0eV9pbm9kZXMoKSBncmFicyBvbmUKPj4+IGNwdSBmb3IgYSBsb25nIHRp
+bWUuIEhhdmUgeW91IHRyaWVkIHJlcHJvZHVjZSB0aGF0IGFzIHdlbGw/Cj4+Pgo+Pgo+PiBJIGhh
+dmUgdGVzdCB0aGlzIHBhdGNoIHdpdGggaW5jcmVhc2luZyB0b3VjaCBmaWxlIHRocmVhZHMgdG8g
+MzLvvIxhbmQgb3RoZXIgcmVtYWluCj4+IHNhbWUgYXMgcHJldmlvdXMsIEJ1dCBJIGhhdmUgbm90
+IHJlcHJvZHVjZSB5b3VyIHByb2JsZW0uIAo+Pgo+PiBCZXNpZGVzLCBJIHRyeSB0byB0ZXN0IHRo
+ZSBjb2RlIGp1c3QgcmVtb3ZlIHRoaXMgbGluZToKPj4gCQljb25nZXN0aW9uX3dhaXQoQkxLX1JX
+X0FTWU5DLCBIWi81MCk7Cj4+Cj4+IEl0J3MgYWxzbyBvayB0byBteSB0ZXN0LCBhbmQgY3ljbGUg
+bnVtIHJlZHVjZWQgdG8gPCAzCj4gCj4gWW91IG1heSBiZSBhYmxlIHRvIGFkZCB0aHJlc2hvbGQg
+aGVyZT8KCkhtbSwgaWYgY3ljbGUgZXhjZWVkcyB0aHJlc2hvbGQsICBzdGlsbCB3ZSBjYW4gZW5j
+b3VudGVyIHRoaXMgaXNzdWUuIEhvdyBhYm91dApqdXN0IHJlbW92aW5nIGNvbmdlc3Rpb25fd2Fp
+dCwgYW5kIGtlZXAgY29uZF9yZXNjaGVkLCBpdCBjYW4gc3dpdGNoIGN1cnJlbnQgY3B1IG91dD8K
+ClRoYW5rcywKCj4gCj4+Cj4+IFRoYW5rcy4KPj4KPj4+IFRoYW5rcywKPj4+Cj4+Pj4KPj4+PiBT
+aWduZWQtb2ZmLWJ5OiBZdW5sZWkgSGUgPGhleXVubGVpQGh1YXdlaS5jb20+Cj4+Pj4gLS0tCj4+
+Pj4gIGZzL2YyZnMvY2hlY2twb2ludC5jIHwgMTAgLS0tLS0tLS0tLQo+Pj4+ICAxIGZpbGUgY2hh
+bmdlZCwgMTAgZGVsZXRpb25zKC0pCj4+Pj4KPj4+PiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9jaGVj
+a3BvaW50LmMgYi9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+Pj4+IGluZGV4IDhlYjE4NGMuLjc2ZTE4
+NTYgMTAwNjQ0Cj4+Pj4gLS0tIGEvZnMvZjJmcy9jaGVja3BvaW50LmMKPj4+PiArKysgYi9mcy9m
+MmZzL2NoZWNrcG9pbnQuYwo+Pj4+IEBAIC05NDQsNyArOTQ0LDYgQEAgaW50IGYyZnNfc3luY19k
+aXJ0eV9pbm9kZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBlbnVtIGlub2RlX3R5cGUgdHlw
+ZSkKPj4+PiAgCXN0cnVjdCBpbm9kZSAqaW5vZGU7Cj4+Pj4gIAlzdHJ1Y3QgZjJmc19pbm9kZV9p
+bmZvICpmaTsKPj4+PiAgCWJvb2wgaXNfZGlyID0gKHR5cGUgPT0gRElSX0lOT0RFKTsKPj4+PiAt
+CXVuc2lnbmVkIGxvbmcgaW5vID0gMDsKPj4+Pgo+Pj4+ICAJdHJhY2VfZjJmc19zeW5jX2RpcnR5
+X2lub2Rlc19lbnRlcihzYmktPnNiLCBpc19kaXIsCj4+Pj4gIAkJCQlnZXRfcGFnZXMoc2JpLCBp
+c19kaXIgPwo+Pj4+IEBAIC05NjcsOCArOTY2LDYgQEAgaW50IGYyZnNfc3luY19kaXJ0eV9pbm9k
+ZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBlbnVtIGlub2RlX3R5cGUgdHlwZSkKPj4+PiAg
+CWlub2RlID0gaWdyYWIoJmZpLT52ZnNfaW5vZGUpOwo+Pj4+ICAJc3Bpbl91bmxvY2soJnNiaS0+
+aW5vZGVfbG9ja1t0eXBlXSk7Cj4+Pj4gIAlpZiAoaW5vZGUpIHsKPj4+PiAtCQl1bnNpZ25lZCBs
+b25nIGN1cl9pbm8gPSBpbm9kZS0+aV9pbm87Cj4+Pj4gLQo+Pj4+ICAJCWlmIChpc19kaXIpCj4+
+Pj4gIAkJCUYyRlNfSShpbm9kZSktPmNwX3Rhc2sgPSBjdXJyZW50Owo+Pj4+Cj4+Pj4gQEAgLTk3
+OCwxMyArOTc1LDYgQEAgaW50IGYyZnNfc3luY19kaXJ0eV9pbm9kZXMoc3RydWN0IGYyZnNfc2Jf
+aW5mbyAqc2JpLCBlbnVtIGlub2RlX3R5cGUgdHlwZSkKPj4+PiAgCQkJRjJGU19JKGlub2RlKS0+
+Y3BfdGFzayA9IE5VTEw7Cj4+Pj4KPj4+PiAgCQlpcHV0KGlub2RlKTsKPj4+PiAtCQkvKiBXZSBu
+ZWVkIHRvIGdpdmUgY3B1IHRvIGFub3RoZXIgd3JpdGVycy4gKi8KPj4+PiAtCQlpZiAoaW5vID09
+IGN1cl9pbm8pIHsKPj4+PiAtCQkJY29uZ2VzdGlvbl93YWl0KEJMS19SV19BU1lOQywgSFovNTAp
+Owo+Pj4+IC0JCQljb25kX3Jlc2NoZWQoKTsKPj4+PiAtCQl9IGVsc2Ugewo+Pj4+IC0JCQlpbm8g
+PSBjdXJfaW5vOwo+Pj4+IC0JCX0KPj4+PiAgCX0gZWxzZSB7Cj4+Pj4gIAkJLyoKPj4+PiAgCQkg
+KiBXZSBzaG91bGQgc3VibWl0IGJpbywgc2luY2UgaXQgZXhpc3RzIHNldmVyYWwKPj4+PiAtLQo+
+Pj4+IDEuOS4xCj4gCj4gLgo+IAoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpDaGVjayBvdXQgdGhl
+IHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKZW5nYWdp
+bmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1k
+ZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQK
+aHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1k
+ZXZlbAo=
