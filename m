@@ -1,60 +1,125 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: fix to clear FI_VOLATILE_FILE correctly
-Date: Mon,  4 Jun 2018 23:20:51 +0800
-Message-ID: <20180604152051.26123-1-chao@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] resize.f2fs: skip cursegs when finding next
+ free block
+Date: Mon, 4 Jun 2018 13:55:59 -0700
+Message-ID: <20180604205559.GA72668@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180604081436.146277-1-shengyong1@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1fPwWP-0006f9-Ra
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Jun 2018 20:56:09 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fPwWL-002nR4-W9
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Jun 2018 20:56:07 +0000
+Content-Disposition: inline
+In-Reply-To: <20180604081436.146277-1-shengyong1@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Sheng Yong <shengyong1@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-From: Chao Yu <yuchao0@huawei.com>
+On 06/04, Sheng Yong wrote:
+> resize.f2fs (f2fs_defragment) tries to migrate blocks to new positions.
+> However, if a curseg is selected, and f2fs_defragment is broken by any
+> error, curseg->next_blkoff is left not updated.
+> 
+> To avoid this, we skip cursegs when finding next free block.
 
-Thread A			Thread B
-- f2fs_release_file
- - clear_inode_flag(FI_VOLATILE_FILE)
-				- wb_writeback
-				 - writeback_sb_inodes
-				  - __writeback_single_inode
-				   - do_writepages
-				    - f2fs_write_data_pages
-				     - __write_data_page
-				     all volatile file's pages
-				     are writebacked to storage
- - set_inode_flag(FI_DROP_CACHE)
- - filemap_fdatawrite
+Don't we update the curseg at the end of resize/defrag?
 
-There is a hole that mm can flush all dirty pages of volatile file as
-inode is not tagged with both FI_VOLATILE_FILE and FI_DROP_CACHE flags,
-we should never writeback the page #0 and also it's unneeded to writeback
-other pages.
+> 
+> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+> ---
+>  fsck/f2fs.h  | 5 +----
+>  fsck/fsck.c  | 2 +-
+>  fsck/mount.c | 8 +++-----
+>  3 files changed, 5 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fsck/f2fs.h b/fsck/f2fs.h
+> index d0e08aa..d216444 100644
+> --- a/fsck/f2fs.h
+> +++ b/fsck/f2fs.h
+> @@ -380,16 +380,13 @@ static inline bool IS_VALID_BLK_ADDR(struct f2fs_sb_info *sbi, u32 addr)
+>  	return 1;
+>  }
+>  
+> -static inline int IS_CUR_SEGNO(struct f2fs_sb_info *sbi, u32 segno, int type)
+> +static inline int IS_CUR_SEGNO(struct f2fs_sb_info *sbi, u32 segno)
+>  {
+>  	int i;
+>  
+>  	for (i = 0; i < NO_CHECK_TYPE; i++) {
+>  		struct curseg_info *curseg = CURSEG_I(sbi, i);
+>  
+> -		if (type == i)
+> -			continue;
+> -
+>  		if (segno == curseg->segno)
+>  			return 1;
+>  	}
+> diff --git a/fsck/fsck.c b/fsck/fsck.c
+> index 5b6dbc8..8145199 100644
+> --- a/fsck/fsck.c
+> +++ b/fsck/fsck.c
+> @@ -1741,7 +1741,7 @@ int fsck_chk_meta(struct f2fs_sb_info *sbi)
+>  		se = get_seg_entry(sbi, i);
+>  		if (se->valid_blocks != 0)
+>  			sit_valid_segs++;
+> -		else if (IS_CUR_SEGNO(sbi, i, NO_CHECK_TYPE)) {
+> +		else if (IS_CUR_SEGNO(sbi, i)) {
+>  			/* curseg has not been written back to device */
+>  			MSG(1, "\tInfo: curseg %u is counted in valid segs\n", i);
+>  			sit_valid_segs++;
+> diff --git a/fsck/mount.c b/fsck/mount.c
+> index 0a30adb..8d4704e 100644
+> --- a/fsck/mount.c
+> +++ b/fsck/mount.c
+> @@ -35,8 +35,7 @@ u32 get_free_segments(struct f2fs_sb_info *sbi)
+>  	for (i = 0; i < TOTAL_SEGS(sbi); i++) {
+>  		struct seg_entry *se = get_seg_entry(sbi, i);
+>  
+> -		if (se->valid_blocks == 0x0 &&
+> -				!IS_CUR_SEGNO(sbi, i, NO_CHECK_TYPE))
+> +		if (se->valid_blocks == 0x0 && !IS_CUR_SEGNO(sbi, i))
+>  			free_segs++;
+>  	}
+>  	return free_segs;
+> @@ -1891,8 +1890,7 @@ void flush_sit_entries(struct f2fs_sb_info *sbi)
+>  							se->valid_blocks);
+>  		rewrite_current_sit_page(sbi, segno, sit_blk);
+>  
+> -		if (se->valid_blocks == 0x0 &&
+> -				!IS_CUR_SEGNO(sbi, segno, NO_CHECK_TYPE))
+> +		if (se->valid_blocks == 0x0 && !IS_CUR_SEGNO(sbi, segno))
+>  			free_segs++;
+>  	}
+>  
+> @@ -1922,7 +1920,7 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left, int type)
+>  		se = get_seg_entry(sbi, segno);
+>  
+>  		if (se->valid_blocks == sbi->blocks_per_seg ||
+> -				IS_CUR_SEGNO(sbi, segno, type)) {
+> +				IS_CUR_SEGNO(sbi, segno)) {
+>  			*to = left ? START_BLOCK(sbi, segno) - 1:
+>  						START_BLOCK(sbi, segno + 1);
+>  			continue;
+> -- 
+> 2.17.0
 
-This patch adjusts to relocate clear_inode_flag(FI_VOLATILE_FILE), so that
-FI_VOLATILE_FILE flag can be remained before all dirty pages were dropped
-to avoid issue.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/file.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 16fd50abbf40..13f2f6845e87 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1564,11 +1564,11 @@ static int f2fs_release_file(struct inode *inode, struct file *filp)
- 	if (f2fs_is_atomic_file(inode))
- 		f2fs_drop_inmem_pages(inode);
- 	if (f2fs_is_volatile_file(inode)) {
--		clear_inode_flag(inode, FI_VOLATILE_FILE);
--		stat_dec_volatile_write(inode);
- 		set_inode_flag(inode, FI_DROP_CACHE);
- 		filemap_fdatawrite(inode->i_mapping);
- 		clear_inode_flag(inode, FI_DROP_CACHE);
-+		clear_inode_flag(inode, FI_VOLATILE_FILE);
-+		stat_dec_volatile_write(inode);
- 	}
- 	return 0;
- }
--- 
-2.16.2.17.g38e79b1fd
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
