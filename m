@@ -1,26 +1,22 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH RFC] Revert "f2fs: avoid cpu lockup"
-Date: Fri, 1 Jun 2018 11:35:08 -0700
-Message-ID: <20180601183508.GA44432@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1527755549-22660-1-git-send-email-heyunlei@huawei.com>
- <20180531175618.GA9718@jaegeuk-macbookpro.roam.corp.google.com>
- <42B685BFA705F94C860C6DD0752F056548D4AC79@dggemm510-mbx.china.huawei.com>
+From: Sheng Yong <shengyong1@huawei.com>
+Subject: [PATCH] resize.f2fs: skip cursegs when finding next free
+ block
+Date: Mon, 4 Jun 2018 16:14:36 +0800
+Message-ID: <20180604081436.146277-1-shengyong1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1fOotT-0007kX-IR
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Jun 2018 18:35:19 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <shengyong1@huawei.com>) id 1fPkdt-0007G8-Un
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Jun 2018 08:15:05 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fOotR-004YXR-Nt
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Jun 2018 18:35:19 +0000
-Content-Disposition: inline
-In-Reply-To: <42B685BFA705F94C860C6DD0752F056548D4AC79@dggemm510-mbx.china.huawei.com>
+ id 1fPkdp-00HVnP-Qm
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Jun 2018 08:15:05 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,64 +26,94 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: heyunlei <heyunlei@huawei.com>
-Cc: "Zhangdianfang (Euler)" <zhangdianfang@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-T24gMDYvMDEsIGhleXVubGVpIHdyb3RlOgo+IAo+IAo+ID4tLS0tLU9yaWdpbmFsIE1lc3NhZ2Ut
-LS0tLQo+ID5Gcm9tOiBKYWVnZXVrIEtpbSBbbWFpbHRvOmphZWdldWtAa2VybmVsLm9yZ10KPiA+
-U2VudDogRnJpZGF5LCBKdW5lIDAxLCAyMDE4IDE6NTYgQU0KPiA+VG86IGhleXVubGVpCj4gPkNj
-OiBZdWNoYW8gKFQpOyBsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldDsgV2Fu
-Z2JpbnRpYW47IFpoYW5nZGlhbmZhbmcgKEV1bGVyKQo+ID5TdWJqZWN0OiBSZTogW2YyZnMtZGV2
-XVtQQVRDSCBSRkNdIFJldmVydCAiZjJmczogYXZvaWQgY3B1IGxvY2t1cCIKPiA+Cj4gPkhpIFl1
-bmxlaSwKPiA+Cj4gSGkgSmFlZ2V1a++8jAo+ID5PbiAwNS8zMSwgWXVubGVpIEhlIHdyb3RlOgo+
-ID4+IFRoaXMgcmV2ZXJ0cyBjb21taXQgNGRiMDhkMDE2Y2NlZGI1Yjk3ODY5NzI0YTA5Njk5MGFj
-YWQ1OTY4NSB0bwo+ID4+IGZpeCBodW5ndGFzayBwcm9ibGVtIHdoaWNoIGNhbiBiZSByZXByb2R1
-Y2VkIGFzIGZvbGxvdzoKPiA+Pgo+ID4+IFRocmVhZCAwfjM6Cj4gPj4KPiA+PiB3aGlsZSB0cnVl
-Cj4gPj4gZG8KPiA+PiAJdG91Y2ggL3h4eC90ZXN0L2ZpbGVfeHh4Cj4gPj4gZG9uZQo+ID4+Cj4g
-Pj4gVGhyZWFkIDUgd3JpdGUgYSBuZXcgY2hlY2twb2ludCBldmVyeSB0aHJlZSBzZWNvbmRzLgo+
-ID4+Cj4gPj4gSW4gdGhlIG1lYW50aW1lLCBmaW8gc3RhcnQgMTYgdGhyZWFkcyBmb3IgcmFuZHdy
-aXRlLgo+ID4+Cj4gPj4gV2l0aCBteSBkZWJ1ZyBpbmZvLCBjeWNsZXMgbnVtIHdpbGwgZXhjZWVk
-IDEwMDAgaW4gZnVuY3Rpb24KPiA+PiBmMmZzX3N5bmNfZGlydHlfaW5vZGVzLCBhbmQgbW9zdCBv
-ZiBjeWNsZSB3aWxsIGJlIGRyb3BwZWQKPiA+PiBpbnRvIGNvbmdlc3Rpb25fd2FpdCgpIGFuZCBz
-bGVlcCBtb3JlIHRoYW4gMjBtcy4KPiA+Cj4gPk9yaWdpbmFsIHBhdGNoIHRyaWVzIHRvIGZpeCB3
-YXRjaGRvZyB3aGljaCBzeW5jX2RpcnR5X2lub2RlcygpIGdyYWJzIG9uZQo+ID5jcHUgZm9yIGEg
-bG9uZyB0aW1lLiBIYXZlIHlvdSB0cmllZCByZXByb2R1Y2UgdGhhdCBhcyB3ZWxsPwo+ID4KPiAK
-PiBJIGhhdmUgdGVzdCB0aGlzIHBhdGNoIHdpdGggaW5jcmVhc2luZyB0b3VjaCBmaWxlIHRocmVh
-ZHMgdG8gMzLvvIxhbmQgb3RoZXIgcmVtYWluCj4gc2FtZSBhcyBwcmV2aW91cywgQnV0IEkgaGF2
-ZSBub3QgcmVwcm9kdWNlIHlvdXIgcHJvYmxlbS4gCj4gCj4gQmVzaWRlcywgSSB0cnkgdG8gdGVz
-dCB0aGUgY29kZSBqdXN0IHJlbW92ZSB0aGlzIGxpbmU6Cj4gCQljb25nZXN0aW9uX3dhaXQoQkxL
-X1JXX0FTWU5DLCBIWi81MCk7Cj4gCj4gSXQncyBhbHNvIG9rIHRvIG15IHRlc3QsIGFuZCBjeWNs
-ZSBudW0gcmVkdWNlZCB0byA8IDMKCllvdSBtYXkgYmUgYWJsZSB0byBhZGQgdGhyZXNob2xkIGhl
-cmU/Cgo+IAo+IFRoYW5rcy4KPiAKPiA+VGhhbmtzLAo+ID4KPiA+Pgo+ID4+IFNpZ25lZC1vZmYt
-Ynk6IFl1bmxlaSBIZSA8aGV5dW5sZWlAaHVhd2VpLmNvbT4KPiA+PiAtLS0KPiA+PiAgZnMvZjJm
-cy9jaGVja3BvaW50LmMgfCAxMCAtLS0tLS0tLS0tCj4gPj4gIDEgZmlsZSBjaGFuZ2VkLCAxMCBk
-ZWxldGlvbnMoLSkKPiA+Pgo+ID4+IGRpZmYgLS1naXQgYS9mcy9mMmZzL2NoZWNrcG9pbnQuYyBi
-L2ZzL2YyZnMvY2hlY2twb2ludC5jCj4gPj4gaW5kZXggOGViMTg0Yy4uNzZlMTg1NiAxMDA2NDQK
-PiA+PiAtLS0gYS9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+ID4+ICsrKyBiL2ZzL2YyZnMvY2hlY2tw
-b2ludC5jCj4gPj4gQEAgLTk0NCw3ICs5NDQsNiBAQCBpbnQgZjJmc19zeW5jX2RpcnR5X2lub2Rl
-cyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIGVudW0gaW5vZGVfdHlwZSB0eXBlKQo+ID4+ICAJ
-c3RydWN0IGlub2RlICppbm9kZTsKPiA+PiAgCXN0cnVjdCBmMmZzX2lub2RlX2luZm8gKmZpOwo+
-ID4+ICAJYm9vbCBpc19kaXIgPSAodHlwZSA9PSBESVJfSU5PREUpOwo+ID4+IC0JdW5zaWduZWQg
-bG9uZyBpbm8gPSAwOwo+ID4+Cj4gPj4gIAl0cmFjZV9mMmZzX3N5bmNfZGlydHlfaW5vZGVzX2Vu
-dGVyKHNiaS0+c2IsIGlzX2RpciwKPiA+PiAgCQkJCWdldF9wYWdlcyhzYmksIGlzX2RpciA/Cj4g
-Pj4gQEAgLTk2Nyw4ICs5NjYsNiBAQCBpbnQgZjJmc19zeW5jX2RpcnR5X2lub2RlcyhzdHJ1Y3Qg
-ZjJmc19zYl9pbmZvICpzYmksIGVudW0gaW5vZGVfdHlwZSB0eXBlKQo+ID4+ICAJaW5vZGUgPSBp
-Z3JhYigmZmktPnZmc19pbm9kZSk7Cj4gPj4gIAlzcGluX3VubG9jaygmc2JpLT5pbm9kZV9sb2Nr
-W3R5cGVdKTsKPiA+PiAgCWlmIChpbm9kZSkgewo+ID4+IC0JCXVuc2lnbmVkIGxvbmcgY3VyX2lu
-byA9IGlub2RlLT5pX2lubzsKPiA+PiAtCj4gPj4gIAkJaWYgKGlzX2RpcikKPiA+PiAgCQkJRjJG
-U19JKGlub2RlKS0+Y3BfdGFzayA9IGN1cnJlbnQ7Cj4gPj4KPiA+PiBAQCAtOTc4LDEzICs5NzUs
-NiBAQCBpbnQgZjJmc19zeW5jX2RpcnR5X2lub2RlcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmks
-IGVudW0gaW5vZGVfdHlwZSB0eXBlKQo+ID4+ICAJCQlGMkZTX0koaW5vZGUpLT5jcF90YXNrID0g
-TlVMTDsKPiA+Pgo+ID4+ICAJCWlwdXQoaW5vZGUpOwo+ID4+IC0JCS8qIFdlIG5lZWQgdG8gZ2l2
-ZSBjcHUgdG8gYW5vdGhlciB3cml0ZXJzLiAqLwo+ID4+IC0JCWlmIChpbm8gPT0gY3VyX2lubykg
-ewo+ID4+IC0JCQljb25nZXN0aW9uX3dhaXQoQkxLX1JXX0FTWU5DLCBIWi81MCk7Cj4gPj4gLQkJ
-CWNvbmRfcmVzY2hlZCgpOwo+ID4+IC0JCX0gZWxzZSB7Cj4gPj4gLQkJCWlubyA9IGN1cl9pbm87
-Cj4gPj4gLQkJfQo+ID4+ICAJfSBlbHNlIHsKPiA+PiAgCQkvKgo+ID4+ICAJCSAqIFdlIHNob3Vs
-ZCBzdWJtaXQgYmlvLCBzaW5jZSBpdCBleGlzdHMgc2V2ZXJhbAo+ID4+IC0tCj4gPj4gMS45LjEK
-Ci0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5p
-dHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hk
-b3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGlu
-dXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vm
-b3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+resize.f2fs (f2fs_defragment) tries to migrate blocks to new positions.
+However, if a curseg is selected, and f2fs_defragment is broken by any
+error, curseg->next_blkoff is left not updated.
+
+To avoid this, we skip cursegs when finding next free block.
+
+Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+---
+ fsck/f2fs.h  | 5 +----
+ fsck/fsck.c  | 2 +-
+ fsck/mount.c | 8 +++-----
+ 3 files changed, 5 insertions(+), 10 deletions(-)
+
+diff --git a/fsck/f2fs.h b/fsck/f2fs.h
+index d0e08aa..d216444 100644
+--- a/fsck/f2fs.h
++++ b/fsck/f2fs.h
+@@ -380,16 +380,13 @@ static inline bool IS_VALID_BLK_ADDR(struct f2fs_sb_info *sbi, u32 addr)
+ 	return 1;
+ }
+ 
+-static inline int IS_CUR_SEGNO(struct f2fs_sb_info *sbi, u32 segno, int type)
++static inline int IS_CUR_SEGNO(struct f2fs_sb_info *sbi, u32 segno)
+ {
+ 	int i;
+ 
+ 	for (i = 0; i < NO_CHECK_TYPE; i++) {
+ 		struct curseg_info *curseg = CURSEG_I(sbi, i);
+ 
+-		if (type == i)
+-			continue;
+-
+ 		if (segno == curseg->segno)
+ 			return 1;
+ 	}
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 5b6dbc8..8145199 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -1741,7 +1741,7 @@ int fsck_chk_meta(struct f2fs_sb_info *sbi)
+ 		se = get_seg_entry(sbi, i);
+ 		if (se->valid_blocks != 0)
+ 			sit_valid_segs++;
+-		else if (IS_CUR_SEGNO(sbi, i, NO_CHECK_TYPE)) {
++		else if (IS_CUR_SEGNO(sbi, i)) {
+ 			/* curseg has not been written back to device */
+ 			MSG(1, "\tInfo: curseg %u is counted in valid segs\n", i);
+ 			sit_valid_segs++;
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 0a30adb..8d4704e 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -35,8 +35,7 @@ u32 get_free_segments(struct f2fs_sb_info *sbi)
+ 	for (i = 0; i < TOTAL_SEGS(sbi); i++) {
+ 		struct seg_entry *se = get_seg_entry(sbi, i);
+ 
+-		if (se->valid_blocks == 0x0 &&
+-				!IS_CUR_SEGNO(sbi, i, NO_CHECK_TYPE))
++		if (se->valid_blocks == 0x0 && !IS_CUR_SEGNO(sbi, i))
+ 			free_segs++;
+ 	}
+ 	return free_segs;
+@@ -1891,8 +1890,7 @@ void flush_sit_entries(struct f2fs_sb_info *sbi)
+ 							se->valid_blocks);
+ 		rewrite_current_sit_page(sbi, segno, sit_blk);
+ 
+-		if (se->valid_blocks == 0x0 &&
+-				!IS_CUR_SEGNO(sbi, segno, NO_CHECK_TYPE))
++		if (se->valid_blocks == 0x0 && !IS_CUR_SEGNO(sbi, segno))
+ 			free_segs++;
+ 	}
+ 
+@@ -1922,7 +1920,7 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left, int type)
+ 		se = get_seg_entry(sbi, segno);
+ 
+ 		if (se->valid_blocks == sbi->blocks_per_seg ||
+-				IS_CUR_SEGNO(sbi, segno, type)) {
++				IS_CUR_SEGNO(sbi, segno)) {
+ 			*to = left ? START_BLOCK(sbi, segno) - 1:
+ 						START_BLOCK(sbi, segno + 1);
+ 			continue;
+-- 
+2.17.0
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
