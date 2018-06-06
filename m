@@ -1,9 +1,9 @@
-From: Junling Zheng <zhengjunling@huawei.com>
-Subject: Re: [PATCH] fsck.f2fs: do not print content beyond
- sb->version
-Date: Wed, 6 Jun 2018 22:45:32 +0800
-Message-ID: <b7418e83-6391-ac1c-cace-3c117599acac@huawei.com>
-References: <20180606143924.154725-1-zhengjunling@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH 2/2] f2fs: move s_res{u,
+ g}id initialization to default_options()
+Date: Wed,  6 Jun 2018 23:55:02 +0800
+Message-ID: <20180606155502.11619-2-chao@kernel.org>
+References: <20180606155502.11619-1-chao@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,14 +11,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <zhengjunling@huawei.com>) id 1fQZhF-0002ny-C5
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Jun 2018 14:45:57 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <chao@kernel.org>) id 1fQamo-0004ij-7m
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Jun 2018 15:55:46 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fQZhD-00DIit-Mc
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Jun 2018 14:45:57 +0000
-In-Reply-To: <20180606143924.154725-1-zhengjunling@huawei.com>
+ id 1fQamm-00CdSU-Cg
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Jun 2018 15:55:46 +0000
+In-Reply-To: <20180606155502.11619-1-chao@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,44 +28,44 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Actually, I prefer to fix this bug by unifying the length of versions in
-f2fs_configuration and f2fs_super_block :)
+From: Chao Yu <yuchao0@huawei.com>
 
-Reference: https://sourceforge.net/p/linux-f2fs/mailman/message/35398537/
+Let default_options() initialize s_res{u,g}id with default value like
+other options.
 
-Thanks
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/super.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-On 2018/6/6 22:39, Junling Zheng wrote:
-> Currently, versions in f2fs_configuration have one more byte than
-> those in sb, so versions in sb may not end with '\0', and then
-> print_raw_sb_info() will print something beyond sb->version.
-> 
-> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
-> ---
->  fsck/mount.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fsck/mount.c b/fsck/mount.c
-> index 0a30adb..9def919 100644
-> --- a/fsck/mount.c
-> +++ b/fsck/mount.c
-> @@ -341,7 +341,10 @@ void print_raw_sb_info(struct f2fs_super_block *sb)
->  	DISP_u32(sb, node_ino);
->  	DISP_u32(sb, meta_ino);
->  	DISP_u32(sb, cp_payload);
-> -	DISP("%s", sb, version);
-> +	if (sb->version[255] != '\0')
-> +		DISP("%-.256s", sb, version);
-> +	else
-> +		DISP("%s", sb, version);
->  	printf("\n");
->  }
->  
-> 
-
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 73d7d7e51a61..56f3af86f62c 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1355,6 +1355,8 @@ static void default_options(struct f2fs_sb_info *sbi)
+ 	F2FS_OPTION(sbi).alloc_mode = ALLOC_MODE_DEFAULT;
+ 	F2FS_OPTION(sbi).fsync_mode = FSYNC_MODE_POSIX;
+ 	F2FS_OPTION(sbi).test_dummy_encryption = false;
++	F2FS_OPTION(sbi).s_resuid = make_kuid(&init_user_ns, F2FS_DEF_RESUID);
++	F2FS_OPTION(sbi).s_resgid = make_kgid(&init_user_ns, F2FS_DEF_RESGID);
+ 	sbi->readdir_ra = 1;
+ 
+ 	set_opt(sbi, BG_GC);
+@@ -2702,9 +2704,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	sb->s_fs_info = sbi;
+ 	sbi->raw_super = raw_super;
+ 
+-	F2FS_OPTION(sbi).s_resuid = make_kuid(&init_user_ns, F2FS_DEF_RESUID);
+-	F2FS_OPTION(sbi).s_resgid = make_kgid(&init_user_ns, F2FS_DEF_RESGID);
+-
+ 	/* precompute checksum seed for metadata */
+ 	if (f2fs_sb_has_inode_chksum(sb))
+ 		sbi->s_chksum_seed = f2fs_chksum(sbi, ~0, raw_super->uuid,
+-- 
+2.16.2.17.g38e79b1fd
 
 
 ------------------------------------------------------------------------------
