@@ -1,119 +1,155 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v13 72/72] radix tree: Remove radix_tree_clear_tags
-Date: Mon, 11 Jun 2018 07:06:39 -0700
-Message-ID: <20180611140639.17215-73-willy@infradead.org>
+Subject: [PATCH v13 62/72] dax: Hash on XArray instead of mapping
+Date: Mon, 11 Jun 2018 07:06:29 -0700
+Message-ID: <20180611140639.17215-63-willy@infradead.org>
 References: <20180611140639.17215-1-willy@infradead.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <willy@infradead.org>) id 1fSNTm-0000WC-09
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:30 +0000
+Received: from bombadil.infradead.org ([198.137.202.133])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fSNTj-0001Qo-OI
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:29 +0000
 In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Matthew Wilcox <mawilcox@microsoft.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-The page cache was the only user of this interface and it has now
-been converted to the XArray.  Transform the test into a test of
-xas_init_tags().
+Since the XArray is embedded in the struct address_space, its address
+contains exactly as much entropy as the address of the mapping.  This
+patch is purely preparatory for later patches which will simplify the
+wait/wake interfaces.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- include/linux/radix-tree.h           |  2 --
- lib/radix-tree.c                     | 13 -----------
- tools/testing/radix-tree/tag_check.c | 32 +++++++++++++---------------
- 3 files changed, 15 insertions(+), 32 deletions(-)
+ fs/dax.c | 29 +++++++++++++++--------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
 
-diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
-index f8ef267e4975..27c15990951d 100644
---- a/include/linux/radix-tree.h
-+++ b/include/linux/radix-tree.h
-@@ -252,8 +252,6 @@ void radix_tree_iter_delete(struct radix_tree_root *,
- 			struct radix_tree_iter *iter, void __rcu **slot);
- void *radix_tree_delete_item(struct radix_tree_root *, unsigned long, void *);
- void *radix_tree_delete(struct radix_tree_root *, unsigned long);
--void radix_tree_clear_tags(struct radix_tree_root *, struct radix_tree_node *,
--			   void __rcu **slot);
- unsigned int radix_tree_gang_lookup(const struct radix_tree_root *,
- 			void **results, unsigned long first_index,
- 			unsigned int max_items);
-diff --git a/lib/radix-tree.c b/lib/radix-tree.c
-index ad03dc0c562f..101f1c28e1b6 100644
---- a/lib/radix-tree.c
-+++ b/lib/radix-tree.c
-@@ -1711,19 +1711,6 @@ void *radix_tree_delete(struct radix_tree_root *root, unsigned long index)
- }
- EXPORT_SYMBOL(radix_tree_delete);
+diff --git a/fs/dax.c b/fs/dax.c
+index 97e8931541f1..7d0712c45da5 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -116,7 +116,7 @@ static int dax_is_empty_entry(void *entry)
+  * DAX page cache entry locking
+  */
+ struct exceptional_entry_key {
+-	struct address_space *mapping;
++	struct xarray *xa;
+ 	pgoff_t entry_start;
+ };
  
--void radix_tree_clear_tags(struct radix_tree_root *root,
--			   struct radix_tree_node *node,
--			   void __rcu **slot)
--{
--	if (node) {
--		unsigned int tag, offset = get_slot_offset(node, slot);
--		for (tag = 0; tag < RADIX_TREE_MAX_TAGS; tag++)
--			node_tag_clear(root, node, tag, offset);
--	} else {
--		root_tag_clear_all(root);
--	}
--}
--
- /**
-  *	radix_tree_tagged - test whether any items in the tree are tagged
-  *	@root:		radix tree root
-diff --git a/tools/testing/radix-tree/tag_check.c b/tools/testing/radix-tree/tag_check.c
-index 543181e4847b..340bc4f72f34 100644
---- a/tools/testing/radix-tree/tag_check.c
-+++ b/tools/testing/radix-tree/tag_check.c
-@@ -331,29 +331,27 @@ static void single_check(void)
- 	item_kill_tree(&tree);
- }
+@@ -125,7 +125,7 @@ struct wait_exceptional_entry_queue {
+ 	struct exceptional_entry_key key;
+ };
  
--void radix_tree_clear_tags_test(void)
-+void init_tags_test(void)
+-static wait_queue_head_t *dax_entry_waitqueue(struct address_space *mapping,
++static wait_queue_head_t *dax_entry_waitqueue(struct xarray *xa,
+ 		pgoff_t index, void *entry, struct exceptional_entry_key *key)
  {
-+	DEFINE_XARRAY(tree);
-+	XA_STATE(xas, &tree, 0);
- 	unsigned long index;
--	struct radix_tree_node *node;
--	struct radix_tree_iter iter;
--	void **slot;
-+	void *entry;
+ 	unsigned long hash;
+@@ -138,21 +138,21 @@ static wait_queue_head_t *dax_entry_waitqueue(struct address_space *mapping,
+ 	if (dax_is_pmd_entry(entry))
+ 		index &= ~PG_PMD_COLOUR;
  
--	RADIX_TREE(tree, GFP_KERNEL);
--
--	item_insert(&tree, 0);
--	item_tag_set(&tree, 0, 0);
--	__radix_tree_lookup(&tree, 0, &node, &slot);
--	radix_tree_clear_tags(&tree, node, slot);
--	assert(item_tag_get(&tree, 0, 0) == 0);
-+	xa_store(&tree, 0, xa_mk_value(0), GFP_KERNEL);
-+	item_tag_set(&tree, 0, XA_TAG_0);
-+	xas_load(&xas);
-+	xas_init_tags(&xas);
-+	assert(item_tag_get(&tree, 0, XA_TAG_0) == 0);
+-	key->mapping = mapping;
++	key->xa = xa;
+ 	key->entry_start = index;
  
- 	for (index = 0; index < 1000; index++) {
--		item_insert(&tree, index);
--		item_tag_set(&tree, index, 0);
-+		xa_store(&tree, index, xa_mk_value(index), GFP_KERNEL);
-+		item_tag_set(&tree, index, XA_TAG_0);
- 	}
- 
--	radix_tree_for_each_slot(slot, &tree, &iter, 0) {
--		radix_tree_clear_tags(&tree, iter.node, slot);
--		assert(item_tag_get(&tree, iter.index, 0) == 0);
-+	xas_for_each(&xas, entry, ULONG_MAX) {
-+		xas_init_tags(&xas);
-+		assert(item_tag_get(&tree, xas.xa_index, XA_TAG_0) == 0);
- 	}
- 
- 	item_kill_tree(&tree);
-@@ -376,5 +374,5 @@ void tag_check(void)
- 	thrash_tags();
- 	rcu_barrier();
- 	printv(2, "after thrash_tags: %d allocated\n", nr_allocated);
--	radix_tree_clear_tags_test();
-+	init_tags_test();
+-	hash = hash_long((unsigned long)mapping ^ index, DAX_WAIT_TABLE_BITS);
++	hash = hash_long((unsigned long)xa ^ index, DAX_WAIT_TABLE_BITS);
+ 	return wait_table + hash;
  }
+ 
+-static int wake_exceptional_entry_func(wait_queue_entry_t *wait, unsigned int mode,
+-				       int sync, void *keyp)
++static int wake_exceptional_entry_func(wait_queue_entry_t *wait,
++		unsigned int mode, int sync, void *keyp)
+ {
+ 	struct exceptional_entry_key *key = keyp;
+ 	struct wait_exceptional_entry_queue *ewait =
+ 		container_of(wait, struct wait_exceptional_entry_queue, wait);
+ 
+-	if (key->mapping != ewait->key.mapping ||
++	if (key->xa != ewait->key.xa ||
+ 	    key->entry_start != ewait->key.entry_start)
+ 		return 0;
+ 	return autoremove_wake_function(wait, mode, sync, NULL);
+@@ -163,13 +163,13 @@ static int wake_exceptional_entry_func(wait_queue_entry_t *wait, unsigned int mo
+  * The important information it's conveying is whether the entry at
+  * this index used to be a PMD entry.
+  */
+-static void dax_wake_mapping_entry_waiter(struct address_space *mapping,
++static void dax_wake_mapping_entry_waiter(struct xarray *xa,
+ 		pgoff_t index, void *entry, bool wake_all)
+ {
+ 	struct exceptional_entry_key key;
+ 	wait_queue_head_t *wq;
+ 
+-	wq = dax_entry_waitqueue(mapping, index, entry, &key);
++	wq = dax_entry_waitqueue(xa, index, entry, &key);
+ 
+ 	/*
+ 	 * Checking for locked entry and prepare_to_wait_exclusive() happens
+@@ -246,7 +246,8 @@ static void *get_unlocked_mapping_entry(struct address_space *mapping,
+ 			return entry;
+ 		}
+ 
+-		wq = dax_entry_waitqueue(mapping, index, entry, &ewait.key);
++		wq = dax_entry_waitqueue(&mapping->i_pages, index, entry,
++				&ewait.key);
+ 		prepare_to_wait_exclusive(wq, &ewait.wait,
+ 					  TASK_UNINTERRUPTIBLE);
+ 		xa_unlock_irq(&mapping->i_pages);
+@@ -270,7 +271,7 @@ static void dax_unlock_mapping_entry(struct address_space *mapping,
+ 	}
+ 	unlock_slot(mapping, slot);
+ 	xa_unlock_irq(&mapping->i_pages);
+-	dax_wake_mapping_entry_waiter(mapping, index, entry, false);
++	dax_wake_mapping_entry_waiter(&mapping->i_pages, index, entry, false);
+ }
+ 
+ static void put_locked_mapping_entry(struct address_space *mapping,
+@@ -290,7 +291,7 @@ static void put_unlocked_mapping_entry(struct address_space *mapping,
+ 		return;
+ 
+ 	/* We have to wake up next waiter for the page cache entry lock */
+-	dax_wake_mapping_entry_waiter(mapping, index, entry, false);
++	dax_wake_mapping_entry_waiter(&mapping->i_pages, index, entry, false);
+ }
+ 
+ static unsigned long dax_entry_size(void *entry)
+@@ -481,8 +482,8 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
+ 			dax_disassociate_entry(entry, mapping, false);
+ 			radix_tree_delete(&mapping->i_pages, index);
+ 			mapping->nrexceptional--;
+-			dax_wake_mapping_entry_waiter(mapping, index, entry,
+-					true);
++			dax_wake_mapping_entry_waiter(&mapping->i_pages,
++					index, entry, true);
+ 		}
+ 
+ 		entry = dax_make_locked(0, size_flag | DAX_EMPTY);
 -- 
 2.17.1
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
