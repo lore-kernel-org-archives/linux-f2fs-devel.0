@@ -1,8 +1,8 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v13 28/72] page cache: Convert
- find_get_entries_tag to XArray
-Date: Mon, 11 Jun 2018 07:05:55 -0700
-Message-ID: <20180611140639.17215-29-willy@infradead.org>
+Subject: [PATCH v13 39/72] mm: Convert __do_page_cache_readahead
+ to XArray
+Date: Mon, 11 Jun 2018 07:06:06 -0700
+Message-ID: <20180611140639.17215-40-willy@infradead.org>
 References: <20180611140639.17215-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,13 +11,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1fSNTU-00023U-7O
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:12 +0000
+ (envelope-from <willy@infradead.org>) id 1fSNTY-00024F-PK
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:16 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fSNTT-00GC8f-0Q
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:12 +0000
+ id 1fSNTX-0001Pv-Jy
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:16 +0000
 In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,113 +33,28 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Slightly shorter and simpler code.
+This one is trivial.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- include/linux/pagemap.h |  2 +-
- mm/filemap.c            | 54 ++++++++++++++++++-----------------------
- 2 files changed, 25 insertions(+), 31 deletions(-)
+ mm/readahead.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index a6d635fefb01..442977811b59 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -373,7 +373,7 @@ static inline unsigned find_get_pages_tag(struct address_space *mapping,
- 					nr_pages, pages);
- }
- unsigned find_get_entries_tag(struct address_space *mapping, pgoff_t start,
--			int tag, unsigned int nr_entries,
-+			xa_tag_t tag, unsigned int nr_entries,
- 			struct page **entries, pgoff_t *indices);
- 
- struct page *grab_cache_page_write_begin(struct address_space *mapping,
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 83328635edaa..67f04bcdf9ef 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1866,57 +1866,51 @@ EXPORT_SYMBOL(find_get_pages_range_tag);
-  * @tag.
-  */
- unsigned find_get_entries_tag(struct address_space *mapping, pgoff_t start,
--			int tag, unsigned int nr_entries,
-+			xa_tag_t tag, unsigned int nr_entries,
- 			struct page **entries, pgoff_t *indices)
- {
--	void **slot;
-+	XA_STATE(xas, &mapping->i_pages, start);
-+	struct page *page;
- 	unsigned int ret = 0;
--	struct radix_tree_iter iter;
- 
- 	if (!nr_entries)
- 		return 0;
- 
- 	rcu_read_lock();
--	radix_tree_for_each_tagged(slot, &mapping->i_pages, &iter, start, tag) {
--		struct page *head, *page;
--repeat:
--		page = radix_tree_deref_slot(slot);
--		if (unlikely(!page))
-+	xas_for_each_tagged(&xas, page, ULONG_MAX, tag) {
-+		struct page *head;
-+		if (xas_retry(&xas, page))
- 			continue;
--		if (radix_tree_exception(page)) {
--			if (radix_tree_deref_retry(page)) {
--				slot = radix_tree_iter_retry(&iter);
--				continue;
--			}
--
--			/*
--			 * A shadow entry of a recently evicted page, a swap
--			 * entry from shmem/tmpfs or a DAX entry.  Return it
--			 * without attempting to raise page count.
--			 */
-+		/*
-+		 * A shadow entry of a recently evicted page, a swap
-+		 * entry from shmem/tmpfs or a DAX entry.  Return it
-+		 * without attempting to raise page count.
-+		 */
-+		if (xa_is_value(page))
- 			goto export;
--		}
- 
- 		head = compound_head(page);
- 		if (!page_cache_get_speculative(head))
--			goto repeat;
-+			goto retry;
- 
- 		/* The page was split under us? */
--		if (compound_head(page) != head) {
--			put_page(head);
--			goto repeat;
--		}
-+		if (compound_head(page) != head)
-+			goto put_page;
- 
- 		/* Has the page moved? */
--		if (unlikely(page != *slot)) {
--			put_page(head);
--			goto repeat;
--		}
-+		if (unlikely(page != xas_reload(&xas)))
-+			goto put_page;
-+
- export:
--		indices[ret] = iter.index;
-+		indices[ret] = xas.xa_index;
- 		entries[ret] = page;
- 		if (++ret == nr_entries)
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 59998ca31f2a..07f9734dc79f 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -174,9 +174,7 @@ unsigned int __do_page_cache_readahead(struct address_space *mapping,
+ 		if (page_offset > end_index)
  			break;
-+		continue;
-+put_page:
-+		put_page(head);
-+retry:
-+		xas_reset(&xas);
- 	}
- 	rcu_read_unlock();
- 	return ret;
+ 
+-		rcu_read_lock();
+-		page = radix_tree_lookup(&mapping->i_pages, page_offset);
+-		rcu_read_unlock();
++		page = xa_load(&mapping->i_pages, page_offset);
+ 		if (page && !xa_is_value(page)) {
+ 			/*
+ 			 * Page already present?  Kick off the current batch of
 -- 
 2.17.1
 
