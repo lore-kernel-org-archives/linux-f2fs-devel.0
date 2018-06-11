@@ -1,71 +1,178 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v13 18/72] xarray: Add MAINTAINERS entry
-Date: Mon, 11 Jun 2018 07:05:45 -0700
-Message-ID: <20180611140639.17215-19-willy@infradead.org>
+Subject: [PATCH v13 59/72] nilfs2: Convert to XArray
+Date: Mon, 11 Jun 2018 07:06:26 -0700
+Message-ID: <20180611140639.17215-60-willy@infradead.org>
 References: <20180611140639.17215-1-willy@infradead.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1fSNTN-0008W8-Rr
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:05 +0000
-Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fSNTL-00HVcz-Fw
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:05 +0000
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Matthew Wilcox <mawilcox@microsoft.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Add myself as XArray and IDR maintainer.
+This is close to a 1:1 replacement of radix tree APIs with their XArray
+equivalents.  It would be possible to optimise nilfs_copy_back_pages(),
+but that doesn't seem to be in the performance path.  Also, I think
+it has a pre-existing bug, and I've added a note to that effect in the
+source code.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- MAINTAINERS | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ fs/nilfs2/btnode.c | 26 +++++++++-----------------
+ fs/nilfs2/page.c   | 29 +++++++++++++----------------
+ 2 files changed, 22 insertions(+), 33 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 14fbc6e94774..afb6678188b1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15598,6 +15598,18 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/vdso
- S:	Maintained
- F:	arch/x86/entry/vdso/
+diff --git a/fs/nilfs2/btnode.c b/fs/nilfs2/btnode.c
+index dec98cab729d..e9fcffb3a15c 100644
+--- a/fs/nilfs2/btnode.c
++++ b/fs/nilfs2/btnode.c
+@@ -177,24 +177,18 @@ int nilfs_btnode_prepare_change_key(struct address_space *btnc,
+ 	ctxt->newbh = NULL;
  
-+XARRAY
-+M:	Matthew Wilcox <mawilcox@microsoft.com>
-+M:	Matthew Wilcox <willy@infradead.org>
-+L:	linux-fsdevel@vger.kernel.org
-+S:	Supported
-+F:	Documentation/core-api/xarray.rst
-+F:	lib/idr.c
-+F:	lib/xarray.c
-+F:	include/linux/idr.h
-+F:	include/linux/xarray.h
-+F:	tools/testing/radix-tree
-+
- XC2028/3028 TUNER DRIVER
- M:	Mauro Carvalho Chehab <mchehab@kernel.org>
- L:	linux-media@vger.kernel.org
+ 	if (inode->i_blkbits == PAGE_SHIFT) {
+-		lock_page(obh->b_page);
+-		/*
+-		 * We cannot call radix_tree_preload for the kernels older
+-		 * than 2.6.23, because it is not exported for modules.
+-		 */
++		struct page *opage = obh->b_page;
++		lock_page(opage);
+ retry:
+-		err = radix_tree_preload(GFP_NOFS & ~__GFP_HIGHMEM);
+-		if (err)
+-			goto failed_unlock;
+ 		/* BUG_ON(oldkey != obh->b_page->index); */
+-		if (unlikely(oldkey != obh->b_page->index))
+-			NILFS_PAGE_BUG(obh->b_page,
++		if (unlikely(oldkey != opage->index))
++			NILFS_PAGE_BUG(opage,
+ 				       "invalid oldkey %lld (newkey=%lld)",
+ 				       (unsigned long long)oldkey,
+ 				       (unsigned long long)newkey);
+ 
+ 		xa_lock_irq(&btnc->i_pages);
+-		err = radix_tree_insert(&btnc->i_pages, newkey, obh->b_page);
++		err = __xa_insert(&btnc->i_pages, newkey, opage, GFP_NOFS);
+ 		xa_unlock_irq(&btnc->i_pages);
+ 		/*
+ 		 * Note: page->index will not change to newkey until
+@@ -202,7 +196,6 @@ int nilfs_btnode_prepare_change_key(struct address_space *btnc,
+ 		 * To protect the page in intermediate state, the page lock
+ 		 * is held.
+ 		 */
+-		radix_tree_preload_end();
+ 		if (!err)
+ 			return 0;
+ 		else if (err != -EEXIST)
+@@ -212,7 +205,7 @@ int nilfs_btnode_prepare_change_key(struct address_space *btnc,
+ 		if (!err)
+ 			goto retry;
+ 		/* fallback to copy mode */
+-		unlock_page(obh->b_page);
++		unlock_page(opage);
+ 	}
+ 
+ 	nbh = nilfs_btnode_create_block(btnc, newkey);
+@@ -252,9 +245,8 @@ void nilfs_btnode_commit_change_key(struct address_space *btnc,
+ 		mark_buffer_dirty(obh);
+ 
+ 		xa_lock_irq(&btnc->i_pages);
+-		radix_tree_delete(&btnc->i_pages, oldkey);
+-		radix_tree_tag_set(&btnc->i_pages, newkey,
+-				   PAGECACHE_TAG_DIRTY);
++		__xa_erase(&btnc->i_pages, oldkey);
++		__xa_set_tag(&btnc->i_pages, newkey, PAGECACHE_TAG_DIRTY);
+ 		xa_unlock_irq(&btnc->i_pages);
+ 
+ 		opage->index = obh->b_blocknr = newkey;
+@@ -284,7 +276,7 @@ void nilfs_btnode_abort_change_key(struct address_space *btnc,
+ 
+ 	if (nbh == NULL) {	/* blocksize == pagesize */
+ 		xa_lock_irq(&btnc->i_pages);
+-		radix_tree_delete(&btnc->i_pages, newkey);
++		__xa_erase(&btnc->i_pages, newkey);
+ 		xa_unlock_irq(&btnc->i_pages);
+ 		unlock_page(ctxt->bh->b_page);
+ 	} else
+diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
+index 4cb850a6f1c2..8384473b98b8 100644
+--- a/fs/nilfs2/page.c
++++ b/fs/nilfs2/page.c
+@@ -298,7 +298,7 @@ int nilfs_copy_dirty_pages(struct address_space *dmap,
+  * @dmap: destination page cache
+  * @smap: source page cache
+  *
+- * No pages must no be added to the cache during this process.
++ * No pages must be added to the cache during this process.
+  * This must be ensured by the caller.
+  */
+ void nilfs_copy_back_pages(struct address_space *dmap,
+@@ -307,7 +307,6 @@ void nilfs_copy_back_pages(struct address_space *dmap,
+ 	struct pagevec pvec;
+ 	unsigned int i, n;
+ 	pgoff_t index = 0;
+-	int err;
+ 
+ 	pagevec_init(&pvec);
+ repeat:
+@@ -322,35 +321,34 @@ void nilfs_copy_back_pages(struct address_space *dmap,
+ 		lock_page(page);
+ 		dpage = find_lock_page(dmap, offset);
+ 		if (dpage) {
+-			/* override existing page on the destination cache */
++			/* overwrite existing page in the destination cache */
+ 			WARN_ON(PageDirty(dpage));
+ 			nilfs_copy_page(dpage, page, 0);
+ 			unlock_page(dpage);
+ 			put_page(dpage);
++			/* Do we not need to remove page from smap here? */
+ 		} else {
+-			struct page *page2;
++			struct page *p;
+ 
+ 			/* move the page to the destination cache */
+ 			xa_lock_irq(&smap->i_pages);
+-			page2 = radix_tree_delete(&smap->i_pages, offset);
+-			WARN_ON(page2 != page);
+-
++			p = __xa_erase(&smap->i_pages, offset);
++			WARN_ON(page != p);
+ 			smap->nrpages--;
+ 			xa_unlock_irq(&smap->i_pages);
+ 
+ 			xa_lock_irq(&dmap->i_pages);
+-			err = radix_tree_insert(&dmap->i_pages, offset, page);
+-			if (unlikely(err < 0)) {
+-				WARN_ON(err == -EEXIST);
++			p = __xa_store(&dmap->i_pages, offset, page, GFP_NOFS);
++			if (unlikely(p)) {
++				/* Probably -ENOMEM */
+ 				page->mapping = NULL;
+-				put_page(page); /* for cache */
++				put_page(page);
+ 			} else {
+ 				page->mapping = dmap;
+ 				dmap->nrpages++;
+ 				if (PageDirty(page))
+-					radix_tree_tag_set(&dmap->i_pages,
+-							   offset,
+-							   PAGECACHE_TAG_DIRTY);
++					__xa_set_tag(&dmap->i_pages, offset,
++							PAGECACHE_TAG_DIRTY);
+ 			}
+ 			xa_unlock_irq(&dmap->i_pages);
+ 		}
+@@ -476,8 +474,7 @@ int __nilfs_clear_page_dirty(struct page *page)
+ 	if (mapping) {
+ 		xa_lock_irq(&mapping->i_pages);
+ 		if (test_bit(PG_dirty, &page->flags)) {
+-			radix_tree_tag_clear(&mapping->i_pages,
+-					     page_index(page),
++			__xa_clear_tag(&mapping->i_pages, page_index(page),
+ 					     PAGECACHE_TAG_DIRTY);
+ 			xa_unlock_irq(&mapping->i_pages);
+ 			return clear_page_dirty_for_io(page);
 -- 
 2.17.1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
