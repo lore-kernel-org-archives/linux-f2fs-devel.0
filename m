@@ -1,8 +1,8 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v13 22/72] page cache: Convert page deletion to
- XArray
-Date: Mon, 11 Jun 2018 07:05:49 -0700
-Message-ID: <20180611140639.17215-23-willy@infradead.org>
+Subject: [PATCH v13 46/72] shmem: Convert
+ shmem_radix_tree_replace to XArray
+Date: Mon, 11 Jun 2018 07:06:13 -0700
+Message-ID: <20180611140639.17215-47-willy@infradead.org>
 References: <20180611140639.17215-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,13 +11,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1fSNTY-00009A-5c
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:16 +0000
+ (envelope-from <willy@infradead.org>) id 1fSNTg-0000Bp-MU
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:24 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fSNTS-00GC8M-W1
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:16 +0000
+ id 1fSNTf-00GCAB-Ej
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:24 +0000
 In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,70 +33,77 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-The code is slightly shorter and simpler.
+Rename shmem_radix_tree_replace() to shmem_replace_entry() and
+convert it to use the XArray API.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- mm/filemap.c | 31 +++++++++++++------------------
- 1 file changed, 13 insertions(+), 18 deletions(-)
+ mm/shmem.c | 22 ++++++++--------------
+ 1 file changed, 8 insertions(+), 14 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 965ff68e5b8d..7cdb1d4b8117 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -111,31 +111,26 @@
-  *   ->tasklist_lock            (memory_failure, collect_procs_ao)
-  */
- 
--static void page_cache_tree_delete(struct address_space *mapping,
-+static void page_cache_delete(struct address_space *mapping,
- 				   struct page *page, void *shadow)
- {
--	int i, nr;
-+	XA_STATE(xas, &mapping->i_pages, page->index);
-+	unsigned int nr = 1;
- 
--	/* hugetlb pages are represented by one entry in the radix tree */
--	nr = PageHuge(page) ? 1 : hpage_nr_pages(page);
-+	mapping_set_update(&xas, mapping);
-+
-+	/* hugetlb pages are represented by a single entry in the xarray */
-+	if (!PageHuge(page)) {
-+		xas_set_order(&xas, page->index, compound_order(page));
-+		nr = 1U << compound_order(page);
-+	}
- 
- 	VM_BUG_ON_PAGE(!PageLocked(page), page);
- 	VM_BUG_ON_PAGE(PageTail(page), page);
- 	VM_BUG_ON_PAGE(nr != 1 && shadow, page);
- 
--	for (i = 0; i < nr; i++) {
--		struct radix_tree_node *node;
--		void **slot;
--
--		__radix_tree_lookup(&mapping->i_pages, page->index + i,
--				    &node, &slot);
--
--		VM_BUG_ON_PAGE(!node && nr != 1, page);
--
--		radix_tree_clear_tags(&mapping->i_pages, node, slot);
--		__radix_tree_replace(&mapping->i_pages, node, slot, shadow,
--				workingset_lookup_update(mapping));
--	}
-+	xas_store(&xas, shadow);
-+	xas_init_tags(&xas);
- 
- 	page->mapping = NULL;
- 	/* Leave page->index set: truncation lookup relies upon it */
-@@ -234,7 +229,7 @@ void __delete_from_page_cache(struct page *page, void *shadow)
- 	trace_mm_filemap_delete_from_page_cache(page);
- 
- 	unaccount_page_cache_page(mapping, page);
--	page_cache_tree_delete(mapping, page, shadow);
-+	page_cache_delete(mapping, page, shadow);
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 3b03ede3515c..2b8720d32e7a 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -321,24 +321,20 @@ void shmem_uncharge(struct inode *inode, long pages)
  }
  
- static void page_cache_free_page(struct address_space *mapping,
+ /*
+- * Replace item expected in radix tree by a new item, while holding tree lock.
++ * Replace item expected in xarray by a new item, while holding xa_lock.
+  */
+-static int shmem_radix_tree_replace(struct address_space *mapping,
++static int shmem_replace_entry(struct address_space *mapping,
+ 			pgoff_t index, void *expected, void *replacement)
+ {
+-	struct radix_tree_node *node;
+-	void __rcu **pslot;
++	XA_STATE(xas, &mapping->i_pages, index);
+ 	void *item;
+ 
+ 	VM_BUG_ON(!expected);
+ 	VM_BUG_ON(!replacement);
+-	item = __radix_tree_lookup(&mapping->i_pages, index, &node, &pslot);
+-	if (!item)
+-		return -ENOENT;
++	item = xas_load(&xas);
+ 	if (item != expected)
+ 		return -ENOENT;
+-	__radix_tree_replace(&mapping->i_pages, node, pslot,
+-			     replacement, NULL);
++	xas_store(&xas, replacement);
+ 	return 0;
+ }
+ 
+@@ -623,8 +619,7 @@ static int shmem_add_to_page_cache(struct page *page,
+ 	} else if (!expected) {
+ 		error = radix_tree_insert(&mapping->i_pages, index, page);
+ 	} else {
+-		error = shmem_radix_tree_replace(mapping, index, expected,
+-								 page);
++		error = shmem_replace_entry(mapping, index, expected, page);
+ 	}
+ 
+ 	if (!error) {
+@@ -653,7 +648,7 @@ static void shmem_delete_from_page_cache(struct page *page, void *radswap)
+ 	VM_BUG_ON_PAGE(PageCompound(page), page);
+ 
+ 	xa_lock_irq(&mapping->i_pages);
+-	error = shmem_radix_tree_replace(mapping, page->index, page, radswap);
++	error = shmem_replace_entry(mapping, page->index, page, radswap);
+ 	page->mapping = NULL;
+ 	mapping->nrpages--;
+ 	__dec_node_page_state(page, NR_FILE_PAGES);
+@@ -1577,8 +1572,7 @@ static int shmem_replace_page(struct page **pagep, gfp_t gfp,
+ 	 * a nice clean interface for us to replace oldpage by newpage there.
+ 	 */
+ 	xa_lock_irq(&swap_mapping->i_pages);
+-	error = shmem_radix_tree_replace(swap_mapping, swap_index, oldpage,
+-								   newpage);
++	error = shmem_replace_entry(swap_mapping, swap_index, oldpage, newpage);
+ 	if (!error) {
+ 		__inc_node_page_state(newpage, NR_FILE_PAGES);
+ 		__dec_node_page_state(oldpage, NR_FILE_PAGES);
 -- 
 2.17.1
 
