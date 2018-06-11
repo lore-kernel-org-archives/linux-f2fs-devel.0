@@ -1,176 +1,143 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v13 50/72] shmem: Convert shmem_alloc_hugepage to
- XArray
-Date: Mon, 11 Jun 2018 07:06:17 -0700
-Message-ID: <20180611140639.17215-51-willy@infradead.org>
+Subject: [PATCH v13 71/72] radix tree: Remove radix_tree_maybe_preload_order
+Date: Mon, 11 Jun 2018 07:06:38 -0700
+Message-ID: <20180611140639.17215-72-willy@infradead.org>
 References: <20180611140639.17215-1-willy@infradead.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1fSNTi-0000Vj-2I
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:26 +0000
-Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fSNTg-0001QY-Ox
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:26 +0000
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Matthew Wilcox <mawilcox@microsoft.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-xa_find() is a slightly easier API to use than
-radix_tree_gang_lookup_slot() because it contains its own RCU locking.
-This commit removes the last user of radix_tree_gang_lookup_slot()
-so remove the function too.
+This function was only used by the page cache which is now converted
+to the XArray.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- include/linux/radix-tree.h |  6 +-----
- lib/radix-tree.c           | 44 +-------------------------------------
- mm/shmem.c                 | 14 ++++--------
- 3 files changed, 6 insertions(+), 58 deletions(-)
+ include/linux/radix-tree.h |  1 -
+ lib/radix-tree.c           | 74 --------------------------------------
+ 2 files changed, 75 deletions(-)
 
 diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
-index eefa0b099dd5..081e68b4376b 100644
+index b882d644cc47..f8ef267e4975 100644
 --- a/include/linux/radix-tree.h
 +++ b/include/linux/radix-tree.h
-@@ -147,12 +147,11 @@ static inline unsigned int iter_shift(const struct radix_tree_iter *iter)
-  * radix_tree_lookup_slot
-  * radix_tree_tag_get
-  * radix_tree_gang_lookup
-- * radix_tree_gang_lookup_slot
-  * radix_tree_gang_lookup_tag
-  * radix_tree_gang_lookup_tag_slot
-  * radix_tree_tagged
-  *
-- * The first 8 functions are able to be called locklessly, using RCU. The
-+ * The first 7 functions are able to be called locklessly, using RCU. The
-  * caller must ensure calls to these functions are made within rcu_read_lock()
-  * regions. Other readers (lock-free or otherwise) and modifications may be
-  * running concurrently.
-@@ -263,9 +262,6 @@ void radix_tree_clear_tags(struct radix_tree_root *, struct radix_tree_node *,
- unsigned int radix_tree_gang_lookup(const struct radix_tree_root *,
- 			void **results, unsigned long first_index,
+@@ -259,7 +259,6 @@ unsigned int radix_tree_gang_lookup(const struct radix_tree_root *,
  			unsigned int max_items);
--unsigned int radix_tree_gang_lookup_slot(const struct radix_tree_root *,
--			void __rcu ***results, unsigned long *indices,
--			unsigned long first_index, unsigned int max_items);
  int radix_tree_preload(gfp_t gfp_mask);
  int radix_tree_maybe_preload(gfp_t gfp_mask);
- int radix_tree_maybe_preload_order(gfp_t gfp_mask, int order);
+-int radix_tree_maybe_preload_order(gfp_t gfp_mask, int order);
+ void radix_tree_init(void);
+ void *radix_tree_tag_set(struct radix_tree_root *,
+ 			unsigned long index, unsigned int tag);
 diff --git a/lib/radix-tree.c b/lib/radix-tree.c
-index 5c8a262f506c..d0f44ea96945 100644
+index c472ceeb6a97..ad03dc0c562f 100644
 --- a/lib/radix-tree.c
 +++ b/lib/radix-tree.c
-@@ -1138,7 +1138,7 @@ void __radix_tree_replace(struct radix_tree_root *root,
-  * @slot:	pointer to slot
-  * @item:	new item to store in the slot.
-  *
-- * For use with radix_tree_lookup_slot(), radix_tree_gang_lookup_slot(),
-+ * For use with radix_tree_lookup_slot() and
-  * radix_tree_gang_lookup_tag_slot().  Caller must hold tree write locked
-  * across slot lookup and replacement.
-  *
-@@ -1772,48 +1772,6 @@ radix_tree_gang_lookup(const struct radix_tree_root *root, void **results,
+@@ -41,9 +41,6 @@
+ #include <linux/xarray.h>
+ 
+ 
+-/* Number of nodes in fully populated tree of given height */
+-static unsigned long height_to_maxnodes[RADIX_TREE_MAX_PATH + 1] __read_mostly;
+-
+ /*
+  * Radix tree node cache.
+  */
+@@ -463,51 +460,6 @@ int radix_tree_maybe_preload(gfp_t gfp_mask)
  }
- EXPORT_SYMBOL(radix_tree_gang_lookup);
+ EXPORT_SYMBOL(radix_tree_maybe_preload);
  
--/**
-- *	radix_tree_gang_lookup_slot - perform multiple slot lookup on radix tree
-- *	@root:		radix tree root
-- *	@results:	where the results of the lookup are placed
-- *	@indices:	where their indices should be placed (but usually NULL)
-- *	@first_index:	start the lookup from this key
-- *	@max_items:	place up to this many items at *results
-- *
-- *	Performs an index-ascending scan of the tree for present items.  Places
-- *	their slots at *@results and returns the number of items which were
-- *	placed at *@results.
-- *
-- *	The implementation is naive.
-- *
-- *	Like radix_tree_gang_lookup as far as RCU and locking goes. Slots must
-- *	be dereferenced with radix_tree_deref_slot, and if using only RCU
-- *	protection, radix_tree_deref_slot may fail requiring a retry.
+-/*
+- * The same as function above, but preload number of nodes required to insert
+- * (1 << order) continuous naturally-aligned elements.
 - */
--unsigned int
--radix_tree_gang_lookup_slot(const struct radix_tree_root *root,
--			void __rcu ***results, unsigned long *indices,
--			unsigned long first_index, unsigned int max_items)
+-int radix_tree_maybe_preload_order(gfp_t gfp_mask, int order)
 -{
--	struct radix_tree_iter iter;
--	void __rcu **slot;
--	unsigned int ret = 0;
+-	unsigned long nr_subtrees;
+-	int nr_nodes, subtree_height;
 -
--	if (unlikely(!max_items))
+-	/* Preloading doesn't help anything with this gfp mask, skip it */
+-	if (!gfpflags_allow_blocking(gfp_mask)) {
+-		preempt_disable();
 -		return 0;
--
--	radix_tree_for_each_slot(slot, root, &iter, first_index) {
--		results[ret] = slot;
--		if (indices)
--			indices[ret] = iter.index;
--		if (++ret == max_items)
--			break;
 -	}
 -
--	return ret;
+-	/*
+-	 * Calculate number and height of fully populated subtrees it takes to
+-	 * store (1 << order) elements.
+-	 */
+-	nr_subtrees = 1 << order;
+-	for (subtree_height = 0; nr_subtrees > RADIX_TREE_MAP_SIZE;
+-			subtree_height++)
+-		nr_subtrees >>= RADIX_TREE_MAP_SHIFT;
+-
+-	/*
+-	 * The worst case is zero height tree with a single item at index 0 and
+-	 * then inserting items starting at ULONG_MAX - (1 << order).
+-	 *
+-	 * This requires RADIX_TREE_MAX_PATH nodes to build branch from root to
+-	 * 0-index item.
+-	 */
+-	nr_nodes = RADIX_TREE_MAX_PATH;
+-
+-	/* Plus branch to fully populated subtrees. */
+-	nr_nodes += RADIX_TREE_MAX_PATH - subtree_height;
+-
+-	/* Root node is shared. */
+-	nr_nodes--;
+-
+-	/* Plus nodes required to build subtrees. */
+-	nr_nodes += nr_subtrees * height_to_maxnodes[subtree_height];
+-
+-	return __radix_tree_preload(gfp_mask, nr_nodes);
 -}
--EXPORT_SYMBOL(radix_tree_gang_lookup_slot);
 -
- /**
-  *	radix_tree_gang_lookup_tag - perform multiple lookup on a radix tree
-  *	                             based on a tag
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 8e702b6d84a5..09452ca79220 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1434,23 +1434,17 @@ static struct page *shmem_alloc_hugepage(gfp_t gfp,
- 		struct shmem_inode_info *info, pgoff_t index)
+ static unsigned radix_tree_load_root(const struct radix_tree_root *root,
+ 		struct radix_tree_node **nodep, unsigned long *maxindex)
  {
- 	struct vm_area_struct pvma;
--	struct inode *inode = &info->vfs_inode;
--	struct address_space *mapping = inode->i_mapping;
--	pgoff_t idx, hindex;
--	void __rcu **results;
-+	struct address_space *mapping = info->vfs_inode.i_mapping;
-+	pgoff_t hindex;
- 	struct page *page;
+@@ -1928,31 +1880,6 @@ radix_tree_node_ctor(void *arg)
+ 	INIT_LIST_HEAD(&node->private_list);
+ }
  
- 	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGE_PAGECACHE))
- 		return NULL;
- 
- 	hindex = round_down(index, HPAGE_PMD_NR);
--	rcu_read_lock();
--	if (radix_tree_gang_lookup_slot(&mapping->i_pages, &results, &idx,
--				hindex, 1) && idx < hindex + HPAGE_PMD_NR) {
--		rcu_read_unlock();
-+	if (xa_find(&mapping->i_pages, &hindex, hindex + HPAGE_PMD_NR - 1,
-+								XA_PRESENT))
- 		return NULL;
+-static __init unsigned long __maxindex(unsigned int height)
+-{
+-	unsigned int width = height * RADIX_TREE_MAP_SHIFT;
+-	int shift = RADIX_TREE_INDEX_BITS - width;
+-
+-	if (shift < 0)
+-		return ~0UL;
+-	if (shift >= BITS_PER_LONG)
+-		return 0UL;
+-	return ~0UL >> shift;
+-}
+-
+-static __init void radix_tree_init_maxnodes(void)
+-{
+-	unsigned long height_to_maxindex[RADIX_TREE_MAX_PATH + 1];
+-	unsigned int i, j;
+-
+-	for (i = 0; i < ARRAY_SIZE(height_to_maxindex); i++)
+-		height_to_maxindex[i] = __maxindex(i);
+-	for (i = 0; i < ARRAY_SIZE(height_to_maxnodes); i++) {
+-		for (j = i; j > 0; j--)
+-			height_to_maxnodes[i] += height_to_maxindex[j - 1] + 1;
 -	}
--	rcu_read_unlock();
- 
- 	shmem_pseudo_vma_init(&pvma, info, hindex);
- 	page = alloc_pages_vma(gfp | __GFP_COMP | __GFP_NORETRY | __GFP_NOWARN,
+-}
+-
+ static int radix_tree_cpu_dead(unsigned int cpu)
+ {
+ 	struct radix_tree_preload *rtp;
+@@ -1982,7 +1909,6 @@ void __init radix_tree_init(void)
+ 			sizeof(struct radix_tree_node), 0,
+ 			SLAB_PANIC | SLAB_RECLAIM_ACCOUNT,
+ 			radix_tree_node_ctor);
+-	radix_tree_init_maxnodes();
+ 	ret = cpuhp_setup_state_nocalls(CPUHP_RADIX_DEAD, "lib/radix:dead",
+ 					NULL, radix_tree_cpu_dead);
+ 	WARN_ON(ret < 0);
 -- 
 2.17.1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
