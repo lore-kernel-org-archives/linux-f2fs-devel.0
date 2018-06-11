@@ -1,23 +1,23 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v13 33/72] page cache: Convert
- filemap_range_has_page to XArray
-Date: Mon, 11 Jun 2018 07:06:00 -0700
-Message-ID: <20180611140639.17215-34-willy@infradead.org>
+Subject: [PATCH v13 22/72] page cache: Convert page deletion to
+ XArray
+Date: Mon, 11 Jun 2018 07:05:49 -0700
+Message-ID: <20180611140639.17215-23-willy@infradead.org>
 References: <20180611140639.17215-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1fSNTV-00023q-ON
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:13 +0000
+ (envelope-from <willy@infradead.org>) id 1fSNTY-00009A-5c
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:16 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fSNTT-0001PW-Hk
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:13 +0000
+ id 1fSNTS-00GC8M-W1
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:16 +0000
 In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,58 +33,70 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Instead of calling find_get_pages_range() and putting any reference,
-use xas_find() to iterate over any entries in the range, skipping the
-shadow/swap entries.
+The code is slightly shorter and simpler.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- mm/filemap.c | 26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
+ mm/filemap.c | 31 +++++++++++++------------------
+ 1 file changed, 13 insertions(+), 18 deletions(-)
 
 diff --git a/mm/filemap.c b/mm/filemap.c
-index e447dd2d0f5c..68890327d1f2 100644
+index 965ff68e5b8d..7cdb1d4b8117 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -455,20 +455,30 @@ EXPORT_SYMBOL(filemap_flush);
- bool filemap_range_has_page(struct address_space *mapping,
- 			   loff_t start_byte, loff_t end_byte)
+@@ -111,31 +111,26 @@
+  *   ->tasklist_lock            (memory_failure, collect_procs_ao)
+  */
+ 
+-static void page_cache_tree_delete(struct address_space *mapping,
++static void page_cache_delete(struct address_space *mapping,
+ 				   struct page *page, void *shadow)
  {
--	pgoff_t index = start_byte >> PAGE_SHIFT;
--	pgoff_t end = end_byte >> PAGE_SHIFT;
- 	struct page *page;
-+	XA_STATE(xas, &mapping->i_pages, start_byte >> PAGE_SHIFT);
-+	pgoff_t max = end_byte >> PAGE_SHIFT;
+-	int i, nr;
++	XA_STATE(xas, &mapping->i_pages, page->index);
++	unsigned int nr = 1;
  
- 	if (end_byte < start_byte)
- 		return false;
+-	/* hugetlb pages are represented by one entry in the radix tree */
+-	nr = PageHuge(page) ? 1 : hpage_nr_pages(page);
++	mapping_set_update(&xas, mapping);
++
++	/* hugetlb pages are represented by a single entry in the xarray */
++	if (!PageHuge(page)) {
++		xas_set_order(&xas, page->index, compound_order(page));
++		nr = 1U << compound_order(page);
++	}
  
--	if (mapping->nrpages == 0)
--		return false;
-+	rcu_read_lock();
-+	do {
-+		page = xas_find(&xas, max);
-+		if (xas_retry(&xas, page))
-+			continue;
-+		/* Shadow entries don't count */
-+		if (xa_is_value(page))
-+			continue;
-+		/*
-+		 * We don't need to try to pin this page; we're about to
-+		 * release the RCU lock anyway.  It is enough to know that
-+		 * there was a page here recently.
-+		 */
-+	} while (0);
-+	rcu_read_unlock();
+ 	VM_BUG_ON_PAGE(!PageLocked(page), page);
+ 	VM_BUG_ON_PAGE(PageTail(page), page);
+ 	VM_BUG_ON_PAGE(nr != 1 && shadow, page);
  
--	if (!find_get_pages_range(mapping, &index, end, 1, &page))
--		return false;
--	put_page(page);
--	return true;
-+	return page != NULL;
+-	for (i = 0; i < nr; i++) {
+-		struct radix_tree_node *node;
+-		void **slot;
+-
+-		__radix_tree_lookup(&mapping->i_pages, page->index + i,
+-				    &node, &slot);
+-
+-		VM_BUG_ON_PAGE(!node && nr != 1, page);
+-
+-		radix_tree_clear_tags(&mapping->i_pages, node, slot);
+-		__radix_tree_replace(&mapping->i_pages, node, slot, shadow,
+-				workingset_lookup_update(mapping));
+-	}
++	xas_store(&xas, shadow);
++	xas_init_tags(&xas);
+ 
+ 	page->mapping = NULL;
+ 	/* Leave page->index set: truncation lookup relies upon it */
+@@ -234,7 +229,7 @@ void __delete_from_page_cache(struct page *page, void *shadow)
+ 	trace_mm_filemap_delete_from_page_cache(page);
+ 
+ 	unaccount_page_cache_page(mapping, page);
+-	page_cache_tree_delete(mapping, page, shadow);
++	page_cache_delete(mapping, page, shadow);
  }
- EXPORT_SYMBOL(filemap_range_has_page);
  
+ static void page_cache_free_page(struct address_space *mapping,
 -- 
 2.17.1
 
