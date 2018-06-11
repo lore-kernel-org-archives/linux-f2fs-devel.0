@@ -1,8 +1,8 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v13 43/72] mm: Convert khugepaged_scan_shmem to
+Subject: [PATCH v13 64/72] dax: Convert dax_layout_busy_page to
  XArray
-Date: Mon, 11 Jun 2018 07:06:10 -0700
-Message-ID: <20180611140639.17215-44-willy@infradead.org>
+Date: Mon, 11 Jun 2018 07:06:31 -0700
+Message-ID: <20180611140639.17215-65-willy@infradead.org>
 References: <20180611140639.17215-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,13 +11,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1fSNTd-0000BE-UQ
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:21 +0000
+ (envelope-from <willy@infradead.org>) id 1fSNTl-0000D9-GX
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:29 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fSNTc-00HVef-OC
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:21 +0000
+ id 1fSNTk-00D4T8-9a
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:29 +0000
 In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,57 +33,103 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Slightly shorter and easier to read code.
+Instead of using a pagevec, just use the XArray iterators.  Add a
+conditional rescheduling point which probably should have been there in
+the original.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- mm/khugepaged.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
+ fs/dax.c | 57 +++++++++++++++++++++-----------------------------------
+ 1 file changed, 21 insertions(+), 36 deletions(-)
 
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 43598cc5998b..28579ad0c5fe 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1538,8 +1538,7 @@ static void khugepaged_scan_shmem(struct mm_struct *mm,
- 		pgoff_t start, struct page **hpage)
+diff --git a/fs/dax.c b/fs/dax.c
+index 1c9b736147d3..b8ed7bf32ba1 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -621,11 +621,10 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
+  */
+ struct page *dax_layout_busy_page(struct address_space *mapping)
  {
+-	pgoff_t	indices[PAGEVEC_SIZE];
++	XA_STATE(xas, &mapping->i_pages, 0);
++	void *entry;
++	unsigned int scanned = 0;
  	struct page *page = NULL;
--	struct radix_tree_iter iter;
--	void **slot;
-+	XA_STATE(xas, &mapping->i_pages, start);
- 	int present, swap;
- 	int node = NUMA_NO_NODE;
- 	int result = SCAN_SUCCEED;
-@@ -1548,17 +1547,11 @@ static void khugepaged_scan_shmem(struct mm_struct *mm,
- 	swap = 0;
- 	memset(khugepaged_node_load, 0, sizeof(khugepaged_node_load));
- 	rcu_read_lock();
--	radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, start) {
--		if (iter.index >= start + HPAGE_PMD_NR)
--			break;
+-	struct pagevec pvec;
+-	pgoff_t	index, end;
+-	unsigned i;
+ 
+ 	/*
+ 	 * In the 'limited' case get_user_pages() for dax is disabled.
+@@ -636,13 +635,9 @@ struct page *dax_layout_busy_page(struct address_space *mapping)
+ 	if (!dax_mapping(mapping) || !mapping_mapped(mapping))
+ 		return NULL;
+ 
+-	pagevec_init(&pvec);
+-	index = 0;
+-	end = -1;
 -
--		page = radix_tree_deref_slot(slot);
--		if (radix_tree_deref_retry(page)) {
--			slot = radix_tree_iter_retry(&iter);
-+	xas_for_each(&xas, page, start + HPAGE_PMD_NR - 1) {
-+		if (xas_retry(&xas, page))
- 			continue;
+ 	/*
+ 	 * If we race get_user_pages_fast() here either we'll see the
+-	 * elevated page count in the pagevec_lookup and wait, or
++	 * elevated page count in the iteration and wait, or
+ 	 * get_user_pages_fast() will see that the page it took a reference
+ 	 * against is no longer mapped in the page tables and bail to the
+ 	 * get_user_pages() slow path.  The slow path is protected by
+@@ -654,36 +649,26 @@ struct page *dax_layout_busy_page(struct address_space *mapping)
+ 	 */
+ 	unmap_mapping_range(mapping, 0, 0, 1);
+ 
+-	while (index < end && pagevec_lookup_entries(&pvec, mapping, index,
+-				min(end - index, (pgoff_t)PAGEVEC_SIZE),
+-				indices)) {
+-		for (i = 0; i < pagevec_count(&pvec); i++) {
+-			struct page *pvec_ent = pvec.pages[i];
+-			void *entry;
+-
+-			index = indices[i];
+-			if (index >= end)
+-				break;
+-
+-			if (!xa_is_value(pvec_ent))
+-				continue;
+-
+-			xa_lock_irq(&mapping->i_pages);
+-			entry = get_unlocked_mapping_entry(mapping, index, NULL);
+-			if (entry)
+-				page = dax_busy_page(entry);
+-			put_unlocked_mapping_entry(mapping, index, entry);
+-			xa_unlock_irq(&mapping->i_pages);
+-			if (page)
+-				break;
 -		}
- 
--		if (radix_tree_exception(page)) {
-+		if (xa_is_value(page)) {
- 			if (++swap > khugepaged_max_ptes_swap) {
- 				result = SCAN_EXCEED_SWAP_PTE;
- 				break;
-@@ -1597,7 +1590,7 @@ static void khugepaged_scan_shmem(struct mm_struct *mm,
- 		present++;
- 
- 		if (need_resched()) {
--			slot = radix_tree_iter_resume(slot, &iter);
-+			xas_pause(&xas);
- 			cond_resched_rcu();
- 		}
+-		pagevec_remove_exceptionals(&pvec);
+-		pagevec_release(&pvec);
+-		index++;
+-
++	xas_lock_irq(&xas);
++	xas_for_each(&xas, entry, ULONG_MAX) {
++		if (!xa_is_value(entry))
++			continue;
++		if (unlikely(dax_is_locked(entry)))
++			entry = get_unlocked_entry(&xas);
++		if (entry)
++			page = dax_busy_page(entry);
++		put_unlocked_entry(&xas, entry);
+ 		if (page)
+ 			break;
++		if (++scanned % XA_CHECK_SCHED)
++			continue;
++
++		xas_pause(&xas);
++		xas_unlock_irq(&xas);
++		cond_resched();
++		xas_lock_irq(&xas);
  	}
++	xas_unlock_irq(&xas);
+ 	return page;
+ }
+ EXPORT_SYMBOL_GPL(dax_layout_busy_page);
 -- 
 2.17.1
 
