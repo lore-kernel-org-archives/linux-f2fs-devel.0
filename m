@@ -1,8 +1,7 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v13 49/72] shmem: Convert shmem_add_to_page_cache
- to XArray
-Date: Mon, 11 Jun 2018 07:06:16 -0700
-Message-ID: <20180611140639.17215-50-willy@infradead.org>
+Subject: [PATCH v13 40/72] mm: Convert page migration to XArray
+Date: Mon, 11 Jun 2018 07:06:07 -0700
+Message-ID: <20180611140639.17215-41-willy@infradead.org>
 References: <20180611140639.17215-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,13 +10,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1fSNTh-0000Vb-OD
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:25 +0000
+ (envelope-from <willy@infradead.org>) id 1fSNTW-0000U5-5z
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:14 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fSNTg-0001QX-FU
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:25 +0000
+ id 1fSNTU-00D4Rm-U9
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:14 +0000
 In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,161 +32,142 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-This removes the last caller of radix_tree_maybe_preload_order().
-Simpler code, unless we run out of memory for new xa_nodes partway through
-inserting entries into the xarray.  Hopefully we can support multi-index
-entries in the page cache soon and all the awful code goes away.
-
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- mm/shmem.c | 87 ++++++++++++++++++++++++------------------------------
- 1 file changed, 39 insertions(+), 48 deletions(-)
+ mm/migrate.c | 48 ++++++++++++++++++------------------------------
+ 1 file changed, 18 insertions(+), 30 deletions(-)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 983a27656e2e..8e702b6d84a5 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -576,9 +576,10 @@ static inline bool is_huge_enabled(struct shmem_sb_info *sbinfo)
-  */
- static int shmem_add_to_page_cache(struct page *page,
- 				   struct address_space *mapping,
--				   pgoff_t index, void *expected)
-+				   pgoff_t index, void *expected, gfp_t gfp)
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 8c0af0f7cab1..80dc5b8c9738 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -323,7 +323,7 @@ void __migration_entry_wait(struct mm_struct *mm, pte_t *ptep,
+ 	page = migration_entry_to_page(entry);
+ 
+ 	/*
+-	 * Once radix-tree replacement of page migration started, page_count
++	 * Once page cache replacement of page migration started, page_count
+ 	 * *must* be zero. And, we don't want to call wait_on_page_locked()
+ 	 * against a page without get_page().
+ 	 * So, we use get_page_unless_zero(), here. Even failed, page fault
+@@ -438,10 +438,10 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 		struct buffer_head *head, enum migrate_mode mode,
+ 		int extra_count)
  {
--	int error, nr = hpage_nr_pages(page);
-+	XA_STATE(xas, &mapping->i_pages, index);
-+	unsigned long i, nr = 1UL << compound_order(page);
++	XA_STATE(xas, &mapping->i_pages, page_index(page));
+ 	struct zone *oldzone, *newzone;
+ 	int dirty;
+ 	int expected_count = 1 + extra_count;
+-	void **pslot;
  
- 	VM_BUG_ON_PAGE(PageTail(page), page);
- 	VM_BUG_ON_PAGE(index != round_down(index, nr), page);
-@@ -587,49 +588,47 @@ static int shmem_add_to_page_cache(struct page *page,
- 	VM_BUG_ON(expected && PageTransHuge(page));
- 
- 	page_ref_add(page, nr);
--	page->mapping = mapping;
- 	page->index = index;
-+	page->mapping = mapping;
+ 	/*
+ 	 * Device public or private pages have an extra refcount as they are
+@@ -467,21 +467,16 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 	oldzone = page_zone(page);
+ 	newzone = page_zone(newpage);
  
 -	xa_lock_irq(&mapping->i_pages);
--	if (PageTransHuge(page)) {
--		void __rcu **results;
--		pgoff_t idx;
--		int i;
 -
--		error = 0;
--		if (radix_tree_gang_lookup_slot(&mapping->i_pages,
--					&results, &idx, index, 1) &&
--				idx < index + HPAGE_PMD_NR) {
--			error = -EEXIST;
-+	do {
-+		xas_lock_irq(&xas);
-+		xas_create_range(&xas, index + nr - 1);
-+		if (xas_error(&xas))
-+			goto unlock;
-+		for (i = 0; i < nr; i++) {
-+			void *entry = xas_load(&xas);
-+			if (entry != expected)
-+				xas_set_err(&xas, -ENOENT);
-+			if (xas_error(&xas))
-+				goto undo;
-+			xas_store(&xas, page + i);
-+			xas_next(&xas);
- 		}
--
--		if (!error) {
--			for (i = 0; i < HPAGE_PMD_NR; i++) {
--				error = radix_tree_insert(&mapping->i_pages,
--						index + i, page + i);
--				VM_BUG_ON(error);
--			}
-+		if (PageTransHuge(page)) {
- 			count_vm_event(THP_FILE_ALLOC);
-+			__inc_node_page_state(page, NR_SHMEM_THPS);
- 		}
--	} else if (!expected) {
--		error = radix_tree_insert(&mapping->i_pages, index, page);
--	} else {
--		error = shmem_replace_entry(mapping, index, expected, page);
--	}
--
--	if (!error) {
- 		mapping->nrpages += nr;
--		if (PageTransHuge(page))
--			__inc_node_page_state(page, NR_SHMEM_THPS);
- 		__mod_node_page_state(page_pgdat(page), NR_FILE_PAGES, nr);
- 		__mod_node_page_state(page_pgdat(page), NR_SHMEM, nr);
+-	pslot = radix_tree_lookup_slot(&mapping->i_pages,
+- 					page_index(page));
++	xas_lock_irq(&xas);
+ 
+ 	expected_count += hpage_nr_pages(page) + page_has_private(page);
+-	if (page_count(page) != expected_count ||
+-		radix_tree_deref_slot_protected(pslot,
+-					&mapping->i_pages.xa_lock) != page) {
 -		xa_unlock_irq(&mapping->i_pages);
--	} else {
-+		goto unlock;
-+undo:
-+		while (i-- > 0) {
-+			xas_store(&xas, NULL);
-+			xas_prev(&xas);
-+		}
-+unlock:
++	if (page_count(page) != expected_count || xas_load(&xas) != page) {
 +		xas_unlock_irq(&xas);
-+	} while (xas_nomem(&xas, gfp));
-+
-+	if (xas_error(&xas)) {
- 		page->mapping = NULL;
--		xa_unlock_irq(&mapping->i_pages);
- 		page_ref_sub(page, nr);
-+		return xas_error(&xas);
+ 		return -EAGAIN;
  	}
--	return error;
-+
-+	return 0;
- }
  
- /*
-@@ -1182,7 +1181,7 @@ static int shmem_unuse_inode(struct shmem_inode_info *info,
+ 	if (!page_ref_freeze(page, expected_count)) {
+-		xa_unlock_irq(&mapping->i_pages);
++		xas_unlock_irq(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+@@ -495,7 +490,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 	if (mode == MIGRATE_ASYNC && head &&
+ 			!buffer_migrate_lock_buffers(head, mode)) {
+ 		page_ref_unfreeze(page, expected_count);
+-		xa_unlock_irq(&mapping->i_pages);
++		xas_unlock_irq(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+@@ -523,16 +518,13 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 		SetPageDirty(newpage);
+ 	}
+ 
+-	radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
++	xas_store(&xas, newpage);
+ 	if (PageTransHuge(page)) {
+ 		int i;
+-		int index = page_index(page);
+ 
+ 		for (i = 1; i < HPAGE_PMD_NR; i++) {
+-			pslot = radix_tree_lookup_slot(&mapping->i_pages,
+-						       index + i);
+-			radix_tree_replace_slot(&mapping->i_pages, pslot,
+-						newpage + i);
++			xas_next(&xas);
++			xas_store(&xas, newpage + i);
+ 		}
+ 	}
+ 
+@@ -543,7 +535,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
  	 */
- 	if (!error)
- 		error = shmem_add_to_page_cache(*pagep, mapping, index,
--						radswap);
-+						radswap, gfp);
- 	if (error != -ENOMEM) {
- 		/*
- 		 * Truncation and eviction use free_swap_and_cache(), which
-@@ -1698,7 +1697,7 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
- 				false);
- 		if (!error) {
- 			error = shmem_add_to_page_cache(page, mapping, index,
--						swp_to_radix_entry(swap));
-+						swp_to_radix_entry(swap), gfp);
- 			/*
- 			 * We already confirmed swap under page lock, and make
- 			 * no memory allocation here, so usually no possibility
-@@ -1804,13 +1803,8 @@ alloc_nohuge:		page = shmem_alloc_and_acct_page(gfp, inode,
- 				PageTransHuge(page));
- 		if (error)
- 			goto unacct;
--		error = radix_tree_maybe_preload_order(gfp & GFP_RECLAIM_MASK,
--				compound_order(page));
--		if (!error) {
--			error = shmem_add_to_page_cache(page, mapping, hindex,
--							NULL);
--			radix_tree_preload_end();
--		}
-+		error = shmem_add_to_page_cache(page, mapping, hindex,
-+						NULL, gfp & GFP_RECLAIM_MASK);
- 		if (error) {
- 			mem_cgroup_cancel_charge(page, memcg,
- 					PageTransHuge(page));
-@@ -2277,11 +2271,8 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
- 	if (ret)
- 		goto out_release;
+ 	page_ref_unfreeze(page, expected_count - hpage_nr_pages(page));
  
--	ret = radix_tree_maybe_preload(gfp & GFP_RECLAIM_MASK);
--	if (!ret) {
--		ret = shmem_add_to_page_cache(page, mapping, pgoff, NULL);
--		radix_tree_preload_end();
--	}
-+	ret = shmem_add_to_page_cache(page, mapping, pgoff, NULL,
-+						gfp & GFP_RECLAIM_MASK);
- 	if (ret)
- 		goto out_release_uncharge;
+-	xa_unlock(&mapping->i_pages);
++	xas_unlock(&xas);
+ 	/* Leave irq disabled to prevent preemption while updating stats */
  
+ 	/*
+@@ -583,22 +575,18 @@ EXPORT_SYMBOL(migrate_page_move_mapping);
+ int migrate_huge_page_move_mapping(struct address_space *mapping,
+ 				   struct page *newpage, struct page *page)
+ {
++	XA_STATE(xas, &mapping->i_pages, page_index(page));
+ 	int expected_count;
+-	void **pslot;
+-
+-	xa_lock_irq(&mapping->i_pages);
+-
+-	pslot = radix_tree_lookup_slot(&mapping->i_pages, page_index(page));
+ 
++	xas_lock_irq(&xas);
+ 	expected_count = 2 + page_has_private(page);
+-	if (page_count(page) != expected_count ||
+-		radix_tree_deref_slot_protected(pslot, &mapping->i_pages.xa_lock) != page) {
+-		xa_unlock_irq(&mapping->i_pages);
++	if (page_count(page) != expected_count || xas_load(&xas) != page) {
++		xas_unlock_irq(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+ 	if (!page_ref_freeze(page, expected_count)) {
+-		xa_unlock_irq(&mapping->i_pages);
++		xas_unlock_irq(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+@@ -607,11 +595,11 @@ int migrate_huge_page_move_mapping(struct address_space *mapping,
+ 
+ 	get_page(newpage);
+ 
+-	radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
++	xas_store(&xas, newpage);
+ 
+ 	page_ref_unfreeze(page, expected_count - 1);
+ 
+-	xa_unlock_irq(&mapping->i_pages);
++	xas_unlock_irq(&xas);
+ 
+ 	return MIGRATEPAGE_SUCCESS;
+ }
 -- 
 2.17.1
 
