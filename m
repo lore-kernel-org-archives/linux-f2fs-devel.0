@@ -1,7 +1,8 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v13 35/72] mm: Convert workingset to XArray
-Date: Mon, 11 Jun 2018 07:06:02 -0700
-Message-ID: <20180611140639.17215-36-willy@infradead.org>
+Subject: [PATCH v13 38/72] mm: Convert delete_from_swap_cache to
+ XArray
+Date: Mon, 11 Jun 2018 07:06:05 -0700
+Message-ID: <20180611140639.17215-39-willy@infradead.org>
 References: <20180611140639.17215-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,13 +11,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1fSNTX-0000UO-BK
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:15 +0000
+ (envelope-from <willy@infradead.org>) id 1fSNTW-0000UB-9F
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:14 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fSNTW-0001Pe-2C
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:15 +0000
+ id 1fSNTU-00HVdh-14
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:14 +0000
 In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -32,160 +33,105 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-We construct a fake XA_STATE and use it to delete the node with
-xas_store() rather than adding a special function for this unique
-use case.
+Both callers of __delete_from_swap_cache have the swp_entry_t already,
+so pass that in to make constructing the XA_STATE easier.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- include/linux/swap.h |  9 --------
- mm/workingset.c      | 51 +++++++++++++++++++-------------------------
- 2 files changed, 22 insertions(+), 38 deletions(-)
+ include/linux/swap.h |  5 +++--
+ mm/swap_state.c      | 24 ++++++++++--------------
+ mm/vmscan.c          |  2 +-
+ 3 files changed, 14 insertions(+), 17 deletions(-)
 
 diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 1b91e7f7bdeb..a450a1d40b19 100644
+index a450a1d40b19..470570dac9e8 100644
 --- a/include/linux/swap.h
 +++ b/include/linux/swap.h
-@@ -307,15 +307,6 @@ void workingset_update_node(struct xa_node *node);
- 		xas_set_update(xas, workingset_update_node);		\
- } while (0)
+@@ -404,7 +404,7 @@ extern void show_swap_cache_info(void);
+ extern int add_to_swap(struct page *page);
+ extern int add_to_swap_cache(struct page *, swp_entry_t, gfp_t);
+ extern int __add_to_swap_cache(struct page *page, swp_entry_t entry);
+-extern void __delete_from_swap_cache(struct page *);
++extern void __delete_from_swap_cache(struct page *, swp_entry_t entry);
+ extern void delete_from_swap_cache(struct page *);
+ extern void free_page_and_swap_cache(struct page *);
+ extern void free_pages_and_swap_cache(struct page **, int);
+@@ -564,7 +564,8 @@ static inline int add_to_swap_cache(struct page *page, swp_entry_t entry,
+ 	return -1;
+ }
  
--/* Returns workingset_update_node() if the mapping has shadow entries. */
--#define workingset_lookup_update(mapping)				\
--({									\
--	radix_tree_update_node_t __helper = workingset_update_node;	\
--	if (dax_mapping(mapping) || shmem_mapping(mapping))		\
--		__helper = NULL;					\
--	__helper;							\
--})
--
- /* linux/mm/page_alloc.c */
- extern unsigned long totalram_pages;
- extern unsigned long totalreserve_pages;
-diff --git a/mm/workingset.c b/mm/workingset.c
-index bad4e58881cd..564e97bd5934 100644
---- a/mm/workingset.c
-+++ b/mm/workingset.c
-@@ -148,7 +148,7 @@
-  * and activations is maintained (node->inactive_age).
-  *
-  * On eviction, a snapshot of this counter (along with some bits to
-- * identify the node) is stored in the now empty page cache radix tree
-+ * identify the node) is stored in the now empty page cache
-  * slot of the evicted page.  This is called a shadow entry.
-  *
-  * On cache misses for which there are shadow entries, an eligible
-@@ -162,7 +162,7 @@
- 
- /*
-  * Eviction timestamps need to be able to cover the full range of
-- * actionable refaults. However, bits are tight in the radix tree
-+ * actionable refaults. However, bits are tight in the xarray
-  * entry, and after storing the identifier for the lruvec there might
-  * not be enough left to represent every single actionable refault. In
-  * that case, we have to sacrifice granularity for distance, and group
-@@ -338,7 +338,7 @@ void workingset_activation(struct page *page)
- 
- static struct list_lru shadow_nodes;
- 
--void workingset_update_node(struct radix_tree_node *node)
-+void workingset_update_node(struct xa_node *node)
+-static inline void __delete_from_swap_cache(struct page *page)
++static inline void __delete_from_swap_cache(struct page *page,
++							swp_entry_t entry)
  {
- 	/*
- 	 * Track non-empty nodes that contain only shadow entries;
-@@ -370,7 +370,7 @@ static unsigned long count_shadow_nodes(struct shrinker *shrinker,
- 	local_irq_enable();
+ }
  
- 	/*
--	 * Approximate a reasonable limit for the radix tree nodes
-+	 * Approximate a reasonable limit for the nodes
- 	 * containing shadow entries. We don't need to keep more
- 	 * shadow entries than possible pages on the active list,
- 	 * since refault distances bigger than that are dismissed.
-@@ -385,11 +385,11 @@ static unsigned long count_shadow_nodes(struct shrinker *shrinker,
- 	 * worst-case density of 1/8th. Below that, not all eligible
- 	 * refaults can be detected anymore.
- 	 *
--	 * On 64-bit with 7 radix_tree_nodes per page and 64 slots
-+	 * On 64-bit with 7 xa_nodes per page and 64 slots
- 	 * each, this will reclaim shadow entries when they consume
- 	 * ~1.8% of available memory:
- 	 *
--	 * PAGE_SIZE / radix_tree_nodes / node_entries * 8 / PAGE_SIZE
-+	 * PAGE_SIZE / xa_nodes / node_entries * 8 / PAGE_SIZE
- 	 */
- 	if (sc->memcg) {
- 		cache = mem_cgroup_node_nr_lru_pages(sc->memcg, sc->nid,
-@@ -398,7 +398,7 @@ static unsigned long count_shadow_nodes(struct shrinker *shrinker,
- 		cache = node_page_state(NODE_DATA(sc->nid), NR_ACTIVE_FILE) +
- 			node_page_state(NODE_DATA(sc->nid), NR_INACTIVE_FILE);
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index ac07db436c15..84595e1a4cd7 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -154,23 +154,22 @@ int add_to_swap_cache(struct page *page, swp_entry_t entry, gfp_t gfp)
+  * This must be called only on pages that have
+  * been verified to be in the swap cache.
+  */
+-void __delete_from_swap_cache(struct page *page)
++void __delete_from_swap_cache(struct page *page, swp_entry_t entry)
+ {
+-	struct address_space *address_space;
++	struct address_space *address_space = swap_address_space(entry);
+ 	int i, nr = hpage_nr_pages(page);
+-	swp_entry_t entry;
+-	pgoff_t idx;
++	pgoff_t idx = swp_offset(entry);
++	XA_STATE(xas, &address_space->i_pages, idx);
+ 
+ 	VM_BUG_ON_PAGE(!PageLocked(page), page);
+ 	VM_BUG_ON_PAGE(!PageSwapCache(page), page);
+ 	VM_BUG_ON_PAGE(PageWriteback(page), page);
+ 
+-	entry.val = page_private(page);
+-	address_space = swap_address_space(entry);
+-	idx = swp_offset(entry);
+ 	for (i = 0; i < nr; i++) {
+-		radix_tree_delete(&address_space->i_pages, idx + i);
++		void *entry = xas_store(&xas, NULL);
++		VM_BUG_ON_PAGE(entry != page + i, entry);
+ 		set_page_private(page + i, 0);
++		xas_next(&xas);
  	}
--	max_nodes = cache >> (RADIX_TREE_MAP_SHIFT - 3);
-+	max_nodes = cache >> (XA_CHUNK_SHIFT - 3);
- 
- 	if (nodes <= max_nodes)
- 		return 0;
-@@ -408,11 +408,11 @@ static unsigned long count_shadow_nodes(struct shrinker *shrinker,
- static enum lru_status shadow_lru_isolate(struct list_head *item,
- 					  struct list_lru_one *lru,
- 					  spinlock_t *lru_lock,
--					  void *arg)
-+					  void *arg) __must_hold(lru_lock)
+ 	ClearPageSwapCache(page);
+ 	address_space->nrpages -= nr;
+@@ -243,14 +242,11 @@ int add_to_swap(struct page *page)
+  */
+ void delete_from_swap_cache(struct page *page)
  {
-+	XA_STATE(xas, NULL, 0);
- 	struct address_space *mapping;
--	struct radix_tree_node *node;
--	unsigned int i;
-+	struct xa_node *node;
- 	int ret;
+-	swp_entry_t entry;
+-	struct address_space *address_space;
+-
+-	entry.val = page_private(page);
++	swp_entry_t entry = { .val = page_private(page) };
++	struct address_space *address_space = swap_address_space(entry);
  
- 	/*
-@@ -420,7 +420,7 @@ static enum lru_status shadow_lru_isolate(struct list_head *item,
- 	 * the shadow node LRU under the i_pages lock and the
- 	 * lru_lock.  Because the page cache tree is emptied before
- 	 * the inode can be destroyed, holding the lru_lock pins any
--	 * address_space that has radix tree nodes on the LRU.
-+	 * address_space that has nodes on the LRU.
- 	 *
- 	 * We can then safely transition to the i_pages lock to
- 	 * pin only the address_space of the particular node we want
-@@ -449,25 +449,18 @@ static enum lru_status shadow_lru_isolate(struct list_head *item,
- 		goto out_invalid;
- 	if (WARN_ON_ONCE(node->count != node->nr_values))
- 		goto out_invalid;
--	for (i = 0; i < RADIX_TREE_MAP_SIZE; i++) {
--		if (node->slots[i]) {
--			if (WARN_ON_ONCE(!xa_is_value(node->slots[i])))
--				goto out_invalid;
--			if (WARN_ON_ONCE(!node->nr_values))
--				goto out_invalid;
--			if (WARN_ON_ONCE(!mapping->nrexceptional))
--				goto out_invalid;
--			node->slots[i] = NULL;
--			node->nr_values--;
--			node->count--;
--			mapping->nrexceptional--;
--		}
--	}
--	if (WARN_ON_ONCE(node->nr_values))
--		goto out_invalid;
-+	mapping->nrexceptional -= node->nr_values;
-+	xas.xa = node->array;
-+	xas.xa_node = rcu_dereference_protected(node->parent,
-+				lockdep_is_held(&mapping->i_pages.xa_lock));
-+	xas.xa_offset = node->offset;
-+	xas.xa_update = workingset_update_node;
-+	/*
-+	 * We could store a shadow entry here which was the minimum of the
-+	 * shadow entries we were tracking ...
-+	 */
-+	xas_store(&xas, NULL);
- 	inc_lruvec_page_state(virt_to_page(node), WORKINGSET_NODERECLAIM);
--	__radix_tree_delete_node(&mapping->i_pages, node,
--				 workingset_lookup_update(mapping));
+-	address_space = swap_address_space(entry);
+ 	xa_lock_irq(&address_space->i_pages);
+-	__delete_from_swap_cache(page);
++	__delete_from_swap_cache(page, entry);
+ 	xa_unlock_irq(&address_space->i_pages);
  
- out_invalid:
- 	xa_unlock(&mapping->i_pages);
+ 	put_swap_page(page, entry);
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 03822f86f288..0448b1b366d9 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -753,7 +753,7 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
+ 	if (PageSwapCache(page)) {
+ 		swp_entry_t swap = { .val = page_private(page) };
+ 		mem_cgroup_swapout(page, swap);
+-		__delete_from_swap_cache(page);
++		__delete_from_swap_cache(page, swap);
+ 		xa_unlock_irqrestore(&mapping->i_pages, flags);
+ 		put_swap_page(page, swap);
+ 	} else {
 -- 
 2.17.1
 
