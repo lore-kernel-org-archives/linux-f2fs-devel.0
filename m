@@ -1,8 +1,8 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v13 51/72] shmem: Convert shmem_free_swap to
- XArray
-Date: Mon, 11 Jun 2018 07:06:18 -0700
-Message-ID: <20180611140639.17215-52-willy@infradead.org>
+Subject: [PATCH v13 52/72] shmem: Convert
+ shmem_partial_swap_usage to XArray
+Date: Mon, 11 Jun 2018 07:06:19 -0700
+Message-ID: <20180611140639.17215-53-willy@infradead.org>
 References: <20180611140639.17215-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,13 +11,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1fSNTl-000256-S2
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:29 +0000
+ (envelope-from <willy@infradead.org>) id 1fSNTi-00024q-6J
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:26 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fSNTg-00D4So-NC
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:29 +0000
+ id 1fSNTh-00HVeu-0N
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:26 +0000
 In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,36 +33,52 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Since we are conditionally storing NULL in the XArray, we do not need
-to allocate memory and the GFP flags will be unused.
+Simpler code because the xarray takes care of things like the limit and
+dereferencing the slot.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- mm/shmem.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ mm/shmem.c | 18 ++++--------------
+ 1 file changed, 4 insertions(+), 14 deletions(-)
 
 diff --git a/mm/shmem.c b/mm/shmem.c
-index 09452ca79220..9dbbdd5dee30 100644
+index 9dbbdd5dee30..bffb87854852 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -653,7 +653,7 @@ static void shmem_delete_from_page_cache(struct page *page, void *radswap)
- }
+@@ -679,29 +679,19 @@ static int shmem_free_swap(struct address_space *mapping,
+ unsigned long shmem_partial_swap_usage(struct address_space *mapping,
+ 						pgoff_t start, pgoff_t end)
+ {
+-	struct radix_tree_iter iter;
+-	void __rcu **slot;
++	XA_STATE(xas, &mapping->i_pages, start);
+ 	struct page *page;
+ 	unsigned long swapped = 0;
  
- /*
-- * Remove swap entry from radix tree, free the swap and its page cache.
-+ * Remove swap entry from page cache, free the swap and its page cache.
-  */
- static int shmem_free_swap(struct address_space *mapping,
- 			   pgoff_t index, void *radswap)
-@@ -661,7 +661,7 @@ static int shmem_free_swap(struct address_space *mapping,
- 	void *old;
+ 	rcu_read_lock();
+-
+-	radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, start) {
+-		if (iter.index >= end)
+-			break;
+-
+-		page = radix_tree_deref_slot(slot);
+-
+-		if (radix_tree_deref_retry(page)) {
+-			slot = radix_tree_iter_retry(&iter);
++	xas_for_each(&xas, page, end - 1) {
++		if (xas_retry(&xas, page))
+ 			continue;
+-		}
+-
+ 		if (xa_is_value(page))
+ 			swapped++;
  
- 	xa_lock_irq(&mapping->i_pages);
--	old = radix_tree_delete_item(&mapping->i_pages, index, radswap);
-+	old = __xa_cmpxchg(&mapping->i_pages, index, radswap, NULL, 0);
- 	xa_unlock_irq(&mapping->i_pages);
- 	if (old != radswap)
- 		return -ENOENT;
+ 		if (need_resched()) {
+-			slot = radix_tree_iter_resume(slot, &iter);
++			xas_pause(&xas);
+ 			cond_resched_rcu();
+ 		}
+ 	}
 -- 
 2.17.1
 
