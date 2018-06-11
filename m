@@ -1,138 +1,119 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v13 25/72] page cache: Convert
- find_get_pages_range to XArray
-Date: Mon, 11 Jun 2018 07:05:52 -0700
-Message-ID: <20180611140639.17215-26-willy@infradead.org>
+Subject: [PATCH v13 72/72] radix tree: Remove radix_tree_clear_tags
+Date: Mon, 11 Jun 2018 07:06:39 -0700
+Message-ID: <20180611140639.17215-73-willy@infradead.org>
 References: <20180611140639.17215-1-willy@infradead.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1fSNTY-000249-B2
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:16 +0000
-Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fSNTT-00GC8W-5L
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:16 +0000
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Matthew Wilcox <mawilcox@microsoft.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-The 'end' parameter of the xas_for_each iterator avoids a useless
-iteration at the end of the range.
+The page cache was the only user of this interface and it has now
+been converted to the XArray.  Transform the test into a test of
+xas_init_tags().
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- mm/filemap.c | 52 +++++++++++++++++++---------------------------------
- 1 file changed, 19 insertions(+), 33 deletions(-)
+ include/linux/radix-tree.h           |  2 --
+ lib/radix-tree.c                     | 13 -----------
+ tools/testing/radix-tree/tag_check.c | 32 +++++++++++++---------------
+ 3 files changed, 15 insertions(+), 32 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index b49290131e85..019c263bb6be 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1650,64 +1650,50 @@ unsigned find_get_pages_range(struct address_space *mapping, pgoff_t *start,
- 			      pgoff_t end, unsigned int nr_pages,
- 			      struct page **pages)
+diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
+index f8ef267e4975..27c15990951d 100644
+--- a/include/linux/radix-tree.h
++++ b/include/linux/radix-tree.h
+@@ -252,8 +252,6 @@ void radix_tree_iter_delete(struct radix_tree_root *,
+ 			struct radix_tree_iter *iter, void __rcu **slot);
+ void *radix_tree_delete_item(struct radix_tree_root *, unsigned long, void *);
+ void *radix_tree_delete(struct radix_tree_root *, unsigned long);
+-void radix_tree_clear_tags(struct radix_tree_root *, struct radix_tree_node *,
+-			   void __rcu **slot);
+ unsigned int radix_tree_gang_lookup(const struct radix_tree_root *,
+ 			void **results, unsigned long first_index,
+ 			unsigned int max_items);
+diff --git a/lib/radix-tree.c b/lib/radix-tree.c
+index ad03dc0c562f..101f1c28e1b6 100644
+--- a/lib/radix-tree.c
++++ b/lib/radix-tree.c
+@@ -1711,19 +1711,6 @@ void *radix_tree_delete(struct radix_tree_root *root, unsigned long index)
+ }
+ EXPORT_SYMBOL(radix_tree_delete);
+ 
+-void radix_tree_clear_tags(struct radix_tree_root *root,
+-			   struct radix_tree_node *node,
+-			   void __rcu **slot)
+-{
+-	if (node) {
+-		unsigned int tag, offset = get_slot_offset(node, slot);
+-		for (tag = 0; tag < RADIX_TREE_MAX_TAGS; tag++)
+-			node_tag_clear(root, node, tag, offset);
+-	} else {
+-		root_tag_clear_all(root);
+-	}
+-}
+-
+ /**
+  *	radix_tree_tagged - test whether any items in the tree are tagged
+  *	@root:		radix tree root
+diff --git a/tools/testing/radix-tree/tag_check.c b/tools/testing/radix-tree/tag_check.c
+index 543181e4847b..340bc4f72f34 100644
+--- a/tools/testing/radix-tree/tag_check.c
++++ b/tools/testing/radix-tree/tag_check.c
+@@ -331,29 +331,27 @@ static void single_check(void)
+ 	item_kill_tree(&tree);
+ }
+ 
+-void radix_tree_clear_tags_test(void)
++void init_tags_test(void)
  {
++	DEFINE_XARRAY(tree);
++	XA_STATE(xas, &tree, 0);
+ 	unsigned long index;
+-	struct radix_tree_node *node;
 -	struct radix_tree_iter iter;
 -	void **slot;
-+	XA_STATE(xas, &mapping->i_pages, *start);
-+	struct page *page;
- 	unsigned ret = 0;
++	void *entry;
  
- 	if (unlikely(!nr_pages))
- 		return 0;
- 
- 	rcu_read_lock();
--	radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, *start) {
--		struct page *head, *page;
+-	RADIX_TREE(tree, GFP_KERNEL);
 -
--		if (iter.index > end)
--			break;
--repeat:
--		page = radix_tree_deref_slot(slot);
--		if (unlikely(!page))
-+	xas_for_each(&xas, page, end) {
-+		struct page *head;
-+		if (xas_retry(&xas, page))
- 			continue;
--
--		if (radix_tree_exception(page)) {
--			if (radix_tree_deref_retry(page)) {
--				slot = radix_tree_iter_retry(&iter);
--				continue;
--			}
--			/*
--			 * A shadow entry of a recently evicted page,
--			 * or a swap entry from shmem/tmpfs.  Skip
--			 * over it.
--			 */
-+		/* Skip over shadow, swap and DAX entries */
-+		if (xa_is_value(page))
- 			continue;
--		}
+-	item_insert(&tree, 0);
+-	item_tag_set(&tree, 0, 0);
+-	__radix_tree_lookup(&tree, 0, &node, &slot);
+-	radix_tree_clear_tags(&tree, node, slot);
+-	assert(item_tag_get(&tree, 0, 0) == 0);
++	xa_store(&tree, 0, xa_mk_value(0), GFP_KERNEL);
++	item_tag_set(&tree, 0, XA_TAG_0);
++	xas_load(&xas);
++	xas_init_tags(&xas);
++	assert(item_tag_get(&tree, 0, XA_TAG_0) == 0);
  
- 		head = compound_head(page);
- 		if (!page_cache_get_speculative(head))
--			goto repeat;
-+			goto retry;
- 
- 		/* The page was split under us? */
--		if (compound_head(page) != head) {
--			put_page(head);
--			goto repeat;
--		}
-+		if (compound_head(page) != head)
-+			goto put_page;
- 
- 		/* Has the page moved? */
--		if (unlikely(page != *slot)) {
--			put_page(head);
--			goto repeat;
--		}
-+		if (unlikely(page != xas_reload(&xas)))
-+			goto put_page;
- 
- 		pages[ret] = page;
- 		if (++ret == nr_pages) {
--			*start = pages[ret - 1]->index + 1;
-+			*start = page->index + 1;
- 			goto out;
- 		}
-+		continue;
-+put_page:
-+		put_page(head);
-+retry:
-+		xas_reset(&xas);
+ 	for (index = 0; index < 1000; index++) {
+-		item_insert(&tree, index);
+-		item_tag_set(&tree, index, 0);
++		xa_store(&tree, index, xa_mk_value(index), GFP_KERNEL);
++		item_tag_set(&tree, index, XA_TAG_0);
  	}
  
- 	/*
- 	 * We come here when there is no page beyond @end. We take care to not
- 	 * overflow the index @start as it confuses some of the callers. This
--	 * breaks the iteration when there is page at index -1 but that is
-+	 * breaks the iteration when there is a page at index -1 but that is
- 	 * already broken anyway.
- 	 */
- 	if (end == (pgoff_t)-1)
+-	radix_tree_for_each_slot(slot, &tree, &iter, 0) {
+-		radix_tree_clear_tags(&tree, iter.node, slot);
+-		assert(item_tag_get(&tree, iter.index, 0) == 0);
++	xas_for_each(&xas, entry, ULONG_MAX) {
++		xas_init_tags(&xas);
++		assert(item_tag_get(&tree, xas.xa_index, XA_TAG_0) == 0);
+ 	}
+ 
+ 	item_kill_tree(&tree);
+@@ -376,5 +374,5 @@ void tag_check(void)
+ 	thrash_tags();
+ 	rcu_barrier();
+ 	printv(2, "after thrash_tags: %d allocated\n", nr_allocated);
+-	radix_tree_clear_tags_test();
++	init_tags_test();
+ }
 -- 
 2.17.1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
