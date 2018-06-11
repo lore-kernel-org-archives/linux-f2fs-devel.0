@@ -1,35 +1,57 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [GIT PULL] f2fs update for 4.18-rc1
-Date: Mon, 11 Jun 2018 10:51:03 -0700
-Message-ID: <20180611175103.GA9244@jaegeuk-macbookpro.roam.corp.google.com>
+From: Matthew Wilcox <mawilcox@microsoft.com>
+Subject: RE: [GIT PULL] f2fs update for 4.18-rc1
+Date: Mon, 11 Jun 2018 18:20:58 +0000
+Message-ID: <DM5PR2101MB08880B2FEEE593857E9501BCCB780@DM5PR2101MB0888.namprd21.prod.outlook.com>
 References: <20180611165212.GA6783@jaegeuk-macbookpro.roam.corp.google.com>
- <CA+55aFw13-=qJ44s+_SM7csCPu0EeQf4bSzsf+tfPes=cBVBOg@mail.gmail.com>
+ <CA+55aFznP4aEy7DkVfeQ_e6eXgLnswVnSJS3C51UHD_k8qYZCA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CA+55aFw13-=qJ44s+_SM7csCPu0EeQf4bSzsf+tfPes=cBVBOg@mail.gmail.com>
+In-Reply-To: <CA+55aFznP4aEy7DkVfeQ_e6eXgLnswVnSJS3C51UHD_k8qYZCA@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Eric Biggers <ebiggers@google.com>, Chao Yu <yuchao0@huawei.com>, "Linux F2FS DEV, Mailing List" <linux-f2fs-devel@lists.sourceforge.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: "Linux F2FS DEV, Mailing List" <linux-f2fs-devel@lists.sourceforge.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 06/11, Linus Torvalds wrote:
-> On Mon, Jun 11, 2018 at 9:52 AM Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> >
-> > Eric Biggers (4):
-> >       f2fs: call unlock_new_inode() before d_instantiate()
-> 
-> Btw, in my merge, this got superseded by commit 1e2e547a93a00ebc2158
-> ("do d_instantiate/unlock_new_inode combinations safely"), because the
-> ordering of that d_instantiate() and unlock_new_inode() was subtler
-> than just doing the unlock first.
-> 
-> I can't test the end result, so you guys should double-check whatever
-> xfstest you ran originall, ok?
-
-https://lkml.org/lkml/2018/5/13/248
-Got it. Thanks.
-
-> 
->             Linus
+QXJnaCwgeW91IHVzZWQgbXkgT3V0bG9vayBlbWFpbCBhZGRyZXNzLCBzbyB5b3UgZ2V0IHRvcC1w
+b3N0aW5nIPCfmIkNCg0KVGhlIHJhZGl4IHRyZWUgZG9lcyByZWx5IG9uIGNvbnN0cnVjdG9ycyBz
+dGlsbC4gIE9uZSBvZiB0aGUgdGhpbmdzIG9uIG15IHRvZG8gbGlzdCBpcyB0byB2ZXJpZnkgd2hl
+dGhlciBpdCBhY3R1YWxseSBtYWtlcyBzZW5zZSB0byBkbyB0aGF0IG9yIG5vdC4gIEl0IG1heSBj
+b250aW51ZSB0byBtYWtlIHNlbnNlOyB0aGUgcmFkaXggdHJlZSBub2RlIGlzIDU3NiBieXRlcyAo
+OSBjYWNoZSBsaW5lcykgYW5kIHRoZSBub3JtYWwgdXNhZ2Ugb2YgYSBmcmVzaGx5IGFsbG9jYXRl
+ZCByYWRpeCB0cmVlIG5vZGUgd2lsbCB0b3VjaCBvbmx5IG9uZSBvciB0d28gY2FjaGVsaW5lcy4g
+IFJhZGl4IHRyZWUgbm9kZXMgbmF0dXJhbGx5IGNvbWUgYmFjayB0byB0aGUgY2FjaGUgemVyb2Vk
+LCBzbyB0aGVyZSdzIG5vIGNhY2hlIHBvbGx1dGlvbiB3aGVuIGRlc3Ryb3lpbmcgdGhlbSBlaXRo
+ZXIuDQoNCldlIGRpZG4ndCBzZW5kIHRoYXQgcGF0Y2ggdXBzdHJlYW07IGluc3RlYWQgd2Ugc2Fp
+ZCB0aGF0IGFueWJvZHkgd2hvIHNwZWNpZmllcyBfX0dGUF9aRVJPIG9uIGEgc2xhYiB3aXRoIGNv
+bnN0cnVjdG9ycyBpcyBjcmF6eSBhbmQgZml4ZWQgaXQgd2l0aCBjb21taXRzIGFiYzFiZTEzZmQx
+MTNkZGVmNWUyZDgwN2E0NjYyODZiODY0Y2FlZDMgYW5kIDEyODIyN2U3ZmU0MDg3YjYwZjFiZDMx
+Zjc2MmU2MTIzN2ViMjM3OTANCg0KSSBkb24ndCByZWFsbHkgdW5kZXJzdGFuZCB3aHkgSmFlZ2V1
+ayBpcyBjaGFuZ2luZyBmMmZzIG5vdyB3aGVuIHdlJ3ZlIGp1c3QgZml4ZWQgdGhlIGNvcmUga2Vy
+bmVsIHRvIG1ha2Ugd2hhdCBoZSdzIGRvaW5nIHBlcmZlY3RseSBsZWdhbC4NCg0KPiAtLS0tLU9y
+aWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGlu
+dXgtZm91bmRhdGlvbi5vcmc+DQo+IFNlbnQ6IE1vbmRheSwgSnVuZSAxMSwgMjAxOCAxOjI4IFBN
+DQo+IFRvOiBKYWVnZXVrIEtpbSA8amFlZ2V1a0BrZXJuZWwub3JnPjsgTWF0dGhldyBXaWxjb3gN
+Cj4gPG1hd2lsY294QG1pY3Jvc29mdC5jb20+DQo+IENjOiBMaW51eCBGMkZTIERFViwgTWFpbGlu
+ZyBMaXN0IDxsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldD47IExpbnV4DQo+
+IEtlcm5lbCBNYWlsaW5nIExpc3QgPGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+DQo+IFN1
+YmplY3Q6IFJlOiBbR0lUIFBVTExdIGYyZnMgdXBkYXRlIGZvciA0LjE4LXJjMQ0KPiANCj4gT24g
+TW9uLCBKdW4gMTEsIDIwMTggYXQgOTo1MiBBTSBKYWVnZXVrIEtpbSA8amFlZ2V1a0BrZXJuZWwu
+b3JnPiB3cm90ZToNCj4gPg0KPiA+IEluIG9yZGVyIHRvIGF2b2lkIG9sZCBNTSBidWcgWzFdLCB3
+ZSBkZWNpZGVkIG5vdCB0byB1c2UgX19HRlBfWkVSTw0KPiA+IGZvciB0aGUgbWFwcGluZyBmb3Ig
+bm9kZSBhbmQgbWV0YSBwYWdlIGNhY2hlcy4NCj4gPg0KPiA+IFsxXQ0KPiBodHRwczovL25hMDEu
+c2FmZWxpbmtzLnByb3RlY3Rpb24ub3V0bG9vay5jb20vP3VybD1odHRwcyUzQSUyRiUyRmxrbWwu
+b3JnDQo+ICUyRmxrbWwlMkYyMDE4JTJGNCUyRjglMkY2NjEmZGF0YT0wMiU3QzAxJTdDbWF3aWxj
+b3glNDBtaWNyb3NvDQo+IGZ0LmNvbSU3Q2U2OWMxZjlhOGQ2YTQ0YmRhMzZlMDhkNWNmYzBiMWE1
+JTdDNzJmOTg4YmY4NmYxNDFhZjkxYWIyZA0KPiA3Y2QwMTFkYjQ3JTdDMSU3QzAlN0M2MzY2NDMz
+NDg4NzQ2MDgzODUmc2RhdGE9eGJBZzBjT014eXJZNE5ZDQo+IHlzVGoxWDBEUFRkeHdUMjRvWXUx
+Y3hPNDVua1ElM0QmcmVzZXJ2ZWQ9MA0KPiANCj4gSG1tLiBUaGUgcGF0Y2ggdGhlcmUgbG9va3Mg
+Y29ycmVjdCwgYW5kIGFueWJvZHkgd2hvIHJlbGllcyBvbiBzbGFiDQo+IGNvbnN0cnVjdG9ycyBp
+cyBjcmF6eS4NCj4gDQo+IFRoYXQgZW1haWwgZnJvbSBBcHJpbCBzYXlzIGl0IHNob3VsZCBnbyBp
+bnRvIHN0YWJsZSwgYnV0IGl0IG5ldmVyIGV2ZW4NCj4gd2VudCB1cHN0cmVhbS4uDQo+IA0KPiBB
+ZGRpbmcgV2lsbHkgdG8gdGhlIGNjLCBmb3IgY29tbWVudHMsIHNpbmNlIGhlJ3MgYmVlbiBhY3Rp
+dmUgdGhlcmUgYW5kDQo+IGlzIHByb2JhYmx5IHRoZSBtYWludGFpbmVyIGV2ZW4gaWYgdGhlIE1B
+SU5UQUlORVJTIGZpbGUgZG9lc24ndCBzYXkNCj4gc28uLg0KPiANCj4gV2lsbHk/DQo+IA0KPiAg
+ICAgICAgICAgICAgTGludXMNCg==
