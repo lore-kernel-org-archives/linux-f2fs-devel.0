@@ -1,49 +1,34 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: What commit v4.17 is?
-Date: Mon, 11 Jun 2018 10:01:22 -0700
-Message-ID: <20180611170122.GB6783@jaegeuk-macbookpro.roam.corp.google.com>
-References: <VI1PR07MB16455C3E87BEE7172DF2BB61A1790@VI1PR07MB1645.eurprd07.prod.outlook.com>
- <VI1PR07MB164579C7BD26A5420FBB5191A1780@VI1PR07MB1645.eurprd07.prod.outlook.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [GIT PULL] f2fs update for 4.18-rc1
+Date: Mon, 11 Jun 2018 10:27:54 -0700
+Message-ID: <CA+55aFznP4aEy7DkVfeQ_e6eXgLnswVnSJS3C51UHD_k8qYZCA@mail.gmail.com>
+References: <20180611165212.GA6783@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <VI1PR07MB164579C7BD26A5420FBB5191A1780@VI1PR07MB1645.eurprd07.prod.outlook.com>
+In-Reply-To: <20180611165212.GA6783@jaegeuk-macbookpro.roam.corp.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jorge Fernandez Monteagudo <jorgefm@cirsa.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Matthew Wilcox <mawilcox@microsoft.com>
+Cc: "Linux F2FS DEV, Mailing List" <linux-f2fs-devel@lists.sourceforge.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jorge,
+On Mon, Jun 11, 2018 at 9:52 AM Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+>
+> In order to avoid old MM bug [1], we decided not to use __GFP_ZERO
+> for the mapping for node and meta page caches.
+>
+> [1] https://lkml.org/lkml/2018/4/8/661
 
-On 06/11, Jorge Fernandez Monteagudo wrote:
-> Hi all,
-> 
-> 
-> This is my first message in the mailing list and is about what f2fs commit is present in the 4.17 kernel. I guess is a
-> 
-> very basic question but I'm not very skilled with git.
-> 
-> 
-> Currently I'm using a 4.14 kernel I downloaded from https://kernel.googlesource.com/pub/scm/linux/kernel/git/jaegeuk/f2fs-stable/+/linux-4.14.y
-> 
-> commit 00f0eaaadfe041ee518c5a9122a121864e56cd23 (Thu Jan 25 14:54:42 2018 +0800). This kernel is working ok for me because I need
-> 
-> my SSD disk with F2FS to recover from powerfail tests.
-> 
-> 
-> Now I have to update to an 4.17 kernel in order to get my AMD graphic card to work but I don't want to lose the F2FS recovering capabilities.
-> 
-> Is the previous commit 00f0eaaadfe041ee518c5a9122a121864e56cd23 present in the vanilla 4.17 kernel I can download from kernel.org or
+Hmm. The patch there looks correct, and anybody who relies on slab
+constructors is crazy.
 
-That commit was lastly merged in vanilla v4.16, which means v4.17 should include
-all the commits that you've used.
+That email from April says it should go into stable, but it never even
+went upstream..
 
-Thanks,
+Adding Willy to the cc, for comments, since he's been active there and
+is probably the maintainer even if the MAINTAINERS file doesn't say
+so..
 
-> 
-> I need a special kernel from f2fs or f2fs-stable?
-> 
-> 
-> Thanks!
-> 
+Willy?
+
+             Linus
