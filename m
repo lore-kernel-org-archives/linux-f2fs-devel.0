@@ -1,8 +1,8 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v13 27/72] page cache;
- Convert find_get_pages_range_tag to XArray
-Date: Mon, 11 Jun 2018 07:05:54 -0700
-Message-ID: <20180611140639.17215-28-willy@infradead.org>
+Subject: [PATCH v13 26/72] page cache: Convert
+ find_get_pages_contig to XArray
+Date: Mon, 11 Jun 2018 07:05:53 -0700
+Message-ID: <20180611140639.17215-27-willy@infradead.org>
 References: <20180611140639.17215-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,13 +11,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1fSNTV-00008Q-Cs
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:13 +0000
+ (envelope-from <willy@infradead.org>) id 1fSNTS-00007S-8k
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:10 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fSNTT-00GC8l-3c
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:13 +0000
+ id 1fSNTR-00HVdU-0Z
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jun 2018 14:07:10 +0000
 In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,66 +33,85 @@ Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@r
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-The 'end' parameter of the xas_for_each iterator avoids a useless
-iteration at the end of the range.
+There's no direct replacement for radix_tree_for_each_contig()
+in the XArray API as it's an unusual thing to do.  Instead,
+open-code a loop using xas_next().  This removes the only user of
+radix_tree_for_each_contig() so delete the iterator from the API and
+the test suite code for it.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- include/linux/pagemap.h |  4 +--
- mm/filemap.c            | 68 ++++++++++++++++-------------------------
- 2 files changed, 28 insertions(+), 44 deletions(-)
+ .clang-format                          |  1 -
+ include/linux/radix-tree.h             | 17 ---------
+ mm/filemap.c                           | 53 +++++++++++---------------
+ tools/testing/radix-tree/regression3.c | 23 -----------
+ 4 files changed, 22 insertions(+), 72 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 2f5d2d3ebaac..a6d635fefb01 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -363,10 +363,10 @@ static inline unsigned find_get_pages(struct address_space *mapping,
- unsigned find_get_pages_contig(struct address_space *mapping, pgoff_t start,
- 			       unsigned int nr_pages, struct page **pages);
- unsigned find_get_pages_range_tag(struct address_space *mapping, pgoff_t *index,
--			pgoff_t end, int tag, unsigned int nr_pages,
-+			pgoff_t end, xa_tag_t tag, unsigned int nr_pages,
- 			struct page **pages);
- static inline unsigned find_get_pages_tag(struct address_space *mapping,
--			pgoff_t *index, int tag, unsigned int nr_pages,
-+			pgoff_t *index, xa_tag_t tag, unsigned int nr_pages,
- 			struct page **pages)
- {
- 	return find_get_pages_range_tag(mapping, index, (pgoff_t)-1, tag,
+diff --git a/.clang-format b/.clang-format
+index faffc0d5af4e..c1de31c6875e 100644
+--- a/.clang-format
++++ b/.clang-format
+@@ -323,7 +323,6 @@ ForEachMacros:
+   - 'protocol_for_each_card'
+   - 'protocol_for_each_dev'
+   - 'queue_for_each_hw_ctx'
+-  - 'radix_tree_for_each_contig'
+   - 'radix_tree_for_each_slot'
+   - 'radix_tree_for_each_tagged'
+   - 'rbtree_postorder_for_each_entry_safe'
+diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
+index 4b6f685309fc..eefa0b099dd5 100644
+--- a/include/linux/radix-tree.h
++++ b/include/linux/radix-tree.h
+@@ -522,23 +522,6 @@ static __always_inline void __rcu **radix_tree_next_slot(void __rcu **slot,
+ 	     slot || (slot = radix_tree_next_chunk(root, iter, 0)) ;	\
+ 	     slot = radix_tree_next_slot(slot, iter, 0))
+ 
+-/**
+- * radix_tree_for_each_contig - iterate over contiguous slots
+- *
+- * @slot:	the void** variable for pointer to slot
+- * @root:	the struct radix_tree_root pointer
+- * @iter:	the struct radix_tree_iter pointer
+- * @start:	iteration starting index
+- *
+- * @slot points to radix tree slot, @iter->index contains its index.
+- */
+-#define radix_tree_for_each_contig(slot, root, iter, start)		\
+-	for (slot = radix_tree_iter_init(iter, start) ;			\
+-	     slot || (slot = radix_tree_next_chunk(root, iter,		\
+-				RADIX_TREE_ITER_CONTIG)) ;		\
+-	     slot = radix_tree_next_slot(slot, iter,			\
+-				RADIX_TREE_ITER_CONTIG))
+-
+ /**
+  * radix_tree_for_each_tagged - iterate over tagged slots
+  *
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 8a69613fcdf3..83328635edaa 100644
+index 019c263bb6be..8a69613fcdf3 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -1789,74 +1789,58 @@ EXPORT_SYMBOL(find_get_pages_contig);
-  * @tag.   We update @index to index the next page for the traversal.
-  */
- unsigned find_get_pages_range_tag(struct address_space *mapping, pgoff_t *index,
--			pgoff_t end, int tag, unsigned int nr_pages,
-+			pgoff_t end, xa_tag_t tag, unsigned int nr_pages,
- 			struct page **pages)
+@@ -1721,57 +1721,43 @@ unsigned find_get_pages_range(struct address_space *mapping, pgoff_t *start,
+ unsigned find_get_pages_contig(struct address_space *mapping, pgoff_t index,
+ 			       unsigned int nr_pages, struct page **pages)
  {
 -	struct radix_tree_iter iter;
 -	void **slot;
-+	XA_STATE(xas, &mapping->i_pages, *index);
++	XA_STATE(xas, &mapping->i_pages, index);
 +	struct page *page;
- 	unsigned ret = 0;
+ 	unsigned int ret = 0;
  
  	if (unlikely(!nr_pages))
  		return 0;
  
  	rcu_read_lock();
--	radix_tree_for_each_tagged(slot, &mapping->i_pages, &iter, *index, tag) {
+-	radix_tree_for_each_contig(slot, &mapping->i_pages, &iter, index) {
 -		struct page *head, *page;
--
--		if (iter.index > end)
--			break;
 -repeat:
 -		page = radix_tree_deref_slot(slot);
+-		/* The hole, there no reason to continue */
 -		if (unlikely(!page))
-+	xas_for_each_tagged(&xas, page, end, tag) {
-+		struct page *head;
-+		if (xas_retry(&xas, page))
- 			continue;
+-			break;
 -
 -		if (radix_tree_exception(page)) {
 -			if (radix_tree_deref_retry(page)) {
@@ -100,23 +119,20 @@ index 8a69613fcdf3..83328635edaa 100644
 -				continue;
 -			}
 -			/*
--			 * A shadow entry of a recently evicted page.
--			 *
--			 * Those entries should never be tagged, but
--			 * this tree walk is lockless and the tags are
--			 * looked up in bulk, one radix tree node at a
--			 * time, so there is a sizable window for page
--			 * reclaim to evict a page we saw tagged.
--			 *
--			 * Skip over it.
+-			 * A shadow entry of a recently evicted page,
+-			 * or a swap entry from shmem/tmpfs.  Stop
+-			 * looking for contiguous pages.
 -			 */
++	for (page = xas_load(&xas); page; page = xas_next(&xas)) {
++		struct page *head;
++		if (xas_retry(&xas, page))
++			continue;
 +		/*
-+		 * Shadow entries should never be tagged, but this iteration
-+		 * is lockless so there is a window for page reclaim to evict
-+		 * a page we saw tagged.  Skip over it.
++		 * If the entry has been swapped out, we can stop looking.
++		 * No current caller is looking for DAX entries.
 +		 */
 +		if (xa_is_value(page))
- 			continue;
+ 			break;
 -		}
  
  		head = compound_head(page);
@@ -140,30 +156,69 @@ index 8a69613fcdf3..83328635edaa 100644
 +		if (unlikely(page != xas_reload(&xas)))
 +			goto put_page;
  
- 		pages[ret] = page;
- 		if (++ret == nr_pages) {
--			*index = pages[ret - 1]->index + 1;
-+			*index = page->index + 1;
- 			goto out;
+ 		/*
+ 		 * must check mapping and index after taking the ref.
+ 		 * otherwise we can get both false positives and false
+ 		 * negatives, which is just confusing to the caller.
+ 		 */
+-		if (page->mapping == NULL || page_to_pgoff(page) != iter.index) {
++		if (!page->mapping || page_to_pgoff(page) != xas.xa_index) {
+ 			put_page(page);
+ 			break;
  		}
+@@ -1779,6 +1765,11 @@ unsigned find_get_pages_contig(struct address_space *mapping, pgoff_t index,
+ 		pages[ret] = page;
+ 		if (++ret == nr_pages)
+ 			break;
 +		continue;
 +put_page:
 +		put_page(head);
 +retry:
 +		xas_reset(&xas);
  	}
+ 	rcu_read_unlock();
+ 	return ret;
+diff --git a/tools/testing/radix-tree/regression3.c b/tools/testing/radix-tree/regression3.c
+index ace2543c3eda..9f9a3b280f56 100644
+--- a/tools/testing/radix-tree/regression3.c
++++ b/tools/testing/radix-tree/regression3.c
+@@ -69,21 +69,6 @@ void regression3_test(void)
+ 			continue;
+ 		}
+ 	}
+-	radix_tree_delete(&root, 1);
+-
+-	first = true;
+-	radix_tree_for_each_contig(slot, &root, &iter, 0) {
+-		printv(2, "contig %ld %p\n", iter.index, *slot);
+-		if (first) {
+-			radix_tree_insert(&root, 1, ptr);
+-			first = false;
+-		}
+-		if (radix_tree_deref_retry(*slot)) {
+-			printv(2, "retry at %ld\n", iter.index);
+-			slot = radix_tree_iter_retry(&iter);
+-			continue;
+-		}
+-	}
  
- 	/*
--	 * We come here when we got at @end. We take care to not overflow the
-+	 * We come here when we got to @end. We take care to not overflow the
- 	 * index @index as it confuses some of the callers. This breaks the
--	 * iteration when there is page at index -1 but that is already broken
--	 * anyway.
-+	 * iteration when there is a page at index -1 but that is already
-+	 * broken anyway.
- 	 */
- 	if (end == (pgoff_t)-1)
- 		*index = (pgoff_t)-1;
+ 	radix_tree_for_each_slot(slot, &root, &iter, 0) {
+ 		printv(2, "slot %ld %p\n", iter.index, *slot);
+@@ -93,14 +78,6 @@ void regression3_test(void)
+ 		}
+ 	}
+ 
+-	radix_tree_for_each_contig(slot, &root, &iter, 0) {
+-		printv(2, "contig %ld %p\n", iter.index, *slot);
+-		if (!iter.index) {
+-			printv(2, "next at %ld\n", iter.index);
+-			slot = radix_tree_iter_resume(slot, &iter);
+-		}
+-	}
+-
+ 	radix_tree_tag_set(&root, 0, 0);
+ 	radix_tree_tag_set(&root, 1, 0);
+ 	radix_tree_for_each_tagged(slot, &root, &iter, 0, 0) {
 -- 
 2.17.1
 
