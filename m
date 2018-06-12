@@ -1,26 +1,117 @@
-From: Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v13 00/72] Convert page cache to XArray
-Date: Tue, 12 Jun 2018 04:31:22 -0700
-Message-ID: <20180612113122.GA19433@bombadil.infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
- <20180612104041.GB24375@twin.jikos.cz>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH v6] f2fs: support in-memory inode checksum
+ when checking consistency
+Date: Tue, 12 Jun 2018 22:36:53 +0800
+Message-ID: <4a425d34-125d-24a8-83e6-9531d8174de4@kernel.org>
+References: <20180309151021.142737-1-guoweichao@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180612104041.GB24375@twin.jikos.cz>
-Sender: linux-kernel-owner@vger.kernel.org
-To: dsterba@suse.cz, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <chao@kernel.org>) id 1fSkPx-0004zo-6n
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Jun 2018 14:37:05 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fSkPv-002RHe-Fi
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Jun 2018 14:37:05 +0000
+In-Reply-To: <20180309151021.142737-1-guoweichao@huawei.com>
+Content-Language: en-US
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Weichao Guo <guoweichao@huawei.com>, yuchao0@huawei.com, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Tue, Jun 12, 2018 at 12:40:41PM +0200, David Sterba wrote:
-> [ 9875.174796] kernel BUG at fs/inode.c:513!
+Ping,
 
-What the ...
+Jaegeuk, sometimes, we suffer data corruption caused by bit-transition of cache,
+we troubleshoot for weeks or months, and finally, find that it is caused by
+hardware. So for this case, maybe in-memory checksum can help to troubleshoot
+more quickly.
 
-Somehow the fix for that got dropped.  I spent most of last week chasing
-that problem!  This is the correct code:
+Could you consider this?
 
-http://git.infradead.org/users/willy/linux-dax.git/commitdiff/01177bb06761539af8a6c872416109e2c8b64559
+Thanks,
 
-I'll check over the patchset and see if anything else got dropped!
+On 2018/3/9 23:10, Weichao Guo wrote:
+> Enable in-memory inode checksum to protect metadata blocks from
+> in-memory scribbles when checking consistency, which has no
+> performance requirements.
+> 
+> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+> ---
+>  fs/f2fs/inode.c |  7 +++++++
+>  fs/f2fs/node.c  | 10 +++++++++-
+>  2 files changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index 205add3..e405b28 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -159,8 +159,12 @@ bool f2fs_inode_chksum_verify(struct f2fs_sb_info *sbi, struct page *page)
+>  	struct f2fs_inode *ri;
+>  	__u32 provided, calculated;
+>  
+> +#ifdef CONFIG_F2FS_CHECK_FS
+> +	if (!f2fs_enable_inode_chksum(sbi, page))
+> +#else
+>  	if (!f2fs_enable_inode_chksum(sbi, page) ||
+>  			PageDirty(page) || PageWriteback(page))
+> +#endif
+>  		return true;
+>  
+>  	ri = &F2FS_NODE(page)->i;
+> @@ -445,6 +449,9 @@ void update_inode(struct inode *inode, struct page *node_page)
+>  	if (inode->i_nlink == 0)
+>  		clear_inline_node(node_page);
+>  
+> +#ifdef CONFIG_F2FS_CHECK_FS
+> +	f2fs_inode_chksum_set(F2FS_I_SB(inode), node_page);
+> +#endif
+>  }
+>  
+>  void update_inode_page(struct inode *inode)
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 177c438..6107935 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1113,8 +1113,12 @@ static int read_node_page(struct page *page, int op_flags)
+>  		.encrypted_page = NULL,
+>  	};
+>  
+> -	if (PageUptodate(page))
+> +	if (PageUptodate(page)) {
+> +#ifdef CONFIG_F2FS_CHECK_FS
+> +		f2fs_bug_on(sbi, !f2fs_inode_chksum_verify(sbi, page));
+> +#endif
+>  		return LOCKED_PAGE;
+> +	}
+>  
+>  	get_node_info(sbi, page->index, &ni);
+>  
+> @@ -1731,6 +1735,10 @@ static int f2fs_set_node_page_dirty(struct page *page)
+>  
+>  	if (!PageUptodate(page))
+>  		SetPageUptodate(page);
+> +#ifdef CONFIG_F2FS_CHECK_FS
+> +	if (IS_INODE(page))
+> +		f2fs_inode_chksum_set(F2FS_P_SB(page), page);
+> +#endif
+>  	if (!PageDirty(page)) {
+>  		f2fs_set_page_dirty_nobuffers(page);
+>  		inc_page_count(F2FS_P_SB(page), F2FS_DIRTY_NODES);
+> 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
