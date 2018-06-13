@@ -1,23 +1,24 @@
 From: Sheng Yong <shengyong1@huawei.com>
-Subject: [RFC PATCH 2/2] fsck.f2fs: introduce fsck_chk_curseg_info
-Date: Wed, 13 Jun 2018 09:51:50 +0800
-Message-ID: <20180613015150.197854-2-shengyong1@huawei.com>
-References: <20180613015150.197854-1-shengyong1@huawei.com>
+Subject: [PATCH] f2fs-tools: do not count free_segs in
+ flush_sit_entries
+Date: Wed, 13 Jun 2018 18:13:59 +0800
+Message-ID: <20180613101359.1184-1-shengyong1@huawei.com>
+References: <20180613015150.197854-2-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <shengyong1@huawei.com>) id 1fSuxV-0005az-Pz
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Jun 2018 01:52:25 +0000
+ (envelope-from <shengyong1@huawei.com>) id 1fT2nT-0002Rs-5U
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Jun 2018 10:14:35 +0000
 Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fSuxT-0015bo-RO
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Jun 2018 01:52:25 +0000
-In-Reply-To: <20180613015150.197854-1-shengyong1@huawei.com>
+ id 1fT2nR-005SVF-0g
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Jun 2018 10:14:35 +0000
+In-Reply-To: <20180613015150.197854-2-shengyong1@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,87 +31,47 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-If curseg is an empty segment, it will not be checked. This patch
-introduces fsck_chk_curseg_info() to check SIT/SSA type of cursegs
-to avoid curseg corruption.
+flush_sit_entries() is always called before write_checkpoint(). Since
+free_segs is counted in write_checkpoint, there is no need to do that
+in flush_sit_entries. Besides, the value of free_segs may be not
+correct if we skip uptodate seg_entries.
 
 Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 ---
- fsck/fsck.c | 34 ++++++++++++++++++++++++++++++++++
- fsck/fsck.h |  1 +
- fsck/main.c |  2 ++
- 3 files changed, 37 insertions(+)
+ fsck/mount.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 5b6dbc8..cfd939f 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -2422,6 +2422,40 @@ out:
- 	return cnt;
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 68278c5..80a4849 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -1867,11 +1867,9 @@ void flush_journal_entries(struct f2fs_sb_info *sbi)
+ 
+ void flush_sit_entries(struct f2fs_sb_info *sbi)
+ {
+-	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
+ 	struct sit_info *sit_i = SIT_I(sbi);
+ 	struct f2fs_sit_block *sit_blk;
+ 	unsigned int segno = 0;
+-	u32 free_segs = 0;
+ 
+ 	sit_blk = calloc(BLOCK_SZ, 1);
+ 	ASSERT(sit_blk);
+@@ -1891,14 +1889,9 @@ void flush_sit_entries(struct f2fs_sb_info *sbi)
+ 		sit->vblocks = cpu_to_le16((se->type << SIT_VBLOCKS_SHIFT) |
+ 							se->valid_blocks);
+ 		rewrite_current_sit_page(sbi, segno, sit_blk);
+-
+-		if (se->valid_blocks == 0x0 &&
+-				!IS_CUR_SEGNO(sbi, segno, NO_CHECK_TYPE))
+-			free_segs++;
+ 	}
+ 
+ 	free(sit_blk);
+-	set_cp(free_segment_count, free_segs);
  }
  
-+int fsck_chk_curseg_info(struct f2fs_sb_info *sbi)
-+{
-+	struct curseg_info *curseg;
-+	struct seg_entry *se;
-+	struct f2fs_summary_block *sum_blk;
-+	int i, ret = 0;
-+
-+	for (i = 0; i < NO_CHECK_TYPE; i++) {
-+		curseg = CURSEG_I(sbi, i);
-+		se = get_seg_entry(sbi, curseg->segno);
-+		sum_blk = curseg->sum_blk;
-+
-+		if (se->type != i) {
-+			ASSERT_MSG("Incorrect curseg [%d]: segno [0x%x] "
-+				   "type(SIT) [%d]", i, curseg->segno,
-+				   se->type);
-+			se->type = i;
-+			ret = -1;
-+		}
-+		if (i <= CURSEG_COLD_DATA && IS_SUM_DATA_SEG(sum_blk->footer)) {
-+			continue;
-+		} else if (i > CURSEG_COLD_DATA && IS_SUM_NODE_SEG(sum_blk->footer)) {
-+			continue;
-+		} else {
-+			ASSERT_MSG("Incorrect curseg [%d]: segno [0x%x] "
-+				   "type(SSA) [%d]", i, curseg->segno,
-+				   sum_blk->footer.entry_type);
-+			ret = -1;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
- int fsck_verify(struct f2fs_sb_info *sbi)
- {
- 	unsigned int i = 0;
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index cbe7fc4..5530aff 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -144,6 +144,7 @@ extern int fsck_chk_dentry_blk(struct f2fs_sb_info *, u32, struct child_info *,
- int fsck_chk_inline_dentries(struct f2fs_sb_info *, struct f2fs_node *,
- 		struct child_info *);
- int fsck_chk_meta(struct f2fs_sb_info *sbi);
-+int fsck_chk_curseg_info(struct f2fs_sb_info *);
- int convert_encrypted_name(unsigned char *, int, unsigned char *, int);
- 
- extern void update_free_segments(struct f2fs_sb_info *);
-diff --git a/fsck/main.c b/fsck/main.c
-index 09026c9..f6d12b0 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -578,6 +578,8 @@ static void do_fsck(struct f2fs_sb_info *sbi)
- 
- 	print_cp_state(flag);
- 
-+	fsck_chk_curseg_info(sbi);
-+
- 	if (!c.fix_on && !c.bug_on) {
- 		switch (c.preen_mode) {
- 		case PREEN_MODE_1:
+ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left, int type)
 -- 
 2.17.1
 
