@@ -1,48 +1,59 @@
-From: Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v13 00/72] Convert page cache to XArray
-Date: Tue, 12 Jun 2018 12:46:19 -0700
-Message-ID: <20180612194619.GH19433@bombadil.infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
- <20180612104041.GB24375@twin.jikos.cz>
- <20180612113122.GA19433@bombadil.infradead.org>
- <20180612193741.GC28436@linux.intel.com>
+From: Sheng Yong <shengyong1@huawei.com>
+Subject: [PATCH 1/2] sload.f2fs: update sit entries of cursegs
+Date: Wed, 13 Jun 2018 09:51:49 +0800
+Message-ID: <20180613015150.197854-1-shengyong1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180612193741.GC28436@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ross Zwisler <ross.zwisler@linux.intel.com>, dsterba@suse.cz, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Lukas Czerner <lczerner@redhat.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <shengyong1@huawei.com>) id 1fSuxV-0005ay-Pv
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Jun 2018 01:52:25 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fSuxT-005fDk-U5
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Jun 2018 01:52:25 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On Tue, Jun 12, 2018 at 01:37:41PM -0600, Ross Zwisler wrote:
-> On Tue, Jun 12, 2018 at 04:31:22AM -0700, Matthew Wilcox wrote:
-> > On Tue, Jun 12, 2018 at 12:40:41PM +0200, David Sterba wrote:
-> > > [ 9875.174796] kernel BUG at fs/inode.c:513!
-> > 
-> > What the ...
-> > 
-> > Somehow the fix for that got dropped.  I spent most of last week chasing
-> > that problem!  This is the correct code:
-> > 
-> > http://git.infradead.org/users/willy/linux-dax.git/commitdiff/01177bb06761539af8a6c872416109e2c8b64559
-> > 
-> > I'll check over the patchset and see if anything else got dropped!
-> 
-> Can you please repost when you have this sorted?
-> 
-> I think the commit you've pointed to is in your xarray-20180601 branch, but I
-> see two more recent xarray branches in your tree (xarray-20180608 and
-> xarray-20180612).
-> 
-> Basically, I don't know what is stable and what's not, and what I should be
-> reviewing/testing.
+move_curseg_info->reset_curseg changes cursegs, however, new segment
+entries are not set as dirty. As a result, flush_sit_entries will not
+update entries in SIT, especially when an empty segment is selected
+as the new curseg, its seg_entry->type is lost.
 
-Yup, I shall.  The xarray-20180612 is the most recent thing I've
-published, but I'm still going over the 0601 patchset looking for other
-little pieces I may have dropped.  I've found a couple, and I'm updating
-the 0612 branch each time I find another one.
+Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+---
+ fsck/mount.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-If you want to start looking at the DAX patches on the 0612 branch,
-that wouldn't be a waste of your time.  Neither would testing; I don't
-think I dropped anything from the DAX patches.
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 0a30adb..68278c5 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -1149,6 +1149,7 @@ void reset_curseg(struct f2fs_sb_info *sbi, int type)
+ 		SET_SUM_TYPE(sum_footer, SUM_TYPE_NODE);
+ 	se = get_seg_entry(sbi, curseg->segno);
+ 	se->type = type;
++	se->dirty = 1;
+ }
+ 
+ static void read_compacted_summaries(struct f2fs_sb_info *sbi)
+-- 
+2.17.1
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
