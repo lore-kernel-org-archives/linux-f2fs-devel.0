@@ -1,8 +1,8 @@
-From: Liu Xue <liuxueliu.liu@huawei.com>
-Subject: [PATCH] f2fs-tools: calculate inode checksum and
- writeback
-Date: Thu, 14 Jun 2018 11:10:22 +0800
-Message-ID: <1528945822-85289-1-git-send-email-liuxueliu.liu@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to propagate return value of
+ scan_nat_page()
+Date: Fri, 15 Jun 2018 14:45:57 +0800
+Message-ID: <20180615064557.5096-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,13 +10,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <liuxueliu.liu@huawei.com>) id 1fTIf8-0005yt-VI
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 Jun 2018 03:11:02 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1fTiVb-0006Vn-Pp
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Jun 2018 06:46:55 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fTIf6-004qdu-BY
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 Jun 2018 03:11:02 +0000
+ id 1fTiVZ-00BgW1-AR
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Jun 2018 06:46:55 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,84 +27,208 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
-Cc: Liu Xue <liuxueliu.liu@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Calculate inode checksum and writeback when processing
-sload or resize.
+As Anatoly Trosinenko reported in bugzilla:
 
-Signed-off-by: Xue Liu <liuxueliu.liu@huawei.com>
+How to reproduce:
+1. Compile the 73fcb1a370c76 version of the kernel using the config attached
+2. Unpack and mount the attached filesystem image as F2FS
+3. The kernel will BUG() on mount (BUGs are explicitly enabled in config)
+
+[    2.233612] F2FS-fs (sda): Found nat_bits in checkpoint
+[    2.248422] ------------[ cut here ]------------
+[    2.248857] kernel BUG at fs/f2fs/node.c:1967!
+[    2.249760] invalid opcode: 0000 [#1] SMP NOPTI
+[    2.250219] Modules linked in:
+[    2.251848] CPU: 0 PID: 944 Comm: mount Not tainted 4.17.0-rc5+ #1
+[    2.252331] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+[    2.253305] RIP: 0010:build_free_nids+0x337/0x3f0
+[    2.253672] RSP: 0018:ffffae7fc0857c50 EFLAGS: 00000246
+[    2.254080] RAX: 00000000ffffffff RBX: 0000000000000123 RCX: 0000000000000001
+[    2.254638] RDX: ffff9aa7063d5c00 RSI: 0000000000000122 RDI: ffff9aa705852e00
+[    2.255190] RBP: ffff9aa705852e00 R08: 0000000000000001 R09: ffff9aa7059090c0
+[    2.255719] R10: 0000000000000000 R11: 0000000000000000 R12: ffff9aa705852e00
+[    2.256242] R13: ffff9aa7063ad000 R14: ffff9aa705919000 R15: 0000000000000123
+[    2.256809] FS:  00000000023078c0(0000) GS:ffff9aa707800000(0000) knlGS:0000000000000000
+[    2.258654] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    2.259153] CR2: 00000000005511ae CR3: 0000000005872000 CR4: 00000000000006f0
+[    2.259801] Call Trace:
+[    2.260583]  build_node_manager+0x5cd/0x600
+[    2.260963]  f2fs_fill_super+0x66a/0x17c0
+[    2.261300]  ? f2fs_commit_super+0xe0/0xe0
+[    2.261622]  mount_bdev+0x16e/0x1a0
+[    2.261899]  mount_fs+0x30/0x150
+[    2.262398]  vfs_kern_mount.part.28+0x4f/0xf0
+[    2.262743]  do_mount+0x5d0/0xc60
+[    2.263010]  ? _copy_from_user+0x37/0x60
+[    2.263313]  ? memdup_user+0x39/0x60
+[    2.263692]  ksys_mount+0x7b/0xd0
+[    2.263960]  __x64_sys_mount+0x1c/0x20
+[    2.264268]  do_syscall_64+0x43/0xf0
+[    2.264560]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[    2.265095] RIP: 0033:0x48d31a
+[    2.265502] RSP: 002b:00007ffc6fe60a08 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+[    2.266089] RAX: ffffffffffffffda RBX: 0000000000008000 RCX: 000000000048d31a
+[    2.266607] RDX: 00007ffc6fe62fa5 RSI: 00007ffc6fe62f9d RDI: 00007ffc6fe62f94
+[    2.267130] RBP: 00000000023078a0 R08: 0000000000000000 R09: 0000000000000000
+[    2.267670] R10: 0000000000008000 R11: 0000000000000246 R12: 0000000000000000
+[    2.268192] R13: 0000000000000000 R14: 00007ffc6fe60c78 R15: 0000000000000000
+[    2.268767] Code: e8 5f c3 ff ff 83 c3 01 41 83 c7 01 81 fb c7 01 00 00 74 48 44 39 7d 04 76 42 48 63 c3 48 8d 04 c0 41 8b 44 06 05 83 f8 ff 75 c1 <0f> 0b 49 8b 45 50 48 8d b8 b0 00 00 00 e8 37 59 69 00 b9 01 00
+[    2.270434] RIP: build_free_nids+0x337/0x3f0 RSP: ffffae7fc0857c50
+[    2.271426] ---[ end trace ab20c06cd3c8fde4 ]---
+
+During loading NAT entries, we will do sanity check, once the entry info
+is corrupted, it will cause BUG_ON directly to protect user data from
+being overwrited.
+
+In this case, it will be better to just return failure on mount() instead
+of panic, so that user can get hint from kmsg and try fsck for recovery
+immediately rather than after an abnormal reboot.
+
+https://bugzilla.kernel.org/show_bug.cgi?id=199769
+
+Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fsck/fsck.h    | 1 +
- fsck/mount.c   | 6 ++++--
- fsck/segment.c | 2 +-
- fsck/xattr.c   | 3 +--
- 4 files changed, 7 insertions(+), 5 deletions(-)
+ fs/f2fs/f2fs.h |  2 +-
+ fs/f2fs/node.c | 42 ++++++++++++++++++++++++++++++------------
+ 2 files changed, 31 insertions(+), 13 deletions(-)
 
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index cbe7fc4..f90bcf9 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -221,6 +221,7 @@ int f2fs_resize(struct f2fs_sb_info *);
- int f2fs_sload(struct f2fs_sb_info *);
- 
- /* segment.c */
-+void write_inode(u64, struct f2fs_node *);
- void reserve_new_block(struct f2fs_sb_info *, block_t *,
- 					struct f2fs_summary *, int);
- void new_data_block(struct f2fs_sb_info *, void *,
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 0a30adb..87b6295 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -1551,6 +1551,9 @@ void update_data_blkaddr(struct f2fs_sb_info *sbi, nid_t nid,
- 
- 		oldaddr = le32_to_cpu(node_blk->i.i_addr[ofs + ofs_in_node]);
- 		node_blk->i.i_addr[ofs + ofs_in_node] = cpu_to_le32(newaddr);
-+		if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM))
-+			node_blk->i.i_inode_checksum =
-+				cpu_to_le32(f2fs_inode_chksum(node_blk));
- 	} else {
- 		oldaddr = le32_to_cpu(node_blk->dn.addr[ofs_in_node]);
- 		node_blk->dn.addr[ofs_in_node] = cpu_to_le32(newaddr);
-@@ -1574,8 +1577,7 @@ void update_data_blkaddr(struct f2fs_sb_info *sbi, nid_t nid,
- 		node_blk->i.i_ext.len = 0;
- 
- 		/* update inode block */
--		ret = dev_write_block(node_blk, ni.blk_addr);
--		ASSERT(ret >= 0);
-+		write_inode(ni.blk_addr, node_blk);
- 	}
- 	free(node_blk);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index d2b8365e0a64..8ea76fdd1bfd 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2837,7 +2837,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+ 			struct writeback_control *wbc,
+ 			bool do_balance, enum iostat_type io_type);
+-void f2fs_build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount);
++int f2fs_build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount);
+ bool f2fs_alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid);
+ void f2fs_alloc_nid_done(struct f2fs_sb_info *sbi, nid_t nid);
+ void f2fs_alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 4a3311be4003..65bc29862169 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1968,7 +1968,7 @@ static void remove_free_nid(struct f2fs_sb_info *sbi, nid_t nid)
+ 		kmem_cache_free(free_nid_slab, i);
  }
-diff --git a/fsck/segment.c b/fsck/segment.c
-index 4f8bdb4..50f0d73 100644
---- a/fsck/segment.c
-+++ b/fsck/segment.c
-@@ -16,7 +16,7 @@
- #include "fsck.h"
- #include "node.h"
  
--static void write_inode(u64 blkaddr, struct f2fs_node *inode)
-+void write_inode(u64 blkaddr, struct f2fs_node *inode)
+-static void scan_nat_page(struct f2fs_sb_info *sbi,
++static int scan_nat_page(struct f2fs_sb_info *sbi,
+ 			struct page *nat_page, nid_t start_nid)
  {
- 	if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM))
- 		inode->i.i_inode_checksum =
-diff --git a/fsck/xattr.c b/fsck/xattr.c
-index 1d15d1b..7144a83 100644
---- a/fsck/xattr.c
-+++ b/fsck/xattr.c
-@@ -220,8 +220,7 @@ int f2fs_setxattr(struct f2fs_sb_info *sbi, nid_t ino, int index, const char *na
- 	write_all_xattrs(sbi, inode, new_hsize, base_addr);
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+@@ -1986,7 +1986,10 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
+ 			break;
  
- 	/* inode need update */
--	ret = dev_write_block(inode, ni.blk_addr);
--	ASSERT(ret >= 0);
-+	write_inode(ni.blk_addr, inode);
- exit:
- 	free(base_addr);
- 	return error;
+ 		blk_addr = le32_to_cpu(nat_blk->entries[i].block_addr);
+-		f2fs_bug_on(sbi, blk_addr == NEW_ADDR);
++
++		if (blk_addr == NEW_ADDR)
++			return -EINVAL;
++
+ 		if (blk_addr == NULL_ADDR) {
+ 			add_free_nid(sbi, start_nid, true, true);
+ 		} else {
+@@ -1995,6 +1998,8 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
+ 			spin_unlock(&NM_I(sbi)->nid_list_lock);
+ 		}
+ 	}
++
++	return 0;
+ }
+ 
+ static void scan_curseg_cache(struct f2fs_sb_info *sbi)
+@@ -2050,11 +2055,11 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
+ 	up_read(&nm_i->nat_tree_lock);
+ }
+ 
+-static void __f2fs_build_free_nids(struct f2fs_sb_info *sbi,
++static int __f2fs_build_free_nids(struct f2fs_sb_info *sbi,
+ 						bool sync, bool mount)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+-	int i = 0;
++	int i = 0, ret;
+ 	nid_t nid = nm_i->next_scan_nid;
+ 
+ 	if (unlikely(nid >= nm_i->max_nid))
+@@ -2062,17 +2067,17 @@ static void __f2fs_build_free_nids(struct f2fs_sb_info *sbi,
+ 
+ 	/* Enough entries */
+ 	if (nm_i->nid_cnt[FREE_NID] >= NAT_ENTRY_PER_BLOCK)
+-		return;
++		return 0;
+ 
+ 	if (!sync && !f2fs_available_free_memory(sbi, FREE_NIDS))
+-		return;
++		return 0;
+ 
+ 	if (!mount) {
+ 		/* try to find free nids in free_nid_bitmap */
+ 		scan_free_nid_bits(sbi);
+ 
+ 		if (nm_i->nid_cnt[FREE_NID] >= NAT_ENTRY_PER_BLOCK)
+-			return;
++			return 0;
+ 	}
+ 
+ 	/* readahead nat pages to be scanned */
+@@ -2086,8 +2091,16 @@ static void __f2fs_build_free_nids(struct f2fs_sb_info *sbi,
+ 						nm_i->nat_block_bitmap)) {
+ 			struct page *page = get_current_nat_page(sbi, nid);
+ 
+-			scan_nat_page(sbi, page, nid);
++			ret = scan_nat_page(sbi, page, nid);
+ 			f2fs_put_page(page, 1);
++
++			if (ret) {
++				up_read(&nm_i->nat_tree_lock);
++				f2fs_bug_on(sbi, !mount);
++				f2fs_msg(sbi->sb, KERN_ERR,
++					"NAT is corrupt, run fsck to fix it");
++				return -EINVAL;
++			}
+ 		}
+ 
+ 		nid += (NAT_ENTRY_PER_BLOCK - (nid % NAT_ENTRY_PER_BLOCK));
+@@ -2108,13 +2121,19 @@ static void __f2fs_build_free_nids(struct f2fs_sb_info *sbi,
+ 
+ 	f2fs_ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nm_i->next_scan_nid),
+ 					nm_i->ra_nid_pages, META_NAT, false);
++
++	return 0;
+ }
+ 
+-void f2fs_build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
++int f2fs_build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
+ {
++	int ret;
++
+ 	mutex_lock(&NM_I(sbi)->build_lock);
+-	__f2fs_build_free_nids(sbi, sync, mount);
++	ret = __f2fs_build_free_nids(sbi, sync, mount);
+ 	mutex_unlock(&NM_I(sbi)->build_lock);
++
++	return ret;
+ }
+ 
+ /*
+@@ -2797,8 +2816,7 @@ int f2fs_build_node_manager(struct f2fs_sb_info *sbi)
+ 	/* load free nid status from nat_bits table */
+ 	load_free_nid_bitmap(sbi);
+ 
+-	f2fs_build_free_nids(sbi, true, true);
+-	return 0;
++	return f2fs_build_free_nids(sbi, true, true);
+ }
+ 
+ void f2fs_destroy_node_manager(struct f2fs_sb_info *sbi)
 -- 
-1.8.5.2
+2.18.0.rc1
 
 
 ------------------------------------------------------------------------------
