@@ -1,105 +1,28 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH RFC] Revert "f2fs: avoid cpu lockup"
-Date: Fri, 15 Jun 2018 17:46:17 -0700
-Message-ID: <20180616004617.GA66538@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1527755549-22660-1-git-send-email-heyunlei@huawei.com>
- <20180531175618.GA9718@jaegeuk-macbookpro.roam.corp.google.com>
- <42B685BFA705F94C860C6DD0752F056548D4AC79@dggemm510-mbx.china.huawei.com>
- <20180601183508.GA44432@jaegeuk-macbookpro.roam.corp.google.com>
- <52452ca2-d4d5-30cc-1591-b2a67797bcb5@huawei.com>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v13 00/72] Convert page cache to XArray
+Date: Sat, 16 Jun 2018 05:07:21 -0700
+Message-ID: <20180616120721.GA15447@bombadil.infradead.org>
+References: <20180611140639.17215-1-willy@infradead.org>
+ <20180612104041.GB24375@twin.jikos.cz>
+ <20180612113122.GA19433@bombadil.infradead.org>
+ <20180612193741.GC28436@linux.intel.com>
+ <20180612194619.GH19433@bombadil.infradead.org>
+ <20180613201021.GA4801@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1fTzMI-00085c-GD
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 16 Jun 2018 00:46:26 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fTzMG-00FJef-U6
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 16 Jun 2018 00:46:26 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <52452ca2-d4d5-30cc-1591-b2a67797bcb5@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: "Zhangdianfang (Euler)" <zhangdianfang@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+In-Reply-To: <20180613201021.GA4801@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ross Zwisler <ross.zwisler@linux.intel.com>, dsterba@suse.cz, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Lukas Czerner <lczerner@redhat.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-T24gMDYvMDQsIENoYW8gWXUgd3JvdGU6Cj4gT24gMjAxOC82LzIgMjozNSwgSmFlZ2V1ayBLaW0g
-d3JvdGU6Cj4gPiBPbiAwNi8wMSwgaGV5dW5sZWkgd3JvdGU6Cj4gPj4KPiA+Pgo+ID4+PiAtLS0t
-LU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+ID4+PiBGcm9tOiBKYWVnZXVrIEtpbSBbbWFpbHRvOmph
-ZWdldWtAa2VybmVsLm9yZ10KPiA+Pj4gU2VudDogRnJpZGF5LCBKdW5lIDAxLCAyMDE4IDE6NTYg
-QU0KPiA+Pj4gVG86IGhleXVubGVpCj4gPj4+IENjOiBZdWNoYW8gKFQpOyBsaW51eC1mMmZzLWRl
-dmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldDsgV2FuZ2JpbnRpYW47IFpoYW5nZGlhbmZhbmcgKEV1
-bGVyKQo+ID4+PiBTdWJqZWN0OiBSZTogW2YyZnMtZGV2XVtQQVRDSCBSRkNdIFJldmVydCAiZjJm
-czogYXZvaWQgY3B1IGxvY2t1cCIKPiA+Pj4KPiA+Pj4gSGkgWXVubGVpLAo+ID4+Pgo+ID4+IEhp
-IEphZWdldWvvvIwKPiA+Pj4gT24gMDUvMzEsIFl1bmxlaSBIZSB3cm90ZToKPiA+Pj4+IFRoaXMg
-cmV2ZXJ0cyBjb21taXQgNGRiMDhkMDE2Y2NlZGI1Yjk3ODY5NzI0YTA5Njk5MGFjYWQ1OTY4NSB0
-bwo+ID4+Pj4gZml4IGh1bmd0YXNrIHByb2JsZW0gd2hpY2ggY2FuIGJlIHJlcHJvZHVjZWQgYXMg
-Zm9sbG93Ogo+ID4+Pj4KPiA+Pj4+IFRocmVhZCAwfjM6Cj4gPj4+Pgo+ID4+Pj4gd2hpbGUgdHJ1
-ZQo+ID4+Pj4gZG8KPiA+Pj4+IAl0b3VjaCAveHh4L3Rlc3QvZmlsZV94eHgKPiA+Pj4+IGRvbmUK
-PiA+Pj4+Cj4gPj4+PiBUaHJlYWQgNSB3cml0ZSBhIG5ldyBjaGVja3BvaW50IGV2ZXJ5IHRocmVl
-IHNlY29uZHMuCj4gPj4+Pgo+ID4+Pj4gSW4gdGhlIG1lYW50aW1lLCBmaW8gc3RhcnQgMTYgdGhy
-ZWFkcyBmb3IgcmFuZHdyaXRlLgo+ID4+Pj4KPiA+Pj4+IFdpdGggbXkgZGVidWcgaW5mbywgY3lj
-bGVzIG51bSB3aWxsIGV4Y2VlZCAxMDAwIGluIGZ1bmN0aW9uCj4gPj4+PiBmMmZzX3N5bmNfZGly
-dHlfaW5vZGVzLCBhbmQgbW9zdCBvZiBjeWNsZSB3aWxsIGJlIGRyb3BwZWQKPiA+Pj4+IGludG8g
-Y29uZ2VzdGlvbl93YWl0KCkgYW5kIHNsZWVwIG1vcmUgdGhhbiAyMG1zLgo+ID4+Pgo+ID4+PiBP
-cmlnaW5hbCBwYXRjaCB0cmllcyB0byBmaXggd2F0Y2hkb2cgd2hpY2ggc3luY19kaXJ0eV9pbm9k
-ZXMoKSBncmFicyBvbmUKPiA+Pj4gY3B1IGZvciBhIGxvbmcgdGltZS4gSGF2ZSB5b3UgdHJpZWQg
-cmVwcm9kdWNlIHRoYXQgYXMgd2VsbD8KPiA+Pj4KPiA+Pgo+ID4+IEkgaGF2ZSB0ZXN0IHRoaXMg
-cGF0Y2ggd2l0aCBpbmNyZWFzaW5nIHRvdWNoIGZpbGUgdGhyZWFkcyB0byAzMu+8jGFuZCBvdGhl
-ciByZW1haW4KPiA+PiBzYW1lIGFzIHByZXZpb3VzLCBCdXQgSSBoYXZlIG5vdCByZXByb2R1Y2Ug
-eW91ciBwcm9ibGVtLiAKPiA+Pgo+ID4+IEJlc2lkZXMsIEkgdHJ5IHRvIHRlc3QgdGhlIGNvZGUg
-anVzdCByZW1vdmUgdGhpcyBsaW5lOgo+ID4+IAkJY29uZ2VzdGlvbl93YWl0KEJMS19SV19BU1lO
-QywgSFovNTApOwo+ID4+Cj4gPj4gSXQncyBhbHNvIG9rIHRvIG15IHRlc3QsIGFuZCBjeWNsZSBu
-dW0gcmVkdWNlZCB0byA8IDMKPiA+IAo+ID4gWW91IG1heSBiZSBhYmxlIHRvIGFkZCB0aHJlc2hv
-bGQgaGVyZT8KPiAKPiBIbW0sIGlmIGN5Y2xlIGV4Y2VlZHMgdGhyZXNob2xkLCAgc3RpbGwgd2Ug
-Y2FuIGVuY291bnRlciB0aGlzIGlzc3VlLiBIb3cgYWJvdXQKPiBqdXN0IHJlbW92aW5nIGNvbmdl
-c3Rpb25fd2FpdCwgYW5kIGtlZXAgY29uZF9yZXNjaGVkLCBpdCBjYW4gc3dpdGNoIGN1cnJlbnQg
-Y3B1IG91dD8KCk9rYXksIGxldCdzIHRyeSB0aGF0IGFuZCBzZWUgd2hhdCdsbCBoYXBwZW4uCgpU
-aGFua3MsCgo+IAo+IFRoYW5rcywKPiAKPiA+IAo+ID4+Cj4gPj4gVGhhbmtzLgo+ID4+Cj4gPj4+
-IFRoYW5rcywKPiA+Pj4KPiA+Pj4+Cj4gPj4+PiBTaWduZWQtb2ZmLWJ5OiBZdW5sZWkgSGUgPGhl
-eXVubGVpQGh1YXdlaS5jb20+Cj4gPj4+PiAtLS0KPiA+Pj4+ICBmcy9mMmZzL2NoZWNrcG9pbnQu
-YyB8IDEwIC0tLS0tLS0tLS0KPiA+Pj4+ICAxIGZpbGUgY2hhbmdlZCwgMTAgZGVsZXRpb25zKC0p
-Cj4gPj4+Pgo+ID4+Pj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvY2hlY2twb2ludC5jIGIvZnMvZjJm
-cy9jaGVja3BvaW50LmMKPiA+Pj4+IGluZGV4IDhlYjE4NGMuLjc2ZTE4NTYgMTAwNjQ0Cj4gPj4+
-PiAtLS0gYS9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+ID4+Pj4gKysrIGIvZnMvZjJmcy9jaGVja3Bv
-aW50LmMKPiA+Pj4+IEBAIC05NDQsNyArOTQ0LDYgQEAgaW50IGYyZnNfc3luY19kaXJ0eV9pbm9k
-ZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBlbnVtIGlub2RlX3R5cGUgdHlwZSkKPiA+Pj4+
-ICAJc3RydWN0IGlub2RlICppbm9kZTsKPiA+Pj4+ICAJc3RydWN0IGYyZnNfaW5vZGVfaW5mbyAq
-Zmk7Cj4gPj4+PiAgCWJvb2wgaXNfZGlyID0gKHR5cGUgPT0gRElSX0lOT0RFKTsKPiA+Pj4+IC0J
-dW5zaWduZWQgbG9uZyBpbm8gPSAwOwo+ID4+Pj4KPiA+Pj4+ICAJdHJhY2VfZjJmc19zeW5jX2Rp
-cnR5X2lub2Rlc19lbnRlcihzYmktPnNiLCBpc19kaXIsCj4gPj4+PiAgCQkJCWdldF9wYWdlcyhz
-YmksIGlzX2RpciA/Cj4gPj4+PiBAQCAtOTY3LDggKzk2Niw2IEBAIGludCBmMmZzX3N5bmNfZGly
-dHlfaW5vZGVzKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgZW51bSBpbm9kZV90eXBlIHR5cGUp
-Cj4gPj4+PiAgCWlub2RlID0gaWdyYWIoJmZpLT52ZnNfaW5vZGUpOwo+ID4+Pj4gIAlzcGluX3Vu
-bG9jaygmc2JpLT5pbm9kZV9sb2NrW3R5cGVdKTsKPiA+Pj4+ICAJaWYgKGlub2RlKSB7Cj4gPj4+
-PiAtCQl1bnNpZ25lZCBsb25nIGN1cl9pbm8gPSBpbm9kZS0+aV9pbm87Cj4gPj4+PiAtCj4gPj4+
-PiAgCQlpZiAoaXNfZGlyKQo+ID4+Pj4gIAkJCUYyRlNfSShpbm9kZSktPmNwX3Rhc2sgPSBjdXJy
-ZW50Owo+ID4+Pj4KPiA+Pj4+IEBAIC05NzgsMTMgKzk3NSw2IEBAIGludCBmMmZzX3N5bmNfZGly
-dHlfaW5vZGVzKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgZW51bSBpbm9kZV90eXBlIHR5cGUp
-Cj4gPj4+PiAgCQkJRjJGU19JKGlub2RlKS0+Y3BfdGFzayA9IE5VTEw7Cj4gPj4+Pgo+ID4+Pj4g
-IAkJaXB1dChpbm9kZSk7Cj4gPj4+PiAtCQkvKiBXZSBuZWVkIHRvIGdpdmUgY3B1IHRvIGFub3Ro
-ZXIgd3JpdGVycy4gKi8KPiA+Pj4+IC0JCWlmIChpbm8gPT0gY3VyX2lubykgewo+ID4+Pj4gLQkJ
-CWNvbmdlc3Rpb25fd2FpdChCTEtfUldfQVNZTkMsIEhaLzUwKTsKPiA+Pj4+IC0JCQljb25kX3Jl
-c2NoZWQoKTsKPiA+Pj4+IC0JCX0gZWxzZSB7Cj4gPj4+PiAtCQkJaW5vID0gY3VyX2lubzsKPiA+
-Pj4+IC0JCX0KPiA+Pj4+ICAJfSBlbHNlIHsKPiA+Pj4+ICAJCS8qCj4gPj4+PiAgCQkgKiBXZSBz
-aG91bGQgc3VibWl0IGJpbywgc2luY2UgaXQgZXhpc3RzIHNldmVyYWwKPiA+Pj4+IC0tCj4gPj4+
-PiAxLjkuMQo+ID4gCj4gPiAuCj4gPiAKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpDaGVjayBvdXQg
-dGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKZW5n
-YWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJm
-cy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5u
-ZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJm
-cy1kZXZlbAo=
+On Wed, Jun 13, 2018 at 02:10:21PM -0600, Ross Zwisler wrote:
+> I tested xarray-20180612 vs next-20180612, and your patches cause a new
+> deadlock with XFS + DAX + generic/269.  Here's the output from
+> "echo w > /proc/sysrq-trigger":
+
+After getting my pmem setup working (thanks for the help Dan &
+Jeff), I tracked this down to a missing call to dax_wake_entry() in
+dax_writeback_one().  I'm running xfstests -g auto now to see if
+there's anything else that needs to be fixed.
