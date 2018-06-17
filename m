@@ -1,22 +1,23 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v14 58/74] fs: Convert buffer to XArray
-Date: Sat, 16 Jun 2018 19:00:36 -0700
-Message-ID: <20180617020052.4759-59-willy@infradead.org>
+Subject: [PATCH v14 31/74] radix tree test suite: Convert
+ regression1 to XArray
+Date: Sat, 16 Jun 2018 19:00:09 -0700
+Message-ID: <20180617020052.4759-32-willy@infradead.org>
 References: <20180617020052.4759-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1fUN0o-0003FV-9k
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:50 +0000
+ (envelope-from <willy@infradead.org>) id 1fUN0v-0002l9-Sz
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:57 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fUN0n-00BzIV-1v
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:50 +0000
+ id 1fUN0u-00HBxC-Gj
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:57 +0000
 In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -30,59 +31,118 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-Mostly comment fixes, but one use of __xa_set_tag.
+Now the page cache lookup is using the XArray, let's convert this
+regression test from the radix tree API to the XArray so it's testing
+roughly the same thing it was testing before.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- fs/buffer.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ tools/testing/radix-tree/regression1.c | 58 +++++++++-----------------
+ 1 file changed, 19 insertions(+), 39 deletions(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 8194e3049fc5..deae44fd64e9 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -562,7 +562,7 @@ void mark_buffer_dirty_inode(struct buffer_head *bh, struct inode *inode)
- EXPORT_SYMBOL(mark_buffer_dirty_inode);
+diff --git a/tools/testing/radix-tree/regression1.c b/tools/testing/radix-tree/regression1.c
+index 0aece092f40e..b4a4a7168986 100644
+--- a/tools/testing/radix-tree/regression1.c
++++ b/tools/testing/radix-tree/regression1.c
+@@ -53,12 +53,12 @@ struct page {
+ 	unsigned long index;
+ };
  
- /*
-- * Mark the page dirty, and set it dirty in the radix tree, and mark the inode
-+ * Mark the page dirty, and set it dirty in the page cache, and mark the inode
-  * dirty.
-  *
-  * If warn is true, then emit a warning if the page is not uptodate and has
-@@ -579,8 +579,8 @@ void __set_page_dirty(struct page *page, struct address_space *mapping,
- 	if (page->mapping) {	/* Race with truncate? */
- 		WARN_ON_ONCE(warn && !PageUptodate(page));
- 		account_page_dirtied(page, mapping);
--		radix_tree_tag_set(&mapping->i_pages,
--				page_index(page), PAGECACHE_TAG_DIRTY);
-+		__xa_set_tag(&mapping->i_pages, page_index(page),
-+				PAGECACHE_TAG_DIRTY);
+-static struct page *page_alloc(void)
++static struct page *page_alloc(int index)
+ {
+ 	struct page *p;
+ 	p = malloc(sizeof(struct page));
+ 	p->count = 1;
+-	p->index = 1;
++	p->index = index;
+ 	pthread_mutex_init(&p->lock, NULL);
+ 
+ 	return p;
+@@ -80,53 +80,33 @@ static void page_free(struct page *p)
+ static unsigned find_get_pages(unsigned long start,
+ 			    unsigned int nr_pages, struct page **pages)
+ {
+-	unsigned int i;
+-	unsigned int ret;
+-	unsigned int nr_found;
++	XA_STATE(xas, &mt_tree, start);
++	struct page *page;
++	unsigned int ret = 0;
+ 
+ 	rcu_read_lock();
+-restart:
+-	nr_found = radix_tree_gang_lookup_slot(&mt_tree,
+-				(void ***)pages, NULL, start, nr_pages);
+-	ret = 0;
+-	for (i = 0; i < nr_found; i++) {
+-		struct page *page;
+-repeat:
+-		page = radix_tree_deref_slot((void **)pages[i]);
+-		if (unlikely(!page))
++	xas_for_each(&xas, page, ULONG_MAX) {
++		if (xas_retry(&xas, page))
+ 			continue;
+ 
+-		if (radix_tree_exception(page)) {
+-			if (radix_tree_deref_retry(page)) {
+-				/*
+-				 * Transient condition which can only trigger
+-				 * when entry at index 0 moves out of or back
+-				 * to root: none yet gotten, safe to restart.
+-				 */
+-				assert((start | i) == 0);
+-				goto restart;
+-			}
+-			/*
+-			 * No exceptional entries are inserted in this test.
+-			 */
+-			assert(0);
+-		}
+-
+ 		pthread_mutex_lock(&page->lock);
+-		if (!page->count) {
+-			pthread_mutex_unlock(&page->lock);
+-			goto repeat;
+-		}
++		if (!page->count)
++			goto unlock;
++
+ 		/* don't actually update page refcount */
+ 		pthread_mutex_unlock(&page->lock);
+ 
+ 		/* Has the page moved? */
+-		if (unlikely(page != *((void **)pages[i]))) {
+-			goto repeat;
+-		}
++		if (unlikely(page != xas_reload(&xas)))
++			goto put_page;
+ 
+ 		pages[ret] = page;
+ 		ret++;
++		continue;
++unlock:
++		pthread_mutex_unlock(&page->lock);
++put_page:
++		xas_reset(&xas);
  	}
- 	xa_unlock_irqrestore(&mapping->i_pages, flags);
- }
-@@ -1043,7 +1043,7 @@ __getblk_slow(struct block_device *bdev, sector_t block,
-  * The relationship between dirty buffers and dirty pages:
-  *
-  * Whenever a page has any dirty buffers, the page's dirty bit is set, and
-- * the page is tagged dirty in its radix tree.
-+ * the page is tagged dirty in the page cache.
-  *
-  * At all times, the dirtiness of the buffers represents the dirtiness of
-  * subsections of the page.  If the page has buffers, the page dirty bit is
-@@ -1066,9 +1066,9 @@ __getblk_slow(struct block_device *bdev, sector_t block,
-  * mark_buffer_dirty - mark a buffer_head as needing writeout
-  * @bh: the buffer_head to mark dirty
-  *
-- * mark_buffer_dirty() will set the dirty bit against the buffer, then set its
-- * backing page dirty, then tag the page as dirty in its address_space's radix
-- * tree and then attach the address_space's inode to its superblock's dirty
-+ * mark_buffer_dirty() will set the dirty bit against the buffer, then set
-+ * its backing page dirty, then tag the page as dirty in the page cache
-+ * and then attach the address_space's inode to its superblock's dirty
-  * inode list.
-  *
-  * mark_buffer_dirty() is atomic.  It takes bh->b_page->mapping->private_lock,
+ 	rcu_read_unlock();
+ 	return ret;
+@@ -145,12 +125,12 @@ static void *regression1_fn(void *arg)
+ 		for (j = 0; j < 1000000; j++) {
+ 			struct page *p;
+ 
+-			p = page_alloc();
++			p = page_alloc(0);
+ 			pthread_mutex_lock(&mt_lock);
+ 			radix_tree_insert(&mt_tree, 0, p);
+ 			pthread_mutex_unlock(&mt_lock);
+ 
+-			p = page_alloc();
++			p = page_alloc(1);
+ 			pthread_mutex_lock(&mt_lock);
+ 			radix_tree_insert(&mt_tree, 1, p);
+ 			pthread_mutex_unlock(&mt_lock);
 -- 
 2.17.1
 
