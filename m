@@ -1,133 +1,171 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v14 61/74] f2fs: Convert to XArray
-Date: Sat, 16 Jun 2018 19:00:39 -0700
-Message-ID: <20180617020052.4759-62-willy@infradead.org>
+Subject: [PATCH v14 68/74] dax: Convert dax_lock_page to XArray
+Date: Sat, 16 Jun 2018 19:00:46 -0700
+Message-ID: <20180617020052.4759-69-willy@infradead.org>
 References: <20180617020052.4759-1-willy@infradead.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1fUN0k-0002h6-KS
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:46 +0000
-Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fUN0j-00HBwY-8O
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:46 +0000
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>
-
-This is a straightforward conversion.
+Cc: Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- fs/f2fs/data.c   | 4 ++--
- fs/f2fs/dir.c    | 2 +-
- fs/f2fs/f2fs.h   | 2 +-
- fs/f2fs/inline.c | 2 +-
- fs/f2fs/node.c   | 6 ++----
- 5 files changed, 7 insertions(+), 9 deletions(-)
+ fs/dax.c | 96 +++++++++++++++++++++++++++++---------------------------
+ 1 file changed, 50 insertions(+), 46 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index e5c0b1e74ce6..b274300995cd 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2600,13 +2600,13 @@ const struct address_space_operations f2fs_dblock_aops = {
- #endif
- };
- 
--void f2fs_clear_radix_tree_dirty_tag(struct page *page)
-+void f2fs_clear_page_cache_dirty_tag(struct page *page)
- {
- 	struct address_space *mapping = page_mapping(page);
- 	unsigned long flags;
- 
- 	xa_lock_irqsave(&mapping->i_pages, flags);
--	radix_tree_tag_clear(&mapping->i_pages, page_index(page),
-+	__xa_clear_tag(&mapping->i_pages, page_index(page),
- 						PAGECACHE_TAG_DIRTY);
- 	xa_unlock_irqrestore(&mapping->i_pages, flags);
+diff --git a/fs/dax.c b/fs/dax.c
+index 08595ffde566..54a01380527a 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -99,6 +99,22 @@ static void *dax_make_locked(unsigned long pfn, unsigned long flags)
+ 			DAX_LOCKED);
  }
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 7f955c4e86a4..9c2a23242f64 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -730,7 +730,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
  
- 	if (bit_pos == NR_DENTRY_IN_BLOCK &&
- 		!f2fs_truncate_hole(dir, page->index, page->index + 1)) {
--		f2fs_clear_radix_tree_dirty_tag(page);
-+		f2fs_clear_page_cache_dirty_tag(page);
- 		clear_page_dirty_for_io(page);
- 		ClearPagePrivate(page);
- 		ClearPageUptodate(page);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4d8b1de83143..1f71ab2ddad9 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2973,7 +2973,7 @@ int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
- 			struct page *page, enum migrate_mode mode);
- #endif
- bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len);
--void f2fs_clear_radix_tree_dirty_tag(struct page *page);
-+void f2fs_clear_page_cache_dirty_tag(struct page *page);
- 
- /*
-  * gc.c
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 043830be5662..48f40d344a2a 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -226,7 +226,7 @@ int f2fs_write_inline_data(struct inode *inode, struct page *page)
- 	kunmap_atomic(src_addr);
- 	set_page_dirty(dn.inode_page);
- 
--	f2fs_clear_radix_tree_dirty_tag(page);
-+	f2fs_clear_page_cache_dirty_tag(page);
- 
- 	set_inode_flag(inode, FI_APPEND_WRITE);
- 	set_inode_flag(inode, FI_DATA_EXIST);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 10643b11bd59..9aa076be8a0e 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -103,7 +103,7 @@ bool f2fs_available_free_memory(struct f2fs_sb_info *sbi, int type)
- static void clear_node_page_dirty(struct page *page)
++static unsigned long dax_is_pmd_entry(void *entry)
++{
++	return xa_to_value(entry) & DAX_PMD;
++}
++
++static void *dax_make_entry(pfn_t pfn, unsigned long flags)
++{
++	return xa_mk_value(flags | (pfn_t_to_pfn(pfn) << DAX_SHIFT));
++}
++
++static void *dax_make_page_entry(struct page *page, void *entry)
++{
++	pfn_t pfn = page_to_pfn_t(page);
++	return dax_make_entry(pfn, dax_is_pmd_entry(entry));
++}
++
+ static bool dax_is_locked(void *entry)
  {
- 	if (PageDirty(page)) {
--		f2fs_clear_radix_tree_dirty_tag(page);
-+		f2fs_clear_page_cache_dirty_tag(page);
- 		clear_page_dirty_for_io(page);
- 		dec_page_count(F2FS_P_SB(page), F2FS_DIRTY_NODES);
- 	}
-@@ -1168,9 +1168,7 @@ void f2fs_ra_node_page(struct f2fs_sb_info *sbi, nid_t nid)
- 	if (f2fs_check_nid_range(sbi, nid))
- 		return;
+ 	return xa_to_value(entry) & DAX_LOCKED;
+@@ -111,11 +127,6 @@ static unsigned int dax_entry_order(void *entry)
+ 	return 0;
+ }
+ 
+-static int dax_is_pmd_entry(void *entry)
+-{
+-	return xa_to_value(entry) & DAX_PMD;
+-}
+-
+ static int dax_is_pte_entry(void *entry)
+ {
+ 	return !(xa_to_value(entry) & DAX_PMD);
+@@ -466,78 +477,71 @@ static struct page *dax_busy_page(void *entry)
+ 
+ struct page *dax_lock_page(unsigned long pfn)
+ {
+-	pgoff_t index;
+-	struct inode *inode;
+-	wait_queue_head_t *wq;
+-	void *entry = NULL, **slot;
++	struct page *page = pfn_to_page(pfn);
++	XA_STATE(xas, NULL, 0);
++	void *entry;
+ 	struct address_space *mapping;
+-	struct wait_exceptional_entry_queue ewait;
+-	struct page *ret = NULL, *page = pfn_to_page(pfn);
  
 -	rcu_read_lock();
--	apage = radix_tree_lookup(&NODE_MAPPING(sbi)->i_pages, nid);
--	rcu_read_unlock();
-+	apage = xa_load(&NODE_MAPPING(sbi)->i_pages, nid);
- 	if (apage)
+ 	for (;;) {
++		rcu_read_lock();
+ 		mapping = READ_ONCE(page->mapping);
+ 
+-		if (!mapping || !IS_DAX(mapping->host))
++		if (!mapping || !IS_DAX(mapping->host)) {
++			page = NULL;
+ 			break;
++		}
+ 
+ 		/*
+ 		 * In the device-dax case there's no need to lock, a
+ 		 * struct dev_pagemap pin is sufficient to keep the
+ 		 * inode alive.
+ 		 */
+-		inode = mapping->host;
+-		if (S_ISCHR(inode->i_mode)) {
+-			ret = page;
++		if (S_ISCHR(mapping->host->i_mode))
+ 			break;
+-		}
+ 
+-		xa_lock_irq(&mapping->i_pages);
++		xas.xa = &mapping->i_pages;
++		xas_lock_irq(&xas);
++		rcu_read_unlock();
+ 		if (mapping != page->mapping) {
+ 			xa_unlock_irq(&mapping->i_pages);
+ 			continue;
+ 		}
+-		index = page->index;
+-
+-		init_wait(&ewait.wait);
+-		ewait.wait.func = wake_exceptional_entry_func;
+-
+-		entry = __radix_tree_lookup(&mapping->i_pages, index, NULL,
+-				&slot);
+-		if (!entry || WARN_ON_ONCE(!xa_is_value(entry))) {
+-			xa_unlock_irq(&mapping->i_pages);
+-			break;
+-		} else if (!slot_locked(mapping, slot)) {
+-			lock_slot(mapping, slot);
+-			ret = page;
+-			xa_unlock_irq(&mapping->i_pages);
+-			break;
++		xas_set(&xas, page->index);
++		entry = xas_load(&xas);
++		if (dax_is_locked(entry)) {
++			entry = get_unlocked_entry(&xas);
++			/* Did the page move while we slept? */
++			if (dax_to_pfn(entry) != pfn) {
++				xas_unlock_irq(&xas);
++				continue;
++			}
+ 		}
+-
+-		wq = dax_entry_waitqueue(&mapping->i_pages, index, entry,
+-				&ewait.key);
+-		prepare_to_wait_exclusive(wq, &ewait.wait,
+-				TASK_UNINTERRUPTIBLE);
+-		xa_unlock_irq(&mapping->i_pages);
+-		rcu_read_unlock();
+-		schedule();
+-		finish_wait(wq, &ewait.wait);
+-		rcu_read_lock();
++		dax_lock_entry(&xas, entry);
++		xas_unlock_irq(&xas);
++		goto out;
+ 	}
+ 	rcu_read_unlock();
+ 
++out:
+ 	return page;
+ }
+ 
+ void dax_unlock_page(struct page *page)
+ {
+ 	struct address_space *mapping = page->mapping;
+-	struct inode *inode = mapping->host;
++	XA_STATE(xas, &mapping->i_pages, page->index);
++	void *entry;
+ 
+-	if (S_ISCHR(inode->i_mode))
++	if (S_ISCHR(mapping->host->i_mode))
  		return;
  
+-	dax_unlock_mapping_entry(mapping, page->index);
++	xas_lock_irq(&xas);
++	entry = xas_load(&xas);
++	BUG_ON(!dax_is_locked(entry));
++	entry = dax_make_page_entry(page, entry);
++	xas_store(&xas, entry);
++	dax_wake_entry(&xas, entry, false);
++	xas_unlock_irq(&xas);
+ }
+ 
+ /*
 -- 
 2.17.1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
