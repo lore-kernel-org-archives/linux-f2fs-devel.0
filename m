@@ -1,135 +1,113 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v14 24/74] page cache: Convert find_get_entry to
- XArray
-Date: Sat, 16 Jun 2018 19:00:02 -0700
-Message-ID: <20180617020052.4759-25-willy@infradead.org>
+Subject: [PATCH v14 39/74] mm: Convert delete_from_swap_cache to XArray
+Date: Sat, 16 Jun 2018 19:00:17 -0700
+Message-ID: <20180617020052.4759-40-willy@infradead.org>
 References: <20180617020052.4759-1-willy@infradead.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1fUN0K-0003Ri-Gr
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:20 +0000
-Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fUN0J-00Gt8l-93
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:20 +0000
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>
+Cc: Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Slightly shorter and simpler code.
+Both callers of __delete_from_swap_cache have the swp_entry_t already,
+so pass that in to make constructing the XA_STATE easier.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- mm/filemap.c | 63 +++++++++++++++++++++++-----------------------------
- 1 file changed, 28 insertions(+), 35 deletions(-)
+ include/linux/swap.h |  5 +++--
+ mm/swap_state.c      | 24 ++++++++++--------------
+ mm/vmscan.c          |  2 +-
+ 3 files changed, 14 insertions(+), 17 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 7cdb1d4b8117..6db3d35ff5f6 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1382,47 +1382,40 @@ EXPORT_SYMBOL(page_cache_prev_gap);
-  */
- struct page *find_get_entry(struct address_space *mapping, pgoff_t offset)
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index a450a1d40b19..470570dac9e8 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -404,7 +404,7 @@ extern void show_swap_cache_info(void);
+ extern int add_to_swap(struct page *page);
+ extern int add_to_swap_cache(struct page *, swp_entry_t, gfp_t);
+ extern int __add_to_swap_cache(struct page *page, swp_entry_t entry);
+-extern void __delete_from_swap_cache(struct page *);
++extern void __delete_from_swap_cache(struct page *, swp_entry_t entry);
+ extern void delete_from_swap_cache(struct page *);
+ extern void free_page_and_swap_cache(struct page *);
+ extern void free_pages_and_swap_cache(struct page **, int);
+@@ -564,7 +564,8 @@ static inline int add_to_swap_cache(struct page *page, swp_entry_t entry,
+ 	return -1;
+ }
+ 
+-static inline void __delete_from_swap_cache(struct page *page)
++static inline void __delete_from_swap_cache(struct page *page,
++							swp_entry_t entry)
  {
--	void **pagep;
-+	XA_STATE(xas, &mapping->i_pages, offset);
- 	struct page *head, *page;
+ }
  
- 	rcu_read_lock();
- repeat:
--	page = NULL;
--	pagep = radix_tree_lookup_slot(&mapping->i_pages, offset);
--	if (pagep) {
--		page = radix_tree_deref_slot(pagep);
--		if (unlikely(!page))
--			goto out;
--		if (radix_tree_exception(page)) {
--			if (radix_tree_deref_retry(page))
--				goto repeat;
--			/*
--			 * A shadow entry of a recently evicted page,
--			 * or a swap entry from shmem/tmpfs.  Return
--			 * it without attempting to raise page count.
--			 */
--			goto out;
--		}
-+	xas_reset(&xas);
-+	page = xas_load(&xas);
-+	if (xas_retry(&xas, page))
-+		goto repeat;
-+	/*
-+	 * A shadow entry of a recently evicted page, or a swap entry from
-+	 * shmem/tmpfs.  Return it without attempting to raise page count.
-+	 */
-+	if (!page || xa_is_value(page))
-+		goto out;
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index ca18407a79aa..5cd42d05177e 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -154,23 +154,22 @@ int add_to_swap_cache(struct page *page, swp_entry_t entry, gfp_t gfp)
+  * This must be called only on pages that have
+  * been verified to be in the swap cache.
+  */
+-void __delete_from_swap_cache(struct page *page)
++void __delete_from_swap_cache(struct page *page, swp_entry_t entry)
+ {
+-	struct address_space *address_space;
++	struct address_space *address_space = swap_address_space(entry);
+ 	int i, nr = hpage_nr_pages(page);
+-	swp_entry_t entry;
+-	pgoff_t idx;
++	pgoff_t idx = swp_offset(entry);
++	XA_STATE(xas, &address_space->i_pages, idx);
  
--		head = compound_head(page);
--		if (!page_cache_get_speculative(head))
--			goto repeat;
-+	head = compound_head(page);
-+	if (!page_cache_get_speculative(head))
-+		goto repeat;
+ 	VM_BUG_ON_PAGE(!PageLocked(page), page);
+ 	VM_BUG_ON_PAGE(!PageSwapCache(page), page);
+ 	VM_BUG_ON_PAGE(PageWriteback(page), page);
  
--		/* The page was split under us? */
--		if (compound_head(page) != head) {
--			put_page(head);
--			goto repeat;
--		}
-+	/* The page was split under us? */
-+	if (compound_head(page) != head) {
-+		put_page(head);
-+		goto repeat;
-+	}
- 
--		/*
--		 * Has the page moved?
--		 * This is part of the lockless pagecache protocol. See
--		 * include/linux/pagemap.h for details.
--		 */
--		if (unlikely(page != *pagep)) {
--			put_page(head);
--			goto repeat;
--		}
-+	/*
-+	 * Has the page moved?
-+	 * This is part of the lockless pagecache protocol. See
-+	 * include/linux/pagemap.h for details.
-+	 */
-+	if (unlikely(page != xas_reload(&xas))) {
-+		put_page(head);
-+		goto repeat;
+-	entry.val = page_private(page);
+-	address_space = swap_address_space(entry);
+-	idx = swp_offset(entry);
+ 	for (i = 0; i < nr; i++) {
+-		radix_tree_delete(&address_space->i_pages, idx + i);
++		void *entry = xas_store(&xas, NULL);
++		VM_BUG_ON_PAGE(entry != page + i, entry);
+ 		set_page_private(page + i, 0);
++		xas_next(&xas);
  	}
- out:
- 	rcu_read_unlock();
-@@ -1453,7 +1446,7 @@ struct page *find_lock_entry(struct address_space *mapping, pgoff_t offset)
+ 	ClearPageSwapCache(page);
+ 	address_space->nrpages -= nr;
+@@ -243,14 +242,11 @@ int add_to_swap(struct page *page)
+  */
+ void delete_from_swap_cache(struct page *page)
+ {
+-	swp_entry_t entry;
+-	struct address_space *address_space;
+-
+-	entry.val = page_private(page);
++	swp_entry_t entry = { .val = page_private(page) };
++	struct address_space *address_space = swap_address_space(entry);
  
- repeat:
- 	page = find_get_entry(mapping, offset);
--	if (page && !radix_tree_exception(page)) {
-+	if (page && !xa_is_value(page)) {
- 		lock_page(page);
- 		/* Has the page been truncated? */
- 		if (unlikely(page_mapping(page) != mapping)) {
+-	address_space = swap_address_space(entry);
+ 	xa_lock_irq(&address_space->i_pages);
+-	__delete_from_swap_cache(page);
++	__delete_from_swap_cache(page, entry);
+ 	xa_unlock_irq(&address_space->i_pages);
+ 
+ 	put_swap_page(page, entry);
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 03822f86f288..0448b1b366d9 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -753,7 +753,7 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
+ 	if (PageSwapCache(page)) {
+ 		swp_entry_t swap = { .val = page_private(page) };
+ 		mem_cgroup_swapout(page, swap);
+-		__delete_from_swap_cache(page);
++		__delete_from_swap_cache(page, swap);
+ 		xa_unlock_irqrestore(&mapping->i_pages, flags);
+ 		put_swap_page(page, swap);
+ 	} else {
 -- 
 2.17.1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
