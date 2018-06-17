@@ -1,7 +1,8 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v14 19/74] xarray: Add MAINTAINERS entry
-Date: Sat, 16 Jun 2018 18:59:57 -0700
-Message-ID: <20180617020052.4759-20-willy@infradead.org>
+Subject: [PATCH v14 40/74] mm: Convert __do_page_cache_readahead
+ to XArray
+Date: Sat, 16 Jun 2018 19:00:18 -0700
+Message-ID: <20180617020052.4759-41-willy@infradead.org>
 References: <20180617020052.4759-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,13 +11,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1fUN0P-0002WP-UD
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:25 +0000
+ (envelope-from <willy@infradead.org>) id 1fUN0R-0002Wy-Nw
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:27 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fUN0M-00F8vc-3W
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:25 +0000
+ id 1fUN0Q-00F8vp-Hc
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:27 +0000
 In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -30,35 +31,28 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-Add myself as XArray and IDR maintainer.
+This one is trivial.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ mm/readahead.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6dc2c9cb2d7b..959cc42e33ad 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15596,6 +15596,17 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/vdso
- S:	Maintained
- F:	arch/x86/entry/vdso/
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 59998ca31f2a..07f9734dc79f 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -174,9 +174,7 @@ unsigned int __do_page_cache_readahead(struct address_space *mapping,
+ 		if (page_offset > end_index)
+ 			break;
  
-+XARRAY
-+M:	Matthew Wilcox <willy@infradead.org>
-+L:	linux-fsdevel@vger.kernel.org
-+S:	Supported
-+F:	Documentation/core-api/xarray.rst
-+F:	lib/idr.c
-+F:	lib/xarray.c
-+F:	include/linux/idr.h
-+F:	include/linux/xarray.h
-+F:	tools/testing/radix-tree
-+
- XC2028/3028 TUNER DRIVER
- M:	Mauro Carvalho Chehab <mchehab@kernel.org>
- L:	linux-media@vger.kernel.org
+-		rcu_read_lock();
+-		page = radix_tree_lookup(&mapping->i_pages, page_offset);
+-		rcu_read_unlock();
++		page = xa_load(&mapping->i_pages, page_offset);
+ 		if (page && !xa_is_value(page)) {
+ 			/*
+ 			 * Page already present?  Kick off the current batch of
 -- 
 2.17.1
 
