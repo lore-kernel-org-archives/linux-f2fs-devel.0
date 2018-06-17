@@ -1,23 +1,23 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v14 12/74] xarray: Add XArray conditional store
- operations
-Date: Sat, 16 Jun 2018 18:59:50 -0700
-Message-ID: <20180617020052.4759-13-willy@infradead.org>
+Subject: [PATCH v14 27/74] page cache: Convert
+ find_get_pages_contig to XArray
+Date: Sat, 16 Jun 2018 19:00:05 -0700
+Message-ID: <20180617020052.4759-28-willy@infradead.org>
 References: <20180617020052.4759-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1fUN0N-0003SC-2F
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:23 +0000
+ (envelope-from <willy@infradead.org>) id 1fUN0R-00034J-9Z
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:27 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fUN0L-00Gt8v-K9
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:22 +0000
+ id 1fUN0P-00F8vl-7i
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:26 +0000
 In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -31,227 +31,192 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-Like cmpxchg(), xa_cmpxchg will only store to the index if the current
-entry matches the old entry.  It returns the current entry, which is
-usually more useful than the errno returned by radix_tree_insert().
-For the users who really only want the errno, the xa_insert() wrapper
-provides a more convenient calling convention.
+There's no direct replacement for radix_tree_for_each_contig()
+in the XArray API as it's an unusual thing to do.  Instead,
+open-code a loop using xas_next().  This removes the only user of
+radix_tree_for_each_contig() so delete the iterator from the API and
+the test suite code for it.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- include/linux/xarray.h | 60 +++++++++++++++++++++++++++++++++++
- lib/test_xarray.c      | 20 ++++++++++++
- lib/xarray.c           | 71 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 151 insertions(+)
+ .clang-format                          |  1 -
+ include/linux/radix-tree.h             | 17 ---------
+ mm/filemap.c                           | 53 +++++++++++---------------
+ tools/testing/radix-tree/regression3.c | 23 -----------
+ 4 files changed, 22 insertions(+), 72 deletions(-)
 
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index 13e5c4084dcd..94b7f454a6a0 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -218,6 +218,8 @@ struct xarray {
- void xa_init_flags(struct xarray *, gfp_t flags);
- void *xa_load(struct xarray *, unsigned long index);
- void *xa_store(struct xarray *, unsigned long index, void *entry, gfp_t);
-+void *xa_cmpxchg(struct xarray *, unsigned long index,
-+			void *old, void *entry, gfp_t);
- bool xa_get_tag(struct xarray *, unsigned long index, xa_tag_t);
- void xa_set_tag(struct xarray *, unsigned long index, xa_tag_t);
- void xa_clear_tag(struct xarray *, unsigned long index, xa_tag_t);
-@@ -277,6 +279,34 @@ static inline void *xa_erase(struct xarray *xa, unsigned long index)
- 	return xa_store(xa, index, NULL, 0);
- }
+diff --git a/.clang-format b/.clang-format
+index faffc0d5af4e..c1de31c6875e 100644
+--- a/.clang-format
++++ b/.clang-format
+@@ -323,7 +323,6 @@ ForEachMacros:
+   - 'protocol_for_each_card'
+   - 'protocol_for_each_dev'
+   - 'queue_for_each_hw_ctx'
+-  - 'radix_tree_for_each_contig'
+   - 'radix_tree_for_each_slot'
+   - 'radix_tree_for_each_tagged'
+   - 'rbtree_postorder_for_each_entry_safe'
+diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
+index 4b6f685309fc..eefa0b099dd5 100644
+--- a/include/linux/radix-tree.h
++++ b/include/linux/radix-tree.h
+@@ -522,23 +522,6 @@ static __always_inline void __rcu **radix_tree_next_slot(void __rcu **slot,
+ 	     slot || (slot = radix_tree_next_chunk(root, iter, 0)) ;	\
+ 	     slot = radix_tree_next_slot(slot, iter, 0))
  
-+/**
-+ * xa_insert() - Store this entry in the XArray unless another entry is
-+ *			already present.
-+ * @xa: XArray.
-+ * @index: Index into array.
-+ * @entry: New entry.
-+ * @gfp: Memory allocation flags.
-+ *
-+ * If you would rather see the existing entry in the array, use xa_cmpxchg().
-+ * This function is for users who don't care what the entry is, only that
-+ * one is present.
-+ *
-+ * Context: Process context.  Takes and releases the xa_lock.
-+ *	    May sleep if the @gfp flags permit.
-+ * Return: 0 if the store succeeded.  -EEXIST if another entry was present.
-+ * 	   -ENOMEM if memory could not be allocated.
-+ */
-+static inline int xa_insert(struct xarray *xa, unsigned long index,
-+		void *entry, gfp_t gfp)
-+{
-+	void *curr = xa_cmpxchg(xa, index, NULL, entry, gfp);
-+	if (!curr)
-+		return 0;
-+	if (xa_is_err(curr))
-+		return xa_err(curr);
-+	return -EEXIST;
-+}
-+
- #define xa_trylock(xa)		spin_trylock(&(xa)->xa_lock)
- #define xa_lock(xa)		spin_lock(&(xa)->xa_lock)
- #define xa_unlock(xa)		spin_unlock(&(xa)->xa_lock)
-@@ -296,9 +326,39 @@ static inline void *xa_erase(struct xarray *xa, unsigned long index)
-  */
- void *__xa_erase(struct xarray *, unsigned long index);
- void *__xa_store(struct xarray *, unsigned long index, void *entry, gfp_t);
-+void *__xa_cmpxchg(struct xarray *, unsigned long index, void *old,
-+		void *entry, gfp_t);
- void __xa_set_tag(struct xarray *, unsigned long index, xa_tag_t);
- void __xa_clear_tag(struct xarray *, unsigned long index, xa_tag_t);
- 
-+/**
-+ * __xa_insert() - Store this entry in the XArray unless another entry is
-+ *			already present.
-+ * @xa: XArray.
-+ * @index: Index into array.
-+ * @entry: New entry.
-+ * @gfp: Memory allocation flags.
-+ *
-+ * If you would rather see the existing entry in the array, use __xa_cmpxchg().
-+ * This function is for users who don't care what the entry is, only that
-+ * one is present.
-+ *
-+ * Context: Any context.  Expects xa_lock to be held on entry.  May
-+ *	    release and reacquire xa_lock if the @gfp flags permit.
-+ * Return: 0 if the store succeeded.  -EEXIST if another entry was present.
-+ *	   -ENOMEM if memory could not be allocated.
-+ */
-+static inline int __xa_insert(struct xarray *xa, unsigned long index,
-+		void *entry, gfp_t gfp)
-+{
-+	void *curr = __xa_cmpxchg(xa, index, NULL, entry, gfp);
-+	if (!curr)
-+		return 0;
-+	if (xa_is_err(curr))
-+		return xa_err(curr);
-+	return -EEXIST;
-+}
-+
- /* Everything below here is the Advanced API.  Proceed with caution. */
- 
- /*
-diff --git a/lib/test_xarray.c b/lib/test_xarray.c
-index cb6e9910e369..35fca5e23cbc 100644
---- a/lib/test_xarray.c
-+++ b/lib/test_xarray.c
-@@ -181,6 +181,25 @@ static void check_xa_shrink(struct xarray *xa)
- 	XA_BUG_ON(xa, !xa_empty(xa));
- }
- 
-+static void check_cmpxchg(struct xarray *xa)
-+{
-+	void *FIVE = xa_mk_value(5);
-+	void *SIX = xa_mk_value(6);
-+	void *LOTS = xa_mk_value(12345678);
-+
-+	XA_BUG_ON(xa, !xa_empty(xa));
-+	XA_BUG_ON(xa, xa_store_value(xa, 12345678, GFP_KERNEL) != NULL);
-+	XA_BUG_ON(xa, xa_insert(xa, 12345678, xa, GFP_KERNEL) != -EEXIST);
-+	XA_BUG_ON(xa, xa_cmpxchg(xa, 12345678, SIX, FIVE, GFP_KERNEL) != LOTS);
-+	XA_BUG_ON(xa, xa_cmpxchg(xa, 12345678, LOTS, FIVE, GFP_KERNEL) != LOTS);
-+	XA_BUG_ON(xa, xa_cmpxchg(xa, 12345678, FIVE, LOTS, GFP_KERNEL) != FIVE);
-+	XA_BUG_ON(xa, xa_cmpxchg(xa, 5, FIVE, NULL, GFP_KERNEL) != NULL);
-+	XA_BUG_ON(xa, xa_cmpxchg(xa, 5, NULL, FIVE, GFP_KERNEL) != NULL);
-+	xa_erase_value(xa, 12345678);
-+	xa_erase_value(xa, 5);
-+	XA_BUG_ON(xa, !xa_empty(xa));
-+}
-+
- static void check_multi_store(struct xarray *xa)
- {
- 	unsigned long i, j, k;
-@@ -248,6 +267,7 @@ static int xarray_checks(void)
- 	check_xa_load(&array);
- 	check_xa_tag(&array);
- 	check_xa_shrink(&array);
-+	check_cmpxchg(&array);
- 	check_multi_store(&array);
- 
- 	printk("XArray: %u of %u tests passed\n", tests_passed, tests_run);
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 18043aee8a91..1a3a256cbb37 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -962,6 +962,77 @@ void *__xa_store(struct xarray *xa, unsigned long index, void *entry, gfp_t gfp)
- }
- EXPORT_SYMBOL(__xa_store);
- 
-+/**
-+ * xa_cmpxchg() - Conditionally replace an entry in the XArray.
-+ * @xa: XArray.
-+ * @index: Index into array.
-+ * @old: Old value to test against.
-+ * @entry: New value to place in array.
-+ * @gfp: Memory allocation flags.
-+ *
-+ * If the entry at @index is the same as @old, replace it with @entry.
-+ * If the return value is equal to @old, then the exchange was successful.
-+ *
-+ * Context: Process context.  Takes and releases the xa_lock.  May sleep
-+ * if the @gfp flags permit.
-+ * Return: The old value at this index or xa_err() if an error happened.
-+ */
-+void *xa_cmpxchg(struct xarray *xa, unsigned long index,
-+			void *old, void *entry, gfp_t gfp)
-+{
-+	XA_STATE(xas, xa, index);
-+	void *curr;
-+
-+	if (WARN_ON_ONCE(xa_is_internal(entry)))
-+		return XA_ERROR(-EINVAL);
-+
-+	do {
-+		xas_lock(&xas);
-+		curr = xas_load(&xas);
-+		if (curr == old)
-+			xas_store(&xas, entry);
-+		xas_unlock(&xas);
-+	} while (xas_nomem(&xas, gfp));
-+
-+	return xas_result(&xas, curr);
-+}
-+EXPORT_SYMBOL(xa_cmpxchg);
-+
-+/**
-+ * __xa_cmpxchg() - Store this entry in the XArray.
-+ * @xa: XArray.
-+ * @index: Index into array.
-+ * @old: Old value to test against.
-+ * @entry: New entry.
-+ * @gfp: Memory allocation flags.
-+ *
-+ * You must already be holding the xa_lock when calling this function.
-+ * It will drop the lock if needed to allocate memory, and then reacquire
-+ * it afterwards.
-+ *
-+ * Context: Any context.  Expects xa_lock to be held on entry.  May
-+ * release and reacquire xa_lock if @gfp flags permit.
-+ * Return: The old entry at this index or xa_err() if an error happened.
-+ */
-+void *__xa_cmpxchg(struct xarray *xa, unsigned long index,
-+			void *old, void *entry, gfp_t gfp)
-+{
-+	XA_STATE(xas, xa, index);
-+	void *curr;
-+
-+	if (WARN_ON_ONCE(xa_is_internal(entry)))
-+		return XA_ERROR(-EINVAL);
-+
-+	do {
-+		curr = xas_load(&xas);
-+		if (curr == old)
-+			xas_store(&xas, entry);
-+	} while (__xas_nomem(&xas, gfp));
-+
-+	return xas_result(&xas, curr);
-+}
-+EXPORT_SYMBOL(__xa_cmpxchg);
-+
+-/**
+- * radix_tree_for_each_contig - iterate over contiguous slots
+- *
+- * @slot:	the void** variable for pointer to slot
+- * @root:	the struct radix_tree_root pointer
+- * @iter:	the struct radix_tree_iter pointer
+- * @start:	iteration starting index
+- *
+- * @slot points to radix tree slot, @iter->index contains its index.
+- */
+-#define radix_tree_for_each_contig(slot, root, iter, start)		\
+-	for (slot = radix_tree_iter_init(iter, start) ;			\
+-	     slot || (slot = radix_tree_next_chunk(root, iter,		\
+-				RADIX_TREE_ITER_CONTIG)) ;		\
+-	     slot = radix_tree_next_slot(slot, iter,			\
+-				RADIX_TREE_ITER_CONTIG))
+-
  /**
-  * __xa_set_tag() - Set this tag on this entry while locked.
-  * @xa: XArray.
+  * radix_tree_for_each_tagged - iterate over tagged slots
+  *
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 019c263bb6be..8a69613fcdf3 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1721,57 +1721,43 @@ unsigned find_get_pages_range(struct address_space *mapping, pgoff_t *start,
+ unsigned find_get_pages_contig(struct address_space *mapping, pgoff_t index,
+ 			       unsigned int nr_pages, struct page **pages)
+ {
+-	struct radix_tree_iter iter;
+-	void **slot;
++	XA_STATE(xas, &mapping->i_pages, index);
++	struct page *page;
+ 	unsigned int ret = 0;
+ 
+ 	if (unlikely(!nr_pages))
+ 		return 0;
+ 
+ 	rcu_read_lock();
+-	radix_tree_for_each_contig(slot, &mapping->i_pages, &iter, index) {
+-		struct page *head, *page;
+-repeat:
+-		page = radix_tree_deref_slot(slot);
+-		/* The hole, there no reason to continue */
+-		if (unlikely(!page))
+-			break;
+-
+-		if (radix_tree_exception(page)) {
+-			if (radix_tree_deref_retry(page)) {
+-				slot = radix_tree_iter_retry(&iter);
+-				continue;
+-			}
+-			/*
+-			 * A shadow entry of a recently evicted page,
+-			 * or a swap entry from shmem/tmpfs.  Stop
+-			 * looking for contiguous pages.
+-			 */
++	for (page = xas_load(&xas); page; page = xas_next(&xas)) {
++		struct page *head;
++		if (xas_retry(&xas, page))
++			continue;
++		/*
++		 * If the entry has been swapped out, we can stop looking.
++		 * No current caller is looking for DAX entries.
++		 */
++		if (xa_is_value(page))
+ 			break;
+-		}
+ 
+ 		head = compound_head(page);
+ 		if (!page_cache_get_speculative(head))
+-			goto repeat;
++			goto retry;
+ 
+ 		/* The page was split under us? */
+-		if (compound_head(page) != head) {
+-			put_page(head);
+-			goto repeat;
+-		}
++		if (compound_head(page) != head)
++			goto put_page;
+ 
+ 		/* Has the page moved? */
+-		if (unlikely(page != *slot)) {
+-			put_page(head);
+-			goto repeat;
+-		}
++		if (unlikely(page != xas_reload(&xas)))
++			goto put_page;
+ 
+ 		/*
+ 		 * must check mapping and index after taking the ref.
+ 		 * otherwise we can get both false positives and false
+ 		 * negatives, which is just confusing to the caller.
+ 		 */
+-		if (page->mapping == NULL || page_to_pgoff(page) != iter.index) {
++		if (!page->mapping || page_to_pgoff(page) != xas.xa_index) {
+ 			put_page(page);
+ 			break;
+ 		}
+@@ -1779,6 +1765,11 @@ unsigned find_get_pages_contig(struct address_space *mapping, pgoff_t index,
+ 		pages[ret] = page;
+ 		if (++ret == nr_pages)
+ 			break;
++		continue;
++put_page:
++		put_page(head);
++retry:
++		xas_reset(&xas);
+ 	}
+ 	rcu_read_unlock();
+ 	return ret;
+diff --git a/tools/testing/radix-tree/regression3.c b/tools/testing/radix-tree/regression3.c
+index ace2543c3eda..9f9a3b280f56 100644
+--- a/tools/testing/radix-tree/regression3.c
++++ b/tools/testing/radix-tree/regression3.c
+@@ -69,21 +69,6 @@ void regression3_test(void)
+ 			continue;
+ 		}
+ 	}
+-	radix_tree_delete(&root, 1);
+-
+-	first = true;
+-	radix_tree_for_each_contig(slot, &root, &iter, 0) {
+-		printv(2, "contig %ld %p\n", iter.index, *slot);
+-		if (first) {
+-			radix_tree_insert(&root, 1, ptr);
+-			first = false;
+-		}
+-		if (radix_tree_deref_retry(*slot)) {
+-			printv(2, "retry at %ld\n", iter.index);
+-			slot = radix_tree_iter_retry(&iter);
+-			continue;
+-		}
+-	}
+ 
+ 	radix_tree_for_each_slot(slot, &root, &iter, 0) {
+ 		printv(2, "slot %ld %p\n", iter.index, *slot);
+@@ -93,14 +78,6 @@ void regression3_test(void)
+ 		}
+ 	}
+ 
+-	radix_tree_for_each_contig(slot, &root, &iter, 0) {
+-		printv(2, "contig %ld %p\n", iter.index, *slot);
+-		if (!iter.index) {
+-			printv(2, "next at %ld\n", iter.index);
+-			slot = radix_tree_iter_resume(slot, &iter);
+-		}
+-	}
+-
+ 	radix_tree_tag_set(&root, 0, 0);
+ 	radix_tree_tag_set(&root, 1, 0);
+ 	radix_tree_for_each_tagged(slot, &root, &iter, 0, 0) {
 -- 
 2.17.1
 
