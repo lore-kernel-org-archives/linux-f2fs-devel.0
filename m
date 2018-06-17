@@ -1,8 +1,8 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v14 50/74] shmem: Convert shmem_add_to_page_cache
- to XArray
-Date: Sat, 16 Jun 2018 19:00:28 -0700
-Message-ID: <20180617020052.4759-51-willy@infradead.org>
+Subject: [PATCH v14 53/74] shmem: Convert
+ shmem_partial_swap_usage to XArray
+Date: Sat, 16 Jun 2018 19:00:31 -0700
+Message-ID: <20180617020052.4759-54-willy@infradead.org>
 References: <20180617020052.4759-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,13 +11,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1fUN0X-0002bE-O8
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:33 +0000
+ (envelope-from <willy@infradead.org>) id 1fUN0e-0002ee-Ot
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:40 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fUN0W-00BzHJ-Ea
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:33 +0000
+ id 1fUN0d-00F8ws-J3
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:40 +0000
 In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -31,161 +31,52 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-This removes the last caller of radix_tree_maybe_preload_order().
-Simpler code, unless we run out of memory for new xa_nodes partway through
-inserting entries into the xarray.  Hopefully we can support multi-index
-entries in the page cache soon and all the awful code goes away.
+Simpler code because the xarray takes care of things like the limit and
+dereferencing the slot.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- mm/shmem.c | 87 ++++++++++++++++++++++++------------------------------
- 1 file changed, 39 insertions(+), 48 deletions(-)
+ mm/shmem.c | 18 ++++--------------
+ 1 file changed, 4 insertions(+), 14 deletions(-)
 
 diff --git a/mm/shmem.c b/mm/shmem.c
-index 983a27656e2e..8e702b6d84a5 100644
+index 9dbbdd5dee30..bffb87854852 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -576,9 +576,10 @@ static inline bool is_huge_enabled(struct shmem_sb_info *sbinfo)
-  */
- static int shmem_add_to_page_cache(struct page *page,
- 				   struct address_space *mapping,
--				   pgoff_t index, void *expected)
-+				   pgoff_t index, void *expected, gfp_t gfp)
+@@ -679,29 +679,19 @@ static int shmem_free_swap(struct address_space *mapping,
+ unsigned long shmem_partial_swap_usage(struct address_space *mapping,
+ 						pgoff_t start, pgoff_t end)
  {
--	int error, nr = hpage_nr_pages(page);
-+	XA_STATE(xas, &mapping->i_pages, index);
-+	unsigned long i, nr = 1UL << compound_order(page);
+-	struct radix_tree_iter iter;
+-	void __rcu **slot;
++	XA_STATE(xas, &mapping->i_pages, start);
+ 	struct page *page;
+ 	unsigned long swapped = 0;
  
- 	VM_BUG_ON_PAGE(PageTail(page), page);
- 	VM_BUG_ON_PAGE(index != round_down(index, nr), page);
-@@ -587,49 +588,47 @@ static int shmem_add_to_page_cache(struct page *page,
- 	VM_BUG_ON(expected && PageTransHuge(page));
- 
- 	page_ref_add(page, nr);
--	page->mapping = mapping;
- 	page->index = index;
-+	page->mapping = mapping;
- 
--	xa_lock_irq(&mapping->i_pages);
--	if (PageTransHuge(page)) {
--		void __rcu **results;
--		pgoff_t idx;
--		int i;
+ 	rcu_read_lock();
 -
--		error = 0;
--		if (radix_tree_gang_lookup_slot(&mapping->i_pages,
--					&results, &idx, index, 1) &&
--				idx < index + HPAGE_PMD_NR) {
--			error = -EEXIST;
-+	do {
-+		xas_lock_irq(&xas);
-+		xas_create_range(&xas, index + nr - 1);
-+		if (xas_error(&xas))
-+			goto unlock;
-+		for (i = 0; i < nr; i++) {
-+			void *entry = xas_load(&xas);
-+			if (entry != expected)
-+				xas_set_err(&xas, -ENOENT);
-+			if (xas_error(&xas))
-+				goto undo;
-+			xas_store(&xas, page + i);
-+			xas_next(&xas);
- 		}
+-	radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, start) {
+-		if (iter.index >= end)
+-			break;
 -
--		if (!error) {
--			for (i = 0; i < HPAGE_PMD_NR; i++) {
--				error = radix_tree_insert(&mapping->i_pages,
--						index + i, page + i);
--				VM_BUG_ON(error);
--			}
-+		if (PageTransHuge(page)) {
- 			count_vm_event(THP_FILE_ALLOC);
-+			__inc_node_page_state(page, NR_SHMEM_THPS);
- 		}
--	} else if (!expected) {
--		error = radix_tree_insert(&mapping->i_pages, index, page);
--	} else {
--		error = shmem_replace_entry(mapping, index, expected, page);
--	}
+-		page = radix_tree_deref_slot(slot);
 -
--	if (!error) {
- 		mapping->nrpages += nr;
--		if (PageTransHuge(page))
--			__inc_node_page_state(page, NR_SHMEM_THPS);
- 		__mod_node_page_state(page_pgdat(page), NR_FILE_PAGES, nr);
- 		__mod_node_page_state(page_pgdat(page), NR_SHMEM, nr);
--		xa_unlock_irq(&mapping->i_pages);
--	} else {
-+		goto unlock;
-+undo:
-+		while (i-- > 0) {
-+			xas_store(&xas, NULL);
-+			xas_prev(&xas);
-+		}
-+unlock:
-+		xas_unlock_irq(&xas);
-+	} while (xas_nomem(&xas, gfp));
-+
-+	if (xas_error(&xas)) {
- 		page->mapping = NULL;
--		xa_unlock_irq(&mapping->i_pages);
- 		page_ref_sub(page, nr);
-+		return xas_error(&xas);
- 	}
--	return error;
-+
-+	return 0;
- }
- 
- /*
-@@ -1182,7 +1181,7 @@ static int shmem_unuse_inode(struct shmem_inode_info *info,
- 	 */
- 	if (!error)
- 		error = shmem_add_to_page_cache(*pagep, mapping, index,
--						radswap);
-+						radswap, gfp);
- 	if (error != -ENOMEM) {
- 		/*
- 		 * Truncation and eviction use free_swap_and_cache(), which
-@@ -1698,7 +1697,7 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
- 				false);
- 		if (!error) {
- 			error = shmem_add_to_page_cache(page, mapping, index,
--						swp_to_radix_entry(swap));
-+						swp_to_radix_entry(swap), gfp);
- 			/*
- 			 * We already confirmed swap under page lock, and make
- 			 * no memory allocation here, so usually no possibility
-@@ -1804,13 +1803,8 @@ alloc_nohuge:		page = shmem_alloc_and_acct_page(gfp, inode,
- 				PageTransHuge(page));
- 		if (error)
- 			goto unacct;
--		error = radix_tree_maybe_preload_order(gfp & GFP_RECLAIM_MASK,
--				compound_order(page));
--		if (!error) {
--			error = shmem_add_to_page_cache(page, mapping, hindex,
--							NULL);
--			radix_tree_preload_end();
+-		if (radix_tree_deref_retry(page)) {
+-			slot = radix_tree_iter_retry(&iter);
++	xas_for_each(&xas, page, end - 1) {
++		if (xas_retry(&xas, page))
+ 			continue;
 -		}
-+		error = shmem_add_to_page_cache(page, mapping, hindex,
-+						NULL, gfp & GFP_RECLAIM_MASK);
- 		if (error) {
- 			mem_cgroup_cancel_charge(page, memcg,
- 					PageTransHuge(page));
-@@ -2277,11 +2271,8 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
- 	if (ret)
- 		goto out_release;
+-
+ 		if (xa_is_value(page))
+ 			swapped++;
  
--	ret = radix_tree_maybe_preload(gfp & GFP_RECLAIM_MASK);
--	if (!ret) {
--		ret = shmem_add_to_page_cache(page, mapping, pgoff, NULL);
--		radix_tree_preload_end();
--	}
-+	ret = shmem_add_to_page_cache(page, mapping, pgoff, NULL,
-+						gfp & GFP_RECLAIM_MASK);
- 	if (ret)
- 		goto out_release_uncharge;
- 
+ 		if (need_resched()) {
+-			slot = radix_tree_iter_resume(slot, &iter);
++			xas_pause(&xas);
+ 			cond_resched_rcu();
+ 		}
+ 	}
 -- 
 2.17.1
 
