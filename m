@@ -1,8 +1,7 @@
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v14 31/74] radix tree test suite: Convert
- regression1 to XArray
-Date: Sat, 16 Jun 2018 19:00:09 -0700
-Message-ID: <20180617020052.4759-32-willy@infradead.org>
+Subject: [PATCH v14 61/74] f2fs: Convert to XArray
+Date: Sat, 16 Jun 2018 19:00:39 -0700
+Message-ID: <20180617020052.4759-62-willy@infradead.org>
 References: <20180617020052.4759-1-willy@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,13 +10,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1fUN0v-0002l9-Sz
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:57 +0000
+ (envelope-from <willy@infradead.org>) id 1fUN0k-0002h6-KS
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:46 +0000
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fUN0u-00HBxC-Gj
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:57 +0000
+ id 1fUN0j-00HBwY-8O
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Jun 2018 02:01:46 +0000
 In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -31,118 +30,100 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-Now the page cache lookup is using the XArray, let's convert this
-regression test from the radix tree API to the XArray so it's testing
-roughly the same thing it was testing before.
+This is a straightforward conversion.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- tools/testing/radix-tree/regression1.c | 58 +++++++++-----------------
- 1 file changed, 19 insertions(+), 39 deletions(-)
+ fs/f2fs/data.c   | 4 ++--
+ fs/f2fs/dir.c    | 2 +-
+ fs/f2fs/f2fs.h   | 2 +-
+ fs/f2fs/inline.c | 2 +-
+ fs/f2fs/node.c   | 6 ++----
+ 5 files changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/tools/testing/radix-tree/regression1.c b/tools/testing/radix-tree/regression1.c
-index 0aece092f40e..b4a4a7168986 100644
---- a/tools/testing/radix-tree/regression1.c
-+++ b/tools/testing/radix-tree/regression1.c
-@@ -53,12 +53,12 @@ struct page {
- 	unsigned long index;
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index e5c0b1e74ce6..b274300995cd 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2600,13 +2600,13 @@ const struct address_space_operations f2fs_dblock_aops = {
+ #endif
  };
  
--static struct page *page_alloc(void)
-+static struct page *page_alloc(int index)
+-void f2fs_clear_radix_tree_dirty_tag(struct page *page)
++void f2fs_clear_page_cache_dirty_tag(struct page *page)
  {
- 	struct page *p;
- 	p = malloc(sizeof(struct page));
- 	p->count = 1;
--	p->index = 1;
-+	p->index = index;
- 	pthread_mutex_init(&p->lock, NULL);
+ 	struct address_space *mapping = page_mapping(page);
+ 	unsigned long flags;
  
- 	return p;
-@@ -80,53 +80,33 @@ static void page_free(struct page *p)
- static unsigned find_get_pages(unsigned long start,
- 			    unsigned int nr_pages, struct page **pages)
+ 	xa_lock_irqsave(&mapping->i_pages, flags);
+-	radix_tree_tag_clear(&mapping->i_pages, page_index(page),
++	__xa_clear_tag(&mapping->i_pages, page_index(page),
+ 						PAGECACHE_TAG_DIRTY);
+ 	xa_unlock_irqrestore(&mapping->i_pages, flags);
+ }
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 7f955c4e86a4..9c2a23242f64 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -730,7 +730,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+ 
+ 	if (bit_pos == NR_DENTRY_IN_BLOCK &&
+ 		!f2fs_truncate_hole(dir, page->index, page->index + 1)) {
+-		f2fs_clear_radix_tree_dirty_tag(page);
++		f2fs_clear_page_cache_dirty_tag(page);
+ 		clear_page_dirty_for_io(page);
+ 		ClearPagePrivate(page);
+ 		ClearPageUptodate(page);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 4d8b1de83143..1f71ab2ddad9 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2973,7 +2973,7 @@ int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
+ 			struct page *page, enum migrate_mode mode);
+ #endif
+ bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len);
+-void f2fs_clear_radix_tree_dirty_tag(struct page *page);
++void f2fs_clear_page_cache_dirty_tag(struct page *page);
+ 
+ /*
+  * gc.c
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 043830be5662..48f40d344a2a 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -226,7 +226,7 @@ int f2fs_write_inline_data(struct inode *inode, struct page *page)
+ 	kunmap_atomic(src_addr);
+ 	set_page_dirty(dn.inode_page);
+ 
+-	f2fs_clear_radix_tree_dirty_tag(page);
++	f2fs_clear_page_cache_dirty_tag(page);
+ 
+ 	set_inode_flag(inode, FI_APPEND_WRITE);
+ 	set_inode_flag(inode, FI_DATA_EXIST);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 10643b11bd59..9aa076be8a0e 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -103,7 +103,7 @@ bool f2fs_available_free_memory(struct f2fs_sb_info *sbi, int type)
+ static void clear_node_page_dirty(struct page *page)
  {
--	unsigned int i;
--	unsigned int ret;
--	unsigned int nr_found;
-+	XA_STATE(xas, &mt_tree, start);
-+	struct page *page;
-+	unsigned int ret = 0;
- 
- 	rcu_read_lock();
--restart:
--	nr_found = radix_tree_gang_lookup_slot(&mt_tree,
--				(void ***)pages, NULL, start, nr_pages);
--	ret = 0;
--	for (i = 0; i < nr_found; i++) {
--		struct page *page;
--repeat:
--		page = radix_tree_deref_slot((void **)pages[i]);
--		if (unlikely(!page))
-+	xas_for_each(&xas, page, ULONG_MAX) {
-+		if (xas_retry(&xas, page))
- 			continue;
- 
--		if (radix_tree_exception(page)) {
--			if (radix_tree_deref_retry(page)) {
--				/*
--				 * Transient condition which can only trigger
--				 * when entry at index 0 moves out of or back
--				 * to root: none yet gotten, safe to restart.
--				 */
--				assert((start | i) == 0);
--				goto restart;
--			}
--			/*
--			 * No exceptional entries are inserted in this test.
--			 */
--			assert(0);
--		}
--
- 		pthread_mutex_lock(&page->lock);
--		if (!page->count) {
--			pthread_mutex_unlock(&page->lock);
--			goto repeat;
--		}
-+		if (!page->count)
-+			goto unlock;
-+
- 		/* don't actually update page refcount */
- 		pthread_mutex_unlock(&page->lock);
- 
- 		/* Has the page moved? */
--		if (unlikely(page != *((void **)pages[i]))) {
--			goto repeat;
--		}
-+		if (unlikely(page != xas_reload(&xas)))
-+			goto put_page;
- 
- 		pages[ret] = page;
- 		ret++;
-+		continue;
-+unlock:
-+		pthread_mutex_unlock(&page->lock);
-+put_page:
-+		xas_reset(&xas);
+ 	if (PageDirty(page)) {
+-		f2fs_clear_radix_tree_dirty_tag(page);
++		f2fs_clear_page_cache_dirty_tag(page);
+ 		clear_page_dirty_for_io(page);
+ 		dec_page_count(F2FS_P_SB(page), F2FS_DIRTY_NODES);
  	}
- 	rcu_read_unlock();
- 	return ret;
-@@ -145,12 +125,12 @@ static void *regression1_fn(void *arg)
- 		for (j = 0; j < 1000000; j++) {
- 			struct page *p;
+@@ -1168,9 +1168,7 @@ void f2fs_ra_node_page(struct f2fs_sb_info *sbi, nid_t nid)
+ 	if (f2fs_check_nid_range(sbi, nid))
+ 		return;
  
--			p = page_alloc();
-+			p = page_alloc(0);
- 			pthread_mutex_lock(&mt_lock);
- 			radix_tree_insert(&mt_tree, 0, p);
- 			pthread_mutex_unlock(&mt_lock);
+-	rcu_read_lock();
+-	apage = radix_tree_lookup(&NODE_MAPPING(sbi)->i_pages, nid);
+-	rcu_read_unlock();
++	apage = xa_load(&NODE_MAPPING(sbi)->i_pages, nid);
+ 	if (apage)
+ 		return;
  
--			p = page_alloc();
-+			p = page_alloc(1);
- 			pthread_mutex_lock(&mt_lock);
- 			radix_tree_insert(&mt_tree, 1, p);
- 			pthread_mutex_unlock(&mt_lock);
 -- 
 2.17.1
 
