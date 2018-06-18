@@ -1,159 +1,217 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/2] fsck.f2fs: add sanity check nat_bits
-Date: Sun, 17 Jun 2018 17:39:47 -0700
-Message-ID: <20180618003948.16479-1-jaegeuk@kernel.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [GIT PULL] f2fs update for 4.16-rc1
+Date: Mon, 18 Jun 2018 13:38:17 +1000
+Message-ID: <20180618133817.6faba27e@canb.auug.org.au>
+References: <20180130223220.GB65489@jaegeuk-macbookpro.roam.corp.google.com>
+        <20180131095446.443670dc@canb.auug.org.au>
+        <20180131002535.GD65489@jaegeuk-macbookpro.roam.corp.google.com>
+        <20180201092551.759f32be@canb.auug.org.au>
+        <20180314101704.51aaae7f@canb.auug.org.au>
+        <20180403122919.3c503f74@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1fUiDI-0002ra-Dj
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Jun 2018 00:40:08 +0000
-Received: from [198.145.29.99] (helo=mail.kernel.org)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fUiDH-000Zh5-4e
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Jun 2018 00:40:08 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/lqihSEbz3Vi4iT6k5.T6NlI"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180403122919.3c503f74@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yufen Yu <yuyufen@huawei.com>, Tejun Heo <tj@kernel.org>, David Sterba <dsterba@suse.cz>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch adds to check nat_bits is valid or not. If not, it writes correct
-nat_bits.
+--Sig_/lqihSEbz3Vi4iT6k5.T6NlI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fsck/mount.c | 95 ++++++++++++++++++++++++++++++++++++++++------------
- 1 file changed, 74 insertions(+), 21 deletions(-)
+Hi Chris,
 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index a481a1e..f830e9b 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -1044,6 +1044,78 @@ void write_nat_bits(struct f2fs_sb_info *sbi,
- 	free(nat_bits);
- }
- 
-+static int check_nat_bits(struct f2fs_sb_info *sbi,
-+	struct f2fs_super_block *sb, struct f2fs_checkpoint *cp)
-+{
-+	struct f2fs_nm_info *nm_i = NM_I(sbi);
-+	u_int32_t nat_blocks = get_sb(segment_count_nat) <<
-+				(get_sb(log_blocks_per_seg) - 1);
-+	u_int32_t nat_bits_bytes = nat_blocks >> 3;
-+	u_int32_t nat_bits_blocks = F2FS_BYTES_TO_BLK((nat_bits_bytes << 1) +
-+					8 + F2FS_BLKSIZE - 1);
-+	unsigned char *nat_bits, *full_nat_bits, *empty_nat_bits;
-+	u_int32_t i, j;
-+	block_t blkaddr;
-+	int err = 0;
-+
-+	nat_bits = calloc(F2FS_BLKSIZE, nat_bits_blocks);
-+	ASSERT(nat_bits);
-+
-+	full_nat_bits = nat_bits + 8;
-+	empty_nat_bits = full_nat_bits + nat_bits_bytes;
-+
-+	blkaddr = get_sb(segment0_blkaddr) + (sbi->cur_cp <<
-+				get_sb(log_blocks_per_seg)) - nat_bits_blocks;
-+
-+	for (i = 0; i < nat_bits_blocks; i++) {
-+		if (dev_read_block(nat_bits + i * F2FS_BLKSIZE, blkaddr + i))
-+			ASSERT_MSG("\tError: read NAT bits to disk!!!\n");
-+	}
-+
-+	if (*(__le64 *)nat_bits != get_cp_crc(cp)) {
-+		err = -1;
-+		goto out;
-+	}
-+
-+	for (i = 0; i < nat_blocks; i++) {
-+		u_int32_t start_nid = i * NAT_ENTRY_PER_BLOCK;
-+		u_int32_t valid = 0;
-+
-+		for (j = 0; j < NAT_ENTRY_PER_BLOCK; j++) {
-+			if (f2fs_test_bit(start_nid + j, nm_i->nid_bitmap))
-+				valid++;
-+		}
-+		if (valid == 0) {
-+			if (!test_bit_le(i, empty_nat_bits) ||
-+					test_bit_le(i, full_nat_bits)) {
-+				err = -1;
-+				goto out;
-+			}
-+		} else if (valid == NAT_ENTRY_PER_BLOCK) {
-+			if (test_bit_le(i, empty_nat_bits) ||
-+					!test_bit_le(i, full_nat_bits)) {
-+				err = -1;
-+				goto out;
-+			}
-+		} else {
-+			if (test_bit_le(i, empty_nat_bits) ||
-+					test_bit_le(i, full_nat_bits)) {
-+				err = -1;
-+				goto out;
-+			}
-+		}
-+	}
-+out:
-+	free(nat_bits);
-+	if (!err) {
-+		MSG(0, "Info: Checked valid nat_bits in checkpoint\n");
-+	} else {
-+		c.bug_on = 1;
-+		MSG(0, "Info: Corrupted valid nat_bits in checkpoint\n");
-+	}
-+	return err;
-+}
-+
- int init_node_manager(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
-@@ -2394,28 +2466,9 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
- 	}
- 
- 	/* Check nat_bits */
--	if (c.func != DUMP && is_set_ckpt_flags(cp, CP_NAT_BITS_FLAG)) {
--		u_int32_t nat_bits_bytes, nat_bits_blocks;
--		__le64 *kaddr;
--		u_int32_t blk;
--
--		blk = get_sb(cp_blkaddr) + (1 << get_sb(log_blocks_per_seg));
--		if (sbi->cur_cp == 2)
--			blk += 1 << get_sb(log_blocks_per_seg);
--
--		nat_bits_bytes = get_sb(segment_count_nat) << 5;
--		nat_bits_blocks = F2FS_BYTES_TO_BLK((nat_bits_bytes << 1) + 8 +
--				F2FS_BLKSIZE - 1);
--		blk -= nat_bits_blocks;
--
--		kaddr = malloc(PAGE_SIZE);
--		ret = dev_read_block(kaddr, blk);
--		ASSERT(ret >= 0);
--		if (*kaddr != get_cp_crc(cp))
-+	if (c.func == FSCK && is_set_ckpt_flags(cp, CP_NAT_BITS_FLAG)) {
-+		if (check_nat_bits(sbi, sb, cp) && c.fix_on)
- 			write_nat_bits(sbi, sb, cp, sbi->cur_cp);
--		else
--			MSG(0, "Info: Found valid nat_bits in checkpoint\n");
--		free(kaddr);
- 	}
- 	return 0;
- }
--- 
-2.17.0.441.gb46fe60e1d-goog
+On Tue, 3 Apr 2018 12:29:19 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Ping?
+>=20
+> On Wed, 14 Mar 2018 10:17:04 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > On Thu, 1 Feb 2018 09:25:51 +1100 Stephen Rothwell <sfr@canb.auug.org.a=
+u> wrote: =20
+> > >
+> > > On Tue, 30 Jan 2018 16:25:35 -0800 Jaegeuk Kim <jaegeuk@kernel.org> w=
+rote:   =20
+> > > >
+> > > > On 01/31, Stephen Rothwell wrote:     =20
+> > > > >=20
+> > > > > On Tue, 30 Jan 2018 14:32:20 -0800 Jaegeuk Kim <jaegeuk@kernel.or=
+g> wrote:       =20
+> > > > > >
+> > > > > > Could you please consider the below pull request?
+> > > > > >=20
+> > > > > > Thanks,
+> > > > > >=20
+> > > > > > The following changes since commit ace52288edf0cb5e7a52b681f057=
+f86224c49c27:
+> > > > > >=20
+> > > > > >   Merge tag 'for-linus-20171218' of git://git.infradead.org/lin=
+ux-mtd (2017-12-18 16:18:01 -0800)
+> > > > > >=20
+> > > > > > are available in the Git repository at:
+> > > > > >=20
+> > > > > >   git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.gi=
+t tags/f2fs-for-4.16-rc1
+> > > > > >=20
+> > > > > > for you to fetch changes up to 1c1d35df71104c76a4a2e25862926f22=
+c334c9d6:
+> > > > > >=20
+> > > > > >   f2fs: support inode creation time (2018-01-25 14:10:39 -0800)=
+       =20
+> > > > >=20
+> > > > > This has an interesting conflict with the btrfs tree:
+> > > > >=20
+> > > > > -----------------------------------------------------------------=
+------
+> > > > > After merging the f2fs tree, today's linux-next build (x86_64
+> > > > > allmodconfig) failed like this:
+> > > > >=20
+> > > > > /home/sfr/next/next/fs/f2fs/super.c: In function 'f2fs_fill_super=
+':
+> > > > > /home/sfr/next/next/fs/f2fs/super.c:2563:18: error: 'SB_I_CGROUPW=
+B' undeclared (first use in this function); did you mean 'S_CGROUPWB'?
+> > > > >   sb->s_iflags |=3D SB_I_CGROUPWB;
+> > > > >                   ^~~~~~~~~~~~~
+> > > > >                   S_CGROUPWB
+> > > > >=20
+> > > > > Caused by commit
+> > > > >=20
+> > > > >   578c647879f7 ("f2fs: implement cgroup writeback support")
+> > > > >=20
+> > > > > interacting with commit
+> > > > >=20
+> > > > >   34934189a3dd ("cgroup, writeback: replace SB_I_CGROUPWB with pe=
+r-inode S_CGROUPWB"
+> > > > >=20
+> > > > > from the btrfs tree.
+> > > > >=20
+> > > > > I have reverted the f2fs tree commit for today, but a better reso=
+lution
+> > > > > would be appreciated.
+> > > > > -----------------------------------------------------------------=
+------
+> > > > >=20
+> > > > > I have seen no response to the above email and have been revertin=
+g that
+> > > > > commit since Jan 18.       =20
+> > > >=20
+> > > > I think this can be addressed by:
+> > > >=20
+> > > > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> > > > index 89c838bfb067..c743b73976d0 100644
+> > > > --- a/fs/f2fs/inode.c
+> > > > +++ b/fs/f2fs/inode.c
+> > > > @@ -48,9 +48,10 @@ void f2fs_set_inode_flags(struct inode *inode)
+> > > >                 new_fl |=3D S_DIRSYNC;
+> > > >         if (f2fs_encrypted_inode(inode))
+> > > >                 new_fl |=3D S_ENCRYPTED;
+> > > > +       new_fl |=3D S_CGROUPWB;
+> > > >         inode_set_flags(inode, new_fl,
+> > > >                         S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIR=
+SYNC|
+> > > > -                       S_ENCRYPTED);
+> > > > +                       S_ENCRYPTED|S_CGROUPWB);
+> > > >  }
+> > > >=20
+> > > >  static void __get_inode_rdev(struct inode *inode, struct f2fs_inod=
+e *ri)
+> > > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > > > index 8173ae688814..ebcd58476fc7 100644
+> > > > --- a/fs/f2fs/super.c
+> > > > +++ b/fs/f2fs/super.c
+> > > > @@ -2560,7 +2560,6 @@ static int f2fs_fill_super(struct super_block=
+ *sb, void *data, int silent)
+> > > >         sb->s_flags =3D (sb->s_flags & ~SB_POSIXACL) |
+> > > >                 (test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
+> > > >         memcpy(&sb->s_uuid, raw_super->uuid, sizeof(raw_super->uuid=
+));
+> > > > -       sb->s_iflags |=3D SB_I_CGROUPWB;
+> > > >=20
+> > > >         /* init f2fs-specific super block info */
+> > > >         sbi->valid_super_block =3D valid_super_block;
+> > > >      =20
+> > >=20
+> > > I have applied that (by hand) as a merge fix patch for the merge of t=
+eh
+> > > btrfs tree for today.  Thanks for the resolution.   =20
+> >=20
+> > I am still applying this to the merge of the btrfs tree every day ...
+> >=20
+> > Commit
+> >   578c647879f7 ("f2fs: implement cgroup writeback support")
+> > was merged into Linus' tree on Jan 31.
+> >=20
+> > Here is the actual merge fix patch:
+> >=20
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Thu, 1 Feb 2018 09:21:06 +1100
+> > Subject: [PATCH] f2fs: fixup for cgroup/writeback change
+> >=20
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  fs/f2fs/inode.c | 3 ++-
+> >  fs/f2fs/super.c | 1 -
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> > index 205add3d0f3a..f34652c4288f 100644
+> > --- a/fs/f2fs/inode.c
+> > +++ b/fs/f2fs/inode.c
+> > @@ -48,9 +48,10 @@ void f2fs_set_inode_flags(struct inode *inode)
+> >  		new_fl |=3D S_DIRSYNC;
+> >  	if (f2fs_encrypted_inode(inode))
+> >  		new_fl |=3D S_ENCRYPTED;
+> > +	new_fl |=3D S_CGROUPWB;
+> >  	inode_set_flags(inode, new_fl,
+> >  			S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC|
+> > -			S_ENCRYPTED);
+> > +			S_ENCRYPTED|S_CGROUPWB);
+> >  }
+> > =20
+> >  static void __get_inode_rdev(struct inode *inode, struct f2fs_inode *r=
+i)
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index 8173ae688814..ebcd58476fc7 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -2560,7 +2560,6 @@ static int f2fs_fill_super(struct super_block *sb=
+, void *data, int silent)
+> >  	sb->s_flags =3D (sb->s_flags & ~SB_POSIXACL) |
+> >  		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
+> >  	memcpy(&sb->s_uuid, raw_super->uuid, sizeof(raw_super->uuid));
+> > -	sb->s_iflags |=3D SB_I_CGROUPWB;
+> > =20
+> >  	/* init f2fs-specific super block info */
+> >  	sbi->valid_super_block =3D valid_super_block;
+> > --=20
+> > 2.15.1 =20
 
+Another merge window has passed and I am still holding this tree and its
+merge fixes ...  Tomorrow I will drop the btrfs tree and rename the
+btrfs-kdave tree to btrfs.  OK?
+--=20
+Cheers,
+Stephen Rothwell
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+--Sig_/lqihSEbz3Vi4iT6k5.T6NlI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsnKSkACgkQAVBC80lX
+0Gz2pQf8CwiIWv1DfNT94kiVhiQAKEcxxiHgC8sB9O+N7PVUsejdk+xZOLLG8Lb1
+uy8+Hbx7U3VmayvSt1DIoFw9WvuImgLsyFFMt4/EXEeY0Dfwx45IfULB7fUozIL6
+aYSLqJKv6MgpUTkUzSHY3BCRk5IpQ/YCWtUMf9pKQpGHdtVCwaiuFn22CwkTmcgy
+f5U/OPt3KdfJdLxBrWcEswOYpNN+eAlXSgylxfxCy2XLei0TqpALGHaKGOk6KOIm
+OOVB3KvO/z/Lj//jghz66H/FcFCtjgh+xLFlhO+v4HKudOwUR+gDT5wiA3Ftw/lQ
+NbpSXnxvCx3MqDQMuefSh6gtsGzBIg==
+=yEb9
+-----END PGP SIGNATURE-----
+
+--Sig_/lqihSEbz3Vi4iT6k5.T6NlI--
