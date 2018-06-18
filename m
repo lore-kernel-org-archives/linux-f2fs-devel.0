@@ -1,217 +1,63 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Chris Mason <clm@fb.com>
 Subject: Re: [GIT PULL] f2fs update for 4.16-rc1
-Date: Mon, 18 Jun 2018 13:38:17 +1000
-Message-ID: <20180618133817.6faba27e@canb.auug.org.au>
+Date: Mon, 18 Jun 2018 14:05:32 -0400
+Message-ID: <0CA8215A-6529-40B1-90FB-A5902EA47549@fb.com>
 References: <20180130223220.GB65489@jaegeuk-macbookpro.roam.corp.google.com>
-        <20180131095446.443670dc@canb.auug.org.au>
-        <20180131002535.GD65489@jaegeuk-macbookpro.roam.corp.google.com>
-        <20180201092551.759f32be@canb.auug.org.au>
-        <20180314101704.51aaae7f@canb.auug.org.au>
-        <20180403122919.3c503f74@canb.auug.org.au>
+ <20180131095446.443670dc@canb.auug.org.au>
+ <20180131002535.GD65489@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180201092551.759f32be@canb.auug.org.au>
+ <20180314101704.51aaae7f@canb.auug.org.au>
+ <20180403122919.3c503f74@canb.auug.org.au>
+ <20180618133817.6faba27e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/lqihSEbz3Vi4iT6k5.T6NlI"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180403122919.3c503f74@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yufen Yu <yuyufen@huawei.com>, Tejun Heo <tj@kernel.org>, David Sterba <dsterba@suse.cz>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <prvs=9707f4b852=clm@fb.com>) id 1fUyZy-0002Kt-14
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Jun 2018 18:08:38 +0000
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]
+ helo=mx0a-00082601.pphosted.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fUyZw-00H7vH-9g
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Jun 2018 18:08:37 +0000
+In-Reply-To: <20180618133817.6faba27e@canb.auug.org.au>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Yufen Yu <yuyufen@huawei.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.cz>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>, Tejun Heo <tj@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>
 
---Sig_/lqihSEbz3Vi4iT6k5.T6NlI
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 17 Jun 2018, at 23:38, Stephen Rothwell wrote:
 
-Hi Chris,
-
-On Tue, 3 Apr 2018 12:29:19 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
+> Hi Chris,
 >
-> Ping?
->=20
-> On Wed, 14 Mar 2018 10:17:04 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > On Thu, 1 Feb 2018 09:25:51 +1100 Stephen Rothwell <sfr@canb.auug.org.a=
-u> wrote: =20
-> > >
-> > > On Tue, 30 Jan 2018 16:25:35 -0800 Jaegeuk Kim <jaegeuk@kernel.org> w=
-rote:   =20
-> > > >
-> > > > On 01/31, Stephen Rothwell wrote:     =20
-> > > > >=20
-> > > > > On Tue, 30 Jan 2018 14:32:20 -0800 Jaegeuk Kim <jaegeuk@kernel.or=
-g> wrote:       =20
-> > > > > >
-> > > > > > Could you please consider the below pull request?
-> > > > > >=20
-> > > > > > Thanks,
-> > > > > >=20
-> > > > > > The following changes since commit ace52288edf0cb5e7a52b681f057=
-f86224c49c27:
-> > > > > >=20
-> > > > > >   Merge tag 'for-linus-20171218' of git://git.infradead.org/lin=
-ux-mtd (2017-12-18 16:18:01 -0800)
-> > > > > >=20
-> > > > > > are available in the Git repository at:
-> > > > > >=20
-> > > > > >   git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.gi=
-t tags/f2fs-for-4.16-rc1
-> > > > > >=20
-> > > > > > for you to fetch changes up to 1c1d35df71104c76a4a2e25862926f22=
-c334c9d6:
-> > > > > >=20
-> > > > > >   f2fs: support inode creation time (2018-01-25 14:10:39 -0800)=
-       =20
-> > > > >=20
-> > > > > This has an interesting conflict with the btrfs tree:
-> > > > >=20
-> > > > > -----------------------------------------------------------------=
-------
-> > > > > After merging the f2fs tree, today's linux-next build (x86_64
-> > > > > allmodconfig) failed like this:
-> > > > >=20
-> > > > > /home/sfr/next/next/fs/f2fs/super.c: In function 'f2fs_fill_super=
-':
-> > > > > /home/sfr/next/next/fs/f2fs/super.c:2563:18: error: 'SB_I_CGROUPW=
-B' undeclared (first use in this function); did you mean 'S_CGROUPWB'?
-> > > > >   sb->s_iflags |=3D SB_I_CGROUPWB;
-> > > > >                   ^~~~~~~~~~~~~
-> > > > >                   S_CGROUPWB
-> > > > >=20
-> > > > > Caused by commit
-> > > > >=20
-> > > > >   578c647879f7 ("f2fs: implement cgroup writeback support")
-> > > > >=20
-> > > > > interacting with commit
-> > > > >=20
-> > > > >   34934189a3dd ("cgroup, writeback: replace SB_I_CGROUPWB with pe=
-r-inode S_CGROUPWB"
-> > > > >=20
-> > > > > from the btrfs tree.
-> > > > >=20
-> > > > > I have reverted the f2fs tree commit for today, but a better reso=
-lution
-> > > > > would be appreciated.
-> > > > > -----------------------------------------------------------------=
-------
-> > > > >=20
-> > > > > I have seen no response to the above email and have been revertin=
-g that
-> > > > > commit since Jan 18.       =20
-> > > >=20
-> > > > I think this can be addressed by:
-> > > >=20
-> > > > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> > > > index 89c838bfb067..c743b73976d0 100644
-> > > > --- a/fs/f2fs/inode.c
-> > > > +++ b/fs/f2fs/inode.c
-> > > > @@ -48,9 +48,10 @@ void f2fs_set_inode_flags(struct inode *inode)
-> > > >                 new_fl |=3D S_DIRSYNC;
-> > > >         if (f2fs_encrypted_inode(inode))
-> > > >                 new_fl |=3D S_ENCRYPTED;
-> > > > +       new_fl |=3D S_CGROUPWB;
-> > > >         inode_set_flags(inode, new_fl,
-> > > >                         S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIR=
-SYNC|
-> > > > -                       S_ENCRYPTED);
-> > > > +                       S_ENCRYPTED|S_CGROUPWB);
-> > > >  }
-> > > >=20
-> > > >  static void __get_inode_rdev(struct inode *inode, struct f2fs_inod=
-e *ri)
-> > > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > > > index 8173ae688814..ebcd58476fc7 100644
-> > > > --- a/fs/f2fs/super.c
-> > > > +++ b/fs/f2fs/super.c
-> > > > @@ -2560,7 +2560,6 @@ static int f2fs_fill_super(struct super_block=
- *sb, void *data, int silent)
-> > > >         sb->s_flags =3D (sb->s_flags & ~SB_POSIXACL) |
-> > > >                 (test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
-> > > >         memcpy(&sb->s_uuid, raw_super->uuid, sizeof(raw_super->uuid=
-));
-> > > > -       sb->s_iflags |=3D SB_I_CGROUPWB;
-> > > >=20
-> > > >         /* init f2fs-specific super block info */
-> > > >         sbi->valid_super_block =3D valid_super_block;
-> > > >      =20
-> > >=20
-> > > I have applied that (by hand) as a merge fix patch for the merge of t=
-eh
-> > > btrfs tree for today.  Thanks for the resolution.   =20
-> >=20
-> > I am still applying this to the merge of the btrfs tree every day ...
-> >=20
-> > Commit
-> >   578c647879f7 ("f2fs: implement cgroup writeback support")
-> > was merged into Linus' tree on Jan 31.
-> >=20
-> > Here is the actual merge fix patch:
-> >=20
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Thu, 1 Feb 2018 09:21:06 +1100
-> > Subject: [PATCH] f2fs: fixup for cgroup/writeback change
-> >=20
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > ---
-> >  fs/f2fs/inode.c | 3 ++-
-> >  fs/f2fs/super.c | 1 -
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> > index 205add3d0f3a..f34652c4288f 100644
-> > --- a/fs/f2fs/inode.c
-> > +++ b/fs/f2fs/inode.c
-> > @@ -48,9 +48,10 @@ void f2fs_set_inode_flags(struct inode *inode)
-> >  		new_fl |=3D S_DIRSYNC;
-> >  	if (f2fs_encrypted_inode(inode))
-> >  		new_fl |=3D S_ENCRYPTED;
-> > +	new_fl |=3D S_CGROUPWB;
-> >  	inode_set_flags(inode, new_fl,
-> >  			S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC|
-> > -			S_ENCRYPTED);
-> > +			S_ENCRYPTED|S_CGROUPWB);
-> >  }
-> > =20
-> >  static void __get_inode_rdev(struct inode *inode, struct f2fs_inode *r=
-i)
-> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > index 8173ae688814..ebcd58476fc7 100644
-> > --- a/fs/f2fs/super.c
-> > +++ b/fs/f2fs/super.c
-> > @@ -2560,7 +2560,6 @@ static int f2fs_fill_super(struct super_block *sb=
-, void *data, int silent)
-> >  	sb->s_flags =3D (sb->s_flags & ~SB_POSIXACL) |
-> >  		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
-> >  	memcpy(&sb->s_uuid, raw_super->uuid, sizeof(raw_super->uuid));
-> > -	sb->s_iflags |=3D SB_I_CGROUPWB;
-> > =20
-> >  	/* init f2fs-specific super block info */
-> >  	sbi->valid_super_block =3D valid_super_block;
-> > --=20
-> > 2.15.1 =20
+>
+> Another merge window has passed and I am still holding this tree and 
+> its
+> merge fixes ...  Tomorrow I will drop the btrfs tree and rename the
+> btrfs-kdave tree to btrfs.  OK?
 
-Another merge window has passed and I am still holding this tree and its
-merge fixes ...  Tomorrow I will drop the btrfs tree and rename the
-btrfs-kdave tree to btrfs.  OK?
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/lqihSEbz3Vi4iT6k5.T6NlI
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Really sorry for the hassle, the f2fs subject line got this filtered 
+into a different inbox. Tejun and Josef are working out these btrfs 
+cgroup fixes, so I've pushed v4.17 to my -next tree for now.
 
------BEGIN PGP SIGNATURE-----
+Dave has been doing the Btrfs merge window for some time, so focusing 
+linux-next on his tree is a better fit.  But either way, I've fixed my 
+my email filters so you're back at the top where you belong.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsnKSkACgkQAVBC80lX
-0Gz2pQf8CwiIWv1DfNT94kiVhiQAKEcxxiHgC8sB9O+N7PVUsejdk+xZOLLG8Lb1
-uy8+Hbx7U3VmayvSt1DIoFw9WvuImgLsyFFMt4/EXEeY0Dfwx45IfULB7fUozIL6
-aYSLqJKv6MgpUTkUzSHY3BCRk5IpQ/YCWtUMf9pKQpGHdtVCwaiuFn22CwkTmcgy
-f5U/OPt3KdfJdLxBrWcEswOYpNN+eAlXSgylxfxCy2XLei0TqpALGHaKGOk6KOIm
-OOVB3KvO/z/Lj//jghz66H/FcFCtjgh+xLFlhO+v4HKudOwUR+gDT5wiA3Ftw/lQ
-NbpSXnxvCx3MqDQMuefSh6gtsGzBIg==
-=yEb9
------END PGP SIGNATURE-----
+-chris
 
---Sig_/lqihSEbz3Vi4iT6k5.T6NlI--
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
