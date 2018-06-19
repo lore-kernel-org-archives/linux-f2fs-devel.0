@@ -1,40 +1,49 @@
-From: Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v14 00/74] Convert page cache to XArray
-Date: Tue, 19 Jun 2018 02:22:30 -0700
-Message-ID: <20180619092230.GA1438@bombadil.infradead.org>
-References: <20180617020052.4759-1-willy@infradead.org>
- <20180619031257.GA12527@linux.intel.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 1/2] sload.f2fs: update sit entries of cursegs
+Date: Tue, 19 Jun 2018 20:07:23 +0800
+Message-ID: <ac1de6c2-82a0-93ae-cdcb-b1972e92f5ee@huawei.com>
+References: <20180613015150.197854-1-shengyong1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180619031257.GA12527@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ross Zwisler <ross.zwisler@linux.intel.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Lukas Czerner <lczerner@redhat.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1fVFQq-000089-LB
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Jun 2018 12:08:20 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fVFQm-000QQl-Sk
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Jun 2018 12:08:20 +0000
+In-Reply-To: <20180613015150.197854-1-shengyong1@huawei.com>
+Content-Language: en-US
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On Mon, Jun 18, 2018 at 09:12:57PM -0600, Ross Zwisler wrote:
-> Hit another deadlock.  This one reproduces 100% of the time in my setup with
-> XFS + DAX + generic/340.  It doesn't reproduce for me at all with
-> next-20180615.  Here's the output from "echo w > /proc/sysrq-trigger":
+On 2018/6/13 9:51, Sheng Yong wrote:
+> move_curseg_info->reset_curseg changes cursegs, however, new segment
+> entries are not set as dirty. As a result, flush_sit_entries will not
+> update entries in SIT, especially when an empty segment is selected
+> as the new curseg, its seg_entry->type is lost.
+> 
+> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 
-*sigh*.  I wonder what the differences are between our setups ...
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-> [   92.849119] sysrq: SysRq : Show Blocked State
-> [   92.850506]   task                        PC stack   pid father
-> [   92.852299] holetest        D    0  1651   1466 0x00000000
-> [   92.853912] Call Trace:
-> [   92.854610]  __schedule+0x2c5/0xad0
-> [   92.855612]  schedule+0x36/0x90
-> [   92.856602]  get_unlocked_entry+0xce/0x120
-> [   92.857756]  ? dax_insert_entry+0x2b0/0x2b0
-> [   92.858931]  grab_mapping_entry+0x19e/0x250
-> [   92.860119]  dax_iomap_pte_fault+0x115/0x1140
-> [   92.860836]  dax_iomap_fault+0x37/0x40
-...
-> This looks very similar to the one I reported last week with generic/269.
+Thanks,
 
-Yeah, another missing wakeup, no doubt.  Can you bisect this?  That was
-how I found the last one; bisected it to a single patch and stared very
-hard at the patch until I saw it.  I'm not going to be in a position to
-tinker with my DAX setup until the first week of July.
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
