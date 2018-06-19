@@ -1,63 +1,90 @@
-From: Chris Mason <clm@fb.com>
-Subject: Re: [GIT PULL] f2fs update for 4.16-rc1
-Date: Mon, 18 Jun 2018 14:05:32 -0400
-Message-ID: <0CA8215A-6529-40B1-90FB-A5902EA47549@fb.com>
-References: <20180130223220.GB65489@jaegeuk-macbookpro.roam.corp.google.com>
- <20180131095446.443670dc@canb.auug.org.au>
- <20180131002535.GD65489@jaegeuk-macbookpro.roam.corp.google.com>
- <20180201092551.759f32be@canb.auug.org.au>
- <20180314101704.51aaae7f@canb.auug.org.au>
- <20180403122919.3c503f74@canb.auug.org.au>
- <20180618133817.6faba27e@canb.auug.org.au>
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
+Subject: Re: [PATCH v14 00/74] Convert page cache to XArray
+Date: Mon, 18 Jun 2018 21:12:57 -0600
+Message-ID: <20180619031257.GA12527@linux.intel.com>
+References: <20180617020052.4759-1-willy@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <prvs=9707f4b852=clm@fb.com>) id 1fUyZy-0002Kt-14
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Jun 2018 18:08:38 +0000
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]
- helo=mx0a-00082601.pphosted.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fUyZw-00H7vH-9g
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Jun 2018 18:08:37 +0000
-In-Reply-To: <20180618133817.6faba27e@canb.auug.org.au>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Yufen Yu <yuyufen@huawei.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.cz>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>, Tejun Heo <tj@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 17 Jun 2018, at 23:38, Stephen Rothwell wrote:
+On Sat, Jun 16, 2018 at 06:59:38PM -0700, Matthew Wilcox wrote:
+> The XArray is a replacement for the radix tree.  For the moment it uses
+> the same data structures, enabling a gradual replacement.  This patch
+> set implements the XArray and converts the page cache to use it.
+> 
+> A version of these patches has been running under xfstests for over
+> 48 hours, so I have some confidence in them.  The DAX changes have now
+> also had a reasonable test outing.  This is based on next-20180615 and
+> is available as a git tree at
+> git://git.infradead.org/users/willy/linux-dax.git xarray-20180615
+> 
+> I shall create a git branch from -rc1 and ask for that to be included in
+> -next.  I'm a little concerned I still have no reviews on some of the
+> later patches.
+> 
+> Changes since v13:
+>  - Actually fixed bug in workingset conversion that led to exceptional
+>    entries not being deleted from the XArray.  Not sure how I dropped
+>    that patch for v13.  Thanks to David Sterba for noticing.
+>  - Fixed bug in DAX writeback conversion that failed to wake up waiters.
+>    Thanks to Ross for testing, and to Dan & Jeff for helping me get a
+>    setup working to reproduce the problem.
+>  - Converted the new dax_lock_page / dax_unlock_page functions.
+>  - Moved XArray test suite entirely into the test_xarray kernel module
+>    to match other test suites.  It can still be built in userspace as
+>    part of the radix tree test suite.
+>  - Changed email address.
+>  - Moved a few functions into different patches to make the test-suite
+>    additions more logical.
+>  - Fixed a bug in XA_BUG_ON (oh the irony) where it evaluated the
+>    condition twice.
+>  - Constified xa_head() / xa_parent() / xa_entry() and their _locked
+>    variants.
+>  - Moved xa_parent() to xarray.h so it can be used from the workingset code.
+>  - Call the xarray testsuite from the radix tree test suite to ensure
+>    that I remember to run both test suites ;-)
+>  - Added some more tests to the test suite.
 
-> Hi Chris,
->
->
-> Another merge window has passed and I am still holding this tree and 
-> its
-> merge fixes ...  Tomorrow I will drop the btrfs tree and rename the
-> btrfs-kdave tree to btrfs.  OK?
+Hit another deadlock.  This one reproduces 100% of the time in my setup with
+XFS + DAX + generic/340.  It doesn't reproduce for me at all with
+next-20180615.  Here's the output from "echo w > /proc/sysrq-trigger":
 
+[   92.849119] sysrq: SysRq : Show Blocked State
+[   92.850506]   task                        PC stack   pid father
+[   92.852299] holetest        D    0  1651   1466 0x00000000
+[   92.853912] Call Trace:
+[   92.854610]  __schedule+0x2c5/0xad0
+[   92.855612]  schedule+0x36/0x90
+[   92.856602]  get_unlocked_entry+0xce/0x120
+[   92.857756]  ? dax_insert_entry+0x2b0/0x2b0
+[   92.858931]  grab_mapping_entry+0x19e/0x250
+[   92.860119]  dax_iomap_pte_fault+0x115/0x1140
+[   92.860836]  dax_iomap_fault+0x37/0x40
+[   92.861235]  __xfs_filemap_fault+0x2de/0x310
+[   92.861681]  xfs_filemap_fault+0x2c/0x30
+[   92.862113]  __do_fault+0x26/0x160
+[   92.862531]  __handle_mm_fault+0xc96/0x1320
+[   92.863059]  handle_mm_fault+0x1ba/0x3c0
+[   92.863534]  __do_page_fault+0x2b4/0x590
+[   92.864029]  do_page_fault+0x38/0x2c0
+[   92.864472]  do_async_page_fault+0x2c/0xb0
+[   92.864985]  ? async_page_fault+0x8/0x30
+[   92.865459]  async_page_fault+0x1e/0x30
+[   92.865941] RIP: 0033:0x401442
+[   92.866322] Code: Bad RIP value.
+[   92.866739] RSP: 002b:00007fa29c9feec0 EFLAGS: 00010212
+[   92.867366] RAX: 00007fa29ca00400 RBX: 0000000000001000 RCX: 0000000000008000
+[   92.868219] RDX: 0000000000000009 RSI: 0000000000000000 RDI: 0000000000000000
+[   92.869082] RBP: 00007fa29c9ff700 R08: 00007fa29c9ff700 R09: 00007fa29c9ff700
+[   92.869939] R10: 0000000000000070 R11: 00007fa29e571ba0 R12: 00007fa29ca00000
+[   92.870804] R13: 00007fffd5f24160 R14: 0000000000000400 R15: 00007fffd5f240b0
 
-Really sorry for the hassle, the f2fs subject line got this filtered 
-into a different inbox. Tejun and Josef are working out these btrfs 
-cgroup fixes, so I've pushed v4.17 to my -next tree for now.
+This looks very similar to the one I reported last week with generic/269.
 
-Dave has been doing the Btrfs merge window for some time, so focusing 
-linux-next on his tree is a better fit.  But either way, I've fixed my 
-my email filters so you're back at the top where you belong.
-
--chris
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+- Ross
