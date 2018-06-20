@@ -1,107 +1,53 @@
-From: Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v14 00/74] Convert page cache to XArray
-Date: Tue, 19 Jun 2018 10:16:38 -0700
-Message-ID: <20180619171638.GE1438@bombadil.infradead.org>
-References: <20180617020052.4759-1-willy@infradead.org>
- <20180619031257.GA12527@linux.intel.com>
- <20180619092230.GA1438@bombadil.infradead.org>
- <20180619164037.GA6679@linux.intel.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 2/2] resize.f2fs: fix wrong nat_bits migration
+Date: Wed, 20 Jun 2018 10:25:38 +0800
+Message-ID: <07b6ac9e-0e9a-ffd9-832a-a9d871a67ef9@huawei.com>
+References: <20180618003948.16479-1-jaegeuk@kernel.org>
+ <20180618003948.16479-2-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180619164037.GA6679@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ross Zwisler <ross.zwisler@linux.intel.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Lukas Czerner <lczerner@redhat.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1fVSov-0000aW-Fa
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 20 Jun 2018 02:26:05 +0000
+Received: from [45.249.212.35] (helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fVSot-0010kY-7B
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 20 Jun 2018 02:26:05 +0000
+In-Reply-To: <20180618003948.16479-2-jaegeuk@kernel.org>
+Content-Language: en-US
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-On Tue, Jun 19, 2018 at 10:40:37AM -0600, Ross Zwisler wrote:
-> On Tue, Jun 19, 2018 at 02:22:30AM -0700, Matthew Wilcox wrote:
-> > On Mon, Jun 18, 2018 at 09:12:57PM -0600, Ross Zwisler wrote:
-> > > Hit another deadlock.  This one reproduces 100% of the time in my setup with
-> > > XFS + DAX + generic/340.  It doesn't reproduce for me at all with
-> > > next-20180615.  Here's the output from "echo w > /proc/sysrq-trigger":
-> > 
-> > *sigh*.  I wonder what the differences are between our setups ...
-> > 
-> > > [   92.849119] sysrq: SysRq : Show Blocked State
-> > > [   92.850506]   task                        PC stack   pid father
-> > > [   92.852299] holetest        D    0  1651   1466 0x00000000
-> > > [   92.853912] Call Trace:
-> > > [   92.854610]  __schedule+0x2c5/0xad0
-> > > [   92.855612]  schedule+0x36/0x90
-> > > [   92.856602]  get_unlocked_entry+0xce/0x120
-> > > [   92.857756]  ? dax_insert_entry+0x2b0/0x2b0
-> > > [   92.858931]  grab_mapping_entry+0x19e/0x250
-> > > [   92.860119]  dax_iomap_pte_fault+0x115/0x1140
-> > > [   92.860836]  dax_iomap_fault+0x37/0x40
-> > ...
-> > > This looks very similar to the one I reported last week with generic/269.
-> > 
-> > Yeah, another missing wakeup, no doubt.  Can you bisect this?  That was
-> > how I found the last one; bisected it to a single patch and stared very
-> > hard at the patch until I saw it.  I'm not going to be in a position to
-> > tinker with my DAX setup until the first week of July.
+On 2018/6/18 8:39, Jaegeuk Kim wrote:
+> When wring the last nat_bits in new checkpoint, we call write_nat_bits()
+> to recover the nat_bits. But, we didn't update nm_i->nat_bitmap which we can
+> get the up-to-date nat blocks. After sit migration, old checkpoint has no
+> longer valid nat blocks, resulting in wrong free nid allocation at the following
+> mount time.
 > 
-> It bisected to this commit:
+> Let's indicate new nat_blocks by adjusting nat_bitmap in nat migration.
 > 
-> b4b4daa7e8fb0ad0fee35d3e28d00e97c849a6cb is the first bad commit
-> commit b4b4daa7e8fb0ad0fee35d3e28d00e97c849a6cb
-> Author: Matthew Wilcox <willy@infradead.org>
-> Date:   Thu Mar 29 22:58:27 2018 -0400
-> 
->     dax: Convert page fault handlers to XArray
-> 
->     This is the last part of DAX to be converted to the XArray so
->     remove all the old helper functions.
-> 
->     Signed-off-by: Matthew Wilcox <willy@infradead.org>
+> Reported-by: Lianjun Huang <huanglianjun@vivo.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-I think I see a bug.  No idea if it's the one you're hitting ;-)
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-I had been intending to not use the 'entry' to decide whether we were
-waiting on a 2MB or 4kB page, but rather the xas.  I shelved that idea,
-but not before dropping the DAX_PMD flag being passed from the PMD
-pagefault caller.  So if I put that back ...
+Thanks,
 
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 9919b6b545fb..75cc160d2f0b 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -367,13 +367,13 @@ static struct page *dax_busy_page(void *entry)
-  * a VM_FAULT code, encoded as an xarray internal entry.  The ERR_PTR values
-  * overlap with xarray value entries.
-  */
--static
--void *grab_mapping_entry(struct xa_state *xas, struct address_space *mapping)
-+static void *grab_mapping_entry(struct xa_state *xas,
-+		struct address_space *mapping, unsigned long size)
- {
- 	bool pmd_downgrade = false; /* splitting 2MiB entry into 4k entries? */
- 	void *locked = dax_make_entry(pfn_to_pfn_t(0),
--						DAX_EMPTY | DAX_LOCKED);
--	void *unlocked = dax_make_entry(pfn_to_pfn_t(0), DAX_EMPTY);
-+						size | DAX_EMPTY | DAX_LOCKED);
-+	void *unlocked = dax_make_entry(pfn_to_pfn_t(0), size | DAX_EMPTY);
- 	void *entry;
- 
- retry:
-@@ -1163,7 +1163,7 @@ static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 	if (write && !vmf->cow_page)
- 		flags |= IOMAP_WRITE;
- 
--	entry = grab_mapping_entry(&xas, mapping);
-+	entry = grab_mapping_entry(&xas, mapping, 0);
- 	if (xa_is_internal(entry)) {
- 		ret = xa_to_internal(entry);
- 		goto out;
-@@ -1396,7 +1396,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
- 	 * page is already in the tree, for instance), it will return
- 	 * VM_FAULT_FALLBACK.
- 	 */
--	entry = grab_mapping_entry(&xas, mapping);
-+	entry = grab_mapping_entry(&xas, mapping, DAX_PMD);
- 	if (xa_is_internal(entry)) {
- 		result = xa_to_internal(entry);
- 		goto fallback;
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
