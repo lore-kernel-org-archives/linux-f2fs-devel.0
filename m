@@ -1,34 +1,59 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: fix to wait on page writeback before updating page
-Date: Thu, 21 Jun 2018 22:38:28 +0800
-Message-ID: <20180621143828.3844-1-chao@kernel.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: don't issue discard commands in online discard is on
+Date: Thu, 21 Jun 2018 11:05:18 -0700
+Message-ID: <20180621180518.76856-1-jaegeuk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Chao Yu <yuchao0@huawei.com>
+Actually, we don't need to issue discard commands, if discard is on, as
+mentioned in the comment.
 
-In error path of f2fs_move_rehashed_dirents, inode page could be writeback
-state, so we should wait on inode page writeback before updating it.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/inline.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/f2fs/segment.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index a6d6d340211a..d0d430ad79ff 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -477,6 +477,7 @@ static int f2fs_move_rehashed_dirents(struct inode *dir, struct page *ipage,
- 	return 0;
- recover:
- 	lock_page(ipage);
-+	f2fs_wait_on_page_writeback(ipage, NODE, true);
- 	memcpy(inline_dentry, backup_dentry, MAX_INLINE_DATA(dir));
- 	f2fs_i_depth_write(dir, 0);
- 	f2fs_i_size_write(dir, MAX_INLINE_DATA(dir));
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 6dbdf2c48fba..553075973be4 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2469,23 +2469,24 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+ 	if (err)
+ 		goto out;
+ 
+-	start_block = START_BLOCK(sbi, start_segno);
+-	end_block = START_BLOCK(sbi, end_segno + 1);
+-
+-	__init_discard_policy(sbi, &dpolicy, DPOLICY_FSTRIM, cpc.trim_minlen);
+-	__issue_discard_cmd_range(sbi, &dpolicy, start_block, end_block);
+-
+ 	/*
+ 	 * We filed discard candidates, but actually we don't need to wait for
+ 	 * all of them, since they'll be issued in idle time along with runtime
+ 	 * discard option. User configuration looks like using runtime discard
+ 	 * or periodic fstrim instead of it.
+ 	 */
+-	if (!test_opt(sbi, DISCARD)) {
+-		trimmed = __wait_discard_cmd_range(sbi, &dpolicy,
++	if (test_opt(sbi, DISCARD))
++		goto out;
++
++	start_block = START_BLOCK(sbi, start_segno);
++	end_block = START_BLOCK(sbi, end_segno + 1);
++
++	__init_discard_policy(sbi, &dpolicy, DPOLICY_FSTRIM, cpc.trim_minlen);
++	__issue_discard_cmd_range(sbi, &dpolicy, start_block, end_block);
++
++	trimmed = __wait_discard_cmd_range(sbi, &dpolicy,
+ 					start_block, end_block);
+-		range->len = F2FS_BLK_TO_BYTES(trimmed);
+-	}
++	range->len = F2FS_BLK_TO_BYTES(trimmed);
+ out:
+ 	return err;
+ }
 -- 
-2.16.2.17.g38e79b1fd
+2.17.0.441.gb46fe60e1d-goog
