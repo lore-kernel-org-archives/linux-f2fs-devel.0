@@ -1,24 +1,22 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs-tools: fix compile errors on AOSP
-Date: Thu, 21 Jun 2018 14:12:19 +0800
-Message-ID: <19329f96-b8cf-78d7-6948-ab55cfa3203b@huawei.com>
-References: <20180620130616.100017-1-zhengjunling@huawei.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH v2] f2fs: fix a hungtask problem caused by
+ congestion_wait
+Date: Thu, 21 Jun 2018 14:49:06 +0800
+Message-ID: <1529563746-8608-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fVspy-0003on-2S
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Jun 2018 06:12:54 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <heyunlei@huawei.com>) id 1fVtcC-0000fr-Pl
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Jun 2018 07:02:44 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fVspv-00GYrf-Va
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Jun 2018 06:12:54 +0000
-In-Reply-To: <20180620130616.100017-1-zhengjunling@huawei.com>
-Content-Language: en-US
+ id 1fVtc9-004jT8-LW
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Jun 2018 07:02:44 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,17 +26,52 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Junling Zheng <zhengjunling@huawei.com>, jaegeuk@kernel.org
-Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: zhangdianfang@huawei.com
 
-On 2018/6/20 21:06, Junling Zheng wrote:
-> Include needed header files directly to fix compile errors on AOSP.
-> 
-> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+This patch fix hungtask problem which can be reproduced as follow:
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Thread 0~3:
+while true
+do
+        touch /xxx/test/file_xxx
+done
 
-Thanks,
+Thread 4 write a new checkpoint every three seconds.
+
+In the meantime, fio start 16 threads for randwrite.
+
+With my debug info, cycles num will exceed 1000 in function
+f2fs_sync_dirty_inodes, and most of cycle will be dropped
+into congestion_wait() and sleep more than 20ms. Cycles num
+reduced to 3 with this patch.
+
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fs/f2fs/checkpoint.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 9624a8f..1a1a0a2 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -979,12 +979,10 @@ int f2fs_sync_dirty_inodes(struct f2fs_sb_info *sbi, enum inode_type type)
+ 
+ 		iput(inode);
+ 		/* We need to give cpu to another writers. */
+-		if (ino == cur_ino) {
+-			congestion_wait(BLK_RW_ASYNC, HZ/50);
++		if (ino == cur_ino)
+ 			cond_resched();
+-		} else {
++		else
+ 			ino = cur_ino;
+-		}
+ 	} else {
+ 		/*
+ 		 * We should submit bio, since it exists several
+-- 
+1.9.1
 
 
 ------------------------------------------------------------------------------
