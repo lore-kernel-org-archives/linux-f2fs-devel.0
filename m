@@ -1,32 +1,49 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: use timespec64 for inode timestamps
-Date: Thu, 21 Jun 2018 14:08:06 +0800
-Message-ID: <cda86b47-c61d-121e-a353-97f3e5447bb7@huawei.com>
-References: <20180620080603.4156809-1-arnd@arndb.de>
+Subject: Re: [PATCH] f2fs: Fix uninitialized return in
+ f2fs_ioc_shutdown()
+Date: Thu, 21 Jun 2018 14:10:03 +0800
+Message-ID: <f490775d-c56f-e2db-9470-14a04d1b6210@huawei.com>
+References: <20180620103953.bxdqzy2izn3elii7@kili.mountain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <y2038-bounces@lists.linaro.org>
-In-Reply-To: <20180620080603.4156809-1-arnd@arndb.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1fVso4-0008WT-Ds
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Jun 2018 06:10:56 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fVso1-004Jfc-J0
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Jun 2018 06:10:56 +0000
+In-Reply-To: <20180620103953.bxdqzy2izn3elii7@kili.mountain>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.linaro.org/mailman/options/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=unsubscribe>
-List-Archive: <http://lists.linaro.org/pipermail/y2038/>
-List-Post: <mailto:y2038@lists.linaro.org>
-List-Help: <mailto:y2038-request@lists.linaro.org?subject=help>
-List-Subscribe: <https://lists.linaro.org/mailman/listinfo/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=subscribe>
-Errors-To: y2038-bounces@lists.linaro.org
-Sender: "Y2038" <y2038-bounces@lists.linaro.org>
-To: Arnd Bergmann <arnd@arndb.de>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Theodore Ts'o <tytso@mit.edu>, Sheng Yong <shengyong1@huawei.com>, Eric Biggers <ebiggers@google.com>, y2038@lists.linaro.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Yunlong Song <yunlong.song@huawei.com>, Yunlei He <heyunlei@huawei.com>, Deepa Dinamani <deepa.kernel@gmail.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Dan Carpenter <dan.carpenter@oracle.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Sahitya Tummala <stummala@codeaurora.org>
+Cc: kernel-janitors@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-T24gMjAxOC82LzIwIDE2OjAyLCBBcm5kIEJlcmdtYW5uIHdyb3RlOgo+IFRoZSBvbi1kaXNrIHJl
-cHJlc2VudGF0aW9uIGFuZCB0aGUgdmZzIGJvdGggdXNlIDY0LWJpdCB0dl9zZWMgdmFsdWVzLAo+
-IHNvIGxldCdzIGNoYW5nZSB0aGUgbGFzdCBtaXNzaW5nIHBpZWNlIGluIHRoZSBtaWRkbGUuCj4g
-Cj4gU2lnbmVkLW9mZi1ieTogQXJuZCBCZXJnbWFubiA8YXJuZEBhcm5kYi5kZT4KClJldmlld2Vk
-LWJ5OiBDaGFvIFl1IDx5dWNoYW8wQGh1YXdlaS5jb20+CgpUaGFua3MsCgpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpZMjAzOCBtYWlsaW5nIGxpc3QKWTIw
-MzhAbGlzdHMubGluYXJvLm9yZwpodHRwczovL2xpc3RzLmxpbmFyby5vcmcvbWFpbG1hbi9saXN0
-aW5mby95MjAzOAo=
+On 2018/6/20 18:39, Dan Carpenter wrote:
+> "ret" can be uninitialized on the success path when "in ==
+> F2FS_GOING_DOWN_FULLSYNC".
+> 
+> Fixes: 60b2b4ee2bc0 ("f2fs: Fix deadlock in shutdown ioctl")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks,
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
