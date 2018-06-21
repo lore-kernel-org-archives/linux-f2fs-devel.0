@@ -1,22 +1,22 @@
 From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v2] f2fs: fix a hungtask problem caused by
- congestion_wait
-Date: Thu, 21 Jun 2018 14:49:06 +0800
-Message-ID: <1529563746-8608-1-git-send-email-heyunlei@huawei.com>
+Subject: [PATCH] f2fs: report error if quota off error during
+ umount
+Date: Thu, 21 Jun 2018 15:27:11 +0800
+Message-ID: <1529566031-14261-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <heyunlei@huawei.com>) id 1fVtcC-0000fr-Pl
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Jun 2018 07:02:44 +0000
-Received: from [45.249.212.32] (helo=huawei.com)
+ (envelope-from <heyunlei@huawei.com>) id 1fVuD4-0005Wh-T7
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Jun 2018 07:40:50 +0000
+Received: from [45.249.212.35] (helo=huawei.com)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fVtc9-004jT8-LW
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Jun 2018 07:02:44 +0000
+ id 1fVuD3-004lBW-5c
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Jun 2018 07:40:50 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,47 +29,41 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 Cc: zhangdianfang@huawei.com
 
-This patch fix hungtask problem which can be reproduced as follow:
-
-Thread 0~3:
-while true
-do
-        touch /xxx/test/file_xxx
-done
-
-Thread 4 write a new checkpoint every three seconds.
-
-In the meantime, fio start 16 threads for randwrite.
-
-With my debug info, cycles num will exceed 1000 in function
-f2fs_sync_dirty_inodes, and most of cycle will be dropped
-into congestion_wait() and sleep more than 20ms. Cycles num
-reduced to 3 with this patch.
+Now, we depend on fsck to ensure quota file data is ok,
+so we scan whole partition if checkpoint without umount
+flag. It's same for quota off error case, which may make
+quota file data inconsistent.
 
 Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fs/f2fs/checkpoint.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ fs/f2fs/super.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 9624a8f..1a1a0a2 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -979,12 +979,10 @@ int f2fs_sync_dirty_inodes(struct f2fs_sb_info *sbi, enum inode_type type)
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 73d7d7e..d1e91f0 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1820,7 +1820,9 @@ static int f2fs_quota_off(struct super_block *sb, int type)
+ 	if (!inode || !igrab(inode))
+ 		return dquot_quota_off(sb, type);
  
- 		iput(inode);
- 		/* We need to give cpu to another writers. */
--		if (ino == cur_ino) {
--			congestion_wait(BLK_RW_ASYNC, HZ/50);
-+		if (ino == cur_ino)
- 			cond_resched();
--		} else {
-+		else
- 			ino = cur_ino;
--		}
- 	} else {
- 		/*
- 		 * We should submit bio, since it exists several
+-	f2fs_quota_sync(sb, type);
++	err = f2fs_quota_sync(sb, type);
++	if (err)
++		goto out_put;
+ 
+ 	err = dquot_quota_off(sb, type);
+ 	if (err || f2fs_sb_has_quota_ino(sb))
+@@ -1841,7 +1843,8 @@ void f2fs_quota_off_umount(struct super_block *sb)
+ 	int type;
+ 
+ 	for (type = 0; type < MAXQUOTAS; type++)
+-		f2fs_quota_off(sb, type);
++		if (f2fs_quota_off(sb, type))
++			set_sbi_flag(sbi, SBI_NEED_FSCK);
+ }
+ 
+ static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
 -- 
 1.9.1
 
