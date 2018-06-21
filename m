@@ -1,25 +1,22 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] fsck.f2fs: clear qf_ino if quota node is
- removed
-Date: Thu, 21 Jun 2018 17:35:01 +0800
-Message-ID: <31b0da53-6e54-33cd-eb28-c45a8bd29917@huawei.com>
-References: <20180621085138.195409-1-shengyong1@huawei.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH v2] f2fs: report error if quota off error during
+ umount
+Date: Thu, 21 Jun 2018 20:20:33 +0800
+Message-ID: <1529583633-20746-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fVw0E-0003o4-H0
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Jun 2018 09:35:42 +0000
+ (envelope-from <heyunlei@huawei.com>) id 1fVyn6-0003z9-RZ
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Jun 2018 12:34:20 +0000
 Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fVw0C-00Gi4j-R9
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Jun 2018 09:35:42 +0000
-In-Reply-To: <20180621085138.195409-1-shengyong1@huawei.com>
-Content-Language: en-US
+ id 1fVyn4-002OaY-Ng
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Jun 2018 12:34:20 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,100 +26,57 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org
-Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: zhangdianfang@huawei.com
 
-On 2018/6/21 16:51, Sheng Yong wrote:
-> If a quota node is corrupted, it may be removed. Then its qf_ino should
-> also be removed.
+Now, we depend on fsck to ensure quota file data is ok,
+so we scan whole partition if checkpoint without umount
+flag. It's same for quota off error case, which may make
+quota file data inconsistent.
 
-Yes, I agree that is simplest way by just removing quota sysfiles and trying to
-rebuild them entirely by rescanning.
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fs/f2fs/super.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-Refer to below discussion, could you consider to try to rebuild them directly?
-
-https://patchwork.kernel.org/patch/10189407/
-
-Thanks,
-
-> 
-> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
-> ---
->  fsck/fsck.c  | 19 +++++++++++++++++--
->  fsck/fsck.h  |  1 +
->  fsck/mount.c |  2 +-
->  3 files changed, 19 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fsck/fsck.c b/fsck/fsck.c
-> index 8145199..8418bdb 100644
-> --- a/fsck/fsck.c
-> +++ b/fsck/fsck.c
-> @@ -1675,8 +1675,13 @@ int fsck_chk_quota_node(struct f2fs_sb_info *sbi)
->  		}
->  		ret = fsck_chk_node_blk(sbi, NULL, ino,
->  				F2FS_FT_REG_FILE, TYPE_INODE, &blk_cnt, NULL);
-> -		if (ret)
-> -			ASSERT_MSG("[0x%x] wrong orphan inode", ino);
-> +		if (ret) {
-> +			/* sanity_check_nid failed, node should be removed */
-> +			ASSERT_MSG("[0x%x] wrong quota inode", ino);
-> +			sb->qf_ino[qtype] = 0;
-> +			if (c.fix_on)
-> +				F2FS_FSCK(sbi)->chk.fix_sb = 1;
-> +		}
->  	}
->  	return ret;
->  }
-> @@ -2004,6 +2009,15 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
->  		write_nat_bits(sbi, sb, cp, sbi->cur_cp);
->  }
->  
-> +static void fix_superblock(struct f2fs_sb_info *sbi)
-> +{
-> +	if (!F2FS_FSCK(sbi)->chk.fix_sb)
-> +		return;
-> +
-> +	write_superblock(F2FS_RAW_SUPER(sbi));
-> +	F2FS_FSCK(sbi)->chk.fix_sb = 0;
-> +}
-> +
->  int check_curseg_offset(struct f2fs_sb_info *sbi)
->  {
->  	int i;
-> @@ -2584,6 +2598,7 @@ int fsck_verify(struct f2fs_sb_info *sbi)
->  				flush_curseg_sit_entries(sbi);
->  			}
->  			fix_checkpoint(sbi);
-> +			fix_superblock(sbi);
->  		} else if (is_set_ckpt_flags(cp, CP_FSCK_FLAG)) {
->  			write_checkpoint(sbi);
->  		}
-> diff --git a/fsck/fsck.h b/fsck/fsck.h
-> index f90bcf9..60cdf23 100644
-> --- a/fsck/fsck.h
-> +++ b/fsck/fsck.h
-> @@ -69,6 +69,7 @@ struct f2fs_fsck {
->  		u32 multi_hard_link_files;
->  		u64 sit_valid_blocks;
->  		u32 sit_free_segs;
-> +		int fix_sb;
->  	} chk;
->  
->  	struct hard_link_node *hard_link_list_head;
-> diff --git a/fsck/mount.c b/fsck/mount.c
-> index 7912605..7e908f1 100644
-> --- a/fsck/mount.c
-> +++ b/fsck/mount.c
-> @@ -2165,7 +2165,7 @@ void write_superblock(struct f2fs_super_block *new_sb)
->  		ASSERT(ret >= 0);
->  	}
->  	free(buf);
-> -	DBG(0, "Info: Done to rebuild superblock\n");
-> +	MSG(0, "Info: Done to rebuild superblock\n");
->  }
->  
->  void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
-> 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 73d7d7e..679af0a 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1820,7 +1820,9 @@ static int f2fs_quota_off(struct super_block *sb, int type)
+ 	if (!inode || !igrab(inode))
+ 		return dquot_quota_off(sb, type);
+ 
+-	f2fs_quota_sync(sb, type);
++	err = f2fs_quota_sync(sb, type);
++	if (err)
++		goto out_put;
+ 
+ 	err = dquot_quota_off(sb, type);
+ 	if (err || f2fs_sb_has_quota_ino(sb))
+@@ -1839,9 +1841,18 @@ static int f2fs_quota_off(struct super_block *sb, int type)
+ void f2fs_quota_off_umount(struct super_block *sb)
+ {
+ 	int type;
++	int err;
+ 
+-	for (type = 0; type < MAXQUOTAS; type++)
+-		f2fs_quota_off(sb, type);
++	for (type = 0; type < MAXQUOTAS; type++) {
++		err = f2fs_quota_off(sb, type);
++		if (err) {
++			f2fs_msg(sb, KERN_ERR,
++				"Failed to off quota tracking "
++				"(type=%d, err=%d). Please run "
++				"fsck to fix.", type, err);
++			set_sbi_flag(F2FS_SB(sb), SBI_NEED_FSCK);
++		}
++	}
+ }
+ 
+ static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
+-- 
+1.9.1
 
 
 ------------------------------------------------------------------------------
