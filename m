@@ -1,66 +1,59 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [GIT PULL] f2fs update for 4.16-rc1
-Date: Thu, 21 Jun 2018 09:26:07 +1000
-Message-ID: <20180621092607.3e13e43f@canb.auug.org.au>
-References: <20180130223220.GB65489@jaegeuk-macbookpro.roam.corp.google.com>
-        <20180131095446.443670dc@canb.auug.org.au>
-        <20180131002535.GD65489@jaegeuk-macbookpro.roam.corp.google.com>
-        <20180201092551.759f32be@canb.auug.org.au>
-        <20180314101704.51aaae7f@canb.auug.org.au>
-        <20180403122919.3c503f74@canb.auug.org.au>
-        <20180618133817.6faba27e@canb.auug.org.au>
-        <0CA8215A-6529-40B1-90FB-A5902EA47549@fb.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] fsck.f2fs: show missing large_nat_bitmap flag in
+ print_ckpt_info
+Date: Thu, 21 Jun 2018 09:20:32 +0800
+Message-ID: <20180621012032.96297-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/faqi5hVO4SfNG7GmwxJOv+N"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <0CA8215A-6529-40B1-90FB-A5902EA47549@fb.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chris Mason <clm@fb.com>
-Cc: Josef Bacik <jbacik@fb.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yufen Yu <yuyufen@huawei.com>, Tejun Heo <tj@kernel.org>, David Sterba <dsterba@suse.cz>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1fVoIG-0007CT-Kh
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Jun 2018 01:21:48 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fVoIE-004UAK-Ft
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Jun 2018 01:21:48 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
---Sig_/faqi5hVO4SfNG7GmwxJOv+N
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Previously, we forget to print large_nat_bitmap according to CP flag,
+fix it.
 
-Hi Chris,
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fsck/mount.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-On Mon, 18 Jun 2018 14:05:32 -0400 Chris Mason <clm@fb.com> wrote:
->
-> Really sorry for the hassle, the f2fs subject line got this filtered=20
-> into a different inbox. Tejun and Josef are working out these btrfs=20
+diff --git a/fsck/mount.c b/fsck/mount.c
+index f830e9b1f72a..b4911506cddb 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -405,6 +405,8 @@ void print_ckpt_info(struct f2fs_sb_info *sbi)
+ void print_cp_state(u32 flag)
+ {
+ 	MSG(0, "Info: checkpoint state = %x : ", flag);
++	if (flag & CP_LARGE_NAT_BITMAP_FLAG)
++		MSG(0, "%s", " large_nat_bitmap");
+ 	if (flag & CP_NOCRC_RECOVERY_FLAG)
+ 		MSG(0, "%s", " allow_nocrc");
+ 	if (flag & CP_TRIMMED_FLAG)
+-- 
+2.18.0.rc1
 
-Ah, that explains it.
 
-> cgroup fixes, so I've pushed v4.17 to my -next tree for now.
-
-Thanks.
-
-> Dave has been doing the Btrfs merge window for some time, so focusing=20
-> linux-next on his tree is a better fit.  But either way, I've fixed my=20
-> my email filters so you're back at the top where you belong.
-
-I'll just leave things as they are for now.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/faqi5hVO4SfNG7GmwxJOv+N
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsq4o8ACgkQAVBC80lX
-0GwOIAf7B2AmazbsG5Ctu22dUEGqQ6KxhsTUOzKwTCvApkP5GfQ2GfuOFSmhNSm0
-87wyUeXxd/AIxyAOLrR8aQhz+gm1U4ZxhEm+QwFkr0ORtOHj9+4iZ5myQrsdel8t
-ErJRYRZ6AbXDv1s6QyTkALK2+E60q8Je071H1t5i2PhFQ1lNSBs5imrOhf2kqV66
-2V08vDOjSdxJr9Gj8lPeuy5I7zzW/xH0yWSWgwS0X6mB9T5Y2Rs0msKP1lWhS0nH
-9JmgJ+QQGVXyZ8bBZEBL/2LhSOOvQoRRf2Y9vLg9eMimZf9Czb3DIlhtxAN3dfvb
-cbgQSvAnCPHgOqekOBWgmdYJIRW0sQ==
-=RwbE
------END PGP SIGNATURE-----
-
---Sig_/faqi5hVO4SfNG7GmwxJOv+N--
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
