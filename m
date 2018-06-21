@@ -1,89 +1,106 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: disable f2fs_check_rb_tree_consistence
-Date: Thu, 21 Jun 2018 12:03:05 -0700
-Message-ID: <20180621190305.GB77164@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180621033936.108796-1-yuchao0@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Subject: [PATCH] f2fs: assign REQ_RAHEAD to bio for ->readpages
+Date: Thu, 21 Jun 2018 12:32:13 -0700
+Message-ID: <20180621193213.86850-1-jaegeuk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180621033936.108796-1-yuchao0@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Yunlei He <heyunlei@huawei.com>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Jens Axboe <axboe@kernel.dk>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 06/21, Chao Yu wrote:
-> If there is millions of discard entries cached in rb tree, each
-> sanity check of it can cause very long latency as held cmd_lock
-> blocking other lock grabbers.
-> 
-> In other aspect, we have enabled the check very long time, as
-> we see, there is no such inconsistent condition caused by bugs.
-> 
-> But still we do not choose to kill it directly, instead, adding
-> an flag to disable the check now, if there is related code change,
-> we can reuse it to detect bugs.
-> 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/f2fs.h    |  1 +
->  fs/f2fs/segment.c | 10 +++++++---
->  2 files changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 49c687173923..412e907920c2 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -309,6 +309,7 @@ struct discard_cmd_control {
->  	atomic_t issing_discard;		/* # of issing discard */
->  	atomic_t discard_cmd_cnt;		/* # of cached cmd count */
->  	struct rb_root root;			/* root of discard rb-tree */
-> +	bool rbtree_check;			/* config for consistence check */
->  };
->  
->  /* for the list of fsync inodes, used only during recovery */
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 6dbdf2c48fba..8c1d6c546fa0 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -1199,8 +1199,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->  		mutex_lock(&dcc->cmd_lock);
->  		if (list_empty(pend_list))
->  			goto next;
-> -		f2fs_bug_on(sbi,
-> -			!f2fs_check_rb_tree_consistence(sbi, &dcc->root));
-> +		if (dcc->rbtree_check)
+As Jens reported, we'd better assign REQ_RAHEAD to bio by the fact that
+->readpages is called only from read-ahead.
 
-		unlikely()?
+In Documentation/filesystems/vfs.txt,
 
-> +			f2fs_bug_on(sbi, !f2fs_check_rb_tree_consistence(sbi,
-> +								&dcc->root));
->  		blk_start_plug(&plug);
->  		list_for_each_entry_safe(dc, tmp, pend_list, list) {
->  			f2fs_bug_on(sbi, dc->state != D_PREP);
-> @@ -1752,6 +1753,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
->  	dcc->max_discards = MAIN_SEGS(sbi) << sbi->log_blocks_per_seg;
->  	dcc->undiscard_blks = 0;
->  	dcc->root = RB_ROOT;
-> +	dcc->rbtree_check = false;
->  
->  	init_waitqueue_head(&dcc->discard_wait_queue);
->  	SM_I(sbi)->dcc_info = dcc;
-> @@ -2381,7 +2383,9 @@ static void __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
->  	issued = 0;
->  
->  	mutex_lock(&dcc->cmd_lock);
-> -	f2fs_bug_on(sbi, !f2fs_check_rb_tree_consistence(sbi, &dcc->root));
-> +	if (dcc->rbtree_check)
+readpages: called by the VM to read pages associated with the address_space
+  	object. This is essentially just a vector version of
+  	readpage.  Instead of just one page, several pages are
+  	requested.
+	readpages is only used for read-ahead, so read errors are
+  	ignored.  If anything goes wrong, feel free to give up.
 
-		unlikely()?
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/data.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-> +		f2fs_bug_on(sbi, !f2fs_check_rb_tree_consistence(sbi,
-> +								&dcc->root));
->  
->  	dc = (struct discard_cmd *)f2fs_lookup_rb_tree_ret(&dcc->root,
->  					NULL, start,
-> -- 
-> 2.18.0.rc1
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 8f931d699287..bc28ae5ae1ad 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -534,7 +534,7 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ }
+ 
+ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
+-							 unsigned nr_pages)
++					unsigned nr_pages, unsigned op_flag)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct bio *bio;
+@@ -546,7 +546,7 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
+ 		return ERR_PTR(-ENOMEM);
+ 	f2fs_target_device(sbi, blkaddr, bio);
+ 	bio->bi_end_io = f2fs_read_end_io;
+-	bio_set_op_attrs(bio, REQ_OP_READ, 0);
++	bio_set_op_attrs(bio, REQ_OP_READ, op_flag);
+ 
+ 	if (f2fs_encrypted_file(inode))
+ 		post_read_steps |= 1 << STEP_DECRYPT;
+@@ -571,7 +571,7 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
+ static int f2fs_submit_page_read(struct inode *inode, struct page *page,
+ 							block_t blkaddr)
+ {
+-	struct bio *bio = f2fs_grab_read_bio(inode, blkaddr, 1);
++	struct bio *bio = f2fs_grab_read_bio(inode, blkaddr, 1, 0);
+ 
+ 	if (IS_ERR(bio))
+ 		return PTR_ERR(bio);
+@@ -1421,10 +1421,15 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ /*
+  * This function was originally taken from fs/mpage.c, and customized for f2fs.
+  * Major change was from block_size == page_size in f2fs by default.
++ *
++ * Note that the aops->readpages() function is ONLY used for read-ahead. If
++ * this function ever deviates from doing just read-ahead, it should either
++ * use ->readpage() or do the necessary surgery to decouple ->readpages()
++ * from read-ahead.
+  */
+ static int f2fs_mpage_readpages(struct address_space *mapping,
+ 			struct list_head *pages, struct page *page,
+-			unsigned nr_pages)
++			unsigned nr_pages, bool is_readahead)
+ {
+ 	struct bio *bio = NULL;
+ 	sector_t last_block_in_bio = 0;
+@@ -1514,7 +1519,8 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
+ 			bio = NULL;
+ 		}
+ 		if (bio == NULL) {
+-			bio = f2fs_grab_read_bio(inode, block_nr, nr_pages);
++			bio = f2fs_grab_read_bio(inode, block_nr, nr_pages,
++					is_readahead ? REQ_RAHEAD : 0);
+ 			if (IS_ERR(bio)) {
+ 				bio = NULL;
+ 				goto set_error_page;
+@@ -1558,7 +1564,7 @@ static int f2fs_read_data_page(struct file *file, struct page *page)
+ 	if (f2fs_has_inline_data(inode))
+ 		ret = f2fs_read_inline_data(inode, page);
+ 	if (ret == -EAGAIN)
+-		ret = f2fs_mpage_readpages(page->mapping, NULL, page, 1);
++		ret = f2fs_mpage_readpages(page->mapping, NULL, page, 1, false);
+ 	return ret;
+ }
+ 
+@@ -1575,7 +1581,7 @@ static int f2fs_read_data_pages(struct file *file,
+ 	if (f2fs_has_inline_data(inode))
+ 		return 0;
+ 
+-	return f2fs_mpage_readpages(mapping, pages, NULL, nr_pages);
++	return f2fs_mpage_readpages(mapping, pages, NULL, nr_pages, true);
+ }
+ 
+ static int encrypt_one_page(struct f2fs_io_info *fio)
+-- 
+2.17.0.441.gb46fe60e1d-goog
