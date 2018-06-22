@@ -1,25 +1,25 @@
 From: "Xu, Wen" <wen.xu@gatech.edu>
-Subject: Bug report: BUG() triggered in verify_block_addr() when
- mounting a corrupted f2fs image
-Date: Fri, 22 Jun 2018 14:18:40 +0000
-Message-ID: <D2787930-B873-4B28-ADD4-DF122501E7BA@gatech.edu>
+Subject: Bug report: Divide zero in reset_curseg() when mounting
+ a crafted f2fs image
+Date: Fri, 22 Jun 2018 14:20:22 +0000
+Message-ID: <15AA751D-8F5A-4258-A389-1D7EBBAED613@gatech.edu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <wen.xu@gatech.edu>) id 1fWNPN-00023Q-Ci
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Jun 2018 14:51:29 +0000
-Received: from mail-eopbgr690133.outbound.protection.outlook.com
- ([40.107.69.133] helo=NAM04-CO1-obe.outbound.protection.outlook.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <wen.xu@gatech.edu>) id 1fWNQS-0004nX-E6
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Jun 2018 14:52:36 +0000
+Received: from mail-eopbgr720096.outbound.protection.outlook.com
+ ([40.107.72.96] helo=NAM05-CO1-obe.outbound.protection.outlook.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-SHA384:256) (Exim 4.90_1)
- id 1fWNPK-006Dae-PR
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Jun 2018 14:51:29 +0000
+ id 1fWNQQ-000Jf8-15
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Jun 2018 14:52:36 +0000
 Content-Language: en-US
-Content-ID: <A4984241FB7B6A42AEE531EE7F2207FC@namprd07.prod.outlook.com>
+Content-ID: <ACC0B0AA1C0EE740BAD7297D73A3ADD2@namprd07.prod.outlook.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,7 +33,7 @@ To: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge
 
 Hi,
 
-A bug found by fuzzing: https://bugzilla.kernel.org/show_bug.cgi?id=200177
+A bug found by fuzzing at https://bugzilla.kernel.org/show_bug.cgi?id=200183
 
 Thanks,
 Wen
