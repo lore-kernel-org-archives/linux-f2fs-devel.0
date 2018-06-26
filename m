@@ -1,22 +1,25 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH] fsck.f2fs: fix wrong err message of check quota
- node
-Date: Tue, 26 Jun 2018 16:06:54 +0800
-Message-ID: <1530000414-29115-1-git-send-email-heyunlei@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v3] f2fs: report error if quota off error
+ during umount
+Date: Tue, 26 Jun 2018 16:34:14 +0800
+Message-ID: <18d4965a-7358-c057-32ea-9db6395bd56f@huawei.com>
+References: <1529989963-24570-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <heyunlei@huawei.com>) id 1fXjDN-0004k7-8l
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Jun 2018 08:20:41 +0000
-Received: from [45.249.212.35] (helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1fXjR2-0006Ln-83
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Jun 2018 08:34:48 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fXjDL-0035An-9P
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Jun 2018 08:20:41 +0000
+ id 1fXjR0-009Ugj-8b
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Jun 2018 08:34:48 +0000
+In-Reply-To: <1529989963-24570-1-git-send-email-heyunlei@huawei.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,41 +29,20 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: zhangdianfang@huawei.com
 
-This patch fix wrong err message of check quota node.
+On 2018/6/26 13:12, Yunlei He wrote:
+> Now, we depend on fsck to ensure quota file data is ok,
+> so we scan whole partition if checkpoint without umount
+> flag. It's same for quota off error case, which may make
+> quota file data inconsistent.
+> 
+> Signed-off-by: Yunlei He <heyunlei@huawei.com>
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fsck/fsck.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 8145199..f9ed797 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -1663,7 +1663,7 @@ int fsck_chk_quota_node(struct f2fs_sb_info *sbi)
- 		nid_t ino = QUOTA_INO(sb, qtype);
- 		struct node_info ni;
- 
--		DBG(1, "[%3d] ino [0x%x]\n", qtype, ino);
-+		DBG(1, "qtype [%d] ino [0x%x]\n", qtype, ino);
- 		blk_cnt = 1;
- 
- 		if (c.preen_mode == PREEN_MODE_1 && !c.fix_on) {
-@@ -1676,7 +1676,8 @@ int fsck_chk_quota_node(struct f2fs_sb_info *sbi)
- 		ret = fsck_chk_node_blk(sbi, NULL, ino,
- 				F2FS_FT_REG_FILE, TYPE_INODE, &blk_cnt, NULL);
- 		if (ret)
--			ASSERT_MSG("[0x%x] wrong orphan inode", ino);
-+			ASSERT_MSG("wrong quota inode, qtype [%d] ino [0x%x]",
-+								qtype, ino);
- 	}
- 	return ret;
- }
--- 
-1.9.1
+Thanks,
 
 
 ------------------------------------------------------------------------------
