@@ -1,22 +1,22 @@
 From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v3] f2fs: report error if quota off error during
- umount
-Date: Tue, 26 Jun 2018 13:12:43 +0800
-Message-ID: <1529989963-24570-1-git-send-email-heyunlei@huawei.com>
+Subject: [PATCH] fsck.f2fs: fix wrong err message of check quota
+ node
+Date: Tue, 26 Jun 2018 16:06:54 +0800
+Message-ID: <1530000414-29115-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <heyunlei@huawei.com>) id 1fXgV1-0000ED-HS
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Jun 2018 05:26:43 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <heyunlei@huawei.com>) id 1fXjDN-0004k7-8l
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Jun 2018 08:20:41 +0000
+Received: from [45.249.212.35] (helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fXgUw-006A7R-Cx
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Jun 2018 05:26:43 +0000
+ id 1fXjDL-0035An-9P
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Jun 2018 08:20:41 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,52 +29,36 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 Cc: zhangdianfang@huawei.com
 
-Now, we depend on fsck to ensure quota file data is ok,
-so we scan whole partition if checkpoint without umount
-flag. It's same for quota off error case, which may make
-quota file data inconsistent.
+This patch fix wrong err message of check quota node.
 
 Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fs/f2fs/super.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ fsck/fsck.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 73d7d7e..669a7af 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1820,7 +1820,9 @@ static int f2fs_quota_off(struct super_block *sb, int type)
- 	if (!inode || !igrab(inode))
- 		return dquot_quota_off(sb, type);
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 8145199..f9ed797 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -1663,7 +1663,7 @@ int fsck_chk_quota_node(struct f2fs_sb_info *sbi)
+ 		nid_t ino = QUOTA_INO(sb, qtype);
+ 		struct node_info ni;
  
--	f2fs_quota_sync(sb, type);
-+	err = f2fs_quota_sync(sb, type);
-+	if (err)
-+		goto out_put;
+-		DBG(1, "[%3d] ino [0x%x]\n", qtype, ino);
++		DBG(1, "qtype [%d] ino [0x%x]\n", qtype, ino);
+ 		blk_cnt = 1;
  
- 	err = dquot_quota_off(sb, type);
- 	if (err || f2fs_sb_has_quota_ino(sb))
-@@ -1839,9 +1841,18 @@ static int f2fs_quota_off(struct super_block *sb, int type)
- void f2fs_quota_off_umount(struct super_block *sb)
- {
- 	int type;
-+	int err;
- 
--	for (type = 0; type < MAXQUOTAS; type++)
--		f2fs_quota_off(sb, type);
-+	for (type = 0; type < MAXQUOTAS; type++) {
-+		err = f2fs_quota_off(sb, type);
-+		if (err) {
-+			f2fs_msg(sb, KERN_ERR,
-+				"Fail to turn off disk quota "
-+				"(type: %d, err: %d), Please "
-+				"run fsck to fix it.", type, err);
-+			set_sbi_flag(F2FS_SB(sb), SBI_NEED_FSCK);
-+		}
-+	}
+ 		if (c.preen_mode == PREEN_MODE_1 && !c.fix_on) {
+@@ -1676,7 +1676,8 @@ int fsck_chk_quota_node(struct f2fs_sb_info *sbi)
+ 		ret = fsck_chk_node_blk(sbi, NULL, ino,
+ 				F2FS_FT_REG_FILE, TYPE_INODE, &blk_cnt, NULL);
+ 		if (ret)
+-			ASSERT_MSG("[0x%x] wrong orphan inode", ino);
++			ASSERT_MSG("wrong quota inode, qtype [%d] ino [0x%x]",
++								qtype, ino);
+ 	}
+ 	return ret;
  }
- 
- static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
 -- 
 1.9.1
 
