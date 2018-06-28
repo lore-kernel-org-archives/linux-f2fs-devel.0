@@ -1,39 +1,48 @@
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-Subject: Re: [PATCH v14 00/74] Convert page cache to XArray
-Date: Wed, 27 Jun 2018 13:44:38 -0600
-Message-ID: <20180627194438.GA20774@linux.intel.com>
-References: <20180617020052.4759-1-willy@infradead.org>
- <20180619031257.GA12527@linux.intel.com>
- <20180619092230.GA1438@bombadil.infradead.org>
- <20180619164037.GA6679@linux.intel.com>
- <20180619171638.GE1438@bombadil.infradead.org>
- <20180627110529.GA19606@bombadil.infradead.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v2] f2fs: Allocate and stat mem used by free
+ nid bitmap more accurately
+Date: Thu, 28 Jun 2018 10:02:50 +0800
+Message-ID: <6c656a11-5e2a-3dd8-011b-294f74e7cd6e@huawei.com>
+References: <1530081981-25514-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180627110529.GA19606@bombadil.infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Lukas Czerner <lczerner@redhat.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1fYMHQ-0005Eq-4d
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Jun 2018 02:03:28 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fYMHO-004okL-4p
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Jun 2018 02:03:28 +0000
+In-Reply-To: <1530081981-25514-1-git-send-email-heyunlei@huawei.com>
+Content-Language: en-US
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: zhangdianfang@huawei.com
 
-On Wed, Jun 27, 2018 at 04:05:29AM -0700, Matthew Wilcox wrote:
-> On Tue, Jun 19, 2018 at 10:16:38AM -0700, Matthew Wilcox wrote:
-> > I think I see a bug.  No idea if it's the one you're hitting ;-)
-> > 
-> > I had been intending to not use the 'entry' to decide whether we were
-> > waiting on a 2MB or 4kB page, but rather the xas.  I shelved that idea,
-> > but not before dropping the DAX_PMD flag being passed from the PMD
-> > pagefault caller.  So if I put that back ...
+On 2018/6/27 14:46, Yunlei He wrote:
+> This patch used f2fs_bitmap_size macro to calculate mem used by
+> free nid bitmap, and stat used mem including aligned part.
 > 
-> Did you get a chance to test this?
+> Signed-off-by: Yunlei He <heyunlei@huawei.com>
 
-With this patch it doesn't deadlock, but the test dies with a SIGBUS and we
-hit a WARN_ON in the DAX code:
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-WARNING: CPU: 5 PID: 1678 at fs/dax.c:226 get_unlocked_entry+0xf7/0x120
+Thanks,
 
-I don't have a lot of time this week to debug further.  The quickest path to
-victory is probably for you to get this reproducing in your test setup.  Does
-XFS + DAX + generic/340 pass for you?
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
