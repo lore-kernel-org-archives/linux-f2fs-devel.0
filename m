@@ -1,56 +1,268 @@
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-Subject: Re: [PATCH v14 00/74] Convert page cache to XArray
-Date: Thu, 28 Jun 2018 10:30:20 -0600
-Message-ID: <20180628163020.GA18192@linux.intel.com>
-References: <20180617020052.4759-1-willy@infradead.org>
- <20180619031257.GA12527@linux.intel.com>
- <20180619092230.GA1438@bombadil.infradead.org>
- <20180619164037.GA6679@linux.intel.com>
- <20180619171638.GE1438@bombadil.infradead.org>
- <20180627110529.GA19606@bombadil.infradead.org>
- <20180627194438.GA20774@linux.intel.com>
- <20180628083909.GA7646@bombadil.infradead.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to do sanity check with node footer
+ and iblocks
+Date: Fri, 29 Jun 2018 13:55:22 +0800
+Message-ID: <20180629055522.80209-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180628083909.GA7646@bombadil.infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Lukas Czerner <lczerner@redhat.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1fYmOU-0004Lk-8k
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Jun 2018 05:56:30 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fYmOR-005ued-OX
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Jun 2018 05:56:30 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Thu, Jun 28, 2018 at 01:39:09AM -0700, Matthew Wilcox wrote:
-> On Wed, Jun 27, 2018 at 01:44:38PM -0600, Ross Zwisler wrote:
-> > On Wed, Jun 27, 2018 at 04:05:29AM -0700, Matthew Wilcox wrote:
-> > > On Tue, Jun 19, 2018 at 10:16:38AM -0700, Matthew Wilcox wrote:
-> > > > I think I see a bug.  No idea if it's the one you're hitting ;-)
-> > > > 
-> > > > I had been intending to not use the 'entry' to decide whether we were
-> > > > waiting on a 2MB or 4kB page, but rather the xas.  I shelved that idea,
-> > > > but not before dropping the DAX_PMD flag being passed from the PMD
-> > > > pagefault caller.  So if I put that back ...
-> > > 
-> > > Did you get a chance to test this?
-> > 
-> > With this patch it doesn't deadlock, but the test dies with a SIGBUS and we
-> > hit a WARN_ON in the DAX code:
-> > 
-> > WARNING: CPU: 5 PID: 1678 at fs/dax.c:226 get_unlocked_entry+0xf7/0x120
-> > 
-> > I don't have a lot of time this week to debug further.  The quickest path to
-> > victory is probably for you to get this reproducing in your test setup.  Does
-> > XFS + DAX + generic/340 pass for you?
-> 
-> I won't be back in front of my test box until Tuesday, but that test
-> does work for me because I couldn't get your instructions to give me a
-> 2MB aligned DAX setup.  I had to settle for 4k, so none of the 2MB stuff
-> has been tested properly.
+This patch adds to do sanity check with below fields of inode to
+avoid reported panic.
+- node footer
+- iblocks
 
-Ah.  I've documented both my qemu setup and my filesystem setup here:
+https://bugzilla.kernel.org/show_bug.cgi?id=200223
 
-https://nvdimm.wiki.kernel.org/pmem_in_qemu
-https://nvdimm.wiki.kernel.org/2mib_fs_dax
+- Overview
+BUG() triggered in f2fs_truncate_inode_blocks() when un-mounting a mounted f2fs image after writing to it
 
-This should be enough to get you up and running in QEMU and able to reliably
-get filesystem DAX PMD faults.
+- Reproduce
+
+- POC (poc.c)
+
+static void activity(char *mpoint) {
+
+  char *foo_bar_baz;
+  int err;
+
+  static int buf[8192];
+  memset(buf, 0, sizeof(buf));
+
+  err = asprintf(&foo_bar_baz, "%s/foo/bar/baz", mpoint);
+
+  // open / write / read
+  int fd = open(foo_bar_baz, O_RDWR | O_TRUNC, 0777);
+  if (fd >= 0) {
+    write(fd, (char *)buf, 517);
+    write(fd, (char *)buf, sizeof(buf));
+    close(fd);
+  }
+
+}
+
+int main(int argc, char *argv[]) {
+  activity(argv[1]);
+  return 0;
+}
+
+- Kernel meesage
+[  552.479723] F2FS-fs (loop0): Mounted with checkpoint version = 2
+[  556.451891] ------------[ cut here ]------------
+[  556.451899] kernel BUG at fs/f2fs/node.c:987!
+[  556.452920] invalid opcode: 0000 [#1] SMP KASAN PTI
+[  556.453936] CPU: 1 PID: 1310 Comm: umount Not tainted 4.18.0-rc1+ #4
+[  556.455213] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  556.457140] RIP: 0010:f2fs_truncate_inode_blocks+0x4a7/0x6f0
+[  556.458280] Code: e8 ae ea ff ff 41 89 c7 c1 e8 1f 84 c0 74 0a 41 83 ff fe 0f 85 35 ff ff ff 81 85 b0 fe ff ff fb 03 00 00 e9 f7 fd ff ff 0f 0b <0f> 0b e8 62 b7 9a 00 48 8b bd a0 fe ff ff e8 56 54 ae ff 48 8b b5
+[  556.462015] RSP: 0018:ffff8801f292f808 EFLAGS: 00010286
+[  556.463068] RAX: ffffed003e73242d RBX: ffff8801f292f958 RCX: ffffffffb88b81bc
+[  556.464479] RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff8801f3992164
+[  556.465901] RBP: ffff8801f292f980 R08: ffffed003e73242d R09: ffffed003e73242d
+[  556.467311] R10: 0000000000000001 R11: ffffed003e73242c R12: 00000000fffffc64
+[  556.468706] R13: ffff8801f3992000 R14: 0000000000000058 R15: 00000000ffff8801
+[  556.470117] FS:  00007f8029297840(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
+[  556.471702] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  556.472838] CR2: 000055f5f57305d8 CR3: 00000001f18b0000 CR4: 00000000000006e0
+[  556.474265] Call Trace:
+[  556.474782]  ? f2fs_alloc_nid_failed+0xf0/0xf0
+[  556.475686]  ? truncate_nodes+0x980/0x980
+[  556.476516]  ? pagecache_get_page+0x21f/0x2f0
+[  556.477412]  ? __asan_loadN+0xf/0x20
+[  556.478153]  ? __get_node_page+0x331/0x5b0
+[  556.478992]  ? reweight_entity+0x1e6/0x3b0
+[  556.479826]  f2fs_truncate_blocks+0x55e/0x740
+[  556.480709]  ? f2fs_truncate_data_blocks+0x20/0x20
+[  556.481689]  ? __radix_tree_lookup+0x34/0x160
+[  556.482630]  ? radix_tree_lookup+0xd/0x10
+[  556.483445]  f2fs_truncate+0xd4/0x1a0
+[  556.484206]  f2fs_evict_inode+0x5ce/0x630
+[  556.485032]  evict+0x16f/0x290
+[  556.485664]  iput+0x280/0x300
+[  556.486300]  dentry_unlink_inode+0x165/0x1e0
+[  556.487169]  __dentry_kill+0x16a/0x260
+[  556.487936]  dentry_kill+0x70/0x250
+[  556.488651]  shrink_dentry_list+0x125/0x260
+[  556.489504]  shrink_dcache_parent+0xc1/0x110
+[  556.490379]  ? shrink_dcache_sb+0x200/0x200
+[  556.491231]  ? bit_wait_timeout+0xc0/0xc0
+[  556.492047]  do_one_tree+0x12/0x40
+[  556.492743]  shrink_dcache_for_umount+0x3f/0xa0
+[  556.493656]  generic_shutdown_super+0x43/0x1c0
+[  556.494561]  kill_block_super+0x52/0x80
+[  556.495341]  kill_f2fs_super+0x62/0x70
+[  556.496105]  deactivate_locked_super+0x6f/0xa0
+[  556.497004]  deactivate_super+0x5e/0x80
+[  556.497785]  cleanup_mnt+0x61/0xa0
+[  556.498492]  __cleanup_mnt+0x12/0x20
+[  556.499218]  task_work_run+0xc8/0xf0
+[  556.499949]  exit_to_usermode_loop+0x125/0x130
+[  556.500846]  do_syscall_64+0x138/0x170
+[  556.501609]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  556.502659] RIP: 0033:0x7f8028b77487
+[  556.503384] Code: 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d e1 c9 2b 00 f7 d8 64 89 01 48
+[  556.507137] RSP: 002b:00007fff9f2e3598 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+[  556.508637] RAX: 0000000000000000 RBX: 0000000000ebd030 RCX: 00007f8028b77487
+[  556.510069] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 0000000000ec41e0
+[  556.511481] RBP: 0000000000ec41e0 R08: 0000000000000000 R09: 0000000000000014
+[  556.512892] R10: 00000000000006b2 R11: 0000000000000246 R12: 00007f802908083c
+[  556.514320] R13: 0000000000000000 R14: 0000000000ebd210 R15: 00007fff9f2e3820
+[  556.515745] Modules linked in: snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_pcm snd_timer snd mac_hid i2c_piix4 soundcore ib_iser rdma_cm iw_cm ib_cm ib_core iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx raid1 raid0 multipath linear 8139too crct10dif_pclmul crc32_pclmul qxl drm_kms_helper syscopyarea aesni_intel sysfillrect sysimgblt fb_sys_fops ttm drm aes_x86_64 crypto_simd cryptd 8139cp glue_helper mii pata_acpi floppy
+[  556.529276] ---[ end trace 4ce02f25ff7d3df5 ]---
+[  556.530340] RIP: 0010:f2fs_truncate_inode_blocks+0x4a7/0x6f0
+[  556.531513] Code: e8 ae ea ff ff 41 89 c7 c1 e8 1f 84 c0 74 0a 41 83 ff fe 0f 85 35 ff ff ff 81 85 b0 fe ff ff fb 03 00 00 e9 f7 fd ff ff 0f 0b <0f> 0b e8 62 b7 9a 00 48 8b bd a0 fe ff ff e8 56 54 ae ff 48 8b b5
+[  556.535330] RSP: 0018:ffff8801f292f808 EFLAGS: 00010286
+[  556.536395] RAX: ffffed003e73242d RBX: ffff8801f292f958 RCX: ffffffffb88b81bc
+[  556.537824] RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff8801f3992164
+[  556.539290] RBP: ffff8801f292f980 R08: ffffed003e73242d R09: ffffed003e73242d
+[  556.540709] R10: 0000000000000001 R11: ffffed003e73242c R12: 00000000fffffc64
+[  556.542131] R13: ffff8801f3992000 R14: 0000000000000058 R15: 00000000ffff8801
+[  556.543579] FS:  00007f8029297840(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
+[  556.545180] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  556.546338] CR2: 000055f5f57305d8 CR3: 00000001f18b0000 CR4: 00000000000006e0
+[  556.547809] ==================================================================
+[  556.549248] BUG: KASAN: stack-out-of-bounds in arch_tlb_gather_mmu+0x52/0x170
+[  556.550672] Write of size 8 at addr ffff8801f292fd10 by task umount/1310
+
+[  556.552338] CPU: 1 PID: 1310 Comm: umount Tainted: G      D           4.18.0-rc1+ #4
+[  556.553886] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  556.555756] Call Trace:
+[  556.556264]  dump_stack+0x7b/0xb5
+[  556.556944]  print_address_description+0x70/0x290
+[  556.557903]  kasan_report+0x291/0x390
+[  556.558649]  ? arch_tlb_gather_mmu+0x52/0x170
+[  556.559537]  __asan_store8+0x57/0x90
+[  556.560268]  arch_tlb_gather_mmu+0x52/0x170
+[  556.561110]  tlb_gather_mmu+0x12/0x40
+[  556.561862]  exit_mmap+0x123/0x2a0
+[  556.562555]  ? __ia32_sys_munmap+0x50/0x50
+[  556.563384]  ? exit_aio+0x98/0x230
+[  556.564079]  ? __x32_compat_sys_io_submit+0x260/0x260
+[  556.565099]  ? taskstats_exit+0x1f4/0x640
+[  556.565925]  ? kasan_check_read+0x11/0x20
+[  556.566739]  ? mm_update_next_owner+0x322/0x380
+[  556.567652]  mmput+0x8b/0x1d0
+[  556.568260]  do_exit+0x43a/0x1390
+[  556.568937]  ? mm_update_next_owner+0x380/0x380
+[  556.569855]  ? deactivate_super+0x5e/0x80
+[  556.570668]  ? cleanup_mnt+0x61/0xa0
+[  556.571395]  ? __cleanup_mnt+0x12/0x20
+[  556.572156]  ? task_work_run+0xc8/0xf0
+[  556.572917]  ? exit_to_usermode_loop+0x125/0x130
+[  556.573861]  rewind_stack_do_exit+0x17/0x20
+[  556.574707] RIP: 0033:0x7f8028b77487
+[  556.575428] Code: Bad RIP value.
+[  556.576106] RSP: 002b:00007fff9f2e3598 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+[  556.577599] RAX: 0000000000000000 RBX: 0000000000ebd030 RCX: 00007f8028b77487
+[  556.579020] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 0000000000ec41e0
+[  556.580422] RBP: 0000000000ec41e0 R08: 0000000000000000 R09: 0000000000000014
+[  556.581833] R10: 00000000000006b2 R11: 0000000000000246 R12: 00007f802908083c
+[  556.583252] R13: 0000000000000000 R14: 0000000000ebd210 R15: 00007fff9f2e3820
+
+[  556.584983] The buggy address belongs to the page:
+[  556.585961] page:ffffea0007ca4bc0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+[  556.587540] flags: 0x2ffff0000000000()
+[  556.588296] raw: 02ffff0000000000 0000000000000000 dead000000000200 0000000000000000
+[  556.589822] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+[  556.591359] page dumped because: kasan: bad access detected
+
+[  556.592786] Memory state around the buggy address:
+[  556.593753]  ffff8801f292fc00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  556.595191]  ffff8801f292fc80: 00 00 00 00 00 00 00 00 f1 f1 f1 f1 00 00 00 00
+[  556.596613] >ffff8801f292fd00: 00 00 f3 00 00 00 00 f3 f3 00 00 00 00 f4 f4 f4
+[  556.598044]                          ^
+[  556.598797]  ffff8801f292fd80: f3 f3 f3 f3 00 00 00 00 00 00 00 00 00 00 00 00
+[  556.600225]  ffff8801f292fe00: 00 00 00 00 00 00 00 00 f1 f1 f1 f1 00 f4 f4 f4
+[  556.601647] ==================================================================
+
+- Location
+https://elixir.bootlin.com/linux/v4.18-rc1/source/fs/f2fs/node.c#L987
+		case NODE_DIND_BLOCK:
+			err = truncate_nodes(&dn, nofs, offset[1], 3);
+			cont = 0;
+			break;
+
+		default:
+			BUG(); <---
+		}
+
+Reported-by Wen Xu <wen.xu@gatech.edu>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/inode.c | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 4cf0a05cc03e..321995f9bab5 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -187,9 +187,30 @@ void f2fs_inode_chksum_set(struct f2fs_sb_info *sbi, struct page *page)
+ 	ri->i_inode_checksum = cpu_to_le32(f2fs_inode_chksum(sbi, page));
+ }
+ 
+-static bool sanity_check_inode(struct inode *inode)
++static bool sanity_check_inode(struct inode *inode, struct page *node_page)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	unsigned long long iblocks;
++
++	iblocks = le64_to_cpu(F2FS_INODE(node_page)->i_blocks);
++	if (!iblocks || iblocks > sbi->max_file_blocks) {
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
++		f2fs_msg(sbi->sb, KERN_WARNING,
++			"%s: corrupted inode i_blocks i_ino=%lx iblocks=%llu, "
++			"run fsck to fix.",
++			__func__, inode->i_ino, iblocks);
++		return false;
++	}
++
++	if (ino_of_node(node_page) != nid_of_node(node_page)) {
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
++		f2fs_msg(sbi->sb, KERN_WARNING,
++			"%s: corrupted inode footer i_ino=%lx, ino,nid: "
++			"[%u, %u] run fsck to fix.",
++			__func__, inode->i_ino,
++			ino_of_node(node_page), nid_of_node(node_page));
++		return false;
++	}
+ 
+ 	if (f2fs_sb_has_flexible_inline_xattr(sbi->sb)
+ 			&& !f2fs_has_extra_attr(inode)) {
+@@ -296,7 +317,7 @@ static int do_read_inode(struct inode *inode)
+ 
+ 	get_inline_info(inode, ri);
+ 
+-	if (!sanity_check_inode(inode)) {
++	if (!sanity_check_inode(inode, node_page)) {
+ 		f2fs_put_page(node_page, 1);
+ 		return -EINVAL;
+ 	}
+-- 
+2.18.0.rc1
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
