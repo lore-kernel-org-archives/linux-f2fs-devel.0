@@ -1,91 +1,53 @@
-From: "Xu, Wen" <wen.xu@gatech.edu>
-Subject: Re: Unfixed bug in f2fs-dev branch
-Date: Sun, 1 Jul 2018 02:30:23 +0000
-Message-ID: <B9D85AA9-AD52-4B6B-A34C-D154BB575215@gatech.edu>
-References: <4C84D904-982F-42E1-910F-202DB0BAABC3@gatech.edu>
- <0c0693e7-8ccb-090f-3f70-95f42dc2f0ad@huawei.com>
- <CBE669A7-5C20-4CFC-AB23-F2AEE877A2C6@gatech.edu>
- <ed513d15-cc84-5ea4-0f6a-947187073980@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <wen.xu@gatech.edu>) id 1fZS8H-0002ay-9E
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 01 Jul 2018 02:30:33 +0000
-Received: from mail-eopbgr700107.outbound.protection.outlook.com
- ([40.107.70.107] helo=NAM04-SN1-obe.outbound.protection.outlook.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-SHA384:256) (Exim 4.90_1)
- id 1fZS8F-00Dnf9-6U
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 01 Jul 2018 02:30:33 +0000
-In-Reply-To: <ed513d15-cc84-5ea4-0f6a-947187073980@kernel.org>
-Content-Language: en-US
-Content-ID: <784B072A830B9842867FD4534C426AE0@namprd07.prod.outlook.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao@kernel.org>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH] f2fs: Replace strncpy with memcpy
+Date: Sun,  1 Jul 2018 13:57:06 -0700
+Message-ID: <1530478626-15753-1-git-send-email-linux@roeck-us.net>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Yeah, thanks.
+gcc 8.1.0 complains:
 
--Wen
+fs/f2fs/namei.c: In function 'f2fs_update_extension_list':
+fs/f2fs/namei.c:257:3: warning:
+	'strncpy' output truncated before terminating nul copying
+	as many bytes from a string as its length
+fs/f2fs/namei.c:249:3: warning:
+	'strncpy' output truncated before terminating nul copying
+	as many bytes from a string as its length
 
-> On Jun 30, 2018, at 10:29 PM, Chao Yu <chao@kernel.org> wrote:
-> 
-> On 2018/7/1 5:08, Xu, Wen wrote:
->> Thanks for your efforts. It is fixed regarding my testing.
-> 
-> Thanks very much for the test. :)
-> 
-> If you don't mind, I will reply to bug report posts, and tag them as fixed status.
-> 
-> Thanks,
-> 
->> 
->> -Wen
->> 
->>> On Jun 30, 2018, at 6:17 AM, Chao Yu <yuchao0@huawei.com> wrote:
->>> 
->>> Hi Wen Xu,
->>> 
->>> On 2018/6/30 1:31, Xu, Wen wrote:
->>>> Hi Chao,
->>>> 
->>>> Thank you for your quick response for my bugs!
->>>> 
->>>> After testing your patches, I found all my bugs are fixed except for https://bugzilla.kernel.org/show_bug.cgi?id=200179
->>>> The kernel still panics with KASAN report that I have already pasted in the link. Please check it.
->>> 
->>> I just sent another patch for that, later I will add it into my tree, could you
->>> please test that patch? I hope it can fix the issue current stack showed.
->>> 
->>> Thanks,
->>> 
->>>> 
->>>> -Wen
->>>> 
->>> 
->> 
->> 
->> ------------------------------------------------------------------------------
->> Check out the vibrant tech community on one of the world's most
->> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+Using strncpy() is indeed less than perfect since the length of data to
+be copied has already been determined with strlen(). Replace strncpy()
+with memcpy() to address the warning and optimize the code a little.
 
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ fs/f2fs/namei.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 231b7f3ea7d3..e75607544f7c 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -246,7 +246,7 @@ int f2fs_update_extension_list(struct f2fs_sb_info *sbi, const char *name,
+ 		return -EINVAL;
+ 
+ 	if (hot) {
+-		strncpy(extlist[count], name, strlen(name));
++		memcpy(extlist[count], name, strlen(name));
+ 		sbi->raw_super->hot_ext_count = hot_count + 1;
+ 	} else {
+ 		char buf[F2FS_MAX_EXTENSION][F2FS_EXTENSION_LEN];
+@@ -254,7 +254,7 @@ int f2fs_update_extension_list(struct f2fs_sb_info *sbi, const char *name,
+ 		memcpy(buf, &extlist[cold_count],
+ 				F2FS_EXTENSION_LEN * hot_count);
+ 		memset(extlist[cold_count], 0, F2FS_EXTENSION_LEN);
+-		strncpy(extlist[cold_count], name, strlen(name));
++		memcpy(extlist[cold_count], name, strlen(name));
+ 		memcpy(&extlist[cold_count + 1], buf,
+ 				F2FS_EXTENSION_LEN * hot_count);
+ 		sbi->raw_super->extension_count = cpu_to_le32(cold_count + 1);
+-- 
+2.7.4
