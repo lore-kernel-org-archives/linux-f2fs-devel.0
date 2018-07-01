@@ -1,90 +1,72 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid the global name 'fault_name'
-Date: Sun, 1 Jul 2018 10:25:23 +0800
-Message-ID: <c00e7a33-ca80-283b-be88-88e0adf5cbfc@kernel.org>
-References: <1530374223-130895-1-git-send-email-gaoxiang25@huawei.com>
- <174b5d84-8d41-4b8e-4e87-39f8cc3948ae@huawei.com>
+Subject: Re: Unfixed bug in f2fs-dev branch
+Date: Sun, 1 Jul 2018 10:29:12 +0800
+Message-ID: <ed513d15-cc84-5ea4-0f6a-947187073980@kernel.org>
+References: <4C84D904-982F-42E1-910F-202DB0BAABC3@gatech.edu>
+ <0c0693e7-8ccb-090f-3f70-95f42dc2f0ad@huawei.com>
+ <CBE669A7-5C20-4CFC-AB23-F2AEE877A2C6@gatech.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <174b5d84-8d41-4b8e-4e87-39f8cc3948ae@huawei.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <chao@kernel.org>) id 1fZS79-0005ny-AX
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 01 Jul 2018 02:29:23 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fZS77-00EJxA-Sw
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 01 Jul 2018 02:29:23 +0000
+In-Reply-To: <CBE669A7-5C20-4CFC-AB23-F2AEE877A2C6@gatech.edu>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Gao Xiang <gaoxiang25@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: "Xu, Wen" <wen.xu@gatech.edu>, Chao Yu <yuchao0@huawei.com>
+Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-On 2018/7/1 0:06, Gao Xiang wrote:
-> 
-> Oh, I just found the same patch written by Chao at:
-> https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/commit/?h=f2fs-dev
-> 
-> I just fixed the erofs name conflicts, so fixed f2fs as well.
-> Please ignore this one.
+On 2018/7/1 5:08, Xu, Wen wrote:
+> Thanks for your efforts. It is fixed regarding my testing.
 
-I didn't send it out, I think merging yours will be fine to me. :)
+Thanks very much for the test. :)
+
+If you don't mind, I will reply to bug report posts, and tag them as fixed status.
 
 Thanks,
 
 > 
-> Thanks, 
-> Gao Xiang
+> -Wen
 > 
-> On 2018/6/30 23:57, Gao Xiang wrote:
->> Non-prefix global name 'fault_name' will pollute global
->> namespace, fix it.
+>> On Jun 30, 2018, at 6:17 AM, Chao Yu <yuchao0@huawei.com> wrote:
 >>
->> Refer to:
->> https://lists.01.org/pipermail/kbuild-all/2018-June/049660.html
+>> Hi Wen Xu,
 >>
->> To: Jaegeuk Kim <jaegeuk@kernel.org>
->> To: Chao Yu <yuchao0@huawei.com>
->> Cc: linux-f2fs-devel@lists.sourceforge.net
->> Cc: linux-kernel@vger.kernel.org
->> Reported-by: kbuild test robot <lkp@intel.com>
->> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
->> ---
->>  fs/f2fs/f2fs.h  | 4 ++--
->>  fs/f2fs/super.c | 2 +-
->>  2 files changed, 3 insertions(+), 3 deletions(-)
+>> On 2018/6/30 1:31, Xu, Wen wrote:
+>>> Hi Chao,
+>>>
+>>> Thank you for your quick response for my bugs!
+>>>
+>>> After testing your patches, I found all my bugs are fixed except for https://bugzilla.kernel.org/show_bug.cgi?id=200179
+>>> The kernel still panics with KASAN report that I have already pasted in the link. Please check it.
 >>
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index 4d8b1de..11a2e09 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -65,7 +65,7 @@ struct f2fs_fault_info {
->>  	unsigned int inject_type;
->>  };
->>  
->> -extern char *fault_name[FAULT_MAX];
->> +extern char *f2fs_fault_name[FAULT_MAX];
->>  #define IS_FAULT_SET(fi, type) ((fi)->inject_type & (1 << (type)))
->>  #endif
->>  
->> @@ -1279,7 +1279,7 @@ struct f2fs_sb_info {
->>  #ifdef CONFIG_F2FS_FAULT_INJECTION
->>  #define f2fs_show_injection_info(type)				\
->>  	printk("%sF2FS-fs : inject %s in %s of %pF\n",		\
->> -		KERN_INFO, fault_name[type],			\
->> +		KERN_INFO, f2fs_fault_name[type],		\
->>  		__func__, __builtin_return_address(0))
->>  static inline bool time_to_inject(struct f2fs_sb_info *sbi, int type)
->>  {
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index 3995e92..df12dcd 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -41,7 +41,7 @@
->>  
->>  #ifdef CONFIG_F2FS_FAULT_INJECTION
->>  
->> -char *fault_name[FAULT_MAX] = {
->> +char *f2fs_fault_name[FAULT_MAX] = {
->>  	[FAULT_KMALLOC]		= "kmalloc",
->>  	[FAULT_KVMALLOC]	= "kvmalloc",
->>  	[FAULT_PAGE_ALLOC]	= "page alloc",
+>> I just sent another patch for that, later I will add it into my tree, could you
+>> please test that patch? I hope it can fix the issue current stack showed.
 >>
+>> Thanks,
+>>
+>>>
+>>> -Wen
+>>>
+>>
+> 
 > 
 > ------------------------------------------------------------------------------
 > Check out the vibrant tech community on one of the world's most
@@ -94,3 +76,7 @@ Thanks,
 > Linux-f2fs-devel@lists.sourceforge.net
 > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 > 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
