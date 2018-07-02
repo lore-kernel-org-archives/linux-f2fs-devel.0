@@ -1,72 +1,46 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: Replace strncpy with memcpy
-Date: Mon, 2 Jul 2018 10:57:09 +0800
-Message-ID: <ecb4f083-1d61-d882-c85c-53cb33fa793e@huawei.com>
-References: <1530478626-15753-1-git-send-email-linux@roeck-us.net>
- <0250de00-adf7-7b43-5f7c-44704119e2f9@huawei.com>
- <367fb12b-3ae0-4a6a-b59e-31d3a360bf05@roeck-us.net>
+Subject: Re: [PATCH] f2fs: check the right return value of memory
+ alloc function
+Date: Mon, 2 Jul 2018 11:14:02 +0800
+Message-ID: <18a3c16a-78fe-08a5-5c6e-ca992efd32e0@huawei.com>
+References: <1530499219-10716-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <367fb12b-3ae0-4a6a-b59e-31d3a360bf05@roeck-us.net>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1fZpIX-000760-2k
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 02 Jul 2018 03:14:41 +0000
+Received: from [45.249.212.35] (helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fZpIU-00F60C-IO
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 02 Jul 2018 03:14:41 +0000
+In-Reply-To: <1530499219-10716-1-git-send-email-heyunlei@huawei.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: zhangdianfang@huawei.com
 
-On 2018/7/2 10:16, Guenter Roeck wrote:
-> On 07/01/2018 06:53 PM, Chao Yu wrote:
->> On 2018/7/2 4:57, Guenter Roeck wrote:
->>> gcc 8.1.0 complains:
->>>
->>> fs/f2fs/namei.c: In function 'f2fs_update_extension_list':
->>> fs/f2fs/namei.c:257:3: warning:
->>> 	'strncpy' output truncated before terminating nul copying
->>> 	as many bytes from a string as its length
->>> fs/f2fs/namei.c:249:3: warning:
->>> 	'strncpy' output truncated before terminating nul copying
->>> 	as many bytes from a string as its length
->>>
->>> Using strncpy() is indeed less than perfect since the length of data to
->>> be copied has already been determined with strlen(). Replace strncpy()
->>> with memcpy() to address the warning and optimize the code a little.
->>>
->>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
->>> ---
->>>   fs/f2fs/namei.c | 4 ++--
->>>   1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
->>> index 231b7f3ea7d3..e75607544f7c 100644
->>> --- a/fs/f2fs/namei.c
->>> +++ b/fs/f2fs/namei.c
->>> @@ -246,7 +246,7 @@ int f2fs_update_extension_list(struct f2fs_sb_info *sbi, const char *name,
->>>   		return -EINVAL;
->>>   
->>>   	if (hot) {
->>> -		strncpy(extlist[count], name, strlen(name));
->>> +		memcpy(extlist[count], name, strlen(name));
->>
->> How about replacing with strcpy(extlist[count], name)? Because name length has
->> already been checked before f2fs_update_extension_list, it should be valid, and
->> will not cause overflow during copying.
->>
-> 
-> Your call; feel free to submit an alternative. Since it is different files, static
-> analysis might not know and complain, though. You might want to make sure that this
-> doesn't happen, and also add a comment explaining the reason for using strcpy().
-
-Yeah, that could be changed in another patch, but it will be trivial. Anyway, to
-fix this gcc complaint, this patch looks good to me, thanks for the patch. :)
+On 2018/7/2 10:40, Yunlei He wrote:
+> This patch check the right return value of memory alloc function
+> > Signed-off-by: Yunlei He <heyunlei@huawei.com>
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
 
-> 
-> Thanks,
-> Guenter
-> 
-> 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
