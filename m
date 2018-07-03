@@ -1,22 +1,24 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: [PATCH 1/2] fsck.f2fs: check extent of inline
- data/dentry inode
-Date: Tue, 3 Jul 2018 18:10:04 +0800
-Message-ID: <20180703101005.200396-1-shengyong1@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 2/2] f2fs: let checkpoint flush dnode page of
+ regular
+Date: Tue, 3 Jul 2018 20:12:53 +0800
+Message-ID: <20180703121253.44560-2-yuchao0@huawei.com>
+References: <20180703121253.44560-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <shengyong1@huawei.com>) id 1faIGn-0006Up-5q
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Jul 2018 10:10:49 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1faKBp-00063w-Kh
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Jul 2018 12:13:49 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1faIGj-00Byni-EW
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Jul 2018 10:10:49 +0000
+ id 1faKBn-008qtt-Su
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Jul 2018 12:13:49 +0000
+In-Reply-To: <20180703121253.44560-1-yuchao0@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,99 +28,93 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, wen.xu@gatech.edu
-Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Check extent for inline data/dentry inode. If an inode contains inline
-data/dentry, it should have no extent.
+Fsyncer will wait on all dnode pages of regular writeback before flushing,
+if there are async dnode pages blocked by IO scheduler, it may decrease
+fsync's performance.
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=200175
-Reported-by: Wen Xu <wen.xu@gatech.edu>
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+In this patch, we choose to let f2fs_balance_fs_bg() to trigger checkpoint
+to flush these dnode pages of regular, so async IO of dnode page can be
+elimitnated, making fsyncer only need to wait for sync IO.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fsck/fsck.c | 16 +++++++++++-----
- fsck/fsck.h |  1 +
- 2 files changed, 12 insertions(+), 5 deletions(-)
+ fs/f2fs/node.c    | 8 +++++++-
+ fs/f2fs/node.h    | 5 +++++
+ fs/f2fs/segment.c | 4 +++-
+ 3 files changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 6fd9dc2..15264b2 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -584,6 +584,9 @@ static void check_extent_info(struct child_info *child,
- 	if (child->state & FSCK_UNMATCHED_EXTENT)
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 0810c8117d46..eeee582cee32 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1384,6 +1384,10 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+ 	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
+ 		goto redirty_out;
+ 
++	if (wbc->sync_mode == WB_SYNC_NONE &&
++			IS_DNODE(page) && is_cold_node(page))
++		goto redirty_out;
++
+ 	/* get old block addr of this node page */
+ 	nid = nid_of_node(page);
+ 	f2fs_bug_on(sbi, page->index != nid);
+@@ -1698,10 +1702,12 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+ 	}
+ 
+ 	if (step < 2) {
++		if (wbc->sync_mode == WB_SYNC_NONE && step == 1)
++			goto out;
+ 		step++;
+ 		goto next_step;
+ 	}
+-
++out:
+ 	if (nwritten)
+ 		f2fs_submit_merged_write(sbi, NODE);
+ 
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index b95e49e4a928..b0da4c26eebb 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -135,6 +135,11 @@ static inline bool excess_cached_nats(struct f2fs_sb_info *sbi)
+ 	return NM_I(sbi)->nat_cnt >= DEF_NAT_CACHE_THRESHOLD;
+ }
+ 
++static inline bool excess_dirty_nodes(struct f2fs_sb_info *sbi)
++{
++	return get_pages(sbi, F2FS_DIRTY_NODES) >= sbi->blocks_per_seg * 8;
++}
++
+ enum mem_type {
+ 	FREE_NIDS,	/* indicates the free nid list */
+ 	NAT_ENTRIES,	/* indicates the cached nat entry */
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index bbe6e1596611..13f5e3665bf0 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -503,7 +503,8 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+ 	else
+ 		f2fs_build_free_nids(sbi, false, false);
+ 
+-	if (!is_idle(sbi) && !excess_dirty_nats(sbi))
++	if (!is_idle(sbi) &&
++		(!excess_dirty_nats(sbi) && !excess_dirty_nodes(sbi)))
  		return;
  
-+	if ((child->state & FSCK_INLINE_INODE) && ei->len)
-+		goto unmatched;
-+
- 	if (last) {
- 		/* hole exist in the back of extent */
- 		if (child->last_blk != ei->blk + ei->len - 1)
-@@ -735,6 +738,10 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 	}
- 	ofs = get_extra_isize(node_blk);
- 
-+	/* init extent info */
-+	get_extent_info(&child.ei, &node_blk->i.i_ext);
-+	child.last_blk = 0;
-+
- 	if ((node_blk->i.i_inline & F2FS_INLINE_DATA)) {
- 		if (le32_to_cpu(node_blk->i.i_addr[ofs]) != 0) {
- 			/* should fix this bug all the time */
-@@ -756,6 +763,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 			}
- 		}
- 		DBG(3, "ino[0x%x] has inline data!\n", nid);
-+		child.state |= FSCK_INLINE_INODE;
- 		goto check;
- 	}
- 
-@@ -775,13 +783,10 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 			/* should fix this bug all the time */
- 			need_fix = 1;
- 		}
-+		child.state |= FSCK_INLINE_INODE;
- 		goto check;
- 	}
- 
--	/* init extent info */
--	get_extent_info(&child.ei, &node_blk->i.i_ext);
--	child.last_blk = 0;
--
- 	/* check data blocks in inode */
- 	for (idx = 0; idx < ADDRS_PER_INODE(&node_blk->i);
- 						idx++, child.pgofs++) {
-@@ -851,6 +856,7 @@ skip:
- 
- 	}
- 
-+check:
- 	/* check uncovered range in the back of extent */
- 	check_extent_info(&child, 0, 1);
- 
-@@ -860,7 +866,7 @@ skip:
- 		if (c.fix_on)
- 			need_fix = 1;
- 	}
--check:
-+
- 	if (i_blocks != *blk_cnt) {
- 		ASSERT_MSG("ino: 0x%x has i_blocks: %08"PRIx64", "
- 				"but has %u blocks",
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index 5530aff..f620912 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -16,6 +16,7 @@
- struct quota_ctx;
- 
- #define FSCK_UNMATCHED_EXTENT		0x00000001
-+#define FSCK_INLINE_INODE		0x00000002
- 
- enum {
- 	PREEN_MODE_0,
+ 	/* checkpoint is the only way to shrink partial cached entries */
+@@ -511,6 +512,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+ 			!f2fs_available_free_memory(sbi, INO_ENTRIES) ||
+ 			excess_prefree_segs(sbi) ||
+ 			excess_dirty_nats(sbi) ||
++			excess_dirty_nodes(sbi) ||
+ 			f2fs_time_over(sbi, CP_TIME)) {
+ 		if (test_opt(sbi, DATA_FLUSH)) {
+ 			struct blk_plug plug;
 -- 
-2.17.1
+2.18.0.rc1
 
 
 ------------------------------------------------------------------------------
