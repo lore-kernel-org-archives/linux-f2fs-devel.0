@@ -1,8 +1,9 @@
-From: "Xu, Wen" <wen.xu@gatech.edu>
-Subject: Questions about commit f2fs: fix to avoid broken of
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: Questions about commit f2fs: fix to avoid broken of
  dnode block list
-Date: Wed, 4 Jul 2018 04:34:00 +0000
-Message-ID: <808556C6-7CCE-4D50-9F54-F34072A83AE3@gatech.edu>
+Date: Wed, 4 Jul 2018 14:58:08 +0800
+Message-ID: <e71300ba-b88e-dc35-b141-6e2cb3464713@huawei.com>
+References: <808556C6-7CCE-4D50-9F54-F34072A83AE3@gatech.edu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
@@ -10,16 +11,15 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <wen.xu@gatech.edu>) id 1faZUZ-0003ak-6v
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Jul 2018 04:34:11 +0000
-Received: from mail-cys01nam02on0092.outbound.protection.outlook.com
- ([104.47.37.92] helo=NAM02-CY1-obe.outbound.protection.outlook.com)
+ (envelope-from <yuchao0@huawei.com>) id 1fabkd-00069b-Gr
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Jul 2018 06:58:55 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-SHA384:256) (Exim 4.90_1)
- id 1faZUW-009Kss-6X
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Jul 2018 04:34:11 +0000
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fabkb-009Py5-7D
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Jul 2018 06:58:55 +0000
+In-Reply-To: <808556C6-7CCE-4D50-9F54-F34072A83AE3@gatech.edu>
 Content-Language: en-US
-Content-ID: <F84297C1EBC2B145AA0143B7AF99949D@namprd07.prod.outlook.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,22 +29,28 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
+To: "Xu, Wen" <wen.xu@gatech.edu>
 Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-SGkgQ2hhbywNCg0KaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9n
-aXQvY2hhby9saW51eC5naXQvY29tbWl0Lz9oPWYyZnMtZGV2JmlkPTBhYzI4OTAxNTZhYjUxN2E4
-YWM3OTg0OWVlNWFiYWI3YWQ2MDMxMGINCg0KSW4gdGhpcyBwYXRjaDogZjJmczogZml4IHRvIGF2
-b2lkIGJyb2tlbiBvZiBkbm9kZSBibG9jayBsaXN0DQotaW50IGYyZnNfd2FpdF9vbl9ub2RlX3Bh
-Z2VzX3dyaXRlYmFjayhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIG5pZF90IGlubykNCitpbnQg
-ZjJmc193YWl0X29uX25vZGVfcGFnZXNfd3JpdGViYWNrKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNi
-aSkNCg0KWW91IG1vZGlmeSBmMmZzX3dhaXRfb25fbm9kZV9wYWdlc193cml0ZWJhY2soKSBpbiBm
-aWxlLmMgYnV0IHNlZW1zIG5vdCBtb2RpZnlpbmcgdGhlIGRlY2xhcmF0aW9uIGluIGYyZnMuaD8g
-V2hpY2ggbWFrZXMgY29tcGlsYXRpb24gZmFpbGVk4oCmDQoNClRoYW5rcywNCi1XZW4KLS0tLS0t
+SGkgV2VuLAoKT24gMjAxOC83LzQgMTI6MzQsIFh1LCBXZW4gd3JvdGU6Cj4gSGkgQ2hhbywKPiAK
+PiBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9jaGFvL2xp
+bnV4LmdpdC9jb21taXQvP2g9ZjJmcy1kZXYmaWQ9MGFjMjg5MDE1NmFiNTE3YThhYzc5ODQ5ZWU1
+YWJhYjdhZDYwMzEwYgo+IAo+IEluIHRoaXMgcGF0Y2g6IGYyZnM6IGZpeCB0byBhdm9pZCBicm9r
+ZW4gb2YgZG5vZGUgYmxvY2sgbGlzdAo+IC1pbnQgZjJmc193YWl0X29uX25vZGVfcGFnZXNfd3Jp
+dGViYWNrKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgbmlkX3QgaW5vKQo+ICtpbnQgZjJmc193
+YWl0X29uX25vZGVfcGFnZXNfd3JpdGViYWNrKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSkKPiAK
+PiBZb3UgbW9kaWZ5IGYyZnNfd2FpdF9vbl9ub2RlX3BhZ2VzX3dyaXRlYmFjaygpIGluIGZpbGUu
+YyBidXQgc2VlbXMgbm90IG1vZGlmeWluZyB0aGUgZGVjbGFyYXRpb24gaW4gZjJmcy5oPyBXaGlj
+aCBtYWtlcyBjb21waWxhdGlvbiBmYWlsZWTigKYKClNvcnJ5LCBteSBtaXN0YWtlLCBpdCBhZGRl
+ZCBkZWZpbml0aW9uIGNoYW5nZSBsb2NhdGVkIGluIGYyZnMuaCBpbnRvIGluY29ycmVjdApwYXRj
+aCB3aGVuIEkgc3BsaXQgb25lIHBhdGNoIHRvIGJlbG93IHR3bzoKCmYyZnM6IGxldCBjaGVja3Bv
+aW50IGZsdXNoIGRub2RlIHBhZ2Ugb2YgcmVndWxhcgpmMmZzOiBmaXggdG8gYXZvaWQgYnJva2Vu
+IG9mIGRub2RlIGJsb2NrIGxpc3QKCkkgd2lsbCB1cGRhdGUgdGhlbSwgdGhhbmtzIGZvciB5b3Vy
+IHJlcG9ydC4gOikKClRoYW5rcywKCj4gCj4gVGhhbmtzLAo+IC1XZW4KPiAKCgotLS0tLS0tLS0t
 LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUgdmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBv
-bmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmch
-IGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZz
-LWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5l
-dC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+LS0tLS0tLS0tLS0KQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBv
+ZiB0aGUgd29ybGQncyBtb3N0CmVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0
+cDovL3NkbS5saW5rL3NsYXNoZG90Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2
+ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xp
+c3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
