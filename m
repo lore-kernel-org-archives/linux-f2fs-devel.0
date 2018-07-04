@@ -1,7 +1,7 @@
 From: Chao Yu <chao@kernel.org>
-Subject: [PATCH v2 1/2] f2fs: fix to skip GC if type in SSA and SIT is inconsistent
-Date: Wed,  4 Jul 2018 21:20:05 +0800
-Message-ID: <20180704132005.20404-1-chao@kernel.org>
+Subject: [PATCH] f2fs: split discard command in prior to block layer
+Date: Wed,  4 Jul 2018 23:37:46 +0800
+Message-ID: <20180704153746.2510-1-chao@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org
@@ -10,70 +10,128 @@ List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-If segment type in SSA and SIT is inconsistent, we will encounter below
-BUG_ON during GC, to avoid this panic, let's just skip doing GC on such
-segment.
+Some devices has small max_{hw,}discard_sectors, so that in
+__blkdev_issue_discard(), one big size discard bio can be split
+into multiple small size discard bios, result in heavy load in IO
+scheduler and device, which can hang other sync IO for long time.
 
-The bug is triggered with image reported in below link:
-
-https://bugzilla.kernel.org/show_bug.cgi?id=200223
-
-[  388.060262] ------------[ cut here ]------------
-[  388.060268] kernel BUG at /home/y00370721/git/devf2fs/gc.c:989!
-[  388.061172] invalid opcode: 0000 [#1] SMP
-[  388.061773] Modules linked in: f2fs(O) bluetooth ecdh_generic xt_tcpudp iptable_filter ip_tables x_tables lp ttm drm_kms_helper drm intel_rapl sb_edac crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel fb_sys_fops ppdev aes_x86_64 syscopyarea crypto_simd sysfillrect parport_pc joydev sysimgblt glue_helper parport cryptd i2c_piix4 serio_raw mac_hid btrfs hid_generic usbhid hid raid6_pq psmouse pata_acpi floppy
-[  388.064247] CPU: 7 PID: 4151 Comm: f2fs_gc-7:0 Tainted: G           O    4.13.0-rc1+ #26
-[  388.065306] Hardware name: Xen HVM domU, BIOS 4.1.2_115-900.260_ 11/06/2015
-[  388.066058] task: ffff880201583b80 task.stack: ffffc90004d7c000
-[  388.069948] RIP: 0010:do_garbage_collect+0xcc8/0xcd0 [f2fs]
-[  388.070766] RSP: 0018:ffffc90004d7fc68 EFLAGS: 00010202
-[  388.071783] RAX: ffff8801ed227000 RBX: 0000000000000001 RCX: ffffea0007b489c0
-[  388.072700] RDX: ffff880000000000 RSI: 0000000000000001 RDI: ffffea0007b489c0
-[  388.073607] RBP: ffffc90004d7fd58 R08: 0000000000000003 R09: ffffea0007b489dc
-[  388.074619] R10: 0000000000000000 R11: 0052782ab317138d R12: 0000000000000018
-[  388.075625] R13: 0000000000000018 R14: ffff880211ceb000 R15: ffff880211ceb000
-[  388.076687] FS:  0000000000000000(0000) GS:ffff880214fc0000(0000) knlGS:0000000000000000
-[  388.083277] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  388.084536] CR2: 0000000000e18c60 CR3: 00000001ecf2e000 CR4: 00000000001406e0
-[  388.085748] Call Trace:
-[  388.086690]  ? find_next_bit+0xb/0x10
-[  388.088091]  f2fs_gc+0x1a8/0x9d0 [f2fs]
-[  388.088888]  ? lock_timer_base+0x7d/0xa0
-[  388.090213]  ? try_to_del_timer_sync+0x44/0x60
-[  388.091698]  gc_thread_func+0x342/0x4b0 [f2fs]
-[  388.092892]  ? wait_woken+0x80/0x80
-[  388.094098]  kthread+0x109/0x140
-[  388.095010]  ? f2fs_gc+0x9d0/0x9d0 [f2fs]
-[  388.096043]  ? kthread_park+0x60/0x60
-[  388.097281]  ret_from_fork+0x25/0x30
-[  388.098401] Code: ff ff 48 83 e8 01 48 89 44 24 58 e9 27 f8 ff ff 48 83 e8 01 e9 78 fc ff ff 48 8d 78 ff e9 17 fb ff ff 48 83 ef 01 e9 4d f4 ff ff <0f> 0b 66 0f 1f 44 00 00 0f 1f 44 00 00 55 48 89 e5 41 56 41 55
-[  388.100864] RIP: do_garbage_collect+0xcc8/0xcd0 [f2fs] RSP: ffffc90004d7fc68
-[  388.101810] ---[ end trace 81c73d6e6b7da61d ]---
+Now, f2fs is trying to control discard commands more elaboratively,
+in order to make less conflict in between discard IO and user IO
+to enhance application's performance, so in this patch, we will
+split discard bio in f2fs in prior to in block layer to reduce
+issuing multiple discard bios in a short time.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
-v2: add missing set_sbi_flag(sbi, SBI_NEED_FSCK).
- fs/f2fs/gc.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ fs/f2fs/f2fs.h    | 13 ++++++-------
+ fs/f2fs/segment.c | 25 ++++++++++++++++++++++---
+ 2 files changed, 28 insertions(+), 10 deletions(-)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 9093be6e7a7d..37ab2d10a872 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -986,7 +986,13 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
- 			goto next;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index a9da5a089cb4..a09d2b2d9520 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -178,7 +178,6 @@ enum {
  
- 		sum = page_address(sum_page);
--		f2fs_bug_on(sbi, type != GET_SUM_TYPE((&sum->footer)));
-+		if (type != GET_SUM_TYPE((&sum->footer))) {
-+			f2fs_msg(sbi->sb, KERN_ERR, "Inconsistent segment (%u) "
-+				"type [%d, %d] in SSA and SIT",
-+				segno, type, GET_SUM_TYPE((&sum->footer)));
-+			set_sbi_flag(sbi, SBI_NEED_FSCK);
-+			goto next;
-+		}
+ #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
+ #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
+-#define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
+ #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
+ #define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
+ #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
+@@ -701,22 +700,22 @@ static inline void set_extent_info(struct extent_info *ei, unsigned int fofs,
+ }
  
- 		/*
- 		 * this is to avoid deadlock:
+ static inline bool __is_discard_mergeable(struct discard_info *back,
+-						struct discard_info *front)
++			struct discard_info *front, unsigned int max_len)
+ {
+ 	return (back->lstart + back->len == front->lstart) &&
+-		(back->len + front->len < DEF_MAX_DISCARD_LEN);
++		(back->len + front->len <= max_len);
+ }
+ 
+ static inline bool __is_discard_back_mergeable(struct discard_info *cur,
+-						struct discard_info *back)
++			struct discard_info *back, unsigned int max_len)
+ {
+-	return __is_discard_mergeable(back, cur);
++	return __is_discard_mergeable(back, cur, max_len);
+ }
+ 
+ static inline bool __is_discard_front_mergeable(struct discard_info *cur,
+-						struct discard_info *front)
++			struct discard_info *front, unsigned int max_len)
+ {
+-	return __is_discard_mergeable(cur, front);
++	return __is_discard_mergeable(cur, front, max_len);
+ }
+ 
+ static inline bool __is_extent_mergeable(struct extent_info *back,
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 4648561e2bfd..8e417a12684d 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1086,6 +1086,9 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+ 	struct discard_cmd *dc;
+ 	struct discard_info di = {0};
+ 	struct rb_node **insert_p = NULL, *insert_parent = NULL;
++	struct request_queue *q = bdev_get_queue(bdev);
++	unsigned int max_discard_blocks =
++			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
+ 	block_t end = lstart + len;
+ 
+ 	mutex_lock(&dcc->cmd_lock);
+@@ -1129,7 +1132,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+ 
+ 		if (prev_dc && prev_dc->state == D_PREP &&
+ 			prev_dc->bdev == bdev &&
+-			__is_discard_back_mergeable(&di, &prev_dc->di)) {
++			__is_discard_back_mergeable(&di, &prev_dc->di,
++							max_discard_blocks)) {
+ 			prev_dc->di.len += di.len;
+ 			dcc->undiscard_blks += di.len;
+ 			__relocate_discard_cmd(dcc, prev_dc);
+@@ -1140,7 +1144,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+ 
+ 		if (next_dc && next_dc->state == D_PREP &&
+ 			next_dc->bdev == bdev &&
+-			__is_discard_front_mergeable(&di, &next_dc->di)) {
++			__is_discard_front_mergeable(&di, &next_dc->di,
++							max_discard_blocks)) {
+ 			next_dc->di.lstart = di.lstart;
+ 			next_dc->di.len += di.len;
+ 			next_dc->di.start = di.start;
+@@ -1170,7 +1175,11 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+ 		struct block_device *bdev, block_t blkstart, block_t blklen)
+ {
++	struct request_queue *q = bdev_get_queue(bdev);
++	unsigned int max_discard_blocks =
++			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
+ 	block_t lblkstart = blkstart;
++	block_t total_len = blklen;
+ 
+ 	trace_f2fs_queue_discard(bdev, blkstart, blklen);
+ 
+@@ -1179,7 +1188,17 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+ 
+ 		blkstart -= FDEV(devi).start_blk;
+ 	}
+-	__update_discard_tree_range(sbi, bdev, lblkstart, blkstart, blklen);
++
++	while (total_len) {
++		if (blklen > max_discard_blocks)
++			blklen = max_discard_blocks;
++		__update_discard_tree_range(sbi, bdev, lblkstart,
++						blkstart, blklen);
++		lblkstart += blklen;
++		blkstart += blklen;
++		total_len -= blklen;
++		blklen = total_len;
++	}
+ 	return 0;
+ }
+ 
 -- 
 2.16.2.17.g38e79b1fd
