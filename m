@@ -1,8 +1,8 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2 1/2] f2fs: fix to avoid broken of dnode block
- list
-Date: Wed, 4 Jul 2018 16:56:14 +0800
-Message-ID: <20180704085614.13004-1-yuchao0@huawei.com>
+From: Sheng Yong <shengyong1@huawei.com>
+Subject: [PATCH] f2fs-tools: avoid mounting f2fs if tools already
+ open the device
+Date: Wed, 4 Jul 2018 17:50:45 +0800
+Message-ID: <20180704095045.156157-1-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,13 +10,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fadbG-0006rM-ET
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Jul 2018 08:57:22 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <shengyong1@huawei.com>) id 1faeRu-0008AK-RQ
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Jul 2018 09:51:46 +0000
+Received: from [45.249.212.32] (helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fadbC-009V0J-GK
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Jul 2018 08:57:22 +0000
+ id 1faeRs-00CiYZ-I3
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Jul 2018 09:51:46 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,90 +26,78 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-f2fs recovery flow is relying on dnode block link list, it means fsynced
-file recovery depends on previous dnode's persistence in the list, so
-during fsync() we should wait on all regular inode's dnode writebacked
-before issuing flush.
+If the block device is opened by tools, F2FS should not be mounted.
+Especially when fsck is running, errors unexpected may happen. So if
+tools open a block device, we give it the O_EXCL flag to make sure
+the block device is opened exclusivly.
 
-By this way, we can avoid dnode block list being broken by out-of-order
-IO submission due to IO scheduler or driver.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 ---
-v2: add missing definition modification in f2fs.h.
- fs/f2fs/f2fs.h |  2 +-
- fs/f2fs/file.c | 17 ++++-------------
- fs/f2fs/node.c |  4 ++--
- 3 files changed, 7 insertions(+), 16 deletions(-)
+ lib/libf2fs.c | 27 +++++++++++++++++----------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 859ecde81dd0..a9da5a089cb4 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2825,7 +2825,7 @@ pgoff_t f2fs_get_next_page_offset(struct dnode_of_data *dn, pgoff_t pgofs);
- int f2fs_get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode);
- int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from);
- int f2fs_truncate_xattr_node(struct inode *inode);
--int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino);
-+int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi);
- int f2fs_remove_inode_page(struct inode *inode);
- struct page *f2fs_new_inode_page(struct inode *inode);
- struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 752ff678bfe0..ecca7b833268 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -292,19 +292,10 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 		goto sync_nodes;
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index b25fbf2..5625cff 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -783,21 +783,35 @@ int get_device_info(int i)
+ #endif
+ 	struct device_info *dev = c.devices + i;
+ 
++	stat_buf = malloc(sizeof(struct stat));
++	ASSERT(stat_buf);
++	if (stat(dev->path, stat_buf) < 0 ) {
++		MSG(0, "\tError: Failed to get the device stat!\n");
++		free(stat_buf);
++		return -1;
++	}
++
+ 	if (c.sparse_mode) {
+-		fd = open((char *)dev->path, O_RDWR | O_CREAT | O_BINARY, 0644);
++		fd = open(dev->path, O_RDWR | O_CREAT | O_BINARY, 0644);
+ 	} else {
+-		fd = open((char *)dev->path, O_RDWR);
++		if (S_ISBLK(stat_buf->st_mode))
++			fd = open(dev->path, O_RDWR | O_EXCL);
++		else
++			fd = open(dev->path, O_RDWR);
+ 	}
+ 	if (fd < 0) {
+ 		MSG(0, "\tError: Failed to open the device!\n");
++		free(stat_buf);
+ 		return -1;
  	}
  
--	/*
--	 * If it's atomic_write, it's just fine to keep write ordering. So
--	 * here we don't need to wait for node write completion, since we use
--	 * node chain which serializes node blocks. If one of node writes are
--	 * reordered, we can see simply broken chain, resulting in stopping
--	 * roll-forward recovery. It means we'll recover all or none node blocks
--	 * given fsync mark.
--	 */
--	if (!atomic) {
--		ret = f2fs_wait_on_node_pages_writeback(sbi, ino);
--		if (ret)
--			goto out;
+ 	dev->fd = fd;
+ 
+ 	if (c.sparse_mode) {
+-		if (f2fs_init_sparse_file())
++		if (f2fs_init_sparse_file()) {
++			free(stat_buf);
+ 			return -1;
++		}
+ 	}
+ 
+ 	if (c.kd == -1) {
+@@ -810,13 +824,6 @@ int get_device_info(int i)
+ 		}
+ 	}
+ 
+-	stat_buf = malloc(sizeof(struct stat));
+-	if (fstat(fd, stat_buf) < 0 ) {
+-		MSG(0, "\tError: Failed to get the device stat!\n");
+-		free(stat_buf);
+-		return -1;
 -	}
-+
-+	ret = f2fs_wait_on_node_pages_writeback(sbi);
-+	if (ret)
-+		goto out;
- 
- 	/* once recovery info is written, don't need to tack this */
- 	f2fs_remove_ino_entry(sbi, ino, APPEND_INO);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 849c2ed9c152..0810c8117d46 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1710,7 +1710,7 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
- 	return ret;
- }
- 
--int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino)
-+int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi)
- {
- 	pgoff_t index = 0;
- 	struct pagevec pvec;
-@@ -1726,7 +1726,7 @@ int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino)
- 		for (i = 0; i < nr_pages; i++) {
- 			struct page *page = pvec.pages[i];
- 
--			if (ino && ino_of_node(page) == ino) {
-+			if (IS_DNODE(page) && is_cold_node(page)) {
- 				f2fs_wait_on_page_writeback(page, NODE, true);
- 				if (TestClearPageError(page))
- 					ret = -EIO;
+-
+ 	if (c.sparse_mode) {
+ 		dev->total_sectors = c.device_size / dev->sector_size;
+ 	} else if (S_ISREG(stat_buf->st_mode)) {
 -- 
-2.18.0.rc1
+2.17.1
 
 
 ------------------------------------------------------------------------------
