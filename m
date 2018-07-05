@@ -1,168 +1,76 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 2/2] f2fs: issue small discard by LBA order
-Date: Thu, 5 Jul 2018 19:37:01 +0800
-Message-ID: <20180705113701.3466-2-yuchao0@huawei.com>
-References: <20180705113701.3466-1-yuchao0@huawei.com>
+Subject: [PATCH 1/2] f2fs: fix to detect looped node chain
+ correctly
+Date: Thu, 5 Jul 2018 19:37:00 +0800
+Message-ID: <20180705113701.3466-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180705113701.3466-1-yuchao0@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1fb2aM-0006Vj-Hz
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 05 Jul 2018 11:38:06 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fb2aK-00HRcS-MK
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 05 Jul 2018 11:38:06 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-For small granularity discard which size is smaller than 64KB, if we
-issue those kind of discards orderly by size, their IOs will be spread
-into entire logical address, so that in FTL, L2P table will be updated
-randomly, result bad wear rate in the table.
+Below dmesg was printed when testing generic/388 of fstest:
 
-In this patch, we choose to issue small discard by LBA order, by this
-way, we can expect that L2P table updates from adjacent discard IOs can
-be merged in the cache, so it can reduce lifetime wearing of flash.
+F2FS-fs (zram1): find_fsync_dnodes: detect looped node chain, blkaddr:526615, next:526616
+F2FS-fs (zram1): Cannot recover all fsync data errno=-22
+F2FS-fs (zram1): Mounted with checkpoint version = 22300d0e
+F2FS-fs (zram1): find_fsync_dnodes: detect looped node chain, blkaddr:526615, next:526616
+F2FS-fs (zram1): Cannot recover all fsync data errno=-22
+
+The reason is that we initialize free_blocks with free blocks of
+filesystem, so if filesystem is full, free_blocks can be zero,
+below condition will be true, so that, it will fail recovery.
+
+if (++loop_cnt >= free_blocks ||
+	blkaddr == next_blkaddr_of_node(page))
+
+To fix this issue, initialize free_blocks with correct value which
+includes over-privision blocks.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/f2fs.h    |  2 ++
- fs/f2fs/segment.c | 71 +++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 73 insertions(+)
+ fs/f2fs/recovery.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 47ac0a9b022f..8d592029328a 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -290,6 +290,7 @@ struct discard_policy {
- 	unsigned int io_aware_gran;	/* minimum granularity discard not be aware of I/O */
- 	bool io_aware;			/* issue discard in idle time */
- 	bool sync;			/* submit discard with REQ_SYNC flag */
-+	bool ordered;			/* issue discard by lba order */
- 	unsigned int granularity;	/* discard granularity */
- };
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 3051a5e5dfc7..0d927ae26c48 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -241,8 +241,8 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 	struct page *page = NULL;
+ 	block_t blkaddr;
+ 	unsigned int loop_cnt = 0;
+-	unsigned int free_blocks = sbi->user_block_count -
+-					valid_user_blocks(sbi);
++	unsigned int free_blocks = MAIN_SEGS(sbi) * sbi->blocks_per_seg -
++						valid_user_blocks(sbi);
+ 	int err = 0;
  
-@@ -306,6 +307,7 @@ struct discard_cmd_control {
- 	unsigned int max_discards;		/* max. discards to be issued */
- 	unsigned int discard_granularity;	/* discard granularity */
- 	unsigned int undiscard_blks;		/* # of undiscard blocks */
-+	unsigned int next_pos;			/* next discard position */
- 	atomic_t issued_discard;		/* # of issued discard */
- 	atomic_t issing_discard;		/* # of issing discard */
- 	atomic_t discard_cmd_cnt;		/* # of cached cmd count */
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index f95bf618bc1e..df0d91dfb8ac 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -18,6 +18,7 @@
- #include <linux/timer.h>
- #include <linux/freezer.h>
- #include <linux/sched/signal.h>
-+#include <linux/delay.h>
- 
- #include "f2fs.h"
- #include "segment.h"
-@@ -936,6 +937,7 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
- 	/* common policy */
- 	dpolicy->type = discard_type;
- 	dpolicy->sync = true;
-+	dpolicy->ordered = false;
- 	dpolicy->granularity = granularity;
- 
- 	dpolicy->max_requests = DEF_MAX_DISCARD_REQUEST;
-@@ -947,6 +949,7 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
- 		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
- 		dpolicy->io_aware = true;
- 		dpolicy->sync = false;
-+		dpolicy->ordered = true;
- 		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
- 			dpolicy->granularity = 1;
- 			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
-@@ -1202,6 +1205,69 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
- 	return 0;
- }
- 
-+static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
-+					struct discard_policy *dpolicy)
-+{
-+	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-+	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
-+	struct rb_node **insert_p = NULL, *insert_parent = NULL;
-+	struct discard_cmd *dc;
-+	struct blk_plug plug;
-+	unsigned int pos = dcc->next_pos;
-+	unsigned int issued = 0, iter = 0;
-+	bool io_interrupted;
-+
-+	mutex_lock(&dcc->cmd_lock);
-+	dc = (struct discard_cmd *)f2fs_lookup_rb_tree_ret(&dcc->root,
-+					NULL, pos,
-+					(struct rb_entry **)&prev_dc,
-+					(struct rb_entry **)&next_dc,
-+					&insert_p, &insert_parent, true);
-+	if (!dc)
-+		dc = next_dc;
-+
-+	blk_start_plug(&plug);
-+
-+	while (dc) {
-+		struct rb_node *node;
-+
-+		if (dc->state != D_PREP)
-+			goto next;
-+retry:
-+		io_interrupted = false;
-+
-+		if (dpolicy->io_aware && !is_idle(sbi)) {
-+			io_interrupted = true;
-+			goto skip;
-+		}
-+
-+		__submit_discard_cmd(sbi, dpolicy, dc);
-+		issued++;
-+		dcc->next_pos = dc->lstart + dc->len;
-+skip:
-+		if (++iter >= dpolicy->max_requests)
-+			break;
-+
-+		if (io_interrupted)
-+			goto retry;
-+next:
-+		node = rb_next(&dc->rb_node);
-+		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
-+	}
-+
-+	blk_finish_plug(&plug);
-+
-+	if (!dc)
-+		dcc->next_pos = 0;
-+
-+	mutex_unlock(&dcc->cmd_lock);
-+
-+	if (!issued && io_interrupted)
-+		issued = -1;
-+
-+	return issued;
-+}
-+
- static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 					struct discard_policy *dpolicy)
- {
-@@ -1215,6 +1281,10 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
- 		if (i + 1 < dpolicy->granularity)
- 			break;
-+
-+		if (i < DEFAULT_DISCARD_GRANULARITY && dpolicy->ordered)
-+			return __issue_discard_cmd_orderly(sbi, dpolicy);
-+
- 		pend_list = &dcc->pend_list[i];
- 
- 		mutex_lock(&dcc->cmd_lock);
-@@ -1786,6 +1856,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
- 	dcc->nr_discards = 0;
- 	dcc->max_discards = MAIN_SEGS(sbi) << sbi->log_blocks_per_seg;
- 	dcc->undiscard_blks = 0;
-+	dcc->next_pos = 0;
- 	dcc->root = RB_ROOT;
- 	dcc->rbtree_check = false;
- 
+ 	/* get node pages in the current segment */
 -- 
 2.18.0.rc1
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
