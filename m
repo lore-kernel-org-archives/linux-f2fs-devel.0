@@ -1,7 +1,7 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: give another chance to issue discard with current granularity
-Date: Thu, 5 Jul 2018 14:15:51 +0800
-Message-ID: <20180705061551.2961-1-yuchao0@huawei.com>
+Subject: [PATCH] f2fs: enable real-time discard by default
+Date: Thu, 5 Jul 2018 14:24:11 +0800
+Message-ID: <20180705062411.3757-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -10,62 +10,34 @@ To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If discard IOs are blocked by user IO, do not skip to select and issue
-discard with lower granularity, retry with current granularity.
+f2fs is focused on flash based storage, so let's enable real-time
+discard by default, if user don't want to enable it, 'nodiscard'
+mount option should be used on mount.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
-v2:
-- fix deadloop.
- fs/f2fs/segment.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ fs/f2fs/super.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 1f9ae8270f86..6e2b2e717a40 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1191,7 +1191,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 	struct discard_cmd *dc, *tmp;
- 	struct blk_plug plug;
- 	int i, iter = 0, issued = 0;
--	bool io_interrupted = false;
-+	bool io_interrupted = false, end_up = false;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 848badda50ad..980edeb0b650 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1366,12 +1366,11 @@ static void default_options(struct f2fs_sb_info *sbi)
+ 	set_opt(sbi, NOHEAP);
+ 	sbi->sb->s_flags |= SB_LAZYTIME;
+ 	set_opt(sbi, FLUSH_MERGE);
+-	if (f2fs_sb_has_blkzoned(sbi->sb)) {
++	set_opt(sbi, DISCARD);
++	if (f2fs_sb_has_blkzoned(sbi->sb))
+ 		set_opt_mode(sbi, F2FS_MOUNT_LFS);
+-		set_opt(sbi, DISCARD);
+-	} else {
++	else
+ 		set_opt_mode(sbi, F2FS_MOUNT_ADAPTIVE);
+-	}
  
- 	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
- 		if (i + 1 < dpolicy->granularity)
-@@ -1199,6 +1199,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 		pend_list = &dcc->pend_list[i];
- 
- 		mutex_lock(&dcc->cmd_lock);
-+retry:
- 		if (list_empty(pend_list))
- 			goto next;
- 		if (unlikely(dcc->rbtree_check))
-@@ -1217,14 +1218,23 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 			__submit_discard_cmd(sbi, dpolicy, dc);
- 			issued++;
- skip:
--			if (++iter >= dpolicy->max_requests)
-+			if (++iter >= dpolicy->max_requests) {
-+				end_up = true;
- 				break;
-+			}
- 		}
- 		blk_finish_plug(&plug);
-+
-+		/*
-+		 * if discard IO was interrupted by user IOs, give another
-+		 * chance to issue discard with current granularity.
-+		 */
-+		if (io_interrupted && !end_up)
-+			goto retry;
- next:
- 		mutex_unlock(&dcc->cmd_lock);
- 
--		if (iter >= dpolicy->max_requests)
-+		if (end_up)
- 			break;
- 	}
- 
+ #ifdef CONFIG_F2FS_FS_XATTR
+ 	set_opt(sbi, XATTR_USER);
 -- 
 2.18.0.rc1
