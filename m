@@ -1,181 +1,109 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 2/2] f2fs: issue small discard by LBA order
-Date: Fri, 6 Jul 2018 16:23:45 -0700
-Message-ID: <20180706232345.GE77984@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180705113701.3466-1-yuchao0@huawei.com>
- <20180705113701.3466-2-yuchao0@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH v2 1/2] f2fs: fix to avoid broken of dnode block list
+Date: Sat, 7 Jul 2018 07:30:50 +0800
+Message-ID: <65fb52d5-7bb6-2f01-955d-df7c2e2010a4@kernel.org>
+References: <20180704085614.13004-1-yuchao0@huawei.com>
+ <20180706223246.GA77984@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180705113701.3466-2-yuchao0@huawei.com>
+In-Reply-To: <20180706223246.GA77984@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 07/05, Chao Yu wrote:
-> For small granularity discard which size is smaller than 64KB, if we
-> issue those kind of discards orderly by size, their IOs will be spread
-> into entire logical address, so that in FTL, L2P table will be updated
-> randomly, result bad wear rate in the table.
+On 2018/7/7 6:32, Jaegeuk Kim wrote:
+> On 07/04, Chao Yu wrote:
+>> f2fs recovery flow is relying on dnode block link list, it means fsynced
+>> file recovery depends on previous dnode's persistence in the list, so
+>> during fsync() we should wait on all regular inode's dnode writebacked
+>> before issuing flush.
 > 
-> In this patch, we choose to issue small discard by LBA order, by this
-> way, we can expect that L2P table updates from adjacent discard IOs can
-> be merged in the cache, so it can reduce lifetime wearing of flash.
+> We don't need to wait for all the writebacking nodes which can enter later.
+> Can we add a list of nids that we need to wait for?
+
+Agreed, let me update it later. :)
+
+Thanks,
+
 > 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/f2fs.h    |  2 ++
->  fs/f2fs/segment.c | 71 +++++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 73 insertions(+)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 47ac0a9b022f..8d592029328a 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -290,6 +290,7 @@ struct discard_policy {
->  	unsigned int io_aware_gran;	/* minimum granularity discard not be aware of I/O */
->  	bool io_aware;			/* issue discard in idle time */
->  	bool sync;			/* submit discard with REQ_SYNC flag */
-> +	bool ordered;			/* issue discard by lba order */
->  	unsigned int granularity;	/* discard granularity */
->  };
->  
-> @@ -306,6 +307,7 @@ struct discard_cmd_control {
->  	unsigned int max_discards;		/* max. discards to be issued */
->  	unsigned int discard_granularity;	/* discard granularity */
->  	unsigned int undiscard_blks;		/* # of undiscard blocks */
-> +	unsigned int next_pos;			/* next discard position */
->  	atomic_t issued_discard;		/* # of issued discard */
->  	atomic_t issing_discard;		/* # of issing discard */
->  	atomic_t discard_cmd_cnt;		/* # of cached cmd count */
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index f95bf618bc1e..df0d91dfb8ac 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -18,6 +18,7 @@
->  #include <linux/timer.h>
->  #include <linux/freezer.h>
->  #include <linux/sched/signal.h>
-> +#include <linux/delay.h>
-
-Why?
-
->  
->  #include "f2fs.h"
->  #include "segment.h"
-> @@ -936,6 +937,7 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
->  	/* common policy */
->  	dpolicy->type = discard_type;
->  	dpolicy->sync = true;
-> +	dpolicy->ordered = false;
->  	dpolicy->granularity = granularity;
->  
->  	dpolicy->max_requests = DEF_MAX_DISCARD_REQUEST;
-> @@ -947,6 +949,7 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
->  		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
->  		dpolicy->io_aware = true;
->  		dpolicy->sync = false;
-> +		dpolicy->ordered = true;
->  		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
->  			dpolicy->granularity = 1;
->  			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
-> @@ -1202,6 +1205,69 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
->  	return 0;
->  }
->  
-> +static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
-> +					struct discard_policy *dpolicy)
-> +{
-> +	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-> +	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
-> +	struct rb_node **insert_p = NULL, *insert_parent = NULL;
-> +	struct discard_cmd *dc;
-> +	struct blk_plug plug;
-> +	unsigned int pos = dcc->next_pos;
-> +	unsigned int issued = 0, iter = 0;
-> +	bool io_interrupted;
-> +
-> +	mutex_lock(&dcc->cmd_lock);
-> +	dc = (struct discard_cmd *)f2fs_lookup_rb_tree_ret(&dcc->root,
-> +					NULL, pos,
-> +					(struct rb_entry **)&prev_dc,
-> +					(struct rb_entry **)&next_dc,
-> +					&insert_p, &insert_parent, true);
-> +	if (!dc)
-> +		dc = next_dc;
-> +
-> +	blk_start_plug(&plug);
-> +
-> +	while (dc) {
-> +		struct rb_node *node;
-> +
-> +		if (dc->state != D_PREP)
-> +			goto next;
-> +retry:
-> +		io_interrupted = false;
-> +
-> +		if (dpolicy->io_aware && !is_idle(sbi)) {
-> +			io_interrupted = true;
-> +			goto skip;
-
-Please don't try, if user is doing something.
-
-> +		}
-> +
-> +		__submit_discard_cmd(sbi, dpolicy, dc);
-> +		issued++;
-> +		dcc->next_pos = dc->lstart + dc->len;
-> +skip:
-> +		if (++iter >= dpolicy->max_requests)
-> +			break;
-> +
-> +		if (io_interrupted)
-> +			goto retry;
-> +next:
-> +		node = rb_next(&dc->rb_node);
-> +		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
-> +	}
-> +
-> +	blk_finish_plug(&plug);
-> +
-> +	if (!dc)
-> +		dcc->next_pos = 0;
-> +
-> +	mutex_unlock(&dcc->cmd_lock);
-> +
-> +	if (!issued && io_interrupted)
-> +		issued = -1;
-> +
-> +	return issued;
-> +}
-> +
->  static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->  					struct discard_policy *dpolicy)
->  {
-> @@ -1215,6 +1281,10 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->  	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
->  		if (i + 1 < dpolicy->granularity)
->  			break;
-> +
-> +		if (i < DEFAULT_DISCARD_GRANULARITY && dpolicy->ordered)
-> +			return __issue_discard_cmd_orderly(sbi, dpolicy);
-
-So, at this moment, we usually expect there'd be a bunch of small candidates
-only, and thus, it'd be better to issue small chunks in LBA order?
-
-> +
->  		pend_list = &dcc->pend_list[i];
->  
->  		mutex_lock(&dcc->cmd_lock);
-> @@ -1786,6 +1856,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
->  	dcc->nr_discards = 0;
->  	dcc->max_discards = MAIN_SEGS(sbi) << sbi->log_blocks_per_seg;
->  	dcc->undiscard_blks = 0;
-> +	dcc->next_pos = 0;
->  	dcc->root = RB_ROOT;
->  	dcc->rbtree_check = false;
->  
-> -- 
-> 2.18.0.rc1
+>>
+>> By this way, we can avoid dnode block list being broken by out-of-order
+>> IO submission due to IO scheduler or driver.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>> v2: add missing definition modification in f2fs.h.
+>>  fs/f2fs/f2fs.h |  2 +-
+>>  fs/f2fs/file.c | 17 ++++-------------
+>>  fs/f2fs/node.c |  4 ++--
+>>  3 files changed, 7 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 859ecde81dd0..a9da5a089cb4 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -2825,7 +2825,7 @@ pgoff_t f2fs_get_next_page_offset(struct dnode_of_data *dn, pgoff_t pgofs);
+>>  int f2fs_get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode);
+>>  int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from);
+>>  int f2fs_truncate_xattr_node(struct inode *inode);
+>> -int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino);
+>> +int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi);
+>>  int f2fs_remove_inode_page(struct inode *inode);
+>>  struct page *f2fs_new_inode_page(struct inode *inode);
+>>  struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs);
+>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>> index 752ff678bfe0..ecca7b833268 100644
+>> --- a/fs/f2fs/file.c
+>> +++ b/fs/f2fs/file.c
+>> @@ -292,19 +292,10 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>>  		goto sync_nodes;
+>>  	}
+>>  
+>> -	/*
+>> -	 * If it's atomic_write, it's just fine to keep write ordering. So
+>> -	 * here we don't need to wait for node write completion, since we use
+>> -	 * node chain which serializes node blocks. If one of node writes are
+>> -	 * reordered, we can see simply broken chain, resulting in stopping
+>> -	 * roll-forward recovery. It means we'll recover all or none node blocks
+>> -	 * given fsync mark.
+>> -	 */
+>> -	if (!atomic) {
+>> -		ret = f2fs_wait_on_node_pages_writeback(sbi, ino);
+>> -		if (ret)
+>> -			goto out;
+>> -	}
+>> +
+>> +	ret = f2fs_wait_on_node_pages_writeback(sbi);
+>> +	if (ret)
+>> +		goto out;
+>>  
+>>  	/* once recovery info is written, don't need to tack this */
+>>  	f2fs_remove_ino_entry(sbi, ino, APPEND_INO);
+>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+>> index 849c2ed9c152..0810c8117d46 100644
+>> --- a/fs/f2fs/node.c
+>> +++ b/fs/f2fs/node.c
+>> @@ -1710,7 +1710,7 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+>>  	return ret;
+>>  }
+>>  
+>> -int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino)
+>> +int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi)
+>>  {
+>>  	pgoff_t index = 0;
+>>  	struct pagevec pvec;
+>> @@ -1726,7 +1726,7 @@ int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino)
+>>  		for (i = 0; i < nr_pages; i++) {
+>>  			struct page *page = pvec.pages[i];
+>>  
+>> -			if (ino && ino_of_node(page) == ino) {
+>> +			if (IS_DNODE(page) && is_cold_node(page)) {
+>>  				f2fs_wait_on_page_writeback(page, NODE, true);
+>>  				if (TestClearPageError(page))
+>>  					ret = -EIO;
+>> -- 
+>> 2.18.0.rc1
