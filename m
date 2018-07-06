@@ -1,9 +1,8 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4/4] f2fs: should check the type of end_io after
- pullback by fscrypto
-Date: Fri,  6 Jul 2018 14:09:03 -0700
-Message-ID: <20180706210903.77887-4-jaegeuk@kernel.org>
-References: <20180706210903.77887-1-jaegeuk@kernel.org>
+Subject: [PATCH 1/4] f2fs: flush journal nat entries for nat_bits
+ during unmount
+Date: Fri,  6 Jul 2018 14:09:00 -0700
+Message-ID: <20180706210903.77887-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,14 +10,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1fbXyc-000116-FA
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 06 Jul 2018 21:09:14 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1fbXyb-00010o-2a
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 06 Jul 2018 21:09:13 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fbXyb-00EoSW-44
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 06 Jul 2018 21:09:14 +0000
-In-Reply-To: <20180706210903.77887-1-jaegeuk@kernel.org>
+ id 1fbXyZ-001HX8-8Y
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 06 Jul 2018 21:09:13 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,44 +29,31 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This fixes to get the page type after pullback by fscrypto, since the original
-page is bounce page but we should need to get control page which is what we
-originally submitted.
+Let's flush journal nat entries for speed up in the next run.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/data.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/f2fs/node.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index c3f9b9baf140..9a0fcec53d0e 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -152,7 +152,6 @@ static void f2fs_write_end_io(struct bio *bio)
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 29237aeca041..0f076fb0d828 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -2613,6 +2613,13 @@ void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	nid_t set_idx = 0;
+ 	LIST_HEAD(sets);
  
- 	bio_for_each_segment_all(bvec, bio, i) {
- 		struct page *page = bvec->bv_page;
--		enum count_type type = WB_DATA_TYPE(page);
++	/* during unmount, let's flush nat_bits before checking dirty_nat_cnt */
++	if (enabled_nat_bits(sbi, cpc)) {
++		down_write(&nm_i->nat_tree_lock);
++		remove_nats_in_journal(sbi);
++		up_write(&nm_i->nat_tree_lock);
++	}
++
+ 	if (!nm_i->dirty_nat_cnt)
+ 		return;
  
- 		if (IS_DUMMY_WRITTEN_PAGE(page)) {
- 			set_page_private(page, (unsigned long)NULL);
-@@ -169,14 +168,14 @@ static void f2fs_write_end_io(struct bio *bio)
- 
- 		if (unlikely(bio->bi_status)) {
- 			mapping_set_error(page->mapping, -EIO);
--			if (type == F2FS_WB_CP_DATA)
-+			if (WB_DATA_TYPE(page) == F2FS_WB_CP_DATA)
- 				f2fs_stop_checkpoint(sbi, true);
- 		}
- 
- 		f2fs_bug_on(sbi, page->mapping == NODE_MAPPING(sbi) &&
- 					page->index != nid_of_node(page));
- 
--		dec_page_count(sbi, type);
-+		dec_page_count(sbi, WB_DATA_TYPE(page));
- 		clear_cold_data(page);
- 		end_page_writeback(page);
- 	}
 -- 
 2.17.0.441.gb46fe60e1d-goog
 
