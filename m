@@ -1,26 +1,24 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: Bug report: some new bugs found by fuzzing
-Date: Sat, 7 Jul 2018 00:22:05 +0800
-Message-ID: <8a47f71c-5915-106c-9361-355dc349f6d9@kernel.org>
-References: <B655752F-CBBA-4D7D-B504-E1E21378429A@gatech.edu>
- <7f5282db-2bb6-b808-679b-620957185945@huawei.com>
- <0C7436B3-FE05-4999-A163-89F9851ADC00@gatech.edu>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 4/4] f2fs: should check the type of end_io after
+ pullback by fscrypto
+Date: Fri,  6 Jul 2018 14:09:03 -0700
+Message-ID: <20180706210903.77887-4-jaegeuk@kernel.org>
+References: <20180706210903.77887-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1fbTUy-0004lT-Cz
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 06 Jul 2018 16:22:20 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1fbXyc-000116-FA
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 06 Jul 2018 21:09:14 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fbTUv-00EdSe-1b
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 06 Jul 2018 16:22:20 +0000
-In-Reply-To: <0C7436B3-FE05-4999-A163-89F9851ADC00@gatech.edu>
-Content-Language: en-US
+ id 1fbXyb-00EoSW-44
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 06 Jul 2018 21:09:14 +0000
+In-Reply-To: <20180706210903.77887-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,48 +28,51 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "Xu, Wen" <wen.xu@gatech.edu>, Chao Yu <yuchao0@huawei.com>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-SGkgV2VuLAoKSSd2ZSB1cGRhdGUgdHdvIHBhdGNoZXMgdG9kYXkgZm9yIHRoZXNlIGlzc3Vlcywg
-Y291bGQgeW91IHBsZWFzZSB0ZXN0IHRoZW0/CgpPbiAyMDE4LzcvNiA5OjMwLCBYdSwgV2VuIHdy
-b3RlOgo+IFRoYW5rcyB2ZXJ5IG11Y2ghIEkgd291bGQgbGlrZSB0byBwcm92aWRlIGFueSBmdXJ0
-aGVyIGhlbHAgb3IgdGVzdGluZy4KPiAKPiAtV2VuCj4gCj4+IE9uIEp1bCA1LCAyMDE4LCBhdCA5
-OjEzIFBNLCBDaGFvIFl1IDx5dWNoYW8wQGh1YXdlaS5jb20+IHdyb3RlOgo+Pgo+PiBIaSBXZW4s
-Cj4+Cj4+IE9uIDIwMTgvNy82IDM6MTksIFh1LCBXZW4gd3JvdGU6Cj4+PiBEZWFyIEYyRlMgZGV2
-ZWxvcGVycywKPj4+Cj4+PiBCeSBmdXp6aW5nLCBJIGZpbmQgc29tZSBuZXcgaXNzdWVzIGluIExp
-bnV4IGYyZnMga2VybmVsIG1vZHVsZS4gSGVyZSBhcmUgdGhlIGxpbmtzIG9uIEJ1Z3ppbGxhLAo+
-Pj4KPj4+IDIwMDQxOQlOVUxMIHBvaW50ZXIgZGVyZWZlcmVuY2UgaW4gX19yZW1vdmVfZGlydHlf
-c2VnbWVudCgpIHdoZW4gbW91bnRpbmcgYW4gZjJmcyBpbWFnZQo+Pj4gaHR0cHM6Ly9idWd6aWxs
-YS5rZXJuZWwub3JnL3Nob3dfYnVnLmNnaT9pZD0yMDA0MTkKCmh0dHBzOi8vZ2l0Lmtlcm5lbC5v
-cmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2NoYW8vbGludXguZ2l0L2NvbW1pdC8/aD1mMmZz
-LWRldiZpZD1jY2Y1ZTE1MjVlOTIwMTBkZDJjYjhmZjVhODIwMjgzZjliZmY1Yzc4Cgo+Pj4KPj4+
-IDIwMDQyMQlCdWZmZXIgb3ZlcnJ1biBpbiBmMmZzX3RydW5jYXRlX2lubGluZV9pbm9kZSgpIHdo
-ZW4gdW1vdW50aW5nIGFuIGYyZnMgaW1hZ2UKPj4+IGh0dHBzOi8vYnVnemlsbGEua2VybmVsLm9y
-Zy9zaG93X2J1Zy5jZ2k/aWQ9MjAwNDIxCgpodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20v
-bGludXgva2VybmVsL2dpdC9jaGFvL2xpbnV4LmdpdC9jb21taXQvP2g9ZjJmcy1kZXYmaWQ9ZWEw
-ODIwMmVlNGNhNjdiMzFiMzUxMDU5MWYyYTgwMzJlYzNhYzRjYgoKPj4+Cj4+PiAyMDA0MjMJT3V0
-LW9mLWJvdW5kIGFjY2VzcyBpbiBmMmZzX2dldF9kbm9kZV9vZl9kYXRhKCkgd2hlbiBvcGVyYXRp
-bmcgZmlsZSBvbiBhbiBmMmZzIGltYWdlCj4+PiBodHRwczovL2J1Z3ppbGxhLmtlcm5lbC5vcmcv
-c2hvd19idWcuY2dpP2lkPTIwMDQyMwo+Pj4KPj4+IDIwMDQyNQlJbnZhbGlkIG1lbW9yeSBhY2Nl
-c3MgaW4gZjJmc19maW5kX3RhcmdldF9kZW50cnkoKSB3aGVuIG9wZXJhdGluZyBmaWxlcyBvbiBh
-biBmMmZzIGltYWdlCj4+PiBodHRwczovL2J1Z3ppbGxhLmtlcm5lbC5vcmcvc2hvd19idWcuY2dp
-P2lkPTIwMDQyNQoKRml4ZXMgdGhpcyBpc3N1ZSB3aXRoIGFib3ZlIGNvbW1pdC4KClRoYW5rcywK
-Cj4+Pgo+Pj4gUmVnYXJkaW5nIG15IHRlc3RpbmcsIHRoZXkgY2FuIGFsbCBiZSByZXByb2R1Y2Vk
-IHcvIENoYW/igJlzIGYyZnMtZGV2IGJyYW5jaC4gVGhhbmtzIQo+Pgo+PiBBbHJpZ2h0LCBJIHdp
-bGwgZGlnIGludG8gdGhlc2UgaXNzdWVzIGluIHRoZXNlIGRheXMsIG9uY2UgSSBoYXZlIHNvbHV0
-aW9uLCB3aWxsCj4+IGxldCB5b3Uga25vdy4KPj4KPj4gVGhhbmtzLAo+Pgo+Pj4KPj4+IC1XZW4K
-PiAKPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiBDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBj
-b21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKPiBlbmdhZ2luZyB0ZWNoIHNpdGVz
-LCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdAo+IF9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gTGludXgtZjJmcy1kZXZlbCBtYWls
-aW5nIGxpc3QKPiBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+IGh0dHBz
-Oi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
-PiAKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21t
-dW5pdHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xh
-c2hkb3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QK
-TGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3Vy
-Y2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+This fixes to get the page type after pullback by fscrypto, since the original
+page is bounce page but we should need to get control page which is what we
+originally submitted.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/data.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index c3f9b9baf140..9a0fcec53d0e 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -152,7 +152,6 @@ static void f2fs_write_end_io(struct bio *bio)
+ 
+ 	bio_for_each_segment_all(bvec, bio, i) {
+ 		struct page *page = bvec->bv_page;
+-		enum count_type type = WB_DATA_TYPE(page);
+ 
+ 		if (IS_DUMMY_WRITTEN_PAGE(page)) {
+ 			set_page_private(page, (unsigned long)NULL);
+@@ -169,14 +168,14 @@ static void f2fs_write_end_io(struct bio *bio)
+ 
+ 		if (unlikely(bio->bi_status)) {
+ 			mapping_set_error(page->mapping, -EIO);
+-			if (type == F2FS_WB_CP_DATA)
++			if (WB_DATA_TYPE(page) == F2FS_WB_CP_DATA)
+ 				f2fs_stop_checkpoint(sbi, true);
+ 		}
+ 
+ 		f2fs_bug_on(sbi, page->mapping == NODE_MAPPING(sbi) &&
+ 					page->index != nid_of_node(page));
+ 
+-		dec_page_count(sbi, type);
++		dec_page_count(sbi, WB_DATA_TYPE(page));
+ 		clear_cold_data(page);
+ 		end_page_writeback(page);
+ 	}
+-- 
+2.17.0.441.gb46fe60e1d-goog
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
