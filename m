@@ -1,22 +1,29 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] f2fs: fix defined but not used build warnings
-Date: Fri, 6 Jul 2018 20:50:57 -0700
-Message-ID: <4463b606-3373-2e51-ad8c-3303b1ccc587@infradead.org>
+From: "Xu, Wen" <wen.xu@gatech.edu>
+Subject: Re: Bug report: some new bugs found by fuzzing
+Date: Sat, 7 Jul 2018 15:48:39 +0000
+Message-ID: <73E9588B-D1C0-4B9A-B00B-58C975D48489@gatech.edu>
+References: <B655752F-CBBA-4D7D-B504-E1E21378429A@gatech.edu>
+ <7f5282db-2bb6-b808-679b-620957185945@huawei.com>
+ <0C7436B3-FE05-4999-A163-89F9851ADC00@gatech.edu>
+ <8a47f71c-5915-106c-9361-355dc349f6d9@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <rdunlap@infradead.org>) id 1fbeFa-0000Gs-O8
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Jul 2018 03:51:10 +0000
-Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fbeFX-00F0EZ-Ol
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Jul 2018 03:51:10 +0000
+ (envelope-from <wen.xu@gatech.edu>) id 1fbpzz-0001Pi-OO
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Jul 2018 16:23:51 +0000
+Received: from mail-cys01nam02on0109.outbound.protection.outlook.com
+ ([104.47.37.109] helo=NAM02-CY1-obe.outbound.protection.outlook.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-SHA384:256) (Exim 4.90_1)
+ id 1fbpzx-00CFO2-ER
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Jul 2018 16:23:51 +0000
+In-Reply-To: <8a47f71c-5915-106c-9361-355dc349f6d9@kernel.org>
 Content-Language: en-US
+Content-ID: <FB74798E1EAB34468C65FF3011FC0C75@namprd07.prod.outlook.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,67 +33,54 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Linux FS Devel <linux-fsdevel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+To: Chao Yu <chao@kernel.org>
+Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-From: Randy Dunlap <rdunlap@infradead.org>
-
-Fix build warnings in f2fs when CONFIG_PROC_FS is not enabled
-by marking the unused functions as __maybe_unused.
-
-../fs/f2fs/sysfs.c:519:12: warning: 'segment_info_seq_show' defined but not used [-Wunused-function]
-../fs/f2fs/sysfs.c:546:12: warning: 'segment_bits_seq_show' defined but not used [-Wunused-function]
-../fs/f2fs/sysfs.c:570:12: warning: 'iostat_info_seq_show' defined but not used [-Wunused-function]
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
----
- fs/f2fs/sysfs.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
---- linux-next-20180706.orig/fs/f2fs/sysfs.c
-+++ linux-next-20180706/fs/f2fs/sysfs.c
-@@ -9,6 +9,7 @@
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
-  */
-+#include <linux/compiler.h>
- #include <linux/proc_fs.h>
- #include <linux/f2fs_fs.h>
- #include <linux/seq_file.h>
-@@ -516,7 +517,8 @@ static struct kobject f2fs_feat = {
- 	.kset	= &f2fs_kset,
- };
- 
--static int segment_info_seq_show(struct seq_file *seq, void *offset)
-+static int __maybe_unused segment_info_seq_show(struct seq_file *seq,
-+						void *offset)
- {
- 	struct super_block *sb = seq->private;
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-@@ -543,7 +545,8 @@ static int segment_info_seq_show(struct
- 	return 0;
- }
- 
--static int segment_bits_seq_show(struct seq_file *seq, void *offset)
-+static int __maybe_unused segment_bits_seq_show(struct seq_file *seq,
-+						void *offset)
- {
- 	struct super_block *sb = seq->private;
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-@@ -567,7 +570,8 @@ static int segment_bits_seq_show(struct
- 	return 0;
- }
- 
--static int iostat_info_seq_show(struct seq_file *seq, void *offset)
-+static int __maybe_unused iostat_info_seq_show(struct seq_file *seq,
-+					       void *offset)
- {
- 	struct super_block *sb = seq->private;
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+U3VyZSBJIHdpbGwgZG8gaXQuIFNvIHlvdSBhcmUgc3RpbGwgd2lsbGluZyB0byBmaXggdGhlIGlz
+c3VlcyBldmVuIGl0IG1heSBiZSBhZmZlY3RlZCBieSBDSEVDS19GUyBjb25maWc/DQoNClRoYW5r
+cw0KLVdlbg0KDQo+IE9uIEp1bCA2LCAyMDE4LCBhdCAxMjoyMiBQTSwgQ2hhbyBZdSA8Y2hhb0Br
+ZXJuZWwub3JnPiB3cm90ZToNCj4gDQo+IEhpIFdlbiwNCj4gDQo+IEkndmUgdXBkYXRlIHR3byBw
+YXRjaGVzIHRvZGF5IGZvciB0aGVzZSBpc3N1ZXMsIGNvdWxkIHlvdSBwbGVhc2UgdGVzdCB0aGVt
+Pw0KPiANCj4gT24gMjAxOC83LzYgOTozMCwgWHUsIFdlbiB3cm90ZToNCj4+IFRoYW5rcyB2ZXJ5
+IG11Y2ghIEkgd291bGQgbGlrZSB0byBwcm92aWRlIGFueSBmdXJ0aGVyIGhlbHAgb3IgdGVzdGlu
+Zy4NCj4+IA0KPj4gLVdlbg0KPj4gDQo+Pj4gT24gSnVsIDUsIDIwMTgsIGF0IDk6MTMgUE0sIENo
+YW8gWXUgPHl1Y2hhbzBAaHVhd2VpLmNvbT4gd3JvdGU6DQo+Pj4gDQo+Pj4gSGkgV2VuLA0KPj4+
+IA0KPj4+IE9uIDIwMTgvNy82IDM6MTksIFh1LCBXZW4gd3JvdGU6DQo+Pj4+IERlYXIgRjJGUyBk
+ZXZlbG9wZXJzLA0KPj4+PiANCj4+Pj4gQnkgZnV6emluZywgSSBmaW5kIHNvbWUgbmV3IGlzc3Vl
+cyBpbiBMaW51eCBmMmZzIGtlcm5lbCBtb2R1bGUuIEhlcmUgYXJlIHRoZSBsaW5rcyBvbiBCdWd6
+aWxsYSwNCj4+Pj4gDQo+Pj4+IDIwMDQxOQlOVUxMIHBvaW50ZXIgZGVyZWZlcmVuY2UgaW4gX19y
+ZW1vdmVfZGlydHlfc2VnbWVudCgpIHdoZW4gbW91bnRpbmcgYW4gZjJmcyBpbWFnZQ0KPj4+PiBo
+dHRwczovL2J1Z3ppbGxhLmtlcm5lbC5vcmcvc2hvd19idWcuY2dpP2lkPTIwMDQxOQ0KPiANCj4g
+aHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvY2hhby9saW51
+eC5naXQvY29tbWl0Lz9oPWYyZnMtZGV2JmlkPWNjZjVlMTUyNWU5MjAxMGRkMmNiOGZmNWE4MjAy
+ODNmOWJmZjVjNzgNCj4gDQo+Pj4+IA0KPj4+PiAyMDA0MjEJQnVmZmVyIG92ZXJydW4gaW4gZjJm
+c190cnVuY2F0ZV9pbmxpbmVfaW5vZGUoKSB3aGVuIHVtb3VudGluZyBhbiBmMmZzIGltYWdlDQo+
+Pj4+IGh0dHBzOi8vYnVnemlsbGEua2VybmVsLm9yZy9zaG93X2J1Zy5jZ2k/aWQ9MjAwNDIxDQo+
+IA0KPiBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9jaGFv
+L2xpbnV4LmdpdC9jb21taXQvP2g9ZjJmcy1kZXYmaWQ9ZWEwODIwMmVlNGNhNjdiMzFiMzUxMDU5
+MWYyYTgwMzJlYzNhYzRjYg0KPiANCj4+Pj4gDQo+Pj4+IDIwMDQyMwlPdXQtb2YtYm91bmQgYWNj
+ZXNzIGluIGYyZnNfZ2V0X2Rub2RlX29mX2RhdGEoKSB3aGVuIG9wZXJhdGluZyBmaWxlIG9uIGFu
+IGYyZnMgaW1hZ2UNCj4+Pj4gaHR0cHM6Ly9idWd6aWxsYS5rZXJuZWwub3JnL3Nob3dfYnVnLmNn
+aT9pZD0yMDA0MjMNCj4+Pj4gDQo+Pj4+IDIwMDQyNQlJbnZhbGlkIG1lbW9yeSBhY2Nlc3MgaW4g
+ZjJmc19maW5kX3RhcmdldF9kZW50cnkoKSB3aGVuIG9wZXJhdGluZyBmaWxlcyBvbiBhbiBmMmZz
+IGltYWdlDQo+Pj4+IGh0dHBzOi8vYnVnemlsbGEua2VybmVsLm9yZy9zaG93X2J1Zy5jZ2k/aWQ9
+MjAwNDI1DQo+IA0KPiBGaXhlcyB0aGlzIGlzc3VlIHdpdGggYWJvdmUgY29tbWl0Lg0KPiANCj4g
+VGhhbmtzLA0KPiANCj4+Pj4gDQo+Pj4+IFJlZ2FyZGluZyBteSB0ZXN0aW5nLCB0aGV5IGNhbiBh
+bGwgYmUgcmVwcm9kdWNlZCB3LyBDaGFv4oCZcyBmMmZzLWRldiBicmFuY2guIFRoYW5rcyENCj4+
+PiANCj4+PiBBbHJpZ2h0LCBJIHdpbGwgZGlnIGludG8gdGhlc2UgaXNzdWVzIGluIHRoZXNlIGRh
+eXMsIG9uY2UgSSBoYXZlIHNvbHV0aW9uLCB3aWxsDQo+Pj4gbGV0IHlvdSBrbm93Lg0KPj4+IA0K
+Pj4+IFRoYW5rcywNCj4+PiANCj4+Pj4gDQo+Pj4+IC1XZW4NCj4+IA0KPj4gLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tDQo+PiBDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25l
+IG9mIHRoZSB3b3JsZCdzIG1vc3QNCj4+IGVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9y
+ZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90DQo+PiBfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXw0KPj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QN
+Cj4+IExpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0DQo+PiBodHRwczovL2xp
+c3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsDQoNCi0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLQpDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkg
+b24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qu
+b3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgt
+ZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3Jn
+ZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
