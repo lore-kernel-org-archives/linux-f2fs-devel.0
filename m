@@ -1,26 +1,27 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH 2/2] f2fs: issue small discard by LBA order
-Date: Sat, 7 Jul 2018 08:08:03 +0800
-Message-ID: <822c2d6b-1765-7956-2a30-09d0423e90a2@kernel.org>
-References: <20180705113701.3466-1-yuchao0@huawei.com>
- <20180705113701.3466-2-yuchao0@huawei.com>
- <20180706232345.GE77984@jaegeuk-macbookpro.roam.corp.google.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: split discard command in prior to
+ block layer
+Date: Fri, 6 Jul 2018 18:08:34 -0700
+Message-ID: <20180707010834.GA3767@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180704153746.2510-1-chao@kernel.org>
+ <20180706224533.GC77984@jaegeuk-macbookpro.roam.corp.google.com>
+ <fd8f7ecb-a1e7-7e10-f6c6-2b908cf9841b@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1fbalr-0002PC-Qy
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Jul 2018 00:08:15 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1fbbiN-0005zw-8o
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Jul 2018 01:08:43 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fbalq-00EuG0-Ce
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Jul 2018 00:08:15 +0000
-In-Reply-To: <20180706232345.GE77984@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
+ id 1fbbiL-00246w-9d
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Jul 2018 01:08:43 +0000
+Content-Disposition: inline
+In-Reply-To: <fd8f7ecb-a1e7-7e10-f6c6-2b908cf9841b@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,188 +31,159 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+To: Chao Yu <chao@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Jaegeuk,
-
-On 2018/7/7 7:23, Jaegeuk Kim wrote:
-> On 07/05, Chao Yu wrote:
->> For small granularity discard which size is smaller than 64KB, if we
->> issue those kind of discards orderly by size, their IOs will be spread
->> into entire logical address, so that in FTL, L2P table will be updated
->> randomly, result bad wear rate in the table.
->>
->> In this patch, we choose to issue small discard by LBA order, by this
->> way, we can expect that L2P table updates from adjacent discard IOs can
->> be merged in the cache, so it can reduce lifetime wearing of flash.
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/f2fs.h    |  2 ++
->>  fs/f2fs/segment.c | 71 +++++++++++++++++++++++++++++++++++++++++++++++
->>  2 files changed, 73 insertions(+)
->>
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index 47ac0a9b022f..8d592029328a 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -290,6 +290,7 @@ struct discard_policy {
->>  	unsigned int io_aware_gran;	/* minimum granularity discard not be aware of I/O */
->>  	bool io_aware;			/* issue discard in idle time */
->>  	bool sync;			/* submit discard with REQ_SYNC flag */
->> +	bool ordered;			/* issue discard by lba order */
->>  	unsigned int granularity;	/* discard granularity */
->>  };
->>  
->> @@ -306,6 +307,7 @@ struct discard_cmd_control {
->>  	unsigned int max_discards;		/* max. discards to be issued */
->>  	unsigned int discard_granularity;	/* discard granularity */
->>  	unsigned int undiscard_blks;		/* # of undiscard blocks */
->> +	unsigned int next_pos;			/* next discard position */
->>  	atomic_t issued_discard;		/* # of issued discard */
->>  	atomic_t issing_discard;		/* # of issing discard */
->>  	atomic_t discard_cmd_cnt;		/* # of cached cmd count */
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index f95bf618bc1e..df0d91dfb8ac 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -18,6 +18,7 @@
->>  #include <linux/timer.h>
->>  #include <linux/freezer.h>
->>  #include <linux/sched/signal.h>
->> +#include <linux/delay.h>
+On 07/07, Chao Yu wrote:
+> Hi Jaegeuk,
 > 
-> Why?
+> On 2018/7/7 6:45, Jaegeuk Kim wrote:
+> > On 07/04, Chao Yu wrote:
+> >> From: Chao Yu <yuchao0@huawei.com>
+> >>
+> >> Some devices has small max_{hw,}discard_sectors, so that in
+> >> __blkdev_issue_discard(), one big size discard bio can be split
+> >> into multiple small size discard bios, result in heavy load in IO
+> >> scheduler and device, which can hang other sync IO for long time.
+> >>
+> >> Now, f2fs is trying to control discard commands more elaboratively,
+> >> in order to make less conflict in between discard IO and user IO
+> >> to enhance application's performance, so in this patch, we will
+> >> split discard bio in f2fs in prior to in block layer to reduce
+> >> issuing multiple discard bios in a short time.
+> > 
+> > Hi Chao,
+> > 
+> > In terms of # of candidates, can we control this when actually issuing
+> > the discard commands?
+> 
+> IIUC, you mean once we pick one discard entry in rbtree, if
+> max_{hw,}discard_sectors is smaller than size of this discard, then we can split
+> it into smaller ones by discard_sectors, and just issue one or partials of them?
 
-I forgot to remove this... will do it.
+Yes, sort of.
 
 > 
->>  
->>  #include "f2fs.h"
->>  #include "segment.h"
->> @@ -936,6 +937,7 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
->>  	/* common policy */
->>  	dpolicy->type = discard_type;
->>  	dpolicy->sync = true;
->> +	dpolicy->ordered = false;
->>  	dpolicy->granularity = granularity;
->>  
->>  	dpolicy->max_requests = DEF_MAX_DISCARD_REQUEST;
->> @@ -947,6 +949,7 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
->>  		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
->>  		dpolicy->io_aware = true;
->>  		dpolicy->sync = false;
->> +		dpolicy->ordered = true;
->>  		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
->>  			dpolicy->granularity = 1;
->>  			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
->> @@ -1202,6 +1205,69 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
->>  	return 0;
->>  }
->>  
->> +static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
->> +					struct discard_policy *dpolicy)
->> +{
->> +	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
->> +	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
->> +	struct rb_node **insert_p = NULL, *insert_parent = NULL;
->> +	struct discard_cmd *dc;
->> +	struct blk_plug plug;
->> +	unsigned int pos = dcc->next_pos;
->> +	unsigned int issued = 0, iter = 0;
->> +	bool io_interrupted;
->> +
->> +	mutex_lock(&dcc->cmd_lock);
->> +	dc = (struct discard_cmd *)f2fs_lookup_rb_tree_ret(&dcc->root,
->> +					NULL, pos,
->> +					(struct rb_entry **)&prev_dc,
->> +					(struct rb_entry **)&next_dc,
->> +					&insert_p, &insert_parent, true);
->> +	if (!dc)
->> +		dc = next_dc;
->> +
->> +	blk_start_plug(&plug);
->> +
->> +	while (dc) {
->> +		struct rb_node *node;
->> +
->> +		if (dc->state != D_PREP)
->> +			goto next;
->> +retry:
->> +		io_interrupted = false;
->> +
->> +		if (dpolicy->io_aware && !is_idle(sbi)) {
->> +			io_interrupted = true;
->> +			goto skip;
+> Thanks,
 > 
-> Please don't try, if user is doing something.
-
-Just use 'break' instead of 'goto skip' here?
-
-> 
->> +		}
->> +
->> +		__submit_discard_cmd(sbi, dpolicy, dc);
->> +		issued++;
->> +		dcc->next_pos = dc->lstart + dc->len;
->> +skip:
->> +		if (++iter >= dpolicy->max_requests)
->> +			break;
->> +
->> +		if (io_interrupted)
->> +			goto retry;
->> +next:
->> +		node = rb_next(&dc->rb_node);
->> +		dc = rb_entry_safe(node, struct discard_cmd, rb_node);
->> +	}
->> +
->> +	blk_finish_plug(&plug);
->> +
->> +	if (!dc)
->> +		dcc->next_pos = 0;
->> +
->> +	mutex_unlock(&dcc->cmd_lock);
->> +
->> +	if (!issued && io_interrupted)
->> +		issued = -1;
->> +
->> +	return issued;
->> +}
->> +
->>  static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->>  					struct discard_policy *dpolicy)
->>  {
->> @@ -1215,6 +1281,10 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->>  	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
->>  		if (i + 1 < dpolicy->granularity)
->>  			break;
->> +
->> +		if (i < DEFAULT_DISCARD_GRANULARITY && dpolicy->ordered)
->> +			return __issue_discard_cmd_orderly(sbi, dpolicy);
-> 
-> So, at this moment, we usually expect there'd be a bunch of small candidates
-> only, and thus, it'd be better to issue small chunks in LBA order?
-
-Yes, that's right. :)
-
-Thanks,
-
-> 
->> +
->>  		pend_list = &dcc->pend_list[i];
->>  
->>  		mutex_lock(&dcc->cmd_lock);
->> @@ -1786,6 +1856,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
->>  	dcc->nr_discards = 0;
->>  	dcc->max_discards = MAIN_SEGS(sbi) << sbi->log_blocks_per_seg;
->>  	dcc->undiscard_blks = 0;
->> +	dcc->next_pos = 0;
->>  	dcc->root = RB_ROOT;
->>  	dcc->rbtree_check = false;
->>  
->> -- 
->> 2.18.0.rc1
+> > 
+> > Thanks,
+> > 
+> >>
+> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >> ---
+> >>  fs/f2fs/f2fs.h    | 13 ++++++-------
+> >>  fs/f2fs/segment.c | 25 ++++++++++++++++++++++---
+> >>  2 files changed, 28 insertions(+), 10 deletions(-)
+> >>
+> >> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >> index a9da5a089cb4..a09d2b2d9520 100644
+> >> --- a/fs/f2fs/f2fs.h
+> >> +++ b/fs/f2fs/f2fs.h
+> >> @@ -178,7 +178,6 @@ enum {
+> >>  
+> >>  #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
+> >>  #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
+> >> -#define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
+> >>  #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
+> >>  #define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
+> >>  #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
+> >> @@ -701,22 +700,22 @@ static inline void set_extent_info(struct extent_info *ei, unsigned int fofs,
+> >>  }
+> >>  
+> >>  static inline bool __is_discard_mergeable(struct discard_info *back,
+> >> -						struct discard_info *front)
+> >> +			struct discard_info *front, unsigned int max_len)
+> >>  {
+> >>  	return (back->lstart + back->len == front->lstart) &&
+> >> -		(back->len + front->len < DEF_MAX_DISCARD_LEN);
+> >> +		(back->len + front->len <= max_len);
+> >>  }
+> >>  
+> >>  static inline bool __is_discard_back_mergeable(struct discard_info *cur,
+> >> -						struct discard_info *back)
+> >> +			struct discard_info *back, unsigned int max_len)
+> >>  {
+> >> -	return __is_discard_mergeable(back, cur);
+> >> +	return __is_discard_mergeable(back, cur, max_len);
+> >>  }
+> >>  
+> >>  static inline bool __is_discard_front_mergeable(struct discard_info *cur,
+> >> -						struct discard_info *front)
+> >> +			struct discard_info *front, unsigned int max_len)
+> >>  {
+> >> -	return __is_discard_mergeable(cur, front);
+> >> +	return __is_discard_mergeable(cur, front, max_len);
+> >>  }
+> >>  
+> >>  static inline bool __is_extent_mergeable(struct extent_info *back,
+> >> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >> index 4648561e2bfd..8e417a12684d 100644
+> >> --- a/fs/f2fs/segment.c
+> >> +++ b/fs/f2fs/segment.c
+> >> @@ -1086,6 +1086,9 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+> >>  	struct discard_cmd *dc;
+> >>  	struct discard_info di = {0};
+> >>  	struct rb_node **insert_p = NULL, *insert_parent = NULL;
+> >> +	struct request_queue *q = bdev_get_queue(bdev);
+> >> +	unsigned int max_discard_blocks =
+> >> +			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
+> >>  	block_t end = lstart + len;
+> >>  
+> >>  	mutex_lock(&dcc->cmd_lock);
+> >> @@ -1129,7 +1132,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+> >>  
+> >>  		if (prev_dc && prev_dc->state == D_PREP &&
+> >>  			prev_dc->bdev == bdev &&
+> >> -			__is_discard_back_mergeable(&di, &prev_dc->di)) {
+> >> +			__is_discard_back_mergeable(&di, &prev_dc->di,
+> >> +							max_discard_blocks)) {
+> >>  			prev_dc->di.len += di.len;
+> >>  			dcc->undiscard_blks += di.len;
+> >>  			__relocate_discard_cmd(dcc, prev_dc);
+> >> @@ -1140,7 +1144,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+> >>  
+> >>  		if (next_dc && next_dc->state == D_PREP &&
+> >>  			next_dc->bdev == bdev &&
+> >> -			__is_discard_front_mergeable(&di, &next_dc->di)) {
+> >> +			__is_discard_front_mergeable(&di, &next_dc->di,
+> >> +							max_discard_blocks)) {
+> >>  			next_dc->di.lstart = di.lstart;
+> >>  			next_dc->di.len += di.len;
+> >>  			next_dc->di.start = di.start;
+> >> @@ -1170,7 +1175,11 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+> >>  static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+> >>  		struct block_device *bdev, block_t blkstart, block_t blklen)
+> >>  {
+> >> +	struct request_queue *q = bdev_get_queue(bdev);
+> >> +	unsigned int max_discard_blocks =
+> >> +			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
+> >>  	block_t lblkstart = blkstart;
+> >> +	block_t total_len = blklen;
+> >>  
+> >>  	trace_f2fs_queue_discard(bdev, blkstart, blklen);
+> >>  
+> >> @@ -1179,7 +1188,17 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+> >>  
+> >>  		blkstart -= FDEV(devi).start_blk;
+> >>  	}
+> >> -	__update_discard_tree_range(sbi, bdev, lblkstart, blkstart, blklen);
+> >> +
+> >> +	while (total_len) {
+> >> +		if (blklen > max_discard_blocks)
+> >> +			blklen = max_discard_blocks;
+> >> +		__update_discard_tree_range(sbi, bdev, lblkstart,
+> >> +						blkstart, blklen);
+> >> +		lblkstart += blklen;
+> >> +		blkstart += blklen;
+> >> +		total_len -= blklen;
+> >> +		blklen = total_len;
+> >> +	}
+> >>  	return 0;
+> >>  }
+> >>  
+> >> -- 
+> >> 2.16.2.17.g38e79b1fd
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
