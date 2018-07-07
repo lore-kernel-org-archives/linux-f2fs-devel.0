@@ -1,52 +1,63 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: enable real-time discard by default
-Date: Fri, 6 Jul 2018 18:13:48 -0700
-Message-ID: <20180707011348.GB3904@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180705062411.3757-1-yuchao0@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Subject: [PATCH] f2fs: do checkpoint in kill_sb
+Date: Fri,  6 Jul 2018 18:20:20 -0700
+Message-ID: <20180707012020.4708-1-jaegeuk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180705062411.3757-1-yuchao0@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 07/05, Chao Yu wrote:
-> f2fs is focused on flash based storage, so let's enable real-time
-> discard by default, if user don't want to enable it, 'nodiscard'
-> mount option should be used on mount.
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/super.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 848badda50ad..980edeb0b650 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1366,12 +1366,11 @@ static void default_options(struct f2fs_sb_info *sbi)
->  	set_opt(sbi, NOHEAP);
->  	sbi->sb->s_flags |= SB_LAZYTIME;
->  	set_opt(sbi, FLUSH_MERGE);
-> -	if (f2fs_sb_has_blkzoned(sbi->sb)) {
+When unmounting f2fs in force mode, we can get it stuck by io_schedule()
+by some pending IOs in meta_inode.
 
-I added this.
+io_schedule+0xd/0x30
+wait_on_page_bit_common+0xc6/0x130
+__filemap_fdatawait_range+0xbd/0x100
+filemap_fdatawait_keep_errors+0x15/0x40
+sync_inodes_sb+0x1cf/0x240
+sync_filesystem+0x52/0x90
+generic_shutdown_super+0x1d/0x110
+ceph_kill_sb+0x28/0x80 [ceph]
+deactivate_locked_super+0x35/0x60
+cleanup_mnt+0x36/0x70
+task_work_run+0x79/0xa0
+exit_to_usermode_loop+0x62/0x70
+do_syscall_64+0xdb/0xf0
+entry_SYSCALL_64_after_hwframe+0x44/0xa9
+0xffffffffffffffff
 
-	if (blk_queue_discard(bdev_get_queue(sbi->sb->s_bdev)))
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/super.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-> +	set_opt(sbi, DISCARD);
-> +	if (f2fs_sb_has_blkzoned(sbi->sb))
->  		set_opt_mode(sbi, F2FS_MOUNT_LFS);
-> -		set_opt(sbi, DISCARD);
-> -	} else {
-> +	else
->  		set_opt_mode(sbi, F2FS_MOUNT_ADAPTIVE);
-> -	}
->  
->  #ifdef CONFIG_F2FS_FS_XATTR
->  	set_opt(sbi, XATTR_USER);
-> -- 
-> 2.18.0.rc1
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 3995e926ba3a..1dc6809fac38 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3089,9 +3089,19 @@ static struct dentry *f2fs_mount(struct file_system_type *fs_type, int flags,
+ static void kill_f2fs_super(struct super_block *sb)
+ {
+ 	if (sb->s_root) {
+-		set_sbi_flag(F2FS_SB(sb), SBI_IS_CLOSE);
+-		f2fs_stop_gc_thread(F2FS_SB(sb));
+-		f2fs_stop_discard_thread(F2FS_SB(sb));
++		struct f2fs_sb_info *sbi = F2FS_SB(sb);
++
++		set_sbi_flag(sbi, SBI_IS_CLOSE);
++		f2fs_stop_gc_thread(sbi);
++		f2fs_stop_discard_thread(sbi);
++
++		if (is_sbi_flag_set(sbi, SBI_IS_DIRTY) ||
++				!is_set_ckpt_flags(sbi, CP_UMOUNT_FLAG)) {
++			struct cp_control cpc = {
++				.reason = CP_UMOUNT,
++			};
++			f2fs_write_checkpoint(sbi, &cpc);
++		}
+ 	}
+ 	kill_block_super(sb);
+ }
+-- 
+2.17.0.441.gb46fe60e1d-goog
