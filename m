@@ -1,60 +1,92 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] f2fs: enable real-time discard by default
-Date: Sat, 7 Jul 2018 09:44:32 +0800
-Message-ID: <50f73892-fc50-f6c5-02ec-cd41f6bdb6fc@kernel.org>
-References: <20180705062411.3757-1-yuchao0@huawei.com>
- <20180707011348.GB3904@jaegeuk-macbookpro.roam.corp.google.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] f2fs: fix defined but not used build warnings
+Date: Fri, 6 Jul 2018 20:50:57 -0700
+Message-ID: <4463b606-3373-2e51-ad8c-3303b1ccc587@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180707011348.GB3904@jaegeuk-macbookpro.roam.corp.google.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <rdunlap@infradead.org>) id 1fbeFa-0000Gs-O8
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Jul 2018 03:51:10 +0000
+Received: from bombadil.infradead.org ([198.137.202.133])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fbeFX-00F0EZ-Ol
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Jul 2018 03:51:10 +0000
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Linux FS Devel <linux-fsdevel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
 
-On 2018/7/7 9:13, Jaegeuk Kim wrote:
-> On 07/05, Chao Yu wrote:
->> f2fs is focused on flash based storage, so let's enable real-time
->> discard by default, if user don't want to enable it, 'nodiscard'
->> mount option should be used on mount.
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/super.c | 7 +++----
->>  1 file changed, 3 insertions(+), 4 deletions(-)
->>
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index 848badda50ad..980edeb0b650 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -1366,12 +1366,11 @@ static void default_options(struct f2fs_sb_info *sbi)
->>  	set_opt(sbi, NOHEAP);
->>  	sbi->sb->s_flags |= SB_LAZYTIME;
->>  	set_opt(sbi, FLUSH_MERGE);
->> -	if (f2fs_sb_has_blkzoned(sbi->sb)) {
-> 
-> I added this.
-> 
-> 	if (blk_queue_discard(bdev_get_queue(sbi->sb->s_bdev)))
+From: Randy Dunlap <rdunlap@infradead.org>
 
-That's correct. Thank you! :)
+Fix build warnings in f2fs when CONFIG_PROC_FS is not enabled
+by marking the unused functions as __maybe_unused.
 
-Thanks,
+../fs/f2fs/sysfs.c:519:12: warning: 'segment_info_seq_show' defined but not used [-Wunused-function]
+../fs/f2fs/sysfs.c:546:12: warning: 'segment_bits_seq_show' defined but not used [-Wunused-function]
+../fs/f2fs/sysfs.c:570:12: warning: 'iostat_info_seq_show' defined but not used [-Wunused-function]
 
-> 
->> +	set_opt(sbi, DISCARD);
->> +	if (f2fs_sb_has_blkzoned(sbi->sb))
->>  		set_opt_mode(sbi, F2FS_MOUNT_LFS);
->> -		set_opt(sbi, DISCARD);
->> -	} else {
->> +	else
->>  		set_opt_mode(sbi, F2FS_MOUNT_ADAPTIVE);
->> -	}
->>  
->>  #ifdef CONFIG_F2FS_FS_XATTR
->>  	set_opt(sbi, XATTR_USER);
->> -- 
->> 2.18.0.rc1
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
+---
+ fs/f2fs/sysfs.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+--- linux-next-20180706.orig/fs/f2fs/sysfs.c
++++ linux-next-20180706/fs/f2fs/sysfs.c
+@@ -9,6 +9,7 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
++#include <linux/compiler.h>
+ #include <linux/proc_fs.h>
+ #include <linux/f2fs_fs.h>
+ #include <linux/seq_file.h>
+@@ -516,7 +517,8 @@ static struct kobject f2fs_feat = {
+ 	.kset	= &f2fs_kset,
+ };
+ 
+-static int segment_info_seq_show(struct seq_file *seq, void *offset)
++static int __maybe_unused segment_info_seq_show(struct seq_file *seq,
++						void *offset)
+ {
+ 	struct super_block *sb = seq->private;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+@@ -543,7 +545,8 @@ static int segment_info_seq_show(struct
+ 	return 0;
+ }
+ 
+-static int segment_bits_seq_show(struct seq_file *seq, void *offset)
++static int __maybe_unused segment_bits_seq_show(struct seq_file *seq,
++						void *offset)
+ {
+ 	struct super_block *sb = seq->private;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+@@ -567,7 +570,8 @@ static int segment_bits_seq_show(struct
+ 	return 0;
+ }
+ 
+-static int iostat_info_seq_show(struct seq_file *seq, void *offset)
++static int __maybe_unused iostat_info_seq_show(struct seq_file *seq,
++					       void *offset)
+ {
+ 	struct super_block *sb = seq->private;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
