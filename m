@@ -1,106 +1,436 @@
-From: "Xu, Wen" <wen.xu@gatech.edu>
-Subject: Re: Bug report: some new bugs found by fuzzing
-Date: Sun, 8 Jul 2018 02:43:34 +0000
-Message-ID: <14604831-EB4B-421F-B5E4-BB159611D850@gatech.edu>
-References: <B655752F-CBBA-4D7D-B504-E1E21378429A@gatech.edu>
- <7f5282db-2bb6-b808-679b-620957185945@huawei.com>
- <0C7436B3-FE05-4999-A163-89F9851ADC00@gatech.edu>
- <8a47f71c-5915-106c-9361-355dc349f6d9@kernel.org>
- <73E9588B-D1C0-4B9A-B00B-58C975D48489@gatech.edu>
- <ed7af144-d43e-386b-5f0f-b9899023afe5@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <wen.xu@gatech.edu>) id 1fbzfs-0006YQ-Sa
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Jul 2018 02:43:44 +0000
-Received: from mail-co1nam03on0126.outbound.protection.outlook.com
- ([104.47.40.126] helo=NAM03-CO1-obe.outbound.protection.outlook.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-SHA384:256) (Exim 4.90_1)
- id 1fbzfq-00FhN3-Gm
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Jul 2018 02:43:44 +0000
-In-Reply-To: <ed7af144-d43e-386b-5f0f-b9899023afe5@kernel.org>
-Content-Language: en-US
-Content-ID: <DDF5DF66952F83498EBF7F1D1E34E84C@namprd07.prod.outlook.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao@kernel.org>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH v3 1/2] f2fs: fix to avoid broken of dnode block list
+Date: Sun,  8 Jul 2018 22:04:42 +0800
+Message-ID: <20180708140443.23244-1-chao@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SXQgaXMgYWxyZWFkeSBmaXhlZCBieSB0aGUgbGF0ZXN0IGNvbW1pdCBpbiB5b3VyIGdpdCB0cmVl
-Pw0KDQpUaGFua3MsDQpXZW4NCg0KPiBPbiBKdWwgNywgMjAxOCwgYXQgMTI6MzIgUE0sIENoYW8g
-WXUgPGNoYW9Aa2VybmVsLm9yZz4gd3JvdGU6DQo+IA0KPiBPbiAyMDE4LzcvNyAyMzo0OCwgWHUs
-IFdlbiB3cm90ZToNCj4+IFN1cmUgSSB3aWxsIGRvIGl0LiBTbyB5b3UgYXJlIHN0aWxsIHdpbGxp
-bmcgdG8gZml4IHRoZSBpc3N1ZXMgZXZlbiBpdCBtYXkgYmUgYWZmZWN0ZWQgYnkgQ0hFQ0tfRlMg
-Y29uZmlnPw0KPiANCj4gWWVzLCBsZXQgbWUgZmlndXJlIG91dCB0aGUgcHJvYmxlbS4NCj4gDQo+
-IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2NoYW8vbGlu
-dXguZ2l0L2NvbW1pdC8/aD1mMmZzLWRldiZpZD1jY2Y1ZTE1MjVlOTIwMTBkZDJjYjhmZjVhODIw
-MjgzZjliZmY1Yzc4DQo+IA0KPiBBYm92ZSBjb21taXQgc2VlbXMgYnJlYWtpbmcgbm9ybWFsIGNh
-c2UsIGxldCBtZSB1cGRhdGUgaXQuDQo+IA0KPiBUaGFua3MsDQo+IA0KPj4gDQo+PiBUaGFua3MN
-Cj4+IC1XZW4NCj4+IA0KPj4+IE9uIEp1bCA2LCAyMDE4LCBhdCAxMjoyMiBQTSwgQ2hhbyBZdSA8
-Y2hhb0BrZXJuZWwub3JnPiB3cm90ZToNCj4+PiANCj4+PiBIaSBXZW4sDQo+Pj4gDQo+Pj4gSSd2
-ZSB1cGRhdGUgdHdvIHBhdGNoZXMgdG9kYXkgZm9yIHRoZXNlIGlzc3VlcywgY291bGQgeW91IHBs
-ZWFzZSB0ZXN0IHRoZW0/DQo+Pj4gDQo+Pj4gT24gMjAxOC83LzYgOTozMCwgWHUsIFdlbiB3cm90
-ZToNCj4+Pj4gVGhhbmtzIHZlcnkgbXVjaCEgSSB3b3VsZCBsaWtlIHRvIHByb3ZpZGUgYW55IGZ1
-cnRoZXIgaGVscCBvciB0ZXN0aW5nLg0KPj4+PiANCj4+Pj4gLVdlbg0KPj4+PiANCj4+Pj4+IE9u
-IEp1bCA1LCAyMDE4LCBhdCA5OjEzIFBNLCBDaGFvIFl1IDx5dWNoYW8wQGh1YXdlaS5jb20+IHdy
-b3RlOg0KPj4+Pj4gDQo+Pj4+PiBIaSBXZW4sDQo+Pj4+PiANCj4+Pj4+IE9uIDIwMTgvNy82IDM6
-MTksIFh1LCBXZW4gd3JvdGU6DQo+Pj4+Pj4gRGVhciBGMkZTIGRldmVsb3BlcnMsDQo+Pj4+Pj4g
-DQo+Pj4+Pj4gQnkgZnV6emluZywgSSBmaW5kIHNvbWUgbmV3IGlzc3VlcyBpbiBMaW51eCBmMmZz
-IGtlcm5lbCBtb2R1bGUuIEhlcmUgYXJlIHRoZSBsaW5rcyBvbiBCdWd6aWxsYSwNCj4+Pj4+PiAN
-Cj4+Pj4+PiAyMDA0MTkJTlVMTCBwb2ludGVyIGRlcmVmZXJlbmNlIGluIF9fcmVtb3ZlX2RpcnR5
-X3NlZ21lbnQoKSB3aGVuIG1vdW50aW5nIGFuIGYyZnMgaW1hZ2UNCj4+Pj4+PiBodHRwczovL2J1
-Z3ppbGxhLmtlcm5lbC5vcmcvc2hvd19idWcuY2dpP2lkPTIwMDQxOQ0KPj4+IA0KPj4+IGh0dHBz
-Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2NoYW8vbGludXguZ2l0
-L2NvbW1pdC8/aD1mMmZzLWRldiZpZD1jY2Y1ZTE1MjVlOTIwMTBkZDJjYjhmZjVhODIwMjgzZjli
-ZmY1Yzc4DQo+Pj4gDQo+Pj4+Pj4gDQo+Pj4+Pj4gMjAwNDIxCUJ1ZmZlciBvdmVycnVuIGluIGYy
-ZnNfdHJ1bmNhdGVfaW5saW5lX2lub2RlKCkgd2hlbiB1bW91bnRpbmcgYW4gZjJmcyBpbWFnZQ0K
-Pj4+Pj4+IGh0dHBzOi8vYnVnemlsbGEua2VybmVsLm9yZy9zaG93X2J1Zy5jZ2k/aWQ9MjAwNDIx
-DQo+Pj4gDQo+Pj4gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9n
-aXQvY2hhby9saW51eC5naXQvY29tbWl0Lz9oPWYyZnMtZGV2JmlkPWVhMDgyMDJlZTRjYTY3YjMx
-YjM1MTA1OTFmMmE4MDMyZWMzYWM0Y2INCj4+PiANCj4+Pj4+PiANCj4+Pj4+PiAyMDA0MjMJT3V0
-LW9mLWJvdW5kIGFjY2VzcyBpbiBmMmZzX2dldF9kbm9kZV9vZl9kYXRhKCkgd2hlbiBvcGVyYXRp
-bmcgZmlsZSBvbiBhbiBmMmZzIGltYWdlDQo+Pj4+Pj4gaHR0cHM6Ly9idWd6aWxsYS5rZXJuZWwu
-b3JnL3Nob3dfYnVnLmNnaT9pZD0yMDA0MjMNCj4+Pj4+PiANCj4+Pj4+PiAyMDA0MjUJSW52YWxp
-ZCBtZW1vcnkgYWNjZXNzIGluIGYyZnNfZmluZF90YXJnZXRfZGVudHJ5KCkgd2hlbiBvcGVyYXRp
-bmcgZmlsZXMgb24gYW4gZjJmcyBpbWFnZQ0KPj4+Pj4+IGh0dHBzOi8vYnVnemlsbGEua2VybmVs
-Lm9yZy9zaG93X2J1Zy5jZ2k/aWQ9MjAwNDI1DQo+Pj4gDQo+Pj4gRml4ZXMgdGhpcyBpc3N1ZSB3
-aXRoIGFib3ZlIGNvbW1pdC4NCj4+PiANCj4+PiBUaGFua3MsDQo+Pj4gDQo+Pj4+Pj4gDQo+Pj4+
-Pj4gUmVnYXJkaW5nIG15IHRlc3RpbmcsIHRoZXkgY2FuIGFsbCBiZSByZXByb2R1Y2VkIHcvIENo
-YW/igJlzIGYyZnMtZGV2IGJyYW5jaC4gVGhhbmtzIQ0KPj4+Pj4gDQo+Pj4+PiBBbHJpZ2h0LCBJ
-IHdpbGwgZGlnIGludG8gdGhlc2UgaXNzdWVzIGluIHRoZXNlIGRheXMsIG9uY2UgSSBoYXZlIHNv
-bHV0aW9uLCB3aWxsDQo+Pj4+PiBsZXQgeW91IGtub3cuDQo+Pj4+PiANCj4+Pj4+IFRoYW5rcywN
-Cj4+Pj4+IA0KPj4+Pj4+IA0KPj4+Pj4+IC1XZW4NCj4+Pj4gDQo+Pj4+IC0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLQ0KPj4+PiBDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25l
-IG9mIHRoZSB3b3JsZCdzIG1vc3QNCj4+Pj4gZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qu
-b3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QNCj4+Pj4gX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18NCj4+Pj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5n
-IGxpc3QNCj4+Pj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQNCj4+Pj4g
-aHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1k
-ZXZlbA0KPj4gDQo+PiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4+IENoZWNrIG91dCB0aGUgdmli
-cmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdA0KPj4gZW5nYWdp
-bmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QNCj4+
-IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQo+PiBMaW51
-eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdA0KPj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3Vy
-Y2Vmb3JnZS5uZXQNCj4+IGh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3Rp
-bmZvL2xpbnV4LWYyZnMtZGV2ZWwNCj4+IA0KDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQ2hlY2sg
-b3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0
-CmVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNo
-ZG90Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4
-LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9y
-Z2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4
-LWYyZnMtZGV2ZWwK
+From: Chao Yu <yuchao0@huawei.com>
+
+f2fs recovery flow is relying on dnode block link list, it means fsynced
+file recovery depends on previous dnode's persistence in the list, so
+during fsync() we should wait on all regular inode's dnode writebacked
+before issuing flush.
+
+By this way, we can avoid dnode block list being broken by out-of-order
+IO submission due to IO scheduler or driver.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v3:
+- add a list to link all writebacked dnodes, let fsync() only wait on
+necessary dnode.
+ fs/f2fs/checkpoint.c |   2 +
+ fs/f2fs/data.c       |   2 +
+ fs/f2fs/f2fs.h       |  21 +++++++-
+ fs/f2fs/file.c       |  20 +++----
+ fs/f2fs/node.c       | 148 +++++++++++++++++++++++++++++++++++++++++----------
+ fs/f2fs/super.c      |   4 ++
+ 6 files changed, 153 insertions(+), 44 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 8b698bd54490..d5e60d76362e 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1379,6 +1379,8 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 
+ 	f2fs_release_ino_entry(sbi, false);
+ 
++	f2fs_reset_fsync_node_info(sbi);
++
+ 	if (unlikely(f2fs_cp_error(sbi)))
+ 		return -EIO;
+ 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 70813a4dda3e..afe76d87575c 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -176,6 +176,8 @@ static void f2fs_write_end_io(struct bio *bio)
+ 					page->index != nid_of_node(page));
+ 
+ 		dec_page_count(sbi, WB_DATA_TYPE(page));
++		if (f2fs_in_warm_node_list(sbi, page))
++			f2fs_del_fsync_node_entry(sbi, page);
+ 		clear_cold_data(page);
+ 		end_page_writeback(page);
+ 	}
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index c8c865fa8450..bf5f7a336ace 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -228,6 +228,12 @@ struct inode_entry {
+ 	struct inode *inode;	/* vfs inode pointer */
+ };
+ 
++struct fsync_node_entry {
++	struct list_head list;	/* list head */
++	struct page *page;	/* warm node page pointer */
++	unsigned int seq_id;	/* sequence id */
++};
++
+ /* for the bitmap indicate blocks to be discarded */
+ struct discard_entry {
+ 	struct list_head list;	/* list head */
+@@ -1152,6 +1158,11 @@ struct f2fs_sb_info {
+ 
+ 	struct inode_management im[MAX_INO_ENTRY];      /* manage inode cache */
+ 
++	spinlock_t fsync_node_lock;		/* for node entry lock */
++	struct list_head fsync_node_list;	/* node list head */
++	unsigned int fsync_seg_id;		/* sequence id */
++	unsigned int fsync_node_num;		/* number of node entries */
++
+ 	/* for orphan inode, use 0'th array */
+ 	unsigned int max_orphans;		/* max orphan inodes */
+ 
+@@ -2816,6 +2827,10 @@ struct node_info;
+ 
+ int f2fs_check_nid_range(struct f2fs_sb_info *sbi, nid_t nid);
+ bool f2fs_available_free_memory(struct f2fs_sb_info *sbi, int type);
++bool f2fs_in_warm_node_list(struct f2fs_sb_info *sbi, struct page *page);
++void f2fs_init_fsync_node_info(struct f2fs_sb_info *sbi);
++void f2fs_del_fsync_node_entry(struct f2fs_sb_info *sbi, struct page *page);
++void f2fs_reset_fsync_node_info(struct f2fs_sb_info *sbi);
+ int f2fs_need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid);
+ bool f2fs_is_checkpointed_node(struct f2fs_sb_info *sbi, nid_t nid);
+ bool f2fs_need_inode_block_update(struct f2fs_sb_info *sbi, nid_t ino);
+@@ -2825,7 +2840,8 @@ pgoff_t f2fs_get_next_page_offset(struct dnode_of_data *dn, pgoff_t pgofs);
+ int f2fs_get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode);
+ int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from);
+ int f2fs_truncate_xattr_node(struct inode *inode);
+-int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino);
++int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi,
++					unsigned int seq_id);
+ int f2fs_remove_inode_page(struct inode *inode);
+ struct page *f2fs_new_inode_page(struct inode *inode);
+ struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs);
+@@ -2834,7 +2850,8 @@ struct page *f2fs_get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid);
+ struct page *f2fs_get_node_page_ra(struct page *parent, int start);
+ void f2fs_move_node_page(struct page *node_page, int gc_type);
+ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+-			struct writeback_control *wbc, bool atomic);
++			struct writeback_control *wbc, bool atomic,
++			unsigned int *seq_id);
+ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+ 			struct writeback_control *wbc,
+ 			bool do_balance, enum iostat_type io_type);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 5e29d4053748..ddea2bfd4042 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -213,6 +213,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 		.nr_to_write = LONG_MAX,
+ 		.for_reclaim = 0,
+ 	};
++	unsigned int seq_id = 0;
+ 
+ 	if (unlikely(f2fs_readonly(inode->i_sb)))
+ 		return 0;
+@@ -275,7 +276,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 	}
+ sync_nodes:
+ 	atomic_inc(&sbi->wb_sync_req[NODE]);
+-	ret = f2fs_fsync_node_pages(sbi, inode, &wbc, atomic);
++	ret = f2fs_fsync_node_pages(sbi, inode, &wbc, atomic, &seq_id);
+ 	atomic_dec(&sbi->wb_sync_req[NODE]);
+ 	if (ret)
+ 		goto out;
+@@ -292,19 +293,10 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 		goto sync_nodes;
+ 	}
+ 
+-	/*
+-	 * If it's atomic_write, it's just fine to keep write ordering. So
+-	 * here we don't need to wait for node write completion, since we use
+-	 * node chain which serializes node blocks. If one of node writes are
+-	 * reordered, we can see simply broken chain, resulting in stopping
+-	 * roll-forward recovery. It means we'll recover all or none node blocks
+-	 * given fsync mark.
+-	 */
+-	if (!atomic) {
+-		ret = f2fs_wait_on_node_pages_writeback(sbi, ino);
+-		if (ret)
+-			goto out;
+-	}
++
++	ret = f2fs_wait_on_node_pages_writeback(sbi, seq_id);
++	if (ret)
++		goto out;
+ 
+ 	/* once recovery info is written, don't need to tack this */
+ 	f2fs_remove_ino_entry(sbi, ino, APPEND_INO);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 1e30bc305243..31dc372c56a0 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -28,6 +28,7 @@
+ static struct kmem_cache *nat_entry_slab;
+ static struct kmem_cache *free_nid_slab;
+ static struct kmem_cache *nat_entry_set_slab;
++static struct kmem_cache *fsync_node_entry_slab;
+ 
+ /*
+  * Check whether the given nid is within node id range.
+@@ -267,6 +268,72 @@ static unsigned int __gang_lookup_nat_set(struct f2fs_nm_info *nm_i,
+ 							start, nr);
+ }
+ 
++bool f2fs_in_warm_node_list(struct f2fs_sb_info *sbi, struct page *page)
++{
++	return NODE_MAPPING(sbi) == page->mapping &&
++			IS_DNODE(page) && is_cold_node(page);
++}
++
++void f2fs_init_fsync_node_info(struct f2fs_sb_info *sbi)
++{
++	spin_lock_init(&sbi->fsync_node_lock);
++	INIT_LIST_HEAD(&sbi->fsync_node_list);
++	sbi->fsync_seg_id = 0;
++	sbi->fsync_node_num = 0;
++}
++
++static unsigned int f2fs_add_fsync_node_entry(struct f2fs_sb_info *sbi,
++							struct page *page)
++{
++	struct fsync_node_entry *fn;
++	unsigned long flags;
++	unsigned int seq_id;
++
++	fn = f2fs_kmem_cache_alloc(fsync_node_entry_slab, GFP_NOFS);
++
++	get_page(page);
++	fn->page = page;
++	INIT_LIST_HEAD(&fn->list);
++
++	spin_lock_irqsave(&sbi->fsync_node_lock, flags);
++	list_add_tail(&fn->list, &sbi->fsync_node_list);
++	fn->seq_id = sbi->fsync_seg_id++;
++	seq_id = fn->seq_id;
++	sbi->fsync_node_num++;
++	spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
++
++	return seq_id;
++}
++
++void f2fs_del_fsync_node_entry(struct f2fs_sb_info *sbi, struct page *page)
++{
++	struct fsync_node_entry *fn;
++	unsigned long flags;
++
++	spin_lock_irqsave(&sbi->fsync_node_lock, flags);
++	list_for_each_entry(fn, &sbi->fsync_node_list, list) {
++		if (fn->page == page) {
++			list_del(&fn->list);
++			sbi->fsync_node_num--;
++			spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
++			kmem_cache_free(fsync_node_entry_slab, fn);
++			put_page(page);
++			return;
++		}
++	}
++	spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
++	f2fs_bug_on(sbi, 1);
++}
++
++void f2fs_reset_fsync_node_info(struct f2fs_sb_info *sbi)
++{
++	unsigned long flags;
++
++	spin_lock_irqsave(&sbi->fsync_node_lock, flags);
++	sbi->fsync_node_num = 0;
++	spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
++}
++
+ int f2fs_need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+@@ -1353,7 +1420,7 @@ static struct page *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
+ 
+ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+ 				struct writeback_control *wbc, bool do_balance,
+-				enum iostat_type io_type)
++				enum iostat_type io_type, unsigned int *seq_id)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_P_SB(page);
+ 	nid_t nid;
+@@ -1370,6 +1437,7 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+ 		.io_type = io_type,
+ 		.io_wbc = wbc,
+ 	};
++	unsigned int seq;
+ 
+ 	trace_f2fs_writepage(page, NODE);
+ 
+@@ -1416,6 +1484,13 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+ 
+ 	set_page_writeback(page);
+ 	ClearPageError(page);
++
++	if (f2fs_in_warm_node_list(sbi, page)) {
++		seq = f2fs_add_fsync_node_entry(sbi, page);
++		if (seq_id)
++			*seq_id = seq;
++	}
++
+ 	fio.old_blkaddr = ni.blk_addr;
+ 	f2fs_do_write_node_page(nid, &fio);
+ 	set_node_addr(sbi, &ni, fio.new_blkaddr, is_fsync_dnode(page));
+@@ -1463,7 +1538,7 @@ void f2fs_move_node_page(struct page *node_page, int gc_type)
+ 			goto out_page;
+ 
+ 		if (__write_node_page(node_page, false, NULL,
+-					&wbc, false, FS_GC_NODE_IO))
++					&wbc, false, FS_GC_NODE_IO, NULL))
+ 			unlock_page(node_page);
+ 		goto release_page;
+ 	} else {
+@@ -1480,11 +1555,13 @@ void f2fs_move_node_page(struct page *node_page, int gc_type)
+ static int f2fs_write_node_page(struct page *page,
+ 				struct writeback_control *wbc)
+ {
+-	return __write_node_page(page, false, NULL, wbc, false, FS_NODE_IO);
++	return __write_node_page(page, false, NULL, wbc, false,
++						FS_NODE_IO, NULL);
+ }
+ 
+ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+-			struct writeback_control *wbc, bool atomic)
++			struct writeback_control *wbc, bool atomic,
++			unsigned int *seq_id)
+ {
+ 	pgoff_t index;
+ 	pgoff_t last_idx = ULONG_MAX;
+@@ -1565,7 +1642,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ 			ret = __write_node_page(page, atomic &&
+ 						page == last_page,
+ 						&submitted, wbc, true,
+-						FS_NODE_IO);
++						FS_NODE_IO, seq_id);
+ 			if (ret) {
+ 				unlock_page(page);
+ 				f2fs_put_page(last_page, 0);
+@@ -1682,7 +1759,7 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+ 			set_dentry_mark(page, 0);
+ 
+ 			ret = __write_node_page(page, false, &submitted,
+-						wbc, do_balance, io_type);
++						wbc, do_balance, io_type, NULL);
+ 			if (ret)
+ 				unlock_page(page);
+ 			else if (submitted)
+@@ -1713,35 +1790,42 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+ 	return ret;
+ }
+ 
+-int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino)
++int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi,
++						unsigned int seq_id)
+ {
+-	pgoff_t index = 0;
+-	struct pagevec pvec;
+-	int ret2, ret = 0;
+-	int nr_pages;
++	struct fsync_node_entry *fn;
++	struct page *page;
++	struct list_head *head = &sbi->fsync_node_list;
++	unsigned long flags;
++	unsigned int cur_seq_id = 0;
++	int ret = 0;
+ 
+-	pagevec_init(&pvec);
++	while (seq_id && cur_seq_id < seq_id) {
++		spin_lock_irqsave(&sbi->fsync_node_lock, flags);
++		if (list_empty(head)) {
++			spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
++			break;
++		}
++		fn = list_first_entry(head, struct fsync_node_entry, list);
++		if (fn->seq_id > seq_id) {
++			spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
++			break;
++		}
++		cur_seq_id = fn->seq_id;
++		page = fn->page;
++		get_page(page);
++		spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
+ 
+-	while ((nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
+-				PAGECACHE_TAG_WRITEBACK))) {
+-		int i;
++		f2fs_wait_on_page_writeback(page, NODE, true);
++		if (TestClearPageError(page))
++			ret = -EIO;
+ 
+-		for (i = 0; i < nr_pages; i++) {
+-			struct page *page = pvec.pages[i];
++		put_page(page);
+ 
+-			if (ino && ino_of_node(page) == ino) {
+-				f2fs_wait_on_page_writeback(page, NODE, true);
+-				if (TestClearPageError(page))
+-					ret = -EIO;
+-			}
+-		}
+-		pagevec_release(&pvec);
+-		cond_resched();
++		if (ret)
++			break;
+ 	}
+ 
+-	ret2 = filemap_check_errors(NODE_MAPPING(sbi));
+-	if (!ret)
+-		ret = ret2;
+ 	return ret;
+ }
+ 
+@@ -2939,8 +3023,15 @@ int __init f2fs_create_node_manager_caches(void)
+ 			sizeof(struct nat_entry_set));
+ 	if (!nat_entry_set_slab)
+ 		goto destroy_free_nid;
++
++	fsync_node_entry_slab = f2fs_kmem_cache_create("fsync_node_entry",
++			sizeof(struct fsync_node_entry));
++	if (!fsync_node_entry_slab)
++		goto destroy_nat_entry_set;
+ 	return 0;
+ 
++destroy_nat_entry_set:
++	kmem_cache_destroy(nat_entry_set_slab);
+ destroy_free_nid:
+ 	kmem_cache_destroy(free_nid_slab);
+ destroy_nat_entry:
+@@ -2951,6 +3042,7 @@ int __init f2fs_create_node_manager_caches(void)
+ 
+ void f2fs_destroy_node_manager_caches(void)
+ {
++	kmem_cache_destroy(fsync_node_entry_slab);
+ 	kmem_cache_destroy(nat_entry_set_slab);
+ 	kmem_cache_destroy(free_nid_slab);
+ 	kmem_cache_destroy(nat_entry_slab);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 143ed321076e..34321932754d 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1023,6 +1023,8 @@ static void f2fs_put_super(struct super_block *sb)
+ 	 */
+ 	f2fs_release_ino_entry(sbi, true);
+ 
++	f2fs_bug_on(sbi, sbi->fsync_node_num);
++
+ 	f2fs_leave_shrinker(sbi);
+ 	mutex_unlock(&sbi->umount_mutex);
+ 
+@@ -2903,6 +2905,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 
+ 	f2fs_init_ino_entry_info(sbi);
+ 
++	f2fs_init_fsync_node_info(sbi);
++
+ 	/* setup f2fs internal modules */
+ 	err = f2fs_build_segment_manager(sbi);
+ 	if (err) {
+-- 
+2.16.2.17.g38e79b1fd
