@@ -1,22 +1,33 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH v2] fsck.f2fs: fix to do sanity check with
- extra_attr feature
-Date: Mon,  9 Jul 2018 23:25:41 +0800
-Message-ID: <20180709152541.3396-1-chao@kernel.org>
+From: "Xu, Wen" <wen.xu@gatech.edu>
+Subject: Re: Bug report: some new bugs found by fuzzing
+Date: Mon, 9 Jul 2018 19:11:02 +0000
+Message-ID: <27B26578-EDCA-4C80-86DB-A2253AE064B5@gatech.edu>
+References: <B655752F-CBBA-4D7D-B504-E1E21378429A@gatech.edu>
+ <7f5282db-2bb6-b808-679b-620957185945@huawei.com>
+ <0C7436B3-FE05-4999-A163-89F9851ADC00@gatech.edu>
+ <8a47f71c-5915-106c-9361-355dc349f6d9@kernel.org>
+ <73E9588B-D1C0-4B9A-B00B-58C975D48489@gatech.edu>
+ <ed7af144-d43e-386b-5f0f-b9899023afe5@kernel.org>
+ <14604831-EB4B-421F-B5E4-BB159611D850@gatech.edu>
+ <e02f2adc-d444-e4d1-a66a-d294d62e46af@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1fcY3O-0006Wp-Mp
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Jul 2018 15:26:18 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fcY3M-004JuV-HB
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Jul 2018 15:26:18 +0000
+ (envelope-from <wen.xu@gatech.edu>) id 1fcbZ1-0001Id-KN
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Jul 2018 19:11:11 +0000
+Received: from mail-eopbgr720109.outbound.protection.outlook.com
+ ([40.107.72.109] helo=NAM05-CO1-obe.outbound.protection.outlook.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-SHA384:256) (Exim 4.90_1)
+ id 1fcbYz-00GzxI-0X
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Jul 2018 19:11:11 +0000
+In-Reply-To: <e02f2adc-d444-e4d1-a66a-d294d62e46af@kernel.org>
+Content-Language: en-US
+Content-ID: <1982416AF1FAD246BF777338E2304F07@namprd07.prod.outlook.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,61 +37,87 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao@kernel.org>
+Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-From: Chao Yu <yuchao0@huawei.com>
-
-This patch tries to fix incorrect extra_attr bit or i_extra_isize value
-in fsck.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2:
-- fix to replace F2FS_INLINE_DATA with F2FS_EXTRA_ATTR.
- fsck/fsck.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
-
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 05a6301..36d1977 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -655,7 +655,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 	u32 i_links = le32_to_cpu(node_blk->i.i_links);
- 	u64 i_size = le64_to_cpu(node_blk->i.i_size);
- 	u64 i_blocks = le64_to_cpu(node_blk->i.i_blocks);
--	int ofs = get_extra_isize(node_blk);
-+	int ofs;
- 	unsigned char *en;
- 	int namelen;
- 	unsigned int idx = 0;
-@@ -719,6 +719,22 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 			ftype == F2FS_FT_FIFO || ftype == F2FS_FT_SOCK)
- 		goto check;
- 
-+	if (f2fs_has_extra_isize(&node_blk->i)) {
-+		if (c.feature & cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR)) {
-+			if (node_blk->i.i_extra_isize >
-+				cpu_to_le16(F2FS_TOTAL_EXTRA_ATTR_SIZE)) {
-+				node_blk->i.i_extra_isize =
-+					cpu_to_le16(F2FS_TOTAL_EXTRA_ATTR_SIZE);
-+				need_fix = 1;
-+			}
-+		} else {
-+			/* we don't support tuning F2FS_FEATURE_EXTRA_ATTR now */
-+			node_blk->i.i_inline |= ~F2FS_EXTRA_ATTR;
-+			need_fix = 1;
-+		}
-+	}
-+	ofs = get_extra_isize(node_blk);
-+
- 	if ((node_blk->i.i_inline & F2FS_INLINE_DATA)) {
- 		if (le32_to_cpu(node_blk->i.i_addr[ofs]) != 0) {
- 			/* should fix this bug all the time */
--- 
-2.16.2.17.g38e79b1fd
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+WWVhaCwgdGhlIGlzc3VlcyBhcmUgYWxsIGZpeGVkIGJ5IHlvdXIgY29tbWl0cyByZWdhcmRpbmcg
+bXkgdGVzdHMuDQoNClRoYW5rcywNCldlbg0KDQo+IE9uIEp1bCA5LCAyMDE4LCBhdCAxMToxMCBB
+TSwgQ2hhbyBZdSA8Y2hhb0BrZXJuZWwub3JnPiB3cm90ZToNCj4gDQo+IEkgZ3Vlc3MsIGNvdWxk
+IHlvdSBwbGVhc2UgdGVzdCBpdD8NCj4gDQo+IFRoYW5rcywNCj4gDQo+IE9uIDIwMTgvNy84IDEw
+OjQzLCBYdSwgV2VuIHdyb3RlOg0KPj4gSXQgaXMgYWxyZWFkeSBmaXhlZCBieSB0aGUgbGF0ZXN0
+IGNvbW1pdCBpbiB5b3VyIGdpdCB0cmVlPw0KPj4gDQo+PiBUaGFua3MsDQo+PiBXZW4NCj4+IA0K
+Pj4+IE9uIEp1bCA3LCAyMDE4LCBhdCAxMjozMiBQTSwgQ2hhbyBZdSA8Y2hhb0BrZXJuZWwub3Jn
+PiB3cm90ZToNCj4+PiANCj4+PiBPbiAyMDE4LzcvNyAyMzo0OCwgWHUsIFdlbiB3cm90ZToNCj4+
+Pj4gU3VyZSBJIHdpbGwgZG8gaXQuIFNvIHlvdSBhcmUgc3RpbGwgd2lsbGluZyB0byBmaXggdGhl
+IGlzc3VlcyBldmVuIGl0IG1heSBiZSBhZmZlY3RlZCBieSBDSEVDS19GUyBjb25maWc/DQo+Pj4g
+DQo+Pj4gWWVzLCBsZXQgbWUgZmlndXJlIG91dCB0aGUgcHJvYmxlbS4NCj4+PiANCj4+PiBodHRw
+czovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9jaGFvL2xpbnV4Lmdp
+dC9jb21taXQvP2g9ZjJmcy1kZXYmaWQ9Y2NmNWUxNTI1ZTkyMDEwZGQyY2I4ZmY1YTgyMDI4M2Y5
+YmZmNWM3OA0KPj4+IA0KPj4+IEFib3ZlIGNvbW1pdCBzZWVtcyBicmVha2luZyBub3JtYWwgY2Fz
+ZSwgbGV0IG1lIHVwZGF0ZSBpdC4NCj4+PiANCj4+PiBUaGFua3MsDQo+Pj4gDQo+Pj4+IA0KPj4+
+PiBUaGFua3MNCj4+Pj4gLVdlbg0KPj4+PiANCj4+Pj4+IE9uIEp1bCA2LCAyMDE4LCBhdCAxMjoy
+MiBQTSwgQ2hhbyBZdSA8Y2hhb0BrZXJuZWwub3JnPiB3cm90ZToNCj4+Pj4+IA0KPj4+Pj4gSGkg
+V2VuLA0KPj4+Pj4gDQo+Pj4+PiBJJ3ZlIHVwZGF0ZSB0d28gcGF0Y2hlcyB0b2RheSBmb3IgdGhl
+c2UgaXNzdWVzLCBjb3VsZCB5b3UgcGxlYXNlIHRlc3QgdGhlbT8NCj4+Pj4+IA0KPj4+Pj4gT24g
+MjAxOC83LzYgOTozMCwgWHUsIFdlbiB3cm90ZToNCj4+Pj4+PiBUaGFua3MgdmVyeSBtdWNoISBJ
+IHdvdWxkIGxpa2UgdG8gcHJvdmlkZSBhbnkgZnVydGhlciBoZWxwIG9yIHRlc3RpbmcuDQo+Pj4+
+Pj4gDQo+Pj4+Pj4gLVdlbg0KPj4+Pj4+IA0KPj4+Pj4+PiBPbiBKdWwgNSwgMjAxOCwgYXQgOTox
+MyBQTSwgQ2hhbyBZdSA8eXVjaGFvMEBodWF3ZWkuY29tPiB3cm90ZToNCj4+Pj4+Pj4gDQo+Pj4+
+Pj4+IEhpIFdlbiwNCj4+Pj4+Pj4gDQo+Pj4+Pj4+IE9uIDIwMTgvNy82IDM6MTksIFh1LCBXZW4g
+d3JvdGU6DQo+Pj4+Pj4+PiBEZWFyIEYyRlMgZGV2ZWxvcGVycywNCj4+Pj4+Pj4+IA0KPj4+Pj4+
+Pj4gQnkgZnV6emluZywgSSBmaW5kIHNvbWUgbmV3IGlzc3VlcyBpbiBMaW51eCBmMmZzIGtlcm5l
+bCBtb2R1bGUuIEhlcmUgYXJlIHRoZSBsaW5rcyBvbiBCdWd6aWxsYSwNCj4+Pj4+Pj4+IA0KPj4+
+Pj4+Pj4gMjAwNDE5CU5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZSBpbiBfX3JlbW92ZV9kaXJ0eV9z
+ZWdtZW50KCkgd2hlbiBtb3VudGluZyBhbiBmMmZzIGltYWdlDQo+Pj4+Pj4+PiBodHRwczovL2J1
+Z3ppbGxhLmtlcm5lbC5vcmcvc2hvd19idWcuY2dpP2lkPTIwMDQxOQ0KPj4+Pj4gDQo+Pj4+PiBo
+dHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9jaGFvL2xpbnV4
+LmdpdC9jb21taXQvP2g9ZjJmcy1kZXYmaWQ9Y2NmNWUxNTI1ZTkyMDEwZGQyY2I4ZmY1YTgyMDI4
+M2Y5YmZmNWM3OA0KPj4+Pj4gDQo+Pj4+Pj4+PiANCj4+Pj4+Pj4+IDIwMDQyMQlCdWZmZXIgb3Zl
+cnJ1biBpbiBmMmZzX3RydW5jYXRlX2lubGluZV9pbm9kZSgpIHdoZW4gdW1vdW50aW5nIGFuIGYy
+ZnMgaW1hZ2UNCj4+Pj4+Pj4+IGh0dHBzOi8vYnVnemlsbGEua2VybmVsLm9yZy9zaG93X2J1Zy5j
+Z2k/aWQ9MjAwNDIxDQo+Pj4+PiANCj4+Pj4+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3Nj
+bS9saW51eC9rZXJuZWwvZ2l0L2NoYW8vbGludXguZ2l0L2NvbW1pdC8/aD1mMmZzLWRldiZpZD1l
+YTA4MjAyZWU0Y2E2N2IzMWIzNTEwNTkxZjJhODAzMmVjM2FjNGNiDQo+Pj4+PiANCj4+Pj4+Pj4+
+IA0KPj4+Pj4+Pj4gMjAwNDIzCU91dC1vZi1ib3VuZCBhY2Nlc3MgaW4gZjJmc19nZXRfZG5vZGVf
+b2ZfZGF0YSgpIHdoZW4gb3BlcmF0aW5nIGZpbGUgb24gYW4gZjJmcyBpbWFnZQ0KPj4+Pj4+Pj4g
+aHR0cHM6Ly9idWd6aWxsYS5rZXJuZWwub3JnL3Nob3dfYnVnLmNnaT9pZD0yMDA0MjMNCj4+Pj4+
+Pj4+IA0KPj4+Pj4+Pj4gMjAwNDI1CUludmFsaWQgbWVtb3J5IGFjY2VzcyBpbiBmMmZzX2ZpbmRf
+dGFyZ2V0X2RlbnRyeSgpIHdoZW4gb3BlcmF0aW5nIGZpbGVzIG9uIGFuIGYyZnMgaW1hZ2UNCj4+
+Pj4+Pj4+IGh0dHBzOi8vYnVnemlsbGEua2VybmVsLm9yZy9zaG93X2J1Zy5jZ2k/aWQ9MjAwNDI1
+DQo+Pj4+PiANCj4+Pj4+IEZpeGVzIHRoaXMgaXNzdWUgd2l0aCBhYm92ZSBjb21taXQuDQo+Pj4+
+PiANCj4+Pj4+IFRoYW5rcywNCj4+Pj4+IA0KPj4+Pj4+Pj4gDQo+Pj4+Pj4+PiBSZWdhcmRpbmcg
+bXkgdGVzdGluZywgdGhleSBjYW4gYWxsIGJlIHJlcHJvZHVjZWQgdy8gQ2hhb+KAmXMgZjJmcy1k
+ZXYgYnJhbmNoLiBUaGFua3MhDQo+Pj4+Pj4+IA0KPj4+Pj4+PiBBbHJpZ2h0LCBJIHdpbGwgZGln
+IGludG8gdGhlc2UgaXNzdWVzIGluIHRoZXNlIGRheXMsIG9uY2UgSSBoYXZlIHNvbHV0aW9uLCB3
+aWxsDQo+Pj4+Pj4+IGxldCB5b3Uga25vdy4NCj4+Pj4+Pj4gDQo+Pj4+Pj4+IFRoYW5rcywNCj4+
+Pj4+Pj4gDQo+Pj4+Pj4+PiANCj4+Pj4+Pj4+IC1XZW4NCj4+Pj4+PiANCj4+Pj4+PiAtLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0NCj4+Pj4+PiBDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5p
+dHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QNCj4+Pj4+PiBlbmdhZ2luZyB0ZWNoIHNpdGVz
+LCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdA0KPj4+Pj4+IF9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQo+Pj4+Pj4gTGludXgtZjJm
+cy1kZXZlbCBtYWlsaW5nIGxpc3QNCj4+Pj4+PiBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJj
+ZWZvcmdlLm5ldA0KPj4+Pj4+IGh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xp
+c3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwNCj4+Pj4gDQo+Pj4+IC0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LQ0KPj4+PiBDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRo
+ZSB3b3JsZCdzIG1vc3QNCj4+Pj4gZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3JnISBo
+dHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QNCj4+Pj4gX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18NCj4+Pj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QN
+Cj4+Pj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQNCj4+Pj4gaHR0cHM6
+Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbA0K
+Pj4+PiANCj4+IA0KPj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+PiBDaGVjayBvdXQgdGhlIHZp
+YnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QNCj4+IGVuZ2Fn
+aW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90DQo+
+PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0KPj4gTGlu
+dXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QNCj4+IExpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291
+cmNlZm9yZ2UubmV0DQo+PiBodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0
+aW5mby9saW51eC1mMmZzLWRldmVsDQo+PiANCg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNr
+IG91dCB0aGUgdmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9z
+dAplbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFz
+aGRvdApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51
+eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZv
+cmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51
+eC1mMmZzLWRldmVsCg==
