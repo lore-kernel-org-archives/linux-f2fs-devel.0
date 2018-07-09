@@ -1,77 +1,113 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: do checkpoint in kill_sb
-Date: Mon, 9 Jul 2018 23:04:51 +0800
-Message-ID: <0cb1e0fd-1fb4-ba69-6c70-e05e991a243a@kernel.org>
-References: <20180707012020.4708-1-jaegeuk@kernel.org>
+Subject: Re: Bug report: some new bugs found by fuzzing
+Date: Mon, 9 Jul 2018 23:10:28 +0800
+Message-ID: <e02f2adc-d444-e4d1-a66a-d294d62e46af@kernel.org>
+References: <B655752F-CBBA-4D7D-B504-E1E21378429A@gatech.edu>
+ <7f5282db-2bb6-b808-679b-620957185945@huawei.com>
+ <0C7436B3-FE05-4999-A163-89F9851ADC00@gatech.edu>
+ <8a47f71c-5915-106c-9361-355dc349f6d9@kernel.org>
+ <73E9588B-D1C0-4B9A-B00B-58C975D48489@gatech.edu>
+ <ed7af144-d43e-386b-5f0f-b9899023afe5@kernel.org>
+ <14604831-EB4B-421F-B5E4-BB159611D850@gatech.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180707012020.4708-1-jaegeuk@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <chao@kernel.org>) id 1fcXoH-0004tH-Ke
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Jul 2018 15:10:41 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fcXoE-003fOE-QA
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Jul 2018 15:10:41 +0000
+In-Reply-To: <14604831-EB4B-421F-B5E4-BB159611D850@gatech.edu>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: "Xu, Wen" <wen.xu@gatech.edu>
+Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-On 2018/7/7 9:20, Jaegeuk Kim wrote:
-> When unmounting f2fs in force mode, we can get it stuck by io_schedule()
-
-force mode means force shutdown?
-
-> by some pending IOs in meta_inode.
-> 
-> io_schedule+0xd/0x30
-> wait_on_page_bit_common+0xc6/0x130
-
-Looks like a deadlock here? Does this mean we forget to submit cached bio in
-somewhere?
-
-Thanks,
-
-> __filemap_fdatawait_range+0xbd/0x100
-> filemap_fdatawait_keep_errors+0x15/0x40
-> sync_inodes_sb+0x1cf/0x240
-> sync_filesystem+0x52/0x90
-> generic_shutdown_super+0x1d/0x110
-> ceph_kill_sb+0x28/0x80 [ceph]
-> deactivate_locked_super+0x35/0x60
-> cleanup_mnt+0x36/0x70
-> task_work_run+0x79/0xa0
-> exit_to_usermode_loop+0x62/0x70
-> do_syscall_64+0xdb/0xf0
-> entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> 0xffffffffffffffff
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/super.c | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 3995e926ba3a..1dc6809fac38 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -3089,9 +3089,19 @@ static struct dentry *f2fs_mount(struct file_system_type *fs_type, int flags,
->  static void kill_f2fs_super(struct super_block *sb)
->  {
->  	if (sb->s_root) {
-> -		set_sbi_flag(F2FS_SB(sb), SBI_IS_CLOSE);
-> -		f2fs_stop_gc_thread(F2FS_SB(sb));
-> -		f2fs_stop_discard_thread(F2FS_SB(sb));
-> +		struct f2fs_sb_info *sbi = F2FS_SB(sb);
-> +
-> +		set_sbi_flag(sbi, SBI_IS_CLOSE);
-> +		f2fs_stop_gc_thread(sbi);
-> +		f2fs_stop_discard_thread(sbi);
-> +
-> +		if (is_sbi_flag_set(sbi, SBI_IS_DIRTY) ||
-> +				!is_set_ckpt_flags(sbi, CP_UMOUNT_FLAG)) {
-> +			struct cp_control cpc = {
-> +				.reason = CP_UMOUNT,
-> +			};
-> +			f2fs_write_checkpoint(sbi, &cpc);
-> +		}
->  	}
->  	kill_block_super(sb);
->  }
-> 
+SSBndWVzcywgY291bGQgeW91IHBsZWFzZSB0ZXN0IGl0PwoKVGhhbmtzLAoKT24gMjAxOC83Lzgg
+MTA6NDMsIFh1LCBXZW4gd3JvdGU6Cj4gSXQgaXMgYWxyZWFkeSBmaXhlZCBieSB0aGUgbGF0ZXN0
+IGNvbW1pdCBpbiB5b3VyIGdpdCB0cmVlPwo+IAo+IFRoYW5rcywKPiBXZW4KPiAKPj4gT24gSnVs
+IDcsIDIwMTgsIGF0IDEyOjMyIFBNLCBDaGFvIFl1IDxjaGFvQGtlcm5lbC5vcmc+IHdyb3RlOgo+
+Pgo+PiBPbiAyMDE4LzcvNyAyMzo0OCwgWHUsIFdlbiB3cm90ZToKPj4+IFN1cmUgSSB3aWxsIGRv
+IGl0LiBTbyB5b3UgYXJlIHN0aWxsIHdpbGxpbmcgdG8gZml4IHRoZSBpc3N1ZXMgZXZlbiBpdCBt
+YXkgYmUgYWZmZWN0ZWQgYnkgQ0hFQ0tfRlMgY29uZmlnPwo+Pgo+PiBZZXMsIGxldCBtZSBmaWd1
+cmUgb3V0IHRoZSBwcm9ibGVtLgo+Pgo+PiBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20v
+bGludXgva2VybmVsL2dpdC9jaGFvL2xpbnV4LmdpdC9jb21taXQvP2g9ZjJmcy1kZXYmaWQ9Y2Nm
+NWUxNTI1ZTkyMDEwZGQyY2I4ZmY1YTgyMDI4M2Y5YmZmNWM3OAo+Pgo+PiBBYm92ZSBjb21taXQg
+c2VlbXMgYnJlYWtpbmcgbm9ybWFsIGNhc2UsIGxldCBtZSB1cGRhdGUgaXQuCj4+Cj4+IFRoYW5r
+cywKPj4KPj4+Cj4+PiBUaGFua3MKPj4+IC1XZW4KPj4+Cj4+Pj4gT24gSnVsIDYsIDIwMTgsIGF0
+IDEyOjIyIFBNLCBDaGFvIFl1IDxjaGFvQGtlcm5lbC5vcmc+IHdyb3RlOgo+Pj4+Cj4+Pj4gSGkg
+V2VuLAo+Pj4+Cj4+Pj4gSSd2ZSB1cGRhdGUgdHdvIHBhdGNoZXMgdG9kYXkgZm9yIHRoZXNlIGlz
+c3VlcywgY291bGQgeW91IHBsZWFzZSB0ZXN0IHRoZW0/Cj4+Pj4KPj4+PiBPbiAyMDE4LzcvNiA5
+OjMwLCBYdSwgV2VuIHdyb3RlOgo+Pj4+PiBUaGFua3MgdmVyeSBtdWNoISBJIHdvdWxkIGxpa2Ug
+dG8gcHJvdmlkZSBhbnkgZnVydGhlciBoZWxwIG9yIHRlc3RpbmcuCj4+Pj4+Cj4+Pj4+IC1XZW4K
+Pj4+Pj4KPj4+Pj4+IE9uIEp1bCA1LCAyMDE4LCBhdCA5OjEzIFBNLCBDaGFvIFl1IDx5dWNoYW8w
+QGh1YXdlaS5jb20+IHdyb3RlOgo+Pj4+Pj4KPj4+Pj4+IEhpIFdlbiwKPj4+Pj4+Cj4+Pj4+PiBP
+biAyMDE4LzcvNiAzOjE5LCBYdSwgV2VuIHdyb3RlOgo+Pj4+Pj4+IERlYXIgRjJGUyBkZXZlbG9w
+ZXJzLAo+Pj4+Pj4+Cj4+Pj4+Pj4gQnkgZnV6emluZywgSSBmaW5kIHNvbWUgbmV3IGlzc3VlcyBp
+biBMaW51eCBmMmZzIGtlcm5lbCBtb2R1bGUuIEhlcmUgYXJlIHRoZSBsaW5rcyBvbiBCdWd6aWxs
+YSwKPj4+Pj4+Pgo+Pj4+Pj4+IDIwMDQxOQlOVUxMIHBvaW50ZXIgZGVyZWZlcmVuY2UgaW4gX19y
+ZW1vdmVfZGlydHlfc2VnbWVudCgpIHdoZW4gbW91bnRpbmcgYW4gZjJmcyBpbWFnZQo+Pj4+Pj4+
+IGh0dHBzOi8vYnVnemlsbGEua2VybmVsLm9yZy9zaG93X2J1Zy5jZ2k/aWQ9MjAwNDE5Cj4+Pj4K
+Pj4+PiBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9jaGFv
+L2xpbnV4LmdpdC9jb21taXQvP2g9ZjJmcy1kZXYmaWQ9Y2NmNWUxNTI1ZTkyMDEwZGQyY2I4ZmY1
+YTgyMDI4M2Y5YmZmNWM3OAo+Pj4+Cj4+Pj4+Pj4KPj4+Pj4+PiAyMDA0MjEJQnVmZmVyIG92ZXJy
+dW4gaW4gZjJmc190cnVuY2F0ZV9pbmxpbmVfaW5vZGUoKSB3aGVuIHVtb3VudGluZyBhbiBmMmZz
+IGltYWdlCj4+Pj4+Pj4gaHR0cHM6Ly9idWd6aWxsYS5rZXJuZWwub3JnL3Nob3dfYnVnLmNnaT9p
+ZD0yMDA0MjEKPj4+Pgo+Pj4+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9r
+ZXJuZWwvZ2l0L2NoYW8vbGludXguZ2l0L2NvbW1pdC8/aD1mMmZzLWRldiZpZD1lYTA4MjAyZWU0
+Y2E2N2IzMWIzNTEwNTkxZjJhODAzMmVjM2FjNGNiCj4+Pj4KPj4+Pj4+Pgo+Pj4+Pj4+IDIwMDQy
+MwlPdXQtb2YtYm91bmQgYWNjZXNzIGluIGYyZnNfZ2V0X2Rub2RlX29mX2RhdGEoKSB3aGVuIG9w
+ZXJhdGluZyBmaWxlIG9uIGFuIGYyZnMgaW1hZ2UKPj4+Pj4+PiBodHRwczovL2J1Z3ppbGxhLmtl
+cm5lbC5vcmcvc2hvd19idWcuY2dpP2lkPTIwMDQyMwo+Pj4+Pj4+Cj4+Pj4+Pj4gMjAwNDI1CUlu
+dmFsaWQgbWVtb3J5IGFjY2VzcyBpbiBmMmZzX2ZpbmRfdGFyZ2V0X2RlbnRyeSgpIHdoZW4gb3Bl
+cmF0aW5nIGZpbGVzIG9uIGFuIGYyZnMgaW1hZ2UKPj4+Pj4+PiBodHRwczovL2J1Z3ppbGxhLmtl
+cm5lbC5vcmcvc2hvd19idWcuY2dpP2lkPTIwMDQyNQo+Pj4+Cj4+Pj4gRml4ZXMgdGhpcyBpc3N1
+ZSB3aXRoIGFib3ZlIGNvbW1pdC4KPj4+Pgo+Pj4+IFRoYW5rcywKPj4+Pgo+Pj4+Pj4+Cj4+Pj4+
+Pj4gUmVnYXJkaW5nIG15IHRlc3RpbmcsIHRoZXkgY2FuIGFsbCBiZSByZXByb2R1Y2VkIHcvIENo
+YW/igJlzIGYyZnMtZGV2IGJyYW5jaC4gVGhhbmtzIQo+Pj4+Pj4KPj4+Pj4+IEFscmlnaHQsIEkg
+d2lsbCBkaWcgaW50byB0aGVzZSBpc3N1ZXMgaW4gdGhlc2UgZGF5cywgb25jZSBJIGhhdmUgc29s
+dXRpb24sIHdpbGwKPj4+Pj4+IGxldCB5b3Uga25vdy4KPj4+Pj4+Cj4+Pj4+PiBUaGFua3MsCj4+
+Pj4+Pgo+Pj4+Pj4+Cj4+Pj4+Pj4gLVdlbgo+Pj4+Pgo+Pj4+PiAtLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0KPj4+Pj4gQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0
+aGUgd29ybGQncyBtb3N0Cj4+Pj4+IGVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEg
+aHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cj4+Pj4+IF9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCj4+Pj4+IExpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0
+Cj4+Pj4+IExpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cj4+Pj4+IGh0dHBz
+Oi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+Pj4+Cj4+PiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPj4+IENoZWNrIG91dCB0aGUgdmlicmFudCB0
+ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAo+Pj4gZW5nYWdpbmcgdGVj
+aCBzaXRlcywgU2xhc2hkb3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QKPj4+IF9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4+PiBMaW51eC1mMmZz
+LWRldmVsIG1haWxpbmcgbGlzdAo+Pj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3Jn
+ZS5uZXQKPj4+IGh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xp
+bnV4LWYyZnMtZGV2ZWwKPj4+Cj4gCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gQ2hlY2sgb3V0
+IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0Cj4g
+ZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hk
+b3QKPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IExp
+bnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Cj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3Vy
+Y2Vmb3JnZS5uZXQKPiBodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5m
+by9saW51eC1mMmZzLWRldmVsCj4gCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQ2hlY2sgb3V0IHRo
+ZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0CmVuZ2Fn
+aW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMt
+ZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0
+Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMt
+ZGV2ZWwK
