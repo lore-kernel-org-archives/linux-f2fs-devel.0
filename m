@@ -1,16 +1,15 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 2/4] f2fs: allow wrong configure dio to
- buffered write
-Date: Mon, 9 Jul 2018 13:41:25 -0700
-Message-ID: <20180709204125.GC24534@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [f2fs-dev] [PATCH 1/4] f2fs: flush journal nat entries for
+ nat_bits during unmount
+Date: Mon, 9 Jul 2018 13:43:06 -0700
+Message-ID: <20180709204306.GD24534@jaegeuk-macbookpro.roam.corp.google.com>
 References: <20180706210903.77887-1-jaegeuk@kernel.org>
- <20180706210903.77887-2-jaegeuk@kernel.org>
- <af7e2fa5-b9e9-3090-7659-bd76585fd3aa@kernel.org>
+ <ee638123-4114-badc-7d82-989e480ed45e@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <af7e2fa5-b9e9-3090-7659-bd76585fd3aa@kernel.org>
+In-Reply-To: <ee638123-4114-badc-7d82-989e480ed45e@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Chao Yu <chao@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
@@ -18,38 +17,47 @@ List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 On 07/09, Chao Yu wrote:
 > On 2018/7/7 5:09, Jaegeuk Kim wrote:
-> > This fixes to support unaligned dio as buffered writes.
-> 
-> Should we return -EINVAL as manual of write said:
-> 
-> EINVAL fd is attached to an object which is unsuitable for writing; or the file
-> was opened with the O_DIRECT flag,  and  either  the  address
-> specified in buf, the value specified in count, or the current file offset is
-> not suitably aligned.
-
-I came from many xfstests failures regarding to direct IO error. It seems other
-filesystems allow buffered writes as well.
-
-> 
-> Thanks,
-> 
+> > Let's flush journal nat entries for speed up in the next run.
 > > 
 > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > > ---
-> >  fs/f2fs/data.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >  fs/f2fs/node.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
 > > 
-> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > index e66379961804..6e8e78bb64a7 100644
-> > --- a/fs/f2fs/data.c
-> > +++ b/fs/f2fs/data.c
-> > @@ -2425,7 +2425,7 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> > index 29237aeca041..0f076fb0d828 100644
+> > --- a/fs/f2fs/node.c
+> > +++ b/fs/f2fs/node.c
+> > @@ -2613,6 +2613,13 @@ void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >  	nid_t set_idx = 0;
+> >  	LIST_HEAD(sets);
 > >  
-> >  	err = check_direct_IO(inode, iter, offset);
-> >  	if (err)
-> > -		return err;
-> > +		return 0;
+> > +	/* during unmount, let's flush nat_bits before checking dirty_nat_cnt */
+> > +	if (enabled_nat_bits(sbi, cpc)) {
+> > +		down_write(&nm_i->nat_tree_lock);
+> > +		remove_nats_in_journal(sbi);
+> > +		up_write(&nm_i->nat_tree_lock);
+> > +	}
+> 
+> The case will cover that nm_i->dirty_nat_cnt is zero and there is cached nats in
+> journal?
+
+Yes.
+
+> 
+> So enabled_nat_bits() below should be removed?
+
+It's out of lock, nm_i->nat_tree_lock, logically..
+
+> 
+> 	if (enabled_nat_bits(sbi, cpc) ||
+> 		!__has_cursum_space(journal, nm_i->dirty_nat_cnt, NAT_JOURNAL))
+> 		remove_nats_in_journal(sbi);
+> 
+> Thanks,
+> 
+> > +
+> >  	if (!nm_i->dirty_nat_cnt)
+> >  		return;
 > >  
-> >  	if (f2fs_force_buffered_io(inode, rw))
-> >  		return 0;
 > > 
