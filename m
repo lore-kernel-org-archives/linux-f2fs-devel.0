@@ -1,16 +1,16 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 4/4] f2fs: should check the type of end_io
- after pullback by fscrypto
-Date: Mon, 9 Jul 2018 13:37:58 -0700
-Message-ID: <20180709203758.GB24534@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [f2fs-dev] [PATCH 2/4] f2fs: allow wrong configure dio to
+ buffered write
+Date: Mon, 9 Jul 2018 13:41:25 -0700
+Message-ID: <20180709204125.GC24534@jaegeuk-macbookpro.roam.corp.google.com>
 References: <20180706210903.77887-1-jaegeuk@kernel.org>
- <20180706210903.77887-4-jaegeuk@kernel.org>
- <d09dbae7-8073-1df6-e7ab-a0241c4023ff@kernel.org>
+ <20180706210903.77887-2-jaegeuk@kernel.org>
+ <af7e2fa5-b9e9-3090-7659-bd76585fd3aa@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <d09dbae7-8073-1df6-e7ab-a0241c4023ff@kernel.org>
+In-Reply-To: <af7e2fa5-b9e9-3090-7659-bd76585fd3aa@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Chao Yu <chao@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
@@ -18,76 +18,38 @@ List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 On 07/09, Chao Yu wrote:
 > On 2018/7/7 5:09, Jaegeuk Kim wrote:
-> > This fixes to get the page type after pullback by fscrypto, since the original
-> > page is bounce page but we should need to get control page which is what we
-> > originally submitted.
+> > This fixes to support unaligned dio as buffered writes.
+> 
+> Should we return -EINVAL as manual of write said:
+> 
+> EINVAL fd is attached to an object which is unsuitable for writing; or the file
+> was opened with the O_DIRECT flag,  and  either  the  address
+> specified in buf, the value specified in count, or the current file offset is
+> not suitably aligned.
+
+I came from many xfstests failures regarding to direct IO error. It seems other
+filesystems allow buffered writes as well.
+
+> 
+> Thanks,
+> 
 > > 
 > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > > ---
-> >  fs/f2fs/data.c | 5 ++---
-> >  1 file changed, 2 insertions(+), 3 deletions(-)
+> >  fs/f2fs/data.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
 > > 
 > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > index c3f9b9baf140..9a0fcec53d0e 100644
+> > index e66379961804..6e8e78bb64a7 100644
 > > --- a/fs/f2fs/data.c
 > > +++ b/fs/f2fs/data.c
-> > @@ -152,7 +152,6 @@ static void f2fs_write_end_io(struct bio *bio)
+> > @@ -2425,7 +2425,7 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
 > >  
-> >  	bio_for_each_segment_all(bvec, bio, i) {
-> >  		struct page *page = bvec->bv_page;
-> > -		enum count_type type = WB_DATA_TYPE(page);
+> >  	err = check_direct_IO(inode, iter, offset);
+> >  	if (err)
+> > -		return err;
+> > +		return 0;
 > >  
-> >  		if (IS_DUMMY_WRITTEN_PAGE(page)) {
-> >  			set_page_private(page, (unsigned long)NULL);
-> > @@ -169,14 +168,14 @@ static void f2fs_write_end_io(struct bio *bio)
-> >  
-> >  		if (unlikely(bio->bi_status)) {
-> >  			mapping_set_error(page->mapping, -EIO);
-> > -			if (type == F2FS_WB_CP_DATA)
-> > +			if (WB_DATA_TYPE(page) == F2FS_WB_CP_DATA)
-> >  				f2fs_stop_checkpoint(sbi, true);
-> >  		}
-> >  
-> >  		f2fs_bug_on(sbi, page->mapping == NODE_MAPPING(sbi) &&
-> >  					page->index != nid_of_node(page));
-> >  
-> > -		dec_page_count(sbi, type);
-> > +		dec_page_count(sbi, WB_DATA_TYPE(page));
-> 
-> But we account F2FS_WB_CP_DATA/F2FS_WB_DATA type page based bounce page instead
-> of original page.
-> 
-> 	bio_page = fio->encrypted_page ? fio->encrypted_page : fio->page;
-> 
-> 	/* set submitted = true as a return value */
-> 	fio->submitted = true;
-> 
-> 	inc_page_count(sbi, WB_DATA_TYPE(bio_page));
-> 
-> Because for encrypted page of regular inode, we should account it with
-> F2FS_WB_DATA type:
-> 
-> static bool __is_cp_guaranteed(struct page *page)
-> {
-> ....
-> 	if (!mapping)   <---bounce page's mapping is NULL
-> 		return false;
-> }
-> 
-> So we will get F2FS_WB_DATA type from __is_cp_guaranteed below:
-> 
-> enum count_type type = WB_DATA_TYPE(page);
-> 
-> Is there any problem?
-
-Yeah, right. Let me drop this and test again.
-
-Thanks,
-
-> 
-> Thanks
-> 
-> >  		clear_cold_data(page);
-> >  		end_page_writeback(page);
-> >  	}
+> >  	if (f2fs_force_buffered_io(inode, rw))
+> >  		return 0;
 > > 
