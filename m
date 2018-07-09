@@ -1,123 +1,86 @@
-From: "Xu, Wen" <wen.xu@gatech.edu>
-Subject: Re: Bug report: some new bugs found by fuzzing
-Date: Mon, 9 Jul 2018 19:11:02 +0000
-Message-ID: <27B26578-EDCA-4C80-86DB-A2253AE064B5@gatech.edu>
-References: <B655752F-CBBA-4D7D-B504-E1E21378429A@gatech.edu>
- <7f5282db-2bb6-b808-679b-620957185945@huawei.com>
- <0C7436B3-FE05-4999-A163-89F9851ADC00@gatech.edu>
- <8a47f71c-5915-106c-9361-355dc349f6d9@kernel.org>
- <73E9588B-D1C0-4B9A-B00B-58C975D48489@gatech.edu>
- <ed7af144-d43e-386b-5f0f-b9899023afe5@kernel.org>
- <14604831-EB4B-421F-B5E4-BB159611D850@gatech.edu>
- <e02f2adc-d444-e4d1-a66a-d294d62e46af@kernel.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: do checkpoint in kill_sb
+Date: Mon, 9 Jul 2018 13:36:24 -0700
+Message-ID: <20180709203624.GA24534@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180707012020.4708-1-jaegeuk@kernel.org>
+ <0cb1e0fd-1fb4-ba69-6c70-e05e991a243a@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <wen.xu@gatech.edu>) id 1fcbZ1-0001Id-KN
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Jul 2018 19:11:11 +0000
-Received: from mail-eopbgr720109.outbound.protection.outlook.com
- ([40.107.72.109] helo=NAM05-CO1-obe.outbound.protection.outlook.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-SHA384:256) (Exim 4.90_1)
- id 1fcbYz-00GzxI-0X
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Jul 2018 19:11:11 +0000
-In-Reply-To: <e02f2adc-d444-e4d1-a66a-d294d62e46af@kernel.org>
-Content-Language: en-US
-Content-ID: <1982416AF1FAD246BF777338E2304F07@namprd07.prod.outlook.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <0cb1e0fd-1fb4-ba69-6c70-e05e991a243a@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Chao Yu <chao@kernel.org>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-WWVhaCwgdGhlIGlzc3VlcyBhcmUgYWxsIGZpeGVkIGJ5IHlvdXIgY29tbWl0cyByZWdhcmRpbmcg
-bXkgdGVzdHMuDQoNClRoYW5rcywNCldlbg0KDQo+IE9uIEp1bCA5LCAyMDE4LCBhdCAxMToxMCBB
-TSwgQ2hhbyBZdSA8Y2hhb0BrZXJuZWwub3JnPiB3cm90ZToNCj4gDQo+IEkgZ3Vlc3MsIGNvdWxk
-IHlvdSBwbGVhc2UgdGVzdCBpdD8NCj4gDQo+IFRoYW5rcywNCj4gDQo+IE9uIDIwMTgvNy84IDEw
-OjQzLCBYdSwgV2VuIHdyb3RlOg0KPj4gSXQgaXMgYWxyZWFkeSBmaXhlZCBieSB0aGUgbGF0ZXN0
-IGNvbW1pdCBpbiB5b3VyIGdpdCB0cmVlPw0KPj4gDQo+PiBUaGFua3MsDQo+PiBXZW4NCj4+IA0K
-Pj4+IE9uIEp1bCA3LCAyMDE4LCBhdCAxMjozMiBQTSwgQ2hhbyBZdSA8Y2hhb0BrZXJuZWwub3Jn
-PiB3cm90ZToNCj4+PiANCj4+PiBPbiAyMDE4LzcvNyAyMzo0OCwgWHUsIFdlbiB3cm90ZToNCj4+
-Pj4gU3VyZSBJIHdpbGwgZG8gaXQuIFNvIHlvdSBhcmUgc3RpbGwgd2lsbGluZyB0byBmaXggdGhl
-IGlzc3VlcyBldmVuIGl0IG1heSBiZSBhZmZlY3RlZCBieSBDSEVDS19GUyBjb25maWc/DQo+Pj4g
-DQo+Pj4gWWVzLCBsZXQgbWUgZmlndXJlIG91dCB0aGUgcHJvYmxlbS4NCj4+PiANCj4+PiBodHRw
-czovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9jaGFvL2xpbnV4Lmdp
-dC9jb21taXQvP2g9ZjJmcy1kZXYmaWQ9Y2NmNWUxNTI1ZTkyMDEwZGQyY2I4ZmY1YTgyMDI4M2Y5
-YmZmNWM3OA0KPj4+IA0KPj4+IEFib3ZlIGNvbW1pdCBzZWVtcyBicmVha2luZyBub3JtYWwgY2Fz
-ZSwgbGV0IG1lIHVwZGF0ZSBpdC4NCj4+PiANCj4+PiBUaGFua3MsDQo+Pj4gDQo+Pj4+IA0KPj4+
-PiBUaGFua3MNCj4+Pj4gLVdlbg0KPj4+PiANCj4+Pj4+IE9uIEp1bCA2LCAyMDE4LCBhdCAxMjoy
-MiBQTSwgQ2hhbyBZdSA8Y2hhb0BrZXJuZWwub3JnPiB3cm90ZToNCj4+Pj4+IA0KPj4+Pj4gSGkg
-V2VuLA0KPj4+Pj4gDQo+Pj4+PiBJJ3ZlIHVwZGF0ZSB0d28gcGF0Y2hlcyB0b2RheSBmb3IgdGhl
-c2UgaXNzdWVzLCBjb3VsZCB5b3UgcGxlYXNlIHRlc3QgdGhlbT8NCj4+Pj4+IA0KPj4+Pj4gT24g
-MjAxOC83LzYgOTozMCwgWHUsIFdlbiB3cm90ZToNCj4+Pj4+PiBUaGFua3MgdmVyeSBtdWNoISBJ
-IHdvdWxkIGxpa2UgdG8gcHJvdmlkZSBhbnkgZnVydGhlciBoZWxwIG9yIHRlc3RpbmcuDQo+Pj4+
-Pj4gDQo+Pj4+Pj4gLVdlbg0KPj4+Pj4+IA0KPj4+Pj4+PiBPbiBKdWwgNSwgMjAxOCwgYXQgOTox
-MyBQTSwgQ2hhbyBZdSA8eXVjaGFvMEBodWF3ZWkuY29tPiB3cm90ZToNCj4+Pj4+Pj4gDQo+Pj4+
-Pj4+IEhpIFdlbiwNCj4+Pj4+Pj4gDQo+Pj4+Pj4+IE9uIDIwMTgvNy82IDM6MTksIFh1LCBXZW4g
-d3JvdGU6DQo+Pj4+Pj4+PiBEZWFyIEYyRlMgZGV2ZWxvcGVycywNCj4+Pj4+Pj4+IA0KPj4+Pj4+
-Pj4gQnkgZnV6emluZywgSSBmaW5kIHNvbWUgbmV3IGlzc3VlcyBpbiBMaW51eCBmMmZzIGtlcm5l
-bCBtb2R1bGUuIEhlcmUgYXJlIHRoZSBsaW5rcyBvbiBCdWd6aWxsYSwNCj4+Pj4+Pj4+IA0KPj4+
-Pj4+Pj4gMjAwNDE5CU5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZSBpbiBfX3JlbW92ZV9kaXJ0eV9z
-ZWdtZW50KCkgd2hlbiBtb3VudGluZyBhbiBmMmZzIGltYWdlDQo+Pj4+Pj4+PiBodHRwczovL2J1
-Z3ppbGxhLmtlcm5lbC5vcmcvc2hvd19idWcuY2dpP2lkPTIwMDQxOQ0KPj4+Pj4gDQo+Pj4+PiBo
-dHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9jaGFvL2xpbnV4
-LmdpdC9jb21taXQvP2g9ZjJmcy1kZXYmaWQ9Y2NmNWUxNTI1ZTkyMDEwZGQyY2I4ZmY1YTgyMDI4
-M2Y5YmZmNWM3OA0KPj4+Pj4gDQo+Pj4+Pj4+PiANCj4+Pj4+Pj4+IDIwMDQyMQlCdWZmZXIgb3Zl
-cnJ1biBpbiBmMmZzX3RydW5jYXRlX2lubGluZV9pbm9kZSgpIHdoZW4gdW1vdW50aW5nIGFuIGYy
-ZnMgaW1hZ2UNCj4+Pj4+Pj4+IGh0dHBzOi8vYnVnemlsbGEua2VybmVsLm9yZy9zaG93X2J1Zy5j
-Z2k/aWQ9MjAwNDIxDQo+Pj4+PiANCj4+Pj4+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3Nj
-bS9saW51eC9rZXJuZWwvZ2l0L2NoYW8vbGludXguZ2l0L2NvbW1pdC8/aD1mMmZzLWRldiZpZD1l
-YTA4MjAyZWU0Y2E2N2IzMWIzNTEwNTkxZjJhODAzMmVjM2FjNGNiDQo+Pj4+PiANCj4+Pj4+Pj4+
-IA0KPj4+Pj4+Pj4gMjAwNDIzCU91dC1vZi1ib3VuZCBhY2Nlc3MgaW4gZjJmc19nZXRfZG5vZGVf
-b2ZfZGF0YSgpIHdoZW4gb3BlcmF0aW5nIGZpbGUgb24gYW4gZjJmcyBpbWFnZQ0KPj4+Pj4+Pj4g
-aHR0cHM6Ly9idWd6aWxsYS5rZXJuZWwub3JnL3Nob3dfYnVnLmNnaT9pZD0yMDA0MjMNCj4+Pj4+
-Pj4+IA0KPj4+Pj4+Pj4gMjAwNDI1CUludmFsaWQgbWVtb3J5IGFjY2VzcyBpbiBmMmZzX2ZpbmRf
-dGFyZ2V0X2RlbnRyeSgpIHdoZW4gb3BlcmF0aW5nIGZpbGVzIG9uIGFuIGYyZnMgaW1hZ2UNCj4+
-Pj4+Pj4+IGh0dHBzOi8vYnVnemlsbGEua2VybmVsLm9yZy9zaG93X2J1Zy5jZ2k/aWQ9MjAwNDI1
-DQo+Pj4+PiANCj4+Pj4+IEZpeGVzIHRoaXMgaXNzdWUgd2l0aCBhYm92ZSBjb21taXQuDQo+Pj4+
-PiANCj4+Pj4+IFRoYW5rcywNCj4+Pj4+IA0KPj4+Pj4+Pj4gDQo+Pj4+Pj4+PiBSZWdhcmRpbmcg
-bXkgdGVzdGluZywgdGhleSBjYW4gYWxsIGJlIHJlcHJvZHVjZWQgdy8gQ2hhb+KAmXMgZjJmcy1k
-ZXYgYnJhbmNoLiBUaGFua3MhDQo+Pj4+Pj4+IA0KPj4+Pj4+PiBBbHJpZ2h0LCBJIHdpbGwgZGln
-IGludG8gdGhlc2UgaXNzdWVzIGluIHRoZXNlIGRheXMsIG9uY2UgSSBoYXZlIHNvbHV0aW9uLCB3
-aWxsDQo+Pj4+Pj4+IGxldCB5b3Uga25vdy4NCj4+Pj4+Pj4gDQo+Pj4+Pj4+IFRoYW5rcywNCj4+
-Pj4+Pj4gDQo+Pj4+Pj4+PiANCj4+Pj4+Pj4+IC1XZW4NCj4+Pj4+PiANCj4+Pj4+PiAtLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0NCj4+Pj4+PiBDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5p
-dHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QNCj4+Pj4+PiBlbmdhZ2luZyB0ZWNoIHNpdGVz
-LCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdA0KPj4+Pj4+IF9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQo+Pj4+Pj4gTGludXgtZjJm
-cy1kZXZlbCBtYWlsaW5nIGxpc3QNCj4+Pj4+PiBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJj
-ZWZvcmdlLm5ldA0KPj4+Pj4+IGh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xp
-c3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwNCj4+Pj4gDQo+Pj4+IC0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LQ0KPj4+PiBDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRo
-ZSB3b3JsZCdzIG1vc3QNCj4+Pj4gZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3JnISBo
-dHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QNCj4+Pj4gX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18NCj4+Pj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QN
-Cj4+Pj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQNCj4+Pj4gaHR0cHM6
-Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbA0K
-Pj4+PiANCj4+IA0KPj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+PiBDaGVjayBvdXQgdGhlIHZp
-YnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QNCj4+IGVuZ2Fn
-aW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90DQo+
-PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0KPj4gTGlu
-dXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QNCj4+IExpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291
-cmNlZm9yZ2UubmV0DQo+PiBodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0
-aW5mby9saW51eC1mMmZzLWRldmVsDQo+PiANCg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNr
-IG91dCB0aGUgdmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9z
-dAplbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFz
-aGRvdApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51
-eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZv
-cmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51
-eC1mMmZzLWRldmVsCg==
+On 07/09, Chao Yu wrote:
+> On 2018/7/7 9:20, Jaegeuk Kim wrote:
+> > When unmounting f2fs in force mode, we can get it stuck by io_schedule()
+> 
+> force mode means force shutdown?
+
+Yes.
+
+> 
+> > by some pending IOs in meta_inode.
+> > 
+> > io_schedule+0xd/0x30
+> > wait_on_page_bit_common+0xc6/0x130
+> 
+> Looks like a deadlock here? Does this mean we forget to submit cached bio in
+> somewhere?
+
+I'm hitting this randomly, when running all the testcases in xfstests.
+I can't find the missing flow, and only get this during kill_sb.
+
+> 
+> Thanks,
+> 
+> > __filemap_fdatawait_range+0xbd/0x100
+> > filemap_fdatawait_keep_errors+0x15/0x40
+> > sync_inodes_sb+0x1cf/0x240
+> > sync_filesystem+0x52/0x90
+> > generic_shutdown_super+0x1d/0x110
+> > ceph_kill_sb+0x28/0x80 [ceph]
+> > deactivate_locked_super+0x35/0x60
+> > cleanup_mnt+0x36/0x70
+> > task_work_run+0x79/0xa0
+> > exit_to_usermode_loop+0x62/0x70
+> > do_syscall_64+0xdb/0xf0
+> > entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > 0xffffffffffffffff
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/super.c | 16 +++++++++++++---
+> >  1 file changed, 13 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index 3995e926ba3a..1dc6809fac38 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -3089,9 +3089,19 @@ static struct dentry *f2fs_mount(struct file_system_type *fs_type, int flags,
+> >  static void kill_f2fs_super(struct super_block *sb)
+> >  {
+> >  	if (sb->s_root) {
+> > -		set_sbi_flag(F2FS_SB(sb), SBI_IS_CLOSE);
+> > -		f2fs_stop_gc_thread(F2FS_SB(sb));
+> > -		f2fs_stop_discard_thread(F2FS_SB(sb));
+> > +		struct f2fs_sb_info *sbi = F2FS_SB(sb);
+> > +
+> > +		set_sbi_flag(sbi, SBI_IS_CLOSE);
+> > +		f2fs_stop_gc_thread(sbi);
+> > +		f2fs_stop_discard_thread(sbi);
+> > +
+> > +		if (is_sbi_flag_set(sbi, SBI_IS_DIRTY) ||
+> > +				!is_set_ckpt_flags(sbi, CP_UMOUNT_FLAG)) {
+> > +			struct cp_control cpc = {
+> > +				.reason = CP_UMOUNT,
+> > +			};
+> > +			f2fs_write_checkpoint(sbi, &cpc);
+> > +		}
+> >  	}
+> >  	kill_block_super(sb);
+> >  }
+> > 
