@@ -1,69 +1,79 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH 2/4] f2fs: allow wrong configure dio to
- buffered write
-Date: Tue, 10 Jul 2018 13:54:40 +0800
-Message-ID: <5ba170bb-8837-ce0a-87a9-b996b38eb1d8@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH 1/4] f2fs: flush journal nat entries for
+ nat_bits during unmount
+Date: Tue, 10 Jul 2018 14:01:22 +0800
+Message-ID: <e50c1305-ef02-0380-ca2a-3760247f0d64@huawei.com>
 References: <20180706210903.77887-1-jaegeuk@kernel.org>
- <20180706210903.77887-2-jaegeuk@kernel.org>
- <af7e2fa5-b9e9-3090-7659-bd76585fd3aa@kernel.org>
- <20180709204125.GC24534@jaegeuk-macbookpro.roam.corp.google.com>
+ <ee638123-4114-badc-7d82-989e480ed45e@kernel.org>
+ <20180709204306.GD24534@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180709204125.GC24534@jaegeuk-macbookpro.roam.corp.google.com>
+In-Reply-To: <20180709204306.GD24534@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/7/10 4:41, Jaegeuk Kim wrote:
+On 2018/7/10 4:43, Jaegeuk Kim wrote:
 > On 07/09, Chao Yu wrote:
 >> On 2018/7/7 5:09, Jaegeuk Kim wrote:
->>> This fixes to support unaligned dio as buffered writes.
+>>> Let's flush journal nat entries for speed up in the next run.
+>>>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fs/f2fs/node.c | 7 +++++++
+>>>  1 file changed, 7 insertions(+)
+>>>
+>>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+>>> index 29237aeca041..0f076fb0d828 100644
+>>> --- a/fs/f2fs/node.c
+>>> +++ b/fs/f2fs/node.c
+>>> @@ -2613,6 +2613,13 @@ void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>>  	nid_t set_idx = 0;
+>>>  	LIST_HEAD(sets);
+>>>  
+>>> +	/* during unmount, let's flush nat_bits before checking dirty_nat_cnt */
+>>> +	if (enabled_nat_bits(sbi, cpc)) {
+>>> +		down_write(&nm_i->nat_tree_lock);
+>>> +		remove_nats_in_journal(sbi);
+>>> +		up_write(&nm_i->nat_tree_lock);
+>>> +	}
 >>
->> Should we return -EINVAL as manual of write said:
->>
->> EINVAL fd is attached to an object which is unsuitable for writing; or the file
->> was opened with the O_DIRECT flag,  and  either  the  address
->> specified in buf, the value specified in count, or the current file offset is
->> not suitably aligned.
+>> The case will cover that nm_i->dirty_nat_cnt is zero and there is cached nats in
+>> journal?
 > 
-> I came from many xfstests failures regarding to direct IO error. It seems other
-> filesystems allow buffered writes as well.
+> Yes.
+> 
+>>
+>> So enabled_nat_bits() below should be removed?
+> 
+> It's out of lock, nm_i->nat_tree_lock, logically..
 
-But as I see, it allows unaligned DIO write like xfs_io -d -c "pwrite 1 512",
-where ext4 returns failure.
+CP_NAT_BITS_FLAG modification should be happened in mount or checkpoint, so
+there should be no contention.
 
-I guess, we only need to expand to support DIO write aligns to sector (512
-bytes) for these cases?
+Anyway, keep it here is okay to me.
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
 
 > 
 >>
+>> 	if (enabled_nat_bits(sbi, cpc) ||
+>> 		!__has_cursum_space(journal, nm_i->dirty_nat_cnt, NAT_JOURNAL))
+>> 		remove_nats_in_journal(sbi);
+>>
 >> Thanks,
 >>
->>>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>> ---
->>>  fs/f2fs/data.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>> index e66379961804..6e8e78bb64a7 100644
->>> --- a/fs/f2fs/data.c
->>> +++ b/fs/f2fs/data.c
->>> @@ -2425,7 +2425,7 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>>> +
+>>>  	if (!nm_i->dirty_nat_cnt)
+>>>  		return;
 >>>  
->>>  	err = check_direct_IO(inode, iter, offset);
->>>  	if (err)
->>> -		return err;
->>> +		return 0;
->>>  
->>>  	if (f2fs_force_buffered_io(inode, rw))
->>>  		return 0;
 >>>
 > 
+> .
 > 
