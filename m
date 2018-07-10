@@ -1,10 +1,9 @@
 From: Sheng Yong <shengyong1@huawei.com>
-Subject: Re: [PATCH] f2fs-tools: avoid mounting f2fs if tools
- already open the device
-Date: Tue, 10 Jul 2018 09:53:03 +0800
-Message-ID: <16d09369-4776-d3d2-c8e1-0877a46e83e8@huawei.com>
-References: <20180704095045.156157-1-shengyong1@huawei.com>
- <fef9843d-21f4-ade1-bfdf-1f2c4d3f1592@kernel.org>
+Subject: Re: [PATCH v2] fsck.f2fs: fix to do sanity check with
+ extra_attr feature
+Date: Tue, 10 Jul 2018 09:55:11 +0800
+Message-ID: <ec920c0c-dd6b-6095-57c5-519efa450f54@huawei.com>
+References: <20180709152541.3396-1-chao@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
@@ -12,14 +11,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <shengyong1@huawei.com>) id 1fchqb-0000Fe-IY
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Jul 2018 01:53:45 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ (envelope-from <shengyong1@huawei.com>) id 1fchsC-0000I1-M8
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Jul 2018 01:55:24 +0000
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fchqZ-004jlu-Eu
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Jul 2018 01:53:45 +0000
-In-Reply-To: <fef9843d-21f4-ade1-bfdf-1f2c4d3f1592@kernel.org>
+ id 1fchsA-004jpW-Tn
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Jul 2018 01:55:24 +0000
+In-Reply-To: <20180709152541.3396-1-chao@kernel.org>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -30,98 +29,66 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
 Hi, Chao,
 
-On 2018/7/9 23:14, Chao Yu wrote:
-> On 2018/7/4 17:50, Sheng Yong wrote:
->> If the block device is opened by tools, F2FS should not be mounted.
->> Especially when fsck is running, errors unexpected may happen. So if
->> tools open a block device, we give it the O_EXCL flag to make sure
->> the block device is opened exclusivly.
+On 2018/7/9 23:25, Chao Yu wrote:
+> From: Chao Yu <yuchao0@huawei.com>
 > 
-> Should we treat block inode and regular inode as the same?
+> This patch tries to fix incorrect extra_attr bit or i_extra_isize value
+> in fsck.
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+> v2:
+> - fix to replace F2FS_INLINE_DATA with F2FS_EXTRA_ATTR.
+>   fsck/fsck.c | 18 +++++++++++++++++-
+>   1 file changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fsck/fsck.c b/fsck/fsck.c
+> index 05a6301..36d1977 100644
+> --- a/fsck/fsck.c
+> +++ b/fsck/fsck.c
+> @@ -655,7 +655,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+>   	u32 i_links = le32_to_cpu(node_blk->i.i_links);
+>   	u64 i_size = le64_to_cpu(node_blk->i.i_size);
+>   	u64 i_blocks = le64_to_cpu(node_blk->i.i_blocks);
+> -	int ofs = get_extra_isize(node_blk);
+> +	int ofs;
+>   	unsigned char *en;
+>   	int namelen;
+>   	unsigned int idx = 0;
+> @@ -719,6 +719,22 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+>   			ftype == F2FS_FT_FIFO || ftype == F2FS_FT_SOCK)
+>   		goto check;
+>   
+> +	if (f2fs_has_extra_isize(&node_blk->i)) {
+> +		if (c.feature & cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR)) {
+> +			if (node_blk->i.i_extra_isize >
+> +				cpu_to_le16(F2FS_TOTAL_EXTRA_ATTR_SIZE)) {
+> +				node_blk->i.i_extra_isize =
+> +					cpu_to_le16(F2FS_TOTAL_EXTRA_ATTR_SIZE);
+> +				need_fix = 1;
+> +			}
+> +		} else {
+> +			/* we don't support tuning F2FS_FEATURE_EXTRA_ATTR now */
+> +			node_blk->i.i_inline |= ~F2FS_EXTRA_ATTR;
 
-I'm afraid not, the behavior of O_EXCL is not defined for regular inode
-if it is used without O_CREAT. If f2fs is installed in a image file (not
-a block device), we may still find a another way to avoid fsck and f2fs
-run concurrently :(
+node_blk->i.i_inline &= ~F2FS_EXTRA_ATTR;
 
-thanks
-> 
-> Not sure about this, since for debuging, if we can't umount due to panic in
-> f2fs, still we can dump last data in device.
-> 
-> Thanks,
-> 
->>
->> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
->> ---
->>   lib/libf2fs.c | 27 +++++++++++++++++----------
->>   1 file changed, 17 insertions(+), 10 deletions(-)
->>
->> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
->> index b25fbf2..5625cff 100644
->> --- a/lib/libf2fs.c
->> +++ b/lib/libf2fs.c
->> @@ -783,21 +783,35 @@ int get_device_info(int i)
->>   #endif
->>   	struct device_info *dev = c.devices + i;
->>   
->> +	stat_buf = malloc(sizeof(struct stat));
->> +	ASSERT(stat_buf);
->> +	if (stat(dev->path, stat_buf) < 0 ) {
->> +		MSG(0, "\tError: Failed to get the device stat!\n");
->> +		free(stat_buf);
->> +		return -1;
->> +	}
->> +
->>   	if (c.sparse_mode) {
->> -		fd = open((char *)dev->path, O_RDWR | O_CREAT | O_BINARY, 0644);
->> +		fd = open(dev->path, O_RDWR | O_CREAT | O_BINARY, 0644);
->>   	} else {
->> -		fd = open((char *)dev->path, O_RDWR);
->> +		if (S_ISBLK(stat_buf->st_mode))
->> +			fd = open(dev->path, O_RDWR | O_EXCL);
->> +		else
->> +			fd = open(dev->path, O_RDWR);
->>   	}
->>   	if (fd < 0) {
->>   		MSG(0, "\tError: Failed to open the device!\n");
->> +		free(stat_buf);
->>   		return -1;
->>   	}
->>   
->>   	dev->fd = fd;
->>   
->>   	if (c.sparse_mode) {
->> -		if (f2fs_init_sparse_file())
->> +		if (f2fs_init_sparse_file()) {
->> +			free(stat_buf);
->>   			return -1;
->> +		}
->>   	}
->>   
->>   	if (c.kd == -1) {
->> @@ -810,13 +824,6 @@ int get_device_info(int i)
->>   		}
->>   	}
->>   
->> -	stat_buf = malloc(sizeof(struct stat));
->> -	if (fstat(fd, stat_buf) < 0 ) {
->> -		MSG(0, "\tError: Failed to get the device stat!\n");
->> -		free(stat_buf);
->> -		return -1;
->> -	}
->> -
->>   	if (c.sparse_mode) {
->>   		dev->total_sectors = c.device_size / dev->sector_size;
->>   	} else if (S_ISREG(stat_buf->st_mode)) {
->>
-> 
-> .
+thanks :-)
+.
+
+> +			need_fix = 1;
+> +		}
+> +	}
+> +	ofs = get_extra_isize(node_blk);
+> +
+>   	if ((node_blk->i.i_inline & F2FS_INLINE_DATA)) {
+>   		if (le32_to_cpu(node_blk->i.i_addr[ofs]) != 0) {
+>   			/* should fix this bug all the time */
 > 
 
 
