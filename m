@@ -1,80 +1,69 @@
-From: Daniel Rosenberg via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Subject: [PATCH] f2fs: Keep alloc_valid_block_count in sync
-Date: Mon,  9 Jul 2018 20:32:42 -0700
-Message-ID: <20180710033242.177557-1-drosen@google.com>
-Reply-To: Daniel Rosenberg <drosen@google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH 2/4] f2fs: allow wrong configure dio to
+ buffered write
+Date: Tue, 10 Jul 2018 13:54:40 +0800
+Message-ID: <5ba170bb-8837-ce0a-87a9-b996b38eb1d8@huawei.com>
+References: <20180706210903.77887-1-jaegeuk@kernel.org>
+ <20180706210903.77887-2-jaegeuk@kernel.org>
+ <af7e2fa5-b9e9-3090-7659-bd76585fd3aa@kernel.org>
+ <20180709204125.GC24534@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <drosen@google.com>) id 1fcjPm-0001tV-UF
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Jul 2018 03:34:10 +0000
-Received: from mail-pf0-f196.google.com ([209.85.192.196])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1fcjPl-004n8u-0g
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Jul 2018 03:34:10 +0000
-Received: by mail-pf0-f196.google.com with SMTP id l9-v6so3469152pff.9
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 09 Jul 2018 20:34:08 -0700 (PDT)
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-Cc: kernel-team@android.com, linux-kernel@vger.kernel.org, Daniel Rosenberg <drosen@google.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180709204125.GC24534@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If we attempt to request more blocks than we have room for, we try to
-instead request as much as we can, however, alloc_valid_block_count
-is not decremented to match the new value, allowing it to drift higher
-until the next checkpoint. This always decrements it when the requested
-amount cannot be fulfilled.
+On 2018/7/10 4:41, Jaegeuk Kim wrote:
+> On 07/09, Chao Yu wrote:
+>> On 2018/7/7 5:09, Jaegeuk Kim wrote:
+>>> This fixes to support unaligned dio as buffered writes.
+>>
+>> Should we return -EINVAL as manual of write said:
+>>
+>> EINVAL fd is attached to an object which is unsuitable for writing; or the file
+>> was opened with the O_DIRECT flag,  and  either  the  address
+>> specified in buf, the value specified in count, or the current file offset is
+>> not suitably aligned.
+> 
+> I came from many xfstests failures regarding to direct IO error. It seems other
+> filesystems allow buffered writes as well.
 
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
----
- fs/f2fs/f2fs.h | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+But as I see, it allows unaligned DIO write like xfs_io -d -c "pwrite 1 512",
+where ext4 returns failure.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4d8b1de83143..5af955a8736e 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1680,18 +1680,20 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
- 		sbi->total_valid_block_count -= diff;
- 		if (!*count) {
- 			spin_unlock(&sbi->stat_lock);
--			percpu_counter_sub(&sbi->alloc_valid_block_count, diff);
- 			goto enospc;
- 		}
- 	}
- 	spin_unlock(&sbi->stat_lock);
- 
--	if (unlikely(release))
-+	if (unlikely(release)) {
-+		percpu_counter_sub(&sbi->alloc_valid_block_count, release);
- 		dquot_release_reservation_block(inode, release);
-+	}
- 	f2fs_i_blocks_write(inode, *count, true, true);
- 	return 0;
- 
- enospc:
-+	percpu_counter_sub(&sbi->alloc_valid_block_count, release);
- 	dquot_release_reservation_block(inode, release);
- 	return -ENOSPC;
- }
--- 
-2.18.0.203.gfac676dfb9-goog
+I guess, we only need to expand to support DIO write aligns to sector (512
+bytes) for these cases?
 
+Thanks,
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fs/f2fs/data.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>> index e66379961804..6e8e78bb64a7 100644
+>>> --- a/fs/f2fs/data.c
+>>> +++ b/fs/f2fs/data.c
+>>> @@ -2425,7 +2425,7 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>>>  
+>>>  	err = check_direct_IO(inode, iter, offset);
+>>>  	if (err)
+>>> -		return err;
+>>> +		return 0;
+>>>  
+>>>  	if (f2fs_force_buffered_io(inode, rw))
+>>>  		return 0;
+>>>
+> 
+> 
