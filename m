@@ -1,79 +1,124 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH 1/4] f2fs: flush journal nat entries for
- nat_bits during unmount
-Date: Tue, 10 Jul 2018 14:01:22 +0800
-Message-ID: <e50c1305-ef02-0380-ca2a-3760247f0d64@huawei.com>
-References: <20180706210903.77887-1-jaegeuk@kernel.org>
- <ee638123-4114-badc-7d82-989e480ed45e@kernel.org>
- <20180709204306.GD24534@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH] f2fs: do checkpoint in kill_sb
+Date: Tue, 10 Jul 2018 14:09:20 +0800
+Message-ID: <05429d14-a690-7f57-cde4-7fddadef241c@huawei.com>
+References: <20180707012020.4708-1-jaegeuk@kernel.org>
+ <0cb1e0fd-1fb4-ba69-6c70-e05e991a243a@kernel.org>
+ <20180709203624.GA24534@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180709204306.GD24534@jaegeuk-macbookpro.roam.corp.google.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1fclqe-0000Fe-6W
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Jul 2018 06:10:04 +0000
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fclqc-004EdG-3h
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Jul 2018 06:10:04 +0000
+In-Reply-To: <20180709203624.GA24534@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/7/10 4:43, Jaegeuk Kim wrote:
+On 2018/7/10 4:36, Jaegeuk Kim wrote:
 > On 07/09, Chao Yu wrote:
->> On 2018/7/7 5:09, Jaegeuk Kim wrote:
->>> Let's flush journal nat entries for speed up in the next run.
->>>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>> ---
->>>  fs/f2fs/node.c | 7 +++++++
->>>  1 file changed, 7 insertions(+)
->>>
->>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
->>> index 29237aeca041..0f076fb0d828 100644
->>> --- a/fs/f2fs/node.c
->>> +++ b/fs/f2fs/node.c
->>> @@ -2613,6 +2613,13 @@ void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->>>  	nid_t set_idx = 0;
->>>  	LIST_HEAD(sets);
->>>  
->>> +	/* during unmount, let's flush nat_bits before checking dirty_nat_cnt */
->>> +	if (enabled_nat_bits(sbi, cpc)) {
->>> +		down_write(&nm_i->nat_tree_lock);
->>> +		remove_nats_in_journal(sbi);
->>> +		up_write(&nm_i->nat_tree_lock);
->>> +	}
+>> On 2018/7/7 9:20, Jaegeuk Kim wrote:
+>>> When unmounting f2fs in force mode, we can get it stuck by io_schedule()
 >>
->> The case will cover that nm_i->dirty_nat_cnt is zero and there is cached nats in
->> journal?
+>> force mode means force shutdown?
 > 
 > Yes.
 > 
 >>
->> So enabled_nat_bits() below should be removed?
+>>> by some pending IOs in meta_inode.
+>>>
+>>> io_schedule+0xd/0x30
+>>> wait_on_page_bit_common+0xc6/0x130
+>>
+>> Looks like a deadlock here? Does this mean we forget to submit cached bio in
+>> somewhere?
 > 
-> It's out of lock, nm_i->nat_tree_lock, logically..
+> I'm hitting this randomly, when running all the testcases in xfstests.
+> I can't find the missing flow, and only get this during kill_sb.
 
-CP_NAT_BITS_FLAG modification should be happened in mount or checkpoint, so
-there should be no contention.
+I guess we need this before returning from ->writepage{,s}:
 
-Anyway, keep it here is okay to me.
+if (is_sbi_flag_set(sbi, SBI_IS_SHUTDOWN))
+	f2fs_submit_merged_write()
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+How about trying this instead?
 
 Thanks,
 
 > 
 >>
->> 	if (enabled_nat_bits(sbi, cpc) ||
->> 		!__has_cursum_space(journal, nm_i->dirty_nat_cnt, NAT_JOURNAL))
->> 		remove_nats_in_journal(sbi);
->>
 >> Thanks,
 >>
+>>> __filemap_fdatawait_range+0xbd/0x100
+>>> filemap_fdatawait_keep_errors+0x15/0x40
+>>> sync_inodes_sb+0x1cf/0x240
+>>> sync_filesystem+0x52/0x90
+>>> generic_shutdown_super+0x1d/0x110
+>>> ceph_kill_sb+0x28/0x80 [ceph]
+>>> deactivate_locked_super+0x35/0x60
+>>> cleanup_mnt+0x36/0x70
+>>> task_work_run+0x79/0xa0
+>>> exit_to_usermode_loop+0x62/0x70
+>>> do_syscall_64+0xdb/0xf0
+>>> entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>> 0xffffffffffffffff
+>>>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fs/f2fs/super.c | 16 +++++++++++++---
+>>>  1 file changed, 13 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>> index 3995e926ba3a..1dc6809fac38 100644
+>>> --- a/fs/f2fs/super.c
+>>> +++ b/fs/f2fs/super.c
+>>> @@ -3089,9 +3089,19 @@ static struct dentry *f2fs_mount(struct file_system_type *fs_type, int flags,
+>>>  static void kill_f2fs_super(struct super_block *sb)
+>>>  {
+>>>  	if (sb->s_root) {
+>>> -		set_sbi_flag(F2FS_SB(sb), SBI_IS_CLOSE);
+>>> -		f2fs_stop_gc_thread(F2FS_SB(sb));
+>>> -		f2fs_stop_discard_thread(F2FS_SB(sb));
+>>> +		struct f2fs_sb_info *sbi = F2FS_SB(sb);
 >>> +
->>>  	if (!nm_i->dirty_nat_cnt)
->>>  		return;
->>>  
+>>> +		set_sbi_flag(sbi, SBI_IS_CLOSE);
+>>> +		f2fs_stop_gc_thread(sbi);
+>>> +		f2fs_stop_discard_thread(sbi);
+>>> +
+>>> +		if (is_sbi_flag_set(sbi, SBI_IS_DIRTY) ||
+>>> +				!is_set_ckpt_flags(sbi, CP_UMOUNT_FLAG)) {
+>>> +			struct cp_control cpc = {
+>>> +				.reason = CP_UMOUNT,
+>>> +			};
+>>> +			f2fs_write_checkpoint(sbi, &cpc);
+>>> +		}
+>>>  	}
+>>>  	kill_block_super(sb);
+>>>  }
 >>>
 > 
 > .
 > 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
