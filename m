@@ -1,26 +1,26 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] fsck.f2fs: fix to do sanity check with
- extra_attr feature
-Date: Tue, 10 Jul 2018 10:59:26 +0800
-Message-ID: <5c32affb-59b2-bbfb-8bba-cb11ebe57fdb@huawei.com>
-References: <20180709152541.3396-1-chao@kernel.org>
- <ec920c0c-dd6b-6095-57c5-519efa450f54@huawei.com>
+From: Daniel Rosenberg via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Subject: [PATCH] f2fs: Keep alloc_valid_block_count in sync
+Date: Mon,  9 Jul 2018 20:32:42 -0700
+Message-ID: <20180710033242.177557-1-drosen@google.com>
+Reply-To: Daniel Rosenberg <drosen@google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fcitY-0003b7-UB
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Jul 2018 03:00:52 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fcitX-00E6Ul-4J
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Jul 2018 03:00:52 +0000
-In-Reply-To: <ec920c0c-dd6b-6095-57c5-519efa450f54@huawei.com>
-Content-Language: en-US
+ (envelope-from <drosen@google.com>) id 1fcjPm-0001tV-UF
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Jul 2018 03:34:10 +0000
+Received: from mail-pf0-f196.google.com ([209.85.192.196])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1fcjPl-004n8u-0g
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Jul 2018 03:34:10 +0000
+Received: by mail-pf0-f196.google.com with SMTP id l9-v6so3469152pff.9
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 09 Jul 2018 20:34:08 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,86 +30,49 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Sheng Yong <shengyong1@huawei.com>, Chao Yu <chao@kernel.org>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: kernel-team@android.com, linux-kernel@vger.kernel.org, Daniel Rosenberg <drosen@google.com>
 
-Hi Sheng,
+If we attempt to request more blocks than we have room for, we try to
+instead request as much as we can, however, alloc_valid_block_count
+is not decremented to match the new value, allowing it to drift higher
+until the next checkpoint. This always decrements it when the requested
+amount cannot be fulfilled.
 
-On 2018/7/10 9:55, Sheng Yong wrote:
-> Hi, Chao,
-> 
-> On 2018/7/9 23:25, Chao Yu wrote:
->> From: Chao Yu <yuchao0@huawei.com>
->>
->> This patch tries to fix incorrect extra_attr bit or i_extra_isize value
->> in fsck.
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->> v2:
->> - fix to replace F2FS_INLINE_DATA with F2FS_EXTRA_ATTR.
->>   fsck/fsck.c | 18 +++++++++++++++++-
->>   1 file changed, 17 insertions(+), 1 deletion(-)
->>
->> diff --git a/fsck/fsck.c b/fsck/fsck.c
->> index 05a6301..36d1977 100644
->> --- a/fsck/fsck.c
->> +++ b/fsck/fsck.c
->> @@ -655,7 +655,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
->>   	u32 i_links = le32_to_cpu(node_blk->i.i_links);
->>   	u64 i_size = le64_to_cpu(node_blk->i.i_size);
->>   	u64 i_blocks = le64_to_cpu(node_blk->i.i_blocks);
->> -	int ofs = get_extra_isize(node_blk);
->> +	int ofs;
->>   	unsigned char *en;
->>   	int namelen;
->>   	unsigned int idx = 0;
->> @@ -719,6 +719,22 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
->>   			ftype == F2FS_FT_FIFO || ftype == F2FS_FT_SOCK)
->>   		goto check;
->>   
->> +	if (f2fs_has_extra_isize(&node_blk->i)) {
->> +		if (c.feature & cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR)) {
->> +			if (node_blk->i.i_extra_isize >
->> +				cpu_to_le16(F2FS_TOTAL_EXTRA_ATTR_SIZE)) {
->> +				node_blk->i.i_extra_isize =
->> +					cpu_to_le16(F2FS_TOTAL_EXTRA_ATTR_SIZE);
->> +				need_fix = 1;
->> +			}
->> +		} else {
->> +			/* we don't support tuning F2FS_FEATURE_EXTRA_ATTR now */
->> +			node_blk->i.i_inline |= ~F2FS_EXTRA_ATTR;
-> 
-> node_blk->i.i_inline &= ~F2FS_EXTRA_ATTR;
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+---
+ fs/f2fs/f2fs.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Oh, sorry, let me fix this in v3, thanks for the review. :)
-
-Thanks,
-
-> 
-> thanks :-)
-> .
-> 
->> +			need_fix = 1;
->> +		}
->> +	}
->> +	ofs = get_extra_isize(node_blk);
->> +
->>   	if ((node_blk->i.i_inline & F2FS_INLINE_DATA)) {
->>   		if (le32_to_cpu(node_blk->i.i_addr[ofs]) != 0) {
->>   			/* should fix this bug all the time */
->>
-> 
-> 
-> ------------------------------------------------------------------------------
-> Check out the vibrant tech community on one of the world's most
-> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 4d8b1de83143..5af955a8736e 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1680,18 +1680,20 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+ 		sbi->total_valid_block_count -= diff;
+ 		if (!*count) {
+ 			spin_unlock(&sbi->stat_lock);
+-			percpu_counter_sub(&sbi->alloc_valid_block_count, diff);
+ 			goto enospc;
+ 		}
+ 	}
+ 	spin_unlock(&sbi->stat_lock);
+ 
+-	if (unlikely(release))
++	if (unlikely(release)) {
++		percpu_counter_sub(&sbi->alloc_valid_block_count, release);
+ 		dquot_release_reservation_block(inode, release);
++	}
+ 	f2fs_i_blocks_write(inode, *count, true, true);
+ 	return 0;
+ 
+ enospc:
++	percpu_counter_sub(&sbi->alloc_valid_block_count, release);
+ 	dquot_release_reservation_block(inode, release);
+ 	return -ENOSPC;
+ }
+-- 
+2.18.0.203.gfac676dfb9-goog
 
 
 ------------------------------------------------------------------------------
