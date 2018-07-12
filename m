@@ -1,106 +1,70 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: do checkpoint in kill_sb
-Date: Thu, 12 Jul 2018 00:34:49 -0700
-Message-ID: <20180712073449.GA21745@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180707012020.4708-1-jaegeuk@kernel.org>
- <0cb1e0fd-1fb4-ba69-6c70-e05e991a243a@kernel.org>
- <20180709203624.GA24534@jaegeuk-macbookpro.roam.corp.google.com>
- <05429d14-a690-7f57-cde4-7fddadef241c@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: fix defined but not used build warnings
+Date: Thu, 12 Jul 2018 16:21:38 +0800
+Message-ID: <a3041a31-c2e4-ff28-deec-dd175555f11b@huawei.com>
+References: <4463b606-3373-2e51-ad8c-3303b1ccc587@infradead.org>
+ <b6f9275a-854a-d9e3-271b-b2671acd6041@huawei.com>
+ <14890abc-8ba5-5029-8043-6e27fd4c2b37@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <05429d14-a690-7f57-cde4-7fddadef241c@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1fdWrM-0002bD-IN
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 12 Jul 2018 08:21:56 +0000
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fdWrK-001S58-CN
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 12 Jul 2018 08:21:56 +0000
+In-Reply-To: <14890abc-8ba5-5029-8043-6e27fd4c2b37@infradead.org>
+Content-Language: en-US
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Randy Dunlap <rdunlap@infradead.org>, Linux FS Devel <linux-fsdevel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>
 
-On 07/10, Chao Yu wrote:
-> On 2018/7/10 4:36, Jaegeuk Kim wrote:
-> > On 07/09, Chao Yu wrote:
-> >> On 2018/7/7 9:20, Jaegeuk Kim wrote:
-> >>> When unmounting f2fs in force mode, we can get it stuck by io_schedule()
-> >>
-> >> force mode means force shutdown?
-> > 
-> > Yes.
-> > 
-> >>
-> >>> by some pending IOs in meta_inode.
-> >>>
-> >>> io_schedule+0xd/0x30
-> >>> wait_on_page_bit_common+0xc6/0x130
-> >>
-> >> Looks like a deadlock here? Does this mean we forget to submit cached bio in
-> >> somewhere?
-> > 
-> > I'm hitting this randomly, when running all the testcases in xfstests.
-> > I can't find the missing flow, and only get this during kill_sb.
+On 2018/7/12 11:35, Randy Dunlap wrote:
+> On 07/09/2018 06:09 PM, Chao Yu wrote:
+>> On 2018/7/7 11:50, Randy Dunlap wrote:
+>>> From: Randy Dunlap <rdunlap@infradead.org>
+>>>
+>>> Fix build warnings in f2fs when CONFIG_PROC_FS is not enabled
+>>> by marking the unused functions as __maybe_unused.
+>>>
+>>> ../fs/f2fs/sysfs.c:519:12: warning: 'segment_info_seq_show' defined but not used [-Wunused-function]
+>>> ../fs/f2fs/sysfs.c:546:12: warning: 'segment_bits_seq_show' defined but not used [-Wunused-function]
+>>> ../fs/f2fs/sysfs.c:570:12: warning: 'iostat_info_seq_show' defined but not used [-Wunused-function]
+>>>
+>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>>> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> Cc: Chao Yu <yuchao0@huawei.com>
+>>> Cc: linux-f2fs-devel@lists.sourceforge.net
+>>
+>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
 > 
-> I guess we need this before returning from ->writepage{,s}:
-> 
-> if (is_sbi_flag_set(sbi, SBI_IS_SHUTDOWN))
-> 	f2fs_submit_merged_write()
-> 
-> How about trying this instead?
+> Hi,
+> Who would you like to merge this patch?  or could you do so?
 
-No, it's not shutdown case unfortunately.
+Hello,
+
+Jaegeuk will merge it. :)
+
+Thanks,
 
 > 
-> Thanks,
+> thanks,
 > 
-> > 
-> >>
-> >> Thanks,
-> >>
-> >>> __filemap_fdatawait_range+0xbd/0x100
-> >>> filemap_fdatawait_keep_errors+0x15/0x40
-> >>> sync_inodes_sb+0x1cf/0x240
-> >>> sync_filesystem+0x52/0x90
-> >>> generic_shutdown_super+0x1d/0x110
-> >>> ceph_kill_sb+0x28/0x80 [ceph]
-> >>> deactivate_locked_super+0x35/0x60
-> >>> cleanup_mnt+0x36/0x70
-> >>> task_work_run+0x79/0xa0
-> >>> exit_to_usermode_loop+0x62/0x70
-> >>> do_syscall_64+0xdb/0xf0
-> >>> entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> >>> 0xffffffffffffffff
-> >>>
-> >>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>> ---
-> >>>  fs/f2fs/super.c | 16 +++++++++++++---
-> >>>  1 file changed, 13 insertions(+), 3 deletions(-)
-> >>>
-> >>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> >>> index 3995e926ba3a..1dc6809fac38 100644
-> >>> --- a/fs/f2fs/super.c
-> >>> +++ b/fs/f2fs/super.c
-> >>> @@ -3089,9 +3089,19 @@ static struct dentry *f2fs_mount(struct file_system_type *fs_type, int flags,
-> >>>  static void kill_f2fs_super(struct super_block *sb)
-> >>>  {
-> >>>  	if (sb->s_root) {
-> >>> -		set_sbi_flag(F2FS_SB(sb), SBI_IS_CLOSE);
-> >>> -		f2fs_stop_gc_thread(F2FS_SB(sb));
-> >>> -		f2fs_stop_discard_thread(F2FS_SB(sb));
-> >>> +		struct f2fs_sb_info *sbi = F2FS_SB(sb);
-> >>> +
-> >>> +		set_sbi_flag(sbi, SBI_IS_CLOSE);
-> >>> +		f2fs_stop_gc_thread(sbi);
-> >>> +		f2fs_stop_discard_thread(sbi);
-> >>> +
-> >>> +		if (is_sbi_flag_set(sbi, SBI_IS_DIRTY) ||
-> >>> +				!is_set_ckpt_flags(sbi, CP_UMOUNT_FLAG)) {
-> >>> +			struct cp_control cpc = {
-> >>> +				.reason = CP_UMOUNT,
-> >>> +			};
-> >>> +			f2fs_write_checkpoint(sbi, &cpc);
-> >>> +		}
-> >>>  	}
-> >>>  	kill_block_super(sb);
-> >>>  }
-> >>>
-> > 
-> > .
-> > 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
