@@ -1,7 +1,7 @@
 From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH 1/5] f2fs: do not set free of current section
-Date: Thu, 12 Jul 2018 23:09:26 +0800
-Message-ID: <1531408170-45758-2-git-send-email-yunlong.song@huawei.com>
+Subject: [PATCH 2/5] f2fs: clear the remaining prefree_map of the section
+Date: Thu, 12 Jul 2018 23:09:27 +0800
+Message-ID: <1531408170-45758-3-git-send-email-yunlong.song@huawei.com>
 References: <1531408170-45758-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -13,36 +13,47 @@ Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 For the case when sbi->segs_per_sec > 1, take section:segment = 5 for
-example, if segment 1 is just used and allocate new segment 2, and the
-blocks of segment 1 is invalidated, at this time, the previous code will
-use __set_test_and_free to free the free_secmap and free_sections++,
-this is not correct since it is still a current section, so fix it.
+example, if the section prefree_map is ...previous section | current
+section (1 1 0 1 1) | next section..., then the start = x, end = x + 1,
+after start = start_segno + sbi->segs_per_sec, start = x + 5, then it
+will skip x + 3 and x + 4, but their bitmap is still set, which will
+cause duplicated f2fs_issue_discard of this same section in the next
+write_checkpoint, so fix it.
 
 Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 ---
- fs/f2fs/segment.h | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/f2fs/segment.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index b5bd328..5049551 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -448,6 +448,8 @@ static inline void __set_test_and_free(struct f2fs_sb_info *sbi,
- 	if (test_and_clear_bit(segno, free_i->free_segmap)) {
- 		free_i->free_segments++;
- 
-+		if (IS_CURSEC(sbi, secno))
-+			goto skip_free;
- 		next = find_next_bit(free_i->free_segmap,
- 				start_segno + sbi->segs_per_sec, start_segno);
- 		if (next >= start_segno + sbi->segs_per_sec) {
-@@ -455,6 +457,7 @@ static inline void __set_test_and_free(struct f2fs_sb_info *sbi,
- 				free_i->free_sections++;
- 		}
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 47b6595..fd38b61 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1684,8 +1684,23 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
+ 		start = start_segno + sbi->segs_per_sec;
+ 		if (start < end)
+ 			goto next;
+-		else
+-			end = start - 1;
++		else {
++			start_segno = start;
++
++			while (1) {
++				start = find_next_bit(prefree_map, start_segno,
++									end + 1);
++				if (start >= start_segno)
++					break;
++				end = find_next_zero_bit(prefree_map, start_segno,
++										start + 1);
++				for (i = start; i < end; i++)
++					clear_bit(i, prefree_map);
++				dirty_i->nr_dirty[PRE] -= end - start;
++			}
++
++			end = start_segno - 1;
++		}
  	}
-+skip_free:
- 	spin_unlock(&free_i->segmap_lock);
- }
+ 	mutex_unlock(&dirty_i->seglist_lock);
  
 -- 
 1.8.5.2
