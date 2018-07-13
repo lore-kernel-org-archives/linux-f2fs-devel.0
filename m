@@ -1,75 +1,34 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Subject: Re: [PATCH] f2fs: hide unused procfs helpers
-Date: Fri, 13 Jul 2018 17:17:54 +0800
-Message-ID: <7181036d-854d-2278-3039-e14542586b1a@huawei.com>
-References: <20180713035304.18520-1-yuehaibing@huawei.com>
- <643f0ef2-f74a-8ea9-b24c-fb1cc231b8ba@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [f2fs-dev v2] [PATCH 2/4] f2fs: allow wrong configure dio to
+ buffered write
+Date: Fri, 13 Jul 2018 19:29:35 +0800
+Message-ID: <870ee2d8-8221-4934-04a0-aef22a78480a@kernel.org>
+References: <20180706210903.77887-1-jaegeuk@kernel.org>
+ <20180706210903.77887-2-jaegeuk@kernel.org>
+ <af7e2fa5-b9e9-3090-7659-bd76585fd3aa@kernel.org>
+ <20180712175611.GA37244@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <643f0ef2-f74a-8ea9-b24c-fb1cc231b8ba@huawei.com>
+In-Reply-To: <20180712175611.GA37244@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
+On 2018/7/13 1:59, Jaegeuk Kim wrote:
+> This fixes to support dio having unaligned buffers as buffered writes.
+> 
+> xfs_io -f -d -c "pwrite 0 512" $testfile
+>  -> okay
+> 
+> xfs_io -f -d -c "pwrite 1 512" $testfile
+>  -> EINVAL
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-On 2018/7/13 17:02, Chao Yu wrote:
-> Hello,
-> 
-> On 2018/7/13 11:53, YueHaibing wrote:
->> When CONFIG_PROC_FS isn't set, gcc warning this:
->>
->> fs/f2fs/sysfs.c:519:12: warning: ‘segment_info_seq_show’ defined but not used [-Wunused-function]
->>  static int segment_info_seq_show(struct seq_file *seq, void *offset)
->>             ^
->> fs/f2fs/sysfs.c:546:12: warning: ‘segment_bits_seq_show’ defined but not used [-Wunused-function]
->>  static int segment_bits_seq_show(struct seq_file *seq, void *offset)
->>             ^
->> fs/f2fs/sysfs.c:570:12: warning: ‘iostat_info_seq_show’ defined but not used [-Wunused-function]
->>  static int iostat_info_seq_show(struct seq_file *seq, void *offset)
->>
->> We can fix the warning by adding the same #ifdef around them.
-> 
-> Could you check below patch sent from Randy Dunlap? It has already fixed this
-> issue, anyway, thanks for your patch. :)
-> 
-> [PATCH] f2fs: fix defined but not used build warnings
-
-thank you for your information.
-> 
-> Thanks,
-> 
->>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>  fs/f2fs/sysfs.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
->> index 2e7e611..7d45e65 100644
->> --- a/fs/f2fs/sysfs.c
->> +++ b/fs/f2fs/sysfs.c
->> @@ -516,6 +516,7 @@ static struct kobject f2fs_feat = {
->>  	.kset	= &f2fs_kset,
->>  };
->>  
->> +#ifdef CONFIG_PROC_FS
->>  static int segment_info_seq_show(struct seq_file *seq, void *offset)
->>  {
->>  	struct super_block *sb = seq->private;
->> @@ -608,6 +609,7 @@ static int iostat_info_seq_show(struct seq_file *seq, void *offset)
->>  
->>  	return 0;
->>  }
->> +#endif
->>  
->>  int __init f2fs_init_sysfs(void)
->>  {
->>
-> 
-> 
-> .
-> 
+Thanks,
