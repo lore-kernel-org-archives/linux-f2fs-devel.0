@@ -1,142 +1,60 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH 2/5] f2fs: clear the remaining prefree_map of the section
-Date: Fri, 13 Jul 2018 11:51:59 +0800
-Message-ID: <52acc420-2a08-c5e9-f63e-74d63fb11126@huawei.com>
-References: <1531408170-45758-1-git-send-email-yunlong.song@huawei.com>
- <1531408170-45758-3-git-send-email-yunlong.song@huawei.com>
- <c9a3972b-dc52-19ca-7ed0-2f754d89ab33@huawei.com>
- <75dc9cad-8166-82c5-e085-88c9623f5c5e@huawei.com>
- <12f3c3d2-6586-ca73-8770-8f97b436d643@huawei.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] f2fs: hide unused procfs helpers
+Date: Fri, 13 Jul 2018 11:53:04 +0800
+Message-ID: <20180713035304.18520-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <12f3c3d2-6586-ca73-8770-8f97b436d643@huawei.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuehaibing@huawei.com>) id 1fdpLg-0004kZ-37
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Jul 2018 04:06:28 +0000
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fdpLe-007iTa-9B
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Jul 2018 04:06:28 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Because in f2fs_clear_prefree_segments, the codes:
-...
-     while (1) {
-         int i;
-         start = find_next_bit(prefree_map, MAIN_SEGS(sbi), end + 1);
-         if (start >= MAIN_SEGS(sbi))
-             break;
-         end = find_next_zero_bit(prefree_map, MAIN_SEGS(sbi),
-                                 start + 1);
-
-         for (i = start; i < end; i++)
-             clear_bit(i, prefree_map);
-...
-next:
-         secno = GET_SEC_FROM_SEG(sbi, start);
-         start_segno = GET_SEG_FROM_SEC(sbi, secno);
-         if (!IS_CURSEC(sbi, secno) &&
-             !get_valid_blocks(sbi, start, true))
-             f2fs_issue_discard(sbi, START_BLOCK(sbi, start_segno),
-                 sbi->segs_per_sec << sbi->log_blocks_per_seg);
-
-         start = start_segno + sbi->segs_per_sec;
-         if (start < end)
-             goto next;
-         else
-             end = start - 1;
-...
-In round 2, for prefree_map: 1 1 0 1 1, start = 0, end = 2, then
-
-start = start_segno + sbi->segs_per_sec makes start = 5
-
-if (start < end)  --> start = 5, end = 2
-
-so end = start -1  --> end = 4, then return to while again, this time skips
-prefree bit 3 and 4.
-
-On 2018/7/13 11:42, Chao Yu wrote:
-> On 2018/7/13 11:28, Yunlong Song wrote:
->> round 1: section bitmap : 1 1 1 1 1, all valid, prefree_map: 0 0 0 0 0
->> then rm data block NO.2, block NO.2 becomes invalid, prefree_map: 0 0 1 0 0
->> write_checkpoint: section bitmap: 1 1 0 1 1, prefree_map: 0 0 0 0 0,
->> prefree of NO.2 is cleared, and no discard issued
->>
->> round2: rm data block NO.0, NO.1, NO.3, NO.4
->> all invalid, but prefree bit of NO.2 is set and cleared in round1, then
->> prefree_map: 1 1 0 1 1
->> write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1, no
-> Why prefree_map is not 0 0 0 0 0?
->
-> Thanks,
->
->> valid blocks of this section, so discard issued
->> but this time prefree bit of NO.3 and NO.4 is skipped...
->>
->> round3:
->> write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1 - >
->> 0 0 0 0 0, no valid blocks of this section, so discard issued
->> this time prefree bit of NO.3 and NO.4 is cleared, but the discard of
->> this section is sent again...
->>
->> On 2018/7/13 11:13, Chao Yu wrote:
->>> On 2018/7/12 23:09, Yunlong Song wrote:
->>>> For the case when sbi->segs_per_sec > 1, take section:segment = 5 for
->>>> example, if the section prefree_map is ...previous section | current
->>>> section (1 1 0 1 1) | next section..., then the start = x, end = x + 1,
->>>> after start = start_segno + sbi->segs_per_sec, start = x + 5, then it
->>>> will skip x + 3 and x + 4, but their bitmap is still set, which will
->>>> cause duplicated f2fs_issue_discard of this same section in the next
->>>> write_checkpoint, so fix it.
->>> I didn't get it, if # 2 segment is not prefree state, so it still has valid
->>> blocks there, so we won't issue discard due to below condition, right?
->>>
->>> 		if (!IS_CURSEC(sbi, secno) &&
->>> 			!get_valid_blocks(sbi, start, true))
->>>
->>> Thanks,
->>>
->>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->>>> ---
->>>>    fs/f2fs/segment.c | 19 +++++++++++++++++--
->>>>    1 file changed, 17 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>> index 47b6595..fd38b61 100644
->>>> --- a/fs/f2fs/segment.c
->>>> +++ b/fs/f2fs/segment.c
->>>> @@ -1684,8 +1684,23 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
->>>>    		start = start_segno + sbi->segs_per_sec;
->>>>    		if (start < end)
->>>>    			goto next;
->>>> -		else
->>>> -			end = start - 1;
->>>> +		else {
->>>> +			start_segno = start;
->>>> +
->>>> +			while (1) {
->>>> +				start = find_next_bit(prefree_map, start_segno,
->>>> +									end + 1);
->>>> +				if (start >= start_segno)
->>>> +					break;
->>>> +				end = find_next_zero_bit(prefree_map, start_segno,
->>>> +										start + 1);
->>>> +				for (i = start; i < end; i++)
->>>> +					clear_bit(i, prefree_map);
->>>> +				dirty_i->nr_dirty[PRE] -= end - start;
->>>> +			}
->>>> +
->>>> +			end = start_segno - 1;
->>>> +		}
->>>>    	}
->>>>    	mutex_unlock(&dirty_i->seglist_lock);
->>>>    
->>>>
->>> .
->>>
->
-> .
->
-
--- 
-Thanks,
-Yunlong Song
+V2hlbiBDT05GSUdfUFJPQ19GUyBpc24ndCBzZXQsIGdjYyB3YXJuaW5nIHRoaXM6Cgpmcy9mMmZz
+L3N5c2ZzLmM6NTE5OjEyOiB3YXJuaW5nOiDigJhzZWdtZW50X2luZm9fc2VxX3Nob3figJkgZGVm
+aW5lZCBidXQgbm90IHVzZWQgWy1XdW51c2VkLWZ1bmN0aW9uXQogc3RhdGljIGludCBzZWdtZW50
+X2luZm9fc2VxX3Nob3coc3RydWN0IHNlcV9maWxlICpzZXEsIHZvaWQgKm9mZnNldCkKICAgICAg
+ICAgICAgXgpmcy9mMmZzL3N5c2ZzLmM6NTQ2OjEyOiB3YXJuaW5nOiDigJhzZWdtZW50X2JpdHNf
+c2VxX3Nob3figJkgZGVmaW5lZCBidXQgbm90IHVzZWQgWy1XdW51c2VkLWZ1bmN0aW9uXQogc3Rh
+dGljIGludCBzZWdtZW50X2JpdHNfc2VxX3Nob3coc3RydWN0IHNlcV9maWxlICpzZXEsIHZvaWQg
+Km9mZnNldCkKICAgICAgICAgICAgXgpmcy9mMmZzL3N5c2ZzLmM6NTcwOjEyOiB3YXJuaW5nOiDi
+gJhpb3N0YXRfaW5mb19zZXFfc2hvd+KAmSBkZWZpbmVkIGJ1dCBub3QgdXNlZCBbLVd1bnVzZWQt
+ZnVuY3Rpb25dCiBzdGF0aWMgaW50IGlvc3RhdF9pbmZvX3NlcV9zaG93KHN0cnVjdCBzZXFfZmls
+ZSAqc2VxLCB2b2lkICpvZmZzZXQpCgpXZSBjYW4gZml4IHRoZSB3YXJuaW5nIGJ5IGFkZGluZyB0
+aGUgc2FtZSAjaWZkZWYgYXJvdW5kIHRoZW0uCgpTaWduZWQtb2ZmLWJ5OiBZdWVIYWliaW5nIDx5
+dWVoYWliaW5nQGh1YXdlaS5jb20+Ci0tLQogZnMvZjJmcy9zeXNmcy5jIHwgMiArKwogMSBmaWxl
+IGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc3lzZnMuYyBi
+L2ZzL2YyZnMvc3lzZnMuYwppbmRleCAyZTdlNjExLi43ZDQ1ZTY1IDEwMDY0NAotLS0gYS9mcy9m
+MmZzL3N5c2ZzLmMKKysrIGIvZnMvZjJmcy9zeXNmcy5jCkBAIC01MTYsNiArNTE2LDcgQEAgc3Rh
+dGljIHN0cnVjdCBrb2JqZWN0IGYyZnNfZmVhdCA9IHsKIAkua3NldAk9ICZmMmZzX2tzZXQsCiB9
+OwogCisjaWZkZWYgQ09ORklHX1BST0NfRlMKIHN0YXRpYyBpbnQgc2VnbWVudF9pbmZvX3NlcV9z
+aG93KHN0cnVjdCBzZXFfZmlsZSAqc2VxLCB2b2lkICpvZmZzZXQpCiB7CiAJc3RydWN0IHN1cGVy
+X2Jsb2NrICpzYiA9IHNlcS0+cHJpdmF0ZTsKQEAgLTYwOCw2ICs2MDksNyBAQCBzdGF0aWMgaW50
+IGlvc3RhdF9pbmZvX3NlcV9zaG93KHN0cnVjdCBzZXFfZmlsZSAqc2VxLCB2b2lkICpvZmZzZXQp
+CiAKIAlyZXR1cm4gMDsKIH0KKyNlbmRpZgogCiBpbnQgX19pbml0IGYyZnNfaW5pdF9zeXNmcyh2
+b2lkKQogewotLSAKMi43LjAKCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUg
+dmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2lu
+ZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdApfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRl
+dmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApo
+dHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRl
+dmVsCg==
