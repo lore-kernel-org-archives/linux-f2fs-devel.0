@@ -1,7 +1,7 @@
-From: youngjun <youngjun.willow@gmail.com>
-Subject: [PATCH] fs: f2fs: Insert a space around that :
-Date: Sat, 14 Jul 2018 19:34:30 +0900
-Message-ID: <20180714103430.GA28388@willow72.org>
+From: youngjun yoo <youngjun.willow@gmail.com>
+Subject: [PATCH] fs: f2fs: Insert a space
+Date: Sat, 14 Jul 2018 19:38:52 +0900
+Message-ID: <20180714103852.GA28458@willow72.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -9,12 +9,12 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willow72@willow72.org>) id 1feHsr-0006yz-GI
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Jul 2018 10:34:37 +0000
+ (envelope-from <willow72@willow72.org>) id 1feHx5-0007tn-9R
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Jul 2018 10:38:59 +0000
 Received: from [210.115.226.249] (helo=willow72)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtp (Exim 4.90_1)
- id 1feHsq-008Dbt-6q
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Jul 2018 10:34:37 +0000
+ id 1feHx3-008Dkb-Vt
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Jul 2018 10:38:59 +0000
 Content-Disposition: inline
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -28,29 +28,37 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-clean up checkpath error:
-ERROR : space required around that :
-
-Signed-off-by: youngjun yoo <youngjun.willow@gmail.com>
+clean up checkpatch error:
+ERROR:
+space required before the open parenthesis (
+space required around that :
+Signed-off-by: willow72 <youngjun.willow@gmail.com>
 ---
- fs/f2fs/debug.c | 4 ++--
+ fs/f2fs/node.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 2d65e77..076b75b 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -269,8 +269,8 @@ static int stat_show(struct seq_file *s, void *v)
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 51388cf..14ed45c 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1225,7 +1225,7 @@ static struct page *__get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid,
+ 		goto out_err;
+ 	}
+ page_hit:
+-	if(unlikely(nid != nid_of_node(page))) {
++	if (unlikely (nid != nid_of_node (page))) {
+ 		f2fs_msg(sbi->sb, KERN_WARNING, "inconsistent node block, "
+ 			"nid:%lu, node_footer[nid:%u,ino:%u,ofs:%u,cpver:%llu,blkaddr:%u]",
+ 			nid, nid_of_node(page), ino_of_node(page),
+@@ -1589,7 +1589,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ out:
+ 	if (last_idx != ULONG_MAX)
+ 		f2fs_submit_merged_write_cond(sbi, NULL, ino, last_idx, NODE);
+-	return ret ? -EIO: 0;
++	return ret ? -EIO : 0;
+ }
  
- 		seq_printf(s, "\n=====[ partition info(%pg). #%d, %s, CP: %s]=====\n",
- 			si->sbi->sb->s_bdev, i++,
--			f2fs_readonly(si->sbi->sb) ? "RO": "RW",
--			f2fs_cp_error(si->sbi) ? "Error": "Good");
-+			f2fs_readonly(si->sbi->sb) ? "RO" : "RW",
-+			f2fs_cp_error(si->sbi) ? "Error" : "Good");
- 		seq_printf(s, "[SB: 1] [CP: 2] [SIT: %d] [NAT: %d] ",
- 			   si->sit_area_segs, si->nat_area_segs);
- 		seq_printf(s, "[SSA: %d] [MAIN: %d",
+ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
 -- 
 2.7.4
 
