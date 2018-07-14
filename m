@@ -1,21 +1,30 @@
-From: youngjun yoo <youngjun.willow@gmail.com>
-Subject: [PATCH] fs: f2fs: Insert a space
-Date: Sat, 14 Jul 2018 19:38:52 +0900
-Message-ID: <20180714103852.GA28458@willow72.org>
+From: Rosen Penev <rosenp@gmail.com>
+Subject: [PATCH] mkfs.f2fs: Add several media formats + exe
+Date: Sat, 14 Jul 2018 11:08:05 -0700
+Message-ID: <20180714180805.11633-1-rosenp@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willow72@willow72.org>) id 1feHx5-0007tn-9R
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Jul 2018 10:38:59 +0000
-Received: from [210.115.226.249] (helo=willow72)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtp (Exim 4.90_1)
- id 1feHx3-008Dkb-Vt
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Jul 2018 10:38:59 +0000
-Content-Disposition: inline
+ (envelope-from <rosenp@gmail.com>) id 1feOxr-0004fv-V3
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Jul 2018 18:08:16 +0000
+Received: from mail-pl0-f67.google.com ([209.85.160.67])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1feOxo-003QQA-R1
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Jul 2018 18:08:14 +0000
+Received: by mail-pl0-f67.google.com with SMTP id o7-v6so3153443plk.10
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat, 14 Jul 2018 11:08:12 -0700 (PDT)
+Received: from clevo-mangix.lan (astound-69-42-1-138.ca.astound.net.
+ [69.42.1.138])
+ by smtp.gmail.com with ESMTPSA id f19-v6sm35026509pfd.147.2018.07.14.11.08.06
+ for <linux-f2fs-devel@lists.sourceforge.net>
+ (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+ Sat, 14 Jul 2018 11:08:06 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -25,42 +34,53 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-clean up checkpatch error:
-ERROR:
-space required before the open parenthesis (
-space required around that :
-Signed-off-by: willow72 <youngjun.willow@gmail.com>
+These media formats are currently in use.
+
+exe is useful if storing various Windows utilities on the drive.
+
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
- fs/f2fs/node.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ mkfs/f2fs_format.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 51388cf..14ed45c 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1225,7 +1225,7 @@ static struct page *__get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid,
- 		goto out_err;
- 	}
- page_hit:
--	if(unlikely(nid != nid_of_node(page))) {
-+	if (unlikely (nid != nid_of_node (page))) {
- 		f2fs_msg(sbi->sb, KERN_WARNING, "inconsistent node block, "
- 			"nid:%lu, node_footer[nid:%u,ino:%u,ofs:%u,cpver:%llu,blkaddr:%u]",
- 			nid, nid_of_node(page), ino_of_node(page),
-@@ -1589,7 +1589,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- out:
- 	if (last_idx != ULONG_MAX)
- 		f2fs_submit_merged_write_cond(sbi, NULL, ino, last_idx, NODE);
--	return ret ? -EIO: 0;
-+	return ret ? -EIO : 0;
- }
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 1a2deae..5245d68 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -43,6 +43,9 @@ const char *media_ext_lists[] = {
+ 	"png",
+ 	"avi",
+ 	"divx",
++	"m4a",
++	"m4v",
++	"m4p",
+ 	"mp4",
+ 	"mp3",
+ 	"3gp",
+@@ -56,15 +59,19 @@ const char *media_ext_lists[] = {
+ 	"wmx",
+ 	"svi",
+ 	"wvx",
++	"wv",
+ 	"wm",
+ 	"mpg",
+ 	"mpe",
+ 	"rm",
+ 	"ogg",
++	"opus",
++	"flac",
+ 	"jpeg",
+ 	"video",
+ 	"apk",	/* for android system */
+ 	"so",	/* for android system */
++	"exe",
+ 	NULL
+ };
  
- int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
 -- 
-2.7.4
+2.17.1
 
 
 ------------------------------------------------------------------------------
