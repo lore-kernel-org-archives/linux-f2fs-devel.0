@@ -1,68 +1,110 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 5/5] f2fs: clean up ioctl interface naming
-Date: Tue, 17 Jul 2018 20:41:49 +0800
-Message-ID: <20180717124149.32523-5-yuchao0@huawei.com>
-References: <20180717124149.32523-1-yuchao0@huawei.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: [PATCH] f2fs: issue discard align to section in LFS mode
+Date: Tue, 17 Jul 2018 22:04:35 +0800
+Message-ID: <1531836275-94933-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1ffPJk-0001da-6B
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Jul 2018 12:43:00 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1ffPJi-00Ahu3-8H
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Jul 2018 12:43:00 +0000
-In-Reply-To: <20180717124149.32523-1-yuchao0@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Romve redundant prefix 'f2fs_' in the middle of f2fs_ioc_f2fs_write_checkpoint().
+For the case when sbi->segs_per_sec > 1 with lfs mode, take
+section:segment = 5 for example, if the section prefree_map is
+...previous section | current section (1 1 0 1 1) | next section...,
+then the start = x, end = x + 1, after start = start_segno +
+sbi->segs_per_sec, start = x + 5, then it will skip x + 3 and x + 4, but
+their bitmap is still set, which will cause duplicated
+f2fs_issue_discard of this same section in the next write_checkpoint:
 
+round 1: section bitmap : 1 1 1 1 1, all valid, prefree_map: 0 0 0 0 0
+then rm data block NO.2, block NO.2 becomes invalid, prefree_map: 0 0 1 0 0
+write_checkpoint: section bitmap: 1 1 0 1 1, prefree_map: 0 0 0 0 0,
+prefree of NO.2 is cleared, and no discard issued
+
+round 2: rm data block NO.0, NO.1, NO.3, NO.4
+all invalid, but prefree bit of NO.2 is set and cleared in round 1, then
+prefree_map: 1 1 0 1 1
+write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1, no
+valid blocks of this section, so discard issued, but this time prefree
+bit of NO.3 and NO.4 is skipped due to start = start_segno + sbi->segs_per_sec;
+
+round 3:
+write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1 ->
+0 0 0 0 0, no valid blocks of this section, so discard issued,
+this time prefree bit of NO.3 and NO.4 is cleared, but the discard of
+this section is sent again...
+
+To fix this problem, we can align the start and end value to section
+boundary for fstrim and real-time discard operation, and decide to issue
+discard only when the whole section is invalid, which can issue discard
+aligned to section size as much as possible and avoid redundant discard.
+
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/file.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/segment.c | 24 +++++++++++++++++++-----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 3a31b4e6d2dc..c6e3c0f751de 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2125,7 +2125,7 @@ static int f2fs_ioc_gc_range(struct file *filp, unsigned long arg)
- 	return ret;
- }
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index cfff7cf..ff5de34 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1710,6 +1710,7 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
+ 	unsigned int start = 0, end = -1;
+ 	unsigned int secno, start_segno;
+ 	bool force = (cpc->reason & CP_DISCARD);
++	bool need_align = test_opt(sbi, LFS) && sbi->segs_per_sec > 1;
  
--static int f2fs_ioc_f2fs_write_checkpoint(struct file *filp, unsigned long arg)
-+static int f2fs_ioc_write_checkpoint(struct file *filp, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-@@ -2906,7 +2906,7 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	case F2FS_IOC_GARBAGE_COLLECT_RANGE:
- 		return f2fs_ioc_gc_range(filp, arg);
- 	case F2FS_IOC_WRITE_CHECKPOINT:
--		return f2fs_ioc_f2fs_write_checkpoint(filp, arg);
-+		return f2fs_ioc_write_checkpoint(filp, arg);
- 	case F2FS_IOC_DEFRAGMENT:
- 		return f2fs_ioc_defragment(filp, arg);
- 	case F2FS_IOC_MOVE_RANGE:
+ 	mutex_lock(&dirty_i->seglist_lock);
+ 
+@@ -1721,14 +1722,19 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
+ 		end = find_next_zero_bit(prefree_map, MAIN_SEGS(sbi),
+ 								start + 1);
+ 
+-		for (i = start; i < end; i++)
+-			clear_bit(i, prefree_map);
+-
+-		dirty_i->nr_dirty[PRE] -= end - start;
+-
+ 		if (!test_opt(sbi, DISCARD))
+ 			continue;
+ 
++		if (need_align) {
++			start = rounddown(start, sbi->segs_per_sec);
++			end = roundup(end, sbi->segs_per_sec);
++		}
++
++		for (i = start; i < end; i++) {
++			if (test_and_clear_bit(i, prefree_map))
++				dirty_i->nr_dirty[PRE]--;
++		}
++
+ 		if (force && start >= cpc->trim_start &&
+ 					(end - 1) <= cpc->trim_end)
+ 				continue;
+@@ -2511,6 +2517,7 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+ 	struct discard_policy dpolicy;
+ 	unsigned long long trimmed = 0;
+ 	int err = 0;
++	bool need_align = test_opt(sbi, LFS) && sbi->segs_per_sec > 1;
+ 
+ 	if (start >= MAX_BLKADDR(sbi) || range->len < sbi->blocksize)
+ 		return -EINVAL;
+@@ -2528,6 +2535,13 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+ 	start_segno = (start <= MAIN_BLKADDR(sbi)) ? 0 : GET_SEGNO(sbi, start);
+ 	end_segno = (end >= MAX_BLKADDR(sbi)) ? MAIN_SEGS(sbi) - 1 :
+ 						GET_SEGNO(sbi, end);
++	if (need_align) {
++		start_segno = rounddown(start_segno, sbi->segs_per_sec);
++		end_segno = roundup(end_segno, sbi->segs_per_sec);
++		if (start_segno == end_segno)
++			end_segno += sbi->segs_per_sec;
++		end_segno--;
++	}
+ 
+ 	cpc.reason = CP_DISCARD;
+ 	cpc.trim_minlen = max_t(__u64, 1, F2FS_BYTES_TO_BLK(range->minlen));
 -- 
-2.18.0.rc1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+1.8.5.2
