@@ -1,7 +1,7 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 2/5] f2fs: clean up with get_current_nat_page
-Date: Tue, 17 Jul 2018 20:41:46 +0800
-Message-ID: <20180717124149.32523-2-yuchao0@huawei.com>
+Subject: [PATCH 3/5] f2fs: clean up with f2fs_encrypted_inode()
+Date: Tue, 17 Jul 2018 20:41:47 +0800
+Message-ID: <20180717124149.32523-3-yuchao0@huawei.com>
 References: <20180717124149.32523-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,45 +12,23 @@ To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Just cleanup, no logic change.
-
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/node.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ fs/f2fs/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 99dc1a1d02e3..021d095dc3c5 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -113,25 +113,22 @@ static void clear_node_page_dirty(struct page *page)
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index d55fa25fc2f1..3a31b4e6d2dc 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1607,7 +1607,7 @@ static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 	unsigned int flags = fi->i_flags;
  
- static struct page *get_current_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
- {
--	pgoff_t index = current_nat_addr(sbi, nid);
--	return f2fs_get_meta_page_nofail(sbi, index);
-+	return f2fs_get_meta_page_nofail(sbi, current_nat_addr(sbi, nid));
- }
- 
- static struct page *get_next_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
- {
- 	struct page *src_page;
- 	struct page *dst_page;
--	pgoff_t src_off;
- 	pgoff_t dst_off;
- 	void *src_addr;
- 	void *dst_addr;
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 
--	src_off = current_nat_addr(sbi, nid);
--	dst_off = next_nat_addr(sbi, src_off);
-+	dst_off = next_nat_addr(sbi, current_nat_addr(sbi, nid));
- 
- 	/* get current nat block page with lock */
--	src_page = f2fs_get_meta_page(sbi, src_off);
-+	src_page = get_current_nat_page(sbi, nid);
- 	dst_page = f2fs_grab_meta_page(sbi, dst_off);
- 	f2fs_bug_on(sbi, PageDirty(src_page));
- 
+-	if (file_is_encrypt(inode))
++	if (f2fs_encrypted_inode(inode))
+ 		flags |= F2FS_ENCRYPT_FL;
+ 	if (f2fs_has_inline_data(inode) || f2fs_has_inline_dentry(inode))
+ 		flags |= F2FS_INLINE_DATA_FL;
 -- 
 2.18.0.rc1
