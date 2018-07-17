@@ -1,36 +1,59 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 4/5] f2fs: clean up with f2fs_is_{atomic,volatile}_file()
-Date: Tue, 17 Jul 2018 20:41:48 +0800
-Message-ID: <20180717124149.32523-4-yuchao0@huawei.com>
-References: <20180717124149.32523-1-yuchao0@huawei.com>
+Subject: [PATCH 1/5] f2fs: kill EXT_TREE_VEC_SIZE
+Date: Tue, 17 Jul 2018 20:41:45 +0800
+Message-ID: <20180717124149.32523-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180717124149.32523-1-yuchao0@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1ffPJk-0004VG-BX
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Jul 2018 12:43:00 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1ffPJi-0027T5-94
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Jul 2018 12:43:00 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+
+Since commit 201ef5e080c9 ("f2fs: improve shrink performance of extent nodes"),
+there is no user of EXT_TREE_VEC_SIZE, just kill it for cleanup.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/segment.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/f2fs.h | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 0adab2ec5c5e..92b1bedfe85e 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2766,8 +2766,8 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
- 			return CURSEG_COLD_DATA;
- 		if (file_is_hot(inode) ||
- 				is_inode_flag_set(inode, FI_HOT_DATA) ||
--				is_inode_flag_set(inode, FI_ATOMIC_FILE) ||
--				is_inode_flag_set(inode, FI_VOLATILE_FILE))
-+				f2fs_is_atomic_file(inode) ||
-+				f2fs_is_volatile_file(inode))
- 			return CURSEG_HOT_DATA;
- 		return f2fs_rw_hint_to_seg_type(inode->i_write_hint);
- 	} else {
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 806006ed0d0a..ff3b80da32f3 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -524,9 +524,6 @@ enum {
+ 
+ #define MAX_DIR_RA_PAGES	4	/* maximum ra pages of dir */
+ 
+-/* vector size for gang look-up from extent cache that consists of radix tree */
+-#define EXT_TREE_VEC_SIZE	64
+-
+ /* for in-memory extent cache entry */
+ #define F2FS_MIN_EXTENT_LEN	64	/* minimum extent length */
+ 
 -- 
 2.18.0.rc1
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
