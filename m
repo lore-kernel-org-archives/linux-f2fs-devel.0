@@ -1,7 +1,7 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 3/5] f2fs: clean up with f2fs_encrypted_inode()
-Date: Tue, 17 Jul 2018 20:41:47 +0800
-Message-ID: <20180717124149.32523-3-yuchao0@huawei.com>
+Subject: [PATCH 4/5] f2fs: clean up with f2fs_is_{atomic,volatile}_file()
+Date: Tue, 17 Jul 2018 20:41:48 +0800
+Message-ID: <20180717124149.32523-4-yuchao0@huawei.com>
 References: <20180717124149.32523-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -14,21 +14,23 @@ List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/segment.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index d55fa25fc2f1..3a31b4e6d2dc 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1607,7 +1607,7 @@ static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	unsigned int flags = fi->i_flags;
- 
--	if (file_is_encrypt(inode))
-+	if (f2fs_encrypted_inode(inode))
- 		flags |= F2FS_ENCRYPT_FL;
- 	if (f2fs_has_inline_data(inode) || f2fs_has_inline_dentry(inode))
- 		flags |= F2FS_INLINE_DATA_FL;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 0adab2ec5c5e..92b1bedfe85e 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2766,8 +2766,8 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
+ 			return CURSEG_COLD_DATA;
+ 		if (file_is_hot(inode) ||
+ 				is_inode_flag_set(inode, FI_HOT_DATA) ||
+-				is_inode_flag_set(inode, FI_ATOMIC_FILE) ||
+-				is_inode_flag_set(inode, FI_VOLATILE_FILE))
++				f2fs_is_atomic_file(inode) ||
++				f2fs_is_volatile_file(inode))
+ 			return CURSEG_HOT_DATA;
+ 		return f2fs_rw_hint_to_seg_type(inode->i_write_hint);
+ 	} else {
 -- 
 2.18.0.rc1
