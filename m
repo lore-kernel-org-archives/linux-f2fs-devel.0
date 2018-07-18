@@ -1,10 +1,12 @@
 From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH] f2fs: issue discard align to section in LFS mode
-Date: Tue, 17 Jul 2018 22:04:35 +0800
-Message-ID: <1531836275-94933-1-git-send-email-yunlong.song@huawei.com>
+Subject: [PATCH v2] f2fs: issue discard align to section in LFS mode
+Date: Wed, 18 Jul 2018 10:02:27 +0800
+Message-ID: <1531879347-102427-1-git-send-email-yunlong.song@huawei.com>
+References: <1531836275-94933-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1531836275-94933-1-git-send-email-yunlong.song@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
 Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
@@ -44,11 +46,11 @@ aligned to section size as much as possible and avoid redundant discard.
 Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/segment.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ fs/f2fs/segment.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index cfff7cf..ff5de34 100644
+index cfff7cf..c25e2eb 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
 @@ -1710,6 +1710,7 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
@@ -92,16 +94,13 @@ index cfff7cf..ff5de34 100644
  
  	if (start >= MAX_BLKADDR(sbi) || range->len < sbi->blocksize)
  		return -EINVAL;
-@@ -2528,6 +2535,13 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+@@ -2528,6 +2535,10 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
  	start_segno = (start <= MAIN_BLKADDR(sbi)) ? 0 : GET_SEGNO(sbi, start);
  	end_segno = (end >= MAX_BLKADDR(sbi)) ? MAIN_SEGS(sbi) - 1 :
  						GET_SEGNO(sbi, end);
 +	if (need_align) {
 +		start_segno = rounddown(start_segno, sbi->segs_per_sec);
-+		end_segno = roundup(end_segno, sbi->segs_per_sec);
-+		if (start_segno == end_segno)
-+			end_segno += sbi->segs_per_sec;
-+		end_segno--;
++		end_segno = roundup(end_segno + 1, sbi->segs_per_sec) - 1;
 +	}
  
  	cpc.reason = CP_DISCARD;
