@@ -1,215 +1,228 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] fsck.f2fs: rebuild qf_ino if quota node is
- corrupted
-Date: Mon, 23 Jul 2018 21:49:21 +0900
-Message-ID: <20180723124921.GC19644@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180723031332.190083-1-shengyong1@huawei.com>
+Subject: Re: [PATCH 1/3] f2fs: turn off atomic writes when deteting abnormal
+ behaviors
+Date: Mon, 23 Jul 2018 22:03:46 +0900
+Message-ID: <20180723130346.GD19644@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180715011112.11475-1-jaegeuk@kernel.org>
+ <29151284-ef34-2eb2-1060-7e214fe8834a@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1fhaHN-0000vm-Gw
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 23 Jul 2018 12:49:33 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fhaHI-00Fw0K-Qx
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 23 Jul 2018 12:49:33 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180723031332.190083-1-shengyong1@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Sheng Yong <shengyong1@huawei.com>
-Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <29151284-ef34-2eb2-1060-7e214fe8834a@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 07/23, Sheng Yong wrote:
-> If a quota node is corrupted, it may be removed. But its qf_ino in
-> super blocks is not cleared. To keep quota feature available, let's
-> try to rebuild a new quota node.
+On 07/16, Chao Yu wrote:
+> On 2018/7/15 9:11, Jaegeuk Kim wrote:
+> > In order to prevent abusing atomic writes by abnormal users, we've added a
+> > threshold, 20% over memory footprint, which disallows further atomic writes.
+> > Previously, however, SQLite doesn't know the files became normal, so that
+> > it could write stale data and commit on revoked normal database file.
+> > 
+> > Once f2fs detects such the abnormal behavior, this patch simply disables
+> > all the atomic operations such as:
+> > - write_begin() gives EINVAL to avoid stale data writes, and SQLite will call
+> >   F2FS_IOC_ABORT_VOLATILE_WRITE to notify aborting the transaction,
+> > - F2FS_IOC_START_ATOMIC_WRITE gives EINVAL for SQLite to fall back normal
+> >   journal_mode,
+> > - F2FS_IOC_COMMIT_ATOMIC_WRITE gives EINVAL, if the file was revoked, so that
+> >   Framework retries to submit the transaction given propagated SQLite error.
+> > 
+> > Note that, this patch also turns off atomic operations, if foreground GC tries
+> > to move atomic files too frequently.
+> 
+> Well, how about just keeping original implementation: shutdown atomic write for
+> those files which are really affect fggc? Since intention of the original
+> behavior is targeting to abnormal atomic write usage, e.g. open atomic_write
+> file for very long time, then fggc will be blocked each time when moving its
+> block. So shutdown it, fggc will recover.
 
-Hi Sheng,
-
-IIRC, we need to rebuild whole quota structures, no?
+The point here is stopping sqlite to keep going wrong data writes even after
+we already revoked blocks.
 
 Thanks,
 
 > 
-> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
-> ---
->  fsck/fsck.c  | 82 +++++++++++++++++++++++++++++++++++++++++++++++++---
->  fsck/fsck.h  |  1 +
->  fsck/mount.c |  7 +++--
->  3 files changed, 84 insertions(+), 6 deletions(-)
+> Thanks,
 > 
-> diff --git a/fsck/fsck.c b/fsck/fsck.c
-> index e95dedf..dd10182 100644
-> --- a/fsck/fsck.c
-> +++ b/fsck/fsck.c
-> @@ -10,6 +10,7 @@
->   */
->  #include "fsck.h"
->  #include "quotaio.h"
-> +#include "quotaio_v2.h"
->  #include <time.h>
->  
->  char *tree_mark;
-> @@ -1697,13 +1698,80 @@ int fsck_chk_quota_node(struct f2fs_sb_info *sbi)
->  		}
->  		ret = fsck_chk_node_blk(sbi, NULL, ino,
->  				F2FS_FT_REG_FILE, TYPE_INODE, &blk_cnt, NULL);
-> -		if (ret)
-> -			ASSERT_MSG("wrong quota inode, qtype [%d] ino [0x%x]",
-> -								qtype, ino);
-> +		if (ret) {
-> +			/* sanity_check_nid failed, node should be removed */
-> +			ASSERT_MSG("[0x%x] wrong quota inode", ino);
-> +			if (c.fix_on)
-> +				F2FS_FSCK(sbi)->corrupt_quotas = 1 << qtype;
-> +		}
->  	}
->  	return ret;
->  }
->  
-> +static nid_t prepare_rebuild_qf_inode(struct f2fs_sb_info *sbi, int qtype)
-> +{
-> +	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
-> +	struct f2fs_summary sum;
-> +	struct f2fs_node *qf_node;
-> +	nid_t nid = QUOTA_INO(F2FS_RAW_SUPER(sbi), qtype);
-> +	block_t node_blkaddr;
-> +	int ret;
-> +
-> +	DBG(1, "Rebuild Quota file (qtype [%3d] ino [0x%x])\n", qtype, nid);
-> +
-> +	qf_node = calloc(F2FS_BLKSIZE, 1);
-> +	if (!qf_node) {
-> +		MSG(0, "\tError: calloc failed for qf_inode!!!\n");
-> +		return 0;
-> +	}
-> +
-> +	/* prepare qf_node */
-> +	qf_node->footer.nid = cpu_to_le32(nid);
-> +	qf_node->footer.ino = cpu_to_le32(nid);
-> +	qf_node->footer.cp_ver = cpu_to_le64(get_cp(checkpoint_ver));
-> +
-> +	qf_node->i.i_mode = cpu_to_le16(0x8180);
-> +	qf_node->i.i_links = cpu_to_le32(1);
-> +	qf_node->i.i_uid = cpu_to_le32(getuid());
-> +	qf_node->i.i_gid = cpu_to_le32(getgid());
-> +	qf_node->i.i_size = 0;
-> +	qf_node->i.i_blocks = 1;
-> +	qf_node->i.i_atime = cpu_to_le32(time(NULL));
-> +	qf_node->i.i_atime_nsec = 0;
-> +	qf_node->i.i_ctime = cpu_to_le32(time(NULL));
-> +	qf_node->i.i_ctime_nsec = 0;
-> +	qf_node->i.i_mtime = cpu_to_le32(time(NULL));
-> +	qf_node->i.i_mtime_nsec = 0;
-> +	qf_node->i.i_generation = 0;
-> +	qf_node->i.i_xattr_nid = 0;
-> +	qf_node->i.i_flags = FS_IMMUTABLE_FL;
-> +	qf_node->i.i_current_depth = cpu_to_le32(1);
-> +	qf_node->i.i_dir_level = DEF_DIR_LEVEL;
-> +	if (c.feature & cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR)) {
-> +		qf_node->i.i_inline = F2FS_EXTRA_ATTR;
-> +		qf_node->i.i_extra_isize =
-> +				cpu_to_le16(F2FS_TOTAL_EXTRA_ATTR_SIZE);
-> +	}
-> +	if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CRTIME)) {
-> +		qf_node->i.i_crtime = cpu_to_le32(time(NULL));
-> +		qf_node->i.i_crtime_nsec = 0;
-> +	}
-> +
-> +	/* write back qf inode */
-> +	node_blkaddr = 0;
-> +	set_summary(&sum, nid, 0, 0);
-> +	reserve_new_block(sbi, &node_blkaddr, &sum, CURSEG_HOT_NODE);
-> +	update_nat_blkaddr(sbi, nid, nid, node_blkaddr);
-> +	DBG(1, "Write new qf_node to blk %#x\n", node_blkaddr);
-> +
-> +	ret = dev_write_block(qf_node, node_blkaddr);
-> +	ASSERT(ret >= 0);
-> +	f2fs_clear_bit(nid, F2FS_FSCK(sbi)->nat_area_bitmap);
-> +
-> +	free(qf_node);
-> +	return nid;
-> +}
-> +
->  int fsck_chk_quota_files(struct f2fs_sb_info *sbi)
->  {
->  	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
-> @@ -1722,6 +1790,12 @@ int fsck_chk_quota_files(struct f2fs_sb_info *sbi)
->  		if (!ino)
->  			continue;
->  
-> +		if (fsck->corrupt_quotas & (1 << qtype) && c.fix_on) {
-> +			ino = prepare_rebuild_qf_inode(sbi, qtype);
-> +			if (!ino)
-> +				continue;
-> +		}
-> +
->  	        DBG(1, "Checking Quota file ([%3d] ino [0x%x])\n", qtype, ino);
->  		needs_writeout = 0;
->  		ret = quota_compare_and_update(sbi, qtype, &needs_writeout,
-> @@ -1733,7 +1807,7 @@ int fsck_chk_quota_files(struct f2fs_sb_info *sbi)
->  
->  		/* Something is wrong */
->  		if (c.fix_on) {
-> -			DBG(0, "Fixing Quota file ([%3d] ino [0x%x])\n",
-> +			FIX_MSG("Fixing Quota file ([%3d] ino [0x%x])\n",
->  							qtype, ino);
->  			f2fs_filesize_update(sbi, ino, 0);
->  			ret = quota_write_inode(sbi, qtype);
-> diff --git a/fsck/fsck.h b/fsck/fsck.h
-> index 580e851..393c995 100644
-> --- a/fsck/fsck.h
-> +++ b/fsck/fsck.h
-> @@ -91,6 +91,7 @@ struct f2fs_fsck {
->  	u32 nat_valid_inode_cnt;
->  
->  	struct quota_ctx *qctx;
-> +	unsigned short corrupt_quotas;
->  };
->  
->  #define BLOCK_SZ		4096
-> diff --git a/fsck/mount.c b/fsck/mount.c
-> index 3c9607f..121b26a 100644
-> --- a/fsck/mount.c
-> +++ b/fsck/mount.c
-> @@ -2022,8 +2022,11 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left, int type)
->  				if (se2->valid_blocks)
->  					break;
->  			}
-> -			if (i == sbi->segs_per_sec)
-> +			if (i == sbi->segs_per_sec) {
-> +				/* find a free seg, init its type */
-> +				se->orig_type = type;
->  				return 0;
-> +			}
->  		}
->  
->  		if (se->type == type &&
-> @@ -2244,7 +2247,7 @@ void write_superblock(struct f2fs_super_block *new_sb)
->  		ASSERT(ret >= 0);
->  	}
->  	free(buf);
-> -	DBG(0, "Info: Done to rebuild superblock\n");
-> +	MSG(0, "Info: Done to rebuild superblock\n");
->  }
->  
->  void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
-> -- 
-> 2.17.1
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/data.c    |  7 ++++---
+> >  fs/f2fs/f2fs.h    |  4 ++--
+> >  fs/f2fs/file.c    |  6 +++++-
+> >  fs/f2fs/gc.c      |  4 +---
+> >  fs/f2fs/segment.c | 21 +++++++++++----------
+> >  5 files changed, 23 insertions(+), 19 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index 5e53d210e222..c9e75aa61c24 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -2247,8 +2247,9 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+> >  	trace_f2fs_write_begin(inode, pos, len, flags);
+> >  
+> >  	if (f2fs_is_atomic_file(inode) &&
+> > -			!f2fs_available_free_memory(sbi, INMEM_PAGES)) {
+> > -		err = -ENOMEM;
+> > +			(is_sbi_flag_set(sbi, SBI_DISABLE_ATOMIC_WRITE) ||
+> > +			!f2fs_available_free_memory(sbi, INMEM_PAGES))) {
+> > +		err = -EINVAL;
+> >  		drop_atomic = true;
+> >  		goto fail;
+> >  	}
+> > @@ -2331,7 +2332,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+> >  	f2fs_put_page(page, 1);
+> >  	f2fs_write_failed(mapping, pos + len);
+> >  	if (drop_atomic)
+> > -		f2fs_drop_inmem_pages_all(sbi, false);
+> > +		f2fs_disable_atomic_write(sbi);
+> >  	return err;
+> >  }
+> >  
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 4d8b1de83143..1d5c8d543eda 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -621,7 +621,6 @@ enum {
+> >  
+> >  enum {
+> >  	GC_FAILURE_PIN,
+> > -	GC_FAILURE_ATOMIC,
+> >  	MAX_GC_FAILURE
+> >  };
+> >  
+> > @@ -1066,6 +1065,7 @@ enum {
+> >  	SBI_POR_DOING,				/* recovery is doing or not */
+> >  	SBI_NEED_SB_WRITE,			/* need to recover superblock */
+> >  	SBI_NEED_CP,				/* need to checkpoint */
+> > +	SBI_DISABLE_ATOMIC_WRITE,		/* turn off atomic write */
+> >  };
+> >  
+> >  enum {
+> > @@ -2833,7 +2833,7 @@ void f2fs_destroy_node_manager_caches(void);
+> >   */
+> >  bool f2fs_need_SSR(struct f2fs_sb_info *sbi);
+> >  void f2fs_register_inmem_page(struct inode *inode, struct page *page);
+> > -void f2fs_drop_inmem_pages_all(struct f2fs_sb_info *sbi, bool gc_failure);
+> > +void f2fs_disable_atomic_write(struct f2fs_sb_info *sbi);
+> >  void f2fs_drop_inmem_pages(struct inode *inode);
+> >  void f2fs_drop_inmem_page(struct inode *inode, struct page *page);
+> >  int f2fs_commit_inmem_pages(struct inode *inode);
+> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > index 6880c6f78d58..b029a4ed3bb0 100644
+> > --- a/fs/f2fs/file.c
+> > +++ b/fs/f2fs/file.c
+> > @@ -1682,6 +1682,9 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+> >  	if (!S_ISREG(inode->i_mode))
+> >  		return -EINVAL;
+> >  
+> > +	if (is_sbi_flag_set(F2FS_I_SB(inode), SBI_DISABLE_ATOMIC_WRITE))
+> > +		return -EINVAL;
+> > +
+> >  	ret = mnt_want_write_file(filp);
+> >  	if (ret)
+> >  		return ret;
+> > @@ -1750,7 +1753,6 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+> >  		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
+> >  		if (!ret) {
+> >  			clear_inode_flag(inode, FI_ATOMIC_FILE);
+> > -			F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC] = 0;
+> >  			stat_dec_atomic_write(inode);
+> >  		}
+> >  	} else {
+> > @@ -1853,6 +1855,8 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
+> >  		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
+> >  	}
+> >  
+> > +	clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+> > +
+> >  	inode_unlock(inode);
+> >  
+> >  	mnt_drop_write_file(filp);
+> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > index 9093be6e7a7d..6d762f3cdfc7 100644
+> > --- a/fs/f2fs/gc.c
+> > +++ b/fs/f2fs/gc.c
+> > @@ -629,7 +629,6 @@ static void move_data_block(struct inode *inode, block_t bidx,
+> >  		goto out;
+> >  
+> >  	if (f2fs_is_atomic_file(inode)) {
+> > -		F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC]++;
+> >  		F2FS_I_SB(inode)->skipped_atomic_files[gc_type]++;
+> >  		goto out;
+> >  	}
+> > @@ -745,7 +744,6 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+> >  		goto out;
+> >  
+> >  	if (f2fs_is_atomic_file(inode)) {
+> > -		F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC]++;
+> >  		F2FS_I_SB(inode)->skipped_atomic_files[gc_type]++;
+> >  		goto out;
+> >  	}
+> > @@ -1100,7 +1098,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+> >  		if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
+> >  			if (skipped_round > MAX_SKIP_ATOMIC_COUNT &&
+> >  				skipped_round * 2 >= round)
+> > -				f2fs_drop_inmem_pages_all(sbi, true);
+> > +				f2fs_disable_atomic_write(sbi);
+> >  			segno = NULL_SEGNO;
+> >  			goto gc_more;
+> >  		}
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 9efce174c51a..05877a2f1894 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -274,11 +274,14 @@ static int __revoke_inmem_pages(struct inode *inode,
+> >  	return err;
+> >  }
+> >  
+> > -void f2fs_drop_inmem_pages_all(struct f2fs_sb_info *sbi, bool gc_failure)
+> > +void f2fs_disable_atomic_write(struct f2fs_sb_info *sbi)
+> >  {
+> >  	struct list_head *head = &sbi->inode_list[ATOMIC_FILE];
+> >  	struct inode *inode;
+> >  	struct f2fs_inode_info *fi;
+> > +
+> > +	/* just turn it off */
+> > +	set_sbi_flag(sbi, SBI_DISABLE_ATOMIC_WRITE);
+> >  next:
+> >  	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
+> >  	if (list_empty(head)) {
+> > @@ -290,17 +293,16 @@ void f2fs_drop_inmem_pages_all(struct f2fs_sb_info *sbi, bool gc_failure)
+> >  	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+> >  
+> >  	if (inode) {
+> > -		if (gc_failure) {
+> > -			if (fi->i_gc_failures[GC_FAILURE_ATOMIC])
+> > -				goto drop;
+> > -			goto skip;
+> > +		inode_lock(inode);
+> > +		/* need to check whether it was already revoked */
+> > +		if (f2fs_is_atomic_file(inode)) {
+> > +			f2fs_drop_inmem_pages(inode);
+> > +			set_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+> >  		}
+> > -drop:
+> > -		set_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+> > -		f2fs_drop_inmem_pages(inode);
+> > +		inode_unlock(inode);
+> >  		iput(inode);
+> >  	}
+> > -skip:
+> > +
+> >  	congestion_wait(BLK_RW_ASYNC, HZ/50);
+> >  	cond_resched();
+> >  	goto next;
+> > @@ -320,7 +322,6 @@ void f2fs_drop_inmem_pages(struct inode *inode)
+> >  	mutex_unlock(&fi->inmem_lock);
+> >  
+> >  	clear_inode_flag(inode, FI_ATOMIC_FILE);
+> > -	fi->i_gc_failures[GC_FAILURE_ATOMIC] = 0;
+> >  	stat_dec_atomic_write(inode);
+> >  }
+> >  
+> > 
