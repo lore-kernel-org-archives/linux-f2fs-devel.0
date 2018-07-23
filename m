@@ -1,356 +1,215 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2] f2fs: split discard command in prior to block layer
-Date: Mon, 23 Jul 2018 21:47:47 +0900
-Message-ID: <20180723124747.GB19644@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180708141433.24182-1-chao@kernel.org>
- <20180715012700.GA11571@jaegeuk-macbookpro.roam.corp.google.com>
- <4f2fafdd-eb5a-0dcd-272b-65aac5080677@kernel.org>
- <20180715031308.GI11571@jaegeuk-macbookpro.roam.corp.google.com>
- <30b14b7b-4036-d8a7-c477-0f578449e18d@kernel.org>
+Subject: Re: [PATCH] fsck.f2fs: rebuild qf_ino if quota node is
+ corrupted
+Date: Mon, 23 Jul 2018 21:49:21 +0900
+Message-ID: <20180723124921.GC19644@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180723031332.190083-1-shengyong1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1fhaHN-0000vm-Gw
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 23 Jul 2018 12:49:33 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fhaHI-00Fw0K-Qx
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 23 Jul 2018 12:49:33 +0000
 Content-Disposition: inline
-In-Reply-To: <30b14b7b-4036-d8a7-c477-0f578449e18d@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <20180723031332.190083-1-shengyong1@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Sheng Yong <shengyong1@huawei.com>
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 07/15, Chao Yu wrote:
-> On 2018/7/15 11:13, Jaegeuk Kim wrote:
-> > On 07/15, Chao Yu wrote:
-> >> Hi Jaegeuk,
-> >>
-> >> On 2018/7/15 9:27, Jaegeuk Kim wrote:
-> >>> On 07/08, Chao Yu wrote:
-> >>>> From: Chao Yu <yuchao0@huawei.com>
-> >>>>
-> >>>> Some devices has small max_{hw,}discard_sectors, so that in
-> >>>> __blkdev_issue_discard(), one big size discard bio can be split
-> >>>> into multiple small size discard bios, result in heavy load in IO
-> >>>> scheduler and device, which can hang other sync IO for long time.
-> >>>>
-> >>>> Now, f2fs is trying to control discard commands more elaboratively,
-> >>>> in order to make less conflict in between discard IO and user IO
-> >>>> to enhance application's performance, so in this patch, we will
-> >>>> split discard bio in f2fs in prior to in block layer to reduce
-> >>>> issuing multiple discard bios in a short time.
-> >>>
-> >>> Can we just change __submit_discard_cmd() to submit the large candidate
-> >>> partially and adjust lstart in the original candidate?
-> >>
-> >> Yep, could you check __submit_discard_cmd() implementation below? Does that
-> >> match the thoughts from you?
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>>>
-> >>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >>>> ---
-> >>>> v2:
-> >>>> - change to split discard command entry before submission.
-> >>>>  fs/f2fs/f2fs.h    |  13 +++---
-> >>>>  fs/f2fs/segment.c | 117 +++++++++++++++++++++++++++++++++++++-----------------
-> >>>>  2 files changed, 86 insertions(+), 44 deletions(-)
-> >>>>
-> >>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >>>> index c48b655d5d8d..359526d88d3f 100644
-> >>>> --- a/fs/f2fs/f2fs.h
-> >>>> +++ b/fs/f2fs/f2fs.h
-> >>>> @@ -178,7 +178,6 @@ enum {
-> >>>>  
-> >>>>  #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
-> >>>>  #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
-> >>>> -#define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
-> >>>>  #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
-> >>>>  #define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
-> >>>>  #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
-> >>>> @@ -709,22 +708,22 @@ static inline void set_extent_info(struct extent_info *ei, unsigned int fofs,
-> >>>>  }
-> >>>>  
-> >>>>  static inline bool __is_discard_mergeable(struct discard_info *back,
-> >>>> -						struct discard_info *front)
-> >>>> +			struct discard_info *front, unsigned int max_len)
-> >>>>  {
-> >>>>  	return (back->lstart + back->len == front->lstart) &&
-> >>>> -		(back->len + front->len < DEF_MAX_DISCARD_LEN);
-> >>>> +		(back->len + front->len <= max_len);
-> >>>>  }
-> >>>>  
-> >>>>  static inline bool __is_discard_back_mergeable(struct discard_info *cur,
-> >>>> -						struct discard_info *back)
-> >>>> +			struct discard_info *back, unsigned int max_len)
-> >>>>  {
-> >>>> -	return __is_discard_mergeable(back, cur);
-> >>>> +	return __is_discard_mergeable(back, cur, max_len);
-> >>>>  }
-> >>>>  
-> >>>>  static inline bool __is_discard_front_mergeable(struct discard_info *cur,
-> >>>> -						struct discard_info *front)
-> >>>> +			struct discard_info *front, unsigned int max_len)
-> >>>>  {
-> >>>> -	return __is_discard_mergeable(cur, front);
-> >>>> +	return __is_discard_mergeable(cur, front, max_len);
-> >>>>  }
-> >>>>  
-> >>>>  static inline bool __is_extent_mergeable(struct extent_info *back,
-> >>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >>>> index f7f56dd091b4..cbf8f3f9a8e7 100644
-> >>>> --- a/fs/f2fs/segment.c
-> >>>> +++ b/fs/f2fs/segment.c
-> >>>> @@ -966,17 +966,24 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
-> >>>>  	}
-> >>>>  }
-> >>>>  
-> >>>> -
-> > 
-> > ===================== BEGIN
-> > 
-> >>>> +static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
-> >>>> +				struct block_device *bdev, block_t lstart,
-> >>>> +				block_t start, block_t len);
-> >>>>  /* this function is copied from blkdev_issue_discard from block/blk-lib.c */
-> >>>>  static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
-> >>>>  						struct discard_policy *dpolicy,
-> >>>> -						struct discard_cmd *dc)
-> >>>> +						struct discard_cmd *dc,
-> >>>> +						unsigned int *issued)
-> >>>>  {
-> >>>> +	struct block_device *bdev = dc->bdev;
-> >>>> +	struct request_queue *q = bdev_get_queue(bdev);
-> >>>> +	unsigned int max_discard_blocks =
-> >>>> +			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
-> >>>>  	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-> >>>>  	struct list_head *wait_list = (dpolicy->type == DPOLICY_FSTRIM) ?
-> >>>>  					&(dcc->fstrim_list) : &(dcc->wait_list);
-> >>>> -	struct bio *bio = NULL;
-> >>>>  	int flag = dpolicy->sync ? REQ_SYNC : 0;
-> >>>> +	block_t lstart, start, len, total_len;
-> >>>>  
-> >>>>  	if (dc->state != D_PREP)
-> >>>>  		return;
-> >>>> @@ -984,30 +991,63 @@ static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
-> >>>>  	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
-> >>>>  		return;
-> >>>>  
-> >>>> -	trace_f2fs_issue_discard(dc->bdev, dc->start, dc->len);
-> >>>> -
-> >>>> -	dc->error = __blkdev_issue_discard(dc->bdev,
-> >>>> -				SECTOR_FROM_BLOCK(dc->start),
-> >>>> -				SECTOR_FROM_BLOCK(dc->len),
-> >>>> -				GFP_NOFS, 0, &bio);
-> >>>> -	if (!dc->error) {
-> >>>> -		/* should keep before submission to avoid D_DONE right away */
-> >>>> -		dc->state = D_SUBMIT;
-> >>>> -		atomic_inc(&dcc->issued_discard);
-> >>>> -		atomic_inc(&dcc->issing_discard);
-> >>>> -		if (bio) {
-> >>>> -			bio->bi_private = dc;
-> >>>> -			bio->bi_end_io = f2fs_submit_discard_endio;
-> >>>> -			bio->bi_opf |= flag;
-> >>>> -			submit_bio(bio);
-> >>>> -			list_move_tail(&dc->list, wait_list);
-> >>>> -			__check_sit_bitmap(sbi, dc->start, dc->start + dc->len);
-> >>>> -
-> >>>> -			f2fs_update_iostat(sbi, FS_DISCARD, 1);
-> >>>> +	trace_f2fs_issue_discard(bdev, dc->start, dc->len);
-> >>>> +
-> >>>> +	lstart = dc->lstart;
-> >>>> +	start = dc->start;
-> >>>> +	len = dc->len;
-> >>>> +	total_len = len;
-> >>>> +
-> >>>> +	while (total_len && *issued < dpolicy->max_requests) {
-> >>>> +		struct bio *bio = NULL;
-> >>>> +
-> >>>> +		if (len > max_discard_blocks)
-> >>>> +			len = max_discard_blocks;
-> >>>> +
-> >>>> +		dc->error = __blkdev_issue_discard(bdev,
-> >>>> +					SECTOR_FROM_BLOCK(start),
-> >>>> +					SECTOR_FROM_BLOCK(len),
-> >>>> +					GFP_NOFS, 0, &bio);
-> >>>> +		if (!dc->error) {
-> >>>> +			/*
-> >>>> +			 * should keep before submission to avoid D_DONE
-> >>>> +			 * right away
-> >>>> +			 */
-> >>>> +			dc->state = D_SUBMIT;
-> >>>> +			dc->len = len;
-> >>>> +			atomic_inc(&dcc->issued_discard);
-> >>>> +			atomic_inc(&dcc->issing_discard);
-> >>>> +			if (bio) {
-> >>>> +				bio->bi_private = dc;
-> >>>> +				bio->bi_end_io = f2fs_submit_discard_endio;
-> >>>> +				bio->bi_opf |= flag;
-> >>>> +				submit_bio(bio);
-> >>>> +				list_move_tail(&dc->list, wait_list);
-> >>>> +				__check_sit_bitmap(sbi, dc->start,
-> >>>> +							dc->start + dc->len);
-> >>>> +
-> >>>> +				f2fs_update_iostat(sbi, FS_DISCARD, 1);
-> >>>> +			}
-> >>>> +		} else {
-> >>>> +			__remove_discard_cmd(sbi, dc);
-> > 
-> > Keep the original one, since it's partially failed?
-> 
-> During __submit_discard_cmd(), we are trying to split original dc into multiple
-> dc, and once we failed to submit some of them, we will remove corresponding dc,
-> the removal logic is the same as before, not being changed...
-> 
-> If we want to keep failed dc and do retry, we'd better add another patch for
-> that, right?
+On 07/23, Sheng Yong wrote:
+> If a quota node is corrupted, it may be removed. But its qf_ino in
+> super blocks is not cleared. To keep quota feature available, let's
+> try to rebuild a new quota node.
 
-I thought removing failed portion of the dc.
+Hi Sheng,
 
-> 
-> > 
-> >>>> +			return;
-> >>>> +		}
-> >>>> +		lstart += len;
-> >>>> +		start += len;
-> >>>> +		total_len -= len;
-> >>>> +		len = total_len;
-> >>>> +		(*issued)++;
-> >>>> +
-> >>>> +		if (len) {
-> >>>> +			__update_discard_tree_range(sbi, bdev, lstart,
-> >>>> +								start, len);
-> > 
-> > Do we really need this? We already grabbed one candidate which was not merged
-> > well.
-> 
-> You mean submitting multiple bios based on one large size dc?
-
-Yes.
-
-> 
-> Previously, one bio references to one dc as below, in end_io, it will change
-> dc->state which can be detected by its own waiter.
-> 
-> 	bio->bi_private = dc;
-> 	bio->bi_end_io = f2fs_submit_discard_endio;
-> 	bio->bi_opf |= flag;
-> 
-> If multiple bios reference to one dc, it will be more complicated to handle
-> that. How do you think?
-
-I was concerned about too many entries in the lists. How about adding a refcnt
-to count how many bios were issued on the dc?
+IIRC, we need to rebuild whole quota structures, no?
 
 Thanks,
 
 > 
-> Thanks,
+> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+> ---
+>  fsck/fsck.c  | 82 +++++++++++++++++++++++++++++++++++++++++++++++++---
+>  fsck/fsck.h  |  1 +
+>  fsck/mount.c |  7 +++--
+>  3 files changed, 84 insertions(+), 6 deletions(-)
 > 
-> > 
-> >>>> +			dc = (struct discard_cmd *)f2fs_lookup_rb_tree(
-> >>>> +						&dcc->root, NULL, lstart);
-> >>>> +			f2fs_bug_on(sbi, !dc);
-> >>>>  		}
-> >>>> -	} else {
-> >>>> -		__remove_discard_cmd(sbi, dc);
-> >>>>  	}
-> >>>> +
-> >>>> +	return;
-> >>>>  }
-> > 
-> > ======================= END
-> > 
-> > 
-> >>>>  
-> >>>>  static struct discard_cmd *__insert_discard_tree(struct f2fs_sb_info *sbi,
-> >>>> @@ -1088,10 +1128,11 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
-> >>>>  	struct discard_cmd *dc;
-> >>>>  	struct discard_info di = {0};
-> >>>>  	struct rb_node **insert_p = NULL, *insert_parent = NULL;
-> >>>> +	struct request_queue *q = bdev_get_queue(bdev);
-> >>>> +	unsigned int max_discard_blocks =
-> >>>> +			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
-> >>>>  	block_t end = lstart + len;
-> >>>>  
-> >>>> -	mutex_lock(&dcc->cmd_lock);
-> >>>> -
-> >>>>  	dc = (struct discard_cmd *)f2fs_lookup_rb_tree_ret(&dcc->root,
-> >>>>  					NULL, lstart,
-> >>>>  					(struct rb_entry **)&prev_dc,
-> >>>> @@ -1131,7 +1172,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
-> >>>>  
-> >>>>  		if (prev_dc && prev_dc->state == D_PREP &&
-> >>>>  			prev_dc->bdev == bdev &&
-> >>>> -			__is_discard_back_mergeable(&di, &prev_dc->di)) {
-> >>>> +			__is_discard_back_mergeable(&di, &prev_dc->di,
-> >>>> +							max_discard_blocks)) {
-> >>>>  			prev_dc->di.len += di.len;
-> >>>>  			dcc->undiscard_blks += di.len;
-> >>>>  			__relocate_discard_cmd(dcc, prev_dc);
-> >>>> @@ -1142,7 +1184,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
-> >>>>  
-> >>>>  		if (next_dc && next_dc->state == D_PREP &&
-> >>>>  			next_dc->bdev == bdev &&
-> >>>> -			__is_discard_front_mergeable(&di, &next_dc->di)) {
-> >>>> +			__is_discard_front_mergeable(&di, &next_dc->di,
-> >>>> +							max_discard_blocks)) {
-> >>>>  			next_dc->di.lstart = di.lstart;
-> >>>>  			next_dc->di.len += di.len;
-> >>>>  			next_dc->di.start = di.start;
-> >>>> @@ -1165,8 +1208,6 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
-> >>>>  		node = rb_next(&prev_dc->rb_node);
-> >>>>  		next_dc = rb_entry_safe(node, struct discard_cmd, rb_node);
-> >>>>  	}
-> >>>> -
-> >>>> -	mutex_unlock(&dcc->cmd_lock);
-> >>>>  }
-> >>>>  
-> >>>>  static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
-> >>>> @@ -1181,7 +1222,9 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
-> >>>>  
-> >>>>  		blkstart -= FDEV(devi).start_blk;
-> >>>>  	}
-> >>>> +	mutex_lock(&SM_I(sbi)->dcc_info->cmd_lock);
-> >>>>  	__update_discard_tree_range(sbi, bdev, lblkstart, blkstart, blklen);
-> >>>> +	mutex_unlock(&SM_I(sbi)->dcc_info->cmd_lock);
-> >>>>  	return 0;
-> >>>>  }
-> >>>>  
-> >>>> @@ -1220,9 +1263,9 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
-> >>>>  		}
-> >>>>  
-> >>>>  		dcc->next_pos = dc->lstart + dc->len;
-> >>>> -		__submit_discard_cmd(sbi, dpolicy, dc);
-> >>>> +		__submit_discard_cmd(sbi, dpolicy, dc, &issued);
-> >>>>  
-> >>>> -		if (++issued >= dpolicy->max_requests)
-> >>>> +		if (issued >= dpolicy->max_requests)
-> >>>>  			break;
-> >>>>  next:
-> >>>>  		node = rb_next(&dc->rb_node);
-> >>>> @@ -1277,9 +1320,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> >>>>  				break;
-> >>>>  			}
-> >>>>  
-> >>>> -			__submit_discard_cmd(sbi, dpolicy, dc);
-> >>>> +			__submit_discard_cmd(sbi, dpolicy, dc, &issued);
-> >>>>  
-> >>>> -			if (++issued >= dpolicy->max_requests)
-> >>>> +			if (issued >= dpolicy->max_requests)
-> >>>>  				break;
-> >>>>  		}
-> >>>>  		blk_finish_plug(&plug);
-> >>>> @@ -2475,9 +2518,9 @@ static unsigned int __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
-> >>>>  			goto skip;
-> >>>>  		}
-> >>>>  
-> >>>> -		__submit_discard_cmd(sbi, dpolicy, dc);
-> >>>> +		__submit_discard_cmd(sbi, dpolicy, dc, &issued);
-> >>>>  
-> >>>> -		if (++issued >= dpolicy->max_requests) {
-> >>>> +		if (issued >= dpolicy->max_requests) {
-> >>>>  			start = dc->lstart + dc->len;
-> >>>>  
-> >>>>  			blk_finish_plug(&plug);
-> >>>> -- 
-> >>>> 2.16.2.17.g38e79b1fd
+> diff --git a/fsck/fsck.c b/fsck/fsck.c
+> index e95dedf..dd10182 100644
+> --- a/fsck/fsck.c
+> +++ b/fsck/fsck.c
+> @@ -10,6 +10,7 @@
+>   */
+>  #include "fsck.h"
+>  #include "quotaio.h"
+> +#include "quotaio_v2.h"
+>  #include <time.h>
+>  
+>  char *tree_mark;
+> @@ -1697,13 +1698,80 @@ int fsck_chk_quota_node(struct f2fs_sb_info *sbi)
+>  		}
+>  		ret = fsck_chk_node_blk(sbi, NULL, ino,
+>  				F2FS_FT_REG_FILE, TYPE_INODE, &blk_cnt, NULL);
+> -		if (ret)
+> -			ASSERT_MSG("wrong quota inode, qtype [%d] ino [0x%x]",
+> -								qtype, ino);
+> +		if (ret) {
+> +			/* sanity_check_nid failed, node should be removed */
+> +			ASSERT_MSG("[0x%x] wrong quota inode", ino);
+> +			if (c.fix_on)
+> +				F2FS_FSCK(sbi)->corrupt_quotas = 1 << qtype;
+> +		}
+>  	}
+>  	return ret;
+>  }
+>  
+> +static nid_t prepare_rebuild_qf_inode(struct f2fs_sb_info *sbi, int qtype)
+> +{
+> +	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
+> +	struct f2fs_summary sum;
+> +	struct f2fs_node *qf_node;
+> +	nid_t nid = QUOTA_INO(F2FS_RAW_SUPER(sbi), qtype);
+> +	block_t node_blkaddr;
+> +	int ret;
+> +
+> +	DBG(1, "Rebuild Quota file (qtype [%3d] ino [0x%x])\n", qtype, nid);
+> +
+> +	qf_node = calloc(F2FS_BLKSIZE, 1);
+> +	if (!qf_node) {
+> +		MSG(0, "\tError: calloc failed for qf_inode!!!\n");
+> +		return 0;
+> +	}
+> +
+> +	/* prepare qf_node */
+> +	qf_node->footer.nid = cpu_to_le32(nid);
+> +	qf_node->footer.ino = cpu_to_le32(nid);
+> +	qf_node->footer.cp_ver = cpu_to_le64(get_cp(checkpoint_ver));
+> +
+> +	qf_node->i.i_mode = cpu_to_le16(0x8180);
+> +	qf_node->i.i_links = cpu_to_le32(1);
+> +	qf_node->i.i_uid = cpu_to_le32(getuid());
+> +	qf_node->i.i_gid = cpu_to_le32(getgid());
+> +	qf_node->i.i_size = 0;
+> +	qf_node->i.i_blocks = 1;
+> +	qf_node->i.i_atime = cpu_to_le32(time(NULL));
+> +	qf_node->i.i_atime_nsec = 0;
+> +	qf_node->i.i_ctime = cpu_to_le32(time(NULL));
+> +	qf_node->i.i_ctime_nsec = 0;
+> +	qf_node->i.i_mtime = cpu_to_le32(time(NULL));
+> +	qf_node->i.i_mtime_nsec = 0;
+> +	qf_node->i.i_generation = 0;
+> +	qf_node->i.i_xattr_nid = 0;
+> +	qf_node->i.i_flags = FS_IMMUTABLE_FL;
+> +	qf_node->i.i_current_depth = cpu_to_le32(1);
+> +	qf_node->i.i_dir_level = DEF_DIR_LEVEL;
+> +	if (c.feature & cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR)) {
+> +		qf_node->i.i_inline = F2FS_EXTRA_ATTR;
+> +		qf_node->i.i_extra_isize =
+> +				cpu_to_le16(F2FS_TOTAL_EXTRA_ATTR_SIZE);
+> +	}
+> +	if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CRTIME)) {
+> +		qf_node->i.i_crtime = cpu_to_le32(time(NULL));
+> +		qf_node->i.i_crtime_nsec = 0;
+> +	}
+> +
+> +	/* write back qf inode */
+> +	node_blkaddr = 0;
+> +	set_summary(&sum, nid, 0, 0);
+> +	reserve_new_block(sbi, &node_blkaddr, &sum, CURSEG_HOT_NODE);
+> +	update_nat_blkaddr(sbi, nid, nid, node_blkaddr);
+> +	DBG(1, "Write new qf_node to blk %#x\n", node_blkaddr);
+> +
+> +	ret = dev_write_block(qf_node, node_blkaddr);
+> +	ASSERT(ret >= 0);
+> +	f2fs_clear_bit(nid, F2FS_FSCK(sbi)->nat_area_bitmap);
+> +
+> +	free(qf_node);
+> +	return nid;
+> +}
+> +
+>  int fsck_chk_quota_files(struct f2fs_sb_info *sbi)
+>  {
+>  	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
+> @@ -1722,6 +1790,12 @@ int fsck_chk_quota_files(struct f2fs_sb_info *sbi)
+>  		if (!ino)
+>  			continue;
+>  
+> +		if (fsck->corrupt_quotas & (1 << qtype) && c.fix_on) {
+> +			ino = prepare_rebuild_qf_inode(sbi, qtype);
+> +			if (!ino)
+> +				continue;
+> +		}
+> +
+>  	        DBG(1, "Checking Quota file ([%3d] ino [0x%x])\n", qtype, ino);
+>  		needs_writeout = 0;
+>  		ret = quota_compare_and_update(sbi, qtype, &needs_writeout,
+> @@ -1733,7 +1807,7 @@ int fsck_chk_quota_files(struct f2fs_sb_info *sbi)
+>  
+>  		/* Something is wrong */
+>  		if (c.fix_on) {
+> -			DBG(0, "Fixing Quota file ([%3d] ino [0x%x])\n",
+> +			FIX_MSG("Fixing Quota file ([%3d] ino [0x%x])\n",
+>  							qtype, ino);
+>  			f2fs_filesize_update(sbi, ino, 0);
+>  			ret = quota_write_inode(sbi, qtype);
+> diff --git a/fsck/fsck.h b/fsck/fsck.h
+> index 580e851..393c995 100644
+> --- a/fsck/fsck.h
+> +++ b/fsck/fsck.h
+> @@ -91,6 +91,7 @@ struct f2fs_fsck {
+>  	u32 nat_valid_inode_cnt;
+>  
+>  	struct quota_ctx *qctx;
+> +	unsigned short corrupt_quotas;
+>  };
+>  
+>  #define BLOCK_SZ		4096
+> diff --git a/fsck/mount.c b/fsck/mount.c
+> index 3c9607f..121b26a 100644
+> --- a/fsck/mount.c
+> +++ b/fsck/mount.c
+> @@ -2022,8 +2022,11 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left, int type)
+>  				if (se2->valid_blocks)
+>  					break;
+>  			}
+> -			if (i == sbi->segs_per_sec)
+> +			if (i == sbi->segs_per_sec) {
+> +				/* find a free seg, init its type */
+> +				se->orig_type = type;
+>  				return 0;
+> +			}
+>  		}
+>  
+>  		if (se->type == type &&
+> @@ -2244,7 +2247,7 @@ void write_superblock(struct f2fs_super_block *new_sb)
+>  		ASSERT(ret >= 0);
+>  	}
+>  	free(buf);
+> -	DBG(0, "Info: Done to rebuild superblock\n");
+> +	MSG(0, "Info: Done to rebuild superblock\n");
+>  }
+>  
+>  void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
+> -- 
+> 2.17.1
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
