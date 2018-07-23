@@ -1,102 +1,121 @@
 From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH 5/5] f2fs: add proc entry to show victim_secmap
- bitmap
-Date: Mon, 23 Jul 2018 22:10:22 +0800
-Message-ID: <1532355022-163029-6-git-send-email-yunlong.song@huawei.com>
+Subject: [PATCH 4/5] f2fs: let BG_GC check every dirty segments and gc over a threshold
+Date: Mon, 23 Jul 2018 22:10:21 +0800
+Message-ID: <1532355022-163029-5-git-send-email-yunlong.song@huawei.com>
 References: <1532355022-163029-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yunlong.song@huawei.com>) id 1fhbYG-0004xi-At
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 23 Jul 2018 14:11:04 +0000
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fhbYD-009ors-II
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 23 Jul 2018 14:11:04 +0000
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1532355022-163029-1-git-send-email-yunlong.song@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, miaoxie@huawei.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch adds a new proc entry to show victim_secmap information in
-more detail, which is very helpful to know the get_victim candidate
-status clearly, and helpful to debug problems (e.g., some sections can
-not gc all of its blocks, since some blocks belong to atomic file,
-leaving victim_secmap with section bit setting, in extrem case, this
-will lead all bytes of victim_secmap setting with 0xff).
+BG_GC is triggered in idle time, so it is better check every dirty
+segment and finds the best victim to gc. Otherwise, BG_GC will be
+limited to only 8G areas, and probably select a victim which has nearly
+full of valid blocks, resulting a big WAI. Besides, we also add a
+bggc_threshold (which is the old "fggc_threshold", so revert commit
+"299254") to stop BG_GC when there is no good choice. This is especially
+good for large section case to reduce WAI.
 
 Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 ---
- fs/f2fs/sysfs.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ fs/f2fs/f2fs.h    |  2 ++
+ fs/f2fs/gc.c      | 23 ++++++++++++++++++++---
+ fs/f2fs/segment.h |  9 +++++++++
+ 3 files changed, 31 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index bca1236..f22782a 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -615,6 +615,28 @@ static int __maybe_unused iostat_info_seq_show(struct seq_file *seq,
- 	return 0;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f8a7b42..24a9d7f 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1220,6 +1220,8 @@ struct f2fs_sb_info {
+ 	unsigned int cur_fg_victim_sec;		/* current FG_GC victim section num */
+ 	unsigned int cur_bg_victim_sec;		/* current BG_GC victim section num */
+ 	unsigned int gc_mode;			/* current GC state */
++	/* threshold for selecting bg victims */
++	u64 bggc_threshold;
+ 	/* for skip statistic */
+ 	unsigned long long skipped_atomic_files[2];	/* FG_GC and BG_GC */
+ 
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 0e7a265..21e8d59 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -189,9 +189,8 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
+ 		p->ofs_unit = sbi->segs_per_sec;
+ 	}
+ 
+-	/* we need to check every dirty segments in the FG_GC case */
+-	if (gc_type != FG_GC &&
+-			(sbi->gc_mode != GC_URGENT) &&
++	/* we need to check every dirty segments in the GC case */
++	if (p->alloc_mode == SSR &&
+ 			p->max_search > sbi->max_victim_search)
+ 		p->max_search = sbi->max_victim_search;
+ 
+@@ -230,6 +229,10 @@ static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
+ 	for_each_set_bit(secno, dirty_i->victim_secmap, MAIN_SECS(sbi)) {
+ 		if (sec_usage_check(sbi, secno))
+ 			continue;
++
++		if (no_bggc_candidate(sbi, secno))
++			continue;
++
+ 		clear_bit(secno, dirty_i->victim_secmap);
+ 		return GET_SEG_FROM_SEC(sbi, secno);
+ 	}
+@@ -368,6 +371,10 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+ 		if (sec_usage_check(sbi, secno))
+ 			goto next;
+ 
++		if (gc_type == BG_GC && p.alloc_mode == LFS &&
++					no_bggc_candidate(sbi, secno))
++			goto next;
++
+ 		cost = get_gc_cost(sbi, segno, &p);
+ 
+ 		if (p.min_cost > cost) {
+@@ -1140,8 +1147,18 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+ 
+ void f2fs_build_gc_manager(struct f2fs_sb_info *sbi)
+ {
++	u64 main_count, resv_count, ovp_count;
++
+ 	DIRTY_I(sbi)->v_ops = &default_v_ops;
+ 
++	/* threshold of # of valid blocks in a section for victims of BG_GC */
++	main_count = SM_I(sbi)->main_segments << sbi->log_blocks_per_seg;
++	resv_count = SM_I(sbi)->reserved_segments << sbi->log_blocks_per_seg;
++	ovp_count = SM_I(sbi)->ovp_segments << sbi->log_blocks_per_seg;
++
++	sbi->bggc_threshold = div64_u64((main_count - ovp_count) *
++					BLKS_PER_SEC(sbi), (main_count - resv_count));
++
+ 	sbi->gc_pin_file_threshold = DEF_GC_FAILED_PINNED_FILES;
+ 
+ 	/* give warm/cold data area from slower device */
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index b21bb96..932e59b 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -785,6 +785,15 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
+ 				- (base + 1) + type;
  }
  
-+static int __maybe_unused victim_bits_seq_show(struct seq_file *seq,
-+						void *offset)
++static inline bool no_bggc_candidate(struct f2fs_sb_info *sbi,
++                        unsigned int secno)
 +{
-+	struct super_block *sb = seq->private;
-+	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-+	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
-+	int i;
-+
-+	seq_puts(seq, "format: victim_secmap bitmaps\n");
-+
-+	for (i = 0; i < MAIN_SECS(sbi); i++) {
-+		if ((i % 10) == 0)
-+			seq_printf(seq, "%-10d", i);
-+		seq_printf(seq, "%d", test_bit(i, dirty_i->victim_secmap) ? 1 : 0);
-+		if ((i % 10) == 9 || i == (MAIN_SECS(sbi) - 1))
-+			seq_putc(seq, '\n');
-+		else
-+			seq_putc(seq, ' ');
-+	}
-+	return 0;
++    if (get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true) >
++                        sbi->bggc_threshold)
++        return true;
++    return false;
 +}
 +
- int __init f2fs_init_sysfs(void)
+ static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int secno)
  {
- 	int ret;
-@@ -664,6 +686,8 @@ int f2fs_register_sysfs(struct f2fs_sb_info *sbi)
- 				segment_bits_seq_show, sb);
- 		proc_create_single_data("iostat_info", S_IRUGO, sbi->s_proc,
- 				iostat_info_seq_show, sb);
-+		proc_create_single_data("victim_bits", S_IRUGO, sbi->s_proc,
-+				victim_bits_seq_show, sb);
- 	}
- 	return 0;
- }
-@@ -674,6 +698,7 @@ void f2fs_unregister_sysfs(struct f2fs_sb_info *sbi)
- 		remove_proc_entry("iostat_info", sbi->s_proc);
- 		remove_proc_entry("segment_info", sbi->s_proc);
- 		remove_proc_entry("segment_bits", sbi->s_proc);
-+		remove_proc_entry("victim_bits", sbi->s_proc);
- 		remove_proc_entry(sbi->sb->s_id, f2fs_proc_root);
- 	}
- 	kobject_del(&sbi->s_kobj);
+ 	if (IS_CURSEC(sbi, secno) || (sbi->cur_fg_victim_sec == secno) ||
 -- 
 1.8.5.2
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
