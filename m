@@ -1,217 +1,140 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH 2/5] f2fs: add cur_victim_sec for BG_GC to avoid skipping
- BG_GC victim
-Date: Tue, 24 Jul 2018 22:17:39 +0800
-Message-ID: <07419cf7-057a-e92a-2478-4f827a1d6b2f@kernel.org>
+Subject: Re: [PATCH 4/5] f2fs: let BG_GC check every dirty segments and gc
+ over a threshold
+Date: Tue, 24 Jul 2018 22:52:08 +0800
+Message-ID: <866f57e1-ef22-112c-6386-f80a054d1e32@kernel.org>
 References: <1532355022-163029-1-git-send-email-yunlong.song@huawei.com>
- <1532355022-163029-3-git-send-email-yunlong.song@huawei.com>
- <42824b9f-6ebb-2280-0a62-c74954fff39c@huawei.com>
- <a052ec0f-1581-a199-0eb4-7adeef6d55fc@huawei.com>
+ <1532355022-163029-5-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a052ec0f-1581-a199-0eb4-7adeef6d55fc@huawei.com>
+In-Reply-To: <1532355022-163029-5-git-send-email-yunlong.song@huawei.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>, Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org, yunlong.song@icloud.com
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
 Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/7/24 21:39, Yunlong Song wrote:
-> 
-> 
-> On 2018/7/24 21:11, Chao Yu wrote:
->> On 2018/7/23 22:10, Yunlong Song wrote:
->>> If f2fs aborts BG_GC, then the section bit of victim_secmap will be set,
->>> which will cause the section skipped in the future get_victim of BG_GC.
->>> In a worst case that each section in the victim_secmap is set and there
->>> are enough free sections (so FG_GC can not be triggered), then BG_GC
->>> will skip all the sections and cannot find any victims, causing BG_GC
->> If f2fs aborts BG_GC, we'd better to clear victim_secmap?
-> We can keep the bit set in victim_secmap for FG_GC use next time as before, the
+On 2018/7/23 22:10, Yunlong Song wrote:
+> BG_GC is triggered in idle time, so it is better check every dirty
+> segment and finds the best victim to gc. Otherwise, BG_GC will be
+> limited to only 8G areas, and probably select a victim which has nearly
 
-No, I don't think we could assume that FGGC will come soon, and in adaptive
-mode, after we triggered SSR agressively, FG_GC will be much less.
+If 8GB range is not enough and just hard code now, we can export it in sysfs and
+do the configuration.
 
-For your case, we need to clear victim_secmap.
+> full of valid blocks, resulting a big WAI. Besides, we also add a
 
-> diffierent
-> is that this patch will make BG_GC ignore the bit set in victim_secmap, so BG_GC
-> can still
-> get the the section (which is in set) as victim and do GC jobs.
+BGGC should move cold data anway, if we only consider WA, hot data section can
+be selected with very high probability, but hot data can do OPU itself sooner or
+later, so moving them will cause higher WA.
 
-I guess this scenario is the case our previous scheme tries to prevent, since if
-in selected section, all block there are cached and set dirty, BGGC will end up
-with doing nothing, it's inefficient.
+I think the better way is we can export a sysfs entry to adjust factor to
+control weight of aging or valid block of section. So that, user can adjust it
+to select less valid block candidate first instead of high aging one.
 
 Thanks,
 
->>
->>> failed each time. Besides, SSR also uses BG_GC to get ssr segment, if
->> Looks like foreground GC will try to grab section which is selected as
->> victim of background GC?
-> Yes, this is exactly the value of victim_secmap, it helps FG_GC reduce time in
-> selecting victims
-> and continue the job which BG_GC has not finished.
+> bggc_threshold (which is the old "fggc_threshold", so revert commit
+> "299254") to stop BG_GC when there is no good choice. This is especially
+> good for large section case to reduce WAI.
 > 
->>
->> Thanks,
->>
->>> many sections in the victim_secmap are set, then SSR cannot get a proper
->>> ssr segment to allocate blocks, which makes SSR inefficiently. To fix
->>> this problem, we can add cur_victim_sec for BG_GC similar like that in
->>> FG_GC to avoid selecting the same section repeatedly.
->>>
->>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->>> ---
->>>   fs/f2fs/f2fs.h              |  3 ++-
->>>   fs/f2fs/gc.c                | 15 +++++++++------
->>>   fs/f2fs/segment.h           |  3 ++-
->>>   fs/f2fs/super.c             |  3 ++-
->>>   include/trace/events/f2fs.h | 18 ++++++++++++------
->>>   5 files changed, 27 insertions(+), 15 deletions(-)
->>>
->>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>> index 57a8851..f8a7b42 100644
->>> --- a/fs/f2fs/f2fs.h
->>> +++ b/fs/f2fs/f2fs.h
->>> @@ -1217,7 +1217,8 @@ struct f2fs_sb_info {
->>>       /* for cleaning operations */
->>>       struct mutex gc_mutex;            /* mutex for GC */
->>>       struct f2fs_gc_kthread    *gc_thread;    /* GC thread */
->>> -    unsigned int cur_victim_sec;        /* current victim section num */
->>> +    unsigned int cur_fg_victim_sec;        /* current FG_GC victim section
->>> num */
->>> +    unsigned int cur_bg_victim_sec;        /* current BG_GC victim section
->>> num */
->>>       unsigned int gc_mode;            /* current GC state */
->>>       /* for skip statistic */
->>>       unsigned long long skipped_atomic_files[2];    /* FG_GC and BG_GC */
->>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>> index 2ba470d..705d419 100644
->>> --- a/fs/f2fs/gc.c
->>> +++ b/fs/f2fs/gc.c
->>> @@ -367,8 +367,6 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
->>>             if (sec_usage_check(sbi, secno))
->>>               goto next;
->>> -        if (gc_type == BG_GC && test_bit(secno, dirty_i->victim_secmap))
->>> -            goto next;
->>>             cost = get_gc_cost(sbi, segno, &p);
->>>   @@ -391,14 +389,17 @@ static int get_victim_by_default(struct f2fs_sb_info
->>> *sbi,
->>>           if (p.alloc_mode == LFS) {
->>>               secno = GET_SEC_FROM_SEG(sbi, p.min_segno);
->>>               if (gc_type == FG_GC)
->>> -                sbi->cur_victim_sec = secno;
->>> -            else
->>> +                sbi->cur_fg_victim_sec = secno;
->>> +            else {
->>>                   set_bit(secno, dirty_i->victim_secmap);
->>> +                sbi->cur_bg_victim_sec = secno;
->>> +            }
->>>           }
->>>           *result = (p.min_segno / p.ofs_unit) * p.ofs_unit;
->>>             trace_f2fs_get_victim(sbi->sb, type, gc_type, &p,
->>> -                sbi->cur_victim_sec,
->>> +                sbi->cur_fg_victim_sec,
->>> +                sbi->cur_bg_victim_sec,
->>>                   prefree_segments(sbi), free_segments(sbi));
->>>       }
->>>   out:
->>> @@ -1098,7 +1099,9 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>>       }
->>>         if (gc_type == FG_GC)
->>> -        sbi->cur_victim_sec = NULL_SEGNO;
->>> +        sbi->cur_fg_victim_sec = NULL_SEGNO;
->>> +    else
->>> +        sbi->cur_bg_victim_sec = NULL_SEGNO;
->>>         if (!sync) {
->>>           if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
->>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
->>> index 5049551..b21bb96 100644
->>> --- a/fs/f2fs/segment.h
->>> +++ b/fs/f2fs/segment.h
->>> @@ -787,7 +787,8 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info
->>> *sbi, int base, int type)
->>>     static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int
->>> secno)
->>>   {
->>> -    if (IS_CURSEC(sbi, secno) || (sbi->cur_victim_sec == secno))
->>> +    if (IS_CURSEC(sbi, secno) || (sbi->cur_fg_victim_sec == secno) ||
->>> +        (sbi->cur_bg_victim_sec == secno))
->>>           return true;
->>>       return false;
->>>   }
->>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>> index 7187885..ef69ebf 100644
->>> --- a/fs/f2fs/super.c
->>> +++ b/fs/f2fs/super.c
->>> @@ -2386,7 +2386,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
->>>       sbi->root_ino_num = le32_to_cpu(raw_super->root_ino);
->>>       sbi->node_ino_num = le32_to_cpu(raw_super->node_ino);
->>>       sbi->meta_ino_num = le32_to_cpu(raw_super->meta_ino);
->>> -    sbi->cur_victim_sec = NULL_SECNO;
->>> +    sbi->cur_fg_victim_sec = NULL_SECNO;
->>> +    sbi->cur_bg_victim_sec = NULL_SECNO;
->>>       sbi->max_victim_search = DEF_MAX_VICTIM_SEARCH;
->>>         sbi->dir_level = DEF_DIR_LEVEL;
->>> diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
->>> index 7956989..0f01f82 100644
->>> --- a/include/trace/events/f2fs.h
->>> +++ b/include/trace/events/f2fs.h
->>> @@ -693,10 +693,12 @@
->>>   TRACE_EVENT(f2fs_get_victim,
->>>         TP_PROTO(struct super_block *sb, int type, int gc_type,
->>> -            struct victim_sel_policy *p, unsigned int pre_victim,
->>> +            struct victim_sel_policy *p, unsigned int pre_fg_victim,
->>> +            unsigned int pre_bg_victim,
->>>               unsigned int prefree, unsigned int free),
->>>   -    TP_ARGS(sb, type, gc_type, p, pre_victim, prefree, free),
->>> +    TP_ARGS(sb, type, gc_type, p, pre_fg_victim, pre_bg_victim,
->>> +        prefree, free),
->>>         TP_STRUCT__entry(
->>>           __field(dev_t,    dev)
->>> @@ -707,7 +709,8 @@
->>>           __field(unsigned int,    victim)
->>>           __field(unsigned int,    cost)
->>>           __field(unsigned int,    ofs_unit)
->>> -        __field(unsigned int,    pre_victim)
->>> +        __field(unsigned int,    pre_fg_victim)
->>> +        __field(unsigned int,    pre_bg_victim)
->>>           __field(unsigned int,    prefree)
->>>           __field(unsigned int,    free)
->>>       ),
->>> @@ -721,14 +724,16 @@
->>>           __entry->victim        = p->min_segno;
->>>           __entry->cost        = p->min_cost;
->>>           __entry->ofs_unit    = p->ofs_unit;
->>> -        __entry->pre_victim    = pre_victim;
->>> +        __entry->pre_fg_victim    = pre_fg_victim;
->>> +        __entry->pre_bg_victim    = pre_bg_victim;
->>>           __entry->prefree    = prefree;
->>>           __entry->free        = free;
->>>       ),
->>>         TP_printk("dev = (%d,%d), type = %s, policy = (%s, %s, %s), "
->>>           "victim = %u, cost = %u, ofs_unit = %u, "
->>> -        "pre_victim_secno = %d, prefree = %u, free = %u",
->>> +        "pre_fg_victim_secno = %d, pre_bg_victim_secno = %d, "
->>> +        "prefree = %u, free = %u",
->>>           show_dev(__entry->dev),
->>>           show_data_type(__entry->type),
->>>           show_gc_type(__entry->gc_type),
->>> @@ -737,7 +742,8 @@
->>>           __entry->victim,
->>>           __entry->cost,
->>>           __entry->ofs_unit,
->>> -        (int)__entry->pre_victim,
->>> +        (int)__entry->pre_fg_victim,
->>> +        (int)__entry->pre_bg_victim,
->>>           __entry->prefree,
->>>           __entry->free)
->>>   );
->>>
->>
->> .
->>
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> ---
+>  fs/f2fs/f2fs.h    |  2 ++
+>  fs/f2fs/gc.c      | 23 ++++++++++++++++++++---
+>  fs/f2fs/segment.h |  9 +++++++++
+>  3 files changed, 31 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index f8a7b42..24a9d7f 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1220,6 +1220,8 @@ struct f2fs_sb_info {
+>  	unsigned int cur_fg_victim_sec;		/* current FG_GC victim section num */
+>  	unsigned int cur_bg_victim_sec;		/* current BG_GC victim section num */
+>  	unsigned int gc_mode;			/* current GC state */
+> +	/* threshold for selecting bg victims */
+> +	u64 bggc_threshold;
+>  	/* for skip statistic */
+>  	unsigned long long skipped_atomic_files[2];	/* FG_GC and BG_GC */
+>  
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 0e7a265..21e8d59 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -189,9 +189,8 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
+>  		p->ofs_unit = sbi->segs_per_sec;
+>  	}
+>  
+> -	/* we need to check every dirty segments in the FG_GC case */
+> -	if (gc_type != FG_GC &&
+> -			(sbi->gc_mode != GC_URGENT) &&
+> +	/* we need to check every dirty segments in the GC case */
+> +	if (p->alloc_mode == SSR &&
+>  			p->max_search > sbi->max_victim_search)
+>  		p->max_search = sbi->max_victim_search;
+>  
+> @@ -230,6 +229,10 @@ static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
+>  	for_each_set_bit(secno, dirty_i->victim_secmap, MAIN_SECS(sbi)) {
+>  		if (sec_usage_check(sbi, secno))
+>  			continue;
+> +
+> +		if (no_bggc_candidate(sbi, secno))
+> +			continue;
+> +
+>  		clear_bit(secno, dirty_i->victim_secmap);
+>  		return GET_SEG_FROM_SEC(sbi, secno);
+>  	}
+> @@ -368,6 +371,10 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+>  		if (sec_usage_check(sbi, secno))
+>  			goto next;
+>  
+> +		if (gc_type == BG_GC && p.alloc_mode == LFS &&
+> +					no_bggc_candidate(sbi, secno))
+> +			goto next;
+> +
+>  		cost = get_gc_cost(sbi, segno, &p);
+>  
+>  		if (p.min_cost > cost) {
+> @@ -1140,8 +1147,18 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>  
+>  void f2fs_build_gc_manager(struct f2fs_sb_info *sbi)
+>  {
+> +	u64 main_count, resv_count, ovp_count;
+> +
+>  	DIRTY_I(sbi)->v_ops = &default_v_ops;
+>  
+> +	/* threshold of # of valid blocks in a section for victims of BG_GC */
+> +	main_count = SM_I(sbi)->main_segments << sbi->log_blocks_per_seg;
+> +	resv_count = SM_I(sbi)->reserved_segments << sbi->log_blocks_per_seg;
+> +	ovp_count = SM_I(sbi)->ovp_segments << sbi->log_blocks_per_seg;
+> +
+> +	sbi->bggc_threshold = div64_u64((main_count - ovp_count) *
+> +					BLKS_PER_SEC(sbi), (main_count - resv_count));
+> +
+>  	sbi->gc_pin_file_threshold = DEF_GC_FAILED_PINNED_FILES;
+>  
+>  	/* give warm/cold data area from slower device */
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index b21bb96..932e59b 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -785,6 +785,15 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
+>  				- (base + 1) + type;
+>  }
+>  
+> +static inline bool no_bggc_candidate(struct f2fs_sb_info *sbi,
+> +                        unsigned int secno)
+> +{
+> +    if (get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true) >
+> +                        sbi->bggc_threshold)
+> +        return true;
+> +    return false;
+> +}
+> +
+>  static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int secno)
+>  {
+>  	if (IS_CURSEC(sbi, secno) || (sbi->cur_fg_victim_sec == secno) ||
 > 
