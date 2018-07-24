@@ -1,48 +1,54 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: fix wrong kernel message when recover
- fsync data on ro fs
-Date: Tue, 24 Jul 2018 10:38:09 +0800
-Message-ID: <882106d3-c0b1-5998-06bb-d0abd0839aeb@huawei.com>
-References: <1531983434-30722-1-git-send-email-heyunlei@huawei.com>
+Subject: Re: [PATCH v3] f2fs: issue discard align to section in LFS mode
+Date: Tue, 24 Jul 2018 10:40:27 +0800
+Message-ID: <bec2c80d-13ca-e6be-f73a-ee8c6e9f6462@huawei.com>
+References: <1531836275-94933-1-git-send-email-yunlong.song@huawei.com>
+ <1532005095-111878-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fhnDV-000344-O4
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 24 Jul 2018 02:38:25 +0000
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fhnDT-00HE4h-Gr
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 24 Jul 2018 02:38:25 +0000
-In-Reply-To: <1531983434-30722-1-git-send-email-heyunlei@huawei.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1532005095-111878-1-git-send-email-yunlong.song@huawei.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: zhangdianfang@huawei.com
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/7/19 14:57, Yunlei He wrote:
-> This patch fix wrong message info for recover fsync data
-> on readonly fs.
+On 2018/7/19 20:58, Yunlong Song wrote:
+> For the case when sbi->segs_per_sec > 1 with lfs mode, take
+> section:segment = 5 for example, if the section prefree_map is
+> ...previous section | current section (1 1 0 1 1) | next section...,
+> then the start = x, end = x + 1, after start = start_segno +
+> sbi->segs_per_sec, start = x + 5, then it will skip x + 3 and x + 4, but
+> their bitmap is still set, which will cause duplicated
+> f2fs_issue_discard of this same section in the next write_checkpoint:
 > 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-
+> round 1: section bitmap : 1 1 1 1 1, all valid, prefree_map: 0 0 0 0 0
+> then rm data block NO.2, block NO.2 becomes invalid, prefree_map: 0 0 1 0 0
+> write_checkpoint: section bitmap: 1 1 0 1 1, prefree_map: 0 0 0 0 0,
+> prefree of NO.2 is cleared, and no discard issued
+> 
+> round 2: rm data block NO.0, NO.1, NO.3, NO.4
+> all invalid, but prefree bit of NO.2 is set and cleared in round 1, then
+> prefree_map: 1 1 0 1 1
+> write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1, no
+> valid blocks of this section, so discard issued, but this time prefree
+> bit of NO.3 and NO.4 is skipped due to start = start_segno + sbi->segs_per_sec;
+> 
+> round 3:
+> write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1 ->
+> 0 0 0 0 0, no valid blocks of this section, so discard issued,
+> this time prefree bit of NO.3 and NO.4 is cleared, but the discard of
+> this section is sent again...
+> 
+> To fix this problem, we can align the start and end value to section
+> boundary for fstrim and real-time discard operation, and decide to issue
+> discard only when the whole section is invalid, which can issue discard
+> aligned to section size as much as possible and avoid redundant discard.
+> 
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
