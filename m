@@ -1,54 +1,49 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v3] f2fs: issue discard align to section in LFS mode
-Date: Tue, 24 Jul 2018 10:40:27 +0800
-Message-ID: <bec2c80d-13ca-e6be-f73a-ee8c6e9f6462@huawei.com>
-References: <1531836275-94933-1-git-send-email-yunlong.song@huawei.com>
- <1532005095-111878-1-git-send-email-yunlong.song@huawei.com>
+Subject: Re: [PATCH 1/5] f2fs: clear victim_secmap when section has full valid
+ blocks
+Date: Tue, 24 Jul 2018 10:52:54 +0800
+Message-ID: <fe1659bb-5fed-4d2d-5b68-a109b0235547@huawei.com>
+References: <1532355022-163029-1-git-send-email-yunlong.song@huawei.com>
+ <1532355022-163029-2-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1532005095-111878-1-git-send-email-yunlong.song@huawei.com>
+In-Reply-To: <1532355022-163029-2-git-send-email-yunlong.song@huawei.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com
 Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/7/19 20:58, Yunlong Song wrote:
-> For the case when sbi->segs_per_sec > 1 with lfs mode, take
-> section:segment = 5 for example, if the section prefree_map is
-> ...previous section | current section (1 1 0 1 1) | next section...,
-> then the start = x, end = x + 1, after start = start_segno +
-> sbi->segs_per_sec, start = x + 5, then it will skip x + 3 and x + 4, but
-> their bitmap is still set, which will cause duplicated
-> f2fs_issue_discard of this same section in the next write_checkpoint:
-> 
-> round 1: section bitmap : 1 1 1 1 1, all valid, prefree_map: 0 0 0 0 0
-> then rm data block NO.2, block NO.2 becomes invalid, prefree_map: 0 0 1 0 0
-> write_checkpoint: section bitmap: 1 1 0 1 1, prefree_map: 0 0 0 0 0,
-> prefree of NO.2 is cleared, and no discard issued
-> 
-> round 2: rm data block NO.0, NO.1, NO.3, NO.4
-> all invalid, but prefree bit of NO.2 is set and cleared in round 1, then
-> prefree_map: 1 1 0 1 1
-> write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1, no
-> valid blocks of this section, so discard issued, but this time prefree
-> bit of NO.3 and NO.4 is skipped due to start = start_segno + sbi->segs_per_sec;
-> 
-> round 3:
-> write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1 ->
-> 0 0 0 0 0, no valid blocks of this section, so discard issued,
-> this time prefree bit of NO.3 and NO.4 is cleared, but the discard of
-> this section is sent again...
-> 
-> To fix this problem, we can align the start and end value to section
-> boundary for fstrim and real-time discard operation, and decide to issue
-> discard only when the whole section is invalid, which can issue discard
-> aligned to section size as much as possible and avoid redundant discard.
+On 2018/7/23 22:10, Yunlong Song wrote:
+> Without this patch, f2fs only clears victim_secmap when it finds out
+> that the section has no valid blocks at all, but forgets to clear the
+> victim_secmap when the whole section has full valid blocks.
 > 
 > Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/segment.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index cfff7cf..255bff5 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -776,7 +776,9 @@ static void __remove_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
+>  		if (test_and_clear_bit(segno, dirty_i->dirty_segmap[t]))
+>  			dirty_i->nr_dirty[t]--;
+>  
+> -		if (get_valid_blocks(sbi, segno, true) == 0)
+> +		if (get_valid_blocks(sbi, segno, true) == 0 ||
+> +			get_valid_blocks(sbi, segno, true) ==
+> +			(sbi->segs_per_sec << sbi->log_blocks_per_seg))
+
+BLKS_PER_SEC(sbi)?
 
 Thanks,
+
+>  			clear_bit(GET_SEC_FROM_SEG(sbi, segno),
+>  						dirty_i->victim_secmap);
+>  	}
+> 
