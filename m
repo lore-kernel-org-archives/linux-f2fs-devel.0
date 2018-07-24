@@ -1,23 +1,23 @@
 From: Sheng Yong <shengyong1@huawei.com>
-Subject: [PATCH 2/3] f2fs: quota: decrease the lock granularity
- of statfs_project
-Date: Tue, 24 Jul 2018 20:17:53 +0800
-Message-ID: <20180724121754.19920-2-shengyong1@huawei.com>
+Subject: [PATCH 3/3] f2fs: quota: fix incorrect error message and
+ comments
+Date: Tue, 24 Jul 2018 20:17:54 +0800
+Message-ID: <20180724121754.19920-3-shengyong1@huawei.com>
 References: <20180724121754.19920-1-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <shengyong1@huawei.com>) id 1fhwGi-0001L9-4a
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 24 Jul 2018 12:18:20 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <shengyong1@huawei.com>) id 1fhwGn-0008Sr-F9
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 24 Jul 2018 12:18:25 +0000
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fhwGg-00Ha0x-FS
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 24 Jul 2018 12:18:20 +0000
+ id 1fhwGl-007JUT-O3
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 24 Jul 2018 12:18:25 +0000
 In-Reply-To: <20180724121754.19920-1-shengyong1@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -31,40 +31,58 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-According to fs/quota/dquot.c, `dq_data_lock' protects mem_dqinfo
-structures and modifications of dquot pointers in the inode, and
-`dquot->dq_dqb_lock' protects data from dq_dqb.
-
-We should use dquot->dq_dqb_lock in statfs_project instead of
-dq_dat_lock.
-
 Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 ---
- fs/f2fs/super.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/checkpoint.c | 5 ++++-
+ fs/f2fs/recovery.c   | 2 +-
+ fs/f2fs/super.c      | 5 +----
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 796a2d756572..4ed91ceab3ee 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1118,7 +1118,7 @@ static int f2fs_statfs_project(struct super_block *sb,
- 	dquot = dqget(sb, qid);
- 	if (IS_ERR(dquot))
- 		return PTR_ERR(dquot);
--	spin_lock(&dq_data_lock);
-+	spin_lock(&dquot->dq_dqb_lock);
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 9c29526a7633..9a0222d9e28c 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -645,7 +645,10 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
+ 	/* Needed for iput() to work correctly and not trash data */
+ 	sbi->sb->s_flags |= SB_ACTIVE;
  
- 	limit = (dquot->dq_dqb.dqb_bsoftlimit ?
- 		 dquot->dq_dqb.dqb_bsoftlimit :
-@@ -1141,7 +1141,7 @@ static int f2fs_statfs_project(struct super_block *sb,
- 			 (buf->f_files - dquot->dq_dqb.dqb_curinodes) : 0;
+-	/* Turn on quotas so that they are updated correctly */
++	/*
++	 * Turn on quotas which were not enabled for read-only mounts if
++	 * filesystem has quota feature, so that they are updated correctly.
++	 */
+ 	quota_enabled = f2fs_enable_quota_files(sbi, s_flags & SB_RDONLY);
+ #endif
+ 
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 0d927ae26c48..e93162a2e6d8 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -628,7 +628,7 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ #endif
+ 
+ 	if (s_flags & SB_RDONLY) {
+-		f2fs_msg(sbi->sb, KERN_INFO, "orphan cleanup on readonly fs");
++		f2fs_msg(sbi->sb, KERN_INFO, "fsync data recover on readonly fs");
+ 		sbi->sb->s_flags &= ~SB_RDONLY;
  	}
  
--	spin_unlock(&dq_data_lock);
-+	spin_unlock(&dquot->dq_dqb_lock);
- 	dqput(dquot);
- 	return 0;
- }
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 4ed91ceab3ee..3e24dde60f54 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2970,10 +2970,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 		goto free_root_inode;
+ 
+ #ifdef CONFIG_QUOTA
+-	/*
+-	 * Turn on quotas which were not enabled for read-only mounts if
+-	 * filesystem has quota feature, so that they are updated correctly.
+-	 */
++	/* Enable quota usage during mount */
+ 	if (f2fs_sb_has_quota_ino(sb) && !f2fs_readonly(sb)) {
+ 		err = f2fs_enable_quotas(sb);
+ 		if (err) {
 -- 
 2.17.1
 
