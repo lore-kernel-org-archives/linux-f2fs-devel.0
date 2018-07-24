@@ -1,22 +1,21 @@
-From: Weichao Guo <guoweichao@huawei.com>
-Subject: [PATCH RFC] fsck.f2fs: write checkpoint out of place
- first
-Date: Tue, 24 Jul 2018 23:28:49 +0800
-Message-ID: <20180724152849.240933-1-guoweichao@huawei.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH] f2fs: add a new mount option "errors_mode"
+Date: Tue, 24 Jul 2018 15:51:36 +0800
+Message-ID: <1532418696-9379-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <guoweichao@huawei.com>) id 1fhrif-0008J0-34
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 24 Jul 2018 07:26:53 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <heyunlei@huawei.com>) id 1fhsKc-0002hz-Vv
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 24 Jul 2018 08:06:06 +0000
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fhric-00HOJU-PK
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 24 Jul 2018 07:26:53 +0000
+ id 1fhsKZ-00Gb23-5s
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 24 Jul 2018 08:06:06 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,120 +25,156 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, chao@kernel.org
-Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: zhangdianfang@huawei.com
 
-We may encounter both checkpoints invalid in such a case:
-1. write checkpoint A, B, C;
-2. sudden power-cut during write checkpoint D;
-3. fsck changes the total block count of checkpoint C;
-4. sudden power-cut during fsck write checkpoint C in place
+This patch add a new mount option "errors_mode" to adjust
+fs disposing cp error policy. Now supports "panic",
+"remount-ro", and "continue".
 
- ---------           ---------
-|  ver C  |         |  ver D  |
-|   ...   |         |   ...   |
-| content |         | content |
-|   ...   |         |   ...   |
-|  ver C  |         |         |
-|  ver A  |         |  ver B  |
- ---------           ---------
-
-As the total # of checkpoint C is changed, an old cp block
-like ver A or an invalid cp block may be referenced.
-To avoid both checkpoints invalid, and considering fsck should
-not update the checkpoint version, fsck could write checkpoint
-out of place first and then write checkpoint in place. This
-makes sure the file system is fixed by fsck and at least one
-of the two checkpoints is valid.
-
-Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fsck/fsck.c  | 13 ++++++++++++-
- fsck/mount.c | 13 ++++++++++++-
- 2 files changed, 24 insertions(+), 2 deletions(-)
+ Documentation/filesystems/f2fs.txt |  2 ++
+ fs/f2fs/checkpoint.c               | 11 +++++++++++
+ fs/f2fs/f2fs.h                     |  7 +++++++
+ fs/f2fs/super.c                    | 32 ++++++++++++++++++++++++++++++++
+ 4 files changed, 52 insertions(+)
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 91c8529..28320d5 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -1954,6 +1954,7 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
- 	u32 i;
- 	int ret;
- 	u_int32_t crc = 0;
-+	int phase = 0;
+diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+index 69f8de9..4a3493e 100644
+--- a/Documentation/filesystems/f2fs.txt
++++ b/Documentation/filesystems/f2fs.txt
+@@ -191,6 +191,8 @@ fsync_mode=%s          Control the policy of fsync. Currently supports "posix",
+                        pass, but the performance will regress. "nobarrier" is
+                        based on "posix", but doesn't issue flush command for
+                        non-atomic files likewise "nobarrier" mount option.
++errors_mode=%s         Adjust fs disposing cp error policy. Now supports "panic",
++                       "remount-ro", and "continue".
+ test_dummy_encryption  Enable dummy encryption, which provides a fake fscrypt
+                        context. The fake fscrypt context is used by xfstests.
  
- 	if (is_set_ckpt_flags(cp, CP_ORPHAN_PRESENT_FLAG)) {
- 		orphan_blks = __start_sum_addr(sbi) - 1;
-@@ -1975,9 +1976,11 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
- 	*((__le32 *)((unsigned char *)cp + CHECKSUM_OFFSET)) = cpu_to_le32(crc);
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 9c29526..36f6146 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -28,8 +28,19 @@
  
- 	cp_blk_no = get_sb(cp_blkaddr);
--	if (sbi->cur_cp == 2)
-+	/* write checkpoint with current version out of place first */
-+	if (sbi->cur_cp == 1)
- 		cp_blk_no += 1 << get_sb(log_blocks_per_seg);
- 
-+next_step:
- 	ret = dev_write_block(cp, cp_blk_no++);
- 	ASSERT(ret >= 0);
- 
-@@ -2002,6 +2005,14 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
- 	/* Write nat bits */
- 	if (flags & CP_NAT_BITS_FLAG)
- 		write_nat_bits(sbi, sb, cp, sbi->cur_cp);
+ void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi, bool end_io)
+ {
++	int errors_mode = F2FS_OPTION(sbi).errors_mode;
 +
-+	if (phase == 0) {
-+		cp_blk_no = get_sb(cp_blkaddr);
-+		if (sbi->cur_cp == 2)
-+			cp_blk_no += 1 << get_sb(log_blocks_per_seg);
-+		phase++;
-+		goto next_step;
+ 	f2fs_build_fault_attr(sbi, 0);
+ 	set_ckpt_flags(sbi, CP_ERROR_FLAG);
++	if (errors_mode == ERRORS_MODE_PANIC) {
++		panic("F2FS-fs (device %s): panic forced after error\n",
++			sbi->sb->s_id);
++	} else if (errors_mode == ERRORS_MODE_REMOUNT_RO) {
++		f2fs_msg(sbi->sb, KERN_CRIT,
++			"Remounting filesystem read-only");
++		sbi->sb->s_flags |= SB_RDONLY;
 +	}
++
+ 	if (!end_io)
+ 		f2fs_flush_merged_writes(sbi);
+ }
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 57a8851..1858cfb 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -133,6 +133,7 @@ struct f2fs_mount_info {
+ 	int whint_mode;
+ 	int alloc_mode;			/* segment allocation policy */
+ 	int fsync_mode;			/* fsync policy */
++	int errors_mode;		/* fs errors policy */
+ 	bool test_dummy_encryption;	/* test dummy encryption */
+ };
+ 
+@@ -1104,6 +1105,12 @@ enum fsync_mode {
+ 	FSYNC_MODE_NOBARRIER,	/* fsync behaves nobarrier based on posix */
+ };
+ 
++enum errors_mode {
++	ERRORS_MODE_PANIC,		/* panic if cp error */
++	ERRORS_MODE_REMOUNT_RO,		/* remount-ro if cp error */
++	ERRORS_MODE_CONTINUE,		/* continue to run */
++};
++
+ #ifdef CONFIG_F2FS_FS_ENCRYPTION
+ #define DUMMY_ENCRYPTION_ENABLED(sbi) \
+ 			(unlikely(F2FS_OPTION(sbi).test_dummy_encryption))
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 7187885..feb43d7 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -131,6 +131,7 @@ enum {
+ 	Opt_whint,
+ 	Opt_alloc,
+ 	Opt_fsync,
++	Opt_errors,
+ 	Opt_test_dummy_encryption,
+ 	Opt_err,
+ };
+@@ -188,6 +189,7 @@ enum {
+ 	{Opt_whint, "whint_mode=%s"},
+ 	{Opt_alloc, "alloc_mode=%s"},
+ 	{Opt_fsync, "fsync_mode=%s"},
++	{Opt_errors, "errors_mode=%s"},
+ 	{Opt_test_dummy_encryption, "test_dummy_encryption"},
+ 	{Opt_err, NULL},
+ };
+@@ -749,6 +751,28 @@ static int parse_options(struct super_block *sb, char *options)
+ 			}
+ 			kfree(name);
+ 			break;
++		case Opt_errors:
++			name = match_strdup(&args[0]);
++			if (!name)
++				return -ENOMEM;
++			if (strlen(name) == 5 &&
++					!strncmp(name, "panic", 5)) {
++				F2FS_OPTION(sbi).errors_mode =
++						ERRORS_MODE_PANIC;
++			} else if (strlen(name) == 10 &&
++					!strncmp(name, "remount-ro", 10)) {
++				F2FS_OPTION(sbi).errors_mode =
++						ERRORS_MODE_REMOUNT_RO;
++			} else if (strlen(name) == 8 &&
++					!strncmp(name, "continue", 8)) {
++				F2FS_OPTION(sbi).errors_mode =
++						ERRORS_MODE_CONTINUE;
++			} else {
++				kfree(name);
++				return -EINVAL;
++			}
++			kfree(name);
++			break;
+ 		case Opt_test_dummy_encryption:
+ #ifdef CONFIG_F2FS_FS_ENCRYPTION
+ 			if (!f2fs_sb_has_encrypt(sb)) {
+@@ -1344,6 +1368,13 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+ 		seq_printf(seq, ",fsync_mode=%s", "strict");
+ 	else if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_NOBARRIER)
+ 		seq_printf(seq, ",fsync_mode=%s", "nobarrier");
++
++	if (F2FS_OPTION(sbi).errors_mode == ERRORS_MODE_PANIC)
++		seq_printf(seq, ",errors_mode=%s", "panic");
++	else if (F2FS_OPTION(sbi).errors_mode == ERRORS_MODE_REMOUNT_RO)
++		seq_printf(seq, ",errors_mode=%s", "remount-ro");
++	else if (F2FS_OPTION(sbi).errors_mode == ERRORS_MODE_CONTINUE)
++		seq_printf(seq, ",errors_mode=%s", "continue");
+ 	return 0;
  }
  
- int check_curseg_offset(struct f2fs_sb_info *sbi)
-diff --git a/fsck/mount.c b/fsck/mount.c
-index e5574c5..8d7a9bb 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -2088,6 +2088,7 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
- 	u32 flags = CP_UMOUNT_FLAG;
- 	int i, ret;
- 	u_int32_t crc = 0;
-+	int phase = 0;
- 
- 	if (is_set_ckpt_flags(cp, CP_ORPHAN_PRESENT_FLAG)) {
- 		orphan_blks = __start_sum_addr(sbi) - 1;
-@@ -2105,9 +2106,11 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
- 	*((__le32 *)((unsigned char *)cp + CHECKSUM_OFFSET)) = cpu_to_le32(crc);
- 
- 	cp_blk_no = get_sb(cp_blkaddr);
--	if (sbi->cur_cp == 2)
-+	/* write checkpoint with current version out of place first */
-+	if (sbi->cur_cp == 1)
- 		cp_blk_no += 1 << get_sb(log_blocks_per_seg);
- 
-+next_step:
- 	/* write the first cp */
- 	ret = dev_write_block(cp, cp_blk_no++);
- 	ASSERT(ret >= 0);
-@@ -2142,6 +2145,14 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
- 	/* write the last cp */
- 	ret = dev_write_block(cp, cp_blk_no++);
- 	ASSERT(ret >= 0);
-+
-+	if (phase == 0) {
-+		cp_blk_no = get_sb(cp_blkaddr);
-+		if (sbi->cur_cp == 2)
-+			cp_blk_no += 1 << get_sb(log_blocks_per_seg);
-+		phase++;
-+		goto next_step;
-+	}
- }
- 
- void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
+@@ -1355,6 +1386,7 @@ static void default_options(struct f2fs_sb_info *sbi)
+ 	F2FS_OPTION(sbi).whint_mode = WHINT_MODE_OFF;
+ 	F2FS_OPTION(sbi).alloc_mode = ALLOC_MODE_DEFAULT;
+ 	F2FS_OPTION(sbi).fsync_mode = FSYNC_MODE_POSIX;
++	F2FS_OPTION(sbi).errors_mode = ERRORS_MODE_CONTINUE;
+ 	F2FS_OPTION(sbi).test_dummy_encryption = false;
+ 	F2FS_OPTION(sbi).s_resuid = make_kuid(&init_user_ns, F2FS_DEF_RESUID);
+ 	F2FS_OPTION(sbi).s_resgid = make_kgid(&init_user_ns, F2FS_DEF_RESGID);
 -- 
-2.10.1
+1.9.1
 
 
 ------------------------------------------------------------------------------
