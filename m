@@ -1,49 +1,147 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 1/5] f2fs: clear victim_secmap when section has full valid
- blocks
-Date: Tue, 24 Jul 2018 10:52:54 +0800
-Message-ID: <fe1659bb-5fed-4d2d-5b68-a109b0235547@huawei.com>
-References: <1532355022-163029-1-git-send-email-yunlong.song@huawei.com>
- <1532355022-163029-2-git-send-email-yunlong.song@huawei.com>
+From: Weichao Guo <guoweichao@huawei.com>
+Subject: [PATCH RFC] fsck.f2fs: write checkpoint out of place
+ first
+Date: Tue, 24 Jul 2018 23:28:49 +0800
+Message-ID: <20180724152849.240933-1-guoweichao@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1532355022-163029-2-git-send-email-yunlong.song@huawei.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <guoweichao@huawei.com>) id 1fhrif-0008J0-34
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 24 Jul 2018 07:26:53 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fhric-00HOJU-PK
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 24 Jul 2018 07:26:53 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, chao@kernel.org
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/7/23 22:10, Yunlong Song wrote:
-> Without this patch, f2fs only clears victim_secmap when it finds out
-> that the section has no valid blocks at all, but forgets to clear the
-> victim_secmap when the whole section has full valid blocks.
-> 
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> ---
->  fs/f2fs/segment.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index cfff7cf..255bff5 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -776,7 +776,9 @@ static void __remove_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
->  		if (test_and_clear_bit(segno, dirty_i->dirty_segmap[t]))
->  			dirty_i->nr_dirty[t]--;
->  
-> -		if (get_valid_blocks(sbi, segno, true) == 0)
-> +		if (get_valid_blocks(sbi, segno, true) == 0 ||
-> +			get_valid_blocks(sbi, segno, true) ==
-> +			(sbi->segs_per_sec << sbi->log_blocks_per_seg))
+We may encounter both checkpoints invalid in such a case:
+1. write checkpoint A, B, C;
+2. sudden power-cut during write checkpoint D;
+3. fsck changes the total block count of checkpoint C;
+4. sudden power-cut during fsck write checkpoint C in place
 
-BLKS_PER_SEC(sbi)?
+ ---------           ---------
+|  ver C  |         |  ver D  |
+|   ...   |         |   ...   |
+| content |         | content |
+|   ...   |         |   ...   |
+|  ver C  |         |         |
+|  ver A  |         |  ver B  |
+ ---------           ---------
 
-Thanks,
+As the total # of checkpoint C is changed, an old cp block
+like ver A or an invalid cp block may be referenced.
+To avoid both checkpoints invalid, and considering fsck should
+not update the checkpoint version, fsck could write checkpoint
+out of place first and then write checkpoint in place. This
+makes sure the file system is fixed by fsck and at least one
+of the two checkpoints is valid.
 
->  			clear_bit(GET_SEC_FROM_SEG(sbi, segno),
->  						dirty_i->victim_secmap);
->  	}
-> 
+Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+---
+ fsck/fsck.c  | 13 ++++++++++++-
+ fsck/mount.c | 13 ++++++++++++-
+ 2 files changed, 24 insertions(+), 2 deletions(-)
+
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 91c8529..28320d5 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -1954,6 +1954,7 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
+ 	u32 i;
+ 	int ret;
+ 	u_int32_t crc = 0;
++	int phase = 0;
+ 
+ 	if (is_set_ckpt_flags(cp, CP_ORPHAN_PRESENT_FLAG)) {
+ 		orphan_blks = __start_sum_addr(sbi) - 1;
+@@ -1975,9 +1976,11 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
+ 	*((__le32 *)((unsigned char *)cp + CHECKSUM_OFFSET)) = cpu_to_le32(crc);
+ 
+ 	cp_blk_no = get_sb(cp_blkaddr);
+-	if (sbi->cur_cp == 2)
++	/* write checkpoint with current version out of place first */
++	if (sbi->cur_cp == 1)
+ 		cp_blk_no += 1 << get_sb(log_blocks_per_seg);
+ 
++next_step:
+ 	ret = dev_write_block(cp, cp_blk_no++);
+ 	ASSERT(ret >= 0);
+ 
+@@ -2002,6 +2005,14 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
+ 	/* Write nat bits */
+ 	if (flags & CP_NAT_BITS_FLAG)
+ 		write_nat_bits(sbi, sb, cp, sbi->cur_cp);
++
++	if (phase == 0) {
++		cp_blk_no = get_sb(cp_blkaddr);
++		if (sbi->cur_cp == 2)
++			cp_blk_no += 1 << get_sb(log_blocks_per_seg);
++		phase++;
++		goto next_step;
++	}
+ }
+ 
+ int check_curseg_offset(struct f2fs_sb_info *sbi)
+diff --git a/fsck/mount.c b/fsck/mount.c
+index e5574c5..8d7a9bb 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -2088,6 +2088,7 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
+ 	u32 flags = CP_UMOUNT_FLAG;
+ 	int i, ret;
+ 	u_int32_t crc = 0;
++	int phase = 0;
+ 
+ 	if (is_set_ckpt_flags(cp, CP_ORPHAN_PRESENT_FLAG)) {
+ 		orphan_blks = __start_sum_addr(sbi) - 1;
+@@ -2105,9 +2106,11 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
+ 	*((__le32 *)((unsigned char *)cp + CHECKSUM_OFFSET)) = cpu_to_le32(crc);
+ 
+ 	cp_blk_no = get_sb(cp_blkaddr);
+-	if (sbi->cur_cp == 2)
++	/* write checkpoint with current version out of place first */
++	if (sbi->cur_cp == 1)
+ 		cp_blk_no += 1 << get_sb(log_blocks_per_seg);
+ 
++next_step:
+ 	/* write the first cp */
+ 	ret = dev_write_block(cp, cp_blk_no++);
+ 	ASSERT(ret >= 0);
+@@ -2142,6 +2145,14 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
+ 	/* write the last cp */
+ 	ret = dev_write_block(cp, cp_blk_no++);
+ 	ASSERT(ret >= 0);
++
++	if (phase == 0) {
++		cp_blk_no = get_sb(cp_blkaddr);
++		if (sbi->cur_cp == 2)
++			cp_blk_no += 1 << get_sb(log_blocks_per_seg);
++		phase++;
++		goto next_step;
++	}
+ }
+ 
+ void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
+-- 
+2.10.1
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
