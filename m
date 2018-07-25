@@ -1,24 +1,23 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] mkfs.f2fs: Fix the checkpoint version
- written to the footer of the root inode
-Date: Wed, 25 Jul 2018 23:01:04 +0800
-Message-ID: <00c46d1e-4eba-f9c1-867d-3f3e71c0e9ca@kernel.org>
-References: <E9C77C37-B3B8-4B76-A2F9-66B5A5A0183D@cs.toronto.edu>
+Subject: Re: [PATCH] f2fs: add a new mount option "errors_mode"
+Date: Wed, 25 Jul 2018 23:16:31 +0800
+Message-ID: <f6a0b1c3-4057-8b64-a419-4b2914d48394@kernel.org>
+References: <1532418696-9379-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1fiLI6-0008OR-3q
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 Jul 2018 15:01:26 +0000
+ (envelope-from <chao@kernel.org>) id 1fiLX0-0002ch-9o
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 Jul 2018 15:16:50 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fiLI0-000CvD-K8
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 Jul 2018 15:01:26 +0000
-In-Reply-To: <E9C77C37-B3B8-4B76-A2F9-66B5A5A0183D@cs.toronto.edu>
+ id 1fiLWy-0016zN-8T
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 Jul 2018 15:16:50 +0000
+In-Reply-To: <1532418696-9379-1-git-send-email-heyunlei@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -29,160 +28,163 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Sotirios-Efstathios Maneas <smaneas@cs.toronto.edu>, linux-f2fs-devel@lists.sourceforge.net
+To: Yunlei He <heyunlei@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: zhangdianfang@huawei.com
 
-Hello,
-
-Could you please make patch with git format-patch instead of git diff?
-
-On 2018/7/24 10:28, Sotirios-Efstathios Maneas wrote:
-> Dear all,
+On 2018/7/24 15:51, Yunlei He wrote:
+> This patch add a new mount option "errors_mode" to adjust
+> fs disposing cp error policy. Now supports "panic",
+> "remount-ro", and "continue".
 > 
-> The following patch fixes the checkpoint version written to the footer of the inode associated with the root directory, while creating
-> the file system from scratch. Furthermore, the patch fixes some typos in the printed messages.
+> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+> ---
+>  Documentation/filesystems/f2fs.txt |  2 ++
+>  fs/f2fs/checkpoint.c               | 11 +++++++++++
+>  fs/f2fs/f2fs.h                     |  7 +++++++
+>  fs/f2fs/super.c                    | 32 ++++++++++++++++++++++++++++++++
+>  4 files changed, 52 insertions(+)
 > 
-> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-> index 1a2deae..25febd1 100644
-> --- a/mkfs/f2fs_format.c
-> +++ b/mkfs/f2fs_format.c
-> @@ -28,6 +28,7 @@ extern struct f2fs_configuration c;
->  struct f2fs_super_block raw_sb;
->  struct f2fs_super_block *sb = &raw_sb;
->  struct f2fs_checkpoint *cp;
-> +int f2fs_checkpoint_version;
->  
->  /* Return first segment number of each area */
->  #define prev_zone(cur)		(c.cur_seg[cur] - c.segs_per_zone)
-> @@ -592,13 +593,13 @@ static int f2fs_write_check_point_pack(void)
->  
->  	sum = calloc(F2FS_BLKSIZE, 1);
->  	if (sum == NULL) {
-> -		MSG(1, "\tError: Calloc Failed for summay_node!!!\n");
-> +		MSG(1, "\tError: Calloc Failed for summary_node!!!\n");
->  		goto free_cp;
->  	}
->  
->  	sum_compact = calloc(F2FS_BLKSIZE, 1);
->  	if (sum_compact == NULL) {
-> -		MSG(1, "\tError: Calloc Failed for summay buffer!!!\n");
-> +		MSG(1, "\tError: Calloc Failed for summary buffer!!!\n");
->  		goto free_sum;
->  	}
->  	sum_compact_p = sum_compact;
-> @@ -619,8 +620,7 @@ static int f2fs_write_check_point_pack(void)
->  	}
->  
->  	/* 1. cp page 1 of checkpoint pack 1 */
-> -	srand(time(NULL));
-> -	cp->checkpoint_ver = cpu_to_le64(rand() | 0x1);
-> +	cp->checkpoint_ver = cpu_to_le64(f2fs_checkpoint_version);
->  	set_cp(cur_node_segno[0], c.cur_seg[CURSEG_HOT_NODE]);
->  	set_cp(cur_node_segno[1], c.cur_seg[CURSEG_WARM_NODE]);
->  	set_cp(cur_node_segno[2], c.cur_seg[CURSEG_COLD_NODE]);
-> @@ -920,7 +920,7 @@ static int f2fs_write_check_point_pack(void)
->  	}
->  
->  	/* cp page 1 of check point pack 2
-> -	 * Initiatialize other checkpoint pack with version zero
-> +	 * Initialise other checkpoint pack with version zero
->  	 */
->  	cp->checkpoint_ver = 0;
->  
-> @@ -975,6 +975,10 @@ static int f2fs_write_super_block(void)
->  	u_int8_t *zero_buff;
->  
->  	zero_buff = calloc(F2FS_BLKSIZE, 1);
-> +	if (!zero_buff) {
-> +		MSG(1, "\tError: Calloc Failed for f2fs_write_super_block!!!\n");
-> +		return -1;
-> +	}
+> diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+> index 69f8de9..4a3493e 100644
+> --- a/Documentation/filesystems/f2fs.txt
+> +++ b/Documentation/filesystems/f2fs.txt
+> @@ -191,6 +191,8 @@ fsync_mode=%s          Control the policy of fsync. Currently supports "posix",
+>                         pass, but the performance will regress. "nobarrier" is
+>                         based on "posix", but doesn't issue flush command for
+>                         non-atomic files likewise "nobarrier" mount option.
+> +errors_mode=%s         Adjust fs disposing cp error policy. Now supports "panic",
+> +                       "remount-ro", and "continue".
 
-That's a bug fix, can you send a separated patch for this?
+Could you add more details about these three modes like ext4?
 
->  
->  	memcpy(zero_buff + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
->  	DBG(1, "\tWriting super block, at offset 0x%08x\n", 0);
-> @@ -1057,9 +1061,12 @@ static int f2fs_write_root_inode(void)
->  		return -1;
->  	}
->  
-> +	srand(time(NULL));
-> +	f2fs_checkpoint_version = rand() | 0x1;
-> +
->  	raw_node->footer.nid = sb->root_ino;
->  	raw_node->footer.ino = sb->root_ino;
-> -	raw_node->footer.cp_ver = cpu_to_le64(1);
-> +	raw_node->footer.cp_ver = cpu_to_le64(f2fs_checkpoint_version);
-
-Ditto, it's better to include this fix in another patch. IMO, it needs to cover
-all cp_ver updating in other place.
-
-All other cleanup looks good to me.
+It looks other filesystems allow to set three mode together, how about just
+following the rule and option naming?
 
 Thanks,
 
->  	raw_node->footer.next_blkaddr = cpu_to_le32(
->  			get_sb(main_blkaddr) +
->  			c.cur_seg[CURSEG_HOT_NODE] *
-> @@ -1630,13 +1637,13 @@ int f2fs_format_device(void)
+>  test_dummy_encryption  Enable dummy encryption, which provides a fake fscrypt
+>                         context. The fake fscrypt context is used by xfstests.
 >  
->  	err = f2fs_init_sit_area();
->  	if (err < 0) {
-> -		MSG(0, "\tError: Failed to Initialise the SIT AREA!!!\n");
-> +		MSG(0, "\tError: Failed to initialise the SIT AREA!!!\n");
->  		goto exit;
->  	}
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 9c29526..36f6146 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -28,8 +28,19 @@
 >  
->  	err = f2fs_init_nat_area();
->  	if (err < 0) {
-> -		MSG(0, "\tError: Failed to Initialise the NAT AREA!!!\n");
-> +		MSG(0, "\tError: Failed to initialise the NAT AREA!!!\n");
->  		goto exit;
->  	}
+>  void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi, bool end_io)
+>  {
+> +	int errors_mode = F2FS_OPTION(sbi).errors_mode;
+> +
+>  	f2fs_build_fault_attr(sbi, 0);
+>  	set_ckpt_flags(sbi, CP_ERROR_FLAG);
+> +	if (errors_mode == ERRORS_MODE_PANIC) {
+> +		panic("F2FS-fs (device %s): panic forced after error\n",
+> +			sbi->sb->s_id);
+> +	} else if (errors_mode == ERRORS_MODE_REMOUNT_RO) {
+> +		f2fs_msg(sbi->sb, KERN_CRIT,
+> +			"Remounting filesystem read-only");
+> +		sbi->sb->s_flags |= SB_RDONLY;
+> +	}
+> +
+>  	if (!end_io)
+>  		f2fs_flush_merged_writes(sbi);
+>  }
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 57a8851..1858cfb 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -133,6 +133,7 @@ struct f2fs_mount_info {
+>  	int whint_mode;
+>  	int alloc_mode;			/* segment allocation policy */
+>  	int fsync_mode;			/* fsync policy */
+> +	int errors_mode;		/* fs errors policy */
+>  	bool test_dummy_encryption;	/* test dummy encryption */
+>  };
 >  
-> diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
-> index 449a0ed..95eec67 100644
-> --- a/mkfs/f2fs_format_main.c
-> +++ b/mkfs/f2fs_format_main.c
-> @@ -193,22 +193,22 @@ static void f2fs_parse_options(int argc, char *argv[])
+> @@ -1104,6 +1105,12 @@ enum fsync_mode {
+>  	FSYNC_MODE_NOBARRIER,	/* fsync behaves nobarrier based on posix */
+>  };
 >  
->  	if (!(c.feature & cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR))) {
->  		if (c.feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA)) {
-> -			MSG(0, "\tInfo: project quota feature should always been"
-> +			MSG(0, "\tInfo: project quota feature should always be"
->  				"enabled with extra attr feature\n");
->  			exit(1);
->  		}
->  		if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM)) {
-> -			MSG(0, "\tInfo: inode checksum feature should always been"
-> +			MSG(0, "\tInfo: inode checksum feature should always be"
->  				"enabled with extra attr feature\n");
->  			exit(1);
->  		}
->  		if (c.feature & cpu_to_le32(F2FS_FEATURE_FLEXIBLE_INLINE_XATTR)) {
-> -			MSG(0, "\tInfo: flexible inline xattr feature should always been"
-> +			MSG(0, "\tInfo: flexible inline xattr feature should always be"
->  				"enabled with extra attr feature\n");
->  			exit(1);
->  		}
->  		if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CRTIME)) {
-> -			MSG(0, "\tInfo: inode crtime feature should always been"
-> +			MSG(0, "\tInfo: inode crtime feature should always be"
->  				"enabled with extra attr feature\n");
->  			exit(1);
->  		}
-> 
-> Kind regards,
-> Stathis Maneas
-> 
-> 
-> ------------------------------------------------------------------------------
-> Check out the vibrant tech community on one of the world's most
-> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> +enum errors_mode {
+> +	ERRORS_MODE_PANIC,		/* panic if cp error */
+> +	ERRORS_MODE_REMOUNT_RO,		/* remount-ro if cp error */
+> +	ERRORS_MODE_CONTINUE,		/* continue to run */
+> +};
+> +
+>  #ifdef CONFIG_F2FS_FS_ENCRYPTION
+>  #define DUMMY_ENCRYPTION_ENABLED(sbi) \
+>  			(unlikely(F2FS_OPTION(sbi).test_dummy_encryption))
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 7187885..feb43d7 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -131,6 +131,7 @@ enum {
+>  	Opt_whint,
+>  	Opt_alloc,
+>  	Opt_fsync,
+> +	Opt_errors,
+>  	Opt_test_dummy_encryption,
+>  	Opt_err,
+>  };
+> @@ -188,6 +189,7 @@ enum {
+>  	{Opt_whint, "whint_mode=%s"},
+>  	{Opt_alloc, "alloc_mode=%s"},
+>  	{Opt_fsync, "fsync_mode=%s"},
+> +	{Opt_errors, "errors_mode=%s"},
+>  	{Opt_test_dummy_encryption, "test_dummy_encryption"},
+>  	{Opt_err, NULL},
+>  };
+> @@ -749,6 +751,28 @@ static int parse_options(struct super_block *sb, char *options)
+>  			}
+>  			kfree(name);
+>  			break;
+> +		case Opt_errors:
+> +			name = match_strdup(&args[0]);
+> +			if (!name)
+> +				return -ENOMEM;
+> +			if (strlen(name) == 5 &&
+> +					!strncmp(name, "panic", 5)) {
+> +				F2FS_OPTION(sbi).errors_mode =
+> +						ERRORS_MODE_PANIC;
+> +			} else if (strlen(name) == 10 &&
+> +					!strncmp(name, "remount-ro", 10)) {
+> +				F2FS_OPTION(sbi).errors_mode =
+> +						ERRORS_MODE_REMOUNT_RO;
+> +			} else if (strlen(name) == 8 &&
+> +					!strncmp(name, "continue", 8)) {
+> +				F2FS_OPTION(sbi).errors_mode =
+> +						ERRORS_MODE_CONTINUE;
+> +			} else {
+> +				kfree(name);
+> +				return -EINVAL;
+> +			}
+> +			kfree(name);
+> +			break;
+>  		case Opt_test_dummy_encryption:
+>  #ifdef CONFIG_F2FS_FS_ENCRYPTION
+>  			if (!f2fs_sb_has_encrypt(sb)) {
+> @@ -1344,6 +1368,13 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+>  		seq_printf(seq, ",fsync_mode=%s", "strict");
+>  	else if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_NOBARRIER)
+>  		seq_printf(seq, ",fsync_mode=%s", "nobarrier");
+> +
+> +	if (F2FS_OPTION(sbi).errors_mode == ERRORS_MODE_PANIC)
+> +		seq_printf(seq, ",errors_mode=%s", "panic");
+> +	else if (F2FS_OPTION(sbi).errors_mode == ERRORS_MODE_REMOUNT_RO)
+> +		seq_printf(seq, ",errors_mode=%s", "remount-ro");
+> +	else if (F2FS_OPTION(sbi).errors_mode == ERRORS_MODE_CONTINUE)
+> +		seq_printf(seq, ",errors_mode=%s", "continue");
+>  	return 0;
+>  }
+>  
+> @@ -1355,6 +1386,7 @@ static void default_options(struct f2fs_sb_info *sbi)
+>  	F2FS_OPTION(sbi).whint_mode = WHINT_MODE_OFF;
+>  	F2FS_OPTION(sbi).alloc_mode = ALLOC_MODE_DEFAULT;
+>  	F2FS_OPTION(sbi).fsync_mode = FSYNC_MODE_POSIX;
+> +	F2FS_OPTION(sbi).errors_mode = ERRORS_MODE_CONTINUE;
+>  	F2FS_OPTION(sbi).test_dummy_encryption = false;
+>  	F2FS_OPTION(sbi).s_resuid = make_kuid(&init_user_ns, F2FS_DEF_RESUID);
+>  	F2FS_OPTION(sbi).s_resgid = make_kgid(&init_user_ns, F2FS_DEF_RESGID);
 > 
 
 ------------------------------------------------------------------------------
