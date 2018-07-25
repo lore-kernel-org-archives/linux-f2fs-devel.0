@@ -1,485 +1,190 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v4 1/2] f2fs: fix to avoid broken of dnode block list
-Date: Wed, 25 Jul 2018 19:16:20 +0800
-Message-ID: <20180725111621.37564-1-yuchao0@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH] mkfs.f2fs: Fix the checkpoint version
+ written to the footer of the root inode
+Date: Wed, 25 Jul 2018 23:01:04 +0800
+Message-ID: <00c46d1e-4eba-f9c1-867d-3f3e71c0e9ca@kernel.org>
+References: <E9C77C37-B3B8-4B76-A2F9-66B5A5A0183D@cs.toronto.edu>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <chao@kernel.org>) id 1fiLI6-0008OR-3q
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 Jul 2018 15:01:26 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fiLI0-000CvD-K8
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 Jul 2018 15:01:26 +0000
+In-Reply-To: <E9C77C37-B3B8-4B76-A2F9-66B5A5A0183D@cs.toronto.edu>
+Content-Language: en-US
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Sotirios-Efstathios Maneas <smaneas@cs.toronto.edu>, linux-f2fs-devel@lists.sourceforge.net
 
-f2fs recovery flow is relying on dnode block link list, it means fsynced
-file recovery depends on previous dnode's persistence in the list, so
-during fsync() we should wait on all regular inode's dnode writebacked
-before issuing flush.
+Hello,
 
-By this way, we can avoid dnode block list being broken by out-of-order
-IO submission due to IO scheduler or driver.
+Could you please make patch with git format-patch instead of git diff?
 
-Sheng Yong helps to do the test with this patch:
+On 2018/7/24 10:28, Sotirios-Efstathios Maneas wrote:
+> Dear all,
+> 
+> The following patch fixes the checkpoint version written to the footer of the inode associated with the root directory, while creating
+> the file system from scratch. Furthermore, the patch fixes some typos in the printed messages.
+> 
+> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+> index 1a2deae..25febd1 100644
+> --- a/mkfs/f2fs_format.c
+> +++ b/mkfs/f2fs_format.c
+> @@ -28,6 +28,7 @@ extern struct f2fs_configuration c;
+>  struct f2fs_super_block raw_sb;
+>  struct f2fs_super_block *sb = &raw_sb;
+>  struct f2fs_checkpoint *cp;
+> +int f2fs_checkpoint_version;
+>  
+>  /* Return first segment number of each area */
+>  #define prev_zone(cur)		(c.cur_seg[cur] - c.segs_per_zone)
+> @@ -592,13 +593,13 @@ static int f2fs_write_check_point_pack(void)
+>  
+>  	sum = calloc(F2FS_BLKSIZE, 1);
+>  	if (sum == NULL) {
+> -		MSG(1, "\tError: Calloc Failed for summay_node!!!\n");
+> +		MSG(1, "\tError: Calloc Failed for summary_node!!!\n");
+>  		goto free_cp;
+>  	}
+>  
+>  	sum_compact = calloc(F2FS_BLKSIZE, 1);
+>  	if (sum_compact == NULL) {
+> -		MSG(1, "\tError: Calloc Failed for summay buffer!!!\n");
+> +		MSG(1, "\tError: Calloc Failed for summary buffer!!!\n");
+>  		goto free_sum;
+>  	}
+>  	sum_compact_p = sum_compact;
+> @@ -619,8 +620,7 @@ static int f2fs_write_check_point_pack(void)
+>  	}
+>  
+>  	/* 1. cp page 1 of checkpoint pack 1 */
+> -	srand(time(NULL));
+> -	cp->checkpoint_ver = cpu_to_le64(rand() | 0x1);
+> +	cp->checkpoint_ver = cpu_to_le64(f2fs_checkpoint_version);
+>  	set_cp(cur_node_segno[0], c.cur_seg[CURSEG_HOT_NODE]);
+>  	set_cp(cur_node_segno[1], c.cur_seg[CURSEG_WARM_NODE]);
+>  	set_cp(cur_node_segno[2], c.cur_seg[CURSEG_COLD_NODE]);
+> @@ -920,7 +920,7 @@ static int f2fs_write_check_point_pack(void)
+>  	}
+>  
+>  	/* cp page 1 of check point pack 2
+> -	 * Initiatialize other checkpoint pack with version zero
+> +	 * Initialise other checkpoint pack with version zero
+>  	 */
+>  	cp->checkpoint_ver = 0;
+>  
+> @@ -975,6 +975,10 @@ static int f2fs_write_super_block(void)
+>  	u_int8_t *zero_buff;
+>  
+>  	zero_buff = calloc(F2FS_BLKSIZE, 1);
+> +	if (!zero_buff) {
+> +		MSG(1, "\tError: Calloc Failed for f2fs_write_super_block!!!\n");
+> +		return -1;
+> +	}
 
-Target:/data (f2fs, -)
-64MB / 32768KB / 4KB / 8
+That's a bug fix, can you send a separated patch for this?
 
-1 / PERSIST / Index
+>  
+>  	memcpy(zero_buff + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
+>  	DBG(1, "\tWriting super block, at offset 0x%08x\n", 0);
+> @@ -1057,9 +1061,12 @@ static int f2fs_write_root_inode(void)
+>  		return -1;
+>  	}
+>  
+> +	srand(time(NULL));
+> +	f2fs_checkpoint_version = rand() | 0x1;
+> +
+>  	raw_node->footer.nid = sb->root_ino;
+>  	raw_node->footer.ino = sb->root_ino;
+> -	raw_node->footer.cp_ver = cpu_to_le64(1);
+> +	raw_node->footer.cp_ver = cpu_to_le64(f2fs_checkpoint_version);
 
-Base:
-	SEQ-RD(MB/s)	SEQ-WR(MB/s)	RND-RD(IOPS)	RND-WR(IOPS)	Insert(TPS)	Update(TPS)	Delete(TPS)
-1	867.82		204.15		41440.03	41370.54	680.8		1025.94		1031.08
-2	871.87		205.87		41370.3		40275.2		791.14		1065.84		1101.7
-3	866.52		205.69		41795.67	40596.16	694.69		1037.16		1031.48
-Avg	868.7366667	205.2366667	41535.33333	40747.3		722.21		1042.98		1054.753333
+Ditto, it's better to include this fix in another patch. IMO, it needs to cover
+all cp_ver updating in other place.
 
-After:
-	SEQ-RD(MB/s)	SEQ-WR(MB/s)	RND-RD(IOPS)	RND-WR(IOPS)	Insert(TPS)	Update(TPS)	Delete(TPS)
-1	798.81		202.5		41143		40613.87	602.71		838.08		913.83
-2	805.79		206.47		40297.2		41291.46	604.44		840.75		924.27
-3	814.83		206.17		41209.57	40453.62	602.85		834.66		927.91
-Avg	806.4766667	205.0466667	40883.25667	40786.31667	603.3333333	837.83		922.0033333
+All other cleanup looks good to me.
 
-Patched/Original:
-	0.928332713	0.999074239	0.984300676	1.000957528	0.835398753	0.803303994	0.874141189
+Thanks,
 
-It looks like atomic write will suffer performance regression.
+>  	raw_node->footer.next_blkaddr = cpu_to_le32(
+>  			get_sb(main_blkaddr) +
+>  			c.cur_seg[CURSEG_HOT_NODE] *
+> @@ -1630,13 +1637,13 @@ int f2fs_format_device(void)
+>  
+>  	err = f2fs_init_sit_area();
+>  	if (err < 0) {
+> -		MSG(0, "\tError: Failed to Initialise the SIT AREA!!!\n");
+> +		MSG(0, "\tError: Failed to initialise the SIT AREA!!!\n");
+>  		goto exit;
+>  	}
+>  
+>  	err = f2fs_init_nat_area();
+>  	if (err < 0) {
+> -		MSG(0, "\tError: Failed to Initialise the NAT AREA!!!\n");
+> +		MSG(0, "\tError: Failed to initialise the NAT AREA!!!\n");
+>  		goto exit;
+>  	}
+>  
+> diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+> index 449a0ed..95eec67 100644
+> --- a/mkfs/f2fs_format_main.c
+> +++ b/mkfs/f2fs_format_main.c
+> @@ -193,22 +193,22 @@ static void f2fs_parse_options(int argc, char *argv[])
+>  
+>  	if (!(c.feature & cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR))) {
+>  		if (c.feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA)) {
+> -			MSG(0, "\tInfo: project quota feature should always been"
+> +			MSG(0, "\tInfo: project quota feature should always be"
+>  				"enabled with extra attr feature\n");
+>  			exit(1);
+>  		}
+>  		if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM)) {
+> -			MSG(0, "\tInfo: inode checksum feature should always been"
+> +			MSG(0, "\tInfo: inode checksum feature should always be"
+>  				"enabled with extra attr feature\n");
+>  			exit(1);
+>  		}
+>  		if (c.feature & cpu_to_le32(F2FS_FEATURE_FLEXIBLE_INLINE_XATTR)) {
+> -			MSG(0, "\tInfo: flexible inline xattr feature should always been"
+> +			MSG(0, "\tInfo: flexible inline xattr feature should always be"
+>  				"enabled with extra attr feature\n");
+>  			exit(1);
+>  		}
+>  		if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CRTIME)) {
+> -			MSG(0, "\tInfo: inode crtime feature should always been"
+> +			MSG(0, "\tInfo: inode crtime feature should always be"
+>  				"enabled with extra attr feature\n");
+>  			exit(1);
+>  		}
+> 
+> Kind regards,
+> Stathis Maneas
+> 
+> 
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
 
-I suspect that the criminal is that we forcing to wait all dnode being in
-storage cache before we issue PREFLUSH+FUA.
-
-BTW, will commit ("f2fs: don't need to wait for node writes for atomic write")
-cause the problem: we will lose data of last transaction after SPO, even if
-atomic write return no error:
-
-- atomic_open();
-- write() P1, P2, P3;
-- atomic_commit();
- - writeback data: P1, P2, P3;
- - writeback node: N1, N2, N3;  <--- If N1, N2 is not writebacked, N3 with fsync_mark is
-writebacked, In SPOR, we won't find N3 since node chain is broken, turns out that losing
-last transaction.
- - preflush + fua;
-- power-cut
-
-If we don't wait dnode writeback for atomic_write:
-
-	SEQ-RD(MB/s)	SEQ-WR(MB/s)	RND-RD(IOPS)	RND-WR(IOPS)	Insert(TPS)	Update(TPS)	Delete(TPS)
-1	779.91		206.03		41621.5		40333.16	716.9		1038.21		1034.85
-2	848.51		204.35		40082.44	39486.17	791.83		1119.96		1083.77
-3	772.12		206.27		41335.25	41599.65	723.29		1055.07		971.92
-Avg	800.18		205.55		41013.06333	40472.99333	744.0066667	1071.08		1030.18
-
-Patched/Original:
-	0.92108464	1.001526693	0.987425886	0.993268102	1.030180511	1.026942031	0.976702294
-
-SQLite's performance recovers.
-
-Jaegeuk:
-"Practically, I don't see db corruption becase of this. We can excuse to lose
-the last transaction."
-
-Finally, we decide to keep original implementation of atomic write interface
-sematics that we don't wait all dnode writeback before preflush+fua submission.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v4:
-- add test number with Androbench.
-- don't wait dnode writeback for atomic_write.
-- add missing filemap_check_errors.
- fs/f2fs/checkpoint.c |   2 +
- fs/f2fs/data.c       |   2 +
- fs/f2fs/f2fs.h       |  21 ++++++-
- fs/f2fs/file.c       |   5 +-
- fs/f2fs/node.c       | 144 +++++++++++++++++++++++++++++++++++--------
- fs/f2fs/super.c      |   4 ++
- 6 files changed, 150 insertions(+), 28 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 04841f32d4d9..e010fecce097 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1407,6 +1407,8 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 
- 	f2fs_release_ino_entry(sbi, false);
- 
-+	f2fs_reset_fsync_node_info(sbi);
-+
- 	clear_sbi_flag(sbi, SBI_IS_DIRTY);
- 	clear_sbi_flag(sbi, SBI_NEED_CP);
- 	__set_cp_next_pack(sbi);
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 6b8ca5011bfd..572c91e43337 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -177,6 +177,8 @@ static void f2fs_write_end_io(struct bio *bio)
- 					page->index != nid_of_node(page));
- 
- 		dec_page_count(sbi, type);
-+		if (f2fs_in_warm_node_list(sbi, page))
-+			f2fs_del_fsync_node_entry(sbi, page);
- 		clear_cold_data(page);
- 		end_page_writeback(page);
- 	}
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 0374f069520c..6627fef9ae38 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -228,6 +228,12 @@ struct inode_entry {
- 	struct inode *inode;	/* vfs inode pointer */
- };
- 
-+struct fsync_node_entry {
-+	struct list_head list;	/* list head */
-+	struct page *page;	/* warm node page pointer */
-+	unsigned int seq_id;	/* sequence id */
-+};
-+
- /* for the bitmap indicate blocks to be discarded */
- struct discard_entry {
- 	struct list_head list;	/* list head */
-@@ -1156,6 +1162,11 @@ struct f2fs_sb_info {
- 
- 	struct inode_management im[MAX_INO_ENTRY];      /* manage inode cache */
- 
-+	spinlock_t fsync_node_lock;		/* for node entry lock */
-+	struct list_head fsync_node_list;	/* node list head */
-+	unsigned int fsync_seg_id;		/* sequence id */
-+	unsigned int fsync_node_num;		/* number of node entries */
-+
- 	/* for orphan inode, use 0'th array */
- 	unsigned int max_orphans;		/* max orphan inodes */
- 
-@@ -2822,6 +2833,10 @@ struct node_info;
- 
- int f2fs_check_nid_range(struct f2fs_sb_info *sbi, nid_t nid);
- bool f2fs_available_free_memory(struct f2fs_sb_info *sbi, int type);
-+bool f2fs_in_warm_node_list(struct f2fs_sb_info *sbi, struct page *page);
-+void f2fs_init_fsync_node_info(struct f2fs_sb_info *sbi);
-+void f2fs_del_fsync_node_entry(struct f2fs_sb_info *sbi, struct page *page);
-+void f2fs_reset_fsync_node_info(struct f2fs_sb_info *sbi);
- int f2fs_need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid);
- bool f2fs_is_checkpointed_node(struct f2fs_sb_info *sbi, nid_t nid);
- bool f2fs_need_inode_block_update(struct f2fs_sb_info *sbi, nid_t ino);
-@@ -2831,7 +2846,8 @@ pgoff_t f2fs_get_next_page_offset(struct dnode_of_data *dn, pgoff_t pgofs);
- int f2fs_get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode);
- int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from);
- int f2fs_truncate_xattr_node(struct inode *inode);
--int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino);
-+int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi,
-+					unsigned int seq_id);
- int f2fs_remove_inode_page(struct inode *inode);
- struct page *f2fs_new_inode_page(struct inode *inode);
- struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs);
-@@ -2840,7 +2856,8 @@ struct page *f2fs_get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid);
- struct page *f2fs_get_node_page_ra(struct page *parent, int start);
- void f2fs_move_node_page(struct page *node_page, int gc_type);
- int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
--			struct writeback_control *wbc, bool atomic);
-+			struct writeback_control *wbc, bool atomic,
-+			unsigned int *seq_id);
- int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
- 			struct writeback_control *wbc,
- 			bool do_balance, enum iostat_type io_type);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 3a5c35fa0603..267ec3794e1e 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -213,6 +213,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 		.nr_to_write = LONG_MAX,
- 		.for_reclaim = 0,
- 	};
-+	unsigned int seq_id = 0;
- 
- 	if (unlikely(f2fs_readonly(inode->i_sb)))
- 		return 0;
-@@ -275,7 +276,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 	}
- sync_nodes:
- 	atomic_inc(&sbi->wb_sync_req[NODE]);
--	ret = f2fs_fsync_node_pages(sbi, inode, &wbc, atomic);
-+	ret = f2fs_fsync_node_pages(sbi, inode, &wbc, atomic, &seq_id);
- 	atomic_dec(&sbi->wb_sync_req[NODE]);
- 	if (ret)
- 		goto out;
-@@ -301,7 +302,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 	 * given fsync mark.
- 	 */
- 	if (!atomic) {
--		ret = f2fs_wait_on_node_pages_writeback(sbi, ino);
-+		ret = f2fs_wait_on_node_pages_writeback(sbi, seq_id);
- 		if (ret)
- 			goto out;
- 	}
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 9d9f4c9750c4..d976b8fe479d 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -28,6 +28,7 @@
- static struct kmem_cache *nat_entry_slab;
- static struct kmem_cache *free_nid_slab;
- static struct kmem_cache *nat_entry_set_slab;
-+static struct kmem_cache *fsync_node_entry_slab;
- 
- /*
-  * Check whether the given nid is within node id range.
-@@ -264,6 +265,72 @@ static unsigned int __gang_lookup_nat_set(struct f2fs_nm_info *nm_i,
- 							start, nr);
- }
- 
-+bool f2fs_in_warm_node_list(struct f2fs_sb_info *sbi, struct page *page)
-+{
-+	return NODE_MAPPING(sbi) == page->mapping &&
-+			IS_DNODE(page) && is_cold_node(page);
-+}
-+
-+void f2fs_init_fsync_node_info(struct f2fs_sb_info *sbi)
-+{
-+	spin_lock_init(&sbi->fsync_node_lock);
-+	INIT_LIST_HEAD(&sbi->fsync_node_list);
-+	sbi->fsync_seg_id = 0;
-+	sbi->fsync_node_num = 0;
-+}
-+
-+static unsigned int f2fs_add_fsync_node_entry(struct f2fs_sb_info *sbi,
-+							struct page *page)
-+{
-+	struct fsync_node_entry *fn;
-+	unsigned long flags;
-+	unsigned int seq_id;
-+
-+	fn = f2fs_kmem_cache_alloc(fsync_node_entry_slab, GFP_NOFS);
-+
-+	get_page(page);
-+	fn->page = page;
-+	INIT_LIST_HEAD(&fn->list);
-+
-+	spin_lock_irqsave(&sbi->fsync_node_lock, flags);
-+	list_add_tail(&fn->list, &sbi->fsync_node_list);
-+	fn->seq_id = sbi->fsync_seg_id++;
-+	seq_id = fn->seq_id;
-+	sbi->fsync_node_num++;
-+	spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
-+
-+	return seq_id;
-+}
-+
-+void f2fs_del_fsync_node_entry(struct f2fs_sb_info *sbi, struct page *page)
-+{
-+	struct fsync_node_entry *fn;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&sbi->fsync_node_lock, flags);
-+	list_for_each_entry(fn, &sbi->fsync_node_list, list) {
-+		if (fn->page == page) {
-+			list_del(&fn->list);
-+			sbi->fsync_node_num--;
-+			spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
-+			kmem_cache_free(fsync_node_entry_slab, fn);
-+			put_page(page);
-+			return;
-+		}
-+	}
-+	spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
-+	f2fs_bug_on(sbi, 1);
-+}
-+
-+void f2fs_reset_fsync_node_info(struct f2fs_sb_info *sbi)
-+{
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&sbi->fsync_node_lock, flags);
-+	sbi->fsync_node_num = 0;
-+	spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
-+}
-+
- int f2fs_need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid)
- {
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
-@@ -1384,7 +1451,7 @@ static struct page *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
- 
- static int __write_node_page(struct page *page, bool atomic, bool *submitted,
- 				struct writeback_control *wbc, bool do_balance,
--				enum iostat_type io_type)
-+				enum iostat_type io_type, unsigned int *seq_id)
- {
- 	struct f2fs_sb_info *sbi = F2FS_P_SB(page);
- 	nid_t nid;
-@@ -1401,6 +1468,7 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
- 		.io_type = io_type,
- 		.io_wbc = wbc,
- 	};
-+	unsigned int seq;
- 
- 	trace_f2fs_writepage(page, NODE);
- 
-@@ -1442,6 +1510,13 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
- 
- 	set_page_writeback(page);
- 	ClearPageError(page);
-+
-+	if (f2fs_in_warm_node_list(sbi, page)) {
-+		seq = f2fs_add_fsync_node_entry(sbi, page);
-+		if (seq_id)
-+			*seq_id = seq;
-+	}
-+
- 	fio.old_blkaddr = ni.blk_addr;
- 	f2fs_do_write_node_page(nid, &fio);
- 	set_node_addr(sbi, &ni, fio.new_blkaddr, is_fsync_dnode(page));
-@@ -1489,7 +1564,7 @@ void f2fs_move_node_page(struct page *node_page, int gc_type)
- 			goto out_page;
- 
- 		if (__write_node_page(node_page, false, NULL,
--					&wbc, false, FS_GC_NODE_IO))
-+					&wbc, false, FS_GC_NODE_IO, NULL))
- 			unlock_page(node_page);
- 		goto release_page;
- 	} else {
-@@ -1506,11 +1581,13 @@ void f2fs_move_node_page(struct page *node_page, int gc_type)
- static int f2fs_write_node_page(struct page *page,
- 				struct writeback_control *wbc)
- {
--	return __write_node_page(page, false, NULL, wbc, false, FS_NODE_IO);
-+	return __write_node_page(page, false, NULL, wbc, false,
-+						FS_NODE_IO, NULL);
- }
- 
- int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
--			struct writeback_control *wbc, bool atomic)
-+			struct writeback_control *wbc, bool atomic,
-+			unsigned int *seq_id)
- {
- 	pgoff_t index;
- 	pgoff_t last_idx = ULONG_MAX;
-@@ -1591,7 +1668,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 			ret = __write_node_page(page, atomic &&
- 						page == last_page,
- 						&submitted, wbc, true,
--						FS_NODE_IO);
-+						FS_NODE_IO, seq_id);
- 			if (ret) {
- 				unlock_page(page);
- 				f2fs_put_page(last_page, 0);
-@@ -1708,7 +1785,7 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
- 			set_dentry_mark(page, 0);
- 
- 			ret = __write_node_page(page, false, &submitted,
--						wbc, do_balance, io_type);
-+						wbc, do_balance, io_type, NULL);
- 			if (ret)
- 				unlock_page(page);
- 			else if (submitted)
-@@ -1739,35 +1816,46 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
- 	return ret;
- }
- 
--int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino)
-+int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi,
-+						unsigned int seq_id)
- {
--	pgoff_t index = 0;
--	struct pagevec pvec;
-+	struct fsync_node_entry *fn;
-+	struct page *page;
-+	struct list_head *head = &sbi->fsync_node_list;
-+	unsigned long flags;
-+	unsigned int cur_seq_id = 0;
- 	int ret2, ret = 0;
--	int nr_pages;
- 
--	pagevec_init(&pvec);
-+	while (seq_id && cur_seq_id < seq_id) {
-+		spin_lock_irqsave(&sbi->fsync_node_lock, flags);
-+		if (list_empty(head)) {
-+			spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
-+			break;
-+		}
-+		fn = list_first_entry(head, struct fsync_node_entry, list);
-+		if (fn->seq_id > seq_id) {
-+			spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
-+			break;
-+		}
-+		cur_seq_id = fn->seq_id;
-+		page = fn->page;
-+		get_page(page);
-+		spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
- 
--	while ((nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
--				PAGECACHE_TAG_WRITEBACK))) {
--		int i;
-+		f2fs_wait_on_page_writeback(page, NODE, true);
-+		if (TestClearPageError(page))
-+			ret = -EIO;
- 
--		for (i = 0; i < nr_pages; i++) {
--			struct page *page = pvec.pages[i];
-+		put_page(page);
- 
--			if (ino && ino_of_node(page) == ino) {
--				f2fs_wait_on_page_writeback(page, NODE, true);
--				if (TestClearPageError(page))
--					ret = -EIO;
--			}
--		}
--		pagevec_release(&pvec);
--		cond_resched();
-+		if (ret)
-+			break;
- 	}
- 
- 	ret2 = filemap_check_errors(NODE_MAPPING(sbi));
- 	if (!ret)
- 		ret = ret2;
-+
- 	return ret;
- }
- 
-@@ -2982,8 +3070,15 @@ int __init f2fs_create_node_manager_caches(void)
- 			sizeof(struct nat_entry_set));
- 	if (!nat_entry_set_slab)
- 		goto destroy_free_nid;
-+
-+	fsync_node_entry_slab = f2fs_kmem_cache_create("fsync_node_entry",
-+			sizeof(struct fsync_node_entry));
-+	if (!fsync_node_entry_slab)
-+		goto destroy_nat_entry_set;
- 	return 0;
- 
-+destroy_nat_entry_set:
-+	kmem_cache_destroy(nat_entry_set_slab);
- destroy_free_nid:
- 	kmem_cache_destroy(free_nid_slab);
- destroy_nat_entry:
-@@ -2994,6 +3089,7 @@ int __init f2fs_create_node_manager_caches(void)
- 
- void f2fs_destroy_node_manager_caches(void)
- {
-+	kmem_cache_destroy(fsync_node_entry_slab);
- 	kmem_cache_destroy(nat_entry_set_slab);
- 	kmem_cache_destroy(free_nid_slab);
- 	kmem_cache_destroy(nat_entry_slab);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index cf2722ed7e0f..4825b4f61a03 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1023,6 +1023,8 @@ static void f2fs_put_super(struct super_block *sb)
- 	 */
- 	f2fs_release_ino_entry(sbi, true);
- 
-+	f2fs_bug_on(sbi, sbi->fsync_node_num);
-+
- 	f2fs_leave_shrinker(sbi);
- 	mutex_unlock(&sbi->umount_mutex);
- 
-@@ -2916,6 +2918,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 
- 	f2fs_init_ino_entry_info(sbi);
- 
-+	f2fs_init_fsync_node_info(sbi);
-+
- 	/* setup f2fs internal modules */
- 	err = f2fs_build_segment_manager(sbi);
- 	if (err) {
--- 
-2.18.0.rc1
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
