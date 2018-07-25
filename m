@@ -1,52 +1,48 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix 32-bit format string warning
-Date: Wed, 25 Jul 2018 23:21:02 +0800
-Message-ID: <08f5d7dd-a271-4cef-4cf3-950c4c251c91@kernel.org>
-References: <20180724093509.1637386-1-arnd@arndb.de>
+Subject: Re: [PATCH 1/3] f2fs: quota: do not mount as RDWR
+ without QUOTA if quota feature enabled
+Date: Wed, 25 Jul 2018 23:27:48 +0800
+Message-ID: <5f80b07e-231f-0aed-8445-28cbd61b35d2@kernel.org>
+References: <20180724121754.19920-1-shengyong1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180724093509.1637386-1-arnd@arndb.de>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <chao@kernel.org>) id 1fiLhu-00008g-A5
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 Jul 2018 15:28:06 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fiLhs-0017bz-JV
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 Jul 2018 15:28:06 +0000
+In-Reply-To: <20180724121754.19920-1-shengyong1@huawei.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Eric Biggers <ebiggers@google.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/7/24 17:34, Arnd Bergmann wrote:
-> On 32-bit targets, size_t is often 'unsigned int', so printing it as %lu
-> causes a warning:
+On 2018/7/24 20:17, Sheng Yong wrote:
+> If quota feature is enabled, quota is on by default. However, if
+> CONFIG_QUOTA is not built in kernel, dquot entries will not get updated,
+> which leads to quota inconsistency.
 > 
-> fs/f2fs/inode.c: In function 'sanity_check_inode':
-> fs/f2fs/inode.c:247:4: error: format '%lu' expects argument of type 'long unsigned int', but argument 7 has type 'unsigned int' [-Werror=format=]
-> 
-> The correct format string is %zu.
-> 
-> Fixes: ba3a252d3367 ("f2fs: fix to do sanity check with i_extra_isize")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 
-I noticed the issue, thank you for fixing it, but original buggy patch has not
-been upstreamed yet, how about merging this fix into origial patch, if you don't
-mind?
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
 
-> ---
->  fs/f2fs/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index 3fe63b0c7325..4fd339fd3ff2 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -245,7 +245,7 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
->  		set_sbi_flag(sbi, SBI_NEED_FSCK);
->  		f2fs_msg(sbi->sb, KERN_WARNING,
->  			"%s: inode (ino=%lx) has corrupted i_extra_isize: %d, "
-> -			"max: %lu",
-> +			"max: %zu",
->  			__func__, inode->i_ino, fi->i_extra_isize,
->  			F2FS_TOTAL_EXTRA_ATTR_SIZE);
->  		return false;
-> 
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
