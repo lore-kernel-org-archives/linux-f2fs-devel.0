@@ -1,34 +1,43 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix 32-bit format string warning
-Date: Wed, 25 Jul 2018 21:37:24 +0200
-Message-ID: <CAK8P3a0DTCOtLLKRx6Z41fnweJyB8+J1zjEcpf9oQvMrj82-DA@mail.gmail.com>
-References: <20180724093509.1637386-1-arnd@arndb.de> <08f5d7dd-a271-4cef-4cf3-950c4c251c91@kernel.org>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v14 00/74] Convert page cache to XArray
+Date: Wed, 25 Jul 2018 14:03:23 -0700
+Message-ID: <20180725210323.GB1366@bombadil.infradead.org>
+References: <20180617020052.4759-1-willy@infradead.org>
+ <20180619031257.GA12527@linux.intel.com>
+ <20180619092230.GA1438@bombadil.infradead.org>
+ <20180619164037.GA6679@linux.intel.com>
+ <20180619171638.GE1438@bombadil.infradead.org>
+ <20180627110529.GA19606@bombadil.infradead.org>
+ <20180627194438.GA20774@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <08f5d7dd-a271-4cef-4cf3-950c4c251c91@kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180627194438.GA20774@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao@kernel.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, "Linux F2FS DEV, Mailing List" <linux-f2fs-devel@lists.sourceforge.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eric Biggers <ebiggers@google.com>
+To: Ross Zwisler <ross.zwisler@linux.intel.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Lukas Czerner <lczerner@redhat.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>, Nicholas Piggin <npiggin@gmail.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wed, Jul 25, 2018 at 5:21 PM, Chao Yu <chao@kernel.org> wrote:
-> On 2018/7/24 17:34, Arnd Bergmann wrote:
->> On 32-bit targets, size_t is often 'unsigned int', so printing it as %lu
->> causes a warning:
->>
->> fs/f2fs/inode.c: In function 'sanity_check_inode':
->> fs/f2fs/inode.c:247:4: error: format '%lu' expects argument of type 'long unsigned int', but argument 7 has type 'unsigned int' [-Werror=format=]
->>
->> The correct format string is %zu.
->>
->> Fixes: ba3a252d3367 ("f2fs: fix to do sanity check with i_extra_isize")
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> I noticed the issue, thank you for fixing it, but original buggy patch has not
-> been upstreamed yet, how about merging this fix into origial patch, if you don't
-> mind?
+On Wed, Jun 27, 2018 at 01:44:38PM -0600, Ross Zwisler wrote:
+> On Wed, Jun 27, 2018 at 04:05:29AM -0700, Matthew Wilcox wrote:
+> > On Tue, Jun 19, 2018 at 10:16:38AM -0700, Matthew Wilcox wrote:
+> > > I think I see a bug.  No idea if it's the one you're hitting ;-)
+> > > 
+> > > I had been intending to not use the 'entry' to decide whether we were
+> > > waiting on a 2MB or 4kB page, but rather the xas.  I shelved that idea,
+> > > but not before dropping the DAX_PMD flag being passed from the PMD
+> > > pagefault caller.  So if I put that back ...
+> > 
+> > Did you get a chance to test this?
+> 
+> With this patch it doesn't deadlock, but the test dies with a SIGBUS and we
+> hit a WARN_ON in the DAX code:
+> 
+> WARNING: CPU: 5 PID: 1678 at fs/dax.c:226 get_unlocked_entry+0xf7/0x120
+> 
+> I don't have a lot of time this week to debug further.  The quickest path to
+> victory is probably for you to get this reproducing in your test setup.  Does
+> XFS + DAX + generic/340 pass for you?
 
-Yes, please do that.
-
-      Arnd
+I now have generic/340 passing.  I've pushed a new version to
+git://git.infradead.org/users/willy/linux-dax.git xarray
