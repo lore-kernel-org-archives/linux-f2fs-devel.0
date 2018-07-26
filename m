@@ -1,246 +1,77 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: relocate f2fs_sanity_check_ckpt() and make it static
-Date: Thu, 26 Jul 2018 18:54:11 +0800
-Message-ID: <20180726105411.115343-1-yuchao0@huawei.com>
+From: Sheng Yong <shengyong1@huawei.com>
+Subject: [PATCH v2] f2fs: quota: fix incorrect comments
+Date: Thu, 26 Jul 2018 19:24:25 +0800
+Message-ID: <20180726112425.58904-1-shengyong1@huawei.com>
+References: <20180724121754.19920-3-shengyong1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <shengyong1@huawei.com>) id 1fieO3-0003xZ-6B
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 Jul 2018 11:24:51 +0000
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fieO0-0025H1-VW
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 Jul 2018 11:24:51 +0000
+In-Reply-To: <20180724121754.19920-3-shengyong1@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 ---
- fs/f2fs/checkpoint.c | 93 +++++++++++++++++++++++++++++++++++++++++++-
- fs/f2fs/f2fs.h       |  1 -
- fs/f2fs/super.c      | 91 -------------------------------------------
- 3 files changed, 92 insertions(+), 93 deletions(-)
+ fs/f2fs/checkpoint.c | 5 ++++-
+ fs/f2fs/super.c      | 5 +----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index e010fecce097..7d16cb36be47 100644
+index 04841f32d4d9..581710760ba6 100644
 --- a/fs/f2fs/checkpoint.c
 +++ b/fs/f2fs/checkpoint.c
-@@ -833,6 +833,97 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
- 	return NULL;
- }
+@@ -661,7 +661,10 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
+ 	/* Needed for iput() to work correctly and not trash data */
+ 	sbi->sb->s_flags |= SB_ACTIVE;
  
-+static int sanity_check_ckpt(struct f2fs_sb_info *sbi)
-+{
-+	unsigned int total, fsmeta;
-+	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
-+	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
-+	unsigned int ovp_segments, reserved_segments;
-+	unsigned int main_segs, blocks_per_seg;
-+	unsigned int sit_segs, nat_segs;
-+	unsigned int sit_bitmap_size, nat_bitmap_size;
-+	unsigned int log_blocks_per_seg;
-+	unsigned int user_block_count;
-+	unsigned int segment_count_main;
-+	unsigned int cp_pack_start_sum, cp_blkaddr, cp_payload;
-+	int i;
-+
-+	total = le32_to_cpu(raw_super->segment_count);
-+	fsmeta = le32_to_cpu(raw_super->segment_count_ckpt);
-+	sit_segs = le32_to_cpu(raw_super->segment_count_sit);
-+	fsmeta += sit_segs;
-+	nat_segs = le32_to_cpu(raw_super->segment_count_nat);
-+	fsmeta += nat_segs;
-+	fsmeta += le32_to_cpu(ckpt->rsvd_segment_count);
-+	fsmeta += le32_to_cpu(raw_super->segment_count_ssa);
-+
-+	if (unlikely(fsmeta >= total))
-+		return 1;
-+
-+	ovp_segments = le32_to_cpu(ckpt->overprov_segment_count);
-+	reserved_segments = le32_to_cpu(ckpt->rsvd_segment_count);
-+
-+	if (unlikely(fsmeta < F2FS_MIN_SEGMENTS ||
-+			ovp_segments == 0 || reserved_segments == 0)) {
-+		f2fs_msg(sbi->sb, KERN_ERR,
-+			"Wrong layout: check mkfs.f2fs version");
-+		return 1;
-+	}
-+
-+	user_block_count = le32_to_cpu(ckpt->user_block_count);
-+	segment_count_main = le32_to_cpu(raw_super->segment_count_main);
-+	log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
-+	if (!user_block_count || user_block_count >=
-+			segment_count_main << log_blocks_per_seg) {
-+		f2fs_msg(sbi->sb, KERN_ERR,
-+			"Wrong user_block_count: %u", user_block_count);
-+		return 1;
-+	}
-+
-+	main_segs = le32_to_cpu(raw_super->segment_count_main);
-+	blocks_per_seg = sbi->blocks_per_seg;
-+
-+	for (i = 0; i < NR_CURSEG_NODE_TYPE; i++) {
-+		if (le32_to_cpu(ckpt->cur_node_segno[i]) >= main_segs ||
-+			le16_to_cpu(ckpt->cur_node_blkoff[i]) >= blocks_per_seg)
-+			return 1;
-+	}
-+	for (i = 0; i < NR_CURSEG_DATA_TYPE; i++) {
-+		if (le32_to_cpu(ckpt->cur_data_segno[i]) >= main_segs ||
-+			le16_to_cpu(ckpt->cur_data_blkoff[i]) >= blocks_per_seg)
-+			return 1;
-+	}
-+
-+	sit_bitmap_size = le32_to_cpu(ckpt->sit_ver_bitmap_bytesize);
-+	nat_bitmap_size = le32_to_cpu(ckpt->nat_ver_bitmap_bytesize);
-+
-+	if (sit_bitmap_size != ((sit_segs / 2) << log_blocks_per_seg) / 8 ||
-+		nat_bitmap_size != ((nat_segs / 2) << log_blocks_per_seg) / 8) {
-+		f2fs_msg(sbi->sb, KERN_ERR,
-+			"Wrong bitmap size: sit: %u, nat:%u",
-+			sit_bitmap_size, nat_bitmap_size);
-+		return 1;
-+	}
-+
-+	cp_pack_start_sum = __start_sum_addr(sbi);
-+	cp_blkaddr = __start_cp_addr(sbi);
-+	cp_payload = __cp_payload(sbi);
-+	if (cp_pack_start_sum < cp_payload + 1 ||
-+		cp_pack_start_sum > blocks_per_seg - 1 -
-+			NR_CURSEG_TYPE) {
-+		f2fs_msg(sbi->sb, KERN_ERR,
-+			"Wrong cp_pack_start_sum: %u",
-+			cp_pack_start_sum);
-+		return 1;
-+	}
-+
-+	if (unlikely(f2fs_cp_error(sbi))) {
-+		f2fs_msg(sbi->sb, KERN_ERR, "A bug case: need to run fsck");
-+		return 1;
-+	}
-+	return 0;
-+}
-+
- int f2fs_get_valid_checkpoint(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_checkpoint *cp_block;
-@@ -883,7 +974,7 @@ int f2fs_get_valid_checkpoint(struct f2fs_sb_info *sbi)
- 		sbi->cur_cp_pack = 2;
+-	/* Turn on quotas so that they are updated correctly */
++	/*
++	 * Turn on quotas which were not enabled for read-only mounts if
++	 * filesystem has quota feature, so that they are updated correctly.
++	 */
+ 	quota_enabled = f2fs_enable_quota_files(sbi, s_flags & SB_RDONLY);
+ #endif
  
- 	/* Sanity checking of checkpoint */
--	if (f2fs_sanity_check_ckpt(sbi))
-+	if (sanity_check_ckpt(sbi))
- 		goto free_fail_no_cp;
- 
- 	if (cp_blks <= 1)
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index adee43288593..fa5d0ebf8998 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2817,7 +2817,6 @@ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover);
- int f2fs_sync_fs(struct super_block *sb, int sync);
- extern __printf(3, 4)
- void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...);
--int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi);
- 
- /*
-  * hash.c
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 622acaab46b2..0eb5c9b659f7 100644
+index 7187885da251..6ad0414ba303 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -2295,97 +2295,6 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 	return 0;
- }
+@@ -2968,10 +2968,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 		goto free_root_inode;
  
--int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
--{
--	unsigned int total, fsmeta;
--	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
--	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
--	unsigned int ovp_segments, reserved_segments;
--	unsigned int main_segs, blocks_per_seg;
--	unsigned int sit_segs, nat_segs;
--	unsigned int sit_bitmap_size, nat_bitmap_size;
--	unsigned int log_blocks_per_seg;
--	unsigned int user_block_count;
--	unsigned int segment_count_main;
--	unsigned int cp_pack_start_sum, cp_blkaddr, cp_payload;
--	int i;
--
--	total = le32_to_cpu(raw_super->segment_count);
--	fsmeta = le32_to_cpu(raw_super->segment_count_ckpt);
--	sit_segs = le32_to_cpu(raw_super->segment_count_sit);
--	fsmeta += sit_segs;
--	nat_segs = le32_to_cpu(raw_super->segment_count_nat);
--	fsmeta += nat_segs;
--	fsmeta += le32_to_cpu(ckpt->rsvd_segment_count);
--	fsmeta += le32_to_cpu(raw_super->segment_count_ssa);
--
--	if (unlikely(fsmeta >= total))
--		return 1;
--
--	ovp_segments = le32_to_cpu(ckpt->overprov_segment_count);
--	reserved_segments = le32_to_cpu(ckpt->rsvd_segment_count);
--
--	if (unlikely(fsmeta < F2FS_MIN_SEGMENTS ||
--			ovp_segments == 0 || reserved_segments == 0)) {
--		f2fs_msg(sbi->sb, KERN_ERR,
--			"Wrong layout: check mkfs.f2fs version");
--		return 1;
--	}
--
--	user_block_count = le32_to_cpu(ckpt->user_block_count);
--	segment_count_main = le32_to_cpu(raw_super->segment_count_main);
--	log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
--	if (!user_block_count || user_block_count >=
--			segment_count_main << log_blocks_per_seg) {
--		f2fs_msg(sbi->sb, KERN_ERR,
--			"Wrong user_block_count: %u", user_block_count);
--		return 1;
--	}
--
--	main_segs = le32_to_cpu(raw_super->segment_count_main);
--	blocks_per_seg = sbi->blocks_per_seg;
--
--	for (i = 0; i < NR_CURSEG_NODE_TYPE; i++) {
--		if (le32_to_cpu(ckpt->cur_node_segno[i]) >= main_segs ||
--			le16_to_cpu(ckpt->cur_node_blkoff[i]) >= blocks_per_seg)
--			return 1;
--	}
--	for (i = 0; i < NR_CURSEG_DATA_TYPE; i++) {
--		if (le32_to_cpu(ckpt->cur_data_segno[i]) >= main_segs ||
--			le16_to_cpu(ckpt->cur_data_blkoff[i]) >= blocks_per_seg)
--			return 1;
--	}
--
--	sit_bitmap_size = le32_to_cpu(ckpt->sit_ver_bitmap_bytesize);
--	nat_bitmap_size = le32_to_cpu(ckpt->nat_ver_bitmap_bytesize);
--
--	if (sit_bitmap_size != ((sit_segs / 2) << log_blocks_per_seg) / 8 ||
--		nat_bitmap_size != ((nat_segs / 2) << log_blocks_per_seg) / 8) {
--		f2fs_msg(sbi->sb, KERN_ERR,
--			"Wrong bitmap size: sit: %u, nat:%u",
--			sit_bitmap_size, nat_bitmap_size);
--		return 1;
--	}
--
--	cp_pack_start_sum = __start_sum_addr(sbi);
--	cp_blkaddr = __start_cp_addr(sbi);
--	cp_payload = __cp_payload(sbi);
--	if (cp_pack_start_sum < cp_payload + 1 ||
--		cp_pack_start_sum > blocks_per_seg - 1 -
--			NR_CURSEG_TYPE) {
--		f2fs_msg(sbi->sb, KERN_ERR,
--			"Wrong cp_pack_start_sum: %u",
--			cp_pack_start_sum);
--		return 1;
--	}
--
--	if (unlikely(f2fs_cp_error(sbi))) {
--		f2fs_msg(sbi->sb, KERN_ERR, "A bug case: need to run fsck");
--		return 1;
--	}
--	return 0;
--}
--
- static void init_sb_info(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_super_block *raw_super = sbi->raw_super;
+ #ifdef CONFIG_QUOTA
+-	/*
+-	 * Turn on quotas which were not enabled for read-only mounts if
+-	 * filesystem has quota feature, so that they are updated correctly.
+-	 */
++	/* Enable quota usage during mount */
+ 	if (f2fs_sb_has_quota_ino(sb) && !f2fs_readonly(sb)) {
+ 		err = f2fs_enable_quotas(sb);
+ 		if (err) {
 -- 
-2.18.0.rc1
+2.17.1
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
