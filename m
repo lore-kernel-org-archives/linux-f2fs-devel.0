@@ -1,77 +1,180 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] f2fs: avoid race between zero_range and background GC
-Date: Fri, 27 Jul 2018 20:16:50 +0800
-Message-ID: <10d7814b-06d0-6751-ca56-85e7c8b92a27@kernel.org>
-References: <20180726104536.114340-1-yuchao0@huawei.com>
- <20180727102916.GI16155@jaegeuk-macbookpro.roam.corp.google.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] mkfs.f2fs: Fix the checkpoint version
+ written to the footer of the root inode
+Date: Fri, 27 Jul 2018 19:07:27 +0900
+Message-ID: <20180727100727.GE16155@jaegeuk-macbookpro.roam.corp.google.com>
+References: <E9C77C37-B3B8-4B76-A2F9-66B5A5A0183D@cs.toronto.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180727102916.GI16155@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1fj6JD-0004cf-Qr
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Jul 2018 17:13:43 +0000
+Received: from [198.145.29.99] (helo=mail.kernel.org)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fj6JB-0001Bb-92
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Jul 2018 17:13:43 +0000
+Content-Disposition: inline
+In-Reply-To: <E9C77C37-B3B8-4B76-A2F9-66B5A5A0183D@cs.toronto.edu>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Sotirios-Efstathios Maneas <smaneas@cs.toronto.edu>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/7/27 18:29, Jaegeuk Kim wrote:
-> On 07/26, Chao Yu wrote:
->> Thread A				Background GC
->> - f2fs_zero_range
->>  - truncate_pagecache_range
->> 					- gc_data_segment
->> 					 - get_read_data_page
->> 					  - move_data_page
->> 					   - set_page_dirty
->> 					   - set_cold_data
->>  - f2fs_do_zero_range
->>   - dn->data_blkaddr = NEW_ADDR;
->>   - f2fs_set_data_blkaddr
->>
->> Actually, we don't need to set dirty & checked flag on the page, since
->> all valid data in the page should be zeroed by zero_range().
+On 07/23, Sotirios-Efstathios Maneas wrote:
+> Dear all,
 > 
-> But, it doesn't matter too much, right?
-
-No, if the dirtied page is writebacked after f2fs_do_zero_range(), result of
-zero_range() should be wrong, as zeroed page contains valid user data.
-
+> The following patch fixes the checkpoint version written to the footer of the inode associated with the root directory, while creating
+> the file system from scratch. Furthermore, the patch fixes some typos in the printed messages.
 > 
->> Use i_gc_rwsem[WRITE] to avoid such race condition.
-> 
-> Hope to avoid abusing i_gc_rwsem[] tho.
+> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+> index 1a2deae..25febd1 100644
+> --- a/mkfs/f2fs_format.c
+> +++ b/mkfs/f2fs_format.c
+> @@ -28,6 +28,7 @@ extern struct f2fs_configuration c;
+>  struct f2fs_super_block raw_sb;
+>  struct f2fs_super_block *sb = &raw_sb;
+>  struct f2fs_checkpoint *cp;
+> +int f2fs_checkpoint_version;
+>  
+>  /* Return first segment number of each area */
+>  #define prev_zone(cur)		(c.cur_seg[cur] - c.segs_per_zone)
+> @@ -592,13 +593,13 @@ static int f2fs_write_check_point_pack(void)
+>  
+>  	sum = calloc(F2FS_BLKSIZE, 1);
+>  	if (sum == NULL) {
+> -		MSG(1, "\tError: Calloc Failed for summay_node!!!\n");
+> +		MSG(1, "\tError: Calloc Failed for summary_node!!!\n");
+>  		goto free_cp;
+>  	}
+>  
+>  	sum_compact = calloc(F2FS_BLKSIZE, 1);
+>  	if (sum_compact == NULL) {
+> -		MSG(1, "\tError: Calloc Failed for summay buffer!!!\n");
+> +		MSG(1, "\tError: Calloc Failed for summary buffer!!!\n");
+>  		goto free_sum;
+>  	}
+>  	sum_compact_p = sum_compact;
+> @@ -619,8 +620,7 @@ static int f2fs_write_check_point_pack(void)
+>  	}
+>  
+>  	/* 1. cp page 1 of checkpoint pack 1 */
+> -	srand(time(NULL));
+> -	cp->checkpoint_ver = cpu_to_le64(rand() | 0x1);
+> +	cp->checkpoint_ver = cpu_to_le64(f2fs_checkpoint_version);
+>  	set_cp(cur_node_segno[0], c.cur_seg[CURSEG_HOT_NODE]);
+>  	set_cp(cur_node_segno[1], c.cur_seg[CURSEG_WARM_NODE]);
+>  	set_cp(cur_node_segno[2], c.cur_seg[CURSEG_COLD_NODE]);
+> @@ -920,7 +920,7 @@ static int f2fs_write_check_point_pack(void)
+>  	}
+>  
+>  	/* cp page 1 of check point pack 2
+> -	 * Initiatialize other checkpoint pack with version zero
+> +	 * Initialise other checkpoint pack with version zero
+>  	 */
+>  	cp->checkpoint_ver = 0;
+>  
+> @@ -975,6 +975,10 @@ static int f2fs_write_super_block(void)
+>  	u_int8_t *zero_buff;
+>  
+>  	zero_buff = calloc(F2FS_BLKSIZE, 1);
+> +	if (!zero_buff) {
+> +		MSG(1, "\tError: Calloc Failed for f2fs_write_super_block!!!\n");
+> +		return -1;
+> +	}
+>  
+>  	memcpy(zero_buff + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
+>  	DBG(1, "\tWriting super block, at offset 0x%08x\n", 0);
+> @@ -1057,9 +1061,12 @@ static int f2fs_write_root_inode(void)
+>  		return -1;
+>  	}
+>  
+> +	srand(time(NULL));
+> +	f2fs_checkpoint_version = rand() | 0x1;
+> +
+>  	raw_node->footer.nid = sb->root_ino;
+>  	raw_node->footer.ino = sb->root_ino;
+> -	raw_node->footer.cp_ver = cpu_to_le64(1);
+> +	raw_node->footer.cp_ver = cpu_to_le64(f2fs_checkpoint_version);
 
-Agreed, let's try avoiding until we have to use it.
+We don't check this cp version in f2fs tho?
 
 Thanks,
 
+>  	raw_node->footer.next_blkaddr = cpu_to_le32(
+>  			get_sb(main_blkaddr) +
+>  			c.cur_seg[CURSEG_HOT_NODE] *
+> @@ -1630,13 +1637,13 @@ int f2fs_format_device(void)
+>  
+>  	err = f2fs_init_sit_area();
+>  	if (err < 0) {
+> -		MSG(0, "\tError: Failed to Initialise the SIT AREA!!!\n");
+> +		MSG(0, "\tError: Failed to initialise the SIT AREA!!!\n");
+>  		goto exit;
+>  	}
+>  
+>  	err = f2fs_init_nat_area();
+>  	if (err < 0) {
+> -		MSG(0, "\tError: Failed to Initialise the NAT AREA!!!\n");
+> +		MSG(0, "\tError: Failed to initialise the NAT AREA!!!\n");
+>  		goto exit;
+>  	}
+>  
+> diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+> index 449a0ed..95eec67 100644
+> --- a/mkfs/f2fs_format_main.c
+> +++ b/mkfs/f2fs_format_main.c
+> @@ -193,22 +193,22 @@ static void f2fs_parse_options(int argc, char *argv[])
+>  
+>  	if (!(c.feature & cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR))) {
+>  		if (c.feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA)) {
+> -			MSG(0, "\tInfo: project quota feature should always been"
+> +			MSG(0, "\tInfo: project quota feature should always be"
+>  				"enabled with extra attr feature\n");
+>  			exit(1);
+>  		}
+>  		if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM)) {
+> -			MSG(0, "\tInfo: inode checksum feature should always been"
+> +			MSG(0, "\tInfo: inode checksum feature should always be"
+>  				"enabled with extra attr feature\n");
+>  			exit(1);
+>  		}
+>  		if (c.feature & cpu_to_le32(F2FS_FEATURE_FLEXIBLE_INLINE_XATTR)) {
+> -			MSG(0, "\tInfo: flexible inline xattr feature should always been"
+> +			MSG(0, "\tInfo: flexible inline xattr feature should always be"
+>  				"enabled with extra attr feature\n");
+>  			exit(1);
+>  		}
+>  		if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CRTIME)) {
+> -			MSG(0, "\tInfo: inode crtime feature should always been"
+> +			MSG(0, "\tInfo: inode crtime feature should always be"
+>  				"enabled with extra attr feature\n");
+>  			exit(1);
+>  		}
 > 
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/file.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->> index 267ec3794e1e..7bd2412a8c37 100644
->> --- a/fs/f2fs/file.c
->> +++ b/fs/f2fs/file.c
->> @@ -1309,6 +1309,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
->>  	if (ret)
->>  		return ret;
->>  
->> +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->>  	down_write(&F2FS_I(inode)->i_mmap_sem);
->>  	ret = filemap_write_and_wait_range(mapping, offset, offset + len - 1);
->>  	if (ret)
->> @@ -1389,6 +1390,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
->>  	}
->>  out_sem:
->>  	up_write(&F2FS_I(inode)->i_mmap_sem);
->> +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->>  
->>  	return ret;
->>  }
->> -- 
->> 2.18.0.rc1
+> Kind regards,
+> Stathis Maneas
+> 
+> 
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
