@@ -1,126 +1,58 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: turn off atomic writes when deteting
- abnormal behaviors
-Date: Fri, 27 Jul 2018 19:44:28 +0800
-Message-ID: <65fc88dc-5d38-6323-9ba0-8776bcd6165f@kernel.org>
-References: <20180715011112.11475-1-jaegeuk@kernel.org>
- <29151284-ef34-2eb2-1060-7e214fe8834a@huawei.com>
- <20180723130346.GD19644@jaegeuk-macbookpro.roam.corp.google.com>
- <d7fe5243-b0cd-a685-fe24-7ce833a07015@kernel.org>
- <20180727091721.GA16155@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH v4 1/2] f2fs: fix to avoid broken of dnode block list
+Date: Fri, 27 Jul 2018 19:55:03 +0800
+Message-ID: <06ed02ea-aba0-a771-155a-fc000564f6c7@kernel.org>
+References: <20180725111621.37564-1-yuchao0@huawei.com>
+ <20180727100344.GD16155@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180727091721.GA16155@jaegeuk-macbookpro.roam.corp.google.com>
+In-Reply-To: <20180727100344.GD16155@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <yuchao0@huawei.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/7/27 17:17, Jaegeuk Kim wrote:
-> On 07/23, Chao Yu wrote:
->> On 2018/7/23 21:03, Jaegeuk Kim wrote:
->>> On 07/16, Chao Yu wrote:
->>>> On 2018/7/15 9:11, Jaegeuk Kim wrote:
->>>>> In order to prevent abusing atomic writes by abnormal users, we've added a
->>>>> threshold, 20% over memory footprint, which disallows further atomic writes.
->>>>> Previously, however, SQLite doesn't know the files became normal, so that
->>>>> it could write stale data and commit on revoked normal database file.
->>>>>
->>>>> Once f2fs detects such the abnormal behavior, this patch simply disables
->>>>> all the atomic operations such as:
->>>>> - write_begin() gives EINVAL to avoid stale data writes, and SQLite will call
->>>>>   F2FS_IOC_ABORT_VOLATILE_WRITE to notify aborting the transaction,
->>>>> - F2FS_IOC_START_ATOMIC_WRITE gives EINVAL for SQLite to fall back normal
->>>>>   journal_mode,
->>>>> - F2FS_IOC_COMMIT_ATOMIC_WRITE gives EINVAL, if the file was revoked, so that
->>>>>   Framework retries to submit the transaction given propagated SQLite error.
->>>>>
->>>>> Note that, this patch also turns off atomic operations, if foreground GC tries
->>>>> to move atomic files too frequently.
->>>>
->>>> Well, how about just keeping original implementation: shutdown atomic write for
->>>> those files which are really affect fggc? Since intention of the original
->>>> behavior is targeting to abnormal atomic write usage, e.g. open atomic_write
->>>> file for very long time, then fggc will be blocked each time when moving its
->>>> block. So shutdown it, fggc will recover.
->>>
->>> The point here is stopping sqlite to keep going wrong data writes even after
->>> we already revoked blocks.
+On 2018/7/27 18:03, Jaegeuk Kim wrote:
+> On 07/25, Chao Yu wrote:
+>> f2fs recovery flow is relying on dnode block link list, it means fsynced
+>> file recovery depends on previous dnode's persistence in the list, so
+>> during fsync() we should wait on all regular inode's dnode writebacked
+>> before issuing flush.
 >>
->> Yes, that's correct, what I mean is that if we can do that with smaller
->> granularity like just revoke blocks for file which is blocking fggc, it will
->> affect system/sqlite flow much less than forcing closing all atomic_write.
+>> By this way, we can avoid dnode block list being broken by out-of-order
+>> IO submission due to IO scheduler or driver.
+>>
+>> Sheng Yong helps to do the test with this patch:
+>>
+>> Target:/data (f2fs, -)
+>> 64MB / 32768KB / 4KB / 8
+>>
+>> 1 / PERSIST / Index
+>>
+>> Base:
+>> 	SEQ-RD(MB/s)	SEQ-WR(MB/s)	RND-RD(IOPS)	RND-WR(IOPS)	Insert(TPS)	Update(TPS)	Delete(TPS)
+>> 1	867.82		204.15		41440.03	41370.54	680.8		1025.94		1031.08
+>> 2	871.87		205.87		41370.3		40275.2		791.14		1065.84		1101.7
+>> 3	866.52		205.69		41795.67	40596.16	694.69		1037.16		1031.48
+>> Avg	868.7366667	205.2366667	41535.33333	40747.3		722.21		1042.98		1054.753333
 > 
-> How about this?
+> I merged it tho, do you know why SEQ-RD is much better?
 
-Yes, it looks good to me. :)
+I have no idea about what happened, this patch should only affect write path.
+Let me and Sheng do one more round test to check the result.
 
 > 
-> From 64d2becb82a496c2e2c04abeed42efa3b401ee20 Mon Sep 17 00:00:00 2001
-> From: Jaegeuk Kim <jaegeuk@kernel.org>
-> Date: Fri, 27 Jul 2018 18:15:11 +0900
-> Subject: [PATCH] f2fs: don't allow any writes on aborted atomic writes
-> 
-> In order to prevent abusing atomic writes by abnormal users, we've added a
-> threshold, 20% over memory footprint, which disallows further atomic writes.
-> Previously, however, SQLite doesn't know the files became normal, so that
-> it could write stale data and commit on revoked normal database file.
-> 
-> Once f2fs detects such the abnormal behavior, this patch tries to avoid further
-> writes in write_begin().
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>> +void f2fs_reset_fsync_node_info(struct f2fs_sb_info *sbi)
+>> +{
+>> +	unsigned long flags;
+>> +
+>> +	spin_lock_irqsave(&sbi->fsync_node_lock, flags);
+>> +	sbi->fsync_node_num = 0;
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+I reviewed the patch again, and found that here it needs to update the code to
+sbi->fsync_seg_id = 0; Let me send v5.
 
 Thanks,
-
-> ---
->  fs/f2fs/data.c | 3 ++-
->  fs/f2fs/file.c | 7 ++++++-
->  2 files changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 22dd00c6e241..02ec2603725f 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -2295,7 +2295,8 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
->  	trace_f2fs_write_begin(inode, pos, len, flags);
->  
->  	if (f2fs_is_atomic_file(inode) &&
-> -			!f2fs_available_free_memory(sbi, INMEM_PAGES)) {
-> +			(is_inode_flag_set(inode, FI_ATOMIC_REVOKE_REQUEST) ||
-> +			!f2fs_available_free_memory(sbi, INMEM_PAGES))) {
->  		err = -ENOMEM;
->  		drop_atomic = true;
->  		goto fail;
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index ff2cb8fb6934..c2c47f3248c4 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -1708,8 +1708,11 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
->  
->  	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->  
-> -	if (f2fs_is_atomic_file(inode))
-> +	if (f2fs_is_atomic_file(inode)) {
-> +		if (is_inode_flag_set(inode, FI_ATOMIC_REVOKE_REQUEST))
-> +			ret = -EINVAL;
->  		goto out;
-> +	}
->  
->  	ret = f2fs_convert_inline_inode(inode);
->  	if (ret)
-> @@ -1871,6 +1874,8 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
->  		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
->  	}
->  
-> +	clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
-> +
->  	inode_unlock(inode);
->  
->  	mnt_drop_write_file(filp);
-> 
