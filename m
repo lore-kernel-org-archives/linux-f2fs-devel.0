@@ -1,180 +1,116 @@
-From: Weichao Guo <guoweichao@huawei.com>
-Subject: [RFC PATCH v2] fsck.f2fs: write checkpoint out of place
- first
-Date: Fri, 27 Jul 2018 04:54:05 +0800
-Message-ID: <20180726205405.158146-1-guoweichao@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: turn off atomic writes when
+ deteting abnormal behaviors
+Date: Fri, 27 Jul 2018 18:17:21 +0900
+Message-ID: <20180727091721.GA16155@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180715011112.11475-1-jaegeuk@kernel.org>
+ <29151284-ef34-2eb2-1060-7e214fe8834a@huawei.com>
+ <20180723130346.GD19644@jaegeuk-macbookpro.roam.corp.google.com>
+ <d7fe5243-b0cd-a685-fe24-7ce833a07015@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <guoweichao@huawei.com>) id 1fifkE-0000nC-52
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 Jul 2018 12:51:50 +0000
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fifkC-001G0v-AD
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 Jul 2018 12:51:50 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, chao@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <d7fe5243-b0cd-a685-fe24-7ce833a07015@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <chao@kernel.org>
+Cc: Chao Yu <yuchao0@huawei.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-We may encounter both checkpoints invalid in such a case:
-1. write checkpoint A, B, C;
-2. sudden power-cut during write checkpoint D;
-3. fsck changes the total block count of checkpoint C;
-4. sudden power-cut during fsck write checkpoint C in place
+On 07/23, Chao Yu wrote:
+> On 2018/7/23 21:03, Jaegeuk Kim wrote:
+> > On 07/16, Chao Yu wrote:
+> >> On 2018/7/15 9:11, Jaegeuk Kim wrote:
+> >>> In order to prevent abusing atomic writes by abnormal users, we've added a
+> >>> threshold, 20% over memory footprint, which disallows further atomic writes.
+> >>> Previously, however, SQLite doesn't know the files became normal, so that
+> >>> it could write stale data and commit on revoked normal database file.
+> >>>
+> >>> Once f2fs detects such the abnormal behavior, this patch simply disables
+> >>> all the atomic operations such as:
+> >>> - write_begin() gives EINVAL to avoid stale data writes, and SQLite will call
+> >>>   F2FS_IOC_ABORT_VOLATILE_WRITE to notify aborting the transaction,
+> >>> - F2FS_IOC_START_ATOMIC_WRITE gives EINVAL for SQLite to fall back normal
+> >>>   journal_mode,
+> >>> - F2FS_IOC_COMMIT_ATOMIC_WRITE gives EINVAL, if the file was revoked, so that
+> >>>   Framework retries to submit the transaction given propagated SQLite error.
+> >>>
+> >>> Note that, this patch also turns off atomic operations, if foreground GC tries
+> >>> to move atomic files too frequently.
+> >>
+> >> Well, how about just keeping original implementation: shutdown atomic write for
+> >> those files which are really affect fggc? Since intention of the original
+> >> behavior is targeting to abnormal atomic write usage, e.g. open atomic_write
+> >> file for very long time, then fggc will be blocked each time when moving its
+> >> block. So shutdown it, fggc will recover.
+> > 
+> > The point here is stopping sqlite to keep going wrong data writes even after
+> > we already revoked blocks.
+> 
+> Yes, that's correct, what I mean is that if we can do that with smaller
+> granularity like just revoke blocks for file which is blocking fggc, it will
+> affect system/sqlite flow much less than forcing closing all atomic_write.
 
- ---------           ---------
-|  ver C  |         |  ver D  |
-|   ...   |         |   ...   |
-| content |         | content |
-|   ...   |         |   ...   |
-|  ver C  |         |         |
-|  ver A  |         |  ver B  |
- ---------           ---------
+How about this?
 
-As the total # of checkpoint C is changed, an old cp block
-like ver A or an invalid cp block may be referenced.
-To avoid both checkpoints invalid, and considering fsck should
-not update the checkpoint version, fsck could write checkpoint
-out of place first and then write checkpoint in place. This
-makes sure the file system is fixed by fsck and at least one
-of the two checkpoints is valid.
+>From 64d2becb82a496c2e2c04abeed42efa3b401ee20 Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Fri, 27 Jul 2018 18:15:11 +0900
+Subject: [PATCH] f2fs: don't allow any writes on aborted atomic writes
 
-Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+In order to prevent abusing atomic writes by abnormal users, we've added a
+threshold, 20% over memory footprint, which disallows further atomic writes.
+Previously, however, SQLite doesn't know the files became normal, so that
+it could write stale data and commit on revoked normal database file.
+
+Once f2fs detects such the abnormal behavior, this patch tries to avoid further
+writes in write_begin().
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fsck/defrag.c |  2 +-
- fsck/fsck.c   | 14 +++++++++++++-
- fsck/fsck.h   |  1 +
- fsck/mount.c  | 16 ++++++++++++++--
- fsck/sload.c  |  2 +-
- 5 files changed, 30 insertions(+), 5 deletions(-)
+ fs/f2fs/data.c | 3 ++-
+ fs/f2fs/file.c | 7 ++++++-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/fsck/defrag.c b/fsck/defrag.c
-index bea0293..9fc932f 100644
---- a/fsck/defrag.c
-+++ b/fsck/defrag.c
-@@ -96,7 +96,7 @@ int f2fs_defragment(struct f2fs_sb_info *sbi, u64 from, u64 len, u64 to, int lef
- 	/* flush dirty sit entries */
- 	flush_sit_entries(sbi);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 22dd00c6e241..02ec2603725f 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2295,7 +2295,8 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+ 	trace_f2fs_write_begin(inode, pos, len, flags);
  
--	write_checkpoint(sbi);
-+	__write_checkpoint(sbi);
+ 	if (f2fs_is_atomic_file(inode) &&
+-			!f2fs_available_free_memory(sbi, INMEM_PAGES)) {
++			(is_inode_flag_set(inode, FI_ATOMIC_REVOKE_REQUEST) ||
++			!f2fs_available_free_memory(sbi, INMEM_PAGES))) {
+ 		err = -ENOMEM;
+ 		drop_atomic = true;
+ 		goto fail;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index ff2cb8fb6934..c2c47f3248c4 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1708,8 +1708,11 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
  
- 	return 0;
- }
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 91c8529..f2ff4bc 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -1943,7 +1943,7 @@ static void flush_curseg_sit_entries(struct f2fs_sb_info *sbi)
- 	free(sit_blk);
- }
+ 	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
  
--static void fix_checkpoint(struct f2fs_sb_info *sbi)
-+static void __fix_checkpoint(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
- 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
-@@ -2004,6 +2004,18 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
- 		write_nat_bits(sbi, sb, cp, sbi->cur_cp);
- }
- 
-+static void fix_checkpoint(struct f2fs_sb_info *sbi)
-+{
-+	int i = 0;
-+
-+	for (i = 0; i < 2; i++) {
-+		/* write checkpoint out of place first */
-+		sbi->cur_cp = sbi->cur_cp % 2 + 1;
-+		__fix_checkpoint(sbi);
-+		f2fs_fsync_device();
+-	if (f2fs_is_atomic_file(inode))
++	if (f2fs_is_atomic_file(inode)) {
++		if (is_inode_flag_set(inode, FI_ATOMIC_REVOKE_REQUEST))
++			ret = -EINVAL;
+ 		goto out;
 +	}
-+}
+ 
+ 	ret = f2fs_convert_inline_inode(inode);
+ 	if (ret)
+@@ -1871,6 +1874,8 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
+ 		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
+ 	}
+ 
++	clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
 +
- int check_curseg_offset(struct f2fs_sb_info *sbi)
- {
- 	int i;
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index 8e133fa..068dd34 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -175,6 +175,7 @@ extern void flush_sit_entries(struct f2fs_sb_info *);
- extern void move_curseg_info(struct f2fs_sb_info *, u64);
- extern void write_curseg_info(struct f2fs_sb_info *);
- extern int find_next_free_block(struct f2fs_sb_info *, u64 *, int, int);
-+extern void __write_checkpoint(struct f2fs_sb_info *);
- extern void write_checkpoint(struct f2fs_sb_info *);
- extern void update_data_blkaddr(struct f2fs_sb_info *, nid_t, u16, block_t);
- extern void update_nat_blkaddr(struct f2fs_sb_info *, nid_t, nid_t, block_t);
-diff --git a/fsck/mount.c b/fsck/mount.c
-index e5574c5..8a29421 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -1856,7 +1856,7 @@ void flush_journal_entries(struct f2fs_sb_info *sbi)
- 	int n_sits = flush_sit_journal_entries(sbi);
+ 	inode_unlock(inode);
  
- 	if (n_nats || n_sits)
--		write_checkpoint(sbi);
-+		__write_checkpoint(sbi);
- }
- 
- void flush_sit_entries(struct f2fs_sb_info *sbi)
-@@ -2079,7 +2079,7 @@ void nullify_nat_entry(struct f2fs_sb_info *sbi, u32 nid)
- 	free(nat_block);
- }
- 
--void write_checkpoint(struct f2fs_sb_info *sbi)
-+void __write_checkpoint(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
- 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
-@@ -2144,6 +2144,18 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
- 	ASSERT(ret >= 0);
- }
- 
-+void write_checkpoint(struct f2fs_sb_info *sbi)
-+{
-+	int i = 0;
-+
-+	for (i = 0; i < 2; i++) {
-+		/* write checkpoint out of place first */
-+		sbi->cur_cp = sbi->cur_cp % 2 + 1;
-+		__write_checkpoint(sbi);
-+		f2fs_fsync_device();
-+	}
-+}
-+
- void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
- {
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
-diff --git a/fsck/sload.c b/fsck/sload.c
-index 2842f2c..53d80fa 100644
---- a/fsck/sload.c
-+++ b/fsck/sload.c
-@@ -325,6 +325,6 @@ int f2fs_sload(struct f2fs_sb_info *sbi)
- 	/* flush dirty sit entries */
- 	flush_sit_entries(sbi);
- 
--	write_checkpoint(sbi);
-+	__write_checkpoint(sbi);
- 	return 0;
- }
+ 	mnt_drop_write_file(filp);
 -- 
-2.10.1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+2.17.0.441.gb46fe60e1d-goog
