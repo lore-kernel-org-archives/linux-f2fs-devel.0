@@ -1,25 +1,31 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] mkfs.f2fs: Fix the checkpoint version
- written to the footer of the root inode
-Date: Fri, 27 Jul 2018 19:07:27 +0900
-Message-ID: <20180727100727.GE16155@jaegeuk-macbookpro.roam.corp.google.com>
-References: <E9C77C37-B3B8-4B76-A2F9-66B5A5A0183D@cs.toronto.edu>
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
+Subject: Re: [PATCH v14 00/74] Convert page cache to XArray
+Date: Fri, 27 Jul 2018 11:20:35 -0600
+Message-ID: <20180727172035.GA13586@linux.intel.com>
+References: <20180617020052.4759-1-willy@infradead.org>
+ <20180619031257.GA12527@linux.intel.com>
+ <20180619092230.GA1438@bombadil.infradead.org>
+ <20180619164037.GA6679@linux.intel.com>
+ <20180619171638.GE1438@bombadil.infradead.org>
+ <20180627110529.GA19606@bombadil.infradead.org>
+ <20180627194438.GA20774@linux.intel.com>
+ <20180725210323.GB1366@bombadil.infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1fj6JD-0004cf-Qr
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Jul 2018 17:13:43 +0000
-Received: from [198.145.29.99] (helo=mail.kernel.org)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <ross.zwisler@linux.intel.com>) id 1fj6Q7-00070t-Lf
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Jul 2018 17:20:51 +0000
+Received: from mga03.intel.com ([134.134.136.65])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fj6JB-0001Bb-92
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Jul 2018 17:13:43 +0000
+ id 1fj6Q4-0002eN-1f
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Jul 2018 17:20:51 +0000
 Content-Disposition: inline
-In-Reply-To: <E9C77C37-B3B8-4B76-A2F9-66B5A5A0183D@cs.toronto.edu>
+In-Reply-To: <20180725210323.GB1366@bombadil.infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,151 +35,100 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Sotirios-Efstathios Maneas <smaneas@cs.toronto.edu>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Matthew Wilcox <willy@infradead.org>, zwisler@kernel.org
+Cc: linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, linux-fsdevel@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-On 07/23, Sotirios-Efstathios Maneas wrote:
-> Dear all,
+On Wed, Jul 25, 2018 at 02:03:23PM -0700, Matthew Wilcox wrote:
+> On Wed, Jun 27, 2018 at 01:44:38PM -0600, Ross Zwisler wrote:
+> > On Wed, Jun 27, 2018 at 04:05:29AM -0700, Matthew Wilcox wrote:
+> > > On Tue, Jun 19, 2018 at 10:16:38AM -0700, Matthew Wilcox wrote:
+> > > > I think I see a bug.  No idea if it's the one you're hitting ;-)
+> > > > 
+> > > > I had been intending to not use the 'entry' to decide whether we were
+> > > > waiting on a 2MB or 4kB page, but rather the xas.  I shelved that idea,
+> > > > but not before dropping the DAX_PMD flag being passed from the PMD
+> > > > pagefault caller.  So if I put that back ...
+> > > 
+> > > Did you get a chance to test this?
+> > 
+> > With this patch it doesn't deadlock, but the test dies with a SIGBUS and we
+> > hit a WARN_ON in the DAX code:
+> > 
+> > WARNING: CPU: 5 PID: 1678 at fs/dax.c:226 get_unlocked_entry+0xf7/0x120
+> > 
+> > I don't have a lot of time this week to debug further.  The quickest path to
+> > victory is probably for you to get this reproducing in your test setup.  Does
+> > XFS + DAX + generic/340 pass for you?
 > 
-> The following patch fixes the checkpoint version written to the footer of the inode associated with the root directory, while creating
-> the file system from scratch. Furthermore, the patch fixes some typos in the printed messages.
-> 
-> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-> index 1a2deae..25febd1 100644
-> --- a/mkfs/f2fs_format.c
-> +++ b/mkfs/f2fs_format.c
-> @@ -28,6 +28,7 @@ extern struct f2fs_configuration c;
->  struct f2fs_super_block raw_sb;
->  struct f2fs_super_block *sb = &raw_sb;
->  struct f2fs_checkpoint *cp;
-> +int f2fs_checkpoint_version;
->  
->  /* Return first segment number of each area */
->  #define prev_zone(cur)		(c.cur_seg[cur] - c.segs_per_zone)
-> @@ -592,13 +593,13 @@ static int f2fs_write_check_point_pack(void)
->  
->  	sum = calloc(F2FS_BLKSIZE, 1);
->  	if (sum == NULL) {
-> -		MSG(1, "\tError: Calloc Failed for summay_node!!!\n");
-> +		MSG(1, "\tError: Calloc Failed for summary_node!!!\n");
->  		goto free_cp;
->  	}
->  
->  	sum_compact = calloc(F2FS_BLKSIZE, 1);
->  	if (sum_compact == NULL) {
-> -		MSG(1, "\tError: Calloc Failed for summay buffer!!!\n");
-> +		MSG(1, "\tError: Calloc Failed for summary buffer!!!\n");
->  		goto free_sum;
->  	}
->  	sum_compact_p = sum_compact;
-> @@ -619,8 +620,7 @@ static int f2fs_write_check_point_pack(void)
->  	}
->  
->  	/* 1. cp page 1 of checkpoint pack 1 */
-> -	srand(time(NULL));
-> -	cp->checkpoint_ver = cpu_to_le64(rand() | 0x1);
-> +	cp->checkpoint_ver = cpu_to_le64(f2fs_checkpoint_version);
->  	set_cp(cur_node_segno[0], c.cur_seg[CURSEG_HOT_NODE]);
->  	set_cp(cur_node_segno[1], c.cur_seg[CURSEG_WARM_NODE]);
->  	set_cp(cur_node_segno[2], c.cur_seg[CURSEG_COLD_NODE]);
-> @@ -920,7 +920,7 @@ static int f2fs_write_check_point_pack(void)
->  	}
->  
->  	/* cp page 1 of check point pack 2
-> -	 * Initiatialize other checkpoint pack with version zero
-> +	 * Initialise other checkpoint pack with version zero
->  	 */
->  	cp->checkpoint_ver = 0;
->  
-> @@ -975,6 +975,10 @@ static int f2fs_write_super_block(void)
->  	u_int8_t *zero_buff;
->  
->  	zero_buff = calloc(F2FS_BLKSIZE, 1);
-> +	if (!zero_buff) {
-> +		MSG(1, "\tError: Calloc Failed for f2fs_write_super_block!!!\n");
-> +		return -1;
-> +	}
->  
->  	memcpy(zero_buff + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
->  	DBG(1, "\tWriting super block, at offset 0x%08x\n", 0);
-> @@ -1057,9 +1061,12 @@ static int f2fs_write_root_inode(void)
->  		return -1;
->  	}
->  
-> +	srand(time(NULL));
-> +	f2fs_checkpoint_version = rand() | 0x1;
-> +
->  	raw_node->footer.nid = sb->root_ino;
->  	raw_node->footer.ino = sb->root_ino;
-> -	raw_node->footer.cp_ver = cpu_to_le64(1);
-> +	raw_node->footer.cp_ver = cpu_to_le64(f2fs_checkpoint_version);
+> I now have generic/340 passing.  I've pushed a new version to
+> git://git.infradead.org/users/willy/linux-dax.git xarray
 
-We don't check this cp version in f2fs tho?
+Okay, the next failure I'm hitting is with DAX + XFS + generic/344.  It
+doesn't happen every time, but I can usually recreate it within 10 iterations
+of the test.  Here's the failure:
 
-Thanks,
+generic/344 21s ...[ 1852.564559] run fstests generic/344 at 2018-07-27 11:19:05
+[ 1853.033177] XFS (pmem0p2): Unmounting Filesystem
+[ 1853.134497] XFS (pmem0p2): DAX enabled. Warning: EXPERIMENTAL, use at your own risk
+[ 1853.135335] XFS (pmem0p2): Mounting V5 Filesystem
+[ 1853.138119] XFS (pmem0p2): Ending clean mount
+[ 1862.251185] WARNING: CPU: 10 PID: 15695 at mm/memory.c:1801 insert_pfn+0x229/0x240
+[ 1862.252023] Modules linked in: dax_pmem device_dax nd_pmem nd_btt nfit libnvdimm
+[ 1862.252853] CPU: 10 PID: 15695 Comm: holetest Tainted: G        W         4.18.0-rc6-00077-gc79b37ebab6d-dirty #1
+[ 1862.253979] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.1-0-g0551a4be2c-prebuilt.qemu-project.org 04/01/2014
+[ 1862.255232] RIP: 0010:insert_pfn+0x229/0x240
+[ 1862.255734] Code: 21 fa 4c 89 4d b0 48 89 45 c0 c6 05 3c 47 74 01 01 e8 db c2 e2 ff 0f 0b 44 8b 45 ac 4c 8b 4d b0 4c 8b 55 b8 48 8b 45 c0 eb 92 <0f> 0b e9 45 fe ff ff 41 bf f4 ff ff ff e9 43 fe ff ff e8 50 c5 e2
+[ 1862.257526] RSP: 0000:ffffc9000e197af8 EFLAGS: 00010216
+[ 1862.257994] RAX: 0000000000002df7 RBX: ffff8800368ffe00 RCX: 0000000000000002
+[ 1862.258673] RDX: 000fffffffffffff RSI: 000000000000000a RDI: 8000000002df7225
+[ 1862.259319] RBP: ffffc9000e197b50 R08: 0000000000000001 R09: ffff8800b8fecd48
+[ 1862.260097] R10: ffffc9000e197a30 R11: ffff88010d649a80 R12: ffff8800bb616e80
+[ 1862.260843] R13: 00007fc2137c0000 R14: 00000000004521d4 R15: 00000000fffffff0
+[ 1862.261563] FS:  00007fc2157ff700(0000) GS:ffff880115800000(0000) knlGS:0000000000000000
+[ 1862.262420] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 1862.263003] CR2: 00007fc2137c0c00 CR3: 00000000b866e000 CR4: 00000000000006e0
+[ 1862.263631] Call Trace:
+[ 1862.263862]  ? trace_hardirqs_on_caller+0xf4/0x190
+[ 1862.264300]  __vm_insert_mixed+0x83/0xd0
+[ 1862.264657]  vmf_insert_mixed_mkwrite+0x13/0x40
+[ 1862.265066]  dax_iomap_pte_fault+0x760/0x1140
+[ 1862.265478]  dax_iomap_fault+0x37/0x40
+[ 1862.265816]  __xfs_filemap_fault+0x2de/0x310
+[ 1862.266207]  xfs_filemap_page_mkwrite+0x15/0x20
+[ 1862.266610]  xfs_filemap_pfn_mkwrite+0xe/0x10
+[ 1862.267044]  do_wp_page+0x1bb/0x660
+[ 1862.267435]  __handle_mm_fault+0xc78/0x1320
+[ 1862.267912]  handle_mm_fault+0x1ba/0x3c0
+[ 1862.268359]  __do_page_fault+0x2b4/0x590
+[ 1862.268799]  do_page_fault+0x38/0x2c0
+[ 1862.269218]  do_async_page_fault+0x2c/0xb0
+[ 1862.269674]  ? async_page_fault+0x8/0x30
+[ 1862.270081]  async_page_fault+0x1e/0x30
+[ 1862.270431] RIP: 0033:0x401442
+[ 1862.270709] Code: 1d 20 00 85 f6 0f 85 7d 00 00 00 48 85 db 7e 20 4b 8d 04 34 31 d2 66 90 48 8b 0d 21 1d 20 00 48 0f af ca 48 83 c2 01 48 39 d3 <48> 89 2c 08 75 e8 8b 0d de 1c 20 00 31 c0 85 c9 74 0a 8b 15 d6 1c
+[ 1862.272811] RSP: 002b:00007fc2157feec0 EFLAGS: 00010216
+[ 1862.273392] RAX: 00007fc213600c00 RBX: 0000000000001000 RCX: 00000000001c0000
+[ 1862.274182] RDX: 00000000000001c1 RSI: 0000000000000000 RDI: 0000000000000001
+[ 1862.274961] RBP: 00007fc2157ff700 R08: 00007fc2157ff700 R09: 00007fc2157ff700
+[ 1862.275740] R10: 00007fc2157ff9d0 R11: 0000000000000202 R12: 00007fc213600000
+[ 1862.276519] R13: 00007ffe07faa240 R14: 0000000000000c00 R15: 00007ffe07faa170
+[ 1862.277296] irq event stamp: 13256
+[ 1862.277666] hardirqs last  enabled at (13255): [<ffffffff81c8c24c>] _raw_spin_unlock_irq+0x2c/0x60
+[ 1862.278630] hardirqs last disabled at (13256): [<ffffffff81e011d3>] error_entry+0x93/0x110
+[ 1862.279510] softirqs last  enabled at (13250): [<ffffffff820003bf>] __do_softirq+0x3bf/0x520
+[ 1862.280410] softirqs last disabled at (13229): [<ffffffff810ac388>] irq_exit+0xe8/0xf0
+[ 1862.281251] ---[ end trace 4b8bc73df4e9e7ba ]---
+ 22s
+[ 1874.258598] XFS (pmem0p2): Unmounting Filesystem
+[ 1874.347182] XFS (pmem0p2): DAX enabled. Warning: EXPERIMENTAL, use at your own risk
+[ 1874.348721] XFS (pmem0p2): Mounting V5 Filesystem
+[ 1874.353946] XFS (pmem0p2): Ending clean mount
+_check_dmesg: something found in dmesg (see /root/xfstests/results//generic/344.dmesg)
+Ran: generic/344
+Failures: generic/344
+Failed 1 of 1 tests
 
->  	raw_node->footer.next_blkaddr = cpu_to_le32(
->  			get_sb(main_blkaddr) +
->  			c.cur_seg[CURSEG_HOT_NODE] *
-> @@ -1630,13 +1637,13 @@ int f2fs_format_device(void)
->  
->  	err = f2fs_init_sit_area();
->  	if (err < 0) {
-> -		MSG(0, "\tError: Failed to Initialise the SIT AREA!!!\n");
-> +		MSG(0, "\tError: Failed to initialise the SIT AREA!!!\n");
->  		goto exit;
->  	}
->  
->  	err = f2fs_init_nat_area();
->  	if (err < 0) {
-> -		MSG(0, "\tError: Failed to Initialise the NAT AREA!!!\n");
-> +		MSG(0, "\tError: Failed to initialise the NAT AREA!!!\n");
->  		goto exit;
->  	}
->  
-> diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
-> index 449a0ed..95eec67 100644
-> --- a/mkfs/f2fs_format_main.c
-> +++ b/mkfs/f2fs_format_main.c
-> @@ -193,22 +193,22 @@ static void f2fs_parse_options(int argc, char *argv[])
->  
->  	if (!(c.feature & cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR))) {
->  		if (c.feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA)) {
-> -			MSG(0, "\tInfo: project quota feature should always been"
-> +			MSG(0, "\tInfo: project quota feature should always be"
->  				"enabled with extra attr feature\n");
->  			exit(1);
->  		}
->  		if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM)) {
-> -			MSG(0, "\tInfo: inode checksum feature should always been"
-> +			MSG(0, "\tInfo: inode checksum feature should always be"
->  				"enabled with extra attr feature\n");
->  			exit(1);
->  		}
->  		if (c.feature & cpu_to_le32(F2FS_FEATURE_FLEXIBLE_INLINE_XATTR)) {
-> -			MSG(0, "\tInfo: flexible inline xattr feature should always been"
-> +			MSG(0, "\tInfo: flexible inline xattr feature should always be"
->  				"enabled with extra attr feature\n");
->  			exit(1);
->  		}
->  		if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CRTIME)) {
-> -			MSG(0, "\tInfo: inode crtime feature should always been"
-> +			MSG(0, "\tInfo: inode crtime feature should always be"
->  				"enabled with extra attr feature\n");
->  			exit(1);
->  		}
-> 
-> Kind regards,
-> Stathis Maneas
-> 
-> 
-> ------------------------------------------------------------------------------
-> Check out the vibrant tech community on one of the world's most
-> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+- Ross
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
