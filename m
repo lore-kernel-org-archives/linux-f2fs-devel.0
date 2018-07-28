@@ -1,23 +1,24 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] mkfs.f2fs: add -R 0:0 by default for android
-Date: Sat, 28 Jul 2018 09:07:52 +0800
-Message-ID: <f8baf14f-1687-d7e0-c96d-dbc0f26471e1@huawei.com>
-References: <20180727084834.22121-1-jaegeuk@kernel.org>
+Subject: Re: [RFC PATCH v2] fsck.f2fs: write checkpoint out of
+ place first
+Date: Sat, 28 Jul 2018 09:13:10 +0800
+Message-ID: <0f5c562c-1718-83a6-034c-9a384aa94347@huawei.com>
+References: <20180726205405.158146-1-guoweichao@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fjDi4-0001BF-14
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 28 Jul 2018 01:07:52 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1fjDnE-0001gK-MV
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 28 Jul 2018 01:13:12 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fjDi2-000PC8-C9
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 28 Jul 2018 01:07:51 +0000
-In-Reply-To: <20180727084834.22121-1-jaegeuk@kernel.org>
+ id 1fjDnD-000OzD-3W
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 28 Jul 2018 01:13:12 +0000
+In-Reply-To: <20180726205405.158146-1-guoweichao@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -28,16 +29,166 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+To: Weichao Guo <guoweichao@huawei.com>, jaegeuk@kernel.org, chao@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/7/27 16:48, Jaegeuk Kim wrote:
-> This patch sets "-R 0:0" for android by default.
+On 2018/7/27 4:54, Weichao Guo wrote:
+> We may encounter both checkpoints invalid in such a case:
+> 1. write checkpoint A, B, C;
+> 2. sudden power-cut during write checkpoint D;
+> 3. fsck changes the total block count of checkpoint C;
+> 4. sudden power-cut during fsck write checkpoint C in place
 > 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>  ---------           ---------
+> |  ver C  |         |  ver D  |
+> |   ...   |         |   ...   |
+> | content |         | content |
+> |   ...   |         |   ...   |
+> |  ver C  |         |         |
+> |  ver A  |         |  ver B  |
+>  ---------           ---------
+> 
+> As the total # of checkpoint C is changed, an old cp block
+> like ver A or an invalid cp block may be referenced.
+> To avoid both checkpoints invalid, and considering fsck should
+> not update the checkpoint version, fsck could write checkpoint
+> out of place first and then write checkpoint in place. This
+> makes sure the file system is fixed by fsck and at least one
+> of the two checkpoints is valid.
+> 
+> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+> ---
+>  fsck/defrag.c |  2 +-
+>  fsck/fsck.c   | 14 +++++++++++++-
+>  fsck/fsck.h   |  1 +
+>  fsck/mount.c  | 16 ++++++++++++++--
+>  fsck/sload.c  |  2 +-
+>  5 files changed, 30 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fsck/defrag.c b/fsck/defrag.c
+> index bea0293..9fc932f 100644
+> --- a/fsck/defrag.c
+> +++ b/fsck/defrag.c
+> @@ -96,7 +96,7 @@ int f2fs_defragment(struct f2fs_sb_info *sbi, u64 from, u64 len, u64 to, int lef
+>  	/* flush dirty sit entries */
+>  	flush_sit_entries(sbi);
+>  
+> -	write_checkpoint(sbi);
+> +	__write_checkpoint(sbi);
+>  
+>  	return 0;
+>  }
+> diff --git a/fsck/fsck.c b/fsck/fsck.c
+> index 91c8529..f2ff4bc 100644
+> --- a/fsck/fsck.c
+> +++ b/fsck/fsck.c
+> @@ -1943,7 +1943,7 @@ static void flush_curseg_sit_entries(struct f2fs_sb_info *sbi)
+>  	free(sit_blk);
+>  }
+>  
+> -static void fix_checkpoint(struct f2fs_sb_info *sbi)
+> +static void __fix_checkpoint(struct f2fs_sb_info *sbi)
+>  {
+>  	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
+>  	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+> @@ -2004,6 +2004,18 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
+>  		write_nat_bits(sbi, sb, cp, sbi->cur_cp);
+>  }
+>  
+> +static void fix_checkpoint(struct f2fs_sb_info *sbi)
+> +{
+> +	int i = 0;
+> +
+> +	for (i = 0; i < 2; i++) {
+> +		/* write checkpoint out of place first */
+> +		sbi->cur_cp = sbi->cur_cp % 2 + 1;
+> +		__fix_checkpoint(sbi);
+> +		f2fs_fsync_device();
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+It needs to check return value here.
+
+We can add below codes in the end of __fix_checkpoint()?
+
+	ret = f2fs_fsync_device();
+	ASSERT(ret >= 0);
+
+> +	}
+> +}
+> +
+>  int check_curseg_offset(struct f2fs_sb_info *sbi)
+>  {
+>  	int i;
+> diff --git a/fsck/fsck.h b/fsck/fsck.h
+> index 8e133fa..068dd34 100644
+> --- a/fsck/fsck.h
+> +++ b/fsck/fsck.h
+> @@ -175,6 +175,7 @@ extern void flush_sit_entries(struct f2fs_sb_info *);
+>  extern void move_curseg_info(struct f2fs_sb_info *, u64);
+>  extern void write_curseg_info(struct f2fs_sb_info *);
+>  extern int find_next_free_block(struct f2fs_sb_info *, u64 *, int, int);
+> +extern void __write_checkpoint(struct f2fs_sb_info *);
+>  extern void write_checkpoint(struct f2fs_sb_info *);
+>  extern void update_data_blkaddr(struct f2fs_sb_info *, nid_t, u16, block_t);
+>  extern void update_nat_blkaddr(struct f2fs_sb_info *, nid_t, nid_t, block_t);
+> diff --git a/fsck/mount.c b/fsck/mount.c
+> index e5574c5..8a29421 100644
+> --- a/fsck/mount.c
+> +++ b/fsck/mount.c
+> @@ -1856,7 +1856,7 @@ void flush_journal_entries(struct f2fs_sb_info *sbi)
+>  	int n_sits = flush_sit_journal_entries(sbi);
+>  
+>  	if (n_nats || n_sits)
+> -		write_checkpoint(sbi);
+> +		__write_checkpoint(sbi);
+>  }
+>  
+>  void flush_sit_entries(struct f2fs_sb_info *sbi)
+> @@ -2079,7 +2079,7 @@ void nullify_nat_entry(struct f2fs_sb_info *sbi, u32 nid)
+>  	free(nat_block);
+>  }
+>  
+> -void write_checkpoint(struct f2fs_sb_info *sbi)
+> +void __write_checkpoint(struct f2fs_sb_info *sbi)
+>  {
+>  	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
+>  	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+> @@ -2144,6 +2144,18 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
+>  	ASSERT(ret >= 0);
+>  }
+>  
+> +void write_checkpoint(struct f2fs_sb_info *sbi)
+> +{
+> +	int i = 0;
+> +
+> +	for (i = 0; i < 2; i++) {
+> +		/* write checkpoint out of place first */
+> +		sbi->cur_cp = sbi->cur_cp % 2 + 1;
+> +		__write_checkpoint(sbi);
+> +		f2fs_fsync_device();
+
+Ditto.
 
 Thanks,
+
+> +	}
+> +}
+> +
+>  void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
+>  {
+>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+> diff --git a/fsck/sload.c b/fsck/sload.c
+> index 2842f2c..53d80fa 100644
+> --- a/fsck/sload.c
+> +++ b/fsck/sload.c
+> @@ -325,6 +325,6 @@ int f2fs_sload(struct f2fs_sb_info *sbi)
+>  	/* flush dirty sit entries */
+>  	flush_sit_entries(sbi);
+>  
+> -	write_checkpoint(sbi);
+> +	__write_checkpoint(sbi);
+>  	return 0;
+>  }
+> 
 
 
 ------------------------------------------------------------------------------
