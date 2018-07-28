@@ -1,196 +1,154 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [RFC PATCH v2] fsck.f2fs: write checkpoint out of
- place first
-Date: Sat, 28 Jul 2018 09:13:10 +0800
-Message-ID: <0f5c562c-1718-83a6-034c-9a384aa94347@huawei.com>
-References: <20180726205405.158146-1-guoweichao@huawei.com>
+Subject: [PATCH v2 1/2] f2fs: fix to do sanity check with user_block_count
+Date: Sat, 28 Jul 2018 09:30:34 +0800
+Message-ID: <20180728013034.90359-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fjDnE-0001gK-MV
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 28 Jul 2018 01:13:12 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fjDnD-000OzD-3W
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 28 Jul 2018 01:13:12 +0000
-In-Reply-To: <20180726205405.158146-1-guoweichao@huawei.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Weichao Guo <guoweichao@huawei.com>, jaegeuk@kernel.org, chao@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/7/27 4:54, Weichao Guo wrote:
-> We may encounter both checkpoints invalid in such a case:
-> 1. write checkpoint A, B, C;
-> 2. sudden power-cut during write checkpoint D;
-> 3. fsck changes the total block count of checkpoint C;
-> 4. sudden power-cut during fsck write checkpoint C in place
-> 
->  ---------           ---------
-> |  ver C  |         |  ver D  |
-> |   ...   |         |   ...   |
-> | content |         | content |
-> |   ...   |         |   ...   |
-> |  ver C  |         |         |
-> |  ver A  |         |  ver B  |
->  ---------           ---------
-> 
-> As the total # of checkpoint C is changed, an old cp block
-> like ver A or an invalid cp block may be referenced.
-> To avoid both checkpoints invalid, and considering fsck should
-> not update the checkpoint version, fsck could write checkpoint
-> out of place first and then write checkpoint in place. This
-> makes sure the file system is fixed by fsck and at least one
-> of the two checkpoints is valid.
-> 
-> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
-> ---
->  fsck/defrag.c |  2 +-
->  fsck/fsck.c   | 14 +++++++++++++-
->  fsck/fsck.h   |  1 +
->  fsck/mount.c  | 16 ++++++++++++++--
->  fsck/sload.c  |  2 +-
->  5 files changed, 30 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fsck/defrag.c b/fsck/defrag.c
-> index bea0293..9fc932f 100644
-> --- a/fsck/defrag.c
-> +++ b/fsck/defrag.c
-> @@ -96,7 +96,7 @@ int f2fs_defragment(struct f2fs_sb_info *sbi, u64 from, u64 len, u64 to, int lef
->  	/* flush dirty sit entries */
->  	flush_sit_entries(sbi);
->  
-> -	write_checkpoint(sbi);
-> +	__write_checkpoint(sbi);
->  
->  	return 0;
->  }
-> diff --git a/fsck/fsck.c b/fsck/fsck.c
-> index 91c8529..f2ff4bc 100644
-> --- a/fsck/fsck.c
-> +++ b/fsck/fsck.c
-> @@ -1943,7 +1943,7 @@ static void flush_curseg_sit_entries(struct f2fs_sb_info *sbi)
->  	free(sit_blk);
->  }
->  
-> -static void fix_checkpoint(struct f2fs_sb_info *sbi)
-> +static void __fix_checkpoint(struct f2fs_sb_info *sbi)
->  {
->  	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
->  	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
-> @@ -2004,6 +2004,18 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
->  		write_nat_bits(sbi, sb, cp, sbi->cur_cp);
->  }
->  
-> +static void fix_checkpoint(struct f2fs_sb_info *sbi)
-> +{
-> +	int i = 0;
-> +
-> +	for (i = 0; i < 2; i++) {
-> +		/* write checkpoint out of place first */
-> +		sbi->cur_cp = sbi->cur_cp % 2 + 1;
-> +		__fix_checkpoint(sbi);
-> +		f2fs_fsync_device();
+This patch fixs to do sanity check with user_block_count.
 
-It needs to check return value here.
+- Overview
+Divide zero in utilization when mount() a corrupted f2fs image
 
-We can add below codes in the end of __fix_checkpoint()?
+- Reproduce (4.18 upstream kernel)
 
-	ret = f2fs_fsync_device();
-	ASSERT(ret >= 0);
+- Kernel message
+[  564.099503] F2FS-fs (loop0): invalid crc value
+[  564.101991] divide error: 0000 [#1] SMP KASAN PTI
+[  564.103103] CPU: 1 PID: 1298 Comm: f2fs_discard-7: Not tainted 4.18.0-rc1+ #4
+[  564.104584] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  564.106624] RIP: 0010:issue_discard_thread+0x248/0x5c0
+[  564.107692] Code: ff ff 48 8b bd e8 fe ff ff 41 8b 9d 4c 04 00 00 e8 cd b8 ad ff 41 8b 85 50 04 00 00 31 d2 48 8d 04 80 48 8d 04 80 48 c1 e0 02 <48> f7 f3 83 f8 50 7e 16 41 c7 86 7c ff ff ff 01 00 00 00 41 c7 86
+[  564.111686] RSP: 0018:ffff8801f3117dc0 EFLAGS: 00010206
+[  564.112775] RAX: 0000000000000384 RBX: 0000000000000000 RCX: ffffffffb88c1e03
+[  564.114250] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: ffff8801e3aa4850
+[  564.115706] RBP: ffff8801f3117f00 R08: 1ffffffff751a1d0 R09: fffffbfff751a1d0
+[  564.117177] R10: 0000000000000001 R11: fffffbfff751a1d0 R12: 00000000fffffffc
+[  564.118634] R13: ffff8801e3aa4400 R14: ffff8801f3117ed8 R15: ffff8801e2050000
+[  564.120094] FS:  0000000000000000(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
+[  564.121748] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  564.122923] CR2: 000000000202b078 CR3: 00000001f11ac000 CR4: 00000000000006e0
+[  564.124383] Call Trace:
+[  564.124924]  ? __issue_discard_cmd+0x480/0x480
+[  564.125882]  ? __sched_text_start+0x8/0x8
+[  564.126756]  ? __kthread_parkme+0xcb/0x100
+[  564.127620]  ? kthread_blkcg+0x70/0x70
+[  564.128412]  kthread+0x180/0x1d0
+[  564.129105]  ? __issue_discard_cmd+0x480/0x480
+[  564.130029]  ? kthread_associate_blkcg+0x150/0x150
+[  564.131033]  ret_from_fork+0x35/0x40
+[  564.131794] Modules linked in: snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_pcm snd_timer snd mac_hid i2c_piix4 soundcore ib_iser rdma_cm iw_cm ib_cm ib_core iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx raid1 raid0 multipath linear 8139too crct10dif_pclmul crc32_pclmul qxl drm_kms_helper syscopyarea aesni_intel sysfillrect sysimgblt fb_sys_fops ttm drm aes_x86_64 crypto_simd cryptd 8139cp glue_helper mii pata_acpi floppy
+[  564.141798] ---[ end trace 4ce02f25ff7d3df5 ]---
+[  564.142773] RIP: 0010:issue_discard_thread+0x248/0x5c0
+[  564.143885] Code: ff ff 48 8b bd e8 fe ff ff 41 8b 9d 4c 04 00 00 e8 cd b8 ad ff 41 8b 85 50 04 00 00 31 d2 48 8d 04 80 48 8d 04 80 48 c1 e0 02 <48> f7 f3 83 f8 50 7e 16 41 c7 86 7c ff ff ff 01 00 00 00 41 c7 86
+[  564.147776] RSP: 0018:ffff8801f3117dc0 EFLAGS: 00010206
+[  564.148856] RAX: 0000000000000384 RBX: 0000000000000000 RCX: ffffffffb88c1e03
+[  564.150424] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: ffff8801e3aa4850
+[  564.151906] RBP: ffff8801f3117f00 R08: 1ffffffff751a1d0 R09: fffffbfff751a1d0
+[  564.153463] R10: 0000000000000001 R11: fffffbfff751a1d0 R12: 00000000fffffffc
+[  564.154915] R13: ffff8801e3aa4400 R14: ffff8801f3117ed8 R15: ffff8801e2050000
+[  564.156405] FS:  0000000000000000(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
+[  564.158070] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  564.159279] CR2: 000000000202b078 CR3: 00000001f11ac000 CR4: 00000000000006e0
+[  564.161043] ==================================================================
+[  564.162587] BUG: KASAN: stack-out-of-bounds in from_kuid_munged+0x1d/0x50
+[  564.163994] Read of size 4 at addr ffff8801f3117c84 by task f2fs_discard-7:/1298
 
-> +	}
-> +}
-> +
->  int check_curseg_offset(struct f2fs_sb_info *sbi)
->  {
->  	int i;
-> diff --git a/fsck/fsck.h b/fsck/fsck.h
-> index 8e133fa..068dd34 100644
-> --- a/fsck/fsck.h
-> +++ b/fsck/fsck.h
-> @@ -175,6 +175,7 @@ extern void flush_sit_entries(struct f2fs_sb_info *);
->  extern void move_curseg_info(struct f2fs_sb_info *, u64);
->  extern void write_curseg_info(struct f2fs_sb_info *);
->  extern int find_next_free_block(struct f2fs_sb_info *, u64 *, int, int);
-> +extern void __write_checkpoint(struct f2fs_sb_info *);
->  extern void write_checkpoint(struct f2fs_sb_info *);
->  extern void update_data_blkaddr(struct f2fs_sb_info *, nid_t, u16, block_t);
->  extern void update_nat_blkaddr(struct f2fs_sb_info *, nid_t, nid_t, block_t);
-> diff --git a/fsck/mount.c b/fsck/mount.c
-> index e5574c5..8a29421 100644
-> --- a/fsck/mount.c
-> +++ b/fsck/mount.c
-> @@ -1856,7 +1856,7 @@ void flush_journal_entries(struct f2fs_sb_info *sbi)
->  	int n_sits = flush_sit_journal_entries(sbi);
->  
->  	if (n_nats || n_sits)
-> -		write_checkpoint(sbi);
-> +		__write_checkpoint(sbi);
->  }
->  
->  void flush_sit_entries(struct f2fs_sb_info *sbi)
-> @@ -2079,7 +2079,7 @@ void nullify_nat_entry(struct f2fs_sb_info *sbi, u32 nid)
->  	free(nat_block);
->  }
->  
-> -void write_checkpoint(struct f2fs_sb_info *sbi)
-> +void __write_checkpoint(struct f2fs_sb_info *sbi)
->  {
->  	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
->  	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
-> @@ -2144,6 +2144,18 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
->  	ASSERT(ret >= 0);
->  }
->  
-> +void write_checkpoint(struct f2fs_sb_info *sbi)
-> +{
-> +	int i = 0;
-> +
-> +	for (i = 0; i < 2; i++) {
-> +		/* write checkpoint out of place first */
-> +		sbi->cur_cp = sbi->cur_cp % 2 + 1;
-> +		__write_checkpoint(sbi);
-> +		f2fs_fsync_device();
+[  564.165852] CPU: 1 PID: 1298 Comm: f2fs_discard-7: Tainted: G      D           4.18.0-rc1+ #4
+[  564.167593] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  564.169522] Call Trace:
+[  564.170057]  dump_stack+0x7b/0xb5
+[  564.170778]  print_address_description+0x70/0x290
+[  564.171765]  kasan_report+0x291/0x390
+[  564.172540]  ? from_kuid_munged+0x1d/0x50
+[  564.173408]  __asan_load4+0x78/0x80
+[  564.174148]  from_kuid_munged+0x1d/0x50
+[  564.174962]  do_notify_parent+0x1f5/0x4f0
+[  564.175808]  ? send_sigqueue+0x390/0x390
+[  564.176639]  ? css_set_move_task+0x152/0x340
+[  564.184197]  do_exit+0x1290/0x1390
+[  564.184950]  ? __issue_discard_cmd+0x480/0x480
+[  564.185884]  ? mm_update_next_owner+0x380/0x380
+[  564.186829]  ? __sched_text_start+0x8/0x8
+[  564.187672]  ? __kthread_parkme+0xcb/0x100
+[  564.188528]  ? kthread_blkcg+0x70/0x70
+[  564.189333]  ? kthread+0x180/0x1d0
+[  564.190052]  ? __issue_discard_cmd+0x480/0x480
+[  564.190983]  rewind_stack_do_exit+0x17/0x20
 
-Ditto.
+[  564.192190] The buggy address belongs to the page:
+[  564.193213] page:ffffea0007cc45c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+[  564.194856] flags: 0x2ffff0000000000()
+[  564.195644] raw: 02ffff0000000000 0000000000000000 dead000000000200 0000000000000000
+[  564.197247] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+[  564.198826] page dumped because: kasan: bad access detected
 
-Thanks,
+[  564.200299] Memory state around the buggy address:
+[  564.201306]  ffff8801f3117b80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  564.202779]  ffff8801f3117c00: 00 00 00 00 00 00 00 00 00 00 00 f3 f3 f3 f3 f3
+[  564.204252] >ffff8801f3117c80: f3 f3 f3 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1
+[  564.205742]                    ^
+[  564.206424]  ffff8801f3117d00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  564.207908]  ffff8801f3117d80: f3 f3 f3 f3 f3 f3 f3 f3 00 00 00 00 00 00 00 00
+[  564.209389] ==================================================================
+[  564.231795] F2FS-fs (loop0): Mounted with checkpoint version = 2
 
-> +	}
-> +}
-> +
->  void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
->  {
->  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
-> diff --git a/fsck/sload.c b/fsck/sload.c
-> index 2842f2c..53d80fa 100644
-> --- a/fsck/sload.c
-> +++ b/fsck/sload.c
-> @@ -325,6 +325,6 @@ int f2fs_sload(struct f2fs_sb_info *sbi)
->  	/* flush dirty sit entries */
->  	flush_sit_entries(sbi);
->  
-> -	write_checkpoint(sbi);
-> +	__write_checkpoint(sbi);
->  	return 0;
->  }
-> 
+- Location
+https://elixir.bootlin.com/linux/v4.18-rc1/source/fs/f2fs/segment.h#L586
+	return div_u64((u64)valid_user_blocks(sbi) * 100,
+					sbi->user_block_count);
+Missing checks on sbi->user_block_count.
 
+Reported-by: Wen Xu <wen.xu@gatech.edu>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v2:
+- replace le32_to_cpu with le64_to_cpu.
+ fs/f2fs/super.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 7fb51885a240..09009f5b3e87 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2283,6 +2283,8 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 	unsigned int sit_segs, nat_segs;
+ 	unsigned int sit_bitmap_size, nat_bitmap_size;
+ 	unsigned int log_blocks_per_seg;
++	unsigned int user_block_count;
++	unsigned int segment_count_main;
+ 	int i;
+ 
+ 	total = le32_to_cpu(raw_super->segment_count);
+@@ -2307,6 +2309,16 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 		return 1;
+ 	}
+ 
++	user_block_count = le64_to_cpu(ckpt->user_block_count);
++	segment_count_main = le32_to_cpu(raw_super->segment_count_main);
++	log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
++	if (!user_block_count || user_block_count >=
++			segment_count_main << log_blocks_per_seg) {
++		f2fs_msg(sbi->sb, KERN_ERR,
++			"Wrong user_block_count: %u", user_block_count);
++		return 1;
++	}
++
+ 	main_segs = le32_to_cpu(raw_super->segment_count_main);
+ 	blocks_per_seg = sbi->blocks_per_seg;
+ 
+@@ -2323,7 +2335,6 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 
+ 	sit_bitmap_size = le32_to_cpu(ckpt->sit_ver_bitmap_bytesize);
+ 	nat_bitmap_size = le32_to_cpu(ckpt->nat_ver_bitmap_bytesize);
+-	log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
+ 
+ 	if (sit_bitmap_size != ((sit_segs / 2) << log_blocks_per_seg) / 8 ||
+ 		nat_bitmap_size != ((nat_segs / 2) << log_blocks_per_seg) / 8) {
+-- 
+2.18.0.rc1
