@@ -1,25 +1,25 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 3/3] mkfs.f2fs: Fix the checkpoint version
- written to the footer of the root's inode
-Date: Sat, 28 Jul 2018 18:14:57 -0700
-Message-ID: <20180729011457.GA83620@jaegeuk-macbookpro.roam.corp.google.com>
-References: <9F004D7E-1745-4AF2-A395-35437F2055FA@cs.toronto.edu>
+Subject: Re: [PATCH 2/3] mkfs.f2fs: Fixed typos in several
+ printed messages.
+Date: Sat, 28 Jul 2018 18:15:09 -0700
+Message-ID: <20180729011509.GB83620@jaegeuk-macbookpro.roam.corp.google.com>
+References: <0B31334F-7114-4C65-B79F-3BD8D12BAD3E@cs.toronto.edu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1fjaIe-000519-6u
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Jul 2018 01:15:08 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1fjaIo-0005VP-GN
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Jul 2018 01:15:18 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fjaIa-001DZ0-S5
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Jul 2018 01:15:08 +0000
+ id 1fjaIm-001QlC-NK
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Jul 2018 01:15:18 +0000
 Content-Disposition: inline
-In-Reply-To: <9F004D7E-1745-4AF2-A395-35437F2055FA@cs.toronto.edu>
+In-Reply-To: <0B31334F-7114-4C65-B79F-3BD8D12BAD3E@cs.toronto.edu>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,58 +33,124 @@ To: Sotirios-Efstathios Maneas <smaneas@cs.toronto.edu>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
 On 07/26, Sotirios-Efstathios Maneas wrote:
-> Fix the checkpoint version written to the footer of the root's inode.
+> Fixed typos in several printed messages.
 
-What does this patch to fix?
-The checkpoint_ver in footer is to detect the node is recoverable or not during
-roll-forward recovery. So, root_inode doesn't require to have the exact version.
+Thanks, merged.
 
 > 
 > ---
->  mkfs/f2fs_format.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+>  mkfs/f2fs_format.c      | 18 +++++++++---------
+>  mkfs/f2fs_format_main.c |  8 ++++----
+>  2 files changed, 13 insertions(+), 13 deletions(-)
 > 
 > diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-> index d844563..fe3112e 100644
+> index 491a9da..d844563 100644
 > --- a/mkfs/f2fs_format.c
 > +++ b/mkfs/f2fs_format.c
-> @@ -28,6 +28,7 @@ extern struct f2fs_configuration c;
->  struct f2fs_super_block raw_sb;
->  struct f2fs_super_block *sb = &raw_sb;
->  struct f2fs_checkpoint *cp;
-> +int f2fs_checkpoint_version;
-
-This should be u64.
-
-Thanks,
-
+> @@ -586,19 +586,19 @@ static int f2fs_write_check_point_pack(void)
 >  
->  /* Return first segment number of each area */
->  #define prev_zone(cur)		(c.cur_seg[cur] - c.segs_per_zone)
-> @@ -619,8 +620,7 @@ static int f2fs_write_check_point_pack(void)
+>  	cp = calloc(F2FS_BLKSIZE, 1);
+>  	if (cp == NULL) {
+> -		MSG(1, "\tError: Calloc Failed for f2fs_checkpoint!!!\n");
+> +		MSG(1, "\tError: Calloc failed for f2fs_checkpoint!!!\n");
+>  		return ret;
 >  	}
 >  
->  	/* 1. cp page 1 of checkpoint pack 1 */
-> -	srand(time(NULL));
-> -	cp->checkpoint_ver = cpu_to_le64(rand() | 0x1);
-> +	cp->checkpoint_ver = cpu_to_le64(f2fs_checkpoint_version);
->  	set_cp(cur_node_segno[0], c.cur_seg[CURSEG_HOT_NODE]);
->  	set_cp(cur_node_segno[1], c.cur_seg[CURSEG_WARM_NODE]);
->  	set_cp(cur_node_segno[2], c.cur_seg[CURSEG_COLD_NODE]);
-> @@ -1061,9 +1061,12 @@ static int f2fs_write_root_inode(void)
->  		return -1;
+>  	sum = calloc(F2FS_BLKSIZE, 1);
+>  	if (sum == NULL) {
+> -		MSG(1, "\tError: Calloc Failed for summay_node!!!\n");
+> +		MSG(1, "\tError: Calloc failed for summary_node!!!\n");
+>  		goto free_cp;
 >  	}
 >  
-> +	srand(time(NULL));
-> +	f2fs_checkpoint_version = rand() | 0x1;
-> +
->  	raw_node->footer.nid = sb->root_ino;
->  	raw_node->footer.ino = sb->root_ino;
-> -	raw_node->footer.cp_ver = cpu_to_le64(1);
-> +	raw_node->footer.cp_ver = cpu_to_le64(f2fs_checkpoint_version);
->  	raw_node->footer.next_blkaddr = cpu_to_le32(
->  			get_sb(main_blkaddr) +
->  			c.cur_seg[CURSEG_HOT_NODE] *
+>  	sum_compact = calloc(F2FS_BLKSIZE, 1);
+>  	if (sum_compact == NULL) {
+> -		MSG(1, "\tError: Calloc Failed for summay buffer!!!\n");
+> +		MSG(1, "\tError: Calloc failed for summary buffer!!!\n");
+>  		goto free_sum;
+>  	}
+>  	sum_compact_p = sum_compact;
+> @@ -608,13 +608,13 @@ static int f2fs_write_check_point_pack(void)
+>  						F2FS_BLKSIZE - 1);
+>  	nat_bits = calloc(F2FS_BLKSIZE, nat_bits_blocks);
+>  	if (nat_bits == NULL) {
+> -		MSG(1, "\tError: Calloc Failed for nat bits buffer!!!\n");
+> +		MSG(1, "\tError: Calloc failed for nat bits buffer!!!\n");
+>  		goto free_sum_compact;
+>  	}
+>  
+>  	cp_payload = calloc(F2FS_BLKSIZE, 1);
+>  	if (cp_payload == NULL) {
+> -		MSG(1, "\tError: Calloc Failed for cp_payload!!!\n");
+> +		MSG(1, "\tError: Calloc failed for cp_payload!!!\n");
+>  		goto free_nat_bits;
+>  	}
+>  
+> @@ -920,7 +920,7 @@ static int f2fs_write_check_point_pack(void)
+>  	}
+>  
+>  	/* cp page 1 of check point pack 2
+> -	 * Initiatialize other checkpoint pack with version zero
+> +	 * Initialize other checkpoint pack with version zero
+>  	 */
+>  	cp->checkpoint_ver = 0;
+>  
+> @@ -1634,13 +1634,13 @@ int f2fs_format_device(void)
+>  
+>  	err = f2fs_init_sit_area();
+>  	if (err < 0) {
+> -		MSG(0, "\tError: Failed to Initialise the SIT AREA!!!\n");
+> +		MSG(0, "\tError: Failed to initialise the SIT AREA!!!\n");
+>  		goto exit;
+>  	}
+>  
+>  	err = f2fs_init_nat_area();
+>  	if (err < 0) {
+> -		MSG(0, "\tError: Failed to Initialise the NAT AREA!!!\n");
+> +		MSG(0, "\tError: Failed to initialise the NAT AREA!!!\n");
+>  		goto exit;
+>  	}
+>  
+> @@ -1658,7 +1658,7 @@ int f2fs_format_device(void)
+>  
+>  	err = f2fs_write_super_block();
+>  	if (err < 0) {
+> -		MSG(0, "\tError: Failed to write the Super Block!!!\n");
+> +		MSG(0, "\tError: Failed to write the super block!!!\n");
+>  		goto exit;
+>  	}
+>  exit:
+> diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+> index 449a0ed..0024393 100644
+> --- a/mkfs/f2fs_format_main.c
+> +++ b/mkfs/f2fs_format_main.c
+> @@ -193,22 +193,22 @@ static void f2fs_parse_options(int argc, char *argv[])
+>  
+>  	if (!(c.feature & cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR))) {
+>  		if (c.feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA)) {
+> -			MSG(0, "\tInfo: project quota feature should always been"
+> +			MSG(0, "\tInfo: project quota feature should always be "
+>  				"enabled with extra attr feature\n");
+>  			exit(1);
+>  		}
+>  		if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM)) {
+> -			MSG(0, "\tInfo: inode checksum feature should always been"
+> +			MSG(0, "\tInfo: inode checksum feature should always be "
+>  				"enabled with extra attr feature\n");
+>  			exit(1);
+>  		}
+>  		if (c.feature & cpu_to_le32(F2FS_FEATURE_FLEXIBLE_INLINE_XATTR)) {
+> -			MSG(0, "\tInfo: flexible inline xattr feature should always been"
+> +			MSG(0, "\tInfo: flexible inline xattr feature should always be "
+>  				"enabled with extra attr feature\n");
+>  			exit(1);
+>  		}
+>  		if (c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CRTIME)) {
+> -			MSG(0, "\tInfo: inode crtime feature should always been"
+> +			MSG(0, "\tInfo: inode crtime feature should always be "
+>  				"enabled with extra attr feature\n");
+>  			exit(1);
+>  		}
 > -- 
 > 2.7.4
 > 
