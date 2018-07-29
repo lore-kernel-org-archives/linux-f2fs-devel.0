@@ -1,29 +1,22 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v3] f2fs: report error if quota off error
- during umount
-Date: Sat, 28 Jul 2018 20:41:54 -0700
-Message-ID: <20180729034154.GA97518@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1529989963-24570-1-git-send-email-heyunlei@huawei.com>
- <18d4965a-7358-c057-32ea-9db6395bd56f@huawei.com>
- <d39bdd51-f5e2-29df-b8ca-73e6c68bc85a@huawei.com>
- <20180729020601.GI83620@jaegeuk-macbookpro.roam.corp.google.com>
- <b5596bf0-8772-3947-dc7f-aa2f3e936a26@kernel.org>
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH] f2fs: fix to clear PG_checked flag in
+ set_page_dirty()
+Date: Sun, 29 Jul 2018 12:16:59 +0800
+Message-ID: <20180729041659.19420-1-chao@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1fjcao-0007Kl-57
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Jul 2018 03:42:02 +0000
+ (envelope-from <chao@kernel.org>) id 1fjd9h-0008Lw-Ap
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Jul 2018 04:18:05 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fjcam-001X5P-Hj
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Jul 2018 03:42:02 +0000
-Content-Disposition: inline
-In-Reply-To: <b5596bf0-8772-3947-dc7f-aa2f3e936a26@kernel.org>
+ id 1fjd9e-001YfK-WB
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Jul 2018 04:18:05 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,61 +26,43 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao@kernel.org>
-Cc: zhangdianfang@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 07/29, Chao Yu wrote:
-> On 2018/7/29 10:06, Jaegeuk Kim wrote:
-> > On 07/28, Chao Yu wrote:
-> >> Ping,
-> > 
-> > Please check dev-test.
-> 
-> I still can't find this patch in last dev-test...
+From: Chao Yu <yuchao0@huawei.com>
 
-Oh, I recalled what happened on this patch. I didn't merge this, since fault
-injection test was failed due to this.
-Let me check, once everyting is stabilized.
+PG_checked flag will be set on data page during GC, later, we can
+recognize such page by the flag and migrate page to cold segment.
 
-Thanks,
+But previously, we don't clear this flag when invalidating data page,
+after page redirtying, we will write it into wrong log.
 
-> 
-> Thanks,
-> 
-> > 
-> >>
-> >> On 2018/6/26 16:34, Chao Yu wrote:
-> >>> On 2018/6/26 13:12, Yunlei He wrote:
-> >>>> Now, we depend on fsck to ensure quota file data is ok,
-> >>>> so we scan whole partition if checkpoint without umount
-> >>>> flag. It's same for quota off error case, which may make
-> >>>> quota file data inconsistent.
-> >>>>
-> >>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> >>>
-> >>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> >>>
-> >>> Thanks,
-> >>>
-> >>>
-> >>> ------------------------------------------------------------------------------
-> >>> Check out the vibrant tech community on one of the world's most
-> >>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> >>> _______________________________________________
-> >>> Linux-f2fs-devel mailing list
-> >>> Linux-f2fs-devel@lists.sourceforge.net
-> >>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> >>>
-> >>>
-> > 
-> > ------------------------------------------------------------------------------
-> > Check out the vibrant tech community on one of the world's most
-> > engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> > 
+Let's clear PG_checked flag in set_page_dirty() to avoid this.
+
+Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/data.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index bac667831052..eb994c66fe66 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2549,6 +2549,10 @@ static int f2fs_set_data_page_dirty(struct page *page)
+ 	if (!PageUptodate(page))
+ 		SetPageUptodate(page);
+ 
++	/* don't remain PG_checked flag which was set during GC */
++	if (is_cold_data(page))
++		clear_cold_data(page);
++
+ 	if (f2fs_is_atomic_file(inode) && !f2fs_is_commit_atomic_write(inode)) {
+ 		if (!IS_ATOMIC_WRITTEN_PAGE(page)) {
+ 			f2fs_register_inmem_page(inode, page);
+-- 
+2.18.0
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
