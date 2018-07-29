@@ -1,29 +1,27 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] f2fs: avoid race between zero_range and
- background GC
-Date: Sun, 29 Jul 2018 11:03:06 +0800
-Message-ID: <d6e6a1c0-c56a-aac8-a210-945cce17f5b3@kernel.org>
-References: <20180726104536.114340-1-yuchao0@huawei.com>
- <20180727102916.GI16155@jaegeuk-macbookpro.roam.corp.google.com>
- <10d7814b-06d0-6751-ca56-85e7c8b92a27@kernel.org>
- <20180729020254.GH83620@jaegeuk-macbookpro.roam.corp.google.com>
- <6d86bad1-52fa-2309-9403-47490345e372@kernel.org>
- <20180729025930.GA95148@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH v3] f2fs: report error if quota off error
+ during umount
+Date: Sun, 29 Jul 2018 11:07:34 +0800
+Message-ID: <b5596bf0-8772-3947-dc7f-aa2f3e936a26@kernel.org>
+References: <1529989963-24570-1-git-send-email-heyunlei@huawei.com>
+ <18d4965a-7358-c057-32ea-9db6395bd56f@huawei.com>
+ <d39bdd51-f5e2-29df-b8ca-73e6c68bc85a@huawei.com>
+ <20180729020601.GI83620@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1fjbzJ-0003Xe-Ja
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Jul 2018 03:03:17 +0000
+ (envelope-from <chao@kernel.org>) id 1fjc3d-0006s6-Po
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Jul 2018 03:07:45 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fjbzI-001Sd4-6g
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Jul 2018 03:03:17 +0000
-In-Reply-To: <20180729025930.GA95148@jaegeuk-macbookpro.roam.corp.google.com>
+ id 1fjc3c-001Sno-8Y
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Jul 2018 03:07:45 +0000
+In-Reply-To: <20180729020601.GI83620@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -34,116 +32,53 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: zhangdianfang@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/7/29 10:59, Jaegeuk Kim wrote:
-> On 07/29, Chao Yu wrote:
->> On 2018/7/29 10:02, Jaegeuk Kim wrote:
->>> On 07/27, Chao Yu wrote:
->>>> On 2018/7/27 18:29, Jaegeuk Kim wrote:
->>>>> On 07/26, Chao Yu wrote:
->>>>>> Thread A				Background GC
->>>>>> - f2fs_zero_range
->>>>>>  - truncate_pagecache_range
->>>>>> 					- gc_data_segment
->>>>>> 					 - get_read_data_page
->>>>>> 					  - move_data_page
->>>>>> 					   - set_page_dirty
->>>>>> 					   - set_cold_data
->>>>>>  - f2fs_do_zero_range
->>>>>>   - dn->data_blkaddr = NEW_ADDR;
->>>>>>   - f2fs_set_data_blkaddr
->>>>>>
->>>>>> Actually, we don't need to set dirty & checked flag on the page, since
->>>>>> all valid data in the page should be zeroed by zero_range().
->>>>>
->>>>> But, it doesn't matter too much, right?
->>>>
->>>> No, if the dirtied page is writebacked after f2fs_do_zero_range(), result of
->>>> zero_range() should be wrong, as zeroed page contains valid user data.
->>>
->>> How about truncating page caches after block address change or doing it twice
->>> before and after?
->>
->> Thread A				Background GC
->> - f2fs_zero_range
->>  - truncate_pagecache_range
->> 					- gc_data_segment
->> 					 - get_read_data_page
->> 					  - move_data_page
->> 					   - set_page_dirty
->> 					   - set_cold_data
->>  - f2fs_do_zero_range
->>   - dn->data_blkaddr = NEW_ADDR;
->>   - f2fs_set_data_blkaddr
->> 					bdi-flusher
->> 					- __write_data_page
->> 					 - f2fs_update_data_blkaddr
->> 					 : data_blkaddr has been updated here.
->>  - truncate_pagecache_range
->>  : data & dnode has been writebacked before page cache truncation?
->>
->> How about this case?
+On 2018/7/29 10:06, Jaegeuk Kim wrote:
+> On 07/28, Chao Yu wrote:
+>> Ping,
 > 
-> So, truncating pages under dnode lock can address it?
+> Please check dev-test.
 
-Normally, our lock dependency is
-
-->writepage()
-lock data page -> lock dnode page
-
-here
-lock dnode page -> truncate_pagecache_range::lock data page
-
-Will easily cause deadlock?
+I still can't find this patch in last dev-test...
 
 Thanks,
 
 > 
 >>
->> Thanks,
->>
+>> On 2018/6/26 16:34, Chao Yu wrote:
+>>> On 2018/6/26 13:12, Yunlei He wrote:
+>>>> Now, we depend on fsck to ensure quota file data is ok,
+>>>> so we scan whole partition if checkpoint without umount
+>>>> flag. It's same for quota off error case, which may make
+>>>> quota file data inconsistent.
+>>>>
+>>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
 >>>
->>>>
->>>>>
->>>>>> Use i_gc_rwsem[WRITE] to avoid such race condition.
->>>>>
->>>>> Hope to avoid abusing i_gc_rwsem[] tho.
->>>>
->>>> Agreed, let's try avoiding until we have to use it.
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>>>
->>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>>>> ---
->>>>>>  fs/f2fs/file.c | 2 ++
->>>>>>  1 file changed, 2 insertions(+)
->>>>>>
->>>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>>>>> index 267ec3794e1e..7bd2412a8c37 100644
->>>>>> --- a/fs/f2fs/file.c
->>>>>> +++ b/fs/f2fs/file.c
->>>>>> @@ -1309,6 +1309,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
->>>>>>  	if (ret)
->>>>>>  		return ret;
->>>>>>  
->>>>>> +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->>>>>>  	down_write(&F2FS_I(inode)->i_mmap_sem);
->>>>>>  	ret = filemap_write_and_wait_range(mapping, offset, offset + len - 1);
->>>>>>  	if (ret)
->>>>>> @@ -1389,6 +1390,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
->>>>>>  	}
->>>>>>  out_sem:
->>>>>>  	up_write(&F2FS_I(inode)->i_mmap_sem);
->>>>>> +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->>>>>>  
->>>>>>  	return ret;
->>>>>>  }
->>>>>> -- 
->>>>>> 2.18.0.rc1
+>>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>>>
+>>> Thanks,
+>>>
+>>>
+>>> ------------------------------------------------------------------------------
+>>> Check out the vibrant tech community on one of the world's most
+>>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+>>> _______________________________________________
+>>> Linux-f2fs-devel mailing list
+>>> Linux-f2fs-devel@lists.sourceforge.net
+>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>>>
+>>>
+> 
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
