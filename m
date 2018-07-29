@@ -1,25 +1,27 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 4/4] f2fs: fix to spread clear_cold_data()
-Date: Sat, 28 Jul 2018 19:00:13 -0700
-Message-ID: <20180729020013.GG83620@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180727101516.41403-1-yuchao0@huawei.com>
- <20180727101516.41403-4-yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: avoid race between zero_range and
+ background GC
+Date: Sat, 28 Jul 2018 19:02:54 -0700
+Message-ID: <20180729020254.GH83620@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180726104536.114340-1-yuchao0@huawei.com>
+ <20180727102916.GI16155@jaegeuk-macbookpro.roam.corp.google.com>
+ <10d7814b-06d0-6751-ca56-85e7c8b92a27@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1fjb0P-0002Jl-6n
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Jul 2018 02:00:21 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1fjb30-0005sg-3v
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Jul 2018 02:03:02 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fjb0N-001Q0T-Pp
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Jul 2018 02:00:21 +0000
+ id 1fjb2y-001SrC-Ol
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Jul 2018 02:03:02 +0000
 Content-Disposition: inline
-In-Reply-To: <20180727101516.41403-4-yuchao0@huawei.com>
+In-Reply-To: <10d7814b-06d0-6751-ca56-85e7c8b92a27@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,95 +31,74 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
+To: Chao Yu <chao@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 On 07/27, Chao Yu wrote:
-> We need to drop PG_checked flag on page as well when we clear PG_uptodate
-> flag, in order to avoid treating the page as GCing one later.
+> On 2018/7/27 18:29, Jaegeuk Kim wrote:
+> > On 07/26, Chao Yu wrote:
+> >> Thread A				Background GC
+> >> - f2fs_zero_range
+> >>  - truncate_pagecache_range
+> >> 					- gc_data_segment
+> >> 					 - get_read_data_page
+> >> 					  - move_data_page
+> >> 					   - set_page_dirty
+> >> 					   - set_cold_data
+> >>  - f2fs_do_zero_range
+> >>   - dn->data_blkaddr = NEW_ADDR;
+> >>   - f2fs_set_data_blkaddr
+> >>
+> >> Actually, we don't need to set dirty & checked flag on the page, since
+> >> all valid data in the page should be zeroed by zero_range().
+> > 
+> > But, it doesn't matter too much, right?
+> 
+> No, if the dirtied page is writebacked after f2fs_do_zero_range(), result of
+> zero_range() should be wrong, as zeroed page contains valid user data.
 
-What do you mean "treating the page as GCing one"?
+How about truncating page caches after block address change or doing it twice
+before and after?
 
 > 
-> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/data.c    | 8 +++++++-
->  fs/f2fs/dir.c     | 1 +
->  fs/f2fs/segment.c | 4 +++-
->  3 files changed, 11 insertions(+), 2 deletions(-)
+> > 
+> >> Use i_gc_rwsem[WRITE] to avoid such race condition.
+> > 
+> > Hope to avoid abusing i_gc_rwsem[] tho.
 > 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index a29f3162b887..2817e2f4eb17 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1768,6 +1768,7 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
->  	/* This page is already truncated */
->  	if (fio->old_blkaddr == NULL_ADDR) {
->  		ClearPageUptodate(page);
-> +		clear_cold_data(page);
->  		goto out_writepage;
->  	}
->  got_it:
-> @@ -1943,8 +1944,10 @@ static int __write_data_page(struct page *page, bool *submitted,
->  
->  out:
->  	inode_dec_dirty_pages(inode);
-> -	if (err)
-> +	if (err) {
->  		ClearPageUptodate(page);
-> +		clear_cold_data(page);
-> +	}
->  
->  	if (wbc->for_reclaim) {
->  		f2fs_submit_merged_write_cond(sbi, inode, 0, page->index, DATA);
-> @@ -2534,6 +2537,8 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
->  		}
->  	}
->  
-> +	clear_cold_data(page);
-> +
->  	/* This is atomic written page, keep Private */
->  	if (IS_ATOMIC_WRITTEN_PAGE(page))
->  		return f2fs_drop_inmem_page(inode, page);
-> @@ -2552,6 +2557,7 @@ int f2fs_release_page(struct page *page, gfp_t wait)
->  	if (IS_ATOMIC_WRITTEN_PAGE(page))
->  		return 0;
->  
-> +	clear_cold_data(page);
->  	set_page_private(page, 0);
->  	ClearPagePrivate(page);
->  	return 1;
-> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> index 7f955c4e86a4..1e4a4122eb0c 100644
-> --- a/fs/f2fs/dir.c
-> +++ b/fs/f2fs/dir.c
-> @@ -734,6 +734,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
->  		clear_page_dirty_for_io(page);
->  		ClearPagePrivate(page);
->  		ClearPageUptodate(page);
-> +		clear_cold_data(page);
->  		inode_dec_dirty_pages(dir);
->  		f2fs_remove_dirty_inode(dir);
->  	}
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 58abbdc53561..4d83961745e6 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -267,8 +267,10 @@ static int __revoke_inmem_pages(struct inode *inode,
->  		}
->  next:
->  		/* we don't need to invalidate this in the sccessful status */
-> -		if (drop || recover)
-> +		if (drop || recover) {
->  			ClearPageUptodate(page);
-> +			clear_cold_data(page);
-> +		}
->  		set_page_private(page, 0);
->  		ClearPagePrivate(page);
->  		f2fs_put_page(page, 1);
-> -- 
-> 2.18.0.rc1
+> Agreed, let's try avoiding until we have to use it.
+> 
+> Thanks,
+> 
+> > 
+> >>
+> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >> ---
+> >>  fs/f2fs/file.c | 2 ++
+> >>  1 file changed, 2 insertions(+)
+> >>
+> >> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> >> index 267ec3794e1e..7bd2412a8c37 100644
+> >> --- a/fs/f2fs/file.c
+> >> +++ b/fs/f2fs/file.c
+> >> @@ -1309,6 +1309,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+> >>  	if (ret)
+> >>  		return ret;
+> >>  
+> >> +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >>  	down_write(&F2FS_I(inode)->i_mmap_sem);
+> >>  	ret = filemap_write_and_wait_range(mapping, offset, offset + len - 1);
+> >>  	if (ret)
+> >> @@ -1389,6 +1390,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+> >>  	}
+> >>  out_sem:
+> >>  	up_write(&F2FS_I(inode)->i_mmap_sem);
+> >> +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> >>  
+> >>  	return ret;
+> >>  }
+> >> -- 
+> >> 2.18.0.rc1
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
