@@ -1,107 +1,105 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs-tools: fix to reset i_gc_failures offline
-Date: Sat, 28 Jul 2018 18:41:35 +0800
-Message-ID: <20180728104135.13055-1-yuchao0@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 3/3] mkfs.f2fs: Fix the checkpoint version
+ written to the footer of the root's inode
+Date: Sat, 28 Jul 2018 18:14:57 -0700
+Message-ID: <20180729011457.GA83620@jaegeuk-macbookpro.roam.corp.google.com>
+References: <9F004D7E-1745-4AF2-A395-35437F2055FA@cs.toronto.edu>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1fjaIe-000519-6u
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Jul 2018 01:15:08 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fjaIa-001DZ0-S5
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Jul 2018 01:15:08 +0000
+Content-Disposition: inline
+In-Reply-To: <9F004D7E-1745-4AF2-A395-35437F2055FA@cs.toronto.edu>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Sotirios-Efstathios Maneas <smaneas@cs.toronto.edu>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-This patch synchronize f2fs_inode structure from kernel side, in
-addition, it adds to check .i_gc_failures and do resetting in fsck.
+On 07/26, Sotirios-Efstathios Maneas wrote:
+> Fix the checkpoint version written to the footer of the root's inode.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fsck/dir.c         |  5 ++++-
- fsck/fsck.c        | 16 ++++++++++++++++
- include/f2fs_fs.h  |  8 +++++++-
- mkfs/f2fs_format.c |  2 +-
- 4 files changed, 28 insertions(+), 3 deletions(-)
+What does this patch to fix?
+The checkpoint_ver in footer is to detect the node is recoverable or not during
+roll-forward recovery. So, root_inode doesn't require to have the exact version.
 
-diff --git a/fsck/dir.c b/fsck/dir.c
-index 567a4e9c9b83..98a0b7a89601 100644
---- a/fsck/dir.c
-+++ b/fsck/dir.c
-@@ -445,7 +445,10 @@ static void init_inode_block(struct f2fs_sb_info *sbi,
- 	node_blk->i.i_ctime_nsec = 0;
- 	node_blk->i.i_mtime_nsec = 0;
- 	node_blk->i.i_generation = 0;
--	node_blk->i.i_current_depth = cpu_to_le32(1);
-+	if (de->file_type == F2FS_FT_DIR)
-+		node_blk->i.i_current_depth = cpu_to_le32(1);
-+	else
-+		node_blk->i.i_current_depth = cpu_to_le32(0);
- 	node_blk->i.i_xattr_nid = 0;
- 	node_blk->i.i_flags = 0;
- 	node_blk->i.i_inline = F2FS_INLINE_XATTR;
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 20a569228516..d550403e3e10 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -662,6 +662,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 	unsigned char *en;
- 	u32 namelen;
- 	unsigned int idx = 0;
-+	unsigned short i_gc_failures;
- 	int need_fix = 0;
- 	int ret;
- 
-@@ -939,6 +940,21 @@ skip_blkcnt_fix:
- 		}
- 	}
- 
-+	i_gc_failures = le16_to_cpu(node_blk->i.i_gc_failures);
-+	if (ftype == F2FS_FT_REG_FILE && i_gc_failures) {
-+
-+		DBG(1, "Regular Inode: 0x%x [%s] depth: %d\n\n",
-+				le32_to_cpu(node_blk->footer.ino), en,
-+				i_gc_failures);
-+
-+		if (c.fix_on) {
-+			node_blk->i.i_gc_failures = cpu_to_le16(0);
-+			need_fix = 1;
-+			FIX_MSG("Regular: 0x%x reset i_gc_failures from 0x%x to 0x00",
-+					nid, i_gc_failures);
-+		}
-+	}
-+
- 	free(en);
- 
- 	if (ftype == F2FS_FT_SYMLINK && i_blocks && i_size == 0) {
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index fe1e31ba1a46..53fa002c5520 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -788,7 +788,13 @@ struct f2fs_inode {
- 	__le32 i_ctime_nsec;		/* change time in nano scale */
- 	__le32 i_mtime_nsec;		/* modification time in nano scale */
- 	__le32 i_generation;		/* file version (for NFS) */
--	__le32 i_current_depth;		/* only for directory depth */
-+	union {
-+		__le32 i_current_depth;	/* only for directory depth */
-+		__le16 i_gc_failures;	/*
-+					 * # of gc failures on pinned file.
-+					 * only for regular files.
-+					 */
-+	};
- 	__le32 i_xattr_nid;		/* nid to save xattr */
- 	__le32 i_flags;			/* file attributes */
- 	__le32 i_pino;			/* parent inode number */
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index f2880eb06460..01a73e858d73 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -1251,7 +1251,7 @@ static int f2fs_write_qf_inode(int qtype)
- 	raw_node->i.i_generation = 0;
- 	raw_node->i.i_xattr_nid = 0;
- 	raw_node->i.i_flags = FS_IMMUTABLE_FL;
--	raw_node->i.i_current_depth = cpu_to_le32(1);
-+	raw_node->i.i_current_depth = cpu_to_le32(0);
- 	raw_node->i.i_dir_level = DEF_DIR_LEVEL;
- 
- 	if (c.feature & cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR)) {
--- 
-2.18.0.rc1
+> 
+> ---
+>  mkfs/f2fs_format.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+> index d844563..fe3112e 100644
+> --- a/mkfs/f2fs_format.c
+> +++ b/mkfs/f2fs_format.c
+> @@ -28,6 +28,7 @@ extern struct f2fs_configuration c;
+>  struct f2fs_super_block raw_sb;
+>  struct f2fs_super_block *sb = &raw_sb;
+>  struct f2fs_checkpoint *cp;
+> +int f2fs_checkpoint_version;
+
+This should be u64.
+
+Thanks,
+
+>  
+>  /* Return first segment number of each area */
+>  #define prev_zone(cur)		(c.cur_seg[cur] - c.segs_per_zone)
+> @@ -619,8 +620,7 @@ static int f2fs_write_check_point_pack(void)
+>  	}
+>  
+>  	/* 1. cp page 1 of checkpoint pack 1 */
+> -	srand(time(NULL));
+> -	cp->checkpoint_ver = cpu_to_le64(rand() | 0x1);
+> +	cp->checkpoint_ver = cpu_to_le64(f2fs_checkpoint_version);
+>  	set_cp(cur_node_segno[0], c.cur_seg[CURSEG_HOT_NODE]);
+>  	set_cp(cur_node_segno[1], c.cur_seg[CURSEG_WARM_NODE]);
+>  	set_cp(cur_node_segno[2], c.cur_seg[CURSEG_COLD_NODE]);
+> @@ -1061,9 +1061,12 @@ static int f2fs_write_root_inode(void)
+>  		return -1;
+>  	}
+>  
+> +	srand(time(NULL));
+> +	f2fs_checkpoint_version = rand() | 0x1;
+> +
+>  	raw_node->footer.nid = sb->root_ino;
+>  	raw_node->footer.ino = sb->root_ino;
+> -	raw_node->footer.cp_ver = cpu_to_le64(1);
+> +	raw_node->footer.cp_ver = cpu_to_le64(f2fs_checkpoint_version);
+>  	raw_node->footer.next_blkaddr = cpu_to_le32(
+>  			get_sb(main_blkaddr) +
+>  			c.cur_seg[CURSEG_HOT_NODE] *
+> -- 
+> 2.7.4
+> 
+> Kind regards,
+> Stathis Maneas
+> 
+> 
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
