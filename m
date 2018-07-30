@@ -1,174 +1,181 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid race between zero_range and
- background GC
-Date: Mon, 30 Jul 2018 09:55:18 +0800
-Message-ID: <c4640220-b294-c801-fc41-b5b0bab007d5@huawei.com>
-References: <20180726104536.114340-1-yuchao0@huawei.com>
- <20180727102916.GI16155@jaegeuk-macbookpro.roam.corp.google.com>
- <10d7814b-06d0-6751-ca56-85e7c8b92a27@kernel.org>
- <20180729020254.GH83620@jaegeuk-macbookpro.roam.corp.google.com>
- <6d86bad1-52fa-2309-9403-47490345e372@kernel.org>
- <20180729025930.GA95148@jaegeuk-macbookpro.roam.corp.google.com>
- <d6e6a1c0-c56a-aac8-a210-945cce17f5b3@kernel.org>
- <20180729051459.GB97518@jaegeuk-macbookpro.roam.corp.google.com>
- <20180730013816.GA15708@jaegeuk-macbookpro.roam.corp.google.com>
+From: Weichao Guo <guoweichao@huawei.com>
+Subject: [PATCH v3] fsck.f2fs: write checkpoint out of place first
+Date: Mon, 30 Jul 2018 18:46:45 +0800
+Message-ID: <20180730104645.95429-1-guoweichao@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180730013816.GA15708@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <guoweichao@huawei.com>) id 1fjyAu-0008Bn-Mk
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Jul 2018 02:44:44 +0000
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fjyAs-002ehd-Kx
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Jul 2018 02:44:44 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, chao@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/7/30 9:38, Jaegeuk Kim wrote:
-> On 07/28, Jaegeuk Kim wrote:
->> On 07/29, Chao Yu wrote:
->>> On 2018/7/29 10:59, Jaegeuk Kim wrote:
->>>> On 07/29, Chao Yu wrote:
->>>>> On 2018/7/29 10:02, Jaegeuk Kim wrote:
->>>>>> On 07/27, Chao Yu wrote:
->>>>>>> On 2018/7/27 18:29, Jaegeuk Kim wrote:
->>>>>>>> On 07/26, Chao Yu wrote:
->>>>>>>>> Thread A				Background GC
->>>>>>>>> - f2fs_zero_range
->>>>>>>>>  - truncate_pagecache_range
->>>>>>>>> 					- gc_data_segment
->>>>>>>>> 					 - get_read_data_page
->>>>>>>>> 					  - move_data_page
->>>>>>>>> 					   - set_page_dirty
->>>>>>>>> 					   - set_cold_data
->>>>>>>>>  - f2fs_do_zero_range
->>>>>>>>>   - dn->data_blkaddr = NEW_ADDR;
->>>>>>>>>   - f2fs_set_data_blkaddr
->>>>>>>>>
->>>>>>>>> Actually, we don't need to set dirty & checked flag on the page, since
->>>>>>>>> all valid data in the page should be zeroed by zero_range().
->>>>>>>>
->>>>>>>> But, it doesn't matter too much, right?
->>>>>>>
->>>>>>> No, if the dirtied page is writebacked after f2fs_do_zero_range(), result of
->>>>>>> zero_range() should be wrong, as zeroed page contains valid user data.
->>>>>>
->>>>>> How about truncating page caches after block address change or doing it twice
->>>>>> before and after?
->>>>>
->>>>> Thread A				Background GC
->>>>> - f2fs_zero_range
->>>>>  - truncate_pagecache_range
->>>>> 					- gc_data_segment
->>>>> 					 - get_read_data_page
->>>>> 					  - move_data_page
->>>>> 					   - set_page_dirty
->>>>> 					   - set_cold_data
->>>>>  - f2fs_do_zero_range
->>>>>   - dn->data_blkaddr = NEW_ADDR;
->>>>>   - f2fs_set_data_blkaddr
->>>>> 					bdi-flusher
->>>>> 					- __write_data_page
->>>>> 					 - f2fs_update_data_blkaddr
->>>>> 					 : data_blkaddr has been updated here.
->>>>>  - truncate_pagecache_range
->>>>>  : data & dnode has been writebacked before page cache truncation?
->>>>>
->>>>> How about this case?
->>>>
->>>> So, truncating pages under dnode lock can address it?
->>>
->>> Normally, our lock dependency is
->>>
->>> ->writepage()
->>> lock data page -> lock dnode page
->>>
->>> here
->>> lock dnode page -> truncate_pagecache_range::lock data page
->>>
->>> Will easily cause deadlock?
->>
->> Yeah. Can we add an inode flag to bypass GC in this case, then?
-> 
-> Hmm, BTW, how about using i_gc_rwsem[WRITE] in a very narrow scope?
+We may encounter both checkpoints invalid in such a case:
+1. write checkpoint A, B, C;
+2. sudden power-cut during write checkpoint D;
+3. fsck changes the total block count of checkpoint C;
+4. sudden power-cut during fsck write checkpoint C in place
 
-Oh, I can see that you submitted a patch to change lock dependency to:
+ ---------           ---------
+|  ver C  |         |  ver D  |
+|   ...   |         |   ...   |
+| content |         | content |
+|   ...   |         |   ...   |
+|  ver C  |         |         |
+|  ver A  |         |  ver B  |
+ ---------           ---------
 
-f2fs_lock_op() -> down_write(i_gc_rwsem[WRITE])
+As the total # of checkpoint C is changed, an old cp block
+like ver A or an invalid cp block may be referenced.
+To avoid both checkpoints invalid, and considering fsck should
+not update the checkpoint version, fsck could write checkpoint
+out of place first and then write checkpoint in place. This
+makes sure the file system is fixed by fsck and at least one
+of the two checkpoints is valid.
 
-At a glance, I haven't see any place can cause deadlock now.
+Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+---
+ fsck/defrag.c |  2 +-
+ fsck/fsck.c   | 15 ++++++++++++++-
+ fsck/fsck.h   |  1 +
+ fsck/mount.c  | 17 +++++++++++++++--
+ fsck/sload.c  |  2 +-
+ 5 files changed, 32 insertions(+), 5 deletions(-)
 
-> 
-> for (index = pg_start; index < pg_end;) {
-> 	f2fs_lock_op();
-> 	down_write(i_gc_rwsem[WRITE]);
-> 	truncate_page_cache_range(index, index + 4k);
-> 	f2fs_do_zero_range(&dn, index, end);
-> 	up_write(i_gc_rwsem[WRITE]);
-> 	f2fs_unlock_op();
-> 	f2fs_balance_fs();
-> }
+diff --git a/fsck/defrag.c b/fsck/defrag.c
+index bea0293..9fc932f 100644
+--- a/fsck/defrag.c
++++ b/fsck/defrag.c
+@@ -96,7 +96,7 @@ int f2fs_defragment(struct f2fs_sb_info *sbi, u64 from, u64 len, u64 to, int lef
+ 	/* flush dirty sit entries */
+ 	flush_sit_entries(sbi);
+ 
+-	write_checkpoint(sbi);
++	__write_checkpoint(sbi);
+ 
+ 	return 0;
+ }
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 91c8529..1cf9e5e 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -1943,7 +1943,7 @@ static void flush_curseg_sit_entries(struct f2fs_sb_info *sbi)
+ 	free(sit_blk);
+ }
+ 
+-static void fix_checkpoint(struct f2fs_sb_info *sbi)
++static void __fix_checkpoint(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
+ 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+@@ -2004,6 +2004,19 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
+ 		write_nat_bits(sbi, sb, cp, sbi->cur_cp);
+ }
+ 
++static void fix_checkpoint(struct f2fs_sb_info *sbi)
++{
++	int i, ret;
++
++	for (i = 0; i < 2; i++) {
++		/* write checkpoint out of place first */
++		sbi->cur_cp = sbi->cur_cp % 2 + 1;
++		__fix_checkpoint(sbi);
++		ret = f2fs_fsync_device();
++		ASSERT(ret >= 0);
++	}
++}
++
+ int check_curseg_offset(struct f2fs_sb_info *sbi)
+ {
+ 	int i;
+diff --git a/fsck/fsck.h b/fsck/fsck.h
+index 8e133fa..068dd34 100644
+--- a/fsck/fsck.h
++++ b/fsck/fsck.h
+@@ -175,6 +175,7 @@ extern void flush_sit_entries(struct f2fs_sb_info *);
+ extern void move_curseg_info(struct f2fs_sb_info *, u64);
+ extern void write_curseg_info(struct f2fs_sb_info *);
+ extern int find_next_free_block(struct f2fs_sb_info *, u64 *, int, int);
++extern void __write_checkpoint(struct f2fs_sb_info *);
+ extern void write_checkpoint(struct f2fs_sb_info *);
+ extern void update_data_blkaddr(struct f2fs_sb_info *, nid_t, u16, block_t);
+ extern void update_nat_blkaddr(struct f2fs_sb_info *, nid_t, nid_t, block_t);
+diff --git a/fsck/mount.c b/fsck/mount.c
+index e5574c5..acf4e47 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -1856,7 +1856,7 @@ void flush_journal_entries(struct f2fs_sb_info *sbi)
+ 	int n_sits = flush_sit_journal_entries(sbi);
+ 
+ 	if (n_nats || n_sits)
+-		write_checkpoint(sbi);
++		__write_checkpoint(sbi);
+ }
+ 
+ void flush_sit_entries(struct f2fs_sb_info *sbi)
+@@ -2079,7 +2079,7 @@ void nullify_nat_entry(struct f2fs_sb_info *sbi, u32 nid)
+ 	free(nat_block);
+ }
+ 
+-void write_checkpoint(struct f2fs_sb_info *sbi)
++void __write_checkpoint(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
+ 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+@@ -2144,6 +2144,19 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
+ 	ASSERT(ret >= 0);
+ }
+ 
++void write_checkpoint(struct f2fs_sb_info *sbi)
++{
++	int i, ret;
++
++	for (i = 0; i < 2; i++) {
++		/* write checkpoint out of place first */
++		sbi->cur_cp = sbi->cur_cp % 2 + 1;
++		__write_checkpoint(sbi);
++		ret = f2fs_fsync_device();
++		ASSERT(ret >= 0);
++	}
++}
++
+ void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
+ {
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+diff --git a/fsck/sload.c b/fsck/sload.c
+index 2842f2c..53d80fa 100644
+--- a/fsck/sload.c
++++ b/fsck/sload.c
+@@ -325,6 +325,6 @@ int f2fs_sload(struct f2fs_sb_info *sbi)
+ 	/* flush dirty sit entries */
+ 	flush_sit_entries(sbi);
+ 
+-	write_checkpoint(sbi);
++	__write_checkpoint(sbi);
+ 	return 0;
+ }
+-- 
+2.10.1
 
-Let me update the patch as you suggested.
 
-Thanks,
-
-> 
->>
->>>
->>> Thanks,
->>>
->>>>
->>>>>
->>>>> Thanks,
->>>>>
->>>>>>
->>>>>>>
->>>>>>>>
->>>>>>>>> Use i_gc_rwsem[WRITE] to avoid such race condition.
->>>>>>>>
->>>>>>>> Hope to avoid abusing i_gc_rwsem[] tho.
->>>>>>>
->>>>>>> Agreed, let's try avoiding until we have to use it.
->>>>>>>
->>>>>>> Thanks,
->>>>>>>
->>>>>>>>
->>>>>>>>>
->>>>>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>>>>>>> ---
->>>>>>>>>  fs/f2fs/file.c | 2 ++
->>>>>>>>>  1 file changed, 2 insertions(+)
->>>>>>>>>
->>>>>>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>>>>>>>> index 267ec3794e1e..7bd2412a8c37 100644
->>>>>>>>> --- a/fs/f2fs/file.c
->>>>>>>>> +++ b/fs/f2fs/file.c
->>>>>>>>> @@ -1309,6 +1309,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
->>>>>>>>>  	if (ret)
->>>>>>>>>  		return ret;
->>>>>>>>>  
->>>>>>>>> +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->>>>>>>>>  	down_write(&F2FS_I(inode)->i_mmap_sem);
->>>>>>>>>  	ret = filemap_write_and_wait_range(mapping, offset, offset + len - 1);
->>>>>>>>>  	if (ret)
->>>>>>>>> @@ -1389,6 +1390,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
->>>>>>>>>  	}
->>>>>>>>>  out_sem:
->>>>>>>>>  	up_write(&F2FS_I(inode)->i_mmap_sem);
->>>>>>>>> +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->>>>>>>>>  
->>>>>>>>>  	return ret;
->>>>>>>>>  }
->>>>>>>>> -- 
->>>>>>>>> 2.18.0.rc1
->>
->> ------------------------------------------------------------------------------
->> Check out the vibrant tech community on one of the world's most
->> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> .
-> 
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
