@@ -1,152 +1,75 @@
 From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 1/2] f2fs: refresh recent accessed nat entry in lru list
-Date: Sun,  5 Aug 2018 23:08:59 +0800
-Message-ID: <20180805150900.9941-1-chao@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 2/2] f2fs: fix incorrect range->len in
+ f2fs_trim_fs()
+Date: Sun,  5 Aug 2018 23:09:00 +0800
+Message-ID: <20180805150900.9941-2-chao@kernel.org>
+References: <20180805150900.9941-1-chao@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <chao@kernel.org>) id 1fmKfR-0004Xd-Pt
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 Aug 2018 15:10:01 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fmKfQ-00ACJI-DV
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 Aug 2018 15:10:01 +0000
+In-Reply-To: <20180805150900.9941-1-chao@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-Introduce nat_list_lock to protect nm_i->nat_entries list, and manage
-it as a LRU list, refresh location for therein recent accessed entries
-in the list.
+generic/260 reported below error:
+
+     [+] Default length with start set (should succeed)
+     [+] Length beyond the end of fs (should succeed)
+     [+] Length beyond the end of fs with start set (should succeed)
+    +./tests/generic/260: line 94: [: 18446744073709551615: integer expression expected
+    +./tests/generic/260: line 104: [: 18446744073709551615: integer expression expected
+     Test done
+    ...
+
+In f2fs_trim_fs(), if there is no discard being trimmed, we need to correct
+range->len before return.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/f2fs.h |  1 +
- fs/f2fs/node.c | 46 ++++++++++++++++++++++++++++++++++++++++++----
- 2 files changed, 43 insertions(+), 4 deletions(-)
+ fs/f2fs/segment.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f4b03339799e..afcdba241c4b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -780,6 +780,7 @@ struct f2fs_nm_info {
- 	struct radix_tree_root nat_set_root;/* root of the nat set cache */
- 	struct rw_semaphore nat_tree_lock;	/* protect nat_tree_lock */
- 	struct list_head nat_entries;	/* cached nat entry list (clean) */
-+	spinlock_t nat_list_lock;	/* protect clean nat entry list */
- 	unsigned int nat_cnt;		/* the # of cached nat entries */
- 	unsigned int dirty_nat_cnt;	/* total num of nat entries in set */
- 	unsigned int nat_blocks;	/* # of nat blocks */
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 81fb2f3edb52..472dd643b074 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -174,14 +174,30 @@ static struct nat_entry *__init_nat_entry(struct f2fs_nm_info *nm_i,
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 24b7147456e9..7b470a1fe92b 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2626,8 +2626,9 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
  
- 	if (raw_ne)
- 		node_info_from_raw_nat(&ne->ni, raw_ne);
-+
-+	spin_lock(&nm_i->nat_list_lock);
- 	list_add_tail(&ne->list, &nm_i->nat_entries);
-+	spin_unlock(&nm_i->nat_list_lock);
-+
- 	nm_i->nat_cnt++;
- 	return ne;
+ 	trimmed += __wait_discard_cmd_range(sbi, &dpolicy,
+ 					start_block, end_block);
+-	range->len = F2FS_BLK_TO_BYTES(trimmed);
+ out:
++	if (!err)
++		range->len = F2FS_BLK_TO_BYTES(trimmed);
+ 	return err;
  }
- 
- static struct nat_entry *__lookup_nat_cache(struct f2fs_nm_info *nm_i, nid_t n)
- {
--	return radix_tree_lookup(&nm_i->nat_root, n);
-+	struct nat_entry *ne;
-+
-+	ne = radix_tree_lookup(&nm_i->nat_root, n);
-+
-+	/* for recent accessed nat entry, move it to tail of lru list */
-+	if (ne && !get_nat_flag(ne, IS_DIRTY)) {
-+		spin_lock(&nm_i->nat_list_lock);
-+		if (!list_empty(&ne->list))
-+			list_move_tail(&ne->list, &nm_i->nat_entries);
-+		spin_unlock(&nm_i->nat_list_lock);
-+	}
-+
-+	return ne;
- }
- 
- static unsigned int __gang_lookup_nat_cache(struct f2fs_nm_info *nm_i,
-@@ -192,7 +208,6 @@ static unsigned int __gang_lookup_nat_cache(struct f2fs_nm_info *nm_i,
- 
- static void __del_from_nat_cache(struct f2fs_nm_info *nm_i, struct nat_entry *e)
- {
--	list_del(&e->list);
- 	radix_tree_delete(&nm_i->nat_root, nat_get_nid(e));
- 	nm_i->nat_cnt--;
- 	__free_nat_entry(e);
-@@ -243,16 +258,21 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
- 	nm_i->dirty_nat_cnt++;
- 	set_nat_flag(ne, IS_DIRTY, true);
- refresh_list:
-+	spin_lock(&nm_i->nat_list_lock);
- 	if (new_ne)
- 		list_del_init(&ne->list);
- 	else
- 		list_move_tail(&ne->list, &head->entry_list);
-+	spin_unlock(&nm_i->nat_list_lock);
- }
- 
- static void __clear_nat_cache_dirty(struct f2fs_nm_info *nm_i,
- 		struct nat_entry_set *set, struct nat_entry *ne)
- {
-+	spin_lock(&nm_i->nat_list_lock);
- 	list_move_tail(&ne->list, &nm_i->nat_entries);
-+	spin_unlock(&nm_i->nat_list_lock);
-+
- 	set_nat_flag(ne, IS_DIRTY, false);
- 	set->entry_cnt--;
- 	nm_i->dirty_nat_cnt--;
-@@ -469,13 +489,25 @@ int f2fs_try_to_free_nats(struct f2fs_sb_info *sbi, int nr_shrink)
- 	if (!down_write_trylock(&nm_i->nat_tree_lock))
- 		return 0;
- 
--	while (nr_shrink && !list_empty(&nm_i->nat_entries)) {
-+	spin_lock(&nm_i->nat_list_lock);
-+	while (nr_shrink) {
- 		struct nat_entry *ne;
-+
-+		if (list_empty(&nm_i->nat_entries))
-+			break;
-+
- 		ne = list_first_entry(&nm_i->nat_entries,
- 					struct nat_entry, list);
-+		list_del(&ne->list);
-+		spin_unlock(&nm_i->nat_list_lock);
-+
- 		__del_from_nat_cache(nm_i, ne);
- 		nr_shrink--;
-+
-+		spin_lock(&nm_i->nat_list_lock);
- 	}
-+	spin_unlock(&nm_i->nat_list_lock);
-+
- 	up_write(&nm_i->nat_tree_lock);
- 	return nr - nr_shrink;
- }
-@@ -2906,6 +2938,7 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
- 	INIT_RADIX_TREE(&nm_i->nat_root, GFP_NOIO);
- 	INIT_RADIX_TREE(&nm_i->nat_set_root, GFP_NOIO);
- 	INIT_LIST_HEAD(&nm_i->nat_entries);
-+	spin_lock_init(&nm_i->nat_list_lock);
- 
- 	mutex_init(&nm_i->build_lock);
- 	spin_lock_init(&nm_i->nid_list_lock);
-@@ -3024,8 +3057,13 @@ void f2fs_destroy_node_manager(struct f2fs_sb_info *sbi)
- 		unsigned idx;
- 
- 		nid = nat_get_nid(natvec[found - 1]) + 1;
--		for (idx = 0; idx < found; idx++)
-+		for (idx = 0; idx < found; idx++) {
-+			spin_lock(&nm_i->nat_list_lock);
-+			list_del(&natvec[idx]->list);
-+			spin_unlock(&nm_i->nat_list_lock);
-+
- 			__del_from_nat_cache(nm_i, natvec[idx]);
-+		}
- 	}
- 	f2fs_bug_on(sbi, nm_i->nat_cnt);
  
 -- 
 2.18.0
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
