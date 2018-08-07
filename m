@@ -1,24 +1,25 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [RFC PATCH v2 1/3] f2fs: support superblock checksum
-Date: Tue, 7 Aug 2018 18:05:41 +0800
-Message-ID: <fea53028-98a8-657b-068d-ef5a1a40e878@huawei.com>
+Subject: Re: [RFC PATCH 2/3] f2fs-tools: rename CHECKSUM_OFFSET
+ to CHKSUM_OFFSET_CP
+Date: Tue, 7 Aug 2018 18:07:03 +0800
+Message-ID: <9dbef41b-2c9a-6e4f-8df7-df36c6060993@huawei.com>
 References: <20180807091718.192688-1-zhengjunling@huawei.com>
- <20180807093953.210487-1-zhengjunling@huawei.com>
+ <20180807091718.192688-2-zhengjunling@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fmysJ-0008UB-5s
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Aug 2018 10:05:59 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1fmytc-0005wV-8i
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Aug 2018 10:07:20 +0000
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fmysH-00CDvg-5l
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Aug 2018 10:05:59 +0000
-In-Reply-To: <20180807093953.210487-1-zhengjunling@huawei.com>
+ id 1fmyta-00CcFm-DW
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Aug 2018 10:07:20 +0000
+In-Reply-To: <20180807091718.192688-2-zhengjunling@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -32,114 +33,12 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Junling Zheng <zhengjunling@huawei.com>, jaegeuk@kernel.org
 Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/8/7 17:39, Junling Zheng wrote:
-> Now we support crc32 checksum for superblock.
-> 
-> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
-> ---
-> v1 -> v1:
->  - fix to switch endian of crc.
->  fs/f2fs/f2fs.h          |  1 +
->  fs/f2fs/super.c         | 28 ++++++++++++++++++++++++++++
->  include/linux/f2fs_fs.h |  3 ++-
->  3 files changed, 31 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 4525f4f82af0..d404ede01fcd 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -147,6 +147,7 @@ struct f2fs_mount_info {
->  #define F2FS_FEATURE_INODE_CRTIME	0x0100
->  #define F2FS_FEATURE_LOST_FOUND		0x0200
->  #define F2FS_FEATURE_VERITY		0x0400	/* reserved */
-> +#define F2FS_FEATURE_SB_CHKSUM		0x0800
+On 2018/8/7 17:17, Junling Zheng wrote:
+> This patch renamed CHECKSUM_OFFSET to CHKSUM_OFFSET_CP.
 
-Need to adjust sysfs entry for this new feature.
-
->  
->  #define F2FS_HAS_FEATURE(sb, mask)					\
->  	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index bd57be470e23..c782fab52a12 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -2149,6 +2149,8 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
->  					(bh->b_data + F2FS_SUPER_OFFSET);
->  	struct super_block *sb = sbi->sb;
->  	unsigned int blocksize;
-> +	size_t crc_offset = 0;
-> +	__u32 crc = 0;
->  
->  	if (F2FS_SUPER_MAGIC != le32_to_cpu(raw_super->magic)) {
->  		f2fs_msg(sb, KERN_INFO,
-> @@ -2283,6 +2285,23 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
->  	if (sanity_check_area_boundary(sbi, bh))
->  		return 1;
->  
-> +	if (F2FS_HAS_FEATURE(sbi->sb, F2FS_FEATURE_SB_CHKSUM)) {
-> +		crc_offset = le32_to_cpu(raw_super->checksum_offset);
-> +		if (crc_offset !=
-> +			offsetof(struct f2fs_super_block, crc)) {
-> +			f2fs_msg(sb, KERN_INFO,
-> +				"Invalid SB checksum offset: %lu",
-> +				crc_offset);
-> +			return 1;
-> +		}
-> +		crc = le32_to_cpu(raw_super->crc);
-> +		if (!f2fs_crc_valid(sbi, crc, raw_super, crc_offset)) {
-> +			f2fs_msg(sb, KERN_INFO,
-> +				"Invalid SB checksum value: %u", crc);
-> +			return 1;
-> +		}
-> +	}
-
-How about moving above codes to the beginning of sanity_check_raw_super(), since
-once crc value is wrong, all other verification is unneeded.
+Hmm... How about CP_CHECKSUM_OFFSET?
 
 Thanks,
-
-> +
->  	return 0;
->  }
->  
-> @@ -2568,6 +2587,7 @@ static int read_raw_super_block(struct f2fs_sb_info *sbi,
->  int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
->  {
->  	struct buffer_head *bh;
-> +	__u32 crc = 0;
->  	int err;
->  
->  	if ((recover && f2fs_readonly(sbi->sb)) ||
-> @@ -2576,6 +2596,14 @@ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
->  		return -EROFS;
->  	}
->  
-> +	/* we should update superblock crc here */
-> +	if (!recover &&
-> +		F2FS_HAS_FEATURE(sbi->sb, F2FS_FEATURE_SB_CHKSUM)) {
-> +		crc = f2fs_crc32(sbi, F2FS_RAW_SUPER(sbi),
-> +				offsetof(struct f2fs_super_block, crc));
-> +		F2FS_RAW_SUPER(sbi)->crc = cpu_to_le32(crc);
-> +	}
-> +
->  	/* write back-up superblock first */
->  	bh = sb_bread(sbi->sb, sbi->valid_super_block ? 0 : 1);
->  	if (!bh)
-> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-> index f70f8ac9c4f4..aa4b586569c1 100644
-> --- a/include/linux/f2fs_fs.h
-> +++ b/include/linux/f2fs_fs.h
-> @@ -112,7 +112,8 @@ struct f2fs_super_block {
->  	struct f2fs_device devs[MAX_DEVICES];	/* device list */
->  	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
->  	__u8 hot_ext_count;		/* # of hot file extension */
-> -	__u8 reserved[314];		/* valid reserved region */
-> +	__u8 reserved[310];		/* valid reserved region */
-> +	__le32 crc;			/* checksum of superblock */
->  } __packed;
->  
->  /*
-> 
 
 
 ------------------------------------------------------------------------------
