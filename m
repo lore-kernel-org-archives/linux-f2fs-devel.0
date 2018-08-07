@@ -1,21 +1,23 @@
 From: Junling Zheng <zhengjunling@huawei.com>
-Subject: [RFC PATCH] f2fs: support superblock checksum
-Date: Tue, 7 Aug 2018 17:17:16 +0800
-Message-ID: <20180807091718.192688-1-zhengjunling@huawei.com>
+Subject: [RFC PATCH v2 1/3] f2fs: support superblock checksum
+Date: Tue, 7 Aug 2018 17:39:53 +0800
+Message-ID: <20180807093953.210487-1-zhengjunling@huawei.com>
+References: <20180807091718.192688-1-zhengjunling@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <zhengjunling@huawei.com>) id 1fmy7W-0004bp-EY
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Aug 2018 09:17:38 +0000
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <zhengjunling@huawei.com>) id 1fmyTN-0005GT-1H
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Aug 2018 09:40:13 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fmy7U-00CZlw-9a
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Aug 2018 09:17:38 +0000
+ id 1fmyTK-00CCar-12
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Aug 2018 09:40:12 +0000
+In-Reply-To: <20180807091718.192688-1-zhengjunling@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,6 +34,8 @@ Now we support crc32 checksum for superblock.
 
 Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
 ---
+v1 -> v1:
+ - fix to switch endian of crc.
  fs/f2fs/f2fs.h          |  1 +
  fs/f2fs/super.c         | 28 ++++++++++++++++++++++++++++
  include/linux/f2fs_fs.h |  3 ++-
@@ -50,7 +54,7 @@ index 4525f4f82af0..d404ede01fcd 100644
  #define F2FS_HAS_FEATURE(sb, mask)					\
  	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index bd57be470e23..dbb1a2bb9e8e 100644
+index bd57be470e23..c782fab52a12 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
 @@ -2149,6 +2149,8 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
@@ -103,7 +107,7 @@ index bd57be470e23..dbb1a2bb9e8e 100644
 +		F2FS_HAS_FEATURE(sbi->sb, F2FS_FEATURE_SB_CHKSUM)) {
 +		crc = f2fs_crc32(sbi, F2FS_RAW_SUPER(sbi),
 +				offsetof(struct f2fs_super_block, crc));
-+		F2FS_RAW_SUPER(sbi)->crc = crc;
++		F2FS_RAW_SUPER(sbi)->crc = cpu_to_le32(crc);
 +	}
 +
  	/* write back-up superblock first */
