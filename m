@@ -1,7 +1,8 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [bug report] f2fs: issue small discard by LBA order
-Date: Tue, 7 Aug 2018 11:17:39 +0300
-Message-ID: <20180807081739.cirr6e7rc5w74ry3@kili.mountain>
+From: Junling Zheng <zhengjunling@huawei.com>
+Subject: [RFC PATCH 3/3] f2fs-tools: introduce sb checksum
+Date: Tue, 7 Aug 2018 17:17:18 +0800
+Message-ID: <20180807091718.192688-3-zhengjunling@huawei.com>
+References: <20180807091718.192688-1-zhengjunling@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -9,14 +10,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <dan.carpenter@oracle.com>) id 1fmxBv-0003qt-Pa
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Aug 2018 08:18:07 +0000
-Received: from aserp2130.oracle.com ([141.146.126.79])
+ (envelope-from <zhengjunling@huawei.com>) id 1fmy7W-0005J9-Ot
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Aug 2018 09:17:38 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fmxBt-00C8OM-UW
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Aug 2018 08:18:07 +0000
-Content-Disposition: inline
+ id 1fmy7V-00CBY6-1k
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Aug 2018 09:17:38 +0000
+In-Reply-To: <20180807091718.192688-1-zhengjunling@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,54 +27,235 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: yuchao0@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-Hello Chao Yu,
+This patch introduced superblock checksum.
 
-The patch 20ee4382322c: "f2fs: issue small discard by LBA order" from
-Jul 8, 2018, leads to the following Smatch warning:
+Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+---
+ fsck/mount.c       | 52 ++++++++++++++++++++++++++++++++++++++++++++++
+ fsck/resize.c      | 11 ++++++++++
+ include/f2fs_fs.h  |  6 +++++-
+ mkfs/f2fs_format.c |  9 ++++++++
+ 4 files changed, 77 insertions(+), 1 deletion(-)
 
-	fs/f2fs/segment.c:1277 __issue_discard_cmd_orderly()
-	warn: 'dc' was already freed.
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 957f531..b29af3c 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -340,6 +340,7 @@ void print_raw_sb_info(struct f2fs_super_block *sb)
+ 	DISP_u32(sb, node_ino);
+ 	DISP_u32(sb, meta_ino);
+ 	DISP_u32(sb, cp_payload);
++	DISP_u32(sb, crc);
+ 	DISP("%-.256s", sb, version);
+ 	printf("\n");
+ }
+@@ -467,6 +468,9 @@ void print_sb_state(struct f2fs_super_block *sb)
+ 	if (f & cpu_to_le32(F2FS_FEATURE_LOST_FOUND)) {
+ 		MSG(0, "%s", " lost_found");
+ 	}
++	if (f & cpu_to_le32(F2FS_FEATURE_SB_CHKSUM)) {
++		MSG(0, "%s", " sb_checksum");
++	}
+ 	MSG(0, "\n");
+ 	MSG(0, "Info: superblock encrypt level = %d, salt = ",
+ 					sb->encryption_level);
+@@ -602,6 +606,20 @@ int sanity_check_raw_super(struct f2fs_super_block *sb, u64 offset)
+ 
+ 	if (sanity_check_area_boundary(sb, offset))
+ 		return -1;
++
++	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) {
++		if (CHKSUM_OFFSET_SB != get_sb(checksum_offset)) {
++			MSG(0, "\tInvalid SB CRC offset: %u\n",
++						get_sb(checksum_offset));
++			return -1;
++		}
++		if (f2fs_crc_valid(get_sb(crc), sb,
++				get_sb(checksum_offset))) {
++			MSG(0, "\tInvalid SB CRC: 0x%x\n", get_sb(crc));
++			return -1;
++		}
++	}
++
+ 	return 0;
+ }
+ 
+@@ -609,6 +627,7 @@ int validate_super_block(struct f2fs_sb_info *sbi, int block)
+ {
+ 	u64 offset;
+ 	char buf[F2FS_BLKSIZE];
++	u32 old_crc, new_crc;
+ 
+ 	sbi->raw_super = malloc(sizeof(struct f2fs_super_block));
+ 
+@@ -646,6 +665,18 @@ int validate_super_block(struct f2fs_sb_info *sbi, int block)
+ 
+ 			memcpy(sbi->raw_super->version,
+ 						c.version, VERSION_LEN);
++			if (le32_to_cpu(sbi->raw_super->feature) &
++						F2FS_FEATURE_SB_CHKSUM) {
++				/* Recalculate CRC */
++				old_crc = le32_to_cpu(sbi->raw_super->crc);
++				new_crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC,
++								sbi->raw_super,
++								CHKSUM_OFFSET_SB);
++				sbi->raw_super->crc = cpu_to_le32(new_crc);
++				MSG(0, "Info: update SB CRC successfully"
++					"(0x%x --> 0x%x)\n", old_crc, new_crc);
++			}
++
+ 			ret = dev_write(sbi->raw_super, offset,
+ 					sizeof(struct f2fs_super_block));
+ 			ASSERT(ret >= 0);
+@@ -2453,6 +2484,7 @@ static int check_sector_size(struct f2fs_super_block *sb)
+ 	int index;
+ 	u_int32_t log_sectorsize, log_sectors_per_block;
+ 	u_int8_t *zero_buff;
++	u32 old_crc, new_crc;
+ 
+ 	log_sectorsize = log_base_2(c.sector_size);
+ 	log_sectors_per_block = log_base_2(c.sectors_per_blk);
+@@ -2467,6 +2499,16 @@ static int check_sector_size(struct f2fs_super_block *sb)
+ 	set_sb(log_sectorsize, log_sectorsize);
+ 	set_sb(log_sectors_per_block, log_sectors_per_block);
+ 
++	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) {
++		/* Recalculate CRC */
++		old_crc = get_sb(crc);
++		new_crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, sb,
++						CHKSUM_OFFSET_SB);
++		set_sb(crc, new_crc);
++		MSG(0, "Info: update SB CRC successfully"
++			"(0x%x --> 0x%x)\n", old_crc, new_crc);
++	}
++
+ 	memcpy(zero_buff + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
+ 	DBG(1, "\tWriting super block, at offset 0x%08x\n", 0);
+ 	for (index = 0; index < 2; index++) {
+@@ -2485,6 +2527,7 @@ static int check_sector_size(struct f2fs_super_block *sb)
+ static void tune_sb_features(struct f2fs_sb_info *sbi)
+ {
+ 	int sb_changed = 0;
++	u32 old_crc, new_crc;
+ 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+ 
+ 	if (!(sb->feature & cpu_to_le32(F2FS_FEATURE_ENCRYPT)) &&
+@@ -2499,6 +2542,15 @@ static void tune_sb_features(struct f2fs_sb_info *sbi)
+ 	if (!sb_changed)
+ 		return;
+ 
++	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) {
++		/* Recalculate CRC */
++		old_crc = get_sb(crc);
++		new_crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, sb,
++						CHKSUM_OFFSET_SB);
++		set_sb(crc, new_crc);
++		MSG(0, "Info: update SB CRC successfully"
++			"(0x%x --> 0x%x)\n", old_crc, new_crc);
++	}
+ 	write_superblock(sb);
+ }
+ 
+diff --git a/fsck/resize.c b/fsck/resize.c
+index 94580db..dfec9d2 100644
+--- a/fsck/resize.c
++++ b/fsck/resize.c
+@@ -11,6 +11,7 @@
+ 
+ static int get_new_sb(struct f2fs_super_block *sb)
+ {
++	u_int32_t old_crc, new_crc;
+ 	u_int32_t zone_size_bytes;
+ 	u_int64_t zone_align_start_offset;
+ 	u_int32_t blocks_for_sit, blocks_for_nat, blocks_for_ssa;
+@@ -160,6 +161,16 @@ safe_resize:
+ 			(get_sb(segment_count_main) - 2));
+ 		return -1;
+ 	}
++	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) {
++		/* Recalculate CRC */
++		old_crc = get_sb(crc);
++		new_crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, sb,
++						CHKSUM_OFFSET_SB);
++		set_sb(crc, new_crc);
++		MSG(0, "Info: update SB CRC successfully"
++			"(0x%x --> 0x%x)\n", old_crc, new_crc);
++	}
++
+ 	return 0;
+ }
+ 
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index dbeeb6a..fb57c38 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -279,6 +279,7 @@ static inline uint64_t bswap_64(uint64_t val)
+ #define BITS_PER_BYTE		8
+ #define F2FS_SUPER_MAGIC	0xF2F52010	/* F2FS Magic Number */
+ #define CHKSUM_OFFSET_CP	4092
++#define CHKSUM_OFFSET_SB	3068
+ #define MAX_PATH_LEN		64
+ #define MAX_DEVICES		8
+ 
+@@ -579,6 +580,7 @@ enum {
+ #define F2FS_FEATURE_INODE_CRTIME	0x0100
+ #define F2FS_FEATURE_LOST_FOUND		0x0200
+ #define F2FS_FEATURE_VERITY		0x0400	/* reserved */
++#define F2FS_FEATURE_SB_CHKSUM		0x0800
+ 
+ #define MAX_VOLUME_NAME		512
+ 
+@@ -632,7 +634,8 @@ struct f2fs_super_block {
+ 	struct f2fs_device devs[MAX_DEVICES];	/* device list */
+ 	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
+ 	__u8 hot_ext_count;		/* # of hot file extension */
+-	__u8 reserved[314];		/* valid reserved region */
++	__u8 reserved[310];		/* valid reserved region */
++	__le32 crc;			/* checksum of superblock */
+ } __attribute__((packed));
+ 
+ /*
+@@ -1338,6 +1341,7 @@ struct feature feature_table[] = {					\
+ 	{ "inode_crtime",		F2FS_FEATURE_INODE_CRTIME },	\
+ 	{ "lost_found",			F2FS_FEATURE_LOST_FOUND },	\
+ 	{ "verity",			F2FS_FEATURE_VERITY },	/* reserved */ \
++	{ "sb_checksum",		F2FS_FEATURE_SB_CHKSUM },	\
+ 	{ NULL,				0x0},				\
+ };
+ 
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 038a589..53316ee 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -187,6 +187,7 @@ static int f2fs_prepare_super_block(void)
+ 	u_int32_t sit_bitmap_size, max_sit_bitmap_size;
+ 	u_int32_t max_nat_bitmap_size, max_nat_segments;
+ 	u_int32_t total_zones;
++	u_int32_t crc;
+ 	enum quota_type qtype;
+ 	int i;
+ 
+@@ -504,6 +505,14 @@ static int f2fs_prepare_super_block(void)
+ 
+ 	sb->feature = c.feature;
+ 
++	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) {
++		set_sb(checksum_offset, CHKSUM_OFFSET_SB);
++		/* calculate superblock checksum */
++		crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, sb, CHKSUM_OFFSET_SB);
++		set_sb(crc, crc);
++		MSG(0, "Info: set SB CRC successfully (0x%x)\n", crc);
++	}
++
+ 	return 0;
+ }
+ 
+-- 
+2.18.0
 
-fs/f2fs/segment.c
-  1260          while (dc) {
-  1261                  struct rb_node *node;
-  1262  
-  1263                  if (dc->state != D_PREP)
-  1264                          goto next;
-  1265  
-  1266                  if (dpolicy->io_aware && !is_idle(sbi)) {
-  1267                          io_interrupted = true;
-  1268                          break;
-  1269                  }
-  1270  
-  1271                  dcc->next_pos = dc->lstart + dc->len;
-  1272                  __submit_discard_cmd(sbi, dpolicy, dc, &issued);
-                                                           ^^
-Smatch is complaining that __submit_discard_cmd() frees dc on the
-error path.
-
-  1273  
-  1274                  if (issued >= dpolicy->max_requests)
-  1275                          break;
-  1276  next:
-  1277                  node = rb_next(&dc->rb_node);
-                                        ^^^^^^^^^^^
-Dereference.
-
-  1278                  dc = rb_entry_safe(node, struct discard_cmd, rb_node);
-  1279          }
-  1280  
-  1281          blk_finish_plug(&plug);
-  1282  
-
-See also:
-fs/f2fs/segment.c:2550 __issue_discard_cmd_range() warn: 'dc' was already freed.
-
-regards,
-dan carpenter
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
