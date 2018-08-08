@@ -1,24 +1,24 @@
-From: Chao Yu <chao@kernel.org>
+From: Junling Zheng <zhengjunling@huawei.com>
 Subject: Re: [RFC PATCH v3 1/3] f2fs: support superblock checksum
-Date: Wed, 8 Aug 2018 20:03:00 +0800
-Message-ID: <772d31d6-3cfe-d7e2-af18-eb023c73aee9@kernel.org>
+Date: Wed, 8 Aug 2018 20:21:31 +0800
+Message-ID: <df6895b0-d94c-e5a5-82e2-2f8e5439d0b3@huawei.com>
 References: <20180808102750.102971-1-zhengjunling@huawei.com>
+ <772d31d6-3cfe-d7e2-af18-eb023c73aee9@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1fnNBU-0007D6-5r
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Aug 2018 12:03:24 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <zhengjunling@huawei.com>) id 1fnNT1-0006fi-Sr
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Aug 2018 12:21:31 +0000
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fnNBR-00BSSs-SB
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Aug 2018 12:03:24 +0000
-In-Reply-To: <20180808102750.102971-1-zhengjunling@huawei.com>
-Content-Language: en-US
+ id 1fnNSz-00DNRZ-FL
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Aug 2018 12:21:31 +0000
+In-Reply-To: <772d31d6-3cfe-d7e2-af18-eb023c73aee9@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,115 +28,206 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Junling Zheng <zhengjunling@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com
+To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-T24gMjAxOC84LzggMTg6MjcsIEp1bmxpbmcgWmhlbmcgd3JvdGU6Cj4gTm93IHdlIHN1cHBvcnQg
-Y3JjMzIgY2hlY2tzdW0gZm9yIHN1cGVyYmxvY2suCj4gCj4gU2lnbmVkLW9mZi1ieTogSnVubGlu
-ZyBaaGVuZyA8emhlbmdqdW5saW5nQGh1YXdlaS5jb20+Cj4gLS0tCj4gdjIgLT4gdjM6Cj4gIC0g
-YWRkIHN5c2ZzIGVudHJ5IGZvciBzdXBlcmJsb2NrIGNoZWNrc3VtLgo+ICAtIG1vdmUgdGhlIGNy
-YyBjaGVja2luZyB0byB0aGUgYmVnaW5uaW5nIG9mIHNhbml0eV9jaGVja19yYXdfc3VwZXIoKS4K
-PiAgLSBmaXggdGhlIE5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZSBhcyBzYi0+c19mc19pbmZvIGhh
-c24ndCBiZSBzZXQgeWV0IGluCj4gICAgc2FuaXR5X2NoZWNrX3Jhd19zdXBlcigpLgo+IHYxIC0+
-IHYyOgo+ICAtIGZpeCB0byBzd2l0Y2ggZW5kaWFuIG9mIGNyYy4KPiAgZnMvZjJmcy9mMmZzLmgg
-ICAgICAgICAgfCAgMiArKwo+ICBmcy9mMmZzL3N1cGVyLmMgICAgICAgICB8IDI5ICsrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrCj4gIGZzL2YyZnMvc3lzZnMuYyAgICAgICAgIHwgIDcgKysr
-KysrKwo+ICBpbmNsdWRlL2xpbnV4L2YyZnNfZnMuaCB8ICAzICsrLQo+ICA0IGZpbGVzIGNoYW5n
-ZWQsIDQwIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZnMv
-ZjJmcy9mMmZzLmggYi9mcy9mMmZzL2YyZnMuaAo+IGluZGV4IDQ1MjVmNGY4MmFmMC4uZDUwZDZl
-ZmRhOTZiIDEwMDY0NAo+IC0tLSBhL2ZzL2YyZnMvZjJmcy5oCj4gKysrIGIvZnMvZjJmcy9mMmZz
-LmgKPiBAQCAtMTQ3LDYgKzE0Nyw3IEBAIHN0cnVjdCBmMmZzX21vdW50X2luZm8gewo+ICAjZGVm
-aW5lIEYyRlNfRkVBVFVSRV9JTk9ERV9DUlRJTUUJMHgwMTAwCj4gICNkZWZpbmUgRjJGU19GRUFU
-VVJFX0xPU1RfRk9VTkQJCTB4MDIwMAo+ICAjZGVmaW5lIEYyRlNfRkVBVFVSRV9WRVJJVFkJCTB4
-MDQwMAkvKiByZXNlcnZlZCAqLwo+ICsjZGVmaW5lIEYyRlNfRkVBVFVSRV9TQl9DSEtTVU0JCTB4
-MDgwMAo+ICAKPiAgI2RlZmluZSBGMkZTX0hBU19GRUFUVVJFKHNiLCBtYXNrKQkJCQkJXAo+ICAJ
-KChGMkZTX1NCKHNiKS0+cmF3X3N1cGVyLT5mZWF0dXJlICYgY3B1X3RvX2xlMzIobWFzaykpICE9
-IDApCj4gQEAgLTMzNzYsNiArMzM3Nyw3IEBAIEYyRlNfRkVBVFVSRV9GVU5DUyhmbGV4aWJsZV9p
-bmxpbmVfeGF0dHIsIEZMRVhJQkxFX0lOTElORV9YQVRUUik7Cj4gIEYyRlNfRkVBVFVSRV9GVU5D
-UyhxdW90YV9pbm8sIFFVT1RBX0lOTyk7Cj4gIEYyRlNfRkVBVFVSRV9GVU5DUyhpbm9kZV9jcnRp
-bWUsIElOT0RFX0NSVElNRSk7Cj4gIEYyRlNfRkVBVFVSRV9GVU5DUyhsb3N0X2ZvdW5kLCBMT1NU
-X0ZPVU5EKTsKPiArRjJGU19GRUFUVVJFX0ZVTkNTKHNiX2Noa3N1bSwgU0JfQ0hLU1VNKTsKPiAg
-Cj4gICNpZmRlZiBDT05GSUdfQkxLX0RFVl9aT05FRAo+ICBzdGF0aWMgaW5saW5lIGludCBnZXRf
-Ymxrel90eXBlKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwKPiBkaWZmIC0tZ2l0IGEvZnMvZjJm
-cy9zdXBlci5jIGIvZnMvZjJmcy9zdXBlci5jCj4gaW5kZXggYmQ1N2JlNDcwZTIzLi5jM2RiYWZh
-MzE2MTMgMTAwNjQ0Cj4gLS0tIGEvZnMvZjJmcy9zdXBlci5jCj4gKysrIGIvZnMvZjJmcy9zdXBl
-ci5jCj4gQEAgLTIxNDksNiArMjE0OSwyNiBAQCBzdGF0aWMgaW50IHNhbml0eV9jaGVja19yYXdf
-c3VwZXIoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLAo+ICAJCQkJCShiaC0+Yl9kYXRhICsgRjJG
-U19TVVBFUl9PRkZTRVQpOwo+ICAJc3RydWN0IHN1cGVyX2Jsb2NrICpzYiA9IHNiaS0+c2I7Cj4g
-IAl1bnNpZ25lZCBpbnQgYmxvY2tzaXplOwo+ICsJc2l6ZV90IGNyY19vZmZzZXQgPSAwOwo+ICsJ
-X191MzIgY3JjID0gMDsKPiArCj4gKwkvKiBDaGVjayBjaGVja3N1bV9vZmZzZXQgYW5kIGNyYyBp
-biBzdXBlcmJsb2NrICovCj4gKwlpZiAobGUzMl90b19jcHUocmF3X3N1cGVyLT5mZWF0dXJlKSAm
-IEYyRlNfRkVBVFVSRV9TQl9DSEtTVU0pIHsKPiArCQljcmNfb2Zmc2V0ID0gbGUzMl90b19jcHUo
-cmF3X3N1cGVyLT5jaGVja3N1bV9vZmZzZXQpOwo+ICsJCWlmIChjcmNfb2Zmc2V0ICE9Cj4gKwkJ
-CW9mZnNldG9mKHN0cnVjdCBmMmZzX3N1cGVyX2Jsb2NrLCBjcmMpKSB7Cj4gKwkJCWYyZnNfbXNn
-KHNiLCBLRVJOX0lORk8sCj4gKwkJCQkiSW52YWxpZCBTQiBjaGVja3N1bSBvZmZzZXQ6ICVsdSIs
-Cgp3YXJuaW5nOiBmb3JtYXQg4oCYJWx14oCZIGV4cGVjdHMgYXJndW1lbnQgb2YgdHlwZSDigJhs
-b25nIHVuc2lnbmVkIGludOKAmSwgYnV0IGFyZ3VtZW50CjQgaGFzIHR5cGUg4oCYc2l6ZV904oCZ
-IFstV2Zvcm1hdD1dCiAgICAgY3JjX29mZnNldCk7CgpPdGhlcndpc2UsIGl0IGxvb2tzIGdvb2Qg
-dG8gbWUsIHlvdSBjYW4gYWRkIGluIG5leHQgdmVyc2lvbjoKClJldmlld2VkLWJ5OiBDaGFvIFl1
-IDx5dWNoYW8wQGh1YXdlaS5jb20+CgpUaGFua3MsCgo+ICsJCQkJY3JjX29mZnNldCk7Cj4gKwkJ
-CXJldHVybiAxOwo+ICsJCX0KPiArCQljcmMgPSBsZTMyX3RvX2NwdShyYXdfc3VwZXItPmNyYyk7
-Cj4gKwkJaWYgKCFmMmZzX2NyY192YWxpZChzYmksIGNyYywgcmF3X3N1cGVyLCBjcmNfb2Zmc2V0
-KSkgewo+ICsJCQlmMmZzX21zZyhzYiwgS0VSTl9JTkZPLAo+ICsJCQkJIkludmFsaWQgU0IgY2hl
-Y2tzdW0gdmFsdWU6ICV1IiwgY3JjKTsKPiArCQkJcmV0dXJuIDE7Cj4gKwkJfQo+ICsJfQo+ICAK
-PiAgCWlmIChGMkZTX1NVUEVSX01BR0lDICE9IGxlMzJfdG9fY3B1KHJhd19zdXBlci0+bWFnaWMp
-KSB7Cj4gIAkJZjJmc19tc2coc2IsIEtFUk5fSU5GTywKPiBAQCAtMjU2OCw2ICsyNTg4LDcgQEAg
-c3RhdGljIGludCByZWFkX3Jhd19zdXBlcl9ibG9jayhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmks
-Cj4gIGludCBmMmZzX2NvbW1pdF9zdXBlcihzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIGJvb2wg
-cmVjb3ZlcikKPiAgewo+ICAJc3RydWN0IGJ1ZmZlcl9oZWFkICpiaDsKPiArCV9fdTMyIGNyYyA9
-IDA7Cj4gIAlpbnQgZXJyOwo+ICAKPiAgCWlmICgocmVjb3ZlciAmJiBmMmZzX3JlYWRvbmx5KHNi
-aS0+c2IpKSB8fAo+IEBAIC0yNTc2LDYgKzI1OTcsMTQgQEAgaW50IGYyZnNfY29tbWl0X3N1cGVy
-KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgYm9vbCByZWNvdmVyKQo+ICAJCXJldHVybiAtRVJP
-RlM7Cj4gIAl9Cj4gIAo+ICsJLyogd2Ugc2hvdWxkIHVwZGF0ZSBzdXBlcmJsb2NrIGNyYyBoZXJl
-ICovCj4gKwlpZiAoIXJlY292ZXIgJiYKPiArCQlGMkZTX0hBU19GRUFUVVJFKHNiaS0+c2IsIEYy
-RlNfRkVBVFVSRV9TQl9DSEtTVU0pKSB7Cj4gKwkJY3JjID0gZjJmc19jcmMzMihzYmksIEYyRlNf
-UkFXX1NVUEVSKHNiaSksCj4gKwkJCQlvZmZzZXRvZihzdHJ1Y3QgZjJmc19zdXBlcl9ibG9jaywg
-Y3JjKSk7Cj4gKwkJRjJGU19SQVdfU1VQRVIoc2JpKS0+Y3JjID0gY3B1X3RvX2xlMzIoY3JjKTsK
-PiArCX0KPiArCj4gIAkvKiB3cml0ZSBiYWNrLXVwIHN1cGVyYmxvY2sgZmlyc3QgKi8KPiAgCWJo
-ID0gc2JfYnJlYWQoc2JpLT5zYiwgc2JpLT52YWxpZF9zdXBlcl9ibG9jayA/IDAgOiAxKTsKPiAg
-CWlmICghYmgpCj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc3lzZnMuYyBiL2ZzL2YyZnMvc3lzZnMu
-Ywo+IGluZGV4IGNkMmUwMzBlNDdiOC4uYzg2ZDkxYmU2YzQ4IDEwMDY0NAo+IC0tLSBhL2ZzL2Yy
-ZnMvc3lzZnMuYwo+ICsrKyBiL2ZzL2YyZnMvc3lzZnMuYwo+IEBAIC0xMjAsNiArMTIwLDkgQEAg
-c3RhdGljIHNzaXplX3QgZmVhdHVyZXNfc2hvdyhzdHJ1Y3QgZjJmc19hdHRyICphLAo+ICAJaWYg
-KGYyZnNfc2JfaGFzX2xvc3RfZm91bmQoc2IpKQo+ICAJCWxlbiArPSBzbnByaW50ZihidWYgKyBs
-ZW4sIFBBR0VfU0laRSAtIGxlbiwgIiVzJXMiLAo+ICAJCQkJbGVuID8gIiwgIiA6ICIiLCAibG9z
-dF9mb3VuZCIpOwo+ICsJaWYgKGYyZnNfc2JfaGFzX3NiX2Noa3N1bShzYikpCj4gKwkJbGVuICs9
-IHNucHJpbnRmKGJ1ZiArIGxlbiwgUEFHRV9TSVpFIC0gbGVuLCAiJXMlcyIsCj4gKwkJCQlsZW4g
-PyAiLCAiIDogIiIsICJzYl9jaGVja3N1bSIpOwo+ICAJbGVuICs9IHNucHJpbnRmKGJ1ZiArIGxl
-biwgUEFHRV9TSVpFIC0gbGVuLCAiXG4iKTsKPiAgCXJldHVybiBsZW47Cj4gIH0KPiBAQCAtMzM3
-LDYgKzM0MCw3IEBAIGVudW0gZmVhdF9pZCB7Cj4gIAlGRUFUX1FVT1RBX0lOTywKPiAgCUZFQVRf
-SU5PREVfQ1JUSU1FLAo+ICAJRkVBVF9MT1NUX0ZPVU5ELAo+ICsJRkVBVF9TQl9DSEVDS1NVTSwK
-PiAgfTsKPiAgCj4gIHN0YXRpYyBzc2l6ZV90IGYyZnNfZmVhdHVyZV9zaG93KHN0cnVjdCBmMmZz
-X2F0dHIgKmEsCj4gQEAgLTM1Myw2ICszNTcsNyBAQCBzdGF0aWMgc3NpemVfdCBmMmZzX2ZlYXR1
-cmVfc2hvdyhzdHJ1Y3QgZjJmc19hdHRyICphLAo+ICAJY2FzZSBGRUFUX1FVT1RBX0lOTzoKPiAg
-CWNhc2UgRkVBVF9JTk9ERV9DUlRJTUU6Cj4gIAljYXNlIEZFQVRfTE9TVF9GT1VORDoKPiArCWNh
-c2UgRkVBVF9TQl9DSEVDS1NVTToKPiAgCQlyZXR1cm4gc25wcmludGYoYnVmLCBQQUdFX1NJWkUs
-ICJzdXBwb3J0ZWRcbiIpOwo+ICAJfQo+ICAJcmV0dXJuIDA7Cj4gQEAgLTQzMyw2ICs0MzgsNyBA
-QCBGMkZTX0ZFQVRVUkVfUk9fQVRUUihmbGV4aWJsZV9pbmxpbmVfeGF0dHIsIEZFQVRfRkxFWElC
-TEVfSU5MSU5FX1hBVFRSKTsKPiAgRjJGU19GRUFUVVJFX1JPX0FUVFIocXVvdGFfaW5vLCBGRUFU
-X1FVT1RBX0lOTyk7Cj4gIEYyRlNfRkVBVFVSRV9ST19BVFRSKGlub2RlX2NydGltZSwgRkVBVF9J
-Tk9ERV9DUlRJTUUpOwo+ICBGMkZTX0ZFQVRVUkVfUk9fQVRUUihsb3N0X2ZvdW5kLCBGRUFUX0xP
-U1RfRk9VTkQpOwo+ICtGMkZTX0ZFQVRVUkVfUk9fQVRUUihzYl9jaGVja3N1bSwgRkVBVF9TQl9D
-SEVDS1NVTSk7Cj4gIAo+ICAjZGVmaW5lIEFUVFJfTElTVChuYW1lKSAoJmYyZnNfYXR0cl8jI25h
-bWUuYXR0cikKPiAgc3RhdGljIHN0cnVjdCBhdHRyaWJ1dGUgKmYyZnNfYXR0cnNbXSA9IHsKPiBA
-QCAtNDg5LDYgKzQ5NSw3IEBAIHN0YXRpYyBzdHJ1Y3QgYXR0cmlidXRlICpmMmZzX2ZlYXRfYXR0
-cnNbXSA9IHsKPiAgCUFUVFJfTElTVChxdW90YV9pbm8pLAo+ICAJQVRUUl9MSVNUKGlub2RlX2Ny
-dGltZSksCj4gIAlBVFRSX0xJU1QobG9zdF9mb3VuZCksCj4gKwlBVFRSX0xJU1Qoc2JfY2hlY2tz
-dW0pLAo+ICAJTlVMTCwKPiAgfTsKPiAgCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvZjJm
-c19mcy5oIGIvaW5jbHVkZS9saW51eC9mMmZzX2ZzLmgKPiBpbmRleCBmNzBmOGFjOWM0ZjQuLmFh
-NGI1ODY1NjljMSAxMDA2NDQKPiAtLS0gYS9pbmNsdWRlL2xpbnV4L2YyZnNfZnMuaAo+ICsrKyBi
-L2luY2x1ZGUvbGludXgvZjJmc19mcy5oCj4gQEAgLTExMiw3ICsxMTIsOCBAQCBzdHJ1Y3QgZjJm
-c19zdXBlcl9ibG9jayB7Cj4gIAlzdHJ1Y3QgZjJmc19kZXZpY2UgZGV2c1tNQVhfREVWSUNFU107
-CS8qIGRldmljZSBsaXN0ICovCj4gIAlfX2xlMzIgcWZfaW5vW0YyRlNfTUFYX1FVT1RBU107CS8q
-IHF1b3RhIGlub2RlIG51bWJlcnMgKi8KPiAgCV9fdTggaG90X2V4dF9jb3VudDsJCS8qICMgb2Yg
-aG90IGZpbGUgZXh0ZW5zaW9uICovCj4gLQlfX3U4IHJlc2VydmVkWzMxNF07CQkvKiB2YWxpZCBy
-ZXNlcnZlZCByZWdpb24gKi8KPiArCV9fdTggcmVzZXJ2ZWRbMzEwXTsJCS8qIHZhbGlkIHJlc2Vy
-dmVkIHJlZ2lvbiAqLwo+ICsJX19sZTMyIGNyYzsJCQkvKiBjaGVja3N1bSBvZiBzdXBlcmJsb2Nr
-ICovCj4gIH0gX19wYWNrZWQ7Cj4gIAo+ICAvKgo+IAoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNo
-ZWNrIG91dCB0aGUgdmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3Mg
-bW9zdAplbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9z
-bGFzaGRvdApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpM
-aW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJj
-ZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9s
-aW51eC1mMmZzLWRldmVsCg==
+On 2018/8/8 20:03, Chao Yu wrote:
+> On 2018/8/8 18:27, Junling Zheng wrote:
+>> Now we support crc32 checksum for superblock.
+>>
+>> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+>> ---
+>> v2 -> v3:
+>>  - add sysfs entry for superblock checksum.
+>>  - move the crc checking to the beginning of sanity_check_raw_super().
+>>  - fix the NULL pointer dereference as sb->s_fs_info hasn't be set yet in
+>>    sanity_check_raw_super().
+>> v1 -> v2:
+>>  - fix to switch endian of crc.
+>>  fs/f2fs/f2fs.h          |  2 ++
+>>  fs/f2fs/super.c         | 29 +++++++++++++++++++++++++++++
+>>  fs/f2fs/sysfs.c         |  7 +++++++
+>>  include/linux/f2fs_fs.h |  3 ++-
+>>  4 files changed, 40 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 4525f4f82af0..d50d6efda96b 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -147,6 +147,7 @@ struct f2fs_mount_info {
+>>  #define F2FS_FEATURE_INODE_CRTIME	0x0100
+>>  #define F2FS_FEATURE_LOST_FOUND		0x0200
+>>  #define F2FS_FEATURE_VERITY		0x0400	/* reserved */
+>> +#define F2FS_FEATURE_SB_CHKSUM		0x0800
+>>  =
+
+>>  #define F2FS_HAS_FEATURE(sb, mask)					\
+>>  	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) !=3D 0)
+>> @@ -3376,6 +3377,7 @@ F2FS_FEATURE_FUNCS(flexible_inline_xattr, FLEXIBLE=
+_INLINE_XATTR);
+>>  F2FS_FEATURE_FUNCS(quota_ino, QUOTA_INO);
+>>  F2FS_FEATURE_FUNCS(inode_crtime, INODE_CRTIME);
+>>  F2FS_FEATURE_FUNCS(lost_found, LOST_FOUND);
+>> +F2FS_FEATURE_FUNCS(sb_chksum, SB_CHKSUM);
+>>  =
+
+>>  #ifdef CONFIG_BLK_DEV_ZONED
+>>  static inline int get_blkz_type(struct f2fs_sb_info *sbi,
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index bd57be470e23..c3dbafa31613 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -2149,6 +2149,26 @@ static int sanity_check_raw_super(struct f2fs_sb_=
+info *sbi,
+>>  					(bh->b_data + F2FS_SUPER_OFFSET);
+>>  	struct super_block *sb =3D sbi->sb;
+>>  	unsigned int blocksize;
+>> +	size_t crc_offset =3D 0;
+>> +	__u32 crc =3D 0;
+>> +
+>> +	/* Check checksum_offset and crc in superblock */
+>> +	if (le32_to_cpu(raw_super->feature) & F2FS_FEATURE_SB_CHKSUM) {
+>> +		crc_offset =3D le32_to_cpu(raw_super->checksum_offset);
+>> +		if (crc_offset !=3D
+>> +			offsetof(struct f2fs_super_block, crc)) {
+>> +			f2fs_msg(sb, KERN_INFO,
+>> +				"Invalid SB checksum offset: %lu",
+> =
+
+> warning: format =91%lu=92 expects argument of type =91long unsigned int=
+=92, but argument
+> 4 has type =91size_t=92 [-Wformat=3D]
+>      crc_offset);
+> =
+
+
+:( sorry, I'll send a v4 patch.
+
+> Otherwise, it looks good to me, you can add in next version:
+> =
+
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> =
+
+> Thanks,
+> =
+
+>> +				crc_offset);
+>> +			return 1;
+>> +		}
+>> +		crc =3D le32_to_cpu(raw_super->crc);
+>> +		if (!f2fs_crc_valid(sbi, crc, raw_super, crc_offset)) {
+>> +			f2fs_msg(sb, KERN_INFO,
+>> +				"Invalid SB checksum value: %u", crc);
+>> +			return 1;
+>> +		}
+>> +	}
+>>  =
+
+>>  	if (F2FS_SUPER_MAGIC !=3D le32_to_cpu(raw_super->magic)) {
+>>  		f2fs_msg(sb, KERN_INFO,
+>> @@ -2568,6 +2588,7 @@ static int read_raw_super_block(struct f2fs_sb_inf=
+o *sbi,
+>>  int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
+>>  {
+>>  	struct buffer_head *bh;
+>> +	__u32 crc =3D 0;
+>>  	int err;
+>>  =
+
+>>  	if ((recover && f2fs_readonly(sbi->sb)) ||
+>> @@ -2576,6 +2597,14 @@ int f2fs_commit_super(struct f2fs_sb_info *sbi, b=
+ool recover)
+>>  		return -EROFS;
+>>  	}
+>>  =
+
+>> +	/* we should update superblock crc here */
+>> +	if (!recover &&
+>> +		F2FS_HAS_FEATURE(sbi->sb, F2FS_FEATURE_SB_CHKSUM)) {
+>> +		crc =3D f2fs_crc32(sbi, F2FS_RAW_SUPER(sbi),
+>> +				offsetof(struct f2fs_super_block, crc));
+>> +		F2FS_RAW_SUPER(sbi)->crc =3D cpu_to_le32(crc);
+>> +	}
+>> +
+>>  	/* write back-up superblock first */
+>>  	bh =3D sb_bread(sbi->sb, sbi->valid_super_block ? 0 : 1);
+>>  	if (!bh)
+>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+>> index cd2e030e47b8..c86d91be6c48 100644
+>> --- a/fs/f2fs/sysfs.c
+>> +++ b/fs/f2fs/sysfs.c
+>> @@ -120,6 +120,9 @@ static ssize_t features_show(struct f2fs_attr *a,
+>>  	if (f2fs_sb_has_lost_found(sb))
+>>  		len +=3D snprintf(buf + len, PAGE_SIZE - len, "%s%s",
+>>  				len ? ", " : "", "lost_found");
+>> +	if (f2fs_sb_has_sb_chksum(sb))
+>> +		len +=3D snprintf(buf + len, PAGE_SIZE - len, "%s%s",
+>> +				len ? ", " : "", "sb_checksum");
+>>  	len +=3D snprintf(buf + len, PAGE_SIZE - len, "\n");
+>>  	return len;
+>>  }
+>> @@ -337,6 +340,7 @@ enum feat_id {
+>>  	FEAT_QUOTA_INO,
+>>  	FEAT_INODE_CRTIME,
+>>  	FEAT_LOST_FOUND,
+>> +	FEAT_SB_CHECKSUM,
+>>  };
+>>  =
+
+>>  static ssize_t f2fs_feature_show(struct f2fs_attr *a,
+>> @@ -353,6 +357,7 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
+>>  	case FEAT_QUOTA_INO:
+>>  	case FEAT_INODE_CRTIME:
+>>  	case FEAT_LOST_FOUND:
+>> +	case FEAT_SB_CHECKSUM:
+>>  		return snprintf(buf, PAGE_SIZE, "supported\n");
+>>  	}
+>>  	return 0;
+>> @@ -433,6 +438,7 @@ F2FS_FEATURE_RO_ATTR(flexible_inline_xattr, FEAT_FLE=
+XIBLE_INLINE_XATTR);
+>>  F2FS_FEATURE_RO_ATTR(quota_ino, FEAT_QUOTA_INO);
+>>  F2FS_FEATURE_RO_ATTR(inode_crtime, FEAT_INODE_CRTIME);
+>>  F2FS_FEATURE_RO_ATTR(lost_found, FEAT_LOST_FOUND);
+>> +F2FS_FEATURE_RO_ATTR(sb_checksum, FEAT_SB_CHECKSUM);
+>>  =
+
+>>  #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
+>>  static struct attribute *f2fs_attrs[] =3D {
+>> @@ -489,6 +495,7 @@ static struct attribute *f2fs_feat_attrs[] =3D {
+>>  	ATTR_LIST(quota_ino),
+>>  	ATTR_LIST(inode_crtime),
+>>  	ATTR_LIST(lost_found),
+>> +	ATTR_LIST(sb_checksum),
+>>  	NULL,
+>>  };
+>>  =
+
+>> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+>> index f70f8ac9c4f4..aa4b586569c1 100644
+>> --- a/include/linux/f2fs_fs.h
+>> +++ b/include/linux/f2fs_fs.h
+>> @@ -112,7 +112,8 @@ struct f2fs_super_block {
+>>  	struct f2fs_device devs[MAX_DEVICES];	/* device list */
+>>  	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
+>>  	__u8 hot_ext_count;		/* # of hot file extension */
+>> -	__u8 reserved[314];		/* valid reserved region */
+>> +	__u8 reserved[310];		/* valid reserved region */
+>> +	__le32 crc;			/* checksum of superblock */
+>>  } __packed;
+>>  =
+
+>>  /*
+>>
+> =
+
+> .
+> =
+
+
+
+
+---------------------------------------------------------------------------=
+---
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
