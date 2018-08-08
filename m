@@ -1,24 +1,24 @@
-From: Junling Zheng <zhengjunling@huawei.com>
-Subject: [RFC PATCH v2 2/3] f2fs-tools: rename CHECKSUM_OFFSET to
- CP_CHKSUM_OFFSET
-Date: Wed, 8 Aug 2018 18:27:49 +0800
-Message-ID: <20180808102750.102971-2-zhengjunling@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [RFC PATCH v3 1/3] f2fs: support superblock checksum
+Date: Wed, 8 Aug 2018 20:03:00 +0800
+Message-ID: <772d31d6-3cfe-d7e2-af18-eb023c73aee9@kernel.org>
 References: <20180808102750.102971-1-zhengjunling@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <zhengjunling@huawei.com>) id 1fnLhH-00030I-Ii
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Aug 2018 10:28:07 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <chao@kernel.org>) id 1fnNBU-0007D6-5r
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Aug 2018 12:03:24 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fnLhF-00Dhkg-FS
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Aug 2018 10:28:07 +0000
+ id 1fnNBR-00BSSs-SB
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Aug 2018 12:03:24 +0000
 In-Reply-To: <20180808102750.102971-1-zhengjunling@huawei.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,153 +28,115 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
+To: Junling Zheng <zhengjunling@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-This patch renamed CHECKSUM_OFFSET to CP_CHKSUM_OFFSET.
-
-Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
----
-v1 -> v2:
- - Rename CHKSUM_OFFSET_CP to CP_CHKSUM_OFFSET.
- fsck/fsck.c        |  4 ++--
- fsck/mount.c       |  4 ++--
- fsck/resize.c      |  8 ++++----
- include/f2fs_fs.h  |  6 +++---
- mkfs/f2fs_format.c | 14 +++++++-------
- 5 files changed, 18 insertions(+), 18 deletions(-)
-
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index d550403..f080d3c 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -2010,8 +2010,8 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
- 	set_cp(valid_node_count, fsck->chk.valid_node_cnt);
- 	set_cp(valid_inode_count, fsck->chk.valid_inode_cnt);
- 
--	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CHECKSUM_OFFSET);
--	*((__le32 *)((unsigned char *)cp + CHECKSUM_OFFSET)) = cpu_to_le32(crc);
-+	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CP_CHKSUM_OFFSET);
-+	*((__le32 *)((unsigned char *)cp + CP_CHKSUM_OFFSET)) = cpu_to_le32(crc);
- 
- 	cp_blk_no = get_sb(cp_blkaddr);
- 	if (sbi->cur_cp == 2)
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 8fb4d59..58ef3e6 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -2187,8 +2187,8 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
- 	flags = update_nat_bits_flags(sb, cp, flags);
- 	set_cp(ckpt_flags, flags);
- 
--	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CHECKSUM_OFFSET);
--	*((__le32 *)((unsigned char *)cp + CHECKSUM_OFFSET)) = cpu_to_le32(crc);
-+	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CP_CHKSUM_OFFSET);
-+	*((__le32 *)((unsigned char *)cp + CP_CHKSUM_OFFSET)) = cpu_to_le32(crc);
- 
- 	cp_blk_no = get_sb(cp_blkaddr);
- 	if (sbi->cur_cp == 2)
-diff --git a/fsck/resize.c b/fsck/resize.c
-index fe8a61a..e9612b3 100644
---- a/fsck/resize.c
-+++ b/fsck/resize.c
-@@ -90,10 +90,10 @@ static int get_new_sb(struct f2fs_super_block *sb)
- 		 * It requires more pages for cp.
- 		 */
- 		if (max_sit_bitmap_size > MAX_SIT_BITMAP_SIZE_IN_CKPT) {
--			max_nat_bitmap_size = CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1;
-+			max_nat_bitmap_size = CP_CHKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1;
- 			set_sb(cp_payload, F2FS_BLK_ALIGN(max_sit_bitmap_size));
- 		} else {
--			max_nat_bitmap_size = CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1
-+			max_nat_bitmap_size = CP_CHKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1
- 				- max_sit_bitmap_size;
- 			set_sb(cp_payload, 0);
- 		}
-@@ -520,8 +520,8 @@ static void rebuild_checkpoint(struct f2fs_sb_info *sbi,
- 						(unsigned char *)cp);
- 	new_cp->checkpoint_ver = cpu_to_le64(cp_ver + 1);
- 
--	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, new_cp, CHECKSUM_OFFSET);
--	*((__le32 *)((unsigned char *)new_cp + CHECKSUM_OFFSET)) =
-+	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, new_cp, CP_CHKSUM_OFFSET);
-+	*((__le32 *)((unsigned char *)new_cp + CP_CHKSUM_OFFSET)) =
- 							cpu_to_le32(crc);
- 
- 	/* Write a new checkpoint in the other set */
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 53fa002..e279b9f 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -278,7 +278,7 @@ static inline uint64_t bswap_64(uint64_t val)
- #define PAGE_CACHE_SIZE		4096
- #define BITS_PER_BYTE		8
- #define F2FS_SUPER_MAGIC	0xF2F52010	/* F2FS Magic Number */
--#define CHECKSUM_OFFSET		4092
-+#define CP_CHKSUM_OFFSET	4092
- #define MAX_PATH_LEN		64
- #define MAX_DEVICES		8
- 
-@@ -682,9 +682,9 @@ struct f2fs_checkpoint {
- } __attribute__((packed));
- 
- #define MAX_SIT_BITMAP_SIZE_IN_CKPT    \
--	(CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1 - 64)
-+	(CP_CHKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1 - 64)
- #define MAX_BITMAP_SIZE_IN_CKPT	\
--	(CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1)
-+	(CP_CHKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1)
- 
- /*
-  * For orphan inode management
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index 4b88d93..621126c 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -342,12 +342,12 @@ static int f2fs_prepare_super_block(void)
- 		 * It requires more pages for cp.
- 		 */
- 		if (max_sit_bitmap_size > MAX_SIT_BITMAP_SIZE_IN_CKPT) {
--			max_nat_bitmap_size = CHECKSUM_OFFSET -
-+			max_nat_bitmap_size = CP_CHKSUM_OFFSET -
- 					sizeof(struct f2fs_checkpoint) + 1;
- 			set_sb(cp_payload, F2FS_BLK_ALIGN(max_sit_bitmap_size));
- 	        } else {
- 			max_nat_bitmap_size =
--				CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1
-+				CP_CHKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1
- 				- max_sit_bitmap_size;
- 			set_sb(cp_payload, 0);
- 		}
-@@ -684,10 +684,10 @@ static int f2fs_write_check_point_pack(void)
- 	set_cp(nat_ver_bitmap_bytesize, ((get_sb(segment_count_nat) / 2) <<
- 			 get_sb(log_blocks_per_seg)) / 8);
- 
--	set_cp(checksum_offset, CHECKSUM_OFFSET);
-+	set_cp(checksum_offset, CP_CHKSUM_OFFSET);
- 
--	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CHECKSUM_OFFSET);
--	*((__le32 *)((unsigned char *)cp + CHECKSUM_OFFSET)) =
-+	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CP_CHKSUM_OFFSET);
-+	*((__le32 *)((unsigned char *)cp + CP_CHKSUM_OFFSET)) =
- 							cpu_to_le32(crc);
- 
- 	blk_size_bytes = 1 << get_sb(log_blocksize);
-@@ -932,8 +932,8 @@ static int f2fs_write_check_point_pack(void)
- 	 */
- 	cp->checkpoint_ver = 0;
- 
--	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CHECKSUM_OFFSET);
--	*((__le32 *)((unsigned char *)cp + CHECKSUM_OFFSET)) =
-+	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CP_CHKSUM_OFFSET);
-+	*((__le32 *)((unsigned char *)cp + CP_CHKSUM_OFFSET)) =
- 							cpu_to_le32(crc);
- 	cp_seg_blk = get_sb(segment0_blkaddr) + c.blks_per_seg;
- 	DBG(1, "\tWriting cp page 1 of checkpoint pack 2, at offset 0x%08"PRIx64"\n",
--- 
-2.18.0
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+T24gMjAxOC84LzggMTg6MjcsIEp1bmxpbmcgWmhlbmcgd3JvdGU6Cj4gTm93IHdlIHN1cHBvcnQg
+Y3JjMzIgY2hlY2tzdW0gZm9yIHN1cGVyYmxvY2suCj4gCj4gU2lnbmVkLW9mZi1ieTogSnVubGlu
+ZyBaaGVuZyA8emhlbmdqdW5saW5nQGh1YXdlaS5jb20+Cj4gLS0tCj4gdjIgLT4gdjM6Cj4gIC0g
+YWRkIHN5c2ZzIGVudHJ5IGZvciBzdXBlcmJsb2NrIGNoZWNrc3VtLgo+ICAtIG1vdmUgdGhlIGNy
+YyBjaGVja2luZyB0byB0aGUgYmVnaW5uaW5nIG9mIHNhbml0eV9jaGVja19yYXdfc3VwZXIoKS4K
+PiAgLSBmaXggdGhlIE5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZSBhcyBzYi0+c19mc19pbmZvIGhh
+c24ndCBiZSBzZXQgeWV0IGluCj4gICAgc2FuaXR5X2NoZWNrX3Jhd19zdXBlcigpLgo+IHYxIC0+
+IHYyOgo+ICAtIGZpeCB0byBzd2l0Y2ggZW5kaWFuIG9mIGNyYy4KPiAgZnMvZjJmcy9mMmZzLmgg
+ICAgICAgICAgfCAgMiArKwo+ICBmcy9mMmZzL3N1cGVyLmMgICAgICAgICB8IDI5ICsrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrCj4gIGZzL2YyZnMvc3lzZnMuYyAgICAgICAgIHwgIDcgKysr
+KysrKwo+ICBpbmNsdWRlL2xpbnV4L2YyZnNfZnMuaCB8ICAzICsrLQo+ICA0IGZpbGVzIGNoYW5n
+ZWQsIDQwIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZnMv
+ZjJmcy9mMmZzLmggYi9mcy9mMmZzL2YyZnMuaAo+IGluZGV4IDQ1MjVmNGY4MmFmMC4uZDUwZDZl
+ZmRhOTZiIDEwMDY0NAo+IC0tLSBhL2ZzL2YyZnMvZjJmcy5oCj4gKysrIGIvZnMvZjJmcy9mMmZz
+LmgKPiBAQCAtMTQ3LDYgKzE0Nyw3IEBAIHN0cnVjdCBmMmZzX21vdW50X2luZm8gewo+ICAjZGVm
+aW5lIEYyRlNfRkVBVFVSRV9JTk9ERV9DUlRJTUUJMHgwMTAwCj4gICNkZWZpbmUgRjJGU19GRUFU
+VVJFX0xPU1RfRk9VTkQJCTB4MDIwMAo+ICAjZGVmaW5lIEYyRlNfRkVBVFVSRV9WRVJJVFkJCTB4
+MDQwMAkvKiByZXNlcnZlZCAqLwo+ICsjZGVmaW5lIEYyRlNfRkVBVFVSRV9TQl9DSEtTVU0JCTB4
+MDgwMAo+ICAKPiAgI2RlZmluZSBGMkZTX0hBU19GRUFUVVJFKHNiLCBtYXNrKQkJCQkJXAo+ICAJ
+KChGMkZTX1NCKHNiKS0+cmF3X3N1cGVyLT5mZWF0dXJlICYgY3B1X3RvX2xlMzIobWFzaykpICE9
+IDApCj4gQEAgLTMzNzYsNiArMzM3Nyw3IEBAIEYyRlNfRkVBVFVSRV9GVU5DUyhmbGV4aWJsZV9p
+bmxpbmVfeGF0dHIsIEZMRVhJQkxFX0lOTElORV9YQVRUUik7Cj4gIEYyRlNfRkVBVFVSRV9GVU5D
+UyhxdW90YV9pbm8sIFFVT1RBX0lOTyk7Cj4gIEYyRlNfRkVBVFVSRV9GVU5DUyhpbm9kZV9jcnRp
+bWUsIElOT0RFX0NSVElNRSk7Cj4gIEYyRlNfRkVBVFVSRV9GVU5DUyhsb3N0X2ZvdW5kLCBMT1NU
+X0ZPVU5EKTsKPiArRjJGU19GRUFUVVJFX0ZVTkNTKHNiX2Noa3N1bSwgU0JfQ0hLU1VNKTsKPiAg
+Cj4gICNpZmRlZiBDT05GSUdfQkxLX0RFVl9aT05FRAo+ICBzdGF0aWMgaW5saW5lIGludCBnZXRf
+Ymxrel90eXBlKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwKPiBkaWZmIC0tZ2l0IGEvZnMvZjJm
+cy9zdXBlci5jIGIvZnMvZjJmcy9zdXBlci5jCj4gaW5kZXggYmQ1N2JlNDcwZTIzLi5jM2RiYWZh
+MzE2MTMgMTAwNjQ0Cj4gLS0tIGEvZnMvZjJmcy9zdXBlci5jCj4gKysrIGIvZnMvZjJmcy9zdXBl
+ci5jCj4gQEAgLTIxNDksNiArMjE0OSwyNiBAQCBzdGF0aWMgaW50IHNhbml0eV9jaGVja19yYXdf
+c3VwZXIoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLAo+ICAJCQkJCShiaC0+Yl9kYXRhICsgRjJG
+U19TVVBFUl9PRkZTRVQpOwo+ICAJc3RydWN0IHN1cGVyX2Jsb2NrICpzYiA9IHNiaS0+c2I7Cj4g
+IAl1bnNpZ25lZCBpbnQgYmxvY2tzaXplOwo+ICsJc2l6ZV90IGNyY19vZmZzZXQgPSAwOwo+ICsJ
+X191MzIgY3JjID0gMDsKPiArCj4gKwkvKiBDaGVjayBjaGVja3N1bV9vZmZzZXQgYW5kIGNyYyBp
+biBzdXBlcmJsb2NrICovCj4gKwlpZiAobGUzMl90b19jcHUocmF3X3N1cGVyLT5mZWF0dXJlKSAm
+IEYyRlNfRkVBVFVSRV9TQl9DSEtTVU0pIHsKPiArCQljcmNfb2Zmc2V0ID0gbGUzMl90b19jcHUo
+cmF3X3N1cGVyLT5jaGVja3N1bV9vZmZzZXQpOwo+ICsJCWlmIChjcmNfb2Zmc2V0ICE9Cj4gKwkJ
+CW9mZnNldG9mKHN0cnVjdCBmMmZzX3N1cGVyX2Jsb2NrLCBjcmMpKSB7Cj4gKwkJCWYyZnNfbXNn
+KHNiLCBLRVJOX0lORk8sCj4gKwkJCQkiSW52YWxpZCBTQiBjaGVja3N1bSBvZmZzZXQ6ICVsdSIs
+Cgp3YXJuaW5nOiBmb3JtYXQg4oCYJWx14oCZIGV4cGVjdHMgYXJndW1lbnQgb2YgdHlwZSDigJhs
+b25nIHVuc2lnbmVkIGludOKAmSwgYnV0IGFyZ3VtZW50CjQgaGFzIHR5cGUg4oCYc2l6ZV904oCZ
+IFstV2Zvcm1hdD1dCiAgICAgY3JjX29mZnNldCk7CgpPdGhlcndpc2UsIGl0IGxvb2tzIGdvb2Qg
+dG8gbWUsIHlvdSBjYW4gYWRkIGluIG5leHQgdmVyc2lvbjoKClJldmlld2VkLWJ5OiBDaGFvIFl1
+IDx5dWNoYW8wQGh1YXdlaS5jb20+CgpUaGFua3MsCgo+ICsJCQkJY3JjX29mZnNldCk7Cj4gKwkJ
+CXJldHVybiAxOwo+ICsJCX0KPiArCQljcmMgPSBsZTMyX3RvX2NwdShyYXdfc3VwZXItPmNyYyk7
+Cj4gKwkJaWYgKCFmMmZzX2NyY192YWxpZChzYmksIGNyYywgcmF3X3N1cGVyLCBjcmNfb2Zmc2V0
+KSkgewo+ICsJCQlmMmZzX21zZyhzYiwgS0VSTl9JTkZPLAo+ICsJCQkJIkludmFsaWQgU0IgY2hl
+Y2tzdW0gdmFsdWU6ICV1IiwgY3JjKTsKPiArCQkJcmV0dXJuIDE7Cj4gKwkJfQo+ICsJfQo+ICAK
+PiAgCWlmIChGMkZTX1NVUEVSX01BR0lDICE9IGxlMzJfdG9fY3B1KHJhd19zdXBlci0+bWFnaWMp
+KSB7Cj4gIAkJZjJmc19tc2coc2IsIEtFUk5fSU5GTywKPiBAQCAtMjU2OCw2ICsyNTg4LDcgQEAg
+c3RhdGljIGludCByZWFkX3Jhd19zdXBlcl9ibG9jayhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmks
+Cj4gIGludCBmMmZzX2NvbW1pdF9zdXBlcihzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIGJvb2wg
+cmVjb3ZlcikKPiAgewo+ICAJc3RydWN0IGJ1ZmZlcl9oZWFkICpiaDsKPiArCV9fdTMyIGNyYyA9
+IDA7Cj4gIAlpbnQgZXJyOwo+ICAKPiAgCWlmICgocmVjb3ZlciAmJiBmMmZzX3JlYWRvbmx5KHNi
+aS0+c2IpKSB8fAo+IEBAIC0yNTc2LDYgKzI1OTcsMTQgQEAgaW50IGYyZnNfY29tbWl0X3N1cGVy
+KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgYm9vbCByZWNvdmVyKQo+ICAJCXJldHVybiAtRVJP
+RlM7Cj4gIAl9Cj4gIAo+ICsJLyogd2Ugc2hvdWxkIHVwZGF0ZSBzdXBlcmJsb2NrIGNyYyBoZXJl
+ICovCj4gKwlpZiAoIXJlY292ZXIgJiYKPiArCQlGMkZTX0hBU19GRUFUVVJFKHNiaS0+c2IsIEYy
+RlNfRkVBVFVSRV9TQl9DSEtTVU0pKSB7Cj4gKwkJY3JjID0gZjJmc19jcmMzMihzYmksIEYyRlNf
+UkFXX1NVUEVSKHNiaSksCj4gKwkJCQlvZmZzZXRvZihzdHJ1Y3QgZjJmc19zdXBlcl9ibG9jaywg
+Y3JjKSk7Cj4gKwkJRjJGU19SQVdfU1VQRVIoc2JpKS0+Y3JjID0gY3B1X3RvX2xlMzIoY3JjKTsK
+PiArCX0KPiArCj4gIAkvKiB3cml0ZSBiYWNrLXVwIHN1cGVyYmxvY2sgZmlyc3QgKi8KPiAgCWJo
+ID0gc2JfYnJlYWQoc2JpLT5zYiwgc2JpLT52YWxpZF9zdXBlcl9ibG9jayA/IDAgOiAxKTsKPiAg
+CWlmICghYmgpCj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc3lzZnMuYyBiL2ZzL2YyZnMvc3lzZnMu
+Ywo+IGluZGV4IGNkMmUwMzBlNDdiOC4uYzg2ZDkxYmU2YzQ4IDEwMDY0NAo+IC0tLSBhL2ZzL2Yy
+ZnMvc3lzZnMuYwo+ICsrKyBiL2ZzL2YyZnMvc3lzZnMuYwo+IEBAIC0xMjAsNiArMTIwLDkgQEAg
+c3RhdGljIHNzaXplX3QgZmVhdHVyZXNfc2hvdyhzdHJ1Y3QgZjJmc19hdHRyICphLAo+ICAJaWYg
+KGYyZnNfc2JfaGFzX2xvc3RfZm91bmQoc2IpKQo+ICAJCWxlbiArPSBzbnByaW50ZihidWYgKyBs
+ZW4sIFBBR0VfU0laRSAtIGxlbiwgIiVzJXMiLAo+ICAJCQkJbGVuID8gIiwgIiA6ICIiLCAibG9z
+dF9mb3VuZCIpOwo+ICsJaWYgKGYyZnNfc2JfaGFzX3NiX2Noa3N1bShzYikpCj4gKwkJbGVuICs9
+IHNucHJpbnRmKGJ1ZiArIGxlbiwgUEFHRV9TSVpFIC0gbGVuLCAiJXMlcyIsCj4gKwkJCQlsZW4g
+PyAiLCAiIDogIiIsICJzYl9jaGVja3N1bSIpOwo+ICAJbGVuICs9IHNucHJpbnRmKGJ1ZiArIGxl
+biwgUEFHRV9TSVpFIC0gbGVuLCAiXG4iKTsKPiAgCXJldHVybiBsZW47Cj4gIH0KPiBAQCAtMzM3
+LDYgKzM0MCw3IEBAIGVudW0gZmVhdF9pZCB7Cj4gIAlGRUFUX1FVT1RBX0lOTywKPiAgCUZFQVRf
+SU5PREVfQ1JUSU1FLAo+ICAJRkVBVF9MT1NUX0ZPVU5ELAo+ICsJRkVBVF9TQl9DSEVDS1NVTSwK
+PiAgfTsKPiAgCj4gIHN0YXRpYyBzc2l6ZV90IGYyZnNfZmVhdHVyZV9zaG93KHN0cnVjdCBmMmZz
+X2F0dHIgKmEsCj4gQEAgLTM1Myw2ICszNTcsNyBAQCBzdGF0aWMgc3NpemVfdCBmMmZzX2ZlYXR1
+cmVfc2hvdyhzdHJ1Y3QgZjJmc19hdHRyICphLAo+ICAJY2FzZSBGRUFUX1FVT1RBX0lOTzoKPiAg
+CWNhc2UgRkVBVF9JTk9ERV9DUlRJTUU6Cj4gIAljYXNlIEZFQVRfTE9TVF9GT1VORDoKPiArCWNh
+c2UgRkVBVF9TQl9DSEVDS1NVTToKPiAgCQlyZXR1cm4gc25wcmludGYoYnVmLCBQQUdFX1NJWkUs
+ICJzdXBwb3J0ZWRcbiIpOwo+ICAJfQo+ICAJcmV0dXJuIDA7Cj4gQEAgLTQzMyw2ICs0MzgsNyBA
+QCBGMkZTX0ZFQVRVUkVfUk9fQVRUUihmbGV4aWJsZV9pbmxpbmVfeGF0dHIsIEZFQVRfRkxFWElC
+TEVfSU5MSU5FX1hBVFRSKTsKPiAgRjJGU19GRUFUVVJFX1JPX0FUVFIocXVvdGFfaW5vLCBGRUFU
+X1FVT1RBX0lOTyk7Cj4gIEYyRlNfRkVBVFVSRV9ST19BVFRSKGlub2RlX2NydGltZSwgRkVBVF9J
+Tk9ERV9DUlRJTUUpOwo+ICBGMkZTX0ZFQVRVUkVfUk9fQVRUUihsb3N0X2ZvdW5kLCBGRUFUX0xP
+U1RfRk9VTkQpOwo+ICtGMkZTX0ZFQVRVUkVfUk9fQVRUUihzYl9jaGVja3N1bSwgRkVBVF9TQl9D
+SEVDS1NVTSk7Cj4gIAo+ICAjZGVmaW5lIEFUVFJfTElTVChuYW1lKSAoJmYyZnNfYXR0cl8jI25h
+bWUuYXR0cikKPiAgc3RhdGljIHN0cnVjdCBhdHRyaWJ1dGUgKmYyZnNfYXR0cnNbXSA9IHsKPiBA
+QCAtNDg5LDYgKzQ5NSw3IEBAIHN0YXRpYyBzdHJ1Y3QgYXR0cmlidXRlICpmMmZzX2ZlYXRfYXR0
+cnNbXSA9IHsKPiAgCUFUVFJfTElTVChxdW90YV9pbm8pLAo+ICAJQVRUUl9MSVNUKGlub2RlX2Ny
+dGltZSksCj4gIAlBVFRSX0xJU1QobG9zdF9mb3VuZCksCj4gKwlBVFRSX0xJU1Qoc2JfY2hlY2tz
+dW0pLAo+ICAJTlVMTCwKPiAgfTsKPiAgCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvZjJm
+c19mcy5oIGIvaW5jbHVkZS9saW51eC9mMmZzX2ZzLmgKPiBpbmRleCBmNzBmOGFjOWM0ZjQuLmFh
+NGI1ODY1NjljMSAxMDA2NDQKPiAtLS0gYS9pbmNsdWRlL2xpbnV4L2YyZnNfZnMuaAo+ICsrKyBi
+L2luY2x1ZGUvbGludXgvZjJmc19mcy5oCj4gQEAgLTExMiw3ICsxMTIsOCBAQCBzdHJ1Y3QgZjJm
+c19zdXBlcl9ibG9jayB7Cj4gIAlzdHJ1Y3QgZjJmc19kZXZpY2UgZGV2c1tNQVhfREVWSUNFU107
+CS8qIGRldmljZSBsaXN0ICovCj4gIAlfX2xlMzIgcWZfaW5vW0YyRlNfTUFYX1FVT1RBU107CS8q
+IHF1b3RhIGlub2RlIG51bWJlcnMgKi8KPiAgCV9fdTggaG90X2V4dF9jb3VudDsJCS8qICMgb2Yg
+aG90IGZpbGUgZXh0ZW5zaW9uICovCj4gLQlfX3U4IHJlc2VydmVkWzMxNF07CQkvKiB2YWxpZCBy
+ZXNlcnZlZCByZWdpb24gKi8KPiArCV9fdTggcmVzZXJ2ZWRbMzEwXTsJCS8qIHZhbGlkIHJlc2Vy
+dmVkIHJlZ2lvbiAqLwo+ICsJX19sZTMyIGNyYzsJCQkvKiBjaGVja3N1bSBvZiBzdXBlcmJsb2Nr
+ICovCj4gIH0gX19wYWNrZWQ7Cj4gIAo+ICAvKgo+IAoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNo
+ZWNrIG91dCB0aGUgdmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3Mg
+bW9zdAplbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9z
+bGFzaGRvdApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpM
+aW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJj
+ZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9s
+aW51eC1mMmZzLWRldmVsCg==
