@@ -1,189 +1,245 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: support fault_type mount option
-Date: Wed, 8 Aug 2018 17:36:41 +0800
-Message-ID: <20180808093641.84280-1-yuchao0@huawei.com>
+From: Junling Zheng <zhengjunling@huawei.com>
+Subject: [RFC PATCH v2 3/3] f2fs-tools: introduce sb checksum
+Date: Wed, 8 Aug 2018 18:27:50 +0800
+Message-ID: <20180808102750.102971-3-zhengjunling@huawei.com>
+References: <20180808102750.102971-1-zhengjunling@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <zhengjunling@huawei.com>) id 1fnLhH-0003Ye-QB
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Aug 2018 10:28:07 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fnLhF-00BOSA-TZ
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Aug 2018 10:28:07 +0000
+In-Reply-To: <20180808102750.102971-1-zhengjunling@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-Previously, once fault injection is on, by default, all kind of faults
-will be injected to f2fs, if we want to trigger single or specified
-combined type during the test, we need to configure sysfs entry, it will
-be a little inconvenient to integrate sysfs configuring into testsuit,
-such as xfstest.
+This patch introduced superblock checksum.
 
-So this patch introduces a new mount option 'fault_type' to assist old
-option 'fault_injection', with these two mount options, we can specify
-any fault rate/type at mount-time.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
 ---
- Documentation/filesystems/f2fs.txt | 18 ++++++++++++++++
- fs/f2fs/checkpoint.c               |  2 +-
- fs/f2fs/f2fs.h                     |  7 ++++--
- fs/f2fs/super.c                    | 34 ++++++++++++++++++++++++------
- 4 files changed, 51 insertions(+), 10 deletions(-)
+v1 -> v2:
+ - Rename CHKSUM_OFFSET_SB to SB_CHKSUM_OFFSET.
+ - Introduce update_sb_chksum() to update superblock checksum.
+ fsck/fsck.h        |  1 +
+ fsck/mount.c       | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ fsck/resize.c      |  3 +++
+ include/f2fs_fs.h  |  6 +++++-
+ mkfs/f2fs_format.c |  9 +++++++++
+ 5 files changed, 62 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-index 69f8de995739..e5edd29687b5 100644
---- a/Documentation/filesystems/f2fs.txt
-+++ b/Documentation/filesystems/f2fs.txt
-@@ -157,6 +157,24 @@ data_flush             Enable data flushing before checkpoint in order to
-                        persist data of regular and symlink.
- fault_injection=%d     Enable fault injection in all supported types with
-                        specified injection rate.
-+fault_type=%d          Support configuring fault injection type, should be
-+                       enabled with fault_injection option, fault type value
-+                       is shown below, it supports single or combined type.
-+                       Type_Name		Type_Value
-+                       FAULT_KMALLOC		0x000000001
-+                       FAULT_KVMALLOC		0x000000002
-+                       FAULT_PAGE_ALLOC		0x000000004
-+                       FAULT_PAGE_GET		0x000000008
-+                       FAULT_ALLOC_BIO		0x000000010
-+                       FAULT_ALLOC_NID		0x000000020
-+                       FAULT_ORPHAN		0x000000040
-+                       FAULT_BLOCK		0x000000080
-+                       FAULT_DIR_DEPTH		0x000000100
-+                       FAULT_EVICT_INODE	0x000000200
-+                       FAULT_TRUNCATE		0x000000400
-+                       FAULT_IO			0x000000800
-+                       FAULT_CHECKPOINT		0x000001000
-+                       FAULT_DISCARD		0x000002000
- mode=%s                Control block allocation mode which supports "adaptive"
-                        and "lfs". In "lfs" mode, there should be no random
-                        writes towards main area.
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 31561026ac9a..3ab7a00c0641 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -28,7 +28,7 @@ struct kmem_cache *f2fs_inode_entry_slab;
+diff --git a/fsck/fsck.h b/fsck/fsck.h
+index 6042e68..2172cac 100644
+--- a/fsck/fsck.h
++++ b/fsck/fsck.h
+@@ -170,6 +170,7 @@ extern int fsck_verify(struct f2fs_sb_info *);
+ extern void fsck_free(struct f2fs_sb_info *);
+ extern int f2fs_do_mount(struct f2fs_sb_info *);
+ extern void f2fs_do_umount(struct f2fs_sb_info *);
++extern void update_sb_chksum(struct f2fs_super_block *);
  
- void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi, bool end_io)
- {
--	f2fs_build_fault_attr(sbi, 0);
-+	f2fs_build_fault_attr(sbi, 0, 0);
- 	set_ckpt_flags(sbi, CP_ERROR_FLAG);
- 	if (!end_io)
- 		f2fs_flush_merged_writes(sbi);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 1e07fcd7f580..f05ae7c46e14 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -60,6 +60,8 @@ enum {
- 	FAULT_MAX,
- };
- 
-+#define F2FS_ALL_FAULT_TYPE		((1 << FAULT_MAX) - 1)
-+
- struct f2fs_fault_info {
- 	atomic_t inject_ops;
- 	unsigned int inject_rate;
-@@ -3437,9 +3439,10 @@ static inline bool f2fs_force_buffered_io(struct inode *inode, int rw)
+ extern void flush_journal_entries(struct f2fs_sb_info *);
+ extern void zero_journal_entries(struct f2fs_sb_info *);
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 58ef3e6..1dfabba 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -340,6 +340,7 @@ void print_raw_sb_info(struct f2fs_super_block *sb)
+ 	DISP_u32(sb, node_ino);
+ 	DISP_u32(sb, meta_ino);
+ 	DISP_u32(sb, cp_payload);
++	DISP_u32(sb, crc);
+ 	DISP("%-.256s", sb, version);
+ 	printf("\n");
  }
- 
- #ifdef CONFIG_F2FS_FAULT_INJECTION
--extern void f2fs_build_fault_attr(struct f2fs_sb_info *sbi, unsigned int rate);
-+extern void f2fs_build_fault_attr(struct f2fs_sb_info *sbi, unsigned int rate,
-+							unsigned int type);
- #else
--#define f2fs_build_fault_attr(sbi, rate)		do { } while (0)
-+#define f2fs_build_fault_attr(sbi, rate, type)		do { } while (0)
- #endif
- 
- #endif
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 254f74a6b481..5717838888b4 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -58,17 +58,21 @@ char *f2fs_fault_name[FAULT_MAX] = {
- 	[FAULT_DISCARD]		= "discard error",
- };
- 
--void f2fs_build_fault_attr(struct f2fs_sb_info *sbi, unsigned int rate)
-+void f2fs_build_fault_attr(struct f2fs_sb_info *sbi, unsigned int rate,
-+							unsigned int type)
- {
- 	struct f2fs_fault_info *ffi = &F2FS_OPTION(sbi).fault_info;
- 
- 	if (rate) {
- 		atomic_set(&ffi->inject_ops, 0);
- 		ffi->inject_rate = rate;
--		ffi->inject_type = (1 << FAULT_MAX) - 1;
--	} else {
--		memset(ffi, 0, sizeof(struct f2fs_fault_info));
+@@ -467,6 +468,9 @@ void print_sb_state(struct f2fs_super_block *sb)
+ 	if (f & cpu_to_le32(F2FS_FEATURE_LOST_FOUND)) {
+ 		MSG(0, "%s", " lost_found");
  	}
-+
-+	if (type)
-+		ffi->inject_type = type;
-+
-+	if (!rate && !type)
-+		memset(ffi, 0, sizeof(struct f2fs_fault_info));
- }
- #endif
- 
-@@ -113,6 +117,7 @@ enum {
- 	Opt_mode,
- 	Opt_io_size_bits,
- 	Opt_fault_injection,
-+	Opt_fault_type,
- 	Opt_lazytime,
- 	Opt_nolazytime,
- 	Opt_quota,
-@@ -170,6 +175,7 @@ static match_table_t f2fs_tokens = {
- 	{Opt_mode, "mode=%s"},
- 	{Opt_io_size_bits, "io_bits=%u"},
- 	{Opt_fault_injection, "fault_injection=%u"},
-+	{Opt_fault_type, "fault_type=%u"},
- 	{Opt_lazytime, "lazytime"},
- 	{Opt_nolazytime, "nolazytime"},
- 	{Opt_quota, "quota"},
-@@ -600,7 +606,18 @@ static int parse_options(struct super_block *sb, char *options)
- 			if (args->from && match_int(args, &arg))
- 				return -EINVAL;
- #ifdef CONFIG_F2FS_FAULT_INJECTION
--			f2fs_build_fault_attr(sbi, arg);
-+			f2fs_build_fault_attr(sbi, arg, F2FS_ALL_FAULT_TYPE);
-+			set_opt(sbi, FAULT_INJECTION);
-+#else
-+			f2fs_msg(sb, KERN_INFO,
-+				"FAULT_INJECTION was not selected");
-+#endif
-+			break;
-+		case Opt_fault_type:
-+			if (args->from && match_int(args, &arg))
-+				return -EINVAL;
-+#ifdef CONFIG_F2FS_FAULT_INJECTION
-+			f2fs_build_fault_attr(sbi, 0, arg);
- 			set_opt(sbi, FAULT_INJECTION);
- #else
- 			f2fs_msg(sb, KERN_INFO,
-@@ -1321,9 +1338,12 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 	if (F2FS_IO_SIZE_BITS(sbi))
- 		seq_printf(seq, ",io_size=%uKB", F2FS_IO_SIZE_KB(sbi));
- #ifdef CONFIG_F2FS_FAULT_INJECTION
--	if (test_opt(sbi, FAULT_INJECTION))
-+	if (test_opt(sbi, FAULT_INJECTION)) {
- 		seq_printf(seq, ",fault_injection=%u",
- 				F2FS_OPTION(sbi).fault_info.inject_rate);
-+		seq_printf(seq, ",fault_type=%u",
-+				F2FS_OPTION(sbi).fault_info.inject_type);
++	if (f & cpu_to_le32(F2FS_FEATURE_SB_CHKSUM)) {
++		MSG(0, "%s", " sb_checksum");
 +	}
- #endif
- #ifdef CONFIG_QUOTA
- 	if (test_opt(sbi, QUOTA))
-@@ -1393,7 +1413,7 @@ static void default_options(struct f2fs_sb_info *sbi)
- 	set_opt(sbi, POSIX_ACL);
- #endif
- 
--	f2fs_build_fault_attr(sbi, 0);
-+	f2fs_build_fault_attr(sbi, 0, 0);
+ 	MSG(0, "\n");
+ 	MSG(0, "Info: superblock encrypt level = %d, salt = ",
+ 					sb->encryption_level);
+@@ -558,10 +562,29 @@ static inline int sanity_check_area_boundary(struct f2fs_super_block *sb,
+ 	return 0;
  }
  
- #ifdef CONFIG_QUOTA
++static int verify_sb_chksum(struct f2fs_super_block *sb)
++{
++	if (SB_CHKSUM_OFFSET != get_sb(checksum_offset)) {
++		MSG(0, "\tInvalid SB CRC offset: %u\n",
++					get_sb(checksum_offset));
++		return -1;
++	}
++	if (f2fs_crc_valid(get_sb(crc), sb,
++			get_sb(checksum_offset))) {
++		MSG(0, "\tInvalid SB CRC: 0x%x\n", get_sb(crc));
++		return -1;
++	}
++	return 0;
++}
++
+ int sanity_check_raw_super(struct f2fs_super_block *sb, u64 offset)
+ {
+ 	unsigned int blocksize;
+ 
++	if ((get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) &&
++					verify_sb_chksum(sb))
++		return -1;
++
+ 	if (F2FS_SUPER_MAGIC != get_sb(magic))
+ 		return -1;
+ 
+@@ -605,6 +628,18 @@ int sanity_check_raw_super(struct f2fs_super_block *sb, u64 offset)
+ 	return 0;
+ }
+ 
++void update_sb_chksum(struct f2fs_super_block *sb)
++{
++	u32 old_crc, new_crc;
++
++	old_crc = get_sb(crc);
++	new_crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, sb,
++					SB_CHKSUM_OFFSET);
++	set_sb(crc, new_crc);
++	MSG(0, "Info: update SB CRC successfully "
++		"(0x%x --> 0x%x)\n", old_crc, new_crc);
++}
++
+ int validate_super_block(struct f2fs_sb_info *sbi, int block)
+ {
+ 	u64 offset;
+@@ -646,6 +681,10 @@ int validate_super_block(struct f2fs_sb_info *sbi, int block)
+ 
+ 			memcpy(sbi->raw_super->version,
+ 						c.version, VERSION_LEN);
++			if (le32_to_cpu(sbi->raw_super->feature) &
++						F2FS_FEATURE_SB_CHKSUM)
++				update_sb_chksum(sbi->raw_super);
++
+ 			ret = dev_write(sbi->raw_super, offset,
+ 					sizeof(struct f2fs_super_block));
+ 			ASSERT(ret >= 0);
+@@ -2402,6 +2441,9 @@ static int check_sector_size(struct f2fs_super_block *sb)
+ 	set_sb(log_sectorsize, log_sectorsize);
+ 	set_sb(log_sectors_per_block, log_sectors_per_block);
+ 
++	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM)
++		update_sb_chksum(sb);
++
+ 	memcpy(zero_buff + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
+ 	DBG(1, "\tWriting super block, at offset 0x%08x\n", 0);
+ 	for (index = 0; index < 2; index++) {
+@@ -2434,6 +2476,8 @@ static void tune_sb_features(struct f2fs_sb_info *sbi)
+ 	if (!sb_changed)
+ 		return;
+ 
++	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM)
++		update_sb_chksum(sb);
+ 	write_superblock(sb);
+ }
+ 
+diff --git a/fsck/resize.c b/fsck/resize.c
+index e9612b3..ca8c6f9 100644
+--- a/fsck/resize.c
++++ b/fsck/resize.c
+@@ -160,6 +160,9 @@ safe_resize:
+ 			(get_sb(segment_count_main) - 2));
+ 		return -1;
+ 	}
++	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM)
++		update_sb_chksum(sb);
++
+ 	return 0;
+ }
+ 
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index e279b9f..b6dfd29 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -279,6 +279,7 @@ static inline uint64_t bswap_64(uint64_t val)
+ #define BITS_PER_BYTE		8
+ #define F2FS_SUPER_MAGIC	0xF2F52010	/* F2FS Magic Number */
+ #define CP_CHKSUM_OFFSET	4092
++#define SB_CHKSUM_OFFSET	3068
+ #define MAX_PATH_LEN		64
+ #define MAX_DEVICES		8
+ 
+@@ -579,6 +580,7 @@ enum {
+ #define F2FS_FEATURE_INODE_CRTIME	0x0100
+ #define F2FS_FEATURE_LOST_FOUND		0x0200
+ #define F2FS_FEATURE_VERITY		0x0400	/* reserved */
++#define F2FS_FEATURE_SB_CHKSUM		0x0800
+ 
+ #define MAX_VOLUME_NAME		512
+ 
+@@ -632,7 +634,8 @@ struct f2fs_super_block {
+ 	struct f2fs_device devs[MAX_DEVICES];	/* device list */
+ 	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
+ 	__u8 hot_ext_count;		/* # of hot file extension */
+-	__u8 reserved[314];		/* valid reserved region */
++	__u8 reserved[310];		/* valid reserved region */
++	__le32 crc;			/* checksum of superblock */
+ } __attribute__((packed));
+ 
+ /*
+@@ -1337,6 +1340,7 @@ struct feature feature_table[] = {					\
+ 	{ "inode_crtime",		F2FS_FEATURE_INODE_CRTIME },	\
+ 	{ "lost_found",			F2FS_FEATURE_LOST_FOUND },	\
+ 	{ "verity",			F2FS_FEATURE_VERITY },	/* reserved */ \
++	{ "sb_checksum",		F2FS_FEATURE_SB_CHKSUM },	\
+ 	{ NULL,				0x0},				\
+ };
+ 
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 621126c..012f3a8 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -187,6 +187,7 @@ static int f2fs_prepare_super_block(void)
+ 	u_int32_t sit_bitmap_size, max_sit_bitmap_size;
+ 	u_int32_t max_nat_bitmap_size, max_nat_segments;
+ 	u_int32_t total_zones;
++	u_int32_t crc;
+ 	enum quota_type qtype;
+ 	int i;
+ 
+@@ -504,6 +505,14 @@ static int f2fs_prepare_super_block(void)
+ 
+ 	sb->feature = c.feature;
+ 
++	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) {
++		set_sb(checksum_offset, SB_CHKSUM_OFFSET);
++		/* calculate superblock checksum */
++		crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, sb, SB_CHKSUM_OFFSET);
++		set_sb(crc, crc);
++		MSG(0, "Info: set SB CRC successfully (0x%x)\n", crc);
++	}
++
+ 	return 0;
+ }
+ 
 -- 
-2.18.0.rc1
+2.18.0
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
