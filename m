@@ -1,11 +1,17 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: fix performance issue observed with multi-thread sequential read
-Date: Thu,  9 Aug 2018 19:37:58 -0700
-Message-ID: <20180810023758.46974-1-jaegeuk@kernel.org>
+Subject: Re: [PATCH v2] f2fs: fix performance issue observed with
+ multi-thread sequential read
+Date: Thu, 9 Aug 2018 19:48:59 -0700
+Message-ID: <20180810024859.GA48219@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180810023758.46974-1-jaegeuk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180810023758.46974-1-jaegeuk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Sahitya Tummala <stummala@codeaurora.org>
+Cc: Sahitya Tummala <stummala@codeaurora.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 This reverts the commit - "b93f771 - f2fs: remove writepages lock"
@@ -27,13 +33,16 @@ total write requests: 2701 (of these ~2034 requests are written in 512KB).
 Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
+Change log from v1:
+ - quick code fix
+
  fs/f2fs/data.c  | 14 ++++++++++++--
  fs/f2fs/f2fs.h  |  1 +
  fs/f2fs/super.c |  1 +
  3 files changed, 14 insertions(+), 2 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 45f043ee48bd..e042d050b87d 100644
+index 45f043ee48bd..6da143a27b3a 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
 @@ -2132,6 +2132,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
@@ -52,13 +61,13 @@ index 45f043ee48bd..e042d050b87d 100644
 +	if (wbc->sync_mode == WB_SYNC_ALL) {
  		atomic_inc(&sbi->wb_sync_req[DATA]);
 -	else if (atomic_read(&sbi->wb_sync_req[DATA]))
-+		mutex_lock(&sbi->writepages);
-+		locked = true;
++		goto writepages_lock;
 +	} else if (atomic_read(&sbi->wb_sync_req[DATA])) {
  		goto skip_write;
 +	} else {
-+		atomic_inc(&sbi->wb_sync_req[DATA]);
++writepages_lock:
 +		mutex_lock(&sbi->writepages);
++		locked = true;
 +	}
  
  	blk_start_plug(&plug);
