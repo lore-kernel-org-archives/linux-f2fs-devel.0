@@ -1,36 +1,39 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v3] f2fs: checkpoint disabling
-Date: Fri, 10 Aug 2018 16:40:53 +0800
-Message-ID: <b156678d-56e6-a46b-c7a6-00f4bc2c4b3d@huawei.com>
-References: <20180807234843.129387-1-drosen@google.com>
+Subject: [PATCH 1/2] f2fs: set 4KB discard granularity by default
+Date: Fri, 10 Aug 2018 18:08:05 +0800
+Message-ID: <20180810100806.9298-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180807234843.129387-1-drosen@google.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Rosenberg <drosen@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Jonathan Corbet <corbet@lwn.net>, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, kernel-team@android.com
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Daniel,
+Small granularity (size < 64K) fragmentation will cause f2fs suspending
+all pending discards, result in performance regression, so let's set
+4KB discard granularity by default.
 
-On 2018/8/8 7:48, Daniel Rosenberg wrote:
-> This adds a lightweight non-persistent snapshotting scheme to f2fs.
-> 
-> To use, mount with the option checkpoint=disable, and to return to
-> normal operation, remount with checkpoint=enable. If the filesystem
-> is shut down before remounting with checkpoint=enable, it will revert
-> back to its apparent state when it was first mounted with
-> checkpoint=disable. This is useful for situations where you wish to be
-> able to roll back the state of the disk in case of some critical
-> failure.
+So that without fstrim, we also have the ability to avoid any performance
+regression caused by non-alignment mapping between fs and flash device.
 
-When filesystem is full, statfs shown abnormally as below:
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/f2fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-/dev/zram0       2095104 -17177769548 17179864652    - /mnt/f2fs
-
-I guess it's related to this patch, could you have a look at this?
-
-Thanks,
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 58431b9bfd8f..273ffdaf4891 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -248,7 +248,7 @@ struct discard_entry {
+ };
+ 
+ /* default discard granularity of inner discard thread, unit: block count */
+-#define DEFAULT_DISCARD_GRANULARITY		16
++#define DEFAULT_DISCARD_GRANULARITY		1
+ 
+ /* max discard pend list number */
+ #define MAX_PLIST_NUM		512
+-- 
+2.18.0.rc1
