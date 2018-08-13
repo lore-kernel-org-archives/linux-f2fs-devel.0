@@ -1,51 +1,38 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: fix return value of
- f2fs_set_qf_name and parse_options
-Date: Mon, 13 Aug 2018 14:30:00 +0800
-Message-ID: <b564e37f-7aee-2c3a-d02a-113a0d14eec5@huawei.com>
-References: <46a8a2e0.4e2d.16531cdc4a5.Coremail.kernelpatch@126.com>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH] Revert "f2fs: use printk_ratelimited for f2fs_msg"
+Date: Mon, 13 Aug 2018 02:50:47 -0700
+Message-ID: <a5f29d4ed6098373fb3fe7a0194687d78d3592f7.camel@perches.com>
+References: <20180813062845.25394-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fp6Mk-0001GP-T5
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 13 Aug 2018 06:30:10 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fp6Mj-001Zw1-8K
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 13 Aug 2018 06:30:10 +0000
-In-Reply-To: <46a8a2e0.4e2d.16531cdc4a5.Coremail.kernelpatch@126.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Tiezhu Yang <kernelpatch@126.com>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180813062845.25394-1-yuchao0@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/8/13 13:41, Tiezhu Yang wrote:
-> match_strdup() returns NULL when kmalloc failed, so the caller
-> function f2fs_set_qf_name() should return -ENOMEM in this case;
-> match_int() returns -ENOMEM, -EINVAL, or -ERANGE on failure,
-> so the caller function parse_options() should not always return
-> -EINVAL in this case.
+On Mon, 2018-08-13 at 14:28 +0800, Chao Yu wrote:
+> Don't limit printing log, so that we will not miss any key messages.
 > 
-> Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
+> This reverts commit a36c106dffb616250117efb1cab271c19a8f94ff.
+[]
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+[]
+> @@ -209,7 +209,7 @@ void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...)
+>  	va_start(args, fmt);
+>  	vaf.fmt = fmt;
+>  	vaf.va = &args;
+> -	printk_ratelimited("%sF2FS-fs (%s): %pV\n", level, sb->s_id, &vaf);
+> +	printk("%sF2FS-fs (%s): %pV\n", level, sb->s_id, &vaf);
+>  	va_end(args);
+>  }
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+If there was value in ratelimiting these messages at all,
+perhaps there is value in using a specific ratelimit_state
+other than
 
-Thanks,
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+	static DEFINE_RATELIMIT_STATE(_rs,				\
+				      DEFAULT_RATELIMIT_INTERVAL,	\
+				      DEFAULT_RATELIMIT_BURST);		\
