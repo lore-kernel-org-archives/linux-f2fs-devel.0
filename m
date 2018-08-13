@@ -1,227 +1,205 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [RFC PATCH 4/4] f2fs-tools: introduce sb checksum
-Date: Mon, 13 Aug 2018 22:33:55 +0800
-Message-ID: <2e8414fe-b028-fdf0-3a78-97711a5d997f@kernel.org>
-References: <20180813133211.243529-1-zhengjunling@huawei.com>
- <20180813133211.243529-4-zhengjunling@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: fix performance issue observed with
+ multi-thread sequential read
+Date: Mon, 13 Aug 2018 13:11:50 -0700
+Message-ID: <20180813201150.GA27044@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180810023758.46974-1-jaegeuk@kernel.org>
+ <20180810024859.GA48219@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180810185640.GA63079@jaegeuk-macbookpro.roam.corp.google.com>
+ <57149b77-3576-87ed-2cae-a3bc2e8088f2@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1fpDv6-0005IH-A2
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 13 Aug 2018 14:34:08 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fpDv3-00GMPu-VA
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 13 Aug 2018 14:34:08 +0000
-In-Reply-To: <20180813133211.243529-4-zhengjunling@huawei.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Junling Zheng <zhengjunling@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <57149b77-3576-87ed-2cae-a3bc2e8088f2@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/8/13 21:32, Junling Zheng wrote:
-> This patch introduced crc for superblock.
+On 08/13, Chao Yu wrote:
+> Hi Jaegeuk,
 > 
-> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
-> ---
->  fsck/mount.c       | 23 +++++++++++++++++++++++
->  fsck/resize.c      | 12 ++++++------
->  include/f2fs_fs.h  | 16 +++++++++++++++-
->  mkfs/f2fs_format.c |  3 +++
->  4 files changed, 47 insertions(+), 7 deletions(-)
+> On 2018/8/11 2:56, Jaegeuk Kim wrote:
+> > This reverts the commit - "b93f771 - f2fs: remove writepages lock"
+> > to fix the drop in sequential read throughput.
+> > 
+> > Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
+> > device: UFS
+> > 
+> > Before -
+> > read throughput: 185 MB/s
+> > total read requests: 85177 (of these ~80000 are 4KB size requests).
+> > total write requests: 2546 (of these ~2208 requests are written in 512KB).
+> > 
+> > After -
+> > read throughput: 758 MB/s
+> > total read requests: 2417 (of these ~2042 are 512KB reads).
+> > total write requests: 2701 (of these ~2034 requests are written in 512KB).
 > 
-> diff --git a/fsck/mount.c b/fsck/mount.c
-> index e7ceb8d..af9b219 100644
-> --- a/fsck/mount.c
-> +++ b/fsck/mount.c
-> @@ -340,6 +340,7 @@ void print_raw_sb_info(struct f2fs_super_block *sb)
->  	DISP_u32(sb, node_ino);
->  	DISP_u32(sb, meta_ino);
->  	DISP_u32(sb, cp_payload);
-> +	DISP_u32(sb, crc);
-
-if (feature is on) {
-	DISP_u32(sb, checksum_offset);
-	DISP_u32(sb, crc);
-}
-
-Thanks,
-
->  	DISP("%-.256s", sb, version);
->  	printf("\n");
->  }
-> @@ -467,6 +468,9 @@ void print_sb_state(struct f2fs_super_block *sb)
->  	if (f & cpu_to_le32(F2FS_FEATURE_LOST_FOUND)) {
->  		MSG(0, "%s", " lost_found");
->  	}
-> +	if (f & cpu_to_le32(F2FS_FEATURE_SB_CHKSUM)) {
-> +		MSG(0, "%s", " sb_checksum");
-> +	}
->  	MSG(0, "\n");
->  	MSG(0, "Info: superblock encrypt level = %d, salt = ",
->  					sb->encryption_level);
-> @@ -555,10 +559,29 @@ static inline int sanity_check_area_boundary(struct f2fs_super_block *sb,
->  	return 0;
->  }
->  
-> +static int verify_sb_chksum(struct f2fs_super_block *sb)
-> +{
-> +	if (SB_CHKSUM_OFFSET != get_sb(checksum_offset)) {
-> +		MSG(0, "\tInvalid SB CRC offset: %u\n",
-> +					get_sb(checksum_offset));
-> +		return -1;
-> +	}
-> +	if (f2fs_crc_valid(get_sb(crc), sb,
-> +			get_sb(checksum_offset))) {
-> +		MSG(0, "\tInvalid SB CRC: 0x%x\n", get_sb(crc));
-> +		return -1;
-> +	}
-> +	return 0;
-> +}
-> +
->  int sanity_check_raw_super(struct f2fs_super_block *sb, enum SB_ADDR sb_addr)
->  {
->  	unsigned int blocksize;
->  
-> +	if ((get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) &&
-> +					verify_sb_chksum(sb))
-> +		return -1;
-> +
->  	if (F2FS_SUPER_MAGIC != get_sb(magic))
->  		return -1;
->  
-> diff --git a/fsck/resize.c b/fsck/resize.c
-> index 5161a1f..3462165 100644
-> --- a/fsck/resize.c
-> +++ b/fsck/resize.c
-> @@ -603,9 +603,6 @@ static int f2fs_resize_grow(struct f2fs_sb_info *sbi)
->  		}
->  	}
->  
-> -	print_raw_sb_info(sb);
-> -	print_raw_sb_info(new_sb);
-> -
->  	old_main_blkaddr = get_sb(main_blkaddr);
->  	new_main_blkaddr = get_newsb(main_blkaddr);
->  	offset = new_main_blkaddr - old_main_blkaddr;
-> @@ -629,6 +626,9 @@ static int f2fs_resize_grow(struct f2fs_sb_info *sbi)
->  	migrate_sit(sbi, new_sb, offset_seg);
->  	rebuild_checkpoint(sbi, new_sb, offset_seg);
->  	update_superblock(new_sb, SB_ALL);
-> +	print_raw_sb_info(sb);
-> +	print_raw_sb_info(new_sb);
-> +
->  	return 0;
->  }
->  
-> @@ -658,9 +658,6 @@ static int f2fs_resize_shrink(struct f2fs_sb_info *sbi)
->  		}
->  	}
->  
-> -	print_raw_sb_info(sb);
-> -	print_raw_sb_info(new_sb);
-> -
->  	old_main_blkaddr = get_sb(main_blkaddr);
->  	new_main_blkaddr = get_newsb(main_blkaddr);
->  	offset = old_main_blkaddr - new_main_blkaddr;
-> @@ -690,6 +687,9 @@ static int f2fs_resize_shrink(struct f2fs_sb_info *sbi)
->  	/* move whole data region */
->  	//if (err)
->  	//	migrate_main(sbi, offset);
-> +	print_raw_sb_info(sb);
-> +	print_raw_sb_info(new_sb);
-> +
->  	return 0;
->  }
->  
-> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-> index b0d9b9b..556d526 100644
-> --- a/include/f2fs_fs.h
-> +++ b/include/f2fs_fs.h
-> @@ -279,6 +279,7 @@ static inline uint64_t bswap_64(uint64_t val)
->  #define BITS_PER_BYTE		8
->  #define F2FS_SUPER_MAGIC	0xF2F52010	/* F2FS Magic Number */
->  #define CP_CHKSUM_OFFSET	4092
-> +#define SB_CHKSUM_OFFSET	3068
->  #define MAX_PATH_LEN		64
->  #define MAX_DEVICES		8
->  
-> @@ -579,6 +580,7 @@ enum {
->  #define F2FS_FEATURE_INODE_CRTIME	0x0100
->  #define F2FS_FEATURE_LOST_FOUND		0x0200
->  #define F2FS_FEATURE_VERITY		0x0400	/* reserved */
-> +#define F2FS_FEATURE_SB_CHKSUM		0x0800
->  
->  #define MAX_VOLUME_NAME		512
->  
-> @@ -632,7 +634,8 @@ struct f2fs_super_block {
->  	struct f2fs_device devs[MAX_DEVICES];	/* device list */
->  	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
->  	__u8 hot_ext_count;		/* # of hot file extension */
-> -	__u8 reserved[314];		/* valid reserved region */
-> +	__u8 reserved[310];		/* valid reserved region */
-> +	__le32 crc;			/* checksum of superblock */
->  } __attribute__((packed));
->  
->  /*
-> @@ -1337,6 +1340,7 @@ struct feature feature_table[] = {					\
->  	{ "inode_crtime",		F2FS_FEATURE_INODE_CRTIME },	\
->  	{ "lost_found",			F2FS_FEATURE_LOST_FOUND },	\
->  	{ "verity",			F2FS_FEATURE_VERITY },	/* reserved */ \
-> +	{ "sb_checksum",		F2FS_FEATURE_SB_CHKSUM },	\
->  	{ NULL,				0x0},				\
->  };
->  
-> @@ -1424,10 +1428,20 @@ static inline int __write_superblock(struct f2fs_super_block *sb, int sb_mask)
->  {
->  	int index, ret;
->  	u_int8_t *buf;
-> +	u32 old_crc, new_crc;
->  
->  	buf = calloc(F2FS_BLKSIZE, 1);
->  	ASSERT(buf);
->  
-> +	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) {
-> +		old_crc = get_sb(crc);
-> +		new_crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, sb,
-> +						SB_CHKSUM_OFFSET);
-> +		set_sb(crc, new_crc);
-> +		MSG(0, "Info: SB CRC is set successfully"
-> +				"(0x%x -> 0x%x)\n", old_crc, new_crc);
-> +	}
-> +
->  	memcpy(buf + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
->  	for (index = 0; index < SB_ADDR_MAX; index++) {
->  		if ((1 << index) & sb_mask) {
-> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-> index 7e3846e..87e33da 100644
-> --- a/mkfs/f2fs_format.c
-> +++ b/mkfs/f2fs_format.c
-> @@ -504,6 +504,9 @@ static int f2fs_prepare_super_block(void)
->  
->  	sb->feature = c.feature;
->  
-> +	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM)
-> +		set_sb(checksum_offset, SB_CHKSUM_OFFSET);
-> +
->  	return 0;
->  }
->  
+> IMO, it only impact sequential read performance in a large file which may be
+> fragmented during multi-thread writing.
 > 
+> In android environment, mostly, the large file should be cold type, such as apk,
+> mp3, rmvb, jpeg..., so I think we only need to serialize writepages() for cold
+> data area writer.
+> 
+> So how about adding a mount option to serialize writepage() for different type
+> of log, e.g. in android, using serialize=4; by default, using serialize=7
+> HOT_DATA	1
+> WARM_DATA	2
+> COLD_DATA	4
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+Well, I don't think we need to give too many mount options for this fragmented
+case. How about doing this for the large files only like this?
+
+>From 4fea0b6e4da8512a72dd52afc7a51beb35966ad9 Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Thu, 9 Aug 2018 17:53:34 -0700
+Subject: [PATCH] f2fs: fix performance issue observed with multi-thread
+ sequential read
+
+This reverts the commit - "b93f771 - f2fs: remove writepages lock"
+to fix the drop in sequential read throughput.
+
+Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
+device: UFS
+
+Before -
+read throughput: 185 MB/s
+total read requests: 85177 (of these ~80000 are 4KB size requests).
+total write requests: 2546 (of these ~2208 requests are written in 512KB).
+
+After -
+read throughput: 758 MB/s
+total read requests: 2417 (of these ~2042 are 512KB reads).
+total write requests: 2701 (of these ~2034 requests are written in 512KB).
+
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++++++
+ fs/f2fs/data.c                          | 10 ++++++++++
+ fs/f2fs/f2fs.h                          |  2 ++
+ fs/f2fs/segment.c                       |  1 +
+ fs/f2fs/super.c                         |  1 +
+ fs/f2fs/sysfs.c                         |  2 ++
+ 6 files changed, 24 insertions(+)
+
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 9b0123388f18..94a24aedcdb2 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -51,6 +51,14 @@ Description:
+ 		 Controls the dirty page count condition for the in-place-update
+ 		 policies.
+ 
++What:		/sys/fs/f2fs/<disk>/min_seq_blocks
++Date:		August 2018
++Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
++Description:
++		 Controls the dirty page count condition for batched sequential
++		 writes in ->writepages.
++
++
+ What:		/sys/fs/f2fs/<disk>/min_hot_blocks
+ Date:		March 2017
+ Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 45f043ee48bd..f09231b1cc74 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2132,6 +2132,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct blk_plug plug;
+ 	int ret;
++	bool locked = false;
+ 
+ 	/* deal with chardevs and other special file */
+ 	if (!mapping->a_ops->writepage)
+@@ -2162,10 +2163,19 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+ 	else if (atomic_read(&sbi->wb_sync_req[DATA]))
+ 		goto skip_write;
+ 
++	if (!S_ISDIR(inode->i_mode) &&
++			get_dirty_pages(inode) <= SM_I(sbi)->min_seq_blocks) {
++		mutex_lock(&sbi->writepages);
++		locked = true;
++	}
++
+ 	blk_start_plug(&plug);
+ 	ret = f2fs_write_cache_pages(mapping, wbc, io_type);
+ 	blk_finish_plug(&plug);
+ 
++	if (locked)
++		mutex_unlock(&sbi->writepages);
++
+ 	if (wbc->sync_mode == WB_SYNC_ALL)
+ 		atomic_dec(&sbi->wb_sync_req[DATA]);
+ 	/*
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 375aa9f30cfa..098bdedc28bf 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -913,6 +913,7 @@ struct f2fs_sm_info {
+ 	unsigned int ipu_policy;	/* in-place-update policy */
+ 	unsigned int min_ipu_util;	/* in-place-update threshold */
+ 	unsigned int min_fsync_blocks;	/* threshold for fsync */
++	unsigned int min_seq_blocks;	/* threshold for sequential blocks */
+ 	unsigned int min_hot_blocks;	/* threshold for hot block allocation */
+ 	unsigned int min_ssr_sections;	/* threshold to trigger SSR allocation */
+ 
+@@ -1133,6 +1134,7 @@ struct f2fs_sb_info {
+ 	struct rw_semaphore sb_lock;		/* lock for raw super block */
+ 	int valid_super_block;			/* valid super block no */
+ 	unsigned long s_flag;				/* flags for sbi */
++	struct mutex writepages;		/* mutex for writepages() */
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
+ 	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 63fc647f9ac2..ffea2d1303bd 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4131,6 +4131,7 @@ int f2fs_build_segment_manager(struct f2fs_sb_info *sbi)
+ 		sm_info->ipu_policy = 1 << F2FS_IPU_FSYNC;
+ 	sm_info->min_ipu_util = DEF_MIN_IPU_UTIL;
+ 	sm_info->min_fsync_blocks = DEF_MIN_FSYNC_BLOCKS;
++	sm_info->min_seq_blocks = sbi->blocks_per_seg * sbi->segs_per_sec;
+ 	sm_info->min_hot_blocks = DEF_MIN_HOT_BLOCKS;
+ 	sm_info->min_ssr_sections = reserved_sections(sbi);
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index be41dbd7b261..53d70b64fea1 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2842,6 +2842,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	/* init f2fs-specific super block info */
+ 	sbi->valid_super_block = valid_super_block;
+ 	mutex_init(&sbi->gc_mutex);
++	mutex_init(&sbi->writepages);
+ 	mutex_init(&sbi->cp_mutex);
+ 	init_rwsem(&sbi->node_write);
+ 	init_rwsem(&sbi->node_change);
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index cd2e030e47b8..81c0e5337443 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -397,6 +397,7 @@ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, batched_trim_sections, trim_sections);
+ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, ipu_policy, ipu_policy);
+ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ipu_util, min_ipu_util);
+ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_fsync_blocks, min_fsync_blocks);
++F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_seq_blocks, min_seq_blocks);
+ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_hot_blocks, min_hot_blocks);
+ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ssr_sections, min_ssr_sections);
+ F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ram_thresh, ram_thresh);
+@@ -449,6 +450,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(ipu_policy),
+ 	ATTR_LIST(min_ipu_util),
+ 	ATTR_LIST(min_fsync_blocks),
++	ATTR_LIST(min_seq_blocks),
+ 	ATTR_LIST(min_hot_blocks),
+ 	ATTR_LIST(min_ssr_sections),
+ 	ATTR_LIST(max_victim_search),
+-- 
+2.17.0.441.gb46fe60e1d-goog
