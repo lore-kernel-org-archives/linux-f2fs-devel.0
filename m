@@ -1,278 +1,392 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid fi->i_gc_rwsem[WRITE] lock in
- f2fs_gc
-Date: Mon, 13 Aug 2018 13:12:51 -0700
-Message-ID: <20180813201251.GB27044@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180730013242.15647-1-jaegeuk@kernel.org>
- <f62425be-b378-1e6b-e305-64a61b139dd9@huawei.com>
- <20180730041805.GA20178@jaegeuk-macbookpro.roam.corp.google.com>
- <aa12112e-0ff3-997a-24bd-12db30ad7284@huawei.com>
- <20180730090849.GA22089@jaegeuk-macbookpro.roam.corp.google.com>
- <171084b5-acd5-97fa-205e-202b752baaf0@huawei.com>
- <20180730100039.GA25037@jaegeuk-macbookpro.roam.corp.google.com>
- <5dfbb141-9bd9-f4fe-6250-5ec0baddd0fd@kernel.org>
- <d0cbc6bb-9e92-2803-b84d-729c78b21d5b@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] f2fs: rework fault injection handling to avoid a
+ warning
+Date: Mon, 13 Aug 2018 23:38:06 +0200
+Message-ID: <20180813213909.3125189-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <d0cbc6bb-9e92-2803-b84d-729c78b21d5b@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao@kernel.org>
-Cc: Chao Yu <yuchao0@huawei.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <arnd@arndb.de>) id 1fpKYj-0006mS-Kj
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 13 Aug 2018 21:39:29 +0000
+Received: from mout.kundenserver.de ([217.72.192.73])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1fpKYf-00HGL4-Pk
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 13 Aug 2018 21:39:29 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-f2fs-devel@lists.sourceforge.net
 
-On 08/12, Chao Yu wrote:
-> On 2018/8/4 10:31, Chao Yu wrote:
-> > How about keep lock order as:
-> > 
-> > - inode_lock
-> >  - i_mmap_sem
-> >   - lock_all()
-> >   - unlock_all()
-> >   - i_gc_rwsem[WRITE]
-> >    - lock_op()
-> 
-> I got below warning when testing last dev-test:
-> 
-> - f2fs_direct_IO			current lock dependency
->  - i_gc_rwsem[WRITE]
-> 					- i_mmap_sem
->   - do_blockdev_direct_IO
->    - i_mmap_sem
-> 					 - i_gc_rwsem[WRITE]
-> 
+When CONFIG_F2FS_FAULT_INJECTION is disabled, we get a warning about an
+unused label:
 
-Yeah, it seems it's true.
-How about this?
+fs/f2fs/segment.c: In function '__submit_discard_cmd':
+fs/f2fs/segment.c:1059:1: error: label 'submit' defined but not used [-Werror=unused-label]
 
+This could be fixed by adding another #ifdef around it, but the more
+reliable way of doing this seems to be to remove the other #ifdefs
+where that is easily possible.
+
+By defining time_to_inject() as a trivial stub, most of the checks for
+CONFIG_F2FS_FAULT_INJECTION can go away. This also leads to nicer
+formatting of the code.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/f2fs/data.c |  4 ++--
- fs/f2fs/file.c | 43 +++++++++++++++++++++++--------------------
- 2 files changed, 25 insertions(+), 22 deletions(-)
+ fs/f2fs/checkpoint.c |  3 +--
+ fs/f2fs/data.c       |  2 --
+ fs/f2fs/dir.c        |  3 +--
+ fs/f2fs/f2fs.h       | 50 ++++++++++++++++++++++----------------------
+ fs/f2fs/file.c       |  3 +--
+ fs/f2fs/gc.c         |  2 --
+ fs/f2fs/inode.c      |  3 +--
+ fs/f2fs/node.c       |  3 +--
+ fs/f2fs/recovery.c   |  5 ++---
+ fs/f2fs/segment.c    |  4 ----
+ 10 files changed, 32 insertions(+), 46 deletions(-)
 
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 3ab7a00c0641..e8b6b89bddb8 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -555,13 +555,12 @@ int f2fs_acquire_orphan_inode(struct f2fs_sb_info *sbi)
+ 
+ 	spin_lock(&im->ino_lock);
+ 
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+ 	if (time_to_inject(sbi, FAULT_ORPHAN)) {
+ 		spin_unlock(&im->ino_lock);
+ 		f2fs_show_injection_info(FAULT_ORPHAN);
+ 		return -ENOSPC;
+ 	}
+-#endif
++
+ 	if (unlikely(im->ino_num >= sbi->max_orphans))
+ 		err = -ENOSPC;
+ 	else
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index f09231b1cc74..021923dc666b 100644
+index 67dc5fd8d4d5..773f82bbb618 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -2208,14 +2208,14 @@ static void f2fs_write_failed(struct address_space *mapping, loff_t to)
- 	loff_t i_size = i_size_read(inode);
+@@ -126,12 +126,10 @@ static bool f2fs_bio_post_read_required(struct bio *bio)
  
- 	if (to > i_size) {
--		down_write(&F2FS_I(inode)->i_mmap_sem);
- 		down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+		down_write(&F2FS_I(inode)->i_mmap_sem);
- 
- 		truncate_pagecache(inode, i_size);
- 		f2fs_truncate_blocks(inode, i_size, true);
- 
--		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 		up_write(&F2FS_I(inode)->i_mmap_sem);
-+		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ static void f2fs_read_end_io(struct bio *bio)
+ {
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+ 	if (time_to_inject(F2FS_P_SB(bio_first_page_all(bio)), FAULT_IO)) {
+ 		f2fs_show_injection_info(FAULT_IO);
+ 		bio->bi_status = BLK_STS_IOERR;
  	}
+-#endif
+ 
+ 	if (f2fs_bio_post_read_required(bio)) {
+ 		struct bio_post_read_ctx *ctx = bio->bi_private;
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 9c2a23242f64..01006085904a 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -517,12 +517,11 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
+ 	}
+ 
+ start:
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+ 	if (time_to_inject(F2FS_I_SB(dir), FAULT_DIR_DEPTH)) {
+ 		f2fs_show_injection_info(FAULT_DIR_DEPTH);
+ 		return -ENOSPC;
+ 	}
+-#endif
++
+ 	if (unlikely(current_depth == MAX_DIR_HASH_DEPTH))
+ 		return -ENOSPC;
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index a8ae1c73d3b3..8d2086e2571b 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -41,7 +41,6 @@
+ 	} while (0)
+ #endif
+ 
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+ enum {
+ 	FAULT_KMALLOC,
+ 	FAULT_KVMALLOC,
+@@ -60,6 +59,7 @@ enum {
+ 	FAULT_MAX,
+ };
+ 
++#ifdef CONFIG_F2FS_FAULT_INJECTION
+ #define F2FS_ALL_FAULT_TYPE		((1 << FAULT_MAX) - 1)
+ 
+ struct f2fs_fault_info {
+@@ -1326,6 +1326,12 @@ static inline bool time_to_inject(struct f2fs_sb_info *sbi, int type)
+ 	}
+ 	return false;
+ }
++#else
++#define f2fs_show_injection_info(type) do { } while (0)
++static inline bool time_to_inject(struct f2fs_sb_info *sbi, int type)
++{
++	return false;
++}
+ #endif
+ 
+ /* For write statistics. Suppose sector size is 512 bytes,
+@@ -1678,13 +1684,12 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+ 	if (ret)
+ 		return ret;
+ 
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+ 	if (time_to_inject(sbi, FAULT_BLOCK)) {
+ 		f2fs_show_injection_info(FAULT_BLOCK);
+ 		release = *count;
+ 		goto enospc;
+ 	}
+-#endif
++
+ 	/*
+ 	 * let's increase this in prior to actual block count change in order
+ 	 * for f2fs_sync_file to avoid data races when deciding checkpoint.
+@@ -1893,12 +1898,10 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+ 			return ret;
+ 	}
+ 
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+ 	if (time_to_inject(sbi, FAULT_BLOCK)) {
+ 		f2fs_show_injection_info(FAULT_BLOCK);
+ 		goto enospc;
+ 	}
+-#endif
+ 
+ 	spin_lock(&sbi->stat_lock);
+ 
+@@ -1983,22 +1986,23 @@ static inline s64 valid_inode_count(struct f2fs_sb_info *sbi)
+ static inline struct page *f2fs_grab_cache_page(struct address_space *mapping,
+ 						pgoff_t index, bool for_write)
+ {
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+ 	struct page *page;
+ 
+-	if (!for_write)
+-		page = find_get_page_flags(mapping, index,
+-						FGP_LOCK | FGP_ACCESSED);
+-	else
+-		page = find_lock_page(mapping, index);
+-	if (page)
+-		return page;
++	if (IS_ENABLED(CONFIG_F2FS_FAULT_INJECTION)) {
++		if (!for_write)
++			page = find_get_page_flags(mapping, index,
++							FGP_LOCK | FGP_ACCESSED);
++		else
++			page = find_lock_page(mapping, index);
++		if (page)
++			return page;
+ 
+-	if (time_to_inject(F2FS_M_SB(mapping), FAULT_PAGE_ALLOC)) {
+-		f2fs_show_injection_info(FAULT_PAGE_ALLOC);
+-		return NULL;
++		if (time_to_inject(F2FS_M_SB(mapping), FAULT_PAGE_ALLOC)) {
++			f2fs_show_injection_info(FAULT_PAGE_ALLOC);
++			return NULL;
++		}
+ 	}
+-#endif
++
+ 	if (!for_write)
+ 		return grab_cache_page(mapping, index);
+ 	return grab_cache_page_write_begin(mapping, index, AOP_FLAG_NOFS);
+@@ -2008,12 +2012,11 @@ static inline struct page *f2fs_pagecache_get_page(
+ 				struct address_space *mapping, pgoff_t index,
+ 				int fgp_flags, gfp_t gfp_mask)
+ {
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+ 	if (time_to_inject(F2FS_M_SB(mapping), FAULT_PAGE_GET)) {
+ 		f2fs_show_injection_info(FAULT_PAGE_GET);
+ 		return NULL;
+ 	}
+-#endif
++
+ 	return pagecache_get_page(mapping, index, fgp_flags, gfp_mask);
+ }
+ 
+@@ -2078,12 +2081,11 @@ static inline struct bio *f2fs_bio_alloc(struct f2fs_sb_info *sbi,
+ 			bio = bio_alloc(GFP_NOIO | __GFP_NOFAIL, npages);
+ 		return bio;
+ 	}
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+ 	if (time_to_inject(sbi, FAULT_ALLOC_BIO)) {
+ 		f2fs_show_injection_info(FAULT_ALLOC_BIO);
+ 		return NULL;
+ 	}
+-#endif
++
+ 	return bio_alloc(GFP_KERNEL, npages);
+ }
+ 
+@@ -2618,12 +2620,11 @@ static inline bool f2fs_may_extent_tree(struct inode *inode)
+ static inline void *f2fs_kmalloc(struct f2fs_sb_info *sbi,
+ 					size_t size, gfp_t flags)
+ {
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+ 	if (time_to_inject(sbi, FAULT_KMALLOC)) {
+ 		f2fs_show_injection_info(FAULT_KMALLOC);
+ 		return NULL;
+ 	}
+-#endif
++
+ 	return kmalloc(size, flags);
+ }
+ 
+@@ -2636,12 +2637,11 @@ static inline void *f2fs_kzalloc(struct f2fs_sb_info *sbi,
+ static inline void *f2fs_kvmalloc(struct f2fs_sb_info *sbi,
+ 					size_t size, gfp_t flags)
+ {
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+ 	if (time_to_inject(sbi, FAULT_KVMALLOC)) {
+ 		f2fs_show_injection_info(FAULT_KVMALLOC);
+ 		return NULL;
+ 	}
+-#endif
++
+ 	return kvmalloc(size, flags);
  }
  
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 560751adba01..8b13afb23734 100644
+index 560751adba01..6f14e7d16e9d 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -798,8 +798,8 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
- 	if (attr->ia_valid & ATTR_SIZE) {
- 		bool to_smaller = (attr->ia_size <= i_size_read(inode));
+@@ -668,12 +668,11 @@ int f2fs_truncate(struct inode *inode)
  
--		down_write(&F2FS_I(inode)->i_mmap_sem);
- 		down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+		down_write(&F2FS_I(inode)->i_mmap_sem);
+ 	trace_f2fs_truncate(inode);
  
- 		truncate_setsize(inode, attr->ia_size);
- 
-@@ -809,8 +809,8 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
- 		 * do not trim all blocks after i_size if target size is
- 		 * larger than i_size.
- 		 */
--		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 		up_write(&F2FS_I(inode)->i_mmap_sem);
-+		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 
- 		if (err)
- 			return err;
-@@ -963,8 +963,8 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
- 			blk_start = (loff_t)pg_start << PAGE_SHIFT;
- 			blk_end = (loff_t)pg_end << PAGE_SHIFT;
- 
--			down_write(&F2FS_I(inode)->i_mmap_sem);
- 			down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+			down_write(&F2FS_I(inode)->i_mmap_sem);
- 
- 			truncate_inode_pages_range(mapping, blk_start,
- 					blk_end - 1);
-@@ -973,8 +973,8 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
- 			ret = f2fs_truncate_hole(inode, pg_start, pg_end);
- 			f2fs_unlock_op(sbi);
- 
--			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 			up_write(&F2FS_I(inode)->i_mmap_sem);
-+			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+ 	if (time_to_inject(F2FS_I_SB(inode), FAULT_TRUNCATE)) {
+ 		f2fs_show_injection_info(FAULT_TRUNCATE);
+ 		return -EIO;
+ 	}
+-#endif
++
+ 	/* we should check inline_data size */
+ 	if (!f2fs_may_inline_data(inode)) {
+ 		err = f2fs_convert_inline_inode(inode);
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 87a6b4675987..c598ae5ecbfa 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -53,12 +53,10 @@ static int gc_thread_func(void *data)
+ 			continue;
  		}
+ 
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+ 		if (time_to_inject(sbi, FAULT_CHECKPOINT)) {
+ 			f2fs_show_injection_info(FAULT_CHECKPOINT);
+ 			f2fs_stop_checkpoint(sbi, false);
+ 		}
+-#endif
+ 
+ 		if (!sb_start_write_trylock(sbi->sb))
+ 			continue;
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index fc2c98b9e255..6908896a1950 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -659,12 +659,11 @@ void f2fs_evict_inode(struct inode *inode)
+ 	if (F2FS_HAS_BLOCKS(inode))
+ 		err = f2fs_truncate(inode);
+ 
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+ 	if (time_to_inject(sbi, FAULT_EVICT_INODE)) {
+ 		f2fs_show_injection_info(FAULT_EVICT_INODE);
+ 		err = -EIO;
  	}
- 
-@@ -1201,6 +1201,7 @@ static int f2fs_do_collapse(struct inode *inode, loff_t offset, loff_t len)
- 
- 	/* avoid gc operation during block exchange */
- 	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+	down_write(&F2FS_I(inode)->i_mmap_sem);
- 
- 	f2fs_lock_op(sbi);
- 	f2fs_drop_extent_tree(inode);
-@@ -1208,6 +1209,7 @@ static int f2fs_do_collapse(struct inode *inode, loff_t offset, loff_t len)
- 	ret = __exchange_data_block(inode, inode, end, start, nrpages - end, true);
- 	f2fs_unlock_op(sbi);
- 
-+	up_write(&F2FS_I(inode)->i_mmap_sem);
- 	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 	return ret;
- }
-@@ -1228,17 +1230,17 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
- 	if (ret)
- 		return ret;
- 
--	down_write(&F2FS_I(inode)->i_mmap_sem);
- 	/* write out all dirty pages from offset */
- 	ret = filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
- 	if (ret)
--		goto out_unlock;
-+		return ret;
- 
- 	ret = f2fs_do_collapse(inode, offset, len);
- 	if (ret)
--		goto out_unlock;
-+		return ret;
- 
- 	/* write out all moved pages, if possible */
-+	down_write(&F2FS_I(inode)->i_mmap_sem);
- 	filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
- 	truncate_pagecache(inode, offset);
- 
-@@ -1246,10 +1248,9 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
- 	truncate_pagecache(inode, new_size);
- 
- 	ret = f2fs_truncate_blocks(inode, new_size, true);
-+	up_write(&F2FS_I(inode)->i_mmap_sem);
- 	if (!ret)
- 		f2fs_i_size_write(inode, new_size);
--out_unlock:
--	up_write(&F2FS_I(inode)->i_mmap_sem);
- 	return ret;
- }
- 
-@@ -1315,10 +1316,9 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- 	if (ret)
- 		return ret;
- 
--	down_write(&F2FS_I(inode)->i_mmap_sem);
- 	ret = filemap_write_and_wait_range(mapping, offset, offset + len - 1);
- 	if (ret)
--		goto out_sem;
-+		return ret;
- 
- 	pg_start = ((unsigned long long) offset) >> PAGE_SHIFT;
- 	pg_end = ((unsigned long long) offset + len) >> PAGE_SHIFT;
-@@ -1330,7 +1330,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- 		ret = fill_zero(inode, pg_start, off_start,
- 						off_end - off_start);
- 		if (ret)
--			goto out_sem;
-+			return ret;
- 
- 		new_size = max_t(loff_t, new_size, offset + len);
- 	} else {
-@@ -1338,7 +1338,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- 			ret = fill_zero(inode, pg_start++, off_start,
- 						PAGE_SIZE - off_start);
- 			if (ret)
--				goto out_sem;
-+				return ret;
- 
- 			new_size = max_t(loff_t, new_size,
- 					(loff_t)pg_start << PAGE_SHIFT);
-@@ -1350,6 +1350,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- 			pgoff_t end;
- 
- 			down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+			down_write(&F2FS_I(inode)->i_mmap_sem);
- 
- 			truncate_pagecache_range(inode,
- 				(loff_t)index << PAGE_SHIFT,
-@@ -1361,6 +1362,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- 			ret = f2fs_get_dnode_of_data(&dn, index, ALLOC_NODE);
- 			if (ret) {
- 				f2fs_unlock_op(sbi);
-+				up_write(&F2FS_I(inode)->i_mmap_sem);
- 				up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 				goto out;
- 			}
-@@ -1372,6 +1374,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- 			f2fs_put_dnode(&dn);
- 
- 			f2fs_unlock_op(sbi);
-+			up_write(&F2FS_I(inode)->i_mmap_sem);
- 			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 
- 			f2fs_balance_fs(sbi, dn.node_changed);
-@@ -1400,9 +1403,6 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- 		else
- 			f2fs_i_size_write(inode, new_size);
+-#endif
++
+ 	if (!err) {
+ 		f2fs_lock_op(sbi);
+ 		err = f2fs_remove_inode_page(inode);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 3c93f6cbc3cd..0bae5eda056a 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -2321,12 +2321,11 @@ bool f2fs_alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct free_nid *i = NULL;
+ retry:
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+ 	if (time_to_inject(sbi, FAULT_ALLOC_NID)) {
+ 		f2fs_show_injection_info(FAULT_ALLOC_NID);
+ 		return false;
  	}
--out_sem:
--	up_write(&F2FS_I(inode)->i_mmap_sem);
--
- 	return ret;
- }
+-#endif
++
+ 	spin_lock(&nm_i->nid_list_lock);
  
-@@ -1433,13 +1433,14 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ 	if (unlikely(nm_i->available_nids == 0)) {
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 64e5a59a270a..95511ed11a22 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -518,10 +518,9 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
  
- 	down_write(&F2FS_I(inode)->i_mmap_sem);
- 	ret = f2fs_truncate_blocks(inode, i_size_read(inode), true);
-+	up_write(&F2FS_I(inode)->i_mmap_sem);
- 	if (ret)
--		goto out;
-+		return ret;
- 
- 	/* write out all dirty pages from offset */
- 	ret = filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
- 	if (ret)
--		goto out;
-+		return ret;
- 
- 	pg_start = offset >> PAGE_SHIFT;
- 	pg_end = (offset + len) >> PAGE_SHIFT;
-@@ -1448,6 +1449,7 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
- 
- 	/* avoid gc operation during block exchange */
- 	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+	down_write(&F2FS_I(inode)->i_mmap_sem);
- 	truncate_pagecache(inode, offset);
- 
- 	while (!ret && idx > pg_start) {
-@@ -1463,16 +1465,17 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
- 					idx + delta, nr, false);
- 		f2fs_unlock_op(sbi);
+ 			if (src == NULL_ADDR) {
+ 				err = f2fs_reserve_new_block(&dn);
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+-				while (err)
++				while (err &&
++				       IS_ENABLED(CONFIG_F2FS_FAULT_INJECTION))
+ 					err = f2fs_reserve_new_block(&dn);
+-#endif
+ 				/* We should not get -ENOSPC */
+ 				f2fs_bug_on(sbi, err);
+ 				if (err)
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 43f127b48447..41769c77b7cc 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -474,12 +474,10 @@ int f2fs_commit_inmem_pages(struct inode *inode)
+  */
+ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
+ {
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+ 	if (time_to_inject(sbi, FAULT_CHECKPOINT)) {
+ 		f2fs_show_injection_info(FAULT_CHECKPOINT);
+ 		f2fs_stop_checkpoint(sbi, false);
  	}
-+	up_write(&F2FS_I(inode)->i_mmap_sem);
- 	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+-#endif
  
- 	/* write out all moved pages, if possible */
-+	down_write(&F2FS_I(inode)->i_mmap_sem);
- 	filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
- 	truncate_pagecache(inode, offset);
-+	up_write(&F2FS_I(inode)->i_mmap_sem);
+ 	/* balance_fs_bg is able to be pending */
+ 	if (need && excess_cached_nats(sbi))
+@@ -1045,13 +1043,11 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
  
- 	if (!ret)
- 		f2fs_i_size_write(inode, new_size);
--out:
--	up_write(&F2FS_I(inode)->i_mmap_sem);
- 	return ret;
- }
+ 		dc->len += len;
  
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+ 		if (time_to_inject(sbi, FAULT_DISCARD)) {
+ 			f2fs_show_injection_info(FAULT_DISCARD);
+ 			err = -EIO;
+ 			goto submit;
+ 		}
+-#endif
+ 		err = __blkdev_issue_discard(bdev,
+ 					SECTOR_FROM_BLOCK(start),
+ 					SECTOR_FROM_BLOCK(len),
 -- 
-2.17.0.441.gb46fe60e1d-goog
+2.18.0
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
