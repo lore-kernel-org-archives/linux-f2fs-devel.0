@@ -1,50 +1,51 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [RFC PATCH v2 3/4] f2fs-tools: unify the writeback
- of superblock
-Date: Tue, 14 Aug 2018 15:43:36 +0800
-Message-ID: <6f8338ee-007b-1635-0fde-82cf1d011dc6@huawei.com>
-References: <20180814065616.33278-1-zhengjunling@huawei.com>
- <20180814065616.33278-3-zhengjunling@huawei.com>
+Subject: Re: [PATCH] Revert "f2fs: use printk_ratelimited for f2fs_msg"
+Date: Tue, 14 Aug 2018 15:53:11 +0800
+Message-ID: <c59c6667-b532-42a6-2e61-752d7aba9001@huawei.com>
+References: <20180813062845.25394-1-yuchao0@huawei.com>
+ <a5f29d4ed6098373fb3fe7a0194687d78d3592f7.camel@perches.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fpTzd-0000Ql-DC
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Aug 2018 07:43:53 +0000
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fpTzb-00H5gz-RY
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Aug 2018 07:43:53 +0000
-In-Reply-To: <20180814065616.33278-3-zhengjunling@huawei.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <a5f29d4ed6098373fb3fe7a0194687d78d3592f7.camel@perches.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Junling Zheng <zhengjunling@huawei.com>, jaegeuk@kernel.org
-Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: Joe Perches <joe@perches.com>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/8/14 14:56, Junling Zheng wrote:
-> Introduce __write_superblock() to support updating specified one
-> superblock or both, thus we can wrapper it in update_superblock() and
-> f2fs_write_super_block to unify all places where sb needs to be updated.
-> 
-> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Hi Joe, thanks for pointing out this, I didn't see any cases need to be limited now.
 
 Thanks,
 
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+On 2018/8/13 17:50, Joe Perches wrote:
+> On Mon, 2018-08-13 at 14:28 +0800, Chao Yu wrote:
+>> Don't limit printing log, so that we will not miss any key messages.
+>>
+>> This reverts commit a36c106dffb616250117efb1cab271c19a8f94ff.
+> []
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> []
+>> @@ -209,7 +209,7 @@ void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...)
+>>  	va_start(args, fmt);
+>>  	vaf.fmt = fmt;
+>>  	vaf.va = &args;
+>> -	printk_ratelimited("%sF2FS-fs (%s): %pV\n", level, sb->s_id, &vaf);
+>> +	printk("%sF2FS-fs (%s): %pV\n", level, sb->s_id, &vaf);
+>>  	va_end(args);
+>>  }
+> 
+> If there was value in ratelimiting these messages at all,
+> perhaps there is value in using a specific ratelimit_state
+> other than
+> 
+> 	static DEFINE_RATELIMIT_STATE(_rs,				\
+> 				      DEFAULT_RATELIMIT_INTERVAL,	\
+> 				      DEFAULT_RATELIMIT_BURST);		\
+> 
+> 
+> 
+> 
+> .
+> 
