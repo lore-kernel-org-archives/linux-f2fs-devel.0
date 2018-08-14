@@ -1,8 +1,10 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] f2fs: rework fault injection handling to avoid a
- warning
-Date: Mon, 13 Aug 2018 23:38:06 +0200
-Message-ID: <20180813213909.3125189-1-arnd@arndb.de>
+From: Junling Zheng <zhengjunling@huawei.com>
+Subject: Re: [RFC PATCH 4/4] f2fs-tools: introduce sb checksum
+Date: Tue, 14 Aug 2018 10:03:25 +0800
+Message-ID: <d2804e71-2d50-d9b6-3788-1af04d880ec2@huawei.com>
+References: <20180813133211.243529-1-zhengjunling@huawei.com>
+ <20180813133211.243529-4-zhengjunling@huawei.com>
+ <2e8414fe-b028-fdf0-3a78-97711a5d997f@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,13 +12,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <arnd@arndb.de>) id 1fpKYj-0006mS-Kj
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 13 Aug 2018 21:39:29 +0000
-Received: from mout.kundenserver.de ([217.72.192.73])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1fpKYf-00HGL4-Pk
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 13 Aug 2018 21:39:29 +0000
+ (envelope-from <zhengjunling@huawei.com>) id 1fpOgT-0003KS-8n
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Aug 2018 02:03:45 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fpOgQ-0023B1-V8
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Aug 2018 02:03:45 +0000
+In-Reply-To: <2e8414fe-b028-fdf0-3a78-97711a5d997f@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,365 +29,209 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-When CONFIG_F2FS_FAULT_INJECTION is disabled, we get a warning about an
-unused label:
+Hi, Chao
 
-fs/f2fs/segment.c: In function '__submit_discard_cmd':
-fs/f2fs/segment.c:1059:1: error: label 'submit' defined but not used [-Werror=unused-label]
+On 2018/8/13 22:33, Chao Yu wrote:
+> On 2018/8/13 21:32, Junling Zheng wrote:
+>> This patch introduced crc for superblock.
+>>
+>> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+>> ---
+>>  fsck/mount.c       | 23 +++++++++++++++++++++++
+>>  fsck/resize.c      | 12 ++++++------
+>>  include/f2fs_fs.h  | 16 +++++++++++++++-
+>>  mkfs/f2fs_format.c |  3 +++
+>>  4 files changed, 47 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/fsck/mount.c b/fsck/mount.c
+>> index e7ceb8d..af9b219 100644
+>> --- a/fsck/mount.c
+>> +++ b/fsck/mount.c
+>> @@ -340,6 +340,7 @@ void print_raw_sb_info(struct f2fs_super_block *sb)
+>>  	DISP_u32(sb, node_ino);
+>>  	DISP_u32(sb, meta_ino);
+>>  	DISP_u32(sb, cp_payload);
+>> +	DISP_u32(sb, crc);
+> 
+> if (feature is on) {
+> 	DISP_u32(sb, checksum_offset);
+> 	DISP_u32(sb, crc);
+> }
+> 
 
-This could be fixed by adding another #ifdef around it, but the more
-reliable way of doing this seems to be to remove the other #ifdefs
-where that is easily possible.
+sb->checksum_offset had been printed before without any conditions.
+So I think it's better to print them always :)
 
-By defining time_to_inject() as a trivial stub, most of the checks for
-CONFIG_F2FS_FAULT_INJECTION can go away. This also leads to nicer
-formatting of the code.
+> Thanks,
+> 
+>>  	DISP("%-.256s", sb, version);
+>>  	printf("\n");
+>>  }
+>> @@ -467,6 +468,9 @@ void print_sb_state(struct f2fs_super_block *sb)
+>>  	if (f & cpu_to_le32(F2FS_FEATURE_LOST_FOUND)) {
+>>  		MSG(0, "%s", " lost_found");
+>>  	}
+>> +	if (f & cpu_to_le32(F2FS_FEATURE_SB_CHKSUM)) {
+>> +		MSG(0, "%s", " sb_checksum");
+>> +	}
+>>  	MSG(0, "\n");
+>>  	MSG(0, "Info: superblock encrypt level = %d, salt = ",
+>>  					sb->encryption_level);
+>> @@ -555,10 +559,29 @@ static inline int sanity_check_area_boundary(struct f2fs_super_block *sb,
+>>  	return 0;
+>>  }
+>>  
+>> +static int verify_sb_chksum(struct f2fs_super_block *sb)
+>> +{
+>> +	if (SB_CHKSUM_OFFSET != get_sb(checksum_offset)) {
+>> +		MSG(0, "\tInvalid SB CRC offset: %u\n",
+>> +					get_sb(checksum_offset));
+>> +		return -1;
+>> +	}
+>> +	if (f2fs_crc_valid(get_sb(crc), sb,
+>> +			get_sb(checksum_offset))) {
+>> +		MSG(0, "\tInvalid SB CRC: 0x%x\n", get_sb(crc));
+>> +		return -1;
+>> +	}
+>> +	return 0;
+>> +}
+>> +
+>>  int sanity_check_raw_super(struct f2fs_super_block *sb, enum SB_ADDR sb_addr)
+>>  {
+>>  	unsigned int blocksize;
+>>  
+>> +	if ((get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) &&
+>> +					verify_sb_chksum(sb))
+>> +		return -1;
+>> +
+>>  	if (F2FS_SUPER_MAGIC != get_sb(magic))
+>>  		return -1;
+>>  
+>> diff --git a/fsck/resize.c b/fsck/resize.c
+>> index 5161a1f..3462165 100644
+>> --- a/fsck/resize.c
+>> +++ b/fsck/resize.c
+>> @@ -603,9 +603,6 @@ static int f2fs_resize_grow(struct f2fs_sb_info *sbi)
+>>  		}
+>>  	}
+>>  
+>> -	print_raw_sb_info(sb);
+>> -	print_raw_sb_info(new_sb);
+>> -
+>>  	old_main_blkaddr = get_sb(main_blkaddr);
+>>  	new_main_blkaddr = get_newsb(main_blkaddr);
+>>  	offset = new_main_blkaddr - old_main_blkaddr;
+>> @@ -629,6 +626,9 @@ static int f2fs_resize_grow(struct f2fs_sb_info *sbi)
+>>  	migrate_sit(sbi, new_sb, offset_seg);
+>>  	rebuild_checkpoint(sbi, new_sb, offset_seg);
+>>  	update_superblock(new_sb, SB_ALL);
+>> +	print_raw_sb_info(sb);
+>> +	print_raw_sb_info(new_sb);
+>> +
+>>  	return 0;
+>>  }
+>>  
+>> @@ -658,9 +658,6 @@ static int f2fs_resize_shrink(struct f2fs_sb_info *sbi)
+>>  		}
+>>  	}
+>>  
+>> -	print_raw_sb_info(sb);
+>> -	print_raw_sb_info(new_sb);
+>> -
+>>  	old_main_blkaddr = get_sb(main_blkaddr);
+>>  	new_main_blkaddr = get_newsb(main_blkaddr);
+>>  	offset = old_main_blkaddr - new_main_blkaddr;
+>> @@ -690,6 +687,9 @@ static int f2fs_resize_shrink(struct f2fs_sb_info *sbi)
+>>  	/* move whole data region */
+>>  	//if (err)
+>>  	//	migrate_main(sbi, offset);
+>> +	print_raw_sb_info(sb);
+>> +	print_raw_sb_info(new_sb);
+>> +
+>>  	return 0;
+>>  }
+>>  
+>> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+>> index b0d9b9b..556d526 100644
+>> --- a/include/f2fs_fs.h
+>> +++ b/include/f2fs_fs.h
+>> @@ -279,6 +279,7 @@ static inline uint64_t bswap_64(uint64_t val)
+>>  #define BITS_PER_BYTE		8
+>>  #define F2FS_SUPER_MAGIC	0xF2F52010	/* F2FS Magic Number */
+>>  #define CP_CHKSUM_OFFSET	4092
+>> +#define SB_CHKSUM_OFFSET	3068
+>>  #define MAX_PATH_LEN		64
+>>  #define MAX_DEVICES		8
+>>  
+>> @@ -579,6 +580,7 @@ enum {
+>>  #define F2FS_FEATURE_INODE_CRTIME	0x0100
+>>  #define F2FS_FEATURE_LOST_FOUND		0x0200
+>>  #define F2FS_FEATURE_VERITY		0x0400	/* reserved */
+>> +#define F2FS_FEATURE_SB_CHKSUM		0x0800
+>>  
+>>  #define MAX_VOLUME_NAME		512
+>>  
+>> @@ -632,7 +634,8 @@ struct f2fs_super_block {
+>>  	struct f2fs_device devs[MAX_DEVICES];	/* device list */
+>>  	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
+>>  	__u8 hot_ext_count;		/* # of hot file extension */
+>> -	__u8 reserved[314];		/* valid reserved region */
+>> +	__u8 reserved[310];		/* valid reserved region */
+>> +	__le32 crc;			/* checksum of superblock */
+>>  } __attribute__((packed));
+>>  
+>>  /*
+>> @@ -1337,6 +1340,7 @@ struct feature feature_table[] = {					\
+>>  	{ "inode_crtime",		F2FS_FEATURE_INODE_CRTIME },	\
+>>  	{ "lost_found",			F2FS_FEATURE_LOST_FOUND },	\
+>>  	{ "verity",			F2FS_FEATURE_VERITY },	/* reserved */ \
+>> +	{ "sb_checksum",		F2FS_FEATURE_SB_CHKSUM },	\
+>>  	{ NULL,				0x0},				\
+>>  };
+>>  
+>> @@ -1424,10 +1428,20 @@ static inline int __write_superblock(struct f2fs_super_block *sb, int sb_mask)
+>>  {
+>>  	int index, ret;
+>>  	u_int8_t *buf;
+>> +	u32 old_crc, new_crc;
+>>  
+>>  	buf = calloc(F2FS_BLKSIZE, 1);
+>>  	ASSERT(buf);
+>>  
+>> +	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) {
+>> +		old_crc = get_sb(crc);
+>> +		new_crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, sb,
+>> +						SB_CHKSUM_OFFSET);
+>> +		set_sb(crc, new_crc);
+>> +		MSG(0, "Info: SB CRC is set successfully"
+>> +				"(0x%x -> 0x%x)\n", old_crc, new_crc);
+>> +	}
+>> +
+>>  	memcpy(buf + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
+>>  	for (index = 0; index < SB_ADDR_MAX; index++) {
+>>  		if ((1 << index) & sb_mask) {
+>> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+>> index 7e3846e..87e33da 100644
+>> --- a/mkfs/f2fs_format.c
+>> +++ b/mkfs/f2fs_format.c
+>> @@ -504,6 +504,9 @@ static int f2fs_prepare_super_block(void)
+>>  
+>>  	sb->feature = c.feature;
+>>  
+>> +	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM)
+>> +		set_sb(checksum_offset, SB_CHKSUM_OFFSET);
+>> +
+>>  	return 0;
+>>  }
+>>  
+>>
+> 
+> .
+> 
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/f2fs/checkpoint.c |  3 +--
- fs/f2fs/data.c       |  2 --
- fs/f2fs/dir.c        |  3 +--
- fs/f2fs/f2fs.h       | 50 ++++++++++++++++++++++----------------------
- fs/f2fs/file.c       |  3 +--
- fs/f2fs/gc.c         |  2 --
- fs/f2fs/inode.c      |  3 +--
- fs/f2fs/node.c       |  3 +--
- fs/f2fs/recovery.c   |  5 ++---
- fs/f2fs/segment.c    |  4 ----
- 10 files changed, 32 insertions(+), 46 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 3ab7a00c0641..e8b6b89bddb8 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -555,13 +555,12 @@ int f2fs_acquire_orphan_inode(struct f2fs_sb_info *sbi)
- 
- 	spin_lock(&im->ino_lock);
- 
--#ifdef CONFIG_F2FS_FAULT_INJECTION
- 	if (time_to_inject(sbi, FAULT_ORPHAN)) {
- 		spin_unlock(&im->ino_lock);
- 		f2fs_show_injection_info(FAULT_ORPHAN);
- 		return -ENOSPC;
- 	}
--#endif
-+
- 	if (unlikely(im->ino_num >= sbi->max_orphans))
- 		err = -ENOSPC;
- 	else
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 67dc5fd8d4d5..773f82bbb618 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -126,12 +126,10 @@ static bool f2fs_bio_post_read_required(struct bio *bio)
- 
- static void f2fs_read_end_io(struct bio *bio)
- {
--#ifdef CONFIG_F2FS_FAULT_INJECTION
- 	if (time_to_inject(F2FS_P_SB(bio_first_page_all(bio)), FAULT_IO)) {
- 		f2fs_show_injection_info(FAULT_IO);
- 		bio->bi_status = BLK_STS_IOERR;
- 	}
--#endif
- 
- 	if (f2fs_bio_post_read_required(bio)) {
- 		struct bio_post_read_ctx *ctx = bio->bi_private;
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 9c2a23242f64..01006085904a 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -517,12 +517,11 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
- 	}
- 
- start:
--#ifdef CONFIG_F2FS_FAULT_INJECTION
- 	if (time_to_inject(F2FS_I_SB(dir), FAULT_DIR_DEPTH)) {
- 		f2fs_show_injection_info(FAULT_DIR_DEPTH);
- 		return -ENOSPC;
- 	}
--#endif
-+
- 	if (unlikely(current_depth == MAX_DIR_HASH_DEPTH))
- 		return -ENOSPC;
- 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index a8ae1c73d3b3..8d2086e2571b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -41,7 +41,6 @@
- 	} while (0)
- #endif
- 
--#ifdef CONFIG_F2FS_FAULT_INJECTION
- enum {
- 	FAULT_KMALLOC,
- 	FAULT_KVMALLOC,
-@@ -60,6 +59,7 @@ enum {
- 	FAULT_MAX,
- };
- 
-+#ifdef CONFIG_F2FS_FAULT_INJECTION
- #define F2FS_ALL_FAULT_TYPE		((1 << FAULT_MAX) - 1)
- 
- struct f2fs_fault_info {
-@@ -1326,6 +1326,12 @@ static inline bool time_to_inject(struct f2fs_sb_info *sbi, int type)
- 	}
- 	return false;
- }
-+#else
-+#define f2fs_show_injection_info(type) do { } while (0)
-+static inline bool time_to_inject(struct f2fs_sb_info *sbi, int type)
-+{
-+	return false;
-+}
- #endif
- 
- /* For write statistics. Suppose sector size is 512 bytes,
-@@ -1678,13 +1684,12 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
- 	if (ret)
- 		return ret;
- 
--#ifdef CONFIG_F2FS_FAULT_INJECTION
- 	if (time_to_inject(sbi, FAULT_BLOCK)) {
- 		f2fs_show_injection_info(FAULT_BLOCK);
- 		release = *count;
- 		goto enospc;
- 	}
--#endif
-+
- 	/*
- 	 * let's increase this in prior to actual block count change in order
- 	 * for f2fs_sync_file to avoid data races when deciding checkpoint.
-@@ -1893,12 +1898,10 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
- 			return ret;
- 	}
- 
--#ifdef CONFIG_F2FS_FAULT_INJECTION
- 	if (time_to_inject(sbi, FAULT_BLOCK)) {
- 		f2fs_show_injection_info(FAULT_BLOCK);
- 		goto enospc;
- 	}
--#endif
- 
- 	spin_lock(&sbi->stat_lock);
- 
-@@ -1983,22 +1986,23 @@ static inline s64 valid_inode_count(struct f2fs_sb_info *sbi)
- static inline struct page *f2fs_grab_cache_page(struct address_space *mapping,
- 						pgoff_t index, bool for_write)
- {
--#ifdef CONFIG_F2FS_FAULT_INJECTION
- 	struct page *page;
- 
--	if (!for_write)
--		page = find_get_page_flags(mapping, index,
--						FGP_LOCK | FGP_ACCESSED);
--	else
--		page = find_lock_page(mapping, index);
--	if (page)
--		return page;
-+	if (IS_ENABLED(CONFIG_F2FS_FAULT_INJECTION)) {
-+		if (!for_write)
-+			page = find_get_page_flags(mapping, index,
-+							FGP_LOCK | FGP_ACCESSED);
-+		else
-+			page = find_lock_page(mapping, index);
-+		if (page)
-+			return page;
- 
--	if (time_to_inject(F2FS_M_SB(mapping), FAULT_PAGE_ALLOC)) {
--		f2fs_show_injection_info(FAULT_PAGE_ALLOC);
--		return NULL;
-+		if (time_to_inject(F2FS_M_SB(mapping), FAULT_PAGE_ALLOC)) {
-+			f2fs_show_injection_info(FAULT_PAGE_ALLOC);
-+			return NULL;
-+		}
- 	}
--#endif
-+
- 	if (!for_write)
- 		return grab_cache_page(mapping, index);
- 	return grab_cache_page_write_begin(mapping, index, AOP_FLAG_NOFS);
-@@ -2008,12 +2012,11 @@ static inline struct page *f2fs_pagecache_get_page(
- 				struct address_space *mapping, pgoff_t index,
- 				int fgp_flags, gfp_t gfp_mask)
- {
--#ifdef CONFIG_F2FS_FAULT_INJECTION
- 	if (time_to_inject(F2FS_M_SB(mapping), FAULT_PAGE_GET)) {
- 		f2fs_show_injection_info(FAULT_PAGE_GET);
- 		return NULL;
- 	}
--#endif
-+
- 	return pagecache_get_page(mapping, index, fgp_flags, gfp_mask);
- }
- 
-@@ -2078,12 +2081,11 @@ static inline struct bio *f2fs_bio_alloc(struct f2fs_sb_info *sbi,
- 			bio = bio_alloc(GFP_NOIO | __GFP_NOFAIL, npages);
- 		return bio;
- 	}
--#ifdef CONFIG_F2FS_FAULT_INJECTION
- 	if (time_to_inject(sbi, FAULT_ALLOC_BIO)) {
- 		f2fs_show_injection_info(FAULT_ALLOC_BIO);
- 		return NULL;
- 	}
--#endif
-+
- 	return bio_alloc(GFP_KERNEL, npages);
- }
- 
-@@ -2618,12 +2620,11 @@ static inline bool f2fs_may_extent_tree(struct inode *inode)
- static inline void *f2fs_kmalloc(struct f2fs_sb_info *sbi,
- 					size_t size, gfp_t flags)
- {
--#ifdef CONFIG_F2FS_FAULT_INJECTION
- 	if (time_to_inject(sbi, FAULT_KMALLOC)) {
- 		f2fs_show_injection_info(FAULT_KMALLOC);
- 		return NULL;
- 	}
--#endif
-+
- 	return kmalloc(size, flags);
- }
- 
-@@ -2636,12 +2637,11 @@ static inline void *f2fs_kzalloc(struct f2fs_sb_info *sbi,
- static inline void *f2fs_kvmalloc(struct f2fs_sb_info *sbi,
- 					size_t size, gfp_t flags)
- {
--#ifdef CONFIG_F2FS_FAULT_INJECTION
- 	if (time_to_inject(sbi, FAULT_KVMALLOC)) {
- 		f2fs_show_injection_info(FAULT_KVMALLOC);
- 		return NULL;
- 	}
--#endif
-+
- 	return kvmalloc(size, flags);
- }
- 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 560751adba01..6f14e7d16e9d 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -668,12 +668,11 @@ int f2fs_truncate(struct inode *inode)
- 
- 	trace_f2fs_truncate(inode);
- 
--#ifdef CONFIG_F2FS_FAULT_INJECTION
- 	if (time_to_inject(F2FS_I_SB(inode), FAULT_TRUNCATE)) {
- 		f2fs_show_injection_info(FAULT_TRUNCATE);
- 		return -EIO;
- 	}
--#endif
-+
- 	/* we should check inline_data size */
- 	if (!f2fs_may_inline_data(inode)) {
- 		err = f2fs_convert_inline_inode(inode);
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 87a6b4675987..c598ae5ecbfa 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -53,12 +53,10 @@ static int gc_thread_func(void *data)
- 			continue;
- 		}
- 
--#ifdef CONFIG_F2FS_FAULT_INJECTION
- 		if (time_to_inject(sbi, FAULT_CHECKPOINT)) {
- 			f2fs_show_injection_info(FAULT_CHECKPOINT);
- 			f2fs_stop_checkpoint(sbi, false);
- 		}
--#endif
- 
- 		if (!sb_start_write_trylock(sbi->sb))
- 			continue;
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index fc2c98b9e255..6908896a1950 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -659,12 +659,11 @@ void f2fs_evict_inode(struct inode *inode)
- 	if (F2FS_HAS_BLOCKS(inode))
- 		err = f2fs_truncate(inode);
- 
--#ifdef CONFIG_F2FS_FAULT_INJECTION
- 	if (time_to_inject(sbi, FAULT_EVICT_INODE)) {
- 		f2fs_show_injection_info(FAULT_EVICT_INODE);
- 		err = -EIO;
- 	}
--#endif
-+
- 	if (!err) {
- 		f2fs_lock_op(sbi);
- 		err = f2fs_remove_inode_page(inode);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 3c93f6cbc3cd..0bae5eda056a 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2321,12 +2321,11 @@ bool f2fs_alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct free_nid *i = NULL;
- retry:
--#ifdef CONFIG_F2FS_FAULT_INJECTION
- 	if (time_to_inject(sbi, FAULT_ALLOC_NID)) {
- 		f2fs_show_injection_info(FAULT_ALLOC_NID);
- 		return false;
- 	}
--#endif
-+
- 	spin_lock(&nm_i->nid_list_lock);
- 
- 	if (unlikely(nm_i->available_nids == 0)) {
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 64e5a59a270a..95511ed11a22 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -518,10 +518,9 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- 
- 			if (src == NULL_ADDR) {
- 				err = f2fs_reserve_new_block(&dn);
--#ifdef CONFIG_F2FS_FAULT_INJECTION
--				while (err)
-+				while (err &&
-+				       IS_ENABLED(CONFIG_F2FS_FAULT_INJECTION))
- 					err = f2fs_reserve_new_block(&dn);
--#endif
- 				/* We should not get -ENOSPC */
- 				f2fs_bug_on(sbi, err);
- 				if (err)
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 43f127b48447..41769c77b7cc 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -474,12 +474,10 @@ int f2fs_commit_inmem_pages(struct inode *inode)
-  */
- void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
- {
--#ifdef CONFIG_F2FS_FAULT_INJECTION
- 	if (time_to_inject(sbi, FAULT_CHECKPOINT)) {
- 		f2fs_show_injection_info(FAULT_CHECKPOINT);
- 		f2fs_stop_checkpoint(sbi, false);
- 	}
--#endif
- 
- 	/* balance_fs_bg is able to be pending */
- 	if (need && excess_cached_nats(sbi))
-@@ -1045,13 +1043,11 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
- 
- 		dc->len += len;
- 
--#ifdef CONFIG_F2FS_FAULT_INJECTION
- 		if (time_to_inject(sbi, FAULT_DISCARD)) {
- 			f2fs_show_injection_info(FAULT_DISCARD);
- 			err = -EIO;
- 			goto submit;
- 		}
--#endif
- 		err = __blkdev_issue_discard(bdev,
- 					SECTOR_FROM_BLOCK(start),
- 					SECTOR_FROM_BLOCK(len),
--- 
-2.18.0
 
 
 ------------------------------------------------------------------------------
