@@ -1,10 +1,11 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 2/2] f2fs: tune discard speed with storage
- usage rate
-Date: Mon, 13 Aug 2018 21:19:06 -0700
-Message-ID: <20180814041906.GC52730@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180810100806.9298-1-yuchao0@huawei.com>
- <20180810100806.9298-2-yuchao0@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [RFC PATCH 4/4] f2fs-tools: introduce sb checksum
+Date: Tue, 14 Aug 2018 13:54:33 +0800
+Message-ID: <bbf15a63-4090-bbc6-0bd5-533ffb84ac35@huawei.com>
+References: <20180813133211.243529-1-zhengjunling@huawei.com>
+ <20180813133211.243529-4-zhengjunling@huawei.com>
+ <2e8414fe-b028-fdf0-3a78-97711a5d997f@kernel.org>
+ <d2804e71-2d50-d9b6-3788-1af04d880ec2@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -12,15 +13,15 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1fpQnd-00047m-1i
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Aug 2018 04:19:17 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1fpSI5-0005tE-4d
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Aug 2018 05:54:49 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fpQnZ-00Gxkx-1g
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Aug 2018 04:19:16 +0000
-Content-Disposition: inline
-In-Reply-To: <20180810100806.9298-2-yuchao0@huawei.com>
+ id 1fpSI2-0001N1-PS
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Aug 2018 05:54:49 +0000
+In-Reply-To: <d2804e71-2d50-d9b6-3788-1af04d880ec2@huawei.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,259 +31,220 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Junling Zheng <zhengjunling@huawei.com>, Chao Yu <chao@kernel.org>, jaegeuk@kernel.org
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 08/10, Chao Yu wrote:
-> Previously, discard speed was fixed mostly, and in high usage rate
-> device, we will speed up issuing discard, but it doesn't make sense
-> that in a non-full filesystem, we still issue discard with slow speed.
+On 2018/8/14 10:03, Junling Zheng wrote:
+> Hi, Chao
+> 
+> On 2018/8/13 22:33, Chao Yu wrote:
+>> On 2018/8/13 21:32, Junling Zheng wrote:
+>>> This patch introduced crc for superblock.
+>>>
+>>> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+>>> ---
+>>>  fsck/mount.c       | 23 +++++++++++++++++++++++
+>>>  fsck/resize.c      | 12 ++++++------
+>>>  include/f2fs_fs.h  | 16 +++++++++++++++-
+>>>  mkfs/f2fs_format.c |  3 +++
+>>>  4 files changed, 47 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/fsck/mount.c b/fsck/mount.c
+>>> index e7ceb8d..af9b219 100644
+>>> --- a/fsck/mount.c
+>>> +++ b/fsck/mount.c
+>>> @@ -340,6 +340,7 @@ void print_raw_sb_info(struct f2fs_super_block *sb)
+>>>  	DISP_u32(sb, node_ino);
+>>>  	DISP_u32(sb, meta_ino);
+>>>  	DISP_u32(sb, cp_payload);
+>>> +	DISP_u32(sb, crc);
+>>
+>> if (feature is on) {
+>> 	DISP_u32(sb, checksum_offset);
+>> 	DISP_u32(sb, crc);
+>> }
+>>
+> 
+> sb->checksum_offset had been printed before without any conditions.
+> So I think it's better to print them always :)
 
-Could you please elaborate the problem in more detail? The speed depends
-on how many candidates?
+Alright, since it's trivial. :)
 
 Thanks,
 
 > 
-> Anyway, it comes out undiscarded block makes FTL GC be lower efficient
-> and causing high lifetime overhead.
+>> Thanks,
+>>
+>>>  	DISP("%-.256s", sb, version);
+>>>  	printf("\n");
+>>>  }
+>>> @@ -467,6 +468,9 @@ void print_sb_state(struct f2fs_super_block *sb)
+>>>  	if (f & cpu_to_le32(F2FS_FEATURE_LOST_FOUND)) {
+>>>  		MSG(0, "%s", " lost_found");
+>>>  	}
+>>> +	if (f & cpu_to_le32(F2FS_FEATURE_SB_CHKSUM)) {
+>>> +		MSG(0, "%s", " sb_checksum");
+>>> +	}
+>>>  	MSG(0, "\n");
+>>>  	MSG(0, "Info: superblock encrypt level = %d, salt = ",
+>>>  					sb->encryption_level);
+>>> @@ -555,10 +559,29 @@ static inline int sanity_check_area_boundary(struct f2fs_super_block *sb,
+>>>  	return 0;
+>>>  }
+>>>  
+>>> +static int verify_sb_chksum(struct f2fs_super_block *sb)
+>>> +{
+>>> +	if (SB_CHKSUM_OFFSET != get_sb(checksum_offset)) {
+>>> +		MSG(0, "\tInvalid SB CRC offset: %u\n",
+>>> +					get_sb(checksum_offset));
+>>> +		return -1;
+>>> +	}
+>>> +	if (f2fs_crc_valid(get_sb(crc), sb,
+>>> +			get_sb(checksum_offset))) {
+>>> +		MSG(0, "\tInvalid SB CRC: 0x%x\n", get_sb(crc));
+>>> +		return -1;
+>>> +	}
+>>> +	return 0;
+>>> +}
+>>> +
+>>>  int sanity_check_raw_super(struct f2fs_super_block *sb, enum SB_ADDR sb_addr)
+>>>  {
+>>>  	unsigned int blocksize;
+>>>  
+>>> +	if ((get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) &&
+>>> +					verify_sb_chksum(sb))
+>>> +		return -1;
+>>> +
+>>>  	if (F2FS_SUPER_MAGIC != get_sb(magic))
+>>>  		return -1;
+>>>  
+>>> diff --git a/fsck/resize.c b/fsck/resize.c
+>>> index 5161a1f..3462165 100644
+>>> --- a/fsck/resize.c
+>>> +++ b/fsck/resize.c
+>>> @@ -603,9 +603,6 @@ static int f2fs_resize_grow(struct f2fs_sb_info *sbi)
+>>>  		}
+>>>  	}
+>>>  
+>>> -	print_raw_sb_info(sb);
+>>> -	print_raw_sb_info(new_sb);
+>>> -
+>>>  	old_main_blkaddr = get_sb(main_blkaddr);
+>>>  	new_main_blkaddr = get_newsb(main_blkaddr);
+>>>  	offset = new_main_blkaddr - old_main_blkaddr;
+>>> @@ -629,6 +626,9 @@ static int f2fs_resize_grow(struct f2fs_sb_info *sbi)
+>>>  	migrate_sit(sbi, new_sb, offset_seg);
+>>>  	rebuild_checkpoint(sbi, new_sb, offset_seg);
+>>>  	update_superblock(new_sb, SB_ALL);
+>>> +	print_raw_sb_info(sb);
+>>> +	print_raw_sb_info(new_sb);
+>>> +
+>>>  	return 0;
+>>>  }
+>>>  
+>>> @@ -658,9 +658,6 @@ static int f2fs_resize_shrink(struct f2fs_sb_info *sbi)
+>>>  		}
+>>>  	}
+>>>  
+>>> -	print_raw_sb_info(sb);
+>>> -	print_raw_sb_info(new_sb);
+>>> -
+>>>  	old_main_blkaddr = get_sb(main_blkaddr);
+>>>  	new_main_blkaddr = get_newsb(main_blkaddr);
+>>>  	offset = old_main_blkaddr - new_main_blkaddr;
+>>> @@ -690,6 +687,9 @@ static int f2fs_resize_shrink(struct f2fs_sb_info *sbi)
+>>>  	/* move whole data region */
+>>>  	//if (err)
+>>>  	//	migrate_main(sbi, offset);
+>>> +	print_raw_sb_info(sb);
+>>> +	print_raw_sb_info(new_sb);
+>>> +
+>>>  	return 0;
+>>>  }
+>>>  
+>>> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+>>> index b0d9b9b..556d526 100644
+>>> --- a/include/f2fs_fs.h
+>>> +++ b/include/f2fs_fs.h
+>>> @@ -279,6 +279,7 @@ static inline uint64_t bswap_64(uint64_t val)
+>>>  #define BITS_PER_BYTE		8
+>>>  #define F2FS_SUPER_MAGIC	0xF2F52010	/* F2FS Magic Number */
+>>>  #define CP_CHKSUM_OFFSET	4092
+>>> +#define SB_CHKSUM_OFFSET	3068
+>>>  #define MAX_PATH_LEN		64
+>>>  #define MAX_DEVICES		8
+>>>  
+>>> @@ -579,6 +580,7 @@ enum {
+>>>  #define F2FS_FEATURE_INODE_CRTIME	0x0100
+>>>  #define F2FS_FEATURE_LOST_FOUND		0x0200
+>>>  #define F2FS_FEATURE_VERITY		0x0400	/* reserved */
+>>> +#define F2FS_FEATURE_SB_CHKSUM		0x0800
+>>>  
+>>>  #define MAX_VOLUME_NAME		512
+>>>  
+>>> @@ -632,7 +634,8 @@ struct f2fs_super_block {
+>>>  	struct f2fs_device devs[MAX_DEVICES];	/* device list */
+>>>  	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
+>>>  	__u8 hot_ext_count;		/* # of hot file extension */
+>>> -	__u8 reserved[314];		/* valid reserved region */
+>>> +	__u8 reserved[310];		/* valid reserved region */
+>>> +	__le32 crc;			/* checksum of superblock */
+>>>  } __attribute__((packed));
+>>>  
+>>>  /*
+>>> @@ -1337,6 +1340,7 @@ struct feature feature_table[] = {					\
+>>>  	{ "inode_crtime",		F2FS_FEATURE_INODE_CRTIME },	\
+>>>  	{ "lost_found",			F2FS_FEATURE_LOST_FOUND },	\
+>>>  	{ "verity",			F2FS_FEATURE_VERITY },	/* reserved */ \
+>>> +	{ "sb_checksum",		F2FS_FEATURE_SB_CHKSUM },	\
+>>>  	{ NULL,				0x0},				\
+>>>  };
+>>>  
+>>> @@ -1424,10 +1428,20 @@ static inline int __write_superblock(struct f2fs_super_block *sb, int sb_mask)
+>>>  {
+>>>  	int index, ret;
+>>>  	u_int8_t *buf;
+>>> +	u32 old_crc, new_crc;
+>>>  
+>>>  	buf = calloc(F2FS_BLKSIZE, 1);
+>>>  	ASSERT(buf);
+>>>  
+>>> +	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) {
+>>> +		old_crc = get_sb(crc);
+>>> +		new_crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, sb,
+>>> +						SB_CHKSUM_OFFSET);
+>>> +		set_sb(crc, new_crc);
+>>> +		MSG(0, "Info: SB CRC is set successfully"
+>>> +				"(0x%x -> 0x%x)\n", old_crc, new_crc);
+>>> +	}
+>>> +
+>>>  	memcpy(buf + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
+>>>  	for (index = 0; index < SB_ADDR_MAX; index++) {
+>>>  		if ((1 << index) & sb_mask) {
+>>> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+>>> index 7e3846e..87e33da 100644
+>>> --- a/mkfs/f2fs_format.c
+>>> +++ b/mkfs/f2fs_format.c
+>>> @@ -504,6 +504,9 @@ static int f2fs_prepare_super_block(void)
+>>>  
+>>>  	sb->feature = c.feature;
+>>>  
+>>> +	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM)
+>>> +		set_sb(checksum_offset, SB_CHKSUM_OFFSET);
+>>> +
+>>>  	return 0;
+>>>  }
+>>>  
+>>>
+>>
+>> .
+>>
 > 
-> Let's tune discard speed as below:
 > 
-> a. adjust default issue interval:
-> 		original	after
-> min_interval:	50ms		100ms
-> mid_interval:	500ms		1000ms
-> max_interval:	60000ms		10000ms
 > 
-> b. if last time we stop issuing discard due to IO interruption of user,
-> let's reset all {min,mid,max}_interval to default one.
+> .
 > 
-> c. tune {min,mid,max}_interval with below calculation method:
-> 
-> base_interval = default_interval / 10;
-> total_interval = default_interval - base_interval;
-> interval = base_interval + total_interval * (100 - dev_util) / 100;
-> 
-> For example:
-> min_interval (:100ms)
-> dev_util (%)	interval (ms)
-> 0		100
-> 10		91
-> 20		82
-> 30		73
-> ...
-> 80		28
-> 90		19
-> 100		10
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/f2fs.h    | 11 ++++----
->  fs/f2fs/segment.c | 64 +++++++++++++++++++++++++++++++++++++----------
->  fs/f2fs/segment.h |  9 +++++++
->  fs/f2fs/super.c   |  2 +-
->  4 files changed, 67 insertions(+), 19 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 273ffdaf4891..a1dd2e1c3cb9 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -185,10 +185,9 @@ enum {
->  
->  #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
->  #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
-> -#define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
-> -#define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
-> -#define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
-> -#define DEF_DISCARD_URGENT_UTIL		80	/* do more discard over 80% */
-> +#define DEF_MIN_DISCARD_ISSUE_TIME	100	/* 100 ms, if exists */
-> +#define DEF_MID_DISCARD_ISSUE_TIME	1000	/* 1000 ms, if device busy */
-> +#define DEF_MAX_DISCARD_ISSUE_TIME	10000	/* 10000 ms, if no candidates */
->  #define DEF_CP_INTERVAL			60	/* 60 secs */
->  #define DEF_IDLE_INTERVAL		5	/* 5 secs */
->  
-> @@ -248,7 +247,8 @@ struct discard_entry {
->  };
->  
->  /* default discard granularity of inner discard thread, unit: block count */
-> -#define DEFAULT_DISCARD_GRANULARITY		1
-> +#define MID_DISCARD_GRANULARITY			16
-> +#define MIN_DISCARD_GRANULARITY			1
->  
->  /* max discard pend list number */
->  #define MAX_PLIST_NUM		512
-> @@ -330,6 +330,7 @@ struct discard_cmd_control {
->  	atomic_t discard_cmd_cnt;		/* # of cached cmd count */
->  	struct rb_root root;			/* root of discard rb-tree */
->  	bool rbtree_check;			/* config for consistence check */
-> +	bool io_interrupted;			/* last state of io interrupted */
->  };
->  
->  /* for the list of fsync inodes, used only during recovery */
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 8b52e8dfb12f..9564aaf1f27b 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -968,6 +968,44 @@ static void __check_sit_bitmap(struct f2fs_sb_info *sbi,
->  #endif
->  }
->  
-> +static void __adjust_discard_speed(unsigned int *interval,
-> +				unsigned int def_interval, int dev_util)
-> +{
-> +	unsigned int base_interval, total_interval;
-> +
-> +	base_interval = def_interval / 10;
-> +	total_interval = def_interval - base_interval;
-> +
-> +	/*
-> +	 * if def_interval = 100, adjusted interval should be in range of
-> +	 * [10, 100].
-> +	 */
-> +	*interval = base_interval + total_interval * (100 - dev_util) / 100;
-> +}
-> +
-> +static void __tune_discard_policy(struct f2fs_sb_info *sbi,
-> +					struct discard_policy *dpolicy)
-> +{
-> +	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-> +	int dev_util;
-> +
-> +	if (dcc->io_interrupted) {
-> +		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
-> +		dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
-> +		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
-> +		return;
-> +	}
-> +
-> +	dev_util = dev_utilization(sbi);
-> +
-> +	__adjust_discard_speed(&dpolicy->min_interval,
-> +				DEF_MIN_DISCARD_ISSUE_TIME, dev_util);
-> +	__adjust_discard_speed(&dpolicy->mid_interval,
-> +				DEF_MID_DISCARD_ISSUE_TIME, dev_util);
-> +	__adjust_discard_speed(&dpolicy->max_interval,
-> +				DEF_MAX_DISCARD_ISSUE_TIME, dev_util);
-> +}
-> +
->  static void __init_discard_policy(struct f2fs_sb_info *sbi,
->  				struct discard_policy *dpolicy,
->  				int discard_type, unsigned int granularity)
-> @@ -982,20 +1020,11 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
->  	dpolicy->io_aware_gran = MAX_PLIST_NUM;
->  
->  	if (discard_type == DPOLICY_BG) {
-> -		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
-> -		dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
-> -		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
->  		dpolicy->io_aware = true;
->  		dpolicy->sync = false;
->  		dpolicy->ordered = true;
-> -		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
-> -			dpolicy->granularity = 1;
-> -			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
-> -		}
-> +		__tune_discard_policy(sbi, dpolicy);
->  	} else if (discard_type == DPOLICY_FORCE) {
-> -		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
-> -		dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
-> -		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
->  		dpolicy->io_aware = false;
->  	} else if (discard_type == DPOLICY_FSTRIM) {
->  		dpolicy->io_aware = false;
-> @@ -1353,6 +1382,8 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
->  	if (!issued && io_interrupted)
->  		issued = -1;
->  
-> +	dcc->io_interrupted = io_interrupted;
-> +
->  	return issued;
->  }
->  
-> @@ -1370,7 +1401,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->  		if (i + 1 < dpolicy->granularity)
->  			break;
->  
-> -		if (i < DEFAULT_DISCARD_GRANULARITY && dpolicy->ordered)
-> +		if (i < MID_DISCARD_GRANULARITY && dpolicy->ordered)
->  			return __issue_discard_cmd_orderly(sbi, dpolicy);
->  
->  		pend_list = &dcc->pend_list[i];
-> @@ -1407,6 +1438,8 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->  	if (!issued && io_interrupted)
->  		issued = -1;
->  
-> +	dcc->io_interrupted = io_interrupted;
-> +
->  	return issued;
->  }
->  
-> @@ -1576,7 +1609,11 @@ static int issue_discard_thread(void *data)
->  	struct f2fs_sb_info *sbi = data;
->  	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
->  	wait_queue_head_t *q = &dcc->discard_wait_queue;
-> -	struct discard_policy dpolicy;
-> +	struct discard_policy dpolicy = {
-> +		.min_interval = DEF_MIN_DISCARD_ISSUE_TIME,
-> +		.mid_interval = DEF_MID_DISCARD_ISSUE_TIME,
-> +		.max_interval = DEF_MAX_DISCARD_ISSUE_TIME,
-> +	};
->  	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
->  	int issued;
->  
-> @@ -1929,7 +1966,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
->  	if (!dcc)
->  		return -ENOMEM;
->  
-> -	dcc->discard_granularity = DEFAULT_DISCARD_GRANULARITY;
-> +	dcc->discard_granularity = MIN_DISCARD_GRANULARITY;
->  	INIT_LIST_HEAD(&dcc->entry_list);
->  	for (i = 0; i < MAX_PLIST_NUM; i++)
->  		INIT_LIST_HEAD(&dcc->pend_list[i]);
-> @@ -1945,6 +1982,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
->  	dcc->next_pos = 0;
->  	dcc->root = RB_ROOT;
->  	dcc->rbtree_check = false;
-> +	dcc->io_interrupted = false;
->  
->  	init_waitqueue_head(&dcc->discard_wait_queue);
->  	SM_I(sbi)->dcc_info = dcc;
-> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> index 422b0ceb1eaa..63b4da72cd34 100644
-> --- a/fs/f2fs/segment.h
-> +++ b/fs/f2fs/segment.h
-> @@ -616,6 +616,15 @@ static inline int utilization(struct f2fs_sb_info *sbi)
->  					sbi->user_block_count);
->  }
->  
-> +static inline int dev_utilization(struct f2fs_sb_info *sbi)
-> +{
-> +	unsigned int dev_blks;
-> +
-> +	dev_blks = valid_user_blocks(sbi) + SM_I(sbi)->dcc_info->undiscard_blks;
-> +	return div_u64((u64)dev_blks * 100,
-> +			MAIN_SEGS(sbi) << sbi->log_blocks_per_seg);
-> +}
-> +
->  /*
->   * Sometimes f2fs may be better to drop out-of-place update policy.
->   * And, users can control the policy through sysfs entries.
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index b055f2ea77c5..55ed76daad23 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -2862,7 +2862,7 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
->  	/* adjust parameters according to the volume size */
->  	if (sm_i->main_segments <= SMALL_VOLUME_SEGMENTS) {
->  		F2FS_OPTION(sbi).alloc_mode = ALLOC_MODE_REUSE;
-> -		sm_i->dcc_info->discard_granularity = 1;
-> +		sm_i->dcc_info->discard_granularity = MIN_DISCARD_GRANULARITY;
->  		sm_i->ipu_policy = 1 << F2FS_IPU_FORCE;
->  	}
->  
-> -- 
-> 2.18.0.rc1
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
