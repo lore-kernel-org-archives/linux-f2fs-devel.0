@@ -1,376 +1,228 @@
-From: Junling Zheng <zhengjunling@huawei.com>
-Subject: Re: [RFC PATCH 3/4] f2fs-tools: unify the writeback of
- superblock
-Date: Tue, 14 Aug 2018 10:08:36 +0800
-Message-ID: <36bd4ddb-cd08-921c-01eb-e06e1578b58c@huawei.com>
-References: <20180813133211.243529-1-zhengjunling@huawei.com>
- <20180813133211.243529-3-zhengjunling@huawei.com>
- <59b7e960-7d32-d233-0c2e-7628a1e50bf6@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: fix performance issue observed with
+ multi-thread sequential read
+Date: Tue, 14 Aug 2018 11:49:00 +0800
+Message-ID: <0e07e79b-5b67-9355-1fa0-402a5d118bd1@huawei.com>
+References: <20180810023758.46974-1-jaegeuk@kernel.org>
+ <20180810024859.GA48219@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180810185640.GA63079@jaegeuk-macbookpro.roam.corp.google.com>
+ <57149b77-3576-87ed-2cae-a3bc2e8088f2@huawei.com>
+ <20180813201150.GA27044@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <zhengjunling@huawei.com>) id 1fpOlR-0003QZ-Ud
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Aug 2018 02:08:53 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fpOlP-00GsZV-W0
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Aug 2018 02:08:53 +0000
-In-Reply-To: <59b7e960-7d32-d233-0c2e-7628a1e50bf6@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180813201150.GA27044@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/8/13 22:25, Chao Yu wrote:
-> On 2018/8/13 21:32, Junling Zheng wrote:
->> Introduce __write_superblock() to support updating specified one
->> superblock or both, thus we can wrapper it in update_superblock() and
->> f2fs_write_super_block to unify all places where sb needs to be updated.
+On 2018/8/14 4:11, Jaegeuk Kim wrote:
+> On 08/13, Chao Yu wrote:
+>> Hi Jaegeuk,
 >>
->> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
->> ---
->>  fsck/fsck.h        |  2 +-
->>  fsck/mount.c       | 74 +++++++++++-----------------------------------
->>  fsck/resize.c      | 20 ++-----------
->>  include/f2fs_fs.h  | 31 +++++++++++++++++++
->>  mkfs/f2fs_format.c | 19 +-----------
->>  5 files changed, 52 insertions(+), 94 deletions(-)
+>> On 2018/8/11 2:56, Jaegeuk Kim wrote:
+>>> This reverts the commit - "b93f771 - f2fs: remove writepages lock"
+>>> to fix the drop in sequential read throughput.
+>>>
+>>> Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
+>>> device: UFS
+>>>
+>>> Before -
+>>> read throughput: 185 MB/s
+>>> total read requests: 85177 (of these ~80000 are 4KB size requests).
+>>> total write requests: 2546 (of these ~2208 requests are written in 512KB).
+>>>
+>>> After -
+>>> read throughput: 758 MB/s
+>>> total read requests: 2417 (of these ~2042 are 512KB reads).
+>>> total write requests: 2701 (of these ~2034 requests are written in 512KB).
 >>
->> diff --git a/fsck/fsck.h b/fsck/fsck.h
->> index 6042e68..e3490e6 100644
->> --- a/fsck/fsck.h
->> +++ b/fsck/fsck.h
->> @@ -178,7 +178,7 @@ extern void move_curseg_info(struct f2fs_sb_info *, u64, int);
->>  extern void write_curseg_info(struct f2fs_sb_info *);
->>  extern int find_next_free_block(struct f2fs_sb_info *, u64 *, int, int);
->>  extern void write_checkpoint(struct f2fs_sb_info *);
->> -extern void write_superblock(struct f2fs_super_block *);
->> +extern void update_superblock(struct f2fs_super_block *, int);
->>  extern void update_data_blkaddr(struct f2fs_sb_info *, nid_t, u16, block_t);
->>  extern void update_nat_blkaddr(struct f2fs_sb_info *, nid_t, nid_t, block_t);
->>  
->> diff --git a/fsck/mount.c b/fsck/mount.c
->> index 58ef3e6..e7ceb8d 100644
->> --- a/fsck/mount.c
->> +++ b/fsck/mount.c
->> @@ -476,7 +476,7 @@ void print_sb_state(struct f2fs_super_block *sb)
->>  }
->>  
->>  static inline int sanity_check_area_boundary(struct f2fs_super_block *sb,
->> -							u64 offset)
->> +							enum SB_ADDR sb_addr)
->>  {
->>  	u32 segment0_blkaddr = get_sb(segment0_blkaddr);
->>  	u32 cp_blkaddr = get_sb(cp_blkaddr);
->> @@ -542,14 +542,11 @@ static inline int sanity_check_area_boundary(struct f2fs_super_block *sb,
->>  			segment_count_main << log_blocks_per_seg);
->>  		return -1;
->>  	} else if (main_end_blkaddr < seg_end_blkaddr) {
->> -		int err;
->> -
->>  		set_sb(segment_count, (main_end_blkaddr -
->>  				segment0_blkaddr) >> log_blocks_per_seg);
->>  
->> -		err = dev_write(sb, offset, sizeof(struct f2fs_super_block));
->> -		MSG(0, "Info: Fix alignment: %s, start(%u) end(%u) block(%u)\n",
->> -			err ? "failed": "done",
->> +		update_superblock(sb, 1 << sb_addr);
->> +		MSG(0, "Info: Fix alignment: start(%u) end(%u) block(%u)\n",
->>  			main_blkaddr,
->>  			segment0_blkaddr +
->>  				(segment_count << log_blocks_per_seg),
->> @@ -558,7 +555,7 @@ static inline int sanity_check_area_boundary(struct f2fs_super_block *sb,
->>  	return 0;
->>  }
->>  
->> -int sanity_check_raw_super(struct f2fs_super_block *sb, u64 offset)
->> +int sanity_check_raw_super(struct f2fs_super_block *sb, enum SB_ADDR sb_addr)
->>  {
->>  	unsigned int blocksize;
->>  
->> @@ -600,30 +597,24 @@ int sanity_check_raw_super(struct f2fs_super_block *sb, u64 offset)
->>  	if (get_sb(segment_count) > F2FS_MAX_SEGMENT)
->>  		return -1;
->>  
->> -	if (sanity_check_area_boundary(sb, offset))
->> +	if (sanity_check_area_boundary(sb, sb_addr))
->>  		return -1;
->>  	return 0;
->>  }
->>  
->> -int validate_super_block(struct f2fs_sb_info *sbi, int block)
->> +int validate_super_block(struct f2fs_sb_info *sbi, enum SB_ADDR sb_addr)
->>  {
->> -	u64 offset;
->>  	char buf[F2FS_BLKSIZE];
->>  
->>  	sbi->raw_super = malloc(sizeof(struct f2fs_super_block));
->>  
->> -	if (block == 0)
->> -		offset = F2FS_SUPER_OFFSET;
->> -	else
->> -		offset = F2FS_BLKSIZE + F2FS_SUPER_OFFSET;
->> -
->> -	if (dev_read_block(buf, block))
->> +	if (dev_read_block(buf, sb_addr))
->>  		return -1;
->>  
->>  	memcpy(sbi->raw_super, buf + F2FS_SUPER_OFFSET,
->>  					sizeof(struct f2fs_super_block));
->>  
->> -	if (!sanity_check_raw_super(sbi->raw_super, offset)) {
->> +	if (!sanity_check_raw_super(sbi->raw_super, sb_addr)) {
->>  		/* get kernel version */
->>  		if (c.kd >= 0) {
->>  			dev_read_version(c.version, 0, VERSION_LEN);
->> @@ -642,13 +633,9 @@ int validate_super_block(struct f2fs_sb_info *sbi, int block)
->>  		MSG(0, "Info: FSCK version\n  from \"%s\"\n    to \"%s\"\n",
->>  					c.sb_version, c.version);
->>  		if (memcmp(c.sb_version, c.version, VERSION_LEN)) {
->> -			int ret;
->> -
->>  			memcpy(sbi->raw_super->version,
->>  						c.version, VERSION_LEN);
->> -			ret = dev_write(sbi->raw_super, offset,
->> -					sizeof(struct f2fs_super_block));
->> -			ASSERT(ret >= 0);
->> +			update_superblock(sbi->raw_super, 1 << sb_addr);
->>  
->>  			c.auto_fix = 0;
->>  			c.fix_on = 1;
->> @@ -659,7 +646,7 @@ int validate_super_block(struct f2fs_sb_info *sbi, int block)
->>  
->>  	free(sbi->raw_super);
->>  	sbi->raw_super = NULL;
->> -	MSG(0, "\tCan't find a valid F2FS superblock at 0x%x\n", block);
->> +	MSG(0, "\tCan't find a valid F2FS superblock at 0x%x\n", sb_addr);
->>  
->>  	return -EINVAL;
->>  }
->> @@ -2230,21 +2217,10 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
->>  	ASSERT(ret >= 0);
->>  }
->>  
->> -void write_superblock(struct f2fs_super_block *new_sb)
->> +void update_superblock(struct f2fs_super_block *new_sb, int sb_mask)
->>  {
->> -	int index, ret;
->> -	u_int8_t *buf;
->> -
->> -	buf = calloc(BLOCK_SZ, 1);
->> -	ASSERT(buf);
->> -
->> -	memcpy(buf + F2FS_SUPER_OFFSET, new_sb, sizeof(*new_sb));
->> -	for (index = 0; index < 2; index++) {
->> -		ret = dev_write_block(buf, index);
->> -		ASSERT(ret >= 0);
->> -	}
->> -	free(buf);
->> -	DBG(0, "Info: Done to rebuild superblock\n");
->> +	ASSERT(__write_superblock(new_sb, sb_mask));
->> +	DBG(0, "Info: Done to update superblock\n");
->>  }
->>  
->>  void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
->> @@ -2385,9 +2361,7 @@ void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
->>  
->>  static int check_sector_size(struct f2fs_super_block *sb)
->>  {
->> -	int index;
->>  	u_int32_t log_sectorsize, log_sectors_per_block;
->> -	u_int8_t *zero_buff;
->>  
->>  	log_sectorsize = log_base_2(c.sector_size);
->>  	log_sectors_per_block = log_base_2(c.sectors_per_blk);
->> @@ -2396,24 +2370,10 @@ static int check_sector_size(struct f2fs_super_block *sb)
->>  			log_sectors_per_block == get_sb(log_sectors_per_block))
->>  		return 0;
->>  
->> -	zero_buff = calloc(F2FS_BLKSIZE, 1);
->> -	ASSERT(zero_buff);
->> -
->>  	set_sb(log_sectorsize, log_sectorsize);
->>  	set_sb(log_sectors_per_block, log_sectors_per_block);
->>  
->> -	memcpy(zero_buff + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
->> -	DBG(1, "\tWriting super block, at offset 0x%08x\n", 0);
->> -	for (index = 0; index < 2; index++) {
->> -		if (dev_write(zero_buff, index * F2FS_BLKSIZE, F2FS_BLKSIZE)) {
->> -			MSG(1, "\tError: Failed while writing supe_blk "
->> -				"on disk!!! index : %d\n", index);
->> -			free(zero_buff);
->> -			return -1;
->> -		}
->> -	}
->> -
->> -	free(zero_buff);
->> +	update_superblock(sb, SB_ALL);
->>  	return 0;
->>  }
->>  
->> @@ -2434,7 +2394,7 @@ static void tune_sb_features(struct f2fs_sb_info *sbi)
->>  	if (!sb_changed)
->>  		return;
->>  
->> -	write_superblock(sb);
->> +	update_superblock(sb, SB_ALL);
->>  }
->>  
->>  int f2fs_do_mount(struct f2fs_sb_info *sbi)
->> @@ -2444,9 +2404,9 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
->>  	int ret;
->>  
->>  	sbi->active_logs = NR_CURSEG_TYPE;
->> -	ret = validate_super_block(sbi, 0);
->> +	ret = validate_super_block(sbi, SB_ADDR_0);
->>  	if (ret) {
->> -		ret = validate_super_block(sbi, 1);
->> +		ret = validate_super_block(sbi, SB_ADDR_1);
->>  		if (ret)
->>  			return -1;
->>  	}
->> diff --git a/fsck/resize.c b/fsck/resize.c
->> index e9612b3..5161a1f 100644
->> --- a/fsck/resize.c
->> +++ b/fsck/resize.c
->> @@ -577,22 +577,6 @@ static void rebuild_checkpoint(struct f2fs_sb_info *sbi,
->>  	DBG(0, "Info: Done to rebuild checkpoint blocks\n");
->>  }
->>  
->> -static void rebuild_superblock(struct f2fs_super_block *new_sb)
->> -{
->> -	int index, ret;
->> -	u_int8_t *buf;
->> -
->> -	buf = calloc(BLOCK_SZ, 1);
->> -
->> -	memcpy(buf + F2FS_SUPER_OFFSET, new_sb, sizeof(*new_sb));
->> -	for (index = 0; index < 2; index++) {
->> -		ret = dev_write_block(buf, index);
->> -		ASSERT(ret >= 0);
->> -	}
->> -	free(buf);
->> -	DBG(0, "Info: Done to rebuild superblock\n");
->> -}
->> -
->>  static int f2fs_resize_grow(struct f2fs_sb_info *sbi)
->>  {
->>  	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
->> @@ -644,7 +628,7 @@ static int f2fs_resize_grow(struct f2fs_sb_info *sbi)
->>  	migrate_nat(sbi, new_sb);
->>  	migrate_sit(sbi, new_sb, offset_seg);
->>  	rebuild_checkpoint(sbi, new_sb, offset_seg);
->> -	write_superblock(new_sb);
->> +	update_superblock(new_sb, SB_ALL);
->>  	return 0;
->>  }
->>  
->> @@ -695,7 +679,7 @@ static int f2fs_resize_shrink(struct f2fs_sb_info *sbi)
->>  		return -ENOSPC;
->>  	}
->>  
->> -	rebuild_superblock(new_sb);
->> +	update_superblock(new_sb, SB_ALL);
->>  	rebuild_checkpoint(sbi, new_sb, 0);
->>  	/*if (!c.safe_resize) {
->>  		migrate_sit(sbi, new_sb, offset_seg);
->> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
->> index e279b9f..b0d9b9b 100644
->> --- a/include/f2fs_fs.h
->> +++ b/include/f2fs_fs.h
->> @@ -1410,4 +1410,35 @@ static inline int parse_root_owner(char *ids,
->>  	return 0;
->>  }
->>  
->> +enum SB_ADDR {
->> +	SB_ADDR_0,
->> +	SB_ADDR_1,
->> +	SB_ADDR_MAX,
->> +};
->> +
->> +#define SB_FIRST	(1 << SB_ADDR_0)
->> +#define SB_SECOND	(1 << SB_ADDR_1)
->> +#define SB_ALL		(SB_FIRST | SB_SECOND)
->> +
->> +static inline int __write_superblock(struct f2fs_super_block *sb, int sb_mask)
->> +{
->> +	int index, ret;
->> +	u_int8_t *buf;
->> +
->> +	buf = calloc(F2FS_BLKSIZE, 1);
->> +	ASSERT(buf);
->> +
->> +	memcpy(buf + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
->> +	for (index = 0; index < SB_ADDR_MAX; index++) {
->> +		if ((1 << index) & sb_mask) {
->> +			ret = dev_write_block(buf, index);
->> +			if (ret)
-> 
-> Leaving some messages here and call free(buf) to avoid memory leak
-> 
-
-:( Sorry, I'll fix it in the next version.
-
-> Thanks,
-> 
->> +				return ret;
->> +		}
->> +	}
->> +
->> +	free(buf);
->> +	return 0;
->> +}
->> +
->>  #endif	/*__F2FS_FS_H */
->> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
->> index 621126c..7e3846e 100644
->> --- a/mkfs/f2fs_format.c
->> +++ b/mkfs/f2fs_format.c
->> @@ -979,24 +979,7 @@ free_cp:
->>  
->>  static int f2fs_write_super_block(void)
->>  {
->> -	int index;
->> -	u_int8_t *zero_buff;
->> -
->> -	zero_buff = calloc(F2FS_BLKSIZE, 1);
->> -
->> -	memcpy(zero_buff + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
->> -	DBG(1, "\tWriting super block, at offset 0x%08x\n", 0);
->> -	for (index = 0; index < 2; index++) {
->> -		if (dev_write_block(zero_buff, index)) {
->> -			MSG(1, "\tError: While while writing supe_blk "
->> -					"on disk!!! index : %d\n", index);
->> -			free(zero_buff);
->> -			return -1;
->> -		}
->> -	}
->> -
->> -	free(zero_buff);
->> -	return 0;
->> +	return __write_superblock(sb, SB_ALL);
->>  }
->>  
->>  #ifndef WITH_ANDROID
+>> IMO, it only impact sequential read performance in a large file which may be
+>> fragmented during multi-thread writing.
 >>
+>> In android environment, mostly, the large file should be cold type, such as apk,
+>> mp3, rmvb, jpeg..., so I think we only need to serialize writepages() for cold
+>> data area writer.
+>>
+>> So how about adding a mount option to serialize writepage() for different type
+>> of log, e.g. in android, using serialize=4; by default, using serialize=7
+>> HOT_DATA	1
+>> WARM_DATA	2
+>> COLD_DATA	4
 > 
-> .
+> Well, I don't think we need to give too many mount options for this fragmented
+> case. How about doing this for the large files only like this?
+
+Thread A write 512 pages			Thread B write 8 pages
+
+- writepages()
+ - mutex_lock(&sbi->writepages);
+  - writepage();
+...
+						- writepages()
+						 - writepage()
+						  ....
+  - writepage();
+...
+ - mutex_unlock(&sbi->writepages);
+
+Above case will also cause fragmentation since we didn't serialize all
+concurrent IO with the lock.
+
+Do we need to consider such case?
+
+Thanks,
+
 > 
-
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+>>From 4fea0b6e4da8512a72dd52afc7a51beb35966ad9 Mon Sep 17 00:00:00 2001
+> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> Date: Thu, 9 Aug 2018 17:53:34 -0700
+> Subject: [PATCH] f2fs: fix performance issue observed with multi-thread
+>  sequential read
+> 
+> This reverts the commit - "b93f771 - f2fs: remove writepages lock"
+> to fix the drop in sequential read throughput.
+> 
+> Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
+> device: UFS
+> 
+> Before -
+> read throughput: 185 MB/s
+> total read requests: 85177 (of these ~80000 are 4KB size requests).
+> total write requests: 2546 (of these ~2208 requests are written in 512KB).
+> 
+> After -
+> read throughput: 758 MB/s
+> total read requests: 2417 (of these ~2042 are 512KB reads).
+> total write requests: 2701 (of these ~2034 requests are written in 512KB).
+> 
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++++++
+>  fs/f2fs/data.c                          | 10 ++++++++++
+>  fs/f2fs/f2fs.h                          |  2 ++
+>  fs/f2fs/segment.c                       |  1 +
+>  fs/f2fs/super.c                         |  1 +
+>  fs/f2fs/sysfs.c                         |  2 ++
+>  6 files changed, 24 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+> index 9b0123388f18..94a24aedcdb2 100644
+> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+> @@ -51,6 +51,14 @@ Description:
+>  		 Controls the dirty page count condition for the in-place-update
+>  		 policies.
+>  
+> +What:		/sys/fs/f2fs/<disk>/min_seq_blocks
+> +Date:		August 2018
+> +Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
+> +Description:
+> +		 Controls the dirty page count condition for batched sequential
+> +		 writes in ->writepages.
+> +
+> +
+>  What:		/sys/fs/f2fs/<disk>/min_hot_blocks
+>  Date:		March 2017
+>  Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 45f043ee48bd..f09231b1cc74 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -2132,6 +2132,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>  	struct blk_plug plug;
+>  	int ret;
+> +	bool locked = false;
+>  
+>  	/* deal with chardevs and other special file */
+>  	if (!mapping->a_ops->writepage)
+> @@ -2162,10 +2163,19 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+>  	else if (atomic_read(&sbi->wb_sync_req[DATA]))
+>  		goto skip_write;
+>  
+> +	if (!S_ISDIR(inode->i_mode) &&
+> +			get_dirty_pages(inode) <= SM_I(sbi)->min_seq_blocks) {
+> +		mutex_lock(&sbi->writepages);
+> +		locked = true;
+> +	}
+> +
+>  	blk_start_plug(&plug);
+>  	ret = f2fs_write_cache_pages(mapping, wbc, io_type);
+>  	blk_finish_plug(&plug);
+>  
+> +	if (locked)
+> +		mutex_unlock(&sbi->writepages);
+> +
+>  	if (wbc->sync_mode == WB_SYNC_ALL)
+>  		atomic_dec(&sbi->wb_sync_req[DATA]);
+>  	/*
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 375aa9f30cfa..098bdedc28bf 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -913,6 +913,7 @@ struct f2fs_sm_info {
+>  	unsigned int ipu_policy;	/* in-place-update policy */
+>  	unsigned int min_ipu_util;	/* in-place-update threshold */
+>  	unsigned int min_fsync_blocks;	/* threshold for fsync */
+> +	unsigned int min_seq_blocks;	/* threshold for sequential blocks */
+>  	unsigned int min_hot_blocks;	/* threshold for hot block allocation */
+>  	unsigned int min_ssr_sections;	/* threshold to trigger SSR allocation */
+>  
+> @@ -1133,6 +1134,7 @@ struct f2fs_sb_info {
+>  	struct rw_semaphore sb_lock;		/* lock for raw super block */
+>  	int valid_super_block;			/* valid super block no */
+>  	unsigned long s_flag;				/* flags for sbi */
+> +	struct mutex writepages;		/* mutex for writepages() */
+>  
+>  #ifdef CONFIG_BLK_DEV_ZONED
+>  	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 63fc647f9ac2..ffea2d1303bd 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -4131,6 +4131,7 @@ int f2fs_build_segment_manager(struct f2fs_sb_info *sbi)
+>  		sm_info->ipu_policy = 1 << F2FS_IPU_FSYNC;
+>  	sm_info->min_ipu_util = DEF_MIN_IPU_UTIL;
+>  	sm_info->min_fsync_blocks = DEF_MIN_FSYNC_BLOCKS;
+> +	sm_info->min_seq_blocks = sbi->blocks_per_seg * sbi->segs_per_sec;
+>  	sm_info->min_hot_blocks = DEF_MIN_HOT_BLOCKS;
+>  	sm_info->min_ssr_sections = reserved_sections(sbi);
+>  
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index be41dbd7b261..53d70b64fea1 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -2842,6 +2842,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  	/* init f2fs-specific super block info */
+>  	sbi->valid_super_block = valid_super_block;
+>  	mutex_init(&sbi->gc_mutex);
+> +	mutex_init(&sbi->writepages);
+>  	mutex_init(&sbi->cp_mutex);
+>  	init_rwsem(&sbi->node_write);
+>  	init_rwsem(&sbi->node_change);
+> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> index cd2e030e47b8..81c0e5337443 100644
+> --- a/fs/f2fs/sysfs.c
+> +++ b/fs/f2fs/sysfs.c
+> @@ -397,6 +397,7 @@ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, batched_trim_sections, trim_sections);
+>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, ipu_policy, ipu_policy);
+>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ipu_util, min_ipu_util);
+>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_fsync_blocks, min_fsync_blocks);
+> +F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_seq_blocks, min_seq_blocks);
+>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_hot_blocks, min_hot_blocks);
+>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ssr_sections, min_ssr_sections);
+>  F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ram_thresh, ram_thresh);
+> @@ -449,6 +450,7 @@ static struct attribute *f2fs_attrs[] = {
+>  	ATTR_LIST(ipu_policy),
+>  	ATTR_LIST(min_ipu_util),
+>  	ATTR_LIST(min_fsync_blocks),
+> +	ATTR_LIST(min_seq_blocks),
+>  	ATTR_LIST(min_hot_blocks),
+>  	ATTR_LIST(min_ssr_sections),
+>  	ATTR_LIST(max_victim_search),
+> 
