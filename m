@@ -1,51 +1,53 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] Revert "f2fs: use printk_ratelimited for f2fs_msg"
-Date: Tue, 14 Aug 2018 15:53:11 +0800
-Message-ID: <c59c6667-b532-42a6-2e61-752d7aba9001@huawei.com>
-References: <20180813062845.25394-1-yuchao0@huawei.com>
- <a5f29d4ed6098373fb3fe7a0194687d78d3592f7.camel@perches.com>
+From: Chengguang Xu <cgxu519@gmx.com>
+Subject: [PATCH 1/5] ext2: cache NULL when both default_acl and
+ acl are NULL
+Date: Tue, 14 Aug 2018 22:16:30 +0800
+Message-ID: <20180814141634.5471-1-cgxu519@gmx.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <a5f29d4ed6098373fb3fe7a0194687d78d3592f7.camel@perches.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joe Perches <joe@perches.com>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jack@suse.com, tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org, yuchao0@huawei.com, shaggy@kernel.org, hubcap@omnibond.com, martin@omnibond.com
+Cc: jfs-discussion@lists.sourceforge.net, Chengguang Xu <cgxu519@gmx.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org, devel@lists.orangefs.org
 
-Hi Joe, thanks for pointing out this, I didn't see any cases need to be limited now.
+default_acl and acl of newly created inode will be initiated
+as ACL_NOT_CACHED in vfs function inode_init_always() and later
+will be updated by calling xxx_init_acl() in specific filesystems.
+Howerver, when default_acl and acl are NULL then they keep the value
+of ACL_NOT_CACHED, this patch tries to cache NULL for acl/default_acl
+in this case.
 
-Thanks,
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+---
+ fs/ext2/acl.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-On 2018/8/13 17:50, Joe Perches wrote:
-> On Mon, 2018-08-13 at 14:28 +0800, Chao Yu wrote:
->> Don't limit printing log, so that we will not miss any key messages.
->>
->> This reverts commit a36c106dffb616250117efb1cab271c19a8f94ff.
-> []
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> []
->> @@ -209,7 +209,7 @@ void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...)
->>  	va_start(args, fmt);
->>  	vaf.fmt = fmt;
->>  	vaf.va = &args;
->> -	printk_ratelimited("%sF2FS-fs (%s): %pV\n", level, sb->s_id, &vaf);
->> +	printk("%sF2FS-fs (%s): %pV\n", level, sb->s_id, &vaf);
->>  	va_end(args);
->>  }
-> 
-> If there was value in ratelimiting these messages at all,
-> perhaps there is value in using a specific ratelimit_state
-> other than
-> 
-> 	static DEFINE_RATELIMIT_STATE(_rs,				\
-> 				      DEFAULT_RATELIMIT_INTERVAL,	\
-> 				      DEFAULT_RATELIMIT_BURST);		\
-> 
-> 
-> 
-> 
-> .
-> 
+diff --git a/fs/ext2/acl.c b/fs/ext2/acl.c
+index 224c04abb2e5..74411e8ea507 100644
+--- a/fs/ext2/acl.c
++++ b/fs/ext2/acl.c
+@@ -262,5 +262,8 @@ ext2_init_acl(struct inode *inode, struct inode *dir)
+ 			error = __ext2_set_acl(inode, acl, ACL_TYPE_ACCESS);
+ 		posix_acl_release(acl);
+ 	}
++	if (!default_acl && !acl)
++		cache_no_acl(inode);
++
+ 	return error;
+ }
+-- 
+2.17.1
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
