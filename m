@@ -1,285 +1,219 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid fi->i_gc_rwsem[WRITE] lock in
- f2fs_gc
-Date: Tue, 14 Aug 2018 14:21:25 +0800
-Message-ID: <63a76905-a6e3-f249-c623-df09c59ee020@huawei.com>
-References: <20180730013242.15647-1-jaegeuk@kernel.org>
- <f62425be-b378-1e6b-e305-64a61b139dd9@huawei.com>
- <20180730041805.GA20178@jaegeuk-macbookpro.roam.corp.google.com>
- <aa12112e-0ff3-997a-24bd-12db30ad7284@huawei.com>
- <20180730090849.GA22089@jaegeuk-macbookpro.roam.corp.google.com>
- <171084b5-acd5-97fa-205e-202b752baaf0@huawei.com>
- <20180730100039.GA25037@jaegeuk-macbookpro.roam.corp.google.com>
- <5dfbb141-9bd9-f4fe-6250-5ec0baddd0fd@kernel.org>
- <d0cbc6bb-9e92-2803-b84d-729c78b21d5b@kernel.org>
- <20180813201251.GB27044@jaegeuk-macbookpro.roam.corp.google.com>
+From: Junling Zheng <zhengjunling@huawei.com>
+Subject: [RFC PATCH RESEND 4/4] f2fs-tools: introduce sb checksum
+Date: Tue, 14 Aug 2018 14:56:16 +0800
+Message-ID: <20180814065616.33278-4-zhengjunling@huawei.com>
+References: <20180814065616.33278-1-zhengjunling@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180813201251.GB27044@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <zhengjunling@huawei.com>) id 1fpTFs-0008AM-DZ
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Aug 2018 06:56:36 +0000
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fpTFq-0003cq-QL
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Aug 2018 06:56:36 +0000
+In-Reply-To: <20180814065616.33278-1-zhengjunling@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/8/14 4:12, Jaegeuk Kim wrote:
-> On 08/12, Chao Yu wrote:
->> On 2018/8/4 10:31, Chao Yu wrote:
->>> How about keep lock order as:
->>>
->>> - inode_lock
->>>  - i_mmap_sem
->>>   - lock_all()
->>>   - unlock_all()
->>>   - i_gc_rwsem[WRITE]
->>>    - lock_op()
->>
->> I got below warning when testing last dev-test:
->>
->> - f2fs_direct_IO			current lock dependency
->>  - i_gc_rwsem[WRITE]
->> 					- i_mmap_sem
->>   - do_blockdev_direct_IO
->>    - i_mmap_sem
->> 					 - i_gc_rwsem[WRITE]
->>
-> 
-> Yeah, it seems it's true.
-> How about this?
+This patch introduced crc for superblock.
 
-It looks good to me, anyway, let me check this patch with fstests again.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+---
+ fsck/mount.c       | 23 +++++++++++++++++++++++
+ fsck/resize.c      | 12 ++++++------
+ include/f2fs_fs.h  | 16 +++++++++++++++-
+ mkfs/f2fs_format.c |  3 +++
+ 4 files changed, 47 insertions(+), 7 deletions(-)
 
-Thanks,
+diff --git a/fsck/mount.c b/fsck/mount.c
+index e7ceb8d..af9b219 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -340,6 +340,7 @@ void print_raw_sb_info(struct f2fs_super_block *sb)
+ 	DISP_u32(sb, node_ino);
+ 	DISP_u32(sb, meta_ino);
+ 	DISP_u32(sb, cp_payload);
++	DISP_u32(sb, crc);
+ 	DISP("%-.256s", sb, version);
+ 	printf("\n");
+ }
+@@ -467,6 +468,9 @@ void print_sb_state(struct f2fs_super_block *sb)
+ 	if (f & cpu_to_le32(F2FS_FEATURE_LOST_FOUND)) {
+ 		MSG(0, "%s", " lost_found");
+ 	}
++	if (f & cpu_to_le32(F2FS_FEATURE_SB_CHKSUM)) {
++		MSG(0, "%s", " sb_checksum");
++	}
+ 	MSG(0, "\n");
+ 	MSG(0, "Info: superblock encrypt level = %d, salt = ",
+ 					sb->encryption_level);
+@@ -555,10 +559,29 @@ static inline int sanity_check_area_boundary(struct f2fs_super_block *sb,
+ 	return 0;
+ }
+ 
++static int verify_sb_chksum(struct f2fs_super_block *sb)
++{
++	if (SB_CHKSUM_OFFSET != get_sb(checksum_offset)) {
++		MSG(0, "\tInvalid SB CRC offset: %u\n",
++					get_sb(checksum_offset));
++		return -1;
++	}
++	if (f2fs_crc_valid(get_sb(crc), sb,
++			get_sb(checksum_offset))) {
++		MSG(0, "\tInvalid SB CRC: 0x%x\n", get_sb(crc));
++		return -1;
++	}
++	return 0;
++}
++
+ int sanity_check_raw_super(struct f2fs_super_block *sb, enum SB_ADDR sb_addr)
+ {
+ 	unsigned int blocksize;
+ 
++	if ((get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) &&
++					verify_sb_chksum(sb))
++		return -1;
++
+ 	if (F2FS_SUPER_MAGIC != get_sb(magic))
+ 		return -1;
+ 
+diff --git a/fsck/resize.c b/fsck/resize.c
+index 5161a1f..3462165 100644
+--- a/fsck/resize.c
++++ b/fsck/resize.c
+@@ -603,9 +603,6 @@ static int f2fs_resize_grow(struct f2fs_sb_info *sbi)
+ 		}
+ 	}
+ 
+-	print_raw_sb_info(sb);
+-	print_raw_sb_info(new_sb);
+-
+ 	old_main_blkaddr = get_sb(main_blkaddr);
+ 	new_main_blkaddr = get_newsb(main_blkaddr);
+ 	offset = new_main_blkaddr - old_main_blkaddr;
+@@ -629,6 +626,9 @@ static int f2fs_resize_grow(struct f2fs_sb_info *sbi)
+ 	migrate_sit(sbi, new_sb, offset_seg);
+ 	rebuild_checkpoint(sbi, new_sb, offset_seg);
+ 	update_superblock(new_sb, SB_ALL);
++	print_raw_sb_info(sb);
++	print_raw_sb_info(new_sb);
++
+ 	return 0;
+ }
+ 
+@@ -658,9 +658,6 @@ static int f2fs_resize_shrink(struct f2fs_sb_info *sbi)
+ 		}
+ 	}
+ 
+-	print_raw_sb_info(sb);
+-	print_raw_sb_info(new_sb);
+-
+ 	old_main_blkaddr = get_sb(main_blkaddr);
+ 	new_main_blkaddr = get_newsb(main_blkaddr);
+ 	offset = old_main_blkaddr - new_main_blkaddr;
+@@ -690,6 +687,9 @@ static int f2fs_resize_shrink(struct f2fs_sb_info *sbi)
+ 	/* move whole data region */
+ 	//if (err)
+ 	//	migrate_main(sbi, offset);
++	print_raw_sb_info(sb);
++	print_raw_sb_info(new_sb);
++
+ 	return 0;
+ }
+ 
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index 791e64f..7446baa 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -279,6 +279,7 @@ static inline uint64_t bswap_64(uint64_t val)
+ #define BITS_PER_BYTE		8
+ #define F2FS_SUPER_MAGIC	0xF2F52010	/* F2FS Magic Number */
+ #define CP_CHKSUM_OFFSET	4092
++#define SB_CHKSUM_OFFSET	3068
+ #define MAX_PATH_LEN		64
+ #define MAX_DEVICES		8
+ 
+@@ -579,6 +580,7 @@ enum {
+ #define F2FS_FEATURE_INODE_CRTIME	0x0100
+ #define F2FS_FEATURE_LOST_FOUND		0x0200
+ #define F2FS_FEATURE_VERITY		0x0400	/* reserved */
++#define F2FS_FEATURE_SB_CHKSUM		0x0800
+ 
+ #define MAX_VOLUME_NAME		512
+ 
+@@ -632,7 +634,8 @@ struct f2fs_super_block {
+ 	struct f2fs_device devs[MAX_DEVICES];	/* device list */
+ 	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
+ 	__u8 hot_ext_count;		/* # of hot file extension */
+-	__u8 reserved[314];		/* valid reserved region */
++	__u8 reserved[310];		/* valid reserved region */
++	__le32 crc;			/* checksum of superblock */
+ } __attribute__((packed));
+ 
+ /*
+@@ -1337,6 +1340,7 @@ struct feature feature_table[] = {					\
+ 	{ "inode_crtime",		F2FS_FEATURE_INODE_CRTIME },	\
+ 	{ "lost_found",			F2FS_FEATURE_LOST_FOUND },	\
+ 	{ "verity",			F2FS_FEATURE_VERITY },	/* reserved */ \
++	{ "sb_checksum",		F2FS_FEATURE_SB_CHKSUM },	\
+ 	{ NULL,				0x0},				\
+ };
+ 
+@@ -1424,10 +1428,20 @@ static inline int __write_superblock(struct f2fs_super_block *sb, int sb_mask)
+ {
+ 	int index, ret;
+ 	u_int8_t *buf;
++	u32 old_crc, new_crc;
+ 
+ 	buf = calloc(F2FS_BLKSIZE, 1);
+ 	ASSERT(buf);
+ 
++	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) {
++		old_crc = get_sb(crc);
++		new_crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, sb,
++						SB_CHKSUM_OFFSET);
++		set_sb(crc, new_crc);
++		MSG(0, "Info: SB CRC is set successfully"
++				"(0x%x -> 0x%x)\n", old_crc, new_crc);
++	}
++
+ 	memcpy(buf + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
+ 	for (index = 0; index < SB_ADDR_MAX; index++) {
+ 		if ((1 << index) & sb_mask) {
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 7e3846e..87e33da 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -504,6 +504,9 @@ static int f2fs_prepare_super_block(void)
+ 
+ 	sb->feature = c.feature;
+ 
++	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM)
++		set_sb(checksum_offset, SB_CHKSUM_OFFSET);
++
+ 	return 0;
+ }
+ 
+-- 
+2.18.0
 
-> 
-> ---
->  fs/f2fs/data.c |  4 ++--
->  fs/f2fs/file.c | 43 +++++++++++++++++++++++--------------------
->  2 files changed, 25 insertions(+), 22 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index f09231b1cc74..021923dc666b 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -2208,14 +2208,14 @@ static void f2fs_write_failed(struct address_space *mapping, loff_t to)
->  	loff_t i_size = i_size_read(inode);
->  
->  	if (to > i_size) {
-> -		down_write(&F2FS_I(inode)->i_mmap_sem);
->  		down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> +		down_write(&F2FS_I(inode)->i_mmap_sem);
->  
->  		truncate_pagecache(inode, i_size);
->  		f2fs_truncate_blocks(inode, i_size, true);
->  
-> -		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->  		up_write(&F2FS_I(inode)->i_mmap_sem);
-> +		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->  	}
->  }
->  
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 560751adba01..8b13afb23734 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -798,8 +798,8 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
->  	if (attr->ia_valid & ATTR_SIZE) {
->  		bool to_smaller = (attr->ia_size <= i_size_read(inode));
->  
-> -		down_write(&F2FS_I(inode)->i_mmap_sem);
->  		down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> +		down_write(&F2FS_I(inode)->i_mmap_sem);
->  
->  		truncate_setsize(inode, attr->ia_size);
->  
-> @@ -809,8 +809,8 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
->  		 * do not trim all blocks after i_size if target size is
->  		 * larger than i_size.
->  		 */
-> -		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->  		up_write(&F2FS_I(inode)->i_mmap_sem);
-> +		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->  
->  		if (err)
->  			return err;
-> @@ -963,8 +963,8 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
->  			blk_start = (loff_t)pg_start << PAGE_SHIFT;
->  			blk_end = (loff_t)pg_end << PAGE_SHIFT;
->  
-> -			down_write(&F2FS_I(inode)->i_mmap_sem);
->  			down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> +			down_write(&F2FS_I(inode)->i_mmap_sem);
->  
->  			truncate_inode_pages_range(mapping, blk_start,
->  					blk_end - 1);
-> @@ -973,8 +973,8 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
->  			ret = f2fs_truncate_hole(inode, pg_start, pg_end);
->  			f2fs_unlock_op(sbi);
->  
-> -			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->  			up_write(&F2FS_I(inode)->i_mmap_sem);
-> +			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->  		}
->  	}
->  
-> @@ -1201,6 +1201,7 @@ static int f2fs_do_collapse(struct inode *inode, loff_t offset, loff_t len)
->  
->  	/* avoid gc operation during block exchange */
->  	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> +	down_write(&F2FS_I(inode)->i_mmap_sem);
->  
->  	f2fs_lock_op(sbi);
->  	f2fs_drop_extent_tree(inode);
-> @@ -1208,6 +1209,7 @@ static int f2fs_do_collapse(struct inode *inode, loff_t offset, loff_t len)
->  	ret = __exchange_data_block(inode, inode, end, start, nrpages - end, true);
->  	f2fs_unlock_op(sbi);
->  
-> +	up_write(&F2FS_I(inode)->i_mmap_sem);
->  	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->  	return ret;
->  }
-> @@ -1228,17 +1230,17 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
->  	if (ret)
->  		return ret;
->  
-> -	down_write(&F2FS_I(inode)->i_mmap_sem);
->  	/* write out all dirty pages from offset */
->  	ret = filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
->  	if (ret)
-> -		goto out_unlock;
-> +		return ret;
->  
->  	ret = f2fs_do_collapse(inode, offset, len);
->  	if (ret)
-> -		goto out_unlock;
-> +		return ret;
->  
->  	/* write out all moved pages, if possible */
-> +	down_write(&F2FS_I(inode)->i_mmap_sem);
->  	filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
->  	truncate_pagecache(inode, offset);
->  
-> @@ -1246,10 +1248,9 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
->  	truncate_pagecache(inode, new_size);
->  
->  	ret = f2fs_truncate_blocks(inode, new_size, true);
-> +	up_write(&F2FS_I(inode)->i_mmap_sem);
->  	if (!ret)
->  		f2fs_i_size_write(inode, new_size);
-> -out_unlock:
-> -	up_write(&F2FS_I(inode)->i_mmap_sem);
->  	return ret;
->  }
->  
-> @@ -1315,10 +1316,9 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
->  	if (ret)
->  		return ret;
->  
-> -	down_write(&F2FS_I(inode)->i_mmap_sem);
->  	ret = filemap_write_and_wait_range(mapping, offset, offset + len - 1);
->  	if (ret)
-> -		goto out_sem;
-> +		return ret;
->  
->  	pg_start = ((unsigned long long) offset) >> PAGE_SHIFT;
->  	pg_end = ((unsigned long long) offset + len) >> PAGE_SHIFT;
-> @@ -1330,7 +1330,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
->  		ret = fill_zero(inode, pg_start, off_start,
->  						off_end - off_start);
->  		if (ret)
-> -			goto out_sem;
-> +			return ret;
->  
->  		new_size = max_t(loff_t, new_size, offset + len);
->  	} else {
-> @@ -1338,7 +1338,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
->  			ret = fill_zero(inode, pg_start++, off_start,
->  						PAGE_SIZE - off_start);
->  			if (ret)
-> -				goto out_sem;
-> +				return ret;
->  
->  			new_size = max_t(loff_t, new_size,
->  					(loff_t)pg_start << PAGE_SHIFT);
-> @@ -1350,6 +1350,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
->  			pgoff_t end;
->  
->  			down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> +			down_write(&F2FS_I(inode)->i_mmap_sem);
->  
->  			truncate_pagecache_range(inode,
->  				(loff_t)index << PAGE_SHIFT,
-> @@ -1361,6 +1362,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
->  			ret = f2fs_get_dnode_of_data(&dn, index, ALLOC_NODE);
->  			if (ret) {
->  				f2fs_unlock_op(sbi);
-> +				up_write(&F2FS_I(inode)->i_mmap_sem);
->  				up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->  				goto out;
->  			}
-> @@ -1372,6 +1374,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
->  			f2fs_put_dnode(&dn);
->  
->  			f2fs_unlock_op(sbi);
-> +			up_write(&F2FS_I(inode)->i_mmap_sem);
->  			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->  
->  			f2fs_balance_fs(sbi, dn.node_changed);
-> @@ -1400,9 +1403,6 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
->  		else
->  			f2fs_i_size_write(inode, new_size);
->  	}
-> -out_sem:
-> -	up_write(&F2FS_I(inode)->i_mmap_sem);
-> -
->  	return ret;
->  }
->  
-> @@ -1433,13 +1433,14 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
->  
->  	down_write(&F2FS_I(inode)->i_mmap_sem);
->  	ret = f2fs_truncate_blocks(inode, i_size_read(inode), true);
-> +	up_write(&F2FS_I(inode)->i_mmap_sem);
->  	if (ret)
-> -		goto out;
-> +		return ret;
->  
->  	/* write out all dirty pages from offset */
->  	ret = filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
->  	if (ret)
-> -		goto out;
-> +		return ret;
->  
->  	pg_start = offset >> PAGE_SHIFT;
->  	pg_end = (offset + len) >> PAGE_SHIFT;
-> @@ -1448,6 +1449,7 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
->  
->  	/* avoid gc operation during block exchange */
->  	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> +	down_write(&F2FS_I(inode)->i_mmap_sem);
->  	truncate_pagecache(inode, offset);
->  
->  	while (!ret && idx > pg_start) {
-> @@ -1463,16 +1465,17 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
->  					idx + delta, nr, false);
->  		f2fs_unlock_op(sbi);
->  	}
-> +	up_write(&F2FS_I(inode)->i_mmap_sem);
->  	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->  
->  	/* write out all moved pages, if possible */
-> +	down_write(&F2FS_I(inode)->i_mmap_sem);
->  	filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
->  	truncate_pagecache(inode, offset);
-> +	up_write(&F2FS_I(inode)->i_mmap_sem);
->  
->  	if (!ret)
->  		f2fs_i_size_write(inode, new_size);
-> -out:
-> -	up_write(&F2FS_I(inode)->i_mmap_sem);
->  	return ret;
->  }
->  
-> 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
