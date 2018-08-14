@@ -1,36 +1,246 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: rework fault injection handling to avoid a warning
-Date: Tue, 14 Aug 2018 14:05:52 +0800
-Message-ID: <bee2baa8-1768-4e80-9f63-baf52d6359b9@huawei.com>
-References: <20180813213909.3125189-1-arnd@arndb.de>
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: fix performance issue observed with
+ multi-thread sequential read
+Date: Tue, 14 Aug 2018 14:18:09 +0800
+Message-ID: <7194f3d2-b875-376a-4c46-37c598bf3e8e@huawei.com>
+References: <20180810023758.46974-1-jaegeuk@kernel.org>
+ <20180810024859.GA48219@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180810185640.GA63079@jaegeuk-macbookpro.roam.corp.google.com>
+ <57149b77-3576-87ed-2cae-a3bc2e8088f2@huawei.com>
+ <20180813201150.GA27044@jaegeuk-macbookpro.roam.corp.google.com>
+ <0e07e79b-5b67-9355-1fa0-402a5d118bd1@huawei.com>
+ <20180814040434.GA52730@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180813213909.3125189-1-arnd@arndb.de>
+In-Reply-To: <20180814040434.GA52730@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Yunlei He <heyunlei@huawei.com>, Sheng Yong <shengyong1@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/8/14 5:38, Arnd Bergmann wrote:
-> When CONFIG_F2FS_FAULT_INJECTION is disabled, we get a warning about an
-> unused label:
+On 2018/8/14 12:04, Jaegeuk Kim wrote:
+> On 08/14, Chao Yu wrote:
+>> On 2018/8/14 4:11, Jaegeuk Kim wrote:
+>>> On 08/13, Chao Yu wrote:
+>>>> Hi Jaegeuk,
+>>>>
+>>>> On 2018/8/11 2:56, Jaegeuk Kim wrote:
+>>>>> This reverts the commit - "b93f771 - f2fs: remove writepages lock"
+>>>>> to fix the drop in sequential read throughput.
+>>>>>
+>>>>> Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
+>>>>> device: UFS
+>>>>>
+>>>>> Before -
+>>>>> read throughput: 185 MB/s
+>>>>> total read requests: 85177 (of these ~80000 are 4KB size requests).
+>>>>> total write requests: 2546 (of these ~2208 requests are written in 512KB).
+>>>>>
+>>>>> After -
+>>>>> read throughput: 758 MB/s
+>>>>> total read requests: 2417 (of these ~2042 are 512KB reads).
+>>>>> total write requests: 2701 (of these ~2034 requests are written in 512KB).
+>>>>
+>>>> IMO, it only impact sequential read performance in a large file which may be
+>>>> fragmented during multi-thread writing.
+>>>>
+>>>> In android environment, mostly, the large file should be cold type, such as apk,
+>>>> mp3, rmvb, jpeg..., so I think we only need to serialize writepages() for cold
+>>>> data area writer.
+>>>>
+>>>> So how about adding a mount option to serialize writepage() for different type
+>>>> of log, e.g. in android, using serialize=4; by default, using serialize=7
+>>>> HOT_DATA	1
+>>>> WARM_DATA	2
+>>>> COLD_DATA	4
+>>>
+>>> Well, I don't think we need to give too many mount options for this fragmented
+>>> case. How about doing this for the large files only like this?
+>>
+>> Thread A write 512 pages			Thread B write 8 pages
+>>
+>> - writepages()
+>>  - mutex_lock(&sbi->writepages);
+>>   - writepage();
+>> ...
+>> 						- writepages()
+>> 						 - writepage()
+>> 						  ....
+>>   - writepage();
+>> ...
+>>  - mutex_unlock(&sbi->writepages);
+>>
+>> Above case will also cause fragmentation since we didn't serialize all
+>> concurrent IO with the lock.
+>>
+>> Do we need to consider such case?
 > 
-> fs/f2fs/segment.c: In function '__submit_discard_cmd':
-> fs/f2fs/segment.c:1059:1: error: label 'submit' defined but not used [-Werror=unused-label]
-> 
-> This could be fixed by adding another #ifdef around it, but the more
-> reliable way of doing this seems to be to remove the other #ifdefs
-> where that is easily possible.
-> 
-> By defining time_to_inject() as a trivial stub, most of the checks for
-> CONFIG_F2FS_FAULT_INJECTION can go away. This also leads to nicer
-> formatting of the code.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> We can simply allow 512 and 8 in the same segment, which would not a big deal,
+> when considering starvation of Thread B.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Yeah, but in reality, there would be more threads competing in same log header,
+so I worry that the effect of defragmenting will not so good as we expect,
+anyway, for benchmark, it's enough.
 
 Thanks,
+
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>> >From 4fea0b6e4da8512a72dd52afc7a51beb35966ad9 Mon Sep 17 00:00:00 2001
+>>> From: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> Date: Thu, 9 Aug 2018 17:53:34 -0700
+>>> Subject: [PATCH] f2fs: fix performance issue observed with multi-thread
+>>>  sequential read
+>>>
+>>> This reverts the commit - "b93f771 - f2fs: remove writepages lock"
+>>> to fix the drop in sequential read throughput.
+>>>
+>>> Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
+>>> device: UFS
+>>>
+>>> Before -
+>>> read throughput: 185 MB/s
+>>> total read requests: 85177 (of these ~80000 are 4KB size requests).
+>>> total write requests: 2546 (of these ~2208 requests are written in 512KB).
+>>>
+>>> After -
+>>> read throughput: 758 MB/s
+>>> total read requests: 2417 (of these ~2042 are 512KB reads).
+>>> total write requests: 2701 (of these ~2034 requests are written in 512KB).
+>>>
+>>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++++++
+>>>  fs/f2fs/data.c                          | 10 ++++++++++
+>>>  fs/f2fs/f2fs.h                          |  2 ++
+>>>  fs/f2fs/segment.c                       |  1 +
+>>>  fs/f2fs/super.c                         |  1 +
+>>>  fs/f2fs/sysfs.c                         |  2 ++
+>>>  6 files changed, 24 insertions(+)
+>>>
+>>> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+>>> index 9b0123388f18..94a24aedcdb2 100644
+>>> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+>>> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+>>> @@ -51,6 +51,14 @@ Description:
+>>>  		 Controls the dirty page count condition for the in-place-update
+>>>  		 policies.
+>>>  
+>>> +What:		/sys/fs/f2fs/<disk>/min_seq_blocks
+>>> +Date:		August 2018
+>>> +Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
+>>> +Description:
+>>> +		 Controls the dirty page count condition for batched sequential
+>>> +		 writes in ->writepages.
+>>> +
+>>> +
+>>>  What:		/sys/fs/f2fs/<disk>/min_hot_blocks
+>>>  Date:		March 2017
+>>>  Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
+>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>> index 45f043ee48bd..f09231b1cc74 100644
+>>> --- a/fs/f2fs/data.c
+>>> +++ b/fs/f2fs/data.c
+>>> @@ -2132,6 +2132,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+>>>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>>>  	struct blk_plug plug;
+>>>  	int ret;
+>>> +	bool locked = false;
+>>>  
+>>>  	/* deal with chardevs and other special file */
+>>>  	if (!mapping->a_ops->writepage)
+>>> @@ -2162,10 +2163,19 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+>>>  	else if (atomic_read(&sbi->wb_sync_req[DATA]))
+>>>  		goto skip_write;
+>>>  
+>>> +	if (!S_ISDIR(inode->i_mode) &&
+>>> +			get_dirty_pages(inode) <= SM_I(sbi)->min_seq_blocks) {
+>>> +		mutex_lock(&sbi->writepages);
+>>> +		locked = true;
+>>> +	}
+>>> +
+>>>  	blk_start_plug(&plug);
+>>>  	ret = f2fs_write_cache_pages(mapping, wbc, io_type);
+>>>  	blk_finish_plug(&plug);
+>>>  
+>>> +	if (locked)
+>>> +		mutex_unlock(&sbi->writepages);
+>>> +
+>>>  	if (wbc->sync_mode == WB_SYNC_ALL)
+>>>  		atomic_dec(&sbi->wb_sync_req[DATA]);
+>>>  	/*
+>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>> index 375aa9f30cfa..098bdedc28bf 100644
+>>> --- a/fs/f2fs/f2fs.h
+>>> +++ b/fs/f2fs/f2fs.h
+>>> @@ -913,6 +913,7 @@ struct f2fs_sm_info {
+>>>  	unsigned int ipu_policy;	/* in-place-update policy */
+>>>  	unsigned int min_ipu_util;	/* in-place-update threshold */
+>>>  	unsigned int min_fsync_blocks;	/* threshold for fsync */
+>>> +	unsigned int min_seq_blocks;	/* threshold for sequential blocks */
+>>>  	unsigned int min_hot_blocks;	/* threshold for hot block allocation */
+>>>  	unsigned int min_ssr_sections;	/* threshold to trigger SSR allocation */
+>>>  
+>>> @@ -1133,6 +1134,7 @@ struct f2fs_sb_info {
+>>>  	struct rw_semaphore sb_lock;		/* lock for raw super block */
+>>>  	int valid_super_block;			/* valid super block no */
+>>>  	unsigned long s_flag;				/* flags for sbi */
+>>> +	struct mutex writepages;		/* mutex for writepages() */
+>>>  
+>>>  #ifdef CONFIG_BLK_DEV_ZONED
+>>>  	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
+>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>> index 63fc647f9ac2..ffea2d1303bd 100644
+>>> --- a/fs/f2fs/segment.c
+>>> +++ b/fs/f2fs/segment.c
+>>> @@ -4131,6 +4131,7 @@ int f2fs_build_segment_manager(struct f2fs_sb_info *sbi)
+>>>  		sm_info->ipu_policy = 1 << F2FS_IPU_FSYNC;
+>>>  	sm_info->min_ipu_util = DEF_MIN_IPU_UTIL;
+>>>  	sm_info->min_fsync_blocks = DEF_MIN_FSYNC_BLOCKS;
+>>> +	sm_info->min_seq_blocks = sbi->blocks_per_seg * sbi->segs_per_sec;
+>>>  	sm_info->min_hot_blocks = DEF_MIN_HOT_BLOCKS;
+>>>  	sm_info->min_ssr_sections = reserved_sections(sbi);
+>>>  
+>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>> index be41dbd7b261..53d70b64fea1 100644
+>>> --- a/fs/f2fs/super.c
+>>> +++ b/fs/f2fs/super.c
+>>> @@ -2842,6 +2842,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>>  	/* init f2fs-specific super block info */
+>>>  	sbi->valid_super_block = valid_super_block;
+>>>  	mutex_init(&sbi->gc_mutex);
+>>> +	mutex_init(&sbi->writepages);
+>>>  	mutex_init(&sbi->cp_mutex);
+>>>  	init_rwsem(&sbi->node_write);
+>>>  	init_rwsem(&sbi->node_change);
+>>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+>>> index cd2e030e47b8..81c0e5337443 100644
+>>> --- a/fs/f2fs/sysfs.c
+>>> +++ b/fs/f2fs/sysfs.c
+>>> @@ -397,6 +397,7 @@ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, batched_trim_sections, trim_sections);
+>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, ipu_policy, ipu_policy);
+>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ipu_util, min_ipu_util);
+>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_fsync_blocks, min_fsync_blocks);
+>>> +F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_seq_blocks, min_seq_blocks);
+>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_hot_blocks, min_hot_blocks);
+>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ssr_sections, min_ssr_sections);
+>>>  F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ram_thresh, ram_thresh);
+>>> @@ -449,6 +450,7 @@ static struct attribute *f2fs_attrs[] = {
+>>>  	ATTR_LIST(ipu_policy),
+>>>  	ATTR_LIST(min_ipu_util),
+>>>  	ATTR_LIST(min_fsync_blocks),
+>>> +	ATTR_LIST(min_seq_blocks),
+>>>  	ATTR_LIST(min_hot_blocks),
+>>>  	ATTR_LIST(min_ssr_sections),
+>>>  	ATTR_LIST(max_victim_search),
+>>>
+> 
+> .
+> 
