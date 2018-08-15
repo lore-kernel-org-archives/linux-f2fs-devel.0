@@ -1,289 +1,351 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: fix performance issue observed with
- multi-thread sequential read
-Date: Tue, 14 Aug 2018 19:15:24 -0700
-Message-ID: <20180815021524.GA84720@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180810023758.46974-1-jaegeuk@kernel.org>
- <20180810024859.GA48219@jaegeuk-macbookpro.roam.corp.google.com>
- <20180810185640.GA63079@jaegeuk-macbookpro.roam.corp.google.com>
- <57149b77-3576-87ed-2cae-a3bc2e8088f2@huawei.com>
- <20180813201150.GA27044@jaegeuk-macbookpro.roam.corp.google.com>
- <0e07e79b-5b67-9355-1fa0-402a5d118bd1@huawei.com>
- <20180814040434.GA52730@jaegeuk-macbookpro.roam.corp.google.com>
- <7194f3d2-b875-376a-4c46-37c598bf3e8e@huawei.com>
- <20180814172837.GD56510@jaegeuk-macbookpro.roam.corp.google.com>
- <167ce8f1-ee4d-2ffc-3518-32850465cd0c@huawei.com>
+Subject: Re: [PATCH 2/2] f2fs: tune discard speed with storage
+ usage rate
+Date: Tue, 14 Aug 2018 19:33:26 -0700
+Message-ID: <20180815023326.GB84720@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180810100806.9298-1-yuchao0@huawei.com>
+ <20180810100806.9298-2-yuchao0@huawei.com>
+ <20180814041906.GC52730@jaegeuk-macbookpro.roam.corp.google.com>
+ <57d9b6ea-68a5-4736-0b34-74db539d8959@huawei.com>
+ <20180814172313.GC56510@jaegeuk-macbookpro.roam.corp.google.com>
+ <cf3e27a2-de20-13e7-eb5e-f0ad2781cf0f@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1fplcv-0000EO-B0
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Aug 2018 02:33:37 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fplct-000GnZ-K2
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Aug 2018 02:33:37 +0000
 Content-Disposition: inline
-In-Reply-To: <167ce8f1-ee4d-2ffc-3518-32850465cd0c@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <cf3e27a2-de20-13e7-eb5e-f0ad2781cf0f@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Chao Yu <yuchao0@huawei.com>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 On 08/15, Chao Yu wrote:
-> On 2018/8/15 1:28, Jaegeuk Kim wrote:
+> On 2018/8/15 1:23, Jaegeuk Kim wrote:
 > > On 08/14, Chao Yu wrote:
-> >> On 2018/8/14 12:04, Jaegeuk Kim wrote:
-> >>> On 08/14, Chao Yu wrote:
-> >>>> On 2018/8/14 4:11, Jaegeuk Kim wrote:
-> >>>>> On 08/13, Chao Yu wrote:
-> >>>>>> Hi Jaegeuk,
-> >>>>>>
-> >>>>>> On 2018/8/11 2:56, Jaegeuk Kim wrote:
-> >>>>>>> This reverts the commit - "b93f771 - f2fs: remove writepages lock"
-> >>>>>>> to fix the drop in sequential read throughput.
-> >>>>>>>
-> >>>>>>> Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
-> >>>>>>> device: UFS
-> >>>>>>>
-> >>>>>>> Before -
-> >>>>>>> read throughput: 185 MB/s
-> >>>>>>> total read requests: 85177 (of these ~80000 are 4KB size requests).
-> >>>>>>> total write requests: 2546 (of these ~2208 requests are written in 512KB).
-> >>>>>>>
-> >>>>>>> After -
-> >>>>>>> read throughput: 758 MB/s
-> >>>>>>> total read requests: 2417 (of these ~2042 are 512KB reads).
-> >>>>>>> total write requests: 2701 (of these ~2034 requests are written in 512KB).
-> >>>>>>
-> >>>>>> IMO, it only impact sequential read performance in a large file which may be
-> >>>>>> fragmented during multi-thread writing.
-> >>>>>>
-> >>>>>> In android environment, mostly, the large file should be cold type, such as apk,
-> >>>>>> mp3, rmvb, jpeg..., so I think we only need to serialize writepages() for cold
-> >>>>>> data area writer.
-> >>>>>>
-> >>>>>> So how about adding a mount option to serialize writepage() for different type
-> >>>>>> of log, e.g. in android, using serialize=4; by default, using serialize=7
-> >>>>>> HOT_DATA	1
-> >>>>>> WARM_DATA	2
-> >>>>>> COLD_DATA	4
-> >>>>>
-> >>>>> Well, I don't think we need to give too many mount options for this fragmented
-> >>>>> case. How about doing this for the large files only like this?
-> >>>>
-> >>>> Thread A write 512 pages			Thread B write 8 pages
-> >>>>
-> >>>> - writepages()
-> >>>>  - mutex_lock(&sbi->writepages);
-> >>>>   - writepage();
-> >>>> ...
-> >>>> 						- writepages()
-> >>>> 						 - writepage()
-> >>>> 						  ....
-> >>>>   - writepage();
-> >>>> ...
-> >>>>  - mutex_unlock(&sbi->writepages);
-> >>>>
-> >>>> Above case will also cause fragmentation since we didn't serialize all
-> >>>> concurrent IO with the lock.
-> >>>>
-> >>>> Do we need to consider such case?
+> >> On 2018/8/14 12:19, Jaegeuk Kim wrote:
+> >>> On 08/10, Chao Yu wrote:
+> >>>> Previously, discard speed was fixed mostly, and in high usage rate
+> >>>> device, we will speed up issuing discard, but it doesn't make sense
+> >>>> that in a non-full filesystem, we still issue discard with slow speed.
 > >>>
-> >>> We can simply allow 512 and 8 in the same segment, which would not a big deal,
-> >>> when considering starvation of Thread B.
+> >>> Could you please elaborate the problem in more detail? The speed depends
+> >>> on how many candidates?
 > >>
-> >> Yeah, but in reality, there would be more threads competing in same log header,
-> >> so I worry that the effect of defragmenting will not so good as we expect,
-> >> anyway, for benchmark, it's enough.
+> >> undiscard blocks are all 4k granularity.
+> >> a) utility: filesystem: 20% + undiscard blocks: 20% = flash storage: 40%
+> >> b) utility: filesystem: 40% + undiscard blocks: 25% = flash storage: 65%
+> >> c) utility: filesystem: 60% + undiscard blocks: 30% = flash storage: 100%
+> >>
+> >>
+> >> 1. for case c), we need to speed up issuing discard based on utilization of
+> >> "filesystem + undiscard" instead of just utilization of filesystem.
+> >>
+> >> -		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
+> >> -			dpolicy->granularity = 1;
+> >> -			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+> >> -		}
+> >>
+> >> 2. If free space in storage touches therein threshold, performance will be very
+> >> sensitive. In low-end storage, with high usage in space, even free space is
+> >> reduced by 1%, performance will decrease a lot.
 > > 
-> > Basically, I think this is not a benchmark issue. :) It just reveals the issue
-> > much easily. Let me think about three cases:
-> > 1) WB_SYNC_NONE & WB_SYNC_NONE
-> >  -> can simply use mutex_lock
-> > 
-> > 2) WB_SYNC_ALL & WB_SYNC_NONE
-> >  -> can use mutex_lock on WB_SYNC_ALL having >512 blocks, while WB_SYNC_NONE
-> >     will skip writing blocks
-> > 
-> > 3) WB_SYNC_ALL & WB_SYNC_ALL
-> >  -> can use mutex_lock on WB_SYNC_ALL having >512 blocks, in order to avoid
-> >     starvation.
-> > 
-> > 
-> > I've been testing the below.
-> > 
-> > if (!S_ISDIR(inode->i_mode) && (wbc->sync_mode != WB_SYNC_ALL ||
-> >                 get_dirty_pages(inode) <= SM_I(sbi)->min_seq_blocks)) {
-> >         mutex_lock(&sbi->writepages);
-> >         locked = true;
+> > So, we may need to distinguish low-end vs. high-end storage. In high-end case,
+> > it'd be better to avoid IO contention, while low-end device wants to get more
+> > discard commands as much as possible. So, how about adding an option for this
+> > as a tunable point?
 > 
-> Just cover buffered IO? how about covering Direct IO and atomic write as well?
+> Agreed, how about adding a sysfs entry discard_tunning:
+> 1: enabled, use 4k granularity, self-adapted speed based on real device free space.
+> 0: disabled, use dcc->discard_granularity, fixed speed.
+> 
+> By default: enabled
+> 
+> How do you think?
 
-I'd expect direct IO does in-place-updates, and not sure whether we need to
-add another lock contention between buffered or direct IO. Atomic writes
-would be covered by ->min_seq_blocks.
+I don't think this is proper with a sysfs entry, since we already know the
+device type when mounting the partition. We won't require to change the policy
+on the fly. And, I still don't get to change the default.
 
 > 
 > Thanks,
 > 
-> > }
 > > 
-> > Thanks,
-> > 
+> >>
+> >> IMO, in above cases, we'd better to issue discard with high speed for c), middle
+> >> speed for b), and low speed for a).
+> >>
+> >> How do you think?
 > >>
 > >> Thanks,
 > >>
 > >>>
+> >>> Thanks,
+> >>>
 > >>>>
-> >>>> Thanks,
+> >>>> Anyway, it comes out undiscarded block makes FTL GC be lower efficient
+> >>>> and causing high lifetime overhead.
 > >>>>
-> >>>>>
-> >>>>> >From 4fea0b6e4da8512a72dd52afc7a51beb35966ad9 Mon Sep 17 00:00:00 2001
-> >>>>> From: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>>>> Date: Thu, 9 Aug 2018 17:53:34 -0700
-> >>>>> Subject: [PATCH] f2fs: fix performance issue observed with multi-thread
-> >>>>>  sequential read
-> >>>>>
-> >>>>> This reverts the commit - "b93f771 - f2fs: remove writepages lock"
-> >>>>> to fix the drop in sequential read throughput.
-> >>>>>
-> >>>>> Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
-> >>>>> device: UFS
-> >>>>>
-> >>>>> Before -
-> >>>>> read throughput: 185 MB/s
-> >>>>> total read requests: 85177 (of these ~80000 are 4KB size requests).
-> >>>>> total write requests: 2546 (of these ~2208 requests are written in 512KB).
-> >>>>>
-> >>>>> After -
-> >>>>> read throughput: 758 MB/s
-> >>>>> total read requests: 2417 (of these ~2042 are 512KB reads).
-> >>>>> total write requests: 2701 (of these ~2034 requests are written in 512KB).
-> >>>>>
-> >>>>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> >>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>>>> ---
-> >>>>>  Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++++++
-> >>>>>  fs/f2fs/data.c                          | 10 ++++++++++
-> >>>>>  fs/f2fs/f2fs.h                          |  2 ++
-> >>>>>  fs/f2fs/segment.c                       |  1 +
-> >>>>>  fs/f2fs/super.c                         |  1 +
-> >>>>>  fs/f2fs/sysfs.c                         |  2 ++
-> >>>>>  6 files changed, 24 insertions(+)
-> >>>>>
-> >>>>> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-> >>>>> index 9b0123388f18..94a24aedcdb2 100644
-> >>>>> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
-> >>>>> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-> >>>>> @@ -51,6 +51,14 @@ Description:
-> >>>>>  		 Controls the dirty page count condition for the in-place-update
-> >>>>>  		 policies.
-> >>>>>  
-> >>>>> +What:		/sys/fs/f2fs/<disk>/min_seq_blocks
-> >>>>> +Date:		August 2018
-> >>>>> +Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
-> >>>>> +Description:
-> >>>>> +		 Controls the dirty page count condition for batched sequential
-> >>>>> +		 writes in ->writepages.
-> >>>>> +
-> >>>>> +
-> >>>>>  What:		/sys/fs/f2fs/<disk>/min_hot_blocks
-> >>>>>  Date:		March 2017
-> >>>>>  Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
-> >>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> >>>>> index 45f043ee48bd..f09231b1cc74 100644
-> >>>>> --- a/fs/f2fs/data.c
-> >>>>> +++ b/fs/f2fs/data.c
-> >>>>> @@ -2132,6 +2132,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
-> >>>>>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> >>>>>  	struct blk_plug plug;
-> >>>>>  	int ret;
-> >>>>> +	bool locked = false;
-> >>>>>  
-> >>>>>  	/* deal with chardevs and other special file */
-> >>>>>  	if (!mapping->a_ops->writepage)
-> >>>>> @@ -2162,10 +2163,19 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
-> >>>>>  	else if (atomic_read(&sbi->wb_sync_req[DATA]))
-> >>>>>  		goto skip_write;
-> >>>>>  
-> >>>>> +	if (!S_ISDIR(inode->i_mode) &&
-> >>>>> +			get_dirty_pages(inode) <= SM_I(sbi)->min_seq_blocks) {
-> >>>>> +		mutex_lock(&sbi->writepages);
-> >>>>> +		locked = true;
-> >>>>> +	}
-> >>>>> +
-> >>>>>  	blk_start_plug(&plug);
-> >>>>>  	ret = f2fs_write_cache_pages(mapping, wbc, io_type);
-> >>>>>  	blk_finish_plug(&plug);
-> >>>>>  
-> >>>>> +	if (locked)
-> >>>>> +		mutex_unlock(&sbi->writepages);
-> >>>>> +
-> >>>>>  	if (wbc->sync_mode == WB_SYNC_ALL)
-> >>>>>  		atomic_dec(&sbi->wb_sync_req[DATA]);
-> >>>>>  	/*
-> >>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >>>>> index 375aa9f30cfa..098bdedc28bf 100644
-> >>>>> --- a/fs/f2fs/f2fs.h
-> >>>>> +++ b/fs/f2fs/f2fs.h
-> >>>>> @@ -913,6 +913,7 @@ struct f2fs_sm_info {
-> >>>>>  	unsigned int ipu_policy;	/* in-place-update policy */
-> >>>>>  	unsigned int min_ipu_util;	/* in-place-update threshold */
-> >>>>>  	unsigned int min_fsync_blocks;	/* threshold for fsync */
-> >>>>> +	unsigned int min_seq_blocks;	/* threshold for sequential blocks */
-> >>>>>  	unsigned int min_hot_blocks;	/* threshold for hot block allocation */
-> >>>>>  	unsigned int min_ssr_sections;	/* threshold to trigger SSR allocation */
-> >>>>>  
-> >>>>> @@ -1133,6 +1134,7 @@ struct f2fs_sb_info {
-> >>>>>  	struct rw_semaphore sb_lock;		/* lock for raw super block */
-> >>>>>  	int valid_super_block;			/* valid super block no */
-> >>>>>  	unsigned long s_flag;				/* flags for sbi */
-> >>>>> +	struct mutex writepages;		/* mutex for writepages() */
-> >>>>>  
-> >>>>>  #ifdef CONFIG_BLK_DEV_ZONED
-> >>>>>  	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
-> >>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >>>>> index 63fc647f9ac2..ffea2d1303bd 100644
-> >>>>> --- a/fs/f2fs/segment.c
-> >>>>> +++ b/fs/f2fs/segment.c
-> >>>>> @@ -4131,6 +4131,7 @@ int f2fs_build_segment_manager(struct f2fs_sb_info *sbi)
-> >>>>>  		sm_info->ipu_policy = 1 << F2FS_IPU_FSYNC;
-> >>>>>  	sm_info->min_ipu_util = DEF_MIN_IPU_UTIL;
-> >>>>>  	sm_info->min_fsync_blocks = DEF_MIN_FSYNC_BLOCKS;
-> >>>>> +	sm_info->min_seq_blocks = sbi->blocks_per_seg * sbi->segs_per_sec;
-> >>>>>  	sm_info->min_hot_blocks = DEF_MIN_HOT_BLOCKS;
-> >>>>>  	sm_info->min_ssr_sections = reserved_sections(sbi);
-> >>>>>  
-> >>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> >>>>> index be41dbd7b261..53d70b64fea1 100644
-> >>>>> --- a/fs/f2fs/super.c
-> >>>>> +++ b/fs/f2fs/super.c
-> >>>>> @@ -2842,6 +2842,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
-> >>>>>  	/* init f2fs-specific super block info */
-> >>>>>  	sbi->valid_super_block = valid_super_block;
-> >>>>>  	mutex_init(&sbi->gc_mutex);
-> >>>>> +	mutex_init(&sbi->writepages);
-> >>>>>  	mutex_init(&sbi->cp_mutex);
-> >>>>>  	init_rwsem(&sbi->node_write);
-> >>>>>  	init_rwsem(&sbi->node_change);
-> >>>>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> >>>>> index cd2e030e47b8..81c0e5337443 100644
-> >>>>> --- a/fs/f2fs/sysfs.c
-> >>>>> +++ b/fs/f2fs/sysfs.c
-> >>>>> @@ -397,6 +397,7 @@ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, batched_trim_sections, trim_sections);
-> >>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, ipu_policy, ipu_policy);
-> >>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ipu_util, min_ipu_util);
-> >>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_fsync_blocks, min_fsync_blocks);
-> >>>>> +F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_seq_blocks, min_seq_blocks);
-> >>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_hot_blocks, min_hot_blocks);
-> >>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ssr_sections, min_ssr_sections);
-> >>>>>  F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ram_thresh, ram_thresh);
-> >>>>> @@ -449,6 +450,7 @@ static struct attribute *f2fs_attrs[] = {
-> >>>>>  	ATTR_LIST(ipu_policy),
-> >>>>>  	ATTR_LIST(min_ipu_util),
-> >>>>>  	ATTR_LIST(min_fsync_blocks),
-> >>>>> +	ATTR_LIST(min_seq_blocks),
-> >>>>>  	ATTR_LIST(min_hot_blocks),
-> >>>>>  	ATTR_LIST(min_ssr_sections),
-> >>>>>  	ATTR_LIST(max_victim_search),
-> >>>>>
+> >>>> Let's tune discard speed as below:
+> >>>>
+> >>>> a. adjust default issue interval:
+> >>>> 		original	after
+> >>>> min_interval:	50ms		100ms
+> >>>> mid_interval:	500ms		1000ms
+> >>>> max_interval:	60000ms		10000ms
+> >>>>
+> >>>> b. if last time we stop issuing discard due to IO interruption of user,
+> >>>> let's reset all {min,mid,max}_interval to default one.
+> >>>>
+> >>>> c. tune {min,mid,max}_interval with below calculation method:
+> >>>>
+> >>>> base_interval = default_interval / 10;
+> >>>> total_interval = default_interval - base_interval;
+> >>>> interval = base_interval + total_interval * (100 - dev_util) / 100;
+> >>>>
+> >>>> For example:
+> >>>> min_interval (:100ms)
+> >>>> dev_util (%)	interval (ms)
+> >>>> 0		100
+> >>>> 10		91
+> >>>> 20		82
+> >>>> 30		73
+> >>>> ...
+> >>>> 80		28
+> >>>> 90		19
+> >>>> 100		10
+> >>>>
+> >>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >>>> ---
+> >>>>  fs/f2fs/f2fs.h    | 11 ++++----
+> >>>>  fs/f2fs/segment.c | 64 +++++++++++++++++++++++++++++++++++++----------
+> >>>>  fs/f2fs/segment.h |  9 +++++++
+> >>>>  fs/f2fs/super.c   |  2 +-
+> >>>>  4 files changed, 67 insertions(+), 19 deletions(-)
+> >>>>
+> >>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >>>> index 273ffdaf4891..a1dd2e1c3cb9 100644
+> >>>> --- a/fs/f2fs/f2fs.h
+> >>>> +++ b/fs/f2fs/f2fs.h
+> >>>> @@ -185,10 +185,9 @@ enum {
+> >>>>  
+> >>>>  #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
+> >>>>  #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
+> >>>> -#define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
+> >>>> -#define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
+> >>>> -#define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
+> >>>> -#define DEF_DISCARD_URGENT_UTIL		80	/* do more discard over 80% */
+> >>>> +#define DEF_MIN_DISCARD_ISSUE_TIME	100	/* 100 ms, if exists */
+> >>>> +#define DEF_MID_DISCARD_ISSUE_TIME	1000	/* 1000 ms, if device busy */
+> >>>> +#define DEF_MAX_DISCARD_ISSUE_TIME	10000	/* 10000 ms, if no candidates */
+> >>>>  #define DEF_CP_INTERVAL			60	/* 60 secs */
+> >>>>  #define DEF_IDLE_INTERVAL		5	/* 5 secs */
+> >>>>  
+> >>>> @@ -248,7 +247,8 @@ struct discard_entry {
+> >>>>  };
+> >>>>  
+> >>>>  /* default discard granularity of inner discard thread, unit: block count */
+> >>>> -#define DEFAULT_DISCARD_GRANULARITY		1
+> >>>> +#define MID_DISCARD_GRANULARITY			16
+> >>>> +#define MIN_DISCARD_GRANULARITY			1
+> >>>>  
+> >>>>  /* max discard pend list number */
+> >>>>  #define MAX_PLIST_NUM		512
+> >>>> @@ -330,6 +330,7 @@ struct discard_cmd_control {
+> >>>>  	atomic_t discard_cmd_cnt;		/* # of cached cmd count */
+> >>>>  	struct rb_root root;			/* root of discard rb-tree */
+> >>>>  	bool rbtree_check;			/* config for consistence check */
+> >>>> +	bool io_interrupted;			/* last state of io interrupted */
+> >>>>  };
+> >>>>  
+> >>>>  /* for the list of fsync inodes, used only during recovery */
+> >>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >>>> index 8b52e8dfb12f..9564aaf1f27b 100644
+> >>>> --- a/fs/f2fs/segment.c
+> >>>> +++ b/fs/f2fs/segment.c
+> >>>> @@ -968,6 +968,44 @@ static void __check_sit_bitmap(struct f2fs_sb_info *sbi,
+> >>>>  #endif
+> >>>>  }
+> >>>>  
+> >>>> +static void __adjust_discard_speed(unsigned int *interval,
+> >>>> +				unsigned int def_interval, int dev_util)
+> >>>> +{
+> >>>> +	unsigned int base_interval, total_interval;
+> >>>> +
+> >>>> +	base_interval = def_interval / 10;
+> >>>> +	total_interval = def_interval - base_interval;
+> >>>> +
+> >>>> +	/*
+> >>>> +	 * if def_interval = 100, adjusted interval should be in range of
+> >>>> +	 * [10, 100].
+> >>>> +	 */
+> >>>> +	*interval = base_interval + total_interval * (100 - dev_util) / 100;
+> >>>> +}
+> >>>> +
+> >>>> +static void __tune_discard_policy(struct f2fs_sb_info *sbi,
+> >>>> +					struct discard_policy *dpolicy)
+> >>>> +{
+> >>>> +	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+> >>>> +	int dev_util;
+> >>>> +
+> >>>> +	if (dcc->io_interrupted) {
+> >>>> +		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+> >>>> +		dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
+> >>>> +		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+> >>>> +		return;
+> >>>> +	}
+> >>>> +
+> >>>> +	dev_util = dev_utilization(sbi);
+> >>>> +
+> >>>> +	__adjust_discard_speed(&dpolicy->min_interval,
+> >>>> +				DEF_MIN_DISCARD_ISSUE_TIME, dev_util);
+> >>>> +	__adjust_discard_speed(&dpolicy->mid_interval,
+> >>>> +				DEF_MID_DISCARD_ISSUE_TIME, dev_util);
+> >>>> +	__adjust_discard_speed(&dpolicy->max_interval,
+> >>>> +				DEF_MAX_DISCARD_ISSUE_TIME, dev_util);
+> >>>> +}
+> >>>> +
+> >>>>  static void __init_discard_policy(struct f2fs_sb_info *sbi,
+> >>>>  				struct discard_policy *dpolicy,
+> >>>>  				int discard_type, unsigned int granularity)
+> >>>> @@ -982,20 +1020,11 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
+> >>>>  	dpolicy->io_aware_gran = MAX_PLIST_NUM;
+> >>>>  
+> >>>>  	if (discard_type == DPOLICY_BG) {
+> >>>> -		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+> >>>> -		dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
+> >>>> -		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+> >>>>  		dpolicy->io_aware = true;
+> >>>>  		dpolicy->sync = false;
+> >>>>  		dpolicy->ordered = true;
+> >>>> -		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
+> >>>> -			dpolicy->granularity = 1;
+> >>>> -			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+> >>>> -		}
+> >>>> +		__tune_discard_policy(sbi, dpolicy);
+> >>>>  	} else if (discard_type == DPOLICY_FORCE) {
+> >>>> -		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+> >>>> -		dpolicy->mid_interval = DEF_MID_DISCARD_ISSUE_TIME;
+> >>>> -		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+> >>>>  		dpolicy->io_aware = false;
+> >>>>  	} else if (discard_type == DPOLICY_FSTRIM) {
+> >>>>  		dpolicy->io_aware = false;
+> >>>> @@ -1353,6 +1382,8 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+> >>>>  	if (!issued && io_interrupted)
+> >>>>  		issued = -1;
+> >>>>  
+> >>>> +	dcc->io_interrupted = io_interrupted;
+> >>>> +
+> >>>>  	return issued;
+> >>>>  }
+> >>>>  
+> >>>> @@ -1370,7 +1401,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >>>>  		if (i + 1 < dpolicy->granularity)
+> >>>>  			break;
+> >>>>  
+> >>>> -		if (i < DEFAULT_DISCARD_GRANULARITY && dpolicy->ordered)
+> >>>> +		if (i < MID_DISCARD_GRANULARITY && dpolicy->ordered)
+> >>>>  			return __issue_discard_cmd_orderly(sbi, dpolicy);
+> >>>>  
+> >>>>  		pend_list = &dcc->pend_list[i];
+> >>>> @@ -1407,6 +1438,8 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >>>>  	if (!issued && io_interrupted)
+> >>>>  		issued = -1;
+> >>>>  
+> >>>> +	dcc->io_interrupted = io_interrupted;
+> >>>> +
+> >>>>  	return issued;
+> >>>>  }
+> >>>>  
+> >>>> @@ -1576,7 +1609,11 @@ static int issue_discard_thread(void *data)
+> >>>>  	struct f2fs_sb_info *sbi = data;
+> >>>>  	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+> >>>>  	wait_queue_head_t *q = &dcc->discard_wait_queue;
+> >>>> -	struct discard_policy dpolicy;
+> >>>> +	struct discard_policy dpolicy = {
+> >>>> +		.min_interval = DEF_MIN_DISCARD_ISSUE_TIME,
+> >>>> +		.mid_interval = DEF_MID_DISCARD_ISSUE_TIME,
+> >>>> +		.max_interval = DEF_MAX_DISCARD_ISSUE_TIME,
+> >>>> +	};
+> >>>>  	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
+> >>>>  	int issued;
+> >>>>  
+> >>>> @@ -1929,7 +1966,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
+> >>>>  	if (!dcc)
+> >>>>  		return -ENOMEM;
+> >>>>  
+> >>>> -	dcc->discard_granularity = DEFAULT_DISCARD_GRANULARITY;
+> >>>> +	dcc->discard_granularity = MIN_DISCARD_GRANULARITY;
+> >>>>  	INIT_LIST_HEAD(&dcc->entry_list);
+> >>>>  	for (i = 0; i < MAX_PLIST_NUM; i++)
+> >>>>  		INIT_LIST_HEAD(&dcc->pend_list[i]);
+> >>>> @@ -1945,6 +1982,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
+> >>>>  	dcc->next_pos = 0;
+> >>>>  	dcc->root = RB_ROOT;
+> >>>>  	dcc->rbtree_check = false;
+> >>>> +	dcc->io_interrupted = false;
+> >>>>  
+> >>>>  	init_waitqueue_head(&dcc->discard_wait_queue);
+> >>>>  	SM_I(sbi)->dcc_info = dcc;
+> >>>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> >>>> index 422b0ceb1eaa..63b4da72cd34 100644
+> >>>> --- a/fs/f2fs/segment.h
+> >>>> +++ b/fs/f2fs/segment.h
+> >>>> @@ -616,6 +616,15 @@ static inline int utilization(struct f2fs_sb_info *sbi)
+> >>>>  					sbi->user_block_count);
+> >>>>  }
+> >>>>  
+> >>>> +static inline int dev_utilization(struct f2fs_sb_info *sbi)
+> >>>> +{
+> >>>> +	unsigned int dev_blks;
+> >>>> +
+> >>>> +	dev_blks = valid_user_blocks(sbi) + SM_I(sbi)->dcc_info->undiscard_blks;
+> >>>> +	return div_u64((u64)dev_blks * 100,
+> >>>> +			MAIN_SEGS(sbi) << sbi->log_blocks_per_seg);
+> >>>> +}
+> >>>> +
+> >>>>  /*
+> >>>>   * Sometimes f2fs may be better to drop out-of-place update policy.
+> >>>>   * And, users can control the policy through sysfs entries.
+> >>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> >>>> index b055f2ea77c5..55ed76daad23 100644
+> >>>> --- a/fs/f2fs/super.c
+> >>>> +++ b/fs/f2fs/super.c
+> >>>> @@ -2862,7 +2862,7 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
+> >>>>  	/* adjust parameters according to the volume size */
+> >>>>  	if (sm_i->main_segments <= SMALL_VOLUME_SEGMENTS) {
+> >>>>  		F2FS_OPTION(sbi).alloc_mode = ALLOC_MODE_REUSE;
+> >>>> -		sm_i->dcc_info->discard_granularity = 1;
+> >>>> +		sm_i->dcc_info->discard_granularity = MIN_DISCARD_GRANULARITY;
+> >>>>  		sm_i->ipu_policy = 1 << F2FS_IPU_FORCE;
+> >>>>  	}
+> >>>>  
+> >>>> -- 
+> >>>> 2.18.0.rc1
 > >>>
 > >>> .
 > >>>
 > > 
 > > .
 > > 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
