@@ -1,326 +1,188 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: fix performance issue observed with
- multi-thread sequential read
-Date: Thu, 16 Aug 2018 19:39:44 +0800
-Message-ID: <70ea1366-89eb-d011-aa4f-ec8003fcf24b@huawei.com>
-References: <20180810185640.GA63079@jaegeuk-macbookpro.roam.corp.google.com>
- <57149b77-3576-87ed-2cae-a3bc2e8088f2@huawei.com>
- <20180813201150.GA27044@jaegeuk-macbookpro.roam.corp.google.com>
- <0e07e79b-5b67-9355-1fa0-402a5d118bd1@huawei.com>
- <20180814040434.GA52730@jaegeuk-macbookpro.roam.corp.google.com>
- <7194f3d2-b875-376a-4c46-37c598bf3e8e@huawei.com>
- <20180814172837.GD56510@jaegeuk-macbookpro.roam.corp.google.com>
- <167ce8f1-ee4d-2ffc-3518-32850465cd0c@huawei.com>
- <20180815021524.GA84720@jaegeuk-macbookpro.roam.corp.google.com>
- <aba79ead-0d26-8caf-e677-e674002fa534@huawei.com>
- <20180816013452.GA12293@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: [PATCH 2/2] f2fs: guarantee journalled quota data by checkpoint
+Date: Fri, 17 Aug 2018 17:18:40 +0800
+Message-ID: <20180817091840.50792-2-yuchao0@huawei.com>
+References: <20180817091840.50792-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180816013452.GA12293@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
+In-Reply-To: <20180817091840.50792-1-yuchao0@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>, Weichao Guo <guoweichao@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/8/16 9:34, Jaegeuk Kim wrote:
-> On 08/15, Chao Yu wrote:
->> On 2018/8/15 10:15, Jaegeuk Kim wrote:
->>> On 08/15, Chao Yu wrote:
->>>> On 2018/8/15 1:28, Jaegeuk Kim wrote:
->>>>> On 08/14, Chao Yu wrote:
->>>>>> On 2018/8/14 12:04, Jaegeuk Kim wrote:
->>>>>>> On 08/14, Chao Yu wrote:
->>>>>>>> On 2018/8/14 4:11, Jaegeuk Kim wrote:
->>>>>>>>> On 08/13, Chao Yu wrote:
->>>>>>>>>> Hi Jaegeuk,
->>>>>>>>>>
->>>>>>>>>> On 2018/8/11 2:56, Jaegeuk Kim wrote:
->>>>>>>>>>> This reverts the commit - "b93f771 - f2fs: remove writepages lock"
->>>>>>>>>>> to fix the drop in sequential read throughput.
->>>>>>>>>>>
->>>>>>>>>>> Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
->>>>>>>>>>> device: UFS
->>>>>>>>>>>
->>>>>>>>>>> Before -
->>>>>>>>>>> read throughput: 185 MB/s
->>>>>>>>>>> total read requests: 85177 (of these ~80000 are 4KB size requests).
->>>>>>>>>>> total write requests: 2546 (of these ~2208 requests are written in 512KB).
->>>>>>>>>>>
->>>>>>>>>>> After -
->>>>>>>>>>> read throughput: 758 MB/s
->>>>>>>>>>> total read requests: 2417 (of these ~2042 are 512KB reads).
->>>>>>>>>>> total write requests: 2701 (of these ~2034 requests are written in 512KB).
->>>>>>>>>>
->>>>>>>>>> IMO, it only impact sequential read performance in a large file which may be
->>>>>>>>>> fragmented during multi-thread writing.
->>>>>>>>>>
->>>>>>>>>> In android environment, mostly, the large file should be cold type, such as apk,
->>>>>>>>>> mp3, rmvb, jpeg..., so I think we only need to serialize writepages() for cold
->>>>>>>>>> data area writer.
->>>>>>>>>>
->>>>>>>>>> So how about adding a mount option to serialize writepage() for different type
->>>>>>>>>> of log, e.g. in android, using serialize=4; by default, using serialize=7
->>>>>>>>>> HOT_DATA	1
->>>>>>>>>> WARM_DATA	2
->>>>>>>>>> COLD_DATA	4
->>>>>>>>>
->>>>>>>>> Well, I don't think we need to give too many mount options for this fragmented
->>>>>>>>> case. How about doing this for the large files only like this?
->>>>>>>>
->>>>>>>> Thread A write 512 pages			Thread B write 8 pages
->>>>>>>>
->>>>>>>> - writepages()
->>>>>>>>  - mutex_lock(&sbi->writepages);
->>>>>>>>   - writepage();
->>>>>>>> ...
->>>>>>>> 						- writepages()
->>>>>>>> 						 - writepage()
->>>>>>>> 						  ....
->>>>>>>>   - writepage();
->>>>>>>> ...
->>>>>>>>  - mutex_unlock(&sbi->writepages);
->>>>>>>>
->>>>>>>> Above case will also cause fragmentation since we didn't serialize all
->>>>>>>> concurrent IO with the lock.
->>>>>>>>
->>>>>>>> Do we need to consider such case?
->>>>>>>
->>>>>>> We can simply allow 512 and 8 in the same segment, which would not a big deal,
->>>>>>> when considering starvation of Thread B.
->>>>>>
->>>>>> Yeah, but in reality, there would be more threads competing in same log header,
->>>>>> so I worry that the effect of defragmenting will not so good as we expect,
->>>>>> anyway, for benchmark, it's enough.
->>>>>
->>>>> Basically, I think this is not a benchmark issue. :) It just reveals the issue
->>>>> much easily. Let me think about three cases:
->>>>> 1) WB_SYNC_NONE & WB_SYNC_NONE
->>>>>  -> can simply use mutex_lock
->>>>>
->>>>> 2) WB_SYNC_ALL & WB_SYNC_NONE
->>>>>  -> can use mutex_lock on WB_SYNC_ALL having >512 blocks, while WB_SYNC_NONE
->>>>>     will skip writing blocks
->>>>>
->>>>> 3) WB_SYNC_ALL & WB_SYNC_ALL
->>>>>  -> can use mutex_lock on WB_SYNC_ALL having >512 blocks, in order to avoid
->>>>>     starvation.
->>>>>
->>>>>
->>>>> I've been testing the below.
->>>>>
->>>>> if (!S_ISDIR(inode->i_mode) && (wbc->sync_mode != WB_SYNC_ALL ||
->>>>>                 get_dirty_pages(inode) <= SM_I(sbi)->min_seq_blocks)) {
->>>>>         mutex_lock(&sbi->writepages);
->>>>>         locked = true;
->>>>
->>>> Just cover buffered IO? how about covering Direct IO and atomic write as well?
->>>
->>> I'd expect direct IO does in-place-updates, and not sure whether we need to
->>
->> For initial writes, they are not IPU.
-> 
-> It's a little bit different. DIO allocates blocks first in the bulk mode, and
-> sumbit bios later. So, it'd be more likely to allocate consecutive blocks by
-> get_data_block_dio, if user gave a big chunk to write. I'm more concerend about
-> lock contention, and don't think we have to serialize all the block allocation.
+For journalled quota mode, let checkpoint to flush dquot dirty data
+and quota file data to keep all file quota info are consisting in
+last checkpoint, so that we can avoid quota file being corrupted
+after SPO.
 
-IMO, that's a tradeoff between avoid fragmentation and improving concurrency.
+Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/checkpoint.c | 12 ++++++++
+ fs/f2fs/data.c       |  4 ++-
+ fs/f2fs/f2fs.h       |  2 ++
+ fs/f2fs/super.c      | 67 ++++++++++++++++++++++++++++++++++++++++----
+ 4 files changed, 78 insertions(+), 7 deletions(-)
 
-For single kind of above demands, we can separate optimizing design with
-configuration, enable it dynamically, but there is no single best choice to
-adapt all demands.
-
-Well, the design is okay for me, and could you send out the patch? :)
-
-Thanks,
-
-
-> 
->>
->>> add another lock contention between buffered or direct IO. Atomic writes
->>> would be covered by ->min_seq_blocks.
->>
->> Okay. :)
->>
->> Thanks,
->>
->>>
->>>>
->>>> Thanks,
->>>>
->>>>> }
->>>>>
->>>>> Thanks,
->>>>>
->>>>>>
->>>>>> Thanks,
->>>>>>
->>>>>>>
->>>>>>>>
->>>>>>>> Thanks,
->>>>>>>>
->>>>>>>>>
->>>>>>>>> >From 4fea0b6e4da8512a72dd52afc7a51beb35966ad9 Mon Sep 17 00:00:00 2001
->>>>>>>>> From: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>>>>> Date: Thu, 9 Aug 2018 17:53:34 -0700
->>>>>>>>> Subject: [PATCH] f2fs: fix performance issue observed with multi-thread
->>>>>>>>>  sequential read
->>>>>>>>>
->>>>>>>>> This reverts the commit - "b93f771 - f2fs: remove writepages lock"
->>>>>>>>> to fix the drop in sequential read throughput.
->>>>>>>>>
->>>>>>>>> Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
->>>>>>>>> device: UFS
->>>>>>>>>
->>>>>>>>> Before -
->>>>>>>>> read throughput: 185 MB/s
->>>>>>>>> total read requests: 85177 (of these ~80000 are 4KB size requests).
->>>>>>>>> total write requests: 2546 (of these ~2208 requests are written in 512KB).
->>>>>>>>>
->>>>>>>>> After -
->>>>>>>>> read throughput: 758 MB/s
->>>>>>>>> total read requests: 2417 (of these ~2042 are 512KB reads).
->>>>>>>>> total write requests: 2701 (of these ~2034 requests are written in 512KB).
->>>>>>>>>
->>>>>>>>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
->>>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>>>>> ---
->>>>>>>>>  Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++++++
->>>>>>>>>  fs/f2fs/data.c                          | 10 ++++++++++
->>>>>>>>>  fs/f2fs/f2fs.h                          |  2 ++
->>>>>>>>>  fs/f2fs/segment.c                       |  1 +
->>>>>>>>>  fs/f2fs/super.c                         |  1 +
->>>>>>>>>  fs/f2fs/sysfs.c                         |  2 ++
->>>>>>>>>  6 files changed, 24 insertions(+)
->>>>>>>>>
->>>>>>>>> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
->>>>>>>>> index 9b0123388f18..94a24aedcdb2 100644
->>>>>>>>> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
->>>>>>>>> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
->>>>>>>>> @@ -51,6 +51,14 @@ Description:
->>>>>>>>>  		 Controls the dirty page count condition for the in-place-update
->>>>>>>>>  		 policies.
->>>>>>>>>  
->>>>>>>>> +What:		/sys/fs/f2fs/<disk>/min_seq_blocks
->>>>>>>>> +Date:		August 2018
->>>>>>>>> +Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
->>>>>>>>> +Description:
->>>>>>>>> +		 Controls the dirty page count condition for batched sequential
->>>>>>>>> +		 writes in ->writepages.
->>>>>>>>> +
->>>>>>>>> +
->>>>>>>>>  What:		/sys/fs/f2fs/<disk>/min_hot_blocks
->>>>>>>>>  Date:		March 2017
->>>>>>>>>  Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
->>>>>>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>>>>>>>> index 45f043ee48bd..f09231b1cc74 100644
->>>>>>>>> --- a/fs/f2fs/data.c
->>>>>>>>> +++ b/fs/f2fs/data.c
->>>>>>>>> @@ -2132,6 +2132,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
->>>>>>>>>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->>>>>>>>>  	struct blk_plug plug;
->>>>>>>>>  	int ret;
->>>>>>>>> +	bool locked = false;
->>>>>>>>>  
->>>>>>>>>  	/* deal with chardevs and other special file */
->>>>>>>>>  	if (!mapping->a_ops->writepage)
->>>>>>>>> @@ -2162,10 +2163,19 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
->>>>>>>>>  	else if (atomic_read(&sbi->wb_sync_req[DATA]))
->>>>>>>>>  		goto skip_write;
->>>>>>>>>  
->>>>>>>>> +	if (!S_ISDIR(inode->i_mode) &&
->>>>>>>>> +			get_dirty_pages(inode) <= SM_I(sbi)->min_seq_blocks) {
->>>>>>>>> +		mutex_lock(&sbi->writepages);
->>>>>>>>> +		locked = true;
->>>>>>>>> +	}
->>>>>>>>> +
->>>>>>>>>  	blk_start_plug(&plug);
->>>>>>>>>  	ret = f2fs_write_cache_pages(mapping, wbc, io_type);
->>>>>>>>>  	blk_finish_plug(&plug);
->>>>>>>>>  
->>>>>>>>> +	if (locked)
->>>>>>>>> +		mutex_unlock(&sbi->writepages);
->>>>>>>>> +
->>>>>>>>>  	if (wbc->sync_mode == WB_SYNC_ALL)
->>>>>>>>>  		atomic_dec(&sbi->wb_sync_req[DATA]);
->>>>>>>>>  	/*
->>>>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>>>>>>> index 375aa9f30cfa..098bdedc28bf 100644
->>>>>>>>> --- a/fs/f2fs/f2fs.h
->>>>>>>>> +++ b/fs/f2fs/f2fs.h
->>>>>>>>> @@ -913,6 +913,7 @@ struct f2fs_sm_info {
->>>>>>>>>  	unsigned int ipu_policy;	/* in-place-update policy */
->>>>>>>>>  	unsigned int min_ipu_util;	/* in-place-update threshold */
->>>>>>>>>  	unsigned int min_fsync_blocks;	/* threshold for fsync */
->>>>>>>>> +	unsigned int min_seq_blocks;	/* threshold for sequential blocks */
->>>>>>>>>  	unsigned int min_hot_blocks;	/* threshold for hot block allocation */
->>>>>>>>>  	unsigned int min_ssr_sections;	/* threshold to trigger SSR allocation */
->>>>>>>>>  
->>>>>>>>> @@ -1133,6 +1134,7 @@ struct f2fs_sb_info {
->>>>>>>>>  	struct rw_semaphore sb_lock;		/* lock for raw super block */
->>>>>>>>>  	int valid_super_block;			/* valid super block no */
->>>>>>>>>  	unsigned long s_flag;				/* flags for sbi */
->>>>>>>>> +	struct mutex writepages;		/* mutex for writepages() */
->>>>>>>>>  
->>>>>>>>>  #ifdef CONFIG_BLK_DEV_ZONED
->>>>>>>>>  	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
->>>>>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>>>>>>> index 63fc647f9ac2..ffea2d1303bd 100644
->>>>>>>>> --- a/fs/f2fs/segment.c
->>>>>>>>> +++ b/fs/f2fs/segment.c
->>>>>>>>> @@ -4131,6 +4131,7 @@ int f2fs_build_segment_manager(struct f2fs_sb_info *sbi)
->>>>>>>>>  		sm_info->ipu_policy = 1 << F2FS_IPU_FSYNC;
->>>>>>>>>  	sm_info->min_ipu_util = DEF_MIN_IPU_UTIL;
->>>>>>>>>  	sm_info->min_fsync_blocks = DEF_MIN_FSYNC_BLOCKS;
->>>>>>>>> +	sm_info->min_seq_blocks = sbi->blocks_per_seg * sbi->segs_per_sec;
->>>>>>>>>  	sm_info->min_hot_blocks = DEF_MIN_HOT_BLOCKS;
->>>>>>>>>  	sm_info->min_ssr_sections = reserved_sections(sbi);
->>>>>>>>>  
->>>>>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>>>>>>>> index be41dbd7b261..53d70b64fea1 100644
->>>>>>>>> --- a/fs/f2fs/super.c
->>>>>>>>> +++ b/fs/f2fs/super.c
->>>>>>>>> @@ -2842,6 +2842,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>>>>>>>>  	/* init f2fs-specific super block info */
->>>>>>>>>  	sbi->valid_super_block = valid_super_block;
->>>>>>>>>  	mutex_init(&sbi->gc_mutex);
->>>>>>>>> +	mutex_init(&sbi->writepages);
->>>>>>>>>  	mutex_init(&sbi->cp_mutex);
->>>>>>>>>  	init_rwsem(&sbi->node_write);
->>>>>>>>>  	init_rwsem(&sbi->node_change);
->>>>>>>>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
->>>>>>>>> index cd2e030e47b8..81c0e5337443 100644
->>>>>>>>> --- a/fs/f2fs/sysfs.c
->>>>>>>>> +++ b/fs/f2fs/sysfs.c
->>>>>>>>> @@ -397,6 +397,7 @@ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, batched_trim_sections, trim_sections);
->>>>>>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, ipu_policy, ipu_policy);
->>>>>>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ipu_util, min_ipu_util);
->>>>>>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_fsync_blocks, min_fsync_blocks);
->>>>>>>>> +F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_seq_blocks, min_seq_blocks);
->>>>>>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_hot_blocks, min_hot_blocks);
->>>>>>>>>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ssr_sections, min_ssr_sections);
->>>>>>>>>  F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ram_thresh, ram_thresh);
->>>>>>>>> @@ -449,6 +450,7 @@ static struct attribute *f2fs_attrs[] = {
->>>>>>>>>  	ATTR_LIST(ipu_policy),
->>>>>>>>>  	ATTR_LIST(min_ipu_util),
->>>>>>>>>  	ATTR_LIST(min_fsync_blocks),
->>>>>>>>> +	ATTR_LIST(min_seq_blocks),
->>>>>>>>>  	ATTR_LIST(min_hot_blocks),
->>>>>>>>>  	ATTR_LIST(min_ssr_sections),
->>>>>>>>>  	ATTR_LIST(max_victim_search),
->>>>>>>>>
->>>>>>>
->>>>>>> .
->>>>>>>
->>>>>
->>>>> .
->>>>>
->>>
->>> .
->>>
-> 
-> .
-> 
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 0274446f585e..cf8d1bb8ec3e 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1100,7 +1100,19 @@ static int block_operations(struct f2fs_sb_info *sbi)
+ 	blk_start_plug(&plug);
+ 
+ retry_flush_dents:
++	if (is_sbi_flag_set(sbi, SBI_NEED_FLUSH_QUOTA)) {
++		clear_sbi_flag(sbi, SBI_NEED_FLUSH_QUOTA);
++		err = f2fs_quota_sync(sbi->sb, -1);
++		if (err)
++			goto out;
++	}
++
+ 	f2fs_lock_all(sbi);
++	if (is_sbi_flag_set(sbi, SBI_NEED_FLUSH_QUOTA)) {
++		f2fs_unlock_all(sbi);
++		goto retry_flush_dents;
++	}
++
+ 	/* write all the dirty dentry pages */
+ 	if (get_pages(sbi, F2FS_DIRTY_DENTS)) {
+ 		f2fs_unlock_all(sbi);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 8e754710c746..0bfb10cd9ad2 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -49,7 +49,7 @@ static bool __is_cp_guaranteed(struct page *page)
+ 			inode->i_ino ==  F2FS_NODE_INO(sbi) ||
+ 			S_ISDIR(inode->i_mode) ||
+ 			(S_ISREG(inode->i_mode) &&
+-			is_inode_flag_set(inode, FI_ATOMIC_FILE)) ||
++			(f2fs_is_atomic_file(inode) || IS_NOQUOTA(inode))) ||
+ 			is_cold_data(page))
+ 		return true;
+ 	return false;
+@@ -1721,6 +1721,8 @@ bool f2fs_should_update_outplace(struct inode *inode, struct f2fs_io_info *fio)
+ 	}
+ 	if (S_ISDIR(inode->i_mode))
+ 		return true;
++	if (IS_NOQUOTA(inode))
++		return true;
+ 	if (f2fs_is_atomic_file(inode))
+ 		return true;
+ 	if (fio) {
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 54ee8217092e..b7ba5aaeb61e 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1093,6 +1093,7 @@ enum {
+ 	SBI_NEED_CP,				/* need to checkpoint */
+ 	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
+ 	SBI_CP_DISABLED,			/* CP was disabled last mount */
++	SBI_NEED_FLUSH_QUOTA,			/* need to flush quota info in CP */
+ };
+ 
+ enum {
+@@ -2888,6 +2889,7 @@ static inline int f2fs_add_link(struct dentry *dentry, struct inode *inode)
+ int f2fs_inode_dirtied(struct inode *inode, bool sync);
+ void f2fs_inode_synced(struct inode *inode);
+ int f2fs_enable_quota_files(struct f2fs_sb_info *sbi, bool rdonly);
++int f2fs_quota_sync(struct super_block *sb, int type);
+ void f2fs_quota_off_umount(struct super_block *sb);
+ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover);
+ int f2fs_sync_fs(struct super_block *sb, int sync);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 9647bbcdfd2b..f1482363b4eb 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1886,7 +1886,7 @@ static int f2fs_enable_quotas(struct super_block *sb)
+ 	return 0;
+ }
+ 
+-static int f2fs_quota_sync(struct super_block *sb, int type)
++int f2fs_quota_sync(struct super_block *sb, int type)
+ {
+ 	struct quota_info *dqopt = sb_dqopt(sb);
+ 	int cnt;
+@@ -1988,6 +1988,61 @@ void f2fs_quota_off_umount(struct super_block *sb)
+ 	}
+ }
+ 
++static int f2fs_dquot_commit(struct dquot *dquot)
++{
++	int ret;
++
++	ret = dquot_commit(dquot);
++	if (ret == -ENOSPC || ret == -EIO)
++		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_NEED_FSCK);
++	return ret;
++}
++
++static int f2fs_dquot_acquire(struct dquot *dquot)
++{
++	int ret;
++
++	ret = dquot_acquire(dquot);
++	if (ret == -ENOSPC || ret == -EIO)
++		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_NEED_FSCK);
++	return ret;
++}
++
++static int f2fs_dquot_release(struct dquot *dquot)
++{
++	int ret;
++
++	ret = dquot_release(dquot);
++	if (ret == -ENOSPC || ret == -EIO)
++		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_NEED_FSCK);
++	return ret;
++}
++
++static int f2fs_dquot_mark_dquot_dirty(struct dquot *dquot)
++{
++	struct super_block *sb = dquot->dq_sb;
++	struct f2fs_sb_info *sbi = F2FS_SB(sb);
++
++	/* if we are using journalled quota */
++	if (f2fs_sb_has_quota_ino(sbi) ||
++		F2FS_OPTION(sbi).s_qf_names[USRQUOTA] ||
++		F2FS_OPTION(sbi).s_qf_names[GRPQUOTA] ||
++		F2FS_OPTION(sbi).s_qf_names[PRJQUOTA])
++		set_sbi_flag(sbi, SBI_NEED_FLUSH_QUOTA);
++
++	return dquot_mark_dquot_dirty(dquot);
++}
++
++static int f2fs_dquot_commit_info(struct super_block *sb, int type)
++{
++	int ret;
++
++	ret = dquot_commit_info(sb, type);
++	if (ret == -ENOSPC || ret == -EIO)
++		set_sbi_flag(F2FS_SB(sb), SBI_NEED_FSCK);
++	return ret;
++}
++
+ static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
+ {
+ 	*projid = F2FS_I(inode)->i_projid;
+@@ -1996,11 +2051,11 @@ static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
+ 
+ static const struct dquot_operations f2fs_quota_operations = {
+ 	.get_reserved_space = f2fs_get_reserved_space,
+-	.write_dquot	= dquot_commit,
+-	.acquire_dquot	= dquot_acquire,
+-	.release_dquot	= dquot_release,
+-	.mark_dirty	= dquot_mark_dquot_dirty,
+-	.write_info	= dquot_commit_info,
++	.write_dquot	= f2fs_dquot_commit,
++	.acquire_dquot	= f2fs_dquot_acquire,
++	.release_dquot	= f2fs_dquot_release,
++	.mark_dirty	= f2fs_dquot_mark_dquot_dirty,
++	.write_info	= f2fs_dquot_commit_info,
+ 	.alloc_dquot	= dquot_alloc,
+ 	.destroy_dquot	= dquot_destroy,
+ 	.get_projid	= f2fs_get_projid,
+-- 
+2.18.0.rc1
