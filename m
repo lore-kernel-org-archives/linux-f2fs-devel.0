@@ -1,79 +1,217 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH 1/2] f2fs: fix to avoid quota inode leak in ->put_super
-Date: Mon, 20 Aug 2018 20:33:49 +0800
-Message-ID: <b10c4ae6-2a25-fb0b-cbfa-467b5e988b47@kernel.org>
-References: <20180817091840.50792-1-yuchao0@huawei.com>
- <20180818151600.GA84798@jaegeuk-macbookpro.roam.corp.google.com>
+From: guoweichao <guoweichao@huawei.com>
+Subject: Re: [RFC PATCH v2] fsck.f2fs: write checkpoint out of
+ place first
+Date: Mon, 20 Aug 2018 21:01:59 +0800
+Message-ID: <32914790-e213-9265-0ad8-70a0856b85b5@huawei.com>
+References: <20180726205405.158146-1-guoweichao@huawei.com>
+ <0f5c562c-1718-83a6-034c-9a384aa94347@huawei.com>
+ <20180817183233.GC58612@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180818151600.GA84798@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <guoweichao@huawei.com>) id 1frjp5-0001qD-CU
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Aug 2018 13:02:19 +0000
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1frjp3-008wlz-AS
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Aug 2018 13:02:19 +0000
+In-Reply-To: <20180817183233.GC58612@jaegeuk-macbookpro.roam.corp.google.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/8/18 23:16, Jaegeuk Kim wrote:
-> On 08/17, Chao Yu wrote:
->> generic/019 reports below error:
->>
->>  __quota_error: 1160 callbacks suppressed
->>  Quota error (device zram1): write_blk: dquota write failed
->>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
->>  Quota error (device zram1): write_blk: dquota write failed
->>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
->>  Quota error (device zram1): write_blk: dquota write failed
->>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
->>  Quota error (device zram1): write_blk: dquota write failed
->>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
->>  Quota error (device zram1): write_blk: dquota write failed
->>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
->>  VFS: Busy inodes after unmount of zram1. Self-destruct in 5 seconds.  Have a nice day...
->>
->> If we failed in below path due to fail to write dquot block, we will miss
->> to release quota inode, fix it.
->>
->> - f2fs_put_super
->>  - f2fs_quota_off_umount
->>   - f2fs_quota_off
->>    - f2fs_quota_sync   <-- failed
->>    - dquot_quota_off   <-- missed to call
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/super.c | 6 ++++--
->>  1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index a5df9fbc6355..9647bbcdfd2b 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -1977,10 +1977,12 @@ void f2fs_quota_off_umount(struct super_block *sb)
->>  	for (type = 0; type < MAXQUOTAS; type++) {
->>  		err = f2fs_quota_off(sb, type);
->>  		if (err) {
->> +			int ret = dquot_quota_off(sb, type);
->> +
+Hi Jaegeuk,
+
+Is your test using a kernel include some unstable patches like "f2fs: guarantee journalled quota data by checkpoint"?
+I am planing to reproduce the problem with dev branch. Is that OK? Any hints for reproducing?
+
+Thank,
+Weichao
+
+On 2018/8/18 2:32, Jaegeuk Kim wrote:
+> Hi Weichao,
 > 
-> Could you check the mainline version?
-
-I guess we missed to apply below patch? Could you check that?
-
-f2fs: report error if quota off error during umount
-
-Thanks,
-
+> This is corrupting the checkpoint showing dangling nids when running my test
+> where injects faults with shutdown loop.
 > 
->>  			f2fs_msg(sb, KERN_ERR,
->>  				"Fail to turn off disk quota "
->> -				"(type: %d, err: %d), Please "
->> -				"run fsck to fix it.", type, err);
->> +				"(type: %d, err: %d, ret:%d), Please "
->> +				"run fsck to fix it.", type, err, ret);
->>  			set_sbi_flag(F2FS_SB(sb), SBI_NEED_FSCK);
->>  		}
->>  	}
->> -- 
->> 2.18.0.rc1
+> Thanks,
+> 
+> On 07/28, Chao Yu wrote:
+>> On 2018/7/27 4:54, Weichao Guo wrote:
+>>> We may encounter both checkpoints invalid in such a case:
+>>> 1. write checkpoint A, B, C;
+>>> 2. sudden power-cut during write checkpoint D;
+>>> 3. fsck changes the total block count of checkpoint C;
+>>> 4. sudden power-cut during fsck write checkpoint C in place
+>>>
+>>>  ---------           ---------
+>>> |  ver C  |         |  ver D  |
+>>> |   ...   |         |   ...   |
+>>> | content |         | content |
+>>> |   ...   |         |   ...   |
+>>> |  ver C  |         |         |
+>>> |  ver A  |         |  ver B  |
+>>>  ---------           ---------
+>>>
+>>> As the total # of checkpoint C is changed, an old cp block
+>>> like ver A or an invalid cp block may be referenced.
+>>> To avoid both checkpoints invalid, and considering fsck should
+>>> not update the checkpoint version, fsck could write checkpoint
+>>> out of place first and then write checkpoint in place. This
+>>> makes sure the file system is fixed by fsck and at least one
+>>> of the two checkpoints is valid.
+>>>
+>>> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+>>> ---
+>>>  fsck/defrag.c |  2 +-
+>>>  fsck/fsck.c   | 14 +++++++++++++-
+>>>  fsck/fsck.h   |  1 +
+>>>  fsck/mount.c  | 16 ++++++++++++++--
+>>>  fsck/sload.c  |  2 +-
+>>>  5 files changed, 30 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/fsck/defrag.c b/fsck/defrag.c
+>>> index bea0293..9fc932f 100644
+>>> --- a/fsck/defrag.c
+>>> +++ b/fsck/defrag.c
+>>> @@ -96,7 +96,7 @@ int f2fs_defragment(struct f2fs_sb_info *sbi, u64 from, u64 len, u64 to, int lef
+>>>  	/* flush dirty sit entries */
+>>>  	flush_sit_entries(sbi);
+>>>  
+>>> -	write_checkpoint(sbi);
+>>> +	__write_checkpoint(sbi);
+>>>  
+>>>  	return 0;
+>>>  }
+>>> diff --git a/fsck/fsck.c b/fsck/fsck.c
+>>> index 91c8529..f2ff4bc 100644
+>>> --- a/fsck/fsck.c
+>>> +++ b/fsck/fsck.c
+>>> @@ -1943,7 +1943,7 @@ static void flush_curseg_sit_entries(struct f2fs_sb_info *sbi)
+>>>  	free(sit_blk);
+>>>  }
+>>>  
+>>> -static void fix_checkpoint(struct f2fs_sb_info *sbi)
+>>> +static void __fix_checkpoint(struct f2fs_sb_info *sbi)
+>>>  {
+>>>  	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
+>>>  	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+>>> @@ -2004,6 +2004,18 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
+>>>  		write_nat_bits(sbi, sb, cp, sbi->cur_cp);
+>>>  }
+>>>  
+>>> +static void fix_checkpoint(struct f2fs_sb_info *sbi)
+>>> +{
+>>> +	int i = 0;
+>>> +
+>>> +	for (i = 0; i < 2; i++) {
+>>> +		/* write checkpoint out of place first */
+>>> +		sbi->cur_cp = sbi->cur_cp % 2 + 1;
+>>> +		__fix_checkpoint(sbi);
+>>> +		f2fs_fsync_device();
+>>
+>> It needs to check return value here.
+>>
+>> We can add below codes in the end of __fix_checkpoint()?
+>>
+>> 	ret = f2fs_fsync_device();
+>> 	ASSERT(ret >= 0);
+>>
+>>> +	}
+>>> +}
+>>> +
+>>>  int check_curseg_offset(struct f2fs_sb_info *sbi)
+>>>  {
+>>>  	int i;
+>>> diff --git a/fsck/fsck.h b/fsck/fsck.h
+>>> index 8e133fa..068dd34 100644
+>>> --- a/fsck/fsck.h
+>>> +++ b/fsck/fsck.h
+>>> @@ -175,6 +175,7 @@ extern void flush_sit_entries(struct f2fs_sb_info *);
+>>>  extern void move_curseg_info(struct f2fs_sb_info *, u64);
+>>>  extern void write_curseg_info(struct f2fs_sb_info *);
+>>>  extern int find_next_free_block(struct f2fs_sb_info *, u64 *, int, int);
+>>> +extern void __write_checkpoint(struct f2fs_sb_info *);
+>>>  extern void write_checkpoint(struct f2fs_sb_info *);
+>>>  extern void update_data_blkaddr(struct f2fs_sb_info *, nid_t, u16, block_t);
+>>>  extern void update_nat_blkaddr(struct f2fs_sb_info *, nid_t, nid_t, block_t);
+>>> diff --git a/fsck/mount.c b/fsck/mount.c
+>>> index e5574c5..8a29421 100644
+>>> --- a/fsck/mount.c
+>>> +++ b/fsck/mount.c
+>>> @@ -1856,7 +1856,7 @@ void flush_journal_entries(struct f2fs_sb_info *sbi)
+>>>  	int n_sits = flush_sit_journal_entries(sbi);
+>>>  
+>>>  	if (n_nats || n_sits)
+>>> -		write_checkpoint(sbi);
+>>> +		__write_checkpoint(sbi);
+>>>  }
+>>>  
+>>>  void flush_sit_entries(struct f2fs_sb_info *sbi)
+>>> @@ -2079,7 +2079,7 @@ void nullify_nat_entry(struct f2fs_sb_info *sbi, u32 nid)
+>>>  	free(nat_block);
+>>>  }
+>>>  
+>>> -void write_checkpoint(struct f2fs_sb_info *sbi)
+>>> +void __write_checkpoint(struct f2fs_sb_info *sbi)
+>>>  {
+>>>  	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
+>>>  	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+>>> @@ -2144,6 +2144,18 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
+>>>  	ASSERT(ret >= 0);
+>>>  }
+>>>  
+>>> +void write_checkpoint(struct f2fs_sb_info *sbi)
+>>> +{
+>>> +	int i = 0;
+>>> +
+>>> +	for (i = 0; i < 2; i++) {
+>>> +		/* write checkpoint out of place first */
+>>> +		sbi->cur_cp = sbi->cur_cp % 2 + 1;
+>>> +		__write_checkpoint(sbi);
+>>> +		f2fs_fsync_device();
+>>
+>> Ditto.
+>>
+>> Thanks,
+>>
+>>> +	}
+>>> +}
+>>> +
+>>>  void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
+>>>  {
+>>>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+>>> diff --git a/fsck/sload.c b/fsck/sload.c
+>>> index 2842f2c..53d80fa 100644
+>>> --- a/fsck/sload.c
+>>> +++ b/fsck/sload.c
+>>> @@ -325,6 +325,6 @@ int f2fs_sload(struct f2fs_sb_info *sbi)
+>>>  	/* flush dirty sit entries */
+>>>  	flush_sit_entries(sbi);
+>>>  
+>>> -	write_checkpoint(sbi);
+>>> +	__write_checkpoint(sbi);
+>>>  	return 0;
+>>>  }
+>>>
+> 
+> .
+> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
