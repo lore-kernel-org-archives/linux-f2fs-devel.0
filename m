@@ -1,88 +1,68 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: avoid fi->i_gc_rwsem[WRITE] lock in
- f2fs_gc
-Date: Mon, 20 Aug 2018 15:13:04 +0800
-Message-ID: <a12d7501-2156-2492-7fe2-8727f91bd5ff@huawei.com>
-References: <20180730013242.15647-1-jaegeuk@kernel.org>
- <20180804222954.GB35077@jaegeuk-macbookpro.roam.corp.google.com>
- <20180805163450.GB55836@jaegeuk-macbookpro.roam.corp.google.com>
- <16d7f719-268f-99f4-c5b2-fc893b557f11@huawei.com>
- <20180809195917.GA27087@jaegeuk-macbookpro.roam.corp.google.com>
- <b09cdcf8-f8cd-98b6-54c1-82b2fb0f8b81@huawei.com>
- <20180810014614.GA44979@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH 2/2] Ask git to ignore the generated
+ sg_write_buffer executable
+Date: Mon, 20 Aug 2018 15:21:09 +0800
+Message-ID: <53b935aa-1c0e-1968-b966-5f16de969e90@huawei.com>
+References: <20180820030407.13225-1-tytso@mit.edu>
+ <20180820030407.13225-2-tytso@mit.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180810014614.GA44979@jaegeuk-macbookpro.roam.corp.google.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1freVA-0001E8-Me
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Aug 2018 07:21:24 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1freV8-005kb8-Lf
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Aug 2018 07:21:24 +0000
+In-Reply-To: <20180820030407.13225-2-tytso@mit.edu>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Theodore Ts'o <tytso@mit.edu>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-Hi Jaegeuk,
+Hi Ted,
 
-Please add:
+That has already been fixed in f2fs-utils, you can find the path in below link. :)
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-tools.git/commit/?h=dev-test&id=5180253fb40c8955e9541a3620264180cbbf280a
+
+https://lkml.org/lkml/2018/5/30/71
 
 Thanks,
 
-On 2018/8/10 9:46, Jaegeuk Kim wrote:
-> On 08/10, Chao Yu wrote:
->> On 2018/8/10 3:59, Jaegeuk Kim wrote:
->>> Yup, how about this?
->>>
->>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>> index d816c328f02b..cb510fb36523 100644
->>> --- a/fs/f2fs/gc.c
->>> +++ b/fs/f2fs/gc.c
->>> @@ -1052,6 +1052,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>>  		.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
->>>  	};
->>>  	unsigned long long last_skipped = sbi->skipped_atomic_files[FG_GC];
->>> +	unsigned long long first_skipped;
->>>  	unsigned int skipped_round = 0, round = 0;
->>>  
->>>  	trace_f2fs_gc_begin(sbi->sb, sync, background,
->>> @@ -1064,8 +1065,10 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>>  				prefree_segments(sbi));
->>>  
->>>  	cpc.reason = __get_cp_reason(sbi);
->>> -	sbi->skipped_gc_rwsem = 0;
->>>  gc_more:
->>> +	sbi->skipped_gc_rwsem = 0;
->>> +	first_skipped = last_skipped;
->>> +
->>>  	if (unlikely(!(sbi->sb->s_flags & SB_ACTIVE))) {
->>>  		ret = -EINVAL;
->>>  		goto stop;
->>> @@ -1126,8 +1129,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>>  			goto gc_more;
->>>  		}
->>>  
->>> -		if (sbi->skipped_atomic_files[FG_GC] == last_skipped &&
->>> -				sbi->skipped_atomic_files[FG_GC] >
->>> +		if (first_skipped < last_skipped &&
->>> +				(last_skipped - first_skipped) >
->>
->> IMO, it would be better to judge the condition with skipped number in all round
->> of FGGC instead of last round, since number in last round may not very accurate.
+On 2018/8/20 11:04, Theodore Ts'o wrote:
+> Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+> ---
+>  .gitignore | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Yup, moved before gc_more.
+> diff --git a/.gitignore b/.gitignore
+> index d5ca55d..3f04e85 100644
+> --- a/.gitignore
+> +++ b/.gitignore
+> @@ -50,6 +50,7 @@ stamp-h1
+>  /tools/fibmap.f2fs
+>  /tools/parse.f2fs
+>  /tools/f2fscrypt
+> +/tools/sg_write_buffer/sg_write_buffer
+>  
+>  # cscope files
+>  cscope.*
 > 
->>
->> Thoughts?
->>
->> Thanks,
->>
->>>  						sbi->skipped_gc_rwsem) {
->>>  			f2fs_drop_inmem_pages_all(sbi, true);
->>>  			segno = NULL_SEGNO;
->>>
->>> .
->>>
-> 
-> .
-> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
