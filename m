@@ -1,123 +1,88 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: [PATCH 1/2] add configure option --with-root-libdir
-Date: Sun, 19 Aug 2018 23:04:06 -0400
-Message-ID: <20180820030407.13225-1-tytso@mit.edu>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: avoid fi->i_gc_rwsem[WRITE] lock in
+ f2fs_gc
+Date: Mon, 20 Aug 2018 15:13:04 +0800
+Message-ID: <a12d7501-2156-2492-7fe2-8727f91bd5ff@huawei.com>
+References: <20180730013242.15647-1-jaegeuk@kernel.org>
+ <20180804222954.GB35077@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180805163450.GB55836@jaegeuk-macbookpro.roam.corp.google.com>
+ <16d7f719-268f-99f4-c5b2-fc893b557f11@huawei.com>
+ <20180809195917.GA27087@jaegeuk-macbookpro.roam.corp.google.com>
+ <b09cdcf8-f8cd-98b6-54c1-82b2fb0f8b81@huawei.com>
+ <20180810014614.GA44979@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@thunk.org>) id 1frb7w-000672-14
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Aug 2018 03:45:12 +0000
-Received: from imap.thunk.org ([74.207.234.97])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1frb7s-005e9w-9H
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Aug 2018 03:45:11 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Theodore Ts'o <tytso@mit.edu>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180810014614.GA44979@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This allows the development link libraries to be installed in
-/usr/lib, while the run-libraries are installed in /lib, which is
-required by Debian policy.  This can be done via:
+Hi Jaegeuk,
 
-    configure --prefix=/ --libdir=/usr/lib --with-root-libdir=/lib
+Please add:
 
-The technique of working around libtool's inflexibility is borrowed
-from util-linux.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
----
- configure.ac     | 11 +++++++++++
- lib/Makefile.am  | 17 +++++++++++++++++
- mkfs/Makefile.am | 15 +++++++++++++++
- 3 files changed, 43 insertions(+)
+Thanks,
 
-diff --git a/configure.ac b/configure.ac
-index f04f281..62c18eb 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -190,6 +190,17 @@ AM_CONDITIONAL([OSX], [test "$build_mac" = "yes"])
- #AC_SUBST([sbindir], [/sbin])
- #AC_SUBST([sysconfdir], [/etc])
- #AC_SUBST([localstatedir], [/var])
-+
-+AC_ARG_WITH([root-libdir],
-+[  --with-root-libdir=DIR override location for /lib/libf2fs.so],
-+root_libdir=$withval,
-+root_libdir=NONE)dnl
-+
-+if test "$root_libdir" = NONE ; then
-+   root_libdir="$libdir"
-+fi
-+AC_SUBST(root_libdir)
-+
- AC_CONFIG_FILES([
- 	Makefile
- 	man/Makefile
-diff --git a/lib/Makefile.am b/lib/Makefile.am
-index b26b404..c1875a0 100644
---- a/lib/Makefile.am
-+++ b/lib/Makefile.am
-@@ -6,3 +6,20 @@ libf2fs_la_SOURCES = libf2fs.c libf2fs_io.c libf2fs_zoned.c
- libf2fs_la_CFLAGS = -Wall
- libf2fs_la_CPPFLAGS = -I$(top_srcdir)/include
- libf2fs_la_LDFLAGS = -version-info $(LIBF2FS_CURRENT):$(LIBF2FS_REVISION):$(LIBF2FS_AGE)
-+
-+root_libdir=@root_libdir@
-+
-+install-exec-hook:
-+	if test -n "$(root_libdir)" -a "$(libdir)" != "$(root_libdir)" -a \
-+	    -f "$(DESTDIR)$(libdir)/libf2fs.so"; then \
-+		$(MKDIR_P) $(DESTDIR)$(root_libdir); \
-+		mv $(DESTDIR)$(libdir)/libf2fs.so.* $(DESTDIR)$(root_libdir); \
-+		so_img_name=$$(readlink $(DESTDIR)$(libdir)/libf2fs.so); \
-+		so_img_rel_target=$$(echo $(libdir) | sed 's,\(^/\|\)[^/][^/]*,..,g'); \
-+		(cd $(DESTDIR)$(libdir) && \
-+			rm -f libf2fs.so && \
-+			$(LN_S) $$so_img_rel_target$(root_libdir)/$$so_img_name libf2fs.so); \
-+	fi
-+
-+uninstall-hook:
-+	rm -f $(DESTDIR)$(root_libdir)/libf2fs.so*
-diff --git a/mkfs/Makefile.am b/mkfs/Makefile.am
-index bbb4917..32996ba 100644
---- a/mkfs/Makefile.am
-+++ b/mkfs/Makefile.am
-@@ -14,3 +14,18 @@ libf2fs_format_la_CFLAGS = -DWITH_BLKDISCARD
- libf2fs_format_la_CPPFLAGS = -I$(top_srcdir)/include
- libf2fs_format_la_LDFLAGS = -luuid -L$(top_builddir)/lib -lf2fs \
- 	-version-info $(FMT_CURRENT):$(FMT_REVISION):$(FMT_AGE)
-+
-+install-exec-hook:
-+	if test -n "$(root_libdir)" -a "$(libdir)" != "$(root_libdir)" -a \
-+	    -f "$(DESTDIR)$(libdir)/libf2fs_format.so"; then \
-+		$(MKDIR_P) $(DESTDIR)$(root_libdir); \
-+		mv $(DESTDIR)$(libdir)/libf2fs_format.so.* $(DESTDIR)$(root_libdir); \
-+		so_img_name=$$(readlink $(DESTDIR)$(libdir)/libf2fs_format.so); \
-+		so_img_rel_target=$$(echo $(libdir) | sed 's,\(^/\|\)[^/][^/]*,..,g'); \
-+		(cd $(DESTDIR)$(libdir) && \
-+			rm -f libf2fs_format.so && \
-+			$(LN_S) $$so_img_rel_target$(root_libdir)/$$so_img_name libf2fs_format.so); \
-+	fi
-+
-+uninstall-hook:
-+	rm $(DESTDIR)$(root_libdir)/libf2fs_format.so*
--- 
-2.18.0.rc0
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+On 2018/8/10 9:46, Jaegeuk Kim wrote:
+> On 08/10, Chao Yu wrote:
+>> On 2018/8/10 3:59, Jaegeuk Kim wrote:
+>>> Yup, how about this?
+>>>
+>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>> index d816c328f02b..cb510fb36523 100644
+>>> --- a/fs/f2fs/gc.c
+>>> +++ b/fs/f2fs/gc.c
+>>> @@ -1052,6 +1052,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>>  		.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
+>>>  	};
+>>>  	unsigned long long last_skipped = sbi->skipped_atomic_files[FG_GC];
+>>> +	unsigned long long first_skipped;
+>>>  	unsigned int skipped_round = 0, round = 0;
+>>>  
+>>>  	trace_f2fs_gc_begin(sbi->sb, sync, background,
+>>> @@ -1064,8 +1065,10 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>>  				prefree_segments(sbi));
+>>>  
+>>>  	cpc.reason = __get_cp_reason(sbi);
+>>> -	sbi->skipped_gc_rwsem = 0;
+>>>  gc_more:
+>>> +	sbi->skipped_gc_rwsem = 0;
+>>> +	first_skipped = last_skipped;
+>>> +
+>>>  	if (unlikely(!(sbi->sb->s_flags & SB_ACTIVE))) {
+>>>  		ret = -EINVAL;
+>>>  		goto stop;
+>>> @@ -1126,8 +1129,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>>  			goto gc_more;
+>>>  		}
+>>>  
+>>> -		if (sbi->skipped_atomic_files[FG_GC] == last_skipped &&
+>>> -				sbi->skipped_atomic_files[FG_GC] >
+>>> +		if (first_skipped < last_skipped &&
+>>> +				(last_skipped - first_skipped) >
+>>
+>> IMO, it would be better to judge the condition with skipped number in all round
+>> of FGGC instead of last round, since number in last round may not very accurate.
+> 
+> Yup, moved before gc_more.
+> 
+>>
+>> Thoughts?
+>>
+>> Thanks,
+>>
+>>>  						sbi->skipped_gc_rwsem) {
+>>>  			f2fs_drop_inmem_pages_all(sbi, true);
+>>>  			segno = NULL_SEGNO;
+>>>
+>>> .
+>>>
+> 
+> .
+> 
