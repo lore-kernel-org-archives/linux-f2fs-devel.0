@@ -1,68 +1,79 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 2/2] Ask git to ignore the generated
- sg_write_buffer executable
-Date: Mon, 20 Aug 2018 15:21:09 +0800
-Message-ID: <53b935aa-1c0e-1968-b966-5f16de969e90@huawei.com>
-References: <20180820030407.13225-1-tytso@mit.edu>
- <20180820030407.13225-2-tytso@mit.edu>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH 1/2] f2fs: fix to avoid quota inode leak in ->put_super
+Date: Mon, 20 Aug 2018 20:33:49 +0800
+Message-ID: <b10c4ae6-2a25-fb0b-cbfa-467b5e988b47@kernel.org>
+References: <20180817091840.50792-1-yuchao0@huawei.com>
+ <20180818151600.GA84798@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1freVA-0001E8-Me
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Aug 2018 07:21:24 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1freV8-005kb8-Lf
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Aug 2018 07:21:24 +0000
-In-Reply-To: <20180820030407.13225-2-tytso@mit.edu>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180818151600.GA84798@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Theodore Ts'o <tytso@mit.edu>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Ted,
+On 2018/8/18 23:16, Jaegeuk Kim wrote:
+> On 08/17, Chao Yu wrote:
+>> generic/019 reports below error:
+>>
+>>  __quota_error: 1160 callbacks suppressed
+>>  Quota error (device zram1): write_blk: dquota write failed
+>>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+>>  Quota error (device zram1): write_blk: dquota write failed
+>>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+>>  Quota error (device zram1): write_blk: dquota write failed
+>>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+>>  Quota error (device zram1): write_blk: dquota write failed
+>>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+>>  Quota error (device zram1): write_blk: dquota write failed
+>>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+>>  VFS: Busy inodes after unmount of zram1. Self-destruct in 5 seconds.  Have a nice day...
+>>
+>> If we failed in below path due to fail to write dquot block, we will miss
+>> to release quota inode, fix it.
+>>
+>> - f2fs_put_super
+>>  - f2fs_quota_off_umount
+>>   - f2fs_quota_off
+>>    - f2fs_quota_sync   <-- failed
+>>    - dquot_quota_off   <-- missed to call
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/super.c | 6 ++++--
+>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index a5df9fbc6355..9647bbcdfd2b 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -1977,10 +1977,12 @@ void f2fs_quota_off_umount(struct super_block *sb)
+>>  	for (type = 0; type < MAXQUOTAS; type++) {
+>>  		err = f2fs_quota_off(sb, type);
+>>  		if (err) {
+>> +			int ret = dquot_quota_off(sb, type);
+>> +
+> 
+> Could you check the mainline version?
 
-That has already been fixed in f2fs-utils, you can find the path in below link. :)
+I guess we missed to apply below patch? Could you check that?
 
-https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-tools.git/commit/?h=dev-test&id=5180253fb40c8955e9541a3620264180cbbf280a
-
-https://lkml.org/lkml/2018/5/30/71
+f2fs: report error if quota off error during umount
 
 Thanks,
 
-On 2018/8/20 11:04, Theodore Ts'o wrote:
-> Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-> ---
->  .gitignore | 1 +
->  1 file changed, 1 insertion(+)
 > 
-> diff --git a/.gitignore b/.gitignore
-> index d5ca55d..3f04e85 100644
-> --- a/.gitignore
-> +++ b/.gitignore
-> @@ -50,6 +50,7 @@ stamp-h1
->  /tools/fibmap.f2fs
->  /tools/parse.f2fs
->  /tools/f2fscrypt
-> +/tools/sg_write_buffer/sg_write_buffer
->  
->  # cscope files
->  cscope.*
-> 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+>>  			f2fs_msg(sb, KERN_ERR,
+>>  				"Fail to turn off disk quota "
+>> -				"(type: %d, err: %d), Please "
+>> -				"run fsck to fix it.", type, err);
+>> +				"(type: %d, err: %d, ret:%d), Please "
+>> +				"run fsck to fix it.", type, err, ret);
+>>  			set_sbi_flag(F2FS_SB(sb), SBI_NEED_FSCK);
+>>  		}
+>>  	}
+>> -- 
+>> 2.18.0.rc1
