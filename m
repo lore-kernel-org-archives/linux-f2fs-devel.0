@@ -1,179 +1,314 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v3] f2fs: fix to flush all dirty inodes recovered
- in readonly fs
-Date: Tue, 21 Aug 2018 20:23:10 +0800
-Message-ID: <20180821122310.113103-1-yuchao0@huawei.com>
+Subject: [PATCH v2] f2fs: guarantee journalled quota data by checkpoint
+Date: Tue, 21 Aug 2018 20:47:02 +0800
+Message-ID: <20180821124702.68370-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fs5h6-00011p-7X
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 21 Aug 2018 12:23:32 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fs5h4-00AdzJ-1k
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 21 Aug 2018 12:23:32 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>, Weichao Guo <guoweichao@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-generic/417 reported as blow:
+For journalled quota mode, let checkpoint to flush dquot dirty data
+and quota file data to keep all file quota info are consisting in
+last checkpoint, so that we can avoid quota file being corrupted
+after SPO.
 
-------------[ cut here ]------------
-kernel BUG at /home/yuchao/git/devf2fs/inode.c:695!
-invalid opcode: 0000 [#1] PREEMPT SMP
-CPU: 1 PID: 21697 Comm: umount Tainted: G        W  O      4.18.0-rc2+ #39
-Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-EIP: f2fs_evict_inode+0x556/0x580 [f2fs]
-Call Trace:
- ? _raw_spin_unlock+0x2c/0x50
- evict+0xa8/0x170
- dispose_list+0x34/0x40
- evict_inodes+0x118/0x120
- generic_shutdown_super+0x41/0x100
- ? rcu_read_lock_sched_held+0x97/0xa0
- kill_block_super+0x22/0x50
- kill_f2fs_super+0x6f/0x80 [f2fs]
- deactivate_locked_super+0x3d/0x70
- deactivate_super+0x40/0x60
- cleanup_mnt+0x39/0x70
- __cleanup_mnt+0x10/0x20
- task_work_run+0x81/0xa0
- exit_to_usermode_loop+0x59/0xa7
- do_fast_syscall_32+0x1f5/0x22c
- entry_SYSENTER_32+0x53/0x86
-EIP: f2fs_evict_inode+0x556/0x580 [f2fs]
+The implementation is that:
 
-It can simply reproduced with scripts:
+1. add a global state SBI_QUOTA_NEED_FLUSH to indicate that there is
+cached dquot metadata changes in quota subsystem, and later checkpoint
+should:
+ a) flush dquot metadata into quota file.
+ b) flush quota file to storage to keep file usage be consistent.
 
-Enable quota feature during mkfs.
+2. add a glabal state SBI_QUOTA_NEED_REPAIR to indicate that quota
+persisting is failed due to -EIO or -ENOSPC, and then,
+ a) checkpoint will skip syncing dquot metadata.
+ b) CP_QUOTA_NEED_FSCK_FLAG will be set in last cp pack to give a
+    hint for fsck repairing.
 
-Testcase1:
-1. mkfs.f2fs /dev/zram0
-2. mount -t f2fs /dev/zram0 /mnt/f2fs
-3. xfs_io -f /mnt/f2fs/file -c "pwrite 0 4k" -c "fsync"
-4. godown /mnt/f2fs
-5. umount /mnt/f2fs
-6. mount -t f2fs -o ro /dev/zram0 /mnt/f2fs
-7. umount /mnt/f2fs
-
-Testcase2:
-1. mkfs.f2fs /dev/zram0
-2. mount -t f2fs /dev/zram0 /mnt/f2fs
-3. touch /mnt/f2fs/file
-4. create process[pid = x] do:
-	a) open /mnt/f2fs/file;
-	b) unlink /mnt/f2fs/file
-5. godown -f /mnt/f2fs
-6. kill process[pid = x]
-7. umount /mnt/f2fs
-8. mount -t f2fs -o ro /dev/zram0 /mnt/f2fs
-9. umount /mnt/f2fs
-
-The reason is: during recovery, i_{c,m}time of inode will be updated, then
-the inode can be set dirty w/o being tracked in sbi->inode_list[DIRTY_META]
-global list, so later write_checkpoint will not flush such dirty inode into
-node page.
-
-Once umount is called, sync_filesystem() in generic_shutdown_super() will
-skip syncng dirty inodes due to sb_rdonly check, leaving dirty inodes
-there.
-
-To solve this issue, during umount, add remove SB_RDONLY flag in
-sb->s_flags, to make sure sync_filesystem() will not be skipped.
-
+Signed-off-by: Weichao Guo <guoweichao@huawei.com>
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
 v2:
-- cover orphan recovery.
-v3:
-- fix to cover error path of recovery.
- fs/f2fs/checkpoint.c |  2 ++
- fs/f2fs/f2fs.h       |  1 +
- fs/f2fs/recovery.c   | 14 +++++++++-----
- fs/f2fs/super.c      |  3 +++
- 4 files changed, 15 insertions(+), 5 deletions(-)
+- refactor the patch, implementation is updated in commit log.
+ fs/f2fs/checkpoint.c    | 21 ++++++++++
+ fs/f2fs/data.c          |  8 +++-
+ fs/f2fs/f2fs.h          |  3 ++
+ fs/f2fs/super.c         | 90 ++++++++++++++++++++++++++++++++++++-----
+ include/linux/f2fs_fs.h |  1 +
+ 5 files changed, 112 insertions(+), 11 deletions(-)
 
 diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 0274446f585e..a01fd22c1410 100644
+index a01fd22c1410..05d58aa508b5 100644
 --- a/fs/f2fs/checkpoint.c
 +++ b/fs/f2fs/checkpoint.c
-@@ -696,6 +696,8 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
- 	/* clear Orphan Flag */
- 	clear_ckpt_flags(sbi, CP_ORPHAN_PRESENT_FLAG);
- out:
-+	set_ckpt_flags(sbi, SBI_IS_RECOVERED);
+@@ -1086,6 +1086,12 @@ static void __prepare_cp_block(struct f2fs_sb_info *sbi)
+ 	ckpt->next_free_nid = cpu_to_le32(last_nid);
+ }
+ 
++static bool __need_flush_quota(struct f2fs_sb_info *sbi)
++{
++	return is_sbi_flag_set(sbi, SBI_QUOTA_NEED_FLUSH) &&
++			!is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR);
++}
 +
- #ifdef CONFIG_QUOTA
- 	/* Turn quotas off */
- 	if (quota_enabled)
+ /*
+  * Freeze all the FS-operations for checkpoint.
+  */
+@@ -1102,7 +1108,19 @@ static int block_operations(struct f2fs_sb_info *sbi)
+ 	blk_start_plug(&plug);
+ 
+ retry_flush_dents:
++	if (__need_flush_quota(sbi)) {
++		clear_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
++		err = f2fs_quota_sync(sbi->sb, -1);
++		if (err)
++			goto out;
++	}
++
+ 	f2fs_lock_all(sbi);
++	if (__need_flush_quota(sbi)) {
++		f2fs_unlock_all(sbi);
++		goto retry_flush_dents;
++	}
++
+ 	/* write all the dirty dentry pages */
+ 	if (get_pages(sbi, F2FS_DIRTY_DENTS)) {
+ 		f2fs_unlock_all(sbi);
+@@ -1217,6 +1235,9 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
+ 		__set_ckpt_flags(ckpt, CP_FSCK_FLAG);
+ 
++	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
++		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
++
+ 	/* set this flag to activate crc|cp_ver for recovery */
+ 	__set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG);
+ 	__clear_ckpt_flags(ckpt, CP_NOCRC_RECOVERY_FLAG);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 16abe2231247..eac3a0e27c6e 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -49,7 +49,7 @@ static bool __is_cp_guaranteed(struct page *page)
+ 			inode->i_ino ==  F2FS_NODE_INO(sbi) ||
+ 			S_ISDIR(inode->i_mode) ||
+ 			(S_ISREG(inode->i_mode) &&
+-			is_inode_flag_set(inode, FI_ATOMIC_FILE)) ||
++			(f2fs_is_atomic_file(inode) || IS_NOQUOTA(inode))) ||
+ 			is_cold_data(page))
+ 		return true;
+ 	return false;
+@@ -1708,6 +1708,8 @@ bool f2fs_should_update_outplace(struct inode *inode, struct f2fs_io_info *fio)
+ 		return true;
+ 	if (S_ISDIR(inode->i_mode))
+ 		return true;
++	if (IS_NOQUOTA(inode))
++		return true;
+ 	if (f2fs_is_atomic_file(inode))
+ 		return true;
+ 	if (fio) {
+@@ -1952,7 +1954,7 @@ static int __write_data_page(struct page *page, bool *submitted,
+ 	}
+ 
+ 	unlock_page(page);
+-	if (!S_ISDIR(inode->i_mode))
++	if (!S_ISDIR(inode->i_mode) && !IS_NOQUOTA(inode))
+ 		f2fs_balance_fs(sbi, need_balance_fs);
+ 
+ 	if (unlikely(f2fs_cp_error(sbi))) {
+@@ -2143,6 +2145,8 @@ static inline bool __should_serialize_io(struct inode *inode,
+ {
+ 	if (!S_ISREG(inode->i_mode))
+ 		return false;
++	if (IS_NOQUOTA(inode))
++		return false;
+ 	if (wbc->sync_mode != WB_SYNC_ALL)
+ 		return true;
+ 	if (get_dirty_pages(inode) >= SM_I(F2FS_I_SB(inode))->min_seq_blocks)
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index e100af9afe38..e9009e8d30e2 100644
+index e9009e8d30e2..57cd6d7f36ea 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -1091,6 +1091,7 @@ enum {
- 	SBI_NEED_SB_WRITE,			/* need to recover superblock */
+@@ -1092,6 +1092,8 @@ enum {
  	SBI_NEED_CP,				/* need to checkpoint */
  	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
-+	SBI_IS_RECOVERED,			/* recovered orphan/data */
+ 	SBI_IS_RECOVERED,			/* recovered orphan/data */
++	SBI_QUOTA_NEED_FLUSH,			/* need to flush quota info in CP */
++	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
  };
  
  enum {
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 95511ed11a22..e3aa6eee7a8b 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -697,11 +697,15 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- 	/* let's drop all the directory inodes for clean checkpoint */
- 	destroy_fsync_dnodes(&dir_list);
- 
--	if (!err && need_writecp) {
--		struct cp_control cpc = {
--			.reason = CP_RECOVERY,
--		};
--		err = f2fs_write_checkpoint(sbi, &cpc);
-+	if (need_writecp) {
-+		set_sbi_flag(sbi, SBI_IS_RECOVERED);
-+
-+		if (!err) {
-+			struct cp_control cpc = {
-+				.reason = CP_RECOVERY,
-+			};
-+			err = f2fs_write_checkpoint(sbi, &cpc);
-+		}
- 	}
- 
- 	kmem_cache_destroy(fsync_entry_slab);
+@@ -2832,6 +2834,7 @@ static inline int f2fs_add_link(struct dentry *dentry, struct inode *inode)
+ int f2fs_inode_dirtied(struct inode *inode, bool sync);
+ void f2fs_inode_synced(struct inode *inode);
+ int f2fs_enable_quota_files(struct f2fs_sb_info *sbi, bool rdonly);
++int f2fs_quota_sync(struct super_block *sb, int type);
+ void f2fs_quota_off_umount(struct super_block *sb);
+ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover);
+ int f2fs_sync_fs(struct super_block *sb, int sync);
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index ab9e0921f207..af0a3cbb11a9 100644
+index af0a3cbb11a9..74e8a39254fc 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -3215,6 +3215,9 @@ static void kill_f2fs_super(struct super_block *sb)
- 			};
- 			f2fs_write_checkpoint(sbi, &cpc);
- 		}
+@@ -1696,6 +1696,13 @@ static qsize_t *f2fs_get_reserved_space(struct inode *inode)
+ 
+ static int f2fs_quota_on_mount(struct f2fs_sb_info *sbi, int type)
+ {
 +
-+		if (is_sbi_flag_set(sbi, SBI_IS_RECOVERED) && sb_rdonly(sb))
-+			sb->s_flags &= ~SB_RDONLY;
- 	}
- 	kill_block_super(sb);
++	if (is_set_ckpt_flags(sbi, CP_QUOTA_NEED_FSCK_FLAG)) {
++		f2fs_msg(sbi->sb, KERN_ERR,
++			"quota sysfile may be corrupted, skip loading it");
++		return 0;
++	}
++
+ 	return dquot_quota_on_mount(sbi->sb, F2FS_OPTION(sbi).s_qf_names[type],
+ 					F2FS_OPTION(sbi).s_jquota_fmt, type);
  }
+@@ -1766,7 +1773,14 @@ static int f2fs_enable_quotas(struct super_block *sb)
+ 		test_opt(F2FS_SB(sb), PRJQUOTA),
+ 	};
+ 
++	if (is_set_ckpt_flags(F2FS_SB(sb), CP_QUOTA_NEED_FSCK_FLAG)) {
++		f2fs_msg(sb, KERN_ERR,
++			"quota file may be corrupted, skip loading it");
++		return 0;
++	}
++
+ 	sb_dqopt(sb)->flags |= DQUOT_QUOTA_SYS_FILE | DQUOT_NOLIST_DIRTY;
++
+ 	for (type = 0; type < MAXQUOTAS; type++) {
+ 		qf_inum = f2fs_qf_ino(sb, type);
+ 		if (qf_inum) {
+@@ -1787,7 +1801,7 @@ static int f2fs_enable_quotas(struct super_block *sb)
+ 	return 0;
+ }
+ 
+-static int f2fs_quota_sync(struct super_block *sb, int type)
++int f2fs_quota_sync(struct super_block *sb, int type)
+ {
+ 	struct quota_info *dqopt = sb_dqopt(sb);
+ 	int cnt;
+@@ -1795,7 +1809,7 @@ static int f2fs_quota_sync(struct super_block *sb, int type)
+ 
+ 	ret = dquot_writeback_dquots(sb, type);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	/*
+ 	 * Now when everything is written we can discard the pagecache so
+@@ -1809,13 +1823,16 @@ static int f2fs_quota_sync(struct super_block *sb, int type)
+ 
+ 		ret = filemap_write_and_wait(dqopt->files[cnt]->i_mapping);
+ 		if (ret)
+-			return ret;
++			goto out;
+ 
+ 		inode_lock(dqopt->files[cnt]);
+ 		truncate_inode_pages(&dqopt->files[cnt]->i_data, 0);
+ 		inode_unlock(dqopt->files[cnt]);
+ 	}
+-	return 0;
++out:
++	if (ret)
++		set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
++	return ret;
+ }
+ 
+ static int f2fs_quota_on(struct super_block *sb, int type, int format_id,
+@@ -1889,6 +1906,61 @@ void f2fs_quota_off_umount(struct super_block *sb)
+ 	}
+ }
+ 
++static int f2fs_dquot_commit(struct dquot *dquot)
++{
++	int ret;
++
++	ret = dquot_commit(dquot);
++	if (ret == -ENOSPC || ret == -EIO)
++		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
++	return ret;
++}
++
++static int f2fs_dquot_acquire(struct dquot *dquot)
++{
++	int ret;
++
++	ret = dquot_acquire(dquot);
++	if (ret == -ENOSPC || ret == -EIO)
++		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
++	return ret;
++}
++
++static int f2fs_dquot_release(struct dquot *dquot)
++{
++	int ret;
++
++	ret = dquot_release(dquot);
++	if (ret == -ENOSPC || ret == -EIO)
++		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
++	return ret;
++}
++
++static int f2fs_dquot_mark_dquot_dirty(struct dquot *dquot)
++{
++	struct super_block *sb = dquot->dq_sb;
++	struct f2fs_sb_info *sbi = F2FS_SB(sb);
++
++	/* if we are using journalled quota */
++	if (f2fs_sb_has_quota_ino(sbi) ||
++		F2FS_OPTION(sbi).s_qf_names[USRQUOTA] ||
++		F2FS_OPTION(sbi).s_qf_names[GRPQUOTA] ||
++		F2FS_OPTION(sbi).s_qf_names[PRJQUOTA])
++		set_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
++
++	return dquot_mark_dquot_dirty(dquot);
++}
++
++static int f2fs_dquot_commit_info(struct super_block *sb, int type)
++{
++	int ret;
++
++	ret = dquot_commit_info(sb, type);
++	if (ret == -ENOSPC || ret == -EIO)
++		set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
++	return ret;
++}
++
+ static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
+ {
+ 	*projid = F2FS_I(inode)->i_projid;
+@@ -1897,11 +1969,11 @@ static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
+ 
+ static const struct dquot_operations f2fs_quota_operations = {
+ 	.get_reserved_space = f2fs_get_reserved_space,
+-	.write_dquot	= dquot_commit,
+-	.acquire_dquot	= dquot_acquire,
+-	.release_dquot	= dquot_release,
+-	.mark_dirty	= dquot_mark_dquot_dirty,
+-	.write_info	= dquot_commit_info,
++	.write_dquot	= f2fs_dquot_commit,
++	.acquire_dquot	= f2fs_dquot_acquire,
++	.release_dquot	= f2fs_dquot_release,
++	.mark_dirty	= f2fs_dquot_mark_dquot_dirty,
++	.write_info	= f2fs_dquot_commit_info,
+ 	.alloc_dquot	= dquot_alloc,
+ 	.destroy_dquot	= dquot_destroy,
+ 	.get_projid	= f2fs_get_projid,
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index aa4b586569c1..b6cc2b38471f 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -119,6 +119,7 @@ struct f2fs_super_block {
+ /*
+  * For checkpoint
+  */
++#define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
+ #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
+ #define CP_NOCRC_RECOVERY_FLAG	0x00000200
+ #define CP_TRIMMED_FLAG		0x00000100
 -- 
 2.18.0.rc1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
