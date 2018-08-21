@@ -1,14 +1,33 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: fix to flush all dirty inodes recovered in readonly fs
-Date: Tue, 21 Aug 2018 16:25:21 +0800
-Message-ID: <20180821082521.9681-1-yuchao0@huawei.com>
+Subject: [PATCH v3] f2fs: fix to flush all dirty inodes recovered
+ in readonly fs
+Date: Tue, 21 Aug 2018 20:23:10 +0800
+Message-ID: <20180821122310.113103-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1fs5h6-00011p-7X
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 21 Aug 2018 12:23:32 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fs5h4-00AdzJ-1k
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 21 Aug 2018 12:23:32 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 generic/417 reported as blow:
 
@@ -77,56 +96,71 @@ sb->s_flags, to make sure sync_filesystem() will not be skipped.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/checkpoint.c | 2 ++
- fs/f2fs/f2fs.h       | 1 +
- fs/f2fs/recovery.c   | 3 +++
- fs/f2fs/super.c      | 3 +++
- 4 files changed, 9 insertions(+)
+v2:
+- cover orphan recovery.
+v3:
+- fix to cover error path of recovery.
+ fs/f2fs/checkpoint.c |  2 ++
+ fs/f2fs/f2fs.h       |  1 +
+ fs/f2fs/recovery.c   | 14 +++++++++-----
+ fs/f2fs/super.c      |  3 +++
+ 4 files changed, 15 insertions(+), 5 deletions(-)
 
 diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 2fb4967753e0..91dd10c5d85b 100644
+index 0274446f585e..a01fd22c1410 100644
 --- a/fs/f2fs/checkpoint.c
 +++ b/fs/f2fs/checkpoint.c
-@@ -698,6 +698,8 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
- 	}
+@@ -696,6 +696,8 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
  	/* clear Orphan Flag */
  	clear_ckpt_flags(sbi, CP_ORPHAN_PRESENT_FLAG);
-+
-+	set_ckpt_flags(sbi, SBI_IS_RECOVERED);
  out:
++	set_ckpt_flags(sbi, SBI_IS_RECOVERED);
++
  #ifdef CONFIG_QUOTA
  	/* Turn quotas off */
+ 	if (quota_enabled)
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index fe3d7ac62cf2..d773ee6f9e8d 100644
+index e100af9afe38..e9009e8d30e2 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -1094,6 +1094,7 @@ enum {
+@@ -1091,6 +1091,7 @@ enum {
+ 	SBI_NEED_SB_WRITE,			/* need to recover superblock */
  	SBI_NEED_CP,				/* need to checkpoint */
  	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
- 	SBI_NEED_FLUSH_QUOTA,			/* need to flush quota info in CP */
 +	SBI_IS_RECOVERED,			/* recovered orphan/data */
  };
  
  enum {
 diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 59df8c396ae6..f8ebed4e0962 100644
+index 95511ed11a22..e3aa6eee7a8b 100644
 --- a/fs/f2fs/recovery.c
 +++ b/fs/f2fs/recovery.c
-@@ -702,6 +702,9 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- 		struct cp_control cpc = {
- 			.reason = CP_RECOVERY,
- 		};
+@@ -697,11 +697,15 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ 	/* let's drop all the directory inodes for clean checkpoint */
+ 	destroy_fsync_dnodes(&dir_list);
+ 
+-	if (!err && need_writecp) {
+-		struct cp_control cpc = {
+-			.reason = CP_RECOVERY,
+-		};
+-		err = f2fs_write_checkpoint(sbi, &cpc);
++	if (need_writecp) {
++		set_sbi_flag(sbi, SBI_IS_RECOVERED);
 +
-+		set_ckpt_flags(sbi, SBI_IS_RECOVERED);
-+
- 		err = f2fs_write_checkpoint(sbi, &cpc);
++		if (!err) {
++			struct cp_control cpc = {
++				.reason = CP_RECOVERY,
++			};
++			err = f2fs_write_checkpoint(sbi, &cpc);
++		}
  	}
  
+ 	kmem_cache_destroy(fsync_entry_slab);
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index c3a3c9ef8c7d..621d56f55fd2 100644
+index ab9e0921f207..af0a3cbb11a9 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -3273,6 +3273,9 @@ static void kill_f2fs_super(struct super_block *sb)
+@@ -3215,6 +3215,9 @@ static void kill_f2fs_super(struct super_block *sb)
  			};
  			f2fs_write_checkpoint(sbi, &cpc);
  		}
@@ -138,3 +172,8 @@ index c3a3c9ef8c7d..621d56f55fd2 100644
  }
 -- 
 2.18.0.rc1
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
