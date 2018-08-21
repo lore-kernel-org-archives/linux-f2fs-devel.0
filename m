@@ -1,184 +1,225 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH v5] f2fs: fix performance issue observed with
- multi-thread sequential read
-Date: Mon, 20 Aug 2018 19:36:26 -0700
-Message-ID: <20180821023626.GB20263@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180810023758.46974-1-jaegeuk@kernel.org>
- <20180810024859.GA48219@jaegeuk-macbookpro.roam.corp.google.com>
- <20180810185640.GA63079@jaegeuk-macbookpro.roam.corp.google.com>
- <20180817182944.GA58612@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [RFC PATCH v2] fsck.f2fs: write checkpoint out of
+ place first
+Date: Mon, 20 Aug 2018 19:38:07 -0700
+Message-ID: <20180821023807.GC20263@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180726205405.158146-1-guoweichao@huawei.com>
+ <0f5c562c-1718-83a6-034c-9a384aa94347@huawei.com>
+ <20180817183233.GC58612@jaegeuk-macbookpro.roam.corp.google.com>
+ <32914790-e213-9265-0ad8-70a0856b85b5@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1frwYk-00078a-2e
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 21 Aug 2018 02:38:18 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1frwYg-009Voi-SM
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 21 Aug 2018 02:38:18 +0000
 Content-Disposition: inline
-In-Reply-To: <20180817182944.GA58612@jaegeuk-macbookpro.roam.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <32914790-e213-9265-0ad8-70a0856b85b5@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: guoweichao <guoweichao@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-This reverts the commit - "b93f771 - f2fs: remove writepages lock"
-to fix the drop in sequential read throughput.
+On 08/20, guoweichao wrote:
+> Hi Jaegeuk,
+> 
+> Is your test using a kernel include some unstable patches like "f2fs: guarantee journalled quota data by checkpoint"?
+> I am planing to reproduce the problem with dev branch. Is that OK? Any hints for reproducing?
 
-Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
-device: UFS
+I actually removed such the patches. Could you please test with dev now which
+would be targetting to -rc.
 
-Before -
-read throughput: 185 MB/s
-total read requests: 85177 (of these ~80000 are 4KB size requests).
-total write requests: 2546 (of these ~2208 requests are written in 512KB).
+Thanks,
 
-After -
-read throughput: 758 MB/s
-total read requests: 2417 (of these ~2042 are 512KB reads).
-total write requests: 2701 (of these ~2034 requests are written in 512KB).
+> 
+> Thank,
+> Weichao
+> 
+> On 2018/8/18 2:32, Jaegeuk Kim wrote:
+> > Hi Weichao,
+> > 
+> > This is corrupting the checkpoint showing dangling nids when running my test
+> > where injects faults with shutdown loop.
+> > 
+> > Thanks,
+> > 
+> > On 07/28, Chao Yu wrote:
+> >> On 2018/7/27 4:54, Weichao Guo wrote:
+> >>> We may encounter both checkpoints invalid in such a case:
+> >>> 1. write checkpoint A, B, C;
+> >>> 2. sudden power-cut during write checkpoint D;
+> >>> 3. fsck changes the total block count of checkpoint C;
+> >>> 4. sudden power-cut during fsck write checkpoint C in place
+> >>>
+> >>>  ---------           ---------
+> >>> |  ver C  |         |  ver D  |
+> >>> |   ...   |         |   ...   |
+> >>> | content |         | content |
+> >>> |   ...   |         |   ...   |
+> >>> |  ver C  |         |         |
+> >>> |  ver A  |         |  ver B  |
+> >>>  ---------           ---------
+> >>>
+> >>> As the total # of checkpoint C is changed, an old cp block
+> >>> like ver A or an invalid cp block may be referenced.
+> >>> To avoid both checkpoints invalid, and considering fsck should
+> >>> not update the checkpoint version, fsck could write checkpoint
+> >>> out of place first and then write checkpoint in place. This
+> >>> makes sure the file system is fixed by fsck and at least one
+> >>> of the two checkpoints is valid.
+> >>>
+> >>> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+> >>> ---
+> >>>  fsck/defrag.c |  2 +-
+> >>>  fsck/fsck.c   | 14 +++++++++++++-
+> >>>  fsck/fsck.h   |  1 +
+> >>>  fsck/mount.c  | 16 ++++++++++++++--
+> >>>  fsck/sload.c  |  2 +-
+> >>>  5 files changed, 30 insertions(+), 5 deletions(-)
+> >>>
+> >>> diff --git a/fsck/defrag.c b/fsck/defrag.c
+> >>> index bea0293..9fc932f 100644
+> >>> --- a/fsck/defrag.c
+> >>> +++ b/fsck/defrag.c
+> >>> @@ -96,7 +96,7 @@ int f2fs_defragment(struct f2fs_sb_info *sbi, u64 from, u64 len, u64 to, int lef
+> >>>  	/* flush dirty sit entries */
+> >>>  	flush_sit_entries(sbi);
+> >>>  
+> >>> -	write_checkpoint(sbi);
+> >>> +	__write_checkpoint(sbi);
+> >>>  
+> >>>  	return 0;
+> >>>  }
+> >>> diff --git a/fsck/fsck.c b/fsck/fsck.c
+> >>> index 91c8529..f2ff4bc 100644
+> >>> --- a/fsck/fsck.c
+> >>> +++ b/fsck/fsck.c
+> >>> @@ -1943,7 +1943,7 @@ static void flush_curseg_sit_entries(struct f2fs_sb_info *sbi)
+> >>>  	free(sit_blk);
+> >>>  }
+> >>>  
+> >>> -static void fix_checkpoint(struct f2fs_sb_info *sbi)
+> >>> +static void __fix_checkpoint(struct f2fs_sb_info *sbi)
+> >>>  {
+> >>>  	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
+> >>>  	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+> >>> @@ -2004,6 +2004,18 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
+> >>>  		write_nat_bits(sbi, sb, cp, sbi->cur_cp);
+> >>>  }
+> >>>  
+> >>> +static void fix_checkpoint(struct f2fs_sb_info *sbi)
+> >>> +{
+> >>> +	int i = 0;
+> >>> +
+> >>> +	for (i = 0; i < 2; i++) {
+> >>> +		/* write checkpoint out of place first */
+> >>> +		sbi->cur_cp = sbi->cur_cp % 2 + 1;
+> >>> +		__fix_checkpoint(sbi);
+> >>> +		f2fs_fsync_device();
+> >>
+> >> It needs to check return value here.
+> >>
+> >> We can add below codes in the end of __fix_checkpoint()?
+> >>
+> >> 	ret = f2fs_fsync_device();
+> >> 	ASSERT(ret >= 0);
+> >>
+> >>> +	}
+> >>> +}
+> >>> +
+> >>>  int check_curseg_offset(struct f2fs_sb_info *sbi)
+> >>>  {
+> >>>  	int i;
+> >>> diff --git a/fsck/fsck.h b/fsck/fsck.h
+> >>> index 8e133fa..068dd34 100644
+> >>> --- a/fsck/fsck.h
+> >>> +++ b/fsck/fsck.h
+> >>> @@ -175,6 +175,7 @@ extern void flush_sit_entries(struct f2fs_sb_info *);
+> >>>  extern void move_curseg_info(struct f2fs_sb_info *, u64);
+> >>>  extern void write_curseg_info(struct f2fs_sb_info *);
+> >>>  extern int find_next_free_block(struct f2fs_sb_info *, u64 *, int, int);
+> >>> +extern void __write_checkpoint(struct f2fs_sb_info *);
+> >>>  extern void write_checkpoint(struct f2fs_sb_info *);
+> >>>  extern void update_data_blkaddr(struct f2fs_sb_info *, nid_t, u16, block_t);
+> >>>  extern void update_nat_blkaddr(struct f2fs_sb_info *, nid_t, nid_t, block_t);
+> >>> diff --git a/fsck/mount.c b/fsck/mount.c
+> >>> index e5574c5..8a29421 100644
+> >>> --- a/fsck/mount.c
+> >>> +++ b/fsck/mount.c
+> >>> @@ -1856,7 +1856,7 @@ void flush_journal_entries(struct f2fs_sb_info *sbi)
+> >>>  	int n_sits = flush_sit_journal_entries(sbi);
+> >>>  
+> >>>  	if (n_nats || n_sits)
+> >>> -		write_checkpoint(sbi);
+> >>> +		__write_checkpoint(sbi);
+> >>>  }
+> >>>  
+> >>>  void flush_sit_entries(struct f2fs_sb_info *sbi)
+> >>> @@ -2079,7 +2079,7 @@ void nullify_nat_entry(struct f2fs_sb_info *sbi, u32 nid)
+> >>>  	free(nat_block);
+> >>>  }
+> >>>  
+> >>> -void write_checkpoint(struct f2fs_sb_info *sbi)
+> >>> +void __write_checkpoint(struct f2fs_sb_info *sbi)
+> >>>  {
+> >>>  	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
+> >>>  	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+> >>> @@ -2144,6 +2144,18 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
+> >>>  	ASSERT(ret >= 0);
+> >>>  }
+> >>>  
+> >>> +void write_checkpoint(struct f2fs_sb_info *sbi)
+> >>> +{
+> >>> +	int i = 0;
+> >>> +
+> >>> +	for (i = 0; i < 2; i++) {
+> >>> +		/* write checkpoint out of place first */
+> >>> +		sbi->cur_cp = sbi->cur_cp % 2 + 1;
+> >>> +		__write_checkpoint(sbi);
+> >>> +		f2fs_fsync_device();
+> >>
+> >> Ditto.
+> >>
+> >> Thanks,
+> >>
+> >>> +	}
+> >>> +}
+> >>> +
+> >>>  void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
+> >>>  {
+> >>>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+> >>> diff --git a/fsck/sload.c b/fsck/sload.c
+> >>> index 2842f2c..53d80fa 100644
+> >>> --- a/fsck/sload.c
+> >>> +++ b/fsck/sload.c
+> >>> @@ -325,6 +325,6 @@ int f2fs_sload(struct f2fs_sb_info *sbi)
+> >>>  	/* flush dirty sit entries */
+> >>>  	flush_sit_entries(sbi);
+> >>>  
+> >>> -	write_checkpoint(sbi);
+> >>> +	__write_checkpoint(sbi);
+> >>>  	return 0;
+> >>>  }
+> >>>
+> > 
+> > .
+> > 
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
-Change log from v4:
- - add __should_serialize_io
- - fix wrong condition
-
- Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++++++
- fs/f2fs/data.c                          | 21 +++++++++++++++++++++
- fs/f2fs/f2fs.h                          |  2 ++
- fs/f2fs/segment.c                       |  1 +
- fs/f2fs/super.c                         |  1 +
- fs/f2fs/sysfs.c                         |  2 ++
- 6 files changed, 35 insertions(+)
-
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 9b0123388f18..94a24aedcdb2 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -51,6 +51,14 @@ Description:
- 		 Controls the dirty page count condition for the in-place-update
- 		 policies.
- 
-+What:		/sys/fs/f2fs/<disk>/min_seq_blocks
-+Date:		August 2018
-+Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
-+Description:
-+		 Controls the dirty page count condition for batched sequential
-+		 writes in ->writepages.
-+
-+
- What:		/sys/fs/f2fs/<disk>/min_hot_blocks
- Date:		March 2017
- Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 43d3723dc886..bdcb023506a7 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2122,6 +2122,18 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 	return ret;
- }
- 
-+static inline bool __should_serialize_io(struct inode *inode,
-+					struct writeback_control *wbc)
-+{
-+	if (!S_ISREG(inode->i_mode))
-+		return false;
-+	if (wbc->sync_mode != WB_SYNC_ALL)
-+		return true;
-+	if (get_dirty_pages(inode) >= SM_I(F2FS_I_SB(inode))->min_seq_blocks)
-+		return true;
-+	return false;
-+}
-+
- static int __f2fs_write_data_pages(struct address_space *mapping,
- 						struct writeback_control *wbc,
- 						enum iostat_type io_type)
-@@ -2130,6 +2142,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct blk_plug plug;
- 	int ret;
-+	bool locked = false;
- 
- 	/* deal with chardevs and other special file */
- 	if (!mapping->a_ops->writepage)
-@@ -2160,10 +2173,18 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
- 	else if (atomic_read(&sbi->wb_sync_req[DATA]))
- 		goto skip_write;
- 
-+	if (__should_serialize_io(inode, wbc)) {
-+		mutex_lock(&sbi->writepages);
-+		locked = true;
-+	}
-+
- 	blk_start_plug(&plug);
- 	ret = f2fs_write_cache_pages(mapping, wbc, io_type);
- 	blk_finish_plug(&plug);
- 
-+	if (locked)
-+		mutex_unlock(&sbi->writepages);
-+
- 	if (wbc->sync_mode == WB_SYNC_ALL)
- 		atomic_dec(&sbi->wb_sync_req[DATA]);
- 	/*
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9a6ba4a8d338..170573f8a04a 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -913,6 +913,7 @@ struct f2fs_sm_info {
- 	unsigned int ipu_policy;	/* in-place-update policy */
- 	unsigned int min_ipu_util;	/* in-place-update threshold */
- 	unsigned int min_fsync_blocks;	/* threshold for fsync */
-+	unsigned int min_seq_blocks;	/* threshold for sequential blocks */
- 	unsigned int min_hot_blocks;	/* threshold for hot block allocation */
- 	unsigned int min_ssr_sections;	/* threshold to trigger SSR allocation */
- 
-@@ -1133,6 +1134,7 @@ struct f2fs_sb_info {
- 	struct rw_semaphore sb_lock;		/* lock for raw super block */
- 	int valid_super_block;			/* valid super block no */
- 	unsigned long s_flag;				/* flags for sbi */
-+	struct mutex writepages;		/* mutex for writepages() */
- 
- #ifdef CONFIG_BLK_DEV_ZONED
- 	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index b136e39e1e9e..20650e25117b 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -4127,6 +4127,7 @@ int f2fs_build_segment_manager(struct f2fs_sb_info *sbi)
- 		sm_info->ipu_policy = 1 << F2FS_IPU_FSYNC;
- 	sm_info->min_ipu_util = DEF_MIN_IPU_UTIL;
- 	sm_info->min_fsync_blocks = DEF_MIN_FSYNC_BLOCKS;
-+	sm_info->min_seq_blocks = sbi->blocks_per_seg * sbi->segs_per_sec;
- 	sm_info->min_hot_blocks = DEF_MIN_HOT_BLOCKS;
- 	sm_info->min_ssr_sections = reserved_sections(sbi);
- 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index be41dbd7b261..53d70b64fea1 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2842,6 +2842,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	/* init f2fs-specific super block info */
- 	sbi->valid_super_block = valid_super_block;
- 	mutex_init(&sbi->gc_mutex);
-+	mutex_init(&sbi->writepages);
- 	mutex_init(&sbi->cp_mutex);
- 	init_rwsem(&sbi->node_write);
- 	init_rwsem(&sbi->node_change);
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index cd2e030e47b8..81c0e5337443 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -397,6 +397,7 @@ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, batched_trim_sections, trim_sections);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, ipu_policy, ipu_policy);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ipu_util, min_ipu_util);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_fsync_blocks, min_fsync_blocks);
-+F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_seq_blocks, min_seq_blocks);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_hot_blocks, min_hot_blocks);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ssr_sections, min_ssr_sections);
- F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ram_thresh, ram_thresh);
-@@ -449,6 +450,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(ipu_policy),
- 	ATTR_LIST(min_ipu_util),
- 	ATTR_LIST(min_fsync_blocks),
-+	ATTR_LIST(min_seq_blocks),
- 	ATTR_LIST(min_hot_blocks),
- 	ATTR_LIST(min_ssr_sections),
- 	ATTR_LIST(max_victim_search),
--- 
-2.17.0.441.gb46fe60e1d-goog
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
