@@ -1,89 +1,95 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH v5] f2fs: fix performance issue observed with
- multi-thread sequential read
-Date: Tue, 21 Aug 2018 11:30:22 +0800
-Message-ID: <782a0bae-a398-9afe-745e-cca31e8fc8e8@huawei.com>
-References: <20180810023758.46974-1-jaegeuk@kernel.org>
- <20180810024859.GA48219@jaegeuk-macbookpro.roam.corp.google.com>
- <20180810185640.GA63079@jaegeuk-macbookpro.roam.corp.google.com>
- <20180817182944.GA58612@jaegeuk-macbookpro.roam.corp.google.com>
- <20180821023626.GB20263@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH 1/2] f2fs: fix to avoid quota inode leak in ->put_super
+Date: Tue, 21 Aug 2018 11:35:30 +0800
+Message-ID: <fbb9e77b-aca0-9ad9-cd06-503ec335370c@huawei.com>
+References: <20180817091840.50792-1-yuchao0@huawei.com>
+ <20180818151600.GA84798@jaegeuk-macbookpro.roam.corp.google.com>
+ <b10c4ae6-2a25-fb0b-cbfa-467b5e988b47@kernel.org>
+ <20180821023840.GD20263@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180821023626.GB20263@jaegeuk-macbookpro.roam.corp.google.com>
+In-Reply-To: <20180821023840.GD20263@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/8/21 10:36, Jaegeuk Kim wrote:
-> This reverts the commit - "b93f771 - f2fs: remove writepages lock"
-> to fix the drop in sequential read throughput.
+On 2018/8/21 10:38, Jaegeuk Kim wrote:
+> On 08/20, Chao Yu wrote:
+>> On 2018/8/18 23:16, Jaegeuk Kim wrote:
+>>> On 08/17, Chao Yu wrote:
+>>>> generic/019 reports below error:
+>>>>
+>>>>  __quota_error: 1160 callbacks suppressed
+>>>>  Quota error (device zram1): write_blk: dquota write failed
+>>>>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+>>>>  Quota error (device zram1): write_blk: dquota write failed
+>>>>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+>>>>  Quota error (device zram1): write_blk: dquota write failed
+>>>>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+>>>>  Quota error (device zram1): write_blk: dquota write failed
+>>>>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+>>>>  Quota error (device zram1): write_blk: dquota write failed
+>>>>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+>>>>  VFS: Busy inodes after unmount of zram1. Self-destruct in 5 seconds.  Have a nice day...
+>>>>
+>>>> If we failed in below path due to fail to write dquot block, we will miss
+>>>> to release quota inode, fix it.
+>>>>
+>>>> - f2fs_put_super
+>>>>  - f2fs_quota_off_umount
+>>>>   - f2fs_quota_off
+>>>>    - f2fs_quota_sync   <-- failed
+>>>>    - dquot_quota_off   <-- missed to call
+>>>>
+>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>> ---
+>>>>  fs/f2fs/super.c | 6 ++++--
+>>>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>>> index a5df9fbc6355..9647bbcdfd2b 100644
+>>>> --- a/fs/f2fs/super.c
+>>>> +++ b/fs/f2fs/super.c
+>>>> @@ -1977,10 +1977,12 @@ void f2fs_quota_off_umount(struct super_block *sb)
+>>>>  	for (type = 0; type < MAXQUOTAS; type++) {
+>>>>  		err = f2fs_quota_off(sb, type);
+>>>>  		if (err) {
+>>>> +			int ret = dquot_quota_off(sb, type);
+>>>> +
+>>>
+>>> Could you check the mainline version?
+>>
+>> I guess we missed to apply below patch? Could you check that?
+>>
+>> f2fs: report error if quota off error during umount
 > 
-> Test: ./tiotest -t 32 -d /data/tio_tmp -f 32 -b 524288 -k 1 -k 3 -L
-> device: UFS
-> 
-> Before -
-> read throughput: 185 MB/s
-> total read requests: 85177 (of these ~80000 are 4KB size requests).
-> total write requests: 2546 (of these ~2208 requests are written in 512KB).
-> 
-> After -
-> read throughput: 758 MB/s
-> total read requests: 2417 (of these ~2042 are 512KB reads).
-> total write requests: 2701 (of these ~2034 requests are written in 512KB).
-> 
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
-> Change log from v4:
->  - add __should_serialize_io
->  - fix wrong condition
-> 
->  Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++++++
->  fs/f2fs/data.c                          | 21 +++++++++++++++++++++
->  fs/f2fs/f2fs.h                          |  2 ++
->  fs/f2fs/segment.c                       |  1 +
->  fs/f2fs/super.c                         |  1 +
->  fs/f2fs/sysfs.c                         |  2 ++
->  6 files changed, 35 insertions(+)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-> index 9b0123388f18..94a24aedcdb2 100644
-> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
-> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-> @@ -51,6 +51,14 @@ Description:
->  		 Controls the dirty page count condition for the in-place-update
->  		 policies.
->  
-> +What:		/sys/fs/f2fs/<disk>/min_seq_blocks
-> +Date:		August 2018
-> +Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
-> +Description:
-> +		 Controls the dirty page count condition for batched sequential
-> +		 writes in ->writepages.
-> +
-> +
->  What:		/sys/fs/f2fs/<disk>/min_hot_blocks
->  Date:		March 2017
->  Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 43d3723dc886..bdcb023506a7 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -2122,6 +2122,18 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->  	return ret;
->  }
->  
-> +static inline bool __should_serialize_io(struct inode *inode,
-> +					struct writeback_control *wbc)
-> +{
-> +	if (!S_ISREG(inode->i_mode))
+> I remember there was a bug in the patch.
 
-Good catch! Will be better. :)
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Yeah, I guess this patch can fix that one. So could you help trying to test
+again with the two patches if you have time. :)
 
 Thanks,
+
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>>>  			f2fs_msg(sb, KERN_ERR,
+>>>>  				"Fail to turn off disk quota "
+>>>> -				"(type: %d, err: %d), Please "
+>>>> -				"run fsck to fix it.", type, err);
+>>>> +				"(type: %d, err: %d, ret:%d), Please "
+>>>> +				"run fsck to fix it.", type, err, ret);
+>>>>  			set_sbi_flag(F2FS_SB(sb), SBI_NEED_FSCK);
+>>>>  		}
+>>>>  	}
+>>>> -- 
+>>>> 2.18.0.rc1
+> 
+> .
+> 
