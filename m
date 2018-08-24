@@ -1,8 +1,8 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 200635] Oops error in refresh_sit_entry() while
  unmounting a crafted F2FS image
-Date: Fri, 24 Aug 2018 18:42:45 +0000
-Message-ID: <bug-200635-202145-D0G8XefW2j@https.bugzilla.kernel.org/>
+Date: Fri, 24 Aug 2018 18:55:40 +0000
+Message-ID: <bug-200635-202145-9Pj0atrEVS@https.bugzilla.kernel.org/>
 References: <bug-200635-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -12,17 +12,17 @@ Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1ftH2q-0005en-R0
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Aug 2018 18:42:52 +0000
+ id 1ftHFL-0005oa-M3
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Aug 2018 18:55:47 +0000
 Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1ftH2p-009fVk-5x
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Aug 2018 18:42:52 +0000
+ id 1ftHFK-008lEa-06
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Aug 2018 18:55:47 +0000
 Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 948E72CA9A
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 4EC492CB03
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 24 Aug 2018 18:42:44 +0000 (UTC)
+ Fri, 24 Aug 2018 18:55:39 +0000 (UTC)
 In-Reply-To: <bug-200635-202145@https.bugzilla.kernel.org/>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -41,14 +41,19 @@ Stathis Maneas (smaneas@cs.toronto.edu) changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
-             Status|NEW                         |RESOLVED
-         Resolution|---                         |CODE_FIX
+             Status|RESOLVED                    |REOPENED
+         Resolution|CODE_FIX                    |---
 
---- Comment #2 from Stathis Maneas (smaneas@cs.toronto.edu) ---
-I can confirm that the specified commit actually resolves the error. Therefore,
-I am marking the bug as resolved.
+--- Comment #3 from Stathis Maneas (smaneas@cs.toronto.edu) ---
+I have reopened the bug, because indeed, the fix included in the aforementioned
+commit prevents the file system from being mounted after reading an invalid
+value from the superblock.
 
-Thanks a lot,
+Nonetheless, after invoking fsck to fix the partition, the file system still
+cannot be mounted. Would the patch that introduces the checksum mechanism for
+the superblock completely resolve the error?
+
+Thanks,
 Stathis Maneas
 
 -- 
