@@ -1,237 +1,135 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: Corrupt F2FS partition - fsck is useless
-Date: Fri, 24 Aug 2018 23:59:26 +0800
-Message-ID: <a8530673-fbcb-c6e5-2bd4-ad58ba18d2c5@kernel.org>
-References: <201808240431.07031.luke@dashjr.org>
- <5751656f-ff8a-0d3e-5737-47cf50e23c83@kernel.org>
- <201808241438.44154.luke@dashjr.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1ftEUs-00041T-1z
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Aug 2018 15:59:38 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1ftEUq-00D2ha-5R
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Aug 2018 15:59:38 +0000
-In-Reply-To: <201808241438.44154.luke@dashjr.org>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Luke Dashjr <luke@dashjr.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+From: Eric Biggers <ebiggers@kernel.org>
+Subject: [RFC PATCH 00/10] fs-verity: filesystem-level integrity protection
+Date: Fri, 24 Aug 2018 09:16:32 -0700
+Message-ID: <20180824161642.1144-1-ebiggers@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-integrity@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Michael Halcrow <mhalcrow@google.com>, Victor Hsieh <victorhsieh@google.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-T24gMjAxOC84LzI0IDIyOjM4LCBMdWtlIERhc2hqciB3cm90ZToKPiBJbmZvOiBEZWJ1ZyBsZXZl
-bCA9IDEKPiBJbmZvOiBTZWdtZW50cyBwZXIgc2VjdGlvbiA9IDEKPiBJbmZvOiBTZWN0aW9ucyBw
-ZXIgem9uZSA9IDEKPiBJbmZvOiBzZWN0b3Igc2l6ZSA9IDUxMgo+IEluZm86IHRvdGFsIHNlY3Rv
-cnMgPSAxMjU5NzY1NiAoNjE1MSBNQikKPiBJbmZvOiBNS0ZTIHZlcnNpb24KPiAgICJMaW51eCB2
-ZXJzaW9uIDMuMTAuNDktZ2VkYTAwNTUtMDE5MjgtZ2IyMWMxYjU3IChodWRzb25jbUBpbGNsYmxk
-MzApIChnY2MgCj4gdmVyc2lvbiA0LjggKEdDQykgKSAjMSBTTVAgUFJFRU1QVCBGcmkgRmViIDUg
-MjA6NDg6NTMgQ1NUIDIwMTYiCj4gSW5mbzogRlNDSyB2ZXJzaW9uCj4gICBmcm9tICJMaW51eCB2
-ZXJzaW9uIDQuMTcuMTEtZ2VudG9vIChyb290QGlzaGliYXNoaSkgKGdjYyB2ZXJzaW9uIDcuMy4w
-IAo+IChHZW50b28gSGFyZGVuZWQgNy4zLjAgcDEuMCkpICMxIFNNUCBQUkVFTVBUIFN1biBKdWwg
-MjkgMDQ6MDc6MTYgVVRDIDIwMTgiCj4gICAgIHRvICJMaW51eCB2ZXJzaW9uIDQuMTcuMTEtZ2Vu
-dG9vIChyb290QGlzaGliYXNoaSkgKGdjYyB2ZXJzaW9uIDcuMy4wIAo+IChHZW50b28gSGFyZGVu
-ZWQgNy4zLjAgcDEuMCkpICMxIFNNUCBQUkVFTVBUIFN1biBKdWwgMjkgMDQ6MDc6MTYgVVRDIDIw
-MTgiCj4gSW5mbzogc3VwZXJibG9jayBmZWF0dXJlcyA9IDAgOiAKPiBJbmZvOiBzdXBlcmJsb2Nr
-IGVuY3J5cHQgbGV2ZWwgPSAwLCBzYWx0ID0gMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw
-MDAKPiAKPiArLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0rCj4gfCBTdXBlciBibG9jayAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgfAo+ICstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLSsKPiBtYWdpYyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgWzB4ZjJmNTIwMTAgOiA0MDc2MTUwODAwXQo+IG1ham9yX3ZlciAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICBbMHggICAgICAgMSA6IDFdCj4gdm9sdW1fbmFtZSAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIFtdCj4gbWlub3JfdmVyICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIFsweCAgICAgICAyIDogMl0KPiBsb2dfc2VjdG9yc2l6ZSAgICAgICAgICAgICAgICAgICAg
-ICAgICAgWzB4ICAgICAgIDkgOiA5XQo+IGxvZ19zZWN0b3JzX3Blcl9ibG9jayAgICAgICAgICAg
-ICAgICAgICBbMHggICAgICAgMyA6IDNdCj4gbG9nX2Jsb2Nrc2l6ZSAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIFsweCAgICAgICBjIDogMTJdCj4gbG9nX2Jsb2Nrc19wZXJfc2VnICAgICAgICAg
-ICAgICAgICAgICAgIFsweCAgICAgICA5IDogOV0KPiBzZWdzX3Blcl9zZWMgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgWzB4ICAgICAgIDEgOiAxXQo+IHNlY3NfcGVyX3pvbmUgICAgICAgICAg
-ICAgICAgICAgICAgICAgICBbMHggICAgICAgMSA6IDFdCj4gY2hlY2tzdW1fb2Zmc2V0ICAgICAg
-ICAgICAgICAgICAgICAgICAgIFsweCAgICAgICAwIDogMF0KPiBibG9ja19jb3VudCAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgWzB4ICAxM2ZmZTAgOiAxMzEwNjg4XQo+IHNlY3Rpb25fY291
-bnQgICAgICAgICAgICAgICAgICAgICAgICAgICBbMHggICAgIDllOSA6IDI1MzddCj4gc2VnbWVu
-dF9jb3VudCAgICAgICAgICAgICAgICAgICAgICAgICAgIFsweCAgICAgOWZlIDogMjU1OF0KPiBz
-ZWdtZW50X2NvdW50X2NrcHQgICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICAgIDIgOiAyXQo+
-IHNlZ21lbnRfY291bnRfc2l0ICAgICAgICAgICAgICAgICAgICAgICBbMHggICAgICAgMiA6IDJd
-Cj4gc2VnbWVudF9jb3VudF9uYXQgICAgICAgICAgICAgICAgICAgICAgIFsweCAgICAgICBjIDog
-MTJdCj4gc2VnbWVudF9jb3VudF9zc2EgICAgICAgICAgICAgICAgICAgICAgIFsweCAgICAgICA1
-IDogNV0KPiBzZWdtZW50X2NvdW50X21haW4gICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICA5
-ZTkgOiAyNTM3XQo+IHNlZ21lbnQwX2Jsa2FkZHIgICAgICAgICAgICAgICAgICAgICAgICBbMHgg
-ICAgIDIwMCA6IDUxMl0KPiBjcF9ibGthZGRyICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-WzB4ICAgICAyMDAgOiA1MTJdCj4gc2l0X2Jsa2FkZHIgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIFsweCAgICAgNjAwIDogMTUzNl0KPiBuYXRfYmxrYWRkciAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgWzB4ICAgICBhMDAgOiAyNTYwXQo+IHNzYV9ibGthZGRyICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICBbMHggICAgMjIwMCA6IDg3MDRdCj4gbWFpbl9ibGthZGRyICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgIFsweCAgICAyYzAwIDogMTEyNjRdCj4gcm9vdF9pbm8gICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIFsweCAgICAgICAzIDogM10KPiBub2RlX2lubyAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICAgIDEgOiAxXQo+IG1ldGFfaW5vICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBbMHggICAgICAgMiA6IDJdCj4gY3BfcGF5bG9h
-ZCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsweCAgICAgICAwIDogMF0KPiB2ZXJzaW9u
-ICAgICAgICAgICAgICAgICAgICAgICBMaW51eCB2ZXJzaW9uIDQuMTcuMTEtZ2VudG9vIChyb290
-QGlzaGliYXNoaSkgCj4gKGdjYyB2ZXJzaW9uIDcuMy4wIChHZW50b28gSGFyZGVuZWQgNy4zLjAg
-cDEuMCkpICMxIFNNUCBQUkVFTVBUIFN1biBKdWwgMjkgCj4gMDQ6MDc6MTYgVVRDIDIwMTgKPiBJ
-bmZvOiB0b3RhbCBGUyBzZWN0b3JzID0gMTA0ODU1MDQgKDUxMTkgTUIpCj4gSW5mbzogQ0tQVCB2
-ZXJzaW9uID0gMWYzMzlmCj4gCj4gKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tKwo+IHwgQ2hlY2twb2ludCAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIHwKPiArLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rCj4gY2hlY2twb2ludF92ZXIgICAgICAgICAg
-ICAgICAgICAgICAgICAgIFsweCAgMWYzMzlmIDogMjA0NDgzMV0KPiB1c2VyX2Jsb2NrX2NvdW50
-ICAgICAgICAgICAgICAgICAgICAgICAgWzB4ICAxMjdhMDAgOiAxMjEwODgwXQo+IHZhbGlkX2Js
-b2NrX2NvdW50ICAgICAgICAgICAgICAgICAgICAgICBbMHggICBiZmMyMyA6IDc4NTQ0M10KPiBy
-c3ZkX3NlZ21lbnRfY291bnQgICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICAgMzAgOiA0OF0K
-PiBvdmVycHJvdl9zZWdtZW50X2NvdW50ICAgICAgICAgICAgICAgICAgWzB4ICAgICAgYWMgOiAx
-NzJdCj4gZnJlZV9zZWdtZW50X2NvdW50ICAgICAgICAgICAgICAgICAgICAgIFsweCAgICAgIDMw
-IDogNDhdCj4gYWxsb2NfdHlwZVtDVVJTRUdfSE9UX05PREVdICAgICAgICAgICAgIFsweCAgICAg
-ICAwIDogMF0KPiBhbGxvY190eXBlW0NVUlNFR19XQVJNX05PREVdICAgICAgICAgICAgWzB4ICAg
-ICAgIDAgOiAwXQo+IGFsbG9jX3R5cGVbQ1VSU0VHX0NPTERfTk9ERV0gICAgICAgICAgICBbMHgg
-ICAgICAgMCA6IDBdCj4gY3VyX25vZGVfc2Vnbm9bMF0gICAgICAgICAgICAgICAgICAgICAgIFsw
-eCAgICAgNGJjIDogMTIxMl0KPiBjdXJfbm9kZV9zZWdub1sxXSAgICAgICAgICAgICAgICAgICAg
-ICAgWzB4ICAgICA1NTIgOiAxMzYyXQo+IGN1cl9ub2RlX3NlZ25vWzJdICAgICAgICAgICAgICAg
-ICAgICAgICBbMHggICAgIDkxMiA6IDIzMjJdCj4gY3VyX25vZGVfYmxrb2ZmWzBdICAgICAgICAg
-ICAgICAgICAgICAgIFsweCAgICAgIGJjIDogMTg4XQo+IGN1cl9ub2RlX2Jsa29mZlsxXSAgICAg
-ICAgICAgICAgICAgICAgICBbMHggICAgICA3OSA6IDEyMV0KPiBjdXJfbm9kZV9ibGtvZmZbMl0g
-ICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICAxNjkgOiAzNjFdCj4gYWxsb2NfdHlwZVtDVVJT
-RUdfSE9UX0RBVEFdICAgICAgICAgICAgIFsweCAgICAgICAwIDogMF0KPiBhbGxvY190eXBlW0NV
-UlNFR19XQVJNX0RBVEFdICAgICAgICAgICAgWzB4ICAgICAgIDAgOiAwXQo+IGFsbG9jX3R5cGVb
-Q1VSU0VHX0NPTERfREFUQV0gICAgICAgICAgICBbMHggICAgICAgMCA6IDBdCj4gY3VyX2RhdGFf
-c2Vnbm9bMF0gICAgICAgICAgICAgICAgICAgICAgIFsweCAgICAgNTc2IDogMTM5OF0KPiBjdXJf
-ZGF0YV9zZWdub1sxXSAgICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICA2NjUgOiAxNjM3XQo+
-IGN1cl9kYXRhX3NlZ25vWzJdICAgICAgICAgICAgICAgICAgICAgICBbMHggICAgIDY2ZSA6IDE2
-NDZdCj4gY3VyX2RhdGFfYmxrb2ZmWzBdICAgICAgICAgICAgICAgICAgICAgIFsweCAgICAgICAw
-IDogMF0KPiBjdXJfZGF0YV9ibGtvZmZbMV0gICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICAg
-IDAgOiAwXQo+IGN1cl9kYXRhX2Jsa29mZlsyXSAgICAgICAgICAgICAgICAgICAgICBbMHggICAg
-ICAgMCA6IDBdCj4gY2twdF9mbGFncyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsweCAg
-ICAgICA0IDogNF0KPiBjcF9wYWNrX3RvdGFsX2Jsb2NrX2NvdW50ICAgICAgICAgICAgICAgWzB4
-ICAgICAgIDMgOiAzXQo+IGNwX3BhY2tfc3RhcnRfc3VtICAgICAgICAgICAgICAgICAgICAgICBb
-MHggICAgICAgMSA6IDFdCj4gdmFsaWRfbm9kZV9jb3VudCAgICAgICAgICAgICAgICAgICAgICAg
-IFsweCAgICA1ZTUyIDogMjQxNDZdCj4gdmFsaWRfaW5vZGVfY291bnQgICAgICAgICAgICAgICAg
-ICAgICAgIFsweCAgICA1Yzk3IDogMjM3MDNdCj4gbmV4dF9mcmVlX25pZCAgICAgICAgICAgICAg
-ICAgICAgICAgICAgIFsweCAgIDM1Yzc4IDogMjIwMjgwXQo+IHNpdF92ZXJfYml0bWFwX2J5dGVz
-aXplICAgICAgICAgICAgICAgICBbMHggICAgICA0MCA6IDY0XQo+IG5hdF92ZXJfYml0bWFwX2J5
-dGVzaXplICAgICAgICAgICAgICAgICBbMHggICAgIDE4MCA6IDM4NF0KPiBjaGVja3N1bV9vZmZz
-ZXQgICAgICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICBmZmMgOiA0MDkyXQo+IGVsYXBzZWRf
-dGltZSAgICAgICAgICAgICAgICAgICAgICAgICAgICBbMHgxODNlOGYyMGY0MyA6IDE2NjYwNjA1
-MjEyODNdCj4gc2l0X25hdF92ZXJzaW9uX2JpdG1hcFswXSAgICAgICAgICAgICAgIFsweCAgICAg
-ICA5IDogOV0KPiAKPiAKPiBbZHVtcF9ub2RlOiA1MDBdIE5vZGUgSUQgICAgICAgICAgICAgICBb
-MHgzXQo+IFtkdW1wX25vZGU6IDUwMV0gbmF0X2VudHJ5LmJsb2NrX2FkZHIgIFsweDExZmEwZV0K
-PiBbZHVtcF9ub2RlOiA1MDJdIG5hdF9lbnRyeS52ZXJzaW9uICAgICBbMHgwXQo+IFtkdW1wX25v
-ZGU6IDUwM10gbmF0X2VudHJ5LmlubyAgICAgICAgIFsweDNdCj4gW2R1bXBfbm9kZTogNTEwXSBu
-b2RlX2Jsay5mb290ZXIuaW5vIFsweDMwMzMzMjM4XQo+IFtkdW1wX25vZGU6IDUxMV0gbm9kZV9i
-bGsuZm9vdGVyLm5pZCBbMHgzMDM1MmMzMF0KPiBbcHJpbnRfbm9kZV9pbmZvOiAyODNdIE5vZGUg
-SUQgWzB4MzAzNTJjMzA6ODA4NzkxMDg4XSBpcyBkaXJlY3Qgbm9kZSBvciAKPiBpbmRpcmVjdCBu
-b2RlLgo+IFswXSAgICAgICAgICAgICAgICAgICAgIFsweDM5MzMzMzJjIDogOTU5NjU2NzQ4XQo+
-IFsxXSAgICAgICAgICAgICAgICAgICAgIFsweDM2MzMzMjJjIDogOTA5MzI0ODQ0XQo+IFsyXSAg
-ICAgICAgICAgICAgICAgICAgIFsweDMwMzAzMDMwIDogODA4NDY0NDMyXQo+IFszXSAgICAgICAg
-ICAgICAgICAgICAgIFsweDMxMzQzMTJjIDogODI1NTA0MDQ0XQo+IFs0XSAgICAgICAgICAgICAg
-ICAgICAgIFsweDJjMzAzNjM5IDogNzQxMzU3MTEzXQo+IFs1XSAgICAgICAgICAgICAgICAgICAg
-IFsweDM2MzYzMjJkIDogOTA5NTIxNDUzXQo+IFs2XSAgICAgICAgICAgICAgICAgICAgIFsweDJj
-MzYzMzMxIDogNzQxNzQ5NTUzXQo+IFs3XSAgICAgICAgICAgICAgICAgICAgIFsweDMxMzAzNDMy
-IDogODI1MjQyNjc0XQo+IFs4XSAgICAgICAgICAgICAgICAgICAgIFsweDJjMzAzMDMwIDogNzQx
-MzU1NTY4XQo+IFs5XSAgICAgICAgICAgICAgICAgICAgIFsweDQ3MmMzNTMyIDogMTE5NDA3OTUz
-OF0KPiBbMTBdICAgICAgICAgICAgICAgICAgICBbMHgyYzY0NmY2ZiA6IDc0NDc3OTYzMV0KCkl0
-IGxvb2tzIGxpa2UgdGhpcyBibG9jayBjb250YWlucyBub3JtYWwgY2hhcmFjdGVycyBpbnN0ZWFk
-IG9mIGZpZWxkcyBvZiByZWd1bGFyCmlub2RlIHN0cnVjdHVyZSwgc28gSSB0aGluayByb290IGlu
-b2RlJ3MgYmxvY2sgb3IgbmF0X2VudHJ5LmJsa2FkZHIgbWF5IGJlCmNvcnJ1cHRlZC4KCkxldCBt
-ZSB0aGluayBhYm91dCB0aGUgd2F5IHRvIHJlYnVpbGQgcm9vdCBpbm9kZS4KClRoYW5rcywKCj4g
-SW52YWxpZCAoaSlub2RlIGJsb2NrCj4gCj4gSW5mbzogY2hlY2twb2ludCBzdGF0ZSA9IDQgOiAg
-Y29tcGFjdGVkX3N1bW1hcnkgc3VkZGVuLXBvd2VyLW9mZgo+IAo+IERvbmUuCj4gCj4gCj4gT24g
-RnJpZGF5IDI0IEF1Z3VzdCAyMDE4IDEzOjA4OjMwIENoYW8gWXUgd3JvdGU6Cj4+IEhpIEx1a2Us
-Cj4+Cj4+IEkgdGhpbmsgdGhlIHByb2JsZW0gaGVyZSBpcyB0aGF0IHdlIGRvbid0IGV2ZW4gc3Rh
-cnQgdG8gdHJhdmVyc2UgYW5kIGNoZWNrCj4+IGFsbCBkaXJlY3RvcmllcyBhbmQgZmlsZXMgZHVl
-IHRvIHdlIGVuY291bnRlciByb290IGlub2RlIHNhbml0eSBjaGVjawo+PiBmYWlsdXJlLgo+Pgo+
-PiBbQVNTRVJUXSAoc2FuaXR5X2NoZWNrX25pZDogNDEyKSAgLS0+IG5pZFsweDNdIGZvb3Rlci5u
-aWRbMHgzMDM1MmMzMF0KPj4gZm9vdGVyLmlub1sweDMwMzMzMjM4XQo+Pgo+PiBDb3VsZCB5b3Ug
-ZHVtcCByb290IG5vZGUgaW5mbyB3aXRoIGJlbG93IGNvbW1hbmQ6Cj4+Cj4+IGR1bXAuZjJmcyAt
-aSAzIC1kIDEgPHlvdXJfZGV2aWNlX3BhdGg+Cj4+Cj4+IFRoYW5rcywKPj4KPj4gT24gMjAxOC84
-LzI0IDEyOjMxLCBMdWtlIERhc2hqciB3cm90ZToKPj4+IE9uZSBvZiBteSBwaG9uZXMgcmVjZW50
-bHkgZGVjaWRlZCB0byBjb3JydXB0IGl0cyAvZGF0YSBwYXJ0aXRpb24uIEkKPj4+IG1hbmFnZWQg
-dG8gY29weSBpdCB0byBteSBQQyBiZWZvcmUgd2lwaW5nIHRoZSBwaG9uZSBjb21wbGV0ZWx5LCBi
-dXQKPj4+IGVmZm9ydHMgdG8gbW91bnQgb3Igb3RoZXJ3aXNlIHJlY292ZXIgZGF0YSBmcm9tIGl0
-IGhhdmUgcHJvdmVuIGZ1dGlsZS4KPj4+Cj4+PiBNb3VudGluZyBmYWlscyB3aXRoIGRtZXNnIHNo
-b3dpbmc6Cj4+Pgo+Pj4gWzQzMzkxOC45OTQzOTFdIEYyRlMtZnMgKGxvb3AwKTogaW5jb25zaXN0
-ZW50IG5vZGUgYmxvY2ssIG5pZDozLAo+Pj4gbm9kZV9mb290ZXJbbmlkOjgwODc5MTA4OCxpbm86
-ODA4NjYxNTYwLG9mczo5MjY3NzUxMCxjcHZlcjo0MDUwNDgwMTAxNjQyNAo+Pj4gODI3MzksYmxr
-YWRkcjo3NTc4NzI2OTBdIFs0MzM5MTguOTk1NTY2XSBGMkZTLWZzIChsb29wMCk6IEZhaWxlZCB0
-byByZWFkCj4+PiByb290IGlub2RlCj4+PiBbNDMzOTE5LjAwMjQyMF0gRjJGUy1mcyAobG9vcDAp
-OiBpbmNvbnNpc3RlbnQgbm9kZSBibG9jaywgbmlkOjMsCj4+PiBub2RlX2Zvb3RlcltuaWQ6ODA4
-NzkxMDg4LGlubzo4MDg2NjE1NjAsb2ZzOjkyNjc3NTEwLGNwdmVyOjQwNTA0ODAxMDE2NDI0Cj4+
-PiA4MjczOSxibGthZGRyOjc1Nzg3MjY5MF0gWzQzMzkxOS4wMDM1OThdIEYyRlMtZnMgKGxvb3Aw
-KTogRmFpbGVkIHRvIHJlYWQKPj4+IHJvb3QgaW5vZGUKPj4+Cj4+PiBmMmZzLXRvb2xzIHYxLjEx
-LjAncyBmc2NrIGNyYXNoZXMgaWYgSSB0ZWxsIGl0IHRvIHJlY292ZXIgbG9zdCtmb3VuZDoKPj4+
-Cj4+PiAoTk9URTogZnNjayBvdXRwdXQgYXQKPj4+IGh0dHBzOi8vbHVrZS5kYXNoanIub3JnL3Rt
-cC9jb2RlL2ZzY2suZjJmcy1MRi5sb2cueHogKSAjMCAKPj4+IDB4MDAwMDU1NTU1NTU1OTkxMSBp
-biBtZW1jcHkgKF9fbGVuPTE4NDQ2NzQ0MDcyMzY5NTcxOTUwLAo+Pj4gX19zcmM9MHg1NTU1NTU3
-ZDY0NGMsIF9fZGVzdD0weDdmZmZmZmZmZDJkMCkKPj4+ICAgICBhdCAvdXNyL2luY2x1ZGUvYml0
-cy9zdHJpbmdfZm9ydGlmaWVkLmg6MzQKPj4+ICMxICBjb252ZXJ0X2VuY3J5cHRlZF9uYW1lICgK
-Pj4+IG5hbWU9bmFtZUBlbnRyeT0weDU1NTU1NTdkNjQ0Ywo+Pj4gIjNcMDM2XDAyMVwwMDRcMDM1
-PV1cMDM1XDMyMlwwMzdcZihcMjEyXDIwMiZcMDA0XCJcMDIxXDIyNlwyMzVFYzQKPj4+IFtcMjI3
-XDI2NlwyMjFSMVwzMzJcMzMxIQo+Pj4gXDAwNFwyMjZcMzE1XDI3MFwyMTZcMDMwXDIwNVwwMjBc
-MzMwXDMzNFwzMzRcMzQ0XDMyNHNnXDIyNlwyNzUtXDMxN1wzNTJcMwo+Pj4gNTJcMDMyaVwyMjJd
-XDMyNtOLXDAyN15cMDMwXDIyNlwwMDUmXDAwNnwKPj4+IFwzMzNiXDIyM1wyMDRJXDMyM1BcMzI3
-XHJcMjExS1wyMjBcMzA2XDMyMVwwNjRcclwyNzFcMjYzXDA2NHVcMjA1XDMyMlwwMDYKPj4+IGdc
-MDM0dV1cMDAzXDAwMilcMDA1IQo+Pj4gXDIwMFBcbmNcMDI0UlwyNjZcMDcwXDI0N1wzNjA+XDM0
-MlwzMzNcMzMwXDM2MWgkXDAyMlwyMDNcMjY1KVwzMDYkXDI2NC1kaQo+Pj4gXDMxNlwzMzFcMzQ2
-LEIpXDIxMl5cMjExXDMyMVwwMzJcMjI3Z2RZXDIwNk1cMDIzXDI1NlwyNzJcMzQ2alwzMjI8X1wy
-MDJcMjEKPj4+IDRcYiEgXDM2MVwyNDFcMjEzXDM3MFwzMzYKPj4+IHtcMjY2XDI2N3dcMjMwTSZc
-MzcwXDI0NlwzNDXCuVwwMjdcMjcxelwzNzVcMDcwdVwzMjNyXDM1NFwzMzBcMDYxXDM1Mgo+Pj4g
-OXNcMzQ2XDAzNFwzNzNcMzY3XDM1NycoXDI3MFwyNjRcMjYzRVwyMjYiLi4uLCBsZW49LTEzMzk5
-Nzk2NjYsCj4+PiBuZXc9bmV3QGVudHJ5PTB4N2ZmZmZmZmZkMmQwICIzXDAzNlwwMjFcMDA0XDAz
-NT1dXDAzNSIsCj4+PiBlbmNfbmFtZT08b3B0aW1pemVkIG91dD4pCj4+PiAgICAgYXQgZnNjay5j
-OjExMzIKPj4+ICMyICAweDAwMDA1NTU1NTU1NjM5ZDkgaW4gcHJpbnRfaW5vZGVfaW5mbyAoc2Jp
-PTB4NTU1NTU1NzgxN2UwIDxnZnNjaz4sCj4+PiBub2RlPTB4NTU1NTU1N2Q2M2YwLCBuYW1lPTEp
-IGF0IG1vdW50LmM6MTgzCj4+PiAjMyAgMHgwMDAwNTU1NTU1NTY0MjRmIGluIHByaW50X25vZGVf
-aW5mbyAoc2JpPTxvcHRpbWl6ZWQgb3V0PiwKPj4+IG5vZGVfYmxvY2s9PG9wdGltaXplZCBvdXQ+
-LCB2ZXJib3NlPTxvcHRpbWl6ZWQgb3V0PikKPj4+ICAgICBhdCBtb3VudC5jOjI3Nwo+Pj4gIzQg
-IDB4MDAwMDU1NTU1NTU2MjBjMiBpbiBkdW1wX25vZGUgKHNiaT1zYmlAZW50cnk9MHg1NTU1NTU3
-ODE3ZTAKPj4+IDxnZnNjaz4sIG5pZD1uaWRAZW50cnk9Mjg3NSwgZm9yY2U9Zm9yY2VAZW50cnk9
-MSkKPj4+ICAgICBhdCBkdW1wLmM6NTIwCj4+PiAjNSAgMHgwMDAwNTU1NTU1NTVmNThmIGluIGZz
-Y2tfdmVyaWZ5IChzYmk9PG9wdGltaXplZCBvdXQ+KSBhdAo+Pj4gZnNjay5jOjI1NjggIzYgIDB4
-MDAwMDU1NTU1NTU1Njc5YiBpbiBkb19mc2NrIChzYmk9MHg1NTU1NTU3ODE3ZTAKPj4+IDxnZnNj
-az4pIGF0IG1haW4uYzo1NjkgIzcgIG1haW4gKGFyZ2M9PG9wdGltaXplZCBvdXQ+LCBhcmd2PTxv
-cHRpbWl6ZWQKPj4+IG91dD4pIGF0IG1haW4uYzo3MjYKPj4+Cj4+PiBJZiBJIHRlbGwgaXQgTk9U
-IHRvIHJlY292ZXIgbG9zdCtmb3VuZCwgaXQgY29tcGxldGVzLCBidXQgbW91bnRpbmcgc3RpbGwK
-Pj4+IGZhaWxzOgo+Pj4KPj4+IChOT1RFOiBmc2NrIG91dHB1dAo+Pj4gaHR0cHM6Ly9sdWtlLmRh
-c2hqci5vcmcvdG1wL2NvZGUvZnNjay5mMmZzLU5PLUxGLmxvZy54eiApIFs0MzQzNjEuODEzMTk2
-XQo+Pj4gRjJGUy1mcyAobG9vcDApOiBGb3VuZCBuYXRfYml0cyBpbiBjaGVja3BvaW50Cj4+PiBb
-NDM0MzYxLjgyNTYyOF0gRjJGUy1mcyAobG9vcDApOiBGYWlsZWQgdG8gcmVhZCByb290IGlub2Rl
-Cj4+PiBbNDM0MzYxLjgyODQ2MV0gRjJGUy1mcyAobG9vcDApOiBGb3VuZCBuYXRfYml0cyBpbiBj
-aGVja3BvaW50Cj4+PiBbNDM0MzYxLjg0MDYyMF0gRjJGUy1mcyAobG9vcDApOiBGYWlsZWQgdG8g
-cmVhZCByb290IGlub2RlCj4+Pgo+Pj4gQW55IGlkZWFzIG9uIGhvdyB0byBnZXQgYXQgbGVhc3Qg
-c29tZSBkYXRhIHJlY292ZXJlZCBmcm9tIHRoaXM/Cj4+PiAoUGFydGljdWxhcmx5IHRoZSBlbmNy
-eXB0aW9uIGtleShzKSBBbmRyb2lkIHN0b3JlcyBhdAo+Pj4gL2RhdGEvbWlzYy92b2xkLyoua2V5
-KQo+Pj4KPj4+IFRoYW5rcywKPj4+Cj4+PiBMdWtlCj4+Pgo+Pj4gLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+
-Pj4gLS0tLS0gQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0
-aGUgd29ybGQncyBtb3N0Cj4+PiBlbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0
-dHA6Ly9zZG0ubGluay9zbGFzaGRvdAo+Pj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18KPj4+IExpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Cj4+PiBM
-aW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+Pj4gaHR0cHM6Ly9saXN0cy5z
-b3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo+IAo+IAo+IC0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLQo+IENoZWNrIG91dCB0aGUgdmlicmFudCB0ZWNoIGNvbW11bml0
-eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAo+IGVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNo
-ZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cj4gX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KPiBMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlz
-dAo+IExpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cj4gaHR0cHM6Ly9saXN0
-cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo+IAoKLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUgdmlicmFudCB0ZWNoIGNvbW11bml0eSBv
-biBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5v
-cmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdApfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1m
-MmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdl
-Lm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+Hello,
+
+This RFC patchset implements fs-verity for ext4 and f2fs.  fs-verity is
+similar to dm-verity, but implemented on a per-file basis: a Merkle tree
+hidden past the end of the file is used to verify the file's data as it
+is paged in.  Most of the code is in fs/verity/, and not too many
+filesystem-specific changes are needed.  The Merkle tree is written by
+userspace before calling an ioctl to mark the file as a verity file; the
+file then becomes read-only and the tree is hidden from userspace.
+
+Note: on Monday, Michael Halcrow and I will be giving a talk about
+fs-verity at the Linux Security Summit.  fs-verity was also previously
+discussed at LSFMM 2018; see https://lwn.net/Articles/752614/.  It was
+also previously discussed on linux-fsdevel here:
+https://www.spinics.net/lists/linux-fsdevel/msg121182.html
+
+Since fs-verity provides the Merkle tree root hash in constant time and
+verifies data blocks on-demand, it is useful for efficiently verifying
+the authenticity of, or "appraising", large files of which only a small
+portion may be accessed -- such as Android application (APK) files.  It
+can also be useful in "audit" use cases where file hashes are logged.
+fs-verity also provides better protection against malicious disk
+firmware than an ahead-of-time hash, since fs-verity re-verifies data
+each time it's paged in.
+
+This patchset doesn't yet include IMA support for fs-verity file
+measurements; this is planned and we'd like to collaborate with the IMA
+maintainers.  Although fs-verity can be used on its own without IMA,
+fs-verity is primarily a lower level feature (think of it as a way of
+hashing a file), so some users will probably still need IMA's policy
+mechanism.  The patchset *does* include an optional means of including a
+signature in the fs-verity metadata and verifying it against the
+certificates in an fs-verity keyring; though, this might need to be
+re-assessed if it turns out IMA works just as well for that use case.
+
+For now this patchset only supports the case where the fs-verity block
+sizes are equal to PAGE_SIZE.  However, the fs-verity block sizes can be
+different from the filesystem's block size.
+
+A documentation file in Documentation/filesystems/ is planned but not
+yet included.
+
+This patchset is based on Linux v4.18.  It can also be found in git at
+tag "fsverity_2018-08-24" of:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git
+
+A userspace utility for fs-verity can be found at:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/fsverity-utils.git
+
+See the README.md file in the userspace utility source tree for examples.
+
+Tests for fs-verity can be found at branch "fsverity" of:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/xfstests-dev.git
+
+On ext4 and f2fs, using fs-verity requires setting the verity feature
+flag on your filesystem.  The verity feature flag is supported since
+e2fsprogs 1.44.4-2 and f2fs-tools 1.11.0.
+
+Warning: besides the feature bit and inode flag, fs-verity's on-disk
+format is not yet stable, i.e. it can still be changed.  Please don't
+use this patchset "in production" yet!
+
+Feedback on the design and implementation is greatly appreciated.
+
+Thanks!
+
+Eric Biggers (8):
+  fs-verity: add setup code, UAPI, and Kconfig
+  fs-verity: add data verification hooks for ->readpages()
+  fs-verity: implement FS_IOC_ENABLE_VERITY ioctl
+  fs-verity: implement FS_IOC_MEASURE_VERITY ioctl
+  fs-verity: add SHA-512 support
+  fs-verity: add CRC-32C support
+  fs-verity: support builtin file signatures
+  f2fs: fs-verity support
+
+Theodore Ts'o (2):
+  ext4: add basic fs-verity support
+  ext4: add fs-verity read support
+
+ fs/Kconfig                    |   2 +
+ fs/Makefile                   |   1 +
+ fs/ext4/Kconfig               |  20 +
+ fs/ext4/ext4.h                |  22 +-
+ fs/ext4/file.c                |   6 +
+ fs/ext4/inode.c               |  11 +
+ fs/ext4/ioctl.c               |  12 +
+ fs/ext4/readpage.c            | 207 ++++++--
+ fs/ext4/super.c               |  87 ++++
+ fs/ext4/sysfs.c               |   6 +
+ fs/f2fs/Kconfig               |  20 +
+ fs/f2fs/data.c                |  43 +-
+ fs/f2fs/f2fs.h                |  17 +-
+ fs/f2fs/file.c                |  58 +++
+ fs/f2fs/inode.c               |   3 +-
+ fs/f2fs/super.c               |  22 +
+ fs/f2fs/sysfs.c               |  11 +
+ fs/verity/Kconfig             |  53 ++
+ fs/verity/Makefile            |   5 +
+ fs/verity/fsverity_private.h  | 136 +++++
+ fs/verity/hash_algs.c         | 115 +++++
+ fs/verity/ioctl.c             | 170 +++++++
+ fs/verity/setup.c             | 931 ++++++++++++++++++++++++++++++++++
+ fs/verity/signature.c         | 187 +++++++
+ fs/verity/verify.c            | 310 +++++++++++
+ include/linux/fs.h            |   9 +
+ include/linux/fsverity.h      | 102 ++++
+ include/uapi/linux/fsverity.h |  98 ++++
+ 28 files changed, 2623 insertions(+), 41 deletions(-)
+ create mode 100644 fs/verity/Kconfig
+ create mode 100644 fs/verity/Makefile
+ create mode 100644 fs/verity/fsverity_private.h
+ create mode 100644 fs/verity/hash_algs.c
+ create mode 100644 fs/verity/ioctl.c
+ create mode 100644 fs/verity/setup.c
+ create mode 100644 fs/verity/signature.c
+ create mode 100644 fs/verity/verify.c
+ create mode 100644 include/linux/fsverity.h
+ create mode 100644 include/uapi/linux/fsverity.h
+
+-- 
+2.18.0
