@@ -1,27 +1,22 @@
-From: Luke Dashjr <luke@dashjr.org>
-Subject: Corrupt F2FS partition - fsck is useless
-Date: Fri, 24 Aug 2018 04:31:05 +0000
-Message-ID: <201808240431.07031.luke@dashjr.org>
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: [PATCH] build: declare that libf2fs_format uses the
+ blkid library
+Date: Fri, 24 Aug 2018 03:26:32 -0400
+Message-ID: <20180824072632.23608-1-tytso@mit.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <luke@dashjr.org>) id 1ft41c-0001Cg-W3
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Aug 2018 04:48:44 +0000
-Received: from zinan.dashjr.org ([192.3.11.21])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtp (Exim 4.90_1)
- id 1ft41a-008GMJ-Sm
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Aug 2018 04:48:44 +0000
-Received: from [2001:470:5:265:a45d:823b:2d27:961c] (unknown
- [IPv6:2001:470:5:265:a45d:823b:2d27:961c])
- (Authenticated sender: luke-jr)
- by zinan.dashjr.org (Postfix) with ESMTPSA id 0C6A838B33FD
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 24 Aug 2018 04:31:14 +0000 (UTC)
-Content-Disposition: inline
+ (envelope-from <tytso@thunk.org>) id 1ft6UZ-0002Ha-Ke
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Aug 2018 07:26:47 +0000
+Received: from imap.thunk.org ([74.207.234.97])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1ft6UX-00DWAz-DW
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Aug 2018 07:26:47 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,63 +27,30 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Theodore Ts'o <tytso@mit.edu>
 
-T25lIG9mIG15IHBob25lcyByZWNlbnRseSBkZWNpZGVkIHRvIGNvcnJ1cHQgaXRzIC9kYXRhIHBh
-cnRpdGlvbi4gSSBtYW5hZ2VkIHRvIApjb3B5IGl0IHRvIG15IFBDIGJlZm9yZSB3aXBpbmcgdGhl
-IHBob25lIGNvbXBsZXRlbHksIGJ1dCBlZmZvcnRzIHRvIG1vdW50IG9yIApvdGhlcndpc2UgcmVj
-b3ZlciBkYXRhIGZyb20gaXQgaGF2ZSBwcm92ZW4gZnV0aWxlLgoKTW91bnRpbmcgZmFpbHMgd2l0
-aCBkbWVzZyBzaG93aW5nOgoKWzQzMzkxOC45OTQzOTFdIEYyRlMtZnMgKGxvb3AwKTogaW5jb25z
-aXN0ZW50IG5vZGUgYmxvY2ssIG5pZDozLCAKbm9kZV9mb290ZXJbbmlkOjgwODc5MTA4OCxpbm86
-ODA4NjYxNTYwLG9mczo5MjY3NzUxMCxjcHZlcjo0MDUwNDgwMTAxNjQyNDgyNzM5LGJsa2FkZHI6
-NzU3ODcyNjkwXQpbNDMzOTE4Ljk5NTU2Nl0gRjJGUy1mcyAobG9vcDApOiBGYWlsZWQgdG8gcmVh
-ZCByb290IGlub2RlCls0MzM5MTkuMDAyNDIwXSBGMkZTLWZzIChsb29wMCk6IGluY29uc2lzdGVu
-dCBub2RlIGJsb2NrLCBuaWQ6MywgCm5vZGVfZm9vdGVyW25pZDo4MDg3OTEwODgsaW5vOjgwODY2
-MTU2MCxvZnM6OTI2Nzc1MTAsY3B2ZXI6NDA1MDQ4MDEwMTY0MjQ4MjczOSxibGthZGRyOjc1Nzg3
-MjY5MF0KWzQzMzkxOS4wMDM1OThdIEYyRlMtZnMgKGxvb3AwKTogRmFpbGVkIHRvIHJlYWQgcm9v
-dCBpbm9kZQoKZjJmcy10b29scyB2MS4xMS4wJ3MgZnNjayBjcmFzaGVzIGlmIEkgdGVsbCBpdCB0
-byByZWNvdmVyIGxvc3QrZm91bmQ6CgooTk9URTogZnNjayBvdXRwdXQgYXQgaHR0cHM6Ly9sdWtl
-LmRhc2hqci5vcmcvdG1wL2NvZGUvZnNjay5mMmZzLUxGLmxvZy54eiApCiMwICAweDAwMDA1NTU1
-NTU1NTk5MTEgaW4gbWVtY3B5IChfX2xlbj0xODQ0Njc0NDA3MjM2OTU3MTk1MCwgCl9fc3JjPTB4
-NTU1NTU1N2Q2NDRjLCBfX2Rlc3Q9MHg3ZmZmZmZmZmQyZDApCiAgICBhdCAvdXNyL2luY2x1ZGUv
-Yml0cy9zdHJpbmdfZm9ydGlmaWVkLmg6MzQKIzEgIGNvbnZlcnRfZW5jcnlwdGVkX25hbWUgKCAg
-ICAKbmFtZT1uYW1lQGVudHJ5PTB4NTU1NTU1N2Q2NDRjICIzXDAzNlwwMjFcMDA0XDAzNT1dXDAz
-NVwzMjJcMDM3XGYoXDIxMlwyMDImXDAwNFwiXDAyMVwyMjZcMjM1RWM0CltcMjI3XDI2NlwyMjFS
-MVwzMzJcMzMxIQpcMDA0XDIyNlwzMTVcMjcwXDIxNlwwMzBcMjA1XDAyMFwzMzBcMzM0XDMzNFwz
-NDRcMzI0c2dcMjI2XDI3NS1cMzE3XDM1MlwzNTJcMDMyaVwyMjJdXDMyNtOLXDAyN15cMDMwXDIy
-NlwwMDUmXDAwNnwKXDMzM2JcMjIzXDIwNElcMzIzUFwzMjdcclwyMTFLXDIyMFwzMDZcMzIxXDA2
-NFxyXDI3MVwyNjNcMDY0dVwyMDVcMzIyXDAwNmdcMDM0dV1cMDAzXDAwMilcMDA1IQpcMjAwUFxu
-Y1wwMjRSXDI2NlwwNzBcMjQ3XDM2MD5cMzQyXDMzM1wzMzBcMzYxaCRcMDIyXDIwM1wyNjUpXDMw
-NiRcMjY0LWRpXDMxNlwzMzFcMzQ2LEIpXDIxMl5cMjExXDMyMVwwMzJcMjI3Z2RZXDIwNk1cMDIz
-XDI1NlwyNzJcMzQ2alwzMjI8X1wyMDJcMjE0XGIhClwzNjFcMjQxXDIxM1wzNzBcMzM2CntcMjY2
-XDI2N3dcMjMwTSZcMzcwXDI0NlwzNDXCuVwwMjdcMjcxelwzNzVcMDcwdVwzMjNyXDM1NFwzMzBc
-MDYxXDM1MiAKOXNcMzQ2XDAzNFwzNzNcMzY3XDM1NycoXDI3MFwyNjRcMjYzRVwyMjYiLi4uLCBs
-ZW49LTEzMzk5Nzk2NjYsIApuZXc9bmV3QGVudHJ5PTB4N2ZmZmZmZmZkMmQwICIzXDAzNlwwMjFc
-MDA0XDAzNT1dXDAzNSIsIGVuY19uYW1lPTxvcHRpbWl6ZWQgCm91dD4pCiAgICBhdCBmc2NrLmM6
-MTEzMgojMiAgMHgwMDAwNTU1NTU1NTYzOWQ5IGluIHByaW50X2lub2RlX2luZm8gKHNiaT0weDU1
-NTU1NTc4MTdlMCA8Z2ZzY2s+LCAKbm9kZT0weDU1NTU1NTdkNjNmMCwgbmFtZT0xKSBhdCBtb3Vu
-dC5jOjE4MwojMyAgMHgwMDAwNTU1NTU1NTY0MjRmIGluIHByaW50X25vZGVfaW5mbyAoc2JpPTxv
-cHRpbWl6ZWQgb3V0PiwgCm5vZGVfYmxvY2s9PG9wdGltaXplZCBvdXQ+LCB2ZXJib3NlPTxvcHRp
-bWl6ZWQgb3V0PikKICAgIGF0IG1vdW50LmM6Mjc3CiM0ICAweDAwMDA1NTU1NTU1NjIwYzIgaW4g
-ZHVtcF9ub2RlIChzYmk9c2JpQGVudHJ5PTB4NTU1NTU1NzgxN2UwIDxnZnNjaz4sIApuaWQ9bmlk
-QGVudHJ5PTI4NzUsIGZvcmNlPWZvcmNlQGVudHJ5PTEpCiAgICBhdCBkdW1wLmM6NTIwCiM1ICAw
-eDAwMDA1NTU1NTU1NWY1OGYgaW4gZnNja192ZXJpZnkgKHNiaT08b3B0aW1pemVkIG91dD4pIGF0
-IGZzY2suYzoyNTY4CiM2ICAweDAwMDA1NTU1NTU1NTY3OWIgaW4gZG9fZnNjayAoc2JpPTB4NTU1
-NTU1NzgxN2UwIDxnZnNjaz4pIGF0IG1haW4uYzo1NjkKIzcgIG1haW4gKGFyZ2M9PG9wdGltaXpl
-ZCBvdXQ+LCBhcmd2PTxvcHRpbWl6ZWQgb3V0PikgYXQgbWFpbi5jOjcyNgoKSWYgSSB0ZWxsIGl0
-IE5PVCB0byByZWNvdmVyIGxvc3QrZm91bmQsIGl0IGNvbXBsZXRlcywgYnV0IG1vdW50aW5nIHN0
-aWxsIApmYWlsczoKCihOT1RFOiBmc2NrIG91dHB1dCBodHRwczovL2x1a2UuZGFzaGpyLm9yZy90
-bXAvY29kZS9mc2NrLmYyZnMtTk8tTEYubG9nLnh6ICkKWzQzNDM2MS44MTMxOTZdIEYyRlMtZnMg
-KGxvb3AwKTogRm91bmQgbmF0X2JpdHMgaW4gY2hlY2twb2ludApbNDM0MzYxLjgyNTYyOF0gRjJG
-Uy1mcyAobG9vcDApOiBGYWlsZWQgdG8gcmVhZCByb290IGlub2RlCls0MzQzNjEuODI4NDYxXSBG
-MkZTLWZzIChsb29wMCk6IEZvdW5kIG5hdF9iaXRzIGluIGNoZWNrcG9pbnQKWzQzNDM2MS44NDA2
-MjBdIEYyRlMtZnMgKGxvb3AwKTogRmFpbGVkIHRvIHJlYWQgcm9vdCBpbm9kZQoKQW55IGlkZWFz
-IG9uIGhvdyB0byBnZXQgYXQgbGVhc3Qgc29tZSBkYXRhIHJlY292ZXJlZCBmcm9tIHRoaXM/CihQ
-YXJ0aWN1bGFybHkgdGhlIGVuY3J5cHRpb24ga2V5KHMpIEFuZHJvaWQgc3RvcmVzIGF0IC9kYXRh
-L21pc2Mvdm9sZC8qLmtleSkKClRoYW5rcywKCkx1a2UKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpD
-aGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3JsZCdz
-IG1vc3QKZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3JnISBodHRwOi8vc2RtLmxpbmsv
-c2xhc2hkb3QKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-TGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3Vy
-Y2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8v
-bGludXgtZjJmcy1kZXZlbAo=
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+---
+ mkfs/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mkfs/Makefile.am b/mkfs/Makefile.am
+index 32996ba..cae2f93 100644
+--- a/mkfs/Makefile.am
++++ b/mkfs/Makefile.am
+@@ -12,7 +12,7 @@ lib_LTLIBRARIES = libf2fs_format.la
+ libf2fs_format_la_SOURCES = f2fs_format_main.c f2fs_format.c f2fs_format_utils.c
+ libf2fs_format_la_CFLAGS = -DWITH_BLKDISCARD
+ libf2fs_format_la_CPPFLAGS = -I$(top_srcdir)/include
+-libf2fs_format_la_LDFLAGS = -luuid -L$(top_builddir)/lib -lf2fs \
++libf2fs_format_la_LDFLAGS = -lblkid -luuid -L$(top_builddir)/lib -lf2fs \
+ 	-version-info $(FMT_CURRENT):$(FMT_REVISION):$(FMT_AGE)
+ 
+ install-exec-hook:
+-- 
+2.18.0.rc0
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
