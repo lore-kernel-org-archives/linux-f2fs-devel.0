@@ -1,29 +1,24 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 200635] Oops error in refresh_sit_entry() while
- unmounting a crafted F2FS image
-Date: Fri, 24 Aug 2018 10:21:34 +0000
-Message-ID: <bug-200635-202145-fTG73QNenF@https.bugzilla.kernel.org/>
-References: <bug-200635-202145@https.bugzilla.kernel.org/>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: Corrupt F2FS partition - fsck is useless
+Date: Fri, 24 Aug 2018 21:08:30 +0800
+Message-ID: <5751656f-ff8a-0d3e-5737-47cf50e23c83@kernel.org>
+References: <201808240431.07031.luke@dashjr.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1ft9Dp-0003hW-H3
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Aug 2018 10:21:41 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <chao@kernel.org>) id 1ftBpW-0004hB-Iz
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Aug 2018 13:08:46 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1ft9Dn-009Mzu-F8
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Aug 2018 10:21:41 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id D6CC72C475
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 24 Aug 2018 10:21:33 +0000 (UTC)
-In-Reply-To: <bug-200635-202145@https.bugzilla.kernel.org/>
+ id 1ftBpT-00CvmV-BH
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Aug 2018 13:08:46 +0000
+In-Reply-To: <201808240431.07031.luke@dashjr.org>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,20 +28,80 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Luke Dashjr <luke@dashjr.org>, linux-f2fs-devel@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200635
-
---- Comment #1 from Chao Yu (chao@kernel.org) ---
-It has been fixed by below commit, can you please check it?
-
-f2fs: fix to do sanity check with cp_pack_start_sum
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e494c2f995d6181d6e29c4927d68e0f295ecf75b
-
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+SGkgTHVrZSwKCkkgdGhpbmsgdGhlIHByb2JsZW0gaGVyZSBpcyB0aGF0IHdlIGRvbid0IGV2ZW4g
+c3RhcnQgdG8gdHJhdmVyc2UgYW5kIGNoZWNrIGFsbApkaXJlY3RvcmllcyBhbmQgZmlsZXMgZHVl
+IHRvIHdlIGVuY291bnRlciByb290IGlub2RlIHNhbml0eSBjaGVjayBmYWlsdXJlLgoKW0FTU0VS
+VF0gKHNhbml0eV9jaGVja19uaWQ6IDQxMikgIC0tPiBuaWRbMHgzXSBmb290ZXIubmlkWzB4MzAz
+NTJjMzBdCmZvb3Rlci5pbm9bMHgzMDMzMzIzOF0KCkNvdWxkIHlvdSBkdW1wIHJvb3Qgbm9kZSBp
+bmZvIHdpdGggYmVsb3cgY29tbWFuZDoKCmR1bXAuZjJmcyAtaSAzIC1kIDEgPHlvdXJfZGV2aWNl
+X3BhdGg+CgpUaGFua3MsCgpPbiAyMDE4LzgvMjQgMTI6MzEsIEx1a2UgRGFzaGpyIHdyb3RlOgo+
+IE9uZSBvZiBteSBwaG9uZXMgcmVjZW50bHkgZGVjaWRlZCB0byBjb3JydXB0IGl0cyAvZGF0YSBw
+YXJ0aXRpb24uIEkgbWFuYWdlZCB0byAKPiBjb3B5IGl0IHRvIG15IFBDIGJlZm9yZSB3aXBpbmcg
+dGhlIHBob25lIGNvbXBsZXRlbHksIGJ1dCBlZmZvcnRzIHRvIG1vdW50IG9yIAo+IG90aGVyd2lz
+ZSByZWNvdmVyIGRhdGEgZnJvbSBpdCBoYXZlIHByb3ZlbiBmdXRpbGUuCj4gCj4gTW91bnRpbmcg
+ZmFpbHMgd2l0aCBkbWVzZyBzaG93aW5nOgo+IAo+IFs0MzM5MTguOTk0MzkxXSBGMkZTLWZzIChs
+b29wMCk6IGluY29uc2lzdGVudCBub2RlIGJsb2NrLCBuaWQ6MywgCj4gbm9kZV9mb290ZXJbbmlk
+OjgwODc5MTA4OCxpbm86ODA4NjYxNTYwLG9mczo5MjY3NzUxMCxjcHZlcjo0MDUwNDgwMTAxNjQy
+NDgyNzM5LGJsa2FkZHI6NzU3ODcyNjkwXQo+IFs0MzM5MTguOTk1NTY2XSBGMkZTLWZzIChsb29w
+MCk6IEZhaWxlZCB0byByZWFkIHJvb3QgaW5vZGUKPiBbNDMzOTE5LjAwMjQyMF0gRjJGUy1mcyAo
+bG9vcDApOiBpbmNvbnNpc3RlbnQgbm9kZSBibG9jaywgbmlkOjMsIAo+IG5vZGVfZm9vdGVyW25p
+ZDo4MDg3OTEwODgsaW5vOjgwODY2MTU2MCxvZnM6OTI2Nzc1MTAsY3B2ZXI6NDA1MDQ4MDEwMTY0
+MjQ4MjczOSxibGthZGRyOjc1Nzg3MjY5MF0KPiBbNDMzOTE5LjAwMzU5OF0gRjJGUy1mcyAobG9v
+cDApOiBGYWlsZWQgdG8gcmVhZCByb290IGlub2RlCj4gCj4gZjJmcy10b29scyB2MS4xMS4wJ3Mg
+ZnNjayBjcmFzaGVzIGlmIEkgdGVsbCBpdCB0byByZWNvdmVyIGxvc3QrZm91bmQ6Cj4gCj4gKE5P
+VEU6IGZzY2sgb3V0cHV0IGF0IGh0dHBzOi8vbHVrZS5kYXNoanIub3JnL3RtcC9jb2RlL2ZzY2su
+ZjJmcy1MRi5sb2cueHogKQo+ICMwICAweDAwMDA1NTU1NTU1NTk5MTEgaW4gbWVtY3B5IChfX2xl
+bj0xODQ0Njc0NDA3MjM2OTU3MTk1MCwgCj4gX19zcmM9MHg1NTU1NTU3ZDY0NGMsIF9fZGVzdD0w
+eDdmZmZmZmZmZDJkMCkKPiAgICAgYXQgL3Vzci9pbmNsdWRlL2JpdHMvc3RyaW5nX2ZvcnRpZmll
+ZC5oOjM0Cj4gIzEgIGNvbnZlcnRfZW5jcnlwdGVkX25hbWUgKCAgICAKPiBuYW1lPW5hbWVAZW50
+cnk9MHg1NTU1NTU3ZDY0NGMgIjNcMDM2XDAyMVwwMDRcMDM1PV1cMDM1XDMyMlwwMzdcZihcMjEy
+XDIwMiZcMDA0XCJcMDIxXDIyNlwyMzVFYzQKPiBbXDIyN1wyNjZcMjIxUjFcMzMyXDMzMSEKPiBc
+MDA0XDIyNlwzMTVcMjcwXDIxNlwwMzBcMjA1XDAyMFwzMzBcMzM0XDMzNFwzNDRcMzI0c2dcMjI2
+XDI3NS1cMzE3XDM1MlwzNTJcMDMyaVwyMjJdXDMyNtOLXDAyN15cMDMwXDIyNlwwMDUmXDAwNnwK
+PiBcMzMzYlwyMjNcMjA0SVwzMjNQXDMyN1xyXDIxMUtcMjIwXDMwNlwzMjFcMDY0XHJcMjcxXDI2
+M1wwNjR1XDIwNVwzMjJcMDA2Z1wwMzR1XVwwMDNcMDAyKVwwMDUhCj4gXDIwMFBcbmNcMDI0Ulwy
+NjZcMDcwXDI0N1wzNjA+XDM0MlwzMzNcMzMwXDM2MWgkXDAyMlwyMDNcMjY1KVwzMDYkXDI2NC1k
+aVwzMTZcMzMxXDM0NixCKVwyMTJeXDIxMVwzMjFcMDMyXDIyN2dkWVwyMDZNXDAyM1wyNTZcMjcy
+XDM0NmpcMzIyPF9cMjAyXDIxNFxiIQo+IFwzNjFcMjQxXDIxM1wzNzBcMzM2Cj4ge1wyNjZcMjY3
+d1wyMzBNJlwzNzBcMjQ2XDM0NcK5XDAyN1wyNzF6XDM3NVwwNzB1XDMyM3JcMzU0XDMzMFwwNjFc
+MzUyIAo+IDlzXDM0NlwwMzRcMzczXDM2N1wzNTcnKFwyNzBcMjY0XDI2M0VcMjI2Ii4uLiwgbGVu
+PS0xMzM5OTc5NjY2LCAKPiBuZXc9bmV3QGVudHJ5PTB4N2ZmZmZmZmZkMmQwICIzXDAzNlwwMjFc
+MDA0XDAzNT1dXDAzNSIsIGVuY19uYW1lPTxvcHRpbWl6ZWQgCj4gb3V0PikKPiAgICAgYXQgZnNj
+ay5jOjExMzIKPiAjMiAgMHgwMDAwNTU1NTU1NTYzOWQ5IGluIHByaW50X2lub2RlX2luZm8gKHNi
+aT0weDU1NTU1NTc4MTdlMCA8Z2ZzY2s+LCAKPiBub2RlPTB4NTU1NTU1N2Q2M2YwLCBuYW1lPTEp
+IGF0IG1vdW50LmM6MTgzCj4gIzMgIDB4MDAwMDU1NTU1NTU2NDI0ZiBpbiBwcmludF9ub2RlX2lu
+Zm8gKHNiaT08b3B0aW1pemVkIG91dD4sIAo+IG5vZGVfYmxvY2s9PG9wdGltaXplZCBvdXQ+LCB2
+ZXJib3NlPTxvcHRpbWl6ZWQgb3V0PikKPiAgICAgYXQgbW91bnQuYzoyNzcKPiAjNCAgMHgwMDAw
+NTU1NTU1NTYyMGMyIGluIGR1bXBfbm9kZSAoc2JpPXNiaUBlbnRyeT0weDU1NTU1NTc4MTdlMCA8
+Z2ZzY2s+LCAKPiBuaWQ9bmlkQGVudHJ5PTI4NzUsIGZvcmNlPWZvcmNlQGVudHJ5PTEpCj4gICAg
+IGF0IGR1bXAuYzo1MjAKPiAjNSAgMHgwMDAwNTU1NTU1NTVmNThmIGluIGZzY2tfdmVyaWZ5IChz
+Ymk9PG9wdGltaXplZCBvdXQ+KSBhdCBmc2NrLmM6MjU2OAo+ICM2ICAweDAwMDA1NTU1NTU1NTY3
+OWIgaW4gZG9fZnNjayAoc2JpPTB4NTU1NTU1NzgxN2UwIDxnZnNjaz4pIGF0IG1haW4uYzo1NjkK
+PiAjNyAgbWFpbiAoYXJnYz08b3B0aW1pemVkIG91dD4sIGFyZ3Y9PG9wdGltaXplZCBvdXQ+KSBh
+dCBtYWluLmM6NzI2Cj4gCj4gSWYgSSB0ZWxsIGl0IE5PVCB0byByZWNvdmVyIGxvc3QrZm91bmQs
+IGl0IGNvbXBsZXRlcywgYnV0IG1vdW50aW5nIHN0aWxsIAo+IGZhaWxzOgo+IAo+IChOT1RFOiBm
+c2NrIG91dHB1dCBodHRwczovL2x1a2UuZGFzaGpyLm9yZy90bXAvY29kZS9mc2NrLmYyZnMtTk8t
+TEYubG9nLnh6ICkKPiBbNDM0MzYxLjgxMzE5Nl0gRjJGUy1mcyAobG9vcDApOiBGb3VuZCBuYXRf
+Yml0cyBpbiBjaGVja3BvaW50Cj4gWzQzNDM2MS44MjU2MjhdIEYyRlMtZnMgKGxvb3AwKTogRmFp
+bGVkIHRvIHJlYWQgcm9vdCBpbm9kZQo+IFs0MzQzNjEuODI4NDYxXSBGMkZTLWZzIChsb29wMCk6
+IEZvdW5kIG5hdF9iaXRzIGluIGNoZWNrcG9pbnQKPiBbNDM0MzYxLjg0MDYyMF0gRjJGUy1mcyAo
+bG9vcDApOiBGYWlsZWQgdG8gcmVhZCByb290IGlub2RlCj4gCj4gQW55IGlkZWFzIG9uIGhvdyB0
+byBnZXQgYXQgbGVhc3Qgc29tZSBkYXRhIHJlY292ZXJlZCBmcm9tIHRoaXM/Cj4gKFBhcnRpY3Vs
+YXJseSB0aGUgZW5jcnlwdGlvbiBrZXkocykgQW5kcm9pZCBzdG9yZXMgYXQgL2RhdGEvbWlzYy92
+b2xkLyoua2V5KQo+IAo+IFRoYW5rcywKPiAKPiBMdWtlCj4gCj4gLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tCj4gQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUg
+d29ybGQncyBtb3N0Cj4gZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3JnISBodHRwOi8v
+c2RtLmxpbmsvc2xhc2hkb3QKPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwo+IExpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Cj4gTGludXgtZjJmcy1k
+ZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiBodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5l
+dC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCj4gCgotLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0KQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29y
+bGQncyBtb3N0CmVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5s
+aW5rL3NsYXNoZG90Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMu
+c291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3Rp
+bmZvL2xpbnV4LWYyZnMtZGV2ZWwK
