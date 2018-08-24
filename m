@@ -1,64 +1,33 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 200635] Oops error in refresh_sit_entry() while
- unmounting a crafted F2FS image
-Date: Fri, 24 Aug 2018 18:55:40 +0000
-Message-ID: <bug-200635-202145-9Pj0atrEVS@https.bugzilla.kernel.org/>
-References: <bug-200635-202145@https.bugzilla.kernel.org/>
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+Subject: Re: [RFC PATCH 01/10] fs-verity: add setup code, UAPI, and Kconfig
+Date: Fri, 24 Aug 2018 18:45:17 -0400
+Message-ID: <20180824224517.GF15262@thunk.org>
+References: <20180824161642.1144-1-ebiggers@kernel.org>
+ <20180824161642.1144-2-ebiggers@kernel.org>
+ <1535132549.2855027.1485213752.129E3334@webmail.messagingengine.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1ftHFL-0005oa-M3
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Aug 2018 18:55:47 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1ftHFK-008lEa-06
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Aug 2018 18:55:47 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 4EC492CB03
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 24 Aug 2018 18:55:39 +0000 (UTC)
-In-Reply-To: <bug-200635-202145@https.bugzilla.kernel.org/>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1535132549.2855027.1485213752.129E3334@webmail.messagingengine.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Colin Walters <walters@verbum.org>
+Cc: Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-integrity@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Michael Halcrow <mhalcrow@google.com>, Victor Hsieh <victorhsieh@google.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200635
+On Fri, Aug 24, 2018 at 01:42:29PM -0400, Colin Walters wrote:
+> 
+> While I'm not too familiar with the vfs, as far as I can
+> tell  from inspection of Linus' git master is that pretty much any change (timestamp, hardlinks) ends up
+> calling notify_change() which calls the fs-specific one, and in
+> the verity case basically denies everything, right?
 
-Stathis Maneas (smaneas@cs.toronto.edu) changed:
+That's not correct.  The verity case only denies truncate, because
+changing the data of the file would break the Merkle tree checksums.
+The metadata of the file is is not made immutable.  So a
+verity-protected file can be deleted, renamed, can have hard links,
+and the timestamps can be set via utimes(), etc.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|RESOLVED                    |REOPENED
-         Resolution|CODE_FIX                    |---
+Cheers,
 
---- Comment #3 from Stathis Maneas (smaneas@cs.toronto.edu) ---
-I have reopened the bug, because indeed, the fix included in the aforementioned
-commit prevents the file system from being mounted after reading an invalid
-value from the superblock.
-
-Nonetheless, after invoking fsck to fix the partition, the file system still
-cannot be mounted. Would the patch that introduces the checksum mechanism for
-the superblock completely resolve the error?
-
-Thanks,
-Stathis Maneas
-
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+    		       	      	  	     - Ted
