@@ -1,87 +1,59 @@
-From: Colin Walters <walters@verbum.org>
-Subject: Re: [RFC PATCH 01/10] fs-verity: add setup code, UAPI, and Kconfig
-Date: Fri, 24 Aug 2018 13:42:29 -0400
-Message-ID: <1535132549.2855027.1485213752.129E3334@webmail.messagingengine.com>
-References: <20180824161642.1144-1-ebiggers@kernel.org>
- <20180824161642.1144-2-ebiggers@kernel.org>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 200635] Oops error in refresh_sit_entry() while
+ unmounting a crafted F2FS image
+Date: Fri, 24 Aug 2018 18:42:45 +0000
+Message-ID: <bug-200635-202145-D0G8XefW2j@https.bugzilla.kernel.org/>
+References: <bug-200635-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180824161642.1144-2-ebiggers@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-integrity@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Michael Halcrow <mhalcrow@google.com>, Victor Hsieh <victorhsieh@google.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
+ id 1ftH2q-0005en-R0
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Aug 2018 18:42:52 +0000
+Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1ftH2p-009fVk-5x
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Aug 2018 18:42:52 +0000
+Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 948E72CA9A
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 24 Aug 2018 18:42:44 +0000 (UTC)
+In-Reply-To: <bug-200635-202145@https.bugzilla.kernel.org/>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
+https://bugzilla.kernel.org/show_bug.cgi?id=200635
 
+Stathis Maneas (smaneas@cs.toronto.edu) changed:
 
-On Fri, Aug 24, 2018, at 12:16 PM, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> fs-verity is a filesystem feature that provides efficient, transparent
-> integrity verification and authentication of read-only files.  It uses a
-> dm-verity like mechanism at the file level: a Merkle tree hidden past
-> the end of the file is used to verify any block in the file in
-> log(filesize) time.  It is implemented mainly by helper functions in
-> fs/verity/ that will be shared by multiple filesystems.
-> 
-> Essentially, fs-verity reports a file's hash in constant time, but reads
-> that would violate that hash fail at runtime.  This is useful when only
-> a portion of the file is actually accessed, as only the accessed portion
-> has to be hashed, and the latency to the first read is much reduced over
-> a full file hash.  On top of this hashing mechanism, auditing or
-> authentication policies can be implemented to log or verify file hashes.
-> 
-> Note that in general, fs-verity is *not* a replacement for IMA.
-> fs-verity is a lower-level feature, primarily a way to hash a file;
-> whereas IMA deals more with higher-level policy logic, like defining
-> which files are "measured" and what to do with those measurements.  We
-> plan for IMA to support fs-verity measurements as an alternative to the
-> traditional full file hash.  Still, some users find fs-verity useful by
-> itself, so it's also usable without IMA in simple cases, e.g. in cases
-> where just retrieving the file measurement via an ioctl is enough.
-> 
-> A structure containing the properties of the Merkle tree -- such as the
-> hash algorithm used, the block size, and the root hash -- is also stored
-> on-disk, following the Merkle tree.  The actual file measurement hash
-> that fs-verity reports is the hash of this structure.
-> 
-> All fs-verity metadata is written by userspace; the kernel only reads
-> it.  Extended attributes aren't used because the Merkle tree may be much
-> larger than XATTR_SIZE_MAX, we want the hash pages to be cached in the
-> page cache as usual, and in the case of fs-verity combined with fscrypt
-> we want the metadata to be encrypted to avoid leaking plaintext hashes.
-> The fs-verity metadata is hidden from userspace by overriding the i_size
-> of the in-memory VFS inode; ext4 additionally will override the on-disk
-> i_size in order to make verity a RO_COMPAT filesystem feature.
-> 
-> This initial patch only adds the fs-verity Kconfig option, UAPI, and
-> setup code, e.g. the ->open() hook that parses the fs-verity descriptor.
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |RESOLVED
+         Resolution|---                         |CODE_FIX
 
-This first patch also adds a bit of core logic in the
-simple fsverity_prepare_setattr() which ends up being called
-by ext4 later.
+--- Comment #2 from Stathis Maneas (smaneas@cs.toronto.edu) ---
+I can confirm that the specified commit actually resolves the error. Therefore,
+I am marking the bug as resolved.
 
-While I'm not too familiar with the vfs, as far as I can
-tell  from inspection of Linus' git master is that pretty much any change (timestamp, hardlinks) ends up
-calling notify_change() which calls the fs-specific one, and in
-the verity case basically denies everything, right?
+Thanks a lot,
+Stathis Maneas
 
-Previously I brought up many uses for "content immutable" files:
-https://marc.info/?l=linux-fsdevel&m=151698481512084&w=2
-
-The discussion sort of died out but...did you have any opinion
-on e.g. my proposal to use the Unix mode bits as a way to describe
-levels of mutablility?
-
-Let's say that your new _VERITY inode flag becomes "_WRITEPROT"
-or something a bit more generic.
-
-Do you have any thoughts on my proposal to reuse the Unix mode
-bits to control levels of inode mutability?
-
-For example, it seems to me we could define u+w as "hardlinks are OK".
-There shouldn't be any reason ext4/f2fs couldn't hardlink a verity-protected
-inode right?  Or if for some reason that is hard, we could disallow that to
-start, but at least have the core VFS support _WRITEPROT inodes?
+-- 
+You are receiving this mail because:
+You are watching the assignee of the bug.
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
