@@ -1,74 +1,61 @@
-From: Gao Xiang <gaoxiang25@huawei.com>
-Subject: Re: [f2fs-dev] [RFC PATCH 02/10] fs-verity: add data verification
- hooks for ->readpages()
-Date: Sat, 25 Aug 2018 15:55:18 +0800
-Message-ID: <22b235b0-8615-5947-bcae-78f4d492d28a@huawei.com>
-References: <20180824161642.1144-1-ebiggers@kernel.org>
- <20180824161642.1144-3-ebiggers@kernel.org>
- <2f2382c3-e5e9-f0da-dc89-42dfc7b2b636@huawei.com>
- <20180825034544.GA5281@thunk.org>
- <cb646950-94ea-9b28-80f1-3c840ad85581@huawei.com>
- <20180825050621.GA25031@thunk.org>
- <faf1fe45-e325-bae4-e60d-871f0b7b41b0@huawei.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 200177] BUG() triggered in verify_block_addr() when
+ mounting a corrupted f2fs image
+Date: Sat, 25 Aug 2018 14:36:08 +0000
+Message-ID: <bug-200177-202145-ghzBLkkVXK@https.bugzilla.kernel.org/>
+References: <bug-200177-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <faf1fe45-e325-bae4-e60d-871f0b7b41b0@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Theodore Y. Ts'o" <tytso@mit.edu>, Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Michael Halcrow <mhalcrow@google.com>, linux-kernel@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, Victor Hsieh <victorhsieh@google.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
+ id 1ftaDY-00067X-1D
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 25 Aug 2018 15:11:12 +0000
+Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1ftZfj-009LKB-3b
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 25 Aug 2018 14:36:17 +0000
+Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 7A3902A817
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat, 25 Aug 2018 14:36:08 +0000 (UTC)
+In-Reply-To: <bug-200177-202145@https.bugzilla.kernel.org/>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Ted,
+https://bugzilla.kernel.org/show_bug.cgi?id=200177
 
-Please ignore the following email, Eric has replied to me. :)
-I need to dig into these fs-verity patches later and best wishes to fs-verity.
+Chao Yu (chao@kernel.org) changed:
 
-Thanks,
-Gao Xiang
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |RESOLVED
+                 CC|                            |chao@kernel.org
+          Component|Other                       |f2fs
+         Resolution|---                         |CODE_FIX
+           Assignee|fs_other@kernel-bugs.osdl.o |linux-f2fs-devel@lists.sour
+                   |rg                          |ceforge.net
 
-On 2018/8/25 15:33, Gao Xiang wrote:
-> Hi Ted,
-> 
-> Thanks for your detailed reply. Sorry about my english, the words could not be logical.
-> 
-> Tiny pieces in B-tree to compose a page is too far from us too, and you are right,
-> fs-verity is complete for >99% cases for the existed file system, and no need to worry about currently.
-> 
-> As I mentioned in reply to Eric, I am actually curious about the Google fs-verity roadmap
-> for the future Android, I need to analyze if it is only limited to APKs for the read-write partitions
-> and not to replace dm-verity in the near future since fs-verity has some conflicts
-> to EROFS I am working on I mentioned in the email to Eric.
-> 
-> I think it is more than just to handle FILE_MAPPING and bio-strict for compression use.
-> 
-> On 2018/8/25 13:06, Theodore Y. Ts'o wrote:
->> But I'd suggest worrying about it when such a file system
->> comes out of the woodwork, and someone is willing to do the work to
->> integrate fserity in that file system.
->>
-> Yes, we are now handling partial page due to compression use.
-> 
-> fs could submit bios in pages from different mapping(FILE_MAPPING[compress in-place and no caching
-> compressed page to reduce extra memory overhead] or META_MAPPING [for caching compressed page]) and
-> they could be decompressed into many full pages and (possible) a partial page (in-place or out-of-place).
-> 
-> so in principle, since we have BIO_MAX_PAGES limitation, a filemap page could be Uptodate
-> after two bios is ended and decompressed. and other runtime limitations could also divide a bio into two bios for encoded cases.
-> 
-> Therefore, I think in that case we could not just consider FILE_MAPPING and one bio, and as you said `In
-> that case, it could call fsverity after assembling the page in the page cache.' should be done in this way.
-> 
->> Well, the userspace interface for instantiating a fs-verity file is
->> that it writes the file data with the fs-verity metadata (which
->> consists of the Merkle tree with a fs-verity header at the end of the
->> file).  The program (which might be a package manager such as dpkg or
->> rpm) would then call an ioctl which would cause the file system to
->> read the fs-verity header and make only the file data visible, and the
->> file system would the verify the data as it is read into the page
->> cache.
-> Thanks for your reply again, I think fs-verity is good enough for now.
-> However, I need to think over about fs-verity itself more... :(
-> 
-> Thanks,
-> Gao Xiang
+--- Comment #1 from Chao Yu (chao@kernel.org) ---
+Fixed by below commit:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c9b60788fc760d136211853f10ce73dc152d1f4a
+
+-- 
+You are receiving this mail because:
+You are the assignee for the bug.
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
