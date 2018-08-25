@@ -1,9 +1,9 @@
 From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 200183] Divide zero in reset_curseg() when mounting
- a crafted f2fs image
-Date: Sat, 25 Aug 2018 23:31:12 +0000
-Message-ID: <bug-200183-202145-r8hCMfwAlE@https.bugzilla.kernel.org/>
-References: <bug-200183-202145@https.bugzilla.kernel.org/>
+Subject: [Bug 200221] BUG() triggered in clear_inode() when
+ mounting and un-mounting a corrupted f2fs image
+Date: Sat, 25 Aug 2018 23:39:34 +0000
+Message-ID: <bug-200221-202145-A8spy8Umdm@https.bugzilla.kernel.org/>
+References: <bug-200221-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -12,18 +12,18 @@ Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1fti1X-0006b3-62
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 25 Aug 2018 23:31:19 +0000
+ id 1fti9c-0006lO-RR
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 25 Aug 2018 23:39:40 +0000
 Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fti1V-00F651-Hh
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 25 Aug 2018 23:31:19 +0000
+ id 1fti9b-00AZwB-2t
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 25 Aug 2018 23:39:40 +0000
 Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id B50162A1C0
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 248B229A2C
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 25 Aug 2018 23:31:11 +0000 (UTC)
-In-Reply-To: <bug-200183-202145@https.bugzilla.kernel.org/>
+ Sat, 25 Aug 2018 23:39:33 +0000 (UTC)
+In-Reply-To: <bug-200221-202145@https.bugzilla.kernel.org/>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,7 +35,7 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200183
+https://bugzilla.kernel.org/show_bug.cgi?id=200221
 
 Chao Yu (chao@kernel.org) changed:
 
@@ -51,7 +51,7 @@ Chao Yu (chao@kernel.org) changed:
 --- Comment #1 from Chao Yu (chao@kernel.org) ---
 Fixed by below commit:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=42bf546c1fe3f3654bdf914e977acbc2b80a5be5
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=bcbfbd604dcba45246dd307c8317f216ada5567d
 
 -- 
 You are receiving this mail because:
