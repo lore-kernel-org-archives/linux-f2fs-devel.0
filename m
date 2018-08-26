@@ -1,29 +1,29 @@
-From: Gao Xiang via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Subject: Re: [RFC PATCH 02/10] fs-verity: add data verification
- hooks for ->readpages()
-Date: Mon, 27 Aug 2018 01:44:50 +0800
-Message-ID: <a83219f8-44a2-7a40-319a-dc2f9d567cbe@aol.com>
-References: <20180824161642.1144-1-ebiggers@kernel.org>
- <20180824161642.1144-3-ebiggers@kernel.org>
- <C86750D6-CA95-4A7F-9204-51345C497EC2@gmail.com>
- <20180826170433.GA728@sol.localdomain>
-Reply-To: Gao Xiang <hsiangkao@aol.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 200635] Oops error in refresh_sit_entry() while
+ unmounting a crafted F2FS image
+Date: Sun, 26 Aug 2018 23:22:45 +0000
+Message-ID: <bug-200635-202145-6HB3CnEx4i@https.bugzilla.kernel.org/>
+References: <bug-200635-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <hsiangkao@aol.com>) id 1ftz69-00018F-6f
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 26 Aug 2018 17:45:13 +0000
-Received: from sonic309-21.consmr.mail.gq1.yahoo.com ([98.137.65.147])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1ftz67-00B6Es-Gh
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 26 Aug 2018 17:45:13 +0000
-In-Reply-To: <20180826170433.GA728@sol.localdomain>
-Content-Language: en-US
+ (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
+ id 1fu4My-0007nn-5V
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 26 Aug 2018 23:22:56 +0000
+Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fu4Mw-00AKkr-2F
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 26 Aug 2018 23:22:55 +0000
+Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id A6B432914F
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sun, 26 Aug 2018 23:22:46 +0000 (UTC)
+In-Reply-To: <bug-200635-202145@https.bugzilla.kernel.org/>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,86 +33,19 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Chuck Lever <chucklever@gmail.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Michael Halcrow <mhalcrow@google.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-ext4@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, Victor Hsieh <victorhsieh@google.com>
+To: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Eric,
+https://bugzilla.kernel.org/show_bug.cgi?id=200635
 
-On 2018/8/27 1:04, Eric Biggers wrote:
-> Hi Chuck,
-> 
-> On Sun, Aug 26, 2018 at 11:55:57AM -0400, Chuck Lever wrote:
->>> +
->>> +/**
->>> + * fsverity_verify_page - verify a data page
->>> + *
->>> + * Verify a page that has just been read from a file against that file's Merkle
->>> + * tree.  The page is assumed to be a pagecache page.
->>> + *
->>> + * Return: true if the page is valid, else false.
->>> + */
->>> +bool fsverity_verify_page(struct page *data_page)
->>> +{
->>> +	struct inode *inode = data_page->mapping->host;
->>> +	const struct fsverity_info *vi = get_fsverity_info(inode);
->>> +	struct ahash_request *req;
->>> +	bool valid;
->>> +
->>> +	req = ahash_request_alloc(vi->hash_alg->tfm, GFP_KERNEL);
+--- Comment #5 from Stathis Maneas (smaneas@cs.toronto.edu) ---
+For the case where the checksum mechanism is not enabled for the superblock, it
+would be nice to fix the error and make the file system able to be mounted once
+again, provided that there is a safe way to restore the values stored in the
+superblock using any of the underlying checkpoints.
 
-Some minor suggestions occurred to me after I saw this part of code
-again before sleeping...
-
-1) How about introducing an iterator callback to avoid too many
-ahash_request_alloc and ahash_request_free... (It seems too many pages
-and could be some slower than fsverity_verify_bio...)
-
-2) How about adding a gfp_t input argument since I don't know whether
-GFP_KERNEL is suitable for all use cases...
-
-It seems there could be more fsverity_verify_page users as well as
-fsverity_verify_bio ;)
-
-Sorry for interruption...
-
-Thanks,
-Gao Xiang
-
->>> +	if (unlikely(!req))
->>> +		return false;
->>> +
->>> +	valid = verify_page(inode, vi, req, data_page);
->>> +
->>> +	ahash_request_free(req);
->>> +
->>> +	return valid;
->>> +}
->>> +EXPORT_SYMBOL_GPL(fsverity_verify_page);
->>> +
->>> +/**
->>> + * fsverity_verify_bio - verify a 'read' bio that has just completed
->>> + *
->>> + * Verify a set of pages that have just been read from a file against that
->>> + * file's Merkle tree.  The pages are assumed to be pagecache pages.  Pages that
->>> + * fail verification are set to the Error state.  Verification is skipped for
->>> + * pages already in the Error state, e.g. due to fscrypt decryption failure.
->>> + */
->>> +void fsverity_verify_bio(struct bio *bio)
->>
->> Hi Eric-
->>
->> This kind of API won't work for remote filesystems, which do not use
->> "struct bio" to do their I/O. Could a remote filesystem solely use
->> fsverity_verify_page instead?
->>
-> 
-> Yes, filesystems don't have to use fsverity_verify_bio().  They can call
-> fsverity_verify_page() on each page instead.  I will clarify this in the next
-> revision of the patchset.
-> 
-> - Eric
-> 
-
+-- 
+You are receiving this mail because:
+You are watching the assignee of the bug.
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
 engaging tech sites, Slashdot.org! http://sdm.link/slashdot
