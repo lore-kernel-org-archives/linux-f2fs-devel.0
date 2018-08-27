@@ -1,29 +1,27 @@
 From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 200871] F2FS experiences data loss (entry is
- completely lost) when an I/O failure occurs.
-Date: Sun, 26 Aug 2018 23:43:23 +0000
-Message-ID: <bug-200871-202145-Ve7lJpu59R@https.bugzilla.kernel.org/>
-References: <bug-200871-202145@https.bugzilla.kernel.org/>
+Subject: [Bug 200951] New: kernel NULL pointer dereference in
+ update_sit_entry
+Date: Mon, 27 Aug 2018 13:44:43 +0000
+Message-ID: <bug-200951-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1fu4gt-0008Cl-NL
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 26 Aug 2018 23:43:31 +0000
+ id 1fuHp5-00064P-Bv
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 27 Aug 2018 13:44:51 +0000
 Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fu4gr-00F6zZ-SV
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 26 Aug 2018 23:43:31 +0000
+ id 1fuHp3-00Bok7-Ce
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 27 Aug 2018 13:44:51 +0000
 Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 666C229755
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 702B328CFA
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 26 Aug 2018 23:43:23 +0000 (UTC)
-In-Reply-To: <bug-200871-202145@https.bugzilla.kernel.org/>
+ Mon, 27 Aug 2018 13:44:43 +0000 (UTC)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,43 +33,43 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200871
-
---- Comment #2 from Stathis Maneas (smaneas@cs.toronto.edu) ---
-1. I am using a device mapper module similar to the existing dm-flakey module:
-https://elixir.bootlin.com/linux/v4.18/source/drivers/md/dm-flakey.c
-
-Specifically, an error is introduced to an I/O operation in the same way as
-implemented by the dm-flakey module
-(https://elixir.bootlin.com/linux/v4.18/source/drivers/md/dm-flakey.c#L348):
-...
-else if (test_bit(ERROR_WRITES, &fc->flags)) {
-        bio_io_error(bio);
-        return DM_MAPIO_SUBMITTED;
-}
-...
-
-In this case, fsync is not able to capture the error and returns as if no error
-has taken place.
-
-Here, I would like to mention that using this mechanism to introduce errors
-when ext4 is used as the underlying file system, results in fsync returning an
-error.
-
-2. Indeed, the problem here is that the corresponding NAT table entry points to
-an inode that has never been persisted on disk. However, since fsync does not
-report an error, someone would hope that the entry would be there.
-
-Moreover, the problem here is worse, because after invoking fsck, the entry
-completely disappears from the file system and cannot be restored in any way.
-
-Had fsync returned with an error, the user would have known that the operation
-has failed and thus, they would not have excepted any modifications to have
-taken place.
-
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+aHR0cHM6Ly9idWd6aWxsYS5rZXJuZWwub3JnL3Nob3dfYnVnLmNnaT9pZD0yMDA5NTEKCiAgICAg
+ICAgICAgIEJ1ZyBJRDogMjAwOTUxCiAgICAgICAgICAgU3VtbWFyeToga2VybmVsIE5VTEwgcG9p
+bnRlciBkZXJlZmVyZW5jZSBpbiB1cGRhdGVfc2l0X2VudHJ5CiAgICAgICAgICAgUHJvZHVjdDog
+RmlsZSBTeXN0ZW0KICAgICAgICAgICBWZXJzaW9uOiAyLjUKICAgIEtlcm5lbCBWZXJzaW9uOiB2
+NC4xOS1yYzEsIHY0LjE4LjIKICAgICAgICAgIEhhcmR3YXJlOiBBUk0KICAgICAgICAgICAgICAg
+IE9TOiBMaW51eAogICAgICAgICAgICAgIFRyZWU6IE1haW5saW5lCiAgICAgICAgICAgIFN0YXR1
+czogTkVXCiAgICAgICAgICBTZXZlcml0eTogaGlnaAogICAgICAgICAgUHJpb3JpdHk6IFAxCiAg
+ICAgICAgIENvbXBvbmVudDogZjJmcwogICAgICAgICAgQXNzaWduZWU6IGZpbGVzeXN0ZW1fZjJm
+c0BrZXJuZWwtYnVncy5rZXJuZWwub3JnCiAgICAgICAgICBSZXBvcnRlcjogdmljZW5jYkBnbWFp
+bC5jb20KICAgICAgICBSZWdyZXNzaW9uOiBObwoKQ3JlYXRlZCBhdHRhY2htZW50IDI3ODEyNwog
+IC0tPiBodHRwczovL2J1Z3ppbGxhLmtlcm5lbC5vcmcvYXR0YWNobWVudC5jZ2k/aWQ9Mjc4MTI3
+JmFjdGlvbj1lZGl0CmRtZXNnCgpIaSwKaW4gdGhlIHNldHVwIHRoZXJlIGlzIGEgU0FUQSBTU0Qg
+Y29ubmVjdGVkIHRvIGEgU0FUQS10by1VU0IgYnJpZGdlLgoKVGhlIGRpc2MgaXMgIlNhbXN1bmcg
+U1NEIDg1MCBQUk8gMjU2RyIgd2hpY2ggc3VwcG9ydHMgVFJJTS4KVGhlcmUgYXJlIGZvdXIgcGFy
+dGl0aW9uczoKIHNkYTE6IEZBVCAgL2Jvb3QKIHNkYTI6IEYyRlMgLwogc2RhMzogRjJGUyAvaG9t
+ZQogc2RhNDogRjJGUwoKVGhlIGJyaWRnZSBpcyBBU01UMTE1M2Ugd2hpY2ggdXNlcyB0aGUgInVh
+cyIgZHJpdmVyLgpUaGVyZSBpcyBubyBUUklNIHBhc3MtdGhyb3VnaCwgc28sIHdoZW4gbW91bnRp
+bmcgaXQgcmVwb3J0czoKIG1vdW50aW5nIHdpdGggImRpc2NhcmQiIG9wdGlvbiwgYnV0IHRoZSBk
+ZXZpY2UgZG9lcyBub3Qgc3VwcG9ydCBkaXNjYXJkCgpUaGUgVVNCIGhvc3QgaXMgVVNCMy4wIGFu
+ZCBVQVNQIGNhcGFibGUuIEl0IGlzIHRoZSBvbmUgb24gUkszMzk5LgoKR2l2ZW4gdGhpcyBldmVy
+eXRoaW5nIHdvcmtzIGZpbmUsIGV4Y2VwdCB0aGVyZSBpcyBubyBUUklNIHN1cHBvcnQuCgpJbiBv
+cmRlciB0byBlbmFibGUgVFJJTSBhIG5ldyBVREVWIHJ1bGUgaXMgYWRkZWQgWzFdOgogL2V0Yy91
+ZGV2L3J1bGVzLmQvMTAtc2F0YS1icmlkZ2UtdHJpbS5ydWxlczoKIEFDVElPTj09ImFkZHxjaGFu
+Z2UiLCBBVFRSU3tpZFZlbmRvcn09PSIxNzRjIiwgQVRUUlN7aWRQcm9kdWN0fT09IjU1YWEiLApT
+VUJTWVNURU09PSJzY3NpX2Rpc2siLCBBVFRSe3Byb3Zpc2lvbmluZ19tb2RlfT0idW5tYXAiCkFm
+dGVyIHJlYm9vdCBhbnkgRjJGUyB3cml0ZSBoYW5ncyBmb3JldmVyIGFuZCBkbWVzZyByZXBvcnRz
+OgogVW5hYmxlIHRvIGhhbmRsZSBrZXJuZWwgTlVMTCBwb2ludGVyIGRlcmVmZXJlbmNlCgpBbHNv
+IHRlc3RlZCBvbiBhIHg4Nl82NCBzeXN0ZW06IHdvcmtzIGZpbmUgZXZlbiB3aXRoIFRSSU0gZW5h
+YmxlZC4KIHNhbWUgZGlzYwogc2FtZSBicmlkZ2UKIGRpZmZlcmVudCB1c2IgaG9zdCBjb250cm9s
+bGVyCiBkaWZmZXJlbnQgY3B1IGFyY2hpdGVjdHVyZQogbm90IHJvb3QgZmlsZXN5c3RlbQoKUmVn
+YXJkcywKICBWaWNlbsOnLgoKWzFdIFBvc3QgIzUgaW4gaHR0cHM6Ly9iYnMuYXJjaGxpbnV4Lm9y
+Zy92aWV3dG9waWMucGhwP2lkPTIzNjI4MAoKLS0gCllvdSBhcmUgcmVjZWl2aW5nIHRoaXMgbWFp
+bCBiZWNhdXNlOgpZb3UgYXJlIHdhdGNoaW5nIHRoZSBhc3NpZ25lZSBvZiB0aGUgYnVnLgotLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0KQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9u
+IG9uZSBvZiB0aGUgd29ybGQncyBtb3N0CmVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9y
+ZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYy
+ZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2Uu
+bmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
