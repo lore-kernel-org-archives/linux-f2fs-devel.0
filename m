@@ -1,10 +1,9 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] build: declare that libf2fs_format uses the
- blkid library
-Date: Mon, 27 Aug 2018 09:51:33 -0700
-Message-ID: <20180827165133.GA74162@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180824072632.23608-1-tytso@mit.edu>
- <20180827160459.GH2311@thunk.org>
+Subject: Re: [PATCH 1/2] add configure option --with-root-libdir
+Date: Mon, 27 Aug 2018 09:57:44 -0700
+Message-ID: <20180827165744.GB74162@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180820030407.13225-1-tytso@mit.edu>
+ <20180827155114.GG2311@thunk.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -12,15 +11,15 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1fuKk7-0001i5-P1
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 27 Aug 2018 16:51:55 +0000
-Received: from [198.145.29.99] (helo=mail.kernel.org)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <jaegeuk@kernel.org>) id 1fuKpv-0001px-3C
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 27 Aug 2018 16:57:55 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fuKk2-0001YM-Eo
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 27 Aug 2018 16:51:55 +0000
+ id 1fuKpr-0001nA-HQ
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 27 Aug 2018 16:57:55 +0000
 Content-Disposition: inline
-In-Reply-To: <20180827160459.GH2311@thunk.org>
+In-Reply-To: <20180827155114.GG2311@thunk.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,43 +33,27 @@ To: "Theodore Y. Ts'o" <tytso@mit.edu>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
 On 08/27, Theodore Y. Ts'o wrote:
-> Ping?  This bug was noticed when I was repackaging f2fs-tools for
-> Debian.  The problem is that libf2fs_format references the blkid
-> library, and Debian's shared library auditing tools noticed the
-> missing library dependency.
-
-Hi Ted,
-
-Thank you for the fix. I added it in my local tree for testing for a while.
-Let me think about next release having this.
-
-Thanks,
-
-> 
-> 					- Ted
-> 
-> On Fri, Aug 24, 2018 at 03:26:32AM -0400, Theodore Ts'o wrote:
+> On Sun, Aug 19, 2018 at 11:04:06PM -0400, Theodore Ts'o wrote:
+> > This allows the development link libraries to be installed in
+> > /usr/lib, while the run-libraries are installed in /lib, which is
+> > required by Debian policy.  This can be done via:
+> > 
+> >     configure --prefix=/ --libdir=/usr/lib --with-root-libdir=/lib
+> > 
+> > The technique of working around libtool's inflexibility is borrowed
+> > from util-linux.
+> > 
 > > Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-> > ---
-> >  mkfs/Makefile.am | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/mkfs/Makefile.am b/mkfs/Makefile.am
-> > index 32996ba..cae2f93 100644
-> > --- a/mkfs/Makefile.am
-> > +++ b/mkfs/Makefile.am
-> > @@ -12,7 +12,7 @@ lib_LTLIBRARIES = libf2fs_format.la
-> >  libf2fs_format_la_SOURCES = f2fs_format_main.c f2fs_format.c f2fs_format_utils.c
-> >  libf2fs_format_la_CFLAGS = -DWITH_BLKDISCARD
-> >  libf2fs_format_la_CPPFLAGS = -I$(top_srcdir)/include
-> > -libf2fs_format_la_LDFLAGS = -luuid -L$(top_builddir)/lib -lf2fs \
-> > +libf2fs_format_la_LDFLAGS = -lblkid -luuid -L$(top_builddir)/lib -lf2fs \
-> >  	-version-info $(FMT_CURRENT):$(FMT_REVISION):$(FMT_AGE)
-> >  
-> >  install-exec-hook:
-> > -- 
-> > 2.18.0.rc0
-> > 
+> 
+> Ping?  This is needed (and is applied) for the Debian packaging of
+> f2fs-tools.  See patch #0001 at:
+
+Thanks. I've added this and been testing with other patches for next release.
+
+> 
+> https://salsa.debian.org/debian/f2fs-tools/tree/master/debian/patches
+> 
+> 						- Ted
 > 
 > ------------------------------------------------------------------------------
 > Check out the vibrant tech community on one of the world's most
