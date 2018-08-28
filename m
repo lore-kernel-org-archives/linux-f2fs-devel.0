@@ -1,26 +1,22 @@
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-Subject: Re: [PATCH 1/2] add configure option --with-root-libdir
-Date: Mon, 27 Aug 2018 19:56:19 -0400
-Message-ID: <20180827235619.GA2304@thunk.org>
-References: <20180820030407.13225-1-tytso@mit.edu>
- <20180827155114.GG2311@thunk.org>
- <20180827165744.GB74162@jaegeuk-macbookpro.roam.corp.google.com>
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: [PATCH] f2fs-tools: Fix cross-build problem caused by
+ AC_CHECK_FILE abuse
+Date: Mon, 27 Aug 2018 20:29:41 -0400
+Message-ID: <20180828002941.7507-1-tytso@mit.edu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@thunk.org>) id 1fuRN1-00011t-FD
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 27 Aug 2018 23:56:31 +0000
+ (envelope-from <tytso@thunk.org>) id 1fuRtQ-0003Ky-Ea
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 28 Aug 2018 00:30:00 +0000
 Received: from imap.thunk.org ([74.207.234.97])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fuRMz-000JsK-RG
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 27 Aug 2018 23:56:31 +0000
-Content-Disposition: inline
-In-Reply-To: <20180827165744.GB74162@jaegeuk-macbookpro.roam.corp.google.com>
+ id 1fuRtO-000L7k-0X
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 28 Aug 2018 00:30:00 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,40 +26,55 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Helmut Grohne <helmut@subdivi.de>, Theodore Ts'o <tytso@mit.edu>
 
-On Mon, Aug 27, 2018 at 09:57:44AM -0700, Jaegeuk Kim wrote:
-> 
-> Thanks. I've added this and been testing with other patches for next release.
->
+From: Helmut Grohne <helmut@subdivi.de>
 
-Are you planning on doing a new release soon?
+f2fs-tools fails to cross build from source, because its upstream
+build system wrongly uses AC_CHECK_FILE. The purpose of the macro is
+checking for files on the host system. However here it is used to
+check whether a .git directory exists, which is a property of the
+build place. A simple "test -d" should be used here. After doing so,
+f2fs-tools cross builds successfully.
 
-I'm also wondering if you could give some color commentary on how
-often you plan on bumping the shared version library numbers?  The
-reason why I ask is because there is a Debian package which depends on
-libf2fs and libf2fs-format, android-libf2fs-utils.  It appears to be
-part of the Android SDK.
+Addresses-Debian-Bug: #896909
 
-I was about to send the Debian maintainer of android-libf2fs-utils
-package a ping asking him or her to relink against the latest so
-versions --- libf2fs.so.5 and libf2fs-format.so.4.  But if the next
-release is going to involve a bump of the so versions again, I'll hold
-off requesting a rebuild of the package.
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+---
 
-And if the shared libraries are going to be regularly bumped due to
-incompatible ABI changes, should I recommend the andorid-f2fs-utils to
-statically link instead of link against the f2fs shared libraries?
+This was a FTCBFS problem reported by a Debian user:
 
-(I haven't bumped the e2fsprogs so versions in over a decade, but
-that's because I had carefully designed the interfaces to allow for
-backwards compatibility as we added new features to the file system.
-I didn't know if that was part of your plan for f2fs-tools)
+	https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=896909
 
-Thanks!!
+ configure.ac | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-						- Ted
+diff --git a/configure.ac b/configure.ac
+index 62c18eb..f3e12d8 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -20,14 +20,14 @@ AC_DEFINE([F2FS_MINOR_VERSION], m4_bpatsubst(f2fs_tools_version,
+ 				[\([0-9]*\).\([0-9]*\)\(\w\|\W\)*], [\2]),
+ 				[Minor version for f2fs-tools])
+ 
+-AC_CHECK_FILE(.git,
++AS_IF([test -d .git],[
+ 	AC_DEFINE([F2FS_TOOLS_DATE],
+ 		"m4_bpatsubst(f2fs_tools_gitdate,
+ 		[\([0-9-]*\)\(\w\|\W\)*], [\1])",
+-		[f2fs-tools date based on Git commits]),
++		[f2fs-tools date based on Git commits])],[
+ 	AC_DEFINE([F2FS_TOOLS_DATE],
+ 		"f2fs_tools_date",
+-		[f2fs-tools date based on Source releases]))
++		[f2fs-tools date based on Source releases])])
+ 
+ AC_CONFIG_SRCDIR([config.h.in])
+ AC_CONFIG_HEADER([config.h])
+-- 
+2.18.0.rc0
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
