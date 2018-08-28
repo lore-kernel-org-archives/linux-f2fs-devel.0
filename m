@@ -1,23 +1,24 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 1/2] add configure option --with-root-libdir
-Date: Tue, 28 Aug 2018 11:43:39 +0800
-Message-ID: <ea991c4f-8b41-1978-4fa6-2359edb30a1e@huawei.com>
-References: <20180820030407.13225-1-tytso@mit.edu>
+Subject: Re: [PATCH] f2fs-tools: Fix cross-build problem caused
+ by AC_CHECK_FILE abuse
+Date: Tue, 28 Aug 2018 11:44:09 +0800
+Message-ID: <8acd7c28-5979-df91-0b2c-1ce206968b9e@huawei.com>
+References: <20180828002941.7507-1-tytso@mit.edu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fuUv4-0006q8-2N
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 28 Aug 2018 03:43:54 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ (envelope-from <yuchao0@huawei.com>) id 1fuUvY-0000we-SX
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 28 Aug 2018 03:44:24 +0000
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fuUv2-000Xdn-27
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 28 Aug 2018 03:43:54 +0000
-In-Reply-To: <20180820030407.13225-1-tytso@mit.edu>
+ id 1fuUvW-000Xfa-TC
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 28 Aug 2018 03:44:24 +0000
+In-Reply-To: <20180828002941.7507-1-tytso@mit.edu>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -29,16 +30,19 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Theodore Ts'o <tytso@mit.edu>, linux-f2fs-devel@lists.sourceforge.net
+Cc: Helmut Grohne <helmut@subdivi.de>
 
-On 2018/8/20 11:04, Theodore Ts'o wrote:
-> This allows the development link libraries to be installed in
-> /usr/lib, while the run-libraries are installed in /lib, which is
-> required by Debian policy.  This can be done via:
+On 2018/8/28 8:29, Theodore Ts'o wrote:
+> From: Helmut Grohne <helmut@subdivi.de>
 > 
->     configure --prefix=/ --libdir=/usr/lib --with-root-libdir=/lib
+> f2fs-tools fails to cross build from source, because its upstream
+> build system wrongly uses AC_CHECK_FILE. The purpose of the macro is
+> checking for files on the host system. However here it is used to
+> check whether a .git directory exists, which is a property of the
+> build place. A simple "test -d" should be used here. After doing so,
+> f2fs-tools cross builds successfully.
 > 
-> The technique of working around libtool's inflexibility is borrowed
-> from util-linux.
+> Addresses-Debian-Bug: #896909
 > 
 > Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 
