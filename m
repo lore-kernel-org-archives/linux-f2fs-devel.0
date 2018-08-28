@@ -1,87 +1,98 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/2] add configure option --with-root-libdir
-Date: Tue, 28 Aug 2018 00:12:02 -0700
-Message-ID: <20180828071202.GA29049@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180820030407.13225-1-tytso@mit.edu>
- <20180827155114.GG2311@thunk.org>
- <20180827165744.GB74162@jaegeuk-macbookpro.roam.corp.google.com>
- <20180827235619.GA2304@thunk.org>
+Subject: Re: [f2fs-dev] [RFC PATCH 10/10] f2fs: fs-verity support
+Date: Tue, 28 Aug 2018 00:27:56 -0700
+Message-ID: <20180828072756.GC29049@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180824161642.1144-1-ebiggers@kernel.org>
+ <20180824161642.1144-11-ebiggers@kernel.org>
+ <b2b6a810-9605-15c8-b905-a4591c0cf3a5@huawei.com>
+ <20180826173507.GC728@sol.localdomain>
+ <dbc20be8-975d-7bd2-002d-a8f30896da4a@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1fuYAg-00020l-UG
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 28 Aug 2018 07:12:14 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fuYAe-000dUT-Qy
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 28 Aug 2018 07:12:14 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180827235619.GA2304@thunk.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <dbc20be8-975d-7bd2-002d-a8f30896da4a@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <chao@kernel.org>
+Cc: Eric Biggers <ebiggers@kernel.org>, Chao Yu <yuchao0@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Michael Halcrow <mhalcrow@google.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-ext4@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, Victor Hsieh <victorhsieh@google.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 08/27, Theodore Y. Ts'o wrote:
-> On Mon, Aug 27, 2018 at 09:57:44AM -0700, Jaegeuk Kim wrote:
+On 08/27, Chao Yu wrote:
+> Hi Eric,
+> 
+> On 2018/8/27 1:35, Eric Biggers wrote:
+> > Hi Chao,
 > > 
-> > Thanks. I've added this and been testing with other patches for next release.
-> >
+> > On Sat, Aug 25, 2018 at 01:54:08PM +0800, Chao Yu wrote:
+> >> On 2018/8/25 0:16, Eric Biggers wrote:
+> >>> From: Eric Biggers <ebiggers@google.com>
+> >>>  #ifdef CONFIG_F2FS_CHECK_FS
+> >>>  #define f2fs_bug_on(sbi, condition)	BUG_ON(condition)
+> >>>  #else
+> >>> @@ -146,7 +149,7 @@ struct f2fs_mount_info {
+> >>>  #define F2FS_FEATURE_QUOTA_INO		0x0080
+> >>>  #define F2FS_FEATURE_INODE_CRTIME	0x0100
+> >>>  #define F2FS_FEATURE_LOST_FOUND		0x0200
+> >>> -#define F2FS_FEATURE_VERITY		0x0400	/* reserved */
+> >>> +#define F2FS_FEATURE_VERITY		0x0400
+> >>>  
+> >>>  #define F2FS_HAS_FEATURE(sb, mask)					\
+> >>>  	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
+> >>> @@ -598,7 +601,7 @@ enum {
+> >>>  #define FADVISE_ENC_NAME_BIT	0x08
+> >>>  #define FADVISE_KEEP_SIZE_BIT	0x10
+> >>>  #define FADVISE_HOT_BIT		0x20
+> >>> -#define FADVISE_VERITY_BIT	0x40	/* reserved */
+> >>> +#define FADVISE_VERITY_BIT	0x40
+> >>
+> >> As I suggested before, how about moving f2fs' verity_bit from i_fadvise to more
+> >> generic i_flags field like ext4, so we can a) remaining more bits for those
+> >> demands which really need file advise fields. b) using i_flags bits keeping line
+> >> with ext4. Not sure, if user want to know whether the file is verity one, it
+> >> will be easy for f2fs to export the status through FS_IOC_SETFLAGS.
+> >>
+> >> #define EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
+> >>
+> >> #define F2FS_VERITY_FL			0x00100000 /* Verity protected inode */
+> >>
+> > 
+> > I don't like using i_advise much either, but I actually don't see either
+> > location being much better than the other at the moment.  The real problem is an
+> > artificial one: the i_flags in f2fs's on-disk format are being assumed to use
 > 
-> Are you planning on doing a new release soon?
+> Yeah, but since most copied flags from vfs/ext4 are not actually used in f2fs,
+> also 0x00100000 bit is not used now, so we can just define it now directly for
+> verity bit.
 > 
-> I'm also wondering if you could give some color commentary on how
-> often you plan on bumping the shared version library numbers?  The
-> reason why I ask is because there is a Debian package which depends on
-> libf2fs and libf2fs-format, android-libf2fs-utils.  It appears to be
-> part of the Android SDK.
+> Cleanup and remapping in ioctl interface for those unused flags, we can do it
+> latter?
 
-I think f2fs-tools is getting much firmer lib APIs, so don't expect frequent
-major updates on library versions, but was struggling to keep it as much as
-possible tho. I'm checking the final test results, and thus, planning to
-release 1.11.1 within a week or so. In this release, I'm seeing that
-it requires to bump revision like libf2fs-5.1.0, and libf2fs-format-4.1.0.
+No, it was reserved by f2fs-tools, and I think this should be aligned to the
+encryption bit. Moreover, we guarantee i_flags less strictly from power-cut than
+i_advise.
 
 > 
-> I was about to send the Debian maintainer of android-libf2fs-utils
-> package a ping asking him or her to relink against the latest so
-> versions --- libf2fs.so.5 and libf2fs-format.so.4.  But if the next
-> release is going to involve a bump of the so versions again, I'll hold
-> off requesting a rebuild of the package.
+> Thanks,
 > 
-> And if the shared libraries are going to be regularly bumped due to
-> incompatible ABI changes, should I recommend the andorid-f2fs-utils to
-> statically link instead of link against the f2fs shared libraries?
-
-Yeah, I think that'd be much safer to us for a while, as I expect.
-
-> 
-> (I haven't bumped the e2fsprogs so versions in over a decade, but
-> that's because I had carefully designed the interfaces to allow for
-> backwards compatibility as we added new features to the file system.
-> I didn't know if that was part of your plan for f2fs-tools)
-
-Will keep to try on it. :)
-
-Thanks,
-
-> 
-> Thanks!!
-> 
-> 						- Ted
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> > the same numbering scheme as ext4's on-disk format, which makes it seem that
+> > they have to be in sync, and that all new ext4 flags (say, EA_INODE) also
+> > reserve bits in f2fs and vice versa, when they in fact do not.  Instead, f2fs
+> > should use its own numbering for its i_flags, and it should map them to/from
+> > whatever is needed for common APIs like FS_IOC_{GET,SET}FLAGS and
+> > FS_IOC_FS{GET,SET}XATTR.
+> > 
+> > So putting the verity flag in *either* location (i_advise or i_flags) is just
+> > kicking the can down the road.  If I get around to it I will send a patch that
+> > cleans up the f2fs flags properly...>
+> > Thanks,
+> > 
+> > - Eric
+> > 
+> > ------------------------------------------------------------------------------
+> > Check out the vibrant tech community on one of the world's most
+> > engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> > _______________________________________________
+> > Linux-f2fs-devel mailing list
+> > Linux-f2fs-devel@lists.sourceforge.net
+> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> > 
