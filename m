@@ -1,26 +1,25 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: Corrupt F2FS partition - fsck is useless
-Date: Tue, 28 Aug 2018 18:34:39 +0800
-Message-ID: <a16ddebb-1c94-e7ce-dcb9-5134160cdd6e@huawei.com>
-References: <201808240431.07031.luke@dashjr.org>
- <a8530673-fbcb-c6e5-2bd4-ad58ba18d2c5@kernel.org>
- <be5855a1-86b1-1468-4db5-22e322874646@huawei.com>
- <201808280947.06609.luke@dashjr.org>
+Subject: Re: [RFC PATCH v2 3/4] f2fs-tools: unify the writeback
+ of superblock
+Date: Tue, 28 Aug 2018 21:47:21 +0800
+Message-ID: <bd136c6e-f0fc-c8ca-a843-cce1e185e849@huawei.com>
+References: <20180814065616.33278-1-zhengjunling@huawei.com>
+ <20180814065616.33278-3-zhengjunling@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fubKq-0006YR-K0
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 28 Aug 2018 10:34:56 +0000
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1fueLS-000231-N4
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 28 Aug 2018 13:47:46 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fubKn-000obI-Iz
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 28 Aug 2018 10:34:56 +0000
-In-Reply-To: <201808280947.06609.luke@dashjr.org>
+ id 1fueLN-000yi8-8R
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 28 Aug 2018 13:47:46 +0000
+In-Reply-To: <20180814065616.33278-3-zhengjunling@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -31,247 +30,345 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "shengyong (A)" <shengyong1@huawei.com>
-Cc: Luke Dashjr <luke@dashjr.org>, linux-f2fs-devel@lists.sourceforge.net
+To: Junling Zheng <zhengjunling@huawei.com>, jaegeuk@kernel.org
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-SGkgU2hlbmcsCgpDb3VsZCB5b3UgaGF2ZSBhIGxvb2sgYXQgdGhpcz8gV2UgbmVlZCB0byBza2lw
-IGNhbGxpbmcgc2FuaXR5X2NoZWNrX25pZCBhZ2FpbiBpbgpmc2NrX2Noa19mcz8KCk9uIDIwMTgv
-OC8yOCAxNzo0NywgTHVrZSBEYXNoanIgd3JvdGU6Cj4gWWVzLCBJIGRpZCBteSBiZXN0IHRvIHJl
-YmFzZSBpdDoKPiAKPiAgICAgaHR0cHM6Ly9wYXN0ZS5wb3VuZC1weXRob24ub3JnL3Nob3cvbldz
-aFhVZDVRU0xiajVaQ3VnUHkvCj4gCj4gVW5mb3J0dW5hdGVseSwgaXQgYWJvcnRzOgo+IAo+IFtB
-U1NFUlRdIChzYW5pdHlfY2hlY2tfbmlkOiAzOTEpICAtLT4gbmlkWzB4M10gaW5vIGlzIDAKPiAK
-PiAjMCAgc2FuaXR5X2NoZWNrX25pZCAoc2JpPXNiaUBlbnRyeT0weDU1NTU1NTc4MjgwMCA8Z2Zz
-Y2s+LCBuaWQ9bmlkQGVudHJ5PTMsIAo+IG5vZGVfYmxrPW5vZGVfYmxrQGVudHJ5PTB4NTU1NTU1
-N2Q2ZmUwLCAKPiAgICAgZnR5cGU9ZnR5cGVAZW50cnk9RjJGU19GVF9ESVIsIG50eXBlPW50eXBl
-QGVudHJ5PVRZUEVfSU5PREUsIAo+IG5pPW5pQGVudHJ5PTB4N2ZmZmZmZmZkNjYwKSBhdCBmc2Nr
-LmM6MzkyCj4gIzEgIDB4MDAwMDU1NTU1NTU1ZDg1MyBpbiBmc2NrX2Noa19mcyAoc2JpPTxvcHRp
-bWl6ZWQgb3V0PiwgCj4gYmxrX2NudD0weDdmZmZmZmZmZDZlYykgYXQgZnNjay5jOjk5Nwo+ICMy
-ICAweDAwMDA1NTU1NTU1NTY3NWMgaW4gZG9fZnNjayAoc2JpPTB4NTU1NTU1NzgyODAwIDxnZnNj
-az4pIGF0IG1haW4uYzo1NjUKPiAjMyAgbWFpbiAoYXJnYz08b3B0aW1pemVkIG91dD4sIGFyZ3Y9
-PG9wdGltaXplZCBvdXQ+KSBhdCBtYWluLmM6NzI1Cj4gCj4gTHVrZQo+IAo+IAo+IE9uIFR1ZXNk
-YXkgMjggQXVndXN0IDIwMTggMDk6Mjg6NTcgQ2hhbyBZdSB3cm90ZToKPj4gSGkgTHVrZSwKPj4K
-Pj4gRG8geW91IGhhdmUgdHJpZWQgU2hlbmcgWW9uZydzIHBhdGNoPwo+Pgo+PiBCVFcsIGJlZm9y
-ZSByZWNvdmVyaW5nIHJvb3QgaW5vZGUsIGl0IG5lZWRzIHRvIGJhY2t1cCB5b3VyIGVudGlyZSBp
-bWFnZS4KPj4KPj4gT24gMjAxOC84LzI0IDIzOjU5LCBDaGFvIFl1IHdyb3RlOgo+Pj4gT24gMjAx
-OC84LzI0IDIyOjM4LCBMdWtlIERhc2hqciB3cm90ZToKPj4+PiBJbmZvOiBEZWJ1ZyBsZXZlbCA9
-IDEKPj4+PiBJbmZvOiBTZWdtZW50cyBwZXIgc2VjdGlvbiA9IDEKPj4+PiBJbmZvOiBTZWN0aW9u
-cyBwZXIgem9uZSA9IDEKPj4+PiBJbmZvOiBzZWN0b3Igc2l6ZSA9IDUxMgo+Pj4+IEluZm86IHRv
-dGFsIHNlY3RvcnMgPSAxMjU5NzY1NiAoNjE1MSBNQikKPj4+PiBJbmZvOiBNS0ZTIHZlcnNpb24K
-Pj4+PiAgICJMaW51eCB2ZXJzaW9uIDMuMTAuNDktZ2VkYTAwNTUtMDE5MjgtZ2IyMWMxYjU3ICho
-dWRzb25jbUBpbGNsYmxkMzApCj4+Pj4gKGdjYyB2ZXJzaW9uIDQuOCAoR0NDKSApICMxIFNNUCBQ
-UkVFTVBUIEZyaSBGZWIgNSAyMDo0ODo1MyBDU1QgMjAxNiIKPj4+PiBJbmZvOiBGU0NLIHZlcnNp
-b24KPj4+PiAgIGZyb20gIkxpbnV4IHZlcnNpb24gNC4xNy4xMS1nZW50b28gKHJvb3RAaXNoaWJh
-c2hpKSAoZ2NjIHZlcnNpb24gNy4zLjAKPj4+PiAoR2VudG9vIEhhcmRlbmVkIDcuMy4wIHAxLjAp
-KSAjMSBTTVAgUFJFRU1QVCBTdW4gSnVsIDI5IDA0OjA3OjE2IFVUQwo+Pj4+IDIwMTgiIHRvICJM
-aW51eCB2ZXJzaW9uIDQuMTcuMTEtZ2VudG9vIChyb290QGlzaGliYXNoaSkgKGdjYyB2ZXJzaW9u
-Cj4+Pj4gNy4zLjAgKEdlbnRvbyBIYXJkZW5lZCA3LjMuMCBwMS4wKSkgIzEgU01QIFBSRUVNUFQg
-U3VuIEp1bCAyOSAwNDowNzoxNgo+Pj4+IFVUQyAyMDE4IiBJbmZvOiBzdXBlcmJsb2NrIGZlYXR1
-cmVzID0gMCA6Cj4+Pj4gSW5mbzogc3VwZXJibG9jayBlbmNyeXB0IGxldmVsID0gMCwgc2FsdCA9
-Cj4+Pj4gMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAKPj4+Pgo+Pj4+ICstLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsKPj4+Pgo+
-Pj4+IHwgU3VwZXIgYmxvY2sgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIHwKPj4+Pgo+Pj4+ICstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLSsKPj4+PiBtYWdpYyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgWzB4ZjJmNTIwMTAgOiA0MDc2MTUwODAwXQo+Pj4+IG1ham9yX3ZlciAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICBbMHggICAgICAgMSA6IDFdCj4+Pj4gdm9sdW1fbmFtZSAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIFtdCj4+Pj4gbWlub3JfdmVyICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIFsweCAgICAgICAyIDogMl0KPj4+PiBsb2dfc2VjdG9yc2l6ZSAgICAg
-ICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICAgIDkgOiA5XQo+Pj4+IGxvZ19zZWN0b3JzX3Bl
-cl9ibG9jayAgICAgICAgICAgICAgICAgICBbMHggICAgICAgMyA6IDNdCj4+Pj4gbG9nX2Jsb2Nr
-c2l6ZSAgICAgICAgICAgICAgICAgICAgICAgICAgIFsweCAgICAgICBjIDogMTJdCj4+Pj4gbG9n
-X2Jsb2Nrc19wZXJfc2VnICAgICAgICAgICAgICAgICAgICAgIFsweCAgICAgICA5IDogOV0KPj4+
-PiBzZWdzX3Blcl9zZWMgICAgICAgICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICAgIDEgOiAx
-XQo+Pj4+IHNlY3NfcGVyX3pvbmUgICAgICAgICAgICAgICAgICAgICAgICAgICBbMHggICAgICAg
-MSA6IDFdCj4+Pj4gY2hlY2tzdW1fb2Zmc2V0ICAgICAgICAgICAgICAgICAgICAgICAgIFsweCAg
-ICAgICAwIDogMF0KPj4+PiBibG9ja19jb3VudCAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-WzB4ICAxM2ZmZTAgOiAxMzEwNjg4XQo+Pj4+IHNlY3Rpb25fY291bnQgICAgICAgICAgICAgICAg
-ICAgICAgICAgICBbMHggICAgIDllOSA6IDI1MzddCj4+Pj4gc2VnbWVudF9jb3VudCAgICAgICAg
-ICAgICAgICAgICAgICAgICAgIFsweCAgICAgOWZlIDogMjU1OF0KPj4+PiBzZWdtZW50X2NvdW50
-X2NrcHQgICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICAgIDIgOiAyXQo+Pj4+IHNlZ21lbnRf
-Y291bnRfc2l0ICAgICAgICAgICAgICAgICAgICAgICBbMHggICAgICAgMiA6IDJdCj4+Pj4gc2Vn
-bWVudF9jb3VudF9uYXQgICAgICAgICAgICAgICAgICAgICAgIFsweCAgICAgICBjIDogMTJdCj4+
-Pj4gc2VnbWVudF9jb3VudF9zc2EgICAgICAgICAgICAgICAgICAgICAgIFsweCAgICAgICA1IDog
-NV0KPj4+PiBzZWdtZW50X2NvdW50X21haW4gICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICA5
-ZTkgOiAyNTM3XQo+Pj4+IHNlZ21lbnQwX2Jsa2FkZHIgICAgICAgICAgICAgICAgICAgICAgICBb
-MHggICAgIDIwMCA6IDUxMl0KPj4+PiBjcF9ibGthZGRyICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgWzB4ICAgICAyMDAgOiA1MTJdCj4+Pj4gc2l0X2Jsa2FkZHIgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgIFsweCAgICAgNjAwIDogMTUzNl0KPj4+PiBuYXRfYmxrYWRkciAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICBhMDAgOiAyNTYwXQo+Pj4+IHNzYV9ibGthZGRy
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBbMHggICAgMjIwMCA6IDg3MDRdCj4+Pj4gbWFp
-bl9ibGthZGRyICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsweCAgICAyYzAwIDogMTEyNjRd
-Cj4+Pj4gcm9vdF9pbm8gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFsweCAgICAgICAz
-IDogM10KPj4+PiBub2RlX2lubyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgWzB4ICAg
-ICAgIDEgOiAxXQo+Pj4+IG1ldGFfaW5vICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBb
-MHggICAgICAgMiA6IDJdCj4+Pj4gY3BfcGF5bG9hZCAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIFsweCAgICAgICAwIDogMF0KPj4+PiB2ZXJzaW9uICAgICAgICAgICAgICAgICAgICAgICBM
-aW51eCB2ZXJzaW9uIDQuMTcuMTEtZ2VudG9vCj4+Pj4gKHJvb3RAaXNoaWJhc2hpKSAoZ2NjIHZl
-cnNpb24gNy4zLjAgKEdlbnRvbyBIYXJkZW5lZCA3LjMuMCBwMS4wKSkgIzEgU01QCj4+Pj4gUFJF
-RU1QVCBTdW4gSnVsIDI5IDA0OjA3OjE2IFVUQyAyMDE4Cj4+Pj4gSW5mbzogdG90YWwgRlMgc2Vj
-dG9ycyA9IDEwNDg1NTA0ICg1MTE5IE1CKQo+Pj4+IEluZm86IENLUFQgdmVyc2lvbiA9IDFmMzM5
-Zgo+Pj4+Cj4+Pj4gKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tKwo+Pj4+Cj4+Pj4gfCBDaGVja3BvaW50ICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgfAo+Pj4+Cj4+Pj4gKy0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKwo+Pj4+IGNoZWNrcG9pbnRfdmVy
-ICAgICAgICAgICAgICAgICAgICAgICAgICBbMHggIDFmMzM5ZiA6IDIwNDQ4MzFdCj4+Pj4gdXNl
-cl9ibG9ja19jb3VudCAgICAgICAgICAgICAgICAgICAgICAgIFsweCAgMTI3YTAwIDogMTIxMDg4
-MF0KPj4+PiB2YWxpZF9ibG9ja19jb3VudCAgICAgICAgICAgICAgICAgICAgICAgWzB4ICAgYmZj
-MjMgOiA3ODU0NDNdCj4+Pj4gcnN2ZF9zZWdtZW50X2NvdW50ICAgICAgICAgICAgICAgICAgICAg
-IFsweCAgICAgIDMwIDogNDhdCj4+Pj4gb3ZlcnByb3Zfc2VnbWVudF9jb3VudCAgICAgICAgICAg
-ICAgICAgIFsweCAgICAgIGFjIDogMTcyXQo+Pj4+IGZyZWVfc2VnbWVudF9jb3VudCAgICAgICAg
-ICAgICAgICAgICAgICBbMHggICAgICAzMCA6IDQ4XQo+Pj4+IGFsbG9jX3R5cGVbQ1VSU0VHX0hP
-VF9OT0RFXSAgICAgICAgICAgICBbMHggICAgICAgMCA6IDBdCj4+Pj4gYWxsb2NfdHlwZVtDVVJT
-RUdfV0FSTV9OT0RFXSAgICAgICAgICAgIFsweCAgICAgICAwIDogMF0KPj4+PiBhbGxvY190eXBl
-W0NVUlNFR19DT0xEX05PREVdICAgICAgICAgICAgWzB4ICAgICAgIDAgOiAwXQo+Pj4+IGN1cl9u
-b2RlX3NlZ25vWzBdICAgICAgICAgICAgICAgICAgICAgICBbMHggICAgIDRiYyA6IDEyMTJdCj4+
-Pj4gY3VyX25vZGVfc2Vnbm9bMV0gICAgICAgICAgICAgICAgICAgICAgIFsweCAgICAgNTUyIDog
-MTM2Ml0KPj4+PiBjdXJfbm9kZV9zZWdub1syXSAgICAgICAgICAgICAgICAgICAgICAgWzB4ICAg
-ICA5MTIgOiAyMzIyXQo+Pj4+IGN1cl9ub2RlX2Jsa29mZlswXSAgICAgICAgICAgICAgICAgICAg
-ICBbMHggICAgICBiYyA6IDE4OF0KPj4+PiBjdXJfbm9kZV9ibGtvZmZbMV0gICAgICAgICAgICAg
-ICAgICAgICAgWzB4ICAgICAgNzkgOiAxMjFdCj4+Pj4gY3VyX25vZGVfYmxrb2ZmWzJdICAgICAg
-ICAgICAgICAgICAgICAgIFsweCAgICAgMTY5IDogMzYxXQo+Pj4+IGFsbG9jX3R5cGVbQ1VSU0VH
-X0hPVF9EQVRBXSAgICAgICAgICAgICBbMHggICAgICAgMCA6IDBdCj4+Pj4gYWxsb2NfdHlwZVtD
-VVJTRUdfV0FSTV9EQVRBXSAgICAgICAgICAgIFsweCAgICAgICAwIDogMF0KPj4+PiBhbGxvY190
-eXBlW0NVUlNFR19DT0xEX0RBVEFdICAgICAgICAgICAgWzB4ICAgICAgIDAgOiAwXQo+Pj4+IGN1
-cl9kYXRhX3NlZ25vWzBdICAgICAgICAgICAgICAgICAgICAgICBbMHggICAgIDU3NiA6IDEzOThd
-Cj4+Pj4gY3VyX2RhdGFfc2Vnbm9bMV0gICAgICAgICAgICAgICAgICAgICAgIFsweCAgICAgNjY1
-IDogMTYzN10KPj4+PiBjdXJfZGF0YV9zZWdub1syXSAgICAgICAgICAgICAgICAgICAgICAgWzB4
-ICAgICA2NmUgOiAxNjQ2XQo+Pj4+IGN1cl9kYXRhX2Jsa29mZlswXSAgICAgICAgICAgICAgICAg
-ICAgICBbMHggICAgICAgMCA6IDBdCj4+Pj4gY3VyX2RhdGFfYmxrb2ZmWzFdICAgICAgICAgICAg
-ICAgICAgICAgIFsweCAgICAgICAwIDogMF0KPj4+PiBjdXJfZGF0YV9ibGtvZmZbMl0gICAgICAg
-ICAgICAgICAgICAgICAgWzB4ICAgICAgIDAgOiAwXQo+Pj4+IGNrcHRfZmxhZ3MgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICBbMHggICAgICAgNCA6IDRdCj4+Pj4gY3BfcGFja190b3RhbF9i
-bG9ja19jb3VudCAgICAgICAgICAgICAgIFsweCAgICAgICAzIDogM10KPj4+PiBjcF9wYWNrX3N0
-YXJ0X3N1bSAgICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICAgIDEgOiAxXQo+Pj4+IHZhbGlk
-X25vZGVfY291bnQgICAgICAgICAgICAgICAgICAgICAgICBbMHggICAgNWU1MiA6IDI0MTQ2XQo+
-Pj4+IHZhbGlkX2lub2RlX2NvdW50ICAgICAgICAgICAgICAgICAgICAgICBbMHggICAgNWM5NyA6
-IDIzNzAzXQo+Pj4+IG5leHRfZnJlZV9uaWQgICAgICAgICAgICAgICAgICAgICAgICAgICBbMHgg
-ICAzNWM3OCA6IDIyMDI4MF0KPj4+PiBzaXRfdmVyX2JpdG1hcF9ieXRlc2l6ZSAgICAgICAgICAg
-ICAgICAgWzB4ICAgICAgNDAgOiA2NF0KPj4+PiBuYXRfdmVyX2JpdG1hcF9ieXRlc2l6ZSAgICAg
-ICAgICAgICAgICAgWzB4ICAgICAxODAgOiAzODRdCj4+Pj4gY2hlY2tzdW1fb2Zmc2V0ICAgICAg
-ICAgICAgICAgICAgICAgICAgIFsweCAgICAgZmZjIDogNDA5Ml0KPj4+PiBlbGFwc2VkX3RpbWUg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgWzB4MTgzZThmMjBmNDMgOiAxNjY2MDYwNTIxMjgz
-XQo+Pj4+IHNpdF9uYXRfdmVyc2lvbl9iaXRtYXBbMF0gICAgICAgICAgICAgICBbMHggICAgICAg
-OSA6IDldCj4+Pj4KPj4+Pgo+Pj4+IFtkdW1wX25vZGU6IDUwMF0gTm9kZSBJRCAgICAgICAgICAg
-ICAgIFsweDNdCj4+Pj4gW2R1bXBfbm9kZTogNTAxXSBuYXRfZW50cnkuYmxvY2tfYWRkciAgWzB4
-MTFmYTBlXQo+Pj4+IFtkdW1wX25vZGU6IDUwMl0gbmF0X2VudHJ5LnZlcnNpb24gICAgIFsweDBd
-Cj4+Pj4gW2R1bXBfbm9kZTogNTAzXSBuYXRfZW50cnkuaW5vICAgICAgICAgWzB4M10KPj4+PiBb
-ZHVtcF9ub2RlOiA1MTBdIG5vZGVfYmxrLmZvb3Rlci5pbm8gWzB4MzAzMzMyMzhdCj4+Pj4gW2R1
-bXBfbm9kZTogNTExXSBub2RlX2Jsay5mb290ZXIubmlkIFsweDMwMzUyYzMwXQo+Pj4+IFtwcmlu
-dF9ub2RlX2luZm86IDI4M10gTm9kZSBJRCBbMHgzMDM1MmMzMDo4MDg3OTEwODhdIGlzIGRpcmVj
-dCBub2RlIG9yCj4+Pj4gaW5kaXJlY3Qgbm9kZS4KPj4+PiBbMF0gICAgICAgICAgICAgICAgICAg
-ICBbMHgzOTMzMzMyYyA6IDk1OTY1Njc0OF0KPj4+PiBbMV0gICAgICAgICAgICAgICAgICAgICBb
-MHgzNjMzMzIyYyA6IDkwOTMyNDg0NF0KPj4+PiBbMl0gICAgICAgICAgICAgICAgICAgICBbMHgz
-MDMwMzAzMCA6IDgwODQ2NDQzMl0KPj4+PiBbM10gICAgICAgICAgICAgICAgICAgICBbMHgzMTM0
-MzEyYyA6IDgyNTUwNDA0NF0KPj4+PiBbNF0gICAgICAgICAgICAgICAgICAgICBbMHgyYzMwMzYz
-OSA6IDc0MTM1NzExM10KPj4+PiBbNV0gICAgICAgICAgICAgICAgICAgICBbMHgzNjM2MzIyZCA6
-IDkwOTUyMTQ1M10KPj4+PiBbNl0gICAgICAgICAgICAgICAgICAgICBbMHgyYzM2MzMzMSA6IDc0
-MTc0OTU1M10KPj4+PiBbN10gICAgICAgICAgICAgICAgICAgICBbMHgzMTMwMzQzMiA6IDgyNTI0
-MjY3NF0KPj4+PiBbOF0gICAgICAgICAgICAgICAgICAgICBbMHgyYzMwMzAzMCA6IDc0MTM1NTU2
-OF0KPj4+PiBbOV0gICAgICAgICAgICAgICAgICAgICBbMHg0NzJjMzUzMiA6IDExOTQwNzk1Mzhd
-Cj4+Pj4gWzEwXSAgICAgICAgICAgICAgICAgICAgWzB4MmM2NDZmNmYgOiA3NDQ3Nzk2MzFdCj4+
-Pgo+Pj4gSXQgbG9va3MgbGlrZSB0aGlzIGJsb2NrIGNvbnRhaW5zIG5vcm1hbCBjaGFyYWN0ZXJz
-IGluc3RlYWQgb2YgZmllbGRzIG9mCj4+PiByZWd1bGFyIGlub2RlIHN0cnVjdHVyZSwgc28gSSB0
-aGluayByb290IGlub2RlJ3MgYmxvY2sgb3IKPj4+IG5hdF9lbnRyeS5ibGthZGRyIG1heSBiZSBj
-b3JydXB0ZWQuCj4+Pgo+Pj4gTGV0IG1lIHRoaW5rIGFib3V0IHRoZSB3YXkgdG8gcmVidWlsZCBy
-b290IGlub2RlLgo+Pj4KPj4+IFRoYW5rcywKPj4+Cj4+Pj4gSW52YWxpZCAoaSlub2RlIGJsb2Nr
-Cj4+Pj4KPj4+PiBJbmZvOiBjaGVja3BvaW50IHN0YXRlID0gNCA6ICBjb21wYWN0ZWRfc3VtbWFy
-eSBzdWRkZW4tcG93ZXItb2ZmCj4+Pj4KPj4+PiBEb25lLgo+Pj4+Cj4+Pj4gT24gRnJpZGF5IDI0
-IEF1Z3VzdCAyMDE4IDEzOjA4OjMwIENoYW8gWXUgd3JvdGU6Cj4+Pj4+IEhpIEx1a2UsCj4+Pj4+
-Cj4+Pj4+IEkgdGhpbmsgdGhlIHByb2JsZW0gaGVyZSBpcyB0aGF0IHdlIGRvbid0IGV2ZW4gc3Rh
-cnQgdG8gdHJhdmVyc2UgYW5kCj4+Pj4+IGNoZWNrIGFsbCBkaXJlY3RvcmllcyBhbmQgZmlsZXMg
-ZHVlIHRvIHdlIGVuY291bnRlciByb290IGlub2RlIHNhbml0eQo+Pj4+PiBjaGVjayBmYWlsdXJl
-Lgo+Pj4+Pgo+Pj4+PiBbQVNTRVJUXSAoc2FuaXR5X2NoZWNrX25pZDogNDEyKSAgLS0+IG5pZFsw
-eDNdIGZvb3Rlci5uaWRbMHgzMDM1MmMzMF0KPj4+Pj4gZm9vdGVyLmlub1sweDMwMzMzMjM4XQo+
-Pj4+Pgo+Pj4+PiBDb3VsZCB5b3UgZHVtcCByb290IG5vZGUgaW5mbyB3aXRoIGJlbG93IGNvbW1h
-bmQ6Cj4+Pj4+Cj4+Pj4+IGR1bXAuZjJmcyAtaSAzIC1kIDEgPHlvdXJfZGV2aWNlX3BhdGg+Cj4+
-Pj4+Cj4+Pj4+IFRoYW5rcywKPj4+Pj4KPj4+Pj4gT24gMjAxOC84LzI0IDEyOjMxLCBMdWtlIERh
-c2hqciB3cm90ZToKPj4+Pj4+IE9uZSBvZiBteSBwaG9uZXMgcmVjZW50bHkgZGVjaWRlZCB0byBj
-b3JydXB0IGl0cyAvZGF0YSBwYXJ0aXRpb24uIEkKPj4+Pj4+IG1hbmFnZWQgdG8gY29weSBpdCB0
-byBteSBQQyBiZWZvcmUgd2lwaW5nIHRoZSBwaG9uZSBjb21wbGV0ZWx5LCBidXQKPj4+Pj4+IGVm
-Zm9ydHMgdG8gbW91bnQgb3Igb3RoZXJ3aXNlIHJlY292ZXIgZGF0YSBmcm9tIGl0IGhhdmUgcHJv
-dmVuIGZ1dGlsZS4KPj4+Pj4+Cj4+Pj4+PiBNb3VudGluZyBmYWlscyB3aXRoIGRtZXNnIHNob3dp
-bmc6Cj4+Pj4+Pgo+Pj4+Pj4gWzQzMzkxOC45OTQzOTFdIEYyRlMtZnMgKGxvb3AwKTogaW5jb25z
-aXN0ZW50IG5vZGUgYmxvY2ssIG5pZDozLAo+Pj4+Pj4gbm9kZV9mb290ZXJbbmlkOjgwODc5MTA4
-OCxpbm86ODA4NjYxNTYwLG9mczo5MjY3NzUxMCxjcHZlcjo0MDUwNDgwMTAxNgo+Pj4+Pj4gNDI0
-IDgyNzM5LGJsa2FkZHI6NzU3ODcyNjkwXSBbNDMzOTE4Ljk5NTU2Nl0gRjJGUy1mcyAobG9vcDAp
-OiBGYWlsZWQgdG8KPj4+Pj4+IHJlYWQgcm9vdCBpbm9kZQo+Pj4+Pj4gWzQzMzkxOS4wMDI0MjBd
-IEYyRlMtZnMgKGxvb3AwKTogaW5jb25zaXN0ZW50IG5vZGUgYmxvY2ssIG5pZDozLAo+Pj4+Pj4g
-bm9kZV9mb290ZXJbbmlkOjgwODc5MTA4OCxpbm86ODA4NjYxNTYwLG9mczo5MjY3NzUxMCxjcHZl
-cjo0MDUwNDgwMTAxNgo+Pj4+Pj4gNDI0IDgyNzM5LGJsa2FkZHI6NzU3ODcyNjkwXSBbNDMzOTE5
-LjAwMzU5OF0gRjJGUy1mcyAobG9vcDApOiBGYWlsZWQgdG8KPj4+Pj4+IHJlYWQgcm9vdCBpbm9k
-ZQo+Pj4+Pj4KPj4+Pj4+IGYyZnMtdG9vbHMgdjEuMTEuMCdzIGZzY2sgY3Jhc2hlcyBpZiBJIHRl
-bGwgaXQgdG8gcmVjb3ZlciBsb3N0K2ZvdW5kOgo+Pj4+Pj4KPj4+Pj4+IChOT1RFOiBmc2NrIG91
-dHB1dCBhdAo+Pj4+Pj4gaHR0cHM6Ly9sdWtlLmRhc2hqci5vcmcvdG1wL2NvZGUvZnNjay5mMmZz
-LUxGLmxvZy54eiApICMwCj4+Pj4+PiAweDAwMDA1NTU1NTU1NTk5MTEgaW4gbWVtY3B5IChfX2xl
-bj0xODQ0Njc0NDA3MjM2OTU3MTk1MCwKPj4+Pj4+IF9fc3JjPTB4NTU1NTU1N2Q2NDRjLCBfX2Rl
-c3Q9MHg3ZmZmZmZmZmQyZDApCj4+Pj4+PiAgICAgYXQgL3Vzci9pbmNsdWRlL2JpdHMvc3RyaW5n
-X2ZvcnRpZmllZC5oOjM0Cj4+Pj4+PiAjMSAgY29udmVydF9lbmNyeXB0ZWRfbmFtZSAoCj4+Pj4+
-PiBuYW1lPW5hbWVAZW50cnk9MHg1NTU1NTU3ZDY0NGMKPj4+Pj4+ICIzXDAzNlwwMjFcMDA0XDAz
-NT1dXDAzNVwzMjJcMDM3XGYoXDIxMlwyMDImXDAwNFwiXDAyMVwyMjZcMjM1RWM0Cj4+Pj4+PiBb
-XDIyN1wyNjZcMjIxUjFcMzMyXDMzMSEKPj4+Pj4+IFwwMDRcMjI2XDMxNVwyNzBcMjE2XDAzMFwy
-MDVcMDIwXDMzMFwzMzRcMzM0XDM0NFwzMjRzZ1wyMjZcMjc1LVwzMTdcMzUKPj4+Pj4+IDJcMyA1
-MlwwMzJpXDIyMl1cMzI204tcMDI3XlwwMzBcMjI2XDAwNSZcMDA2fAo+Pj4+Pj4gXDMzM2JcMjIz
-XDIwNElcMzIzUFwzMjdcclwyMTFLXDIyMFwzMDZcMzIxXDA2NFxyXDI3MVwyNjNcMDY0dVwyMDVc
-MzIyXAo+Pj4+Pj4gMDA2IGdcMDM0dV1cMDAzXDAwMilcMDA1IQo+Pj4+Pj4gXDIwMFBcbmNcMDI0
-UlwyNjZcMDcwXDI0N1wzNjA+XDM0MlwzMzNcMzMwXDM2MWgkXDAyMlwyMDNcMjY1KVwzMDYkXDI2
-NAo+Pj4+Pj4gLWRpCj4+Pj4+PiBcMzE2XDMzMVwzNDYsQilcMjEyXlwyMTFcMzIxXDAzMlwyMjdn
-ZFlcMjA2TVwwMjNcMjU2XDI3MlwzNDZqXDMyMjxfXDIwCj4+Pj4+PiAyXDIxIDRcYiEgXDM2MVwy
-NDFcMjEzXDM3MFwzMzYKPj4+Pj4+IHtcMjY2XDI2N3dcMjMwTSZcMzcwXDI0NlwzNDXCuVwwMjdc
-MjcxelwzNzVcMDcwdVwzMjNyXDM1NFwzMzBcMDYxXDM1Mgo+Pj4+Pj4gOXNcMzQ2XDAzNFwzNzNc
-MzY3XDM1NycoXDI3MFwyNjRcMjYzRVwyMjYiLi4uLCBsZW49LTEzMzk5Nzk2NjYsCj4+Pj4+PiBu
-ZXc9bmV3QGVudHJ5PTB4N2ZmZmZmZmZkMmQwICIzXDAzNlwwMjFcMDA0XDAzNT1dXDAzNSIsCj4+
-Pj4+PiBlbmNfbmFtZT08b3B0aW1pemVkIG91dD4pCj4+Pj4+PiAgICAgYXQgZnNjay5jOjExMzIK
-Pj4+Pj4+ICMyICAweDAwMDA1NTU1NTU1NjM5ZDkgaW4gcHJpbnRfaW5vZGVfaW5mbyAoc2JpPTB4
-NTU1NTU1NzgxN2UwCj4+Pj4+PiA8Z2ZzY2s+LCBub2RlPTB4NTU1NTU1N2Q2M2YwLCBuYW1lPTEp
-IGF0IG1vdW50LmM6MTgzCj4+Pj4+PiAjMyAgMHgwMDAwNTU1NTU1NTY0MjRmIGluIHByaW50X25v
-ZGVfaW5mbyAoc2JpPTxvcHRpbWl6ZWQgb3V0PiwKPj4+Pj4+IG5vZGVfYmxvY2s9PG9wdGltaXpl
-ZCBvdXQ+LCB2ZXJib3NlPTxvcHRpbWl6ZWQgb3V0PikKPj4+Pj4+ICAgICBhdCBtb3VudC5jOjI3
-Nwo+Pj4+Pj4gIzQgIDB4MDAwMDU1NTU1NTU2MjBjMiBpbiBkdW1wX25vZGUgKHNiaT1zYmlAZW50
-cnk9MHg1NTU1NTU3ODE3ZTAKPj4+Pj4+IDxnZnNjaz4sIG5pZD1uaWRAZW50cnk9Mjg3NSwgZm9y
-Y2U9Zm9yY2VAZW50cnk9MSkKPj4+Pj4+ICAgICBhdCBkdW1wLmM6NTIwCj4+Pj4+PiAjNSAgMHgw
-MDAwNTU1NTU1NTVmNThmIGluIGZzY2tfdmVyaWZ5IChzYmk9PG9wdGltaXplZCBvdXQ+KSBhdAo+
-Pj4+Pj4gZnNjay5jOjI1NjggIzYgIDB4MDAwMDU1NTU1NTU1Njc5YiBpbiBkb19mc2NrIChzYmk9
-MHg1NTU1NTU3ODE3ZTAKPj4+Pj4+IDxnZnNjaz4pIGF0IG1haW4uYzo1NjkgIzcgIG1haW4gKGFy
-Z2M9PG9wdGltaXplZCBvdXQ+LCBhcmd2PTxvcHRpbWl6ZWQKPj4+Pj4+IG91dD4pIGF0IG1haW4u
-Yzo3MjYKPj4+Pj4+Cj4+Pj4+PiBJZiBJIHRlbGwgaXQgTk9UIHRvIHJlY292ZXIgbG9zdCtmb3Vu
-ZCwgaXQgY29tcGxldGVzLCBidXQgbW91bnRpbmcKPj4+Pj4+IHN0aWxsIGZhaWxzOgo+Pj4+Pj4K
-Pj4+Pj4+IChOT1RFOiBmc2NrIG91dHB1dAo+Pj4+Pj4gaHR0cHM6Ly9sdWtlLmRhc2hqci5vcmcv
-dG1wL2NvZGUvZnNjay5mMmZzLU5PLUxGLmxvZy54eiApCj4+Pj4+PiBbNDM0MzYxLjgxMzE5Nl0g
-RjJGUy1mcyAobG9vcDApOiBGb3VuZCBuYXRfYml0cyBpbiBjaGVja3BvaW50Cj4+Pj4+PiBbNDM0
-MzYxLjgyNTYyOF0gRjJGUy1mcyAobG9vcDApOiBGYWlsZWQgdG8gcmVhZCByb290IGlub2RlCj4+
-Pj4+PiBbNDM0MzYxLjgyODQ2MV0gRjJGUy1mcyAobG9vcDApOiBGb3VuZCBuYXRfYml0cyBpbiBj
-aGVja3BvaW50Cj4+Pj4+PiBbNDM0MzYxLjg0MDYyMF0gRjJGUy1mcyAobG9vcDApOiBGYWlsZWQg
-dG8gcmVhZCByb290IGlub2RlCj4+Pj4+Pgo+Pj4+Pj4gQW55IGlkZWFzIG9uIGhvdyB0byBnZXQg
-YXQgbGVhc3Qgc29tZSBkYXRhIHJlY292ZXJlZCBmcm9tIHRoaXM/Cj4+Pj4+PiAoUGFydGljdWxh
-cmx5IHRoZSBlbmNyeXB0aW9uIGtleShzKSBBbmRyb2lkIHN0b3JlcyBhdAo+Pj4+Pj4gL2RhdGEv
-bWlzYy92b2xkLyoua2V5KQo+Pj4+Pj4KPj4+Pj4+IFRoYW5rcywKPj4+Pj4+Cj4+Pj4+PiBMdWtl
-Cj4+Pj4+Pgo+Pj4+Pj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+Pj4+Pj4gLS0tIC0tLS0tIENoZWNrIG91dCB0
-aGUgdmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MKPj4+Pj4+IG1v
-c3QgZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xh
-c2hkb3QKPj4+Pj4+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCj4+Pj4+PiBMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdAo+Pj4+Pj4gTGludXgtZjJm
-cy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPj4+Pj4+IGh0dHBzOi8vbGlzdHMuc291cmNl
-Zm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwKPj4+Pgo+Pj4+IC0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLQo+Pj4+IC0tLS0tLSBDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5p
-dHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKPj4+PiBlbmdhZ2luZyB0ZWNoIHNpdGVzLCBT
-bGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdAo+Pj4+IF9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4+Pj4gTGludXgtZjJmcy1kZXZlbCBt
-YWlsaW5nIGxpc3QKPj4+PiBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+
-Pj4+IGh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYy
-ZnMtZGV2ZWwKPj4+Cj4+PiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4+PiAtLS0tLSBDaGVjayBvdXQgdGhl
-IHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKPj4+IGVu
-Z2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoZG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90
-Cj4+PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+Pj4g
-TGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKPj4+IExpbnV4LWYyZnMtZGV2ZWxAbGlzdHMu
-c291cmNlZm9yZ2UubmV0Cj4+PiBodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9s
-aXN0aW5mby9saW51eC1mMmZzLWRldmVsCj4gCj4gCj4gLgo+IAoKCi0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLQpDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3
-b3JsZCdzIG1vc3QKZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3JnISBodHRwOi8vc2Rt
-Lmxpbmsvc2xhc2hkb3QKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0
-cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlz
-dGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+On 2018/8/14 14:56, Junling Zheng wrote:
+> Introduce __write_superblock() to support updating specified one
+> superblock or both, thus we can wrapper it in update_superblock() and
+> f2fs_write_super_block to unify all places where sb needs to be updated.
+> 
+> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+> ---
+> v1 -> v2:
+>  - if dev_write_block failed, add some notes and free buf to avoid memory leak.
+>  fsck/fsck.h        |  2 +-
+>  fsck/mount.c       | 74 +++++++++++-----------------------------------
+>  fsck/resize.c      | 20 ++-----------
+>  include/f2fs_fs.h  | 35 ++++++++++++++++++++++
+>  mkfs/f2fs_format.c | 19 +-----------
+>  5 files changed, 56 insertions(+), 94 deletions(-)
+> 
+> diff --git a/fsck/fsck.h b/fsck/fsck.h
+> index 6042e68..e3490e6 100644
+> --- a/fsck/fsck.h
+> +++ b/fsck/fsck.h
+> @@ -178,7 +178,7 @@ extern void move_curseg_info(struct f2fs_sb_info *, u64, int);
+>  extern void write_curseg_info(struct f2fs_sb_info *);
+>  extern int find_next_free_block(struct f2fs_sb_info *, u64 *, int, int);
+>  extern void write_checkpoint(struct f2fs_sb_info *);
+> -extern void write_superblock(struct f2fs_super_block *);
+> +extern void update_superblock(struct f2fs_super_block *, int);
+>  extern void update_data_blkaddr(struct f2fs_sb_info *, nid_t, u16, block_t);
+>  extern void update_nat_blkaddr(struct f2fs_sb_info *, nid_t, nid_t, block_t);
+>  
+> diff --git a/fsck/mount.c b/fsck/mount.c
+> index 58ef3e6..e7ceb8d 100644
+> --- a/fsck/mount.c
+> +++ b/fsck/mount.c
+> @@ -476,7 +476,7 @@ void print_sb_state(struct f2fs_super_block *sb)
+>  }
+>  
+>  static inline int sanity_check_area_boundary(struct f2fs_super_block *sb,
+> -							u64 offset)
+> +							enum SB_ADDR sb_addr)
+>  {
+>  	u32 segment0_blkaddr = get_sb(segment0_blkaddr);
+>  	u32 cp_blkaddr = get_sb(cp_blkaddr);
+> @@ -542,14 +542,11 @@ static inline int sanity_check_area_boundary(struct f2fs_super_block *sb,
+>  			segment_count_main << log_blocks_per_seg);
+>  		return -1;
+>  	} else if (main_end_blkaddr < seg_end_blkaddr) {
+> -		int err;
+> -
+>  		set_sb(segment_count, (main_end_blkaddr -
+>  				segment0_blkaddr) >> log_blocks_per_seg);
+>  
+> -		err = dev_write(sb, offset, sizeof(struct f2fs_super_block));
+> -		MSG(0, "Info: Fix alignment: %s, start(%u) end(%u) block(%u)\n",
+> -			err ? "failed": "done",
+> +		update_superblock(sb, 1 << sb_addr);
+> +		MSG(0, "Info: Fix alignment: start(%u) end(%u) block(%u)\n",
+>  			main_blkaddr,
+>  			segment0_blkaddr +
+>  				(segment_count << log_blocks_per_seg),
+> @@ -558,7 +555,7 @@ static inline int sanity_check_area_boundary(struct f2fs_super_block *sb,
+>  	return 0;
+>  }
+>  
+> -int sanity_check_raw_super(struct f2fs_super_block *sb, u64 offset)
+> +int sanity_check_raw_super(struct f2fs_super_block *sb, enum SB_ADDR sb_addr)
+>  {
+>  	unsigned int blocksize;
+>  
+> @@ -600,30 +597,24 @@ int sanity_check_raw_super(struct f2fs_super_block *sb, u64 offset)
+>  	if (get_sb(segment_count) > F2FS_MAX_SEGMENT)
+>  		return -1;
+>  
+> -	if (sanity_check_area_boundary(sb, offset))
+> +	if (sanity_check_area_boundary(sb, sb_addr))
+>  		return -1;
+>  	return 0;
+>  }
+>  
+> -int validate_super_block(struct f2fs_sb_info *sbi, int block)
+> +int validate_super_block(struct f2fs_sb_info *sbi, enum SB_ADDR sb_addr)
+>  {
+> -	u64 offset;
+>  	char buf[F2FS_BLKSIZE];
+>  
+>  	sbi->raw_super = malloc(sizeof(struct f2fs_super_block));
+>  
+> -	if (block == 0)
+> -		offset = F2FS_SUPER_OFFSET;
+> -	else
+> -		offset = F2FS_BLKSIZE + F2FS_SUPER_OFFSET;
+> -
+> -	if (dev_read_block(buf, block))
+> +	if (dev_read_block(buf, sb_addr))
+>  		return -1;
+>  
+>  	memcpy(sbi->raw_super, buf + F2FS_SUPER_OFFSET,
+>  					sizeof(struct f2fs_super_block));
+>  
+> -	if (!sanity_check_raw_super(sbi->raw_super, offset)) {
+> +	if (!sanity_check_raw_super(sbi->raw_super, sb_addr)) {
+>  		/* get kernel version */
+>  		if (c.kd >= 0) {
+>  			dev_read_version(c.version, 0, VERSION_LEN);
+> @@ -642,13 +633,9 @@ int validate_super_block(struct f2fs_sb_info *sbi, int block)
+>  		MSG(0, "Info: FSCK version\n  from \"%s\"\n    to \"%s\"\n",
+>  					c.sb_version, c.version);
+>  		if (memcmp(c.sb_version, c.version, VERSION_LEN)) {
+> -			int ret;
+> -
+>  			memcpy(sbi->raw_super->version,
+>  						c.version, VERSION_LEN);
+> -			ret = dev_write(sbi->raw_super, offset,
+> -					sizeof(struct f2fs_super_block));
+> -			ASSERT(ret >= 0);
+> +			update_superblock(sbi->raw_super, 1 << sb_addr);
+>  
+>  			c.auto_fix = 0;
+>  			c.fix_on = 1;
+> @@ -659,7 +646,7 @@ int validate_super_block(struct f2fs_sb_info *sbi, int block)
+>  
+>  	free(sbi->raw_super);
+>  	sbi->raw_super = NULL;
+> -	MSG(0, "\tCan't find a valid F2FS superblock at 0x%x\n", block);
+> +	MSG(0, "\tCan't find a valid F2FS superblock at 0x%x\n", sb_addr);
+>  
+>  	return -EINVAL;
+>  }
+> @@ -2230,21 +2217,10 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
+>  	ASSERT(ret >= 0);
+>  }
+>  
+> -void write_superblock(struct f2fs_super_block *new_sb)
+> +void update_superblock(struct f2fs_super_block *new_sb, int sb_mask)
+>  {
+> -	int index, ret;
+> -	u_int8_t *buf;
+> -
+> -	buf = calloc(BLOCK_SZ, 1);
+> -	ASSERT(buf);
+> -
+> -	memcpy(buf + F2FS_SUPER_OFFSET, new_sb, sizeof(*new_sb));
+> -	for (index = 0; index < 2; index++) {
+> -		ret = dev_write_block(buf, index);
+> -		ASSERT(ret >= 0);
+> -	}
+> -	free(buf);
+> -	DBG(0, "Info: Done to rebuild superblock\n");
+> +	ASSERT(__write_superblock(new_sb, sb_mask));
+
+ASSERT(!__write_superbloc());?
+
+Thanks,
+
+> +	DBG(0, "Info: Done to update superblock\n");
+>  }
+>  
+>  void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
+> @@ -2385,9 +2361,7 @@ void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
+>  
+>  static int check_sector_size(struct f2fs_super_block *sb)
+>  {
+> -	int index;
+>  	u_int32_t log_sectorsize, log_sectors_per_block;
+> -	u_int8_t *zero_buff;
+>  
+>  	log_sectorsize = log_base_2(c.sector_size);
+>  	log_sectors_per_block = log_base_2(c.sectors_per_blk);
+> @@ -2396,24 +2370,10 @@ static int check_sector_size(struct f2fs_super_block *sb)
+>  			log_sectors_per_block == get_sb(log_sectors_per_block))
+>  		return 0;
+>  
+> -	zero_buff = calloc(F2FS_BLKSIZE, 1);
+> -	ASSERT(zero_buff);
+> -
+>  	set_sb(log_sectorsize, log_sectorsize);
+>  	set_sb(log_sectors_per_block, log_sectors_per_block);
+>  
+> -	memcpy(zero_buff + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
+> -	DBG(1, "\tWriting super block, at offset 0x%08x\n", 0);
+> -	for (index = 0; index < 2; index++) {
+> -		if (dev_write(zero_buff, index * F2FS_BLKSIZE, F2FS_BLKSIZE)) {
+> -			MSG(1, "\tError: Failed while writing supe_blk "
+> -				"on disk!!! index : %d\n", index);
+> -			free(zero_buff);
+> -			return -1;
+> -		}
+> -	}
+> -
+> -	free(zero_buff);
+> +	update_superblock(sb, SB_ALL);
+>  	return 0;
+>  }
+>  
+> @@ -2434,7 +2394,7 @@ static void tune_sb_features(struct f2fs_sb_info *sbi)
+>  	if (!sb_changed)
+>  		return;
+>  
+> -	write_superblock(sb);
+> +	update_superblock(sb, SB_ALL);
+>  }
+>  
+>  int f2fs_do_mount(struct f2fs_sb_info *sbi)
+> @@ -2444,9 +2404,9 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
+>  	int ret;
+>  
+>  	sbi->active_logs = NR_CURSEG_TYPE;
+> -	ret = validate_super_block(sbi, 0);
+> +	ret = validate_super_block(sbi, SB_ADDR_0);
+>  	if (ret) {
+> -		ret = validate_super_block(sbi, 1);
+> +		ret = validate_super_block(sbi, SB_ADDR_1);
+>  		if (ret)
+>  			return -1;
+>  	}
+> diff --git a/fsck/resize.c b/fsck/resize.c
+> index e9612b3..5161a1f 100644
+> --- a/fsck/resize.c
+> +++ b/fsck/resize.c
+> @@ -577,22 +577,6 @@ static void rebuild_checkpoint(struct f2fs_sb_info *sbi,
+>  	DBG(0, "Info: Done to rebuild checkpoint blocks\n");
+>  }
+>  
+> -static void rebuild_superblock(struct f2fs_super_block *new_sb)
+> -{
+> -	int index, ret;
+> -	u_int8_t *buf;
+> -
+> -	buf = calloc(BLOCK_SZ, 1);
+> -
+> -	memcpy(buf + F2FS_SUPER_OFFSET, new_sb, sizeof(*new_sb));
+> -	for (index = 0; index < 2; index++) {
+> -		ret = dev_write_block(buf, index);
+> -		ASSERT(ret >= 0);
+> -	}
+> -	free(buf);
+> -	DBG(0, "Info: Done to rebuild superblock\n");
+> -}
+> -
+>  static int f2fs_resize_grow(struct f2fs_sb_info *sbi)
+>  {
+>  	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+> @@ -644,7 +628,7 @@ static int f2fs_resize_grow(struct f2fs_sb_info *sbi)
+>  	migrate_nat(sbi, new_sb);
+>  	migrate_sit(sbi, new_sb, offset_seg);
+>  	rebuild_checkpoint(sbi, new_sb, offset_seg);
+> -	write_superblock(new_sb);
+> +	update_superblock(new_sb, SB_ALL);
+>  	return 0;
+>  }
+>  
+> @@ -695,7 +679,7 @@ static int f2fs_resize_shrink(struct f2fs_sb_info *sbi)
+>  		return -ENOSPC;
+>  	}
+>  
+> -	rebuild_superblock(new_sb);
+> +	update_superblock(new_sb, SB_ALL);
+>  	rebuild_checkpoint(sbi, new_sb, 0);
+>  	/*if (!c.safe_resize) {
+>  		migrate_sit(sbi, new_sb, offset_seg);
+> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+> index e279b9f..791e64f 100644
+> --- a/include/f2fs_fs.h
+> +++ b/include/f2fs_fs.h
+> @@ -1410,4 +1410,39 @@ static inline int parse_root_owner(char *ids,
+>  	return 0;
+>  }
+>  
+> +enum SB_ADDR {
+> +	SB_ADDR_0,
+> +	SB_ADDR_1,
+> +	SB_ADDR_MAX,
+> +};
+> +
+> +#define SB_FIRST	(1 << SB_ADDR_0)
+> +#define SB_SECOND	(1 << SB_ADDR_1)
+> +#define SB_ALL		(SB_FIRST | SB_SECOND)
+> +
+> +static inline int __write_superblock(struct f2fs_super_block *sb, int sb_mask)
+> +{
+> +	int index, ret;
+> +	u_int8_t *buf;
+> +
+> +	buf = calloc(F2FS_BLKSIZE, 1);
+> +	ASSERT(buf);
+> +
+> +	memcpy(buf + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
+> +	for (index = 0; index < SB_ADDR_MAX; index++) {
+> +		if ((1 << index) & sb_mask) {
+> +			ret = dev_write_block(buf, index);
+> +			if (ret) {
+> +				MSG(0, "\tError: While writing superblock %d "
+> +							"to disk!!!\n", index);
+> +				free(buf);
+> +				return ret;
+> +			}
+> +		}
+> +	}
+> +
+> +	free(buf);
+> +	return 0;
+> +}
+> +
+>  #endif	/*__F2FS_FS_H */
+> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+> index 621126c..7e3846e 100644
+> --- a/mkfs/f2fs_format.c
+> +++ b/mkfs/f2fs_format.c
+> @@ -979,24 +979,7 @@ free_cp:
+>  
+>  static int f2fs_write_super_block(void)
+>  {
+> -	int index;
+> -	u_int8_t *zero_buff;
+> -
+> -	zero_buff = calloc(F2FS_BLKSIZE, 1);
+> -
+> -	memcpy(zero_buff + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
+> -	DBG(1, "\tWriting super block, at offset 0x%08x\n", 0);
+> -	for (index = 0; index < 2; index++) {
+> -		if (dev_write_block(zero_buff, index)) {
+> -			MSG(1, "\tError: While while writing supe_blk "
+> -					"on disk!!! index : %d\n", index);
+> -			free(zero_buff);
+> -			return -1;
+> -		}
+> -	}
+> -
+> -	free(zero_buff);
+> -	return 0;
+> +	return __write_superblock(sb, SB_ALL);
+>  }
+>  
+>  #ifndef WITH_ANDROID
+> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
