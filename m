@@ -1,98 +1,104 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [RFC PATCH 10/10] f2fs: fs-verity support
-Date: Tue, 28 Aug 2018 00:27:56 -0700
-Message-ID: <20180828072756.GC29049@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180824161642.1144-1-ebiggers@kernel.org>
- <20180824161642.1144-11-ebiggers@kernel.org>
- <b2b6a810-9605-15c8-b905-a4591c0cf3a5@huawei.com>
- <20180826173507.GC728@sol.localdomain>
- <dbc20be8-975d-7bd2-002d-a8f30896da4a@kernel.org>
+Subject: Re: Corrupt F2FS partition - fsck is useless
+Date: Tue, 28 Aug 2018 00:37:35 -0700
+Message-ID: <20180828073735.GD29049@jaegeuk-macbookpro.roam.corp.google.com>
+References: <201808240431.07031.luke@dashjr.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1fuYZZ-0002Y7-3j
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 28 Aug 2018 07:37:57 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fuYZJ-000kQ9-Hk
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 28 Aug 2018 07:37:57 +0000
 Content-Disposition: inline
-In-Reply-To: <dbc20be8-975d-7bd2-002d-a8f30896da4a@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao@kernel.org>
-Cc: Eric Biggers <ebiggers@kernel.org>, Chao Yu <yuchao0@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Michael Halcrow <mhalcrow@google.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-ext4@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, Victor Hsieh <victorhsieh@google.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <201808240431.07031.luke@dashjr.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Luke Dashjr <luke@dashjr.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 08/27, Chao Yu wrote:
-> Hi Eric,
-> 
-> On 2018/8/27 1:35, Eric Biggers wrote:
-> > Hi Chao,
-> > 
-> > On Sat, Aug 25, 2018 at 01:54:08PM +0800, Chao Yu wrote:
-> >> On 2018/8/25 0:16, Eric Biggers wrote:
-> >>> From: Eric Biggers <ebiggers@google.com>
-> >>>  #ifdef CONFIG_F2FS_CHECK_FS
-> >>>  #define f2fs_bug_on(sbi, condition)	BUG_ON(condition)
-> >>>  #else
-> >>> @@ -146,7 +149,7 @@ struct f2fs_mount_info {
-> >>>  #define F2FS_FEATURE_QUOTA_INO		0x0080
-> >>>  #define F2FS_FEATURE_INODE_CRTIME	0x0100
-> >>>  #define F2FS_FEATURE_LOST_FOUND		0x0200
-> >>> -#define F2FS_FEATURE_VERITY		0x0400	/* reserved */
-> >>> +#define F2FS_FEATURE_VERITY		0x0400
-> >>>  
-> >>>  #define F2FS_HAS_FEATURE(sb, mask)					\
-> >>>  	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
-> >>> @@ -598,7 +601,7 @@ enum {
-> >>>  #define FADVISE_ENC_NAME_BIT	0x08
-> >>>  #define FADVISE_KEEP_SIZE_BIT	0x10
-> >>>  #define FADVISE_HOT_BIT		0x20
-> >>> -#define FADVISE_VERITY_BIT	0x40	/* reserved */
-> >>> +#define FADVISE_VERITY_BIT	0x40
-> >>
-> >> As I suggested before, how about moving f2fs' verity_bit from i_fadvise to more
-> >> generic i_flags field like ext4, so we can a) remaining more bits for those
-> >> demands which really need file advise fields. b) using i_flags bits keeping line
-> >> with ext4. Not sure, if user want to know whether the file is verity one, it
-> >> will be easy for f2fs to export the status through FS_IOC_SETFLAGS.
-> >>
-> >> #define EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
-> >>
-> >> #define F2FS_VERITY_FL			0x00100000 /* Verity protected inode */
-> >>
-> > 
-> > I don't like using i_advise much either, but I actually don't see either
-> > location being much better than the other at the moment.  The real problem is an
-> > artificial one: the i_flags in f2fs's on-disk format are being assumed to use
-> 
-> Yeah, but since most copied flags from vfs/ext4 are not actually used in f2fs,
-> also 0x00100000 bit is not used now, so we can just define it now directly for
-> verity bit.
-> 
-> Cleanup and remapping in ioctl interface for those unused flags, we can do it
-> latter?
-
-No, it was reserved by f2fs-tools, and I think this should be aligned to the
-encryption bit. Moreover, we guarantee i_flags less strictly from power-cut than
-i_advise.
-
-> 
-> Thanks,
-> 
-> > the same numbering scheme as ext4's on-disk format, which makes it seem that
-> > they have to be in sync, and that all new ext4 flags (say, EA_INODE) also
-> > reserve bits in f2fs and vice versa, when they in fact do not.  Instead, f2fs
-> > should use its own numbering for its i_flags, and it should map them to/from
-> > whatever is needed for common APIs like FS_IOC_{GET,SET}FLAGS and
-> > FS_IOC_FS{GET,SET}XATTR.
-> > 
-> > So putting the verity flag in *either* location (i_advise or i_flags) is just
-> > kicking the can down the road.  If I get around to it I will send a patch that
-> > cleans up the f2fs flags properly...>
-> > Thanks,
-> > 
-> > - Eric
-> > 
-> > ------------------------------------------------------------------------------
-> > Check out the vibrant tech community on one of the world's most
-> > engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> > 
+T24gMDgvMjQsIEx1a2UgRGFzaGpyIHdyb3RlOgo+IE9uZSBvZiBteSBwaG9uZXMgcmVjZW50bHkg
+ZGVjaWRlZCB0byBjb3JydXB0IGl0cyAvZGF0YSBwYXJ0aXRpb24uIEkgbWFuYWdlZCB0byAKPiBj
+b3B5IGl0IHRvIG15IFBDIGJlZm9yZSB3aXBpbmcgdGhlIHBob25lIGNvbXBsZXRlbHksIGJ1dCBl
+ZmZvcnRzIHRvIG1vdW50IG9yIAo+IG90aGVyd2lzZSByZWNvdmVyIGRhdGEgZnJvbSBpdCBoYXZl
+IHByb3ZlbiBmdXRpbGUuCj4gCj4gTW91bnRpbmcgZmFpbHMgd2l0aCBkbWVzZyBzaG93aW5nOgo+
+IAo+IFs0MzM5MTguOTk0MzkxXSBGMkZTLWZzIChsb29wMCk6IGluY29uc2lzdGVudCBub2RlIGJs
+b2NrLCBuaWQ6MywgCj4gbm9kZV9mb290ZXJbbmlkOjgwODc5MTA4OCxpbm86ODA4NjYxNTYwLG9m
+czo5MjY3NzUxMCxjcHZlcjo0MDUwNDgwMTAxNjQyNDgyNzM5LGJsa2FkZHI6NzU3ODcyNjkwXQo+
+IFs0MzM5MTguOTk1NTY2XSBGMkZTLWZzIChsb29wMCk6IEZhaWxlZCB0byByZWFkIHJvb3QgaW5v
+ZGUKPiBbNDMzOTE5LjAwMjQyMF0gRjJGUy1mcyAobG9vcDApOiBpbmNvbnNpc3RlbnQgbm9kZSBi
+bG9jaywgbmlkOjMsIAo+IG5vZGVfZm9vdGVyW25pZDo4MDg3OTEwODgsaW5vOjgwODY2MTU2MCxv
+ZnM6OTI2Nzc1MTAsY3B2ZXI6NDA1MDQ4MDEwMTY0MjQ4MjczOSxibGthZGRyOjc1Nzg3MjY5MF0K
+PiBbNDMzOTE5LjAwMzU5OF0gRjJGUy1mcyAobG9vcDApOiBGYWlsZWQgdG8gcmVhZCByb290IGlu
+b2RlCj4gCj4gZjJmcy10b29scyB2MS4xMS4wJ3MgZnNjayBjcmFzaGVzIGlmIEkgdGVsbCBpdCB0
+byByZWNvdmVyIGxvc3QrZm91bmQ6Cj4gCj4gKE5PVEU6IGZzY2sgb3V0cHV0IGF0IGh0dHBzOi8v
+bHVrZS5kYXNoanIub3JnL3RtcC9jb2RlL2ZzY2suZjJmcy1MRi5sb2cueHogKQo+ICMwICAweDAw
+MDA1NTU1NTU1NTk5MTEgaW4gbWVtY3B5IChfX2xlbj0xODQ0Njc0NDA3MjM2OTU3MTk1MCwgCj4g
+X19zcmM9MHg1NTU1NTU3ZDY0NGMsIF9fZGVzdD0weDdmZmZmZmZmZDJkMCkKPiAgICAgYXQgL3Vz
+ci9pbmNsdWRlL2JpdHMvc3RyaW5nX2ZvcnRpZmllZC5oOjM0Cj4gIzEgIGNvbnZlcnRfZW5jcnlw
+dGVkX25hbWUgKCAgICAKPiBuYW1lPW5hbWVAZW50cnk9MHg1NTU1NTU3ZDY0NGMgIjNcMDM2XDAy
+MVwwMDRcMDM1PV1cMDM1XDMyMlwwMzdcZihcMjEyXDIwMiZcMDA0XCJcMDIxXDIyNlwyMzVFYzQK
+PiBbXDIyN1wyNjZcMjIxUjFcMzMyXDMzMSEKPiBcMDA0XDIyNlwzMTVcMjcwXDIxNlwwMzBcMjA1
+XDAyMFwzMzBcMzM0XDMzNFwzNDRcMzI0c2dcMjI2XDI3NS1cMzE3XDM1MlwzNTJcMDMyaVwyMjJd
+XDMyNtOLXDAyN15cMDMwXDIyNlwwMDUmXDAwNnwKPiBcMzMzYlwyMjNcMjA0SVwzMjNQXDMyN1xy
+XDIxMUtcMjIwXDMwNlwzMjFcMDY0XHJcMjcxXDI2M1wwNjR1XDIwNVwzMjJcMDA2Z1wwMzR1XVww
+MDNcMDAyKVwwMDUhCj4gXDIwMFBcbmNcMDI0UlwyNjZcMDcwXDI0N1wzNjA+XDM0MlwzMzNcMzMw
+XDM2MWgkXDAyMlwyMDNcMjY1KVwzMDYkXDI2NC1kaVwzMTZcMzMxXDM0NixCKVwyMTJeXDIxMVwz
+MjFcMDMyXDIyN2dkWVwyMDZNXDAyM1wyNTZcMjcyXDM0NmpcMzIyPF9cMjAyXDIxNFxiIQo+IFwz
+NjFcMjQxXDIxM1wzNzBcMzM2Cj4ge1wyNjZcMjY3d1wyMzBNJlwzNzBcMjQ2XDM0NcK5XDAyN1wy
+NzF6XDM3NVwwNzB1XDMyM3JcMzU0XDMzMFwwNjFcMzUyIAo+IDlzXDM0NlwwMzRcMzczXDM2N1wz
+NTcnKFwyNzBcMjY0XDI2M0VcMjI2Ii4uLiwgbGVuPS0xMzM5OTc5NjY2LCAKPiBuZXc9bmV3QGVu
+dHJ5PTB4N2ZmZmZmZmZkMmQwICIzXDAzNlwwMjFcMDA0XDAzNT1dXDAzNSIsIGVuY19uYW1lPTxv
+cHRpbWl6ZWQgCj4gb3V0PikKPiAgICAgYXQgZnNjay5jOjExMzIKPiAjMiAgMHgwMDAwNTU1NTU1
+NTYzOWQ5IGluIHByaW50X2lub2RlX2luZm8gKHNiaT0weDU1NTU1NTc4MTdlMCA8Z2ZzY2s+LCAK
+PiBub2RlPTB4NTU1NTU1N2Q2M2YwLCBuYW1lPTEpIGF0IG1vdW50LmM6MTgzCj4gIzMgIDB4MDAw
+MDU1NTU1NTU2NDI0ZiBpbiBwcmludF9ub2RlX2luZm8gKHNiaT08b3B0aW1pemVkIG91dD4sIAo+
+IG5vZGVfYmxvY2s9PG9wdGltaXplZCBvdXQ+LCB2ZXJib3NlPTxvcHRpbWl6ZWQgb3V0PikKPiAg
+ICAgYXQgbW91bnQuYzoyNzcKPiAjNCAgMHgwMDAwNTU1NTU1NTYyMGMyIGluIGR1bXBfbm9kZSAo
+c2JpPXNiaUBlbnRyeT0weDU1NTU1NTc4MTdlMCA8Z2ZzY2s+LCAKPiBuaWQ9bmlkQGVudHJ5PTI4
+NzUsIGZvcmNlPWZvcmNlQGVudHJ5PTEpCj4gICAgIGF0IGR1bXAuYzo1MjAKPiAjNSAgMHgwMDAw
+NTU1NTU1NTVmNThmIGluIGZzY2tfdmVyaWZ5IChzYmk9PG9wdGltaXplZCBvdXQ+KSBhdCBmc2Nr
+LmM6MjU2OAo+ICM2ICAweDAwMDA1NTU1NTU1NTY3OWIgaW4gZG9fZnNjayAoc2JpPTB4NTU1NTU1
+NzgxN2UwIDxnZnNjaz4pIGF0IG1haW4uYzo1NjkKPiAjNyAgbWFpbiAoYXJnYz08b3B0aW1pemVk
+IG91dD4sIGFyZ3Y9PG9wdGltaXplZCBvdXQ+KSBhdCBtYWluLmM6NzI2Cj4gCj4gSWYgSSB0ZWxs
+IGl0IE5PVCB0byByZWNvdmVyIGxvc3QrZm91bmQsIGl0IGNvbXBsZXRlcywgYnV0IG1vdW50aW5n
+IHN0aWxsIAo+IGZhaWxzOgo+IAo+IChOT1RFOiBmc2NrIG91dHB1dCBodHRwczovL2x1a2UuZGFz
+aGpyLm9yZy90bXAvY29kZS9mc2NrLmYyZnMtTk8tTEYubG9nLnh6ICkKPiBbNDM0MzYxLjgxMzE5
+Nl0gRjJGUy1mcyAobG9vcDApOiBGb3VuZCBuYXRfYml0cyBpbiBjaGVja3BvaW50Cj4gWzQzNDM2
+MS44MjU2MjhdIEYyRlMtZnMgKGxvb3AwKTogRmFpbGVkIHRvIHJlYWQgcm9vdCBpbm9kZQo+IFs0
+MzQzNjEuODI4NDYxXSBGMkZTLWZzIChsb29wMCk6IEZvdW5kIG5hdF9iaXRzIGluIGNoZWNrcG9p
+bnQKPiBbNDM0MzYxLjg0MDYyMF0gRjJGUy1mcyAobG9vcDApOiBGYWlsZWQgdG8gcmVhZCByb290
+IGlub2RlCj4gCj4gQW55IGlkZWFzIG9uIGhvdyB0byBnZXQgYXQgbGVhc3Qgc29tZSBkYXRhIHJl
+Y292ZXJlZCBmcm9tIHRoaXM/Cj4gKFBhcnRpY3VsYXJseSB0aGUgZW5jcnlwdGlvbiBrZXkocykg
+QW5kcm9pZCBzdG9yZXMgYXQgL2RhdGEvbWlzYy92b2xkLyoua2V5KQoKQXJlIHlvdSB1c2luZyBk
+bS1jcnlwdCB1bmRlciBmMmZzPyBEaWQgeW91IGRlY3J5cHQgdGhlIHJhdyBpbWFnZT8KdjMuMTAg
+aXMgdG9vIG11Y2ggb2xkLCBhbmQgSSBxdWl0IHRvIGJhY2twb3J0IHJlY2VudCBwYXRjaGVzIGFz
+IHdlbGwuCklzIHRoZXJlIGEgY2hhbmNlIHRvIHVwZ3JhZGUgdGhlIGtlcm5lbD8KCj4gCj4gVGhh
+bmtzLAo+IAo+IEx1a2UKPiAKPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiBDaGVjayBvdXQgdGhl
+IHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKPiBlbmdh
+Z2luZyB0ZWNoIHNpdGVzLCBTbGFzaGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdAo+
+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gTGludXgt
+ZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKPiBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZv
+cmdlLm5ldAo+IGh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xp
+bnV4LWYyZnMtZGV2ZWwKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpDaGVjayBvdXQgdGhlIHZpYnJh
+bnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKZW5nYWdpbmcgdGVj
+aCBzaXRlcywgU2xhc2hkb3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBt
+YWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6
+Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
