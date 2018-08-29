@@ -1,24 +1,25 @@
-From: Sheng Yong <shengyong1@huawei.com>
+From: Chao Yu <chao@kernel.org>
 Subject: Re: [PATCH] fsck.f2fs: detect and recover corrupted
  quota file
-Date: Wed, 29 Aug 2018 23:06:52 +0800
-Message-ID: <30b6c1a6-bacd-8fbb-58b1-c22f3446f41f@huawei.com>
+Date: Wed, 29 Aug 2018 23:38:12 +0800
+Message-ID: <61f77e2d-c730-635d-d2ad-0e0a515e0263@kernel.org>
 References: <20180829120923.61173-1-yuchao0@huawei.com>
+ <30b6c1a6-bacd-8fbb-58b1-c22f3446f41f@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <shengyong1@huawei.com>) id 1fv23v-0006iU-HU
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Aug 2018 15:07:15 +0000
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <chao@kernel.org>) id 1fv2Y7-0001D8-NC
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Aug 2018 15:38:27 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fv23r-0028i3-I5
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Aug 2018 15:07:15 +0000
-In-Reply-To: <20180829120923.61173-1-yuchao0@huawei.com>
+ id 1fv2Y2-002TRG-N1
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Aug 2018 15:38:27 +0000
+In-Reply-To: <30b6c1a6-bacd-8fbb-58b1-c22f3446f41f@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -29,103 +30,90 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org
+To: Sheng Yong <shengyong1@huawei.com>, Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi, Chao
-
-On 2018/8/29 20:09, Chao Yu wrote:
-> Once quota file is corrupted, kernel will set CP_QUOTA_NEED_FSCK_FLAG
-> into checkpoint pack, this patch makes fsck supporting to detect the flag
-> and try to rebuild corrupted quota file.
-> 
-Do we need to drop recovery data? Recovery data is never checked by fsck,
-if fsck tries to rebuild quota, it needs to allocate blocks from cursegs,
-this may overwrite data blocks which may be recovered latter.
-
-thanks
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->   fsck/fsck.c       | 3 ++-
->   fsck/mount.c      | 6 ++++--
->   include/f2fs_fs.h | 2 ++
->   lib/libf2fs.c     | 2 ++
->   4 files changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fsck/fsck.c b/fsck/fsck.c
-> index f080d3c8741c..10b69ef403ef 100644
-> --- a/fsck/fsck.c
-> +++ b/fsck/fsck.c
-> @@ -2668,7 +2668,8 @@ int fsck_verify(struct f2fs_sb_info *sbi)
->   				flush_curseg_sit_entries(sbi);
->   			}
->   			fix_checkpoint(sbi);
-> -		} else if (is_set_ckpt_flags(cp, CP_FSCK_FLAG)) {
-> +		} else if (is_set_ckpt_flags(cp, CP_FSCK_FLAG) ||
-> +			is_set_ckpt_flags(cp, CP_QUOTA_NEED_FSCK_FLAG)) {
->   			write_checkpoint(sbi);
->   		}
->   	}
-> diff --git a/fsck/mount.c b/fsck/mount.c
-> index a2448e370c0b..168cf387991f 100644
-> --- a/fsck/mount.c
-> +++ b/fsck/mount.c
-> @@ -405,6 +405,8 @@ void print_ckpt_info(struct f2fs_sb_info *sbi)
->   void print_cp_state(u32 flag)
->   {
->   	MSG(0, "Info: checkpoint state = %x : ", flag);
-> +	if (flag & CP_QUOTA_NEED_FSCK_FLAG)
-> +		MSG(0, "%s", " quota_need_fsck");
->   	if (flag & CP_LARGE_NAT_BITMAP_FLAG)
->   		MSG(0, "%s", " large_nat_bitmap");
->   	if (flag & CP_NOCRC_RECOVERY_FLAG)
-> @@ -2532,8 +2534,8 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
->   		u32 flag = get_cp(ckpt_flags);
->   
->   		if (flag & CP_FSCK_FLAG ||
-> -			(exist_qf_ino(sb) && (!(flag & CP_UMOUNT_FLAG) ||
-> -						flag & CP_ERROR_FLAG))) {
-> +			flag & CP_QUOTA_NEED_FSCK_FLAG ||
-> +			(exist_qf_ino(sb) && (flag & CP_ERROR_FLAG))) {
->   			c.fix_on = 1;
->   		} else if (!c.preen_mode) {
->   			print_cp_state(flag);
-> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-> index 9396c785a254..160eaf72f0b6 100644
-> --- a/include/f2fs_fs.h
-> +++ b/include/f2fs_fs.h
-> @@ -372,6 +372,7 @@ struct f2fs_configuration {
->   	int defset;
->   	int bug_on;
->   	int auto_fix;
-> +	int quota_fix;
->   	int preen_mode;
->   	int ro;
->   	int preserve_limits;		/* preserve quota limits */
-> @@ -641,6 +642,7 @@ struct f2fs_super_block {
->   /*
->    * For checkpoint
->    */
-> +#define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
->   #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
->   #define CP_NOCRC_RECOVERY_FLAG	0x00000200
->   #define CP_TRIMMED_FLAG		0x00000100
-> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-> index a1f8beb1f78d..192b8125de36 100644
-> --- a/lib/libf2fs.c
-> +++ b/lib/libf2fs.c
-> @@ -619,6 +619,8 @@ void f2fs_init_configuration(void)
->   	/* default root owner */
->   	c.root_uid = getuid();
->   	c.root_gid = getgid();
-> +
-> +	c.quota_fix = 1;
->   }
->   
->   #ifdef HAVE_SETMNTENT
-> 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+SGkgU2hlbmcsCgpPbiAyMDE4LzgvMjkgMjM6MDYsIFNoZW5nIFlvbmcgd3JvdGU6Cj4gSGksIENo
+YW8KPiAKPiBPbiAyMDE4LzgvMjkgMjA6MDksIENoYW8gWXUgd3JvdGU6Cj4+IE9uY2UgcXVvdGEg
+ZmlsZSBpcyBjb3JydXB0ZWQsIGtlcm5lbCB3aWxsIHNldCBDUF9RVU9UQV9ORUVEX0ZTQ0tfRkxB
+Rwo+PiBpbnRvIGNoZWNrcG9pbnQgcGFjaywgdGhpcyBwYXRjaCBtYWtlcyBmc2NrIHN1cHBvcnRp
+bmcgdG8gZGV0ZWN0IHRoZSBmbGFnCj4+IGFuZCB0cnkgdG8gcmVidWlsZCBjb3JydXB0ZWQgcXVv
+dGEgZmlsZS4KPj4KPiBEbyB3ZSBuZWVkIHRvIGRyb3AgcmVjb3ZlcnkgZGF0YT8gUmVjb3Zlcnkg
+ZGF0YSBpcyBuZXZlciBjaGVja2VkIGJ5IGZzY2ssCj4gaWYgZnNjayB0cmllcyB0byByZWJ1aWxk
+IHF1b3RhLCBpdCBuZWVkcyB0byBhbGxvY2F0ZSBibG9ja3MgZnJvbSBjdXJzZWdzLAo+IHRoaXMg
+bWF5IG92ZXJ3cml0ZSBkYXRhIGJsb2NrcyB3aGljaCBtYXkgYmUgcmVjb3ZlcmVkIGxhdHRlci4K
+CklNTywgd2UnZCBiZXR0ZXIgbm90IHRvIGRyb3AgdGhvc2UgZGF0YSwgc28gSSBwcmVmZXIgdG8g
+c3VwcG9ydCByZWNvdmVyaW5nCmZzeW5jZWQgZGF0YSBpbiBmc2NrLCBhbmQgZG8gcmVjb3Zlcnkg
+aW4gdGhlIGNvbmRpdGlvbiBvZjoKLSBuZWVkcyB0byBhbGxvY2F0ZSBibG9jayBmcm9tIGxvZyBo
+ZWFkZXIuCi0gdGhyb3VnaCBkZWZpbmVkIG9wdGlvbi4KCkhvdyBkbyB5b3UgdGhpbms/CgpUaGFu
+a3MsCgo+IAo+IHRoYW5rcwo+PiBTaWduZWQtb2ZmLWJ5OiBDaGFvIFl1IDx5dWNoYW8wQGh1YXdl
+aS5jb20+Cj4+IC0tLQo+PiDCoCBmc2NrL2ZzY2suY8KgwqDCoMKgwqDCoCB8IDMgKystCj4+IMKg
+IGZzY2svbW91bnQuY8KgwqDCoMKgwqAgfCA2ICsrKystLQo+PiDCoCBpbmNsdWRlL2YyZnNfZnMu
+aCB8IDIgKysKPj4gwqAgbGliL2xpYmYyZnMuY8KgwqDCoMKgIHwgMiArKwo+PiDCoCA0IGZpbGVz
+IGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1n
+aXQgYS9mc2NrL2ZzY2suYyBiL2ZzY2svZnNjay5jCj4+IGluZGV4IGYwODBkM2M4NzQxYy4uMTBi
+NjllZjQwM2VmIDEwMDY0NAo+PiAtLS0gYS9mc2NrL2ZzY2suYwo+PiArKysgYi9mc2NrL2ZzY2su
+Ywo+PiBAQCAtMjY2OCw3ICsyNjY4LDggQEAgaW50IGZzY2tfdmVyaWZ5KHN0cnVjdCBmMmZzX3Ni
+X2luZm8gKnNiaSkKPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBmbHVzaF9j
+dXJzZWdfc2l0X2VudHJpZXMoc2JpKTsKPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfQo+
+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBmaXhfY2hlY2twb2ludChzYmkpOwo+PiAtwqDC
+oMKgwqDCoMKgwqAgfSBlbHNlIGlmIChpc19zZXRfY2twdF9mbGFncyhjcCwgQ1BfRlNDS19GTEFH
+KSkgewo+PiArwqDCoMKgwqDCoMKgwqAgfSBlbHNlIGlmIChpc19zZXRfY2twdF9mbGFncyhjcCwg
+Q1BfRlNDS19GTEFHKSB8fAo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpc19zZXRfY2twdF9m
+bGFncyhjcCwgQ1BfUVVPVEFfTkVFRF9GU0NLX0ZMQUcpKSB7Cj4+IMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIHdyaXRlX2NoZWNrcG9pbnQoc2JpKTsKPj4gwqDCoMKgwqDCoMKgwqDCoMKgIH0K
+Pj4gwqDCoMKgwqDCoCB9Cj4+IGRpZmYgLS1naXQgYS9mc2NrL21vdW50LmMgYi9mc2NrL21vdW50
+LmMKPj4gaW5kZXggYTI0NDhlMzcwYzBiLi4xNjhjZjM4Nzk5MWYgMTAwNjQ0Cj4+IC0tLSBhL2Zz
+Y2svbW91bnQuYwo+PiArKysgYi9mc2NrL21vdW50LmMKPj4gQEAgLTQwNSw2ICs0MDUsOCBAQCB2
+b2lkIHByaW50X2NrcHRfaW5mbyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpCj4+IMKgIHZvaWQg
+cHJpbnRfY3Bfc3RhdGUodTMyIGZsYWcpCj4+IMKgIHsKPj4gwqDCoMKgwqDCoCBNU0coMCwgIklu
+Zm86IGNoZWNrcG9pbnQgc3RhdGUgPSAleCA6ICIsIGZsYWcpOwo+PiArwqDCoMKgIGlmIChmbGFn
+ICYgQ1BfUVVPVEFfTkVFRF9GU0NLX0ZMQUcpCj4+ICvCoMKgwqDCoMKgwqDCoCBNU0coMCwgIiVz
+IiwgIiBxdW90YV9uZWVkX2ZzY2siKTsKPj4gwqDCoMKgwqDCoCBpZiAoZmxhZyAmIENQX0xBUkdF
+X05BVF9CSVRNQVBfRkxBRykKPj4gwqDCoMKgwqDCoMKgwqDCoMKgIE1TRygwLCAiJXMiLCAiIGxh
+cmdlX25hdF9iaXRtYXAiKTsKPj4gwqDCoMKgwqDCoCBpZiAoZmxhZyAmIENQX05PQ1JDX1JFQ09W
+RVJZX0ZMQUcpCj4+IEBAIC0yNTMyLDggKzI1MzQsOCBAQCBpbnQgZjJmc19kb19tb3VudChzdHJ1
+Y3QgZjJmc19zYl9pbmZvICpzYmkpCj4+IMKgwqDCoMKgwqDCoMKgwqDCoCB1MzIgZmxhZyA9IGdl
+dF9jcChja3B0X2ZsYWdzKTsKPj4gwqAgwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChmbGFnICYgQ1Bf
+RlNDS19GTEFHIHx8Cj4+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgIChleGlzdF9xZl9pbm8oc2Ip
+ICYmICghKGZsYWcgJiBDUF9VTU9VTlRfRkxBRykgfHwKPj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZmxhZyAmIENQX0VSUk9SX0ZMQUcpKSkgewo+PiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBmbGFnICYgQ1BfUVVPVEFfTkVFRF9GU0NLX0ZMQUcgfHwK
+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKGV4aXN0X3FmX2lubyhzYikgJiYgKGZsYWcgJiBD
+UF9FUlJPUl9GTEFHKSkpIHsKPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgYy5maXhfb24g
+PSAxOwo+PiDCoMKgwqDCoMKgwqDCoMKgwqAgfSBlbHNlIGlmICghYy5wcmVlbl9tb2RlKSB7Cj4+
+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHByaW50X2NwX3N0YXRlKGZsYWcpOwo+PiBkaWZm
+IC0tZ2l0IGEvaW5jbHVkZS9mMmZzX2ZzLmggYi9pbmNsdWRlL2YyZnNfZnMuaAo+PiBpbmRleCA5
+Mzk2Yzc4NWEyNTQuLjE2MGVhZjcyZjBiNiAxMDA2NDQKPj4gLS0tIGEvaW5jbHVkZS9mMmZzX2Zz
+LmgKPj4gKysrIGIvaW5jbHVkZS9mMmZzX2ZzLmgKPj4gQEAgLTM3Miw2ICszNzIsNyBAQCBzdHJ1
+Y3QgZjJmc19jb25maWd1cmF0aW9uIHsKPj4gwqDCoMKgwqDCoCBpbnQgZGVmc2V0Owo+PiDCoMKg
+wqDCoMKgIGludCBidWdfb247Cj4+IMKgwqDCoMKgwqAgaW50IGF1dG9fZml4Owo+PiArwqDCoMKg
+IGludCBxdW90YV9maXg7Cj4+IMKgwqDCoMKgwqAgaW50IHByZWVuX21vZGU7Cj4+IMKgwqDCoMKg
+wqAgaW50IHJvOwo+PiDCoMKgwqDCoMKgIGludCBwcmVzZXJ2ZV9saW1pdHM7wqDCoMKgwqDCoMKg
+wqAgLyogcHJlc2VydmUgcXVvdGEgbGltaXRzICovCj4+IEBAIC02NDEsNiArNjQyLDcgQEAgc3Ry
+dWN0IGYyZnNfc3VwZXJfYmxvY2sgewo+PiDCoCAvKgo+PiDCoMKgICogRm9yIGNoZWNrcG9pbnQK
+Pj4gwqDCoCAqLwo+PiArI2RlZmluZSBDUF9RVU9UQV9ORUVEX0ZTQ0tfRkxBR8KgwqDCoMKgwqDC
+oMKgIDB4MDAwMDA4MDAKPj4gwqAgI2RlZmluZSBDUF9MQVJHRV9OQVRfQklUTUFQX0ZMQUfCoMKg
+wqAgMHgwMDAwMDQwMAo+PiDCoCAjZGVmaW5lIENQX05PQ1JDX1JFQ09WRVJZX0ZMQUfCoMKgwqAg
+MHgwMDAwMDIwMAo+PiDCoCAjZGVmaW5lIENQX1RSSU1NRURfRkxBR8KgwqDCoMKgwqDCoMKgIDB4
+MDAwMDAxMDAKPj4gZGlmZiAtLWdpdCBhL2xpYi9saWJmMmZzLmMgYi9saWIvbGliZjJmcy5jCj4+
+IGluZGV4IGExZjhiZWIxZjc4ZC4uMTkyYjgxMjVkZTM2IDEwMDY0NAo+PiAtLS0gYS9saWIvbGli
+ZjJmcy5jCj4+ICsrKyBiL2xpYi9saWJmMmZzLmMKPj4gQEAgLTYxOSw2ICs2MTksOCBAQCB2b2lk
+IGYyZnNfaW5pdF9jb25maWd1cmF0aW9uKHZvaWQpCj4+IMKgwqDCoMKgwqAgLyogZGVmYXVsdCBy
+b290IG93bmVyICovCj4+IMKgwqDCoMKgwqAgYy5yb290X3VpZCA9IGdldHVpZCgpOwo+PiDCoMKg
+wqDCoMKgIGMucm9vdF9naWQgPSBnZXRnaWQoKTsKPj4gKwo+PiArwqDCoMKgIGMucXVvdGFfZml4
+ID0gMTsKPj4gwqAgfQo+PiDCoCDCoCAjaWZkZWYgSEFWRV9TRVRNTlRFTlQKPj4KPiAKPiAKPiAt
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0KPiBDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5p
+dHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKPiBlbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFz
+aGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdAo+IF9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxp
+c3QKPiBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+IGh0dHBzOi8vbGlz
+dHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwKCi0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLQpDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24g
+b25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3Jn
+ISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJm
+cy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5u
+ZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
