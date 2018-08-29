@@ -1,26 +1,31 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] fsck.f2fs: detect and recover corrupted
- quota file
-Date: Wed, 29 Aug 2018 23:38:12 +0800
-Message-ID: <61f77e2d-c730-635d-d2ad-0e0a515e0263@kernel.org>
-References: <20180829120923.61173-1-yuchao0@huawei.com>
- <30b6c1a6-bacd-8fbb-58b1-c22f3446f41f@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 1/2] add cotnfigure option --with-root-libdir
+Date: Wed, 29 Aug 2018 14:04:55 -0700
+Message-ID: <20180829210455.GA77879@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180820030407.13225-1-tytso@mit.edu>
+ <20180827155114.GG2311@thunk.org>
+ <20180827165744.GB74162@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180827235619.GA2304@thunk.org>
+ <20180828071202.GA29049@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180828142511.GA19128@thunk.org>
+ <20180828165944.GA62482@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180829031040.GE19128@thunk.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1fv2Y7-0001D8-NC
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Aug 2018 15:38:27 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1fv7eD-0005Ng-QB
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Aug 2018 21:05:05 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fv2Y2-002TRG-N1
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Aug 2018 15:38:27 +0000
-In-Reply-To: <30b6c1a6-bacd-8fbb-58b1-c22f3446f41f@huawei.com>
-Content-Language: en-US
+ id 1fv7eB-002W3N-Vm
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Aug 2018 21:05:05 +0000
+Content-Disposition: inline
+In-Reply-To: <20180829031040.GE19128@thunk.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,90 +35,196 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Sheng Yong <shengyong1@huawei.com>, Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org
+To: "Theodore Y. Ts'o" <tytso@mit.edu>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-SGkgU2hlbmcsCgpPbiAyMDE4LzgvMjkgMjM6MDYsIFNoZW5nIFlvbmcgd3JvdGU6Cj4gSGksIENo
-YW8KPiAKPiBPbiAyMDE4LzgvMjkgMjA6MDksIENoYW8gWXUgd3JvdGU6Cj4+IE9uY2UgcXVvdGEg
-ZmlsZSBpcyBjb3JydXB0ZWQsIGtlcm5lbCB3aWxsIHNldCBDUF9RVU9UQV9ORUVEX0ZTQ0tfRkxB
-Rwo+PiBpbnRvIGNoZWNrcG9pbnQgcGFjaywgdGhpcyBwYXRjaCBtYWtlcyBmc2NrIHN1cHBvcnRp
-bmcgdG8gZGV0ZWN0IHRoZSBmbGFnCj4+IGFuZCB0cnkgdG8gcmVidWlsZCBjb3JydXB0ZWQgcXVv
-dGEgZmlsZS4KPj4KPiBEbyB3ZSBuZWVkIHRvIGRyb3AgcmVjb3ZlcnkgZGF0YT8gUmVjb3Zlcnkg
-ZGF0YSBpcyBuZXZlciBjaGVja2VkIGJ5IGZzY2ssCj4gaWYgZnNjayB0cmllcyB0byByZWJ1aWxk
-IHF1b3RhLCBpdCBuZWVkcyB0byBhbGxvY2F0ZSBibG9ja3MgZnJvbSBjdXJzZWdzLAo+IHRoaXMg
-bWF5IG92ZXJ3cml0ZSBkYXRhIGJsb2NrcyB3aGljaCBtYXkgYmUgcmVjb3ZlcmVkIGxhdHRlci4K
-CklNTywgd2UnZCBiZXR0ZXIgbm90IHRvIGRyb3AgdGhvc2UgZGF0YSwgc28gSSBwcmVmZXIgdG8g
-c3VwcG9ydCByZWNvdmVyaW5nCmZzeW5jZWQgZGF0YSBpbiBmc2NrLCBhbmQgZG8gcmVjb3Zlcnkg
-aW4gdGhlIGNvbmRpdGlvbiBvZjoKLSBuZWVkcyB0byBhbGxvY2F0ZSBibG9jayBmcm9tIGxvZyBo
-ZWFkZXIuCi0gdGhyb3VnaCBkZWZpbmVkIG9wdGlvbi4KCkhvdyBkbyB5b3UgdGhpbms/CgpUaGFu
-a3MsCgo+IAo+IHRoYW5rcwo+PiBTaWduZWQtb2ZmLWJ5OiBDaGFvIFl1IDx5dWNoYW8wQGh1YXdl
-aS5jb20+Cj4+IC0tLQo+PiDCoCBmc2NrL2ZzY2suY8KgwqDCoMKgwqDCoCB8IDMgKystCj4+IMKg
-IGZzY2svbW91bnQuY8KgwqDCoMKgwqAgfCA2ICsrKystLQo+PiDCoCBpbmNsdWRlL2YyZnNfZnMu
-aCB8IDIgKysKPj4gwqAgbGliL2xpYmYyZnMuY8KgwqDCoMKgIHwgMiArKwo+PiDCoCA0IGZpbGVz
-IGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1n
-aXQgYS9mc2NrL2ZzY2suYyBiL2ZzY2svZnNjay5jCj4+IGluZGV4IGYwODBkM2M4NzQxYy4uMTBi
-NjllZjQwM2VmIDEwMDY0NAo+PiAtLS0gYS9mc2NrL2ZzY2suYwo+PiArKysgYi9mc2NrL2ZzY2su
-Ywo+PiBAQCAtMjY2OCw3ICsyNjY4LDggQEAgaW50IGZzY2tfdmVyaWZ5KHN0cnVjdCBmMmZzX3Ni
-X2luZm8gKnNiaSkKPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBmbHVzaF9j
-dXJzZWdfc2l0X2VudHJpZXMoc2JpKTsKPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfQo+
-PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBmaXhfY2hlY2twb2ludChzYmkpOwo+PiAtwqDC
-oMKgwqDCoMKgwqAgfSBlbHNlIGlmIChpc19zZXRfY2twdF9mbGFncyhjcCwgQ1BfRlNDS19GTEFH
-KSkgewo+PiArwqDCoMKgwqDCoMKgwqAgfSBlbHNlIGlmIChpc19zZXRfY2twdF9mbGFncyhjcCwg
-Q1BfRlNDS19GTEFHKSB8fAo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpc19zZXRfY2twdF9m
-bGFncyhjcCwgQ1BfUVVPVEFfTkVFRF9GU0NLX0ZMQUcpKSB7Cj4+IMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgIHdyaXRlX2NoZWNrcG9pbnQoc2JpKTsKPj4gwqDCoMKgwqDCoMKgwqDCoMKgIH0K
-Pj4gwqDCoMKgwqDCoCB9Cj4+IGRpZmYgLS1naXQgYS9mc2NrL21vdW50LmMgYi9mc2NrL21vdW50
-LmMKPj4gaW5kZXggYTI0NDhlMzcwYzBiLi4xNjhjZjM4Nzk5MWYgMTAwNjQ0Cj4+IC0tLSBhL2Zz
-Y2svbW91bnQuYwo+PiArKysgYi9mc2NrL21vdW50LmMKPj4gQEAgLTQwNSw2ICs0MDUsOCBAQCB2
-b2lkIHByaW50X2NrcHRfaW5mbyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpCj4+IMKgIHZvaWQg
-cHJpbnRfY3Bfc3RhdGUodTMyIGZsYWcpCj4+IMKgIHsKPj4gwqDCoMKgwqDCoCBNU0coMCwgIklu
-Zm86IGNoZWNrcG9pbnQgc3RhdGUgPSAleCA6ICIsIGZsYWcpOwo+PiArwqDCoMKgIGlmIChmbGFn
-ICYgQ1BfUVVPVEFfTkVFRF9GU0NLX0ZMQUcpCj4+ICvCoMKgwqDCoMKgwqDCoCBNU0coMCwgIiVz
-IiwgIiBxdW90YV9uZWVkX2ZzY2siKTsKPj4gwqDCoMKgwqDCoCBpZiAoZmxhZyAmIENQX0xBUkdF
-X05BVF9CSVRNQVBfRkxBRykKPj4gwqDCoMKgwqDCoMKgwqDCoMKgIE1TRygwLCAiJXMiLCAiIGxh
-cmdlX25hdF9iaXRtYXAiKTsKPj4gwqDCoMKgwqDCoCBpZiAoZmxhZyAmIENQX05PQ1JDX1JFQ09W
-RVJZX0ZMQUcpCj4+IEBAIC0yNTMyLDggKzI1MzQsOCBAQCBpbnQgZjJmc19kb19tb3VudChzdHJ1
-Y3QgZjJmc19zYl9pbmZvICpzYmkpCj4+IMKgwqDCoMKgwqDCoMKgwqDCoCB1MzIgZmxhZyA9IGdl
-dF9jcChja3B0X2ZsYWdzKTsKPj4gwqAgwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChmbGFnICYgQ1Bf
-RlNDS19GTEFHIHx8Cj4+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgIChleGlzdF9xZl9pbm8oc2Ip
-ICYmICghKGZsYWcgJiBDUF9VTU9VTlRfRkxBRykgfHwKPj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZmxhZyAmIENQX0VSUk9SX0ZMQUcpKSkgewo+PiAr
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBmbGFnICYgQ1BfUVVPVEFfTkVFRF9GU0NLX0ZMQUcgfHwK
-Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKGV4aXN0X3FmX2lubyhzYikgJiYgKGZsYWcgJiBD
-UF9FUlJPUl9GTEFHKSkpIHsKPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgYy5maXhfb24g
-PSAxOwo+PiDCoMKgwqDCoMKgwqDCoMKgwqAgfSBlbHNlIGlmICghYy5wcmVlbl9tb2RlKSB7Cj4+
-IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHByaW50X2NwX3N0YXRlKGZsYWcpOwo+PiBkaWZm
-IC0tZ2l0IGEvaW5jbHVkZS9mMmZzX2ZzLmggYi9pbmNsdWRlL2YyZnNfZnMuaAo+PiBpbmRleCA5
-Mzk2Yzc4NWEyNTQuLjE2MGVhZjcyZjBiNiAxMDA2NDQKPj4gLS0tIGEvaW5jbHVkZS9mMmZzX2Zz
-LmgKPj4gKysrIGIvaW5jbHVkZS9mMmZzX2ZzLmgKPj4gQEAgLTM3Miw2ICszNzIsNyBAQCBzdHJ1
-Y3QgZjJmc19jb25maWd1cmF0aW9uIHsKPj4gwqDCoMKgwqDCoCBpbnQgZGVmc2V0Owo+PiDCoMKg
-wqDCoMKgIGludCBidWdfb247Cj4+IMKgwqDCoMKgwqAgaW50IGF1dG9fZml4Owo+PiArwqDCoMKg
-IGludCBxdW90YV9maXg7Cj4+IMKgwqDCoMKgwqAgaW50IHByZWVuX21vZGU7Cj4+IMKgwqDCoMKg
-wqAgaW50IHJvOwo+PiDCoMKgwqDCoMKgIGludCBwcmVzZXJ2ZV9saW1pdHM7wqDCoMKgwqDCoMKg
-wqAgLyogcHJlc2VydmUgcXVvdGEgbGltaXRzICovCj4+IEBAIC02NDEsNiArNjQyLDcgQEAgc3Ry
-dWN0IGYyZnNfc3VwZXJfYmxvY2sgewo+PiDCoCAvKgo+PiDCoMKgICogRm9yIGNoZWNrcG9pbnQK
-Pj4gwqDCoCAqLwo+PiArI2RlZmluZSBDUF9RVU9UQV9ORUVEX0ZTQ0tfRkxBR8KgwqDCoMKgwqDC
-oMKgIDB4MDAwMDA4MDAKPj4gwqAgI2RlZmluZSBDUF9MQVJHRV9OQVRfQklUTUFQX0ZMQUfCoMKg
-wqAgMHgwMDAwMDQwMAo+PiDCoCAjZGVmaW5lIENQX05PQ1JDX1JFQ09WRVJZX0ZMQUfCoMKgwqAg
-MHgwMDAwMDIwMAo+PiDCoCAjZGVmaW5lIENQX1RSSU1NRURfRkxBR8KgwqDCoMKgwqDCoMKgIDB4
-MDAwMDAxMDAKPj4gZGlmZiAtLWdpdCBhL2xpYi9saWJmMmZzLmMgYi9saWIvbGliZjJmcy5jCj4+
-IGluZGV4IGExZjhiZWIxZjc4ZC4uMTkyYjgxMjVkZTM2IDEwMDY0NAo+PiAtLS0gYS9saWIvbGli
-ZjJmcy5jCj4+ICsrKyBiL2xpYi9saWJmMmZzLmMKPj4gQEAgLTYxOSw2ICs2MTksOCBAQCB2b2lk
-IGYyZnNfaW5pdF9jb25maWd1cmF0aW9uKHZvaWQpCj4+IMKgwqDCoMKgwqAgLyogZGVmYXVsdCBy
-b290IG93bmVyICovCj4+IMKgwqDCoMKgwqAgYy5yb290X3VpZCA9IGdldHVpZCgpOwo+PiDCoMKg
-wqDCoMKgIGMucm9vdF9naWQgPSBnZXRnaWQoKTsKPj4gKwo+PiArwqDCoMKgIGMucXVvdGFfZml4
-ID0gMTsKPj4gwqAgfQo+PiDCoCDCoCAjaWZkZWYgSEFWRV9TRVRNTlRFTlQKPj4KPiAKPiAKPiAt
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0KPiBDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5p
-dHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKPiBlbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFz
-aGRvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdAo+IF9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxp
-c3QKPiBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+IGh0dHBzOi8vbGlz
-dHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwKCi0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLQpDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24g
-b25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hkb3Qub3Jn
-ISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJm
-cy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5u
-ZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+Thank you so much for kind explanation. This is really awesome especially for
+newbies like me. This gives answers to me for all my own stupid questions like
+why I need to investigate all the lib changes in order to determine bumping
+current/revision/age numbers or not.
+
+I'd definitely like to follow this rule to avoid any verion changes later, as
+I expect the next release will be the last major update. For dependency parts,
+I'll study and practice them for a while.
+
+BTW, can I archive this like in f2fs-tools/VERSIONING?
+
+Thanks,
+
+On 08/28, Theodore Y. Ts'o wrote:
+> On Tue, Aug 28, 2018 at 09:59:44AM -0700, Jaegeuk Kim wrote:
+> > 
+> > https://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
+> > 
+> > I understood that, if there is no interface change but some implementation
+> > changes, I need to bump revision. If new interface is added, for example, I
+> > need to bump current while revision=0 and age++.
+> 
+> So part of the problem here is that libtool is doing something really
+> strange because they are trying to use some abstract concept that is
+> OS-independent.  I don't use libtool because I find it horribly
+> complex and doesn't add enough value to be worth the complexity.
+> 
+> So I'll tell you how things work with respect to Linux's ELF version
+> numbering system.  Translating this to libtool's wierd "current,
+> revision, age" terminology is left as an exercise to the reader.  I've
+> looked at the libtool documentation, and it confuses me horribly.
+> Reading it, I suspect it's wrong, but I don't have the time to
+> experiment to confirm that the documentation is wrong and how it
+> diverges from the libtool implementation.
+> 
+> So let me explain things using the ELF shared library terminology,
+> which is "major version, minor version, patchlevel".  This shows up in
+> the library name:
+>     
+> 	libudev.so.1.6.11
+> 
+> So in this example, the major version number is 1, the minor version
+> is 6, and the patchlevel is 11.  The patchlevel is entirely optional,
+> and many packages don't use it at all.  The minor number is also
+> mostly useless on Linux, but it's still there for historical reasons.
+> The patchlevel and minor version numbers were useful back for SunOS
+> (and Linux a.out shared library), back when there weren't rpm and dpkg
+> as package managers.
+> 
+> So many modern Linux shared libraries will only use the major and
+> minor version numbers, e.g:
+> 
+> 	libext2fs.so.2.4
+> 
+> The only thing you really need to worry about is the major version
+> number, really.  The minor version is *supposed* to change when new
+> interfaces has changed (but I and most other people don't do that any
+> more).  But the big deal is that the major number *must* get bumped if
+> an existing interface has *changed*.
+> 
+> So let's talk about the major version number, and then we'll talk
+> about why the minor version number isn't really a big deal for Linux.
+> 
+> So if you change any of the library's function signatures --- and this
+> includes changing a type from a 32-bit integer to a 64-bit integer,
+> that's an ABI breakage, and so you must bump the major version number
+> so that a program that was linked against libfoo.so.4 doesn't try to
+> use libfoo.so.5.  That's really the key --- will a program linked
+> against the previous version library break if it links against the
+> newer version.  If it does, then you need to bump the version number.
+> 
+> So for structures, if you change any of the existing fields, or if the
+> application program allocates the structure --- either by declaring it
+> on the stack, or via malloc() --- and you expand the structure,
+> obviously that will cause problem, and so that's an ABI break.
+> 
+> If however, you arrange to have structures allocated by the library,
+> and struct members are always added at the end, then an older program
+> won't have any problems.  You can guarantee this by simply only using
+> a pointer to the struct in your public header files, and defining the
+> struct in a private header file that is not available to userspace
+> programs.
+> 
+> Similarly, adding new functions never breaks the ABI.  That's because
+> older program won't try to use the newer interfaces.  So if I need to
+> change an interface to a function, what I'll generally do is to define
+> a new function, and then implement the older function in terms of the
+> newer one.  For example:
+> 
+> extern errcode_t ext2fs_open(const char *name, int flags, int superblock,
+> 			     unsigned int block_size, io_manager manager,
+> 			     ext2_filsys *ret_fs);
+> 			     
+> extern errcode_t ext2fs_open2(const char *name, const char *io_options,
+> 			      int flags, int superblock,
+> 			      unsigned int block_size, io_manager manager,
+> 			      ext2_filsys *hret_fs);
+> 
+> As far as the minor version numbers are concerned, the dynamic linker
+> doesn't use it.  In SunOS 4, if you have a DT_NEEDED for libfoo.so.4,
+> and the dynamic linker finds in its search path:
+> 
+>     libfoo.so.4.8
+>     libfoo.so.4.9
+> 
+> It will preferentially use libfoo.so.4.9.
+> 
+> That's not how it works in Linux, though.  In Linux there will be a
+> symlink that points libfoo.so.4 to libfoo.so.4.9, and the linker just
+> looks for libfoo.so.4.  One could imagine a package manager which
+> adjusts the symlink to point at the library with the highest version,
+> but given that libfoo.so.4.9 is supposed to contain a superset of
+> libfoo.so.4.8, there's no point.  So we just in practice handle all of
+> this in the package manager, or via an ELF symbol map.  Or, we just
+> assume that since vast majority of software comes from the
+> distribution, the distro package manager will just update libraries to
+> the newer version as a matter of course, and nothing special needs to
+> be done.
+> 
+> So in practice I don't bump the minor version number for e2fsprogs
+> each time I add new interfaces, because in practice it really doesn't
+> matter for Linux.  We have a much better system that gets used for
+> Debian.
+> 
+> For example in Debian there is a file that contains when each symbol
+> was first introduced into a library, by its package version number.
+> See:
+> 
+> https://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git/tree/debian/libext2fs2.symbols
+> 
+> This file contains a version number for each symbol in libext2fs2, and
+> it tells us what version of libext2fs you need to guarantee that a
+> particular symbol is present in the library.  Then when *other*
+> packages are built that depend on libext2fs2, the minimum version of
+> libext2fs can be calculated based on which symbols they use.
+> 
+> So for example the libf2fs-format4 package has a Debian dependency of:
+> 
+> Depends: libblkid1 (>= 2.17.2), libc6 (>= 2.14), libf2fs5, libuuid1 (>= 2.16)
+> 
+> The minimum version numbers needed for libblkid1 and libuuid1 are
+> determined by figuring out all of the symbols used by the
+> libf2fs-format4 package, and determining the minimum version number of
+> libblkid1 that supports all of those blkid functions.
+> 
+> This gets done automatically, so I didn't have to figure this out.
+> All I have in the debian/control file is:
+> 
+> Depends: ${misc:Depends}, ${shlibs:Depends}
+> 
+> Sorry this got so long, but hopefully you'll find this useful.  How
+> you bend libtool to your will is something you'll have to figure out,
+> because I don't use libtool in my packages.[1]
+> 
+> Cheers,
+> 
+> 					- Ted
+> 
+> 
+> [1] If you are interested in how I do things in e2fsprogs, take a look
+> at the Makefile.elf-lib, Makefile.solaris-lib, Makefile.darwin-lib,
+> etc. here:
+> 
+> https://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git/tree/lib
+> 
+> This these Makefile fragments are then pulled into the generated
+> makefile using autoconf's substitution rules, here:
+> 
+> https://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git/tree/lib/ext2fs/Makefile.in
+> 
+> (Search for "@MAKEFILE_ELF@" in the above Makefile.in).
+> 
+> So when someone runs "configure --enable-elf-shlibs", they get the ELF
+> shared libraries built.  On BSD and MacOS systems they just have to
+> run "configure --enable-bsd-shlibs", and so on.
+> 
+> Personally, since most people don't bother to write truly portable
+> programs, as their C code is full of Linux'isms, using libtool is just
+> overkill, because they probably can't build on any other OS *anyway*
+> so libtool's slow and complex abstraction layer is totally wasted.
+> Might as well not use autoconf, automake, and libtool at all.
+> 
+> On the other hand, if you really *do* worry about portability on other
+> OS's (e2fsprogs builds on MacOS, NetBSD, Hurd, Solaris, etc.) then
+> using autoconf makes sense --- but I *still* don't think the
+> complexity of libtool is worth it.
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
