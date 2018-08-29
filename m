@@ -1,137 +1,112 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: avoid wrong decrypted data from disk
-Date: Wed, 29 Aug 2018 21:04:58 -0700
-Message-ID: <20180830040458.GB97850@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180827225226.14272-1-jaegeuk@kernel.org>
- <20180830014858.GA91444@jaegeuk-macbookpro.roam.corp.google.com>
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+Subject: Re: [PATCH 1/2] add cotnfigure option --with-root-libdir
+Date: Wed, 29 Aug 2018 19:51:41 -0400
+Message-ID: <20180829235141.GL19128@thunk.org>
+References: <20180820030407.13225-1-tytso@mit.edu>
+ <20180827155114.GG2311@thunk.org>
+ <20180827165744.GB74162@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180827235619.GA2304@thunk.org>
+ <20180828071202.GA29049@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180828142511.GA19128@thunk.org>
+ <20180828165944.GA62482@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180829031040.GE19128@thunk.org>
+ <20180829210455.GA77879@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <tytso@thunk.org>) id 1fvEuW-0005KS-SX
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Aug 2018 04:50:24 +0000
+Received: from imap.thunk.org ([74.207.234.97])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fvEuU-002v4P-Hj
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Aug 2018 04:50:24 +0000
 Content-Disposition: inline
-In-Reply-To: <20180830014858.GA91444@jaegeuk-macbookpro.roam.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <20180829210455.GA77879@jaegeuk-macbookpro.roam.corp.google.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-1. Create a file in an encrypted directory
-2. Do GC & drop caches
-3. Read stale data before its bio for metapage was not issued yet
+On Wed, Aug 29, 2018 at 02:04:55PM -0700, Jaegeuk Kim wrote:
+> Thank you so much for kind explanation. This is really awesome especially for
+> newbies like me. This gives answers to me for all my own stupid questions like
+> why I need to investigate all the lib changes in order to determine bumping
+> current/revision/age numbers or not.
+> 
+> I'd definitely like to follow this rule to avoid any verion changes later, as
+> I expect the next release will be the last major update. For dependency parts,
+> I'll study and practice them for a while.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
-Change log from v2:
- - make it globally consistent
- - should use f2fs_post_read_required()
+If you are going to be making one less major update, this is the
+perfect time to make sure that data structures are allocated by the
+library, and are (ideally) opaque to the calling application (so they
+only manipulate structure poitners).  That is, the structure
+definition is not exposed in the public header file, and you use
+accessor functions to set and get fields in the structure.
 
- fs/f2fs/data.c    | 18 ++++++++++--------
- fs/f2fs/f2fs.h    |  2 +-
- fs/f2fs/file.c    |  3 +--
- fs/f2fs/segment.c |  6 +++++-
- 4 files changed, 17 insertions(+), 12 deletions(-)
+If you can't do that for all data structures, if you can do that with
+your primary data structure that's going to make your life much easier
+in the long term.  For ext2fs, that's the file systme handle.  It's
+created by ext2fs_open(), and it's passed to all other library
+functions as the first argument.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 382c1ef9a9e4..8c204f896c22 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -565,9 +565,6 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
- 		ctx->bio = bio;
- 		ctx->enabled_steps = post_read_steps;
- 		bio->bi_private = ctx;
--
--		/* wait the page to be moved by cleaning */
--		f2fs_wait_on_block_writeback(sbi, blkaddr);
- 	}
- 
- 	return bio;
-@@ -582,6 +579,9 @@ static int f2fs_submit_page_read(struct inode *inode, struct page *page,
- 	if (IS_ERR(bio))
- 		return PTR_ERR(bio);
- 
-+	/* wait for GCed page writeback via META_MAPPING */
-+	f2fs_wait_on_block_writeback(inode, blkaddr);
-+
- 	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
- 		bio_put(bio);
- 		return -EFAULT;
-@@ -1558,6 +1558,12 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
- 			}
- 		}
- 
-+		/*
-+		 * If the page is under writeback, we need to wait for
-+		 * its completion to see the correct decrypted data.
-+		 */
-+		f2fs_wait_on_block_writeback(inode, block_nr);
-+
- 		if (bio_add_page(bio, page, blocksize, 0) < blocksize)
- 			goto submit_and_realloc;
- 
-@@ -1625,7 +1631,7 @@ static int encrypt_one_page(struct f2fs_io_info *fio)
- 		return 0;
- 
- 	/* wait for GCed page writeback via META_MAPPING */
--	f2fs_wait_on_block_writeback(fio->sbi, fio->old_blkaddr);
-+	f2fs_wait_on_block_writeback(inode, fio->old_blkaddr);
- 
- retry_encrypt:
- 	fio->encrypted_page = fscrypt_encrypt_page(inode, fio->page,
-@@ -2382,10 +2388,6 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
- 
- 	f2fs_wait_on_page_writeback(page, DATA, false);
- 
--	/* wait for GCed page writeback via META_MAPPING */
--	if (f2fs_post_read_required(inode))
--		f2fs_wait_on_block_writeback(sbi, blkaddr);
--
- 	if (len == PAGE_SIZE || PageUptodate(page))
- 		return 0;
- 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4e1120f20041..42950d87e91d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2942,7 +2942,7 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 			struct f2fs_io_info *fio, bool add_list);
- void f2fs_wait_on_page_writeback(struct page *page,
- 			enum page_type type, bool ordered);
--void f2fs_wait_on_block_writeback(struct f2fs_sb_info *sbi, block_t blkaddr);
-+void f2fs_wait_on_block_writeback(struct inode *inode, block_t blkaddr);
- void f2fs_write_data_summaries(struct f2fs_sb_info *sbi, block_t start_blk);
- void f2fs_write_node_summaries(struct f2fs_sb_info *sbi, block_t start_blk);
- int f2fs_lookup_journal_in_cursum(struct f2fs_journal *journal, int type,
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 5474aaa274b9..98bb26be3f6f 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -112,8 +112,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- 	f2fs_wait_on_page_writeback(page, DATA, false);
- 
- 	/* wait for GCed page writeback via META_MAPPING */
--	if (f2fs_post_read_required(inode))
--		f2fs_wait_on_block_writeback(sbi, dn.data_blkaddr);
-+	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
- 
- out_sem:
- 	up_read(&F2FS_I(inode)->i_mmap_sem);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 29a1ee21f396..056ac120305a 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3191,10 +3191,14 @@ void f2fs_wait_on_page_writeback(struct page *page,
- 	}
- }
- 
--void f2fs_wait_on_block_writeback(struct f2fs_sb_info *sbi, block_t blkaddr)
-+void f2fs_wait_on_block_writeback(struct inode *inode, block_t blkaddr)
- {
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct page *cpage;
- 
-+	if (!f2fs_post_read_required(inode))
-+		return;
-+
- 	if (!is_valid_data_blkaddr(sbi, blkaddr))
- 		return;
- 
--- 
-2.17.0.441.gb46fe60e1d-goog
+The other thing you might want to consider doing is adding a magic
+number to the beginning of each structure.  That way you can tell if
+the wrong structure gets passed to a library.  It's also helpful for
+doing the equivalent of subclassing in C.
+
+This is how we do it in libext2fs --- we use com_err to define the
+magic numbers:
+
+	error_table ext2
+
+ec	EXT2_ET_BASE,
+	"EXT2FS Library version @E2FSPROGS_VERSION@"
+
+ec	EXT2_ET_MAGIC_EXT2FS_FILSYS,
+	"Wrong magic number for ext2_filsys structure"
+
+ec	EXT2_ET_MAGIC_BADBLOCKS_LIST,
+	"Wrong magic number for badblocks_list structure"
+	...
+
+And then every single structure starts like so:
+
+struct struct_ext2_filsys {
+	errcode_t			magic;
+	...
+
+struct ext2_struct_inode_scan {
+	errcode_t		magic;
+	...
+
+And then before we use any pointer we do this:
+
+	if (file->magic != EXT2_ET_MAGIC_EXT2_FILE)
+		return EXT2_ET_MAGIC_EXT2_FILE;
+
+Anyway, you don't have to do any of this, but if you're thinking about
+making a big major version number bump, this is a great opportunity to
+do some of these things.
+
+> BTW, can I archive this like in f2fs-tools/VERSIONING?
+
+Sure, feel free!
+
+					- Ted
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
