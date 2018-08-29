@@ -1,14 +1,8 @@
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-Subject: Re: [PATCH 1/2] add cotnfigure option --with-root-libdir
-Date: Tue, 28 Aug 2018 23:10:40 -0400
-Message-ID: <20180829031040.GE19128@thunk.org>
-References: <20180820030407.13225-1-tytso@mit.edu>
- <20180827155114.GG2311@thunk.org>
- <20180827165744.GB74162@jaegeuk-macbookpro.roam.corp.google.com>
- <20180827235619.GA2304@thunk.org>
- <20180828071202.GA29049@jaegeuk-macbookpro.roam.corp.google.com>
- <20180828142511.GA19128@thunk.org>
- <20180828165944.GA62482@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] fsck.f2fs: detect and recover corrupted quota
+ file
+Date: Wed, 29 Aug 2018 20:09:23 +0800
+Message-ID: <20180829120923.61173-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -16,15 +10,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@thunk.org>) id 1fuqsd-00066Z-Im
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Aug 2018 03:10:51 +0000
-Received: from imap.thunk.org ([74.207.234.97])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1fuzIc-0006l4-TI
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Aug 2018 12:10:14 +0000
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fuqsa-001adX-Ph
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Aug 2018 03:10:51 +0000
-Content-Disposition: inline
-In-Reply-To: <20180828165944.GA62482@jaegeuk-macbookpro.roam.corp.google.com>
+ id 1fuzIX-001zjT-JE
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Aug 2018 12:10:14 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,181 +26,94 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
+To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Tue, Aug 28, 2018 at 09:59:44AM -0700, Jaegeuk Kim wrote:
-> 
-> https://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
-> 
-> I understood that, if there is no interface change but some implementation
-> changes, I need to bump revision. If new interface is added, for example, I
-> need to bump current while revision=0 and age++.
+Once quota file is corrupted, kernel will set CP_QUOTA_NEED_FSCK_FLAG
+into checkpoint pack, this patch makes fsck supporting to detect the flag
+and try to rebuild corrupted quota file.
 
-So part of the problem here is that libtool is doing something really
-strange because they are trying to use some abstract concept that is
-OS-independent.  I don't use libtool because I find it horribly
-complex and doesn't add enough value to be worth the complexity.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fsck/fsck.c       | 3 ++-
+ fsck/mount.c      | 6 ++++--
+ include/f2fs_fs.h | 2 ++
+ lib/libf2fs.c     | 2 ++
+ 4 files changed, 10 insertions(+), 3 deletions(-)
 
-So I'll tell you how things work with respect to Linux's ELF version
-numbering system.  Translating this to libtool's wierd "current,
-revision, age" terminology is left as an exercise to the reader.  I've
-looked at the libtool documentation, and it confuses me horribly.
-Reading it, I suspect it's wrong, but I don't have the time to
-experiment to confirm that the documentation is wrong and how it
-diverges from the libtool implementation.
-
-So let me explain things using the ELF shared library terminology,
-which is "major version, minor version, patchlevel".  This shows up in
-the library name:
-    
-	libudev.so.1.6.11
-
-So in this example, the major version number is 1, the minor version
-is 6, and the patchlevel is 11.  The patchlevel is entirely optional,
-and many packages don't use it at all.  The minor number is also
-mostly useless on Linux, but it's still there for historical reasons.
-The patchlevel and minor version numbers were useful back for SunOS
-(and Linux a.out shared library), back when there weren't rpm and dpkg
-as package managers.
-
-So many modern Linux shared libraries will only use the major and
-minor version numbers, e.g:
-
-	libext2fs.so.2.4
-
-The only thing you really need to worry about is the major version
-number, really.  The minor version is *supposed* to change when new
-interfaces has changed (but I and most other people don't do that any
-more).  But the big deal is that the major number *must* get bumped if
-an existing interface has *changed*.
-
-So let's talk about the major version number, and then we'll talk
-about why the minor version number isn't really a big deal for Linux.
-
-So if you change any of the library's function signatures --- and this
-includes changing a type from a 32-bit integer to a 64-bit integer,
-that's an ABI breakage, and so you must bump the major version number
-so that a program that was linked against libfoo.so.4 doesn't try to
-use libfoo.so.5.  That's really the key --- will a program linked
-against the previous version library break if it links against the
-newer version.  If it does, then you need to bump the version number.
-
-So for structures, if you change any of the existing fields, or if the
-application program allocates the structure --- either by declaring it
-on the stack, or via malloc() --- and you expand the structure,
-obviously that will cause problem, and so that's an ABI break.
-
-If however, you arrange to have structures allocated by the library,
-and struct members are always added at the end, then an older program
-won't have any problems.  You can guarantee this by simply only using
-a pointer to the struct in your public header files, and defining the
-struct in a private header file that is not available to userspace
-programs.
-
-Similarly, adding new functions never breaks the ABI.  That's because
-older program won't try to use the newer interfaces.  So if I need to
-change an interface to a function, what I'll generally do is to define
-a new function, and then implement the older function in terms of the
-newer one.  For example:
-
-extern errcode_t ext2fs_open(const char *name, int flags, int superblock,
-			     unsigned int block_size, io_manager manager,
-			     ext2_filsys *ret_fs);
-			     
-extern errcode_t ext2fs_open2(const char *name, const char *io_options,
-			      int flags, int superblock,
-			      unsigned int block_size, io_manager manager,
-			      ext2_filsys *hret_fs);
-
-As far as the minor version numbers are concerned, the dynamic linker
-doesn't use it.  In SunOS 4, if you have a DT_NEEDED for libfoo.so.4,
-and the dynamic linker finds in its search path:
-
-    libfoo.so.4.8
-    libfoo.so.4.9
-
-It will preferentially use libfoo.so.4.9.
-
-That's not how it works in Linux, though.  In Linux there will be a
-symlink that points libfoo.so.4 to libfoo.so.4.9, and the linker just
-looks for libfoo.so.4.  One could imagine a package manager which
-adjusts the symlink to point at the library with the highest version,
-but given that libfoo.so.4.9 is supposed to contain a superset of
-libfoo.so.4.8, there's no point.  So we just in practice handle all of
-this in the package manager, or via an ELF symbol map.  Or, we just
-assume that since vast majority of software comes from the
-distribution, the distro package manager will just update libraries to
-the newer version as a matter of course, and nothing special needs to
-be done.
-
-So in practice I don't bump the minor version number for e2fsprogs
-each time I add new interfaces, because in practice it really doesn't
-matter for Linux.  We have a much better system that gets used for
-Debian.
-
-For example in Debian there is a file that contains when each symbol
-was first introduced into a library, by its package version number.
-See:
-
-https://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git/tree/debian/libext2fs2.symbols
-
-This file contains a version number for each symbol in libext2fs2, and
-it tells us what version of libext2fs you need to guarantee that a
-particular symbol is present in the library.  Then when *other*
-packages are built that depend on libext2fs2, the minimum version of
-libext2fs can be calculated based on which symbols they use.
-
-So for example the libf2fs-format4 package has a Debian dependency of:
-
-Depends: libblkid1 (>= 2.17.2), libc6 (>= 2.14), libf2fs5, libuuid1 (>= 2.16)
-
-The minimum version numbers needed for libblkid1 and libuuid1 are
-determined by figuring out all of the symbols used by the
-libf2fs-format4 package, and determining the minimum version number of
-libblkid1 that supports all of those blkid functions.
-
-This gets done automatically, so I didn't have to figure this out.
-All I have in the debian/control file is:
-
-Depends: ${misc:Depends}, ${shlibs:Depends}
-
-Sorry this got so long, but hopefully you'll find this useful.  How
-you bend libtool to your will is something you'll have to figure out,
-because I don't use libtool in my packages.[1]
-
-Cheers,
-
-					- Ted
-
-
-[1] If you are interested in how I do things in e2fsprogs, take a look
-at the Makefile.elf-lib, Makefile.solaris-lib, Makefile.darwin-lib,
-etc. here:
-
-https://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git/tree/lib
-
-This these Makefile fragments are then pulled into the generated
-makefile using autoconf's substitution rules, here:
-
-https://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git/tree/lib/ext2fs/Makefile.in
-
-(Search for "@MAKEFILE_ELF@" in the above Makefile.in).
-
-So when someone runs "configure --enable-elf-shlibs", they get the ELF
-shared libraries built.  On BSD and MacOS systems they just have to
-run "configure --enable-bsd-shlibs", and so on.
-
-Personally, since most people don't bother to write truly portable
-programs, as their C code is full of Linux'isms, using libtool is just
-overkill, because they probably can't build on any other OS *anyway*
-so libtool's slow and complex abstraction layer is totally wasted.
-Might as well not use autoconf, automake, and libtool at all.
-
-On the other hand, if you really *do* worry about portability on other
-OS's (e2fsprogs builds on MacOS, NetBSD, Hurd, Solaris, etc.) then
-using autoconf makes sense --- but I *still* don't think the
-complexity of libtool is worth it.
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index f080d3c8741c..10b69ef403ef 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -2668,7 +2668,8 @@ int fsck_verify(struct f2fs_sb_info *sbi)
+ 				flush_curseg_sit_entries(sbi);
+ 			}
+ 			fix_checkpoint(sbi);
+-		} else if (is_set_ckpt_flags(cp, CP_FSCK_FLAG)) {
++		} else if (is_set_ckpt_flags(cp, CP_FSCK_FLAG) ||
++			is_set_ckpt_flags(cp, CP_QUOTA_NEED_FSCK_FLAG)) {
+ 			write_checkpoint(sbi);
+ 		}
+ 	}
+diff --git a/fsck/mount.c b/fsck/mount.c
+index a2448e370c0b..168cf387991f 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -405,6 +405,8 @@ void print_ckpt_info(struct f2fs_sb_info *sbi)
+ void print_cp_state(u32 flag)
+ {
+ 	MSG(0, "Info: checkpoint state = %x : ", flag);
++	if (flag & CP_QUOTA_NEED_FSCK_FLAG)
++		MSG(0, "%s", " quota_need_fsck");
+ 	if (flag & CP_LARGE_NAT_BITMAP_FLAG)
+ 		MSG(0, "%s", " large_nat_bitmap");
+ 	if (flag & CP_NOCRC_RECOVERY_FLAG)
+@@ -2532,8 +2534,8 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
+ 		u32 flag = get_cp(ckpt_flags);
+ 
+ 		if (flag & CP_FSCK_FLAG ||
+-			(exist_qf_ino(sb) && (!(flag & CP_UMOUNT_FLAG) ||
+-						flag & CP_ERROR_FLAG))) {
++			flag & CP_QUOTA_NEED_FSCK_FLAG ||
++			(exist_qf_ino(sb) && (flag & CP_ERROR_FLAG))) {
+ 			c.fix_on = 1;
+ 		} else if (!c.preen_mode) {
+ 			print_cp_state(flag);
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index 9396c785a254..160eaf72f0b6 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -372,6 +372,7 @@ struct f2fs_configuration {
+ 	int defset;
+ 	int bug_on;
+ 	int auto_fix;
++	int quota_fix;
+ 	int preen_mode;
+ 	int ro;
+ 	int preserve_limits;		/* preserve quota limits */
+@@ -641,6 +642,7 @@ struct f2fs_super_block {
+ /*
+  * For checkpoint
+  */
++#define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
+ #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
+ #define CP_NOCRC_RECOVERY_FLAG	0x00000200
+ #define CP_TRIMMED_FLAG		0x00000100
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index a1f8beb1f78d..192b8125de36 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -619,6 +619,8 @@ void f2fs_init_configuration(void)
+ 	/* default root owner */
+ 	c.root_uid = getuid();
+ 	c.root_gid = getgid();
++
++	c.quota_fix = 1;
+ }
+ 
+ #ifdef HAVE_SETMNTENT
+-- 
+2.18.0.rc1
 
 
 ------------------------------------------------------------------------------
