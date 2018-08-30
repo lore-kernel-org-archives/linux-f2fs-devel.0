@@ -1,25 +1,24 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: Out of inodes on my f2fs partition
-Date: Thu, 30 Aug 2018 23:39:55 +0800
-Message-ID: <e18462d8-10bb-3939-e3b3-cbd764654c31@kernel.org>
-References: <CAF_dkJAhK_1WtPF_2s5xUX60k87iMLbAYHV1=0S2aKQv3jh8Ng@mail.gmail.com>
- <5adf6554-6881-1bd6-3be2-28ae6c72f794@kernel.org>
- <CAF_dkJC5GvRzweVkCKWeHMuRWp=6tNdDDR14VLrGY7NcZs7ObQ@mail.gmail.com>
+Subject: Re: [PATCH] f2fs: add additional sanity check in
+ f2fs_acl_from_disk()
+Date: Thu, 30 Aug 2018 23:41:53 +0800
+Message-ID: <ab67166f-aa58-8a64-0672-c94e8a143ae0@kernel.org>
+References: <20180830133331.5503-1-cgxu519@gmx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1fvP3P-00064y-8c
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Aug 2018 15:40:15 +0000
+ (envelope-from <chao@kernel.org>) id 1fvP5B-0001nY-5s
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Aug 2018 15:42:05 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fvP3J-003sAf-HT
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Aug 2018 15:40:15 +0000
-In-Reply-To: <CAF_dkJC5GvRzweVkCKWeHMuRWp=6tNdDDR14VLrGY7NcZs7ObQ@mail.gmail.com>
+ id 1fvP59-003Q8C-BY
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Aug 2018 15:42:05 +0000
+In-Reply-To: <20180830133331.5503-1-cgxu519@gmx.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -30,50 +29,44 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Patrick Doyle <wpdster@gmail.com>
+To: Chengguang Xu <cgxu519@gmx.com>, jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Patrick,
+Hi Chengguang,
 
-On 2018/8/30 23:30, Patrick Doyle wrote:
-> On Thu, Aug 30, 2018 at 11:22 AM Chao Yu <chao@kernel.org> wrote:
->>
->> Hi Patrick,
->>
->> Can you try -i option?
+On 2018/8/30 21:33, Chengguang Xu wrote:
+> Add additinal sanity check for irregular case(e.g. corruption).
+> If size of extended attribution is smaller than size of acl header,
+> then return -EINVAL.
+> 
+> Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+> ---
+>  fs/f2fs/acl.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+> index 111824199a88..79e9ea773070 100644
+> --- a/fs/f2fs/acl.c
+> +++ b/fs/f2fs/acl.c
+> @@ -53,6 +53,9 @@ static struct posix_acl *f2fs_acl_from_disk(const char *value, size_t size)
+>  	struct f2fs_acl_entry *entry = (struct f2fs_acl_entry *)(hdr + 1);
+>  	const char *end = value + size;
+>  
+> +	if (size < sizeof(f2fs_acl_header))
+> +		return ERR_PTR(-EINVAL);
 
-Sorry, I mean mkfs.f2fs -i /dev/xxx;
+I guess below codes have checked that already?
 
-And you can use stat -f /your_mount_option to see whether largest number of
-inode support in new image increased.
-
-Inodes: Total: 719360     Free: 719357
-        ^^^^^^^^^^^^^
+	count = f2fs_acl_count(size);
+	if (count < 0)
+		return ERR_PTR(-EINVAL);
 
 Thanks,
 
->>
-> Hello Chao,
-> Thank you for your reply.  For which command should I try the -i
-> option?  I presume you mean df:
-> 
-> $ df -i /home/wpd/src/
-> Filesystem      Inodes   IUsed  IFree IUse% Mounted on
-> /dev/nvme0n1   9784317 9410039 374278   97% /home/wpd/src
-> 
-> And, for reference:
-> $ df /home/wpd/src
-> Filesystem      1K-blocks      Used Available Use% Mounted on
-> /dev/nvme0n1   1000202584 324990344 671159248  33% /home/wpd/src
-> 
-> My f2fs partition is only 33% full, but I can no longer build on it,
-> as I keep getting "device out of space" errors.
-> 
-> I don't see any mechanism to tune (dynamically) or fix (at mkfs.f2fs
-> time) the number of inodes.  I am desperately looking for a clue now
-> :-)
-> 
-> --wpd
+> +
+>  	if (hdr->a_version != cpu_to_le32(F2FS_ACL_VERSION))
+>  		return ERR_PTR(-EINVAL);
+>  
 > 
 
 ------------------------------------------------------------------------------
