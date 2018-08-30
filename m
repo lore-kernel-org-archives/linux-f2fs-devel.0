@@ -1,24 +1,25 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] f2fs: add additional sanity check in
- f2fs_acl_from_disk()
-Date: Thu, 30 Aug 2018 23:41:53 +0800
-Message-ID: <ab67166f-aa58-8a64-0672-c94e8a143ae0@kernel.org>
-References: <20180830133331.5503-1-cgxu519@gmx.com>
+Subject: Re: [RFC PATCH v3 3/5] f2fs-tools: unify the writeback
+ of superblock
+Date: Thu, 30 Aug 2018 23:43:25 +0800
+Message-ID: <de17b694-fd06-bdf5-a98b-c93187786ebe@kernel.org>
+References: <20180830033733.236460-1-zhengjunling@huawei.com>
+ <20180830033733.236460-3-zhengjunling@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1fvP5B-0001nY-5s
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Aug 2018 15:42:05 +0000
+ (envelope-from <chao@kernel.org>) id 1fvP6k-0001xO-Q1
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Aug 2018 15:43:42 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fvP59-003Q8C-BY
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Aug 2018 15:42:05 +0000
-In-Reply-To: <20180830133331.5503-1-cgxu519@gmx.com>
+ id 1fvP6f-003RCa-Eo
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Aug 2018 15:43:42 +0000
+In-Reply-To: <20180830033733.236460-3-zhengjunling@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -29,45 +30,19 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chengguang Xu <cgxu519@gmx.com>, jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Junling Zheng <zhengjunling@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Chengguang,
-
-On 2018/8/30 21:33, Chengguang Xu wrote:
-> Add additinal sanity check for irregular case(e.g. corruption).
-> If size of extended attribution is smaller than size of acl header,
-> then return -EINVAL.
+On 2018/8/30 11:37, Junling Zheng wrote:
+> Introduce __write_superblock() to support updating specified one
+> superblock or both, thus we can wrapper it in update_superblock() and
+> f2fs_write_super_block to unify all places where sb needs to be updated.
 > 
-> Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
-> ---
->  fs/f2fs/acl.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
-> index 111824199a88..79e9ea773070 100644
-> --- a/fs/f2fs/acl.c
-> +++ b/fs/f2fs/acl.c
-> @@ -53,6 +53,9 @@ static struct posix_acl *f2fs_acl_from_disk(const char *value, size_t size)
->  	struct f2fs_acl_entry *entry = (struct f2fs_acl_entry *)(hdr + 1);
->  	const char *end = value + size;
->  
-> +	if (size < sizeof(f2fs_acl_header))
-> +		return ERR_PTR(-EINVAL);
+> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
 
-I guess below codes have checked that already?
-
-	count = f2fs_acl_count(size);
-	if (count < 0)
-		return ERR_PTR(-EINVAL);
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
-
-> +
->  	if (hdr->a_version != cpu_to_le32(F2FS_ACL_VERSION))
->  		return ERR_PTR(-EINVAL);
->  
-> 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
