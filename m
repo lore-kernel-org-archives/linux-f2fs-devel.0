@@ -1,86 +1,61 @@
-From: Sahitya Tummala <stummala@codeaurora.org>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid wrong decrypted data from disk
-Date: Thu, 30 Aug 2018 13:19:42 +0530
-Message-ID: <20180830074942.GD12489@codeaurora.org>
-References: <20180827225226.14272-1-jaegeuk@kernel.org>
- <20180830062903.GC12489@codeaurora.org>
+From: Chengguang Xu <cgxu519@gmx.com>
+Subject: [PATCH] f2fs: add additional sanity check in
+ f2fs_acl_from_disk()
+Date: Thu, 30 Aug 2018 21:33:31 +0800
+Message-ID: <20180830133331.5503-1-cgxu519@gmx.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180830062903.GC12489@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <cgxu519@gmx.com>) id 1fvN58-0007jW-H7
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Aug 2018 13:33:54 +0000
+Received: from mout.gmx.net ([212.227.15.18])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1fvN56-003lm3-ME
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Aug 2018 13:33:54 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: Chengguang Xu <cgxu519@gmx.com>, linux-f2fs-devel@lists.sourceforge.net
 
-On Thu, Aug 30, 2018 at 11:59:03AM +0530, Sahitya Tummala wrote:
-> On Mon, Aug 27, 2018 at 03:52:26PM -0700, Jaegeuk Kim wrote:
-> > 1. Create a file in an encrypted directory
-> > 2. Do GC & drop caches
-> > 3. Read stale data before its bio for metapage was not issued yet
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/data.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > index 382c1ef9a9e4..c3557fd4a0bd 100644
-> > --- a/fs/f2fs/data.c
-> > +++ b/fs/f2fs/data.c
-> > @@ -1550,6 +1550,13 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
-> >  			bio = NULL;
-> >  		}
-> >  		if (bio == NULL) {
-> > +			/*
-> > +			 * If the page is under writeback, we need to wait for
-> > +			 * its completion to see the correct decrypted data.
-> > +			 */
-> > +			if (unlikely(f2fs_encrypted_file(inode)))
-> > +				f2fs_wait_on_block_writeback(F2FS_I_SB(inode), block_nr);
-> > +
-> 
-> I am not sure if this really helps the case.
-> 
-> When the data is being moved by GC, the writeback is set on the encrypted page
-> which belongs to meta mapping. But before that writeback could complete, the read
-> will happen on the original file where it's corresponding page will not have any
-> writeback set, right?
+Add additinal sanity check for irregular case(e.g. corruption).
+If size of extended attribution is smaller than size of acl header,
+then return -EINVAL.
 
-Never mind, got it. Tested with your latest v3 patch and it is fixing the
-problem. Thanks.
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+---
+ fs/f2fs/acl.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> 
-> >  			bio = f2fs_grab_read_bio(inode, block_nr, nr_pages,
-> >  					is_readahead ? REQ_RAHEAD : 0);
-> >  			if (IS_ERR(bio)) {
-> > -- 
-> > 2.17.0.441.gb46fe60e1d-goog
-> > 
-> > 
-> > ------------------------------------------------------------------------------
-> > Check out the vibrant tech community on one of the world's most
-> > engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> -- 
-> --
-> Sent by a consultant of the Qualcomm Innovation Center, Inc.
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
-> 
-> ------------------------------------------------------------------------------
-> Check out the vibrant tech community on one of the world's most
-> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
+diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+index 111824199a88..79e9ea773070 100644
+--- a/fs/f2fs/acl.c
++++ b/fs/f2fs/acl.c
+@@ -53,6 +53,9 @@ static struct posix_acl *f2fs_acl_from_disk(const char *value, size_t size)
+ 	struct f2fs_acl_entry *entry = (struct f2fs_acl_entry *)(hdr + 1);
+ 	const char *end = value + size;
+ 
++	if (size < sizeof(f2fs_acl_header))
++		return ERR_PTR(-EINVAL);
++
+ 	if (hdr->a_version != cpu_to_le32(F2FS_ACL_VERSION))
+ 		return ERR_PTR(-EINVAL);
+ 
 -- 
---
-Sent by a consultant of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+2.17.1
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
