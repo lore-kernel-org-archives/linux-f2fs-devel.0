@@ -1,21 +1,22 @@
 From: Junling Zheng <zhengjunling@huawei.com>
-Subject: [RFC PATCH RESEND 4/5] f2fs-tools: introduce sb checksum
-Date: Thu, 30 Aug 2018 11:37:32 +0800
-Message-ID: <20180830033733.236460-4-zhengjunling@huawei.com>
+Subject: [RFC PATCH RESEND 2/5] f2fs-tools: rename
+ CHECKSUM_OFFSET to CP_CHKSUM_OFFSET
+Date: Thu, 30 Aug 2018 11:37:30 +0800
+Message-ID: <20180830033733.236460-2-zhengjunling@huawei.com>
 References: <20180830033733.236460-1-zhengjunling@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <zhengjunling@huawei.com>) id 1fvDmM-00046D-6x
+ (envelope-from <zhengjunling@huawei.com>) id 1fvDmM-0003V6-6j
  for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Aug 2018 03:37:54 +0000
 Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fvDmK-002qqX-G2
+ id 1fvDmK-003DFM-Fk
  for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Aug 2018 03:37:54 +0000
 In-Reply-To: <20180830033733.236460-1-zhengjunling@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
@@ -30,186 +31,145 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-This patch introduced crc for superblock.
+This patch renamed CHECKSUM_OFFSET to CP_CHKSUM_OFFSET.
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
 ---
- fsck/mount.c       | 23 +++++++++++++++++++++++
- fsck/resize.c      | 12 ++++++------
- include/f2fs_fs.h  | 16 +++++++++++++++-
- mkfs/f2fs_format.c |  3 +++
- 4 files changed, 47 insertions(+), 7 deletions(-)
+ fsck/fsck.c        |  4 ++--
+ fsck/mount.c       |  4 ++--
+ fsck/resize.c      |  8 ++++----
+ include/f2fs_fs.h  |  6 +++---
+ mkfs/f2fs_format.c | 14 +++++++-------
+ 5 files changed, 18 insertions(+), 18 deletions(-)
 
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index d550403..f080d3c 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -2010,8 +2010,8 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
+ 	set_cp(valid_node_count, fsck->chk.valid_node_cnt);
+ 	set_cp(valid_inode_count, fsck->chk.valid_inode_cnt);
+ 
+-	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CHECKSUM_OFFSET);
+-	*((__le32 *)((unsigned char *)cp + CHECKSUM_OFFSET)) = cpu_to_le32(crc);
++	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CP_CHKSUM_OFFSET);
++	*((__le32 *)((unsigned char *)cp + CP_CHKSUM_OFFSET)) = cpu_to_le32(crc);
+ 
+ 	cp_blk_no = get_sb(cp_blkaddr);
+ 	if (sbi->cur_cp == 2)
 diff --git a/fsck/mount.c b/fsck/mount.c
-index 2bc44ce..71af6b2 100644
+index 2c2473d..1daef75 100644
 --- a/fsck/mount.c
 +++ b/fsck/mount.c
-@@ -340,6 +340,7 @@ void print_raw_sb_info(struct f2fs_super_block *sb)
- 	DISP_u32(sb, node_ino);
- 	DISP_u32(sb, meta_ino);
- 	DISP_u32(sb, cp_payload);
-+	DISP_u32(sb, crc);
- 	DISP("%-.256s", sb, version);
- 	printf("\n");
- }
-@@ -467,6 +468,9 @@ void print_sb_state(struct f2fs_super_block *sb)
- 	if (f & cpu_to_le32(F2FS_FEATURE_LOST_FOUND)) {
- 		MSG(0, "%s", " lost_found");
- 	}
-+	if (f & cpu_to_le32(F2FS_FEATURE_SB_CHKSUM)) {
-+		MSG(0, "%s", " sb_checksum");
-+	}
- 	MSG(0, "\n");
- 	MSG(0, "Info: superblock encrypt level = %d, salt = ",
- 					sb->encryption_level);
-@@ -555,10 +559,29 @@ static inline int sanity_check_area_boundary(struct f2fs_super_block *sb,
- 	return 0;
- }
+@@ -2252,8 +2252,8 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
+ 	flags = update_nat_bits_flags(sb, cp, flags);
+ 	set_cp(ckpt_flags, flags);
  
-+static int verify_sb_chksum(struct f2fs_super_block *sb)
-+{
-+	if (SB_CHKSUM_OFFSET != get_sb(checksum_offset)) {
-+		MSG(0, "\tInvalid SB CRC offset: %u\n",
-+					get_sb(checksum_offset));
-+		return -1;
-+	}
-+	if (f2fs_crc_valid(get_sb(crc), sb,
-+			get_sb(checksum_offset))) {
-+		MSG(0, "\tInvalid SB CRC: 0x%x\n", get_sb(crc));
-+		return -1;
-+	}
-+	return 0;
-+}
-+
- int sanity_check_raw_super(struct f2fs_super_block *sb, enum SB_ADDR sb_addr)
- {
- 	unsigned int blocksize;
+-	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CHECKSUM_OFFSET);
+-	*((__le32 *)((unsigned char *)cp + CHECKSUM_OFFSET)) = cpu_to_le32(crc);
++	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CP_CHKSUM_OFFSET);
++	*((__le32 *)((unsigned char *)cp + CP_CHKSUM_OFFSET)) = cpu_to_le32(crc);
  
-+	if ((get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) &&
-+					verify_sb_chksum(sb))
-+		return -1;
-+
- 	if (F2FS_SUPER_MAGIC != get_sb(magic))
- 		return -1;
- 
+ 	cp_blk_no = get_sb(cp_blkaddr);
+ 	if (sbi->cur_cp == 2)
 diff --git a/fsck/resize.c b/fsck/resize.c
-index 5161a1f..3462165 100644
+index fe8a61a..e9612b3 100644
 --- a/fsck/resize.c
 +++ b/fsck/resize.c
-@@ -603,9 +603,6 @@ static int f2fs_resize_grow(struct f2fs_sb_info *sbi)
+@@ -90,10 +90,10 @@ static int get_new_sb(struct f2fs_super_block *sb)
+ 		 * It requires more pages for cp.
+ 		 */
+ 		if (max_sit_bitmap_size > MAX_SIT_BITMAP_SIZE_IN_CKPT) {
+-			max_nat_bitmap_size = CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1;
++			max_nat_bitmap_size = CP_CHKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1;
+ 			set_sb(cp_payload, F2FS_BLK_ALIGN(max_sit_bitmap_size));
+ 		} else {
+-			max_nat_bitmap_size = CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1
++			max_nat_bitmap_size = CP_CHKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1
+ 				- max_sit_bitmap_size;
+ 			set_sb(cp_payload, 0);
  		}
- 	}
+@@ -520,8 +520,8 @@ static void rebuild_checkpoint(struct f2fs_sb_info *sbi,
+ 						(unsigned char *)cp);
+ 	new_cp->checkpoint_ver = cpu_to_le64(cp_ver + 1);
  
--	print_raw_sb_info(sb);
--	print_raw_sb_info(new_sb);
--
- 	old_main_blkaddr = get_sb(main_blkaddr);
- 	new_main_blkaddr = get_newsb(main_blkaddr);
- 	offset = new_main_blkaddr - old_main_blkaddr;
-@@ -629,6 +626,9 @@ static int f2fs_resize_grow(struct f2fs_sb_info *sbi)
- 	migrate_sit(sbi, new_sb, offset_seg);
- 	rebuild_checkpoint(sbi, new_sb, offset_seg);
- 	update_superblock(new_sb, SB_ALL);
-+	print_raw_sb_info(sb);
-+	print_raw_sb_info(new_sb);
-+
- 	return 0;
- }
+-	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, new_cp, CHECKSUM_OFFSET);
+-	*((__le32 *)((unsigned char *)new_cp + CHECKSUM_OFFSET)) =
++	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, new_cp, CP_CHKSUM_OFFSET);
++	*((__le32 *)((unsigned char *)new_cp + CP_CHKSUM_OFFSET)) =
+ 							cpu_to_le32(crc);
  
-@@ -658,9 +658,6 @@ static int f2fs_resize_shrink(struct f2fs_sb_info *sbi)
- 		}
- 	}
- 
--	print_raw_sb_info(sb);
--	print_raw_sb_info(new_sb);
--
- 	old_main_blkaddr = get_sb(main_blkaddr);
- 	new_main_blkaddr = get_newsb(main_blkaddr);
- 	offset = old_main_blkaddr - new_main_blkaddr;
-@@ -690,6 +687,9 @@ static int f2fs_resize_shrink(struct f2fs_sb_info *sbi)
- 	/* move whole data region */
- 	//if (err)
- 	//	migrate_main(sbi, offset);
-+	print_raw_sb_info(sb);
-+	print_raw_sb_info(new_sb);
-+
- 	return 0;
- }
- 
+ 	/* Write a new checkpoint in the other set */
 diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index df46950..9396c78 100644
+index 2c086a9..38a0da4 100644
 --- a/include/f2fs_fs.h
 +++ b/include/f2fs_fs.h
-@@ -279,6 +279,7 @@ static inline uint64_t bswap_64(uint64_t val)
+@@ -278,7 +278,7 @@ static inline uint64_t bswap_64(uint64_t val)
+ #define PAGE_CACHE_SIZE		4096
  #define BITS_PER_BYTE		8
  #define F2FS_SUPER_MAGIC	0xF2F52010	/* F2FS Magic Number */
- #define CP_CHKSUM_OFFSET	4092
-+#define SB_CHKSUM_OFFSET	3068
+-#define CHECKSUM_OFFSET		4092
++#define CP_CHKSUM_OFFSET	4092
  #define MAX_PATH_LEN		64
  #define MAX_DEVICES		8
  
-@@ -579,6 +580,7 @@ enum {
- #define F2FS_FEATURE_INODE_CRTIME	0x0100
- #define F2FS_FEATURE_LOST_FOUND		0x0200
- #define F2FS_FEATURE_VERITY		0x0400	/* reserved */
-+#define F2FS_FEATURE_SB_CHKSUM		0x0800
- 
- #define MAX_VOLUME_NAME		512
- 
-@@ -632,7 +634,8 @@ struct f2fs_super_block {
- 	struct f2fs_device devs[MAX_DEVICES];	/* device list */
- 	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
- 	__u8 hot_ext_count;		/* # of hot file extension */
--	__u8 reserved[314];		/* valid reserved region */
-+	__u8 reserved[310];		/* valid reserved region */
-+	__le32 crc;			/* checksum of superblock */
+@@ -682,9 +682,9 @@ struct f2fs_checkpoint {
  } __attribute__((packed));
  
+ #define MAX_SIT_BITMAP_SIZE_IN_CKPT    \
+-	(CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1 - 64)
++	(CP_CHKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1 - 64)
+ #define MAX_BITMAP_SIZE_IN_CKPT	\
+-	(CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1)
++	(CP_CHKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1)
+ 
  /*
-@@ -1338,6 +1341,7 @@ struct feature feature_table[] = {					\
- 	{ "inode_crtime",		F2FS_FEATURE_INODE_CRTIME },	\
- 	{ "lost_found",			F2FS_FEATURE_LOST_FOUND },	\
- 	{ "verity",			F2FS_FEATURE_VERITY },	/* reserved */ \
-+	{ "sb_checksum",		F2FS_FEATURE_SB_CHKSUM },	\
- 	{ NULL,				0x0},				\
- };
- 
-@@ -1425,10 +1429,20 @@ static inline int __write_superblock(struct f2fs_super_block *sb, int sb_mask)
- {
- 	int index, ret;
- 	u_int8_t *buf;
-+	u32 old_crc, new_crc;
- 
- 	buf = calloc(F2FS_BLKSIZE, 1);
- 	ASSERT(buf);
- 
-+	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) {
-+		old_crc = get_sb(crc);
-+		new_crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, sb,
-+						SB_CHKSUM_OFFSET);
-+		set_sb(crc, new_crc);
-+		MSG(0, "Info: SB CRC is set successfully"
-+				"(0x%x -> 0x%x)\n", old_crc, new_crc);
-+	}
-+
- 	memcpy(buf + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
- 	for (index = 0; index < SB_ADDR_MAX; index++) {
- 		if ((1 << index) & sb_mask) {
+  * For orphan inode management
 diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index 7e3846e..87e33da 100644
+index 4b88d93..621126c 100644
 --- a/mkfs/f2fs_format.c
 +++ b/mkfs/f2fs_format.c
-@@ -504,6 +504,9 @@ static int f2fs_prepare_super_block(void)
+@@ -342,12 +342,12 @@ static int f2fs_prepare_super_block(void)
+ 		 * It requires more pages for cp.
+ 		 */
+ 		if (max_sit_bitmap_size > MAX_SIT_BITMAP_SIZE_IN_CKPT) {
+-			max_nat_bitmap_size = CHECKSUM_OFFSET -
++			max_nat_bitmap_size = CP_CHKSUM_OFFSET -
+ 					sizeof(struct f2fs_checkpoint) + 1;
+ 			set_sb(cp_payload, F2FS_BLK_ALIGN(max_sit_bitmap_size));
+ 	        } else {
+ 			max_nat_bitmap_size =
+-				CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1
++				CP_CHKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1
+ 				- max_sit_bitmap_size;
+ 			set_sb(cp_payload, 0);
+ 		}
+@@ -684,10 +684,10 @@ static int f2fs_write_check_point_pack(void)
+ 	set_cp(nat_ver_bitmap_bytesize, ((get_sb(segment_count_nat) / 2) <<
+ 			 get_sb(log_blocks_per_seg)) / 8);
  
- 	sb->feature = c.feature;
+-	set_cp(checksum_offset, CHECKSUM_OFFSET);
++	set_cp(checksum_offset, CP_CHKSUM_OFFSET);
  
-+	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM)
-+		set_sb(checksum_offset, SB_CHKSUM_OFFSET);
-+
- 	return 0;
- }
+-	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CHECKSUM_OFFSET);
+-	*((__le32 *)((unsigned char *)cp + CHECKSUM_OFFSET)) =
++	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CP_CHKSUM_OFFSET);
++	*((__le32 *)((unsigned char *)cp + CP_CHKSUM_OFFSET)) =
+ 							cpu_to_le32(crc);
  
+ 	blk_size_bytes = 1 << get_sb(log_blocksize);
+@@ -932,8 +932,8 @@ static int f2fs_write_check_point_pack(void)
+ 	 */
+ 	cp->checkpoint_ver = 0;
+ 
+-	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CHECKSUM_OFFSET);
+-	*((__le32 *)((unsigned char *)cp + CHECKSUM_OFFSET)) =
++	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CP_CHKSUM_OFFSET);
++	*((__le32 *)((unsigned char *)cp + CP_CHKSUM_OFFSET)) =
+ 							cpu_to_le32(crc);
+ 	cp_seg_blk = get_sb(segment0_blkaddr) + c.blks_per_seg;
+ 	DBG(1, "\tWriting cp page 1 of checkpoint pack 2, at offset 0x%08"PRIx64"\n",
 -- 
 2.18.0
 
