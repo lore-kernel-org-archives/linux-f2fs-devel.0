@@ -1,66 +1,59 @@
-From: Chengguang Xu <cgxu519@gmx.com>
-Subject: [PATCH v2 5/5] orangefs: cache NULL when both
- default_acl and acl are NULL
-Date: Fri, 31 Aug 2018 22:33:52 +0800
-Message-ID: <20180831143352.22970-5-cgxu519@gmx.com>
-References: <20180831143352.22970-1-cgxu519@gmx.com>
+From: Jan =?ISO-8859-1?Q?L=FCbbe?= <jlu@pengutronix.de>
+Subject: Re: [RFC PATCH 00/10] fs-verity: filesystem-level integrity
+ protection
+Date: Fri, 31 Aug 2018 22:05:23 +0200
+Message-ID: <1535745923.25742.1.camel@pengutronix.de>
+References: <20180824161642.1144-1-ebiggers@kernel.org>
+Reply-To: jlu@pengutronix.de
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-In-Reply-To: <20180831143352.22970-1-cgxu519@gmx.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jack@suse.com, tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org, yuchao0@huawei.com, shaggy@kernel.org, hubcap@omnibond.com, martin@omnibond.com
-Cc: jfs-discussion@lists.sourceforge.net, Chengguang Xu <cgxu519@gmx.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org, devel@lists.orangefs.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180824161642.1144-1-ebiggers@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-integrity@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Michael Halcrow <mhalcrow@google.com>, Victor Hsieh <victorhsieh@google.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-default_acl and acl of newly created inode will be initiated
-as ACL_NOT_CACHED in vfs function inode_init_always() and later
-will be updated by calling xxx_init_acl() in specific filesystems.
-Howerver, when default_acl and acl are NULL then they keep the value
-of ACL_NOT_CACHED, this patch tries to cache NULL for acl/default_acl
-in this case.
+On Fri, 2018-08-24 at 09:16 -0700, Eric Biggers wrote:
+[...]
+> Since fs-verity provides the Merkle tree root hash in constant time and
+> verifies data blocks on-demand, it is useful for efficiently verifying
+> the authenticity of, or "appraising", large files of which only a small
+> portion may be accessed -- such as Android application (APK) files.  It
+> can also be useful in "audit" use cases where file hashes are logged.
+> fs-verity also provides better protection against malicious disk
+> firmware than an ahead-of-time hash, since fs-verity re-verifies data
+> each time it's paged in.
+[...]
+> Feedback on the design and implementation is greatly appreciated.
 
-Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
----
-v1->v2:
-- Coding style change.
+Hi,
 
- fs/orangefs/acl.c | 4 ++++
- 1 file changed, 4 insertions(+)
+I've looked at the series and the slides linked form the recent lwn.net
+article, but I'm not sure how fs-verity intends to protect against
+malicious firmware (or offline modification). Similar to IMA/EVM, fs-
+verity doesn't seem to include the name/location of the file into it's
+verification. So the firmware/an attacker could replace one fs-verity-
+protected file with another (maybe a trusted system APK with another
+one for which a vulnerability was discovered, or /sbin/init with
+/bin/sh).
 
-diff --git a/fs/orangefs/acl.c b/fs/orangefs/acl.c
-index 10587413b20e..72d2ff17d27b 100644
---- a/fs/orangefs/acl.c
-+++ b/fs/orangefs/acl.c
-@@ -167,12 +167,16 @@ int orangefs_init_acl(struct inode *inode, struct inode *dir)
- 		error = __orangefs_set_acl(inode, default_acl,
- 					   ACL_TYPE_DEFAULT);
- 		posix_acl_release(default_acl);
-+	} else {
-+		inode->i_default_acl = NULL;
- 	}
- 
- 	if (acl) {
- 		if (!error)
- 			error = __orangefs_set_acl(inode, acl, ACL_TYPE_ACCESS);
- 		posix_acl_release(acl);
-+	} else {
-+		inode->i_acl = NULL;
- 	}
- 
- 	/* If mode of the inode was changed, then do a forcible ->setattr */
+Is the expected root hash of the file provided from somewhere else, so
+this is not a problem on Android? Or is this problem out-of-scope for
+fs-verity?
+
+For IMA/EVM, there were patches by Dmitry to address this class of
+attacks (they were not merged, though):
+https://lwn.net/Articles/574221/
+
+Thanks,
+Jan
+
+[1] https://events.linuxfoundation.org/wp-content/uploads/2017/11/fs-ve
+rify_Mike-Halcrow_Eric-Biggers.pdf
 -- 
-2.17.1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
