@@ -1,57 +1,48 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 200951] kernel NULL pointer dereference in
- update_sit_entry
-Date: Fri, 31 Aug 2018 08:17:40 +0000
-Message-ID: <bug-200951-202145-9adjehn3tB@https.bugzilla.kernel.org/>
-References: <bug-200951-202145@https.bugzilla.kernel.org/>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1fvecn-0004C2-5i
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 31 Aug 2018 08:17:49 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fvecl-003zZM-Er
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 31 Aug 2018 08:17:49 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id E4C0D2B9C7
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 31 Aug 2018 08:17:40 +0000 (UTC)
-In-Reply-To: <bug-200951-202145@https.bugzilla.kernel.org/>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+From: Sahitya Tummala <stummala@codeaurora.org>
+Subject: [PATCH] f2fs: fix unnecessary periodic wakeup of discard thread when dev is busy
+Date: Fri, 31 Aug 2018 15:09:26 +0530
+Message-ID: <1535708366-11318-1-git-send-email-stummala@codeaurora.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200951
+When dev is busy, discard thread wake up timeout can be aligned with the
+exact time that it needs to wait for dev to come out of busy. This helps
+to avoid unnecessary periodic wakeups and thus save some power.
 
-Chao Yu (chao@kernel.org) changed:
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+---
+ fs/f2fs/segment.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |chao@kernel.org
-
---- Comment #3 from Chao Yu (chao@kernel.org) ---
-Hi,
-
-Is this bug reproducible? Can you run fsck on device to check filesystem
-consistence.
-
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 8bcbb50..df14030 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1379,6 +1379,8 @@ static int issue_discard_thread(void *data)
+ 	struct discard_policy dpolicy;
+ 	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
+ 	int issued;
++	unsigned long interval = sbi->interval_time[REQ_TIME] * HZ;
++	long delta;
+ 
+ 	set_freezable();
+ 
+@@ -1410,7 +1412,11 @@ static int issue_discard_thread(void *data)
+ 			__wait_all_discard_cmd(sbi, &dpolicy);
+ 			wait_ms = dpolicy.min_interval;
+ 		} else if (issued == -1){
+-			wait_ms = dpolicy.mid_interval;
++			delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
++			if (delta > 0)
++				wait_ms = jiffies_to_msecs(delta);
++			else
++				wait_ms = dpolicy.mid_interval;
+ 		} else {
+ 			wait_ms = dpolicy.max_interval;
+ 		}
 -- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
