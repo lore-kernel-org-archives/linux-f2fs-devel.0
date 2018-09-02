@@ -1,49 +1,67 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 200951] kernel NULL pointer dereference in
- update_sit_entry
-Date: Sat, 01 Sep 2018 13:18:20 +0000
-Message-ID: <bug-200951-202145-ivqIsDSpcL@https.bugzilla.kernel.org/>
-References: <bug-200951-202145@https.bugzilla.kernel.org/>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [RFC PATCH 02/10] fs-verity: add data verification hooks for ->readpages()
+Date: Sat, 1 Sep 2018 19:35:53 -0700
+Message-ID: <CAOesGMhGfesVQHHMpqW5r7gMOZccX4RsZZex6y-kfkmuA6K0ow@mail.gmail.com>
+References: <20180824161642.1144-1-ebiggers@kernel.org> <20180824161642.1144-3-ebiggers@kernel.org>
+ <2f2382c3-e5e9-f0da-dc89-42dfc7b2b636@huawei.com> <20180825041647.GA726@sol.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1fw5nI-0006Vt-Vp
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Sep 2018 13:18:28 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fw5nH-005GqA-44
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Sep 2018 13:18:28 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 4534029E87
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat,  1 Sep 2018 13:18:21 +0000 (UTC)
-In-Reply-To: <bug-200951-202145@https.bugzilla.kernel.org/>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180825041647.GA726@sol.localdomain>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Gao Xiang <gaoxiang25@huawei.com>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Michael Halcrow <mhalcrow@google.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-fscrypt@vger.kernel.org, linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, Victor Hsieh <victorhsieh@google.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200951
+Hi,
 
---- Comment #6 from vicencb@gmail.com ---
-Hi, just found that the issue is also reproducible when mounted
-with the "nodiscard" option, enabling TRIM via UDEV is enouth.
+On Fri, Aug 24, 2018 at 9:16 PM, Eric Biggers <ebiggers@kernel.org> wrote:
+> Hi Gao,
+>
+> On Sat, Aug 25, 2018 at 10:29:26AM +0800, Gao Xiang wrote:
+>> Hi,
+>>
+>> At last, I hope filesystems could select the on-disk position of hash tree and 'struct fsverity_descriptor'
+>> rather than fixed in the end of verity files...I think if fs-verity preparing such support and interfaces could be better.....hmmm... :(
+>
+> In theory it would be a much cleaner design to store verity metadata separately
+> from the data.  But the Merkle tree can be very large.  For example, a 1 GB file
+> using SHA-512 would have a 16.6 MB Merkle tree.  So the Merkle tree can't be an
+> extended attribute, since the xattrs API requires xattrs to be small (<= 64 KB),
+> and most filesystems further limit xattr sizes in their on-disk format to as
+> little as 4 KB.  Furthermore, even if both of these limits were to be increased,
+> the xattrs functions (both the syscalls, and the internal functions that
+> filesystems have) are all based around getting/setting the entire xattr value.
+>
+> Also when used with fscrypt, we want the Merkle tree and fsverity_descriptor to
+> be encrypted, so they doesn't leak plaintext hashes.  And we want the Merkle
+> tree to be paged into memory, just like the file contents, to take advantage of
+> the usual Linux memory management.
+>
+> What we really need is *streams*, like NTFS has.  But the filesystems we're
+> targetting don't support streams, nor does the Linux syscall interface have any
+> API for accessing streams, nor does the VFS support them.
+>
+> Adding streams support to all those things would be a huge multi-year effort,
+> controversial, and almost certainly not worth it just for fs-verity.
+>
+> So simply storing the verity metadata past i_size seems like the best solution
+> for now.
+>
+> That being said, in the future we could pretty easily swap out the calls to
+> read_mapping_page() with something else if a particular filesystem wanted to
+> store the metadata somewhere else.  We actually even originally had a function
+> ->read_metadata_page() in the filesystem's fsverity_operations, but it turned
+> out to be unnecessary and I replaced it with directly calling
+> read_mapping_page(), but it could be changed back at any time.
 
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+What about an xattr not to hold the Merkle tree, but to contain a
+suitable reference to a file/inode+offset that contains it (+ toplevel
+hash for said tree/file or the descriptor/struct)?
+
+If you also expose said file in the directory structure, things such
+as backups might be easier to handle. For where the tree is appended
+to the file, you could self-reference.
+
+
+-Olof
