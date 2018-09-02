@@ -1,9 +1,9 @@
 From: Sasha Levin via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Subject: [PATCH AUTOSEL 4.18 041/131] f2fs: fix defined but not
+Subject: [PATCH AUTOSEL 4.14 28/89] f2fs: fix defined but not
  used build warnings
-Date: Sun, 2 Sep 2018 13:03:53 +0000
-Message-ID: <20180902064601.183036-41-alexander.levin@microsoft.com>
-References: <20180902064601.183036-1-alexander.levin@microsoft.com>
+Date: Sun, 2 Sep 2018 13:06:41 +0000
+Message-ID: <20180902064918.183387-28-alexander.levin@microsoft.com>
+References: <20180902064918.183387-1-alexander.levin@microsoft.com>
 Reply-To: Sasha Levin <Alexander.Levin@microsoft.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -12,15 +12,15 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <Alexander.Levin@microsoft.com>) id 1fwS3C-0003LF-JH
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 02 Sep 2018 13:04:22 +0000
-Received: from mail-dm3nam03on0118.outbound.protection.outlook.com
- ([104.47.41.118] helo=NAM03-DM3-obe.outbound.protection.outlook.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <Alexander.Levin@microsoft.com>) id 1fwS60-0003On-CX
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 02 Sep 2018 13:07:16 +0000
+Received: from mail-by2nam03on0101.outbound.protection.outlook.com
+ ([104.47.42.101] helo=NAM03-BY2-obe.outbound.protection.outlook.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-SHA384:256) (Exim 4.90_1)
- id 1fwS38-006Gru-0x
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 02 Sep 2018 13:04:22 +0000
-In-Reply-To: <20180902064601.183036-1-alexander.levin@microsoft.com>
+ id 1fwS5x-006JMT-DT
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 02 Sep 2018 13:07:16 +0000
+In-Reply-To: <20180902064918.183387-1-alexander.levin@microsoft.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -56,7 +56,7 @@ Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
  1 file changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 2e7e611deaef..5344e21853b2 100644
+index e2c258f717cd..93af9d7dfcdc 100644
 --- a/fs/f2fs/sysfs.c
 +++ b/fs/f2fs/sysfs.c
 @@ -9,6 +9,7 @@
@@ -67,7 +67,7 @@ index 2e7e611deaef..5344e21853b2 100644
  #include <linux/proc_fs.h>
  #include <linux/f2fs_fs.h>
  #include <linux/seq_file.h>
-@@ -516,7 +517,8 @@ static struct kobject f2fs_feat = {
+@@ -381,7 +382,8 @@ static struct kobject f2fs_feat = {
  	.kset	= &f2fs_kset,
  };
  
@@ -77,7 +77,7 @@ index 2e7e611deaef..5344e21853b2 100644
  {
  	struct super_block *sb = seq->private;
  	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-@@ -543,7 +545,8 @@ static int segment_info_seq_show(struct seq_file *seq, void *offset)
+@@ -408,7 +410,8 @@ static int segment_info_seq_show(struct seq_file *seq, void *offset)
  	return 0;
  }
  
@@ -87,7 +87,7 @@ index 2e7e611deaef..5344e21853b2 100644
  {
  	struct super_block *sb = seq->private;
  	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-@@ -567,7 +570,8 @@ static int segment_bits_seq_show(struct seq_file *seq, void *offset)
+@@ -432,7 +435,8 @@ static int segment_bits_seq_show(struct seq_file *seq, void *offset)
  	return 0;
  }
  
