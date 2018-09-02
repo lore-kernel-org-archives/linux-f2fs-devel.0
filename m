@@ -1,92 +1,105 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix unnecessary periodic wakeup of
- discard thread when dev is busy
-Date: Sun, 2 Sep 2018 20:56:32 +0800
-Message-ID: <fdf4d391-4ec3-077f-c4b5-4c3785a153aa@kernel.org>
-References: <1535708366-11318-1-git-send-email-stummala@codeaurora.org>
- <ae0ec622-1fd3-d28a-019b-75a507e551f6@kernel.org>
- <20180902103411.GE12489@codeaurora.org>
+From: Sasha Levin via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Subject: [PATCH AUTOSEL 4.18 041/131] f2fs: fix defined but not
+ used build warnings
+Date: Sun, 2 Sep 2018 13:03:53 +0000
+Message-ID: <20180902064601.183036-41-alexander.levin@microsoft.com>
+References: <20180902064601.183036-1-alexander.levin@microsoft.com>
+Reply-To: Sasha Levin <Alexander.Levin@microsoft.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180902103411.GE12489@codeaurora.org>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <Alexander.Levin@microsoft.com>) id 1fwS3C-0003LF-JH
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 02 Sep 2018 13:04:22 +0000
+Received: from mail-dm3nam03on0118.outbound.protection.outlook.com
+ ([104.47.41.118] helo=NAM03-DM3-obe.outbound.protection.outlook.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-SHA384:256) (Exim 4.90_1)
+ id 1fwS38-006Gru-0x
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 02 Sep 2018 13:04:22 +0000
+In-Reply-To: <20180902064601.183036-1-alexander.levin@microsoft.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sahitya Tummala <stummala@codeaurora.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: "stable@vger.kernel.org" <stable@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Sasha Levin <Alexander.Levin@microsoft.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-On 2018/9/2 18:34, Sahitya Tummala wrote:
-> On Sun, Sep 02, 2018 at 04:52:40PM +0800, Chao Yu wrote:
->> On 2018/8/31 17:39, Sahitya Tummala wrote:
->>> When dev is busy, discard thread wake up timeout can be aligned with the
->>> exact time that it needs to wait for dev to come out of busy. This helps
->>> to avoid unnecessary periodic wakeups and thus save some power.
->>>
->>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
->>> ---
->>>  fs/f2fs/segment.c | 8 +++++++-
->>>  1 file changed, 7 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>> index 8bcbb50..df14030 100644
->>> --- a/fs/f2fs/segment.c
->>> +++ b/fs/f2fs/segment.c
->>> @@ -1379,6 +1379,8 @@ static int issue_discard_thread(void *data)
->>>  	struct discard_policy dpolicy;
->>>  	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
->>>  	int issued;
->>> +	unsigned long interval = sbi->interval_time[REQ_TIME] * HZ;
->>> +	long delta;
->>>  
->>>  	set_freezable();
->>>  
->>> @@ -1410,7 +1412,11 @@ static int issue_discard_thread(void *data)
->>>  			__wait_all_discard_cmd(sbi, &dpolicy);
->>>  			wait_ms = dpolicy.min_interval;
->>>  		} else if (issued == -1){
->>> -			wait_ms = dpolicy.mid_interval;
->>> +			delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
->>
->> I agree that we need to consider power consumption. One more consideration is
->> that discard thread may need different submission frequency comparing to garbage
->> collection thread, maybe a little fast, would it be better to split
->> sbi->interval_time[REQ_TIME] according to gc/discard type.
->>
->> How do you think?
->>
->> Thanks,
->>
-> 
-> Thanks for the review.
-> 
-> You mean when GC type is urgent? I see that for that case, the discard policy is
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Actually, I mean splitting sbi->interval_time[REQ_TIME] into:
-- sbi->interval_time[GC_TIM] which can be used for GC thread.
-- sbi->interval_time[DISCARD_TIME] which can be used for Discard thread.
+[ Upstream commit cb15d1e43db0a6341c1e26ac6a2c74e61b74f1aa ]
 
-Then we can configure sbi->interval_time[DISCARD_TIME] independently, and set
-more suitable interval value for discard thread, since discard thread may need
-to wake to submit discards more frequently.
+Fix build warnings in f2fs when CONFIG_PROC_FS is not enabled
+by marking the unused functions as __maybe_unused.
 
-I guess if we can accept above idea, it can be sent as another patch, so anyway,
-I'm okay with your change. :)
+../fs/f2fs/sysfs.c:519:12: warning: 'segment_info_seq_show' defined but not used [-Wunused-function]
+../fs/f2fs/sysfs.c:546:12: warning: 'segment_bits_seq_show' defined but not used [-Wunused-function]
+../fs/f2fs/sysfs.c:570:12: warning: 'iostat_info_seq_show' defined but not used [-Wunused-function]
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ fs/f2fs/sysfs.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-Thanks,
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 2e7e611deaef..5344e21853b2 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -9,6 +9,7 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
++#include <linux/compiler.h>
+ #include <linux/proc_fs.h>
+ #include <linux/f2fs_fs.h>
+ #include <linux/seq_file.h>
+@@ -516,7 +517,8 @@ static struct kobject f2fs_feat = {
+ 	.kset	= &f2fs_kset,
+ };
+ 
+-static int segment_info_seq_show(struct seq_file *seq, void *offset)
++static int __maybe_unused segment_info_seq_show(struct seq_file *seq,
++						void *offset)
+ {
+ 	struct super_block *sb = seq->private;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+@@ -543,7 +545,8 @@ static int segment_info_seq_show(struct seq_file *seq, void *offset)
+ 	return 0;
+ }
+ 
+-static int segment_bits_seq_show(struct seq_file *seq, void *offset)
++static int __maybe_unused segment_bits_seq_show(struct seq_file *seq,
++						void *offset)
+ {
+ 	struct super_block *sb = seq->private;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+@@ -567,7 +570,8 @@ static int segment_bits_seq_show(struct seq_file *seq, void *offset)
+ 	return 0;
+ }
+ 
+-static int iostat_info_seq_show(struct seq_file *seq, void *offset)
++static int __maybe_unused iostat_info_seq_show(struct seq_file *seq,
++					       void *offset)
+ {
+ 	struct super_block *sb = seq->private;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+-- 
+2.17.1
 
-> changed to DPOLICY_FORCE, which sets dpolicy->io_aware as false and hence,
-> cannot fall into this (issued == -1) case at all.
-> 
->>> +			if (delta > 0)
->>> +				wait_ms = jiffies_to_msecs(delta);
->>> +			else
->>> +				wait_ms = dpolicy.mid_interval;
->>>  		} else {
->>>  			wait_ms = dpolicy.max_interval;
->>>  		}
->>>
-> 
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
