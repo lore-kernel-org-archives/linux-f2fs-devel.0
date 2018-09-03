@@ -1,29 +1,16 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 200951] kernel NULL pointer dereference in
- update_sit_entry
-Date: Mon, 03 Sep 2018 09:54:29 +0000
-Message-ID: <bug-200951-202145-JHPUD2CoYU@https.bugzilla.kernel.org/>
-References: <bug-200951-202145@https.bugzilla.kernel.org/>
+From: Dave Kleikamp <dave.kleikamp@oracle.com>
+Subject: Re: [Jfs-discussion] [PATCH v2 4/5] jfs: cache NULL when
+ both default_acl and acl are NULL
+Date: Mon, 3 Sep 2018 15:34:36 -0500
+Message-ID: <0e37733e-9acd-cf82-62f7-420f0fa864eb@oracle.com>
+References: <20180831143352.22970-1-cgxu519@gmx.com>
+ <20180831143352.22970-4-cgxu519@gmx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1fwlZ7-0007vW-CD
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 03 Sep 2018 09:54:37 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fwlZ5-0086cK-HC
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 03 Sep 2018 09:54:37 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id B0F742924F
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  3 Sep 2018 09:54:29 +0000 (UTC)
-In-Reply-To: <bug-200951-202145@https.bugzilla.kernel.org/>
+In-Reply-To: <20180831143352.22970-4-cgxu519@gmx.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,21 +20,54 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Chengguang Xu <cgxu519@gmx.com>, jack@suse.com, tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org, yuchao0@huawei.com, shaggy@kernel.org, hubcap@omnibond.com, martin@omnibond.com
+Cc: jfs-discussion@lists.sourceforge.net, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, devel@lists.orangefs.org, linux-f2fs-devel@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200951
+Are you pushing these as a series, or would you like this patch pushed
+through the jfs tree?
 
---- Comment #14 from vicencb@gmail.com ---
-This could explain why it fails on aarch64 but works on x86_64.
-When this is tested on aarch64, the f2fs is the root FS, and the udev
-rule is applied after mount because it is stored in the filesystemm itself.
-Whereas in the x86_64 case, the udev rule is applied when the disk is
-plugged in, before mounting.
-All in all, it is a general issue, not an architecture-specific one.
+On 8/31/18 9:33 AM, Chengguang Xu wrote:
+> default_acl and acl of newly created inode will be initiated
+> as ACL_NOT_CACHED in vfs function inode_init_always() and later
+> will be updated by calling xxx_init_acl() in specific filesystems.
+> Howerver, when default_acl and acl are NULL then they keep the value
+> of ACL_NOT_CACHED, this patch tries to cache NULL for acl/default_acl
+> in this case.
+> 
+> Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
 
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+Acked-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+
+> ---
+> v1->v2:
+> - Coding style change.
+> 
+>  fs/jfs/acl.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/fs/jfs/acl.c b/fs/jfs/acl.c
+> index 2e71b6e7e646..8c06a6ea862d 100644
+> --- a/fs/jfs/acl.c
+> +++ b/fs/jfs/acl.c
+> @@ -146,12 +146,16 @@ int jfs_init_acl(tid_t tid, struct inode *inode, struct inode *dir)
+>  	if (default_acl) {
+>  		rc = __jfs_set_acl(tid, inode, ACL_TYPE_DEFAULT, default_acl);
+>  		posix_acl_release(default_acl);
+> +	} else {
+> +		inode->i_default_acl = NULL;
+>  	}
+>  
+>  	if (acl) {
+>  		if (!rc)
+>  			rc = __jfs_set_acl(tid, inode, ACL_TYPE_ACCESS, acl);
+>  		posix_acl_release(acl);
+> +	} else {
+> +		inode->i_acl = NULL;
+>  	}
+>  
+>  	JFS_IP(inode)->mode2 = (JFS_IP(inode)->mode2 & 0xffff0000) |
+> 
+
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
 engaging tech sites, Slashdot.org! http://sdm.link/slashdot
