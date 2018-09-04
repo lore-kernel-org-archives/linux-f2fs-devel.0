@@ -1,25 +1,27 @@
 From: Wang Shilong <wangshilong1991@gmail.com>
-Subject: [PATCH 1/2] ext4: fix setattr project check upon
+Subject: [PATCH 2/2] f2fs: fix setattr project check upon
  fssetxattr ioctl
-Date: Tue,  4 Sep 2018 23:54:05 +0900
-Message-ID: <1536072846-19361-1-git-send-email-wshilong@ddn.com>
+Date: Tue,  4 Sep 2018 23:54:06 +0900
+Message-ID: <1536072846-19361-2-git-send-email-wshilong@ddn.com>
+References: <1536072846-19361-1-git-send-email-wshilong@ddn.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <wangshilong1991@gmail.com>) id 1fxCij-0008J1-Ta
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 04 Sep 2018 14:54:21 +0000
-Received: from mail-pf1-f193.google.com ([209.85.210.193])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (envelope-from <wangshilong1991@gmail.com>) id 1fxCil-0001Fz-Tk
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 04 Sep 2018 14:54:23 +0000
+Received: from mail-pl1-f193.google.com ([209.85.214.193])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1fxCih-000l5n-Uk
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 04 Sep 2018 14:54:21 +0000
-Received: by mail-pf1-f193.google.com with SMTP id s13-v6so1819485pfi.7
+ id 1fxCik-008I0a-9e
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 04 Sep 2018 14:54:23 +0000
+Received: by mail-pl1-f193.google.com with SMTP id b12-v6so1748070plr.8
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 04 Sep 2018 07:54:19 -0700 (PDT)
+ Tue, 04 Sep 2018 07:54:22 -0700 (PDT)
+In-Reply-To: <1536072846-19361-1-git-send-email-wshilong@ddn.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -52,73 +54,19 @@ inode lock.
 
 Signed-off-by: Wang Shilong <wshilong@ddn.com>
 ---
- fs/ext4/ioctl.c | 62 ++++++++++++++++++++++++++++++++++++---------------------
- 1 file changed, 39 insertions(+), 23 deletions(-)
+ fs/f2fs/file.c | 41 ++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 34 insertions(+), 7 deletions(-)
 
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index a707411..e860df9 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -339,19 +339,14 @@ static int ext4_ioctl_setproject(struct file *filp, __u32 projid)
- 	if (projid_eq(kprojid, EXT4_I(inode)->i_projid))
- 		return 0;
- 
--	err = mnt_want_write_file(filp);
--	if (err)
--		return err;
--
- 	err = -EPERM;
--	inode_lock(inode);
- 	/* Is it quota file? Do not allow user to mess with it */
- 	if (ext4_is_quota_file(inode))
--		goto out_unlock;
-+		return err;
- 
- 	err = ext4_get_inode_loc(inode, &iloc);
- 	if (err)
--		goto out_unlock;
-+		return err;
- 
- 	raw_inode = ext4_raw_inode(&iloc);
- 	if (!EXT4_FITS_IN_INODE(raw_inode, ei, i_projid)) {
-@@ -359,7 +354,7 @@ static int ext4_ioctl_setproject(struct file *filp, __u32 projid)
- 					      EXT4_SB(sb)->s_want_extra_isize,
- 					      &iloc);
- 		if (err)
--			goto out_unlock;
-+			return err;
- 	} else {
- 		brelse(iloc.bh);
- 	}
-@@ -369,10 +364,8 @@ static int ext4_ioctl_setproject(struct file *filp, __u32 projid)
- 	handle = ext4_journal_start(inode, EXT4_HT_QUOTA,
- 		EXT4_QUOTA_INIT_BLOCKS(sb) +
- 		EXT4_QUOTA_DEL_BLOCKS(sb) + 3);
--	if (IS_ERR(handle)) {
--		err = PTR_ERR(handle);
--		goto out_unlock;
--	}
-+	if (IS_ERR(handle))
-+		return PTR_ERR(handle);
- 
- 	err = ext4_reserve_inode_write(handle, inode, &iloc);
- 	if (err)
-@@ -400,9 +393,6 @@ static int ext4_ioctl_setproject(struct file *filp, __u32 projid)
- 		err = rc;
- out_stop:
- 	ext4_journal_stop(handle);
--out_unlock:
--	inode_unlock(inode);
--	mnt_drop_write_file(filp);
- 	return err;
- }
- #else
-@@ -626,6 +616,32 @@ static long ext4_ioctl_group_add(struct file *file,
- 	return err;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 5474aaa..cb63fe6 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2736,6 +2736,32 @@ static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
+ 	return 0;
  }
  
 +static int
-+ext4_ioctl_setattr_check_projid(struct inode *inode,
++f2fs_ioctl_setattr_check_projid(struct inode *inode,
 +				struct fsxattr *fa)
 +{
 +	/*
@@ -129,10 +77,10 @@ index a707411..e860df9 100644
 +	if (current_user_ns() == &init_user_ns)
 +		return 0;
 +
-+	if (__kprojid_val(EXT4_I(inode)->i_projid) != fa->fsx_projid)
++	if (__kprojid_val(F2FS_I(inode)->i_projid) != fa->fsx_projid)
 +		return -EINVAL;
 +
-+	if (ext4_test_inode_flag(inode, EXT4_INODE_PROJINHERIT)) {
++	if (F2FS_I(inode)->i_flags & F2FS_PROJINHERIT_FL) {
 +		if (!(fa->fsx_xflags & FS_XFLAG_PROJINHERIT))
 +			return -EINVAL;
 +	} else {
@@ -143,37 +91,37 @@ index a707411..e860df9 100644
 +	return 0;
 +}
 +
- long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
  {
  	struct inode *inode = file_inode(filp);
-@@ -1025,19 +1041,19 @@ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 			return err;
+@@ -2763,19 +2789,20 @@ static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
+ 		return err;
  
- 		inode_lock(inode);
-+		err = ext4_ioctl_setattr_check_projid(inode, &fa);
-+		if (err)
-+			goto out;
- 		flags = (ei->i_flags & ~EXT4_FL_XFLAG_VISIBLE) |
- 			 (flags & EXT4_FL_XFLAG_VISIBLE);
- 		err = ext4_ioctl_setflags(inode, flags);
--		inode_unlock(inode);
--		mnt_drop_write_file(filp);
- 		if (err)
--			return err;
+ 	inode_lock(inode);
++	err = f2fs_ioctl_setattr_check_projid(inode, &fa);
++	if (err)
++		goto out;
+ 	flags = (fi->i_flags & ~F2FS_FL_XFLAG_VISIBLE) |
+ 				(flags & F2FS_FL_XFLAG_VISIBLE);
+ 	err = __f2fs_ioc_setflags(inode, flags);
+-	inode_unlock(inode);
+-	mnt_drop_write_file(filp);
+ 	if (err)
+-		return err;
++		goto out;
+ 
+ 	err = f2fs_ioc_setproject(filp, fa.fsx_projid);
+-	if (err)
+-		return err;
 -
-+			goto out;
- 		err = ext4_ioctl_setproject(filp, fa.fsx_projid);
--		if (err)
--			return err;
--
--		return 0;
+-	return 0;
 +out:
-+		inode_unlock(inode);
-+		mnt_drop_write_file(filp);
-+		return err;
- 	}
- 	case EXT4_IOC_SHUTDOWN:
- 		return ext4_shutdown(sb, arg);
++	inode_unlock(inode);
++	mnt_drop_write_file(filp);
++	return err;
+ }
+ 
+ int f2fs_pin_file_control(struct inode *inode, bool inc)
 -- 
 1.8.3.1
 
