@@ -1,87 +1,183 @@
-From: Ju Hyung Park <qkrwngud825@gmail.com>
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: set 4KB discard granularity by default
-Date: Tue, 4 Sep 2018 23:36:14 +0900
-Message-ID: <CAD14+f15yadDMY-fwSW5TVHRF1JAz-8kKocN0t258H7c1CTDAw@mail.gmail.com>
-References: <20180810100806.9298-1-yuchao0@huawei.com> <20180814041329.GB52730@jaegeuk-macbookpro.roam.corp.google.com>
- <8dd153c2-5611-728b-e4a9-0c59486f53a4@huawei.com>
+From: Wang Shilong <wangshilong1991@gmail.com>
+Subject: [PATCH 1/2] ext4: fix setattr project check upon
+ fssetxattr ioctl
+Date: Tue,  4 Sep 2018 23:54:05 +0900
+Message-ID: <1536072846-19361-1-git-send-email-wshilong@ddn.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <8dd153c2-5611-728b-e4a9-0c59486f53a4@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <wangshilong1991@gmail.com>) id 1fxCij-0008J1-Ta
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 04 Sep 2018 14:54:21 +0000
+Received: from mail-pf1-f193.google.com ([209.85.210.193])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1fxCih-000l5n-Uk
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 04 Sep 2018 14:54:21 +0000
+Received: by mail-pf1-f193.google.com with SMTP id s13-v6so1819485pfi.7
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 04 Sep 2018 07:54:19 -0700 (PDT)
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: adilger@dilger.ca, wshilong@ddn.com, dchinner@redhat.com
 
-Hi,
+Currently, project quota could be changed by fssetxattr
+ioctl, and existed permission check inode_owner_or_capable()
+is obviously not enough, just think that common users could
+change project id of file, that could make users to
+break project quota easily.
 
-I was wondering what would be the negatives on reducing the discard granularity
-other than making discard more aggressive(hence higher overhead and latency?).
+This patch try to follow same regular of xfs project
+quota:
 
-Thanks.
+"Project Quota ID state is only allowed to change from
+within the init namespace. Enforce that restriction only
+if we are trying to change the quota ID state.
+Everything else is allowed in user namespaces."
 
-On Tue, Aug 14, 2018 at 4:08 PM Chao Yu <yuchao0@huawei.com> wrote:
->
-> On 2018/8/14 12:13, Jaegeuk Kim wrote:
-> > On 08/10, Chao Yu wrote:
-> >> Small granularity (size < 64K) fragmentation will cause f2fs suspending
-> >> all pending discards, result in performance regression, so let's set
-> >> 4KB discard granularity by default.
-> >>
-> >> So that without fstrim, we also have the ability to avoid any performance
-> >> regression caused by non-alignment mapping between fs and flash device.
-> >
-> > This is why we added a sysfs entry. Why do we need to change the default
-> > value every time?
->
-> Of course, I didn't forget it. But, mostly, our user didn't know very well about
-> our filesystem including each configuration's meaning, mechanism, or usage
-> scenario, most of the time, they will choose to test f2fs with all default
-> option, and then make the conclusion.
->
-> Currently, with default 64k granularity, if we simulate fragmentation scenario
-> of filesystem, like by a)writing 4k file and b)deleting even indexing file, then
-> all 4k discards won't be issued, result in exhaustion of free space of flash
-> storage, and performance degradation.
->
-> So I think we'd better to consider and set default value of configuration more
-> elaborately to avoid obvious weakness.
->
-> Thoughts?
->
-> Thanks,
->
-> >
-> >>
-> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >> ---
-> >>  fs/f2fs/f2fs.h | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >> index 58431b9bfd8f..273ffdaf4891 100644
-> >> --- a/fs/f2fs/f2fs.h
-> >> +++ b/fs/f2fs/f2fs.h
-> >> @@ -248,7 +248,7 @@ struct discard_entry {
-> >>  };
-> >>
-> >>  /* default discard granularity of inner discard thread, unit: block count */
-> >> -#define DEFAULT_DISCARD_GRANULARITY         16
-> >> +#define DEFAULT_DISCARD_GRANULARITY         1
-> >>
-> >>  /* max discard pend list number */
-> >>  #define MAX_PLIST_NUM               512
-> >> --
-> >> 2.18.0.rc1
-> >
-> > .
-> >
->
->
-> ------------------------------------------------------------------------------
-> Check out the vibrant tech community on one of the world's most
-> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+Besides that, check and set project id'state should
+be an atomic operation, protect whole operation with
+inode lock.
+
+Signed-off-by: Wang Shilong <wshilong@ddn.com>
+---
+ fs/ext4/ioctl.c | 62 ++++++++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 39 insertions(+), 23 deletions(-)
+
+diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+index a707411..e860df9 100644
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -339,19 +339,14 @@ static int ext4_ioctl_setproject(struct file *filp, __u32 projid)
+ 	if (projid_eq(kprojid, EXT4_I(inode)->i_projid))
+ 		return 0;
+ 
+-	err = mnt_want_write_file(filp);
+-	if (err)
+-		return err;
+-
+ 	err = -EPERM;
+-	inode_lock(inode);
+ 	/* Is it quota file? Do not allow user to mess with it */
+ 	if (ext4_is_quota_file(inode))
+-		goto out_unlock;
++		return err;
+ 
+ 	err = ext4_get_inode_loc(inode, &iloc);
+ 	if (err)
+-		goto out_unlock;
++		return err;
+ 
+ 	raw_inode = ext4_raw_inode(&iloc);
+ 	if (!EXT4_FITS_IN_INODE(raw_inode, ei, i_projid)) {
+@@ -359,7 +354,7 @@ static int ext4_ioctl_setproject(struct file *filp, __u32 projid)
+ 					      EXT4_SB(sb)->s_want_extra_isize,
+ 					      &iloc);
+ 		if (err)
+-			goto out_unlock;
++			return err;
+ 	} else {
+ 		brelse(iloc.bh);
+ 	}
+@@ -369,10 +364,8 @@ static int ext4_ioctl_setproject(struct file *filp, __u32 projid)
+ 	handle = ext4_journal_start(inode, EXT4_HT_QUOTA,
+ 		EXT4_QUOTA_INIT_BLOCKS(sb) +
+ 		EXT4_QUOTA_DEL_BLOCKS(sb) + 3);
+-	if (IS_ERR(handle)) {
+-		err = PTR_ERR(handle);
+-		goto out_unlock;
+-	}
++	if (IS_ERR(handle))
++		return PTR_ERR(handle);
+ 
+ 	err = ext4_reserve_inode_write(handle, inode, &iloc);
+ 	if (err)
+@@ -400,9 +393,6 @@ static int ext4_ioctl_setproject(struct file *filp, __u32 projid)
+ 		err = rc;
+ out_stop:
+ 	ext4_journal_stop(handle);
+-out_unlock:
+-	inode_unlock(inode);
+-	mnt_drop_write_file(filp);
+ 	return err;
+ }
+ #else
+@@ -626,6 +616,32 @@ static long ext4_ioctl_group_add(struct file *file,
+ 	return err;
+ }
+ 
++static int
++ext4_ioctl_setattr_check_projid(struct inode *inode,
++				struct fsxattr *fa)
++{
++	/*
++	 * Project Quota ID state is only allowed to change from within the init
++	 * namespace. Enforce that restriction only if we are trying to change
++	 * the quota ID state. Everything else is allowed in user namespaces.
++	 */
++	if (current_user_ns() == &init_user_ns)
++		return 0;
++
++	if (__kprojid_val(EXT4_I(inode)->i_projid) != fa->fsx_projid)
++		return -EINVAL;
++
++	if (ext4_test_inode_flag(inode, EXT4_INODE_PROJINHERIT)) {
++		if (!(fa->fsx_xflags & FS_XFLAG_PROJINHERIT))
++			return -EINVAL;
++	} else {
++		if (fa->fsx_xflags & FS_XFLAG_PROJINHERIT)
++			return -EINVAL;
++	}
++
++	return 0;
++}
++
+ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ {
+ 	struct inode *inode = file_inode(filp);
+@@ -1025,19 +1041,19 @@ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 			return err;
+ 
+ 		inode_lock(inode);
++		err = ext4_ioctl_setattr_check_projid(inode, &fa);
++		if (err)
++			goto out;
+ 		flags = (ei->i_flags & ~EXT4_FL_XFLAG_VISIBLE) |
+ 			 (flags & EXT4_FL_XFLAG_VISIBLE);
+ 		err = ext4_ioctl_setflags(inode, flags);
+-		inode_unlock(inode);
+-		mnt_drop_write_file(filp);
+ 		if (err)
+-			return err;
+-
++			goto out;
+ 		err = ext4_ioctl_setproject(filp, fa.fsx_projid);
+-		if (err)
+-			return err;
+-
+-		return 0;
++out:
++		inode_unlock(inode);
++		mnt_drop_write_file(filp);
++		return err;
+ 	}
+ 	case EXT4_IOC_SHUTDOWN:
+ 		return ext4_shutdown(sb, arg);
+-- 
+1.8.3.1
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
