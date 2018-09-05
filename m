@@ -1,31 +1,27 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: Out of inodes on my f2fs partition
-Date: Wed, 5 Sep 2018 09:57:50 -0700
-Message-ID: <20180905165750.GA24972@jaegeuk-macbookpro.roam.corp.google.com>
-References: <CAF_dkJAhK_1WtPF_2s5xUX60k87iMLbAYHV1=0S2aKQv3jh8Ng@mail.gmail.com>
- <5adf6554-6881-1bd6-3be2-28ae6c72f794@kernel.org>
- <CAF_dkJC5GvRzweVkCKWeHMuRWp=6tNdDDR14VLrGY7NcZs7ObQ@mail.gmail.com>
- <e18462d8-10bb-3939-e3b3-cbd764654c31@kernel.org>
- <CAF_dkJCgEfdSKM2ibkPezKW0dLN7QawwALX6p=-wYz64ZSe0sw@mail.gmail.com>
- <56d656d8-fc19-2919-488a-b7b3e0df9e43@kernel.org>
- <20180830165845.GB3742@jaegeuk-macbookpro.roam.corp.google.com>
- <7e01fdd5-f39e-793b-97d7-72b93f567579@kernel.org>
+Subject: Re: [PATCH] f2fs: add additional sanity check in
+ f2fs_acl_from_disk()
+Date: Wed, 5 Sep 2018 09:59:40 -0700
+Message-ID: <20180905165940.GB24972@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180830133331.5503-1-cgxu519@gmx.com>
+ <20180905042822.GA17417@jaegeuk-macbookpro.roam.corp.google.com>
+ <8d2bbf71-94d8-aabf-a53b-ee52df0d11bd@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1fxb7w-0006Xb-4S
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 05 Sep 2018 16:58:00 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1fxb9l-0005kq-Ps
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 05 Sep 2018 16:59:53 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fxb7t-001z0D-4z
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 05 Sep 2018 16:57:59 +0000
+ id 1fxb9h-009JCj-Uz
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 05 Sep 2018 16:59:53 +0000
 Content-Disposition: inline
-In-Reply-To: <7e01fdd5-f39e-793b-97d7-72b93f567579@kernel.org>
+In-Reply-To: <8d2bbf71-94d8-aabf-a53b-ee52df0d11bd@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,35 +31,54 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao@kernel.org>
-Cc: Patrick Doyle <wpdster@gmail.com>, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Chengguang Xu <cgxu519@gmx.com>, linux-f2fs-devel@lists.sourceforge.net
 
 On 09/05, Chao Yu wrote:
-> Jaegeuk,
+> Hi Jaegeuk,
 > 
-> I missed to reply this thread.
+> Could you update dev-test branch? so I can rebase my patch on it. :)
+
+Will do soon. :)
+
 > 
-> On 2018/8/31 0:58, Jaegeuk Kim wrote:
-> > Chao,
+> On 2018/9/5 12:28, Jaegeuk Kim wrote:
+> > On 08/30, Chengguang Xu wrote:
+> >> Add additinal sanity check for irregular case(e.g. corruption).
+> >> If size of extended attribution is smaller than size of acl header,
+> >> then return -EINVAL.
+> >>
+> >> Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+> >> ---
+> >>  fs/f2fs/acl.c | 3 +++
+> >>  1 file changed, 3 insertions(+)
+> >>
+> >> diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+> >> index 111824199a88..79e9ea773070 100644
+> >> --- a/fs/f2fs/acl.c
+> >> +++ b/fs/f2fs/acl.c
+> >> @@ -53,6 +53,9 @@ static struct posix_acl *f2fs_acl_from_disk(const char *value, size_t size)
+> >>  	struct f2fs_acl_entry *entry = (struct f2fs_acl_entry *)(hdr + 1);
+> >>  	const char *end = value + size;
+> >>  
+> >> +	if (size < sizeof(f2fs_acl_header))
 > > 
-> > It seems we may need to consider tune.f2fs for this case.
-> 
-> It may need to expand NAT size, which needs a extra resize operation, or we just
-> need to consider non-expanding case?
-
-Urg, right, we need resizing partition layout.
-
-> 
-> > Could you TAL?
-> What does TAL mean... I didn't find out the meaning even though via google.
-
-Take A Look. Sorry. :P
-
-> 
-> Thanks,
-> 
+> > 		sizeof(struct f2fs_acl_header)
+> > 
+> > I fixed the above, and merged.
 > > 
 > > Thanks,
+> > 
+> >> +		return ERR_PTR(-EINVAL);
+> >> +
+> >>  	if (hdr->a_version != cpu_to_le32(F2FS_ACL_VERSION))
+> >>  		return ERR_PTR(-EINVAL);
+> >>  
+> >> -- 
+> >> 2.17.1
+> > 
+> > .
+> > 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
