@@ -1,29 +1,31 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 200635] Oops error in refresh_sit_entry() while
- unmounting a crafted F2FS image
-Date: Wed, 05 Sep 2018 16:44:46 +0000
-Message-ID: <bug-200635-202145-Fd1qLvQr0K@https.bugzilla.kernel.org/>
-References: <bug-200635-202145@https.bugzilla.kernel.org/>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: Out of inodes on my f2fs partition
+Date: Wed, 5 Sep 2018 09:57:50 -0700
+Message-ID: <20180905165750.GA24972@jaegeuk-macbookpro.roam.corp.google.com>
+References: <CAF_dkJAhK_1WtPF_2s5xUX60k87iMLbAYHV1=0S2aKQv3jh8Ng@mail.gmail.com>
+ <5adf6554-6881-1bd6-3be2-28ae6c72f794@kernel.org>
+ <CAF_dkJC5GvRzweVkCKWeHMuRWp=6tNdDDR14VLrGY7NcZs7ObQ@mail.gmail.com>
+ <e18462d8-10bb-3939-e3b3-cbd764654c31@kernel.org>
+ <CAF_dkJCgEfdSKM2ibkPezKW0dLN7QawwALX6p=-wYz64ZSe0sw@mail.gmail.com>
+ <56d656d8-fc19-2919-488a-b7b3e0df9e43@kernel.org>
+ <20180830165845.GB3742@jaegeuk-macbookpro.roam.corp.google.com>
+ <7e01fdd5-f39e-793b-97d7-72b93f567579@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1fxavI-0003l0-2v
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 05 Sep 2018 16:44:56 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
+ (envelope-from <jaegeuk@kernel.org>) id 1fxb7w-0006Xb-4S
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 05 Sep 2018 16:58:00 +0000
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fxavE-001yO9-Jd
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 05 Sep 2018 16:44:55 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id EA7A42928D
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed,  5 Sep 2018 16:44:46 +0000 (UTC)
-In-Reply-To: <bug-200635-202145@https.bugzilla.kernel.org/>
+ id 1fxb7t-001z0D-4z
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 05 Sep 2018 16:57:59 +0000
+Content-Disposition: inline
+In-Reply-To: <7e01fdd5-f39e-793b-97d7-72b93f567579@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,26 +35,36 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao@kernel.org>
+Cc: Patrick Doyle <wpdster@gmail.com>, linux-f2fs-devel@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200635
+On 09/05, Chao Yu wrote:
+> Jaegeuk,
+> 
+> I missed to reply this thread.
+> 
+> On 2018/8/31 0:58, Jaegeuk Kim wrote:
+> > Chao,
+> > 
+> > It seems we may need to consider tune.f2fs for this case.
+> 
+> It may need to expand NAT size, which needs a extra resize operation, or we just
+> need to consider non-expanding case?
 
-Stathis Maneas (smaneas@cs.toronto.edu) changed:
+Urg, right, we need resizing partition layout.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|REOPENED                    |RESOLVED
-         Resolution|---                         |CODE_FIX
+> 
+> > Could you TAL?
+> What does TAL mean... I didn't find out the meaning even though via google.
 
---- Comment #7 from Stathis Maneas (smaneas@cs.toronto.edu) ---
-I can verify that the latter patch is able to resolved the error and thus, I am
-marking the issue as resolved.
+Take A Look. Sorry. :P
 
-Thanks a lot!
+> 
+> Thanks,
+> 
+> > 
+> > Thanks,
 
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
 engaging tech sites, Slashdot.org! http://sdm.link/slashdot
