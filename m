@@ -1,25 +1,16 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: add additional sanity check in
- f2fs_acl_from_disk()
-Date: Wed, 5 Sep 2018 13:54:38 +0800
-Message-ID: <8d2bbf71-94d8-aabf-a53b-ee52df0d11bd@huawei.com>
-References: <20180830133331.5503-1-cgxu519@gmx.com>
- <20180905042822.GA17417@jaegeuk-macbookpro.roam.corp.google.com>
+From: cgxu519 <cgxu519@gmx.com>
+Subject: Re: [Jfs-discussion] [PATCH v2 4/5] jfs: cache NULL when
+ both default_acl and acl are NULL
+Date: Wed, 5 Sep 2018 14:13:47 +0800
+Message-ID: <c231d198-7a4e-63a0-0a7d-9211ab0abfe9@gmx.com>
+References: <20180831143352.22970-1-cgxu519@gmx.com>
+ <20180831143352.22970-4-cgxu519@gmx.com>
+ <0e37733e-9acd-cf82-62f7-420f0fa864eb@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fxQmC-0003Vt-Cc
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 05 Sep 2018 05:54:52 +0000
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fxQm9-008oKK-Tz
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 05 Sep 2018 05:54:52 +0000
-In-Reply-To: <20180905042822.GA17417@jaegeuk-macbookpro.roam.corp.google.com>
+In-Reply-To: <0e37733e-9acd-cf82-62f7-420f0fa864eb@oracle.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -30,51 +21,30 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chengguang Xu <cgxu519@gmx.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Dave Kleikamp <dave.kleikamp@oracle.com>, jack@suse.com, tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org, yuchao0@huawei.com, shaggy@kernel.org, hubcap@omnibond.com, martin@omnibond.com
+Cc: jfs-discussion@lists.sourceforge.net, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, devel@lists.orangefs.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Jaegeuk,
 
-Could you update dev-test branch? so I can rebase my patch on it. :)
+On 09/04/2018 04:34 AM, Dave Kleikamp wrote:
+> Are you pushing these as a series, or would you like this patch pushed
+> through the jfs tree?
+I'd hope maintainers pick individual patch to their tree.
 
-On 2018/9/5 12:28, Jaegeuk Kim wrote:
-> On 08/30, Chengguang Xu wrote:
->> Add additinal sanity check for irregular case(e.g. corruption).
->> If size of extended attribution is smaller than size of acl header,
->> then return -EINVAL.
+Thanks,
+Chengguang
+
+>
+> On 8/31/18 9:33 AM, Chengguang Xu wrote:
+>> default_acl and acl of newly created inode will be initiated
+>> as ACL_NOT_CACHED in vfs function inode_init_always() and later
+>> will be updated by calling xxx_init_acl() in specific filesystems.
+>> Howerver, when default_acl and acl are NULL then they keep the value
+>> of ACL_NOT_CACHED, this patch tries to cache NULL for acl/default_acl
+>> in this case.
 >>
 >> Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
->> ---
->>  fs/f2fs/acl.c | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
->> index 111824199a88..79e9ea773070 100644
->> --- a/fs/f2fs/acl.c
->> +++ b/fs/f2fs/acl.c
->> @@ -53,6 +53,9 @@ static struct posix_acl *f2fs_acl_from_disk(const char *value, size_t size)
->>  	struct f2fs_acl_entry *entry = (struct f2fs_acl_entry *)(hdr + 1);
->>  	const char *end = value + size;
->>  
->> +	if (size < sizeof(f2fs_acl_header))
-> 
-> 		sizeof(struct f2fs_acl_header)
-> 
-> I fixed the above, and merged.
-> 
-> Thanks,
-> 
->> +		return ERR_PTR(-EINVAL);
->> +
->>  	if (hdr->a_version != cpu_to_le32(F2FS_ACL_VERSION))
->>  		return ERR_PTR(-EINVAL);
->>  
->> -- 
->> 2.17.1
-> 
-> .
-> 
-
+> Acked-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+>
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
