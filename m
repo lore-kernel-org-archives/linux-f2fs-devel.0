@@ -1,51 +1,43 @@
-From: cgxu519 <cgxu519@gmx.com>
-Subject: Re: [Jfs-discussion] [PATCH v2 4/5] jfs: cache NULL when
- both default_acl and acl are NULL
-Date: Wed, 5 Sep 2018 14:13:47 +0800
-Message-ID: <c231d198-7a4e-63a0-0a7d-9211ab0abfe9@gmx.com>
-References: <20180831143352.22970-1-cgxu519@gmx.com>
- <20180831143352.22970-4-cgxu519@gmx.com>
- <0e37733e-9acd-cf82-62f7-420f0fa864eb@oracle.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 2/2] f2fs: fix memory leak of percpu counter in fill_super()
+Date: Wed, 5 Sep 2018 14:54:02 +0800
+Message-ID: <20180905065402.52945-2-yuchao0@huawei.com>
+References: <20180905065402.52945-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-In-Reply-To: <0e37733e-9acd-cf82-62f7-420f0fa864eb@oracle.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Dave Kleikamp <dave.kleikamp@oracle.com>, jack@suse.com, tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org, yuchao0@huawei.com, shaggy@kernel.org, hubcap@omnibond.com, martin@omnibond.com
-Cc: jfs-discussion@lists.sourceforge.net, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, devel@lists.orangefs.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180905065402.52945-1-yuchao0@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
+In fill_super -> init_percpu_info, we should destroy percpu counter
+in error path, otherwise memory allcoated for percpu counter will
+leak.
 
-On 09/04/2018 04:34 AM, Dave Kleikamp wrote:
-> Are you pushing these as a series, or would you like this patch pushed
-> through the jfs tree?
-I'd hope maintainers pick individual patch to their tree.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/super.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Thanks,
-Chengguang
-
->
-> On 8/31/18 9:33 AM, Chengguang Xu wrote:
->> default_acl and acl of newly created inode will be initiated
->> as ACL_NOT_CACHED in vfs function inode_init_always() and later
->> will be updated by calling xxx_init_acl() in specific filesystems.
->> Howerver, when default_acl and acl are NULL then they keep the value
->> of ACL_NOT_CACHED, this patch tries to cache NULL for acl/default_acl
->> in this case.
->>
->> Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
-> Acked-by: Dave Kleikamp <dave.kleikamp@oracle.com>
->
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 627b9a959714..cc4bd264111e 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2668,8 +2668,12 @@ static int init_percpu_info(struct f2fs_sb_info *sbi)
+ 	if (err)
+ 		return err;
+ 
+-	return percpu_counter_init(&sbi->total_valid_inode_count, 0,
++	err = percpu_counter_init(&sbi->total_valid_inode_count, 0,
+ 								GFP_KERNEL);
++	if (err)
++		percpu_counter_destroy(&sbi->alloc_valid_block_count);
++
++	return err;
+ }
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
+-- 
+2.18.0.rc1
