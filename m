@@ -1,356 +1,139 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v4] f2fs: guarantee journalled quota data by
- checkpoint
-Date: Thu, 6 Sep 2018 11:14:19 +0800
-Message-ID: <54a6a441-6f38-9b38-01b3-958d934f713e@huawei.com>
-References: <20180823112844.2092-1-yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to do sanity check with current segment number
+Date: Thu, 6 Sep 2018 20:34:12 +0800
+Message-ID: <20180906123412.87812-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fxkkf-0004yu-Hc
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Sep 2018 03:14:37 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fxkkd-002XA4-DG
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Sep 2018 03:14:37 +0000
-In-Reply-To: <20180823112844.2092-1-yuchao0@huawei.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Ping,
+https://bugzilla.kernel.org/show_bug.cgi?id=200219
 
-On 2018/8/23 19:28, Chao Yu wrote:
-> For journalled quota mode, let checkpoint to flush dquot dirty data
-> and quota file data to keep all file quota info are consisting in
-> last checkpoint, so that we can avoid quota file being corrupted
-> after SPO.
-> 
-> The implementation is that:
-> 
-> 1. add a global state SBI_QUOTA_NEED_FLUSH to indicate that there is
-> cached dquot metadata changes in quota subsystem, and later checkpoint
-> should:
->  a) flush dquot metadata into quota file.
->  b) flush quota file to storage to keep file usage be consistent.
-> 
-> 2. add a glabal state SBI_QUOTA_NEED_REPAIR to indicate that quota
-> persisting is failed due to -EIO or -ENOSPC, and then,
->  a) checkpoint will skip syncing dquot metadata.
->  b) CP_QUOTA_NEED_FSCK_FLAG will be set in last cp pack to give a
->     hint for fsck repairing.
-> 
-> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
-> v4:
-> - rebase to dev-test to avoid compiling error due to conflict with
-> another cleanup patch.
->  fs/f2fs/checkpoint.c    | 21 +++++++++
->  fs/f2fs/data.c          |  8 +++-
->  fs/f2fs/f2fs.h          |  3 ++
->  fs/f2fs/super.c         | 95 +++++++++++++++++++++++++++++++++++++----
->  include/linux/f2fs_fs.h |  1 +
->  5 files changed, 117 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index 59d0472013f4..c120d197b479 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -1086,6 +1086,12 @@ static void __prepare_cp_block(struct f2fs_sb_info *sbi)
->  	ckpt->next_free_nid = cpu_to_le32(last_nid);
->  }
->  
-> +static bool __need_flush_quota(struct f2fs_sb_info *sbi)
-> +{
-> +	return is_sbi_flag_set(sbi, SBI_QUOTA_NEED_FLUSH) &&
-> +			!is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR);
-> +}
-> +
->  /*
->   * Freeze all the FS-operations for checkpoint.
->   */
-> @@ -1102,7 +1108,19 @@ static int block_operations(struct f2fs_sb_info *sbi)
->  	blk_start_plug(&plug);
->  
->  retry_flush_dents:
-> +	if (__need_flush_quota(sbi)) {
-> +		clear_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
-> +		err = f2fs_quota_sync(sbi->sb, -1);
-> +		if (err)
-> +			goto out;
-> +	}
-> +
->  	f2fs_lock_all(sbi);
-> +	if (__need_flush_quota(sbi)) {
-> +		f2fs_unlock_all(sbi);
-> +		goto retry_flush_dents;
-> +	}
-> +
->  	/* write all the dirty dentry pages */
->  	if (get_pages(sbi, F2FS_DIRTY_DENTS)) {
->  		f2fs_unlock_all(sbi);
-> @@ -1217,6 +1235,9 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->  	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
->  		__set_ckpt_flags(ckpt, CP_FSCK_FLAG);
->  
-> +	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
-> +		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-> +
->  	/* set this flag to activate crc|cp_ver for recovery */
->  	__set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG);
->  	__clear_ckpt_flags(ckpt, CP_NOCRC_RECOVERY_FLAG);
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 382c1ef9a9e4..dd51632f97ec 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -49,7 +49,7 @@ static bool __is_cp_guaranteed(struct page *page)
->  			inode->i_ino ==  F2FS_NODE_INO(sbi) ||
->  			S_ISDIR(inode->i_mode) ||
->  			(S_ISREG(inode->i_mode) &&
-> -			is_inode_flag_set(inode, FI_ATOMIC_FILE)) ||
-> +			(f2fs_is_atomic_file(inode) || IS_NOQUOTA(inode))) ||
->  			is_cold_data(page))
->  		return true;
->  	return false;
-> @@ -1705,6 +1705,8 @@ bool f2fs_should_update_outplace(struct inode *inode, struct f2fs_io_info *fio)
->  		return true;
->  	if (S_ISDIR(inode->i_mode))
->  		return true;
-> +	if (IS_NOQUOTA(inode))
-> +		return true;
->  	if (f2fs_is_atomic_file(inode))
->  		return true;
->  	if (fio) {
-> @@ -1949,7 +1951,7 @@ static int __write_data_page(struct page *page, bool *submitted,
->  	}
->  
->  	unlock_page(page);
-> -	if (!S_ISDIR(inode->i_mode))
-> +	if (!S_ISDIR(inode->i_mode) && !IS_NOQUOTA(inode))
->  		f2fs_balance_fs(sbi, need_balance_fs);
->  
->  	if (unlikely(f2fs_cp_error(sbi))) {
-> @@ -2140,6 +2142,8 @@ static inline bool __should_serialize_io(struct inode *inode,
->  {
->  	if (!S_ISREG(inode->i_mode))
->  		return false;
-> +	if (IS_NOQUOTA(inode))
-> +		return false;
->  	if (wbc->sync_mode != WB_SYNC_ALL)
->  		return true;
->  	if (get_dirty_pages(inode) >= SM_I(F2FS_I_SB(inode))->min_seq_blocks)
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index da942ecf705e..f2241b001130 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1089,6 +1089,8 @@ enum {
->  	SBI_NEED_CP,				/* need to checkpoint */
->  	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
->  	SBI_IS_RECOVERED,			/* recovered orphan/data */
-> +	SBI_QUOTA_NEED_FLUSH,			/* need to flush quota info in CP */
-> +	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
->  };
->  
->  enum {
-> @@ -2828,6 +2830,7 @@ static inline int f2fs_add_link(struct dentry *dentry, struct inode *inode)
->  int f2fs_inode_dirtied(struct inode *inode, bool sync);
->  void f2fs_inode_synced(struct inode *inode);
->  int f2fs_enable_quota_files(struct f2fs_sb_info *sbi, bool rdonly);
-> +int f2fs_quota_sync(struct super_block *sb, int type);
->  void f2fs_quota_off_umount(struct super_block *sb);
->  int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover);
->  int f2fs_sync_fs(struct super_block *sb, int sync);
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index ae22fb357ac0..9ea16111a19a 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1696,6 +1696,13 @@ static qsize_t *f2fs_get_reserved_space(struct inode *inode)
->  
->  static int f2fs_quota_on_mount(struct f2fs_sb_info *sbi, int type)
->  {
-> +
-> +	if (is_set_ckpt_flags(sbi, CP_QUOTA_NEED_FSCK_FLAG)) {
-> +		f2fs_msg(sbi->sb, KERN_ERR,
-> +			"quota sysfile may be corrupted, skip loading it");
-> +		return 0;
-> +	}
-> +
->  	return dquot_quota_on_mount(sbi->sb, F2FS_OPTION(sbi).s_qf_names[type],
->  					F2FS_OPTION(sbi).s_jquota_fmt, type);
->  }
-> @@ -1766,7 +1773,14 @@ static int f2fs_enable_quotas(struct super_block *sb)
->  		test_opt(F2FS_SB(sb), PRJQUOTA),
->  	};
->  
-> +	if (is_set_ckpt_flags(F2FS_SB(sb), CP_QUOTA_NEED_FSCK_FLAG)) {
-> +		f2fs_msg(sb, KERN_ERR,
-> +			"quota file may be corrupted, skip loading it");
-> +		return 0;
-> +	}
-> +
->  	sb_dqopt(sb)->flags |= DQUOT_QUOTA_SYS_FILE | DQUOT_NOLIST_DIRTY;
-> +
->  	for (type = 0; type < MAXQUOTAS; type++) {
->  		qf_inum = f2fs_qf_ino(sb, type);
->  		if (qf_inum) {
-> @@ -1787,7 +1801,7 @@ static int f2fs_enable_quotas(struct super_block *sb)
->  	return 0;
->  }
->  
-> -static int f2fs_quota_sync(struct super_block *sb, int type)
-> +int f2fs_quota_sync(struct super_block *sb, int type)
->  {
->  	struct quota_info *dqopt = sb_dqopt(sb);
->  	int cnt;
-> @@ -1795,7 +1809,7 @@ static int f2fs_quota_sync(struct super_block *sb, int type)
->  
->  	ret = dquot_writeback_dquots(sb, type);
->  	if (ret)
-> -		return ret;
-> +		goto out;
->  
->  	/*
->  	 * Now when everything is written we can discard the pagecache so
-> @@ -1809,13 +1823,16 @@ static int f2fs_quota_sync(struct super_block *sb, int type)
->  
->  		ret = filemap_write_and_wait(dqopt->files[cnt]->i_mapping);
->  		if (ret)
-> -			return ret;
-> +			goto out;
->  
->  		inode_lock(dqopt->files[cnt]);
->  		truncate_inode_pages(&dqopt->files[cnt]->i_data, 0);
->  		inode_unlock(dqopt->files[cnt]);
->  	}
-> -	return 0;
-> +out:
-> +	if (ret)
-> +		set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
-> +	return ret;
->  }
->  
->  static int f2fs_quota_on(struct super_block *sb, int type, int format_id,
-> @@ -1876,6 +1893,61 @@ void f2fs_quota_off_umount(struct super_block *sb)
->  		f2fs_quota_off(sb, type);
->  }
->  
-> +static int f2fs_dquot_commit(struct dquot *dquot)
-> +{
-> +	int ret;
-> +
-> +	ret = dquot_commit(dquot);
-> +	if (ret == -ENOSPC || ret == -EIO)
-> +		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
-> +	return ret;
-> +}
-> +
-> +static int f2fs_dquot_acquire(struct dquot *dquot)
-> +{
-> +	int ret;
-> +
-> +	ret = dquot_acquire(dquot);
-> +	if (ret == -ENOSPC || ret == -EIO)
-> +		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
-> +	return ret;
-> +}
-> +
-> +static int f2fs_dquot_release(struct dquot *dquot)
-> +{
-> +	int ret;
-> +
-> +	ret = dquot_release(dquot);
-> +	if (ret == -ENOSPC || ret == -EIO)
-> +		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
-> +	return ret;
-> +}
-> +
-> +static int f2fs_dquot_mark_dquot_dirty(struct dquot *dquot)
-> +{
-> +	struct super_block *sb = dquot->dq_sb;
-> +	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-> +
-> +	/* if we are using journalled quota */
-> +	if (f2fs_sb_has_quota_ino(sb) ||
-> +		F2FS_OPTION(sbi).s_qf_names[USRQUOTA] ||
-> +		F2FS_OPTION(sbi).s_qf_names[GRPQUOTA] ||
-> +		F2FS_OPTION(sbi).s_qf_names[PRJQUOTA])
-> +		set_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
-> +
-> +	return dquot_mark_dquot_dirty(dquot);
-> +}
-> +
-> +static int f2fs_dquot_commit_info(struct super_block *sb, int type)
-> +{
-> +	int ret;
-> +
-> +	ret = dquot_commit_info(sb, type);
-> +	if (ret == -ENOSPC || ret == -EIO)
-> +		set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
-> +	return ret;
-> +}
-> +
->  static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
->  {
->  	*projid = F2FS_I(inode)->i_projid;
-> @@ -1884,11 +1956,11 @@ static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
->  
->  static const struct dquot_operations f2fs_quota_operations = {
->  	.get_reserved_space = f2fs_get_reserved_space,
-> -	.write_dquot	= dquot_commit,
-> -	.acquire_dquot	= dquot_acquire,
-> -	.release_dquot	= dquot_release,
-> -	.mark_dirty	= dquot_mark_dquot_dirty,
-> -	.write_info	= dquot_commit_info,
-> +	.write_dquot	= f2fs_dquot_commit,
-> +	.acquire_dquot	= f2fs_dquot_acquire,
-> +	.release_dquot	= f2fs_dquot_release,
-> +	.mark_dirty	= f2fs_dquot_mark_dquot_dirty,
-> +	.write_info	= f2fs_dquot_commit_info,
->  	.alloc_dquot	= dquot_alloc,
->  	.destroy_dquot	= dquot_destroy,
->  	.get_projid	= f2fs_get_projid,
-> @@ -1906,6 +1978,11 @@ static const struct quotactl_ops f2fs_quotactl_ops = {
->  	.get_nextdqblk	= dquot_get_next_dqblk,
->  };
->  #else
-> +int f2fs_quota_sync(struct super_block *sb, int type)
-> +{
-> +	return 0;
-> +}
-> +
->  void f2fs_quota_off_umount(struct super_block *sb)
->  {
->  }
-> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-> index f70f8ac9c4f4..6a879a865343 100644
-> --- a/include/linux/f2fs_fs.h
-> +++ b/include/linux/f2fs_fs.h
-> @@ -118,6 +118,7 @@ struct f2fs_super_block {
->  /*
->   * For checkpoint
->   */
-> +#define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
->  #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
->  #define CP_NOCRC_RECOVERY_FLAG	0x00000200
->  #define CP_TRIMMED_FLAG		0x00000100
-> 
+Reproduction way:
+- mount image
+- run poc code
+- umount image
 
+F2FS-fs (loop1): Bitmap was wrongly set, blk:15364
+------------[ cut here ]------------
+kernel BUG at /home/yuchao/git/devf2fs/segment.c:2061!
+invalid opcode: 0000 [#1] PREEMPT SMP
+CPU: 2 PID: 17686 Comm: umount Tainted: G        W  O      4.18.0-rc2+ #39
+Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+EIP: update_sit_entry+0x459/0x4e0 [f2fs]
+Code: e8 1c b5 fd ff 0f 0b 0f 0b 8b 45 e4 c7 44 24 08 9c 7a 6c f8 c7 44 24 04 bc 4a 6c f8 89 44 24 0c 8b 06 89 04 24 e8 f7 b4 fd ff <0f> 0b 8b 45 e4 0f b6 d2 89 54 24 10 c7 44 24 08 60 7a 6c f8 c7 44
+EAX: 00000032 EBX: 000000f8 ECX: 00000002 EDX: 00000001
+ESI: d7177000 EDI: f520fe68 EBP: d6477c6c ESP: d6477c34
+DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00010282
+CR0: 80050033 CR2: b7fbe000 CR3: 2a99b3c0 CR4: 000406f0
+Call Trace:
+ f2fs_allocate_data_block+0x124/0x580 [f2fs]
+ do_write_page+0x78/0x150 [f2fs]
+ f2fs_do_write_node_page+0x25/0xa0 [f2fs]
+ __write_node_page+0x2bf/0x550 [f2fs]
+ f2fs_sync_node_pages+0x60e/0x6d0 [f2fs]
+ ? sync_inode_metadata+0x2f/0x40
+ ? f2fs_write_checkpoint+0x28f/0x7d0 [f2fs]
+ ? up_write+0x1e/0x80
+ f2fs_write_checkpoint+0x2a9/0x7d0 [f2fs]
+ ? mark_held_locks+0x5d/0x80
+ ? _raw_spin_unlock_irq+0x27/0x50
+ kill_f2fs_super+0x68/0x90 [f2fs]
+ deactivate_locked_super+0x3d/0x70
+ deactivate_super+0x40/0x60
+ cleanup_mnt+0x39/0x70
+ __cleanup_mnt+0x10/0x20
+ task_work_run+0x81/0xa0
+ exit_to_usermode_loop+0x59/0xa7
+ do_fast_syscall_32+0x1f5/0x22c
+ entry_SYSENTER_32+0x53/0x86
+EIP: 0xb7f95c51
+Code: c1 1e f7 ff ff 89 e5 8b 55 08 85 d2 8b 81 64 cd ff ff 74 02 89 02 5d c3 8b 0c 24 c3 8b 1c 24 c3 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d 76 00 58 b8 77 00 00 00 cd 80 90 8d 76
+EAX: 00000000 EBX: 0871ab90 ECX: bfb2cd00 EDX: 00000000
+ESI: 00000000 EDI: 0871ab90 EBP: 0871ab90 ESP: bfb2cd7c
+DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00000246
+Modules linked in: f2fs(O) crc32_generic bnep rfcomm bluetooth ecdh_generic snd_intel8x0 snd_ac97_codec ac97_bus snd_pcm snd_seq_midi snd_seq_midi_event snd_rawmidi snd_seq pcbc joydev aesni_intel snd_seq_device aes_i586 snd_timer crypto_simd snd cryptd soundcore mac_hid serio_raw video i2c_piix4 parport_pc ppdev lp parport hid_generic psmouse usbhid hid e1000 [last unloaded: f2fs]
+---[ end trace d423f83982cfcdc5 ]---
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+The reason is, different log headers using the same segment, once
+one log's next block address is used by another log, it will cause
+panic as above.
+
+Main area: 24 segs, 24 secs 24 zones
+  - COLD  data: 0, 0, 0
+  - WARM  data: 1, 1, 1
+  - HOT   data: 20, 20, 20
+  - Dir   dnode: 22, 22, 22
+  - File   dnode: 22, 22, 22
+  - Indir nodes: 21, 21, 21
+
+So this patch adds sanity check to detect such condition to avoid
+this issue.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/super.c | 34 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 65775428ec2f..ad77994f47fa 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2312,7 +2312,7 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 	unsigned int segment_count_main;
+ 	unsigned int cp_pack_start_sum, cp_payload;
+ 	block_t user_block_count;
+-	int i;
++	int i, j;
+ 
+ 	total = le32_to_cpu(raw_super->segment_count);
+ 	fsmeta = le32_to_cpu(raw_super->segment_count_ckpt);
+@@ -2353,11 +2353,43 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 		if (le32_to_cpu(ckpt->cur_node_segno[i]) >= main_segs ||
+ 			le16_to_cpu(ckpt->cur_node_blkoff[i]) >= blocks_per_seg)
+ 			return 1;
++		for (j = i + 1; j < NR_CURSEG_NODE_TYPE; j++) {
++			if (le32_to_cpu(ckpt->cur_node_segno[i]) ==
++				le32_to_cpu(ckpt->cur_node_segno[j])) {
++				f2fs_msg(sbi->sb, KERN_ERR,
++					"Node segment (%u, %u) has the same "
++					"segno: %u", i, j,
++					le32_to_cpu(ckpt->cur_node_segno[i]));
++				return 1;
++			}
++		}
+ 	}
+ 	for (i = 0; i < NR_CURSEG_DATA_TYPE; i++) {
+ 		if (le32_to_cpu(ckpt->cur_data_segno[i]) >= main_segs ||
+ 			le16_to_cpu(ckpt->cur_data_blkoff[i]) >= blocks_per_seg)
+ 			return 1;
++		for (j = i + 1; j < NR_CURSEG_DATA_TYPE; j++) {
++			if (le32_to_cpu(ckpt->cur_data_segno[i]) ==
++				le32_to_cpu(ckpt->cur_data_segno[j])) {
++				f2fs_msg(sbi->sb, KERN_ERR,
++					"Data segment (%u, %u) has the same "
++					"segno: %u", i, j,
++					le32_to_cpu(ckpt->cur_data_segno[i]));
++				return 1;
++			}
++		}
++	}
++	for (i = 0; i < NR_CURSEG_NODE_TYPE; i++) {
++		for (j = i; j < NR_CURSEG_DATA_TYPE; j++) {
++			if (le32_to_cpu(ckpt->cur_node_segno[i]) ==
++				le32_to_cpu(ckpt->cur_data_segno[j])) {
++				f2fs_msg(sbi->sb, KERN_ERR,
++					"Data segment (%u) and Data segment (%u)"
++					" has the same segno: %u", i, j,
++					le32_to_cpu(ckpt->cur_node_segno[i]));
++				return 1;
++			}
++		}
+ 	}
+ 
+ 	sit_bitmap_size = le32_to_cpu(ckpt->sit_ver_bitmap_bytesize);
+-- 
+2.18.0.rc1
