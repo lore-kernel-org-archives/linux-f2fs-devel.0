@@ -1,31 +1,33 @@
-From: Chao Yu <yuchao0@huawei.com>
+From: Patrick Doyle <wpdster@gmail.com>
 Subject: Re: Are there limitation to the number of named
  pipes/FIFO's supported by F2FS?
-Date: Thu, 6 Sep 2018 20:44:55 +0800
-Message-ID: <325f8076-60f6-90ca-3f2e-e10672e3f782@huawei.com>
+Date: Thu, 6 Sep 2018 09:14:05 -0400
+Message-ID: <CAF_dkJDCi4Jb0dZ1rNo97ru7idTucxLy3DXUDgBjs8rxumYLHQ@mail.gmail.com>
 References: <CAF_dkJChk25fWa+bTndWa-qRsy6mW3Mj3uemXpk0QxLgY=fzeg@mail.gmail.com>
  <a24181da-6e5f-63de-d2fa-7c14c8ed592f@huawei.com>
  <20180905041210.GB15147@jaegeuk-macbookpro.roam.corp.google.com>
  <CAF_dkJCyf69FEM+RberH4NV2FZqa3b0tN+zQROkm3F1a_vFspw@mail.gmail.com>
  <8ffaeb7c-972e-f1d2-277d-0b02407f58ff@kernel.org>
  <CAF_dkJAzcBui=6ov=gbob3-T8u2n3QUyn3znSbLUkFjeg7nB8g@mail.gmail.com>
- <2d8ae907-a7ac-446c-d31e-d3c66ee4d8f6@huawei.com>
+ <8778e118-1b5f-8a11-7cd7-4fe663c9da3a@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1fxten-0006vQ-6f
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Sep 2018 12:45:09 +0000
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ (envelope-from <wpdster@gmail.com>) id 1fxu7P-0004bU-5l
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Sep 2018 13:14:43 +0000
+Received: from mail-oi0-f65.google.com ([209.85.218.65])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fxtek-002xd2-WD
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Sep 2018 12:45:08 +0000
-In-Reply-To: <2d8ae907-a7ac-446c-d31e-d3c66ee4d8f6@huawei.com>
-Content-Language: en-US
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1fxu7K-002zOK-FM
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Sep 2018 13:14:43 +0000
+Received: by mail-oi0-f65.google.com with SMTP id l202-v6so20356429oig.7
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 06 Sep 2018 06:14:38 -0700 (PDT)
+In-Reply-To: <8778e118-1b5f-8a11-7cd7-4fe663c9da3a@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,47 +37,39 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Patrick Doyle <wpdster@gmail.com>, chao@kernel.org
+To: yuchao0@huawei.com
 Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/9/6 10:03, Chao Yu wrote:
+On Wed, Sep 5, 2018 at 9:51 PM Chao Yu <yuchao0@huawei.com> wrote:
 > On 2018/9/6 0:11, Patrick Doyle wrote:
->> What is the "Large nat bitmap feature"? (Now you've got me curious).
-> 
-> That's the feature backed '-i' option, it can make image support more inode
-> space.
-> 
-> So if you use this feature in f2fs version lower than 4.17, there should be
-> problem.
-> 
->>
->> Would that have been turned on by default with the 1.11.0 version of
->> mkfs.f2fs I used to gain access to the "-i" option?
-> 
-> Not sure, in android scenario, I haven't got any report that in 256GB size
-> cell phone, it runs out of inode space.
-> 
-> To Jaegeuk,
-> 
-> Maybe, we could give a hint (leaving a message) to user to use '-i' option
-> if partition size is large, e.g. >= 512MB?
+> > I think it would also be worthwhile also to submit patches to the LTS
+> > kernels that would check for an inhibit mounting of F2FS filesystems
+> > that have features unsupported by the kernel.  If that is already in
+> > place, then I shouldn't have been able to mount my f2fs partition if
+> > it had the "Large nat bitmap feature" enabled.
+>
+> Agreed, but I tracked LTS version in Linux upstream and kernel version in
+> LTS of ubuntu:
+...
+> And not sure that other distribution of linux will use above version
+> kernel, in order to fix all version, we have to:
+>
+> 1. find all linux distributions LTS kernel version.
+> 2. make and send the right fixing patch to all distribution's kernel
+> maintainers.
+>
+> Thoughts?
+My original recommendation was to patch the F2FS kernel driver so that
+it refuses to mount filesystems with incompatible, or unknown,
+options.  (I freely admit, I don't know what's involved in such a
+patch, but I feel that there should be some way to validate the
+features and format of the superblock to ensure that they are
+compatible with the features expected by that particular version of
+the kernel driver.)  I would expect that you should only need to
+submit that patch against the kernel LTS versions (listed at
+kernel.org) and let the distribution maintainers take it from there.
 
-I mean >= 512GB, sorry.
-
-> 
-> Thanks,
-> 
-> 
-> ------------------------------------------------------------------------------
-> Check out the vibrant tech community on one of the world's most
-> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> 
-
+--wpd
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
