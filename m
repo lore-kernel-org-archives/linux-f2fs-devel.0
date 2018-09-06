@@ -1,63 +1,82 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 1/2] f2fs: report error if quota off error during umount
-Date: Thu, 6 Sep 2018 20:44:35 +0800
-Message-ID: <20180906124436.89193-1-yuchao0@huawei.com>
+Subject: Re: Are there limitation to the number of named
+ pipes/FIFO's supported by F2FS?
+Date: Thu, 6 Sep 2018 20:44:55 +0800
+Message-ID: <325f8076-60f6-90ca-3f2e-e10672e3f782@huawei.com>
+References: <CAF_dkJChk25fWa+bTndWa-qRsy6mW3Mj3uemXpk0QxLgY=fzeg@mail.gmail.com>
+ <a24181da-6e5f-63de-d2fa-7c14c8ed592f@huawei.com>
+ <20180905041210.GB15147@jaegeuk-macbookpro.roam.corp.google.com>
+ <CAF_dkJCyf69FEM+RberH4NV2FZqa3b0tN+zQROkm3F1a_vFspw@mail.gmail.com>
+ <8ffaeb7c-972e-f1d2-277d-0b02407f58ff@kernel.org>
+ <CAF_dkJAzcBui=6ov=gbob3-T8u2n3QUyn3znSbLUkFjeg7nB8g@mail.gmail.com>
+ <2d8ae907-a7ac-446c-d31e-d3c66ee4d8f6@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Yunlei He <heyunlei@huawei.com>, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1fxten-0006vQ-6f
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Sep 2018 12:45:09 +0000
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fxtek-002xd2-WD
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Sep 2018 12:45:08 +0000
+In-Reply-To: <2d8ae907-a7ac-446c-d31e-d3c66ee4d8f6@huawei.com>
+Content-Language: en-US
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Patrick Doyle <wpdster@gmail.com>, chao@kernel.org
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-From: Yunlei He <heyunlei@huawei.com>
+On 2018/9/6 10:03, Chao Yu wrote:
+> On 2018/9/6 0:11, Patrick Doyle wrote:
+>> What is the "Large nat bitmap feature"? (Now you've got me curious).
+> 
+> That's the feature backed '-i' option, it can make image support more inode
+> space.
+> 
+> So if you use this feature in f2fs version lower than 4.17, there should be
+> problem.
+> 
+>>
+>> Would that have been turned on by default with the 1.11.0 version of
+>> mkfs.f2fs I used to gain access to the "-i" option?
+> 
+> Not sure, in android scenario, I haven't got any report that in 256GB size
+> cell phone, it runs out of inode space.
+> 
+> To Jaegeuk,
+> 
+> Maybe, we could give a hint (leaving a message) to user to use '-i' option
+> if partition size is large, e.g. >= 512MB?
 
-Now, we depend on fsck to ensure quota file data is ok,
-so we scan whole partition if checkpoint without umount
-flag. It's same for quota off error case, which may make
-quota file data inconsistent.
+I mean >= 512GB, sorry.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fs/f2fs/super.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+> 
+> Thanks,
+> 
+> 
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
+> 
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 8f026ba226fb..c026aaccf218 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1874,7 +1874,9 @@ static int f2fs_quota_off(struct super_block *sb, int type)
- 	if (!inode || !igrab(inode))
- 		return dquot_quota_off(sb, type);
- 
--	f2fs_quota_sync(sb, type);
-+	err = f2fs_quota_sync(sb, type);
-+	if (err)
-+		goto out_put;
- 
- 	err = dquot_quota_off(sb, type);
- 	if (err || f2fs_sb_has_quota_ino(sb))
-@@ -1893,9 +1895,18 @@ static int f2fs_quota_off(struct super_block *sb, int type)
- void f2fs_quota_off_umount(struct super_block *sb)
- {
- 	int type;
-+	int err;
- 
--	for (type = 0; type < MAXQUOTAS; type++)
--		f2fs_quota_off(sb, type);
-+	for (type = 0; type < MAXQUOTAS; type++) {
-+		err = f2fs_quota_off(sb, type);
-+		if (err) {
-+			f2fs_msg(sb, KERN_ERR,
-+				"Fail to turn off disk quota "
-+				"(type: %d, err: %d), Please "
-+				"run fsck to fix it.", type, err);
-+			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
-+		}
-+	}
- }
- 
- static int f2fs_dquot_commit(struct dquot *dquot)
--- 
-2.18.0.rc1
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, Slashdot.org! http://sdm.link/slashdot
