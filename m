@@ -1,60 +1,33 @@
-From: Mike Marshall <hubcap@omnibond.com>
-Subject: Re: [PATCH v2 5/5] orangefs: cache NULL when both default_acl and acl
- are NULL
-Date: Fri, 7 Sep 2018 14:11:08 -0400
-Message-ID: <CAOg9mSR1n88LBpmr7kOdSRx84FtnzUzsxG+oV4=vWVjz0Zkfbw@mail.gmail.com>
-References: <20180831143352.22970-1-cgxu519@gmx.com> <20180831143352.22970-5-cgxu519@gmx.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: submit bio after shutdown
+Date: Fri,  7 Sep 2018 14:28:04 -0700
+Message-ID: <20180907212804.91462-1-jaegeuk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180831143352.22970-5-cgxu519@gmx.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: cgxu519@gmx.com
-Cc: jack@suse.com, Theodore Ts'o <tytso@mit.edu>, adilger.kernel@dilger.ca, jaegeuk@kernel.org, yuchao0@huawei.com, shaggy@kernel.org, Martin Brandenburg <martin@omnibond.com>, devel@lists.orangefs.org, LKML <linux-kernel@vger.kernel.org>, Ext4 Developers List <linux-ext4@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, jfs-discussion@lists.sourceforge.net, Mike Marshall <hubcap@omnibond.com>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Thanks... I've added your patch to 4.19-rc2, run it through xfstests,
-and added it to my linux-next tree...
+Sometimes, some merged IOs could get a chance to be submitted, resulting in
+system hang in shutdown test. This issues IOs all the time after shutdown.
 
--Mike
-On Fri, Aug 31, 2018 at 10:35 AM Chengguang Xu <cgxu519@gmx.com> wrote:
->
-> default_acl and acl of newly created inode will be initiated
-> as ACL_NOT_CACHED in vfs function inode_init_always() and later
-> will be updated by calling xxx_init_acl() in specific filesystems.
-> Howerver, when default_acl and acl are NULL then they keep the value
-> of ACL_NOT_CACHED, this patch tries to cache NULL for acl/default_acl
-> in this case.
->
-> Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
-> ---
-> v1->v2:
-> - Coding style change.
->
->  fs/orangefs/acl.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/fs/orangefs/acl.c b/fs/orangefs/acl.c
-> index 10587413b20e..72d2ff17d27b 100644
-> --- a/fs/orangefs/acl.c
-> +++ b/fs/orangefs/acl.c
-> @@ -167,12 +167,16 @@ int orangefs_init_acl(struct inode *inode, struct inode *dir)
->                 error = __orangefs_set_acl(inode, default_acl,
->                                            ACL_TYPE_DEFAULT);
->                 posix_acl_release(default_acl);
-> +       } else {
-> +               inode->i_default_acl = NULL;
->         }
->
->         if (acl) {
->                 if (!error)
->                         error = __orangefs_set_acl(inode, acl, ACL_TYPE_ACCESS);
->                 posix_acl_release(acl);
-> +       } else {
-> +               inode->i_acl = NULL;
->         }
->
->         /* If mode of the inode was changed, then do a forcible ->setattr */
-> --
-> 2.17.1
->
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/data.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 8c204f896c22..26f38b224bb2 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -533,6 +533,8 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 	if (fio->in_list)
+ 		goto next;
+ out:
++	if (is_sbi_flag_set(sbi, SBI_IS_SHUTDOWN))
++		__submit_merged_bio(io);
+ 	up_write(&io->io_rwsem);
+ }
+ 
+-- 
+2.17.0.441.gb46fe60e1d-goog
