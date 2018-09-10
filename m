@@ -1,236 +1,266 @@
-From: Sahitya Tummala <stummala@codeaurora.org>
-Subject: [PATCH v2] f2fs: add new idle interval timing for discard and gc paths
-Date: Mon, 10 Sep 2018 09:17:32 +0530
-Message-ID: <1536551252-24256-1-git-send-email-stummala@codeaurora.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Zhikang Zhang <zhangzhikang1@huawei.com>
+Subject: [PATCH v3] f2fs: avoid sleeping under spin_lock
+Date: Mon, 10 Sep 2018 16:18:25 +0800
+Message-ID: <1536567505-5755-1-git-send-email-zhangzhikang1@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <zhangzhikang1@huawei.com>) id 1fzHOz-0003Vh-0k
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 Sep 2018 08:18:33 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fzHOw-00DO4D-Ms
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 Sep 2018 08:18:32 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-This helps to control the frequency of submission of discard and
-GC requests independently, based on the need. The sleep timing of
-GC thread is now aligned with this idle time when the dev is busy,
-to avoid unnecessary periodic wakeups.
+In the call trace below, we might sleep in function dput().
 
-Suggested-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+So in order to avoid sleeping under spin_lock, we remove f2fs_mark_inode_dirty_sync
+from __try_update_largest_extent && __drop_largest_extent.
+
+BUG: sleeping function called from invalid context at fs/dcache.c:796
+Call trace:
+	dump_backtrace+0x0/0x3f4
+	show_stack+0x24/0x30
+	dump_stack+0xe0/0x138
+	___might_sleep+0x2a8/0x2c8
+	__might_sleep+0x78/0x10c
+	dput+0x7c/0x750
+	block_dump___mark_inode_dirty+0x120/0x17c
+	__mark_inode_dirty+0x344/0x11f0
+	f2fs_mark_inode_dirty_sync+0x40/0x50
+	__insert_extent_tree+0x2e0/0x2f4
+	f2fs_update_extent_tree_range+0xcf4/0xde8
+	f2fs_update_extent_cache+0x114/0x12c
+	f2fs_update_data_blkaddr+0x40/0x50
+	write_data_page+0x150/0x314
+	do_write_data_page+0x648/0x2318
+	__write_data_page+0xdb4/0x1640
+	f2fs_write_cache_pages+0x768/0xafc
+	__f2fs_write_data_pages+0x590/0x1218
+	f2fs_write_data_pages+0x64/0x74
+	do_writepages+0x74/0xe4
+	__writeback_single_inode+0xdc/0x15f0
+	writeback_sb_inodes+0x574/0xc98
+	__writeback_inodes_wb+0x190/0x204
+	wb_writeback+0x730/0xf14
+	wb_check_old_data_flush+0x1bc/0x1c8
+	wb_workfn+0x554/0xf74
+	process_one_work+0x440/0x118c
+	worker_thread+0xac/0x974
+	kthread+0x1a0/0x1c8
+	ret_from_fork+0x10/0x1c
 ---
-v2:
--fix __issue_discard_cmd_orderly() path
+ fs/f2fs/extent_cache.c | 51 +++++++++++++++++++++++++++++++-------------------
+ fs/f2fs/f2fs.h         |  7 ++++---
+ 2 files changed, 36 insertions(+), 22 deletions(-)
 
- Documentation/ABI/testing/sysfs-fs-f2fs | 17 ++++++++++++++++-
- fs/f2fs/f2fs.h                          | 31 +++++++++++++++++++++++++++----
- fs/f2fs/gc.c                            |  6 ++++--
- fs/f2fs/segment.c                       | 16 ++++++----------
- fs/f2fs/super.c                         |  2 ++
- fs/f2fs/sysfs.c                         |  5 +++++
- 6 files changed, 60 insertions(+), 17 deletions(-)
-
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 94a24ae..3ac4177 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -121,7 +121,22 @@ What:		/sys/fs/f2fs/<disk>/idle_interval
- Date:		January 2016
- Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
- Description:
--		 Controls the idle timing.
-+		 Controls the idle timing for all paths other than
-+		 discard and gc path.
-+
-+What:		/sys/fs/f2fs/<disk>/discard_idle_interval
-+Date:		September 2018
-+Contact:	"Chao Yu" <yuchao0@huawei.com>
-+Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
-+Description:
-+		 Controls the idle timing for discard path.
-+
-+What:		/sys/fs/f2fs/<disk>/gc_idle_interval
-+Date:		September 2018
-+Contact:	"Chao Yu" <yuchao0@huawei.com>
-+Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
-+Description:
-+		 Controls the idle timing for gc path.
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index 231b77e..a70cd25 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -308,14 +308,13 @@ static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
+ 	return count - atomic_read(&et->node_cnt);
+ }
  
- What:		/sys/fs/f2fs/<disk>/iostat_enable
- Date:		August 2017
+-static void __drop_largest_extent(struct inode *inode,
++static void __drop_largest_extent(struct extent_tree *et,
+ 					pgoff_t fofs, unsigned int len)
+ {
+-	struct extent_info *largest = &F2FS_I(inode)->extent_tree->largest;
+-
+-	if (fofs < largest->fofs + largest->len && fofs + len > largest->fofs) {
+-		largest->len = 0;
+-		f2fs_mark_inode_dirty_sync(inode, true);
++	if (fofs < et->largest.fofs + et->largest.len &&
++			fofs + len > et->largest.fofs) {
++		et->largest.len = 0;
++		et->largest_updated = true;
+ 	}
+ }
+ 
+@@ -416,12 +415,11 @@ static bool f2fs_lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
+ 	return ret;
+ }
+ 
+-static struct extent_node *__try_merge_extent_node(struct inode *inode,
++static struct extent_node *__try_merge_extent_node(struct f2fs_sb_info *sbi,
+ 				struct extent_tree *et, struct extent_info *ei,
+ 				struct extent_node *prev_ex,
+ 				struct extent_node *next_ex)
+ {
+-	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct extent_node *en = NULL;
+ 
+ 	if (prev_ex && __is_back_mergeable(ei, &prev_ex->ei)) {
+@@ -443,7 +441,7 @@ static struct extent_node *__try_merge_extent_node(struct inode *inode,
+ 	if (!en)
+ 		return NULL;
+ 
+-	__try_update_largest_extent(inode, et, en);
++	__try_update_largest_extent(et, en);
+ 
+ 	spin_lock(&sbi->extent_lock);
+ 	if (!list_empty(&en->list)) {
+@@ -454,12 +452,11 @@ static struct extent_node *__try_merge_extent_node(struct inode *inode,
+ 	return en;
+ }
+ 
+-static struct extent_node *__insert_extent_tree(struct inode *inode,
++static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
+ 				struct extent_tree *et, struct extent_info *ei,
+ 				struct rb_node **insert_p,
+ 				struct rb_node *insert_parent)
+ {
+-	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct rb_node **p;
+ 	struct rb_node *parent = NULL;
+ 	struct extent_node *en = NULL;
+@@ -476,7 +473,7 @@ static struct extent_node *__insert_extent_tree(struct inode *inode,
+ 	if (!en)
+ 		return NULL;
+ 
+-	__try_update_largest_extent(inode, et, en);
++	__try_update_largest_extent(et, en);
+ 
+ 	/* update in global extent list */
+ 	spin_lock(&sbi->extent_lock);
+@@ -497,6 +494,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
+ 	struct rb_node **insert_p = NULL, *insert_parent = NULL;
+ 	unsigned int end = fofs + len;
+ 	unsigned int pos = (unsigned int)fofs;
++	bool updated = false;
+ 
+ 	if (!et)
+ 		return;
+@@ -517,7 +515,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
+ 	 * drop largest extent before lookup, in case it's already
+ 	 * been shrunk from extent tree
+ 	 */
+-	__drop_largest_extent(inode, fofs, len);
++	__drop_largest_extent(et, fofs, len);
+ 
+ 	/* 1. lookup first extent node in range [fofs, fofs + len - 1] */
+ 	en = (struct extent_node *)f2fs_lookup_rb_tree_ret(&et->root,
+@@ -550,7 +548,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
+ 				set_extent_info(&ei, end,
+ 						end - dei.fofs + dei.blk,
+ 						org_end - end);
+-				en1 = __insert_extent_tree(inode, et, &ei,
++				en1 = __insert_extent_tree(sbi, et, &ei,
+ 							NULL, NULL);
+ 				next_en = en1;
+ 			} else {
+@@ -570,7 +568,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
+ 		}
+ 
+ 		if (parts)
+-			__try_update_largest_extent(inode, et, en);
++			__try_update_largest_extent(et, en);
+ 		else
+ 			__release_extent_node(sbi, et, en);
+ 
+@@ -590,15 +588,16 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
+ 	if (blkaddr) {
+ 
+ 		set_extent_info(&ei, fofs, blkaddr, len);
+-		if (!__try_merge_extent_node(inode, et, &ei, prev_en, next_en))
+-			__insert_extent_tree(inode, et, &ei,
++		if (!__try_merge_extent_node(sbi, et, &ei, prev_en, next_en))
++			__insert_extent_tree(sbi, et, &ei,
+ 						insert_p, insert_parent);
+ 
+ 		/* give up extent_cache, if split and small updates happen */
+ 		if (dei.len >= 1 &&
+ 				prev.len < F2FS_MIN_EXTENT_LEN &&
+ 				et->largest.len < F2FS_MIN_EXTENT_LEN) {
+-			__drop_largest_extent(inode, 0, UINT_MAX);
++			et->largest.len = 0;
++			et->largest_updated = true;
+ 			set_inode_flag(inode, FI_NO_EXTENT);
+ 		}
+ 	}
+@@ -606,7 +605,15 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
+ 	if (is_inode_flag_set(inode, FI_NO_EXTENT))
+ 		__free_extent_tree(sbi, et);
+ 
++	if (et->largest_updated) {
++		et->largest_updated = false;
++		updated = true;
++	}
++
+ 	write_unlock(&et->lock);
++
++	if (updated)
++		f2fs_mark_inode_dirty_sync(inode, true);
+ }
+ 
+ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
+@@ -705,6 +712,7 @@ void f2fs_drop_extent_tree(struct inode *inode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct extent_tree *et = F2FS_I(inode)->extent_tree;
++	bool updated = false;
+ 
+ 	if (!f2fs_may_extent_tree(inode))
+ 		return;
+@@ -713,8 +721,13 @@ void f2fs_drop_extent_tree(struct inode *inode)
+ 
+ 	write_lock(&et->lock);
+ 	__free_extent_tree(sbi, et);
+-	__drop_largest_extent(inode, 0, UINT_MAX);
++	if (et->largest.len) {
++		et->largest.len = 0;
++		updated = true;
++	}
+ 	write_unlock(&et->lock);
++	if (updated)
++		f2fs_mark_inode_dirty_sync(inode, true);
+ }
+ 
+ void f2fs_destroy_extent_tree(struct inode *inode)
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index abf9256..6070681 100644
+index abf9256..e146e6c 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -1093,6 +1093,8 @@ enum {
- enum {
- 	CP_TIME,
- 	REQ_TIME,
-+	DISCARD_TIME,
-+	GC_TIME,
- 	MAX_TIME,
+@@ -572,6 +572,7 @@ struct extent_tree {
+ 	struct list_head list;		/* to be used by sbi->zombie_list */
+ 	rwlock_t lock;			/* protect extent info rb-tree */
+ 	atomic_t node_cnt;		/* # of extent node in rb-tree*/
++	bool largest_updated;		/* largest extent updated */
  };
  
-@@ -1347,14 +1349,35 @@ static inline void f2fs_update_time(struct f2fs_sb_info *sbi, int type)
- 	sbi->last_time[type] = jiffies;
- }
- 
--static inline bool f2fs_time_over(struct f2fs_sb_info *sbi, int type)
-+static inline bool f2fs_time_over_cp(struct f2fs_sb_info *sbi)
-+{
-+	unsigned long interval = sbi->interval_time[CP_TIME] * HZ;
-+
-+	return time_after(jiffies, sbi->last_time[CP_TIME] + interval);
-+}
-+
-+static inline bool f2fs_time_over_req(struct f2fs_sb_info *sbi, int type)
-+{
-+	unsigned long interval = sbi->interval_time[type] * HZ;
-+
-+	return time_after(jiffies, sbi->last_time[REQ_TIME] + interval);
-+}
-+
-+static inline unsigned int f2fs_get_wait_time(struct f2fs_sb_info *sbi,
-+						int type)
- {
- 	unsigned long interval = sbi->interval_time[type] * HZ;
-+	unsigned int wait_ms = 0;
-+	long delta;
-+
-+	delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
-+	if (delta > 0)
-+		wait_ms = jiffies_to_msecs(delta);
- 
--	return time_after(jiffies, sbi->last_time[type] + interval);
-+	return wait_ms;
- }
- 
--static inline bool is_idle(struct f2fs_sb_info *sbi)
-+static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
- {
- 	struct block_device *bdev = sbi->sb->s_bdev;
- 	struct request_queue *q = bdev_get_queue(bdev);
-@@ -1363,7 +1386,7 @@ static inline bool is_idle(struct f2fs_sb_info *sbi)
- 	if (rl->count[BLK_RW_SYNC] || rl->count[BLK_RW_ASYNC])
- 		return false;
- 
--	return f2fs_time_over(sbi, REQ_TIME);
-+	return f2fs_time_over_req(sbi, type);
- }
- 
  /*
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 5c8d004..c0bafea 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -83,8 +83,10 @@ static int gc_thread_func(void *data)
- 		if (!mutex_trylock(&sbi->gc_mutex))
- 			goto next;
+@@ -754,12 +755,12 @@ static inline bool __is_front_mergeable(struct extent_info *cur,
+ }
  
--		if (!is_idle(sbi)) {
--			increase_sleep_time(gc_th, &wait_ms);
-+		if (!is_idle(sbi, GC_TIME)) {
-+			wait_ms = f2fs_get_wait_time(sbi, GC_TIME);
-+			if (!wait_ms)
-+				increase_sleep_time(gc_th, &wait_ms);
- 			mutex_unlock(&sbi->gc_mutex);
- 			goto next;
- 		}
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index c5024f8..2d15733 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -511,7 +511,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
- 	else
- 		f2fs_build_free_nids(sbi, false, false);
+ extern void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync);
+-static inline void __try_update_largest_extent(struct inode *inode,
+-			struct extent_tree *et, struct extent_node *en)
++static inline void __try_update_largest_extent(struct extent_tree *et,
++						struct extent_node *en)
+ {
+ 	if (en->ei.len > et->largest.len) {
+ 		et->largest = en->ei;
+-		f2fs_mark_inode_dirty_sync(inode, true);
++		et->largest_updated = true;
+ 	}
+ }
  
--	if (!is_idle(sbi) &&
-+	if (!is_idle(sbi, REQ_TIME) &&
- 		(!excess_dirty_nats(sbi) && !excess_dirty_nodes(sbi)))
- 		return;
- 
-@@ -521,7 +521,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
- 			excess_prefree_segs(sbi) ||
- 			excess_dirty_nats(sbi) ||
- 			excess_dirty_nodes(sbi) ||
--			f2fs_time_over(sbi, CP_TIME)) {
-+			f2fs_time_over_cp(sbi)) {
- 		if (test_opt(sbi, DATA_FLUSH)) {
- 			struct blk_plug plug;
- 
-@@ -1311,7 +1311,7 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
- 		if (dc->state != D_PREP)
- 			goto next;
- 
--		if (dpolicy->io_aware && !is_idle(sbi)) {
-+		if (dpolicy->io_aware && !is_idle(sbi, DISCARD_TIME)) {
- 			io_interrupted = true;
- 			break;
- 		}
-@@ -1371,7 +1371,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 			f2fs_bug_on(sbi, dc->state != D_PREP);
- 
- 			if (dpolicy->io_aware && i < dpolicy->io_aware_gran &&
--								!is_idle(sbi)) {
-+						!is_idle(sbi, DISCARD_TIME)) {
- 				io_interrupted = true;
- 				break;
- 			}
-@@ -1564,8 +1564,6 @@ static int issue_discard_thread(void *data)
- 	struct discard_policy dpolicy;
- 	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
- 	int issued;
--	unsigned long interval = sbi->interval_time[REQ_TIME] * HZ;
--	long delta;
- 
- 	set_freezable();
- 
-@@ -1602,10 +1600,8 @@ static int issue_discard_thread(void *data)
- 			__wait_all_discard_cmd(sbi, &dpolicy);
- 			wait_ms = dpolicy.min_interval;
- 		} else if (issued == -1){
--			delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
--			if (delta > 0)
--				wait_ms = jiffies_to_msecs(delta);
--			else
-+			wait_ms = f2fs_get_wait_time(sbi, DISCARD_TIME);
-+			if (!wait_ms)
- 				wait_ms = dpolicy.mid_interval;
- 		} else {
- 			wait_ms = dpolicy.max_interval;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 896b885..1706f45 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2423,6 +2423,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
- 	sbi->dir_level = DEF_DIR_LEVEL;
- 	sbi->interval_time[CP_TIME] = DEF_CP_INTERVAL;
- 	sbi->interval_time[REQ_TIME] = DEF_IDLE_INTERVAL;
-+	sbi->interval_time[DISCARD_TIME] = DEF_IDLE_INTERVAL;
-+	sbi->interval_time[GC_TIME] = DEF_IDLE_INTERVAL;
- 	clear_sbi_flag(sbi, SBI_NEED_FSCK);
- 
- 	for (i = 0; i < NR_COUNT_TYPE; i++)
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 81c0e53..0afe99c 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -407,6 +407,9 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
-+F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, discard_idle_interval,
-+					interval_time[DISCARD_TIME]);
-+F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_idle_interval, interval_time[GC_TIME]);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
-@@ -460,6 +463,8 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
- 	ATTR_LIST(dirty_nats_ratio),
- 	ATTR_LIST(cp_interval),
- 	ATTR_LIST(idle_interval),
-+	ATTR_LIST(discard_idle_interval),
-+	ATTR_LIST(gc_idle_interval),
- 	ATTR_LIST(iostat_enable),
- 	ATTR_LIST(readdir_ra),
- 	ATTR_LIST(gc_pin_file_thresh),
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.7.4
