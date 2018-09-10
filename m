@@ -1,415 +1,308 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH v8] f2fs: guarantee journalled quota data by checkpoint
-Date: Sun,  9 Sep 2018 14:28:06 +0800
-Message-ID: <20180909062806.24232-1-chao@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>, Weichao Guo <guoweichao@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: zhangzhikang <zhangzhikang1@huawei.com>
+Subject: =?utf-8?b?562U5aSNOiAgW1BBVENIIHYyXSBmMmZzOiByZW1vdmUg?=
+ =?utf-8?q?sleep_from_atomic_lock?=
+Date: Mon, 10 Sep 2018 01:34:48 +0000
+Message-ID: <D642D0D599E2434C97EA15C58EE8D70E083FC942@dggema521-mbx.china.huawei.com>
+References: <1536465911-23016-1-git-send-email-zhangzhikang1@huawei.com>
+ <464ec846-298c-b94d-9122-7a5fc6292364@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <zhangzhikang1@huawei.com>) id 1fzB6b-0008C5-2W
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 Sep 2018 01:35:09 +0000
+Received: from szxga02-in.huawei.com ([45.249.212.188] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fzB6Y-00FDWD-Bz
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 Sep 2018 01:35:08 +0000
+In-Reply-To: <464ec846-298c-b94d-9122-7a5fc6292364@kernel.org>
+Content-Language: zh-CN
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <chao@kernel.org>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "Yuchao (T)" <yuchao0@huawei.com>
+Cc: "miaoxie (A)" <miaoxie@huawei.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-From: Chao Yu <yuchao0@huawei.com>
+Hi Chao,
 
-For journalled quota mode, let checkpoint to flush dquot dirty data
-and quota file data to guarntee persistence of all quota sysfile in
-last checkpoint, by this way, we can avoid corrupting quota sysfile
-when encountering SPO.
+Thanks for your suggestion, I will send a new patch for this.
 
-The implementation is as below:
+Regards,
+Zhikang
 
-1. add a global state SBI_QUOTA_NEED_FLUSH to indicate that there is
-cached dquot metadata changes in quota subsystem, and later checkpoint
-should:
- a) flush dquot metadata into quota file.
- b) flush quota file to storage to keep file usage be consistent.
-
-2. add a global state SBI_QUOTA_NEED_REPAIR to indicate that quota
-operation failed due to -EIO or -ENOSPC, so later,
- a) checkpoint will skip syncing dquot metadata.
- b) CP_QUOTA_NEED_FSCK_FLAG will be set in last cp pack to give a
-    hint for fsck repairing.
-
-3. add a global state SBI_QUOTA_SKIP_FLUSH, in checkpoint, if quota
-data updating is very heavy, it may cause hungtask in block_operation().
-To avoid this, if our retry time exceed threshold, let's just skip
-flushing and retry in next checkpoint().
-
-Signed-off-by: Weichao Guo <guoweichao@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v8:
-- don't set DQUOT_NOLIST_DIRTY.
- fs/f2fs/checkpoint.c    |  45 ++++++++++++++--
- fs/f2fs/data.c          |   8 ++-
- fs/f2fs/f2fs.h          |   7 +++
- fs/f2fs/super.c         | 110 ++++++++++++++++++++++++++++++++++++----
- include/linux/f2fs_fs.h |   1 +
- 5 files changed, 154 insertions(+), 17 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 59d0472013f4..fb1db60e587d 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1086,6 +1086,15 @@ static void __prepare_cp_block(struct f2fs_sb_info *sbi)
- 	ckpt->next_free_nid = cpu_to_le32(last_nid);
- }
- 
-+static bool __need_flush_quota(struct f2fs_sb_info *sbi)
-+{
-+	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
-+		return false;
-+	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
-+		return false;
-+	return is_sbi_flag_set(sbi, SBI_QUOTA_NEED_FLUSH);
-+}
-+
- /*
-  * Freeze all the FS-operations for checkpoint.
-  */
-@@ -1097,12 +1106,31 @@ static int block_operations(struct f2fs_sb_info *sbi)
- 		.for_reclaim = 0,
- 	};
- 	struct blk_plug plug;
--	int err = 0;
-+	int err = 0, cnt = 0;
- 
- 	blk_start_plug(&plug);
- 
--retry_flush_dents:
-+retry_flush_quotas:
-+	if (__need_flush_quota(sbi)) {
-+		if (++cnt > DEFAULT_RETRY_QUOTA_FLUSH_COUNT) {
-+			set_sbi_flag(sbi, SBI_QUOTA_SKIP_FLUSH);
-+			f2fs_lock_all(sbi);
-+			goto retry_flush_dents;
-+		}
-+		clear_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
-+		err = f2fs_quota_sync(sbi->sb, -1);
-+		if (err)
-+			goto out;
-+	}
-+
- 	f2fs_lock_all(sbi);
-+	if (__need_flush_quota(sbi)) {
-+		f2fs_unlock_all(sbi);
-+		cond_resched();
-+		goto retry_flush_quotas;
-+	}
-+
-+retry_flush_dents:
- 	/* write all the dirty dentry pages */
- 	if (get_pages(sbi, F2FS_DIRTY_DENTS)) {
- 		f2fs_unlock_all(sbi);
-@@ -1110,7 +1138,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
- 		if (err)
- 			goto out;
- 		cond_resched();
--		goto retry_flush_dents;
-+		goto retry_flush_quotas;
- 	}
- 
- 	/*
-@@ -1126,7 +1154,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
- 		if (err)
- 			goto out;
- 		cond_resched();
--		goto retry_flush_dents;
-+		goto retry_flush_quotas;
- 	}
- 
- retry_flush_nodes:
-@@ -1217,6 +1245,14 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
- 		__set_ckpt_flags(ckpt, CP_FSCK_FLAG);
- 
-+	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
-+		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-+	else
-+		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-+
-+	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
-+		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-+
- 	/* set this flag to activate crc|cp_ver for recovery */
- 	__set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG);
- 	__clear_ckpt_flags(ckpt, CP_NOCRC_RECOVERY_FLAG);
-@@ -1424,6 +1460,7 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 
- 	clear_sbi_flag(sbi, SBI_IS_DIRTY);
- 	clear_sbi_flag(sbi, SBI_NEED_CP);
-+	clear_sbi_flag(sbi, SBI_QUOTA_SKIP_FLUSH);
- 	__set_cp_next_pack(sbi);
- 
- 	/*
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 26f38b224bb2..878bf17071f3 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -49,7 +49,7 @@ static bool __is_cp_guaranteed(struct page *page)
- 			inode->i_ino ==  F2FS_NODE_INO(sbi) ||
- 			S_ISDIR(inode->i_mode) ||
- 			(S_ISREG(inode->i_mode) &&
--			is_inode_flag_set(inode, FI_ATOMIC_FILE)) ||
-+			(f2fs_is_atomic_file(inode) || IS_NOQUOTA(inode))) ||
- 			is_cold_data(page))
- 		return true;
- 	return false;
-@@ -1713,6 +1713,8 @@ bool f2fs_should_update_outplace(struct inode *inode, struct f2fs_io_info *fio)
- 		return true;
- 	if (S_ISDIR(inode->i_mode))
- 		return true;
-+	if (IS_NOQUOTA(inode))
-+		return true;
- 	if (f2fs_is_atomic_file(inode))
- 		return true;
- 	if (fio) {
-@@ -1957,7 +1959,7 @@ static int __write_data_page(struct page *page, bool *submitted,
- 	}
- 
- 	unlock_page(page);
--	if (!S_ISDIR(inode->i_mode))
-+	if (!S_ISDIR(inode->i_mode) && !IS_NOQUOTA(inode))
- 		f2fs_balance_fs(sbi, need_balance_fs);
- 
- 	if (unlikely(f2fs_cp_error(sbi))) {
-@@ -2148,6 +2150,8 @@ static inline bool __should_serialize_io(struct inode *inode,
- {
- 	if (!S_ISREG(inode->i_mode))
- 		return false;
-+	if (IS_NOQUOTA(inode))
-+		return false;
- 	if (wbc->sync_mode != WB_SYNC_ALL)
- 		return true;
- 	if (get_dirty_pages(inode) >= SM_I(F2FS_I_SB(inode))->min_seq_blocks)
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 3a8a60e6844c..b153f97de696 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -527,6 +527,9 @@ enum {
- 
- #define DEFAULT_RETRY_IO_COUNT	8	/* maximum retry read IO count */
- 
-+/* maximum retry quota flush count */
-+#define DEFAULT_RETRY_QUOTA_FLUSH_COUNT		8
-+
- #define F2FS_LINK_MAX	0xffffffff	/* maximum link count per file */
- 
- #define MAX_DIR_RA_PAGES	4	/* maximum ra pages of dir */
-@@ -1089,6 +1092,9 @@ enum {
- 	SBI_NEED_CP,				/* need to checkpoint */
- 	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
- 	SBI_IS_RECOVERED,			/* recovered orphan/data */
-+	SBI_QUOTA_NEED_FLUSH,			/* need to flush quota info in CP */
-+	SBI_QUOTA_SKIP_FLUSH,			/* skip flushing quota in current CP */
-+	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
- };
- 
- enum {
-@@ -2828,6 +2834,7 @@ static inline int f2fs_add_link(struct dentry *dentry, struct inode *inode)
- int f2fs_inode_dirtied(struct inode *inode, bool sync);
- void f2fs_inode_synced(struct inode *inode);
- int f2fs_enable_quota_files(struct f2fs_sb_info *sbi, bool rdonly);
-+int f2fs_quota_sync(struct super_block *sb, int type);
- void f2fs_quota_off_umount(struct super_block *sb);
- int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover);
- int f2fs_sync_fs(struct super_block *sb, int sync);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 32402f0d9d40..77bd936cfc8c 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1688,6 +1688,13 @@ static qsize_t *f2fs_get_reserved_space(struct inode *inode)
- 
- static int f2fs_quota_on_mount(struct f2fs_sb_info *sbi, int type)
- {
-+
-+	if (is_set_ckpt_flags(sbi, CP_QUOTA_NEED_FSCK_FLAG)) {
-+		f2fs_msg(sbi->sb, KERN_ERR,
-+			"quota sysfile may be corrupted, skip loading it");
-+		return 0;
-+	}
-+
- 	return dquot_quota_on_mount(sbi->sb, F2FS_OPTION(sbi).s_qf_names[type],
- 					F2FS_OPTION(sbi).s_jquota_fmt, type);
- }
-@@ -1758,7 +1765,14 @@ static int f2fs_enable_quotas(struct super_block *sb)
- 		test_opt(F2FS_SB(sb), PRJQUOTA),
- 	};
- 
--	sb_dqopt(sb)->flags |= DQUOT_QUOTA_SYS_FILE | DQUOT_NOLIST_DIRTY;
-+	if (is_set_ckpt_flags(F2FS_SB(sb), CP_QUOTA_NEED_FSCK_FLAG)) {
-+		f2fs_msg(sb, KERN_ERR,
-+			"quota file may be corrupted, skip loading it");
-+		return 0;
-+	}
-+
-+	sb_dqopt(sb)->flags |= DQUOT_QUOTA_SYS_FILE;
-+
- 	for (type = 0; type < MAXQUOTAS; type++) {
- 		qf_inum = f2fs_qf_ino(sb, type);
- 		if (qf_inum) {
-@@ -1779,15 +1793,16 @@ static int f2fs_enable_quotas(struct super_block *sb)
- 	return 0;
- }
- 
--static int f2fs_quota_sync(struct super_block *sb, int type)
-+int f2fs_quota_sync(struct super_block *sb, int type)
- {
-+	struct f2fs_sb_info *sbi = F2FS_SB(sb);
- 	struct quota_info *dqopt = sb_dqopt(sb);
- 	int cnt;
- 	int ret;
- 
- 	ret = dquot_writeback_dquots(sb, type);
- 	if (ret)
--		return ret;
-+		goto out;
- 
- 	/*
- 	 * Now when everything is written we can discard the pagecache so
-@@ -1801,13 +1816,23 @@ static int f2fs_quota_sync(struct super_block *sb, int type)
- 
- 		ret = filemap_write_and_wait(dqopt->files[cnt]->i_mapping);
- 		if (ret)
--			return ret;
-+			goto out;
-+
-+		/* if we are using journalled quota */
-+		if (f2fs_sb_has_quota_ino(sb) ||
-+			F2FS_OPTION(sbi).s_qf_names[USRQUOTA] ||
-+			F2FS_OPTION(sbi).s_qf_names[GRPQUOTA] ||
-+			F2FS_OPTION(sbi).s_qf_names[PRJQUOTA])
-+			continue;
- 
- 		inode_lock(dqopt->files[cnt]);
- 		truncate_inode_pages(&dqopt->files[cnt]->i_data, 0);
- 		inode_unlock(dqopt->files[cnt]);
- 	}
--	return 0;
-+out:
-+	if (ret)
-+		set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
-+	return ret;
- }
- 
- static int f2fs_quota_on(struct super_block *sb, int type, int format_id,
-@@ -1876,11 +1901,66 @@ void f2fs_quota_off_umount(struct super_block *sb)
- 				"Fail to turn off disk quota "
- 				"(type: %d, err: %d, ret:%d), Please "
- 				"run fsck to fix it.", type, err, ret);
--			set_sbi_flag(F2FS_SB(sb), SBI_NEED_FSCK);
-+			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
- 		}
- 	}
- }
- 
-+static int f2fs_dquot_commit(struct dquot *dquot)
-+{
-+	int ret;
-+
-+	ret = dquot_commit(dquot);
-+	if (ret == -ENOSPC || ret == -EIO)
-+		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
-+	return ret;
-+}
-+
-+static int f2fs_dquot_acquire(struct dquot *dquot)
-+{
-+	int ret;
-+
-+	ret = dquot_acquire(dquot);
-+	if (ret == -ENOSPC || ret == -EIO)
-+		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
-+	return ret;
-+}
-+
-+static int f2fs_dquot_release(struct dquot *dquot)
-+{
-+	int ret;
-+
-+	ret = dquot_release(dquot);
-+	if (ret == -ENOSPC || ret == -EIO)
-+		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
-+	return ret;
-+}
-+
-+static int f2fs_dquot_mark_dquot_dirty(struct dquot *dquot)
-+{
-+	struct super_block *sb = dquot->dq_sb;
-+	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-+
-+	/* if we are using journalled quota */
-+	if (f2fs_sb_has_quota_ino(sb) ||
-+		F2FS_OPTION(sbi).s_qf_names[USRQUOTA] ||
-+		F2FS_OPTION(sbi).s_qf_names[GRPQUOTA] ||
-+		F2FS_OPTION(sbi).s_qf_names[PRJQUOTA])
-+		set_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
-+
-+	return dquot_mark_dquot_dirty(dquot);
-+}
-+
-+static int f2fs_dquot_commit_info(struct super_block *sb, int type)
-+{
-+	int ret;
-+
-+	ret = dquot_commit_info(sb, type);
-+	if (ret == -ENOSPC || ret == -EIO)
-+		set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
-+	return ret;
-+}
-+
- static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
- {
- 	*projid = F2FS_I(inode)->i_projid;
-@@ -1889,11 +1969,11 @@ static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
- 
- static const struct dquot_operations f2fs_quota_operations = {
- 	.get_reserved_space = f2fs_get_reserved_space,
--	.write_dquot	= dquot_commit,
--	.acquire_dquot	= dquot_acquire,
--	.release_dquot	= dquot_release,
--	.mark_dirty	= dquot_mark_dquot_dirty,
--	.write_info	= dquot_commit_info,
-+	.write_dquot	= f2fs_dquot_commit,
-+	.acquire_dquot	= f2fs_dquot_acquire,
-+	.release_dquot	= f2fs_dquot_release,
-+	.mark_dirty	= f2fs_dquot_mark_dquot_dirty,
-+	.write_info	= f2fs_dquot_commit_info,
- 	.alloc_dquot	= dquot_alloc,
- 	.destroy_dquot	= dquot_destroy,
- 	.get_projid	= f2fs_get_projid,
-@@ -1911,6 +1991,11 @@ static const struct quotactl_ops f2fs_quotactl_ops = {
- 	.get_nextdqblk	= dquot_get_next_dqblk,
- };
- #else
-+int f2fs_quota_sync(struct super_block *sb, int type)
-+{
-+	return 0;
-+}
-+
- void f2fs_quota_off_umount(struct super_block *sb)
- {
- }
-@@ -2950,6 +3035,9 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		goto free_meta_inode;
- 	}
- 
-+	if (__is_set_ckpt_flags(F2FS_CKPT(sbi), CP_QUOTA_NEED_FSCK_FLAG))
-+		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
-+
- 	/* Initialize device list */
- 	err = f2fs_scan_devices(sbi);
- 	if (err) {
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index f70f8ac9c4f4..6a879a865343 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -118,6 +118,7 @@ struct f2fs_super_block {
- /*
-  * For checkpoint
-  */
-+#define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
- #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
- #define CP_NOCRC_RECOVERY_FLAG	0x00000200
- #define CP_TRIMMED_FLAG		0x00000100
--- 
-2.18.0
+On 2018/9/9 14:20, Chao Yu wrote:
+> Hi Zhikang,
+> 
+> It's completely trivial, but how about changing title as below, :)
+> 
+> f2fs: avoid sleeping under spin_lock
+> 
+> On 2018/9/9 12:05, Zhikang Zhang wrote:
+> > In the call trace below, we might sleep in function dput().
+> >
+> > So in order to avoid sleeping in atomic lock, we remove
+> > f2fs_mark_inode_dirty_sync in __try_update_largest_extent &&
+> __drop_largest_extent.
+> >
+> > BUG: sleeping function called from invalid context at fs/dcache.c:796
+> > Call trace:
+> > 	dump_backtrace+0x0/0x3f4
+> > 	show_stack+0x24/0x30
+> > 	dump_stack+0xe0/0x138
+> > 	___might_sleep+0x2a8/0x2c8
+> > 	__might_sleep+0x78/0x10c
+> > 	dput+0x7c/0x750
+> > 	block_dump___mark_inode_dirty+0x120/0x17c
+> > 	__mark_inode_dirty+0x344/0x11f0
+> > 	f2fs_mark_inode_dirty_sync+0x40/0x50
+> > 	__insert_extent_tree+0x2e0/0x2f4
+> > 	f2fs_update_extent_tree_range+0xcf4/0xde8
+> > 	f2fs_update_extent_cache+0x114/0x12c
+> > 	f2fs_update_data_blkaddr+0x40/0x50
+> > 	write_data_page+0x150/0x314
+> > 	do_write_data_page+0x648/0x2318
+> > 	__write_data_page+0xdb4/0x1640
+> > 	f2fs_write_cache_pages+0x768/0xafc
+> > 	__f2fs_write_data_pages+0x590/0x1218
+> > 	f2fs_write_data_pages+0x64/0x74
+> > 	do_writepages+0x74/0xe4
+> > 	__writeback_single_inode+0xdc/0x15f0
+> > 	writeback_sb_inodes+0x574/0xc98
+> > 	__writeback_inodes_wb+0x190/0x204
+> > 	wb_writeback+0x730/0xf14
+> > 	wb_check_old_data_flush+0x1bc/0x1c8
+> > 	wb_workfn+0x554/0xf74
+> > 	process_one_work+0x440/0x118c
+> > 	worker_thread+0xac/0x974
+> > 	kthread+0x1a0/0x1c8
+> > 	ret_from_fork+0x10/0x1c
+> > ---
+> >  fs/f2fs/extent_cache.c | 31 ++++++++++++++++---------------
+> >  fs/f2fs/f2fs.h         |  8 +++-----
+> >  2 files changed, 19 insertions(+), 20 deletions(-)
+> >
+> > diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c index
+> > 231b77e..8cc5cba 100644
+> > --- a/fs/f2fs/extent_cache.c
+> > +++ b/fs/f2fs/extent_cache.c
+> > @@ -313,10 +313,8 @@ static void __drop_largest_extent(struct inode
+> > *inode,  {
+> >  	struct extent_info *largest = &F2FS_I(inode)->extent_tree->largest;
+> >
+> > -	if (fofs < largest->fofs + largest->len && fofs + len > largest->fofs) {
+> > +	if (fofs < largest->fofs + largest->len && fofs + len >
+> > +largest->fofs)
+> >  		largest->len = 0;
+> 
+> et->largest_updated = true;
+> 
+> > -		f2fs_mark_inode_dirty_sync(inode, true);
+> > -	}
+> >  }
+> >
+> >  /* return true, if inode page is changed */ @@ -416,12 +414,11 @@
+> > static bool f2fs_lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
+> >  	return ret;
+> >  }
+> >
+> > -static struct extent_node *__try_merge_extent_node(struct inode
+> > *inode,
+> > +static struct extent_node *__try_merge_extent_node(struct
+> > +f2fs_sb_info *sbi,
+> >  				struct extent_tree *et, struct extent_info *ei,
+> >  				struct extent_node *prev_ex,
+> >  				struct extent_node *next_ex)
+> >  {
+> > -	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> >  	struct extent_node *en = NULL;
+> >
+> >  	if (prev_ex && __is_back_mergeable(ei, &prev_ex->ei)) { @@ -
+> 443,7
+> > +440,7 @@ static struct extent_node *__try_merge_extent_node(struct
+> inode *inode,
+> >  	if (!en)
+> >  		return NULL;
+> >
+> > -	__try_update_largest_extent(inode, et, en);
+> > +	__try_update_largest_extent(et, en);
+> >
+> >  	spin_lock(&sbi->extent_lock);
+> >  	if (!list_empty(&en->list)) {
+> > @@ -454,12 +451,11 @@ static struct extent_node
+> *__try_merge_extent_node(struct inode *inode,
+> >  	return en;
+> >  }
+> >
+> > -static struct extent_node *__insert_extent_tree(struct inode *inode,
+> > +static struct extent_node *__insert_extent_tree(struct f2fs_sb_info
+> > +*sbi,
+> >  				struct extent_tree *et, struct extent_info *ei,
+> >  				struct rb_node **insert_p,
+> >  				struct rb_node *insert_parent)
+> >  {
+> > -	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> >  	struct rb_node **p;
+> >  	struct rb_node *parent = NULL;
+> >  	struct extent_node *en = NULL;
+> > @@ -476,7 +472,7 @@ static struct extent_node
+> *__insert_extent_tree(struct inode *inode,
+> >  	if (!en)
+> >  		return NULL;
+> >
+> > -	__try_update_largest_extent(inode, et, en);
+> > +	__try_update_largest_extent(et, en);
+> >
+> >  	/* update in global extent list */
+> >  	spin_lock(&sbi->extent_lock);
+> > @@ -497,6 +493,7 @@ static void f2fs_update_extent_tree_range(struct
+> inode *inode,
+> >  	struct rb_node **insert_p = NULL, *insert_parent = NULL;
+> >  	unsigned int end = fofs + len;
+> >  	unsigned int pos = (unsigned int)fofs;
+> > +	unsigned int old_largest = et->largest.len;
+> >
+> >  	if (!et)
+> >  		return;
+> > @@ -550,7 +547,7 @@ static void f2fs_update_extent_tree_range(struct
+> inode *inode,
+> >  				set_extent_info(&ei, end,
+> >  						end - dei.fofs + dei.blk,
+> >  						org_end - end);
+> > -				en1 = __insert_extent_tree(inode, et, &ei,
+> > +				en1 = __insert_extent_tree(sbi, et, &ei,
+> >  							NULL, NULL);
+> >  				next_en = en1;
+> >  			} else {
+> > @@ -570,7 +567,7 @@ static void f2fs_update_extent_tree_range(struct
+> inode *inode,
+> >  		}
+> >
+> >  		if (parts)
+> > -			__try_update_largest_extent(inode, et, en);
+> > +			__try_update_largest_extent(et, en);
+> >  		else
+> >  			__release_extent_node(sbi, et, en);
+> >
+> > @@ -590,15 +587,15 @@ static void
+> f2fs_update_extent_tree_range(struct inode *inode,
+> >  	if (blkaddr) {
+> >
+> >  		set_extent_info(&ei, fofs, blkaddr, len);
+> > -		if (!__try_merge_extent_node(inode, et, &ei, prev_en,
+> next_en))
+> > -			__insert_extent_tree(inode, et, &ei,
+> > +		if (!__try_merge_extent_node(sbi, et, &ei, prev_en,
+> next_en))
+> > +			__insert_extent_tree(sbi, et, &ei,
+> >  						insert_p, insert_parent);
+> >
+> >  		/* give up extent_cache, if split and small updates happen */
+> >  		if (dei.len >= 1 &&
+> >  				prev.len < F2FS_MIN_EXTENT_LEN &&
+> >  				et->largest.len < F2FS_MIN_EXTENT_LEN) {
+> > -			__drop_largest_extent(inode, 0, UINT_MAX);
+> > +			et->largest.len = 0;
+> 
+> et->largest_updated = true;
+> 
+> >  			set_inode_flag(inode, FI_NO_EXTENT);
+> >  		}
+> >  	}
+> > @@ -607,6 +604,9 @@ static void f2fs_update_extent_tree_range(struct
+> inode *inode,
+> >  		__free_extent_tree(sbi, et);
+> >
+> >  	write_unlock(&et->lock);
+> 
+> There is no lock protection, so in race case, if there are other updaters
+> increase largest.len, and In case of old_largest == et->largest.len, we will
+> miss dirtying inode. So I think length of largest extent node based
+> comparison is not precise.
+> 
+> What about adding one more variable to indicate that largest extent was
+> changed.
+> 
+> struct extent_tree {
+> ....
+> 	bool largest_updated;		/* largest extent updated */
+> };
+> 
+> 
+> f2fs_update_extent_tree_range()
+> {
+> 	write_lock(&et->lock);
+> 
+> 	....
+> 
+> 	if (et->largest_updated) {
+> 		et->largest_updated = false;
+> 		updated = true;
+> 	}
+> 	write_unlock(&et->lock);
+> 
+> 	if (updated)
+> 		f2fs_mark_inode_dirty_sync(inode, true); }
+> > +
+> > +	if (old_largest != et->largest.len)
+> > +		f2fs_mark_inode_dirty_sync(inode, true);
+> >  }
+> >
+> >  unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int
+> > nr_shrink) @@ -713,8 +713,9 @@ void f2fs_drop_extent_tree(struct inode
+> > *inode)
+> >
+> >  	write_lock(&et->lock);
+> >  	__free_extent_tree(sbi, et);
+> > -	__drop_largest_extent(inode, 0, UINT_MAX);
+> > +	et->largest.len = 0;
+> 
+> if (et->largest.len) {
+> 	et->largest.len = 0;
+> 	udpated = true;
+> }
+> 
+> >  	write_unlock(&et->lock);
+> 
+> if (updated)
+> 	f2fs_mark_inode_dirty_sync(inode, true);
+> 
+> > +	f2fs_mark_inode_dirty_sync(inode, true);
+> >  }
+> >
+> >  void f2fs_destroy_extent_tree(struct inode *inode) diff --git
+> > a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h index abf9256..eef3016 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -754,13 +754,11 @@ static inline bool __is_front_mergeable(struct
+> > extent_info *cur,  }
+> >
+> >  extern void f2fs_mark_inode_dirty_sync(struct inode *inode, bool
+> > sync); -static inline void __try_update_largest_extent(struct inode *inode,
+> > -			struct extent_tree *et, struct extent_node *en)
+> > +static inline void __try_update_largest_extent(struct extent_tree *et,
+> > +						struct extent_node *en)
+> >  {
+> > -	if (en->ei.len > et->largest.len) {
+> > +	if (en->ei.len > et->largest.len)
+> >  		et->largest = en->ei;
+> 
+> et->largest_updated = true;
+> 
+> Thanks,
+> 
+> > -		f2fs_mark_inode_dirty_sync(inode, true);
+> > -	}
+> >  }
+> >
+> >  /*
+> >
