@@ -1,7 +1,7 @@
 From: Sahitya Tummala <stummala@codeaurora.org>
-Subject: [PATCH] f2fs: add new idle interval timing for discard and gc paths
-Date: Mon, 10 Sep 2018 08:46:22 +0530
-Message-ID: <1536549382-23584-1-git-send-email-stummala@codeaurora.org>
+Subject: [PATCH v2] f2fs: add new idle interval timing for discard and gc paths
+Date: Mon, 10 Sep 2018 09:17:32 +0530
+Message-ID: <1536551252-24256-1-git-send-email-stummala@codeaurora.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
@@ -16,13 +16,16 @@ to avoid unnecessary periodic wakeups.
 Suggested-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 ---
+v2:
+-fix __issue_discard_cmd_orderly() path
+
  Documentation/ABI/testing/sysfs-fs-f2fs | 17 ++++++++++++++++-
  fs/f2fs/f2fs.h                          | 31 +++++++++++++++++++++++++++----
  fs/f2fs/gc.c                            |  6 ++++--
- fs/f2fs/segment.c                       | 14 +++++---------
+ fs/f2fs/segment.c                       | 16 ++++++----------
  fs/f2fs/super.c                         |  2 ++
  fs/f2fs/sysfs.c                         |  5 +++++
- 6 files changed, 59 insertions(+), 16 deletions(-)
+ 6 files changed, 60 insertions(+), 17 deletions(-)
 
 diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
 index 94a24ae..3ac4177 100644
@@ -131,7 +134,7 @@ index 5c8d004..c0bafea 100644
  			goto next;
  		}
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index c5024f8..f8a6a7b 100644
+index c5024f8..2d15733 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
 @@ -511,7 +511,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
@@ -152,6 +155,15 @@ index c5024f8..f8a6a7b 100644
  		if (test_opt(sbi, DATA_FLUSH)) {
  			struct blk_plug plug;
  
+@@ -1311,7 +1311,7 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+ 		if (dc->state != D_PREP)
+ 			goto next;
+ 
+-		if (dpolicy->io_aware && !is_idle(sbi)) {
++		if (dpolicy->io_aware && !is_idle(sbi, DISCARD_TIME)) {
+ 			io_interrupted = true;
+ 			break;
+ 		}
 @@ -1371,7 +1371,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
  			f2fs_bug_on(sbi, dc->state != D_PREP);
  
