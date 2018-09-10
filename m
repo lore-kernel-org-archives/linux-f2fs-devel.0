@@ -1,23 +1,25 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH v3] f2fs: avoid sleeping under spin_lock
-Date: Mon, 10 Sep 2018 22:34:58 +0800
-Message-ID: <90a59906-e849-2adf-bbf8-0241dc5e1377@kernel.org>
-References: <1536567505-5755-1-git-send-email-zhangzhikang1@huawei.com>
+Subject: Re: [PATCH v2 2/2] f2fs: fix setattr project check upon
+ fssetxattr ioctl
+Date: Mon, 10 Sep 2018 22:45:38 +0800
+Message-ID: <acdda52b-02a2-52e9-4e96-2fa67ddc29a7@kernel.org>
+References: <1536484514-16202-1-git-send-email-wshilong1991@gmail.com>
+ <1536484514-16202-2-git-send-email-wshilong1991@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1fzNHV-0000Sz-BM
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 Sep 2018 14:35:13 +0000
+ (envelope-from <chao@kernel.org>) id 1fzNRn-0003S1-0S
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 Sep 2018 14:45:51 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fzNHT-00DeOB-8g
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 Sep 2018 14:35:12 +0000
-In-Reply-To: <1536567505-5755-1-git-send-email-zhangzhikang1@huawei.com>
+ id 1fzNRk-00Fluj-Lg
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 Sep 2018 14:45:50 +0000
+In-Reply-To: <1536484514-16202-2-git-send-email-wshilong1991@gmail.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -28,252 +30,34 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Zhikang Zhang <zhangzhikang1@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: Wang Shilong <wangshilong1991@gmail.com>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: adilger@dilger.ca, wshilong@ddn.com, dchinner@redhat.com
 
-On 2018/9/10 16:18, Zhikang Zhang wrote:
-> In the call trace below, we might sleep in function dput().
+On 2018/9/9 17:15, Wang Shilong wrote:
+> From: Wang Shilong <wangshilong1991@gmail.com>
 > 
-> So in order to avoid sleeping under spin_lock, we remove f2fs_mark_inode_dirty_sync
-> from __try_update_largest_extent && __drop_largest_extent.
+> Currently, project quota could be changed by fssetxattr
+> ioctl, and existed permission check inode_owner_or_capable()
+> is obviously not enough, just think that common users could
+> change project id of file, that could make users to
+> break project quota easily.
 > 
-> BUG: sleeping function called from invalid context at fs/dcache.c:796
-> Call trace:
-> 	dump_backtrace+0x0/0x3f4
-> 	show_stack+0x24/0x30
-> 	dump_stack+0xe0/0x138
-> 	___might_sleep+0x2a8/0x2c8
-> 	__might_sleep+0x78/0x10c
-> 	dput+0x7c/0x750
-> 	block_dump___mark_inode_dirty+0x120/0x17c
-> 	__mark_inode_dirty+0x344/0x11f0
-> 	f2fs_mark_inode_dirty_sync+0x40/0x50
-> 	__insert_extent_tree+0x2e0/0x2f4
-> 	f2fs_update_extent_tree_range+0xcf4/0xde8
-> 	f2fs_update_extent_cache+0x114/0x12c
-> 	f2fs_update_data_blkaddr+0x40/0x50
-> 	write_data_page+0x150/0x314
-> 	do_write_data_page+0x648/0x2318
-> 	__write_data_page+0xdb4/0x1640
-> 	f2fs_write_cache_pages+0x768/0xafc
-> 	__f2fs_write_data_pages+0x590/0x1218
-> 	f2fs_write_data_pages+0x64/0x74
-> 	do_writepages+0x74/0xe4
-> 	__writeback_single_inode+0xdc/0x15f0
-> 	writeback_sb_inodes+0x574/0xc98
-> 	__writeback_inodes_wb+0x190/0x204
-> 	wb_writeback+0x730/0xf14
-> 	wb_check_old_data_flush+0x1bc/0x1c8
-> 	wb_workfn+0x554/0xf74
-> 	process_one_work+0x440/0x118c
-> 	worker_thread+0xac/0x974
-> 	kthread+0x1a0/0x1c8
-> 	ret_from_fork+0x10/0x1c
+> This patch try to follow same regular of xfs project
+> quota:
+> 
+> "Project Quota ID state is only allowed to change from
+> within the init namespace. Enforce that restriction only
+> if we are trying to change the quota ID state.
+> Everything else is allowed in user namespaces."
+> 
+> Besides that, check and set project id'state should
+> be an atomic operation, protect whole operation with
+> inode lock.
+> 
+> Signed-off-by: Wang Shilong <wshilong@ddn.com>
 
-Missed a Signed-off-by here?
+It looks good to me, thanks for the patch, Shilong. :)
 
-Signed-off-by: Zhikang Zhang <zhangzhikang1@huawei.com>
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-I think Jaegeuk can help to add them when merging this patch. :)
-
 Thanks,
-
-> ---
->  fs/f2fs/extent_cache.c | 51 +++++++++++++++++++++++++++++++-------------------
->  fs/f2fs/f2fs.h         |  7 ++++---
->  2 files changed, 36 insertions(+), 22 deletions(-)
-> 
-> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-> index 231b77e..a70cd25 100644
-> --- a/fs/f2fs/extent_cache.c
-> +++ b/fs/f2fs/extent_cache.c
-> @@ -308,14 +308,13 @@ static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
->  	return count - atomic_read(&et->node_cnt);
->  }
->  
-> -static void __drop_largest_extent(struct inode *inode,
-> +static void __drop_largest_extent(struct extent_tree *et,
->  					pgoff_t fofs, unsigned int len)
->  {
-> -	struct extent_info *largest = &F2FS_I(inode)->extent_tree->largest;
-> -
-> -	if (fofs < largest->fofs + largest->len && fofs + len > largest->fofs) {
-> -		largest->len = 0;
-> -		f2fs_mark_inode_dirty_sync(inode, true);
-> +	if (fofs < et->largest.fofs + et->largest.len &&
-> +			fofs + len > et->largest.fofs) {
-> +		et->largest.len = 0;
-> +		et->largest_updated = true;
->  	}
->  }
->  
-> @@ -416,12 +415,11 @@ static bool f2fs_lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
->  	return ret;
->  }
->  
-> -static struct extent_node *__try_merge_extent_node(struct inode *inode,
-> +static struct extent_node *__try_merge_extent_node(struct f2fs_sb_info *sbi,
->  				struct extent_tree *et, struct extent_info *ei,
->  				struct extent_node *prev_ex,
->  				struct extent_node *next_ex)
->  {
-> -	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->  	struct extent_node *en = NULL;
->  
->  	if (prev_ex && __is_back_mergeable(ei, &prev_ex->ei)) {
-> @@ -443,7 +441,7 @@ static struct extent_node *__try_merge_extent_node(struct inode *inode,
->  	if (!en)
->  		return NULL;
->  
-> -	__try_update_largest_extent(inode, et, en);
-> +	__try_update_largest_extent(et, en);
->  
->  	spin_lock(&sbi->extent_lock);
->  	if (!list_empty(&en->list)) {
-> @@ -454,12 +452,11 @@ static struct extent_node *__try_merge_extent_node(struct inode *inode,
->  	return en;
->  }
->  
-> -static struct extent_node *__insert_extent_tree(struct inode *inode,
-> +static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
->  				struct extent_tree *et, struct extent_info *ei,
->  				struct rb_node **insert_p,
->  				struct rb_node *insert_parent)
->  {
-> -	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->  	struct rb_node **p;
->  	struct rb_node *parent = NULL;
->  	struct extent_node *en = NULL;
-> @@ -476,7 +473,7 @@ static struct extent_node *__insert_extent_tree(struct inode *inode,
->  	if (!en)
->  		return NULL;
->  
-> -	__try_update_largest_extent(inode, et, en);
-> +	__try_update_largest_extent(et, en);
->  
->  	/* update in global extent list */
->  	spin_lock(&sbi->extent_lock);
-> @@ -497,6 +494,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
->  	struct rb_node **insert_p = NULL, *insert_parent = NULL;
->  	unsigned int end = fofs + len;
->  	unsigned int pos = (unsigned int)fofs;
-> +	bool updated = false;
->  
->  	if (!et)
->  		return;
-> @@ -517,7 +515,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
->  	 * drop largest extent before lookup, in case it's already
->  	 * been shrunk from extent tree
->  	 */
-> -	__drop_largest_extent(inode, fofs, len);
-> +	__drop_largest_extent(et, fofs, len);
->  
->  	/* 1. lookup first extent node in range [fofs, fofs + len - 1] */
->  	en = (struct extent_node *)f2fs_lookup_rb_tree_ret(&et->root,
-> @@ -550,7 +548,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
->  				set_extent_info(&ei, end,
->  						end - dei.fofs + dei.blk,
->  						org_end - end);
-> -				en1 = __insert_extent_tree(inode, et, &ei,
-> +				en1 = __insert_extent_tree(sbi, et, &ei,
->  							NULL, NULL);
->  				next_en = en1;
->  			} else {
-> @@ -570,7 +568,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
->  		}
->  
->  		if (parts)
-> -			__try_update_largest_extent(inode, et, en);
-> +			__try_update_largest_extent(et, en);
->  		else
->  			__release_extent_node(sbi, et, en);
->  
-> @@ -590,15 +588,16 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
->  	if (blkaddr) {
->  
->  		set_extent_info(&ei, fofs, blkaddr, len);
-> -		if (!__try_merge_extent_node(inode, et, &ei, prev_en, next_en))
-> -			__insert_extent_tree(inode, et, &ei,
-> +		if (!__try_merge_extent_node(sbi, et, &ei, prev_en, next_en))
-> +			__insert_extent_tree(sbi, et, &ei,
->  						insert_p, insert_parent);
->  
->  		/* give up extent_cache, if split and small updates happen */
->  		if (dei.len >= 1 &&
->  				prev.len < F2FS_MIN_EXTENT_LEN &&
->  				et->largest.len < F2FS_MIN_EXTENT_LEN) {
-> -			__drop_largest_extent(inode, 0, UINT_MAX);
-> +			et->largest.len = 0;
-> +			et->largest_updated = true;
->  			set_inode_flag(inode, FI_NO_EXTENT);
->  		}
->  	}
-> @@ -606,7 +605,15 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
->  	if (is_inode_flag_set(inode, FI_NO_EXTENT))
->  		__free_extent_tree(sbi, et);
->  
-> +	if (et->largest_updated) {
-> +		et->largest_updated = false;
-> +		updated = true;
-> +	}
-> +
->  	write_unlock(&et->lock);
-> +
-> +	if (updated)
-> +		f2fs_mark_inode_dirty_sync(inode, true);
->  }
->  
->  unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
-> @@ -705,6 +712,7 @@ void f2fs_drop_extent_tree(struct inode *inode)
->  {
->  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->  	struct extent_tree *et = F2FS_I(inode)->extent_tree;
-> +	bool updated = false;
->  
->  	if (!f2fs_may_extent_tree(inode))
->  		return;
-> @@ -713,8 +721,13 @@ void f2fs_drop_extent_tree(struct inode *inode)
->  
->  	write_lock(&et->lock);
->  	__free_extent_tree(sbi, et);
-> -	__drop_largest_extent(inode, 0, UINT_MAX);
-> +	if (et->largest.len) {
-> +		et->largest.len = 0;
-> +		updated = true;
-> +	}
->  	write_unlock(&et->lock);
-> +	if (updated)
-> +		f2fs_mark_inode_dirty_sync(inode, true);
->  }
->  
->  void f2fs_destroy_extent_tree(struct inode *inode)
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index abf9256..e146e6c 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -572,6 +572,7 @@ struct extent_tree {
->  	struct list_head list;		/* to be used by sbi->zombie_list */
->  	rwlock_t lock;			/* protect extent info rb-tree */
->  	atomic_t node_cnt;		/* # of extent node in rb-tree*/
-> +	bool largest_updated;		/* largest extent updated */
->  };
->  
->  /*
-> @@ -754,12 +755,12 @@ static inline bool __is_front_mergeable(struct extent_info *cur,
->  }
->  
->  extern void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync);
-> -static inline void __try_update_largest_extent(struct inode *inode,
-> -			struct extent_tree *et, struct extent_node *en)
-> +static inline void __try_update_largest_extent(struct extent_tree *et,
-> +						struct extent_node *en)
->  {
->  	if (en->ei.len > et->largest.len) {
->  		et->largest = en->ei;
-> -		f2fs_mark_inode_dirty_sync(inode, true);
-> +		et->largest_updated = true;
->  	}
->  }
->  
-> 
