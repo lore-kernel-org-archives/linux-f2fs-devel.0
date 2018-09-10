@@ -1,250 +1,100 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: add new idle interval timing for
- discard and gc paths
-Date: Tue, 11 Sep 2018 00:01:43 +0800
-Message-ID: <5d74d46b-8141-f048-9c0a-459c82b2c449@kernel.org>
-References: <1536551252-24256-1-git-send-email-stummala@codeaurora.org>
+Subject: Re: [PATCH] f2fs: surround fault_injection ralted option
+ parsing using CONFIG_F2FS_FAULT_INJECTION
+Date: Tue, 11 Sep 2018 00:15:56 +0800
+Message-ID: <1313486d-8a86-d365-b843-0e6811050d92@kernel.org>
+References: <20180910154807.29035-1-cgxu519@gmx.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1536551252-24256-1-git-send-email-stummala@codeaurora.org>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <chao@kernel.org>) id 1fzOrA-00063D-G1
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 Sep 2018 16:16:08 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fzOr8-00DgA1-2Z
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 Sep 2018 16:16:08 +0000
+In-Reply-To: <20180910154807.29035-1-cgxu519@gmx.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sahitya Tummala <stummala@codeaurora.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chengguang Xu <cgxu519@gmx.com>, jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/9/10 11:47, Sahitya Tummala wrote:
-> This helps to control the frequency of submission of discard and
-> GC requests independently, based on the need. The sleep timing of
-> GC thread is now aligned with this idle time when the dev is busy,
-> to avoid unnecessary periodic wakeups.
+On 2018/9/10 23:48, Chengguang Xu wrote:
+> It's a little bit strange when fault_injection related
+> options fail with -EINVAL which were already disabled
+> from config, so surround all fault_injection related option
+> parsing code using CONFIG_F2FS_FAULT_INJECTION. Meanwhile,
+> slightly change warning message to keep consistency with
+> option POSIX_ACL and FS_XATTR.
 > 
-> Suggested-by: Chao Yu <yuchao0@huawei.com>
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
 > ---
-> v2:
-> -fix __issue_discard_cmd_orderly() path
+>  fs/f2fs/super.c | 19 +++++++++++--------
+>  1 file changed, 11 insertions(+), 8 deletions(-)
 > 
->  Documentation/ABI/testing/sysfs-fs-f2fs | 17 ++++++++++++++++-
->  fs/f2fs/f2fs.h                          | 31 +++++++++++++++++++++++++++----
->  fs/f2fs/gc.c                            |  6 ++++--
->  fs/f2fs/segment.c                       | 16 ++++++----------
->  fs/f2fs/super.c                         |  2 ++
->  fs/f2fs/sysfs.c                         |  5 +++++
->  6 files changed, 60 insertions(+), 17 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-> index 94a24ae..3ac4177 100644
-> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
-> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-> @@ -121,7 +121,22 @@ What:		/sys/fs/f2fs/<disk>/idle_interval
->  Date:		January 2016
->  Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
->  Description:
-> -		 Controls the idle timing.
-> +		 Controls the idle timing for all paths other than
-> +		 discard and gc path.
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 896b885f504e..cc49cc10d9f5 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -602,28 +602,31 @@ static int parse_options(struct super_block *sb, char *options)
+>  			}
+>  			F2FS_OPTION(sbi).write_io_size_bits = arg;
+>  			break;
+> +#ifdef CONFIG_F2FS_FAULT_INJECTION
+>  		case Opt_fault_injection:
+>  			if (args->from && match_int(args, &arg))
+>  				return -EINVAL;
+> -#ifdef CONFIG_F2FS_FAULT_INJECTION
+>  			f2fs_build_fault_attr(sbi, arg, F2FS_ALL_FAULT_TYPE);
+>  			set_opt(sbi, FAULT_INJECTION);
+> -#else
+> -			f2fs_msg(sb, KERN_INFO,
+> -				"FAULT_INJECTION was not selected");
+> -#endif
+>  			break;
 > +
-> +What:		/sys/fs/f2fs/<disk>/discard_idle_interval
-> +Date:		September 2018
-> +Contact:	"Chao Yu" <yuchao0@huawei.com>
-> +Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
-> +Description:
-> +		 Controls the idle timing for discard path.
-> +
-> +What:		/sys/fs/f2fs/<disk>/gc_idle_interval
-> +Date:		September 2018
-> +Contact:	"Chao Yu" <yuchao0@huawei.com>
-> +Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
-> +Description:
-> +		 Controls the idle timing for gc path.
->  
->  What:		/sys/fs/f2fs/<disk>/iostat_enable
->  Date:		August 2017
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index abf9256..6070681 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1093,6 +1093,8 @@ enum {
->  enum {
->  	CP_TIME,
->  	REQ_TIME,
-> +	DISCARD_TIME,
-> +	GC_TIME,
->  	MAX_TIME,
->  };
->  
-> @@ -1347,14 +1349,35 @@ static inline void f2fs_update_time(struct f2fs_sb_info *sbi, int type)
->  	sbi->last_time[type] = jiffies;
->  }
->  
-> -static inline bool f2fs_time_over(struct f2fs_sb_info *sbi, int type)
-> +static inline bool f2fs_time_over_cp(struct f2fs_sb_info *sbi)
-> +{
-> +	unsigned long interval = sbi->interval_time[CP_TIME] * HZ;
-> +
-> +	return time_after(jiffies, sbi->last_time[CP_TIME] + interval);
-> +}
-> +
-> +static inline bool f2fs_time_over_req(struct f2fs_sb_info *sbi, int type)
-> +{
-> +	unsigned long interval = sbi->interval_time[type] * HZ;
-> +
-> +	return time_after(jiffies, sbi->last_time[REQ_TIME] + interval);
-> +}
-> +
-> +static inline unsigned int f2fs_get_wait_time(struct f2fs_sb_info *sbi,
-> +						int type)
->  {
->  	unsigned long interval = sbi->interval_time[type] * HZ;
-> +	unsigned int wait_ms = 0;
-> +	long delta;
-> +
-> +	delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
-> +	if (delta > 0)
-> +		wait_ms = jiffies_to_msecs(delta);
->  
-> -	return time_after(jiffies, sbi->last_time[type] + interval);
-> +	return wait_ms;
->  }
->  
-> -static inline bool is_idle(struct f2fs_sb_info *sbi)
-> +static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
->  {
->  	struct block_device *bdev = sbi->sb->s_bdev;
->  	struct request_queue *q = bdev_get_queue(bdev);
-> @@ -1363,7 +1386,7 @@ static inline bool is_idle(struct f2fs_sb_info *sbi)
->  	if (rl->count[BLK_RW_SYNC] || rl->count[BLK_RW_ASYNC])
->  		return false;
->  
-> -	return f2fs_time_over(sbi, REQ_TIME);
-> +	return f2fs_time_over_req(sbi, type);
->  }
->  
->  /*
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 5c8d004..c0bafea 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -83,8 +83,10 @@ static int gc_thread_func(void *data)
->  		if (!mutex_trylock(&sbi->gc_mutex))
->  			goto next;
->  
-> -		if (!is_idle(sbi)) {
-> -			increase_sleep_time(gc_th, &wait_ms);
-> +		if (!is_idle(sbi, GC_TIME)) {
-> +			wait_ms = f2fs_get_wait_time(sbi, GC_TIME);
+>  		case Opt_fault_type:
+>  			if (args->from && match_int(args, &arg))
+>  				return -EINVAL;
+> -#ifdef CONFIG_F2FS_FAULT_INJECTION
+>  			f2fs_build_fault_attr(sbi, 0, arg);
+>  			set_opt(sbi, FAULT_INJECTION);
+> +			break;
+>  #else
+> +		case Opt_fault_injection:
+>  			f2fs_msg(sb, KERN_INFO,
+> -				"FAULT_INJECTION was not selected");
+> -#endif
+> +				"FAULT_INJECTION not supported");
 
-It seems this patch changes the method of increasing wait_ms here, if device is
-busy, we may wake up GC thread earlier than before, not sure we should do this.
+"fault_injection options not supported"
 
-To Jaegeuk, how do you think of this?
+>  			break;
+> +
+> +		case Opt_fault_type:
+> +			f2fs_msg(sb, KERN_INFO,
+> +				"FAULT_INJECTION not supported");
+
+"fault_type options not supported"
 
 Thanks,
 
-> +			if (!wait_ms)
-> +				increase_sleep_time(gc_th, &wait_ms);
->  			mutex_unlock(&sbi->gc_mutex);
->  			goto next;
->  		}
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index c5024f8..2d15733 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -511,7 +511,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
->  	else
->  		f2fs_build_free_nids(sbi, false, false);
->  
-> -	if (!is_idle(sbi) &&
-> +	if (!is_idle(sbi, REQ_TIME) &&
->  		(!excess_dirty_nats(sbi) && !excess_dirty_nodes(sbi)))
->  		return;
->  
-> @@ -521,7 +521,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
->  			excess_prefree_segs(sbi) ||
->  			excess_dirty_nats(sbi) ||
->  			excess_dirty_nodes(sbi) ||
-> -			f2fs_time_over(sbi, CP_TIME)) {
-> +			f2fs_time_over_cp(sbi)) {
->  		if (test_opt(sbi, DATA_FLUSH)) {
->  			struct blk_plug plug;
->  
-> @@ -1311,7 +1311,7 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
->  		if (dc->state != D_PREP)
->  			goto next;
->  
-> -		if (dpolicy->io_aware && !is_idle(sbi)) {
-> +		if (dpolicy->io_aware && !is_idle(sbi, DISCARD_TIME)) {
->  			io_interrupted = true;
+> +			break;
+> +#endif
+>  		case Opt_lazytime:
+>  			sb->s_flags |= SB_LAZYTIME;
 >  			break;
->  		}
-> @@ -1371,7 +1371,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->  			f2fs_bug_on(sbi, dc->state != D_PREP);
->  
->  			if (dpolicy->io_aware && i < dpolicy->io_aware_gran &&
-> -								!is_idle(sbi)) {
-> +						!is_idle(sbi, DISCARD_TIME)) {
->  				io_interrupted = true;
->  				break;
->  			}
-> @@ -1564,8 +1564,6 @@ static int issue_discard_thread(void *data)
->  	struct discard_policy dpolicy;
->  	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
->  	int issued;
-> -	unsigned long interval = sbi->interval_time[REQ_TIME] * HZ;
-> -	long delta;
->  
->  	set_freezable();
->  
-> @@ -1602,10 +1600,8 @@ static int issue_discard_thread(void *data)
->  			__wait_all_discard_cmd(sbi, &dpolicy);
->  			wait_ms = dpolicy.min_interval;
->  		} else if (issued == -1){
-> -			delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
-> -			if (delta > 0)
-> -				wait_ms = jiffies_to_msecs(delta);
-> -			else
-> +			wait_ms = f2fs_get_wait_time(sbi, DISCARD_TIME);
-> +			if (!wait_ms)
->  				wait_ms = dpolicy.mid_interval;
->  		} else {
->  			wait_ms = dpolicy.max_interval;
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 896b885..1706f45 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -2423,6 +2423,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
->  	sbi->dir_level = DEF_DIR_LEVEL;
->  	sbi->interval_time[CP_TIME] = DEF_CP_INTERVAL;
->  	sbi->interval_time[REQ_TIME] = DEF_IDLE_INTERVAL;
-> +	sbi->interval_time[DISCARD_TIME] = DEF_IDLE_INTERVAL;
-> +	sbi->interval_time[GC_TIME] = DEF_IDLE_INTERVAL;
->  	clear_sbi_flag(sbi, SBI_NEED_FSCK);
->  
->  	for (i = 0; i < NR_COUNT_TYPE; i++)
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index 81c0e53..0afe99c 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -407,6 +407,9 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
->  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
->  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
->  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
-> +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, discard_idle_interval,
-> +					interval_time[DISCARD_TIME]);
-> +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_idle_interval, interval_time[GC_TIME]);
->  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
->  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
->  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
-> @@ -460,6 +463,8 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
->  	ATTR_LIST(dirty_nats_ratio),
->  	ATTR_LIST(cp_interval),
->  	ATTR_LIST(idle_interval),
-> +	ATTR_LIST(discard_idle_interval),
-> +	ATTR_LIST(gc_idle_interval),
->  	ATTR_LIST(iostat_enable),
->  	ATTR_LIST(readdir_ra),
->  	ATTR_LIST(gc_pin_file_thresh),
 > 
