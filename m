@@ -1,194 +1,194 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: submit cached bio to avoid endless PageWriteback
-Date: Tue, 11 Sep 2018 15:39:16 -0700
-Message-ID: <20180911223916.GE55456@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180911101847.129519-1-yuchao0@huawei.com>
+Subject: Re: [PATCH v3 2/2] f2fs: fix setattr project check upon
+ fssetxattr ioctl
+Date: Tue, 11 Sep 2018 15:47:01 -0700
+Message-ID: <20180911224701.GF55456@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1536623661-5912-1-git-send-email-wshilong1991@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1fzrR9-0002NT-LE
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 11 Sep 2018 22:47:11 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fzrR6-00H06g-AI
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 11 Sep 2018 22:47:11 +0000
 Content-Disposition: inline
-In-Reply-To: <20180911101847.129519-1-yuchao0@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: kassey1216@gmail.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <1536623661-5912-1-git-send-email-wshilong1991@gmail.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Wang Shilong <wangshilong1991@gmail.com>
+Cc: adilger@dilger.ca, dchinner@redhat.com, linux-ext4@vger.kernel.org, wshilong@ddn.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 09/11, Chao Yu wrote:
-> When migrating encrypted block from background GC thread, we only add
-> them into f2fs inner bio cache, but forget to submit the cached bio, it
-> may cause potential deadlock when we are waiting page writebacked, fix
-> it.
+On 09/11, Wang Shilong wrote:
+> From: Wang Shilong <wangshilong1991@gmail.com>
 > 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> Currently, project quota could be changed by fssetxattr
+> ioctl, and existed permission check inode_owner_or_capable()
+> is obviously not enough, just think that common users could
+> change project id of file, that could make users to
+> break project quota easily.
+> 
+> This patch try to follow same regular of xfs project
+> quota:
+> 
+> "Project Quota ID state is only allowed to change from
+> within the init namespace. Enforce that restriction only
+> if we are trying to change the quota ID state.
+> Everything else is allowed in user namespaces."
+> 
+> Besides that, check and set project id'state should
+> be an atomic operation, protect whole operation with
+> inode lock.
+> 
+> Signed-off-by: Wang Shilong <wshilong@ddn.com>
 > ---
->  fs/f2fs/gc.c | 42 +++++++++++++++++++++++++++++-------------
->  1 file changed, 29 insertions(+), 13 deletions(-)
+> v2->v3: remove inode_lock() and mnt_want_write_file()
+> inside f2fs_ioc_setproject()
+> v1->v2: rename f2fs_ioctl_setattr_check_projid()
+> to f2fs_ioctl_check_project()
+>  fs/f2fs/file.c | 61 ++++++++++++++++++++++++++++++++++++----------------------
+>  1 file changed, 38 insertions(+), 23 deletions(-)
 > 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index c4ea4009cf05..a2ea0d445345 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -687,7 +687,7 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
->   * Move data block via META_MAPPING while keeping locked data page.
->   * This can be used to move blocks, aka LBAs, directly on disk.
->   */
-> -static void move_data_block(struct inode *inode, block_t bidx,
-> +static int move_data_block(struct inode *inode, block_t bidx,
->  				int gc_type, unsigned int segno, int off)
->  {
->  	struct f2fs_io_info fio = {
-> @@ -706,25 +706,29 @@ static void move_data_block(struct inode *inode, block_t bidx,
->  	struct node_info ni;
->  	struct page *page, *mpage;
->  	block_t newaddr;
-> -	int err;
-> +	int err = 0;
->  	bool lfs_mode = test_opt(fio.sbi, LFS);
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 5474aaa..f5170e6 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -2617,34 +2617,26 @@ static int f2fs_ioc_setproject(struct file *filp, __u32 projid)
+>  	if (projid_eq(kprojid, F2FS_I(inode)->i_projid))
+>  		return 0;
 >  
->  	/* do not read out */
->  	page = f2fs_grab_cache_page(inode->i_mapping, bidx, false);
->  	if (!page)
-> -		return;
-> +		return -ENOMEM;
+> -	err = mnt_want_write_file(filp);
+> -	if (err)
+> -		return err;
+> -
+>  	err = -EPERM;
+> -	inode_lock(inode);
+> -
+>  	/* Is it quota file? Do not allow user to mess with it */
+>  	if (IS_NOQUOTA(inode))
+> -		goto out_unlock;
+> +		return err;
 >  
-> -	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
-> +	if (!check_valid_map(F2FS_I_SB(inode), segno, off)) {
-> +		err = -ENOENT;
->  		goto out;
-> +	}
+>  	ipage = f2fs_get_node_page(sbi, inode->i_ino);
+> -	if (IS_ERR(ipage)) {
+> -		err = PTR_ERR(ipage);
+> -		goto out_unlock;
+> -	}
+> +	if (IS_ERR(ipage))
+> +		return PTR_ERR(ipage);
 >  
->  	if (f2fs_is_atomic_file(inode)) {
->  		F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC]++;
->  		F2FS_I_SB(inode)->skipped_atomic_files[gc_type]++;
-> +		err = -EAGAIN;
->  		goto out;
+>  	if (!F2FS_FITS_IN_INODE(F2FS_INODE(ipage), fi->i_extra_isize,
+>  								i_projid)) {
+>  		err = -EOVERFLOW;
+>  		f2fs_put_page(ipage, 1);
+> -		goto out_unlock;
+> +		return err;
 >  	}
+>  	f2fs_put_page(ipage, 1);
 >  
->  	if (f2fs_is_pinned_file(inode)) {
->  		f2fs_pin_file_control(inode, true);
-> +		err = -EAGAIN;
->  		goto out;
->  	}
+>  	err = dquot_initialize(inode);
+>  	if (err)
+> -		goto out_unlock;
+> +		return err;
 >  
-> @@ -735,6 +739,7 @@ static void move_data_block(struct inode *inode, block_t bidx,
+>  	transfer_to[PRJQUOTA] = dqget(sb, make_kqid_projid(kprojid));
+>  	if (!IS_ERR(transfer_to[PRJQUOTA])) {
+> @@ -2658,9 +2650,6 @@ static int f2fs_ioc_setproject(struct file *filp, __u32 projid)
+>  	inode->i_ctime = current_time(inode);
+>  out_dirty:
+>  	f2fs_mark_inode_dirty_sync(inode, true);
+> -out_unlock:
+> -	inode_unlock(inode);
+> -	mnt_drop_write_file(filp);
+>  	return err;
+>  }
+>  #else
+> @@ -2736,6 +2725,31 @@ static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
+>  	return 0;
+>  }
 >  
->  	if (unlikely(dn.data_blkaddr == NULL_ADDR)) {
->  		ClearPageUptodate(page);
-> +		err = -ENOENT;
->  		goto put_out;
->  	}
->  
-> @@ -817,6 +822,7 @@ static void move_data_block(struct inode *inode, block_t bidx,
->  	fio.new_blkaddr = newaddr;
->  	f2fs_submit_page_write(&fio);
->  	if (fio.retry) {
-> +		err = -EAGAIN;
->  		if (PageWriteback(fio.encrypted_page))
->  			end_page_writeback(fio.encrypted_page);
->  		goto put_page_out;
-> @@ -840,6 +846,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
->  	f2fs_put_dnode(&dn);
->  out:
->  	f2fs_put_page(page, 1);
+> +static int
+> +f2fs_ioctl_check_project(struct inode *inode, struct fsxattr *fa)
+
+We're not following this coding style. Let me allow to declare like this.
+
+static int f2fs_ioctl_...
+
+Thanks,
+
+> +{
+> +	/*
+> +	 * Project Quota ID state is only allowed to change from within the init
+> +	 * namespace. Enforce that restriction only if we are trying to change
+> +	 * the quota ID state. Everything else is allowed in user namespaces.
+> +	 */
+> +	if (current_user_ns() == &init_user_ns)
+> +		return 0;
 > +
+> +	if (__kprojid_val(F2FS_I(inode)->i_projid) != fa->fsx_projid)
+> +		return -EINVAL;
+> +
+> +	if (F2FS_I(inode)->i_flags & F2FS_PROJINHERIT_FL) {
+> +		if (!(fa->fsx_xflags & FS_XFLAG_PROJINHERIT))
+> +			return -EINVAL;
+> +	} else {
+> +		if (fa->fsx_xflags & FS_XFLAG_PROJINHERIT)
+> +			return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
+>  {
+>  	struct inode *inode = file_inode(filp);
+> @@ -2763,19 +2777,20 @@ static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
+>  		return err;
+>  
+>  	inode_lock(inode);
+> +	err = f2fs_ioctl_check_project(inode, &fa);
+> +	if (err)
+> +		goto out;
+>  	flags = (fi->i_flags & ~F2FS_FL_XFLAG_VISIBLE) |
+>  				(flags & F2FS_FL_XFLAG_VISIBLE);
+>  	err = __f2fs_ioc_setflags(inode, flags);
+> -	inode_unlock(inode);
+> -	mnt_drop_write_file(filp);
+>  	if (err)
+> -		return err;
+> +		goto out;
+>  
+>  	err = f2fs_ioc_setproject(filp, fa.fsx_projid);
+> -	if (err)
+> -		return err;
+> -
+> -	return 0;
+> +out:
+> +	inode_unlock(inode);
+> +	mnt_drop_write_file(filp);
 > +	return err;
 >  }
 >  
->  static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
-> @@ -919,7 +927,7 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->   * If the parent node is not valid or the data block address is different,
->   * the victim data block is ignored.
->   */
-> -static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
-> +static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->  		struct gc_inode_list *gc_list, unsigned int segno, int gc_type)
->  {
->  	struct super_block *sb = sbi->sb;
-> @@ -927,6 +935,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->  	block_t start_addr;
->  	int off;
->  	int phase = 0;
-> +	int submitted = 0;
->  
->  	start_addr = START_BLOCK(sbi, segno);
->  
-> @@ -943,7 +952,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->  
->  		/* stop BG_GC if there is not enough free sections. */
->  		if (gc_type == BG_GC && has_not_enough_free_secs(sbi, 0, 0))
-> -			return;
-> +			return submitted;
->  
->  		if (check_valid_map(sbi, segno, off) == 0)
->  			continue;
-> @@ -1015,6 +1024,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->  		if (inode) {
->  			struct f2fs_inode_info *fi = F2FS_I(inode);
->  			bool locked = false;
-> +			int err;
->  
->  			if (S_ISREG(inode->i_mode)) {
->  				if (!down_write_trylock(&fi->i_gc_rwsem[READ]))
-> @@ -1033,12 +1043,15 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->  
->  			start_bidx = f2fs_start_bidx_of_node(nofs, inode)
->  								+ ofs_in_node;
-> -			if (f2fs_post_read_required(inode))
-> -				move_data_block(inode, start_bidx, gc_type,
-> -								segno, off);
-> -			else
-> +			if (f2fs_post_read_required(inode)) {
-> +				err = move_data_block(inode, start_bidx,
-> +							gc_type, segno, off);
-> +				if (!err)
-> +					submitted++;
-> +			} else {
->  				move_data_page(inode, start_bidx, gc_type,
->  								segno, off);
-> +			}
->  
->  			if (locked) {
->  				up_write(&fi->i_gc_rwsem[WRITE]);
-> @@ -1051,6 +1064,8 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->  
->  	if (++phase < 5)
->  		goto next_step;
-> +
-> +	return submitted;
->  }
->  
->  static int __get_victim(struct f2fs_sb_info *sbi, unsigned int *victim,
-> @@ -1078,6 +1093,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
->  	unsigned char type = IS_DATASEG(get_seg_entry(sbi, segno)->type) ?
->  						SUM_TYPE_DATA : SUM_TYPE_NODE;
->  	unsigned int units = 0;
-> +	int submitted = 0;
->  
->  	/* start segno may point to middle of section, so adjust it */
->  	if (__is_large_section(sbi))
-> @@ -1136,8 +1152,8 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
->  		if (type == SUM_TYPE_NODE)
->  			gc_node_segment(sbi, sum->entries, segno, gc_type);
->  		else
-> -			gc_data_segment(sbi, sum->entries, gc_list, segno,
-> -								gc_type);
-> +			submitted += gc_data_segment(sbi, sum->entries, gc_list,
-> +							segno, gc_type);
->  
->  		stat_inc_seg_count(sbi, type, gc_type);
->  
-> @@ -1152,7 +1168,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
->  		f2fs_put_page(sum_page, 0);
->  	}
->  
-> -	if (gc_type == FG_GC)
-> +	if (gc_type == FG_GC || submitted)
-
-Do we need to check submitted for both of node and data? Then, we can remove
-FG_GC case?
-
->  		f2fs_submit_merged_write(sbi,
->  				(type == SUM_TYPE_NODE) ? NODE : DATA);
->  
+>  int f2fs_pin_file_control(struct inode *inode, bool inc)
 > -- 
-> 2.18.0.rc1
+> 1.8.3.1
+> 
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
