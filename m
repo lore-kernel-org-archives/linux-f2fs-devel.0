@@ -1,160 +1,186 @@
-From: Junling Zheng <zhengjunling@huawei.com>
-Subject: Re: [RFC PATCH v3 3/5] f2fs-tools: unify the writeback
- of superblock
-Date: Tue, 11 Sep 2018 11:28:21 +0800
-Message-ID: <0eeec4ed-e059-fca6-92a4-dfc6325a08f9@huawei.com>
-References: <20180830033733.236460-1-zhengjunling@huawei.com>
- <20180830033733.236460-3-zhengjunling@huawei.com>
- <20180907222342.GB93212@jaegeuk-macbookpro.roam.corp.google.com>
- <e4efcfcf-0df8-f2d3-711f-bf64cfba0ce2@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: submit cached bio to avoid endless PageWriteback
+Date: Tue, 11 Sep 2018 18:18:47 +0800
+Message-ID: <20180911101847.129519-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <zhengjunling@huawei.com>) id 1fzZM0-000134-7p
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 11 Sep 2018 03:28:40 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1fzZLx-00E392-Jw
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 11 Sep 2018 03:28:40 +0000
-In-Reply-To: <e4efcfcf-0df8-f2d3-711f-bf64cfba0ce2@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: kassey1216@gmail.com, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi, Jaegeuk
+When migrating encrypted block from background GC thread, we only add
+them into f2fs inner bio cache, but forget to submit the cached bio, it
+may cause potential deadlock when we are waiting page writebacked, fix
+it.
 
-On 2018/9/11 10:43, Junling Zheng wrote:
-> On 2018/9/8 6:23, Jaegeuk Kim wrote:
->> On 08/30, Junling Zheng wrote:
->>> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
->>> index 38a0da4..df46950 100644
->>> --- a/include/f2fs_fs.h
->>> +++ b/include/f2fs_fs.h
->>> @@ -1411,4 +1411,39 @@ static inline int parse_root_owner(char *ids,
->>>  	return 0;
->>>  }
->>>  
->>> +enum SB_ADDR {
->>> +	SB_ADDR_0,
->>> +	SB_ADDR_1,
->>> +	SB_ADDR_MAX,
->>> +};
->>> +
->>> +#define SB_FIRST	(1 << SB_ADDR_0)
->>> +#define SB_SECOND	(1 << SB_ADDR_1)
->>> +#define SB_ALL		(SB_FIRST | SB_SECOND)
->>> +
->>> +static inline int __write_superblock(struct f2fs_super_block *sb, int sb_mask)
->>> +{
->>> +	int index, ret;
->>> +	u_int8_t *buf;
->>> +
->>> +	buf = calloc(F2FS_BLKSIZE, 1);
->>> +	ASSERT(buf);
->>> +
->>> +	memcpy(buf + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
->>> +	for (index = 0; index < SB_ADDR_MAX; index++) {
->>> +		if ((1 << index) & sb_mask) {
->>> +			ret = dev_write_block(buf, index);
->>
->> This doesn't look like a proper inline function.
->>
-> 
-> Ok, I'll remove the "inline" flag :)
-> Any other flaws?
-> 
-> Thanks
-> 
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/gc.c | 42 +++++++++++++++++++++++++++++-------------
+ 1 file changed, 29 insertions(+), 13 deletions(-)
 
-Sorry, here may be difficult to handle :(
-
-This function is used in both mkfs and fsck, so I think it's proper to place it in
-include/f2fs_fs.h.
-
-Then, if the "inline" flag is removed it will generate some compile warnings as below:
-
-In file included from libf2fs.c:11:0:
-../include/f2fs_fs.h:1428:12: warning: '__write_superblock' defined but not used [-Wunused-function]
- static int __write_superblock(struct f2fs_super_block *sb, int sb_mask)
-            ^
-
-Besides, there're some other complex functions like get_best_overprovision(), parse_feature()
-being defined as inline functions.
-
-So, I think it's better to keep it inline. what do you think?
-
-Thanks
-
->>> +			if (ret) {
->>> +				MSG(0, "\tError: While writing superblock %d "
->>> +							"to disk!!!\n", index);
->>> +				free(buf);
->>> +				return ret;
->>> +			}
->>> +		}
->>> +	}
->>> +
->>> +	free(buf);
->>> +	return 0;
->>> +}
->>> +
->>>  #endif	/*__F2FS_FS_H */
->>> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
->>> index 621126c..7e3846e 100644
->>> --- a/mkfs/f2fs_format.c
->>> +++ b/mkfs/f2fs_format.c
->>> @@ -979,24 +979,7 @@ free_cp:
->>>  
->>>  static int f2fs_write_super_block(void)
->>>  {
->>> -	int index;
->>> -	u_int8_t *zero_buff;
->>> -
->>> -	zero_buff = calloc(F2FS_BLKSIZE, 1);
->>> -
->>> -	memcpy(zero_buff + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
->>> -	DBG(1, "\tWriting super block, at offset 0x%08x\n", 0);
->>> -	for (index = 0; index < 2; index++) {
->>> -		if (dev_write_block(zero_buff, index)) {
->>> -			MSG(1, "\tError: While while writing supe_blk "
->>> -					"on disk!!! index : %d\n", index);
->>> -			free(zero_buff);
->>> -			return -1;
->>> -		}
->>> -	}
->>> -
->>> -	free(zero_buff);
->>> -	return 0;
->>> +	return __write_superblock(sb, SB_ALL);
->>>  }
->>>  
->>>  #ifndef WITH_ANDROID
->>> -- 
->>> 2.18.0
->>
->> .
->>
-> 
-> 
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> .
-> 
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index c4ea4009cf05..a2ea0d445345 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -687,7 +687,7 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
+  * Move data block via META_MAPPING while keeping locked data page.
+  * This can be used to move blocks, aka LBAs, directly on disk.
+  */
+-static void move_data_block(struct inode *inode, block_t bidx,
++static int move_data_block(struct inode *inode, block_t bidx,
+ 				int gc_type, unsigned int segno, int off)
+ {
+ 	struct f2fs_io_info fio = {
+@@ -706,25 +706,29 @@ static void move_data_block(struct inode *inode, block_t bidx,
+ 	struct node_info ni;
+ 	struct page *page, *mpage;
+ 	block_t newaddr;
+-	int err;
++	int err = 0;
+ 	bool lfs_mode = test_opt(fio.sbi, LFS);
+ 
+ 	/* do not read out */
+ 	page = f2fs_grab_cache_page(inode->i_mapping, bidx, false);
+ 	if (!page)
+-		return;
++		return -ENOMEM;
+ 
+-	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
++	if (!check_valid_map(F2FS_I_SB(inode), segno, off)) {
++		err = -ENOENT;
+ 		goto out;
++	}
+ 
+ 	if (f2fs_is_atomic_file(inode)) {
+ 		F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC]++;
+ 		F2FS_I_SB(inode)->skipped_atomic_files[gc_type]++;
++		err = -EAGAIN;
+ 		goto out;
+ 	}
+ 
+ 	if (f2fs_is_pinned_file(inode)) {
+ 		f2fs_pin_file_control(inode, true);
++		err = -EAGAIN;
+ 		goto out;
+ 	}
+ 
+@@ -735,6 +739,7 @@ static void move_data_block(struct inode *inode, block_t bidx,
+ 
+ 	if (unlikely(dn.data_blkaddr == NULL_ADDR)) {
+ 		ClearPageUptodate(page);
++		err = -ENOENT;
+ 		goto put_out;
+ 	}
+ 
+@@ -817,6 +822,7 @@ static void move_data_block(struct inode *inode, block_t bidx,
+ 	fio.new_blkaddr = newaddr;
+ 	f2fs_submit_page_write(&fio);
+ 	if (fio.retry) {
++		err = -EAGAIN;
+ 		if (PageWriteback(fio.encrypted_page))
+ 			end_page_writeback(fio.encrypted_page);
+ 		goto put_page_out;
+@@ -840,6 +846,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
+ 	f2fs_put_dnode(&dn);
+ out:
+ 	f2fs_put_page(page, 1);
++
++	return err;
+ }
+ 
+ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+@@ -919,7 +927,7 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+  * If the parent node is not valid or the data block address is different,
+  * the victim data block is ignored.
+  */
+-static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
++static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 		struct gc_inode_list *gc_list, unsigned int segno, int gc_type)
+ {
+ 	struct super_block *sb = sbi->sb;
+@@ -927,6 +935,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 	block_t start_addr;
+ 	int off;
+ 	int phase = 0;
++	int submitted = 0;
+ 
+ 	start_addr = START_BLOCK(sbi, segno);
+ 
+@@ -943,7 +952,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 
+ 		/* stop BG_GC if there is not enough free sections. */
+ 		if (gc_type == BG_GC && has_not_enough_free_secs(sbi, 0, 0))
+-			return;
++			return submitted;
+ 
+ 		if (check_valid_map(sbi, segno, off) == 0)
+ 			continue;
+@@ -1015,6 +1024,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 		if (inode) {
+ 			struct f2fs_inode_info *fi = F2FS_I(inode);
+ 			bool locked = false;
++			int err;
+ 
+ 			if (S_ISREG(inode->i_mode)) {
+ 				if (!down_write_trylock(&fi->i_gc_rwsem[READ]))
+@@ -1033,12 +1043,15 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 
+ 			start_bidx = f2fs_start_bidx_of_node(nofs, inode)
+ 								+ ofs_in_node;
+-			if (f2fs_post_read_required(inode))
+-				move_data_block(inode, start_bidx, gc_type,
+-								segno, off);
+-			else
++			if (f2fs_post_read_required(inode)) {
++				err = move_data_block(inode, start_bidx,
++							gc_type, segno, off);
++				if (!err)
++					submitted++;
++			} else {
+ 				move_data_page(inode, start_bidx, gc_type,
+ 								segno, off);
++			}
+ 
+ 			if (locked) {
+ 				up_write(&fi->i_gc_rwsem[WRITE]);
+@@ -1051,6 +1064,8 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 
+ 	if (++phase < 5)
+ 		goto next_step;
++
++	return submitted;
+ }
+ 
+ static int __get_victim(struct f2fs_sb_info *sbi, unsigned int *victim,
+@@ -1078,6 +1093,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 	unsigned char type = IS_DATASEG(get_seg_entry(sbi, segno)->type) ?
+ 						SUM_TYPE_DATA : SUM_TYPE_NODE;
+ 	unsigned int units = 0;
++	int submitted = 0;
+ 
+ 	/* start segno may point to middle of section, so adjust it */
+ 	if (__is_large_section(sbi))
+@@ -1136,8 +1152,8 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 		if (type == SUM_TYPE_NODE)
+ 			gc_node_segment(sbi, sum->entries, segno, gc_type);
+ 		else
+-			gc_data_segment(sbi, sum->entries, gc_list, segno,
+-								gc_type);
++			submitted += gc_data_segment(sbi, sum->entries, gc_list,
++							segno, gc_type);
+ 
+ 		stat_inc_seg_count(sbi, type, gc_type);
+ 
+@@ -1152,7 +1168,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 		f2fs_put_page(sum_page, 0);
+ 	}
+ 
+-	if (gc_type == FG_GC)
++	if (gc_type == FG_GC || submitted)
+ 		f2fs_submit_merged_write(sbi,
+ 				(type == SUM_TYPE_NODE) ? NODE : DATA);
+ 
+-- 
+2.18.0.rc1
