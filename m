@@ -1,260 +1,170 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: add new idle interval timing for
- discard and gc paths
-Date: Tue, 11 Sep 2018 15:09:58 -0700
-Message-ID: <20180911220958.GC55456@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1536551252-24256-1-git-send-email-stummala@codeaurora.org>
- <5d74d46b-8141-f048-9c0a-459c82b2c449@kernel.org>
+Subject: Re: [RFC PATCH v3 3/5] f2fs-tools: unify the writeback
+ of superblock
+Date: Tue, 11 Sep 2018 15:14:09 -0700
+Message-ID: <20180911221409.GD55456@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180830033733.236460-1-zhengjunling@huawei.com>
+ <20180830033733.236460-3-zhengjunling@huawei.com>
+ <20180907222342.GB93212@jaegeuk-macbookpro.roam.corp.google.com>
+ <e4efcfcf-0df8-f2d3-711f-bf64cfba0ce2@huawei.com>
+ <0eeec4ed-e059-fca6-92a4-dfc6325a08f9@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1fzqvM-00016K-5O
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 11 Sep 2018 22:14:20 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1fzqvJ-00EfrY-HR
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 11 Sep 2018 22:14:19 +0000
 Content-Disposition: inline
-In-Reply-To: <5d74d46b-8141-f048-9c0a-459c82b2c449@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao@kernel.org>
-Cc: Sahitya Tummala <stummala@codeaurora.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <0eeec4ed-e059-fca6-92a4-dfc6325a08f9@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Junling Zheng <zhengjunling@huawei.com>
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 09/11, Chao Yu wrote:
-> On 2018/9/10 11:47, Sahitya Tummala wrote:
-> > This helps to control the frequency of submission of discard and
-> > GC requests independently, based on the need. The sleep timing of
-> > GC thread is now aligned with this idle time when the dev is busy,
-> > to avoid unnecessary periodic wakeups.
-> > 
-> > Suggested-by: Chao Yu <yuchao0@huawei.com>
-> > Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> > ---
-> > v2:
-> > -fix __issue_discard_cmd_orderly() path
-> > 
-> >  Documentation/ABI/testing/sysfs-fs-f2fs | 17 ++++++++++++++++-
-> >  fs/f2fs/f2fs.h                          | 31 +++++++++++++++++++++++++++----
-> >  fs/f2fs/gc.c                            |  6 ++++--
-> >  fs/f2fs/segment.c                       | 16 ++++++----------
-> >  fs/f2fs/super.c                         |  2 ++
-> >  fs/f2fs/sysfs.c                         |  5 +++++
-> >  6 files changed, 60 insertions(+), 17 deletions(-)
-> > 
-> > diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-> > index 94a24ae..3ac4177 100644
-> > --- a/Documentation/ABI/testing/sysfs-fs-f2fs
-> > +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-> > @@ -121,7 +121,22 @@ What:		/sys/fs/f2fs/<disk>/idle_interval
-> >  Date:		January 2016
-> >  Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
-> >  Description:
-> > -		 Controls the idle timing.
-> > +		 Controls the idle timing for all paths other than
-> > +		 discard and gc path.
-> > +
-> > +What:		/sys/fs/f2fs/<disk>/discard_idle_interval
-> > +Date:		September 2018
-> > +Contact:	"Chao Yu" <yuchao0@huawei.com>
-> > +Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
-> > +Description:
-> > +		 Controls the idle timing for discard path.
-> > +
-> > +What:		/sys/fs/f2fs/<disk>/gc_idle_interval
-> > +Date:		September 2018
-> > +Contact:	"Chao Yu" <yuchao0@huawei.com>
-> > +Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
-> > +Description:
-> > +		 Controls the idle timing for gc path.
-> >  
-> >  What:		/sys/fs/f2fs/<disk>/iostat_enable
-> >  Date:		August 2017
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index abf9256..6070681 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -1093,6 +1093,8 @@ enum {
-> >  enum {
-> >  	CP_TIME,
-> >  	REQ_TIME,
-> > +	DISCARD_TIME,
-> > +	GC_TIME,
-> >  	MAX_TIME,
-> >  };
-> >  
-> > @@ -1347,14 +1349,35 @@ static inline void f2fs_update_time(struct f2fs_sb_info *sbi, int type)
-> >  	sbi->last_time[type] = jiffies;
-> >  }
-> >  
-> > -static inline bool f2fs_time_over(struct f2fs_sb_info *sbi, int type)
-> > +static inline bool f2fs_time_over_cp(struct f2fs_sb_info *sbi)
-
-I don't see why we need this separately.
-
-> > +{
-> > +	unsigned long interval = sbi->interval_time[CP_TIME] * HZ;
-> > +
-> > +	return time_after(jiffies, sbi->last_time[CP_TIME] + interval);
-> > +}
-> > +
-> > +static inline bool f2fs_time_over_req(struct f2fs_sb_info *sbi, int type)
-> > +{
-> > +	unsigned long interval = sbi->interval_time[type] * HZ;
-> > +
-> > +	return time_after(jiffies, sbi->last_time[REQ_TIME] + interval);
-> > +}
-> > +
-> > +static inline unsigned int f2fs_get_wait_time(struct f2fs_sb_info *sbi,
-> > +						int type)
-
-f2fs_time_to_wait()?
-
-> >  {
-> >  	unsigned long interval = sbi->interval_time[type] * HZ;
-> > +	unsigned int wait_ms = 0;
-> > +	long delta;
-> > +
-> > +	delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
-> > +	if (delta > 0)
-> > +		wait_ms = jiffies_to_msecs(delta);
-> >  
-> > -	return time_after(jiffies, sbi->last_time[type] + interval);
-> > +	return wait_ms;
-> >  }
-> >  
-> > -static inline bool is_idle(struct f2fs_sb_info *sbi)
-> > +static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
-> >  {
-> >  	struct block_device *bdev = sbi->sb->s_bdev;
-> >  	struct request_queue *q = bdev_get_queue(bdev);
-> > @@ -1363,7 +1386,7 @@ static inline bool is_idle(struct f2fs_sb_info *sbi)
-> >  	if (rl->count[BLK_RW_SYNC] || rl->count[BLK_RW_ASYNC])
-> >  		return false;
-> >  
-> > -	return f2fs_time_over(sbi, REQ_TIME);
-> > +	return f2fs_time_over_req(sbi, type);
-> >  }
-> >  
-> >  /*
-> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> > index 5c8d004..c0bafea 100644
-> > --- a/fs/f2fs/gc.c
-> > +++ b/fs/f2fs/gc.c
-> > @@ -83,8 +83,10 @@ static int gc_thread_func(void *data)
-> >  		if (!mutex_trylock(&sbi->gc_mutex))
-> >  			goto next;
-> >  
-> > -		if (!is_idle(sbi)) {
-> > -			increase_sleep_time(gc_th, &wait_ms);
-> > +		if (!is_idle(sbi, GC_TIME)) {
-> > +			wait_ms = f2fs_get_wait_time(sbi, GC_TIME);
+On 09/11, Junling Zheng wrote:
+> Hi, Jaegeuk
 > 
-> It seems this patch changes the method of increasing wait_ms here, if device is
-> busy, we may wake up GC thread earlier than before, not sure we should do this.
+> On 2018/9/11 10:43, Junling Zheng wrote:
+> > On 2018/9/8 6:23, Jaegeuk Kim wrote:
+> >> On 08/30, Junling Zheng wrote:
+> >>> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+> >>> index 38a0da4..df46950 100644
+> >>> --- a/include/f2fs_fs.h
+> >>> +++ b/include/f2fs_fs.h
+> >>> @@ -1411,4 +1411,39 @@ static inline int parse_root_owner(char *ids,
+> >>>  	return 0;
+> >>>  }
+> >>>  
+> >>> +enum SB_ADDR {
+> >>> +	SB_ADDR_0,
+> >>> +	SB_ADDR_1,
+> >>> +	SB_ADDR_MAX,
+> >>> +};
+> >>> +
+> >>> +#define SB_FIRST	(1 << SB_ADDR_0)
+> >>> +#define SB_SECOND	(1 << SB_ADDR_1)
+> >>> +#define SB_ALL		(SB_FIRST | SB_SECOND)
+> >>> +
+> >>> +static inline int __write_superblock(struct f2fs_super_block *sb, int sb_mask)
+> >>> +{
+> >>> +	int index, ret;
+> >>> +	u_int8_t *buf;
+> >>> +
+> >>> +	buf = calloc(F2FS_BLKSIZE, 1);
+> >>> +	ASSERT(buf);
+> >>> +
+> >>> +	memcpy(buf + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
+> >>> +	for (index = 0; index < SB_ADDR_MAX; index++) {
+> >>> +		if ((1 << index) & sb_mask) {
+> >>> +			ret = dev_write_block(buf, index);
+> >>
+> >> This doesn't look like a proper inline function.
+> >>
+> > 
+> > Ok, I'll remove the "inline" flag :)
+> > Any other flaws?
+> > 
+> > Thanks
+> > 
 > 
-> To Jaegeuk, how do you think of this?
+> Sorry, here may be difficult to handle :(
+> 
+> This function is used in both mkfs and fsck, so I think it's proper to place it in
+> include/f2fs_fs.h.
+> 
+> Then, if the "inline" flag is removed it will generate some compile warnings as below:
+> 
+> In file included from libf2fs.c:11:0:
+> ../include/f2fs_fs.h:1428:12: warning: '__write_superblock' defined but not used [-Wunused-function]
+>  static int __write_superblock(struct f2fs_super_block *sb, int sb_mask)
+>             ^
+> 
+> Besides, there're some other complex functions like get_best_overprovision(), parse_feature()
+> being defined as inline functions.
+> 
+> So, I think it's better to keep it inline. what do you think?
 
-Yes, please let us discuss this in another patch.
+I meant we'd better keep them separately, since mkfs is quite independent from
+fsck friends.
+
+Thanks,
 
 > 
-> Thanks,
+> Thanks
 > 
-> > +			if (!wait_ms)
-> > +				increase_sleep_time(gc_th, &wait_ms);
-> >  			mutex_unlock(&sbi->gc_mutex);
-> >  			goto next;
-> >  		}
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index c5024f8..2d15733 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -511,7 +511,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
-> >  	else
-> >  		f2fs_build_free_nids(sbi, false, false);
-> >  
-> > -	if (!is_idle(sbi) &&
-> > +	if (!is_idle(sbi, REQ_TIME) &&
-> >  		(!excess_dirty_nats(sbi) && !excess_dirty_nodes(sbi)))
-> >  		return;
-> >  
-> > @@ -521,7 +521,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
-> >  			excess_prefree_segs(sbi) ||
-> >  			excess_dirty_nats(sbi) ||
-> >  			excess_dirty_nodes(sbi) ||
-> > -			f2fs_time_over(sbi, CP_TIME)) {
-> > +			f2fs_time_over_cp(sbi)) {
-> >  		if (test_opt(sbi, DATA_FLUSH)) {
-> >  			struct blk_plug plug;
-> >  
-> > @@ -1311,7 +1311,7 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
-> >  		if (dc->state != D_PREP)
-> >  			goto next;
-> >  
-> > -		if (dpolicy->io_aware && !is_idle(sbi)) {
-> > +		if (dpolicy->io_aware && !is_idle(sbi, DISCARD_TIME)) {
-> >  			io_interrupted = true;
-> >  			break;
-> >  		}
-> > @@ -1371,7 +1371,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> >  			f2fs_bug_on(sbi, dc->state != D_PREP);
-> >  
-> >  			if (dpolicy->io_aware && i < dpolicy->io_aware_gran &&
-> > -								!is_idle(sbi)) {
-> > +						!is_idle(sbi, DISCARD_TIME)) {
-> >  				io_interrupted = true;
-> >  				break;
-> >  			}
-> > @@ -1564,8 +1564,6 @@ static int issue_discard_thread(void *data)
-> >  	struct discard_policy dpolicy;
-> >  	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
-> >  	int issued;
-> > -	unsigned long interval = sbi->interval_time[REQ_TIME] * HZ;
-> > -	long delta;
-> >  
-> >  	set_freezable();
-> >  
-> > @@ -1602,10 +1600,8 @@ static int issue_discard_thread(void *data)
-> >  			__wait_all_discard_cmd(sbi, &dpolicy);
-> >  			wait_ms = dpolicy.min_interval;
-> >  		} else if (issued == -1){
-> > -			delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
-> > -			if (delta > 0)
-> > -				wait_ms = jiffies_to_msecs(delta);
-> > -			else
-> > +			wait_ms = f2fs_get_wait_time(sbi, DISCARD_TIME);
-> > +			if (!wait_ms)
-> >  				wait_ms = dpolicy.mid_interval;
-> >  		} else {
-> >  			wait_ms = dpolicy.max_interval;
-> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > index 896b885..1706f45 100644
-> > --- a/fs/f2fs/super.c
-> > +++ b/fs/f2fs/super.c
-> > @@ -2423,6 +2423,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
-> >  	sbi->dir_level = DEF_DIR_LEVEL;
-> >  	sbi->interval_time[CP_TIME] = DEF_CP_INTERVAL;
-> >  	sbi->interval_time[REQ_TIME] = DEF_IDLE_INTERVAL;
-> > +	sbi->interval_time[DISCARD_TIME] = DEF_IDLE_INTERVAL;
-> > +	sbi->interval_time[GC_TIME] = DEF_IDLE_INTERVAL;
-> >  	clear_sbi_flag(sbi, SBI_NEED_FSCK);
-> >  
-> >  	for (i = 0; i < NR_COUNT_TYPE; i++)
-> > diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> > index 81c0e53..0afe99c 100644
-> > --- a/fs/f2fs/sysfs.c
-> > +++ b/fs/f2fs/sysfs.c
-> > @@ -407,6 +407,9 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
-> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
-> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
-> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
-> > +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, discard_idle_interval,
-> > +					interval_time[DISCARD_TIME]);
-> > +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_idle_interval, interval_time[GC_TIME]);
-> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
-> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
-> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
-> > @@ -460,6 +463,8 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
-> >  	ATTR_LIST(dirty_nats_ratio),
-> >  	ATTR_LIST(cp_interval),
-> >  	ATTR_LIST(idle_interval),
-> > +	ATTR_LIST(discard_idle_interval),
-> > +	ATTR_LIST(gc_idle_interval),
-> >  	ATTR_LIST(iostat_enable),
-> >  	ATTR_LIST(readdir_ra),
-> >  	ATTR_LIST(gc_pin_file_thresh),
+> >>> +			if (ret) {
+> >>> +				MSG(0, "\tError: While writing superblock %d "
+> >>> +							"to disk!!!\n", index);
+> >>> +				free(buf);
+> >>> +				return ret;
+> >>> +			}
+> >>> +		}
+> >>> +	}
+> >>> +
+> >>> +	free(buf);
+> >>> +	return 0;
+> >>> +}
+> >>> +
+> >>>  #endif	/*__F2FS_FS_H */
+> >>> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+> >>> index 621126c..7e3846e 100644
+> >>> --- a/mkfs/f2fs_format.c
+> >>> +++ b/mkfs/f2fs_format.c
+> >>> @@ -979,24 +979,7 @@ free_cp:
+> >>>  
+> >>>  static int f2fs_write_super_block(void)
+> >>>  {
+> >>> -	int index;
+> >>> -	u_int8_t *zero_buff;
+> >>> -
+> >>> -	zero_buff = calloc(F2FS_BLKSIZE, 1);
+> >>> -
+> >>> -	memcpy(zero_buff + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
+> >>> -	DBG(1, "\tWriting super block, at offset 0x%08x\n", 0);
+> >>> -	for (index = 0; index < 2; index++) {
+> >>> -		if (dev_write_block(zero_buff, index)) {
+> >>> -			MSG(1, "\tError: While while writing supe_blk "
+> >>> -					"on disk!!! index : %d\n", index);
+> >>> -			free(zero_buff);
+> >>> -			return -1;
+> >>> -		}
+> >>> -	}
+> >>> -
+> >>> -	free(zero_buff);
+> >>> -	return 0;
+> >>> +	return __write_superblock(sb, SB_ALL);
+> >>>  }
+> >>>  
+> >>>  #ifndef WITH_ANDROID
+> >>> -- 
+> >>> 2.18.0
+> >>
+> >> .
+> >>
 > > 
+> > 
+> > 
+> > 
+> > _______________________________________________
+> > Linux-f2fs-devel mailing list
+> > Linux-f2fs-devel@lists.sourceforge.net
+> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> > 
+> > .
+> > 
+> 
