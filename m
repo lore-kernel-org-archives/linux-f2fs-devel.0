@@ -1,149 +1,95 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
-Date: Wed, 12 Sep 2018 10:57:45 +0800
-Message-ID: <cc6216bf-a9b9-01de-b9be-5186a228d512@huawei.com>
-References: <20180911201546.56566-1-jaegeuk@kernel.org>
- <7aa2e6f3-a4b2-dfdd-6205-f19c4bc952e6@kernel.org>
- <20180912000603.GA67662@jaegeuk-macbookpro.roam.corp.google.com>
- <20180912002700.GA69323@jaegeuk-macbookpro.roam.corp.google.com>
- <650f06f4-7ca3-a3ed-d149-88d1e9f93b7a@huawei.com>
- <20180912012550.GA71953@jaegeuk-macbookpro.roam.corp.google.com>
- <ffbfbc85-f7ac-dd5c-b20f-d08868adb4ee@huawei.com>
- <20180912024601.GA75537@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chengguang Xu <cgxu519@gmx.com>
+Subject: [PATCH v3] f2fs: surround fault_injection related option
+ parsing using CONFIG_F2FS_FAULT_INJECTION
+Date: Wed, 12 Sep 2018 13:32:52 +0800
+Message-ID: <20180912053252.30965-1-cgxu519@gmx.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180912024601.GA75537@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <cgxu519@gmx.com>) id 1fzxmf-0005m6-LR
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 Sep 2018 05:33:49 +0000
+Received: from mout.gmx.net ([212.227.17.22])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1fzxmd-00EpjE-Ml
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 Sep 2018 05:33:49 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: Chengguang Xu <cgxu519@gmx.com>, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/9/12 10:46, Jaegeuk Kim wrote:
-> On 09/12, Chao Yu wrote:
->> On 2018/9/12 9:25, Jaegeuk Kim wrote:
->>> On 09/12, Chao Yu wrote:
->>>> On 2018/9/12 8:27, Jaegeuk Kim wrote:
->>>>> On 09/11, Jaegeuk Kim wrote:
->>>>>> On 09/12, Chao Yu wrote:
->>>>>>> On 2018/9/12 4:15, Jaegeuk Kim wrote:
->>>>>>>> fsck.f2fs is able to recover the quota structure, since roll-forward recovery
->>>>>>>> can recover it based on previous user information.
->>>>>>>
->>>>>>> I didn't get it, both fsck and kernel recover quota file based all inodes'
->>>>>>> uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
->>>>>>> same?
->>>>>>
->>>>>> I thought that, but had to add this, since I was encountering quota errors right
->>>>>> after getting some files recovered. And, I thought it'd make it more safe to do
->>>>>> fsck after roll-forward recovery.
->>>>>>
->>>>>> Anyway, let me test again without this patch for a while.
->>>>>
->>>>> Hmm, I just got a fsck failure right after some files recovered.
->>>>
->>>> To make sure, do you test with "f2fs: guarantee journalled quota data by
->>>> checkpoint"? if not, I think there is no guarantee that f2fs can recover
->>>> quote info into correct quote file, because, in last checkpoint, quota file
->>>> may was corrupted/inconsistent. Right?
->>
->> Oh, I forget to mention that, I add a patch to fsck to let it noticing
->> CP_QUOTA_NEED_FSCK_FLAG flag, and by default, fsck will fix corrupted quote
->> file if the flag is set, but w/o this flag, quota file is still corrupted
->> detected by fsck, I guess there is bug in v8.
->>
->> Can you add that in fsck too? so we can separate real kernel bug and quota
->> file corruption due to dquot subsystem error caused like below case:
-> 
-> I'm testing to trigger fsck when it sees the below flag. But, when considering
-> old f2fs-tools, we may need a way to detect mkfs version in superblock in order
+It's a little bit strange when fault_injection related
+options fail with -EINVAL which were already disabled
+from config, so surround all fault_injection related option
+parsing code using CONFIG_F2FS_FAULT_INJECTION. Meanwhile,
+slightly change warning message to keep consistency with
+option POSIX_ACL and FS_XATTR.
 
-Oh, that will make kernel be complicated... kernel should be aware of user
-space things... if user use old tools and new kernel, how about just let
-kernel give warning on dmesg to user to upgrade f2fs tool set.
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+---
+v1->v2:
+- modify warning message
+v2->v3:
+- fix typo in title
 
-And also, even if w/o CP_FSCK_FLAG, fsck can also detect such quote file
-corruption, then do repair, right?
+ fs/f2fs/super.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
-Thanks,
-
-> to determine whether we can rely on this new flag or not.
-> 
->>
->> +static int f2fs_dquot_acquire(struct dquot *dquot)
->> +{
->> +	int ret;
->> +
->> +	ret = dquot_acquire(dquot);
->> +	if (ret == -ENOSPC || ret == -EIO)
->> +		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
->> +	return ret;
->> +}
->>
->>>
->>> I hit the failure with v8. And, the test scenario is 1) enable fault injection
->>> 2) run fsstress, 3) call shutdowon, 4) kill fsstress, 5) unmount, 6) fsck, 7)
->>> mount, 8) fsck, 9) go 1).
->>>
->>> So, I'm hitting failure in 8) fsck. I expect 6) fsck should fix any corruption
->>> and 7) recovered some files on clean checkpoint.
->>
->> I see, I can add this case too, does this exist in your xfstest tree in github?
-> 
-> I think so.
-> 
->>
->> Thanks,
->>
->>>
->>> Thanks,
->>>
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>>>
->>>>>> Thanks,
->>>>>>
->>>>>>
->>>>>>>
->>>>>>> Thanks,
->>>>>>>
->>>>>>>>
->>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>>>> ---
->>>>>>>>  fs/f2fs/recovery.c | 3 +++
->>>>>>>>  1 file changed, 3 insertions(+)
->>>>>>>>
->>>>>>>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
->>>>>>>> index 95511ed11a22..1fde86a2107e 100644
->>>>>>>> --- a/fs/f2fs/recovery.c
->>>>>>>> +++ b/fs/f2fs/recovery.c
->>>>>>>> @@ -675,6 +675,9 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
->>>>>>>>  
->>>>>>>>  	need_writecp = true;
->>>>>>>>  
->>>>>>>> +	/* quota is not fully updated due to the lack of user information. */
->>>>>>>> +	set_sbi_flag(sbi, SBI_NEED_FSCK);
->>>>>>>> +
->>>>>>>>  	/* step #2: recover data */
->>>>>>>>  	err = recover_data(sbi, &inode_list, &dir_list);
->>>>>>>>  	if (!err)
->>>>>>>>
->>>>>>
->>>>>>
->>>>>> _______________________________________________
->>>>>> Linux-f2fs-devel mailing list
->>>>>> Linux-f2fs-devel@lists.sourceforge.net
->>>>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>>>>
->>>>> .
->>>>>
->>>
->>> .
->>>
-> 
-> .
-> 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 896b885f504e..ea6952c62e9f 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -602,28 +602,31 @@ static int parse_options(struct super_block *sb, char *options)
+ 			}
+ 			F2FS_OPTION(sbi).write_io_size_bits = arg;
+ 			break;
++#ifdef CONFIG_F2FS_FAULT_INJECTION
+ 		case Opt_fault_injection:
+ 			if (args->from && match_int(args, &arg))
+ 				return -EINVAL;
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+ 			f2fs_build_fault_attr(sbi, arg, F2FS_ALL_FAULT_TYPE);
+ 			set_opt(sbi, FAULT_INJECTION);
+-#else
+-			f2fs_msg(sb, KERN_INFO,
+-				"FAULT_INJECTION was not selected");
+-#endif
+ 			break;
++
+ 		case Opt_fault_type:
+ 			if (args->from && match_int(args, &arg))
+ 				return -EINVAL;
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+ 			f2fs_build_fault_attr(sbi, 0, arg);
+ 			set_opt(sbi, FAULT_INJECTION);
++			break;
+ #else
++		case Opt_fault_injection:
+ 			f2fs_msg(sb, KERN_INFO,
+-				"FAULT_INJECTION was not selected");
+-#endif
++				"fault_injection options not supported");
+ 			break;
++
++		case Opt_fault_type:
++			f2fs_msg(sb, KERN_INFO,
++				"fault_type options not supported");
++			break;
++#endif
+ 		case Opt_lazytime:
+ 			sb->s_flags |= SB_LAZYTIME;
+ 			break;
+-- 
+2.17.1
