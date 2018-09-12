@@ -1,58 +1,211 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
-Date: Tue, 11 Sep 2018 17:06:03 -0700
-Message-ID: <20180912000603.GA67662@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180911201546.56566-1-jaegeuk@kernel.org>
- <7aa2e6f3-a4b2-dfdd-6205-f19c4bc952e6@kernel.org>
+Subject: Re: [PATCH] f2fs: submit cached bio to avoid endless PageWriteback
+Date: Tue, 11 Sep 2018 17:12:44 -0700
+Message-ID: <20180912001244.GA68887@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180911101847.129519-1-yuchao0@huawei.com>
+ <20180911223916.GE55456@jaegeuk-macbookpro.roam.corp.google.com>
+ <38085da9-b100-8013-7189-de1df7917d9c@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <7aa2e6f3-a4b2-dfdd-6205-f19c4bc952e6@kernel.org>
+In-Reply-To: <38085da9-b100-8013-7189-de1df7917d9c@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Chao Yu <yuchao0@huawei.com>, kassey1216@gmail.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 On 09/12, Chao Yu wrote:
-> On 2018/9/12 4:15, Jaegeuk Kim wrote:
-> > fsck.f2fs is able to recover the quota structure, since roll-forward recovery
-> > can recover it based on previous user information.
+> Jaegeuk,
 > 
-> I didn't get it, both fsck and kernel recover quota file based all inodes'
-> uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
-> same?
+> Could you update dev-test branch? so I can rebase this on yours, there are some
+> pending patches in my tree, I guess it can avoid conflict when you merge this.
 
-I thought that, but had to add this, since I was encountering quota errors right
-after getting some files recovered. And, I thought it'd make it more safe to do
-fsck after roll-forward recovery.
+Done.
 
-Anyway, let me test again without this patch for a while.
-
-Thanks,
-
-
+> 
+> On 2018/9/12 6:39, Jaegeuk Kim wrote:
+> > On 09/11, Chao Yu wrote:
+> >> When migrating encrypted block from background GC thread, we only add
+> >> them into f2fs inner bio cache, but forget to submit the cached bio, it
+> >> may cause potential deadlock when we are waiting page writebacked, fix
+> >> it.
+> >>
+> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >> ---
+> >>  fs/f2fs/gc.c | 42 +++++++++++++++++++++++++++++-------------
+> >>  1 file changed, 29 insertions(+), 13 deletions(-)
+> >>
+> >> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> >> index c4ea4009cf05..a2ea0d445345 100644
+> >> --- a/fs/f2fs/gc.c
+> >> +++ b/fs/f2fs/gc.c
+> >> @@ -687,7 +687,7 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
+> >>   * Move data block via META_MAPPING while keeping locked data page.
+> >>   * This can be used to move blocks, aka LBAs, directly on disk.
+> >>   */
+> >> -static void move_data_block(struct inode *inode, block_t bidx,
+> >> +static int move_data_block(struct inode *inode, block_t bidx,
+> >>  				int gc_type, unsigned int segno, int off)
+> >>  {
+> >>  	struct f2fs_io_info fio = {
+> >> @@ -706,25 +706,29 @@ static void move_data_block(struct inode *inode, block_t bidx,
+> >>  	struct node_info ni;
+> >>  	struct page *page, *mpage;
+> >>  	block_t newaddr;
+> >> -	int err;
+> >> +	int err = 0;
+> >>  	bool lfs_mode = test_opt(fio.sbi, LFS);
+> >>  
+> >>  	/* do not read out */
+> >>  	page = f2fs_grab_cache_page(inode->i_mapping, bidx, false);
+> >>  	if (!page)
+> >> -		return;
+> >> +		return -ENOMEM;
+> >>  
+> >> -	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+> >> +	if (!check_valid_map(F2FS_I_SB(inode), segno, off)) {
+> >> +		err = -ENOENT;
+> >>  		goto out;
+> >> +	}
+> >>  
+> >>  	if (f2fs_is_atomic_file(inode)) {
+> >>  		F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC]++;
+> >>  		F2FS_I_SB(inode)->skipped_atomic_files[gc_type]++;
+> >> +		err = -EAGAIN;
+> >>  		goto out;
+> >>  	}
+> >>  
+> >>  	if (f2fs_is_pinned_file(inode)) {
+> >>  		f2fs_pin_file_control(inode, true);
+> >> +		err = -EAGAIN;
+> >>  		goto out;
+> >>  	}
+> >>  
+> >> @@ -735,6 +739,7 @@ static void move_data_block(struct inode *inode, block_t bidx,
+> >>  
+> >>  	if (unlikely(dn.data_blkaddr == NULL_ADDR)) {
+> >>  		ClearPageUptodate(page);
+> >> +		err = -ENOENT;
+> >>  		goto put_out;
+> >>  	}
+> >>  
+> >> @@ -817,6 +822,7 @@ static void move_data_block(struct inode *inode, block_t bidx,
+> >>  	fio.new_blkaddr = newaddr;
+> >>  	f2fs_submit_page_write(&fio);
+> >>  	if (fio.retry) {
+> >> +		err = -EAGAIN;
+> >>  		if (PageWriteback(fio.encrypted_page))
+> >>  			end_page_writeback(fio.encrypted_page);
+> >>  		goto put_page_out;
+> >> @@ -840,6 +846,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
+> >>  	f2fs_put_dnode(&dn);
+> >>  out:
+> >>  	f2fs_put_page(page, 1);
+> >> +
+> >> +	return err;
+> >>  }
+> >>  
+> >>  static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+> >> @@ -919,7 +927,7 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+> >>   * If the parent node is not valid or the data block address is different,
+> >>   * the victim data block is ignored.
+> >>   */
+> >> -static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+> >> +static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+> >>  		struct gc_inode_list *gc_list, unsigned int segno, int gc_type)
+> >>  {
+> >>  	struct super_block *sb = sbi->sb;
+> >> @@ -927,6 +935,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+> >>  	block_t start_addr;
+> >>  	int off;
+> >>  	int phase = 0;
+> >> +	int submitted = 0;
+> >>  
+> >>  	start_addr = START_BLOCK(sbi, segno);
+> >>  
+> >> @@ -943,7 +952,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+> >>  
+> >>  		/* stop BG_GC if there is not enough free sections. */
+> >>  		if (gc_type == BG_GC && has_not_enough_free_secs(sbi, 0, 0))
+> >> -			return;
+> >> +			return submitted;
+> >>  
+> >>  		if (check_valid_map(sbi, segno, off) == 0)
+> >>  			continue;
+> >> @@ -1015,6 +1024,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+> >>  		if (inode) {
+> >>  			struct f2fs_inode_info *fi = F2FS_I(inode);
+> >>  			bool locked = false;
+> >> +			int err;
+> >>  
+> >>  			if (S_ISREG(inode->i_mode)) {
+> >>  				if (!down_write_trylock(&fi->i_gc_rwsem[READ]))
+> >> @@ -1033,12 +1043,15 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+> >>  
+> >>  			start_bidx = f2fs_start_bidx_of_node(nofs, inode)
+> >>  								+ ofs_in_node;
+> >> -			if (f2fs_post_read_required(inode))
+> >> -				move_data_block(inode, start_bidx, gc_type,
+> >> -								segno, off);
+> >> -			else
+> >> +			if (f2fs_post_read_required(inode)) {
+> >> +				err = move_data_block(inode, start_bidx,
+> >> +							gc_type, segno, off);
+> >> +				if (!err)
+> >> +					submitted++;
+> >> +			} else {
+> >>  				move_data_page(inode, start_bidx, gc_type,
+> >>  								segno, off);
+> >> +			}
+> >>  
+> >>  			if (locked) {
+> >>  				up_write(&fi->i_gc_rwsem[WRITE]);
+> >> @@ -1051,6 +1064,8 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+> >>  
+> >>  	if (++phase < 5)
+> >>  		goto next_step;
+> >> +
+> >> +	return submitted;
+> >>  }
+> >>  
+> >>  static int __get_victim(struct f2fs_sb_info *sbi, unsigned int *victim,
+> >> @@ -1078,6 +1093,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+> >>  	unsigned char type = IS_DATASEG(get_seg_entry(sbi, segno)->type) ?
+> >>  						SUM_TYPE_DATA : SUM_TYPE_NODE;
+> >>  	unsigned int units = 0;
+> >> +	int submitted = 0;
+> >>  
+> >>  	/* start segno may point to middle of section, so adjust it */
+> >>  	if (__is_large_section(sbi))
+> >> @@ -1136,8 +1152,8 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+> >>  		if (type == SUM_TYPE_NODE)
+> >>  			gc_node_segment(sbi, sum->entries, segno, gc_type);
+> >>  		else
+> >> -			gc_data_segment(sbi, sum->entries, gc_list, segno,
+> >> -								gc_type);
+> >> +			submitted += gc_data_segment(sbi, sum->entries, gc_list,
+> >> +							segno, gc_type);
+> >>  
+> >>  		stat_inc_seg_count(sbi, type, gc_type);
+> >>  
+> >> @@ -1152,7 +1168,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+> >>  		f2fs_put_page(sum_page, 0);
+> >>  	}
+> >>  
+> >> -	if (gc_type == FG_GC)
+> >> +	if (gc_type == FG_GC || submitted)
+> > 
+> > Do we need to check submitted for both of node and data? Then, we can remove
+> > FG_GC case?
+> 
+> Yup, good idea, let me adjust.
 > 
 > Thanks,
 > 
 > > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/recovery.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-> > index 95511ed11a22..1fde86a2107e 100644
-> > --- a/fs/f2fs/recovery.c
-> > +++ b/fs/f2fs/recovery.c
-> > @@ -675,6 +675,9 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
-> >  
-> >  	need_writecp = true;
-> >  
-> > +	/* quota is not fully updated due to the lack of user information. */
-> > +	set_sbi_flag(sbi, SBI_NEED_FSCK);
-> > +
-> >  	/* step #2: recover data */
-> >  	err = recover_data(sbi, &inode_list, &dir_list);
-> >  	if (!err)
-> > 
+> >>  		f2fs_submit_merged_write(sbi,
+> >>  				(type == SUM_TYPE_NODE) ? NODE : DATA);
+> >>  
+> >> -- 
+> >> 2.18.0.rc1
