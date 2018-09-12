@@ -1,182 +1,58 @@
-From: Wang Shilong <wangshilong1991@gmail.com>
-Subject: [PATCH v4 3/3] f2fs: fix setattr project check upon
- fssetxattr ioctl
-Date: Wed, 12 Sep 2018 08:57:18 +0900
-Message-ID: <1536710238-16858-3-git-send-email-wshilong1991@gmail.com>
-References: <1536710238-16858-1-git-send-email-wshilong1991@gmail.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
+Date: Tue, 11 Sep 2018 17:06:03 -0700
+Message-ID: <20180912000603.GA67662@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180911201546.56566-1-jaegeuk@kernel.org>
+ <7aa2e6f3-a4b2-dfdd-6205-f19c4bc952e6@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <wangshilong1991@gmail.com>) id 1fzsXM-00032Z-09
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 11 Sep 2018 23:57:40 +0000
-Received: from mail-pf1-f193.google.com ([209.85.210.193])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1fzsXK-008rfr-Cs
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 11 Sep 2018 23:57:39 +0000
-Received: by mail-pf1-f193.google.com with SMTP id j8-v6so49115pff.6
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 11 Sep 2018 16:57:38 -0700 (PDT)
-In-Reply-To: <1536710238-16858-1-git-send-email-wshilong1991@gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: adilger@dilger.ca, Wang Shilong <wangshilong1991@gmail.com>, wshilong@ddn.com, dchinner@redhat.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <7aa2e6f3-a4b2-dfdd-6205-f19c4bc952e6@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Wang Shilong <wangshilong1991@gmail.com>
+On 09/12, Chao Yu wrote:
+> On 2018/9/12 4:15, Jaegeuk Kim wrote:
+> > fsck.f2fs is able to recover the quota structure, since roll-forward recovery
+> > can recover it based on previous user information.
+> 
+> I didn't get it, both fsck and kernel recover quota file based all inodes'
+> uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
+> same?
 
-Currently, project quota could be changed by fssetxattr
-ioctl, and existed permission check inode_owner_or_capable()
-is obviously not enough, just think that common users could
-change project id of file, that could make users to
-break project quota easily.
+I thought that, but had to add this, since I was encountering quota errors right
+after getting some files recovered. And, I thought it'd make it more safe to do
+fsck after roll-forward recovery.
 
-This patch try to follow same regular of xfs project
-quota:
+Anyway, let me test again without this patch for a while.
 
-"Project Quota ID state is only allowed to change from
-within the init namespace. Enforce that restriction only
-if we are trying to change the quota ID state.
-Everything else is allowed in user namespaces."
+Thanks,
 
-Besides that, check and set project id'state should
-be an atomic operation, protect whole operation with
-inode lock.
 
-Signed-off-by: Wang Shilong <wshilong@ddn.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
----
-v3->v4: change function declaration to one line.
-v2->v3: remove inode_lock() and mnt_want_write_file()
-inside f2fs_ioc_setproject()
-v1->v2: rename f2fs_ioctl_setattr_check_projid()
----
- fs/f2fs/file.c | 60 +++++++++++++++++++++++++++++++-------------------
- 1 file changed, 37 insertions(+), 23 deletions(-)
-
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 5474aaa274b9..e7896c5da0c2 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2617,34 +2617,26 @@ static int f2fs_ioc_setproject(struct file *filp, __u32 projid)
- 	if (projid_eq(kprojid, F2FS_I(inode)->i_projid))
- 		return 0;
- 
--	err = mnt_want_write_file(filp);
--	if (err)
--		return err;
--
- 	err = -EPERM;
--	inode_lock(inode);
--
- 	/* Is it quota file? Do not allow user to mess with it */
- 	if (IS_NOQUOTA(inode))
--		goto out_unlock;
-+		return err;
- 
- 	ipage = f2fs_get_node_page(sbi, inode->i_ino);
--	if (IS_ERR(ipage)) {
--		err = PTR_ERR(ipage);
--		goto out_unlock;
--	}
-+	if (IS_ERR(ipage))
-+		return PTR_ERR(ipage);
- 
- 	if (!F2FS_FITS_IN_INODE(F2FS_INODE(ipage), fi->i_extra_isize,
- 								i_projid)) {
- 		err = -EOVERFLOW;
- 		f2fs_put_page(ipage, 1);
--		goto out_unlock;
-+		return err;
- 	}
- 	f2fs_put_page(ipage, 1);
- 
- 	err = dquot_initialize(inode);
- 	if (err)
--		goto out_unlock;
-+		return err;
- 
- 	transfer_to[PRJQUOTA] = dqget(sb, make_kqid_projid(kprojid));
- 	if (!IS_ERR(transfer_to[PRJQUOTA])) {
-@@ -2658,9 +2650,6 @@ static int f2fs_ioc_setproject(struct file *filp, __u32 projid)
- 	inode->i_ctime = current_time(inode);
- out_dirty:
- 	f2fs_mark_inode_dirty_sync(inode, true);
--out_unlock:
--	inode_unlock(inode);
--	mnt_drop_write_file(filp);
- 	return err;
- }
- #else
-@@ -2736,6 +2725,30 @@ static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
- 	return 0;
- }
- 
-+static int f2fs_ioctl_check_project(struct inode *inode, struct fsxattr *fa)
-+{
-+	/*
-+	 * Project Quota ID state is only allowed to change from within the init
-+	 * namespace. Enforce that restriction only if we are trying to change
-+	 * the quota ID state. Everything else is allowed in user namespaces.
-+	 */
-+	if (current_user_ns() == &init_user_ns)
-+		return 0;
-+
-+	if (__kprojid_val(F2FS_I(inode)->i_projid) != fa->fsx_projid)
-+		return -EINVAL;
-+
-+	if (F2FS_I(inode)->i_flags & F2FS_PROJINHERIT_FL) {
-+		if (!(fa->fsx_xflags & FS_XFLAG_PROJINHERIT))
-+			return -EINVAL;
-+	} else {
-+		if (fa->fsx_xflags & FS_XFLAG_PROJINHERIT)
-+			return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
-@@ -2763,19 +2776,20 @@ static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
- 		return err;
- 
- 	inode_lock(inode);
-+	err = f2fs_ioctl_check_project(inode, &fa);
-+	if (err)
-+		goto out;
- 	flags = (fi->i_flags & ~F2FS_FL_XFLAG_VISIBLE) |
- 				(flags & F2FS_FL_XFLAG_VISIBLE);
- 	err = __f2fs_ioc_setflags(inode, flags);
--	inode_unlock(inode);
--	mnt_drop_write_file(filp);
- 	if (err)
--		return err;
-+		goto out;
- 
- 	err = f2fs_ioc_setproject(filp, fa.fsx_projid);
--	if (err)
--		return err;
--
--	return 0;
-+out:
-+	inode_unlock(inode);
-+	mnt_drop_write_file(filp);
-+	return err;
- }
- 
- int f2fs_pin_file_control(struct inode *inode, bool inc)
--- 
-2.17.1
+> 
+> Thanks,
+> 
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/recovery.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> > index 95511ed11a22..1fde86a2107e 100644
+> > --- a/fs/f2fs/recovery.c
+> > +++ b/fs/f2fs/recovery.c
+> > @@ -675,6 +675,9 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+> >  
+> >  	need_writecp = true;
+> >  
+> > +	/* quota is not fully updated due to the lack of user information. */
+> > +	set_sbi_flag(sbi, SBI_NEED_FSCK);
+> > +
+> >  	/* step #2: recover data */
+> >  	err = recover_data(sbi, &inode_list, &dir_list);
+> >  	if (!err)
+> > 
