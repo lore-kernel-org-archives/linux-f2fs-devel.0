@@ -1,94 +1,52 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: add new idle interval timing for
- discard and gc paths
-Date: Wed, 12 Sep 2018 17:50:31 +0800
-Message-ID: <d79bf580-361f-7a13-7c86-a04637f27653@huawei.com>
-References: <1536551252-24256-1-git-send-email-stummala@codeaurora.org>
- <5d74d46b-8141-f048-9c0a-459c82b2c449@kernel.org>
- <20180911220958.GC55456@jaegeuk-macbookpro.roam.corp.google.com>
- <20180912082740.GB22939@codeaurora.org>
+From: cgxu519 <cgxu519@gmx.com>
+Subject: Re: [PATCH v2 2/5] ext4: cache NULL when both
+ default_acl and acl are NULL
+Date: Wed, 12 Sep 2018 23:04:35 +0800
+Message-ID: <f1dd02a3-78ea-0240-72cc-135ee26f6524@gmx.com>
+References: <20180831143352.22970-1-cgxu519@gmx.com>
+ <20180831143352.22970-2-cgxu519@gmx.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180912082740.GB22939@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+In-Reply-To: <20180831143352.22970-2-cgxu519@gmx.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sahitya Tummala <stummala@codeaurora.org>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: tytso@mit.edu, adilger.kernel@dilger.ca
+Cc: shaggy@kernel.org, jfs-discussion@lists.sourceforge.net, martin@omnibond.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, jack@suse.com, jaegeuk@kernel.org, linux-ext4@vger.kernel.org, devel@lists.orangefs.org, hubcap@omnibond.com
 
-On 2018/9/12 16:27, Sahitya Tummala wrote:
-> On Tue, Sep 11, 2018 at 03:09:58PM -0700, Jaegeuk Kim wrote:
->> On 09/11, Chao Yu wrote:
->>> On 2018/9/10 11:47, Sahitya Tummala wrote:
->>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>> index abf9256..6070681 100644
->>>> --- a/fs/f2fs/f2fs.h
->>>> +++ b/fs/f2fs/f2fs.h
->>>> @@ -1093,6 +1093,8 @@ enum {
->>>>  enum {
->>>>  	CP_TIME,
->>>>  	REQ_TIME,
->>>> +	DISCARD_TIME,
->>>> +	GC_TIME,
->>>>  	MAX_TIME,
->>>>  };
->>>>  
->>>> @@ -1347,14 +1349,35 @@ static inline void f2fs_update_time(struct f2fs_sb_info *sbi, int type)
->>>>  	sbi->last_time[type] = jiffies;
->>>>  }
->>>>  
->>>> -static inline bool f2fs_time_over(struct f2fs_sb_info *sbi, int type)
->>>> +static inline bool f2fs_time_over_cp(struct f2fs_sb_info *sbi)
->>
->> I don't see why we need this separately.
-> 
-> Yes, not really required. I will update it.
-> 
->>
->>>> +{
->>>> +	unsigned long interval = sbi->interval_time[CP_TIME] * HZ;
->>>> +
->>>> +	return time_after(jiffies, sbi->last_time[CP_TIME] + interval);
->>>> +}
->>>> +
->>>> +static inline bool f2fs_time_over_req(struct f2fs_sb_info *sbi, int type)
->>>> +{
->>>> +	unsigned long interval = sbi->interval_time[type] * HZ;
->>>> +
->>>> +	return time_after(jiffies, sbi->last_time[REQ_TIME] + interval);
->>>> +}
->>>> +
->>>> +static inline unsigned int f2fs_get_wait_time(struct f2fs_sb_info *sbi,
->>>> +						int type)
->>
->> f2fs_time_to_wait()?
-> 
-> Sure.
-> 
->>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>>> index 5c8d004..c0bafea 100644
->>>> --- a/fs/f2fs/gc.c
->>>> +++ b/fs/f2fs/gc.c
->>>> @@ -83,8 +83,10 @@ static int gc_thread_func(void *data)
->>>>  		if (!mutex_trylock(&sbi->gc_mutex))
->>>>  			goto next;
->>>>  
->>>> -		if (!is_idle(sbi)) {
->>>> -			increase_sleep_time(gc_th, &wait_ms);
->>>> +		if (!is_idle(sbi, GC_TIME)) {
->>>> +			wait_ms = f2fs_get_wait_time(sbi, GC_TIME);
->>>
->>> It seems this patch changes the method of increasing wait_ms here, if device is
->>> busy, we may wake up GC thread earlier than before, not sure we should do this.
->>>
->>> To Jaegeuk, how do you think of this?
->>
->> Yes, please let us discuss this in another patch.
-> 
-> Sure, I will submit this in another patch for discussion.
-
-It's fine to me. :)
-
-> 
+T24gMDgvMzEvMjAxOCAxMDozMyBQTSwgQ2hlbmdndWFuZyBYdSB3cm90ZToKPiBkZWZhdWx0X2Fj
+bCBhbmQgYWNsIG9mIG5ld2x5IGNyZWF0ZWQgaW5vZGUgd2lsbCBiZSBpbml0aWF0ZWQKPiBhcyBB
+Q0xfTk9UX0NBQ0hFRCBpbiB2ZnMgZnVuY3Rpb24gaW5vZGVfaW5pdF9hbHdheXMoKSBhbmQgbGF0
+ZXIKPiB3aWxsIGJlIHVwZGF0ZWQgYnkgY2FsbGluZyB4eHhfaW5pdF9hY2woKSBpbiBzcGVjaWZp
+YyBmaWxlc3lzdGVtcy4KPiBIb3dlcnZlciwgd2hlbiBkZWZhdWx0X2FjbCBhbmQgYWNsIGFyZSBO
+VUxMIHRoZW4gdGhleSBrZWVwIHRoZSB2YWx1ZQo+IG9mIEFDTF9OT1RfQ0FDSEVELCB0aGlzIHBh
+dGNoIHRyaWVzIHRvIGNhY2hlIE5VTEwgZm9yIGFjbC9kZWZhdWx0X2FjbAo+IGluIHRoaXMgY2Fz
+ZS4KPgo+IFNpZ25lZC1vZmYtYnk6IENoZW5nZ3VhbmcgWHUgPGNneHU1MTlAZ214LmNvbT4KPiAt
+LS0KPiB2MS0+djI6Cj4gLSBDb2Rpbmcgc3R5bGUgY2hhbmdlLgo+Cj4gICBmcy9leHQ0L2FjbC5j
+IHwgNCArKysrCj4gICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspCj4KPiBkaWZmIC0t
+Z2l0IGEvZnMvZXh0NC9hY2wuYyBiL2ZzL2V4dDQvYWNsLmMKPiBpbmRleCBmYjUwZjlhYTZlYWQu
+LmMxZDU3MGVlMWQ5ZiAxMDA2NDQKPiAtLS0gYS9mcy9leHQ0L2FjbC5jCj4gKysrIGIvZnMvZXh0
+NC9hY2wuYwo+IEBAIC0yODQsMTIgKzI4NCwxNiBAQCBleHQ0X2luaXRfYWNsKGhhbmRsZV90ICpo
+YW5kbGUsIHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBpbm9kZSAqZGlyKQo+ICAgCQllcnJv
+ciA9IF9fZXh0NF9zZXRfYWNsKGhhbmRsZSwgaW5vZGUsIEFDTF9UWVBFX0RFRkFVTFQsCj4gICAJ
+CQkJICAgICAgIGRlZmF1bHRfYWNsLCBYQVRUUl9DUkVBVEUpOwo+ICAgCQlwb3NpeF9hY2xfcmVs
+ZWFzZShkZWZhdWx0X2FjbCk7Cj4gKwl9IGVsc2Ugewo+ICsJCWlub2RlLT5pX2RlZmF1bHRfYWNs
+ID0gTlVMTDsKPiAgIAl9Cj4gICAJaWYgKGFjbCkgewo+ICAgCQlpZiAoIWVycm9yKQo+ICAgCQkJ
+ZXJyb3IgPSBfX2V4dDRfc2V0X2FjbChoYW5kbGUsIGlub2RlLCBBQ0xfVFlQRV9BQ0NFU1MsCj4g
+ICAJCQkJCSAgICAgICBhY2wsIFhBVFRSX0NSRUFURSk7Cj4gICAJCXBvc2l4X2FjbF9yZWxlYXNl
+KGFjbCk7Cj4gKwl9IGVsc2Ugewo+ICsJCWlub2RlLT5pX2FjbCA9IE5VTEw7Cj4gICAJfQo+ICAg
+CXJldHVybiBlcnJvcjsKPiAgIH0KCkhpIFRlZCzCoCBBbmRyZWFzCgpIYXZlIHlvdSBnb3QgY2hh
+bmNlIHRvIGxvb2sgYXQgdGhpcyBwYXRjaD8KClRoYW5rcywKQ2hlbmdndWFuZwoKCgoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZl
+bCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0
+cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZl
+bAo=
