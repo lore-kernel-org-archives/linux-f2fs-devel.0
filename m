@@ -1,7 +1,7 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: add SPDX license identifiers
-Date: Wed, 12 Sep 2018 09:16:07 +0800
-Message-ID: <20180912011607.62860-1-yuchao0@huawei.com>
+Subject: [PATCH] f2fs: split IO error injection according to RW
+Date: Wed, 12 Sep 2018 09:22:29 +0800
+Message-ID: <20180912012229.64936-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -10,559 +10,92 @@ To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Remove the verbose license text from f2fs files and replace them with
-SPDX tags.  This does not change the license of any of the code.
+This patch adds to support injecting error for write IO, this can simulate
+IO error like fail_make_request or dm_flakey does.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/acl.c           | 5 +----
- fs/f2fs/acl.h           | 5 +----
- fs/f2fs/checkpoint.c    | 5 +----
- fs/f2fs/data.c          | 5 +----
- fs/f2fs/debug.c         | 5 +----
- fs/f2fs/dir.c           | 5 +----
- fs/f2fs/extent_cache.c  | 5 +----
- fs/f2fs/f2fs.h          | 5 +----
- fs/f2fs/file.c          | 5 +----
- fs/f2fs/gc.c            | 5 +----
- fs/f2fs/gc.h            | 5 +----
- fs/f2fs/hash.c          | 5 +----
- fs/f2fs/inline.c        | 4 +---
- fs/f2fs/inode.c         | 5 +----
- fs/f2fs/namei.c         | 5 +----
- fs/f2fs/node.c          | 5 +----
- fs/f2fs/node.h          | 5 +----
- fs/f2fs/recovery.c      | 5 +----
- fs/f2fs/segment.c       | 5 +----
- fs/f2fs/segment.h       | 5 +----
- fs/f2fs/shrinker.c      | 5 +----
- fs/f2fs/super.c         | 5 +----
- fs/f2fs/sysfs.c         | 5 +----
- fs/f2fs/trace.c         | 5 +----
- fs/f2fs/trace.h         | 5 +----
- fs/f2fs/xattr.c         | 5 +----
- fs/f2fs/xattr.h         | 5 +----
- include/linux/f2fs_fs.h | 5 +----
- 28 files changed, 28 insertions(+), 111 deletions(-)
+ Documentation/filesystems/f2fs.txt |  3 ++-
+ fs/f2fs/data.c                     | 10 ++++++++--
+ fs/f2fs/f2fs.h                     |  3 ++-
+ fs/f2fs/super.c                    |  3 ++-
+ 4 files changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
-index 1f35f4e9f0d6..f9a7987ad3a1 100644
---- a/fs/f2fs/acl.c
-+++ b/fs/f2fs/acl.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/acl.c
-  *
-@@ -7,10 +8,6 @@
-  * Portions of this code from linux/fs/ext2/acl.c
-  *
-  * Copyright (C) 2001-2003 Andreas Gruenbacher, <agruen@suse.de>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #include <linux/f2fs_fs.h>
- #include "f2fs.h"
-diff --git a/fs/f2fs/acl.h b/fs/f2fs/acl.h
-index 2c685185c24d..b96823c59b15 100644
---- a/fs/f2fs/acl.h
-+++ b/fs/f2fs/acl.h
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/acl.h
-  *
-@@ -7,10 +8,6 @@
-  * Portions of this code from linux/fs/ext2/acl.h
-  *
-  * Copyright (C) 2001-2003 Andreas Gruenbacher, <agruen@suse.de>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #ifndef __F2FS_ACL_H__
- #define __F2FS_ACL_H__
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index fb1db60e587d..bd9e20bed6ae 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/checkpoint.c
-  *
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #include <linux/fs.h>
- #include <linux/bio.h>
+diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+index e5edd29687b5..bde3e91e5372 100644
+--- a/Documentation/filesystems/f2fs.txt
++++ b/Documentation/filesystems/f2fs.txt
+@@ -172,9 +172,10 @@ fault_type=%d          Support configuring fault injection type, should be
+                        FAULT_DIR_DEPTH		0x000000100
+                        FAULT_EVICT_INODE	0x000000200
+                        FAULT_TRUNCATE		0x000000400
+-                       FAULT_IO			0x000000800
++                       FAULT_READ_IO		0x000000800
+                        FAULT_CHECKPOINT		0x000001000
+                        FAULT_DISCARD		0x000002000
++                       FAULT_WRITE_IO		0x000004000
+ mode=%s                Control block allocation mode which supports "adaptive"
+                        and "lfs". In "lfs" mode, there should be no random
+                        writes towards main area.
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 878bf17071f3..9a2a0777a25a 100644
+index 9a2a0777a25a..35ec30e69bfe 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/data.c
-  *
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index ebe649d9793c..d3c402183e3c 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * f2fs debugging statistics
-  *
-@@ -5,10 +6,6 @@
-  *             http://www.samsung.com/
-  * Copyright (c) 2012 Linux Foundation
-  * Copyright (c) 2012 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
+@@ -123,8 +123,9 @@ static bool f2fs_bio_post_read_required(struct bio *bio)
  
- #include <linux/fs.h>
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index bd0348cc860f..c77a58038709 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/dir.c
-  *
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index a70cd2580eae..904ad7ba5a45 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * f2fs extent cache support
-  *
-@@ -5,10 +6,6 @@
-  * Copyright (c) 2015 Samsung Electronics
-  * Authors: Jaegeuk Kim <jaegeuk@kernel.org>
-  *          Chao Yu <chao2.yu@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
+ static void f2fs_read_end_io(struct bio *bio)
+ {
+-	if (time_to_inject(F2FS_P_SB(bio_first_page_all(bio)), FAULT_IO)) {
+-		f2fs_show_injection_info(FAULT_IO);
++	if (time_to_inject(F2FS_P_SB(bio_first_page_all(bio)),
++						FAULT_READ_IO)) {
++		f2fs_show_injection_info(FAULT_READ_IO);
+ 		bio->bi_status = BLK_STS_IOERR;
+ 	}
  
- #include <linux/fs.h>
+@@ -145,6 +146,11 @@ static void f2fs_write_end_io(struct bio *bio)
+ 	struct bio_vec *bvec;
+ 	int i;
+ 
++	if (time_to_inject(sbi, FAULT_WRITE_IO)) {
++		f2fs_show_injection_info(FAULT_WRITE_IO);
++		bio->bi_status = BLK_STS_IOERR;
++	}
++
+ 	bio_for_each_segment_all(bvec, bio, i) {
+ 		struct page *page = bvec->bv_page;
+ 		enum count_type type = WB_DATA_TYPE(page);
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4e4fd5fcaf39..1f9e6171a581 100644
+index 1f9e6171a581..8c8ce6b8f45a 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/f2fs.h
-  *
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #ifndef _LINUX_F2FS_H
- #define _LINUX_F2FS_H
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 61f95731c858..357422a4c319 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/file.c
-  *
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 5c8d00422237..a4c1a419611d 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/gc.c
-  *
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #include <linux/fs.h>
- #include <linux/module.h>
-diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-index c8619e408009..bbac9d3787bd 100644
---- a/fs/f2fs/gc.h
-+++ b/fs/f2fs/gc.h
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/gc.h
-  *
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #define GC_THREAD_MIN_WB_PAGES		1	/*
- 						 * a threshold to determine
-diff --git a/fs/f2fs/hash.c b/fs/f2fs/hash.c
-index eb2e031ea887..cc82f142f811 100644
---- a/fs/f2fs/hash.c
-+++ b/fs/f2fs/hash.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/hash.c
-  *
-@@ -7,10 +8,6 @@
-  * Portions of this code from linux/fs/ext3/hash.c
-  *
-  * Copyright (C) 2002 by Theodore Ts'o
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #include <linux/types.h>
- #include <linux/fs.h>
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 115dc219344b..425d740f87fd 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -1,11 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/inline.c
-  * Copyright (c) 2013, Intel Corporation
-  * Authors: Huajun Li <huajun.li@intel.com>
-  *          Haicheng Li <haicheng.li@intel.com>
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
+@@ -50,9 +50,10 @@ enum {
+ 	FAULT_DIR_DEPTH,
+ 	FAULT_EVICT_INODE,
+ 	FAULT_TRUNCATE,
+-	FAULT_IO,
++	FAULT_READ_IO,
+ 	FAULT_CHECKPOINT,
+ 	FAULT_DISCARD,
++	FAULT_WRITE_IO,
+ 	FAULT_MAX,
+ };
  
- #include <linux/fs.h>
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 959df2249875..86e7333d60c1 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/inode.c
-  *
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 1f67e389169f..9ad451ac2cec 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/namei.c
-  *
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index dd2e45a661aa..fa2381c0bc47 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/node.c
-  *
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index 0f4db7a61254..1c73d879a9bc 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/node.h
-  *
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- /* start node id of a node block dedicated to the given node id */
- #define	START_NID(nid) (((nid) / NAT_ENTRY_PER_BLOCK) * NAT_ENTRY_PER_BLOCK)
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 313b6b703d00..8f5b5d07a6c2 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/recovery.c
-  *
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 187c848a65b8..9a8d7d415a74 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/segment.c
-  *
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index b3d9e317ff0c..086150028c6d 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/segment.h
-  *
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #include <linux/blkdev.h>
- #include <linux/backing-dev.h>
-diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
-index 36cfd816c160..9e13db994fdf 100644
---- a/fs/f2fs/shrinker.c
-+++ b/fs/f2fs/shrinker.c
-@@ -1,13 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * f2fs shrinker support
-  *   the basic infra was copied from fs/ubifs/shrinker.c
-  *
-  * Copyright (c) 2015 Motorola Mobility
-  * Copyright (c) 2015 Jaegeuk Kim <jaegeuk@kernel.org>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index c36ebae96c58..73f2cd3a2b39 100644
+index 73f2cd3a2b39..968cb6ced1e9 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/super.c
-  *
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #include <linux/module.h>
- #include <linux/init.h>
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 81c0e5337443..c8924c02accd 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -1,13 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * f2fs sysfs interface
-  *
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-  * Copyright (c) 2017 Chao Yu <chao@kernel.org>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #include <linux/compiler.h>
- #include <linux/proc_fs.h>
-diff --git a/fs/f2fs/trace.c b/fs/f2fs/trace.c
-index a1fcd00bbb2b..ce2a5eb210b6 100644
---- a/fs/f2fs/trace.c
-+++ b/fs/f2fs/trace.c
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * f2fs IO tracer
-  *
-  * Copyright (c) 2014 Motorola Mobility
-  * Copyright (c) 2014 Jaegeuk Kim <jaegeuk@kernel.org>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
-diff --git a/fs/f2fs/trace.h b/fs/f2fs/trace.h
-index 67db24ac1e85..e8075fc5b228 100644
---- a/fs/f2fs/trace.h
-+++ b/fs/f2fs/trace.h
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * f2fs IO tracer
-  *
-  * Copyright (c) 2014 Motorola Mobility
-  * Copyright (c) 2014 Jaegeuk Kim <jaegeuk@kernel.org>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #ifndef __F2FS_TRACE_H__
- #define __F2FS_TRACE_H__
-diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-index 77a010e625f5..7261245c208d 100644
---- a/fs/f2fs/xattr.c
-+++ b/fs/f2fs/xattr.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/xattr.c
-  *
-@@ -13,10 +14,6 @@
-  *  suggestion of Luka Renko <luka.renko@hermes.si>.
-  * xattr consolidation Copyright (c) 2004 James Morris <jmorris@redhat.com>,
-  *  Red Hat Inc.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #include <linux/rwsem.h>
- #include <linux/f2fs_fs.h>
-diff --git a/fs/f2fs/xattr.h b/fs/f2fs/xattr.h
-index dbcd1d16e669..67db134da0f5 100644
---- a/fs/f2fs/xattr.h
-+++ b/fs/f2fs/xattr.h
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * fs/f2fs/xattr.h
-  *
-@@ -9,10 +10,6 @@
-  * On-disk format of extended attributes for the ext2 filesystem.
-  *
-  * (C) 2001 Andreas Gruenbacher, <a.gruenbacher@computer.org>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #ifndef __F2FS_XATTR_H__
- #define __F2FS_XATTR_H__
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 6a879a865343..aaca9f5d5f5c 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /**
-  * include/linux/f2fs_fs.h
-  *
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- #ifndef _LINUX_F2FS_FS_H
- #define _LINUX_F2FS_FS_H
+@@ -50,9 +50,10 @@ char *f2fs_fault_name[FAULT_MAX] = {
+ 	[FAULT_DIR_DEPTH]	= "too big dir depth",
+ 	[FAULT_EVICT_INODE]	= "evict_inode fail",
+ 	[FAULT_TRUNCATE]	= "truncate fail",
+-	[FAULT_IO]		= "IO error",
++	[FAULT_READ_IO]		= "read IO error",
+ 	[FAULT_CHECKPOINT]	= "checkpoint error",
+ 	[FAULT_DISCARD]		= "discard error",
++	[FAULT_WRITE_IO]	= "write IO error",
+ };
+ 
+ void f2fs_build_fault_attr(struct f2fs_sb_info *sbi, unsigned int rate,
 -- 
 2.18.0.rc1
