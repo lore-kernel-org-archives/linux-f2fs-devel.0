@@ -1,58 +1,56 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 200465] null ptr dereference in
- fscrypt_do_page_crypto() when operating a file on a corrupted f2fs image
-Date: Thu, 13 Sep 2018 18:48:15 +0000
-Message-ID: <bug-200465-202145-qBuFS5wDEE@https.bugzilla.kernel.org/>
-References: <bug-200465-202145@https.bugzilla.kernel.org/>
+From: Colin Walters <walters@verbum.org>
+Subject: Re: [RFC PATCH 01/10] fs-verity: add setup code, UAPI, and Kconfig
+Date: Fri, 14 Sep 2018 09:15:30 -0400
+Message-ID: <1536930930.1003187.1508104496.6465C44D@webmail.messagingengine.com>
+References: <20180824161642.1144-1-ebiggers@kernel.org>
+ <20180824161642.1144-2-ebiggers@kernel.org>
+ <1535132549.2855027.1485213752.129E3334@webmail.messagingengine.com>
+ <20180825044852.GB726@sol.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1g0Wf8-0003YT-LX
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Sep 2018 18:48:22 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g0Wf6-00G1Ti-Fg
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Sep 2018 18:48:22 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id C1AA22B130
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 13 Sep 2018 18:48:14 +0000 (UTC)
-In-Reply-To: <bug-200465-202145@https.bugzilla.kernel.org/>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180825044852.GB726@sol.localdomain>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-integrity@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Michael Halcrow <mhalcrow@google.com>, Victor Hsieh <victorhsieh@google.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200465
+On Sat, Aug 25, 2018, at 12:48 AM, Eric Biggers wrote:
+>
+> As Ted pointed out, only truncates are denied on fs-verity files, not other
+> metadata changes like chmod().
+> 
+> Think of it this way: the purpose of fs-verity is *not* to make files immutable.
+> It's to hash them.
 
-Steve Beattie (sbeattie@ubuntu.com) changed:
+Sorry for my unfamiliarity with Android internals but - in earlier discussion
+I believe it was mentioned that APK (zip files?) that are being targeted here, right?
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |sbeattie@ubuntu.com
+Now AIUI, Zip files have an internal header that contains e.g. the size and
+indexes into the internal files.  So if someone added random data to the end
+of a zip file, nothing is going to end up actually reading it.
 
---- Comment #2 from Steve Beattie (sbeattie@ubuntu.com) ---
-This was assigned CVE-2018-14616 (see
-https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-14616).
+However, there are file formats that use the size of the file reported by stat();
+at least OSTree does this with serializing GVariant.  I'm sure there are others -
+I'd imagine at least some things parsing ELF do this?
+In such a case, we really want to deny appending to the file as well.
 
-Chao, is it correct that the fix for this issue landed as
-https://git.kernel.org/linus/91291e9998d208370eb8156c760691b873bd7522 ? Or are
-additional fixes needed?
+Unless there's some mechanism to deny applications reading not-verified
+data?
 
-Thanks!
+And "hidden" data after fs-verity protected files would be a nice place
+for persistent malware to hide.
 
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+Does anyone know of a use case for appending to a fs-verity file?
+
+The slides here:
+https://events.linuxfoundation.org/wp-content/uploads/2017/11/fs-verify_Mike-Halcrow_Eric-Biggers.pdf
+even say "File becomes read-only!"
+
+If not, then here's a strawman: Require that at FS_IOC_ENABLE_VERITY time
+the file does not have any +w bits set (and I guess no ACLs that do so...
+that may get ugly).  
+
+I think that would make it easier to later factor out a "_CONTENTS_IMMUTABLE"
+flag.
