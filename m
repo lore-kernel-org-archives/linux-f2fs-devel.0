@@ -1,38 +1,54 @@
 From: "Theodore Y. Ts'o" <tytso@mit.edu>
-Subject: Re: [RFC PATCH 01/10] fs-verity: add setup code, UAPI, and Kconfig
-Date: Sat, 15 Sep 2018 11:27:03 -0400
-Message-ID: <20180915152703.GA9979@thunk.org>
-References: <20180824161642.1144-1-ebiggers@kernel.org>
- <20180824161642.1144-2-ebiggers@kernel.org>
- <1535132549.2855027.1485213752.129E3334@webmail.messagingengine.com>
- <20180825044852.GB726@sol.localdomain>
- <1536930930.1003187.1508104496.6465C44D@webmail.messagingengine.com>
- <20180914162142.GA734@sol.localdomain>
+Subject: Re: [PATCH v3 1/3] ext4: fix setattr project check upon
+ fssetxattr ioctl
+Date: Sat, 15 Sep 2018 23:55:29 -0400
+Message-ID: <20180916035529.GG8652@thunk.org>
+References: <1536710238-16858-1-git-send-email-wshilong1991@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <tytso@thunk.org>) id 1g1O9t-0005aZ-Mp
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 16 Sep 2018 03:55:41 +0000
+Received: from imap.thunk.org ([74.207.234.97])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1g1O9r-0000YG-9t
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 16 Sep 2018 03:55:41 +0000
 Content-Disposition: inline
-In-Reply-To: <20180914162142.GA734@sol.localdomain>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Colin Walters <walters@verbum.org>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-integrity@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Michael Halcrow <mhalcrow@google.com>, Victor Hsieh <victorhsieh@google.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <1536710238-16858-1-git-send-email-wshilong1991@gmail.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Wang Shilong <wangshilong1991@gmail.com>
+Cc: adilger@dilger.ca, linux-ext4@vger.kernel.org, wshilong@ddn.com, dchinner@redhat.com, linux-f2fs-devel@lists.sourceforge.net
 
-On Fri, Sep 14, 2018 at 09:21:43AM -0700, Eric Biggers wrote:
-> > 
-> > Now AIUI, Zip files have an internal header that contains e.g. the size and
-> > indexes into the internal files.  So if someone added random data to the end
-> > of a zip file, nothing is going to end up actually reading it.
-> 
-> After the verity bit is enabled, the verity metadata is not visible to
-> userspace.  Yes, that means i_size is adjusted too.  Also all contents
-> modifications are denied, including appends.
+On Wed, Sep 12, 2018 at 08:57:16AM +0900, Wang Shilong wrote:
+> diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+> index a7074115d6f6..f81102bd3203 100644
+> --- a/fs/ext4/ioctl.c
+> +++ b/fs/ext4/ioctl.c
+> @@ -339,19 +339,14 @@ static int ext4_ioctl_setproject(struct file *filp, __u32 projid)
+>  	if (projid_eq(kprojid, EXT4_I(inode)->i_projid))
+>  		return 0;
+>  
+> -	err = mnt_want_write_file(filp);
+> -	if (err)
+> -		return err;
+> -
 
-One of this reasons why this is important is that ZIP files *also*
-have an central directory at the end.  And in the case of the APK
-files, there is an in-band signature block which is located at at the
-end of the last file and the central directory, which can be located
-by starting at the end of the file, finding the length of the central
-directory, and then backing up to find the signature block.
+A huge part of this patch is dropping the calls to
+mnt_want_write_file() and mnt_drop_write_file().  What's the
+justification for doing this?  The use of mnt_want_write_file() looks
+necessary to me...
 
-    	 	       	    		- Ted
+				- Ted
