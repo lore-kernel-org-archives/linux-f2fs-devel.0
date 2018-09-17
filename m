@@ -1,92 +1,218 @@
-From: Wang Shilong <wshilong@ddn.com>
-Subject: Re: [PATCH v3 1/3] ext4: fix setattr project check upon
- fssetxattr ioctl
-Date: Mon, 17 Sep 2018 05:18:13 +0000
-Message-ID: <DD605171-E52E-47E1-B916-61B42C36ABC2@ddn.com>
-References: <1536710238-16858-1-git-send-email-wshilong1991@gmail.com>
- <20180916035529.GG8652@thunk.org>
- <75832A38-2476-4504-A03C-15B40053A565@ddn.com>
- <20180916122034.GA5915@thunk.org>
- <9A6D2B35-2355-4061-9E0C-4A1883FC3547@ddn.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <wshilong@ddn.com>) id 1g1lvT-0007U0-LO
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 17 Sep 2018 05:18:23 +0000
-Received: from legacy.ddn.com ([64.47.133.206])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1:ECDHE-RSA-AES256-SHA:256) (Exim 4.90_1) id 1g1lvR-000cml-Pr
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 17 Sep 2018 05:18:23 +0000
-In-Reply-To: <9A6D2B35-2355-4061-9E0C-4A1883FC3547@ddn.com>
-Content-Language: en-US
-Content-ID: <3165508BE6969448A1309B5B2E1128C4@ddn.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: "adilger@dilger.ca" <adilger@dilger.ca>, "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, Wang Shilong <wangshilong1991@gmail.com>, "dchinner@redhat.com" <dchinner@redhat.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+From: Sahitya Tummala <stummala@codeaurora.org>
+Subject: [PATCH v3] f2fs: add new idle interval timing for discard and gc paths
+Date: Mon, 17 Sep 2018 13:00:58 +0530
+Message-ID: <1537169458-30361-1-git-send-email-stummala@codeaurora.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-DQo+IOWcqCAyMDE45bm0OeaciDE25pel77yM5LiL5Y2IODoyNe+8jFdhbmcgU2hpbG9uZyA8d3No
-aWxvbmdAZGRuLmNvbT4g5YaZ6YGT77yaDQo+IA0KPiANCj4gDQo+PiDlnKggMjAxOOW5tDnmnIgx
-NuaXpe+8jOS4i+WNiDg6MjDvvIxUaGVvZG9yZSBZLiBUcydvIDx0eXRzb0BtaXQuZWR1PiDlhpnp
-gZPvvJoNCj4+IA0KPj4gT24gU3VuLCBTZXAgMTYsIDIwMTggYXQgMDQ6MDI6NTJBTSArMDAwMCwg
-V2FuZyBTaGlsb25nIHdyb3RlOg0KPj4+IA0KPj4+IA0KPj4+PiDlnKggMjAxOOW5tDnmnIgxNuaX
-pe+8jOS4iuWNiDExOjU177yMVGhlb2RvcmUgWS4gVHMnbyA8dHl0c29AbWl0LmVkdT4g5YaZ6YGT
-77yaDQo+Pj4+IA0KPj4+PiBPbiBXZWQsIFNlcCAxMiwgMjAxOCBhdCAwODo1NzoxNkFNICswOTAw
-LCBXYW5nIFNoaWxvbmcgd3JvdGU6DQo+Pj4+PiBkaWZmIC0tZ2l0IGEvZnMvZXh0NC9pb2N0bC5j
-IGIvZnMvZXh0NC9pb2N0bC5jDQo+Pj4+PiBpbmRleCBhNzA3NDExNWQ2ZjYuLmY4MTEwMmJkMzIw
-MyAxMDA2NDQNCj4+Pj4+IC0tLSBhL2ZzL2V4dDQvaW9jdGwuYw0KPj4+Pj4gKysrIGIvZnMvZXh0
-NC9pb2N0bC5jDQo+Pj4+PiBAQCAtMzM5LDE5ICszMzksMTQgQEAgc3RhdGljIGludCBleHQ0X2lv
-Y3RsX3NldHByb2plY3Qoc3RydWN0IGZpbGUgKmZpbHAsIF9fdTMyIHByb2ppZCkNCj4+Pj4+IAlp
-ZiAocHJvamlkX2VxKGtwcm9qaWQsIEVYVDRfSShpbm9kZSktPmlfcHJvamlkKSkNCj4+Pj4+IAkJ
-cmV0dXJuIDA7DQo+Pj4+PiANCj4+Pj4+IC0JZXJyID0gbW50X3dhbnRfd3JpdGVfZmlsZShmaWxw
-KTsNCj4+Pj4+IC0JaWYgKGVycikNCj4+Pj4+IC0JCXJldHVybiBlcnI7DQo+Pj4+PiAtDQo+Pj4+
-IA0KPj4+PiBBIGh1Z2UgcGFydCBvZiB0aGlzIHBhdGNoIGlzIGRyb3BwaW5nIHRoZSBjYWxscyB0
-bw0KPj4+PiBtbnRfd2FudF93cml0ZV9maWxlKCkgYW5kIG1udF9kcm9wX3dyaXRlX2ZpbGUoKS4g
-IFdoYXQncyB0aGUNCj4+Pj4ganVzdGlmaWNhdGlvbiBmb3IgZG9pbmcgdGhpcz8gIFRoZSB1c2Ug
-b2YgbW50X3dhbnRfd3JpdGVfZmlsZSgpIGxvb2tzDQo+Pj4+IG5lY2Vzc2FyeSB0byBtZeKApg0K
-Pj4+IA0KPj4+IEhpIFRlZCwNCj4+PiANCj4+PiAgICBtbnRfd2FudF93cml0ZV9maWxlKCkgYW5k
-IGlub2RlX2xvY2sgaXMgaGVsZCBiZWZvcmUgdGhpcyBmdW5jdGlvbiBjYWxsZWQgbm93Lg0KPj4+
-IFNpbmNlIGJvdGggaW9jdGxfc2V0X2ZsYWdzIGFuZCBleHQ0X3NldF9wcm9qZWN0KCkgbmVlZCBj
-YWxsIHRoZW0uDQo+PiANCj4+IEkgZG9uJ3Qgc2VlIGFueSBwbGFjZSBpbiB0aGlzIHBhdGNoIHdo
-ZXJlIG1udF93YW50X3dyaXRlX2ZpbGUoKSBpcw0KPj4gYmVpbmcgY2FsbGVkLiAgV2hhdCBhbSBJ
-IG1pc3Npbmc/ICBBbmQgaWYgdGhlcmUgaXMgYSBkZXBlbmRlbnQgcGF0Y2gNCj4+IHRvIHRoaXMg
-Zmlyc3QgcGF0Y2ggaW4gdGhlIHBhdGNoIHNlcmllcywgcGxlYXNlIGluY2x1ZGUgaXQgaW4gdGhp
-cw0KPj4gcGF0Y2ggc2VyaWVzLi4uLiAgb3IgbGVhc3QgcG9pbnQgaXQgb3V0IGFmdGVyIHRoZSAt
-LS0gbGlzdC4NCj4gDQo+IFNvcnJ5LCBJIG1pZ2h0IG5vdCBleHBsYWluIGl0IGNsZWFybHksIGhl
-cmUgaXMgY3VycmVudCBjb2RlcyBhZnRlciBhcHBseWluZyBwYXRjaDoNCj4gDQo+IDAzOSAgICAg
-ICAgICAgICAgICAgZXJyID0gbW50X3dhbnRfd3JpdGVfZmlsZShmaWxwKTsgICAgICAgICAg4oCU
-4oCU4oCU4oCU4oCU4oCU4oCUPmNhbGxlZCBoZXJlLCB0aGlzIGlzIG9yaWdpbmFsbHkgdGhlcmUg
-Zm9yIGV4dDRfaW9jdGxfc2V0ZmxhZ3MoKQ0KPiAxMDQwICAgICAgICAgICAgICAgICBpZiAoZXJy
-KQ0KPiAxMDQxICAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiBlcnI7DQo+IDEwNDIgDQo+
-IDEwNDMgICAgICAgICAgICAgICAgIGlub2RlX2xvY2soaW5vZGUpOw0KPiAxMDQ0ICAgICAgICAg
-ICAgICAgICBlcnIgPSBleHQ0X2lvY3RsX3NldGF0dHJfY2hlY2tfcHJvamlkKGlub2RlLCAmZmEp
-Ow0KPiAxMDQ1ICAgICAgICAgICAgICAgICBpZiAoZXJyKQ0KPiAxMDQ2ICAgICAgICAgICAgICAg
-ICAgICAgICAgIGdvdG8gb3V0Ow0KPiAxMDQ3ICAgICAgICAgICAgICAgICBmbGFncyA9IChlaS0+
-aV9mbGFncyAmIH5FWFQ0X0ZMX1hGTEFHX1ZJU0lCTEUpIHwNCj4gMTA0OCAgICAgICAgICAgICAg
-ICAgICAgICAgICAgKGZsYWdzICYgRVhUNF9GTF9YRkxBR19WSVNJQkxFKTsNCj4gMTA0OSAgICAg
-ICAgICAgICAgICAgZXJyID0gZXh0NF9pb2N0bF9zZXRmbGFncyhpbm9kZSwgZmxhZ3MpOw0KPiAx
-MDUwICAgICAgICAgICAgICAgICBpZiAoZXJyKQ0KPiAxMDUxICAgICAgICAgICAgICAgICAgICAg
-ICAgIGdvdG8gb3V0Ow0KPiAxMDUyICAgICAgICAgICAgICAgICBlcnIgPSBleHQ0X2lvY3RsX3Nl
-dHByb2plY3QoZmlscCwgZmEuZnN4X3Byb2ppZCk7DQo+IDEwNTMgb3V0Og0KPiAxMDU0ICAgICAg
-ICAgICAgICAgICBpbm9kZV91bmxvY2soaW5vZGUpOw0KPiAxMDU1ICAgICAgICAgICAgICAgICBt
-bnRfZHJvcF93cml0ZV9maWxlKGZpbHApOyAgICAgICAgICDigJTigJTigJTigJTigJTigJTigJTi
-gJQ+ZHJvcHBlZCBoZXJlLg0KPiAxMDU2ICAgICAgICAgICAgICAgICByZXR1cm4gZXJyOyANCj4g
-MTA1NyAgICAgICAgIH0NCj4gDQo+IFRoYW5rcywNCj4gU2hpbG9uZw0KDQpKdXN0IGEgZ2VuZXJh
-bCBwaW5nIGZvciB0aGlzLCBtYWtlIHN1cmUgeW91IGRpZCBub3QgbWlzcyByZXBseS4NClNpbmNl
-IEkgc2F3IHlvdSBzZW50IG5ldyBwdWxsIHJlcXVlc3QuDQoNCklzIHRoZXJlIGFueXRoaW5nIG1v
-cmUgSSBjb3VsZCBkbz8gDQoNCg0KPiANCj4+IA0KPj4gVGhhbmtzLA0KPj4gDQo+PiAJCQkJCQkt
-IFRlZA0KPiANCg0KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMu
-c291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3Rp
-bmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+This helps to control the frequency of submission of discard and
+GC requests independently, based on the need.
+
+Suggested-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+---
+v3:
+-don't change gc thread wait_ms in this patch
+-Use the existing function f2fs_time_over() to handle this
+-change f2fs_get_wait_time() to f2fs_time_to_wait()
+
+ Documentation/ABI/testing/sysfs-fs-f2fs | 17 ++++++++++++++++-
+ fs/f2fs/f2fs.h                          | 28 +++++++++++++++++++++++++---
+ fs/f2fs/gc.c                            |  2 +-
+ fs/f2fs/segment.c                       | 14 +++++---------
+ fs/f2fs/super.c                         |  2 ++
+ fs/f2fs/sysfs.c                         |  5 +++++
+ 6 files changed, 54 insertions(+), 14 deletions(-)
+
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 94a24ae..3ac4177 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -121,7 +121,22 @@ What:		/sys/fs/f2fs/<disk>/idle_interval
+ Date:		January 2016
+ Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
+ Description:
+-		 Controls the idle timing.
++		 Controls the idle timing for all paths other than
++		 discard and gc path.
++
++What:		/sys/fs/f2fs/<disk>/discard_idle_interval
++Date:		September 2018
++Contact:	"Chao Yu" <yuchao0@huawei.com>
++Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
++Description:
++		 Controls the idle timing for discard path.
++
++What:		/sys/fs/f2fs/<disk>/gc_idle_interval
++Date:		September 2018
++Contact:	"Chao Yu" <yuchao0@huawei.com>
++Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
++Description:
++		 Controls the idle timing for gc path.
+ 
+ What:		/sys/fs/f2fs/<disk>/iostat_enable
+ Date:		August 2017
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 88b8d50..41e00d3 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1095,6 +1095,8 @@ enum {
+ enum {
+ 	CP_TIME,
+ 	REQ_TIME,
++	DISCARD_TIME,
++	GC_TIME,
+ 	MAX_TIME,
+ };
+ 
+@@ -1352,11 +1354,31 @@ static inline void f2fs_update_time(struct f2fs_sb_info *sbi, int type)
+ static inline bool f2fs_time_over(struct f2fs_sb_info *sbi, int type)
+ {
+ 	unsigned long interval = sbi->interval_time[type] * HZ;
++	unsigned long last_time;
+ 
+-	return time_after(jiffies, sbi->last_time[type] + interval);
++	if (type == CP_TIME)
++		last_time = sbi->last_time[CP_TIME];
++	else
++		last_time = sbi->last_time[REQ_TIME];
++
++	return time_after(jiffies, last_time + interval);
++}
++
++static inline unsigned int f2fs_time_to_wait(struct f2fs_sb_info *sbi,
++						int type)
++{
++	unsigned long interval = sbi->interval_time[type] * HZ;
++	unsigned int wait_ms = 0;
++	long delta;
++
++	delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
++	if (delta > 0)
++		wait_ms = jiffies_to_msecs(delta);
++
++	return wait_ms;
+ }
+ 
+-static inline bool is_idle(struct f2fs_sb_info *sbi)
++static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
+ {
+ 	struct block_device *bdev = sbi->sb->s_bdev;
+ 	struct request_queue *q = bdev_get_queue(bdev);
+@@ -1365,7 +1387,7 @@ static inline bool is_idle(struct f2fs_sb_info *sbi)
+ 	if (rl->count[BLK_RW_SYNC] || rl->count[BLK_RW_ASYNC])
+ 		return false;
+ 
+-	return f2fs_time_over(sbi, REQ_TIME);
++	return f2fs_time_over(sbi, type);
+ }
+ 
+ /*
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 5c8d004..49e2328 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -83,7 +83,7 @@ static int gc_thread_func(void *data)
+ 		if (!mutex_trylock(&sbi->gc_mutex))
+ 			goto next;
+ 
+-		if (!is_idle(sbi)) {
++		if (!is_idle(sbi, GC_TIME)) {
+ 			increase_sleep_time(gc_th, &wait_ms);
+ 			mutex_unlock(&sbi->gc_mutex);
+ 			goto next;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 187c848..67cf7e4 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -511,7 +511,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+ 	else
+ 		f2fs_build_free_nids(sbi, false, false);
+ 
+-	if (!is_idle(sbi) &&
++	if (!is_idle(sbi, REQ_TIME) &&
+ 		(!excess_dirty_nats(sbi) && !excess_dirty_nodes(sbi)))
+ 		return;
+ 
+@@ -1311,7 +1311,7 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+ 		if (dc->state != D_PREP)
+ 			goto next;
+ 
+-		if (dpolicy->io_aware && !is_idle(sbi)) {
++		if (dpolicy->io_aware && !is_idle(sbi, DISCARD_TIME)) {
+ 			io_interrupted = true;
+ 			break;
+ 		}
+@@ -1371,7 +1371,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 			f2fs_bug_on(sbi, dc->state != D_PREP);
+ 
+ 			if (dpolicy->io_aware && i < dpolicy->io_aware_gran &&
+-								!is_idle(sbi)) {
++						!is_idle(sbi, DISCARD_TIME)) {
+ 				io_interrupted = true;
+ 				break;
+ 			}
+@@ -1564,8 +1564,6 @@ static int issue_discard_thread(void *data)
+ 	struct discard_policy dpolicy;
+ 	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
+ 	int issued;
+-	unsigned long interval = sbi->interval_time[REQ_TIME] * HZ;
+-	long delta;
+ 
+ 	set_freezable();
+ 
+@@ -1602,10 +1600,8 @@ static int issue_discard_thread(void *data)
+ 			__wait_all_discard_cmd(sbi, &dpolicy);
+ 			wait_ms = dpolicy.min_interval;
+ 		} else if (issued == -1){
+-			delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
+-			if (delta > 0)
+-				wait_ms = jiffies_to_msecs(delta);
+-			else
++			wait_ms = f2fs_time_to_wait(sbi, DISCARD_TIME);
++			if (!wait_ms)
+ 				wait_ms = dpolicy.mid_interval;
+ 		} else {
+ 			wait_ms = dpolicy.max_interval;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 3106da1..2f67948 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2463,6 +2463,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+ 	sbi->dir_level = DEF_DIR_LEVEL;
+ 	sbi->interval_time[CP_TIME] = DEF_CP_INTERVAL;
+ 	sbi->interval_time[REQ_TIME] = DEF_IDLE_INTERVAL;
++	sbi->interval_time[DISCARD_TIME] = DEF_IDLE_INTERVAL;
++	sbi->interval_time[GC_TIME] = DEF_IDLE_INTERVAL;
+ 	clear_sbi_flag(sbi, SBI_NEED_FSCK);
+ 
+ 	for (i = 0; i < NR_COUNT_TYPE; i++)
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 81c0e53..0afe99c 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -407,6 +407,9 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
+ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
+ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
+ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
++F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, discard_idle_interval,
++					interval_time[DISCARD_TIME]);
++F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_idle_interval, interval_time[GC_TIME]);
+ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
+ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
+ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
+@@ -460,6 +463,8 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
+ 	ATTR_LIST(dirty_nats_ratio),
+ 	ATTR_LIST(cp_interval),
+ 	ATTR_LIST(idle_interval),
++	ATTR_LIST(discard_idle_interval),
++	ATTR_LIST(gc_idle_interval),
+ 	ATTR_LIST(iostat_enable),
+ 	ATTR_LIST(readdir_ra),
+ 	ATTR_LIST(gc_pin_file_thresh),
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
