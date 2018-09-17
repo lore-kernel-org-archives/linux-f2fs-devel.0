@@ -1,218 +1,119 @@
-From: Sahitya Tummala <stummala@codeaurora.org>
-Subject: [PATCH v3] f2fs: add new idle interval timing for discard and gc paths
-Date: Mon, 17 Sep 2018 13:00:58 +0530
-Message-ID: <1537169458-30361-1-git-send-email-stummala@codeaurora.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: <gregkh@linuxfoundation.org>
+Subject: Patch "f2fs: fix defined but not used build warnings"
+ has been added to the 4.14-stable tree
+Date: Mon, 17 Sep 2018 12:34:27 +0200
+Message-ID: <153718046717428@kroah.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <gregkh@linuxfoundation.org>) id 1g1qsd-00050x-7b
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 17 Sep 2018 10:35:47 +0000
+Received: from mail.linuxfoundation.org ([140.211.169.12])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1g1qsa-000mPS-6z
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 17 Sep 2018 10:35:46 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: alexander.levin@microsoft.com, gregkh@linuxfoundation.org, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net, rdunlap@infradead.org, yuchao0@huawei.com
+Cc: stable-commits@vger.kernel.org
 
-This helps to control the frequency of submission of discard and
-GC requests independently, based on the need.
 
-Suggested-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+This is a note to let you know that I've just added the patch titled
+
+    f2fs: fix defined but not used build warnings
+
+to the 4.14-stable tree which can be found at:
+    http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
+
+The filename of the patch is:
+     f2fs-fix-defined-but-not-used-build-warnings.patch
+and it can be found in the queue-4.14 subdirectory.
+
+If you, or anyone else, feels it should not be added to the stable tree,
+please let <stable@vger.kernel.org> know about it.
+
+
+>From foo@baz Mon Sep 17 12:33:31 CEST 2018
+From: Randy Dunlap <rdunlap@infradead.org>
+Date: Fri, 6 Jul 2018 20:50:57 -0700
+Subject: f2fs: fix defined but not used build warnings
+
+From: Randy Dunlap <rdunlap@infradead.org>
+
+[ Upstream commit cb15d1e43db0a6341c1e26ac6a2c74e61b74f1aa ]
+
+Fix build warnings in f2fs when CONFIG_PROC_FS is not enabled
+by marking the unused functions as __maybe_unused.
+
+../fs/f2fs/sysfs.c:519:12: warning: 'segment_info_seq_show' defined but not used [-Wunused-function]
+../fs/f2fs/sysfs.c:546:12: warning: 'segment_bits_seq_show' defined but not used [-Wunused-function]
+../fs/f2fs/sysfs.c:570:12: warning: 'iostat_info_seq_show' defined but not used [-Wunused-function]
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-v3:
--don't change gc thread wait_ms in this patch
--Use the existing function f2fs_time_over() to handle this
--change f2fs_get_wait_time() to f2fs_time_to_wait()
+ fs/f2fs/sysfs.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
- Documentation/ABI/testing/sysfs-fs-f2fs | 17 ++++++++++++++++-
- fs/f2fs/f2fs.h                          | 28 +++++++++++++++++++++++++---
- fs/f2fs/gc.c                            |  2 +-
- fs/f2fs/segment.c                       | 14 +++++---------
- fs/f2fs/super.c                         |  2 ++
- fs/f2fs/sysfs.c                         |  5 +++++
- 6 files changed, 54 insertions(+), 14 deletions(-)
-
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 94a24ae..3ac4177 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -121,7 +121,22 @@ What:		/sys/fs/f2fs/<disk>/idle_interval
- Date:		January 2016
- Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
- Description:
--		 Controls the idle timing.
-+		 Controls the idle timing for all paths other than
-+		 discard and gc path.
-+
-+What:		/sys/fs/f2fs/<disk>/discard_idle_interval
-+Date:		September 2018
-+Contact:	"Chao Yu" <yuchao0@huawei.com>
-+Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
-+Description:
-+		 Controls the idle timing for discard path.
-+
-+What:		/sys/fs/f2fs/<disk>/gc_idle_interval
-+Date:		September 2018
-+Contact:	"Chao Yu" <yuchao0@huawei.com>
-+Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
-+Description:
-+		 Controls the idle timing for gc path.
- 
- What:		/sys/fs/f2fs/<disk>/iostat_enable
- Date:		August 2017
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 88b8d50..41e00d3 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1095,6 +1095,8 @@ enum {
- enum {
- 	CP_TIME,
- 	REQ_TIME,
-+	DISCARD_TIME,
-+	GC_TIME,
- 	MAX_TIME,
- };
- 
-@@ -1352,11 +1354,31 @@ static inline void f2fs_update_time(struct f2fs_sb_info *sbi, int type)
- static inline bool f2fs_time_over(struct f2fs_sb_info *sbi, int type)
- {
- 	unsigned long interval = sbi->interval_time[type] * HZ;
-+	unsigned long last_time;
- 
--	return time_after(jiffies, sbi->last_time[type] + interval);
-+	if (type == CP_TIME)
-+		last_time = sbi->last_time[CP_TIME];
-+	else
-+		last_time = sbi->last_time[REQ_TIME];
-+
-+	return time_after(jiffies, last_time + interval);
-+}
-+
-+static inline unsigned int f2fs_time_to_wait(struct f2fs_sb_info *sbi,
-+						int type)
-+{
-+	unsigned long interval = sbi->interval_time[type] * HZ;
-+	unsigned int wait_ms = 0;
-+	long delta;
-+
-+	delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
-+	if (delta > 0)
-+		wait_ms = jiffies_to_msecs(delta);
-+
-+	return wait_ms;
- }
- 
--static inline bool is_idle(struct f2fs_sb_info *sbi)
-+static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
- {
- 	struct block_device *bdev = sbi->sb->s_bdev;
- 	struct request_queue *q = bdev_get_queue(bdev);
-@@ -1365,7 +1387,7 @@ static inline bool is_idle(struct f2fs_sb_info *sbi)
- 	if (rl->count[BLK_RW_SYNC] || rl->count[BLK_RW_ASYNC])
- 		return false;
- 
--	return f2fs_time_over(sbi, REQ_TIME);
-+	return f2fs_time_over(sbi, type);
- }
- 
- /*
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 5c8d004..49e2328 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -83,7 +83,7 @@ static int gc_thread_func(void *data)
- 		if (!mutex_trylock(&sbi->gc_mutex))
- 			goto next;
- 
--		if (!is_idle(sbi)) {
-+		if (!is_idle(sbi, GC_TIME)) {
- 			increase_sleep_time(gc_th, &wait_ms);
- 			mutex_unlock(&sbi->gc_mutex);
- 			goto next;
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 187c848..67cf7e4 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -511,7 +511,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
- 	else
- 		f2fs_build_free_nids(sbi, false, false);
- 
--	if (!is_idle(sbi) &&
-+	if (!is_idle(sbi, REQ_TIME) &&
- 		(!excess_dirty_nats(sbi) && !excess_dirty_nodes(sbi)))
- 		return;
- 
-@@ -1311,7 +1311,7 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
- 		if (dc->state != D_PREP)
- 			goto next;
- 
--		if (dpolicy->io_aware && !is_idle(sbi)) {
-+		if (dpolicy->io_aware && !is_idle(sbi, DISCARD_TIME)) {
- 			io_interrupted = true;
- 			break;
- 		}
-@@ -1371,7 +1371,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 			f2fs_bug_on(sbi, dc->state != D_PREP);
- 
- 			if (dpolicy->io_aware && i < dpolicy->io_aware_gran &&
--								!is_idle(sbi)) {
-+						!is_idle(sbi, DISCARD_TIME)) {
- 				io_interrupted = true;
- 				break;
- 			}
-@@ -1564,8 +1564,6 @@ static int issue_discard_thread(void *data)
- 	struct discard_policy dpolicy;
- 	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
- 	int issued;
--	unsigned long interval = sbi->interval_time[REQ_TIME] * HZ;
--	long delta;
- 
- 	set_freezable();
- 
-@@ -1602,10 +1600,8 @@ static int issue_discard_thread(void *data)
- 			__wait_all_discard_cmd(sbi, &dpolicy);
- 			wait_ms = dpolicy.min_interval;
- 		} else if (issued == -1){
--			delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
--			if (delta > 0)
--				wait_ms = jiffies_to_msecs(delta);
--			else
-+			wait_ms = f2fs_time_to_wait(sbi, DISCARD_TIME);
-+			if (!wait_ms)
- 				wait_ms = dpolicy.mid_interval;
- 		} else {
- 			wait_ms = dpolicy.max_interval;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 3106da1..2f67948 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2463,6 +2463,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
- 	sbi->dir_level = DEF_DIR_LEVEL;
- 	sbi->interval_time[CP_TIME] = DEF_CP_INTERVAL;
- 	sbi->interval_time[REQ_TIME] = DEF_IDLE_INTERVAL;
-+	sbi->interval_time[DISCARD_TIME] = DEF_IDLE_INTERVAL;
-+	sbi->interval_time[GC_TIME] = DEF_IDLE_INTERVAL;
- 	clear_sbi_flag(sbi, SBI_NEED_FSCK);
- 
- 	for (i = 0; i < NR_COUNT_TYPE; i++)
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 81c0e53..0afe99c 100644
 --- a/fs/f2fs/sysfs.c
 +++ b/fs/f2fs/sysfs.c
-@@ -407,6 +407,9 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
-+F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, discard_idle_interval,
-+					interval_time[DISCARD_TIME]);
-+F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_idle_interval, interval_time[GC_TIME]);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
-@@ -460,6 +463,8 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
- 	ATTR_LIST(dirty_nats_ratio),
- 	ATTR_LIST(cp_interval),
- 	ATTR_LIST(idle_interval),
-+	ATTR_LIST(discard_idle_interval),
-+	ATTR_LIST(gc_idle_interval),
- 	ATTR_LIST(iostat_enable),
- 	ATTR_LIST(readdir_ra),
- 	ATTR_LIST(gc_pin_file_thresh),
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+@@ -9,6 +9,7 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
++#include <linux/compiler.h>
+ #include <linux/proc_fs.h>
+ #include <linux/f2fs_fs.h>
+ #include <linux/seq_file.h>
+@@ -381,7 +382,8 @@ static struct kobject f2fs_feat = {
+ 	.kset	= &f2fs_kset,
+ };
+ 
+-static int segment_info_seq_show(struct seq_file *seq, void *offset)
++static int __maybe_unused segment_info_seq_show(struct seq_file *seq,
++						void *offset)
+ {
+ 	struct super_block *sb = seq->private;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+@@ -408,7 +410,8 @@ static int segment_info_seq_show(struct
+ 	return 0;
+ }
+ 
+-static int segment_bits_seq_show(struct seq_file *seq, void *offset)
++static int __maybe_unused segment_bits_seq_show(struct seq_file *seq,
++						void *offset)
+ {
+ 	struct super_block *sb = seq->private;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+@@ -432,7 +435,8 @@ static int segment_bits_seq_show(struct
+ 	return 0;
+ }
+ 
+-static int iostat_info_seq_show(struct seq_file *seq, void *offset)
++static int __maybe_unused iostat_info_seq_show(struct seq_file *seq,
++					       void *offset)
+ {
+ 	struct super_block *sb = seq->private;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+
+
+Patches currently in stable-queue which might be from rdunlap@infradead.org are
+
+queue-4.14/f2fs-fix-defined-but-not-used-build-warnings.patch
