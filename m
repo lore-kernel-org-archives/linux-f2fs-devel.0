@@ -1,29 +1,29 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 200465] null ptr dereference in
- fscrypt_do_page_crypto() when operating a file on a corrupted f2fs image
-Date: Mon, 17 Sep 2018 03:04:10 +0000
-Message-ID: <bug-200465-202145-6zGZtzx6JU@https.bugzilla.kernel.org/>
-References: <bug-200465-202145@https.bugzilla.kernel.org/>
+From: Wang Shilong <wshilong@ddn.com>
+Subject: Re: [PATCH v3 1/3] ext4: fix setattr project check upon
+ fssetxattr ioctl
+Date: Mon, 17 Sep 2018 05:18:13 +0000
+Message-ID: <DD605171-E52E-47E1-B916-61B42C36ABC2@ddn.com>
+References: <1536710238-16858-1-git-send-email-wshilong1991@gmail.com>
+ <20180916035529.GG8652@thunk.org>
+ <75832A38-2476-4504-A03C-15B40053A565@ddn.com>
+ <20180916122034.GA5915@thunk.org>
+ <9A6D2B35-2355-4061-9E0C-4A1883FC3547@ddn.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1g1jpj-0001Vd-Rd
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 17 Sep 2018 03:04:19 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g1jph-003dKP-EW
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 17 Sep 2018 03:04:19 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id CEB222967F
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 17 Sep 2018 03:04:10 +0000 (UTC)
-In-Reply-To: <bug-200465-202145@https.bugzilla.kernel.org/>
+ (envelope-from <wshilong@ddn.com>) id 1g1lvT-0007U0-LO
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 17 Sep 2018 05:18:23 +0000
+Received: from legacy.ddn.com ([64.47.133.206])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1:ECDHE-RSA-AES256-SHA:256) (Exim 4.90_1) id 1g1lvR-000cml-Pr
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 17 Sep 2018 05:18:23 +0000
+In-Reply-To: <9A6D2B35-2355-4061-9E0C-4A1883FC3547@ddn.com>
+Content-Language: en-US
+Content-ID: <3165508BE6969448A1309B5B2E1128C4@ddn.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,28 +33,60 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: "adilger@dilger.ca" <adilger@dilger.ca>, "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, Wang Shilong <wangshilong1991@gmail.com>, "dchinner@redhat.com" <dchinner@redhat.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200465
-
---- Comment #3 from Chao Yu (chao@kernel.org) ---
-Steve,
-
-I figure out that patch to solve issue which I encounter with image attached by
-Wen Xu, the bug can be triggered with below scripts:
-- mount image /mnt/f2fs/
-- cd /mnt/f2fs/foo/bar/
-- ls -l
-
-After applying that patch, the problem was gone.
-
-But when the bug triggeres, related call stack is not the same as reported one,
-also I can't reproduce reported call stack with the method provided from Wen
-Xu.
-
-I guess the right producing way is adding master key for encrypted file, I'd
-like to confirm with Wen Xu.
-
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+DQo+IOWcqCAyMDE45bm0OeaciDE25pel77yM5LiL5Y2IODoyNe+8jFdhbmcgU2hpbG9uZyA8d3No
+aWxvbmdAZGRuLmNvbT4g5YaZ6YGT77yaDQo+IA0KPiANCj4gDQo+PiDlnKggMjAxOOW5tDnmnIgx
+NuaXpe+8jOS4i+WNiDg6MjDvvIxUaGVvZG9yZSBZLiBUcydvIDx0eXRzb0BtaXQuZWR1PiDlhpnp
+gZPvvJoNCj4+IA0KPj4gT24gU3VuLCBTZXAgMTYsIDIwMTggYXQgMDQ6MDI6NTJBTSArMDAwMCwg
+V2FuZyBTaGlsb25nIHdyb3RlOg0KPj4+IA0KPj4+IA0KPj4+PiDlnKggMjAxOOW5tDnmnIgxNuaX
+pe+8jOS4iuWNiDExOjU177yMVGhlb2RvcmUgWS4gVHMnbyA8dHl0c29AbWl0LmVkdT4g5YaZ6YGT
+77yaDQo+Pj4+IA0KPj4+PiBPbiBXZWQsIFNlcCAxMiwgMjAxOCBhdCAwODo1NzoxNkFNICswOTAw
+LCBXYW5nIFNoaWxvbmcgd3JvdGU6DQo+Pj4+PiBkaWZmIC0tZ2l0IGEvZnMvZXh0NC9pb2N0bC5j
+IGIvZnMvZXh0NC9pb2N0bC5jDQo+Pj4+PiBpbmRleCBhNzA3NDExNWQ2ZjYuLmY4MTEwMmJkMzIw
+MyAxMDA2NDQNCj4+Pj4+IC0tLSBhL2ZzL2V4dDQvaW9jdGwuYw0KPj4+Pj4gKysrIGIvZnMvZXh0
+NC9pb2N0bC5jDQo+Pj4+PiBAQCAtMzM5LDE5ICszMzksMTQgQEAgc3RhdGljIGludCBleHQ0X2lv
+Y3RsX3NldHByb2plY3Qoc3RydWN0IGZpbGUgKmZpbHAsIF9fdTMyIHByb2ppZCkNCj4+Pj4+IAlp
+ZiAocHJvamlkX2VxKGtwcm9qaWQsIEVYVDRfSShpbm9kZSktPmlfcHJvamlkKSkNCj4+Pj4+IAkJ
+cmV0dXJuIDA7DQo+Pj4+PiANCj4+Pj4+IC0JZXJyID0gbW50X3dhbnRfd3JpdGVfZmlsZShmaWxw
+KTsNCj4+Pj4+IC0JaWYgKGVycikNCj4+Pj4+IC0JCXJldHVybiBlcnI7DQo+Pj4+PiAtDQo+Pj4+
+IA0KPj4+PiBBIGh1Z2UgcGFydCBvZiB0aGlzIHBhdGNoIGlzIGRyb3BwaW5nIHRoZSBjYWxscyB0
+bw0KPj4+PiBtbnRfd2FudF93cml0ZV9maWxlKCkgYW5kIG1udF9kcm9wX3dyaXRlX2ZpbGUoKS4g
+IFdoYXQncyB0aGUNCj4+Pj4ganVzdGlmaWNhdGlvbiBmb3IgZG9pbmcgdGhpcz8gIFRoZSB1c2Ug
+b2YgbW50X3dhbnRfd3JpdGVfZmlsZSgpIGxvb2tzDQo+Pj4+IG5lY2Vzc2FyeSB0byBtZeKApg0K
+Pj4+IA0KPj4+IEhpIFRlZCwNCj4+PiANCj4+PiAgICBtbnRfd2FudF93cml0ZV9maWxlKCkgYW5k
+IGlub2RlX2xvY2sgaXMgaGVsZCBiZWZvcmUgdGhpcyBmdW5jdGlvbiBjYWxsZWQgbm93Lg0KPj4+
+IFNpbmNlIGJvdGggaW9jdGxfc2V0X2ZsYWdzIGFuZCBleHQ0X3NldF9wcm9qZWN0KCkgbmVlZCBj
+YWxsIHRoZW0uDQo+PiANCj4+IEkgZG9uJ3Qgc2VlIGFueSBwbGFjZSBpbiB0aGlzIHBhdGNoIHdo
+ZXJlIG1udF93YW50X3dyaXRlX2ZpbGUoKSBpcw0KPj4gYmVpbmcgY2FsbGVkLiAgV2hhdCBhbSBJ
+IG1pc3Npbmc/ICBBbmQgaWYgdGhlcmUgaXMgYSBkZXBlbmRlbnQgcGF0Y2gNCj4+IHRvIHRoaXMg
+Zmlyc3QgcGF0Y2ggaW4gdGhlIHBhdGNoIHNlcmllcywgcGxlYXNlIGluY2x1ZGUgaXQgaW4gdGhp
+cw0KPj4gcGF0Y2ggc2VyaWVzLi4uLiAgb3IgbGVhc3QgcG9pbnQgaXQgb3V0IGFmdGVyIHRoZSAt
+LS0gbGlzdC4NCj4gDQo+IFNvcnJ5LCBJIG1pZ2h0IG5vdCBleHBsYWluIGl0IGNsZWFybHksIGhl
+cmUgaXMgY3VycmVudCBjb2RlcyBhZnRlciBhcHBseWluZyBwYXRjaDoNCj4gDQo+IDAzOSAgICAg
+ICAgICAgICAgICAgZXJyID0gbW50X3dhbnRfd3JpdGVfZmlsZShmaWxwKTsgICAgICAgICAg4oCU
+4oCU4oCU4oCU4oCU4oCU4oCUPmNhbGxlZCBoZXJlLCB0aGlzIGlzIG9yaWdpbmFsbHkgdGhlcmUg
+Zm9yIGV4dDRfaW9jdGxfc2V0ZmxhZ3MoKQ0KPiAxMDQwICAgICAgICAgICAgICAgICBpZiAoZXJy
+KQ0KPiAxMDQxICAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiBlcnI7DQo+IDEwNDIgDQo+
+IDEwNDMgICAgICAgICAgICAgICAgIGlub2RlX2xvY2soaW5vZGUpOw0KPiAxMDQ0ICAgICAgICAg
+ICAgICAgICBlcnIgPSBleHQ0X2lvY3RsX3NldGF0dHJfY2hlY2tfcHJvamlkKGlub2RlLCAmZmEp
+Ow0KPiAxMDQ1ICAgICAgICAgICAgICAgICBpZiAoZXJyKQ0KPiAxMDQ2ICAgICAgICAgICAgICAg
+ICAgICAgICAgIGdvdG8gb3V0Ow0KPiAxMDQ3ICAgICAgICAgICAgICAgICBmbGFncyA9IChlaS0+
+aV9mbGFncyAmIH5FWFQ0X0ZMX1hGTEFHX1ZJU0lCTEUpIHwNCj4gMTA0OCAgICAgICAgICAgICAg
+ICAgICAgICAgICAgKGZsYWdzICYgRVhUNF9GTF9YRkxBR19WSVNJQkxFKTsNCj4gMTA0OSAgICAg
+ICAgICAgICAgICAgZXJyID0gZXh0NF9pb2N0bF9zZXRmbGFncyhpbm9kZSwgZmxhZ3MpOw0KPiAx
+MDUwICAgICAgICAgICAgICAgICBpZiAoZXJyKQ0KPiAxMDUxICAgICAgICAgICAgICAgICAgICAg
+ICAgIGdvdG8gb3V0Ow0KPiAxMDUyICAgICAgICAgICAgICAgICBlcnIgPSBleHQ0X2lvY3RsX3Nl
+dHByb2plY3QoZmlscCwgZmEuZnN4X3Byb2ppZCk7DQo+IDEwNTMgb3V0Og0KPiAxMDU0ICAgICAg
+ICAgICAgICAgICBpbm9kZV91bmxvY2soaW5vZGUpOw0KPiAxMDU1ICAgICAgICAgICAgICAgICBt
+bnRfZHJvcF93cml0ZV9maWxlKGZpbHApOyAgICAgICAgICDigJTigJTigJTigJTigJTigJTigJTi
+gJQ+ZHJvcHBlZCBoZXJlLg0KPiAxMDU2ICAgICAgICAgICAgICAgICByZXR1cm4gZXJyOyANCj4g
+MTA1NyAgICAgICAgIH0NCj4gDQo+IFRoYW5rcywNCj4gU2hpbG9uZw0KDQpKdXN0IGEgZ2VuZXJh
+bCBwaW5nIGZvciB0aGlzLCBtYWtlIHN1cmUgeW91IGRpZCBub3QgbWlzcyByZXBseS4NClNpbmNl
+IEkgc2F3IHlvdSBzZW50IG5ldyBwdWxsIHJlcXVlc3QuDQoNCklzIHRoZXJlIGFueXRoaW5nIG1v
+cmUgSSBjb3VsZCBkbz8gDQoNCg0KPiANCj4+IA0KPj4gVGhhbmtzLA0KPj4gDQo+PiAJCQkJCQkt
+IFRlZA0KPiANCg0KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMu
+c291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3Rp
+bmZvL2xpbnV4LWYyZnMtZGV2ZWwK
