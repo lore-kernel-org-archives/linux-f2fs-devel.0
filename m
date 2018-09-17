@@ -1,22 +1,22 @@
 From: <gregkh@linuxfoundation.org>
 Subject: Patch "f2fs: fix defined but not used build warnings"
- has been added to the 4.14-stable tree
-Date: Mon, 17 Sep 2018 12:34:27 +0200
-Message-ID: <153718046717428@kroah.com>
+ has been added to the 4.18-stable tree
+Date: Mon, 17 Sep 2018 12:39:37 +0200
+Message-ID: <153718077719629@kroah.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <gregkh@linuxfoundation.org>) id 1g1qsd-00050x-7b
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 17 Sep 2018 10:35:47 +0000
+ (envelope-from <gregkh@linuxfoundation.org>) id 1g1qy2-0001Y2-Ls
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 17 Sep 2018 10:41:22 +0000
 Received: from mail.linuxfoundation.org ([140.211.169.12])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g1qsa-000mPS-6z
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 17 Sep 2018 10:35:46 +0000
+ id 1g1qy0-000oHz-By
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 17 Sep 2018 10:41:22 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,18 +34,18 @@ This is a note to let you know that I've just added the patch titled
 
     f2fs: fix defined but not used build warnings
 
-to the 4.14-stable tree which can be found at:
+to the 4.18-stable tree which can be found at:
     http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
 
 The filename of the patch is:
      f2fs-fix-defined-but-not-used-build-warnings.patch
-and it can be found in the queue-4.14 subdirectory.
+and it can be found in the queue-4.18 subdirectory.
 
 If you, or anyone else, feels it should not be added to the stable tree,
 please let <stable@vger.kernel.org> know about it.
 
 
->From foo@baz Mon Sep 17 12:33:31 CEST 2018
+>From foo@baz Mon Sep 17 12:37:52 CEST 2018
 From: Randy Dunlap <rdunlap@infradead.org>
 Date: Fri, 6 Jul 2018 20:50:57 -0700
 Subject: f2fs: fix defined but not used build warnings
@@ -82,7 +82,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  #include <linux/proc_fs.h>
  #include <linux/f2fs_fs.h>
  #include <linux/seq_file.h>
-@@ -381,7 +382,8 @@ static struct kobject f2fs_feat = {
+@@ -516,7 +517,8 @@ static struct kobject f2fs_feat = {
  	.kset	= &f2fs_kset,
  };
  
@@ -92,7 +92,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  {
  	struct super_block *sb = seq->private;
  	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-@@ -408,7 +410,8 @@ static int segment_info_seq_show(struct
+@@ -543,7 +545,8 @@ static int segment_info_seq_show(struct
  	return 0;
  }
  
@@ -102,7 +102,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  {
  	struct super_block *sb = seq->private;
  	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-@@ -432,7 +435,8 @@ static int segment_bits_seq_show(struct
+@@ -567,7 +570,8 @@ static int segment_bits_seq_show(struct
  	return 0;
  }
  
@@ -116,4 +116,4 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 Patches currently in stable-queue which might be from rdunlap@infradead.org are
 
-queue-4.14/f2fs-fix-defined-but-not-used-build-warnings.patch
+queue-4.18/f2fs-fix-defined-but-not-used-build-warnings.patch
