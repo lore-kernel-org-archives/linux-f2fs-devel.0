@@ -1,19 +1,19 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 4.14 045/126] f2fs: fix defined but not used build warnings
-Date: Tue, 18 Sep 2018 00:41:33 +0200
-Message-ID: <20180917211707.604787292@linuxfoundation.org>
-References: <20180917211703.481236999@linuxfoundation.org>
+Subject: [PATCH 4.18 081/158] f2fs: fix defined but not used build warnings
+Date: Tue, 18 Sep 2018 00:41:51 +0200
+Message-ID: <20180917211714.965796467@linuxfoundation.org>
+References: <20180917211710.383360696@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
+In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, Sasha Levin <alexander.levin@microsoft.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -49,7 +49,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  #include <linux/proc_fs.h>
  #include <linux/f2fs_fs.h>
  #include <linux/seq_file.h>
-@@ -381,7 +382,8 @@ static struct kobject f2fs_feat = {
+@@ -516,7 +517,8 @@ static struct kobject f2fs_feat = {
  	.kset	= &f2fs_kset,
  };
  
@@ -59,7 +59,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  {
  	struct super_block *sb = seq->private;
  	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-@@ -408,7 +410,8 @@ static int segment_info_seq_show(struct
+@@ -543,7 +545,8 @@ static int segment_info_seq_show(struct
  	return 0;
  }
  
@@ -69,7 +69,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  {
  	struct super_block *sb = seq->private;
  	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-@@ -432,7 +435,8 @@ static int segment_bits_seq_show(struct
+@@ -567,7 +570,8 @@ static int segment_bits_seq_show(struct
  	return 0;
  }
  
