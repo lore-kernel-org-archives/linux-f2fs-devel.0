@@ -1,54 +1,147 @@
-From: Chengguang Xu <cgxu519@gmx.com>
-Subject: [PATCH] f2fs: remove default option setting in remount
-Date: Tue, 18 Sep 2018 14:23:44 +0800
-Message-ID: <20180918062344.3102-1-cgxu519@gmx.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
+Date: Tue, 18 Sep 2018 18:13:33 +0800
+Message-ID: <e6e2b5e7-3b2e-d2f1-57d3-0a13059673db@huawei.com>
+References: <20180912000603.GA67662@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180912002700.GA69323@jaegeuk-macbookpro.roam.corp.google.com>
+ <650f06f4-7ca3-a3ed-d149-88d1e9f93b7a@huawei.com>
+ <20180912012550.GA71953@jaegeuk-macbookpro.roam.corp.google.com>
+ <ffbfbc85-f7ac-dd5c-b20f-d08868adb4ee@huawei.com>
+ <24ee1c19-ccc1-31db-12d0-30ac76fd645e@huawei.com>
+ <20180912195406.GB8356@jaegeuk-macbookpro.roam.corp.google.com>
+ <bbdc2ae6-591a-ffaf-ff51-e0884ef475ca@kernel.org>
+ <20180918011904.GB79604@jaegeuk-macbookpro.roam.corp.google.com>
+ <c60b6e64-04ce-ec7c-24d8-82273e65b5b9@huawei.com>
+ <20180918020559.GB83471@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <cgxu519@gmx.com>) id 1g29Re-0008TR-3h
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 18 Sep 2018 06:25:10 +0000
-Received: from mout.gmx.net ([212.227.15.19])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1g29Rc-004g2v-2u
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 18 Sep 2018 06:25:09 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: Chengguang Xu <cgxu519@gmx.com>, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180918020559.GB83471@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Currently we set default value to options before parsing remount options,
-it will cause unexpected change of options which were specified in first
-mount.
+On 2018/9/18 10:05, Jaegeuk Kim wrote:
+> On 09/18, Chao Yu wrote:
+>> On 2018/9/18 9:19, Jaegeuk Kim wrote:
+>>> On 09/13, Chao Yu wrote:
+>>>> On 2018/9/13 3:54, Jaegeuk Kim wrote:
+>>>>> On 09/12, Chao Yu wrote:
+>>>>>> On 2018/9/12 9:40, Chao Yu wrote:
+>>>>>>> On 2018/9/12 9:25, Jaegeuk Kim wrote:
+>>>>>>>> On 09/12, Chao Yu wrote:
+>>>>>>>>> On 2018/9/12 8:27, Jaegeuk Kim wrote:
+>>>>>>>>>> On 09/11, Jaegeuk Kim wrote:
+>>>>>>>>>>> On 09/12, Chao Yu wrote:
+>>>>>>>>>>>> On 2018/9/12 4:15, Jaegeuk Kim wrote:
+>>>>>>>>>>>>> fsck.f2fs is able to recover the quota structure, since roll-forward recovery
+>>>>>>>>>>>>> can recover it based on previous user information.
+>>>>>>>>>>>>
+>>>>>>>>>>>> I didn't get it, both fsck and kernel recover quota file based all inodes'
+>>>>>>>>>>>> uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
+>>>>>>>>>>>> same?
+>>>>>>>>>>>
+>>>>>>>>>>> I thought that, but had to add this, since I was encountering quota errors right
+>>>>>>>>>>> after getting some files recovered. And, I thought it'd make it more safe to do
+>>>>>>>>>>> fsck after roll-forward recovery.
+>>>>>>>>>>>
+>>>>>>>>>>> Anyway, let me test again without this patch for a while.
+>>>>>>>>>>
+>>>>>>>>>> Hmm, I just got a fsck failure right after some files recovered.
+>>>>>>>>>
+>>>>>>>>> To make sure, do you test with "f2fs: guarantee journalled quota data by
+>>>>>>>>> checkpoint"? if not, I think there is no guarantee that f2fs can recover
+>>>>>>>>> quote info into correct quote file, because, in last checkpoint, quota file
+>>>>>>>>> may was corrupted/inconsistent. Right?
+>>>>>>>
+>>>>>>> Oh, I forget to mention that, I add a patch to fsck to let it noticing
+>>>>>>> CP_QUOTA_NEED_FSCK_FLAG flag, and by default, fsck will fix corrupted quote
+>>>>>>> file if the flag is set, but w/o this flag, quota file is still corrupted
+>>>>>>> detected by fsck, I guess there is bug in v8.
+>>>>>>
+>>>>>> In v8, there are two cases we didn't guarantee quota file's consistence:
+>>>>>> 1. flush time in block_operation exceed a threshold.
+>>>>>> 2. dquot subsystem error occurs.
+>>>>>>
+>>>>>> For above case, fsck should repair the quota file by default.
+>>>>>
+>>>>> Okay, I got another failure and it seems CP_QUOTA_NEED_FSCK_FLAG was not set
+>>>>> during the recovery. So, we have something missing in the recovery in terms
+>>>>> of quota updates.
+>>>>
+>>>> Yeah, I checked the code, just found one suspected place:
+>>>>
+>>>> find_fsync_dnodes()
+>>>>  - f2fs_recover_inode_page
+>>>>   - inc_valid_node_count
+>>>>    - dquot_reserve_block  dquot info is not initialized now
+>>>>  - add_fsync_inode
+>>>>   - dquot_initialize
+>>>>
+>>>> I think we should reserve block for inode block after dquot_initialize(), can
+>>>> you confirm this?
+>>>
+>>> Let me test this.
+>>>
+>>> >From b90260bc577fe87570b1ef7b134554a8295b1f6c Mon Sep 17 00:00:00 2001
+>>> From: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> Date: Mon, 17 Sep 2018 18:14:41 -0700
+>>> Subject: [PATCH] f2fs: count inode block for recovered files
+>>>
+>>> If a new file is recovered, we missed to reserve its inode block.
+>>
+>> I remember, in order to keep line with other filesystem, unlike on-disk, we
+>> have to keep backward compatibilty, in memory we don't account block number
+>> for f2fs' inode block, but only account inode number for it, so here like
+>> we did in inc_valid_node_count(), we don't need to do this.
+> 
+> Okay, I just hit the error again w/o your patch. Another one coming to my mind
+> is that caused by uid/gid change during recovery. Let me try out your patch.
 
-Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
----
- fs/f2fs/super.c | 2 --
- 1 file changed, 2 deletions(-)
+I guess we should update dquot and inode's uid/gid atomically under
+lock_op() in f2fs_setattr() to prevent corruption on sys quota file.
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 00d512cd4bf2..89ea19466e80 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1499,8 +1499,6 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 			clear_sbi_flag(sbi, SBI_NEED_SB_WRITE);
- 	}
- 
--	default_options(sbi);
--
- 	/* parse mount options */
- 	err = parse_options(sb, data);
- 	if (err)
--- 
-2.17.1
+v9 can pass all xfstest cases and por_fsstress case w/ sys quota file
+enabled, but w/ normal quota file, I got one regression reported by
+generic/232, I fixed in v10, will do some tests and release it later.
+
+Note that, my fsck can fix corrupted quota file automatically once
+CP_QUOTA_NEED_FSCK_FLAG is set.
+
+Thanks,
+
+> 
+>>
+>> Can you test v9 first? I didn't encounter quota corruption with your
+>> testcase right now. Will check it in cell phone environment.
+>>
+>>>
+>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fs/f2fs/recovery.c | 5 +++++
+>>>  1 file changed, 5 insertions(+)
+>>>
+>>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+>>> index 56d34193a74b..bff5cf730e13 100644
+>>> --- a/fs/f2fs/recovery.c
+>>> +++ b/fs/f2fs/recovery.c
+>>> @@ -84,6 +84,11 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
+>>>  		err = dquot_alloc_inode(inode);
+>>>  		if (err)
+>>>  			goto err_out;
+>>> +		err = dquot_reserve_block(inode, 1);
+>>> +		if (err) {
+>>> +			dquot_drop(inode);
+>>> +			goto err_out;
+>>> +		}
+>>>  	}
+>>>  
+>>>  	entry = f2fs_kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
+>>>
+> 
+> .
+> 
