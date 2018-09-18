@@ -1,259 +1,151 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v3] f2fs: add new idle interval timing for discard and gc
- paths
-Date: Tue, 18 Sep 2018 09:39:54 -0700
-Message-ID: <20180918163954.GB91945@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1537169458-30361-1-git-send-email-stummala@codeaurora.org>
- <20180918013039.GD79604@jaegeuk-macbookpro.roam.corp.google.com>
- <20180918032516.GD22939@codeaurora.org>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
+Date: Tue, 18 Sep 2018 09:45:56 -0700
+Message-ID: <20180918164556.GC91945@jaegeuk-macbookpro.roam.corp.google.com>
+References: <650f06f4-7ca3-a3ed-d149-88d1e9f93b7a@huawei.com>
+ <20180912012550.GA71953@jaegeuk-macbookpro.roam.corp.google.com>
+ <ffbfbc85-f7ac-dd5c-b20f-d08868adb4ee@huawei.com>
+ <24ee1c19-ccc1-31db-12d0-30ac76fd645e@huawei.com>
+ <20180912195406.GB8356@jaegeuk-macbookpro.roam.corp.google.com>
+ <bbdc2ae6-591a-ffaf-ff51-e0884ef475ca@kernel.org>
+ <20180918011904.GB79604@jaegeuk-macbookpro.roam.corp.google.com>
+ <c60b6e64-04ce-ec7c-24d8-82273e65b5b9@huawei.com>
+ <20180918020559.GB83471@jaegeuk-macbookpro.roam.corp.google.com>
+ <e6e2b5e7-3b2e-d2f1-57d3-0a13059673db@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180918032516.GD22939@codeaurora.org>
+In-Reply-To: <e6e2b5e7-3b2e-d2f1-57d3-0a13059673db@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sahitya Tummala <stummala@codeaurora.org>
-Cc: Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 09/18, Sahitya Tummala wrote:
-> On Mon, Sep 17, 2018 at 06:30:39PM -0700, Jaegeuk Kim wrote:
-> > On 09/17, Sahitya Tummala wrote:
-> > > This helps to control the frequency of submission of discard and
-> > > GC requests independently, based on the need.
-> > > 
-> > > Suggested-by: Chao Yu <yuchao0@huawei.com>
-> > > Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> > > ---
-> > > v3:
-> > > -don't change gc thread wait_ms in this patch
-> > > -Use the existing function f2fs_time_over() to handle this
-> > > -change f2fs_get_wait_time() to f2fs_time_to_wait()
-> > > 
-> > >  Documentation/ABI/testing/sysfs-fs-f2fs | 17 ++++++++++++++++-
-> > >  fs/f2fs/f2fs.h                          | 28 +++++++++++++++++++++++++---
-> > >  fs/f2fs/gc.c                            |  2 +-
-> > >  fs/f2fs/segment.c                       | 14 +++++---------
-> > >  fs/f2fs/super.c                         |  2 ++
-> > >  fs/f2fs/sysfs.c                         |  5 +++++
-> > >  6 files changed, 54 insertions(+), 14 deletions(-)
-> > > 
-> > > diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-> > > index 94a24ae..3ac4177 100644
-> > > --- a/Documentation/ABI/testing/sysfs-fs-f2fs
-> > > +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-> > > @@ -121,7 +121,22 @@ What:		/sys/fs/f2fs/<disk>/idle_interval
-> > >  Date:		January 2016
-> > >  Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
-> > >  Description:
-> > > -		 Controls the idle timing.
-> > > +		 Controls the idle timing for all paths other than
-> > > +		 discard and gc path.
-> > > +
-> > > +What:		/sys/fs/f2fs/<disk>/discard_idle_interval
-> > > +Date:		September 2018
-> > > +Contact:	"Chao Yu" <yuchao0@huawei.com>
-> > > +Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
-> > > +Description:
-> > > +		 Controls the idle timing for discard path.
-> > > +
-> > > +What:		/sys/fs/f2fs/<disk>/gc_idle_interval
-> > > +Date:		September 2018
-> > > +Contact:	"Chao Yu" <yuchao0@huawei.com>
-> > > +Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
-> > > +Description:
-> > > +		 Controls the idle timing for gc path.
-> > >  
-> > >  What:		/sys/fs/f2fs/<disk>/iostat_enable
-> > >  Date:		August 2017
-> > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > > index 88b8d50..41e00d3 100644
-> > > --- a/fs/f2fs/f2fs.h
-> > > +++ b/fs/f2fs/f2fs.h
-> > > @@ -1095,6 +1095,8 @@ enum {
-> > >  enum {
-> > >  	CP_TIME,
-> > >  	REQ_TIME,
-> > > +	DISCARD_TIME,
-> > > +	GC_TIME,
-> > >  	MAX_TIME,
-> > >  };
-> > >  
-> > > @@ -1352,11 +1354,31 @@ static inline void f2fs_update_time(struct f2fs_sb_info *sbi, int type)
-> > >  static inline bool f2fs_time_over(struct f2fs_sb_info *sbi, int type)
-> > >  {
-> > >  	unsigned long interval = sbi->interval_time[type] * HZ;
-> > > +	unsigned long last_time;
-> > >  
-> > > -	return time_after(jiffies, sbi->last_time[type] + interval);
-> > > +	if (type == CP_TIME)
-> > > +		last_time = sbi->last_time[CP_TIME];
-> > > +	else
-> > > +		last_time = sbi->last_time[REQ_TIME];
+On 09/18, Chao Yu wrote:
+> On 2018/9/18 10:05, Jaegeuk Kim wrote:
+> > On 09/18, Chao Yu wrote:
+> >> On 2018/9/18 9:19, Jaegeuk Kim wrote:
+> >>> On 09/13, Chao Yu wrote:
+> >>>> On 2018/9/13 3:54, Jaegeuk Kim wrote:
+> >>>>> On 09/12, Chao Yu wrote:
+> >>>>>> On 2018/9/12 9:40, Chao Yu wrote:
+> >>>>>>> On 2018/9/12 9:25, Jaegeuk Kim wrote:
+> >>>>>>>> On 09/12, Chao Yu wrote:
+> >>>>>>>>> On 2018/9/12 8:27, Jaegeuk Kim wrote:
+> >>>>>>>>>> On 09/11, Jaegeuk Kim wrote:
+> >>>>>>>>>>> On 09/12, Chao Yu wrote:
+> >>>>>>>>>>>> On 2018/9/12 4:15, Jaegeuk Kim wrote:
+> >>>>>>>>>>>>> fsck.f2fs is able to recover the quota structure, since roll-forward recovery
+> >>>>>>>>>>>>> can recover it based on previous user information.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> I didn't get it, both fsck and kernel recover quota file based all inodes'
+> >>>>>>>>>>>> uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
+> >>>>>>>>>>>> same?
+> >>>>>>>>>>>
+> >>>>>>>>>>> I thought that, but had to add this, since I was encountering quota errors right
+> >>>>>>>>>>> after getting some files recovered. And, I thought it'd make it more safe to do
+> >>>>>>>>>>> fsck after roll-forward recovery.
+> >>>>>>>>>>>
+> >>>>>>>>>>> Anyway, let me test again without this patch for a while.
+> >>>>>>>>>>
+> >>>>>>>>>> Hmm, I just got a fsck failure right after some files recovered.
+> >>>>>>>>>
+> >>>>>>>>> To make sure, do you test with "f2fs: guarantee journalled quota data by
+> >>>>>>>>> checkpoint"? if not, I think there is no guarantee that f2fs can recover
+> >>>>>>>>> quote info into correct quote file, because, in last checkpoint, quota file
+> >>>>>>>>> may was corrupted/inconsistent. Right?
+> >>>>>>>
+> >>>>>>> Oh, I forget to mention that, I add a patch to fsck to let it noticing
+> >>>>>>> CP_QUOTA_NEED_FSCK_FLAG flag, and by default, fsck will fix corrupted quote
+> >>>>>>> file if the flag is set, but w/o this flag, quota file is still corrupted
+> >>>>>>> detected by fsck, I guess there is bug in v8.
+> >>>>>>
+> >>>>>> In v8, there are two cases we didn't guarantee quota file's consistence:
+> >>>>>> 1. flush time in block_operation exceed a threshold.
+> >>>>>> 2. dquot subsystem error occurs.
+> >>>>>>
+> >>>>>> For above case, fsck should repair the quota file by default.
+> >>>>>
+> >>>>> Okay, I got another failure and it seems CP_QUOTA_NEED_FSCK_FLAG was not set
+> >>>>> during the recovery. So, we have something missing in the recovery in terms
+> >>>>> of quota updates.
+> >>>>
+> >>>> Yeah, I checked the code, just found one suspected place:
+> >>>>
+> >>>> find_fsync_dnodes()
+> >>>>  - f2fs_recover_inode_page
+> >>>>   - inc_valid_node_count
+> >>>>    - dquot_reserve_block  dquot info is not initialized now
+> >>>>  - add_fsync_inode
+> >>>>   - dquot_initialize
+> >>>>
+> >>>> I think we should reserve block for inode block after dquot_initialize(), can
+> >>>> you confirm this?
+> >>>
+> >>> Let me test this.
+> >>>
+> >>> >From b90260bc577fe87570b1ef7b134554a8295b1f6c Mon Sep 17 00:00:00 2001
+> >>> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>> Date: Mon, 17 Sep 2018 18:14:41 -0700
+> >>> Subject: [PATCH] f2fs: count inode block for recovered files
+> >>>
+> >>> If a new file is recovered, we missed to reserve its inode block.
+> >>
+> >> I remember, in order to keep line with other filesystem, unlike on-disk, we
+> >> have to keep backward compatibilty, in memory we don't account block number
+> >> for f2fs' inode block, but only account inode number for it, so here like
+> >> we did in inc_valid_node_count(), we don't need to do this.
 > > 
-> > Why can't we use just this?
-> > 
-> > 	return time_after(jiffies, sbi->last_time[type] + interval);
-> > 
+> > Okay, I just hit the error again w/o your patch. Another one coming to my mind
+> > is that caused by uid/gid change during recovery. Let me try out your patch.
 > 
-> There is no sbi_->last_time[discard_time] and sbi->last_time[gc_time]. Only
-> sbi->interval_time[discard_time] and sbi->interval_time[gc_time] is defined to
-> determine the idle interval time since the last request time, separately for
-> these two paths.
+> I guess we should update dquot and inode's uid/gid atomically under
+> lock_op() in f2fs_setattr() to prevent corruption on sys quota file.
+> 
+> v9 can pass all xfstest cases and por_fsstress case w/ sys quota file
+> enabled, but w/ normal quota file, I got one regression reported by
+> generic/232, I fixed in v10, will do some tests and release it later.
+> 
+> Note that, my fsck can fix corrupted quota file automatically once
+> CP_QUOTA_NEED_FSCK_FLAG is set.
 
-If you add enums above, sbi will have last_time slots for DISCARD_TIME/GC_TIME.
-Doesn't it make sense to add the below in f2fs_update_time(), if you want to
-introduce two additional types?
-
-	/* DISCARD_TIME and GC_TIME are based on REQ_TIME */
-	if (type == REQ_TIME) {
-		sbi->last_time(DISCARD_TIME) = jiffies;
-		sbi->last_time(GC_TIME) = jiffies;
-	}
+I hit failures again with your v9 w/ sysfile quota and modified fsck to detect
+CP_QUOTA_NEED_FSCK_FLAG to fix the partition. Note that, if I set NEED_FSCK
+flag in roll-forward recovery, everything is fine.
 
 > 
-> > > +
-> > > +	return time_after(jiffies, last_time + interval);
-> > > +}
-> > > +
-> > > +static inline unsigned int f2fs_time_to_wait(struct f2fs_sb_info *sbi,
-> > > +						int type)
-> > > +{
-> > > +	unsigned long interval = sbi->interval_time[type] * HZ;
-> > > +	unsigned int wait_ms = 0;
-> > > +	long delta;
-> > > +
-> > > +	delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
-
-Then, we can use *type* instead of REQ_TIME?
-
-> > > +	if (delta > 0)
-> > > +		wait_ms = jiffies_to_msecs(delta);
-> > > +
-> > > +	return wait_ms;
-> > >  }
-> > >  
-> > > -static inline bool is_idle(struct f2fs_sb_info *sbi)
-> > > +static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
-> > >  {
-> > >  	struct block_device *bdev = sbi->sb->s_bdev;
-> > >  	struct request_queue *q = bdev_get_queue(bdev);
-> > > @@ -1365,7 +1387,7 @@ static inline bool is_idle(struct f2fs_sb_info *sbi)
-> > >  	if (rl->count[BLK_RW_SYNC] || rl->count[BLK_RW_ASYNC])
-> > >  		return false;
-> > >  
-> > > -	return f2fs_time_over(sbi, REQ_TIME);
-> > > +	return f2fs_time_over(sbi, type);
-> > >  }
-> > >  
-> > >  /*
-> > > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> > > index 5c8d004..49e2328 100644
-> > > --- a/fs/f2fs/gc.c
-> > > +++ b/fs/f2fs/gc.c
-> > > @@ -83,7 +83,7 @@ static int gc_thread_func(void *data)
-> > >  		if (!mutex_trylock(&sbi->gc_mutex))
-> > >  			goto next;
-> > >  
-> > > -		if (!is_idle(sbi)) {
-> > > +		if (!is_idle(sbi, GC_TIME)) {
-> > >  			increase_sleep_time(gc_th, &wait_ms);
-> > >  			mutex_unlock(&sbi->gc_mutex);
-> > >  			goto next;
-> > > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > > index 187c848..67cf7e4 100644
-> > > --- a/fs/f2fs/segment.c
-> > > +++ b/fs/f2fs/segment.c
-> > > @@ -511,7 +511,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
-> > >  	else
-> > >  		f2fs_build_free_nids(sbi, false, false);
-> > >  
-> > > -	if (!is_idle(sbi) &&
-> > > +	if (!is_idle(sbi, REQ_TIME) &&
-> > >  		(!excess_dirty_nats(sbi) && !excess_dirty_nodes(sbi)))
-> > >  		return;
-> > >  
-> > > @@ -1311,7 +1311,7 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
-> > >  		if (dc->state != D_PREP)
-> > >  			goto next;
-> > >  
-> > > -		if (dpolicy->io_aware && !is_idle(sbi)) {
-> > > +		if (dpolicy->io_aware && !is_idle(sbi, DISCARD_TIME)) {
-> > >  			io_interrupted = true;
-> > >  			break;
-> > >  		}
-> > > @@ -1371,7 +1371,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> > >  			f2fs_bug_on(sbi, dc->state != D_PREP);
-> > >  
-> > >  			if (dpolicy->io_aware && i < dpolicy->io_aware_gran &&
-> > > -								!is_idle(sbi)) {
-> > > +						!is_idle(sbi, DISCARD_TIME)) {
-> > >  				io_interrupted = true;
-> > >  				break;
-> > >  			}
-> > > @@ -1564,8 +1564,6 @@ static int issue_discard_thread(void *data)
-> > >  	struct discard_policy dpolicy;
-> > >  	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
-> > >  	int issued;
-> > > -	unsigned long interval = sbi->interval_time[REQ_TIME] * HZ;
-> > > -	long delta;
-> > >  
-> > >  	set_freezable();
-> > >  
-> > > @@ -1602,10 +1600,8 @@ static int issue_discard_thread(void *data)
-> > >  			__wait_all_discard_cmd(sbi, &dpolicy);
-> > >  			wait_ms = dpolicy.min_interval;
-> > >  		} else if (issued == -1){
-> > > -			delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
-> > > -			if (delta > 0)
-> > > -				wait_ms = jiffies_to_msecs(delta);
-> > > -			else
-> > > +			wait_ms = f2fs_time_to_wait(sbi, DISCARD_TIME);
-> > > +			if (!wait_ms)
-> > >  				wait_ms = dpolicy.mid_interval;
-> > >  		} else {
-> > >  			wait_ms = dpolicy.max_interval;
-> > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > > index 3106da1..2f67948 100644
-> > > --- a/fs/f2fs/super.c
-> > > +++ b/fs/f2fs/super.c
-> > > @@ -2463,6 +2463,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
-> > >  	sbi->dir_level = DEF_DIR_LEVEL;
-> > >  	sbi->interval_time[CP_TIME] = DEF_CP_INTERVAL;
-> > >  	sbi->interval_time[REQ_TIME] = DEF_IDLE_INTERVAL;
-> > > +	sbi->interval_time[DISCARD_TIME] = DEF_IDLE_INTERVAL;
-> > > +	sbi->interval_time[GC_TIME] = DEF_IDLE_INTERVAL;
-> > >  	clear_sbi_flag(sbi, SBI_NEED_FSCK);
-> > >  
-> > >  	for (i = 0; i < NR_COUNT_TYPE; i++)
-> > > diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> > > index 81c0e53..0afe99c 100644
-> > > --- a/fs/f2fs/sysfs.c
-> > > +++ b/fs/f2fs/sysfs.c
-> > > @@ -407,6 +407,9 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
-> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
-> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
-> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
-> > > +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, discard_idle_interval,
-> > > +					interval_time[DISCARD_TIME]);
-> > > +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_idle_interval, interval_time[GC_TIME]);
-> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
-> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
-> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
-> > > @@ -460,6 +463,8 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
-> > >  	ATTR_LIST(dirty_nats_ratio),
-> > >  	ATTR_LIST(cp_interval),
-> > >  	ATTR_LIST(idle_interval),
-> > > +	ATTR_LIST(discard_idle_interval),
-> > > +	ATTR_LIST(gc_idle_interval),
-> > >  	ATTR_LIST(iostat_enable),
-> > >  	ATTR_LIST(readdir_ra),
-> > >  	ATTR_LIST(gc_pin_file_thresh),
-> > > -- 
-> > > Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-> > > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+> Thanks,
 > 
-> -- 
-> --
-> Sent by a consultant of the Qualcomm Innovation Center, Inc.
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+> > 
+> >>
+> >> Can you test v9 first? I didn't encounter quota corruption with your
+> >> testcase right now. Will check it in cell phone environment.
+> >>
+> >>>
+> >>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>> ---
+> >>>  fs/f2fs/recovery.c | 5 +++++
+> >>>  1 file changed, 5 insertions(+)
+> >>>
+> >>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> >>> index 56d34193a74b..bff5cf730e13 100644
+> >>> --- a/fs/f2fs/recovery.c
+> >>> +++ b/fs/f2fs/recovery.c
+> >>> @@ -84,6 +84,11 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
+> >>>  		err = dquot_alloc_inode(inode);
+> >>>  		if (err)
+> >>>  			goto err_out;
+> >>> +		err = dquot_reserve_block(inode, 1);
+> >>> +		if (err) {
+> >>> +			dquot_drop(inode);
+> >>> +			goto err_out;
+> >>> +		}
+> >>>  	}
+> >>>  
+> >>>  	entry = f2fs_kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
+> >>>
+> > 
+> > .
+> > 
