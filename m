@@ -1,25 +1,21 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v3] f2fs: add new idle interval timing for
- discard and gc paths
-Date: Tue, 18 Sep 2018 11:43:50 +0800
-Message-ID: <5b4c0656-d074-b7dc-e067-be7b63dd20ff@huawei.com>
-References: <1537169458-30361-1-git-send-email-stummala@codeaurora.org>
+From: Chengguang Xu <cgxu519@gmx.com>
+Subject: [PATCH] f2fs: remove default option setting in remount
+Date: Tue, 18 Sep 2018 14:23:44 +0800
+Message-ID: <20180918062344.3102-1-cgxu519@gmx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1g26vl-0000zF-8z
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 18 Sep 2018 03:44:05 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g26vj-00EVbQ-9z
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 18 Sep 2018 03:44:04 +0000
-In-Reply-To: <1537169458-30361-1-git-send-email-stummala@codeaurora.org>
-Content-Language: en-US
+ (envelope-from <cgxu519@gmx.com>) id 1g29Re-0008TR-3h
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 18 Sep 2018 06:25:10 +0000
+Received: from mout.gmx.net ([212.227.15.19])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1g29Rc-004g2v-2u
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 18 Sep 2018 06:25:09 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,16 +25,30 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Sahitya Tummala <stummala@codeaurora.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: Chengguang Xu <cgxu519@gmx.com>, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/9/17 15:30, Sahitya Tummala wrote:
-> This helps to control the frequency of submission of discard and
-> GC requests independently, based on the need.
-> 
-> Suggested-by: Chao Yu <yuchao0@huawei.com>
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Currently we set default value to options before parsing remount options,
+it will cause unexpected change of options which were specified in first
+mount.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+---
+ fs/f2fs/super.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Thanks,
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 00d512cd4bf2..89ea19466e80 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1499,8 +1499,6 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 			clear_sbi_flag(sbi, SBI_NEED_SB_WRITE);
+ 	}
+ 
+-	default_options(sbi);
+-
+ 	/* parse mount options */
+ 	err = parse_options(sb, data);
+ 	if (err)
+-- 
+2.17.1
