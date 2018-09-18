@@ -1,66 +1,40 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] f2fs: remove default option setting in
- remount
-Date: Tue, 18 Sep 2018 21:20:58 +0800
-Message-ID: <9bc59ef2-01cc-0cf1-1676-4d8a75514aad@kernel.org>
-References: <20180918062344.3102-1-cgxu519@gmx.com>
+Subject: Re: [PATCH] f2fs: avoid GC causing encrypted file corrupted
+Date: Tue, 18 Sep 2018 21:21:49 +0800
+Message-ID: <19e63fa7-1a48-c1de-eef5-cde242e8300d@kernel.org>
+References: <1537274393-78441-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1g2FwI-0003z1-5M
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 18 Sep 2018 13:21:14 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g2FwF-00EuHT-OH
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 18 Sep 2018 13:21:13 +0000
-In-Reply-To: <20180918062344.3102-1-cgxu519@gmx.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1537274393-78441-1-git-send-email-yunlong.song@huawei.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chengguang Xu <cgxu519@gmx.com>, jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/9/18 14:23, Chengguang Xu wrote:
-> Currently we set default value to options before parsing remount options,
-> it will cause unexpected change of options which were specified in first
-> mount.
+On 2018/9/18 20:39, Yunlong Song wrote:
+> The encrypted file may be corrupted by GC in following case:
+> 
+> Time 1: | segment 1 blkaddr = A |  GC -> | segment 2 blkaddr = B |
+> Encrypted block 1 is moved from blkaddr A of segment 1 to blkaddr B of
+> segment 2,
+> 
+> Time 2: | segment 1 blkaddr = B |  GC -> | segment 3 blkaddr = C |
+> 
+> Before page 1 is written back and if segment 2 become a victim, then
+> page 1 is moved from blkaddr B of segment 2 to blkaddr Cof segment 3,
+> during the GC process of Time 2, f2fs should wait for page 1 written back
+> before reading it, or move_data_block will read a garbage block from
+> blkaddr B since page is not written back to blkaddr B yet.
+> 
+> Commit 6aa58d8a ("f2fs: readahead encrypted block during GC") introduce
+> ra_data_block to read encrypted block, but it forgets to add
+> f2fs_wait_on_page_writeback to avoid racing between GC and flush.
+> 
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 
-Can you check below commit? It looks w/o it we may lose default option after
-remount.
-
-498c5e9fcd10 ("f2fs: add default mount options to remount")
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
-
-> 
-> Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
-> ---
->  fs/f2fs/super.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 00d512cd4bf2..89ea19466e80 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1499,8 +1499,6 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
->  			clear_sbi_flag(sbi, SBI_NEED_SB_WRITE);
->  	}
->  
-> -	default_options(sbi);
-> -
->  	/* parse mount options */
->  	err = parse_options(sb, data);
->  	if (err)
-> 
