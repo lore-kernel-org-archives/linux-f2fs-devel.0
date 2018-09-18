@@ -1,84 +1,79 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/2] f2fs: report ENOENT correct in
- f2fs_rename
-Date: Tue, 18 Sep 2018 10:59:36 -0700
-Message-ID: <20180918175936.GF91945@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180918021805.85032-1-jaegeuk@kernel.org>
- <f2d06f89-4f84-8492-eeea-e1c07e5104c3@kernel.org>
+Subject: Re: [PATCH] f2fs: avoid GC causing encrypted file corrupted
+Date: Tue, 18 Sep 2018 11:17:05 -0700
+Message-ID: <20180918181705.GG91945@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1537274393-78441-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1g2KHt-0001Je-Oq
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 18 Sep 2018 17:59:49 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g2KHo-001oxu-VC
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 18 Sep 2018 17:59:49 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <f2d06f89-4f84-8492-eeea-e1c07e5104c3@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <1537274393-78441-1-git-send-email-yunlong.song@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yunlong Song <yunlong.song@huawei.com>
+Cc: chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 09/18, Chao Yu wrote:
-> On 2018/9/18 10:18, Jaegeuk Kim wrote:
-> > This fixes wrong error report in f2fs_rename.
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/namei.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> > index 98d3ab7c3ce6..d653be777529 100644
-> > --- a/fs/f2fs/namei.c
-> > +++ b/fs/f2fs/namei.c
-> > @@ -833,7 +833,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
-> >  	struct f2fs_dir_entry *old_entry;
-> >  	struct f2fs_dir_entry *new_entry;
-> >  	bool is_old_inline = f2fs_has_inline_dentry(old_dir);
-> > -	int err = -ENOENT;
-> > +	int err;
-> >  
-> >  	if (unlikely(f2fs_cp_error(sbi)))
-> >  		return -EIO;
-> > @@ -854,6 +854,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
-> >  	if (err)
-> >  		goto out;
-> >  
-> > +	err = -ENOENT;
+On 09/18, Yunlong Song wrote:
+> The encrypted file may be corrupted by GC in following case:
 > 
-> I didn't get what's the difference after moving initialization of 'err' here...
+> Time 1: | segment 1 blkaddr = A |  GC -> | segment 2 blkaddr = B |
+> Encrypted block 1 is moved from blkaddr A of segment 1 to blkaddr B of
+> segment 2,
+> 
+> Time 2: | segment 1 blkaddr = B |  GC -> | segment 3 blkaddr = C |
 
-One example,
-
-        old_entry = f2fs_find_entry(old_dir, &old_dentry->d_name, &old_page);
-        if (!old_entry) {
-                if (IS_ERR(old_page))
-                        err = PTR_ERR(old_page);
-
---> need to return ENOENT instead of 0.
-
-                goto out;
-        }
+            segment 2 blkaddr = B?
 
 > 
-> Thanks,
+> Before page 1 is written back and if segment 2 become a victim, then
+> page 1 is moved from blkaddr B of segment 2 to blkaddr Cof segment 3,
+
+                                                         C of ?
+
+> during the GC process of Time 2, f2fs should wait for page 1 written back
+> before reading it, or move_data_block will read a garbage block from
+> blkaddr B since page is not written back to blkaddr B yet.
+
+move_data_block() checks PageUptodate() so it won't get garbage, yes?
+So, does ra_data_block need to check PageUptodate?
+
 > 
-> >  	if (new_inode) {
-> >  		err = dquot_initialize(new_inode);
-> >  		if (err)
-> > 
+> Commit 6aa58d8a ("f2fs: readahead encrypted block during GC") introduce
+> ra_data_block to read encrypted block, but it forgets to add
+> f2fs_wait_on_page_writeback to avoid racing between GC and flush.
+> 
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> ---
+>  fs/f2fs/gc.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index a4c1a41..c55fb62 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -641,6 +641,14 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
+>  	fio.page = page;
+>  	fio.new_blkaddr = fio.old_blkaddr = dn.data_blkaddr;
+>  
+> +	/*
+> +	 * don't cache encrypted data into meta inode until previous dirty
+> +	 * data were writebacked to avoid racing between GC and flush.
+> +	 */
+> +	f2fs_wait_on_page_writeback(page, DATA, true);
+> +
+> +	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
+> +
+>  	fio.encrypted_page = f2fs_pagecache_get_page(META_MAPPING(sbi),
+>  					dn.data_blkaddr,
+>  					FGP_LOCK | FGP_CREAT, GFP_NOFS);
+> @@ -723,6 +731,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
+>  	 */
+>  	f2fs_wait_on_page_writeback(page, DATA, true);
+>  
+> +	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
+> +
+>  	err = f2fs_get_node_info(fio.sbi, dn.nid, &ni);
+>  	if (err)
+>  		goto put_out;
+> -- 
+> 1.8.5.2
