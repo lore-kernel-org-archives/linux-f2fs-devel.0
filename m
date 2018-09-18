@@ -1,68 +1,65 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: mount fail with option fault_injection < 20000 && >0
-Date: Tue, 18 Sep 2018 20:21:28 +0800
-Message-ID: <fa4fccef-e9d5-50be-dd29-d1f531f2ddf4@kernel.org>
-References: <61afbde5-f05e-9bd5-8dc2-31932c13cd51@gmx.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: [PATCH] f2fs: avoid GC causing encrypted file corrupted
+Date: Tue, 18 Sep 2018 20:39:53 +0800
+Message-ID: <1537274393-78441-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1g2F0k-0001OL-5K
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 18 Sep 2018 12:21:46 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g2F0i-00ErEn-3a
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 18 Sep 2018 12:21:45 +0000
-In-Reply-To: <61afbde5-f05e-9bd5-8dc2-31932c13cd51@gmx.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: cgxu519 <cgxu519@gmx.com>, linux-f2fs-devel@lists.sourceforge.net
-Cc: jaegeuk@kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Chengguang,
+The encrypted file may be corrupted by GC in following case:
 
-On 2018/9/18 19:02, cgxu519 wrote:
-> HI guys,
-> 
-> I found mount with option fault_injection < 20000 && >0 will fail with error
-> -ENOMEM.
-> I understand fault_injection function is explicitly mocking some errors, but
+Time 1: | segment 1 blkaddr = A |  GC -> | segment 2 blkaddr = B |
+Encrypted block 1 is moved from blkaddr A of segment 1 to blkaddr B of
+segment 2,
 
-If we skip injecting error into memory allocation functions during mount, we may
-miss checking most error paths in fill_super(). So I think we really need this
-during mount.
+Time 2: | segment 1 blkaddr = B |  GC -> | segment 3 blkaddr = C |
 
-But if you want to inject error after mount, you can reenable error injection by
-configuring fault_injection/fault_rate sysfs entry.
+Before page 1 is written back and if segment 2 become a victim, then
+page 1 is moved from blkaddr B of segment 2 to blkaddr Cof segment 3,
+during the GC process of Time 2, f2fs should wait for page 1 written back
+before reading it, or move_data_block will read a garbage block from
+blkaddr B since page is not written back to blkaddr B yet.
 
-Thanks,
+Commit 6aa58d8a ("f2fs: readahead encrypted block during GC") introduce
+ra_data_block to read encrypted block, but it forgets to add
+f2fs_wait_on_page_writeback to avoid racing between GC and flush.
 
-> isn't it better
-> mocking errors after successful mount? Is it really allocating memory so many times
-> during mount process?
-> 
-> Thanks,
-> Chengguang
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+---
+ fs/f2fs/gc.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index a4c1a41..c55fb62 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -641,6 +641,14 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
+ 	fio.page = page;
+ 	fio.new_blkaddr = fio.old_blkaddr = dn.data_blkaddr;
+ 
++	/*
++	 * don't cache encrypted data into meta inode until previous dirty
++	 * data were writebacked to avoid racing between GC and flush.
++	 */
++	f2fs_wait_on_page_writeback(page, DATA, true);
++
++	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
++
+ 	fio.encrypted_page = f2fs_pagecache_get_page(META_MAPPING(sbi),
+ 					dn.data_blkaddr,
+ 					FGP_LOCK | FGP_CREAT, GFP_NOFS);
+@@ -723,6 +731,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
+ 	 */
+ 	f2fs_wait_on_page_writeback(page, DATA, true);
+ 
++	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
++
+ 	err = f2fs_get_node_info(fio.sbi, dn.nid, &ni);
+ 	if (err)
+ 		goto put_out;
+-- 
+1.8.5.2
