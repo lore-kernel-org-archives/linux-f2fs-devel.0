@@ -1,228 +1,230 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: allow out-place-update for direct IO in LFS mode
-Date: Mon, 17 Sep 2018 18:27:01 -0700
-Message-ID: <20180918012701.GC79604@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180916133407.26802-1-chao@kernel.org>
+Subject: Re: [PATCH v3] f2fs: add new idle interval timing for discard and gc
+ paths
+Date: Mon, 17 Sep 2018 18:30:39 -0700
+Message-ID: <20180918013039.GD79604@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1537169458-30361-1-git-send-email-stummala@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180916133407.26802-1-chao@kernel.org>
+In-Reply-To: <1537169458-30361-1-git-send-email-stummala@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+To: Sahitya Tummala <stummala@codeaurora.org>
+Cc: Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 09/16, Chao Yu wrote:
-> From: Chao Yu <yuchao0@huawei.com>
+On 09/17, Sahitya Tummala wrote:
+> This helps to control the frequency of submission of discard and
+> GC requests independently, based on the need.
 > 
-> Normally, DIO uses in-pllace-update, but in LFS mode, f2fs doesn't
-> allow triggering any in-place-update writes, so we fallback direct
-> write to buffered write, result in bad performance of large size
-> write.
-
-I remember this is to serialize all the IOs in one buffered IO path to keep
-the IO sequence espeicially useful for SMR drivers. Could you confirm whether
-there is any IO reordering problem?
-
-> 
-> This patch adds to support triggering out-place-update for direct IO
-> to enhance its performance.
-> 
-> Note that it needs to exclude direct read IO during direct write,
-> since new data writing to new block address will no be valid until
-> write finished.
-> 
-> storage: zram
-> 
-> time xfs_io -f -d /mnt/f2fs/file -c "pwrite 0 1073741824" -c "fsync"
-> 
-> Before:
-> real	0m13.061s
-> user	0m0.327s
-> sys	0m12.486s
-> 
-> After:
-> real	0m6.448s
-> user	0m0.228s
-> sys	0m6.212s
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> Suggested-by: Chao Yu <yuchao0@huawei.com>
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 > ---
->  fs/f2fs/data.c | 41 +++++++++++++++++++++++++++++++++--------
->  fs/f2fs/f2fs.h | 39 +++++++++++++++++++++++++++++++++++----
->  fs/f2fs/file.c |  3 ++-
->  3 files changed, 70 insertions(+), 13 deletions(-)
+> v3:
+> -don't change gc thread wait_ms in this patch
+> -Use the existing function f2fs_time_over() to handle this
+> -change f2fs_get_wait_time() to f2fs_time_to_wait()
 > 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 048f9cf1d589..9937dc2f384a 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -894,7 +894,7 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
->  
->  	dn->data_blkaddr = datablock_addr(dn->inode,
->  				dn->node_page, dn->ofs_in_node);
-> -	if (dn->data_blkaddr == NEW_ADDR)
-> +	if (dn->data_blkaddr != NULL_ADDR)
->  		goto alloc;
->  
->  	if (unlikely((err = inc_valid_block_count(sbi, dn->inode, &count))))
-> @@ -950,7 +950,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
->  
->  	if (direct_io) {
->  		map.m_seg_type = f2fs_rw_hint_to_seg_type(iocb->ki_hint);
-> -		flag = f2fs_force_buffered_io(inode, WRITE) ?
-> +		flag = f2fs_force_buffered_io(inode, iocb, from) ?
->  					F2FS_GET_BLOCK_PRE_AIO :
->  					F2FS_GET_BLOCK_PRE_DIO;
->  		goto map_blocks;
-> @@ -1069,7 +1069,15 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->  		goto sync_out;
->  	}
->  
-> -	if (!is_valid_data_blkaddr(sbi, blkaddr)) {
-> +	if (is_valid_data_blkaddr(sbi, blkaddr)) {
-> +		/* use out-place-update for driect IO under LFS mode */
-> +		if (test_opt(sbi, LFS) && create &&
-> +				flag == F2FS_GET_BLOCK_DEFAULT) {
-> +			err = __allocate_data_block(&dn, map->m_seg_type);
-> +			if (!err)
-> +				set_inode_flag(inode, FI_APPEND_WRITE);
-> +		}
-> +	} else {
->  		if (create) {
->  			if (unlikely(f2fs_cp_error(sbi))) {
->  				err = -EIO;
-> @@ -2491,36 +2499,53 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->  	struct address_space *mapping = iocb->ki_filp->f_mapping;
->  	struct inode *inode = mapping->host;
->  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> +	struct f2fs_inode_info *fi = F2FS_I(inode);
->  	size_t count = iov_iter_count(iter);
->  	loff_t offset = iocb->ki_pos;
->  	int rw = iov_iter_rw(iter);
->  	int err;
->  	enum rw_hint hint = iocb->ki_hint;
->  	int whint_mode = F2FS_OPTION(sbi).whint_mode;
-> +	bool lock_read;
->  
->  	err = check_direct_IO(inode, iter, offset);
->  	if (err)
->  		return err < 0 ? err : 0;
->  
-> -	if (f2fs_force_buffered_io(inode, rw))
-> +	if (f2fs_force_buffered_io(inode, iocb, iter))
->  		return 0;
->  
-> +	lock_read = allow_outplace_dio(inode, iocb, iter);
+>  Documentation/ABI/testing/sysfs-fs-f2fs | 17 ++++++++++++++++-
+>  fs/f2fs/f2fs.h                          | 28 +++++++++++++++++++++++++---
+>  fs/f2fs/gc.c                            |  2 +-
+>  fs/f2fs/segment.c                       | 14 +++++---------
+>  fs/f2fs/super.c                         |  2 ++
+>  fs/f2fs/sysfs.c                         |  5 +++++
+>  6 files changed, 54 insertions(+), 14 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+> index 94a24ae..3ac4177 100644
+> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+> @@ -121,7 +121,22 @@ What:		/sys/fs/f2fs/<disk>/idle_interval
+>  Date:		January 2016
+>  Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
+>  Description:
+> -		 Controls the idle timing.
+> +		 Controls the idle timing for all paths other than
+> +		 discard and gc path.
 > +
->  	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
->  
->  	if (rw == WRITE && whint_mode == WHINT_MODE_OFF)
->  		iocb->ki_hint = WRITE_LIFE_NOT_SET;
->  
-> -	if (!down_read_trylock(&F2FS_I(inode)->i_gc_rwsem[rw])) {
-> -		if (iocb->ki_flags & IOCB_NOWAIT) {
-> +	if (iocb->ki_flags & IOCB_NOWAIT) {
-> +		if (!down_read_trylock(&fi->i_gc_rwsem[rw])) {
-> +			iocb->ki_hint = hint;
-> +			err = -EAGAIN;
-> +			goto out;
-> +		}
-> +		if (lock_read && !down_read_trylock(&fi->i_gc_rwsem[READ])) {
-> +			up_read(&fi->i_gc_rwsem[rw]);
->  			iocb->ki_hint = hint;
->  			err = -EAGAIN;
->  			goto out;
->  		}
-> -		down_read(&F2FS_I(inode)->i_gc_rwsem[rw]);
-> +	} else {
-> +		down_read(&fi->i_gc_rwsem[rw]);
-> +		if (lock_read)
-> +			down_read(&fi->i_gc_rwsem[READ]);
->  	}
->  
->  	err = blockdev_direct_IO(iocb, inode, iter, get_data_block_dio);
-> -	up_read(&F2FS_I(inode)->i_gc_rwsem[rw]);
+> +What:		/sys/fs/f2fs/<disk>/discard_idle_interval
+> +Date:		September 2018
+> +Contact:	"Chao Yu" <yuchao0@huawei.com>
+> +Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
+> +Description:
+> +		 Controls the idle timing for discard path.
 > +
-> +	if (lock_read)
-> +		up_read(&fi->i_gc_rwsem[READ]);
-> +
-> +	up_read(&fi->i_gc_rwsem[rw]);
+> +What:		/sys/fs/f2fs/<disk>/gc_idle_interval
+> +Date:		September 2018
+> +Contact:	"Chao Yu" <yuchao0@huawei.com>
+> +Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
+> +Description:
+> +		 Controls the idle timing for gc path.
 >  
->  	if (rw == WRITE) {
->  		if (whint_mode == WHINT_MODE_OFF)
+>  What:		/sys/fs/f2fs/<disk>/iostat_enable
+>  Date:		August 2017
 > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 6f59ad180be7..a6dc9d581ee4 100644
+> index 88b8d50..41e00d3 100644
 > --- a/fs/f2fs/f2fs.h
 > +++ b/fs/f2fs/f2fs.h
-> @@ -8,6 +8,7 @@
->  #ifndef _LINUX_F2FS_H
->  #define _LINUX_F2FS_H
+> @@ -1095,6 +1095,8 @@ enum {
+>  enum {
+>  	CP_TIME,
+>  	REQ_TIME,
+> +	DISCARD_TIME,
+> +	GC_TIME,
+>  	MAX_TIME,
+>  };
 >  
-> +#include <linux/uio.h>
->  #include <linux/types.h>
->  #include <linux/page-flags.h>
->  #include <linux/buffer_head.h>
-> @@ -3461,11 +3462,41 @@ static inline bool f2fs_may_encrypt(struct inode *inode)
->  #endif
->  }
->  
-> -static inline bool f2fs_force_buffered_io(struct inode *inode, int rw)
-> +static inline int block_unaligned_IO(struct inode *inode,
-> +				struct kiocb *iocb, struct iov_iter *iter)
+> @@ -1352,11 +1354,31 @@ static inline void f2fs_update_time(struct f2fs_sb_info *sbi, int type)
+>  static inline bool f2fs_time_over(struct f2fs_sb_info *sbi, int type)
 >  {
-> -	return (f2fs_post_read_required(inode) ||
-> -			(rw == WRITE && test_opt(F2FS_I_SB(inode), LFS)) ||
-> -			F2FS_I_SB(inode)->s_ndevs);
-> +	unsigned int i_blkbits = READ_ONCE(inode->i_blkbits);
-> +	unsigned int blocksize_mask = (1 << i_blkbits) - 1;
-> +	loff_t offset = iocb->ki_pos;
-> +	unsigned long align = offset | iov_iter_alignment(iter);
+>  	unsigned long interval = sbi->interval_time[type] * HZ;
+> +	unsigned long last_time;
+>  
+> -	return time_after(jiffies, sbi->last_time[type] + interval);
+> +	if (type == CP_TIME)
+> +		last_time = sbi->last_time[CP_TIME];
+> +	else
+> +		last_time = sbi->last_time[REQ_TIME];
+
+Why can't we use just this?
+
+	return time_after(jiffies, sbi->last_time[type] + interval);
+
 > +
-> +	return align & blocksize_mask;
+> +	return time_after(jiffies, last_time + interval);
 > +}
 > +
-> +static inline int allow_outplace_dio(struct inode *inode,
-> +				struct kiocb *iocb, struct iov_iter *iter)
+> +static inline unsigned int f2fs_time_to_wait(struct f2fs_sb_info *sbi,
+> +						int type)
 > +{
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> +	int rw = iov_iter_rw(iter);
+> +	unsigned long interval = sbi->interval_time[type] * HZ;
+> +	unsigned int wait_ms = 0;
+> +	long delta;
 > +
-> +	return (test_opt(sbi, LFS) && (rw == WRITE) &&
-> +				!block_unaligned_IO(inode, iocb, iter));
-> +}
+> +	delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
+> +	if (delta > 0)
+> +		wait_ms = jiffies_to_msecs(delta);
 > +
-> +static inline bool f2fs_force_buffered_io(struct inode *inode,
-> +				struct kiocb *iocb, struct iov_iter *iter)
-> +{
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> +	int rw = iov_iter_rw(iter);
-> +
-> +	if (f2fs_post_read_required(inode))
-> +		return true;
-> +	if (sbi->s_ndevs)
-> +		return true;
-> +	if (test_opt(sbi, LFS) && (rw == WRITE) &&
-> +				block_unaligned_IO(inode, iocb, iter))
-> +		return true;
-> +	return false;
+> +	return wait_ms;
 >  }
 >  
->  #ifdef CONFIG_F2FS_FAULT_INJECTION
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 428e7398bd89..70491631e040 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -3018,7 +3018,8 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  				if (!f2fs_overwrite_io(inode, iocb->ki_pos,
->  						iov_iter_count(from)) ||
->  					f2fs_has_inline_data(inode) ||
-> -					f2fs_force_buffered_io(inode, WRITE)) {
-> +					f2fs_force_buffered_io(inode,
-> +							iocb, from)) {
->  						clear_inode_flag(inode,
->  								FI_NO_PREALLOC);
->  						inode_unlock(inode);
+> -static inline bool is_idle(struct f2fs_sb_info *sbi)
+> +static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
+>  {
+>  	struct block_device *bdev = sbi->sb->s_bdev;
+>  	struct request_queue *q = bdev_get_queue(bdev);
+> @@ -1365,7 +1387,7 @@ static inline bool is_idle(struct f2fs_sb_info *sbi)
+>  	if (rl->count[BLK_RW_SYNC] || rl->count[BLK_RW_ASYNC])
+>  		return false;
+>  
+> -	return f2fs_time_over(sbi, REQ_TIME);
+> +	return f2fs_time_over(sbi, type);
+>  }
+>  
+>  /*
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 5c8d004..49e2328 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -83,7 +83,7 @@ static int gc_thread_func(void *data)
+>  		if (!mutex_trylock(&sbi->gc_mutex))
+>  			goto next;
+>  
+> -		if (!is_idle(sbi)) {
+> +		if (!is_idle(sbi, GC_TIME)) {
+>  			increase_sleep_time(gc_th, &wait_ms);
+>  			mutex_unlock(&sbi->gc_mutex);
+>  			goto next;
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 187c848..67cf7e4 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -511,7 +511,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+>  	else
+>  		f2fs_build_free_nids(sbi, false, false);
+>  
+> -	if (!is_idle(sbi) &&
+> +	if (!is_idle(sbi, REQ_TIME) &&
+>  		(!excess_dirty_nats(sbi) && !excess_dirty_nodes(sbi)))
+>  		return;
+>  
+> @@ -1311,7 +1311,7 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+>  		if (dc->state != D_PREP)
+>  			goto next;
+>  
+> -		if (dpolicy->io_aware && !is_idle(sbi)) {
+> +		if (dpolicy->io_aware && !is_idle(sbi, DISCARD_TIME)) {
+>  			io_interrupted = true;
+>  			break;
+>  		}
+> @@ -1371,7 +1371,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+>  			f2fs_bug_on(sbi, dc->state != D_PREP);
+>  
+>  			if (dpolicy->io_aware && i < dpolicy->io_aware_gran &&
+> -								!is_idle(sbi)) {
+> +						!is_idle(sbi, DISCARD_TIME)) {
+>  				io_interrupted = true;
+>  				break;
+>  			}
+> @@ -1564,8 +1564,6 @@ static int issue_discard_thread(void *data)
+>  	struct discard_policy dpolicy;
+>  	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
+>  	int issued;
+> -	unsigned long interval = sbi->interval_time[REQ_TIME] * HZ;
+> -	long delta;
+>  
+>  	set_freezable();
+>  
+> @@ -1602,10 +1600,8 @@ static int issue_discard_thread(void *data)
+>  			__wait_all_discard_cmd(sbi, &dpolicy);
+>  			wait_ms = dpolicy.min_interval;
+>  		} else if (issued == -1){
+> -			delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
+> -			if (delta > 0)
+> -				wait_ms = jiffies_to_msecs(delta);
+> -			else
+> +			wait_ms = f2fs_time_to_wait(sbi, DISCARD_TIME);
+> +			if (!wait_ms)
+>  				wait_ms = dpolicy.mid_interval;
+>  		} else {
+>  			wait_ms = dpolicy.max_interval;
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 3106da1..2f67948 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -2463,6 +2463,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+>  	sbi->dir_level = DEF_DIR_LEVEL;
+>  	sbi->interval_time[CP_TIME] = DEF_CP_INTERVAL;
+>  	sbi->interval_time[REQ_TIME] = DEF_IDLE_INTERVAL;
+> +	sbi->interval_time[DISCARD_TIME] = DEF_IDLE_INTERVAL;
+> +	sbi->interval_time[GC_TIME] = DEF_IDLE_INTERVAL;
+>  	clear_sbi_flag(sbi, SBI_NEED_FSCK);
+>  
+>  	for (i = 0; i < NR_COUNT_TYPE; i++)
+> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> index 81c0e53..0afe99c 100644
+> --- a/fs/f2fs/sysfs.c
+> +++ b/fs/f2fs/sysfs.c
+> @@ -407,6 +407,9 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
+>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
+>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
+>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
+> +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, discard_idle_interval,
+> +					interval_time[DISCARD_TIME]);
+> +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_idle_interval, interval_time[GC_TIME]);
+>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
+>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
+>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
+> @@ -460,6 +463,8 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
+>  	ATTR_LIST(dirty_nats_ratio),
+>  	ATTR_LIST(cp_interval),
+>  	ATTR_LIST(idle_interval),
+> +	ATTR_LIST(discard_idle_interval),
+> +	ATTR_LIST(gc_idle_interval),
+>  	ATTR_LIST(iostat_enable),
+>  	ATTR_LIST(readdir_ra),
+>  	ATTR_LIST(gc_pin_file_thresh),
 > -- 
-> 2.18.0
+> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
