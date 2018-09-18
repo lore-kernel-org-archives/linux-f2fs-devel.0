@@ -1,402 +1,128 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v3] f2fs: submit cached bio to avoid endless PageWriteback
-Date: Mon, 17 Sep 2018 19:02:26 -0700
-Message-ID: <20180918020226.GA83471@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180912234053.8761-1-chao@kernel.org>
- <20180918010442.GA79604@jaegeuk-macbookpro.roam.corp.google.com>
- <3ca1e04f-0929-2ab3-2112-4fa22915be50@huawei.com>
- <20180918013743.GE79604@jaegeuk-macbookpro.roam.corp.google.com>
- <8b1571fa-ef41-4ab3-187c-d6caf7a2ebe1@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
+Date: Mon, 17 Sep 2018 19:05:59 -0700
+Message-ID: <20180918020559.GB83471@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180912000603.GA67662@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180912002700.GA69323@jaegeuk-macbookpro.roam.corp.google.com>
+ <650f06f4-7ca3-a3ed-d149-88d1e9f93b7a@huawei.com>
+ <20180912012550.GA71953@jaegeuk-macbookpro.roam.corp.google.com>
+ <ffbfbc85-f7ac-dd5c-b20f-d08868adb4ee@huawei.com>
+ <24ee1c19-ccc1-31db-12d0-30ac76fd645e@huawei.com>
+ <20180912195406.GB8356@jaegeuk-macbookpro.roam.corp.google.com>
+ <bbdc2ae6-591a-ffaf-ff51-e0884ef475ca@kernel.org>
+ <20180918011904.GB79604@jaegeuk-macbookpro.roam.corp.google.com>
+ <c60b6e64-04ce-ec7c-24d8-82273e65b5b9@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <8b1571fa-ef41-4ab3-187c-d6caf7a2ebe1@huawei.com>
+In-Reply-To: <c60b6e64-04ce-ec7c-24d8-82273e65b5b9@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Chao Yu <yuchao0@huawei.com>
-Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Cc: Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 On 09/18, Chao Yu wrote:
-> On 2018/9/18 9:37, Jaegeuk Kim wrote:
-> > On 09/18, Chao Yu wrote:
-> >> On 2018/9/18 9:04, Jaegeuk Kim wrote:
-> >>> On 09/13, Chao Yu wrote:
-> >>>> From: Chao Yu <yuchao0@huawei.com>
+> On 2018/9/18 9:19, Jaegeuk Kim wrote:
+> > On 09/13, Chao Yu wrote:
+> >> On 2018/9/13 3:54, Jaegeuk Kim wrote:
+> >>> On 09/12, Chao Yu wrote:
+> >>>> On 2018/9/12 9:40, Chao Yu wrote:
+> >>>>> On 2018/9/12 9:25, Jaegeuk Kim wrote:
+> >>>>>> On 09/12, Chao Yu wrote:
+> >>>>>>> On 2018/9/12 8:27, Jaegeuk Kim wrote:
+> >>>>>>>> On 09/11, Jaegeuk Kim wrote:
+> >>>>>>>>> On 09/12, Chao Yu wrote:
+> >>>>>>>>>> On 2018/9/12 4:15, Jaegeuk Kim wrote:
+> >>>>>>>>>>> fsck.f2fs is able to recover the quota structure, since roll-forward recovery
+> >>>>>>>>>>> can recover it based on previous user information.
+> >>>>>>>>>>
+> >>>>>>>>>> I didn't get it, both fsck and kernel recover quota file based all inodes'
+> >>>>>>>>>> uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
+> >>>>>>>>>> same?
+> >>>>>>>>>
+> >>>>>>>>> I thought that, but had to add this, since I was encountering quota errors right
+> >>>>>>>>> after getting some files recovered. And, I thought it'd make it more safe to do
+> >>>>>>>>> fsck after roll-forward recovery.
+> >>>>>>>>>
+> >>>>>>>>> Anyway, let me test again without this patch for a while.
+> >>>>>>>>
+> >>>>>>>> Hmm, I just got a fsck failure right after some files recovered.
+> >>>>>>>
+> >>>>>>> To make sure, do you test with "f2fs: guarantee journalled quota data by
+> >>>>>>> checkpoint"? if not, I think there is no guarantee that f2fs can recover
+> >>>>>>> quote info into correct quote file, because, in last checkpoint, quota file
+> >>>>>>> may was corrupted/inconsistent. Right?
+> >>>>>
+> >>>>> Oh, I forget to mention that, I add a patch to fsck to let it noticing
+> >>>>> CP_QUOTA_NEED_FSCK_FLAG flag, and by default, fsck will fix corrupted quote
+> >>>>> file if the flag is set, but w/o this flag, quota file is still corrupted
+> >>>>> detected by fsck, I guess there is bug in v8.
 > >>>>
-> >>>> When migrating encrypted block from background GC thread, we only add
-> >>>> them into f2fs inner bio cache, but forget to submit the cached bio, it
-> >>>> may cause potential deadlock when we are waiting page writebacked, fix
-> >>>> it.
+> >>>> In v8, there are two cases we didn't guarantee quota file's consistence:
+> >>>> 1. flush time in block_operation exceed a threshold.
+> >>>> 2. dquot subsystem error occurs.
 > >>>>
-> >>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >>>> ---
-> >>>> v3:
-> >>>> clean up codes suggested by Jaegeuk.
-> >>>>  fs/f2fs/f2fs.h |  2 +-
-> >>>>  fs/f2fs/gc.c   | 71 +++++++++++++++++++++++++++++++++++---------------
-> >>>>  fs/f2fs/node.c | 13 ++++++---
-> >>>>  3 files changed, 61 insertions(+), 25 deletions(-)
-> >>>>
-> >>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >>>> index b676b82312e0..917b2ca76aac 100644
-> >>>> --- a/fs/f2fs/f2fs.h
-> >>>> +++ b/fs/f2fs/f2fs.h
-> >>>> @@ -2869,7 +2869,7 @@ struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs);
-> >>>>  void f2fs_ra_node_page(struct f2fs_sb_info *sbi, nid_t nid);
-> >>>>  struct page *f2fs_get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid);
-> >>>>  struct page *f2fs_get_node_page_ra(struct page *parent, int start);
-> >>>> -void f2fs_move_node_page(struct page *node_page, int gc_type);
-> >>>> +int f2fs_move_node_page(struct page *node_page, int gc_type);
-> >>>>  int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
-> >>>>  			struct writeback_control *wbc, bool atomic,
-> >>>>  			unsigned int *seq_id);
-> >>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> >>>> index a4c1a419611d..f57622cfe058 100644
-> >>>> --- a/fs/f2fs/gc.c
-> >>>> +++ b/fs/f2fs/gc.c
-> >>>> @@ -461,7 +461,7 @@ static int check_valid_map(struct f2fs_sb_info *sbi,
-> >>>>   * On validity, copy that node with cold status, otherwise (invalid node)
-> >>>>   * ignore that.
-> >>>>   */
-> >>>> -static void gc_node_segment(struct f2fs_sb_info *sbi,
-> >>>> +static int gc_node_segment(struct f2fs_sb_info *sbi,
-> >>>>  		struct f2fs_summary *sum, unsigned int segno, int gc_type)
-> >>>>  {
-> >>>>  	struct f2fs_summary *entry;
-> >>>> @@ -469,6 +469,7 @@ static void gc_node_segment(struct f2fs_sb_info *sbi,
-> >>>>  	int off;
-> >>>>  	int phase = 0;
-> >>>>  	bool fggc = (gc_type == FG_GC);
-> >>>> +	int submitted = 0;
-> >>>>  
-> >>>>  	start_addr = START_BLOCK(sbi, segno);
-> >>>>  
-> >>>> @@ -482,10 +483,11 @@ static void gc_node_segment(struct f2fs_sb_info *sbi,
-> >>>>  		nid_t nid = le32_to_cpu(entry->nid);
-> >>>>  		struct page *node_page;
-> >>>>  		struct node_info ni;
-> >>>> +		int err;
-> >>>>  
-> >>>>  		/* stop BG_GC if there is not enough free sections. */
-> >>>>  		if (gc_type == BG_GC && has_not_enough_free_secs(sbi, 0, 0))
-> >>>> -			return;
-> >>>> +			return submitted;
-> >>>>  
-> >>>>  		if (check_valid_map(sbi, segno, off) == 0)
-> >>>>  			continue;
-> >>>> @@ -522,7 +524,9 @@ static void gc_node_segment(struct f2fs_sb_info *sbi,
-> >>>>  			continue;
-> >>>>  		}
-> >>>>  
-> >>>> -		f2fs_move_node_page(node_page, gc_type);
-> >>>> +		err = f2fs_move_node_page(node_page, gc_type);
-> >>>> +		if (!err && gc_type == FG_GC)
-> >>>> +			submitted++;
-> >>>>  		stat_inc_node_blk_count(sbi, 1, gc_type);
-> >>>>  	}
-> >>>>  
-> >>>> @@ -531,6 +535,7 @@ static void gc_node_segment(struct f2fs_sb_info *sbi,
-> >>>>  
-> >>>>  	if (fggc)
-> >>>>  		atomic_dec(&sbi->wb_sync_req[NODE]);
-> >>>> +	return submitted;
-> >>>>  }
-> >>>>  
-> >>>>  /*
-> >>>> @@ -666,7 +671,7 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
-> >>>>   * Move data block via META_MAPPING while keeping locked data page.
-> >>>>   * This can be used to move blocks, aka LBAs, directly on disk.
-> >>>>   */
-> >>>> -static void move_data_block(struct inode *inode, block_t bidx,
-> >>>> +static int move_data_block(struct inode *inode, block_t bidx,
-> >>>>  				int gc_type, unsigned int segno, int off)
+> >>>> For above case, fsck should repair the quota file by default.
 > >>>
-> >>> We don't need to submit IOs in this case.
+> >>> Okay, I got another failure and it seems CP_QUOTA_NEED_FSCK_FLAG was not set
+> >>> during the recovery. So, we have something missing in the recovery in terms
+> >>> of quota updates.
 > >>
-> >> Actually, previously, we missed to submit IOs for encrypted block only in
-> >> BGGC, so we fix to submit for this case, all other codes are cleanups. Right?
+> >> Yeah, I checked the code, just found one suspected place:
+> >>
+> >> find_fsync_dnodes()
+> >>  - f2fs_recover_inode_page
+> >>   - inc_valid_node_count
+> >>    - dquot_reserve_block  dquot info is not initialized now
+> >>  - add_fsync_inode
+> >>   - dquot_initialize
+> >>
+> >> I think we should reserve block for inode block after dquot_initialize(), can
+> >> you confirm this?
 > > 
-> > The move_data_block migrates encrypted blocks all the time with meta page IOs.
-> > I don't know what you're saying about BGGC.
+> > Let me test this.
+> > 
+> >>From b90260bc577fe87570b1ef7b134554a8295b1f6c Mon Sep 17 00:00:00 2001
+> > From: Jaegeuk Kim <jaegeuk@kernel.org>
+> > Date: Mon, 17 Sep 2018 18:14:41 -0700
+> > Subject: [PATCH] f2fs: count inode block for recovered files
+> > 
+> > If a new file is recovered, we missed to reserve its inode block.
 > 
-> In move_data_block(), we use f2fs_submit_page_write() to add encrypted page
-> in to sbi->write_io[META].bio cache, so before exit GC, we need to submit
-> this cache by f2fs_submit_merged_write(), otherwise bio with encrypted page
-> will be cached in sbi->write_io[META].bio for long time, since we only
-> submmit this bio cache in foreground GC.
-> 
-> if (gc_type == FG_GC)
-> 	f2fs_submit_merged_write(sbi,
-> 				(type == SUM_TYPE_NODE) ? NODE : DATA);
+> I remember, in order to keep line with other filesystem, unlike on-disk, we
+> have to keep backward compatibilty, in memory we don't account block number
+> for f2fs' inode block, but only account inode number for it, so here like
+> we did in inc_valid_node_count(), we don't need to do this.
 
-Does this issue pending META IOs? I think META won't block any NODE/DATA
-pages. Moreover checkpoint or reading the moved block make the IOs be flushed,
-so it doesn't hurt the consistency.
+Okay, I just hit the error again w/o your patch. Another one coming to my mind
+is that caused by uid/gid change during recovery. Let me try out your patch.
 
 > 
+> Can you test v9 first? I didn't encounter quota corruption with your
+> testcase right now. Will check it in cell phone environment.
+> 
 > > 
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>>>  {
-> >>>>  	struct f2fs_io_info fio = {
-> >>>> @@ -685,25 +690,29 @@ static void move_data_block(struct inode *inode, block_t bidx,
-> >>>>  	struct node_info ni;
-> >>>>  	struct page *page, *mpage;
-> >>>>  	block_t newaddr;
-> >>>> -	int err;
-> >>>> +	int err = 0;
-> >>>>  	bool lfs_mode = test_opt(fio.sbi, LFS);
-> >>>>  
-> >>>>  	/* do not read out */
-> >>>>  	page = f2fs_grab_cache_page(inode->i_mapping, bidx, false);
-> >>>>  	if (!page)
-> >>>> -		return;
-> >>>> +		return -ENOMEM;
-> >>>>  
-> >>>> -	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
-> >>>> +	if (!check_valid_map(F2FS_I_SB(inode), segno, off)) {
-> >>>> +		err = -ENOENT;
-> >>>>  		goto out;
-> >>>> +	}
-> >>>>  
-> >>>>  	if (f2fs_is_atomic_file(inode)) {
-> >>>>  		F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC]++;
-> >>>>  		F2FS_I_SB(inode)->skipped_atomic_files[gc_type]++;
-> >>>> +		err = -EAGAIN;
-> >>>>  		goto out;
-> >>>>  	}
-> >>>>  
-> >>>>  	if (f2fs_is_pinned_file(inode)) {
-> >>>>  		f2fs_pin_file_control(inode, true);
-> >>>> +		err = -EAGAIN;
-> >>>>  		goto out;
-> >>>>  	}
-> >>>>  
-> >>>> @@ -714,6 +723,7 @@ static void move_data_block(struct inode *inode, block_t bidx,
-> >>>>  
-> >>>>  	if (unlikely(dn.data_blkaddr == NULL_ADDR)) {
-> >>>>  		ClearPageUptodate(page);
-> >>>> +		err = -ENOENT;
-> >>>>  		goto put_out;
-> >>>>  	}
-> >>>>  
-> >>>> @@ -796,6 +806,7 @@ static void move_data_block(struct inode *inode, block_t bidx,
-> >>>>  	fio.new_blkaddr = newaddr;
-> >>>>  	f2fs_submit_page_write(&fio);
-> >>>>  	if (fio.retry) {
-> >>>> +		err = -EAGAIN;
-> >>>>  		if (PageWriteback(fio.encrypted_page))
-> >>>>  			end_page_writeback(fio.encrypted_page);
-> >>>>  		goto put_page_out;
-> >>>> @@ -819,34 +830,42 @@ static void move_data_block(struct inode *inode, block_t bidx,
-> >>>>  	f2fs_put_dnode(&dn);
-> >>>>  out:
-> >>>>  	f2fs_put_page(page, 1);
-> >>>> +	return err;
-> >>>>  }
-> >>>>  
-> >>>> -static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
-> >>>> +static int move_data_page(struct inode *inode, block_t bidx, int gc_type,
-> >>>>  							unsigned int segno, int off)
-> >>>>  {
-> >>>>  	struct page *page;
-> >>>> +	int err = 0;
-> >>>>  
-> >>>>  	page = f2fs_get_lock_data_page(inode, bidx, true);
-> >>>>  	if (IS_ERR(page))
-> >>>> -		return;
-> >>>> +		return PTR_ERR(page);
-> >>>>  
-> >>>> -	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
-> >>>> +	if (!check_valid_map(F2FS_I_SB(inode), segno, off)) {
-> >>>> +		err = -ENOENT;
-> >>>>  		goto out;
-> >>>> +	}
-> >>>>  
-> >>>>  	if (f2fs_is_atomic_file(inode)) {
-> >>>>  		F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC]++;
-> >>>>  		F2FS_I_SB(inode)->skipped_atomic_files[gc_type]++;
-> >>>> +		err = -EAGAIN;
-> >>>>  		goto out;
-> >>>>  	}
-> >>>>  	if (f2fs_is_pinned_file(inode)) {
-> >>>>  		if (gc_type == FG_GC)
-> >>>>  			f2fs_pin_file_control(inode, true);
-> >>>> +		err = -EAGAIN;
-> >>>>  		goto out;
-> >>>>  	}
-> >>>>  
-> >>>>  	if (gc_type == BG_GC) {
-> >>>> -		if (PageWriteback(page))
-> >>>> +		if (PageWriteback(page)) {
-> >>>> +			err = -EAGAIN;
-> >>>>  			goto out;
-> >>>> +		}
-> >>>>  		set_page_dirty(page);
-> >>>>  		set_cold_data(page);
-> >>>>  	} else {
-> >>>> @@ -864,7 +883,6 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
-> >>>>  			.io_type = FS_GC_DATA_IO,
-> >>>>  		};
-> >>>>  		bool is_dirty = PageDirty(page);
-> >>>> -		int err;
-> >>>>  
-> >>>>  retry:
-> >>>>  		set_page_dirty(page);
-> >>>> @@ -889,6 +907,7 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
-> >>>>  	}
-> >>>>  out:
-> >>>>  	f2fs_put_page(page, 1);
-> >>>> +	return err;
-> >>>>  }
-> >>>>  
-> >>>>  /*
-> >>>> @@ -898,7 +917,7 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
-> >>>>   * If the parent node is not valid or the data block address is different,
-> >>>>   * the victim data block is ignored.
-> >>>>   */
-> >>>> -static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
-> >>>> +static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
-> >>>>  		struct gc_inode_list *gc_list, unsigned int segno, int gc_type)
-> >>>>  {
-> >>>>  	struct super_block *sb = sbi->sb;
-> >>>> @@ -906,6 +925,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
-> >>>>  	block_t start_addr;
-> >>>>  	int off;
-> >>>>  	int phase = 0;
-> >>>> +	int submitted = 0;
-> >>>>  
-> >>>>  	start_addr = START_BLOCK(sbi, segno);
-> >>>>  
-> >>>> @@ -922,7 +942,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
-> >>>>  
-> >>>>  		/* stop BG_GC if there is not enough free sections. */
-> >>>>  		if (gc_type == BG_GC && has_not_enough_free_secs(sbi, 0, 0))
-> >>>> -			return;
-> >>>> +			return submitted;
-> >>>>  
-> >>>>  		if (check_valid_map(sbi, segno, off) == 0)
-> >>>>  			continue;
-> >>>> @@ -994,6 +1014,7 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
-> >>>>  		if (inode) {
-> >>>>  			struct f2fs_inode_info *fi = F2FS_I(inode);
-> >>>>  			bool locked = false;
-> >>>> +			int err;
-> >>>>  
-> >>>>  			if (S_ISREG(inode->i_mode)) {
-> >>>>  				if (!down_write_trylock(&fi->i_gc_rwsem[READ]))
-> >>>> @@ -1013,12 +1034,16 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
-> >>>>  			start_bidx = f2fs_start_bidx_of_node(nofs, inode)
-> >>>>  								+ ofs_in_node;
-> >>>>  			if (f2fs_post_read_required(inode))
-> >>>> -				move_data_block(inode, start_bidx, gc_type,
-> >>>> -								segno, off);
-> >>>> +				err = move_data_block(inode, start_bidx,
-> >>>> +							gc_type, segno, off);
-> >>>>  			else
-> >>>> -				move_data_page(inode, start_bidx, gc_type,
-> >>>> +				err = move_data_page(inode, start_bidx, gc_type,
-> >>>>  								segno, off);
-> >>>>  
-> >>>> +			if (!err && (gc_type == FG_GC ||
-> >>>> +					f2fs_post_read_required(inode)))
-> >>>> +				submitted++;
-> >>>> +
-> >>>>  			if (locked) {
-> >>>>  				up_write(&fi->i_gc_rwsem[WRITE]);
-> >>>>  				up_write(&fi->i_gc_rwsem[READ]);
-> >>>> @@ -1030,6 +1055,8 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
-> >>>>  
-> >>>>  	if (++phase < 5)
-> >>>>  		goto next_step;
-> >>>> +
-> >>>> +	return submitted;
-> >>>>  }
-> >>>>  
-> >>>>  static int __get_victim(struct f2fs_sb_info *sbi, unsigned int *victim,
-> >>>> @@ -1057,6 +1084,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
-> >>>>  	int seg_freed = 0;
-> >>>>  	unsigned char type = IS_DATASEG(get_seg_entry(sbi, segno)->type) ?
-> >>>>  						SUM_TYPE_DATA : SUM_TYPE_NODE;
-> >>>> +	int submitted = 0;
-> >>>>  
-> >>>>  	/* readahead multi ssa blocks those have contiguous address */
-> >>>>  	if (sbi->segs_per_sec > 1)
-> >>>> @@ -1100,10 +1128,11 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
-> >>>>  		 *                                  - lock_page(sum_page)
-> >>>>  		 */
-> >>>>  		if (type == SUM_TYPE_NODE)
-> >>>> -			gc_node_segment(sbi, sum->entries, segno, gc_type);
-> >>>> -		else
-> >>>> -			gc_data_segment(sbi, sum->entries, gc_list, segno,
-> >>>> +			submitted += gc_node_segment(sbi, sum->entries, segno,
-> >>>>  								gc_type);
-> >>>> +		else
-> >>>> +			submitted += gc_data_segment(sbi, sum->entries, gc_list,
-> >>>> +							segno, gc_type);
-> >>>>  
-> >>>>  		stat_inc_seg_count(sbi, type, gc_type);
-> >>>>  
-> >>>> @@ -1114,7 +1143,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
-> >>>>  		f2fs_put_page(sum_page, 0);
-> >>>>  	}
-> >>>>  
-> >>>> -	if (gc_type == FG_GC)
-> >>>> +	if (submitted)
-> >>>>  		f2fs_submit_merged_write(sbi,
-> >>>>  				(type == SUM_TYPE_NODE) ? NODE : DATA);
-> >>>>  
-> >>>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> >>>> index fa2381c0bc47..214dd6326b4b 100644
-> >>>> --- a/fs/f2fs/node.c
-> >>>> +++ b/fs/f2fs/node.c
-> >>>> @@ -1584,8 +1584,10 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
-> >>>>  	return AOP_WRITEPAGE_ACTIVATE;
-> >>>>  }
-> >>>>  
-> >>>> -void f2fs_move_node_page(struct page *node_page, int gc_type)
-> >>>> +int f2fs_move_node_page(struct page *node_page, int gc_type)
-> >>>>  {
-> >>>> +	int err = 0;
-> >>>> +
-> >>>>  	if (gc_type == FG_GC) {
-> >>>>  		struct writeback_control wbc = {
-> >>>>  			.sync_mode = WB_SYNC_ALL,
-> >>>> @@ -1597,12 +1599,16 @@ void f2fs_move_node_page(struct page *node_page, int gc_type)
-> >>>>  		f2fs_wait_on_page_writeback(node_page, NODE, true);
-> >>>>  
-> >>>>  		f2fs_bug_on(F2FS_P_SB(node_page), PageWriteback(node_page));
-> >>>> -		if (!clear_page_dirty_for_io(node_page))
-> >>>> +		if (!clear_page_dirty_for_io(node_page)) {
-> >>>> +			err = -EAGAIN;
-> >>>>  			goto out_page;
-> >>>> +		}
-> >>>>  
-> >>>>  		if (__write_node_page(node_page, false, NULL,
-> >>>> -					&wbc, false, FS_GC_NODE_IO, NULL))
-> >>>> +					&wbc, false, FS_GC_NODE_IO, NULL)) {
-> >>>> +			err = -EAGAIN;
-> >>>>  			unlock_page(node_page);
-> >>>> +		}
-> >>>>  		goto release_page;
-> >>>>  	} else {
-> >>>>  		/* set page dirty and write it */
-> >>>> @@ -1613,6 +1619,7 @@ void f2fs_move_node_page(struct page *node_page, int gc_type)
-> >>>>  	unlock_page(node_page);
-> >>>>  release_page:
-> >>>>  	f2fs_put_page(node_page, 0);
-> >>>> +	return err;
-> >>>>  }
-> >>>>  
-> >>>>  static int f2fs_write_node_page(struct page *page,
-> >>>> -- 
-> >>>> 2.18.0
-> >>>
-> >>> .
-> >>>
+> > Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/recovery.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
 > > 
-> > .
+> > diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> > index 56d34193a74b..bff5cf730e13 100644
+> > --- a/fs/f2fs/recovery.c
+> > +++ b/fs/f2fs/recovery.c
+> > @@ -84,6 +84,11 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
+> >  		err = dquot_alloc_inode(inode);
+> >  		if (err)
+> >  			goto err_out;
+> > +		err = dquot_reserve_block(inode, 1);
+> > +		if (err) {
+> > +			dquot_drop(inode);
+> > +			goto err_out;
+> > +		}
+> >  	}
+> >  
+> >  	entry = f2fs_kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
 > > 
