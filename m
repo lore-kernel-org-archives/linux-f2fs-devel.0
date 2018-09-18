@@ -1,151 +1,172 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
-Date: Tue, 18 Sep 2018 09:45:56 -0700
-Message-ID: <20180918164556.GC91945@jaegeuk-macbookpro.roam.corp.google.com>
-References: <650f06f4-7ca3-a3ed-d149-88d1e9f93b7a@huawei.com>
- <20180912012550.GA71953@jaegeuk-macbookpro.roam.corp.google.com>
- <ffbfbc85-f7ac-dd5c-b20f-d08868adb4ee@huawei.com>
- <24ee1c19-ccc1-31db-12d0-30ac76fd645e@huawei.com>
- <20180912195406.GB8356@jaegeuk-macbookpro.roam.corp.google.com>
- <bbdc2ae6-591a-ffaf-ff51-e0884ef475ca@kernel.org>
- <20180918011904.GB79604@jaegeuk-macbookpro.roam.corp.google.com>
- <c60b6e64-04ce-ec7c-24d8-82273e65b5b9@huawei.com>
- <20180918020559.GB83471@jaegeuk-macbookpro.roam.corp.google.com>
- <e6e2b5e7-3b2e-d2f1-57d3-0a13059673db@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: avoid f2fs_bug_on if
+ f2fs_get_meta_page_nofail got EIO
+Date: Tue, 18 Sep 2018 10:55:33 -0700
+Message-ID: <20180918175533.GD91945@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180918021805.85032-1-jaegeuk@kernel.org>
+ <20180918021805.85032-2-jaegeuk@kernel.org>
+ <4ac0b893-7437-c5f3-e710-64156df09ced@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <e6e2b5e7-3b2e-d2f1-57d3-0a13059673db@huawei.com>
+In-Reply-To: <4ac0b893-7437-c5f3-e710-64156df09ced@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 On 09/18, Chao Yu wrote:
-> On 2018/9/18 10:05, Jaegeuk Kim wrote:
-> > On 09/18, Chao Yu wrote:
-> >> On 2018/9/18 9:19, Jaegeuk Kim wrote:
-> >>> On 09/13, Chao Yu wrote:
-> >>>> On 2018/9/13 3:54, Jaegeuk Kim wrote:
-> >>>>> On 09/12, Chao Yu wrote:
-> >>>>>> On 2018/9/12 9:40, Chao Yu wrote:
-> >>>>>>> On 2018/9/12 9:25, Jaegeuk Kim wrote:
-> >>>>>>>> On 09/12, Chao Yu wrote:
-> >>>>>>>>> On 2018/9/12 8:27, Jaegeuk Kim wrote:
-> >>>>>>>>>> On 09/11, Jaegeuk Kim wrote:
-> >>>>>>>>>>> On 09/12, Chao Yu wrote:
-> >>>>>>>>>>>> On 2018/9/12 4:15, Jaegeuk Kim wrote:
-> >>>>>>>>>>>>> fsck.f2fs is able to recover the quota structure, since roll-forward recovery
-> >>>>>>>>>>>>> can recover it based on previous user information.
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> I didn't get it, both fsck and kernel recover quota file based all inodes'
-> >>>>>>>>>>>> uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
-> >>>>>>>>>>>> same?
-> >>>>>>>>>>>
-> >>>>>>>>>>> I thought that, but had to add this, since I was encountering quota errors right
-> >>>>>>>>>>> after getting some files recovered. And, I thought it'd make it more safe to do
-> >>>>>>>>>>> fsck after roll-forward recovery.
-> >>>>>>>>>>>
-> >>>>>>>>>>> Anyway, let me test again without this patch for a while.
-> >>>>>>>>>>
-> >>>>>>>>>> Hmm, I just got a fsck failure right after some files recovered.
-> >>>>>>>>>
-> >>>>>>>>> To make sure, do you test with "f2fs: guarantee journalled quota data by
-> >>>>>>>>> checkpoint"? if not, I think there is no guarantee that f2fs can recover
-> >>>>>>>>> quote info into correct quote file, because, in last checkpoint, quota file
-> >>>>>>>>> may was corrupted/inconsistent. Right?
-> >>>>>>>
-> >>>>>>> Oh, I forget to mention that, I add a patch to fsck to let it noticing
-> >>>>>>> CP_QUOTA_NEED_FSCK_FLAG flag, and by default, fsck will fix corrupted quote
-> >>>>>>> file if the flag is set, but w/o this flag, quota file is still corrupted
-> >>>>>>> detected by fsck, I guess there is bug in v8.
-> >>>>>>
-> >>>>>> In v8, there are two cases we didn't guarantee quota file's consistence:
-> >>>>>> 1. flush time in block_operation exceed a threshold.
-> >>>>>> 2. dquot subsystem error occurs.
-> >>>>>>
-> >>>>>> For above case, fsck should repair the quota file by default.
-> >>>>>
-> >>>>> Okay, I got another failure and it seems CP_QUOTA_NEED_FSCK_FLAG was not set
-> >>>>> during the recovery. So, we have something missing in the recovery in terms
-> >>>>> of quota updates.
-> >>>>
-> >>>> Yeah, I checked the code, just found one suspected place:
-> >>>>
-> >>>> find_fsync_dnodes()
-> >>>>  - f2fs_recover_inode_page
-> >>>>   - inc_valid_node_count
-> >>>>    - dquot_reserve_block  dquot info is not initialized now
-> >>>>  - add_fsync_inode
-> >>>>   - dquot_initialize
-> >>>>
-> >>>> I think we should reserve block for inode block after dquot_initialize(), can
-> >>>> you confirm this?
-> >>>
-> >>> Let me test this.
-> >>>
-> >>> >From b90260bc577fe87570b1ef7b134554a8295b1f6c Mon Sep 17 00:00:00 2001
-> >>> From: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>> Date: Mon, 17 Sep 2018 18:14:41 -0700
-> >>> Subject: [PATCH] f2fs: count inode block for recovered files
-> >>>
-> >>> If a new file is recovered, we missed to reserve its inode block.
-> >>
-> >> I remember, in order to keep line with other filesystem, unlike on-disk, we
-> >> have to keep backward compatibilty, in memory we don't account block number
-> >> for f2fs' inode block, but only account inode number for it, so here like
-> >> we did in inc_valid_node_count(), we don't need to do this.
+> On 2018/9/18 10:18, Jaegeuk Kim wrote:
+> > This patch avoids BUG_ON when f2fs_get_meta_page_nofail got EIO during
+> > xfstests/generic/475.
 > > 
-> > Okay, I just hit the error again w/o your patch. Another one coming to my mind
-> > is that caused by uid/gid change during recovery. Let me try out your patch.
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/checkpoint.c |  2 +-
+> >  fs/f2fs/gc.c         |  2 ++
+> >  fs/f2fs/node.c       | 12 ++++++++++--
+> >  fs/f2fs/recovery.c   |  2 ++
+> >  fs/f2fs/segment.c    |  3 +++
+> >  5 files changed, 18 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> > index 01e0d8f5bbbe..6ce3cb6502dd 100644
+> > --- a/fs/f2fs/checkpoint.c
+> > +++ b/fs/f2fs/checkpoint.c
+> > @@ -121,7 +121,7 @@ struct page *f2fs_get_meta_page_nofail(struct f2fs_sb_info *sbi, pgoff_t index)
+> >  			goto retry;
+> >  
+> >  		f2fs_stop_checkpoint(sbi, false);
+> > -		f2fs_bug_on(sbi, 1);
+> > +		return NULL;
 > 
-> I guess we should update dquot and inode's uid/gid atomically under
-> lock_op() in f2fs_setattr() to prevent corruption on sys quota file.
-> 
-> v9 can pass all xfstest cases and por_fsstress case w/ sys quota file
-> enabled, but w/ normal quota file, I got one regression reported by
-> generic/232, I fixed in v10, will do some tests and release it later.
-> 
-> Note that, my fsck can fix corrupted quota file automatically once
-> CP_QUOTA_NEED_FSCK_FLAG is set.
+> How about propagate PTR_ERR(page) to caller?
 
-I hit failures again with your v9 w/ sysfile quota and modified fsck to detect
-CP_QUOTA_NEED_FSCK_FLAG to fix the partition. Note that, if I set NEED_FSCK
-flag in roll-forward recovery, everything is fine.
+Done.
 
+> 
+> >  	}
+> >  
+> >  	return page;
+> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > index 4bcc8a59fdef..d049865887cf 100644
+> > --- a/fs/f2fs/gc.c
+> > +++ b/fs/f2fs/gc.c
+> > @@ -1070,6 +1070,8 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+> >  	/* reference all summary page */
+> >  	while (segno < end_segno) {
+> >  		sum_page = f2fs_get_sum_page(sbi, segno++);
+> > +		if (!sum_page)
+> > +			return -EIO;
+> 
+> Well, for large section, we need to release all referenced sum page by
+> f2fs_put_page().
+
+Done.
+
+> 
+> >  		unlock_page(sum_page);
+> >  	}
+> >  
+> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> > index fa2381c0bc47..b3595522c35b 100644
+> > --- a/fs/f2fs/node.c
+> > +++ b/fs/f2fs/node.c
+> > @@ -126,6 +126,8 @@ static struct page *get_next_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
+> >  
+> >  	/* get current nat block page with lock */
+> >  	src_page = get_current_nat_page(sbi, nid);
+> > +	if (!src_page)
+> > +		return NULL;
+> >  	dst_page = f2fs_grab_meta_page(sbi, dst_off);
+> >  	f2fs_bug_on(sbi, PageDirty(src_page));
+> >  
+> > @@ -2265,8 +2267,12 @@ static int __f2fs_build_free_nids(struct f2fs_sb_info *sbi,
+> >  						nm_i->nat_block_bitmap)) {
+> >  			struct page *page = get_current_nat_page(sbi, nid);
+> >  
+> > -			ret = scan_nat_page(sbi, page, nid);
+> > -			f2fs_put_page(page, 1);
+> > +			if (page) {
+> > +				ret = scan_nat_page(sbi, page, nid);
+> > +				f2fs_put_page(page, 1);
+> > +			} else {
+> > +				ret = -EIO;
+> > +			}
+> >  
+> >  			if (ret) {
+> >  				up_read(&nm_i->nat_tree_lock);
+> 
+> Should propagate the error to f2fs_alloc_nid()?
+
+Done.
+
+> 
+> > @@ -2724,6 +2730,8 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+> >  		down_write(&curseg->journal_rwsem);
+> >  	} else {
+> >  		page = get_next_nat_page(sbi, start_nid);
+> > +		if (!page)
+> > +			return;
+> 
+> Ditto, propagate such error to write_checkpoint()?
+
+Done.
+
+> 
+> >  		nat_blk = page_address(page);
+> >  		f2fs_bug_on(sbi, !nat_blk);
+> >  	}
+> > diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> > index 56d34193a74b..a3dce16bfd6c 100644
+> > --- a/fs/f2fs/recovery.c
+> > +++ b/fs/f2fs/recovery.c
+> > @@ -355,6 +355,8 @@ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
+> >  	}
+> >  
+> >  	sum_page = f2fs_get_sum_page(sbi, segno);
+> > +	if (!sum_page)
+> > +		return -EIO;
+> >  	sum_node = (struct f2fs_summary_block *)page_address(sum_page);
+> >  	sum = sum_node->entries[blkoff];
+> >  	f2fs_put_page(sum_page, 1);
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index aa96a371aaf8..cfc9eb492da1 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -2487,6 +2487,7 @@ static void change_curseg(struct f2fs_sb_info *sbi, int type)
+> >  	__next_free_blkoff(sbi, curseg, 0);
+> >  
+> >  	sum_page = f2fs_get_sum_page(sbi, new_segno);
+> > +	f2fs_bug_on(sbi, !sum_page);
+> 
+> Well, next time we may panic here...
+
+This is the same as before, and it's almost impossible to hit anyway in
+production.
+
+Thanks,
+
+> 
+> In product, for EIO case, usually we just reboot cell phone directly to avoid
+> potential data loss later.
+> 
+> So I just set DEFAULT_RETRY_IO_COUNT to 32 temporarily to pass xfstest IO error
+> injection cases.
 > 
 > Thanks,
 > 
-> > 
-> >>
-> >> Can you test v9 first? I didn't encounter quota corruption with your
-> >> testcase right now. Will check it in cell phone environment.
-> >>
-> >>>
-> >>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>> ---
-> >>>  fs/f2fs/recovery.c | 5 +++++
-> >>>  1 file changed, 5 insertions(+)
-> >>>
-> >>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-> >>> index 56d34193a74b..bff5cf730e13 100644
-> >>> --- a/fs/f2fs/recovery.c
-> >>> +++ b/fs/f2fs/recovery.c
-> >>> @@ -84,6 +84,11 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
-> >>>  		err = dquot_alloc_inode(inode);
-> >>>  		if (err)
-> >>>  			goto err_out;
-> >>> +		err = dquot_reserve_block(inode, 1);
-> >>> +		if (err) {
-> >>> +			dquot_drop(inode);
-> >>> +			goto err_out;
-> >>> +		}
-> >>>  	}
-> >>>  
-> >>>  	entry = f2fs_kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
-> >>>
-> > 
-> > .
+> >  	sum_node = (struct f2fs_summary_block *)page_address(sum_page);
+> >  	memcpy(curseg->sum_blk, sum_node, SUM_ENTRY_SIZE);
+> >  	f2fs_put_page(sum_page, 1);
+> > @@ -3971,6 +3972,8 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+> >  
+> >  			se = &sit_i->sentries[start];
+> >  			page = get_current_sit_page(sbi, start);
+> > +			if (!page)
+> > +				return err;
+> >  			sit_blk = (struct f2fs_sit_block *)page_address(page);
+> >  			sit = sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, start)];
+> >  			f2fs_put_page(page, 1);
 > > 
