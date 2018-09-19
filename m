@@ -1,67 +1,166 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: allow out-place-update for direct IO in LFS mode
-Date: Wed, 19 Sep 2018 12:27:39 -0700
-Message-ID: <20180919192739.GA64994@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180916133407.26802-1-chao@kernel.org>
- <20180918012701.GC79604@jaegeuk-macbookpro.roam.corp.google.com>
- <7ba874d6-9ba4-4247-e31d-488d8ffe7cca@huawei.com>
- <20180918162719.GA91945@jaegeuk-macbookpro.roam.corp.google.com>
- <84f67dc2-8907-cb2f-2b18-5278bc75c76a@huawei.com>
+Subject: Re: [PATCH] f2fs: fix quota info to adjust recovered data
+Date: Wed, 19 Sep 2018 15:38:19 -0700
+Message-ID: <20180919223819.GA79681@jaegeuk-macbookpro.roam.corp.google.com>
+References: <ffbfbc85-f7ac-dd5c-b20f-d08868adb4ee@huawei.com>
+ <24ee1c19-ccc1-31db-12d0-30ac76fd645e@huawei.com>
+ <20180912195406.GB8356@jaegeuk-macbookpro.roam.corp.google.com>
+ <bbdc2ae6-591a-ffaf-ff51-e0884ef475ca@kernel.org>
+ <20180918011904.GB79604@jaegeuk-macbookpro.roam.corp.google.com>
+ <c60b6e64-04ce-ec7c-24d8-82273e65b5b9@huawei.com>
+ <20180918020559.GB83471@jaegeuk-macbookpro.roam.corp.google.com>
+ <e6e2b5e7-3b2e-d2f1-57d3-0a13059673db@huawei.com>
+ <20180918164556.GC91945@jaegeuk-macbookpro.roam.corp.google.com>
+ <a6acc207-440a-3ba3-5e57-54377d47bca3@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1g2l79-000426-7D
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Sep 2018 22:38:31 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1g2l74-006Afh-Mv
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Sep 2018 22:38:30 +0000
 Content-Disposition: inline
-In-Reply-To: <84f67dc2-8907-cb2f-2b18-5278bc75c76a@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <a6acc207-440a-3ba3-5e57-54377d47bca3@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Chao Yu <yuchao0@huawei.com>
-Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 On 09/19, Chao Yu wrote:
-> On 2018/9/19 0:27, Jaegeuk Kim wrote:
+> On 2018/9/19 0:45, Jaegeuk Kim wrote:
 > > On 09/18, Chao Yu wrote:
-> >> On 2018/9/18 9:27, Jaegeuk Kim wrote:
-> >>> On 09/16, Chao Yu wrote:
-> >>>> From: Chao Yu <yuchao0@huawei.com>
+> >> On 2018/9/18 10:05, Jaegeuk Kim wrote:
+> >>> On 09/18, Chao Yu wrote:
+> >>>> On 2018/9/18 9:19, Jaegeuk Kim wrote:
+> >>>>> On 09/13, Chao Yu wrote:
+> >>>>>> On 2018/9/13 3:54, Jaegeuk Kim wrote:
+> >>>>>>> On 09/12, Chao Yu wrote:
+> >>>>>>>> On 2018/9/12 9:40, Chao Yu wrote:
+> >>>>>>>>> On 2018/9/12 9:25, Jaegeuk Kim wrote:
+> >>>>>>>>>> On 09/12, Chao Yu wrote:
+> >>>>>>>>>>> On 2018/9/12 8:27, Jaegeuk Kim wrote:
+> >>>>>>>>>>>> On 09/11, Jaegeuk Kim wrote:
+> >>>>>>>>>>>>> On 09/12, Chao Yu wrote:
+> >>>>>>>>>>>>>> On 2018/9/12 4:15, Jaegeuk Kim wrote:
+> >>>>>>>>>>>>>>> fsck.f2fs is able to recover the quota structure, since roll-forward recovery
+> >>>>>>>>>>>>>>> can recover it based on previous user information.
+> >>>>>>>>>>>>>>
+> >>>>>>>>>>>>>> I didn't get it, both fsck and kernel recover quota file based all inodes'
+> >>>>>>>>>>>>>> uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
+> >>>>>>>>>>>>>> same?
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> I thought that, but had to add this, since I was encountering quota errors right
+> >>>>>>>>>>>>> after getting some files recovered. And, I thought it'd make it more safe to do
+> >>>>>>>>>>>>> fsck after roll-forward recovery.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> Anyway, let me test again without this patch for a while.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> Hmm, I just got a fsck failure right after some files recovered.
+> >>>>>>>>>>>
+> >>>>>>>>>>> To make sure, do you test with "f2fs: guarantee journalled quota data by
+> >>>>>>>>>>> checkpoint"? if not, I think there is no guarantee that f2fs can recover
+> >>>>>>>>>>> quote info into correct quote file, because, in last checkpoint, quota file
+> >>>>>>>>>>> may was corrupted/inconsistent. Right?
+> >>>>>>>>>
+> >>>>>>>>> Oh, I forget to mention that, I add a patch to fsck to let it noticing
+> >>>>>>>>> CP_QUOTA_NEED_FSCK_FLAG flag, and by default, fsck will fix corrupted quote
+> >>>>>>>>> file if the flag is set, but w/o this flag, quota file is still corrupted
+> >>>>>>>>> detected by fsck, I guess there is bug in v8.
+> >>>>>>>>
+> >>>>>>>> In v8, there are two cases we didn't guarantee quota file's consistence:
+> >>>>>>>> 1. flush time in block_operation exceed a threshold.
+> >>>>>>>> 2. dquot subsystem error occurs.
+> >>>>>>>>
+> >>>>>>>> For above case, fsck should repair the quota file by default.
+> >>>>>>>
+> >>>>>>> Okay, I got another failure and it seems CP_QUOTA_NEED_FSCK_FLAG was not set
+> >>>>>>> during the recovery. So, we have something missing in the recovery in terms
+> >>>>>>> of quota updates.
+> >>>>>>
+> >>>>>> Yeah, I checked the code, just found one suspected place:
+> >>>>>>
+> >>>>>> find_fsync_dnodes()
+> >>>>>>  - f2fs_recover_inode_page
+> >>>>>>   - inc_valid_node_count
+> >>>>>>    - dquot_reserve_block  dquot info is not initialized now
+> >>>>>>  - add_fsync_inode
+> >>>>>>   - dquot_initialize
+> >>>>>>
+> >>>>>> I think we should reserve block for inode block after dquot_initialize(), can
+> >>>>>> you confirm this?
+> >>>>>
+> >>>>> Let me test this.
+> >>>>>
+> >>>>> >From b90260bc577fe87570b1ef7b134554a8295b1f6c Mon Sep 17 00:00:00 2001
+> >>>>> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>>>> Date: Mon, 17 Sep 2018 18:14:41 -0700
+> >>>>> Subject: [PATCH] f2fs: count inode block for recovered files
+> >>>>>
+> >>>>> If a new file is recovered, we missed to reserve its inode block.
 > >>>>
-> >>>> Normally, DIO uses in-pllace-update, but in LFS mode, f2fs doesn't
-> >>>> allow triggering any in-place-update writes, so we fallback direct
-> >>>> write to buffered write, result in bad performance of large size
-> >>>> write.
+> >>>> I remember, in order to keep line with other filesystem, unlike on-disk, we
+> >>>> have to keep backward compatibilty, in memory we don't account block number
+> >>>> for f2fs' inode block, but only account inode number for it, so here like
+> >>>> we did in inc_valid_node_count(), we don't need to do this.
 > >>>
-> >>> I remember this is to serialize all the IOs in one buffered IO path to keep
-> >>> the IO sequence espeicially useful for SMR drivers. Could you confirm whether
-> >>> there is any IO reordering problem?
+> >>> Okay, I just hit the error again w/o your patch. Another one coming to my mind
+> >>> is that caused by uid/gid change during recovery. Let me try out your patch.
 > >>
-> >> IMO, buffered IO will encounter reordering issue more easily, for example:
+> >> I guess we should update dquot and inode's uid/gid atomically under
+> >> lock_op() in f2fs_setattr() to prevent corruption on sys quota file.
 > >>
-> >> User write 2mb data via DIO, but according to policy on LFS mode, it will
-> >> fallback to buffered IO.
+> >> v9 can pass all xfstest cases and por_fsstress case w/ sys quota file
+> >> enabled, but w/ normal quota file, I got one regression reported by
+> >> generic/232, I fixed in v10, will do some tests and release it later.
 > >>
-> >> Before dio triggers writeback, an async writeback from background is
-> >> triggered, so all IO distribution can be:
-> >>
-> >> 		page		LBA range
-> >> async IO:	0 - 255		x + 0, x + 255
-> >> sync IO:	256 - 511	x + 256, x + 511
-> >>
-> >> Then block IO scheduler can issue sync IO before async IO, result IO
-> >> reordering.
-> >>
-> >> Anyway, in DIO path we will suffer less IO reordering issue.
+> >> Note that, my fsck can fix corrupted quota file automatically once
+> >> CP_QUOTA_NEED_FSCK_FLAG is set.
 > > 
-> > My concern was on mixed DIO and buffered IOs where we don't have a way to
-> > serialize all the IOs.
+> > I hit failures again with your v9 w/ sysfile quota and modified fsck to detect
 > 
-> As I explained above, even we always use buffered IO, there is no such
-> guarantee for serializing all async/sync IO in block layer, am I missing
-> something?
+> That's strange, in my environment, before v9, I always encounter corrupted
+> quota sysfile after step 9), after v9, I never hit failure again.
 > 
-> If you really don't want to change the logic for SMR, how about let me just
-> leave that case?
+> 1) enable fault injection
+> 2) run fsstress
+> 3) call shutdowon
+> 4) kill fsstress
+> 5) unmount
+> 6) fsck
+> 7) mount
+> 8) umount
+> 9) fsck
+> 10) go 1).
+> 
+> > CP_QUOTA_NEED_FSCK_FLAG to fix the partition. Note that, if I set NEED_FSCK
+> > flag in roll-forward recovery, everything is fine.
+> 
+> I do the test based on codes in my git tree, could you check the result
+> again based on my code? in where I just disable nat_bits recovery, not
+> sure, in step 6) fsck can break some thing in image.
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/log/?h=f2fs-dev
+> 
+> Also, I just send the fsck code, could you check that too?
+> 
+> And I'd like to know your mount option and mkfs option, could you list for me?
 
-Okay, that could be fine to me.
-Thanks,
+I'm just doing this.
+https://github.com/jaegeuk/xfstests-f2fs/blob/f2fs/run.sh#L220
 
 > 
 > Thanks,
@@ -72,206 +171,33 @@ Thanks,
 > >>
 > >>>
 > >>>>
-> >>>> This patch adds to support triggering out-place-update for direct IO
-> >>>> to enhance its performance.
+> >>>> Can you test v9 first? I didn't encounter quota corruption with your
+> >>>> testcase right now. Will check it in cell phone environment.
 > >>>>
-> >>>> Note that it needs to exclude direct read IO during direct write,
-> >>>> since new data writing to new block address will no be valid until
-> >>>> write finished.
-> >>>>
-> >>>> storage: zram
-> >>>>
-> >>>> time xfs_io -f -d /mnt/f2fs/file -c "pwrite 0 1073741824" -c "fsync"
-> >>>>
-> >>>> Before:
-> >>>> real	0m13.061s
-> >>>> user	0m0.327s
-> >>>> sys	0m12.486s
-> >>>>
-> >>>> After:
-> >>>> real	0m6.448s
-> >>>> user	0m0.228s
-> >>>> sys	0m6.212s
-> >>>>
-> >>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >>>> ---
-> >>>>  fs/f2fs/data.c | 41 +++++++++++++++++++++++++++++++++--------
-> >>>>  fs/f2fs/f2fs.h | 39 +++++++++++++++++++++++++++++++++++----
-> >>>>  fs/f2fs/file.c |  3 ++-
-> >>>>  3 files changed, 70 insertions(+), 13 deletions(-)
-> >>>>
-> >>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> >>>> index 048f9cf1d589..9937dc2f384a 100644
-> >>>> --- a/fs/f2fs/data.c
-> >>>> +++ b/fs/f2fs/data.c
-> >>>> @@ -894,7 +894,7 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
-> >>>>  
-> >>>>  	dn->data_blkaddr = datablock_addr(dn->inode,
-> >>>>  				dn->node_page, dn->ofs_in_node);
-> >>>> -	if (dn->data_blkaddr == NEW_ADDR)
-> >>>> +	if (dn->data_blkaddr != NULL_ADDR)
-> >>>>  		goto alloc;
-> >>>>  
-> >>>>  	if (unlikely((err = inc_valid_block_count(sbi, dn->inode, &count))))
-> >>>> @@ -950,7 +950,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
-> >>>>  
-> >>>>  	if (direct_io) {
-> >>>>  		map.m_seg_type = f2fs_rw_hint_to_seg_type(iocb->ki_hint);
-> >>>> -		flag = f2fs_force_buffered_io(inode, WRITE) ?
-> >>>> +		flag = f2fs_force_buffered_io(inode, iocb, from) ?
-> >>>>  					F2FS_GET_BLOCK_PRE_AIO :
-> >>>>  					F2FS_GET_BLOCK_PRE_DIO;
-> >>>>  		goto map_blocks;
-> >>>> @@ -1069,7 +1069,15 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
-> >>>>  		goto sync_out;
-> >>>>  	}
-> >>>>  
-> >>>> -	if (!is_valid_data_blkaddr(sbi, blkaddr)) {
-> >>>> +	if (is_valid_data_blkaddr(sbi, blkaddr)) {
-> >>>> +		/* use out-place-update for driect IO under LFS mode */
-> >>>> +		if (test_opt(sbi, LFS) && create &&
-> >>>> +				flag == F2FS_GET_BLOCK_DEFAULT) {
-> >>>> +			err = __allocate_data_block(&dn, map->m_seg_type);
-> >>>> +			if (!err)
-> >>>> +				set_inode_flag(inode, FI_APPEND_WRITE);
-> >>>> +		}
-> >>>> +	} else {
-> >>>>  		if (create) {
-> >>>>  			if (unlikely(f2fs_cp_error(sbi))) {
-> >>>>  				err = -EIO;
-> >>>> @@ -2491,36 +2499,53 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
-> >>>>  	struct address_space *mapping = iocb->ki_filp->f_mapping;
-> >>>>  	struct inode *inode = mapping->host;
-> >>>>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> >>>> +	struct f2fs_inode_info *fi = F2FS_I(inode);
-> >>>>  	size_t count = iov_iter_count(iter);
-> >>>>  	loff_t offset = iocb->ki_pos;
-> >>>>  	int rw = iov_iter_rw(iter);
-> >>>>  	int err;
-> >>>>  	enum rw_hint hint = iocb->ki_hint;
-> >>>>  	int whint_mode = F2FS_OPTION(sbi).whint_mode;
-> >>>> +	bool lock_read;
-> >>>>  
-> >>>>  	err = check_direct_IO(inode, iter, offset);
-> >>>>  	if (err)
-> >>>>  		return err < 0 ? err : 0;
-> >>>>  
-> >>>> -	if (f2fs_force_buffered_io(inode, rw))
-> >>>> +	if (f2fs_force_buffered_io(inode, iocb, iter))
-> >>>>  		return 0;
-> >>>>  
-> >>>> +	lock_read = allow_outplace_dio(inode, iocb, iter);
-> >>>> +
-> >>>>  	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
-> >>>>  
-> >>>>  	if (rw == WRITE && whint_mode == WHINT_MODE_OFF)
-> >>>>  		iocb->ki_hint = WRITE_LIFE_NOT_SET;
-> >>>>  
-> >>>> -	if (!down_read_trylock(&F2FS_I(inode)->i_gc_rwsem[rw])) {
-> >>>> -		if (iocb->ki_flags & IOCB_NOWAIT) {
-> >>>> +	if (iocb->ki_flags & IOCB_NOWAIT) {
-> >>>> +		if (!down_read_trylock(&fi->i_gc_rwsem[rw])) {
-> >>>> +			iocb->ki_hint = hint;
-> >>>> +			err = -EAGAIN;
-> >>>> +			goto out;
-> >>>> +		}
-> >>>> +		if (lock_read && !down_read_trylock(&fi->i_gc_rwsem[READ])) {
-> >>>> +			up_read(&fi->i_gc_rwsem[rw]);
-> >>>>  			iocb->ki_hint = hint;
-> >>>>  			err = -EAGAIN;
-> >>>>  			goto out;
-> >>>>  		}
-> >>>> -		down_read(&F2FS_I(inode)->i_gc_rwsem[rw]);
-> >>>> +	} else {
-> >>>> +		down_read(&fi->i_gc_rwsem[rw]);
-> >>>> +		if (lock_read)
-> >>>> +			down_read(&fi->i_gc_rwsem[READ]);
-> >>>>  	}
-> >>>>  
-> >>>>  	err = blockdev_direct_IO(iocb, inode, iter, get_data_block_dio);
-> >>>> -	up_read(&F2FS_I(inode)->i_gc_rwsem[rw]);
-> >>>> +
-> >>>> +	if (lock_read)
-> >>>> +		up_read(&fi->i_gc_rwsem[READ]);
-> >>>> +
-> >>>> +	up_read(&fi->i_gc_rwsem[rw]);
-> >>>>  
-> >>>>  	if (rw == WRITE) {
-> >>>>  		if (whint_mode == WHINT_MODE_OFF)
-> >>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >>>> index 6f59ad180be7..a6dc9d581ee4 100644
-> >>>> --- a/fs/f2fs/f2fs.h
-> >>>> +++ b/fs/f2fs/f2fs.h
-> >>>> @@ -8,6 +8,7 @@
-> >>>>  #ifndef _LINUX_F2FS_H
-> >>>>  #define _LINUX_F2FS_H
-> >>>>  
-> >>>> +#include <linux/uio.h>
-> >>>>  #include <linux/types.h>
-> >>>>  #include <linux/page-flags.h>
-> >>>>  #include <linux/buffer_head.h>
-> >>>> @@ -3461,11 +3462,41 @@ static inline bool f2fs_may_encrypt(struct inode *inode)
-> >>>>  #endif
-> >>>>  }
-> >>>>  
-> >>>> -static inline bool f2fs_force_buffered_io(struct inode *inode, int rw)
-> >>>> +static inline int block_unaligned_IO(struct inode *inode,
-> >>>> +				struct kiocb *iocb, struct iov_iter *iter)
-> >>>>  {
-> >>>> -	return (f2fs_post_read_required(inode) ||
-> >>>> -			(rw == WRITE && test_opt(F2FS_I_SB(inode), LFS)) ||
-> >>>> -			F2FS_I_SB(inode)->s_ndevs);
-> >>>> +	unsigned int i_blkbits = READ_ONCE(inode->i_blkbits);
-> >>>> +	unsigned int blocksize_mask = (1 << i_blkbits) - 1;
-> >>>> +	loff_t offset = iocb->ki_pos;
-> >>>> +	unsigned long align = offset | iov_iter_alignment(iter);
-> >>>> +
-> >>>> +	return align & blocksize_mask;
-> >>>> +}
-> >>>> +
-> >>>> +static inline int allow_outplace_dio(struct inode *inode,
-> >>>> +				struct kiocb *iocb, struct iov_iter *iter)
-> >>>> +{
-> >>>> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> >>>> +	int rw = iov_iter_rw(iter);
-> >>>> +
-> >>>> +	return (test_opt(sbi, LFS) && (rw == WRITE) &&
-> >>>> +				!block_unaligned_IO(inode, iocb, iter));
-> >>>> +}
-> >>>> +
-> >>>> +static inline bool f2fs_force_buffered_io(struct inode *inode,
-> >>>> +				struct kiocb *iocb, struct iov_iter *iter)
-> >>>> +{
-> >>>> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> >>>> +	int rw = iov_iter_rw(iter);
-> >>>> +
-> >>>> +	if (f2fs_post_read_required(inode))
-> >>>> +		return true;
-> >>>> +	if (sbi->s_ndevs)
-> >>>> +		return true;
-> >>>> +	if (test_opt(sbi, LFS) && (rw == WRITE) &&
-> >>>> +				block_unaligned_IO(inode, iocb, iter))
-> >>>> +		return true;
-> >>>> +	return false;
-> >>>>  }
-> >>>>  
-> >>>>  #ifdef CONFIG_F2FS_FAULT_INJECTION
-> >>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> >>>> index 428e7398bd89..70491631e040 100644
-> >>>> --- a/fs/f2fs/file.c
-> >>>> +++ b/fs/f2fs/file.c
-> >>>> @@ -3018,7 +3018,8 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> >>>>  				if (!f2fs_overwrite_io(inode, iocb->ki_pos,
-> >>>>  						iov_iter_count(from)) ||
-> >>>>  					f2fs_has_inline_data(inode) ||
-> >>>> -					f2fs_force_buffered_io(inode, WRITE)) {
-> >>>> +					f2fs_force_buffered_io(inode,
-> >>>> +							iocb, from)) {
-> >>>>  						clear_inode_flag(inode,
-> >>>>  								FI_NO_PREALLOC);
-> >>>>  						inode_unlock(inode);
-> >>>> -- 
-> >>>> 2.18.0
+> >>>>>
+> >>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>>>> ---
+> >>>>>  fs/f2fs/recovery.c | 5 +++++
+> >>>>>  1 file changed, 5 insertions(+)
+> >>>>>
+> >>>>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> >>>>> index 56d34193a74b..bff5cf730e13 100644
+> >>>>> --- a/fs/f2fs/recovery.c
+> >>>>> +++ b/fs/f2fs/recovery.c
+> >>>>> @@ -84,6 +84,11 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
+> >>>>>  		err = dquot_alloc_inode(inode);
+> >>>>>  		if (err)
+> >>>>>  			goto err_out;
+> >>>>> +		err = dquot_reserve_block(inode, 1);
+> >>>>> +		if (err) {
+> >>>>> +			dquot_drop(inode);
+> >>>>> +			goto err_out;
+> >>>>> +		}
+> >>>>>  	}
+> >>>>>  
+> >>>>>  	entry = f2fs_kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
+> >>>>>
 > >>>
 > >>> .
 > >>>
