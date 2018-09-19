@@ -1,138 +1,94 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: Re: [PATCH] fsck.f2fs: detect and recover corrupted
- quota file
-Date: Wed, 19 Sep 2018 09:48:53 +0800
-Message-ID: <0c46376e-8f21-ff13-cec2-ac8f06b68ffa@huawei.com>
-References: <20180919012837.92414-1-yuchao0@huawei.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: Re: [PATCH] f2fs: avoid GC causing encrypted file corrupted
+Date: Wed, 19 Sep 2018 10:37:12 +0800
+Message-ID: <8f0e5fc7-cb22-47a0-30e8-4e3a25891e8b@huawei.com>
+References: <1537274393-78441-1-git-send-email-yunlong.song@huawei.com>
+ <20180918181705.GG91945@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <shengyong1@huawei.com>) id 1g2Rc3-0001qE-IU
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Sep 2018 01:49:07 +0000
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g2Rc1-00FPi0-MC
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Sep 2018 01:49:07 +0000
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id 128E2411107
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 19 Sep 2018 09:48:58 +0800 (CST)
-In-Reply-To: <20180919012837.92414-1-yuchao0@huawei.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180918181705.GG91945@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi, Chao
 
-On 2018/9/19 9:28, Chao Yu wrote:
-> Once quota file is corrupted, kernel will set CP_QUOTA_NEED_FSCK_FLAG
-> into checkpoint pack, this patch makes fsck supporting to detect the flag
-> and try to rebuild corrupted quota file.
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->   fsck/fsck.c       |  3 ++-
->   fsck/main.c       |  1 +
->   fsck/mount.c      | 11 +++++++++--
->   include/f2fs_fs.h |  2 ++
->   4 files changed, 14 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fsck/fsck.c b/fsck/fsck.c
-> index 40b95f7054a2..28c913b83355 100644
-> --- a/fsck/fsck.c
-> +++ b/fsck/fsck.c
-> @@ -2670,7 +2670,8 @@ int fsck_verify(struct f2fs_sb_info *sbi)
->   				flush_curseg_sit_entries(sbi);
->   			}
->   			fix_checkpoint(sbi);
-> -		} else if (is_set_ckpt_flags(cp, CP_FSCK_FLAG)) {
-> +		} else if (is_set_ckpt_flags(cp, CP_FSCK_FLAG) ||
-> +			is_set_ckpt_flags(cp, CP_QUOTA_NEED_FSCK_FLAG)) {
->   			write_checkpoint(sbi);
->   		}
->   	}
-> diff --git a/fsck/main.c b/fsck/main.c
-> index 714e28a509b9..e20f31ca09e4 100644
-> --- a/fsck/main.c
-> +++ b/fsck/main.c
-> @@ -162,6 +162,7 @@ static void add_default_options(void)
->   	case CONF_ANDROID:
->   		__add_fsck_options();
->   	}
-> +	c.quota_fix = 1;
->   }
->   
->   void f2fs_parse_options(int argc, char *argv[])
-> diff --git a/fsck/mount.c b/fsck/mount.c
-> index 6a3382dbd449..21a39a7222c6 100644
-> --- a/fsck/mount.c
-> +++ b/fsck/mount.c
-> @@ -405,6 +405,8 @@ void print_ckpt_info(struct f2fs_sb_info *sbi)
->   void print_cp_state(u32 flag)
->   {
->   	MSG(0, "Info: checkpoint state = %x : ", flag);
-> +	if (flag & CP_QUOTA_NEED_FSCK_FLAG)
-> +		MSG(0, "%s", " quota_need_fsck");
->   	if (flag & CP_LARGE_NAT_BITMAP_FLAG)
->   		MSG(0, "%s", " large_nat_bitmap");
->   	if (flag & CP_NOCRC_RECOVERY_FLAG)
-> @@ -2541,12 +2543,17 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
->   
->   	print_ckpt_info(sbi);
->   
-> +	if (c.quota_fix) {
-> +		if (get_cp(ckpt_flags) & CP_QUOTA_NEED_FSCK_FLAG)
-> +			c.fix_on = 1;
-> +	}
-> +
 
-I think we don't need the quota_fix, if -f is set, fsck will always check
-quota files. If anything wrong, fix_on will be set.
+On 2018/9/19 2:17, Jaegeuk Kim wrote:
+> On 09/18, Yunlong Song wrote:
+>> The encrypted file may be corrupted by GC in following case:
+>>
+>> Time 1: | segment 1 blkaddr = A |  GC -> | segment 2 blkaddr = B |
+>> Encrypted block 1 is moved from blkaddr A of segment 1 to blkaddr B of
+>> segment 2,
+>>
+>> Time 2: | segment 1 blkaddr = B |  GC -> | segment 3 blkaddr = C |
+>              segment 2 blkaddr = B?
+Sorry for typing error.
+Yes.
+>
+>> Before page 1 is written back and if segment 2 become a victim, then
+>> page 1 is moved from blkaddr B of segment 2 to blkaddr Cof segment 3,
+>                                                           C of ?
+Yes.
+>
+>> during the GC process of Time 2, f2fs should wait for page 1 written back
+>> before reading it, or move_data_block will read a garbage block from
+>> blkaddr B since page is not written back to blkaddr B yet.
+> move_data_block() checks PageUptodate() so it won't get garbage, yes?
+> So, does ra_data_block need to check PageUptodate?
+You mean if page 1 is read from blkaddr B before it is written back to 
+blkaddr B, then
+the page will become non-uptodate status, why? Is it because 
+__read_end_io checks
+"(bio->bi_status || PageError(page))" and ClearPageUptodate(page)?
 
-thanks,
+>
+>> Commit 6aa58d8a ("f2fs: readahead encrypted block during GC") introduce
+>> ra_data_block to read encrypted block, but it forgets to add
+>> f2fs_wait_on_page_writeback to avoid racing between GC and flush.
+>>
+>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>> ---
+>>   fs/f2fs/gc.c | 10 ++++++++++
+>>   1 file changed, 10 insertions(+)
+>>
+>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>> index a4c1a41..c55fb62 100644
+>> --- a/fs/f2fs/gc.c
+>> +++ b/fs/f2fs/gc.c
+>> @@ -641,6 +641,14 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
+>>   	fio.page = page;
+>>   	fio.new_blkaddr = fio.old_blkaddr = dn.data_blkaddr;
+>>   
+>> +	/*
+>> +	 * don't cache encrypted data into meta inode until previous dirty
+>> +	 * data were writebacked to avoid racing between GC and flush.
+>> +	 */
+>> +	f2fs_wait_on_page_writeback(page, DATA, true);
+>> +
+>> +	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
+>> +
+>>   	fio.encrypted_page = f2fs_pagecache_get_page(META_MAPPING(sbi),
+>>   					dn.data_blkaddr,
+>>   					FGP_LOCK | FGP_CREAT, GFP_NOFS);
+>> @@ -723,6 +731,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
+>>   	 */
+>>   	f2fs_wait_on_page_writeback(page, DATA, true);
+>>   
+>> +	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
+>> +
+>>   	err = f2fs_get_node_info(fio.sbi, dn.nid, &ni);
+>>   	if (err)
+>>   		goto put_out;
+>> -- 
+>> 1.8.5.2
+> .
+>
 
->   	if (c.auto_fix || c.preen_mode) {
->   		u32 flag = get_cp(ckpt_flags);
->   
->   		if (flag & CP_FSCK_FLAG ||
-> -			(exist_qf_ino(sb) && (!(flag & CP_UMOUNT_FLAG) ||
-> -						flag & CP_ERROR_FLAG))) {
-> +			flag & CP_QUOTA_NEED_FSCK_FLAG ||
-> +			(exist_qf_ino(sb) && (flag & CP_ERROR_FLAG))) {
->   			c.fix_on = 1;
->   		} else if (!c.preen_mode) {
->   			print_cp_state(flag);
-> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-> index 9396c785a254..160eaf72f0b6 100644
-> --- a/include/f2fs_fs.h
-> +++ b/include/f2fs_fs.h
-> @@ -372,6 +372,7 @@ struct f2fs_configuration {
->   	int defset;
->   	int bug_on;
->   	int auto_fix;
-> +	int quota_fix;
->   	int preen_mode;
->   	int ro;
->   	int preserve_limits;		/* preserve quota limits */
-> @@ -641,6 +642,7 @@ struct f2fs_super_block {
->   /*
->    * For checkpoint
->    */
-> +#define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
->   #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
->   #define CP_NOCRC_RECOVERY_FLAG	0x00000200
->   #define CP_TRIMMED_FLAG		0x00000100
-> 
+-- 
+Thanks,
+Yunlong Song
