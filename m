@@ -1,25 +1,26 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 4/5] f2fs-tools: introduce sb checksum
-Date: Wed, 19 Sep 2018 16:35:04 -0700
-Message-ID: <20180919233504.GB84041@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH 5/5] fsck.f2fs: try to recover cp_payload
+ from valid cp pack
+Date: Wed, 19 Sep 2018 16:38:50 -0700
+Message-ID: <20180919233850.GC84041@jaegeuk-macbookpro.roam.corp.google.com>
 References: <20180919135352.173525-1-zhengjunling@huawei.com>
- <20180919135352.173525-4-zhengjunling@huawei.com>
+ <20180919135352.173525-5-zhengjunling@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1g2m01-0004e9-GD
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Sep 2018 23:35:13 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1g2m3e-0005DJ-Vm
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Sep 2018 23:38:58 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g2lzz-00GGSv-FD
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Sep 2018 23:35:12 +0000
+ id 1g2m3d-002fWA-3Q
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Sep 2018 23:38:58 +0000
 Content-Disposition: inline
-In-Reply-To: <20180919135352.173525-4-zhengjunling@huawei.com>
+In-Reply-To: <20180919135352.173525-5-zhengjunling@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,195 +34,60 @@ To: Junling Zheng <zhengjunling@huawei.com>
 Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
 On 09/19, Junling Zheng wrote:
-> This patch introduced crc for superblock.
+> From: Chao Yu <yuchao0@huawei.com>
 > 
-> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+> If sb checksum is not enabled, and cp pack is valid due to no
+> crc inconsistence, let's try to recover cp_payload based on
+> cp_pack_start_sum in cp pack.
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
 > ---
->  fsck/mount.c       | 33 +++++++++++++++++++++++++++++++++
->  fsck/resize.c      | 12 ++++++------
->  include/f2fs_fs.h  |  6 +++++-
->  mkfs/f2fs_format.c |  8 ++++++++
->  4 files changed, 52 insertions(+), 7 deletions(-)
+>  fsck/f2fs.h  |  5 +++++
+>  fsck/mount.c | 10 +++++++---
+>  2 files changed, 12 insertions(+), 3 deletions(-)
 > 
-> diff --git a/fsck/mount.c b/fsck/mount.c
-> index 74ff7c6..9019921 100644
-> --- a/fsck/mount.c
-> +++ b/fsck/mount.c
-> @@ -340,6 +340,7 @@ void print_raw_sb_info(struct f2fs_super_block *sb)
->  	DISP_u32(sb, node_ino);
->  	DISP_u32(sb, meta_ino);
->  	DISP_u32(sb, cp_payload);
-> +	DISP_u32(sb, crc);
->  	DISP("%-.256s", sb, version);
->  	printf("\n");
->  }
-> @@ -467,6 +468,9 @@ void print_sb_state(struct f2fs_super_block *sb)
->  	if (f & cpu_to_le32(F2FS_FEATURE_LOST_FOUND)) {
->  		MSG(0, "%s", " lost_found");
->  	}
-> +	if (f & cpu_to_le32(F2FS_FEATURE_SB_CHKSUM)) {
-> +		MSG(0, "%s", " sb_checksum");
-> +	}
->  	MSG(0, "\n");
->  	MSG(0, "Info: superblock encrypt level = %d, salt = ",
->  					sb->encryption_level);
-> @@ -479,10 +483,20 @@ void update_superblock(struct f2fs_super_block *sb, int sb_mask)
->  {
->  	int index, ret;
->  	u_int8_t *buf;
-> +	u32 old_crc, new_crc;
->  
->  	buf = calloc(BLOCK_SZ, 1);
->  	ASSERT(buf);
->  
-> +	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) {
-> +		old_crc = get_sb(crc);
-> +		new_crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, sb,
-> +						SB_CHKSUM_OFFSET);
-> +		set_sb(crc, new_crc);
-> +		MSG(1, "Info: SB CRC is updated (0x%x -> 0x%x)\n",
-> +							old_crc, new_crc);
-> +	}
-> +
->  	memcpy(buf + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
->  	for (index = 0; index < SB_ADDR_MAX; index++) {
->  		if ((1 << index) & sb_mask) {
-> @@ -575,10 +589,29 @@ static inline int sanity_check_area_boundary(struct f2fs_super_block *sb,
+> diff --git a/fsck/f2fs.h b/fsck/f2fs.h
+> index d216444..0d0d5e2 100644
+> --- a/fsck/f2fs.h
+> +++ b/fsck/f2fs.h
+> @@ -259,6 +259,11 @@ static inline unsigned long __bitmap_size(struct f2fs_sb_info *sbi, int flag)
 >  	return 0;
 >  }
 >  
-> +static int verify_sb_chksum(struct f2fs_super_block *sb)
+> +static inline block_t __cp_payload(struct f2fs_sb_info *sbi)
 > +{
-> +	if (SB_CHKSUM_OFFSET != get_sb(checksum_offset)) {
-> +		MSG(0, "\tInvalid SB CRC offset: %u\n",
-> +					get_sb(checksum_offset));
-> +		return -1;
-> +	}
-> +	if (f2fs_crc_valid(get_sb(crc), sb,
-> +			get_sb(checksum_offset))) {
-> +		MSG(0, "\tInvalid SB CRC: 0x%x\n", get_sb(crc));
-> +		return -1;
-> +	}
-> +	return 0;
+> +	return le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_payload);
 > +}
 > +
->  int sanity_check_raw_super(struct f2fs_super_block *sb, enum SB_ADDR sb_addr)
+>  static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
 >  {
->  	unsigned int blocksize;
->  
-> +	if ((get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) &&
-> +					verify_sb_chksum(sb))
-> +		return -1;
-> +
->  	if (F2FS_SUPER_MAGIC != get_sb(magic))
->  		return -1;
->  
-> diff --git a/fsck/resize.c b/fsck/resize.c
-> index 5161a1f..3462165 100644
-> --- a/fsck/resize.c
-> +++ b/fsck/resize.c
-> @@ -603,9 +603,6 @@ static int f2fs_resize_grow(struct f2fs_sb_info *sbi)
->  		}
+>  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+> diff --git a/fsck/mount.c b/fsck/mount.c
+> index 9019921..0e8fa41 100644
+> --- a/fsck/mount.c
+> +++ b/fsck/mount.c
+> @@ -975,12 +975,16 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
 >  	}
 >  
-> -	print_raw_sb_info(sb);
-> -	print_raw_sb_info(new_sb);
+>  	cp_pack_start_sum = __start_sum_addr(sbi);
+> -	cp_payload = get_sb(cp_payload);
+> +	cp_payload = __cp_payload(sbi);
+>  	if (cp_pack_start_sum < cp_payload + 1 ||
+>  		cp_pack_start_sum > blocks_per_seg - 1 -
+>  			NR_CURSEG_TYPE) {
+> -		MSG(0, "\tWrong cp_pack_start_sum(%u)\n", cp_pack_start_sum);
+> -		return 1;
+> +		MSG(0, "\tWrong cp_pack_start_sum(%u) or cp_payload(%u)\n",
+> +			cp_pack_start_sum, cp_payload);
+> +		if ((get_sb(feature) & F2FS_FEATURE_SB_CHKSUM))
+> +			return 1;
 
-It'd be worth to keep this to show the previous states.
+Is this trying to fix superblock? Why is it related to SB_CHKSUM?
 
-> -
->  	old_main_blkaddr = get_sb(main_blkaddr);
->  	new_main_blkaddr = get_newsb(main_blkaddr);
->  	offset = new_main_blkaddr - old_main_blkaddr;
-> @@ -629,6 +626,9 @@ static int f2fs_resize_grow(struct f2fs_sb_info *sbi)
->  	migrate_sit(sbi, new_sb, offset_seg);
->  	rebuild_checkpoint(sbi, new_sb, offset_seg);
->  	update_superblock(new_sb, SB_ALL);
-> +	print_raw_sb_info(sb);
-> +	print_raw_sb_info(new_sb);
-> +
->  	return 0;
->  }
->  
-> @@ -658,9 +658,6 @@ static int f2fs_resize_shrink(struct f2fs_sb_info *sbi)
->  		}
+> +		set_sb(cp_payload, cp_pack_start_sum - 1);
+> +		update_superblock(sb, SB_ALL);
 >  	}
 >  
-> -	print_raw_sb_info(sb);
-> -	print_raw_sb_info(new_sb);
-
-Ditto.
-
-> -
->  	old_main_blkaddr = get_sb(main_blkaddr);
->  	new_main_blkaddr = get_newsb(main_blkaddr);
->  	offset = old_main_blkaddr - new_main_blkaddr;
-> @@ -690,6 +687,9 @@ static int f2fs_resize_shrink(struct f2fs_sb_info *sbi)
->  	/* move whole data region */
->  	//if (err)
->  	//	migrate_main(sbi, offset);
-> +	print_raw_sb_info(sb);
-> +	print_raw_sb_info(new_sb);
-> +
 >  	return 0;
->  }
->  
-> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-> index 38a0da4..f80632a 100644
-> --- a/include/f2fs_fs.h
-> +++ b/include/f2fs_fs.h
-> @@ -279,6 +279,7 @@ static inline uint64_t bswap_64(uint64_t val)
->  #define BITS_PER_BYTE		8
->  #define F2FS_SUPER_MAGIC	0xF2F52010	/* F2FS Magic Number */
->  #define CP_CHKSUM_OFFSET	4092
-> +#define SB_CHKSUM_OFFSET	3068
->  #define MAX_PATH_LEN		64
->  #define MAX_DEVICES		8
->  
-> @@ -579,6 +580,7 @@ enum {
->  #define F2FS_FEATURE_INODE_CRTIME	0x0100
->  #define F2FS_FEATURE_LOST_FOUND		0x0200
->  #define F2FS_FEATURE_VERITY		0x0400	/* reserved */
-> +#define F2FS_FEATURE_SB_CHKSUM		0x0800
->  
->  #define MAX_VOLUME_NAME		512
->  
-> @@ -632,7 +634,8 @@ struct f2fs_super_block {
->  	struct f2fs_device devs[MAX_DEVICES];	/* device list */
->  	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
->  	__u8 hot_ext_count;		/* # of hot file extension */
-> -	__u8 reserved[314];		/* valid reserved region */
-> +	__u8 reserved[310];		/* valid reserved region */
-> +	__le32 crc;			/* checksum of superblock */
->  } __attribute__((packed));
->  
->  /*
-> @@ -1338,6 +1341,7 @@ struct feature feature_table[] = {					\
->  	{ "inode_crtime",		F2FS_FEATURE_INODE_CRTIME },	\
->  	{ "lost_found",			F2FS_FEATURE_LOST_FOUND },	\
->  	{ "verity",			F2FS_FEATURE_VERITY },	/* reserved */ \
-> +	{ "sb_checksum",		F2FS_FEATURE_SB_CHKSUM },	\
->  	{ NULL,				0x0},				\
->  };
->  
-> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-> index 621126c..9b0a0d1 100644
-> --- a/mkfs/f2fs_format.c
-> +++ b/mkfs/f2fs_format.c
-> @@ -504,6 +504,14 @@ static int f2fs_prepare_super_block(void)
->  
->  	sb->feature = c.feature;
->  
-> +	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) {
-> +		set_sb(checksum_offset, SB_CHKSUM_OFFSET);
-> +		set_sb(crc, f2fs_cal_crc32(F2FS_SUPER_MAGIC, sb,
-> +						SB_CHKSUM_OFFSET));
-> +		MSG(1, "Info: SB CRC is set: offset (%d), crc (0x%x)\n",
-> +					get_sb(checksum_offset), get_sb(crc));
-> +	}
-> +
->  	return 0;
->  }
->  
 > -- 
 > 2.19.0
