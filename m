@@ -1,68 +1,67 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 200465] null ptr dereference in
- fscrypt_do_page_crypto() when operating a file on a corrupted f2fs image
-Date: Thu, 20 Sep 2018 21:11:13 +0000
-Message-ID: <bug-200465-202145-sXAhavRYeQ@https.bugzilla.kernel.org/>
-References: <bug-200465-202145@https.bugzilla.kernel.org/>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH 1/2 v3] f2fs: report ENOENT correct in
+ f2fs_rename
+Date: Thu, 20 Sep 2018 14:35:01 -0700
+Message-ID: <20180920213501.GA35918@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180918021805.85032-1-jaegeuk@kernel.org>
+ <20180919225037.GC79681@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1g36EO-0002DG-2y
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Sep 2018 21:11:24 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g36EL-00H9wU-Oq
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Sep 2018 21:11:23 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id A94DA2E266
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 20 Sep 2018 21:11:13 +0000 (UTC)
-In-Reply-To: <bug-200465-202145@https.bugzilla.kernel.org/>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180919225037.GC79681@jaegeuk-macbookpro.roam.corp.google.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200465
+This fixes wrong error report in f2fs_rename.
 
---- Comment #4 from Wen Xu (wen.xu@gatech.edu) ---
-(In reply to Chao Yu from comment #3)
-> Steve,
-> 
-> I figure out that patch to solve issue which I encounter with image attached
-> by Wen Xu, the bug can be triggered with below scripts:
-> - mount image /mnt/f2fs/
-> - cd /mnt/f2fs/foo/bar/
-> - ls -l
-> 
-> After applying that patch, the problem was gone.
-> 
-> But when the bug triggeres, related call stack is not the same as reported
-> one, also I can't reproduce reported call stack with the method provided
-> from Wen Xu.
-> 
-> I guess the right producing way is adding master key for encrypted file, I'd
-> like to confirm with Wen Xu.
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ Change log from v2:
+  - remove needless err assignment
+  - relocate err precisely
 
-Hi Chao,
+ fs/f2fs/namei.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Sorry for a late reply! Eh the first thing is that I never did anything like
-adding master key for encrypted file. Second, I feel I pasted wrong
-(mismatched) kernel message/PoC...but unfortunately I do not have a local copy
-on my laptop now.
-
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 98d3ab7c3ce6..abbad9610fad 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -833,7 +833,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	struct f2fs_dir_entry *old_entry;
+ 	struct f2fs_dir_entry *new_entry;
+ 	bool is_old_inline = f2fs_has_inline_dentry(old_dir);
+-	int err = -ENOENT;
++	int err;
+ 
+ 	if (unlikely(f2fs_cp_error(sbi)))
+ 		return -EIO;
+@@ -860,6 +860,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 			goto out;
+ 	}
+ 
++	err = -ENOENT;
+ 	old_entry = f2fs_find_entry(old_dir, &old_dentry->d_name, &old_page);
+ 	if (!old_entry) {
+ 		if (IS_ERR(old_page))
+@@ -1025,7 +1026,7 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	struct f2fs_dir_entry *old_dir_entry = NULL, *new_dir_entry = NULL;
+ 	struct f2fs_dir_entry *old_entry, *new_entry;
+ 	int old_nlink = 0, new_nlink = 0;
+-	int err = -ENOENT;
++	int err;
+ 
+ 	if (unlikely(f2fs_cp_error(sbi)))
+ 		return -EIO;
+@@ -1049,6 +1050,7 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	if (err)
+ 		goto out;
+ 
++	err = -ENOENT;
+ 	old_entry = f2fs_find_entry(old_dir, &old_dentry->d_name, &old_page);
+ 	if (!old_entry) {
+ 		if (IS_ERR(old_page))
 -- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+2.17.0.441.gb46fe60e1d-goog
