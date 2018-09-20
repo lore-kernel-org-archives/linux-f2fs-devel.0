@@ -1,13 +1,12 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: remove default option setting in
- remount
-Date: Thu, 20 Sep 2018 14:29:16 +0800
-Message-ID: <9b7ba619-e29c-9e79-74b0-e4ababae825a@huawei.com>
-References: <20180918062344.3102-1-cgxu519@gmx.com>
- <9bc59ef2-01cc-0cf1-1676-4d8a75514aad@kernel.org>
- <a8cdaf63-c5fd-9391-2411-b61c8941351e@gmx.com>
- <13e22905-22e6-2048-c6b7-5f573380f189@kernel.org>
- <53b1fc54-5827-1506-b081-328505f15dff@gmx.com>
+Subject: Re: [PATCH 5/5] fsck.f2fs: try to recover cp_payload
+ from valid cp pack
+Date: Thu, 20 Sep 2018 14:45:37 +0800
+Message-ID: <61bdcb89-a537-06a7-ab0c-9ff5e9741869@huawei.com>
+References: <20180919135352.173525-1-zhengjunling@huawei.com>
+ <20180919135352.173525-5-zhengjunling@huawei.com>
+ <20180919233850.GC84041@jaegeuk-macbookpro.roam.corp.google.com>
+ <0e66c219-1691-bb5d-ee7c-338a2a1f49f8@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -15,14 +14,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1g2sSs-0003tA-Rn
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Sep 2018 06:29:26 +0000
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1g2sio-0004BB-3l
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Sep 2018 06:45:54 +0000
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g2sSq-006PQt-CY
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Sep 2018 06:29:26 +0000
-In-Reply-To: <53b1fc54-5827-1506-b081-328505f15dff@gmx.com>
+ id 1g2sil-002pyF-K0
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Sep 2018 06:45:53 +0000
+In-Reply-To: <0e66c219-1691-bb5d-ee7c-338a2a1f49f8@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,122 +32,95 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: cgxu519 <cgxu519@gmx.com>, Chao Yu <chao@kernel.org>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Junling Zheng <zhengjunling@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/9/20 7:54, cgxu519 wrote:
-> On 9/19/18 10:02 PM, Chao Yu wrote:
->> On 2018/9/18 21:47, cgxu519 wrote:
->>> On 09/18/2018 09:20 PM, Chao Yu wrote:
->>>> On 2018/9/18 14:23, Chengguang Xu wrote:
->>>>> Currently we set default value to options before parsing remount options,
->>>>> it will cause unexpected change of options which were specified in first
->>>>> mount.
->>>> Can you check below commit? It looks w/o it we may lose default option after
->>>> remount.
->>>>
->>>> 498c5e9fcd10 ("f2fs: add default mount options to remount")
->>> Hi Chao,
->> Hi Chengguang,
->>
->>> It looks like there was a bug in remount at that time, but I think the fix above
->>> is not correct.
+On 2018/9/20 10:38, Junling Zheng wrote:
+> On 2018/9/20 7:38, Jaegeuk Kim wrote:
+>> On 09/19, Junling Zheng wrote:
+>>> From: Chao Yu <yuchao0@huawei.com>
 >>>
->>> from the patch '498c5e9fcd10', I think it was caused by clearing
->>> sbi->mount_opt.opt before
+>>> If sb checksum is not enabled, and cp pack is valid due to no
+>>> crc inconsistence, let's try to recover cp_payload based on
+>>> cp_pack_start_sum in cp pack.
 >>>
->>> parsing. I think remount should not change the options which were specified by
->>> user in
+>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>> ---
+>>>  fsck/f2fs.h  |  5 +++++
+>>>  fsck/mount.c | 10 +++++++---
+>>>  2 files changed, 12 insertions(+), 3 deletions(-)
 >>>
->>> previous mount unless user specifies in remount.
->> Can you check description in manual of mount.
+>>> diff --git a/fsck/f2fs.h b/fsck/f2fs.h
+>>> index d216444..0d0d5e2 100644
+>>> --- a/fsck/f2fs.h
+>>> +++ b/fsck/f2fs.h
+>>> @@ -259,6 +259,11 @@ static inline unsigned long __bitmap_size(struct f2fs_sb_info *sbi, int flag)
+>>>  	return 0;
+>>>  }
+>>>  
+>>> +static inline block_t __cp_payload(struct f2fs_sb_info *sbi)
+>>> +{
+>>> +	return le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_payload);
+>>> +}
+>>> +
+>>>  static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
+>>>  {
+>>>  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+>>> diff --git a/fsck/mount.c b/fsck/mount.c
+>>> index 9019921..0e8fa41 100644
+>>> --- a/fsck/mount.c
+>>> +++ b/fsck/mount.c
+>>> @@ -975,12 +975,16 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
+>>>  	}
+>>>  
+>>>  	cp_pack_start_sum = __start_sum_addr(sbi);
+>>> -	cp_payload = get_sb(cp_payload);
+>>> +	cp_payload = __cp_payload(sbi);
+>>>  	if (cp_pack_start_sum < cp_payload + 1 ||
+>>>  		cp_pack_start_sum > blocks_per_seg - 1 -
+>>>  			NR_CURSEG_TYPE) {
+>>> -		MSG(0, "\tWrong cp_pack_start_sum(%u)\n", cp_pack_start_sum);
+>>> -		return 1;
+>>> +		MSG(0, "\tWrong cp_pack_start_sum(%u) or cp_payload(%u)\n",
+>>> +			cp_pack_start_sum, cp_payload);
+>>> +		if ((get_sb(feature) & F2FS_FEATURE_SB_CHKSUM))
+>>> +			return 1;
 >>
->> IIRC, old mount option will be record into /etc/mtab or /proc/mounts (for
->> adapting namespace feature), with command of "mount -o remount,rw  /dir", old
->> mount options can be loaded from above config file, and merge them with new
->> specified options.
+>> Is this trying to fix superblock? Why is it related to SB_CHKSUM?
 >>
->> Even we kill old mount options by call default_options() in ->remount, user's
->> old mount option can still be set through parameters.
 > 
-> Please let me show you different behaviors before/after this patch.
+> If sb_checksum is enabled, we should not try to fix superblock.
+> In this situation, both sb and cp are verified with crc, so we
+> don't know which one, cp_payload or cp_pack_start_sum, is the
+> exact one.
 > 
-> 
-> [root@x201 cgxu]# uname -a
-> Linux x201 4.19.0-rc2+ #51 SMP Wed Sep 19 22:41:20 CST 2018 x86_64 
-> x86_64 x86_64 GNU/Linux
-> 
-> 
-> Before:
-> 
-> [root@x201 cgxu]# mount -o fsync_mode=strict /dev/mapper/test-test1 
-> /mnt/test/test1
-> [root@x201 cgxu]# mount | grep test1
-> /dev/mapper/test-test1 on /mnt/test/test1 type f2fs 
-> (rw,relatime,lazytime,background_gc=on,discard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=reuse,fsync_mode=strict)
-> 
-> [root@x201 cgxu]# mount -o remount,background_gc=sync 
-> /dev/mapper/test-test1 /mnt/test/test1
-> [root@x201 cgxu]# mount | grep test1
-> /dev/mapper/test-test1 on /mnt/test/test1 type f2fs 
-> (rw,relatime,background_gc=sync,discard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,fsync_mode=posix)
-> 
-> 
-> I only changed background_gc in ->remount, but fsync_mode is implicitly 
-> set to default value 'posix'.
+> By contraries, if sb_checksum is disabled, we could try to fix
+> superblock as below :)
 
-IMO, the resul is as expected, let's referenced description in manual of mount:
+Thanks for helping explanation, Junling.
 
-              The  remount  functionality  follows the standard way how the
-mount command works with options from fstab. It means the mount command
-doesn't read fstab (or mtab) only when a device and
-              dir are fully specified.
+That's true, w/o sb checksum feature, sb data is run out-of-protection,
+instead, checkpoint pack data is always protected by checksum, so I expect
+cp pack data is more trusty, that's why I just do recovery based on cp
+pack's data.
 
-              mount -o remount,rw /dev/foo /dir
-
-              After this call all old mount options are replaced and
-arbitrary stuff from fstab is ignored, except the loop= option which is
-internally generated and maintained by the mount command.
-
-              mount -o remount,rw  /dir
-
-              After this call mount reads fstab (or mtab) and merges these
-options with options from command line ( -o ).
-
-
-So if you want to keep old mount option, you should use:
-
-mount -o remount,background_gc=sync /mnt/test/test1
-
-instead of
-
-mount -o remount,background_gc=sync /dev/mapper/test-test1 /mnt/test/test1
+If sb checksum feature is on, and checksum in SB and CP are all correct, we
+still do not know which data is more trusty, so I just leave such case for now.
 
 Thanks,
 
 > 
-> After:
-> 
-> [root@x201 linus]# mount -o fsync_mode=strict /dev/mapper/test-test1 
-> /mnt/test/test1
-> [root@x201 linus]# mount | grep test1
-> /dev/mapper/test-test1 on /mnt/test/test1 type f2fs 
-> (rw,relatime,lazytime,background_gc=on,discard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=reuse,fsync_mode=strict)
-> 
-> [root@x201 linus]# mount -o remount,background_gc=sync 
-> /dev/mapper/test-test1 /mnt/test/test1
-> [root@x201 linus]# mount | grep test1
-> /dev/mapper/test-test1 on /mnt/test/test1 type f2fs 
-> (rw,relatime,background_gc=sync,discard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=reuse,fsync_mode=strict)
-> 
-> This time fysnc_mode looks fine.
-> 
+>>> +		set_sb(cp_payload, cp_pack_start_sum - 1);
+>>> +		update_superblock(sb, SB_ALL);
+>>>  	}
+>>>  >>  	return 0;
+>>> -- 
+>>> 2.19.0
 >>
->> But the problem here is, some old parameter can be configured via sysfs, if we
->> reset them in default_options(), we will lose them forever after remount.
+>> .
 >>
->> If you have no other opinion about this, could you adapt your commit log?
->>
+> 
+> 
 > 
 > .
 > 
