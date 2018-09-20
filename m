@@ -1,69 +1,154 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH 1/2 v2] f2fs: report ENOENT correct in
- f2fs_rename
-Date: Thu, 20 Sep 2018 14:14:25 +0800
-Message-ID: <740d4c02-0fdd-d9bb-2079-2cb0947bf581@huawei.com>
-References: <20180918021805.85032-1-jaegeuk@kernel.org>
- <20180919225037.GC79681@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH] f2fs: remove default option setting in
+ remount
+Date: Thu, 20 Sep 2018 14:29:16 +0800
+Message-ID: <9b7ba619-e29c-9e79-74b0-e4ababae825a@huawei.com>
+References: <20180918062344.3102-1-cgxu519@gmx.com>
+ <9bc59ef2-01cc-0cf1-1676-4d8a75514aad@kernel.org>
+ <a8cdaf63-c5fd-9391-2411-b61c8941351e@gmx.com>
+ <13e22905-22e6-2048-c6b7-5f573380f189@kernel.org>
+ <53b1fc54-5827-1506-b081-328505f15dff@gmx.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180919225037.GC79681@jaegeuk-macbookpro.roam.corp.google.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1g2sSs-0003tA-Rn
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Sep 2018 06:29:26 +0000
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1g2sSq-006PQt-CY
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Sep 2018 06:29:26 +0000
+In-Reply-To: <53b1fc54-5827-1506-b081-328505f15dff@gmx.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: cgxu519 <cgxu519@gmx.com>, Chao Yu <chao@kernel.org>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/9/20 6:50, Jaegeuk Kim wrote:
-> This fixes wrong error report in f2fs_rename.
+On 2018/9/20 7:54, cgxu519 wrote:
+> On 9/19/18 10:02 PM, Chao Yu wrote:
+>> On 2018/9/18 21:47, cgxu519 wrote:
+>>> On 09/18/2018 09:20 PM, Chao Yu wrote:
+>>>> On 2018/9/18 14:23, Chengguang Xu wrote:
+>>>>> Currently we set default value to options before parsing remount options,
+>>>>> it will cause unexpected change of options which were specified in first
+>>>>> mount.
+>>>> Can you check below commit? It looks w/o it we may lose default option after
+>>>> remount.
+>>>>
+>>>> 498c5e9fcd10 ("f2fs: add default mount options to remount")
+>>> Hi Chao,
+>> Hi Chengguang,
+>>
+>>> It looks like there was a bug in remount at that time, but I think the fix above
+>>> is not correct.
+>>>
+>>> from the patch '498c5e9fcd10', I think it was caused by clearing
+>>> sbi->mount_opt.opt before
+>>>
+>>> parsing. I think remount should not change the options which were specified by
+>>> user in
+>>>
+>>> previous mount unless user specifies in remount.
+>> Can you check description in manual of mount.
+>>
+>> IIRC, old mount option will be record into /etc/mtab or /proc/mounts (for
+>> adapting namespace feature), with command of "mount -o remount,rw  /dir", old
+>> mount options can be loaded from above config file, and merge them with new
+>> specified options.
+>>
+>> Even we kill old mount options by call default_options() in ->remount, user's
+>> old mount option can still be set through parameters.
 > 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
-> Change log from v1:
->  - cover rename2 case
+> Please let me show you different behaviors before/after this patch.
 > 
->  fs/f2fs/namei.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index 98d3ab7c3ce6..48f919469151 100644
-> --- a/fs/f2fs/namei.c
-> +++ b/fs/f2fs/namei.c
-> @@ -833,7 +833,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
->  	struct f2fs_dir_entry *old_entry;
->  	struct f2fs_dir_entry *new_entry;
->  	bool is_old_inline = f2fs_has_inline_dentry(old_dir);
-> -	int err = -ENOENT;
-> +	int err;
->  
->  	if (unlikely(f2fs_cp_error(sbi)))
->  		return -EIO;
-> @@ -854,6 +854,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
->  	if (err)
->  		goto out;
->  
-> +	err = -ENOENT;
+> [root@x201 cgxu]# uname -a
+> Linux x201 4.19.0-rc2+ #51 SMP Wed Sep 19 22:41:20 CST 2018 x86_64 
+> x86_64 x86_64 GNU/Linux
+> 
+> 
+> Before:
+> 
+> [root@x201 cgxu]# mount -o fsync_mode=strict /dev/mapper/test-test1 
+> /mnt/test/test1
+> [root@x201 cgxu]# mount | grep test1
+> /dev/mapper/test-test1 on /mnt/test/test1 type f2fs 
+> (rw,relatime,lazytime,background_gc=on,discard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=reuse,fsync_mode=strict)
+> 
+> [root@x201 cgxu]# mount -o remount,background_gc=sync 
+> /dev/mapper/test-test1 /mnt/test/test1
+> [root@x201 cgxu]# mount | grep test1
+> /dev/mapper/test-test1 on /mnt/test/test1 type f2fs 
+> (rw,relatime,background_gc=sync,discard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,fsync_mode=posix)
+> 
+> 
+> I only changed background_gc in ->remount, but fsync_mode is implicitly 
+> set to default value 'posix'.
 
-It should be assigned after dquot_initialize(), otherwise, err's value can
-still be reset to 0 due to dquot_initialize().
+IMO, the resul is as expected, let's referenced description in manual of mount:
 
->  	if (new_inode) {
->  		err = dquot_initialize(new_inode);
->  		if (err)
-> @@ -1049,6 +1050,7 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
->  	if (err)
->  		goto out;
->  
-> +	err = -ENOENT;
+              The  remount  functionality  follows the standard way how the
+mount command works with options from fstab. It means the mount command
+doesn't read fstab (or mtab) only when a device and
+              dir are fully specified.
 
-We can remove err initialization like f2fs_rename()
+              mount -o remount,rw /dev/foo /dir
 
-int err;
+              After this call all old mount options are replaced and
+arbitrary stuff from fstab is ignored, except the loop= option which is
+internally generated and maintained by the mount command.
+
+              mount -o remount,rw  /dir
+
+              After this call mount reads fstab (or mtab) and merges these
+options with options from command line ( -o ).
+
+
+So if you want to keep old mount option, you should use:
+
+mount -o remount,background_gc=sync /mnt/test/test1
+
+instead of
+
+mount -o remount,background_gc=sync /dev/mapper/test-test1 /mnt/test/test1
 
 Thanks,
 
->  	old_entry = f2fs_find_entry(old_dir, &old_dentry->d_name, &old_page);
->  	if (!old_entry) {
->  		if (IS_ERR(old_page))
+> 
+> After:
+> 
+> [root@x201 linus]# mount -o fsync_mode=strict /dev/mapper/test-test1 
+> /mnt/test/test1
+> [root@x201 linus]# mount | grep test1
+> /dev/mapper/test-test1 on /mnt/test/test1 type f2fs 
+> (rw,relatime,lazytime,background_gc=on,discard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=reuse,fsync_mode=strict)
+> 
+> [root@x201 linus]# mount -o remount,background_gc=sync 
+> /dev/mapper/test-test1 /mnt/test/test1
+> [root@x201 linus]# mount | grep test1
+> /dev/mapper/test-test1 on /mnt/test/test1 type f2fs 
+> (rw,relatime,background_gc=sync,discard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=reuse,fsync_mode=strict)
+> 
+> This time fysnc_mode looks fine.
+> 
+>>
+>> But the problem here is, some old parameter can be configured via sysfs, if we
+>> reset them in default_options(), we will lose them forever after remount.
+>>
+>> If you have no other opinion about this, could you adapt your commit log?
+>>
+> 
+> .
 > 
