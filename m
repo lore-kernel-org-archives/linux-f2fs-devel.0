@@ -1,109 +1,133 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] f2fs: avoid GC causing encrypted file corrupted
-Date: Fri, 21 Sep 2018 22:20:20 +0800
-Message-ID: <aa837149-1dc3-9b75-a54c-00703781b2b4@kernel.org>
-References: <1537274393-78441-1-git-send-email-yunlong.song@huawei.com>
- <20180918181705.GG91945@jaegeuk-macbookpro.roam.corp.google.com>
+From: cgxu519 <cgxu519@gmx.com>
+Subject: Re: [PATCH] f2fs: remove default option setting in
+ remount
+Date: Sat, 22 Sep 2018 22:40:02 +0800
+Message-ID: <6e60aadf-0568-f67d-68e1-ff99d38790e6@gmx.com>
+References: <20180918062344.3102-1-cgxu519@gmx.com>
+ <9bc59ef2-01cc-0cf1-1676-4d8a75514aad@kernel.org>
+ <a8cdaf63-c5fd-9391-2411-b61c8941351e@gmx.com>
+ <13e22905-22e6-2048-c6b7-5f573380f189@kernel.org>
+ <53b1fc54-5827-1506-b081-328505f15dff@gmx.com>
+ <9b7ba619-e29c-9e79-74b0-e4ababae825a@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180918181705.GG91945@jaegeuk-macbookpro.roam.corp.google.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <cgxu519@gmx.com>) id 1g3j57-0001BM-DA
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 22 Sep 2018 14:40:25 +0000
+Received: from mout.gmx.net ([212.227.15.15])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1g3j55-0014hS-DI
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 22 Sep 2018 14:40:25 +0000
+In-Reply-To: <9b7ba619-e29c-9e79-74b0-e4ababae825a@huawei.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Yunlong Song <yunlong.song@huawei.com>
-Cc: yuchao0@huawei.com, yunlong.song@icloud.com, miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>, Chao Yu <chao@kernel.org>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/9/19 2:17, Jaegeuk Kim wrote:
-> On 09/18, Yunlong Song wrote:
->> The encrypted file may be corrupted by GC in following case:
+On 09/20/2018 02:29 PM, Chao Yu wrote:
+> On 2018/9/20 7:54, cgxu519 wrote:
+>> On 9/19/18 10:02 PM, Chao Yu wrote:
+>>> On 2018/9/18 21:47, cgxu519 wrote:
+>>>> On 09/18/2018 09:20 PM, Chao Yu wrote:
+>>>>> On 2018/9/18 14:23, Chengguang Xu wrote:
+>>>>>> Currently we set default value to options before parsing remount options,
+>>>>>> it will cause unexpected change of options which were specified in first
+>>>>>> mount.
+>>>>> Can you check below commit? It looks w/o it we may lose default option after
+>>>>> remount.
+>>>>>
+>>>>> 498c5e9fcd10 ("f2fs: add default mount options to remount")
+>>>> Hi Chao,
+>>> Hi Chengguang,
+>>>
+>>>> It looks like there was a bug in remount at that time, but I think the fix above
+>>>> is not correct.
+>>>>
+>>>> from the patch '498c5e9fcd10', I think it was caused by clearing
+>>>> sbi->mount_opt.opt before
+>>>>
+>>>> parsing. I think remount should not change the options which were specified by
+>>>> user in
+>>>>
+>>>> previous mount unless user specifies in remount.
+>>> Can you check description in manual of mount.
+>>>
+>>> IIRC, old mount option will be record into /etc/mtab or /proc/mounts (for
+>>> adapting namespace feature), with command of "mount -o remount,rw  /dir", old
+>>> mount options can be loaded from above config file, and merge them with new
+>>> specified options.
+>>>
+>>> Even we kill old mount options by call default_options() in ->remount, user's
+>>> old mount option can still be set through parameters.
+>> Please let me show you different behaviors before/after this patch.
 >>
->> Time 1: | segment 1 blkaddr = A |  GC -> | segment 2 blkaddr = B |
->> Encrypted block 1 is moved from blkaddr A of segment 1 to blkaddr B of
->> segment 2,
 >>
->> Time 2: | segment 1 blkaddr = B |  GC -> | segment 3 blkaddr = C |
-> 
->             segment 2 blkaddr = B?
-> 
+>> [root@x201 cgxu]# uname -a
+>> Linux x201 4.19.0-rc2+ #51 SMP Wed Sep 19 22:41:20 CST 2018 x86_64
+>> x86_64 x86_64 GNU/Linux
 >>
->> Before page 1 is written back and if segment 2 become a victim, then
->> page 1 is moved from blkaddr B of segment 2 to blkaddr Cof segment 3,
-> 
->                                                          C of ?
-> 
->> during the GC process of Time 2, f2fs should wait for page 1 written back
->> before reading it, or move_data_block will read a garbage block from
->> blkaddr B since page is not written back to blkaddr B yet.
-> 
-> move_data_block() checks PageUptodate() so it won't get garbage, yes?
+>>
+>> Before:
+>>
+>> [root@x201 cgxu]# mount -o fsync_mode=strict /dev/mapper/test-test1
+>> /mnt/test/test1
+>> [root@x201 cgxu]# mount | grep test1
+>> /dev/mapper/test-test1 on /mnt/test/test1 type f2fs
+>> (rw,relatime,lazytime,background_gc=on,discard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=reuse,fsync_mode=strict)
+>>
+>> [root@x201 cgxu]# mount -o remount,background_gc=sync
+>> /dev/mapper/test-test1 /mnt/test/test1
+>> [root@x201 cgxu]# mount | grep test1
+>> /dev/mapper/test-test1 on /mnt/test/test1 type f2fs
+>> (rw,relatime,background_gc=sync,discard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,fsync_mode=posix)
+>>
+>>
+>> I only changed background_gc in ->remount, but fsync_mode is implicitly
+>> set to default value 'posix'.
+> IMO, the resul is as expected, let's referenced description in manual of mount:
+>
+>                The  remount  functionality  follows the standard way how the
+> mount command works with options from fstab. It means the mount command
+> doesn't read fstab (or mtab) only when a device and
+>                dir are fully specified.
+>
+>                mount -o remount,rw /dev/foo /dir
+>
+>                After this call all old mount options are replaced and
+> arbitrary stuff from fstab is ignored, except the loop= option which is
+> internally generated and maintained by the mount command.
+>
+>                mount -o remount,rw  /dir
+>
+>                After this call mount reads fstab (or mtab) and merges these
+> options with options from command line ( -o ).
+>
+>
+> So if you want to keep old mount option, you should use:
+>
+> mount -o remount,background_gc=sync /mnt/test/test1
+>
+> instead of
+>
+> mount -o remount,background_gc=sync /dev/mapper/test-test1 /mnt/test/test1
 
-I think the problem here is:
-
-Thread A				Background GC Thread
-- writepage
- - f2fs_outplace_write_data
- fio->encrypted_page is in-flight
-					- gc_data_segment
-					 - ra_data_block
-					  - f2fs_pagecache_get_page
-					  - f2fs_submit_page_bio
-					  cache garbage data in meta page
-Device
-Receive encrypted data
-- f2fs_write_end_io
-					 - move_data_block
-					  - f2fs_pagecache_get_page
-					  - if (PageUptodate(mpage)) memcpy()
-					  So here we copy garbage data into meta page
-					  - f2fs_submit_page_write
-					  Here we migrate incorrect data to new address
-
-> So, does ra_data_block need to check PageUptodate?
-
-Yes, I think so, could improve this in another patch.
+I get your point about how mount command organizes options ,
+but it seems other filesystem do not initialize mount option in remount.
+What do you think for that? and if we keep initialization in f2fs,
+shouldn't we set default value to all mount options for remount?
 
 Thanks,
-
-> 
->>
->> Commit 6aa58d8a ("f2fs: readahead encrypted block during GC") introduce
->> ra_data_block to read encrypted block, but it forgets to add
->> f2fs_wait_on_page_writeback to avoid racing between GC and flush.
->>
->> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->> ---
->>  fs/f2fs/gc.c | 10 ++++++++++
->>  1 file changed, 10 insertions(+)
->>
->> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->> index a4c1a41..c55fb62 100644
->> --- a/fs/f2fs/gc.c
->> +++ b/fs/f2fs/gc.c
->> @@ -641,6 +641,14 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
->>  	fio.page = page;
->>  	fio.new_blkaddr = fio.old_blkaddr = dn.data_blkaddr;
->>  
->> +	/*
->> +	 * don't cache encrypted data into meta inode until previous dirty
->> +	 * data were writebacked to avoid racing between GC and flush.
->> +	 */
->> +	f2fs_wait_on_page_writeback(page, DATA, true);
->> +
->> +	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
->> +
->>  	fio.encrypted_page = f2fs_pagecache_get_page(META_MAPPING(sbi),
->>  					dn.data_blkaddr,
->>  					FGP_LOCK | FGP_CREAT, GFP_NOFS);
->> @@ -723,6 +731,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
->>  	 */
->>  	f2fs_wait_on_page_writeback(page, DATA, true);
->>  
->> +	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
->> +
->>  	err = f2fs_get_node_info(fio.sbi, dn.nid, &ni);
->>  	if (err)
->>  		goto put_out;
->> -- 
->> 1.8.5.2
+Chengguang
