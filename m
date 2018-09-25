@@ -1,52 +1,54 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 200871] F2FS experiences data loss (entry is
- completely lost) when an I/O failure occurs.
-Date: Sun, 23 Sep 2018 04:16:17 +0000
-Message-ID: <bug-200871-202145-qRNe4PSzdX@https.bugzilla.kernel.org/>
-References: <bug-200871-202145@https.bugzilla.kernel.org/>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 2/6] f2fs: fix to recover inode's i_flags during POR
+Date: Tue, 25 Sep 2018 15:35:59 +0800
+Message-ID: <20180925073603.102125-2-yuchao0@huawei.com>
+References: <20180925073603.102125-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1g3vop-0004fk-HT
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 23 Sep 2018 04:16:27 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g3von-001Tad-HW
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 23 Sep 2018 04:16:27 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 522392A457
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 23 Sep 2018 04:16:18 +0000 (UTC)
-In-Reply-To: <bug-200871-202145@https.bugzilla.kernel.org/>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180925073603.102125-1-yuchao0@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200871
+Testcase to reproduce this bug:
+1. mkfs.f2fs /dev/sdd
+2. mount -t f2fs /dev/sdd /mnt/f2fs
+3. touch /mnt/f2fs/file
+4. sync
+5. chattr +A /mnt/f2fs/file
+6. xfs_io -f /mnt/f2fs/file -c "fsync"
+7. godown /mnt/f2fs
+8. umount /mnt/f2fs
+9. mount -t f2fs /dev/sdd /mnt/f2fs
+10. lsattr /mnt/f2fs/file
 
---- Comment #11 from Stathis Maneas (smaneas@cs.toronto.edu) ---
-Considering the fact that the operation modifies the entry's inode and that
-fsync is invoked at the end of the program so that all modifications persist,
-then a new inode will eventually be written at a new location on disk. The
-attached files aim to capture this write operation and drop it, also returning
-an error to the upper layers.
+-----------------N- /mnt/f2fs/file
 
-Could you please let me know how should I help you reproduce this issue? I
-would definitely be willing to provide more files/information if necessary.
+But actually, we expect the corrct result is:
 
+-------A---------N- /mnt/f2fs/file
+
+The reason is we didn't recover inode.i_flags field during mount,
+fix it.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/recovery.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index c7e292f21b64..4a0f49654573 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -266,6 +266,7 @@ static int recover_inode(struct inode *inode, struct page *page)
+ 	inode->i_mtime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
+ 
+ 	F2FS_I(inode)->i_advise = raw->i_advise;
++	F2FS_I(inode)->i_flags = le32_to_cpu(raw->i_flags);
+ 
+ 	recover_inline_flags(inode, raw);
+ 
 -- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+2.18.0.rc1
