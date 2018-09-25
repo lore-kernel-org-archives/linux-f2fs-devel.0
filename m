@@ -1,23 +1,31 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 5/6] f2fs: fix to keep project quota consistent
-Date: Tue, 25 Sep 2018 15:36:02 +0800
-Message-ID: <20180925073603.102125-5-yuchao0@huawei.com>
-References: <20180925073603.102125-1-yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: remove default option setting in
+ remount
+Date: Tue, 25 Sep 2018 15:41:38 +0800
+Message-ID: <d236c53a-b820-da8e-e65b-ff631e7d8bcd@huawei.com>
+References: <20180918062344.3102-1-cgxu519@gmx.com>
+ <9bc59ef2-01cc-0cf1-1676-4d8a75514aad@kernel.org>
+ <a8cdaf63-c5fd-9391-2411-b61c8941351e@gmx.com>
+ <13e22905-22e6-2048-c6b7-5f573380f189@kernel.org>
+ <53b1fc54-5827-1506-b081-328505f15dff@gmx.com>
+ <9b7ba619-e29c-9e79-74b0-e4ababae825a@huawei.com>
+ <6e60aadf-0568-f67d-68e1-ff99d38790e6@gmx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1g4htV-0003sB-A6
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Sep 2018 07:36:29 +0000
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1g4hyk-0001xX-QQ
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Sep 2018 07:41:54 +0000
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g4htT-003HEd-OF
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Sep 2018 07:36:29 +0000
-In-Reply-To: <20180925073603.102125-1-yuchao0@huawei.com>
+ id 1g4hyj-00AN28-7r
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Sep 2018 07:41:54 +0000
+In-Reply-To: <6e60aadf-0568-f67d-68e1-ff99d38790e6@gmx.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,126 +35,118 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: cgxu519 <cgxu519@gmx.com>, Chao Yu <chao@kernel.org>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-This patch does below changes to keep consistence of project quota data
-in sudden power-cut case:
-- update inode.i_projid and project quota atomically under lock_op() in
-f2fs_ioc_setproject()
-- recover inode.i_projid and project quota in recover_inode()
+On 2018/9/22 22:40, cgxu519 wrote:
+> On 09/20/2018 02:29 PM, Chao Yu wrote:
+>> On 2018/9/20 7:54, cgxu519 wrote:
+>>> On 9/19/18 10:02 PM, Chao Yu wrote:
+>>>> On 2018/9/18 21:47, cgxu519 wrote:
+>>>>> On 09/18/2018 09:20 PM, Chao Yu wrote:
+>>>>>> On 2018/9/18 14:23, Chengguang Xu wrote:
+>>>>>>> Currently we set default value to options before parsing remount options,
+>>>>>>> it will cause unexpected change of options which were specified in first
+>>>>>>> mount.
+>>>>>> Can you check below commit? It looks w/o it we may lose default option after
+>>>>>> remount.
+>>>>>>
+>>>>>> 498c5e9fcd10 ("f2fs: add default mount options to remount")
+>>>>> Hi Chao,
+>>>> Hi Chengguang,
+>>>>
+>>>>> It looks like there was a bug in remount at that time, but I think the fix above
+>>>>> is not correct.
+>>>>>
+>>>>> from the patch '498c5e9fcd10', I think it was caused by clearing
+>>>>> sbi->mount_opt.opt before
+>>>>>
+>>>>> parsing. I think remount should not change the options which were specified by
+>>>>> user in
+>>>>>
+>>>>> previous mount unless user specifies in remount.
+>>>> Can you check description in manual of mount.
+>>>>
+>>>> IIRC, old mount option will be record into /etc/mtab or /proc/mounts (for
+>>>> adapting namespace feature), with command of "mount -o remount,rw  /dir", old
+>>>> mount options can be loaded from above config file, and merge them with new
+>>>> specified options.
+>>>>
+>>>> Even we kill old mount options by call default_options() in ->remount, user's
+>>>> old mount option can still be set through parameters.
+>>> Please let me show you different behaviors before/after this patch.
+>>>
+>>>
+>>> [root@x201 cgxu]# uname -a
+>>> Linux x201 4.19.0-rc2+ #51 SMP Wed Sep 19 22:41:20 CST 2018 x86_64
+>>> x86_64 x86_64 GNU/Linux
+>>>
+>>>
+>>> Before:
+>>>
+>>> [root@x201 cgxu]# mount -o fsync_mode=strict /dev/mapper/test-test1
+>>> /mnt/test/test1
+>>> [root@x201 cgxu]# mount | grep test1
+>>> /dev/mapper/test-test1 on /mnt/test/test1 type f2fs
+>>> (rw,relatime,lazytime,background_gc=on,discard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=reuse,fsync_mode=strict)
+>>>
+>>> [root@x201 cgxu]# mount -o remount,background_gc=sync
+>>> /dev/mapper/test-test1 /mnt/test/test1
+>>> [root@x201 cgxu]# mount | grep test1
+>>> /dev/mapper/test-test1 on /mnt/test/test1 type f2fs
+>>> (rw,relatime,background_gc=sync,discard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,fsync_mode=posix)
+>>>
+>>>
+>>> I only changed background_gc in ->remount, but fsync_mode is implicitly
+>>> set to default value 'posix'.
+>> IMO, the resul is as expected, let's referenced description in manual of mount:
+>>
+>>                The  remount  functionality  follows the standard way how the
+>> mount command works with options from fstab. It means the mount command
+>> doesn't read fstab (or mtab) only when a device and
+>>                dir are fully specified.
+>>
+>>                mount -o remount,rw /dev/foo /dir
+>>
+>>                After this call all old mount options are replaced and
+>> arbitrary stuff from fstab is ignored, except the loop= option which is
+>> internally generated and maintained by the mount command.
+>>
+>>                mount -o remount,rw  /dir
+>>
+>>                After this call mount reads fstab (or mtab) and merges these
+>> options with options from command line ( -o ).
+>>
+>>
+>> So if you want to keep old mount option, you should use:
+>>
+>> mount -o remount,background_gc=sync /mnt/test/test1
+>>
+>> instead of
+>>
+>> mount -o remount,background_gc=sync /dev/mapper/test-test1 /mnt/test/test1
+> 
+> I get your point about how mount command organizes options ,
+> but it seems other filesystem do not initialize mount option in remount.
+> What do you think for that? and if we keep initialization in f2fs,
+> shouldn't we set default value to all mount options for remount?
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/f2fs.h     |  1 +
- fs/f2fs/file.c     | 37 ++++++++++++++++++++++++++++---------
- fs/f2fs/recovery.c | 12 ++++++++++--
- 3 files changed, 39 insertions(+), 11 deletions(-)
+I'm okay with this change to keep line with other filesystems.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index be16a49c8b62..171917c0961c 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2793,6 +2793,7 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count);
- int f2fs_precache_extents(struct inode *inode);
- long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
- long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
-+int f2fs_transfer_project_quota(struct inode *inode, kprojid_t kprojid);
- int f2fs_pin_file_control(struct inode *inode, bool inc);
- 
- /*
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index a388866e71ee..6f02c8daff76 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2604,13 +2604,29 @@ static int f2fs_ioc_get_features(struct file *filp, unsigned long arg)
- }
- 
- #ifdef CONFIG_QUOTA
-+int f2fs_transfer_project_quota(struct inode *inode, kprojid_t kprojid)
-+{
-+	struct dquot *transfer_to[MAXQUOTAS] = {};
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	struct super_block *sb = sbi->sb;
-+	int err = 0;
-+
-+	transfer_to[PRJQUOTA] = dqget(sb, make_kqid_projid(kprojid));
-+	if (!IS_ERR(transfer_to[PRJQUOTA])) {
-+		err = __dquot_transfer(inode, transfer_to);
-+		if (err)
-+			set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
-+		dqput(transfer_to[PRJQUOTA]);
-+	}
-+	return err;
-+}
-+
- static int f2fs_ioc_setproject(struct file *filp, __u32 projid)
- {
- 	struct inode *inode = file_inode(filp);
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct super_block *sb = sbi->sb;
--	struct dquot *transfer_to[MAXQUOTAS] = {};
- 	struct page *ipage;
- 	kprojid_t kprojid;
- 	int err;
-@@ -2651,21 +2667,24 @@ static int f2fs_ioc_setproject(struct file *filp, __u32 projid)
- 	if (err)
- 		return err;
- 
--	transfer_to[PRJQUOTA] = dqget(sb, make_kqid_projid(kprojid));
--	if (!IS_ERR(transfer_to[PRJQUOTA])) {
--		err = __dquot_transfer(inode, transfer_to);
--		dqput(transfer_to[PRJQUOTA]);
--		if (err)
--			goto out_dirty;
--	}
-+	f2fs_lock_op(sbi);
-+	err = f2fs_transfer_project_quota(inode, kprojid);
-+	if (err)
-+		goto out_unlock;
- 
- 	F2FS_I(inode)->i_projid = kprojid;
- 	inode->i_ctime = current_time(inode);
--out_dirty:
- 	f2fs_mark_inode_dirty_sync(inode, true);
-+out_unlock:
-+	f2fs_unlock_op(sbi);
- 	return err;
- }
- #else
-+int f2fs_transfer_project_quota(struct inode *inode, kprojid_t kprojid)
-+{
-+	return 0;
-+}
-+
- static int f2fs_ioc_setproject(struct file *filp, __u32 projid)
- {
- 	if (projid != F2FS_DEF_PROJID)
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 71577f30a889..5e68e31989c8 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -250,10 +250,18 @@ static int recover_inode(struct inode *inode, struct page *page)
- 			F2FS_FITS_IN_INODE(raw, le16_to_cpu(raw->i_extra_isize),
- 								i_projid)) {
- 			projid_t i_projid;
-+			kprojid_t kprojid;
- 
- 			i_projid = (projid_t)le32_to_cpu(raw->i_projid);
--			F2FS_I(inode)->i_projid =
--				make_kprojid(&init_user_ns, i_projid);
-+			kprojid = make_kprojid(&init_user_ns, i_projid);
-+
-+			if (!projid_eq(kprojid, F2FS_I(inode)->i_projid)) {
-+				err = f2fs_transfer_project_quota(inode,
-+								kprojid);
-+				if (err)
-+					return err;
-+				F2FS_I(inode)->i_projid = kprojid;
-+			}
- 		}
- 	}
- 
--- 
-2.18.0.rc1
++Cc Yunlei to check whether we are missing something.
+
+Thanks,
+
+> 
+> Thanks,
+> Chengguang
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> .
+> 
