@@ -1,7 +1,7 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 2/6] f2fs: fix to recover inode's i_flags during POR
-Date: Tue, 25 Sep 2018 15:35:59 +0800
-Message-ID: <20180925073603.102125-2-yuchao0@huawei.com>
+Subject: [PATCH 4/6] f2fs: fix to recover inode's crtime during POR
+Date: Tue, 25 Sep 2018 15:36:01 +0800
+Message-ID: <20180925073603.102125-4-yuchao0@huawei.com>
 References: <20180925073603.102125-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -13,42 +13,43 @@ Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@k
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 Testcase to reproduce this bug:
-1. mkfs.f2fs /dev/sdd
+1. mkfs.f2fs -O extra_attr -O inode_crtime /dev/sdd
 2. mount -t f2fs /dev/sdd /mnt/f2fs
 3. touch /mnt/f2fs/file
-4. sync
-5. chattr +A /mnt/f2fs/file
-6. xfs_io -f /mnt/f2fs/file -c "fsync"
-7. godown /mnt/f2fs
-8. umount /mnt/f2fs
-9. mount -t f2fs /dev/sdd /mnt/f2fs
-10. lsattr /mnt/f2fs/file
+4. xfs_io -f /mnt/f2fs/file -c "fsync"
+5. godown /mnt/f2fs
+6. umount /mnt/f2fs
+7. mount -t f2fs /dev/sdd /mnt/f2fs
+8. xfs_io -f /mnt/f2fs/file -c "statx -r"
 
------------------N- /mnt/f2fs/file
+stat.btime.tv_sec = 0
+stat.btime.tv_nsec = 0
 
-But actually, we expect the corrct result is:
-
--------A---------N- /mnt/f2fs/file
-
-The reason is we didn't recover inode.i_flags field during mount,
-fix it.
+This patch fixes to recover inode creation time fields during
+mount.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/recovery.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/f2fs/node.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index c7e292f21b64..4a0f49654573 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -266,6 +266,7 @@ static int recover_inode(struct inode *inode, struct page *page)
- 	inode->i_mtime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 5717fb6e7d7d..ea151e07790f 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -2565,6 +2565,13 @@ int f2fs_recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
+ 			F2FS_FITS_IN_INODE(src, le16_to_cpu(src->i_extra_isize),
+ 								i_projid))
+ 			dst->i_projid = src->i_projid;
++
++		if (f2fs_sb_has_inode_crtime(sbi->sb) &&
++			F2FS_FITS_IN_INODE(src, le16_to_cpu(src->i_extra_isize),
++							i_crtime_nsec)) {
++			dst->i_crtime = src->i_crtime;
++			dst->i_crtime_nsec = src->i_crtime_nsec;
++		}
+ 	}
  
- 	F2FS_I(inode)->i_advise = raw->i_advise;
-+	F2FS_I(inode)->i_flags = le32_to_cpu(raw->i_flags);
- 
- 	recover_inline_flags(inode, raw);
- 
+ 	new_ni = old_ni;
 -- 
 2.18.0.rc1
