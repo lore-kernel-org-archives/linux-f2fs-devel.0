@@ -1,14 +1,14 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] Revert: "f2fs: check last page index in cached bio to decide submission"
-Date: Wed, 26 Sep 2018 17:47:30 +0800
-Message-ID: <20180926094730.100570-1-yuchao0@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH RESEND v2] Revert: "f2fs: check last page index in cached bio to decide submission"
+Date: Wed, 26 Sep 2018 22:44:56 +0800
+Message-ID: <20180926144456.3167-1-chao@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
+
+From: Chao Yu <yuchao0@huawei.com>
 
 There is one case that we can leave bio in f2fs, result in hanging
 page writeback waiter.
@@ -28,7 +28,7 @@ Thread A				Thread B
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
 v2:
-- rebase to dev-test.
+- rebase to dev-test
  fs/f2fs/checkpoint.c |  2 +-
  fs/f2fs/data.c       | 38 +++++++++++++++++++-------------------
  fs/f2fs/f2fs.h       |  4 ++--
@@ -37,7 +37,7 @@ v2:
  5 files changed, 33 insertions(+), 34 deletions(-)
 
 diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index d624d7983197..b634e7f88d43 100644
+index d624d7983197..2f63b362ce63 100644
 --- a/fs/f2fs/checkpoint.c
 +++ b/fs/f2fs/checkpoint.c
 @@ -280,7 +280,7 @@ static int __f2fs_write_meta_page(struct page *page,
@@ -45,12 +45,12 @@ index d624d7983197..b634e7f88d43 100644
  	if (wbc->for_reclaim)
  		f2fs_submit_merged_write_cond(sbi, page->mapping->host,
 -						0, page->index, META);
-+							page->index, 0, META);
++							page, 0, META);
  
  	unlock_page(page);
  
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index be69b6ac6870..8bf08196e91c 100644
+index be69b6ac6870..b03f9d163175 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
 @@ -322,8 +322,8 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
@@ -141,7 +141,7 @@ index be69b6ac6870..8bf08196e91c 100644
  
  	if (wbc->for_reclaim) {
 -		f2fs_submit_merged_write_cond(sbi, inode, 0, page->index, DATA);
-+		f2fs_submit_merged_write_cond(sbi, inode, page->index, 0, DATA);
++		f2fs_submit_merged_write_cond(sbi, inode, page, 0, DATA);
  		clear_inode_flag(inode, FI_HOT_DATA);
  		f2fs_remove_dirty_inode(inode);
  		submitted = NULL;
@@ -194,7 +194,7 @@ index dc9306e87a51..464545e40729 100644
  int f2fs_submit_page_bio(struct f2fs_io_info *fio);
  void f2fs_submit_page_write(struct f2fs_io_info *fio);
 diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index ea151e07790f..38a1f0d395a2 100644
+index ea151e07790f..c47ca807e245 100644
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
 @@ -1561,8 +1561,8 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
@@ -204,7 +204,7 @@ index ea151e07790f..38a1f0d395a2 100644
 -		f2fs_submit_merged_write_cond(sbi, page->mapping->host, 0,
 -						page->index, NODE);
 +		f2fs_submit_merged_write_cond(sbi, page->mapping->host,
-+						page->index, 0, NODE);
++						page, 0, NODE);
  		submitted = NULL;
  	}
  
@@ -285,4 +285,4 @@ index 97a4fae75651..965ef524e2a2 100644
  			wait_on_page_writeback(page);
  		else
 -- 
-2.18.0.rc1
+2.18.0
