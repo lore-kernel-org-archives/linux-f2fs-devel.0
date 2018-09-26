@@ -1,25 +1,30 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] generic: add a testcase to test uid/gid
- recovery
-Date: Tue, 25 Sep 2018 17:16:31 +0800
-Message-ID: <ab6235fd-ea62-59d4-246c-9b73bc3983f3@huawei.com>
-References: <20180925084558.77190-1-yuchao0@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 2/2 v2] f2fs: avoid f2fs_bug_on if
+ f2fs_get_meta_page_nofail got EIO
+Date: Tue, 25 Sep 2018 17:18:06 -0700
+Message-ID: <20180926001806.GA3829@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180918021805.85032-1-jaegeuk@kernel.org>
+ <20180918021805.85032-2-jaegeuk@kernel.org>
+ <20180918175648.GE91945@jaegeuk-macbookpro.roam.corp.google.com>
+ <9813f294-3e09-ee2d-56f0-6bb476e88a5a@huawei.com>
+ <20180920214656.GE35918@jaegeuk-macbookpro.roam.corp.google.com>
+ <e36d331c-d368-fcc4-fa30-15f503b737d7@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1g4jSY-0005DQ-1h
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Sep 2018 09:16:46 +0000
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ (envelope-from <jaegeuk@kernel.org>) id 1g4xWw-0004dS-Eh
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Sep 2018 00:18:14 +0000
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g4jSU-0063EE-Ci
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Sep 2018 09:16:45 +0000
-In-Reply-To: <20180925084558.77190-1-yuchao0@huawei.com>
-Content-Language: en-US
+ id 1g4xWu-006VUK-PV
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Sep 2018 00:18:14 +0000
+Content-Disposition: inline
+In-Reply-To: <e36d331c-d368-fcc4-fa30-15f503b737d7@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,149 +34,270 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Eryu Guan <guaneryu@gmail.com>
-Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Eryu,
+On 09/21, Chao Yu wrote:
+> On 2018/9/21 5:46, Jaegeuk Kim wrote:
+> > On 09/20, Chao Yu wrote:
+> >> On 2018/9/19 1:56, Jaegeuk Kim wrote:
+> >>> This patch avoids BUG_ON when f2fs_get_meta_page_nofail got EIO during
+> >>> xfstests/generic/475.
+> >>>
+> >>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>> ---
+> >>> Change log from v1:
+> >>>  - propagate errno
+> >>>  - drop sum_pages
+> >>>
+> >>>  fs/f2fs/checkpoint.c | 10 +++++-----
+> >>>  fs/f2fs/f2fs.h       |  2 +-
+> >>>  fs/f2fs/gc.c         |  9 +++++++++
+> >>>  fs/f2fs/node.c       | 32 ++++++++++++++++++++++++--------
+> >>>  fs/f2fs/recovery.c   |  2 ++
+> >>>  fs/f2fs/segment.c    |  3 +++
+> >>>  6 files changed, 44 insertions(+), 14 deletions(-)
+> >>>
+> >>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> >>> index 01e0d8f5bbbe..1ddf332ce4b2 100644
+> >>> --- a/fs/f2fs/checkpoint.c
+> >>> +++ b/fs/f2fs/checkpoint.c
+> >>> @@ -119,11 +119,8 @@ struct page *f2fs_get_meta_page_nofail(struct f2fs_sb_info *sbi, pgoff_t index)
+> >>>  		if (PTR_ERR(page) == -EIO &&
+> >>>  				++count <= DEFAULT_RETRY_IO_COUNT)
+> >>>  			goto retry;
+> >>> -
+> >>>  		f2fs_stop_checkpoint(sbi, false);
+> >>> -		f2fs_bug_on(sbi, 1);
+> >>>  	}
+> >>> -
+> >>>  	return page;
+> >>>  }
+> >>>  
+> >>> @@ -1512,7 +1509,10 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>  	ckpt->checkpoint_ver = cpu_to_le64(++ckpt_ver);
+> >>>  
+> >>>  	/* write cached NAT/SIT entries to NAT/SIT area */
+> >>> -	f2fs_flush_nat_entries(sbi, cpc);
+> >>> +	err = f2fs_flush_nat_entries(sbi, cpc);
+> >>> +	if (err)
+> >>> +		goto stop;
+> >>
+> >> To make sure, if partial NAT pages become dirty, flush them back to device
+> >> outside checkpoint() is not harmful, right?
+> > 
+> > I think so.
+> 
+> Oh, one more case, now we use NAT #0, if partial NAT pages were
+> writebacked, then we start to use NAT #1, later, in another checkpoint(),
+> we update those NAT pages again, we will write them to NAT #0, which is
+> belong to last valid checkpoint(), it's may cause corrupted checkpoint in
+> scenario of SPO. So it's harmfull, right?
 
-There are several fields in inode rather than uid/gid didn't recover in
-f2fs, I'm not sure we need to cover all of them with one generic testcase,
-or with several testcases. Any suggestion?
+We already stopped checkpoint anymore, so there'd be no way to proceed another
+checkpoint. Am I missing something?
 
-On 2018/9/25 16:45, Chao Yu wrote:
-> After fsync, filesystem should guarantee inode metadata including
-> uid/gid being persisted, so even after sudden power-cut, durign
-> mount, we should recover uid/gid fields correctly, in order to not
-> loss those meta info.
 > 
-> So adding this testcase to check whether generic filesystem can
-> guarantee that.
+> Thanks,
 > 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  tests/generic/505     | 95 +++++++++++++++++++++++++++++++++++++++++++
->  tests/generic/505.out |  2 +
->  tests/generic/group   |  1 +
->  3 files changed, 98 insertions(+)
->  create mode 100755 tests/generic/505
->  create mode 100644 tests/generic/505.out
-> 
-> diff --git a/tests/generic/505 b/tests/generic/505
-> new file mode 100755
-> index 000000000000..103a1e9bbe47
-> --- /dev/null
-> +++ b/tests/generic/505
-> @@ -0,0 +1,95 @@
-> +#! /bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (c) 2018 Huawei.  All Rights Reserved.
-> +#
-> +# FS QA Test 505
-> +#
-> +# This testcase is trying to test recovery flow of generic filesystem, w/ below
-> +# steps, once uid or gid changes, after we fsync that file, we can expect that
-> +# uid/gid can be recovered after sudden power-cuts.
-> +# 1. touch testfile;
-> +# 1.1 sync (optional)
-> +# 2. chown 100 testfile;
-> +# 3. chgrp 100 testfile;
-> +# 4. xfs_io -f testfile -c "fsync";
-> +# 5. godown;
-> +# 6. umount;
-> +# 7. mount;
-> +# 8. check uid/gid
-> +#
-> +seq=`basename $0`
-> +seqres=$RESULT_DIR/$seq
-> +echo "QA output created by $seq"
-> +
-> +here=`pwd`
-> +tmp=/tmp/$$
-> +status=1	# failure is the default!
-> +trap "_cleanup; exit \$status" 0 1 2 3 15
-> +
-> +_cleanup()
-> +{
-> +	cd /
-> +	rm -f $tmp.*
-> +}
-> +
-> +# get standard environment, filters and checks
-> +. ./common/rc
-> +. ./common/filter
-> +
-> +# remove previous $seqres.full before test
-> +rm -f $seqres.full
-> +
-> +# real QA test starts here
-> +_supported_fs generic
-> +_supported_os Linux
-> +
-> +_require_scratch
-> +_require_scratch_shutdown
-> +
-> +_scratch_mkfs >/dev/null 2>&1
-> +_require_metadata_journaling $SCRATCH_DEV
-> +
-> +testfile=$SCRATCH_MNT/testfile
-> +stat_opt='-c "uid: %u, gid: %g"'
-> +
-> +_do_check()
-> +{
-> +	_scratch_mount
-> +
-> +	touch $testfile
-> +
-> +	if [ "$1" == "sync" ]; then
-> +		sync
-> +	fi
-> +
-> +	chown 100 $testfile
-> +	chgrp 100 $testfile
-> +
-> +	before=`stat "$stat_opt" $testfile`
-> +
-> +	$XFS_IO_PROG -f $testfile -c "fsync" | _filter_xfs_io
-> +
-> +	_scratch_shutdown | tee -a $seqres.full
-> +	_scratch_unmount
-> +	_scratch_mount
-> +
-> +	after=`stat "$stat_opt" $testfile`
-> +
-> +	# check inode's uid/gid
-> +	if [ "$before" != "$after" ]; then
-> +		echo "Before: $before"
-> +		echo "After : $after"
-> +	fi
-> +	echo "Before: $before" >> $seqres.full
-> +	echo "After : $after" >> $seqres.full
-> +
-> +	rm $testfile
-> +	_scratch_unmount
-> +}
-> +
-> +_do_check
-> +_do_check sync
-> +
-> +status=0
-> +echo "Silence is golden"
-> +exit
-> diff --git a/tests/generic/505.out b/tests/generic/505.out
-> new file mode 100644
-> index 000000000000..80e3bd1d9abb
-> --- /dev/null
-> +++ b/tests/generic/505.out
-> @@ -0,0 +1,2 @@
-> +QA output created by 505
-> +Silence is golden
-> diff --git a/tests/generic/group b/tests/generic/group
-> index 55155de8bc29..4da0e1888f57 100644
-> --- a/tests/generic/group
-> +++ b/tests/generic/group
-> @@ -507,3 +507,4 @@
->  502 auto quick log
->  503 auto quick dax punch collapse zero
->  504 auto quick locks
-> +505 shutdown auto quick metadata
-> 
+> > 
+> >>
+> >>> +
+> >>>  	f2fs_flush_sit_entries(sbi, cpc);
+> >>>  
+> >>>  	/* unlock all the fs_lock[] in do_checkpoint() */
+> >>> @@ -1521,7 +1521,7 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>  		f2fs_release_discard_addrs(sbi);
+> >>>  	else
+> >>>  		f2fs_clear_prefree_segments(sbi, cpc);
+> >>> -
+> >>> +stop:
+> >>>  	unblock_operations(sbi);
+> >>>  	stat_inc_cp_count(sbi->stat_info);
+> >>>  
+> >>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >>> index a0c868127a7c..29021dbc8f2a 100644
+> >>> --- a/fs/f2fs/f2fs.h
+> >>> +++ b/fs/f2fs/f2fs.h
+> >>> @@ -2895,7 +2895,7 @@ int f2fs_recover_xattr_data(struct inode *inode, struct page *page);
+> >>>  int f2fs_recover_inode_page(struct f2fs_sb_info *sbi, struct page *page);
+> >>>  int f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
+> >>>  			unsigned int segno, struct f2fs_summary_block *sum);
+> >>> -void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc);
+> >>> +int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc);
+> >>>  int f2fs_build_node_manager(struct f2fs_sb_info *sbi);
+> >>>  void f2fs_destroy_node_manager(struct f2fs_sb_info *sbi);
+> >>>  int __init f2fs_create_node_manager_caches(void);
+> >>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> >>> index 4bcc8a59fdef..c7d14282dbf4 100644
+> >>> --- a/fs/f2fs/gc.c
+> >>> +++ b/fs/f2fs/gc.c
+> >>> @@ -1070,6 +1070,15 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+> >>>  	/* reference all summary page */
+> >>>  	while (segno < end_segno) {
+> >>>  		sum_page = f2fs_get_sum_page(sbi, segno++);
+> >>> +		if (IS_ERR(sum_page)) {
+> >>> +			end_segno = segno - 1;
+> >>> +			for (segno = start_segno; segno < end_segno; segno++) {
+> >>> +				sum_page = find_get_page(META_MAPPING(sbi),
+> >>> +						GET_SUM_BLOCK(sbi, segno));
+> >>> +				f2fs_put_page(sum_page, 0);
+> >>
+> >> find_get_page() will add one more reference on page, so we need to call
+> >> f2fs_put_page(sum_page, 0) twice.
+> > 
+> > Done.
+> > 
+> >>
+> >> Thanks,
+> >>
+> >>> +			}
+> >>> +			return PTR_ERR(sum_page);
+> >>> +		}
+> >>>  		unlock_page(sum_page);
+> >>>  	}
+> >>>  
+> >>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> >>> index fa2381c0bc47..79b6fee354f7 100644
+> >>> --- a/fs/f2fs/node.c
+> >>> +++ b/fs/f2fs/node.c
+> >>> @@ -126,6 +126,8 @@ static struct page *get_next_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
+> >>>  
+> >>>  	/* get current nat block page with lock */
+> >>>  	src_page = get_current_nat_page(sbi, nid);
+> >>> +	if (IS_ERR(src_page))
+> >>> +		return src_page;
+> >>>  	dst_page = f2fs_grab_meta_page(sbi, dst_off);
+> >>>  	f2fs_bug_on(sbi, PageDirty(src_page));
+> >>>  
+> >>> @@ -2265,15 +2267,19 @@ static int __f2fs_build_free_nids(struct f2fs_sb_info *sbi,
+> >>>  						nm_i->nat_block_bitmap)) {
+> >>>  			struct page *page = get_current_nat_page(sbi, nid);
+> >>>  
+> >>> -			ret = scan_nat_page(sbi, page, nid);
+> >>> -			f2fs_put_page(page, 1);
+> >>> +			if (IS_ERR(page)) {
+> >>> +				ret = PTR_ERR(page);
+> >>> +			} else {
+> >>> +				ret = scan_nat_page(sbi, page, nid);
+> >>> +				f2fs_put_page(page, 1);
+> >>> +			}
+> >>>  
+> >>>  			if (ret) {
+> >>>  				up_read(&nm_i->nat_tree_lock);
+> >>>  				f2fs_bug_on(sbi, !mount);
+> >>>  				f2fs_msg(sbi->sb, KERN_ERR,
+> >>>  					"NAT is corrupt, run fsck to fix it");
+> >>> -				return -EINVAL;
+> >>> +				return ret;
+> >>>  			}
+> >>>  		}
+> >>>  
+> >>> @@ -2700,7 +2706,7 @@ static void __update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
+> >>>  		__clear_bit_le(nat_index, nm_i->full_nat_bits);
+> >>>  }
+> >>>  
+> >>> -static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+> >>> +static int __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+> >>>  		struct nat_entry_set *set, struct cp_control *cpc)
+> >>>  {
+> >>>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+> >>> @@ -2724,6 +2730,9 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+> >>>  		down_write(&curseg->journal_rwsem);
+> >>>  	} else {
+> >>>  		page = get_next_nat_page(sbi, start_nid);
+> >>> +		if (IS_ERR(page))
+> >>> +			return PTR_ERR(page);
+> >>> +
+> >>>  		nat_blk = page_address(page);
+> >>>  		f2fs_bug_on(sbi, !nat_blk);
+> >>>  	}
+> >>> @@ -2769,12 +2778,13 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+> >>>  		radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
+> >>>  		kmem_cache_free(nat_entry_set_slab, set);
+> >>>  	}
+> >>> +	return 0;
+> >>>  }
+> >>>  
+> >>>  /*
+> >>>   * This function is called during the checkpointing process.
+> >>>   */
+> >>> -void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>> +int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>  {
+> >>>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+> >>>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+> >>> @@ -2784,6 +2794,7 @@ void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>  	unsigned int found;
+> >>>  	nid_t set_idx = 0;
+> >>>  	LIST_HEAD(sets);
+> >>> +	int err = 0;
+> >>>  
+> >>>  	/* during unmount, let's flush nat_bits before checking dirty_nat_cnt */
+> >>>  	if (enabled_nat_bits(sbi, cpc)) {
+> >>> @@ -2793,7 +2804,7 @@ void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>  	}
+> >>>  
+> >>>  	if (!nm_i->dirty_nat_cnt)
+> >>> -		return;
+> >>> +		return 0;
+> >>>  
+> >>>  	down_write(&nm_i->nat_tree_lock);
+> >>>  
+> >>> @@ -2816,11 +2827,16 @@ void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>  	}
+> >>>  
+> >>>  	/* flush dirty nats in nat entry set */
+> >>> -	list_for_each_entry_safe(set, tmp, &sets, set_list)
+> >>> -		__flush_nat_entry_set(sbi, set, cpc);
+> >>> +	list_for_each_entry_safe(set, tmp, &sets, set_list) {
+> >>> +		err = __flush_nat_entry_set(sbi, set, cpc);
+> >>> +		if (err)
+> >>> +			break;
+> >>> +	}
+> >>>  
+> >>>  	up_write(&nm_i->nat_tree_lock);
+> >>>  	/* Allow dirty nats by node block allocation in write_begin */
+> >>> +
+> >>> +	return err;
+> >>>  }
+> >>>  
+> >>>  static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
+> >>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> >>> index 56d34193a74b..ba678efe7cad 100644
+> >>> --- a/fs/f2fs/recovery.c
+> >>> +++ b/fs/f2fs/recovery.c
+> >>> @@ -355,6 +355,8 @@ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
+> >>>  	}
+> >>>  
+> >>>  	sum_page = f2fs_get_sum_page(sbi, segno);
+> >>> +	if (IS_ERR(sum_page))
+> >>> +		return PTR_ERR(sum_page);
+> >>>  	sum_node = (struct f2fs_summary_block *)page_address(sum_page);
+> >>>  	sum = sum_node->entries[blkoff];
+> >>>  	f2fs_put_page(sum_page, 1);
+> >>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >>> index aa96a371aaf8..ab7386a7e9d3 100644
+> >>> --- a/fs/f2fs/segment.c
+> >>> +++ b/fs/f2fs/segment.c
+> >>> @@ -2487,6 +2487,7 @@ static void change_curseg(struct f2fs_sb_info *sbi, int type)
+> >>>  	__next_free_blkoff(sbi, curseg, 0);
+> >>>  
+> >>>  	sum_page = f2fs_get_sum_page(sbi, new_segno);
+> >>> +	f2fs_bug_on(sbi, IS_ERR(sum_page));
+> >>>  	sum_node = (struct f2fs_summary_block *)page_address(sum_page);
+> >>>  	memcpy(curseg->sum_blk, sum_node, SUM_ENTRY_SIZE);
+> >>>  	f2fs_put_page(sum_page, 1);
+> >>> @@ -3971,6 +3972,8 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+> >>>  
+> >>>  			se = &sit_i->sentries[start];
+> >>>  			page = get_current_sit_page(sbi, start);
+> >>> +			if (IS_ERR(page))
+> >>> +				return PTR_ERR(page);
+> >>>  			sit_blk = (struct f2fs_sit_block *)page_address(page);
+> >>>  			sit = sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, start)];
+> >>>  			f2fs_put_page(page, 1);
+> >>>
+> > 
+> > .
+> > 
