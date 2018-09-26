@@ -1,10 +1,8 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: fix quota info to adjust recovered data
-Date: Wed, 26 Sep 2018 10:06:41 +0800
-Message-ID: <e1e855e5-2aaf-6560-d69d-2b7b0f60404e@huawei.com>
-References: <20180918020559.GB83471@jaegeuk-macbookpro.roam.corp.google.com>
- <e6e2b5e7-3b2e-d2f1-57d3-0a13059673db@huawei.com>
- <20180918164556.GC91945@jaegeuk-macbookpro.roam.corp.google.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
+Date: Tue, 25 Sep 2018 19:09:21 -0700
+Message-ID: <20180926020921.GG3829@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180918164556.GC91945@jaegeuk-macbookpro.roam.corp.google.com>
  <a6acc207-440a-3ba3-5e57-54377d47bca3@huawei.com>
  <20180919223819.GA79681@jaegeuk-macbookpro.roam.corp.google.com>
  <157abebb-80e7-d32d-3102-69ddfc5892f2@huawei.com>
@@ -13,266 +11,254 @@ References: <20180918020559.GB83471@jaegeuk-macbookpro.roam.corp.google.com>
  <20180926002909.GC3829@jaegeuk-macbookpro.roam.corp.google.com>
  <b45beb50-c814-5fb4-63da-060871e33553@huawei.com>
  <20180926014418.GE3829@jaegeuk-macbookpro.roam.corp.google.com>
+ <e1e855e5-2aaf-6560-d69d-2b7b0f60404e@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1g4zEA-0001q3-3k
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Sep 2018 02:06:58 +0000
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g4zE7-006Y9O-I6
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Sep 2018 02:06:58 +0000
-In-Reply-To: <20180926014418.GE3829@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <e1e855e5-2aaf-6560-d69d-2b7b0f60404e@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/9/26 9:44, Jaegeuk Kim wrote:
-> On 09/26, Chao Yu wrote:
->> On 2018/9/26 8:29, Jaegeuk Kim wrote:
->>> On 09/21, Chao Yu wrote:
->>>> On 2018/9/21 5:42, Jaegeuk Kim wrote:
->>>>> On 09/20, Chao Yu wrote:
->>>>>> On 2018/9/20 6:38, Jaegeuk Kim wrote:
->>>>>>> On 09/19, Chao Yu wrote:
->>>>>>>> On 2018/9/19 0:45, Jaegeuk Kim wrote:
->>>>>>>>> On 09/18, Chao Yu wrote:
->>>>>>>>>> On 2018/9/18 10:05, Jaegeuk Kim wrote:
->>>>>>>>>>> On 09/18, Chao Yu wrote:
->>>>>>>>>>>> On 2018/9/18 9:19, Jaegeuk Kim wrote:
->>>>>>>>>>>>> On 09/13, Chao Yu wrote:
->>>>>>>>>>>>>> On 2018/9/13 3:54, Jaegeuk Kim wrote:
->>>>>>>>>>>>>>> On 09/12, Chao Yu wrote:
->>>>>>>>>>>>>>>> On 2018/9/12 9:40, Chao Yu wrote:
->>>>>>>>>>>>>>>>> On 2018/9/12 9:25, Jaegeuk Kim wrote:
->>>>>>>>>>>>>>>>>> On 09/12, Chao Yu wrote:
->>>>>>>>>>>>>>>>>>> On 2018/9/12 8:27, Jaegeuk Kim wrote:
->>>>>>>>>>>>>>>>>>>> On 09/11, Jaegeuk Kim wrote:
->>>>>>>>>>>>>>>>>>>>> On 09/12, Chao Yu wrote:
->>>>>>>>>>>>>>>>>>>>>> On 2018/9/12 4:15, Jaegeuk Kim wrote:
->>>>>>>>>>>>>>>>>>>>>>> fsck.f2fs is able to recover the quota structure, since roll-forward recovery
->>>>>>>>>>>>>>>>>>>>>>> can recover it based on previous user information.
->>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>> I didn't get it, both fsck and kernel recover quota file based all inodes'
->>>>>>>>>>>>>>>>>>>>>> uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
->>>>>>>>>>>>>>>>>>>>>> same?
->>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>> I thought that, but had to add this, since I was encountering quota errors right
->>>>>>>>>>>>>>>>>>>>> after getting some files recovered. And, I thought it'd make it more safe to do
->>>>>>>>>>>>>>>>>>>>> fsck after roll-forward recovery.
->>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>> Anyway, let me test again without this patch for a while.
->>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>> Hmm, I just got a fsck failure right after some files recovered.
->>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>> To make sure, do you test with "f2fs: guarantee journalled quota data by
->>>>>>>>>>>>>>>>>>> checkpoint"? if not, I think there is no guarantee that f2fs can recover
->>>>>>>>>>>>>>>>>>> quote info into correct quote file, because, in last checkpoint, quota file
->>>>>>>>>>>>>>>>>>> may was corrupted/inconsistent. Right?
->>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>> Oh, I forget to mention that, I add a patch to fsck to let it noticing
->>>>>>>>>>>>>>>>> CP_QUOTA_NEED_FSCK_FLAG flag, and by default, fsck will fix corrupted quote
->>>>>>>>>>>>>>>>> file if the flag is set, but w/o this flag, quota file is still corrupted
->>>>>>>>>>>>>>>>> detected by fsck, I guess there is bug in v8.
->>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>> In v8, there are two cases we didn't guarantee quota file's consistence:
->>>>>>>>>>>>>>>> 1. flush time in block_operation exceed a threshold.
->>>>>>>>>>>>>>>> 2. dquot subsystem error occurs.
->>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>> For above case, fsck should repair the quota file by default.
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> Okay, I got another failure and it seems CP_QUOTA_NEED_FSCK_FLAG was not set
->>>>>>>>>>>>>>> during the recovery. So, we have something missing in the recovery in terms
->>>>>>>>>>>>>>> of quota updates.
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> Yeah, I checked the code, just found one suspected place:
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> find_fsync_dnodes()
->>>>>>>>>>>>>>  - f2fs_recover_inode_page
->>>>>>>>>>>>>>   - inc_valid_node_count
->>>>>>>>>>>>>>    - dquot_reserve_block  dquot info is not initialized now
->>>>>>>>>>>>>>  - add_fsync_inode
->>>>>>>>>>>>>>   - dquot_initialize
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> I think we should reserve block for inode block after dquot_initialize(), can
->>>>>>>>>>>>>> you confirm this?
->>>>>>>>>>>>>
->>>>>>>>>>>>> Let me test this.
->>>>>>>>>>>>>
->>>>>>>>>>>>> >From b90260bc577fe87570b1ef7b134554a8295b1f6c Mon Sep 17 00:00:00 2001
->>>>>>>>>>>>> From: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>>>>>>>>> Date: Mon, 17 Sep 2018 18:14:41 -0700
->>>>>>>>>>>>> Subject: [PATCH] f2fs: count inode block for recovered files
->>>>>>>>>>>>>
->>>>>>>>>>>>> If a new file is recovered, we missed to reserve its inode block.
->>>>>>>>>>>>
->>>>>>>>>>>> I remember, in order to keep line with other filesystem, unlike on-disk, we
->>>>>>>>>>>> have to keep backward compatibilty, in memory we don't account block number
->>>>>>>>>>>> for f2fs' inode block, but only account inode number for it, so here like
->>>>>>>>>>>> we did in inc_valid_node_count(), we don't need to do this.
->>>>>>>>>>>
->>>>>>>>>>> Okay, I just hit the error again w/o your patch. Another one coming to my mind
->>>>>>>>>>> is that caused by uid/gid change during recovery. Let me try out your patch.
->>>>>>>>>>
->>>>>>>>>> I guess we should update dquot and inode's uid/gid atomically under
->>>>>>>>>> lock_op() in f2fs_setattr() to prevent corruption on sys quota file.
->>>>>>>>>>
->>>>>>>>>> v9 can pass all xfstest cases and por_fsstress case w/ sys quota file
->>>>>>>>>> enabled, but w/ normal quota file, I got one regression reported by
->>>>>>>>>> generic/232, I fixed in v10, will do some tests and release it later.
->>>>>>>>>>
->>>>>>>>>> Note that, my fsck can fix corrupted quota file automatically once
->>>>>>>>>> CP_QUOTA_NEED_FSCK_FLAG is set.
->>>>>>>>>
->>>>>>>>> I hit failures again with your v9 w/ sysfile quota and modified fsck to detect
->>>>>>>>
->>>>>>>> That's strange, in my environment, before v9, I always encounter corrupted
->>>>>>>> quota sysfile after step 9), after v9, I never hit failure again.
->>>>>>>>
->>>>>>>> 1) enable fault injection
->>>>>>>> 2) run fsstress
->>>>>>>> 3) call shutdowon
->>>>>>>> 4) kill fsstress
->>>>>>>> 5) unmount
->>>>>>>> 6) fsck
->>>>>>>> 7) mount
->>>>>>>> 8) umount
->>>>>>>> 9) fsck
->>>>>>>> 10) go 1).
->>>>>>>>
->>>>>>>>> CP_QUOTA_NEED_FSCK_FLAG to fix the partition. Note that, if I set NEED_FSCK
->>>>>>>>> flag in roll-forward recovery, everything is fine.
->>>>>>>>
->>>>>>>> I do the test based on codes in my git tree, could you check the result
->>>>>>>> again based on my code? in where I just disable nat_bits recovery, not
->>>>>>>> sure, in step 6) fsck can break some thing in image.
->>>>>>>>
->>>>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/log/?h=f2fs-dev
->>>>>>>>
->>>>>>>> Also, I just send the fsck code, could you check that too?
->>>>>>>>
->>>>>>>> And I'd like to know your mount option and mkfs option, could you list for me?
->>>>>>>
->>>>>>> I'm just doing this.
->>>>>>> https://github.com/jaegeuk/xfstests-f2fs/blob/f2fs/run.sh#L220
->>>>>>
->>>>>> I just sent one patch to fix POR issue which missed to recover uid/gid of
->>>>>> inode.
->>>>>>
->>>>>> [PATCH] f2fs: fix to recover inode's uid/gid during POR
->>>>>>
->>>>>> After applying this patch, I can reproduce sys quota file corruption... let
->>>>>> me figure out the solution.
->>>>>
->>>>> Okay.
->>>>
->>>> Could you try v11, no quota corruption in my test now.
->>>
->>> Chao,
->>>
->>> I missed your fsck patch to recover this. Could you post it as well?
->>
->> Could you check below one?
->>
->> https://lore.kernel.org/patchwork/patch/988210/
+On 09/26, Chao Yu wrote:
+> On 2018/9/26 9:44, Jaegeuk Kim wrote:
+> > On 09/26, Chao Yu wrote:
+> >> On 2018/9/26 8:29, Jaegeuk Kim wrote:
+> >>> On 09/21, Chao Yu wrote:
+> >>>> On 2018/9/21 5:42, Jaegeuk Kim wrote:
+> >>>>> On 09/20, Chao Yu wrote:
+> >>>>>> On 2018/9/20 6:38, Jaegeuk Kim wrote:
+> >>>>>>> On 09/19, Chao Yu wrote:
+> >>>>>>>> On 2018/9/19 0:45, Jaegeuk Kim wrote:
+> >>>>>>>>> On 09/18, Chao Yu wrote:
+> >>>>>>>>>> On 2018/9/18 10:05, Jaegeuk Kim wrote:
+> >>>>>>>>>>> On 09/18, Chao Yu wrote:
+> >>>>>>>>>>>> On 2018/9/18 9:19, Jaegeuk Kim wrote:
+> >>>>>>>>>>>>> On 09/13, Chao Yu wrote:
+> >>>>>>>>>>>>>> On 2018/9/13 3:54, Jaegeuk Kim wrote:
+> >>>>>>>>>>>>>>> On 09/12, Chao Yu wrote:
+> >>>>>>>>>>>>>>>> On 2018/9/12 9:40, Chao Yu wrote:
+> >>>>>>>>>>>>>>>>> On 2018/9/12 9:25, Jaegeuk Kim wrote:
+> >>>>>>>>>>>>>>>>>> On 09/12, Chao Yu wrote:
+> >>>>>>>>>>>>>>>>>>> On 2018/9/12 8:27, Jaegeuk Kim wrote:
+> >>>>>>>>>>>>>>>>>>>> On 09/11, Jaegeuk Kim wrote:
+> >>>>>>>>>>>>>>>>>>>>> On 09/12, Chao Yu wrote:
+> >>>>>>>>>>>>>>>>>>>>>> On 2018/9/12 4:15, Jaegeuk Kim wrote:
+> >>>>>>>>>>>>>>>>>>>>>>> fsck.f2fs is able to recover the quota structure, since roll-forward recovery
+> >>>>>>>>>>>>>>>>>>>>>>> can recover it based on previous user information.
+> >>>>>>>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>>>>>>> I didn't get it, both fsck and kernel recover quota file based all inodes'
+> >>>>>>>>>>>>>>>>>>>>>> uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
+> >>>>>>>>>>>>>>>>>>>>>> same?
+> >>>>>>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>>>>>> I thought that, but had to add this, since I was encountering quota errors right
+> >>>>>>>>>>>>>>>>>>>>> after getting some files recovered. And, I thought it'd make it more safe to do
+> >>>>>>>>>>>>>>>>>>>>> fsck after roll-forward recovery.
+> >>>>>>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>>>>>> Anyway, let me test again without this patch for a while.
+> >>>>>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>>>>> Hmm, I just got a fsck failure right after some files recovered.
+> >>>>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>>>> To make sure, do you test with "f2fs: guarantee journalled quota data by
+> >>>>>>>>>>>>>>>>>>> checkpoint"? if not, I think there is no guarantee that f2fs can recover
+> >>>>>>>>>>>>>>>>>>> quote info into correct quote file, because, in last checkpoint, quota file
+> >>>>>>>>>>>>>>>>>>> may was corrupted/inconsistent. Right?
+> >>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>> Oh, I forget to mention that, I add a patch to fsck to let it noticing
+> >>>>>>>>>>>>>>>>> CP_QUOTA_NEED_FSCK_FLAG flag, and by default, fsck will fix corrupted quote
+> >>>>>>>>>>>>>>>>> file if the flag is set, but w/o this flag, quota file is still corrupted
+> >>>>>>>>>>>>>>>>> detected by fsck, I guess there is bug in v8.
+> >>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>> In v8, there are two cases we didn't guarantee quota file's consistence:
+> >>>>>>>>>>>>>>>> 1. flush time in block_operation exceed a threshold.
+> >>>>>>>>>>>>>>>> 2. dquot subsystem error occurs.
+> >>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>> For above case, fsck should repair the quota file by default.
+> >>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>> Okay, I got another failure and it seems CP_QUOTA_NEED_FSCK_FLAG was not set
+> >>>>>>>>>>>>>>> during the recovery. So, we have something missing in the recovery in terms
+> >>>>>>>>>>>>>>> of quota updates.
+> >>>>>>>>>>>>>>
+> >>>>>>>>>>>>>> Yeah, I checked the code, just found one suspected place:
+> >>>>>>>>>>>>>>
+> >>>>>>>>>>>>>> find_fsync_dnodes()
+> >>>>>>>>>>>>>>  - f2fs_recover_inode_page
+> >>>>>>>>>>>>>>   - inc_valid_node_count
+> >>>>>>>>>>>>>>    - dquot_reserve_block  dquot info is not initialized now
+> >>>>>>>>>>>>>>  - add_fsync_inode
+> >>>>>>>>>>>>>>   - dquot_initialize
+> >>>>>>>>>>>>>>
+> >>>>>>>>>>>>>> I think we should reserve block for inode block after dquot_initialize(), can
+> >>>>>>>>>>>>>> you confirm this?
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> Let me test this.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> >From b90260bc577fe87570b1ef7b134554a8295b1f6c Mon Sep 17 00:00:00 2001
+> >>>>>>>>>>>>> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>>>>>>>>>>>> Date: Mon, 17 Sep 2018 18:14:41 -0700
+> >>>>>>>>>>>>> Subject: [PATCH] f2fs: count inode block for recovered files
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> If a new file is recovered, we missed to reserve its inode block.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> I remember, in order to keep line with other filesystem, unlike on-disk, we
+> >>>>>>>>>>>> have to keep backward compatibilty, in memory we don't account block number
+> >>>>>>>>>>>> for f2fs' inode block, but only account inode number for it, so here like
+> >>>>>>>>>>>> we did in inc_valid_node_count(), we don't need to do this.
+> >>>>>>>>>>>
+> >>>>>>>>>>> Okay, I just hit the error again w/o your patch. Another one coming to my mind
+> >>>>>>>>>>> is that caused by uid/gid change during recovery. Let me try out your patch.
+> >>>>>>>>>>
+> >>>>>>>>>> I guess we should update dquot and inode's uid/gid atomically under
+> >>>>>>>>>> lock_op() in f2fs_setattr() to prevent corruption on sys quota file.
+> >>>>>>>>>>
+> >>>>>>>>>> v9 can pass all xfstest cases and por_fsstress case w/ sys quota file
+> >>>>>>>>>> enabled, but w/ normal quota file, I got one regression reported by
+> >>>>>>>>>> generic/232, I fixed in v10, will do some tests and release it later.
+> >>>>>>>>>>
+> >>>>>>>>>> Note that, my fsck can fix corrupted quota file automatically once
+> >>>>>>>>>> CP_QUOTA_NEED_FSCK_FLAG is set.
+> >>>>>>>>>
+> >>>>>>>>> I hit failures again with your v9 w/ sysfile quota and modified fsck to detect
+> >>>>>>>>
+> >>>>>>>> That's strange, in my environment, before v9, I always encounter corrupted
+> >>>>>>>> quota sysfile after step 9), after v9, I never hit failure again.
+> >>>>>>>>
+> >>>>>>>> 1) enable fault injection
+> >>>>>>>> 2) run fsstress
+> >>>>>>>> 3) call shutdowon
+> >>>>>>>> 4) kill fsstress
+> >>>>>>>> 5) unmount
+> >>>>>>>> 6) fsck
+> >>>>>>>> 7) mount
+> >>>>>>>> 8) umount
+> >>>>>>>> 9) fsck
+> >>>>>>>> 10) go 1).
+> >>>>>>>>
+> >>>>>>>>> CP_QUOTA_NEED_FSCK_FLAG to fix the partition. Note that, if I set NEED_FSCK
+> >>>>>>>>> flag in roll-forward recovery, everything is fine.
+> >>>>>>>>
+> >>>>>>>> I do the test based on codes in my git tree, could you check the result
+> >>>>>>>> again based on my code? in where I just disable nat_bits recovery, not
+> >>>>>>>> sure, in step 6) fsck can break some thing in image.
+> >>>>>>>>
+> >>>>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/log/?h=f2fs-dev
+> >>>>>>>>
+> >>>>>>>> Also, I just send the fsck code, could you check that too?
+> >>>>>>>>
+> >>>>>>>> And I'd like to know your mount option and mkfs option, could you list for me?
+> >>>>>>>
+> >>>>>>> I'm just doing this.
+> >>>>>>> https://github.com/jaegeuk/xfstests-f2fs/blob/f2fs/run.sh#L220
+> >>>>>>
+> >>>>>> I just sent one patch to fix POR issue which missed to recover uid/gid of
+> >>>>>> inode.
+> >>>>>>
+> >>>>>> [PATCH] f2fs: fix to recover inode's uid/gid during POR
+> >>>>>>
+> >>>>>> After applying this patch, I can reproduce sys quota file corruption... let
+> >>>>>> me figure out the solution.
+> >>>>>
+> >>>>> Okay.
+> >>>>
+> >>>> Could you try v11, no quota corruption in my test now.
+> >>>
+> >>> Chao,
+> >>>
+> >>> I missed your fsck patch to recover this. Could you post it as well?
+> >>
+> >> Could you check below one?
+> >>
+> >> https://lore.kernel.org/patchwork/patch/988210/
+> > 
+> > It'd be worth to show the flag in print_cp_state.
 > 
-> It'd be worth to show the flag in print_cp_state.
+> That patch has already added that?
+> 
+> diff --git a/fsck/mount.c b/fsck/mount.c
+> index 6a3382dbd449..21a39a7222c6 100644
+> --- a/fsck/mount.c
+> +++ b/fsck/mount.c
+> @@ -405,6 +405,8 @@  void print_ckpt_info(struct f2fs_sb_info *sbi)
+>  void print_cp_state(u32 flag)
+>  {
+>  	MSG(0, "Info: checkpoint state = %x : ", flag);
+> +	if (flag & CP_QUOTA_NEED_FSCK_FLAG)
+> +		MSG(0, "%s", " quota_need_fsck");
 
-That patch has already added that?
-
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 6a3382dbd449..21a39a7222c6 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -405,6 +405,8 @@  void print_ckpt_info(struct f2fs_sb_info *sbi)
- void print_cp_state(u32 flag)
- {
- 	MSG(0, "Info: checkpoint state = %x : ", flag);
-+	if (flag & CP_QUOTA_NEED_FSCK_FLAG)
-+		MSG(0, "%s", " quota_need_fsck");
-
-Thanks,
+Oh, yeah. :P
+I started to run all my tests with this. Let me see what will happen.
 
 > 
->>
->> Thanks,
->>
->>>
->>> Thanks,
->>>
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>>>
->>>>>> Thanks,
->>>>>>
->>>>>>>
->>>>>>>>
->>>>>>>> Thanks,
->>>>>>>>
->>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> Thanks,
->>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> Can you test v9 first? I didn't encounter quota corruption with your
->>>>>>>>>>>> testcase right now. Will check it in cell phone environment.
->>>>>>>>>>>>
->>>>>>>>>>>>>
->>>>>>>>>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>>>>>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>>>>>>>>> ---
->>>>>>>>>>>>>  fs/f2fs/recovery.c | 5 +++++
->>>>>>>>>>>>>  1 file changed, 5 insertions(+)
->>>>>>>>>>>>>
->>>>>>>>>>>>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
->>>>>>>>>>>>> index 56d34193a74b..bff5cf730e13 100644
->>>>>>>>>>>>> --- a/fs/f2fs/recovery.c
->>>>>>>>>>>>> +++ b/fs/f2fs/recovery.c
->>>>>>>>>>>>> @@ -84,6 +84,11 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
->>>>>>>>>>>>>  		err = dquot_alloc_inode(inode);
->>>>>>>>>>>>>  		if (err)
->>>>>>>>>>>>>  			goto err_out;
->>>>>>>>>>>>> +		err = dquot_reserve_block(inode, 1);
->>>>>>>>>>>>> +		if (err) {
->>>>>>>>>>>>> +			dquot_drop(inode);
->>>>>>>>>>>>> +			goto err_out;
->>>>>>>>>>>>> +		}
->>>>>>>>>>>>>  	}
->>>>>>>>>>>>>  
->>>>>>>>>>>>>  	entry = f2fs_kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
->>>>>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>> .
->>>>>>>>>>>
->>>>>>>>>
->>>>>>>>> .
->>>>>>>>>
->>>>>>>
->>>>>>> .
->>>>>>>
->>>>>
->>>>> .
->>>>>
->>>
->>> .
->>>
+> Thanks,
 > 
-> .
-> 
+> > 
+> >>
+> >> Thanks,
+> >>
+> >>>
+> >>> Thanks,
+> >>>
+> >>>>
+> >>>> Thanks,
+> >>>>
+> >>>>>
+> >>>>>>
+> >>>>>> Thanks,
+> >>>>>>
+> >>>>>>>
+> >>>>>>>>
+> >>>>>>>> Thanks,
+> >>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>>>
+> >>>>>>>>>> Thanks,
+> >>>>>>>>>>
+> >>>>>>>>>>>
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> Can you test v9 first? I didn't encounter quota corruption with your
+> >>>>>>>>>>>> testcase right now. Will check it in cell phone environment.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >>>>>>>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>>>>>>>>>>>> ---
+> >>>>>>>>>>>>>  fs/f2fs/recovery.c | 5 +++++
+> >>>>>>>>>>>>>  1 file changed, 5 insertions(+)
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> >>>>>>>>>>>>> index 56d34193a74b..bff5cf730e13 100644
+> >>>>>>>>>>>>> --- a/fs/f2fs/recovery.c
+> >>>>>>>>>>>>> +++ b/fs/f2fs/recovery.c
+> >>>>>>>>>>>>> @@ -84,6 +84,11 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
+> >>>>>>>>>>>>>  		err = dquot_alloc_inode(inode);
+> >>>>>>>>>>>>>  		if (err)
+> >>>>>>>>>>>>>  			goto err_out;
+> >>>>>>>>>>>>> +		err = dquot_reserve_block(inode, 1);
+> >>>>>>>>>>>>> +		if (err) {
+> >>>>>>>>>>>>> +			dquot_drop(inode);
+> >>>>>>>>>>>>> +			goto err_out;
+> >>>>>>>>>>>>> +		}
+> >>>>>>>>>>>>>  	}
+> >>>>>>>>>>>>>  
+> >>>>>>>>>>>>>  	entry = f2fs_kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>
+> >>>>>>>>>>> .
+> >>>>>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>> .
+> >>>>>>>>>
+> >>>>>>>
+> >>>>>>> .
+> >>>>>>>
+> >>>>>
+> >>>>> .
+> >>>>>
+> >>>
+> >>> .
+> >>>
+> > 
+> > .
+> > 
