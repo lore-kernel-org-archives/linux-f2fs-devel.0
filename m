@@ -1,77 +1,288 @@
-From: Chengguang Xu <cgxu519@gmx.com>
-Subject: [PATCH 2/2] f2fs: remove unnecessary mount optino flag
- 'QUOTA'
-Date: Thu, 27 Sep 2018 23:23:14 +0800
-Message-ID: <20180927152314.23190-2-cgxu519@gmx.com>
-References: <20180927152314.23190-1-cgxu519@gmx.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <cgxu519@gmx.com>) id 1g5Y9H-00076r-H8
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Sep 2018 15:24:15 +0000
-Received: from mout.gmx.net ([212.227.17.21])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1g5Y9F-00CZYF-JZ
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Sep 2018 15:24:15 +0000
-In-Reply-To: <20180927152314.23190-1-cgxu519@gmx.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: Chengguang Xu <cgxu519@gmx.com>, linux-f2fs-devel@lists.sourceforge.net
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH v3] Revert: "f2fs: check last page index in cached bio to decide submission"
+Date: Thu, 27 Sep 2018 23:41:16 +0800
+Message-ID: <20180927154116.10912-1-chao@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Code cleanup by removing unnecessary mount option
-flag 'QUOTA'.
+From: Chao Yu <yuchao0@huawei.com>
 
-Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+There is one case that we can leave bio in f2fs, result in hanging
+page writeback waiter.
+
+Thread A				Thread B
+- f2fs_write_cache_pages
+ - f2fs_submit_page_write
+ page #0 cached in bio #0 of cold log
+ - f2fs_submit_page_write
+ page #1 cached in bio #1 of warm log
+					- f2fs_write_cache_pages
+					 - f2fs_submit_page_write
+					 bio is full, submit bio #1 contain page #1
+ - f2fs_submit_merged_write_cond(, page #1)
+ fail to submit bio #0 due to page #1 is not in any cached bios.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/f2fs.h  | 1 -
- fs/f2fs/super.c | 3 ---
- 2 files changed, 4 deletions(-)
+v3:
+- only pass page parameter for f2fs_submit_merged_write_cond in relaimer path
+ fs/f2fs/checkpoint.c |  3 +--
+ fs/f2fs/data.c       | 38 +++++++++++++++++++-------------------
+ fs/f2fs/f2fs.h       |  4 ++--
+ fs/f2fs/node.c       | 11 +++++------
+ fs/f2fs/segment.c    | 11 +++++------
+ 5 files changed, 32 insertions(+), 35 deletions(-)
 
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index d312d2829d5a..dbffb3f6c5c7 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -279,8 +279,7 @@ static int __f2fs_write_meta_page(struct page *page,
+ 	dec_page_count(sbi, F2FS_DIRTY_META);
+ 
+ 	if (wbc->for_reclaim)
+-		f2fs_submit_merged_write_cond(sbi, page->mapping->host,
+-						0, page->index, META);
++		f2fs_submit_merged_write_cond(sbi, NULL, page, 0, META);
+ 
+ 	unlock_page(page);
+ 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 36998b078b1b..02d5ce888a4a 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -322,8 +322,8 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
+ 	io->bio = NULL;
+ }
+ 
+-static bool __has_merged_page(struct f2fs_bio_info *io,
+-				struct inode *inode, nid_t ino, pgoff_t idx)
++static bool __has_merged_page(struct f2fs_bio_info *io, struct inode *inode,
++						struct page *page, nid_t ino)
+ {
+ 	struct bio_vec *bvec;
+ 	struct page *target;
+@@ -332,7 +332,7 @@ static bool __has_merged_page(struct f2fs_bio_info *io,
+ 	if (!io->bio)
+ 		return false;
+ 
+-	if (!inode && !ino)
++	if (!inode && !page && !ino)
+ 		return true;
+ 
+ 	bio_for_each_segment_all(bvec, io->bio, i) {
+@@ -342,11 +342,10 @@ static bool __has_merged_page(struct f2fs_bio_info *io,
+ 		else
+ 			target = fscrypt_control_page(bvec->bv_page);
+ 
+-		if (idx != target->index)
+-			continue;
+-
+ 		if (inode && inode == target->mapping->host)
+ 			return true;
++		if (page && page == target)
++			return true;
+ 		if (ino && ino == ino_of_node(target))
+ 			return true;
+ 	}
+@@ -355,7 +354,8 @@ static bool __has_merged_page(struct f2fs_bio_info *io,
+ }
+ 
+ static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
+-				nid_t ino, pgoff_t idx, enum page_type type)
++						struct page *page, nid_t ino,
++						enum page_type type)
+ {
+ 	enum page_type btype = PAGE_TYPE_OF_BIO(type);
+ 	enum temp_type temp;
+@@ -366,7 +366,7 @@ static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
+ 		io = sbi->write_io[btype] + temp;
+ 
+ 		down_read(&io->io_rwsem);
+-		ret = __has_merged_page(io, inode, ino, idx);
++		ret = __has_merged_page(io, inode, page, ino);
+ 		up_read(&io->io_rwsem);
+ 
+ 		/* TODO: use HOT temp only for meta pages now. */
+@@ -397,12 +397,12 @@ static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
+ }
+ 
+ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
+-				struct inode *inode, nid_t ino, pgoff_t idx,
+-				enum page_type type, bool force)
++				struct inode *inode, struct page *page,
++				nid_t ino, enum page_type type, bool force)
+ {
+ 	enum temp_type temp;
+ 
+-	if (!force && !has_merged_page(sbi, inode, ino, idx, type))
++	if (!force && !has_merged_page(sbi, inode, page, ino, type))
+ 		return;
+ 
+ 	for (temp = HOT; temp < NR_TEMP_TYPE; temp++) {
+@@ -421,10 +421,10 @@ void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type)
+ }
+ 
+ void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
+-				struct inode *inode, nid_t ino, pgoff_t idx,
+-				enum page_type type)
++				struct inode *inode, struct page *page,
++				nid_t ino, enum page_type type)
+ {
+-	__submit_merged_write_cond(sbi, inode, ino, idx, type, false);
++	__submit_merged_write_cond(sbi, inode, page, ino, type, false);
+ }
+ 
+ void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi)
+@@ -1960,7 +1960,7 @@ static int __write_data_page(struct page *page, bool *submitted,
+ 		ClearPageUptodate(page);
+ 
+ 	if (wbc->for_reclaim) {
+-		f2fs_submit_merged_write_cond(sbi, inode, 0, page->index, DATA);
++		f2fs_submit_merged_write_cond(sbi, NULL, page, 0, DATA);
+ 		clear_inode_flag(inode, FI_HOT_DATA);
+ 		f2fs_remove_dirty_inode(inode);
+ 		submitted = NULL;
+@@ -2018,10 +2018,10 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 	pgoff_t index;
+ 	pgoff_t end;		/* Inclusive */
+ 	pgoff_t done_index;
+-	pgoff_t last_idx = ULONG_MAX;
+ 	int cycled;
+ 	int range_whole = 0;
+ 	int tag;
++	int nwritten = 0;
+ 
+ 	pagevec_init(&pvec);
+ 
+@@ -2124,7 +2124,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 				done = 1;
+ 				break;
+ 			} else if (submitted) {
+-				last_idx = page->index;
++				nwritten++;
+ 			}
+ 
+ 			if (--wbc->nr_to_write <= 0 &&
+@@ -2146,9 +2146,9 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 	if (wbc->range_cyclic || (range_whole && wbc->nr_to_write > 0))
+ 		mapping->writeback_index = done_index;
+ 
+-	if (last_idx != ULONG_MAX)
++	if (nwritten)
+ 		f2fs_submit_merged_write_cond(F2FS_M_SB(mapping), mapping->host,
+-						0, last_idx, DATA);
++								NULL, 0, DATA);
+ 
+ 	return ret;
+ }
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index abf925664d9c..58d3e40ee46c 100644
+index dfd2de0414e0..9d85961cc498 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -97,7 +97,6 @@ extern char *f2fs_fault_name[FAULT_MAX];
- #define F2FS_MOUNT_USRQUOTA		0x00080000
- #define F2FS_MOUNT_GRPQUOTA		0x00100000
- #define F2FS_MOUNT_PRJQUOTA		0x00200000
--#define F2FS_MOUNT_QUOTA		0x00400000
- #define F2FS_MOUNT_INLINE_XATTR_SIZE	0x00800000
- #define F2FS_MOUNT_RESERVE_ROOT		0x01000000
+@@ -3028,8 +3028,8 @@ int f2fs_init_post_read_processing(void);
+ void f2fs_destroy_post_read_processing(void);
+ void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type);
+ void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
+-				struct inode *inode, nid_t ino, pgoff_t idx,
+-				enum page_type type);
++				struct inode *inode, struct page *page,
++				nid_t ino, enum page_type type);
+ void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi);
+ int f2fs_submit_page_bio(struct f2fs_io_info *fio);
+ void f2fs_submit_page_write(struct f2fs_io_info *fio);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 8f4e12819c94..a4a6ec2b593f 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1561,8 +1561,7 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+ 	up_read(&sbi->node_write);
  
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index e2abd45c2cdd..74eb63e8a2fd 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -680,7 +680,6 @@ static int parse_options(struct super_block *sb, char *options)
- 			F2FS_OPTION(sbi).s_jquota_fmt = QFMT_VFS_V1;
- 			break;
- 		case Opt_noquota:
--			clear_opt(sbi, QUOTA);
- 			clear_opt(sbi, USRQUOTA);
- 			clear_opt(sbi, GRPQUOTA);
- 			clear_opt(sbi, PRJQUOTA);
-@@ -1345,8 +1344,6 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+ 	if (wbc->for_reclaim) {
+-		f2fs_submit_merged_write_cond(sbi, page->mapping->host, 0,
+-						page->index, NODE);
++		f2fs_submit_merged_write_cond(sbi, NULL, page, 0, NODE);
+ 		submitted = NULL;
  	}
- #endif
- #ifdef CONFIG_QUOTA
--	if (test_opt(sbi, QUOTA))
--		seq_puts(seq, ",quota");
- 	if (test_opt(sbi, USRQUOTA))
- 		seq_puts(seq, ",usrquota");
- 	if (test_opt(sbi, GRPQUOTA))
+ 
+@@ -1627,13 +1626,13 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ 			unsigned int *seq_id)
+ {
+ 	pgoff_t index;
+-	pgoff_t last_idx = ULONG_MAX;
+ 	struct pagevec pvec;
+ 	int ret = 0;
+ 	struct page *last_page = NULL;
+ 	bool marked = false;
+ 	nid_t ino = inode->i_ino;
+ 	int nr_pages;
++	int nwritten = 0;
+ 
+ 	if (atomic) {
+ 		last_page = last_fsync_dnode(sbi, ino);
+@@ -1711,7 +1710,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ 				f2fs_put_page(last_page, 0);
+ 				break;
+ 			} else if (submitted) {
+-				last_idx = page->index;
++				nwritten++;
+ 			}
+ 
+ 			if (page == last_page) {
+@@ -1737,8 +1736,8 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ 		goto retry;
+ 	}
+ out:
+-	if (last_idx != ULONG_MAX)
+-		f2fs_submit_merged_write_cond(sbi, NULL, ino, last_idx, NODE);
++	if (nwritten)
++		f2fs_submit_merged_write_cond(sbi, NULL, NULL, ino, NODE);
+ 	return ret ? -EIO: 0;
+ }
+ 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 97a4fae75651..965ef524e2a2 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -371,7 +371,7 @@ static int __f2fs_commit_inmem_pages(struct inode *inode)
+ 		.io_type = FS_DATA_IO,
+ 	};
+ 	struct list_head revoke_list;
+-	pgoff_t last_idx = ULONG_MAX;
++	bool submit_bio = false;
+ 	int err = 0;
+ 
+ 	INIT_LIST_HEAD(&revoke_list);
+@@ -406,14 +406,14 @@ static int __f2fs_commit_inmem_pages(struct inode *inode)
+ 			}
+ 			/* record old blkaddr for revoking */
+ 			cur->old_addr = fio.old_blkaddr;
+-			last_idx = page->index;
++			submit_bio = true;
+ 		}
+ 		unlock_page(page);
+ 		list_move_tail(&cur->list, &revoke_list);
+ 	}
+ 
+-	if (last_idx != ULONG_MAX)
+-		f2fs_submit_merged_write_cond(sbi, inode, 0, last_idx, DATA);
++	if (submit_bio)
++		f2fs_submit_merged_write_cond(sbi, inode, NULL, 0, DATA);
+ 
+ 	if (err) {
+ 		/*
+@@ -3179,8 +3179,7 @@ void f2fs_wait_on_page_writeback(struct page *page,
+ 	if (PageWriteback(page)) {
+ 		struct f2fs_sb_info *sbi = F2FS_P_SB(page);
+ 
+-		f2fs_submit_merged_write_cond(sbi, page->mapping->host,
+-						0, page->index, type);
++		f2fs_submit_merged_write_cond(sbi, NULL, page, 0, type);
+ 		if (ordered)
+ 			wait_on_page_writeback(page);
+ 		else
 -- 
-2.17.1
+2.18.0
