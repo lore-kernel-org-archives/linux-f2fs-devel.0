@@ -1,7 +1,7 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: refactor ->page_mkwrite() flow
-Date: Thu, 27 Sep 2018 18:33:18 +0800
-Message-ID: <20180927103318.36631-1-yuchao0@huawei.com>
+Subject: [PATCH v5] f2fs: allow out-place-update for direct IO in LFS mode
+Date: Thu, 27 Sep 2018 18:34:52 +0800
+Message-ID: <20180927103452.40623-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -10,143 +10,226 @@ To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Thread A				Thread B
-- f2fs_vm_page_mkwrite
-					- f2fs_setattr
-					 - down_write(i_mmap_sem)
-					 - truncate_setsize
-					 - f2fs_truncate
-					 - up_write(i_mmap_sem)
- - f2fs_reserve_block
- reserve NEW_ADDR
- - skip dirty page due to truncation
+Normally, DIO uses in-pllace-update, but in LFS mode, f2fs doesn't
+allow triggering any in-place-update writes, so we fallback direct
+write to buffered write, result in bad performance of large size
+write.
 
-1. we don't need to rserve new block address for a truncated page.
-2. dn.data_blkaddr is used out of node page lock coverage.
+This patch adds to support triggering out-place-update for direct IO
+to enhance its performance.
 
-Refactor ->page_mkwrite() flow to fix above issues:
-- use __do_map_lock() to avoid racing checkpoint()
-- lock data page in prior to dnode page
-- cover f2fs_reserve_block with i_mmap_sem lock
-- wait page writeback before zeroing page
+Note that it needs to exclude direct read IO during direct write,
+since new data writing to new block address will no be valid until
+write finished.
+
+storage: zram
+
+time xfs_io -f -d /mnt/f2fs/file -c "pwrite 0 1073741824" -c "fsync"
+
+Before:
+real	0m13.061s
+user	0m0.327s
+sys	0m12.486s
+
+After:
+real	0m6.448s
+user	0m0.228s
+sys	0m6.212s
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
-v2:
-- handle error path correctly
-- wait page writeback before zeroing page
- fs/f2fs/data.c |  2 +-
- fs/f2fs/f2fs.h |  1 +
- fs/f2fs/file.c | 45 ++++++++++++++++++++++-----------------------
- 3 files changed, 24 insertions(+), 24 deletions(-)
+v5:
+- use F2FS_GET_BLOCK_DIO instead of F2FS_GET_BLOCK_DEFAULT.
+ fs/f2fs/data.c | 44 +++++++++++++++++++++++++++++++++++---------
+ fs/f2fs/f2fs.h | 45 +++++++++++++++++++++++++++++++++++++++++----
+ fs/f2fs/file.c |  3 ++-
+ 3 files changed, 78 insertions(+), 14 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 41102c227eee..b287422c8eeb 100644
+index e98ea9a84782..652919552758 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -972,7 +972,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
- 	return err;
- }
+@@ -893,7 +893,7 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
  
--static inline void __do_map_lock(struct f2fs_sb_info *sbi, int flag, bool lock)
-+void __do_map_lock(struct f2fs_sb_info *sbi, int flag, bool lock)
- {
- 	if (flag == F2FS_GET_BLOCK_PRE_AIO) {
- 		if (lock)
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index b32fd9f7da95..8f4a46603c61 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3050,6 +3050,7 @@ struct page *f2fs_get_lock_data_page(struct inode *inode, pgoff_t index,
- struct page *f2fs_get_new_data_page(struct inode *inode,
- 			struct page *ipage, pgoff_t index, bool new_i_size);
- int f2fs_do_write_data_page(struct f2fs_io_info *fio);
-+void __do_map_lock(struct f2fs_sb_info *sbi, int flag, bool lock);
- int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 			int create, int flag);
- int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 357422a4c319..6db808c80813 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -47,7 +47,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- 	struct page *page = vmf->page;
- 	struct inode *inode = file_inode(vmf->vma->vm_file);
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	struct dnode_of_data dn;
-+	struct dnode_of_data dn = { .node_changed = false };
- 	int err;
+ 	dn->data_blkaddr = datablock_addr(dn->inode,
+ 				dn->node_page, dn->ofs_in_node);
+-	if (dn->data_blkaddr == NEW_ADDR)
++	if (dn->data_blkaddr != NULL_ADDR)
+ 		goto alloc;
  
- 	if (unlikely(f2fs_cp_error(sbi))) {
-@@ -59,19 +59,6 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 	if (unlikely((err = inc_valid_block_count(sbi, dn->inode, &count))))
+@@ -947,7 +947,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
  
- 	f2fs_bug_on(sbi, f2fs_has_inline_data(inode));
- 
--	/* block allocation */
--	f2fs_lock_op(sbi);
--	set_new_dnode(&dn, inode, NULL, NULL, 0);
--	err = f2fs_reserve_block(&dn, page->index);
--	if (err) {
--		f2fs_unlock_op(sbi);
--		goto out;
--	}
--	f2fs_put_dnode(&dn);
--	f2fs_unlock_op(sbi);
--
--	f2fs_balance_fs(sbi, dn.node_changed);
--
- 	file_update_time(vmf->vma->vm_file);
- 	down_read(&F2FS_I(inode)->i_mmap_sem);
- 	lock_page(page);
-@@ -83,11 +70,28 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- 		goto out_sem;
+ 	if (direct_io) {
+ 		map.m_seg_type = f2fs_rw_hint_to_seg_type(iocb->ki_hint);
+-		flag = f2fs_force_buffered_io(inode, WRITE) ?
++		flag = f2fs_force_buffered_io(inode, iocb, from) ?
+ 					F2FS_GET_BLOCK_PRE_AIO :
+ 					F2FS_GET_BLOCK_PRE_DIO;
+ 		goto map_blocks;
+@@ -1066,7 +1066,15 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ 		goto sync_out;
  	}
  
-+	/* block allocation */
-+	__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, true);
-+	set_new_dnode(&dn, inode, NULL, NULL, 0);
-+	err = f2fs_get_block(&dn, page->index);
-+	f2fs_put_dnode(&dn);
-+	__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, false);
-+	if (err) {
-+		unlock_page(page);
-+		goto out_sem;
-+	}
-+
-+	/* fill the page */
-+	f2fs_wait_on_page_writeback(page, DATA, false);
-+
-+	/* wait for GCed page writeback via META_MAPPING */
-+	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
-+
- 	/*
- 	 * check to see if the page is mapped already (no holes)
- 	 */
- 	if (PageMappedToDisk(page))
--		goto mapped;
-+		goto out_sem;
+-	if (!is_valid_data_blkaddr(sbi, blkaddr)) {
++	if (is_valid_data_blkaddr(sbi, blkaddr)) {
++		/* use out-place-update for driect IO under LFS mode */
++		if (test_opt(sbi, LFS) && create &&
++				flag == F2FS_GET_BLOCK_DIO) {
++			err = __allocate_data_block(&dn, map->m_seg_type);
++			if (!err)
++				set_inode_flag(inode, FI_APPEND_WRITE);
++		}
++	} else {
+ 		if (create) {
+ 			if (unlikely(f2fs_cp_error(sbi))) {
+ 				err = -EIO;
+@@ -2492,36 +2500,53 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 	struct address_space *mapping = iocb->ki_filp->f_mapping;
+ 	struct inode *inode = mapping->host;
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 	size_t count = iov_iter_count(iter);
+ 	loff_t offset = iocb->ki_pos;
+ 	int rw = iov_iter_rw(iter);
+ 	int err;
+ 	enum rw_hint hint = iocb->ki_hint;
+ 	int whint_mode = F2FS_OPTION(sbi).whint_mode;
++	bool do_opu;
  
- 	/* page is wholly or partially inside EOF */
- 	if (((loff_t)(page->index + 1) << PAGE_SHIFT) >
-@@ -104,16 +108,11 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- 	f2fs_update_iostat(sbi, APP_MAPPED_IO, F2FS_BLKSIZE);
+ 	err = check_direct_IO(inode, iter, offset);
+ 	if (err)
+ 		return err < 0 ? err : 0;
  
- 	trace_f2fs_vm_page_mkwrite(page, DATA);
--mapped:
--	/* fill the page */
--	f2fs_wait_on_page_writeback(page, DATA, false);
--
--	/* wait for GCed page writeback via META_MAPPING */
--	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
--
- out_sem:
- 	up_read(&F2FS_I(inode)->i_mmap_sem);
--out:
+-	if (f2fs_force_buffered_io(inode, rw))
++	if (f2fs_force_buffered_io(inode, iocb, iter))
+ 		return 0;
+ 
++	do_opu = allow_outplace_dio(inode, iocb, iter);
 +
-+	f2fs_balance_fs(sbi, dn.node_changed);
+ 	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
+ 
+ 	if (rw == WRITE && whint_mode == WHINT_MODE_OFF)
+ 		iocb->ki_hint = WRITE_LIFE_NOT_SET;
+ 
+-	if (!down_read_trylock(&F2FS_I(inode)->i_gc_rwsem[rw])) {
+-		if (iocb->ki_flags & IOCB_NOWAIT) {
++	if (iocb->ki_flags & IOCB_NOWAIT) {
++		if (!down_read_trylock(&fi->i_gc_rwsem[rw])) {
++			iocb->ki_hint = hint;
++			err = -EAGAIN;
++			goto out;
++		}
++		if (do_opu && !down_read_trylock(&fi->i_gc_rwsem[READ])) {
++			up_read(&fi->i_gc_rwsem[rw]);
+ 			iocb->ki_hint = hint;
+ 			err = -EAGAIN;
+ 			goto out;
+ 		}
+-		down_read(&F2FS_I(inode)->i_gc_rwsem[rw]);
++	} else {
++		down_read(&fi->i_gc_rwsem[rw]);
++		if (do_opu)
++			down_read(&fi->i_gc_rwsem[READ]);
+ 	}
+ 
+ 	err = blockdev_direct_IO(iocb, inode, iter, get_data_block_dio);
+-	up_read(&F2FS_I(inode)->i_gc_rwsem[rw]);
 +
- 	sb_end_pagefault(inode->i_sb);
- 	f2fs_update_time(sbi, REQ_TIME);
- err:
++	if (do_opu)
++		up_read(&fi->i_gc_rwsem[READ]);
++
++	up_read(&fi->i_gc_rwsem[rw]);
+ 
+ 	if (rw == WRITE) {
+ 		if (whint_mode == WHINT_MODE_OFF)
+@@ -2529,7 +2554,8 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 		if (err > 0) {
+ 			f2fs_update_iostat(F2FS_I_SB(inode), APP_DIRECT_IO,
+ 									err);
+-			set_inode_flag(inode, FI_UPDATE_WRITE);
++			if (!do_opu)
++				set_inode_flag(inode, FI_UPDATE_WRITE);
+ 		} else if (err < 0) {
+ 			f2fs_write_failed(mapping, offset + count);
+ 		}
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 6b6871093406..675ff5df13bb 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -8,6 +8,7 @@
+ #ifndef _LINUX_F2FS_H
+ #define _LINUX_F2FS_H
+ 
++#include <linux/uio.h>
+ #include <linux/types.h>
+ #include <linux/page-flags.h>
+ #include <linux/buffer_head.h>
+@@ -3488,11 +3489,47 @@ static inline bool f2fs_may_encrypt(struct inode *inode)
+ #endif
+ }
+ 
+-static inline bool f2fs_force_buffered_io(struct inode *inode, int rw)
++static inline int block_unaligned_IO(struct inode *inode,
++				struct kiocb *iocb, struct iov_iter *iter)
+ {
+-	return (f2fs_post_read_required(inode) ||
+-			(rw == WRITE && test_opt(F2FS_I_SB(inode), LFS)) ||
+-			F2FS_I_SB(inode)->s_ndevs);
++	unsigned int i_blkbits = READ_ONCE(inode->i_blkbits);
++	unsigned int blocksize_mask = (1 << i_blkbits) - 1;
++	loff_t offset = iocb->ki_pos;
++	unsigned long align = offset | iov_iter_alignment(iter);
++
++	return align & blocksize_mask;
++}
++
++static inline int allow_outplace_dio(struct inode *inode,
++				struct kiocb *iocb, struct iov_iter *iter)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	int rw = iov_iter_rw(iter);
++
++	return (test_opt(sbi, LFS) && (rw == WRITE) &&
++				!block_unaligned_IO(inode, iocb, iter));
++}
++
++static inline bool f2fs_force_buffered_io(struct inode *inode,
++				struct kiocb *iocb, struct iov_iter *iter)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	int rw = iov_iter_rw(iter);
++
++	if (f2fs_post_read_required(inode))
++		return true;
++	if (sbi->s_ndevs)
++		return true;
++	/*
++	 * for blkzoned device, fallback direct IO to buffered IO, so
++	 * all IOs can be serialized by log-structured write.
++	 */
++	if (f2fs_sb_has_blkzoned(sbi->sb))
++		return true;
++	if (test_opt(sbi, LFS) && (rw == WRITE) &&
++				block_unaligned_IO(inode, iocb, iter))
++		return true;
++	return false;
+ }
+ 
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 378684bf1ee6..2a4cad36141c 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -3037,7 +3037,8 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 				if (!f2fs_overwrite_io(inode, iocb->ki_pos,
+ 						iov_iter_count(from)) ||
+ 					f2fs_has_inline_data(inode) ||
+-					f2fs_force_buffered_io(inode, WRITE)) {
++					f2fs_force_buffered_io(inode,
++							iocb, from)) {
+ 						clear_inode_flag(inode,
+ 								FI_NO_PREALLOC);
+ 						inode_unlock(inode);
 -- 
 2.18.0.rc1
