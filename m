@@ -1,243 +1,299 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v4] f2fs: allow out-place-update for direct IO in LFS mode
-Date: Thu, 27 Sep 2018 09:23:45 +0800
-Message-ID: <eb1459d3-f7d7-140c-5643-9dec1126412a@huawei.com>
-References: <20180921131222.32057-1-chao@kernel.org>
+From: Junling Zheng <zhengjunling@huawei.com>
+Subject: Re: [PATCH 4/5] f2fs-tools: introduce sb checksum
+Date: Thu, 27 Sep 2018 10:46:25 +0800
+Message-ID: <2511a743-221c-e57c-e59a-c61eaad5267b@huawei.com>
+References: <20180919135352.173525-1-zhengjunling@huawei.com>
+ <20180919135352.173525-4-zhengjunling@huawei.com>
+ <20180919233504.GB84041@jaegeuk-macbookpro.roam.corp.google.com>
+ <fc2bfe83-9bf6-7677-2987-1b467f2f231c@huawei.com>
+ <20180920213831.GB35918@jaegeuk-macbookpro.roam.corp.google.com>
+ <a8c35297-cef7-bb31-7777-8448b74052df@huawei.com>
+ <20180926015735.GF3829@jaegeuk-macbookpro.roam.corp.google.com>
+ <8681d349-3460-f701-98e0-27012a5ec875@huawei.com>
+ <20180926202717.GB44119@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180921131222.32057-1-chao@kernel.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <zhengjunling@huawei.com>) id 1g5MKA-0003wG-8j
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Sep 2018 02:46:42 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1g5MK7-007KC2-Tu
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Sep 2018 02:46:42 +0000
+In-Reply-To: <20180926202717.GB44119@jaegeuk-macbookpro.roam.corp.google.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-Ping,
+On 2018/9/27 4:27, Jaegeuk Kim wrote:
+> On 09/26, Junling Zheng wrote:
+>> Hi, Jaegeuk
+>>
+>> On 2018/9/26 9:57, Jaegeuk Kim wrote:
+>>> On 09/21, Junling Zheng wrote:
+>>>> On 2018/9/21 5:38, Jaegeuk Kim wrote:
+>>>>> On 09/20, Junling Zheng wrote:
+>>>>>> Hi, Jaegeuk
+>>>>>>
+>>>>>> On 2018/9/20 7:35, Jaegeuk Kim wrote:
+>>>>>>> On 09/19, Junling Zheng wrote:
+>>>>>>>> This patch introduced crc for superblock.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+>>>>>>>> ---
+>>>>>>>>  fsck/mount.c       | 33 +++++++++++++++++++++++++++++++++
+>>>>>>>>  fsck/resize.c      | 12 ++++++------
+>>>>>>>>  include/f2fs_fs.h  |  6 +++++-
+>>>>>>>>  mkfs/f2fs_format.c |  8 ++++++++
+>>>>>>>>  4 files changed, 52 insertions(+), 7 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/fsck/mount.c b/fsck/mount.c
+>>>>>>>> index 74ff7c6..9019921 100644
+>>>>>>>> --- a/fsck/mount.c
+>>>>>>>> +++ b/fsck/mount.c
+>>>>>>>> @@ -340,6 +340,7 @@ void print_raw_sb_info(struct f2fs_super_block *sb)
+>>>>>>>>  	DISP_u32(sb, node_ino);
+>>>>>>>>  	DISP_u32(sb, meta_ino);
+>>>>>>>>  	DISP_u32(sb, cp_payload);
+>>>>>>>> +	DISP_u32(sb, crc);
+>>>>>>>>  	DISP("%-.256s", sb, version);
+>>>>>>>>  	printf("\n");
+>>>>>>>>  }
+>>>>>>>> @@ -467,6 +468,9 @@ void print_sb_state(struct f2fs_super_block *sb)
+>>>>>>>>  	if (f & cpu_to_le32(F2FS_FEATURE_LOST_FOUND)) {
+>>>>>>>>  		MSG(0, "%s", " lost_found");
+>>>>>>>>  	}
+>>>>>>>> +	if (f & cpu_to_le32(F2FS_FEATURE_SB_CHKSUM)) {
+>>>>>>>> +		MSG(0, "%s", " sb_checksum");
+>>>>>>>> +	}
+>>>>>>>>  	MSG(0, "\n");
+>>>>>>>>  	MSG(0, "Info: superblock encrypt level = %d, salt = ",
+>>>>>>>>  					sb->encryption_level);
+>>>>>>>> @@ -479,10 +483,20 @@ void update_superblock(struct f2fs_super_block *sb, int sb_mask)
+>>>>>>>>  {
+>>>>>>>>  	int index, ret;
+>>>>>>>>  	u_int8_t *buf;
+>>>>>>>> +	u32 old_crc, new_crc;
+>>>>>>>>  
+>>>>>>>>  	buf = calloc(BLOCK_SZ, 1);
+>>>>>>>>  	ASSERT(buf);
+>>>>>>>>  
+>>>>>>>> +	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) {
+>>>>>>>> +		old_crc = get_sb(crc);
+>>>>>>>> +		new_crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, sb,
+>>>>>>>> +						SB_CHKSUM_OFFSET);
+>>>>>>>> +		set_sb(crc, new_crc);
+>>>>>>>> +		MSG(1, "Info: SB CRC is updated (0x%x -> 0x%x)\n",
+>>>>>>>> +							old_crc, new_crc);
+>>>>>>>> +	}
+>>>>>>>> +
+>>>>>>>>  	memcpy(buf + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
+>>>>>>>>  	for (index = 0; index < SB_ADDR_MAX; index++) {
+>>>>>>>>  		if ((1 << index) & sb_mask) {
+>>>>>>>> @@ -575,10 +589,29 @@ static inline int sanity_check_area_boundary(struct f2fs_super_block *sb,
+>>>>>>>>  	return 0;
+>>>>>>>>  }
+>>>>>>>>  
+>>>>>>>> +static int verify_sb_chksum(struct f2fs_super_block *sb)
+>>>>>>>> +{
+>>>>>>>> +	if (SB_CHKSUM_OFFSET != get_sb(checksum_offset)) {
+>>>>>>>> +		MSG(0, "\tInvalid SB CRC offset: %u\n",
+>>>>>>>> +					get_sb(checksum_offset));
+>>>>>>>> +		return -1;
+>>>>>>>> +	}
+>>>>>>>> +	if (f2fs_crc_valid(get_sb(crc), sb,
+>>>>>>>> +			get_sb(checksum_offset))) {
+>>>>>>>> +		MSG(0, "\tInvalid SB CRC: 0x%x\n", get_sb(crc));
+>>>>>>>> +		return -1;
+>>>>>>>> +	}
+>>>>>>>> +	return 0;
+>>>>>>>> +}
+>>>>>>>> +
+>>>>>>>>  int sanity_check_raw_super(struct f2fs_super_block *sb, enum SB_ADDR sb_addr)
+>>>>>>>>  {
+>>>>>>>>  	unsigned int blocksize;
+>>>>>>>>  
+>>>>>>>> +	if ((get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) &&
+>>>>>>>> +					verify_sb_chksum(sb))
+>>>>>>>> +		return -1;
+>>>>>>>> +
+>>>>>>>>  	if (F2FS_SUPER_MAGIC != get_sb(magic))
+>>>>>>>>  		return -1;
+>>>>>>>>  
+>>>>>>>> diff --git a/fsck/resize.c b/fsck/resize.c
+>>>>>>>> index 5161a1f..3462165 100644
+>>>>>>>> --- a/fsck/resize.c
+>>>>>>>> +++ b/fsck/resize.c
+>>>>>>>> @@ -603,9 +603,6 @@ static int f2fs_resize_grow(struct f2fs_sb_info *sbi)
+>>>>>>>>  		}
+>>>>>>>>  	}
+>>>>>>>>  
+>>>>>>>> -	print_raw_sb_info(sb);
+>>>>>>>> -	print_raw_sb_info(new_sb);
+>>>>>>>
+>>>>>>> It'd be worth to keep this to show the previous states.
+>>>>>>>
+>>>>>>
+>>>>>> Here, I just want to move the printing of sb and new_sb to the place
+>>>>>> behind update_superblock(), where the crc in sb will be updated.
+>>>>>
+>>>>> We'd better to see the changes, no?
+>>>>>
+>>>>
+>>>> Yeah, we print sb and new_sb here just for seeing the changes of superblock.
+>>>> However, the crc in new_sb will not be updated until calling update_superblock(),
+>>>> so if we keep the current printing location, we can't get the changes.
+>>>
+>>> I mean...
+>>> 		print_raw_sb_info(sb);
+>>> 		print_raw_sb_info(new_sb);
+>>
+>> I don't think it's necessary to print new_sb here.
+>> Before update_superblock() is called, the crc in new_sb hasn't been updated yet,
+>> and is the same with that in sb.
+>>
+>> Here, as we introduce sb checksum, all we have to do is delay printing new_sb
+>> to show the latest crc.
+> 
+> I see. The contents except crc in sb and new_sb weren't changed during
+> migration. If so, printing them later would make sense, right?
+> 
 
-On 2018/9/21 21:12, Chao Yu wrote:
-> From: Chao Yu <yuchao0@huawei.com>
+Yes, migration wouldn't change the contents of sb and new_sb. And besides,
+in my opinion, we don't neet to print the middle status of sb and new_sb,
+which would make log too long :)
+
+>>
+>> Thanks,
+>>
+>>> 		update...
+>>> 		print_raw_sb_info(new_sb);
+>>>
+>>>>
+>>>> Thanks,
+>>>>
+>>>>>>
+>>>>>>>> -
+>>>>>>>>  	old_main_blkaddr = get_sb(main_blkaddr);
+>>>>>>>>  	new_main_blkaddr = get_newsb(main_blkaddr);
+>>>>>>>>  	offset = new_main_blkaddr - old_main_blkaddr;
+>>>>>>>> @@ -629,6 +626,9 @@ static int f2fs_resize_grow(struct f2fs_sb_info *sbi)
+>>>>>>>>  	migrate_sit(sbi, new_sb, offset_seg);
+>>>>>>>>  	rebuild_checkpoint(sbi, new_sb, offset_seg);
+>>>>>>>>  	update_superblock(new_sb, SB_ALL);
+>>>>>>>> +	print_raw_sb_info(sb);
+>>>>>>>> +	print_raw_sb_info(new_sb);
+>>>>>>>> +
+>>>>>>>>  	return 0;
+>>>>>>>>  }
+>>>>>>>>  
+>>>>>>>> @@ -658,9 +658,6 @@ static int f2fs_resize_shrink(struct f2fs_sb_info *sbi)
+>>>>>>>>  		}
+>>>>>>>>  	}
+>>>>>>>>  
+>>>>>>>> -	print_raw_sb_info(sb);
+>>>>>>>> -	print_raw_sb_info(new_sb);
+>>>>>>>
+>>>>>>> Ditto.
+>>>>>>>
+>>>>>>>> -
+>>>>>>>>  	old_main_blkaddr = get_sb(main_blkaddr);
+>>>>>>>>  	new_main_blkaddr = get_newsb(main_blkaddr);
+>>>>>>>>  	offset = old_main_blkaddr - new_main_blkaddr;
+>>>>>>>> @@ -690,6 +687,9 @@ static int f2fs_resize_shrink(struct f2fs_sb_info *sbi)
+>>>>>>>>  	/* move whole data region */
+>>>>>>>>  	//if (err)
+>>>>>>>>  	//	migrate_main(sbi, offset);
+>>>>>>>> +	print_raw_sb_info(sb);
+>>>>>>>> +	print_raw_sb_info(new_sb);
+>>>>>>>> +
+>>>>>>>>  	return 0;
+>>>>>>>>  }
+>>>>>>>>  
+>>>>>>>> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+>>>>>>>> index 38a0da4..f80632a 100644
+>>>>>>>> --- a/include/f2fs_fs.h
+>>>>>>>> +++ b/include/f2fs_fs.h
+>>>>>>>> @@ -279,6 +279,7 @@ static inline uint64_t bswap_64(uint64_t val)
+>>>>>>>>  #define BITS_PER_BYTE		8
+>>>>>>>>  #define F2FS_SUPER_MAGIC	0xF2F52010	/* F2FS Magic Number */
+>>>>>>>>  #define CP_CHKSUM_OFFSET	4092
+>>>>>>>> +#define SB_CHKSUM_OFFSET	3068
+>>>>>>>>  #define MAX_PATH_LEN		64
+>>>>>>>>  #define MAX_DEVICES		8
+>>>>>>>>  
+>>>>>>>> @@ -579,6 +580,7 @@ enum {
+>>>>>>>>  #define F2FS_FEATURE_INODE_CRTIME	0x0100
+>>>>>>>>  #define F2FS_FEATURE_LOST_FOUND		0x0200
+>>>>>>>>  #define F2FS_FEATURE_VERITY		0x0400	/* reserved */
+>>>>>>>> +#define F2FS_FEATURE_SB_CHKSUM		0x0800
+>>>>>>>>  
+>>>>>>>>  #define MAX_VOLUME_NAME		512
+>>>>>>>>  
+>>>>>>>> @@ -632,7 +634,8 @@ struct f2fs_super_block {
+>>>>>>>>  	struct f2fs_device devs[MAX_DEVICES];	/* device list */
+>>>>>>>>  	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
+>>>>>>>>  	__u8 hot_ext_count;		/* # of hot file extension */
+>>>>>>>> -	__u8 reserved[314];		/* valid reserved region */
+>>>>>>>> +	__u8 reserved[310];		/* valid reserved region */
+>>>>>>>> +	__le32 crc;			/* checksum of superblock */
+>>>>>>>>  } __attribute__((packed));
+>>>>>>>>  
+>>>>>>>>  /*
+>>>>>>>> @@ -1338,6 +1341,7 @@ struct feature feature_table[] = {					\
+>>>>>>>>  	{ "inode_crtime",		F2FS_FEATURE_INODE_CRTIME },	\
+>>>>>>>>  	{ "lost_found",			F2FS_FEATURE_LOST_FOUND },	\
+>>>>>>>>  	{ "verity",			F2FS_FEATURE_VERITY },	/* reserved */ \
+>>>>>>>> +	{ "sb_checksum",		F2FS_FEATURE_SB_CHKSUM },	\
+>>>>>>>>  	{ NULL,				0x0},				\
+>>>>>>>>  };
+>>>>>>>>  
+>>>>>>>> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+>>>>>>>> index 621126c..9b0a0d1 100644
+>>>>>>>> --- a/mkfs/f2fs_format.c
+>>>>>>>> +++ b/mkfs/f2fs_format.c
+>>>>>>>> @@ -504,6 +504,14 @@ static int f2fs_prepare_super_block(void)
+>>>>>>>>  
+>>>>>>>>  	sb->feature = c.feature;
+>>>>>>>>  
+>>>>>>>> +	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) {
+>>>>>>>> +		set_sb(checksum_offset, SB_CHKSUM_OFFSET);
+>>>>>>>> +		set_sb(crc, f2fs_cal_crc32(F2FS_SUPER_MAGIC, sb,
+>>>>>>>> +						SB_CHKSUM_OFFSET));
+>>>>>>>> +		MSG(1, "Info: SB CRC is set: offset (%d), crc (0x%x)\n",
+>>>>>>>> +					get_sb(checksum_offset), get_sb(crc));
+>>>>>>>> +	}
+>>>>>>>> +
+>>>>>>>>  	return 0;
+>>>>>>>>  }
+>>>>>>>>  
+>>>>>>>> -- 
+>>>>>>>> 2.19.0
+>>>>>>>
+>>>>>>> .
+>>>>>>>
+>>>>>>
+>>>>>
+>>>>> .
+>>>>>
+>>>>
+>>>
+>>> .
+>>>
+>>
 > 
-> Normally, DIO uses in-pllace-update, but in LFS mode, f2fs doesn't
-> allow triggering any in-place-update writes, so we fallback direct
-> write to buffered write, result in bad performance of large size
-> write.
-> 
-> This patch adds to support triggering out-place-update for direct IO
-> to enhance its performance.
-> 
-> Note that it needs to exclude direct read IO during direct write,
-> since new data writing to new block address will no be valid until
-> write finished.
-> 
-> storage: zram
-> 
-> time xfs_io -f -d /mnt/f2fs/file -c "pwrite 0 1073741824" -c "fsync"
-> 
-> Before:
-> real	0m13.061s
-> user	0m0.327s
-> sys	0m12.486s
-> 
-> After:
-> real	0m6.448s
-> user	0m0.228s
-> sys	0m6.212s
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
-> v4:
-> - correct parameter in f2fs_sb_has_blkzoned()
->  fs/f2fs/data.c | 44 +++++++++++++++++++++++++++++++++++---------
->  fs/f2fs/f2fs.h | 45 +++++++++++++++++++++++++++++++++++++++++----
->  fs/f2fs/file.c |  3 ++-
->  3 files changed, 78 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index b96f8588d565..38d5baa1c35d 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -894,7 +894,7 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
->  
->  	dn->data_blkaddr = datablock_addr(dn->inode,
->  				dn->node_page, dn->ofs_in_node);
-> -	if (dn->data_blkaddr == NEW_ADDR)
-> +	if (dn->data_blkaddr != NULL_ADDR)
->  		goto alloc;
->  
->  	if (unlikely((err = inc_valid_block_count(sbi, dn->inode, &count))))
-> @@ -950,7 +950,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
->  
->  	if (direct_io) {
->  		map.m_seg_type = f2fs_rw_hint_to_seg_type(iocb->ki_hint);
-> -		flag = f2fs_force_buffered_io(inode, WRITE) ?
-> +		flag = f2fs_force_buffered_io(inode, iocb, from) ?
->  					F2FS_GET_BLOCK_PRE_AIO :
->  					F2FS_GET_BLOCK_PRE_DIO;
->  		goto map_blocks;
-> @@ -1069,7 +1069,15 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->  		goto sync_out;
->  	}
->  
-> -	if (!is_valid_data_blkaddr(sbi, blkaddr)) {
-> +	if (is_valid_data_blkaddr(sbi, blkaddr)) {
-> +		/* use out-place-update for driect IO under LFS mode */
-> +		if (test_opt(sbi, LFS) && create &&
-> +				flag == F2FS_GET_BLOCK_DEFAULT) {
-> +			err = __allocate_data_block(&dn, map->m_seg_type);
-> +			if (!err)
-> +				set_inode_flag(inode, FI_APPEND_WRITE);
-> +		}
-> +	} else {
->  		if (create) {
->  			if (unlikely(f2fs_cp_error(sbi))) {
->  				err = -EIO;
-> @@ -2493,36 +2501,53 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->  	struct address_space *mapping = iocb->ki_filp->f_mapping;
->  	struct inode *inode = mapping->host;
->  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> +	struct f2fs_inode_info *fi = F2FS_I(inode);
->  	size_t count = iov_iter_count(iter);
->  	loff_t offset = iocb->ki_pos;
->  	int rw = iov_iter_rw(iter);
->  	int err;
->  	enum rw_hint hint = iocb->ki_hint;
->  	int whint_mode = F2FS_OPTION(sbi).whint_mode;
-> +	bool do_opu;
->  
->  	err = check_direct_IO(inode, iter, offset);
->  	if (err)
->  		return err < 0 ? err : 0;
->  
-> -	if (f2fs_force_buffered_io(inode, rw))
-> +	if (f2fs_force_buffered_io(inode, iocb, iter))
->  		return 0;
->  
-> +	do_opu = allow_outplace_dio(inode, iocb, iter);
-> +
->  	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
->  
->  	if (rw == WRITE && whint_mode == WHINT_MODE_OFF)
->  		iocb->ki_hint = WRITE_LIFE_NOT_SET;
->  
-> -	if (!down_read_trylock(&F2FS_I(inode)->i_gc_rwsem[rw])) {
-> -		if (iocb->ki_flags & IOCB_NOWAIT) {
-> +	if (iocb->ki_flags & IOCB_NOWAIT) {
-> +		if (!down_read_trylock(&fi->i_gc_rwsem[rw])) {
-> +			iocb->ki_hint = hint;
-> +			err = -EAGAIN;
-> +			goto out;
-> +		}
-> +		if (do_opu && !down_read_trylock(&fi->i_gc_rwsem[READ])) {
-> +			up_read(&fi->i_gc_rwsem[rw]);
->  			iocb->ki_hint = hint;
->  			err = -EAGAIN;
->  			goto out;
->  		}
-> -		down_read(&F2FS_I(inode)->i_gc_rwsem[rw]);
-> +	} else {
-> +		down_read(&fi->i_gc_rwsem[rw]);
-> +		if (do_opu)
-> +			down_read(&fi->i_gc_rwsem[READ]);
->  	}
->  
->  	err = blockdev_direct_IO(iocb, inode, iter, get_data_block_dio);
-> -	up_read(&F2FS_I(inode)->i_gc_rwsem[rw]);
-> +
-> +	if (do_opu)
-> +		up_read(&fi->i_gc_rwsem[READ]);
-> +
-> +	up_read(&fi->i_gc_rwsem[rw]);
->  
->  	if (rw == WRITE) {
->  		if (whint_mode == WHINT_MODE_OFF)
-> @@ -2530,7 +2555,8 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->  		if (err > 0) {
->  			f2fs_update_iostat(F2FS_I_SB(inode), APP_DIRECT_IO,
->  									err);
-> -			set_inode_flag(inode, FI_UPDATE_WRITE);
-> +			if (!do_opu)
-> +				set_inode_flag(inode, FI_UPDATE_WRITE);
->  		} else if (err < 0) {
->  			f2fs_write_failed(mapping, offset + count);
->  		}
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 894a2503e722..72d46860cee3 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -8,6 +8,7 @@
->  #ifndef _LINUX_F2FS_H
->  #define _LINUX_F2FS_H
->  
-> +#include <linux/uio.h>
->  #include <linux/types.h>
->  #include <linux/page-flags.h>
->  #include <linux/buffer_head.h>
-> @@ -3486,11 +3487,47 @@ static inline bool f2fs_may_encrypt(struct inode *inode)
->  #endif
->  }
->  
-> -static inline bool f2fs_force_buffered_io(struct inode *inode, int rw)
-> +static inline int block_unaligned_IO(struct inode *inode,
-> +				struct kiocb *iocb, struct iov_iter *iter)
->  {
-> -	return (f2fs_post_read_required(inode) ||
-> -			(rw == WRITE && test_opt(F2FS_I_SB(inode), LFS)) ||
-> -			F2FS_I_SB(inode)->s_ndevs);
-> +	unsigned int i_blkbits = READ_ONCE(inode->i_blkbits);
-> +	unsigned int blocksize_mask = (1 << i_blkbits) - 1;
-> +	loff_t offset = iocb->ki_pos;
-> +	unsigned long align = offset | iov_iter_alignment(iter);
-> +
-> +	return align & blocksize_mask;
-> +}
-> +
-> +static inline int allow_outplace_dio(struct inode *inode,
-> +				struct kiocb *iocb, struct iov_iter *iter)
-> +{
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> +	int rw = iov_iter_rw(iter);
-> +
-> +	return (test_opt(sbi, LFS) && (rw == WRITE) &&
-> +				!block_unaligned_IO(inode, iocb, iter));
-> +}
-> +
-> +static inline bool f2fs_force_buffered_io(struct inode *inode,
-> +				struct kiocb *iocb, struct iov_iter *iter)
-> +{
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> +	int rw = iov_iter_rw(iter);
-> +
-> +	if (f2fs_post_read_required(inode))
-> +		return true;
-> +	if (sbi->s_ndevs)
-> +		return true;
-> +	/*
-> +	 * for blkzoned device, fallback direct IO to buffered IO, so
-> +	 * all IOs can be serialized by log-structured write.
-> +	 */
-> +	if (f2fs_sb_has_blkzoned(sbi->sb))
-> +		return true;
-> +	if (test_opt(sbi, LFS) && (rw == WRITE) &&
-> +				block_unaligned_IO(inode, iocb, iter))
-> +		return true;
-> +	return false;
->  }
->  
->  #ifdef CONFIG_F2FS_FAULT_INJECTION
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index a75f3e145bf1..a388866e71ee 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -3019,7 +3019,8 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  				if (!f2fs_overwrite_io(inode, iocb->ki_pos,
->  						iov_iter_count(from)) ||
->  					f2fs_has_inline_data(inode) ||
-> -					f2fs_force_buffered_io(inode, WRITE)) {
-> +					f2fs_force_buffered_io(inode,
-> +							iocb, from)) {
->  						clear_inode_flag(inode,
->  								FI_NO_PREALLOC);
->  						inode_unlock(inode);
+> .
 > 
