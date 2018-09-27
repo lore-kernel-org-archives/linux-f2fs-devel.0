@@ -1,344 +1,106 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 2/2 v2] f2fs: avoid f2fs_bug_on if
- f2fs_get_meta_page_nofail got EIO
-Date: Wed, 26 Sep 2018 21:58:22 -0700
-Message-ID: <20180927045822.GA71203@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180918021805.85032-2-jaegeuk@kernel.org>
- <20180918175648.GE91945@jaegeuk-macbookpro.roam.corp.google.com>
- <9813f294-3e09-ee2d-56f0-6bb476e88a5a@huawei.com>
- <20180920214656.GE35918@jaegeuk-macbookpro.roam.corp.google.com>
- <e36d331c-d368-fcc4-fa30-15f503b737d7@huawei.com>
- <20180926001806.GA3829@jaegeuk-macbookpro.roam.corp.google.com>
- <b251de75-6cf4-52a1-434a-d42025a35e8b@huawei.com>
- <2996d79d-c791-1a22-8abd-ad37d48edf17@huawei.com>
- <20180926194932.GA44119@jaegeuk-macbookpro.roam.corp.google.com>
- <49223ef7-88b9-99ed-35ff-52f11fbfeae3@huawei.com>
+Subject: Re: [PATCH] f2fs: refactor ->page_mkwrite() flow
+Date: Wed, 26 Sep 2018 22:05:09 -0700
+Message-ID: <20180927050509.GA72357@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180926144552.3302-1-chao@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <49223ef7-88b9-99ed-35ff-52f11fbfeae3@huawei.com>
+In-Reply-To: <20180926144552.3302-1-chao@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 09/27, Chao Yu wrote:
-> On 2018/9/27 3:49, Jaegeuk Kim wrote:
-> > On 09/26, Chao Yu wrote:
-> >> On 2018/9/26 9:10, Chao Yu wrote:
-> >>> On 2018/9/26 8:18, Jaegeuk Kim wrote:
-> >>>> On 09/21, Chao Yu wrote:
-> >>>>> On 2018/9/21 5:46, Jaegeuk Kim wrote:
-> >>>>>> On 09/20, Chao Yu wrote:
-> >>>>>>> On 2018/9/19 1:56, Jaegeuk Kim wrote:
-> >>>>>>>> This patch avoids BUG_ON when f2fs_get_meta_page_nofail got EIO during
-> >>>>>>>> xfstests/generic/475.
-> >>>>>>>>
-> >>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>>>>>>> ---
-> >>>>>>>> Change log from v1:
-> >>>>>>>>  - propagate errno
-> >>>>>>>>  - drop sum_pages
-> >>>>>>>>
-> >>>>>>>>  fs/f2fs/checkpoint.c | 10 +++++-----
-> >>>>>>>>  fs/f2fs/f2fs.h       |  2 +-
-> >>>>>>>>  fs/f2fs/gc.c         |  9 +++++++++
-> >>>>>>>>  fs/f2fs/node.c       | 32 ++++++++++++++++++++++++--------
-> >>>>>>>>  fs/f2fs/recovery.c   |  2 ++
-> >>>>>>>>  fs/f2fs/segment.c    |  3 +++
-> >>>>>>>>  6 files changed, 44 insertions(+), 14 deletions(-)
-> >>>>>>>>
-> >>>>>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> >>>>>>>> index 01e0d8f5bbbe..1ddf332ce4b2 100644
-> >>>>>>>> --- a/fs/f2fs/checkpoint.c
-> >>>>>>>> +++ b/fs/f2fs/checkpoint.c
-> >>>>>>>> @@ -119,11 +119,8 @@ struct page *f2fs_get_meta_page_nofail(struct f2fs_sb_info *sbi, pgoff_t index)
-> >>>>>>>>  		if (PTR_ERR(page) == -EIO &&
-> >>>>>>>>  				++count <= DEFAULT_RETRY_IO_COUNT)
-> >>>>>>>>  			goto retry;
-> >>>>>>>> -
-> >>>>>>>>  		f2fs_stop_checkpoint(sbi, false);
-> >>>>>>>> -		f2fs_bug_on(sbi, 1);
-> >>>>>>>>  	}
-> >>>>>>>> -
-> >>>>>>>>  	return page;
-> >>>>>>>>  }
-> >>>>>>>>  
-> >>>>>>>> @@ -1512,7 +1509,10 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >>>>>>>>  	ckpt->checkpoint_ver = cpu_to_le64(++ckpt_ver);
-> >>>>>>>>  
-> >>>>>>>>  	/* write cached NAT/SIT entries to NAT/SIT area */
-> >>>>>>>> -	f2fs_flush_nat_entries(sbi, cpc);
-> >>>>>>>> +	err = f2fs_flush_nat_entries(sbi, cpc);
-> >>>>>>>> +	if (err)
-> >>>>>>>> +		goto stop;
-> >>>>>>>
-> >>>>>>> To make sure, if partial NAT pages become dirty, flush them back to device
-> >>>>>>> outside checkpoint() is not harmful, right?
-> >>>>>>
-> >>>>>> I think so.
-> >>>>>
-> >>>>> Oh, one more case, now we use NAT #0, if partial NAT pages were
-> >>>>> writebacked, then we start to use NAT #1, later, in another checkpoint(),
-> >>>>> we update those NAT pages again, we will write them to NAT #0, which is
-> >>>>> belong to last valid checkpoint(), it's may cause corrupted checkpoint in
-> >>>>> scenario of SPO. So it's harmfull, right?
-> >>>>
-> >>>> We already stopped checkpoint anymore, so there'd be no way to proceed another
-> >>>> checkpoint. Am I missing something?
-> >>>
-> >>> You're right, we have called f2fs_stop_checkpoint(), so we are safe now. :)
-> >>
-> >> Can we allow to writeback fs metadata (NAT/SIT/SSA) in prior to checkpoint
-> >> to mitigate IO stress of checkpoint?
-> > 
-> > What's the point related to this patch?
-> 
-> It's not related to this patch.
-> 
-> > Anyway, do you mean f2fs_write_meta_pages is not enough?
-> 
-> Yup, f2fs_write_meta_pages can only flush summary pages, I guess we can
-> allow to flush dirty nat/sit entries to NAT/SIT blocks in some conditions,
-> and then flush those block in background.
+This makes xfstests/083 stuck. So, I'll drop it for a while.
 
-I see, then NAT/SIT will be dirtied and flushed during checkpoint. Do you
-mean flushing some of them partially in background, even if we don't know
-it will be flushed again? We may need to gather some data first.
-
+On 09/26, Chao Yu wrote:
+> From: Chao Yu <yuchao0@huawei.com>
 > 
-> Thanks,
+> Thread A				Thread B
+> - f2fs_vm_page_mkwrite
+> 					- f2fs_setattr
+> 					 - down_write(i_mmap_sem)
+> 					 - truncate_setsize
+> 					 - f2fs_truncate
+> 					 - up_write(i_mmap_sem)
+>  - f2fs_reserve_block
+>  reserve NEW_ADDR
+>  - skip dirty page due to truncation
 > 
-> > 
-> >>
-> >> Maybe below conditions can be consider to trigger writebacking:
-> >> a) dirty count of meta (NAT/SIT/SSA) exceeds threshold
-> >> b) exceed time threshold
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>> Thanks,
-> >>>
-> >>>>
-> >>>>>
-> >>>>> Thanks,
-> >>>>>
-> >>>>>>
-> >>>>>>>
-> >>>>>>>> +
-> >>>>>>>>  	f2fs_flush_sit_entries(sbi, cpc);
-> >>>>>>>>  
-> >>>>>>>>  	/* unlock all the fs_lock[] in do_checkpoint() */
-> >>>>>>>> @@ -1521,7 +1521,7 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >>>>>>>>  		f2fs_release_discard_addrs(sbi);
-> >>>>>>>>  	else
-> >>>>>>>>  		f2fs_clear_prefree_segments(sbi, cpc);
-> >>>>>>>> -
-> >>>>>>>> +stop:
-> >>>>>>>>  	unblock_operations(sbi);
-> >>>>>>>>  	stat_inc_cp_count(sbi->stat_info);
-> >>>>>>>>  
-> >>>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >>>>>>>> index a0c868127a7c..29021dbc8f2a 100644
-> >>>>>>>> --- a/fs/f2fs/f2fs.h
-> >>>>>>>> +++ b/fs/f2fs/f2fs.h
-> >>>>>>>> @@ -2895,7 +2895,7 @@ int f2fs_recover_xattr_data(struct inode *inode, struct page *page);
-> >>>>>>>>  int f2fs_recover_inode_page(struct f2fs_sb_info *sbi, struct page *page);
-> >>>>>>>>  int f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
-> >>>>>>>>  			unsigned int segno, struct f2fs_summary_block *sum);
-> >>>>>>>> -void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc);
-> >>>>>>>> +int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc);
-> >>>>>>>>  int f2fs_build_node_manager(struct f2fs_sb_info *sbi);
-> >>>>>>>>  void f2fs_destroy_node_manager(struct f2fs_sb_info *sbi);
-> >>>>>>>>  int __init f2fs_create_node_manager_caches(void);
-> >>>>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> >>>>>>>> index 4bcc8a59fdef..c7d14282dbf4 100644
-> >>>>>>>> --- a/fs/f2fs/gc.c
-> >>>>>>>> +++ b/fs/f2fs/gc.c
-> >>>>>>>> @@ -1070,6 +1070,15 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
-> >>>>>>>>  	/* reference all summary page */
-> >>>>>>>>  	while (segno < end_segno) {
-> >>>>>>>>  		sum_page = f2fs_get_sum_page(sbi, segno++);
-> >>>>>>>> +		if (IS_ERR(sum_page)) {
-> >>>>>>>> +			end_segno = segno - 1;
-> >>>>>>>> +			for (segno = start_segno; segno < end_segno; segno++) {
-> >>>>>>>> +				sum_page = find_get_page(META_MAPPING(sbi),
-> >>>>>>>> +						GET_SUM_BLOCK(sbi, segno));
-> >>>>>>>> +				f2fs_put_page(sum_page, 0);
-> >>>>>>>
-> >>>>>>> find_get_page() will add one more reference on page, so we need to call
-> >>>>>>> f2fs_put_page(sum_page, 0) twice.
-> >>>>>>
-> >>>>>> Done.
-> >>>>>>
-> >>>>>>>
-> >>>>>>> Thanks,
-> >>>>>>>
-> >>>>>>>> +			}
-> >>>>>>>> +			return PTR_ERR(sum_page);
-> >>>>>>>> +		}
-> >>>>>>>>  		unlock_page(sum_page);
-> >>>>>>>>  	}
-> >>>>>>>>  
-> >>>>>>>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> >>>>>>>> index fa2381c0bc47..79b6fee354f7 100644
-> >>>>>>>> --- a/fs/f2fs/node.c
-> >>>>>>>> +++ b/fs/f2fs/node.c
-> >>>>>>>> @@ -126,6 +126,8 @@ static struct page *get_next_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
-> >>>>>>>>  
-> >>>>>>>>  	/* get current nat block page with lock */
-> >>>>>>>>  	src_page = get_current_nat_page(sbi, nid);
-> >>>>>>>> +	if (IS_ERR(src_page))
-> >>>>>>>> +		return src_page;
-> >>>>>>>>  	dst_page = f2fs_grab_meta_page(sbi, dst_off);
-> >>>>>>>>  	f2fs_bug_on(sbi, PageDirty(src_page));
-> >>>>>>>>  
-> >>>>>>>> @@ -2265,15 +2267,19 @@ static int __f2fs_build_free_nids(struct f2fs_sb_info *sbi,
-> >>>>>>>>  						nm_i->nat_block_bitmap)) {
-> >>>>>>>>  			struct page *page = get_current_nat_page(sbi, nid);
-> >>>>>>>>  
-> >>>>>>>> -			ret = scan_nat_page(sbi, page, nid);
-> >>>>>>>> -			f2fs_put_page(page, 1);
-> >>>>>>>> +			if (IS_ERR(page)) {
-> >>>>>>>> +				ret = PTR_ERR(page);
-> >>>>>>>> +			} else {
-> >>>>>>>> +				ret = scan_nat_page(sbi, page, nid);
-> >>>>>>>> +				f2fs_put_page(page, 1);
-> >>>>>>>> +			}
-> >>>>>>>>  
-> >>>>>>>>  			if (ret) {
-> >>>>>>>>  				up_read(&nm_i->nat_tree_lock);
-> >>>>>>>>  				f2fs_bug_on(sbi, !mount);
-> >>>>>>>>  				f2fs_msg(sbi->sb, KERN_ERR,
-> >>>>>>>>  					"NAT is corrupt, run fsck to fix it");
-> >>>>>>>> -				return -EINVAL;
-> >>>>>>>> +				return ret;
-> >>>>>>>>  			}
-> >>>>>>>>  		}
-> >>>>>>>>  
-> >>>>>>>> @@ -2700,7 +2706,7 @@ static void __update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
-> >>>>>>>>  		__clear_bit_le(nat_index, nm_i->full_nat_bits);
-> >>>>>>>>  }
-> >>>>>>>>  
-> >>>>>>>> -static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
-> >>>>>>>> +static int __flush_nat_entry_set(struct f2fs_sb_info *sbi,
-> >>>>>>>>  		struct nat_entry_set *set, struct cp_control *cpc)
-> >>>>>>>>  {
-> >>>>>>>>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
-> >>>>>>>> @@ -2724,6 +2730,9 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
-> >>>>>>>>  		down_write(&curseg->journal_rwsem);
-> >>>>>>>>  	} else {
-> >>>>>>>>  		page = get_next_nat_page(sbi, start_nid);
-> >>>>>>>> +		if (IS_ERR(page))
-> >>>>>>>> +			return PTR_ERR(page);
-> >>>>>>>> +
-> >>>>>>>>  		nat_blk = page_address(page);
-> >>>>>>>>  		f2fs_bug_on(sbi, !nat_blk);
-> >>>>>>>>  	}
-> >>>>>>>> @@ -2769,12 +2778,13 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
-> >>>>>>>>  		radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
-> >>>>>>>>  		kmem_cache_free(nat_entry_set_slab, set);
-> >>>>>>>>  	}
-> >>>>>>>> +	return 0;
-> >>>>>>>>  }
-> >>>>>>>>  
-> >>>>>>>>  /*
-> >>>>>>>>   * This function is called during the checkpointing process.
-> >>>>>>>>   */
-> >>>>>>>> -void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >>>>>>>> +int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >>>>>>>>  {
-> >>>>>>>>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
-> >>>>>>>>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
-> >>>>>>>> @@ -2784,6 +2794,7 @@ void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >>>>>>>>  	unsigned int found;
-> >>>>>>>>  	nid_t set_idx = 0;
-> >>>>>>>>  	LIST_HEAD(sets);
-> >>>>>>>> +	int err = 0;
-> >>>>>>>>  
-> >>>>>>>>  	/* during unmount, let's flush nat_bits before checking dirty_nat_cnt */
-> >>>>>>>>  	if (enabled_nat_bits(sbi, cpc)) {
-> >>>>>>>> @@ -2793,7 +2804,7 @@ void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >>>>>>>>  	}
-> >>>>>>>>  
-> >>>>>>>>  	if (!nm_i->dirty_nat_cnt)
-> >>>>>>>> -		return;
-> >>>>>>>> +		return 0;
-> >>>>>>>>  
-> >>>>>>>>  	down_write(&nm_i->nat_tree_lock);
-> >>>>>>>>  
-> >>>>>>>> @@ -2816,11 +2827,16 @@ void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >>>>>>>>  	}
-> >>>>>>>>  
-> >>>>>>>>  	/* flush dirty nats in nat entry set */
-> >>>>>>>> -	list_for_each_entry_safe(set, tmp, &sets, set_list)
-> >>>>>>>> -		__flush_nat_entry_set(sbi, set, cpc);
-> >>>>>>>> +	list_for_each_entry_safe(set, tmp, &sets, set_list) {
-> >>>>>>>> +		err = __flush_nat_entry_set(sbi, set, cpc);
-> >>>>>>>> +		if (err)
-> >>>>>>>> +			break;
-> >>>>>>>> +	}
-> >>>>>>>>  
-> >>>>>>>>  	up_write(&nm_i->nat_tree_lock);
-> >>>>>>>>  	/* Allow dirty nats by node block allocation in write_begin */
-> >>>>>>>> +
-> >>>>>>>> +	return err;
-> >>>>>>>>  }
-> >>>>>>>>  
-> >>>>>>>>  static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
-> >>>>>>>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-> >>>>>>>> index 56d34193a74b..ba678efe7cad 100644
-> >>>>>>>> --- a/fs/f2fs/recovery.c
-> >>>>>>>> +++ b/fs/f2fs/recovery.c
-> >>>>>>>> @@ -355,6 +355,8 @@ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
-> >>>>>>>>  	}
-> >>>>>>>>  
-> >>>>>>>>  	sum_page = f2fs_get_sum_page(sbi, segno);
-> >>>>>>>> +	if (IS_ERR(sum_page))
-> >>>>>>>> +		return PTR_ERR(sum_page);
-> >>>>>>>>  	sum_node = (struct f2fs_summary_block *)page_address(sum_page);
-> >>>>>>>>  	sum = sum_node->entries[blkoff];
-> >>>>>>>>  	f2fs_put_page(sum_page, 1);
-> >>>>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >>>>>>>> index aa96a371aaf8..ab7386a7e9d3 100644
-> >>>>>>>> --- a/fs/f2fs/segment.c
-> >>>>>>>> +++ b/fs/f2fs/segment.c
-> >>>>>>>> @@ -2487,6 +2487,7 @@ static void change_curseg(struct f2fs_sb_info *sbi, int type)
-> >>>>>>>>  	__next_free_blkoff(sbi, curseg, 0);
-> >>>>>>>>  
-> >>>>>>>>  	sum_page = f2fs_get_sum_page(sbi, new_segno);
-> >>>>>>>> +	f2fs_bug_on(sbi, IS_ERR(sum_page));
-> >>>>>>>>  	sum_node = (struct f2fs_summary_block *)page_address(sum_page);
-> >>>>>>>>  	memcpy(curseg->sum_blk, sum_node, SUM_ENTRY_SIZE);
-> >>>>>>>>  	f2fs_put_page(sum_page, 1);
-> >>>>>>>> @@ -3971,6 +3972,8 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
-> >>>>>>>>  
-> >>>>>>>>  			se = &sit_i->sentries[start];
-> >>>>>>>>  			page = get_current_sit_page(sbi, start);
-> >>>>>>>> +			if (IS_ERR(page))
-> >>>>>>>> +				return PTR_ERR(page);
-> >>>>>>>>  			sit_blk = (struct f2fs_sit_block *)page_address(page);
-> >>>>>>>>  			sit = sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, start)];
-> >>>>>>>>  			f2fs_put_page(page, 1);
-> >>>>>>>>
-> >>>>>>
-> >>>>>> .
-> >>>>>>
-> >>>>
-> >>>> .
-> >>>>
-> >>>
-> >>>
-> >>>
-> >>> _______________________________________________
-> >>> Linux-f2fs-devel mailing list
-> >>> Linux-f2fs-devel@lists.sourceforge.net
-> >>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> >>>
-> >>> .
-> >>>
-> > 
-> > .
-> > 
+> 1. we don't need to rserve new block address for a truncated page.
+> 2. dn.data_blkaddr is used out of node page lock coverage.
+> 
+> Refactor ->page_mkwrite() flow to fix above issues:
+> - use __do_map_lock() to avoid racing checkpoint()
+> - lock data page in prior to dnode page
+> - cover f2fs_reserve_block with i_mmap_sem lock
+> - access dn.data_blkaddr under dnode lock
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/file.c | 29 ++++++++++++++---------------
+>  1 file changed, 14 insertions(+), 15 deletions(-)
+> 
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 6f02c8daff76..fcb4788b48aa 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -47,7 +47,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+>  	struct page *page = vmf->page;
+>  	struct inode *inode = file_inode(vmf->vma->vm_file);
+>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> -	struct dnode_of_data dn;
+> +	struct dnode_of_data dn = { .node_changed = false };
+>  	int err;
+>  
+>  	if (unlikely(f2fs_cp_error(sbi))) {
+> @@ -59,19 +59,6 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+>  
+>  	f2fs_bug_on(sbi, f2fs_has_inline_data(inode));
+>  
+> -	/* block allocation */
+> -	f2fs_lock_op(sbi);
+> -	set_new_dnode(&dn, inode, NULL, NULL, 0);
+> -	err = f2fs_reserve_block(&dn, page->index);
+> -	if (err) {
+> -		f2fs_unlock_op(sbi);
+> -		goto out;
+> -	}
+> -	f2fs_put_dnode(&dn);
+> -	f2fs_unlock_op(sbi);
+> -
+> -	f2fs_balance_fs(sbi, dn.node_changed);
+> -
+>  	file_update_time(vmf->vma->vm_file);
+>  	down_read(&F2FS_I(inode)->i_mmap_sem);
+>  	lock_page(page);
+> @@ -108,12 +95,24 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+>  	/* fill the page */
+>  	f2fs_wait_on_page_writeback(page, DATA, false);
+>  
+> +	/* block allocation */
+> +	__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, true);
+> +	set_new_dnode(&dn, inode, NULL, NULL, 0);
+> +	err = f2fs_reserve_block(&dn, page->index);
+> +	if (err)
+> +		goto out_unlock;
+> +
+>  	/* wait for GCed page writeback via META_MAPPING */
+>  	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
+>  
+> +	f2fs_put_dnode(&dn);
+> +out_unlock:
+> +	__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, false);
+>  out_sem:
+>  	up_read(&F2FS_I(inode)->i_mmap_sem);
+> -out:
+> +
+> +	f2fs_balance_fs(sbi, dn.node_changed);
+> +
+>  	sb_end_pagefault(inode->i_sb);
+>  	f2fs_update_time(sbi, REQ_TIME);
+>  err:
+> -- 
+> 2.18.0
