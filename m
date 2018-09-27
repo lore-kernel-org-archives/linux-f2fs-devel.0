@@ -1,336 +1,152 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH RESEND v2] Revert: "f2fs: check last page
- index in cached bio to decide submission"
-Date: Thu, 27 Sep 2018 15:50:05 +0800
-Message-ID: <63809379-4844-d326-1a2c-44498b1fad1a@huawei.com>
-References: <20180926144456.3167-1-chao@kernel.org>
- <20180927074058.GK22939@codeaurora.org>
+Subject: [PATCH v2] f2fs: refactor ->page_mkwrite() flow
+Date: Thu, 27 Sep 2018 18:33:18 +0800
+Message-ID: <20180927103318.36631-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1g5R3z-0005o6-VN
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Sep 2018 07:50:19 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g5R3x-007XCH-7N
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Sep 2018 07:50:19 +0000
-In-Reply-To: <20180927074058.GK22939@codeaurora.org>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Sahitya Tummala <stummala@codeaurora.org>, Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/9/27 15:40, Sahitya Tummala wrote:
-> On Wed, Sep 26, 2018 at 10:44:56PM +0800, Chao Yu wrote:
->> From: Chao Yu <yuchao0@huawei.com>
->>
->> There is one case that we can leave bio in f2fs, result in hanging
->> page writeback waiter.
->>
->> Thread A				Thread B
->> - f2fs_write_cache_pages
->>  - f2fs_submit_page_write
->>  page #0 cached in bio #0 of cold log
->>  - f2fs_submit_page_write
->>  page #1 cached in bio #1 of warm log
->> 					- f2fs_write_cache_pages
->> 					 - f2fs_submit_page_write
->> 					 bio is full, submit bio #1 contain page #1
->>  - f2fs_submit_merged_write_cond(, page #1)
->>  fail to submit bio #0 due to page #1 is not in any cached bios.
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->> v2:
->> - rebase to dev-test
->>  fs/f2fs/checkpoint.c |  2 +-
->>  fs/f2fs/data.c       | 38 +++++++++++++++++++-------------------
->>  fs/f2fs/f2fs.h       |  4 ++--
->>  fs/f2fs/node.c       | 12 ++++++------
->>  fs/f2fs/segment.c    | 11 +++++------
->>  5 files changed, 33 insertions(+), 34 deletions(-)
->>
->> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->> index d624d7983197..2f63b362ce63 100644
->> --- a/fs/f2fs/checkpoint.c
->> +++ b/fs/f2fs/checkpoint.c
->> @@ -280,7 +280,7 @@ static int __f2fs_write_meta_page(struct page *page,
->>  
->>  	if (wbc->for_reclaim)
->>  		f2fs_submit_merged_write_cond(sbi, page->mapping->host,
->> -						0, page->index, META);
->> +							page, 0, META);
->>  
->>  	unlock_page(page);
->>  
->> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->> index be69b6ac6870..b03f9d163175 100644
->> --- a/fs/f2fs/data.c
->> +++ b/fs/f2fs/data.c
->> @@ -322,8 +322,8 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
->>  	io->bio = NULL;
->>  }
->>  
->> -static bool __has_merged_page(struct f2fs_bio_info *io,
->> -				struct inode *inode, nid_t ino, pgoff_t idx)
->> +static bool __has_merged_page(struct f2fs_bio_info *io, struct inode *inode,
->> +						struct page *page, nid_t ino)
->>  {
->>  	struct bio_vec *bvec;
->>  	struct page *target;
->> @@ -332,7 +332,7 @@ static bool __has_merged_page(struct f2fs_bio_info *io,
->>  	if (!io->bio)
->>  		return false;
->>  
->> -	if (!inode && !ino)
->> +	if (!inode && !page && !ino)
->>  		return true;
->>  
->>  	bio_for_each_segment_all(bvec, io->bio, i) {
->> @@ -342,11 +342,10 @@ static bool __has_merged_page(struct f2fs_bio_info *io,
->>  		else
->>  			target = fscrypt_control_page(bvec->bv_page);
->>  
->> -		if (idx != target->index)
->> -			continue;
->> -
->>  		if (inode && inode == target->mapping->host)
->>  			return true;
->> +		if (page && page == target)
->> +			return true;
-> 
-> If both inode and page are passed, then I think it we should check for page first
-> followed by inode checks. What do you think?
+Thread A				Thread B
+- f2fs_vm_page_mkwrite
+					- f2fs_setattr
+					 - down_write(i_mmap_sem)
+					 - truncate_setsize
+					 - f2fs_truncate
+					 - up_write(i_mmap_sem)
+ - f2fs_reserve_block
+ reserve NEW_ADDR
+ - skip dirty page due to truncation
 
-Yes, I've changed this and would like to check in latter tests.
+1. we don't need to rserve new block address for a truncated page.
+2. dn.data_blkaddr is used out of node page lock coverage.
 
-But, it's strange, yesterday, I remember I've passed all tests, but when I
-retest this patch at home, I got stuck and obviously there are compiler
-warning... I guess I'm missing something yesterday.
+Refactor ->page_mkwrite() flow to fix above issues:
+- use __do_map_lock() to avoid racing checkpoint()
+- lock data page in prior to dnode page
+- cover f2fs_reserve_block with i_mmap_sem lock
+- wait page writeback before zeroing page
 
-Thanks,
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v2:
+- handle error path correctly
+- wait page writeback before zeroing page
+ fs/f2fs/data.c |  2 +-
+ fs/f2fs/f2fs.h |  1 +
+ fs/f2fs/file.c | 45 ++++++++++++++++++++++-----------------------
+ 3 files changed, 24 insertions(+), 24 deletions(-)
 
-> 
->>  		if (ino && ino == ino_of_node(target))
->>  			return true;
->>  	}
->> @@ -355,7 +354,8 @@ static bool __has_merged_page(struct f2fs_bio_info *io,
->>  }
->>  
->>  static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
->> -				nid_t ino, pgoff_t idx, enum page_type type)
->> +						struct page *page, nid_t ino,
->> +						enum page_type type)
->>  {
->>  	enum page_type btype = PAGE_TYPE_OF_BIO(type);
->>  	enum temp_type temp;
->> @@ -366,7 +366,7 @@ static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
->>  		io = sbi->write_io[btype] + temp;
->>  
->>  		down_read(&io->io_rwsem);
->> -		ret = __has_merged_page(io, inode, ino, idx);
->> +		ret = __has_merged_page(io, inode, page, ino);
->>  		up_read(&io->io_rwsem);
->>  
->>  		/* TODO: use HOT temp only for meta pages now. */
->> @@ -397,12 +397,12 @@ static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
->>  }
->>  
->>  static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
->> -				struct inode *inode, nid_t ino, pgoff_t idx,
->> -				enum page_type type, bool force)
->> +				struct inode *inode, struct page *page,
->> +				nid_t ino, enum page_type type, bool force)
->>  {
->>  	enum temp_type temp;
->>  
->> -	if (!force && !has_merged_page(sbi, inode, ino, idx, type))
->> +	if (!force && !has_merged_page(sbi, inode, page, ino, type))
->>  		return;
->>  
->>  	for (temp = HOT; temp < NR_TEMP_TYPE; temp++) {
->> @@ -421,10 +421,10 @@ void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type)
->>  }
->>  
->>  void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
->> -				struct inode *inode, nid_t ino, pgoff_t idx,
->> -				enum page_type type)
->> +				struct inode *inode, struct page *page,
->> +				nid_t ino, enum page_type type)
->>  {
->> -	__submit_merged_write_cond(sbi, inode, ino, idx, type, false);
->> +	__submit_merged_write_cond(sbi, inode, page, ino, type, false);
->>  }
->>  
->>  void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi)
->> @@ -1962,7 +1962,7 @@ static int __write_data_page(struct page *page, bool *submitted,
->>  		ClearPageUptodate(page);
->>  
->>  	if (wbc->for_reclaim) {
->> -		f2fs_submit_merged_write_cond(sbi, inode, 0, page->index, DATA);
->> +		f2fs_submit_merged_write_cond(sbi, inode, page, 0, DATA);
->>  		clear_inode_flag(inode, FI_HOT_DATA);
->>  		f2fs_remove_dirty_inode(inode);
->>  		submitted = NULL;
->> @@ -2020,10 +2020,10 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->>  	pgoff_t index;
->>  	pgoff_t end;		/* Inclusive */
->>  	pgoff_t done_index;
->> -	pgoff_t last_idx = ULONG_MAX;
->>  	int cycled;
->>  	int range_whole = 0;
->>  	int tag;
->> +	int nwritten = 0;
->>  
->>  	pagevec_init(&pvec);
->>  
->> @@ -2126,7 +2126,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->>  				done = 1;
->>  				break;
->>  			} else if (submitted) {
->> -				last_idx = page->index;
->> +				nwritten++;
->>  			}
->>  
->>  			if (--wbc->nr_to_write <= 0 &&
->> @@ -2148,9 +2148,9 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->>  	if (wbc->range_cyclic || (range_whole && wbc->nr_to_write > 0))
->>  		mapping->writeback_index = done_index;
->>  
->> -	if (last_idx != ULONG_MAX)
->> +	if (nwritten)
->>  		f2fs_submit_merged_write_cond(F2FS_M_SB(mapping), mapping->host,
->> -						0, last_idx, DATA);
->> +								NULL, 0, DATA);
->>  
->>  	return ret;
->>  }
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index dc9306e87a51..464545e40729 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -3049,8 +3049,8 @@ int f2fs_init_post_read_processing(void);
->>  void f2fs_destroy_post_read_processing(void);
->>  void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type);
->>  void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
->> -				struct inode *inode, nid_t ino, pgoff_t idx,
->> -				enum page_type type);
->> +				struct inode *inode, struct page *page,
->> +				nid_t ino, enum page_type type);
->>  void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi);
->>  int f2fs_submit_page_bio(struct f2fs_io_info *fio);
->>  void f2fs_submit_page_write(struct f2fs_io_info *fio);
->> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
->> index ea151e07790f..c47ca807e245 100644
->> --- a/fs/f2fs/node.c
->> +++ b/fs/f2fs/node.c
->> @@ -1561,8 +1561,8 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
->>  	up_read(&sbi->node_write);
->>  
->>  	if (wbc->for_reclaim) {
->> -		f2fs_submit_merged_write_cond(sbi, page->mapping->host, 0,
->> -						page->index, NODE);
->> +		f2fs_submit_merged_write_cond(sbi, page->mapping->host,
->> +						page, 0, NODE);
->>  		submitted = NULL;
->>  	}
->>  
->> @@ -1634,13 +1634,13 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
->>  			unsigned int *seq_id)
->>  {
->>  	pgoff_t index;
->> -	pgoff_t last_idx = ULONG_MAX;
->>  	struct pagevec pvec;
->>  	int ret = 0;
->>  	struct page *last_page = NULL;
->>  	bool marked = false;
->>  	nid_t ino = inode->i_ino;
->>  	int nr_pages;
->> +	int nwritten = 0;
->>  
->>  	if (atomic) {
->>  		last_page = last_fsync_dnode(sbi, ino);
->> @@ -1718,7 +1718,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
->>  				f2fs_put_page(last_page, 0);
->>  				break;
->>  			} else if (submitted) {
->> -				last_idx = page->index;
->> +				nwritten++;
->>  			}
->>  
->>  			if (page == last_page) {
->> @@ -1744,8 +1744,8 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
->>  		goto retry;
->>  	}
->>  out:
->> -	if (last_idx != ULONG_MAX)
->> -		f2fs_submit_merged_write_cond(sbi, NULL, ino, last_idx, NODE);
->> +	if (nwritten)
->> +		f2fs_submit_merged_write_cond(sbi, NULL, NULL, ino, NODE);
->>  	return ret ? -EIO: 0;
->>  }
->>  
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index 97a4fae75651..965ef524e2a2 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -371,7 +371,7 @@ static int __f2fs_commit_inmem_pages(struct inode *inode)
->>  		.io_type = FS_DATA_IO,
->>  	};
->>  	struct list_head revoke_list;
->> -	pgoff_t last_idx = ULONG_MAX;
->> +	bool submit_bio = false;
->>  	int err = 0;
->>  
->>  	INIT_LIST_HEAD(&revoke_list);
->> @@ -406,14 +406,14 @@ static int __f2fs_commit_inmem_pages(struct inode *inode)
->>  			}
->>  			/* record old blkaddr for revoking */
->>  			cur->old_addr = fio.old_blkaddr;
->> -			last_idx = page->index;
->> +			submit_bio = true;
->>  		}
->>  		unlock_page(page);
->>  		list_move_tail(&cur->list, &revoke_list);
->>  	}
->>  
->> -	if (last_idx != ULONG_MAX)
->> -		f2fs_submit_merged_write_cond(sbi, inode, 0, last_idx, DATA);
->> +	if (submit_bio)
->> +		f2fs_submit_merged_write_cond(sbi, inode, NULL, 0, DATA);
->>  
->>  	if (err) {
->>  		/*
->> @@ -3179,8 +3179,7 @@ void f2fs_wait_on_page_writeback(struct page *page,
->>  	if (PageWriteback(page)) {
->>  		struct f2fs_sb_info *sbi = F2FS_P_SB(page);
->>  
->> -		f2fs_submit_merged_write_cond(sbi, page->mapping->host,
->> -						0, page->index, type);
->> +		f2fs_submit_merged_write_cond(sbi, NULL, page, 0, type);
->>  		if (ordered)
->>  			wait_on_page_writeback(page);
->>  		else
->> -- 
->> 2.18.0
->>
->>
->>
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 41102c227eee..b287422c8eeb 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -972,7 +972,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+ 	return err;
+ }
+ 
+-static inline void __do_map_lock(struct f2fs_sb_info *sbi, int flag, bool lock)
++void __do_map_lock(struct f2fs_sb_info *sbi, int flag, bool lock)
+ {
+ 	if (flag == F2FS_GET_BLOCK_PRE_AIO) {
+ 		if (lock)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index b32fd9f7da95..8f4a46603c61 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3050,6 +3050,7 @@ struct page *f2fs_get_lock_data_page(struct inode *inode, pgoff_t index,
+ struct page *f2fs_get_new_data_page(struct inode *inode,
+ 			struct page *ipage, pgoff_t index, bool new_i_size);
+ int f2fs_do_write_data_page(struct f2fs_io_info *fio);
++void __do_map_lock(struct f2fs_sb_info *sbi, int flag, bool lock);
+ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ 			int create, int flag);
+ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 357422a4c319..6db808c80813 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -47,7 +47,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 	struct page *page = vmf->page;
+ 	struct inode *inode = file_inode(vmf->vma->vm_file);
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	struct dnode_of_data dn;
++	struct dnode_of_data dn = { .node_changed = false };
+ 	int err;
+ 
+ 	if (unlikely(f2fs_cp_error(sbi))) {
+@@ -59,19 +59,6 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 
+ 	f2fs_bug_on(sbi, f2fs_has_inline_data(inode));
+ 
+-	/* block allocation */
+-	f2fs_lock_op(sbi);
+-	set_new_dnode(&dn, inode, NULL, NULL, 0);
+-	err = f2fs_reserve_block(&dn, page->index);
+-	if (err) {
+-		f2fs_unlock_op(sbi);
+-		goto out;
+-	}
+-	f2fs_put_dnode(&dn);
+-	f2fs_unlock_op(sbi);
+-
+-	f2fs_balance_fs(sbi, dn.node_changed);
+-
+ 	file_update_time(vmf->vma->vm_file);
+ 	down_read(&F2FS_I(inode)->i_mmap_sem);
+ 	lock_page(page);
+@@ -83,11 +70,28 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 		goto out_sem;
+ 	}
+ 
++	/* block allocation */
++	__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, true);
++	set_new_dnode(&dn, inode, NULL, NULL, 0);
++	err = f2fs_get_block(&dn, page->index);
++	f2fs_put_dnode(&dn);
++	__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, false);
++	if (err) {
++		unlock_page(page);
++		goto out_sem;
++	}
++
++	/* fill the page */
++	f2fs_wait_on_page_writeback(page, DATA, false);
++
++	/* wait for GCed page writeback via META_MAPPING */
++	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
++
+ 	/*
+ 	 * check to see if the page is mapped already (no holes)
+ 	 */
+ 	if (PageMappedToDisk(page))
+-		goto mapped;
++		goto out_sem;
+ 
+ 	/* page is wholly or partially inside EOF */
+ 	if (((loff_t)(page->index + 1) << PAGE_SHIFT) >
+@@ -104,16 +108,11 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 	f2fs_update_iostat(sbi, APP_MAPPED_IO, F2FS_BLKSIZE);
+ 
+ 	trace_f2fs_vm_page_mkwrite(page, DATA);
+-mapped:
+-	/* fill the page */
+-	f2fs_wait_on_page_writeback(page, DATA, false);
+-
+-	/* wait for GCed page writeback via META_MAPPING */
+-	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
+-
+ out_sem:
+ 	up_read(&F2FS_I(inode)->i_mmap_sem);
+-out:
++
++	f2fs_balance_fs(sbi, dn.node_changed);
++
+ 	sb_end_pagefault(inode->i_sb);
+ 	f2fs_update_time(sbi, REQ_TIME);
+ err:
+-- 
+2.18.0.rc1
