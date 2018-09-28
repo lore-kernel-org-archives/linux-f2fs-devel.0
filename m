@@ -1,9 +1,9 @@
-From: Junling Zheng <zhengjunling@huawei.com>
-Subject: [PATCH 5/5] fsck.f2fs: try to recover cp_payload from
- valid cp pack
-Date: Fri, 28 Sep 2018 20:26:00 +0800
-Message-ID: <20180928122600.239931-5-zhengjunling@huawei.com>
-References: <20180928122600.239931-1-zhengjunling@huawei.com>
+From: Eryu Guan <guaneryu@gmail.com>
+Subject: Re: [PATCH] generic: add a testcase to test uid/gid
+ recovery
+Date: Fri, 28 Sep 2018 20:26:22 +0800
+Message-ID: <20180928122622.GF17817@desktop>
+References: <20180925084558.77190-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,14 +11,18 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <zhengjunling@huawei.com>) id 1g5rqf-0003XA-4d
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 28 Sep 2018 12:26:21 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g5rqd-00DMKs-Mf
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 28 Sep 2018 12:26:21 +0000
-In-Reply-To: <20180928122600.239931-1-zhengjunling@huawei.com>
+ (envelope-from <guaneryu@gmail.com>) id 1g5rqv-0003Y9-Q8
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 28 Sep 2018 12:26:37 +0000
+Received: from mail-pg1-f196.google.com ([209.85.215.196])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1g5rqt-006UQ3-Tv
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 28 Sep 2018 12:26:37 +0000
+Received: by mail-pg1-f196.google.com with SMTP id v133-v6so4389020pgb.2
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 28 Sep 2018 05:26:35 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20180925084558.77190-1-yuchao0@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,60 +32,159 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-From: Chao Yu <yuchao0@huawei.com>
+On Tue, Sep 25, 2018 at 04:45:58PM +0800, Chao Yu wrote:
+> After fsync, filesystem should guarantee inode metadata including
+> uid/gid being persisted, so even after sudden power-cut, durign
+> mount, we should recover uid/gid fields correctly, in order to not
+> loss those meta info.
+> 
+> So adding this testcase to check whether generic filesystem can
+> guarantee that.
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
 
-If sb checksum is not enabled, and cp pack is valid due to no
-crc inconsistence, let's try to recover cp_payload based on
-cp_pack_start_sum in cp pack.
+Looks good to me. Just two minor issues inline, and I'll just fix them
+on commit.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fsck/f2fs.h  |  5 +++++
- fsck/mount.c | 10 +++++++---
- 2 files changed, 12 insertions(+), 3 deletions(-)
+> ---
+>  tests/generic/505     | 95 +++++++++++++++++++++++++++++++++++++++++++
+>  tests/generic/505.out |  2 +
+>  tests/generic/group   |  1 +
+>  3 files changed, 98 insertions(+)
+>  create mode 100755 tests/generic/505
+>  create mode 100644 tests/generic/505.out
+> 
+> diff --git a/tests/generic/505 b/tests/generic/505
+> new file mode 100755
+> index 000000000000..103a1e9bbe47
+> --- /dev/null
+> +++ b/tests/generic/505
+> @@ -0,0 +1,95 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (c) 2018 Huawei.  All Rights Reserved.
+> +#
+> +# FS QA Test 505
+> +#
+> +# This testcase is trying to test recovery flow of generic filesystem, w/ below
+> +# steps, once uid or gid changes, after we fsync that file, we can expect that
+> +# uid/gid can be recovered after sudden power-cuts.
+> +# 1. touch testfile;
+> +# 1.1 sync (optional)
+> +# 2. chown 100 testfile;
+> +# 3. chgrp 100 testfile;
+> +# 4. xfs_io -f testfile -c "fsync";
+> +# 5. godown;
+> +# 6. umount;
+> +# 7. mount;
+> +# 8. check uid/gid
+> +#
+> +seq=`basename $0`
+> +seqres=$RESULT_DIR/$seq
+> +echo "QA output created by $seq"
+> +
+> +here=`pwd`
+> +tmp=/tmp/$$
+> +status=1	# failure is the default!
+> +trap "_cleanup; exit \$status" 0 1 2 3 15
+> +
+> +_cleanup()
+> +{
+> +	cd /
+> +	rm -f $tmp.*
+> +}
+> +
+> +# get standard environment, filters and checks
+> +. ./common/rc
+> +. ./common/filter
+> +
+> +# remove previous $seqres.full before test
+> +rm -f $seqres.full
+> +
+> +# real QA test starts here
+> +_supported_fs generic
+> +_supported_os Linux
+> +
+> +_require_scratch
+> +_require_scratch_shutdown
+> +
+> +_scratch_mkfs >/dev/null 2>&1
+> +_require_metadata_journaling $SCRATCH_DEV
+> +
+> +testfile=$SCRATCH_MNT/testfile
+> +stat_opt='-c "uid: %u, gid: %g"'
+> +
+> +_do_check()
 
-diff --git a/fsck/f2fs.h b/fsck/f2fs.h
-index d216444..0d0d5e2 100644
---- a/fsck/f2fs.h
-+++ b/fsck/f2fs.h
-@@ -259,6 +259,11 @@ static inline unsigned long __bitmap_size(struct f2fs_sb_info *sbi, int flag)
- 	return 0;
- }
- 
-+static inline block_t __cp_payload(struct f2fs_sb_info *sbi)
-+{
-+	return le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_payload);
-+}
-+
- static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
- {
- 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 9019921..0e8fa41 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -975,12 +975,16 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
- 	}
- 
- 	cp_pack_start_sum = __start_sum_addr(sbi);
--	cp_payload = get_sb(cp_payload);
-+	cp_payload = __cp_payload(sbi);
- 	if (cp_pack_start_sum < cp_payload + 1 ||
- 		cp_pack_start_sum > blocks_per_seg - 1 -
- 			NR_CURSEG_TYPE) {
--		MSG(0, "\tWrong cp_pack_start_sum(%u)\n", cp_pack_start_sum);
--		return 1;
-+		MSG(0, "\tWrong cp_pack_start_sum(%u) or cp_payload(%u)\n",
-+			cp_pack_start_sum, cp_payload);
-+		if ((get_sb(feature) & F2FS_FEATURE_SB_CHKSUM))
-+			return 1;
-+		set_sb(cp_payload, cp_pack_start_sum - 1);
-+		update_superblock(sb, SB_MASK_ALL);
- 	}
- 
- 	return 0;
--- 
-2.19.0
+Name local functions without the leading underscore, which usually
+indicates it's a global helper function.
+
+> +{
+> +	_scratch_mount
+> +
+> +	touch $testfile
+> +
+> +	if [ "$1" == "sync" ]; then
+> +		sync
+> +	fi
+> +
+> +	chown 100 $testfile
+> +	chgrp 100 $testfile
+> +
+> +	before=`stat "$stat_opt" $testfile`
+> +
+> +	$XFS_IO_PROG -f $testfile -c "fsync" | _filter_xfs_io
+> +
+> +	_scratch_shutdown | tee -a $seqres.full
+> +	_scratch_unmount
+> +	_scratch_mount
+
+_scratch_cycle_mount
+
+Thanks,
+Eryu
+
+> +
+> +	after=`stat "$stat_opt" $testfile`
+> +
+> +	# check inode's uid/gid
+> +	if [ "$before" != "$after" ]; then
+> +		echo "Before: $before"
+> +		echo "After : $after"
+> +	fi
+> +	echo "Before: $before" >> $seqres.full
+> +	echo "After : $after" >> $seqres.full
+> +
+> +	rm $testfile
+> +	_scratch_unmount
+> +}
+> +
+> +_do_check
+> +_do_check sync
+> +
+> +status=0
+> +echo "Silence is golden"
+> +exit
+> diff --git a/tests/generic/505.out b/tests/generic/505.out
+> new file mode 100644
+> index 000000000000..80e3bd1d9abb
+> --- /dev/null
+> +++ b/tests/generic/505.out
+> @@ -0,0 +1,2 @@
+> +QA output created by 505
+> +Silence is golden
+> diff --git a/tests/generic/group b/tests/generic/group
+> index 55155de8bc29..4da0e1888f57 100644
+> --- a/tests/generic/group
+> +++ b/tests/generic/group
+> @@ -507,3 +507,4 @@
+>  502 auto quick log
+>  503 auto quick dax punch collapse zero
+>  504 auto quick locks
+> +505 shutdown auto quick metadata
+> -- 
+> 2.18.0.rc1
+> 
