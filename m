@@ -1,21 +1,21 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] dump.f2fs: allow dump data on mounted image
-Date: Sun, 30 Sep 2018 16:26:13 +0800
-Message-ID: <20180930082613.106905-1-yuchao0@huawei.com>
+Subject: [PATCH 1/2] check: recognize f2fs through parameter
+Date: Sun, 30 Sep 2018 17:26:52 +0800
+Message-ID: <20180930092653.122684-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1g6X3o-0005jc-BC
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 30 Sep 2018 08:26:40 +0000
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1g6Y0d-0003C3-Mg
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 30 Sep 2018 09:27:27 +0000
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g6X3m-009VsO-4J
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 30 Sep 2018 08:26:40 +0000
+ id 1g6Y0b-009VM4-2J
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 30 Sep 2018 09:27:27 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -25,31 +25,35 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: fstests@vger.kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-xfstests assumes it's allow to dump data on mounted image, for example,
-some common functions call dumpe2fs on mounted ext[2|3|4] image to check
-feature lists. To adapt such requirement, let's follow that rule in
-dump.f2fs.
+Add a paramenter in check to configure $FSTYP for f2fs.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fsck/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ check | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fsck/main.c b/fsck/main.c
-index e20f31ca09e4..675c603b1a76 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -744,7 +744,7 @@ int main(int argc, char **argv)
+diff --git a/check b/check
+index f3c8021d94b9..a9024094721a 100755
+--- a/check
++++ b/check
+@@ -59,6 +59,7 @@ check options
+     -pvfs2          test PVFS2
+     -tmpfs              test TMPFS
+     -ubifs              test ubifs
++    -f2fs		test f2fs
+     -l			line mode diff
+     -udiff		show unified diff (default)
+     -n			show me, do not run tests
+@@ -263,6 +264,7 @@ while [ $# -gt 0 ]; do
+ 	-pvfs2)		FSTYP=pvfs2 ;;
+ 	-tmpfs)		FSTYP=tmpfs ;;
+ 	-ubifs)		FSTYP=ubifs ;;
++	-f2fs)		FSTYP=f2fs ;;
  
- 	f2fs_parse_options(argc, argv);
- 
--	if (f2fs_devs_are_umounted() < 0) {
-+	if (c.func != DUMP && f2fs_devs_are_umounted() < 0) {
- 		if (errno == EBUSY)
- 			return -1;
- 		if (!c.ro || c.func == DEFRAG) {
+ 	-g)	group=$2 ; shift ;
+ 		GROUP_LIST="$GROUP_LIST ${group//,/ }"
 -- 
 2.18.0.rc1
