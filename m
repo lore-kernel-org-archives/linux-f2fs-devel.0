@@ -1,8 +1,9 @@
 From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 1/3] generic: test project id recovery after
- power failure
-Date: Thu,  4 Oct 2018 12:35:00 +0800
-Message-ID: <20181004043502.15005-1-chao@kernel.org>
+Subject: [PATCH 2/3] generic: test i_flags recovery after power
+ failure
+Date: Thu,  4 Oct 2018 12:35:01 +0800
+Message-ID: <20181004043502.15005-2-chao@kernel.org>
+References: <20181004043502.15005-1-chao@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,13 +11,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1g7vMD-0002oQ-2P
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Oct 2018 04:35:25 +0000
+ (envelope-from <chao@kernel.org>) id 1g7vMH-0002oo-4Q
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Oct 2018 04:35:29 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g7vMB-00BoOE-BM
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Oct 2018 04:35:25 +0000
+ id 1g7vMD-00BoOH-Oi
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Oct 2018 04:35:29 +0000
+In-Reply-To: <20181004043502.15005-1-chao@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,45 +34,58 @@ Cc: guaneryu@gmail.com, linux-f2fs-devel@lists.sourceforge.net
 From: Chao Yu <yuchao0@huawei.com>
 
 After fsync, filesystem should guarantee inode metadata including
-project id being persisted, so even after sudden power-cut, during
-mount, we should recover project_id fields correctly, in order to
-not loss those meta info.
+i_flags being persisted, so even after sudden power-cut, during
+mount, we should recover i_flags fields correctly, in order to not
+loss those meta info.
 
 So adding this testcase to check whether generic filesystem can
 guarantee that.
 
+We only check below attribute modification which most filesystem
+supports:
+- no atime updates (A)
+- secure deletion (s)
+- synchronous updates (S)
+- undeletable (u)
+
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- tests/generic/506     | 97 +++++++++++++++++++++++++++++++++++++++++++
- tests/generic/506.out |  2 +
- tests/generic/group   |  1 +
- 3 files changed, 100 insertions(+)
- create mode 100644 tests/generic/506
- create mode 100644 tests/generic/506.out
+ tests/generic/507     | 132 ++++++++++++++++++++++++++++++++++++++++++
+ tests/generic/507.out |   2 +
+ tests/generic/group   |   1 +
+ 3 files changed, 135 insertions(+)
+ create mode 100755 tests/generic/507
+ create mode 100644 tests/generic/507.out
 
-diff --git a/tests/generic/506 b/tests/generic/506
-new file mode 100644
-index 00000000..ca035a91
+diff --git a/tests/generic/507 b/tests/generic/507
+new file mode 100755
+index 00000000..2c718f8d
 --- /dev/null
-+++ b/tests/generic/506
-@@ -0,0 +1,97 @@
++++ b/tests/generic/507
+@@ -0,0 +1,132 @@
 +#! /bin/bash
 +# SPDX-License-Identifier: GPL-2.0
 +# Copyright (c) 2018 Huawei.  All Rights Reserved.
 +#
-+# FS QA Test 506
++# FS QA Test 507
 +#
 +# This testcase is trying to test recovery flow of generic filesystem, w/ below
-+# steps, once project id changes, after we fsync that file, we can expect that
-+# project id can be recovered after sudden power-cuts.
++# steps, once i_flags changes, after we fsync that file, we can expect that
++# i_flags can be recovered after sudden power-cuts.
 +# 1. touch testfile;
 +# 1.1 sync (optional)
-+# 2. chattr -p 100 testfile;
++# 2. chattr +[AsSu] testfile
 +# 3. xfs_io -f testfile -c "fsync";
 +# 4. godown;
 +# 5. umount;
 +# 6. mount;
-+# 7. check project id
++# 7. check i_flags
++# 8. chattr -[AsSu] testfile
++# 9. xfs_io -f testfile -c "fsync";
++# 10. godown;
++# 11. umount;
++# 12. mount;
++# 13. check i_flags
 +#
 +seq=`basename $0`
 +seqres=$RESULT_DIR/$seq
@@ -90,7 +105,6 @@ index 00000000..ca035a91
 +# get standard environment, filters and checks
 +. ./common/rc
 +. ./common/filter
-+. ./common/quota
 +
 +# remove previous $seqres.full before test
 +rm -f $seqres.full
@@ -102,7 +116,6 @@ index 00000000..ca035a91
 +_require_test_lsattr
 +_require_command "$CHATTR_PROG" chattr
 +
-+_require_prjquota $SCRATCH_DEV
 +_require_scratch
 +_require_scratch_shutdown
 +
@@ -110,29 +123,58 @@ index 00000000..ca035a91
 +_require_metadata_journaling $SCRATCH_DEV
 +
 +testfile=$SCRATCH_MNT/testfile
++opt="AsSu"
 +
 +do_check()
 +{
++	attr=$1
++
 +	_scratch_mount
 +
 +	touch $testfile
 +
-+	if [ "$1" == "sync" ]; then
++	if [ "$2" == "sync" ]; then
++		echo "sync" >> $seqres.full
 +		sync
 +	fi
 +
-+	chattr -p 100 $testfile
++	echo "Test chattr +$1" >> $seqres.full
 +
-+	before=`lsattr -p $testfile`
++	# add attribute
++	chattr +$attr $testfile
++
++	before=`lsattr $testfile`
 +
 +	$XFS_IO_PROG -f $testfile -c "fsync" | _filter_xfs_io
 +
 +	_scratch_shutdown | tee -a $seqres.full
 +	_scratch_cycle_mount
 +
-+	after=`lsattr -p $testfile`
++	after=`lsattr $testfile`
 +
-+	# check inode's uid/gid
++	# check inode's i_flags
++	if [ "$before" != "$after" ]; then
++		echo "Before: $before"
++		echo "After : $after"
++	fi
++	echo "Before: $before" >> $seqres.full
++	echo "After : $after" >> $seqres.full
++
++	echo "Test chattr -$1" >> $seqres.full
++
++	# delete attribute
++	chattr -$attr $testfile
++
++	before=`lsattr $testfile`
++
++	$XFS_IO_PROG -f $testfile -c "fsync" | _filter_xfs_io
++
++	_scratch_shutdown | tee -a $seqres.full
++	_scratch_cycle_mount
++
++	after=`lsattr $testfile`
++
++	# check inode's i_flags
 +	if [ "$before" != "$after" ]; then
 +		echo "Before: $before"
 +		echo "After : $after"
@@ -146,27 +188,29 @@ index 00000000..ca035a91
 +
 +echo "Silence is golden"
 +
-+do_check
-+do_check sync
++for i in `seq ${#opt}`; do
++	do_check ${opt:$i-1:1}
++	do_check ${opt:$i-1:1} sync
++done
 +
 +status=0
 +exit
-diff --git a/tests/generic/506.out b/tests/generic/506.out
+diff --git a/tests/generic/507.out b/tests/generic/507.out
 new file mode 100644
-index 00000000..cb46b201
+index 00000000..3d8672f8
 --- /dev/null
-+++ b/tests/generic/506.out
++++ b/tests/generic/507.out
 @@ -0,0 +1,2 @@
-+QA output created by 506
++QA output created by 507
 +Silence is golden
 diff --git a/tests/generic/group b/tests/generic/group
-index 4da0e188..c7d42ff9 100644
+index c7d42ff9..e94253dc 100644
 --- a/tests/generic/group
 +++ b/tests/generic/group
-@@ -508,3 +508,4 @@
- 503 auto quick dax punch collapse zero
+@@ -509,3 +509,4 @@
  504 auto quick locks
  505 shutdown auto quick metadata
-+506 shutdown auto quick metadata quota
+ 506 shutdown auto quick metadata quota
++507 shutdown auto quick metadata
 -- 
 2.18.0
