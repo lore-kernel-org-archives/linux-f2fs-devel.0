@@ -1,7 +1,7 @@
 From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 3/3] f2fs: remove unneeded disable_nat_bits()
-Date: Thu,  4 Oct 2018 11:15:20 +0800
-Message-ID: <20181004031520.4096-3-chao@kernel.org>
+Subject: [PATCH 2/3] f2fs: remove unused sbi->trigger_ssr_threshold
+Date: Thu,  4 Oct 2018 11:15:19 +0800
+Message-ID: <20181004031520.4096-2-chao@kernel.org>
 References: <20181004031520.4096-1-chao@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20181004031520.4096-1-chao@kernel.org>
@@ -12,31 +12,26 @@ List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-Commit 7735730d39d7 ("f2fs: fix to propagate error from __get_meta_page()")
-added disable_nat_bits() in error path of __get_nat_bitmaps(), but it's
-unneeded, beause we will fail mount, we won't have chance to change nid
-usage status w/o nat full/empty bitmaps.
+Commit a2a12b679f36 ("f2fs: export SSR allocation threshold") introduced
+two threshold .min_ssr_sections and .trigger_ssr_threshold, but only
+.min_ssr_sections is used, so just remove redundant one for cleanup.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/node.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ fs/f2fs/f2fs.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 8c0367cfb1bb..2b34206486d8 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2879,10 +2879,8 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
- 		struct page *page;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index c4d30c090399..2297492fc56d 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1218,7 +1218,6 @@ struct f2fs_sb_info {
+ 	unsigned int total_valid_node_count;	/* valid node block count */
+ 	loff_t max_file_blocks;			/* max block index of file */
+ 	int dir_level;				/* directory level */
+-	unsigned int trigger_ssr_threshold;	/* threshold to trigger ssr */
+ 	int readdir_ra;				/* readahead inode in readdir */
  
- 		page = f2fs_get_meta_page(sbi, nat_bits_addr++);
--		if (IS_ERR(page)) {
--			disable_nat_bits(sbi, true);
-+		if (IS_ERR(page))
- 			return PTR_ERR(page);
--		}
- 
- 		memcpy(nm_i->nat_bits + (i << F2FS_BLKSIZE_BITS),
- 					page_address(page), F2FS_BLKSIZE);
+ 	block_t user_block_count;		/* # of user blocks */
 -- 
 2.18.0
