@@ -1,410 +1,172 @@
 From: Chao Yu <chao@kernel.org>
-Subject: [PATCH v2] f2fs: use rb_*_cached friends
-Date: Thu,  4 Oct 2018 11:18:30 +0800
-Message-ID: <20181004031830.4297-1-chao@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Subject: [PATCH 1/3] generic: test project id recovery after
+ power failure
+Date: Thu,  4 Oct 2018 12:35:00 +0800
+Message-ID: <20181004043502.15005-1-chao@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <chao@kernel.org>) id 1g7vMD-0002oQ-2P
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Oct 2018 04:35:25 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1g7vMB-00BoOE-BM
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Oct 2018 04:35:25 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: fstests@vger.kernel.org
+Cc: guaneryu@gmail.com, linux-f2fs-devel@lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-As rbtree supports caching leftmost node natively, update f2fs codes
-to use rb_*_cached helpers to speed up leftmost node visiting.
+After fsync, filesystem should guarantee inode metadata including
+project id being persisted, so even after sudden power-cut, during
+mount, we should recover project_id fields correctly, in order to
+not loss those meta info.
+
+So adding this testcase to check whether generic filesystem can
+guarantee that.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
-v2:
-- fix f2fs_lookup_rb_tree_ret() case.
- fs/f2fs/extent_cache.c | 78 +++++++++++++++++++++++++-----------------
- fs/f2fs/f2fs.h         | 17 ++++-----
- fs/f2fs/segment.c      | 22 +++++++-----
- 3 files changed, 69 insertions(+), 48 deletions(-)
+ tests/generic/506     | 97 +++++++++++++++++++++++++++++++++++++++++++
+ tests/generic/506.out |  2 +
+ tests/generic/group   |  1 +
+ 3 files changed, 100 insertions(+)
+ create mode 100644 tests/generic/506
+ create mode 100644 tests/generic/506.out
 
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index 904ad7ba5a45..1cb0fcc67d2d 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -27,10 +27,10 @@ static struct rb_entry *__lookup_rb_tree_fast(struct rb_entry *cached_re,
- 	return NULL;
- }
- 
--static struct rb_entry *__lookup_rb_tree_slow(struct rb_root *root,
-+static struct rb_entry *__lookup_rb_tree_slow(struct rb_root_cached *root,
- 							unsigned int ofs)
- {
--	struct rb_node *node = root->rb_node;
-+	struct rb_node *node = root->rb_root.rb_node;
- 	struct rb_entry *re;
- 
- 	while (node) {
-@@ -46,7 +46,7 @@ static struct rb_entry *__lookup_rb_tree_slow(struct rb_root *root,
- 	return NULL;
- }
- 
--struct rb_entry *f2fs_lookup_rb_tree(struct rb_root *root,
-+struct rb_entry *f2fs_lookup_rb_tree(struct rb_root_cached *root,
- 				struct rb_entry *cached_re, unsigned int ofs)
- {
- 	struct rb_entry *re;
-@@ -59,22 +59,25 @@ struct rb_entry *f2fs_lookup_rb_tree(struct rb_root *root,
- }
- 
- struct rb_node **f2fs_lookup_rb_tree_for_insert(struct f2fs_sb_info *sbi,
--				struct rb_root *root, struct rb_node **parent,
--				unsigned int ofs)
-+				struct rb_root_cached *root,
-+				struct rb_node **parent,
-+				unsigned int ofs, bool *leftmost)
- {
--	struct rb_node **p = &root->rb_node;
-+	struct rb_node **p = &root->rb_root.rb_node;
- 	struct rb_entry *re;
- 
- 	while (*p) {
- 		*parent = *p;
- 		re = rb_entry(*parent, struct rb_entry, rb_node);
- 
--		if (ofs < re->ofs)
-+		if (ofs < re->ofs) {
- 			p = &(*p)->rb_left;
--		else if (ofs >= re->ofs + re->len)
-+		} else if (ofs >= re->ofs + re->len) {
- 			p = &(*p)->rb_right;
--		else
-+			*leftmost = false;
-+		} else {
- 			f2fs_bug_on(sbi, 1);
-+		}
- 	}
- 
- 	return p;
-@@ -89,16 +92,16 @@ struct rb_node **f2fs_lookup_rb_tree_for_insert(struct f2fs_sb_info *sbi,
-  * in order to simpfy the insertion after.
-  * tree must stay unchanged between lookup and insertion.
-  */
--struct rb_entry *f2fs_lookup_rb_tree_ret(struct rb_root *root,
-+struct rb_entry *f2fs_lookup_rb_tree_ret(struct rb_root_cached *root,
- 				struct rb_entry *cached_re,
- 				unsigned int ofs,
- 				struct rb_entry **prev_entry,
- 				struct rb_entry **next_entry,
- 				struct rb_node ***insert_p,
- 				struct rb_node **insert_parent,
--				bool force)
-+				bool force, bool *leftmost)
- {
--	struct rb_node **pnode = &root->rb_node;
-+	struct rb_node **pnode = &root->rb_root.rb_node;
- 	struct rb_node *parent = NULL, *tmp_node;
- 	struct rb_entry *re = cached_re;
- 
-@@ -107,7 +110,7 @@ struct rb_entry *f2fs_lookup_rb_tree_ret(struct rb_root *root,
- 	*prev_entry = NULL;
- 	*next_entry = NULL;
- 
--	if (RB_EMPTY_ROOT(root))
-+	if (RB_EMPTY_ROOT(&root->rb_root))
- 		return NULL;
- 
- 	if (re) {
-@@ -115,16 +118,22 @@ struct rb_entry *f2fs_lookup_rb_tree_ret(struct rb_root *root,
- 			goto lookup_neighbors;
- 	}
- 
-+	if (leftmost)
-+		*leftmost = true;
+diff --git a/tests/generic/506 b/tests/generic/506
+new file mode 100644
+index 00000000..ca035a91
+--- /dev/null
++++ b/tests/generic/506
+@@ -0,0 +1,97 @@
++#! /bin/bash
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (c) 2018 Huawei.  All Rights Reserved.
++#
++# FS QA Test 506
++#
++# This testcase is trying to test recovery flow of generic filesystem, w/ below
++# steps, once project id changes, after we fsync that file, we can expect that
++# project id can be recovered after sudden power-cuts.
++# 1. touch testfile;
++# 1.1 sync (optional)
++# 2. chattr -p 100 testfile;
++# 3. xfs_io -f testfile -c "fsync";
++# 4. godown;
++# 5. umount;
++# 6. mount;
++# 7. check project id
++#
++seq=`basename $0`
++seqres=$RESULT_DIR/$seq
++echo "QA output created by $seq"
 +
- 	while (*pnode) {
- 		parent = *pnode;
- 		re = rb_entry(*pnode, struct rb_entry, rb_node);
- 
--		if (ofs < re->ofs)
-+		if (ofs < re->ofs) {
- 			pnode = &(*pnode)->rb_left;
--		else if (ofs >= re->ofs + re->len)
-+		} else if (ofs >= re->ofs + re->len) {
- 			pnode = &(*pnode)->rb_right;
--		else
-+			if (leftmost)
-+				*leftmost = false;
-+		} else {
- 			goto lookup_neighbors;
-+		}
- 	}
- 
- 	*insert_p = pnode;
-@@ -157,10 +166,10 @@ struct rb_entry *f2fs_lookup_rb_tree_ret(struct rb_root *root,
- }
- 
- bool f2fs_check_rb_tree_consistence(struct f2fs_sb_info *sbi,
--						struct rb_root *root)
-+						struct rb_root_cached *root)
- {
- #ifdef CONFIG_F2FS_CHECK_FS
--	struct rb_node *cur = rb_first(root), *next;
-+	struct rb_node *cur = rb_first_cached(root), *next;
- 	struct rb_entry *cur_re, *next_re;
- 
- 	if (!cur)
-@@ -193,7 +202,8 @@ static struct kmem_cache *extent_node_slab;
- 
- static struct extent_node *__attach_extent_node(struct f2fs_sb_info *sbi,
- 				struct extent_tree *et, struct extent_info *ei,
--				struct rb_node *parent, struct rb_node **p)
-+				struct rb_node *parent, struct rb_node **p,
-+				bool leftmost)
- {
- 	struct extent_node *en;
- 
-@@ -206,7 +216,7 @@ static struct extent_node *__attach_extent_node(struct f2fs_sb_info *sbi,
- 	en->et = et;
- 
- 	rb_link_node(&en->rb_node, parent, p);
--	rb_insert_color(&en->rb_node, &et->root);
-+	rb_insert_color_cached(&en->rb_node, &et->root, leftmost);
- 	atomic_inc(&et->node_cnt);
- 	atomic_inc(&sbi->total_ext_node);
- 	return en;
-@@ -215,7 +225,7 @@ static struct extent_node *__attach_extent_node(struct f2fs_sb_info *sbi,
- static void __detach_extent_node(struct f2fs_sb_info *sbi,
- 				struct extent_tree *et, struct extent_node *en)
- {
--	rb_erase(&en->rb_node, &et->root);
-+	rb_erase_cached(&en->rb_node, &et->root);
- 	atomic_dec(&et->node_cnt);
- 	atomic_dec(&sbi->total_ext_node);
- 
-@@ -254,7 +264,7 @@ static struct extent_tree *__grab_extent_tree(struct inode *inode)
- 		f2fs_radix_tree_insert(&sbi->extent_tree_root, ino, et);
- 		memset(et, 0, sizeof(struct extent_tree));
- 		et->ino = ino;
--		et->root = RB_ROOT;
-+		et->root = RB_ROOT_CACHED;
- 		et->cached_en = NULL;
- 		rwlock_init(&et->lock);
- 		INIT_LIST_HEAD(&et->list);
-@@ -275,10 +285,10 @@ static struct extent_tree *__grab_extent_tree(struct inode *inode)
- static struct extent_node *__init_extent_tree(struct f2fs_sb_info *sbi,
- 				struct extent_tree *et, struct extent_info *ei)
- {
--	struct rb_node **p = &et->root.rb_node;
-+	struct rb_node **p = &et->root.rb_root.rb_node;
- 	struct extent_node *en;
- 
--	en = __attach_extent_node(sbi, et, ei, NULL, p);
-+	en = __attach_extent_node(sbi, et, ei, NULL, p, true);
- 	if (!en)
- 		return NULL;
- 
-@@ -294,7 +304,7 @@ static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
- 	struct extent_node *en;
- 	unsigned int count = atomic_read(&et->node_cnt);
- 
--	node = rb_first(&et->root);
-+	node = rb_first_cached(&et->root);
- 	while (node) {
- 		next = rb_next(node);
- 		en = rb_entry(node, struct extent_node, rb_node);
-@@ -452,7 +462,8 @@ static struct extent_node *__try_merge_extent_node(struct f2fs_sb_info *sbi,
- static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
- 				struct extent_tree *et, struct extent_info *ei,
- 				struct rb_node **insert_p,
--				struct rb_node *insert_parent)
-+				struct rb_node *insert_parent,
-+				bool leftmost)
- {
- 	struct rb_node **p;
- 	struct rb_node *parent = NULL;
-@@ -464,9 +475,12 @@ static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
- 		goto do_insert;
- 	}
- 
--	p = f2fs_lookup_rb_tree_for_insert(sbi, &et->root, &parent, ei->fofs);
-+	leftmost = true;
++here=`pwd`
++tmp=/tmp/$$
++status=1	# failure is the default!
++trap "_cleanup; exit \$status" 0 1 2 3 15
 +
-+	p = f2fs_lookup_rb_tree_for_insert(sbi, &et->root, &parent,
-+						ei->fofs, &leftmost);
- do_insert:
--	en = __attach_extent_node(sbi, et, ei, parent, p);
-+	en = __attach_extent_node(sbi, et, ei, parent, p, leftmost);
- 	if (!en)
- 		return NULL;
- 
-@@ -492,6 +506,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
- 	unsigned int end = fofs + len;
- 	unsigned int pos = (unsigned int)fofs;
- 	bool updated = false;
-+	bool leftmost;
- 
- 	if (!et)
- 		return;
-@@ -519,7 +534,8 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
- 					(struct rb_entry *)et->cached_en, fofs,
- 					(struct rb_entry **)&prev_en,
- 					(struct rb_entry **)&next_en,
--					&insert_p, &insert_parent, false);
-+					&insert_p, &insert_parent, false,
-+					&leftmost);
- 	if (!en)
- 		en = next_en;
- 
-@@ -546,7 +562,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
- 						end - dei.fofs + dei.blk,
- 						org_end - end);
- 				en1 = __insert_extent_tree(sbi, et, &ei,
--							NULL, NULL);
-+							NULL, NULL, true);
- 				next_en = en1;
- 			} else {
- 				en->ei.fofs = end;
-@@ -587,7 +603,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
- 		set_extent_info(&ei, fofs, blkaddr, len);
- 		if (!__try_merge_extent_node(sbi, et, &ei, prev_en, next_en))
- 			__insert_extent_tree(sbi, et, &ei,
--						insert_p, insert_parent);
-+					insert_p, insert_parent, leftmost);
- 
- 		/* give up extent_cache, if split and small updates happen */
- 		if (dei.len >= 1 &&
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 1c039965f22e..c4d30c090399 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -327,7 +327,7 @@ struct discard_cmd_control {
- 	atomic_t issued_discard;		/* # of issued discard */
- 	atomic_t issing_discard;		/* # of issing discard */
- 	atomic_t discard_cmd_cnt;		/* # of cached cmd count */
--	struct rb_root root;			/* root of discard rb-tree */
-+	struct rb_root_cached root;		/* root of discard rb-tree */
- 	bool rbtree_check;			/* config for consistence check */
- };
- 
-@@ -569,7 +569,7 @@ struct extent_node {
- 
- struct extent_tree {
- 	nid_t ino;			/* inode number */
--	struct rb_root root;		/* root of extent info rb-tree */
-+	struct rb_root_cached root;	/* root of extent info rb-tree */
- 	struct extent_node *cached_en;	/* recently accessed extent node */
- 	struct extent_info largest;	/* largested extent info */
- 	struct list_head list;		/* to be used by sbi->zombie_list */
-@@ -3365,18 +3365,19 @@ void f2fs_leave_shrinker(struct f2fs_sb_info *sbi);
- /*
-  * extent_cache.c
-  */
--struct rb_entry *f2fs_lookup_rb_tree(struct rb_root *root,
-+struct rb_entry *f2fs_lookup_rb_tree(struct rb_root_cached *root,
- 				struct rb_entry *cached_re, unsigned int ofs);
- struct rb_node **f2fs_lookup_rb_tree_for_insert(struct f2fs_sb_info *sbi,
--				struct rb_root *root, struct rb_node **parent,
--				unsigned int ofs);
--struct rb_entry *f2fs_lookup_rb_tree_ret(struct rb_root *root,
-+				struct rb_root_cached *root,
-+				struct rb_node **parent,
-+				unsigned int ofs, bool *leftmost);
-+struct rb_entry *f2fs_lookup_rb_tree_ret(struct rb_root_cached *root,
- 		struct rb_entry *cached_re, unsigned int ofs,
- 		struct rb_entry **prev_entry, struct rb_entry **next_entry,
- 		struct rb_node ***insert_p, struct rb_node **insert_parent,
--		bool force);
-+		bool force, bool *leftmost);
- bool f2fs_check_rb_tree_consistence(struct f2fs_sb_info *sbi,
--						struct rb_root *root);
-+						struct rb_root_cached *root);
- unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink);
- bool f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext);
- void f2fs_drop_extent_tree(struct inode *inode);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index b3cf00348918..ef9dfa06c6c8 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -897,7 +897,8 @@ static struct discard_cmd *__create_discard_cmd(struct f2fs_sb_info *sbi,
- static struct discard_cmd *__attach_discard_cmd(struct f2fs_sb_info *sbi,
- 				struct block_device *bdev, block_t lstart,
- 				block_t start, block_t len,
--				struct rb_node *parent, struct rb_node **p)
-+				struct rb_node *parent, struct rb_node **p,
-+				bool leftmost)
- {
- 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
- 	struct discard_cmd *dc;
-@@ -905,7 +906,7 @@ static struct discard_cmd *__attach_discard_cmd(struct f2fs_sb_info *sbi,
- 	dc = __create_discard_cmd(sbi, bdev, lstart, start, len);
- 
- 	rb_link_node(&dc->rb_node, parent, p);
--	rb_insert_color(&dc->rb_node, &dcc->root);
-+	rb_insert_color_cached(&dc->rb_node, &dcc->root, leftmost);
- 
- 	return dc;
- }
-@@ -917,7 +918,7 @@ static void __detach_discard_cmd(struct discard_cmd_control *dcc,
- 		atomic_sub(dc->issuing, &dcc->issing_discard);
- 
- 	list_del(&dc->list);
--	rb_erase(&dc->rb_node, &dcc->root);
-+	rb_erase_cached(&dc->rb_node, &dcc->root);
- 	dcc->undiscard_blks -= dc->len;
- 
- 	kmem_cache_free(discard_cmd_slab, dc);
-@@ -1154,6 +1155,7 @@ static struct discard_cmd *__insert_discard_tree(struct f2fs_sb_info *sbi,
- 	struct rb_node **p;
- 	struct rb_node *parent = NULL;
- 	struct discard_cmd *dc = NULL;
-+	bool leftmost = true;
- 
- 	if (insert_p && insert_parent) {
- 		parent = insert_parent;
-@@ -1161,9 +1163,11 @@ static struct discard_cmd *__insert_discard_tree(struct f2fs_sb_info *sbi,
- 		goto do_insert;
- 	}
- 
--	p = f2fs_lookup_rb_tree_for_insert(sbi, &dcc->root, &parent, lstart);
-+	p = f2fs_lookup_rb_tree_for_insert(sbi, &dcc->root, &parent,
-+							lstart, &leftmost);
- do_insert:
--	dc = __attach_discard_cmd(sbi, bdev, lstart, start, len, parent, p);
-+	dc = __attach_discard_cmd(sbi, bdev, lstart, start, len, parent,
-+								p, leftmost);
- 	if (!dc)
- 		return NULL;
- 
-@@ -1231,7 +1235,7 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
- 					NULL, lstart,
- 					(struct rb_entry **)&prev_dc,
- 					(struct rb_entry **)&next_dc,
--					&insert_p, &insert_parent, true);
-+					&insert_p, &insert_parent, true, NULL);
- 	if (dc)
- 		prev_dc = dc;
- 
-@@ -1339,7 +1343,7 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
- 					NULL, pos,
- 					(struct rb_entry **)&prev_dc,
- 					(struct rb_entry **)&next_dc,
--					&insert_p, &insert_parent, true);
-+					&insert_p, &insert_parent, true, NULL);
- 	if (!dc)
- 		dc = next_dc;
- 
-@@ -1971,7 +1975,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
- 	dcc->max_discards = MAIN_SEGS(sbi) << sbi->log_blocks_per_seg;
- 	dcc->undiscard_blks = 0;
- 	dcc->next_pos = 0;
--	dcc->root = RB_ROOT;
-+	dcc->root = RB_ROOT_CACHED;
- 	dcc->rbtree_check = false;
- 
- 	init_waitqueue_head(&dcc->discard_wait_queue);
-@@ -2635,7 +2639,7 @@ static unsigned int __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
- 					NULL, start,
- 					(struct rb_entry **)&prev_dc,
- 					(struct rb_entry **)&next_dc,
--					&insert_p, &insert_parent, true);
-+					&insert_p, &insert_parent, true, NULL);
- 	if (!dc)
- 		dc = next_dc;
- 
++_cleanup()
++{
++	cd /
++	rm -f $tmp.*
++}
++
++# get standard environment, filters and checks
++. ./common/rc
++. ./common/filter
++. ./common/quota
++
++# remove previous $seqres.full before test
++rm -f $seqres.full
++
++# real QA test starts here
++_supported_fs generic
++_supported_os Linux
++
++_require_test_lsattr
++_require_command "$CHATTR_PROG" chattr
++
++_require_prjquota $SCRATCH_DEV
++_require_scratch
++_require_scratch_shutdown
++
++_scratch_mkfs >/dev/null 2>&1
++_require_metadata_journaling $SCRATCH_DEV
++
++testfile=$SCRATCH_MNT/testfile
++
++do_check()
++{
++	_scratch_mount
++
++	touch $testfile
++
++	if [ "$1" == "sync" ]; then
++		sync
++	fi
++
++	chattr -p 100 $testfile
++
++	before=`lsattr -p $testfile`
++
++	$XFS_IO_PROG -f $testfile -c "fsync" | _filter_xfs_io
++
++	_scratch_shutdown | tee -a $seqres.full
++	_scratch_cycle_mount
++
++	after=`lsattr -p $testfile`
++
++	# check inode's uid/gid
++	if [ "$before" != "$after" ]; then
++		echo "Before: $before"
++		echo "After : $after"
++	fi
++	echo "Before: $before" >> $seqres.full
++	echo "After : $after" >> $seqres.full
++
++	rm $testfile
++	_scratch_unmount
++}
++
++echo "Silence is golden"
++
++do_check
++do_check sync
++
++status=0
++exit
+diff --git a/tests/generic/506.out b/tests/generic/506.out
+new file mode 100644
+index 00000000..cb46b201
+--- /dev/null
++++ b/tests/generic/506.out
+@@ -0,0 +1,2 @@
++QA output created by 506
++Silence is golden
+diff --git a/tests/generic/group b/tests/generic/group
+index 4da0e188..c7d42ff9 100644
+--- a/tests/generic/group
++++ b/tests/generic/group
+@@ -508,3 +508,4 @@
+ 503 auto quick dax punch collapse zero
+ 504 auto quick locks
+ 505 shutdown auto quick metadata
++506 shutdown auto quick metadata quota
 -- 
 2.18.0
