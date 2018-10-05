@@ -1,35 +1,48 @@
-From: Sahitya Tummala <stummala@codeaurora.org>
-Subject: [PATCH 2/2] f2fs: update REQ_TIME in f2fs_cross_rename()
-Date: Fri,  5 Oct 2018 10:47:40 +0530
-Message-ID: <1538716660-31572-2-git-send-email-stummala@codeaurora.org>
-References: <1538716660-31572-1-git-send-email-stummala@codeaurora.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: allow to mount, if quota is failed
+Date: Fri,  5 Oct 2018 09:03:22 -0700
+Message-ID: <20181005160322.42871-1-jaegeuk@kernel.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1538716660-31572-1-git-send-email-stummala@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Update REQ_TIME in the missing path - f2fs_cross_rename().
+Since we can use the filesystem without quotas till next boot.
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/namei.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/f2fs/super.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index a146327..e37af23 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -1154,6 +1154,8 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
- 
- 	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir))
- 		f2fs_sync_fs(sbi->sb, 1);
-+
-+	f2fs_update_time(sbi, REQ_TIME);
- 	return 0;
- out_new_dir:
- 	if (new_dir_entry) {
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 94eb7b55fc49..b3991e99a626 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3288,11 +3288,9 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	/* Enable quota usage during mount */
+ 	if (f2fs_sb_has_quota_ino(sb) && !f2fs_readonly(sb)) {
+ 		err = f2fs_enable_quotas(sb);
+-		if (err) {
++		if (err)
+ 			f2fs_msg(sb, KERN_ERR,
+ 				"Cannot turn on quotas: error %d", err);
+-			goto free_sysfs;
+-		}
+ 	}
+ #endif
+ 	/* if there are nt orphan nodes free them */
+@@ -3393,9 +3391,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	 * falls into an infinite loop in f2fs_sync_meta_pages().
+ 	 */
+ 	truncate_inode_pages_final(META_MAPPING(sbi));
+-#ifdef CONFIG_QUOTA
+-free_sysfs:
+-#endif
+ 	f2fs_unregister_sysfs(sbi);
+ free_root_inode:
+ 	dput(sb->s_root);
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.19.0.605.g01d371f741-goog
