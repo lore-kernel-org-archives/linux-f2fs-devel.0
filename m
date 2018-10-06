@@ -1,40 +1,51 @@
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-Subject: Re: [PATCH v2 2/5] ext4: cache NULL when both
- default_acl and acl are NULL
-Date: Sat, 6 Oct 2018 23:36:45 -0400
-Message-ID: <20181007033645.GA12046@thunk.org>
-References: <20180831143352.22970-1-cgxu519@gmx.com>
- <20180831143352.22970-2-cgxu519@gmx.com>
- <f1dd02a3-78ea-0240-72cc-135ee26f6524@gmx.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Content-Disposition: inline
-In-Reply-To: <f1dd02a3-78ea-0240-72cc-135ee26f6524@gmx.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: cgxu519 <cgxu519@gmx.com>
-Cc: shaggy@kernel.org, jfs-discussion@lists.sourceforge.net, martin@omnibond.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, adilger.kernel@dilger.ca, jack@suse.com, jaegeuk@kernel.org, linux-ext4@vger.kernel.org, devel@lists.orangefs.org, hubcap@omnibond.com
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH] f2fs: fix to recover inode->i_flags of inode block during POR
+Date: Sun,  7 Oct 2018 03:03:38 +0800
+Message-ID: <20181006190338.4037-1-chao@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wed, Sep 12, 2018 at 11:04:35PM +0800, cgxu519 wrote:
-> On 08/31/2018 10:33 PM, Chengguang Xu wrote:
-> > default_acl and acl of newly created inode will be initiated
-> > as ACL_NOT_CACHED in vfs function inode_init_always() and later
-> > will be updated by calling xxx_init_acl() in specific filesystems.
-> > Howerver, when default_acl and acl are NULL then they keep the value
-> > of ACL_NOT_CACHED, this patch tries to cache NULL for acl/default_acl
-> > in this case.
-> > 
-> > Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-Applied, thanks.
+Testcase to reproduce this bug:
+1. mkfs.f2fs /dev/sdd
+2. mount -t f2fs /dev/sdd /mnt/f2fs
+3. touch /mnt/f2fs/file
+4. sync
+5. chattr +a /mnt/f2fs/file
+6. xfs_io -a /mnt/f2fs/file -c "fsync"
+7. godown /mnt/f2fs
+8. umount /mnt/f2fs
+9. mount -t f2fs /dev/sdd /mnt/f2fs
+10. xfs_io /mnt/f2fs/file
 
-						- Ted
+There is no error when opening this file w/o O_APPEND, but actually,
+we expect the correct result should be:
+
+/mnt/f2fs/file: Operation not permitted
+
+The root cause is, in recover_inode(), we recover inode->i_flags more
+than F2FS_I(inode)->i_flags, so fix it.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/recovery.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index af66d6f5683b..eeee3756c3a9 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -275,6 +275,7 @@ static int recover_inode(struct inode *inode, struct page *page)
+ 
+ 	F2FS_I(inode)->i_advise = raw->i_advise;
+ 	F2FS_I(inode)->i_flags = le32_to_cpu(raw->i_flags);
++	f2fs_set_inode_flags(inode);
+ 	F2FS_I(inode)->i_gc_failures[GC_FAILURE_PIN] =
+ 				le16_to_cpu(raw->i_gc_failures);
+ 
+-- 
+2.18.0
