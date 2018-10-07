@@ -1,24 +1,25 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH 1/2] check: recognize f2fs through parameter
-Date: Sun, 7 Oct 2018 21:51:48 +0800
-Message-ID: <05f43b5d-0e67-ba87-63dd-e45e8bd4c371@kernel.org>
-References: <20180930092653.122684-1-yuchao0@huawei.com>
- <20181006093207.GI17817@desktop>
+Subject: Re: [PATCH 1/3] generic: test project id recovery after
+ power failure
+Date: Sun, 7 Oct 2018 21:53:03 +0800
+Message-ID: <b592aa2a-82cb-ebe6-29ed-d09d007a52ad@kernel.org>
+References: <20181004043502.15005-1-chao@kernel.org>
+ <20181007133838.GM17817@desktop>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1g99TT-00078V-Pk
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Oct 2018 13:51:59 +0000
+ (envelope-from <chao@kernel.org>) id 1g99Ui-000592-4m
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Oct 2018 13:53:16 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g99TS-00Dsz5-7g
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Oct 2018 13:51:59 +0000
-In-Reply-To: <20181006093207.GI17817@desktop>
+ id 1g99Ug-00Ds9z-MI
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Oct 2018 13:53:16 +0000
+In-Reply-To: <20181007133838.GM17817@desktop>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -29,53 +30,175 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Eryu Guan <guaneryu@gmail.com>, Chao Yu <yuchao0@huawei.com>
+To: Eryu Guan <guaneryu@gmail.com>
 Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-
-On 2018-10-6 17:32, Eryu Guan wrote:
-> On Sun, Sep 30, 2018 at 05:26:52PM +0800, Chao Yu wrote:
->> Add a paramenter in check to configure $FSTYP for f2fs.
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  check | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/check b/check
->> index f3c8021d94b9..a9024094721a 100755
->> --- a/check
->> +++ b/check
->> @@ -59,6 +59,7 @@ check options
->>      -pvfs2          test PVFS2
->>      -tmpfs              test TMPFS
->>      -ubifs              test ubifs
->> +    -f2fs		test f2fs
->>      -l			line mode diff
->>      -udiff		show unified diff (default)
->>      -n			show me, do not run tests
->> @@ -263,6 +264,7 @@ while [ $# -gt 0 ]; do
->>  	-pvfs2)		FSTYP=pvfs2 ;;
->>  	-tmpfs)		FSTYP=tmpfs ;;
->>  	-ubifs)		FSTYP=ubifs ;;
->> +	-f2fs)		FSTYP=f2fs ;;
-> 
-> The test harness should be able to detect the f2fs type from $TEST_DEV.
-> We add param to set FSTYP only when there's no way to tell the
-> filesystem type from the device.
 
 Hi Eryu,
 
-Okay, thanks for the explanation, let's just ignore this patch.
+Will update them in v2 soon as you suggested.
 
 Thanks,
 
+On 2018-10-7 21:38, Eryu Guan wrote:
+> On Thu, Oct 04, 2018 at 12:35:00PM +0800, Chao Yu wrote:
+>> From: Chao Yu <yuchao0@huawei.com>
+>>
+>> After fsync, filesystem should guarantee inode metadata including
+>> project id being persisted, so even after sudden power-cut, during
+>> mount, we should recover project_id fields correctly, in order to
+>> not loss those meta info.
+>>
+>> So adding this testcase to check whether generic filesystem can
+>> guarantee that.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  tests/generic/506     | 97 +++++++++++++++++++++++++++++++++++++++++++
+>>  tests/generic/506.out |  2 +
+>>  tests/generic/group   |  1 +
+>>  3 files changed, 100 insertions(+)
+>>  create mode 100644 tests/generic/506
+>>  create mode 100644 tests/generic/506.out
+>>
+>> diff --git a/tests/generic/506 b/tests/generic/506
+>> new file mode 100644
+>> index 00000000..ca035a91
+>> --- /dev/null
+>> +++ b/tests/generic/506
+>> @@ -0,0 +1,97 @@
+>> +#! /bin/bash
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +# Copyright (c) 2018 Huawei.  All Rights Reserved.
+>> +#
+>> +# FS QA Test 506
+>> +#
+>> +# This testcase is trying to test recovery flow of generic filesystem, w/ below
+>> +# steps, once project id changes, after we fsync that file, we can expect that
+>> +# project id can be recovered after sudden power-cuts.
+>> +# 1. touch testfile;
+>> +# 1.1 sync (optional)
+>> +# 2. chattr -p 100 testfile;
+>> +# 3. xfs_io -f testfile -c "fsync";
+>> +# 4. godown;
+>> +# 5. umount;
+>> +# 6. mount;
+>> +# 7. check project id
+>> +#
+>> +seq=`basename $0`
+>> +seqres=$RESULT_DIR/$seq
+>> +echo "QA output created by $seq"
+>> +
+>> +here=`pwd`
+>> +tmp=/tmp/$$
+>> +status=1	# failure is the default!
+>> +trap "_cleanup; exit \$status" 0 1 2 3 15
+>> +
+>> +_cleanup()
+>> +{
+>> +	cd /
+>> +	rm -f $tmp.*
+>> +}
+>> +
+>> +# get standard environment, filters and checks
+>> +. ./common/rc
+>> +. ./common/filter
+>> +. ./common/quota
+>> +
+>> +# remove previous $seqres.full before test
+>> +rm -f $seqres.full
+>> +
+>> +# real QA test starts here
+>> +_supported_fs generic
+>> +_supported_os Linux
+>> +
+>> +_require_test_lsattr
+>> +_require_command "$CHATTR_PROG" chattr
+> 
+> Better to add a new "LSATTR_PROG" entry as well in common/config and
+> _require_command "$LSATTR_PROG" lsattr
+> 
+>> +
+>> +_require_prjquota $SCRATCH_DEV
+>> +_require_scratch
+>> +_require_scratch_shutdown
+>> +
+>> +_scratch_mkfs >/dev/null 2>&1
+>> +_require_metadata_journaling $SCRATCH_DEV
+>> +
+>> +testfile=$SCRATCH_MNT/testfile
+>> +
+>> +do_check()
+>> +{
+>> +	_scratch_mount
+>> +
+>> +	touch $testfile
+>> +
+>> +	if [ "$1" == "sync" ]; then
+>> +		sync
+>> +	fi
+>> +
+>> +	chattr -p 100 $testfile
+> 
+> And use $CHATTR_PROG
+> 
+>> +
+>> +	before=`lsattr -p $testfile`
+> 
+> and $LSATTR_PROG in the test.
+> 
+>> +
+>> +	$XFS_IO_PROG -f $testfile -c "fsync" | _filter_xfs_io
+>> +
+>> +	_scratch_shutdown | tee -a $seqres.full
+>> +	_scratch_cycle_mount
+>> +
+>> +	after=`lsattr -p $testfile`
+>> +
+>> +	# check inode's uid/gid
+> 
+> Should be "project quota id"?
+> 
+>> +	if [ "$before" != "$after" ]; then
+>> +		echo "Before: $before"
+>> +		echo "After : $after"
+>> +	fi
+>> +	echo "Before: $before" >> $seqres.full
+>> +	echo "After : $after" >> $seqres.full
+>> +
+>> +	rm $testfile
+> 
+> rm -f $testfile
 > 
 > Thanks,
 > Eryu
 > 
->>  
->>  	-g)	group=$2 ; shift ;
->>  		GROUP_LIST="$GROUP_LIST ${group//,/ }"
+>> +	_scratch_unmount
+>> +}
+>> +
+>> +echo "Silence is golden"
+>> +
+>> +do_check
+>> +do_check sync
+>> +
+>> +status=0
+>> +exit
+>> diff --git a/tests/generic/506.out b/tests/generic/506.out
+>> new file mode 100644
+>> index 00000000..cb46b201
+>> --- /dev/null
+>> +++ b/tests/generic/506.out
+>> @@ -0,0 +1,2 @@
+>> +QA output created by 506
+>> +Silence is golden
+>> diff --git a/tests/generic/group b/tests/generic/group
+>> index 4da0e188..c7d42ff9 100644
+>> --- a/tests/generic/group
+>> +++ b/tests/generic/group
+>> @@ -508,3 +508,4 @@
+>>  503 auto quick dax punch collapse zero
+>>  504 auto quick locks
+>>  505 shutdown auto quick metadata
+>> +506 shutdown auto quick metadata quota
 >> -- 
->> 2.18.0.rc1
+>> 2.18.0
 >>
