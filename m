@@ -1,27 +1,29 @@
-From: Eryu Guan <guaneryu@gmail.com>
-Subject: Re: [PATCH 1/2] check: recognize f2fs through parameter
-Date: Sat, 6 Oct 2018 17:32:07 +0800
-Message-ID: <20181006093207.GI17817@desktop>
-References: <20180930092653.122684-1-yuchao0@huawei.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 200871] F2FS experiences data loss (entry is
+ completely lost) when an I/O failure occurs.
+Date: Sun, 07 Oct 2018 01:50:40 +0000
+Message-ID: <bug-200871-202145-SgmOflE1lq@https.bugzilla.kernel.org/>
+References: <bug-200871-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <guaneryu@gmail.com>) id 1g8iwg-0000Yg-Em
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 06 Oct 2018 09:32:22 +0000
-Received: from mail-pg1-f193.google.com ([209.85.215.193])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1g8iwe-001kA9-Il
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 06 Oct 2018 09:32:22 +0000
-Received: by mail-pg1-f193.google.com with SMTP id r9-v6so5759733pgv.6
+ (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
+ id 1g8yDX-0002va-9p
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Oct 2018 01:50:47 +0000
+Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1g8yDV-00DdTu-EW
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Oct 2018 01:50:47 +0000
+Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id A2956290BC
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 06 Oct 2018 02:32:20 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20180930092653.122684-1-yuchao0@huawei.com>
+ Sun,  7 Oct 2018 01:50:39 +0000 (UTC)
+In-Reply-To: <bug-200871-202145@https.bugzilla.kernel.org/>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,45 +33,32 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-On Sun, Sep 30, 2018 at 05:26:52PM +0800, Chao Yu wrote:
-> Add a paramenter in check to configure $FSTYP for f2fs.
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  check | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/check b/check
-> index f3c8021d94b9..a9024094721a 100755
-> --- a/check
-> +++ b/check
-> @@ -59,6 +59,7 @@ check options
->      -pvfs2          test PVFS2
->      -tmpfs              test TMPFS
->      -ubifs              test ubifs
-> +    -f2fs		test f2fs
->      -l			line mode diff
->      -udiff		show unified diff (default)
->      -n			show me, do not run tests
-> @@ -263,6 +264,7 @@ while [ $# -gt 0 ]; do
->  	-pvfs2)		FSTYP=pvfs2 ;;
->  	-tmpfs)		FSTYP=tmpfs ;;
->  	-ubifs)		FSTYP=ubifs ;;
-> +	-f2fs)		FSTYP=f2fs ;;
+https://bugzilla.kernel.org/show_bug.cgi?id=200871
 
-The test harness should be able to detect the f2fs type from $TEST_DEV.
-We add param to set FSTYP only when there's no way to tell the
-filesystem type from the device.
+--- Comment #16 from Stathis Maneas (smaneas@cs.toronto.edu) ---
+I am sorry for the delay! I can definitely help by adding the aforementioned
+statements!
 
-Thanks,
-Eryu
+After adding them and observing the output of dmesg, I can observe that only
+the second statement gets actually invoked:
+[ 1026.438986] f2fs_wait_on_node_pages_writeback, eio:0
 
->  
->  	-g)	group=$2 ; shift ;
->  		GROUP_LIST="$GROUP_LIST ${group//,/ }"
-> -- 
-> 2.18.0.rc1
-> 
+Therefore, this indicates that the following condition is not true under the
+specified workload:
+if (unlikely(bio->bi_status)) { ... }
+
+I tried moving the first print statement at the beginning of the following for
+loop,
+bio_for_each_segment_all(bvec, bio, i) { ... }
+
+but still, I am not observing any errors for the segment (block) of interest:
+[   76.603891] f2fs_write_end_io, ino:1, idx:4, eio:0, type:7
+[   76.603893] f2fs_write_end_io, is_dummy:0 bio_status:0
+
+Is there something else we can try?
+
+-- 
+You are receiving this mail because:
+You are watching the assignee of the bug.
