@@ -1,37 +1,75 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: clear cold data flag if IO is not counted
-Date: Wed, 10 Oct 2018 14:22:17 -0700
-Message-ID: <20181010212217.52289-1-jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: fix data corruption issue with hardware encryption
+Date: Wed, 10 Oct 2018 14:34:02 -0700
+Message-ID: <20181010213402.GA52406@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1539149182-12729-1-git-send-email-stummala@codeaurora.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1539149182-12729-1-git-send-email-stummala@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Sahitya Tummala <stummala@codeaurora.org>
+Cc: Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If we clear the cold data flag out of the writeback flow, we can miscount
--1 by end_io.
+On 10/10, Sahitya Tummala wrote:
+> Direct IO can be used in case of hardware encryption. The following
+> scenario results into data corruption issue in this path -
+> 
+> Thread A -                          Thread B-
+> -> write file#1 in direct IO
+>                                     -> GC gets kicked in
+>                                     -> GC submitted bio on meta mapping
+> 				       for file#1, but pending completion
+> -> write file#1 again with new data
+>    in direct IO
+>                                     -> GC bio gets completed now
+>                                     -> GC writes old data to the new
+>                                        location and thus file#1 is
+> 				       corrupted.
+> 
+> Fix this by submitting and waiting for pending io on meta mapping
+> for direct IO case in f2fs_map_blocks().
+> 
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> ---
+>  fs/f2fs/data.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 9ef6f1f..7b2fef0 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1028,6 +1028,12 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>  		map->m_pblk = ei.blk + pgofs - ei.fofs;
+>  		map->m_len = min((pgoff_t)maxblocks, ei.fofs + ei.len - pgofs);
+>  		map->m_flags = F2FS_MAP_MAPPED;
+> +		/* for HW encryption, but to avoid potential issue in future */
+> +		if (flag == F2FS_GET_BLOCK_DIO) {
+> +			blkaddr = map->m_pblk;
+> +			for (; blkaddr < map->m_pblk + map->m_len; blkaddr++)
+> +				f2fs_wait_on_block_writeback(sbi, blkaddr);
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/data.c | 4 ----
- 1 file changed, 4 deletions(-)
+Do we need this? IIRC, DIO would give create=1.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 29a9d3b8f709..4102799b5558 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2636,10 +2636,6 @@ static int f2fs_set_data_page_dirty(struct page *page)
- 	if (!PageUptodate(page))
- 		SetPageUptodate(page);
- 
--	/* don't remain PG_checked flag which was set during GC */
--	if (is_cold_data(page))
--		clear_cold_data(page);
--
- 	if (f2fs_is_atomic_file(inode) && !f2fs_is_commit_atomic_write(inode)) {
- 		if (!IS_ATOMIC_WRITTEN_PAGE(page)) {
- 			f2fs_register_inmem_page(inode, page);
--- 
-2.19.0.605.g01d371f741-goog
+> +		}
+>  		if (map->m_next_extent)
+>  			*map->m_next_extent = pgofs + map->m_len;
+>  		goto out;
+> @@ -1188,6 +1194,12 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>  	goto next_dnode;
+>  
+>  sync_out:
+> +	/* for hardware encryption, but to avoid potential issue in future */
+> +	if (flag == F2FS_GET_BLOCK_DIO && map->m_flags & F2FS_MAP_MAPPED) {
+> +		blkaddr = map->m_pblk;
+> +		for (; blkaddr < map->m_pblk + map->m_len; blkaddr++)
+> +			f2fs_wait_on_block_writeback(sbi, blkaddr);
+> +	}
+>  	if (flag == F2FS_GET_BLOCK_PRECACHE) {
+>  		if (map->m_flags & F2FS_MAP_MAPPED) {
+>  			unsigned int ofs = start_pgofs - map->m_lblk;
+> -- 
+> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
