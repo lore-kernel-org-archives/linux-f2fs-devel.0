@@ -1,61 +1,66 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] fsck.f2fs: do not hard-code encrypted filename
- length to avoid heap buffer overflow
-Date: Tue,  9 Oct 2018 17:46:47 -0700
-Message-ID: <20181010004647.21630-1-jaegeuk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1gA2eP-0005hf-TW
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 10 Oct 2018 00:46:57 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gA2eO-00FXye-I9
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 10 Oct 2018 00:46:57 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Sahitya Tummala <stummala@codeaurora.org>
+Subject: [PATCH] f2fs: fix data corruption issue with hardware encryption
+Date: Wed, 10 Oct 2018 10:56:22 +0530
+Message-ID: <1539149182-12729-1-git-send-email-stummala@codeaurora.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Randall Huang <huangrandall@google.com>
+Direct IO can be used in case of hardware encryption. The following
+scenario results into data corruption issue in this path -
 
-If the len is less than 24, heap buffer overflow is reported.
+Thread A -                          Thread B-
+-> write file#1 in direct IO
+                                    -> GC gets kicked in
+                                    -> GC submitted bio on meta mapping
+				       for file#1, but pending completion
+-> write file#1 again with new data
+   in direct IO
+                                    -> GC bio gets completed now
+                                    -> GC writes old data to the new
+                                       location and thus file#1 is
+				       corrupted.
 
-Signed-off-by: Randall Huang <huangrandall@google.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Fix this by submitting and waiting for pending io on meta mapping
+for direct IO case in f2fs_map_blocks().
+
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 ---
- fsck/fsck.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/f2fs/data.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 85d9823..1fc168f 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -1170,10 +1170,12 @@ int convert_encrypted_name(unsigned char *name, u32 len,
- 		memcpy(new, name, len);
- 		new[len] = 0;
- 		return len;
-+	} else if (len != 24) {
-+		ASSERT_MSG("len: %d, encrypted name must be 24\n", len);
- 	}
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 9ef6f1f..7b2fef0 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1028,6 +1028,12 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ 		map->m_pblk = ei.blk + pgofs - ei.fofs;
+ 		map->m_len = min((pgoff_t)maxblocks, ei.fofs + ei.len - pgofs);
+ 		map->m_flags = F2FS_MAP_MAPPED;
++		/* for HW encryption, but to avoid potential issue in future */
++		if (flag == F2FS_GET_BLOCK_DIO) {
++			blkaddr = map->m_pblk;
++			for (; blkaddr < map->m_pblk + map->m_len; blkaddr++)
++				f2fs_wait_on_block_writeback(sbi, blkaddr);
++		}
+ 		if (map->m_next_extent)
+ 			*map->m_next_extent = pgofs + map->m_len;
+ 		goto out;
+@@ -1188,6 +1194,12 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ 	goto next_dnode;
  
- 	*new = '_';
--	return digest_encode((const char *)name, 24, (char *)new + 1);
-+	return digest_encode((const char *)name, len, (char *)new + 1);
- }
- 
- static void print_dentry(__u32 depth, __u8 *name,
+ sync_out:
++	/* for hardware encryption, but to avoid potential issue in future */
++	if (flag == F2FS_GET_BLOCK_DIO && map->m_flags & F2FS_MAP_MAPPED) {
++		blkaddr = map->m_pblk;
++		for (; blkaddr < map->m_pblk + map->m_len; blkaddr++)
++			f2fs_wait_on_block_writeback(sbi, blkaddr);
++	}
+ 	if (flag == F2FS_GET_BLOCK_PRECACHE) {
+ 		if (map->m_flags & F2FS_MAP_MAPPED) {
+ 			unsigned int ofs = start_pgofs - map->m_lblk;
 -- 
-2.19.0.605.g01d371f741-goog
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
