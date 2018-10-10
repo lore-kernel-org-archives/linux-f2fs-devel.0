@@ -1,25 +1,22 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: Re: [PATCH] fsck.f2fs: do not check segment type of
- empty curseg
-Date: Tue, 9 Oct 2018 19:22:01 +0800
-Message-ID: <4822fe8d-7536-272b-9e10-5eb597dab0e4@huawei.com>
-References: <20181008130931.5966-1-shengyong1@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] fsck.f2fs: do not hard-code encrypted filename
+ length to avoid heap buffer overflow
+Date: Tue,  9 Oct 2018 17:46:47 -0700
+Message-ID: <20181010004647.21630-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <shengyong1@huawei.com>) id 1g9q5p-0005Ic-Ec
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 09 Oct 2018 11:22:25 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ (envelope-from <jaegeuk@kernel.org>) id 1gA2eP-0005hf-TW
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 10 Oct 2018 00:46:57 +0000
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1g9q5m-00F95w-TP
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 09 Oct 2018 11:22:25 +0000
-In-Reply-To: <20181008130931.5966-1-shengyong1@huawei.com>
-Content-Language: en-US
+ id 1gA2eO-00FXye-I9
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 10 Oct 2018 00:46:57 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,32 +26,36 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Sorry, this seems wrong, please ignore this :(
+From: Randall Huang <huangrandall@google.com>
 
-On 2018/10/8 21:09, Sheng Yong wrote:
-> If a curseg is not used, its SIT entry may have an inconsistent type.
-> This will be fixed during recover.
-> 
-> Fixes: df8065e52928be ("fsck.f2fs: introduce fsck_chk_curseg_info")
-> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
-> ---
->   fsck/fsck.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fsck/fsck.c b/fsck/fsck.c
-> index 85d9823..dd7f6ae 100644
-> --- a/fsck/fsck.c
-> +++ b/fsck/fsck.c
-> @@ -2485,7 +2485,7 @@ int fsck_chk_curseg_info(struct f2fs_sb_info *sbi)
->   		se = get_seg_entry(sbi, curseg->segno);
->   		sum_blk = curseg->sum_blk;
->   
-> -		if (se->type != i) {
-> +		if (se->valid_blocks && se->type != i) {
->   			ASSERT_MSG("Incorrect curseg [%d]: segno [0x%x] "
->   				   "type(SIT) [%d]", i, curseg->segno,
->   				   se->type);
-> 
+If the len is less than 24, heap buffer overflow is reported.
+
+Signed-off-by: Randall Huang <huangrandall@google.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fsck/fsck.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 85d9823..1fc168f 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -1170,10 +1170,12 @@ int convert_encrypted_name(unsigned char *name, u32 len,
+ 		memcpy(new, name, len);
+ 		new[len] = 0;
+ 		return len;
++	} else if (len != 24) {
++		ASSERT_MSG("len: %d, encrypted name must be 24\n", len);
+ 	}
+ 
+ 	*new = '_';
+-	return digest_encode((const char *)name, 24, (char *)new + 1);
++	return digest_encode((const char *)name, len, (char *)new + 1);
+ }
+ 
+ static void print_dentry(__u32 depth, __u8 *name,
+-- 
+2.19.0.605.g01d371f741-goog
