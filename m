@@ -1,28 +1,29 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Sahitya Tummala <stummala@codeaurora.org>
 Subject: Re: [PATCH] f2fs: fix data corruption issue with
  hardware encryption
-Date: Wed, 10 Oct 2018 20:05:44 -0700
-Message-ID: <20181011030544.GA82403@jaegeuk-macbookpro.roam.corp.google.com>
+Date: Thu, 11 Oct 2018 09:15:09 +0530
+Message-ID: <20181011034509.GB24669@codeaurora.org>
 References: <1539149182-12729-1-git-send-email-stummala@codeaurora.org>
  <20181010213402.GA52406@jaegeuk-macbookpro.roam.corp.google.com>
  <20181011002935.GA24669@codeaurora.org>
  <20181011021506.GA78526@jaegeuk-macbookpro.roam.corp.google.com>
+ <20181011030544.GA82403@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1gARIO-0005tt-VW
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Oct 2018 03:05:52 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <stummala@codeaurora.org>) id 1gARuf-0000WF-AM
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Oct 2018 03:45:25 +0000
+Received: from smtp.codeaurora.org ([198.145.29.96])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gARIM-005UVR-MU
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Oct 2018 03:05:52 +0000
+ id 1gARub-00HIvI-JR
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Oct 2018 03:45:25 +0000
 Content-Disposition: inline
-In-Reply-To: <20181011021506.GA78526@jaegeuk-macbookpro.roam.corp.google.com>
+In-Reply-To: <20181011030544.GA82403@jaegeuk-macbookpro.roam.corp.google.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,167 +33,177 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Sahitya Tummala <stummala@codeaurora.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 10/10, Jaegeuk Kim wrote:
-> On 10/11, Sahitya Tummala wrote:
-> > On Wed, Oct 10, 2018 at 02:34:02PM -0700, Jaegeuk Kim wrote:
-> > > On 10/10, Sahitya Tummala wrote:
-> > > > Direct IO can be used in case of hardware encryption. The following
-> > > > scenario results into data corruption issue in this path -
+On Wed, Oct 10, 2018 at 08:05:44PM -0700, Jaegeuk Kim wrote:
+> On 10/10, Jaegeuk Kim wrote:
+> > On 10/11, Sahitya Tummala wrote:
+> > > On Wed, Oct 10, 2018 at 02:34:02PM -0700, Jaegeuk Kim wrote:
+> > > > On 10/10, Sahitya Tummala wrote:
+> > > > > Direct IO can be used in case of hardware encryption. The following
+> > > > > scenario results into data corruption issue in this path -
+> > > > > 
+> > > > > Thread A -                          Thread B-
+> > > > > -> write file#1 in direct IO
+> > > > >                                     -> GC gets kicked in
+> > > > >                                     -> GC submitted bio on meta mapping
+> > > > > 				       for file#1, but pending completion
+> > > > > -> write file#1 again with new data
+> > > > >    in direct IO
+> > > > >                                     -> GC bio gets completed now
+> > > > >                                     -> GC writes old data to the new
+> > > > >                                        location and thus file#1 is
+> > > > > 				       corrupted.
+> > > > > 
+> > > > > Fix this by submitting and waiting for pending io on meta mapping
+> > > > > for direct IO case in f2fs_map_blocks().
+> > > > > 
+> > > > > Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> > > > > ---
+> > > > >  fs/f2fs/data.c | 12 ++++++++++++
+> > > > >  1 file changed, 12 insertions(+)
+> > > > > 
+> > > > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > > > > index 9ef6f1f..7b2fef0 100644
+> > > > > --- a/fs/f2fs/data.c
+> > > > > +++ b/fs/f2fs/data.c
+> > > > > @@ -1028,6 +1028,12 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+> > > > >  		map->m_pblk = ei.blk + pgofs - ei.fofs;
+> > > > >  		map->m_len = min((pgoff_t)maxblocks, ei.fofs + ei.len - pgofs);
+> > > > >  		map->m_flags = F2FS_MAP_MAPPED;
+> > > > > +		/* for HW encryption, but to avoid potential issue in future */
+> > > > > +		if (flag == F2FS_GET_BLOCK_DIO) {
+> > > > > +			blkaddr = map->m_pblk;
+> > > > > +			for (; blkaddr < map->m_pblk + map->m_len; blkaddr++)
+> > > > > +				f2fs_wait_on_block_writeback(sbi, blkaddr);
 > > > > 
-> > > > Thread A -                          Thread B-
-> > > > -> write file#1 in direct IO
-> > > >                                     -> GC gets kicked in
-> > > >                                     -> GC submitted bio on meta mapping
-> > > > 				       for file#1, but pending completion
-> > > > -> write file#1 again with new data
-> > > >    in direct IO
-> > > >                                     -> GC bio gets completed now
-> > > >                                     -> GC writes old data to the new
-> > > >                                        location and thus file#1 is
-> > > > 				       corrupted.
-> > > > 
-> > > > Fix this by submitting and waiting for pending io on meta mapping
-> > > > for direct IO case in f2fs_map_blocks().
-> > > > 
-> > > > Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> > > > ---
-> > > >  fs/f2fs/data.c | 12 ++++++++++++
-> > > >  1 file changed, 12 insertions(+)
-> > > > 
-> > > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > > > index 9ef6f1f..7b2fef0 100644
-> > > > --- a/fs/f2fs/data.c
-> > > > +++ b/fs/f2fs/data.c
-> > > > @@ -1028,6 +1028,12 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
-> > > >  		map->m_pblk = ei.blk + pgofs - ei.fofs;
-> > > >  		map->m_len = min((pgoff_t)maxblocks, ei.fofs + ei.len - pgofs);
-> > > >  		map->m_flags = F2FS_MAP_MAPPED;
-> > > > +		/* for HW encryption, but to avoid potential issue in future */
-> > > > +		if (flag == F2FS_GET_BLOCK_DIO) {
-> > > > +			blkaddr = map->m_pblk;
-> > > > +			for (; blkaddr < map->m_pblk + map->m_len; blkaddr++)
-> > > > +				f2fs_wait_on_block_writeback(sbi, blkaddr);
+> > > > Do we need this? IIRC, DIO would give create=1.
 > > > 
-> > > Do we need this? IIRC, DIO would give create=1.
+> > > Yes, we need it. When we are overwriting an existing file, DIO calls
+> > > f2fs_map_blocks() with create=0. From the DIO code, I see that this happens
+> > > because blockdev_direct_IO() passes this dio flag DIO_SKIP_HOLES. And then
+> > > in get_more_blocks(), below code updates create=0, when we are overwriting
+> > > an existing file.
+> > > 
+> > >                 create = dio->op == REQ_OP_WRITE;
+> > >                 if (dio->flags & DIO_SKIP_HOLES) {
+> > >                         if (fs_startblk <= ((i_size_read(dio->inode) - 1) >>
+> > >                                                         i_blkbits))
+> > >                                 create = 0;
+> > >                 }
+> > > 
+> > >                 ret = (*sdio->get_block)(dio->inode, fs_startblk,
+> > >                                                 map_bh, create);
+> > > 
 > > 
-> > Yes, we need it. When we are overwriting an existing file, DIO calls
-> > f2fs_map_blocks() with create=0. From the DIO code, I see that this happens
-> > because blockdev_direct_IO() passes this dio flag DIO_SKIP_HOLES. And then
-> > in get_more_blocks(), below code updates create=0, when we are overwriting
-> > an existing file.
-> > 
-> >                 create = dio->op == REQ_OP_WRITE;
-> >                 if (dio->flags & DIO_SKIP_HOLES) {
-> >                         if (fs_startblk <= ((i_size_read(dio->inode) - 1) >>
-> >                                                         i_blkbits))
-> >                                 create = 0;
-> >                 }
-> > 
-> >                 ret = (*sdio->get_block)(dio->inode, fs_startblk,
-> >                                                 map_bh, create);
+> > Got it.
+> > How about this?
 > > 
 > 
-> Got it.
-> How about this?
+> Sorry, this is v2.
+
+Looks good to me. Thanks for updating it :)
+
+> 
+> From b78dd7b2e0317be18716b9496269e9792829f63e Mon Sep 17 00:00:00 2001
+> From: Sahitya Tummala <stummala@codeaurora.org>
+> Date: Wed, 10 Oct 2018 10:56:22 +0530
+> Subject: [PATCH] f2fs: fix data corruption issue with hardware encryption
+> 
+> Direct IO can be used in case of hardware encryption. The following
+> scenario results into data corruption issue in this path -
+> 
+> Thread A -                          Thread B-
+> -> write file#1 in direct IO
+>                                     -> GC gets kicked in
+>                                     -> GC submitted bio on meta mapping
+> 				       for file#1, but pending completion
+> -> write file#1 again with new data
+>    in direct IO
+>                                     -> GC bio gets completed now
+>                                     -> GC writes old data to the new
+>                                        location and thus file#1 is
+> 				       corrupted.
+> 
+> Fix this by submitting and waiting for pending io on meta mapping
+> for direct IO case in f2fs_map_blocks().
+> 
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/data.c    | 11 +++++++++++
+>  fs/f2fs/f2fs.h    |  2 ++
+>  fs/f2fs/segment.c |  9 +++++++++
+>  3 files changed, 22 insertions(+)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index be19257d9e36..8952f2d610a6 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1030,6 +1030,11 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>  		map->m_flags = F2FS_MAP_MAPPED;
+>  		if (map->m_next_extent)
+>  			*map->m_next_extent = pgofs + map->m_len;
+> +
+> +		/* for hardware encryption, but to avoid potential issue in future */
+> +		if (flag == F2FS_GET_BLOCK_DIO)
+> +			f2fs_wait_on_block_writeback_range(inode,
+> +						map->m_pblk, map->m_len);
+>  		goto out;
+>  	}
+>  
+> @@ -1188,6 +1193,12 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>  	goto next_dnode;
+>  
+>  sync_out:
+> +
+> +	/* for hardware encryption, but to avoid potential issue in future */
+> +	if (flag == F2FS_GET_BLOCK_DIO && map->m_flags & F2FS_MAP_MAPPED)
+> +		f2fs_wait_on_block_writeback_range(inode,
+> +						map->m_pblk, map->m_len);
+> +
+>  	if (flag == F2FS_GET_BLOCK_PRECACHE) {
+>  		if (map->m_flags & F2FS_MAP_MAPPED) {
+>  			unsigned int ofs = start_pgofs - map->m_lblk;
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 7693b1a2072e..4a608a71c360 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -2986,6 +2986,8 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+>  void f2fs_wait_on_page_writeback(struct page *page,
+>  			enum page_type type, bool ordered);
+>  void f2fs_wait_on_block_writeback(struct inode *inode, block_t blkaddr);
+> +void f2fs_wait_on_block_writeback_range(struct inode *inode, block_t blkaddr,
+> +								block_t len);
+>  void f2fs_write_data_summaries(struct f2fs_sb_info *sbi, block_t start_blk);
+>  void f2fs_write_node_summaries(struct f2fs_sb_info *sbi, block_t start_blk);
+>  int f2fs_lookup_journal_in_cursum(struct f2fs_journal *journal, int type,
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 805c8310d7b0..f306d8946d99 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -3301,6 +3301,15 @@ void f2fs_wait_on_block_writeback(struct inode *inode, block_t blkaddr)
+>  	}
+>  }
+>  
+> +void f2fs_wait_on_block_writeback_range(struct inode *inode, block_t blkaddr,
+> +								block_t len)
+> +{
+> +	block_t i;
+> +
+> +	for (i = 0; i < len; i++)
+> +		f2fs_wait_on_block_writeback(inode, blkaddr + i);
+> +}
+> +
+>  static int read_compacted_summaries(struct f2fs_sb_info *sbi)
+>  {
+>  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+> -- 
+> 2.19.0.605.g01d371f741-goog
 > 
 
-Sorry, this is v2.
-
->From b78dd7b2e0317be18716b9496269e9792829f63e Mon Sep 17 00:00:00 2001
-From: Sahitya Tummala <stummala@codeaurora.org>
-Date: Wed, 10 Oct 2018 10:56:22 +0530
-Subject: [PATCH] f2fs: fix data corruption issue with hardware encryption
-
-Direct IO can be used in case of hardware encryption. The following
-scenario results into data corruption issue in this path -
-
-Thread A -                          Thread B-
--> write file#1 in direct IO
-                                    -> GC gets kicked in
-                                    -> GC submitted bio on meta mapping
-				       for file#1, but pending completion
--> write file#1 again with new data
-   in direct IO
-                                    -> GC bio gets completed now
-                                    -> GC writes old data to the new
-                                       location and thus file#1 is
-				       corrupted.
-
-Fix this by submitting and waiting for pending io on meta mapping
-for direct IO case in f2fs_map_blocks().
-
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/data.c    | 11 +++++++++++
- fs/f2fs/f2fs.h    |  2 ++
- fs/f2fs/segment.c |  9 +++++++++
- 3 files changed, 22 insertions(+)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index be19257d9e36..8952f2d610a6 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1030,6 +1030,11 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 		map->m_flags = F2FS_MAP_MAPPED;
- 		if (map->m_next_extent)
- 			*map->m_next_extent = pgofs + map->m_len;
-+
-+		/* for hardware encryption, but to avoid potential issue in future */
-+		if (flag == F2FS_GET_BLOCK_DIO)
-+			f2fs_wait_on_block_writeback_range(inode,
-+						map->m_pblk, map->m_len);
- 		goto out;
- 	}
- 
-@@ -1188,6 +1193,12 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 	goto next_dnode;
- 
- sync_out:
-+
-+	/* for hardware encryption, but to avoid potential issue in future */
-+	if (flag == F2FS_GET_BLOCK_DIO && map->m_flags & F2FS_MAP_MAPPED)
-+		f2fs_wait_on_block_writeback_range(inode,
-+						map->m_pblk, map->m_len);
-+
- 	if (flag == F2FS_GET_BLOCK_PRECACHE) {
- 		if (map->m_flags & F2FS_MAP_MAPPED) {
- 			unsigned int ofs = start_pgofs - map->m_lblk;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 7693b1a2072e..4a608a71c360 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2986,6 +2986,8 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- void f2fs_wait_on_page_writeback(struct page *page,
- 			enum page_type type, bool ordered);
- void f2fs_wait_on_block_writeback(struct inode *inode, block_t blkaddr);
-+void f2fs_wait_on_block_writeback_range(struct inode *inode, block_t blkaddr,
-+								block_t len);
- void f2fs_write_data_summaries(struct f2fs_sb_info *sbi, block_t start_blk);
- void f2fs_write_node_summaries(struct f2fs_sb_info *sbi, block_t start_blk);
- int f2fs_lookup_journal_in_cursum(struct f2fs_journal *journal, int type,
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 805c8310d7b0..f306d8946d99 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3301,6 +3301,15 @@ void f2fs_wait_on_block_writeback(struct inode *inode, block_t blkaddr)
- 	}
- }
- 
-+void f2fs_wait_on_block_writeback_range(struct inode *inode, block_t blkaddr,
-+								block_t len)
-+{
-+	block_t i;
-+
-+	for (i = 0; i < len; i++)
-+		f2fs_wait_on_block_writeback(inode, blkaddr + i);
-+}
-+
- static int read_compacted_summaries(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
 -- 
-2.19.0.605.g01d371f741-goog
+--
+Sent by a consultant of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
