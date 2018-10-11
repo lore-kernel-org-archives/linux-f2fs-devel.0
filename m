@@ -1,13 +1,7 @@
-From: Sahitya Tummala <stummala@codeaurora.org>
-Subject: Re: [PATCH] f2fs: fix data corruption issue with
- hardware encryption
-Date: Thu, 11 Oct 2018 09:15:09 +0530
-Message-ID: <20181011034509.GB24669@codeaurora.org>
-References: <1539149182-12729-1-git-send-email-stummala@codeaurora.org>
- <20181010213402.GA52406@jaegeuk-macbookpro.roam.corp.google.com>
- <20181011002935.GA24669@codeaurora.org>
- <20181011021506.GA78526@jaegeuk-macbookpro.roam.corp.google.com>
- <20181011030544.GA82403@jaegeuk-macbookpro.roam.corp.google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [bug report] f2fs: use rb_*_cached friends
+Date: Thu, 11 Oct 2018 15:23:42 +0300
+Message-ID: <20181011122342.GA23299@mwanda>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -15,15 +9,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <stummala@codeaurora.org>) id 1gARuf-0000WF-AM
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Oct 2018 03:45:25 +0000
-Received: from smtp.codeaurora.org ([198.145.29.96])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (envelope-from <dan.carpenter@oracle.com>) id 1gAa0f-0001ww-GU
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Oct 2018 12:24:09 +0000
+Received: from userp2130.oracle.com ([156.151.31.86])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gARub-00HIvI-JR
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Oct 2018 03:45:25 +0000
+ id 1gAa0d-00GfTD-M9
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Oct 2018 12:24:09 +0000
 Content-Disposition: inline
-In-Reply-To: <20181011030544.GA82403@jaegeuk-macbookpro.roam.corp.google.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,177 +26,144 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: yuchao0@huawei.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Wed, Oct 10, 2018 at 08:05:44PM -0700, Jaegeuk Kim wrote:
-> On 10/10, Jaegeuk Kim wrote:
-> > On 10/11, Sahitya Tummala wrote:
-> > > On Wed, Oct 10, 2018 at 02:34:02PM -0700, Jaegeuk Kim wrote:
-> > > > On 10/10, Sahitya Tummala wrote:
-> > > > > Direct IO can be used in case of hardware encryption. The following
-> > > > > scenario results into data corruption issue in this path -
-> > > > > 
-> > > > > Thread A -                          Thread B-
-> > > > > -> write file#1 in direct IO
-> > > > >                                     -> GC gets kicked in
-> > > > >                                     -> GC submitted bio on meta mapping
-> > > > > 				       for file#1, but pending completion
-> > > > > -> write file#1 again with new data
-> > > > >    in direct IO
-> > > > >                                     -> GC bio gets completed now
-> > > > >                                     -> GC writes old data to the new
-> > > > >                                        location and thus file#1 is
-> > > > > 				       corrupted.
-> > > > > 
-> > > > > Fix this by submitting and waiting for pending io on meta mapping
-> > > > > for direct IO case in f2fs_map_blocks().
-> > > > > 
-> > > > > Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> > > > > ---
-> > > > >  fs/f2fs/data.c | 12 ++++++++++++
-> > > > >  1 file changed, 12 insertions(+)
-> > > > > 
-> > > > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > > > > index 9ef6f1f..7b2fef0 100644
-> > > > > --- a/fs/f2fs/data.c
-> > > > > +++ b/fs/f2fs/data.c
-> > > > > @@ -1028,6 +1028,12 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
-> > > > >  		map->m_pblk = ei.blk + pgofs - ei.fofs;
-> > > > >  		map->m_len = min((pgoff_t)maxblocks, ei.fofs + ei.len - pgofs);
-> > > > >  		map->m_flags = F2FS_MAP_MAPPED;
-> > > > > +		/* for HW encryption, but to avoid potential issue in future */
-> > > > > +		if (flag == F2FS_GET_BLOCK_DIO) {
-> > > > > +			blkaddr = map->m_pblk;
-> > > > > +			for (; blkaddr < map->m_pblk + map->m_len; blkaddr++)
-> > > > > +				f2fs_wait_on_block_writeback(sbi, blkaddr);
-> > > > 
-> > > > Do we need this? IIRC, DIO would give create=1.
-> > > 
-> > > Yes, we need it. When we are overwriting an existing file, DIO calls
-> > > f2fs_map_blocks() with create=0. From the DIO code, I see that this happens
-> > > because blockdev_direct_IO() passes this dio flag DIO_SKIP_HOLES. And then
-> > > in get_more_blocks(), below code updates create=0, when we are overwriting
-> > > an existing file.
-> > > 
-> > >                 create = dio->op == REQ_OP_WRITE;
-> > >                 if (dio->flags & DIO_SKIP_HOLES) {
-> > >                         if (fs_startblk <= ((i_size_read(dio->inode) - 1) >>
-> > >                                                         i_blkbits))
-> > >                                 create = 0;
-> > >                 }
-> > > 
-> > >                 ret = (*sdio->get_block)(dio->inode, fs_startblk,
-> > >                                                 map_bh, create);
-> > > 
-> > 
-> > Got it.
-> > How about this?
-> > 
-> 
-> Sorry, this is v2.
+Hello Chao Yu,
 
-Looks good to me. Thanks for updating it :)
+The patch df634f444ee9: "f2fs: use rb_*_cached friends" from Oct 4,
+2018, leads to the following static checker warning:
 
-> 
-> From b78dd7b2e0317be18716b9496269e9792829f63e Mon Sep 17 00:00:00 2001
-> From: Sahitya Tummala <stummala@codeaurora.org>
-> Date: Wed, 10 Oct 2018 10:56:22 +0530
-> Subject: [PATCH] f2fs: fix data corruption issue with hardware encryption
-> 
-> Direct IO can be used in case of hardware encryption. The following
-> scenario results into data corruption issue in this path -
-> 
-> Thread A -                          Thread B-
-> -> write file#1 in direct IO
->                                     -> GC gets kicked in
->                                     -> GC submitted bio on meta mapping
-> 				       for file#1, but pending completion
-> -> write file#1 again with new data
->    in direct IO
->                                     -> GC bio gets completed now
->                                     -> GC writes old data to the new
->                                        location and thus file#1 is
-> 				       corrupted.
-> 
-> Fix this by submitting and waiting for pending io on meta mapping
-> for direct IO case in f2fs_map_blocks().
-> 
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/data.c    | 11 +++++++++++
->  fs/f2fs/f2fs.h    |  2 ++
->  fs/f2fs/segment.c |  9 +++++++++
->  3 files changed, 22 insertions(+)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index be19257d9e36..8952f2d610a6 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1030,6 +1030,11 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->  		map->m_flags = F2FS_MAP_MAPPED;
->  		if (map->m_next_extent)
->  			*map->m_next_extent = pgofs + map->m_len;
-> +
-> +		/* for hardware encryption, but to avoid potential issue in future */
-> +		if (flag == F2FS_GET_BLOCK_DIO)
-> +			f2fs_wait_on_block_writeback_range(inode,
-> +						map->m_pblk, map->m_len);
->  		goto out;
->  	}
->  
-> @@ -1188,6 +1193,12 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->  	goto next_dnode;
->  
->  sync_out:
-> +
-> +	/* for hardware encryption, but to avoid potential issue in future */
-> +	if (flag == F2FS_GET_BLOCK_DIO && map->m_flags & F2FS_MAP_MAPPED)
-> +		f2fs_wait_on_block_writeback_range(inode,
-> +						map->m_pblk, map->m_len);
-> +
->  	if (flag == F2FS_GET_BLOCK_PRECACHE) {
->  		if (map->m_flags & F2FS_MAP_MAPPED) {
->  			unsigned int ofs = start_pgofs - map->m_lblk;
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 7693b1a2072e..4a608a71c360 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -2986,6 +2986,8 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
->  void f2fs_wait_on_page_writeback(struct page *page,
->  			enum page_type type, bool ordered);
->  void f2fs_wait_on_block_writeback(struct inode *inode, block_t blkaddr);
-> +void f2fs_wait_on_block_writeback_range(struct inode *inode, block_t blkaddr,
-> +								block_t len);
->  void f2fs_write_data_summaries(struct f2fs_sb_info *sbi, block_t start_blk);
->  void f2fs_write_node_summaries(struct f2fs_sb_info *sbi, block_t start_blk);
->  int f2fs_lookup_journal_in_cursum(struct f2fs_journal *journal, int type,
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 805c8310d7b0..f306d8946d99 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -3301,6 +3301,15 @@ void f2fs_wait_on_block_writeback(struct inode *inode, block_t blkaddr)
->  	}
->  }
->  
-> +void f2fs_wait_on_block_writeback_range(struct inode *inode, block_t blkaddr,
-> +								block_t len)
-> +{
-> +	block_t i;
-> +
-> +	for (i = 0; i < len; i++)
-> +		f2fs_wait_on_block_writeback(inode, blkaddr + i);
-> +}
-> +
->  static int read_compacted_summaries(struct f2fs_sb_info *sbi)
->  {
->  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
-> -- 
-> 2.19.0.605.g01d371f741-goog
-> 
+	fs/f2fs/extent_cache.c:606 f2fs_update_extent_tree_range()
+	error: uninitialized symbol 'leftmost'.
 
--- 
---
-Sent by a consultant of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+fs/f2fs/extent_cache.c
+   497  static void f2fs_update_extent_tree_range(struct inode *inode,
+   498                                  pgoff_t fofs, block_t blkaddr, unsigned int len)
+   499  {
+   500          struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+   501          struct extent_tree *et = F2FS_I(inode)->extent_tree;
+   502          struct extent_node *en = NULL, *en1 = NULL;
+   503          struct extent_node *prev_en = NULL, *next_en = NULL;
+   504          struct extent_info ei, dei, prev;
+   505          struct rb_node **insert_p = NULL, *insert_parent = NULL;
+   506          unsigned int end = fofs + len;
+   507          unsigned int pos = (unsigned int)fofs;
+   508          bool updated = false;
+   509          bool leftmost;
+   510  
+   511          if (!et)
+   512                  return;
+   513  
+   514          trace_f2fs_update_extent_tree_range(inode, fofs, blkaddr, len);
+   515  
+   516          write_lock(&et->lock);
+   517  
+   518          if (is_inode_flag_set(inode, FI_NO_EXTENT)) {
+   519                  write_unlock(&et->lock);
+   520                  return;
+   521          }
+   522  
+   523          prev = et->largest;
+   524          dei.len = 0;
+   525  
+   526          /*
+   527           * drop largest extent before lookup, in case it's already
+   528           * been shrunk from extent tree
+   529           */
+   530          __drop_largest_extent(et, fofs, len);
+   531  
+   532          /* 1. lookup first extent node in range [fofs, fofs + len - 1] */
+   533          en = (struct extent_node *)f2fs_lookup_rb_tree_ret(&et->root,
+   534                                          (struct rb_entry *)et->cached_en, fofs,
+   535                                          (struct rb_entry **)&prev_en,
+   536                                          (struct rb_entry **)&next_en,
+   537                                          &insert_p, &insert_parent, false,
+   538                                          &leftmost);
+                                                 ^^^^^^^^
+Not always initialized in there.
+
+   539          if (!en)
+   540                  en = next_en;
+   541  
+   542          /* 2. invlidate all extent nodes in range [fofs, fofs + len - 1] */
+   543          while (en && en->ei.fofs < end) {
+   544                  unsigned int org_end;
+   545                  int parts = 0;  /* # of parts current extent split into */
+   546  
+   547                  next_en = en1 = NULL;
+   548  
+   549                  dei = en->ei;
+   550                  org_end = dei.fofs + dei.len;
+   551                  f2fs_bug_on(sbi, pos >= org_end);
+   552  
+   553                  if (pos > dei.fofs &&   pos - dei.fofs >= F2FS_MIN_EXTENT_LEN) {
+   554                          en->ei.len = pos - en->ei.fofs;
+   555                          prev_en = en;
+   556                          parts = 1;
+   557                  }
+   558  
+   559                  if (end < org_end && org_end - end >= F2FS_MIN_EXTENT_LEN) {
+   560                          if (parts) {
+   561                                  set_extent_info(&ei, end,
+   562                                                  end - dei.fofs + dei.blk,
+   563                                                  org_end - end);
+   564                                  en1 = __insert_extent_tree(sbi, et, &ei,
+   565                                                          NULL, NULL, true);
+   566                                  next_en = en1;
+   567                          } else {
+   568                                  en->ei.fofs = end;
+   569                                  en->ei.blk += end - dei.fofs;
+   570                                  en->ei.len -= end - dei.fofs;
+   571                                  next_en = en;
+   572                          }
+   573                          parts++;
+   574                  }
+   575  
+   576                  if (!next_en) {
+   577                          struct rb_node *node = rb_next(&en->rb_node);
+   578  
+   579                          next_en = rb_entry_safe(node, struct extent_node,
+   580                                                  rb_node);
+   581                  }
+   582  
+   583                  if (parts)
+   584                          __try_update_largest_extent(et, en);
+   585                  else
+   586                          __release_extent_node(sbi, et, en);
+   587  
+   588                  /*
+   589                   * if original extent is split into zero or two parts, extent
+   590                   * tree has been altered by deletion or insertion, therefore
+   591                   * invalidate pointers regard to tree.
+   592                   */
+   593                  if (parts != 1) {
+   594                          insert_p = NULL;
+   595                          insert_parent = NULL;
+   596                  }
+   597                  en = next_en;
+   598          }
+   599  
+   600          /* 3. update extent in extent cache */
+   601          if (blkaddr) {
+   602  
+   603                  set_extent_info(&ei, fofs, blkaddr, len);
+   604                  if (!__try_merge_extent_node(sbi, et, &ei, prev_en, next_en))
+   605                          __insert_extent_tree(sbi, et, &ei,
+   606                                          insert_p, insert_parent, leftmost);
+                                                                         ^^^^^^^^
+Smatch complains, but I'm to stupid to know if it's valid.
+
+   607  
+   608                  /* give up extent_cache, if split and small updates happen */
+   609                  if (dei.len >= 1 &&
+   610                                  prev.len < F2FS_MIN_EXTENT_LEN &&
+   611                                  et->largest.len < F2FS_MIN_EXTENT_LEN) {
+   612                          et->largest.len = 0;
+   613                          et->largest_updated = true;
+   614                          set_inode_flag(inode, FI_NO_EXTENT);
+   615                  }
+   616          }
+
+regards,
+dan carpenter
