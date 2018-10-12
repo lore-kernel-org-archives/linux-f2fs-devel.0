@@ -1,219 +1,239 @@
-From: Sotirios-Efstathios Maneas <smaneas@cs.toronto.edu>
-Subject: [PATCH 4/4] fsck/mount: Gracefully terminate the mount
- procedure in case the program runs out of memory.
-Date: Thu, 11 Oct 2018 18:21:35 -0400
-Message-ID: <37055E66-4A79-4F24-82AD-D69F9525D397@cs.toronto.edu>
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <smaneas@cs.toronto.edu>) id 1gAjKx-00028v-OA
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Oct 2018 22:21:43 +0000
-Received: from aviary.cs.toronto.edu ([128.100.3.90])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:DHE-RSA-AES128-SHA:128) (Exim 4.90_1) id 1gAjKw-00H4rP-97
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Oct 2018 22:21:43 +0000
-Received: from airport-26.cs.toronto.edu ([128.100.27.26] helo=[172.31.34.138])
- by aviary.cs.toronto.edu (as smtp.cs.toronto.edu) with esmtpsa
- (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256) (Exim 4.82)
- (envelope-from <smaneas@cs.toronto.edu>) id 1gAjKp-0006Sd-GX
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Oct 2018 18:21:35 -0400
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+From: Sheng Yong <shengyong1@huawei.com>
+Subject: [PATCH v2] f2fs: cleanup dirty pages if recover failed
+Date: Fri, 12 Oct 2018 18:49:26 +0800
+Message-ID: <20181012104926.244217-1-shengyong1@huawei.com>
+References: <f4867be0-7a93-b335-d278-211d5a2aa4c8@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <f4867be0-7a93-b335-d278-211d5a2aa4c8@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Added the necessary statements so that the mount procedure gracefully terminates in case the program runs out of memory.
+During recover, we will try to create new dentries for inodes with
+dentry_mark. But if the parent is missing (e.g. killed by fsck),
+recover will break. But those recovered dirty pages are not cleanup.
+This will hit f2fs_bug_on:
 
-Signed-off-by: Sotirios-Efstathios Maneas <smaneas@cs.toronto.edu>
+[   53.519566] F2FS-fs (loop0): Found nat_bits in checkpoint
+[   53.539354] F2FS-fs (loop0): recover_inode: ino = 5, name = file, inline = 3
+[   53.539402] F2FS-fs (loop0): recover_dentry: ino = 5, name = file, dir = 0, err = -2
+[   53.545760] F2FS-fs (loop0): Cannot recover all fsync data errno=-2
+[   53.546105] F2FS-fs (loop0): access invalid blkaddr:4294967295
+[   53.546171] WARNING: CPU: 1 PID: 1798 at fs/f2fs/checkpoint.c:163 f2fs_is_valid_blkaddr+0x26c/0x320
+[   53.546174] Modules linked in:
+[   53.546183] CPU: 1 PID: 1798 Comm: mount Not tainted 4.19.0-rc2+ #1
+[   53.546186] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[   53.546191] RIP: 0010:f2fs_is_valid_blkaddr+0x26c/0x320
+[   53.546195] Code: 85 bb 00 00 00 48 89 df 88 44 24 07 e8 ad a8 db ff 48 8b 3b 44 89 e1 48 c7 c2 40 03 72 a9 48 c7 c6 e0 01 72 a9 e8 84 3c ff ff <0f> 0b 0f b6 44 24 07 e9 8a 00 00 00 48 8d bf 38 01 00 00 e8 7c a8
+[   53.546201] RSP: 0018:ffff88006c067768 EFLAGS: 00010282
+[   53.546208] RAX: 0000000000000000 RBX: ffff880068844200 RCX: ffffffffa83e1a33
+[   53.546211] RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff88006d51e590
+[   53.546215] RBP: 0000000000000005 R08: ffffed000daa3cb3 R09: ffffed000daa3cb3
+[   53.546218] R10: 0000000000000001 R11: ffffed000daa3cb2 R12: 00000000ffffffff
+[   53.546221] R13: ffff88006a1f8000 R14: 0000000000000200 R15: 0000000000000009
+[   53.546226] FS:  00007fb2f3646840(0000) GS:ffff88006d500000(0000) knlGS:0000000000000000
+[   53.546229] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   53.546234] CR2: 00007f0fd77f0008 CR3: 00000000687e6002 CR4: 00000000000206e0
+[   53.546237] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   53.546240] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   53.546242] Call Trace:
+[   53.546248]  f2fs_submit_page_bio+0x95/0x740
+[   53.546253]  read_node_page+0x161/0x1e0
+[   53.546271]  ? truncate_node+0x650/0x650
+[   53.546283]  ? add_to_page_cache_lru+0x12c/0x170
+[   53.546288]  ? pagecache_get_page+0x262/0x2d0
+[   53.546292]  __get_node_page+0x200/0x660
+[   53.546302]  f2fs_update_inode_page+0x4a/0x160
+[   53.546306]  f2fs_write_inode+0x86/0xb0
+[   53.546317]  __writeback_single_inode+0x49c/0x620
+[   53.546322]  writeback_single_inode+0xe4/0x1e0
+[   53.546326]  sync_inode_metadata+0x93/0xd0
+[   53.546330]  ? sync_inode+0x10/0x10
+[   53.546342]  ? do_raw_spin_unlock+0xed/0x100
+[   53.546347]  f2fs_sync_inode_meta+0xe0/0x130
+[   53.546351]  f2fs_fill_super+0x287d/0x2d10
+[   53.546367]  ? vsnprintf+0x742/0x7a0
+[   53.546372]  ? f2fs_commit_super+0x180/0x180
+[   53.546379]  ? up_write+0x20/0x40
+[   53.546385]  ? set_blocksize+0x5f/0x140
+[   53.546391]  ? f2fs_commit_super+0x180/0x180
+[   53.546402]  mount_bdev+0x181/0x200
+[   53.546406]  mount_fs+0x94/0x180
+[   53.546411]  vfs_kern_mount+0x6c/0x1e0
+[   53.546415]  do_mount+0xe5e/0x1510
+[   53.546420]  ? fs_reclaim_release+0x9/0x30
+[   53.546424]  ? copy_mount_string+0x20/0x20
+[   53.546428]  ? fs_reclaim_acquire+0xd/0x30
+[   53.546435]  ? __might_sleep+0x2c/0xc0
+[   53.546440]  ? ___might_sleep+0x53/0x170
+[   53.546453]  ? __might_fault+0x4c/0x60
+[   53.546468]  ? _copy_from_user+0x95/0xa0
+[   53.546474]  ? memdup_user+0x39/0x60
+[   53.546478]  ksys_mount+0x88/0xb0
+[   53.546482]  __x64_sys_mount+0x5d/0x70
+[   53.546495]  do_syscall_64+0x65/0x130
+[   53.546503]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   53.547639] ---[ end trace b804d1ea2fec893e ]---
+
+So if recover fails, we need to drop all recovered data.
+
+Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 ---
- fsck/mount.c | 76 ++++++++++++++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 58 insertions(+), 18 deletions(-)
+v2->v1:
+ * track all recovered inodes so that if recovery fail, we can find and
+   iput all those inodes
+ * clear SB_ACTIVE before destroy_fsync_dnoes to let iput trash all data
+ * do not truncate pages of quota inodes, evict will do that
+ * no need to track orphan inodes, they are evict immediatelly during
+   recovery (i_count = 0)
+---
+ fs/f2fs/recovery.c | 32 +++++++++++++++++++++-----------
+ fs/f2fs/super.c    | 15 ++++++++++++++-
+ 2 files changed, 35 insertions(+), 12 deletions(-)
 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 861e5fb..0036e6f 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -1299,20 +1299,26 @@ int build_sit_info(struct f2fs_sb_info *sbi)
- 	unsigned int bitmap_size;
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 93e3b6c46aae..0f36ea758160 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -96,8 +96,12 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
+ 	return ERR_PTR(err);
+ }
  
- 	sit_i = malloc(sizeof(struct sit_info));
--	if (!sit_i)
-+	if (!sit_i) {
-+		MSG(1, "\tError: Malloc failed for build_sit_info!\n");
- 		return -ENOMEM;
+-static void del_fsync_inode(struct fsync_inode_entry *entry)
++static void del_fsync_inode(struct fsync_inode_entry *entry, int drop)
+ {
++	if (drop) {
++		/* inode should not be recovered, drop it */
++		f2fs_inode_synced(entry->inode);
 +	}
+ 	iput(entry->inode);
+ 	list_del(&entry->list);
+ 	kmem_cache_free(fsync_entry_slab, entry);
+@@ -337,12 +341,12 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 	return err;
+ }
  
- 	SM_I(sbi)->sit_info = sit_i;
+-static void destroy_fsync_dnodes(struct list_head *head)
++static void destroy_fsync_dnodes(struct list_head *head, int drop)
+ {
+ 	struct fsync_inode_entry *entry, *tmp;
  
- 	sit_i->sentries = calloc(TOTAL_SEGS(sbi) * sizeof(struct seg_entry), 1);
--	if (!sit_i->sentries)
--		return -ENOMEM;
-+	if (!sit_i->sentries) {
-+		MSG(1, "\tError: Calloc failed for build_sit_info!\n");
-+		goto free_sit_info;
-+	}
+ 	list_for_each_entry_safe(entry, tmp, head, list)
+-		del_fsync_inode(entry);
++		del_fsync_inode(entry, drop);
+ }
  
- 	for (start = 0; start < TOTAL_SEGS(sbi); start++) {
- 		sit_i->sentries[start].cur_valid_map
- 			= calloc(SIT_VBLOCK_MAP_SIZE, 1);
--		if (!sit_i->sentries[start].cur_valid_map)
--			return -ENOMEM;
-+		if (!sit_i->sentries[start].cur_valid_map) {
-+			MSG(1, "\tError: Calloc failed for build_sit_info!!\n");
-+			goto free_validity_maps;
-+		}
+ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
+@@ -579,7 +583,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ }
+ 
+ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
+-						struct list_head *dir_list)
++		struct list_head *tmp_inode_list, struct list_head *dir_list)
+ {
+ 	struct curseg_info *curseg;
+ 	struct page *page = NULL;
+@@ -633,7 +637,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
+ 		}
+ 
+ 		if (entry->blkaddr == blkaddr)
+-			del_fsync_inode(entry);
++			list_move_tail(&entry->list, tmp_inode_list);
+ next:
+ 		/* check next segment */
+ 		blkaddr = next_blkaddr_of_node(page);
+@@ -646,7 +650,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
+ 
+ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ {
+-	struct list_head inode_list;
++	struct list_head inode_list, tmp_inode_list;
+ 	struct list_head dir_list;
+ 	int err;
+ 	int ret = 0;
+@@ -677,6 +681,7 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
  	}
  
- 	sit_segs = get_sb(segment_count_sit) >> 1;
-@@ -1320,6 +1326,10 @@ int build_sit_info(struct f2fs_sb_info *sbi)
- 	src_bitmap = __bitmap_ptr(sbi, SIT_BITMAP);
+ 	INIT_LIST_HEAD(&inode_list);
++	INIT_LIST_HEAD(&tmp_inode_list);
+ 	INIT_LIST_HEAD(&dir_list);
  
- 	dst_bitmap = malloc(bitmap_size);
-+	if (!dst_bitmap) {
-+		MSG(1, "\tError: Malloc failed for build_sit_info!!\n");
-+		goto free_validity_maps;
+ 	/* prevent checkpoint */
+@@ -695,11 +700,16 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ 	need_writecp = true;
+ 
+ 	/* step #2: recover data */
+-	err = recover_data(sbi, &inode_list, &dir_list);
++	err = recover_data(sbi, &inode_list, &tmp_inode_list, &dir_list);
+ 	if (!err)
+ 		f2fs_bug_on(sbi, !list_empty(&inode_list));
++	else {
++		/* restore s_flags to let iput() trash data */
++		sbi->sb->s_flags = s_flags;
 +	}
- 	memcpy(dst_bitmap, src_bitmap, bitmap_size);
+ skip:
+-	destroy_fsync_dnodes(&inode_list);
++	destroy_fsync_dnodes(&inode_list, err);
++	destroy_fsync_dnodes(&tmp_inode_list, err);
  
- 	sit_i->sit_base_addr = get_sb(sit_blkaddr);
-@@ -1331,6 +1341,16 @@ int build_sit_info(struct f2fs_sb_info *sbi)
- 	sit_i->sents_per_block = SIT_ENTRY_PER_BLOCK;
- 	sit_i->elapsed_time = get_cp(elapsed_time);
- 	return 0;
-+
-+free_validity_maps:
-+	for (--start ; start >= 0; --start)
-+		free(sit_i->sentries[start].cur_valid_map);
-+	free(sit_i->sentries);
-+
-+free_sit_info:
-+	free(sit_i);
-+
-+	return -ENOMEM;
- }
- 
- void reset_curseg(struct f2fs_sb_info *sbi, int type)
-@@ -1504,7 +1524,7 @@ static void restore_curseg_summaries(struct f2fs_sb_info *sbi)
- 		read_normal_summaries(sbi, type);
- }
- 
--static void build_curseg(struct f2fs_sb_info *sbi)
-+static int build_curseg(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
- 	struct curseg_info *array;
-@@ -1513,13 +1533,20 @@ static void build_curseg(struct f2fs_sb_info *sbi)
- 	int i;
- 
- 	array = malloc(sizeof(*array) * NR_CURSEG_TYPE);
--	ASSERT(array);
-+	if (!array) {
-+		MSG(1, "\tError: Malloc failed for build_curseg!\n");
-+		return -ENOMEM;
-+	}
- 
- 	SM_I(sbi)->curseg_array = array;
- 
- 	for (i = 0; i < NR_CURSEG_TYPE; i++) {
- 		array[i].sum_blk = malloc(PAGE_CACHE_SIZE);
--		ASSERT(array[i].sum_blk);
-+		if (!array[i].sum_blk) {
-+			MSG(1, "\tError: Malloc failed for build_curseg!!\n");
-+			goto seg_cleanup;
-+		}
-+
- 		if (i <= CURSEG_COLD_DATA) {
- 			blk_off = get_cp(cur_data_blkoff[i]);
- 			segno = get_cp(cur_data_segno[i]);
-@@ -1538,6 +1565,14 @@ static void build_curseg(struct f2fs_sb_info *sbi)
- 		array[i].alloc_type = cp->alloc_type[i];
- 	}
- 	restore_curseg_summaries(sbi);
-+	return 0;
-+
-+seg_cleanup:
-+	for(--i ; i >=0; --i)
-+		free(array[i].sum_blk);
-+	free(array);
-+
-+	return -ENOMEM;
- }
- 
- static inline void check_seg_range(struct f2fs_sb_info *sbi, unsigned int segno)
-@@ -1823,7 +1858,7 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
- 	node_info_from_raw_nat(ni, &raw_nat);
- }
- 
--void build_sit_entries(struct f2fs_sb_info *sbi)
-+static int build_sit_entries(struct f2fs_sb_info *sbi)
- {
- 	struct sit_info *sit_i = SIT_I(sbi);
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
-@@ -1834,7 +1869,11 @@ void build_sit_entries(struct f2fs_sb_info *sbi)
- 	unsigned int i, segno;
- 
- 	sit_blk = calloc(BLOCK_SZ, 1);
--	ASSERT(sit_blk);
-+	if (!sit_blk) {
-+		MSG(1, "\tError: Calloc failed for build_sit_entries!\n");
-+		return -ENOMEM;
-+	}
-+
- 	for (segno = 0; segno < TOTAL_SEGS(sbi); segno++) {
- 		se = &sit_i->sentries[segno];
- 
-@@ -1854,18 +1893,20 @@ void build_sit_entries(struct f2fs_sb_info *sbi)
- 		check_block_count(sbi, segno, &sit);
- 		seg_info_from_raw_sit(se, &sit);
+ 	/* truncate meta pages to be used by the recovery */
+ 	truncate_inode_pages_range(META_MAPPING(sbi),
+@@ -708,13 +718,13 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ 	if (err) {
+ 		truncate_inode_pages_final(NODE_MAPPING(sbi));
+ 		truncate_inode_pages_final(META_MAPPING(sbi));
++	} else {
++		clear_sbi_flag(sbi, SBI_POR_DOING);
  	}
 -
-+	return 0;
+-	clear_sbi_flag(sbi, SBI_POR_DOING);
+ 	mutex_unlock(&sbi->cp_mutex);
+ 
+ 	/* let's drop all the directory inodes for clean checkpoint */
+-	destroy_fsync_dnodes(&dir_list);
++	destroy_fsync_dnodes(&dir_list, err);
+ 
+ 	if (need_writecp) {
+ 		set_sbi_flag(sbi, SBI_IS_RECOVERED);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 79060c96da5b..f95df93096d5 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1992,6 +1992,19 @@ void f2fs_quota_off_umount(struct super_block *sb)
+ 	}
  }
  
--int build_segment_manager(struct f2fs_sb_info *sbi)
-+static int build_segment_manager(struct f2fs_sb_info *sbi)
++static void f2fs_truncate_quota_inode_pages(struct super_block *sb)
++{
++	struct quota_info *dqopt = sb_dqopt(sb);
++	int type;
++
++	for (type = 0; type < MAXQUOTAS; type++) {
++		if (!dqopt->files[type])
++			continue;
++		f2fs_inode_synced(dqopt->files[type]);
++	}
++}
++
++
+ static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
  {
- 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
- 	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
- 	struct f2fs_sm_info *sm_info;
+ 	*projid = F2FS_I(inode)->i_projid;
+@@ -3282,10 +3295,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
  
- 	sm_info = malloc(sizeof(struct f2fs_sm_info));
--	if (!sm_info)
-+	if (!sm_info) {
-+		MSG(1, "\tError: Malloc failed for build_segment_manager!\n");
- 		return -ENOMEM;
-+	}
- 
- 	/* init sm info */
- 	sbi->sm_info = sm_info;
-@@ -1877,11 +1918,10 @@ int build_segment_manager(struct f2fs_sb_info *sbi)
- 	sm_info->main_segments = get_sb(segment_count_main);
- 	sm_info->ssa_blkaddr = get_sb(ssa_blkaddr);
- 
--	build_sit_info(sbi);
--
--	build_curseg(sbi);
--
--	build_sit_entries(sbi);
-+	if (build_sit_info(sbi) || build_curseg(sbi) || build_sit_entries(sbi)) {
-+		free(sm_info);
-+		return -ENOMEM;
-+	}
- 
- 	return 0;
- }
+ free_meta:
+ #ifdef CONFIG_QUOTA
++	f2fs_truncate_quota_inode_pages(sb);
+ 	if (f2fs_sb_has_quota_ino(sb) && !f2fs_readonly(sb))
+ 		f2fs_quota_off_umount(sbi->sb);
+ #endif
+-	f2fs_sync_inode_meta(sbi);
+ 	/*
+ 	 * Some dirty meta pages can be produced by f2fs_recover_orphan_inodes()
+ 	 * failed by EIO. Then, iput(node_inode) can trigger balance_fs_bg()
 -- 
-2.10.1
-
-Kind regards,
-Stathis Maneas
+2.17.1
