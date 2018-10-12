@@ -1,239 +1,228 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: [PATCH v2] f2fs: cleanup dirty pages if recover failed
-Date: Fri, 12 Oct 2018 18:49:26 +0800
-Message-ID: <20181012104926.244217-1-shengyong1@huawei.com>
-References: <f4867be0-7a93-b335-d278-211d5a2aa4c8@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [bug report] f2fs: use rb_*_cached friends
+Date: Fri, 12 Oct 2018 22:00:20 +0800
+Message-ID: <de7d9aa6-b828-f2d9-4568-bfc758fad9d0@kernel.org>
+References: <20181011122342.GA23299@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f4867be0-7a93-b335-d278-211d5a2aa4c8@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <chao@kernel.org>) id 1gAxzY-00062i-3m
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 12 Oct 2018 14:00:36 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1gAxzS-006v0w-Ko
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 12 Oct 2018 14:00:36 +0000
+In-Reply-To: <20181011122342.GA23299@mwanda>
+Content-Language: en-US
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Dan Carpenter <dan.carpenter@oracle.com>, yuchao0@huawei.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-During recover, we will try to create new dentries for inodes with
-dentry_mark. But if the parent is missing (e.g. killed by fsck),
-recover will break. But those recovered dirty pages are not cleanup.
-This will hit f2fs_bug_on:
+Hi Dan,
 
-[   53.519566] F2FS-fs (loop0): Found nat_bits in checkpoint
-[   53.539354] F2FS-fs (loop0): recover_inode: ino = 5, name = file, inline = 3
-[   53.539402] F2FS-fs (loop0): recover_dentry: ino = 5, name = file, dir = 0, err = -2
-[   53.545760] F2FS-fs (loop0): Cannot recover all fsync data errno=-2
-[   53.546105] F2FS-fs (loop0): access invalid blkaddr:4294967295
-[   53.546171] WARNING: CPU: 1 PID: 1798 at fs/f2fs/checkpoint.c:163 f2fs_is_valid_blkaddr+0x26c/0x320
-[   53.546174] Modules linked in:
-[   53.546183] CPU: 1 PID: 1798 Comm: mount Not tainted 4.19.0-rc2+ #1
-[   53.546186] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-[   53.546191] RIP: 0010:f2fs_is_valid_blkaddr+0x26c/0x320
-[   53.546195] Code: 85 bb 00 00 00 48 89 df 88 44 24 07 e8 ad a8 db ff 48 8b 3b 44 89 e1 48 c7 c2 40 03 72 a9 48 c7 c6 e0 01 72 a9 e8 84 3c ff ff <0f> 0b 0f b6 44 24 07 e9 8a 00 00 00 48 8d bf 38 01 00 00 e8 7c a8
-[   53.546201] RSP: 0018:ffff88006c067768 EFLAGS: 00010282
-[   53.546208] RAX: 0000000000000000 RBX: ffff880068844200 RCX: ffffffffa83e1a33
-[   53.546211] RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff88006d51e590
-[   53.546215] RBP: 0000000000000005 R08: ffffed000daa3cb3 R09: ffffed000daa3cb3
-[   53.546218] R10: 0000000000000001 R11: ffffed000daa3cb2 R12: 00000000ffffffff
-[   53.546221] R13: ffff88006a1f8000 R14: 0000000000000200 R15: 0000000000000009
-[   53.546226] FS:  00007fb2f3646840(0000) GS:ffff88006d500000(0000) knlGS:0000000000000000
-[   53.546229] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   53.546234] CR2: 00007f0fd77f0008 CR3: 00000000687e6002 CR4: 00000000000206e0
-[   53.546237] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[   53.546240] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[   53.546242] Call Trace:
-[   53.546248]  f2fs_submit_page_bio+0x95/0x740
-[   53.546253]  read_node_page+0x161/0x1e0
-[   53.546271]  ? truncate_node+0x650/0x650
-[   53.546283]  ? add_to_page_cache_lru+0x12c/0x170
-[   53.546288]  ? pagecache_get_page+0x262/0x2d0
-[   53.546292]  __get_node_page+0x200/0x660
-[   53.546302]  f2fs_update_inode_page+0x4a/0x160
-[   53.546306]  f2fs_write_inode+0x86/0xb0
-[   53.546317]  __writeback_single_inode+0x49c/0x620
-[   53.546322]  writeback_single_inode+0xe4/0x1e0
-[   53.546326]  sync_inode_metadata+0x93/0xd0
-[   53.546330]  ? sync_inode+0x10/0x10
-[   53.546342]  ? do_raw_spin_unlock+0xed/0x100
-[   53.546347]  f2fs_sync_inode_meta+0xe0/0x130
-[   53.546351]  f2fs_fill_super+0x287d/0x2d10
-[   53.546367]  ? vsnprintf+0x742/0x7a0
-[   53.546372]  ? f2fs_commit_super+0x180/0x180
-[   53.546379]  ? up_write+0x20/0x40
-[   53.546385]  ? set_blocksize+0x5f/0x140
-[   53.546391]  ? f2fs_commit_super+0x180/0x180
-[   53.546402]  mount_bdev+0x181/0x200
-[   53.546406]  mount_fs+0x94/0x180
-[   53.546411]  vfs_kern_mount+0x6c/0x1e0
-[   53.546415]  do_mount+0xe5e/0x1510
-[   53.546420]  ? fs_reclaim_release+0x9/0x30
-[   53.546424]  ? copy_mount_string+0x20/0x20
-[   53.546428]  ? fs_reclaim_acquire+0xd/0x30
-[   53.546435]  ? __might_sleep+0x2c/0xc0
-[   53.546440]  ? ___might_sleep+0x53/0x170
-[   53.546453]  ? __might_fault+0x4c/0x60
-[   53.546468]  ? _copy_from_user+0x95/0xa0
-[   53.546474]  ? memdup_user+0x39/0x60
-[   53.546478]  ksys_mount+0x88/0xb0
-[   53.546482]  __x64_sys_mount+0x5d/0x70
-[   53.546495]  do_syscall_64+0x65/0x130
-[   53.546503]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[   53.547639] ---[ end trace b804d1ea2fec893e ]---
+Firstly, thanks for the report. :)
 
-So if recover fails, we need to drop all recovered data.
+On 2018-10-11 20:23, Dan Carpenter wrote:
+> Hello Chao Yu,
+> 
+> The patch df634f444ee9: "f2fs: use rb_*_cached friends" from Oct 4,
+> 2018, leads to the following static checker warning:
+> 
+> 	fs/f2fs/extent_cache.c:606 f2fs_update_extent_tree_range()
+> 	error: uninitialized symbol 'leftmost'.
+> 
+> fs/f2fs/extent_cache.c
+>    497  static void f2fs_update_extent_tree_range(struct inode *inode,
+>    498                                  pgoff_t fofs, block_t blkaddr, unsigned int len)
+>    499  {
+>    500          struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>    501          struct extent_tree *et = F2FS_I(inode)->extent_tree;
+>    502          struct extent_node *en = NULL, *en1 = NULL;
+>    503          struct extent_node *prev_en = NULL, *next_en = NULL;
+>    504          struct extent_info ei, dei, prev;
+>    505          struct rb_node **insert_p = NULL, *insert_parent = NULL;
+>    506          unsigned int end = fofs + len;
+>    507          unsigned int pos = (unsigned int)fofs;
+>    508          bool updated = false;
+>    509          bool leftmost;
+>    510  
+>    511          if (!et)
+>    512                  return;
+>    513  
+>    514          trace_f2fs_update_extent_tree_range(inode, fofs, blkaddr, len);
+>    515  
+>    516          write_lock(&et->lock);
+>    517  
+>    518          if (is_inode_flag_set(inode, FI_NO_EXTENT)) {
+>    519                  write_unlock(&et->lock);
+>    520                  return;
+>    521          }
+>    522  
+>    523          prev = et->largest;
+>    524          dei.len = 0;
+>    525  
+>    526          /*
+>    527           * drop largest extent before lookup, in case it's already
+>    528           * been shrunk from extent tree
+>    529           */
+>    530          __drop_largest_extent(et, fofs, len);
+>    531  
+>    532          /* 1. lookup first extent node in range [fofs, fofs + len - 1] */
+>    533          en = (struct extent_node *)f2fs_lookup_rb_tree_ret(&et->root,
+>    534                                          (struct rb_entry *)et->cached_en, fofs,
+>    535                                          (struct rb_entry **)&prev_en,
+>    536                                          (struct rb_entry **)&next_en,
+>    537                                          &insert_p, &insert_parent, false,
+>    538                                          &leftmost);
+>                                                  ^^^^^^^^
+> Not always initialized in there.
 
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
----
-v2->v1:
- * track all recovered inodes so that if recovery fail, we can find and
-   iput all those inodes
- * clear SB_ACTIVE before destroy_fsync_dnoes to let iput trash all data
- * do not truncate pages of quota inodes, evict will do that
- * no need to track orphan inodes, they are evict immediatelly during
-   recovery (i_count = 0)
----
- fs/f2fs/recovery.c | 32 +++++++++++++++++++++-----------
- fs/f2fs/super.c    | 15 ++++++++++++++-
- 2 files changed, 35 insertions(+), 12 deletions(-)
+I think the behavior should be acting as designed.
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 93e3b6c46aae..0f36ea758160 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -96,8 +96,12 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
- 	return ERR_PTR(err);
- }
- 
--static void del_fsync_inode(struct fsync_inode_entry *entry)
-+static void del_fsync_inode(struct fsync_inode_entry *entry, int drop)
- {
-+	if (drop) {
-+		/* inode should not be recovered, drop it */
-+		f2fs_inode_synced(entry->inode);
-+	}
- 	iput(entry->inode);
- 	list_del(&entry->list);
- 	kmem_cache_free(fsync_entry_slab, entry);
-@@ -337,12 +341,12 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
- 	return err;
- }
- 
--static void destroy_fsync_dnodes(struct list_head *head)
-+static void destroy_fsync_dnodes(struct list_head *head, int drop)
- {
- 	struct fsync_inode_entry *entry, *tmp;
- 
- 	list_for_each_entry_safe(entry, tmp, head, list)
--		del_fsync_inode(entry);
-+		del_fsync_inode(entry, drop);
- }
- 
- static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
-@@ -579,7 +583,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- }
- 
- static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
--						struct list_head *dir_list)
-+		struct list_head *tmp_inode_list, struct list_head *dir_list)
- {
- 	struct curseg_info *curseg;
- 	struct page *page = NULL;
-@@ -633,7 +637,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
- 		}
- 
- 		if (entry->blkaddr == blkaddr)
--			del_fsync_inode(entry);
-+			list_move_tail(&entry->list, tmp_inode_list);
- next:
- 		/* check next segment */
- 		blkaddr = next_blkaddr_of_node(page);
-@@ -646,7 +650,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
- 
- int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- {
--	struct list_head inode_list;
-+	struct list_head inode_list, tmp_inode_list;
- 	struct list_head dir_list;
- 	int err;
- 	int ret = 0;
-@@ -677,6 +681,7 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- 	}
- 
- 	INIT_LIST_HEAD(&inode_list);
-+	INIT_LIST_HEAD(&tmp_inode_list);
- 	INIT_LIST_HEAD(&dir_list);
- 
- 	/* prevent checkpoint */
-@@ -695,11 +700,16 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- 	need_writecp = true;
- 
- 	/* step #2: recover data */
--	err = recover_data(sbi, &inode_list, &dir_list);
-+	err = recover_data(sbi, &inode_list, &tmp_inode_list, &dir_list);
- 	if (!err)
- 		f2fs_bug_on(sbi, !list_empty(&inode_list));
-+	else {
-+		/* restore s_flags to let iput() trash data */
-+		sbi->sb->s_flags = s_flags;
-+	}
- skip:
--	destroy_fsync_dnodes(&inode_list);
-+	destroy_fsync_dnodes(&inode_list, err);
-+	destroy_fsync_dnodes(&tmp_inode_list, err);
- 
- 	/* truncate meta pages to be used by the recovery */
- 	truncate_inode_pages_range(META_MAPPING(sbi),
-@@ -708,13 +718,13 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- 	if (err) {
- 		truncate_inode_pages_final(NODE_MAPPING(sbi));
- 		truncate_inode_pages_final(META_MAPPING(sbi));
-+	} else {
-+		clear_sbi_flag(sbi, SBI_POR_DOING);
- 	}
--
--	clear_sbi_flag(sbi, SBI_POR_DOING);
- 	mutex_unlock(&sbi->cp_mutex);
- 
- 	/* let's drop all the directory inodes for clean checkpoint */
--	destroy_fsync_dnodes(&dir_list);
-+	destroy_fsync_dnodes(&dir_list, err);
- 
- 	if (need_writecp) {
- 		set_sbi_flag(sbi, SBI_IS_RECOVERED);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 79060c96da5b..f95df93096d5 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1992,6 +1992,19 @@ void f2fs_quota_off_umount(struct super_block *sb)
- 	}
- }
- 
-+static void f2fs_truncate_quota_inode_pages(struct super_block *sb)
-+{
-+	struct quota_info *dqopt = sb_dqopt(sb);
-+	int type;
-+
-+	for (type = 0; type < MAXQUOTAS; type++) {
-+		if (!dqopt->files[type])
-+			continue;
-+		f2fs_inode_synced(dqopt->files[type]);
-+	}
-+}
-+
-+
- static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
- {
- 	*projid = F2FS_I(inode)->i_projid;
-@@ -3282,10 +3295,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 
- free_meta:
- #ifdef CONFIG_QUOTA
-+	f2fs_truncate_quota_inode_pages(sb);
- 	if (f2fs_sb_has_quota_ino(sb) && !f2fs_readonly(sb))
- 		f2fs_quota_off_umount(sbi->sb);
- #endif
--	f2fs_sync_inode_meta(sbi);
- 	/*
- 	 * Some dirty meta pages can be produced by f2fs_recover_orphan_inodes()
- 	 * failed by EIO. Then, iput(node_inode) can trigger balance_fs_bg()
--- 
-2.17.1
+f2fs_lookup_rb_tree_ret()
+{
+...
+	*insert_p = NULL;
+	*insert_parent = NULL;
+	*prev_entry = NULL;
+	*next_entry = NULL;
+
+	if (RB_EMPTY_ROOT(&root->rb_root))
+		return NULL;
+
+	if (re) {
+		if (re->ofs <= ofs && re->ofs + re->len > ofs)
+			goto lookup_neighbors;
+	}
+
+Until here, @leftmost has not been initialized, but both *insert_p and
+*insert_parent are NULL,
+
+	if (leftmost)
+		*leftmost = true;
+...
+}
+
+Later in __insert_extent_tree()
+
+we will not hit below condition because insert_p & insert_parent are not valid:
+	if (insert_p && insert_parent) {
+		parent = insert_parent;
+		p = insert_p;
+		goto do_insert;
+	}
+
+	leftmost = true;
+
+So finally, we will initialize leftmost's value here, anyway, I think there is
+such place we use an uninitialized variable.
+
+BTW, do we have any chance to detect such case in smatch?
+
+Thanks,
+
+> 
+>    539          if (!en)
+>    540                  en = next_en;
+>    541  
+>    542          /* 2. invlidate all extent nodes in range [fofs, fofs + len - 1] */
+>    543          while (en && en->ei.fofs < end) {
+>    544                  unsigned int org_end;
+>    545                  int parts = 0;  /* # of parts current extent split into */
+>    546  
+>    547                  next_en = en1 = NULL;
+>    548  
+>    549                  dei = en->ei;
+>    550                  org_end = dei.fofs + dei.len;
+>    551                  f2fs_bug_on(sbi, pos >= org_end);
+>    552  
+>    553                  if (pos > dei.fofs &&   pos - dei.fofs >= F2FS_MIN_EXTENT_LEN) {
+>    554                          en->ei.len = pos - en->ei.fofs;
+>    555                          prev_en = en;
+>    556                          parts = 1;
+>    557                  }
+>    558  
+>    559                  if (end < org_end && org_end - end >= F2FS_MIN_EXTENT_LEN) {
+>    560                          if (parts) {
+>    561                                  set_extent_info(&ei, end,
+>    562                                                  end - dei.fofs + dei.blk,
+>    563                                                  org_end - end);
+>    564                                  en1 = __insert_extent_tree(sbi, et, &ei,
+>    565                                                          NULL, NULL, true);
+>    566                                  next_en = en1;
+>    567                          } else {
+>    568                                  en->ei.fofs = end;
+>    569                                  en->ei.blk += end - dei.fofs;
+>    570                                  en->ei.len -= end - dei.fofs;
+>    571                                  next_en = en;
+>    572                          }
+>    573                          parts++;
+>    574                  }
+>    575  
+>    576                  if (!next_en) {
+>    577                          struct rb_node *node = rb_next(&en->rb_node);
+>    578  
+>    579                          next_en = rb_entry_safe(node, struct extent_node,
+>    580                                                  rb_node);
+>    581                  }
+>    582  
+>    583                  if (parts)
+>    584                          __try_update_largest_extent(et, en);
+>    585                  else
+>    586                          __release_extent_node(sbi, et, en);
+>    587  
+>    588                  /*
+>    589                   * if original extent is split into zero or two parts, extent
+>    590                   * tree has been altered by deletion or insertion, therefore
+>    591                   * invalidate pointers regard to tree.
+>    592                   */
+>    593                  if (parts != 1) {
+>    594                          insert_p = NULL;
+>    595                          insert_parent = NULL;
+>    596                  }
+>    597                  en = next_en;
+>    598          }
+>    599  
+>    600          /* 3. update extent in extent cache */
+>    601          if (blkaddr) {
+>    602  
+>    603                  set_extent_info(&ei, fofs, blkaddr, len);
+>    604                  if (!__try_merge_extent_node(sbi, et, &ei, prev_en, next_en))
+>    605                          __insert_extent_tree(sbi, et, &ei,
+>    606                                          insert_p, insert_parent, leftmost);
+>                                                                          ^^^^^^^^
+> Smatch complains, but I'm to stupid to know if it's valid.
+> 
+>    607  
+>    608                  /* give up extent_cache, if split and small updates happen */
+>    609                  if (dei.len >= 1 &&
+>    610                                  prev.len < F2FS_MIN_EXTENT_LEN &&
+>    611                                  et->largest.len < F2FS_MIN_EXTENT_LEN) {
+>    612                          et->largest.len = 0;
+>    613                          et->largest_updated = true;
+>    614                          set_inode_flag(inode, FI_NO_EXTENT);
+>    615                  }
+>    616          }
+> 
+> regards,
+> dan carpenter
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
