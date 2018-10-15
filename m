@@ -1,59 +1,46 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: fix count of seg_freed to make sec_freed correct
-Date: Mon, 15 Oct 2018 20:35:07 +0800
-Message-ID: <2d4c379a-77c2-4408-2f23-36753afb95bd@huawei.com>
-References: <1539168739-79848-1-git-send-email-yunlong.song@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: clear cold data flag if IO is not
+ counted
+Date: Mon, 15 Oct 2018 20:38:01 +0800
+Message-ID: <3f08031e-d195-5bc1-67e1-f3b6eab3506b@huawei.com>
+References: <20181010212217.52289-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1539168739-79848-1-git-send-email-yunlong.song@huawei.com>
+In-Reply-To: <20181010212217.52289-1-jaegeuk@kernel.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/10/10 18:52, Yunlong Song wrote:
-> When sbi->segs_per_sec > 1, and if some segno has 0 valid blocks before
-> gc starts, do_garbage_collect will skip counting seg_freed++, and this
-> will cause seg_freed < sbi->segs_per_sec and finally skip sec_freed++.
+On 2018/10/11 5:22, Jaegeuk Kim wrote:
+> If we clear the cold data flag out of the writeback flow, we can miscount
+> -1 by end_io.
+
+I didn't get it, which count do you mean?
+
+Thanks,
+
 > 
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > ---
->  fs/f2fs/gc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  fs/f2fs/data.c | 4 ----
+>  1 file changed, 4 deletions(-)
 > 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index a07241f..dc63cd5 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -1160,10 +1160,10 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 29a9d3b8f709..4102799b5558 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -2636,10 +2636,6 @@ static int f2fs_set_data_page_dirty(struct page *page)
+>  	if (!PageUptodate(page))
+>  		SetPageUptodate(page);
 >  
->  		stat_inc_seg_count(sbi, type, gc_type);
->  
-> +next:
->  		if (gc_type == FG_GC &&
->  				get_valid_blocks(sbi, segno, false) == 0)
->  			seg_freed++;
-> -next:
-
-How about:
-
-if (get_valid_blocks(sbi, segno, false) == 0)
-	goto freed;
-
-if (!PageUptodate(sum_page) || unlikely(f2fs_cp_error(sbi))
-	goto next;
-
-
-freed:
-	if (gc_type == FG_GC &&
-			get_valid_blocks(sbi, segno, false) == 0)
-		seg_freed++;
-next:
-
->  		f2fs_put_page(sum_page, 0);
->  	}
->  
+> -	/* don't remain PG_checked flag which was set during GC */
+> -	if (is_cold_data(page))
+> -		clear_cold_data(page);
+> -
+>  	if (f2fs_is_atomic_file(inode) && !f2fs_is_commit_atomic_write(inode)) {
+>  		if (!IS_ATOMIC_WRITTEN_PAGE(page)) {
+>  			f2fs_register_inmem_page(inode, page);
 > 
