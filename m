@@ -1,44 +1,74 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 2/2] f2fs: update REQ_TIME in f2fs_cross_rename()
-Date: Mon, 15 Oct 2018 20:00:03 +0800
-Message-ID: <fa825846-ba41-31d2-c819-476e9245b7a8@huawei.com>
-References: <1538716660-31572-1-git-send-email-stummala@codeaurora.org>
- <1538716660-31572-2-git-send-email-stummala@codeaurora.org>
+Subject: Re: [PATCH] mkfs.f2fs: show the info of volume label
+ only when specify it
+Date: Mon, 15 Oct 2018 20:08:08 +0800
+Message-ID: <c6c0aabc-71a7-1fab-a7a5-583b8cbe3c41@huawei.com>
+References: <7d9354b8.ca7b.16653b02e86.Coremail.kernelpatch@126.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1538716660-31572-2-git-send-email-stummala@codeaurora.org>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1gC1fZ-0007O6-LV
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Oct 2018 12:08:21 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1gC1fX-001wNf-Hq
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Oct 2018 12:08:21 +0000
+In-Reply-To: <7d9354b8.ca7b.16653b02e86.Coremail.kernelpatch@126.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sahitya Tummala <stummala@codeaurora.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Tiezhu Yang <kernelpatch@126.com>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/10/5 13:17, Sahitya Tummala wrote:
-> Update REQ_TIME in the missing path - f2fs_cross_rename().
+On 2018/10/8 20:39, Tiezhu Yang wrote:
+> Currently, when format disk used with mkfs.f2fs, even if the volume label
+> is not specified, it still shows the info of volume label with no content
+> due to the check condition is always true, this patch fixes it.
+> 
+> [root@localhost home]# mkfs.f2fs -f /dev/sdb1
+> 
+> 	F2FS-tools: mkfs.f2fs Ver: 1.12.0 (2018-10-08)
+> 
+> Info: Disable heap-based policy
+> Info: Debug level = 0
+> Info: Label = 
+> Info: Trim is enabled
 
-Needs to cover f2fs_rename() as well?
+Like tune2fs does, we can show volume label as below if user didn't set it.
+
+Info: Label = <none>
 
 Thanks,
 
 > 
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
 > ---
->  fs/f2fs/namei.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  mkfs/f2fs_format_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index a146327..e37af23 100644
-> --- a/fs/f2fs/namei.c
-> +++ b/fs/f2fs/namei.c
-> @@ -1154,6 +1154,8 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+> diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+> index 1424cc3..6ea8068 100644
+> --- a/mkfs/f2fs_format_main.c
+> +++ b/mkfs/f2fs_format_main.c
+> @@ -81,7 +81,7 @@ static void f2fs_show_info()
+>  	if (c.extension_list[1])
+>  		MSG(0, "Info: Add new hot file extension list\n");
 >  
->  	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir))
->  		f2fs_sync_fs(sbi->sb, 1);
-> +
-> +	f2fs_update_time(sbi, REQ_TIME);
->  	return 0;
->  out_new_dir:
->  	if (new_dir_entry) {
+> -	if (c.vol_label)
+> +	if (strlen(c.vol_label))
+>  		MSG(0, "Info: Label = %s\n", c.vol_label);
+>  	MSG(0, "Info: Trim is %s\n", c.trim ? "enabled": "disabled");
+>  
 > 
