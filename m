@@ -1,112 +1,91 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 1/4] mkfs.f2fs: Added missing statements
- related to error checking.
-Date: Tue, 16 Oct 2018 19:18:43 +0800
-Message-ID: <47edfc4f-ac80-9164-5c6e-31deb19720a4@huawei.com>
-References: <0A9E2DD2-E2DA-4C24-A362-8778454B2142@cs.toronto.edu>
+Subject: Re: [PATCH v2] f2fs: cleanup dirty pages if recover failed
+Date: Tue, 16 Oct 2018 20:37:33 +0800
+Message-ID: <b0203c4c-747e-3949-62df-e1644f11ad73@huawei.com>
+References: <f4867be0-7a93-b335-d278-211d5a2aa4c8@huawei.com>
+ <20181012104926.244217-1-shengyong1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1gCNNH-0006E6-JV
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 16 Oct 2018 11:18:55 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gCNND-002hc4-Ea
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 16 Oct 2018 11:18:55 +0000
-In-Reply-To: <0A9E2DD2-E2DA-4C24-A362-8778454B2142@cs.toronto.edu>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181012104926.244217-1-shengyong1@huawei.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Sotirios-Efstathios Maneas <smaneas@cs.toronto.edu>, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/10/12 6:20, Sotirios-Efstathios Maneas wrote:
-> The following patch adds a few missing statements related to error checking.
+On 2018/10/12 18:49, Sheng Yong wrote:
+> During recover, we will try to create new dentries for inodes with
+> dentry_mark. But if the parent is missing (e.g. killed by fsck),
+> recover will break. But those recovered dirty pages are not cleanup.
+> This will hit f2fs_bug_on:
 > 
-> Signed-off-by: Sotirios-Efstathios Maneas <smaneas@cs.toronto.edu>
-> ---
->  mkfs/f2fs_format.c       | 10 ++++++++--
->  mkfs/f2fs_format_utils.c |  5 +++++
->  2 files changed, 13 insertions(+), 2 deletions(-)
+> [   53.519566] F2FS-fs (loop0): Found nat_bits in checkpoint
+> [   53.539354] F2FS-fs (loop0): recover_inode: ino = 5, name = file, inline = 3
+> [   53.539402] F2FS-fs (loop0): recover_dentry: ino = 5, name = file, dir = 0, err = -2
+> [   53.545760] F2FS-fs (loop0): Cannot recover all fsync data errno=-2
+> [   53.546105] F2FS-fs (loop0): access invalid blkaddr:4294967295
+> [   53.546171] WARNING: CPU: 1 PID: 1798 at fs/f2fs/checkpoint.c:163 f2fs_is_valid_blkaddr+0x26c/0x320
+> [   53.546174] Modules linked in:
+> [   53.546183] CPU: 1 PID: 1798 Comm: mount Not tainted 4.19.0-rc2+ #1
+> [   53.546186] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+> [   53.546191] RIP: 0010:f2fs_is_valid_blkaddr+0x26c/0x320
+> [   53.546195] Code: 85 bb 00 00 00 48 89 df 88 44 24 07 e8 ad a8 db ff 48 8b 3b 44 89 e1 48 c7 c2 40 03 72 a9 48 c7 c6 e0 01 72 a9 e8 84 3c ff ff <0f> 0b 0f b6 44 24 07 e9 8a 00 00 00 48 8d bf 38 01 00 00 e8 7c a8
+> [   53.546201] RSP: 0018:ffff88006c067768 EFLAGS: 00010282
+> [   53.546208] RAX: 0000000000000000 RBX: ffff880068844200 RCX: ffffffffa83e1a33
+> [   53.546211] RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff88006d51e590
+> [   53.546215] RBP: 0000000000000005 R08: ffffed000daa3cb3 R09: ffffed000daa3cb3
+> [   53.546218] R10: 0000000000000001 R11: ffffed000daa3cb2 R12: 00000000ffffffff
+> [   53.546221] R13: ffff88006a1f8000 R14: 0000000000000200 R15: 0000000000000009
+> [   53.546226] FS:  00007fb2f3646840(0000) GS:ffff88006d500000(0000) knlGS:0000000000000000
+> [   53.546229] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   53.546234] CR2: 00007f0fd77f0008 CR3: 00000000687e6002 CR4: 00000000000206e0
+> [   53.546237] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [   53.546240] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [   53.546242] Call Trace:
+> [   53.546248]  f2fs_submit_page_bio+0x95/0x740
+> [   53.546253]  read_node_page+0x161/0x1e0
+> [   53.546271]  ? truncate_node+0x650/0x650
+> [   53.546283]  ? add_to_page_cache_lru+0x12c/0x170
+> [   53.546288]  ? pagecache_get_page+0x262/0x2d0
+> [   53.546292]  __get_node_page+0x200/0x660
+> [   53.546302]  f2fs_update_inode_page+0x4a/0x160
+> [   53.546306]  f2fs_write_inode+0x86/0xb0
+> [   53.546317]  __writeback_single_inode+0x49c/0x620
+> [   53.546322]  writeback_single_inode+0xe4/0x1e0
+> [   53.546326]  sync_inode_metadata+0x93/0xd0
+> [   53.546330]  ? sync_inode+0x10/0x10
+> [   53.546342]  ? do_raw_spin_unlock+0xed/0x100
+> [   53.546347]  f2fs_sync_inode_meta+0xe0/0x130
+> [   53.546351]  f2fs_fill_super+0x287d/0x2d10
+> [   53.546367]  ? vsnprintf+0x742/0x7a0
+> [   53.546372]  ? f2fs_commit_super+0x180/0x180
+> [   53.546379]  ? up_write+0x20/0x40
+> [   53.546385]  ? set_blocksize+0x5f/0x140
+> [   53.546391]  ? f2fs_commit_super+0x180/0x180
+> [   53.546402]  mount_bdev+0x181/0x200
+> [   53.546406]  mount_fs+0x94/0x180
+> [   53.546411]  vfs_kern_mount+0x6c/0x1e0
+> [   53.546415]  do_mount+0xe5e/0x1510
+> [   53.546420]  ? fs_reclaim_release+0x9/0x30
+> [   53.546424]  ? copy_mount_string+0x20/0x20
+> [   53.546428]  ? fs_reclaim_acquire+0xd/0x30
+> [   53.546435]  ? __might_sleep+0x2c/0xc0
+> [   53.546440]  ? ___might_sleep+0x53/0x170
+> [   53.546453]  ? __might_fault+0x4c/0x60
+> [   53.546468]  ? _copy_from_user+0x95/0xa0
+> [   53.546474]  ? memdup_user+0x39/0x60
+> [   53.546478]  ksys_mount+0x88/0xb0
+> [   53.546482]  __x64_sys_mount+0x5d/0x70
+> [   53.546495]  do_syscall_64+0x65/0x130
+> [   53.546503]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> [   53.547639] ---[ end trace b804d1ea2fec893e ]---
 > 
-> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-> index 9b0a0d1..a2685cb 100644
-> --- a/mkfs/f2fs_format.c
-> +++ b/mkfs/f2fs_format.c
-> @@ -991,12 +991,16 @@ static int f2fs_write_super_block(void)
->  	u_int8_t *zero_buff;
->  
->  	zero_buff = calloc(F2FS_BLKSIZE, 1);
-> +	if (zero_buff == NULL) {
+> So if recover fails, we need to drop all recovered data.
+> 
+> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 
-I think it will be good to keep the coding style:
-
-if (!zero_buff)
-
-> +		MSG(1, "\tError: Calloc Failed for super_blk_zero_buf!!!\n");
-> +		return -1;
-> +	}
->  
->  	memcpy(zero_buff + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
->  	DBG(1, "\tWriting super block, at offset 0x%08x\n", 0);
->  	for (index = 0; index < 2; index++) {
->  		if (dev_write_block(zero_buff, index)) {
-> -			MSG(1, "\tError: While while writing supe_blk "
-> +			MSG(1, "\tError: While while writing super_blk "
-
-This typo should be fixed in another patch.
-
->  					"on disk!!! index : %d\n", index);
->  			free(zero_buff);
->  			return -1;
-> @@ -1021,8 +1025,10 @@ static int f2fs_discard_obsolete_dnode(void)
->  		return 0;
->  
->  	raw_node = calloc(sizeof(struct f2fs_node), 1);
-> -	if (!raw_node)
-> +	if (raw_node == NULL) {
-
-Coding style.
-
-> +		MSG(1, "\tError: Calloc Failed for discard_raw_node!!!\n");
->  		return -1;
-> +	}
->  
->  	/* avoid power-off-recovery based on roll-forward policy */
->  	offset = get_sb(main_blkaddr);
-> diff --git a/mkfs/f2fs_format_utils.c b/mkfs/f2fs_format_utils.c
-> index bf9ffbd..36b363a 100644
-> --- a/mkfs/f2fs_format_utils.c
-> +++ b/mkfs/f2fs_format_utils.c
-> @@ -51,6 +51,11 @@ static int trim_device(int i)
->  	int fd = dev->fd;
->  
->  	stat_buf = malloc(sizeof(struct stat));
-> +	if (stat_buf == NULL) {
-
-Ditto.
-
-How about fixing all error handling of calloc/malloc from differnet .c
-files in one patch?
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
-
-> +		MSG(1, "\tError: Malloc Failed for trim_stat_buf!!!\n");
-> +		return -1;
-> +	}
-> +
->  	if (fstat(fd, stat_buf) < 0 ) {
->  		MSG(1, "\tError: Failed to get the device stat!!!\n");
->  		free(stat_buf);
-> 
