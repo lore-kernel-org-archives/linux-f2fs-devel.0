@@ -1,63 +1,73 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 2/2] f2fs: update REQ_TIME in f2fs_cross_rename()
-Date: Tue, 16 Oct 2018 09:34:10 +0800
-Message-ID: <93a29c62-8115-607c-5b69-a506c9b9a3a1@huawei.com>
-References: <1538716660-31572-1-git-send-email-stummala@codeaurora.org>
- <1538716660-31572-2-git-send-email-stummala@codeaurora.org>
- <fa825846-ba41-31d2-c819-476e9245b7a8@huawei.com>
- <20181015230357.GA1296@jaegeuk-macbookpro.roam.corp.google.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 200871] F2FS experiences data loss (entry is
+ completely lost) when an I/O failure occurs.
+Date: Tue, 16 Oct 2018 01:48:46 +0000
+Message-ID: <bug-200871-202145-gTbdXbAbx6@https.bugzilla.kernel.org/>
+References: <bug-200871-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181015230357.GA1296@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Sahitya Tummala <stummala@codeaurora.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
+ id 1gCETg-0005aY-75
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 16 Oct 2018 01:48:56 +0000
+Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1gCETc-002Pj1-Uh
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 16 Oct 2018 01:48:56 +0000
+Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id BADB6299C2
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 16 Oct 2018 01:48:45 +0000 (UTC)
+In-Reply-To: <bug-200871-202145@https.bugzilla.kernel.org/>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/10/16 7:03, Jaegeuk Kim wrote:
-> On 10/15, Chao Yu wrote:
->> On 2018/10/5 13:17, Sahitya Tummala wrote:
->>> Update REQ_TIME in the missing path - f2fs_cross_rename().
->>
->> Needs to cover f2fs_rename() as well?
-> 
-> Hi, I've added this in f2fs_rename().
+https://bugzilla.kernel.org/show_bug.cgi?id=200871
 
-Oh, I see, it looks okay to me now. :)
+--- Comment #17 from Chao Yu (chao@kernel.org) ---
+(In reply to Stathis Maneas from comment #16)
+> I am sorry for the delay! I can definitely help by adding the aforementioned
+> statements!
+> 
+> After adding them and observing the output of dmesg, I can observe that only
+> the second statement gets actually invoked:
+> [ 1026.438986] f2fs_wait_on_node_pages_writeback, eio:0
+> 
+> Therefore, this indicates that the following condition is not true under the
+> specified workload:
+> if (unlikely(bio->bi_status)) { ... }
+> 
+> I tried moving the first print statement at the beginning of the following
+> for loop,
+> bio_for_each_segment_all(bvec, bio, i) { ... }
+> 
+> but still, I am not observing any errors for the segment (block) of interest:
+> [   76.603891] f2fs_write_end_io, ino:1, idx:4, eio:0, type:7
+> [   76.603893] f2fs_write_end_io, is_dummy:0 bio_status:0
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Sorry for the delay.
 
-Thanks,
+Oh, so I guess that you trigger the error injection but didn't set
+bio->bi_status to nonzero value, result in fs can not be aware of that.
+
+I think we'd better to double check all your test steps and injection codes.
 
 > 
-> Thanks,
-> 
->>
->> Thanks,
->>
->>>
->>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
->>> ---
->>>  fs/f2fs/namei.c | 2 ++
->>>  1 file changed, 2 insertions(+)
->>>
->>> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
->>> index a146327..e37af23 100644
->>> --- a/fs/f2fs/namei.c
->>> +++ b/fs/f2fs/namei.c
->>> @@ -1154,6 +1154,8 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
->>>  
->>>  	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir))
->>>  		f2fs_sync_fs(sbi->sb, 1);
->>> +
->>> +	f2fs_update_time(sbi, REQ_TIME);
->>>  	return 0;
->>>  out_new_dir:
->>>  	if (new_dir_entry) {
->>>
-> 
-> .
-> 
+> Is there something else we can try?
+
+-- 
+You are receiving this mail because:
+You are watching the assignee of the bug.
