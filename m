@@ -1,62 +1,190 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: remove request_list check in is_idle()
-Date: Wed, 17 Oct 2018 11:11:50 +0800
-Message-ID: <7a55158a-1987-1bd4-2595-339d1379eb88@huawei.com>
-References: <d89936bb-398e-08c1-573f-b1bd54f3ca35@kernel.dk>
- <003df7ce-626c-e32b-909b-909b87e0c8f3@kernel.org>
- <5bbe6ae7-704e-dcaa-f798-959d8a1a00b3@kernel.dk>
- <20181016192314.GB29774@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH v11] f2fs: guarantee journalled quota data by checkpoint
+Date: Wed, 17 Oct 2018 11:30:08 +0800
+Message-ID: <9a3f0b96-8d29-121a-b31b-1eeb7c2e92c2@huawei.com>
+References: <20180920120500.21026-1-chao@kernel.org>
+ <20181001000618.GC17407@jaegeuk-macbookpro.roam.corp.google.com>
+ <cd4d60b9-3f24-d408-610a-af57e0cb0165@kernel.org>
+ <20181001012911.GF17407@jaegeuk-macbookpro.roam.corp.google.com>
+ <73df627f-5b12-71cd-9a52-41f187d5516d@kernel.org>
+ <20181001014915.GG17407@jaegeuk-macbookpro.roam.corp.google.com>
+ <143b572f-8044-eae2-d321-79040beba4f4@kernel.org>
+ <20181002164514.GA93409@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1gCcFo-0002te-3i
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Oct 2018 03:12:12 +0000
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gCcFm-003A54-83
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Oct 2018 03:12:12 +0000
-In-Reply-To: <20181016192314.GB29774@jaegeuk-macbookpro.roam.corp.google.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181002164514.GA93409@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Weichao Guo <guoweichao@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/10/17 3:23, Jaegeuk Kim wrote:
-> Thanks Jens,
-> 
-> On top of the patch killing the dead code, I wrote another one to detect
-> the idle time by the internal account logic like below. IMHO, it'd be
-> better to decouple f2fs with other layers, if possible.
-> 
-> Thanks,
-> 
->>From 85daf5190671b3d98ef779bdea77b4a046658708 Mon Sep 17 00:00:00 2001
-> From: Jaegeuk Kim <jaegeuk@kernel.org>
-> Date: Tue, 16 Oct 2018 10:20:53 -0700
-> Subject: [PATCH] f2fs: account read IOs and use IO counts for is_idle
-> 
-> This patch adds issued read IO counts which is under block layer.
+Jaegeuk,
 
-Anyway, being aware of IO from f2fs and IO from block layer can be
-separated into different patches, so adding this patch firstly looks good
-to me.
+Sorry for the long delay, I'm busy on other thing.
 
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+I'm trying your fixing code on both fsck and kernel with 'run.sh
+por_fsstress' case.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+And got below output, is that normal in updated fsck? I didn't have time to
+look into this.
+
+Info: checkpoint state = 8c6 :  quota_need_fsck nat_bits crc
+compacted_summary orphan_inodes sudden-power-off
+[fsck_chk_quota_files:1755] Fixing Quota file ([  0] ino [0x4])
+[ERROR] quotaio_tree.c:83:write_blk:: Cannot write block (1320):
+Inappropriate ioctl for device
+[ERROR] quotaio_tree.c:110:get_free_dqblk:: Cannot allocate new quota block
+(out of disk space).
+[ERROR] quotaio_tree.c:315:dq_insert_tree:: Cannot write quota (id
+67368348): Inappropriate ioctl for device
+[fsck_chk_quota_files:1755] Fixing Quota file ([  1] ino [0x5])
+[ERROR] quotaio_tree.c:83:write_blk:: Cannot write block (1332):
+Inappropriate ioctl for device
+[ERROR] quotaio_tree.c:110:get_free_dqblk:: Cannot allocate new quota block
+(out of disk space).
+[ERROR] quotaio_tree.c:315:dq_insert_tree:: Cannot write quota (id
+73435216): Inappropriate ioctl for device
 
 Thanks,
+
+
+On 2018/10/3 0:45, Jaegeuk Kim wrote:
+> On 10/01, Chao Yu wrote:
+>> On 2018-10-1 9:49, Jaegeuk Kim wrote:
+>>> On 10/01, Chao Yu wrote:
+>>>> On 2018-10-1 9:29, Jaegeuk Kim wrote:
+>>>>> On 10/01, Chao Yu wrote:
+>>>>>> Hi Jaegeuk,
+>>>>>>
+>>>>>> On 2018-10-1 8:06, Jaegeuk Kim wrote:
+>>>>>>> Hi Chao,
+>>>>>>>
+>>>>>>> This fails on fsstress with godown without fault injection. Could you please
+>>>>>>> test a bit? I assumed that this patch should give no fsck failure along with
+>>>>>>> valid checkpoint having no flag.
+>>>>>>
+>>>>>> Okay, let me reproduce with that case.
+>>>>>>
+>>>>>>>
+>>>>>>> BTW, I'm in doubt that f2fs_lock_all covers entire quota modification. What
+>>>>>>> about prepare_write_begin() -> f2fs_get_block() ... -> inc_valid_block_count()?
+>>>>>>
+>>>>>> If quota data changed in above path, we will detect that in below condition:
+>>>>>>
+>>>>>> block_operation()
+>>>>>>
+>>>>>> 	down_write(&sbi->node_change);
+>>>>>>
+>>>>>> 	if (__need_flush_quota(sbi)) {
+>>>>>> 		up_write(&sbi->node_change);
+>>>>>> 		f2fs_unlock_all(sbi);
+>>>>>> 		goto retry_flush_quotas;
+>>>>>> 	}
+>>>>>>
+>>>>>> So there is no problem?
+>>>>>
+>>>>> We may need to check quota is dirty, since we have no way to detect by
+>>>>> f2fs structures?
+>>>>
+>>>> Below condition can check that.
+>>>>
+>>>> static bool __need_flush_quota(struct f2fs_sb_info *sbi)
+>>>> {
+>>>> ...
+>>>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_FLUSH))
+>>>> 		return true;
+>>>> 	if (get_pages(sbi, F2FS_DIRTY_QDATA))
+>>>> 		return true;
+>>>> ...
+>>>> }
+>>>>
+>>>> static int f2fs_dquot_mark_dquot_dirty(struct dquot *dquot)
+>>>> {
+>>>> ...
+>>>> 	ret = dquot_mark_dquot_dirty(dquot);
+>>>>
+>>>> 	/* if we are using journalled quota */
+>>>> 	if (is_journalled_quota(sbi))
+>>>> 		set_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
+>>>> ...
+>>>> }
+>>>
+>>> Okay, then, could you please run the above stress test to reproduce this?
+>>
+>> Sure, let me try this case and fix it.
+>>
+>> Could you check other patches in mailing list, and test them instead?
+> 
+> With the below change, the test result is much better for now.
+> Let me know, if you have further concern.
+> 
+> ---
+>  fs/f2fs/checkpoint.c | 6 ++++++
+>  fs/f2fs/super.c      | 4 +++-
+>  2 files changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index a1facfbfc5c7..b111c6201023 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1111,6 +1111,8 @@ static int block_operations(struct f2fs_sb_info *sbi)
+>  
+>  retry_flush_quotas:
+>  	if (__need_flush_quota(sbi)) {
+> +		int locked;
+> +
+>  		if (++cnt > DEFAULT_RETRY_QUOTA_FLUSH_COUNT) {
+>  			set_sbi_flag(sbi, SBI_QUOTA_SKIP_FLUSH);
+>  			f2fs_lock_all(sbi);
+> @@ -1118,7 +1120,11 @@ static int block_operations(struct f2fs_sb_info *sbi)
+>  		}
+>  		clear_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
+>  
+> +		/* only failed during mount/umount/freeze/quotactl */
+> +		locked = down_read_trylock(&sbi->sb->s_umount);
+>  		f2fs_quota_sync(sbi->sb, -1);
+> +		if (locked)
+> +			up_read(&sbi->sb->s_umount);
+>  	}
+>  
+>  	f2fs_lock_all(sbi);
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index a28c245b1288..b39f60d57120 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -1706,6 +1706,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+>  				congestion_wait(BLK_RW_ASYNC, HZ/50);
+>  				goto repeat;
+>  			}
+> +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+>  			return PTR_ERR(page);
+>  		}
+>  
+> @@ -1717,6 +1718,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+>  		}
+>  		if (unlikely(!PageUptodate(page))) {
+>  			f2fs_put_page(page, 1);
+> +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+>  			return -EIO;
+>  		}
+>  
+> @@ -1758,6 +1760,7 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
+>  				congestion_wait(BLK_RW_ASYNC, HZ/50);
+>  				goto retry;
+>  			}
+> +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+>  			break;
+>  		}
+>  
+> @@ -1794,7 +1797,6 @@ static qsize_t *f2fs_get_reserved_space(struct inode *inode)
+>  
+>  static int f2fs_quota_on_mount(struct f2fs_sb_info *sbi, int type)
+>  {
+> -
+>  	if (is_set_ckpt_flags(sbi, CP_QUOTA_NEED_FSCK_FLAG)) {
+>  		f2fs_msg(sbi->sb, KERN_ERR,
+>  			"quota sysfile may be corrupted, skip loading it");
+> 
