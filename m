@@ -1,143 +1,195 @@
-From: "Chengguang Xu" <cgxu519@gmx.com>
-Subject: Re: [PATCH] f2fs: remove default option setting in
- remount
-Date: Thu, 18 Oct 2018 07:28:53 +0200
-Message-ID: <trinity-bae5e1a5-aab2-4c26-9802-3ad64db5b813-1539840533830@msvc-mesg-gmx023>
-References: <20180918062344.3102-1-cgxu519@gmx.com>
- <9bc59ef2-01cc-0cf1-1676-4d8a75514aad@kernel.org>
- <a8cdaf63-c5fd-9391-2411-b61c8941351e@gmx.com>
- <13e22905-22e6-2048-c6b7-5f573380f189@kernel.org>
- <53b1fc54-5827-1506-b081-328505f15dff@gmx.com>
- <9b7ba619-e29c-9e79-74b0-e4ababae825a@huawei.com>
- <6e60aadf-0568-f67d-68e1-ff99d38790e6@gmx.com>
- <d236c53a-b820-da8e-e65b-ff631e7d8bcd@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH v11] f2fs: guarantee journalled quota data by checkpoint
+Date: Thu, 18 Oct 2018 12:04:01 -0700
+Message-ID: <20181018190401.GC50556@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180920120500.21026-1-chao@kernel.org>
+ <20181001000618.GC17407@jaegeuk-macbookpro.roam.corp.google.com>
+ <cd4d60b9-3f24-d408-610a-af57e0cb0165@kernel.org>
+ <20181001012911.GF17407@jaegeuk-macbookpro.roam.corp.google.com>
+ <73df627f-5b12-71cd-9a52-41f187d5516d@kernel.org>
+ <20181001014915.GG17407@jaegeuk-macbookpro.roam.corp.google.com>
+ <143b572f-8044-eae2-d321-79040beba4f4@kernel.org>
+ <20181002164514.GA93409@jaegeuk-macbookpro.roam.corp.google.com>
+ <9a3f0b96-8d29-121a-b31b-1eeb7c2e92c2@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <cgxu519@gmx.com>) id 1gD0rt-0005BZ-G6
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 18 Oct 2018 05:29:09 +0000
-Received: from mout.gmx.net ([212.227.15.18])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1gD0rr-0041Xk-Ht
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 18 Oct 2018 05:29:09 +0000
-In-Reply-To: <d236c53a-b820-da8e-e65b-ff631e7d8bcd@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <9a3f0b96-8d29-121a-b31b-1eeb7c2e92c2@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Chao Yu <yuchao0@huawei.com>
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Weichao Guo <guoweichao@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/9/25 at 3:41 PM, Chao Yu wrote:
-
-> On 2018/9/22 22:40, cgxu519 wrote:
-> > On 09/20/2018 02:29 PM, Chao Yu wrote:
-> >> On 2018/9/20 7:54, cgxu519 wrote:
-> >>> On 9/19/18 10:02 PM, Chao Yu wrote:
-> >>>> On 2018/9/18 21:47, cgxu519 wrote:
-> >>>>> On 09/18/2018 09:20 PM, Chao Yu wrote:
-> >>>>>> On 2018/9/18 14:23, Chengguang Xu wrote:
-> >>>>>>> Currently we set default value to options before parsing remount options,
-> >>>>>>> it will cause unexpected change of options which were specified in first
-> >>>>>>> mount.
-> >>>>>> Can you check below commit? It looks w/o it we may lose default option after
-> >>>>>> remount.
-> >>>>>>
-> >>>>>> 498c5e9fcd10 ("f2fs: add default mount options to remount")
-> >>>>> Hi Chao,
-> >>>> Hi Chengguang,
-> >>>>
-> >>>>> It looks like there was a bug in remount at that time, but I think the fix above
-> >>>>> is not correct.
-> >>>>>
-> >>>>> from the patch '498c5e9fcd10', I think it was caused by clearing
-> >>>>> sbi->mount_opt.opt before
-> >>>>>
-> >>>>> parsing. I think remount should not change the options which were specified by
-> >>>>> user in
-> >>>>>
-> >>>>> previous mount unless user specifies in remount.
-> >>>> Can you check description in manual of mount.
-> >>>>
-> >>>> IIRC, old mount option will be record into /etc/mtab or /proc/mounts (for
-> >>>> adapting namespace feature), with command of "mount -o remount,rw  /dir", old
-> >>>> mount options can be loaded from above config file, and merge them with new
-> >>>> specified options.
-> >>>>
-> >>>> Even we kill old mount options by call default_options() in ->remount, user's
-> >>>> old mount option can still be set through parameters.
-> >>> Please let me show you different behaviors before/after this patch.
-> >>>
-> >>>
-> >>> [root@x201 cgxu]# uname -a
-> >>> Linux x201 4.19.0-rc2+ #51 SMP Wed Sep 19 22:41:20 CST 2018 x86_64
-> >>> x86_64 x86_64 GNU/Linux
-> >>>
-> >>>
-> >>> Before:
-> >>>
-> >>> [root@x201 cgxu]# mount -o fsync_mode=strict /dev/mapper/test-test1
-> >>> /mnt/test/test1
-> >>> [root@x201 cgxu]# mount | grep test1
-> >>> /dev/mapper/test-test1 on /mnt/test/test1 type f2fs
-> >>> (rw,relatime,lazytime,background_gc=on,discard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=reuse,fsync_mode=strict)
-> >>>
-> >>> [root@x201 cgxu]# mount -o remount,background_gc=sync
-> >>> /dev/mapper/test-test1 /mnt/test/test1
-> >>> [root@x201 cgxu]# mount | grep test1
-> >>> /dev/mapper/test-test1 on /mnt/test/test1 type f2fs
-> >>> (rw,relatime,background_gc=sync,discard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,fsync_mode=posix)
-> >>>
-> >>>
-> >>> I only changed background_gc in ->remount, but fsync_mode is implicitly
-> >>> set to default value 'posix'.
-> >> IMO, the resul is as expected, let's referenced description in manual of mount:
-> >>
-> >>                The  remount  functionality  follows the standard way how the
-> >> mount command works with options from fstab. It means the mount command
-> >> doesn't read fstab (or mtab) only when a device and
-> >>                dir are fully specified.
-> >>
-> >>                mount -o remount,rw /dev/foo /dir
-> >>
-> >>                After this call all old mount options are replaced and
-> >> arbitrary stuff from fstab is ignored, except the loop= option which is
-> >> internally generated and maintained by the mount command.
-> >>
-> >>                mount -o remount,rw  /dir
-> >>
-> >>                After this call mount reads fstab (or mtab) and merges these
-> >> options with options from command line ( -o ).
-> >>
-> >>
-> >> So if you want to keep old mount option, you should use:
-> >>
-> >> mount -o remount,background_gc=sync /mnt/test/test1
-> >>
-> >> instead of
-> >>
-> >> mount -o remount,background_gc=sync /dev/mapper/test-test1 /mnt/test/test1
-> > 
-> > I get your point about how mount command organizes options ,
-> > but it seems other filesystem do not initialize mount option in remount.
-> > What do you think for that? and if we keep initialization in f2fs,
-> > shouldn't we set default value to all mount options for remount?
+On 10/17, Chao Yu wrote:
+> Jaegeuk,
 > 
-> I'm okay with this change to keep line with other filesystems.
+> Sorry for the long delay, I'm busy on other thing.
+> 
+> I'm trying your fixing code on both fsck and kernel with 'run.sh
+> por_fsstress' case.
+> 
+> And got below output, is that normal in updated fsck? I didn't have time to
+> look into this.
 
-Hi Chao
+Yeah, I just stopped to allocate new blocks to fix quota, if there may have
+some data to be reocvered at the next mount time.
 
-Do you agree this patch without change of commit log?
-
-Thanks,
-Chengguang
+> 
+> Info: checkpoint state = 8c6 :  quota_need_fsck nat_bits crc
+> compacted_summary orphan_inodes sudden-power-off
+> [fsck_chk_quota_files:1755] Fixing Quota file ([  0] ino [0x4])
+> [ERROR] quotaio_tree.c:83:write_blk:: Cannot write block (1320):
+> Inappropriate ioctl for device
+> [ERROR] quotaio_tree.c:110:get_free_dqblk:: Cannot allocate new quota block
+> (out of disk space).
+> [ERROR] quotaio_tree.c:315:dq_insert_tree:: Cannot write quota (id
+> 67368348): Inappropriate ioctl for device
+> [fsck_chk_quota_files:1755] Fixing Quota file ([  1] ino [0x5])
+> [ERROR] quotaio_tree.c:83:write_blk:: Cannot write block (1332):
+> Inappropriate ioctl for device
+> [ERROR] quotaio_tree.c:110:get_free_dqblk:: Cannot allocate new quota block
+> (out of disk space).
+> [ERROR] quotaio_tree.c:315:dq_insert_tree:: Cannot write quota (id
+> 73435216): Inappropriate ioctl for device
+> 
+> Thanks,
+> 
+> 
+> On 2018/10/3 0:45, Jaegeuk Kim wrote:
+> > On 10/01, Chao Yu wrote:
+> >> On 2018-10-1 9:49, Jaegeuk Kim wrote:
+> >>> On 10/01, Chao Yu wrote:
+> >>>> On 2018-10-1 9:29, Jaegeuk Kim wrote:
+> >>>>> On 10/01, Chao Yu wrote:
+> >>>>>> Hi Jaegeuk,
+> >>>>>>
+> >>>>>> On 2018-10-1 8:06, Jaegeuk Kim wrote:
+> >>>>>>> Hi Chao,
+> >>>>>>>
+> >>>>>>> This fails on fsstress with godown without fault injection. Could you please
+> >>>>>>> test a bit? I assumed that this patch should give no fsck failure along with
+> >>>>>>> valid checkpoint having no flag.
+> >>>>>>
+> >>>>>> Okay, let me reproduce with that case.
+> >>>>>>
+> >>>>>>>
+> >>>>>>> BTW, I'm in doubt that f2fs_lock_all covers entire quota modification. What
+> >>>>>>> about prepare_write_begin() -> f2fs_get_block() ... -> inc_valid_block_count()?
+> >>>>>>
+> >>>>>> If quota data changed in above path, we will detect that in below condition:
+> >>>>>>
+> >>>>>> block_operation()
+> >>>>>>
+> >>>>>> 	down_write(&sbi->node_change);
+> >>>>>>
+> >>>>>> 	if (__need_flush_quota(sbi)) {
+> >>>>>> 		up_write(&sbi->node_change);
+> >>>>>> 		f2fs_unlock_all(sbi);
+> >>>>>> 		goto retry_flush_quotas;
+> >>>>>> 	}
+> >>>>>>
+> >>>>>> So there is no problem?
+> >>>>>
+> >>>>> We may need to check quota is dirty, since we have no way to detect by
+> >>>>> f2fs structures?
+> >>>>
+> >>>> Below condition can check that.
+> >>>>
+> >>>> static bool __need_flush_quota(struct f2fs_sb_info *sbi)
+> >>>> {
+> >>>> ...
+> >>>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_FLUSH))
+> >>>> 		return true;
+> >>>> 	if (get_pages(sbi, F2FS_DIRTY_QDATA))
+> >>>> 		return true;
+> >>>> ...
+> >>>> }
+> >>>>
+> >>>> static int f2fs_dquot_mark_dquot_dirty(struct dquot *dquot)
+> >>>> {
+> >>>> ...
+> >>>> 	ret = dquot_mark_dquot_dirty(dquot);
+> >>>>
+> >>>> 	/* if we are using journalled quota */
+> >>>> 	if (is_journalled_quota(sbi))
+> >>>> 		set_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
+> >>>> ...
+> >>>> }
+> >>>
+> >>> Okay, then, could you please run the above stress test to reproduce this?
+> >>
+> >> Sure, let me try this case and fix it.
+> >>
+> >> Could you check other patches in mailing list, and test them instead?
+> > 
+> > With the below change, the test result is much better for now.
+> > Let me know, if you have further concern.
+> > 
+> > ---
+> >  fs/f2fs/checkpoint.c | 6 ++++++
+> >  fs/f2fs/super.c      | 4 +++-
+> >  2 files changed, 9 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> > index a1facfbfc5c7..b111c6201023 100644
+> > --- a/fs/f2fs/checkpoint.c
+> > +++ b/fs/f2fs/checkpoint.c
+> > @@ -1111,6 +1111,8 @@ static int block_operations(struct f2fs_sb_info *sbi)
+> >  
+> >  retry_flush_quotas:
+> >  	if (__need_flush_quota(sbi)) {
+> > +		int locked;
+> > +
+> >  		if (++cnt > DEFAULT_RETRY_QUOTA_FLUSH_COUNT) {
+> >  			set_sbi_flag(sbi, SBI_QUOTA_SKIP_FLUSH);
+> >  			f2fs_lock_all(sbi);
+> > @@ -1118,7 +1120,11 @@ static int block_operations(struct f2fs_sb_info *sbi)
+> >  		}
+> >  		clear_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
+> >  
+> > +		/* only failed during mount/umount/freeze/quotactl */
+> > +		locked = down_read_trylock(&sbi->sb->s_umount);
+> >  		f2fs_quota_sync(sbi->sb, -1);
+> > +		if (locked)
+> > +			up_read(&sbi->sb->s_umount);
+> >  	}
+> >  
+> >  	f2fs_lock_all(sbi);
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index a28c245b1288..b39f60d57120 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -1706,6 +1706,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+> >  				congestion_wait(BLK_RW_ASYNC, HZ/50);
+> >  				goto repeat;
+> >  			}
+> > +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+> >  			return PTR_ERR(page);
+> >  		}
+> >  
+> > @@ -1717,6 +1718,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+> >  		}
+> >  		if (unlikely(!PageUptodate(page))) {
+> >  			f2fs_put_page(page, 1);
+> > +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+> >  			return -EIO;
+> >  		}
+> >  
+> > @@ -1758,6 +1760,7 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
+> >  				congestion_wait(BLK_RW_ASYNC, HZ/50);
+> >  				goto retry;
+> >  			}
+> > +			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+> >  			break;
+> >  		}
+> >  
+> > @@ -1794,7 +1797,6 @@ static qsize_t *f2fs_get_reserved_space(struct inode *inode)
+> >  
+> >  static int f2fs_quota_on_mount(struct f2fs_sb_info *sbi, int type)
+> >  {
+> > -
+> >  	if (is_set_ckpt_flags(sbi, CP_QUOTA_NEED_FSCK_FLAG)) {
+> >  		f2fs_msg(sbi->sb, KERN_ERR,
+> >  			"quota sysfile may be corrupted, skip loading it");
+> > 
