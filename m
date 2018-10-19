@@ -1,10 +1,8 @@
-From: Ju Hyung Park <qkrwngud825@gmail.com>
-Subject: Re: [PATCH v2] f2fs: clear cold data flag if IO is not
- counted
-Date: Sat, 20 Oct 2018 03:16:22 +0900
-Message-ID: <CAD14+f1EsMBiH0vkFPQ3wAa2-xOp+rpGGhmbTd+JfLpCGYh5jA@mail.gmail.com>
-References: <20181010212217.52289-1-jaegeuk@kernel.org>
- <20181017023404.GB77619@jaegeuk-macbookpro.roam.corp.google.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs-tools: give WITH_KERNEL_VERSION to check
+ kernel version only
+Date: Fri, 19 Oct 2018 15:43:57 -0700
+Message-ID: <20181019224357.11121-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -12,17 +10,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <qkrwngud825@gmail.com>) id 1gDZKB-0008SB-V7
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 19 Oct 2018 18:16:39 +0000
-Received: from mail-ua1-f65.google.com ([209.85.222.65])
+ (envelope-from <jaegeuk@kernel.org>) id 1gDdV0-0003q6-Ea
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 19 Oct 2018 22:44:06 +0000
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1gDZKA-0089xT-3k
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 19 Oct 2018 18:16:39 +0000
-Received: by mail-ua1-f65.google.com with SMTP id b3so7767118uak.3
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 19 Oct 2018 11:16:37 -0700 (PDT)
-In-Reply-To: <20181017023404.GB77619@jaegeuk-macbookpro.roam.corp.google.com>
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1gDdUz-008R0w-6u
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 19 Oct 2018 22:44:06 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,70 +26,34 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This does seem to fix the problem I've been having.
+This patch adds a build option to relax kernel version and release string to
+trigger full scan.
 
-I was encountering all I/Os to be blocked on my Android device
-almost on a daily basis, but after this patch I'm rock solid for almost a week.
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ lib/libf2fs.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-I'd appreciate it if you could add the following tags:
-Reported-by: Park Ju Hyung <qkrwngud825@gmail.com>
-Tested-by: Park Ju Hyung <qkrwngud825@gmail.com>
-
-Also, a little additional note would be helpful
-for those who are unfamiliar with f2fs:
-This fixes a deadlock causing all I/Os to be blocked during heavy GC.
-
-Thanks,
-On Wed, Oct 17, 2018 at 11:34 AM Jaegeuk Kim <jaegeuk@kernel.org> wrote:
->
-> This reverts commit 66110abc4c931f879d70e83e1281f891699364bf.
->
-> If we clear the cold data flag out of the writeback flow, we can miscount
-> -1 by end_io.
->
-> Balancing F2FS Async:
->  - IO (CP:    1, Data:   -1, Flush: (   0    0    1), Discard: (   ...
->
-> GC thread:                              IRQ
-> - move_data_page()
->  - set_page_dirty()
->   - clear_cold_data()
->                                         - f2fs_write_end_io()
->                                          - type = WB_DATA_TYPE(page);
->                                            here, we get wrong type
->                                          - dec_page_count(sbi, type);
->  - f2fs_wait_on_page_writeback()
->
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/data.c | 4 ----
->  1 file changed, 4 deletions(-)
->
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 3f272c18fb61..0d0b4dd55b04 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -2650,10 +2650,6 @@ static int f2fs_set_data_page_dirty(struct page *page)
->         if (!PageUptodate(page))
->                 SetPageUptodate(page);
->
-> -       /* don't remain PG_checked flag which was set during GC */
-> -       if (is_cold_data(page))
-> -               clear_cold_data(page);
-> -
->         if (f2fs_is_atomic_file(inode) && !f2fs_is_commit_atomic_write(inode)) {
->                 if (!IS_ATOMIC_WRITTEN_PAGE(page)) {
->                         f2fs_register_inmem_page(inode, page);
-> --
-> 2.19.0.605.g01d371f741-goog
->
->
->
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index fd3e006..bf2830d 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -744,8 +744,13 @@ void get_kernel_uname_version(__u8 *version)
+ 	if (uname(&buf))
+ 		return;
+ 
++#if !defined(WITH_KERNEL_VERSION)
+ 	snprintf((char *)version,
+ 		VERSION_LEN, "%s %s", buf.release, buf.version);
++#else
++	snprintf((char *)version,
++		VERSION_LEN, "%s", buf.release);
++#endif
+ #else
+ 	memset(version, 0, VERSION_LEN);
+ #endif
+-- 
+2.19.0.605.g01d371f741-goog
