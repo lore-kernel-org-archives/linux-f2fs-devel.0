@@ -1,221 +1,133 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: add bio cache for IPU
-Date: Tue, 23 Oct 2018 16:38:17 +0800
-Message-ID: <20181023083817.3466-1-yuchao0@huawei.com>
+From: Phillip Potter <phil@philpotter.co.uk>
+Subject: [RFC][PATCH v2 08/10] f2fs: use common file type conversion
+Date: Tue, 23 Oct 2018 21:20:02 +0100
+Message-ID: <20181023202002.GA15738@pathfinder>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1gEsCw-0004CK-95
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Oct 2018 08:38:34 +0000
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gEsCu-008glv-0z
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Oct 2018 08:38:34 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, amir73il@gmail.com, viro@zeniv.linux.org.uk, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SQLite in Wal mode may trigger sequential IPU write in db-wal file, after
-commit d1b3e72d5490 ("f2fs: submit bio of in-place-update pages"), we
-lost the chance of merging page in inner managed bio cache, result in
-submitting more small-sized IO.
+Deduplicate the f2fs file type conversion implementation.
 
-So let's add temporary bio in writepages() to cache mergeable write IO as
-much as possible.
+Original patch by Amir Goldstein.
 
-Test case:
-1. xfs_io -f /mnt/f2fs/file -c "pwrite 0 65536" -c "fsync"
-2. xfs_io -f /mnt/f2fs/file -c "pwrite 0 65536" -c "fsync"
+v2:
+- Rebased against Linux 4.19 by Phillip Potter
+- Compile-time checks added by Phillip Potter to make
+  sure the F2FS_FT_x enum values stay same as FT_x values
 
-Before:
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65544, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65552, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65560, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65568, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65576, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65584, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65592, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65600, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65608, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65616, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65624, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65632, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65640, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65648, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65656, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65664, size = 4096
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), NODE, sector = 57352, size = 4096
+v1:
+- Initial implementation
 
-After:
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65544, size = 65536
-f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), NODE, sector = 57368, size = 4096
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
 ---
- fs/f2fs/data.c    | 57 +++++++++++++++++++++++++++++++++++++++++++++--
- fs/f2fs/f2fs.h    |  3 +++
- fs/f2fs/segment.c |  5 ++++-
- 3 files changed, 62 insertions(+), 3 deletions(-)
+ fs/f2fs/dir.c           | 43 +++++++++++++++++------------------------
+ fs/f2fs/inline.c        |  2 +-
+ include/linux/f2fs_fs.h |  8 +++++---
+ 3 files changed, 24 insertions(+), 29 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 01b7f59523dc..0c8f18dc140d 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -491,6 +491,49 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
- 	return 0;
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index ecc3a4e2be96..dcb503da0d86 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -39,37 +39,30 @@ static unsigned int bucket_blocks(unsigned int level)
+ 		return 4;
  }
  
-+int f2fs_merge_page_bio(struct f2fs_io_info *fio)
-+{
-+	struct bio *bio = *fio->bio;
-+	struct page *page = fio->encrypted_page ?
-+			fio->encrypted_page : fio->page;
-+
-+	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
-+			__is_meta_io(fio) ? META_GENERIC : DATA_GENERIC))
-+		return -EFAULT;
-+
-+	trace_f2fs_submit_page_bio(page, fio);
-+	f2fs_trace_ios(fio, 0);
-+
-+	if (bio && (*fio->last_block + 1 != fio->new_blkaddr ||
-+			!__same_bdev(fio->sbi, fio->new_blkaddr, bio))) {
-+		__submit_bio(fio->sbi, bio, fio->type);
-+		bio = NULL;
-+	}
-+alloc_new:
-+	if (!bio) {
-+		bio = __bio_alloc(fio->sbi, fio->new_blkaddr, fio->io_wbc,
-+				BIO_MAX_PAGES, false, fio->type, fio->temp);
-+		*fio->last_block = fio->new_blkaddr;
-+		bio_set_op_attrs(bio, fio->op, fio->op_flags);
-+	}
-+
-+	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
-+		__submit_bio(fio->sbi, bio, fio->type);
-+		bio = NULL;
-+		goto alloc_new;
-+	}
-+
-+	if (fio->io_wbc)
-+		wbc_account_io(fio->io_wbc, page, PAGE_SIZE);
-+
-+	*fio->last_block = fio->new_blkaddr;
-+
-+	inc_page_count(fio->sbi, WB_DATA_TYPE(fio->page));
-+
-+	*fio->bio = bio;
-+	return 0;
-+}
-+
- void f2fs_submit_page_write(struct f2fs_io_info *fio)
+-static unsigned char f2fs_filetype_table[F2FS_FT_MAX] = {
+-	[F2FS_FT_UNKNOWN]	= DT_UNKNOWN,
+-	[F2FS_FT_REG_FILE]	= DT_REG,
+-	[F2FS_FT_DIR]		= DT_DIR,
+-	[F2FS_FT_CHRDEV]	= DT_CHR,
+-	[F2FS_FT_BLKDEV]	= DT_BLK,
+-	[F2FS_FT_FIFO]		= DT_FIFO,
+-	[F2FS_FT_SOCK]		= DT_SOCK,
+-	[F2FS_FT_SYMLINK]	= DT_LNK,
+-};
+-
+-static unsigned char f2fs_type_by_mode[S_IFMT >> S_SHIFT] = {
+-	[S_IFREG >> S_SHIFT]	= F2FS_FT_REG_FILE,
+-	[S_IFDIR >> S_SHIFT]	= F2FS_FT_DIR,
+-	[S_IFCHR >> S_SHIFT]	= F2FS_FT_CHRDEV,
+-	[S_IFBLK >> S_SHIFT]	= F2FS_FT_BLKDEV,
+-	[S_IFIFO >> S_SHIFT]	= F2FS_FT_FIFO,
+-	[S_IFSOCK >> S_SHIFT]	= F2FS_FT_SOCK,
+-	[S_IFLNK >> S_SHIFT]	= F2FS_FT_SYMLINK,
+-};
+-
+ static void set_de_type(struct f2fs_dir_entry *de, umode_t mode)
  {
- 	struct f2fs_sb_info *sbi = fio->sbi;
-@@ -1899,6 +1942,8 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+-	de->file_type = f2fs_type_by_mode[(mode & S_IFMT) >> S_SHIFT];
++	/*
++	 * compile-time asserts that generic FT_x types
++	 * still match F2FS_FT_x types - no need to list
++	 * in other functions as well as build will
++	 * fail either way
++	 */
++	BUILD_BUG_ON(F2FS_FT_UNKNOWN != FT_UNKNOWN);
++	BUILD_BUG_ON(F2FS_FT_REG_FILE != FT_REG_FILE);
++	BUILD_BUG_ON(F2FS_FT_DIR != FT_DIR);
++	BUILD_BUG_ON(F2FS_FT_CHRDEV != FT_CHRDEV);
++	BUILD_BUG_ON(F2FS_FT_BLKDEV != FT_BLKDEV);
++	BUILD_BUG_ON(F2FS_FT_FIFO != FT_FIFO);
++	BUILD_BUG_ON(F2FS_FT_SOCK != FT_SOCK);
++	BUILD_BUG_ON(F2FS_FT_SYMLINK != FT_SYMLINK);
++	BUILD_BUG_ON(F2FS_FT_MAX != FT_MAX);
++
++	de->file_type = fs_umode_to_ftype(mode);
  }
  
- static int __write_data_page(struct page *page, bool *submitted,
-+				struct bio **bio,
-+				sector_t *last_block,
- 				struct writeback_control *wbc,
- 				enum iostat_type io_type)
+ unsigned char f2fs_get_de_type(struct f2fs_dir_entry *de)
  {
-@@ -1924,6 +1969,8 @@ static int __write_data_page(struct page *page, bool *submitted,
- 		.need_lock = LOCK_RETRY,
- 		.io_type = io_type,
- 		.io_wbc = wbc,
-+		.bio = bio,
-+		.last_block = last_block,
- 	};
- 
- 	trace_f2fs_writepage(page, DATA);
-@@ -2051,7 +2098,7 @@ static int __write_data_page(struct page *page, bool *submitted,
- static int f2fs_write_data_page(struct page *page,
- 					struct writeback_control *wbc)
- {
--	return __write_data_page(page, NULL, wbc, FS_DATA_IO);
-+	return __write_data_page(page, NULL, NULL, NULL, wbc, FS_DATA_IO);
+-	if (de->file_type < F2FS_FT_MAX)
+-		return f2fs_filetype_table[de->file_type];
+-	return DT_UNKNOWN;
++	return fs_dtype(de->file_type);
  }
  
- /*
-@@ -2067,6 +2114,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 	int done = 0;
- 	struct pagevec pvec;
- 	struct f2fs_sb_info *sbi = F2FS_M_SB(mapping);
-+	struct bio *bio = NULL;
-+	sector_t last_block;
- 	int nr_pages;
- 	pgoff_t uninitialized_var(writeback_index);
- 	pgoff_t index;
-@@ -2154,7 +2203,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 			if (!clear_page_dirty_for_io(page))
- 				goto continue_unlock;
+ static unsigned long dir_block_index(unsigned int level,
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 115dc219344b..d47448904f66 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -460,7 +460,7 @@ static int f2fs_add_inline_entries(struct inode *dir, void *inline_dentry)
+ 		new_name.len = le16_to_cpu(de->name_len);
  
--			ret = __write_data_page(page, &submitted, wbc, io_type);
-+			ret = __write_data_page(page, &submitted, &bio,
-+						&last_block, wbc, io_type);
- 			if (unlikely(ret)) {
- 				/*
- 				 * keep nr_to_write, since vfs uses this to
-@@ -2201,6 +2251,9 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 	if (nwritten)
- 		f2fs_submit_merged_write_cond(F2FS_M_SB(mapping), mapping->host,
- 								NULL, 0, DATA);
-+	/* submit cached bio of IPU write */
-+	if (bio)
-+		__submit_bio(sbi, bio, DATA);
+ 		ino = le32_to_cpu(de->ino);
+-		fake_mode = f2fs_get_de_type(de) << S_SHIFT;
++		fake_mode = f2fs_get_de_type(de) << S_DT_SHIFT;
  
- 	return ret;
- }
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 8932276015f9..6af2a105529d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1042,6 +1042,8 @@ struct f2fs_io_info {
- 	bool retry;		/* need to reallocate block address */
- 	enum iostat_type io_type;	/* io type */
- 	struct writeback_control *io_wbc; /* writeback control */
-+	struct bio **bio;		/* bio for ipu */
-+	sector_t *last_block;		/* last block number in bio */
- 	unsigned char version;		/* version of the node */
+ 		err = f2fs_add_regular_entry(dir, &new_name, NULL, NULL,
+ 							ino, fake_mode);
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index f70f8ac9c4f4..fb8ad4d87132 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -524,7 +524,11 @@ struct f2fs_dentry_block {
+ 	__u8 filename[NR_DENTRY_IN_BLOCK][F2FS_SLOT_LEN];
+ } __packed;
+ 
+-/* file types used in inode_info->flags */
++/*
++ * file types used in inode_info->flags
++ *
++ * Values should match common file type values in file_type.h.
++ */
+ enum {
+ 	F2FS_FT_UNKNOWN,
+ 	F2FS_FT_REG_FILE,
+@@ -537,8 +541,6 @@ enum {
+ 	F2FS_FT_MAX
  };
  
-@@ -3085,6 +3087,7 @@ void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
- 				nid_t ino, enum page_type type);
- void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi);
- int f2fs_submit_page_bio(struct f2fs_io_info *fio);
-+int f2fs_merge_page_bio(struct f2fs_io_info *fio);
- void f2fs_submit_page_write(struct f2fs_io_info *fio);
- struct block_device *f2fs_target_device(struct f2fs_sb_info *sbi,
- 			block_t blk_addr, struct bio *bio);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 3aa2f00262b3..b51b182dd7f4 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3194,7 +3194,10 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
+-#define S_SHIFT 12
+-
+ #define	F2FS_DEF_PROJID		0	/* default project ID */
  
- 	stat_inc_inplace_blocks(fio->sbi);
- 
--	err = f2fs_submit_page_bio(fio);
-+	if (fio->bio)
-+		err = f2fs_merge_page_bio(fio);
-+	else
-+		err = f2fs_submit_page_bio(fio);
- 	if (!err)
- 		update_device_state(fio);
- 
+ #endif  /* _LINUX_F2FS_FS_H */
 -- 
-2.18.0.rc1
+2.17.2
