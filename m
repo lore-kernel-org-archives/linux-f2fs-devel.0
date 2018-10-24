@@ -1,195 +1,65 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 1/3] f2fs: introduce __is_large_section() for
- cleanup
-Date: Wed, 24 Oct 2018 18:37:26 +0800
-Message-ID: <20181024103728.9870-1-yuchao0@huawei.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: [PATCH v2] f2fs: only flush the single temp bio cache which owns the target page
+Date: Wed, 24 Oct 2018 19:35:45 +0800
+Message-ID: <1540380945-18114-1-git-send-email-yunlong.song@huawei.com>
+References: <1540368651-14353-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1gFGXs-0001H0-Lo
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 24 Oct 2018 10:37:48 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gFGXq-00DsiV-VI
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 24 Oct 2018 10:37:48 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1540368651-14353-1-git-send-email-yunlong.song@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Introduce a wrapper __is_large_section() to clean up codes.
+Previously, when f2fs finds which temp bio cache owns the target page,
+it will flush all the three temp bio caches, but we only need to flush
+one single bio cache indeed, which can help to keep bio merged.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 ---
- fs/f2fs/debug.c   |  2 +-
- fs/f2fs/f2fs.h    |  2 ++
- fs/f2fs/file.c    |  2 +-
- fs/f2fs/gc.c      |  4 ++--
- fs/f2fs/segment.c | 16 ++++++++--------
- fs/f2fs/segment.h |  2 +-
- 6 files changed, 15 insertions(+), 13 deletions(-)
+ fs/f2fs/data.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 139b4d5c83d5..e327eefdbc02 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -197,7 +197,7 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
- 	si->base_mem += 2 * SIT_VBLOCK_MAP_SIZE * MAIN_SEGS(sbi);
- 	si->base_mem += SIT_VBLOCK_MAP_SIZE * MAIN_SEGS(sbi);
- 	si->base_mem += SIT_VBLOCK_MAP_SIZE;
--	if (sbi->segs_per_sec > 1)
-+	if (__is_large_section(sbi))
- 		si->base_mem += MAIN_SECS(sbi) * sizeof(struct sec_entry);
- 	si->base_mem += __bitmap_size(sbi, SIT_BITMAP);
- 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index b60ab0b78be5..e57e7874d162 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2767,6 +2767,8 @@ static inline void f2fs_update_iostat(struct f2fs_sb_info *sbi,
- 	spin_unlock(&sbi->iostat_lock);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 106f116..882e217 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -396,13 +396,17 @@ static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
  }
  
-+#define __is_large_section(sbi)		((sbi)->segs_per_sec > 1)
-+
- #define __is_meta_io(fio) (PAGE_TYPE_OF_BIO(fio->type) == META &&	\
- 				(!is_read_io(fio->op) || fio->is_meta))
- 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 82f144052fce..a114eacc0d7e 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2560,7 +2560,7 @@ static int f2fs_ioc_flush_device(struct file *filp, unsigned long arg)
- 		return -EFAULT;
- 
- 	if (sbi->s_ndevs <= 1 || sbi->s_ndevs - 1 <= range.dev_num ||
--			sbi->segs_per_sec != 1) {
-+			__is_large_section(sbi)) {
- 		f2fs_msg(sbi->sb, KERN_WARNING,
- 			"Can't flush %u in %d for segs_per_sec %u != 1\n",
- 				range.dev_num, sbi->s_ndevs,
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index a07241fb8537..34b9d56f5f9e 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1099,7 +1099,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
- 	int submitted = 0;
- 
- 	/* readahead multi ssa blocks those have contiguous address */
--	if (sbi->segs_per_sec > 1)
-+	if (__is_large_section(sbi))
- 		f2fs_ra_meta_pages(sbi, GET_SUM_BLOCK(sbi, segno),
- 					sbi->segs_per_sec, META_SSA, true);
- 
-@@ -1307,7 +1307,7 @@ void f2fs_build_gc_manager(struct f2fs_sb_info *sbi)
- 	sbi->gc_pin_file_threshold = DEF_GC_FAILED_PINNED_FILES;
- 
- 	/* give warm/cold data area from slower device */
--	if (sbi->s_ndevs && sbi->segs_per_sec == 1)
-+	if (sbi->s_ndevs && !__is_large_section(sbi))
- 		SIT_I(sbi)->last_victim[ALLOC_NEXT] =
- 				GET_SEGNO(sbi, FDEV(0).end_blk) + 1;
- }
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 63b109679281..b0e6331a5d95 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1884,7 +1884,7 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
- 	unsigned int start = 0, end = -1;
- 	unsigned int secno, start_segno;
- 	bool force = (cpc->reason & CP_DISCARD);
--	bool need_align = test_opt(sbi, LFS) && sbi->segs_per_sec > 1;
-+	bool need_align = test_opt(sbi, LFS) && __is_large_section(sbi);
- 
- 	mutex_lock(&dirty_i->seglist_lock);
- 
-@@ -1916,7 +1916,7 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
- 					(end - 1) <= cpc->trim_end)
- 				continue;
- 
--		if (!test_opt(sbi, LFS) || sbi->segs_per_sec == 1) {
-+		if (!test_opt(sbi, LFS) || !__is_large_section(sbi)) {
- 			f2fs_issue_discard(sbi, START_BLOCK(sbi, start),
- 				(end - start) << sbi->log_blocks_per_seg);
- 			continue;
-@@ -2148,7 +2148,7 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
- 	/* update total number of valid blocks to be written in ckpt area */
- 	SIT_I(sbi)->written_valid_blocks += del;
- 
--	if (sbi->segs_per_sec > 1)
-+	if (__is_large_section(sbi))
- 		get_sec_entry(sbi, segno)->valid_blocks += del;
- }
- 
-@@ -2414,7 +2414,7 @@ static void reset_curseg(struct f2fs_sb_info *sbi, int type, int modified)
- static unsigned int __get_next_segno(struct f2fs_sb_info *sbi, int type)
+ static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
+-				enum page_type type, enum temp_type temp)
++				struct inode *inode, struct page *page, nid_t ino,
++				enum page_type type, enum temp_type temp, bool force)
  {
- 	/* if segs_per_sec is large than 1, we need to keep original policy. */
--	if (sbi->segs_per_sec != 1)
-+	if (__is_large_section(sbi))
- 		return CURSEG_I(sbi, type)->segno;
+ 	enum page_type btype = PAGE_TYPE_OF_BIO(type);
+ 	struct f2fs_bio_info *io = sbi->write_io[btype] + temp;
  
- 	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
-@@ -2724,7 +2724,7 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
- 	struct discard_policy dpolicy;
- 	unsigned long long trimmed = 0;
- 	int err = 0;
--	bool need_align = test_opt(sbi, LFS) && sbi->segs_per_sec > 1;
-+	bool need_align = test_opt(sbi, LFS) && __is_large_section(sbi);
+ 	down_write(&io->io_rwsem);
  
- 	if (start >= MAX_BLKADDR(sbi) || range->len < sbi->blocksize)
- 		return -EINVAL;
-@@ -3885,7 +3885,7 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
- 	if (!sit_i->tmp_map)
- 		return -ENOMEM;
++	if (!force && !__has_merged_page(io, inode, page, ino))
++		goto out;
++
+ 	/* change META to META_FLUSH in the checkpoint procedure */
+ 	if (type >= META_FLUSH) {
+ 		io->fio.type = META_FLUSH;
+@@ -412,6 +416,7 @@ static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
+ 			io->fio.op_flags |= REQ_PREFLUSH | REQ_FUA;
+ 	}
+ 	__submit_merged_bio(io);
++out:
+ 	up_write(&io->io_rwsem);
+ }
  
--	if (sbi->segs_per_sec > 1) {
-+	if (__is_large_section(sbi)) {
- 		sit_i->sec_entries =
- 			f2fs_kvzalloc(sbi, array_size(sizeof(struct sec_entry),
- 						      MAIN_SECS(sbi)),
-@@ -4040,7 +4040,7 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
- 					se->valid_blocks;
- 			}
+@@ -426,7 +431,7 @@ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
  
--			if (sbi->segs_per_sec > 1)
-+			if (__is_large_section(sbi))
- 				get_sec_entry(sbi, start)->valid_blocks +=
- 							se->valid_blocks;
- 		}
-@@ -4084,7 +4084,7 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
- 			sbi->discard_blks -= se->valid_blocks;
- 		}
+ 	for (temp = HOT; temp < NR_TEMP_TYPE; temp++) {
  
--		if (sbi->segs_per_sec > 1) {
-+		if (__is_large_section(sbi)) {
- 			get_sec_entry(sbi, start)->valid_blocks +=
- 							se->valid_blocks;
- 			get_sec_entry(sbi, start)->valid_blocks -=
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index ab3465faddf1..a77f76f528b6 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -333,7 +333,7 @@ static inline unsigned int get_valid_blocks(struct f2fs_sb_info *sbi,
- 	 * In order to get # of valid blocks in a section instantly from many
- 	 * segments, f2fs manages two counting structures separately.
- 	 */
--	if (use_section && sbi->segs_per_sec > 1)
-+	if (use_section && __is_large_section(sbi))
- 		return get_sec_entry(sbi, segno)->valid_blocks;
- 	else
- 		return get_seg_entry(sbi, segno)->valid_blocks;
+-		__f2fs_submit_merged_write(sbi, type, temp);
++		__f2fs_submit_merged_write(sbi, inode, page, ino, type, temp, force);
+ 
+ 		/* TODO: use HOT temp only for meta pages now. */
+ 		if (type >= META)
 -- 
-2.18.0.rc1
+1.8.5.2
