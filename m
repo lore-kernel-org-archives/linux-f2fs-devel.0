@@ -1,39 +1,28 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: fix to be aware discard/preflush command in is_idle()
-Date: Wed, 24 Oct 2018 17:29:36 +0800
-Message-ID: <20181024092936.129587-1-yuchao0@huawei.com>
+Subject: Re: [PATCH v2] f2fs: fix count of seg_freed to make sec_freed correct
+Date: Wed, 24 Oct 2018 17:31:33 +0800
+Message-ID: <6eed9a3c-120e-f920-58cd-7ce2a2b9bc16@huawei.com>
+References: <1539168739-79848-1-git-send-email-yunlong.song@huawei.com>
+ <1540368510-14270-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1540368510-14270-1-git-send-email-yunlong.song@huawei.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch adds missing in-flight discard/preflush command count check
-in is_idle().
+On 2018/10/24 16:08, Yunlong Song wrote:
+> When sbi->segs_per_sec > 1, and if some segno has 0 valid blocks before
+> gc starts, do_garbage_collect will skip counting seg_freed++, and this
+> will cause seg_freed < sbi->segs_per_sec and finally skip sec_freed++.
+> 
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2:
-- add in-flight preflush count check as well.
- fs/f2fs/f2fs.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 6af2a105529d..70009709d50c 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2156,7 +2156,9 @@ static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
- {
- 	if (get_pages(sbi, F2FS_RD_DATA) || get_pages(sbi, F2FS_RD_NODE) ||
- 		get_pages(sbi, F2FS_RD_META) || get_pages(sbi, F2FS_WB_DATA) ||
--		get_pages(sbi, F2FS_WB_CP_DATA))
-+		get_pages(sbi, F2FS_WB_CP_DATA) ||
-+		atomic_read(&SM_I(sbi)->dcc_info->issing_discard) ||
-+		atomic_read(&SM_I(sbi)->fcc_info->issing_flush))
- 		return false;
- 	return f2fs_time_over(sbi, type);
- }
--- 
-2.18.0.rc1
+Thanks,
