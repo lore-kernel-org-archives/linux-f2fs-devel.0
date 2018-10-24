@@ -1,63 +1,37 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH] f2fs: only flush the single temp bio cache which owns the target page
-Date: Wed, 24 Oct 2018 16:10:51 +0800
-Message-ID: <1540368651-14353-1-git-send-email-yunlong.song@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to account preflush command for noflush_merge mode
+Date: Wed, 24 Oct 2018 17:24:10 +0800
+Message-ID: <20181024092410.127957-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Previously, when f2fs finds which temp bio cache owns the target page,
-it will flush all the three temp bio caches, but we only need to flush
-one single bio cache indeed, which can help to keep bio merged.
+Previously, we only account preflush command for flush_merge mode,
+so for noflush_merge mode, we can not know in-flight preflush
+command count, fix it.
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/data.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ fs/f2fs/segment.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 106f116..04ebbad 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -374,7 +374,7 @@ static bool __has_merged_page(struct f2fs_bio_info *io, struct inode *inode,
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index d0cc6330dd61..9f388098d174 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -666,7 +666,9 @@ int f2fs_issue_flush(struct f2fs_sb_info *sbi, nid_t ino)
+ 		return 0;
  
- static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
- 						struct page *page, nid_t ino,
--						enum page_type type)
-+						enum page_type type, enum temp_type *owner)
- {
- 	enum page_type btype = PAGE_TYPE_OF_BIO(type);
- 	enum temp_type temp;
-@@ -392,6 +392,10 @@ static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
- 		if (ret || btype == META)
- 			break;
+ 	if (!test_opt(sbi, FLUSH_MERGE)) {
++		atomic_inc(&fcc->issing_flush);
+ 		ret = submit_flush_wait(sbi, ino);
++		atomic_dec(&fcc->issing_flush);
+ 		atomic_inc(&fcc->issued_flush);
+ 		return ret;
  	}
-+	if (!ret || (!inode && !page && !ino))
-+		*owner = NR_TEMP_TYPE;
-+	else
-+		*owner = temp;
- 	return ret;
- }
- 
-@@ -421,9 +425,14 @@ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
- {
- 	enum temp_type temp;
- 
--	if (!force && !has_merged_page(sbi, inode, page, ino, type))
-+	if (!force && !has_merged_page(sbi, inode, page, ino, type, &temp))
- 		return;
- 
-+	if (!force && temp != NR_TEMP_TYPE) {
-+		__f2fs_submit_merged_write(sbi, type, temp);
-+		return;
-+	}
-+
- 	for (temp = HOT; temp < NR_TEMP_TYPE; temp++) {
- 
- 		__f2fs_submit_merged_write(sbi, type, temp);
 -- 
-1.8.5.2
+2.18.0.rc1
