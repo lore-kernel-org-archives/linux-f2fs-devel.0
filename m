@@ -1,74 +1,51 @@
 From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH] f2fs: avoid GC causing encrypted file corrupted
-Date: Wed, 24 Oct 2018 16:07:08 +0800
-Message-ID: <d2acab58-5f7f-1aed-3719-bc58c5c45b53@huawei.com>
-References: <1537274393-78441-1-git-send-email-yunlong.song@huawei.com>
+Subject: [PATCH v2] f2fs: fix count of seg_freed to make sec_freed correct
+Date: Wed, 24 Oct 2018 16:08:30 +0800
+Message-ID: <1540368510-14270-1-git-send-email-yunlong.song@huawei.com>
+References: <1539168739-79848-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1537274393-78441-1-git-send-email-yunlong.song@huawei.com>
-Content-Language: en-US
+In-Reply-To: <1539168739-79848-1-git-send-email-yunlong.song@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
 Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-ping...
+When sbi->segs_per_sec > 1, and if some segno has 0 valid blocks before
+gc starts, do_garbage_collect will skip counting seg_freed++, and this
+will cause seg_freed < sbi->segs_per_sec and finally skip sec_freed++.
 
-On 2018/9/18 20:39, Yunlong Song wrote:
-> The encrypted file may be corrupted by GC in following case:
->
-> Time 1: | segment 1 blkaddr = A |  GC -> | segment 2 blkaddr = B |
-> Encrypted block 1 is moved from blkaddr A of segment 1 to blkaddr B of
-> segment 2,
->
-> Time 2: | segment 1 blkaddr = B |  GC -> | segment 3 blkaddr = C |
->
-> Before page 1 is written back and if segment 2 become a victim, then
-> page 1 is moved from blkaddr B of segment 2 to blkaddr Cof segment 3,
-> during the GC process of Time 2, f2fs should wait for page 1 written back
-> before reading it, or move_data_block will read a garbage block from
-> blkaddr B since page is not written back to blkaddr B yet.
->
-> Commit 6aa58d8a ("f2fs: readahead encrypted block during GC") introduce
-> ra_data_block to read encrypted block, but it forgets to add
-> f2fs_wait_on_page_writeback to avoid racing between GC and flush.
->
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> ---
->   fs/f2fs/gc.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
->
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index a4c1a41..c55fb62 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -641,6 +641,14 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
->   	fio.page = page;
->   	fio.new_blkaddr = fio.old_blkaddr = dn.data_blkaddr;
->   
-> +	/*
-> +	 * don't cache encrypted data into meta inode until previous dirty
-> +	 * data were writebacked to avoid racing between GC and flush.
-> +	 */
-> +	f2fs_wait_on_page_writeback(page, DATA, true);
-> +
-> +	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
-> +
->   	fio.encrypted_page = f2fs_pagecache_get_page(META_MAPPING(sbi),
->   					dn.data_blkaddr,
->   					FGP_LOCK | FGP_CREAT, GFP_NOFS);
-> @@ -723,6 +731,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
->   	 */
->   	f2fs_wait_on_page_writeback(page, DATA, true);
->   
-> +	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
-> +
->   	err = f2fs_get_node_info(fio.sbi, dn.nid, &ni);
->   	if (err)
->   		goto put_out;
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/gc.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index a07241f..57841e9 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1130,9 +1130,9 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 					GET_SUM_BLOCK(sbi, segno));
+ 		f2fs_put_page(sum_page, 0);
+ 
+-		if (get_valid_blocks(sbi, segno, false) == 0 ||
+-				!PageUptodate(sum_page) ||
+-				unlikely(f2fs_cp_error(sbi)))
++		if (get_valid_blocks(sbi, segno, false) == 0)
++			goto freed;
++		if (!PageUptodate(sum_page) || unlikely(f2fs_cp_error(sbi)))
+ 			goto next;
+ 
+ 		sum = page_address(sum_page);
+@@ -1160,6 +1160,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 
+ 		stat_inc_seg_count(sbi, type, gc_type);
+ 
++freed:
+ 		if (gc_type == FG_GC &&
+ 				get_valid_blocks(sbi, segno, false) == 0)
+ 			seg_freed++;
 -- 
-Thanks,
-Yunlong Song
+1.8.5.2
