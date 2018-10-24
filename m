@@ -1,7 +1,7 @@
 From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH] f2fs: remove codes of unused wio_mutex
-Date: Wed, 24 Oct 2018 16:09:42 +0800
-Message-ID: <1540368582-14312-1-git-send-email-yunlong.song@huawei.com>
+Subject: [PATCH] f2fs: only flush the single temp bio cache which owns the target page
+Date: Wed, 24 Oct 2018 16:10:51 +0800
+Message-ID: <1540368651-14353-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -10,46 +10,54 @@ To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud
 Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
+Previously, when f2fs finds which temp bio cache owns the target page,
+it will flush all the three temp bio caches, but we only need to flush
+one single bio cache indeed, which can help to keep bio merged.
+
 Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 ---
- fs/f2fs/f2fs.h  | 1 -
- fs/f2fs/super.c | 5 +----
- 2 files changed, 1 insertion(+), 5 deletions(-)
+ fs/f2fs/data.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 56204a8..4dfa28d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1170,7 +1170,6 @@ struct f2fs_sb_info {
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 106f116..04ebbad 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -374,7 +374,7 @@ static bool __has_merged_page(struct f2fs_bio_info *io, struct inode *inode,
  
- 	/* for bio operations */
- 	struct f2fs_bio_info *write_io[NR_PAGE_TYPE];	/* for write bios */
--	struct mutex wio_mutex[NR_PAGE_TYPE - 1][NR_TEMP_TYPE];
- 						/* bio ordering for NODE/DATA */
- 	/* keep migration IO order for LFS mode */
- 	struct rw_semaphore io_order_lock;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index af58b2c..2d18de5 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2674,7 +2674,7 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
- static void init_sb_info(struct f2fs_sb_info *sbi)
+ static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
+ 						struct page *page, nid_t ino,
+-						enum page_type type)
++						enum page_type type, enum temp_type *owner)
  {
- 	struct f2fs_super_block *raw_super = sbi->raw_super;
--	int i, j;
-+	int i;
+ 	enum page_type btype = PAGE_TYPE_OF_BIO(type);
+ 	enum temp_type temp;
+@@ -392,6 +392,10 @@ static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
+ 		if (ret || btype == META)
+ 			break;
+ 	}
++	if (!ret || (!inode && !page && !ino))
++		*owner = NR_TEMP_TYPE;
++	else
++		*owner = temp;
+ 	return ret;
+ }
  
- 	sbi->log_sectors_per_block =
- 		le32_to_cpu(raw_super->log_sectors_per_block);
-@@ -2710,9 +2710,6 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+@@ -421,9 +425,14 @@ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
+ {
+ 	enum temp_type temp;
  
- 	INIT_LIST_HEAD(&sbi->s_list);
- 	mutex_init(&sbi->umount_mutex);
--	for (i = 0; i < NR_PAGE_TYPE - 1; i++)
--		for (j = HOT; j < NR_TEMP_TYPE; j++)
--			mutex_init(&sbi->wio_mutex[i][j]);
- 	init_rwsem(&sbi->io_order_lock);
- 	spin_lock_init(&sbi->cp_lock);
+-	if (!force && !has_merged_page(sbi, inode, page, ino, type))
++	if (!force && !has_merged_page(sbi, inode, page, ino, type, &temp))
+ 		return;
  
++	if (!force && temp != NR_TEMP_TYPE) {
++		__f2fs_submit_merged_write(sbi, type, temp);
++		return;
++	}
++
+ 	for (temp = HOT; temp < NR_TEMP_TYPE; temp++) {
+ 
+ 		__f2fs_submit_merged_write(sbi, type, temp);
 -- 
 1.8.5.2
