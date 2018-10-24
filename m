@@ -1,51 +1,55 @@
 From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH v2] f2fs: fix count of seg_freed to make sec_freed correct
-Date: Wed, 24 Oct 2018 16:08:30 +0800
-Message-ID: <1540368510-14270-1-git-send-email-yunlong.song@huawei.com>
-References: <1539168739-79848-1-git-send-email-yunlong.song@huawei.com>
+Subject: [PATCH] f2fs: remove codes of unused wio_mutex
+Date: Wed, 24 Oct 2018 16:09:42 +0800
+Message-ID: <1540368582-14312-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1539168739-79848-1-git-send-email-yunlong.song@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
 Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-When sbi->segs_per_sec > 1, and if some segno has 0 valid blocks before
-gc starts, do_garbage_collect will skip counting seg_freed++, and this
-will cause seg_freed < sbi->segs_per_sec and finally skip sec_freed++.
-
 Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/gc.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ fs/f2fs/f2fs.h  | 1 -
+ fs/f2fs/super.c | 5 +----
+ 2 files changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index a07241f..57841e9 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1130,9 +1130,9 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
- 					GET_SUM_BLOCK(sbi, segno));
- 		f2fs_put_page(sum_page, 0);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 56204a8..4dfa28d 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1170,7 +1170,6 @@ struct f2fs_sb_info {
  
--		if (get_valid_blocks(sbi, segno, false) == 0 ||
--				!PageUptodate(sum_page) ||
--				unlikely(f2fs_cp_error(sbi)))
-+		if (get_valid_blocks(sbi, segno, false) == 0)
-+			goto freed;
-+		if (!PageUptodate(sum_page) || unlikely(f2fs_cp_error(sbi)))
- 			goto next;
+ 	/* for bio operations */
+ 	struct f2fs_bio_info *write_io[NR_PAGE_TYPE];	/* for write bios */
+-	struct mutex wio_mutex[NR_PAGE_TYPE - 1][NR_TEMP_TYPE];
+ 						/* bio ordering for NODE/DATA */
+ 	/* keep migration IO order for LFS mode */
+ 	struct rw_semaphore io_order_lock;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index af58b2c..2d18de5 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2674,7 +2674,7 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ static void init_sb_info(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_super_block *raw_super = sbi->raw_super;
+-	int i, j;
++	int i;
  
- 		sum = page_address(sum_page);
-@@ -1160,6 +1160,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 	sbi->log_sectors_per_block =
+ 		le32_to_cpu(raw_super->log_sectors_per_block);
+@@ -2710,9 +2710,6 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
  
- 		stat_inc_seg_count(sbi, type, gc_type);
+ 	INIT_LIST_HEAD(&sbi->s_list);
+ 	mutex_init(&sbi->umount_mutex);
+-	for (i = 0; i < NR_PAGE_TYPE - 1; i++)
+-		for (j = HOT; j < NR_TEMP_TYPE; j++)
+-			mutex_init(&sbi->wio_mutex[i][j]);
+ 	init_rwsem(&sbi->io_order_lock);
+ 	spin_lock_init(&sbi->cp_lock);
  
-+freed:
- 		if (gc_type == FG_GC &&
- 				get_valid_blocks(sbi, segno, false) == 0)
- 			seg_freed++;
 -- 
 1.8.5.2
