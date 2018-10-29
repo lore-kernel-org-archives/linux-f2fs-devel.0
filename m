@@ -1,24 +1,24 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs-tools: add the max chunk size limit in
- sparse image
-Date: Mon, 29 Oct 2018 18:30:39 +0800
-Message-ID: <247d4b5f-51d7-83ec-75d5-98a4ee73143d@huawei.com>
-References: <1539609897-88068-1-git-send-email-gaoming20@huawei.com>
+Subject: Re: [RFC][PATCH v3 08/10] f2fs: use common file type
+ conversion
+Date: Mon, 29 Oct 2018 18:35:03 +0800
+Message-ID: <d9979cf6-899d-b264-35df-d765e6f0adba@huawei.com>
+References: <20181027005342.GA9982@pathfinder>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1gH4p5-0003bl-5T
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 29 Oct 2018 10:31:03 +0000
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ (envelope-from <yuchao0@huawei.com>) id 1gH4t9-0006xR-UE
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 29 Oct 2018 10:35:15 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gH4oz-006CoZ-5p
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 29 Oct 2018 10:31:03 +0000
-In-Reply-To: <1539609897-88068-1-git-send-email-gaoming20@huawei.com>
+ id 1gH4t8-006CxS-FW
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 29 Oct 2018 10:35:15 +0000
+In-Reply-To: <20181027005342.GA9982@pathfinder>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -29,15 +29,18 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Gao Ming <gaoming20@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
-Cc: harry.shen@huawei.com, weidu.du@huawei.com, wvitao.wang@huawei.com, wangfei66@huawei.com
+To: Phillip Potter <phil@philpotter.co.uk>, jaegeuk@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, amir73il@gmail.com, viro@zeniv.linux.org.uk, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/10/15 21:24, Gao Ming wrote:
-> Malloc Failure occurs in 32bit Windows, when using fastboot.exe flash the
->  f2fs sparse image filling with  up to 2G chunk size.
+On 2018/10/27 8:53, Phillip Potter wrote:
+> Deduplicate the f2fs file type conversion implementation - file systems
+> that use the same file types as defined by POSIX do not need to define
+> their own versions and can use the common helper functions decared in
+> fs_types.h and implemented in fs_types.c
 > 
-> Signed-off-by: Gao Ming <gaoming20@huawei.com>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Acked-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
