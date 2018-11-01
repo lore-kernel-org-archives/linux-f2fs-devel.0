@@ -1,29 +1,27 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 201555] [f2fs] Processes freezing periodically with
- f2fs root
-Date: Wed, 31 Oct 2018 12:53:59 +0000
-Message-ID: <bug-201555-202145-a5vPtSsOxU@https.bugzilla.kernel.org/>
-References: <bug-201555-202145@https.bugzilla.kernel.org/>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [BUG] Kernel BUG when mounting and then unmounting a
+ fuzzed F2FS image
+Date: Thu, 1 Nov 2018 09:12:55 +0800
+Message-ID: <10a2fd1d-4413-fca5-4c1a-cd2671b2bf42@huawei.com>
+References: <CAE5jQCfXKTdxPW2OKVyV9-49WqNmQT+mHsui3XXxDBJbkJ6=jA@mail.gmail.com>
+ <d7fd18ae-ac93-2c1a-1f6a-21b3c5da8de7@huawei.com>
+ <CAE5jQCdS5dfFBP7YxyJH-E6wM0pkJ=r4VXhepOuGJzcxBOL0EQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1gHq0c-000489-9R
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 31 Oct 2018 12:54:06 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1gI1Xo-0001Kz-Bl
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 01 Nov 2018 01:13:08 +0000
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gHq0a-00FkjA-AI
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 31 Oct 2018 12:54:06 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 9A88828A6B
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 31 Oct 2018 12:53:58 +0000 (UTC)
-In-Reply-To: <bug-201555-202145@https.bugzilla.kernel.org/>
+ id 1gI1Xm-004FKA-AD
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 01 Nov 2018 01:13:08 +0000
+In-Reply-To: <CAE5jQCdS5dfFBP7YxyJH-E6wM0pkJ=r4VXhepOuGJzcxBOL0EQ@mail.gmail.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,14 +31,95 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=201555
-
---- Comment #4 from Pierpaolo Valerio (gondsman@techgeek.co.in) ---
-Ok, I've compiled your dev branch and I'll report back in a few days (or
-earlier if the PC freezes again). Thanks!
-
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+SGkgQW5hdG9seSwKCk9uIDIwMTgvMTAvMzEgMTk6MDYsIEFuYXRvbHkgVHJvc2luZW5rbyB3cm90
+ZToKPiBIaSBDaGFvLAo+IAo+IEkgaGF2ZSB0ZXN0ZWQgdG9ydmFsZHMvbWFzdGVyIGFuZCBpdCB3
+b3JrcyBPSyB3aXRoIHJlc3BlY3QgdG8gdGhpcwoKVGhhbmtzIGZvciB5b3VyIHRlc3QuCgo+IHRl
+c3QgY2FzZS4gU28gcGxlYXNlIGV4Y3VzZSBtZSBmb3IgZGlzdHVyYmFuY2UuCgpJdCdzIG9rYXks
+IGFueXdheSwgaWYgdGhlcmUgaXMgYW55IGZ1cnRoZXIgcHJvYmxlbSwgcGxlYXNlIGxldCB1cyBr
+bm93LgoKVGhhbmtzLAoKPiAKPiBCZXN0IHJlZ2FyZHMKPiBBbmF0b2x5Cj4gCj4g0L/QvSwgMjkg
+0L7QutGCLiAyMDE4INCzLiDQsiAxNDoxNCwgQ2hhbyBZdSA8eXVjaGFvMEBodWF3ZWkuY29tPjoK
+Pj4KPj4gSGkgQW5hdG9seSwKPj4KPj4gQ291bGQgeW91IHBsZWFzZSB0cnkgcGVuZGluZyB2NS4w
+MHJjMSBvciB2NC4yMHJjMSwgc2luY2UgaW4gdGhpcyByb3VuZCB3ZQo+PiBoYXZlIGZpeGVkIHRo
+aXMgaXNzdWUgd2l0aCBiZWxvdyBjb21taXQ6Cj4+Cj4+IGVkYzU1YWFmMGQxNyAoImYyZnM6IGF2
+b2lkIGYyZnNfYnVnX29uIGlmIGYyZnNfZ2V0X21ldGFfcGFnZV9ub2ZhaWwgZ290IEVJTyIpCj4+
+Cj4+IFRoYW5rcywKPj4KPj4gT24gMjAxOC8xMC8yOCAxOTo1MCwgQW5hdG9seSBUcm9zaW5lbmtv
+IHdyb3RlOgo+Pj4gSGVsbG8sCj4+Pgo+Pj4gV2hlbiBtb3VudGluZyBhbmQgdGhlbiB1bm1vdW50
+aW5nIGEgZnV6emVkIEYyRlMgaW1hZ2UsIGEgQlVHIGlzCj4+PiB0cmlnZ2VyZWQgYXQgZnMvZjJm
+cy9jaGVja3BvaW50LmM6MTI3Lgo+Pj4KPj4+IEhvdyB0byByZXByb2R1Y2Ugd2l0aCBrdm0teGZz
+dGVzdHM6Cj4+PiAxKSBDaGVja291dCB2NC4xOSwgY29weSB4ODZfNjQtY29uZmlnLTQuMTQgdG8g
+LmNvbmZpZywgcGVyZm9ybSBgbWFrZQo+Pj4gb2xkZGVmY29uZmlnYCwgdGhlbiBjb21waWxlCj4+
+PiAyKSBQbGFjZSB0aGUgYXR0YWNoZWQgaW1hZ2UgKDEyOE0gdW5wYWNrZWQpIHRvIC90bXAva3Zt
+LXhmc3Rlc3RzLSRVU0VSCj4+PiAzKSBJbnNpZGUgdGhlIGBrdm0teGZzdGVzdHMgc2hlbGxgIGV4
+ZWN1dGU6Cj4+Pgo+Pj4gcm9vdEBrdm0teGZzdGVzdHM6fiMgbW91bnQgL3Z0bXAKPj4+IHJvb3RA
+a3ZtLXhmc3Rlc3RzOn4jIG1vdW50IC92dG1wL2YyZnMuaW1nIC9tbnQKPj4+IFsgICAxMS40NTY4
+NTddIEYyRlMtZnMgKGxvb3AwKTogRm91bmQgbmF0X2JpdHMgaW4gY2hlY2twb2ludAo+Pj4gWyAg
+IDExLjQ2MDM2MF0gRjJGUy1mcyAobG9vcDApOiBNb3VudGVkIHdpdGggY2hlY2twb2ludCB2ZXJz
+aW9uID0gMWM4YTYwMDEKPj4+IHJvb3RAa3ZtLXhmc3Rlc3RzOn4jIHVtb3VudCAvbW50Cj4+PiBb
+ICAgMTQuNTkyNzYxXSAtLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0KPj4+IFsg
+ICAxNC41OTMyMThdIGtlcm5lbCBCVUcgYXQgZnMvZjJmcy9jaGVja3BvaW50LmM6MTI3IQo+Pj4g
+WyAgIDE0LjU5MzczOV0gaW52YWxpZCBvcGNvZGU6IDAwMDAgWyMxXSBTTVAgUFRJCj4+PiBbICAg
+MTQuNTk0MTI5XSBDUFU6IDAgUElEOiAzNjggQ29tbTogdW1vdW50IE5vdCB0YWludGVkIDQuMTku
+MC14ZnN0ZXN0cyAjMQo+Pj4gWyAgIDE0LjU5NDcxMF0gSGFyZHdhcmUgbmFtZTogUUVNVSBTdGFu
+ZGFyZCBQQyAoaTQ0MEZYICsgUElJWCwgMTk5NiksCj4+PiBCSU9TIDEuMTEuMS0xdWJ1bnR1MSAw
+NC8wMS8yMDE0Cj4+PiBbICAgMTQuNTk1NDk3XSBSSVA6IDAwMTA6ZjJmc19nZXRfbWV0YV9wYWdl
+X25vZmFpbCsweDQxLzB4NTAKPj4+IFsgICAxNC41OTYwMzBdIENvZGU6IDAwIDAwIDRjIDg5IGU2
+IDQ4IDg5IGVmIGU4IDFjIGYzIGZmIGZmIDQ4IDNkIDAwCj4+PiBmMCBmZiBmZiA3NiAxNyA0OCA4
+MyBmOCBmYiA3NSAwNSA4MyBlYiAwMSA3NSBkZCAzMSBmNiA0OCA4OSBlZiBlOCBiZgo+Pj4gZmUg
+ZmYgZmYgPDBmPiAwYiA1YiA1ZCA0MSA1YyBjMyAwZiAxZiA4NCAwMCAwMCAwMCAwMCAwMCAwZiAx
+ZiA0NCAwMCAwMAo+Pj4gMzEgZDIKPj4+IFsgICAxNC41OTc3ODRdIFJTUDogMDAxODpmZmZmYjk1
+ZWMwOTVmYWQ4IEVGTEFHUzogMDAwMTAyOTYKPj4+IFsgICAxNC41OTgyNTddIFJBWDogZmZmZjk5
+ODJiOWQyZDI4MCBSQlg6IDAwMDAwMDAwMDAwMDAwMDkgUkNYOiAwMDAwMDAwMDAwMDAwMDAwCj4+
+PiBbICAgMTQuNTk4OTM1XSBSRFg6IGZmZmZmZmZmMDAwMDAwMDEgUlNJOiAwMDAwMDAwMDAwMDAw
+MDA3IFJESTogMDAwMDAwMDAwMDAwMDI0Ngo+Pj4gWyAgIDE0LjU5OTYwOF0gUkJQOiBmZmZmOTk4
+MmJhYmUwMDAwIFIwODogMDAwMDAwMDRkMGEyNDgwMyBSMDk6IDAwMDAwMDAwMDAwMDAwMDEKPj4+
+IFsgICAxNC42MDAyODZdIFIxMDogMDAwMDAwMDAwMDAwMDAwMSBSMTE6IDAwMDAwMDAwMDAwMDAw
+MDAgUjEyOiAwMDAwMDAwMDAxMjAxYWVmCj4+PiBbICAgMTQuNjAwOTUzXSBSMTM6IGZmZmY5OTgy
+YjlkMTRjMDAgUjE0OiAwMDAwMDAwMDAwOTAwOGVmIFIxNTogMDAwMDAwMDAwMDAwMDAwMQo+Pj4g
+WyAgIDE0LjYwMTYyNV0gRlM6ICAwMDAwMDAwMDAwMDAwMDAwKDAwMDApIEdTOmZmZmY5OTgyYmRh
+MDAwMDAoMDA2MykKPj4+IGtubEdTOjAwMDAwMDAwZjdiZGFiMDAKPj4+IFsgICAxNC42MDIzODRd
+IENTOiAgMDAxMCBEUzogMDAyYiBFUzogMDAyYiBDUjA6IDAwMDAwMDAwODAwNTAwMzMKPj4+IFsg
+ICAxNC42MDI4OTldIENSMjogMDAwMDAwMDA1NmM5NTQ2MCBDUjM6IDAwMDAwMDAwNzg1ZWEwMDYg
+Q1I0OiAwMDAwMDAwMDAwMzYwZWYwCj4+PiBbICAgMTQuNjAzNTUwXSBDYWxsIFRyYWNlOgo+Pj4g
+WyAgIDE0LjYwMzc3OV0gIF9fZmx1c2hfbmF0X2VudHJ5X3NldCsweDExOC8weDYyMAo+Pj4gWyAg
+IDE0LjYwNDE4Ml0gIGYyZnNfZmx1c2hfbmF0X2VudHJpZXMrMHgyMzkvMHgyOTAKPj4+IFsgICAx
+NC42MDQ1ODVdICA/IF9fc3VibWl0X21lcmdlZF93cml0ZV9jb25kKzB4YTcvMHgyMDAKPj4+IFsg
+ICAxNC42MDUwMjZdICA/IHVwX3dyaXRlKzB4MWMvMHg4MAo+Pj4gWyAgIDE0LjYwNTMyNF0gID8g
+X19zdWJtaXRfbWVyZ2VkX3dyaXRlX2NvbmQrMHhhNy8weDIwMAo+Pj4gWyAgIDE0LjYwNTc2NF0g
+IGYyZnNfd3JpdGVfY2hlY2twb2ludCsweDQ1Yy8weDcyMAo+Pj4gWyAgIDE0LjYwNjE2MV0gIGYy
+ZnNfc3luY19mcysweGI5LzB4MWEwCj4+PiBbICAgMTQuNjA2NDgyXSAgc3luY19maWxlc3lzdGVt
+KzB4NzEvMHg5MAo+Pj4gWyAgIDE0LjYwNjgxOF0gIGdlbmVyaWNfc2h1dGRvd25fc3VwZXIrMHgy
+Mi8weDEwMAo+Pj4gWyAgIDE0LjYwNzIxNF0gIGtpbGxfYmxvY2tfc3VwZXIrMHgyMS8weDUwCj4+
+PiBbICAgMTQuNjA3NTU4XSAga2lsbF9mMmZzX3N1cGVyKzB4NjcvMHhjMAo+Pj4gWyAgIDE0LjYw
+Nzg5M10gIGRlYWN0aXZhdGVfbG9ja2VkX3N1cGVyKzB4MmYvMHg3MAo+Pj4gWyAgIDE0LjYwODI5
+Ml0gIGNsZWFudXBfbW50KzB4M2IvMHg3MAo+Pj4gWyAgIDE0LjYwODU5OF0gIHRhc2tfd29ya19y
+dW4rMHg5ZS8weGQwCj4+PiBbICAgMTQuNjA4OTE5XSAgZXhpdF90b191c2VybW9kZV9sb29wKzB4
+YjcvMHhjMAo+Pj4gWyAgIDE0LjYwOTI5OV0gIGRvX2Zhc3Rfc3lzY2FsbF8zMisweDI2Ny8weDJm
+MAo+Pj4gWyAgIDE0LjYwOTY3Ml0gIGVudHJ5X1NZU0VOVEVSX2NvbXBhdCsweDg0LzB4OTYKPj4+
+IFsgICAxNC42MTAwODJdIC0tLVsgZW5kIHRyYWNlIGQxNWE0MTU1NGU2N2MwZWMgXS0tLQo+Pj4g
+WyAgIDE0LjYxMDUwMF0gUklQOiAwMDEwOmYyZnNfZ2V0X21ldGFfcGFnZV9ub2ZhaWwrMHg0MS8w
+eDUwCj4+PiBbICAgMTQuNjEwOTc5XSBDb2RlOiAwMCAwMCA0YyA4OSBlNiA0OCA4OSBlZiBlOCAx
+YyBmMyBmZiBmZiA0OCAzZCAwMAo+Pj4gZjAgZmYgZmYgNzYgMTcgNDggODMgZjggZmIgNzUgMDUg
+ODMgZWIgMDEgNzUgZGQgMzEgZjYgNDggODkgZWYgZTggYmYKPj4+IGZlIGZmIGZmIDwwZj4gMGIg
+NWIgNWQgNDEgNWMgYzMgMGYgMWYgODQgMDAgMDAgMDAgMDAgMDAgMGYgMWYgNDQgMDAgMDAKPj4+
+IDMxIGQyCj4+PiBbICAgMTQuNjEyNjMyXSBSU1A6IDAwMTg6ZmZmZmI5NWVjMDk1ZmFkOCBFRkxB
+R1M6IDAwMDEwMjk2Cj4+PiBbICAgMTQuNjEzMDk2XSBSQVg6IGZmZmY5OTgyYjlkMmQyODAgUkJY
+OiAwMDAwMDAwMDAwMDAwMDA5IFJDWDogMDAwMDAwMDAwMDAwMDAwMAo+Pj4gWyAgIDE0LjYxMzcy
+MF0gUkRYOiBmZmZmZmZmZjAwMDAwMDAxIFJTSTogMDAwMDAwMDAwMDAwMDAwNyBSREk6IDAwMDAw
+MDAwMDAwMDAyNDYKPj4+IFsgICAxNC42MTQzNDddIFJCUDogZmZmZjk5ODJiYWJlMDAwMCBSMDg6
+IDAwMDAwMDA0ZDBhMjQ4MDMgUjA5OiAwMDAwMDAwMDAwMDAwMDAxCj4+PiBbICAgMTQuNjE0OTc0
+XSBSMTA6IDAwMDAwMDAwMDAwMDAwMDEgUjExOiAwMDAwMDAwMDAwMDAwMDAwIFIxMjogMDAwMDAw
+MDAwMTIwMWFlZgo+Pj4gWyAgIDE0LjYxNTYxMF0gUjEzOiBmZmZmOTk4MmI5ZDE0YzAwIFIxNDog
+MDAwMDAwMDAwMDkwMDhlZiBSMTU6IDAwMDAwMDAwMDAwMDAwMDEKPj4+IFsgICAxNC42MTYyNDBd
+IEZTOiAgMDAwMDAwMDAwMDAwMDAwMCgwMDAwKSBHUzpmZmZmOTk4MmJkYTAwMDAwKDAwNjMpCj4+
+PiBrbmxHUzowMDAwMDAwMGY3YmRhYjAwCj4+PiBbICAgMTQuNjE2OTQ5XSBDUzogIDAwMTAgRFM6
+IDAwMmIgRVM6IDAwMmIgQ1IwOiAwMDAwMDAwMDgwMDUwMDMzCj4+PiBbICAgMTQuNjE3NDU3XSBD
+UjI6IDAwMDAwMDAwNTZjOTU0NjAgQ1IzOiAwMDAwMDAwMDc4NWVhMDA2IENSNDogMDAwMDAwMDAw
+MDM2MGVmMAo+Pj4gU2VnbWVudGF0aW9uIGZhdWx0Cj4+PiByb290QGt2bS14ZnN0ZXN0czp+Iwo+
+Pj4KPj4+IEJlc3QgcmVnYXJkcwo+Pj4gQW5hdG9seQo+Pj4KPj4KPiAKPiAuCj4gCgoKCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2
+ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0
+dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2
+ZWwK
