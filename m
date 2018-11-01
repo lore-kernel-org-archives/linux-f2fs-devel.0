@@ -1,363 +1,478 @@
 From: Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v2 11/12] ext4: add fs-verity read support
-Date: Thu,  1 Nov 2018 15:52:29 -0700
-Message-ID: <20181101225230.88058-12-ebiggers@kernel.org>
+Subject: [PATCH v2 04/12] fs-verity: add data verification hooks
+ for ->readpages()
+Date: Thu,  1 Nov 2018 15:52:22 -0700
+Message-ID: <20181101225230.88058-5-ebiggers@kernel.org>
 References: <20181101225230.88058-1-ebiggers@kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <ebiggers@kernel.org>) id 1gILr6-0007Nz-7a
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 01 Nov 2018 22:54:24 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1gILr4-00H4KL-E9
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 01 Nov 2018 22:54:24 +0000
 In-Reply-To: <20181101225230.88058-1-ebiggers@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-fscrypt@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Victor Hsieh <victorhsieh@google.com>, Chandan Rajendra <chandan@linux.vnet.ibm.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: "Theodore Y . Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, linux-integrity@vger.kernel.org, linux-ext4@vger.kernel.org, Victor Hsieh <victorhsieh@google.com>
 
 From: Eric Biggers <ebiggers@google.com>
 
-Make ext4_mpage_readpages() verify data as it is read from fs-verity
-files, using the helper functions from fs/verity/.
+Add functions that verify data pages that have been read from a
+fs-verity file, against that file's Merkle tree.  These will be called
+from filesystems' ->readpage() and ->readpages() methods.
 
-To be compatible with fscrypt, like in the corresponding f2fs patch this
-required refactoring the decryption workflow into a generic "post-read
-processing" workflow, which can do decryption, verification, or both.
+Since data verification can block, a workqueue is provided for these
+methods to enqueue verification work from their bio completion callback.
 
-Co-developed-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/ext4/ext4.h     |   2 +
- fs/ext4/inode.c    |   3 +
- fs/ext4/readpage.c | 209 ++++++++++++++++++++++++++++++++++++++-------
- fs/ext4/super.c    |   9 +-
- 4 files changed, 191 insertions(+), 32 deletions(-)
+ fs/verity/Makefile           |   2 +-
+ fs/verity/fsverity_private.h |   3 +
+ fs/verity/setup.c            |  26 ++-
+ fs/verity/verify.c           | 298 +++++++++++++++++++++++++++++++++++
+ include/linux/fsverity.h     |  33 ++++
+ 5 files changed, 360 insertions(+), 2 deletions(-)
+ create mode 100644 fs/verity/verify.c
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index e5475a629ed80..80957f9d3cbef 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -3101,6 +3101,8 @@ static inline void ext4_set_de_type(struct super_block *sb,
- extern int ext4_mpage_readpages(struct address_space *mapping,
- 				struct list_head *pages, struct page *page,
- 				unsigned nr_pages, bool is_readahead);
-+extern int __init ext4_init_post_read_processing(void);
-+extern void ext4_exit_post_read_processing(void);
+diff --git a/fs/verity/Makefile b/fs/verity/Makefile
+index 39e123805c827..a6c7cefb61ab7 100644
+--- a/fs/verity/Makefile
++++ b/fs/verity/Makefile
+@@ -1,3 +1,3 @@
+ obj-$(CONFIG_FS_VERITY)	+= fsverity.o
  
- /* symlink.c */
- extern const struct inode_operations ext4_encrypted_symlink_inode_operations;
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index c624c83bbad26..d7019f5dca6f1 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3884,6 +3884,9 @@ static ssize_t ext4_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 		return 0;
- #endif
- 
-+	if (ext4_verity_inode(inode))
-+		return 0;
-+
- 	/*
- 	 * If we are doing data journalling we don't support O_DIRECT
- 	 */
-diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-index f461d75ac049f..d3dd1ff745db8 100644
---- a/fs/ext4/readpage.c
-+++ b/fs/ext4/readpage.c
-@@ -47,6 +47,11 @@
- 
- #include "ext4.h"
- 
-+#define NUM_PREALLOC_POST_READ_CTXS	128
-+
-+static struct kmem_cache *bio_post_read_ctx_cache;
-+static mempool_t *bio_post_read_ctx_pool;
-+
- static inline bool ext4_bio_encrypted(struct bio *bio)
- {
- #ifdef CONFIG_EXT4_FS_ENCRYPTION
-@@ -56,6 +61,124 @@ static inline bool ext4_bio_encrypted(struct bio *bio)
- #endif
+-fsverity-y := hash_algs.o setup.o
++fsverity-y := hash_algs.o setup.o verify.o
+diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
+index acc29825a0ed7..dfdbac3874d74 100644
+--- a/fs/verity/fsverity_private.h
++++ b/fs/verity/fsverity_private.h
+@@ -95,4 +95,7 @@ static inline bool set_fsverity_info(struct inode *inode,
+ 	return cmpxchg_release(&inode->i_verity_info, NULL, vi) == NULL;
  }
  
-+/* postprocessing steps for read bios */
-+enum bio_post_read_step {
-+	STEP_INITIAL = 0,
-+	STEP_DECRYPT,
-+	STEP_VERITY,
-+};
++/* verify.c */
++extern struct workqueue_struct *fsverity_read_workqueue;
 +
-+struct bio_post_read_ctx {
-+	struct bio *bio;
-+	struct work_struct work;
-+	unsigned int cur_step;
-+	unsigned int enabled_steps;
-+};
+ #endif /* _FSVERITY_PRIVATE_H */
+diff --git a/fs/verity/setup.c b/fs/verity/setup.c
+index 925970fbe084d..184bdc96abe51 100644
+--- a/fs/verity/setup.c
++++ b/fs/verity/setup.c
+@@ -801,18 +801,42 @@ EXPORT_SYMBOL_GPL(fsverity_full_i_size);
+ 
+ static int __init fsverity_module_init(void)
+ {
++	int err;
 +
-+static void __read_end_io(struct bio *bio)
++	/*
++	 * Use an unbound workqueue to allow bios to be verified in parallel
++	 * even when they happen to complete on the same CPU.  This sacrifices
++	 * locality, but it's worthwhile since hashing is CPU-intensive.
++	 *
++	 * Also use a high-priority workqueue to prioritize verification work,
++	 * which blocks reads from completing, over regular application tasks.
++	 */
++	err = -ENOMEM;
++	fsverity_read_workqueue = alloc_workqueue("fsverity_read_queue",
++						  WQ_UNBOUND | WQ_HIGHPRI,
++						  num_online_cpus());
++	if (!fsverity_read_workqueue)
++		goto error;
++
++	err = -ENOMEM;
+ 	fsverity_info_cachep = KMEM_CACHE(fsverity_info, SLAB_RECLAIM_ACCOUNT);
+ 	if (!fsverity_info_cachep)
+-		return -ENOMEM;
++		goto error_free_workqueue;
+ 
+ 	fsverity_check_hash_algs();
+ 
+ 	pr_debug("Initialized fs-verity\n");
+ 	return 0;
++
++error_free_workqueue:
++	destroy_workqueue(fsverity_read_workqueue);
++error:
++	return err;
+ }
+ 
+ static void __exit fsverity_module_exit(void)
+ {
++	destroy_workqueue(fsverity_read_workqueue);
+ 	kmem_cache_destroy(fsverity_info_cachep);
+ 	fsverity_exit_hash_algs();
+ }
+diff --git a/fs/verity/verify.c b/fs/verity/verify.c
+new file mode 100644
+index 0000000000000..e308f22475e8d
+--- /dev/null
++++ b/fs/verity/verify.c
+@@ -0,0 +1,298 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * fs/verity/verify.c: fs-verity data verification functions,
++ *		       i.e. hooks for ->readpages()
++ *
++ * Copyright 2018 Google LLC
++ *
++ * Originally written by Jaegeuk Kim and Michael Halcrow;
++ * heavily rewritten by Eric Biggers.
++ */
++
++#include "fsverity_private.h"
++
++#include <crypto/hash.h>
++#include <linux/bio.h>
++#include <linux/pagemap.h>
++#include <linux/ratelimit.h>
++#include <linux/scatterlist.h>
++
++struct workqueue_struct *fsverity_read_workqueue;
++
++/**
++ * hash_at_level() - compute the location of the block's hash at the given level
++ *
++ * @vi:		(in) the file's verity info
++ * @dindex:	(in) the index of the data block being verified
++ * @level:	(in) the level of hash we want (0 is leaf level)
++ * @hindex:	(out) the index of the hash block containing the wanted hash
++ * @hoffset:	(out) the byte offset to the wanted hash within the hash block
++ */
++static void hash_at_level(const struct fsverity_info *vi, pgoff_t dindex,
++			  unsigned int level, pgoff_t *hindex,
++			  unsigned int *hoffset)
 +{
-+	struct page *page;
++	pgoff_t position;
++
++	/* Offset of the hash within the level's region, in hashes */
++	position = dindex >> (level * vi->log_arity);
++
++	/* Index of the hash block in the tree overall */
++	*hindex = vi->hash_lvl_region_idx[level] + (position >> vi->log_arity);
++
++	/* Offset of the wanted hash (in bytes) within the hash block */
++	*hoffset = (position & ((1 << vi->log_arity) - 1)) <<
++		   (vi->block_bits - vi->log_arity);
++}
++
++/* Extract a hash from a hash page */
++static void extract_hash(struct page *hpage, unsigned int hoffset,
++			 unsigned int hsize, u8 *out)
++{
++	void *virt = kmap_atomic(hpage);
++
++	memcpy(out, virt + hoffset, hsize);
++	kunmap_atomic(virt);
++}
++
++static int fsverity_hash_page(const struct fsverity_info *vi,
++			      struct ahash_request *req,
++			      struct page *page, u8 *out)
++{
++	struct scatterlist sg;
++	DECLARE_CRYPTO_WAIT(wait);
++	int err;
++
++	sg_init_table(&sg, 1);
++	sg_set_page(&sg, page, PAGE_SIZE, 0);
++
++	ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP |
++				   CRYPTO_TFM_REQ_MAY_BACKLOG,
++				   crypto_req_done, &wait);
++	ahash_request_set_crypt(req, &sg, out, PAGE_SIZE);
++
++	err = crypto_ahash_import(req, vi->hashstate);
++	if (err)
++		return err;
++
++	return crypto_wait_req(crypto_ahash_finup(req), &wait);
++}
++
++static inline int compare_hashes(const u8 *want_hash, const u8 *real_hash,
++				 int digest_size, struct inode *inode,
++				 pgoff_t index, int level, const char *algname)
++{
++	if (memcmp(want_hash, real_hash, digest_size) == 0)
++		return 0;
++
++	pr_warn_ratelimited("VERIFICATION FAILURE!  ino=%lu, index=%lu, level=%d, want_hash=%s:%*phN, real_hash=%s:%*phN\n",
++			    inode->i_ino, index, level,
++			    algname, digest_size, want_hash,
++			    algname, digest_size, real_hash);
++	return -EBADMSG;
++}
++
++/*
++ * Verify a single data page against the file's Merkle tree.
++ *
++ * In principle, we need to verify the entire path to the root node.  But as an
++ * optimization, we cache the hash pages in the file's page cache, similar to
++ * data pages.  Therefore, we can stop verifying as soon as a verified hash page
++ * is seen while ascending the tree.
++ *
++ * Note that unlike data pages, hash pages are marked Uptodate *before* they are
++ * verified; instead, the Checked bit is set on hash pages that have been
++ * verified.  Multiple tasks may race to verify a hash page and mark it Checked,
++ * but it doesn't matter.  The use of the Checked bit also implies that the hash
++ * block size must equal PAGE_SIZE (for now).
++ */
++static bool verify_page(struct inode *inode, const struct fsverity_info *vi,
++			struct ahash_request *req, struct page *data_page)
++{
++	pgoff_t index = data_page->index;
++	int level = 0;
++	u8 _want_hash[FS_VERITY_MAX_DIGEST_SIZE];
++	const u8 *want_hash = NULL;
++	u8 real_hash[FS_VERITY_MAX_DIGEST_SIZE];
++	struct page *hpages[FS_VERITY_MAX_LEVELS];
++	unsigned int hoffsets[FS_VERITY_MAX_LEVELS];
++	int err;
++
++	/* The page must not be unlocked until verification has completed. */
++	if (WARN_ON_ONCE(!PageLocked(data_page)))
++		return false;
++
++	/*
++	 * Filesystems shouldn't ask to verify pages beyond the end of the
++	 * original data (e.g. pages of the Merkle tree itself, if it's stored
++	 * beyond EOF), but to be safe check for it here too.
++	 */
++	if (index >= (vi->data_i_size + PAGE_SIZE - 1) >> PAGE_SHIFT) {
++		pr_debug("Page %lu is beyond data region\n", index);
++		return true;
++	}
++
++	pr_debug_ratelimited("Verifying data page %lu...\n", index);
++
++	/*
++	 * Starting at the leaves, ascend the tree saving hash pages along the
++	 * way until we find a verified hash page, indicated by PageChecked; or
++	 * until we reach the root.
++	 */
++	for (level = 0; level < vi->depth; level++) {
++		pgoff_t hindex;
++		unsigned int hoffset;
++		struct page *hpage;
++
++		hash_at_level(vi, index, level, &hindex, &hoffset);
++
++		pr_debug_ratelimited("Level %d: hindex=%lu, hoffset=%u\n",
++				     level, hindex, hoffset);
++
++		hpage = fsverity_read_metadata_page(inode, hindex);
++		if (IS_ERR(hpage)) {
++			err = PTR_ERR(hpage);
++			goto out;
++		}
++
++		if (PageChecked(hpage)) {
++			extract_hash(hpage, hoffset, vi->hash_alg->digest_size,
++				     _want_hash);
++			want_hash = _want_hash;
++			put_page(hpage);
++			pr_debug_ratelimited("Hash page already checked, want %s:%*phN\n",
++					     vi->hash_alg->name,
++					     vi->hash_alg->digest_size,
++					     want_hash);
++			break;
++		}
++		pr_debug_ratelimited("Hash page not yet checked\n");
++		hpages[level] = hpage;
++		hoffsets[level] = hoffset;
++	}
++
++	if (!want_hash) {
++		want_hash = vi->root_hash;
++		pr_debug("Want root hash: %s:%*phN\n", vi->hash_alg->name,
++			 vi->hash_alg->digest_size, want_hash);
++	}
++
++	/* Descend the tree verifying hash pages */
++	for (; level > 0; level--) {
++		struct page *hpage = hpages[level - 1];
++		unsigned int hoffset = hoffsets[level - 1];
++
++		err = fsverity_hash_page(vi, req, hpage, real_hash);
++		if (err)
++			goto out;
++		err = compare_hashes(want_hash, real_hash,
++				     vi->hash_alg->digest_size,
++				     inode, index, level - 1,
++				     vi->hash_alg->name);
++		if (err)
++			goto out;
++		SetPageChecked(hpage);
++		extract_hash(hpage, hoffset, vi->hash_alg->digest_size,
++			     _want_hash);
++		want_hash = _want_hash;
++		put_page(hpage);
++		pr_debug("Verified hash page at level %d, now want %s:%*phN\n",
++			 level - 1, vi->hash_alg->name,
++			 vi->hash_alg->digest_size, want_hash);
++	}
++
++	/* Finally, verify the data page */
++	err = fsverity_hash_page(vi, req, data_page, real_hash);
++	if (err)
++		goto out;
++	err = compare_hashes(want_hash, real_hash, vi->hash_alg->digest_size,
++			     inode, index, -1, vi->hash_alg->name);
++out:
++	for (; level > 0; level--)
++		put_page(hpages[level - 1]);
++	if (err) {
++		pr_warn_ratelimited("Error verifying page; ino=%lu, index=%lu (err=%d)\n",
++				    inode->i_ino, data_page->index, err);
++		return false;
++	}
++	return true;
++}
++
++/**
++ * fsverity_verify_page - verify a data page
++ *
++ * Verify a page that has just been read from a file against that file's Merkle
++ * tree.  The page is assumed to be a pagecache page.
++ *
++ * Return: true if the page is valid, else false.
++ */
++bool fsverity_verify_page(struct page *data_page)
++{
++	struct inode *inode = data_page->mapping->host;
++	const struct fsverity_info *vi = get_fsverity_info(inode);
++	struct ahash_request *req;
++	bool valid;
++
++	req = ahash_request_alloc(vi->hash_alg->tfm, GFP_KERNEL);
++	if (unlikely(!req))
++		return false;
++
++	valid = verify_page(inode, vi, req, data_page);
++
++	ahash_request_free(req);
++
++	return valid;
++}
++EXPORT_SYMBOL_GPL(fsverity_verify_page);
++
++#ifdef CONFIG_BLOCK
++/**
++ * fsverity_verify_bio - verify a 'read' bio that has just completed
++ *
++ * Verify a set of pages that have just been read from a file against that
++ * file's Merkle tree.  The pages are assumed to be pagecache pages.  Pages that
++ * fail verification are set to the Error state.  Verification is skipped for
++ * pages already in the Error state, e.g. due to fscrypt decryption failure.
++ *
++ * This is a helper function for filesystems that issue bios to read data
++ * directly into the page cache.  Filesystems that work differently should call
++ * fsverity_verify_page() on each page instead.  fsverity_verify_page() is also
++ * needed on holes!
++ */
++void fsverity_verify_bio(struct bio *bio)
++{
++	struct inode *inode = bio_first_page_all(bio)->mapping->host;
++	const struct fsverity_info *vi = get_fsverity_info(inode);
++	struct ahash_request *req;
 +	struct bio_vec *bv;
 +	int i;
 +
-+	bio_for_each_segment_all(bv, bio, i) {
-+		page = bv->bv_page;
-+
-+		/* PG_error was set if any post_read step failed */
-+		if (bio->bi_status || PageError(page)) {
-+			ClearPageUptodate(page);
-+			SetPageError(page);
-+		} else {
-+			SetPageUptodate(page);
-+		}
-+		unlock_page(page);
-+	}
-+	if (bio->bi_private)
-+		mempool_free(bio->bi_private, bio_post_read_ctx_pool);
-+	bio_put(bio);
-+}
-+
-+static void bio_post_read_processing(struct bio_post_read_ctx *ctx);
-+
-+static void decrypt_work(struct work_struct *work)
-+{
-+	struct bio_post_read_ctx *ctx =
-+		container_of(work, struct bio_post_read_ctx, work);
-+
-+	fscrypt_decrypt_bio(ctx->bio);
-+
-+	bio_post_read_processing(ctx);
-+}
-+
-+static void verity_work(struct work_struct *work)
-+{
-+	struct bio_post_read_ctx *ctx =
-+		container_of(work, struct bio_post_read_ctx, work);
-+
-+	fsverity_verify_bio(ctx->bio);
-+
-+	bio_post_read_processing(ctx);
-+}
-+
-+static void bio_post_read_processing(struct bio_post_read_ctx *ctx)
-+{
-+	/*
-+	 * We use different work queues for decryption and for verity because
-+	 * verity may require reading metadata pages that need decryption, and
-+	 * we shouldn't recurse to the same workqueue.
-+	 */
-+	switch (++ctx->cur_step) {
-+	case STEP_DECRYPT:
-+		if (ctx->enabled_steps & (1 << STEP_DECRYPT)) {
-+			INIT_WORK(&ctx->work, decrypt_work);
-+			fscrypt_enqueue_decrypt_work(&ctx->work);
-+			return;
-+		}
-+		ctx->cur_step++;
-+		/* fall-through */
-+	case STEP_VERITY:
-+		if (ctx->enabled_steps & (1 << STEP_VERITY)) {
-+			INIT_WORK(&ctx->work, verity_work);
-+			fsverity_enqueue_verify_work(&ctx->work);
-+			return;
-+		}
-+		ctx->cur_step++;
-+		/* fall-through */
-+	default:
-+		__read_end_io(ctx->bio);
-+	}
-+}
-+
-+static struct bio_post_read_ctx *get_bio_post_read_ctx(struct inode *inode,
-+						       struct bio *bio,
-+						       pgoff_t index)
-+{
-+	unsigned int post_read_steps = 0;
-+	struct bio_post_read_ctx *ctx = NULL;
-+
-+	if (ext4_encrypted_inode(inode) && S_ISREG(inode->i_mode))
-+		post_read_steps |= 1 << STEP_DECRYPT;
-+#ifdef CONFIG_EXT4_FS_VERITY
-+	if (inode->i_verity_info != NULL &&
-+	    (index < ((i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT)))
-+		post_read_steps |= 1 << STEP_VERITY;
-+#endif
-+	if (post_read_steps) {
-+		ctx = mempool_alloc(bio_post_read_ctx_pool, GFP_NOFS);
-+		if (!ctx)
-+			return ERR_PTR(-ENOMEM);
-+		ctx->bio = bio;
-+		ctx->enabled_steps = post_read_steps;
-+		bio->bi_private = ctx;
-+	}
-+	return ctx;
-+}
-+
-+static bool bio_post_read_required(struct bio *bio)
-+{
-+	return bio->bi_private && !bio->bi_status;
-+}
-+
- /*
-  * I/O completion handler for multipage BIOs.
-  *
-@@ -70,30 +193,31 @@ static inline bool ext4_bio_encrypted(struct bio *bio)
-  */
- static void mpage_end_io(struct bio *bio)
- {
--	struct bio_vec *bv;
--	int i;
-+	if (bio_post_read_required(bio)) {
-+		struct bio_post_read_ctx *ctx = bio->bi_private;
- 
--	if (ext4_bio_encrypted(bio)) {
--		if (bio->bi_status) {
--			fscrypt_release_ctx(bio->bi_private);
--		} else {
--			fscrypt_enqueue_decrypt_bio(bio->bi_private, bio);
--			return;
--		}
-+		ctx->cur_step = STEP_INITIAL;
-+		bio_post_read_processing(ctx);
++	req = ahash_request_alloc(vi->hash_alg->tfm, GFP_KERNEL);
++	if (unlikely(!req)) {
++		bio_for_each_segment_all(bv, bio, i)
++			SetPageError(bv->bv_page);
 +		return;
- 	}
--	bio_for_each_segment_all(bv, bio, i) {
--		struct page *page = bv->bv_page;
-+	__read_end_io(bio);
++	}
++
++	bio_for_each_segment_all(bv, bio, i) {
++		struct page *page = bv->bv_page;
++
++		if (!PageError(page) && !verify_page(inode, vi, req, page))
++			SetPageError(page);
++	}
++
++	ahash_request_free(req);
 +}
- 
--		if (!bio->bi_status) {
--			SetPageUptodate(page);
--		} else {
--			ClearPageUptodate(page);
--			SetPageError(page);
--		}
--		unlock_page(page);
-+static inline loff_t ext4_readpage_limit(struct inode *inode)
-+{
-+#ifdef CONFIG_EXT4_FS_VERITY
-+	if (ext4_verity_inode(inode)) {
-+		if (inode->i_verity_info)
-+			/* limit to end of metadata region */
-+			return fsverity_full_i_size(inode);
-+		/*
-+		 * fsverity_info is currently being set up and no user reads are
-+		 * allowed yet.  It's easiest to just not enforce a limit yet.
-+		 */
-+		return inode->i_sb->s_maxbytes;
- 	}
--
--	bio_put(bio);
-+#endif
-+	return i_size_read(inode);
- }
- 
- int ext4_mpage_readpages(struct address_space *mapping,
-@@ -140,7 +264,8 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 
- 		block_in_file = (sector_t)page->index << (PAGE_SHIFT - blkbits);
- 		last_block = block_in_file + nr_pages * blocks_per_page;
--		last_block_in_file = (i_size_read(inode) + blocksize - 1) >> blkbits;
-+		last_block_in_file = (ext4_readpage_limit(inode) +
-+				      blocksize - 1) >> blkbits;
- 		if (last_block > last_block_in_file)
- 			last_block = last_block_in_file;
- 		page_block = 0;
-@@ -217,6 +342,8 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 			zero_user_segment(page, first_hole << blkbits,
- 					  PAGE_SIZE);
- 			if (first_hole == 0) {
-+				if (!fsverity_check_hole(inode, page))
-+					goto set_error_page;
- 				SetPageUptodate(page);
- 				unlock_page(page);
- 				goto next_page;
-@@ -240,19 +367,15 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 			bio = NULL;
- 		}
- 		if (bio == NULL) {
--			struct fscrypt_ctx *ctx = NULL;
-+			struct bio_post_read_ctx *ctx;
- 
--			if (ext4_encrypted_inode(inode) &&
--			    S_ISREG(inode->i_mode)) {
--				ctx = fscrypt_get_ctx(inode, GFP_NOFS);
--				if (IS_ERR(ctx))
--					goto set_error_page;
--			}
- 			bio = bio_alloc(GFP_KERNEL,
- 				min_t(int, nr_pages, BIO_MAX_PAGES));
--			if (!bio) {
--				if (ctx)
--					fscrypt_release_ctx(ctx);
-+			if (!bio)
-+				goto set_error_page;
-+			ctx = get_bio_post_read_ctx(inode, bio, page->index);
-+			if (IS_ERR(ctx)) {
-+				bio_put(bio);
- 				goto set_error_page;
- 			}
- 			bio_set_dev(bio, bdev);
-@@ -293,3 +416,27 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 		submit_bio(bio);
- 	return 0;
- }
++EXPORT_SYMBOL_GPL(fsverity_verify_bio);
++#endif /* CONFIG_BLOCK */
 +
-+int __init ext4_init_post_read_processing(void)
++/**
++ * fsverity_enqueue_verify_work - enqueue work on the fs-verity workqueue
++ *
++ * Enqueue verification work for asynchronous processing.
++ */
++void fsverity_enqueue_verify_work(struct work_struct *work)
 +{
-+	bio_post_read_ctx_cache = KMEM_CACHE(bio_post_read_ctx, 0);
-+	if (!bio_post_read_ctx_cache)
-+		goto fail;
-+	bio_post_read_ctx_pool =
-+		mempool_create_slab_pool(NUM_PREALLOC_POST_READ_CTXS,
-+					 bio_post_read_ctx_cache);
-+	if (!bio_post_read_ctx_pool)
-+		goto fail_free_cache;
-+	return 0;
++	queue_work(fsverity_read_workqueue, work);
++}
++EXPORT_SYMBOL_GPL(fsverity_enqueue_verify_work);
+diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
+index c9422a579c160..15478fe7d55aa 100644
+--- a/include/linux/fsverity.h
++++ b/include/linux/fsverity.h
+@@ -28,6 +28,16 @@ extern int fsverity_prepare_getattr(struct inode *inode);
+ extern void fsverity_cleanup_inode(struct inode *inode);
+ extern loff_t fsverity_full_i_size(const struct inode *inode);
+ 
++/* verify.c */
++extern bool fsverity_verify_page(struct page *page);
++extern void fsverity_verify_bio(struct bio *bio);
++extern void fsverity_enqueue_verify_work(struct work_struct *work);
 +
-+fail_free_cache:
-+	kmem_cache_destroy(bio_post_read_ctx_cache);
-+fail:
-+	return -ENOMEM;
++static inline bool fsverity_check_hole(struct inode *inode, struct page *page)
++{
++	return inode->i_verity_info == NULL || fsverity_verify_page(page);
 +}
 +
-+void ext4_exit_post_read_processing(void)
-+{
-+	mempool_destroy(bio_post_read_ctx_pool);
-+	kmem_cache_destroy(bio_post_read_ctx_cache);
-+}
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index c4a66b64ea604..fb4e060f28ecb 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -6070,6 +6070,10 @@ static int __init ext4_init_fs(void)
- 		return err;
+ #else /* !__FS_HAS_VERITY */
  
- 	err = ext4_init_pending();
-+	if (err)
-+		goto out7;
-+
-+	err = ext4_init_post_read_processing();
- 	if (err)
- 		goto out6;
- 
-@@ -6111,8 +6115,10 @@ static int __init ext4_init_fs(void)
- out4:
- 	ext4_exit_pageio();
- out5:
--	ext4_exit_pending();
-+	ext4_exit_post_read_processing();
- out6:
-+	ext4_exit_pending();
-+out7:
- 	ext4_exit_es();
- 
- 	return err;
-@@ -6129,6 +6135,7 @@ static void __exit ext4_exit_fs(void)
- 	ext4_exit_sysfs();
- 	ext4_exit_system_zone();
- 	ext4_exit_pageio();
-+	ext4_exit_post_read_processing();
- 	ext4_exit_es();
- 	ext4_exit_pending();
+ /* setup.c */
+@@ -57,6 +67,29 @@ static inline loff_t fsverity_full_i_size(const struct inode *inode)
+ 	return i_size_read(inode);
  }
+ 
++/* verify.c */
++
++static inline bool fsverity_verify_page(struct page *page)
++{
++	WARN_ON(1);
++	return false;
++}
++
++static inline void fsverity_verify_bio(struct bio *bio)
++{
++	WARN_ON(1);
++}
++
++static inline void fsverity_enqueue_verify_work(struct work_struct *work)
++{
++	WARN_ON(1);
++}
++
++static inline bool fsverity_check_hole(struct inode *inode, struct page *page)
++{
++	return true;
++}
++
+ #endif	/* !__FS_HAS_VERITY */
+ 
+ #endif	/* _LINUX_FSVERITY_H */
 -- 
 2.19.1.568.g152ad8e336-goog
