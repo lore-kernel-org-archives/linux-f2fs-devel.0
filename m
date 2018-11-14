@@ -1,33 +1,28 @@
-From: =?GB2312?B?wdbPyMn6?= <baoguan@hotmail.com>
-Subject: =?gb2312?b?tPq/qreixrGjrLXjyv21zQ==?=
-Date: Tue, 13 Nov 2018 19:51:15 +0800
-Message-ID: <E1gMXEV-0006D5-Uj@sfs-ml-1.v29.lw.sourceforge.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v3] f2fs: only flush the single temp bio cache which owns
+ the target page
+Date: Wed, 14 Nov 2018 18:49:55 +0800
+Message-ID: <264f0463-bda9-cf5b-9236-13edc7f06936@huawei.com>
+References: <1540368651-14353-1-git-send-email-yunlong.song@huawei.com>
+ <1542081452-66059-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <baoguan@hotmail.com>) id 1gMXEU-0006Cn-Ol
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Nov 2018 11:51:50 +0000
-Received: from [60.172.124.44] (helo=hotmail.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtp (Exim 4.90_1)
- id 1gMXEF-00GBU9-3B
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Nov 2018 11:51:50 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1542081452-66059-1-git-send-email-yunlong.song@huawei.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, chao@kernel.org, yunlong.song@icloud.com
+Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-tPq/qreixrGjrLXjyv21zaGjzqrG89K1vdrUvLPJsb6ho7/J0enWpLrzuLa/7qOssLLIq7/Jv7+j
-rDEzNSAxMDIzIDAzMjjOotDFzayyvQpRUaO6MzIxMTcgOTg3OTKhogoKCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGlu
-ZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlz
-dHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+On 2018/11/13 11:57, Yunlong Song wrote:
+> Previously, when f2fs finds which temp bio cache owns the target page,
+> it will flush all the three temp bio caches, but we only need to flush
+> one single bio cache indeed, which can help to keep bio merged.
+> 
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks,
