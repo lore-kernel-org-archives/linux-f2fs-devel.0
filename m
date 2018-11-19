@@ -1,26 +1,24 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 2/2] f2fs: Set CP_ERROR_FLAG in case of
- inconsistent node page entries
-Date: Mon, 19 Nov 2018 15:15:14 +0800
-Message-ID: <b3414466-789f-7b2e-8ef0-60288210a33b@huawei.com>
-References: <1542607377-25446-1-git-send-email-riteshh@codeaurora.org>
- <1542607377-25446-2-git-send-email-riteshh@codeaurora.org>
+From: Jia Zhu <zhujia13@huawei.com>
+Subject: [PATCH v2] f2fs: fix m_may_create to make OPU DIO write
+ correctly
+Date: Tue, 20 Nov 2018 04:29:35 +0800
+Message-ID: <20181119202935.206643-1-zhujia13@huawei.com>
+References: <20181116194142.6343-1-zhujia13@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1gOdmM-0000Zq-Ao
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Nov 2018 07:15:30 +0000
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <zhujia13@huawei.com>) id 1gOic3-0002Vb-GW
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Nov 2018 12:25:11 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gOdmK-00DjRN-CB
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Nov 2018 07:15:30 +0000
-In-Reply-To: <1542607377-25446-2-git-send-email-riteshh@codeaurora.org>
-Content-Language: en-US
+ id 1gOic0-0095xn-21
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Nov 2018 12:25:10 +0000
+In-Reply-To: <20181116194142.6343-1-zhujia13@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,43 +28,76 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Ritesh Harjani <riteshh@codeaurora.org>, linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com
+Cc: jaizhu.zj@gmail.com, Jia Zhu <zhujia13@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Ritesh,
+Previously, we added a parameter @map.m_may_create to trigger OPU
+allocation and call f2fs_balance_fs() correctly.
 
-On 2018/11/19 14:02, Ritesh Harjani wrote:
-> In case of any inconsistent node page entries found,
-> call f2fs_stop_checkpoint to further avoid any corruption.
-> 
-> Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
-> ---
->  fs/f2fs/node.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index d338740..29b56ef 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1369,6 +1369,7 @@ static struct page *__get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid,
->  			ofs_of_node(page), cpver_of_node(page),
->  			next_blkaddr_of_node(page));
->  		err = -EINVAL;
-> +		f2fs_stop_checkpoint(sbi, false);
+But in get_more_blocks(), @create has been overwritten by below code.
+So the function f2fs_map_blocks() will not allocate new block address
+but directly go out. Meanwile,there are several functions calling
+f2fs_map_blocks() directly and @map.m_may_create not initialized.
+CODE:
+create = dio->op == REQ_OP_WRITE;
+	if (dio->flags & DIO_SKIP_HOLES) {
+		if (fs_startblk <= ((i_size_read(dio->inode) - 1) >>
+						i_blkbits))
+			create = 0;
+	}
 
-I think it needs more information to proof filesystem-level metadata is
-corrupted, otherwise it only indicate that current node is corrupted...
+This patch fixes it.
 
-I guess that we can verify ni.blk_addr validity in SIT to check consistent
-between NAT and SIT, then we can decide to stop checkpoint?
+Signed-off-by: Jia Zhu <zhujia13@huawei.com>
+---
+ fs/f2fs/data.c | 5 +++++
+ fs/f2fs/file.c | 4 +++-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-BTW, I suspect there is still app/system program bypass filesystem and use
-block layer interface to operate data partition directly, e.g. fiemap/bmap
-+ write blkaddr, since block migration during f2fs GC, such operation
-should be avoided. :)
-
-Thanks,
-
->  out_err:
->  		ClearPageUptodate(page);
->  		f2fs_put_page(page, 1);
-> 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index aa8843a..7226300 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1052,6 +1052,10 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ 	end = pgofs + maxblocks;
+ 
+ 	if (!create && f2fs_lookup_extent_cache(inode, pgofs, &ei)) {
++		if (test_opt(sbi, LFS) && flag == F2FS_GET_BLOCK_DIO &&
++							map->m_may_create)
++			goto next_dnode;
++
+ 		map->m_pblk = ei.blk + pgofs - ei.fofs;
+ 		map->m_len = min((pgoff_t)maxblocks, ei.fofs + ei.len - pgofs);
+ 		map->m_flags = F2FS_MAP_MAPPED;
+@@ -1261,6 +1265,7 @@ bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len)
+ 	map.m_next_pgofs = NULL;
+ 	map.m_next_extent = NULL;
+ 	map.m_seg_type = NO_CHECK_TYPE;
++	map.m_may_create = false;
+ 	last_lblk = F2FS_BLK_ALIGN(pos + len);
+ 
+ 	while (map.m_lblk < last_lblk) {
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 3271830..ff82350 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2201,7 +2201,8 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
+ {
+ 	struct inode *inode = file_inode(filp);
+ 	struct f2fs_map_blocks map = { .m_next_extent = NULL,
+-					.m_seg_type = NO_CHECK_TYPE };
++					.m_seg_type = NO_CHECK_TYPE ,
++					.m_may_create = false };
+ 	struct extent_info ei = {0, 0, 0};
+ 	pgoff_t pg_start, pg_end, next_pgofs;
+ 	unsigned int blk_per_seg = sbi->blocks_per_seg;
+@@ -2935,6 +2936,7 @@ int f2fs_precache_extents(struct inode *inode)
+ 	map.m_next_pgofs = NULL;
+ 	map.m_next_extent = &m_next_extent;
+ 	map.m_seg_type = NO_CHECK_TYPE;
++	map.m_may_create = false;
+ 	end = F2FS_I_SB(inode)->max_file_blocks;
+ 
+ 	while (map.m_lblk < end) {
+-- 
+2.10.1
