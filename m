@@ -1,27 +1,25 @@
-From: Ritesh Harjani <riteshh@codeaurora.org>
-Subject: Re: [PATCH 1/2] f2fs: remove stale inode entry before
- eviction from gdirty_list
-Date: Tue, 20 Nov 2018 16:03:33 +0530
-Message-ID: <182b74e8-4148-4180-763c-a79b10bd0612@codeaurora.org>
-References: <1542607377-25446-1-git-send-email-riteshh@codeaurora.org>
- <0a2feb36-8f71-67a0-381c-2e487d658145@huawei.com>
- <c5387fdb-6b20-ed3d-e9a5-ae55b5dbdd37@codeaurora.org>
- <20181119210340.GA33805@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH v2] f2fs: fix m_may_create to make OPU DIO
+ write correctly
+Date: Tue, 20 Nov 2018 19:58:40 +0800
+Message-ID: <c72e1624-1c9f-1a21-385e-badb2fc5d641@kernel.org>
+References: <20181116194142.6343-1-zhujia13@huawei.com>
+ <20181119202935.206643-1-zhujia13@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <riteshh@codeaurora.org>) id 1gP3Lp-0007Fb-GI
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 20 Nov 2018 10:33:49 +0000
-Received: from smtp.codeaurora.org ([198.145.29.96])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <chao@kernel.org>) id 1gP4gA-0008NI-95
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 20 Nov 2018 11:58:54 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gP3Ll-00EvwZ-9P
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 20 Nov 2018 10:33:49 +0000
-In-Reply-To: <20181119210340.GA33805@jaegeuk-macbookpro.roam.corp.google.com>
+ id 1gP4g6-00F0t7-Hj
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 20 Nov 2018 11:58:54 +0000
+In-Reply-To: <20181119202935.206643-1-zhujia13@huawei.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -32,129 +30,86 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Jia Zhu <zhujia13@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: jaizhu.zj@gmail.com, linux-f2fs-devel@lists.sourceforge.net
 
-Ck9uIDExLzIwLzIwMTggMjozMyBBTSwgSmFlZ2V1ayBLaW0gd3JvdGU6Cj4gT24gMTEvMTksIFJp
-dGVzaCBIYXJqYW5pIHdyb3RlOgo+PiBIaSBDaGFvLAo+Pgo+PiBPbiAxMS8xOS8yMDE4IDEyOjA5
-IFBNLCBDaGFvIFl1IHdyb3RlOgo+Pj4gSGkgUml0ZXNoLAo+Pj4KPj4+IE9uIDIwMTgvMTEvMTkg
-MTQ6MDIsIFJpdGVzaCBIYXJqYW5pIHdyb3RlOgo+Pj4+IFRoaXMgaXMgc2VlbiB3aGVuIENQX0VS
-Uk9SX0ZMQUcgaXMgbm90IHNldCAmIEZTIG1heSBiZSBjb3JydXB0ZWQuCj4+Pj4gVGhlcmUgaXMg
-YSBjYXNlIG9ic2VydmVkIHdoZXJlIGRpcnR5IHN0YWxlIGlub2RlIHBvaW50ZXIgZGF0YSBpcyBz
-dGlsbAo+Pj4+IHByZXNlbnQgaW4gdGhlIGdkaXJ0eV9saXN0IGNhdXNpbmcgcGFuaWMgb24gYWNj
-ZXNzIHdoaWxlIGRvaW5nCj4+Pj4gY2hlY2twb2ludCBvcGVyYXRpb24uCj4+Pj4KPj4+PiBXQVJO
-SU5HOiBDUFU6IDMgUElEOiAxODI3IGF0Cj4+Pj4ga2VybmVsL21zbS00LjE0L2ZzL2YyZnMvaW5v
-ZGUuYzo1NjcKPj4+PiBmMmZzX2V2aWN0X2lub2RlKzB4MzY0LzB4MzdjCj4+Pj4gPC4uLj4KPj4+
-PiBbNDIyNDYuNzc2Mjg5XSBCVUc6IHNwaW5sb2NrIGJhZCBtYWdpYyBvbiBDUFUjNCwgMTI0NQo+
-Pj4+IFs0MjI0Ni43ODI2NzRdIFVuYWJsZSB0byBoYW5kbGUga2VybmVsIHBhZ2luZyByZXF1ZXN0
-IGF0IHZpcnR1YWwgYWRkcmVzcyA2YjZiNmI2YjZiNzEzYgo+Pj4+IDwuLi4+Cj4+Pj4gWzQyMjQ2
-Ljg5NjM3MF0gdGFzazogZmZmZmZmYzBmMDQzNDA4MCB0YXNrLnN0YWNrOiBmZmZmZmY4MDIzZWEw
-MDAwCj4+Pj4gWzQyMjQ2LjkwMjQ2NV0gcGMgOiBzcGluX2J1ZysweDgwLzB4YjgKPj4+PiBbNDIy
-NDYuOTA2MDU1XSBsciA6IHNwaW5fYnVnKzB4NjQvMHhiOAo+Pj4+IDwuLi4+Cj4+Pj4gWzQyMjQ3
-LjEyMjM0Nl0gQ2FsbCB0cmFjZToKPj4+PiBbNDIyNDcuMTI0ODc2XSAgc3Bpbl9idWcrMHg4MC8w
-eGI4Cj4+Pj4gWzQyMjQ3LjEyODExMF0gIGRvX3Jhd19zcGluX2xvY2srMHhlOC8weDExOAo+Pj4+
-IFs0MjI0Ny4xMzIxNDRdICBfcmF3X3NwaW5fbG9jaysweDI0LzB4MzAKPj4+PiBbNDIyNDcuMTM1
-OTE2XSAgaWdyYWIrMHgyMC8weDZjCj4+Pj4gWzQyMjQ3LjEzODg5NF0gIGYyZnNfc3luY19pbm9k
-ZV9tZXRhKzB4NTgvMHhjMAo+Pj4+IFs0MjI0Ny4xNDMxOTldICB3cml0ZV9jaGVja3BvaW50KzB4
-MWM0LzB4ZWNjCj4+Pj4gWzQyMjQ3LjE0NzMyMl0gIGYyZnNfc3luY19mcysweDExOC8weDE3MAo+
-Pj4+IFs0MjI0Ny4xNTEwOTZdICBmMmZzX2RvX3N5bmNfZmlsZSsweDRmMC8weDc5OAo+Pj4+IFs0
-MjI0Ny4xNTUzMTFdICBmMmZzX3N5bmNfZmlsZSsweDU0LzB4NmMKPj4+PiBbNDIyNDcuMTU5MDg3
-XSAgdmZzX2ZzeW5jX3JhbmdlKzB4OTAvMHhhYwo+Pj4+IFs0MjI0Ny4xNjI5NTBdICB2ZnNfZnN5
-bmMrMHgyYy8weDM4Cj4+Pj4gWzQyMjQ3LjE2NjI3OF0gIGRvX2ZzeW5jKzB4M2MvMHg3OAo+Pj4+
-IFs0MjI0Ny4xNjk1MTVdICBTeVNfZmRhdGFzeW5jKzB4MjAvMHgzMAo+Pj4+Cj4+Pj4gU2lnbmVk
-LW9mZi1ieTogUml0ZXNoIEhhcmphbmkgPHJpdGVzaGhAY29kZWF1cm9yYS5vcmc+Cj4+Pj4gLS0t
-Cj4+Pj4gICAgZnMvZjJmcy9pbm9kZS5jIHwgMTAgKysrKysrLS0tLQo+Pj4+ICAgIDEgZmlsZSBj
-aGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pCj4+Pj4KPj4+PiBkaWZmIC0t
-Z2l0IGEvZnMvZjJmcy9pbm9kZS5jIGIvZnMvZjJmcy9pbm9kZS5jCj4+Pj4gaW5kZXggOTFjZWVl
-MC4uYzU3ZjYzNiAxMDA2NDQKPj4+PiAtLS0gYS9mcy9mMmZzL2lub2RlLmMKPj4+PiArKysgYi9m
-cy9mMmZzL2lub2RlLmMKPj4+PiBAQCAtNzAyLDExICs3MDIsMTMgQEAgdm9pZCBmMmZzX2V2aWN0
-X2lub2RlKHN0cnVjdCBpbm9kZSAqaW5vZGUpCj4+Pj4gICAgCXN0YXRfZGVjX2lubGluZV9kaXIo
-aW5vZGUpOwo+Pj4+ICAgIAlzdGF0X2RlY19pbmxpbmVfaW5vZGUoaW5vZGUpOwo+Pj4+IC0JaWYg
-KGxpa2VseSghaXNfc2V0X2NrcHRfZmxhZ3Moc2JpLCBDUF9FUlJPUl9GTEFHKSAmJgo+Pj4+IC0J
-CQkJIWlzX3NiaV9mbGFnX3NldChzYmksIFNCSV9DUF9ESVNBQkxFRCkpKQo+Pj4+IC0JCWYyZnNf
-YnVnX29uKHNiaSwgaXNfaW5vZGVfZmxhZ19zZXQoaW5vZGUsIEZJX0RJUlRZX0lOT0RFKSk7Cj4+
-Pj4gLQllbHNlCj4+Pj4gKwlpZiAodW5saWtlbHkoaXNfaW5vZGVfZmxhZ19zZXQoaW5vZGUsIEZJ
-X0RJUlRZX0lOT0RFKSkpIHsKPj4+PiAgICAJCWYyZnNfaW5vZGVfc3luY2VkKGlub2RlKTsKPj4+
-PiArCQlmMmZzX21zZyhzYmktPnNiLCBLRVJOX1dBUk5JTkcsCj4+Pj4gKwkJCSAiaW5jb25zaXN0
-ZW50IGRpcnR5IGlub2RlOiV1IGVudHJ5IGZvdW5kIGR1cmluZyBldmljdGlvblxuIiwKPj4+PiAr
-CQkJIGlub2RlLT5pX2lubyk7Cj4+Pj4gKwkJZjJmc19idWdfb24oc2JpLCAxKTsKPj4+IElJUkMs
-IEphZWdldWsgYWRkZWQgYmVsb3cgY29uZGl0aW9uIHRvIGF2b2lkIGYyZnNfYnVnX29uIGR1cmlu
-ZyBkb2luZyB0ZXN0Cj4+PiB3LyBjaGVja3BvaW50IGVycm9yIGluamVjdGlvbiwgaWYgd2UgcmVt
-b3ZlIHRoaXMsIHdlIG1heSBzdGlsbCBlbmNvdW50ZXIKPj4+IHN1Y2ggcHJvYmxlbS4KPj4+Cj4+
-PiBpZiAobGlrZWx5KCFpc19zZXRfY2twdF9mbGFncyhzYmksIENQX0VSUk9SX0ZMQUcpKSkKPj4g
-T2ssIGFncmVlZC4gRG9lcyBiZWxvdyBzb3VuZHMgZ29vZCB0aGVuPwo+PiBUaGUgaWRlYSBpcyB0
-byBnbyBhaGVhZCBhbmQgY2FsbCBmMmZzX2lub2RlX3N5bmNlZChpbm9kZSkgd2hlbiB0aGUgaW5v
-ZGUKPj4gRklfRElSVFlfSU5PREUgZmxhZyBpcyBzZXQgaXJyZXNwZWN0aXZlIG9mIENQX0VSUk9S
-X0ZMQUcgc2V0IG9yIG5vdC4gQmVjYXVzZQo+PiBvdGhlcndpc2UgdGhlcmUgaXMgYSBzdGFsZSBp
-bm9kZSBlbnRyeSB3aGljaCB3aWxsCj4+IHJlbWFpbiBpbiBnZGlydHlfbGlzdCA9PiBjYXVzaW5n
-IGtlcm5lbCBwYW5pYyBpbiBjaGVja3BvaW50IHBhdGguCj4+Cj4+IGRpZmYgLS1naXQgYS9mcy9m
-MmZzL2lub2RlLmMgYi9mcy9mMmZzL2lub2RlLmMKPj4gaW5kZXggOTFjZWVlMC4uMDA5MTVjMiAx
-MDA2NDQKPj4gLS0tIGEvZnMvZjJmcy9pbm9kZS5jCj4+ICsrKyBiL2ZzL2YyZnMvaW5vZGUuYwo+
-PiBAQCAtNzAyLDExICs3MDIsMTUgQEAgdm9pZCBmMmZzX2V2aWN0X2lub2RlKHN0cnVjdCBpbm9k
-ZSAqaW5vZGUpCj4+ICDCoMKgwqDCoMKgwqDCoCBzdGF0X2RlY19pbmxpbmVfZGlyKGlub2RlKTsK
-Pj4gIMKgwqDCoMKgwqDCoMKgIHN0YXRfZGVjX2lubGluZV9pbm9kZShpbm9kZSk7Cj4+Cj4+IC3C
-oMKgwqDCoMKgwqAgaWYgKGxpa2VseSghaXNfc2V0X2NrcHRfZmxhZ3Moc2JpLCBDUF9FUlJPUl9G
-TEFHKSAmJgo+PiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgICFpc19zYmlfZmxhZ19zZXQoc2JpLCBTQklfQ1BfRElTQUJMRUQpKSkK
-Pj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZjJmc19idWdfb24oc2JpLCBpc19pbm9k
-ZV9mbGFnX3NldChpbm9kZSwgRklfRElSVFlfSU5PREUpKTsKPj4gLcKgwqDCoMKgwqDCoCBlbHNl
-Cj4+ICvCoMKgwqDCoMKgwqAgaWYgKHVubGlrZWx5KGlzX2lub2RlX2ZsYWdfc2V0KGlub2RlLCBG
-SV9ESVJUWV9JTk9ERSkpKSB7Cj4+ICDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZjJm
-c19pbm9kZV9zeW5jZWQoaW5vZGUpOwo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBm
-MmZzX21zZyhzYmktPnNiLCBLRVJOX1dBUk5JTkcsCj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICJpbmNvbnNpc3RlbnQgZGlydHkgaW5vZGU6JXUgZW50
-cnkgZm91bmQgZHVyaW5nCj4+IGV2aWN0aW9uXG4iLAo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpbm9kZS0+aV9pbm8pOwo+PiArwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoCBpZiAoKCFpc19zZXRfY2twdF9mbGFncyhzYmksIENQX0VSUk9SX0ZM
-QUcpICYmCj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgIWlzX3NiaV9mbGFnX3NldChzYmksIFNCSV9DUF9ESVNBQkxFRCkpKQo+
-PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZjJmc19idWdf
-b24oc2JpLCAxKTsKPj4gK8KgwqDCoMKgwqDCoCB9Cj4+Cj4+PiBTbyBJJ2QgbGlrZSB0byBrbm93
-IHdoYXQga2luZCBvZiBjYXNlIGNhbiBtYWtlIGRpcnR5IGlub2RlIGR1cmluZyBldmljdCgpLAo+
-Pj4gY2FuIHlvdSBleHBsYWluIG1vcmU/Cj4+IFllcywgd2UgYWxzbyBjb3VsZCBub3QgZ2V0IGV4
-YWN0IHBhdGggYWJvdXQgd2hlbiB0aGlzIGNhbiBoYXBwZW4uIEJ1dCBiZWxvdwo+PiBhcmUgdGhl
-IHBhcmFsbGVsIG9uZ29pbmcgY29udGV4dHMgd2hlbiB0aGUgaXNzdWUgaXMgc2VlbjotCj4+IFdl
-IGRvIHN1c3BlY3QgdGhhdCB0aGVyZSBpcyBzb21ldGhpbmcgYWxyZWFkeSB3cm9uZyBpbiB0aGUg
-RlMgZXZlbiBiZWZvcmUKPj4gd2hlbiB0aGlzIGlzc3VlIG9jY3VycmVkIChkdWUgdG8gImluY29u
-c2lzdGVudCBub2RlIGJsb2NrIiBsb2dzKS4gVGhpcyBjb3VsZAo+PiBiZSBkdWUgdG8gc29tZSBv
-dGhlciB1bmRlcmx5aW5nIHN0b3JhZ2UgZHJpdmVyIGlzc3VlLgo+PiBOb3Qgc3VyZSB0aG91Z2gu
-Cj4+Cj4+IDEuIHVubGlua2F0IG9wZXJhdGlvbiBjYXVzaW5nIGYyZnNfZXZpY3RfaW5vZGUgY2F1
-c2luZyBhIHdhcm5pbmcgKGFzCj4+IG1lbnRpb25lZCBpbiB0aGUgY29tbWl0IHRleHQpLgo+PiAy
-LiBlY2hvIDMgPiAvcHJvYy9zeXMvdm0vZHJvcF9jYWNoZXMuCj4+IDMuIFJlbmFtZSBvcGVyYXRp
-b24gb24gc29tZSBmaWxlLgo+PiA0LiB2ZnNfZnN5bmMgLT4gZG9pbmcgY2hlY2twb2ludGluZyA9
-PiB0aGlzIGNhdXNlcyBhIGtlcm5lbCBwYW5pYyBzaW5jZQo+PiBzdGFsZSBpbm9kZSBlbnRyeSBp
-cyBzdGlsbCBwcmVzZW50IHdoaWNoIGdvdCBmcmVlZCBmcm9tIGYyZnNfZXZpY3RfaW5vZGUKPj4g
-cGF0aC4KPj4KPj4gU29tZSBlcnJvciBsb2dzIHdoaWNoIHdlcmUgc2VlbiBsb25nIGJlZm9yZSB0
-aGlzIGlzc3VlIG9jY3VycmVkLgo+PiBbNDIyMTkuMDg5ODEwXcKgRjJGUy1mc8KgKG1tY2JsazBw
-NzUpOsKgaW5jb25zaXN0ZW50wqBub2RlwqBibG9jayzCoG5pZDo1MDAxOCzCoG5vZGVfZm9vdGVy
-W25pZDo1MDMyNyxpbm86NTAzMjcsb2ZzOjAsY3B2ZXI6MTIxNDY1MDU5OTYyODI3NzMxODIsYmxr
-YWRkcjo1MTU0ODRdCj4+IFs0MjIxOS4xMDQyODFdwqBGMkZTLWZzwqAobW1jYmxrMHA3NSk6wqBp
-bmNvbnNpc3RlbnTCoG5vZGXCoGJsb2NrLMKgbmlkOjQ5ODM2LMKgbm9kZV9mb290ZXJbbmlkOjUw
-MjI4LGlubzo1MDIyOCxvZnM6MCxjcHZlcjoxMDIzMDI0NzI5NDI1Njk2MTAxNyxibGthZGRyOjE0
-OTYzNDZdCj4+IFs0MjIxOS4xMTg3MjNdwqBGMkZTLWZzwqAobW1jYmxrMHA3NSk6wqBpbmNvbnNp
-c3RlbnTCoG5vZGXCoGJsb2NrLMKgbmlkOjUwMzI3LMKgbm9kZV9mb290ZXJbbmlkOjAsaW5vOjAs
-b2ZzOjAsY3B2ZXI6MCxibGthZGRyOjBdCj4+IFs0MjIxOS4xMzA3ODJdwqBGMkZTLWZzwqAobW1j
-YmxrMHA3NSk6wqBpbmNvbnNpc3RlbnTCoG5vZGXCoGJsb2NrLMKgbmlkOjUwMjI4LMKgbm9kZV9m
-b290ZXJbbmlkOjAsaW5vOjAsb2ZzOjAsY3B2ZXI6MCxibGthZGRyOjBdCj4gSSd2ZSBjb25jZXJu
-ZWQgdGhhdCB0aGlzIHBhdGNoIGhpZGVzIHRoZSBidWcgYW5kIG1ha2VzIHRoZSBwYXJ0aXRpb24g
-YmVpbmcgbW9yZQo+IGNvcnJ1cHRlZC4gV2UgaGF2ZSB0byBmaWd1cmUgb3V0IHdoZXJlIHN1Y2gg
-dGhlIG5vZGUgYmxvY2sgd2VyZSBnZW5lcmF0ZWQuClRoaXMgaXNzdWUgc2VlbXMgdG8gYmUgbW9z
-dGx5IGR1ZSB0byBwcm9ibGVtIGZyb20gdW5kZXJseWluZyBzdG9yYWdlIApkcml2ZXIuIEFzIG9m
-IG5vdyB0aGUgc3VzcGVjdAppcyBub3QgZnJvbSBmMmZzIHNpbmNlIHdlIGRvbid0IHNlZSB0aGlz
-IGlzc3VlIG9uIGEgZGlmZmVyZW50IApjb25maWd1cmF0aW9uIG9mIHN0b3JhZ2UgZHJpdmVyLgpU
-aGUgYWJvdmUgcGF0Y2ggaXMgbWFpbmx5IHRvIGZpeCBhIGtlcm5lbCBjcmFzaCB3aGVuIHRoZSBz
-eXN0ZW0vRlMgaGFzIAphY3R1YWxseSBnb25lIGJhZCBkdWUgdG8gc29tZSBvdGhlciBzdWJzeXN0
-ZW0gY2F1c2luZyBjb3JydXB0aW9uLgpXZSB0aG91Z2h0IGl0IGlzIGEgZ29vZCBmaXggdG8gaGF2
-ZSBiZWNhdXNlIGFueXdheXMgaWYgdGhlcmUgaXMgYSBkaXJ0eSAKaW5vZGUgZm91bmQgZHVyaW5n
-IGV2aWN0aW9uLAp0aGVuIHdlIHNob3VsZCByZW1vdmUgYW55IHN0YWxlIGVudHJpZXMgb2YgaXQg
-ZnJvbSBSQU0gZGF0YSBzdHJ1Y3R1cmVzLCAKYmVmb3JlIGZyZWVpbmcgdGhlIGlub2RlICh3aXRo
-IGEgd2FybmluZyBtc2cpLgoKPiBIb3cgbWFueSBwYXRjaGVzIGhhdmUgeW91IGNoZXJyeS1waWNr
-ZWQ/IFdoaWNoIGtlcm5lbCB2ZXJzaW9uIGFyZSB5b3UgdXNpbmc/Cmtlcm5lbCA0LjE0LiBZZXMg
-d2UgZG8gaGF2ZSBhbGwgdGhlIHBhdGNoZXMgcHVsbGVkIGZyb20gYW5kcm9pZCBhb3NwLgo+IEhh
-dmUgeW91IGVuYWJsZWQgSUNFPwpZZXMuIElDRSBpcyBlbmFibGVkLgoKClRoYW5rcwpSaXRlc2gK
-Cj4KPiBUaGFua3MsCj4KPgo+PiBUaGFua3MsCj4+Cj4+PiBUaGFua3MsCj4+Pgo+Pj4+ICsJfQo+
-Pj4+ICAgIAkvKiBpbm8gPT0gMCwgaWYgZjJmc19uZXdfaW5vZGUoKSB3YXMgZmFpbGVkIHQqLwo+
-Pj4+ICAgIAlpZiAoaW5vZGUtPmlfaW5vKQo+Pj4+CgoKCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Ckxp
-bnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNl
-Zm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+On 2018-11-20 4:29, Jia Zhu wrote:
+> Previously, we added a parameter @map.m_may_create to trigger OPU
+> allocation and call f2fs_balance_fs() correctly.
+> 
+> But in get_more_blocks(), @create has been overwritten by below code.
+> So the function f2fs_map_blocks() will not allocate new block address
+> but directly go out. Meanwile,there are several functions calling
+> f2fs_map_blocks() directly and @map.m_may_create not initialized.
+
+Oh, I missed to check all f2fs_map_blocks structure referrers, sorry.
+
+> CODE:
+> create = dio->op == REQ_OP_WRITE;
+> 	if (dio->flags & DIO_SKIP_HOLES) {
+> 		if (fs_startblk <= ((i_size_read(dio->inode) - 1) >>
+> 						i_blkbits))
+> 			create = 0;
+> 	}
+> 
+> This patch fixes it.
+> 
+> Signed-off-by: Jia Zhu <zhujia13@huawei.com>> ---
+
+It will be better to add simple change logs here to indicate how you modify your
+patch comparing to previous one, please keep that rule for your next patch. ;)
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks,
+
+>  fs/f2fs/data.c | 5 +++++
+>  fs/f2fs/file.c | 4 +++-
+>  2 files changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index aa8843a..7226300 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1052,6 +1052,10 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>  	end = pgofs + maxblocks;
+>  
+>  	if (!create && f2fs_lookup_extent_cache(inode, pgofs, &ei)) {
+> +		if (test_opt(sbi, LFS) && flag == F2FS_GET_BLOCK_DIO &&
+> +							map->m_may_create)
+> +			goto next_dnode;
+> +
+>  		map->m_pblk = ei.blk + pgofs - ei.fofs;
+>  		map->m_len = min((pgoff_t)maxblocks, ei.fofs + ei.len - pgofs);
+>  		map->m_flags = F2FS_MAP_MAPPED;
+> @@ -1261,6 +1265,7 @@ bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len)
+>  	map.m_next_pgofs = NULL;
+>  	map.m_next_extent = NULL;
+>  	map.m_seg_type = NO_CHECK_TYPE;
+> +	map.m_may_create = false;
+>  	last_lblk = F2FS_BLK_ALIGN(pos + len);
+>  
+>  	while (map.m_lblk < last_lblk) {
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 3271830..ff82350 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -2201,7 +2201,8 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
+>  {
+>  	struct inode *inode = file_inode(filp);
+>  	struct f2fs_map_blocks map = { .m_next_extent = NULL,
+> -					.m_seg_type = NO_CHECK_TYPE };
+> +					.m_seg_type = NO_CHECK_TYPE ,
+> +					.m_may_create = false };
+>  	struct extent_info ei = {0, 0, 0};
+>  	pgoff_t pg_start, pg_end, next_pgofs;
+>  	unsigned int blk_per_seg = sbi->blocks_per_seg;
+> @@ -2935,6 +2936,7 @@ int f2fs_precache_extents(struct inode *inode)
+>  	map.m_next_pgofs = NULL;
+>  	map.m_next_extent = &m_next_extent;
+>  	map.m_seg_type = NO_CHECK_TYPE;
+> +	map.m_may_create = false;
+>  	end = F2FS_I_SB(inode)->max_file_blocks;
+>  
+>  	while (map.m_lblk < end) {
+> 
