@@ -1,8 +1,7 @@
-From: Phillip Potter <phil@philpotter.co.uk>
-Subject: [RFC][PATCH v4 07/09] f2fs: use common file type
- conversion
-Date: Wed, 21 Nov 2018 19:06:58 +0000
-Message-ID: <20181121190658.GA7731@pathfinder>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs-tools: release 1.12.0
+Date: Wed, 21 Nov 2018 11:36:44 -0800
+Message-ID: <20181121193644.8360-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,17 +9,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <phil@philpotter.co.uk>) id 1gPXq8-0003Tv-Dd
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Nov 2018 19:07:08 +0000
-Received: from mail-wr1-f68.google.com ([209.85.221.68])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1gPXq6-00GPL9-24
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Nov 2018 19:07:08 +0000
-Received: by mail-wr1-f68.google.com with SMTP id j10so6837825wru.4
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 21 Nov 2018 11:07:05 -0800 (PST)
-Content-Disposition: inline
+ (envelope-from <jaegeuk@kernel.org>) id 1gPYJ5-0004lC-Jp
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Nov 2018 19:37:03 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1gPYJ0-00Bp2B-C1
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Nov 2018 19:37:03 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,119 +25,51 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, amir73il@gmail.com, viro@zeniv.linux.org.uk, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Deduplicate the f2fs file type conversion implementation - file systems
-that use the same file types as defined by POSIX do not need to define
-their own versions and can use the common helper functions decared in
-fs_types.h and implemented in fs_types.c
+This release includes:
+ - add android default configuration
+ - fix resgid/resuid
+ - add more sanity checks
+ - fix corrupted quota in clean umount
+ - add superblock checksum
 
-Acked-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
+And, there are several bug fixes in fsck.f2fs/sload.f2fs/mkfs.f2fs.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/dir.c           | 41 ++++++++++++++++-------------------------
- fs/f2fs/inline.c        |  2 +-
- include/linux/f2fs_fs.h |  8 +++++---
- 3 files changed, 22 insertions(+), 29 deletions(-)
+ VERSION      | 4 ++--
+ configure.ac | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index bacc667950b6..113820f16c6d 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -36,37 +36,28 @@ static unsigned int bucket_blocks(unsigned int level)
- 		return 4;
- }
+diff --git a/VERSION b/VERSION
+index bd6aefb..7ba7212 100644
+--- a/VERSION
++++ b/VERSION
+@@ -1,2 +1,2 @@
+-1.11.0
+-2018-07-10
++1.12.0
++2018-11-12
+diff --git a/configure.ac b/configure.ac
+index 70583cd..b02a718 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -212,12 +212,12 @@ AC_CONFIG_FILES([
+ ])
  
--static unsigned char f2fs_filetype_table[F2FS_FT_MAX] = {
--	[F2FS_FT_UNKNOWN]	= DT_UNKNOWN,
--	[F2FS_FT_REG_FILE]	= DT_REG,
--	[F2FS_FT_DIR]		= DT_DIR,
--	[F2FS_FT_CHRDEV]	= DT_CHR,
--	[F2FS_FT_BLKDEV]	= DT_BLK,
--	[F2FS_FT_FIFO]		= DT_FIFO,
--	[F2FS_FT_SOCK]		= DT_SOCK,
--	[F2FS_FT_SYMLINK]	= DT_LNK,
--};
--
--static unsigned char f2fs_type_by_mode[S_IFMT >> S_SHIFT] = {
--	[S_IFREG >> S_SHIFT]	= F2FS_FT_REG_FILE,
--	[S_IFDIR >> S_SHIFT]	= F2FS_FT_DIR,
--	[S_IFCHR >> S_SHIFT]	= F2FS_FT_CHRDEV,
--	[S_IFBLK >> S_SHIFT]	= F2FS_FT_BLKDEV,
--	[S_IFIFO >> S_SHIFT]	= F2FS_FT_FIFO,
--	[S_IFSOCK >> S_SHIFT]	= F2FS_FT_SOCK,
--	[S_IFLNK >> S_SHIFT]	= F2FS_FT_SYMLINK,
--};
--
- static void set_de_type(struct f2fs_dir_entry *de, umode_t mode)
- {
--	de->file_type = f2fs_type_by_mode[(mode & S_IFMT) >> S_SHIFT];
-+	/*
-+	 * compile-time asserts that generic FT_x types still match
-+	 * F2FS_FT_x types
-+	 */
-+	BUILD_BUG_ON(F2FS_FT_UNKNOWN != FT_UNKNOWN);
-+	BUILD_BUG_ON(F2FS_FT_REG_FILE != FT_REG_FILE);
-+	BUILD_BUG_ON(F2FS_FT_DIR != FT_DIR);
-+	BUILD_BUG_ON(F2FS_FT_CHRDEV != FT_CHRDEV);
-+	BUILD_BUG_ON(F2FS_FT_BLKDEV != FT_BLKDEV);
-+	BUILD_BUG_ON(F2FS_FT_FIFO != FT_FIFO);
-+	BUILD_BUG_ON(F2FS_FT_SOCK != FT_SOCK);
-+	BUILD_BUG_ON(F2FS_FT_SYMLINK != FT_SYMLINK);
-+	BUILD_BUG_ON(F2FS_FT_MAX != FT_MAX);
-+
-+	de->file_type = fs_umode_to_ftype(mode);
- }
+ # export library version info for mkfs/libf2fs_format_la
+-AC_SUBST(FMT_CURRENT, 4)
++AC_SUBST(FMT_CURRENT, 5)
+ AC_SUBST(FMT_REVISION, 0)
+ AC_SUBST(FMT_AGE, 0)
  
- unsigned char f2fs_get_de_type(struct f2fs_dir_entry *de)
- {
--	if (de->file_type < F2FS_FT_MAX)
--		return f2fs_filetype_table[de->file_type];
--	return DT_UNKNOWN;
-+	return fs_ftype_to_dtype(de->file_type);
- }
+ # export library version info for lib/libf2fs_la
+-AC_SUBST(LIBF2FS_CURRENT, 5)
++AC_SUBST(LIBF2FS_CURRENT, 6)
+ AC_SUBST(LIBF2FS_REVISION, 0)
+ AC_SUBST(LIBF2FS_AGE, 0)
  
- static unsigned long dir_block_index(unsigned int level,
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 7b0cff7e6051..34205d2e1cc2 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -458,7 +458,7 @@ static int f2fs_add_inline_entries(struct inode *dir, void *inline_dentry)
- 		new_name.len = le16_to_cpu(de->name_len);
- 
- 		ino = le32_to_cpu(de->ino);
--		fake_mode = f2fs_get_de_type(de) << S_SHIFT;
-+		fake_mode = f2fs_get_de_type(de) << S_DT_SHIFT;
- 
- 		err = f2fs_add_regular_entry(dir, &new_name, NULL, NULL,
- 							ino, fake_mode);
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index d7711048ef93..4b8a2ae348d8 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -524,7 +524,11 @@ struct f2fs_dentry_block {
- 	__u8 filename[NR_DENTRY_IN_BLOCK][F2FS_SLOT_LEN];
- } __packed;
- 
--/* file types used in inode_info->flags */
-+/*
-+ * file types used in inode_info->flags
-+ *
-+ * Values must match common file type values in fs_types.h.
-+ */
- enum {
- 	F2FS_FT_UNKNOWN,
- 	F2FS_FT_REG_FILE,
-@@ -537,8 +541,6 @@ enum {
- 	F2FS_FT_MAX
- };
- 
--#define S_SHIFT 12
--
- #define	F2FS_DEF_PROJID		0	/* default project ID */
- 
- #endif  /* _LINUX_F2FS_FS_H */
 -- 
-2.19.1
+2.19.0.605.g01d371f741-goog
