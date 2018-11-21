@@ -1,80 +1,65 @@
-From: "Tiezhu Yang" <kernelpatch@126.com>
-Subject: [PATCH v2] f2fs: fix wrong return value of
- f2fs_acl_create
-Date: Wed, 21 Nov 2018 07:21:38 +0800 (CST)
-Message-ID: <3ff4ba33.a5b.167336de02f.Coremail.kernelpatch@126.com>
+From: Eiichi Tsukata <devel@etsukata.com>
+Subject: [PATCH v1 0/4] fs: fix race between llseek SEEK_END and write
+Date: Wed, 21 Nov 2018 11:43:56 +0900
+Message-ID: <20181121024400.4346-1-devel@etsukata.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <kernelpatch@126.com>) id 1gPFL6-0002rW-0A
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 20 Nov 2018 23:21:52 +0000
-Received: from m15-62.126.com ([220.181.15.62])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtp (Exim 4.90_1)
- id 1gPFL2-00AmA3-96
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 20 Nov 2018 23:21:51 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-btrfs-owner@vger.kernel.org>
+Sender: linux-btrfs-owner@vger.kernel.org
+To: andi@firstfloor.org, Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, Miklos Szeredi <miklos@szeredi.hu>, Bob Peterson <rpeterso@redhat.com>, Andreas Gruenbacher <agruenba@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com, linux-unionfs@vger.kernel.org
+Cc: Eiichi Tsukata <devel@etsukata.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-When call f2fs_acl_create_masq() failed, the caller f2fs_acl_create()
-should return -EIO instead of -ENOMEM, this patch makes it consistent
-with posix_acl_create() which has been fixed in commit beaf226b863a
-("posix_acl: don't ignore return value of posix_acl_create_masq()").
+Some file systems (including ext4, xfs, ramfs ...) have the following
+problem as I've described in the commit message of the 1/4 patch.
 
-Fixes: 83dfe53c185e ("f2fs: fix reference leaks in f2fs_acl_create")
-Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
----
- fs/f2fs/acl.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+  The commit ef3d0fd27e90 ("vfs: do (nearly) lockless generic_file_llseek")
+  removed almost all locks in llseek() including SEEK_END. It based on the
+  idea that write() updates size atomically. But in fact, write() can be
+  divided into two or more parts in generic_perform_write() when pos
+  straddles over the PAGE_SIZE, which results in updating size multiple
+  times in one write(). It means that llseek() can see the size being
+  updated during write().
 
-diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
-index fa707cd..22f0d17 100644
---- a/fs/f2fs/acl.c
-+++ b/fs/f2fs/acl.c
-@@ -352,12 +352,14 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
- 		return PTR_ERR(p);
- 
- 	clone = f2fs_acl_clone(p, GFP_NOFS);
--	if (!clone)
--		goto no_mem;
-+	if (!clone) {
-+		ret = -ENOMEM;
-+		goto release_acl;
-+	}
- 
- 	ret = f2fs_acl_create_masq(clone, mode);
- 	if (ret < 0)
--		goto no_mem_clone;
-+		goto release_clone;
- 
- 	if (ret == 0)
- 		posix_acl_release(clone);
-@@ -371,11 +373,11 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
- 
- 	return 0;
- 
--no_mem_clone:
-+release_clone:
- 	posix_acl_release(clone);
--no_mem:
-+release_acl:
- 	posix_acl_release(p);
--	return -ENOMEM;
-+	return ret;
- }
- 
- int f2fs_init_acl(struct inode *inode, struct inode *dir, struct page *ipage,
+  This race changes behavior of some applications. 'tail' is one of those
+  applications. It reads range [pos, pos_end] where pos_end is obtained
+  via llseek() SEEK_END. Sometimes, a read line could be broken.
+
+  reproducer:
+
+    $ while true; do echo 123456 >> out; done
+    $ while true; do tail out | grep -v 123456 ; done
+
+  example output(take 30 secs):
+
+    12345
+    1
+    1234
+    1
+    12
+    1234
+
+Note: Some file systems which indivisually implements llseek() and hold
+      inode mutex lock in it are not affected. ex:) btrfs, ocfs2
+
+Patch 1: re-implements inode lock for SEEK_END in generic_file_llseek()
+Patch 2 to 4: implement inode lock for SEEK_END in each file systems
+
+Eiichi Tsukata (4):
+  vfs: fix race between llseek SEEK_END and write
+  ext4: fix race between llseek SEEK_END and write
+  f2fs: fix race between llseek SEEK_END and write
+  overlayfs: fix race between llseek SEEK_END and write
+
+ fs/btrfs/file.c     |  2 +-
+ fs/ext4/file.c      | 10 ++++++++++
+ fs/f2fs/file.c      |  6 +-----
+ fs/fuse/file.c      |  5 +++--
+ fs/gfs2/file.c      |  3 ++-
+ fs/overlayfs/file.c | 23 ++++++++++++++++++++---
+ fs/read_write.c     | 37 ++++++++++++++++++++++++++++++++++---
+ include/linux/fs.h  |  2 ++
+ 8 files changed, 73 insertions(+), 15 deletions(-)
+
 -- 
-1.8.3.1
+2.19.1
