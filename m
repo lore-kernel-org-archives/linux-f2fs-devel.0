@@ -1,46 +1,31 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: fix wrong return value of
- f2fs_acl_create
-Date: Wed, 21 Nov 2018 11:32:22 +0800
-Message-ID: <c8d7aace-5b91-e18a-416c-58d7b6019d97@huawei.com>
-References: <3ff4ba33.a5b.167336de02f.Coremail.kernelpatch@126.com>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: [PATCH v1 0/4] fs: fix race between llseek SEEK_END and write
+Date: Wed, 21 Nov 2018 04:54:41 +0000
+Message-ID: <20181121045440.GM32577@ZenIV.linux.org.uk>
+References: <20181121024400.4346-1-devel@etsukata.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1gPJFg-0004P2-Jd
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Nov 2018 03:32:32 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gPJFe-00Fdzm-Pz
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Nov 2018 03:32:32 +0000
-In-Reply-To: <3ff4ba33.a5b.167336de02f.Coremail.kernelpatch@126.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Tiezhu Yang <kernelpatch@126.com>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-btrfs-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20181121024400.4346-1-devel@etsukata.com>
+Sender: linux-btrfs-owner@vger.kernel.org
+To: Eiichi Tsukata <devel@etsukata.com>
+Cc: andi@firstfloor.org, Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, Miklos Szeredi <miklos@szeredi.hu>, Bob Peterson <rpeterso@redhat.com>, Andreas Gruenbacher <agruenba@redhat.com>, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com, linux-unionfs@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/11/21 7:21, Tiezhu Yang wrote:
-> When call f2fs_acl_create_masq() failed, the caller f2fs_acl_create()
-> should return -EIO instead of -ENOMEM, this patch makes it consistent
-> with posix_acl_create() which has been fixed in commit beaf226b863a
-> ("posix_acl: don't ignore return value of posix_acl_create_masq()").
+On Wed, Nov 21, 2018 at 11:43:56AM +0900, Eiichi Tsukata wrote:
+> Some file systems (including ext4, xfs, ramfs ...) have the following
+> problem as I've described in the commit message of the 1/4 patch.
 > 
-> Fixes: 83dfe53c185e ("f2fs: fix reference leaks in f2fs_acl_create")
-> Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
+>   The commit ef3d0fd27e90 ("vfs: do (nearly) lockless generic_file_llseek")
+>   removed almost all locks in llseek() including SEEK_END. It based on the
+>   idea that write() updates size atomically. But in fact, write() can be
+>   divided into two or more parts in generic_perform_write() when pos
+>   straddles over the PAGE_SIZE, which results in updating size multiple
+>   times in one write(). It means that llseek() can see the size being
+>   updated during write().
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
+And?  Who has ever promised anything that insane?  write(2) can take an arbitrary
+amount of time; another process doing lseek() on independently opened descriptor
+is *not* going to wait for that (e.g. page-in of the buffer being written, which
+just happens to be mmapped from a file on NFS over RFC1149 link).
