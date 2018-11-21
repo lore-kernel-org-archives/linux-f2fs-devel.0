@@ -1,33 +1,148 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v1 3/4] f2fs: fix race between llseek SEEK_END and write
-Date: Wed, 21 Nov 2018 01:23:14 -0800
-Message-ID: <20181121092314.GB10667@infradead.org>
-References: <20181121024400.4346-1-devel@etsukata.com>
- <20181121024400.4346-4-devel@etsukata.com>
+From: Phillip Potter <phil@philpotter.co.uk>
+Subject: [RFC][PATCH v4 07/09] f2fs: use common file type
+ conversion
+Date: Wed, 21 Nov 2018 19:06:58 +0000
+Message-ID: <20181121190658.GA7731@pathfinder>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-btrfs-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <phil@philpotter.co.uk>) id 1gPXq8-0003Tv-Dd
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Nov 2018 19:07:08 +0000
+Received: from mail-wr1-f68.google.com ([209.85.221.68])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1gPXq6-00GPL9-24
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Nov 2018 19:07:08 +0000
+Received: by mail-wr1-f68.google.com with SMTP id j10so6837825wru.4
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 21 Nov 2018 11:07:05 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <20181121024400.4346-4-devel@etsukata.com>
-Sender: linux-btrfs-owner@vger.kernel.org
-To: Eiichi Tsukata <devel@etsukata.com>
-Cc: andi@firstfloor.org, Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, Miklos Szeredi <miklos@szeredi.hu>, Bob Peterson <rpeterso@redhat.com>, Andreas Gruenbacher <agruenba@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com, linux-unionfs@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, amir73il@gmail.com, viro@zeniv.linux.org.uk, linux-f2fs-devel@lists.sourceforge.net
 
-On Wed, Nov 21, 2018 at 11:43:59AM +0900, Eiichi Tsukata wrote:
-> This patch itself seems to be just a cleanup but with the
-> commit b25bd1d9fd87 ("vfs: fix race between llseek SEEK_END and write")
-> it fixes race.
+Deduplicate the f2fs file type conversion implementation - file systems
+that use the same file types as defined by POSIX do not need to define
+their own versions and can use the common helper functions decared in
+fs_types.h and implemented in fs_types.c
 
-Please move this patch to the beginning of the series and replace
-the commit log with something like the one below.  Note that your
-commit id is different from the one that will appear once applied
-upstream, so the aboe isn't too helpful.
-
+Acked-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
 ---
-f2fs: use generic_file_llseek
+ fs/f2fs/dir.c           | 41 ++++++++++++++++-------------------------
+ fs/f2fs/inline.c        |  2 +-
+ include/linux/f2fs_fs.h |  8 +++++---
+ 3 files changed, 22 insertions(+), 29 deletions(-)
 
-f2fs always passes inode->i_sb->s_maxbytes to generic_file_llseek_size,
-and thus should simply use generic_file_llseek.  For now this is a just
-a cleanup, but it will allow f2fs to pick up a race fix in
-generic_file_llseek for free.
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index bacc667950b6..113820f16c6d 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -36,37 +36,28 @@ static unsigned int bucket_blocks(unsigned int level)
+ 		return 4;
+ }
+ 
+-static unsigned char f2fs_filetype_table[F2FS_FT_MAX] = {
+-	[F2FS_FT_UNKNOWN]	= DT_UNKNOWN,
+-	[F2FS_FT_REG_FILE]	= DT_REG,
+-	[F2FS_FT_DIR]		= DT_DIR,
+-	[F2FS_FT_CHRDEV]	= DT_CHR,
+-	[F2FS_FT_BLKDEV]	= DT_BLK,
+-	[F2FS_FT_FIFO]		= DT_FIFO,
+-	[F2FS_FT_SOCK]		= DT_SOCK,
+-	[F2FS_FT_SYMLINK]	= DT_LNK,
+-};
+-
+-static unsigned char f2fs_type_by_mode[S_IFMT >> S_SHIFT] = {
+-	[S_IFREG >> S_SHIFT]	= F2FS_FT_REG_FILE,
+-	[S_IFDIR >> S_SHIFT]	= F2FS_FT_DIR,
+-	[S_IFCHR >> S_SHIFT]	= F2FS_FT_CHRDEV,
+-	[S_IFBLK >> S_SHIFT]	= F2FS_FT_BLKDEV,
+-	[S_IFIFO >> S_SHIFT]	= F2FS_FT_FIFO,
+-	[S_IFSOCK >> S_SHIFT]	= F2FS_FT_SOCK,
+-	[S_IFLNK >> S_SHIFT]	= F2FS_FT_SYMLINK,
+-};
+-
+ static void set_de_type(struct f2fs_dir_entry *de, umode_t mode)
+ {
+-	de->file_type = f2fs_type_by_mode[(mode & S_IFMT) >> S_SHIFT];
++	/*
++	 * compile-time asserts that generic FT_x types still match
++	 * F2FS_FT_x types
++	 */
++	BUILD_BUG_ON(F2FS_FT_UNKNOWN != FT_UNKNOWN);
++	BUILD_BUG_ON(F2FS_FT_REG_FILE != FT_REG_FILE);
++	BUILD_BUG_ON(F2FS_FT_DIR != FT_DIR);
++	BUILD_BUG_ON(F2FS_FT_CHRDEV != FT_CHRDEV);
++	BUILD_BUG_ON(F2FS_FT_BLKDEV != FT_BLKDEV);
++	BUILD_BUG_ON(F2FS_FT_FIFO != FT_FIFO);
++	BUILD_BUG_ON(F2FS_FT_SOCK != FT_SOCK);
++	BUILD_BUG_ON(F2FS_FT_SYMLINK != FT_SYMLINK);
++	BUILD_BUG_ON(F2FS_FT_MAX != FT_MAX);
++
++	de->file_type = fs_umode_to_ftype(mode);
+ }
+ 
+ unsigned char f2fs_get_de_type(struct f2fs_dir_entry *de)
+ {
+-	if (de->file_type < F2FS_FT_MAX)
+-		return f2fs_filetype_table[de->file_type];
+-	return DT_UNKNOWN;
++	return fs_ftype_to_dtype(de->file_type);
+ }
+ 
+ static unsigned long dir_block_index(unsigned int level,
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 7b0cff7e6051..34205d2e1cc2 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -458,7 +458,7 @@ static int f2fs_add_inline_entries(struct inode *dir, void *inline_dentry)
+ 		new_name.len = le16_to_cpu(de->name_len);
+ 
+ 		ino = le32_to_cpu(de->ino);
+-		fake_mode = f2fs_get_de_type(de) << S_SHIFT;
++		fake_mode = f2fs_get_de_type(de) << S_DT_SHIFT;
+ 
+ 		err = f2fs_add_regular_entry(dir, &new_name, NULL, NULL,
+ 							ino, fake_mode);
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index d7711048ef93..4b8a2ae348d8 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -524,7 +524,11 @@ struct f2fs_dentry_block {
+ 	__u8 filename[NR_DENTRY_IN_BLOCK][F2FS_SLOT_LEN];
+ } __packed;
+ 
+-/* file types used in inode_info->flags */
++/*
++ * file types used in inode_info->flags
++ *
++ * Values must match common file type values in fs_types.h.
++ */
+ enum {
+ 	F2FS_FT_UNKNOWN,
+ 	F2FS_FT_REG_FILE,
+@@ -537,8 +541,6 @@ enum {
+ 	F2FS_FT_MAX
+ };
+ 
+-#define S_SHIFT 12
+-
+ #define	F2FS_DEF_PROJID		0	/* default project ID */
+ 
+ #endif  /* _LINUX_F2FS_FS_H */
+-- 
+2.19.1
