@@ -1,94 +1,40 @@
-From: Sahitya Tummala <stummala@codeaurora.org>
-Subject: [PATCH 2/2] f2fs: fix memory leak of quota files extent tree and it's nodes
-Date: Thu, 22 Nov 2018 16:29:20 +0530
-Message-ID: <1542884360-19470-2-git-send-email-stummala@codeaurora.org>
-References: <1542884360-19470-1-git-send-email-stummala@codeaurora.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1542884360-19470-1-git-send-email-stummala@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] mkfs.f2fs: enable VERITY by default
+Date: Thu, 22 Nov 2018 19:15:31 +0800
+Message-ID: <10ef37ee-0a46-7d07-3216-975155e7570b@huawei.com>
+References: <20181122071847.33708-1-jaegeuk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1gPmxn-0007Ue-In
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 22 Nov 2018 11:16:03 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1gPmxT-00HAbd-6r
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 22 Nov 2018 11:16:03 +0000
+In-Reply-To: <20181122071847.33708-1-jaegeuk@kernel.org>
+Content-Language: en-US
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-When there is a failure in f2fs_fill_super() after the quota is
-enabled, then f2fs_quota_off_umount() is called in the error handling.
-Then sbi is freed up and f2fs_fill_super() retries again.
-But f2fs_quota_off_umount() doesn't guarantee that quota file's extent
-tree/nodes are removed/freed. It will just add to sbi->zombie_list,
-if those files are referenced. In the next retry, quota is enabled
-again with the new extent tree and nodes, causing memory leak for the
-previously allocated memory.
+On 2018/11/22 15:18, Jaegeuk Kim wrote:
+> This enables VERITY by default for android.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Fix this by cleaning up the sbi->zombie_list before freeing sbi and
-before the next retry.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
----
- fs/f2fs/extent_cache.c | 21 +++++++++++++++++++++
- fs/f2fs/f2fs.h         |  1 +
- fs/f2fs/super.c        |  5 +++++
- 3 files changed, 27 insertions(+)
-
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index 763ba83..c2bcd88 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -629,6 +629,27 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
- 		f2fs_mark_inode_dirty_sync(inode, true);
- }
- 
-+void f2fs_cleanup_zombie_list(struct f2fs_sb_info *sbi)
-+{
-+	struct extent_tree *et, *next;
-+
-+	mutex_lock(&sbi->extent_tree_lock);
-+	list_for_each_entry_safe(et, next, &sbi->zombie_list, list) {
-+		if (atomic_read(&et->node_cnt)) {
-+			write_lock(&et->lock);
-+			__free_extent_tree(sbi, et);
-+			write_unlock(&et->lock);
-+		}
-+		f2fs_bug_on(sbi, atomic_read(&et->node_cnt));
-+		list_del_init(&et->list);
-+		radix_tree_delete(&sbi->extent_tree_root, et->ino);
-+		kmem_cache_free(extent_tree_slab, et);
-+		atomic_dec(&sbi->total_ext_tree);
-+		atomic_dec(&sbi->total_zombie_tree);
-+	}
-+	mutex_unlock(&sbi->extent_tree_lock);
-+}
-+
- unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
- {
- 	struct extent_tree *et, *next;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index db8a919..6807815 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3419,6 +3419,7 @@ void f2fs_update_extent_cache_range(struct dnode_of_data *dn,
- void f2fs_init_extent_cache_info(struct f2fs_sb_info *sbi);
- int __init f2fs_create_extent_cache(void);
- void f2fs_destroy_extent_cache(void);
-+void f2fs_cleanup_zombie_list(struct f2fs_sb_info *sbi);
- 
- /*
-  * sysfs.c
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index f41ac43..521fe3f 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -3023,6 +3023,11 @@ void f2fs_cleanup_extent_cache(struct f2fs_sb_info *sbi)
- 
- 	list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list)
- 		f2fs_destroy_extent_tree(inode, true);
-+
-+	f2fs_cleanup_zombie_list(sbi);
-+
-+	f2fs_bug_on(sbi, !list_empty(&sbi->zombie_list));
-+	f2fs_bug_on(sbi, !list_empty(&sbi->extent_list));
- }
- 
- static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+Thanks,
