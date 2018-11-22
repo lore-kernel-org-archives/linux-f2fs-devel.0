@@ -1,39 +1,35 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] mkfs.f2fs: enable VERITY by default
-Date: Thu, 22 Nov 2018 19:15:31 +0800
-Message-ID: <10ef37ee-0a46-7d07-3216-975155e7570b@huawei.com>
-References: <20181122071847.33708-1-jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: read page index before freeing
+Date: Thu, 22 Nov 2018 19:21:16 +0800
+Message-ID: <2cd91c95-598d-fcc1-b1d6-6fddb224efcf@huawei.com>
+References: <1542884326-74903-1-git-send-email-bianpan2016@163.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1gPmxn-0007Ue-In
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 22 Nov 2018 11:16:03 +0000
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gPmxT-00HAbd-6r
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 22 Nov 2018 11:16:03 +0000
-In-Reply-To: <20181122071847.33708-1-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1542884326-74903-1-git-send-email-bianpan2016@163.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pan Bian <bianpan2016@163.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/11/22 15:18, Jaegeuk Kim wrote:
-> This enables VERITY by default for android.
+Hi Pan,
+
+On 2018/11/22 18:58, Pan Bian wrote:
+> The function truncate_node frees the page with f2fs_put_page. However,
+> the page index is read after that. So, the patch reads the index before
+> freeing the page.
+
+Good catch!
+
+It will be better to add:
+
+Fixes: bf39c00a9a7f ("f2fs: drop obsolete node page when it is truncated")
+Cc: <stable@vger.kernel.org>
+
 > 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> Signed-off-by: Pan Bian <bianpan2016@163.com>
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
