@@ -1,75 +1,54 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs-tools: release 1.12.0
-Date: Wed, 21 Nov 2018 11:36:44 -0800
-Message-ID: <20181121193644.8360-1-jaegeuk@kernel.org>
+From: Eiichi Tsukata <devel@etsukata.com>
+Subject: Re: [PATCH v1 0/4] fs: fix race between llseek SEEK_END and write
+Date: Thu, 22 Nov 2018 14:40:50 +0900
+Message-ID: <CANhTXPQzKmsyPO9QrGz6eijjuMFzLN4BhUV=6ABDJysX0xyKfw@mail.gmail.com>
+References: <20181121024400.4346-1-devel@etsukata.com> <20181121045440.GM32577@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1gPYJ5-0004lC-Jp
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Nov 2018 19:37:03 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gPYJ0-00Bp2B-C1
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Nov 2018 19:37:03 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-btrfs-owner@vger.kernel.org>
+In-Reply-To: <20181121045440.GM32577@ZenIV.linux.org.uk>
+Sender: linux-btrfs-owner@vger.kernel.org
+To: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: andi@firstfloor.org, Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, Miklos Szeredi <miklos@szeredi.hu>, Bob Peterson <rpeterso@redhat.com>, Andreas Gruenbacher <agruenba@redhat.com>, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com, linux-unionfs@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This release includes:
- - add android default configuration
- - fix resgid/resuid
- - add more sanity checks
- - fix corrupted quota in clean umount
- - add superblock checksum
+2018=E5=B9=B411=E6=9C=8821=E6=97=A5(=E6=B0=B4) 13:54 Al Viro <viro@zeniv.li=
+nux.org.uk>:
+>
+> On Wed, Nov 21, 2018 at 11:43:56AM +0900, Eiichi Tsukata wrote:
+> > Some file systems (including ext4, xfs, ramfs ...) have the following
+> > problem as I've described in the commit message of the 1/4 patch.
+> >
+> >   The commit ef3d0fd27e90 ("vfs: do (nearly) lockless generic_file_llse=
+ek")
+> >   removed almost all locks in llseek() including SEEK_END. It based on =
+the
+> >   idea that write() updates size atomically. But in fact, write() can b=
+e
+> >   divided into two or more parts in generic_perform_write() when pos
+> >   straddles over the PAGE_SIZE, which results in updating size multiple
+> >   times in one write(). It means that llseek() can see the size being
+> >   updated during write().
+>
+> And?  Who has ever promised anything that insane?  write(2) can take an a=
+rbitrary
+> amount of time; another process doing lseek() on independently opened des=
+criptor
+> is *not* going to wait for that (e.g. page-in of the buffer being written=
+, which
+> just happens to be mmapped from a file on NFS over RFC1149 link).
 
-And, there are several bug fixes in fsck.f2fs/sload.f2fs/mkfs.f2fs.
+Thanks.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- VERSION      | 4 ++--
- configure.ac | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+The lock I added in NFS was nothing but slow down lseek() because a file si=
+ze is
+updated atomically. Even `spin_lock(&inode->i_lock)` is unnecessary.
 
-diff --git a/VERSION b/VERSION
-index bd6aefb..7ba7212 100644
---- a/VERSION
-+++ b/VERSION
-@@ -1,2 +1,2 @@
--1.11.0
--2018-07-10
-+1.12.0
-+2018-11-12
-diff --git a/configure.ac b/configure.ac
-index 70583cd..b02a718 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -212,12 +212,12 @@ AC_CONFIG_FILES([
- ])
- 
- # export library version info for mkfs/libf2fs_format_la
--AC_SUBST(FMT_CURRENT, 4)
-+AC_SUBST(FMT_CURRENT, 5)
- AC_SUBST(FMT_REVISION, 0)
- AC_SUBST(FMT_AGE, 0)
- 
- # export library version info for lib/libf2fs_la
--AC_SUBST(LIBF2FS_CURRENT, 5)
-+AC_SUBST(LIBF2FS_CURRENT, 6)
- AC_SUBST(LIBF2FS_REVISION, 0)
- AC_SUBST(LIBF2FS_AGE, 0)
- 
--- 
-2.19.0.605.g01d371f741-goog
+I'll fix the commit message which only refers to specific local file
+systems that use
+generic_perform_write() and remove unnecessary locks in some
+distributed file systems
+(e.g. nfs, cifs, or more) by replacing generic_file_llseek() with
+generic_file_llseek_unlocked()
+so that `tail` don't have to wait for avian carriers.
