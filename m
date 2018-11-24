@@ -1,62 +1,41 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: fix to allow node segment for GC by ioctl path
-Date: Sat, 24 Nov 2018 18:23:55 +0800
-Message-ID: <f94e8b8c-0c20-0668-16ad-4978b0600d36@huawei.com>
-References: <1542949942-30275-1-git-send-email-stummala@codeaurora.org>
+Subject: Re: [PATCH] f2fs: make "f2fs_fault_name[]" const char *
+Date: Sat, 24 Nov 2018 18:25:33 +0800
+Message-ID: <f8830c39-9a98-7456-dab3-1f82b8fad9ed@huawei.com>
+References: <20181124090642.GA10969@avx2>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1542949942-30275-1-git-send-email-stummala@codeaurora.org>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1gQV8D-0002Ks-V9
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 24 Nov 2018 10:25:45 +0000
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1gQV8C-00FEzl-78
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 24 Nov 2018 10:25:45 +0000
+In-Reply-To: <20181124090642.GA10969@avx2>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sahitya Tummala <stummala@codeaurora.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Alexey Dobriyan <adobriyan@gmail.com>, jaegeuk@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/11/23 13:12, Sahitya Tummala wrote:
-> Allow node type segments also to be GC'd via f2fs ioctls
-> F2FS_IOC_GARBAGE_COLLECT and F2FS_IOC_GARBAGE_COLLECT_RANGE.
+On 2018/11/24 17:06, Alexey Dobriyan wrote:
+> Those strings are immutable.
+> 
+> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 
-IIRC, only F2FS_IOC_GARBAGE_COLLECT_RANGE pass a valid segment number via
-@result parameter in get_victim_by_default(), so in commit message, it
-needs to remove F2FS_IOC_GARBAGE_COLLECT, right?
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
-
-> 
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> ---
->  fs/f2fs/gc.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index a07241f..e4689c6 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -323,8 +323,7 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
->  	p.min_cost = get_max_cost(sbi, &p);
->  
->  	if (*result != NULL_SEGNO) {
-> -		if (IS_DATASEG(get_seg_entry(sbi, *result)->type) &&
-> -			get_valid_blocks(sbi, *result, false) &&
-> +		if (get_valid_blocks(sbi, *result, false) &&
->  			!sec_usage_check(sbi, GET_SEC_FROM_SEG(sbi, *result)))
->  			p.min_segno = *result;
->  		goto out;
-> @@ -404,11 +403,12 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
->  		}
->  		*result = (p.min_segno / p.ofs_unit) * p.ofs_unit;
->  
-> +	}
-> +out:
-> +	if (p.min_segno != NULL_SEGNO)
->  		trace_f2fs_get_victim(sbi->sb, type, gc_type, &p,
->  				sbi->cur_victim_sec,
->  				prefree_segments(sbi), free_segments(sbi));
-> -	}
-> -out:
->  	mutex_unlock(&dirty_i->seglist_lock);
->  
->  	return (p.min_segno == NULL_SEGNO) ? 0 : 1;
-> 
