@@ -1,81 +1,62 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: check memory boundary by insane namelen
-Date: Sat, 24 Nov 2018 17:59:20 +0800
-Message-ID: <1d801acd-ed1e-3593-45e6-ad71b27e4c7a@huawei.com>
-References: <20181115075040.83500-1-jaegeuk@kernel.org>
- <3d213d40-a4b0-6e60-87b2-81e66866ac4c@huawei.com>
+Subject: Re: [PATCH] f2fs: fix to allow node segment for GC by ioctl path
+Date: Sat, 24 Nov 2018 18:23:55 +0800
+Message-ID: <f94e8b8c-0c20-0668-16ad-4978b0600d36@huawei.com>
+References: <1542949942-30275-1-git-send-email-stummala@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <3d213d40-a4b0-6e60-87b2-81e66866ac4c@huawei.com>
+In-Reply-To: <1542949942-30275-1-git-send-email-stummala@codeaurora.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sheng Yong <shengyong1@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Sahitya Tummala <stummala@codeaurora.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Sheng,
+On 2018/11/23 13:12, Sahitya Tummala wrote:
+> Allow node type segments also to be GC'd via f2fs ioctls
+> F2FS_IOC_GARBAGE_COLLECT and F2FS_IOC_GARBAGE_COLLECT_RANGE.
 
-On 2018/11/23 20:11, Sheng Yong wrote:
-> Hi, Jaegeuk and Chao,
-> 
-> On 2018/11/15 15:50, Jaegeuk Kim wrote:
->> If namelen is corrupted to have very long value, fill_dentries can copy
->> wrong memory area.
->>
-> Is there any scenario that could hit this corruption? Or this is triggered
-
-I didn't see such issue in my test, I guess it may be caused by fuzzing test.
+IIRC, only F2FS_IOC_GARBAGE_COLLECT_RANGE pass a valid segment number via
+@result parameter in get_victim_by_default(), so in commit message, it
+needs to remove F2FS_IOC_GARBAGE_COLLECT, right?
 
 Thanks,
 
-> by fuzzing injection?
 > 
-> thanks,
-> Sheng Yong
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> ---
+>  fs/f2fs/gc.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
->> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->> ---
->>   fs/f2fs/dir.c | 12 +++++++++++-
->>   1 file changed, 11 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
->> index bacc667950b6..c0c845da12fa 100644
->> --- a/fs/f2fs/dir.c
->> +++ b/fs/f2fs/dir.c
->> @@ -808,6 +808,17 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
->>   		de_name.name = d->filename[bit_pos];
->>   		de_name.len = le16_to_cpu(de->name_len);
->>   
->> +		/* check memory boundary before moving forward */
->> +		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
->> +		if (unlikely(bit_pos > d->max)) {
->> +			f2fs_msg(sbi->sb, KERN_WARNING,
->> +				"%s: corrupted namelen=%d, run fsck to fix.",
->> +				__func__, le16_to_cpu(de->name_len));
->> +			set_sbi_flag(sbi, SBI_NEED_FSCK);
->> +			err = -EINVAL;
->> +			goto out;
->> +		}
->> +
->>   		if (f2fs_encrypted_inode(d->inode)) {
->>   			int save_len = fstr->len;
->>   
->> @@ -830,7 +841,6 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
->>   		if (readdir_ra)
->>   			f2fs_ra_node_page(sbi, le32_to_cpu(de->ino));
->>   
->> -		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
->>   		ctx->pos = start_pos + bit_pos;
->>   	}
->>   out:
->>
-> 
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index a07241f..e4689c6 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -323,8 +323,7 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+>  	p.min_cost = get_max_cost(sbi, &p);
+>  
+>  	if (*result != NULL_SEGNO) {
+> -		if (IS_DATASEG(get_seg_entry(sbi, *result)->type) &&
+> -			get_valid_blocks(sbi, *result, false) &&
+> +		if (get_valid_blocks(sbi, *result, false) &&
+>  			!sec_usage_check(sbi, GET_SEC_FROM_SEG(sbi, *result)))
+>  			p.min_segno = *result;
+>  		goto out;
+> @@ -404,11 +403,12 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+>  		}
+>  		*result = (p.min_segno / p.ofs_unit) * p.ofs_unit;
+>  
+> +	}
+> +out:
+> +	if (p.min_segno != NULL_SEGNO)
+>  		trace_f2fs_get_victim(sbi->sb, type, gc_type, &p,
+>  				sbi->cur_victim_sec,
+>  				prefree_segments(sbi), free_segments(sbi));
+> -	}
+> -out:
+>  	mutex_unlock(&dirty_i->seglist_lock);
+>  
+>  	return (p.min_segno == NULL_SEGNO) ? 0 : 1;
 > 
