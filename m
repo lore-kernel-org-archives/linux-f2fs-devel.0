@@ -1,64 +1,65 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: check memory boundary by insane namelen
-Date: Fri, 23 Nov 2018 20:11:15 +0800
-Message-ID: <3d213d40-a4b0-6e60-87b2-81e66866ac4c@huawei.com>
-References: <20181115075040.83500-1-jaegeuk@kernel.org>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Subject: [PATCH] f2fs: make "f2fs_fault_name[]" const char *
+Date: Sat, 24 Nov 2018 12:06:42 +0300
+Message-ID: <20181124090642.GA10969@avx2>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181115075040.83500-1-jaegeuk@kernel.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: "gongchen (E)" <gongchen4@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <adobriyan@gmail.com>) id 1gQTtt-00008A-2s
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 24 Nov 2018 09:06:53 +0000
+Received: from mail-wr1-f49.google.com ([209.85.221.49])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1gQTtr-001qRM-G1
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 24 Nov 2018 09:06:53 +0000
+Received: by mail-wr1-f49.google.com with SMTP id 96so14282030wrb.2
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat, 24 Nov 2018 01:06:51 -0800 (PST)
+Content-Disposition: inline
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi, Jaegeuk and Chao,
+Those strings are immutable.
 
-On 2018/11/15 15:50, Jaegeuk Kim wrote:
-> If namelen is corrupted to have very long value, fill_dentries can copy
-> wrong memory area.
-> 
-Is there any scenario that could hit this corruption? Or this is triggered
-by fuzzing injection?
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-thanks,
-Sheng Yong
+ fs/f2fs/f2fs.h  |    2 +-
+ fs/f2fs/super.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->   fs/f2fs/dir.c | 12 +++++++++++-
->   1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> index bacc667950b6..c0c845da12fa 100644
-> --- a/fs/f2fs/dir.c
-> +++ b/fs/f2fs/dir.c
-> @@ -808,6 +808,17 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
->   		de_name.name = d->filename[bit_pos];
->   		de_name.len = le16_to_cpu(de->name_len);
->   
-> +		/* check memory boundary before moving forward */
-> +		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
-> +		if (unlikely(bit_pos > d->max)) {
-> +			f2fs_msg(sbi->sb, KERN_WARNING,
-> +				"%s: corrupted namelen=%d, run fsck to fix.",
-> +				__func__, le16_to_cpu(de->name_len));
-> +			set_sbi_flag(sbi, SBI_NEED_FSCK);
-> +			err = -EINVAL;
-> +			goto out;
-> +		}
-> +
->   		if (f2fs_encrypted_inode(d->inode)) {
->   			int save_len = fstr->len;
->   
-> @@ -830,7 +841,6 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
->   		if (readdir_ra)
->   			f2fs_ra_node_page(sbi, le32_to_cpu(de->ino));
->   
-> -		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
->   		ctx->pos = start_pos + bit_pos;
->   	}
->   out:
-> 
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -67,7 +67,7 @@ struct f2fs_fault_info {
+ 	unsigned int inject_type;
+ };
+ 
+-extern char *f2fs_fault_name[FAULT_MAX];
++extern const char *f2fs_fault_name[FAULT_MAX];
+ #define IS_FAULT_SET(fi, type) ((fi)->inject_type & (1 << (type)))
+ #endif
+ 
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -38,7 +38,7 @@ static struct kmem_cache *f2fs_inode_cachep;
+ 
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+ 
+-char *f2fs_fault_name[FAULT_MAX] = {
++const char *f2fs_fault_name[FAULT_MAX] = {
+ 	[FAULT_KMALLOC]		= "kmalloc",
+ 	[FAULT_KVMALLOC]	= "kvmalloc",
+ 	[FAULT_PAGE_ALLOC]	= "page alloc",
