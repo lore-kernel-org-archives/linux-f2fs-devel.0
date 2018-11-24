@@ -1,29 +1,30 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 1/2] f2fs: fix sbi->extent_list corruption
- issue
-Date: Sat, 24 Nov 2018 17:36:53 +0800
-Message-ID: <2a072671-8231-afd6-1132-95415c9b34ae@huawei.com>
-References: <1542884360-19470-1-git-send-email-stummala@codeaurora.org>
- <a1e799ad-a559-12cc-9f2d-a6f037640a35@huawei.com>
- <20181122121107.GB52295@jaegeuk-macbookpro.roam.corp.google.com>
- <20181123034218.GA9838@codeaurora.org>
- <75b71652-31a9-1061-37a4-9d137c3db9aa@huawei.com>
- <20181123101928.GB9838@codeaurora.org>
+Subject: Re: [PATCH 1/2] f2fs: remove stale inode entry before
+ eviction from gdirty_list
+Date: Sat, 24 Nov 2018 17:55:40 +0800
+Message-ID: <6bbf1445-e271-8929-0f19-2951f340f2e5@huawei.com>
+References: <1542607377-25446-1-git-send-email-riteshh@codeaurora.org>
+ <0a2feb36-8f71-67a0-381c-2e487d658145@huawei.com>
+ <c5387fdb-6b20-ed3d-e9a5-ae55b5dbdd37@codeaurora.org>
+ <20181119210340.GA33805@jaegeuk-macbookpro.roam.corp.google.com>
+ <182b74e8-4148-4180-763c-a79b10bd0612@codeaurora.org>
+ <c3cc8092-9093-f6d6-7150-48a782f9de50@huawei.com>
+ <b46e161b-a6b2-1fac-32bc-fab37fedbe90@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1gQUNO-0001GD-Vt
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 24 Nov 2018 09:37:22 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1gQUfT-0005gJ-Iz
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 24 Nov 2018 09:56:03 +0000
 Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gQUN8-00Cv9l-0m
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 24 Nov 2018 09:37:22 +0000
-In-Reply-To: <20181123101928.GB9838@codeaurora.org>
+ id 1gQUfJ-001sPw-TH
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 24 Nov 2018 09:56:03 +0000
+In-Reply-To: <b46e161b-a6b2-1fac-32bc-fab37fedbe90@codeaurora.org>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -34,159 +35,163 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Sahitya Tummala <stummala@codeaurora.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Ritesh Harjani <riteshh@codeaurora.org>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2018/11/23 18:19, Sahitya Tummala wrote:
-> On Fri, Nov 23, 2018 at 05:52:16PM +0800, Chao Yu wrote:
->> On 2018/11/23 11:42, Sahitya Tummala wrote:
->>> On Thu, Nov 22, 2018 at 04:11:07AM -0800, Jaegeuk Kim wrote:
->>>> On 11/22, Chao Yu wrote:
->>>>> On 2018/11/22 18:59, Sahitya Tummala wrote:
->>>>>> When there is a failure in f2fs_fill_super() after/during
->>>>>> the recovery of fsync'd nodes, it frees the current sbi and
->>>>>> retries again. This time the mount is successful, but the files
->>>>>> that got recovered before retry, still holds the extent tree,
->>>>>> whose extent nodes list is corrupted since sbi and sbi->extent_list
->>>>>> is freed up. The list_del corruption issue is observed when the
->>>>>> file system is getting unmounted and when those recoverd files extent
->>>>>> node is being freed up in the below context.
->>>>>>
->>>>>> list_del corruption. prev->next should be fffffff1e1ef5480, but was (null)
->>>>>> <...>
->>>>>> kernel BUG at kernel/msm-4.14/lib/list_debug.c:53!
->>>>>> task: fffffff1f46f2280 task.stack: ffffff8008068000
->>>>>> lr : __list_del_entry_valid+0x94/0xb4
->>>>>> pc : __list_del_entry_valid+0x94/0xb4
->>>>>> <...>
->>>>>> Call trace:
->>>>>> __list_del_entry_valid+0x94/0xb4
->>>>>> __release_extent_node+0xb0/0x114
->>>>>> __free_extent_tree+0x58/0x7c
->>>>>> f2fs_shrink_extent_tree+0xdc/0x3b0
->>>>>> f2fs_leave_shrinker+0x28/0x7c
->>>>>> f2fs_put_super+0xfc/0x1e0
->>>>>> generic_shutdown_super+0x70/0xf4
->>>>>> kill_block_super+0x2c/0x5c
->>>>>> kill_f2fs_super+0x44/0x50
->>>>>> deactivate_locked_super+0x60/0x8c
->>>>>> deactivate_super+0x68/0x74
->>>>>> cleanup_mnt+0x40/0x78
->>>>>> __cleanup_mnt+0x1c/0x28
->>>>>> task_work_run+0x48/0xd0
->>>>>> do_notify_resume+0x678/0xe98
->>>>>> work_pending+0x8/0x14
->>>>>>
->>>>>> Fix this by cleaning up the extent tree of those recovered files
->>>>>> before freeing up sbi and before next retry.
->>>>>
->>>>> Would it be more clear to call shrink_dcache_sb earlier to invalid all
->>>>> inodes and call f2fs_shrink_extent_tree release cached entries and trees in
->>>>> error path?
->>>>
->>>> Agreed.
->>>>
->>> I have tried doing shrink_dcache_sb() earlier but that doesn't call
->>> f2fs_shrink_extent_tree(). So I have moved f2fs_join_shrinker() earlier and 
->>> tried calling f2fs_leave_shrinker() in the error path. That helps to clean up
->>> the cached extent nodes. However, I see that extent tree is left intact for
->>
->> I didn't get it, you mean, in error path, after we call shrink_dcache_sb &
->> f2fs_leave_shrinker, for those recovered files, their extent nodes were
->> evicted, but their extent trees are still in cache?
->>
-> 
-> Yes, only extent tree is present with zero extent nodes as
-> f2fs_leave_shrinker() is only clearing the exntent nodes from
-> sbi->extent_list.
-
-Oh, recovered inodes are in cache due to we didn't call evict_inodes, so
-they are still referenced to extent tree...
-
-How about calling evict_inodes after shrink_dcache_sb?
-
-Thanks,
-
-> 
->>> those recovered files, which should not be a problem as it gets freed as part
->>> of next umount/rm. Only one small problem I see with this is - during rm/umount when
->>> those previoulsy recovered files are being evicted, extent tree memory gets
->>> free'd but the counter sbi->total_ext_tree gets invalid as these recovered
->>> files are not present as part of current sbi->extent_tree_root. So i have come
->>> up with this patch below to fix this. Let me know if this looks good?
->>>
->>> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
->>> index 1cb0fcc..3e4801e 100644
->>> --- a/fs/f2fs/extent_cache.c
->>> +++ b/fs/f2fs/extent_cache.c
->>> @@ -654,9 +654,9 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
->>>  		}
->>>  		f2fs_bug_on(sbi, atomic_read(&et->node_cnt));
->>>  		list_del_init(&et->list);
->>> -		radix_tree_delete(&sbi->extent_tree_root, et->ino);
->>> +		if (radix_tree_delete(&sbi->extent_tree_root, et->ino))
->>> +			atomic_dec(&sbi->total_ext_tree);
->>>  		kmem_cache_free(extent_tree_slab, et);
->>> -		atomic_dec(&sbi->total_ext_tree);
->>>  		atomic_dec(&sbi->total_zombie_tree);
->>>  		tree_cnt++;
->>>  
->>> @@ -767,7 +767,8 @@ void f2fs_destroy_extent_tree(struct inode *inode)
->>>  	/* delete extent tree entry in radix tree */
->>>  	mutex_lock(&sbi->extent_tree_lock);
->>>  	f2fs_bug_on(sbi, atomic_read(&et->node_cnt));
->>> -	radix_tree_delete(&sbi->extent_tree_root, inode->i_ino);
->>> +	if (radix_tree_delete(&sbi->extent_tree_root, inode->i_ino))
->>> +		atomic_dec(&sbi->total_ext_tree);
->>>  	kmem_cache_free(extent_tree_slab, et);
->>>  	atomic_dec(&sbi->total_ext_tree);
->>>  	mutex_unlock(&sbi->extent_tree_lock);
->>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>> index af58b2c..3e5588f 100644
->>> --- a/fs/f2fs/super.c
->>> +++ b/fs/f2fs/super.c
->>> @@ -3295,6 +3295,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>>  	if (err)
->>>  		goto free_root_inode;
->>>  
->>> +	f2fs_join_shrinker(sbi);
->>>  #ifdef CONFIG_QUOTA
->>>  	/* Enable quota usage during mount */
->>>  	if (f2fs_sb_has_quota_ino(sb) && !f2fs_readonly(sb)) {
->>> @@ -3379,8 +3380,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>>  			sbi->valid_super_block ? 1 : 2, err);
->>>  	}
->>>  
->>> -	f2fs_join_shrinker(sbi);
->>> -
->>>  	f2fs_tuning_parameters(sbi);
->>>  
->>>  	f2fs_msg(sbi->sb, KERN_NOTICE, "Mounted with checkpoint version = %llx",
->>> @@ -3402,6 +3401,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>>  	 * falls into an infinite loop in f2fs_sync_meta_pages().
->>>  	 */
->>>  	truncate_inode_pages_final(META_MAPPING(sbi));
->>> +	shrink_dcache_sb(sb);
->>> +	f2fs_leave_shrinker(sbi);
->>
->> Why not just calling f2fs_shrink_extent_tree(sbi, __count_extent_cache(sbi)); ?
->>
-> 
-> Sure, will update in the next patchset.
-> 
->> Thanks,
->>
->>>  	f2fs_unregister_sysfs(sbi);
->>>  free_root_inode:
->>>  	dput(sb->s_root);
->>> @@ -3445,7 +3446,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>>  	/* give only one another chance */
->>>  	if (retry) {
->>>  		retry = false;
->>> -		shrink_dcache_sb(sb);
->>>  		goto try_onemore;
->>>  	}
->>>  	return err;
->>>
->>
-> 
+SGkgUml0ZXNoLAoKT24gMjAxOC8xMS8yMyAxOTowNywgUml0ZXNoIEhhcmphbmkgd3JvdGU6Cj4g
+SGkgQ2hhbywKPiAKPiBPbiAxMS8yMS8yMDE4IDk6MDAgQU0sIENoYW8gWXUgd3JvdGU6Cj4+IEhp
+IFJpdGVzaCwKPj4KPj4gT24gMjAxOC8xMS8yMCAxODozMywgUml0ZXNoIEhhcmphbmkgd3JvdGU6
+Cj4+PiBPbiAxMS8yMC8yMDE4IDI6MzMgQU0sIEphZWdldWsgS2ltIHdyb3RlOgo+Pj4+IE9uIDEx
+LzE5LCBSaXRlc2ggSGFyamFuaSB3cm90ZToKPj4+Pj4gSGkgQ2hhbywKPj4+Pj4KPj4+Pj4gT24g
+MTEvMTkvMjAxOCAxMjowOSBQTSwgQ2hhbyBZdSB3cm90ZToKPj4+Pj4+IEhpIFJpdGVzaCwKPj4+
+Pj4+Cj4+Pj4+PiBPbiAyMDE4LzExLzE5IDE0OjAyLCBSaXRlc2ggSGFyamFuaSB3cm90ZToKPj4+
+Pj4+PiBUaGlzIGlzIHNlZW4gd2hlbiBDUF9FUlJPUl9GTEFHIGlzIG5vdCBzZXQgJiBGUyBtYXkg
+YmUgY29ycnVwdGVkLgo+Pj4+Pj4+IFRoZXJlIGlzIGEgY2FzZSBvYnNlcnZlZCB3aGVyZSBkaXJ0
+eSBzdGFsZSBpbm9kZSBwb2ludGVyIGRhdGEgaXMgc3RpbGwKPj4+Pj4+PiBwcmVzZW50IGluIHRo
+ZSBnZGlydHlfbGlzdCBjYXVzaW5nIHBhbmljIG9uIGFjY2VzcyB3aGlsZSBkb2luZwo+Pj4+Pj4+
+IGNoZWNrcG9pbnQgb3BlcmF0aW9uLgo+Pj4+Pj4+Cj4+Pj4+Pj4gV0FSTklORzogQ1BVOiAzIFBJ
+RDogMTgyNyBhdAo+Pj4+Pj4+IGtlcm5lbC9tc20tNC4xNC9mcy9mMmZzL2lub2RlLmM6NTY3Cj4+
+Pj4+Pj4gZjJmc19ldmljdF9pbm9kZSsweDM2NC8weDM3Ywo+Pj4+Pj4+IDwuLi4+Cj4+Pj4+Pj4g
+WzQyMjQ2Ljc3NjI4OV0gQlVHOiBzcGlubG9jayBiYWQgbWFnaWMgb24gQ1BVIzQsIDEyNDUKPj4+
+Pj4+PiBbNDIyNDYuNzgyNjc0XSBVbmFibGUgdG8gaGFuZGxlIGtlcm5lbCBwYWdpbmcgcmVxdWVz
+dCBhdCB2aXJ0dWFsIGFkZHJlc3MgNmI2YjZiNmI2YjcxM2IKPj4+Pj4+PiA8Li4uPgo+Pj4+Pj4+
+IFs0MjI0Ni44OTYzNzBdIHRhc2s6IGZmZmZmZmMwZjA0MzQwODAgdGFzay5zdGFjazogZmZmZmZm
+ODAyM2VhMDAwMAo+Pj4+Pj4+IFs0MjI0Ni45MDI0NjVdIHBjIDogc3Bpbl9idWcrMHg4MC8weGI4
+Cj4+Pj4+Pj4gWzQyMjQ2LjkwNjA1NV0gbHIgOiBzcGluX2J1ZysweDY0LzB4YjgKPj4+Pj4+PiA8
+Li4uPgo+Pj4+Pj4+IFs0MjI0Ny4xMjIzNDZdIENhbGwgdHJhY2U6Cj4+Pj4+Pj4gWzQyMjQ3LjEy
+NDg3Nl0gIHNwaW5fYnVnKzB4ODAvMHhiOAo+Pj4+Pj4+IFs0MjI0Ny4xMjgxMTBdICBkb19yYXdf
+c3Bpbl9sb2NrKzB4ZTgvMHgxMTgKPj4+Pj4+PiBbNDIyNDcuMTMyMTQ0XSAgX3Jhd19zcGluX2xv
+Y2srMHgyNC8weDMwCj4+Pj4+Pj4gWzQyMjQ3LjEzNTkxNl0gIGlncmFiKzB4MjAvMHg2Ywo+Pj4+
+Pj4+IFs0MjI0Ny4xMzg4OTRdICBmMmZzX3N5bmNfaW5vZGVfbWV0YSsweDU4LzB4YzAKPj4+Pj4+
+PiBbNDIyNDcuMTQzMTk5XSAgd3JpdGVfY2hlY2twb2ludCsweDFjNC8weGVjYwo+Pj4+Pj4+IFs0
+MjI0Ny4xNDczMjJdICBmMmZzX3N5bmNfZnMrMHgxMTgvMHgxNzAKPj4+Pj4+PiBbNDIyNDcuMTUx
+MDk2XSAgZjJmc19kb19zeW5jX2ZpbGUrMHg0ZjAvMHg3OTgKPj4+Pj4+PiBbNDIyNDcuMTU1MzEx
+XSAgZjJmc19zeW5jX2ZpbGUrMHg1NC8weDZjCj4+Pj4+Pj4gWzQyMjQ3LjE1OTA4N10gIHZmc19m
+c3luY19yYW5nZSsweDkwLzB4YWMKPj4+Pj4+PiBbNDIyNDcuMTYyOTUwXSAgdmZzX2ZzeW5jKzB4
+MmMvMHgzOAo+Pj4+Pj4+IFs0MjI0Ny4xNjYyNzhdICBkb19mc3luYysweDNjLzB4NzgKPj4+Pj4+
+PiBbNDIyNDcuMTY5NTE1XSAgU3lTX2ZkYXRhc3luYysweDIwLzB4MzAKPj4+Pj4+Pgo+Pj4+Pj4+
+IFNpZ25lZC1vZmYtYnk6IFJpdGVzaCBIYXJqYW5pIDxyaXRlc2hoQGNvZGVhdXJvcmEub3JnPgo+
+Pj4+Pj4+IC0tLQo+Pj4+Pj4+ICAgICBmcy9mMmZzL2lub2RlLmMgfCAxMCArKysrKystLS0tCj4+
+Pj4+Pj4gICAgIDEgZmlsZSBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0p
+Cj4+Pj4+Pj4KPj4+Pj4+PiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9pbm9kZS5jIGIvZnMvZjJmcy9p
+bm9kZS5jCj4+Pj4+Pj4gaW5kZXggOTFjZWVlMC4uYzU3ZjYzNiAxMDA2NDQKPj4+Pj4+PiAtLS0g
+YS9mcy9mMmZzL2lub2RlLmMKPj4+Pj4+PiArKysgYi9mcy9mMmZzL2lub2RlLmMKPj4+Pj4+PiBA
+QCAtNzAyLDExICs3MDIsMTMgQEAgdm9pZCBmMmZzX2V2aWN0X2lub2RlKHN0cnVjdCBpbm9kZSAq
+aW5vZGUpCj4+Pj4+Pj4gICAgIAlzdGF0X2RlY19pbmxpbmVfZGlyKGlub2RlKTsKPj4+Pj4+PiAg
+ICAgCXN0YXRfZGVjX2lubGluZV9pbm9kZShpbm9kZSk7Cj4+Pj4+Pj4gLQlpZiAobGlrZWx5KCFp
+c19zZXRfY2twdF9mbGFncyhzYmksIENQX0VSUk9SX0ZMQUcpICYmCj4+Pj4+Pj4gLQkJCQkhaXNf
+c2JpX2ZsYWdfc2V0KHNiaSwgU0JJX0NQX0RJU0FCTEVEKSkpCj4+Pj4+Pj4gLQkJZjJmc19idWdf
+b24oc2JpLCBpc19pbm9kZV9mbGFnX3NldChpbm9kZSwgRklfRElSVFlfSU5PREUpKTsKPj4+Pj4+
+PiAtCWVsc2UKPj4+Pj4+PiArCWlmICh1bmxpa2VseShpc19pbm9kZV9mbGFnX3NldChpbm9kZSwg
+RklfRElSVFlfSU5PREUpKSkgewo+Pj4+Pj4+ICAgICAJCWYyZnNfaW5vZGVfc3luY2VkKGlub2Rl
+KTsKPj4+Pj4+PiArCQlmMmZzX21zZyhzYmktPnNiLCBLRVJOX1dBUk5JTkcsCj4+Pj4+Pj4gKwkJ
+CSAiaW5jb25zaXN0ZW50IGRpcnR5IGlub2RlOiV1IGVudHJ5IGZvdW5kIGR1cmluZyBldmljdGlv
+blxuIiwKPj4+Pj4+PiArCQkJIGlub2RlLT5pX2lubyk7Cj4+Pj4+Pj4gKwkJZjJmc19idWdfb24o
+c2JpLCAxKTsKPj4+Pj4+IElJUkMsIEphZWdldWsgYWRkZWQgYmVsb3cgY29uZGl0aW9uIHRvIGF2
+b2lkIGYyZnNfYnVnX29uIGR1cmluZyBkb2luZyB0ZXN0Cj4+Pj4+PiB3LyBjaGVja3BvaW50IGVy
+cm9yIGluamVjdGlvbiwgaWYgd2UgcmVtb3ZlIHRoaXMsIHdlIG1heSBzdGlsbCBlbmNvdW50ZXIK
+Pj4+Pj4+IHN1Y2ggcHJvYmxlbS4KPj4+Pj4+Cj4+Pj4+PiBpZiAobGlrZWx5KCFpc19zZXRfY2tw
+dF9mbGFncyhzYmksIENQX0VSUk9SX0ZMQUcpKSkKPj4+Pj4gT2ssIGFncmVlZC4gRG9lcyBiZWxv
+dyBzb3VuZHMgZ29vZCB0aGVuPwo+Pj4+PiBUaGUgaWRlYSBpcyB0byBnbyBhaGVhZCBhbmQgY2Fs
+bCBmMmZzX2lub2RlX3N5bmNlZChpbm9kZSkgd2hlbiB0aGUgaW5vZGUKPj4+Pj4gRklfRElSVFlf
+SU5PREUgZmxhZyBpcyBzZXQgaXJyZXNwZWN0aXZlIG9mIENQX0VSUk9SX0ZMQUcgc2V0IG9yIG5v
+dC4gQmVjYXVzZQo+Pj4+PiBvdGhlcndpc2UgdGhlcmUgaXMgYSBzdGFsZSBpbm9kZSBlbnRyeSB3
+aGljaCB3aWxsCj4+Pj4+IHJlbWFpbiBpbiBnZGlydHlfbGlzdCA9PiBjYXVzaW5nIGtlcm5lbCBw
+YW5pYyBpbiBjaGVja3BvaW50IHBhdGguCj4+Pj4+Cj4+Pj4+IGRpZmYgLS1naXQgYS9mcy9mMmZz
+L2lub2RlLmMgYi9mcy9mMmZzL2lub2RlLmMKPj4+Pj4gaW5kZXggOTFjZWVlMC4uMDA5MTVjMiAx
+MDA2NDQKPj4+Pj4gLS0tIGEvZnMvZjJmcy9pbm9kZS5jCj4+Pj4+ICsrKyBiL2ZzL2YyZnMvaW5v
+ZGUuYwo+Pj4+PiBAQCAtNzAyLDExICs3MDIsMTUgQEAgdm9pZCBmMmZzX2V2aWN0X2lub2RlKHN0
+cnVjdCBpbm9kZSAqaW5vZGUpCj4+Pj4+ICAgwqDCoMKgwqDCoMKgwqAgc3RhdF9kZWNfaW5saW5l
+X2Rpcihpbm9kZSk7Cj4+Pj4+ICAgwqDCoMKgwqDCoMKgwqAgc3RhdF9kZWNfaW5saW5lX2lub2Rl
+KGlub2RlKTsKPj4+Pj4KPj4+Pj4gLcKgwqDCoMKgwqDCoCBpZiAobGlrZWx5KCFpc19zZXRfY2tw
+dF9mbGFncyhzYmksIENQX0VSUk9SX0ZMQUcpICYmCj4+Pj4+IC3CoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgIWlzX3NiaV9mbGFnX3Nl
+dChzYmksIFNCSV9DUF9ESVNBQkxFRCkpKQo+Pj4+PiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCBmMmZzX2J1Z19vbihzYmksIGlzX2lub2RlX2ZsYWdfc2V0KGlub2RlLCBGSV9ESVJUWV9J
+Tk9ERSkpOwo+Pj4+PiAtwqDCoMKgwqDCoMKgIGVsc2UKPj4+Pj4gK8KgwqDCoMKgwqDCoCBpZiAo
+dW5saWtlbHkoaXNfaW5vZGVfZmxhZ19zZXQoaW5vZGUsIEZJX0RJUlRZX0lOT0RFKSkpIHsKPj4+
+Pj4gICDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZjJmc19pbm9kZV9zeW5jZWQoaW5v
+ZGUpOwo+Pj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBmMmZzX21zZyhzYmktPnNi
+LCBLRVJOX1dBUk5JTkcsCj4+Pj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgICJpbmNvbnNpc3RlbnQgZGlydHkgaW5vZGU6JXUgZW50cnkgZm91bmQgZHVy
+aW5nCj4+Pj4+IGV2aWN0aW9uXG4iLAo+Pj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCBpbm9kZS0+aV9pbm8pOwo+Pj4+PiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCBpZiAoKCFpc19zZXRfY2twdF9mbGFncyhzYmksIENQX0VSUk9SX0ZMQUcp
+ICYmCj4+Pj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgIWlzX3NiaV9mbGFnX3NldChzYmksIFNCSV9DUF9ESVNBQkxFRCkpKQo+
+Pj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZjJmc19i
+dWdfb24oc2JpLCAxKTsKPj4+Pj4gK8KgwqDCoMKgwqDCoCB9Cj4+Pj4+Cj4+Pj4+PiBTbyBJJ2Qg
+bGlrZSB0byBrbm93IHdoYXQga2luZCBvZiBjYXNlIGNhbiBtYWtlIGRpcnR5IGlub2RlIGR1cmlu
+ZyBldmljdCgpLAo+Pj4+Pj4gY2FuIHlvdSBleHBsYWluIG1vcmU/Cj4+Pj4+IFllcywgd2UgYWxz
+byBjb3VsZCBub3QgZ2V0IGV4YWN0IHBhdGggYWJvdXQgd2hlbiB0aGlzIGNhbiBoYXBwZW4uIEJ1
+dCBiZWxvdwo+Pj4+PiBhcmUgdGhlIHBhcmFsbGVsIG9uZ29pbmcgY29udGV4dHMgd2hlbiB0aGUg
+aXNzdWUgaXMgc2VlbjotCj4+Pj4+IFdlIGRvIHN1c3BlY3QgdGhhdCB0aGVyZSBpcyBzb21ldGhp
+bmcgYWxyZWFkeSB3cm9uZyBpbiB0aGUgRlMgZXZlbiBiZWZvcmUKPj4+Pj4gd2hlbiB0aGlzIGlz
+c3VlIG9jY3VycmVkIChkdWUgdG8gImluY29uc2lzdGVudCBub2RlIGJsb2NrIiBsb2dzKS4gVGhp
+cyBjb3VsZAo+Pj4+PiBiZSBkdWUgdG8gc29tZSBvdGhlciB1bmRlcmx5aW5nIHN0b3JhZ2UgZHJp
+dmVyIGlzc3VlLgo+Pj4+PiBOb3Qgc3VyZSB0aG91Z2guCj4+Pj4+Cj4+Pj4+IDEuIHVubGlua2F0
+IG9wZXJhdGlvbiBjYXVzaW5nIGYyZnNfZXZpY3RfaW5vZGUgY2F1c2luZyBhIHdhcm5pbmcgKGFz
+Cj4+Pj4+IG1lbnRpb25lZCBpbiB0aGUgY29tbWl0IHRleHQpLgo+Pj4+PiAyLiBlY2hvIDMgPiAv
+cHJvYy9zeXMvdm0vZHJvcF9jYWNoZXMuCj4+Pj4+IDMuIFJlbmFtZSBvcGVyYXRpb24gb24gc29t
+ZSBmaWxlLgo+Pj4+PiA0LiB2ZnNfZnN5bmMgLT4gZG9pbmcgY2hlY2twb2ludGluZyA9PiB0aGlz
+IGNhdXNlcyBhIGtlcm5lbCBwYW5pYyBzaW5jZQo+Pj4+PiBzdGFsZSBpbm9kZSBlbnRyeSBpcyBz
+dGlsbCBwcmVzZW50IHdoaWNoIGdvdCBmcmVlZCBmcm9tIGYyZnNfZXZpY3RfaW5vZGUKPj4+Pj4g
+cGF0aC4KPj4+Pj4KPj4+Pj4gU29tZSBlcnJvciBsb2dzIHdoaWNoIHdlcmUgc2VlbiBsb25nIGJl
+Zm9yZSB0aGlzIGlzc3VlIG9jY3VycmVkLgo+Pj4+PiBbNDIyMTkuMDg5ODEwXcKgRjJGUy1mc8Kg
+KG1tY2JsazBwNzUpOsKgaW5jb25zaXN0ZW50wqBub2RlwqBibG9jayzCoG5pZDo1MDAxOCzCoG5v
+ZGVfZm9vdGVyW25pZDo1MDMyNyxpbm86NTAzMjcsb2ZzOjAsY3B2ZXI6MTIxNDY1MDU5OTYyODI3
+NzMxODIsYmxrYWRkcjo1MTU0ODRdCj4+Pj4+IFs0MjIxOS4xMDQyODFdwqBGMkZTLWZzwqAobW1j
+YmxrMHA3NSk6wqBpbmNvbnNpc3RlbnTCoG5vZGXCoGJsb2NrLMKgbmlkOjQ5ODM2LMKgbm9kZV9m
+b290ZXJbbmlkOjUwMjI4LGlubzo1MDIyOCxvZnM6MCxjcHZlcjoxMDIzMDI0NzI5NDI1Njk2MTAx
+NyxibGthZGRyOjE0OTYzNDZdCj4+Pj4+IFs0MjIxOS4xMTg3MjNdwqBGMkZTLWZzwqAobW1jYmxr
+MHA3NSk6wqBpbmNvbnNpc3RlbnTCoG5vZGXCoGJsb2NrLMKgbmlkOjUwMzI3LMKgbm9kZV9mb290
+ZXJbbmlkOjAsaW5vOjAsb2ZzOjAsY3B2ZXI6MCxibGthZGRyOjBdCj4+Pj4+IFs0MjIxOS4xMzA3
+ODJdwqBGMkZTLWZzwqAobW1jYmxrMHA3NSk6wqBpbmNvbnNpc3RlbnTCoG5vZGXCoGJsb2NrLMKg
+bmlkOjUwMjI4LMKgbm9kZV9mb290ZXJbbmlkOjAsaW5vOjAsb2ZzOjAsY3B2ZXI6MCxibGthZGRy
+OjBdCj4+Pj4gSSd2ZSBjb25jZXJuZWQgdGhhdCB0aGlzIHBhdGNoIGhpZGVzIHRoZSBidWcgYW5k
+IG1ha2VzIHRoZSBwYXJ0aXRpb24gYmVpbmcgbW9yZQo+Pj4+IGNvcnJ1cHRlZC4gV2UgaGF2ZSB0
+byBmaWd1cmUgb3V0IHdoZXJlIHN1Y2ggdGhlIG5vZGUgYmxvY2sgd2VyZSBnZW5lcmF0ZWQuCj4+
+IEkgYWdyZWUgd2l0aCBKYWVnZXVrLCB3ZSdkIGJldHRlciB0byBmaWd1cmUgb3V0IHJvb3QgY2F1
+c2Ugb2YgdGhpcyBpc3N1ZSwKPj4gaW5zdGVhZCBvZiBoaWRpbmcgaXQuCj4gU3VyZSBJIHdpbGwg
+dHJ5IGFuZCBzZWUgaWYgSSBjYW4gZ2V0IHRoZSBkaXNrIGR1bXAgdG8gdmFsaWRhdGUgZmV3IHRo
+aW5ncy4KPiBCdXQgdGhpcyBtYXkgdGFrZSBhIHdoaWxlLCBzaW5jZSBGUyBpdHNlbGYgaXMgbm90
+IGEgc3VzcGVjdCBoZXJlLCBidXQgCj4gdGhpcyBpcyBkdWUgdG8gc29tZSBvdGhlciBzdWJzeXN0
+ZW0uCj4gT24gZGlzYWJsaW5nIHRob3NlLCB3ZSBkb24ndCBzZWUgYW55ICJpbmNvbnNpc3RlbnQg
+bm9kZSBibG9jayIgbG9ncy4KCk9rYXkuCgo+Pgo+Pj4gVGhpcyBpc3N1ZSBzZWVtcyB0byBiZSBt
+b3N0bHkgZHVlIHRvIHByb2JsZW0gZnJvbSB1bmRlcmx5aW5nIHN0b3JhZ2UKPj4+IGRyaXZlci4g
+QXMgb2Ygbm93IHRoZSBzdXNwZWN0Cj4+PiBpcyBub3QgZnJvbSBmMmZzIHNpbmNlIHdlIGRvbid0
+IHNlZSB0aGlzIGlzc3VlIG9uIGEgZGlmZmVyZW50Cj4+PiBjb25maWd1cmF0aW9uIG9mIHN0b3Jh
+Z2UgZHJpdmVyLgo+Pj4gVGhlIGFib3ZlIHBhdGNoIGlzIG1haW5seSB0byBmaXggYSBrZXJuZWwg
+Y3Jhc2ggd2hlbiB0aGUgc3lzdGVtL0ZTIGhhcwo+Pj4gYWN0dWFsbHkgZ29uZSBiYWQgZHVlIHRv
+IHNvbWUgb3RoZXIgc3Vic3lzdGVtIGNhdXNpbmcgY29ycnVwdGlvbi4KPj4+IFdlIHRob3VnaHQg
+aXQgaXMgYSBnb29kIGZpeCB0byBoYXZlIGJlY2F1c2UgYW55d2F5cyBpZiB0aGVyZSBpcyBhIGRp
+cnR5Cj4+PiBpbm9kZSBmb3VuZCBkdXJpbmcgZXZpY3Rpb24sCj4+PiB0aGVuIHdlIHNob3VsZCBy
+ZW1vdmUgYW55IHN0YWxlIGVudHJpZXMgb2YgaXQgZnJvbSBSQU0gZGF0YSBzdHJ1Y3R1cmVzLAo+
+Pj4gYmVmb3JlIGZyZWVpbmcgdGhlIGlub2RlICh3aXRoIGEgd2FybmluZyBtc2cpLgo+PiBUaGFu
+a3MgZm9yIHRoZSBleHBsYW5hdGlvbiwgSSBjYW4gdW5kZXJzdGFuZCB5b3VyIGNvbmNlcm4sIGlm
+IHlvdSB3b3JyeQo+PiBhYm91dCBmdXJ0aGVyIGNvcnJ1cHRpb24sIHdvdWxkIGl0IGJlIGJldHRl
+ciB0byBzdG9wIGNoZWNrcG9pbnQgaW4gYWRkaXRpb24KPj4gZm9yIHRoaXMgY2FzZSBpbiBxY29t
+J3Mga2VybmVsPwo+IFN1cmUuIEkgd2FzIG9ubHkgdGhpbmtpbmcgaW4gY2FzZSBpZiB0aGVyZSBp
+cyBleGlzdCBhIHNpdHVhdGlvbiB3aGVyZSAKPiBzdGFsZSBpbm9kZSBlbnRyaWVzIGFyZSBwcmVz
+ZW50LAo+IGluc3RlYWQgb2Yga2VybmVsIHBhbmljLCB3ZSBjYW4gcmVtb3ZlIHRob3NlIGVudHJp
+ZXMgd2hpbGUgd2UgY2FuIGR1cmluZyAKPiBmMmZzX2V2aWN0X2lub2RlIGFuZCBnaXZlIGEgcHJf
+d2FybiBtc2cuCgpHb3QgaXQsIGFueXdheSwgbGV0J3MgdHJ5IHRvIHRyb3VibGVzaG9vdCB0aGUg
+cm9vdCBjYXNlIG9mIGFsbCBwcm9ibGVtcyBhcwptdWNoIGFzIHBvc3NpYmxlIGluIHVwc3RyZWFt
+LCBpbiB2ZW5kb3IncyBjb2RlLCB3ZSBjYW4gdGVtcG9yYXJpbHkgY2hhbmdlCml0IHRvIGF2b2lk
+IHBhbmljIGluIHByb2R1Y3RzLgoKPiAKPj4KPj4+PiBIb3cgbWFueSBwYXRjaGVzIGhhdmUgeW91
+IGNoZXJyeS1waWNrZWQ/IFdoaWNoIGtlcm5lbCB2ZXJzaW9uIGFyZSB5b3UgdXNpbmc/Cj4+PiBr
+ZXJuZWwgNC4xNC4gWWVzIHdlIGRvIGhhdmUgYWxsIHRoZSBwYXRjaGVzIHB1bGxlZCBmcm9tIGFu
+ZHJvaWQgYW9zcC4KPj4gWW91IG1lYW4gY29kZSB1bmRlciBiZWxvdyB0YWc/Cj4+Cj4+IGh0dHBz
+Oi8vYW5kcm9pZC5nb29nbGVzb3VyY2UuY29tL2tlcm5lbC9jb21tb24vKy9BU0ItMjAxOC0xMS0w
+NV80LjE0Cj4gSXQgaXMgYmVsb3cgdGFnOi0KPiBodHRwczovL2FuZHJvaWQuZ29vZ2xlc291cmNl
+LmNvbS9rZXJuZWwvY29tbW9uLmdpdC8rL3JlZnMvdGFncy9BU0ItMjAxOC0xMS0wNV80LjE0LXAK
+CkNvcGllZCwgdGhhbmtzLiA6KQoKVGhhbmtzLAoKPiAKPiBUaGFua3MsCj4gUml0ZXNoCj4+Cj4+
+IFRoYW5rcywKPj4KPj4+PiBIYXZlIHlvdSBlbmFibGVkIElDRT8KPj4+IFllcy4gSUNFIGlzIGVu
+YWJsZWQuCj4+Pgo+Pj4KPj4+IFRoYW5rcwo+Pj4gUml0ZXNoCj4+Pgo+Pj4+IFRoYW5rcywKPj4+
+Pgo+Pj4+Cj4+Pj4+IFRoYW5rcywKPj4+Pj4KPj4+Pj4+IFRoYW5rcywKPj4+Pj4+Cj4+Pj4+Pj4g
+Kwl9Cj4+Pj4+Pj4gICAgIAkvKiBpbm8gPT0gMCwgaWYgZjJmc19uZXdfaW5vZGUoKSB3YXMgZmFp
+bGVkIHQqLwo+Pj4+Pj4+ICAgICAJaWYgKGlub2RlLT5pX2lubykKPj4+Pj4+Pgo+Pj4KPj4+IC4K
+Pj4+Cj4gCj4gCj4gLgo+IAoKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVs
+QGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0
+cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
