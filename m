@@ -1,22 +1,30 @@
-From: Jia Zhu <zhujia13@huawei.com>
-Subject: [PATCH] f2fs: fix to update new block address correctly
- for OPU
-Date: Sun, 25 Nov 2018 06:17:42 +0800
-Message-ID: <20181124221742.135673-1-zhujia13@huawei.com>
+From: Perfect Gentleman <perfect007gentleman@gmail.com>
+Subject: Bug in f2fs-tools-1.12.0
+Date: Sun, 25 Nov 2018 12:24:24 +0700
+Message-ID: <e8884c8d-9009-cb70-bdf1-73fc38e83abc@GMail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <zhujia13@huawei.com>) id 1gQYgd-0001xR-Ei
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 24 Nov 2018 14:13:31 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ (envelope-from <perfect007gentleman@gmail.com>) id 1gQmuJ-0005oX-HS
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 25 Nov 2018 05:24:35 +0000
+Received: from mail-lj1-f174.google.com ([209.85.208.174])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gQYgZ-00DBmF-In
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 24 Nov 2018 14:13:31 +0000
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1gQmuH-00DsTK-KA
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 25 Nov 2018 05:24:35 +0000
+Received: by mail-lj1-f174.google.com with SMTP id v15-v6so13650186ljh.13
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat, 24 Nov 2018 21:24:33 -0800 (PST)
+Received: from [192.168.88.11] ([31.135.34.118])
+ by smtp.gmail.com with ESMTPSA id r199sm8613555lff.50.2018.11.24.21.24.24
+ for <linux-f2fs-devel@lists.sourceforge.net>
+ (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+ Sat, 24 Nov 2018 21:24:25 -0800 (PST)
+Content-Language: ru-RU
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,35 +34,17 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com
-Cc: jaizhu.zj@gmail.com, Jia Zhu <zhujia13@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-Previously, we allocated a new block address for OPU mode in direct_IO.
-
-But the new address couldn't be assigned to @map->m_pblk correctly.
-
-This patch fix it.
-
-Signed-off-by: Jia Zhu <zhujia13@huawei.com>
----
- fs/f2fs/data.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 7226300..a3a567a 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1110,8 +1110,10 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 		if (test_opt(sbi, LFS) && flag == F2FS_GET_BLOCK_DIO &&
- 							map->m_may_create) {
- 			err = __allocate_data_block(&dn, map->m_seg_type);
--			if (!err)
-+			if (!err) {
-+				blkaddr = dn.data_blkaddr;
- 				set_inode_flag(inode, FI_APPEND_WRITE);
-+			}
- 		}
- 	} else {
- 		if (create) {
--- 
-2.10.1
+SGkgZjJmcy10ZWFtLAoKdGhlcmUgaXMgYnVnOiBmc2NrLmYyZnMgY2Fubm90IGNoZWNrIHJlYWQt
+b25seSBmaWxlc3lzdGVtLiBCdXQgMS4xMS4wIApjYW4gZG8gdGhhdC4KCmZzY2vCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCB8SW5mbzogRml4IHRoZSByZXBvcnRlZCBjb3JydXB0aW9uLgpmc2Nr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfEluZm86IE1vdW50ZWQgZGV2aWNlIQpmc2NrwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfEluZm86IENoZWNrIEZTIG9ubHkgZHVlIHRvIFJPCmZz
+Y2vCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8RXJyb3I6IEZhaWxlZCB0byBvcGVuIHRoZSBk
+ZXZpY2UhCmZzY2vCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8ICogRmlsZXN5c3RlbXMgY291
+bGRuJ3QgYmUgZml4ZWQKIMKgWyAhISBdCmZzY2vCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8
+ICogRVJST1I6IGZzY2sgZmFpbGVkIHRvIHN0YXJ0CgpSZWdhcmRzLApBbGV4CgoKCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwg
+bWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBz
+Oi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
