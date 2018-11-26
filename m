@@ -1,27 +1,46 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v3 2/2] f2fs: adjust trace print in f2fs_get_victim() to
- cover all paths
-Date: Mon, 26 Nov 2018 18:00:23 +0800
-Message-ID: <e0cf984c-a87b-ca7d-71f1-49f1dcbab3c7@huawei.com>
-References: <1543219302-12219-1-git-send-email-stummala@codeaurora.org>
- <1543219302-12219-2-git-send-email-stummala@codeaurora.org>
+From: Jia Zhu <zhujia13@huawei.com>
+Subject: [PATCH v2] f2fs: fix to update new block address correctly for OPU
+Date: Tue, 27 Nov 2018 02:32:32 +0800
+Message-ID: <20181126183232.51715-1-zhujia13@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1543219302-12219-2-git-send-email-stummala@codeaurora.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sahitya Tummala <stummala@codeaurora.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com
+Cc: jaizhu.zj@gmail.com, shengyong1@huawei.com, yunlong.song@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, stable@vger.kernel.org, Jia Zhu <zhujia13@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/11/26 16:01, Sahitya Tummala wrote:
-> Adjust the trace print in f2fs_get_victim() to cover GC done by
-> F2FS_IOC_GARBAGE_COLLECT_RANGE.
-> 
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Previously, we allocated a new block address for OPU mode in direct_IO.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+But the new address couldn't be assigned to @map->m_pblk correctly.
 
-Thanks,
+This patch fix it.
+
+Fixes: 511f52d02f05 ('f2fs: allow out-place-update for direct IO in LFS mode')
+
+Signed-off-by: Jia Zhu <zhujia13@huawei.com>
+---
+v2:
+- update commit message.
+
+ fs/f2fs/data.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 7226300..a3a567a 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1110,8 +1110,10 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ 		if (test_opt(sbi, LFS) && flag == F2FS_GET_BLOCK_DIO &&
+ 							map->m_may_create) {
+ 			err = __allocate_data_block(&dn, map->m_seg_type);
+-			if (!err)
++			if (!err) {
++				blkaddr = dn.data_blkaddr;
+ 				set_inode_flag(inode, FI_APPEND_WRITE);
++			}
+ 		}
+ 	} else {
+ 		if (create) {
+-- 
+2.10.1
