@@ -1,26 +1,22 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: Bug in f2fs-tools-1.12.0
-Date: Mon, 26 Nov 2018 21:35:22 +0800
-Message-ID: <b1c95e28-23ea-cd75-5b9c-310a817eb854@kernel.org>
-References: <e8884c8d-9009-cb70-bdf1-73fc38e83abc@GMail.com>
- <c5b93b62-37df-a351-7dc5-e1c0f26b5813@huawei.com>
- <0417cc7e-b1ba-cc3d-e5f6-bbb989000faa@GMail.com>
+Subject: [PATCH] f2fs-tools: fix to check return value of {c,
+ m}alloc()
+Date: Mon, 26 Nov 2018 21:36:00 +0800
+Message-ID: <20181126133600.7508-1-chao@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1gRH3S-0002EQ-CN
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Nov 2018 13:36:02 +0000
+ (envelope-from <chao@kernel.org>) id 1gRH3v-0007AE-5C
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Nov 2018 13:36:31 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gRH2w-004EEb-6Q
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Nov 2018 13:36:02 +0000
-In-Reply-To: <0417cc7e-b1ba-cc3d-e5f6-bbb989000faa@GMail.com>
-Content-Language: en-US
+ id 1gRH3d-004HbT-VX
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Nov 2018 13:36:31 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,45 +26,152 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Perfect Gentleman <perfect007gentleman@gmail.com>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-SGkgUGVyZmVjdCBHZW50bGVtYW4sCgpPbiAyMDE4LTExLTI2IDE5OjExLCBQZXJmZWN0IEdlbnRs
-ZW1hbiB3cm90ZToKPiBIaSBDaGFvCj4gCj4gV2hhdCBwYXRjaCBkbyB5b3UgbWVhbj8KCkkgbWVh
-bgoKaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvY2hhby9m
-MmZzLXRvb2xzLmdpdC9jb21taXQvP2g9ZGV2LXRlc3QmaWQ9YTYxNjBjM2UyMWY0M2I4OWI0OTgw
-MmNjNGE5NTZkMWM0YjY1YWU0NAoKVGhhbmtzLAoKPiAKPiBSZWRhcmRzCj4gCj4gUC5TLiBJdCdz
-IHJlcGx5IHRvIGFsbCA6KQo+IAo+IE9uIDExLzI2LzE4IDU6NTIgUE0sIENoYW8gWXUgd3JvdGU6
-Cj4+IEhpIFBlcmZlY3QgR2VudGxlbWFuLAo+Pgo+PiBUaGFua3MgZm9yIHRoZSByZXBvcnQuCj4+
-Cj4+IE9uIDIwMTgvMTEvMjUgMTM6MjQsIFBlcmZlY3QgR2VudGxlbWFuIHdyb3RlOgo+Pj4gSGkg
-ZjJmcy10ZWFtLAo+Pj4KPj4+IHRoZXJlIGlzIGJ1ZzogZnNjay5mMmZzIGNhbm5vdCBjaGVjayBy
-ZWFkLW9ubHkgZmlsZXN5c3RlbS4gQnV0IDEuMTEuMAo+Pj4gY2FuIGRvIHRoYXQuCj4+Pgo+Pj4g
-ZnNja8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHxJbmZvOiBGaXggdGhlIHJlcG9ydGVkIGNv
-cnJ1cHRpb24uCj4+PiBmc2NrwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfEluZm86IE1vdW50
-ZWQgZGV2aWNlIQo+Pj4gZnNja8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHxJbmZvOiBDaGVj
-ayBGUyBvbmx5IGR1ZSB0byBSTwo+Pj4gZnNja8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHxF
-cnJvcjogRmFpbGVkIHRvIG9wZW4gdGhlIGRldmljZSEKPj4gSSBndWVzcyB0aGlzIGlzIGR1ZSB0
-byBiZWxvdyBjb21taXQsIHdoaWNoIHN0b3Agb3BlbmluZyBkZXZpY2UgaW4KPj4gZjJmcy10b29s
-cyBpZiB0aGUgZGV2aWNlIGhhcyBhbHJlYWR5IGJlZW4gb3BlbmVkIGJ5IG90aGVyIG9uZSwgbGlr
-ZSBtb3VudC4KPj4KPj4gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5l
-bC9naXQvamFlZ2V1ay9mMmZzLXRvb2xzLmdpdC9jb21taXQvP2g9ZGV2LXRlc3QmaWQ9ZWI5ZDgw
-MzdlZDNiMzdhNjQ3ZDUxNDQ3MGYxYTFkZjkxZGFlZGI2NAo+Pgo+Pgo+PiBJIHRyaWVkIGUyZnNw
-cm9ncywgdy9vIC1mIG9wdGlvbiwgdGhlIHJlc3VsdCBpcyB0aGUgc2FtZToKPj4KPj4gZnNjayAx
-LjQ0LjQgKDE4LUF1Zy0yMDE4KQo+PiBlMmZzY2sgMS40NC40ICgxOC1BdWctMjAxOCkKPj4gL2Rl
-di96cmFtMCBpcyBtb3VudGVkLgo+PiBlMmZzY2s6IENhbm5vdCBjb250aW51ZSwgYWJvcnRpbmcu
-Cj4+Cj4+IEJ1dCBzdGlsbCB3ZSBjYW4gdHJpZ2dlciBmb3JjZWQgZnNjay5leHQ0IGJ5IHVzaW5n
-IC1mIG9wdGlvbi4KPj4KPj4gQ291bGQgeW91IGhhdmUgYSB0cnkgd2l0aCBmb2xsb3dpbmcgcGF0
-Y2g/Cj4+Cj4+IFtQQVRDSF0gZnNjay5mMmZzOiBhbGxvdyB0byBmc2NrIHJlYWRvbmx5IGltYWdl
-IHcvIC1mIG9wdGlvbgo+Pgo+PiBUaGFua3MsCj4+Cj4+PiBmc2NrwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgfCAqIEZpbGVzeXN0ZW1zIGNvdWxkbid0IGJlIGZpeGVkCj4+PiDCoCDCoFsgISEg
-XQo+Pj4gZnNja8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgKiBFUlJPUjogZnNjayBmYWls
-ZWQgdG8gc3RhcnQKPj4+Cj4+PiBSZWdhcmRzLAo+Pj4gQWxleAo+Pj4KPj4+Cj4+Pgo+Pj4gX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPj4+IExpbnV4LWYy
-ZnMtZGV2ZWwgbWFpbGluZyBsaXN0Cj4+PiBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZv
-cmdlLm5ldAo+Pj4gaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8v
-bGludXgtZjJmcy1kZXZlbAo+Pj4KPiAKPiAKPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwo+IExpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Cj4gTGlu
-dXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiBodHRwczovL2xpc3RzLnNvdXJj
-ZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCgoKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWls
-aW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9s
-aXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+From: Chao Yu <yuchao0@huawei.com>
+
+It needs to fix to handle error case of {c,m}alloc().
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fsck/dump.c      |  4 ++++
+ fsck/fsck.c      |  2 ++
+ fsck/mount.c     | 13 +++++++++++++
+ lib/libf2fs.c    |  4 ++++
+ lib/libf2fs_io.c |  4 ++++
+ 5 files changed, 27 insertions(+)
+
+diff --git a/fsck/dump.c b/fsck/dump.c
+index 8cf431c..d0e3355 100644
+--- a/fsck/dump.c
++++ b/fsck/dump.c
+@@ -277,6 +277,8 @@ static void dump_node_blk(struct f2fs_sb_info *sbi, int ntype,
+ 	get_node_info(sbi, nid, &ni);
+ 
+ 	node_blk = calloc(BLOCK_SZ, 1);
++	ASSERT(node_blk);
++
+ 	dev_read_block(node_blk, ni.blk_addr);
+ 
+ 	for (i = 0; i < idx; i++, (*ofs)++) {
+@@ -475,6 +477,8 @@ void dump_node(struct f2fs_sb_info *sbi, nid_t nid, int force)
+ 	get_node_info(sbi, nid, &ni);
+ 
+ 	node_blk = calloc(BLOCK_SZ, 1);
++	ASSERT(node_blk);
++
+ 	dev_read_block(node_blk, ni.blk_addr);
+ 
+ 	DBG(1, "Node ID               [0x%x]\n", nid);
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 366ba13..970d150 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -1420,6 +1420,8 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, struct child_info *child,
+ 			continue;
+ 		}
+ 		name = calloc(name_len + 1, 1);
++		ASSERT(name);
++
+ 		memcpy(name, filenames[i], name_len);
+ 		slots = (name_len + F2FS_SLOT_LEN - 1) / F2FS_SLOT_LEN;
+ 
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 861e5fb..d853fcf 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -664,6 +664,8 @@ int validate_super_block(struct f2fs_sb_info *sbi, enum SB_ADDR sb_addr)
+ 	char buf[F2FS_BLKSIZE];
+ 
+ 	sbi->raw_super = malloc(sizeof(struct f2fs_super_block));
++	if (!sbi->raw_super)
++		return -ENOMEM;
+ 
+ 	if (dev_read_block(buf, sb_addr))
+ 		return -1;
+@@ -779,6 +781,8 @@ void *validate_checkpoint(struct f2fs_sb_info *sbi, block_t cp_addr,
+ 
+ 	/* Read the 1st cp block in this CP pack */
+ 	cp_page_1 = malloc(PAGE_SIZE);
++	ASSERT(cp_page_1);
++
+ 	if (dev_read_block(cp_page_1, cp_addr) < 0)
+ 		goto invalid_cp1;
+ 
+@@ -798,6 +802,8 @@ void *validate_checkpoint(struct f2fs_sb_info *sbi, block_t cp_addr,
+ 
+ 	/* Read the 2nd cp block in this CP pack */
+ 	cp_page_2 = malloc(PAGE_SIZE);
++	ASSERT(cp_page_2);
++
+ 	cp_addr += get_cp(cp_pack_total_block_count) - 1;
+ 
+ 	if (dev_read_block(cp_page_2, cp_addr) < 0)
+@@ -1320,6 +1326,9 @@ int build_sit_info(struct f2fs_sb_info *sbi)
+ 	src_bitmap = __bitmap_ptr(sbi, SIT_BITMAP);
+ 
+ 	dst_bitmap = malloc(bitmap_size);
++	if (!dst_bitmap)
++		return -ENOMEM;
++
+ 	memcpy(dst_bitmap, src_bitmap, bitmap_size);
+ 
+ 	sit_i->sit_base_addr = get_sb(sit_blkaddr);
+@@ -1361,6 +1370,8 @@ static void read_compacted_summaries(struct f2fs_sb_info *sbi)
+ 	start = start_sum_block(sbi);
+ 
+ 	kaddr = (char *)malloc(PAGE_SIZE);
++	ASSERT(kaddr);
++
+ 	ret = dev_read_block(kaddr, start++);
+ 	ASSERT(ret >= 0);
+ 
+@@ -1452,6 +1463,8 @@ static void read_normal_summaries(struct f2fs_sb_info *sbi, int type)
+ 	}
+ 
+ 	sum_blk = (struct f2fs_summary_block *)malloc(PAGE_SIZE);
++	ASSERT(sum_blk);
++
+ 	ret = dev_read_block(sum_blk, blk_addr);
+ 	ASSERT(ret >= 0);
+ 
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index 498f6c0..c692bf2 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -566,6 +566,8 @@ char *get_rootdev()
+ 	}
+ 
+ 	uevent = malloc(ret + 1);
++	ASSERT(uevent);
++
+ 	uevent[ret] = '\0';
+ 
+ 	ret = read(fd, uevent, ret);
+@@ -709,6 +711,8 @@ int f2fs_dev_is_umounted(char *path)
+ 	 * the file system. In this case, we should not format.
+ 	 */
+ 	st_buf = malloc(sizeof(struct stat));
++	ASSERT(st_buf);
++
+ 	if (stat(path, st_buf) == 0 && S_ISBLK(st_buf->st_mode)) {
+ 		int fd = open(path, O_RDONLY | O_EXCL);
+ 
+diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
+index 47917ab..b40c3d2 100644
+--- a/lib/libf2fs_io.c
++++ b/lib/libf2fs_io.c
+@@ -302,6 +302,10 @@ int f2fs_init_sparse_file(void)
+ 	}
+ 	blocks_count = c.device_size / F2FS_BLKSIZE;
+ 	blocks = calloc(blocks_count, sizeof(char *));
++	if (!blocks) {
++		MSG(0, "\tError: Calloc Failed for blocks!!!\n");
++		return -1;
++	}
+ 
+ 	return sparse_file_foreach_chunk(f2fs_sparse_file, true, false,
+ 				sparse_import_segment, NULL);
+-- 
+2.18.0
