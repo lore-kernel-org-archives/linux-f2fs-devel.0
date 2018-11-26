@@ -1,22 +1,30 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs-tools: fix to check return value of {c,
- m}alloc()
-Date: Mon, 26 Nov 2018 21:36:00 +0800
-Message-ID: <20181126133600.7508-1-chao@kernel.org>
+From: Perfect Gentleman <perfect007gentleman@gmail.com>
+Subject: Re: Bug in f2fs-tools-1.12.0
+Date: Mon, 26 Nov 2018 20:47:07 +0700
+Message-ID: <dd96d207-2fbd-57ef-ac21-8fb52427101d@GMail.com>
+References: <e8884c8d-9009-cb70-bdf1-73fc38e83abc@GMail.com>
+ <c5b93b62-37df-a351-7dc5-e1c0f26b5813@huawei.com>
+ <0417cc7e-b1ba-cc3d-e5f6-bbb989000faa@GMail.com>
+ <b1c95e28-23ea-cd75-5b9c-310a817eb854@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1gRH3v-0007AE-5C
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Nov 2018 13:36:31 +0000
-Received: from mail.kernel.org ([198.145.29.99])
+ (envelope-from <perfect007gentleman@gmail.com>) id 1gRHEa-0002hh-GZ
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Nov 2018 13:47:32 +0000
+Received: from mail-lj1-f195.google.com ([209.85.208.195])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gRH3d-004HbT-VX
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Nov 2018 13:36:31 +0000
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1gRHEL-004Igu-85
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Nov 2018 13:47:32 +0000
+Received: by mail-lj1-f195.google.com with SMTP id k19-v6so16606076lji.11
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 26 Nov 2018 05:47:16 -0800 (PST)
+In-Reply-To: <b1c95e28-23ea-cd75-5b9c-310a817eb854@kernel.org>
+Content-Language: ru-RU
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,152 +34,86 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
 
-From: Chao Yu <yuchao0@huawei.com>
-
-It needs to fix to handle error case of {c,m}alloc().
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fsck/dump.c      |  4 ++++
- fsck/fsck.c      |  2 ++
- fsck/mount.c     | 13 +++++++++++++
- lib/libf2fs.c    |  4 ++++
- lib/libf2fs_io.c |  4 ++++
- 5 files changed, 27 insertions(+)
-
-diff --git a/fsck/dump.c b/fsck/dump.c
-index 8cf431c..d0e3355 100644
---- a/fsck/dump.c
-+++ b/fsck/dump.c
-@@ -277,6 +277,8 @@ static void dump_node_blk(struct f2fs_sb_info *sbi, int ntype,
- 	get_node_info(sbi, nid, &ni);
- 
- 	node_blk = calloc(BLOCK_SZ, 1);
-+	ASSERT(node_blk);
-+
- 	dev_read_block(node_blk, ni.blk_addr);
- 
- 	for (i = 0; i < idx; i++, (*ofs)++) {
-@@ -475,6 +477,8 @@ void dump_node(struct f2fs_sb_info *sbi, nid_t nid, int force)
- 	get_node_info(sbi, nid, &ni);
- 
- 	node_blk = calloc(BLOCK_SZ, 1);
-+	ASSERT(node_blk);
-+
- 	dev_read_block(node_blk, ni.blk_addr);
- 
- 	DBG(1, "Node ID               [0x%x]\n", nid);
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 366ba13..970d150 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -1420,6 +1420,8 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, struct child_info *child,
- 			continue;
- 		}
- 		name = calloc(name_len + 1, 1);
-+		ASSERT(name);
-+
- 		memcpy(name, filenames[i], name_len);
- 		slots = (name_len + F2FS_SLOT_LEN - 1) / F2FS_SLOT_LEN;
- 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 861e5fb..d853fcf 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -664,6 +664,8 @@ int validate_super_block(struct f2fs_sb_info *sbi, enum SB_ADDR sb_addr)
- 	char buf[F2FS_BLKSIZE];
- 
- 	sbi->raw_super = malloc(sizeof(struct f2fs_super_block));
-+	if (!sbi->raw_super)
-+		return -ENOMEM;
- 
- 	if (dev_read_block(buf, sb_addr))
- 		return -1;
-@@ -779,6 +781,8 @@ void *validate_checkpoint(struct f2fs_sb_info *sbi, block_t cp_addr,
- 
- 	/* Read the 1st cp block in this CP pack */
- 	cp_page_1 = malloc(PAGE_SIZE);
-+	ASSERT(cp_page_1);
-+
- 	if (dev_read_block(cp_page_1, cp_addr) < 0)
- 		goto invalid_cp1;
- 
-@@ -798,6 +802,8 @@ void *validate_checkpoint(struct f2fs_sb_info *sbi, block_t cp_addr,
- 
- 	/* Read the 2nd cp block in this CP pack */
- 	cp_page_2 = malloc(PAGE_SIZE);
-+	ASSERT(cp_page_2);
-+
- 	cp_addr += get_cp(cp_pack_total_block_count) - 1;
- 
- 	if (dev_read_block(cp_page_2, cp_addr) < 0)
-@@ -1320,6 +1326,9 @@ int build_sit_info(struct f2fs_sb_info *sbi)
- 	src_bitmap = __bitmap_ptr(sbi, SIT_BITMAP);
- 
- 	dst_bitmap = malloc(bitmap_size);
-+	if (!dst_bitmap)
-+		return -ENOMEM;
-+
- 	memcpy(dst_bitmap, src_bitmap, bitmap_size);
- 
- 	sit_i->sit_base_addr = get_sb(sit_blkaddr);
-@@ -1361,6 +1370,8 @@ static void read_compacted_summaries(struct f2fs_sb_info *sbi)
- 	start = start_sum_block(sbi);
- 
- 	kaddr = (char *)malloc(PAGE_SIZE);
-+	ASSERT(kaddr);
-+
- 	ret = dev_read_block(kaddr, start++);
- 	ASSERT(ret >= 0);
- 
-@@ -1452,6 +1463,8 @@ static void read_normal_summaries(struct f2fs_sb_info *sbi, int type)
- 	}
- 
- 	sum_blk = (struct f2fs_summary_block *)malloc(PAGE_SIZE);
-+	ASSERT(sum_blk);
-+
- 	ret = dev_read_block(sum_blk, blk_addr);
- 	ASSERT(ret >= 0);
- 
-diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index 498f6c0..c692bf2 100644
---- a/lib/libf2fs.c
-+++ b/lib/libf2fs.c
-@@ -566,6 +566,8 @@ char *get_rootdev()
- 	}
- 
- 	uevent = malloc(ret + 1);
-+	ASSERT(uevent);
-+
- 	uevent[ret] = '\0';
- 
- 	ret = read(fd, uevent, ret);
-@@ -709,6 +711,8 @@ int f2fs_dev_is_umounted(char *path)
- 	 * the file system. In this case, we should not format.
- 	 */
- 	st_buf = malloc(sizeof(struct stat));
-+	ASSERT(st_buf);
-+
- 	if (stat(path, st_buf) == 0 && S_ISBLK(st_buf->st_mode)) {
- 		int fd = open(path, O_RDONLY | O_EXCL);
- 
-diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
-index 47917ab..b40c3d2 100644
---- a/lib/libf2fs_io.c
-+++ b/lib/libf2fs_io.c
-@@ -302,6 +302,10 @@ int f2fs_init_sparse_file(void)
- 	}
- 	blocks_count = c.device_size / F2FS_BLKSIZE;
- 	blocks = calloc(blocks_count, sizeof(char *));
-+	if (!blocks) {
-+		MSG(0, "\tError: Calloc Failed for blocks!!!\n");
-+		return -1;
-+	}
- 
- 	return sparse_file_foreach_chunk(f2fs_sparse_file, true, false,
- 				sparse_import_segment, NULL);
--- 
-2.18.0
+SGkgQ2hhbwoKV2l0aCB0aGF0IHBhdGNoIGZzY2suZjJmcyB3b3JrcyBmb3LCoCBSTy1wYXJ0aXRp
+b24gd2l0aCAtZiBvcHRpb24uCgogwqB+ICQgc3VkbyBtb3VudCAtbyByZW1vdW50LHJvIC9kZXYv
+c2RhMQoKIMKgfiAkIHN1ZG8gZnNjay5mMmZzIC1hIC9kZXYvc2RhMQpJbmZvOiBGaXggdGhlIHJl
+cG9ydGVkIGNvcnJ1cHRpb24uCkluZm86IE1vdW50ZWQgZGV2aWNlIQpJbmZvOiBDaGVjayBGUyBv
+bmx5IGR1ZSB0byBSTwogwqDCoMKgwqDCoMKgwqAgRXJyb3I6IEZhaWxlZCB0byBvcGVuIHRoZSBk
+ZXZpY2UhCgp+ICQgc3VkbyBmc2NrLmYyZnMgLWFmIC9kZXYvc2RhMQpJbmZvOiBGaXggdGhlIHJl
+cG9ydGVkIGNvcnJ1cHRpb24uCkluZm86IEZvcmNlIHRvIGZpeCBjb3JydXB0aW9uCkluZm86IE1v
+dW50ZWQgZGV2aWNlIQpJbmZvOiBDaGVjayBGUyBvbmx5IGR1ZSB0byBSTwpJbmZvOiBbL2Rldi9z
+ZGExXSBEaXNrIE1vZGVsOiBTQU1TVU5HIE1aN1dEMjQwCkluZm86IFNlZ21lbnRzIHBlciBzZWN0
+aW9uID0gMQpJbmZvOiBTZWN0aW9ucyBwZXIgem9uZSA9IDEKSW5mbzogc2VjdG9yIHNpemUgPSA1
+MTIKSW5mbzogdG90YWwgc2VjdG9ycyA9IDQ2ODg2MDA0NyAoMjI4OTM1IE1CKQpJbmZvOiBNS0ZT
+IHZlcnNpb24KIMKgICJMaW51eCB2ZXJzaW9uIDQuMTYuNi1nZW50b28gKHJvb3RAa3VidW50dSkg
+KGdjYyB2ZXJzaW9uIDcuMy4wIAooR2VudG9vIDcuMy4wLXIxIHAxLjEpKSAjMSBaRU4gU01QIFBS
+RUVNUFQgVHVlIE1heSAxIDE4OjI4OjA1ICswNyAyMDE4IgpJbmZvOiBGU0NLIHZlcnNpb24KIMKg
+IGZyb20gIkxpbnV4IHZlcnNpb24gNC4xOS40LWdlbnRvbyAocm9vdEBIT1NUKSAoZ2NjIHZlcnNp
+b24gOC4yLjAgCihHZW50b28gOC4yLjAtcjQgcDEuNSkpICMxIFpFTiBTTVAgUFJFRU1QVCBGcmkg
+Tm92IDIzIDIyOjE1OjU5ICswNyAyMDE4IgogwqDCoMKgIHRvICJMaW51eCB2ZXJzaW9uIDQuMTku
+NC1nZW50b28gKHJvb3RASE9TVCkgKGdjYyB2ZXJzaW9uIDguMi4wIAooR2VudG9vIDguMi4wLXI0
+IHAxLjUpKSAjMSBaRU4gU01QIFBSRUVNUFQgRnJpIE5vdiAyMyAyMjoxNTo1OSArMDcgMjAxOCIK
+SW5mbzogc3VwZXJibG9jayBmZWF0dXJlcyA9IDAgOgpJbmZvOiBzdXBlcmJsb2NrIGVuY3J5cHQg
+bGV2ZWwgPSAwLCBzYWx0ID0gMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAKSW5mbzog
+dG90YWwgRlMgc2VjdG9ycyA9IDQ2ODg2MDA0MCAoMjI4OTM1IE1CKQpJbmZvOiBDS1BUIHZlcnNp
+b24gPSA0MGU1MGFlMQpJbmZvOiBDaGVja2VkIHZhbGlkIG5hdF9iaXRzIGluIGNoZWNrcG9pbnQK
+SW5mbzogY2hlY2twb2ludCBzdGF0ZSA9IGM1IDrCoCBuYXRfYml0cyBjcmMgY29tcGFjdGVkX3N1
+bW1hcnkgdW5tb3VudAoKW0ZTQ0tdIFVucmVhY2hhYmxlIG5hdCBlbnRyaWVzwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBbT2suLl0gWzB4MF0KW0ZTQ0tdIFNJ
+VCB2YWxpZCBibG9jayBiaXRtYXAgY2hlY2tpbmfCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgW09rLi5dCltGU0NLXSBIYXJkIGxpbmsgY2hlY2tpbmcgZm9yIHJlZ3VsYXIgZmlsZcKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgW09rLi5dIFsweDBdCltGU0NLXSB2YWxpZF9ibG9ja19jb3VudCBt
+YXRjaGluZyB3aXRoIENQwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFtPay4uXSBbMHgzMzRjZTEw
+XQpbRlNDS10gdmFsaWRfbm9kZV9jb3VudCBtYXRjaW5nIHdpdGggQ1AgKGRlIGxvb2t1cCnCoMKg
+IFtPay4uXSBbMHgxZmU0MV0KW0ZTQ0tdIHZhbGlkX25vZGVfY291bnQgbWF0Y2luZyB3aXRoIENQ
+IChuYXQgbG9va3VwKcKgIFtPay4uXSBbMHgxZmU0MV0KW0ZTQ0tdIHZhbGlkX2lub2RlX2NvdW50
+IG1hdGNoZWQgd2l0aCBDUMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFtPay4uXSBbMHgxMmZi
+MV0KW0ZTQ0tdIGZyZWUgc2VnbWVudF9jb3VudCBtYXRjaGVkIHdpdGggQ1DCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgW09rLi5dIFsweDQxZjBdCltGU0NLXSBuZXh0IGJsb2NrIG9mZnNldCBpcyBm
+cmVlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFtPay4uXQpbRlND
+S10gZml4aW5nIFNJVCB0eXBlcwpbRlNDS10gb3RoZXIgY29ycnVwdGVkIGJ1Z3PCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFtPay4uXQoKRG9uZS4K
+ClJlZ2FyZHMKCk9uIDExLzI2LzE4IDg6MzUgUE0sIENoYW8gWXUgd3JvdGU6Cj4gSGkgUGVyZmVj
+dCBHZW50bGVtYW4sCj4KPiBPbiAyMDE4LTExLTI2IDE5OjExLCBQZXJmZWN0IEdlbnRsZW1hbiB3
+cm90ZToKPj4gSGkgQ2hhbwo+Pgo+PiBXaGF0IHBhdGNoIGRvIHlvdSBtZWFuPwo+IEkgbWVhbgo+
+Cj4gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvY2hhby9m
+MmZzLXRvb2xzLmdpdC9jb21taXQvP2g9ZGV2LXRlc3QmaWQ9YTYxNjBjM2UyMWY0M2I4OWI0OTgw
+MmNjNGE5NTZkMWM0YjY1YWU0NAo+Cj4gVGhhbmtzLAo+Cj4+IFJlZGFyZHMKPj4KPj4gUC5TLiBJ
+dCdzIHJlcGx5IHRvIGFsbCA6KQo+Pgo+PiBPbiAxMS8yNi8xOCA1OjUyIFBNLCBDaGFvIFl1IHdy
+b3RlOgo+Pj4gSGkgUGVyZmVjdCBHZW50bGVtYW4sCj4+Pgo+Pj4gVGhhbmtzIGZvciB0aGUgcmVw
+b3J0Lgo+Pj4KPj4+IE9uIDIwMTgvMTEvMjUgMTM6MjQsIFBlcmZlY3QgR2VudGxlbWFuIHdyb3Rl
+Ogo+Pj4+IEhpIGYyZnMtdGVhbSwKPj4+Pgo+Pj4+IHRoZXJlIGlzIGJ1ZzogZnNjay5mMmZzIGNh
+bm5vdCBjaGVjayByZWFkLW9ubHkgZmlsZXN5c3RlbS4gQnV0IDEuMTEuMAo+Pj4+IGNhbiBkbyB0
+aGF0Lgo+Pj4+Cj4+Pj4gZnNja8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHxJbmZvOiBGaXgg
+dGhlIHJlcG9ydGVkIGNvcnJ1cHRpb24uCj4+Pj4gZnNja8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIHxJbmZvOiBNb3VudGVkIGRldmljZSEKPj4+PiBmc2NrwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgfEluZm86IENoZWNrIEZTIG9ubHkgZHVlIHRvIFJPCj4+Pj4gZnNja8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIHxFcnJvcjogRmFpbGVkIHRvIG9wZW4gdGhlIGRldmljZSEKPj4+IEkg
+Z3Vlc3MgdGhpcyBpcyBkdWUgdG8gYmVsb3cgY29tbWl0LCB3aGljaCBzdG9wIG9wZW5pbmcgZGV2
+aWNlIGluCj4+PiBmMmZzLXRvb2xzIGlmIHRoZSBkZXZpY2UgaGFzIGFscmVhZHkgYmVlbiBvcGVu
+ZWQgYnkgb3RoZXIgb25lLCBsaWtlIG1vdW50Lgo+Pj4KPj4+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5v
+cmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2phZWdldWsvZjJmcy10b29scy5naXQvY29tbWl0
+Lz9oPWRldi10ZXN0JmlkPWViOWQ4MDM3ZWQzYjM3YTY0N2Q1MTQ0NzBmMWExZGY5MWRhZWRiNjQK
+Pj4+Cj4+Pgo+Pj4gSSB0cmllZCBlMmZzcHJvZ3MsIHcvbyAtZiBvcHRpb24sIHRoZSByZXN1bHQg
+aXMgdGhlIHNhbWU6Cj4+Pgo+Pj4gZnNjayAxLjQ0LjQgKDE4LUF1Zy0yMDE4KQo+Pj4gZTJmc2Nr
+IDEuNDQuNCAoMTgtQXVnLTIwMTgpCj4+PiAvZGV2L3pyYW0wIGlzIG1vdW50ZWQuCj4+PiBlMmZz
+Y2s6IENhbm5vdCBjb250aW51ZSwgYWJvcnRpbmcuCj4+Pgo+Pj4gQnV0IHN0aWxsIHdlIGNhbiB0
+cmlnZ2VyIGZvcmNlZCBmc2NrLmV4dDQgYnkgdXNpbmcgLWYgb3B0aW9uLgo+Pj4KPj4+IENvdWxk
+IHlvdSBoYXZlIGEgdHJ5IHdpdGggZm9sbG93aW5nIHBhdGNoPwo+Pj4KPj4+IFtQQVRDSF0gZnNj
+ay5mMmZzOiBhbGxvdyB0byBmc2NrIHJlYWRvbmx5IGltYWdlIHcvIC1mIG9wdGlvbgo+Pj4KPj4+
+IFRoYW5rcywKPj4+Cj4+Pj4gZnNja8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgKiBGaWxl
+c3lzdGVtcyBjb3VsZG4ndCBiZSBmaXhlZAo+Pj4+ICDCoCDCoFsgISEgXQo+Pj4+IGZzY2vCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8ICogRVJST1I6IGZzY2sgZmFpbGVkIHRvIHN0YXJ0Cj4+
+Pj4KPj4+PiBSZWdhcmRzLAo+Pj4+IEFsZXgKPj4+Pgo+Pj4+Cj4+Pj4KPj4+PiBfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+Pj4+IExpbnV4LWYyZnMtZGV2
+ZWwgbWFpbGluZyBsaXN0Cj4+Pj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5u
+ZXQKPj4+PiBodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51
+eC1mMmZzLWRldmVsCj4+Pj4KPj4KPj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KPj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKPj4gTGludXgt
+ZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPj4gaHR0cHM6Ly9saXN0cy5zb3VyY2Vm
+b3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAoKCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGlu
+ZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlz
+dHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
