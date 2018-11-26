@@ -1,26 +1,25 @@
-From: Michael =?ISO-8859-1?Q?La=DF?= <bevan@bi-co.net>
-Subject: fsck: reset i_gc_failures from 0x1 to 0x00
-Date: Mon, 26 Nov 2018 00:09:57 +0100
-Message-ID: <2dbe74e040f9061f298c45016aa37881ea6f879d.camel@bi-co.net>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: fix to update new block address
+ correctly for OPU
+Date: Mon, 26 Nov 2018 10:01:06 +0800
+Message-ID: <9389306a-beb5-1db6-4eed-9a4bf46810c6@huawei.com>
+References: <20181124221742.135673-1-zhujia13@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bevan@bi-co.net>) id 1gR3nc-00089t-1H
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 25 Nov 2018 23:26:48 +0000
-Received: from voltaic.bi-co.net ([134.119.3.22])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1gR6DI-0000sS-0f
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Nov 2018 02:01:28 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gR3nZ-00Etd4-VX
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 25 Nov 2018 23:26:47 +0000
-Received: from bevan-thinkpad (aftr-95-222-30-39.unity-media.net
- [95.222.30.39])
- by voltaic.bi-co.net (Postfix) with ESMTPSA id 8E9BC20888
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 26 Nov 2018 00:09:57 +0100 (CET)
+ id 1gR6DF-003a8b-NB
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Nov 2018 02:01:27 +0000
+In-Reply-To: <20181124221742.135673-1-zhujia13@huawei.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,20 +29,45 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Jia Zhu <zhujia13@huawei.com>, jaegeuk@kernel.org, chao@kernel.org
+Cc: jaizhu.zj@gmail.com, linux-f2fs-devel@lists.sourceforge.net
 
-Hi,
+On 2018/11/25 6:17, Jia Zhu wrote:
+> Previously, we allocated a new block address for OPU mode in direct_IO.
+> 
+> But the new address couldn't be assigned to @map->m_pblk correctly.
+> 
+> This patch fix it.
 
-after updating to f2fs-tools 1.12.0, a routine fsck of my file systems
-took quite a while and output ten-thousands instances of the following
-line:
+Sorry to introduce this bug...
 
-> [FIX] (fsck_chk_inode_blk: 954)  --> Regular: 0xXYZ reset i_gc_failures from 0x1 to 0x00
+It needs to Cc stable kernel mailing list and add 'Fixes' tag line.
 
-where XYZ varied from line to line. I assume this is related to
-91bb7b21f740d61cde2bb27da3dccb0afdd5a15b but I'm not sure about the
-implications. Is this something to worry about or some deliberate
-change of the on-disk format which was now braught up to date by fsck?
+> 
+> Signed-off-by: Jia Zhu <zhujia13@huawei.com>
 
-Best regards,
-Michael
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks,
+
+> ---
+>  fs/f2fs/data.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 7226300..a3a567a 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1110,8 +1110,10 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>  		if (test_opt(sbi, LFS) && flag == F2FS_GET_BLOCK_DIO &&
+>  							map->m_may_create) {
+>  			err = __allocate_data_block(&dn, map->m_seg_type);
+> -			if (!err)
+> +			if (!err) {
+> +				blkaddr = dn.data_blkaddr;
+>  				set_inode_flag(inode, FI_APPEND_WRITE);
+> +			}
+>  		}
+>  	} else {
+>  		if (create) {
+> 
