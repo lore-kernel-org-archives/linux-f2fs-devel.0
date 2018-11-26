@@ -1,48 +1,69 @@
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-Subject: Re: [PATCH 5/7] ext4: use IS_VERITY() to check inode's
- fsverity status
-Date: Mon, 26 Nov 2018 12:36:15 -0500
-Message-ID: <20181126173615.GB22888@thunk.org>
-References: <20181119052324.31456-1-chandan@linux.vnet.ibm.com>
- <20181119052324.31456-6-chandan@linux.vnet.ibm.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: check memory boundary by insane namelen
+Date: Mon, 26 Nov 2018 15:25:29 -0800
+Message-ID: <20181126232529.GC55960@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20181115075040.83500-1-jaegeuk@kernel.org>
+ <3d213d40-a4b0-6e60-87b2-81e66866ac4c@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@thunk.org>) id 1gRKoN-0002Xr-VX
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Nov 2018 17:36:43 +0000
-Received: from imap.thunk.org ([74.207.234.97])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gRKo2-00G5sC-Qh
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Nov 2018 17:36:43 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181119052324.31456-6-chandan@linux.vnet.ibm.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chandan Rajendra <chandan@linux.vnet.ibm.com>
-Cc: ebiggers@kernel.org, linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <3d213d40-a4b0-6e60-87b2-81e66866ac4c@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sheng Yong <shengyong1@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, "gongchen (E)" <gongchen4@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Mon, Nov 19, 2018 at 10:53:22AM +0530, Chandan Rajendra wrote:
-> This commit now uses IS_VERITY() macro to check if fsverity is
-> enabled on an inode.
+On 11/23, Sheng Yong wrote:
+> Hi, Jaegeuk and Chao,
 > 
-> Signed-off-by: Chandan Rajendra <chandan@linux.vnet.ibm.com>
+> On 2018/11/15 15:50, Jaegeuk Kim wrote:
+> > If namelen is corrupted to have very long value, fill_dentries can copy
+> > wrong memory area.
+> > 
+> Is there any scenario that could hit this corruption? Or this is triggered
+> by fuzzing injection?
 
-This patch causes a massive number of fsverity tests.  I suspect it's
-due to a mismatch between the ext4's inode flags as opposed to the VFS
-inode's flags.  I'll take a closer look in the next day or two.
+Hi Sheng,
 
-Cheers,
+It's from a fuzzing test.
 
-						- Ted
+Thanks,
+
+> 
+> thanks,
+> Sheng Yong
+> 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >   fs/f2fs/dir.c | 12 +++++++++++-
+> >   1 file changed, 11 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> > index bacc667950b6..c0c845da12fa 100644
+> > --- a/fs/f2fs/dir.c
+> > +++ b/fs/f2fs/dir.c
+> > @@ -808,6 +808,17 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+> >   		de_name.name = d->filename[bit_pos];
+> >   		de_name.len = le16_to_cpu(de->name_len);
+> > +		/* check memory boundary before moving forward */
+> > +		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
+> > +		if (unlikely(bit_pos > d->max)) {
+> > +			f2fs_msg(sbi->sb, KERN_WARNING,
+> > +				"%s: corrupted namelen=%d, run fsck to fix.",
+> > +				__func__, le16_to_cpu(de->name_len));
+> > +			set_sbi_flag(sbi, SBI_NEED_FSCK);
+> > +			err = -EINVAL;
+> > +			goto out;
+> > +		}
+> > +
+> >   		if (f2fs_encrypted_inode(d->inode)) {
+> >   			int save_len = fstr->len;
+> > @@ -830,7 +841,6 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+> >   		if (readdir_ra)
+> >   			f2fs_ra_node_page(sbi, le32_to_cpu(de->ino));
+> > -		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
+> >   		ctx->pos = start_pos + bit_pos;
+> >   	}
+> >   out:
+> > 
