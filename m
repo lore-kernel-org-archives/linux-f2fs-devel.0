@@ -1,42 +1,27 @@
-From: Sahitya Tummala <stummala@codeaurora.org>
-Subject: [PATCH v3 2/2] f2fs: adjust trace print in f2fs_get_victim() to cover all paths
-Date: Mon, 26 Nov 2018 13:31:42 +0530
-Message-ID: <1543219302-12219-2-git-send-email-stummala@codeaurora.org>
-References: <1543219302-12219-1-git-send-email-stummala@codeaurora.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: read page index before freeing
+Date: Mon, 26 Nov 2018 17:13:53 +0800
+Message-ID: <3ebe6814-586e-77e8-52fa-47fb61d760f5@huawei.com>
+References: <1542884326-74903-1-git-send-email-bianpan2016@163.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1543219302-12219-1-git-send-email-stummala@codeaurora.org>
+In-Reply-To: <1542884326-74903-1-git-send-email-bianpan2016@163.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>
+To: Pan Bian <bianpan2016@163.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Adjust the trace print in f2fs_get_victim() to cover GC done by
-F2FS_IOC_GARBAGE_COLLECT_RANGE.
+Hi Pan,
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
----
- fs/f2fs/gc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+On 2018/11/22 18:58, Pan Bian wrote:
+> The function truncate_node frees the page with f2fs_put_page. However,
+> the page index is read after that. So, the patch reads the index before
+> freeing the page.
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index d720551..e4689c6 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -403,11 +403,12 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 		}
- 		*result = (p.min_segno / p.ofs_unit) * p.ofs_unit;
- 
-+	}
-+out:
-+	if (p.min_segno != NULL_SEGNO)
- 		trace_f2fs_get_victim(sbi->sb, type, gc_type, &p,
- 				sbi->cur_victim_sec,
- 				prefree_segments(sbi), free_segments(sbi));
--	}
--out:
- 	mutex_unlock(&dirty_i->seglist_lock);
- 
- 	return (p.min_segno == NULL_SEGNO) ? 0 : 1;
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+I notice that you found another use-after-free bug in ext4, out of
+curiosity, I'd like to ask how do you find those bugs? by tool or code review?
+
+Thanks,
