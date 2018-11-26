@@ -1,28 +1,22 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: Bug in f2fs-tools-1.12.0
-Date: Mon, 26 Nov 2018 18:52:59 +0800
-Message-ID: <c5b93b62-37df-a351-7dc5-e1c0f26b5813@huawei.com>
-References: <e8884c8d-9009-cb70-bdf1-73fc38e83abc@GMail.com>
+Subject: [PATCH] fsck.f2fs: allow to fsck readonly image w/ -f
+ option
+Date: Mon, 26 Nov 2018 18:53:37 +0800
+Message-ID: <20181126105337.33783-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1gREW6-0007nm-FL
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Nov 2018 10:53:26 +0000
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1gREX1-0004Wz-Ka
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Nov 2018 10:54:23 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gREVq-0046Uz-L0
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Nov 2018 10:53:26 +0000
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
- by Forcepoint Email with ESMTP id 5FE7BA5EC12AA
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 26 Nov 2018 18:53:02 +0800 (CST)
-In-Reply-To: <e8884c8d-9009-cb70-bdf1-73fc38e83abc@GMail.com>
-Content-Language: en-US
+ id 1gREWf-00Fb60-Aw
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Nov 2018 10:54:23 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,34 +26,55 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Perfect Gentleman <perfect007gentleman@gmail.com>, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-SGkgUGVyZmVjdCBHZW50bGVtYW4sCgpUaGFua3MgZm9yIHRoZSByZXBvcnQuCgpPbiAyMDE4LzEx
-LzI1IDEzOjI0LCBQZXJmZWN0IEdlbnRsZW1hbiB3cm90ZToKPiBIaSBmMmZzLXRlYW0sCj4gCj4g
-dGhlcmUgaXMgYnVnOiBmc2NrLmYyZnMgY2Fubm90IGNoZWNrIHJlYWQtb25seSBmaWxlc3lzdGVt
-LiBCdXQgMS4xMS4wIAo+IGNhbiBkbyB0aGF0Lgo+IAo+IGZzY2vCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoCB8SW5mbzogRml4IHRoZSByZXBvcnRlZCBjb3JydXB0aW9uLgo+IGZzY2vCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoCB8SW5mbzogTW91bnRlZCBkZXZpY2UhCj4gZnNja8KgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgIHxJbmZvOiBDaGVjayBGUyBvbmx5IGR1ZSB0byBSTwo+IGZzY2vC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8RXJyb3I6IEZhaWxlZCB0byBvcGVuIHRoZSBkZXZp
-Y2UhCgpJIGd1ZXNzIHRoaXMgaXMgZHVlIHRvIGJlbG93IGNvbW1pdCwgd2hpY2ggc3RvcCBvcGVu
-aW5nIGRldmljZSBpbgpmMmZzLXRvb2xzIGlmIHRoZSBkZXZpY2UgaGFzIGFscmVhZHkgYmVlbiBv
-cGVuZWQgYnkgb3RoZXIgb25lLCBsaWtlIG1vdW50LgoKaHR0cHM6Ly9naXQua2VybmVsLm9yZy9w
-dWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvamFlZ2V1ay9mMmZzLXRvb2xzLmdpdC9jb21taXQvP2g9
-ZGV2LXRlc3QmaWQ9ZWI5ZDgwMzdlZDNiMzdhNjQ3ZDUxNDQ3MGYxYTFkZjkxZGFlZGI2NAoKSSB0
-cmllZCBlMmZzcHJvZ3MsIHcvbyAtZiBvcHRpb24sIHRoZSByZXN1bHQgaXMgdGhlIHNhbWU6Cgpm
-c2NrIDEuNDQuNCAoMTgtQXVnLTIwMTgpCmUyZnNjayAxLjQ0LjQgKDE4LUF1Zy0yMDE4KQovZGV2
-L3pyYW0wIGlzIG1vdW50ZWQuCmUyZnNjazogQ2Fubm90IGNvbnRpbnVlLCBhYm9ydGluZy4KCkJ1
-dCBzdGlsbCB3ZSBjYW4gdHJpZ2dlciBmb3JjZWQgZnNjay5leHQ0IGJ5IHVzaW5nIC1mIG9wdGlv
-bi4KCkNvdWxkIHlvdSBoYXZlIGEgdHJ5IHdpdGggZm9sbG93aW5nIHBhdGNoPwoKW1BBVENIXSBm
-c2NrLmYyZnM6IGFsbG93IHRvIGZzY2sgcmVhZG9ubHkgaW1hZ2Ugdy8gLWYgb3B0aW9uCgpUaGFu
-a3MsCgo+IGZzY2vCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8ICogRmlsZXN5c3RlbXMgY291
-bGRuJ3QgYmUgZml4ZWQKPiAgwqBbICEhIF0KPiBmc2NrwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgfCAqIEVSUk9SOiBmc2NrIGZhaWxlZCB0byBzdGFydAo+IAo+IFJlZ2FyZHMsCj4gQWxleAo+
-IAo+IAo+IAo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-Cj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKPiBMaW51eC1mMmZzLWRldmVsQGxpc3Rz
-LnNvdXJjZWZvcmdlLm5ldAo+IGh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xp
-c3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwKPiAKCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgt
-ZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3Jn
-ZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+To keep line with e2fsprogs, let's allow to fsck mounted image as
+readonly w/ -f option.
+
+Reported-by: Perfect Gentleman <perfect007gentleman@gmail.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fsck/main.c       | 1 +
+ include/f2fs_fs.h | 1 +
+ lib/libf2fs.c     | 2 +-
+ 3 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fsck/main.c b/fsck/main.c
+index 675c603b1a76..bb79f6e9fc89 100644
+--- a/fsck/main.c
++++ b/fsck/main.c
+@@ -249,6 +249,7 @@ void f2fs_parse_options(int argc, char *argv[])
+ 			case 'f':
+ 			case 'y':
+ 				c.fix_on = 1;
++				c.force = 1;
+ 				MSG(0, "Info: Force to fix corruption\n");
+ 				break;
+ 			case 'q':
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index 65cc8fdb3c22..6eebb3ac44e1 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -369,6 +369,7 @@ struct f2fs_configuration {
+ 	void *private;
+ 	int dry_run;
+ 	int fix_on;
++	int force;
+ 	int defset;
+ 	int bug_on;
+ 	int alloc_failed;
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index cc335dbb48ee..498f6c0968d8 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -821,7 +821,7 @@ int get_device_info(int i)
+ 			return -1;
+ 		}
+ 
+-		if (S_ISBLK(stat_buf->st_mode))
++		if (S_ISBLK(stat_buf->st_mode) && !c.force)
+ 			fd = open(dev->path, O_RDWR | O_EXCL);
+ 		else
+ 			fd = open(dev->path, O_RDWR);
+-- 
+2.18.0.rc1
