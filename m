@@ -1,337 +1,158 @@
-From: Eric Biggers <ebiggers@kernel.org>
-Subject: Re: [PATCH 7/7] fsverity: Remove filesystem specific
- build config option
-Date: Mon, 26 Nov 2018 16:45:30 -0800
-Message-ID: <20181127004530.GF11663@gmail.com>
-References: <20181119052324.31456-1-chandan@linux.vnet.ibm.com>
- <20181119052324.31456-8-chandan@linux.vnet.ibm.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v2] f2fs: fix sbi->extent_list corruption issue
+Date: Tue, 27 Nov 2018 09:42:39 +0800
+Message-ID: <fc8c38f6-a039-7b63-d25c-966b0d4396d8@huawei.com>
+References: <1543207640-31033-1-git-send-email-stummala@codeaurora.org>
+ <20181127003050.GG55960@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1gRRVW-0005Np-19
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Nov 2018 00:45:42 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gRRVR-004xYP-V6
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Nov 2018 00:45:41 +0000
-Content-Disposition: inline
-In-Reply-To: <20181119052324.31456-8-chandan@linux.vnet.ibm.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chandan Rajendra <chandan@linux.vnet.ibm.com>
-Cc: linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181127003050.GG55960@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Sahitya Tummala <stummala@codeaurora.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Chandan,
-
-On Mon, Nov 19, 2018 at 10:53:24AM +0530, Chandan Rajendra wrote:
-> In order to have a common code base for fsverity "post read" processing
-> for all filesystems which support per-file verity, this commit removes
-> filesystem specific build config option (e.g. CONFIG_EXT4_FS_VERITY) and
-> replaces it with a build option (i.e. CONFIG_FS_VERITY) whose value
-> affects all the filesystems making use of fsverity.
+On 2018/11/27 8:30, Jaegeuk Kim wrote:
+> On 11/26, Sahitya Tummala wrote:
+>> When there is a failure in f2fs_fill_super() after/during
+>> the recovery of fsync'd nodes, it frees the current sbi and
+>> retries again. This time the mount is successful, but the files
+>> that got recovered before retry, still holds the extent tree,
+>> whose extent nodes list is corrupted since sbi and sbi->extent_list
+>> is freed up. The list_del corruption issue is observed when the
+>> file system is getting unmounted and when those recoverd files extent
+>> node is being freed up in the below context.
+>>
+>> list_del corruption. prev->next should be fffffff1e1ef5480, but was (null)
+>> <...>
+>> kernel BUG at kernel/msm-4.14/lib/list_debug.c:53!
+>> task: fffffff1f46f2280 task.stack: ffffff8008068000
+>> lr : __list_del_entry_valid+0x94/0xb4
+>> pc : __list_del_entry_valid+0x94/0xb4
+>> <...>
+>> Call trace:
+>> __list_del_entry_valid+0x94/0xb4
+>> __release_extent_node+0xb0/0x114
+>> __free_extent_tree+0x58/0x7c
+>> f2fs_shrink_extent_tree+0xdc/0x3b0
+>> f2fs_leave_shrinker+0x28/0x7c
+>> f2fs_put_super+0xfc/0x1e0
+>> generic_shutdown_super+0x70/0xf4
+>> kill_block_super+0x2c/0x5c
+>> kill_f2fs_super+0x44/0x50
+>> deactivate_locked_super+0x60/0x8c
+>> deactivate_super+0x68/0x74
+>> cleanup_mnt+0x40/0x78
+>> __cleanup_mnt+0x1c/0x28
+>> task_work_run+0x48/0xd0
+>> do_notify_resume+0x678/0xe98
+>> work_pending+0x8/0x14
+>>
+>> Fix this by cleaning up inodes, extent tree and nodes of those
+>> recovered files before freeing up sbi and before next retry.
+>>
+>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+>> ---
+>> v2:
+>> -call evict_inodes() and f2fs_shrink_extent_tree() to cleanup inodes
+>>
+>>  fs/f2fs/f2fs.h     |  1 +
+>>  fs/f2fs/shrinker.c |  2 +-
+>>  fs/f2fs/super.c    | 13 ++++++++++++-
+>>  3 files changed, 14 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 1e03197..aaee63b 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -3407,6 +3407,7 @@ struct rb_entry *f2fs_lookup_rb_tree_ret(struct rb_root_cached *root,
+>>  bool f2fs_check_rb_tree_consistence(struct f2fs_sb_info *sbi,
+>>  						struct rb_root_cached *root);
+>>  unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink);
+>> +unsigned long __count_extent_cache(struct f2fs_sb_info *sbi);
+>>  bool f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext);
+>>  void f2fs_drop_extent_tree(struct inode *inode);
+>>  unsigned int f2fs_destroy_extent_node(struct inode *inode);
+>> diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
+>> index 9e13db9..7e3c13b 100644
+>> --- a/fs/f2fs/shrinker.c
+>> +++ b/fs/f2fs/shrinker.c
+>> @@ -30,7 +30,7 @@ static unsigned long __count_free_nids(struct f2fs_sb_info *sbi)
+>>  	return count > 0 ? count : 0;
+>>  }
+>>  
+>> -static unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
+>> +unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
+>>  {
+>>  	return atomic_read(&sbi->total_zombie_tree) +
+>>  				atomic_read(&sbi->total_ext_node);
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index af58b2c..769e7b1 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -3016,6 +3016,16 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
+>>  	sbi->readdir_ra = 1;
+>>  }
+>>  
+>> +static void f2fs_cleanup_inodes(struct f2fs_sb_info *sbi)
+>> +{
+>> +	struct super_block *sb = sbi->sb;
+>> +
+>> +	sync_filesystem(sb);
 > 
-> Signed-off-by: Chandan Rajendra <chandan@linux.vnet.ibm.com>
+> This writes another checkpoint, which would not be what this retrial intended.
 
-Like the corresponding fscrypt patch, this is missing changing
+Actually, checkpoint will not be triggered due to SBI_POR_DOING flag check
+as below:
 
-#if IS_ENABLED(CONFIG_FS_VERITY)
+int f2fs_sync_fs(struct super_block *sb, int sync)
+{
+...
+	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
+		return -EAGAIN;
+...
+}
 
-in include/linux/fs.h to
+And also all dirty data/node won't be persisted due to SBI_POR_DOING flag,
+IIUC.
 
-#ifdef CONFIG_FS_VERITY
+Thanks,
 
-There are also references to the filesystem-specific config options in
-Documentation/filesystems/fsverity.rst that need to be updated.
-
-I also suggest updating the Kconfig help text for CONFIG_FS_VERITY and
-CONFIG_FS_ENCRYPTION to mention the supported filesystems, similar to how
-CONFIG_QUOTA lists the filesystems it supports.
-
-Thanks!
-
-- Eric
-
-> ---
->  fs/ext4/Kconfig          | 20 --------------------
->  fs/ext4/ext4.h           |  2 --
->  fs/ext4/readpage.c       |  4 ++--
->  fs/ext4/super.c          |  6 +++---
->  fs/ext4/sysfs.c          |  4 ++--
->  fs/f2fs/Kconfig          | 20 --------------------
->  fs/f2fs/data.c           |  2 +-
->  fs/f2fs/f2fs.h           |  2 --
->  fs/f2fs/super.c          |  6 +++---
->  fs/f2fs/sysfs.c          |  4 ++--
->  fs/verity/Kconfig        |  2 +-
->  include/linux/fsverity.h |  3 +--
->  12 files changed, 15 insertions(+), 60 deletions(-)
+> How about adding a condition in f2fs_may_extent_tree() when adding extents?
+> Likewise, if (shrinker is not registered) return false;
 > 
-> diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
-> index e1002bbf35bf..031e5a82d556 100644
-> --- a/fs/ext4/Kconfig
-> +++ b/fs/ext4/Kconfig
-> @@ -96,26 +96,6 @@ config EXT4_FS_SECURITY
->  	  If you are not using a security module that requires using
->  	  extended attributes for file security labels, say N.
->  
-> -config EXT4_FS_VERITY
-> -	bool "Ext4 Verity"
-> -	depends on EXT4_FS
-> -	select FS_VERITY
-> -	help
-> -	  This option enables fs-verity for ext4.  fs-verity is the
-> -	  dm-verity mechanism implemented at the file level.  Userspace
-> -	  can append a Merkle tree (hash tree) to a file, then enable
-> -	  fs-verity on the file.  ext4 will then transparently verify
-> -	  any data read from the file against the Merkle tree.  The file
-> -	  is also made read-only.
-> -
-> -	  This serves as an integrity check, but the availability of the
-> -	  Merkle tree root hash also allows efficiently supporting
-> -	  various use cases where normally the whole file would need to
-> -	  be hashed at once, such as auditing and authenticity
-> -	  verification (appraisal).
-> -
-> -	  If unsure, say N.
-> -
->  config EXT4_DEBUG
->  	bool "EXT4 debugging support"
->  	depends on EXT4_FS
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 64bf9fb7ef18..bff8d639dd0c 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -41,8 +41,6 @@
->  #endif
->  
->  #include <linux/fscrypt.h>
-> -
-> -#define __FS_HAS_VERITY IS_ENABLED(CONFIG_EXT4_FS_VERITY)
->  #include <linux/fsverity.h>
->  
->  #include <linux/compiler.h>
-> diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-> index 2c037df629dd..8717ac0a5bb2 100644
-> --- a/fs/ext4/readpage.c
-> +++ b/fs/ext4/readpage.c
-> @@ -158,7 +158,7 @@ static struct bio_post_read_ctx *get_bio_post_read_ctx(struct inode *inode,
->  
->  	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode))
->  		post_read_steps |= 1 << STEP_DECRYPT;
-> -#ifdef CONFIG_EXT4_FS_VERITY
-> +#ifdef CONFIG_FS_VERITY
->  	if (inode->i_verity_info != NULL &&
->  	    (index < ((i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT)))
->  		post_read_steps |= 1 << STEP_VERITY;
-> @@ -205,7 +205,7 @@ static void mpage_end_io(struct bio *bio)
->  
->  static inline loff_t ext4_readpage_limit(struct inode *inode)
->  {
-> -#ifdef CONFIG_EXT4_FS_VERITY
-> +#ifdef CONFIG_FS_VERITY
->  	if (IS_VERITY(inode)) {
->  		if (inode->i_verity_info)
->  			/* limit to end of metadata region */
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 16fb483a6f4a..472338c7cd03 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -1316,7 +1316,7 @@ static const struct fscrypt_operations ext4_cryptops = {
->  };
->  #endif
->  
-> -#ifdef CONFIG_EXT4_FS_VERITY
-> +#ifdef CONFIG_FS_VERITY
->  static int ext4_set_verity(struct inode *inode, loff_t data_i_size)
->  {
->  	int err;
-> @@ -1401,7 +1401,7 @@ static const struct fsverity_operations ext4_verityops = {
->  	.set_verity		= ext4_set_verity,
->  	.get_metadata_end	= ext4_get_metadata_end,
->  };
-> -#endif /* CONFIG_EXT4_FS_VERITY */
-> +#endif /* CONFIG_FS_VERITY */
->  
->  #ifdef CONFIG_QUOTA
->  static const char * const quotatypes[] = INITQFNAMES;
-> @@ -4234,7 +4234,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
->  #ifdef CONFIG_FS_ENCRYPTION
->  	sb->s_cop = &ext4_cryptops;
->  #endif
-> -#ifdef CONFIG_EXT4_FS_VERITY
-> +#ifdef CONFIG_FS_VERITY
->  	sb->s_vop = &ext4_verityops;
->  #endif
->  #ifdef CONFIG_QUOTA
-> diff --git a/fs/ext4/sysfs.c b/fs/ext4/sysfs.c
-> index 8bc915452a38..6fa0f47c3180 100644
-> --- a/fs/ext4/sysfs.c
-> +++ b/fs/ext4/sysfs.c
-> @@ -227,7 +227,7 @@ EXT4_ATTR_FEATURE(meta_bg_resize);
->  #ifdef CONFIG_FS_ENCRYPTION
->  EXT4_ATTR_FEATURE(encryption);
->  #endif
-> -#ifdef CONFIG_EXT4_FS_VERITY
-> +#ifdef CONFIG_FS_VERITY
->  EXT4_ATTR_FEATURE(verity);
->  #endif
->  EXT4_ATTR_FEATURE(metadata_csum_seed);
-> @@ -239,7 +239,7 @@ static struct attribute *ext4_feat_attrs[] = {
->  #ifdef CONFIG_FS_ENCRYPTION
->  	ATTR_LIST(encryption),
->  #endif
-> -#ifdef CONFIG_EXT4_FS_VERITY
-> +#ifdef CONFIG_FS_VERITY
->  	ATTR_LIST(verity),
->  #endif
->  	ATTR_LIST(metadata_csum_seed),
-> diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
-> index ce60e480fec1..708e23816575 100644
-> --- a/fs/f2fs/Kconfig
-> +++ b/fs/f2fs/Kconfig
-> @@ -70,26 +70,6 @@ config F2FS_CHECK_FS
->  
->  	  If you want to improve the performance, say N.
->  
-> -config F2FS_FS_VERITY
-> -	bool "F2FS Verity"
-> -	depends on F2FS_FS
-> -	select FS_VERITY
-> -	help
-> -	  This option enables fs-verity for f2fs.  fs-verity is the
-> -	  dm-verity mechanism implemented at the file level.  Userspace
-> -	  can append a Merkle tree (hash tree) to a file, then enable
-> -	  fs-verity on the file.  f2fs will then transparently verify
-> -	  any data read from the file against the Merkle tree.  The file
-> -	  is also made read-only.
-> -
-> -	  This serves as an integrity check, but the availability of the
-> -	  Merkle tree root hash also allows efficiently supporting
-> -	  various use cases where normally the whole file would need to
-> -	  be hashed at once, such as auditing and authenticity
-> -	  verification (appraisal).
-> -
-> -	  If unsure, say N.
-> -
->  config F2FS_IO_TRACE
->  	bool "F2FS IO tracer"
->  	depends on F2FS_FS
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 844ec573263e..83b59b985894 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -610,7 +610,7 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
->  
->  	if (f2fs_encrypted_file(inode))
->  		post_read_steps |= 1 << STEP_DECRYPT;
-> -#ifdef CONFIG_F2FS_FS_VERITY
-> +#ifdef CONFIG_FS_VERITY
->  	if (inode->i_verity_info != NULL &&
->  	    (first_idx < ((i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT)))
->  		post_read_steps |= 1 << STEP_VERITY;
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index ea8a5ffc4f1f..dc999af932f2 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -25,8 +25,6 @@
->  #include <crypto/hash.h>
->  
->  #include <linux/fscrypt.h>
-> -
-> -#define __FS_HAS_VERITY IS_ENABLED(CONFIG_F2FS_FS_VERITY)
->  #include <linux/fsverity.h>
->  
->  #ifdef CONFIG_F2FS_CHECK_FS
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 4287cf348d3c..60d5338280fb 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -2197,7 +2197,7 @@ static const struct fscrypt_operations f2fs_cryptops = {
->  };
->  #endif
->  
-> -#ifdef CONFIG_F2FS_FS_VERITY
-> +#ifdef CONFIG_FS_VERITY
->  static int f2fs_set_verity(struct inode *inode, loff_t data_i_size)
->  {
->  	int err;
-> @@ -2222,7 +2222,7 @@ static const struct fsverity_operations f2fs_verityops = {
->  	.set_verity		= f2fs_set_verity,
->  	.get_metadata_end	= f2fs_get_metadata_end,
->  };
-> -#endif /* CONFIG_F2FS_FS_VERITY */
-> +#endif /* CONFIG_FS_VERITY */
->  
->  static struct inode *f2fs_nfs_get_inode(struct super_block *sb,
->  		u64 ino, u32 generation)
-> @@ -3146,7 +3146,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->  #ifdef CONFIG_FS_ENCRYPTION
->  	sb->s_cop = &f2fs_cryptops;
->  #endif
-> -#ifdef CONFIG_F2FS_FS_VERITY
-> +#ifdef CONFIG_FS_VERITY
->  	sb->s_vop = &f2fs_verityops;
->  #endif
->  	sb->s_xattr = f2fs_xattr_handlers;
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index 737677655bc0..949e6d87f4e3 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -444,7 +444,7 @@ F2FS_FEATURE_RO_ATTR(flexible_inline_xattr, FEAT_FLEXIBLE_INLINE_XATTR);
->  F2FS_FEATURE_RO_ATTR(quota_ino, FEAT_QUOTA_INO);
->  F2FS_FEATURE_RO_ATTR(inode_crtime, FEAT_INODE_CRTIME);
->  F2FS_FEATURE_RO_ATTR(lost_found, FEAT_LOST_FOUND);
-> -#ifdef CONFIG_F2FS_FS_VERITY
-> +#ifdef CONFIG_FS_VERITY
->  F2FS_FEATURE_RO_ATTR(verity, FEAT_VERITY);
->  #endif
->  F2FS_FEATURE_RO_ATTR(sb_checksum, FEAT_SB_CHECKSUM);
-> @@ -507,7 +507,7 @@ static struct attribute *f2fs_feat_attrs[] = {
->  	ATTR_LIST(quota_ino),
->  	ATTR_LIST(inode_crtime),
->  	ATTR_LIST(lost_found),
-> -#ifdef CONFIG_F2FS_FS_VERITY
-> +#ifdef CONFIG_FS_VERITY
->  	ATTR_LIST(verity),
->  #endif
->  	ATTR_LIST(sb_checksum),
-> diff --git a/fs/verity/Kconfig b/fs/verity/Kconfig
-> index a7470a2e4892..b5a48a9ef0ca 100644
-> --- a/fs/verity/Kconfig
-> +++ b/fs/verity/Kconfig
-> @@ -1,5 +1,5 @@
->  config FS_VERITY
-> -	tristate "FS Verity (read-only file-based authenticity protection)"
-> +	bool "FS Verity (read-only file-based authenticity protection)"
->  	select CRYPTO
->  	# SHA-256 is selected as it's intended to be the default hash algorithm.
->  	# To avoid bloat, other wanted algorithms must be selected explicitly.
-> diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-> index c30c4f6ed411..f37132c640ee 100644
-> --- a/include/linux/fsverity.h
-> +++ b/include/linux/fsverity.h
-> @@ -19,8 +19,7 @@ struct fsverity_operations {
->  	int (*get_metadata_end)(struct inode *inode, loff_t *metadata_end_ret);
->  };
->  
-> -#if __FS_HAS_VERITY
-> -
-> +#ifdef CONFIG_FS_VERITY
->  /* ioctl.c */
->  extern int fsverity_ioctl_enable(struct file *filp, const void __user *arg);
->  extern int fsverity_ioctl_measure(struct file *filp, void __user *arg);
-> -- 
-> 2.19.1
+> 
+>> +	shrink_dcache_sb(sb);
+>> +	evict_inodes(sb);
+>> +	f2fs_shrink_extent_tree(sbi, __count_extent_cache(sbi));
+>> +}
+>> +
+>>  static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>  {
+>>  	struct f2fs_sb_info *sbi;
+>> @@ -3402,6 +3412,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>  	 * falls into an infinite loop in f2fs_sync_meta_pages().
+>>  	 */
+>>  	truncate_inode_pages_final(META_MAPPING(sbi));
+>> +	/* cleanup recovery and quota inodes */
+>> +	f2fs_cleanup_inodes(sbi);
+>>  	f2fs_unregister_sysfs(sbi);
+>>  free_root_inode:
+>>  	dput(sb->s_root);
+>> @@ -3445,7 +3457,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>  	/* give only one another chance */
+>>  	if (retry) {
+>>  		retry = false;
+>> -		shrink_dcache_sb(sb);
+>>  		goto try_onemore;
+>>  	}
+>>  	return err;
+>> -- 
+>> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+> 
+> .
 > 
