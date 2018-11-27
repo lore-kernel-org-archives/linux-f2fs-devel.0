@@ -1,40 +1,26 @@
-From: Chandan Rajendra <chandan@linux.vnet.ibm.com>
-Subject: Re: [PATCH 5/7] ext4: use IS_VERITY() to check inode's
- fsverity status
-Date: Tue, 27 Nov 2018 08:33:52 +0530
-Message-ID: <1994749.6ROMBDTyAZ@localhost.localdomain>
-References: <20181119052324.31456-1-chandan@linux.vnet.ibm.com>
- <20181119052324.31456-6-chandan@linux.vnet.ibm.com>
- <20181126173615.GB22888@thunk.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] fsck.f2fs: fix to skip repairing initialized
+ i_gc_failures
+Date: Tue, 27 Nov 2018 11:10:09 +0800
+Message-ID: <edd664ef-aa51-3453-442f-87c3fdf5d7ed@huawei.com>
+References: <20181126141914.8238-1-chao@kernel.org>
+ <20181127000435.GE55960@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.vnet.ibm.com>) id 1gRTfj-0001Ju-Eu
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Nov 2018 03:04:23 +0000
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
- helo=mx0a-001b2d01.pphosted.com)
+ (envelope-from <yuchao0@huawei.com>) id 1gRTli-000129-F3
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Nov 2018 03:10:34 +0000
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gRTfP-0017F8-5d
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Nov 2018 03:04:23 +0000
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
- by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id
- wAR33SgR126488
- for <linux-f2fs-devel@lists.sourceforge.net>; Mon, 26 Nov 2018 22:03:54 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
- by mx0b-001b2d01.pphosted.com with ESMTP id 2p0ujcma1u-1
- (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>; Mon, 26 Nov 2018 22:03:54 -0500
-Received: from localhost
- by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
- Violators will be prosecuted
- for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.vnet.ibm.com>;
- Tue, 27 Nov 2018 03:03:53 -0000
-In-Reply-To: <20181126173615.GB22888@thunk.org>
+ id 1gRTlV-0017bf-6y
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Nov 2018 03:10:34 +0000
+In-Reply-To: <20181127000435.GE55960@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -44,22 +30,65 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc: ebiggers@kernel.org, linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Monday, November 26, 2018 11:06:15 PM IST Theodore Y. Ts'o wrote:
-> On Mon, Nov 19, 2018 at 10:53:22AM +0530, Chandan Rajendra wrote:
-> > This commit now uses IS_VERITY() macro to check if fsverity is
-> > enabled on an inode.
-> > 
-> > Signed-off-by: Chandan Rajendra <chandan@linux.vnet.ibm.com>
-> 
-> This patch causes a massive number of fsverity tests.  I suspect it's
-> due to a mismatch between the ext4's inode flags as opposed to the VFS
-> inode's flags.  I'll take a closer look in the next day or two.
-> 
+On 2018/11/27 8:04, Jaegeuk Kim wrote:
+> On 11/26, Chao Yu wrote:
+>> From: Chao Yu <yuchao0@huawei.com>
+>>
+>> As Michael reported:
+>>
+>> after updating to f2fs-tools 1.12.0, a routine fsck of my file systems
+>> took quite a while and output ten-thousands instances of the following
+>> line:
+>>
+>>> [FIX] (fsck_chk_inode_blk: 954)  --> Regular: 0xXYZ reset i_gc_failures=
+ from 0x1 to 0x00
+>>
+>> In old kernel, we initialized i_gc_failures as 0x01, let's skip
+>> resetting such unchanged initialized value to avoid unnecessary
+>> repairing.
+>>
+>> Reported-by: Michael La=DF <bevan@bi-co.net>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fsck/fsck.c | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fsck/fsck.c b/fsck/fsck.c
+>> index 970d150..db0e72f 100644
+>> --- a/fsck/fsck.c
+>> +++ b/fsck/fsck.c
+>> @@ -941,7 +941,9 @@ skip_blkcnt_fix:
+>>  	}
+>>  =
 
-I will check this and report back soon. 
+>>  	i_gc_failures =3D le16_to_cpu(node_blk->i.i_gc_failures);
+>> -	if (ftype =3D=3D F2FS_FT_REG_FILE && i_gc_failures) {
+>> +
+>> +	/* old kernel initialized i_gc_failures as 0x01, skip repairing */
+>> +	if (ftype =3D=3D F2FS_FT_REG_FILE && i_gc_failures > 1) {
+> =
 
--- 
-chandan
+> This will break the current implementation.
+
+Yeah, but I doubt that after repairing i_gc_failures, old kernel can still
+continue creating inodes in where .i_gc_failures equals to 0x01, then fsck
+will report such info each time..., can we relief fsck in such condition?
+
+Thanks,
+
+> =
+
+>>  =
+
+>>  		DBG(1, "Regular Inode: 0x%x [%s] depth: %d\n\n",
+>>  				le32_to_cpu(node_blk->footer.ino), en,
+>> -- =
+
+>> 2.18.0
+> =
+
+> .
+> =
