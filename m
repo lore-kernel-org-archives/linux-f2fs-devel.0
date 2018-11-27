@@ -1,58 +1,103 @@
-From: =?utf-8?Q?Michael_La=C3=9F?= <bevan@bi-co.net>
-Subject: Re: fsck: reset i_gc_failures from 0x1 to 0x00
-Date: Tue, 27 Nov 2018 11:38:05 +0100
-Message-ID: <38566EC6-DC27-4103-B577-F7722584262E@bi-co.net>
-References: <2dbe74e040f9061f298c45016aa37881ea6f879d.camel@bi-co.net>
- <0e88393a-e559-f430-62f7-1c63dbce6ad3@kernel.org>
- <7CFFEC72-29AB-473C-92C0-D8F7829BF18D@bi-co.net>
- <20181127000849.GF55960@jaegeuk-macbookpro.roam.corp.google.com>
-Mime-Version: 1.0 (Mac OS X Mail 12.1 \(3445.101.1\))
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bevan@bi-co.net>) id 1gRal1-0007Jo-QG
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Nov 2018 10:38:19 +0000
-Received: from voltaic.bi-co.net ([134.119.3.22])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gRakw-005c22-M9
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Nov 2018 10:38:19 +0000
-In-Reply-To: <20181127000849.GF55960@jaegeuk-macbookpro.roam.corp.google.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] fsck.f2fs: introduce preen mode 2
+Date: Tue, 27 Nov 2018 20:36:35 +0800
+Message-ID: <20181127123635.123303-1-yuchao0@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGksCgo+IEFtIDI3LjExLjIwMTggdW0gMDE6MDggc2NocmllYiBKYWVnZXVrIEtpbSA8amFlZ2V1
-a0BrZXJuZWwub3JnPjoKPiBPbiAxMS8yNiwgTWljaGFlbCBMYcOfIHdyb3RlOgo+PiAKPj4+IEFt
-IDI2LjExLjIwMTggdW0gMTU6MDkgc2NocmllYiBDaGFvIFl1IDxjaGFvQGtlcm5lbC5vcmc+Ogo+
-Pj4gQnV0IHRoZSBwcm9ibGVtIGhlcmUgaXMgZXZlbiAuaV9nY19mYWlsdXJlcydzIHZhbHVlIGlz
-IG9uZSB3aGljaCB3YXMgaW5pdGlhbGl6ZWQKPj4+IGR1aW5nIGlub2RlIGNyZWF0aW9uIGJ5IG9s
-ZCBrZXJuZWwsIGFuZCBpdCBuZXZlciBiZSBpbmNyZWFzZWQgYnkgR0MgZmxvdywgd2UKPj4+IHdp
-bGwgc3RpbGwgdHJpZ2dlciBzdWNoIGZpeCBpbiBmc2NrLiBJIHRoaW5rIGl0J3Mgbm90IG5lY2Vz
-c2FyeSwgYW55d2F5LCBsZXQgbWUKPj4+IHNlbmQgb25lIHBhdGNoIHRvIGZpeCBpdC4KPj4gCj4+
-IFRoaXMgaXMgYSB2ZXJ5IGxpa2VseSBjYXVzZS4gVGhlIGZpbGVzeXN0ZW1zIGFyZSBib3RoIGZy
-b20gZWFybHkgMjAxNSwgc28gcHJvYmFibHkgd2VyZSB1c2VkIHdpdGggTGludXggMy4xOCBvciAz
-LjE5IGF0IHRoYXQgdGltZS4KPiAKPiBKdXN0IGluIGNhc2UsIGlzIHRoaXMgQW5kcm9pZCBkZXZp
-Y2U/IElmIHlvdSBkb24ndCB1c2UgaW9jdGwoRjJGU19QSU5fRklMRSksCj4gdGhpcyBvbmV0aW1l
-IGZpeCB3b250JyBodXJ0IGFueSBmaWxlc3lzdGVtIG1ldGFkYXRhLgoKbm8sIGl04oCZcyB1c2Vk
-IG9uIGEgcmVndWxhciBHTlUvTGludXggc3lzdGVtLCBhIFJhc3BiZXJyeSBQaSBydW5uaW5nIEFy
-Y2ggTGludXggQVJNIHRvIGJlIG1vcmUgc3BlY2lmaWMuIFRoZSBrZXJuZWwgaXMgY3VycmVudGx5
-IHN0aWxsIGF0IHZlcnNpb24gNC4xNC44MyBzbyBhcyBmYXIgYXMgSSBjYW4gc2VlIHRoYXQgaW9j
-dGwgaXNu4oCZdCBldmVuIGF2YWlsYWJsZS4KCkkgZ3Vlc3MgSeKAmWxsIHNlZSB0aGVzZSBtZXNz
-YWdlcyBhZ2FpbiBhZnRlciBuZXcgZmlsZXMgaGF2ZSBiZWVuIGNyZWF0ZWQgYnkgdGhhdCBvbGQg
-a2VybmVsIGJ1dCBzaG91bGQgbm90IHdvcnJ5IGFib3V0IGl0LgoKQmVzdCByZWdhcmRzLApNaWNo
-YWVsCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51
-eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZv
-cmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51
-eC1mMmZzLWRldmVsCg==
+As Michael reported:
+
+after updating to f2fs-tools 1.12.0, a routine fsck of my file systems
+took quite a while and output ten-thousands instances of the following
+line:
+
+> [FIX] (fsck_chk_inode_blk: 954)  --> Regular: 0xXYZ reset i_gc_failures from 0x1 to 0x00
+
+The reason is that:
+
+We start to support reseting .i_gc_failures's value to zero in fsck since
+91bb7b21f740 ("f2fs-tools: fix to reset i_gc_failures offline"), this is
+because if .i_gc_failures continues increasing and exceed threshold, it
+can make f2fs break atomic_write semantics during GC, so I added that
+patch to avoid such condition.
+
+But the problem here is even .i_gc_failures's value is one which was
+initialized duing inode creation by old kernel, and it never be increased
+by GC flow, we will still trigger such fix in fsck. I think it's not
+necessary.
+
+As Jaegeuk suggested, we introduce a new preen mode 2 to handle such
+condition:
+  - 2: same as 0, but skip some checks for old kernel
+
+Suggested-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Reported-by: Michael Laß <bevan@bi-co.net>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fsck/fsck.c | 8 +++++++-
+ fsck/fsck.h | 1 +
+ fsck/main.c | 5 ++++-
+ 3 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 970d150df5e8..bcda78142471 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -941,7 +941,13 @@ skip_blkcnt_fix:
+ 	}
+ 
+ 	i_gc_failures = le16_to_cpu(node_blk->i.i_gc_failures);
+-	if (ftype == F2FS_FT_REG_FILE && i_gc_failures) {
++
++	/*
++	 * old kernel initialized i_gc_failures as 0x01, in preen mode 2,
++	 * let's skip repairing.
++	 */
++	if (ftype == F2FS_FT_REG_FILE && i_gc_failures &&
++		(c.preen_mode != PREEN_MODE_2 || i_gc_failures != 0x01)) {
+ 
+ 		DBG(1, "Regular Inode: 0x%x [%s] depth: %d\n\n",
+ 				le32_to_cpu(node_blk->footer.ino), en,
+diff --git a/fsck/fsck.h b/fsck/fsck.h
+index b2227d2746d1..cbd6e9332d7c 100644
+--- a/fsck/fsck.h
++++ b/fsck/fsck.h
+@@ -21,6 +21,7 @@ struct quota_ctx;
+ enum {
+ 	PREEN_MODE_0,
+ 	PREEN_MODE_1,
++	PREEN_MODE_2,
+ 	PREEN_MODE_MAX
+ };
+ 
+diff --git a/fsck/main.c b/fsck/main.c
+index bb79f6e9fc89..65bdb5d5a401 100644
+--- a/fsck/main.c
++++ b/fsck/main.c
+@@ -216,6 +216,8 @@ void f2fs_parse_options(int argc, char *argv[])
+ 				/* preen mode has different levels:
+ 				 *  0: default level, the same as -a
+ 				 *  1: check meta
++				 *  2: same as 0, but will skip some
++				 *     check for old kernel
+ 				 */
+ 				if (optarg[0] == '-' || !is_digits(optarg) ||
+ 							optind == argc) {
+@@ -230,7 +232,8 @@ void f2fs_parse_options(int argc, char *argv[])
+ 					c.preen_mode = PREEN_MODE_0;
+ 				else if (c.preen_mode >= PREEN_MODE_MAX)
+ 					c.preen_mode = PREEN_MODE_MAX - 1;
+-				if (c.preen_mode == PREEN_MODE_0)
++				if (c.preen_mode == PREEN_MODE_0 ||
++					c.preen_mode == PREEN_MODE_2)
+ 					c.auto_fix = 1;
+ 				MSG(0, "Info: Fix the reported corruption in "
+ 					"preen mode %d\n", c.preen_mode);
+-- 
+2.18.0.rc1
