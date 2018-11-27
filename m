@@ -1,25 +1,26 @@
-From: Eric Biggers <ebiggers@kernel.org>
-Subject: Re: [PATCH 4/7] Add S_VERITY and IS_VERITY()
-Date: Mon, 26 Nov 2018 16:08:38 -0800
-Message-ID: <20181127000836.GA11663@gmail.com>
-References: <20181119052324.31456-1-chandan@linux.vnet.ibm.com>
- <20181119052324.31456-5-chandan@linux.vnet.ibm.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: fsck: reset i_gc_failures from 0x1 to 0x00
+Date: Mon, 26 Nov 2018 16:08:49 -0800
+Message-ID: <20181127000849.GF55960@jaegeuk-macbookpro.roam.corp.google.com>
+References: <2dbe74e040f9061f298c45016aa37881ea6f879d.camel@bi-co.net>
+ <0e88393a-e559-f430-62f7-1c63dbce6ad3@kernel.org>
+ <7CFFEC72-29AB-473C-92C0-D8F7829BF18D@bi-co.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1gRQvm-0003wW-Ov
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Nov 2018 00:08:46 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1gRQvx-0002tq-U1
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Nov 2018 00:08:57 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gRQvl-00GWQI-DO
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Nov 2018 00:08:46 +0000
+ id 1gRQvw-00GWQr-9G
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Nov 2018 00:08:57 +0000
 Content-Disposition: inline
-In-Reply-To: <20181119052324.31456-5-chandan@linux.vnet.ibm.com>
+In-Reply-To: <7CFFEC72-29AB-473C-92C0-D8F7829BF18D@bi-co.net>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,53 +30,47 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chandan Rajendra <chandan@linux.vnet.ibm.com>
-Cc: linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net
+To: Michael =?iso-8859-1?B?TGHf?= <bevan@bi-co.net>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Chandan,
-
-On Mon, Nov 19, 2018 at 10:53:21AM +0530, Chandan Rajendra wrote:
-> Similar to S_ENCRYPTED/IS_ENCRYPTED(), this commit adds
-> S_VERITY/IS_VERITY() to be able to check if a VFS inode has verity
-> information associated with it.
-> 
-> Signed-off-by: Chandan Rajendra <chandan@linux.vnet.ibm.com>
-> ---
->  include/linux/fs.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index bcfc40062757..8129617c9718 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1938,6 +1938,7 @@ struct super_operations {
->  #define S_DAX		0	/* Make all the DAX code disappear */
->  #endif
->  #define S_ENCRYPTED	16384	/* Encrypted file (using fs/crypto/) */
-> +#define S_VERITY	32768	/* File with fsverity info (using fs/verity) */
->  
-
-The comment for S_VERITY is misleading because IS_VERITY() is used to check
-whether the verity bit is set *before* the fsverity_info is created.
-
-Can you change it to just mirror the fscrypt comment?
-
-#define S_VERITY	32768	/* Verity file (using fs/verity/) */
-
->  /*
->   * Note that nosuid etc flags are inode-specific: setting some file-system
-> @@ -1978,6 +1979,7 @@ static inline bool sb_rdonly(const struct super_block *sb) { return sb->s_flags
->  #define IS_NOSEC(inode)		((inode)->i_flags & S_NOSEC)
->  #define IS_DAX(inode)		((inode)->i_flags & S_DAX)
->  #define IS_ENCRYPTED(inode)	((inode)->i_flags & S_ENCRYPTED)
-> +#define IS_VERITY(inode)	((inode)->i_flags & S_VERITY)
->  
->  #define IS_WHITEOUT(inode)	(S_ISCHR(inode->i_mode) && \
->  				 (inode)->i_rdev == WHITEOUT_DEV)
-> -- 
-> 2.19.1
-> 
-
-Thanks,
-
-- Eric
+SGkgTWljaGFlbCwKCk9uIDExLzI2LCBNaWNoYWVsIExhw58gd3JvdGU6Cj4gSGksCj4gCj4gPiBB
+bSAyNi4xMS4yMDE4IHVtIDE1OjA5IHNjaHJpZWIgQ2hhbyBZdSA8Y2hhb0BrZXJuZWwub3JnPjoK
+PiA+IE9uIDIwMTgtMTEtMjYgNzowOSwgTWljaGFlbCBMYcOfIHdyb3RlOgo+ID4+IEhpLAo+ID4+
+IAo+ID4+IGFmdGVyIHVwZGF0aW5nIHRvIGYyZnMtdG9vbHMgMS4xMi4wLCBhIHJvdXRpbmUgZnNj
+ayBvZiBteSBmaWxlIHN5c3RlbXMKPiA+PiB0b29rIHF1aXRlIGEgd2hpbGUgYW5kIG91dHB1dCB0
+ZW4tdGhvdXNhbmRzIGluc3RhbmNlcyBvZiB0aGUgZm9sbG93aW5nCj4gPj4gbGluZToKPiA+PiAK
+PiA+Pj4gW0ZJWF0gKGZzY2tfY2hrX2lub2RlX2JsazogOTU0KSAgLS0+IFJlZ3VsYXI6IDB4WFla
+IHJlc2V0IGlfZ2NfZmFpbHVyZXMgZnJvbSAweDEgdG8gMHgwMAo+ID4gCj4gPiBEbyB5b3UgdXNl
+IC1mIG9yIC1wIDEgb3B0aW9uIHdoZW4gZG9pbmcgZnNjayBvbiBpbWFnZT8KPiAKPiBPbmUgb2Yg
+dGhlIGRldmljZXMgd2FzIGF1dG9tYXRpY2FsbHkgY2hlY2tlZCBkdXJpbmcgYm9vdC11cC4gQXMg
+ZmFyIGFzIEkgY2FuIHNlZSwgdGhlIGZvbGxvd2luZyBjb21tYW5kIGlzIGlzc3VlZCBpbnNpZGUg
+dGhlIGluaXRyZDoKPiAgICAgZnNjayAtVGEgLUMiJEZTQ0tfRkQiICIkMeKAnQo+IHdoZXJlICQx
+IGlzIHRoZSBkZXZpY2UuIFRoZSBvdGhlciBvbmUgSSBjaGVja2VkIG1hbnVhbGx5IGNhbGxpbmcg
+ZnNjay5mMmZzIHdpdGhvdXQgYW55IGFkZGl0aW9uYWwgYXJndW1lbnRzLiBGcm9tIG15IGV4cGVy
+aWVuY2UsIHRoZSBjaGVja3MgYXJlIGFsd2F5cyBwZXJmb3JtZWQgd2hlbiB0aGUgbGFzdCBjaGVj
+ayB3YXMgZG9uZSB3aXRoIGFuIG9sZGVyIGtlcm5lbCB2ZXJzaW9uICh3aGljaCB3YXMgdGhlIGNh
+c2UgaGVyZSkuCj4gCj4gPiBXZSBzdGFydCB0byBzdXBwb3J0IHJlc2V0aW5nIC5pX2djX2ZhaWx1
+cmVzJ3MgdmFsdWUgdG8gemVybyBpbiBmc2NrIHNpbmNlCj4gPiA5MWJiN2IyMWY3NDAgKCJmMmZz
+LXRvb2xzOiBmaXggdG8gcmVzZXQgaV9nY19mYWlsdXJlcyBvZmZsaW5lIiksIHRoaXMgaXMgYmVj
+YXVzZQo+ID4gaWYgLmlfZ2NfZmFpbHVyZXMgY29udGludWVzIGluY3JlYXNpbmcgYW5kIGV4Y2Vl
+ZCB0aHJlc2hvbGQsIGl0IGNhbiBtYWtlIGYyZnMKPiA+IGJyZWFrIGF0b21pY193cml0ZSBzZW1h
+bnRpY3MgZHVyaW5nIEdDLCBzbyBJIGFkZGVkIHRoYXQgcGF0Y2ggdG8gYXZvaWQgc3VjaAo+ID4g
+Y29uZGl0aW9uLgo+ID4gCj4gPiBCdXQgdGhlIHByb2JsZW0gaGVyZSBpcyBldmVuIC5pX2djX2Zh
+aWx1cmVzJ3MgdmFsdWUgaXMgb25lIHdoaWNoIHdhcyBpbml0aWFsaXplZAo+ID4gZHVpbmcgaW5v
+ZGUgY3JlYXRpb24gYnkgb2xkIGtlcm5lbCwgYW5kIGl0IG5ldmVyIGJlIGluY3JlYXNlZCBieSBH
+QyBmbG93LCB3ZQo+ID4gd2lsbCBzdGlsbCB0cmlnZ2VyIHN1Y2ggZml4IGluIGZzY2suIEkgdGhp
+bmsgaXQncyBub3QgbmVjZXNzYXJ5LCBhbnl3YXksIGxldCBtZQo+ID4gc2VuZCBvbmUgcGF0Y2gg
+dG8gZml4IGl0Lgo+IAo+IFRoaXMgaXMgYSB2ZXJ5IGxpa2VseSBjYXVzZS4gVGhlIGZpbGVzeXN0
+ZW1zIGFyZSBib3RoIGZyb20gZWFybHkgMjAxNSwgc28gcHJvYmFibHkgd2VyZSB1c2VkIHdpdGgg
+TGludXggMy4xOCBvciAzLjE5IGF0IHRoYXQgdGltZS4KCkp1c3QgaW4gY2FzZSwgaXMgdGhpcyBB
+bmRyb2lkIGRldmljZT8gSWYgeW91IGRvbid0IHVzZSBpb2N0bChGMkZTX1BJTl9GSUxFKSwKdGhp
+cyBvbmV0aW1lIGZpeCB3b250JyBodXJ0IGFueSBmaWxlc3lzdGVtIG1ldGFkYXRhLgoKVGhhbmtz
+LAoKPiAKPiBUaGFua3MgZm9yIHRoZSBleHBsYW5hdGlvbiBhbmQgdGhlIHByb3Bvc2VkIHBhdGNo
+IQo+IAo+IEJlc3QgcmVnYXJkcywKPiBNaWNoYWVsCj4gCj4gX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KPiBMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlz
+dAo+IExpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cj4gaHR0cHM6Ly9saXN0
+cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAoKCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2
+ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0
+dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2
+ZWwK
