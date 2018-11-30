@@ -1,120 +1,237 @@
-From: Eric Biggers <ebiggers@kernel.org>
-Subject: Re: [PATCH 2/7] f2fs: use IS_ENCRYPTED() to check
- encryption status
-Date: Fri, 30 Nov 2018 09:44:27 -0800
-Message-ID: <20181130174426.GA135453@gmail.com>
-References: <20181119052324.31456-1-chandan@linux.vnet.ibm.com>
- <2911123.OYxvaggYeN@localhost.localdomain>
- <20181129190512.GB168705@gmail.com>
- <2639396.LW90XSOufJ@localhost.localdomain>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid frequent costly fsck triggers
+Date: Fri, 30 Nov 2018 12:28:07 -0800
+Message-ID: <20181130202807.GA71781@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20181128073125.39102-1-jaegeuk@kernel.org>
+ <724de929-6ee1-3ad7-cfa7-6e80d4e7a3da@huawei.com>
+ <20181128081035.GA41969@jaegeuk-macbookpro.roam.corp.google.com>
+ <4f43735a-d01f-f194-18ce-4fbbe10ad8d4@huawei.com>
+ <20181128174805.GB41969@jaegeuk-macbookpro.roam.corp.google.com>
+ <234cabcd-a1c1-9fb6-13aa-94fe681731dc@huawei.com>
+ <afaee7a9-162a-b157-f0bc-de366cbb7b53@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1gSmqM-0001f0-48
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Nov 2018 17:44:46 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gSmqA-006uI5-VD
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Nov 2018 17:44:46 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <2639396.LW90XSOufJ@localhost.localdomain>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chandan Rajendra <chandan@linux.vnet.ibm.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <afaee7a9-162a-b157-f0bc-de366cbb7b53@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Sheng Yong <shengyong1@huawei.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Fri, Nov 30, 2018 at 10:57:58AM +0530, Chandan Rajendra wrote:
-> On Friday, November 30, 2018 12:35:13 AM IST Eric Biggers wrote:
-> > Hi Chandan,
+On 11/30, Chao Yu wrote:
+> On 2018/11/30 10:35, Sheng Yong wrote:
+> > Hi, Jaegeuk and Chao,
 > > 
-> > On Thu, Nov 29, 2018 at 04:08:31PM +0530, Chandan Rajendra wrote:
-> > > On Monday, November 26, 2018 11:04:35 PM IST Theodore Y. Ts'o wrote:
-> > > > On Sun, Nov 25, 2018 at 11:00:38PM -0500, Theodore Y. Ts'o wrote:
-> > > > > 
-> > > > > It might be that the simplest way to solve things is to merge the f2fs
-> > > > > dev branch up to 79c66e75720c.  This will have the net effect of
-> > > > > including the five patches listed above onto the fscrypt git tree.  So
-> > > > > long you don't plan to rebase or otherwise change these five patches,
-> > > > > it should avoid any merge conflicts.
-> > > > 
-> > > > I've set up a git branch which has the f2fs dev branch, 4.20-rc4, the
-> > > > fsverity patches, and part of Chandan's patch series here:
-> > > > 
-> > > > git://git.kernel.org/pub/scm/linux/kernel/git/tytso/fscrypt.git test-working
-> > > > 
-> > > > There is a minor conflict when I did a trial merge with f2fs.git's dev
-> > > > branch, but it's pretty obvious to how to resolve it.
-> > > > 
-> > > > Jaegeuk, Eric, Chandan, please take a look and let me know what you
-> > > > think.
-> > > 
-> > > Ted,
-> > > 
-> > > I have addressed the review comments provided by Eric. Hence three out of
-> > > the four patches in the test-working branch have new changes. I also got
-> > > UBIFS to use CONFIG_FS_ENCRYPTION instead of the per-filesystem config
-> > > symbol.
-> > > 
-> > > I am currently executing fstests to verify the changes.
-> > > 
-> > > 
-> > > Eric,
-> > > 
-> > > When executing generic/900, I noticed that sometimes xfs_io would get stuck
-> > > for an indefinite period. /proc/<pid of xfs_io>/stack showed that the task was
-> > > stuck in tty_read() inside the kernel. The following change fixed it,
-> > > 
-> > > diff --git a/tests/generic/900 b/tests/generic/900
-> > > index 290889ce..0831eed4 100755
-> > > --- a/tests/generic/900
-> > > +++ b/tests/generic/900
-> > > @@ -83,7 +83,7 @@ _fsv_create_enable_file $fsv_file >> $seqres.full
-> > >  echo "* reading"
-> > >  $XFS_IO_PROG -r $fsv_file -c ''
-> > >  echo "* xfs_io writing, should be O_RDWR"
-> > > -$XFS_IO_PROG $fsv_file |& _filter_scratch
-> > > +$XFS_IO_PROG -c '' $fsv_file 2>&1 | _filter_scratch
-> > >  echo "* bash >>, should be O_APPEND"
-> > >  bash -c "echo >> $fsv_file" |& _filter_scratch
-> > >  echo "* bash >, should be O_WRONLY|O_CREAT|O_TRUNC"
-> > > 
-> > > xfs_io gets into interactive mode when invoked without a "-c cmd" string.
-> > > 
-> > > However, I am not able recreate the scenario once again without the above
-> > > changes applied. I am not sure about what changed. 
-> > > 
+> > On 2018/11/29 1:48, Jaegeuk Kim wrote:
+> >> On 11/28, Chao Yu wrote:
+> >>> On 2018/11/28 16:10, Jaegeuk Kim wrote:
+> >>>> On 11/28, Chao Yu wrote:
+> >>>>> Hi Jaeguek,
+> >>>>>
+> >>>>> On 2018/11/28 15:31, Jaegeuk Kim wrote:
+> >>>>>> If we want to re-enable nat_bits, we rely on fsck which requires full scan
+> >>>>>> of directory tree. Let's do that by regular fsck or unclean shutdown.
+> >>>>>
+> >>>>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> >>>>>
+> >>>>> BTW, I have patch made some month ago...
+> >>>>>
+> >>>>> In order to detect nat_bits disabling, could we introduce one more flag for
+> >>>>> fsck?
+> >>>>
+> >>>> Do we have a way to enable nat_bits very quickly in fsck?
+> >>>
+> >>> For image with SBI_NATBIT_NEED_REPAIR flag, can we just check metadata and
+> >>> rebuild nat_bits based on verified nat blocks/journals?
+> >>
+> >> I'm leaning to rely on full scan to enable nat_bits again. We may add a mount
+> >> count or timer to trigger fsck regularly?
 > > 
-> > The test is opening a verity file for read+write access, which should fail.  But
-> > it's incorrectly succeeding, hence the test is right to not pass.  Did you add
-> > the missing call to ext4_set_inode_flags() in ext4_set_verity() as I
-> > suggested?
-> > 
-> > (But I'll make the suggested change to the test too, so it fails cleanly in this
-> > case rather than hangs reading from stdin.)
+> > I'm afraid regular full fsck would give us bad experience of booting time.
+> > FYI, 256GB storage, which is filled with small files, costs almost 10 min
+> > to do a full fsck. And it seems larger capacity storages are on the way.
 > 
-> Yes, I did make the suggested changes. But the test would some times hang
-> indefinitely because of xfs_io waiting on input from stdin.
-> 
-> With the new changes made to ext4_set_verity(), I see that the fsck fails
-> consistency check. But the failure is seen even without my patches applied. I
-> have planned to debug the failure after I post the next version of the
-> patchset.
-> 
+> Agreed.
 
-You're testing with e2fsprogs "1.44.4-2" or later, right?  Note that the
-original "v1.44.4" had some bugs with verity support, which were fixed shortly
-after.  Specifically, e2fsprogs needs to be commit 3baafde6a8ae7 or later.
+Agreed. So, that's why I wrote this patch.
 
-- Eric
+> 
+> > So, is it worth doing that only to enable nat_bits (plus checking f2fs
+> > consistent not that necessarily)?
+> 
+> In android environment, I think it may be too expensive for adding nat_bits
+> by triggering full scan by fsck during boot time.
+
+That's why I'd like to enable this only when we need full scan.
+
+> 
+> If we can update all nat bitmap in free time after mount, maybe we can
+> rebuild nat_bits based on full nat bitmap during umount, which can be
+> cheaper than rebuiding in userspace.
+
+Yeah, rebuiling nat_bits in run time would be better, but can be applied
+in future. But, since Android reboot procedure uses a timeout, if we exceed
+it, we'll get unclean unmount which triggers another fsck, which doesn't
+make sense at all.
+
+> 
+> Thanks,
+> 
+> > 
+> > Thanks
+> >>
+> >>>
+> >>> Thanks,
+> >>>
+> >>>>
+> >>>>>
+> >>>>> >From 86e8bdb2faeec904944bb6621073f4f7de51cc2d Mon Sep 17 00:00:00 2001
+> >>>>> From: Chao Yu <yuchao0@huawei.com>
+> >>>>> Date: Sun, 9 Sep 2018 05:40:20 +0800
+> >>>>> Subject: [PATCH] f2fs: set specified flag after invalidating nat_bits
+> >>>>>
+> >>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >>>>> ---
+> >>>>>   fs/f2fs/checkpoint.c    | 12 +++++++++++-
+> >>>>>   fs/f2fs/f2fs.h          |  3 ++-
+> >>>>>   fs/f2fs/node.c          |  3 +++
+> >>>>>   include/linux/f2fs_fs.h |  1 +
+> >>>>>   4 files changed, 17 insertions(+), 2 deletions(-)
+> >>>>>
+> >>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> >>>>> index 7e17bb3dfcb1..f7fb14e0f5f9 100644
+> >>>>> --- a/fs/f2fs/checkpoint.c
+> >>>>> +++ b/fs/f2fs/checkpoint.c
+> >>>>> @@ -1226,13 +1226,16 @@ static void update_ckpt_flags(struct f2fs_sb_info
+> >>>>> *sbi, struct cp_control *cpc)
+> >>>>>   	unsigned long orphan_num = sbi->im[ORPHAN_INO].ino_num;
+> >>>>>   	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+> >>>>>   	unsigned long flags;
+> >>>>> +	bool disable_natbits = false;
+> >>>>>
+> >>>>>   	spin_lock_irqsave(&sbi->cp_lock, flags);
+> >>>>>
+> >>>>>   	if ((cpc->reason & CP_UMOUNT) &&
+> >>>>>   			le32_to_cpu(ckpt->cp_pack_total_block_count) >
+> >>>>> -			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks)
+> >>>>> +			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks) {
+> >>>>>   		disable_nat_bits(sbi, false);
+> >>>>> +		disable_natbits = true;
+> >>>>> +	}
+> >>>>>
+> >>>>>   	if (cpc->reason & CP_TRIMMED)
+> >>>>>   		__set_ckpt_flags(ckpt, CP_TRIMMED_FLAG);
+> >>>>> @@ -1270,11 +1273,18 @@ static void update_ckpt_flags(struct f2fs_sb_info
+> >>>>> *sbi, struct cp_control *cpc)
+> >>>>>   	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+> >>>>>   		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>>
+> >>>>> +	if (is_sbi_flag_set(sbi, SBI_NATBIT_NEED_REPAIR))
+> >>>>> +		__set_ckpt_flags(ckpt, CP_NATBIT_NEED_FSCK_FLAG);
+> >>>>> +
+> >>>>>   	/* set this flag to activate crc|cp_ver for recovery */
+> >>>>>   	__set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG);
+> >>>>>   	__clear_ckpt_flags(ckpt, CP_NOCRC_RECOVERY_FLAG);
+> >>>>>
+> >>>>>   	spin_unlock_irqrestore(&sbi->cp_lock, flags);
+> >>>>> +
+> >>>>> +	if (disable_natbits)
+> >>>>> +		f2fs_msg(sbi->sb, KERN_NOTICE,
+> >>>>> +			"No enough space in CP area, disable nat_bits.");
+> >>>>>   }
+> >>>>>
+> >>>>>   static void commit_checkpoint(struct f2fs_sb_info *sbi,
+> >>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >>>>> index f0cedbe0c536..b55341c269b2 100644
+> >>>>> --- a/fs/f2fs/f2fs.h
+> >>>>> +++ b/fs/f2fs/f2fs.h
+> >>>>> @@ -1107,6 +1107,7 @@ enum {
+> >>>>>   	SBI_QUOTA_NEED_FLUSH,			/* need to flush quota info in CP */
+> >>>>>   	SBI_QUOTA_SKIP_FLUSH,			/* skip flushing quota in current CP */
+> >>>>>   	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
+> >>>>> +	SBI_NATBIT_NEED_REPAIR,			/* nat full/empty bitmaps need repair */
+> >>>>>   };
+> >>>>>
+> >>>>>   enum {
+> >>>>> @@ -1628,7 +1629,7 @@ static inline void disable_nat_bits(struct
+> >>>>> f2fs_sb_info *sbi, bool lock)
+> >>>>>   {
+> >>>>>   	unsigned long flags;
+> >>>>>
+> >>>>> -	set_sbi_flag(sbi, SBI_NEED_FSCK);
+> >>>>> +	set_sbi_flag(sbi, SBI_NATBIT_NEED_REPAIR);
+> >>>>>
+> >>>>>   	if (lock)
+> >>>>>   		spin_lock_irqsave(&sbi->cp_lock, flags);
+> >>>>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> >>>>> index e57add1e8966..0c6f8312a087 100644
+> >>>>> --- a/fs/f2fs/node.c
+> >>>>> +++ b/fs/f2fs/node.c
+> >>>>> @@ -2902,6 +2902,9 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
+> >>>>>
+> >>>>>   	cp_ver |= (cur_cp_crc(ckpt) << 32);
+> >>>>>   	if (cpu_to_le64(cp_ver) != *(__le64 *)nm_i->nat_bits) {
+> >>>>> +		f2fs_msg(sbi->sb, KERN_NOTICE,
+> >>>>> +			"Disable nat_bits due to incorrect cp_ver (%llu, %llu)",
+> >>>>> +			cp_ver, le64_to_cpu(*(__le64 *)nm_i->nat_bits));
+> >>>>>   		disable_nat_bits(sbi, true);
+> >>>>>   		return 0;
+> >>>>>   	}
+> >>>>> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+> >>>>> index 7196653833fa..1f3ae1504573 100644
+> >>>>> --- a/include/linux/f2fs_fs.h
+> >>>>> +++ b/include/linux/f2fs_fs.h
+> >>>>> @@ -117,6 +117,7 @@ struct f2fs_super_block {
+> >>>>>   /*
+> >>>>>    * For checkpoint
+> >>>>>    */
+> >>>>> +#define CP_NATBIT_NEED_FSCK_FLAG	0X00002000
+> >>>>>   #define CP_DISABLED_FLAG		0x00001000
+> >>>>>   #define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
+> >>>>>   #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
+> >>>>> -- 
+> >>>>> 2.18.0.rc1
+> >>>>>
+> >>>>>
+> >>>>>
+> >>>>>>
+> >>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>>>>> ---
+> >>>>>>   fs/f2fs/f2fs.h | 6 +++++-
+> >>>>>>   1 file changed, 5 insertions(+), 1 deletion(-)
+> >>>>>>
+> >>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >>>>>> index c28a9d1cb278..aa500239baf2 100644
+> >>>>>> --- a/fs/f2fs/f2fs.h
+> >>>>>> +++ b/fs/f2fs/f2fs.h
+> >>>>>> @@ -1621,7 +1621,11 @@ static inline void disable_nat_bits(struct f2fs_sb_info *sbi, bool lock)
+> >>>>>>   {
+> >>>>>>   	unsigned long flags;
+> >>>>>>   
+> >>>>>> -	set_sbi_flag(sbi, SBI_NEED_FSCK);
+> >>>>>> +	/*
+> >>>>>> +	 * In order to re-enable nat_bits we need to call fsck.f2fs by
+> >>>>>> +	 * set_sbi_flag(sbi, SBI_NEED_FSCK). But it may give huge cost,
+> >>>>>> +	 * so let's rely on regular fsck or unclean shutdown.
+> >>>>>> +	 */
+> >>>>>>   
+> >>>>>>   	if (lock)
+> >>>>>>   		spin_lock_irqsave(&sbi->cp_lock, flags);
+> >>>>>>
+> >>>>
+> >>>> .
+> >>>>
+> >>
+> >>
+> >> _______________________________________________
+> >> Linux-f2fs-devel mailing list
+> >> Linux-f2fs-devel@lists.sourceforge.net
+> >> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >>
+> >> .
+> >>
+> > 
+> > 
+> > .
+> > 
