@@ -1,77 +1,134 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: add an ioctl() to explicitly trigger
- fsck later
-Date: Fri, 30 Nov 2018 12:36:11 -0800
-Message-ID: <20181130203611.GC71781@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20181129015257.95036-1-jaegeuk@kernel.org>
- <16b92898-0d8b-8edf-17f4-36b112b25add@huawei.com>
+From: Chandan Rajendra <chandan@linux.vnet.ibm.com>
+Subject: [PATCH V2 0/7] Remove fs specific fscrypt and fsverity
+ build config options
+Date: Tue,  4 Dec 2018 15:26:43 +0530
+Message-ID: <20181204095650.12562-1-chandan@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <16b92898-0d8b-8edf-17f4-36b112b25add@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <chandan@linux.vnet.ibm.com>) id 1gU7S8-0002nb-T0
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 04 Dec 2018 09:57:16 +0000
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1gU7S5-003bvd-V4
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 04 Dec 2018 09:57:15 +0000
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+ by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id
+ wB49ru2o077871
+ for <linux-f2fs-devel@lists.sourceforge.net>; Tue, 4 Dec 2018 04:57:06 -0500
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+ by mx0a-001b2d01.pphosted.com with ESMTP id 2p5pmssynh-1
+ (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <linux-f2fs-devel@lists.sourceforge.net>; Tue, 04 Dec 2018 04:57:06 -0500
+Received: from localhost
+ by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
+ Violators will be prosecuted
+ for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.vnet.ibm.com>;
+ Tue, 4 Dec 2018 09:57:05 -0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-doc@vger.kernel.org, linux-mips@linux-mips.org, linux-s390@vger.kernel.org, linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Cc: dedekind1@gmail.com, tytso@mit.edu, corbet@lwn.net, jhogan@kernel.org, heiko.carstens@de.ibm.com, adrian.hunter@intel.com, ralf@linux-mips.org, ebiggers@kernel.org, paul.burton@mips.com, adilger.kernel@dilger.ca, green.hu@gmail.com, richard@nod.at, schwidefsky@de.ibm.com, jaegeuk@kernel.org, deanbo422@gmail.com, viro@zeniv.linux.org.uk
 
-On 11/30, Chao Yu wrote:
-> On 2018/11/29 9:52, Jaegeuk Kim wrote:
-> > This adds an option in ioctl(F2FS_IOC_SHUTDOWN) in order to trigger fsck by
-> > setting a NEED_FSCK flag.
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/f2fs.h | 1 +
-> >  fs/f2fs/file.c | 7 +++++++
-> >  2 files changed, 8 insertions(+)
-> > 
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index aa500239baf2..7cec897146a3 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -417,6 +417,7 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
-> >  #define F2FS_GOING_DOWN_METASYNC	0x1	/* going down with metadata */
-> >  #define F2FS_GOING_DOWN_NOSYNC		0x2	/* going down */
-> >  #define F2FS_GOING_DOWN_METAFLUSH	0x3	/* going down with meta flush */
-> > +#define F2FS_GOING_DOWN_NEED_FSCK	0x4	/* going down to trigger fsck */
-> 
-> Why not add a new ioctl interface for this? F2FS_GOING_DOWN_ prefix implies
-> filesystem will shutdown, IMO, we'd better to keep all sub-interfaces being
-> consistent in f2fs_ioc_shutdown().
+In order to have a common code base for fscrypt & fsverity "post read"
+processing across filesystems which implement fscrypt/fsverity, this
+commit removes filesystem specific build config option
+(CONFIG_EXT4_FS_ENCRYPTION, CONFIG_EXT4_FS_VERITY,
+CONFIG_F2FS_FS_ENCRYPTION, CONFIG_F2FS_FS_VERITY and
+CONFIG_UBIFS_FS_ENCRYPTION) and replaces it with build options
+(CONFIG_FS_ENCRYPTION and CONFIG_FS_VERITY) whose values affect all
+the filesystems making use of fscrypt and fsverity.
 
-I'm thinking to use this for QA as device shutdown tests.
+PS: Since I have access to only to x86 and ppc64le machines, I haven't tested the
+defconfig files for other architectures.
 
-> 
-> >  
-> >  #if defined(__KERNEL__) && defined(CONFIG_COMPAT)
-> >  /*
-> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > index ff82350a2c55..ca9bdbb8651b 100644
-> > --- a/fs/f2fs/file.c
-> > +++ b/fs/f2fs/file.c
-> > @@ -1966,6 +1966,13 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
-> >  		f2fs_stop_checkpoint(sbi, false);
-> >  		set_sbi_flag(sbi, SBI_IS_SHUTDOWN);
-> >  		break;
-> > +	case F2FS_GOING_DOWN_NEED_FSCK:
-> > +		set_sbi_flag(sbi, SBI_NEED_FSCK);
-> > +		/* do checkpoint only */
-> > +		ret = f2fs_sync_fs(sb, 1);
-> > +		if (ret)
-> > +			goto out;
-> 
-> In large-sized image, it may take long time to trigger full scan during
-> boot, so I'd like to ask how often we set this flag?
+Changelog:
+V1 -> V2:
+1. Address the following review comments provided by Eric Biggers,
+   - In ext4_should_use_dax(), Use ext4_test_inode_flag() to check for
+     fscrypt/fsverity status of an inode.
+   - Update documentation associated with fscrypt & fsverity to refer to
+     CONFIG_FS_ENCRYPTION and CONFIG_FS_VERITY build flags.
+   - Remove filesystem specific fscrypt build configuration from defconfig
+     files.
+   - Provide a list of supported filesystems for CONFIG_FS_ENCRYPTION and
+     CONFIG_FS_VERITY build flags.
+   - Update comment describing S_VERITY flag.
+2. Remove UBIFS specific encryption build option and make use of the generic
+   CONFIG_FS_ENCRYPTION flag.
 
-Based on the use of shutdown ioctl, I'll use this for testing purpose, so it
-won't be used for regular cases.
+RFC -> V1:
+1. Add a new patch to implement S_VERITY/IS_VERITY().
+2. Split code that replaces filesystem specific routines with generic
+   IS_ENCRYPTED() and IS_VERITY() calls into separate patches.
 
-> 
-> Thanks,
-> 
-> > +		break;
-> >  	default:
-> >  		ret = -EINVAL;
-> >  		goto out;
-> > 
+Chandan Rajendra (7):
+  ext4: use IS_ENCRYPTED() to check encryption status
+  f2fs: use IS_ENCRYPTED() to check encryption status
+  fscrypt: remove filesystem specific build config option
+  Add S_VERITY and IS_VERITY()
+  ext4: use IS_VERITY() to check inode's fsverity status
+  f2fs: use IS_VERITY() to check inode's fsverity status
+  fsverity: Remove filesystem specific build config option
+
+ Documentation/filesystems/fscrypt.rst   |   4 +-
+ Documentation/filesystems/fsverity.rst  |   4 +-
+ arch/mips/configs/generic_defconfig     |   2 +-
+ arch/nds32/configs/defconfig            |   2 +-
+ arch/s390/configs/debug_defconfig       |   2 +-
+ arch/s390/configs/performance_defconfig |   2 +-
+ fs/crypto/Kconfig                       |   5 +-
+ fs/ext4/Kconfig                         |  35 --
+ fs/ext4/dir.c                           |  10 +-
+ fs/ext4/ext4.h                          |  23 +-
+ fs/ext4/ext4_jbd2.h                     |   2 +-
+ fs/ext4/extents.c                       |   4 +-
+ fs/ext4/file.c                          |   2 +-
+ fs/ext4/ialloc.c                        |   2 +-
+ fs/ext4/inode.c                         |  32 +-
+ fs/ext4/ioctl.c                         |   4 +-
+ fs/ext4/move_extent.c                   |   3 +-
+ fs/ext4/namei.c                         |  18 +-
+ fs/ext4/page-io.c                       |   8 +-
+ fs/ext4/readpage.c                      |  10 +-
+ fs/ext4/super.c                         |  13 +-
+ fs/ext4/sysfs.c                         |   8 +-
+ fs/f2fs/Kconfig                         |  31 --
+ fs/f2fs/data.c                          |   6 +-
+ fs/f2fs/dir.c                           |  10 +-
+ fs/f2fs/f2fs.h                          |   9 +-
+ fs/f2fs/file.c                          |  16 +-
+ fs/f2fs/inode.c                         |   4 +-
+ fs/f2fs/namei.c                         |   6 +-
+ fs/f2fs/super.c                         |  14 +-
+ fs/f2fs/sysfs.c                         |   8 +-
+ fs/ubifs/Kconfig                        |  11 -
+ fs/ubifs/Makefile                       |   2 +-
+ fs/ubifs/ioctl.c                        |   4 +-
+ fs/ubifs/sb.c                           |   2 +-
+ fs/ubifs/super.c                        |   2 +-
+ fs/ubifs/ubifs.h                        |   5 +-
+ fs/verity/Kconfig                       |   3 +-
+ include/linux/fs.h                      |  10 +-
+ include/linux/fscrypt.h                 | 416 +++++++++++++++++++++++-
+ include/linux/fscrypt_notsupp.h         | 231 -------------
+ include/linux/fscrypt_supp.h            | 204 ------------
+ include/linux/fsverity.h                |   3 +-
+ 43 files changed, 532 insertions(+), 660 deletions(-)
+ delete mode 100644 include/linux/fscrypt_notsupp.h
+ delete mode 100644 include/linux/fscrypt_supp.h
+
+-- 
+2.19.1
