@@ -1,21 +1,26 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] libf2fs: fix to detect stat() failure
-Date: Mon, 10 Dec 2018 18:13:33 +0800
-Message-ID: <20181210101333.111826-1-yuchao0@huawei.com>
+From: Eric Biggers <ebiggers@kernel.org>
+Subject: Re: [PATCH V3 8/9] fsverity: Move verity status check to
+ fsverity_file_open
+Date: Mon, 10 Dec 2018 09:26:11 -0800
+Message-ID: <20181210172610.GA92174@gmail.com>
+References: <20181208065144.19486-1-chandan@linux.vnet.ibm.com>
+ <20181208065144.19486-9-chandan@linux.vnet.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1gWIaA-0008Qq-HQ
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 Dec 2018 10:14:34 +0000
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <ebiggers@kernel.org>) id 1gWPK1-0000lj-81
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 Dec 2018 17:26:21 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gWIZq-009xqQ-4A
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 Dec 2018 10:14:34 +0000
+ id 1gWPJz-00D7ex-K4
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 Dec 2018 17:26:21 +0000
+Content-Disposition: inline
+In-Reply-To: <20181208065144.19486-9-chandan@linux.vnet.ibm.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -25,36 +30,95 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Chandan Rajendra <chandan@linux.vnet.ibm.com>
+Cc: linux-mips@linux-mips.org, linux-doc@vger.kernel.org, jhogan@kernel.org, heiko.carstens@de.ibm.com, linux-mtd@lists.infradead.org, deanbo422@gmail.com, linux-s390@vger.kernel.org, corbet@lwn.net, richard@nod.at, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, green.hu@gmail.com, jaegeuk@kernel.org, tytso@mit.edu, dedekind1@gmail.com, adrian.hunter@intel.com, ralf@linux-mips.org, linux-f2fs-devel@lists.sourceforge.net, paul.burton@mips.com, schwidefsky@de.ibm.com, adilger.kernel@dilger.ca, viro@zeniv.linux.org.uk
 
-stat() can fail due to a lot of reasons, let f2fs_dev_is_umounted()
-detect such error and handle it correctly.
+Hi Chandan,
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- lib/libf2fs.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+On Sat, Dec 08, 2018 at 12:21:43PM +0530, Chandan Rajendra wrote:
+> Instead of conditionally checking for verity status of an inode before
+> invoking fsverity_file_open(), this commit moves the check inside the
+> definition of fsverity_file_open().
+> 
+> Signed-off-by: Chandan Rajendra <chandan@linux.vnet.ibm.com>
+> ---
+>  fs/ext4/file.c    | 8 +++-----
+>  fs/f2fs/file.c    | 8 +++-----
+>  fs/verity/setup.c | 3 +++
+>  3 files changed, 9 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index 30fbd663354f..b404a857cd48 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -444,11 +444,9 @@ static int ext4_file_open(struct inode * inode, struct file * filp)
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (IS_VERITY(inode)) {
+> -		ret = fsverity_file_open(inode, filp);
+> -		if (ret)
+> -			return ret;
+> -	}
+> +	ret = fsverity_file_open(inode, filp);
+> +	if (ret)
+> +		return ret;
+>  
+>  	/*
+>  	 * Set up the jbd2_inode if we are opening the inode for
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 2eb4821d95d1..925c0d9608da 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -491,11 +491,9 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
+>  	if (err)
+>  		return err;
+>  
+> -	if (IS_VERITY(inode)) {
+> -		err = fsverity_file_open(inode, filp);
+> -		if (err)
+> -			return err;
+> -	}
+> +	err = fsverity_file_open(inode, filp);
+> +	if (err)
+> +		return err;
+>  
+>  	filp->f_mode |= FMODE_NOWAIT;
+>  
+> diff --git a/fs/verity/setup.c b/fs/verity/setup.c
+> index 08b609127531..bc463dc601b1 100644
+> --- a/fs/verity/setup.c
+> +++ b/fs/verity/setup.c
+> @@ -771,6 +771,9 @@ static int setup_fsverity_info(struct inode *inode)
+>   */
+>  int fsverity_file_open(struct inode *inode, struct file *filp)
+>  {
+> +	if (!IS_VERITY(inode))
+> +		return 0;
+> +
+>  	if (filp->f_mode & FMODE_WRITE) {
+>  		pr_debug("Denying opening verity file (ino %lu) for write\n",
+>  			 inode->i_ino);
+> -- 
+> 2.19.1
+> 
 
-diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index c692bf2da635..6a1040feff32 100644
---- a/lib/libf2fs.c
-+++ b/lib/libf2fs.c
-@@ -713,7 +713,14 @@ int f2fs_dev_is_umounted(char *path)
- 	st_buf = malloc(sizeof(struct stat));
- 	ASSERT(st_buf);
- 
--	if (stat(path, st_buf) == 0 && S_ISBLK(st_buf->st_mode)) {
-+	ret = stat(path, st_buf);
-+	if (ret) {
-+		MSG(0, "\tError: stat %s failed!\n", path);
-+		free(st_buf);
-+		return -1;
-+	}
-+
-+	if (S_ISBLK(st_buf->st_mode)) {
- 		int fd = open(path, O_RDONLY | O_EXCL);
- 
- 		if (fd >= 0) {
--- 
-2.18.0.rc1
+This will break ext4 and f2fs when !CONFIG_FS_VERITY because then:
+
+static inline int fsverity_file_open(struct inode *inode, struct file *filp)
+{
+	return -EOPNOTSUPP;
+}
+
+Can you please make it like fscrypt_file_open()?
+
+static inline int fsverity_file_open(struct inode *inode, struct file *filp)
+{
+	if (IS_VERITY(inode))
+		return -EOPNOTSUPP;
+	return 0;
+}
+
+Same with fsverity_prepare_setattr().
+
+- Eric
