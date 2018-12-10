@@ -1,34 +1,60 @@
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-Subject: Re: [PATCH V3 0/9] Remove fs specific fscrypt and fsverity build
- config options
-Date: Mon, 10 Dec 2018 01:06:10 -0500
-Message-ID: <20181210060610.GJ1840@mit.edu>
-References: <20181208065144.19486-1-chandan@linux.vnet.ibm.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] libf2fs: fix to detect stat() failure
+Date: Mon, 10 Dec 2018 18:13:33 +0800
+Message-ID: <20181210101333.111826-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20181208065144.19486-1-chandan@linux.vnet.ibm.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
- <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
-List-Post: <mailto:linux-mtd@lists.infradead.org>
-List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
- <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
-Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
-To: Chandan Rajendra <chandan@linux.vnet.ibm.com>
-Cc: linux-mips@linux-mips.org, linux-doc@vger.kernel.org, jhogan@kernel.org, yuchao0@huawei.com, heiko.carstens@de.ibm.com, linux-mtd@lists.infradead.org, deanbo422@gmail.com, linux-s390@vger.kernel.org, corbet@lwn.net, richard@nod.at, ebiggers@kernel.org, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, green.hu@gmail.com, jaegeuk@kernel.org, dedekind1@gmail.com, adrian.hunter@intel.com, ralf@linux-mips.org, linux-f2fs-devel@lists.sourceforge.net, paul.burton@mips.com, schwidefsky@de.ibm.com, adilger.kernel@dilger.ca, viro@zeniv.linux.org.uk
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1gWIaA-0008Qq-HQ
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 Dec 2018 10:14:34 +0000
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1gWIZq-009xqQ-4A
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 Dec 2018 10:14:34 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Chandan,
+stat() can fail due to a lot of reasons, let f2fs_dev_is_umounted()
+detect such error and handle it correctly.
 
-Thanks!  I've applied this patch series to the fscrypt git tree.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ lib/libf2fs.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-	      	      	   	 	- Ted
-
-______________________________________________________
-Linux MTD discussion mailing list
-http://lists.infradead.org/mailman/listinfo/linux-mtd/
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index c692bf2da635..6a1040feff32 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -713,7 +713,14 @@ int f2fs_dev_is_umounted(char *path)
+ 	st_buf = malloc(sizeof(struct stat));
+ 	ASSERT(st_buf);
+ 
+-	if (stat(path, st_buf) == 0 && S_ISBLK(st_buf->st_mode)) {
++	ret = stat(path, st_buf);
++	if (ret) {
++		MSG(0, "\tError: stat %s failed!\n", path);
++		free(st_buf);
++		return -1;
++	}
++
++	if (S_ISBLK(st_buf->st_mode)) {
+ 		int fd = open(path, O_RDONLY | O_EXCL);
+ 
+ 		if (fd >= 0) {
+-- 
+2.18.0.rc1
