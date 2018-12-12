@@ -1,36 +1,37 @@
 From: Chandan Rajendra <chandan@linux.vnet.ibm.com>
-Subject: [PATCH V4 5/9] ext4: use IS_VERITY() to check inode's
+Subject: [PATCH V4 6/9] f2fs: use IS_VERITY() to check inode's
  fsverity status
-Date: Wed, 12 Dec 2018 09:37:32 +0530
-Message-ID: <20181212040736.2849-6-chandan@linux.vnet.ibm.com>
+Date: Wed, 12 Dec 2018 09:37:33 +0530
+Message-ID: <20181212040736.2849-7-chandan@linux.vnet.ibm.com>
 References: <20181212040736.2849-1-chandan@linux.vnet.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.vnet.ibm.com>) id 1gWvpD-0005nP-Gu
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 Dec 2018 04:08:43 +0000
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (envelope-from <chandan@linux.vnet.ibm.com>) id 1gWvpN-0000uW-1a
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 Dec 2018 04:08:53 +0000
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
+ helo=mx0a-001b2d01.pphosted.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gWvpC-00CRl9-4m
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 Dec 2018 04:08:43 +0000
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
- by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id
- wBC3xC52044153
- for <linux-f2fs-devel@lists.sourceforge.net>; Tue, 11 Dec 2018 23:08:36 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
- by mx0a-001b2d01.pphosted.com with ESMTP id 2paqh476t5-1
+ id 1gWvpL-00Cyf8-IA
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 Dec 2018 04:08:52 +0000
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+ by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id
+ wBC3xBmU001311
+ for <linux-f2fs-devel@lists.sourceforge.net>; Tue, 11 Dec 2018 23:08:45 -0500
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+ by mx0b-001b2d01.pphosted.com with ESMTP id 2pasjs2rvw-1
  (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>; Tue, 11 Dec 2018 23:08:36 -0500
+ for <linux-f2fs-devel@lists.sourceforge.net>; Tue, 11 Dec 2018 23:08:45 -0500
 Received: from localhost
- by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
+ by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
  Violators will be prosecuted
  for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.vnet.ibm.com>;
- Wed, 12 Dec 2018 04:08:35 -0000
+ Wed, 12 Dec 2018 04:08:45 -0000
 In-Reply-To: <20181212040736.2849-1-chandan@linux.vnet.ibm.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -44,121 +45,102 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-doc@vger.kernel.org, linux-mips@linux-mips.org, linux-s390@vger.kernel.org, linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org
 Cc: dedekind1@gmail.com, tytso@mit.edu, corbet@lwn.net, jhogan@kernel.org, heiko.carstens@de.ibm.com, adrian.hunter@intel.com, ralf@linux-mips.org, ebiggers@kernel.org, paul.burton@mips.com, adilger.kernel@dilger.ca, green.hu@gmail.com, richard@nod.at, schwidefsky@de.ibm.com, jaegeuk@kernel.org, deanbo422@gmail.com, viro@zeniv.linux.org.uk
 
-This commit removes the ext4 specific ext4_verity_inode() and makes
-use of the generic IS_ENCRYPTED() macro or ext4_test_inode_flag() to
-check for the encryption status of an inode.
+This commit removes the f2fs specific f2fs_verity_file() and makes use
+of the generic IS_VERITY() macro or file_is_verity() to check for the
+verity status of an inode.
 
 Reviewed-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Chandan Rajendra <chandan@linux.vnet.ibm.com>
 ---
- fs/ext4/ext4.h     |  9 ---------
- fs/ext4/file.c     |  2 +-
- fs/ext4/inode.c    | 10 ++++++----
- fs/ext4/readpage.c |  2 +-
- fs/ext4/super.c    |  1 +
- 5 files changed, 9 insertions(+), 15 deletions(-)
+ fs/f2fs/f2fs.h  | 7 +------
+ fs/f2fs/file.c  | 6 +++---
+ fs/f2fs/inode.c | 4 +++-
+ fs/f2fs/super.c | 1 +
+ 4 files changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index db21df885186..64bf9fb7ef18 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -2296,15 +2296,6 @@ extern unsigned ext4_free_clusters_after_init(struct super_block *sb,
- 					      struct ext4_group_desc *gdp);
- ext4_fsblk_t ext4_inode_to_goal_block(struct inode *);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f9c8b0afc1de..54bd93c7b630 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3448,18 +3448,13 @@ static inline void f2fs_set_encrypted_inode(struct inode *inode)
+ #endif
+ }
  
--static inline bool ext4_verity_inode(struct inode *inode)
+-static inline bool f2fs_verity_file(struct inode *inode)
 -{
--#ifdef CONFIG_EXT4_FS_VERITY
--	return ext4_test_inode_flag(inode, EXT4_INODE_VERITY);
--#else
--	return false;
--#endif
+-	return file_is_verity(inode);
 -}
 -
- #ifdef CONFIG_FS_ENCRYPTION
- static inline int ext4_fname_setup_filename(struct inode *dir,
- 			const struct qstr *iname,
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index cb4b69ef01a2..30fbd663354f 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -444,7 +444,7 @@ static int ext4_file_open(struct inode * inode, struct file * filp)
- 	if (ret)
- 		return ret;
- 
--	if (ext4_verity_inode(inode)) {
-+	if (IS_VERITY(inode)) {
- 		ret = fsverity_file_open(inode, filp);
- 		if (ret)
- 			return ret;
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 8a55255a6c32..703f55635824 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3883,7 +3883,7 @@ static ssize_t ext4_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 		return 0;
- #endif
- 
--	if (ext4_verity_inode(inode))
-+	if (IS_VERITY(inode))
- 		return 0;
- 
- 	/*
-@@ -4724,7 +4724,7 @@ static bool ext4_should_use_dax(struct inode *inode)
- 		return false;
- 	if (ext4_test_inode_flag(inode, EXT4_INODE_ENCRYPT))
- 		return false;
--	if (ext4_verity_inode(inode))
-+	if (ext4_test_inode_flag(inode, EXT4_INODE_VERITY))
- 		return false;
- 	return true;
+ /*
+  * Returns true if the reads of the inode's data need to undergo some
+  * postprocessing step, like decryption or authenticity verification.
+  */
+ static inline bool f2fs_post_read_required(struct inode *inode)
+ {
+-	return f2fs_encrypted_file(inode) || f2fs_verity_file(inode);
++	return f2fs_encrypted_file(inode) || IS_VERITY(inode);
  }
-@@ -4748,9 +4748,11 @@ void ext4_set_inode_flags(struct inode *inode)
- 		new_fl |= S_DAX;
- 	if (flags & EXT4_ENCRYPT_FL)
+ 
+ #define F2FS_FEATURE_FUNCS(name, flagname) \
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 6c7ad15000b9..2eb4821d95d1 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -491,7 +491,7 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
+ 	if (err)
+ 		return err;
+ 
+-	if (f2fs_verity_file(inode)) {
++	if (IS_VERITY(inode)) {
+ 		err = fsverity_file_open(inode, filp);
+ 		if (err)
+ 			return err;
+@@ -701,7 +701,7 @@ int f2fs_getattr(const struct path *path, struct kstat *stat,
+ 	struct f2fs_inode *ri;
+ 	unsigned int flags;
+ 
+-	if (f2fs_verity_file(inode)) {
++	if (IS_VERITY(inode)) {
+ 		/*
+ 		 * For fs-verity we need to override i_size with the original
+ 		 * data i_size.  This requires I/O to the file which with
+@@ -800,7 +800,7 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
+ 	if (err)
+ 		return err;
+ 
+-	if (f2fs_verity_file(inode)) {
++	if (IS_VERITY(inode)) {
+ 		err = fsverity_prepare_setattr(dentry, attr);
+ 		if (err)
+ 			return err;
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index d731d23aedee..ff9126616d65 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -45,9 +45,11 @@ void f2fs_set_inode_flags(struct inode *inode)
+ 		new_fl |= S_DIRSYNC;
+ 	if (file_is_encrypt(inode))
  		new_fl |= S_ENCRYPTED;
-+	if (flags & EXT4_VERITY_FL)
++	if (file_is_verity(inode))
 +		new_fl |= S_VERITY;
  	inode_set_flags(inode, new_fl,
- 			S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC|S_DAX|
+ 			S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC|
 -			S_ENCRYPTED);
 +			S_ENCRYPTED|S_VERITY);
  }
  
- static blkcnt_t ext4_inode_blocks(struct ext4_inode *raw_inode,
-@@ -5508,7 +5510,7 @@ int ext4_setattr(struct dentry *dentry, struct iattr *attr)
- 	if (error)
- 		return error;
+ static void __get_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 4287cf348d3c..73320202bd01 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2207,6 +2207,7 @@ static int f2fs_set_verity(struct inode *inode, loff_t data_i_size)
+ 		return err;
  
--	if (ext4_verity_inode(inode)) {
-+	if (IS_VERITY(inode)) {
- 		error = fsverity_prepare_setattr(dentry, attr);
- 		if (error)
- 			return error;
-diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-index 7252f0a60cdb..2c037df629dd 100644
---- a/fs/ext4/readpage.c
-+++ b/fs/ext4/readpage.c
-@@ -206,7 +206,7 @@ static void mpage_end_io(struct bio *bio)
- static inline loff_t ext4_readpage_limit(struct inode *inode)
- {
- #ifdef CONFIG_EXT4_FS_VERITY
--	if (ext4_verity_inode(inode)) {
-+	if (IS_VERITY(inode)) {
- 		if (inode->i_verity_info)
- 			/* limit to end of metadata region */
- 			return fsverity_full_i_size(inode);
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 16fb483a6f4a..35ed3c48f8d2 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1344,6 +1344,7 @@ static int ext4_set_verity(struct inode *inode, loff_t data_i_size)
- 	err = ext4_reserve_inode_write(handle, inode, &iloc);
- 	if (err == 0) {
- 		ext4_set_inode_flag(inode, EXT4_INODE_VERITY);
-+		ext4_set_inode_flags(inode);
- 		EXT4_I(inode)->i_disksize = data_i_size;
- 		err = ext4_mark_iloc_dirty(handle, inode, &iloc);
- 	}
+ 	file_set_verity(inode);
++	f2fs_set_inode_flags(inode);
+ 	f2fs_mark_inode_dirty_sync(inode, true);
+ 	return 0;
+ }
 -- 
 2.19.1
