@@ -1,62 +1,73 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH v2] f2fs: remove codes of unused wio_mutex
-Date: Wed, 12 Dec 2018 11:50:20 +0800
-Message-ID: <1544586620-124300-1-git-send-email-yunlong.song@huawei.com>
-References: <1540368582-14312-1-git-send-email-yunlong.song@huawei.com>
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+Subject: Re: [PATCH 0/2] fs-verity: fix !CONFIG_FS_VERITY case
+Date: Tue, 11 Dec 2018 23:07:03 -0500
+Message-ID: <20181212040703.GA21718@thunk.org>
+References: <20181211224651.112510-1-ebiggers@kernel.org>
+ <20181212023018.GD4464@thunk.org>
+ <20181212024221.GA722@sol.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1540368582-14312-1-git-send-email-yunlong.song@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org, chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com, yunlong.song@huawei.com
-Cc: miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <tytso@thunk.org>) id 1gWvnn-0001d9-7h
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 Dec 2018 04:07:15 +0000
+Received: from imap.thunk.org ([74.207.234.97])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1gWvnl-00CRer-Cc
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 Dec 2018 04:07:15 +0000
+Content-Disposition: inline
+In-Reply-To: <20181212024221.GA722@sol.localdomain>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Tony Lindgren <tony@atomide.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>
 
-v1->v2: delete comments in f2fs.h: "/* bio ordering for NODE/DATA */"
+On Tue, Dec 11, 2018 at 06:42:22PM -0800, Eric Biggers wrote:
+> 
+> Either works, but I slightly prefer my version since it minimizes the overhead
+> on non-verity files when the kconfig option is enabled: it's just an i_flags
+> check, rather than a function call plus an i_flags check.  The same approach is
+> used in the fscrypt hooks.  Also shouldn't it be EOPNOTSUPP, not ENOTSUPP?
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/f2fs.h  | 2 --
- fs/f2fs/super.c | 5 +----
- 2 files changed, 1 insertion(+), 6 deletions(-)
+It's the same for both, since in the !CONFIG_FS_VERITY case the two
+functions are inline functions.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 1e03197..195850e 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1170,8 +1170,6 @@ struct f2fs_sb_info {
- 
- 	/* for bio operations */
- 	struct f2fs_bio_info *write_io[NR_PAGE_TYPE];	/* for write bios */
--	struct mutex wio_mutex[NR_PAGE_TYPE - 1][NR_TEMP_TYPE];
--						/* bio ordering for NODE/DATA */
- 	/* keep migration IO order for LFS mode */
- 	struct rw_semaphore io_order_lock;
- 	mempool_t *write_io_dummy;		/* Dummy pages */
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index af58b2c..2d18de5 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2674,7 +2674,7 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
- static void init_sb_info(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_super_block *raw_super = sbi->raw_super;
--	int i, j;
-+	int i;
- 
- 	sbi->log_sectors_per_block =
- 		le32_to_cpu(raw_super->log_sectors_per_block);
-@@ -2710,9 +2710,6 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
- 
- 	INIT_LIST_HEAD(&sbi->s_list);
- 	mutex_init(&sbi->umount_mutex);
--	for (i = 0; i < NR_PAGE_TYPE - 1; i++)
--		for (j = HOT; j < NR_TEMP_TYPE; j++)
--			mutex_init(&sbi->wio_mutex[i][j]);
- 	init_rwsem(&sbi->io_order_lock);
- 	spin_lock_init(&sbi->cp_lock);
- 
--- 
-1.8.5.2
+There's actually a bigger issue that I've been meaning to raise, which
+is that right now we'll set S_VERITY even if the VERITY feature flag
+is not set.  What we should do, in my opinion, is to make ext4 fail a
+r/w mount if it tries to mount the file system with the VERITY feature
+flag set and the kernel is mounted with the VERITY flag set.
+
+Also, if the kernel is compiled without CONFIG_FS_VERITY enabled,
+IS_VERITY(inode) should be defined to 0, and if the an inode is found
+with EXT4_VERITY_FL and the VERITY feature is not set, we should
+declare the file system corrupted.
+
+The problem is that f2fs doesn't check **any** file system features at
+all.  If you mount a file system with f2fs features that the kernel
+doesn't support, the f2fs file system doesn't say boo.  I suspect
+hilarity would ensue if new f2fs file system with new features are
+mounted on an older kernel, or a kernel where features like encryption
+and verity are disabled.
+
+So I could easily make these changes for ext4, but what we would do
+for f2fs isn't clear.  I think f2fs is very broken here, but I
+hesitate defining IS_VERITY(x) to 0 if !CONFIG_FS_VERITY might cause
+f2fs to break even more than it does today.  I would prefer to do that
+since it would remove dead code from ext4 and f2fs in the
+!CONFIG_FS_VERITY case, but I think we clarify with the f2fs folks why
+it is that they aren't checking the f2fs feature mask when mounting a
+file system first.
+
+       	    	      	       	    - Ted
