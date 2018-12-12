@@ -1,63 +1,104 @@
 From: Chandan Rajendra <chandan@linux.vnet.ibm.com>
-Subject: Re: [BUG BISECT next] Files cannot be opened after "fsverity: Move verity status check to fsverity_file_open"
-Date: Wed, 12 Dec 2018 09:41:18 +0530
-Message-ID: <3791832.MWVI2j2YUV@localhost.localdomain>
-References: <CAJKOXPdNS+Qs6t1GwrgYhWT5EbtORJwYMzSrDPf8oAxv7ndNBg@mail.gmail.com> <20181211174116.GB221175@gmail.com>
+Subject: Re: [PATCH V2 3/7] fscrypt: remove filesystem specific
+ build config option
+Date: Wed, 12 Dec 2018 11:57:31 +0530
+Message-ID: <5001320.eMptl8WvNp@localhost.localdomain>
+References: <20181204095650.12562-1-chandan@linux.vnet.ibm.com>
+ <20181212015211.GA23905@roeck-us.net> <20181212024811.GB722@sol.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181211174116.GB221175@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <chandan@linux.vnet.ibm.com>) id 1gWxzo-0007nW-Ax
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 Dec 2018 06:27:48 +0000
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1gWxzk-00F3ns-R6
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 Dec 2018 06:27:48 +0000
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+ by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id
+ wBC6OGnd109099
+ for <linux-f2fs-devel@lists.sourceforge.net>; Wed, 12 Dec 2018 01:27:37 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+ by mx0a-001b2d01.pphosted.com with ESMTP id 2pau8nm5xc-1
+ (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <linux-f2fs-devel@lists.sourceforge.net>; Wed, 12 Dec 2018 01:27:37 -0500
+Received: from localhost
+ by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
+ Violators will be prosecuted
+ for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.vnet.ibm.com>;
+ Wed, 12 Dec 2018 06:27:34 -0000
+In-Reply-To: <20181212024811.GB722@sol.localdomain>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Eric Biggers <ebiggers@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-mips@linux-mips.org, linux-doc@vger.kernel.org, jhogan@kernel.org, heiko.carstens@de.ibm.com, linux-mtd@lists.infradead.org, deanbo422@gmail.com, linux-s390@vger.kernel.org, corbet@lwn.net, richard@nod.at, linux-ext4@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, linux-fsdevel@vger.kernel.org, green.hu@gmail.com, jaegeuk@kernel.org, tytso@mit.edu, dedekind1@gmail.com, adrian.hunter@intel.com, ralf@linux-mips.org, linux-f2fs-devel@lists.sourceforge.net, paul.burton@mips.com, schwidefsky@de.ibm.com, adilger.kernel@dilger.ca, viro@zeniv.linux.org.uk
 
-On Tuesday, December 11, 2018 11:11:17 PM IST Eric Biggers wrote:
-> On Tue, Dec 11, 2018 at 03:15:53PM +0100, Krzysztof Kozlowski wrote:
+On Wednesday, December 12, 2018 8:18:12 AM IST Eric Biggers wrote:
+> On Tue, Dec 11, 2018 at 05:52:11PM -0800, Guenter Roeck wrote:
 > > Hi,
 > > 
-> > Bisect from today's next pointed me to:
-> > commit 4de97efb578a094e8fbf279522d41eb9ece1e3e0
-> > Author: Chandan Rajendra <chandan@linux.vnet.ibm.com>
-> > Date:   Sat Dec 8 12:21:43 2018 +0530
-> >     fsverity: Move verity status check to fsverity_file_open
+> > On Tue, Dec 04, 2018 at 03:26:46PM +0530, Chandan Rajendra wrote:
+> > > In order to have a common code base for fscrypt "post read" processing
+> > > for all filesystems which support encryption, this commit removes
+> > > filesystem specific build config option (e.g. CONFIG_EXT4_FS_ENCRYPTION)
+> > > and replaces it with a build option (i.e. CONFIG_FS_ENCRYPTION) whose
+> > > value affects all the filesystems making use of fscrypt.
+> > > 
+> > > Signed-off-by: Chandan Rajendra <chandan@linux.vnet.ibm.com>
 > > 
-> > as a reason of "Operation not supported" when reading any file from
-> > mounted ext4fs (from SD card). Rootfs from nfsroot works but reading
-> > from /home with ext4fs fails.
+> > this patch causes a recursive dependency when trying to build ia64 images.
 > > 
-> > Mounts:
-> > 192.168.1.10:/srv/nfs/odroidhc1 on / type nfs4
-> > (rw,relatime,vers=4.0,rsize=131072,wsize=131072,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=192.168.1.12,local_lock=none,addr=192.168.1.10)
-> > /dev/mmcblk0p2 on /home type ext4 (rw,relatime)
+> > make ARCH=ia64 allnoconfig:
 > > 
-> > Configuration:
-> > 1. Arch ARM Linux
-> > 2. exynos_defconfig
-> >   - All my Odroid boards (ARMv7, Exynos)
-> >     Systemd: v239, v238
-> > 3. All boards boot from TFTP with NFS root (NFSv4)
-> > No specific errors in boot log:
-> > https://krzk.eu/#/builders/21/builds/1034/steps/12/logs/serial0
+> > scripts/kconfig/conf  --allnoconfig Kconfig
+> > arch/ia64/Kconfig:126:error: recursive dependency detected!
+> > arch/ia64/Kconfig:126:	choice <choice> contains symbol IA64_HP_SIM
+> > arch/ia64/Kconfig:200:	symbol IA64_HP_SIM is part of choice PM
+> > kernel/power/Kconfig:144:	symbol PM is selected by PM_SLEEP
+> > kernel/power/Kconfig:104:	symbol PM_SLEEP depends on HIBERNATE_CALLBACKS
+> > kernel/power/Kconfig:31:	symbol HIBERNATE_CALLBACKS is selected by HIBERNATION
+> > kernel/power/Kconfig:34:	symbol HIBERNATION depends on SWAP
+> > init/Kconfig:250:	symbol SWAP depends on BLOCK
+> > block/Kconfig:5:	symbol BLOCK is selected by UBIFS_FS
+> > fs/ubifs/Kconfig:1:	symbol UBIFS_FS depends on MISC_FILESYSTEMS
+> > fs/Kconfig:220:	symbol MISC_FILESYSTEMS is selected by ACPI_APEI
+> > drivers/acpi/apei/Kconfig:8:	symbol ACPI_APEI depends on ACPI
+> > drivers/acpi/Kconfig:9:	symbol ACPI depends on ARCH_SUPPORTS_ACPI
+> > drivers/acpi/Kconfig:6:	symbol ARCH_SUPPORTS_ACPI is selected by IA64_HP_SIM
+> > arch/ia64/Kconfig:200:	symbol IA64_HP_SIM is part of choice <choice>
+> > For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> > subsection "Kconfig recursive dependency limitations"
 > > 
-> > Let me know if you need any more data.
+> > scripts/kconfig/Makefile:69: recipe for target 'allnoconfig' failed
 > > 
-> > Best regards,
-> > Krzysztof
+> > Reverting the patch fixes the problem.
+> > 
 > 
-> Thanks Krzysztof.  Ted, this is the same bug I pointed out in my review of this
-> patch yesterday (https://patchwork.kernel.org/patch/10719197/#22371523).  Can
-> you fix or revert the two broken patches?  Thanks,
+> Thanks for the report.  Chandan, it appears the problem is UBIFS_FS selecting
+> BLOCK.  It's actually not necessary because now the parts of fs/crypto/ that
+> depend on BLOCK are separated out into a separate file fs/crypto/bio.c that is
+> only compiled with CONFIG_BLOCK.  So how about just removing the selection of
+> BLOCK from fs/ubifs/Kconfig:
+> 
+> 	select BLOCK if FS_ENCRYPTION
 > 
 
-Hi,
+Yes, I will do that.
 
-I have sent version V4 of the patchset now. My plan was to include the fix for
-"Kconfig recursive dependency" issue reported for IA64 architecture. But I
-would need some more time to understand the problem and provide a correct
-fix. Hence the V4 patchset was sent with a fix to only address the problem
-reported in this mail.
+Also, Apologies for sending V4 of the patchset without checking for newer
+responses from you.
 
 -- 
 chandan
