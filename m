@@ -1,95 +1,40 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: f2fs: prevent mount with "extended node bitmap" on
- older kernels
-Date: Thu, 13 Dec 2018 19:12:20 +0800
-Message-ID: <a1035303-6593-92de-ce3e-7f090fa4890d@huawei.com>
-References: <CAD14+f18VYrabAOvZocx3U3V9j0pKFHBBK+UzvygO=m5Aa_EKQ@mail.gmail.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
+Date: Thu, 13 Dec 2018 12:22:49 -0800
+Message-ID: <20181213202249.GA3797@infradead.org>
+References: <20181101225230.88058-1-ebiggers@kernel.org>
+ <20181101225230.88058-2-ebiggers@kernel.org>
+ <20181212091406.GA31723@infradead.org>
+ <20181212202609.GA193967@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1gXOv7-0006mr-It
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Dec 2018 11:12:45 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gXOuu-00FEKL-5D
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Dec 2018 11:12:45 +0000
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
- by Forcepoint Email with ESMTP id 72686DC7D2CAC
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 13 Dec 2018 19:12:23 +0800 (CST)
-In-Reply-To: <CAD14+f18VYrabAOvZocx3U3V9j0pKFHBBK+UzvygO=m5Aa_EKQ@mail.gmail.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Ju Hyung Park <qkrwngud825@gmail.com>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20181212202609.GA193967@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Victor Hsieh <victorhsieh@google.com>, Chandan Rajendra <chandan@linux.vnet.ibm.com>, Linus Torvalds <torvalds@linux-foundation.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Ju Hyung,
+On Wed, Dec 12, 2018 at 12:26:10PM -0800, Eric Biggers wrote:
+> > As this apparently got merged despite no proper reviews from VFS
+> > level persons:
+> 
+> fs-verity has been out for review since August, and Cc'ed to all relevant
+> mailing lists including linux-fsdevel, linux-ext4, linux-f2fs-devel,
+> linux-fscrypt, linux-integrity, and linux-kernel.  There are tests,
+> documentation (since v2), and a userspace tool.  It's also been presented at
+> multiple conferences, and has been covered by LWN multiple times.  If more
+> people want to review it, then they should do so; there's nothing stopping them.
 
-Sorry for the delay.
+But you did not got a review from someone like Al, Linus, Andrew or me,
+did you?
 
-On 2018/12/9 20:51, Ju Hyung Park wrote:
-> Hi,
-> 
-> I was testing around the "extended node bitmap" feature within f2fs
-> and found an issue with fsck.f2fs resulting in false-positives
-> and causing further corruptions when data is written by older kernels.
-> 
-> I can reliably reproduce this issue with a simple image creation
-> and fsck with Linux 4.15.
-> 
-> # fallocate -l 2G f2fs.img
-> # mkfs.f2fs -i f2fs.img
-> # mount f2fs.img /mnt
-> # rsync -a /var/ /mnt/
-> # umount /mnt
-> # fsck.f2fs -f --dry-run f2fs.img
-> 
-> This results in the following behavior with the latest f2fs-tools
-> v1.12.0 and Linux 4.15:
-> https://pastebin.com/MTKpa2AC
-> (A side note, 2nd run of fsck still shows some errors being fixed.)
-> 
-> I cannot reproduce this issue with Linux 4.19.
-> Is this new feature supposed to be only used with recent kernels?
+> Can you elaborate on the actual problems you think the current solution has, and
+> exactly what solution you'd prefer instead?  Keep in mind that (1) for large
+> files the Merkle tree can be gigabytes long, (2) Linux doesn't have an API for
+> file streams, and (3) when fs-verity is combined with fscrypt, it's important
+> that the hashes be encrypted, so as to not leak information about the plaintext.
 
-That's correct, the feature was enabled in Linux 4.17 kernel, so the image
-should be fit for 4.17+ kernel.
-
-> 
-> If so, mount should be prevented on older kernels, at least writes.
-> (I'm noticing reads are fine with older kernels.)
-
-I guess it will be a little hard for old kernel to be aware of such image
-with new feature, since different kernel support different features, we
-have to:
-- adjust all old kernels to recognize the features they don't support.
-- once new feature is introduced in mkfs, we need to adjust all old kernels..
-
-So the easy way I can imagine is that, during mkfs or in documentation, we
-can remind user the lowest version of kernel for the feature user want to
-use, then user can select kernel with correct version to match the image.
-
-Thanks,
-
-> 
-> Thanks,
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> 
+Given that you alread use an ioctl as the interface what is the problem
+of passing this data through the ioctl?
