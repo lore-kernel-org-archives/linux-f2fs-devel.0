@@ -1,63 +1,55 @@
-From: Eric Biggers <ebiggers@kernel.org>
-Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
-Date: Wed, 12 Dec 2018 12:26:10 -0800
-Message-ID: <20181212202609.GA193967@gmail.com>
-References: <20181101225230.88058-1-ebiggers@kernel.org>
- <20181101225230.88058-2-ebiggers@kernel.org>
- <20181212091406.GA31723@infradead.org>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 201911] High frequency of gc cause application
+ database corrupt
+Date: Thu, 13 Dec 2018 03:42:23 +0000
+Message-ID: <bug-201911-202145-RUWhOo2Qr4@https.bugzilla.kernel.org/>
+References: <bug-201911-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181212091406.GA31723@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Victor Hsieh <victorhsieh@google.com>, Chandan Rajendra <chandan@linux.vnet.ibm.com>, Linus Torvalds <torvalds@linux-foundation.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
+ id 1gXHtO-00086F-29
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Dec 2018 03:42:30 +0000
+Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1gXHtM-00EUU9-E8
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Dec 2018 03:42:30 +0000
+Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id A86372BC13
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 13 Dec 2018 03:42:22 +0000 (UTC)
+In-Reply-To: <bug-201911-202145@https.bugzilla.kernel.org/>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Christoph,
+https://bugzilla.kernel.org/show_bug.cgi?id=201911
 
-On Wed, Dec 12, 2018 at 01:14:06AM -0800, Christoph Hellwig wrote:
-> As this apparently got merged despite no proper reviews from VFS
-> level persons:
+Jaegeuk Kim (jaegeuk@kernel.org) changed:
 
-fs-verity has been out for review since August, and Cc'ed to all relevant
-mailing lists including linux-fsdevel, linux-ext4, linux-f2fs-devel,
-linux-fscrypt, linux-integrity, and linux-kernel.  There are tests,
-documentation (since v2), and a userspace tool.  It's also been presented at
-multiple conferences, and has been covered by LWN multiple times.  If more
-people want to review it, then they should do so; there's nothing stopping them.
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |jaegeuk@kernel.org
 
-> 
-> NAK - the ioctl format that expects the verifycation hash in the file
-> data data with padding after the real data is simply not acceptable,
-> we can't just transform the data in the file itself based on a magic
-> calls like this.
-> 
+--- Comment #3 from Jaegeuk Kim (jaegeuk@kernel.org) ---
+I suspect it's caused by HW encryption.
 
-Can you elaborate on the actual problems you think the current solution has, and
-exactly what solution you'd prefer instead?  Keep in mind that (1) for large
-files the Merkle tree can be gigabytes long, (2) Linux doesn't have an API for
-file streams, and (3) when fs-verity is combined with fscrypt, it's important
-that the hashes be encrypted, so as to not leak information about the plaintext.
+https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-stable.git/commit/?h=linux-4.9.y&id=3d571474ab517bc05cd79e91735861c7e7918681
 
-> Also the core code should not depend on this as a storage format,
-> which is a rather bad idea.  In any modern file system you can
-> store data like this out of line in something like the attr fork
-> in XFS, or the attr items in btrfs.
+https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev&id=9bf1a3f73927492c8be127b642197125e9d52be8
 
-As explained in the documentation, the core code uses the "metadata after EOF"
-format for the API, but not necessarily the on-disk format.  I.e.,
-FS_IOC_ENABLE_VERITY requires it, but during the ioctl the filesystem can choose
-to move the metadata into a different location, such as a file stream.
-
-We'd just need to update fsverity_read_metadata_page() and
-compute_tree_depth_and_offsets() to call out to the filesystem's
-fsverity_operations to read a metadata page and get the offset of the first
-metadata page, respectively.  The rest of fs/verity/ will still work.  I'd be
-glad to add those two fsverity_operations now, though they're not needed for
-ext4 and f2fs, if it would help clarify things further.
-
-Thanks,
-
-- Eric
+-- 
+You are receiving this mail because:
+You are watching the assignee of the bug.
