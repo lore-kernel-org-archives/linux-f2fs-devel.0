@@ -1,278 +1,231 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2] f2fs: fix sbi->extent_list corruption issue
-Date: Fri, 14 Dec 2018 06:25:37 -0800
-Message-ID: <20181214142537.GA75922@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1543207640-31033-1-git-send-email-stummala@codeaurora.org>
- <20181127003050.GG55960@jaegeuk-macbookpro.roam.corp.google.com>
- <fc8c38f6-a039-7b63-d25c-966b0d4396d8@huawei.com>
- <20181129033239.GE9838@codeaurora.org>
- <20181130203339.GB71781@jaegeuk-macbookpro.roam.corp.google.com>
- <49285288-cf99-5f5a-0d1a-c2e0accd8d3d@huawei.com>
- <20181212031749.GF9838@codeaurora.org>
- <0167a499-8479-6be4-946d-4446bd02ff63@huawei.com>
- <20181214075602.GA15236@codeaurora.org>
+Subject: Re: [PATCH v2] f2fs: add bio cache for IPU
+Date: Fri, 14 Dec 2018 06:36:56 -0800
+Message-ID: <20181214143656.GB75922@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20181119032924.12587-1-yuchao0@huawei.com>
+ <ba61f507-a209-76c9-a10e-c847b07caf40@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181214075602.GA15236@codeaurora.org>
+In-Reply-To: <ba61f507-a209-76c9-a10e-c847b07caf40@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sahitya Tummala <stummala@codeaurora.org>
-Cc: Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 12/14, Sahitya Tummala wrote:
-> On Wed, Dec 12, 2018 at 11:36:08AM +0800, Chao Yu wrote:
-> > On 2018/12/12 11:17, Sahitya Tummala wrote:
-> > > On Fri, Dec 07, 2018 at 05:47:31PM +0800, Chao Yu wrote:
-> > >> On 2018/12/1 4:33, Jaegeuk Kim wrote:
-> > >>> On 11/29, Sahitya Tummala wrote:
-> > >>>>
-> > >>>> On Tue, Nov 27, 2018 at 09:42:39AM +0800, Chao Yu wrote:
-> > >>>>> On 2018/11/27 8:30, Jaegeuk Kim wrote:
-> > >>>>>> On 11/26, Sahitya Tummala wrote:
-> > >>>>>>> When there is a failure in f2fs_fill_super() after/during
-> > >>>>>>> the recovery of fsync'd nodes, it frees the current sbi and
-> > >>>>>>> retries again. This time the mount is successful, but the files
-> > >>>>>>> that got recovered before retry, still holds the extent tree,
-> > >>>>>>> whose extent nodes list is corrupted since sbi and sbi->extent_list
-> > >>>>>>> is freed up. The list_del corruption issue is observed when the
-> > >>>>>>> file system is getting unmounted and when those recoverd files extent
-> > >>>>>>> node is being freed up in the below context.
-> > >>>>>>>
-> > >>>>>>> list_del corruption. prev->next should be fffffff1e1ef5480, but was (null)
-> > >>>>>>> <...>
-> > >>>>>>> kernel BUG at kernel/msm-4.14/lib/list_debug.c:53!
-> > >>>>>>> task: fffffff1f46f2280 task.stack: ffffff8008068000
-> > >>>>>>> lr : __list_del_entry_valid+0x94/0xb4
-> > >>>>>>> pc : __list_del_entry_valid+0x94/0xb4
-> > >>>>>>> <...>
-> > >>>>>>> Call trace:
-> > >>>>>>> __list_del_entry_valid+0x94/0xb4
-> > >>>>>>> __release_extent_node+0xb0/0x114
-> > >>>>>>> __free_extent_tree+0x58/0x7c
-> > >>>>>>> f2fs_shrink_extent_tree+0xdc/0x3b0
-> > >>>>>>> f2fs_leave_shrinker+0x28/0x7c
-> > >>>>>>> f2fs_put_super+0xfc/0x1e0
-> > >>>>>>> generic_shutdown_super+0x70/0xf4
-> > >>>>>>> kill_block_super+0x2c/0x5c
-> > >>>>>>> kill_f2fs_super+0x44/0x50
-> > >>>>>>> deactivate_locked_super+0x60/0x8c
-> > >>>>>>> deactivate_super+0x68/0x74
-> > >>>>>>> cleanup_mnt+0x40/0x78
-> > >>>>>>> __cleanup_mnt+0x1c/0x28
-> > >>>>>>> task_work_run+0x48/0xd0
-> > >>>>>>> do_notify_resume+0x678/0xe98
-> > >>>>>>> work_pending+0x8/0x14
-> > >>>>>>>
-> > >>>>>>> Fix this by cleaning up inodes, extent tree and nodes of those
-> > >>>>>>> recovered files before freeing up sbi and before next retry.
-> > >>>>>>>
-> > >>>>>>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> > >>>>>>> ---
-> > >>>>>>> v2:
-> > >>>>>>> -call evict_inodes() and f2fs_shrink_extent_tree() to cleanup inodes
-> > >>>>>>>
-> > >>>>>>>  fs/f2fs/f2fs.h     |  1 +
-> > >>>>>>>  fs/f2fs/shrinker.c |  2 +-
-> > >>>>>>>  fs/f2fs/super.c    | 13 ++++++++++++-
-> > >>>>>>>  3 files changed, 14 insertions(+), 2 deletions(-)
-> > >>>>>>>
-> > >>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > >>>>>>> index 1e03197..aaee63b 100644
-> > >>>>>>> --- a/fs/f2fs/f2fs.h
-> > >>>>>>> +++ b/fs/f2fs/f2fs.h
-> > >>>>>>> @@ -3407,6 +3407,7 @@ struct rb_entry *f2fs_lookup_rb_tree_ret(struct rb_root_cached *root,
-> > >>>>>>>  bool f2fs_check_rb_tree_consistence(struct f2fs_sb_info *sbi,
-> > >>>>>>>  						struct rb_root_cached *root);
-> > >>>>>>>  unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink);
-> > >>>>>>> +unsigned long __count_extent_cache(struct f2fs_sb_info *sbi);
-> > >>>>>>>  bool f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext);
-> > >>>>>>>  void f2fs_drop_extent_tree(struct inode *inode);
-> > >>>>>>>  unsigned int f2fs_destroy_extent_node(struct inode *inode);
-> > >>>>>>> diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
-> > >>>>>>> index 9e13db9..7e3c13b 100644
-> > >>>>>>> --- a/fs/f2fs/shrinker.c
-> > >>>>>>> +++ b/fs/f2fs/shrinker.c
-> > >>>>>>> @@ -30,7 +30,7 @@ static unsigned long __count_free_nids(struct f2fs_sb_info *sbi)
-> > >>>>>>>  	return count > 0 ? count : 0;
-> > >>>>>>>  }
-> > >>>>>>>  
-> > >>>>>>> -static unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
-> > >>>>>>> +unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
-> > >>>>>>>  {
-> > >>>>>>>  	return atomic_read(&sbi->total_zombie_tree) +
-> > >>>>>>>  				atomic_read(&sbi->total_ext_node);
-> > >>>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > >>>>>>> index af58b2c..769e7b1 100644
-> > >>>>>>> --- a/fs/f2fs/super.c
-> > >>>>>>> +++ b/fs/f2fs/super.c
-> > >>>>>>> @@ -3016,6 +3016,16 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
-> > >>>>>>>  	sbi->readdir_ra = 1;
-> > >>>>>>>  }
-> > >>>>>>>  
-> > >>>>>>> +static void f2fs_cleanup_inodes(struct f2fs_sb_info *sbi)
-> > >>>>>>> +{
-> > >>>>>>> +	struct super_block *sb = sbi->sb;
-> > >>>>>>> +
-> > >>>>>>> +	sync_filesystem(sb);
-> > >>>>>>
-> > >>>>>> This writes another checkpoint, which would not be what this retrial intended.
-> > >>>>>
-> > >>>>> Actually, checkpoint will not be triggered due to SBI_POR_DOING flag check
-> > >>>>> as below:
-> > >>>>>
-> > >>>>> int f2fs_sync_fs(struct super_block *sb, int sync)
-> > >>>>> {
-> > >>>>> ...
-> > >>>>> 	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
-> > >>>>> 		return -EAGAIN;
-> > >>>>> ...
-> > >>>>> }
-> > >>>>>
-> > >>>>> And also all dirty data/node won't be persisted due to SBI_POR_DOING flag,
-> > >>>>> IIUC.
-> > >>>>>
-> > >>>>
-> > >>>> Thanks Chao for the clarification.
-> > >>>>
-> > >>>> Hi Jaegeuk,
-> > >>>>
-> > >>>> Do you still have any further concerns or comments on this patch?
-> > >>>
-> > >>> Could you try the below first?
-> > >>>
-> > >>> --  How about adding a condition in f2fs_may_extent_tree() when adding extents?
-> > >>> -- Likewise, if (shrinker is not registered) return false;
-> > >>>
-> > >>> If we can fix what you described directly, I don't want to rely on such the
-> > >>> assumptions saying we won't do checkpoint. This flow literally says syncing
-> > >>> and evicting cached objects, which opposed to what we'd like to drop all caches
-> > >>> and restart fill_super again.
-> > >>>
-> > >>> Let me consider this as a final resolution.
-> > >>
-> > >> Jaegeuk,
-> > >>
-> > >> Still I want to ask, what kind of scenario we have to add retry logic in
-> > >> fill_super for? As in android scenario, it must be extreme rare case that
-> > >> system runs out-of-memory in boot time...at least, I didn't get any kind of
-> > >> report like that.
-> > >>
-> > > Hi Chao,
-> > 
-> > Hi Sahitya,
-> > 
-> > Thanks for letting me know that, I git-blamed the code, and found the
-> > original intention is like what you described:
-> > 
-> > commit ed2e621a95d704e6a4e904cc00524e8cbddda0c2
-> > Author: Jaegeuk Kim <jaegeuk@kernel.org>
-> > Date:   Fri Aug 8 15:37:41 2014 -0700
-> > 
-> >     f2fs: give a chance to mount again when encountering errors
-> > 
-> >     This patch gives another chance to try mount process when we encounter
-> > an error.
-> >     This makes an effect on the roll-forward recovery failures as well.
-> > 
-> > But I doubt that if we failed in recovery, maybe there is corruption in
-> > this image, would it be better to fail the mount, and let user fsck it and
-> > retry the mount? otherwise, the corruption may be expanded...
-
-The problem was there was no way to recover roll-forward area by fsck. IOWs,
-mount was failing all the time. I don't think roll-forward itself can corrupt
-the image more. Please report, if you have any issue on this.
-
-> > 
-> 
+On 12/14, Chao Yu wrote:
 > Hi Jaegeuk,
 > 
-> How do you think about this? If you think it is okay, then I will fix the
-> sbi->extent_list corruption issue, by removing the retry logic. Otherwise,
-> I will fix it in the extent handling as you have suggested earlier.
+> I guess ("f2fs: clear PG_writeback if IPU failed") and v2 patch can fix
+> hang issue caused by v1 one, could you please have a try with v2?
 
-I'd like to keep retry logic, so could you please test what I suggested above?
-
-Thanks,
+Sure.
 
 > 
 > Thanks,
 > 
-> > Thanks,
+> On 2018/11/19 11:29, Chao Yu wrote:
+> > SQLite in Wal mode may trigger sequential IPU write in db-wal file, after
+> > commit d1b3e72d5490 ("f2fs: submit bio of in-place-update pages"), we
+> > lost the chance of merging page in inner managed bio cache, result in
+> > submitting more small-sized IO.
 > > 
-> > > 
-> > > In my case, the first boot up has a failure in recovery as below -
-> > > 
-> > > F2FS-fs (mmcblk0p75): find_fsync_dnodes: detect looped node chain, blkaddr:1979471, next:1979472
-> > > F2FS-fs (mmcblk0p75): Cannot recover all fsync data errno=-22
-> > > 
-> > > But in the second attempt, retry will be set to false and because of that
-> > > recover_fsync_data() is skipped. This helped mount to be successful in
-> > > the second attempt. 
-> > > 
-> > > Thanks,
-> > > 
-> > >> Thanks,
-> > >>
-> > >>>
-> > >>> Thanks,
-> > >>>
-> > >>>>
-> > >>>> Thanks,
-> > >>>> Sahitya.
-> > >>>>
-> > >>>>> Thanks,
-> > >>>>>
-> > >>>>>> How about adding a condition in f2fs_may_extent_tree() when adding extents?
-> > >>>>>> Likewise, if (shrinker is not registered) return false;
-> > >>>>>>
-> > >>>>>>
-> > >>>>>>> +	shrink_dcache_sb(sb);
-> > >>>>>>> +	evict_inodes(sb);
-> > >>>>>>> +	f2fs_shrink_extent_tree(sbi, __count_extent_cache(sbi));
-> > >>>>>>> +}
-> > >>>>>>> +
-> > >>>>>>>  static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
-> > >>>>>>>  {
-> > >>>>>>>  	struct f2fs_sb_info *sbi;
-> > >>>>>>> @@ -3402,6 +3412,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
-> > >>>>>>>  	 * falls into an infinite loop in f2fs_sync_meta_pages().
-> > >>>>>>>  	 */
-> > >>>>>>>  	truncate_inode_pages_final(META_MAPPING(sbi));
-> > >>>>>>> +	/* cleanup recovery and quota inodes */
-> > >>>>>>> +	f2fs_cleanup_inodes(sbi);
-> > >>>>>>>  	f2fs_unregister_sysfs(sbi);
-> > >>>>>>>  free_root_inode:
-> > >>>>>>>  	dput(sb->s_root);
-> > >>>>>>> @@ -3445,7 +3457,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
-> > >>>>>>>  	/* give only one another chance */
-> > >>>>>>>  	if (retry) {
-> > >>>>>>>  		retry = false;
-> > >>>>>>> -		shrink_dcache_sb(sb);
-> > >>>>>>>  		goto try_onemore;
-> > >>>>>>>  	}
-> > >>>>>>>  	return err;
-> > >>>>>>> -- 
-> > >>>>>>> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-> > >>>>>>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
-> > >>>>>>
-> > >>>>>> .
-> > >>>>>>
-> > >>>>>
-> > >>>>
-> > >>>> -- 
-> > >>>> --
-> > >>>> Sent by a consultant of the Qualcomm Innovation Center, Inc.
-> > >>>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
-> > >>>
-> > >>> .
-> > >>>
-> > >>
-> > > 
+> > So let's add temporary bio in writepages() to cache mergeable write IO as
+> > much as possible.
 > > 
-> 
-> -- 
-> --
-> Sent by a consultant of the Qualcomm Innovation Center, Inc.
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+> > Test case:
+> > 1. xfs_io -f /mnt/f2fs/file -c "pwrite 0 65536" -c "fsync"
+> > 2. xfs_io -f /mnt/f2fs/file -c "pwrite 0 65536" -c "fsync"
+> > 
+> > Before:
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65544, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65552, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65560, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65568, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65576, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65584, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65592, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65600, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65608, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65616, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65624, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65632, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65640, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65648, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65656, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65664, size = 4096
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), NODE, sector = 57352, size = 4096
+> > 
+> > After:
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65544, size = 65536
+> > f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), NODE, sector = 57368, size = 4096
+> > 
+> > Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> > ---
+> > v2:
+> > - submit cached bio for cp error case.
+> >  fs/f2fs/data.c    | 61 +++++++++++++++++++++++++++++++++++++++++++++--
+> >  fs/f2fs/f2fs.h    |  3 +++
+> >  fs/f2fs/segment.c |  5 +++-
+> >  3 files changed, 66 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index 8780f3d737c4..7dffafb8b2c5 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -474,6 +474,49 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+> >  	return 0;
+> >  }
+> >  
+> > +int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+> > +{
+> > +	struct bio *bio = *fio->bio;
+> > +	struct page *page = fio->encrypted_page ?
+> > +			fio->encrypted_page : fio->page;
+> > +
+> > +	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
+> > +			__is_meta_io(fio) ? META_GENERIC : DATA_GENERIC))
+> > +		return -EFAULT;
+> > +
+> > +	trace_f2fs_submit_page_bio(page, fio);
+> > +	f2fs_trace_ios(fio, 0);
+> > +
+> > +	if (bio && (*fio->last_block + 1 != fio->new_blkaddr ||
+> > +			!__same_bdev(fio->sbi, fio->new_blkaddr, bio))) {
+> > +		__submit_bio(fio->sbi, bio, fio->type);
+> > +		bio = NULL;
+> > +	}
+> > +alloc_new:
+> > +	if (!bio) {
+> > +		bio = __bio_alloc(fio->sbi, fio->new_blkaddr, fio->io_wbc,
+> > +				BIO_MAX_PAGES, false, fio->type, fio->temp);
+> > +		*fio->last_block = fio->new_blkaddr;
+> > +		bio_set_op_attrs(bio, fio->op, fio->op_flags);
+> > +	}
+> > +
+> > +	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
+> > +		__submit_bio(fio->sbi, bio, fio->type);
+> > +		bio = NULL;
+> > +		goto alloc_new;
+> > +	}
+> > +
+> > +	if (fio->io_wbc)
+> > +		wbc_account_io(fio->io_wbc, page, PAGE_SIZE);
+> > +
+> > +	*fio->last_block = fio->new_blkaddr;
+> > +
+> > +	inc_page_count(fio->sbi, WB_DATA_TYPE(fio->page));
+> > +
+> > +	*fio->bio = bio;
+> > +	return 0;
+> > +}
+> > +
+> >  void f2fs_submit_page_write(struct f2fs_io_info *fio)
+> >  {
+> >  	struct f2fs_sb_info *sbi = fio->sbi;
+> > @@ -1894,6 +1937,8 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+> >  }
+> >  
+> >  static int __write_data_page(struct page *page, bool *submitted,
+> > +				struct bio **bio,
+> > +				sector_t *last_block,
+> >  				struct writeback_control *wbc,
+> >  				enum iostat_type io_type)
+> >  {
+> > @@ -1919,6 +1964,8 @@ static int __write_data_page(struct page *page, bool *submitted,
+> >  		.need_lock = LOCK_RETRY,
+> >  		.io_type = io_type,
+> >  		.io_wbc = wbc,
+> > +		.bio = bio,
+> > +		.last_block = last_block,
+> >  	};
+> >  
+> >  	trace_f2fs_writepage(page, DATA);
+> > @@ -2020,6 +2067,10 @@ static int __write_data_page(struct page *page, bool *submitted,
+> >  		f2fs_balance_fs(sbi, need_balance_fs);
+> >  
+> >  	if (unlikely(f2fs_cp_error(sbi))) {
+> > +		if (bio && *bio) {
+> > +			__submit_bio(sbi, *bio, DATA);
+> > +			*bio = NULL;
+> > +		}
+> >  		f2fs_submit_merged_write(sbi, DATA);
+> >  		submitted = NULL;
+> >  	}
+> > @@ -2046,7 +2097,7 @@ static int __write_data_page(struct page *page, bool *submitted,
+> >  static int f2fs_write_data_page(struct page *page,
+> >  					struct writeback_control *wbc)
+> >  {
+> > -	return __write_data_page(page, NULL, wbc, FS_DATA_IO);
+> > +	return __write_data_page(page, NULL, NULL, NULL, wbc, FS_DATA_IO);
+> >  }
+> >  
+> >  /*
+> > @@ -2062,6 +2113,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+> >  	int done = 0;
+> >  	struct pagevec pvec;
+> >  	struct f2fs_sb_info *sbi = F2FS_M_SB(mapping);
+> > +	struct bio *bio = NULL;
+> > +	sector_t last_block;
+> >  	int nr_pages;
+> >  	pgoff_t uninitialized_var(writeback_index);
+> >  	pgoff_t index;
+> > @@ -2149,7 +2202,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+> >  			if (!clear_page_dirty_for_io(page))
+> >  				goto continue_unlock;
+> >  
+> > -			ret = __write_data_page(page, &submitted, wbc, io_type);
+> > +			ret = __write_data_page(page, &submitted, &bio,
+> > +						&last_block, wbc, io_type);
+> >  			if (unlikely(ret)) {
+> >  				/*
+> >  				 * keep nr_to_write, since vfs uses this to
+> > @@ -2198,6 +2252,9 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+> >  	if (nwritten)
+> >  		f2fs_submit_merged_write_cond(F2FS_M_SB(mapping), mapping->host,
+> >  								NULL, 0, DATA);
+> > +	/* submit cached bio of IPU write */
+> > +	if (bio)
+> > +		__submit_bio(sbi, bio, DATA);
+> >  
+> >  	return ret;
+> >  }
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 26ad1de8641c..d0bb679fd668 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -1051,6 +1051,8 @@ struct f2fs_io_info {
+> >  	bool retry;		/* need to reallocate block address */
+> >  	enum iostat_type io_type;	/* io type */
+> >  	struct writeback_control *io_wbc; /* writeback control */
+> > +	struct bio **bio;		/* bio for ipu */
+> > +	sector_t *last_block;		/* last block number in bio */
+> >  	unsigned char version;		/* version of the node */
+> >  };
+> >  
+> > @@ -3093,6 +3095,7 @@ void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
+> >  				nid_t ino, enum page_type type);
+> >  void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi);
+> >  int f2fs_submit_page_bio(struct f2fs_io_info *fio);
+> > +int f2fs_merge_page_bio(struct f2fs_io_info *fio);
+> >  void f2fs_submit_page_write(struct f2fs_io_info *fio);
+> >  struct block_device *f2fs_target_device(struct f2fs_sb_info *sbi,
+> >  			block_t blk_addr, struct bio *bio);
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 204d31e58967..b0e6331a5d95 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -3158,7 +3158,10 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
+> >  
+> >  	stat_inc_inplace_blocks(fio->sbi);
+> >  
+> > -	err = f2fs_submit_page_bio(fio);
+> > +	if (fio->bio)
+> > +		err = f2fs_merge_page_bio(fio);
+> > +	else
+> > +		err = f2fs_submit_page_bio(fio);
+> >  	if (!err)
+> >  		update_device_state(fio);
+> >  
+> > 
