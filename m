@@ -1,53 +1,30 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix missing unlock(sbi->gc_mutex)
-Date: Tue, 18 Dec 2018 18:33:36 +0800
-Message-ID: <8a552929-17cc-eb0b-f4e6-5a94a1735d83@huawei.com>
-References: <20181218021530.78323-1-jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: fix block address for __check_sit_bitmap
+Date: Tue, 18 Dec 2018 18:36:15 +0800
+Message-ID: <cbfb1b04-34bd-951b-089d-1561e3746d46@huawei.com>
+References: <20181218093223.25242-1-sunqiuyang@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20181218021530.78323-1-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181218093223.25242-1-sunqiuyang@huawei.com>
 Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: stable@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: sunqiuyang <sunqiuyang@huawei.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: fangwei1@huawei.com, yuchangchun1@huawei.com
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/12/18 10:15, Jaegeuk Kim wrote:
-> This fixes missing unlock call.
+On 2018/12/18 17:32, sunqiuyang wrote:
+> From: Qiuyang Sun <sunqiuyang@huawei.com>
 > 
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/super.c | 3 +++
->  1 file changed, 3 insertions(+)
+> Should use lstart (logical start address) instead of start (in dev) here.
+> This fixes a bug in multi-device scenarios.
+
+Good catch!
+
 > 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index b79677639108..2689a2cb56cc 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1462,6 +1462,9 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
->  
->  	while (!f2fs_time_over(sbi, DISABLE_TIME)) {
->  		err = f2fs_gc(sbi, true, false, NULL_SEGNO);
-> +
-> +		/* f2fs_gc guarantees unlock gc_mutex */
+> Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
 
-How about:
-
-	while () {
-		mutex_lock(&sbi->gc_mutex);
-		err = f2fs_gc();
-		if (err) {
-			handle error cases..
-		}
-	}
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
-
-> +		mutex_lock(&sbi->gc_mutex);
->  		if (err == -ENODATA)
->  			break;
->  		if (err && err != -EAGAIN) {
-> 
