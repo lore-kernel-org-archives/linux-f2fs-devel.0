@@ -1,31 +1,68 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: dm: give req_size precisely given by user
-Date: Tue, 18 Dec 2018 13:40:18 -0800
-Message-ID: <20181218214018.GA31062@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20181218172537.12300-1-jaegeuk@kernel.org>
- <01a60138-63ab-6a9d-c0ba-b8fea551b14e@kernel.dk>
- <20181218194708.GA24676@redhat.com>
+Subject: Re: [f2fs-dev] [PATCH 3/3] f2fs: flush stale issued discard
+ candidates
+Date: Tue, 18 Dec 2018 14:43:51 -0800
+Message-ID: <20181218224351.GC31062@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20181214050127.45025-1-jaegeuk@kernel.org>
+ <20181214050127.45025-3-jaegeuk@kernel.org>
+ <639940cc-f7a8-e679-3b28-3b3b2485652b@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181218194708.GA24676@redhat.com>
-Sender: stable-owner@vger.kernel.org
-To: Mike Snitzer <snitzer@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, dm-devel@redhat.com, Alasdair Kergon <agk@redhat.com>, stable@vger.kernel.org
+In-Reply-To: <639940cc-f7a8-e679-3b28-3b3b2485652b@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 12/18, Mike Snitzer wrote:
-> On Tue, Dec 18 2018 at 12:45pm -0500,
-> Jens Axboe <axboe@kernel.dk> wrote:
+On 12/18, Chao Yu wrote:
+> On 2018/12/14 13:01, Jaegeuk Kim wrote:
+> > Sometimes, I could observe # of issuing_discard to be 1 which blocks background
+> > jobs due to is_idle()=false.
+> > The only way to get out of it was to trigger gc_urgent. This patch avoids that
+> > by checking any candidates as done in the list.
 > 
-> > On 12/18/18 10:25 AM, Jaegeuk Kim wrote:
-> > > This patch makes dm be aware of io_pages to assign sane req_size for reads.
-> > 
-> > Reviewed-by: Jens Axboe <axboe@kernel.dk>
-> > 
-> 
-> I've applied this, see:
-> https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/commit/?h=dm-4.21&id=c6d6e9b0f6b4201c77f2cea3964dd122697e3543
+> Well, as below code, once we issued discard commands, we will wait all
+> queued discard end their IO, so do you know what flow can cause such
+> condition...?
 
-Got it. Thank you so much.
+It's very subtle, and I suspect somehow race condition not from here.
+
+> 
+> 		issued = __issue_discard_cmd(sbi, &dpolicy);
+> 		if (issued > 0) {
+> 			__wait_all_discard_cmd(sbi, &dpolicy);
+> 
+> Or, I doubt that 'issued' statistical info could be wrong.
+
+No, it simply came back to 0 with this patch. So, something is pending
+in the queue even if it is done.
+
+Thanks,
+
+> 
+> Thanks,
+> 
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/segment.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 49ea9009ab5a..acbbc924e518 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -1651,6 +1651,10 @@ static int issue_discard_thread(void *data)
+> >  		if (dcc->discard_wake)
+> >  			dcc->discard_wake = 0;
+> >  
+> > +		/* clean up pending candidates before going to sleep */
+> > +		if (atomic_read(&dcc->queued_discard))
+> > +			__wait_all_discard_cmd(sbi, NULL);
+> > +
+> >  		if (try_to_freeze())
+> >  			continue;
+> >  		if (f2fs_readonly(sbi->sb))
+> > 
