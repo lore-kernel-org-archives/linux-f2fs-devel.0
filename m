@@ -1,36 +1,38 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: fix missing unlock(sbi->gc_mutex)
-Date: Mon, 17 Dec 2018 18:15:30 -0800
-Message-ID: <20181218021530.78323-1-jaegeuk@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: use kvmalloc, if kmalloc is failed
+Date: Tue, 18 Dec 2018 16:37:58 +0800
+Message-ID: <a56ea91f-892d-a663-d4f2-6da8b851ec22@huawei.com>
+References: <20181214050127.45025-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181214050127.45025-1-jaegeuk@kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This fixes missing unlock call.
+On 2018/12/14 13:01, Jaegeuk Kim wrote:
+> One report says memalloc failure during mount.
+> 
+>  (unwind_backtrace) from [<c010cd4c>] (show_stack+0x10/0x14)
+>  (show_stack) from [<c049c6b8>] (dump_stack+0x8c/0xa0)
+>  (dump_stack) from [<c024fcf0>] (warn_alloc+0xc4/0x160)
+>  (warn_alloc) from [<c0250218>] (__alloc_pages_nodemask+0x3f4/0x10d0)
+>  (__alloc_pages_nodemask) from [<c0270450>] (kmalloc_order_trace+0x2c/0x120)
+>  (kmalloc_order_trace) from [<c03fa748>] (build_node_manager+0x35c/0x688)
+>  (build_node_manager) from [<c03de494>] (f2fs_fill_super+0xf0c/0x16cc)
+>  (f2fs_fill_super) from [<c02a5864>] (mount_bdev+0x15c/0x188)
+>  (mount_bdev) from [<c03da624>] (f2fs_mount+0x18/0x20)
+>  (f2fs_mount) from [<c02a68b8>] (mount_fs+0x158/0x19c)
+>  (mount_fs) from [<c02c3c9c>] (vfs_kern_mount+0x78/0x134)
+>  (vfs_kern_mount) from [<c02c76ac>] (do_mount+0x474/0xca4)
+>  (do_mount) from [<c02c8264>] (SyS_mount+0x94/0xbc)
+>  (SyS_mount) from [<c0108180>] (ret_fast_syscall+0x0/0x48)
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/super.c | 3 +++
- 1 file changed, 3 insertions(+)
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index b79677639108..2689a2cb56cc 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1462,6 +1462,9 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
- 
- 	while (!f2fs_time_over(sbi, DISABLE_TIME)) {
- 		err = f2fs_gc(sbi, true, false, NULL_SEGNO);
-+
-+		/* f2fs_gc guarantees unlock gc_mutex */
-+		mutex_lock(&sbi->gc_mutex);
- 		if (err == -ENODATA)
- 			break;
- 		if (err && err != -EAGAIN) {
--- 
-2.19.0.605.g01d371f741-goog
+Thanks,
