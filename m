@@ -1,28 +1,33 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix missing unlock(sbi->gc_mutex)
-Date: Wed, 19 Dec 2018 11:44:18 +0800
-Message-ID: <eea9cea9-1df9-3768-15f0-48f7332212e6@huawei.com>
-References: <20181218021530.78323-1-jaegeuk@kernel.org>
- <20181218232228.GE31062@jaegeuk-macbookpro.roam.corp.google.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
+Date: Tue, 18 Dec 2018 23:09:15 -0800
+Message-ID: <20181219070915.GA2628@infradead.org>
+References: <20181101225230.88058-1-ebiggers@kernel.org>
+ <20181101225230.88058-2-ebiggers@kernel.org>
+ <20181212091406.GA31723@infradead.org>
+ <20181212202609.GA193967@gmail.com>
+ <20181213202249.GA3797@infradead.org>
+ <20181214044802.GA681@sol.localdomain>
+ <20181217164949.GA18626@infradead.org>
+ <20181217183205.GA141684@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181218232228.GE31062@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20181217183205.GA141684@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: stable@vger.kernel.org
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Victor Hsieh <victorhsieh@google.com>, Chandan Rajendra <chandan@linux.vnet.ibm.com>, Linus Torvalds <torvalds@linux-foundation.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2018/12/19 7:22, Jaegeuk Kim wrote:
-> This fixes missing unlock call.
-> 
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+On Mon, Dec 17, 2018 at 10:32:06AM -0800, Eric Biggers wrote:
+> I don't see how that helps.  The Merkle tree can still be too large to fit in
+> memory.  In the worst case, it might not even fit in the address space.  And I
+> don't see how get_user_pages() helps either over just copy_from_user(); what are
+> you proposing to do with the pages after getting them, exactly?
 
-Looks good to me now. :)
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
+Write them out to a file system specific area on the media.  Note
+that get_user_pages is indeed not going to work if you run out of
+address space, but that seems like an odd use case.  Out of of memory
+is not an issue as we generally iterate over a small number of pages
+for each individual get_user_pages call.
