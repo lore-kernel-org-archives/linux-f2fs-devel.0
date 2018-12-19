@@ -1,67 +1,116 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
-Date: Wed, 19 Dec 2018 13:19:53 +1100
-Message-ID: <20181219021953.GD31274@dastard>
-References: <20181101225230.88058-1-ebiggers@kernel.org>
- <20181101225230.88058-2-ebiggers@kernel.org>
- <20181212091406.GA31723@infradead.org>
- <20181212202609.GA193967@gmail.com>
- <20181213202249.GA3797@infradead.org>
- <20181214044802.GA681@sol.localdomain>
- <20181217200039.GD8111@magnolia>
- <20181219001603.GD25775@mit.edu>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH 3/3] f2fs: flush stale issued discard
+ candidates
+Date: Wed, 19 Dec 2018 11:21:53 +0800
+Message-ID: <b878570b-1e71-ab32-20a6-dd262f21348a@huawei.com>
+References: <20181214050127.45025-1-jaegeuk@kernel.org>
+ <20181214050127.45025-3-jaegeuk@kernel.org>
+ <639940cc-f7a8-e679-3b28-3b3b2485652b@huawei.com>
+ <20181218224351.GC31062@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181219001603.GD25775@mit.edu>
+In-Reply-To: <20181218224351.GC31062@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Theodore Y. Ts'o" <tytso@mit.edu>, "Darrick J. Wong" <darrick.wong@oracle.com>, Eric Biggers <ebiggers@kernel.org>, Christoph Hellwig <hch@infradead.org>, linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Victor Hsieh <victorhsieh@google.com>, Chandan Rajendra <chandan@linux.vnet.ibm.com>, Linus Torvalds <torvalds@linux-foundation.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Tue, Dec 18, 2018 at 07:16:03PM -0500, Theodore Y. Ts'o wrote:
-> On Mon, Dec 17, 2018 at 12:00:39PM -0800, Darrick J. Wong wrote:
-> > FWIW, if I were (hypothetically) working on an xfs implementation, I
-> > likely would have settled on passing a reference to a merkle tree
-> > through a (fd, length) pair, because that allows us plenty of options
-> > on the back end:
-> > 
-> > b) we could remap the tree into a new inode fork for merkle trees, or
-> > a) remap it as posteof blocks like ext4/f2fs does, or
-> > c) remap the blocks into the attribute fork as an (unusually large)
-> > extended attribute value.
+On 2018/12/19 6:43, Jaegeuk Kim wrote:
+> On 12/18, Chao Yu wrote:
+>> On 2018/12/14 13:01, Jaegeuk Kim wrote:
+>>> Sometimes, I could observe # of issuing_discard to be 1 which blocks background
+>>> jobs due to is_idle()=false.
+>>> The only way to get out of it was to trigger gc_urgent. This patch avoids that
+>>> by checking any candidates as done in the list.
+>>
+>> Well, as below code, once we issued discard commands, we will wait all
+>> queued discard end their IO, so do you know what flow can cause such
+>> condition...?
 > 
-> Sure, but what would be the benefit of doing different things on the
-> back end?  I think this is a really more of a philophical objection
-> than anything else.
+> It's very subtle, and I suspect somehow race condition not from here.
+> 
+>>
+>> 		issued = __issue_discard_cmd(sbi, &dpolicy);
+>> 		if (issued > 0) {
+>> 			__wait_all_discard_cmd(sbi, &dpolicy);
+>>
+>> Or, I doubt that 'issued' statistical info could be wrong.
+> 
+> No, it simply came back to 0 with this patch. So, something is pending
+> in the queue even if it is done.
 
-Putting metadata in user files beyond EOF doesn't work with XFS's
-post-EOF speculative allocation algorithms.
+__submit_discard_cmd()
+{
+....
+	dc->len = 0;   <---- reset discard length here
 
-i.e. Filesystem design/algorithms often assume that the region
-beyond EOF in user files is a write-only region.  e.g. We can allow
-extents beyond EOF to be uninitialised because they are in a write
-only region of the file and so there's no possibility of stale data
-exposure. Unfortunately, putting filesystem/security metadata beyond
-EOF breaks these assumptions - it's no longer a write-only region.
+	while (total_len && *issued < dpolicy->max_requests && !err) {
+		struct bio *bio = NULL;
+		unsigned long flags;
+		bool last = true;
 
-IOWs, all these existing assumptions and implementation details are
-exposed to a new attack surface involving tricking the filesystem
-into thinking it has readable data beyond EOF. And because it can
-now read from the "write only" region beyond EOF (because that's the
-mechanism by which fsverity does it's verification) we no longer
-have a clear line of protection against exposing such data to
-userspace.
+		if (len > max_discard_blocks) {
+			len = max_discard_blocks;  <---- will truncate len to max_discard_blocks
+			last = false;
+		}
 
-Putting the merkel tree somewhere else in the filesystem metadata
-and providing a separate API to manipulate it avoids this problem.
-It allows filesystems to keep their internal metadata and
-security-related verification information in a separate channel (and
-trust path) that is completely out of user data/access scope.
+		(*issued)++;
+		if (*issued == dpolicy->max_requests)
+			last = true;
 
-Cheers,
+		dc->len += len;      <----- will update len into dc->len
+...
+}
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+__wait_discard_cmd_range()
+{
+...
+		if (dc->len < dpolicy->granularity)
+			continue;
+So we can only remove discard entry which size is not smaller than
+dpolicy->granularity, if max_discard_blocks is smaller than granularity,
+after splitting discard in __submit_discard_cmd(), we may left small-sized
+entry there.
+
+...
+}
+
+Could you check that whether the left discard was skipped being removed due
+to above reason?
+
+Thanks
+
+> 
+> Thanks,
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fs/f2fs/segment.c | 4 ++++
+>>>  1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>> index 49ea9009ab5a..acbbc924e518 100644
+>>> --- a/fs/f2fs/segment.c
+>>> +++ b/fs/f2fs/segment.c
+>>> @@ -1651,6 +1651,10 @@ static int issue_discard_thread(void *data)
+>>>  		if (dcc->discard_wake)
+>>>  			dcc->discard_wake = 0;
+>>>  
+>>> +		/* clean up pending candidates before going to sleep */
+>>> +		if (atomic_read(&dcc->queued_discard))
+>>> +			__wait_all_discard_cmd(sbi, NULL);
+>>> +
+>>>  		if (try_to_freeze())
+>>>  			continue;
+>>>  		if (f2fs_readonly(sbi->sb))
+>>>
+> 
+> .
+> 
