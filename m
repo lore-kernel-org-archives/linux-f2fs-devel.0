@@ -1,325 +1,54 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2] f2fs: fix sbi->extent_list corruption issue
-Date: Wed, 19 Dec 2018 15:42:40 -0800
-Message-ID: <20181219234240.GA2179@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20181129033239.GE9838@codeaurora.org>
- <20181130203339.GB71781@jaegeuk-macbookpro.roam.corp.google.com>
- <49285288-cf99-5f5a-0d1a-c2e0accd8d3d@huawei.com>
- <20181212031749.GF9838@codeaurora.org>
- <0167a499-8479-6be4-946d-4446bd02ff63@huawei.com>
- <20181214075602.GA15236@codeaurora.org>
- <20181214142537.GA75922@jaegeuk-macbookpro.roam.corp.google.com>
- <ad28be8b-361e-550f-50c4-1744e60ff9c5@huawei.com>
- <20181218224700.GD31062@jaegeuk-macbookpro.roam.corp.google.com>
- <31efa8cf-95e3-22a2-0c23-9fab9189767f@huawei.com>
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
+Date: Thu, 20 Dec 2018 17:01:58 -0500
+Message-ID: <20181220220158.GC2360@mit.edu>
+References: <20181219071420.GC2628@infradead.org>
+ <20181219021953.GD31274@dastard>
+ <20181219193005.GB6889@mit.edu>
+ <20181219213552.GO6311@dastard>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <31efa8cf-95e3-22a2-0c23-9fab9189767f@huawei.com>
+In-Reply-To: <20181219213552.GO6311@dastard>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: Sahitya Tummala <stummala@codeaurora.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@infradead.org>, "Darrick J. Wong" <darrick.wong@oracle.com>, Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Victor Hsieh <victorhsieh@google.com>, Chandan Rajendra <chandan@linux.vnet.ibm.com>, Linus Torvalds <torvalds@linux-foundation.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 12/19, Chao Yu wrote:
-> On 2018/12/19 6:47, Jaegeuk Kim wrote:
-> > On 12/18, Chao Yu wrote:
-> >> On 2018/12/14 22:25, Jaegeuk Kim wrote:
-> >>> On 12/14, Sahitya Tummala wrote:
-> >>>> On Wed, Dec 12, 2018 at 11:36:08AM +0800, Chao Yu wrote:
-> >>>>> On 2018/12/12 11:17, Sahitya Tummala wrote:
-> >>>>>> On Fri, Dec 07, 2018 at 05:47:31PM +0800, Chao Yu wrote:
-> >>>>>>> On 2018/12/1 4:33, Jaegeuk Kim wrote:
-> >>>>>>>> On 11/29, Sahitya Tummala wrote:
-> >>>>>>>>>
-> >>>>>>>>> On Tue, Nov 27, 2018 at 09:42:39AM +0800, Chao Yu wrote:
-> >>>>>>>>>> On 2018/11/27 8:30, Jaegeuk Kim wrote:
-> >>>>>>>>>>> On 11/26, Sahitya Tummala wrote:
-> >>>>>>>>>>>> When there is a failure in f2fs_fill_super() after/during
-> >>>>>>>>>>>> the recovery of fsync'd nodes, it frees the current sbi and
-> >>>>>>>>>>>> retries again. This time the mount is successful, but the files
-> >>>>>>>>>>>> that got recovered before retry, still holds the extent tree,
-> >>>>>>>>>>>> whose extent nodes list is corrupted since sbi and sbi->extent_list
-> >>>>>>>>>>>> is freed up. The list_del corruption issue is observed when the
-> >>>>>>>>>>>> file system is getting unmounted and when those recoverd files extent
-> >>>>>>>>>>>> node is being freed up in the below context.
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> list_del corruption. prev->next should be fffffff1e1ef5480, but was (null)
-> >>>>>>>>>>>> <...>
-> >>>>>>>>>>>> kernel BUG at kernel/msm-4.14/lib/list_debug.c:53!
-> >>>>>>>>>>>> task: fffffff1f46f2280 task.stack: ffffff8008068000
-> >>>>>>>>>>>> lr : __list_del_entry_valid+0x94/0xb4
-> >>>>>>>>>>>> pc : __list_del_entry_valid+0x94/0xb4
-> >>>>>>>>>>>> <...>
-> >>>>>>>>>>>> Call trace:
-> >>>>>>>>>>>> __list_del_entry_valid+0x94/0xb4
-> >>>>>>>>>>>> __release_extent_node+0xb0/0x114
-> >>>>>>>>>>>> __free_extent_tree+0x58/0x7c
-> >>>>>>>>>>>> f2fs_shrink_extent_tree+0xdc/0x3b0
-> >>>>>>>>>>>> f2fs_leave_shrinker+0x28/0x7c
-> >>>>>>>>>>>> f2fs_put_super+0xfc/0x1e0
-> >>>>>>>>>>>> generic_shutdown_super+0x70/0xf4
-> >>>>>>>>>>>> kill_block_super+0x2c/0x5c
-> >>>>>>>>>>>> kill_f2fs_super+0x44/0x50
-> >>>>>>>>>>>> deactivate_locked_super+0x60/0x8c
-> >>>>>>>>>>>> deactivate_super+0x68/0x74
-> >>>>>>>>>>>> cleanup_mnt+0x40/0x78
-> >>>>>>>>>>>> __cleanup_mnt+0x1c/0x28
-> >>>>>>>>>>>> task_work_run+0x48/0xd0
-> >>>>>>>>>>>> do_notify_resume+0x678/0xe98
-> >>>>>>>>>>>> work_pending+0x8/0x14
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> Fix this by cleaning up inodes, extent tree and nodes of those
-> >>>>>>>>>>>> recovered files before freeing up sbi and before next retry.
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> >>>>>>>>>>>> ---
-> >>>>>>>>>>>> v2:
-> >>>>>>>>>>>> -call evict_inodes() and f2fs_shrink_extent_tree() to cleanup inodes
-> >>>>>>>>>>>>
-> >>>>>>>>>>>>  fs/f2fs/f2fs.h     |  1 +
-> >>>>>>>>>>>>  fs/f2fs/shrinker.c |  2 +-
-> >>>>>>>>>>>>  fs/f2fs/super.c    | 13 ++++++++++++-
-> >>>>>>>>>>>>  3 files changed, 14 insertions(+), 2 deletions(-)
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >>>>>>>>>>>> index 1e03197..aaee63b 100644
-> >>>>>>>>>>>> --- a/fs/f2fs/f2fs.h
-> >>>>>>>>>>>> +++ b/fs/f2fs/f2fs.h
-> >>>>>>>>>>>> @@ -3407,6 +3407,7 @@ struct rb_entry *f2fs_lookup_rb_tree_ret(struct rb_root_cached *root,
-> >>>>>>>>>>>>  bool f2fs_check_rb_tree_consistence(struct f2fs_sb_info *sbi,
-> >>>>>>>>>>>>  						struct rb_root_cached *root);
-> >>>>>>>>>>>>  unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink);
-> >>>>>>>>>>>> +unsigned long __count_extent_cache(struct f2fs_sb_info *sbi);
-> >>>>>>>>>>>>  bool f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext);
-> >>>>>>>>>>>>  void f2fs_drop_extent_tree(struct inode *inode);
-> >>>>>>>>>>>>  unsigned int f2fs_destroy_extent_node(struct inode *inode);
-> >>>>>>>>>>>> diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
-> >>>>>>>>>>>> index 9e13db9..7e3c13b 100644
-> >>>>>>>>>>>> --- a/fs/f2fs/shrinker.c
-> >>>>>>>>>>>> +++ b/fs/f2fs/shrinker.c
-> >>>>>>>>>>>> @@ -30,7 +30,7 @@ static unsigned long __count_free_nids(struct f2fs_sb_info *sbi)
-> >>>>>>>>>>>>  	return count > 0 ? count : 0;
-> >>>>>>>>>>>>  }
-> >>>>>>>>>>>>  
-> >>>>>>>>>>>> -static unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
-> >>>>>>>>>>>> +unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
-> >>>>>>>>>>>>  {
-> >>>>>>>>>>>>  	return atomic_read(&sbi->total_zombie_tree) +
-> >>>>>>>>>>>>  				atomic_read(&sbi->total_ext_node);
-> >>>>>>>>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> >>>>>>>>>>>> index af58b2c..769e7b1 100644
-> >>>>>>>>>>>> --- a/fs/f2fs/super.c
-> >>>>>>>>>>>> +++ b/fs/f2fs/super.c
-> >>>>>>>>>>>> @@ -3016,6 +3016,16 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
-> >>>>>>>>>>>>  	sbi->readdir_ra = 1;
-> >>>>>>>>>>>>  }
-> >>>>>>>>>>>>  
-> >>>>>>>>>>>> +static void f2fs_cleanup_inodes(struct f2fs_sb_info *sbi)
-> >>>>>>>>>>>> +{
-> >>>>>>>>>>>> +	struct super_block *sb = sbi->sb;
-> >>>>>>>>>>>> +
-> >>>>>>>>>>>> +	sync_filesystem(sb);
-> >>>>>>>>>>>
-> >>>>>>>>>>> This writes another checkpoint, which would not be what this retrial intended.
-> >>>>>>>>>>
-> >>>>>>>>>> Actually, checkpoint will not be triggered due to SBI_POR_DOING flag check
-> >>>>>>>>>> as below:
-> >>>>>>>>>>
-> >>>>>>>>>> int f2fs_sync_fs(struct super_block *sb, int sync)
-> >>>>>>>>>> {
-> >>>>>>>>>> ...
-> >>>>>>>>>> 	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
-> >>>>>>>>>> 		return -EAGAIN;
-> >>>>>>>>>> ...
-> >>>>>>>>>> }
-> >>>>>>>>>>
-> >>>>>>>>>> And also all dirty data/node won't be persisted due to SBI_POR_DOING flag,
-> >>>>>>>>>> IIUC.
-> >>>>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>> Thanks Chao for the clarification.
-> >>>>>>>>>
-> >>>>>>>>> Hi Jaegeuk,
-> >>>>>>>>>
-> >>>>>>>>> Do you still have any further concerns or comments on this patch?
-> >>>>>>>>
-> >>>>>>>> Could you try the below first?
-> >>>>>>>>
-> >>>>>>>> --  How about adding a condition in f2fs_may_extent_tree() when adding extents?
-> >>>>>>>> -- Likewise, if (shrinker is not registered) return false;
-> >>>>>>>>
-> >>>>>>>> If we can fix what you described directly, I don't want to rely on such the
-> >>>>>>>> assumptions saying we won't do checkpoint. This flow literally says syncing
-> >>>>>>>> and evicting cached objects, which opposed to what we'd like to drop all caches
-> >>>>>>>> and restart fill_super again.
-> >>>>>>>>
-> >>>>>>>> Let me consider this as a final resolution.
-> >>>>>>>
-> >>>>>>> Jaegeuk,
-> >>>>>>>
-> >>>>>>> Still I want to ask, what kind of scenario we have to add retry logic in
-> >>>>>>> fill_super for? As in android scenario, it must be extreme rare case that
-> >>>>>>> system runs out-of-memory in boot time...at least, I didn't get any kind of
-> >>>>>>> report like that.
-> >>>>>>>
-> >>>>>> Hi Chao,
-> >>>>>
-> >>>>> Hi Sahitya,
-> >>>>>
-> >>>>> Thanks for letting me know that, I git-blamed the code, and found the
-> >>>>> original intention is like what you described:
-> >>>>>
-> >>>>> commit ed2e621a95d704e6a4e904cc00524e8cbddda0c2
-> >>>>> Author: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>>>> Date:   Fri Aug 8 15:37:41 2014 -0700
-> >>>>>
-> >>>>>     f2fs: give a chance to mount again when encountering errors
-> >>>>>
-> >>>>>     This patch gives another chance to try mount process when we encounter
-> >>>>> an error.
-> >>>>>     This makes an effect on the roll-forward recovery failures as well.
-> >>>>>
-> >>>>> But I doubt that if we failed in recovery, maybe there is corruption in
-> >>>>> this image, would it be better to fail the mount, and let user fsck it and
-> >>>>> retry the mount? otherwise, the corruption may be expanded...
-> >>>
-> >>> The problem was there was no way to recover roll-forward area by fsck. IOWs,
-> >>> mount was failing all the time. I don't think roll-forward itself can corrupt
-> >>
-> >> I got your concern, IMO, if mount fails, it will be better to let user
-> >> decide how to handle it.
-> > 
-> > Roll-forward is not based on user decision, but f2fs does internally. So, I'm
+On Thu, Dec 20, 2018 at 08:35:52AM +1100, Dave Chinner wrote:
 > 
-> Yup, IMO without roll-forward, data may lose, and posix compliance can be
-> corrupted, f2fs should do roll-forward internally as possible as it can.
-> 
-> > in doubt we have to ask users on any failed case here.
-> > I don't catch why we need to revert this which has been landed for a long time.
-> 
-> Actually, what I mean is mount can fail due to different reason, but we
-> handle it with fixed retry method by dropping recovery, it may be not flexible.
-> 
-> For example, first fill_super fails due to no memory, then second
-> fill_super runs w/o recovery, if we succeed, we may lose fsynced data. I
-> don't think it make sense.
+> The file has to be written before it has been protected, which means
+> it may very well have user space allocated beyond EOF before the
+> merkle tree needs to be written.
 
-Then, that's another issue, and yeah, we can prepare a patch for that.
+Sure, and every file system knows how to truncate a file.  This isn't
+hard.
 
-> 
-> Thanks,
-> 
-> > 
-> >>
-> >> If mount fails due to:
-> >>
-> >> 1) recovery, user can run fsck and/or try disable_roll_forward or
-> >> norecovery option in another mount;
-> >> 2) -EINVAL caused by sanity, user can run fsck and retry mount.
-> >> 3) -ENOMEM caused low memory in system, user can add more memory and retry
-> >> mount.
-> >> ...
-> >>
-> >> Thanks,
-> >>
-> >>> the image more. Please report, if you have any issue on this.>
-> >>>>>
-> >>>>
-> >>>> Hi Jaegeuk,
-> >>>>
-> >>>> How do you think about this? If you think it is okay, then I will fix the
-> >>>> sbi->extent_list corruption issue, by removing the retry logic. Otherwise,
-> >>>> I will fix it in the extent handling as you have suggested earlier.
-> >>>
-> >>> I'd like to keep retry logic, so could you please test what I suggested above?
-> >>>
-> >>> Thanks,
-> >>>
-> >>>>
-> >>>> Thanks,
-> >>>>
-> >>>>> Thanks,
-> >>>>>
-> >>>>>>
-> >>>>>> In my case, the first boot up has a failure in recovery as below -
-> >>>>>>
-> >>>>>> F2FS-fs (mmcblk0p75): find_fsync_dnodes: detect looped node chain, blkaddr:1979471, next:1979472
-> >>>>>> F2FS-fs (mmcblk0p75): Cannot recover all fsync data errno=-22
-> >>>>>>
-> >>>>>> But in the second attempt, retry will be set to false and because of that
-> >>>>>> recover_fsync_data() is skipped. This helped mount to be successful in
-> >>>>>> the second attempt. 
-> >>>>>>
-> >>>>>> Thanks,
-> >>>>>>
-> >>>>>>> Thanks,
-> >>>>>>>
-> >>>>>>>>
-> >>>>>>>> Thanks,
-> >>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>> Thanks,
-> >>>>>>>>> Sahitya.
-> >>>>>>>>>
-> >>>>>>>>>> Thanks,
-> >>>>>>>>>>
-> >>>>>>>>>>> How about adding a condition in f2fs_may_extent_tree() when adding extents?
-> >>>>>>>>>>> Likewise, if (shrinker is not registered) return false;
-> >>>>>>>>>>>
-> >>>>>>>>>>>
-> >>>>>>>>>>>> +	shrink_dcache_sb(sb);
-> >>>>>>>>>>>> +	evict_inodes(sb);
-> >>>>>>>>>>>> +	f2fs_shrink_extent_tree(sbi, __count_extent_cache(sbi));
-> >>>>>>>>>>>> +}
-> >>>>>>>>>>>> +
-> >>>>>>>>>>>>  static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
-> >>>>>>>>>>>>  {
-> >>>>>>>>>>>>  	struct f2fs_sb_info *sbi;
-> >>>>>>>>>>>> @@ -3402,6 +3412,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
-> >>>>>>>>>>>>  	 * falls into an infinite loop in f2fs_sync_meta_pages().
-> >>>>>>>>>>>>  	 */
-> >>>>>>>>>>>>  	truncate_inode_pages_final(META_MAPPING(sbi));
-> >>>>>>>>>>>> +	/* cleanup recovery and quota inodes */
-> >>>>>>>>>>>> +	f2fs_cleanup_inodes(sbi);
-> >>>>>>>>>>>>  	f2fs_unregister_sysfs(sbi);
-> >>>>>>>>>>>>  free_root_inode:
-> >>>>>>>>>>>>  	dput(sb->s_root);
-> >>>>>>>>>>>> @@ -3445,7 +3457,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
-> >>>>>>>>>>>>  	/* give only one another chance */
-> >>>>>>>>>>>>  	if (retry) {
-> >>>>>>>>>>>>  		retry = false;
-> >>>>>>>>>>>> -		shrink_dcache_sb(sb);
-> >>>>>>>>>>>>  		goto try_onemore;
-> >>>>>>>>>>>>  	}
-> >>>>>>>>>>>>  	return err;
-> >>>>>>>>>>>> -- 
-> >>>>>>>>>>>> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-> >>>>>>>>>>>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
-> >>>>>>>>>>>
-> >>>>>>>>>>> .
-> >>>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>> -- 
-> >>>>>>>>> --
-> >>>>>>>>> Sent by a consultant of the Qualcomm Innovation Center, Inc.
-> >>>>>>>>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
-> >>>>>>>>
-> >>>>>>>> .
-> >>>>>>>>
-> >>>>>>>
-> >>>>>>
-> >>>>>
-> >>>>
-> >>>> -- 
-> >>>> --
-> >>>> Sent by a consultant of the Qualcomm Innovation Center, Inc.
-> >>>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
-> >>>
-> >>> .
-> >>>
-> > 
-> > .
-> > 
+> But whether or not fsverity is enabled on the filesystem, the fact
+> is that the kernel code now has to support storing and reading data
+> from beyond EOF. Every user, whether they are using fsverity or not,
+> is now exposed to that code and a filesystem that no longer
+> considers the user data region beyond EOF as write only.
+
+That's simply not true.  Number one, fsverity is not mandatory for all
+file systems to implement.  If XFS doesn't want to implement fscrypt
+or fsverity, it doesn't have to.  Number two, we're not *making* any
+changes to the kernel code; nothing in mm/filemap.c, et. al.  So
+saying that we are making changes that are impacted by /everyone/ just
+doesn't make any sense.
+
+> How filesystems store and retrieve merkle tree data should be a
+> filesystem internal detail. If how metadata is stored in th e
+> filesystem is defined by the userspace API or the kernel library
+> code that implements the verification feature, then it lacks the
+> necessary abstraction to be a generic Linux filesystem feature.
+> IOWs, it needs to be redesigned and reworked before we should
+> consider it for merging.
+
+I disagree with your aesthetics that the interface has to be
+completely isolated from the implementation.  If you don't want to
+call it a generic file system feature, fine.  It can just be something
+that f2fs and ext4 uses.
+
+					- Ted
