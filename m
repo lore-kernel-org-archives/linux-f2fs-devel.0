@@ -1,74 +1,41 @@
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
+From: Matthew Wilcox <willy@infradead.org>
 Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
-Date: Fri, 21 Dec 2018 10:47:14 -0500
-Message-ID: <20181221154714.GA26547@mit.edu>
+Date: Fri, 21 Dec 2018 07:53:54 -0800
+Message-ID: <20181221155354.GC10600@bombadil.infradead.org>
 References: <20181219071420.GC2628@infradead.org>
- <20181219021953.GD31274@dastard> <20181219193005.GB6889@mit.edu>
- <20181219213552.GO6311@dastard> <20181220220158.GC2360@mit.edu>
+ <20181219021953.GD31274@dastard>
+ <20181219193005.GB6889@mit.edu>
+ <20181219213552.GO6311@dastard>
+ <20181220220158.GC2360@mit.edu>
  <20181221070447.GA21687@infradead.org>
+ <20181221154714.GA26547@mit.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@mit.edu>) id 1gaN1N-0001h2-JH
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 Dec 2018 15:47:29 +0000
-Received: from dmz-mailsec-scanner-7.mit.edu ([18.7.68.36])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gaN1L-00BsEX-MA
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 Dec 2018 15:47:29 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181221070447.GA21687@infradead.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Christoph Hellwig <hch@infradead.org>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>, Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, linux-integrity@vger.kernel.org, linux-ext4@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Victor Hsieh <victorhsieh@google.com>
+In-Reply-To: <20181221154714.GA26547@mit.edu>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Theodore Y. Ts'o" <tytso@mit.edu>, Christoph Hellwig <hch@infradead.org>, Dave Chinner <david@fromorbit.com>, "Darrick J. Wong" <darrick.wong@oracle.com>, Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Victor Hsieh <victorhsieh@google.com>, Chandan Rajendra <chandan@linux.vnet.ibm.com>, Linus Torvalds <torvalds@linux-foundation.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Thu, Dec 20, 2018 at 11:04:47PM -0800, Christoph Hellwig wrote:
-> Ted, I think you know yourself this isn't true.  Whenever we added
-> useful interface to one of the major file systems we had other pick
-> it up, and that is a good thing because the last thing we need is
-> fragmentation of interfaces.  And even if that wasn't the case I don't
-> think we should take short cuts, because even if an interface was just
-> for a file system or two it still needs to be properly desgined.
+On Fri, Dec 21, 2018 at 10:47:14AM -0500, Theodore Y. Ts'o wrote:
+> Linus --- we're going round and round, and I don't think this is
+> really a technical dispute at this point, but rather an aesthetics
+> one.  Will you be willing to accept my pull request for a feature
+> which is being shippped on millions of Android phones, has been out
+> for review for months, and for which, if we *really* need to add
+> uselessly complicated interface later, we can do that?  It's always
+> been the case for internal Kernel interfaces not to add code "just in
+> case" it's useful, but rather when a user turns up.  I argue we should
+> be doing the same thing for user-space visible interfaces.
 
-This is why I think the interface argument is totally bogus.
+To look at it another way, this is an aesthetic dispute in which all those
+who have offered opinions from outside Google -- myself, Dave Chinner &
+Christoph all really dislike this interface.  I'd be happy to discuss
+alternative interfaces, particularly ones which allow for the current
+internal implementation, but I think this interface is really bad.
 
-If you're OK with Darrick's suggested interface, where you pass in a
-file descriptor, offset and length --- that's just a superset of the
-current interface, except where the file descriptor is in the file
-which is going to be protected using fs-verity.  So there's if you're
-OK with that interface, we can add that interface later, and it's
-really no big deal; it certainly doesn't add any extra complexity for
-XFS --- assuming that XFS even gets around to adding support for
-fs-verity.
-
-Adding that extra complexity is not necessary for the current users of
-the interface, and as I've said multiple times before, there's no
-*value* in allowing the Merkle tree to be passed in via some arbitrary
-file descriptor, which might even be on a separate fhile system, as
-opposed in the file which is about to be protected using fs-verity.
-
-Linus --- we're going round and round, and I don't think this is
-really a technical dispute at this point, but rather an aesthetics
-one.  Will you be willing to accept my pull request for a feature
-which is being shippped on millions of Android phones, has been out
-for review for months, and for which, if we *really* need to add
-uselessly complicated interface later, we can do that?  It's always
-been the case for internal Kernel interfaces not to add code "just in
-case" it's useful, but rather when a user turns up.  I argue we should
-be doing the same thing for user-space visible interfaces.
-
-Regards,
-
-						- Ted
+In contrast to "we'll just fix it up later" (which usually applies
+to in-kernel interfaces), we have a policy of not breaking userspace,
+so accepting this interface means setting it in stone.  We should get
+it right.
