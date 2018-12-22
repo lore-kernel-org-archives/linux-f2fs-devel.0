@@ -1,29 +1,28 @@
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
-Date: Fri, 21 Dec 2018 23:17:12 -0500
-Message-ID: <20181222041712.GC26547@mit.edu>
-References: <20181219071420.GC2628@infradead.org>
- <20181219021953.GD31274@dastard> <20181219193005.GB6889@mit.edu>
- <20181219213552.GO6311@dastard> <20181220220158.GC2360@mit.edu>
- <20181221070447.GA21687@infradead.org>
- <20181221154714.GA26547@mit.edu>
- <CAHk-=wgdzWgoPSuHeVcqmGE1hB3Gan72r2_AhtC14e60=z45yg@mail.gmail.com>
+From: Martin Blumenstingl via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Subject: [PATCH v2 0/1] f2fs: fix sanity_check_raw_super on big
+ endian machines
+Date: Sat, 22 Dec 2018 11:22:25 +0100
+Message-ID: <20181222102226.10050-1-martin.blumenstingl@googlemail.com>
+Reply-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@mit.edu>) id 1gaYm7-0005Z9-EE
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 22 Dec 2018 04:20:31 +0000
-Received: from dmz-mailsec-scanner-3.mit.edu ([18.9.25.14])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gaYls-00CZsL-KA
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 22 Dec 2018 04:20:31 +0000
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgdzWgoPSuHeVcqmGE1hB3Gan72r2_AhtC14e60=z45yg@mail.gmail.com>
+ (envelope-from <martin.blumenstingl@googlemail.com>)
+ id 1gaeQa-0003Vz-Ab
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 22 Dec 2018 10:22:40 +0000
+Received: from mail-wm1-f67.google.com ([209.85.128.67])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1gaeQY-00DR4h-LQ
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 22 Dec 2018 10:22:40 +0000
+Received: by mail-wm1-f67.google.com with SMTP id c126so7914457wmh.0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat, 22 Dec 2018 02:22:38 -0800 (PST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,103 +32,41 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Eric Biggers <ebiggers@kernel.org>, "Darrick J. Wong" <darrick.wong@oracle.com>, Dave Chinner <david@fromorbit.com>, Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, Christoph Hellwig <hch@infradead.org>, linux-fscrypt@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-integrity@vger.kernel.org, linux-ext4@vger.kernel.org, Victor Hsieh <victorhsieh@google.com>
+To: linux-f2fs-devel@lists.sourceforge.net, yuchao0@huawei.com, jaegeuk@kernel.org
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 11:13:07AM -0800, Linus Torvalds wrote:
-> 
-> I do agree that your particular model is pretty damn broken in lots of ways.
-> 
-> Why is it filesystem specific? If the whole point is that the file
-> itself has its own verification data (which I like), then I don't see
-> why this is then documented as some filesystem-specific layout model.
-> That's complete and utter garbage.
-> 
-> In other words: either the model is that the file *itself* contains
-> its own merkle tree that validates the file, or it isn't. You can't
-> have it two ways. No silly "layout changes when you apply the hash"
-> garbage. That's just crazy talk and invalidates the whole model.
+Big endian machines (at least the one I have access to) cannot mount
+f2fs filesystems anymore.
+This is with Linux 4.14.89 but I suspect that 4.9.144 (and later) is
+affected as well.
 
-Userspace applications which are reading the file aren't going to be
-expecting Merkle tree.  For example, one of the use cases is Android
-APK files, which are essentially ZIP files.  ZIP files can be parsed
-both from the front-end (streaming), or by looking for the complete
-directory of all of the files in the ZIP file by starting at the end
-of the file and moving backwards.  If the Merkle tree was visible to
-userspace programs that are opening and reading the file, it would
-confuse them mightily.
+commit 0cfe75c5b01199 ("f2fs: enhance sanity_check_raw_super() to avoid
+potential overflows") treats the "block_count" from struct
+f2fs_super_block as 32-bit little endian value instead of a 64-bit
+little endian value.
 
-So what we do for ext4 and f2fs is make the Merkle tree invisible; if
-userspace stats the file, st_size will return size of the original
-"data" file, and reading beyond the st_size from userspace will behave
-like reading beyond EOF.  From the *file system's* perspective,
-though, the metadata blocks are part of the file.  There's just a
-difference between the userspace visible EOF and the file system's
-conception of EOF.  I don't consider this a "layout change", and I
-personally believe this should be just *fine* for all file systems.
-The XFS developers are convinced that this is horrific, and no one
-sane should do this.  OK, call me insane.  But it works, and I think
-it's elegant and clean.
+I tested this fix on top of Linux 4.14.49 but it seems that all stable
+and mainline kernel versions are affected:
+- 4.9.144 and later because 0cfe75c5b01199 was backported there
+- 4.14.86 and later because 0cfe75c5b01199 was backported there
+- 4.19
+- 4.20-rcX
 
-So if *they* want to use some other layout, where the Merkle blocks
-are stored in some Alternate Data Stream, ala NTFS --- they are *free*
-to do that.  It will require more work, and at that point, it will
-require a layout change.  But it's Dave and Christoph who are
-insisting on doing that; not me!
 
-> And honestly, I still think that it's very odd to add the merge data
-> to the end, when the filesystem already supports xattrs. It would have
-> made much more sense to just make one xattr contain the merkle tree
-> validation data.
+changes since v1 at [0]:
+- change the printk format for block_count from "%u" to "%llu" (thanks
+  to "kbuild test robot" for spotting this)
+- added Chao Yu's reviewed by
 
-The problem is that xattrs are designed to be accessed via a set/get
-interface, are currently limited, IIRC at 32k.  The max size of an APK
-is 300 megabytes; and the Merkle tree for a file that size will be
-about 2.3 megabytes.  That's way too big to store as an xattr;
-certainly using the existing xattr interfaces.  And it's also bigger
-than most file systems can handle as xattrs today --- because they've
-been optimzied for relatively small sizes, for things like SELinux
-labels and ACL structures.
 
-> So why is this sold as some unholy mess of "filesystem-specific" and
-> "generic"? That part just annoys the hell out of me. Why isn't this
-> sold as an *actual* generic model, where you just say "append the
-> merkle tree to the file, then enable verity testing of the end result
-> and validate the top-level hash".
+[0] https://lore.kernel.org/patchwork/cover/1027285/
 
-That was the original way it was sold, but Cristoph and Dave have
-NACK'ed it in that form.  The common fsverity code which is generic to
-ext4 and f2fs does treat it that way, with the note that we "lie" to
-userspace about is the size of the file and where the EOF is.  Dave
-and Cristoph have declaimed strongly that this is this layout choice
-is horrible, and filesystem specific, and XFS could never do it that
-way.  I don't understand why, but they are the XFS experts.  So if
-they want to do something else, what I've been trying to point out is
-that they can do that, using the existing interface.
 
-> So what's the excuse for doing the crazy odd "let's just support one
-> single filesystem" model?
+Martin Blumenstingl (1):
+  f2fs: fix validation of the block count in sanity_check_raw_super
 
-Android devices use both ext4 and f2fs; it's the manufacturer's
-choice.  So we wanted fs-verity to support both.  And we didn't want
-to duplicate code across ext4 and f2fs; hence trying to put common
-code in fs/verity.  So we aren't supporting one file system out of the
-gate; we're supporting two.
+ fs/f2fs/super.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Whether XFS wants to implement fs-verity is purely XFS's choice.  XFS
-has chosen not to support fscrypt, which is currently used by ext4,
-f2fs, and ubifs, and both fscrypt's and fs-verity's initial use case
-has been for Android, which is not an area where XFS has proven to be
-a common choice.
-
-So I was not really expecting that they would have any interest in
-fs-verity.  But they seem to have very strong opinions about how they
-would want to implement it, and it's different from what we have in
-the current "generic code shared by ext4 and f2fs".  I was trying to
-show that even if they wanted to do things in this different way ---
-and I don't understand why it's so important to them --- it would be
-possible to do so.
-
-Cheers,
-
-					- Ted
+-- 
+2.20.1
