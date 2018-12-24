@@ -1,88 +1,66 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix to retry fill_super only if recovery failed
-Date: Mon, 24 Dec 2018 17:09:21 +0800
-Message-ID: <20181224090921.123612-1-yuchao0@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Sahitya Tummala <stummala@codeaurora.org>
+Subject: [PATCH] f2fs: fix use-after-free issue with sbi->stat_info
+Date: Mon, 24 Dec 2018 18:36:52 +0530
+Message-ID: <1545656812-14695-1-git-send-email-stummala@codeaurora.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-With current retry mechanism in f2fs_fill_super, first fill_super
-fails due to no memory, then second fill_super runs w/o recovery,
-if we succeed, we may lose fsynced data, it doesn't make sense.
+iput() on sbi->node_inode can update sbi->stat_info
+in the below context, if the f2fs_write_checkpoint()
+has failed with error.
 
-Let's retry fill_super only if it occurs non-ENOMEM error during
-recovery.
+f2fs_balance_fs_bg+0x1ac/0x1ec
+f2fs_write_node_pages+0x4c/0x260
+do_writepages+0x80/0xbc
+__writeback_single_inode+0xdc/0x4ac
+writeback_single_inode+0x9c/0x144
+write_inode_now+0xc4/0xec
+iput+0x194/0x22c
+f2fs_put_super+0x11c/0x1e8
+generic_shutdown_super+0x70/0xf4
+kill_block_super+0x2c/0x5c
+kill_f2fs_super+0x44/0x50
+deactivate_locked_super+0x60/0x8c
+deactivate_super+0x68/0x74
+cleanup_mnt+0x40/0x78
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Fix this by moving f2fs_destroy_stats() further below iput().
+
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 ---
- fs/f2fs/super.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ fs/f2fs/super.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index cec7ef27b389..c43f86f6be48 100644
+index e184ad4e..df41a3a 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -3019,10 +3019,11 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	struct f2fs_super_block *raw_super;
- 	struct inode *root;
- 	int err;
--	bool retry = true, need_fsck = false;
-+	bool skip_recovery = false, need_fsck = false;
- 	char *options = NULL;
- 	int recovery, i, valid_super_block;
- 	struct curseg_info *seg_i;
-+	int retry_cnt = 1;
- 
- try_onemore:
- 	err = -EINVAL;
-@@ -3307,7 +3308,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		goto free_meta;
- 
- 	if (unlikely(is_set_ckpt_flags(sbi, CP_DISABLED_FLAG)))
--		goto skip_recovery;
-+		goto reset_checkpoint;
- 
- 	/* recover fsynced data */
- 	if (!test_opt(sbi, DISABLE_ROLL_FORWARD)) {
-@@ -3324,11 +3325,13 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		if (need_fsck)
- 			set_sbi_flag(sbi, SBI_NEED_FSCK);
- 
--		if (!retry)
--			goto skip_recovery;
-+		if (skip_recovery)
-+			goto reset_checkpoint;
- 
- 		err = f2fs_recover_fsync_data(sbi, false);
- 		if (err < 0) {
-+			if (err != -ENOMEM)
-+				skip_recovery = true;
- 			need_fsck = true;
- 			f2fs_msg(sb, KERN_ERR,
- 				"Cannot recover all fsync data errno=%d", err);
-@@ -3344,7 +3347,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 			goto free_meta;
- 		}
+@@ -1058,9 +1058,6 @@ static void f2fs_put_super(struct super_block *sb)
+ 		f2fs_write_checkpoint(sbi, &cpc);
  	}
--skip_recovery:
-+reset_checkpoint:
- 	/* f2fs_recover_fsync_data() cleared this already */
- 	clear_sbi_flag(sbi, SBI_POR_DOING);
  
-@@ -3440,8 +3443,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	kvfree(sbi);
+-	/* f2fs_write_checkpoint can update stat informaion */
+-	f2fs_destroy_stats(sbi);
+-
+ 	/*
+ 	 * normally superblock is clean, so we need to release this.
+ 	 * In addition, EIO will skip do checkpoint, we need this as well.
+@@ -1080,6 +1077,12 @@ static void f2fs_put_super(struct super_block *sb)
+ 	iput(sbi->node_inode);
+ 	iput(sbi->meta_inode);
  
- 	/* give only one another chance */
--	if (retry) {
--		retry = false;
-+	if (retry_cnt > 0 && skip_recovery) {
-+		retry_cnt--;
- 		shrink_dcache_sb(sb);
- 		goto try_onemore;
- 	}
++	/*
++	 * iput() can update stat information, if f2fs_write_checkpoint()
++	 * above failed with error.
++	 */
++	f2fs_destroy_stats(sbi);
++
+ 	/* destroy f2fs internal modules */
+ 	f2fs_destroy_node_manager(sbi);
+ 	f2fs_destroy_segment_manager(sbi);
 -- 
-2.18.0.rc1
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
