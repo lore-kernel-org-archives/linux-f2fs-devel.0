@@ -1,108 +1,117 @@
 From: sunqiuyang <sunqiuyang@huawei.com>
-Subject: [PATCH 1/2] f2fs-dev: support multi-device direct IO
-Date: Wed, 2 Jan 2019 17:06:59 +0800
-Message-ID: <20190102090659.7974-1-sunqiuyang@huawei.com>
+Subject: [PATCH 2/2] fs: support direct IO in a multi-device FS
+Date: Wed, 2 Jan 2019 17:07:18 +0800
+Message-ID: <20190102090718.8115-1-sunqiuyang@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <sunqiuyang@huawei.com>) id 1gecWA-0005Mf-4D
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 02 Jan 2019 09:08:50 +0000
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gecW7-00BGyT-T5
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 02 Jan 2019 09:08:50 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: sunqiuyang@huawei.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 From: Qiuyang Sun <sunqiuyang@huawei.com>
 
-The physical blocks in struct f2fs_map_blocks must be in the same device.
+Don't use the bdev pointer in struct buffer_head for dio_bio_alloc(),
+since it may have been changed to another device in the FS in
+get_more_blocks().
 
 Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
 ---
- fs/f2fs/data.c | 20 +++++++++++++++++++-
- fs/f2fs/f2fs.h |  2 --
- 2 files changed, 19 insertions(+), 3 deletions(-)
+ fs/direct-io.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index e5cd3fd..7a6369e 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1076,6 +1076,8 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 	struct extent_info ei = {0,0,0};
- 	block_t blkaddr;
- 	unsigned int start_pgofs;
-+	int devi;
-+	block_t end_blk;
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index 722d17c..6cd6029 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -99,6 +99,7 @@ struct dio_submit {
+ 	unsigned cur_page_offset;	/* Offset into it, in bytes */
+ 	unsigned cur_page_len;		/* Nr of bytes at cur_page_offset */
+ 	sector_t cur_page_block;	/* Where it starts */
++	struct block_device *cur_page_dev;
+ 	loff_t cur_page_fs_offset;	/* Offset in file */
  
- 	if (!maxblocks)
- 		return 0;
-@@ -1207,8 +1209,15 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 
- 		map->m_pblk = blkaddr;
- 		map->m_len = 1;
-+
-+		if (sbi->s_ndevs && blkaddr != NEW_ADDR &&
-+							blkaddr != NULL_ADDR) {
-+			devi = f2fs_target_device_index(sbi, blkaddr);
-+			end_blk = FDEV(devi).end_blk;
-+		}
- 	} else if ((map->m_pblk != NEW_ADDR &&
--			blkaddr == (map->m_pblk + ofs)) ||
-+			blkaddr == (map->m_pblk + ofs) &&
-+			(!sbi->s_ndevs || blkaddr <= end_blk)) ||
- 			(map->m_pblk == NEW_ADDR && blkaddr == NEW_ADDR) ||
- 			flag == F2FS_GET_BLOCK_PRE_DIO) {
- 		ofs++;
-@@ -1322,6 +1331,8 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
+ 	struct iov_iter *iter;
+@@ -729,7 +730,7 @@ static int get_more_blocks(struct dio *dio, struct dio_submit *sdio,
+  * There is no bio.  Make one now.
+  */
+ static inline int dio_new_bio(struct dio *dio, struct dio_submit *sdio,
+-		sector_t start_sector, struct buffer_head *map_bh)
++		sector_t start_sector)
  {
- 	struct f2fs_map_blocks map;
- 	int err;
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	int devi;
+ 	sector_t sector;
+ 	int ret, nr_pages;
+@@ -740,7 +741,7 @@ static inline int dio_new_bio(struct dio *dio, struct dio_submit *sdio,
+ 	sector = start_sector << (sdio->blkbits - 9);
+ 	nr_pages = min(sdio->pages_in_io, BIO_MAX_PAGES);
+ 	BUG_ON(nr_pages <= 0);
+-	dio_bio_alloc(dio, sdio, map_bh->b_bdev, sector, nr_pages);
++	dio_bio_alloc(dio, sdio, sdio->cur_page_dev, sector, nr_pages);
+ 	sdio->boundary = 0;
+ out:
+ 	return ret;
+@@ -785,8 +786,7 @@ static inline int dio_bio_add_page(struct dio_submit *sdio)
+  * The caller of this function is responsible for removing cur_page from the
+  * dio, and for dropping the refcount which came from that presence.
+  */
+-static inline int dio_send_cur_page(struct dio *dio, struct dio_submit *sdio,
+-		struct buffer_head *map_bh)
++static inline int dio_send_cur_page(struct dio *dio, struct dio_submit *sdio)
+ {
+ 	int ret = 0;
  
- 	map.m_lblk = iblock;
- 	map.m_len = bh->b_size >> inode->i_blkbits;
-@@ -1333,6 +1344,13 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
- 	err = f2fs_map_blocks(inode, &map, create, flag);
- 	if (!err) {
- 		map_bh(bh, inode->i_sb, map.m_pblk);
-+		if (sbi->s_ndevs) {
-+			devi = f2fs_target_device_index(sbi, map.m_pblk);
-+			if (devi) {
-+				bh->b_bdev = FDEV(devi).bdev;
-+				bh->b_blocknr -= FDEV(devi).start_blk;
-+			}
-+		}
- 		bh->b_state = (bh->b_state & ~F2FS_MAP_FLAGS) | map.m_flags;
- 		bh->b_size = (u64)map.m_len << inode->i_blkbits;
+@@ -815,14 +815,14 @@ static inline int dio_send_cur_page(struct dio *dio, struct dio_submit *sdio,
  	}
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index eeede26..b311471 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3595,8 +3595,6 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
  
- 	if (f2fs_post_read_required(inode))
- 		return true;
--	if (sbi->s_ndevs)
--		return true;
+ 	if (sdio->bio == NULL) {
+-		ret = dio_new_bio(dio, sdio, sdio->cur_page_block, map_bh);
++		ret = dio_new_bio(dio, sdio, sdio->cur_page_block);
+ 		if (ret)
+ 			goto out;
+ 	}
+ 
+ 	if (dio_bio_add_page(sdio) != 0) {
+ 		dio_bio_submit(dio, sdio);
+-		ret = dio_new_bio(dio, sdio, sdio->cur_page_block, map_bh);
++		ret = dio_new_bio(dio, sdio, sdio->cur_page_block);
+ 		if (ret == 0) {
+ 			ret = dio_bio_add_page(sdio);
+ 			BUG_ON(ret != 0);
+@@ -878,7 +878,7 @@ static inline int dio_send_cur_page(struct dio *dio, struct dio_submit *sdio,
+ 	 * If there's a deferred page already there then send it.
+ 	 */
+ 	if (sdio->cur_page) {
+-		ret = dio_send_cur_page(dio, sdio, map_bh);
++		ret = dio_send_cur_page(dio, sdio);
+ 		put_page(sdio->cur_page);
+ 		sdio->cur_page = NULL;
+ 		if (ret)
+@@ -890,6 +890,7 @@ static inline int dio_send_cur_page(struct dio *dio, struct dio_submit *sdio,
+ 	sdio->cur_page_offset = offset;
+ 	sdio->cur_page_len = len;
+ 	sdio->cur_page_block = blocknr;
++	sdio->cur_page_dev = map_bh->b_bdev;
+ 	sdio->cur_page_fs_offset = sdio->block_in_file << sdio->blkbits;
+ out:
  	/*
- 	 * for blkzoned device, fallback direct IO to buffered IO, so
- 	 * all IOs can be serialized by log-structured write.
+@@ -897,7 +898,7 @@ static inline int dio_send_cur_page(struct dio *dio, struct dio_submit *sdio,
+ 	 * avoid metadata seeks.
+ 	 */
+ 	if (sdio->boundary) {
+-		ret = dio_send_cur_page(dio, sdio, map_bh);
++		ret = dio_send_cur_page(dio, sdio);
+ 		if (sdio->bio)
+ 			dio_bio_submit(dio, sdio);
+ 		put_page(sdio->cur_page);
+@@ -1348,7 +1349,7 @@ static inline int drop_refcount(struct dio *dio)
+ 	if (sdio.cur_page) {
+ 		ssize_t ret2;
+ 
+-		ret2 = dio_send_cur_page(dio, &sdio, &map_bh);
++		ret2 = dio_send_cur_page(dio, &sdio);
+ 		if (retval == 0)
+ 			retval = ret2;
+ 		put_page(sdio.cur_page);
 -- 
 1.8.3.1
