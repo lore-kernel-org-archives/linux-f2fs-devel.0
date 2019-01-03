@@ -1,9 +1,7 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: change error code to -ENOMEM from
- -EINVAL
-Date: Thu, 3 Jan 2019 14:44:39 +0800
-Message-ID: <d8e3fba0-9473-7586-adca-79ead1052676@huawei.com>
-References: <20190101133311.18120-1-cgxu519@gmx.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [bug report] f2fs: fix missing unlock(sbi->gc_mutex)
+Date: Thu, 3 Jan 2019 13:54:04 +0300
+Message-ID: <20190103105404.GA6197@kadam>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,15 +9,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1gewkQ-0001WR-NR
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Jan 2019 06:44:54 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <dan.carpenter@oracle.com>) id 1gf0dt-0003Gm-0b
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Jan 2019 10:54:25 +0000
+Received: from aserp2130.oracle.com ([141.146.126.79])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gewkO-00Cmd8-Ff
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Jan 2019 06:44:54 +0000
-In-Reply-To: <20190101133311.18120-1-cgxu519@gmx.com>
-Content-Language: en-US
+ id 1gf0dr-00EZ27-2H
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Jan 2019 10:54:24 +0000
+Content-Disposition: inline
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,15 +26,58 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chengguang Xu <cgxu519@gmx.com>, jaegeuk@kernel.org
+To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2019/1/1 21:33, Chengguang Xu wrote:
-> The error case of failing allocating memory should
-> return -ENOMEM.
-> 
-> Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+Hello Jaegeuk Kim,
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+The patch 8f31b4665c14: "f2fs: fix missing unlock(sbi->gc_mutex)"
+from Dec 17, 2018, leads to the following static checker warning:
 
-Thanks,
+	fs/f2fs/super.c:1481 f2fs_disable_checkpoint()
+	error: double lock 'mutex:&sbi->gc_mutex'
+
+fs/f2fs/super.c
+    1456 static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
+    1457 {
+    1458 	struct cp_control cpc;
+    1459 	int err;
+    1460 
+    1461 	sbi->sb->s_flags |= SB_ACTIVE;
+    1462 
+    1463 	f2fs_update_time(sbi, DISABLE_TIME);
+    1464 
+    1465 	while (!f2fs_time_over(sbi, DISABLE_TIME)) {
+    1466 		mutex_lock(&sbi->gc_mutex);
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+Lock.
+
+    1467 		err = f2fs_gc(sbi, true, false, NULL_SEGNO);
+    1468 		if (err == -ENODATA)
+    1469 			break;
+    1470 		if (err && err != -EAGAIN)
+    1471 			return err;
+    1472 	}
+    1473 
+    1474 	err = sync_filesystem(sbi->sb);
+    1475 	if (err)
+    1476 		return err;
+    1477 
+    1478 	if (f2fs_disable_cp_again(sbi))
+    1479 		return -EAGAIN;
+    1480 
+--> 1481 	mutex_lock(&sbi->gc_mutex);
+                            ^^^^^^^^^^^^^
+Deadlock?
+
+    1482 	cpc.reason = CP_PAUSE;
+    1483 	set_sbi_flag(sbi, SBI_CP_DISABLED);
+    1484 	f2fs_write_checkpoint(sbi, &cpc);
+    1485 
+    1486 	sbi->unusable_block_count = 0;
+    1487 	mutex_unlock(&sbi->gc_mutex);
+    1488 	return 0;
+    1489 }
+
+regards,
+dan carpenter
