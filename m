@@ -1,22 +1,22 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [bug report] f2fs: fix missing unlock(sbi->gc_mutex)
-Date: Thu, 3 Jan 2019 13:54:04 +0300
-Message-ID: <20190103105404.GA6197@kadam>
+From: Zhikang Zhang <zhangzhikang1@huawei.com>
+Subject: [PATCH] f2fs: fix compile warnings: 'struct *' declared
+ inside parameter list
+Date: Thu, 3 Jan 2019 20:06:38 +0800
+Message-ID: <1546517198-9555-1-git-send-email-zhangzhikang1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <dan.carpenter@oracle.com>) id 1gf0dt-0003Gm-0b
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Jan 2019 10:54:25 +0000
-Received: from aserp2130.oracle.com ([141.146.126.79])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (envelope-from <zhangzhikang1@huawei.com>) id 1gf1lw-0004vx-EA
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Jan 2019 12:06:48 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gf0dr-00EZ27-2H
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Jan 2019 10:54:24 +0000
-Content-Disposition: inline
+ id 1gf1lu-00CWL9-69
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Jan 2019 12:06:48 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,58 +26,34 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-Hello Jaegeuk Kim,
+We meet these compile warnings below, which caused by missing declare structs:
+struct f2fs_io_info, struct extent, struct f2fs_sb_info.
 
-The patch 8f31b4665c14: "f2fs: fix missing unlock(sbi->gc_mutex)"
-from Dec 17, 2018, leads to the following static checker warning:
+warning: 'struct f2fs_io_info' declared inside parameter list
+warning: 'struct extent_info' declared inside parameter list
+warning: 'struct f2fs_sb_info' declared inside parameter list
 
-	fs/f2fs/super.c:1481 f2fs_disable_checkpoint()
-	error: double lock 'mutex:&sbi->gc_mutex'
+Signed-off-by: Zhikang Zhang <zhangzhikang1@huawei.com>
+---
+ include/trace/events/f2fs.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-fs/f2fs/super.c
-    1456 static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
-    1457 {
-    1458 	struct cp_control cpc;
-    1459 	int err;
-    1460 
-    1461 	sbi->sb->s_flags |= SB_ACTIVE;
-    1462 
-    1463 	f2fs_update_time(sbi, DISABLE_TIME);
-    1464 
-    1465 	while (!f2fs_time_over(sbi, DISABLE_TIME)) {
-    1466 		mutex_lock(&sbi->gc_mutex);
-                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
-Lock.
-
-    1467 		err = f2fs_gc(sbi, true, false, NULL_SEGNO);
-    1468 		if (err == -ENODATA)
-    1469 			break;
-    1470 		if (err && err != -EAGAIN)
-    1471 			return err;
-    1472 	}
-    1473 
-    1474 	err = sync_filesystem(sbi->sb);
-    1475 	if (err)
-    1476 		return err;
-    1477 
-    1478 	if (f2fs_disable_cp_again(sbi))
-    1479 		return -EAGAIN;
-    1480 
---> 1481 	mutex_lock(&sbi->gc_mutex);
-                            ^^^^^^^^^^^^^
-Deadlock?
-
-    1482 	cpc.reason = CP_PAUSE;
-    1483 	set_sbi_flag(sbi, SBI_CP_DISABLED);
-    1484 	f2fs_write_checkpoint(sbi, &cpc);
-    1485 
-    1486 	sbi->unusable_block_count = 0;
-    1487 	mutex_unlock(&sbi->gc_mutex);
-    1488 	return 0;
-    1489 }
-
-regards,
-dan carpenter
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index 3ec73f1..8a28a2b 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -149,6 +149,9 @@ TRACE_DEFINE_ENUM(CP_TRIMMED);
+ 		{ CP_SPEC_LOG_NUM,	"log type is 2" },		\
+ 		{ CP_RECOVER_DIR,	"dir needs recovery" })
+ 
++struct f2fs_sb_info;
++struct f2fs_io_info;
++struct extent_info;
+ struct victim_sel_policy;
+ struct f2fs_map_blocks;
+ 
+-- 
+2.7.4
