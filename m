@@ -1,67 +1,48 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: export pin_file flag to user
-Date: Fri, 4 Jan 2019 17:00:15 +0800
-Message-ID: <444eef3d-78eb-7c17-b44c-0ab310fb7c7b@huawei.com>
-References: <20190104041945.31802-1-jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: wait on atomic writes to count
+ F2FS_CP_WB_DATA
+Date: Fri, 4 Jan 2019 17:31:52 +0800
+Message-ID: <3e50bcd6-1730-c28d-2d28-7a8e57f456cf@huawei.com>
+References: <20190104042025.31982-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190104041945.31802-1-jaegeuk@kernel.org>
+In-Reply-To: <20190104042025.31982-1-jaegeuk@kernel.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: stable@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2019/1/4 12:19, Jaegeuk Kim wrote:
-> This exports pin_file status to user.
+On 2019/1/4 12:20, Jaegeuk Kim wrote:
+> Otherwise, we can get wrong counts incurring checkpoint hang.
+> 
+> IO_W (CP:  -24, Data:   24, Flush: (   0    0    1), Discard: (   0    0))
+> 
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Semantics of pin_file flag is the same as nocow flag which is more widely
-used in lsattr/chattr and vfs now.
+Good catch! ;)
 
-#define FS_NOCOW_FL                     0x00800000 /* Do not cow file */
+I can understand this condition, but for other new developer who reads this
+commit, it will be a little hard to understand situation here.
 
-lsattr/chattr
-no copy on write (C)
+How about explaining a little more about problem here, maybe:
 
-How about exporting it via F2FS_NOCOW_FL(0x00800000)?
+Thread A			Thread B		
+- f2fs_write_data_pages
+ -  __write_data_page
+  - f2fs_submit_page_write
+   - inc_page_count(F2FS_WB_DATA)
+     type is F2FS_WB_DATA due to file is non-atomic one
+- f2fs_ioc_start_atomic_write
+ - set_inode_flag(FI_ATOMIC_FILE)
+				- f2fs_write_end_io
+				 - dec_page_count(F2FS_WB_CP_DATA)
+				   type is F2FS_WB_DATA due to file becomes
+				   atomic one
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
-
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/f2fs.h | 3 ++-
->  fs/f2fs/file.c | 2 ++
->  2 files changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 12fabd6735dd..036fd62010c1 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -2303,9 +2303,10 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
->  #define F2FS_EOFBLOCKS_FL		0x00400000 /* Blocks allocated beyond EOF */
->  #define F2FS_INLINE_DATA_FL		0x10000000 /* Inode has inline data. */
->  #define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
-> +#define F2FS_PIN_FILE_FL		0x40000000 /* pin_file status */
->  #define F2FS_RESERVED_FL		0x80000000 /* reserved for ext4 lib */
->  
-> -#define F2FS_FL_USER_VISIBLE		0x304BDFFF /* User visible flags */
-> +#define F2FS_FL_USER_VISIBLE		0x704BDFFF /* User visible flags */
->  #define F2FS_FL_USER_MODIFIABLE		0x204BC0FF /* User modifiable flags */
->  
->  /* Flags we can manipulate with through F2FS_IOC_FSSETXATTR */
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index ae2b45e75847..eb099f1ee937 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -1651,6 +1651,8 @@ static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
->  		flags |= F2FS_ENCRYPT_FL;
->  	if (f2fs_has_inline_data(inode) || f2fs_has_inline_dentry(inode))
->  		flags |= F2FS_INLINE_DATA_FL;
-> +	if (is_inode_flag_set(inode, FI_PIN_FILE))
-> +		flags |= F2FS_PIN_FILE_FL;
->  
->  	flags &= F2FS_FL_USER_VISIBLE;
->  
-> 
