@@ -1,100 +1,141 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/2] f2fs: don't access node/meta inode mapping after iput
-Date: Thu,  3 Jan 2019 20:20:25 -0800
-Message-ID: <20190104042025.31982-2-jaegeuk@kernel.org>
-References: <20190104042025.31982-1-jaegeuk@kernel.org>
+Subject: [PATCH] f2fs_io: add pin_file control command
+Date: Thu,  3 Jan 2019 20:37:39 -0800
+Message-ID: <20190104043739.33715-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190104042025.31982-1-jaegeuk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1gfHEy-00049A-9I
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 04 Jan 2019 04:37:48 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1gfHEw-00EMr2-SN
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 04 Jan 2019 04:37:48 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This fixes wrong access of address spaces of node and meta inodes after iput.
+This requires a kernel patch "f2fs: export pin_file flag to user".
 
-Fixes: 60aa4d5536ab ("f2fs: fix use-after-free issue when accessing sbi->stat_info")
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/debug.c | 19 ++++++++++++-------
- fs/f2fs/super.c |  5 +++++
- 2 files changed, 17 insertions(+), 7 deletions(-)
+ tools/f2fs_io/f2fs_io.c | 53 +++++++++++++++++++++++++++++++++++++++++
+ tools/f2fs_io/f2fs_io.h | 11 +++++++++
+ 2 files changed, 64 insertions(+)
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index ebcc121920ba..503fde8349e6 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -96,8 +96,10 @@ static void update_general_status(struct f2fs_sb_info *sbi)
- 	si->free_secs = free_sections(sbi);
- 	si->prefree_count = prefree_segments(sbi);
- 	si->dirty_count = dirty_segments(sbi);
--	si->node_pages = NODE_MAPPING(sbi)->nrpages;
--	si->meta_pages = META_MAPPING(sbi)->nrpages;
-+	if (sbi->node_inode)
-+		si->node_pages = NODE_MAPPING(sbi)->nrpages;
-+	if (sbi->meta_inode)
-+		si->meta_pages = META_MAPPING(sbi)->nrpages;
- 	si->nats = NM_I(sbi)->nat_cnt;
- 	si->dirty_nats = NM_I(sbi)->dirty_nat_cnt;
- 	si->sits = MAIN_SEGS(sbi);
-@@ -175,7 +177,6 @@ static void update_sit_info(struct f2fs_sb_info *sbi)
- static void update_mem_info(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_stat_info *si = F2FS_STAT(sbi);
--	unsigned npages;
- 	int i;
- 
- 	if (si->base_mem)
-@@ -258,10 +259,14 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
- 						sizeof(struct extent_node);
- 
- 	si->page_mem = 0;
--	npages = NODE_MAPPING(sbi)->nrpages;
--	si->page_mem += (unsigned long long)npages << PAGE_SHIFT;
--	npages = META_MAPPING(sbi)->nrpages;
--	si->page_mem += (unsigned long long)npages << PAGE_SHIFT;
-+	if (sbi->node_inode) {
-+		unsigned npages = NODE_MAPPING(sbi)->nrpages;
-+		si->page_mem += (unsigned long long)npages << PAGE_SHIFT;
-+	}
-+	if (sbi->meta_inode) {
-+		unsigned npages = META_MAPPING(sbi)->nrpages;
-+		si->page_mem += (unsigned long long)npages << PAGE_SHIFT;
-+	}
+diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
+index 9c3863d..35ee76a 100644
+--- a/tools/f2fs_io/f2fs_io.c
++++ b/tools/f2fs_io/f2fs_io.c
+@@ -75,6 +75,58 @@ static void do_shutdown(int argc, char **argv, const struct cmd_desc *cmd)
+ 	exit(0);
  }
  
- static int stat_show(struct seq_file *s, void *v)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index c46a1d4318d4..14f033e1ab42 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1075,7 +1075,10 @@ static void f2fs_put_super(struct super_block *sb)
- 	f2fs_bug_on(sbi, sbi->fsync_node_num);
- 
- 	iput(sbi->node_inode);
-+	sbi->node_inode = NULL;
++#define pinfile_desc "pin file control"
++#define pinfile_help						\
++"f2fs_io pinfile [get|set] [file]\n\n"			\
++"get/set pinning given the file\n"				\
 +
- 	iput(sbi->meta_inode);
-+	sbi->meta_inode = NULL;
++static void do_pinfile(int argc, char **argv, const struct cmd_desc *cmd)
++{
++	u32 pin;
++	int ret, fd;
++
++	if (argc != 3) {
++		fputs("Excess arguments\n\n", stderr);
++		fputs(cmd->cmd_help, stderr);
++		exit(1);
++	}
++
++	fd = open(argv[2], O_RDWR);
++	if (fd == -1) {
++		fputs("Open failed\n\n", stderr);
++		fputs(cmd->cmd_help, stderr);
++		exit(1);
++	}
++
++	ret = -1;
++	if (!strcmp(argv[1], "set")) {
++		pin = 1;
++		ret = ioctl(fd, F2FS_IOC_SET_PIN_FILE, &pin);
++		if (ret != 0) {
++			perror("set_pin_file failed");
++			exit(1);
++		}
++		printf("set_pin_file: %u blocks moved in %s\n", ret, argv[2]);
++	} else if (!strcmp(argv[1], "get")) {
++		unsigned int flags;
++
++		ret = ioctl(fd, F2FS_IOC_GET_PIN_FILE, &pin);
++		if (ret < 0) {
++			perror("pin_file failed");
++			exit(1);
++		}
++		ret = ioctl(fd, F2FS_IOC_GETFLAGS, &flags);
++		if (ret < 0) {
++			perror("get flags failed");
++			exit(1);
++		}
++		printf("get_pin_file: %s with %u blocks moved in %s\n",
++				(flags & F2FS_PIN_FILE_FL) ? "pinned" : "un-pinned",
++				pin, argv[2]);
++	}
++	exit(0);
++}
++
+ #define CMD_HIDDEN 	0x0001
+ #define CMD(name) { #name, do_##name, name##_desc, name##_help, 0 }
+ #define _CMD(name) { #name, do_##name, NULL, NULL, CMD_HIDDEN }
+@@ -83,6 +135,7 @@ static void do_help(int argc, char **argv, const struct cmd_desc *cmd);
+ const struct cmd_desc cmd_list[] = {
+ 	_CMD(help),
+ 	CMD(shutdown),
++	CMD(pinfile),
+ 	{ NULL, NULL, NULL, NULL, 0 }
+ };
  
- 	/*
- 	 * iput() can update stat information, if f2fs_write_checkpoint()
-@@ -3410,6 +3413,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	f2fs_release_ino_entry(sbi, true);
- 	truncate_inode_pages_final(NODE_MAPPING(sbi));
- 	iput(sbi->node_inode);
-+	sbi->node_inode = NULL;
- free_stats:
- 	f2fs_destroy_stats(sbi);
- free_nm:
-@@ -3422,6 +3426,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- free_meta_inode:
- 	make_bad_inode(sbi->meta_inode);
- 	iput(sbi->meta_inode);
-+	sbi->meta_inode = NULL;
- free_io_dummy:
- 	mempool_destroy(sbi->write_io_dummy);
- free_percpu:
+diff --git a/tools/f2fs_io/f2fs_io.h b/tools/f2fs_io/f2fs_io.h
+index a02ff2d..882707c 100644
+--- a/tools/f2fs_io/f2fs_io.h
++++ b/tools/f2fs_io/f2fs_io.h
+@@ -36,7 +36,13 @@ typedef u16	__be16;
+ typedef u32	__be32;
+ #endif
+ 
++#ifndef FS_IOC_GETFLAGS
++#define FS_IOC_GETFLAGS			_IOR('f', 1, long)
++#endif
++
+ #define F2FS_IOCTL_MAGIC		0xf5
++#define F2FS_IOC_GETFLAGS		FS_IOC_GETFLAGS
++
+ #define F2FS_IOC_START_ATOMIC_WRITE	_IO(F2FS_IOCTL_MAGIC, 1)
+ #define F2FS_IOC_COMMIT_ATOMIC_WRITE	_IO(F2FS_IOCTL_MAGIC, 2)
+ #define F2FS_IOC_START_VOLATILE_WRITE	_IO(F2FS_IOCTL_MAGIC, 3)
+@@ -61,6 +67,11 @@ typedef u32	__be32;
+ #define F2FS_IOC_GET_ENCRYPTION_POLICY	FS_IOC_GET_ENCRYPTION_POLICY
+ #define F2FS_IOC_GET_ENCRYPTION_PWSALT	FS_IOC_GET_ENCRYPTION_PWSALT
+ 
++/*
++ * Inode flags
++ */
++#define F2FS_PIN_FILE_FL		0x40000000 /* pin_file status */
++
+ /*
+  * should be same as XFS_IOC_GOINGDOWN.
+  * Flags for going down operation used by FS_IOC_GOINGDOWN
 -- 
 2.19.0.605.g01d371f741-goog
