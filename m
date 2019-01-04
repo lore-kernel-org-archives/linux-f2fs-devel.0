@@ -1,73 +1,58 @@
-From: Daniel Colascione <dancol@google.com>
-Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
-Date: Fri, 4 Jan 2019 12:41:24 -0800
-Message-ID: <CAKOZuesHHSRCzQEtGEQbm7v7j53hAjkJq-8Pgcyk+M40o-ia0g@mail.gmail.com>
-References: <20181219071420.GC2628@infradead.org> <20181219021953.GD31274@dastard>
- <20181219193005.GB6889@mit.edu> <20181219213552.GO6311@dastard>
- <20181220220158.GC2360@mit.edu> <20181221070447.GA21687@infradead.org>
- <20181221154714.GA26547@mit.edu> <CAHk-=wgdzWgoPSuHeVcqmGE1hB3Gan72r2_AhtC14e60=z45yg@mail.gmail.com>
- <20181222041712.GC26547@mit.edu> <20181223041007.GL10600@bombadil.infradead.org>
- <20181223044553.GG26547@mit.edu>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH v2] f2fs: export FS_NOCOW_FL flag to user
+Date: Fri, 4 Jan 2019 12:44:49 -0800
+Message-ID: <20190104204449.GD57873@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190104041945.31802-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181223044553.GG26547@mit.edu>
+Content-Disposition: inline
+In-Reply-To: <20190104041945.31802-1-jaegeuk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Theodore Y. Ts'o" <tytso@mit.edu>, Matthew Wilcox <willy@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>, Christoph Hellwig <hch@infradead.org>, Dave Chinner <david@fromorbit.com>, "Darrick J. Wong" <darrick.wong@oracle.com>, Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-integrity@vger.kernel.org, Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Victor Hsieh <victorhsieh@google.com>, Chandan Rajendra <chandan@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Sat, Dec 22, 2018 at 8:46 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
->
-> On Sat, Dec 22, 2018 at 08:10:07PM -0800, Matthew Wilcox wrote:
-> > Pretty much every file format has the ability to put arbitrary blocks
-> > of information into a file somewhere the tools which don't know about
-> > it will skip it.  For example, ZIP "includes an extra field facility
-> > within file headers, which can be used to store extra data not defined
-> > by existing ZIP specifications, and which allow compliant archivers tha=
-t
-> > do not recognize the fields to safely skip them. Header IDs 0=E2=80=933=
-1 are
-> > reserved for use by PKWARE. The remaining IDs can be used by third-part=
-y
-> > vendors for proprietary usage. " (Wikipedia)
-> >
-> > ELF, PNG, PDF and many other formats have the ability to put data
-> > _somewhere_.  It might not be at the tail of the file, but there's
-> > somewhere to do it.
-> >
-> > (I appreciate this isn't what Linus is asking for, but I'm pointing out
-> > that this is by no means as intractable as you make it sound.)
->
-> That design would require the fs-verity code to know the type of eacho
-> file, and where to find the in-band Merkle tree for each file type
-> that we wanted to support.  And if you wanted to use fs-verity to
-> protect a sudoers text configuration file (for example), we'd have to
-> teach sudo how to ignore the userspace visible Merkle tree.
+This exports pin_file status to user.
 
-I'm pretty late to the game, but I just want to bring up one approach
-that I'm not sure people have previously considered. You can't put the
-verification blob in an xattr due to xattr size limits, but you *can*
-put a filename in an xattr. What if, at open time, fs-verity looked
-for a specially-named xattr attached to a file, resolved that name
-like a symlink target, opened the pointed-to file, and just used
-*that* as the authentication blob? It'd also be possible to teach
-unlink to delete the pointed-to file when the pointer file is deleted
---- sort of like a simple and stupid kind of data fork.
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+v2:
+ - use F2FS_NOCOW_FL (aka FS_NOCOW_FL)
 
-For example, if you wanted to secure /usr/bin/emacs, you could set an
-security.fsverify.verification_file xattr (in the system namespace
-because the xattr has special semantics) to
-"/.verification-blobs/@usr@bin@emacs.hashtree" or something like that.
-Then, open(2) on /usr/bin/emacs would, internally to VFS, also open
-/.verification-blobs/@usr@bin@emacs.hashtree and read verification
-data from it, transparently to both users and the underlying
-filesystem. If someone deleted /usr/bin/emacs, VFS would automatically
-delete /.verification-blobs/@usr@bin@emacs.hashtree. If
-/.verification-blobs/@usr@bin@emacs.hashtree didn't exist at time of
-open(2) of /usr/bin/emacs, or couldn't be opened for whatever reason,
-the open(2) of /usr/bin/emacs would fail.
+ fs/f2fs/f2fs.h | 3 ++-
+ fs/f2fs/file.c | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-ISTM that a scheme like this would give you some of the advantages of
-jumbo xattrs, but with much less implementation complexity. If
-someone's proposed something like this before, sorry for the noise.
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 12fabd6735dd..9286ec381453 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2301,11 +2301,12 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
+ #define F2FS_EXTENTS_FL			0x00080000 /* Inode uses extents */
+ #define F2FS_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
+ #define F2FS_EOFBLOCKS_FL		0x00400000 /* Blocks allocated beyond EOF */
++#define F2FS_NOCOW_FL			0x00800000 /* Do not cow file */
+ #define F2FS_INLINE_DATA_FL		0x10000000 /* Inode has inline data. */
+ #define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
+ #define F2FS_RESERVED_FL		0x80000000 /* reserved for ext4 lib */
+ 
+-#define F2FS_FL_USER_VISIBLE		0x304BDFFF /* User visible flags */
++#define F2FS_FL_USER_VISIBLE		0x30CBDFFF /* User visible flags */
+ #define F2FS_FL_USER_MODIFIABLE		0x204BC0FF /* User modifiable flags */
+ 
+ /* Flags we can manipulate with through F2FS_IOC_FSSETXATTR */
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index ae2b45e75847..0d461321edfc 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1651,6 +1651,8 @@ static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
+ 		flags |= F2FS_ENCRYPT_FL;
+ 	if (f2fs_has_inline_data(inode) || f2fs_has_inline_dentry(inode))
+ 		flags |= F2FS_INLINE_DATA_FL;
++	if (is_inode_flag_set(inode, FI_PIN_FILE))
++		flags |= F2FS_NOCOW_FL;
+ 
+ 	flags &= F2FS_FL_USER_VISIBLE;
+ 
+-- 
+2.19.0.605.g01d371f741-goog
