@@ -1,58 +1,70 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2] f2fs: export FS_NOCOW_FL flag to user
-Date: Fri, 4 Jan 2019 12:44:49 -0800
-Message-ID: <20190104204449.GD57873@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190104041945.31802-1-jaegeuk@kernel.org>
+From: Aravind R S <aravindet@gmail.com>
+Subject: fsck.f2fs segmentation fault
+Date: Sun, 6 Jan 2019 01:04:33 +0800
+Message-ID: <CAHZgRdCiOSCokGRYuAgY27+mHS-wQmx5bjSsW_cuZ5OM0MZcHA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190104041945.31802-1-jaegeuk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <aravindet@gmail.com>) id 1gfpNs-0007ye-19
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 05 Jan 2019 17:05:16 +0000
+Received: from mail-vk1-f181.google.com ([209.85.221.181])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1gfpNq-000uwD-HJ
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 05 Jan 2019 17:05:15 +0000
+Received: by mail-vk1-f181.google.com with SMTP id w72so8583877vkd.5
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat, 05 Jan 2019 09:05:14 -0800 (PST)
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-This exports pin_file status to user.
+I use Arch Linux and the versions of the kernel and f2fs-tools
+provided by that distro. I have an F2FS filesystem that seems to have
+become corrupt and cannot be mounted, and running fsck.f2fs on it
+results in a segmentation fault:
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+# fsck.f2fs /dev/sda2
+Info: [/dev/sda2] Disk Model: Samsung SSD 840
+Info: Segments per section = 1
+Info: Sections per zone = 1
+Info: sector size = 512
+Info: total sectors = 234041344 (114278 MB)
+Info: MKFS version
+  ""
+Info: FSCK version
+  from "Linux version 4.19.1-arch1-1-ARCH (builduser@heftig-16768)
+(gcc version 8.2.1 20180831 (GCC)) #1 SMP PREEMPT Sun Nov 4 16:49:26
+UTC 2018"
+    to "Linux version 4.20.0-arch1-1-ARCH (builduser@heftig-29859)
+(gcc version 8.2.1 20181127 (GCC)) #1 SMP PREEMPT Mon Dec 24 03:00:40
+UTC 2018"
+[update_superblock: 513] Info: Done to update superblock
+Info: superblock features = 0 :
+Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
+Info: total FS sectors = 234041344 (114278 MB)
+Info: CKPT version = fb3d6
+[1]    2643 segmentation fault  sudo fsck.f2fs /dev/sda2
+
 ---
-v2:
- - use F2FS_NOCOW_FL (aka FS_NOCOW_FL)
 
- fs/f2fs/f2fs.h | 3 ++-
- fs/f2fs/file.c | 2 ++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+# mount /dev/sda2 /mnt                                    :(
+mount: /mnt: wrong fs type, bad option, bad superblock on /dev/sda2,
+missing codepage or helper program, or other error.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 12fabd6735dd..9286ec381453 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2301,11 +2301,12 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
- #define F2FS_EXTENTS_FL			0x00080000 /* Inode uses extents */
- #define F2FS_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
- #define F2FS_EOFBLOCKS_FL		0x00400000 /* Blocks allocated beyond EOF */
-+#define F2FS_NOCOW_FL			0x00800000 /* Do not cow file */
- #define F2FS_INLINE_DATA_FL		0x10000000 /* Inode has inline data. */
- #define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
- #define F2FS_RESERVED_FL		0x80000000 /* reserved for ext4 lib */
- 
--#define F2FS_FL_USER_VISIBLE		0x304BDFFF /* User visible flags */
-+#define F2FS_FL_USER_VISIBLE		0x30CBDFFF /* User visible flags */
- #define F2FS_FL_USER_MODIFIABLE		0x204BC0FF /* User modifiable flags */
- 
- /* Flags we can manipulate with through F2FS_IOC_FSSETXATTR */
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index ae2b45e75847..0d461321edfc 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1651,6 +1651,8 @@ static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
- 		flags |= F2FS_ENCRYPT_FL;
- 	if (f2fs_has_inline_data(inode) || f2fs_has_inline_dentry(inode))
- 		flags |= F2FS_INLINE_DATA_FL;
-+	if (is_inode_flag_set(inode, FI_PIN_FILE))
-+		flags |= F2FS_NOCOW_FL;
- 
- 	flags &= F2FS_FL_USER_VISIBLE;
- 
--- 
-2.19.0.605.g01d371f741-goog
+---
+
+Please let me know how I can help debug further.
+
+Aravind
