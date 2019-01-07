@@ -1,41 +1,158 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: export FS_NOCOW_FL flag to user
-Date: Mon, 7 Jan 2019 09:39:22 +0800
-Message-ID: <ddb51856-ad8e-c1a2-344d-d408e137c3fb@huawei.com>
-References: <20190104041945.31802-1-jaegeuk@kernel.org>
- <20190104204449.GD57873@jaegeuk-macbookpro.roam.corp.google.com>
+From: sunqiuyang <sunqiuyang@huawei.com>
+Subject: [PATCH v3 1/2] f2fs-dev: support multi-device direct IO
+Date: Mon, 7 Jan 2019 10:19:33 +0800
+Message-ID: <20190107021933.32741-1-sunqiuyang@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1ggJtp-0001Xn-FF
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Jan 2019 01:40:17 +0000
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1ggJto-000VOX-2P
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Jan 2019 01:40:17 +0000
-In-Reply-To: <20190104204449.GD57873@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: sunqiuyang@huawei.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2019/1/5 4:44, Jaegeuk Kim wrote:
-> This exports pin_file status to user.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Qiuyang Sun <sunqiuyang@huawei.com>
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Changelog v1 ==> v2:
+1. Modify the definition of update_device_state(),
+   and call it in direct write;
+2. Move some local variables into branches where they are used.
 
-Thanks,
+Changelog v2 ==> v3:
+Rename update_device_state() to f2fs_update_device_state() like other
+exported function names, otherwise it may pollute global namespace of
+functions in kernel.
+
+Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
+---
+ fs/f2fs/data.c    | 25 ++++++++++++++++++++++++-
+ fs/f2fs/f2fs.h    |  4 ++--
+ fs/f2fs/segment.c | 12 ++++++------
+ 3 files changed, 32 insertions(+), 9 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index e5cd3fd..b35e042 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1076,6 +1076,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ 	struct extent_info ei = {0,0,0};
+ 	block_t blkaddr;
+ 	unsigned int start_pgofs;
++	block_t end_blk;
+ 
+ 	if (!maxblocks)
+ 		return 0;
+@@ -1207,8 +1208,17 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ 
+ 		map->m_pblk = blkaddr;
+ 		map->m_len = 1;
++
++		if (sbi->s_ndevs && blkaddr != NEW_ADDR &&
++							blkaddr != NULL_ADDR) {
++			int devi;
++
++			devi = f2fs_target_device_index(sbi, blkaddr);
++			end_blk = FDEV(devi).end_blk;
++		}
+ 	} else if ((map->m_pblk != NEW_ADDR &&
+-			blkaddr == (map->m_pblk + ofs)) ||
++			blkaddr == (map->m_pblk + ofs) &&
++			(!sbi->s_ndevs || blkaddr <= end_blk)) ||
+ 			(map->m_pblk == NEW_ADDR && blkaddr == NEW_ADDR) ||
+ 			flag == F2FS_GET_BLOCK_PRE_DIO) {
+ 		ofs++;
+@@ -1322,6 +1332,7 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
+ {
+ 	struct f2fs_map_blocks map;
+ 	int err;
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 
+ 	map.m_lblk = iblock;
+ 	map.m_len = bh->b_size >> inode->i_blkbits;
+@@ -1333,6 +1344,18 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
+ 	err = f2fs_map_blocks(inode, &map, create, flag);
+ 	if (!err) {
+ 		map_bh(bh, inode->i_sb, map.m_pblk);
++		if (sbi->s_ndevs) {
++			int devi;
++
++			devi = f2fs_target_device_index(sbi, map.m_pblk);
++			if (devi) {
++				bh->b_bdev = FDEV(devi).bdev;
++				bh->b_blocknr -= FDEV(devi).start_blk;
++			}
++			if (may_write)
++				f2fs_update_device_state(sbi, inode->i_ino,
++								map.m_pblk);
++		}
+ 		bh->b_state = (bh->b_state & ~F2FS_MAP_FLAGS) | map.m_flags;
+ 		bh->b_size = (u64)map.m_len << inode->i_blkbits;
+ 	}
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index eeede26..7e423e4 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3056,6 +3056,8 @@ int f2fs_lookup_journal_in_cursum(struct f2fs_journal *journal, int type,
+ int f2fs_rw_hint_to_seg_type(enum rw_hint hint);
+ enum rw_hint f2fs_io_type_to_rw_hint(struct f2fs_sb_info *sbi,
+ 			enum page_type type, enum temp_type temp);
++void f2fs_update_device_state(struct f2fs_sb_info *sbi, nid_t ino,
++			block_t blkaddr);
+ 
+ /*
+  * checkpoint.c
+@@ -3595,8 +3597,6 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
+ 
+ 	if (f2fs_post_read_required(inode))
+ 		return true;
+-	if (sbi->s_ndevs)
+-		return true;
+ 	/*
+ 	 * for blkzoned device, fallback direct IO to buffered IO, so
+ 	 * all IOs can be serialized by log-structured write.
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index a361d61..2a21d87 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3050,18 +3050,18 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+ 	up_read(&SM_I(sbi)->curseg_lock);
+ }
+ 
+-static void update_device_state(struct f2fs_io_info *fio)
++void f2fs_update_device_state(struct f2fs_sb_info *sbi, nid_t ino,
++						block_t blkaddr)
+ {
+-	struct f2fs_sb_info *sbi = fio->sbi;
+ 	unsigned int devidx;
+ 
+ 	if (!sbi->s_ndevs)
+ 		return;
+ 
+-	devidx = f2fs_target_device_index(sbi, fio->new_blkaddr);
++	devidx = f2fs_target_device_index(sbi, blkaddr);
+ 
+ 	/* update device state for fsync */
+-	f2fs_set_dirty_device(sbi, fio->ino, devidx, FLUSH_INO);
++	f2fs_set_dirty_device(sbi, ino, devidx, FLUSH_INO);
+ 
+ 	/* update device state for checkpoint */
+ 	if (!f2fs_test_bit(devidx, (char *)&sbi->dirty_device)) {
+@@ -3092,7 +3092,7 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
+ 		goto reallocate;
+ 	}
+ 
+-	update_device_state(fio);
++	f2fs_update_device_state(fio->sbi, fio->ino, fio->new_blkaddr);
+ 
+ 	if (keep_order)
+ 		up_read(&fio->sbi->io_order_lock);
+@@ -3168,7 +3168,7 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
+ 	else
+ 		err = f2fs_submit_page_bio(fio);
+ 	if (!err)
+-		update_device_state(fio);
++		f2fs_update_device_state(fio->sbi, fio->ino, fio->new_blkaddr);
+ 
+ 	f2fs_update_iostat(fio->sbi, fio->io_type, F2FS_BLKSIZE);
+ 
+-- 
+1.8.3.1
