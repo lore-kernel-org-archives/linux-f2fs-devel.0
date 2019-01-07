@@ -1,158 +1,189 @@
-From: sunqiuyang <sunqiuyang@huawei.com>
-Subject: [PATCH v3 1/2] f2fs-dev: support multi-device direct IO
-Date: Mon, 7 Jan 2019 10:19:33 +0800
-Message-ID: <20190107021933.32741-1-sunqiuyang@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v2] f2fs: fix sbi->extent_list corruption issue
+Date: Mon, 7 Jan 2019 10:25:11 +0800
+Message-ID: <0197c64e-6419-db96-d8a9-d17f446aa9c1@huawei.com>
+References: <1543207640-31033-1-git-send-email-stummala@codeaurora.org>
+ <20190104080535.GB8475@codeaurora.org>
+ <20190104203329.GA57873@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190104203329.GA57873@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: sunqiuyang@huawei.com
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Sahitya Tummala <stummala@codeaurora.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Qiuyang Sun <sunqiuyang@huawei.com>
+On 2019/1/5 4:33, Jaegeuk Kim wrote:
+> On 01/04, Sahitya Tummala wrote:
+>> On Mon, Nov 26, 2018 at 10:17:20AM +0530, Sahitya Tummala wrote:
+>>> When there is a failure in f2fs_fill_super() after/during
+>>> the recovery of fsync'd nodes, it frees the current sbi and
+>>> retries again. This time the mount is successful, but the files
+>>> that got recovered before retry, still holds the extent tree,
+>>> whose extent nodes list is corrupted since sbi and sbi->extent_list
+>>> is freed up. The list_del corruption issue is observed when the
+>>> file system is getting unmounted and when those recoverd files extent
+>>> node is being freed up in the below context.
+>>>
+>>> list_del corruption. prev->next should be fffffff1e1ef5480, but was (null)
+>>> <...>
+>>> kernel BUG at kernel/msm-4.14/lib/list_debug.c:53!
+>>> task: fffffff1f46f2280 task.stack: ffffff8008068000
+>>> lr : __list_del_entry_valid+0x94/0xb4
+>>> pc : __list_del_entry_valid+0x94/0xb4
+>>> <...>
+>>> Call trace:
+>>> __list_del_entry_valid+0x94/0xb4
+>>> __release_extent_node+0xb0/0x114
+>>> __free_extent_tree+0x58/0x7c
+>>> f2fs_shrink_extent_tree+0xdc/0x3b0
+>>> f2fs_leave_shrinker+0x28/0x7c
+>>> f2fs_put_super+0xfc/0x1e0
+>>> generic_shutdown_super+0x70/0xf4
+>>> kill_block_super+0x2c/0x5c
+>>> kill_f2fs_super+0x44/0x50
+>>> deactivate_locked_super+0x60/0x8c
+>>> deactivate_super+0x68/0x74
+>>> cleanup_mnt+0x40/0x78
+>>> __cleanup_mnt+0x1c/0x28
+>>> task_work_run+0x48/0xd0
+>>> do_notify_resume+0x678/0xe98
+>>> work_pending+0x8/0x14
+>>>
+>>> Fix this by cleaning up inodes, extent tree and nodes of those
+>>> recovered files before freeing up sbi and before next retry.
+>>>
+>> Hi Jaegeuk, Chao,
+>>
+>> I have observed another scenario where the similar list corruption issue
+>> can happen with sbi->inode_list as well. If recover_fsync_data()
+>> fails at some point in write_checkpoint() due to some error and if
+>> those recovered inodes are still dirty, then after the mount is
+>> successful, this issue is observed when that dirty inode is under 
+>> writeback.
+> 
+> recover_fsync_data() does iget/iput in pair, and destroy_fsync_dnodes() drops
+> its dirty list and call iput(), when there is an error. So, after then, there'd
+> be no dirty inodes. If there's no error, checkpoint() flushes quota/dentry pages
+> in dirty inodes as well. Can we check where this dirty inode came from?
 
-Changelog v1 ==> v2:
-1. Modify the definition of update_device_state(),
-   and call it in direct write;
-2. Move some local variables into branches where they are used.
+I guess it comes from:
 
-Changelog v2 ==> v3:
-Rename update_device_state() to f2fs_update_device_state() like other
-exported function names, otherwise it may pollute global namespace of
-functions in kernel.
+f2fs_recover_fsync_data()
 
-Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
----
- fs/f2fs/data.c    | 25 ++++++++++++++++++++++++-
- fs/f2fs/f2fs.h    |  4 ++--
- fs/f2fs/segment.c | 12 ++++++------
- 3 files changed, 32 insertions(+), 9 deletions(-)
+	/* Needed for iput() to work correctly and not trash data */
+	sbi->sb->s_flags |= SB_ACTIVE;
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index e5cd3fd..b35e042 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1076,6 +1076,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 	struct extent_info ei = {0,0,0};
- 	block_t blkaddr;
- 	unsigned int start_pgofs;
-+	block_t end_blk;
- 
- 	if (!maxblocks)
- 		return 0;
-@@ -1207,8 +1208,17 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 
- 		map->m_pblk = blkaddr;
- 		map->m_len = 1;
-+
-+		if (sbi->s_ndevs && blkaddr != NEW_ADDR &&
-+							blkaddr != NULL_ADDR) {
-+			int devi;
-+
-+			devi = f2fs_target_device_index(sbi, blkaddr);
-+			end_blk = FDEV(devi).end_blk;
-+		}
- 	} else if ((map->m_pblk != NEW_ADDR &&
--			blkaddr == (map->m_pblk + ofs)) ||
-+			blkaddr == (map->m_pblk + ofs) &&
-+			(!sbi->s_ndevs || blkaddr <= end_blk)) ||
- 			(map->m_pblk == NEW_ADDR && blkaddr == NEW_ADDR) ||
- 			flag == F2FS_GET_BLOCK_PRE_DIO) {
- 		ofs++;
-@@ -1322,6 +1332,7 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
- {
- 	struct f2fs_map_blocks map;
- 	int err;
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 
- 	map.m_lblk = iblock;
- 	map.m_len = bh->b_size >> inode->i_blkbits;
-@@ -1333,6 +1344,18 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
- 	err = f2fs_map_blocks(inode, &map, create, flag);
- 	if (!err) {
- 		map_bh(bh, inode->i_sb, map.m_pblk);
-+		if (sbi->s_ndevs) {
-+			int devi;
-+
-+			devi = f2fs_target_device_index(sbi, map.m_pblk);
-+			if (devi) {
-+				bh->b_bdev = FDEV(devi).bdev;
-+				bh->b_blocknr -= FDEV(devi).start_blk;
-+			}
-+			if (may_write)
-+				f2fs_update_device_state(sbi, inode->i_ino,
-+								map.m_pblk);
-+		}
- 		bh->b_state = (bh->b_state & ~F2FS_MAP_FLAGS) | map.m_flags;
- 		bh->b_size = (u64)map.m_len << inode->i_blkbits;
- 	}
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index eeede26..7e423e4 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3056,6 +3056,8 @@ int f2fs_lookup_journal_in_cursum(struct f2fs_journal *journal, int type,
- int f2fs_rw_hint_to_seg_type(enum rw_hint hint);
- enum rw_hint f2fs_io_type_to_rw_hint(struct f2fs_sb_info *sbi,
- 			enum page_type type, enum temp_type temp);
-+void f2fs_update_device_state(struct f2fs_sb_info *sbi, nid_t ino,
-+			block_t blkaddr);
- 
- /*
-  * checkpoint.c
-@@ -3595,8 +3597,6 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
- 
- 	if (f2fs_post_read_required(inode))
- 		return true;
--	if (sbi->s_ndevs)
--		return true;
- 	/*
- 	 * for blkzoned device, fallback direct IO to buffered IO, so
- 	 * all IOs can be serialized by log-structured write.
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index a361d61..2a21d87 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3050,18 +3050,18 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 	up_read(&SM_I(sbi)->curseg_lock);
- }
- 
--static void update_device_state(struct f2fs_io_info *fio)
-+void f2fs_update_device_state(struct f2fs_sb_info *sbi, nid_t ino,
-+						block_t blkaddr)
- {
--	struct f2fs_sb_info *sbi = fio->sbi;
- 	unsigned int devidx;
- 
- 	if (!sbi->s_ndevs)
- 		return;
- 
--	devidx = f2fs_target_device_index(sbi, fio->new_blkaddr);
-+	devidx = f2fs_target_device_index(sbi, blkaddr);
- 
- 	/* update device state for fsync */
--	f2fs_set_dirty_device(sbi, fio->ino, devidx, FLUSH_INO);
-+	f2fs_set_dirty_device(sbi, ino, devidx, FLUSH_INO);
- 
- 	/* update device state for checkpoint */
- 	if (!f2fs_test_bit(devidx, (char *)&sbi->dirty_device)) {
-@@ -3092,7 +3092,7 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
- 		goto reallocate;
- 	}
- 
--	update_device_state(fio);
-+	f2fs_update_device_state(fio->sbi, fio->ino, fio->new_blkaddr);
- 
- 	if (keep_order)
- 		up_read(&fio->sbi->io_order_lock);
-@@ -3168,7 +3168,7 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
- 	else
- 		err = f2fs_submit_page_bio(fio);
- 	if (!err)
--		update_device_state(fio);
-+		f2fs_update_device_state(fio->sbi, fio->ino, fio->new_blkaddr);
- 
- 	f2fs_update_iostat(fio->sbi, fio->io_type, F2FS_BLKSIZE);
- 
--- 
-1.8.3.1
+iput_final()
+
+	if (!drop && (sb->s_flags & SB_ACTIVE)) {
+		inode_add_lru(inode);
+		spin_unlock(&inode->i_lock);
+		return;
+	}
+
+So dirty data in those inode can be remained after iput(), then meta/node
+can be persisted during next checkpoint, if checkpoint failed due to error,
+dirty inode remain in system. IIUC.
+
+> 
+> Oh, one sceanrio can be an error by f2fs_disable_checkpoint() which will do GC.
+> 
+>>
+>> [   90.400500] list_del corruption. prev->next should be ffffffed1f566208, but was (null)
+>> [   90.675349] Call trace:
+>> [   90.677869]  __list_del_entry_valid+0x94/0xb4
+>> [   90.682351]  remove_dirty_inode+0xac/0x114
+>> [   90.686563]  __f2fs_write_data_pages+0x6a8/0x6c8
+>> [   90.691302]  f2fs_write_data_pages+0x40/0x4c
+>> [   90.695695]  do_writepages+0x80/0xf0
+>> [   90.699372]  __writeback_single_inode+0xdc/0x4ac
+>> [   90.704113]  writeback_sb_inodes+0x280/0x440
+>> [   90.708501]  wb_writeback+0x1b8/0x3d0
+>> [   90.712267]  wb_workfn+0x1a8/0x4d4
+>> [   90.715765]  process_one_work+0x1c0/0x3d4
+>> [   90.719883]  worker_thread+0x224/0x344
+>> [   90.723739]  kthread+0x120/0x130
+>> [   90.727055]  ret_from_fork+0x10/0x18
+>>
+>> I think it is better to cleanup those inodes completely before freeing sbi
+>> and before next retry as done in this patch. Would you like to re-consider
+>> this patch for this new issue?
+> 
+> The patch was merged in mainline already.
+> Could you take a look at this patch?
+> 
+>>From cb1d20e640402beed300c2bdce79311ee8a781ad Mon Sep 17 00:00:00 2001
+> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> Date: Fri, 4 Jan 2019 12:29:00 -0800
+> Subject: [PATCH] f2fs: sync filesystem after roll-forward recovery
+
+You mean android kernel mainline?
+
+Thanks,
+
+> 
+> Some works after roll-forward recovery can get an error which will release
+> all the data structures. Let's flush them in order to make it clean.
+> 
+> One possible corruption came from:
+> 
+> [   90.400500] list_del corruption. prev->next should be ffffffed1f566208, but was (null)
+> [   90.675349] Call trace:
+> [   90.677869]  __list_del_entry_valid+0x94/0xb4
+> [   90.682351]  remove_dirty_inode+0xac/0x114
+> [   90.686563]  __f2fs_write_data_pages+0x6a8/0x6c8
+> [   90.691302]  f2fs_write_data_pages+0x40/0x4c
+> [   90.695695]  do_writepages+0x80/0xf0
+> [   90.699372]  __writeback_single_inode+0xdc/0x4ac
+> [   90.704113]  writeback_sb_inodes+0x280/0x440
+> [   90.708501]  wb_writeback+0x1b8/0x3d0
+> [   90.712267]  wb_workfn+0x1a8/0x4d4
+> [   90.715765]  process_one_work+0x1c0/0x3d4
+> [   90.719883]  worker_thread+0x224/0x344
+> [   90.723739]  kthread+0x120/0x130
+> [   90.727055]  ret_from_fork+0x10/0x18
+> 
+> Reported-by: Sahitya Tummala <stummala@codeaurora.org>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/super.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 547cb7459be7..bb02186293a3 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -3357,7 +3357,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  	if (test_opt(sbi, DISABLE_CHECKPOINT)) {
+>  		err = f2fs_disable_checkpoint(sbi);
+>  		if (err)
+> -			goto free_meta;
+> +			goto sync_free_meta;
+>  	} else if (is_set_ckpt_flags(sbi, CP_DISABLED_FLAG)) {
+>  		f2fs_enable_checkpoint(sbi);
+>  	}
+> @@ -3370,7 +3370,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  		/* After POR, we can run background GC thread.*/
+>  		err = f2fs_start_gc_thread(sbi);
+>  		if (err)
+> -			goto free_meta;
+> +			goto sync_free_meta;
+>  	}
+>  	kvfree(options);
+>  
+> @@ -3392,6 +3392,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  	f2fs_update_time(sbi, REQ_TIME);
+>  	return 0;
+>  
+> +sync_free_meta:
+> +	/* safe to flush all the data */
+> +	sync_filesystem(sbi->sb);
+> +
+>  free_meta:
+>  	/* flush dirty orphan inode objects */
+>  	f2fs_sync_inode_meta(sbi);
+> 
