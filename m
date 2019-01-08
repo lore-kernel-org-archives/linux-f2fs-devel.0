@@ -1,21 +1,24 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] fsck.f2fs: don't ask anything on dry-run
-Date: Tue,  8 Jan 2019 14:02:55 -0800
-Message-ID: <20190108220255.46531-1-jaegeuk@kernel.org>
+Subject: Re: [PATCH] libf2fs: fix to detect stat() failure
+Date: Tue, 8 Jan 2019 15:46:00 -0800
+Message-ID: <20190108234600.GA55897@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20181210101333.111826-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1ggzSi-0002BI-F8
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 08 Jan 2019 22:03:04 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1gh14V-0000La-MZ
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 08 Jan 2019 23:46:11 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1ggzSg-006XP1-Iv
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 08 Jan 2019 22:03:04 +0000
+ id 1gh14R-006kX6-0Y
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 08 Jan 2019 23:46:10 +0000
+Content-Disposition: inline
+In-Reply-To: <20181210101333.111826-1-yuchao0@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -25,28 +28,41 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-It doesn't need to ask recovering corruption on dry-run mode.
+On 12/10, Chao Yu wrote:
+> stat() can fail due to a lot of reasons, let f2fs_dev_is_umounted()
+> detect such error and handle it correctly.
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  lib/libf2fs.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+> index c692bf2da635..6a1040feff32 100644
+> --- a/lib/libf2fs.c
+> +++ b/lib/libf2fs.c
+> @@ -713,7 +713,14 @@ int f2fs_dev_is_umounted(char *path)
+>  	st_buf = malloc(sizeof(struct stat));
+>  	ASSERT(st_buf);
+>  
+> -	if (stat(path, st_buf) == 0 && S_ISBLK(st_buf->st_mode)) {
+> +	ret = stat(path, st_buf);
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fsck/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+We have to allow creating non-existing image file to build userdata.img. Can we
+check its errno?
 
-diff --git a/fsck/main.c b/fsck/main.c
-index 65bdb5d..d3f0c0d 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -822,7 +822,7 @@ fsck_again:
- 	f2fs_do_umount(sbi);
- 
- 	if (c.func == FSCK && c.bug_on) {
--		if (!c.ro && c.fix_on == 0 && c.auto_fix == 0) {
-+		if (!c.ro && c.fix_on == 0 && c.auto_fix == 0 && !c.dry_run) {
- 			char ans[255] = {0};
- retry:
- 			printf("Do you want to fix this partition? [Y/N] ");
--- 
-2.19.0.605.g01d371f741-goog
+> +	if (ret) {
+> +		MSG(0, "\tError: stat %s failed!\n", path);
+> +		free(st_buf);
+> +		return -1;
+> +	}
+> +
+> +	if (S_ISBLK(st_buf->st_mode)) {
+>  		int fd = open(path, O_RDONLY | O_EXCL);
+>  
+>  		if (fd >= 0) {
+> -- 
+> 2.18.0.rc1
