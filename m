@@ -1,49 +1,70 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix to set sbi dirty correctly
-Date: Thu, 10 Jan 2019 16:40:12 +0800
-Message-ID: <20190110084012.115473-1-yuchao0@huawei.com>
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+Subject: Proposal: A new fs-verity interface
+Date: Thu, 10 Jan 2019 00:15:00 -0500
+Message-ID: <20190110051500.GA32361@mit.edu>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <tytso@mit.edu>) id 1ghWxb-0004W6-GG
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 10 Jan 2019 09:49:11 +0000
+Received: from mail-eopbgr730091.outbound.protection.outlook.com
+ ([40.107.73.91] helo=NAM05-DM3-obe.outbound.protection.outlook.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1ghWxZ-008Ufl-9T
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 10 Jan 2019 09:49:11 +0000
+Content-Disposition: inline
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Linus Torvalds <torvalds@linux-foundation.org>, Christoph Hellwig <hch@infradead.org>, Dave Chinner <david@fromorbit.com>, "Darrick J. Wong" <darrick.wong@oracle.com>, Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-In order to record direct IO count, we add two additional type in
-enum count_type: F2FS_DIO_{WRITE,READ}, but those IO won't dirty
-filesystem metadata, so we don't need to set filesystem dirty in
-inc_page_count(), fix it.
+The following approach is based in Darrick's suggestion:
 
-Fixes: 02b16d0a34a1 ("f2fs: add to account direct IO")
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/f2fs.h | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+int ioctl(fd, FS_IOC_ENABLE_VERITY, struct fsverity_arg *arg);
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 94315e8423a9..dc8498e3d03c 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1793,13 +1793,12 @@ static inline void inc_page_count(struct f2fs_sb_info *sbi, int count_type)
- {
- 	atomic_inc(&sbi->nr_pages[count_type]);
- 
--	if (count_type == F2FS_DIRTY_DATA || count_type == F2FS_INMEM_PAGES ||
--		count_type == F2FS_WB_CP_DATA || count_type == F2FS_WB_DATA ||
--		count_type == F2FS_RD_DATA || count_type == F2FS_RD_NODE ||
--		count_type == F2FS_RD_META)
--		return;
--
--	set_sbi_flag(sbi, SBI_IS_DIRTY);
-+	if (count_type == F2FS_DIRTY_DENTS ||
-+			count_type == F2FS_DIRTY_NODES ||
-+			count_type == F2FS_DIRTY_META ||
-+			count_type == F2FS_DIRTY_QDATA ||
-+			count_type == F2FS_DIRTY_IMETA)
-+		set_sbi_flag(sbi, SBI_IS_DIRTY);
- }
- 
- static inline void inode_inc_dirty_pages(struct inode *inode)
--- 
-2.18.0.rc1
+struct fsverity_arg {
+       int fsv_donor_fd;
+       u64 fsv_offset;
+       u64 fsv_size;
+};
+
+fsv_offset and fsz_size must be a multiple of the file system block
+size.  If the ioctl comples successfully, as a side effect the
+donor_fd will have a hole punch operation on the specified range.  In
+other words, the equivalent of operation of fallocate(fsv_donor_fd,
+FALLOC_FL_PUNCH_HOLE, fsv_offset, fsv_size), and the file specified by
+fd will be protected using fsverity.
+
+It will be legal for fsv_donor_fd == fd, so this interface is a
+superset of the original FS_IOC_ENABLE_VERITY ioctl.
+
+This will hopefully make Christoph and Dave happy because the
+interface does not presuppose how ext4 and f2fs will implement
+fsverity behind the scenes.  However, it does not forbid it, and the
+net cost is that ext4 and f2fs will have to implement code which
+transplants the blocks from the donor_fd to fd in the case where
+donor_fd != fd --- and in the case where blocks are encrypted using
+fscrypt, we will have to decrypt the blocks from donor_fd and possibly
+re-encrypt then in fd's per-file key, which means we'll have to add
+extra complexity to implement the decrypt and re-encrypt passing
+through the page cache.
+
+But if this helps resolve Christoph and Dave's objections, it
+shouldn't be _too_ much extra complexity.  Before we go ahead an
+implement it, though, I'd appreciate a confirmation that this will
+indeed actually resolve their complaints.
+
+Thanks,
+
+					- Ted
