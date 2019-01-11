@@ -1,79 +1,329 @@
-From: Eric Biggers <ebiggers@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] fscrypt: remove filesystem specific build
- config option
-Date: Thu, 10 Jan 2019 17:01:17 -0800
-Message-ID: <20190111010116.GG149637@gmail.com>
-References: <20190110233230.GA23953@roeck-us.net>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [bug report] f2fs: use rb_*_cached friends
+Date: Fri, 11 Jan 2019 10:00:38 +0800
+Message-ID: <df21c5ad-ace3-06c7-c8f6-c19e263b3174@huawei.com>
+References: <20181011122342.GA23299@mwanda>
+ <de7d9aa6-b828-f2d9-4568-bfc758fad9d0@kernel.org>
+ <20190110225119.GE149637@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190110233230.GA23953@roeck-us.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>, Theodore Ts'o <tytso@mit.edu>
-Cc: Chandan Rajendra <chandan@linux.vnet.ibm.com>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1ghm7y-0007Jk-D3
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 11 Jan 2019 02:00:54 +0000
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1ghm7r-00CD5p-Oc
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 11 Jan 2019 02:00:54 +0000
+In-Reply-To: <20190110225119.GE149637@gmail.com>
+Content-Language: en-US
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Eric Biggers <ebiggers@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-f2fs-devel@lists.sourceforge.net
 
-On Thu, Jan 10, 2019 at 03:32:30PM -0800, Guenter Roeck wrote:
-> On Sat, Dec 08, 2018 at 12:21:38PM +0530, Chandan Rajendra wrote:
-> > In order to have a common code base for fscrypt "post read" processing
-> > for all filesystems which support encryption, this commit removes
-> > filesystem specific build config option (e.g. CONFIG_EXT4_FS_ENCRYPTION)
-> > and replaces it with a build option (i.e. CONFIG_FS_ENCRYPTION) whose
-> > value affects all the filesystems making use of fscrypt.
-> > 
-> > Signed-off-by: Chandan Rajendra <chandan@linux.vnet.ibm.com>
-> > Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Hi Eric,
+
+On 2019/1/11 6:51, Eric Biggers wrote:
+> Hi Chao,
 > 
-> This results in:
+> On Fri, Oct 12, 2018 at 10:00:20PM +0800, Chao Yu wrote:
+>> Hi Dan,
+>>
+>> Firstly, thanks for the report. :)
+>>
+>> On 2018-10-11 20:23, Dan Carpenter wrote:
+>>> Hello Chao Yu,
+>>>
+>>> The patch df634f444ee9: "f2fs: use rb_*_cached friends" from Oct 4,
+>>> 2018, leads to the following static checker warning:
+>>>
+>>> 	fs/f2fs/extent_cache.c:606 f2fs_update_extent_tree_range()
+>>> 	error: uninitialized symbol 'leftmost'.
+>>>
+>>> fs/f2fs/extent_cache.c
+>>>    497  static void f2fs_update_extent_tree_range(struct inode *inode,
+>>>    498                                  pgoff_t fofs, block_t blkaddr, unsigned int len)
+>>>    499  {
+>>>    500          struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>>>    501          struct extent_tree *et = F2FS_I(inode)->extent_tree;
+>>>    502          struct extent_node *en = NULL, *en1 = NULL;
+>>>    503          struct extent_node *prev_en = NULL, *next_en = NULL;
+>>>    504          struct extent_info ei, dei, prev;
+>>>    505          struct rb_node **insert_p = NULL, *insert_parent = NULL;
+>>>    506          unsigned int end = fofs + len;
+>>>    507          unsigned int pos = (unsigned int)fofs;
+>>>    508          bool updated = false;
+>>>    509          bool leftmost;
+>>>    510  
+>>>    511          if (!et)
+>>>    512                  return;
+>>>    513  
+>>>    514          trace_f2fs_update_extent_tree_range(inode, fofs, blkaddr, len);
+>>>    515  
+>>>    516          write_lock(&et->lock);
+>>>    517  
+>>>    518          if (is_inode_flag_set(inode, FI_NO_EXTENT)) {
+>>>    519                  write_unlock(&et->lock);
+>>>    520                  return;
+>>>    521          }
+>>>    522  
+>>>    523          prev = et->largest;
+>>>    524          dei.len = 0;
+>>>    525  
+>>>    526          /*
+>>>    527           * drop largest extent before lookup, in case it's already
+>>>    528           * been shrunk from extent tree
+>>>    529           */
+>>>    530          __drop_largest_extent(et, fofs, len);
+>>>    531  
+>>>    532          /* 1. lookup first extent node in range [fofs, fofs + len - 1] */
+>>>    533          en = (struct extent_node *)f2fs_lookup_rb_tree_ret(&et->root,
+>>>    534                                          (struct rb_entry *)et->cached_en, fofs,
+>>>    535                                          (struct rb_entry **)&prev_en,
+>>>    536                                          (struct rb_entry **)&next_en,
+>>>    537                                          &insert_p, &insert_parent, false,
+>>>    538                                          &leftmost);
+>>>                                                  ^^^^^^^^
+>>> Not always initialized in there.
+>>
+>> I think the behavior should be acting as designed.
+>>
+>> f2fs_lookup_rb_tree_ret()
+>> {
+>> ...
+>> 	*insert_p = NULL;
+>> 	*insert_parent = NULL;
+>> 	*prev_entry = NULL;
+>> 	*next_entry = NULL;
+>>
+>> 	if (RB_EMPTY_ROOT(&root->rb_root))
+>> 		return NULL;
+>>
+>> 	if (re) {
+>> 		if (re->ofs <= ofs && re->ofs + re->len > ofs)
+>> 			goto lookup_neighbors;
+>> 	}
+>>
+>> Until here, @leftmost has not been initialized, but both *insert_p and
+>> *insert_parent are NULL,
+>>
+>> 	if (leftmost)
+>> 		*leftmost = true;
+>> ...
+>> }
+>>
+>> Later in __insert_extent_tree()
+>>
+>> we will not hit below condition because insert_p & insert_parent are not valid:
+>> 	if (insert_p && insert_parent) {
+>> 		parent = insert_parent;
+>> 		p = insert_p;
+>> 		goto do_insert;
+>> 	}
+>>
+>> 	leftmost = true;
+>>
+>> So finally, we will initialize leftmost's value here, anyway, I think there is
+>> such place we use an uninitialized variable.
+>>
+>> BTW, do we have any chance to detect such case in smatch?
+>>
+>> Thanks,
+>>
+>>>
+>>>    539          if (!en)
+>>>    540                  en = next_en;
+>>>    541  
+>>>    542          /* 2. invlidate all extent nodes in range [fofs, fofs + len - 1] */
+>>>    543          while (en && en->ei.fofs < end) {
+>>>    544                  unsigned int org_end;
+>>>    545                  int parts = 0;  /* # of parts current extent split into */
+>>>    546  
+>>>    547                  next_en = en1 = NULL;
+>>>    548  
+>>>    549                  dei = en->ei;
+>>>    550                  org_end = dei.fofs + dei.len;
+>>>    551                  f2fs_bug_on(sbi, pos >= org_end);
+>>>    552  
+>>>    553                  if (pos > dei.fofs &&   pos - dei.fofs >= F2FS_MIN_EXTENT_LEN) {
+>>>    554                          en->ei.len = pos - en->ei.fofs;
+>>>    555                          prev_en = en;
+>>>    556                          parts = 1;
+>>>    557                  }
+>>>    558  
+>>>    559                  if (end < org_end && org_end - end >= F2FS_MIN_EXTENT_LEN) {
+>>>    560                          if (parts) {
+>>>    561                                  set_extent_info(&ei, end,
+>>>    562                                                  end - dei.fofs + dei.blk,
+>>>    563                                                  org_end - end);
+>>>    564                                  en1 = __insert_extent_tree(sbi, et, &ei,
+>>>    565                                                          NULL, NULL, true);
+>>>    566                                  next_en = en1;
+>>>    567                          } else {
+>>>    568                                  en->ei.fofs = end;
+>>>    569                                  en->ei.blk += end - dei.fofs;
+>>>    570                                  en->ei.len -= end - dei.fofs;
+>>>    571                                  next_en = en;
+>>>    572                          }
+>>>    573                          parts++;
+>>>    574                  }
+>>>    575  
+>>>    576                  if (!next_en) {
+>>>    577                          struct rb_node *node = rb_next(&en->rb_node);
+>>>    578  
+>>>    579                          next_en = rb_entry_safe(node, struct extent_node,
+>>>    580                                                  rb_node);
+>>>    581                  }
+>>>    582  
+>>>    583                  if (parts)
+>>>    584                          __try_update_largest_extent(et, en);
+>>>    585                  else
+>>>    586                          __release_extent_node(sbi, et, en);
+>>>    587  
+>>>    588                  /*
+>>>    589                   * if original extent is split into zero or two parts, extent
+>>>    590                   * tree has been altered by deletion or insertion, therefore
+>>>    591                   * invalidate pointers regard to tree.
+>>>    592                   */
+>>>    593                  if (parts != 1) {
+>>>    594                          insert_p = NULL;
+>>>    595                          insert_parent = NULL;
+>>>    596                  }
+>>>    597                  en = next_en;
+>>>    598          }
+>>>    599  
+>>>    600          /* 3. update extent in extent cache */
+>>>    601          if (blkaddr) {
+>>>    602  
+>>>    603                  set_extent_info(&ei, fofs, blkaddr, len);
+>>>    604                  if (!__try_merge_extent_node(sbi, et, &ei, prev_en, next_en))
+>>>    605                          __insert_extent_tree(sbi, et, &ei,
+>>>    606                                          insert_p, insert_parent, leftmost);
+>>>                                                                          ^^^^^^^^
+>>> Smatch complains, but I'm to stupid to know if it's valid.
+>>>
+>>>    607  
+>>>    608                  /* give up extent_cache, if split and small updates happen */
+>>>    609                  if (dei.len >= 1 &&
+>>>    610                                  prev.len < F2FS_MIN_EXTENT_LEN &&
+>>>    611                                  et->largest.len < F2FS_MIN_EXTENT_LEN) {
+>>>    612                          et->largest.len = 0;
+>>>    613                          et->largest_updated = true;
+>>>    614                          set_inode_flag(inode, FI_NO_EXTENT);
+>>>    615                  }
+>>>    616          }
+>>>
+>>> regards,
+>>> dan carpenter
+>>>
 > 
-> Building ia64:allnoconfig ... failed
-> --------------
-> Error log:
-> make[1]: Entering directory '/tmp/buildbot-builddir.7Wft3'
->   GEN     Makefile
-> scripts/kconfig/conf  --allnoconfig Kconfig
-> arch/ia64/Kconfig:128:error: recursive dependency detected!
-> arch/ia64/Kconfig:128:	choice <choice> contains symbol IA64_HP_SIM
-> arch/ia64/Kconfig:202:	symbol IA64_HP_SIM is part of choice PM
-> kernel/power/Kconfig:144:	symbol PM is selected by PM_SLEEP
-> kernel/power/Kconfig:104:	symbol PM_SLEEP depends on HIBERNATE_CALLBACKS
-> kernel/power/Kconfig:31:	symbol HIBERNATE_CALLBACKS is selected by HIBERNATION
-> kernel/power/Kconfig:34:	symbol HIBERNATION depends on SWAP
-> init/Kconfig:250:	symbol SWAP depends on BLOCK
-> block/Kconfig:5:	symbol BLOCK is selected by UBIFS_FS
-> fs/ubifs/Kconfig:1:	symbol UBIFS_FS depends on MISC_FILESYSTEMS
-> fs/Kconfig:227:	symbol MISC_FILESYSTEMS is selected by ACPI_APEI
-> drivers/acpi/apei/Kconfig:8:	symbol ACPI_APEI depends on ACPI
-> drivers/acpi/Kconfig:9:	symbol ACPI depends on ARCH_SUPPORTS_ACPI
-> drivers/acpi/Kconfig:6:	symbol ARCH_SUPPORTS_ACPI is selected by IA64_HP_SIM
-> arch/ia64/Kconfig:202:	symbol IA64_HP_SIM is part of choice <choice>
-> For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> subsection "Kconfig recursive dependency limitations"
+> I get an UBSAN warning on this same line, so this seems to be a real bug.
+> It goes away if I initialize 'leftmost'.
 > 
-> Didn't we have exactly the same problem before ?
+> To reproduce, build a kernel with CONFIG_F2FS_FS=y CONFIG_F2FS_FS_ENCRYPTION=y
+> CONFIG_UBSAN=y CONFIG_KASAN=y and run 'kvm-xfstests -c f2fs generic/397'.
+> (There's probably a better reproducer, but that's how I saw it.)
 > 
-> Guenter
+> This is on latest mainline.
+> 
+> ================================================================================
+> UBSAN: Undefined behaviour in fs/f2fs/extent_cache.c:605:4
 
-Indeed, Chandan Rajendra sent out a new version of the patch which fixes the
-problem (by removing the 'select BLOCK' from fs/ubifs/Kconfig), but it never
-made it into the fscrypt tree and hence never made it into linux-next.
+When passing @leftmost to __insert_extent_tree() located in
+extent_cache.c:605, its value could be uninitialized if we go into below
+two paths, but notice that insert_p & insert_parent are both invalid.
 
-Ted, what you are planning to do with the fscrypt tree following the fsverity
-discussion?  IMO, we should keep the fsverity stuff in its own branch, separate
-from any fscrypt changes.  As a suggestion, in the branch "fscrypt" of my
-linux.git repo [1], I applied just these four patches on top of v5.0-rc1 and
-resolved the conflicts with them no longer being on top of fsverity:
+f2fs_lookup_rb_tree_ret()
+{
+	*insert_p = NULL;
+	*insert_parent = NULL;
+..
 
-	fscrypt: remove CRYPTO_CTR dependency
-	ext4: use IS_ENCRYPTED() to check encryption status
-	f2fs: use IS_ENCRYPTED() to check encryption status
-	fscrypt: remove filesystem specific build config option
+	if (RB_EMPTY_ROOT(&root->rb_root))
+		return NULL;
+		^^^^^^^^^^^^
 
-(The last patch is the fixed version.)
+	if (re) {
+		if (re->ofs <= ofs && re->ofs + re->len > ofs)
+			goto lookup_neighbors;
+			^^^^^^^^^^^^^^^^^^^^^^
+	}
 
-Please consider doing the same with the official fscrypt tree.  Thanks!
+	if (leftmost)
+		*leftmost = true;
+}
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=fscrypt
 
-- Eric
+And then, you can see that we will reinitialize leftmost value if insert_p
+& insert_parent are invalid, so before we use @leftmost in
+f2fs_lookup_rb_tree_for_insert and __attach_extent_node, it should be
+initialized one.
+
+__insert_extent_tree()
+{
+...
+	if (insert_p && insert_parent) {
+		parent = insert_parent;
+		p = insert_p;
+		goto do_insert;
+	}
+
+	leftmost = true;
+	^^^^^^^^^^^^^^^^
+
+	p = f2fs_lookup_rb_tree_for_insert(sbi, &et->root, &parent,
+						ei->fofs, &leftmost);
+do_insert:
+	en = __attach_extent_node(sbi, et, ei, parent, p, leftmost);
+...
+}
+
+IMO, it can cause UBSAN warning, rather than corrupt extent cache rb-tree,
+but, anyway, I agree that we need to fix it to avoid UBSAN warning.
+
+Thanks,
+
+> load of value 255 is not a valid value for type '_Bool'
+> CPU: 0 PID: 94 Comm: kworker/u4:2 Not tainted 5.0.0-rc1-00043-g1bdbe22749207 #14
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> Workqueue: writeback wb_workfn (flush-254:32)
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x70/0xa5 lib/dump_stack.c:113
+>  ubsan_epilogue+0xd/0x40 lib/ubsan.c:159
+>  __ubsan_handle_load_invalid_value+0x8e/0xa0 lib/ubsan.c:457
+>  f2fs_update_extent_tree_range+0x6e9/0x760 fs/f2fs/extent_cache.c:605
+>  f2fs_update_extent_cache+0xce/0xf0 fs/f2fs/extent_cache.c:804
+>  f2fs_update_data_blkaddr+0x18/0x20 fs/f2fs/data.c:639
+>  f2fs_outplace_write_data+0x63/0x130 fs/f2fs/segment.c:3147
+>  f2fs_do_write_data_page+0x3ae/0x7e0 fs/f2fs/data.c:1892
+>  __write_data_page+0x734/0xd00 fs/f2fs/data.c:1993
+>  f2fs_write_cache_pages+0x1fb/0x610 fs/f2fs/data.c:2160
+>  __f2fs_write_data_pages fs/f2fs/data.c:2273 [inline]
+>  f2fs_write_data_pages+0x3dc/0x450 fs/f2fs/data.c:2300
+>  do_writepages+0x43/0xf0 mm/page-writeback.c:2335
+>  __writeback_single_inode+0x56/0x660 fs/fs-writeback.c:1316
+>  writeback_sb_inodes+0x20b/0x6b0 fs/fs-writeback.c:1580
+>  wb_writeback+0x10f/0x510 fs/fs-writeback.c:1756
+>  wb_do_writeback fs/fs-writeback.c:1901 [inline]
+>  wb_workfn+0xa7/0x670 fs/fs-writeback.c:1942
+>  process_one_work+0x25d/0x670 kernel/workqueue.c:2153
+>  worker_thread+0x3e/0x3d0 kernel/workqueue.c:2296
+>  kthread+0x124/0x140 kernel/kthread.c:246
+>  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+> ================================================================================
+> 
+> .
+> 
