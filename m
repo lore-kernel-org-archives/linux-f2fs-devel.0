@@ -1,26 +1,28 @@
-From: Phillip Potter <phil@philpotter.co.uk>
-Subject: [RFC][PATCH v5 06/09] f2fs: use common file type
- conversion
-Date: Mon, 21 Jan 2019 00:54:34 +0000
-Message-ID: <20190121005434.GA32358@pathfinder>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] libf2fs: fix to detect stat() failure
+Date: Sun, 20 Jan 2019 19:37:02 -0800
+Message-ID: <20190121033702.GA70751@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20181210101333.111826-1-yuchao0@huawei.com>
+ <20190108234600.GA55897@jaegeuk-macbookpro.roam.corp.google.com>
+ <33b6e171-a915-dd7b-b825-84151ca6b608@huawei.com>
+ <20190109044206.GC55897@jaegeuk-macbookpro.roam.corp.google.com>
+ <a9f4ae37-1b48-1b5a-31a8-e60f642a5200@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <phil@philpotter.co.uk>) id 1glOHb-0002Xx-MA
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 Jan 2019 01:21:47 +0000
-Received: from mail-wr1-f67.google.com ([209.85.221.67])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1glOHZ-004fmo-5V
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 Jan 2019 01:21:47 +0000
-Received: by mail-wr1-f67.google.com with SMTP id j2so21500676wrw.1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 20 Jan 2019 17:21:44 -0800 (PST)
+ (envelope-from <jaegeuk@kernel.org>) id 1glQOm-0005kw-OJ
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 Jan 2019 03:37:20 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1glQOc-0017l0-F4
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 Jan 2019 03:37:20 +0000
 Content-Disposition: inline
+In-Reply-To: <a9f4ae37-1b48-1b5a-31a8-e60f642a5200@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,105 +32,78 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, amir73il@gmail.com, viro@zeniv.linux.org.uk, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Deduplicate the f2fs file type conversion implementation and remove
-F2FS_FT_* definitions - file systems that use the same file types
-as defined by POSIX do not need to define their own versions and can
-use the common helper functions decared in fs_types.h and implemented
-in fs_types.c
+On 01/09, Chao Yu wrote:
+> On 2019/1/9 12:42, Jaegeuk Kim wrote:
+> > On 01/09, Chao Yu wrote:
+> >> On 2019/1/9 7:46, Jaegeuk Kim wrote:
+> >>> On 12/10, Chao Yu wrote:
+> >>>> stat() can fail due to a lot of reasons, let f2fs_dev_is_umounted()
+> >>>> detect such error and handle it correctly.
+> >>>>
+> >>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >>>> ---
+> >>>>  lib/libf2fs.c | 9 ++++++++-
+> >>>>  1 file changed, 8 insertions(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+> >>>> index c692bf2da635..6a1040feff32 100644
+> >>>> --- a/lib/libf2fs.c
+> >>>> +++ b/lib/libf2fs.c
+> >>>> @@ -713,7 +713,14 @@ int f2fs_dev_is_umounted(char *path)
+> >>>>  	st_buf = malloc(sizeof(struct stat));
+> >>>>  	ASSERT(st_buf);
+> >>>>  
+> >>>> -	if (stat(path, st_buf) == 0 && S_ISBLK(st_buf->st_mode)) {
+> >>>> +	ret = stat(path, st_buf);
+> >>>
+> >>> We have to allow creating non-existing image file to build userdata.img. Can we
+> >>> check its errno?
+> >>
+> >> You mean sload flow? so how about?
+> > 
+> > mkfs.f2fs on non-existing image file?
+> 
+> That's not allowed as e2fsprogs does?
 
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
----
- fs/f2fs/dir.c           | 27 ++-------------------------
- fs/f2fs/inline.c        |  2 +-
- include/linux/f2fs_fs.h | 15 ---------------
- 3 files changed, 3 insertions(+), 41 deletions(-)
+I'm not sure it's spec tho, this patch breaks android build which looks like
+regression. Do we have any issue to fix with this patch?
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 50d0d36280fa..797e926388ea 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -36,37 +36,14 @@ static unsigned int bucket_blocks(unsigned int level)
- 		return 4;
- }
- 
--static unsigned char f2fs_filetype_table[F2FS_FT_MAX] = {
--	[F2FS_FT_UNKNOWN]	= DT_UNKNOWN,
--	[F2FS_FT_REG_FILE]	= DT_REG,
--	[F2FS_FT_DIR]		= DT_DIR,
--	[F2FS_FT_CHRDEV]	= DT_CHR,
--	[F2FS_FT_BLKDEV]	= DT_BLK,
--	[F2FS_FT_FIFO]		= DT_FIFO,
--	[F2FS_FT_SOCK]		= DT_SOCK,
--	[F2FS_FT_SYMLINK]	= DT_LNK,
--};
--
--static unsigned char f2fs_type_by_mode[S_IFMT >> S_SHIFT] = {
--	[S_IFREG >> S_SHIFT]	= F2FS_FT_REG_FILE,
--	[S_IFDIR >> S_SHIFT]	= F2FS_FT_DIR,
--	[S_IFCHR >> S_SHIFT]	= F2FS_FT_CHRDEV,
--	[S_IFBLK >> S_SHIFT]	= F2FS_FT_BLKDEV,
--	[S_IFIFO >> S_SHIFT]	= F2FS_FT_FIFO,
--	[S_IFSOCK >> S_SHIFT]	= F2FS_FT_SOCK,
--	[S_IFLNK >> S_SHIFT]	= F2FS_FT_SYMLINK,
--};
--
- static void set_de_type(struct f2fs_dir_entry *de, umode_t mode)
- {
--	de->file_type = f2fs_type_by_mode[(mode & S_IFMT) >> S_SHIFT];
-+	de->file_type = fs_umode_to_ftype(mode);
- }
- 
- unsigned char f2fs_get_de_type(struct f2fs_dir_entry *de)
- {
--	if (de->file_type < F2FS_FT_MAX)
--		return f2fs_filetype_table[de->file_type];
--	return DT_UNKNOWN;
-+	return fs_ftype_to_dtype(de->file_type);
- }
- 
- static unsigned long dir_block_index(unsigned int level,
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index d636cbcf68f2..8b4648221820 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -458,7 +458,7 @@ static int f2fs_add_inline_entries(struct inode *dir, void *inline_dentry)
- 		new_name.len = le16_to_cpu(de->name_len);
- 
- 		ino = le32_to_cpu(de->ino);
--		fake_mode = f2fs_get_de_type(de) << S_SHIFT;
-+		fake_mode = f2fs_get_de_type(de) << S_DT_SHIFT;
- 
- 		err = f2fs_add_regular_entry(dir, &new_name, NULL, NULL,
- 							ino, fake_mode);
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index d7711048ef93..2961c3477e95 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -524,21 +524,6 @@ struct f2fs_dentry_block {
- 	__u8 filename[NR_DENTRY_IN_BLOCK][F2FS_SLOT_LEN];
- } __packed;
- 
--/* file types used in inode_info->flags */
--enum {
--	F2FS_FT_UNKNOWN,
--	F2FS_FT_REG_FILE,
--	F2FS_FT_DIR,
--	F2FS_FT_CHRDEV,
--	F2FS_FT_BLKDEV,
--	F2FS_FT_FIFO,
--	F2FS_FT_SOCK,
--	F2FS_FT_SYMLINK,
--	F2FS_FT_MAX
--};
--
--#define S_SHIFT 12
--
- #define	F2FS_DEF_PROJID		0	/* default project ID */
- 
- #endif  /* _LINUX_F2FS_FS_H */
--- 
-2.20.1
+> 
+> mkfs.ext4 /home/image/img
+> mke2fs 1.44.4 (18-Aug-2018)
+> The file /home/image/img does not exist and no size was specified.
+> 
+> > 
+> >>
+> >> if (ret) {
+> >> 	if (errno == ENOENT && c.func == SLOAD)
+> >> 		return 0;
+> >> 	MSG(0, "\tError: stat %s failed!\n", path);
+> >> 	free(st_buf);
+> >> 	return -1;
+> >> }
+> >>
+> >> Thanks,
+> >>
+> >>>
+> >>>> +	if (ret) {
+> >>>> +		MSG(0, "\tError: stat %s failed!\n", path);
+> >>>> +		free(st_buf);
+> >>>> +		return -1;
+> >>>> +	}
+> >>>> +
+> >>>> +	if (S_ISBLK(st_buf->st_mode)) {
+> >>>>  		int fd = open(path, O_RDONLY | O_EXCL);
+> >>>>  
+> >>>>  		if (fd >= 0) {
+> >>>> -- 
+> >>>> 2.18.0.rc1
+> >>>
+> >>> .
+> >>>
+> > 
+> > .
+> > 
