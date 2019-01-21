@@ -1,244 +1,134 @@
-From: Kyungtae Kim <kt0755@gmail.com>
-Subject: INFO: task hung in drop_inmem_page
-Date: Fri, 18 Jan 2019 15:18:42 -0500
-Message-ID: <CAEAjamtqMwYxdm6ZM3ZchUaga=xht4yWP8=LaUaDj6nbQWFGjA@mail.gmail.com>
+From: Phillip Potter <phil@philpotter.co.uk>
+Subject: [RFC][PATCH v5 06/09] f2fs: use common file type
+ conversion
+Date: Mon, 21 Jan 2019 00:54:34 +0000
+Message-ID: <20190121005434.GA32358@pathfinder>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: Byoungyoung Lee <lifeasageek@gmail.com>, DaeRyong Jeong <threeearcat@gmail.com>, linux-kernel@vger.kernel.org, syzkaller@googlegroups.com, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <phil@philpotter.co.uk>) id 1glOHb-0002Xx-MA
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 Jan 2019 01:21:47 +0000
+Received: from mail-wr1-f67.google.com ([209.85.221.67])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1glOHZ-004fmo-5V
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 Jan 2019 01:21:47 +0000
+Received: by mail-wr1-f67.google.com with SMTP id j2so21500676wrw.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sun, 20 Jan 2019 17:21:44 -0800 (PST)
+Content-Disposition: inline
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, amir73il@gmail.com, viro@zeniv.linux.org.uk, linux-f2fs-devel@lists.sourceforge.net
 
-I'm reporting a bug in linux-4.17.19: "INFO: task hung in
-drop_inmem_page" (no reproducer)
+Deduplicate the f2fs file type conversion implementation and remove
+F2FS_FT_* definitions - file systems that use the same file types
+as defined by POSIX do not need to define their own versions and can
+use the common helper functions decared in fs_types.h and implemented
+in fs_types.c
 
-I think this might be somehow related to the following:
-https://groups.google.com/forum/#!searchin/syzkaller-bugs/INFO$3A$20task$20hung$20in$20%7Csort:date/syzkaller-bugs/c6soBTrdaIo/AjAzPeIzCgAJ
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
+---
+ fs/f2fs/dir.c           | 27 ++-------------------------
+ fs/f2fs/inline.c        |  2 +-
+ include/linux/f2fs_fs.h | 15 ---------------
+ 3 files changed, 3 insertions(+), 41 deletions(-)
 
-=========================================
-INFO: task syz-executor7:10822 blocked for more than 120 seconds.
-      Not tainted 4.17.19 #1
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor7   D27024 10822   6346 0x00000004
-Call Trace:
- context_switch kernel/sched/core.c:2867 [inline]
- __schedule+0x721/0x1e60 kernel/sched/core.c:3515
- schedule+0x88/0x1c0 kernel/sched/core.c:3559
- schedule_preempt_disabled+0x18/0x30 kernel/sched/core.c:3617
- __mutex_lock_common kernel/locking/mutex.c:833 [inline]
- __mutex_lock+0x5bd/0x1410 kernel/locking/mutex.c:893
- mutex_lock_nested+0x1b/0x20 kernel/locking/mutex.c:908
- drop_inmem_page+0xcb/0x810 fs/f2fs/segment.c:327
- f2fs_invalidate_page+0x337/0x5e0 fs/f2fs/data.c:2401
- do_invalidatepage mm/truncate.c:165 [inline]
- truncate_cleanup_page+0x261/0x330 mm/truncate.c:187
- truncate_inode_pages_range+0x552/0x1610 mm/truncate.c:367
- truncate_inode_pages mm/truncate.c:478 [inline]
- truncate_pagecache+0x6d/0x90 mm/truncate.c:801
- truncate_setsize+0x81/0xa0 mm/truncate.c:826
- f2fs_setattr+0x44f/0x1270 fs/f2fs/file.c:781
- notify_change+0xa62/0xe80 fs/attr.c:313
- do_truncate+0x12e/0x1e0 fs/open.c:63
- do_last fs/namei.c:2955 [inline]
- path_openat+0x2042/0x29f0 fs/namei.c:3505
- do_filp_open+0x1bd/0x2c0 fs/namei.c:3540
- do_sys_open+0x35e/0x4e0 fs/open.c:1101
- __do_sys_open fs/open.c:1119 [inline]
- __se_sys_open fs/open.c:1114 [inline]
- __x64_sys_open+0x89/0xc0 fs/open.c:1114
- do_syscall_64+0xc4/0x4e0 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4497b9
-RSP: 002b:00007f734e459c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007f734e45a6cc RCX: 00000000004497b9
-RDX: 0000000000000104 RSI: 00000000000a8280 RDI: 0000000020000080
-RBP: 000000000071bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000007230 R14: 00000000006f02d0 R15: 00007f734e45a700
-INFO: task syz-executor7:10858 blocked for more than 120 seconds.
-      Not tainted 4.17.19 #1
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor7   D28880 10858   6346 0x00000004
-Call Trace:
- context_switch kernel/sched/core.c:2867 [inline]
- __schedule+0x721/0x1e60 kernel/sched/core.c:3515
- schedule+0x88/0x1c0 kernel/sched/core.c:3559
- __rwsem_down_write_failed_common kernel/locking/rwsem-xadd.c:565 [inline]
- rwsem_down_write_failed+0x5e6/0xc90 kernel/locking/rwsem-xadd.c:594
- call_rwsem_down_write_failed+0x17/0x30 arch/x86/lib/rwsem.S:117
- __down_write arch/x86/include/asm/rwsem.h:142 [inline]
- down_write+0x58/0xa0 kernel/locking/rwsem.c:72
- inode_lock include/linux/fs.h:713 [inline]
- do_truncate+0x120/0x1e0 fs/open.c:61
- do_last fs/namei.c:2955 [inline]
- path_openat+0x2042/0x29f0 fs/namei.c:3505
- do_filp_open+0x1bd/0x2c0 fs/namei.c:3540
- do_sys_open+0x35e/0x4e0 fs/open.c:1101
- __do_sys_open fs/open.c:1119 [inline]
- __se_sys_open fs/open.c:1114 [inline]
- __x64_sys_open+0x89/0xc0 fs/open.c:1114
- do_syscall_64+0xc4/0x4e0 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4497b9
-RSP: 002b:00007f734e3b4c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007f734e3b56cc RCX: 00000000004497b9
-RDX: 0000000000000104 RSI: 00000000000a8280 RDI: 0000000020000080
-RBP: 000000000071c238 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000007230 R14: 00000000006f02d0 R15: 00007f734e3b5700
-INFO: task syz-executor5:10829 blocked for more than 120 seconds.
-      Not tainted 4.17.19 #1
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor5   D28760 10829   6308 0x80000002
-Call Trace:
- context_switch kernel/sched/core.c:2867 [inline]
- __schedule+0x721/0x1e60 kernel/sched/core.c:3515
- schedule+0x88/0x1c0 kernel/sched/core.c:3559
- io_schedule+0x21/0x80 kernel/sched/core.c:5179
- wait_on_page_bit_common mm/filemap.c:1100 [inline]
- __lock_page+0x2b5/0x390 mm/filemap.c:1273
- lock_page include/linux/pagemap.h:483 [inline]
- __revoke_inmem_pages+0xb35/0x11c0 fs/f2fs/segment.c:231
- drop_inmem_pages+0xa3/0x3e0 fs/f2fs/segment.c:306
- f2fs_release_file+0x2c7/0x330 fs/f2fs/file.c:1556
- __fput+0x2c7/0x780 fs/file_table.c:209
- ____fput+0x1a/0x20 fs/file_table.c:243
- task_work_run+0x151/0x1d0 kernel/task_work.c:113
- exit_task_work include/linux/task_work.h:22 [inline]
- do_exit+0x8ba/0x30a0 kernel/exit.c:865
- do_group_exit+0x13b/0x3a0 kernel/exit.c:968
- get_signal+0x6bb/0x1650 kernel/signal.c:2482
- do_signal+0x84/0x1b70 arch/x86/kernel/signal.c:810
- exit_to_usermode_loop+0x155/0x190 arch/x86/entry/common.c:162
- prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
- syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
- do_syscall_64+0x445/0x4e0 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4497b9
-RSP: 002b:00007f1c68e74ce8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 000000000071bf80 RCX: 00000000004497b9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000071bf80
-RBP: 000000000071bf80 R08: 0000000000000000 R09: 000000000071bf58
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f1c68e759c0 R15: 00007f1c68e75700
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/1715:
- #0: 00000000aeb8cd00 (tasklist_lock){.+.+}, at:
-debug_show_all_locks+0x7c/0x2b0 kernel/locking/lockdep.c:4470
-2 locks held by getty/6180:
- #0: 000000009ffda690 (&tty->ldisc_sem){++++}, at:
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
- #1: 00000000405232cd (&ldata->atomic_read_lock){+.+.}, at:
-n_tty_read+0x20a/0x1860 drivers/tty/n_tty.c:2140
-2 locks held by getty/6181:
- #0: 0000000084ba3035 (&tty->ldisc_sem){++++}, at:
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
- #1: 0000000071a219d9 (&ldata->atomic_read_lock){+.+.}, at:
-n_tty_read+0x20a/0x1860 drivers/tty/n_tty.c:2140
-2 locks held by getty/6182:
- #0: 00000000477179e0 (&tty->ldisc_sem){++++}, at:
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
- #1: 00000000be4fe263 (&ldata->atomic_read_lock){+.+.}, at:
-n_tty_read+0x20a/0x1860 drivers/tty/n_tty.c:2140
-2 locks held by getty/6183:
- #0: 00000000b3d05924 (&tty->ldisc_sem){++++}, at:
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
- #1: 0000000020e3b19b (&ldata->atomic_read_lock){+.+.}, at:
-n_tty_read+0x20a/0x1860 drivers/tty/n_tty.c:2140
-2 locks held by getty/6184:
- #0: 0000000049b0e21f (&tty->ldisc_sem){++++}, at:
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
- #1: 000000003929ab1b (&ldata->atomic_read_lock){+.+.}, at:
-n_tty_read+0x20a/0x1860 drivers/tty/n_tty.c:2140
-2 locks held by getty/6185:
- #0: 00000000c90895c5 (&tty->ldisc_sem){++++}, at:
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
- #1: 00000000896e1fe7 (&ldata->atomic_read_lock){+.+.}, at:
-n_tty_read+0x20a/0x1860 drivers/tty/n_tty.c:2140
-2 locks held by getty/6186:
- #0: 00000000eb674307 (&tty->ldisc_sem){++++}, at:
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
- #1: 00000000fa43aebb (&ldata->atomic_read_lock){+.+.}, at:
-n_tty_read+0x20a/0x1860 drivers/tty/n_tty.c:2140
-4 locks held by syz-executor7/10822:
- #0: 000000006dfdd6d5 (sb_writers#8){.+.+}, at: sb_start_write
-include/linux/fs.h:1550 [inline]
- #0: 000000006dfdd6d5 (sb_writers#8){.+.+}, at:
-mnt_want_write+0x46/0xc0 fs/namespace.c:386
- #1: 00000000dc29e189 (&sb->s_type->i_mutex_key#16){+.+.}, at:
-inode_lock include/linux/fs.h:713 [inline]
- #1: 00000000dc29e189 (&sb->s_type->i_mutex_key#16){+.+.}, at:
-do_truncate+0x120/0x1e0 fs/open.c:61
- #2: 000000001b235d12 (&fi->i_mmap_sem){+.+.}, at:
-f2fs_setattr+0x421/0x1270 fs/f2fs/file.c:780
- #3: 000000004a9caf7f (&fi->inmem_lock){+.+.}, at:
-drop_inmem_page+0xcb/0x810 fs/f2fs/segment.c:327
-2 locks held by syz-executor7/10858:
- #0: 000000006dfdd6d5 (sb_writers#8){.+.+}, at: sb_start_write
-include/linux/fs.h:1550 [inline]
- #0: 000000006dfdd6d5 (sb_writers#8){.+.+}, at:
-mnt_want_write+0x46/0xc0 fs/namespace.c:386
- #1: 00000000dc29e189 (&sb->s_type->i_mutex_key#16){+.+.}, at:
-inode_lock include/linux/fs.h:713 [inline]
- #1: 00000000dc29e189 (&sb->s_type->i_mutex_key#16){+.+.}, at:
-do_truncate+0x120/0x1e0 fs/open.c:61
-1 lock held by syz-executor5/10829:
- #0: 000000004a9caf7f (&fi->inmem_lock){+.+.}, at:
-drop_inmem_pages+0x86/0x3e0 fs/f2fs/segment.c:305
-2 locks held by syz-executor5/10893:
- #0: 000000006dfdd6d5 (sb_writers#8){.+.+}, at: sb_start_write
-include/linux/fs.h:1550 [inline]
- #0: 000000006dfdd6d5 (sb_writers#8){.+.+}, at:
-mnt_want_write_file+0x12a/0x340 fs/namespace.c:497
- #1: 00000000dc29e189 (&sb->s_type->i_mutex_key#16){+.+.}, at:
-inode_lock include/linux/fs.h:713 [inline]
- #1: 00000000dc29e189 (&sb->s_type->i_mutex_key#16){+.+.}, at:
-f2fs_ioc_start_atomic_write fs/f2fs/file.c:1671 [inline]
- #1: 00000000dc29e189 (&sb->s_type->i_mutex_key#16){+.+.}, at:
-f2fs_ioctl+0x101b/0x6c50 fs/f2fs/file.c:2853
-3 locks held by syz-executor5/10894:
- #0: 000000001e9f4016 (&f->f_pos_lock){+.+.}, at:
-__fdget_pos+0xd6/0x100 fs/file.c:766
- #1: 000000006dfdd6d5 (sb_writers#8){.+.+}, at: file_start_write
-include/linux/fs.h:2719 [inline]
- #1: 000000006dfdd6d5 (sb_writers#8){.+.+}, at: vfs_write+0x469/0x570
-fs/read_write.c:548
- #2: 00000000dc29e189 (&sb->s_type->i_mutex_key#16){+.+.}, at:
-inode_lock include/linux/fs.h:713 [inline]
- #2: 00000000dc29e189 (&sb->s_type->i_mutex_key#16){+.+.}, at:
-f2fs_file_write_iter+0x27a/0xcd0 fs/f2fs/file.c:2917
-1 lock held by syz-executor5/10895:
- #0: 000000001e9f4016 (&f->f_pos_lock){+.+.}, at:
-__fdget_pos+0xd6/0x100 fs/file.c:766
-2 locks held by syz-executor5/10896:
- #0: 000000006dfdd6d5 (sb_writers#8){.+.+}, at: sb_start_write
-include/linux/fs.h:1550 [inline]
- #0: 000000006dfdd6d5 (sb_writers#8){.+.+}, at:
-mnt_want_write_file+0x12a/0x340 fs/namespace.c:497
- #1: 00000000dc29e189 (&sb->s_type->i_mutex_key#16){+.+.}, at:
-inode_lock include/linux/fs.h:713 [inline]
- #1: 00000000dc29e189 (&sb->s_type->i_mutex_key#16){+.+.}, at:
-f2fs_ioc_start_atomic_write fs/f2fs/file.c:1671 [inline]
- #1: 00000000dc29e189 (&sb->s_type->i_mutex_key#16){+.+.}, at:
-f2fs_ioctl+0x101b/0x6c50 fs/f2fs/file.c:2853
-3 locks held by syz-executor5/10897:
- #0: 00000000b6b59b71 (&f->f_pos_lock){+.+.}, at:
-__fdget_pos+0xd6/0x100 fs/file.c:766
- #1: 000000006dfdd6d5 (sb_writers#8){.+.+}, at: file_start_write
-include/linux/fs.h:2719 [inline]
- #1: 000000006dfdd6d5 (sb_writers#8){.+.+}, at: vfs_write+0x469/0x570
-fs/read_write.c:548
- #2: 00000000dc29e189 (&sb->s_type->i_mutex_key#16){+.+.}, at:
-inode_lock include/linux/fs.h:713 [inline]
- #2: 00000000dc29e189 (&sb->s_type->i_mutex_key#16){+.+.}, at:
-f2fs_file_write_iter+0x27a/0xcd0 fs/f2fs/file.c:2917
-1 lock held by syz-executor5/10898:
- #0: 00000000b6b59b71 (&f->f_pos_lock){+.+.}, at:
-__fdget_pos+0xd6/0x100 fs/file.c:766
-
-=========================================
-
-Thanks,
-Kyungtae Kim
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 50d0d36280fa..797e926388ea 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -36,37 +36,14 @@ static unsigned int bucket_blocks(unsigned int level)
+ 		return 4;
+ }
+ 
+-static unsigned char f2fs_filetype_table[F2FS_FT_MAX] = {
+-	[F2FS_FT_UNKNOWN]	= DT_UNKNOWN,
+-	[F2FS_FT_REG_FILE]	= DT_REG,
+-	[F2FS_FT_DIR]		= DT_DIR,
+-	[F2FS_FT_CHRDEV]	= DT_CHR,
+-	[F2FS_FT_BLKDEV]	= DT_BLK,
+-	[F2FS_FT_FIFO]		= DT_FIFO,
+-	[F2FS_FT_SOCK]		= DT_SOCK,
+-	[F2FS_FT_SYMLINK]	= DT_LNK,
+-};
+-
+-static unsigned char f2fs_type_by_mode[S_IFMT >> S_SHIFT] = {
+-	[S_IFREG >> S_SHIFT]	= F2FS_FT_REG_FILE,
+-	[S_IFDIR >> S_SHIFT]	= F2FS_FT_DIR,
+-	[S_IFCHR >> S_SHIFT]	= F2FS_FT_CHRDEV,
+-	[S_IFBLK >> S_SHIFT]	= F2FS_FT_BLKDEV,
+-	[S_IFIFO >> S_SHIFT]	= F2FS_FT_FIFO,
+-	[S_IFSOCK >> S_SHIFT]	= F2FS_FT_SOCK,
+-	[S_IFLNK >> S_SHIFT]	= F2FS_FT_SYMLINK,
+-};
+-
+ static void set_de_type(struct f2fs_dir_entry *de, umode_t mode)
+ {
+-	de->file_type = f2fs_type_by_mode[(mode & S_IFMT) >> S_SHIFT];
++	de->file_type = fs_umode_to_ftype(mode);
+ }
+ 
+ unsigned char f2fs_get_de_type(struct f2fs_dir_entry *de)
+ {
+-	if (de->file_type < F2FS_FT_MAX)
+-		return f2fs_filetype_table[de->file_type];
+-	return DT_UNKNOWN;
++	return fs_ftype_to_dtype(de->file_type);
+ }
+ 
+ static unsigned long dir_block_index(unsigned int level,
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index d636cbcf68f2..8b4648221820 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -458,7 +458,7 @@ static int f2fs_add_inline_entries(struct inode *dir, void *inline_dentry)
+ 		new_name.len = le16_to_cpu(de->name_len);
+ 
+ 		ino = le32_to_cpu(de->ino);
+-		fake_mode = f2fs_get_de_type(de) << S_SHIFT;
++		fake_mode = f2fs_get_de_type(de) << S_DT_SHIFT;
+ 
+ 		err = f2fs_add_regular_entry(dir, &new_name, NULL, NULL,
+ 							ino, fake_mode);
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index d7711048ef93..2961c3477e95 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -524,21 +524,6 @@ struct f2fs_dentry_block {
+ 	__u8 filename[NR_DENTRY_IN_BLOCK][F2FS_SLOT_LEN];
+ } __packed;
+ 
+-/* file types used in inode_info->flags */
+-enum {
+-	F2FS_FT_UNKNOWN,
+-	F2FS_FT_REG_FILE,
+-	F2FS_FT_DIR,
+-	F2FS_FT_CHRDEV,
+-	F2FS_FT_BLKDEV,
+-	F2FS_FT_FIFO,
+-	F2FS_FT_SOCK,
+-	F2FS_FT_SYMLINK,
+-	F2FS_FT_MAX
+-};
+-
+-#define S_SHIFT 12
+-
+ #define	F2FS_DEF_PROJID		0	/* default project ID */
+ 
+ #endif  /* _LINUX_F2FS_FS_H */
+-- 
+2.20.1
