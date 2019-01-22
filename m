@@ -1,43 +1,113 @@
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: Re: Security fixes for 4.4 - f2fs
-Date: Tue, 22 Jan 2019 14:51:01 +0000
-Message-ID: <1548168661.3229.185.camel@codethink.co.uk>
-References: <1547753327.3229.115.camel@codethink.co.uk>
-         <20190118081946.GA17484@kroah.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH v3] fsck.f2fs: check validity of nat journal
+Date: Tue, 22 Jan 2019 15:59:53 -0800
+Message-ID: <20190122235953.GA44459@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190114013308.80535-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190118081946.GA17484@kroah.com>
-Sender: stable-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sasha Levin <Alexander.Levin@microsoft.com>, stable <stable@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1gm5xc-00072a-H1
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Jan 2019 00:00:04 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1gm5xa-006Qaz-7d
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Jan 2019 00:00:04 +0000
+Content-Disposition: inline
+In-Reply-To: <20190114013308.80535-1-yuchao0@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Fri, 2019-01-18 at 09:19 +0100, Greg Kroah-Hartman wrote:
-> On Thu, Jan 17, 2019 at 07:28:47PM +0000, Ben Hutchings wrote:
-> > I've backported fixes for several security issues involving
-> > filesystem
-> > validation in f2fs.  All of these are already fixed in the later
-> > stable
-> > branches.
-> > 
-> > I tested with the reproducers where available.  I also checked for
-> > regressions with xfstests and didn't find any (but many tests fail
-> > with
-> > or without these changes).
+On 01/14, Chao Yu wrote:
+> As reported by Aravind:
 > 
-> Thanks for all of these, now queued up.
+> I built f2fs tools from source (at tag v1.12.0) and was able to get this backtrace in gdb:
 > 
-> Note, one of these, d4fdf8ba0e58 ("f2fs: fix a panic caused by NULL
-> flush_cmd_control"), was already in the 4.4.169 release.
+> Program received signal SIGSEGV, Segmentation fault.
+> 0x00007ffff7f8eb54 in f2fs_set_bit (nr=1041170432,
+>     addr=0x7fffff621010 <error: Cannot access memory at address 0x7fffff621010>) at libf2fs.c:312
+> 312        mask = 1 << (7 - (nr & 0x07));
+> (gdb) where
+>     addr=0x7fffff621010 <error: Cannot access memory at address 0x7fffff621010>) at libf2fs.c:312
+> 
+> > [ 5338.040024] nats:8781, sits:6
+> > [ 5338.040027] F2FS-fs (sda2): Failed to initialize F2FS segment manager
+> > [ 5338.128893] nats:8781, sits:6
+> > [ 5338.128895] F2FS-fs (sda2): Failed to initialize F2FS segment manager
+> 
+> nat_count/nid/blkaddr recorded in journal may be corrupted, let's do
+> sanity check on them, skip loading invalid ones during build_node_manager().
 
-Sorry about that - it took me some time to prepare and test these and I
-was starting from a base of 4.4.167.
+This requires the below diff.
 
-Ben.
+--- a/fsck/f2fs.h
++++ b/fsck/f2fs.h
+@@ -376,6 +376,9 @@ static inline bool IS_VALID_NID(struct f2fs_sb_info *sbi, u32 nid)
 
--- 
-Ben Hutchings, Software Developer                         Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+ static inline bool IS_VALID_BLK_ADDR(struct f2fs_sb_info *sbi, u32 addr)
+ {
++       if (addr == NULL_ADDR || addr == NEW_ADDR)
++               return 1;
++
+        if (addr >= le64_to_cpu(F2FS_RAW_SUPER(sbi)->block_count) ||
+                                addr < SM_I(sbi)->main_blkaddr) {
+                DBG(1, "block addr [0x%x]\n", addr);
+
+> 
+> Reported-by: Aravind R S <aravindet@gmail.com>
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+> v3:
+> - truncate nat journal table once any journalled nat entry is corrupted
+>  fsck/mount.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/fsck/mount.c b/fsck/mount.c
+> index 3966525104a7..51d0a09695eb 100644
+> --- a/fsck/mount.c
+> +++ b/fsck/mount.c
+> @@ -1066,11 +1066,29 @@ static int f2fs_init_nid_bitmap(struct f2fs_sb_info *sbi)
+>  			f2fs_set_bit(nid, nm_i->nid_bitmap);
+>  	}
+>  
+> +	if (nats_in_cursum(journal) > NAT_JOURNAL_ENTRIES) {
+> +		MSG(0, "\tError: f2fs_init_nid_bitmap truncate n_nats(%u) to "
+> +			"NAT_JOURNAL_ENTRIES(%lu)\n",
+> +			nats_in_cursum(journal), NAT_JOURNAL_ENTRIES);
+> +		journal->n_nats = cpu_to_le16(NAT_JOURNAL_ENTRIES);
+> +	}
+> +
+>  	for (i = 0; i < nats_in_cursum(journal); i++) {
+>  		block_t addr;
+>  
+>  		addr = le32_to_cpu(nat_in_journal(journal, i).block_addr);
+> +		if (!IS_VALID_BLK_ADDR(sbi, addr)) {
+> +			MSG(0, "\tError: f2fs_init_nid_bitmap: addr(%u) is invalid!!!\n", addr);
+> +			journal->n_nats = cpu_to_le16(i);
+> +			continue;
+> +		}
+> +
+>  		nid = le32_to_cpu(nid_in_journal(journal, i));
+> +		if (!IS_VALID_NID(sbi, nid)) {
+> +			MSG(0, "\tError: f2fs_init_nid_bitmap: nid(%u) is invalid!!!\n", nid);
+> +			journal->n_nats = cpu_to_le16(i);
+> +			continue;
+> +		}
+>  		if (addr != NULL_ADDR)
+>  			f2fs_set_bit(nid, nm_i->nid_bitmap);
+>  	}
+> -- 
+> 2.18.0.rc1
