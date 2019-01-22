@@ -1,63 +1,43 @@
-From: zhengliang <zhengliang6@huawei.com>
-Subject: f2fs:fix to data block override node segment by mistake
-Date: Tue, 22 Jan 2019 22:01:22 +0800
-Message-ID: <710067dd-5553-8606-efc9-6d1be40b2dc4@huawei.com>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: Re: Security fixes for 4.4 - f2fs
+Date: Tue, 22 Jan 2019 14:51:01 +0000
+Message-ID: <1548168661.3229.185.camel@codethink.co.uk>
+References: <1547753327.3229.115.camel@codethink.co.uk>
+         <20190118081946.GA17484@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <zhengliang6@huawei.com>) id 1glwcY-0002il-5z
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 22 Jan 2019 14:01:42 +0000
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1glwcU-009N3i-NV
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 22 Jan 2019 14:01:42 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190118081946.GA17484@kroah.com>
+Sender: stable-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sasha Levin <Alexander.Levin@microsoft.com>, stable <stable@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-VGhlIGZvbGxvd2luZyByYWNlIGNvdWxkIGxlYWQgdG8gZGF0YSBibG9jayBvdmVycmlkZSBub2Rl
-IHNlZ21lbnQgYnkgbWlzdGFrZS4KClRhc2sgQSAgICAgICAgICAgIHwgICAgVGFzayBCICAgICAg
-ICAgfCAgVGFzayBDICAgICAgICAgICAgfCAgICBUYXNrIEQKPT09PT09PSAgICAgICAgICAgfCAg
-ID09PT09PT09ICAgICAgICB8PT09PT09PT09PSAgICAgICAgICB8ICA9PT09PT09PT0Kb3BlbiBm
-aWxlICAgICAgICAgfCAgICAgICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAgICAgICB8Cndo
-aXRlIGZpbGUgICAgICAgIHwgICAgICAgICAgICAgICAgICAgfCAgICAgICAgICAgICAgICAgICAg
-fApzdWJtaXQgYmlvICAgICAgICB8ICAgICAgICAgICAgICAgICAgIHwgICAgICAgICAgICAgICAg
-ICAgIHwKd2FpdCBpbyBjb21wbGV0ZSAgfCAgICAgICAgICAgICAgICAgICB8ICAgICAgICAgICAg
-ICAgICAgICB8CgkJICB8ICAgcmVtb3ZlIGZpbGUgICAgIHwgICAgICAgICAgICAgICAgICAgIHwK
-Li4uLi4uLi4gICAgICAgICAgfCAgIGlwdXRfZmluYWwgICAgICB8ICAgICAgICAgICAgICAgICAg
-ICB8CgkJICB8ICAgICAgICAgICAgICAgICAgIHwgICBzeW5jICAgICAgICAgICAgIHwKCQkgIHwg
-ICAgICAgICAgICAgICAgICAgfCAgZG8gY2hlY2twb2ludCAgICAgfAoJCSAgfAkJICAgICAgfCAg
-ZGF0YSBzZWdtZW50IGZyZWUgfAoJCSAgfCAgICAgICAgICAgICAgICAgICB8ICAgICAgICAgICAg
-ICAgICAgICB8IGNyZWF0ZSBmaWxlMQoJCSAgfAkJICAgICAgfAkJICAgICAgICAgICB8IGFsbG9j
-YXRlIG5vZGUgc2VnbWVudKOoaWYgaXQgaXMgdGhlIHNhbWUgc2VnbWVudCBmcmVlZCBieSBUYXNr
-IEOjqQpmMmZzX3dyaXRlX2VuZF9pbyB8CQkgICAgICB8ICAgICAgICAgICAgICAgICAgICB8CQkJ
-CQkJCQkKClNvIHdlIG5lZWQgdG8gZ3VhcmFudGVlIGlvIGNvbXBsZXRlIGJlZm9yZSB0cnVuY2F0
-ZSBpbm9kZQppbiBmMmZzX2Ryb3BfaW5vZGUuCgpTaWduZWQtb2ZmLWJ5OiBaaGVuZyBMaWFuZyA8
-emhlbmdsaWFuZzZAaHVhd2VpLmNvbT4KLS0tLS0tLS0KZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc3Vw
-ZXIuYyBiL2ZzL2YyZnMvc3VwZXIuYwppbmRleCBjNDZhMWQ0My4uYmVjYmQxMCAxMDA2NDQKLS0t
-IGEvZnMvZjJmcy9zdXBlci5jCisrKyBiL2ZzL2YyZnMvc3VwZXIuYwpAQCAtOTE1LDYgKzkxNSwx
-MCBAQCBzdGF0aWMgaW50IGYyZnNfZHJvcF9pbm9kZShzdHJ1Y3QgaW5vZGUgKmlub2RlKQogICAg
-ICAgICAgICAgICAgICAgICAgICBzYl9zdGFydF9pbnR3cml0ZShpbm9kZS0+aV9zYik7CiAgICAg
-ICAgICAgICAgICAgICAgICAgIGYyZnNfaV9zaXplX3dyaXRlKGlub2RlLCAwKTsKCisgICAgICAg
-ICAgICAgICAgICAgICAgIGYyZnNfc3VibWl0X21lcmdlZF93cml0ZV9jb25kKEYyRlNfSV9TQihp
-bm9kZSksCisgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpbm9kZSwgTlVM
-TCwgaW5vZGUtPmlfaW5vLCBEQVRBKTsKKyAgICAgICAgICAgICAgICAgICAgICAgdHJ1bmNhdGVf
-aW5vZGVfcGFnZXNfZmluYWwoaW5vZGUtPmlfbWFwcGluZyk7CisKICAgICAgICAgICAgICAgICAg
-ICAgICAgaWYgKEYyRlNfSEFTX0JMT0NLUyhpbm9kZSkpCiAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgZjJmc190cnVuY2F0ZShpbm9kZSk7CgoKCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Ckxp
-bnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNl
-Zm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+On Fri, 2019-01-18 at 09:19 +0100, Greg Kroah-Hartman wrote:
+> On Thu, Jan 17, 2019 at 07:28:47PM +0000, Ben Hutchings wrote:
+> > I've backported fixes for several security issues involving
+> > filesystem
+> > validation in f2fs.  All of these are already fixed in the later
+> > stable
+> > branches.
+> > 
+> > I tested with the reproducers where available.  I also checked for
+> > regressions with xfstests and didn't find any (but many tests fail
+> > with
+> > or without these changes).
+> 
+> Thanks for all of these, now queued up.
+> 
+> Note, one of these, d4fdf8ba0e58 ("f2fs: fix a panic caused by NULL
+> flush_cmd_control"), was already in the 4.4.169 release.
+
+Sorry about that - it took me some time to prepare and test these and I
+was starting from a base of 4.4.167.
+
+Ben.
+
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
