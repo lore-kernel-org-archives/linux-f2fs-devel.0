@@ -1,24 +1,24 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: f2fs:fix to data block override node segment by
- mistake
-Date: Wed, 23 Jan 2019 09:51:12 +0800
-Message-ID: <6627c920-69a8-fcc1-329b-70f3d786245d@huawei.com>
-References: <710067dd-5553-8606-efc9-6d1be40b2dc4@huawei.com>
+Subject: Re: [PATCH v3] fsck.f2fs: check validity of nat journal
+Date: Wed, 23 Jan 2019 10:02:12 +0800
+Message-ID: <48d2573a-c14a-87fc-2cdc-7164c374a69f@huawei.com>
+References: <20190114013308.80535-1-yuchao0@huawei.com>
+ <20190122235953.GA44459@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1gm7hV-0007Jg-AY
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Jan 2019 01:51:33 +0000
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1gm7s0-00081a-Hp
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Jan 2019 02:02:24 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gm7hT-007329-03
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Jan 2019 01:51:33 +0000
-In-Reply-To: <710067dd-5553-8606-efc9-6d1be40b2dc4@huawei.com>
+ id 1gm7ry-006ekX-GM
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Jan 2019 02:02:24 +0000
+In-Reply-To: <20190122235953.GA44459@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -29,43 +29,97 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: zhengliang <zhengliang6@huawei.com>, jaegeuk@kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-T24gMjAxOS8xLzIyIDIyOjAxLCB6aGVuZ2xpYW5nIHdyb3RlOgo+IFRoZSBmb2xsb3dpbmcgcmFj
-ZSBjb3VsZCBsZWFkIHRvIGRhdGEgYmxvY2sgb3ZlcnJpZGUgbm9kZSBzZWdtZW50IGJ5IG1pc3Rh
-a2UuCj4gCj4gVGFzayBBICAgICAgICAgICAgfCAgICBUYXNrIEIgICAgICAgICB8ICBUYXNrIEMg
-ICAgICAgICAgICB8ICAgIFRhc2sgRAo+ID09PT09PT0gICAgICAgICAgIHwgICA9PT09PT09PSAg
-ICAgICAgfD09PT09PT09PT0gICAgICAgICAgfCAgPT09PT09PT09Cj4gb3BlbiBmaWxlICAgICAg
-ICAgfCAgICAgICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAgICAgICB8Cj4gd2hpdGUgZmls
-ZSAgICAgICAgfCAgICAgICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAgICAgICB8Cj4gc3Vi
-bWl0IGJpbyAgICAgICAgfCAgICAgICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAgICAgICB8
-Cj4gd2FpdCBpbyBjb21wbGV0ZSAgfCAgICAgICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAg
-ICAgICB8Cj4gCQkgIHwgICByZW1vdmUgZmlsZSAgICAgfCAgICAgICAgICAgICAgICAgICAgfAo+
-IC4uLi4uLi4uICAgICAgICAgIHwgICBpcHV0X2ZpbmFsICAgICAgfCAgICAgICAgICAgICAgICAg
-ICAgfAo+IAkJICB8ICAgICAgICAgICAgICAgICAgIHwgICBzeW5jICAgICAgICAgICAgIHwKPiAJ
-CSAgfCAgICAgICAgICAgICAgICAgICB8ICBkbyBjaGVja3BvaW50ICAgICB8Cj4gCQkgIHwJCSAg
-ICAgIHwgIGRhdGEgc2VnbWVudCBmcmVlIHwKPiAJCSAgfCAgICAgICAgICAgICAgICAgICB8ICAg
-ICAgICAgICAgICAgICAgICB8IGNyZWF0ZSBmaWxlMQo+IAkJICB8CQkgICAgICB8CQkgICAgICAg
-ICAgIHwgYWxsb2NhdGUgbm9kZSBzZWdtZW50o6hpZiBpdCBpcyB0aGUgc2FtZSBzZWdtZW50IGZy
-ZWVkIGJ5IFRhc2sgQ6OpCj4gZjJmc193cml0ZV9lbmRfaW8gfAkJICAgICAgfCAgICAgICAgICAg
-ICAgICAgICAgfAkJCQkJCQkJCj4gCj4gU28gd2UgbmVlZCB0byBndWFyYW50ZWUgaW8gY29tcGxl
-dGUgYmVmb3JlIHRydW5jYXRlIGlub2RlCj4gaW4gZjJmc19kcm9wX2lub2RlLgo+IAo+IFNpZ25l
-ZC1vZmYtYnk6IFpoZW5nIExpYW5nIDx6aGVuZ2xpYW5nNkBodWF3ZWkuY29tPgo+IC0tLS0tLS0t
-Cj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc3VwZXIuYyBiL2ZzL2YyZnMvc3VwZXIuYwo+IGluZGV4
-IGM0NmExZDQzLi5iZWNiZDEwIDEwMDY0NAo+IC0tLSBhL2ZzL2YyZnMvc3VwZXIuYwo+ICsrKyBi
-L2ZzL2YyZnMvc3VwZXIuYwo+IEBAIC05MTUsNiArOTE1LDEwIEBAIHN0YXRpYyBpbnQgZjJmc19k
-cm9wX2lub2RlKHN0cnVjdCBpbm9kZSAqaW5vZGUpCj4gICAgICAgICAgICAgICAgICAgICAgICAg
-c2Jfc3RhcnRfaW50d3JpdGUoaW5vZGUtPmlfc2IpOwo+ICAgICAgICAgICAgICAgICAgICAgICAg
-IGYyZnNfaV9zaXplX3dyaXRlKGlub2RlLCAwKTsKPiAKPiArICAgICAgICAgICAgICAgICAgICAg
-ICBmMmZzX3N1Ym1pdF9tZXJnZWRfd3JpdGVfY29uZChGMkZTX0lfU0IoaW5vZGUpLAo+ICsgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpbm9kZSwgTlVMTCwgaW5vZGUtPmlf
-aW5vLCBEQVRBKTsKCkBpbm8gaW4gZjJmc19zdWJtaXRfbWVyZ2VkX3dyaXRlX2NvbmQgaXMgdXNl
-ZCBmb3Igbm9kZSBwYWdlIGNoZWNrLCBoZXJlLCB3ZQpkb24ndCBuZWVkIHRvIHBhc3MgaXQuCgpU
-aGFua3MsCgo+ICsgICAgICAgICAgICAgICAgICAgICAgIHRydW5jYXRlX2lub2RlX3BhZ2VzX2Zp
-bmFsKGlub2RlLT5pX21hcHBpbmcpOwo+ICsKPiAgICAgICAgICAgICAgICAgICAgICAgICBpZiAo
-RjJGU19IQVNfQkxPQ0tTKGlub2RlKSkKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-IGYyZnNfdHJ1bmNhdGUoaW5vZGUpOwo+IAo+IAo+IC4KPiAKCgoKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxp
-c3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5z
-b3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+On 2019/1/23 7:59, Jaegeuk Kim wrote:
+> On 01/14, Chao Yu wrote:
+>> As reported by Aravind:
+>>
+>> I built f2fs tools from source (at tag v1.12.0) and was able to get this backtrace in gdb:
+>>
+>> Program received signal SIGSEGV, Segmentation fault.
+>> 0x00007ffff7f8eb54 in f2fs_set_bit (nr=1041170432,
+>>     addr=0x7fffff621010 <error: Cannot access memory at address 0x7fffff621010>) at libf2fs.c:312
+>> 312        mask = 1 << (7 - (nr & 0x07));
+>> (gdb) where
+>>     addr=0x7fffff621010 <error: Cannot access memory at address 0x7fffff621010>) at libf2fs.c:312
+>>
+>>> [ 5338.040024] nats:8781, sits:6
+>>> [ 5338.040027] F2FS-fs (sda2): Failed to initialize F2FS segment manager
+>>> [ 5338.128893] nats:8781, sits:6
+>>> [ 5338.128895] F2FS-fs (sda2): Failed to initialize F2FS segment manager
+>>
+>> nat_count/nid/blkaddr recorded in journal may be corrupted, let's do
+>> sanity check on them, skip loading invalid ones during build_node_manager().
+> 
+> This requires the below diff.
+> 
+> --- a/fsck/f2fs.h
+> +++ b/fsck/f2fs.h
+> @@ -376,6 +376,9 @@ static inline bool IS_VALID_NID(struct f2fs_sb_info *sbi, u32 nid)
+> 
+>  static inline bool IS_VALID_BLK_ADDR(struct f2fs_sb_info *sbi, u32 addr)
+>  {
+> +       if (addr == NULL_ADDR || addr == NEW_ADDR)
+> +               return 1;
+
+Actually, IS_VALID_BLK_ADDR() is used in many places, after the check, we
+may load data from position pointed with @addr, so, we may not return true
+if addr is equal to NULL_ADDR/NEW_ADDR.
+
+Thanks,
+
+> +
+>         if (addr >= le64_to_cpu(F2FS_RAW_SUPER(sbi)->block_count) ||
+>                                 addr < SM_I(sbi)->main_blkaddr) {
+>                 DBG(1, "block addr [0x%x]\n", addr);
+> 
+>>
+>> Reported-by: Aravind R S <aravindet@gmail.com>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>> v3:
+>> - truncate nat journal table once any journalled nat entry is corrupted
+>>  fsck/mount.c | 18 ++++++++++++++++++
+>>  1 file changed, 18 insertions(+)
+>>
+>> diff --git a/fsck/mount.c b/fsck/mount.c
+>> index 3966525104a7..51d0a09695eb 100644
+>> --- a/fsck/mount.c
+>> +++ b/fsck/mount.c
+>> @@ -1066,11 +1066,29 @@ static int f2fs_init_nid_bitmap(struct f2fs_sb_info *sbi)
+>>  			f2fs_set_bit(nid, nm_i->nid_bitmap);
+>>  	}
+>>  
+>> +	if (nats_in_cursum(journal) > NAT_JOURNAL_ENTRIES) {
+>> +		MSG(0, "\tError: f2fs_init_nid_bitmap truncate n_nats(%u) to "
+>> +			"NAT_JOURNAL_ENTRIES(%lu)\n",
+>> +			nats_in_cursum(journal), NAT_JOURNAL_ENTRIES);
+>> +		journal->n_nats = cpu_to_le16(NAT_JOURNAL_ENTRIES);
+>> +	}
+>> +
+>>  	for (i = 0; i < nats_in_cursum(journal); i++) {
+>>  		block_t addr;
+>>  
+>>  		addr = le32_to_cpu(nat_in_journal(journal, i).block_addr);
+>> +		if (!IS_VALID_BLK_ADDR(sbi, addr)) {
+>> +			MSG(0, "\tError: f2fs_init_nid_bitmap: addr(%u) is invalid!!!\n", addr);
+>> +			journal->n_nats = cpu_to_le16(i);
+>> +			continue;
+>> +		}
+>> +
+>>  		nid = le32_to_cpu(nid_in_journal(journal, i));
+>> +		if (!IS_VALID_NID(sbi, nid)) {
+>> +			MSG(0, "\tError: f2fs_init_nid_bitmap: nid(%u) is invalid!!!\n", nid);
+>> +			journal->n_nats = cpu_to_le16(i);
+>> +			continue;
+>> +		}
+>>  		if (addr != NULL_ADDR)
+>>  			f2fs_set_bit(nid, nm_i->nid_bitmap);
+>>  	}
+>> -- 
+>> 2.18.0.rc1
+> 
+> .
+> 
