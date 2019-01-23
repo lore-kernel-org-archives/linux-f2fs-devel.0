@@ -1,113 +1,193 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v3] fsck.f2fs: check validity of nat journal
-Date: Tue, 22 Jan 2019 15:59:53 -0800
-Message-ID: <20190122235953.GA44459@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190114013308.80535-1-yuchao0@huawei.com>
+Subject: [PATCH 1/2] f2fs: run discard jobs when put_super
+Date: Tue, 22 Jan 2019 16:02:28 -0800
+Message-ID: <20190123000229.45236-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1gm5xc-00072a-H1
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Jan 2019 00:00:04 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gm5xa-006Qaz-7d
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Jan 2019 00:00:04 +0000
-Content-Disposition: inline
-In-Reply-To: <20190114013308.80535-1-yuchao0@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 01/14, Chao Yu wrote:
-> As reported by Aravind:
-> 
-> I built f2fs tools from source (at tag v1.12.0) and was able to get this backtrace in gdb:
-> 
-> Program received signal SIGSEGV, Segmentation fault.
-> 0x00007ffff7f8eb54 in f2fs_set_bit (nr=1041170432,
->     addr=0x7fffff621010 <error: Cannot access memory at address 0x7fffff621010>) at libf2fs.c:312
-> 312        mask = 1 << (7 - (nr & 0x07));
-> (gdb) where
->     addr=0x7fffff621010 <error: Cannot access memory at address 0x7fffff621010>) at libf2fs.c:312
-> 
-> > [ 5338.040024] nats:8781, sits:6
-> > [ 5338.040027] F2FS-fs (sda2): Failed to initialize F2FS segment manager
-> > [ 5338.128893] nats:8781, sits:6
-> > [ 5338.128895] F2FS-fs (sda2): Failed to initialize F2FS segment manager
-> 
-> nat_count/nid/blkaddr recorded in journal may be corrupted, let's do
-> sanity check on them, skip loading invalid ones during build_node_manager().
+When we umount f2fs, we need to avoid long delay due to discard commands, which
+is actually taking tens of seconds, if storage is very slow on UNMAP. So, this
+patch introduces timeout-based work on it.
 
-This requires the below diff.
+By default, let me give 5 seconds for discard.
 
---- a/fsck/f2fs.h
-+++ b/fsck/f2fs.h
-@@ -376,6 +376,9 @@ static inline bool IS_VALID_NID(struct f2fs_sb_info *sbi, u32 nid)
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ Documentation/ABI/testing/sysfs-fs-f2fs |  7 +++++++
+ fs/f2fs/f2fs.h                          |  5 ++++-
+ fs/f2fs/segment.c                       | 11 ++++++++++-
+ fs/f2fs/super.c                         | 17 ++++++++---------
+ fs/f2fs/sysfs.c                         |  3 +++
+ 5 files changed, 32 insertions(+), 11 deletions(-)
 
- static inline bool IS_VALID_BLK_ADDR(struct f2fs_sb_info *sbi, u32 addr)
- {
-+       if (addr == NULL_ADDR || addr == NEW_ADDR)
-+               return 1;
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index a7ce33199457..91822ce25831 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -86,6 +86,13 @@ Description:
+ 		The unit size is one block, now only support configuring in range
+ 		of [1, 512].
+ 
++What:          /sys/fs/f2fs/<disk>/umount_discard_timeout
++Date:          January 2019
++Contact:       "Jaegeuk Kim" <jaegeuk@kernel.org>
++Description:
++		Set timeout to issue discard commands during umount.
++		Default: 5 secs
 +
-        if (addr >= le64_to_cpu(F2FS_RAW_SUPER(sbi)->block_count) ||
-                                addr < SM_I(sbi)->main_blkaddr) {
-                DBG(1, "block addr [0x%x]\n", addr);
-
-> 
-> Reported-by: Aravind R S <aravindet@gmail.com>
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
-> v3:
-> - truncate nat journal table once any journalled nat entry is corrupted
->  fsck/mount.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/fsck/mount.c b/fsck/mount.c
-> index 3966525104a7..51d0a09695eb 100644
-> --- a/fsck/mount.c
-> +++ b/fsck/mount.c
-> @@ -1066,11 +1066,29 @@ static int f2fs_init_nid_bitmap(struct f2fs_sb_info *sbi)
->  			f2fs_set_bit(nid, nm_i->nid_bitmap);
->  	}
->  
-> +	if (nats_in_cursum(journal) > NAT_JOURNAL_ENTRIES) {
-> +		MSG(0, "\tError: f2fs_init_nid_bitmap truncate n_nats(%u) to "
-> +			"NAT_JOURNAL_ENTRIES(%lu)\n",
-> +			nats_in_cursum(journal), NAT_JOURNAL_ENTRIES);
-> +		journal->n_nats = cpu_to_le16(NAT_JOURNAL_ENTRIES);
-> +	}
-> +
->  	for (i = 0; i < nats_in_cursum(journal); i++) {
->  		block_t addr;
->  
->  		addr = le32_to_cpu(nat_in_journal(journal, i).block_addr);
-> +		if (!IS_VALID_BLK_ADDR(sbi, addr)) {
-> +			MSG(0, "\tError: f2fs_init_nid_bitmap: addr(%u) is invalid!!!\n", addr);
-> +			journal->n_nats = cpu_to_le16(i);
-> +			continue;
-> +		}
-> +
->  		nid = le32_to_cpu(nid_in_journal(journal, i));
-> +		if (!IS_VALID_NID(sbi, nid)) {
-> +			MSG(0, "\tError: f2fs_init_nid_bitmap: nid(%u) is invalid!!!\n", nid);
-> +			journal->n_nats = cpu_to_le16(i);
-> +			continue;
-> +		}
->  		if (addr != NULL_ADDR)
->  			f2fs_set_bit(nid, nm_i->nid_bitmap);
->  	}
-> -- 
-> 2.18.0.rc1
+ What:		/sys/fs/f2fs/<disk>/max_victim_search
+ Date:		January 2014
+ Contact:	"Jaegeuk Kim" <jaegeuk.kim@samsung.com>
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 0f564883e078..6b6ec5600089 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -191,6 +191,7 @@ enum {
+ #define DEF_CP_INTERVAL			60	/* 60 secs */
+ #define DEF_IDLE_INTERVAL		5	/* 5 secs */
+ #define DEF_DISABLE_INTERVAL		5	/* 5 secs */
++#define DEF_UMOUNT_DISCARD_TIMEOUT	5	/* 5 secs */
+ 
+ struct cp_control {
+ 	int reason;
+@@ -310,6 +311,7 @@ struct discard_policy {
+ 	bool sync;			/* submit discard with REQ_SYNC flag */
+ 	bool ordered;			/* issue discard by lba order */
+ 	unsigned int granularity;	/* discard granularity */
++	int timeout;			/* discard timeout for put_super */
+ };
+ 
+ struct discard_cmd_control {
+@@ -1110,6 +1112,7 @@ enum {
+ 	DISCARD_TIME,
+ 	GC_TIME,
+ 	DISABLE_TIME,
++	UMOUNT_DISCARD_TIMEOUT,
+ 	MAX_TIME,
+ };
+ 
+@@ -3006,7 +3009,7 @@ void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr);
+ bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr);
+ void f2fs_drop_discard_cmd(struct f2fs_sb_info *sbi);
+ void f2fs_stop_discard_thread(struct f2fs_sb_info *sbi);
+-bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi);
++bool f2fs_issue_discard_timeout(struct f2fs_sb_info *sbi);
+ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
+ 					struct cp_control *cpc);
+ void f2fs_dirty_to_prefree(struct f2fs_sb_info *sbi);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 9b79056d705d..97e0faf09ebf 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1037,6 +1037,7 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
+ 
+ 	dpolicy->max_requests = DEF_MAX_DISCARD_REQUEST;
+ 	dpolicy->io_aware_gran = MAX_PLIST_NUM;
++	dpolicy->timeout = MAX_TIME;
+ 
+ 	if (discard_type == DPOLICY_BG) {
+ 		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+@@ -1424,7 +1425,14 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 	int i, issued = 0;
+ 	bool io_interrupted = false;
+ 
++	if (dpolicy->timeout != MAX_TIME)
++		f2fs_update_time(sbi, dpolicy->timeout);
++
+ 	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
++		if (dpolicy->timeout != MAX_TIME &&
++				f2fs_time_over(sbi, dpolicy->timeout))
++			break;
++
+ 		if (i + 1 < dpolicy->granularity)
+ 			break;
+ 
+@@ -1611,7 +1619,7 @@ void f2fs_stop_discard_thread(struct f2fs_sb_info *sbi)
+ }
+ 
+ /* This comes from f2fs_put_super */
+-bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi)
++bool f2fs_issue_discard_timeout(struct f2fs_sb_info *sbi)
+ {
+ 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+ 	struct discard_policy dpolicy;
+@@ -1619,6 +1627,7 @@ bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi)
+ 
+ 	__init_discard_policy(sbi, &dpolicy, DPOLICY_UMOUNT,
+ 					dcc->discard_granularity);
++	dpolicy.timeout = UMOUNT_DISCARD_TIMEOUT;
+ 	__issue_discard_cmd(sbi, &dpolicy);
+ 	dropped = __drop_discard_cmd(sbi);
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index ea514acede36..7998ff5418f2 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1029,6 +1029,9 @@ static void f2fs_put_super(struct super_block *sb)
+ 	int i;
+ 	bool dropped;
+ 
++	/* be sure to wait for any on-going discard commands */
++	dropped = f2fs_issue_discard_timeout(sbi);
++
+ 	f2fs_quota_off_umount(sb);
+ 
+ 	/* prevent remaining shrinker jobs */
+@@ -1044,17 +1047,12 @@ static void f2fs_put_super(struct super_block *sb)
+ 		struct cp_control cpc = {
+ 			.reason = CP_UMOUNT,
+ 		};
+-		f2fs_write_checkpoint(sbi, &cpc);
+-	}
+ 
+-	/* be sure to wait for any on-going discard commands */
+-	dropped = f2fs_wait_discard_bios(sbi);
++		if ((f2fs_hw_support_discard(sbi) ||
++				f2fs_hw_should_discard(sbi)) &&
++				!sbi->discard_blks && !dropped)
++			cpc.reason |= CP_TRIMMED;
+ 
+-	if ((f2fs_hw_support_discard(sbi) || f2fs_hw_should_discard(sbi)) &&
+-					!sbi->discard_blks && !dropped) {
+-		struct cp_control cpc = {
+-			.reason = CP_UMOUNT | CP_TRIMMED,
+-		};
+ 		f2fs_write_checkpoint(sbi, &cpc);
+ 	}
+ 
+@@ -2706,6 +2704,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+ 	sbi->interval_time[DISCARD_TIME] = DEF_IDLE_INTERVAL;
+ 	sbi->interval_time[GC_TIME] = DEF_IDLE_INTERVAL;
+ 	sbi->interval_time[DISABLE_TIME] = DEF_DISABLE_INTERVAL;
++	sbi->interval_time[UMOUNT_DISCARD_TIMEOUT] = DEF_UMOUNT_DISCARD_TIMEOUT;
+ 	clear_sbi_flag(sbi, SBI_NEED_FSCK);
+ 
+ 	for (i = 0; i < NR_COUNT_TYPE; i++)
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 5b83e1d66cb3..18c627e8fc90 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -426,6 +426,8 @@ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
+ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, discard_idle_interval,
+ 					interval_time[DISCARD_TIME]);
+ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_idle_interval, interval_time[GC_TIME]);
++F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info,
++		umount_discard_timeout, interval_time[UMOUNT_DISCARD_TIMEOUT]);
+ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
+ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
+ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
+@@ -483,6 +485,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(idle_interval),
+ 	ATTR_LIST(discard_idle_interval),
+ 	ATTR_LIST(gc_idle_interval),
++	ATTR_LIST(umount_discard_timeout),
+ 	ATTR_LIST(iostat_enable),
+ 	ATTR_LIST(readdir_ra),
+ 	ATTR_LIST(gc_pin_file_thresh),
+-- 
+2.19.0.605.g01d371f741-goog
