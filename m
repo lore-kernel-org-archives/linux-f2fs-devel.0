@@ -1,22 +1,25 @@
-From: Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH] fscrypt: return -EXDEV for incompatible rename
- or link into encrypted dir
-Date: Tue, 22 Jan 2019 16:21:56 -0800
-Message-ID: <20190123002156.116601-1-ebiggers@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: f2fs:fix to data block override node segment by
+ mistake
+Date: Wed, 23 Jan 2019 09:51:12 +0800
+Message-ID: <6627c920-69a8-fcc1-329b-70f3d786245d@huawei.com>
+References: <710067dd-5553-8606-efc9-6d1be40b2dc4@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="gbk"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1gm6Jm-00044y-Ko
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Jan 2019 00:22:58 +0000
-Received: from mail.kernel.org ([198.145.29.99])
+ (envelope-from <yuchao0@huawei.com>) id 1gm7hV-0007Jg-AY
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Jan 2019 01:51:33 +0000
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gm6Jk-006sss-TA
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Jan 2019 00:22:58 +0000
+ id 1gm7hT-007329-03
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Jan 2019 01:51:33 +0000
+In-Reply-To: <710067dd-5553-8606-efc9-6d1be40b2dc4@huawei.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,164 +29,43 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-fscrypt@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Michael Halcrow <mhalcrow@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+To: zhengliang <zhengliang6@huawei.com>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
-
-Currently, trying to rename or link a regular file, directory, or
-symlink into an encrypted directory fails with EPERM when the source
-file is unencrypted or is encrypted with a different encryption policy,
-and is on the same mountpoint.  It is correct for the operation to fail,
-but the choice of EPERM breaks tools like 'mv' that know to copy rather
-than rename if they see EXDEV, but don't know what to do with EPERM.
-
-Our original motivation for EPERM was to encourage users to securely
-handle their data.  Encrypting files by "moving" them into an encrypted
-directory can be insecure because the unencrypted data may remain in
-free space on disk, where it can later be recovered by an attacker.
-It's much better to encrypt the data from the start, or at least try to
-securely delete the source data e.g. using the 'shred' program.
-
-However, the current behavior hasn't been effective at achieving its
-goal because users tend to be confused, hack around it, and complain;
-see e.g. https://github.com/google/fscrypt/issues/76.  And in some cases
-it's actually inconsistent or unnecessary.  For example, 'mv'-ing files
-between differently encrypted directories doesn't work even in cases
-where it can be secure, such as when in userspace the same passphrase
-protects both directories.  Yet, you *can* already 'mv' unencrypted
-files into an encrypted directory if the source files are on a different
-mountpoint, even though doing so is often insecure.
-
-There are probably better ways to teach users to securely handle their
-files.  For example, the 'fscrypt' userspace tool could provide a
-command that migrates unencrypted files into an encrypted directory,
-acting like 'shred' on the source files and providing appropriate
-warnings depending on the type of the source filesystem and disk.
-
-Receiving errors on unimportant files might also force some users to
-disable encryption, thus making the behavior counterproductive.  It's
-desirable to make encryption as unobtrusive as possible.
-
-Therefore, change the error code from EPERM to EXDEV so that tools
-looking for EXDEV will fall back to a copy.
-
-This, of course, doesn't prevent users from still doing the right things
-to securely manage their files.  Note that this also matches the
-behavior when a file is renamed between two project quota hierarchies;
-so there's precedent for using EXDEV for things other than mountpoints.
-
-xfstests generic/398 will require an update with this change.
-
-[Rewritten from an earlier patch series by Michael Halcrow.]
-
-Cc: Michael Halcrow <mhalcrow@google.com>
-Cc: Joe Richey <joerichey@google.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- Documentation/filesystems/fscrypt.rst | 12 ++++++++++--
- fs/crypto/hooks.c                     |  6 +++---
- fs/crypto/policy.c                    |  3 +--
- include/linux/fscrypt.h               |  4 ++--
- 4 files changed, 16 insertions(+), 9 deletions(-)
-
-diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
-index 43dd989e2a3f..08c23b60e016 100644
---- a/Documentation/filesystems/fscrypt.rst
-+++ b/Documentation/filesystems/fscrypt.rst
-@@ -451,10 +451,18 @@ astute users may notice some differences in behavior:
- - Unencrypted files, or files encrypted with a different encryption
-   policy (i.e. different key, modes, or flags), cannot be renamed or
-   linked into an encrypted directory; see `Encryption policy
--  enforcement`_.  Attempts to do so will fail with EPERM.  However,
-+  enforcement`_.  Attempts to do so will fail with EXDEV.  However,
-   encrypted files can be renamed within an encrypted directory, or
-   into an unencrypted directory.
- 
-+  Note: "moving" an unencrypted file into an encrypted directory, e.g.
-+  with the `mv` program, is implemented in userspace by a copy
-+  followed by a delete.  Be aware that the original unencrypted data
-+  may remain recoverable from free space on the disk; prefer to keep
-+  all files encrypted from the very beginning.  The `shred` program
-+  may be used to overwrite the source files but isn't guaranteed to be
-+  effective on all filesystems and storage devices.
-+
- - Direct I/O is not supported on encrypted files.  Attempts to use
-   direct I/O on such files will fall back to buffered I/O.
- 
-@@ -541,7 +549,7 @@ not be encrypted.
- Except for those special files, it is forbidden to have unencrypted
- files, or files encrypted with a different encryption policy, in an
- encrypted directory tree.  Attempts to link or rename such a file into
--an encrypted directory will fail with EPERM.  This is also enforced
-+an encrypted directory will fail with EXDEV.  This is also enforced
- during ->lookup() to provide limited protection against offline
- attacks that try to disable or downgrade encryption in known locations
- where applications may later write sensitive data.  It is recommended
-diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
-index 926e5df20ec3..56debb1fcf5e 100644
---- a/fs/crypto/hooks.c
-+++ b/fs/crypto/hooks.c
-@@ -58,7 +58,7 @@ int __fscrypt_prepare_link(struct inode *inode, struct inode *dir)
- 		return err;
- 
- 	if (!fscrypt_has_permitted_context(dir, inode))
--		return -EPERM;
-+		return -EXDEV;
- 
- 	return 0;
- }
-@@ -82,13 +82,13 @@ int __fscrypt_prepare_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		if (IS_ENCRYPTED(new_dir) &&
- 		    !fscrypt_has_permitted_context(new_dir,
- 						   d_inode(old_dentry)))
--			return -EPERM;
-+			return -EXDEV;
- 
- 		if ((flags & RENAME_EXCHANGE) &&
- 		    IS_ENCRYPTED(old_dir) &&
- 		    !fscrypt_has_permitted_context(old_dir,
- 						   d_inode(new_dentry)))
--			return -EPERM;
-+			return -EXDEV;
- 	}
- 	return 0;
- }
-diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
-index f490de921ce8..bd7eaf9b3f00 100644
---- a/fs/crypto/policy.c
-+++ b/fs/crypto/policy.c
-@@ -151,8 +151,7 @@ EXPORT_SYMBOL(fscrypt_ioctl_get_policy);
-  * malicious offline violations of this constraint, while the link and rename
-  * checks are needed to prevent online violations of this constraint.
-  *
-- * Return: 1 if permitted, 0 if forbidden.  If forbidden, the caller must fail
-- * the filesystem operation with EPERM.
-+ * Return: 1 if permitted, 0 if forbidden.
-  */
- int fscrypt_has_permitted_context(struct inode *parent, struct inode *child)
- {
-diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index eec604840568..e5194fc3983e 100644
---- a/include/linux/fscrypt.h
-+++ b/include/linux/fscrypt.h
-@@ -489,7 +489,7 @@ static inline int fscrypt_require_key(struct inode *inode)
-  * in an encrypted directory tree use the same encryption policy.
-  *
-  * Return: 0 on success, -ENOKEY if the directory's encryption key is missing,
-- * -EPERM if the link would result in an inconsistent encryption policy, or
-+ * -EXDEV if the link would result in an inconsistent encryption policy, or
-  * another -errno code.
-  */
- static inline int fscrypt_prepare_link(struct dentry *old_dentry,
-@@ -519,7 +519,7 @@ static inline int fscrypt_prepare_link(struct dentry *old_dentry,
-  * We also verify that the rename will not violate the constraint that all files
-  * in an encrypted directory tree use the same encryption policy.
-  *
-- * Return: 0 on success, -ENOKEY if an encryption key is missing, -EPERM if the
-+ * Return: 0 on success, -ENOKEY if an encryption key is missing, -EXDEV if the
-  * rename would cause inconsistent encryption policies, or another -errno code.
-  */
- static inline int fscrypt_prepare_rename(struct inode *old_dir,
--- 
-2.20.1.321.g9e740568ce-goog
+T24gMjAxOS8xLzIyIDIyOjAxLCB6aGVuZ2xpYW5nIHdyb3RlOgo+IFRoZSBmb2xsb3dpbmcgcmFj
+ZSBjb3VsZCBsZWFkIHRvIGRhdGEgYmxvY2sgb3ZlcnJpZGUgbm9kZSBzZWdtZW50IGJ5IG1pc3Rh
+a2UuCj4gCj4gVGFzayBBICAgICAgICAgICAgfCAgICBUYXNrIEIgICAgICAgICB8ICBUYXNrIEMg
+ICAgICAgICAgICB8ICAgIFRhc2sgRAo+ID09PT09PT0gICAgICAgICAgIHwgICA9PT09PT09PSAg
+ICAgICAgfD09PT09PT09PT0gICAgICAgICAgfCAgPT09PT09PT09Cj4gb3BlbiBmaWxlICAgICAg
+ICAgfCAgICAgICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAgICAgICB8Cj4gd2hpdGUgZmls
+ZSAgICAgICAgfCAgICAgICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAgICAgICB8Cj4gc3Vi
+bWl0IGJpbyAgICAgICAgfCAgICAgICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAgICAgICB8
+Cj4gd2FpdCBpbyBjb21wbGV0ZSAgfCAgICAgICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAg
+ICAgICB8Cj4gCQkgIHwgICByZW1vdmUgZmlsZSAgICAgfCAgICAgICAgICAgICAgICAgICAgfAo+
+IC4uLi4uLi4uICAgICAgICAgIHwgICBpcHV0X2ZpbmFsICAgICAgfCAgICAgICAgICAgICAgICAg
+ICAgfAo+IAkJICB8ICAgICAgICAgICAgICAgICAgIHwgICBzeW5jICAgICAgICAgICAgIHwKPiAJ
+CSAgfCAgICAgICAgICAgICAgICAgICB8ICBkbyBjaGVja3BvaW50ICAgICB8Cj4gCQkgIHwJCSAg
+ICAgIHwgIGRhdGEgc2VnbWVudCBmcmVlIHwKPiAJCSAgfCAgICAgICAgICAgICAgICAgICB8ICAg
+ICAgICAgICAgICAgICAgICB8IGNyZWF0ZSBmaWxlMQo+IAkJICB8CQkgICAgICB8CQkgICAgICAg
+ICAgIHwgYWxsb2NhdGUgbm9kZSBzZWdtZW50o6hpZiBpdCBpcyB0aGUgc2FtZSBzZWdtZW50IGZy
+ZWVkIGJ5IFRhc2sgQ6OpCj4gZjJmc193cml0ZV9lbmRfaW8gfAkJICAgICAgfCAgICAgICAgICAg
+ICAgICAgICAgfAkJCQkJCQkJCj4gCj4gU28gd2UgbmVlZCB0byBndWFyYW50ZWUgaW8gY29tcGxl
+dGUgYmVmb3JlIHRydW5jYXRlIGlub2RlCj4gaW4gZjJmc19kcm9wX2lub2RlLgo+IAo+IFNpZ25l
+ZC1vZmYtYnk6IFpoZW5nIExpYW5nIDx6aGVuZ2xpYW5nNkBodWF3ZWkuY29tPgo+IC0tLS0tLS0t
+Cj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc3VwZXIuYyBiL2ZzL2YyZnMvc3VwZXIuYwo+IGluZGV4
+IGM0NmExZDQzLi5iZWNiZDEwIDEwMDY0NAo+IC0tLSBhL2ZzL2YyZnMvc3VwZXIuYwo+ICsrKyBi
+L2ZzL2YyZnMvc3VwZXIuYwo+IEBAIC05MTUsNiArOTE1LDEwIEBAIHN0YXRpYyBpbnQgZjJmc19k
+cm9wX2lub2RlKHN0cnVjdCBpbm9kZSAqaW5vZGUpCj4gICAgICAgICAgICAgICAgICAgICAgICAg
+c2Jfc3RhcnRfaW50d3JpdGUoaW5vZGUtPmlfc2IpOwo+ICAgICAgICAgICAgICAgICAgICAgICAg
+IGYyZnNfaV9zaXplX3dyaXRlKGlub2RlLCAwKTsKPiAKPiArICAgICAgICAgICAgICAgICAgICAg
+ICBmMmZzX3N1Ym1pdF9tZXJnZWRfd3JpdGVfY29uZChGMkZTX0lfU0IoaW5vZGUpLAo+ICsgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpbm9kZSwgTlVMTCwgaW5vZGUtPmlf
+aW5vLCBEQVRBKTsKCkBpbm8gaW4gZjJmc19zdWJtaXRfbWVyZ2VkX3dyaXRlX2NvbmQgaXMgdXNl
+ZCBmb3Igbm9kZSBwYWdlIGNoZWNrLCBoZXJlLCB3ZQpkb24ndCBuZWVkIHRvIHBhc3MgaXQuCgpU
+aGFua3MsCgo+ICsgICAgICAgICAgICAgICAgICAgICAgIHRydW5jYXRlX2lub2RlX3BhZ2VzX2Zp
+bmFsKGlub2RlLT5pX21hcHBpbmcpOwo+ICsKPiAgICAgICAgICAgICAgICAgICAgICAgICBpZiAo
+RjJGU19IQVNfQkxPQ0tTKGlub2RlKSkKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IGYyZnNfdHJ1bmNhdGUoaW5vZGUpOwo+IAo+IAo+IC4KPiAKCgoKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxp
+c3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5z
+b3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
