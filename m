@@ -1,9 +1,8 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/2] f2fs: sync filesystem after roll-forward
- recovery
-Date: Tue, 22 Jan 2019 16:02:29 -0800
-Message-ID: <20190123000229.45236-2-jaegeuk@kernel.org>
-References: <20190123000229.45236-1-jaegeuk@kernel.org>
+From: Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH] fscrypt: return -EXDEV for incompatible rename
+ or link into encrypted dir
+Date: Tue, 22 Jan 2019 16:21:56 -0800
+Message-ID: <20190123002156.116601-1-ebiggers@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,14 +10,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1gm606-0003EB-6n
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Jan 2019 00:02:38 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1gm6Jm-00044y-Ko
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Jan 2019 00:22:58 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gm604-006Qqy-Od
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Jan 2019 00:02:38 +0000
-In-Reply-To: <20190123000229.45236-1-jaegeuk@kernel.org>
+ id 1gm6Jk-006sss-TA
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Jan 2019 00:22:58 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,163 +26,164 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-fscrypt@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Michael Halcrow <mhalcrow@google.com>, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
 
-Some works after roll-forward recovery can get an error which will release
-all the data structures. Let's flush them in order to make it clean.
+From: Eric Biggers <ebiggers@google.com>
 
-One possible corruption came from:
+Currently, trying to rename or link a regular file, directory, or
+symlink into an encrypted directory fails with EPERM when the source
+file is unencrypted or is encrypted with a different encryption policy,
+and is on the same mountpoint.  It is correct for the operation to fail,
+but the choice of EPERM breaks tools like 'mv' that know to copy rather
+than rename if they see EXDEV, but don't know what to do with EPERM.
 
-[   90.400500] list_del corruption. prev->next should be ffffffed1f566208, but was (null)
-[   90.675349] Call trace:
-[   90.677869]  __list_del_entry_valid+0x94/0xb4
-[   90.682351]  remove_dirty_inode+0xac/0x114
-[   90.686563]  __f2fs_write_data_pages+0x6a8/0x6c8
-[   90.691302]  f2fs_write_data_pages+0x40/0x4c
-[   90.695695]  do_writepages+0x80/0xf0
-[   90.699372]  __writeback_single_inode+0xdc/0x4ac
-[   90.704113]  writeback_sb_inodes+0x280/0x440
-[   90.708501]  wb_writeback+0x1b8/0x3d0
-[   90.712267]  wb_workfn+0x1a8/0x4d4
-[   90.715765]  process_one_work+0x1c0/0x3d4
-[   90.719883]  worker_thread+0x224/0x344
-[   90.723739]  kthread+0x120/0x130
-[   90.727055]  ret_from_fork+0x10/0x18
+Our original motivation for EPERM was to encourage users to securely
+handle their data.  Encrypting files by "moving" them into an encrypted
+directory can be insecure because the unencrypted data may remain in
+free space on disk, where it can later be recovered by an attacker.
+It's much better to encrypt the data from the start, or at least try to
+securely delete the source data e.g. using the 'shred' program.
 
-Reported-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+However, the current behavior hasn't been effective at achieving its
+goal because users tend to be confused, hack around it, and complain;
+see e.g. https://github.com/google/fscrypt/issues/76.  And in some cases
+it's actually inconsistent or unnecessary.  For example, 'mv'-ing files
+between differently encrypted directories doesn't work even in cases
+where it can be secure, such as when in userspace the same passphrase
+protects both directories.  Yet, you *can* already 'mv' unencrypted
+files into an encrypted directory if the source files are on a different
+mountpoint, even though doing so is often insecure.
+
+There are probably better ways to teach users to securely handle their
+files.  For example, the 'fscrypt' userspace tool could provide a
+command that migrates unencrypted files into an encrypted directory,
+acting like 'shred' on the source files and providing appropriate
+warnings depending on the type of the source filesystem and disk.
+
+Receiving errors on unimportant files might also force some users to
+disable encryption, thus making the behavior counterproductive.  It's
+desirable to make encryption as unobtrusive as possible.
+
+Therefore, change the error code from EPERM to EXDEV so that tools
+looking for EXDEV will fall back to a copy.
+
+This, of course, doesn't prevent users from still doing the right things
+to securely manage their files.  Note that this also matches the
+behavior when a file is renamed between two project quota hierarchies;
+so there's precedent for using EXDEV for things other than mountpoints.
+
+xfstests generic/398 will require an update with this change.
+
+[Rewritten from an earlier patch series by Michael Halcrow.]
+
+Cc: Michael Halcrow <mhalcrow@google.com>
+Cc: Joe Richey <joerichey@google.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/checkpoint.c |  5 +++--
- fs/f2fs/node.c       |  4 +++-
- fs/f2fs/super.c      | 42 +++++++++++++++++++++++++++++++-----------
- 3 files changed, 37 insertions(+), 14 deletions(-)
+ Documentation/filesystems/fscrypt.rst | 12 ++++++++++--
+ fs/crypto/hooks.c                     |  6 +++---
+ fs/crypto/policy.c                    |  3 +--
+ include/linux/fscrypt.h               |  4 ++--
+ 4 files changed, 16 insertions(+), 9 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index f955cd3e0677..ccccf0ce2f06 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -306,8 +306,9 @@ static int f2fs_write_meta_pages(struct address_space *mapping,
- 		goto skip_write;
+diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
+index 43dd989e2a3f..08c23b60e016 100644
+--- a/Documentation/filesystems/fscrypt.rst
++++ b/Documentation/filesystems/fscrypt.rst
+@@ -451,10 +451,18 @@ astute users may notice some differences in behavior:
+ - Unencrypted files, or files encrypted with a different encryption
+   policy (i.e. different key, modes, or flags), cannot be renamed or
+   linked into an encrypted directory; see `Encryption policy
+-  enforcement`_.  Attempts to do so will fail with EPERM.  However,
++  enforcement`_.  Attempts to do so will fail with EXDEV.  However,
+   encrypted files can be renamed within an encrypted directory, or
+   into an unencrypted directory.
  
- 	/* collect a number of dirty meta pages and write together */
--	if (wbc->for_kupdate ||
--		get_pages(sbi, F2FS_DIRTY_META) < nr_pages_to_skip(sbi, META))
-+	if (wbc->sync_mode != WB_SYNC_ALL &&
-+			get_pages(sbi, F2FS_DIRTY_META) <
-+					nr_pages_to_skip(sbi, META))
- 		goto skip_write;
- 
- 	/* if locked failed, cp will flush dirty pages instead */
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 4f450e573312..f6ff84e29749 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1920,7 +1920,9 @@ static int f2fs_write_node_pages(struct address_space *mapping,
- 	f2fs_balance_fs_bg(sbi);
- 
- 	/* collect a number of dirty node pages and write together */
--	if (get_pages(sbi, F2FS_DIRTY_NODES) < nr_pages_to_skip(sbi, NODE))
-+	if (wbc->sync_mode != WB_SYNC_ALL &&
-+			get_pages(sbi, F2FS_DIRTY_NODES) <
-+					nr_pages_to_skip(sbi, NODE))
- 		goto skip_write;
- 
- 	if (wbc->sync_mode == WB_SYNC_ALL)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 7998ff5418f2..2af0db2b738e 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1456,9 +1456,16 @@ static int f2fs_enable_quotas(struct super_block *sb);
- 
- static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
- {
-+	unsigned int s_flags = sbi->sb->s_flags;
- 	struct cp_control cpc;
--	int err;
-+	int err = 0;
-+	int ret;
- 
-+	if (s_flags & SB_RDONLY) {
-+		f2fs_msg(sbi->sb, KERN_ERR,
-+				"checkpoint=disable on readonly fs");
-+		return -EINVAL;
-+	}
- 	sbi->sb->s_flags |= SB_ACTIVE;
- 
- 	f2fs_update_time(sbi, DISABLE_TIME);
-@@ -1466,18 +1473,24 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
- 	while (!f2fs_time_over(sbi, DISABLE_TIME)) {
- 		mutex_lock(&sbi->gc_mutex);
- 		err = f2fs_gc(sbi, true, false, NULL_SEGNO);
--		if (err == -ENODATA)
-+		if (err == -ENODATA) {
-+			err = 0;
- 			break;
-+		}
- 		if (err && err != -EAGAIN)
--			return err;
-+			break;
- 	}
- 
--	err = sync_filesystem(sbi->sb);
--	if (err)
--		return err;
-+	ret = sync_filesystem(sbi->sb);
-+	if (ret || err) {
-+		err = ret ? ret: err;
-+		goto restore_flag;
-+	}
- 
--	if (f2fs_disable_cp_again(sbi))
--		return -EAGAIN;
-+	if (f2fs_disable_cp_again(sbi)) {
-+		err = -EAGAIN;
-+		goto restore_flag;
-+	}
- 
- 	mutex_lock(&sbi->gc_mutex);
- 	cpc.reason = CP_PAUSE;
-@@ -1486,7 +1499,9 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
- 
- 	sbi->unusable_block_count = 0;
- 	mutex_unlock(&sbi->gc_mutex);
--	return 0;
-+restore_flag:
-+	sbi->sb->s_flags = s_flags;	/* Restore MS_RDONLY status */
-+	return err;
- }
- 
- static void f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
-@@ -3356,7 +3371,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	if (test_opt(sbi, DISABLE_CHECKPOINT)) {
- 		err = f2fs_disable_checkpoint(sbi);
- 		if (err)
--			goto free_meta;
-+			goto sync_free_meta;
- 	} else if (is_set_ckpt_flags(sbi, CP_DISABLED_FLAG)) {
- 		f2fs_enable_checkpoint(sbi);
- 	}
-@@ -3369,7 +3384,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		/* After POR, we can run background GC thread.*/
- 		err = f2fs_start_gc_thread(sbi);
- 		if (err)
--			goto free_meta;
-+			goto sync_free_meta;
- 	}
- 	kvfree(options);
- 
-@@ -3391,6 +3406,11 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	f2fs_update_time(sbi, REQ_TIME);
- 	return 0;
- 
-+sync_free_meta:
-+	/* safe to flush all the data */
-+	sync_filesystem(sbi->sb);
-+	retry = false;
++  Note: "moving" an unencrypted file into an encrypted directory, e.g.
++  with the `mv` program, is implemented in userspace by a copy
++  followed by a delete.  Be aware that the original unencrypted data
++  may remain recoverable from free space on the disk; prefer to keep
++  all files encrypted from the very beginning.  The `shred` program
++  may be used to overwrite the source files but isn't guaranteed to be
++  effective on all filesystems and storage devices.
 +
- free_meta:
- #ifdef CONFIG_QUOTA
- 	f2fs_truncate_quota_inode_pages(sb);
+ - Direct I/O is not supported on encrypted files.  Attempts to use
+   direct I/O on such files will fall back to buffered I/O.
+ 
+@@ -541,7 +549,7 @@ not be encrypted.
+ Except for those special files, it is forbidden to have unencrypted
+ files, or files encrypted with a different encryption policy, in an
+ encrypted directory tree.  Attempts to link or rename such a file into
+-an encrypted directory will fail with EPERM.  This is also enforced
++an encrypted directory will fail with EXDEV.  This is also enforced
+ during ->lookup() to provide limited protection against offline
+ attacks that try to disable or downgrade encryption in known locations
+ where applications may later write sensitive data.  It is recommended
+diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
+index 926e5df20ec3..56debb1fcf5e 100644
+--- a/fs/crypto/hooks.c
++++ b/fs/crypto/hooks.c
+@@ -58,7 +58,7 @@ int __fscrypt_prepare_link(struct inode *inode, struct inode *dir)
+ 		return err;
+ 
+ 	if (!fscrypt_has_permitted_context(dir, inode))
+-		return -EPERM;
++		return -EXDEV;
+ 
+ 	return 0;
+ }
+@@ -82,13 +82,13 @@ int __fscrypt_prepare_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 		if (IS_ENCRYPTED(new_dir) &&
+ 		    !fscrypt_has_permitted_context(new_dir,
+ 						   d_inode(old_dentry)))
+-			return -EPERM;
++			return -EXDEV;
+ 
+ 		if ((flags & RENAME_EXCHANGE) &&
+ 		    IS_ENCRYPTED(old_dir) &&
+ 		    !fscrypt_has_permitted_context(old_dir,
+ 						   d_inode(new_dentry)))
+-			return -EPERM;
++			return -EXDEV;
+ 	}
+ 	return 0;
+ }
+diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
+index f490de921ce8..bd7eaf9b3f00 100644
+--- a/fs/crypto/policy.c
++++ b/fs/crypto/policy.c
+@@ -151,8 +151,7 @@ EXPORT_SYMBOL(fscrypt_ioctl_get_policy);
+  * malicious offline violations of this constraint, while the link and rename
+  * checks are needed to prevent online violations of this constraint.
+  *
+- * Return: 1 if permitted, 0 if forbidden.  If forbidden, the caller must fail
+- * the filesystem operation with EPERM.
++ * Return: 1 if permitted, 0 if forbidden.
+  */
+ int fscrypt_has_permitted_context(struct inode *parent, struct inode *child)
+ {
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index eec604840568..e5194fc3983e 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -489,7 +489,7 @@ static inline int fscrypt_require_key(struct inode *inode)
+  * in an encrypted directory tree use the same encryption policy.
+  *
+  * Return: 0 on success, -ENOKEY if the directory's encryption key is missing,
+- * -EPERM if the link would result in an inconsistent encryption policy, or
++ * -EXDEV if the link would result in an inconsistent encryption policy, or
+  * another -errno code.
+  */
+ static inline int fscrypt_prepare_link(struct dentry *old_dentry,
+@@ -519,7 +519,7 @@ static inline int fscrypt_prepare_link(struct dentry *old_dentry,
+  * We also verify that the rename will not violate the constraint that all files
+  * in an encrypted directory tree use the same encryption policy.
+  *
+- * Return: 0 on success, -ENOKEY if an encryption key is missing, -EPERM if the
++ * Return: 0 on success, -ENOKEY if an encryption key is missing, -EXDEV if the
+  * rename would cause inconsistent encryption policies, or another -errno code.
+  */
+ static inline int fscrypt_prepare_rename(struct inode *old_dir,
 -- 
-2.19.0.605.g01d371f741-goog
+2.20.1.321.g9e740568ce-goog
