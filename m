@@ -1,29 +1,24 @@
-From: Phillip Potter <phil@philpotter.co.uk>
-Subject: Re: [RFC][PATCH v5 06/09] f2fs: use common file type
- conversion
-Date: Thu, 24 Jan 2019 09:27:37 +0000
-Message-ID: <20190124092737.GA25629@pathfinder>
-References: <20190121005434.GA32358@pathfinder>
- <6f759f75-5906-e499-e86b-a915d714e8c4@huawei.com>
+From: zhengliang <zhengliang6@huawei.com>
+Subject: [PATCH v2] f2fs: fix to data block override node segment
+ by mistake
+Date: Thu, 24 Jan 2019 20:57:03 +0800
+Message-ID: <20be8521-d934-0995-e423-925fe039ad3c@huawei.com>
+References: <710067dd-5553-8606-efc9-6d1be40b2dc4@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="gbk"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <phil@philpotter.co.uk>) id 1gmbmx-0004Cp-1N
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 Jan 2019 09:59:11 +0000
-Received: from mail-wm1-f67.google.com ([209.85.128.67])
+ (envelope-from <zhengliang6@huawei.com>) id 1gmeZO-0001sb-Ju
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 Jan 2019 12:57:22 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1gmbmv-00AHSe-9m
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 Jan 2019 09:59:10 +0000
-Received: by mail-wm1-f67.google.com with SMTP id y8so2291667wmi.4
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 24 Jan 2019 01:59:08 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <6f759f75-5906-e499-e86b-a915d714e8c4@huawei.com>
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1gmeZM-00AZLO-Gj
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 Jan 2019 12:57:22 +0000
+In-Reply-To: <710067dd-5553-8606-efc9-6d1be40b2dc4@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,25 +28,39 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, amir73il@gmail.com, viro@zeniv.linux.org.uk, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On Wed, Jan 23, 2019 at 02:27:34PM +0800, Chao Yu wrote:
-> On 2019/1/21 8:54, Phillip Potter wrote:
-> > Deduplicate the f2fs file type conversion implementation and remove
-> > F2FS_FT_* definitions - file systems that use the same file types
-> > as defined by POSIX do not need to define their own versions and can
-> > use the common helper functions decared in fs_types.h and implemented
-> > in fs_types.c
-> > 
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
-> 
-> Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> 
-> Thanks,
-> 
-Thank you very much for this.
-
-Regards,
-Phil
+ClRoZSBmb2xsb3dpbmcgcmFjZSBjb3VsZCBsZWFkIHRvIGRhdGEgYmxvY2sgb3ZlcnJpZGUgbm9k
+ZSBzZWdtZW50IGJ5IG1pc3Rha2UuCgpUYXNrIEEgICAgICAgICAgICB8ICAgIFRhc2sgQiAgICAg
+ICAgIHwgIFRhc2sgQyAgICAgICAgICAgIHwgICAgVGFzayBECj09PT09PT0gICAgICAgICAgIHwg
+ICA9PT09PT09PSAgICAgICAgfD09PT09PT09PT0gICAgICAgICAgfCAgPT09PT09PT09Cm9wZW4g
+ZmlsZSAgICAgICAgIHwgICAgICAgICAgICAgICAgICAgfCAgICAgICAgICAgICAgICAgICAgfAp3
+aGl0ZSBmaWxlICAgICAgICB8ICAgICAgICAgICAgICAgICAgIHwgICAgICAgICAgICAgICAgICAg
+IHwKc3VibWl0IGJpbyAgICAgICAgfCAgICAgICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAg
+ICAgICB8CndhaXQgaW8gY29tcGxldGUgIHwgICAgICAgICAgICAgICAgICAgfCAgICAgICAgICAg
+ICAgICAgICAgfAoJCSAgfCAgIHJlbW92ZSBmaWxlICAgICB8ICAgICAgICAgICAgICAgICAgICB8
+Ci4uLi4uLi4uICAgICAgICAgIHwgICBpcHV0X2ZpbmFsICAgICAgfCAgICAgICAgICAgICAgICAg
+ICAgfAoJCSAgfCAgICAgICAgICAgICAgICAgICB8ICAgc3luYyAgICAgICAgICAgICB8CgkJICB8
+ICAgICAgICAgICAgICAgICAgIHwgIGRvIGNoZWNrcG9pbnQgICAgIHwKCQkgIHwJCSAgICAgIHwg
+IGRhdGEgc2VnbWVudCBmcmVlIHwKCQkgIHwgICAgICAgICAgICAgICAgICAgfCAgICAgICAgICAg
+ICAgICAgICAgfCBjcmVhdGUgZmlsZTEKCQkgIHwJCSAgICAgIHwJCSAgICAgICAgICAgfCBhbGxv
+Y2F0ZSBub2RlIHNlZ21lbnSjqGlmIGl0IGlzIHRoZSBzYW1lIHNlZ21lbnQgZnJlZWQgYnkgVGFz
+ayBDo6kKZjJmc193cml0ZV9lbmRfaW8gfAkJICAgICAgfCAgICAgICAgICAgICAgICAgICAgfAkJ
+CQkJCQkJCgpTbyB3ZSBuZWVkIHRvIGd1YXJhbnRlZSBpbyBjb21wbGV0ZSBiZWZvcmUgdHJ1bmNh
+dGUgaW5vZGUKaW4gZjJmc19kcm9wX2lub2RlLgoKdjEtPnYyOiBJdCBkb24ndCBuZWVkIHRvIHBh
+c3MgQGlubyBpbiBmMmZzX3N1Ym1pdF9tZXJnZWRfd3JpdGVfY29uZCAuCgpTaWduZWQtb2ZmLWJ5
+OiBaaGVuZyBMaWFuZyA8emhlbmdsaWFuZzZAaHVhd2VpLmNvbT4KLS0tLS0tLS0KZGlmZiAtLWdp
+dCBhL2ZzL2YyZnMvc3VwZXIuYyBiL2ZzL2YyZnMvc3VwZXIuYwppbmRleCBjNDZhMWQ0My4uNjBm
+MDU5OSAxMDA2NDQKLS0tIGEvZnMvZjJmcy9zdXBlci5jCisrKyBiL2ZzL2YyZnMvc3VwZXIuYwpA
+QCAtOTE1LDYgKzkxNSwxMCBAQCBzdGF0aWMgaW50IGYyZnNfZHJvcF9pbm9kZShzdHJ1Y3QgaW5v
+ZGUgKmlub2RlKQogICAgICAgICAgICAgICAgICAgICAgICBzYl9zdGFydF9pbnR3cml0ZShpbm9k
+ZS0+aV9zYik7CiAgICAgICAgICAgICAgICAgICAgICAgIGYyZnNfaV9zaXplX3dyaXRlKGlub2Rl
+LCAwKTsKCisgICAgICAgICAgICAgICAgICAgICAgIGYyZnNfc3VibWl0X21lcmdlZF93cml0ZV9j
+b25kKEYyRlNfSV9TQihpbm9kZSksCisgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICBpbm9kZSwgTlVMTCwgMCwgREFUQSk7CisgICAgICAgICAgICAgICAgICAgICAgIHRydW5j
+YXRlX2lub2RlX3BhZ2VzX2ZpbmFsKGlub2RlLT5pX21hcHBpbmcpOworCiAgICAgICAgICAgICAg
+ICAgICAgICAgIGlmIChGMkZTX0hBU19CTE9DS1MoaW5vZGUpKQogICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIGYyZnNfdHJ1bmNhdGUoaW5vZGUpOwoKCgpfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlz
+dApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNv
+dXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
