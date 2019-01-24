@@ -1,60 +1,49 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH v2] f2fs: fix to data block override node
- segment by mistake
-Date: Thu, 24 Jan 2019 22:10:32 +0800
-Message-ID: <89908961-cc74-be29-0fed-dcdc47917acb@kernel.org>
-References: <710067dd-5553-8606-efc9-6d1be40b2dc4@huawei.com>
- <20be8521-d934-0995-e423-925fe039ad3c@huawei.com>
+From: Eric Biggers <ebiggers@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] fscrypt: remove filesystem specific build
+ config option
+Date: Thu, 24 Jan 2019 10:29:50 -0800
+Message-ID: <20190124182949.GB10448@gmail.com>
+References: <20190110233230.GA23953@roeck-us.net>
+ <20190111010116.GG149637@gmail.com>
+ <20190124050337.GD8785@mit.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1gmfiR-0005xY-Sb
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 Jan 2019 14:10:47 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gmfiQ-00B7FL-E2
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 Jan 2019 14:10:47 +0000
-In-Reply-To: <20be8521-d934-0995-e423-925fe039ad3c@huawei.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: zhengliang <zhengliang6@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190124050337.GD8785@mit.edu>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Theodore Y. Ts'o" <tytso@mit.edu>, Guenter Roeck <linux@roeck-us.net>, Chandan Rajendra <chandan@linux.vnet.ibm.com>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-T24gMjAxOS0xLTI0IDIwOjU3LCB6aGVuZ2xpYW5nIHdyb3RlOgo+IAo+IFRoZSBmb2xsb3dpbmcg
-cmFjZSBjb3VsZCBsZWFkIHRvIGRhdGEgYmxvY2sgb3ZlcnJpZGUgbm9kZSBzZWdtZW50IGJ5IG1p
-c3Rha2UuCj4gCj4gVGFzayBBICAgICAgICAgICAgfCAgICBUYXNrIEIgICAgICAgICB8ICBUYXNr
-IEMgICAgICAgICAgICB8ICAgIFRhc2sgRAo+ID09PT09PT0gICAgICAgICAgIHwgICA9PT09PT09
-PSAgICAgICAgfD09PT09PT09PT0gICAgICAgICAgfCAgPT09PT09PT09Cj4gb3BlbiBmaWxlICAg
-ICAgICAgfCAgICAgICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAgICAgICB8Cj4gd2hpdGUg
-ZmlsZSAgICAgICAgfCAgICAgICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAgICAgICB8Cj4g
-c3VibWl0IGJpbyAgICAgICAgfCAgICAgICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAgICAg
-ICB8Cj4gd2FpdCBpbyBjb21wbGV0ZSAgfCAgICAgICAgICAgICAgICAgICB8ICAgICAgICAgICAg
-ICAgICAgICB8Cj4gCQkgIHwgICByZW1vdmUgZmlsZSAgICAgfCAgICAgICAgICAgICAgICAgICAg
-fAo+IC4uLi4uLi4uICAgICAgICAgIHwgICBpcHV0X2ZpbmFsICAgICAgfCAgICAgICAgICAgICAg
-ICAgICAgfAo+IAkJICB8ICAgICAgICAgICAgICAgICAgIHwgICBzeW5jICAgICAgICAgICAgIHwK
-PiAJCSAgfCAgICAgICAgICAgICAgICAgICB8ICBkbyBjaGVja3BvaW50ICAgICB8Cj4gCQkgIHwJ
-CSAgICAgIHwgIGRhdGEgc2VnbWVudCBmcmVlIHwKPiAJCSAgfCAgICAgICAgICAgICAgICAgICB8
-ICAgICAgICAgICAgICAgICAgICB8IGNyZWF0ZSBmaWxlMQo+IAkJICB8CQkgICAgICB8CQkgICAg
-ICAgICAgIHwgYWxsb2NhdGUgbm9kZSBzZWdtZW50o6hpZiBpdCBpcyB0aGUgc2FtZSBzZWdtZW50
-IGZyZWVkIGJ5IFRhc2sgQ6OpCj4gZjJmc193cml0ZV9lbmRfaW8gfAkJICAgICAgfCAgICAgICAg
-ICAgICAgICAgICAgfAkJCQkJCQkJCj4gCj4gU28gd2UgbmVlZCB0byBndWFyYW50ZWUgaW8gY29t
-cGxldGUgYmVmb3JlIHRydW5jYXRlIGlub2RlCj4gaW4gZjJmc19kcm9wX2lub2RlLgo+IAo+IHYx
-LT52MjogSXQgZG9uJ3QgbmVlZCB0byBwYXNzIEBpbm8gaW4gZjJmc19zdWJtaXRfbWVyZ2VkX3dy
-aXRlX2NvbmQgLgo+IAo+IFNpZ25lZC1vZmYtYnk6IFpoZW5nIExpYW5nIDx6aGVuZ2xpYW5nNkBo
-dWF3ZWkuY29tPgoKUmV2aWV3ZWQtYnk6IENoYW8gWXUgPHl1Y2hhbzBAaHVhd2VpLmNvbT4KClRo
-YW5rcywKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpM
-aW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJj
-ZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9s
-aW51eC1mMmZzLWRldmVsCg==
+On Thu, Jan 24, 2019 at 12:03:37AM -0500, Theodore Y. Ts'o wrote:
+> On Thu, Jan 10, 2019 at 05:01:17PM -0800, Eric Biggers wrote:
+> > 
+> > Indeed, Chandan Rajendra sent out a new version of the patch which fixes the
+> > problem (by removing the 'select BLOCK' from fs/ubifs/Kconfig), but it never
+> > made it into the fscrypt tree and hence never made it into linux-next.
+> > 
+> > Ted, what you are planning to do with the fscrypt tree following the fsverity
+> > discussion?  IMO, we should keep the fsverity stuff in its own branch, separate
+> > from any fscrypt changes.  As a suggestion, in the branch "fscrypt" of my
+> > linux.git repo [1], I applied just these four patches on top of v5.0-rc1 and
+> > resolved the conflicts with them no longer being on top of fsverity...
+> 
+> Sorry, I was on vacation last week and I've been catching up on things
+> this week.  I've reset the master branch on my fscrypt.git tree so
+> that it has what you have on your fscrypt branch, rebased to 5.0-rc3.
+> 
+> Also, as we had talked about earlier, it probably makes sense to set
+> up jointly maintained git tree for fscrypt and fsverity.  My proposal
+> is that we set up a new fscrypt.git tree, at
+> /pub/scm/fs/fscrypt/fscrypt.git, that would be owned by the "FSCRYPT
+> group", with group membership being ebiggers, jaeguk, and tytso.
+> We'll have to figure out ways that we can jointly update the git tree
+> without stepping on each other, probably using a group chat.  Does
+> that sound good to you?
+> 
+
+Hi Ted, that sounds good to me.  I assume you know how to get that set up?
+Also, should I go ahead and send a patch that adds myself to the MAINTAINERS
+file?
+
+- Eric
