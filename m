@@ -1,35 +1,57 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix to document inline_xattr_size option
-Date: Thu, 24 Jan 2019 17:18:07 +0800
-Message-ID: <20190124091807.89080-1-yuchao0@huawei.com>
+From: Phillip Potter <phil@philpotter.co.uk>
+Subject: Re: [RFC][PATCH v5 06/09] f2fs: use common file type
+ conversion
+Date: Thu, 24 Jan 2019 09:27:37 +0000
+Message-ID: <20190124092737.GA25629@pathfinder>
+References: <20190121005434.GA32358@pathfinder>
+ <6f759f75-5906-e499-e86b-a915d714e8c4@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <phil@philpotter.co.uk>) id 1gmbmx-0004Cp-1N
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 Jan 2019 09:59:11 +0000
+Received: from mail-wm1-f67.google.com ([209.85.128.67])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1gmbmv-00AHSe-9m
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 Jan 2019 09:59:10 +0000
+Received: by mail-wm1-f67.google.com with SMTP id y8so2291667wmi.4
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 24 Jan 2019 01:59:08 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <6f759f75-5906-e499-e86b-a915d714e8c4@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, amir73il@gmail.com, viro@zeniv.linux.org.uk, linux-f2fs-devel@lists.sourceforge.net
 
-We missed to add document for inline_xattr_size mount option in f2fs.txt,
-add it.
+On Wed, Jan 23, 2019 at 02:27:34PM +0800, Chao Yu wrote:
+> On 2019/1/21 8:54, Phillip Potter wrote:
+> > Deduplicate the f2fs file type conversion implementation and remove
+> > F2FS_FT_* definitions - file systems that use the same file types
+> > as defined by POSIX do not need to define their own versions and can
+> > use the common helper functions decared in fs_types.h and implemented
+> > in fs_types.c
+> > 
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
+> 
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> 
+> Thanks,
+> 
+Thank you very much for this.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- Documentation/filesystems/f2fs.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-index e46c2147ddf8..f7b5e4ff0de3 100644
---- a/Documentation/filesystems/f2fs.txt
-+++ b/Documentation/filesystems/f2fs.txt
-@@ -126,6 +126,8 @@ disable_ext_identify   Disable the extension list configured by mkfs, so f2fs
-                        does not aware of cold files such as media files.
- inline_xattr           Enable the inline xattrs feature.
- noinline_xattr         Disable the inline xattrs feature.
-+inline_xattr_size=%u   Support configuring inline xattr size, it depends on
-+		       flexible inline xattr feature.
- inline_data            Enable the inline data feature: New created small(<~3.4k)
-                        files can be written into inode block.
- inline_dentry          Enable the inline dir feature: data in new created
--- 
-2.18.0.rc1
+Regards,
+Phil
