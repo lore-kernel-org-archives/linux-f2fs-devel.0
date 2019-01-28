@@ -1,42 +1,58 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: use xattr_prefix to wrap up
-Date: Sat, 26 Jan 2019 10:49:53 +0800
-Message-ID: <22b1084c-02de-8a57-8d6e-9db894f79cf7@huawei.com>
-References: <20190125121139.27858-1-gaoxiang25@huawei.com>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 086/304] f2fs: move dir data flush to write checkpoint process
+Date: Mon, 28 Jan 2019 10:40:03 -0500
+Message-ID: <20190128154341.47195-86-sashal@kernel.org>
+References: <20190128154341.47195-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1gnE2i-0006ec-Ly
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 26 Jan 2019 02:50:00 +0000
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gnE2g-00FD0P-Ne
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 26 Jan 2019 02:50:00 +0000
-In-Reply-To: <20190125121139.27858-1-gaoxiang25@huawei.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Gao Xiang <gaoxiang25@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: miaoxie@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Yunlei He <heyunlei@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2019/1/25 20:11, Gao Xiang wrote:
-> Let's use xattr_prefix instead of open code.
-> No logic changes.
-> 
-> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+From: Yunlei He <heyunlei@huawei.com>
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+[ Upstream commit b61ac5b720146c619c7cdf17eff2551b934399e5 ]
 
-Thanks,
+This patch move dir data flush to write checkpoint process, by
+doing this, it may reduce some time for dir fsync.
+
+pre:
+	-f2fs_do_sync_file enter
+		-file_write_and_wait_range  <- flush & wait
+		-write_checkpoint
+			-do_checkpoint	    <- wait all
+	-f2fs_do_sync_file exit
+
+now:
+	-f2fs_do_sync_file enter
+		-write_checkpoint
+			-block_operations   <- flush dir & no wait
+			-do_checkpoint	    <- wait all
+	-f2fs_do_sync_file exit
+
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/f2fs/file.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 88b124677189..9eaf07fd8b4c 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -216,6 +216,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 
+ 	trace_f2fs_sync_file_enter(inode);
+ 
++	if (S_ISDIR(inode->i_mode))
++		goto go_write;
++
+ 	/* if fdatasync is triggered, let's do in-place-update */
+ 	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
+ 		set_inode_flag(inode, FI_NEED_IPU);
+-- 
+2.19.1
