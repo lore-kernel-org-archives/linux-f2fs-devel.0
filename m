@@ -1,58 +1,90 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 072/258] f2fs: move dir data flush to write checkpoint process
-Date: Mon, 28 Jan 2019 10:56:18 -0500
-Message-ID: <20190128155924.51521-72-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 075/258] f2fs: fix wrong return
+ value of f2fs_acl_create
+Date: Mon, 28 Jan 2019 10:56:21 -0500
+Message-ID: <20190128155924.51521-75-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <sashal@kernel.org>) id 1go9NO-000858-I1
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Jan 2019 16:03:10 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1go9NN-003tZk-2I
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Jan 2019 16:03:10 +0000
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Yunlei He <heyunlei@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Tiezhu Yang <kernelpatch@126.com>, linux-f2fs-devel@lists.sourceforge.net
 
-From: Yunlei He <heyunlei@huawei.com>
+From: Tiezhu Yang <kernelpatch@126.com>
 
-[ Upstream commit b61ac5b720146c619c7cdf17eff2551b934399e5 ]
+[ Upstream commit f6176473a0c7472380eef72ebeb330cf9485bf0a ]
 
-This patch move dir data flush to write checkpoint process, by
-doing this, it may reduce some time for dir fsync.
+When call f2fs_acl_create_masq() failed, the caller f2fs_acl_create()
+should return -EIO instead of -ENOMEM, this patch makes it consistent
+with posix_acl_create() which has been fixed in commit beaf226b863a
+("posix_acl: don't ignore return value of posix_acl_create_masq()").
 
-pre:
-	-f2fs_do_sync_file enter
-		-file_write_and_wait_range  <- flush & wait
-		-write_checkpoint
-			-do_checkpoint	    <- wait all
-	-f2fs_do_sync_file exit
-
-now:
-	-f2fs_do_sync_file enter
-		-write_checkpoint
-			-block_operations   <- flush dir & no wait
-			-do_checkpoint	    <- wait all
-	-f2fs_do_sync_file exit
-
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Fixes: 83dfe53c185e ("f2fs: fix reference leaks in f2fs_acl_create")
+Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/file.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/f2fs/acl.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 5474aaa274b9..fd36aa6569dc 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -220,6 +220,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+index 111824199a88..b9fe937a3c70 100644
+--- a/fs/f2fs/acl.c
++++ b/fs/f2fs/acl.c
+@@ -352,12 +352,14 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
+ 		return PTR_ERR(p);
  
- 	trace_f2fs_sync_file_enter(inode);
+ 	clone = f2fs_acl_clone(p, GFP_NOFS);
+-	if (!clone)
+-		goto no_mem;
++	if (!clone) {
++		ret = -ENOMEM;
++		goto release_acl;
++	}
  
-+	if (S_ISDIR(inode->i_mode))
-+		goto go_write;
-+
- 	/* if fdatasync is triggered, let's do in-place-update */
- 	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
- 		set_inode_flag(inode, FI_NEED_IPU);
+ 	ret = f2fs_acl_create_masq(clone, mode);
+ 	if (ret < 0)
+-		goto no_mem_clone;
++		goto release_clone;
+ 
+ 	if (ret == 0)
+ 		posix_acl_release(clone);
+@@ -371,11 +373,11 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
+ 
+ 	return 0;
+ 
+-no_mem_clone:
++release_clone:
+ 	posix_acl_release(clone);
+-no_mem:
++release_acl:
+ 	posix_acl_release(p);
+-	return -ENOMEM;
++	return ret;
+ }
+ 
+ int f2fs_init_acl(struct inode *inode, struct inode *dir, struct page *ipage,
 -- 
 2.19.1
