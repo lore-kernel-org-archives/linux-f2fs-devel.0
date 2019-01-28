@@ -1,126 +1,130 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 178/304] f2fs: fix to reorder set_page_dirty and wait_on_page_writeback
-Date: Mon, 28 Jan 2019 10:41:35 -0500
-Message-ID: <20190128154341.47195-178-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 270/304] f2fs: fix use-after-free issue when accessing sbi->stat_info
+Date: Mon, 28 Jan 2019 10:43:07 -0500
+Message-ID: <20190128154341.47195-270-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: Sahitya Tummala <stummala@codeaurora.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Sahitya Tummala <stummala@codeaurora.org>
 
-[ Upstream commit 8d64d365aed355b2e2465d19ba61df02462fff4d ]
+[ Upstream commit 60aa4d5536ab7fe32433ca1173bd9d6633851f27 ]
 
-This patch reorders flow from
+iput() on sbi->node_inode can update sbi->stat_info
+in the below context, if the f2fs_write_checkpoint()
+has failed with error.
 
-- update page
-- set_page_dirty
-- wait_on_page_writeback
+f2fs_balance_fs_bg+0x1ac/0x1ec
+f2fs_write_node_pages+0x4c/0x260
+do_writepages+0x80/0xbc
+__writeback_single_inode+0xdc/0x4ac
+writeback_single_inode+0x9c/0x144
+write_inode_now+0xc4/0xec
+iput+0x194/0x22c
+f2fs_put_super+0x11c/0x1e8
+generic_shutdown_super+0x70/0xf4
+kill_block_super+0x2c/0x5c
+kill_f2fs_super+0x44/0x50
+deactivate_locked_super+0x60/0x8c
+deactivate_super+0x68/0x74
+cleanup_mnt+0x40/0x78
 
-to
+Fix this by moving f2fs_destroy_stats() further below iput() in
+both f2fs_put_super() and f2fs_fill_super() paths.
 
-- wait_on_page_writeback
-- update page
-- set_page_dirty
-
-The reason is:
-- set_page_dirty will increase reference of dirty page, the reference
-should be cleared before wait_on_page_writeback to keep its consistency.
-- some devices need stable page during page writebacking, so we
-should not change page's data.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/checkpoint.c | 7 ++++---
- fs/f2fs/gc.c         | 5 +++--
- fs/f2fs/node.c       | 5 +++--
- fs/f2fs/segment.c    | 3 ++-
- 4 files changed, 12 insertions(+), 8 deletions(-)
+ fs/f2fs/super.c | 27 +++++++++++++++------------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 9c28ea439e0b..e5719fcac47d 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1290,11 +1290,12 @@ static void commit_checkpoint(struct f2fs_sb_info *sbi,
- 	struct page *page = f2fs_grab_meta_page(sbi, blk_addr);
- 	int err;
- 
--	memcpy(page_address(page), src, PAGE_SIZE);
--	set_page_dirty(page);
--
- 	f2fs_wait_on_page_writeback(page, META, true);
- 	f2fs_bug_on(sbi, PageWriteback(page));
-+
-+	memcpy(page_address(page), src, PAGE_SIZE);
-+
-+	set_page_dirty(page);
- 	if (unlikely(!clear_page_dirty_for_io(page)))
- 		f2fs_bug_on(sbi, 1);
- 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index c96e7c6354ef..74f72dccab57 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -812,8 +812,8 @@ static int move_data_block(struct inode *inode, block_t bidx,
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 855a622fb052..a239472f405a 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1058,9 +1058,6 @@ static void f2fs_put_super(struct super_block *sb)
+ 		f2fs_write_checkpoint(sbi, &cpc);
  	}
  
- write_page:
--	set_page_dirty(fio.encrypted_page);
- 	f2fs_wait_on_page_writeback(fio.encrypted_page, DATA, true);
-+	set_page_dirty(fio.encrypted_page);
- 	if (clear_page_dirty_for_io(fio.encrypted_page))
- 		dec_page_count(fio.sbi, F2FS_DIRTY_META);
- 
-@@ -907,8 +907,9 @@ static int move_data_page(struct inode *inode, block_t bidx, int gc_type,
- 		bool is_dirty = PageDirty(page);
- 
- retry:
--		set_page_dirty(page);
- 		f2fs_wait_on_page_writeback(page, DATA, true);
-+
-+		set_page_dirty(page);
- 		if (clear_page_dirty_for_io(page)) {
- 			inode_dec_dirty_pages(inode);
- 			f2fs_remove_dirty_inode(inode);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 88be946dedd4..33fb3f8aeafa 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1598,10 +1598,11 @@ int f2fs_move_node_page(struct page *node_page, int gc_type)
- 			.for_reclaim = 0,
- 		};
- 
--		set_page_dirty(node_page);
- 		f2fs_wait_on_page_writeback(node_page, NODE, true);
+-	/* f2fs_write_checkpoint can update stat informaion */
+-	f2fs_destroy_stats(sbi);
 -
- 		f2fs_bug_on(F2FS_P_SB(node_page), PageWriteback(node_page));
-+
-+		set_page_dirty(node_page);
-+
- 		if (!clear_page_dirty_for_io(node_page)) {
- 			err = -EAGAIN;
- 			goto out_page;
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 6edcf8391dd3..8f3578c5230e 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -387,8 +387,9 @@ static int __f2fs_commit_inmem_pages(struct inode *inode)
- 		if (page->mapping == inode->i_mapping) {
- 			trace_f2fs_commit_inmem_page(page, INMEM);
+ 	/*
+ 	 * normally superblock is clean, so we need to release this.
+ 	 * In addition, EIO will skip do checkpoint, we need this as well.
+@@ -1080,6 +1077,12 @@ static void f2fs_put_super(struct super_block *sb)
+ 	iput(sbi->node_inode);
+ 	iput(sbi->meta_inode);
  
--			set_page_dirty(page);
- 			f2fs_wait_on_page_writeback(page, DATA, true);
++	/*
++	 * iput() can update stat information, if f2fs_write_checkpoint()
++	 * above failed with error.
++	 */
++	f2fs_destroy_stats(sbi);
 +
-+			set_page_dirty(page);
- 			if (clear_page_dirty_for_io(page)) {
- 				inode_dec_dirty_pages(inode);
- 				f2fs_remove_dirty_inode(inode);
+ 	/* destroy f2fs internal modules */
+ 	f2fs_destroy_node_manager(sbi);
+ 	f2fs_destroy_segment_manager(sbi);
+@@ -3256,30 +3259,30 @@ try_onemore:
+ 
+ 	f2fs_build_gc_manager(sbi);
+ 
++	err = f2fs_build_stats(sbi);
++	if (err)
++		goto free_nm;
++
+ 	/* get an inode for node space */
+ 	sbi->node_inode = f2fs_iget(sb, F2FS_NODE_INO(sbi));
+ 	if (IS_ERR(sbi->node_inode)) {
+ 		f2fs_msg(sb, KERN_ERR, "Failed to read node inode");
+ 		err = PTR_ERR(sbi->node_inode);
+-		goto free_nm;
++		goto free_stats;
+ 	}
+ 
+-	err = f2fs_build_stats(sbi);
+-	if (err)
+-		goto free_node_inode;
+-
+ 	/* read root inode and dentry */
+ 	root = f2fs_iget(sb, F2FS_ROOT_INO(sbi));
+ 	if (IS_ERR(root)) {
+ 		f2fs_msg(sb, KERN_ERR, "Failed to read root inode");
+ 		err = PTR_ERR(root);
+-		goto free_stats;
++		goto free_node_inode;
+ 	}
+ 	if (!S_ISDIR(root->i_mode) || !root->i_blocks ||
+ 			!root->i_size || !root->i_nlink) {
+ 		iput(root);
+ 		err = -EINVAL;
+-		goto free_stats;
++		goto free_node_inode;
+ 	}
+ 
+ 	sb->s_root = d_make_root(root); /* allocate root dentry */
+@@ -3403,12 +3406,12 @@ free_meta:
+ free_root_inode:
+ 	dput(sb->s_root);
+ 	sb->s_root = NULL;
+-free_stats:
+-	f2fs_destroy_stats(sbi);
+ free_node_inode:
+ 	f2fs_release_ino_entry(sbi, true);
+ 	truncate_inode_pages_final(NODE_MAPPING(sbi));
+ 	iput(sbi->node_inode);
++free_stats:
++	f2fs_destroy_stats(sbi);
+ free_nm:
+ 	f2fs_destroy_node_manager(sbi);
+ free_sm:
 -- 
 2.19.1
