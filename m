@@ -1,100 +1,72 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 088/304] f2fs: fix race between write_checkpoint and write_begin
-Date: Mon, 28 Jan 2019 10:40:05 -0500
-Message-ID: <20190128154341.47195-88-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 087/304] f2fs: avoid build warn of
+ fall_through
+Date: Mon, 28 Jan 2019 10:40:04 -0500
+Message-ID: <20190128154341.47195-87-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <sashal@kernel.org>) id 1go98C-0007H8-Ce
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Jan 2019 15:47:28 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1go98A-003R7X-JZ
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Jan 2019 15:47:28 +0000
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Sheng Yong <shengyong1@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-From: Sheng Yong <shengyong1@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-[ Upstream commit 2866fb16d67992195b0526d19e65acb6640fb87f ]
+[ Upstream commit f5d5510e7389fa264337fb524346bac9eb93adc8 ]
 
-The following race could lead to inconsistent SIT bitmap:
+After merging the f2fs tree, today's linux-next build
+ (x86_64_allmodconfig) produced this warning:
 
-Task A                          Task B
-======                          ======
-f2fs_write_checkpoint
-  block_operations
-    f2fs_lock_all
-      down_write(node_change)
-      down_write(node_write)
-      ... sync ...
-      up_write(node_change)
-                                f2fs_file_write_iter
-                                  set_inode_flag(FI_NO_PREALLOC)
-                                  ......
-                                  f2fs_write_begin(index=0, has inline data)
-                                    prepare_write_begin
-                                      __do_map_lock(AIO) => down_read(node_change)
-                                      f2fs_convert_inline_page => update SIT
-                                      __do_map_lock(AIO) => up_read(node_change)
-  f2fs_flush_sit_entries <= inconsistent SIT
-  finish write checkpoint
-  sudden-power-off
+ In file included from fs/f2fs/dir.c:11:
+ fs/f2fs/f2fs.h: In function '__mark_inode_dirty_flag':
+ fs/f2fs/f2fs.h:2388:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+    if (set)
+       ^
+ fs/f2fs/f2fs.h:2390:2: note: here
+   case FI_DATA_EXIST:
+   ^~~~
 
-If SPO occurs after checkpoint is finished, SIT bitmap will be set
-incorrectly.
+ Exposed by my use of -Wimplicit-fallthrough
 
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/data.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ fs/f2fs/f2fs.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 17049b030b6c..e90ca6aa3a00 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2326,6 +2326,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
- 	bool locked = false;
- 	struct extent_info ei = {0,0,0};
- 	int err = 0;
-+	int flag;
- 
- 	/*
- 	 * we already allocated all the blocks, so we don't need to get
-@@ -2335,9 +2336,15 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
- 			!is_inode_flag_set(inode, FI_NO_PREALLOC))
- 		return 0;
- 
-+	/* f2fs_lock_op avoids race between write CP and convert_inline_page */
-+	if (f2fs_has_inline_data(inode) && pos + len > MAX_INLINE_DATA(inode))
-+		flag = F2FS_GET_BLOCK_DEFAULT;
-+	else
-+		flag = F2FS_GET_BLOCK_PRE_AIO;
-+
- 	if (f2fs_has_inline_data(inode) ||
- 			(pos & PAGE_MASK) >= i_size_read(inode)) {
--		__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, true);
-+		__do_map_lock(sbi, flag, true);
- 		locked = true;
- 	}
- restart:
-@@ -2375,6 +2382,7 @@ restart:
- 				f2fs_put_dnode(&dn);
- 				__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO,
- 								true);
-+				WARN_ON(flag != F2FS_GET_BLOCK_PRE_AIO);
- 				locked = true;
- 				goto restart;
- 			}
-@@ -2388,7 +2396,7 @@ out:
- 	f2fs_put_dnode(&dn);
- unlock_out:
- 	if (locked)
--		__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, false);
-+		__do_map_lock(sbi, flag, false);
- 	return err;
- }
- 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 1e031971a466..ebad864c031c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2370,6 +2370,7 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
+ 	case FI_NEW_INODE:
+ 		if (set)
+ 			return;
++		/* fall through */
+ 	case FI_DATA_EXIST:
+ 	case FI_INLINE_DOTS:
+ 	case FI_PIN_FILE:
 -- 
 2.19.1
