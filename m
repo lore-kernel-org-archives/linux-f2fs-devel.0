@@ -1,23 +1,23 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 075/258] f2fs: fix wrong return
- value of f2fs_acl_create
-Date: Mon, 28 Jan 2019 10:56:21 -0500
-Message-ID: <20190128155924.51521-75-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 074/258] f2fs: fix race between
+ write_checkpoint and write_begin
+Date: Mon, 28 Jan 2019 10:56:20 -0500
+Message-ID: <20190128155924.51521-74-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <sashal@kernel.org>) id 1go9NO-000858-I1
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Jan 2019 16:03:10 +0000
+ (envelope-from <sashal@kernel.org>) id 1go9NM-0002A7-Se
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Jan 2019 16:03:08 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1go9NN-003tZk-2I
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Jan 2019 16:03:10 +0000
+ id 1go9NL-003tZa-5v
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Jan 2019 16:03:08 +0000
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -29,62 +29,91 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Tiezhu Yang <kernelpatch@126.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-From: Tiezhu Yang <kernelpatch@126.com>
+From: Sheng Yong <shengyong1@huawei.com>
 
-[ Upstream commit f6176473a0c7472380eef72ebeb330cf9485bf0a ]
+[ Upstream commit 2866fb16d67992195b0526d19e65acb6640fb87f ]
 
-When call f2fs_acl_create_masq() failed, the caller f2fs_acl_create()
-should return -EIO instead of -ENOMEM, this patch makes it consistent
-with posix_acl_create() which has been fixed in commit beaf226b863a
-("posix_acl: don't ignore return value of posix_acl_create_masq()").
+The following race could lead to inconsistent SIT bitmap:
 
-Fixes: 83dfe53c185e ("f2fs: fix reference leaks in f2fs_acl_create")
-Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
+Task A                          Task B
+======                          ======
+f2fs_write_checkpoint
+  block_operations
+    f2fs_lock_all
+      down_write(node_change)
+      down_write(node_write)
+      ... sync ...
+      up_write(node_change)
+                                f2fs_file_write_iter
+                                  set_inode_flag(FI_NO_PREALLOC)
+                                  ......
+                                  f2fs_write_begin(index=0, has inline data)
+                                    prepare_write_begin
+                                      __do_map_lock(AIO) => down_read(node_change)
+                                      f2fs_convert_inline_page => update SIT
+                                      __do_map_lock(AIO) => up_read(node_change)
+  f2fs_flush_sit_entries <= inconsistent SIT
+  finish write checkpoint
+  sudden-power-off
+
+If SPO occurs after checkpoint is finished, SIT bitmap will be set
+incorrectly.
+
+Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/acl.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ fs/f2fs/data.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
-index 111824199a88..b9fe937a3c70 100644
---- a/fs/f2fs/acl.c
-+++ b/fs/f2fs/acl.c
-@@ -352,12 +352,14 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
- 		return PTR_ERR(p);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 11f28342f641..08314fb42652 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2259,6 +2259,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
+ 	bool locked = false;
+ 	struct extent_info ei = {0,0,0};
+ 	int err = 0;
++	int flag;
  
- 	clone = f2fs_acl_clone(p, GFP_NOFS);
--	if (!clone)
--		goto no_mem;
-+	if (!clone) {
-+		ret = -ENOMEM;
-+		goto release_acl;
-+	}
+ 	/*
+ 	 * we already allocated all the blocks, so we don't need to get
+@@ -2268,9 +2269,15 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
+ 			!is_inode_flag_set(inode, FI_NO_PREALLOC))
+ 		return 0;
  
- 	ret = f2fs_acl_create_masq(clone, mode);
- 	if (ret < 0)
--		goto no_mem_clone;
-+		goto release_clone;
- 
- 	if (ret == 0)
- 		posix_acl_release(clone);
-@@ -371,11 +373,11 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
- 
- 	return 0;
- 
--no_mem_clone:
-+release_clone:
- 	posix_acl_release(clone);
--no_mem:
-+release_acl:
- 	posix_acl_release(p);
--	return -ENOMEM;
-+	return ret;
++	/* f2fs_lock_op avoids race between write CP and convert_inline_page */
++	if (f2fs_has_inline_data(inode) && pos + len > MAX_INLINE_DATA(inode))
++		flag = F2FS_GET_BLOCK_DEFAULT;
++	else
++		flag = F2FS_GET_BLOCK_PRE_AIO;
++
+ 	if (f2fs_has_inline_data(inode) ||
+ 			(pos & PAGE_MASK) >= i_size_read(inode)) {
+-		__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, true);
++		__do_map_lock(sbi, flag, true);
+ 		locked = true;
+ 	}
+ restart:
+@@ -2308,6 +2315,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
+ 				f2fs_put_dnode(&dn);
+ 				__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO,
+ 								true);
++				WARN_ON(flag != F2FS_GET_BLOCK_PRE_AIO);
+ 				locked = true;
+ 				goto restart;
+ 			}
+@@ -2321,7 +2329,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
+ 	f2fs_put_dnode(&dn);
+ unlock_out:
+ 	if (locked)
+-		__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, false);
++		__do_map_lock(sbi, flag, false);
+ 	return err;
  }
  
- int f2fs_init_acl(struct inode *inode, struct inode *dir, struct page *ipage,
 -- 
 2.19.1
