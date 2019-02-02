@@ -1,8 +1,8 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix potential data inconsistence of
- checkpoint
-Date: Sat, 2 Feb 2019 17:33:01 +0800
-Message-ID: <20190202093301.64677-1-yuchao0@huawei.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 202495] New: oops in fs/f2fs/checkpoint.c:150
+ f2fs_is_valid_blkaddr
+Date: Sat, 02 Feb 2019 15:48:32 +0000
+Message-ID: <bug-202495-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,13 +10,18 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1gprgC-0003VC-C3
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 02 Feb 2019 09:33:40 +0000
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
+ id 1gpxX7-0001rp-Qy
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 02 Feb 2019 15:48:41 +0000
+Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gprg9-00FXJ6-SM
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 02 Feb 2019 09:33:40 +0000
+ id 1gpxX6-00G7CP-0n
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 02 Feb 2019 15:48:41 +0000
+Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 77DDA2F2AA
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat,  2 Feb 2019 15:48:33 +0000 (UTC)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,168 +31,68 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-Previously, we changed lock from cp_rwsem to node_change, it solved
-the deadlock issue which was caused by below race condition:
+https://bugzilla.kernel.org/show_bug.cgi?id=202495
 
-Thread A			Thread B
-- f2fs_setattr
- - f2fs_lock_op  -- read_lock
- - dquot_transfer
-  - __dquot_transfer
-   - dquot_acquire
-    - commit_dqblk
-     - f2fs_quota_write
-      - f2fs_write_begin
-       - f2fs_write_failed
-				- write_checkpoint
-				 - block_operations
-				  - f2fs_lock_all  -- write_lock
-        - f2fs_truncate_blocks
-         - f2fs_lock_op  -- read_lock
+            Bug ID: 202495
+           Summary: oops in fs/f2fs/checkpoint.c:150 f2fs_is_valid_blkaddr
+           Product: File System
+           Version: 2.5
+    Kernel Version: 4.14.97
+          Hardware: ARM
+                OS: Linux
+              Tree: Mainline
+            Status: NEW
+          Severity: normal
+          Priority: P1
+         Component: f2fs
+          Assignee: filesystem_f2fs@kernel-bugs.kernel.org
+          Reporter: jw7779@gmail.com
+        Regression: No
 
-But it breaks the sematics of cp_rwsem, in other callers like:
-- f2fs_file_write_iter -> f2fs_write_begin -> f2fs_write_failed
-- f2fs_direct_IO -> f2fs_write_failed
+DMESG buffer filled with several oops's on boot
 
-We allow to truncate dnode w/o cp_rwsem held, result in incorrect sit
-bitmap update, which can cause further data corruption.
+[   24.810633] ------------[ cut here ]------------
+[   24.810690] WARNING: CPU: 0 PID: 140 at fs/f2fs/checkpoint.c:150
+f2fs_is_valid_blkaddr+0x1d8/0x25c
+[   24.810698] Modules linked in: ipt_MASQUERADE nf_nat_masquerade_ipv4
+iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4 nf_nat nf_conntrack
+ip_tables x_tables arc4 rt2800usb rt2800lib rt2x00usb rt2x00lib crc_ccitt
+mac80211 cfg80211 rfkill rtc_ds3232 hwmon i2c_dev i2c_bcm2835
+[   24.810836] CPU: 0 PID: 140 Comm: ls Tainted: G        W       4.14.97+ #34
+[   24.810842] Hardware name: BCM2835
+[   24.810898] [<c0016218>] (unwind_backtrace) from [<c0013b48>]
+(show_stack+0x20/0x24)
+[   24.810937] [<c0013b48>] (show_stack) from [<c057b694>]
+(dump_stack+0x20/0x28)
+[   24.810967] [<c057b694>] (dump_stack) from [<c0021ef0>] (__warn+0xe4/0x10c)
+[   24.810988] [<c0021ef0>] (__warn) from [<c0021fe4>]
+(warn_slowpath_null+0x30/0x38)
+[   24.811010] [<c0021fe4>] (warn_slowpath_null) from [<c027c974>]
+(f2fs_is_valid_blkaddr+0x1d8/0x25c)
+[   24.811043] [<c027c974>] (f2fs_is_valid_blkaddr) from [<c026af84>]
+(f2fs_iget+0x764/0x1110)
+[   24.811064] [<c026af84>] (f2fs_iget) from [<c026e6fc>]
+(f2fs_lookup+0xd4/0x1cc)
+[   24.811093] [<c026e6fc>] (f2fs_lookup) from [<c0168744>]
+(lookup_slow+0x94/0x13c)
+[   24.811113] [<c0168744>] (lookup_slow) from [<c0168fa4>]
+(walk_component+0x1bc/0x2e8)
+[   24.811134] [<c0168fa4>] (walk_component) from [<c016a9cc>]
+(path_lookupat+0x8c/0x1f0)
+[   24.811158] [<c016a9cc>] (path_lookupat) from [<c016d474>]
+(filename_lookup+0xa0/0xfc)
+[   24.811179] [<c016d474>] (filename_lookup) from [<c016d5bc>]
+(user_path_at_empty+0x54/0x5c)
+[   24.811197] [<c016d5bc>] (user_path_at_empty) from [<c0162974>]
+(vfs_statx+0x68/0xbc)
+[   24.811215] [<c0162974>] (vfs_statx) from [<c01631bc>]
+(SyS_lstat64+0x38/0x58)
+[   24.811236] [<c01631bc>] (SyS_lstat64) from [<c000fba0>]
+(ret_fast_syscall+0x0/0x28)
+[   24.811245] ---[ end trace c72216233c81afbe ]---
 
-So this patch reverts previous fix implementation, and try to fix
-deadlock by skipping calling f2fs_truncate_blocks() in f2fs_write_failed()
-only for quota file, and keep the preallocated data/node in the tail of
-quota file, we can expecte that the preallocated space can be used to
-store quota info latter soon.
-
-Fixes: af033b2aa8a8 ("f2fs: guarantee journalled quota data by checkpoint")
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/data.c   |  3 ++-
- fs/f2fs/f2fs.h   |  3 +--
- fs/f2fs/file.c   | 14 ++++++--------
- fs/f2fs/inline.c |  4 ++--
- 4 files changed, 11 insertions(+), 13 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 77068acc8001..18ebafa2f83e 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2404,7 +2404,8 @@ static void f2fs_write_failed(struct address_space *mapping, loff_t to)
- 		down_write(&F2FS_I(inode)->i_mmap_sem);
- 
- 		truncate_pagecache(inode, i_size);
--		f2fs_truncate_blocks(inode, i_size, true, true);
-+		if (!IS_NOQUOTA(inode))
-+			f2fs_truncate_blocks(inode, i_size, true);
- 
- 		up_write(&F2FS_I(inode)->i_mmap_sem);
- 		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 5ccf55eaa514..b0eb8174a13d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2825,8 +2825,7 @@ static inline bool is_valid_data_blkaddr(struct f2fs_sb_info *sbi,
-  */
- int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync);
- void f2fs_truncate_data_blocks(struct dnode_of_data *dn);
--int f2fs_truncate_blocks(struct inode *inode, u64 from, bool lock,
--							bool buf_write);
-+int f2fs_truncate_blocks(struct inode *inode, u64 from, bool lock);
- int f2fs_truncate(struct inode *inode);
- int f2fs_getattr(const struct path *path, struct kstat *stat,
- 			u32 request_mask, unsigned int flags);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index fe6f92fbba38..b8f5d1208619 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -589,8 +589,7 @@ static int truncate_partial_data_page(struct inode *inode, u64 from,
- 	return 0;
- }
- 
--int f2fs_truncate_blocks(struct inode *inode, u64 from, bool lock,
--							bool buf_write)
-+int f2fs_truncate_blocks(struct inode *inode, u64 from, bool lock)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct dnode_of_data dn;
-@@ -598,7 +597,6 @@ int f2fs_truncate_blocks(struct inode *inode, u64 from, bool lock,
- 	int count = 0, err = 0;
- 	struct page *ipage;
- 	bool truncate_page = false;
--	int flag = buf_write ? F2FS_GET_BLOCK_PRE_AIO : F2FS_GET_BLOCK_PRE_DIO;
- 
- 	trace_f2fs_truncate_blocks_enter(inode, from);
- 
-@@ -608,7 +606,7 @@ int f2fs_truncate_blocks(struct inode *inode, u64 from, bool lock,
- 		goto free_partial;
- 
- 	if (lock)
--		__do_map_lock(sbi, flag, true);
-+		f2fs_lock_op(sbi);
- 
- 	ipage = f2fs_get_node_page(sbi, inode->i_ino);
- 	if (IS_ERR(ipage)) {
-@@ -646,7 +644,7 @@ int f2fs_truncate_blocks(struct inode *inode, u64 from, bool lock,
- 	err = f2fs_truncate_inode_blocks(inode, free_from);
- out:
- 	if (lock)
--		__do_map_lock(sbi, flag, false);
-+		f2fs_unlock_op(sbi);
- free_partial:
- 	/* lastly zero out the first data page */
- 	if (!err)
-@@ -681,7 +679,7 @@ int f2fs_truncate(struct inode *inode)
- 			return err;
- 	}
- 
--	err = f2fs_truncate_blocks(inode, i_size_read(inode), true, false);
-+	err = f2fs_truncate_blocks(inode, i_size_read(inode), true);
- 	if (err)
- 		return err;
- 
-@@ -1262,7 +1260,7 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
- 	new_size = i_size_read(inode) - len;
- 	truncate_pagecache(inode, new_size);
- 
--	ret = f2fs_truncate_blocks(inode, new_size, true, false);
-+	ret = f2fs_truncate_blocks(inode, new_size, true);
- 	up_write(&F2FS_I(inode)->i_mmap_sem);
- 	if (!ret)
- 		f2fs_i_size_write(inode, new_size);
-@@ -1447,7 +1445,7 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
- 	f2fs_balance_fs(sbi, true);
- 
- 	down_write(&F2FS_I(inode)->i_mmap_sem);
--	ret = f2fs_truncate_blocks(inode, i_size_read(inode), true, false);
-+	ret = f2fs_truncate_blocks(inode, i_size_read(inode), true);
- 	up_write(&F2FS_I(inode)->i_mmap_sem);
- 	if (ret)
- 		return ret;
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index d636cbcf68f2..a1381d05956b 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -298,7 +298,7 @@ bool f2fs_recover_inline_data(struct inode *inode, struct page *npage)
- 		clear_inode_flag(inode, FI_INLINE_DATA);
- 		f2fs_put_page(ipage, 1);
- 	} else if (ri && (ri->i_inline & F2FS_INLINE_DATA)) {
--		if (f2fs_truncate_blocks(inode, 0, false, false))
-+		if (f2fs_truncate_blocks(inode, 0, false))
- 			return false;
- 		goto process_inline;
- 	}
-@@ -470,7 +470,7 @@ static int f2fs_add_inline_entries(struct inode *dir, void *inline_dentry)
- 	return 0;
- punch_dentry_pages:
- 	truncate_inode_pages(&dir->i_data, 0);
--	f2fs_truncate_blocks(dir, 0, false, false);
-+	f2fs_truncate_blocks(dir, 0, false);
- 	f2fs_remove_dirty_inode(dir);
- 	return err;
- }
 -- 
-2.18.0.rc1
+You are receiving this mail because:
+You are watching the assignee of the bug.
