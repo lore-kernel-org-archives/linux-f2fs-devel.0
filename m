@@ -1,107 +1,148 @@
-From: Sahitya Tummala <stummala@codeaurora.org>
-Subject: [PATCH] f2fs: do not use mutex lock in atomic context
-Date: Mon,  4 Feb 2019 13:36:53 +0530
-Message-ID: <1549267613-9288-1-git-send-email-stummala@codeaurora.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH 2/7] f2fs: add quick mode of
+ checkpoint=disable for QA
+Date: Mon, 4 Feb 2019 08:55:59 -0800
+Message-ID: <20190204165559.GA15646@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190128234717.77225-1-jaegeuk@kernel.org>
+ <20190128234717.77225-2-jaegeuk@kernel.org>
+ <2221688e-4dfc-71d5-81c6-3cf12d18e64a@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <2221688e-4dfc-71d5-81c6-3cf12d18e64a@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>
+To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Fix below warning coming because of using mutex lock in atomic context.
+On 02/01, Chao Yu wrote:
+> On 2019-1-29 7:47, Jaegeuk Kim wrote:
+> > This mode returns mount() quickly with EAGAIN. We can trigger this by
+> > shutdown(F2FS_GOING_DOWN_NEED_FSCK).
+> 
+> Is the purpose of this patch making mount failed more quickly due to giving less
+> GC time in f2fs_disable_checkpoint(), so we can expect that the total test time
+> can be reduce?
 
-BUG: sleeping function called from invalid context at kernel/locking/mutex.c:98
-in_atomic(): 1, irqs_disabled(): 0, pid: 585, name: sh
-Preemption disabled at: __radix_tree_preload+0x28/0x130
-Call trace:
- dump_backtrace+0x0/0x2b4
- show_stack+0x20/0x28
- dump_stack+0xa8/0xe0
- ___might_sleep+0x144/0x194
- __might_sleep+0x58/0x8c
- mutex_lock+0x2c/0x48
- f2fs_trace_pid+0x88/0x14c
- f2fs_set_node_page_dirty+0xd0/0x184
+Yup.
 
-Do not use f2fs_radix_tree_insert() to avoid doing cond_resched() with
-spin_lock() acquired.
-
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
----
- fs/f2fs/trace.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
-
-diff --git a/fs/f2fs/trace.c b/fs/f2fs/trace.c
-index ce2a5eb..d0ab533 100644
---- a/fs/f2fs/trace.c
-+++ b/fs/f2fs/trace.c
-@@ -14,7 +14,7 @@
- #include "trace.h"
- 
- static RADIX_TREE(pids, GFP_ATOMIC);
--static struct mutex pids_lock;
-+static spinlock_t pids_lock;
- static struct last_io_info last_io;
- 
- static inline void __print_last_io(void)
-@@ -58,23 +58,29 @@ void f2fs_trace_pid(struct page *page)
- 
- 	set_page_private(page, (unsigned long)pid);
- 
-+retry:
- 	if (radix_tree_preload(GFP_NOFS))
- 		return;
- 
--	mutex_lock(&pids_lock);
-+	spin_lock(&pids_lock);
- 	p = radix_tree_lookup(&pids, pid);
- 	if (p == current)
- 		goto out;
- 	if (p)
- 		radix_tree_delete(&pids, pid);
- 
--	f2fs_radix_tree_insert(&pids, pid, current);
-+	if (radix_tree_insert(&pids, pid, current)) {
-+		spin_unlock(&pids_lock);
-+		radix_tree_preload_end();
-+		cond_resched();
-+		goto retry;
-+	}
- 
- 	trace_printk("%3x:%3x %4x %-16s\n",
- 			MAJOR(inode->i_sb->s_dev), MINOR(inode->i_sb->s_dev),
- 			pid, current->comm);
- out:
--	mutex_unlock(&pids_lock);
-+	spin_unlock(&pids_lock);
- 	radix_tree_preload_end();
- }
- 
-@@ -119,7 +125,7 @@ void f2fs_trace_ios(struct f2fs_io_info *fio, int flush)
- 
- void f2fs_build_trace_ios(void)
- {
--	mutex_init(&pids_lock);
-+	spin_lock_init(&pids_lock);
- }
- 
- #define PIDVEC_SIZE	128
-@@ -147,7 +153,7 @@ void f2fs_destroy_trace_ios(void)
- 	pid_t next_pid = 0;
- 	unsigned int found;
- 
--	mutex_lock(&pids_lock);
-+	spin_lock(&pids_lock);
- 	while ((found = gang_lookup_pids(pid, next_pid, PIDVEC_SIZE))) {
- 		unsigned idx;
- 
-@@ -155,5 +161,5 @@ void f2fs_destroy_trace_ios(void)
- 		for (idx = 0; idx < found; idx++)
- 			radix_tree_delete(&pids, pid[idx]);
- 	}
--	mutex_unlock(&pids_lock);
-+	spin_unlock(&pids_lock);
- }
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+> 
+> Thanks,
+> 
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/checkpoint.c    | 5 +++++
+> >  fs/f2fs/f2fs.h          | 2 ++
+> >  fs/f2fs/file.c          | 6 +++---
+> >  fs/f2fs/segment.c       | 3 +++
+> >  fs/f2fs/super.c         | 5 +++++
+> >  include/linux/f2fs_fs.h | 1 +
+> >  6 files changed, 19 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> > index f955cd3e0677..622dca707752 100644
+> > --- a/fs/f2fs/checkpoint.c
+> > +++ b/fs/f2fs/checkpoint.c
+> > @@ -1259,6 +1259,11 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >  	else
+> >  		__clear_ckpt_flags(ckpt, CP_DISABLED_FLAG);
+> >  
+> > +	if (is_sbi_flag_set(sbi, SBI_CP_DISABLED_QUICK))
+> > +		__set_ckpt_flags(ckpt, CP_DISABLED_QUICK_FLAG);
+> > +	else
+> > +		__clear_ckpt_flags(ckpt, CP_DISABLED_QUICK_FLAG);
+> > +
+> >  	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
+> >  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >  	else
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 6b6ec5600089..fe95abb05d40 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -191,6 +191,7 @@ enum {
+> >  #define DEF_CP_INTERVAL			60	/* 60 secs */
+> >  #define DEF_IDLE_INTERVAL		5	/* 5 secs */
+> >  #define DEF_DISABLE_INTERVAL		5	/* 5 secs */
+> > +#define DEF_DISABLE_QUICK_INTERVAL	1	/* 1 secs */
+> >  #define DEF_UMOUNT_DISCARD_TIMEOUT	5	/* 5 secs */
+> >  
+> >  struct cp_control {
+> > @@ -1101,6 +1102,7 @@ enum {
+> >  	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
+> >  	SBI_IS_RECOVERED,			/* recovered orphan/data */
+> >  	SBI_CP_DISABLED,			/* CP was disabled last mount */
+> > +	SBI_CP_DISABLED_QUICK,			/* CP was disabled quickly */
+> >  	SBI_QUOTA_NEED_FLUSH,			/* need to flush quota info in CP */
+> >  	SBI_QUOTA_SKIP_FLUSH,			/* skip flushing quota in current CP */
+> >  	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
+> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > index 0d461321edfc..fe6f92fbba38 100644
+> > --- a/fs/f2fs/file.c
+> > +++ b/fs/f2fs/file.c
+> > @@ -1972,11 +1972,11 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
+> >  		break;
+> >  	case F2FS_GOING_DOWN_NEED_FSCK:
+> >  		set_sbi_flag(sbi, SBI_NEED_FSCK);
+> > +		set_sbi_flag(sbi, SBI_CP_DISABLED_QUICK);
+> > +		set_sbi_flag(sbi, SBI_IS_DIRTY);
+> >  		/* do checkpoint only */
+> >  		ret = f2fs_sync_fs(sb, 1);
+> > -		if (ret)
+> > -			goto out;
+> > -		break;
+> > +		goto out;
+> >  	default:
+> >  		ret = -EINVAL;
+> >  		goto out;
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 5b2b9be6f28d..342b720fb4db 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -868,6 +868,9 @@ int f2fs_disable_cp_again(struct f2fs_sb_info *sbi)
+> >  
+> >  	if (holes[DATA] > ovp || holes[NODE] > ovp)
+> >  		return -EAGAIN;
+> > +	if (is_sbi_flag_set(sbi, SBI_CP_DISABLED_QUICK) &&
+> > +		dirty_segments(sbi) > overprovision_segments(sbi))
+> > +		return -EAGAIN;
+> >  	return 0;
+> >  }
+> >  
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index 24efd76ca151..5e1f8573a17f 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -3205,6 +3205,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> >  
+> >  	if (__is_set_ckpt_flags(F2FS_CKPT(sbi), CP_QUOTA_NEED_FSCK_FLAG))
+> >  		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+> > +	if (__is_set_ckpt_flags(F2FS_CKPT(sbi), CP_DISABLED_QUICK_FLAG)) {
+> > +		set_sbi_flag(sbi, SBI_CP_DISABLED_QUICK);
+> > +		sbi->interval_time[DISABLE_TIME] = DEF_DISABLE_QUICK_INTERVAL;
+> > +	}
+> >  
+> >  	/* Initialize device list */
+> >  	err = f2fs_scan_devices(sbi);
+> > @@ -3392,6 +3396,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> >  				cur_cp_version(F2FS_CKPT(sbi)));
+> >  	f2fs_update_time(sbi, CP_TIME);
+> >  	f2fs_update_time(sbi, REQ_TIME);
+> > +	clear_sbi_flag(sbi, SBI_CP_DISABLED_QUICK);
+> >  	return 0;
+> >  
+> >  free_meta:
+> > diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+> > index d7711048ef93..d6befe1f9dc7 100644
+> > --- a/include/linux/f2fs_fs.h
+> > +++ b/include/linux/f2fs_fs.h
+> > @@ -116,6 +116,7 @@ struct f2fs_super_block {
+> >  /*
+> >   * For checkpoint
+> >   */
+> > +#define CP_DISABLED_QUICK_FLAG		0x00002000
+> >  #define CP_DISABLED_FLAG		0x00001000
+> >  #define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
+> >  #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
+> > 
