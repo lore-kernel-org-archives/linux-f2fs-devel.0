@@ -1,35 +1,38 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Mimi Zohar <zohar@linux.ibm.com>
 Subject: Re: Proposal: Yet another possible fs-verity interface
-Date: Sat, 9 Feb 2019 12:38:05 -0800
-Message-ID: <CAHk-=wh2j+Yy28H_QxEdsP=k9xcHxjCG1PqKAF2Uv=ckK8oPug@mail.gmail.com>
+Date: Sun, 10 Feb 2019 09:06:55 -0500
+Message-ID: <1549807615.12743.109.camel@linux.ibm.com>
 References: <20190207031101.GA7387@mit.edu>
+ <CAHk-=wh2j+Yy28H_QxEdsP=k9xcHxjCG1PqKAF2Uv=ckK8oPug@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <torvalds@linuxfoundation.org>) id 1gsZOS-0006na-Rr
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 09 Feb 2019 20:38:32 +0000
-Received: from mail-lj1-f193.google.com ([209.85.208.193])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1gsZOQ-00Eu7K-At
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 09 Feb 2019 20:38:32 +0000
-Received: by mail-lj1-f193.google.com with SMTP id q2-v6so5758786lji.10
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 09 Feb 2019 12:38:29 -0800 (PST)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com.
- [209.85.208.173])
- by smtp.gmail.com with ESMTPSA id y14-v6sm1215243ljj.55.2019.02.09.12.38.21
- for <linux-f2fs-devel@lists.sourceforge.net>
- (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
- Sat, 09 Feb 2019 12:38:21 -0800 (PST)
-Received: by mail-lj1-f173.google.com with SMTP id g11-v6so5822110ljk.3
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 09 Feb 2019 12:38:21 -0800 (PST)
-In-Reply-To: <20190207031101.GA7387@mit.edu>
+ (envelope-from <zohar@linux.ibm.com>) id 1gsplT-00036e-W1
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 10 Feb 2019 14:07:23 +0000
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
+ helo=mx0a-001b2d01.pphosted.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1gsplR-005oPG-Qf
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 10 Feb 2019 14:07:23 +0000
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+ by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
+ x1AE3jIR028558
+ for <linux-f2fs-devel@lists.sourceforge.net>; Sun, 10 Feb 2019 09:07:14 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+ by mx0b-001b2d01.pphosted.com with ESMTP id 2qjd10gb8p-1
+ (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <linux-f2fs-devel@lists.sourceforge.net>; Sun, 10 Feb 2019 09:07:14 -0500
+Received: from localhost
+ by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
+ Violators will be prosecuted
+ for <linux-f2fs-devel@lists.sourceforge.net> from <zohar@linux.ibm.com>;
+ Sun, 10 Feb 2019 14:07:12 -0000
+In-Reply-To: <CAHk-=wh2j+Yy28H_QxEdsP=k9xcHxjCG1PqKAF2Uv=ckK8oPug@mail.gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -39,44 +42,64 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc: Eric Biggers <ebiggers@kernel.org>, "Darrick J. Wong" <darrick.wong@oracle.com>, Dave Chinner <david@fromorbit.com>, linux-f2fs-devel@lists.sourceforge.net, Christoph Hellwig <hch@infradead.org>, linux-fscrypt@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-ext4@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>, "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc: Eric Biggers <ebiggers@kernel.org>, "Darrick J. Wong" <darrick.wong@oracle.com>, Dave Chinner <david@fromorbit.com>, linux-f2fs-devel@lists.sourceforge.net, Christoph Hellwig <hch@infradead.org>, linux-fscrypt@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, James Bottomley <James.Bottomley@HansenPartnership.com>, linux-ext4@vger.kernel.org
 
-On Thu, Feb 7, 2019 at 8:10 AM Theodore Y. Ts'o <tytso@mit.edu> wrote:
->
-> After doing a lot of thinking and conferring with the other fs-verity
-> developers, our current thinking is to simply move the Merkle tree
-> creation into the kernel.  The upside of doing this is it completely
-> bypasses all of the complaints about how to transfer the Merkle tree
-> from userspace to the kernel.
-
-This sounds very sane to me.
-
-In particular, may I suggest that  the interface be made idempotent,
-so that you can do the merkle tree operation several times with the
-same offset/length arguments, and if the merkle tree has already been
-calculated, you just return the resulting root hash directly.
-
-Why? That allows you to "validate" images on filesystems that don't
-actually have any long-term storage model for the merkle tree. IOW,
-you could do the merkle tree calculation (and verification) every time
-at bootup, and on a filesystem that supports the long-term storage of
-said merkle data, it's a very cheap operation, but on a filesystem
-that doesn't, it would still be *possible* to just calculate the hash
-and mark it "finalized" for that boot (or that mount). IOW, it would
-work for something like ramfs (but you could also make it work for any
-random on-disk filesystem that doesn't support long-term storage).
-
-At that point, the merkle tree thing ends up fairly equivalent to the
-IMA "measurement" thing, with the exception that the filesystem *may*
-optimize it to be long-term. Hmm?
-
-Now, since I assume that only the merkle tree root hash would be
-returned by the "enable merkle tree" operation (so that the code
-enabling it can verify that the hash matches the expected value), you
-do have to worry about the preimage attack, and make sure that you
-can't fool the hashing by making the (bad) file contents themselves be
-just the hashes of the (good) blocks. So each level of the merkle tree
-needs to have a hash seeding thing or whatever.
-
-              Linus
+T24gU2F0LCAyMDE5LTAyLTA5IGF0IDEyOjM4IC0wODAwLCBMaW51cyBUb3J2YWxkcyB3cm90ZToK
+PiBPbiBUaHUsIEZlYiA3LCAyMDE5IGF0IDg6MTAgQU0gVGhlb2RvcmUgWS4gVHMnbyA8dHl0c29A
+bWl0LmVkdT4gd3JvdGU6Cj4gPgo+ID4gQWZ0ZXIgZG9pbmcgYSBsb3Qgb2YgdGhpbmtpbmcgYW5k
+IGNvbmZlcnJpbmcgd2l0aCB0aGUgb3RoZXIgZnMtdmVyaXR5Cj4gPiBkZXZlbG9wZXJzLCBvdXIg
+Y3VycmVudCB0aGlua2luZyBpcyB0byBzaW1wbHkgbW92ZSB0aGUgTWVya2xlIHRyZWUKPiA+IGNy
+ZWF0aW9uIGludG8gdGhlIGtlcm5lbC4gIFRoZSB1cHNpZGUgb2YgZG9pbmcgdGhpcyBpcyBpdCBj
+b21wbGV0ZWx5Cj4gPiBieXBhc3NlcyBhbGwgb2YgdGhlIGNvbXBsYWludHMgYWJvdXQgaG93IHRv
+IHRyYW5zZmVyIHRoZSBNZXJrbGUgdHJlZQo+ID4gZnJvbSB1c2Vyc3BhY2UgdG8gdGhlIGtlcm5l
+bC4KPiAKPiBUaGlzIHNvdW5kcyB2ZXJ5IHNhbmUgdG8gbWUuCgpPbmUgb2YgdGhlIG1vcmUgaW50
+ZXJlc3RpbmcgdXNlIGNhc2VzIGZvciBmcy12ZXJpdHksIGF0IGxlYXN0IHRvIG1lLAp3YXMgcmVt
+b3RlIGZpbGUgc3lzdGVtcy4gwqBIb3BlZnVsbHkgc3VwcG9ydCBmb3IgcmVtb3RlIGZpbGUgc3lz
+dGVtcwp3aWxsIGJlIGluY2x1ZGVkIGluIHRoZSBuZXcgZGVzaWduLgoKPiAKPiBJbiBwYXJ0aWN1
+bGFyLCBtYXkgSSBzdWdnZXN0IHRoYXQgIHRoZSBpbnRlcmZhY2UgYmUgbWFkZSBpZGVtcG90ZW50
+LAo+IHNvIHRoYXQgeW91IGNhbiBkbyB0aGUgbWVya2xlIHRyZWUgb3BlcmF0aW9uIHNldmVyYWwg
+dGltZXMgd2l0aCB0aGUKPiBzYW1lIG9mZnNldC9sZW5ndGggYXJndW1lbnRzLCBhbmQgaWYgdGhl
+IG1lcmtsZSB0cmVlIGhhcyBhbHJlYWR5IGJlZW4KPiBjYWxjdWxhdGVkLCB5b3UganVzdCByZXR1
+cm4gdGhlIHJlc3VsdGluZyByb290IGhhc2ggZGlyZWN0bHkuCj4gCj4gV2h5PyBUaGF0IGFsbG93
+cyB5b3UgdG8gInZhbGlkYXRlIiBpbWFnZXMgb24gZmlsZXN5c3RlbXMgdGhhdCBkb24ndAo+IGFj
+dHVhbGx5IGhhdmUgYW55IGxvbmctdGVybSBzdG9yYWdlIG1vZGVsIGZvciB0aGUgbWVya2xlIHRy
+ZWUuIElPVywKPiB5b3UgY291bGQgZG8gdGhlIG1lcmtsZSB0cmVlIGNhbGN1bGF0aW9uIChhbmQg
+dmVyaWZpY2F0aW9uKSBldmVyeSB0aW1lCj4gYXQgYm9vdHVwLCBhbmQgb24gYSBmaWxlc3lzdGVt
+IHRoYXQgc3VwcG9ydHMgdGhlIGxvbmctdGVybSBzdG9yYWdlIG9mCj4gc2FpZCBtZXJrbGUgZGF0
+YSwgaXQncyBhIHZlcnkgY2hlYXAgb3BlcmF0aW9uLCBidXQgb24gYSBmaWxlc3lzdGVtCj4gdGhh
+dCBkb2Vzbid0LCBpdCB3b3VsZCBzdGlsbCBiZSAqcG9zc2libGUqIHRvIGp1c3QgY2FsY3VsYXRl
+IHRoZSBoYXNoCj4gYW5kIG1hcmsgaXQgImZpbmFsaXplZCIgZm9yIHRoYXQgYm9vdCAob3IgdGhh
+dCBtb3VudCkuIElPVywgaXQgd291bGQKPiB3b3JrIGZvciBzb21ldGhpbmcgbGlrZSByYW1mcyAo
+YnV0IHlvdSBjb3VsZCBhbHNvIG1ha2UgaXQgd29yayBmb3IgYW55Cj4gcmFuZG9tIG9uLWRpc2sg
+ZmlsZXN5c3RlbSB0aGF0IGRvZXNuJ3Qgc3VwcG9ydCBsb25nLXRlcm0gc3RvcmFnZSkuCgpGb3Ig
+d2hpY2ggZmlsZXMgd2lsbCB0aGUgTWVya2xlIHRyZWUgYmUgY3JlYXRlZD8gwqBJcyB0aGlzIGZv
+ciBhbGwKZmlsZXMgb24gYSBwZXIgZmlsZSBzeXN0ZW0gYmFzaXM/IMKgT3IgaXMgdGhlcmUgc29t
+ZSBzb3J0IG9mICJmbGFnIiBvcgpwb2xpY3k/IMKgVGhlIG9yaWdpbmFsIGRlc2lnbiB3YXMgYmFz
+ZWQgb24gYW4gaW9jdGwgZW5hYmxpbmcvZGlzYWJsaW5nCmEgZmxhZy4gwqBJbiB0aGlzIG5ldyBk
+ZXNpZ24sIGlzIHRoZXJlIHN0aWxsIGFuIGlvY3RsPwoKPiAKPiBBdCB0aGF0IHBvaW50LCB0aGUg
+bWVya2xlIHRyZWUgdGhpbmcgZW5kcyB1cCBmYWlybHkgZXF1aXZhbGVudCB0byB0aGUKPiBJTUEg
+Im1lYXN1cmVtZW50IiB0aGluZywgd2l0aCB0aGUgZXhjZXB0aW9uIHRoYXQgdGhlIGZpbGVzeXN0
+ZW0gKm1heSoKPiBvcHRpbWl6ZSBpdCB0byBiZSBsb25nLXRlcm0uIEhtbT8KCldvdWxkbid0IGZz
+LXZlcml0eSB0aGVuIGJlIHNpbWlsYXIgdG8gSU1BLWFwcHJhaXNhbD8gwqBJbnN0ZWFkIG9mCnZl
+cmlmeWluZyB0aGUgZmlsZSBoYXNoLCBmcy12ZXJpdHkgdmVyaWZpZXMgdGhlIE1lcmtsZSB0cmVl
+IGZpbGUgcm9vdApoYXNoLiDCoFRoZSBmaWxlICJtZWFzdXJlbWVudCIsIGluIHRoaXMgY2FzZSB0
+aGUgTWVya2xlIHRyZWUgZmlsZSByb290Cmhhc2gsIGNvdWxkIGJlIHVzZWQgdG8gZXh0ZW5kIHRo
+ZSBUUE0gYW5kIGFkZGVkIHRvIGEgbWVhc3VyZW1lbnQgbGlzdApvciBpbiBUQ0cgdGVybWlub2xv
+Z3kgYW4gZXZlbnQgbG9nLgoKPiAKPiBOb3csIHNpbmNlIEkgYXNzdW1lIHRoYXQgb25seSB0aGUg
+bWVya2xlIHRyZWUgcm9vdCBoYXNoIHdvdWxkIGJlCj4gcmV0dXJuZWQgYnkgdGhlICJlbmFibGUg
+bWVya2xlIHRyZWUiIG9wZXJhdGlvbiAoc28gdGhhdCB0aGUgY29kZQo+IGVuYWJsaW5nIGl0IGNh
+biB2ZXJpZnkgdGhhdCB0aGUgaGFzaCBtYXRjaGVzIHRoZSBleHBlY3RlZCB2YWx1ZSksIHlvdQo+
+IGRvIGhhdmUgdG8gd29ycnkgYWJvdXQgdGhlIHByZWltYWdlIGF0dGFjaywgYW5kIG1ha2Ugc3Vy
+ZSB0aGF0IHlvdQo+IGNhbid0IGZvb2wgdGhlIGhhc2hpbmcgYnkgbWFraW5nIHRoZSAoYmFkKSBm
+aWxlIGNvbnRlbnRzIHRoZW1zZWx2ZXMgYmUKPiBqdXN0IHRoZSBoYXNoZXMgb2YgdGhlIChnb29k
+KSBibG9ja3MuIFNvIGVhY2ggbGV2ZWwgb2YgdGhlIG1lcmtsZSB0cmVlCj4gbmVlZHMgdG8gaGF2
+ZSBhIGhhc2ggc2VlZGluZyB0aGluZyBvciB3aGF0ZXZlci4KCkFncmVlZCwgYnV0IHdvdWxkbid0
+IHRoZSBNZXJrbGUgdHJlZSBmaWxlIHJvb3QgaGFzaCB0aGVuIGJlIHN5c3RlbQpzcGVjaWZpYz8K
+ClRoZSBleGlzdGluZyBmaWxlIGhhc2hlcyBpbmNsdWRlZCBpbiB0aGUgbWVhc3VyZW1lbnQgbGlz
+dCBhbmQgdGhlCmF1ZGl0IGxvZywgYXJlIGN1cnJlbnRseSBiZWluZyB1c2VkIGZvciByZW1vdGUg
+YXR0ZXN0YXRpb24sIGZvcmVuc2ljcwphbmQgc2VjdXJpdHkgYW5hbHl0aWNzLgoKTWltaQoKCgpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZz
+LWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5l
+dApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZz
+LWRldmVsCg==
