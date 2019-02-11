@@ -1,105 +1,209 @@
-From: Mimi Zohar <zohar@linux.ibm.com>
-Subject: Re: Proposal: Yet another possible fs-verity interface
-Date: Sun, 10 Feb 2019 09:06:55 -0500
-Message-ID: <1549807615.12743.109.camel@linux.ibm.com>
-References: <20190207031101.GA7387@mit.edu>
- <CAHk-=wh2j+Yy28H_QxEdsP=k9xcHxjCG1PqKAF2Uv=ckK8oPug@mail.gmail.com>
+From: Eric Biggers <ebiggers@kernel.org>
+Subject: [RFC PATCH v2 01/20] fs,
+ fscrypt: move uapi definitions to new header <linux/fscrypt.h>
+Date: Mon, 11 Feb 2019 09:27:19 -0800
+Message-ID: <20190211172738.4633-2-ebiggers@kernel.org>
+References: <20190211172738.4633-1-ebiggers@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <zohar@linux.ibm.com>) id 1gsplT-00036e-W1
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 10 Feb 2019 14:07:23 +0000
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
- helo=mx0a-001b2d01.pphosted.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gsplR-005oPG-Qf
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 10 Feb 2019 14:07:23 +0000
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
- by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
- x1AE3jIR028558
- for <linux-f2fs-devel@lists.sourceforge.net>; Sun, 10 Feb 2019 09:07:14 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
- by mx0b-001b2d01.pphosted.com with ESMTP id 2qjd10gb8p-1
- (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>; Sun, 10 Feb 2019 09:07:14 -0500
-Received: from localhost
- by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
- Violators will be prosecuted
- for <linux-f2fs-devel@lists.sourceforge.net> from <zohar@linux.ibm.com>;
- Sun, 10 Feb 2019 14:07:12 -0000
-In-Reply-To: <CAHk-=wh2j+Yy28H_QxEdsP=k9xcHxjCG1PqKAF2Uv=ckK8oPug@mail.gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Linus Torvalds <torvalds@linux-foundation.org>, "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc: Eric Biggers <ebiggers@kernel.org>, "Darrick J. Wong" <darrick.wong@oracle.com>, Dave Chinner <david@fromorbit.com>, linux-f2fs-devel@lists.sourceforge.net, Christoph Hellwig <hch@infradead.org>, linux-fscrypt@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, James Bottomley <James.Bottomley@HansenPartnership.com>, linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
+In-Reply-To: <20190211172738.4633-1-ebiggers@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
+List-Post: <mailto:linux-mtd@lists.infradead.org>
+List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
+Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
+To: linux-fscrypt@vger.kernel.org
+Cc: Satya Tangirala <satyat@google.com>, linux-api@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, keyrings@vger.kernel.org, linux-mtd@lists.infradead.org, linux-crypto@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, Paul Crowley <paulcrowley@google.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-T24gU2F0LCAyMDE5LTAyLTA5IGF0IDEyOjM4IC0wODAwLCBMaW51cyBUb3J2YWxkcyB3cm90ZToK
-PiBPbiBUaHUsIEZlYiA3LCAyMDE5IGF0IDg6MTAgQU0gVGhlb2RvcmUgWS4gVHMnbyA8dHl0c29A
-bWl0LmVkdT4gd3JvdGU6Cj4gPgo+ID4gQWZ0ZXIgZG9pbmcgYSBsb3Qgb2YgdGhpbmtpbmcgYW5k
-IGNvbmZlcnJpbmcgd2l0aCB0aGUgb3RoZXIgZnMtdmVyaXR5Cj4gPiBkZXZlbG9wZXJzLCBvdXIg
-Y3VycmVudCB0aGlua2luZyBpcyB0byBzaW1wbHkgbW92ZSB0aGUgTWVya2xlIHRyZWUKPiA+IGNy
-ZWF0aW9uIGludG8gdGhlIGtlcm5lbC4gIFRoZSB1cHNpZGUgb2YgZG9pbmcgdGhpcyBpcyBpdCBj
-b21wbGV0ZWx5Cj4gPiBieXBhc3NlcyBhbGwgb2YgdGhlIGNvbXBsYWludHMgYWJvdXQgaG93IHRv
-IHRyYW5zZmVyIHRoZSBNZXJrbGUgdHJlZQo+ID4gZnJvbSB1c2Vyc3BhY2UgdG8gdGhlIGtlcm5l
-bC4KPiAKPiBUaGlzIHNvdW5kcyB2ZXJ5IHNhbmUgdG8gbWUuCgpPbmUgb2YgdGhlIG1vcmUgaW50
-ZXJlc3RpbmcgdXNlIGNhc2VzIGZvciBmcy12ZXJpdHksIGF0IGxlYXN0IHRvIG1lLAp3YXMgcmVt
-b3RlIGZpbGUgc3lzdGVtcy4gwqBIb3BlZnVsbHkgc3VwcG9ydCBmb3IgcmVtb3RlIGZpbGUgc3lz
-dGVtcwp3aWxsIGJlIGluY2x1ZGVkIGluIHRoZSBuZXcgZGVzaWduLgoKPiAKPiBJbiBwYXJ0aWN1
-bGFyLCBtYXkgSSBzdWdnZXN0IHRoYXQgIHRoZSBpbnRlcmZhY2UgYmUgbWFkZSBpZGVtcG90ZW50
-LAo+IHNvIHRoYXQgeW91IGNhbiBkbyB0aGUgbWVya2xlIHRyZWUgb3BlcmF0aW9uIHNldmVyYWwg
-dGltZXMgd2l0aCB0aGUKPiBzYW1lIG9mZnNldC9sZW5ndGggYXJndW1lbnRzLCBhbmQgaWYgdGhl
-IG1lcmtsZSB0cmVlIGhhcyBhbHJlYWR5IGJlZW4KPiBjYWxjdWxhdGVkLCB5b3UganVzdCByZXR1
-cm4gdGhlIHJlc3VsdGluZyByb290IGhhc2ggZGlyZWN0bHkuCj4gCj4gV2h5PyBUaGF0IGFsbG93
-cyB5b3UgdG8gInZhbGlkYXRlIiBpbWFnZXMgb24gZmlsZXN5c3RlbXMgdGhhdCBkb24ndAo+IGFj
-dHVhbGx5IGhhdmUgYW55IGxvbmctdGVybSBzdG9yYWdlIG1vZGVsIGZvciB0aGUgbWVya2xlIHRy
-ZWUuIElPVywKPiB5b3UgY291bGQgZG8gdGhlIG1lcmtsZSB0cmVlIGNhbGN1bGF0aW9uIChhbmQg
-dmVyaWZpY2F0aW9uKSBldmVyeSB0aW1lCj4gYXQgYm9vdHVwLCBhbmQgb24gYSBmaWxlc3lzdGVt
-IHRoYXQgc3VwcG9ydHMgdGhlIGxvbmctdGVybSBzdG9yYWdlIG9mCj4gc2FpZCBtZXJrbGUgZGF0
-YSwgaXQncyBhIHZlcnkgY2hlYXAgb3BlcmF0aW9uLCBidXQgb24gYSBmaWxlc3lzdGVtCj4gdGhh
-dCBkb2Vzbid0LCBpdCB3b3VsZCBzdGlsbCBiZSAqcG9zc2libGUqIHRvIGp1c3QgY2FsY3VsYXRl
-IHRoZSBoYXNoCj4gYW5kIG1hcmsgaXQgImZpbmFsaXplZCIgZm9yIHRoYXQgYm9vdCAob3IgdGhh
-dCBtb3VudCkuIElPVywgaXQgd291bGQKPiB3b3JrIGZvciBzb21ldGhpbmcgbGlrZSByYW1mcyAo
-YnV0IHlvdSBjb3VsZCBhbHNvIG1ha2UgaXQgd29yayBmb3IgYW55Cj4gcmFuZG9tIG9uLWRpc2sg
-ZmlsZXN5c3RlbSB0aGF0IGRvZXNuJ3Qgc3VwcG9ydCBsb25nLXRlcm0gc3RvcmFnZSkuCgpGb3Ig
-d2hpY2ggZmlsZXMgd2lsbCB0aGUgTWVya2xlIHRyZWUgYmUgY3JlYXRlZD8gwqBJcyB0aGlzIGZv
-ciBhbGwKZmlsZXMgb24gYSBwZXIgZmlsZSBzeXN0ZW0gYmFzaXM/IMKgT3IgaXMgdGhlcmUgc29t
-ZSBzb3J0IG9mICJmbGFnIiBvcgpwb2xpY3k/IMKgVGhlIG9yaWdpbmFsIGRlc2lnbiB3YXMgYmFz
-ZWQgb24gYW4gaW9jdGwgZW5hYmxpbmcvZGlzYWJsaW5nCmEgZmxhZy4gwqBJbiB0aGlzIG5ldyBk
-ZXNpZ24sIGlzIHRoZXJlIHN0aWxsIGFuIGlvY3RsPwoKPiAKPiBBdCB0aGF0IHBvaW50LCB0aGUg
-bWVya2xlIHRyZWUgdGhpbmcgZW5kcyB1cCBmYWlybHkgZXF1aXZhbGVudCB0byB0aGUKPiBJTUEg
-Im1lYXN1cmVtZW50IiB0aGluZywgd2l0aCB0aGUgZXhjZXB0aW9uIHRoYXQgdGhlIGZpbGVzeXN0
-ZW0gKm1heSoKPiBvcHRpbWl6ZSBpdCB0byBiZSBsb25nLXRlcm0uIEhtbT8KCldvdWxkbid0IGZz
-LXZlcml0eSB0aGVuIGJlIHNpbWlsYXIgdG8gSU1BLWFwcHJhaXNhbD8gwqBJbnN0ZWFkIG9mCnZl
-cmlmeWluZyB0aGUgZmlsZSBoYXNoLCBmcy12ZXJpdHkgdmVyaWZpZXMgdGhlIE1lcmtsZSB0cmVl
-IGZpbGUgcm9vdApoYXNoLiDCoFRoZSBmaWxlICJtZWFzdXJlbWVudCIsIGluIHRoaXMgY2FzZSB0
-aGUgTWVya2xlIHRyZWUgZmlsZSByb290Cmhhc2gsIGNvdWxkIGJlIHVzZWQgdG8gZXh0ZW5kIHRo
-ZSBUUE0gYW5kIGFkZGVkIHRvIGEgbWVhc3VyZW1lbnQgbGlzdApvciBpbiBUQ0cgdGVybWlub2xv
-Z3kgYW4gZXZlbnQgbG9nLgoKPiAKPiBOb3csIHNpbmNlIEkgYXNzdW1lIHRoYXQgb25seSB0aGUg
-bWVya2xlIHRyZWUgcm9vdCBoYXNoIHdvdWxkIGJlCj4gcmV0dXJuZWQgYnkgdGhlICJlbmFibGUg
-bWVya2xlIHRyZWUiIG9wZXJhdGlvbiAoc28gdGhhdCB0aGUgY29kZQo+IGVuYWJsaW5nIGl0IGNh
-biB2ZXJpZnkgdGhhdCB0aGUgaGFzaCBtYXRjaGVzIHRoZSBleHBlY3RlZCB2YWx1ZSksIHlvdQo+
-IGRvIGhhdmUgdG8gd29ycnkgYWJvdXQgdGhlIHByZWltYWdlIGF0dGFjaywgYW5kIG1ha2Ugc3Vy
-ZSB0aGF0IHlvdQo+IGNhbid0IGZvb2wgdGhlIGhhc2hpbmcgYnkgbWFraW5nIHRoZSAoYmFkKSBm
-aWxlIGNvbnRlbnRzIHRoZW1zZWx2ZXMgYmUKPiBqdXN0IHRoZSBoYXNoZXMgb2YgdGhlIChnb29k
-KSBibG9ja3MuIFNvIGVhY2ggbGV2ZWwgb2YgdGhlIG1lcmtsZSB0cmVlCj4gbmVlZHMgdG8gaGF2
-ZSBhIGhhc2ggc2VlZGluZyB0aGluZyBvciB3aGF0ZXZlci4KCkFncmVlZCwgYnV0IHdvdWxkbid0
-IHRoZSBNZXJrbGUgdHJlZSBmaWxlIHJvb3QgaGFzaCB0aGVuIGJlIHN5c3RlbQpzcGVjaWZpYz8K
-ClRoZSBleGlzdGluZyBmaWxlIGhhc2hlcyBpbmNsdWRlZCBpbiB0aGUgbWVhc3VyZW1lbnQgbGlz
-dCBhbmQgdGhlCmF1ZGl0IGxvZywgYXJlIGN1cnJlbnRseSBiZWluZyB1c2VkIGZvciByZW1vdGUg
-YXR0ZXN0YXRpb24sIGZvcmVuc2ljcwphbmQgc2VjdXJpdHkgYW5hbHl0aWNzLgoKTWltaQoKCgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZz
-LWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5l
-dApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZz
-LWRldmVsCg==
+From: Eric Biggers <ebiggers@google.com>
+
+More fscrypt definitions are being added, and we shouldn't use a
+disproportionate amount of space in <linux/fs.h> for fscrypt stuff.
+So move the fscrypt definitions to a new header <linux/fscrypt.h>.
+
+For source compatibility with existing userspace programs, <linux/fs.h>
+still includes the new header.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ MAINTAINERS                  |  1 +
+ include/linux/fscrypt.h      |  1 +
+ include/uapi/linux/fs.h      | 54 ++-------------------------------
+ include/uapi/linux/fscrypt.h | 58 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 63 insertions(+), 51 deletions(-)
+ create mode 100644 include/uapi/linux/fscrypt.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 51029a425dbe..f3c60ca897cc 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6199,6 +6199,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tytso/fscrypt.git
+ S:	Supported
+ F:	fs/crypto/
+ F:	include/linux/fscrypt*.h
++F:	include/uapi/linux/fscrypt.h
+ F:	Documentation/filesystems/fscrypt.rst
+ 
+ FSI-ATTACHED I2C DRIVER
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index e5194fc3983e..8b1e44421497 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -16,6 +16,7 @@
+ #include <linux/fs.h>
+ #include <linux/mm.h>
+ #include <linux/slab.h>
++#include <uapi/linux/fscrypt.h>
+ 
+ #define FS_CRYPTO_BLOCK_SIZE		16
+ 
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 121e82ce296b..0f4e66b1bcd0 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -13,6 +13,9 @@
+ #include <linux/limits.h>
+ #include <linux/ioctl.h>
+ #include <linux/types.h>
++#ifndef __KERNEL__
++#include <linux/fscrypt.h>
++#endif
+ 
+ /* Use of MS_* flags within the kernel is restricted to core mount(2) code. */
+ #if !defined(__KERNEL__)
+@@ -212,57 +215,6 @@ struct fsxattr {
+ #define FS_IOC_GETFSLABEL		_IOR(0x94, 49, char[FSLABEL_MAX])
+ #define FS_IOC_SETFSLABEL		_IOW(0x94, 50, char[FSLABEL_MAX])
+ 
+-/*
+- * File system encryption support
+- */
+-/* Policy provided via an ioctl on the topmost directory */
+-#define FS_KEY_DESCRIPTOR_SIZE	8
+-
+-#define FS_POLICY_FLAGS_PAD_4		0x00
+-#define FS_POLICY_FLAGS_PAD_8		0x01
+-#define FS_POLICY_FLAGS_PAD_16		0x02
+-#define FS_POLICY_FLAGS_PAD_32		0x03
+-#define FS_POLICY_FLAGS_PAD_MASK	0x03
+-#define FS_POLICY_FLAG_DIRECT_KEY	0x04	/* use master key directly */
+-#define FS_POLICY_FLAGS_VALID		0x07
+-
+-/* Encryption algorithms */
+-#define FS_ENCRYPTION_MODE_INVALID		0
+-#define FS_ENCRYPTION_MODE_AES_256_XTS		1
+-#define FS_ENCRYPTION_MODE_AES_256_GCM		2
+-#define FS_ENCRYPTION_MODE_AES_256_CBC		3
+-#define FS_ENCRYPTION_MODE_AES_256_CTS		4
+-#define FS_ENCRYPTION_MODE_AES_128_CBC		5
+-#define FS_ENCRYPTION_MODE_AES_128_CTS		6
+-#define FS_ENCRYPTION_MODE_SPECK128_256_XTS	7 /* Removed, do not use. */
+-#define FS_ENCRYPTION_MODE_SPECK128_256_CTS	8 /* Removed, do not use. */
+-#define FS_ENCRYPTION_MODE_ADIANTUM		9
+-
+-struct fscrypt_policy {
+-	__u8 version;
+-	__u8 contents_encryption_mode;
+-	__u8 filenames_encryption_mode;
+-	__u8 flags;
+-	__u8 master_key_descriptor[FS_KEY_DESCRIPTOR_SIZE];
+-};
+-
+-#define FS_IOC_SET_ENCRYPTION_POLICY	_IOR('f', 19, struct fscrypt_policy)
+-#define FS_IOC_GET_ENCRYPTION_PWSALT	_IOW('f', 20, __u8[16])
+-#define FS_IOC_GET_ENCRYPTION_POLICY	_IOW('f', 21, struct fscrypt_policy)
+-
+-/* Parameters for passing an encryption key into the kernel keyring */
+-#define FS_KEY_DESC_PREFIX		"fscrypt:"
+-#define FS_KEY_DESC_PREFIX_SIZE		8
+-
+-/* Structure that userspace passes to the kernel keyring */
+-#define FS_MAX_KEY_SIZE			64
+-
+-struct fscrypt_key {
+-	__u32 mode;
+-	__u8 raw[FS_MAX_KEY_SIZE];
+-	__u32 size;
+-};
+-
+ /*
+  * Inode flags (FS_IOC_GETFLAGS / FS_IOC_SETFLAGS)
+  *
+diff --git a/include/uapi/linux/fscrypt.h b/include/uapi/linux/fscrypt.h
+new file mode 100644
+index 000000000000..193339cb53fd
+--- /dev/null
++++ b/include/uapi/linux/fscrypt.h
+@@ -0,0 +1,58 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef _UAPI_LINUX_FSCRYPT_H
++#define _UAPI_LINUX_FSCRYPT_H
++
++#include <linux/types.h>
++
++/*
++ * File system encryption support
++ */
++/* Policy provided via an ioctl on the topmost directory */
++#define FS_KEY_DESCRIPTOR_SIZE	8
++
++#define FS_POLICY_FLAGS_PAD_4		0x00
++#define FS_POLICY_FLAGS_PAD_8		0x01
++#define FS_POLICY_FLAGS_PAD_16		0x02
++#define FS_POLICY_FLAGS_PAD_32		0x03
++#define FS_POLICY_FLAGS_PAD_MASK	0x03
++#define FS_POLICY_FLAG_DIRECT_KEY	0x04	/* use master key directly */
++#define FS_POLICY_FLAGS_VALID		0x07
++
++/* Encryption algorithms */
++#define FS_ENCRYPTION_MODE_INVALID		0
++#define FS_ENCRYPTION_MODE_AES_256_XTS		1
++#define FS_ENCRYPTION_MODE_AES_256_GCM		2
++#define FS_ENCRYPTION_MODE_AES_256_CBC		3
++#define FS_ENCRYPTION_MODE_AES_256_CTS		4
++#define FS_ENCRYPTION_MODE_AES_128_CBC		5
++#define FS_ENCRYPTION_MODE_AES_128_CTS		6
++#define FS_ENCRYPTION_MODE_SPECK128_256_XTS	7 /* Removed, do not use. */
++#define FS_ENCRYPTION_MODE_SPECK128_256_CTS	8 /* Removed, do not use. */
++#define FS_ENCRYPTION_MODE_ADIANTUM		9
++
++struct fscrypt_policy {
++	__u8 version;
++	__u8 contents_encryption_mode;
++	__u8 filenames_encryption_mode;
++	__u8 flags;
++	__u8 master_key_descriptor[FS_KEY_DESCRIPTOR_SIZE];
++};
++
++#define FS_IOC_SET_ENCRYPTION_POLICY	_IOR('f', 19, struct fscrypt_policy)
++#define FS_IOC_GET_ENCRYPTION_PWSALT	_IOW('f', 20, __u8[16])
++#define FS_IOC_GET_ENCRYPTION_POLICY	_IOW('f', 21, struct fscrypt_policy)
++
++/* Parameters for passing an encryption key into the kernel keyring */
++#define FS_KEY_DESC_PREFIX		"fscrypt:"
++#define FS_KEY_DESC_PREFIX_SIZE		8
++
++/* Structure that userspace passes to the kernel keyring */
++#define FS_MAX_KEY_SIZE			64
++
++struct fscrypt_key {
++	__u32 mode;
++	__u8 raw[FS_MAX_KEY_SIZE];
++	__u32 size;
++};
++
++#endif /* _UAPI_LINUX_FSCRYPT_H */
+-- 
+2.20.1
+
+
+______________________________________________________
+Linux MTD discussion mailing list
+http://lists.infradead.org/mailman/listinfo/linux-mtd/
