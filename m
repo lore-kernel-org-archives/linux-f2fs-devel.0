@@ -1,26 +1,27 @@
 From: "Theodore Y. Ts'o" <tytso@mit.edu>
 Subject: Re: Proposal: Yet another possible fs-verity interface
-Date: Tue, 12 Feb 2019 00:12:37 -0500
-Message-ID: <20190212051237.GQ23000@mit.edu>
+Date: Tue, 12 Feb 2019 00:31:23 -0500
+Message-ID: <20190212053123.GR23000@mit.edu>
 References: <20190207031101.GA7387@mit.edu>
  <CAHk-=wh2j+Yy28H_QxEdsP=k9xcHxjCG1PqKAF2Uv=ckK8oPug@mail.gmail.com>
+ <1549807615.12743.109.camel@linux.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@mit.edu>) id 1gtRpU-0001jU-V8
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Feb 2019 06:46:04 +0000
-Received: from mail-eopbgr790120.outbound.protection.outlook.com
- ([40.107.79.120] helo=NAM03-CO1-obe.outbound.protection.outlook.com)
+ (envelope-from <tytso@mit.edu>) id 1gtU0g-0001bV-Un
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Feb 2019 09:05:46 +0000
+Received: from mail-eopbgr680138.outbound.protection.outlook.com
+ ([40.107.68.138] helo=NAM04-BN3-obe.outbound.protection.outlook.com)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gtRpQ-009fqr-Fw
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Feb 2019 06:46:04 +0000
+ (TLSv1.2:ECDHE-RSA-AES256-SHA384:256) (Exim 4.90_1)
+ id 1gtU0Z-009wTa-TQ
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Feb 2019 09:05:46 +0000
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wh2j+Yy28H_QxEdsP=k9xcHxjCG1PqKAF2Uv=ckK8oPug@mail.gmail.com>
+In-Reply-To: <1549807615.12743.109.camel@linux.ibm.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,86 +31,59 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Eric Biggers <ebiggers@kernel.org>, "Darrick J. Wong" <darrick.wong@oracle.com>, Dave Chinner <david@fromorbit.com>, linux-f2fs-devel@lists.sourceforge.net, Christoph Hellwig <hch@infradead.org>, linux-fscrypt@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-ext4@vger.kernel.org
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Eric Biggers <ebiggers@kernel.org>, "Darrick J.
+ Wong" <darrick.wong@oracle.com>, Dave Chinner <david@fromorbit.com>, linux-f2fs-devel@lists.sourceforge.net, Christoph Hellwig <hch@infradead.org>, linux-fscrypt@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, James Bottomley <James.Bottomley@HansenPartnership.com>, linux-ext4@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
 
-On Sat, Feb 09, 2019 at 12:38:05PM -0800, Linus Torvalds wrote:
-> 
-> In particular, may I suggest that  the interface be made idempotent,
-> so that you can do the merkle tree operation several times with the
-> same offset/length arguments, and if the merkle tree has already been
-> calculated, you just return the resulting root hash directly.
+On Sun, Feb 10, 2019 at 09:06:55AM -0500, Mimi Zohar wrote:
+> For which files will the Merkle tree be created?  Is this for all
+> files on a per file system basis? =A0Or is there some sort of "flag" or
+> policy?  The original design was based on an ioctl enabling/disabling
+> a flag. In this new design, is there still an ioctl?
 
-Sure, I was already thinking that rerunning the ioctl should allow us
-recover from an interrupted Merkle tree generation.  So I agree about
-it being idempotent.
+So for our first use case, it will be used for "privileged APK files"
+in Android.  You can think of this as a "setuid binary", effectively.
 
-> Why? That allows you to "validate" images on filesystems that don't
-> actually have any long-term storage model for the merkle tree. IOW,
-> you could do the merkle tree calculation (and verification) every time
-> at bootup, and on a filesystem that supports the long-term storage of
-> said merkle data, it's a very cheap operation, but on a filesystem
-> that doesn't, it would still be *possible* to just calculate the hash
-> and mark it "finalized" for that boot (or that mount). IOW, it would
-> work for something like ramfs (but you could also make it work for any
-> random on-disk filesystem that doesn't support long-term storage).
+The Merkle tree hash is digitally signed and provided by the App
+Store.  It is *not* calculated on the android device.  So not all
+files will have Merkle trees, because storing the android device won't
+have access to the signing key.  The enforcement is done by the
+userspace code which is loading the privileged APK (the application
+loader).  If the APK is privileged, then it must have the Merkle tree,
+with the root hash matching the digitally signed hash.  Otherwise, the
+application loader will refuse to load it as a privileged "root"
+application.
 
-Well, we *could* do that, but at that point we've just transformed the
-Merkle tree to be a very inefficient crypto checksum.  The whole point
-of the Merkle tree is that you *don't* have to scan the entire data
-file before you open the file (or at boot-time).  Instead, the root
-hash of the Merkle tree is digitally signed, and you verify the file
-as you use it, block-by-block.  If there are large portions of the
-file which are never used (for example, because they contain the
-Russian language files, and the phone is being used by a French
-speaker), then we don't have to read that portion of the file to
-checksum it.
+For Android, the policy enforcement is done in userspace (should the
+APK be privileged), because userspace loads the APK.  We just let the
+kernel take care of verifying the blocks as they are read, and that's
+done by fsverity.
 
-If the file system doesn't have a way to store the Merkle tree, and we
-have to recalculate the "Merkle tree has" as a way of validating the
-file, it will be *much* faster simply to calculate the SHA-256 of the
-file, and then verify that against a digital signature of the expected
-crypto checksum.  For a file system that doesn't support the Merkle tree, 
+If we wanted to do something similar with all setuid executables, that
+would have to be enforced via some kind of LSM (e.g., a SELinux
+policy).
 
-> At that point, the merkle tree thing ends up fairly equivalent to the
-> IMA "measurement" thing, with the exception that the filesystem *may*
-> optimize it to be long-term. Hmm?
+> The existing file hashes included in the measurement list and the
+> audit log, are currently being used for remote attestation, forensics
+> and security analytics.
 
-Well, except that it's just a less efficient way of doing IMA
-"measurement" (if the file system doesn't support Merkle tree
-storage).
+IMA has a very different set primary use cases than fsverity.
 
-So adding that complexity is, in my view, not really worth it, since I
-very much doubt anyone would use a slower scheme.  I think the much
-better model is that fsverity is for file system where you can store
-the Merkle tree (and it's really not that hard for most file systems
-to store it); and if you are using a file system which doesn't, use
-IMA in good health.
+As you have pointed out, forcibly dragging the entire file into the
+page cache to measure it can sometimes result in performance
+improvements.  So there may be system administrators that would prefer
+having the entire file measured up front.  On the other hand, if the
+binaries/APK's are gargantuan, and not all of the file will be used
+(perhaps there are translation files, audio/video assets, etc., that
+aren't used most of the time), then only verifying the blocks that are
+used will be a better approach.
 
-I've talked to Mimi about how we can hook fsverity into the IMA
-machinery, so that if you have fsverity protected files, that can be
-used for the audit log (for example).  This basically means treating
-the Merkle tree hash (which is stored in the fsverity "superblock", so
-it can be fetched without pulling the entire file into the page cache)
-as a IMA "checksum".
+I've never thought that fsverity should replace IMA or vice versa;
+they are optimized for different things.  If it makes sense in some
+configuration for IMA to use the fsverity Merkle tree root hash as a
+measurement, it's easy enough to set up the hooks so they can be
+provided to IMA for its use.  This might be the easist way to
+integrate with SELinux, for example.
 
-This will have to be a policy matter, since there are security folks
-who like the idea that the entire 100 megabyte file must be paged in
-to be checksummed *first*, before it is used.  That way, you know that
-file is 100% valid before you allow userspace to start using it.  In
-the fsverity model, if some portion of the file is corrupted, possibly
-maliciously by an adversary, the program might abort in the middle of
-being run when the corrupted portion of the file is finally used.
-This is a tradeoff; and for people who really care about "how many
-seconds before the user touches the facebook app ico, and pixels start
-being painted on the screen on a low-end mobile device", they'll take
-the fsverity approach and avoid the IMA approach.
-
-So yes --- we can tie into the IMA framework so that if policy allows,
-it can be used instead of the IMA measurement.  But I don't think it
-makes sense to try to use fsverity without the Merkle tree being
-stored in the file system.
-
-Cheers,
-
-					- Ted
+Regards,
+						- Ted
