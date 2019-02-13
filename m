@@ -1,47 +1,46 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: don't allow negative
- ->write_io_size_bits
-Date: Wed, 13 Feb 2019 11:32:46 +0800
-Message-ID: <8f0cfae7-eb14-5e94-ad49-cfae222ce553@huawei.com>
-References: <20190211184514.GA22212@kadam>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: don't clear CP_QUOTA_NEED_FSCK_FLAG
+Date: Wed, 13 Feb 2019 11:42:23 +0800
+Message-ID: <df77f830-e5dd-5943-d5b0-e21ced3a7df2@huawei.com>
+References: <20190212023343.52215-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1gtlI3-0003O7-0R
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Feb 2019 03:32:51 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gtlI0-0046mY-49
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Feb 2019 03:32:50 +0000
-In-Reply-To: <20190211184514.GA22212@kadam>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190212023343.52215-1-jaegeuk@kernel.org>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2019/2/12 2:45, Dan Carpenter wrote:
-> We put an upper bound on ->write_io_size_bits but we don't have a lower
-> bound.
-
-Oh, lower bound, I think there are more cases didn't consider that,
-let me check it.
-
+On 2019/2/12 10:33, Jaegeuk Kim wrote:
+> If we met this once, let fsck.f2fs clear this only.
+> Note that, this addresses all the subtle fault injection test.
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/checkpoint.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 03fea4efd64b..10a3ada28715 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1267,8 +1267,6 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  
+>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
+>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> -	else
+> -		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+I didn't get it, previously, if we didn't persist all quota file's data in
+checkpoint, then we will tag CP_QUOTA_NEED_FSCK_FLAG in CP area, but in current
+checkpoint, we have persisted all quota file's data, quota files are consistent
+with all other files in filesystem, why we can't remove this NEED_FSCK flag..?
 
 Thanks,
+
+>  
+>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> 
