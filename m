@@ -1,76 +1,47 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH 6/7] f2fs: flush quota blocks after turnning it
- off
-Date: Wed, 13 Feb 2019 11:27:25 +0800
-Message-ID: <499c3f3c-3ef4-5412-d4df-8bcfc7a558be@huawei.com>
-References: <20190128234717.77225-1-jaegeuk@kernel.org>
- <20190128234717.77225-6-jaegeuk@kernel.org>
- <629f4b34-381e-7860-c717-3fe54ee15694@kernel.org>
- <20190204165934.GB15646@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH] f2fs: don't allow negative
+ ->write_io_size_bits
+Date: Wed, 13 Feb 2019 11:32:46 +0800
+Message-ID: <8f0cfae7-eb14-5e94-ad49-cfae222ce553@huawei.com>
+References: <20190211184514.GA22212@kadam>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190204165934.GB15646@jaegeuk-macbookpro.roam.corp.google.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1gtlI3-0003O7-0R
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Feb 2019 03:32:51 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1gtlI0-0046mY-49
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Feb 2019 03:32:50 +0000
+In-Reply-To: <20190211184514.GA22212@kadam>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Dan Carpenter <dan.carpenter@oracle.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2019/2/5 0:59, Jaegeuk Kim wrote:
-> On 02/02, Chao Yu wrote:
->> On 2019-1-29 7:47, Jaegeuk Kim wrote:
->>> After quota_off, we'll get some dirty blocks. If put_super don't have a chance
->>> to flush them by checkpoint, it causes NULL pointer exception in end_io after
->>> iput(node_inode). (e.g., by checkpoint=disable)
->>>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>> ---
->>>  fs/f2fs/super.c | 6 ++++++
->>>  1 file changed, 6 insertions(+)
->>>
->>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>> index 5e1f8573a17f..7694cb350734 100644
->>> --- a/fs/f2fs/super.c
->>> +++ b/fs/f2fs/super.c
->>> @@ -2026,6 +2026,12 @@ void f2fs_quota_off_umount(struct super_block *sb)
->>>  			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
->>>  		}
->>>  	}
->>> +	/*
->>> +	 * In case of checkpoint=disable, we must flush quota blocks.
->>
->> checkpoint=disable is one of the cases, right? e.g. IO error can be another case?
->>
->> So here I guess we need to change the comments a bit for that.
+On 2019/2/12 2:45, Dan Carpenter wrote:
+> We put an upper bound on ->write_io_size_bits but we don't have a lower
+> bound.
+
+Oh, lower bound, I think there are more cases didn't consider that,
+let me check it.
+
 > 
-> I didn't test other cases, but checkpoint=disable could give real errors through
-> some tests. So, basically, I'd like to keep known cases only here.
-
-Alright, not a big deal. :)
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
-
-> 
->>
->> Thanks,
->>
->>> +	 * This can cause NULL exception for node_inode in end_io, since
->>> +	 * put_super already dropped it.
->>> +	 */
->>> +	sync_filesystem(sb);
->>>  }
->>>  
->>>  static void f2fs_truncate_quota_inode_pages(struct super_block *sb)
->>>
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> 
