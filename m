@@ -1,103 +1,119 @@
-From: Eric Biggers <ebiggers@kernel.org>
-Subject: Re: Proposal: Yet another possible fs-verity interface
-Date: Tue, 12 Feb 2019 10:42:10 -0800
-Message-ID: <20190212184209.GA3373@gmail.com>
-References: <20190207031101.GA7387@mit.edu>
- <CAHk-=wh2j+Yy28H_QxEdsP=k9xcHxjCG1PqKAF2Uv=ckK8oPug@mail.gmail.com>
- <1549807615.12743.109.camel@linux.ibm.com>
- <20190212053123.GR23000@mit.edu>
- <1549976812.12743.225.camel@linux.ibm.com>
- <20190212172433.GT23000@mit.edu>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: do not use mutex lock in atomic context
+Date: Wed, 13 Feb 2019 11:25:31 +0800
+Message-ID: <c98cbfcb-f45d-e9a9-5c2e-6730d0448e82@huawei.com>
+References: <1549267613-9288-1-git-send-email-stummala@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1gtd0h-0007Mb-5J
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Feb 2019 18:42:23 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gtd0e-003PJo-Nl
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Feb 2019 18:42:23 +0000
-Content-Disposition: inline
-In-Reply-To: <20190212172433.GT23000@mit.edu>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, "Darrick J. Wong" <darrick.wong@oracle.com>, Dave Chinner <david@fromorbit.com>, Mimi Zohar <zohar@linux.ibm.com>, linux-f2fs-devel@lists.sourceforge.net, Christoph Hellwig <hch@infradead.org>, linux-fscrypt@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-ext4@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1549267613-9288-1-git-send-email-stummala@codeaurora.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sahitya Tummala <stummala@codeaurora.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Tue, Feb 12, 2019 at 12:24:33PM -0500, Theodore Y. Ts'o wrote:
-> =
+On 2019/2/4 16:06, Sahitya Tummala wrote:
+> Fix below warning coming because of using mutex lock in atomic context.
+> 
+> BUG: sleeping function called from invalid context at kernel/locking/mutex.c:98
+> in_atomic(): 1, irqs_disabled(): 0, pid: 585, name: sh
+> Preemption disabled at: __radix_tree_preload+0x28/0x130
+> Call trace:
+>  dump_backtrace+0x0/0x2b4
+>  show_stack+0x20/0x28
+>  dump_stack+0xa8/0xe0
+>  ___might_sleep+0x144/0x194
+>  __might_sleep+0x58/0x8c
+>  mutex_lock+0x2c/0x48
+>  f2fs_trace_pid+0x88/0x14c
+>  f2fs_set_node_page_dirty+0xd0/0x184
+> 
+> Do not use f2fs_radix_tree_insert() to avoid doing cond_resched() with
+> spin_lock() acquired.
+> 
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> ---
+>  fs/f2fs/trace.c | 20 +++++++++++++-------
+>  1 file changed, 13 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/f2fs/trace.c b/fs/f2fs/trace.c
+> index ce2a5eb..d0ab533 100644
+> --- a/fs/f2fs/trace.c
+> +++ b/fs/f2fs/trace.c
+> @@ -14,7 +14,7 @@
+>  #include "trace.h"
+>  
+>  static RADIX_TREE(pids, GFP_ATOMIC);
+> -static struct mutex pids_lock;
+> +static spinlock_t pids_lock;
+>  static struct last_io_info last_io;
+>  
+>  static inline void __print_last_io(void)
+> @@ -58,23 +58,29 @@ void f2fs_trace_pid(struct page *page)
+>  
+>  	set_page_private(page, (unsigned long)pid);
+>  
+> +retry:
+>  	if (radix_tree_preload(GFP_NOFS))
+>  		return;
+>  
+> -	mutex_lock(&pids_lock);
+> +	spin_lock(&pids_lock);
+>  	p = radix_tree_lookup(&pids, pid);
+>  	if (p == current)
+>  		goto out;
+>  	if (p)
+>  		radix_tree_delete(&pids, pid);
+>  
+> -	f2fs_radix_tree_insert(&pids, pid, current);
+> +	if (radix_tree_insert(&pids, pid, current)) {
+> +		spin_unlock(&pids_lock);
+> +		radix_tree_preload_end();
+> +		cond_resched();
+> +		goto retry;
+> +	}
+>  
+>  	trace_printk("%3x:%3x %4x %-16s\n",
+>  			MAJOR(inode->i_sb->s_dev), MINOR(inode->i_sb->s_dev),
+>  			pid, current->comm);
 
-> > > > The existing file hashes included in the measurement list and the
-> > > > audit log, are currently being used for remote attestation, forensi=
-cs
-> > > > and security analytics.
-> > =
+Hi Sahitya,
 
-> > Again, the context for this comment was Linus' suggestion "each level
-> > of the merkle tree needs to have a hash seeding thing or whatever."
-> > Up to this point, I had assumed the Merkle tree file root hash could
-> > be used as an identifier, similar to the file hash.=A0=A0With his
-> > suggestion, it sounds like the Merkle tree file root hash would be
-> > system dependent, making it useless for the above usages.
-> =
+Can trace_printk sleep? For safety, how about moving it out of spinlock?
 
-> Yeah, I have no idea what Linus was talking about there.  The only
-> thing that really makes sense is that if you don't have any
-> file-system place to store a seed, you don't use a seed for the Merkle
-> tree, and for a given set of bytes, the Merkle root hash is the same.
-> So it's basically an expensive to calculate crypto checksum, as I said.
-> =
+Thanks,
 
-
-I think there's confusion due to the use of the phrase "Merkle tree root ha=
-sh".
-Linus's point was:
-
-> Now, since I assume that only the merkle tree root hash would be
-> returned by the "enable merkle tree" operation (so that the code
-> enabling it can verify that the hash matches the expected value), you
-> do have to worry about the preimage attack, and make sure that you
-> can't fool the hashing by making the (bad) file contents themselves be
-> just the hashes of the (good) blocks. So each level of the merkle tree
-> needs to have a hash seeding thing or whatever.
-
-This is already taken into account in the original design.  The file hash
-reported by fs-verity is *not* the Merkle tree root hash directly, but rath=
-er a
-hash of the Merkle tree root hash and additional metadata in the
-fsverity_descriptor including the file size in bytes.  This resulting hash =
-is
-referred to in the code, documentation, etc. as the "fs-verity file measure=
-ment".
-
-Thus you can't fool the hashing in the way that Linus mentioned, because the
-file size is included in the hash too.  And I don't expect this part of the
-design should change, even if we change the API.
-
-It's been difficult to get people to start saying "fs-verity file measureme=
-nt"
-rather than "Merkle tree root hash", though, so if anyone has a suggestion =
-for a
-better name it would be appreciated.  An earlier name was "fs-verity root h=
-ash",
-but I thought that would too easily be confused with the Merkle tree root h=
-ash.
-
-fs-verity does support a salt as well, but it's optional and isn't needed to
-prevent preimage attacks, assuming the user chose a strong cryptographic ha=
-sh
-function such as SHA-256 or SHA-512.
-
-- Eric
+>  out:
+> -	mutex_unlock(&pids_lock);
+> +	spin_unlock(&pids_lock);
+>  	radix_tree_preload_end();
+>  }
+>  
+> @@ -119,7 +125,7 @@ void f2fs_trace_ios(struct f2fs_io_info *fio, int flush)
+>  
+>  void f2fs_build_trace_ios(void)
+>  {
+> -	mutex_init(&pids_lock);
+> +	spin_lock_init(&pids_lock);
+>  }
+>  
+>  #define PIDVEC_SIZE	128
+> @@ -147,7 +153,7 @@ void f2fs_destroy_trace_ios(void)
+>  	pid_t next_pid = 0;
+>  	unsigned int found;
+>  
+> -	mutex_lock(&pids_lock);
+> +	spin_lock(&pids_lock);
+>  	while ((found = gang_lookup_pids(pid, next_pid, PIDVEC_SIZE))) {
+>  		unsigned idx;
+>  
+> @@ -155,5 +161,5 @@ void f2fs_destroy_trace_ios(void)
+>  		for (idx = 0; idx < found; idx++)
+>  			radix_tree_delete(&pids, pid[idx]);
+>  	}
+> -	mutex_unlock(&pids_lock);
+> +	spin_unlock(&pids_lock);
+>  }
+> 
