@@ -1,81 +1,117 @@
-From: Omar Sandoval <osandov@osandov.com>
-Subject: [RFC PATCH 1/6] fs: add btime to struct iattr
-Date: Thu, 14 Feb 2019 02:00:08 -0800
-Message-ID: <338b960e32ae2bebcf45c738af42a979af112e12.1550136164.git.osandov@fb.com>
-References: <cover.1550136164.git.osandov@fb.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-btrfs-owner@vger.kernel.org>
-In-Reply-To: <cover.1550136164.git.osandov@fb.com>
-Sender: linux-btrfs-owner@vger.kernel.org
-To: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-Cc: kernel-team@fb.com, linux-api@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH v2] f2fs: fix to check inline_xattr_size boundary correctly
+Date: Fri, 15 Feb 2019 00:08:25 +0800
+Message-ID: <20190214160825.4973-1-chao@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Omar Sandoval <osandov@fb.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-Add btime as an attribute that can be updated through notify_change() if
-the filesystem supports it, which is indicated by FS_HAS_BTIME in
-file_system_type->fs_flags.
+We use below condition to check inline_xattr_size boundary:
 
-Signed-off-by: Omar Sandoval <osandov@fb.com>
+	if (!F2FS_OPTION(sbi).inline_xattr_size ||
+		F2FS_OPTION(sbi).inline_xattr_size >=
+				DEF_ADDRS_PER_INODE -
+				F2FS_TOTAL_EXTRA_ATTR_SIZE -
+				DEF_INLINE_RESERVED_SIZE -
+				DEF_MIN_INLINE_SIZE)
+
+There is there problems in that check:
+- we should allow inline_xattr_size equaling to min size of inline
+{data,dentry} area.
+- F2FS_TOTAL_EXTRA_ATTR_SIZE and inline_xattr_size are based on
+different size unit, previous one is 4 bytes, latter one is 1 bytes.
+- DEF_MIN_INLINE_SIZE only indicate min size of inline data area,
+however, we need to consider min size of inline dentry area as well,
+minimal inline dentry should at least contain two entries: '.' and
+'..', so that min inline_dentry size is 40 bytes.
+
+.bitmap		1 * 1 = 1
+.reserved	1 * 1 = 1
+.dentry		11 * 2 = 22
+.filename	8 * 2 = 16
+total		40
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/attr.c          | 6 ++++++
- include/linux/fs.h | 4 ++++
- 2 files changed, 10 insertions(+)
+v2:
+- fix lower bound check, inline xattr size should be larger than
+xattr_header's size at least.
 
-diff --git a/fs/attr.c b/fs/attr.c
-index d22e8187477f..4831ef479951 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -233,6 +233,10 @@ int notify_change(struct dentry * dentry, struct iattr * attr, struct inode **de
+ fs/f2fs/f2fs.h          |  1 -
+ fs/f2fs/super.c         | 13 +++++++------
+ include/linux/f2fs_fs.h | 13 +++++++------
+ 3 files changed, 14 insertions(+), 13 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 8c928cd72b61..83df26b427b1 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -459,7 +459,6 @@ struct f2fs_flush_device {
  
- 	WARN_ON_ONCE(!inode_is_locked(inode));
- 
-+	if ((ia_valid & ATTR_BTIME) &&
-+	    !(inode->i_sb->s_type->fs_flags & FS_HAS_BTIME))
-+		return -EOPNOTSUPP;
-+
- 	if (ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID | ATTR_TIMES_SET)) {
- 		if (IS_IMMUTABLE(inode) || IS_APPEND(inode))
- 			return -EPERM;
-@@ -267,6 +271,8 @@ int notify_change(struct dentry * dentry, struct iattr * attr, struct inode **de
- 		attr->ia_atime = now;
- 	if (!(ia_valid & ATTR_MTIME_SET))
- 		attr->ia_mtime = now;
-+	if (!(ia_valid & ATTR_BTIME_SET))
-+		attr->ia_btime = now;
- 	if (ia_valid & ATTR_KILL_PRIV) {
- 		error = security_inode_need_killpriv(dentry);
- 		if (error < 0)
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 29d8e2cfed0e..d66040f7740b 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -191,6 +191,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
- #define ATTR_OPEN	(1 << 15) /* Truncating from open(O_TRUNC) */
- #define ATTR_TIMES_SET	(1 << 16)
- #define ATTR_TOUCH	(1 << 17)
-+#define ATTR_BTIME	(1 << 18)
-+#define ATTR_BTIME_SET	(1 << 19)
+ /* for inline stuff */
+ #define DEF_INLINE_RESERVED_SIZE	1
+-#define DEF_MIN_INLINE_SIZE		1
+ static inline int get_extra_isize(struct inode *inode);
+ static inline int get_inline_xattr_addrs(struct inode *inode);
+ #define MAX_INLINE_DATA(inode)	(sizeof(__le32) *			\
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 83bbe7424fc1..be8be445c6ed 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -834,12 +834,13 @@ static int parse_options(struct super_block *sb, char *options)
+ 					"set with inline_xattr option");
+ 			return -EINVAL;
+ 		}
+-		if (!F2FS_OPTION(sbi).inline_xattr_size ||
+-			F2FS_OPTION(sbi).inline_xattr_size >=
+-					DEF_ADDRS_PER_INODE -
+-					F2FS_TOTAL_EXTRA_ATTR_SIZE -
+-					DEF_INLINE_RESERVED_SIZE -
+-					DEF_MIN_INLINE_SIZE) {
++		if (F2FS_OPTION(sbi).inline_xattr_size <
++			sizeof(struct f2fs_xattr_header) / sizeof(__le32) ||
++			F2FS_OPTION(sbi).inline_xattr_size >
++			DEF_ADDRS_PER_INODE -
++			F2FS_TOTAL_EXTRA_ATTR_SIZE / sizeof(__le32) -
++			DEF_INLINE_RESERVED_SIZE -
++			MIN_INLINE_DENTRY_SIZE / sizeof(__le32)) {
+ 			f2fs_msg(sb, KERN_ERR,
+ 					"inline xattr size is out of range");
+ 			return -EINVAL;
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index 8d57aaee8166..666db8eb71e0 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -490,12 +490,12 @@ typedef __le32	f2fs_hash_t;
  
  /*
-  * Whiteout is represented by a char device.  The following constants define the
-@@ -217,6 +219,7 @@ struct iattr {
- 	struct timespec64 ia_atime;
- 	struct timespec64 ia_mtime;
- 	struct timespec64 ia_ctime;
-+	struct timespec64 ia_btime;
+  * space utilization of regular dentry and inline dentry (w/o extra reservation)
+- *		regular dentry			inline dentry
+- * bitmap	1 * 27 = 27			1 * 23 = 23
+- * reserved	1 * 3 = 3			1 * 7 = 7
+- * dentry	11 * 214 = 2354			11 * 182 = 2002
+- * filename	8 * 214 = 1712			8 * 182 = 1456
+- * total	4096				3488
++ *		regular dentry		inline dentry (def)	inline dentry (min)
++ * bitmap	1 * 27 = 27		1 * 23 = 23		1 * 1 = 1
++ * reserved	1 * 3 = 3		1 * 7 = 7		1 * 1 = 1
++ * dentry	11 * 214 = 2354		11 * 182 = 2002		11 * 2 = 22
++ * filename	8 * 214 = 1712		8 * 182 = 1456		8 * 2 = 16
++ * total	4096			3488			40
+  *
+  * Note: there are more reserved space in inline dentry than in regular
+  * dentry, when converting inline dentry we should handle this carefully.
+@@ -507,6 +507,7 @@ typedef __le32	f2fs_hash_t;
+ #define SIZE_OF_RESERVED	(PAGE_SIZE - ((SIZE_OF_DIR_ENTRY + \
+ 				F2FS_SLOT_LEN) * \
+ 				NR_DENTRY_IN_BLOCK + SIZE_OF_DENTRY_BITMAP))
++#define MIN_INLINE_DENTRY_SIZE		40	/* just include '.' and '..' entries */
  
- 	/*
- 	 * Not an attribute, but an auxiliary info for filesystems wanting to
-@@ -2172,6 +2175,7 @@ struct file_system_type {
- #define FS_BINARY_MOUNTDATA	2
- #define FS_HAS_SUBTYPE		4
- #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
-+#define FS_HAS_BTIME		16	/* Supports getting/setting btime. */
- #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
- 	struct dentry *(*mount) (struct file_system_type *, int,
- 		       const char *, void *);
+ /* One directory entry slot representing F2FS_SLOT_LEN-sized file name */
+ struct f2fs_dir_entry {
 -- 
-2.20.1
+2.18.0
