@@ -1,43 +1,56 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: don't allow negative ->write_io_size_bits
-Date: Fri, 15 Feb 2019 00:16:15 +0800
-Message-ID: <20190214161615.5854-1-chao@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: [RFC PATCH 0/6] Allow setting file birth time with utimensat()
+Date: Fri, 15 Feb 2019 09:06:26 +1100
+Message-ID: <20190214220626.GV14116@dastard>
+References: <cover.1550136164.git.osandov@fb.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-btrfs-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <cover.1550136164.git.osandov@fb.com>
+Sender: linux-btrfs-owner@vger.kernel.org
+To: Omar Sandoval <osandov@osandov.com>
+Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, kernel-team@fb.com, linux-api@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Chao Yu <yuchao0@huawei.com>
+On Thu, Feb 14, 2019 at 02:00:07AM -0800, Omar Sandoval wrote:
+> From: Omar Sandoval <osandov@fb.com>
+> 
+> Hi,
+> 
+> Since statx was added in 4.11, userspace has had an interface for
+> reading btime (file creation time), but no way to set it. This RFC patch
+> series adds support for changing btime with utimensat(). Patch 1 adds
+> the VFS infrastructure, patch 2 adds the support to utimensat() with a
+> new flag, and the rest of the patches add filesystem support; I excluded
+> CIFS for now because I don't have a CIFS setup to test it on.
+> 
+> Updating btime is useful for at least a couple of use cases:
+> 
+> - Backup/restore programs (my motivation for this feature is btrfs send)
+> - File servers which interoperate with operating systems that allow
+>   updating file creation time, including Mac OS [1] and Windows [2]
 
-As Dan reported:
+So you're adding an interface that allows users to change the create
+time of files without needing any privileges?
 
-"We put an upper bound on ->write_io_size_bits but we don't have a lower
-bound."
+Inode create time is forensic metadata in XFS  - information we use
+for sequence of event and inode lifetime analysis during examination
+of broken filesystem images and systems that have been broken into.
+Just because it's exposed to userspace via statx(), it doesn't mean
+that it is information that users should be allowed to change. i.e.
+allowing users to be able to change the create time on files makes
+it completely useless for the purpose it was added to XFS for...
 
-So let's add lower bound check for ->write_io_size_bits in parse_options().
+And allowing root to change the create time doesn't really help,
+because once you've broken into a system, this makes it really easy
+to cover tracks (e.g. we can't find files that were created and
+unlinked during the break in window anymore) and lay false
+trails....
 
-[We don't allow configuring ->write_io_size_bits to zero, since at least
-we need to fill one dummy page for aligned IO.]
+Cheers,
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index be8be445c6ed..230845221c74 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -586,7 +586,7 @@ static int parse_options(struct super_block *sb, char *options)
- 		case Opt_io_size_bits:
- 			if (args->from && match_int(args, &arg))
- 				return -EINVAL;
--			if (arg > __ilog2_u32(BIO_MAX_PAGES)) {
-+			if (arg <= 0 || arg > __ilog2_u32(BIO_MAX_PAGES)) {
- 				f2fs_msg(sb, KERN_WARNING,
- 					"Not support %d, larger than %d",
- 					1 << arg, BIO_MAX_PAGES);
+Dave.
 -- 
-2.18.0
+Dave Chinner
+david@fromorbit.com
