@@ -1,133 +1,64 @@
-From: Sahitya Tummala <stummala@codeaurora.org>
-Subject: Re: [PATCH] f2fs: do not use mutex lock in atomic context
-Date: Thu, 14 Feb 2019 13:16:28 +0530
-Message-ID: <20190214074628.GD7308@codeaurora.org>
-References: <1549267613-9288-1-git-send-email-stummala@codeaurora.org>
- <c98cbfcb-f45d-e9a9-5c2e-6730d0448e82@huawei.com>
+From: Omar Sandoval <osandov@osandov.com>
+Subject: [RFC PATCH 0/6] Allow setting file birth time with utimensat()
+Date: Thu, 14 Feb 2019 02:00:07 -0800
+Message-ID: <cover.1550136164.git.osandov@fb.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <c98cbfcb-f45d-e9a9-5c2e-6730d0448e82@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-btrfs-owner@vger.kernel.org>
+Sender: linux-btrfs-owner@vger.kernel.org
+To: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Cc: kernel-team@fb.com, linux-api@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wed, Feb 13, 2019 at 11:25:31AM +0800, Chao Yu wrote:
-> On 2019/2/4 16:06, Sahitya Tummala wrote:
-> > Fix below warning coming because of using mutex lock in atomic context.
-> > 
-> > BUG: sleeping function called from invalid context at kernel/locking/mutex.c:98
-> > in_atomic(): 1, irqs_disabled(): 0, pid: 585, name: sh
-> > Preemption disabled at: __radix_tree_preload+0x28/0x130
-> > Call trace:
-> >  dump_backtrace+0x0/0x2b4
-> >  show_stack+0x20/0x28
-> >  dump_stack+0xa8/0xe0
-> >  ___might_sleep+0x144/0x194
-> >  __might_sleep+0x58/0x8c
-> >  mutex_lock+0x2c/0x48
-> >  f2fs_trace_pid+0x88/0x14c
-> >  f2fs_set_node_page_dirty+0xd0/0x184
-> > 
-> > Do not use f2fs_radix_tree_insert() to avoid doing cond_resched() with
-> > spin_lock() acquired.
-> > 
-> > Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> > ---
-> >  fs/f2fs/trace.c | 20 +++++++++++++-------
-> >  1 file changed, 13 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/trace.c b/fs/f2fs/trace.c
-> > index ce2a5eb..d0ab533 100644
-> > --- a/fs/f2fs/trace.c
-> > +++ b/fs/f2fs/trace.c
-> > @@ -14,7 +14,7 @@
-> >  #include "trace.h"
-> >  
-> >  static RADIX_TREE(pids, GFP_ATOMIC);
-> > -static struct mutex pids_lock;
-> > +static spinlock_t pids_lock;
-> >  static struct last_io_info last_io;
-> >  
-> >  static inline void __print_last_io(void)
-> > @@ -58,23 +58,29 @@ void f2fs_trace_pid(struct page *page)
-> >  
-> >  	set_page_private(page, (unsigned long)pid);
-> >  
-> > +retry:
-> >  	if (radix_tree_preload(GFP_NOFS))
-> >  		return;
-> >  
-> > -	mutex_lock(&pids_lock);
-> > +	spin_lock(&pids_lock);
-> >  	p = radix_tree_lookup(&pids, pid);
-> >  	if (p == current)
-> >  		goto out;
-> >  	if (p)
-> >  		radix_tree_delete(&pids, pid);
-> >  
-> > -	f2fs_radix_tree_insert(&pids, pid, current);
-> > +	if (radix_tree_insert(&pids, pid, current)) {
-> > +		spin_unlock(&pids_lock);
-> > +		radix_tree_preload_end();
-> > +		cond_resched();
-> > +		goto retry;
-> > +	}
-> >  
-> >  	trace_printk("%3x:%3x %4x %-16s\n",
-> >  			MAJOR(inode->i_sb->s_dev), MINOR(inode->i_sb->s_dev),
-> >  			pid, current->comm);
-> 
-> Hi Sahitya,
-> 
-> Can trace_printk sleep? For safety, how about moving it out of spinlock?
-> 
-Hi Chao,
+From: Omar Sandoval <osandov@fb.com>
 
-Yes, trace_printk() is safe to use in atomic context (unlike printk).
+Hi,
 
-Thanks,
-Sahitya.
+Since statx was added in 4.11, userspace has had an interface for
+reading btime (file creation time), but no way to set it. This RFC patch
+series adds support for changing btime with utimensat(). Patch 1 adds
+the VFS infrastructure, patch 2 adds the support to utimensat() with a
+new flag, and the rest of the patches add filesystem support; I excluded
+CIFS for now because I don't have a CIFS setup to test it on.
 
-> Thanks,
-> 
-> >  out:
-> > -	mutex_unlock(&pids_lock);
-> > +	spin_unlock(&pids_lock);
-> >  	radix_tree_preload_end();
-> >  }
-> >  
-> > @@ -119,7 +125,7 @@ void f2fs_trace_ios(struct f2fs_io_info *fio, int flush)
-> >  
-> >  void f2fs_build_trace_ios(void)
-> >  {
-> > -	mutex_init(&pids_lock);
-> > +	spin_lock_init(&pids_lock);
-> >  }
-> >  
-> >  #define PIDVEC_SIZE	128
-> > @@ -147,7 +153,7 @@ void f2fs_destroy_trace_ios(void)
-> >  	pid_t next_pid = 0;
-> >  	unsigned int found;
-> >  
-> > -	mutex_lock(&pids_lock);
-> > +	spin_lock(&pids_lock);
-> >  	while ((found = gang_lookup_pids(pid, next_pid, PIDVEC_SIZE))) {
-> >  		unsigned idx;
-> >  
-> > @@ -155,5 +161,5 @@ void f2fs_destroy_trace_ios(void)
-> >  		for (idx = 0; idx < found; idx++)
-> >  			radix_tree_delete(&pids, pid[idx]);
-> >  	}
-> > -	mutex_unlock(&pids_lock);
-> > +	spin_unlock(&pids_lock);
-> >  }
-> > 
-> 
+Updating btime is useful for at least a couple of use cases:
+
+- Backup/restore programs (my motivation for this feature is btrfs send)
+- File servers which interoperate with operating systems that allow
+  updating file creation time, including Mac OS [1] and Windows [2]
+
+I've also included a man page patch, xfs_io support, and an xfstest.
+
+Thoughts on the implementation or the interface?
+
+Thanks!
+
+1: https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/setattrlist.2.html
+2: https://docs.microsoft.com/en-us/windows/desktop/api/fileapi/nf-fileapi-setfiletime
+
+Omar Sandoval (6):
+  fs: add btime to struct iattr
+  fs: add AT_UTIME_BTIME for utimensat()
+  Btrfs: add support for setting btime
+  ext4: add support for setting btime
+  f2fs: add support for setting btime
+  xfs: add support for setting btime
+
+ fs/attr.c                      |  6 +++
+ fs/btrfs/inode.c               |  2 +
+ fs/btrfs/super.c               |  4 +-
+ fs/ext4/inode.c                | 15 +++++-
+ fs/ext4/super.c                |  2 +-
+ fs/f2fs/file.c                 | 19 ++++++--
+ fs/f2fs/super.c                |  2 +-
+ fs/utimes.c                    | 86 +++++++++++++++++++++-------------
+ fs/xfs/libxfs/xfs_format.h     |  2 +-
+ fs/xfs/libxfs/xfs_log_format.h |  2 +-
+ fs/xfs/xfs_iops.c              | 11 ++++-
+ fs/xfs/xfs_super.c             |  2 +-
+ include/linux/fs.h             |  4 ++
+ include/uapi/linux/fcntl.h     |  2 +
+ 14 files changed, 111 insertions(+), 48 deletions(-)
 
 -- 
---
-Sent by a consultant of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+2.20.1
