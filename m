@@ -1,124 +1,57 @@
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: Re: [PATCH] vfs: don't decrement i_nlink in d_tmpfile
-Date: Fri, 15 Feb 2019 07:56:04 -0800
-Message-ID: <20190215155604.GL32253@magnolia>
-References: <20190214234908.GA6474@magnolia>
- <CAOQ4uxho2AK7g-uhHykGaG6n+aqad-SaCTC6Z_EaA4Jn07tDSg@mail.gmail.com>
+From: Hans van Kranenburg <Hans.van.Kranenburg@mendix.com>
+Subject: Re: [RFC PATCH 0/6] Allow setting file birth time with utimensat()
+Date: Fri, 15 Feb 2019 18:25:18 +0000
+Message-ID: <d0f971c8-5b86-0f4f-7009-fdb199b7e820@mendix.com>
+References: <cover.1550136164.git.osandov@fb.com>
+ <1190dcc0-7054-72b4-2a88-33d0b97e332c@mendix.com>
+ <20190215053950.GF9819@vader>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxho2AK7g-uhHykGaG6n+aqad-SaCTC6Z_EaA4Jn07tDSg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
- <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
-List-Post: <mailto:linux-mtd@lists.infradead.org>
-List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
- <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
-Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: linux-xfs <linux-xfs@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, Theodore Tso <tytso@mit.edu>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Artem Bityutskiy <dedekind1@gmail.com>, Richard Weinberger <richard@nod.at>, yuchao0@huawei.com, Hugh Dickins <hughd@google.com>, Josef Bacik <josef@toxicpanda.com>, Adrian Hunter <adrian.hunter@intel.com>, Christoph Hellwig <hch@infradead.org>, Chris Mason <clm@fb.com>, Andreas Dilger <adilger.kernel@dilger.ca>, Al Viro <viro@zeniv.linux.org.uk>, linux-mtd@lists.infradead.org, Jan Kara <jack@suse.com>, dsterba@suse.com, Jaegeuk Kim <jaegeuk@kernel.org>, Ext4 <linux-ext4@vger.kernel.org>, Linux MM <linux-mm@kvack.org>, Linux Btrfs <linux-btrfs@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-btrfs-owner@vger.kernel.org>
+In-Reply-To: <20190215053950.GF9819@vader>
+Content-Language: en-US
+Content-ID: <FAC717E3C0B1D14DA7B8988A46B27A8D@eurprd06.prod.outlook.com>
+Sender: linux-btrfs-owner@vger.kernel.org
+To: Omar Sandoval <osandov@osandov.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, "kernel-team@fb.com" <kernel-team@fb.com>, "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>, "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Fri, Feb 15, 2019 at 10:04:12AM +0200, Amir Goldstein wrote:
-> On Fri, Feb 15, 2019 at 4:23 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
-> >
-> > From: Darrick J. Wong <darrick.wong@oracle.com>
-> >
-> > d_tmpfile was introduced to instantiate an inode in the dentry cache as
-> > a temporary file.  This helper decrements the inode's nlink count and
-> > dirties the inode, presumably so that filesystems could call new_inode
-> > to create a new inode with nlink == 1 and then call d_tmpfile which will
-> > decrement nlink.
-> >
-> > However, this doesn't play well with XFS, which needs to allocate,
-> > initialize, and insert a tempfile inode on its unlinked list in a single
-> > transaction.  In order to maintain referential integrity of the XFS
-> > metadata, we cannot have an inode on the unlinked list with nlink >= 1.
-> >
-> > XFS and btrfs hack around d_tmpfile's behavior by creating the inode
-> > with nlink == 0 and then incrementing it just prior to calling
-> > d_tmpfile, anticipating that it will be reset to 0.
-> >
-> > Everywhere else outside of d_tmpfile, it appears that nlink updates and
-> > persistence is the responsibility of individual filesystems.  Therefore,
-> > move the nlink decrement out of d_tmpfile into the callers, and require
-> > that callers only pass in inodes with nlink already set to 0.
-> >
-> > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> > ---
-> >  fs/btrfs/inode.c  |    8 --------
-> >  fs/dcache.c       |    8 ++++++--
-> >  fs/ext2/namei.c   |    2 +-
-> >  fs/ext4/namei.c   |    1 +
-> >  fs/f2fs/namei.c   |    1 +
-> >  fs/minix/namei.c  |    2 +-
-> >  fs/ubifs/dir.c    |    1 +
-> >  fs/udf/namei.c    |    2 +-
-> >  fs/xfs/xfs_iops.c |   13 ++-----------
-> >  mm/shmem.c        |    1 +
-> >  10 files changed, 15 insertions(+), 24 deletions(-)
-> >
-> > diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> > index 5c349667c761..bd189fc50f83 100644
-> > --- a/fs/btrfs/inode.c
-> > +++ b/fs/btrfs/inode.c
-> > @@ -10382,14 +10382,6 @@ static int btrfs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
-> >         if (ret)
-> >                 goto out;
-> >
-> > -       /*
-> > -        * We set number of links to 0 in btrfs_new_inode(), and here we set
-> > -        * it to 1 because d_tmpfile() will issue a warning if the count is 0,
-> > -        * through:
-> > -        *
-> > -        *    d_tmpfile() -> inode_dec_link_count() -> drop_nlink()
-> > -        */
-> > -       set_nlink(inode, 1);
-> >         d_tmpfile(dentry, inode);
-> >         unlock_new_inode(inode);
-> >         mark_inode_dirty(inode);
-> > diff --git a/fs/dcache.c b/fs/dcache.c
-> > index aac41adf4743..5fb4ecce2589 100644
-> > --- a/fs/dcache.c
-> > +++ b/fs/dcache.c
-> > @@ -3042,12 +3042,16 @@ void d_genocide(struct dentry *parent)
-> >
-> >  EXPORT_SYMBOL(d_genocide);
-> >
-> > +/*
-> > + * Instantiate an inode in the dentry cache as a temporary file.  Callers must
-> > + * ensure that @inode has a zero link count.
-> > + */
-> >  void d_tmpfile(struct dentry *dentry, struct inode *inode)
-> >  {
-> > -       inode_dec_link_count(inode);
-> >         BUG_ON(dentry->d_name.name != dentry->d_iname ||
-> >                 !hlist_unhashed(&dentry->d_u.d_alias) ||
-> > -               !d_unlinked(dentry));
-> > +               !d_unlinked(dentry) ||
-> > +               inode->i_nlink != 0);
-> 
-> You've just promoted i_nlink filesystem accounting error (which
-> are not that rare) from WARN_ON() to BUG_ON(), not to mention
-> Linus' objection to any use of BUG_ON() at all.
-> 
-> !hlist_unhashed is anyway checked again in d_instantiate().
-> !d_unlinked is not a reason to break the machine.
-> The name check is really not a reason to break the machine.
-> Can probably make tmp name code conditional to WARN_ON().
-
-Fair enough, I'll remove the redundant checks and downgrade that to a
-WARN_ON, if nobody else objects....
-
---D
-
-> Thanks,
-> Amir.
-
-______________________________________________________
-Linux MTD discussion mailing list
-http://lists.infradead.org/mailman/listinfo/linux-mtd/
+T24gMi8xNS8xOSA2OjM5IEFNLCBPbWFyIFNhbmRvdmFsIHdyb3RlOg0KPiBPbiBGcmksIEZlYiAx
+NSwgMjAxOSBhdCAwMTo1NzozOUFNICswMDAwLCBIYW5zIHZhbiBLcmFuZW5idXJnIHdyb3RlOg0K
+Pj4gSGksDQo+Pg0KPj4gT24gMi8xNC8xOSAxMTowMCBBTSwgT21hciBTYW5kb3ZhbCB3cm90ZToN
+Cj4+PiBGcm9tOiBPbWFyIFNhbmRvdmFsIDxvc2FuZG92QGZiLmNvbT4NCj4+Pg0KPj4+IFNpbmNl
+IHN0YXR4IHdhcyBhZGRlZCBpbiA0LjExLCB1c2Vyc3BhY2UgaGFzIGhhZCBhbiBpbnRlcmZhY2Ug
+Zm9yDQo+Pj4gcmVhZGluZyBidGltZSAoZmlsZSBjcmVhdGlvbiB0aW1lKSwgYnV0IG5vIHdheSB0
+byBzZXQgaXQuIFRoaXMgUkZDIHBhdGNoDQo+Pj4gc2VyaWVzIGFkZHMgc3VwcG9ydCBmb3IgY2hh
+bmdpbmcgYnRpbWUgd2l0aCB1dGltZW5zYXQoKS4gUGF0Y2ggMSBhZGRzDQo+Pj4gdGhlIFZGUyBp
+bmZyYXN0cnVjdHVyZSwgcGF0Y2ggMiBhZGRzIHRoZSBzdXBwb3J0IHRvIHV0aW1lbnNhdCgpIHdp
+dGggYQ0KPj4+IG5ldyBmbGFnLCBhbmQgdGhlIHJlc3Qgb2YgdGhlIHBhdGNoZXMgYWRkIGZpbGVz
+eXN0ZW0gc3VwcG9ydDsgSSBleGNsdWRlZA0KPj4+IENJRlMgZm9yIG5vdyBiZWNhdXNlIEkgZG9u
+J3QgaGF2ZSBhIENJRlMgc2V0dXAgdG8gdGVzdCBpdCBvbi4NCj4+Pg0KPj4+IFVwZGF0aW5nIGJ0
+aW1lIGlzIHVzZWZ1bCBmb3IgYXQgbGVhc3QgYSBjb3VwbGUgb2YgdXNlIGNhc2VzOg0KPj4+DQo+
+Pj4gLSBCYWNrdXAvcmVzdG9yZSBwcm9ncmFtcyAobXkgbW90aXZhdGlvbiBmb3IgdGhpcyBmZWF0
+dXJlIGlzIGJ0cmZzIHNlbmQpDQo+Pg0KPj4gQ2FuIHlvdSBnaXZlIGFuIGV4YW1wbGUgb2Ygc3Vj
+aCB1c2VmdWxuZXNzPyBXaGF0J3MgdGhlIHRoaW5nIHlvdSBydW4NCj4+IGludG8gdGhhdCB5b3Ug
+Y2FuJ3QgZG8gd2l0aG91dCBoYXZpbmcgdGhpcz8NCj4gDQo+IFRoYXQgYm9pbHMgZG93biB0byB3
+aGF0J3MgdXNlZnVsIGFib3V0IGhhdmluZyB0aGUgZmlsZSBjcmVhdGlvbiB0aW1lLA0KPiBhbmQg
+aXQncyByZWFsbHkganVzdCBhbm90aGVyIHRpZGJpdCBvZiBpbmZvcm1hdGlvbiB3aGljaCB5b3Ug
+bWF5IG9yIG1heQ0KPiBub3QgY2FyZSBhYm91dC4gTWF5YmUgeW91IGhhdmUgYSBkb2N1bWVudCB0
+aGF0IHlvdSd2ZSBiZWVuIGVkaXRpbmcgZm9yDQo+IGF3aGlsZSwgYW5kIHlvdSB3YW50IHRvIGtu
+b3cgd2hlbiB5b3Ugc3RhcnRlZCB3b3JraW5nIG9uIGl0LiBPciwgeW91DQo+IHdhbnQgdG8ga25v
+dyB3aGVuIGEgdXNlciBjcmVhdGVkIHNvbWUgZGlyZWN0b3J5IHRoYXQgdGhleSBrZWVwIGFkZGlu
+Zw0KPiBmaWxlcyB0by4NCj4gDQo+IElmIHRoZSBmaWxlIGNyZWF0aW9uIHRpbWUgaXMgdXNlZnVs
+IHRvIHlvdSwgdGhlbiB5b3UgbGlrZWx5IHdhbnQgaXQNCj4gcHJlc2VydmVkIGlmIHlvdSBoYXZl
+IHRvIHJlc3RvcmUgZnJvbSBiYWNrdXBzLiBJZiBJIGhhZCB0byByZXN0b3JlIGZyb20NCj4gYmFj
+a3VwcyB5ZXN0ZXJkYXkgYW5kIEknbSB0cnlpbmcgdG8gZmlndXJlIG91dCB3aGVuIEkgc3RhcnRl
+ZCB0aGF0DQo+IGRvY3VtZW50LCBJIGRvbid0IGNhcmUgdGhhdCBJIHJlc3RvcmVkIHRoYXQgZmls
+ZSB5ZXN0ZXJkYXksIEkgd2FudCB0aGUNCj4gcmVhbCBjcmVhdGlvbiBkYXRlLg0KPiANCj4gSWYg
+eW91J3ZlIG5ldmVyIHdvbmRlcmVkIHdoZW4gYSBmaWxlIHdhcyBjcmVhdGVkLCB0aGVuIEknbSBz
+dXJlIHlvdQ0KPiB3b24ndCBjYXJlIHdoZXRoZXIgYnRyZnMgc2VuZC9yZWNlaXZlIHByZXNlcnZl
+cyBpdCA6KQ0KDQpUaGFua3MgZm9yIHRoZSBlbGFib3JhdGUgYW5zd2VyLiBJIHdhcyBqdXN0IGN1
+cmlvdXMgaWYgdGhpcyB3YXMgdG8gbWFrZQ0Kc2VuZCAibW9yZSBmZWF0dXJlIGNvbXBsZXRlIiBv
+ciBpZiB0aGVyZSB3YXMgc29tZXRoaW5nIGVsc2Ugc3BlY2lhbCB0bw0KaXQsIGFuZCBpdCBzZWVt
+cyB0byBiZSB0aGUgZmlyc3Qgb25lLiA7XQ0KDQpBbmQgZm9yIG15c2VsZiwgSSBtb3N0bHkgdHJl
+YXQgYnRyZnMgc2VuZC9yZWNlaXZlIGxpa2UgYSBpbXByb3ZlZA0KcmVwbGFjZW1lbnQgZm9yIHJz
+eW5jIGFuZCB1c3VhbGx5IGRvbid0IGNhcmUgdGhhdCBtdWNoIGFib3V0IGJ0aW1lICBpbmRlZWQu
+DQoNClRoYW5rcywNCi0tIA0KSGFucyB2YW4gS3JhbmVuYnVyZw0K
