@@ -1,151 +1,220 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 202495] oops in fs/f2fs/checkpoint.c:150
- f2fs_is_valid_blkaddr
-Date: Fri, 15 Feb 2019 18:54:04 +0000
-Message-ID: <bug-202495-202145-vVRcRUtZyb@https.bugzilla.kernel.org/>
-References: <bug-202495-202145@https.bugzilla.kernel.org/>
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: [PATCH v2] vfs: don't decrement i_nlink in d_tmpfile
+Date: Fri, 15 Feb 2019 14:39:25 -0800
+Message-ID: <20190215223925.GO32253@magnolia>
+References: <20190214234908.GA6474@magnolia>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1guicy-000709-Bn
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Feb 2019 18:54:24 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1guicl-009QVr-CG
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Feb 2019 18:54:18 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 473782B95A
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 15 Feb 2019 18:54:03 +0000 (UTC)
-In-Reply-To: <bug-202495-202145@https.bugzilla.kernel.org/>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20190214234908.GA6474@magnolia>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
+List-Post: <mailto:linux-mtd@lists.infradead.org>
+List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
+Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
+To: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, viro@zeniv.linux.org.uk, jack@suse.com, tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org, yuchao0@huawei.com, hughd@google.com, hch@infradead.org
+Cc: dedekind1@gmail.com, richard@nod.at, amir73il@gmail.com, adrian.hunter@intel.com, linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org, linux-mm@kvack.org, linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=202495
+From: Darrick J. Wong <darrick.wong@oracle.com>
 
---- Comment #2 from JWalker (jw7779@gmail.com) ---
-Hi Chao,
+d_tmpfile was introduced to instantiate an inode in the dentry cache as
+a temporary file.  This helper decrements the inode's nlink count and
+dirties the inode, presumably so that filesystems could call new_inode
+to create a new inode with nlink == 1 and then call d_tmpfile which will
+decrement nlink.
 
-The kernal code was taken from the raspberry pi git repo, and then the
-incremental patches applied.
+However, this doesn't play well with XFS, which needs to allocate,
+initialize, and insert a tempfile inode on its unlinked list in a single
+transaction.  In order to maintain referential integrity of the XFS
+metadata, we cannot have an inode on the unlinked list with nlink >= 1.
 
-Yes, fsck has been applied. Please see below the output of the both volumes.
+XFS and btrfs hack around d_tmpfile's behavior by creating the inode
+with nlink == 0 and then incrementing it just prior to calling
+d_tmpfile, anticipating that it will be reset to 0.
 
-Please let me know if you require any more info.
+Everywhere else, it appears that nlink updates and persistence is
+the responsibility of individual filesystems.  Therefore, move the nlink
+decrement out of d_tmpfile into the callers, and require that callers
+only pass in inodes with nlink already set to 0.
 
-Regards
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+---
+v2: convert BUG_ON to WARN_ON per review comment
+---
+ fs/btrfs/inode.c  |    8 --------
+ fs/dcache.c       |   10 ++++++----
+ fs/ext2/namei.c   |    2 +-
+ fs/ext4/namei.c   |    1 +
+ fs/f2fs/namei.c   |    1 +
+ fs/minix/namei.c  |    2 +-
+ fs/ubifs/dir.c    |    1 +
+ fs/udf/namei.c    |    2 +-
+ fs/xfs/xfs_iops.c |   13 ++-----------
+ mm/shmem.c        |    1 +
+ 10 files changed, 15 insertions(+), 26 deletions(-)
 
-John
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 5c349667c761..bd189fc50f83 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -10382,14 +10382,6 @@ static int btrfs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	if (ret)
+ 		goto out;
+ 
+-	/*
+-	 * We set number of links to 0 in btrfs_new_inode(), and here we set
+-	 * it to 1 because d_tmpfile() will issue a warning if the count is 0,
+-	 * through:
+-	 *
+-	 *    d_tmpfile() -> inode_dec_link_count() -> drop_nlink()
+-	 */
+-	set_nlink(inode, 1);
+ 	d_tmpfile(dentry, inode);
+ 	unlock_new_inode(inode);
+ 	mark_inode_dirty(inode);
+diff --git a/fs/dcache.c b/fs/dcache.c
+index aac41adf4743..bb349d423055 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -3042,12 +3042,14 @@ void d_genocide(struct dentry *parent)
+ 
+ EXPORT_SYMBOL(d_genocide);
+ 
++/*
++ * Instantiate an inode in the dentry cache as a temporary file.  Callers must
++ * ensure that @inode has a zero link count.
++ */
+ void d_tmpfile(struct dentry *dentry, struct inode *inode)
+ {
+-	inode_dec_link_count(inode);
+-	BUG_ON(dentry->d_name.name != dentry->d_iname ||
+-		!hlist_unhashed(&dentry->d_u.d_alias) ||
+-		!d_unlinked(dentry));
++	WARN_ON(dentry->d_name.name != dentry->d_iname ||
++		!d_unlinked(dentry) || inode->i_nlink != 0);
+ 	spin_lock(&dentry->d_parent->d_lock);
+ 	spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
+ 	dentry->d_name.len = sprintf(dentry->d_iname, "#%llu",
+diff --git a/fs/ext2/namei.c b/fs/ext2/namei.c
+index 0c26dcc5d850..8542e9ce9677 100644
+--- a/fs/ext2/namei.c
++++ b/fs/ext2/namei.c
+@@ -117,7 +117,7 @@ static int ext2_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 		return PTR_ERR(inode);
+ 
+ 	ext2_set_file_ops(inode);
+-	mark_inode_dirty(inode);
++	inode_dec_link_count(inode);
+ 	d_tmpfile(dentry, inode);
+ 	unlock_new_inode(inode);
+ 	return 0;
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 2b928eb07fa2..7502432f9816 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -2517,6 +2517,7 @@ static int ext4_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 		inode->i_op = &ext4_file_inode_operations;
+ 		inode->i_fop = &ext4_file_operations;
+ 		ext4_set_aops(inode);
++		inode_dec_link_count(inode);
+ 		d_tmpfile(dentry, inode);
+ 		err = ext4_orphan_add(handle, inode);
+ 		if (err)
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 62d9829f3a6a..31a556af5f3a 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -780,6 +780,7 @@ static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
+ 		f2fs_i_links_write(inode, false);
+ 		*whiteout = inode;
+ 	} else {
++		inode_dec_link_count(inode);
+ 		d_tmpfile(dentry, inode);
+ 	}
+ 	/* link_count was changed by d_tmpfile as well. */
+diff --git a/fs/minix/namei.c b/fs/minix/namei.c
+index 1a6084d2b02e..3249f86c476a 100644
+--- a/fs/minix/namei.c
++++ b/fs/minix/namei.c
+@@ -57,7 +57,7 @@ static int minix_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	struct inode *inode = minix_new_inode(dir, mode, &error);
+ 	if (inode) {
+ 		minix_set_inode(inode, 0);
+-		mark_inode_dirty(inode);
++		inode_dec_link_count(inode);
+ 		d_tmpfile(dentry, inode);
+ 	}
+ 	return error;
+diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
+index 5767b373a8ff..7187e4fd7561 100644
+--- a/fs/ubifs/dir.c
++++ b/fs/ubifs/dir.c
+@@ -419,6 +419,7 @@ static int do_tmpfile(struct inode *dir, struct dentry *dentry,
+ 		drop_nlink(inode);
+ 		*whiteout = inode;
+ 	} else {
++		inode_dec_link_count(inode);
+ 		d_tmpfile(dentry, inode);
+ 	}
+ 	ubifs_assert(c, ui->dirty);
+diff --git a/fs/udf/namei.c b/fs/udf/namei.c
+index 58cc2414992b..38bd021f9673 100644
+--- a/fs/udf/namei.c
++++ b/fs/udf/namei.c
+@@ -652,7 +652,7 @@ static int udf_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 		inode->i_data.a_ops = &udf_aops;
+ 	inode->i_op = &udf_file_inode_operations;
+ 	inode->i_fop = &udf_file_operations;
+-	mark_inode_dirty(inode);
++	inode_dec_link_count(inode);
+ 	d_tmpfile(dentry, inode);
+ 	unlock_new_inode(inode);
+ 	return 0;
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 1efef69a7f1c..f48ffd7a8d3e 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -191,18 +191,9 @@ xfs_generic_create(
+ 
+ 	xfs_setup_iops(ip);
+ 
+-	if (tmpfile) {
+-		/*
+-		 * The VFS requires that any inode fed to d_tmpfile must have
+-		 * nlink == 1 so that it can decrement the nlink in d_tmpfile.
+-		 * However, we created the temp file with nlink == 0 because
+-		 * we're not allowed to put an inode with nlink > 0 on the
+-		 * unlinked list.  Therefore we have to set nlink to 1 so that
+-		 * d_tmpfile can immediately set it back to zero.
+-		 */
+-		set_nlink(inode, 1);
++	if (tmpfile)
+ 		d_tmpfile(dentry, inode);
+-	} else
++	else
+ 		d_instantiate(dentry, inode);
+ 
+ 	xfs_finish_inode_setup(ip);
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 6ece1e2fe76e..4a7810093561 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2818,6 +2818,7 @@ shmem_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 		error = simple_acl_create(dir, inode);
+ 		if (error)
+ 			goto out_iput;
++		inode_dec_link_count(inode);
+ 		d_tmpfile(dentry, inode);
+ 	}
+ 	return error;
 
-sudo fsck -t f2fs /dev/sdc3
-fsck from util-linux 2.31.1
-Info: [/dev/sdc3] Disk Model: USB3.0 CRW   -SD1.00
-Info: Segments per section = 1
-Info: Sections per zone = 1
-Info: sector size = 512
-Info: total sectors = 4194304 (2048 MB)
-Info: MKFS version
-  "Linux version 4.13.0-43-generic (buildd@lgw01-amd64-041) (gcc
-version 5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.9))
-#48~16.04.1-Ubuntu SMP Thu May 17 13:00:11 UTC 2018"
-Info: FSCK version
-  from "Linux version 4.15.0-43-generic (buildd@lgw01-amd64-001) (gcc
-version 7.3.0 (Ubuntu 7.3.0-16ubuntu3)) #46-Ubuntu SMP Thu Dec 6
-14:45:28 UTC 2018"
-    to "Linux version 4.15.0-45-generic (buildd@lgw01-amd64-031) (gcc
-version 7.3.0 (Ubuntu 7.3.0-16ubuntu3)) #48-Ubuntu SMP Tue Jan 29
-16:28:13 UTC 2019"
-Info: superblock features = 0 :
-Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
-Info: total FS sectors = 4194304 (2048 MB)
-Info: CKPT version = 15a2c
-Info: checkpoint state = 41 :  crc unmount
-
-[FSCK] Unreachable nat entries                        [Ok..] [0x0]
-[FSCK] SIT valid block bitmap checking                [Ok..]
-[FSCK] Hard link checking for regular file            [Ok..] [0x1]
-[FSCK] valid_block_count matching with CP             [Ok..] [0x87a0]
-[FSCK] valid_node_count matcing with CP (de lookup)   [Ok..] [0x107b]
-[FSCK] valid_node_count matcing with CP (nat lookup)  [Ok..] [0x107b]
-[FSCK] valid_inode_count matched with CP              [Ok..] [0x1073]
-[FSCK] free segment_count matched with CP             [Ok..] [0x296]
-[FSCK] next block offset is free                      [Ok..]
-[FSCK] fixing SIT types
-[FSCK] other corrupted bugs                           [Ok..]
-
-Done.
-sudo fsck -t f2fs /dev/sdc4
-fsck from util-linux 2.31.1
-Info: [/dev/sdc4] Disk Model: USB3.0 CRW   -SD1.00
-Info: Segments per section = 1
-Info: Sections per zone = 1
-Info: sector size = 512
-Info: total sectors = 3055616 (1492 MB)
-Info: MKFS version
-  "Linux version 4.13.0-43-generic (buildd@lgw01-amd64-041) (gcc
-version 5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.9))
-#48~16.04.1-Ubuntu SMP Thu May 17 13:00:11 UTC 2018"
-Info: FSCK version
-  from "Linux version 4.15.0-43-generic (buildd@lgw01-amd64-001) (gcc
-version 7.3.0 (Ubuntu 7.3.0-16ubuntu3)) #46-Ubuntu SMP Thu Dec 6
-14:45:28 UTC 2018"
-    to "Linux version 4.15.0-45-generic (buildd@lgw01-amd64-031) (gcc
-version 7.3.0 (Ubuntu 7.3.0-16ubuntu3)) #48-Ubuntu SMP Tue Jan 29
-16:28:13 UTC 2019"
-Info: superblock features = 0 :
-Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
-Info: total FS sectors = 3055616 (1492 MB)
-Info: CKPT version = b
-Info: checkpoint state = 45 :  crc compacted_summary unmount
-
-[FSCK] Unreachable nat entries                        [Ok..] [0x0]
-[FSCK] SIT valid block bitmap checking                [Ok..]
-[FSCK] Hard link checking for regular file            [Ok..] [0x0]
-[FSCK] valid_block_count matching with CP             [Ok..] [0x2]
-[FSCK] valid_node_count matcing with CP (de lookup)   [Ok..] [0x1]
-[FSCK] valid_node_count matcing with CP (nat lookup)  [Ok..] [0x1]
-[FSCK] valid_inode_count matched with CP              [Ok..] [0x1]
-[FSCK] free segment_count matched with CP             [Ok..] [0x2d9]
-[FSCK] next block offset is free                      [Ok..]
-[FSCK] fixing SIT types
-[FSCK] other corrupted bugs                           [Ok..]
-
-Done.
-
-On Fri, 15 Feb 2019 at 08:28, <bugzilla-daemon@bugzilla.kernel.org> wrote:
->
-> https://bugzilla.kernel.org/show_bug.cgi?id=202495
->
-> Chao Yu (chao@kernel.org) changed:
->
->            What    |Removed                     |Added
-> ----------------------------------------------------------------------------
->                  CC|                            |chao@kernel.org
->
-> --- Comment #1 from Chao Yu (chao@kernel.org) ---
-> Hi,
->
-> Do you pick up 4.14 kernel from AOSP, or just kernel.org? did you try fsck on
-> this image?
->
-> --
-> You are receiving this mail because:
-> You reported the bug.
-
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+______________________________________________________
+Linux MTD discussion mailing list
+http://lists.infradead.org/mailman/listinfo/linux-mtd/
