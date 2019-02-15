@@ -1,173 +1,103 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: do not use mutex lock in atomic context
-Date: Fri, 15 Feb 2019 17:10:57 +0800
-Message-ID: <70630a8c-4f7d-7d97-54a2-b1e4bceca492@huawei.com>
-References: <1549267613-9288-1-git-send-email-stummala@codeaurora.org>
- <c98cbfcb-f45d-e9a9-5c2e-6730d0448e82@huawei.com>
- <20190214074628.GD7308@codeaurora.org>
- <5650af07-c55d-fcb4-ca98-eca45248392d@kernel.org>
- <77c63bf6-069c-704c-220a-b50d997d2463@codeaurora.org>
+From: David Disseldorp via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Subject: Re: [RFC PATCH 0/6] Allow setting file birth time with
+ utimensat()
+Date: Fri, 15 Feb 2019 14:57:13 +0100
+Message-ID: <20190215145713.33b0748e@samba.org>
+References: <cover.1550136164.git.osandov@fb.com>
+ <20190214220626.GV14116@dastard> <20190214231429.GE9819@vader>
+ <20190215001657.GY14116@dastard> <20190215065947.GG9819@vader>
+Reply-To: David Disseldorp <ddiss@samba.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <77c63bf6-069c-704c-220a-b50d997d2463@codeaurora.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ritesh Harjani <riteshh@codeaurora.org>, Chao Yu <chao@kernel.org>, Sahitya Tummala <stummala@codeaurora.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <ddiss@samba.org>) id 1gudzf-0003kL-6j
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Feb 2019 13:57:31 +0000
+Received: from hr2.samba.org ([144.76.82.148])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1gudza-00HIe4-4o
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Feb 2019 13:57:31 +0000
+In-Reply-To: <20190215065947.GG9819@vader>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Omar Sandoval <osandov@osandov.com>, Samba Technical <samba-technical@lists.samba.org>
+Cc: Steve French <sfrench@samba.org>, Theodore Ts'o <tytso@mit.edu>, linux-api@vger.kernel.org, Dave Chinner <david@fromorbit.com>, linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, kernel-team@fb.com, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
 
-On 2019/2/15 12:28, Ritesh Harjani wrote:
-> 
-> On 2/14/2019 9:40 PM, Chao Yu wrote:
->> On 2019-2-14 15:46, Sahitya Tummala wrote:
->>> On Wed, Feb 13, 2019 at 11:25:31AM +0800, Chao Yu wrote:
->>>> On 2019/2/4 16:06, Sahitya Tummala wrote:
->>>>> Fix below warning coming because of using mutex lock in atomic context.
->>>>>
->>>>> BUG: sleeping function called from invalid context at kernel/locking/mutex.c:98
->>>>> in_atomic(): 1, irqs_disabled(): 0, pid: 585, name: sh
->>>>> Preemption disabled at: __radix_tree_preload+0x28/0x130
->>>>> Call trace:
->>>>>   dump_backtrace+0x0/0x2b4
->>>>>   show_stack+0x20/0x28
->>>>>   dump_stack+0xa8/0xe0
->>>>>   ___might_sleep+0x144/0x194
->>>>>   __might_sleep+0x58/0x8c
->>>>>   mutex_lock+0x2c/0x48
->>>>>   f2fs_trace_pid+0x88/0x14c
->>>>>   f2fs_set_node_page_dirty+0xd0/0x184
->>>>>
->>>>> Do not use f2fs_radix_tree_insert() to avoid doing cond_resched() with
->>>>> spin_lock() acquired.
->>>>>
->>>>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
->>>>> ---
->>>>>   fs/f2fs/trace.c | 20 +++++++++++++-------
->>>>>   1 file changed, 13 insertions(+), 7 deletions(-)
->>>>>
->>>>> diff --git a/fs/f2fs/trace.c b/fs/f2fs/trace.c
->>>>> index ce2a5eb..d0ab533 100644
->>>>> --- a/fs/f2fs/trace.c
->>>>> +++ b/fs/f2fs/trace.c
->>>>> @@ -14,7 +14,7 @@
->>>>>   #include "trace.h"
->>>>>   
->>>>>   static RADIX_TREE(pids, GFP_ATOMIC);
->>>>> -static struct mutex pids_lock;
->>>>> +static spinlock_t pids_lock;
->>>>>   static struct last_io_info last_io;
->>>>>   
->>>>>   static inline void __print_last_io(void)
->>>>> @@ -58,23 +58,29 @@ void f2fs_trace_pid(struct page *page)
->>>>>   
->>>>>   	set_page_private(page, (unsigned long)pid);
->>>>>   
->>>>> +retry:
->>>>>   	if (radix_tree_preload(GFP_NOFS))
->>>>>   		return;
->>>>>   
->>>>> -	mutex_lock(&pids_lock);
->>>>> +	spin_lock(&pids_lock);
->>>>>   	p = radix_tree_lookup(&pids, pid);
->>>>>   	if (p == current)
->>>>>   		goto out;
->>>>>   	if (p)
->>>>>   		radix_tree_delete(&pids, pid);
->>>>>   
->>>>> -	f2fs_radix_tree_insert(&pids, pid, current);
-> 
-> Do you know why do we have a retry logic here? When anyways we have 
-> called for radix_tree_delete with pid key?
-> Which should ensure the slot is empty, no?
-> Then why in the original code (f2fs_radix_tree_insert), we were 
-> retrying. For what condition a retry was needed?
+On Thu, 14 Feb 2019 22:59:47 -0800, Omar Sandoval wrote:
 
-Hi,
+> On Fri, Feb 15, 2019 at 11:16:57AM +1100, Dave Chinner wrote:
+> > On Thu, Feb 14, 2019 at 03:14:29PM -0800, Omar Sandoval wrote:  
+> > > On Fri, Feb 15, 2019 at 09:06:26AM +1100, Dave Chinner wrote:  
+...
+> > > > Inode create time is forensic metadata in XFS  - information we use
+> > > > for sequence of event and inode lifetime analysis during examination
+> > > > of broken filesystem images and systems that have been broken into.
+> > > > Just because it's exposed to userspace via statx(), it doesn't mean
+> > > > that it is information that users should be allowed to change. i.e.
+> > > > allowing users to be able to change the create time on files makes
+> > > > it completely useless for the purpose it was added to XFS for...
+> > > > 
+> > > > And allowing root to change the create time doesn't really help,
+> > > > because once you've broken into a system, this makes it really easy
+> > > > to cover tracks  
+> > > 
+> > > If the threat model is that the attacker has root, then they can
+> > > overwrite the timestamp on disk anyways, no?  
+> > 
+> > Modifying the block devicee under an active filesystem is fraught
+> > with danger, and there's no guarantee it will work if the metadata
+> > being modified is still active in memory. Corrupting the filesystem
+> > is a sure way to get noticed....
+> >   
+> > > > (e.g. we can't find files that were created and
+> > > > unlinked during the break in window anymore) and lay false
+> > > > trails....  
+> > > 
+> > > Fair point, although there's still ctime during the break-in window,  
+> > 
+> > Unless you're smart enough to know how to trigger S_NOCMTIME or
+> > FMODE_NOCMTIME....
+> >   
+> > > which I assume you'd be looking for anyways since files modified during
+> > > the break-in window are also of interest.  
 
-f2fs_radix_tree_insert is used in many places, it was introduced to used in
-some paths we should not failed.
+I'm not sure I follow the forensics use-case for immutable btime. I'd
+expect dm-verity or selinux/apparmor audits to do a better job for those
+worried about this kind of attack.
 
-And here, I guess we used it for the same purpose, if we failed to insert
-@current pointer into radix, next time, we may not skip calling
-trace_printk, actually it will print the same current->comm info as
-previous one, it's redundant.
+> > ... and then that also can't be guaranteed. :/
+> >   
+> > > I see a few options, none of which are particularly nice:
+> > > 
+> > > 1. Filesystems like XFS could choose not to support setting btime even
+> > >    if they support reading it.
+> > > 2. XFS could add a second, writeable btime which is used for
+> > >    statx/utimes when available (it would fit in di_pad2...).
+> > > 3. We could add a btime_writable sysctl/mount option/mkfs option.  
+> > 
+> > 4. create time remains a read-only field, and btrfs grows its own
+> > special interface to twiddle it in btrfs-recv if it really is
+> > necessary.  
+> 
+> I'm curious to hear what the ext4/f2fs/CIFS developers think. If no one
+> else wants btime to be mutable, then I might as well make it
+> Btrfs-specific. That is, assuming we reach consensus on the Btrfs side
+> that btrfs receive should set btime.
 
-Thanks,
+Samba currently uses a user.DOSATTRIB xattr for tracking creation time.
+IMO a mutable btime accessible via statx would be useful for
+cross-protocol interoperability.
 
-> 
-> Regards
-> Ritesh
-> 
-> 
->>>>> +	if (radix_tree_insert(&pids, pid, current)) {
->>>>> +		spin_unlock(&pids_lock);
->>>>> +		radix_tree_preload_end();
->>>>> +		cond_resched();
->>>>> +		goto retry;
->>>>> +	}
->>>>>   
->>>>>   	trace_printk("%3x:%3x %4x %-16s\n",
->>>>>   			MAJOR(inode->i_sb->s_dev), MINOR(inode->i_sb->s_dev),
->>>>>   			pid, current->comm);
->>>> Hi Sahitya,
->>>>
->>>> Can trace_printk sleep? For safety, how about moving it out of spinlock?
->>>>
->>> Hi Chao,
->>>
->>> Yes, trace_printk() is safe to use in atomic context (unlike printk).
->> Hi Sahitya,
->>
->> Thanks for your confirmation. :)
->>
->> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->>
->> Thanks,
->>
->>> Thanks,
->>> Sahitya.
->>>
->>>> Thanks,
->>>>
->>>>>   out:
->>>>> -	mutex_unlock(&pids_lock);
->>>>> +	spin_unlock(&pids_lock);
->>>>>   	radix_tree_preload_end();
->>>>>   }
->>>>>   
->>>>> @@ -119,7 +125,7 @@ void f2fs_trace_ios(struct f2fs_io_info *fio, int flush)
->>>>>   
->>>>>   void f2fs_build_trace_ios(void)
->>>>>   {
->>>>> -	mutex_init(&pids_lock);
->>>>> +	spin_lock_init(&pids_lock);
->>>>>   }
->>>>>   
->>>>>   #define PIDVEC_SIZE	128
->>>>> @@ -147,7 +153,7 @@ void f2fs_destroy_trace_ios(void)
->>>>>   	pid_t next_pid = 0;
->>>>>   	unsigned int found;
->>>>>   
->>>>> -	mutex_lock(&pids_lock);
->>>>> +	spin_lock(&pids_lock);
->>>>>   	while ((found = gang_lookup_pids(pid, next_pid, PIDVEC_SIZE))) {
->>>>>   		unsigned idx;
->>>>>   
->>>>> @@ -155,5 +161,5 @@ void f2fs_destroy_trace_ios(void)
->>>>>   		for (idx = 0; idx < found; idx++)
->>>>>   			radix_tree_delete(&pids, pid[idx]);
->>>>>   	}
->>>>> -	mutex_unlock(&pids_lock);
->>>>> +	spin_unlock(&pids_lock);
->>>>>   }
->>>>>
->>
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> .
-> 
+Cheers, David
