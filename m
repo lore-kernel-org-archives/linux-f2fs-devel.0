@@ -1,66 +1,172 @@
-From: Hans van Kranenburg <Hans.van.Kranenburg@mendix.com>
-Subject: Re: [RFC PATCH 0/6] Allow setting file birth time with utimensat()
-Date: Fri, 15 Feb 2019 01:57:39 +0000
-Message-ID: <1190dcc0-7054-72b4-2a88-33d0b97e332c@mendix.com>
-References: <cover.1550136164.git.osandov@fb.com>
+From: Ritesh Harjani <riteshh@codeaurora.org>
+Subject: Re: [PATCH] f2fs: do not use mutex lock in atomic context
+Date: Fri, 15 Feb 2019 09:58:15 +0530
+Message-ID: <77c63bf6-069c-704c-220a-b50d997d2463@codeaurora.org>
+References: <1549267613-9288-1-git-send-email-stummala@codeaurora.org>
+ <c98cbfcb-f45d-e9a9-5c2e-6730d0448e82@huawei.com>
+ <20190214074628.GD7308@codeaurora.org>
+ <5650af07-c55d-fcb4-ca98-eca45248392d@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-btrfs-owner@vger.kernel.org>
-In-Reply-To: <cover.1550136164.git.osandov@fb.com>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <riteshh@codeaurora.org>) id 1guV74-00053l-LT
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Feb 2019 04:28:34 +0000
+Received: from smtp.codeaurora.org ([198.145.29.96])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1guV6x-00GO36-7A
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Feb 2019 04:28:33 +0000
+In-Reply-To: <5650af07-c55d-fcb4-ca98-eca45248392d@kernel.org>
 Content-Language: en-US
-Content-ID: <4FEA03B290DAE14C969E15CD47BE9B4F@eurprd06.prod.outlook.com>
-Sender: linux-btrfs-owner@vger.kernel.org
-To: Omar Sandoval <osandov@osandov.com>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: "kernel-team@fb.com" <kernel-team@fb.com>, "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>, "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <chao@kernel.org>, Sahitya Tummala <stummala@codeaurora.org>, Chao Yu <yuchao0@huawei.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-SGksDQoNCk9uIDIvMTQvMTkgMTE6MDAgQU0sIE9tYXIgU2FuZG92YWwgd3JvdGU6DQo+IEZyb206
-IE9tYXIgU2FuZG92YWwgPG9zYW5kb3ZAZmIuY29tPg0KPiANCj4gU2luY2Ugc3RhdHggd2FzIGFk
-ZGVkIGluIDQuMTEsIHVzZXJzcGFjZSBoYXMgaGFkIGFuIGludGVyZmFjZSBmb3INCj4gcmVhZGlu
-ZyBidGltZSAoZmlsZSBjcmVhdGlvbiB0aW1lKSwgYnV0IG5vIHdheSB0byBzZXQgaXQuIFRoaXMg
-UkZDIHBhdGNoDQo+IHNlcmllcyBhZGRzIHN1cHBvcnQgZm9yIGNoYW5naW5nIGJ0aW1lIHdpdGgg
-dXRpbWVuc2F0KCkuIFBhdGNoIDEgYWRkcw0KPiB0aGUgVkZTIGluZnJhc3RydWN0dXJlLCBwYXRj
-aCAyIGFkZHMgdGhlIHN1cHBvcnQgdG8gdXRpbWVuc2F0KCkgd2l0aCBhDQo+IG5ldyBmbGFnLCBh
-bmQgdGhlIHJlc3Qgb2YgdGhlIHBhdGNoZXMgYWRkIGZpbGVzeXN0ZW0gc3VwcG9ydDsgSSBleGNs
-dWRlZA0KPiBDSUZTIGZvciBub3cgYmVjYXVzZSBJIGRvbid0IGhhdmUgYSBDSUZTIHNldHVwIHRv
-IHRlc3QgaXQgb24uDQo+IA0KPiBVcGRhdGluZyBidGltZSBpcyB1c2VmdWwgZm9yIGF0IGxlYXN0
-IGEgY291cGxlIG9mIHVzZSBjYXNlczoNCj4gDQo+IC0gQmFja3VwL3Jlc3RvcmUgcHJvZ3JhbXMg
-KG15IG1vdGl2YXRpb24gZm9yIHRoaXMgZmVhdHVyZSBpcyBidHJmcyBzZW5kKQ0KDQpDYW4geW91
-IGdpdmUgYW4gZXhhbXBsZSBvZiBzdWNoIHVzZWZ1bG5lc3M/IFdoYXQncyB0aGUgdGhpbmcgeW91
-IHJ1bg0KaW50byB0aGF0IHlvdSBjYW4ndCBkbyB3aXRob3V0IGhhdmluZyB0aGlzPw0KDQpZb3Ug
-Z3V5cyBhcmUgaGF2aW5nIGEgdGVjaG5pY2FsIGRpc2N1c3Npb24gYWJvdXQgJ2ltcGxlbWVudGF0
-aW9uIG9yIHRoZQ0KaW50ZXJmYWNlJyBpbiB0aGlzIHRocmVhZCwgd2hpbGUgSSdtIHdvbmRlcmlu
-ZyB3aGF0IEknbSBtaXNzaW5nIGFzIGJ0cmZzDQpzZW5kL3JlY2VpdmUgdXNlciBieSBub3QgaGF2
-aW5nIHRoaXMuIEkgbmV2ZXIgbmVlZGVkIGl0IGluIG15IHVzZSBjYXNlcy4NCg0KVGhlcmUncyB0
-d28gbGV2ZWxzIG9mIHVzZSBjYXNlIGhpZGRlbiBpbiB0aGUgYWJvdmUgbGluZS4gU28sIEkgZG9u
-J3QNCm1lYW4gd2h5IGJ0cmZzIHNlbmQvcmVjZWl2ZSBpcyB1c2VmdWwgKGl0IGlzLCBmb3IgcXVp
-Y2sgZWZmaWNpZW50DQpyZXBsaWNhdGlvbiBvZiBjaGFuZ2VzKSBidXQsIHdoYXQncyBhbiBpbXBv
-cnRhbnQgdXNlY2FzZSBmb3IgYnRpbWUgb24NCnRvcCBvZiB0aGF0Pw0KDQo+IC0gRmlsZSBzZXJ2
-ZXJzIHdoaWNoIGludGVyb3BlcmF0ZSB3aXRoIG9wZXJhdGluZyBzeXN0ZW1zIHRoYXQgYWxsb3cN
-Cj4gICB1cGRhdGluZyBmaWxlIGNyZWF0aW9uIHRpbWUsIGluY2x1ZGluZyBNYWMgT1MgWzFdIGFu
-ZCBXaW5kb3dzIFsyXQ0KPiANCj4gSSd2ZSBhbHNvIGluY2x1ZGVkIGEgbWFuIHBhZ2UgcGF0Y2gs
-IHhmc19pbyBzdXBwb3J0LCBhbmQgYW4geGZzdGVzdC4NCj4gDQo+IFRob3VnaHRzIG9uIHRoZSBp
-bXBsZW1lbnRhdGlvbiBvciB0aGUgaW50ZXJmYWNlPw0KPiANCj4gVGhhbmtzIQ0KPiANCj4gMTog
-aHR0cHM6Ly9kZXZlbG9wZXIuYXBwbGUuY29tL2xpYnJhcnkvYXJjaGl2ZS9kb2N1bWVudGF0aW9u
-L1N5c3RlbS9Db25jZXB0dWFsL01hblBhZ2VzX2lQaG9uZU9TL21hbjIvc2V0YXR0cmxpc3QuMi5o
-dG1sDQo+IDI6IGh0dHBzOi8vZG9jcy5taWNyb3NvZnQuY29tL2VuLXVzL3dpbmRvd3MvZGVza3Rv
-cC9hcGkvZmlsZWFwaS9uZi1maWxlYXBpLXNldGZpbGV0aW1lDQo+IA0KPiBPbWFyIFNhbmRvdmFs
-ICg2KToNCj4gICBmczogYWRkIGJ0aW1lIHRvIHN0cnVjdCBpYXR0cg0KPiAgIGZzOiBhZGQgQVRf
-VVRJTUVfQlRJTUUgZm9yIHV0aW1lbnNhdCgpDQo+ICAgQnRyZnM6IGFkZCBzdXBwb3J0IGZvciBz
-ZXR0aW5nIGJ0aW1lDQo+ICAgZXh0NDogYWRkIHN1cHBvcnQgZm9yIHNldHRpbmcgYnRpbWUNCj4g
-ICBmMmZzOiBhZGQgc3VwcG9ydCBmb3Igc2V0dGluZyBidGltZQ0KPiAgIHhmczogYWRkIHN1cHBv
-cnQgZm9yIHNldHRpbmcgYnRpbWUNCj4gDQo+ICBmcy9hdHRyLmMgICAgICAgICAgICAgICAgICAg
-ICAgfCAgNiArKysNCj4gIGZzL2J0cmZzL2lub2RlLmMgICAgICAgICAgICAgICB8ICAyICsNCj4g
-IGZzL2J0cmZzL3N1cGVyLmMgICAgICAgICAgICAgICB8ICA0ICstDQo+ICBmcy9leHQ0L2lub2Rl
-LmMgICAgICAgICAgICAgICAgfCAxNSArKysrKy0NCj4gIGZzL2V4dDQvc3VwZXIuYyAgICAgICAg
-ICAgICAgICB8ICAyICstDQo+ICBmcy9mMmZzL2ZpbGUuYyAgICAgICAgICAgICAgICAgfCAxOSAr
-KysrKystLQ0KPiAgZnMvZjJmcy9zdXBlci5jICAgICAgICAgICAgICAgIHwgIDIgKy0NCj4gIGZz
-L3V0aW1lcy5jICAgICAgICAgICAgICAgICAgICB8IDg2ICsrKysrKysrKysrKysrKysrKysrKy0t
-LS0tLS0tLS0tLS0NCj4gIGZzL3hmcy9saWJ4ZnMveGZzX2Zvcm1hdC5oICAgICB8ICAyICstDQo+
-ICBmcy94ZnMvbGlieGZzL3hmc19sb2dfZm9ybWF0LmggfCAgMiArLQ0KPiAgZnMveGZzL3hmc19p
-b3BzLmMgICAgICAgICAgICAgIHwgMTEgKysrKy0NCj4gIGZzL3hmcy94ZnNfc3VwZXIuYyAgICAg
-ICAgICAgICB8ICAyICstDQo+ICBpbmNsdWRlL2xpbnV4L2ZzLmggICAgICAgICAgICAgfCAgNCAr
-Kw0KPiAgaW5jbHVkZS91YXBpL2xpbnV4L2ZjbnRsLmggICAgIHwgIDIgKw0KPiAgMTQgZmlsZXMg
-Y2hhbmdlZCwgMTExIGluc2VydGlvbnMoKyksIDQ4IGRlbGV0aW9ucygtKQ0KPiANCg0KDQotLSAN
-CkhhbnMgdmFuIEtyYW5lbmJ1cmcNCg==
+
+On 2/14/2019 9:40 PM, Chao Yu wrote:
+> On 2019-2-14 15:46, Sahitya Tummala wrote:
+>> On Wed, Feb 13, 2019 at 11:25:31AM +0800, Chao Yu wrote:
+>>> On 2019/2/4 16:06, Sahitya Tummala wrote:
+>>>> Fix below warning coming because of using mutex lock in atomic context.
+>>>>
+>>>> BUG: sleeping function called from invalid context at kernel/locking/mutex.c:98
+>>>> in_atomic(): 1, irqs_disabled(): 0, pid: 585, name: sh
+>>>> Preemption disabled at: __radix_tree_preload+0x28/0x130
+>>>> Call trace:
+>>>>   dump_backtrace+0x0/0x2b4
+>>>>   show_stack+0x20/0x28
+>>>>   dump_stack+0xa8/0xe0
+>>>>   ___might_sleep+0x144/0x194
+>>>>   __might_sleep+0x58/0x8c
+>>>>   mutex_lock+0x2c/0x48
+>>>>   f2fs_trace_pid+0x88/0x14c
+>>>>   f2fs_set_node_page_dirty+0xd0/0x184
+>>>>
+>>>> Do not use f2fs_radix_tree_insert() to avoid doing cond_resched() with
+>>>> spin_lock() acquired.
+>>>>
+>>>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+>>>> ---
+>>>>   fs/f2fs/trace.c | 20 +++++++++++++-------
+>>>>   1 file changed, 13 insertions(+), 7 deletions(-)
+>>>>
+>>>> diff --git a/fs/f2fs/trace.c b/fs/f2fs/trace.c
+>>>> index ce2a5eb..d0ab533 100644
+>>>> --- a/fs/f2fs/trace.c
+>>>> +++ b/fs/f2fs/trace.c
+>>>> @@ -14,7 +14,7 @@
+>>>>   #include "trace.h"
+>>>>   
+>>>>   static RADIX_TREE(pids, GFP_ATOMIC);
+>>>> -static struct mutex pids_lock;
+>>>> +static spinlock_t pids_lock;
+>>>>   static struct last_io_info last_io;
+>>>>   
+>>>>   static inline void __print_last_io(void)
+>>>> @@ -58,23 +58,29 @@ void f2fs_trace_pid(struct page *page)
+>>>>   
+>>>>   	set_page_private(page, (unsigned long)pid);
+>>>>   
+>>>> +retry:
+>>>>   	if (radix_tree_preload(GFP_NOFS))
+>>>>   		return;
+>>>>   
+>>>> -	mutex_lock(&pids_lock);
+>>>> +	spin_lock(&pids_lock);
+>>>>   	p = radix_tree_lookup(&pids, pid);
+>>>>   	if (p == current)
+>>>>   		goto out;
+>>>>   	if (p)
+>>>>   		radix_tree_delete(&pids, pid);
+>>>>   
+>>>> -	f2fs_radix_tree_insert(&pids, pid, current);
+
+Do you know why do we have a retry logic here? When anyways we have 
+called for radix_tree_delete with pid key?
+Which should ensure the slot is empty, no?
+Then why in the original code (f2fs_radix_tree_insert), we were 
+retrying. For what condition a retry was needed?
+
+Regards
+Ritesh
+
+
+>>>> +	if (radix_tree_insert(&pids, pid, current)) {
+>>>> +		spin_unlock(&pids_lock);
+>>>> +		radix_tree_preload_end();
+>>>> +		cond_resched();
+>>>> +		goto retry;
+>>>> +	}
+>>>>   
+>>>>   	trace_printk("%3x:%3x %4x %-16s\n",
+>>>>   			MAJOR(inode->i_sb->s_dev), MINOR(inode->i_sb->s_dev),
+>>>>   			pid, current->comm);
+>>> Hi Sahitya,
+>>>
+>>> Can trace_printk sleep? For safety, how about moving it out of spinlock?
+>>>
+>> Hi Chao,
+>>
+>> Yes, trace_printk() is safe to use in atomic context (unlike printk).
+> Hi Sahitya,
+>
+> Thanks for your confirmation. :)
+>
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>
+> Thanks,
+>
+>> Thanks,
+>> Sahitya.
+>>
+>>> Thanks,
+>>>
+>>>>   out:
+>>>> -	mutex_unlock(&pids_lock);
+>>>> +	spin_unlock(&pids_lock);
+>>>>   	radix_tree_preload_end();
+>>>>   }
+>>>>   
+>>>> @@ -119,7 +125,7 @@ void f2fs_trace_ios(struct f2fs_io_info *fio, int flush)
+>>>>   
+>>>>   void f2fs_build_trace_ios(void)
+>>>>   {
+>>>> -	mutex_init(&pids_lock);
+>>>> +	spin_lock_init(&pids_lock);
+>>>>   }
+>>>>   
+>>>>   #define PIDVEC_SIZE	128
+>>>> @@ -147,7 +153,7 @@ void f2fs_destroy_trace_ios(void)
+>>>>   	pid_t next_pid = 0;
+>>>>   	unsigned int found;
+>>>>   
+>>>> -	mutex_lock(&pids_lock);
+>>>> +	spin_lock(&pids_lock);
+>>>>   	while ((found = gang_lookup_pids(pid, next_pid, PIDVEC_SIZE))) {
+>>>>   		unsigned idx;
+>>>>   
+>>>> @@ -155,5 +161,5 @@ void f2fs_destroy_trace_ios(void)
+>>>>   		for (idx = 0; idx < found; idx++)
+>>>>   			radix_tree_delete(&pids, pid[idx]);
+>>>>   	}
+>>>> -	mutex_unlock(&pids_lock);
+>>>> +	spin_unlock(&pids_lock);
+>>>>   }
+>>>>
+>
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
