@@ -1,103 +1,54 @@
-From: Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH] vfs: don't decrement i_nlink in d_tmpfile
-Date: Fri, 15 Feb 2019 10:04:12 +0200
-Message-ID: <CAOQ4uxho2AK7g-uhHykGaG6n+aqad-SaCTC6Z_EaA4Jn07tDSg@mail.gmail.com>
-References: <20190214234908.GA6474@magnolia>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 202495] oops in fs/f2fs/checkpoint.c:150
+ f2fs_is_valid_blkaddr
+Date: Fri, 15 Feb 2019 08:28:07 +0000
+Message-ID: <bug-202495-202145-k0Cx2GfrJi@https.bugzilla.kernel.org/>
+References: <bug-202495-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-btrfs-owner@vger.kernel.org>
-In-Reply-To: <20190214234908.GA6474@magnolia>
-Sender: linux-btrfs-owner@vger.kernel.org
-To: "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, dsterba@suse.com, Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.com>, Theodore Tso <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, yuchao0@huawei.com, Hugh Dickins <hughd@google.com>, Christoph Hellwig <hch@infradead.org>, Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, linux-xfs <linux-xfs@vger.kernel.org>, Linux Btrfs <linux-btrfs@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Ext4 <linux-ext4@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, Linux MM <linux-mm@kvack.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
+ id 1guYr4-0001B0-NV
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Feb 2019 08:28:18 +0000
+Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1guYr3-00Glca-1V
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Feb 2019 08:28:18 +0000
+Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 4082D2A998
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 15 Feb 2019 08:28:11 +0000 (UTC)
+In-Reply-To: <bug-202495-202145@https.bugzilla.kernel.org/>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-On Fri, Feb 15, 2019 at 4:23 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
->
-> From: Darrick J. Wong <darrick.wong@oracle.com>
->
-> d_tmpfile was introduced to instantiate an inode in the dentry cache as
-> a temporary file.  This helper decrements the inode's nlink count and
-> dirties the inode, presumably so that filesystems could call new_inode
-> to create a new inode with nlink == 1 and then call d_tmpfile which will
-> decrement nlink.
->
-> However, this doesn't play well with XFS, which needs to allocate,
-> initialize, and insert a tempfile inode on its unlinked list in a single
-> transaction.  In order to maintain referential integrity of the XFS
-> metadata, we cannot have an inode on the unlinked list with nlink >= 1.
->
-> XFS and btrfs hack around d_tmpfile's behavior by creating the inode
-> with nlink == 0 and then incrementing it just prior to calling
-> d_tmpfile, anticipating that it will be reset to 0.
->
-> Everywhere else outside of d_tmpfile, it appears that nlink updates and
-> persistence is the responsibility of individual filesystems.  Therefore,
-> move the nlink decrement out of d_tmpfile into the callers, and require
-> that callers only pass in inodes with nlink already set to 0.
->
-> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> ---
->  fs/btrfs/inode.c  |    8 --------
->  fs/dcache.c       |    8 ++++++--
->  fs/ext2/namei.c   |    2 +-
->  fs/ext4/namei.c   |    1 +
->  fs/f2fs/namei.c   |    1 +
->  fs/minix/namei.c  |    2 +-
->  fs/ubifs/dir.c    |    1 +
->  fs/udf/namei.c    |    2 +-
->  fs/xfs/xfs_iops.c |   13 ++-----------
->  mm/shmem.c        |    1 +
->  10 files changed, 15 insertions(+), 24 deletions(-)
->
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index 5c349667c761..bd189fc50f83 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -10382,14 +10382,6 @@ static int btrfs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
->         if (ret)
->                 goto out;
->
-> -       /*
-> -        * We set number of links to 0 in btrfs_new_inode(), and here we set
-> -        * it to 1 because d_tmpfile() will issue a warning if the count is 0,
-> -        * through:
-> -        *
-> -        *    d_tmpfile() -> inode_dec_link_count() -> drop_nlink()
-> -        */
-> -       set_nlink(inode, 1);
->         d_tmpfile(dentry, inode);
->         unlock_new_inode(inode);
->         mark_inode_dirty(inode);
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index aac41adf4743..5fb4ecce2589 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -3042,12 +3042,16 @@ void d_genocide(struct dentry *parent)
->
->  EXPORT_SYMBOL(d_genocide);
->
-> +/*
-> + * Instantiate an inode in the dentry cache as a temporary file.  Callers must
-> + * ensure that @inode has a zero link count.
-> + */
->  void d_tmpfile(struct dentry *dentry, struct inode *inode)
->  {
-> -       inode_dec_link_count(inode);
->         BUG_ON(dentry->d_name.name != dentry->d_iname ||
->                 !hlist_unhashed(&dentry->d_u.d_alias) ||
-> -               !d_unlinked(dentry));
-> +               !d_unlinked(dentry) ||
-> +               inode->i_nlink != 0);
+https://bugzilla.kernel.org/show_bug.cgi?id=202495
 
-You've just promoted i_nlink filesystem accounting error (which
-are not that rare) from WARN_ON() to BUG_ON(), not to mention
-Linus' objection to any use of BUG_ON() at all.
+Chao Yu (chao@kernel.org) changed:
 
-!hlist_unhashed is anyway checked again in d_instantiate().
-!d_unlinked is not a reason to break the machine.
-The name check is really not a reason to break the machine.
-Can probably make tmp name code conditional to WARN_ON().
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |chao@kernel.org
 
-Thanks,
-Amir.
+--- Comment #1 from Chao Yu (chao@kernel.org) ---
+Hi,
+
+Do you pick up 4.14 kernel from AOSP, or just kernel.org? did you try fsck on
+this image?
+
+-- 
+You are receiving this mail because:
+You are watching the assignee of the bug.
