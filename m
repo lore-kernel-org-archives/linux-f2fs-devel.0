@@ -1,57 +1,151 @@
-From: Hans van Kranenburg <Hans.van.Kranenburg@mendix.com>
-Subject: Re: [RFC PATCH 0/6] Allow setting file birth time with utimensat()
-Date: Fri, 15 Feb 2019 18:25:18 +0000
-Message-ID: <d0f971c8-5b86-0f4f-7009-fdb199b7e820@mendix.com>
-References: <cover.1550136164.git.osandov@fb.com>
- <1190dcc0-7054-72b4-2a88-33d0b97e332c@mendix.com>
- <20190215053950.GF9819@vader>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 202495] oops in fs/f2fs/checkpoint.c:150
+ f2fs_is_valid_blkaddr
+Date: Fri, 15 Feb 2019 18:54:04 +0000
+Message-ID: <bug-202495-202145-vVRcRUtZyb@https.bugzilla.kernel.org/>
+References: <bug-202495-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-btrfs-owner@vger.kernel.org>
-In-Reply-To: <20190215053950.GF9819@vader>
-Content-Language: en-US
-Content-ID: <FAC717E3C0B1D14DA7B8988A46B27A8D@eurprd06.prod.outlook.com>
-Sender: linux-btrfs-owner@vger.kernel.org
-To: Omar Sandoval <osandov@osandov.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, "kernel-team@fb.com" <kernel-team@fb.com>, "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>, "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
+ id 1guicy-000709-Bn
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Feb 2019 18:54:24 +0000
+Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1guicl-009QVr-CG
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Feb 2019 18:54:18 +0000
+Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 473782B95A
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 15 Feb 2019 18:54:03 +0000 (UTC)
+In-Reply-To: <bug-202495-202145@https.bugzilla.kernel.org/>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-T24gMi8xNS8xOSA2OjM5IEFNLCBPbWFyIFNhbmRvdmFsIHdyb3RlOg0KPiBPbiBGcmksIEZlYiAx
-NSwgMjAxOSBhdCAwMTo1NzozOUFNICswMDAwLCBIYW5zIHZhbiBLcmFuZW5idXJnIHdyb3RlOg0K
-Pj4gSGksDQo+Pg0KPj4gT24gMi8xNC8xOSAxMTowMCBBTSwgT21hciBTYW5kb3ZhbCB3cm90ZToN
-Cj4+PiBGcm9tOiBPbWFyIFNhbmRvdmFsIDxvc2FuZG92QGZiLmNvbT4NCj4+Pg0KPj4+IFNpbmNl
-IHN0YXR4IHdhcyBhZGRlZCBpbiA0LjExLCB1c2Vyc3BhY2UgaGFzIGhhZCBhbiBpbnRlcmZhY2Ug
-Zm9yDQo+Pj4gcmVhZGluZyBidGltZSAoZmlsZSBjcmVhdGlvbiB0aW1lKSwgYnV0IG5vIHdheSB0
-byBzZXQgaXQuIFRoaXMgUkZDIHBhdGNoDQo+Pj4gc2VyaWVzIGFkZHMgc3VwcG9ydCBmb3IgY2hh
-bmdpbmcgYnRpbWUgd2l0aCB1dGltZW5zYXQoKS4gUGF0Y2ggMSBhZGRzDQo+Pj4gdGhlIFZGUyBp
-bmZyYXN0cnVjdHVyZSwgcGF0Y2ggMiBhZGRzIHRoZSBzdXBwb3J0IHRvIHV0aW1lbnNhdCgpIHdp
-dGggYQ0KPj4+IG5ldyBmbGFnLCBhbmQgdGhlIHJlc3Qgb2YgdGhlIHBhdGNoZXMgYWRkIGZpbGVz
-eXN0ZW0gc3VwcG9ydDsgSSBleGNsdWRlZA0KPj4+IENJRlMgZm9yIG5vdyBiZWNhdXNlIEkgZG9u
-J3QgaGF2ZSBhIENJRlMgc2V0dXAgdG8gdGVzdCBpdCBvbi4NCj4+Pg0KPj4+IFVwZGF0aW5nIGJ0
-aW1lIGlzIHVzZWZ1bCBmb3IgYXQgbGVhc3QgYSBjb3VwbGUgb2YgdXNlIGNhc2VzOg0KPj4+DQo+
-Pj4gLSBCYWNrdXAvcmVzdG9yZSBwcm9ncmFtcyAobXkgbW90aXZhdGlvbiBmb3IgdGhpcyBmZWF0
-dXJlIGlzIGJ0cmZzIHNlbmQpDQo+Pg0KPj4gQ2FuIHlvdSBnaXZlIGFuIGV4YW1wbGUgb2Ygc3Vj
-aCB1c2VmdWxuZXNzPyBXaGF0J3MgdGhlIHRoaW5nIHlvdSBydW4NCj4+IGludG8gdGhhdCB5b3Ug
-Y2FuJ3QgZG8gd2l0aG91dCBoYXZpbmcgdGhpcz8NCj4gDQo+IFRoYXQgYm9pbHMgZG93biB0byB3
-aGF0J3MgdXNlZnVsIGFib3V0IGhhdmluZyB0aGUgZmlsZSBjcmVhdGlvbiB0aW1lLA0KPiBhbmQg
-aXQncyByZWFsbHkganVzdCBhbm90aGVyIHRpZGJpdCBvZiBpbmZvcm1hdGlvbiB3aGljaCB5b3Ug
-bWF5IG9yIG1heQ0KPiBub3QgY2FyZSBhYm91dC4gTWF5YmUgeW91IGhhdmUgYSBkb2N1bWVudCB0
-aGF0IHlvdSd2ZSBiZWVuIGVkaXRpbmcgZm9yDQo+IGF3aGlsZSwgYW5kIHlvdSB3YW50IHRvIGtu
-b3cgd2hlbiB5b3Ugc3RhcnRlZCB3b3JraW5nIG9uIGl0LiBPciwgeW91DQo+IHdhbnQgdG8ga25v
-dyB3aGVuIGEgdXNlciBjcmVhdGVkIHNvbWUgZGlyZWN0b3J5IHRoYXQgdGhleSBrZWVwIGFkZGlu
-Zw0KPiBmaWxlcyB0by4NCj4gDQo+IElmIHRoZSBmaWxlIGNyZWF0aW9uIHRpbWUgaXMgdXNlZnVs
-IHRvIHlvdSwgdGhlbiB5b3UgbGlrZWx5IHdhbnQgaXQNCj4gcHJlc2VydmVkIGlmIHlvdSBoYXZl
-IHRvIHJlc3RvcmUgZnJvbSBiYWNrdXBzLiBJZiBJIGhhZCB0byByZXN0b3JlIGZyb20NCj4gYmFj
-a3VwcyB5ZXN0ZXJkYXkgYW5kIEknbSB0cnlpbmcgdG8gZmlndXJlIG91dCB3aGVuIEkgc3RhcnRl
-ZCB0aGF0DQo+IGRvY3VtZW50LCBJIGRvbid0IGNhcmUgdGhhdCBJIHJlc3RvcmVkIHRoYXQgZmls
-ZSB5ZXN0ZXJkYXksIEkgd2FudCB0aGUNCj4gcmVhbCBjcmVhdGlvbiBkYXRlLg0KPiANCj4gSWYg
-eW91J3ZlIG5ldmVyIHdvbmRlcmVkIHdoZW4gYSBmaWxlIHdhcyBjcmVhdGVkLCB0aGVuIEknbSBz
-dXJlIHlvdQ0KPiB3b24ndCBjYXJlIHdoZXRoZXIgYnRyZnMgc2VuZC9yZWNlaXZlIHByZXNlcnZl
-cyBpdCA6KQ0KDQpUaGFua3MgZm9yIHRoZSBlbGFib3JhdGUgYW5zd2VyLiBJIHdhcyBqdXN0IGN1
-cmlvdXMgaWYgdGhpcyB3YXMgdG8gbWFrZQ0Kc2VuZCAibW9yZSBmZWF0dXJlIGNvbXBsZXRlIiBv
-ciBpZiB0aGVyZSB3YXMgc29tZXRoaW5nIGVsc2Ugc3BlY2lhbCB0bw0KaXQsIGFuZCBpdCBzZWVt
-cyB0byBiZSB0aGUgZmlyc3Qgb25lLiA7XQ0KDQpBbmQgZm9yIG15c2VsZiwgSSBtb3N0bHkgdHJl
-YXQgYnRyZnMgc2VuZC9yZWNlaXZlIGxpa2UgYSBpbXByb3ZlZA0KcmVwbGFjZW1lbnQgZm9yIHJz
-eW5jIGFuZCB1c3VhbGx5IGRvbid0IGNhcmUgdGhhdCBtdWNoIGFib3V0IGJ0aW1lICBpbmRlZWQu
-DQoNClRoYW5rcywNCi0tIA0KSGFucyB2YW4gS3JhbmVuYnVyZw0K
+https://bugzilla.kernel.org/show_bug.cgi?id=202495
+
+--- Comment #2 from JWalker (jw7779@gmail.com) ---
+Hi Chao,
+
+The kernal code was taken from the raspberry pi git repo, and then the
+incremental patches applied.
+
+Yes, fsck has been applied. Please see below the output of the both volumes.
+
+Please let me know if you require any more info.
+
+Regards
+
+John
+
+sudo fsck -t f2fs /dev/sdc3
+fsck from util-linux 2.31.1
+Info: [/dev/sdc3] Disk Model: USB3.0 CRW   -SD1.00
+Info: Segments per section = 1
+Info: Sections per zone = 1
+Info: sector size = 512
+Info: total sectors = 4194304 (2048 MB)
+Info: MKFS version
+  "Linux version 4.13.0-43-generic (buildd@lgw01-amd64-041) (gcc
+version 5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.9))
+#48~16.04.1-Ubuntu SMP Thu May 17 13:00:11 UTC 2018"
+Info: FSCK version
+  from "Linux version 4.15.0-43-generic (buildd@lgw01-amd64-001) (gcc
+version 7.3.0 (Ubuntu 7.3.0-16ubuntu3)) #46-Ubuntu SMP Thu Dec 6
+14:45:28 UTC 2018"
+    to "Linux version 4.15.0-45-generic (buildd@lgw01-amd64-031) (gcc
+version 7.3.0 (Ubuntu 7.3.0-16ubuntu3)) #48-Ubuntu SMP Tue Jan 29
+16:28:13 UTC 2019"
+Info: superblock features = 0 :
+Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
+Info: total FS sectors = 4194304 (2048 MB)
+Info: CKPT version = 15a2c
+Info: checkpoint state = 41 :  crc unmount
+
+[FSCK] Unreachable nat entries                        [Ok..] [0x0]
+[FSCK] SIT valid block bitmap checking                [Ok..]
+[FSCK] Hard link checking for regular file            [Ok..] [0x1]
+[FSCK] valid_block_count matching with CP             [Ok..] [0x87a0]
+[FSCK] valid_node_count matcing with CP (de lookup)   [Ok..] [0x107b]
+[FSCK] valid_node_count matcing with CP (nat lookup)  [Ok..] [0x107b]
+[FSCK] valid_inode_count matched with CP              [Ok..] [0x1073]
+[FSCK] free segment_count matched with CP             [Ok..] [0x296]
+[FSCK] next block offset is free                      [Ok..]
+[FSCK] fixing SIT types
+[FSCK] other corrupted bugs                           [Ok..]
+
+Done.
+sudo fsck -t f2fs /dev/sdc4
+fsck from util-linux 2.31.1
+Info: [/dev/sdc4] Disk Model: USB3.0 CRW   -SD1.00
+Info: Segments per section = 1
+Info: Sections per zone = 1
+Info: sector size = 512
+Info: total sectors = 3055616 (1492 MB)
+Info: MKFS version
+  "Linux version 4.13.0-43-generic (buildd@lgw01-amd64-041) (gcc
+version 5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.9))
+#48~16.04.1-Ubuntu SMP Thu May 17 13:00:11 UTC 2018"
+Info: FSCK version
+  from "Linux version 4.15.0-43-generic (buildd@lgw01-amd64-001) (gcc
+version 7.3.0 (Ubuntu 7.3.0-16ubuntu3)) #46-Ubuntu SMP Thu Dec 6
+14:45:28 UTC 2018"
+    to "Linux version 4.15.0-45-generic (buildd@lgw01-amd64-031) (gcc
+version 7.3.0 (Ubuntu 7.3.0-16ubuntu3)) #48-Ubuntu SMP Tue Jan 29
+16:28:13 UTC 2019"
+Info: superblock features = 0 :
+Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
+Info: total FS sectors = 3055616 (1492 MB)
+Info: CKPT version = b
+Info: checkpoint state = 45 :  crc compacted_summary unmount
+
+[FSCK] Unreachable nat entries                        [Ok..] [0x0]
+[FSCK] SIT valid block bitmap checking                [Ok..]
+[FSCK] Hard link checking for regular file            [Ok..] [0x0]
+[FSCK] valid_block_count matching with CP             [Ok..] [0x2]
+[FSCK] valid_node_count matcing with CP (de lookup)   [Ok..] [0x1]
+[FSCK] valid_node_count matcing with CP (nat lookup)  [Ok..] [0x1]
+[FSCK] valid_inode_count matched with CP              [Ok..] [0x1]
+[FSCK] free segment_count matched with CP             [Ok..] [0x2d9]
+[FSCK] next block offset is free                      [Ok..]
+[FSCK] fixing SIT types
+[FSCK] other corrupted bugs                           [Ok..]
+
+Done.
+
+On Fri, 15 Feb 2019 at 08:28, <bugzilla-daemon@bugzilla.kernel.org> wrote:
+>
+> https://bugzilla.kernel.org/show_bug.cgi?id=202495
+>
+> Chao Yu (chao@kernel.org) changed:
+>
+>            What    |Removed                     |Added
+> ----------------------------------------------------------------------------
+>                  CC|                            |chao@kernel.org
+>
+> --- Comment #1 from Chao Yu (chao@kernel.org) ---
+> Hi,
+>
+> Do you pick up 4.14 kernel from AOSP, or just kernel.org? did you try fsck on
+> this image?
+>
+> --
+> You are receiving this mail because:
+> You reported the bug.
+
+-- 
+You are receiving this mail because:
+You are watching the assignee of the bug.
