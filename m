@@ -1,116 +1,103 @@
-From: Omar Sandoval <osandov@osandov.com>
-Subject: Re: [RFC PATCH 0/6] Allow setting file birth time with utimensat()
-Date: Thu, 14 Feb 2019 22:59:47 -0800
-Message-ID: <20190215065947.GG9819@vader>
-References: <cover.1550136164.git.osandov@fb.com>
- <20190214220626.GV14116@dastard>
- <20190214231429.GE9819@vader>
- <20190215001657.GY14116@dastard>
+From: Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH] vfs: don't decrement i_nlink in d_tmpfile
+Date: Fri, 15 Feb 2019 10:04:12 +0200
+Message-ID: <CAOQ4uxho2AK7g-uhHykGaG6n+aqad-SaCTC6Z_EaA4Jn07tDSg@mail.gmail.com>
+References: <20190214234908.GA6474@magnolia>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-btrfs-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190215001657.GY14116@dastard>
+In-Reply-To: <20190214234908.GA6474@magnolia>
 Sender: linux-btrfs-owner@vger.kernel.org
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, kernel-team@fb.com, linux-api@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Steve French <sfrench@samba.org>
+To: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, dsterba@suse.com, Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.com>, Theodore Tso <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, yuchao0@huawei.com, Hugh Dickins <hughd@google.com>, Christoph Hellwig <hch@infradead.org>, Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, linux-xfs <linux-xfs@vger.kernel.org>, Linux Btrfs <linux-btrfs@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Ext4 <linux-ext4@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, Linux MM <linux-mm@kvack.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Fri, Feb 15, 2019 at 11:16:57AM +1100, Dave Chinner wrote:
-> On Thu, Feb 14, 2019 at 03:14:29PM -0800, Omar Sandoval wrote:
-> > On Fri, Feb 15, 2019 at 09:06:26AM +1100, Dave Chinner wrote:
-> > > On Thu, Feb 14, 2019 at 02:00:07AM -0800, Omar Sandoval wrote:
-> > > > From: Omar Sandoval <osandov@fb.com>
-> > > > 
-> > > > Hi,
-> > > > 
-> > > > Since statx was added in 4.11, userspace has had an interface for
-> > > > reading btime (file creation time), but no way to set it. This RFC patch
-> > > > series adds support for changing btime with utimensat(). Patch 1 adds
-> > > > the VFS infrastructure, patch 2 adds the support to utimensat() with a
-> > > > new flag, and the rest of the patches add filesystem support; I excluded
-> > > > CIFS for now because I don't have a CIFS setup to test it on.
-> > > > 
-> > > > Updating btime is useful for at least a couple of use cases:
-> > > > 
-> > > > - Backup/restore programs (my motivation for this feature is btrfs send)
-> > > > - File servers which interoperate with operating systems that allow
-> > > >   updating file creation time, including Mac OS [1] and Windows [2]
-> > > 
-> > > So you're adding an interface that allows users to change the create
-> > > time of files without needing any privileges?
-> > 
-> > I think it'd be reasonable to make this a privileged operation. I didn't
-> > for this initial submission for a couple of reasons:
-> > 
-> > 1. The precedent on Mac OS and Windows is that this isn't a privileged
-> >    operation.
-> 
-> Don't really care about them. Interop file servers that support these
-> operations on other OSs will need to be storing this info in xattrs
-> because they have to work on filesystems that don't support btime.
-> 
-> > 2. I knew there would be different opinions on this either way I went.
-> 
-> Yup.
-> 
-> > > Inode create time is forensic metadata in XFS  - information we use
-> > > for sequence of event and inode lifetime analysis during examination
-> > > of broken filesystem images and systems that have been broken into.
-> > > Just because it's exposed to userspace via statx(), it doesn't mean
-> > > that it is information that users should be allowed to change. i.e.
-> > > allowing users to be able to change the create time on files makes
-> > > it completely useless for the purpose it was added to XFS for...
-> > > 
-> > > And allowing root to change the create time doesn't really help,
-> > > because once you've broken into a system, this makes it really easy
-> > > to cover tracks
-> > 
-> > If the threat model is that the attacker has root, then they can
-> > overwrite the timestamp on disk anyways, no?
-> 
-> Modifying the block devicee under an active filesystem is fraught
-> with danger, and there's no guarantee it will work if the metadata
-> being modified is still active in memory. Corrupting the filesystem
-> is a sure way to get noticed....
-> 
-> > > (e.g. we can't find files that were created and
-> > > unlinked during the break in window anymore) and lay false
-> > > trails....
-> > 
-> > Fair point, although there's still ctime during the break-in window,
-> 
-> Unless you're smart enough to know how to trigger S_NOCMTIME or
-> FMODE_NOCMTIME....
-> 
-> > which I assume you'd be looking for anyways since files modified during
-> > the break-in window are also of interest.
-> 
-> ... and then that also can't be guaranteed. :/
-> 
-> > I see a few options, none of which are particularly nice:
-> > 
-> > 1. Filesystems like XFS could choose not to support setting btime even
-> >    if they support reading it.
-> > 2. XFS could add a second, writeable btime which is used for
-> >    statx/utimes when available (it would fit in di_pad2...).
-> > 3. We could add a btime_writable sysctl/mount option/mkfs option.
-> 
-> 4. create time remains a read-only field, and btrfs grows its own
-> special interface to twiddle it in btrfs-recv if it really is
-> necessary.
+On Fri, Feb 15, 2019 at 4:23 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+>
+> From: Darrick J. Wong <darrick.wong@oracle.com>
+>
+> d_tmpfile was introduced to instantiate an inode in the dentry cache as
+> a temporary file.  This helper decrements the inode's nlink count and
+> dirties the inode, presumably so that filesystems could call new_inode
+> to create a new inode with nlink == 1 and then call d_tmpfile which will
+> decrement nlink.
+>
+> However, this doesn't play well with XFS, which needs to allocate,
+> initialize, and insert a tempfile inode on its unlinked list in a single
+> transaction.  In order to maintain referential integrity of the XFS
+> metadata, we cannot have an inode on the unlinked list with nlink >= 1.
+>
+> XFS and btrfs hack around d_tmpfile's behavior by creating the inode
+> with nlink == 0 and then incrementing it just prior to calling
+> d_tmpfile, anticipating that it will be reset to 0.
+>
+> Everywhere else outside of d_tmpfile, it appears that nlink updates and
+> persistence is the responsibility of individual filesystems.  Therefore,
+> move the nlink decrement out of d_tmpfile into the callers, and require
+> that callers only pass in inodes with nlink already set to 0.
+>
+> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+> ---
+>  fs/btrfs/inode.c  |    8 --------
+>  fs/dcache.c       |    8 ++++++--
+>  fs/ext2/namei.c   |    2 +-
+>  fs/ext4/namei.c   |    1 +
+>  fs/f2fs/namei.c   |    1 +
+>  fs/minix/namei.c  |    2 +-
+>  fs/ubifs/dir.c    |    1 +
+>  fs/udf/namei.c    |    2 +-
+>  fs/xfs/xfs_iops.c |   13 ++-----------
+>  mm/shmem.c        |    1 +
+>  10 files changed, 15 insertions(+), 24 deletions(-)
+>
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index 5c349667c761..bd189fc50f83 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -10382,14 +10382,6 @@ static int btrfs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
+>         if (ret)
+>                 goto out;
+>
+> -       /*
+> -        * We set number of links to 0 in btrfs_new_inode(), and here we set
+> -        * it to 1 because d_tmpfile() will issue a warning if the count is 0,
+> -        * through:
+> -        *
+> -        *    d_tmpfile() -> inode_dec_link_count() -> drop_nlink()
+> -        */
+> -       set_nlink(inode, 1);
+>         d_tmpfile(dentry, inode);
+>         unlock_new_inode(inode);
+>         mark_inode_dirty(inode);
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index aac41adf4743..5fb4ecce2589 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -3042,12 +3042,16 @@ void d_genocide(struct dentry *parent)
+>
+>  EXPORT_SYMBOL(d_genocide);
+>
+> +/*
+> + * Instantiate an inode in the dentry cache as a temporary file.  Callers must
+> + * ensure that @inode has a zero link count.
+> + */
+>  void d_tmpfile(struct dentry *dentry, struct inode *inode)
+>  {
+> -       inode_dec_link_count(inode);
+>         BUG_ON(dentry->d_name.name != dentry->d_iname ||
+>                 !hlist_unhashed(&dentry->d_u.d_alias) ||
+> -               !d_unlinked(dentry));
+> +               !d_unlinked(dentry) ||
+> +               inode->i_nlink != 0);
 
-I'm curious to hear what the ext4/f2fs/CIFS developers think. If no one
-else wants btime to be mutable, then I might as well make it
-Btrfs-specific. That is, assuming we reach consensus on the Btrfs side
-that btrfs receive should set btime.
+You've just promoted i_nlink filesystem accounting error (which
+are not that rare) from WARN_ON() to BUG_ON(), not to mention
+Linus' objection to any use of BUG_ON() at all.
 
-> I'm still not convinced that even backup/restore should be doing this,
-> because there's so much other metadata that is unique even on
-> restored files that it doesn't really make any sense to me to lie
-> about it being created in the past....
+!hlist_unhashed is anyway checked again in d_instantiate().
+!d_unlinked is not a reason to break the machine.
+The name check is really not a reason to break the machine.
+Can probably make tmp name code conditional to WARN_ON().
 
-I suppose it depends on how you interpret btime: if it's strictly
-filesystem metadata, then it makes sense that it should be immutable; if
-it's metadata for the user's own purposes, then we should allow setting
-it.
+Thanks,
+Amir.
