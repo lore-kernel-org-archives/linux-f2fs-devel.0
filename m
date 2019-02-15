@@ -1,103 +1,124 @@
-From: David Disseldorp via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Subject: Re: [RFC PATCH 0/6] Allow setting file birth time with
- utimensat()
-Date: Fri, 15 Feb 2019 14:57:13 +0100
-Message-ID: <20190215145713.33b0748e@samba.org>
-References: <cover.1550136164.git.osandov@fb.com>
- <20190214220626.GV14116@dastard> <20190214231429.GE9819@vader>
- <20190215001657.GY14116@dastard> <20190215065947.GG9819@vader>
-Reply-To: David Disseldorp <ddiss@samba.org>
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: Re: [PATCH] vfs: don't decrement i_nlink in d_tmpfile
+Date: Fri, 15 Feb 2019 07:56:04 -0800
+Message-ID: <20190215155604.GL32253@magnolia>
+References: <20190214234908.GA6474@magnolia>
+ <CAOQ4uxho2AK7g-uhHykGaG6n+aqad-SaCTC6Z_EaA4Jn07tDSg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ddiss@samba.org>) id 1gudzf-0003kL-6j
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Feb 2019 13:57:31 +0000
-Received: from hr2.samba.org ([144.76.82.148])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gudza-00HIe4-4o
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Feb 2019 13:57:31 +0000
-In-Reply-To: <20190215065947.GG9819@vader>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Omar Sandoval <osandov@osandov.com>, Samba Technical <samba-technical@lists.samba.org>
-Cc: Steve French <sfrench@samba.org>, Theodore Ts'o <tytso@mit.edu>, linux-api@vger.kernel.org, Dave Chinner <david@fromorbit.com>, linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, kernel-team@fb.com, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
+Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxho2AK7g-uhHykGaG6n+aqad-SaCTC6Z_EaA4Jn07tDSg@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
+List-Post: <mailto:linux-mtd@lists.infradead.org>
+List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
+Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: linux-xfs <linux-xfs@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, Theodore Tso <tytso@mit.edu>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Artem Bityutskiy <dedekind1@gmail.com>, Richard Weinberger <richard@nod.at>, yuchao0@huawei.com, Hugh Dickins <hughd@google.com>, Josef Bacik <josef@toxicpanda.com>, Adrian Hunter <adrian.hunter@intel.com>, Christoph Hellwig <hch@infradead.org>, Chris Mason <clm@fb.com>, Andreas Dilger <adilger.kernel@dilger.ca>, Al Viro <viro@zeniv.linux.org.uk>, linux-mtd@lists.infradead.org, Jan Kara <jack@suse.com>, dsterba@suse.com, Jaegeuk Kim <jaegeuk@kernel.org>, Ext4 <linux-ext4@vger.kernel.org>, Linux MM <linux-mm@kvack.org>, Linux Btrfs <linux-btrfs@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Thu, 14 Feb 2019 22:59:47 -0800, Omar Sandoval wrote:
-
-> On Fri, Feb 15, 2019 at 11:16:57AM +1100, Dave Chinner wrote:
-> > On Thu, Feb 14, 2019 at 03:14:29PM -0800, Omar Sandoval wrote:  
-> > > On Fri, Feb 15, 2019 at 09:06:26AM +1100, Dave Chinner wrote:  
-...
-> > > > Inode create time is forensic metadata in XFS  - information we use
-> > > > for sequence of event and inode lifetime analysis during examination
-> > > > of broken filesystem images and systems that have been broken into.
-> > > > Just because it's exposed to userspace via statx(), it doesn't mean
-> > > > that it is information that users should be allowed to change. i.e.
-> > > > allowing users to be able to change the create time on files makes
-> > > > it completely useless for the purpose it was added to XFS for...
-> > > > 
-> > > > And allowing root to change the create time doesn't really help,
-> > > > because once you've broken into a system, this makes it really easy
-> > > > to cover tracks  
-> > > 
-> > > If the threat model is that the attacker has root, then they can
-> > > overwrite the timestamp on disk anyways, no?  
-> > 
-> > Modifying the block devicee under an active filesystem is fraught
-> > with danger, and there's no guarantee it will work if the metadata
-> > being modified is still active in memory. Corrupting the filesystem
-> > is a sure way to get noticed....
-> >   
-> > > > (e.g. we can't find files that were created and
-> > > > unlinked during the break in window anymore) and lay false
-> > > > trails....  
-> > > 
-> > > Fair point, although there's still ctime during the break-in window,  
-> > 
-> > Unless you're smart enough to know how to trigger S_NOCMTIME or
-> > FMODE_NOCMTIME....
-> >   
-> > > which I assume you'd be looking for anyways since files modified during
-> > > the break-in window are also of interest.  
-
-I'm not sure I follow the forensics use-case for immutable btime. I'd
-expect dm-verity or selinux/apparmor audits to do a better job for those
-worried about this kind of attack.
-
-> > ... and then that also can't be guaranteed. :/
-> >   
-> > > I see a few options, none of which are particularly nice:
-> > > 
-> > > 1. Filesystems like XFS could choose not to support setting btime even
-> > >    if they support reading it.
-> > > 2. XFS could add a second, writeable btime which is used for
-> > >    statx/utimes when available (it would fit in di_pad2...).
-> > > 3. We could add a btime_writable sysctl/mount option/mkfs option.  
-> > 
-> > 4. create time remains a read-only field, and btrfs grows its own
-> > special interface to twiddle it in btrfs-recv if it really is
-> > necessary.  
+On Fri, Feb 15, 2019 at 10:04:12AM +0200, Amir Goldstein wrote:
+> On Fri, Feb 15, 2019 at 4:23 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+> >
+> > From: Darrick J. Wong <darrick.wong@oracle.com>
+> >
+> > d_tmpfile was introduced to instantiate an inode in the dentry cache as
+> > a temporary file.  This helper decrements the inode's nlink count and
+> > dirties the inode, presumably so that filesystems could call new_inode
+> > to create a new inode with nlink == 1 and then call d_tmpfile which will
+> > decrement nlink.
+> >
+> > However, this doesn't play well with XFS, which needs to allocate,
+> > initialize, and insert a tempfile inode on its unlinked list in a single
+> > transaction.  In order to maintain referential integrity of the XFS
+> > metadata, we cannot have an inode on the unlinked list with nlink >= 1.
+> >
+> > XFS and btrfs hack around d_tmpfile's behavior by creating the inode
+> > with nlink == 0 and then incrementing it just prior to calling
+> > d_tmpfile, anticipating that it will be reset to 0.
+> >
+> > Everywhere else outside of d_tmpfile, it appears that nlink updates and
+> > persistence is the responsibility of individual filesystems.  Therefore,
+> > move the nlink decrement out of d_tmpfile into the callers, and require
+> > that callers only pass in inodes with nlink already set to 0.
+> >
+> > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+> > ---
+> >  fs/btrfs/inode.c  |    8 --------
+> >  fs/dcache.c       |    8 ++++++--
+> >  fs/ext2/namei.c   |    2 +-
+> >  fs/ext4/namei.c   |    1 +
+> >  fs/f2fs/namei.c   |    1 +
+> >  fs/minix/namei.c  |    2 +-
+> >  fs/ubifs/dir.c    |    1 +
+> >  fs/udf/namei.c    |    2 +-
+> >  fs/xfs/xfs_iops.c |   13 ++-----------
+> >  mm/shmem.c        |    1 +
+> >  10 files changed, 15 insertions(+), 24 deletions(-)
+> >
+> > diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> > index 5c349667c761..bd189fc50f83 100644
+> > --- a/fs/btrfs/inode.c
+> > +++ b/fs/btrfs/inode.c
+> > @@ -10382,14 +10382,6 @@ static int btrfs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
+> >         if (ret)
+> >                 goto out;
+> >
+> > -       /*
+> > -        * We set number of links to 0 in btrfs_new_inode(), and here we set
+> > -        * it to 1 because d_tmpfile() will issue a warning if the count is 0,
+> > -        * through:
+> > -        *
+> > -        *    d_tmpfile() -> inode_dec_link_count() -> drop_nlink()
+> > -        */
+> > -       set_nlink(inode, 1);
+> >         d_tmpfile(dentry, inode);
+> >         unlock_new_inode(inode);
+> >         mark_inode_dirty(inode);
+> > diff --git a/fs/dcache.c b/fs/dcache.c
+> > index aac41adf4743..5fb4ecce2589 100644
+> > --- a/fs/dcache.c
+> > +++ b/fs/dcache.c
+> > @@ -3042,12 +3042,16 @@ void d_genocide(struct dentry *parent)
+> >
+> >  EXPORT_SYMBOL(d_genocide);
+> >
+> > +/*
+> > + * Instantiate an inode in the dentry cache as a temporary file.  Callers must
+> > + * ensure that @inode has a zero link count.
+> > + */
+> >  void d_tmpfile(struct dentry *dentry, struct inode *inode)
+> >  {
+> > -       inode_dec_link_count(inode);
+> >         BUG_ON(dentry->d_name.name != dentry->d_iname ||
+> >                 !hlist_unhashed(&dentry->d_u.d_alias) ||
+> > -               !d_unlinked(dentry));
+> > +               !d_unlinked(dentry) ||
+> > +               inode->i_nlink != 0);
 > 
-> I'm curious to hear what the ext4/f2fs/CIFS developers think. If no one
-> else wants btime to be mutable, then I might as well make it
-> Btrfs-specific. That is, assuming we reach consensus on the Btrfs side
-> that btrfs receive should set btime.
+> You've just promoted i_nlink filesystem accounting error (which
+> are not that rare) from WARN_ON() to BUG_ON(), not to mention
+> Linus' objection to any use of BUG_ON() at all.
+> 
+> !hlist_unhashed is anyway checked again in d_instantiate().
+> !d_unlinked is not a reason to break the machine.
+> The name check is really not a reason to break the machine.
+> Can probably make tmp name code conditional to WARN_ON().
 
-Samba currently uses a user.DOSATTRIB xattr for tracking creation time.
-IMO a mutable btime accessible via statx would be useful for
-cross-protocol interoperability.
+Fair enough, I'll remove the redundant checks and downgrade that to a
+WARN_ON, if nobody else objects....
 
-Cheers, David
+--D
+
+> Thanks,
+> Amir.
+
+______________________________________________________
+Linux MTD discussion mailing list
+http://lists.infradead.org/mailman/listinfo/linux-mtd/
