@@ -1,116 +1,89 @@
-From: Andreas Dilger <adilger@dilger.ca>
+From: Boaz Harrosh <openosd@gmail.com>
 Subject: Re: [RFC PATCH 0/6] Allow setting file birth time with utimensat()
-Date: Sat, 16 Feb 2019 18:57:45 -0700
-Message-ID: <72A04438-5991-4A60-8AAB-021A41DE6711@dilger.ca>
+Date: Sun, 17 Feb 2019 18:35:25 +0200
+Message-ID: <6a9dc05a-0445-d0ab-0140-1de4fee7ba9b@gmail.com>
 References: <cover.1550136164.git.osandov@fb.com>
- <20190214220626.GV14116@dastard> <20190214231429.GE9819@vader>
- <20190215001657.GY14116@dastard> <20190215065947.GG9819@vader>
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_2BFC7822-8AA0-4845-B9EA-99BE13F0AA9D";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+ <20190214220626.GV14116@dastard>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-btrfs-owner@vger.kernel.org>
-In-Reply-To: <20190215065947.GG9819@vader>
+In-Reply-To: <20190214220626.GV14116@dastard>
 Sender: linux-btrfs-owner@vger.kernel.org
-To: Omar Sandoval <osandov@osandov.com>
-Cc: Dave Chinner <david@fromorbit.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, kernel-team@fb.com, Linux API <linux-api@vger.kernel.org>, linux-btrfs <linux-btrfs@vger.kernel.org>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Steve French <sfrench@samba.org>
+To: Dave Chinner <david@fromorbit.com>, Omar Sandoval <osandov@osandov.com>
+Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, kernel-team@fb.com, linux-api@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
+On 15/02/19 00:06, Dave Chinner wrote:
+> On Thu, Feb 14, 2019 at 02:00:07AM -0800, Omar Sandoval wrote:
+>> From: Omar Sandoval <osandov@fb.com>
+>>
+>> Hi,
+>>
+>> Since statx was added in 4.11, userspace has had an interface for
+>> reading btime (file creation time), but no way to set it. This RFC patch
+>> series adds support for changing btime with utimensat(). Patch 1 adds
+>> the VFS infrastructure, patch 2 adds the support to utimensat() with a
+>> new flag, and the rest of the patches add filesystem support; I excluded
+>> CIFS for now because I don't have a CIFS setup to test it on.
+>>
+>> Updating btime is useful for at least a couple of use cases:
+>>
+[1]
+>> - Backup/restore programs (my motivation for this feature is btrfs send)
+>> - File servers which interoperate with operating systems that allow
+>>   updating file creation time, including Mac OS [1] and Windows [2]
+> 
+> So you're adding an interface that allows users to change the create
+> time of files without needing any privileges?
+> 
+[2]
+> Inode create time is forensic metadata in XFS  - information we use
+> for sequence of event and inode lifetime analysis during examination
+> of broken filesystem images and systems that have been broken into.
+> Just because it's exposed to userspace via statx(), it doesn't mean
+> that it is information that users should be allowed to change. i.e.
+> allowing users to be able to change the create time on files makes
+> it completely useless for the purpose it was added to XFS for...
+> 
+<snap>
 
---Apple-Mail=_2BFC7822-8AA0-4845-B9EA-99BE13F0AA9D
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+I think the difference in opinion here is that there are two totally
+different BTIme out in the world. For two somewhat opposite motivations
+and it seems they both try to be crammed into the same on disk space.
 
-On Feb 14, 2019, at 11:59 PM, Omar Sandoval <osandov@osandov.com> wrote:
->=20
-> On Fri, Feb 15, 2019 at 11:16:57AM +1100, Dave Chinner wrote:
->> On Thu, Feb 14, 2019 at 03:14:29PM -0800, Omar Sandoval wrote:
->>> I see a few options, none of which are particularly nice:
->>>=20
->>> 1. Filesystems like XFS could choose not to support setting btime =
-even
->>>   if they support reading it.
->>> 2. XFS could add a second, writeable btime which is used for
->>>   statx/utimes when available (it would fit in di_pad2...).
->>> 3. We could add a btime_writable sysctl/mount option/mkfs option.
->>=20
->> 4. create time remains a read-only field, and btrfs grows its own
->> special interface to twiddle it in btrfs-recv if it really is
->> necessary.
->=20
-> I'm curious to hear what the ext4/f2fs/CIFS developers think. If no =
-one
-> else wants btime to be mutable, then I might as well make it
-> Btrfs-specific. That is, assuming we reach consensus on the Btrfs side
-> that btrfs receive should set btime.
->=20
->> I'm still not convinced that even backup/restore should be doing =
-this,
->> because there's so much other metadata that is unique even on
->> restored files that it doesn't really make any sense to me to lie
->> about it being created in the past....
->=20
-> I suppose it depends on how you interpret btime: if it's strictly
-> filesystem metadata, then it makes sense that it should be immutable; =
-if
-> it's metadata for the user's own purposes, then we should allow =
-setting
-> it.
+One - Author creation time
+  This is a Windows originated creature and later MAC (and all vendors who
+  make a living by serving cifs (hint see my email address))
 
-My personal preference is that crtime/btime be read-only information =
-that
-tells when the file itself was created in this filesystem, not some =
-added
-metadata that is managed by userspace.  There have been many times when
-I've needed to know when a file was _actually_ created in the =
-filesystem,
-not what mtime/ctime report.
+  This is a tag carried globally on the globe denoting the time of the
+  original creator of the file. copy, download, backup-restore and so
+  on preserve it from the very first original creation.
+  This creature is a user oriented information. That needs to be carefully
+  orchestrated by all parties
 
-While it may be a bit of a stretch to call this "forensic evidence", =
-making
-it hard to change from except via total root compromise by a skilled =
-hacker
-is very useful.
+Two - Local creation time
+  This is an immutable local FS information that helps in debugging and
+  FS-checking / recovery of data. It is an information that kind of denotes
+  the order of creation of files on a local FS.
 
-If this were to go in (which I'm not in favour of), then there would =
-need to
-be a CONFIG and/or runtime knob to turn it off (or better to only turn =
-it on),
-similar to how FIPS and other security options can only go in one =
-direction.
+So it looks like both sides are correct trying to preserve their own guy?
 
-Cheers, Andreas
+XFS invented [2] I'd let it be. If you need [1] on XFS better push for
+a well defined standardized xattr and be in peace.
 
+BTRFS should decide which one of [2] or [1] it has space for in the inode
+and commit to it. Documenting well what it is.
 
+That said putting my Netapp hat. I would love to see an easy API
+for Author-creation-time BTime type of value. That is accessed
+uniformly by user-mode and/or Network file servers (NFS/CIFS).
+And would love to see a generic implementation of that interface
+that puts it into a standardized xattr if the FS in question does
+not have a native support for it [1].
 
+So I love these patches. And would want to see this through. But
+let us understand each other?
 
-
-
---Apple-Mail=_2BFC7822-8AA0-4845-B9EA-99BE13F0AA9D
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAlxov5oACgkQcqXauRfM
-H+AyPhAAlbb/G73XdA0bWoKFVbnhMxf3ry5kn2FiSnjF8tUNsvWQWLgGwtKDS7LA
-NjAzkZUaYLVVVkxP0Re9XyYNinbPdoyIsgQdjb+6x/Gc14lkP94bXzqQ8xBBC8rA
-uBB/n7GsNj0FsU/osl/TBsQ4pPiQvTZk6Yq5hoJ51eTMk7SnCUQfgtMICtCaRkGX
-edOfzbky+1RpJgu4NfwUlodFqJiNZ05st+gSjCoxcTXrejdhb+itIm7Pi0YIg3Rv
-DuTcg5V1jkmeBwK7ZrocfGjBVG/+zxHvHhNucae2TWQ7EHxA1Qo+zdUu9Vw6U2sk
-vKFYYK1Lb12St25MpTpP3UkO1yHypEjGSniMBWgKH8dZSXIPS3dWL5rsvKWdSP3/
-jjcSXLYQaOQUrCaHkKX/ZyBw/tRM44ZpyTSE1N1YJcrsKvEPb4tSVa6+sydZHWJH
-aWTie3vLN7se0GoYJKtngRzlFxpLHZelMZEGWBeFk4+cMK4kw+7HcoqCa4RnGn9T
-gGJr0YTZfskzYwXYyJDeLIOxSi530C+6rgXooLXKcMWsq5qUy/wFWK22WG75Rqa5
-CuJmPHVy3avbipdjRyGbX1nVPIce9Lr77O9dmEF3qAXZyyEKsNq4LKvt2usKfToU
-1aJq6evQLDDIORopZSxYd/lGAgQLBM6RDMB16jwwa/8se1J1dak=
-=Nx1H
------END PGP SIGNATURE-----
-
---Apple-Mail=_2BFC7822-8AA0-4845-B9EA-99BE13F0AA9D--
+Thanks
+Boaz
