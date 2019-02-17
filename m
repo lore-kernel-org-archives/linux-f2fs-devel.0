@@ -1,71 +1,45 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: don't clear CP_QUOTA_NEED_FSCK_FLAG
-Date: Fri, 15 Feb 2019 20:55:30 -0800
-Message-ID: <20190216045530.GA57019@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190212023343.52215-1-jaegeuk@kernel.org>
- <df77f830-e5dd-5943-d5b0-e21ced3a7df2@huawei.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v2] vfs: don't decrement i_nlink in d_tmpfile
+Date: Sun, 17 Feb 2019 00:26:44 +0000
+Message-ID: <20190217002644.GT2217@ZenIV.linux.org.uk>
+References: <20190214234908.GA6474@magnolia>
+ <20190215223925.GO32253@magnolia>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1gus0y-0004FW-OH
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 16 Feb 2019 04:55:48 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gus0n-00AIx2-A3
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 16 Feb 2019 04:55:43 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-btrfs-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <df77f830-e5dd-5943-d5b0-e21ced3a7df2@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <20190215223925.GO32253@magnolia>
+Sender: linux-btrfs-owner@vger.kernel.org
+To: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, jack@suse.com, tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org, yuchao0@huawei.com, hughd@google.com, hch@infradead.org, richard@nod.at, dedekind1@gmail.com, adrian.hunter@intel.com, linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, linux-mm@kvack.org, amir73il@gmail.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 02/13, Chao Yu wrote:
-> On 2019/2/12 10:33, Jaegeuk Kim wrote:
-> > If we met this once, let fsck.f2fs clear this only.
-> > Note that, this addresses all the subtle fault injection test.
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/checkpoint.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> > index 03fea4efd64b..10a3ada28715 100644
-> > --- a/fs/f2fs/checkpoint.c
-> > +++ b/fs/f2fs/checkpoint.c
-> > @@ -1267,8 +1267,6 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >  
-> >  	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
-> >  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-> > -	else
-> > -		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+On Fri, Feb 15, 2019 at 02:39:25PM -0800, Darrick J. Wong wrote:
+> From: Darrick J. Wong <darrick.wong@oracle.com>
 > 
-> I didn't get it, previously, if we didn't persist all quota file's data in
-> checkpoint, then we will tag CP_QUOTA_NEED_FSCK_FLAG in CP area, but in current
-> checkpoint, we have persisted all quota file's data, quota files are consistent
-> with all other files in filesystem, why we can't remove this NEED_FSCK flag..?
+> d_tmpfile was introduced to instantiate an inode in the dentry cache as
+> a temporary file.  This helper decrements the inode's nlink count and
+> dirties the inode, presumably so that filesystems could call new_inode
+> to create a new inode with nlink == 1 and then call d_tmpfile which will
+> decrement nlink.
+> 
+> However, this doesn't play well with XFS, which needs to allocate,
+> initialize, and insert a tempfile inode on its unlinked list in a single
+> transaction.  In order to maintain referential integrity of the XFS
+> metadata, we cannot have an inode on the unlinked list with nlink >= 1.
+> 
+> XFS and btrfs hack around d_tmpfile's behavior by creating the inode
+> with nlink == 0 and then incrementing it just prior to calling
+> d_tmpfile, anticipating that it will be reset to 0.
+> 
+> Everywhere else, it appears that nlink updates and persistence is
+> the responsibility of individual filesystems.  Therefore, move the nlink
+> decrement out of d_tmpfile into the callers, and require that callers
+> only pass in inodes with nlink already set to 0.
 
-I said it's subtle. So, I guessed 1) set CP_QUOTA_NEED_FSCK_FLAG, 2) clear
-SBI_QUOTA_SKIP_FLUSH by checkpoint, 3) clear CP_QUOTA_NEED_FSCK_FLAG by another
-checkpoint?
+NAK.  You are changing semantics of existing helper, requiring to add
+boilerplate to existing users.  With zero indication that such need
+has appeared - no warnings, etc.
 
-> 
-> Thanks,
-> 
-> >  
-> >  	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
-> >  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-> > 
+If you need a variant that wouldn't do nlink decrement, just add it
+and turn the existing one into a wrapper.  Yield smaller patch, at that...
