@@ -1,38 +1,29 @@
-From: Chandan Rajendra <chandan@linux.ibm.com>
-Subject: Re: [RFC PATCH 00/10] Consolidate Post read processing
- code
-Date: Mon, 18 Feb 2019 15:49:13 +0530
-Message-ID: <2149979.e1aSEps7Pq@localhost.localdomain>
-References: <20190218100433.20048-1-chandan@linux.ibm.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 202495] oops in fs/f2fs/checkpoint.c:150
+ f2fs_is_valid_blkaddr
+Date: Mon, 18 Feb 2019 18:56:11 +0000
+Message-ID: <bug-202495-202145-0p6BmvjuN1@https.bugzilla.kernel.org/>
+References: <bug-202495-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.ibm.com>) id 1gvg0l-0002ul-Bc
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Feb 2019 10:18:55 +0000
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
- helo=mx0a-001b2d01.pphosted.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
+ id 1gvo5U-0003Ub-HM
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Feb 2019 18:56:20 +0000
+Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gvg0c-00EWJ7-Ru
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Feb 2019 10:18:55 +0000
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
- by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
- x1IABcDG093137
- for <linux-f2fs-devel@lists.sourceforge.net>; Mon, 18 Feb 2019 05:18:41 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
- by mx0b-001b2d01.pphosted.com with ESMTP id 2qqrc5eshw-1
- (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>; Mon, 18 Feb 2019 05:18:40 -0500
-Received: from localhost
- by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
- Violators will be prosecuted
- for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.ibm.com>;
- Mon, 18 Feb 2019 10:18:39 -0000
-In-Reply-To: <20190218100433.20048-1-chandan@linux.ibm.com>
+ id 1gvo5S-006jtN-Pc
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Feb 2019 18:56:20 +0000
+Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 524A22B790
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 18 Feb 2019 18:56:12 +0000 (UTC)
+In-Reply-To: <bug-202495-202145@https.bugzilla.kernel.org/>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -42,100 +33,50 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-ext4@vger.kernel.org
-Cc: tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net, ebiggers@kernel.org, linux-fscrypt@vger.kernel.org, adilger.kernel@dilger.ca, jaegeuk@kernel.org
+To: linux-f2fs-devel@lists.sourceforge.net
 
-On Monday, February 18, 2019 3:34:23 PM IST Chandan Rajendra wrote:
-> This patchset moves the "post read processing" code into a file of its
-> own and gets the generic do_mpage_readpge() to make use of the
-> functionality provided. With these changes in place, the patchset
-> changes Ext4 to use mpage_readpage[s] instead of its own custom
-> ext4_readpages() function. This is done to reduce duplicity of code
-> across filesystems. Based on the reviews provided for this patchset, I
-> will change F2FS to use mpage_readpage[s] and post the next version of
-> this patchset to linux-fsdevel mailing list.
-> 
-> The patchset also includes patches from previous postings i.e.
-> patches to replace per-filesystem encryption config options with a
-> single config option that affects all filesystems making use of
-> fscrypt code.
-
-The patchset is based on fsverity_2019-01-30 branch of Eric's git tree. It can
-also be obtained from "https://github.com/chandanr/linux.git
-use-mpage-readpage-rfc".
-
-> 
-> Chandan Rajendra (10):
->   ext4: use IS_ENCRYPTED() to check encryption status
->   f2fs: use IS_ENCRYPTED() to check encryption status
->   fscrypt: remove filesystem specific build config option
->   Consolidate "post read processing" into a new file
->   fsverity: Add call back to decide if verity check has to be performed
->   Introduce REQ_POST_READ_PROC bio flag
->   fsverity: Add call back to determine readpage limit
->   fsverity: Add call back to verify file holes
->   fs/mpage.c: Integrate post read processing
->   ext4: Wire up ext4_readpage[s] to use mpage_readpage[s]
-> 
->  Documentation/filesystems/fscrypt.rst   |   4 +-
->  arch/mips/configs/generic_defconfig     |   2 +-
->  arch/nds32/configs/defconfig            |   2 +-
->  arch/s390/configs/debug_defconfig       |   2 +-
->  arch/s390/configs/performance_defconfig |   2 +-
->  fs/Makefile                             |   3 +-
->  fs/crypto/Kconfig                       |   5 +-
->  fs/crypto/bio.c                         |  21 +-
->  fs/crypto/crypto.c                      |   1 +
->  fs/crypto/fscrypt_private.h             |   4 +-
->  fs/ext4/Kconfig                         |  15 -
->  fs/ext4/Makefile                        |   2 +-
->  fs/ext4/dir.c                           |  10 +-
->  fs/ext4/ext4.h                          |  14 +-
->  fs/ext4/ext4_jbd2.h                     |   2 +-
->  fs/ext4/extents.c                       |   4 +-
->  fs/ext4/ialloc.c                        |   2 +-
->  fs/ext4/inode.c                         |  29 +-
->  fs/ext4/ioctl.c                         |   4 +-
->  fs/ext4/move_extent.c                   |   3 +-
->  fs/ext4/namei.c                         |  18 +-
->  fs/ext4/page-io.c                       |   9 +-
->  fs/ext4/readpage.c                      | 444 ------------------------
->  fs/ext4/super.c                         |  43 ++-
->  fs/ext4/sysfs.c                         |   4 +-
->  fs/f2fs/Kconfig                         |  12 +-
->  fs/f2fs/data.c                          |   4 +-
->  fs/f2fs/dir.c                           |  10 +-
->  fs/f2fs/f2fs.h                          |  14 +-
->  fs/f2fs/file.c                          |  10 +-
->  fs/f2fs/inode.c                         |   4 +-
->  fs/f2fs/namei.c                         |   6 +-
->  fs/f2fs/super.c                         |   8 +-
->  fs/f2fs/sysfs.c                         |   4 +-
->  fs/mpage.c                              |  77 +++-
->  fs/post_read_process.c                  | 128 +++++++
->  fs/ubifs/Kconfig                        |  12 +-
->  fs/ubifs/Makefile                       |   2 +-
->  fs/ubifs/ioctl.c                        |   4 +-
->  fs/ubifs/sb.c                           |   2 +-
->  fs/ubifs/super.c                        |   2 +-
->  fs/ubifs/ubifs.h                        |   5 +-
->  fs/verity/verify.c                      |  12 +
->  include/linux/blk_types.h               |   2 +
->  include/linux/fs.h                      |   4 +-
->  include/linux/fscrypt.h                 | 405 ++++++++++++++++++++-
->  include/linux/fscrypt_notsupp.h         | 231 ------------
->  include/linux/fscrypt_supp.h            | 204 -----------
->  include/linux/fsverity.h                |   3 +
->  include/linux/post_read_process.h       |  21 ++
->  50 files changed, 757 insertions(+), 1078 deletions(-)
->  delete mode 100644 fs/ext4/readpage.c
->  create mode 100644 fs/post_read_process.c
->  delete mode 100644 include/linux/fscrypt_notsupp.h
->  delete mode 100644 include/linux/fscrypt_supp.h
->  create mode 100644 include/linux/post_read_process.h
-> 
-> 
-
-
--- 
-chandan
+aHR0cHM6Ly9idWd6aWxsYS5rZXJuZWwub3JnL3Nob3dfYnVnLmNnaT9pZD0yMDI0OTUKCi0tLSBD
+b21tZW50ICM0IGZyb20gSldhbGtlciAoanc3Nzc5QGdtYWlsLmNvbSkgLS0tCkhpIENoYW8sCkni
+gJl2ZSBhcHBsaWVkIGFsbCBpbmNyZW1lbnRhbCBwYXRjaGVzIHVwIHRvLCBpbmNsdWRpbmcgNC4x
+NC4xMDEuIEkgY2FuIGFsc28KY29uZmlybSB0aGF0IG15IGJ1aWxkIGlzIGEgJTEwMCBtYXRjaCBi
+ZXR3ZWVuIHRoZSAueHogZmlsZSBvbiBrZXJuZWwub3JnICgKd2l0aCByZXNwZWN0IHRvIGZzLyog
+KS4KWWVzICwgdG90YWxseSByZXBlYXRhYmxlLiBBY3R1YWxseSBpdCBhcHBlYXJzIHRvIHBhbmlj
+IGFib3V0IDggdGltZXMgb24KcmVib290LgpBbHNvIHRoZSBwYW5pYyBpcyBub3Qga2VybmVsIHZl
+cnNpb24gc3BlY2lmaWMgYXMgSeKAmXZlIHRyaWVkIG11bHRpcGxlIGtlcm5lbAp2ZXJzaW9ucy4g
+U2FtZSByZXN1bHQuIEnigJl2ZSBhbHNvIHJlZm9ybWF0dGVkIGEgbmV3IHNkY2FyZCwgdGFy4oCZ
+ZCB1cCBhbGwgdGhlCmRhdGEgb24gdGhlIG9sZCBjYXJkLCBhbmQgdHJhbnNmZXJyZWQgdG8gdGhl
+IG5ldyBvbmUsIGFuZCBhbGwgaXMgZmluZS4KT25lIG90aGVyIHNlcGFyYXRlIGlzc3VlLCBzaG91
+bGQgdGhlCi9zeXMvZnMvZjJmcy9tbWNibGtYcFkvbGlmZXRpbWVfd3JpdGVfa2J5dGVzIHdvcmsg
+aW4gNC4xND8gTWluZSBkb2VzbuKAmXQsCmJ1dCBJIGhhdmUgc2VlbiBpdCB3b3JrIGluIFVidW50
+dSAxOC40IHdpdGggNC4xNSBrZXJuZWwuIE9uIHJlYm9vdCB2YWx1ZXMKcmV0dXJuIHRvIDAuCgpI
+b3BlIHRoaXMgaGVscHMKSm9obgoKT24gTW9uLCAxOCBGZWIgMjAxOSBhdCAwMTozMCwgPGJ1Z3pp
+bGxhLWRhZW1vbkBidWd6aWxsYS5rZXJuZWwub3JnPiB3cm90ZToKCj4gaHR0cHM6Ly9idWd6aWxs
+YS5rZXJuZWwub3JnL3Nob3dfYnVnLmNnaT9pZD0yMDI0OTUKPgo+IC0tLSBDb21tZW50ICMzIGZy
+b20gQ2hhbyBZdSAoY2hhb0BrZXJuZWwub3JnKSAtLS0KPiAoSW4gcmVwbHkgdG8gSldhbGtlciBm
+cm9tIGNvbW1lbnQgIzIpCj4gPiBIaSBDaGFvLAo+ID4KPiA+IFRoZSBrZXJuYWwgY29kZSB3YXMg
+dGFrZW4gZnJvbSB0aGUgcmFzcGJlcnJ5IHBpIGdpdCByZXBvLCBhbmQgdGhlbiB0aGUKPiA+IGlu
+Y3JlbWVudGFsIHBhdGNoZXMgYXBwbGllZC4KPgo+IFdoYXQgcGF0Y2hlcyBkbyB5b3UgYXBwbGll
+ZD8gc29tZSBmaXhpbmcgcGF0Y2hlcz8KPgo+ID4KPiA+IFllcywgZnNjayBoYXMgYmVlbiBhcHBs
+aWVkLiBQbGVhc2Ugc2VlIGJlbG93IHRoZSBvdXRwdXQgb2YgdGhlIGJvdGgKPiB2b2x1bWVzLgo+
+ID4KPiA+IFBsZWFzZSBsZXQgbWUga25vdyBpZiB5b3UgcmVxdWlyZSBhbnkgbW9yZSBpbmZvLgo+
+Cj4gLi4uCj4KPiA+IFtGU0NLXSBVbnJlYWNoYWJsZSBuYXQgZW50cmllcyAgICAgICAgICAgICAg
+ICAgICAgICAgIFtPay4uXSBbMHgwXQo+ID4gW0ZTQ0tdIFNJVCB2YWxpZCBibG9jayBiaXRtYXAg
+Y2hlY2tpbmcgICAgICAgICAgICAgICAgW09rLi5dCj4gPiBbRlNDS10gSGFyZCBsaW5rIGNoZWNr
+aW5nIGZvciByZWd1bGFyIGZpbGUgICAgICAgICAgICBbT2suLl0gWzB4MV0KPiA+IFtGU0NLXSB2
+YWxpZF9ibG9ja19jb3VudCBtYXRjaGluZyB3aXRoIENQICAgICAgICAgICAgIFtPay4uXSBbMHg4
+N2EwXQo+ID4gW0ZTQ0tdIHZhbGlkX25vZGVfY291bnQgbWF0Y2luZyB3aXRoIENQIChkZSBsb29r
+dXApICAgW09rLi5dIFsweDEwN2JdCj4gPiBbRlNDS10gdmFsaWRfbm9kZV9jb3VudCBtYXRjaW5n
+IHdpdGggQ1AgKG5hdCBsb29rdXApICBbT2suLl0gWzB4MTA3Yl0KPiA+IFtGU0NLXSB2YWxpZF9p
+bm9kZV9jb3VudCBtYXRjaGVkIHdpdGggQ1AgICAgICAgICAgICAgIFtPay4uXSBbMHgxMDczXQo+
+ID4gW0ZTQ0tdIGZyZWUgc2VnbWVudF9jb3VudCBtYXRjaGVkIHdpdGggQ1AgICAgICAgICAgICAg
+W09rLi5dIFsweDI5Nl0KPiA+IFtGU0NLXSBuZXh0IGJsb2NrIG9mZnNldCBpcyBmcmVlICAgICAg
+ICAgICAgICAgICAgICAgIFtPay4uXQo+ID4gW0ZTQ0tdIGZpeGluZyBTSVQgdHlwZXMKPiA+IFtG
+U0NLXSBvdGhlciBjb3JydXB0ZWQgYnVncyAgICAgICAgICAgICAgICAgICAgICAgICAgIFtPay4u
+XQo+Cj4gSSBkaWRuJ3Qgc2VlIGFueSBjb3JydXB0aW9uIHRoZXJlLCBkb2VzIHRoaXMgaW1hZ2Ug
+c3RpbGwgcGFuaWMgeW91ciBrZXJuZWw/Cj4KPiAtLQo+IFlvdSBhcmUgcmVjZWl2aW5nIHRoaXMg
+bWFpbCBiZWNhdXNlOgo+IFlvdSByZXBvcnRlZCB0aGUgYnVnLgoKLS0gCllvdSBhcmUgcmVjZWl2
+aW5nIHRoaXMgbWFpbCBiZWNhdXNlOgpZb3UgYXJlIHdhdGNoaW5nIHRoZSBhc3NpZ25lZSBvZiB0
+aGUgYnVnLgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+TGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3Vy
+Y2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8v
+bGludXgtZjJmcy1kZXZlbAo=
