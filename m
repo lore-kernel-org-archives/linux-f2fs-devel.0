@@ -1,36 +1,37 @@
 From: Chandan Rajendra <chandan@linux.ibm.com>
-Subject: [RFC PATCH 07/10] fsverity: Add call back to determine
- readpage limit
-Date: Mon, 18 Feb 2019 15:34:30 +0530
-Message-ID: <20190218100433.20048-8-chandan@linux.ibm.com>
+Subject: [RFC PATCH 05/10] fsverity: Add call back to decide if
+ verity check has to be performed
+Date: Mon, 18 Feb 2019 15:34:28 +0530
+Message-ID: <20190218100433.20048-6-chandan@linux.ibm.com>
 References: <20190218100433.20048-1-chandan@linux.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.ibm.com>) id 1gvfn5-0000s2-87
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Feb 2019 10:04:47 +0000
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <chandan@linux.ibm.com>) id 1gvfnA-0005Rz-B4
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Feb 2019 10:04:52 +0000
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
+ helo=mx0a-001b2d01.pphosted.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gvfmy-00EUQu-V9
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Feb 2019 10:04:47 +0000
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+ id 1gvfmu-005d9u-N5
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Feb 2019 10:04:52 +0000
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
  by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
- x1IA3trf060326
- for <linux-f2fs-devel@lists.sourceforge.net>; Mon, 18 Feb 2019 05:04:35 -0500
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
- by mx0a-001b2d01.pphosted.com with ESMTP id 2qqsn8u0gk-1
+ x1IA442H050995
+ for <linux-f2fs-devel@lists.sourceforge.net>; Mon, 18 Feb 2019 05:04:30 -0500
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+ by mx0a-001b2d01.pphosted.com with ESMTP id 2qqrf5nuwk-1
  (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>; Mon, 18 Feb 2019 05:04:35 -0500
+ for <linux-f2fs-devel@lists.sourceforge.net>; Mon, 18 Feb 2019 05:04:29 -0500
 Received: from localhost
- by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
+ by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
  Violators will be prosecuted
  for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.ibm.com>;
- Mon, 18 Feb 2019 10:04:34 -0000
+ Mon, 18 Feb 2019 10:04:27 -0000
 In-Reply-To: <20190218100433.20048-1-chandan@linux.ibm.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -44,65 +45,69 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org
 Cc: tytso@mit.edu, ebiggers@kernel.org, Chandan Rajendra <chandan@linux.ibm.com>, adilger.kernel@dilger.ca, jaegeuk@kernel.org
 
-Ext4 and F2FS store verity metadata beyond i_size. This commit adds a
-call back pointer to "struct fsverity_operations" which helps in
-determining the the real file size limit upto which data can be read
-from the file.
-
-This call back will be required in order to get do_mpage_readpage()
-to read files having verity metadata appended beyond i_size.
+Ext4 and F2FS store verity metadata in data extents (beyond
+inode->i_size) associated with a file. But other filesystems might
+choose alternative means to store verity metadata. Hence this commit
+adds a callback function pointer to 'struct fsverity_operations' to help
+in deciding if verity operation needs to performed against a page-cache
+page holding file data.
 
 Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
 ---
- fs/ext4/super.c          | 18 ++++++++++++++++++
- include/linux/fsverity.h |  1 +
- 2 files changed, 19 insertions(+)
+ fs/ext4/super.c          | 9 +++++++++
+ fs/post_read_process.c   | 5 +++--
+ include/linux/fsverity.h | 1 +
+ 3 files changed, 13 insertions(+), 2 deletions(-)
 
 diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 2d7781ab6824..4493ddc357c6 100644
+index 9314dddfbf34..2d7781ab6824 100644
 --- a/fs/ext4/super.c
 +++ b/fs/ext4/super.c
-@@ -1428,6 +1428,23 @@ static struct page *ext4_read_verity_metadata_page(struct inode *inode,
+@@ -1428,10 +1428,19 @@ static struct page *ext4_read_verity_metadata_page(struct inode *inode,
  	return read_mapping_page(inode->i_mapping, index, NULL);
  }
  
-+static loff_t ext4_readpage_limit(struct inode *inode)
++static bool ext4_verity_required(struct inode *inode, pgoff_t index)
 +{
-+#ifdef CONFIG_FS_VERITY
-+	if (IS_VERITY(inode)) {
-+		if (inode->i_verity_info)
-+			/* limit to end of metadata region */
-+			return fsverity_full_i_size(inode);
-+		/*
-+		 * fsverity_info is currently being set up and no user reads are
-+		 * allowed yet.  It's easiest to just not enforce a limit yet.
-+		 */
-+		return inode->i_sb->s_maxbytes;
-+	}
-+#endif
-+	return i_size_read(inode);
++	if (index < ((i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT))
++		return true;
++	else
++		return false;
 +}
 +
- static bool ext4_verity_required(struct inode *inode, pgoff_t index)
- {
- 	if (index < ((i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT))
-@@ -1441,6 +1458,7 @@ static const struct fsverity_operations ext4_verityops = {
+ static const struct fsverity_operations ext4_verityops = {
+ 	.set_verity		= ext4_set_verity,
  	.get_metadata_end	= ext4_get_verity_metadata_end,
  	.read_metadata_page	= ext4_read_verity_metadata_page,
- 	.verity_required	= ext4_verity_required,
-+	.readpage_limit		= ext4_readpage_limit,
++	.verity_required	= ext4_verity_required,
  };
  #endif /* CONFIG_FS_VERITY */
  
+diff --git a/fs/post_read_process.c b/fs/post_read_process.c
+index 9720eeff0160..1f8663d70247 100644
+--- a/fs/post_read_process.c
++++ b/fs/post_read_process.c
+@@ -79,8 +79,9 @@ struct bio_post_read_ctx *get_bio_post_read_ctx(struct inode *inode,
+ 	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode))
+ 		post_read_steps |= 1 << STEP_DECRYPT;
+ #ifdef CONFIG_FS_VERITY
+-	if (inode->i_verity_info != NULL &&
+-		(index < ((i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT)))
++	if (inode->i_verity_info != NULL
++		&& inode->i_sb->s_vop->verity_required
++		&& inode->i_sb->s_vop->verity_required(inode, index))
+ 		post_read_steps |= 1 << STEP_VERITY;
+ #endif
+ 	if (post_read_steps) {
 diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index b83712d6c79a..fc8113acbbfe 100644
+index 7c33b42abf1b..b83712d6c79a 100644
 --- a/include/linux/fsverity.h
 +++ b/include/linux/fsverity.h
-@@ -19,6 +19,7 @@ struct fsverity_operations {
+@@ -18,6 +18,7 @@ struct fsverity_operations {
+ 	int (*set_verity)(struct inode *inode, loff_t data_i_size);
  	int (*get_metadata_end)(struct inode *inode, loff_t *metadata_end_ret);
  	struct page *(*read_metadata_page)(struct inode *inode, pgoff_t index);
- 	bool (*verity_required)(struct inode *inode, pgoff_t index);
-+	loff_t (*readpage_limit)(struct inode *inode);
++	bool (*verity_required)(struct inode *inode, pgoff_t index);
  };
  
  #ifdef CONFIG_FS_VERITY
