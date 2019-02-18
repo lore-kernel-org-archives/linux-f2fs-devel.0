@@ -1,37 +1,37 @@
 From: Chandan Rajendra <chandan@linux.ibm.com>
-Subject: [RFC PATCH 02/10] f2fs: use IS_ENCRYPTED() to check
- encryption status
-Date: Mon, 18 Feb 2019 15:34:25 +0530
-Message-ID: <20190218100433.20048-3-chandan@linux.ibm.com>
+Subject: [RFC PATCH 09/10] fs/mpage.c: Integrate post read
+ processing
+Date: Mon, 18 Feb 2019 15:34:32 +0530
+Message-ID: <20190218100433.20048-10-chandan@linux.ibm.com>
 References: <20190218100433.20048-1-chandan@linux.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.ibm.com>) id 1gvfnO-0005U4-Sn
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Feb 2019 10:05:06 +0000
+ (envelope-from <chandan@linux.ibm.com>) id 1gvfnf-0000ye-6Q
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Feb 2019 10:05:23 +0000
 Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
  helo=mx0a-001b2d01.pphosted.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gvfnH-00EqFw-UV
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Feb 2019 10:05:06 +0000
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
- by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
- x1IA4o55080964
- for <linux-f2fs-devel@lists.sourceforge.net>; Mon, 18 Feb 2019 05:04:54 -0500
+ id 1gvfnQ-00EUTt-Ce
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Feb 2019 10:05:23 +0000
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+ by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
+ x1IA47bx051131
+ for <linux-f2fs-devel@lists.sourceforge.net>; Mon, 18 Feb 2019 05:05:02 -0500
 Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
- by mx0b-001b2d01.pphosted.com with ESMTP id 2qqrq2dd9b-1
+ by mx0a-001b2d01.pphosted.com with ESMTP id 2qqrf5nvaa-1
  (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>; Mon, 18 Feb 2019 05:04:52 -0500
+ for <linux-f2fs-devel@lists.sourceforge.net>; Mon, 18 Feb 2019 05:04:56 -0500
 Received: from localhost
  by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
  Violators will be prosecuted
  for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.ibm.com>;
- Mon, 18 Feb 2019 10:04:12 -0000
+ Mon, 18 Feb 2019 10:04:43 -0000
 In-Reply-To: <20190218100433.20048-1-chandan@linux.ibm.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -43,218 +43,198 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org
-Cc: tytso@mit.edu, ebiggers@kernel.org, adilger.kernel@dilger.ca, jaegeuk@kernel.org
+Cc: tytso@mit.edu, ebiggers@kernel.org, Chandan Rajendra <chandan@linux.ibm.com>, adilger.kernel@dilger.ca, jaegeuk@kernel.org
 
-From: Chandan Rajendra <chandan@linux.vnet.ibm.com>
+This commit adds code to make do_mpage_readpage() to be "post read
+processing" aware i.e. for files requiring decryption/verification,
+do_mpage_readpage() now allocates a context structure and marks the bio
+with a flag to indicate that after read operation is performed, the
+bio's payload needs to be processed further before handing over the data
+to user space.
 
-This commit removes the f2fs specific f2fs_encrypted_inode() and makes
-use of the generic IS_ENCRYPTED() macro to check for the encryption
-status of an inode.
+The context structure is used for tracking the state machine associated
+with post read processing.
 
-Acked-by: Chao Yu <yuchao0@huawei.com>
-Reviewed-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Chandan Rajendra <chandan@linux.vnet.ibm.com>
+Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
 ---
- fs/f2fs/data.c  |  4 ++--
- fs/f2fs/dir.c   | 10 +++++-----
- fs/f2fs/f2fs.h  |  7 +------
- fs/f2fs/file.c  | 10 +++++-----
- fs/f2fs/inode.c |  4 ++--
- fs/f2fs/namei.c |  6 +++---
- 6 files changed, 18 insertions(+), 23 deletions(-)
+ fs/mpage.c | 77 +++++++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 59 insertions(+), 18 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 2cba513b7b8c..dca01fbe9c21 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1495,7 +1495,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 	}
+diff --git a/fs/mpage.c b/fs/mpage.c
+index c820dc9bebab..09f0491e6260 100644
+--- a/fs/mpage.c
++++ b/fs/mpage.c
+@@ -30,6 +30,8 @@
+ #include <linux/backing-dev.h>
+ #include <linux/pagevec.h>
+ #include <linux/cleancache.h>
++#include <linux/fsverity.h>
++#include <linux/post_read_process.h>
+ #include "internal.h"
  
- 	if (size) {
--		if (f2fs_encrypted_inode(inode))
-+		if (IS_ENCRYPTED(inode))
- 			flags |= FIEMAP_EXTENT_DATA_ENCRYPTED;
+ /*
+@@ -49,6 +51,13 @@ static void mpage_end_io(struct bio *bio)
+ 	struct bio_vec *bv;
+ 	int i;
  
- 		ret = fiemap_fill_next_extent(fieinfo, logical,
-@@ -1769,7 +1769,7 @@ static inline bool check_inplace_update_policy(struct inode *inode,
- 	if (policy & (0x1 << F2FS_IPU_ASYNC) &&
- 			fio && fio->op == REQ_OP_WRITE &&
- 			!(fio->op_flags & REQ_SYNC) &&
--			!f2fs_encrypted_inode(inode))
-+			!IS_ENCRYPTED(inode))
- 		return true;
++	if (bio_post_read_required(bio)) {
++		struct bio_post_read_ctx *ctx = bio->bi_private;
++
++		bio_post_read_processing(ctx);
++		return;
++	}
++
+ 	bio_for_each_segment_all(bv, bio, i) {
+ 		struct page *page = bv->bv_page;
+ 		page_endio(page, bio_op(bio),
+@@ -142,6 +151,7 @@ struct mpage_readpage_args {
+ 	struct buffer_head map_bh;
+ 	unsigned long first_logical_block;
+ 	get_block_t *get_block;
++	int op_flags;
+ };
  
- 	/* this is only set during fdatasync */
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 50d0d36280fa..713b36a10a79 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -385,7 +385,7 @@ struct page *f2fs_init_inode_metadata(struct inode *inode, struct inode *dir,
- 		if (err)
- 			goto put_error;
+ /*
+@@ -170,25 +180,22 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
+ 	struct block_device *bdev = NULL;
+ 	int length;
+ 	int fully_mapped = 1;
+-	int op_flags;
+ 	unsigned nblocks;
+ 	unsigned relative_block;
+ 	gfp_t gfp;
  
--		if ((f2fs_encrypted_inode(dir) || dummy_encrypt) &&
-+		if ((IS_ENCRYPTED(dir) || dummy_encrypt) &&
- 					f2fs_may_encrypt(inode)) {
- 			err = fscrypt_inherit_context(dir, inode, page, false);
- 			if (err)
-@@ -399,7 +399,7 @@ struct page *f2fs_init_inode_metadata(struct inode *inode, struct inode *dir,
+-	if (args->is_readahead) {
+-		op_flags = REQ_RAHEAD;
+-		gfp = readahead_gfp_mask(page->mapping);
+-	} else {
+-		op_flags = 0;
+-		gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
+-	}
+-
+ 	if (page_has_buffers(page))
+ 		goto confused;
  
- 	if (new_name) {
- 		init_dent_inode(new_name, page);
--		if (f2fs_encrypted_inode(dir))
-+		if (IS_ENCRYPTED(dir))
- 			file_set_enc_name(inode);
- 	}
- 
-@@ -819,7 +819,7 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+ 	block_in_file = (sector_t)page->index << (PAGE_SHIFT - blkbits);
+ 	last_block = block_in_file + args->nr_pages * blocks_per_page;
+-	last_block_in_file = (i_size_read(inode) + blocksize - 1) >> blkbits;
++#ifdef CONFIG_FS_VERITY
++	if (IS_VERITY(inode) && inode->i_sb->s_vop->readpage_limit)
++		last_block_in_file = inode->i_sb->s_vop->readpage_limit(inode);
++	else
++#endif
++		last_block_in_file = (i_size_read(inode) + blocksize - 1)
++			>> blkbits;
+ 	if (last_block > last_block_in_file)
+ 		last_block = last_block_in_file;
+ 	page_block = 0;
+@@ -276,6 +283,10 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
+ 	if (first_hole != blocks_per_page) {
+ 		zero_user_segment(page, first_hole << blkbits, PAGE_SIZE);
+ 		if (first_hole == 0) {
++#ifdef CONFIG_FS_VERITY
++			if (IS_VERITY(inode) && inode->i_sb->s_vop->check_hole)
++				inode->i_sb->s_vop->check_hole(inode, page);
++#endif
+ 			SetPageUptodate(page);
+ 			unlock_page(page);
  			goto out;
+@@ -294,26 +305,54 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
+ 	 * This page will go to BIO.  Do we need to send this BIO off first?
+ 	 */
+ 	if (args->bio && (args->last_block_in_bio != blocks[0] - 1))
+-		args->bio = mpage_bio_submit(REQ_OP_READ, op_flags, args->bio);
++		args->bio = mpage_bio_submit(REQ_OP_READ, args->op_flags,
++					args->bio);
+ 
+ alloc_new:
+ 	if (args->bio == NULL) {
+-		if (first_hole == blocks_per_page) {
++		struct bio_post_read_ctx *ctx;
++
++		if (first_hole == blocks_per_page
++			&& !(IS_ENCRYPTED(inode) || IS_VERITY(inode))) {
+ 			if (!bdev_read_page(bdev, blocks[0] << (blkbits - 9),
+ 								page))
+ 				goto out;
  		}
++
++		args->op_flags = 0;
++
++		if (args->is_readahead) {
++			args->op_flags = REQ_RAHEAD;
++			gfp = readahead_gfp_mask(page->mapping);
++		} else {
++			gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
++		}
++
+ 		args->bio = mpage_alloc(bdev, blocks[0] << (blkbits - 9),
+ 					min_t(int, args->nr_pages,
+ 					      BIO_MAX_PAGES),
+ 					gfp);
+-		if (args->bio == NULL)
++		if (args->bio == NULL) {
++			args->op_flags = 0;
+ 			goto confused;
++		}
++
++		ctx = get_bio_post_read_ctx(inode, args->bio, page->index);
++		if (IS_ERR(ctx)) {
++			args->op_flags = 0;
++			bio_put(args->bio);
++			args->bio = NULL;
++			goto confused;
++		}
++
++		if (ctx)
++			args->op_flags |= REQ_POST_READ_PROC;
+ 	}
  
--		if (f2fs_encrypted_inode(d->inode)) {
-+		if (IS_ENCRYPTED(d->inode)) {
- 			int save_len = fstr->len;
+ 	length = first_hole << blkbits;
+ 	if (bio_add_page(args->bio, page, length, 0) < length) {
+-		args->bio = mpage_bio_submit(REQ_OP_READ, op_flags, args->bio);
++		args->bio = mpage_bio_submit(REQ_OP_READ, args->op_flags,
++					args->bio);
+ 		goto alloc_new;
+ 	}
  
- 			err = fscrypt_fname_disk_to_usr(d->inode,
-@@ -862,7 +862,7 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
- 	struct fscrypt_str fstr = FSTR_INIT(NULL, 0);
- 	int err = 0;
+@@ -321,7 +360,8 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
+ 	nblocks = map_bh->b_size >> blkbits;
+ 	if ((buffer_boundary(map_bh) && relative_block == nblocks) ||
+ 	    (first_hole != blocks_per_page))
+-		args->bio = mpage_bio_submit(REQ_OP_READ, op_flags, args->bio);
++		args->bio = mpage_bio_submit(REQ_OP_READ, args->op_flags,
++					args->bio);
+ 	else
+ 		args->last_block_in_bio = blocks[blocks_per_page - 1];
+ out:
+@@ -329,7 +369,8 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
  
--	if (f2fs_encrypted_inode(inode)) {
-+	if (IS_ENCRYPTED(inode)) {
- 		err = fscrypt_get_encryption_info(inode);
- 		if (err && err != -ENOKEY)
- 			goto out;
-@@ -924,7 +924,7 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
- 
- static int f2fs_dir_open(struct inode *inode, struct file *filp)
- {
--	if (f2fs_encrypted_inode(inode))
-+	if (IS_ENCRYPTED(inode))
- 		return fscrypt_get_encryption_info(inode) ? -EACCES : 0;
+ confused:
+ 	if (args->bio)
+-		args->bio = mpage_bio_submit(REQ_OP_READ, op_flags, args->bio);
++		args->bio = mpage_bio_submit(REQ_OP_READ, args->op_flags,
++					args->bio);
+ 	if (!PageUptodate(page))
+ 		block_read_full_page(page, args->get_block);
+ 	else
+@@ -407,7 +448,7 @@ mpage_readpages(struct address_space *mapping, struct list_head *pages,
+ 	}
+ 	BUG_ON(!list_empty(pages));
+ 	if (args.bio)
+-		mpage_bio_submit(REQ_OP_READ, REQ_RAHEAD, args.bio);
++		mpage_bio_submit(REQ_OP_READ, args.op_flags, args.bio);
  	return 0;
  }
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 0634b10697f0..520558a3fb63 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3466,14 +3466,9 @@ void f2fs_unregister_sysfs(struct f2fs_sb_info *sbi);
- /*
-  * crypto support
-  */
--static inline bool f2fs_encrypted_inode(struct inode *inode)
--{
--	return file_is_encrypt(inode);
--}
--
- static inline bool f2fs_encrypted_file(struct inode *inode)
- {
--	return f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode);
-+	return IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode);
+ EXPORT_SYMBOL(mpage_readpages);
+@@ -425,7 +466,7 @@ int mpage_readpage(struct page *page, get_block_t get_block)
+ 
+ 	args.bio = do_mpage_readpage(&args);
+ 	if (args.bio)
+-		mpage_bio_submit(REQ_OP_READ, 0, args.bio);
++		mpage_bio_submit(REQ_OP_READ, args.op_flags, args.bio);
+ 	return 0;
  }
- 
- static inline void f2fs_set_encrypted_inode(struct inode *inode)
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 07ebbf4e492d..dd8f1c38b436 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -586,7 +586,7 @@ static int truncate_partial_data_page(struct inode *inode, u64 from,
- 	zero_user(page, offset, PAGE_SIZE - offset);
- 
- 	/* An encrypted inode should have a key and truncate the last page. */
--	f2fs_bug_on(F2FS_I_SB(inode), cache_only && f2fs_encrypted_inode(inode));
-+	f2fs_bug_on(F2FS_I_SB(inode), cache_only && IS_ENCRYPTED(inode));
- 	if (!cache_only)
- 		set_page_dirty(page);
- 	f2fs_put_page(page, 1);
-@@ -731,7 +731,7 @@ int f2fs_getattr(const struct path *path, struct kstat *stat,
- 		stat->attributes |= STATX_ATTR_APPEND;
- 	if (flags & F2FS_COMPR_FL)
- 		stat->attributes |= STATX_ATTR_COMPRESSED;
--	if (f2fs_encrypted_inode(inode))
-+	if (IS_ENCRYPTED(inode))
- 		stat->attributes |= STATX_ATTR_ENCRYPTED;
- 	if (flags & F2FS_IMMUTABLE_FL)
- 		stat->attributes |= STATX_ATTR_IMMUTABLE;
-@@ -1587,7 +1587,7 @@ static long f2fs_fallocate(struct file *file, int mode,
- 	if (!S_ISREG(inode->i_mode))
- 		return -EINVAL;
- 
--	if (f2fs_encrypted_inode(inode) &&
-+	if (IS_ENCRYPTED(inode) &&
- 		(mode & (FALLOC_FL_COLLAPSE_RANGE | FALLOC_FL_INSERT_RANGE)))
- 		return -EOPNOTSUPP;
- 
-@@ -1671,7 +1671,7 @@ static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	unsigned int flags = fi->i_flags;
- 
--	if (f2fs_encrypted_inode(inode))
-+	if (IS_ENCRYPTED(inode))
- 		flags |= F2FS_ENCRYPT_FL;
- 	if (f2fs_has_inline_data(inode) || f2fs_has_inline_dentry(inode))
- 		flags |= F2FS_INLINE_DATA_FL;
-@@ -2438,7 +2438,7 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
- 	if (!S_ISREG(src->i_mode) || !S_ISREG(dst->i_mode))
- 		return -EINVAL;
- 
--	if (f2fs_encrypted_inode(src) || f2fs_encrypted_inode(dst))
-+	if (IS_ENCRYPTED(src) || IS_ENCRYPTED(dst))
- 		return -EOPNOTSUPP;
- 
- 	if (src == dst) {
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index fe702cb3f4ec..5053944ed221 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -43,7 +43,7 @@ void f2fs_set_inode_flags(struct inode *inode)
- 		new_fl |= S_NOATIME;
- 	if (flags & F2FS_DIRSYNC_FL)
- 		new_fl |= S_DIRSYNC;
--	if (f2fs_encrypted_inode(inode))
-+	if (file_is_encrypt(inode))
- 		new_fl |= S_ENCRYPTED;
- 	if (file_is_verity(inode))
- 		new_fl |= S_VERITY;
-@@ -455,7 +455,7 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
- 		inode->i_mapping->a_ops = &f2fs_dblock_aops;
- 		inode_nohighmem(inode);
- 	} else if (S_ISLNK(inode->i_mode)) {
--		if (f2fs_encrypted_inode(inode))
-+		if (file_is_encrypt(inode))
- 			inode->i_op = &f2fs_encrypted_symlink_inode_operations;
- 		else
- 			inode->i_op = &f2fs_symlink_inode_operations;
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 62d9829f3a6a..e967d27c1a89 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -75,7 +75,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 	set_inode_flag(inode, FI_NEW_INODE);
- 
- 	/* If the directory encrypted, then we should encrypt the inode. */
--	if ((f2fs_encrypted_inode(dir) || DUMMY_ENCRYPTION_ENABLED(sbi)) &&
-+	if ((IS_ENCRYPTED(dir) || DUMMY_ENCRYPTION_ENABLED(sbi)) &&
- 				f2fs_may_encrypt(inode))
- 		f2fs_set_encrypted_inode(inode);
- 
-@@ -476,7 +476,7 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 		if (err)
- 			goto out_iput;
- 	}
--	if (f2fs_encrypted_inode(dir) &&
-+	if (IS_ENCRYPTED(dir) &&
- 	    (S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode)) &&
- 	    !fscrypt_has_permitted_context(dir, inode)) {
- 		f2fs_msg(inode->i_sb, KERN_WARNING,
-@@ -803,7 +803,7 @@ static int f2fs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	if (unlikely(f2fs_cp_error(sbi)))
- 		return -EIO;
- 
--	if (f2fs_encrypted_inode(dir) || DUMMY_ENCRYPTION_ENABLED(sbi)) {
-+	if (IS_ENCRYPTED(dir) || DUMMY_ENCRYPTION_ENABLED(sbi)) {
- 		int err = fscrypt_get_encryption_info(dir);
- 		if (err)
- 			return err;
+ EXPORT_SYMBOL(mpage_readpage);
 -- 
 2.19.1
