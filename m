@@ -1,82 +1,61 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 202495] oops in fs/f2fs/checkpoint.c:150
- f2fs_is_valid_blkaddr
-Date: Mon, 18 Feb 2019 18:56:11 +0000
-Message-ID: <bug-202495-202145-0p6BmvjuN1@https.bugzilla.kernel.org/>
-References: <bug-202495-202145@https.bugzilla.kernel.org/>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: [RFC PATCH 0/6] Allow setting file birth time with utimensat()
+Date: Tue, 19 Feb 2019 09:18:20 +1100
+Message-ID: <20190218221820.GF14116@dastard>
+References: <cover.1550136164.git.osandov@fb.com>
+ <20190214220626.GV14116@dastard>
+ <20190214231429.GE9819@vader>
+ <20190215001657.GY14116@dastard>
+ <20190215065947.GG9819@vader>
+ <72A04438-5991-4A60-8AAB-021A41DE6711@dilger.ca>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1gvo5U-0003Ub-HM
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Feb 2019 18:56:20 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gvo5S-006jtN-Pc
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Feb 2019 18:56:20 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 524A22B790
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 18 Feb 2019 18:56:12 +0000 (UTC)
-In-Reply-To: <bug-202495-202145@https.bugzilla.kernel.org/>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-btrfs-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <72A04438-5991-4A60-8AAB-021A41DE6711@dilger.ca>
+Sender: linux-btrfs-owner@vger.kernel.org
+To: Andreas Dilger <adilger@dilger.ca>
+Cc: Omar Sandoval <osandov@osandov.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, kernel-team@fb.com, Linux API <linux-api@vger.kernel.org>, linux-btrfs <linux-btrfs@vger.kernel.org>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Steve French <sfrench@samba.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-aHR0cHM6Ly9idWd6aWxsYS5rZXJuZWwub3JnL3Nob3dfYnVnLmNnaT9pZD0yMDI0OTUKCi0tLSBD
-b21tZW50ICM0IGZyb20gSldhbGtlciAoanc3Nzc5QGdtYWlsLmNvbSkgLS0tCkhpIENoYW8sCkni
-gJl2ZSBhcHBsaWVkIGFsbCBpbmNyZW1lbnRhbCBwYXRjaGVzIHVwIHRvLCBpbmNsdWRpbmcgNC4x
-NC4xMDEuIEkgY2FuIGFsc28KY29uZmlybSB0aGF0IG15IGJ1aWxkIGlzIGEgJTEwMCBtYXRjaCBi
-ZXR3ZWVuIHRoZSAueHogZmlsZSBvbiBrZXJuZWwub3JnICgKd2l0aCByZXNwZWN0IHRvIGZzLyog
-KS4KWWVzICwgdG90YWxseSByZXBlYXRhYmxlLiBBY3R1YWxseSBpdCBhcHBlYXJzIHRvIHBhbmlj
-IGFib3V0IDggdGltZXMgb24KcmVib290LgpBbHNvIHRoZSBwYW5pYyBpcyBub3Qga2VybmVsIHZl
-cnNpb24gc3BlY2lmaWMgYXMgSeKAmXZlIHRyaWVkIG11bHRpcGxlIGtlcm5lbAp2ZXJzaW9ucy4g
-U2FtZSByZXN1bHQuIEnigJl2ZSBhbHNvIHJlZm9ybWF0dGVkIGEgbmV3IHNkY2FyZCwgdGFy4oCZ
-ZCB1cCBhbGwgdGhlCmRhdGEgb24gdGhlIG9sZCBjYXJkLCBhbmQgdHJhbnNmZXJyZWQgdG8gdGhl
-IG5ldyBvbmUsIGFuZCBhbGwgaXMgZmluZS4KT25lIG90aGVyIHNlcGFyYXRlIGlzc3VlLCBzaG91
-bGQgdGhlCi9zeXMvZnMvZjJmcy9tbWNibGtYcFkvbGlmZXRpbWVfd3JpdGVfa2J5dGVzIHdvcmsg
-aW4gNC4xND8gTWluZSBkb2VzbuKAmXQsCmJ1dCBJIGhhdmUgc2VlbiBpdCB3b3JrIGluIFVidW50
-dSAxOC40IHdpdGggNC4xNSBrZXJuZWwuIE9uIHJlYm9vdCB2YWx1ZXMKcmV0dXJuIHRvIDAuCgpI
-b3BlIHRoaXMgaGVscHMKSm9obgoKT24gTW9uLCAxOCBGZWIgMjAxOSBhdCAwMTozMCwgPGJ1Z3pp
-bGxhLWRhZW1vbkBidWd6aWxsYS5rZXJuZWwub3JnPiB3cm90ZToKCj4gaHR0cHM6Ly9idWd6aWxs
-YS5rZXJuZWwub3JnL3Nob3dfYnVnLmNnaT9pZD0yMDI0OTUKPgo+IC0tLSBDb21tZW50ICMzIGZy
-b20gQ2hhbyBZdSAoY2hhb0BrZXJuZWwub3JnKSAtLS0KPiAoSW4gcmVwbHkgdG8gSldhbGtlciBm
-cm9tIGNvbW1lbnQgIzIpCj4gPiBIaSBDaGFvLAo+ID4KPiA+IFRoZSBrZXJuYWwgY29kZSB3YXMg
-dGFrZW4gZnJvbSB0aGUgcmFzcGJlcnJ5IHBpIGdpdCByZXBvLCBhbmQgdGhlbiB0aGUKPiA+IGlu
-Y3JlbWVudGFsIHBhdGNoZXMgYXBwbGllZC4KPgo+IFdoYXQgcGF0Y2hlcyBkbyB5b3UgYXBwbGll
-ZD8gc29tZSBmaXhpbmcgcGF0Y2hlcz8KPgo+ID4KPiA+IFllcywgZnNjayBoYXMgYmVlbiBhcHBs
-aWVkLiBQbGVhc2Ugc2VlIGJlbG93IHRoZSBvdXRwdXQgb2YgdGhlIGJvdGgKPiB2b2x1bWVzLgo+
-ID4KPiA+IFBsZWFzZSBsZXQgbWUga25vdyBpZiB5b3UgcmVxdWlyZSBhbnkgbW9yZSBpbmZvLgo+
-Cj4gLi4uCj4KPiA+IFtGU0NLXSBVbnJlYWNoYWJsZSBuYXQgZW50cmllcyAgICAgICAgICAgICAg
-ICAgICAgICAgIFtPay4uXSBbMHgwXQo+ID4gW0ZTQ0tdIFNJVCB2YWxpZCBibG9jayBiaXRtYXAg
-Y2hlY2tpbmcgICAgICAgICAgICAgICAgW09rLi5dCj4gPiBbRlNDS10gSGFyZCBsaW5rIGNoZWNr
-aW5nIGZvciByZWd1bGFyIGZpbGUgICAgICAgICAgICBbT2suLl0gWzB4MV0KPiA+IFtGU0NLXSB2
-YWxpZF9ibG9ja19jb3VudCBtYXRjaGluZyB3aXRoIENQICAgICAgICAgICAgIFtPay4uXSBbMHg4
-N2EwXQo+ID4gW0ZTQ0tdIHZhbGlkX25vZGVfY291bnQgbWF0Y2luZyB3aXRoIENQIChkZSBsb29r
-dXApICAgW09rLi5dIFsweDEwN2JdCj4gPiBbRlNDS10gdmFsaWRfbm9kZV9jb3VudCBtYXRjaW5n
-IHdpdGggQ1AgKG5hdCBsb29rdXApICBbT2suLl0gWzB4MTA3Yl0KPiA+IFtGU0NLXSB2YWxpZF9p
-bm9kZV9jb3VudCBtYXRjaGVkIHdpdGggQ1AgICAgICAgICAgICAgIFtPay4uXSBbMHgxMDczXQo+
-ID4gW0ZTQ0tdIGZyZWUgc2VnbWVudF9jb3VudCBtYXRjaGVkIHdpdGggQ1AgICAgICAgICAgICAg
-W09rLi5dIFsweDI5Nl0KPiA+IFtGU0NLXSBuZXh0IGJsb2NrIG9mZnNldCBpcyBmcmVlICAgICAg
-ICAgICAgICAgICAgICAgIFtPay4uXQo+ID4gW0ZTQ0tdIGZpeGluZyBTSVQgdHlwZXMKPiA+IFtG
-U0NLXSBvdGhlciBjb3JydXB0ZWQgYnVncyAgICAgICAgICAgICAgICAgICAgICAgICAgIFtPay4u
-XQo+Cj4gSSBkaWRuJ3Qgc2VlIGFueSBjb3JydXB0aW9uIHRoZXJlLCBkb2VzIHRoaXMgaW1hZ2Ug
-c3RpbGwgcGFuaWMgeW91ciBrZXJuZWw/Cj4KPiAtLQo+IFlvdSBhcmUgcmVjZWl2aW5nIHRoaXMg
-bWFpbCBiZWNhdXNlOgo+IFlvdSByZXBvcnRlZCB0aGUgYnVnLgoKLS0gCllvdSBhcmUgcmVjZWl2
-aW5nIHRoaXMgbWFpbCBiZWNhdXNlOgpZb3UgYXJlIHdhdGNoaW5nIHRoZSBhc3NpZ25lZSBvZiB0
-aGUgYnVnLgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-TGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3Vy
-Y2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8v
-bGludXgtZjJmcy1kZXZlbAo=
+On Sat, Feb 16, 2019 at 06:57:45PM -0700, Andreas Dilger wrote:
+> While it may be a bit of a stretch to call this "forensic evidence", making
+
+We do forensic analysis of corrupt filesystems looking for evidence
+of what went wrong, not just looking for evidence of what happened
+on systems that have been broken into.
+
+> it hard to change from except via total root compromise by a skilled hacker
+> is very useful.
+
+*nod*.
+
+> If this were to go in (which I'm not in favour of), then there would need to
+> be a CONFIG and/or runtime knob to turn it off (or better to only turn it on),
+> similar to how FIPS and other security options can only go in one direction.
+
+The problem here is that "inode birth time" is being conflated with
+"user document creation time". These two things are very different.
+
+i.e. One is filesystem internal information and is not related to
+when the original copy of the data in the file was created, the
+other is user specified metadata that is related to the file data
+contents and needs to travel with the data, not the filesystem.
+
+IMO, trying to make one on-disk field hold two different types of
+information defeats one or the other purpose, and nobody knows which
+one the field stores for any given file.
+
+I'd suggest that "authored date" should be a generic system xattr so
+most filesystems support it, not just those that have a birth time
+field on disk. Sure, modify it through utimesat() and expose it
+through statx() (as authored time, not birth time), but store it a
+system xattr rather than an internal filesystem metadata field that
+requires was never intended to be user modifiable.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
