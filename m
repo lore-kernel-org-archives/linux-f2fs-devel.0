@@ -1,61 +1,38 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: [RFC PATCH 0/6] Allow setting file birth time with utimensat()
-Date: Tue, 19 Feb 2019 09:18:20 +1100
-Message-ID: <20190218221820.GF14116@dastard>
-References: <cover.1550136164.git.osandov@fb.com>
- <20190214220626.GV14116@dastard>
- <20190214231429.GE9819@vader>
- <20190215001657.GY14116@dastard>
- <20190215065947.GG9819@vader>
- <72A04438-5991-4A60-8AAB-021A41DE6711@dilger.ca>
+From: Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH] f2fs: silence VM_WARN_ON_ONCE in mempool_alloc
+Date: Tue, 19 Feb 2019 10:31:52 +0800
+Message-ID: <20190219023152.37863-1-gaoxiang25@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-btrfs-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <72A04438-5991-4A60-8AAB-021A41DE6711@dilger.ca>
-Sender: linux-btrfs-owner@vger.kernel.org
-To: Andreas Dilger <adilger@dilger.ca>
-Cc: Omar Sandoval <osandov@osandov.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, kernel-team@fb.com, Linux API <linux-api@vger.kernel.org>, linux-btrfs <linux-btrfs@vger.kernel.org>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Steve French <sfrench@samba.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, miaoxie@huawei.com, Gao Xiang <gaoxiang25@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Sat, Feb 16, 2019 at 06:57:45PM -0700, Andreas Dilger wrote:
-> While it may be a bit of a stretch to call this "forensic evidence", making
+Note that __GFP_ZERO is not supported for mempool_alloc,
+which also documented in the mempool_alloc comments.
 
-We do forensic analysis of corrupt filesystems looking for evidence
-of what went wrong, not just looking for evidence of what happened
-on systems that have been broken into.
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+ fs/f2fs/data.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> it hard to change from except via total root compromise by a skilled hacker
-> is very useful.
-
-*nod*.
-
-> If this were to go in (which I'm not in favour of), then there would need to
-> be a CONFIG and/or runtime knob to turn it off (or better to only turn it on),
-> similar to how FIPS and other security options can only go in one direction.
-
-The problem here is that "inode birth time" is being conflated with
-"user document creation time". These two things are very different.
-
-i.e. One is filesystem internal information and is not related to
-when the original copy of the data in the file was created, the
-other is user specified metadata that is related to the file data
-contents and needs to travel with the data, not the filesystem.
-
-IMO, trying to make one on-disk field hold two different types of
-information defeats one or the other purpose, and nobody knows which
-one the field stores for any given file.
-
-I'd suggest that "authored date" should be a generic system xattr so
-most filesystems support it, not just those that have a birth time
-field on disk. Sure, modify it through utimesat() and expose it
-through statx() (as authored time, not birth time), but store it a
-system xattr rather than an internal filesystem metadata field that
-requires was never intended to be user modifiable.
-
-Cheers,
-
-Dave.
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index f91d8630c9a2..83c14b31aaba 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -299,9 +299,10 @@ static inline void __submit_bio(struct f2fs_sb_info *sbi,
+ 		for (; start < F2FS_IO_SIZE(sbi); start++) {
+ 			struct page *page =
+ 				mempool_alloc(sbi->write_io_dummy,
+-					GFP_NOIO | __GFP_ZERO | __GFP_NOFAIL);
++					      GFP_NOIO | __GFP_NOFAIL);
+ 			f2fs_bug_on(sbi, !page);
+ 
++			zero_user_segment(page, 0, PAGE_SIZE);
+ 			SetPagePrivate(page);
+ 			set_page_private(page, (unsigned long)DUMMY_WRITTEN_PAGE);
+ 			lock_page(page);
 -- 
-Dave Chinner
-david@fromorbit.com
+2.14.4
