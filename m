@@ -1,21 +1,21 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4/4] f2fs_io: add gc_urgent
-Date: Wed, 20 Feb 2019 09:07:45 -0800
-Message-ID: <20190220170745.7328-4-jaegeuk@kernel.org>
+Subject: [PATCH 3/4] f2fs_io: add fiemap
+Date: Wed, 20 Feb 2019 09:07:44 -0800
+Message-ID: <20190220170745.7328-3-jaegeuk@kernel.org>
 References: <20190220170745.7328-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1gwVLh-0006kP-9Y
+ (envelope-from <jaegeuk@kernel.org>) id 1gwVLh-0000cj-EE
  for linux-f2fs-devel@lists.sourceforge.net; Wed, 20 Feb 2019 17:07:57 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gwVLf-00380G-O0
+ id 1gwVLg-003Swq-0f
  for linux-f2fs-devel@lists.sourceforge.net; Wed, 20 Feb 2019 17:07:57 +0000
 In-Reply-To: <20190220170745.7328-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
@@ -28,68 +28,101 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@google.com>
 
-e.g.,
-f2fs_io gc_urgent dm-4 [start/end/run] [time in sec]
+From: Jaegeuk Kim <jaegeuk@google.com>
 
-This controls sysfs/gc_urgent to run f2fs_gc urgently.
+f2fs_io fiemap [offset in 4kb] [count] [file_path]
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Change-Id: Iee9e8b742ada6a12a9f761b3a6de8d82a60e1b59
+Signed-off-by: Jaegeuk Kim <jaegeuk@google.com>
 ---
- tools/f2fs_io/f2fs_io.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ tools/f2fs_io/f2fs_io.c | 61 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
 
 diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
-index 70fde6e..cb28ff8 100644
+index d09f732..70fde6e 100644
 --- a/tools/f2fs_io/f2fs_io.c
 +++ b/tools/f2fs_io/f2fs_io.c
-@@ -359,6 +359,40 @@ static void do_fiemap(int argc, char **argv, const struct cmd_desc *cmd)
+@@ -9,6 +9,15 @@
+ #ifndef _GNU_SOURCE
+ #define _GNU_SOURCE
+ #endif
++#ifndef _LARGEFILE_SOURCE
++#define _LARGEFILE_SOURCE
++#endif
++#ifndef _LARGEFILE64_SOURCE
++#define _LARGEFILE64_SOURCE
++#endif
++#ifndef O_LARGEFILE
++#define O_LARGEFILE 0
++#endif
+ 
+ #include <stdio.h>
+ #include <fcntl.h>
+@@ -299,6 +308,57 @@ static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
  	exit(0);
  }
  
-+#define gc_urgent_desc "start/end/run gc_urgent for given time period"
-+#define gc_urgent_help					\
-+"f2fs_io gc_urgent $dev [start/end/run] [time in sec]\n\n"\
-+" - f2fs_io gc_urgent sda21 start\n"		\
-+" - f2fs_io gc_urgent sda21 end\n"		\
-+" - f2fs_io gc_urgent sda21 run 10\n"		\
++struct file_ext {
++	__u32 f_pos;
++	__u32 start_blk;
++	__u32 end_blk;
++	__u32 blk_count;
++};
 +
-+static void do_gc_urgent(int argc, char **argv, const struct cmd_desc *cmd)
++#ifndef FIBMAP
++#define FIBMAP          _IO(0x00, 1)    /* bmap access */
++#endif
++
++#define fiemap_desc "get block address in file"
++#define fiemap_help					\
++"f2fs_io fiemap [offset in 4kb] [count] [file_path]\n\n"\
++
++static void do_fiemap(int argc, char **argv, const struct cmd_desc *cmd)
 +{
-+	char command[255];
++	loff_t offset;
++	u32 blknum;
++	unsigned count, i;
++	int fd;
 +
-+	if (argc == 3 && !strcmp(argv[2], "start")) {
-+		printf("gc_urgent: start on %s\n", argv[1]);
-+		sprintf(command, "echo %d > %s/%s/gc_urgent", 1, "/sys/fs/f2fs/", argv[1]);
-+		system(command);
-+	} else if (argc == 3 && !strcmp(argv[2], "end")) {
-+		printf("gc_urgent: end on %s\n", argv[1]);
-+		sprintf(command, "echo %d > %s/%s/gc_urgent", 0, "/sys/fs/f2fs/", argv[1]);
-+		system(command);
-+	} else if (argc == 4 && !strcmp(argv[2], "run")) {
-+		printf("gc_urgent: start on %s for %d secs\n", argv[1], atoi(argv[3]));
-+		sprintf(command, "echo %d > %s/%s/gc_urgent", 1, "/sys/fs/f2fs/", argv[1]);
-+		system(command);
-+		sleep(atoi(argv[3]));
-+		printf("gc_urgent: end on %s for %d secs\n", argv[1], atoi(argv[3]));
-+		sprintf(command, "echo %d > %s/%s/gc_urgent", 0, "/sys/fs/f2fs/", argv[1]);
-+		system(command);
-+	} else {
++	if (argc != 4) {
 +		fputs("Excess arguments\n\n", stderr);
 +		fputs(cmd->cmd_help, stderr);
 +		exit(1);
 +	}
++
++	offset = atoi(argv[1]);
++	count = atoi(argv[2]);
++
++	fd = open(argv[3], O_RDONLY | O_LARGEFILE);
++	if (fd == -1) {
++		fputs("Open failed\n\n", stderr);
++		exit(1);
++	}
++
++	printf("Fiemap: offset = %08lx len = %d\n", offset, count);
++	for (i = 0; i < count; i++) {
++		blknum = offset + i;
++
++		if (ioctl(fd, FIBMAP, &blknum) < 0) {
++			fputs("FIBMAP failed\n\n", stderr);
++			exit(1);
++		}
++		printf("%u ", blknum);
++	}
++	printf("\n");
++	exit(0);
 +}
 +
  #define CMD_HIDDEN 	0x0001
  #define CMD(name) { #name, do_##name, name##_desc, name##_help, 0 }
  #define _CMD(name) { #name, do_##name, NULL, NULL, CMD_HIDDEN }
-@@ -371,6 +405,7 @@ const struct cmd_desc cmd_list[] = {
+@@ -310,6 +370,7 @@ const struct cmd_desc cmd_list[] = {
+ 	CMD(pinfile),
  	CMD(write),
  	CMD(read),
- 	CMD(fiemap),
-+	CMD(gc_urgent),
++	CMD(fiemap),
  	{ NULL, NULL, NULL, NULL, 0 }
  };
  
