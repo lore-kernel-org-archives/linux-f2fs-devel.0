@@ -1,21 +1,21 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/4] f2fs_io: add fiemap
-Date: Wed, 20 Feb 2019 09:07:44 -0800
-Message-ID: <20190220170745.7328-3-jaegeuk@kernel.org>
+Subject: [PATCH 2/4] f2fs_io: add read
+Date: Wed, 20 Feb 2019 09:07:43 -0800
+Message-ID: <20190220170745.7328-2-jaegeuk@kernel.org>
 References: <20190220170745.7328-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1gwVLh-0000cj-EE
+ (envelope-from <jaegeuk@kernel.org>) id 1gwVLh-000291-J2
  for linux-f2fs-devel@lists.sourceforge.net; Wed, 20 Feb 2019 17:07:57 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gwVLg-003Swq-0f
+ id 1gwVLf-003808-TZ
  for linux-f2fs-devel@lists.sourceforge.net; Wed, 20 Feb 2019 17:07:57 +0000
 In-Reply-To: <20190220170745.7328-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
@@ -32,84 +32,107 @@ Cc: Jaegeuk Kim <jaegeuk@google.com>
 
 From: Jaegeuk Kim <jaegeuk@google.com>
 
-f2fs_io fiemap [offset in 4kb] [count] [file_path]
+f2fs_io read [chunk_size in 4kb] [offset in chunk_size] [count] [IO] [print_nbytes] [file_path]
 
-Change-Id: Iee9e8b742ada6a12a9f761b3a6de8d82a60e1b59
+Read data in file_path and print nbytes
+IO can be
+  buffered : buffered IO
+  dio      : direct IO
+
+Change-Id: I912adc4f443c3656ad067d29a1e2f581b79d28e6
 Signed-off-by: Jaegeuk Kim <jaegeuk@google.com>
 ---
- tools/f2fs_io/f2fs_io.c | 61 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+ tools/f2fs_io/f2fs_io.c | 86 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
 
 diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
-index d09f732..70fde6e 100644
+index 0515108..d09f732 100644
 --- a/tools/f2fs_io/f2fs_io.c
 +++ b/tools/f2fs_io/f2fs_io.c
-@@ -9,6 +9,15 @@
- #ifndef _GNU_SOURCE
- #define _GNU_SOURCE
- #endif
-+#ifndef _LARGEFILE_SOURCE
-+#define _LARGEFILE_SOURCE
-+#endif
-+#ifndef _LARGEFILE64_SOURCE
-+#define _LARGEFILE64_SOURCE
-+#endif
-+#ifndef O_LARGEFILE
-+#define O_LARGEFILE 0
-+#endif
- 
- #include <stdio.h>
- #include <fcntl.h>
-@@ -299,6 +308,57 @@ static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
+@@ -214,6 +214,91 @@ static void do_write(int argc, char **argv, const struct cmd_desc *cmd)
  	exit(0);
  }
  
-+struct file_ext {
-+	__u32 f_pos;
-+	__u32 start_blk;
-+	__u32 end_blk;
-+	__u32 blk_count;
-+};
++#define read_desc "read data from file"
++#define read_help					\
++"f2fs_io read [chunk_size in 4kb] [offset in chunk_size] [count] [IO] [print_nbytes] [file_path]\n\n"	\
++"Read data in file_path and print nbytes\n"		\
++"IO can be\n"						\
++"  buffered : buffered IO\n"				\
++"  dio      : direct IO\n"				\
 +
-+#ifndef FIBMAP
-+#define FIBMAP          _IO(0x00, 1)    /* bmap access */
-+#endif
-+
-+#define fiemap_desc "get block address in file"
-+#define fiemap_help					\
-+"f2fs_io fiemap [offset in 4kb] [count] [file_path]\n\n"\
-+
-+static void do_fiemap(int argc, char **argv, const struct cmd_desc *cmd)
++static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
 +{
++	u64 buf_size = 0, ret = 0, read_cnt = 0;
 +	loff_t offset;
-+	u32 blknum;
-+	unsigned count, i;
++	char *buf = NULL;
++	char *print_buf = NULL;
++	unsigned bs, count, i, print_bytes;
++	int flags = 0;
 +	int fd;
 +
-+	if (argc != 4) {
++	if (argc != 7) {
 +		fputs("Excess arguments\n\n", stderr);
 +		fputs(cmd->cmd_help, stderr);
 +		exit(1);
 +	}
 +
-+	offset = atoi(argv[1]);
-+	count = atoi(argv[2]);
++	bs = atoi(argv[1]);
++	if (bs > 1024) {
++		fputs("Too big chunk size - limit: 4MB\n\n", stderr);
++		exit(1);
++	}
++	buf_size = bs * 4096;
 +
-+	fd = open(argv[3], O_RDONLY | O_LARGEFILE);
++	offset = atoi(argv[2]) * buf_size;
++
++	buf = aligned_alloc(4096, buf_size);
++	if (!buf) {
++		fputs("Memory alloc failed\n\n", stderr);
++		exit(1);
++	}
++	count = atoi(argv[3]);
++	if (!strcmp(argv[4], "buffered")) {
++		flags |= O_DIRECT;
++	} else if (strcmp(argv[4], "dio")) {
++		fputs("Wrong IO type\n\n", stderr);
++		exit(1);
++	}
++
++	print_bytes = atoi(argv[5]);
++	if (print_bytes > buf_size) {
++		fputs("Print_nbytes should be less then chunk_size in kb\n\n", stderr);
++		exit(1);
++	}
++	print_buf = malloc(print_bytes);
++	if (!print_buf) {
++		fputs("Memory alloc failed\n\n", stderr);
++		exit(1);
++	}
++
++	fd = open(argv[6], O_RDONLY | flags);
 +	if (fd == -1) {
 +		fputs("Open failed\n\n", stderr);
 +		exit(1);
 +	}
 +
-+	printf("Fiemap: offset = %08lx len = %d\n", offset, count);
 +	for (i = 0; i < count; i++) {
-+		blknum = offset + i;
++		ret = pread(fd, buf, buf_size, offset + buf_size * i);
++		if (ret != buf_size)
++			break;
 +
-+		if (ioctl(fd, FIBMAP, &blknum) < 0) {
-+			fputs("FIBMAP failed\n\n", stderr);
-+			exit(1);
-+		}
-+		printf("%u ", blknum);
++		read_cnt += ret;
++		if (i == 0)
++			memcpy(print_buf, buf, print_bytes);
++	}
++	printf("Read %lu bytes and print %d bytes:\n", read_cnt, print_bytes);
++	printf("%08lx : ", offset);
++	for (i = 1; i <= print_bytes; i++) {
++		printf("%02x", print_buf[i - 1]);
++		if (i % 16 == 0)
++			printf("\n%08lx : ", offset + 16 * i);
++		else if (i % 2 == 0)
++			printf(" ");
 +	}
 +	printf("\n");
 +	exit(0);
@@ -118,11 +141,11 @@ index d09f732..70fde6e 100644
  #define CMD_HIDDEN 	0x0001
  #define CMD(name) { #name, do_##name, name##_desc, name##_help, 0 }
  #define _CMD(name) { #name, do_##name, NULL, NULL, CMD_HIDDEN }
-@@ -310,6 +370,7 @@ const struct cmd_desc cmd_list[] = {
+@@ -224,6 +309,7 @@ const struct cmd_desc cmd_list[] = {
+ 	CMD(shutdown),
  	CMD(pinfile),
  	CMD(write),
- 	CMD(read),
-+	CMD(fiemap),
++	CMD(read),
  	{ NULL, NULL, NULL, NULL, 0 }
  };
  
