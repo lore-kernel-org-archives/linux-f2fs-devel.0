@@ -1,149 +1,132 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: don't clear CP_QUOTA_NEED_FSCK_FLAG
-Date: Wed, 20 Feb 2019 15:31:15 +0800
-Message-ID: <7580aa2e-b2eb-a686-a19d-4e82a713944a@huawei.com>
-References: <20190212023343.52215-1-jaegeuk@kernel.org>
- <df77f830-e5dd-5943-d5b0-e21ced3a7df2@huawei.com>
- <20190216045530.GA57019@jaegeuk-macbookpro.roam.corp.google.com>
- <29a4fd24-6340-41df-7199-6e89b70c6341@huawei.com>
- <20190220070855.GA91331@jaegeuk-macbookpro.roam.corp.google.com>
- <c39a995f-9bfd-e68a-7d04-11bd8c0f8e64@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c39a995f-9bfd-e68a-7d04-11bd8c0f8e64@huawei.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Andreas Dilger <adilger@dilger.ca>
+Subject: Re: [RFC PATCH 0/6] Allow setting file birth time with utimensat()
+Date: Tue, 19 Feb 2019 23:47:57 -0800
+Message-ID: <8778DF81-C710-473B-9817-574DE9D7DE9B@dilger.ca>
+References: <cover.1550136164.git.osandov@fb.com>
+ <20190214220626.GV14116@dastard>
+ <6a9dc05a-0445-d0ab-0140-1de4fee7ba9b@gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_10F92983-9723-4CD5-9FC3-52159FA26C5F";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Return-path: <linux-btrfs-owner@vger.kernel.org>
+In-Reply-To: <6a9dc05a-0445-d0ab-0140-1de4fee7ba9b@gmail.com>
+Sender: linux-btrfs-owner@vger.kernel.org
+To: Boaz Harrosh <openosd@gmail.com>
+Cc: Dave Chinner <david@fromorbit.com>, Omar Sandoval <osandov@osandov.com>, linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, kernel-team@fb.com, linux-api@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2019/2/20 15:25, Chao Yu wrote:
-> On 2019/2/20 15:08, Jaegeuk Kim wrote:
->> On 02/18, Chao Yu wrote:
->>> On 2019/2/16 12:55, Jaegeuk Kim wrote:
->>>> On 02/13, Chao Yu wrote:
->>>>> On 2019/2/12 10:33, Jaegeuk Kim wrote:
->>>>>> If we met this once, let fsck.f2fs clear this only.
->>>>>> Note that, this addresses all the subtle fault injection test.
->>>>>>
->>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>> ---
->>>>>>  fs/f2fs/checkpoint.c | 2 --
->>>>>>  1 file changed, 2 deletions(-)
->>>>>>
->>>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->>>>>> index 03fea4efd64b..10a3ada28715 100644
->>>>>> --- a/fs/f2fs/checkpoint.c
->>>>>> +++ b/fs/f2fs/checkpoint.c
->>>>>> @@ -1267,8 +1267,6 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->>>>>>  
->>>>>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
->>>>>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>>>>> -	else
->>>>>> -		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>>>>
->>>>> I didn't get it, previously, if we didn't persist all quota file's data in
->>>>> checkpoint, then we will tag CP_QUOTA_NEED_FSCK_FLAG in CP area, but in current
->>>>> checkpoint, we have persisted all quota file's data, quota files are consistent
->>>>> with all other files in filesystem, why we can't remove this NEED_FSCK flag..?
->>>>
->>>> I said it's subtle. So, I guessed 1) set CP_QUOTA_NEED_FSCK_FLAG, 2) clear
->>>
->>> I know it's subtle... and I agreed we can fix it like this in upstream
->>> first, but in our product, it's not rare that we hit the
->>> QUOTA_SKIP_FLUSH(its value is 4) case, later we may encounter long latency
->>> caused by quota repairing of fsck.
->>>
->>>> SBI_QUOTA_SKIP_FLUSH by checkpoint, 3) clear CP_QUOTA_NEED_FSCK_FLAG by another
->>>> checkpoint?
->>>
->>> But later if QUOTA_NEED_REPAIR is set, we will set QUOTA_NEED_FSCK_FLAG
->>> again, right?
->>>
->>> if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
->>> 	__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>>
->>>
->>> So in order to figure out whether this is caused by out-of-order execution
->>> of below assignments:
->>>
->>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
->>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>> 	else
->>> 		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- clear flag later
->>>
->>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
->>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- set flag first
->>>
->>>
->>> Could you have a try:
->>>
->>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR) ||
->>> 			is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
->>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>> 	else
->>> 		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>
->> What does this mean? I'm in doubt we have a missing case where we clear this
-> 
-> Cpu pipeline / compiler can make code out-of-order execution, which means:
-> 
-> a = 1;
-> b = 2;
-> 
-> may actually be executed as the order of:
-> 
-> b = 2;
-> a = 1;
-> 
-> So I doubt that below two line codes can be executed out-of-order:
-> 
-> else
-> 	__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- clear flag later
-> 
-> if ()
-> 	__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- set flag first
-> 
->> flag, CP_QUOTA_NEED_FSCK_FLAG.
-> 
-> Agreed, I've checked each operation in f2fs_quota_operations yesterday, and
-> didn't find any missing places yet...
 
-Oh, I mean the place where set SBI_QUOTA_NEED_REPAIR, I also doubt we
-missed to set the flag.
+--Apple-Mail=_10F92983-9723-4CD5-9FC3-52159FA26C5F
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
-Thanks,
+On Feb 17, 2019, at 8:35 AM, Boaz Harrosh <openosd@gmail.com> wrote:
+>=20
+> On 15/02/19 00:06, Dave Chinner wrote:
+>> On Thu, Feb 14, 2019 at 02:00:07AM -0800, Omar Sandoval wrote:
+>>> From: Omar Sandoval <osandov@fb.com>
+>>>=20
+>>> Hi,
+>>>=20
+>>> Since statx was added in 4.11, userspace has had an interface for
+>>> reading btime (file creation time), but no way to set it. This RFC =
+patch
+>>> series adds support for changing btime with utimensat(). Patch 1 =
+adds
+>>> the VFS infrastructure, patch 2 adds the support to utimensat() with =
+a
+>>> new flag, and the rest of the patches add filesystem support; I =
+excluded
+>>> CIFS for now because I don't have a CIFS setup to test it on.
+>>>=20
+>>> Updating btime is useful for at least a couple of use cases:
+>>>=20
+> [1]
+>>> - Backup/restore programs (my motivation for this feature is btrfs =
+send)
+>>> - File servers which interoperate with operating systems that allow
+>>>  updating file creation time, including Mac OS [1] and Windows [2]
+>>=20
+>> So you're adding an interface that allows users to change the create
+>> time of files without needing any privileges?
+>>=20
+> [2]
+>> Inode create time is forensic metadata in XFS  - information we use
+>> for sequence of event and inode lifetime analysis during examination
+>> of broken filesystem images and systems that have been broken into.
+>> Just because it's exposed to userspace via statx(), it doesn't mean
+>> that it is information that users should be allowed to change. i.e.
+>> allowing users to be able to change the create time on files makes
+>> it completely useless for the purpose it was added to XFS for...
+>>=20
+> <snap>
+>=20
+> I think the difference in opinion here is that there are two totally
+> different BTIme out in the world. For two somewhat opposite =
+motivations
+> and it seems they both try to be crammed into the same on disk space.
+>=20
+> One - Author creation time
+>  This is a Windows originated creature and later MAC (and all vendors =
+who
+>  make a living by serving cifs (hint see my email address))
+>=20
+>  This is a tag carried globally on the globe denoting the time of the
+>  original creator of the file. copy, download, backup-restore and so
+>  on preserve it from the very first original creation.
+>  This creature is a user oriented information. That needs to be =
+carefully
+>  orchestrated by all parties.
 
-> 
-> Thanks,
-> 
->>
->>>
->>> Thanks,
->>>
->>>>
->>>>>
->>>>> Thanks,
->>>>>
->>>>>>  
->>>>>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
->>>>>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>>>>>
->>>>
->>>> .
->>>>
->>
->> .
->>
-> 
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> .
-> 
+One of the issues with user-supplied "creation time" is that it is =
+vague.
+If Vim (or many other programs) is writing out an existing file, it
+will actually create a new file and rename it over the old file, so even
+though the newly-written file is "created" at write time, the content is
+older.  Unless the creation time is actually stored internal to the file
+itself, rather than as filesystem metadata, it is unlikely to be kept
+across filesystems, between systems, etc.
+
+Conversely, there is already such metadata in existing file formats, =
+e.g.
+.jpg (Exif.Image.DateTime), .png (tEXt Creation Time), .docx (Date =
+Completed),
+etc. that sticks with the file regardless of the underlying storage =
+medium.
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_10F92983-9723-4CD5-9FC3-52159FA26C5F
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAlxtBi0ACgkQcqXauRfM
+H+CEjxAAhbR5dOgpALSr9iorpUu/bTTAIVrYRKPTa05jj9GfzyUyV7lb1dkXbOc9
+8tpQ9+Ib2P/Xe1kDMXO76mmJbEGuzmegxOhLChr4LfweVTGxSjn4ak3MKQhNTaO5
+AyRLMu1alKmkm7DLODd7DV6PidGo2YPVf4bUkyJX03AaaIbfZBVs98i7HdY5e15Z
+4NxUkoyKCyo6G3ac+wTe+IT52ZPnrCXysbhTksGEs+7jLOuIXuOC+x4sMA/T20iZ
+MChP/g1r54yYAqSqC5+uSU/e1t/AkGAkt9alueGuA+h4UmR/mRpmxuBgvi41sV1+
+FT+CdpTiZoTkBOxbgYqYDM+26MOLgZ+lQI5q1+gV/f+4iiB4Lf7ohZ5MhXDzMZ3G
+6NfHDgxlknWklcoQ0iaHBLgFzkXK8VLCoU36HqKjKYlfAr5N3rZsRw9sDTInyhFp
+eGep9enMgdatdStIurbwoLzJXcwox9cRtD4T0Dow20Pkjm3nUp3JOGIadUYbvtJI
+vIwRfHyarTXkrZaRWA3yhaC+5mK2+cXrqGwoeGTFxeQuIoKEjxz7HInRZYmjoGpZ
+KVtl9KSwzV/8x23o46A8/pXxlBzN4NJcjT18I52cbBjprNF5CxhfbbaVJ5omaeOs
+EmC+xbyZbB3Izf1VjsqnwUj2SPcZyTpILgvI5BPKe2O8vA2Q5Hc=
+=P9aX
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_10F92983-9723-4CD5-9FC3-52159FA26C5F--
