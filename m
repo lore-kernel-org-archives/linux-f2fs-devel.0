@@ -1,10 +1,10 @@
 From: Chandan Rajendra <chandan@linux.ibm.com>
 Subject: Re: [RFC PATCH 00/10] Consolidate Post read processing
  code
-Date: Thu, 21 Feb 2019 19:02:03 +0530
-Message-ID: <2420837.hecoV8S9Z6@localhost.localdomain>
+Date: Thu, 21 Feb 2019 18:59:48 +0530
+Message-ID: <2497291.Oz6HVsdQeZ@localhost.localdomain>
 References: <20190218100433.20048-1-chandan@linux.ibm.com>
- <20190220004107.GI12177@gmail.com>
+ <20190219211715.GA12177@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -12,28 +12,27 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.ibm.com>) id 1gwoS8-0007EJ-0s
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Feb 2019 13:31:52 +0000
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
- helo=mx0a-001b2d01.pphosted.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <chandan@linux.ibm.com>) id 1gwoSA-0007Em-K4
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Feb 2019 13:31:54 +0000
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gwoS6-00EM0N-0w
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Feb 2019 13:31:51 +0000
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
- by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
- x1LDUKSn050932
- for <linux-f2fs-devel@lists.sourceforge.net>; Thu, 21 Feb 2019 08:31:41 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
- by mx0b-001b2d01.pphosted.com with ESMTP id 2qsum63ra7-1
+ id 1gwoS8-005VuN-LP
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Feb 2019 13:31:54 +0000
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+ by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
+ x1LDUjls041194
+ for <linux-f2fs-devel@lists.sourceforge.net>; Thu, 21 Feb 2019 08:31:46 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+ by mx0a-001b2d01.pphosted.com with ESMTP id 2qsuv4u4mv-1
  (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>; Thu, 21 Feb 2019 08:31:40 -0500
+ for <linux-f2fs-devel@lists.sourceforge.net>; Thu, 21 Feb 2019 08:31:45 -0500
 Received: from localhost
- by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
+ by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
  Violators will be prosecuted
  for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.ibm.com>;
- Thu, 21 Feb 2019 13:31:39 -0000
-In-Reply-To: <20190220004107.GI12177@gmail.com>
+ Thu, 21 Feb 2019 13:31:40 -0000
+In-Reply-To: <20190219211715.GA12177@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -46,19 +45,69 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Eric Biggers <ebiggers@kernel.org>
 Cc: tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, adilger.kernel@dilger.ca, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
 
-On Wednesday, February 20, 2019 6:11:07 AM IST Eric Biggers wrote:
+On Wednesday, February 20, 2019 2:47:16 AM IST Eric Biggers wrote:
+> Hi Chandan,
+> 
 > On Mon, Feb 18, 2019 at 03:34:23PM +0530, Chandan Rajendra wrote:
-> > Based on the reviews provided for this patchset, I
+> > This patchset moves the "post read processing" code into a file of its
+> > own and gets the generic do_mpage_readpge() to make use of the
+> > functionality provided. With these changes in place, the patchset
+> > changes Ext4 to use mpage_readpage[s] instead of its own custom
+> > ext4_readpages() function. This is done to reduce duplicity of code
+> > across filesystems. Based on the reviews provided for this patchset, I
 > > will change F2FS to use mpage_readpage[s] and post the next version of
 > > this patchset to linux-fsdevel mailing list.
+> > 
+> > The patchset also includes patches from previous postings i.e.
+> > patches to replace per-filesystem encryption config options with a
+> > single config option that affects all filesystems making use of
+> > fscrypt code.
+> > 
+> > Chandan Rajendra (10):
+> >   ext4: use IS_ENCRYPTED() to check encryption status
+> >   f2fs: use IS_ENCRYPTED() to check encryption status
+> >   fscrypt: remove filesystem specific build config option
+> >   Consolidate "post read processing" into a new file
+> >   fsverity: Add call back to decide if verity check has to be performed
+> >   Introduce REQ_POST_READ_PROC bio flag
+> >   fsverity: Add call back to determine readpage limit
+> >   fsverity: Add call back to verify file holes
+> >   fs/mpage.c: Integrate post read processing
+> >   ext4: Wire up ext4_readpage[s] to use mpage_readpage[s]
+> > 
 > 
-> Is that really possible?  F2FS has other functionality in its ->readpages(),
-> such as support for filesystems that use multiple block devices.
+> Thanks for working on this!  This will also make it much easier to support
+> block_size != PAGE_SIZE in ext4 encryption, right?  I think this is the best
+> path forward, but I'll take a closer look at your new patches.
+> 
+> FYI regarding practical matters, merging fs-verity was delayed due to
+> disagreement about the API.  See https://lwn.net/Articles/775872/.
+> 
+> We don't have to wait for fs-verity for your initial fscrypt changes, though:
+> 
+> 	ext4: use IS_ENCRYPTED() to check encryption status
+> 	f2fs: use IS_ENCRYPTED() to check encryption status
+> 	fscrypt: remove filesystem specific build config option
+> 
+> So, a couple weeks ago Ted and I already queued those three patches in
+> fscrypt.git (https://git.kernel.org/pub/scm/linux/kernel/git/tytso/fscrypt.git
+> branch "master", though we plan to change the repo soon) for the upcoming merge
+> window, based on upstream rather than fs-verity.  Are you fine with that?
+
+Yes, the changes looks good. Thanks for queueing them up.
+
+> 
+> I also suggest adding linux-fsdevel to the Cc given the fs/*.c changes.
+
+Yes, I will do that.
+
+> 
+> Thanks!
+> 
+> - Eric
+> 
 > 
 
-Hmm. I didn't know that. Thanks for pointing that out. I will read up that
-code and if it isn't really possible to get F2FS to use mpage_readpage[s](),
-then I would limit the patchset to Ext4.
 
 -- 
 chandan
