@@ -1,40 +1,40 @@
 From: Chandan Rajendra <chandan@linux.ibm.com>
-Subject: Re: [RFC PATCH 05/10] fsverity: Add call back to decide
- if verity check has to be performed
-Date: Thu, 21 Feb 2019 18:24:52 +0530
-Message-ID: <3323472.mdDe8xBITV@localhost.localdomain>
+Subject: Re: [RFC PATCH 06/10] Introduce REQ_POST_READ_PROC bio
+ flag
+Date: Thu, 21 Feb 2019 18:33:24 +0530
+Message-ID: <8936377.epoSEyofgi@localhost.localdomain>
 References: <20190218100433.20048-1-chandan@linux.ibm.com>
- <20190218100433.20048-6-chandan@linux.ibm.com>
- <20190219232649.GF12177@gmail.com>
+ <20190218100433.20048-7-chandan@linux.ibm.com>
+ <20190220002059.GG12177@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.ibm.com>) id 1gwoSO-0007GM-Kn
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Feb 2019 13:32:08 +0000
+ (envelope-from <chandan@linux.ibm.com>) id 1gwoSo-0002bb-2n
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Feb 2019 13:32:34 +0000
 Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
  helo=mx0a-001b2d01.pphosted.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gwoSN-005B7n-4A
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Feb 2019 13:32:08 +0000
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
- by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
- x1LDTw7V035844
- for <linux-f2fs-devel@lists.sourceforge.net>; Thu, 21 Feb 2019 08:32:01 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
- by mx0a-001b2d01.pphosted.com with ESMTP id 2qsv93hyd5-1
+ id 1gwoSm-005Vxa-HU
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Feb 2019 13:32:34 +0000
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+ by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
+ x1LDTuuq077684
+ for <linux-f2fs-devel@lists.sourceforge.net>; Thu, 21 Feb 2019 08:32:26 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+ by mx0b-001b2d01.pphosted.com with ESMTP id 2qsvansu1d-1
  (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>; Thu, 21 Feb 2019 08:32:00 -0500
+ for <linux-f2fs-devel@lists.sourceforge.net>; Thu, 21 Feb 2019 08:32:26 -0500
 Received: from localhost
- by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
+ by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
  Violators will be prosecuted
  for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.ibm.com>;
- Thu, 21 Feb 2019 13:31:59 -0000
-In-Reply-To: <20190219232649.GF12177@gmail.com>
+ Thu, 21 Feb 2019 13:32:24 -0000
+In-Reply-To: <20190220002059.GG12177@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -47,104 +47,104 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Eric Biggers <ebiggers@kernel.org>
 Cc: tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, adilger.kernel@dilger.ca, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
 
-On Wednesday, February 20, 2019 4:56:49 AM IST Eric Biggers wrote:
+On Wednesday, February 20, 2019 5:51:00 AM IST Eric Biggers wrote:
 > Hi Chandan,
 > 
-> On Mon, Feb 18, 2019 at 03:34:28PM +0530, Chandan Rajendra wrote:
-> > Ext4 and F2FS store verity metadata in data extents (beyond
-> > inode->i_size) associated with a file. But other filesystems might
-> > choose alternative means to store verity metadata. Hence this commit
-> > adds a callback function pointer to 'struct fsverity_operations' to help
-> > in deciding if verity operation needs to performed against a page-cache
-> > page holding file data.
+> On Mon, Feb 18, 2019 at 03:34:29PM +0530, Chandan Rajendra wrote:
+> > Ext4 and F2FS currently use a non-NULL value stored at bio->bi_private
+> > to determine if the contents of the bio need to be "post processed"
+> > i.e. whether its contents need to be decrypted and/or verified. For
+> > block size < page size scenario, bio->bi_private would hold a pointer to
+> > buffer_head. Hence, this commit adds the new flag REQ_POST_READ_PROC to
+> > be able to decisively check for post process requirement for a bio.
 > > 
 > > Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
 > > ---
-> >  fs/ext4/super.c          | 9 +++++++++
-> >  fs/post_read_process.c   | 5 +++--
-> >  include/linux/fsverity.h | 1 +
-> >  3 files changed, 13 insertions(+), 2 deletions(-)
+> >  fs/ext4/readpage.c        | 11 +++++++++--
+> >  fs/post_read_process.c    |  2 +-
+> >  include/linux/blk_types.h |  2 ++
+> >  3 files changed, 12 insertions(+), 3 deletions(-)
 > > 
-> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> > index 9314dddfbf34..2d7781ab6824 100644
-> > --- a/fs/ext4/super.c
-> > +++ b/fs/ext4/super.c
-> > @@ -1428,10 +1428,19 @@ static struct page *ext4_read_verity_metadata_page(struct inode *inode,
-> >  	return read_mapping_page(inode->i_mapping, index, NULL);
-> >  }
+> > diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+> > index 8943fc41fd33..c7dbab35deaa 100644
+> > --- a/fs/ext4/readpage.c
+> > +++ b/fs/ext4/readpage.c
+> > @@ -245,6 +245,7 @@ int ext4_mpage_readpages(struct address_space *mapping,
+> >  		}
+> >  		if (bio == NULL) {
+> >  			struct bio_post_read_ctx *ctx;
+> > +			unsigned int op_flags = 0;
 > >  
-> > +static bool ext4_verity_required(struct inode *inode, pgoff_t index)
-> > +{
-> > +	if (index < ((i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT))
-> > +		return true;
-> > +	else
-> > +		return false;
-> > +}
-> 
-> This can be simplified to:
-> 
-> 	return index < (i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT;
->
-
-You are right.
-
+> >  			bio = bio_alloc(GFP_KERNEL,
+> >  				min_t(int, nr_pages, BIO_MAX_PAGES));
+> > @@ -259,8 +260,14 @@ int ext4_mpage_readpages(struct address_space *mapping,
+> >  			bio->bi_iter.bi_sector = blocks[0] << (blkbits - 9);
+> >  			bio->bi_end_io = mpage_end_io;
+> >  			bio->bi_private = ctx;
+> > -			bio_set_op_attrs(bio, REQ_OP_READ,
+> > -						is_readahead ? REQ_RAHEAD : 0);
 > > +
-> >  static const struct fsverity_operations ext4_verityops = {
-> >  	.set_verity		= ext4_set_verity,
-> >  	.get_metadata_end	= ext4_get_verity_metadata_end,
-> >  	.read_metadata_page	= ext4_read_verity_metadata_page,
-> > +	.verity_required	= ext4_verity_required,
-> >  };
-> >  #endif /* CONFIG_FS_VERITY */
-> 
-> Doesn't f2fs need this too?  This patch only changes ext4.
-
-Yes, My plan was to get review comments about the current approach and then
-make corresponding changes in F2FS.
-
-> 
+> > +			if (is_readahead)
+> > +				op_flags |= REQ_RAHEAD;
+> > +
+> > +			if (ctx)
+> > +				op_flags |= REQ_POST_READ_PROC;
+> > +
+> > +			bio_set_op_attrs(bio, REQ_OP_READ, op_flags);
+> >  		}
 > >  
+> >  		length = first_hole << blkbits;
 > > diff --git a/fs/post_read_process.c b/fs/post_read_process.c
-> > index 9720eeff0160..1f8663d70247 100644
+> > index 1f8663d70247..66c1c6e57e70 100644
 > > --- a/fs/post_read_process.c
 > > +++ b/fs/post_read_process.c
-> > @@ -79,8 +79,9 @@ struct bio_post_read_ctx *get_bio_post_read_ctx(struct inode *inode,
-> >  	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode))
-> >  		post_read_steps |= 1 << STEP_DECRYPT;
-> >  #ifdef CONFIG_FS_VERITY
-> > -	if (inode->i_verity_info != NULL &&
-> > -		(index < ((i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT)))
-> > +	if (inode->i_verity_info != NULL
-> > +		&& inode->i_sb->s_vop->verity_required
-> > +		&& inode->i_sb->s_vop->verity_required(inode, index))
-> >  		post_read_steps |= 1 << STEP_VERITY;
-> 
-> If ->verity_required is NULL, shouldn't that be equivalent to
-> ->verity_required() returning true?
->
-
-Yes, you are right about that. I will fix it in the next iteration of the
-patchset.
-
-> >  #endif
-> >  	if (post_read_steps) {
-> > diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-> > index 7c33b42abf1b..b83712d6c79a 100644
-> > --- a/include/linux/fsverity.h
-> > +++ b/include/linux/fsverity.h
-> > @@ -18,6 +18,7 @@ struct fsverity_operations {
-> >  	int (*set_verity)(struct inode *inode, loff_t data_i_size);
-> >  	int (*get_metadata_end)(struct inode *inode, loff_t *metadata_end_ret);
-> >  	struct page *(*read_metadata_page)(struct inode *inode, pgoff_t index);
-> > +	bool (*verity_required)(struct inode *inode, pgoff_t index);
-> >  };
+> > @@ -104,7 +104,7 @@ void put_bio_post_read_ctx(struct bio_post_read_ctx *ctx)
 > >  
-> >  #ifdef CONFIG_FS_VERITY
+> >  bool bio_post_read_required(struct bio *bio)
+> >  {
+> > -	return bio->bi_private && !bio->bi_status;
+> > +	return bio->bi_opf & REQ_POST_READ_PROC;
+> >  }
+> >  
+> >  static int __init bio_init_post_read_processing(void)
+> > diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+> > index 5c7e7f859a24..6904945c8c40 100644
+> > --- a/include/linux/blk_types.h
+> > +++ b/include/linux/blk_types.h
+> > @@ -320,6 +320,7 @@ enum req_flag_bits {
+> >  	__REQ_RAHEAD,		/* read ahead, can fail anytime */
+> >  	__REQ_BACKGROUND,	/* background IO */
+> >  	__REQ_NOWAIT,           /* Don't wait if request will block */
+> > +	__REQ_POST_READ_PROC,
+> >  
+> >  	/* command specific flags for REQ_OP_WRITE_ZEROES: */
+> >  	__REQ_NOUNMAP,		/* do not free blocks when zeroing */
+> > @@ -346,6 +347,7 @@ enum req_flag_bits {
+> >  #define REQ_RAHEAD		(1ULL << __REQ_RAHEAD)
+> >  #define REQ_BACKGROUND		(1ULL << __REQ_BACKGROUND)
+> >  #define REQ_NOWAIT		(1ULL << __REQ_NOWAIT)
+> > +#define REQ_POST_READ_PROC	(1ULL << __REQ_POST_READ_PROC)
+> >  #define REQ_NOUNMAP		(1ULL << __REQ_NOUNMAP)
+> >  #define REQ_HIPRI		(1ULL << __REQ_HIPRI)
+> >  
 > 
-> - Eric
+> I don't think this is an appropriate use of a request flag, as request flags are
+> meant for the block layer.
 > 
-> 
+> Also doesn't the bio still need a pointer to the bio_post_read_ctx anyway?  So I
+> don't see how this would solve the problem, if ->bi_private is already used.
 
+I had glanced across block_read_full_page() function which implements reading
+non-contiguous blocks mapped by the page in block size < page size
+scenario. Here bio->bi_private would point to the buffer head that represents
+the block on which read I/O was performed. In such a case,
+bio_post_read_required() would always return true. Hence I decided to add this
+request flag.
+
+Now, I believe we can actually save away the ctx pointer in bh->b_private
+member and later decide on whether the buffer head requires post processing
+based on bh->bi_private's non-NULL value. I will have to read up the code more
+thoroughly to confirm this.
 
 -- 
 chandan
