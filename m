@@ -1,81 +1,58 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 202637] New: Chmod'ed directory permission is not
- persisted with fsync
-Date: Thu, 21 Feb 2019 03:05:57 +0000
-Message-ID: <bug-202637-202145@https.bugzilla.kernel.org/>
+From: Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH] f2fs: no need to take page lock in readdir
+Date: Thu, 21 Feb 2019 12:57:35 +0800
+Message-ID: <20190221045735.45419-1-gaoxiang25@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1gwegc-000208-HF
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Feb 2019 03:06:10 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gwega-00DJw7-09
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Feb 2019 03:06:09 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 4DDE12EDE9
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 21 Feb 2019 03:05:57 +0000 (UTC)
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-aHR0cHM6Ly9idWd6aWxsYS5rZXJuZWwub3JnL3Nob3dfYnVnLmNnaT9pZD0yMDI2MzcKCiAgICAg
-ICAgICAgIEJ1ZyBJRDogMjAyNjM3CiAgICAgICAgICAgU3VtbWFyeTogQ2htb2QnZWQgZGlyZWN0
-b3J5IHBlcm1pc3Npb24gaXMgbm90IHBlcnNpc3RlZCB3aXRoCiAgICAgICAgICAgICAgICAgICAg
-ZnN5bmMKICAgICAgICAgICBQcm9kdWN0OiBGaWxlIFN5c3RlbQogICAgICAgICAgIFZlcnNpb246
-IDIuNQogICAgS2VybmVsIFZlcnNpb246IHY1LjAuMC1yYzcgKGxhdGVzdCkKICAgICAgICAgIEhh
-cmR3YXJlOiBBbGwKICAgICAgICAgICAgICAgIE9TOiBMaW51eAogICAgICAgICAgICAgIFRyZWU6
-IE1haW5saW5lCiAgICAgICAgICAgIFN0YXR1czogTkVXCiAgICAgICAgICBTZXZlcml0eTogbm9y
-bWFsCiAgICAgICAgICBQcmlvcml0eTogUDEKICAgICAgICAgQ29tcG9uZW50OiBmMmZzCiAgICAg
-ICAgICBBc3NpZ25lZTogZmlsZXN5c3RlbV9mMmZzQGtlcm5lbC1idWdzLmtlcm5lbC5vcmcKICAg
-ICAgICAgIFJlcG9ydGVyOiBzZXVsYmFlQGdhdGVjaC5lZHUKICAgICAgICBSZWdyZXNzaW9uOiBO
-bwoKQ3JlYXRlZCBhdHRhY2htZW50IDI4MTI1MQogIC0tPiBodHRwczovL2J1Z3ppbGxhLmtlcm5l
-bC5vcmcvYXR0YWNobWVudC5jZ2k/aWQ9MjgxMjUxJmFjdGlvbj1lZGl0ClByb29mIG9mIENvbmNl
-cHQKCltLZXJuZWwgdmVyc2lvbl0KVGhpcyBidWcgY2FuIGJlIHJlcHJvZHVjZWQgb24Ka2VybmVs
-IDUuMC4wLXJjNy4KCltSZXByb2R1Y2VdICogVXNlIGEgVk0sIHNpbmNlIG91ciBQb0Mgc2ltdWxh
-dGVzIGEgY3Jhc2ggYnkgdHJpZ2dlcmluZyBhIFN5c1JxIQoxLiBEb3dubG9hZCBiYXNlIGltYWdl
-CiQgd2dldCBodHRwczovL2d0czMub3JnL35zZXVsYmFlL2ZzaW1nL2YyZnMtMTAuaW1hZ2UKCjIu
-IE1vdW50IGltYWdlCiQgbWtkaXIgL3RtcC9mMmZzCiQgc3VkbyBtb3VudCAtbyBsb29wIGYyZnMt
-MTAuaW1hZ2UgL3RtcC9mMmZzCgozLiBDb21waWxlIGFuZCBydW4gUG9DCiQgZ2NjIHBvYy5jIC1v
-IHBvYwokIHN1ZG8gLi9wb2MgL3RtcC9mMmZzCihTeXN0ZW0gcmVib290cykKCltDaGVja10KMS4g
-UmUtbW91bnQgdGhlIGNyYXNoZWQgaW1hZ2UKJCBta2RpciAvdG1wL2YyZnMKJCBzdWRvIG1vdW50
-IC1vIGxvb3AgZjJmcy0xMC5pbWFnZSAvdG1wL2YyZnMKCjIuIENoZWNrIGluY29uc2lzdGVuY3kK
-JCBzdGF0IC90bXAvZjJmcy9mb28KLT4gQWNjZXNzOiAoMDc1NS9kcnd4ci14ci14KQoKCltEZXNj
-cmlwdGlvbl0KSW4gdGhlIGJhc2UgaW1hZ2UsIDIgZGlyZWN0b3JpZXMgYW5kIDcgZmlsZXMgZXhp
-c3QuCgowOiAwNzU1IChtb3VudF9wb2ludCkKKy0tMjU3OiAwNzU1IGZvbwogICArLS0yNTg6IDA3
-NTUgYmFyCiAgICAgICstLTI1OTogMDY0NCBiYXogKDEyIGJ5dGVzLCBvZmZzZXQ6IHt9KQogICAg
-ICArLS0yNTk6IDA2NDQgaGxuICgxMiBieXRlcywgb2Zmc2V0OiB7fSkKICAgICAgKy0tMjYwOiAw
-NjQ0IHhhdHRyICgwIGJ5dGVzLCBvZmZzZXQ6IHt9KQogICAgICArLS0yNjE6IDA2NDQgYWNsICgw
-IGJ5dGVzLCBvZmZzZXQ6IHt9KQogICAgICArLS0yNjI6IDA2NDQgw6bDuMOlICg0IGJ5dGVzLCBv
-ZmZzZXQ6IHt9KQogICAgICArLS0yNjM6IDA2NDQgZmlmbwogICAgICArLS0yNjQ6IDA3Nzcgc2xu
-IC0+IG1udC9mb28vYmFyL2JhegoKVGhlIFBvQyBiYXNpY2FsbHkKMS4gb3BlbnMgZGlyZWN0b3J5
-ICJmb28iLAoobGluZSAyNikgZmQgPSBzeXNjYWxsKFNZU19vcGVuLCAiLi9mb28iLCBPX0RJUkVD
-VE9SWSwgMCk7CjIuIGNoYW5nZXMgdGhlIHBlcm1pc3Npb24gb2YgaXQgdG8gMDY2NiwKKGxpbmUg
-MjcpIHN5c2NhbGwoU1lTX2NobW9kLCAiLi9mb28iLCAwNjY2KTsKMy4gZmx1c2hlcyBpdHMgbWV0
-YWRhdGEsIGFuZCB0aGVuCihsaW5lIDI4KSBzeXNjYWxsKFNZU19mc3luYywgZmQpOwo0LiBzaW11
-bGF0ZXMgYSBjcmFzaCBieSByZWJvb3RpbmcgcmlnaHQgYXdheSB3aXRob3V0IHVubW91bnRpbmcu
-CihsaW5lIDMwKSBzeXN0ZW0oImVjaG8gYiA+IC9wcm9jL3N5c3JxLXRyaWdnZXIiKTsKCkFzIHdl
-IHJ1biBmc3luYyBvcGVyYXRpb24gb24gImZvbyIsCndlIGV4cGVjdCB0aGF0IHRoZSBtZXRhZGF0
-YSByZWdhcmRpbmcKdGhlIG5ldyBwZXJtaXNzaW9uIGlzIHN1Y2Nlc3NmdWxseSBmbHVzaGVkIHRv
-IGRpc2ssCmFuZCB3aGVuIHdlIHJlbW91bnQgdGhlIGNyYXNoZWQgaW1hZ2UsCndlIHdpbGwgc2Vl
-IHRoYXQgImZvbyIncyBtb2RlIGlzIGNoYW5nZWQgdG8gMDY2Ni4KCkhvd2V2ZXIsIHRoZSBkaXJl
-Y3Rvcnkgc3RpbGwgaGFzIGl0cyBvbGQgbW9kZSwgMDc1NS4KCi0tIApZb3UgYXJlIHJlY2Vpdmlu
-ZyB0aGlzIG1haWwgYmVjYXVzZToKWW91IGFyZSB3YXRjaGluZyB0aGUgYXNzaWduZWUgb2YgdGhl
-IGJ1Zy4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxp
-bnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNl
-Zm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xp
-bnV4LWYyZnMtZGV2ZWwK
+VFS will take inode_lock for readdir, therefore no need to
+take page lock in readdir at all just as the majority of
+other generic filesystems.
+
+This patch improves concurrency since .iterate_shared
+was introduced to VFS years ago.
+
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+
+ personally tend to use read_mapping_page here, but it seems
+ that f2fs has some remaining customized code since it was
+ merged into Linux, use f2fs_find_data_page instead.
+
+ fs/f2fs/dir.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index ecc3a4e2be96..64602bc1e092 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -873,7 +873,7 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
+ 			page_cache_sync_readahead(inode->i_mapping, ra, file, n,
+ 				min(npages - n, (pgoff_t)MAX_DIR_RA_PAGES));
+ 
+-		dentry_page = f2fs_get_lock_data_page(inode, n, false);
++		dentry_page = f2fs_find_data_page(inode, n);
+ 		if (IS_ERR(dentry_page)) {
+ 			err = PTR_ERR(dentry_page);
+ 			if (err == -ENOENT) {
+@@ -891,11 +891,11 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
+ 		err = f2fs_fill_dentries(ctx, &d,
+ 				n * NR_DENTRY_IN_BLOCK, &fstr);
+ 		if (err) {
+-			f2fs_put_page(dentry_page, 1);
++			f2fs_put_page(dentry_page, 0);
+ 			break;
+ 		}
+ 
+-		f2fs_put_page(dentry_page, 1);
++		f2fs_put_page(dentry_page, 0);
+ 	}
+ out_free:
+ 	fscrypt_fname_free_buffer(&fstr);
+-- 
+2.14.4
