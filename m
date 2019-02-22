@@ -1,84 +1,157 @@
-From: Eric Biggers <ebiggers@kernel.org>
-Subject: Re: [RFC PATCH v3 07/18] fscrypt: add
- FS_IOC_ADD_ENCRYPTION_KEY ioctl
-Date: Thu, 21 Feb 2019 10:42:03 -0800
-Message-ID: <20190221184203.GB140206@gmail.com>
-References: <20190220065249.32099-1-ebiggers@kernel.org>
- <CAFLxGvy7WsV7Qo42yTbsZf9YnW563a0k6Yx2-NmASNtoektu_Q@mail.gmail.com>
- <20190221054938.GA12467@sol.localdomain>
- <2024630.T9XyBPH5Ub@blindfold>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: don't clear CP_QUOTA_NEED_FSCK_FLAG
+Date: Thu, 21 Feb 2019 18:40:58 -0800
+Message-ID: <20190222024058.GA6093@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190212023343.52215-1-jaegeuk@kernel.org>
+ <df77f830-e5dd-5943-d5b0-e21ced3a7df2@huawei.com>
+ <20190216045530.GA57019@jaegeuk-macbookpro.roam.corp.google.com>
+ <29a4fd24-6340-41df-7199-6e89b70c6341@huawei.com>
+ <20190220070855.GA91331@jaegeuk-macbookpro.roam.corp.google.com>
+ <c39a995f-9bfd-e68a-7d04-11bd8c0f8e64@huawei.com>
+ <7580aa2e-b2eb-a686-a19d-4e82a713944a@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1gwtIT-0002S5-Dx
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Feb 2019 18:42:13 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gwtIR-005kcP-B7
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Feb 2019 18:42:13 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <2024630.T9XyBPH5Ub@blindfold>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Richard Weinberger <richard@nod.at>
-Cc: linux-ext4@vger.kernel.org, "open list:ABI/API" <linux-api@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, keyrings@vger.kernel.org, linux-mtd@lists.infradead.org, linux-crypto@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Satya Tangirala <satyat@google.com>, Paul Crowley <paulcrowley@google.com>
+In-Reply-To: <7580aa2e-b2eb-a686-a19d-4e82a713944a@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Thu, Feb 21, 2019 at 10:33:12AM +0100, Richard Weinberger wrote:
-> Eric,
-> 
-> Am Donnerstag, 21. Februar 2019, 06:49:39 CET schrieb Eric Biggers:
-> > Hi Richard,
+On 02/20, Chao Yu wrote:
+> On 2019/2/20 15:25, Chao Yu wrote:
+> > On 2019/2/20 15:08, Jaegeuk Kim wrote:
+> >> On 02/18, Chao Yu wrote:
+> >>> On 2019/2/16 12:55, Jaegeuk Kim wrote:
+> >>>> On 02/13, Chao Yu wrote:
+> >>>>> On 2019/2/12 10:33, Jaegeuk Kim wrote:
+> >>>>>> If we met this once, let fsck.f2fs clear this only.
+> >>>>>> Note that, this addresses all the subtle fault injection test.
+> >>>>>>
+> >>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>>>>> ---
+> >>>>>>  fs/f2fs/checkpoint.c | 2 --
+> >>>>>>  1 file changed, 2 deletions(-)
+> >>>>>>
+> >>>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> >>>>>> index 03fea4efd64b..10a3ada28715 100644
+> >>>>>> --- a/fs/f2fs/checkpoint.c
+> >>>>>> +++ b/fs/f2fs/checkpoint.c
+> >>>>>> @@ -1267,8 +1267,6 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>>>>  
+> >>>>>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
+> >>>>>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>>> -	else
+> >>>>>> -		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>>
+> >>>>> I didn't get it, previously, if we didn't persist all quota file's data in
+> >>>>> checkpoint, then we will tag CP_QUOTA_NEED_FSCK_FLAG in CP area, but in current
+> >>>>> checkpoint, we have persisted all quota file's data, quota files are consistent
+> >>>>> with all other files in filesystem, why we can't remove this NEED_FSCK flag..?
+> >>>>
+> >>>> I said it's subtle. So, I guessed 1) set CP_QUOTA_NEED_FSCK_FLAG, 2) clear
+> >>>
+> >>> I know it's subtle... and I agreed we can fix it like this in upstream
+> >>> first, but in our product, it's not rare that we hit the
+> >>> QUOTA_SKIP_FLUSH(its value is 4) case, later we may encounter long latency
+> >>> caused by quota repairing of fsck.
+> >>>
+> >>>> SBI_QUOTA_SKIP_FLUSH by checkpoint, 3) clear CP_QUOTA_NEED_FSCK_FLAG by another
+> >>>> checkpoint?
+> >>>
+> >>> But later if QUOTA_NEED_REPAIR is set, we will set QUOTA_NEED_FSCK_FLAG
+> >>> again, right?
+> >>>
+> >>> if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+> >>> 	__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>
+> >>>
+> >>> So in order to figure out whether this is caused by out-of-order execution
+> >>> of below assignments:
+> >>>
+> >>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
+> >>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>> 	else
+> >>> 		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- clear flag later
+> >>>
+> >>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+> >>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- set flag first
+> >>>
+> >>>
+> >>> Could you have a try:
+> >>>
+> >>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR) ||
+> >>> 			is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
+> >>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>> 	else
+> >>> 		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>
+> >> What does this mean? I'm in doubt we have a missing case where we clear this
 > > 
-> > On Thu, Feb 21, 2019 at 12:52:38AM +0100, Richard Weinberger wrote:
-> > > On Wed, Feb 20, 2019 at 7:55 AM Eric Biggers <ebiggers@kernel.org> wrote:
-> > > > +#define FSCRYPT_FS_KEYRING_DESCRIPTION_SIZE    \
-> > > > +       (CONST_STRLEN("fscrypt-") + FIELD_SIZEOF(struct super_block, s_id))
-> > > > +
-> > > > +#define FSCRYPT_MK_DESCRIPTION_SIZE    (2 * FSCRYPT_KEY_DESCRIPTOR_SIZE + 1)
-> > > > +
-> > > > +static void format_fs_keyring_description(
-> > > > +                       char description[FSCRYPT_FS_KEYRING_DESCRIPTION_SIZE],
-> > > > +                       const struct super_block *sb)
-> > > > +{
-> > > > +       sprintf(description, "fscrypt-%s", sb->s_id);
-> > > > +}
-> > > 
-> > > I fear ->s_id is not the right thing.
-> > > For filesystems such as ext4 ->s_id is the name of the backing block device,
-> > > so it is per filesysem instance unique.
-> > > But this is not guaranteed. For UBIFS ->s_id is just "ubifs", always.
-> > > So the names will clash.
-> > > 
+> > Cpu pipeline / compiler can make code out-of-order execution, which means:
 > > 
-> > What name do you suggest using for UBIFS filesystems?  The keyring name could be
-> > set by the filesystem via a fscrypt_operations callback if needed.
-> 
-> IMHO the BDI name should be used. 
-> 
-> > Note that the keyring name isn't particularly important, since the ioctls will
-> > work regardless.  But we might as well choose something logical, since the
-> > keyring name will still show up in /proc/keys.
-> 
-> I'm not done with reviewing your patches, but will it be possible to use keyctl?
-> For the a unique name is helpful. :)
-> 
+> > a = 1;
+> > b = 2;
+> > 
+> > may actually be executed as the order of:
+> > 
+> > b = 2;
+> > a = 1;
+> > 
+> > So I doubt that below two line codes can be executed out-of-order:
+> > 
+> > else
+> > 	__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- clear flag later
+> > 
+> > if ()
+> > 	__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- set flag first
 
-Not for adding keys, removing keys, or getting a key's status -- those are what
-the ioctls are for.
+In spin_lock_irqsave()?
 
-See e.g. the discussion in patch 7 ("fscrypt: add FS_IOC_ADD_ENCRYPTION_KEY
-ioctl") for why the keyrings syscalls are a poor fit for fscrypt.
+> > 
+> >> flag, CP_QUOTA_NEED_FSCK_FLAG.
+> > 
+> > Agreed, I've checked each operation in f2fs_quota_operations yesterday, and
+> > didn't find any missing places yet...
+> 
+> Oh, I mean the place where set SBI_QUOTA_NEED_REPAIR, I also doubt we
+> missed to set the flag.
 
-- Eric
+So, I may need to keep this patch untill we find the missing case. I'll keep an
+eye on this.
+
+> 
+> Thanks,
+> 
+> > 
+> > Thanks,
+> > 
+> >>
+> >>>
+> >>> Thanks,
+> >>>
+> >>>>
+> >>>>>
+> >>>>> Thanks,
+> >>>>>
+> >>>>>>  
+> >>>>>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+> >>>>>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>>>
+> >>>>
+> >>>> .
+> >>>>
+> >>
+> >> .
+> >>
+> > 
+> > 
+> > 
+> > _______________________________________________
+> > Linux-f2fs-devel mailing list
+> > Linux-f2fs-devel@lists.sourceforge.net
+> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> > 
+> > .
+> > 
