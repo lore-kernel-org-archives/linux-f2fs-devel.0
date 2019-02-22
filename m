@@ -1,172 +1,74 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: don't clear CP_QUOTA_NEED_FSCK_FLAG
-Date: Fri, 22 Feb 2019 11:27:08 +0800
-Message-ID: <0e00fefb-d0af-6143-afcd-6d8c8fa34743@huawei.com>
-References: <20190212023343.52215-1-jaegeuk@kernel.org>
- <df77f830-e5dd-5943-d5b0-e21ced3a7df2@huawei.com>
- <20190216045530.GA57019@jaegeuk-macbookpro.roam.corp.google.com>
- <29a4fd24-6340-41df-7199-6e89b70c6341@huawei.com>
- <20190220070855.GA91331@jaegeuk-macbookpro.roam.corp.google.com>
- <c39a995f-9bfd-e68a-7d04-11bd8c0f8e64@huawei.com>
- <7580aa2e-b2eb-a686-a19d-4e82a713944a@huawei.com>
- <20190222024058.GA6093@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chandan Rajendra <chandan@linux.ibm.com>
+Subject: Re: [RFC PATCH 00/10] Consolidate Post read processing
+ code
+Date: Fri, 22 Feb 2019 09:59:31 +0530
+Message-ID: <2245787.mQPMR5rap9@localhost.localdomain>
+References: <20190218100433.20048-1-chandan@linux.ibm.com>
+ <2420837.hecoV8S9Z6@localhost.localdomain>
+ <20190221183827.GA140206@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190222024058.GA6093@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <chandan@linux.ibm.com>) id 1gx2SU-0000fD-QS
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Feb 2019 04:29:10 +0000
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1gx2SS-006jKW-SI
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Feb 2019 04:29:10 +0000
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+ by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
+ x1M4Swp9088507
+ for <linux-f2fs-devel@lists.sourceforge.net>; Thu, 21 Feb 2019 23:28:59 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+ by mx0a-001b2d01.pphosted.com with ESMTP id 2qt96e1up4-1
+ (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <linux-f2fs-devel@lists.sourceforge.net>; Thu, 21 Feb 2019 23:28:59 -0500
+Received: from localhost
+ by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
+ Violators will be prosecuted
+ for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.ibm.com>;
+ Fri, 22 Feb 2019 04:28:57 -0000
+In-Reply-To: <20190221183827.GA140206@gmail.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, adilger.kernel@dilger.ca, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
 
-On 2019/2/22 10:40, Jaegeuk Kim wrote:
-> On 02/20, Chao Yu wrote:
->> On 2019/2/20 15:25, Chao Yu wrote:
->>> On 2019/2/20 15:08, Jaegeuk Kim wrote:
->>>> On 02/18, Chao Yu wrote:
->>>>> On 2019/2/16 12:55, Jaegeuk Kim wrote:
->>>>>> On 02/13, Chao Yu wrote:
->>>>>>> On 2019/2/12 10:33, Jaegeuk Kim wrote:
->>>>>>>> If we met this once, let fsck.f2fs clear this only.
->>>>>>>> Note that, this addresses all the subtle fault injection test.
->>>>>>>>
->>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>>>> ---
->>>>>>>>  fs/f2fs/checkpoint.c | 2 --
->>>>>>>>  1 file changed, 2 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->>>>>>>> index 03fea4efd64b..10a3ada28715 100644
->>>>>>>> --- a/fs/f2fs/checkpoint.c
->>>>>>>> +++ b/fs/f2fs/checkpoint.c
->>>>>>>> @@ -1267,8 +1267,6 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->>>>>>>>  
->>>>>>>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
->>>>>>>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>>>>>>> -	else
->>>>>>>> -		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>>>>>>
->>>>>>> I didn't get it, previously, if we didn't persist all quota file's data in
->>>>>>> checkpoint, then we will tag CP_QUOTA_NEED_FSCK_FLAG in CP area, but in current
->>>>>>> checkpoint, we have persisted all quota file's data, quota files are consistent
->>>>>>> with all other files in filesystem, why we can't remove this NEED_FSCK flag..?
->>>>>>
->>>>>> I said it's subtle. So, I guessed 1) set CP_QUOTA_NEED_FSCK_FLAG, 2) clear
->>>>>
->>>>> I know it's subtle... and I agreed we can fix it like this in upstream
->>>>> first, but in our product, it's not rare that we hit the
->>>>> QUOTA_SKIP_FLUSH(its value is 4) case, later we may encounter long latency
->>>>> caused by quota repairing of fsck.
->>>>>
->>>>>> SBI_QUOTA_SKIP_FLUSH by checkpoint, 3) clear CP_QUOTA_NEED_FSCK_FLAG by another
->>>>>> checkpoint?
->>>>>
->>>>> But later if QUOTA_NEED_REPAIR is set, we will set QUOTA_NEED_FSCK_FLAG
->>>>> again, right?
->>>>>
->>>>> if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
->>>>> 	__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>>>>
->>>>>
->>>>> So in order to figure out whether this is caused by out-of-order execution
->>>>> of below assignments:
->>>>>
->>>>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
->>>>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>>>> 	else
->>>>> 		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- clear flag later
->>>>>
->>>>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
->>>>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- set flag first
->>>>>
->>>>>
->>>>> Could you have a try:
->>>>>
->>>>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR) ||
->>>>> 			is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
->>>>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>>>> 	else
->>>>> 		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>>>
->>>> What does this mean? I'm in doubt we have a missing case where we clear this
->>>
->>> Cpu pipeline / compiler can make code out-of-order execution, which means:
->>>
->>> a = 1;
->>> b = 2;
->>>
->>> may actually be executed as the order of:
->>>
->>> b = 2;
->>> a = 1;
->>>
->>> So I doubt that below two line codes can be executed out-of-order:
->>>
->>> else
->>> 	__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- clear flag later
->>>
->>> if ()
->>> 	__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- set flag first
+On Friday, February 22, 2019 12:08:28 AM IST Eric Biggers wrote:
+> On Thu, Feb 21, 2019 at 07:02:03PM +0530, Chandan Rajendra wrote:
+> > On Wednesday, February 20, 2019 6:11:07 AM IST Eric Biggers wrote:
+> > > On Mon, Feb 18, 2019 at 03:34:23PM +0530, Chandan Rajendra wrote:
+> > > > Based on the reviews provided for this patchset, I
+> > > > will change F2FS to use mpage_readpage[s] and post the next version of
+> > > > this patchset to linux-fsdevel mailing list.
+> > > 
+> > > Is that really possible?  F2FS has other functionality in its ->readpages(),
+> > > such as support for filesystems that use multiple block devices.
+> > > 
+> > 
+> > Hmm. I didn't know that. Thanks for pointing that out. I will read up that
+> > code and if it isn't really possible to get F2FS to use mpage_readpage[s](),
+> > then I would limit the patchset to Ext4.
+> > 
 > 
-> In spin_lock_irqsave()?
+> But we can make F2FS use the shared bio_post_read functions even if it can't use
+> mpage_readpage[s](), right?
+>
 
-Not sure in coverage of spin_lock, system can guarantee codes being
-executed orderly.
+Yes, that should be possible. I will include those changes in the next version
+of the patchset.
 
-> 
->>>
->>>> flag, CP_QUOTA_NEED_FSCK_FLAG.
->>>
->>> Agreed, I've checked each operation in f2fs_quota_operations yesterday, and
->>> didn't find any missing places yet...
->>
->> Oh, I mean the place where set SBI_QUOTA_NEED_REPAIR, I also doubt we
->> missed to set the flag.
-> 
-> So, I may need to keep this patch untill we find the missing case. I'll keep an
-> eye on this.
-
-Agreed, do you mind adding one line comment there to notice that?
-
-Thanks,
-
-> 
->>
->> Thanks,
->>
->>>
->>> Thanks,
->>>
->>>>
->>>>>
->>>>> Thanks,
->>>>>
->>>>>>
->>>>>>>
->>>>>>> Thanks,
->>>>>>>
->>>>>>>>  
->>>>>>>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
->>>>>>>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>>>>>>>
->>>>>>
->>>>>> .
->>>>>>
->>>>
->>>> .
->>>>
->>>
->>>
->>>
->>> _______________________________________________
->>> Linux-f2fs-devel mailing list
->>> Linux-f2fs-devel@lists.sourceforge.net
->>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>>
->>> .
->>>
-> 
-> .
-> 
+-- 
+chandan
