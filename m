@@ -1,96 +1,59 @@
-From: "Siemens Corporation (Oil & Gas)"<info@siemensrecruitment.us>
-Subject: Siemens Oil&Gas Has Immediate Employment Opportunities
-Date: 24 Feb 2019 08:42:23 +0800
-Message-ID: <20190224084223.01B1CAF2FF666B31@siemensrecruitment.us>
-Reply-To: Siemens Recruitment <jobs@siemensrecruitment.pw>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <info@siemensrecruitment.us>) id 1gxhsF-00024e-Kc
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 24 Feb 2019 00:42:31 +0000
-Received: from [111.90.148.143] by sfi-mx-1.v28.lw.sourceforge.com with esmtp
- (Exim 4.90_1) id 1gxhsD-0032Dv-Rv
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 24 Feb 2019 00:42:31 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH] f2fs: fix to dirty inode for i_mode recovery
+Date: Sat, 23 Feb 2019 09:48:27 +0800
+Message-ID: <20190223014827.7028-1-chao@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Siemens Corporation (Oil & Gas)
-300 New Jersey Avenue, Suite 1000
-TEXAS. 20001 USA
+From: Chao Yu <yuchao0@huawei.com>
 
-Dear Prospective Expatriates,
+As Seulbae Kim reported in bugzilla:
 
-Siemens Oil and Gas USA has immediate employment opportunities. Siemens Oil and Gas USA intends to invite experienced individuals/expatriates or Consultancy firm capable of rendering expertise services in various fields of
+https://bugzilla.kernel.org/show_bug.cgi?id=202637
 
-Engineering,Construction and Installation,
-NDT ,
-Geology,
-Project Management,
-Welding and Fabrication,
-Plant/Start-Up, Maintenance,
-Mechanical/Technical/Design Engineering,
-Information Technology,
-Administrative,
-Commissioning, Host / Hostess,
-Housekeeping Executive / Assistant,
-Cashier / Receptionist,
-Front Office / Guest Relations
-Executive / Manager,
-Duty Manager,
-Head / VP / PR / Corp Communication,
-Head / VP / GM-Accounts,
-Auditors,
-Cashier,
-IT/Telecom-Software,
-Accountants,
-Health Workers,
-Mechanical/Electrical,
-Electronics Operators,
-Customer Care,
-Room attendant,
-Housekeeping,
-Waiter/Waitress,
-Driver,
-Security,
-Foreign/International Language Translators and Teachers and many more others depend on your filed of specialization.
+We didn't recover permission field correctly after sudden power-cut,
+the reason is in setattr we didn't add inode into global dirty list
+once i_mode is changed, so latter checkpoint triggered by fsync will
+not flush last i_mode into disk, result in this problem, fix it.
 
-Job Details
-* Job Location: Texas, USA
-* Company Industry: Siemens Oil & Gas
-* Job Type: Staff
+Reported-by: Seulbae Kim <seulbae@gatech.edu>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/file.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Qualifications
-* Should possess at least a diploma in his/her field.
-* Must be computer literate.
-* Must have at least six (6) months work experience.
-
-Benefits
-* A very attractive net salary paid in Dollar, Pound Sterling or Euro equivalent depending on employee home country and currency preference with annual salary review.
-* Quality single or family housing accommodation in company community.
-* Free medical/dental care in USA or any part of the world for
-employee and family.
-* Excellent educational assistance benefits with family status
-employment.
-* Paid airfares allowing full flexibility with holiday travel.
-* Personal effects shipment and excess baggage allowances.
-* Full access to some of the finest and social recreational facilities in USA.
-* Life Insurance and Paid vacation.
-* Official vehicle/Maximum security in work environment and housing
-community.
-
-Interested candidates should send CV / Resume to our Human Resources Department (jobs@siemensrecruitment.pw)
-
-Best Regards,
-Mr. George G. Rayburn
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index b8f5d1208619..3a8c8eb0f549 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -766,7 +766,6 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
+ {
+ 	struct inode *inode = d_inode(dentry);
+ 	int err;
+-	bool size_changed = false;
+ 
+ 	if (unlikely(f2fs_cp_error(F2FS_I_SB(inode))))
+ 		return -EIO;
+@@ -841,8 +840,6 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
+ 		down_write(&F2FS_I(inode)->i_sem);
+ 		F2FS_I(inode)->last_disk_size = i_size_read(inode);
+ 		up_write(&F2FS_I(inode)->i_sem);
+-
+-		size_changed = true;
+ 	}
+ 
+ 	__setattr_copy(inode, attr);
+@@ -856,7 +853,7 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
+ 	}
+ 
+ 	/* file size may changed here */
+-	f2fs_mark_inode_dirty_sync(inode, size_changed);
++	f2fs_mark_inode_dirty_sync(inode, true);
+ 
+ 	/* inode change will produce dirty node pages flushed by checkpoint */
+ 	f2fs_balance_fs(F2FS_I_SB(inode), true);
+-- 
+2.18.0
