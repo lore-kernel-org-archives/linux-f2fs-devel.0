@@ -1,107 +1,96 @@
-From: Andreas Dilger <adilger@dilger.ca>
-Subject: Re: [RFC PATCH 0/6] Allow setting file birth time with utimensat()
-Date: Sat, 23 Feb 2019 10:32:37 -0800
-Message-ID: <80675DA8-062B-4A31-ACC9-449AC55D1847@dilger.ca>
-References: <cover.1550136164.git.osandov@fb.com>
- <20190214220626.GV14116@dastard> <20190214231429.GE9819@vader>
- <20190215001657.GY14116@dastard> <20190215065947.GG9819@vader>
- <72A04438-5991-4A60-8AAB-021A41DE6711@dilger.ca>
- <20190218221820.GF14116@dastard> <20190222190048.GA29624@vader>
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_87B4C2F2-8451-4D21-B0CF-FBF2A4C6CE5D";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Return-path: <linux-btrfs-owner@vger.kernel.org>
-In-Reply-To: <20190222190048.GA29624@vader>
-Sender: linux-btrfs-owner@vger.kernel.org
-To: Omar Sandoval <osandov@osandov.com>
-Cc: Dave Chinner <david@fromorbit.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, kernel-team@fb.com, Linux API <linux-api@vger.kernel.org>, linux-btrfs <linux-btrfs@vger.kernel.org>, Ext4 Developers List <linux-ext4@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-xfs <linux-xfs@vger.kernel.org>, Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Steve French <sfrench@samba.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
-
-
---Apple-Mail=_87B4C2F2-8451-4D21-B0CF-FBF2A4C6CE5D
+From: "Siemens Corporation (Oil & Gas)"<info@siemensrecruitment.us>
+Subject: Siemens Oil&Gas Has Immediate Employment Opportunities
+Date: 24 Feb 2019 08:42:23 +0800
+Message-ID: <20190224084223.01B1CAF2FF666B31@siemensrecruitment.us>
+Reply-To: Siemens Recruitment <jobs@siemensrecruitment.pw>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <info@siemensrecruitment.us>) id 1gxhsF-00024e-Kc
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 24 Feb 2019 00:42:31 +0000
+Received: from [111.90.148.143] by sfi-mx-1.v28.lw.sourceforge.com with esmtp
+ (Exim 4.90_1) id 1gxhsD-0032Dv-Rv
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 24 Feb 2019 00:42:31 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
+Siemens Corporation (Oil & Gas)
+300 New Jersey Avenue, Suite 1000
+TEXAS. 20001 USA
 
-> On Feb 22, 2019, at 11:00 AM, Omar Sandoval <osandov@osandov.com> wrote:
-> 
-> On Tue, Feb 19, 2019 at 09:18:20AM +1100, Dave Chinner wrote:
->> On Sat, Feb 16, 2019 at 06:57:45PM -0700, Andreas Dilger wrote:
->>> While it may be a bit of a stretch to call this "forensic evidence",
->> 
->> We do forensic analysis of corrupt filesystems looking for evidence
->> of what went wrong, not just looking for evidence of what happened
->> on systems that have been broken into.
->> 
->>> making it hard to change from except via total root compromise by a
->>> skilled hacker is very useful.
->> 
->> *nod*.
->> 
->>> If this were to go in (which I'm not in favour of), then there would
->>> need to be a CONFIG and/or runtime knob to turn it off (or better to
->>> only turn it on), similar to how FIPS and other security options can
->>> only go in one direction.
->> 
->> The problem here is that "inode birth time" is being conflated with
->> "user document creation time". These two things are very different.
->> 
->> i.e. One is filesystem internal information and is not related to
->> when the original copy of the data in the file was created, the
->> other is user specified metadata that is related to the file data
->> contents and needs to travel with the data, not the filesystem.
->> 
->> IMO, trying to make one on-disk field hold two different types of
->> information defeats one or the other purpose, and nobody knows which
->> one the field stores for any given file.
->> 
->> I'd suggest that "authored date" should be a generic system xattr so
->> most filesystems support it, not just those that have a birth time
->> field on disk. Sure, modify it through utimesat() and expose it
->> through statx() (as authored time, not birth time), but store it a
->> system xattr rather than an internal filesystem metadata field that
->> requires was never intended to be user modifiable.
-> 
-> It seems that this is the general consensus, so I'll look into
-> implementing this functionality as an xattr.
+Dear Prospective Expatriates,
 
-I would recommend to look at how Samba is storing these attributes
-today, and do the same thing, maybe add support into GNU coreutils
-to handle this transparently.
+Siemens Oil and Gas USA has immediate employment opportunities. Siemens Oil and Gas USA intends to invite experienced individuals/expatriates or Consultancy firm capable of rendering expertise services in various fields of
 
-Cheers, Andreas
+Engineering,Construction and Installation,
+NDT ,
+Geology,
+Project Management,
+Welding and Fabrication,
+Plant/Start-Up, Maintenance,
+Mechanical/Technical/Design Engineering,
+Information Technology,
+Administrative,
+Commissioning, Host / Hostess,
+Housekeeping Executive / Assistant,
+Cashier / Receptionist,
+Front Office / Guest Relations
+Executive / Manager,
+Duty Manager,
+Head / VP / PR / Corp Communication,
+Head / VP / GM-Accounts,
+Auditors,
+Cashier,
+IT/Telecom-Software,
+Accountants,
+Health Workers,
+Mechanical/Electrical,
+Electronics Operators,
+Customer Care,
+Room attendant,
+Housekeeping,
+Waiter/Waitress,
+Driver,
+Security,
+Foreign/International Language Translators and Teachers and many more others depend on your filed of specialization.
 
+Job Details
+* Job Location: Texas, USA
+* Company Industry: Siemens Oil & Gas
+* Job Type: Staff
 
+Qualifications
+* Should possess at least a diploma in his/her field.
+* Must be computer literate.
+* Must have at least six (6) months work experience.
 
+Benefits
+* A very attractive net salary paid in Dollar, Pound Sterling or Euro equivalent depending on employee home country and currency preference with annual salary review.
+* Quality single or family housing accommodation in company community.
+* Free medical/dental care in USA or any part of the world for
+employee and family.
+* Excellent educational assistance benefits with family status
+employment.
+* Paid airfares allowing full flexibility with holiday travel.
+* Personal effects shipment and excess baggage allowances.
+* Full access to some of the finest and social recreational facilities in USA.
+* Life Insurance and Paid vacation.
+* Official vehicle/Maximum security in work environment and housing
+community.
 
+Interested candidates should send CV / Resume to our Human Resources Department (jobs@siemensrecruitment.pw)
 
-
---Apple-Mail=_87B4C2F2-8451-4D21-B0CF-FBF2A4C6CE5D
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAlxxkcUACgkQcqXauRfM
-H+C9Xw//X1n0jOmRTE6hBjU23kQZyxxsgJVPhG+wekrSO2IixYt9aKoeRWnL/Umq
-4o9LvCkUB0bs40X6kr+r8K/QfjJt9tKlUSxZ80F159ecEPfJAUO9ZOvjPOt1jeA3
-hlPoOwPziYNht90m8Sc9WpYN0qmtN1021rcU8hwBbaX31DBs6JEUj4MxO2Oo8XA/
-C+eiORtc6EBqsVUF38V8ln3b384C51//1WqG2/HMlWxbzNILK8jkV71slD7xb7Vj
-lkgHXcJKK8uDs+908XqNnjtn+qs2HpyJxQ4N46EIEE5PNStbDfSluBHTG7ME4TqH
-GB9ezg2wEh1cSjGsg3Vx4jFsKow+esxWAruZYlW36k1MmBucd1ALSSuJ6IfC2WrZ
-8iGnpUaLmLvlnlSKeIgv6nkZppYCbY9DHfZFmn5GoOtCDCZvi0QgFo17Nf/SifeD
-nP6lp8Mt9Jlymrpc8qTbxfM0e4cO2Zp9gPkzFKIwXrp4sMBBGcnC8+cHRKgIX56h
-M/cM49ApzP08XRSf9kClLnkEMOnMxEvf3kXySqd3yyqJnG5X9xotdiGNldQMTcnc
-Rq83fqRrMJShOIHwvqFnDmsqGOvPdWN56mBMEjKNbQ2Yj2OPybJMVaRcIURs0iLs
-A64oEE8lLjK+PdMkugInBhfu0gSxYVScA1r/CSBIgTKmp21LfTo=
-=UOd0
------END PGP SIGNATURE-----
-
---Apple-Mail=_87B4C2F2-8451-4D21-B0CF-FBF2A4C6CE5D--
+Best Regards,
+Mr. George G. Rayburn
