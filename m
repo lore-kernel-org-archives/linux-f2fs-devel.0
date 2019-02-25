@@ -1,8 +1,9 @@
-From: zhengliang <zhengliang6@huawei.com>
-Subject: [PATCH v3] f2fs: fix to data block override node segment
- by mistake
-Date: Mon, 25 Feb 2019 19:49:37 +0800
-Message-ID: <6e7453cd-683d-e596-de40-4b4a459353df@huawei.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 202637] Chmod'ed directory permission is not
+ persisted with fsync
+Date: Mon, 25 Feb 2019 19:30:47 +0000
+Message-ID: <bug-202637-202145-IflBiWaVYH@https.bugzilla.kernel.org/>
+References: <bug-202637-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,13 +11,19 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <zhengliang6@huawei.com>) id 1gyEm2-0005E8-5h
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 25 Feb 2019 11:50:18 +0000
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
+ id 1gyLxl-0001Ac-4a
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 25 Feb 2019 19:30:53 +0000
+Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gyElz-006Ywb-HF
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 25 Feb 2019 11:50:18 +0000
+ id 1gyLxj-007Kzs-E4
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 25 Feb 2019 19:30:53 +0000
+Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id B50812B93A
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 25 Feb 2019 19:30:45 +0000 (UTC)
+In-Reply-To: <bug-202637-202145@https.bugzilla.kernel.org/>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,34 +33,22 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-v2->v3: It describe the problem scenario more accurately.
+https://bugzilla.kernel.org/show_bug.cgi?id=202637
 
-TASK A              TASK kworker                                                 TASK B                                                   TASK C
+--- Comment #2 from Seulbae Kim (seulbae@gatech.edu) ---
+Thank you for quick response Chao Yu!
+I tested your patch by applying it on kernel v5.0.0-rc7, and confirmed that the
+reported bug is fixed.
 
-open
-write
-close
-                    f2fs_write_data_pages
-                      f2fs_write_cache_pages
-                        f2fs_outplace_write_data
-                          f2fs_allocate_data_block (get block in seg S,
-                                                    S is full, and only
-                                                    have this valid data
-                                                    block)
-                            allocate_segment
-                            locate_dirty_segment (mark S as PRE)
-                          f2fs_submit_page_write (submit but is not
-                                                  written on dev)
-unlink
-  iput_final
-    f2fs_drop_inode
-      f2fs_truncate
-  (not evict)
-                                                                             write_checkpoint
-                                                                               flush merged bio but not wait file data writeback
-                                                                               set_prefree_as_free (mark S as FREE)
-                                                                                                                                    update NODE/DATA
-                                                                                                                                    allocate_segment (select S)
-                       writeback done
+(In reply to Chao Yu from comment #1)
+> Seulbae, thanks for the report.
+> 
+> I've written a patch for that, could you please check it?
+> 
+> [PATCH] f2fs: fix to dirty inode for i_mode recovery
+
+-- 
+You are receiving this mail because:
+You are watching the assignee of the bug.
