@@ -1,8 +1,8 @@
-From: Gao Xiang <gaoxiang25@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
 Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to avoid deadlock of atomic file
  operations
-Date: Mon, 25 Feb 2019 17:33:53 +0800
-Message-ID: <8cbfdd5c-3665-8022-e3cd-6f5643d8cb39@huawei.com>
+Date: Mon, 25 Feb 2019 17:34:42 +0800
+Message-ID: <7476f409-4bc6-542b-af3a-cb02108c0ef9@huawei.com>
 References: <20190225091103.39362-1-yuchao0@huawei.com>
  <7515cd35-8388-3408-0d18-c7c57d261dfc@huawei.com>
 Mime-Version: 1.0
@@ -10,14 +10,13 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <7515cd35-8388-3408-0d18-c7c57d261dfc@huawei.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
+To: Gao Xiang <gaoxiang25@huawei.com>
 Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-
-Sorry, please ignore my reply... (If there no
-truncate and commit race...)
+Hi Xiang,
 
 On 2019/2/25 17:25, Gao Xiang wrote:
 > Hi Chao,
@@ -194,6 +193,13 @@ On 2019/2/25 17:25, Gao Xiang wrote:
 > 
 > Will it cause memleak? since revoke_list is a temporary local linked list...
 > Is there a better way than just simplily skip it?
+
+@trylock will only be true in f2fs_drop_inmem_pages(), and it passes global
+link list &fi->inmem_pages, and there is a loop being introduced to make
+sure that each entry can be released in that list, so any missing case here?
+
+Thanks,
+
 > 
 > Thanks,
 > Gao Xiang
@@ -252,9 +258,5 @@ On 2019/2/25 17:25, Gao Xiang wrote:
 >>  	return err;
 >>
 > 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> .
 > 
