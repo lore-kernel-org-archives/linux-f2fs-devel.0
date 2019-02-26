@@ -1,119 +1,72 @@
-From: Filipe Manana <fdmanana@gmail.com>
-Subject: Re: [PATCH] generic: test i_mode recovery after power
- failure
-Date: Tue, 26 Feb 2019 11:02:07 +0000
-Message-ID: <CAL3q7H4Xn=ncGQcKKwNBpHBWAUPLt8T8T=RVpmvqA6h83r5tug@mail.gmail.com>
-References: <20190226070302.17756-1-yuchao0@huawei.com>
-Reply-To: fdmanana@gmail.com
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: give random value to i_generation
+Date: Tue, 26 Feb 2019 09:45:07 -0800
+Message-ID: <20190226174507.76205-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <fdmanana@gmail.com>) id 1gyaVH-00062m-Hg
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Feb 2019 11:02:27 +0000
-Received: from mail-ua1-f68.google.com ([209.85.222.68])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1gyaVE-008zuH-JD
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Feb 2019 11:02:27 +0000
-Received: by mail-ua1-f68.google.com with SMTP id z24so11389973ual.8
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 26 Feb 2019 03:02:24 -0800 (PST)
-In-Reply-To: <20190226070302.17756-1-yuchao0@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: Eryu Guan <guaneryu@gmail.com>, fstests <fstests@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-T24gVHVlLCBGZWIgMjYsIDIwMTkgYXQgNzowMyBBTSBDaGFvIFl1IDx5dWNoYW8wQGh1YXdlaS5j
-b20+IHdyb3RlOgo+Cj4gQWZ0ZXIgZnN5bmMsIGZpbGVzeXN0ZW0gc2hvdWxkIGd1YXJhbnRlZSBp
-bm9kZSBtZXRhZGF0YSBpbmNsdWRpbmcKPiBwZXJtaXNzaW9uIGluZm8gYmVpbmcgcGVyc2lzdGVk
-LCBzbyBldmVuIGFmdGVyIHN1ZGRlbiBwb3dlci1jdXQsCj4gZHVyaW5nIG1vdW50LCB3ZSBzaG91
-bGQgcmVjb3ZlciBpX21vZGUgZmllbGRzIGNvcnJlY3RseSwgaW4gb3JkZXIKPiB0byBub3QgbG9z
-cyB0aG9zZSBtZXRhIGluZm8uCj4KPiBTbyBhZGRpbmcgdGhpcyB0ZXN0Y2FzZSB0byBjaGVjayB3
-aGV0aGVyIGdlbmVyaWMgZmlsZXN5c3RlbSBjYW4KPiBndWFyYW50ZWUgdGhhdC4KPgo+IFNpZ25l
-ZC1vZmYtYnk6IENoYW8gWXUgPHl1Y2hhbzBAaHVhd2VpLmNvbT4KPiAtLS0KPiAgdGVzdHMvZ2Vu
-ZXJpYy81MzIgICAgIHwgMTA2ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKwo+ICB0ZXN0cy9nZW5lcmljLzUzMi5vdXQgfCAgIDIgKwo+ICB0ZXN0cy9nZW5lcmljL2dy
-b3VwICAgfCAgIDEgKwo+ICAzIGZpbGVzIGNoYW5nZWQsIDEwOSBpbnNlcnRpb25zKCspCj4gIGNy
-ZWF0ZSBtb2RlIDEwMDc1NSB0ZXN0cy9nZW5lcmljLzUzMgo+ICBjcmVhdGUgbW9kZSAxMDA2NDQg
-dGVzdHMvZ2VuZXJpYy81MzIub3V0Cj4KPiBkaWZmIC0tZ2l0IGEvdGVzdHMvZ2VuZXJpYy81MzIg
-Yi90ZXN0cy9nZW5lcmljLzUzMgo+IG5ldyBmaWxlIG1vZGUgMTAwNzU1Cj4gaW5kZXggMDAwMDAw
-MDAwMDAwLi5kODlmN2FiMDlmY2YKPiAtLS0gL2Rldi9udWxsCj4gKysrIGIvdGVzdHMvZ2VuZXJp
-Yy81MzIKPiBAQCAtMCwwICsxLDEwNiBAQAo+ICsjISAvYmluL2Jhc2gKPiArIyBTUERYLUxpY2Vu
-c2UtSWRlbnRpZmllcjogR1BMLTIuMAo+ICsjIENvcHlyaWdodCAoYykgMjAxOSBIdWF3ZWkuICBB
-bGwgUmlnaHRzIFJlc2VydmVkLgo+ICsjCj4gKyMgRlMgUUEgVGVzdCA1MzIKPiArIwo+ICsjIFRo
-aXMgdGVzdGNhc2UgaXMgdHJ5aW5nIHRvIHRlc3QgcmVjb3ZlcnkgZmxvdyBvZiBnZW5lcmljIGZp
-bGVzeXN0ZW0sCj4gKyMgdy8gYmVsb3cgc3RlcHMsIG9uY2UgaV9tb2RlIGNoYW5nZXMsIGFmdGVy
-IHdlIGZzeW5jIHRoYXQgZmlsZSwgd2UgY2FuCj4gKyMgZXhwZWN0IHRoYXQgaV9tb2RlIGNhbiBi
-ZSByZWNvdmVyZWQgYWZ0ZXIgc3VkZGVuIHBvd2VyLWN1dHMuCj4gKyMgMS4gdG91Y2ggdGVzdGZp
-bGUgb3IgbWtkaXIgdGVzdGRpcgo+ICsjIDIuIGNobW9kIDc3NyB0ZXN0ZmlsZS90ZXN0ZGlyCj4g
-KyMgMy4gc3luYwo+ICsjIDQuIGNobW9kIDc1NSB0ZXN0ZmlsZS90ZXN0ZGlyCj4gKyMgNS4gZnN5
-bmMgdGVzdGZpbGUvdGVzdGRpcgo+ICsjIDYuIHJlY29yZCBsYXN0IGlfbW9kZQo+ICsjIDcuIGdv
-ZG93bgo+ICsjIDguIHVtb3VudAo+ICsjIDkuIG1vdW50Cj4gKyMgMTAuIGNoZWNrIGlfbW9kZQo+
-ICsjCj4gK3NlcT1gYmFzZW5hbWUgJDBgCj4gK3NlcXJlcz0kUkVTVUxUX0RJUi8kc2VxCj4gK2Vj
-aG8gIlFBIG91dHB1dCBjcmVhdGVkIGJ5ICRzZXEiCj4gKwo+ICtoZXJlPWBwd2RgCj4gK3RtcD0v
-dG1wLyQkCj4gK3N0YXR1cz0xICAgICAgICMgZmFpbHVyZSBpcyB0aGUgZGVmYXVsdCEKPiArdHJh
-cCAiX2NsZWFudXA7IGV4aXQgXCRzdGF0dXMiIDAgMSAyIDMgMTUKPiArCj4gK19jbGVhbnVwKCkK
-PiArewo+ICsgICAgICAgY2QgLwo+ICsgICAgICAgcm0gLWYgJHRtcC4qCj4gK30KPiArCj4gKyMg
-Z2V0IHN0YW5kYXJkIGVudmlyb25tZW50LCBmaWx0ZXJzIGFuZCBjaGVja3MKPiArLiAuL2NvbW1v
-bi9yYwo+ICsuIC4vY29tbW9uL2ZpbHRlcgo+ICsKPiArIyByZW1vdmUgcHJldmlvdXMgJHNlcXJl
-cy5mdWxsIGJlZm9yZSB0ZXN0Cj4gK3JtIC1mICRzZXFyZXMuZnVsbAo+ICsKPiArIyByZWFsIFFB
-IHRlc3Qgc3RhcnRzIGhlcmUKPiArX3N1cHBvcnRlZF9mcyBnZW5lcmljCj4gK19zdXBwb3J0ZWRf
-b3MgTGludXgKPiArCj4gK19yZXF1aXJlX3NjcmF0Y2gKPiArX3JlcXVpcmVfc2NyYXRjaF9zaHV0
-ZG93bgoKSXMgdGhlIHVzZSBvZiB0aGUgc2h1dGRvd24gZnVuY3Rpb25hbGl0eSBuZWNlc3Nhcnkg
-dG8gdHJpZ2dlciB0aGUgYnVnIG9uIGYyZnM/CklmIG5vdCwgSSdkIHJhdGhlciBoYXZlIGl0IHVz
-ZSBkbWZsYWtleSBzbyB0aGF0IHRoZSB0ZXN0IGlzIGFibGUgdG8KcnVuIGFzIHdlbGwgb24gZmls
-ZXN5c3RlbXMgdGhhdCBkb24ndCBzdXBwb3J0IHNodXRkb3duIChidHJmcyBmb3IKZXhhbXBsZSku
-Ckl0IGFsc28gZmVlbHMgbW9yZSBuYXR1cmFsIHRoZW4gcmVseWluZyBvbiBhIHNwZWNpZmljIGZl
-YXR1cmUgc3VjaCBhcyBzaHV0ZG93bi4KCj4gKwo+ICtfc2NyYXRjaF9ta2ZzID4vZGV2L251bGwg
-Mj4mMQo+ICtfcmVxdWlyZV9tZXRhZGF0YV9qb3VybmFsaW5nICRTQ1JBVENIX0RFVgo+ICsKPiAr
-dGVzdGZpbGU9JFNDUkFUQ0hfTU5UL3Rlc3RmaWxlCj4gK3Rlc3RkaXI9JFNDUkFUQ0hfTU5UL3Rl
-c3RkaXIKPiArCj4gK2RvX2NoZWNrKCkKPiArewo+ICsgICAgICAgdGFyZ2V0PSQxCj4gKyAgICAg
-ICBpc19kaXI9JDIKCkJvdGggc2hvdWxkIGJlIGRlY2xhcmVkIGFzIGxvY2FsLgoKPiArCj4gKyAg
-ICAgICBfc2NyYXRjaF9tb3VudAo+ICsKPiArICAgICAgIGlmIFsgJGlzX2RpciA9IDEgXTsgdGhl
-bgo+ICsgICAgICAgICAgICAgICBta2RpciAkdGFyZ2V0Cj4gKyAgICAgICBlbHNlCj4gKyAgICAg
-ICAgICAgICAgIHRvdWNoICR0YXJnZXQKPiArICAgICAgIGZpCj4gKwo+ICsgICAgICAgZWNobyAi
-VGVzdCBjaG1vZCAkdGFyZ2V0IiA+PiAkc2VxcmVzLmZ1bGwKPiArCj4gKyAgICAgICBjaG1vZCA3
-NzcgJHRhcmdldAo+ICsgICAgICAgc3luYwo+ICsKPiArICAgICAgIGNobW9kIDc1NSAkdGFyZ2V0
-Cj4gKyAgICAgICAkWEZTX0lPX1BST0cgJHRhcmdldCAtYyAiZnN5bmMiIHwgX2ZpbHRlcl94ZnNf
-aW8KCk5vIG5lZWQgdG8gdXNlIHRoZSBmaWx0ZXIgaGVyZS4KCj4gKwo+ICsgICAgICAgYmVmb3Jl
-PWBzdGF0IC1jICVhICR0YXJnZXRgCgpTaG91bGQgYmUgbG9jYWwgYXMgd2VsbC4KCj4gKwo+ICsg
-ICAgICAgX3NjcmF0Y2hfc2h1dGRvd24gfCB0ZWUgLWEgJHNlcXJlcy5mdWxsCj4gKyAgICAgICBf
-c2NyYXRjaF9jeWNsZV9tb3VudAo+ICsKPiArICAgICAgIGFmdGVyPWBzdGF0IC1jICVhICR0YXJn
-ZXRgCgpMb2NhbCBhcyB3ZWxsLgoKPiArCj4gKyAgICAgICAjIGNoZWNrIGlub2RlJ3MgaV9tb2Rl
-Cj4gKyAgICAgICBpZiBbICIkYmVmb3JlIiAhPSAiJGFmdGVyIiBdOyB0aGVuCj4gKyAgICAgICAg
-ICAgICAgIGVjaG8gIkJlZm9yZTogJGJlZm9yZSIKPiArICAgICAgICAgICAgICAgZWNobyAiQWZ0
-ZXIgOiAkYWZ0ZXIiCj4gKyAgICAgICBmaQo+ICsgICAgICAgZWNobyAiQmVmb3JlOiAkYmVmb3Jl
-IiA+PiAkc2VxcmVzLmZ1bGwKPiArICAgICAgIGVjaG8gIkFmdGVyIDogJGFmdGVyIiA+PiAkc2Vx
-cmVzLmZ1bGwKClNlZW1zIHBvaW50bGVzcyB0byBkdW1wIHRoZSB2YWx1ZXMgdG8gJHNlcXJlcy5m
-dWxsIGluIGNhc2Ugb2Ygc3VjY2Vzcy4KClRoYW5rcy4KCj4gKwo+ICsgICAgICAgaWYgWyAkaXNf
-ZGlyID0gMSBdOyB0aGVuCj4gKyAgICAgICAgICAgICAgIHJtZGlyICR0YXJnZXQKPiArICAgICAg
-IGVsc2UKPiArICAgICAgICAgICAgICAgcm0gLWYgJHRhcmdldAo+ICsgICAgICAgZmkKPiArICAg
-ICAgIF9zY3JhdGNoX3VubW91bnQKPiArfQo+ICsKPiArZWNobyAiU2lsZW5jZSBpcyBnb2xkZW4i
-Cj4gKwo+ICtkb19jaGVjayAkdGVzdGZpbGUgMAo+ICtkb19jaGVjayAkdGVzdGRpciAxCj4gKwo+
-ICtzdGF0dXM9MAo+ICtleGl0Cj4gZGlmZiAtLWdpdCBhL3Rlc3RzL2dlbmVyaWMvNTMyLm91dCBi
-L3Rlc3RzL2dlbmVyaWMvNTMyLm91dAo+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gaW5kZXggMDAw
-MDAwMDAwMDAwLi4xZjdkNDY3N2MzYmUKPiAtLS0gL2Rldi9udWxsCj4gKysrIGIvdGVzdHMvZ2Vu
-ZXJpYy81MzIub3V0Cj4gQEAgLTAsMCArMSwyIEBACj4gK1FBIG91dHB1dCBjcmVhdGVkIGJ5IDUz
-Mgo+ICtTaWxlbmNlIGlzIGdvbGRlbgo+IGRpZmYgLS1naXQgYS90ZXN0cy9nZW5lcmljL2dyb3Vw
-IGIvdGVzdHMvZ2VuZXJpYy9ncm91cAo+IGluZGV4IDMxMDExYWM4NzJjMi4uMmZjNTBmYmJmYjVj
-IDEwMDY0NAo+IC0tLSBhL3Rlc3RzL2dlbmVyaWMvZ3JvdXAKPiArKysgYi90ZXN0cy9nZW5lcmlj
-L2dyb3VwCj4gQEAgLTUzNCwzICs1MzQsNCBAQAo+ICA1MjkgYXV0byBxdWljayBhdHRyCj4gIDUz
-MCBhdXRvIHF1aWNrIHVubGluawo+ICA1MzEgYXV0byBxdWljayB1bmxpbmsKPiArNTMyIHNodXRk
-b3duIGF1dG8gcXVpY2sgbWV0YWRhdGEKPiAtLQo+IDIuMTguMC5yYzEKPgoKCi0tIApGaWxpcGUg
-RGF2aWQgTWFuYW5hLAoK4oCcV2hldGhlciB5b3UgdGhpbmsgeW91IGNhbiwgb3IgeW91IHRoaW5r
-IHlvdSBjYW4ndCDigJQgeW91J3JlIHJpZ2h0LuKAnQoKCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Ckxp
-bnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNl
-Zm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+This follows to give random number to i_generation along with commit
+232530680290b ("ext4: improve smp scalability for inode generation")
+
+This can be used for DUN for UFS HW encryption.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/f2fs.h  | 2 --
+ fs/f2fs/namei.c | 3 ++-
+ fs/f2fs/super.c | 1 -
+ 3 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 19cbf17550c7..3007759dd2dd 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1242,8 +1242,6 @@ struct f2fs_sb_info {
+ 
+ 	unsigned int nquota_files;		/* # of quota sysfile */
+ 
+-	u32 s_next_generation;			/* for NFS support */
+-
+ 	/* # of pages, see count_type */
+ 	atomic_t nr_pages[NR_COUNT_TYPE];
+ 	/* # of allocated blocks */
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 62d9829f3a6a..f218d9424d8b 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -10,6 +10,7 @@
+ #include <linux/pagemap.h>
+ #include <linux/sched.h>
+ #include <linux/ctype.h>
++#include <linux/random.h>
+ #include <linux/dcache.h>
+ #include <linux/namei.h>
+ #include <linux/quotaops.h>
+@@ -50,7 +51,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
+ 	inode->i_blocks = 0;
+ 	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
+ 	F2FS_I(inode)->i_crtime = inode->i_mtime;
+-	inode->i_generation = sbi->s_next_generation++;
++	inode->i_generation = prandom_u32();
+ 
+ 	if (S_ISDIR(inode->i_mode))
+ 		F2FS_I(inode)->i_current_depth = 1;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 45121190a2ba..42eb5c86330a 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3129,7 +3129,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	sb->s_maxbytes = sbi->max_file_blocks <<
+ 				le32_to_cpu(raw_super->log_blocksize);
+ 	sb->s_max_links = F2FS_LINK_MAX;
+-	get_random_bytes(&sbi->s_next_generation, sizeof(u32));
+ 
+ #ifdef CONFIG_QUOTA
+ 	sb->dq_op = &f2fs_quota_operations;
+-- 
+2.19.0.605.g01d371f741-goog
