@@ -1,52 +1,86 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 202637] Chmod'ed directory permission is not
- persisted with fsync
-Date: Tue, 26 Feb 2019 08:40:00 +0000
-Message-ID: <bug-202637-202145-qBuQU93GQv@https.bugzilla.kernel.org/>
-References: <bug-202637-202145@https.bugzilla.kernel.org/>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 1/2] f2fs: trace f2fs_ioc_shutdown
+Date: Tue, 26 Feb 2019 19:01:15 +0800
+Message-ID: <20190226110116.36759-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1gyYHW-0002pE-2N
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Feb 2019 08:40:06 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gyYHU-00Gn2d-H2
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Feb 2019 08:40:06 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 9BA482A503
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 26 Feb 2019 08:39:58 +0000 (UTC)
-In-Reply-To: <bug-202637-202145@https.bugzilla.kernel.org/>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=202637
+This patch supports to trace f2fs_ioc_shutdown.
 
---- Comment #3 from Chao Yu (chao@kernel.org) ---
-Thanks for the quick test. :)
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/file.c              |  3 +++
+ include/trace/events/f2fs.h | 32 ++++++++++++++++++++++++++++++++
+ 2 files changed, 35 insertions(+)
 
-I've also sent a patch to simulate your testcase for fstest suit, you can find
-it in below link:
-
-https://sourceforge.net/p/linux-f2fs/mailman/linux-f2fs-devel/thread/20190226070302.17756-1-yuchao0%40huawei.com/#msg36597256
-
-Once the kernel fix patch is merged in upstream, I will close this issue.
-
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 2e7ae5974633..4b852cab21f8 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1993,6 +1993,9 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
+ out:
+ 	if (in != F2FS_GOING_DOWN_FULLSYNC)
+ 		mnt_drop_write_file(filp);
++
++	trace_f2fs_shutdown(sbi, in, ret);
++
+ 	return ret;
+ }
+ 
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index bbbfc9bc0686..4683ee10fe61 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -149,6 +149,14 @@ TRACE_DEFINE_ENUM(CP_TRIMMED);
+ 		{ CP_SPEC_LOG_NUM,	"log type is 2" },		\
+ 		{ CP_RECOVER_DIR,	"dir needs recovery" })
+ 
++#define show_shutdown_mode(type)					\
++	__print_symbolic(type,						\
++		{ F2FS_GOING_DOWN_FULLSYNC,	"full sync" },		\
++		{ F2FS_GOING_DOWN_METASYNC,	"meta sync" },		\
++		{ F2FS_GOING_DOWN_NOSYNC,	"no sync" },		\
++		{ F2FS_GOING_DOWN_METAFLUSH,	"meta flush" },		\
++		{ F2FS_GOING_DOWN_NEED_FSCK,	"need fsck" })
++
+ struct f2fs_sb_info;
+ struct f2fs_io_info;
+ struct extent_info;
+@@ -1619,6 +1627,30 @@ DEFINE_EVENT(f2fs_sync_dirty_inodes, f2fs_sync_dirty_inodes_exit,
+ 	TP_ARGS(sb, type, count)
+ );
+ 
++TRACE_EVENT(f2fs_shutdown,
++
++	TP_PROTO(struct f2fs_sb_info *sbi, unsigned int mode, int ret),
++
++	TP_ARGS(sbi, mode, ret),
++
++	TP_STRUCT__entry(
++		__field(dev_t,	dev)
++		__field(unsigned int, mode)
++		__field(int, ret)
++	),
++
++	TP_fast_assign(
++		__entry->dev = sbi->sb->s_dev;
++		__entry->mode = mode;
++		__entry->ret = ret;
++	),
++
++	TP_printk("dev = (%d,%d), mode: %s, ret:%d",
++		show_dev(__entry->dev),
++		show_shutdown_mode(__entry->mode),
++		__entry->ret)
++);
++
+ #endif /* _TRACE_F2FS_H */
+ 
+  /* This part must be outside protection */
 -- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+2.18.0.rc1
