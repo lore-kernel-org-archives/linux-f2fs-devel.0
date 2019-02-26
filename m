@@ -1,72 +1,184 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: give random value to i_generation
-Date: Tue, 26 Feb 2019 09:45:07 -0800
-Message-ID: <20190226174507.76205-1-jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: don't clear CP_QUOTA_NEED_FSCK_FLAG
+Date: Tue, 26 Feb 2019 09:57:26 -0800
+Message-ID: <20190226175725.GB59048@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190212023343.52215-1-jaegeuk@kernel.org>
+ <df77f830-e5dd-5943-d5b0-e21ced3a7df2@huawei.com>
+ <20190216045530.GA57019@jaegeuk-macbookpro.roam.corp.google.com>
+ <29a4fd24-6340-41df-7199-6e89b70c6341@huawei.com>
+ <20190220070855.GA91331@jaegeuk-macbookpro.roam.corp.google.com>
+ <c39a995f-9bfd-e68a-7d04-11bd8c0f8e64@huawei.com>
+ <7580aa2e-b2eb-a686-a19d-4e82a713944a@huawei.com>
+ <20190222024058.GA6093@jaegeuk-macbookpro.roam.corp.google.com>
+ <0e00fefb-d0af-6143-afcd-6d8c8fa34743@huawei.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <0e00fefb-d0af-6143-afcd-6d8c8fa34743@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This follows to give random number to i_generation along with commit
-232530680290b ("ext4: improve smp scalability for inode generation")
+On 02/22, Chao Yu wrote:
+> On 2019/2/22 10:40, Jaegeuk Kim wrote:
+> > On 02/20, Chao Yu wrote:
+> >> On 2019/2/20 15:25, Chao Yu wrote:
+> >>> On 2019/2/20 15:08, Jaegeuk Kim wrote:
+> >>>> On 02/18, Chao Yu wrote:
+> >>>>> On 2019/2/16 12:55, Jaegeuk Kim wrote:
+> >>>>>> On 02/13, Chao Yu wrote:
+> >>>>>>> On 2019/2/12 10:33, Jaegeuk Kim wrote:
+> >>>>>>>> If we met this once, let fsck.f2fs clear this only.
+> >>>>>>>> Note that, this addresses all the subtle fault injection test.
+> >>>>>>>>
+> >>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>>>>>>> ---
+> >>>>>>>>  fs/f2fs/checkpoint.c | 2 --
+> >>>>>>>>  1 file changed, 2 deletions(-)
+> >>>>>>>>
+> >>>>>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> >>>>>>>> index 03fea4efd64b..10a3ada28715 100644
+> >>>>>>>> --- a/fs/f2fs/checkpoint.c
+> >>>>>>>> +++ b/fs/f2fs/checkpoint.c
+> >>>>>>>> @@ -1267,8 +1267,6 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>>>>>>  
+> >>>>>>>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
+> >>>>>>>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>>>>> -	else
+> >>>>>>>> -		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>>>>
+> >>>>>>> I didn't get it, previously, if we didn't persist all quota file's data in
+> >>>>>>> checkpoint, then we will tag CP_QUOTA_NEED_FSCK_FLAG in CP area, but in current
+> >>>>>>> checkpoint, we have persisted all quota file's data, quota files are consistent
+> >>>>>>> with all other files in filesystem, why we can't remove this NEED_FSCK flag..?
+> >>>>>>
+> >>>>>> I said it's subtle. So, I guessed 1) set CP_QUOTA_NEED_FSCK_FLAG, 2) clear
+> >>>>>
+> >>>>> I know it's subtle... and I agreed we can fix it like this in upstream
+> >>>>> first, but in our product, it's not rare that we hit the
+> >>>>> QUOTA_SKIP_FLUSH(its value is 4) case, later we may encounter long latency
+> >>>>> caused by quota repairing of fsck.
+> >>>>>
+> >>>>>> SBI_QUOTA_SKIP_FLUSH by checkpoint, 3) clear CP_QUOTA_NEED_FSCK_FLAG by another
+> >>>>>> checkpoint?
+> >>>>>
+> >>>>> But later if QUOTA_NEED_REPAIR is set, we will set QUOTA_NEED_FSCK_FLAG
+> >>>>> again, right?
+> >>>>>
+> >>>>> if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+> >>>>> 	__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>>
+> >>>>>
+> >>>>> So in order to figure out whether this is caused by out-of-order execution
+> >>>>> of below assignments:
+> >>>>>
+> >>>>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
+> >>>>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>> 	else
+> >>>>> 		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- clear flag later
+> >>>>>
+> >>>>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+> >>>>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- set flag first
+> >>>>>
+> >>>>>
+> >>>>> Could you have a try:
+> >>>>>
+> >>>>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR) ||
+> >>>>> 			is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
+> >>>>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>> 	else
+> >>>>> 		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>
+> >>>> What does this mean? I'm in doubt we have a missing case where we clear this
+> >>>
+> >>> Cpu pipeline / compiler can make code out-of-order execution, which means:
+> >>>
+> >>> a = 1;
+> >>> b = 2;
+> >>>
+> >>> may actually be executed as the order of:
+> >>>
+> >>> b = 2;
+> >>> a = 1;
+> >>>
+> >>> So I doubt that below two line codes can be executed out-of-order:
+> >>>
+> >>> else
+> >>> 	__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- clear flag later
+> >>>
+> >>> if ()
+> >>> 	__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- set flag first
+> > 
+> > In spin_lock_irqsave()?
+> 
+> Not sure in coverage of spin_lock, system can guarantee codes being
+> executed orderly.
+> 
+> > 
+> >>>
+> >>>> flag, CP_QUOTA_NEED_FSCK_FLAG.
+> >>>
+> >>> Agreed, I've checked each operation in f2fs_quota_operations yesterday, and
+> >>> didn't find any missing places yet...
+> >>
+> >> Oh, I mean the place where set SBI_QUOTA_NEED_REPAIR, I also doubt we
+> >> missed to set the flag.
+> > 
+> > So, I may need to keep this patch untill we find the missing case. I'll keep an
+> > eye on this.
+> 
+> Agreed, do you mind adding one line comment there to notice that?
 
-This can be used for DUN for UFS HW encryption.
+       /*
+        * TODO: we count on fsck.f2fs to clear this flag until we figure out
+        * missing cases which clear it incorrectly.
+        */
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/f2fs.h  | 2 --
- fs/f2fs/namei.c | 3 ++-
- fs/f2fs/super.c | 1 -
- 3 files changed, 2 insertions(+), 4 deletions(-)
+I added like this.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 19cbf17550c7..3007759dd2dd 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1242,8 +1242,6 @@ struct f2fs_sb_info {
- 
- 	unsigned int nquota_files;		/* # of quota sysfile */
- 
--	u32 s_next_generation;			/* for NFS support */
--
- 	/* # of pages, see count_type */
- 	atomic_t nr_pages[NR_COUNT_TYPE];
- 	/* # of allocated blocks */
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 62d9829f3a6a..f218d9424d8b 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -10,6 +10,7 @@
- #include <linux/pagemap.h>
- #include <linux/sched.h>
- #include <linux/ctype.h>
-+#include <linux/random.h>
- #include <linux/dcache.h>
- #include <linux/namei.h>
- #include <linux/quotaops.h>
-@@ -50,7 +51,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 	inode->i_blocks = 0;
- 	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
- 	F2FS_I(inode)->i_crtime = inode->i_mtime;
--	inode->i_generation = sbi->s_next_generation++;
-+	inode->i_generation = prandom_u32();
- 
- 	if (S_ISDIR(inode->i_mode))
- 		F2FS_I(inode)->i_current_depth = 1;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 45121190a2ba..42eb5c86330a 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -3129,7 +3129,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	sb->s_maxbytes = sbi->max_file_blocks <<
- 				le32_to_cpu(raw_super->log_blocksize);
- 	sb->s_max_links = F2FS_LINK_MAX;
--	get_random_bytes(&sbi->s_next_generation, sizeof(u32));
- 
- #ifdef CONFIG_QUOTA
- 	sb->dq_op = &f2fs_quota_operations;
--- 
-2.19.0.605.g01d371f741-goog
+Thanks,
+
+
+> 
+> Thanks,
+> 
+> > 
+> >>
+> >> Thanks,
+> >>
+> >>>
+> >>> Thanks,
+> >>>
+> >>>>
+> >>>>>
+> >>>>> Thanks,
+> >>>>>
+> >>>>>>
+> >>>>>>>
+> >>>>>>> Thanks,
+> >>>>>>>
+> >>>>>>>>  
+> >>>>>>>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+> >>>>>>>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>>>>>
+> >>>>>>
+> >>>>>> .
+> >>>>>>
+> >>>>
+> >>>> .
+> >>>>
+> >>>
+> >>>
+> >>>
+> >>> _______________________________________________
+> >>> Linux-f2fs-devel mailing list
+> >>> Linux-f2fs-devel@lists.sourceforge.net
+> >>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >>>
+> >>> .
+> >>>
+> > 
+> > .
+> > 
