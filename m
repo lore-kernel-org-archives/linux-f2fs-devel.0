@@ -1,25 +1,25 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: zhengliang <zhengliang6@huawei.com>
 Subject: Re: [PATCH v3] f2fs: fix to data block override node
  segment by mistake
-Date: Tue, 26 Feb 2019 09:48:22 -0800
-Message-ID: <20190226174822.GA59048@jaegeuk-macbookpro.roam.corp.google.com>
+Date: Wed, 27 Feb 2019 16:07:19 +0800
+Message-ID: <29aee114-347c-bd14-1753-f735f8e5f792@huawei.com>
 References: <6e7453cd-683d-e596-de40-4b4a459353df@huawei.com>
+ <20190226174822.GA59048@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="gbk"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1gygqt-00026Z-04
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Feb 2019 17:49:17 +0000
-Received: from [198.145.29.99] (helo=mail.kernel.org)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <zhengliang6@huawei.com>) id 1gyuH2-0006ez-Kg
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Feb 2019 08:09:04 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gygqC-009jqm-Uo
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Feb 2019 17:49:10 +0000
-Content-Disposition: inline
-In-Reply-To: <6e7453cd-683d-e596-de40-4b4a459353df@huawei.com>
+ id 1gyuGz-001ZQ3-1Q
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Feb 2019 08:09:04 +0000
+In-Reply-To: <20190226174822.GA59048@jaegeuk-macbookpro.roam.corp.google.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,38 +29,54 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: zhengliang <zhengliang6@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 02/25, zhengliang wrote:
-> v2->v3: It describe the problem scenario more accurately.
-> 
-> TASK A              TASK kworker                                                 TASK B                                                   TASK C
-> 
-> open
-> write
-> close
->                     f2fs_write_data_pages
->                       f2fs_write_cache_pages
->                         f2fs_outplace_write_data
->                           f2fs_allocate_data_block (get block in seg S,
->                                                     S is full, and only
->                                                     have this valid data
->                                                     block)
->                             allocate_segment
->                             locate_dirty_segment (mark S as PRE)
->                           f2fs_submit_page_write (submit but is not
->                                                   written on dev)
-> unlink
->   iput_final
->     f2fs_drop_inode
->       f2fs_truncate
->   (not evict)
->                                                                              write_checkpoint
->                                                                                flush merged bio but not wait file data writeback
->                                                                                set_prefree_as_free (mark S as FREE)
->                                                                                                                                     update NODE/DATA
->                                                                                                                                     allocate_segment (select S)
->                        writeback done
-
-Patch was broken?
+SSdtIHZlcnkgc29ycnkgSSBmb3JnZXQgdG8gYXR0YWNoIHRoZSBwYXRjaCBpbiB2My4KClJldmll
+d2VkLWJ5OiBDaGFvIFl1IDx5dWNoYW8wQGh1YXdlaS5jb20+ClNpZ25lZC1vZmYtYnk6IFpoZW5n
+IExpYW5nIDx6aGVuZ2xpYW5nNkBodWF3ZWkuY29tPgotLS0tLS0tLQpkaWZmIC0tZ2l0IGEvZnMv
+ZjJmcy9zdXBlci5jIGIvZnMvZjJmcy9zdXBlci5jCmluZGV4IGM0NmExZDQzLi42MGYwNTk5IDEw
+MDY0NAotLS0gYS9mcy9mMmZzL3N1cGVyLmMKKysrIGIvZnMvZjJmcy9zdXBlci5jCkBAIC05MTUs
+NiArOTE1LDEwIEBAIHN0YXRpYyBpbnQgZjJmc19kcm9wX2lub2RlKHN0cnVjdCBpbm9kZSAqaW5v
+ZGUpCiAgICAgICAgICAgICAgICAgICAgICAgIHNiX3N0YXJ0X2ludHdyaXRlKGlub2RlLT5pX3Ni
+KTsKICAgICAgICAgICAgICAgICAgICAgICAgZjJmc19pX3NpemVfd3JpdGUoaW5vZGUsIDApOwoK
+KyAgICAgICAgICAgICAgICAgICAgICAgZjJmc19zdWJtaXRfbWVyZ2VkX3dyaXRlX2NvbmQoRjJG
+U19JX1NCKGlub2RlKSwKKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlu
+b2RlLCBOVUxMLCAwLCBEQVRBKTsKKyAgICAgICAgICAgICAgICAgICAgICAgdHJ1bmNhdGVfaW5v
+ZGVfcGFnZXNfZmluYWwoaW5vZGUtPmlfbWFwcGluZyk7CisKICAgICAgICAgICAgICAgICAgICAg
+ICAgaWYgKEYyRlNfSEFTX0JMT0NLUyhpbm9kZSkpCiAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgZjJmc190cnVuY2F0ZShpbm9kZSk7CgrU2iAyMDE5LzIvMjcgMTo0OCwgSmFlZ2V1ayBL
+aW0g0LS1wDoKPiBPbiAwMi8yNSwgemhlbmdsaWFuZyB3cm90ZToKPj4gdjItPnYzOiBJdCBkZXNj
+cmliZSB0aGUgcHJvYmxlbSBzY2VuYXJpbyBtb3JlIGFjY3VyYXRlbHkuCj4+Cj4+IFRBU0sgQSAg
+ICAgICAgICAgICAgVEFTSyBrd29ya2VyICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIFRBU0sgQiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIFRBU0sgQwo+Pgo+PiBvcGVuCj4+IHdyaXRlCj4+IGNsb3NlCj4+ICAg
+ICAgICAgICAgICAgICAgICAgZjJmc193cml0ZV9kYXRhX3BhZ2VzCj4+ICAgICAgICAgICAgICAg
+ICAgICAgICBmMmZzX3dyaXRlX2NhY2hlX3BhZ2VzCj4+ICAgICAgICAgICAgICAgICAgICAgICAg
+IGYyZnNfb3V0cGxhY2Vfd3JpdGVfZGF0YQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgIGYy
+ZnNfYWxsb2NhdGVfZGF0YV9ibG9jayAoZ2V0IGJsb2NrIGluIHNlZyBTLAo+PiAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgUyBpcyBmdWxsLCBhbmQg
+b25seQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgaGF2ZSB0aGlzIHZhbGlkIGRhdGEKPj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIGJsb2NrKQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgYWxsb2NhdGVfc2VnbWVudAo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbG9jYXRl
+X2RpcnR5X3NlZ21lbnQgKG1hcmsgUyBhcyBQUkUpCj4+ICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgZjJmc19zdWJtaXRfcGFnZV93cml0ZSAoc3VibWl0IGJ1dCBpcyBub3QKPj4gICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB3cml0dGVuIG9uIGRldikK
+Pj4gdW5saW5rCj4+ICAgaXB1dF9maW5hbAo+PiAgICAgZjJmc19kcm9wX2lub2RlCj4+ICAgICAg
+IGYyZnNfdHJ1bmNhdGUKPj4gICAobm90IGV2aWN0KQo+PiAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHdy
+aXRlX2NoZWNrcG9pbnQKPj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGZsdXNoIG1lcmdlZCBiaW8g
+YnV0IG5vdCB3YWl0IGZpbGUgZGF0YSB3cml0ZWJhY2sKPj4gICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IHNldF9wcmVmcmVlX2FzX2ZyZWUgKG1hcmsgUyBhcyBGUkVFKQo+PiAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICB1cGRhdGUgTk9ERS9EQVRBCj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGFsbG9jYXRlX3NlZ21lbnQg
+KHNlbGVjdCBTKQo+PiAgICAgICAgICAgICAgICAgICAgICAgIHdyaXRlYmFjayBkb25lCj4gCj4g
+UGF0Y2ggd2FzIGJyb2tlbj8KPiAKPiAuCj4gCgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4
+LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9y
+Z2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
