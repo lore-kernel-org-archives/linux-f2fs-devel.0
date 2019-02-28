@@ -1,22 +1,22 @@
 From: Chao Yu <yuchao0@huawei.com>
 Subject: Re: [PATCH 1/4] f2fs_io: add write
-Date: Thu, 28 Feb 2019 09:23:32 +0800
-Message-ID: <856e9ce5-c983-0681-f7fd-ee4969d6f407@huawei.com>
+Date: Thu, 28 Feb 2019 09:35:42 +0800
+Message-ID: <571cefb4-cce4-df1d-7e60-12417f44f366@huawei.com>
 References: <20190220170745.7328-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1gzAQJ-0006cD-Ck
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Feb 2019 01:23:43 +0000
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1gzAcD-0003fw-3d
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Feb 2019 01:36:01 +0000
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gzAQH-003JDc-7j
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Feb 2019 01:23:43 +0000
+ id 1gzAcA-00D5av-PU
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Feb 2019 01:36:01 +0000
 In-Reply-To: <20190220170745.7328-1-jaegeuk@kernel.org>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
@@ -131,6 +131,15 @@ On 2019/2/21 1:07, Jaegeuk Kim wrote:
 > +		fputs("Wrong IO type\n\n", stderr);
 > +		exit(1);
 > +	}
+
+should be
+
+if (!strcmp(, dio)) {
+	flags |= O_DIRECT;
+} else if (strcmp(, buffered)) {
+	fputs();
+}
+
 > +
 > +	fd = open(argv[6], O_CREAT | O_WRONLY | flags, 0755);
 > +	if (fd == -1) {
@@ -143,11 +152,6 @@ On 2019/2/21 1:07, Jaegeuk Kim wrote:
 > +			*(int *)buf = inc_num++;
 > +		else if (!strcmp(argv[4], "rand"))
 > +			*(int *)buf = rand();
-
-Just assigning first 4 bytes is enough? do we need assign the whole buffer?
-
-Thanks,
-
 > +
 > +		/* write data */
 > +		ret = pwrite(fd, buf, buf_size, offset + buf_size * i);
