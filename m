@@ -1,25 +1,25 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 Subject: Re: [PATCH 1/4] f2fs_io: add write
-Date: Wed, 27 Feb 2019 19:11:44 -0800
-Message-ID: <20190228031144.GA78789@jaegeuk-macbookpro.roam.corp.google.com>
+Date: Wed, 27 Feb 2019 19:12:37 -0800
+Message-ID: <20190228031237.GB78789@jaegeuk-macbookpro.roam.corp.google.com>
 References: <20190220170745.7328-1-jaegeuk@kernel.org>
- <571cefb4-cce4-df1d-7e60-12417f44f366@huawei.com>
+ <856e9ce5-c983-0681-f7fd-ee4969d6f407@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1gzC6z-0002Uh-Ev
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Feb 2019 03:11:53 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1gzC7v-0007Q6-An
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Feb 2019 03:12:51 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1gzC6x-003S0e-Sl
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Feb 2019 03:11:53 +0000
+ id 1gzC7r-00DE59-GC
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Feb 2019 03:12:51 +0000
 Content-Disposition: inline
-In-Reply-To: <571cefb4-cce4-df1d-7e60-12417f44f366@huawei.com>
+In-Reply-To: <856e9ce5-c983-0681-f7fd-ee4969d6f407@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -133,18 +133,6 @@ On 02/28, Chao Yu wrote:
 > > +		fputs("Wrong IO type\n\n", stderr);
 > > +		exit(1);
 > > +	}
-> 
-> should be
-> 
-> if (!strcmp(, dio)) {
-> 	flags |= O_DIRECT;
-> } else if (strcmp(, buffered)) {
-> 	fputs();
-> }
-
-Yeah, right. I'll write another patch, since I merged it too early.
-
-> 
 > > +
 > > +	fd = open(argv[6], O_CREAT | O_WRONLY | flags, 0755);
 > > +	if (fd == -1) {
@@ -157,6 +145,15 @@ Yeah, right. I'll write another patch, since I merged it too early.
 > > +			*(int *)buf = inc_num++;
 > > +		else if (!strcmp(argv[4], "rand"))
 > > +			*(int *)buf = rand();
+> 
+> Just assigning first 4 bytes is enough? do we need assign the whole buffer?
+
+First 4 bytes to have the given content would be enough, since we're dealing
+with 4KB blocks all the time.
+
+> 
+> Thanks,
+> 
 > > +
 > > +		/* write data */
 > > +		ret = pwrite(fd, buf, buf_size, offset + buf_size * i);
