@@ -1,9 +1,8 @@
 From: Dave Chinner <david@fromorbit.com>
-Subject: Re: [PATCH 8/8] xfs: support project in xfs_getattr()
-Date: Mon, 4 Mar 2019 10:03:34 +1100
-Message-ID: <20190303230334.GT23020@dastard>
-References: <1551449141-7884-1-git-send-email-wshilong1991@gmail.com>
- <1551449141-7884-9-git-send-email-wshilong1991@gmail.com>
+Subject: Re: [PATCH 1/2] fchownat.2: add project support updates
+Date: Mon, 4 Mar 2019 10:08:20 +1100
+Message-ID: <20190303230820.GU23020@dastard>
+References: <1551449184-7942-1-git-send-email-wshilong1991@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,14 +10,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <david@fromorbit.com>) id 1h0a9H-0003el-Cu
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 03 Mar 2019 23:03:59 +0000
+ (envelope-from <david@fromorbit.com>) id 1h0aDf-0003pr-1z
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 03 Mar 2019 23:08:31 +0000
 Received: from ipmail06.adl6.internode.on.net ([150.101.137.145])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtp (Exim 4.90_1)
- id 1h0a9F-00900g-Lh
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 03 Mar 2019 23:03:59 +0000
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtp (Exim 4.90_1)
+ id 1h0aDd-009RuV-Kh
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 03 Mar 2019 23:08:31 +0000
 Content-Disposition: inline
-In-Reply-To: <1551449141-7884-9-git-send-email-wshilong1991@gmail.com>
+In-Reply-To: <1551449184-7942-1-git-send-email-wshilong1991@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,29 +28,43 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Wang Shilong <wangshilong1991@gmail.com>
-Cc: adilger@dilger.ca, Wang Shilong <wshilong@ddn.com>, lixi@ddn.com, linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+Cc: adilger@dilger.ca, linux-man@vger.kernel.org, Wang Shilong <wshilong@ddn.com>, lixi@ddn.com, linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
 
-On Fri, Mar 01, 2019 at 11:05:41PM +0900, Wang Shilong wrote:
+On Fri, Mar 01, 2019 at 11:06:22PM +0900, Wang Shilong wrote:
 > From: Wang Shilong <wshilong@ddn.com>
 > 
 > From: Wang Shilong <wshilong@ddn.com>
 > 
+> Cc: linux-man@vger.kernel.org
 > Signed-off-by: Wang Shilong <wshilong@ddn.com>
 > ---
->  fs/xfs/xfs_iops.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  man2/chown.2 | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> index c10466fe6ed4..a2f8c0f048cf 100644
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@ -501,6 +501,7 @@ xfs_vn_getattr(
->  	if (XFS_FORCED_SHUTDOWN(mp))
->  		return -EIO;
->  
-> +	stat->projid = xfs_projid_to_kprojid(xfs_get_projid(ip));
+> diff --git a/man2/chown.2 b/man2/chown.2
+> index 50db789ac..fad74df20 100644
+> --- a/man2/chown.2
+> +++ b/man2/chown.2
+> @@ -217,6 +217,11 @@ instead operate on the link itself, like
+>  .BR fchownat ()
+>  dereferences symbolic links, like
+>  .BR chown ().)
+> +.TP
+> +.B AT_FCHOWN_PROJID
+> +Use
+> +.I group
+> +to change file's project ID instead of its group ID.
 
-Should only be set if the caller is in the init_user_ns.
+Needs to document init_user_ns constraint.
+
+>  .PP
+>  See
+>  .BR openat (2)
+
+Also missing new ENOSPC error that attempting to change a project ID
+can result in. Also should document the EPERM error condition when
+changing project ID in wrong userns, and EINVAL if an invalid
+project ID is supplied.
 
 Cheers,
 
