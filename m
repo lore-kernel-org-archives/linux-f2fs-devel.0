@@ -1,186 +1,172 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to do sanity check with
- inode.i_inline_xattr_size
-Date: Mon, 4 Mar 2019 14:43:08 +0800
-Message-ID: <0ec69bbf-80d6-d7e6-2739-c18c2a0cb676@huawei.com>
-References: <20190301073805.413-1-yuchao0@huawei.com>
- <20190304035909.GA8377@codeaurora.org>
+From: Damien Le Moal <damien.lemoal@wdc.com>
+Subject: [PATCH] f2fs: Reduce zoned block device memory usage
+Date: Mon,  4 Mar 2019 16:04:16 +0900
+Message-ID: <20190304070416.13429-1-damien.lemoal@wdc.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190304035909.GA8377@codeaurora.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sahitya Tummala <stummala@codeaurora.org>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <prvs=95962137b=damien.lemoal@wdc.com>)
+ id 1h0htE-0000wZ-7L
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Mar 2019 07:19:56 +0000
+Received: from esa5.hgst.iphmx.com ([216.71.153.144])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1h0htC-009HFe-Nm
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Mar 2019 07:19:56 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, Matias Bjorling <matias.bjorling@wdc.com>
 
-Hi Sahitya,
+For zoned block devices, an array of zone types for each device is
+allocated and initialized in order to determine if a section is stored
+on a sequential zone (zone reset needed) or a conventional zone (no
+zone reset needed and regular discard applies). Considering this usage,
+the zone types stored in memory can be replaced with a bitmap to
+indicate an equivalent information, that is, if a zone is sequential or
+not. This reduces the memory usage for each zoned device by roughly 8:
+on a 14TB disk with zones of 256 MB, the zone type array consumes
+13x4KB pages while the bitmap uses only 2x4KB pages.
 
-On 2019/3/4 11:59, Sahitya Tummala wrote:
-> On Fri, Mar 01, 2019 at 03:38:05PM +0800, Chao Yu wrote:
->> As Paul Bandha reported in bugzilla:
->>
->> https://bugzilla.kernel.org/show_bug.cgi?id=202709
->>
->> When I run the poc on the mounted f2fs img I get a buffer overflow in
->> read_inline_xattr due to there being no sanity check on the value of
->> i_inline_xattr_size.
->>
->> I created the img by just modifying the value of i_inline_xattr_size
->> in the inode:
->>
->> i_name                        		[test1.txt]
->> i_ext: fofs:0 blkaddr:0 len:0
->> i_extra_isize                 		[0x      18 : 24]
->> i_inline_xattr_size           		[0x    ffff : 65535]
->> i_addr[ofs]                   		[0x       0 : 0]
->>
->> mkdir /mnt/f2fs
->> mount ./f2fs1.img /mnt/f2fs
->> gcc poc.c -o poc
->> ./poc
->>
->> int main() {
->> 	int y = syscall(SYS_listxattr, "/mnt/f2fs/test1.txt", NULL, 0);
->> 	printf("ret %d", y);
->> 	printf("errno: %d\n", errno);
->>
->> }
->>
->>  BUG: KASAN: slab-out-of-bounds in read_inline_xattr+0x18f/0x260
->>  Read of size 262140 at addr ffff88011035efd8 by task f2fs1poc/3263
->>
->>  CPU: 0 PID: 3263 Comm: f2fs1poc Not tainted 4.18.0-custom #1
->>  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.1-0-g0551a4be2c-prebuilt.qemu-project.org 04/01/2014
->>  Call Trace:
->>   dump_stack+0x71/0xab
->>   print_address_description+0x83/0x250
->>   kasan_report+0x213/0x350
->>   memcpy+0x1f/0x50
->>   read_inline_xattr+0x18f/0x260
->>   read_all_xattrs+0xba/0x190
->>   f2fs_listxattr+0x9d/0x3f0
->>   listxattr+0xb2/0xd0
->>   path_listxattr+0x93/0xe0
->>   do_syscall_64+0x9d/0x220
->>   entry_SYSCALL_64_after_hwframe+0x44/0xa9
->>
->> Let's add sanity check for inode.i_inline_xattr_size during f2fs_iget()
->> to avoid this issue.
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/inode.c | 14 ++++++++++++++
->>  fs/f2fs/super.c |  7 ++-----
->>  fs/f2fs/xattr.h |  9 +++++++++
->>  3 files changed, 25 insertions(+), 5 deletions(-)
->>
->> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->> index bec52961630b..b132fe2ff779 100644
->> --- a/fs/f2fs/inode.c
->> +++ b/fs/f2fs/inode.c
->> @@ -14,6 +14,7 @@
->>  #include "f2fs.h"
->>  #include "node.h"
->>  #include "segment.h"
->> +#include "xattr.h"
->>  
->>  #include <trace/events/f2fs.h>
->>  
->> @@ -248,6 +249,19 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
->>  		return false;
->>  	}
->>  
->> +	if (f2fs_has_extra_attr(inode) &&
->> +		f2fs_sb_has_flexible_inline_xattr(sbi) &&
->> +		(fi->i_inline_xattr_size < MIN_INLINE_XATTR_SIZE ||
->> +		fi->i_inline_xattr_size > MAX_INLINE_XATTR_SIZE)) {
->> +		set_sbi_flag(sbi, SBI_NEED_FSCK);
->> +		f2fs_msg(sbi->sb, KERN_WARNING,
->> +			"%s: inode (ino=%lx) has corrupted "
->> +			"i_inline_xattr_size: %d, min: %zu, max: %zu",
->> +			__func__, inode->i_ino, fi->i_inline_xattr_size,
->> +			MIN_INLINE_XATTR_SIZE, MAX_INLINE_XATTR_SIZE);
->> +		return false;
->> +	}
->> +
->>  	if (F2FS_I(inode)->extent_tree) {
->>  		struct extent_info *ei = &F2FS_I(inode)->extent_tree->largest;
->>  
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index 42eb5c86330a..9184b7524c03 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -835,12 +835,9 @@ static int parse_options(struct super_block *sb, char *options)
->>  			return -EINVAL;
->>  		}
->>  		if (F2FS_OPTION(sbi).inline_xattr_size <
->> -			sizeof(struct f2fs_xattr_header) / sizeof(__le32) ||
->> +			MIN_INLINE_XATTR_SIZE ||
->>  			F2FS_OPTION(sbi).inline_xattr_size >
->> -			DEF_ADDRS_PER_INODE -
->> -			F2FS_TOTAL_EXTRA_ATTR_SIZE / sizeof(__le32) -
->> -			DEF_INLINE_RESERVED_SIZE -
->> -			MIN_INLINE_DENTRY_SIZE / sizeof(__le32)) {
->> +			MAX_INLINE_XATTR_SIZE) {
->>  			f2fs_msg(sb, KERN_ERR,
->>  					"inline xattr size is out of range");
->>  			return -EINVAL;
->> diff --git a/fs/f2fs/xattr.h b/fs/f2fs/xattr.h
->> index 67db134da0f5..94e8a5eeaae1 100644
->> --- a/fs/f2fs/xattr.h
->> +++ b/fs/f2fs/xattr.h
->> @@ -55,6 +55,8 @@ struct f2fs_xattr_entry {
->>  #define XATTR_FIRST_ENTRY(ptr)	(XATTR_ENTRY(XATTR_HDR(ptr) + 1))
->>  #define XATTR_ROUND		(3)
->>  
->> +#define XATTR_HDR_SIZE		(sizeof(struct f2fs_xattr_header))
->> +
->>  #define XATTR_ALIGN(size)	(((size) + XATTR_ROUND) & ~XATTR_ROUND)
->>  
->>  #define ENTRY_SIZE(entry) (XATTR_ALIGN(sizeof(struct f2fs_xattr_entry) + \
->> @@ -78,6 +80,13 @@ struct f2fs_xattr_entry {
->>  				sizeof(struct f2fs_xattr_header) -	\
->>  				sizeof(struct f2fs_xattr_entry))
->>  
->> +#define MAX_INLINE_XATTR_SIZE	(XATTR_HDR_SIZE / sizeof(__le32))
-> 
-> I think this should be MIN_INLINE_XATTR_SIZE.
-> 
->> +#define MIN_INLINE_XATTR_SIZE						\
->> +			(DEF_ADDRS_PER_INODE -				\
->> +			F2FS_TOTAL_EXTRA_ATTR_SIZE / sizeof(__le32) -	\
->> +			DEF_INLINE_RESERVED_SIZE -			\
->> +			MIN_INLINE_DENTRY_SIZE / sizeof(__le32))
->> +
-> 
-> And this should be MAX_INLINE_XATTR_SIZE.
+This patch changes the f2fs_dev_info structure blkz_type field to the
+bitmap blkz_seq. Access to this bitmap is done using the helper
+function f2fs_blkz_is_seq(), which is a rewrite of the function
+get_blkz_type().
 
-Thanks for your reminding. :)
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+---
+ fs/f2fs/f2fs.h    | 13 +++++++------
+ fs/f2fs/segment.c | 23 +++++++----------------
+ fs/f2fs/super.c   | 13 ++++++++-----
+ 3 files changed, 22 insertions(+), 27 deletions(-)
 
-I should have missed to check something during testing this patch with
-original corrupted image from bugzilla, sorry.
-
-BTW, MIN_INLINE_XATTR_SIZE may be not necessary...
-
-Thanks,
-
-> 
-> Thanks,
-> Sahitya.
-> 
->>  /*
->>   * On-disk structure of f2fs_xattr
->>   * We use inline xattrs space + 1 block for xattr.
->> -- 
->> 2.18.0.rc1
->>
->>
->>
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 12fabd6735dd..d7b2de930352 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1067,8 +1067,8 @@ struct f2fs_dev_info {
+ 	block_t start_blk;
+ 	block_t end_blk;
+ #ifdef CONFIG_BLK_DEV_ZONED
+-	unsigned int nr_blkz;			/* Total number of zones */
+-	u8 *blkz_type;				/* Array of zones type */
++	unsigned int nr_blkz;		/* Total number of zones */
++	unsigned long *blkz_seq;	/* Bitmap indicating sequential zones */
+ #endif
+ };
+ 
+@@ -3508,16 +3508,17 @@ F2FS_FEATURE_FUNCS(lost_found, LOST_FOUND);
+ F2FS_FEATURE_FUNCS(sb_chksum, SB_CHKSUM);
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
+-static inline int get_blkz_type(struct f2fs_sb_info *sbi,
+-			struct block_device *bdev, block_t blkaddr)
++static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi,
++				    struct block_device *bdev, block_t blkaddr)
+ {
+ 	unsigned int zno = blkaddr >> sbi->log_blocks_per_blkz;
+ 	int i;
+ 
+ 	for (i = 0; i < sbi->s_ndevs; i++)
+ 		if (FDEV(i).bdev == bdev)
+-			return FDEV(i).blkz_type[zno];
+-	return -EINVAL;
++			return test_bit(zno, FDEV(i).blkz_seq);
++	WARN_ON_ONCE(1);
++	return false;
+ }
+ #endif
+ 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 9b79056d705d..65941070776c 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1703,19 +1703,8 @@ static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
+ 		blkstart -= FDEV(devi).start_blk;
+ 	}
+ 
+-	/*
+-	 * We need to know the type of the zone: for conventional zones,
+-	 * use regular discard if the drive supports it. For sequential
+-	 * zones, reset the zone write pointer.
+-	 */
+-	switch (get_blkz_type(sbi, bdev, blkstart)) {
+-
+-	case BLK_ZONE_TYPE_CONVENTIONAL:
+-		if (!blk_queue_discard(bdev_get_queue(bdev)))
+-			return 0;
+-		return __queue_discard_cmd(sbi, bdev, lblkstart, blklen);
+-	case BLK_ZONE_TYPE_SEQWRITE_REQ:
+-	case BLK_ZONE_TYPE_SEQWRITE_PREF:
++	/* For sequential zones, reset the zone write pointer */
++	if (f2fs_blkz_is_seq(sbi, bdev, blkstart)) {
+ 		sector = SECTOR_FROM_BLOCK(blkstart);
+ 		nr_sects = SECTOR_FROM_BLOCK(blklen);
+ 
+@@ -1730,10 +1719,12 @@ static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
+ 		trace_f2fs_issue_reset_zone(bdev, blkstart);
+ 		return blkdev_reset_zones(bdev, sector,
+ 					  nr_sects, GFP_NOFS);
+-	default:
+-		/* Unknown zone type: broken device ? */
+-		return -EIO;
+ 	}
++
++	 /* For conventional zones, use regular discard if supported */
++	if (!blk_queue_discard(bdev_get_queue(bdev)))
++		return 0;
++	return __queue_discard_cmd(sbi, bdev, lblkstart, blklen);
+ }
+ #endif
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index c46a1d4318d4..44860b4285b9 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1017,7 +1017,7 @@ static void destroy_device_list(struct f2fs_sb_info *sbi)
+ 	for (i = 0; i < sbi->s_ndevs; i++) {
+ 		blkdev_put(FDEV(i).bdev, FMODE_EXCL);
+ #ifdef CONFIG_BLK_DEV_ZONED
+-		kvfree(FDEV(i).blkz_type);
++		kfree(FDEV(i).blkz_seq);
+ #endif
+ 	}
+ 	kvfree(sbi->devs);
+@@ -2765,9 +2765,11 @@ static int init_blkz_info(struct f2fs_sb_info *sbi, int devi)
+ 	if (nr_sectors & (bdev_zone_sectors(bdev) - 1))
+ 		FDEV(devi).nr_blkz++;
+ 
+-	FDEV(devi).blkz_type = f2fs_kmalloc(sbi, FDEV(devi).nr_blkz,
+-								GFP_KERNEL);
+-	if (!FDEV(devi).blkz_type)
++	FDEV(devi).blkz_seq = f2fs_kzalloc(sbi,
++					BITS_TO_LONGS(FDEV(devi).nr_blkz)
++					* sizeof(unsigned long),
++					GFP_KERNEL);
++	if (!FDEV(devi).blkz_seq)
+ 		return -ENOMEM;
+ 
+ #define F2FS_REPORT_NR_ZONES   4096
+@@ -2794,7 +2796,8 @@ static int init_blkz_info(struct f2fs_sb_info *sbi, int devi)
+ 		}
+ 
+ 		for (i = 0; i < nr_zones; i++) {
+-			FDEV(devi).blkz_type[n] = zones[i].type;
++			if (zones[i].type != BLK_ZONE_TYPE_CONVENTIONAL)
++				set_bit(n, FDEV(devi).blkz_seq);
+ 			sector += zones[i].len;
+ 			n++;
+ 		}
+-- 
+2.20.1
