@@ -1,23 +1,22 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: [PATCH 1/2] fchownat.2: add project support updates
-Date: Mon, 4 Mar 2019 10:08:20 +1100
-Message-ID: <20190303230820.GU23020@dastard>
-References: <1551449184-7942-1-git-send-email-wshilong1991@gmail.com>
+From: zhengliang <zhengliang6@huawei.com>
+Subject: [PATCH v4] f2fs: fix to data block override node segment
+ by mistake
+Date: Mon, 4 Mar 2019 09:32:25 +0800
+Message-ID: <46bb1ca2-e768-274b-6d98-3ff4323abd1f@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <david@fromorbit.com>) id 1h0aDf-0003pr-1z
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 03 Mar 2019 23:08:31 +0000
-Received: from ipmail06.adl6.internode.on.net ([150.101.137.145])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtp (Exim 4.90_1)
- id 1h0aDd-009RuV-Kh
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 03 Mar 2019 23:08:31 +0000
-Content-Disposition: inline
-In-Reply-To: <1551449184-7942-1-git-send-email-wshilong1991@gmail.com>
+ (envelope-from <zhengliang6@huawei.com>) id 1h0cTZ-0004lz-6o
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Mar 2019 01:33:05 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1h0cTX-002GAu-4j
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Mar 2019 01:33:05 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,48 +26,56 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Wang Shilong <wangshilong1991@gmail.com>
-Cc: adilger@dilger.ca, linux-man@vger.kernel.org, Wang Shilong <wshilong@ddn.com>, lixi@ddn.com, linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On Fri, Mar 01, 2019 at 11:06:22PM +0900, Wang Shilong wrote:
-> From: Wang Shilong <wshilong@ddn.com>
-> 
-> From: Wang Shilong <wshilong@ddn.com>
-> 
-> Cc: linux-man@vger.kernel.org
-> Signed-off-by: Wang Shilong <wshilong@ddn.com>
-> ---
->  man2/chown.2 | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/man2/chown.2 b/man2/chown.2
-> index 50db789ac..fad74df20 100644
-> --- a/man2/chown.2
-> +++ b/man2/chown.2
-> @@ -217,6 +217,11 @@ instead operate on the link itself, like
->  .BR fchownat ()
->  dereferences symbolic links, like
->  .BR chown ().)
-> +.TP
-> +.B AT_FCHOWN_PROJID
-> +Use
-> +.I group
-> +to change file's project ID instead of its group ID.
+v4: Rearrange the previous three versions.
 
-Needs to document init_user_ns constraint.
+The following scenario could lead to data block override by mistake.
 
->  .PP
->  See
->  .BR openat (2)
+TASK A            |  TASK kworker                                            |     TASK B                                            |       TASK C
+                  |                                                          |                                                       |
+open              |                                                          |                                                       |
+write             |                                                          |                                                       |
+close             |                                                          |                                                       |
+                  |  f2fs_write_data_pages                                   |                                                       |
+                  |    f2fs_write_cache_pages                                |                                                       |
+                  |      f2fs_outplace_write_data                            |                                                       |
+                  |        f2fs_allocate_data_block (get block in seg S,     |                                                       |
+                  |                                  S is full, and only     |                                                       |
+                  |                                  have this valid data    |                                                       |
+                  |                                  block)                  |                                                       |
+                  |          allocate_segment                                |                                                       |
+                  |          locate_dirty_segment (mark S as PRE)            |                                                       |
+                  |        f2fs_submit_page_write (submit but is not         |                                                       |
+                  |                                written on dev)           |                                                       |
+unlink            |                                                          |                                                       |
+ iput_final       |                                                          |                                                       |
+  f2fs_drop_inode |                                                          |                                                       |
+    f2fs_truncate |                                                          |                                                       |
+ (not evict)      |                                                          |                                                       |
+                  |                                                          | write_checkpoint                                      |
+                  |                                                          |  flush merged bio but not wait file data writeback    |
+                  |                                                          |  set_prefree_as_free (mark S as FREE)                 |
+                  |                                                          |                                                       | update NODE/DATA
+                  |                                                          |                                                       | allocate_segment (select S)
+                  |     writeback done                                       |                                                       |
 
-Also missing new ENOSPC error that attempting to change a project ID
-can result in. Also should document the EPERM error condition when
-changing project ID in wrong userns, and EINVAL if an invalid
-project ID is supplied.
+So we need to guarantee io complete before truncate inode in f2fs_drop_inode.
 
-Cheers,
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Zheng Liang <zhengliang6@huawei.com>
+--------
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index c46a1d43..60f0599 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -915,6 +915,10 @@ static int f2fs_drop_inode(struct inode *inode)
+                        sb_start_intwrite(inode->i_sb);
+                        f2fs_i_size_write(inode, 0);
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
++                       f2fs_submit_merged_write_cond(F2FS_I_SB(inode),
++                                       inode, NULL, 0, DATA);
++                       truncate_inode_pages_final(inode->i_mapping);
++
+                        if (F2FS_HAS_BLOCKS(inode))
+                                f2fs_truncate(inode);
