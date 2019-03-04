@@ -1,27 +1,28 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 202747] New: sometime kernel crash when kzfree is
- called in fs/f2fs/xattr.c
-Date: Mon, 04 Mar 2019 13:30:53 +0000
-Message-ID: <bug-202747-202145@https.bugzilla.kernel.org/>
+From: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Subject: Re: [PATCH 2/2] statx.2: add project support update
+Date: Mon, 4 Mar 2019 14:52:59 +0100
+Message-ID: <CAKgNAkitiDEYSZDnJ5iQ6coaE=q45BHxnG2z_bZtWs=kk+2g3w@mail.gmail.com>
+References: <1551449184-7942-1-git-send-email-wshilong1991@gmail.com>
+ <1551449184-7942-3-git-send-email-wshilong1991@gmail.com>
+Reply-To: mtk.manpages@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1h0ngP-0000gT-U1
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Mar 2019 13:31:05 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
+ (envelope-from <mtk.manpages@gmail.com>) id 1h0o1u-0001eH-DM
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Mar 2019 13:53:18 +0000
+Received: from mail-ed1-f67.google.com ([209.85.208.67])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h0ngL-009ZVf-56
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Mar 2019 13:31:05 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 36CBA2A26D
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1h0o1s-009ag5-Ip
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Mar 2019 13:53:18 +0000
+Received: by mail-ed1-f67.google.com with SMTP id c55so4317600edb.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  4 Mar 2019 13:30:55 +0000 (UTC)
+ Mon, 04 Mar 2019 05:53:16 -0800 (PST)
+In-Reply-To: <1551449184-7942-3-git-send-email-wshilong1991@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,58 +32,78 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Wang Shilong <wangshilong1991@gmail.com>
+Cc: Andreas Dilger <adilger@dilger.ca>, linux-man <linux-man@vger.kernel.org>, Wang Shilong <wshilong@ddn.com>, "Darrick J. Wong" <darrick.wong@oracle.com>, lixi@ddn.com, linux-f2fs-devel@lists.sourceforge.net, xfs <linux-xfs@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Ext4 Developers List <linux-ext4@vger.kernel.org>
 
-aHR0cHM6Ly9idWd6aWxsYS5rZXJuZWwub3JnL3Nob3dfYnVnLmNnaT9pZD0yMDI3NDcKCiAgICAg
-ICAgICAgIEJ1ZyBJRDogMjAyNzQ3CiAgICAgICAgICAgU3VtbWFyeTogc29tZXRpbWUga2VybmVs
-IGNyYXNoIHdoZW4ga3pmcmVlIGlzIGNhbGxlZCBpbgogICAgICAgICAgICAgICAgICAgIGZzL2Yy
-ZnMveGF0dHIuYwogICAgICAgICAgIFByb2R1Y3Q6IEZpbGUgU3lzdGVtCiAgICAgICAgICAgVmVy
-c2lvbjogMi41CiAgICBLZXJuZWwgVmVyc2lvbjogZjJmcy1kZXYKICAgICAgICAgIEhhcmR3YXJl
-OiBBbGwKICAgICAgICAgICAgICAgIE9TOiBMaW51eAogICAgICAgICAgICAgIFRyZWU6IE1haW5s
-aW5lCiAgICAgICAgICAgIFN0YXR1czogTkVXCiAgICAgICAgICBTZXZlcml0eTogaGlnaAogICAg
-ICAgICAgUHJpb3JpdHk6IFAxCiAgICAgICAgIENvbXBvbmVudDogZjJmcwogICAgICAgICAgQXNz
-aWduZWU6IGZpbGVzeXN0ZW1fZjJmc0BrZXJuZWwtYnVncy5rZXJuZWwub3JnCiAgICAgICAgICBS
-ZXBvcnRlcjogamlxdW4ubGlAdW5pc29jLmNvbQogICAgICAgIFJlZ3Jlc3Npb246IE5vCgppbiBm
-aWxlIGZzL2YyZnMveGF0dHIuYwoKa3pmcmVlKCkgaXMgY2FsbGVkICBzb21ld2hlcmUKCmV4YW1w
-bGU6CgpzdGF0aWMgaW50IHJlYWRfYWxsX3hhdHRycyhzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1
-Y3QgcGFnZSAqaXBhZ2UsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgdm9pZCAqKmJhc2VfYWRkcikKewogICAgICAgIC4uLi4uLgogICAgICAg
-IHR4YXR0cl9hZGRyID0gZjJmc19remFsbG9jKEYyRlNfSV9TQihpbm9kZSksCiAgICAgICAgICAg
-ICAgICAgICAgICAgIGlubGluZV9zaXplICsgc2l6ZSArIFhBVFRSX1BBRERJTkdfU0laRSwgR0ZQ
-X05PRlMpOwogICAgICAgIC4uLi4uCiAgICAgICAga3pmcmVlKHR4YXR0cl9hZGRyKTsKICAgICAg
-ICByZXR1cm4gZXJyOwp9CgphZGRyZXNzIGlzIGFsbG9jZWQgYnkgZjJmc19remFsbG9jKCksIHN0
-ZXAgaW50bywgaXQgbWF5IHVzZSBrbWFsbG9jKCkgb3IKa3ZtYWxsb2MoKSwgCmFjY29yZGluZ2x5
-IHRoZSBhZGRyZXNzIHNob3VsZCBiZSBmcmVlZCBieSBrZnJlZSgpIG9yIGt2ZnJlZSgpLCBidXQg
-a3pmcmVlKCkKYXdheXMgdXNlIGtmcmVlKCksIHRoZW4gdGhlIGtlcm5lbCBjcmFzaGVkIHdoZW4g
-dGhlIGFkZHJlc3MgaXMgYWxsb2NlZCBieQprdm1hbGxvYygpLgoKSSBoYXZlIGNoYW5nZWQga3pm
-cmVlIHRvIGt2ZnJlZe+8jCBrZXJuZWwgbm90IGNyYXNoIGFueSBtb3JlLCBJIG5vdCB1bmRlcnN0
-YW5kCndoeSBzZXQgdGhlIG1lbW9yeSB0byB6ZXJvIGJlZm9yZSBmcmVlIHRoZSBhZGRyZXNzLgoK
-c28gSSB1c2UgdGhlIHBhdGNoLCBrZXJuZWwgbm90IGNyYXNoIGFsc2/jgIIKCml0IGRpZmYgZGlm
-ZiAtLWdpdCBhL2ZzL2YyZnMvZjJmcy5oIGIvZnMvZjJmcy9mMmZzLmggaW5kZXggODVkOTUwOC4u
-YzRiM2Q3YgoxMDA2NDQKLS0tIGEvZnMvZjJmcy9mMmZzLmgKKysrIGIvZnMvZjJmcy9mMmZzLmgK
-QEAgLTI3OTgsNiArMjc5OCwxOCBAQCBzdGF0aWMgaW5saW5lIHZvaWQgKmYyZnNfa21hbGxvYyhz
-dHJ1Y3QgZjJmc19zYl9pbmZvCipzYmksCiAgICAgICAgcmV0dXJuIGt2bWFsbG9jKHNpemUsIGZs
-YWdzKTsKfQoKK3N0YXRpYyBpbmxpbmUgdm9pZCAqZjJmc19remZyZWUoY29uc3Qgdm9pZCAqcCkg
-eworICAgICAgIHNpemVfdCBrczsKKyAgICAgICB2b2lkICptZW0gPSAodm9pZCAqKXA7CisKKyAg
-ICAgICBpZiAodW5saWtlbHkoWkVST19PUl9OVUxMX1BUUihtZW0pKSkKKyAgICAgICAgICAgICAg
-IHJldHVybjsKKyAgICAgICBrcyA9IGtzaXplKG1lbSk7CisgICAgICAgbWVtc2V0KG1lbSwgMCwg
-a3MpOworICAgICAgIGt2ZnJlZShtZW0pOworfQorCnN0YXRpYyBpbmxpbmUgdm9pZCAqa3Z6YWxs
-b2Moc2l6ZV90IHNpemUsIGdmcF90IGZsYWdzKSB7CiAgICAgICAgdm9pZCAqcmV0OwpkaWZmIC0t
-Z2l0IGEvZnMvZjJmcy94YXR0ci5jIGIvZnMvZjJmcy94YXR0ci5jIGluZGV4IGRlZGM5MWEuLjAx
-NTJlZDggMTAwNjQ0Ci0tLSBhL2ZzL2YyZnMveGF0dHIuYworKysgYi9mcy9mMmZzL3hhdHRyLmMK
-QEAgLTM4Niw3ICszODYsNyBAQCBjaGVjazoKICAgICAgICAqYmFzZV9hZGRyID0gdHhhdHRyX2Fk
-ZHI7CiAgICAgICAgcmV0dXJuIDA7Cm91dDoKLSAgICAgICBremZyZWUodHhhdHRyX2FkZHIpOwor
-ICAgICAgIGYyZnNfa3pmcmVlKHR4YXR0cl9hZGRyKTsKICAgICAgICByZXR1cm4gZXJyOwp9CgpA
-QCAtNDI5LDcgKzQyOSw3IEBAIHN0YXRpYyBpbnQgcmVhZF9hbGxfeGF0dHJzKHN0cnVjdCBpbm9k
-ZSAqaW5vZGUsIHN0cnVjdCBwYWdlCippcGFnZSwKICAgICAgICAqYmFzZV9hZGRyID0gdHhhdHRy
-X2FkZHI7CiAgICAgICAgcmV0dXJuIDA7CmZhaWw6Ci0gICAgICAga3pmcmVlKHR4YXR0cl9hZGRy
-KTsKKyAgICAgICBmMmZzX2t6ZnJlZSh0eGF0dHJfYWRkcik7CiAgICAgICAgcmV0dXJuIGVycjsK
-fQoKQEAgLTU1Niw3ICs1NTYsNyBAQCBpbnQgZjJmc19nZXR4YXR0cihzdHJ1Y3QgaW5vZGUgKmlu
-b2RlLCBpbnQgaW5kZXgsIGNvbnN0CmNoYXIgKm5hbWUsCiAgICAgICAgfQogICAgICAgIGVycm9y
-ID0gc2l6ZTsKb3V0OgotICAgICAgIGt6ZnJlZShiYXNlX2FkZHIpOworICAgICAgIGYyZnNfa3pm
-cmVlKGJhc2VfYWRkcik7CiAgICAgICAgcmV0dXJuIGVycm9yOwoKLS0gCllvdSBhcmUgcmVjZWl2
-aW5nIHRoaXMgbWFpbCBiZWNhdXNlOgpZb3UgYXJlIHdhdGNoaW5nIHRoZSBhc3NpZ25lZSBvZiB0
-aGUgYnVnLgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-TGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3Vy
-Y2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8v
-bGludXgtZjJmcy1kZXZlbAo=
+Hello Wang Shilong,
+
+On Fri, 1 Mar 2019 at 15:06, Wang Shilong <wangshilong1991@gmail.com> wrote:
+>
+> From: Wang Shilong <wshilong@ddn.com>
+
+I take it that these patches relate to some API changes that are not
+yet merged into the kernel, right?
+
+Also, I think we need some accompanying info to describe project IDs.
+Can you point me at any documents/resources?
+
+Thanks,
+
+Michael
+
+>
+> Cc: linux-man@vger.kernel.org
+> Signed-off-by: Wang Shilong <wshilong@ddn.com>
+> ---
+>  man2/statx.2 | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/man2/statx.2 b/man2/statx.2
+> index 7265d8ace..6a9dede8b 100644
+> --- a/man2/statx.2
+> +++ b/man2/statx.2
+> @@ -82,6 +82,7 @@ struct statx {
+>         containing the filesystem where the file resides */
+>      __u32 stx_dev_major;   /* Major ID */
+>      __u32 stx_dev_minor;   /* Minor ID */
+> +    __u32 stx_projid;      /* Project ID of file */
+>  };
+>  .EE
+>  .in
+> @@ -261,6 +262,7 @@ STATX_SIZE  Want stx_size
+>  STATX_BLOCKS   Want stx_blocks
+>  STATX_BASIC_STATS      [All of the above]
+>  STATX_BTIME    Want stx_btime
+> +STATX_PROJID   Want stx_projid
+>  STATX_ALL      [All currently available fields]
+>  .TE
+>  .in
+> @@ -412,6 +414,9 @@ The device on which this file (inode) resides.
+>  .IR stx_rdev_major " and "  stx_rdev_minor
+>  The device that this file (inode) represents if the file is of block or
+>  character device type.
+> +.TP
+> +.I stx_projid
+> +The file's project ID.
+>  .PP
+>  For further information on the above fields, see
+>  .BR inode (7).
+> @@ -458,6 +463,9 @@ See
+>  .TP
+>  .B STATX_ATTR_ENCRYPTED
+>  A key is required for the file to be encrypted by the filesystem.
+> +.TP
+> +.B STATX_ATTR_PROJINHERIT
+> +Sub directories or files will inherit parent's project ID automatically.
+>  .SH RETURN VALUE
+>  On success, zero is returned.
+>  On error, \-1 is returned, and
+> --
+> 2.19.1
+>
+
+
+-- 
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
