@@ -1,22 +1,28 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] generic: test i_mode recovery after power
+From: Filipe Manana <fdmanana@gmail.com>
+Subject: Re: [PATCH v2] generic: test i_mode recovery after power
  failure
-Date: Tue, 5 Mar 2019 19:47:44 +0800
-Message-ID: <20190305114744.129633-1-yuchao0@huawei.com>
+Date: Tue, 5 Mar 2019 14:41:54 +0000
+Message-ID: <CAL3q7H5u28F8rOGAobzG=S2WGDxstLkOHJ__z2gpovH=VNNm1g@mail.gmail.com>
+References: <20190305114744.129633-1-yuchao0@huawei.com>
+Reply-To: fdmanana@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1h18YJ-0003ER-Bx
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Mar 2019 11:48:07 +0000
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h18YH-00BqnV-23
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Mar 2019 11:48:07 +0000
+ (envelope-from <fdmanana@gmail.com>) id 1h1BGn-0004vf-3L
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Mar 2019 14:42:13 +0000
+Received: from mail-vk1-f194.google.com ([209.85.221.194])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1h1BGl-0052ek-Bc
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Mar 2019 14:42:12 +0000
+Received: by mail-vk1-f194.google.com with SMTP id j68so1994122vke.13
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 05 Mar 2019 06:42:11 -0800 (PST)
+In-Reply-To: <20190305114744.129633-1-yuchao0@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,158 +32,87 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: fstests@vger.kernel.org
-Cc: guaneryu@gmail.com, fdmanana@gmail.com, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Eryu Guan <guaneryu@gmail.com>, fstests <fstests@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-After fsync, filesystem should guarantee inode metadata including
-permission info being persisted, so even after sudden power-cut,
-during mount, we should recover i_mode fields correctly, in order
-to not loss those meta info.
-
-So adding this testcase to check whether generic filesystem can
-guarantee that.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2:
-change as Filipe suggested:
-- use dmflakey to simulate power-cut for generic filesystem which
-doesn't support godown ioctl interface.
-- minor code style change.
- tests/generic/532     | 105 ++++++++++++++++++++++++++++++++++++++++++
- tests/generic/532.out |   2 +
- tests/generic/group   |   1 +
- 3 files changed, 108 insertions(+)
- create mode 100755 tests/generic/532
- create mode 100644 tests/generic/532.out
-
-diff --git a/tests/generic/532 b/tests/generic/532
-new file mode 100755
-index 000000000000..1c5dffcdc4f6
---- /dev/null
-+++ b/tests/generic/532
-@@ -0,0 +1,105 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2019 Huawei.  All Rights Reserved.
-+#
-+# FS QA Test 532
-+#
-+# This testcase is trying to test recovery flow of generic filesystem,
-+# w/ below steps, once i_mode changes, after we fsync that file, we can
-+# expect that i_mode can be recovered after sudden power-cuts.
-+# 1. touch testfile or mkdir testdir
-+# 2. chmod 777 testfile/testdir
-+# 3. sync
-+# 4. chmod 755 testfile/testdir
-+# 5. fsync testfile/testdir
-+# 6. record last i_mode
-+# 7. flakey drop
-+# 8. remount
-+# 9. check i_mode
-+#
-+seq=`basename $0`
-+seqres=$RESULT_DIR/$seq
-+echo "QA output created by $seq"
-+
-+here=`pwd`
-+tmp=/tmp/$$
-+status=1	# failure is the default!
-+trap "_cleanup; exit \$status" 0 1 2 3 15
-+
-+_cleanup()
-+{
-+	_cleanup_flakey
-+	cd /
-+	rm -f $tmp.*
-+}
-+
-+# get standard environment, filters and checks
-+. ./common/rc
-+. ./common/filter
-+. ./common/dmflakey
-+
-+# remove previous $seqres.full before test
-+rm -f $seqres.full
-+
-+# real QA test starts here
-+_supported_fs generic
-+_supported_os Linux
-+
-+_require_scratch
-+_require_dm_target flakey
-+
-+_scratch_mkfs >/dev/null 2>&1
-+_require_metadata_journaling $SCRATCH_DEV
-+_init_flakey
-+
-+testfile=$SCRATCH_MNT/testfile
-+testdir=$SCRATCH_MNT/testdir
-+
-+do_check()
-+{
-+	local target=$1
-+	local is_dir=$2
-+
-+	_mount_flakey
-+
-+	if [ $is_dir = 1 ]; then
-+		mkdir $target
-+	else
-+		touch $target
-+	fi
-+
-+	echo "Test chmod $target" >> $seqres.full
-+
-+	chmod 777 $target
-+	sync
-+
-+	chmod 755 $target
-+	$XFS_IO_PROG $target -c "fsync"
-+
-+	local before=`stat -c %a $target`
-+
-+	_flakey_drop_and_remount
-+
-+	local after=`stat -c %a $target`
-+
-+	# check inode's i_mode
-+	if [ "$before" != "$after" ]; then
-+		echo "Before: $before"
-+		echo "After : $after"
-+	fi
-+
-+	if [ $is_dir = 1 ]; then
-+		rmdir $target
-+	else
-+		rm -f $target
-+	fi
-+	_unmount_flakey
-+}
-+
-+echo "Silence is golden"
-+
-+do_check $testfile 0
-+do_check $testdir 1
-+
-+status=0
-+exit
-diff --git a/tests/generic/532.out b/tests/generic/532.out
-new file mode 100644
-index 000000000000..1f7d4677c3be
---- /dev/null
-+++ b/tests/generic/532.out
-@@ -0,0 +1,2 @@
-+QA output created by 532
-+Silence is golden
-diff --git a/tests/generic/group b/tests/generic/group
-index 15227b6713f7..c19361667886 100644
---- a/tests/generic/group
-+++ b/tests/generic/group
-@@ -534,3 +534,4 @@
- 529 auto quick attr
- 530 auto quick unlink
- 531 auto quick unlink
-+532 shutdown auto quick metadata
--- 
-2.18.0.rc1
+T24gVHVlLCBNYXIgNSwgMjAxOSBhdCAxMTo0OCBBTSBDaGFvIFl1IDx5dWNoYW8wQGh1YXdlaS5j
+b20+IHdyb3RlOgo+Cj4gQWZ0ZXIgZnN5bmMsIGZpbGVzeXN0ZW0gc2hvdWxkIGd1YXJhbnRlZSBp
+bm9kZSBtZXRhZGF0YSBpbmNsdWRpbmcKPiBwZXJtaXNzaW9uIGluZm8gYmVpbmcgcGVyc2lzdGVk
+LCBzbyBldmVuIGFmdGVyIHN1ZGRlbiBwb3dlci1jdXQsCj4gZHVyaW5nIG1vdW50LCB3ZSBzaG91
+bGQgcmVjb3ZlciBpX21vZGUgZmllbGRzIGNvcnJlY3RseSwgaW4gb3JkZXIKPiB0byBub3QgbG9z
+cyB0aG9zZSBtZXRhIGluZm8uCj4KPiBTbyBhZGRpbmcgdGhpcyB0ZXN0Y2FzZSB0byBjaGVjayB3
+aGV0aGVyIGdlbmVyaWMgZmlsZXN5c3RlbSBjYW4KPiBndWFyYW50ZWUgdGhhdC4KPgo+IFNpZ25l
+ZC1vZmYtYnk6IENoYW8gWXUgPHl1Y2hhbzBAaHVhd2VpLmNvbT4KPiAtLS0KPiB2MjoKPiBjaGFu
+Z2UgYXMgRmlsaXBlIHN1Z2dlc3RlZDoKPiAtIHVzZSBkbWZsYWtleSB0byBzaW11bGF0ZSBwb3dl
+ci1jdXQgZm9yIGdlbmVyaWMgZmlsZXN5c3RlbSB3aGljaAo+IGRvZXNuJ3Qgc3VwcG9ydCBnb2Rv
+d24gaW9jdGwgaW50ZXJmYWNlLgo+IC0gbWlub3IgY29kZSBzdHlsZSBjaGFuZ2UuCj4gIHRlc3Rz
+L2dlbmVyaWMvNTMyICAgICB8IDEwNSArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysKPiAgdGVzdHMvZ2VuZXJpYy81MzIub3V0IHwgICAyICsKPiAgdGVzdHMvZ2VuZXJp
+Yy9ncm91cCAgIHwgICAxICsKPiAgMyBmaWxlcyBjaGFuZ2VkLCAxMDggaW5zZXJ0aW9ucygrKQo+
+ICBjcmVhdGUgbW9kZSAxMDA3NTUgdGVzdHMvZ2VuZXJpYy81MzIKPiAgY3JlYXRlIG1vZGUgMTAw
+NjQ0IHRlc3RzL2dlbmVyaWMvNTMyLm91dAo+Cj4gZGlmZiAtLWdpdCBhL3Rlc3RzL2dlbmVyaWMv
+NTMyIGIvdGVzdHMvZ2VuZXJpYy81MzIKPiBuZXcgZmlsZSBtb2RlIDEwMDc1NQo+IGluZGV4IDAw
+MDAwMDAwMDAwMC4uMWM1ZGZmY2RjNGY2Cj4gLS0tIC9kZXYvbnVsbAo+ICsrKyBiL3Rlc3RzL2dl
+bmVyaWMvNTMyCj4gQEAgLTAsMCArMSwxMDUgQEAKPiArIyEgL2Jpbi9iYXNoCj4gKyMgU1BEWC1M
+aWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAKPiArIyBDb3B5cmlnaHQgKGMpIDIwMTkgSHVhd2Vp
+LiAgQWxsIFJpZ2h0cyBSZXNlcnZlZC4KPiArIwo+ICsjIEZTIFFBIFRlc3QgNTMyCj4gKyMKPiAr
+IyBUaGlzIHRlc3RjYXNlIGlzIHRyeWluZyB0byB0ZXN0IHJlY292ZXJ5IGZsb3cgb2YgZ2VuZXJp
+YyBmaWxlc3lzdGVtLAo+ICsjIHcvIGJlbG93IHN0ZXBzLCBvbmNlIGlfbW9kZSBjaGFuZ2VzLCBh
+ZnRlciB3ZSBmc3luYyB0aGF0IGZpbGUsIHdlIGNhbgo+ICsjIGV4cGVjdCB0aGF0IGlfbW9kZSBj
+YW4gYmUgcmVjb3ZlcmVkIGFmdGVyIHN1ZGRlbiBwb3dlci1jdXRzLgo+ICsjIDEuIHRvdWNoIHRl
+c3RmaWxlIG9yIG1rZGlyIHRlc3RkaXIKPiArIyAyLiBjaG1vZCA3NzcgdGVzdGZpbGUvdGVzdGRp
+cgo+ICsjIDMuIHN5bmMKPiArIyA0LiBjaG1vZCA3NTUgdGVzdGZpbGUvdGVzdGRpcgo+ICsjIDUu
+IGZzeW5jIHRlc3RmaWxlL3Rlc3RkaXIKPiArIyA2LiByZWNvcmQgbGFzdCBpX21vZGUKPiArIyA3
+LiBmbGFrZXkgZHJvcAo+ICsjIDguIHJlbW91bnQKPiArIyA5LiBjaGVjayBpX21vZGUKPiArIwo+
+ICtzZXE9YGJhc2VuYW1lICQwYAo+ICtzZXFyZXM9JFJFU1VMVF9ESVIvJHNlcQo+ICtlY2hvICJR
+QSBvdXRwdXQgY3JlYXRlZCBieSAkc2VxIgo+ICsKPiAraGVyZT1gcHdkYAo+ICt0bXA9L3RtcC8k
+JAo+ICtzdGF0dXM9MSAgICAgICAjIGZhaWx1cmUgaXMgdGhlIGRlZmF1bHQhCj4gK3RyYXAgIl9j
+bGVhbnVwOyBleGl0IFwkc3RhdHVzIiAwIDEgMiAzIDE1Cj4gKwo+ICtfY2xlYW51cCgpCj4gK3sK
+PiArICAgICAgIF9jbGVhbnVwX2ZsYWtleQo+ICsgICAgICAgY2QgLwo+ICsgICAgICAgcm0gLWYg
+JHRtcC4qCj4gK30KPiArCj4gKyMgZ2V0IHN0YW5kYXJkIGVudmlyb25tZW50LCBmaWx0ZXJzIGFu
+ZCBjaGVja3MKPiArLiAuL2NvbW1vbi9yYwo+ICsuIC4vY29tbW9uL2ZpbHRlcgo+ICsuIC4vY29t
+bW9uL2RtZmxha2V5Cj4gKwo+ICsjIHJlbW92ZSBwcmV2aW91cyAkc2VxcmVzLmZ1bGwgYmVmb3Jl
+IHRlc3QKPiArcm0gLWYgJHNlcXJlcy5mdWxsCj4gKwo+ICsjIHJlYWwgUUEgdGVzdCBzdGFydHMg
+aGVyZQo+ICtfc3VwcG9ydGVkX2ZzIGdlbmVyaWMKPiArX3N1cHBvcnRlZF9vcyBMaW51eAo+ICsK
+PiArX3JlcXVpcmVfc2NyYXRjaAo+ICtfcmVxdWlyZV9kbV90YXJnZXQgZmxha2V5Cj4gKwo+ICtf
+c2NyYXRjaF9ta2ZzID4vZGV2L251bGwgMj4mMQo+ICtfcmVxdWlyZV9tZXRhZGF0YV9qb3VybmFs
+aW5nICRTQ1JBVENIX0RFVgo+ICtfaW5pdF9mbGFrZXkKPiArCj4gK3Rlc3RmaWxlPSRTQ1JBVENI
+X01OVC90ZXN0ZmlsZQo+ICt0ZXN0ZGlyPSRTQ1JBVENIX01OVC90ZXN0ZGlyCj4gKwo+ICtkb19j
+aGVjaygpCj4gK3sKPiArICAgICAgIGxvY2FsIHRhcmdldD0kMQo+ICsgICAgICAgbG9jYWwgaXNf
+ZGlyPSQyCj4gKwo+ICsgICAgICAgX21vdW50X2ZsYWtleQo+ICsKPiArICAgICAgIGlmIFsgJGlz
+X2RpciA9IDEgXTsgdGhlbgo+ICsgICAgICAgICAgICAgICBta2RpciAkdGFyZ2V0Cj4gKyAgICAg
+ICBlbHNlCj4gKyAgICAgICAgICAgICAgIHRvdWNoICR0YXJnZXQKPiArICAgICAgIGZpCj4gKwo+
+ICsgICAgICAgZWNobyAiVGVzdCBjaG1vZCAkdGFyZ2V0IiA+PiAkc2VxcmVzLmZ1bGwKPiArCj4g
+KyAgICAgICBjaG1vZCA3NzcgJHRhcmdldAo+ICsgICAgICAgc3luYwo+ICsKPiArICAgICAgIGNo
+bW9kIDc1NSAkdGFyZ2V0Cj4gKyAgICAgICAkWEZTX0lPX1BST0cgJHRhcmdldCAtYyAiZnN5bmMi
+Cj4gKwo+ICsgICAgICAgbG9jYWwgYmVmb3JlPWBzdGF0IC1jICVhICR0YXJnZXRgCj4gKwo+ICsg
+ICAgICAgX2ZsYWtleV9kcm9wX2FuZF9yZW1vdW50Cj4gKwo+ICsgICAgICAgbG9jYWwgYWZ0ZXI9
+YHN0YXQgLWMgJWEgJHRhcmdldGAKPiArCj4gKyAgICAgICAjIGNoZWNrIGlub2RlJ3MgaV9tb2Rl
+Cj4gKyAgICAgICBpZiBbICIkYmVmb3JlIiAhPSAiJGFmdGVyIiBdOyB0aGVuCj4gKyAgICAgICAg
+ICAgICAgIGVjaG8gIkJlZm9yZTogJGJlZm9yZSIKPiArICAgICAgICAgICAgICAgZWNobyAiQWZ0
+ZXIgOiAkYWZ0ZXIiCj4gKyAgICAgICBmaQo+ICsKPiArICAgICAgIGlmIFsgJGlzX2RpciA9IDEg
+XTsgdGhlbgo+ICsgICAgICAgICAgICAgICBybWRpciAkdGFyZ2V0Cj4gKyAgICAgICBlbHNlCj4g
+KyAgICAgICAgICAgICAgIHJtIC1mICR0YXJnZXQKPiArICAgICAgIGZpCj4gKyAgICAgICBfdW5t
+b3VudF9mbGFrZXkKPiArfQo+ICsKPiArZWNobyAiU2lsZW5jZSBpcyBnb2xkZW4iCj4gKwo+ICtk
+b19jaGVjayAkdGVzdGZpbGUgMAo+ICtkb19jaGVjayAkdGVzdGRpciAxCj4gKwo+ICtzdGF0dXM9
+MAo+ICtleGl0Cj4gZGlmZiAtLWdpdCBhL3Rlc3RzL2dlbmVyaWMvNTMyLm91dCBiL3Rlc3RzL2dl
+bmVyaWMvNTMyLm91dAo+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gaW5kZXggMDAwMDAwMDAwMDAw
+Li4xZjdkNDY3N2MzYmUKPiAtLS0gL2Rldi9udWxsCj4gKysrIGIvdGVzdHMvZ2VuZXJpYy81MzIu
+b3V0Cj4gQEAgLTAsMCArMSwyIEBACj4gK1FBIG91dHB1dCBjcmVhdGVkIGJ5IDUzMgo+ICtTaWxl
+bmNlIGlzIGdvbGRlbgo+IGRpZmYgLS1naXQgYS90ZXN0cy9nZW5lcmljL2dyb3VwIGIvdGVzdHMv
+Z2VuZXJpYy9ncm91cAo+IGluZGV4IDE1MjI3YjY3MTNmNy4uYzE5MzYxNjY3ODg2IDEwMDY0NAo+
+IC0tLSBhL3Rlc3RzL2dlbmVyaWMvZ3JvdXAKPiArKysgYi90ZXN0cy9nZW5lcmljL2dyb3VwCj4g
+QEAgLTUzNCwzICs1MzQsNCBAQAo+ICA1MjkgYXV0byBxdWljayBhdHRyCj4gIDUzMCBhdXRvIHF1
+aWNrIHVubGluawo+ICA1MzEgYXV0byBxdWljayB1bmxpbmsKPiArNTMyIHNodXRkb3duIGF1dG8g
+cXVpY2sgbWV0YWRhdGEKClNpbmNlIHRoZSB0ZXN0IG5vdyB1c2VzIGRtZmxha2V5LCBpdCBzaG91
+bGQgbm8gbG9uZ2VyIGJlbG9uZyB0byB0aGUKJ3NodXRkb3duJyBncm91cCBhbmQgc2hvdWxkCmJl
+bG9uZyB0byB0aGUgJ2xvZycgZ3JvdXAgbGlrZSBhbGwgb3RoZXIgdGVzdHMgdXNpbmcgZG1mbGFr
+ZXkuClByb2JhYmx5IEVyeXUgY2FuIGNoYW5nZSB0aGF0IHdoZW4KaGUgcGlja3MgdGhlIHBhdGNo
+LgoKT3RoZXIgdGhhbiB0aGF0IGl0IGxvb2tzIGdvb2QgdG8gbWUsIHRoYW5rcy4KClJldmlld2Vk
+LWJ5OiBGaWxpcGUgTWFuYW5hIDxmZG1hbmFuYUBzdXNlLmNvbT4KCj4gLS0KPiAyLjE4LjAucmMx
+Cj4KCgotLSAKRmlsaXBlIERhdmlkIE1hbmFuYSwKCuKAnFdoZXRoZXIgeW91IHRoaW5rIHlvdSBj
+YW4sIG9yIHlvdSB0aGluayB5b3UgY2FuJ3Qg4oCUIHlvdSdyZSByaWdodC7igJ0KCgpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVs
+IG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRw
+czovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVs
+Cg==
