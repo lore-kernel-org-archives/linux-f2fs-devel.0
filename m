@@ -1,70 +1,183 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix to adapt small inline xattr space in __find_inline_xattr()
-Date: Tue, 5 Mar 2019 19:32:26 +0800
-Message-ID: <20190305113226.124873-1-yuchao0@huawei.com>
+Subject: [PATCH v2] generic: test i_mode recovery after power
+ failure
+Date: Tue, 5 Mar 2019 19:47:44 +0800
+Message-ID: <20190305114744.129633-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1h18YJ-0003ER-Bx
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Mar 2019 11:48:07 +0000
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1h18YH-00BqnV-23
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Mar 2019 11:48:07 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: fstests@vger.kernel.org
+Cc: guaneryu@gmail.com, fdmanana@gmail.com, linux-f2fs-devel@lists.sourceforge.net
 
-With below testcase, we will fail to find existed xattr entry:
+After fsync, filesystem should guarantee inode metadata including
+permission info being persisted, so even after sudden power-cut,
+during mount, we should recover i_mode fields correctly, in order
+to not loss those meta info.
 
-1. mkfs.f2fs -O extra_attr -O flexible_inline_xattr /dev/zram0
-2. mount -t f2fs -o inline_xattr_size=1 /dev/zram0 /mnt/f2fs/
-3. touch /mnt/f2fs/file
-4. setfattr -n "user.name" -v 0 /mnt/f2fs/file
-5. getfattr -n "user.name" /mnt/f2fs/file
-
-/mnt/f2fs/file: user.name: No such attribute
-
-The reason is for inode which has very small inline xattr size,
-__find_inline_xattr() will fail to traverse any entry due to first
-entry may not be loaded from xattr node yet, later, we may skip to
-check entire xattr datas in __find_xattr(), result in such wrong
-condition.
-
-This patch adds condition to check such case to avoid this issue.
+So adding this testcase to check whether generic filesystem can
+guarantee that.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/xattr.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+v2:
+change as Filipe suggested:
+- use dmflakey to simulate power-cut for generic filesystem which
+doesn't support godown ioctl interface.
+- minor code style change.
+ tests/generic/532     | 105 ++++++++++++++++++++++++++++++++++++++++++
+ tests/generic/532.out |   2 +
+ tests/generic/group   |   1 +
+ 3 files changed, 108 insertions(+)
+ create mode 100755 tests/generic/532
+ create mode 100644 tests/generic/532.out
 
-diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-index ca47224d78ab..848a785abe25 100644
---- a/fs/f2fs/xattr.c
-+++ b/fs/f2fs/xattr.c
-@@ -224,11 +224,11 @@ static struct f2fs_xattr_entry *__find_inline_xattr(struct inode *inode,
- {
- 	struct f2fs_xattr_entry *entry;
- 	unsigned int inline_size = inline_xattr_size(inode);
-+	void *max_addr = base_addr + inline_size;
- 
- 	list_for_each_xattr(entry, base_addr) {
--		if ((void *)entry + sizeof(__u32) > base_addr + inline_size ||
--			(void *)XATTR_NEXT_ENTRY(entry) + sizeof(__u32) >
--			base_addr + inline_size) {
-+		if ((void *)entry + sizeof(__u32) > max_addr ||
-+			(void *)XATTR_NEXT_ENTRY(entry) > max_addr) {
- 			*last_addr = entry;
- 			return NULL;
- 		}
-@@ -239,6 +239,13 @@ static struct f2fs_xattr_entry *__find_inline_xattr(struct inode *inode,
- 		if (!memcmp(entry->e_name, name, len))
- 			break;
- 	}
+diff --git a/tests/generic/532 b/tests/generic/532
+new file mode 100755
+index 000000000000..1c5dffcdc4f6
+--- /dev/null
++++ b/tests/generic/532
+@@ -0,0 +1,105 @@
++#! /bin/bash
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (c) 2019 Huawei.  All Rights Reserved.
++#
++# FS QA Test 532
++#
++# This testcase is trying to test recovery flow of generic filesystem,
++# w/ below steps, once i_mode changes, after we fsync that file, we can
++# expect that i_mode can be recovered after sudden power-cuts.
++# 1. touch testfile or mkdir testdir
++# 2. chmod 777 testfile/testdir
++# 3. sync
++# 4. chmod 755 testfile/testdir
++# 5. fsync testfile/testdir
++# 6. record last i_mode
++# 7. flakey drop
++# 8. remount
++# 9. check i_mode
++#
++seq=`basename $0`
++seqres=$RESULT_DIR/$seq
++echo "QA output created by $seq"
 +
-+	/* inline xattr header or entry across max inline xattr size */
-+	if (IS_XATTR_LAST_ENTRY(entry) &&
-+		(void *)entry + sizeof(__u32) > max_addr) {
-+		*last_addr = entry;
-+		return NULL;
-+	}
- 	return entry;
- }
- 
++here=`pwd`
++tmp=/tmp/$$
++status=1	# failure is the default!
++trap "_cleanup; exit \$status" 0 1 2 3 15
++
++_cleanup()
++{
++	_cleanup_flakey
++	cd /
++	rm -f $tmp.*
++}
++
++# get standard environment, filters and checks
++. ./common/rc
++. ./common/filter
++. ./common/dmflakey
++
++# remove previous $seqres.full before test
++rm -f $seqres.full
++
++# real QA test starts here
++_supported_fs generic
++_supported_os Linux
++
++_require_scratch
++_require_dm_target flakey
++
++_scratch_mkfs >/dev/null 2>&1
++_require_metadata_journaling $SCRATCH_DEV
++_init_flakey
++
++testfile=$SCRATCH_MNT/testfile
++testdir=$SCRATCH_MNT/testdir
++
++do_check()
++{
++	local target=$1
++	local is_dir=$2
++
++	_mount_flakey
++
++	if [ $is_dir = 1 ]; then
++		mkdir $target
++	else
++		touch $target
++	fi
++
++	echo "Test chmod $target" >> $seqres.full
++
++	chmod 777 $target
++	sync
++
++	chmod 755 $target
++	$XFS_IO_PROG $target -c "fsync"
++
++	local before=`stat -c %a $target`
++
++	_flakey_drop_and_remount
++
++	local after=`stat -c %a $target`
++
++	# check inode's i_mode
++	if [ "$before" != "$after" ]; then
++		echo "Before: $before"
++		echo "After : $after"
++	fi
++
++	if [ $is_dir = 1 ]; then
++		rmdir $target
++	else
++		rm -f $target
++	fi
++	_unmount_flakey
++}
++
++echo "Silence is golden"
++
++do_check $testfile 0
++do_check $testdir 1
++
++status=0
++exit
+diff --git a/tests/generic/532.out b/tests/generic/532.out
+new file mode 100644
+index 000000000000..1f7d4677c3be
+--- /dev/null
++++ b/tests/generic/532.out
+@@ -0,0 +1,2 @@
++QA output created by 532
++Silence is golden
+diff --git a/tests/generic/group b/tests/generic/group
+index 15227b6713f7..c19361667886 100644
+--- a/tests/generic/group
++++ b/tests/generic/group
+@@ -534,3 +534,4 @@
+ 529 auto quick attr
+ 530 auto quick unlink
+ 531 auto quick unlink
++532 shutdown auto quick metadata
 -- 
 2.18.0.rc1
