@@ -1,10 +1,9 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: Reduce zoned block device memory usage
-Date: Tue, 5 Mar 2019 08:55:34 -0800
-Message-ID: <20190305165534.GA78380@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190304070416.13429-1-damien.lemoal@wdc.com>
- <bae73801-92f5-f7a0-c6a0-941c90219866@suse.de>
- <BYAPR04MB58167832101386B8EA03E037E7720@BYAPR04MB5816.namprd04.prod.outlook.com>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH v2] generic: test i_mode recovery after power
+ failure
+Date: Wed, 6 Mar 2019 07:53:44 +1100
+Message-ID: <20190305205344.GC26298@dastard>
+References: <20190305114744.129633-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -12,15 +11,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1h1DM0-0002VS-Gz
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Mar 2019 16:55:44 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h1DLx-00BqeP-4j
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Mar 2019 16:55:44 +0000
+ (envelope-from <david@fromorbit.com>) id 1h1H4X-00040q-CY
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Mar 2019 20:53:57 +0000
+Received: from ipmail07.adl2.internode.on.net ([150.101.137.131])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtp (Exim 4.90_1)
+ id 1h1H4V-005ehM-66
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Mar 2019 20:53:57 +0000
 Content-Disposition: inline
-In-Reply-To: <BYAPR04MB58167832101386B8EA03E037E7720@BYAPR04MB5816.namprd04.prod.outlook.com>
+In-Reply-To: <20190305114744.129633-1-yuchao0@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,54 +28,46 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Damien Le Moal <Damien.LeMoal@wdc.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, Matias Bjorling <Matias.Bjorling@wdc.com>, Johannes Thumshirn <jthumshirn@suse.de>
+To: Chao Yu <yuchao0@huawei.com>
+Cc: guaneryu@gmail.com, fdmanana@gmail.com, fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 03/05, Damien Le Moal wrote:
-> Johannes,
+On Tue, Mar 05, 2019 at 07:47:44PM +0800, Chao Yu wrote:
+> After fsync, filesystem should guarantee inode metadata including
+> permission info being persisted, so even after sudden power-cut,
+> during mount, we should recover i_mode fields correctly, in order
+> to not loss those meta info.
 > 
-> On 2019/03/04 18:46, Johannes Thumshirn wrote:
-> > Hi Damien,
-> > 
-> > On 04/03/2019 08:04, Damien Le Moal wrote:
-> >> @@ -2765,9 +2765,11 @@ static int init_blkz_info(struct f2fs_sb_info *sbi, int devi)
-> >>  	if (nr_sectors & (bdev_zone_sectors(bdev) - 1))
-> >>  		FDEV(devi).nr_blkz++;
-> >>  
-> >> -	FDEV(devi).blkz_type = f2fs_kmalloc(sbi, FDEV(devi).nr_blkz,
-> >> -								GFP_KERNEL);
-> >> -	if (!FDEV(devi).blkz_type)
-> >> +	FDEV(devi).blkz_seq = f2fs_kzalloc(sbi,
-> >> +					BITS_TO_LONGS(FDEV(devi).nr_blkz)
-> >> +					* sizeof(unsigned long),
-> >> +					GFP_KERNEL);
-> >> +	if (!FDEV(devi).blkz_seq)
-> >>  		return -ENOMEM;
-> > 
-> > Not so sure about F2FS internals, but there is a bitmap_zalloc() in the
-> > normal kernel library.
-> 
-> Yes indeed... f2fs_kzalloc uses f2fs_kmalloc(__GFP_ZERO) and f2fs_kmalloc is
-> basically kmalloc() or kvmalloc() but with error injection for tests. So I used
-> that instead of bitmap_zalloc() to preserve the error injection test.
-> 
-> Jaegeuk,
-> 
-> Which do you prefer ? The patch as it is or switching to bitmap_zalloc() ?
-> Whichever is fine with me so I can send a v2 if you prefer bitmap_zalloc().
+> So adding this testcase to check whether generic filesystem can
+> guarantee that.
 
-Hi Damien,
+Can I make a suggestion here?
 
-I think f2fs_kmalloc would be fine for fault injection tests. It seems it'd
-better to write a clean-up patch which replaces all the bitmap allocations
-in f2fs with single f2fs_bitmap_zalloc() at once.
+I've noticed that we are getting a lot of these one-off, random
+"fsync persists one specific piece of metadata in one specific case"
+tests, mainly in response to some fsync bug that was found in btrfs.
+This is reactive, and does not find new bugs in this area.
 
-I'll take a look at this.
-Thanks,
+We are also beyond the point where the number of tests is
+maintainable (e.g. to be able to make infrastructure changes), so we
+really should be looking to consolidate largely similar tests into
+single tests where possible.
 
-> 
-> Best regards.
-> 
-> -- 
-> Damien Le Moal
-> Western Digital Research
+I'd strongly suggest that a robust fsync tester should be written
+for all the cases that are currently being addressed in an ad hoc
+fashion. Then they can be consolidated into a single test run, and
+we can get rid of all the one-off "fsync failed on this <specific
+thing>" tests from the harness.
+
+Oh, wait, we *already have that infrastructure*: src/fsync-tester.c
+and generic/311.
+
+Can we please consider rolling all of these "do something, fsync,
+drop-writes, remount check" into fsync-tester.c and do the same for
+all future one-off "did fsync persist X" tests?
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
