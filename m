@@ -1,11 +1,7 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: [PATCH v2] generic: test i_mode recovery after power
- failure
-Date: Wed, 6 Mar 2019 16:00:49 +1100
-Message-ID: <20190306050049.GA23020@dastard>
-References: <20190305114744.129633-1-yuchao0@huawei.com>
- <20190305205344.GC26298@dastard>
- <0f1af38b-5dbf-a56a-c0c1-72cf9fafb515@huawei.com>
+From: Damien Le Moal <damien.lemoal@wdc.com>
+Subject: [PATCH v2] f2fs: Reduce zoned block device memory usage
+Date: Wed,  6 Mar 2019 15:27:11 +0900
+Message-ID: <20190306062711.14456-1-damien.lemoal@wdc.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -13,14 +9,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <david@fromorbit.com>) id 1h1Ofv-0006P8-9s
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Mar 2019 05:01:03 +0000
-Received: from ipmail06.adl2.internode.on.net ([150.101.137.129])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtp (Exim 4.90_1)
- id 1h1Oft-00Cv9w-4O
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Mar 2019 05:01:03 +0000
-Content-Disposition: inline
-In-Reply-To: <0f1af38b-5dbf-a56a-c0c1-72cf9fafb515@huawei.com>
+ (envelope-from <prvs=9610ee5ea=damien.lemoal@wdc.com>)
+ id 1h1Q1R-0001XJ-3G
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Mar 2019 06:27:21 +0000
+Received: from esa4.hgst.iphmx.com ([216.71.154.42])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1h1Q1O-00DVGl-SI
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Mar 2019 06:27:21 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,84 +26,150 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: guaneryu@gmail.com, fdmanana@gmail.com, fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, Matias Bjorling <matias.bjorling@wdc.com>
 
-On Wed, Mar 06, 2019 at 10:29:10AM +0800, Chao Yu wrote:
-> On 2019/3/6 4:53, Dave Chinner wrote:
-> > On Tue, Mar 05, 2019 at 07:47:44PM +0800, Chao Yu wrote:
-> >> After fsync, filesystem should guarantee inode metadata including
-> >> permission info being persisted, so even after sudden power-cut,
-> >> during mount, we should recover i_mode fields correctly, in order
-> >> to not loss those meta info.
-> >>
-> >> So adding this testcase to check whether generic filesystem can
-> >> guarantee that.
-> > 
-> > Can I make a suggestion here?
-> > 
-> > I've noticed that we are getting a lot of these one-off, random
-> > "fsync persists one specific piece of metadata in one specific case"
-> > tests, mainly in response to some fsync bug that was found in btrfs.
-> > This is reactive, and does not find new bugs in this area.
-> > 
-> > We are also beyond the point where the number of tests is
-> > maintainable (e.g. to be able to make infrastructure changes), so we
-> > really should be looking to consolidate largely similar tests into
-> > single tests where possible.
-> > 
-> > I'd strongly suggest that a robust fsync tester should be written
-> > for all the cases that are currently being addressed in an ad hoc
-> > fashion. Then they can be consolidated into a single test run, and
-> > we can get rid of all the one-off "fsync failed on this <specific
-> > thing>" tests from the harness.
-> 
-> Thanks for the suggestion, and that makes sense.
-> 
-> > 
-> > Oh, wait, we *already have that infrastructure*: src/fsync-tester.c
-> > and generic/311.
-> > 
-> > Can we please consider rolling all of these "do something, fsync,
-> > drop-writes, remount check" into fsync-tester.c and do the same for
-> > all future one-off "did fsync persist X" tests?
-> 
-> Let me add this testcase into fsync-tester.c, still we need add new
-> testcase in generic/ directory instead of changing generic/311 directly,
-> right? since as I remember that Eryu mentioned that:
-> 
-> "Usually we don't add new sub-tests to existing tests, so new failures
-> introduced by the new sub-tests won't be treated as false regressions.
-> Please add a new test instead."
+For zoned block devices, an array of zone types for each device is
+allocated and initialized in order to determine if a section is stored
+on a sequential zone (zone reset needed) or a conventional zone (no
+zone reset needed and regular discard applies). Considering this usage,
+the zone types stored in memory can be replaced with a bitmap to
+indicate an equivalent information, that is, if a zone is sequential or
+not. This reduces the memory usage for each zoned device by roughly 8:
+on a 14TB disk with zones of 256 MB, the zone type array consumes
+13x4KB pages while the bitmap uses only 2x4KB pages.
 
-Yeah, sure, but there's no point in adding a new fstest for every
-case we move/add to fsync-tester.c - that's no better than what we have
-now. i.e the whole point of using fsync-tester.c is to aggregate
-lots of individual tests full of copy-n-paste dm-flakey
-infrastructure into a single test. Copy-n-paste of fsync tester
-boiler plate is not an improvement.
+This patch changes the f2fs_dev_info structure blkz_type field to the
+bitmap blkz_seq. Access to this bitmap is done using the helper
+function f2fs_blkz_is_seq(), which is a rewrite of the function
+get_blkz_type().
 
-There are other 'aggregation' style tests in fstests, and we do
-extend them from time to time. Some that come to mind are the
-falloc/fpunch/fzero corner case tests, and we add new functionality
-to fsstress and fsx all the time which affects every test that
-runs them, etc.
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+---
+Changes from v1:
+* Use kvfree() instead of kfree() to free the zone bitmap
 
+ fs/f2fs/f2fs.h    | 13 +++++++------
+ fs/f2fs/segment.c | 23 +++++++----------------
+ fs/f2fs/super.c   | 13 ++++++++-----
+ 3 files changed, 22 insertions(+), 27 deletions(-)
 
-> https://patchwork.kernel.org/patch/10042149/
-> 
-> Or to avoid redundant copied code from generic/311 in each fsync related
-> patch, do I need just add my case into fsync_tester.c? and before
-> announcement of fstests master branch, we can add one testcase into
-> generic/ directory, in that testcase we gather/test all new added cases in
-> fsync_tester.c recently.
-
-Gathering them all into fsync-tester is what I'm suggesting should
-be done....
-
-Cheers,
-
-Dave.
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 12fabd6735dd..d7b2de930352 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1067,8 +1067,8 @@ struct f2fs_dev_info {
+ 	block_t start_blk;
+ 	block_t end_blk;
+ #ifdef CONFIG_BLK_DEV_ZONED
+-	unsigned int nr_blkz;			/* Total number of zones */
+-	u8 *blkz_type;				/* Array of zones type */
++	unsigned int nr_blkz;		/* Total number of zones */
++	unsigned long *blkz_seq;	/* Bitmap indicating sequential zones */
+ #endif
+ };
+ 
+@@ -3508,16 +3508,17 @@ F2FS_FEATURE_FUNCS(lost_found, LOST_FOUND);
+ F2FS_FEATURE_FUNCS(sb_chksum, SB_CHKSUM);
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
+-static inline int get_blkz_type(struct f2fs_sb_info *sbi,
+-			struct block_device *bdev, block_t blkaddr)
++static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi,
++				    struct block_device *bdev, block_t blkaddr)
+ {
+ 	unsigned int zno = blkaddr >> sbi->log_blocks_per_blkz;
+ 	int i;
+ 
+ 	for (i = 0; i < sbi->s_ndevs; i++)
+ 		if (FDEV(i).bdev == bdev)
+-			return FDEV(i).blkz_type[zno];
+-	return -EINVAL;
++			return test_bit(zno, FDEV(i).blkz_seq);
++	WARN_ON_ONCE(1);
++	return false;
+ }
+ #endif
+ 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 9b79056d705d..65941070776c 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1703,19 +1703,8 @@ static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
+ 		blkstart -= FDEV(devi).start_blk;
+ 	}
+ 
+-	/*
+-	 * We need to know the type of the zone: for conventional zones,
+-	 * use regular discard if the drive supports it. For sequential
+-	 * zones, reset the zone write pointer.
+-	 */
+-	switch (get_blkz_type(sbi, bdev, blkstart)) {
+-
+-	case BLK_ZONE_TYPE_CONVENTIONAL:
+-		if (!blk_queue_discard(bdev_get_queue(bdev)))
+-			return 0;
+-		return __queue_discard_cmd(sbi, bdev, lblkstart, blklen);
+-	case BLK_ZONE_TYPE_SEQWRITE_REQ:
+-	case BLK_ZONE_TYPE_SEQWRITE_PREF:
++	/* For sequential zones, reset the zone write pointer */
++	if (f2fs_blkz_is_seq(sbi, bdev, blkstart)) {
+ 		sector = SECTOR_FROM_BLOCK(blkstart);
+ 		nr_sects = SECTOR_FROM_BLOCK(blklen);
+ 
+@@ -1730,10 +1719,12 @@ static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
+ 		trace_f2fs_issue_reset_zone(bdev, blkstart);
+ 		return blkdev_reset_zones(bdev, sector,
+ 					  nr_sects, GFP_NOFS);
+-	default:
+-		/* Unknown zone type: broken device ? */
+-		return -EIO;
+ 	}
++
++	 /* For conventional zones, use regular discard if supported */
++	if (!blk_queue_discard(bdev_get_queue(bdev)))
++		return 0;
++	return __queue_discard_cmd(sbi, bdev, lblkstart, blklen);
+ }
+ #endif
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index c46a1d4318d4..91d7429be554 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1017,7 +1017,7 @@ static void destroy_device_list(struct f2fs_sb_info *sbi)
+ 	for (i = 0; i < sbi->s_ndevs; i++) {
+ 		blkdev_put(FDEV(i).bdev, FMODE_EXCL);
+ #ifdef CONFIG_BLK_DEV_ZONED
+-		kvfree(FDEV(i).blkz_type);
++		kvfree(FDEV(i).blkz_seq);
+ #endif
+ 	}
+ 	kvfree(sbi->devs);
+@@ -2765,9 +2765,11 @@ static int init_blkz_info(struct f2fs_sb_info *sbi, int devi)
+ 	if (nr_sectors & (bdev_zone_sectors(bdev) - 1))
+ 		FDEV(devi).nr_blkz++;
+ 
+-	FDEV(devi).blkz_type = f2fs_kmalloc(sbi, FDEV(devi).nr_blkz,
+-								GFP_KERNEL);
+-	if (!FDEV(devi).blkz_type)
++	FDEV(devi).blkz_seq = f2fs_kzalloc(sbi,
++					BITS_TO_LONGS(FDEV(devi).nr_blkz)
++					* sizeof(unsigned long),
++					GFP_KERNEL);
++	if (!FDEV(devi).blkz_seq)
+ 		return -ENOMEM;
+ 
+ #define F2FS_REPORT_NR_ZONES   4096
+@@ -2794,7 +2796,8 @@ static int init_blkz_info(struct f2fs_sb_info *sbi, int devi)
+ 		}
+ 
+ 		for (i = 0; i < nr_zones; i++) {
+-			FDEV(devi).blkz_type[n] = zones[i].type;
++			if (zones[i].type != BLK_ZONE_TYPE_CONVENTIONAL)
++				set_bit(n, FDEV(devi).blkz_seq);
+ 			sector += zones[i].len;
+ 			n++;
+ 		}
 -- 
-Dave Chinner
-david@fromorbit.com
+2.20.1
