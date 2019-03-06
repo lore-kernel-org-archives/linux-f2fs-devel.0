@@ -1,50 +1,49 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to check inline_xattr_size
- boundary correctly
-Date: Wed, 6 Mar 2019 14:32:42 +0800
-Message-ID: <6849d9c1-f329-7dff-b866-7ecf78d64399@huawei.com>
-References: <20190214160825.4973-1-chao@kernel.org>
- <82ef0ff8-452c-1894-6776-41c70ad7654b@huawei.com>
+Subject: Re: [PATCH v11] f2fs: guarantee journalled quota data by checkpoint
+Date: Wed, 6 Mar 2019 14:49:28 +0800
+Message-ID: <7a2b9277-acbf-eda4-d043-74463d7b61c7@huawei.com>
+References: <20180920120500.21026-1-chao@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <82ef0ff8-452c-1894-6776-41c70ad7654b@huawei.com>
+In-Reply-To: <20180920120500.21026-1-chao@kernel.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Weichao Guo <guoweichao@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Ping,
+Hi Jaegeuk,
 
-On 2019/3/4 14:39, Chao Yu wrote:
-> Hi Jaegeuk,
+On 2018/9/20 20:05, Chao Yu wrote:
+> @@ -3456,3 +3477,16 @@
 > 
-> On 2019/2/15 0:08, Chao Yu wrote:
->> ---
->> v2:
->> - fix lower bound check, inline xattr size should be larger than
->> xattr_header's size at least.
+>  extern void f2fs_build_fault_attr(struct f2fs_sb_info *sbi, unsigned int rate,
 > 
-> ...
-> 
->> +		if (F2FS_OPTION(sbi).inline_xattr_size <
->> +			sizeof(struct f2fs_xattr_header) / sizeof(__le32)
-> 
-> No sure we should set this low bound as above... now I guess original
-> non-zero check is enough.
-> 
-> How do you think of setting inline_xattr_size range as
-> (0, MAX_INLINE_XATTR_SIZE]?
-> 
-> Thanks,
-> 
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> 
+> #endif
+> #endif
+> +
+> +static inline bool is_journalled_quota(struct f2fs_sb_info *sbi)
+> +{
+> +#ifdef CONFIG_QUOTA
+> + if (f2fs_sb_has_quota_ino(sbi->sb))
+> + return true;
+> + if (F2FS_OPTION(sbi).s_qf_names[USRQUOTA] ||
+> + F2FS_OPTION(sbi).s_qf_names[GRPQUOTA] ||
+> + F2FS_OPTION(sbi).s_qf_names[PRJQUOTA])
+> + return true;
+> +#endif
+> + return false;
+> +}
+
+I checked dev branch, and found one patch we didn't send to mailing list,
+could you please send it out?
+
+f2fs: fix wrong #endif
+
+I think my quota patch caused this 'wrong #endif' issue, could you add
+single line comment to notice which #if the last #endif is corresponding
+to? so that we can avoid same mistake as quota patch made.
+
+Thanks,
