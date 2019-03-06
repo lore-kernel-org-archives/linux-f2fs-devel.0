@@ -1,257 +1,50 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 1/2] f2fs: fix to add refcount once page is tagged
- PG_private
-Date: Wed, 6 Mar 2019 14:31:36 +0800
-Message-ID: <328faef7-dad0-4dd9-5ecf-1c37ed5ebad6@huawei.com>
-References: <20190305095233.126601-1-yuchao0@huawei.com>
- <20190306034654.GD78380@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to check inline_xattr_size
+ boundary correctly
+Date: Wed, 6 Mar 2019 14:32:42 +0800
+Message-ID: <6849d9c1-f329-7dff-b866-7ecf78d64399@huawei.com>
+References: <20190214160825.4973-1-chao@kernel.org>
+ <82ef0ff8-452c-1894-6776-41c70ad7654b@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190306034654.GD78380@jaegeuk-macbookpro.roam.corp.google.com>
+In-Reply-To: <82ef0ff8-452c-1894-6776-41c70ad7654b@huawei.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2019/3/6 11:46, Jaegeuk Kim wrote:
-> On 03/05, Chao Yu wrote:
->> As Gao Xiang reported in bugzilla:
->>
->> https://bugzilla.kernel.org/show_bug.cgi?id=202749
->>
->> f2fs may skip pageout() due to incorrect page reference count.
->>
->> The problem here is that MM defined the rule [1] very clearly that
->> once page was set with PG_private flag, we should increment the
->> refcount in that page, also main flows like pageout(), migrate_page()
->> will assume there is one additional page reference count if
->> page_has_private() returns true.
->>
->> But currently, f2fs won't add/del refcount when changing PG_private
->> flag. Anyway, f2fs should follow MM's rule to make MM's related flows
->> running as expected.
->>
->> [1] https://lore.kernel.org/lkml/2b19b3c4-2bc4-15fa-15cc-27a13e5c7af1@aol.com/
->>
->> Reported-by: Gao Xiang <gaoxiang25@huawei.com>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Ping,
+
+On 2019/3/4 14:39, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> On 2019/2/15 0:08, Chao Yu wrote:
 >> ---
->>  fs/f2fs/checkpoint.c | 11 +++++++++--
->>  fs/f2fs/data.c       | 32 ++++++++++++++++++++------------
->>  fs/f2fs/dir.c        |  6 +++++-
->>  fs/f2fs/node.c       |  6 +++++-
->>  fs/f2fs/segment.c    | 23 +++++++++++++++++------
->>  5 files changed, 56 insertions(+), 22 deletions(-)
->>
->> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->> index c65a1e8e1e95..4e0e93af5ce0 100644
->> --- a/fs/f2fs/checkpoint.c
->> +++ b/fs/f2fs/checkpoint.c
->> @@ -406,7 +406,11 @@ static int f2fs_set_meta_page_dirty(struct page *page)
->>  	if (!PageDirty(page)) {
->>  		__set_page_dirty_nobuffers(page);
->>  		inc_page_count(F2FS_P_SB(page), F2FS_DIRTY_META);
->> -		SetPagePrivate(page);
->> +
->> +		if (!PagePrivate(page)) {
->> +			get_page(page);
->> +			SetPagePrivate(page);
+>> v2:
+>> - fix lower bound check, inline xattr size should be larger than
+>> xattr_header's size at least.
 > 
-> Can we add generic functions?
+> ...
 > 
-> f2fs_set_page_private(page)
-> {
-> 	if (PagePrivate(page))
-> 		return;
+>> +		if (F2FS_OPTION(sbi).inline_xattr_size <
+>> +			sizeof(struct f2fs_xattr_header) / sizeof(__le32)
 > 
-> 	SetPagePrivate(page);
-> 	get_page(page);
-> }
->  
-> f2fs_clear_page_private(page)
-> {
-> 	if (!PagePrivate(page))
-> 		return;
+> No sure we should set this low bound as above... now I guess original
+> non-zero check is enough.
 > 
-> 	set_page_private(page, 0);
-> 	ClearPagePrivate(page);
-> 	f2fs_put_page(page, 0);
-> }
-
-Done. :)
-
-Thanks,
-
+> How do you think of setting inline_xattr_size range as
+> (0, MAX_INLINE_XATTR_SIZE]?
 > 
->>
->> +		}
->>  		f2fs_trace_pid(page);
->>  		return 1;
->>  	}
->> @@ -957,7 +961,10 @@ void f2fs_update_dirty_page(struct inode *inode, struct page *page)
->>  	inode_inc_dirty_pages(inode);
->>  	spin_unlock(&sbi->inode_lock[type]);
->>  
->> -	SetPagePrivate(page);
->> +	if (!PagePrivate(page)) {
->> +		get_page(page);
->> +		SetPagePrivate(page);
->> +	}
->>  	f2fs_trace_pid(page);
->>  }
->>  
->> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->> index 3f3becd46362..46924d4f69d0 100644
->> --- a/fs/f2fs/data.c
->> +++ b/fs/f2fs/data.c
->> @@ -2715,8 +2715,11 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
->>  	if (IS_ATOMIC_WRITTEN_PAGE(page))
->>  		return f2fs_drop_inmem_page(inode, page);
->>  
->> -	set_page_private(page, 0);
->> -	ClearPagePrivate(page);
->> +	if (PagePrivate(page)) {
->> +		set_page_private(page, 0);
->> +		ClearPagePrivate(page);
->> +		f2fs_put_page(page, 0);
->> +	}
->>  }
->>  
->>  int f2fs_release_page(struct page *page, gfp_t wait)
->> @@ -2730,8 +2733,11 @@ int f2fs_release_page(struct page *page, gfp_t wait)
->>  		return 0;
->>  
->>  	clear_cold_data(page);
->> -	set_page_private(page, 0);
->> -	ClearPagePrivate(page);
->> +	if (PagePrivate(page)) {
->> +		set_page_private(page, 0);
->> +		ClearPagePrivate(page);
->> +		f2fs_put_page(page, 0);
->> +	}
->>  	return 1;
->>  }
->>  
->> @@ -2799,12 +2805,8 @@ int f2fs_migrate_page(struct address_space *mapping,
->>  			return -EAGAIN;
->>  	}
->>  
->> -	/*
->> -	 * A reference is expected if PagePrivate set when move mapping,
->> -	 * however F2FS breaks this for maintaining dirty page counts when
->> -	 * truncating pages. So here adjusting the 'extra_count' make it work.
->> -	 */
->> -	extra_count = (atomic_written ? 1 : 0) - page_has_private(page);
->> +	/* one extra reference was held for atomic_write page */
->> +	extra_count = atomic_written ? 1 : 0;
->>  	rc = migrate_page_move_mapping(mapping, newpage,
->>  				page, mode, extra_count);
->>  	if (rc != MIGRATEPAGE_SUCCESS) {
->> @@ -2825,9 +2827,15 @@ int f2fs_migrate_page(struct address_space *mapping,
->>  		get_page(newpage);
->>  	}
->>  
->> -	if (PagePrivate(page))
->> +	if (PagePrivate(page)) {
->> +		get_page(newpage);
->>  		SetPagePrivate(newpage);
->> -	set_page_private(newpage, page_private(page));
->> +		set_page_private(newpage, page_private(page));
->> +
->> +		set_page_private(page, 0);
->> +		ClearPagePrivate(page);
->> +		f2fs_put_page(page, 0);
->> +	}
->>  
->>  	if (mode != MIGRATE_SYNC_NO_COPY)
->>  		migrate_page_copy(newpage, page);
->> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
->> index 103f3686a045..fbbafb04a431 100644
->> --- a/fs/f2fs/dir.c
->> +++ b/fs/f2fs/dir.c
->> @@ -728,7 +728,11 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
->>  		!f2fs_truncate_hole(dir, page->index, page->index + 1)) {
->>  		f2fs_clear_page_cache_dirty_tag(page);
->>  		clear_page_dirty_for_io(page);
->> -		ClearPagePrivate(page);
->> +		if (PagePrivate(page)) {
->> +			set_page_private(page, 0);
->> +			ClearPagePrivate(page);
->> +			f2fs_put_page(page, 0);
->> +		}
->>  		ClearPageUptodate(page);
->>  		clear_cold_data(page);
->>  		inode_dec_dirty_pages(dir);
->> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
->> index f6ff84e29749..ce97a9885105 100644
->> --- a/fs/f2fs/node.c
->> +++ b/fs/f2fs/node.c
->> @@ -1961,7 +1961,11 @@ static int f2fs_set_node_page_dirty(struct page *page)
->>  	if (!PageDirty(page)) {
->>  		__set_page_dirty_nobuffers(page);
->>  		inc_page_count(F2FS_P_SB(page), F2FS_DIRTY_NODES);
->> -		SetPagePrivate(page);
->> +
->> +		if (!PagePrivate(page)) {
->> +			get_page(page);
->> +			SetPagePrivate(page);
->> +		}
->>  		f2fs_trace_pid(page);
->>  		return 1;
->>  	}
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index e730c334abba..2d77dd133a4e 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -191,8 +191,11 @@ void f2fs_register_inmem_page(struct inode *inode, struct page *page)
->>  
->>  	f2fs_trace_pid(page);
->>  
->> -	set_page_private(page, (unsigned long)ATOMIC_WRITTEN_PAGE);
->> -	SetPagePrivate(page);
->> +	if (!PagePrivate(page)) {
->> +		get_page(page);
->> +		SetPagePrivate(page);
->> +		set_page_private(page, (unsigned long)ATOMIC_WRITTEN_PAGE);
->> +	}
->>  
->>  	new = f2fs_kmem_cache_alloc(inmem_entry_slab, GFP_NOFS);
->>  
->> @@ -280,8 +283,11 @@ static int __revoke_inmem_pages(struct inode *inode,
->>  			ClearPageUptodate(page);
->>  			clear_cold_data(page);
->>  		}
->> -		set_page_private(page, 0);
->> -		ClearPagePrivate(page);
->> +		if (PagePrivate(page)) {
->> +			set_page_private(page, 0);
->> +			ClearPagePrivate(page);
->> +			f2fs_put_page(page, 0);
->> +		}
->>  		f2fs_put_page(page, 1);
->>  
->>  		list_del(&cur->list);
->> @@ -370,8 +376,13 @@ void f2fs_drop_inmem_page(struct inode *inode, struct page *page)
->>  	kmem_cache_free(inmem_entry_slab, cur);
->>  
->>  	ClearPageUptodate(page);
->> -	set_page_private(page, 0);
->> -	ClearPagePrivate(page);
->> +
->> +	if (PagePrivate(page)) {
->> +		set_page_private(page, 0);
->> +		ClearPagePrivate(page);
->> +		f2fs_put_page(page, 0);
->> +	}
->> +
->>  	f2fs_put_page(page, 0);
->>  
->>  	trace_f2fs_commit_inmem_page(page, INMEM_INVALIDATE);
->> -- 
->> 2.18.0.rc1
+> Thanks,
 > 
-> .
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
 > 
