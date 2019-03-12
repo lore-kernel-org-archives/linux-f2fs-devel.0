@@ -1,27 +1,29 @@
 From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 202889] New: fsync on file fails to persist its
- size, which is changed by pwrite
-Date: Tue, 12 Mar 2019 20:58:37 +0000
-Message-ID: <bug-202889-202145@https.bugzilla.kernel.org/>
+Subject: [Bug 202889] fsync on inode fails to persist its size,
+ which is changed by pwrite
+Date: Tue, 12 Mar 2019 20:59:54 +0000
+Message-ID: <bug-202889-202145-CPZCXMZoJv@https.bugzilla.kernel.org/>
+References: <bug-202889-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1h3oU2-0006SO-Ll
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Mar 2019 20:58:46 +0000
+ id 1h3oVK-0006Wa-49
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Mar 2019 21:00:06 +0000
 Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h3oU0-007c6N-Up
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Mar 2019 20:58:46 +0000
+ id 1h3oVG-00DAWC-Q7
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Mar 2019 21:00:06 +0000
 Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 2DB472003F
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 5C58A288D8
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 12 Mar 2019 20:58:39 +0000 (UTC)
+ Tue, 12 Mar 2019 20:59:55 +0000 (UTC)
+In-Reply-To: <bug-202889-202145@https.bugzilla.kernel.org/>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,55 +35,16 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 
-aHR0cHM6Ly9idWd6aWxsYS5rZXJuZWwub3JnL3Nob3dfYnVnLmNnaT9pZD0yMDI4ODkKCiAgICAg
-ICAgICAgIEJ1ZyBJRDogMjAyODg5CiAgICAgICAgICAgU3VtbWFyeTogZnN5bmMgb24gZmlsZSBm
-YWlscyB0byBwZXJzaXN0IGl0cyBzaXplLCB3aGljaCBpcwogICAgICAgICAgICAgICAgICAgIGNo
-YW5nZWQgYnkgcHdyaXRlCiAgICAgICAgICAgUHJvZHVjdDogRmlsZSBTeXN0ZW0KICAgICAgICAg
-ICBWZXJzaW9uOiAyLjUKICAgIEtlcm5lbCBWZXJzaW9uOiB2NS4wCiAgICAgICAgICBIYXJkd2Fy
-ZTogQWxsCiAgICAgICAgICAgICAgICBPUzogTGludXgKICAgICAgICAgICAgICBUcmVlOiBNYWlu
-bGluZQogICAgICAgICAgICBTdGF0dXM6IE5FVwogICAgICAgICAgU2V2ZXJpdHk6IG5vcm1hbAog
-ICAgICAgICAgUHJpb3JpdHk6IFAxCiAgICAgICAgIENvbXBvbmVudDogZjJmcwogICAgICAgICAg
-QXNzaWduZWU6IGZpbGVzeXN0ZW1fZjJmc0BrZXJuZWwtYnVncy5rZXJuZWwub3JnCiAgICAgICAg
-ICBSZXBvcnRlcjogc2V1bGJhZUBnYXRlY2guZWR1CiAgICAgICAgUmVncmVzc2lvbjogTm8KCkNy
-ZWF0ZWQgYXR0YWNobWVudCAyODE3NzEKICAtLT4gaHR0cHM6Ly9idWd6aWxsYS5rZXJuZWwub3Jn
-L2F0dGFjaG1lbnQuY2dpP2lkPTI4MTc3MSZhY3Rpb249ZWRpdApQcm9vZiBvZiBDb25jZXB0Cgpb
-S2VybmVsIHZlcnNpb25dClRoaXMgYnVnIGNhbiBiZSByZXByb2R1Y2VkIG9uIGtlcm5lbCB2NS4w
-LgoKCltSZXByb2R1Y2VdCiogVXNlIGEgVk0sIHNpbmNlIG91ciBQb0Mgc2ltdWxhdGVzIGEgY3Jh
-c2ggYnkgdHJpZ2dlcmluZyBhIFN5c1JxIQoxLiBEb3dubG9hZCBhIGJhc2UgaW1hZ2UgKDY0IE1C
-KQokIHdnZXQgaHR0cHM6Ly9ndHMzLm9yZy9+c2V1bGJhZS9mc2ltZy9mMmZzLTEwLmltYWdlCgoy
-LiBNb3VudCB0aGUgaW1hZ2UKJCBta2RpciAvdG1wL2YyZnMKJCBzdWRvIG1vdW50IC1vIGxvb3Ag
-ZjJmcy0xMC5pbWFnZSAvdG1wL2YyZnMKCjMuIENvbXBpbGUgYW5kIHJ1biBQb0MKJCBnY2MgcG9j
-LmMgLW8gcG9jCiQgc3VkbyAuL3BvYyAvdG1wL2YyZnMKKFN5c3RlbSByZWJvb3RzKQoKCltDaGVj
-a10KMS4gUmUtbW91bnQgdGhlIGNyYXNoZWQgaW1hZ2UKJCBta2RpciAvdG1wL2YyZnMKJCBzdWRv
-IG1vdW50IC1vIGxvb3AgZjJmcy0xMC5pbWFnZSAvdG1wL2YyZnMKCjIuIENoZWNrIGluY29uc2lz
-dGVuY3kKJCBzdGF0IC90bXAvZjJmcy9mb28vYmFyL3hhdHRyClNpemU6IDc4NjAKCgpbRGVzY3Jp
-cHRpb25dCkluIHRoZSBiYXNlIGltYWdlLCAyIGRpcmVjdG9yaWVzIGFuZCA3IGZpbGVzIGV4aXN0
-LgoKMDogMDc1NSAobW91bnRfcG9pbnQpCistLTQ6IDA3NTUgZm9vCiAgICstLTU6IDA3NTUgYmFy
-CiAgICAgICstLTYgOiAwNjQ0IGJheiAgIChzaXplOiAxMiBieXRlcykKICAgICAgKy0tNiA6IDA2
-NDQgaGxuICAgKHNpemU6IDEyIGJ5dGVzKQogICAgICArLS03IDogMDY0NCB4YXR0ciAoc2l6ZTog
-MCBieXRlcykKICAgICAgKy0tOCA6IDA2NDQgYWNsICAgKHNpemU6IDAgYnl0ZXMpCiAgICAgICst
-LTkgOiAwNjQ0IMOmw7jDpSAgIChzaXplOiA0IGJ5dGVzKQogICAgICArLS0xMDogMDY0NCBmaWZv
-ICAoc2l6ZTogMCBieXRlcykKICAgICAgKy0tMTE6IDA3Nzcgc2xuIC0+IG1udC9mb28vYmFyL2Jh
-egoKQmVsb3cgaXMgdGhlIGJyZWFrZG93biBvZiB0aGUgUG9DOgoxLiBPcGVuIHRoZSBleGlzdGlu
-ZywgZW1wdHkgZmlsZSAiZm9vL2Jhci94YXR0ciIgKGlub2RlICM3KSwKKGxpbmUgMjQpIGludCBm
-ZCA9IHN5c2NhbGwoU1lTX29wZW4sICJmb28vYmFyL3hhdHRyIiwgT19SRFdSLCAwKTsKCjIuIHdy
-aXRlIHNvbWUgZGF0YSBvbiBpdCAoYnVmIGlzIGEgODE5Mi1ieXRlIGNoYXIgYXJyYXksIGFsbCBi
-eXRlcyBpbml0aWFsaXplZAphcyAnXDAnKSwKKGxpbmUgMjUpIHN5c2NhbGwoU1lTX3dyaXRlLCBm
-ZCwgYnVmLCA0MTEwKTsKKGxpbmUgMjYpIHN5c2NhbGwoU1lTX3dyaXRlLCBmZCwgYnVmLCAzNzUw
-KTsKCjMuIGZkYXRhc3luYyB0aGUgaW5vZGUsCihsaW5lIDI3KSBzeXNjYWxsKFNZU19mZGF0YXN5
-bmMsIGZkKTsKCjQuIHB3cml0ZSBvbiB0aGUgc2FtZSBmaWxlIHRvIGluY3JlYXNlIGl0cyBzaXpl
-IHRvIDgxOTIKKGxpbmUgMjgpIHN5c2NhbGwoU1lTX3B3cml0ZTY0LCBmZCwgYnVmLCAxMjQ5LCA2
-OTQzKTsKCjUuIGZzeW5jIHRoZSBpbm9kZSB0byBwZXJzaXN0IGl0cyBuZXcgc2l6ZSBhbmQgZGF0
-YSwgYW5kCihsaW5lIDI5KSBzeXNjYWxsKFNZU19mc3luYywgZmQpOwoKNy4gc2ltdWxhdGUgYSBj
-cmFzaCBieSByZWJvb3RpbmcgcmlnaHQgYXdheSB3aXRob3V0IHVuLW1vdW50aW5nLgoobGluZSAz
-MCkgc3lzdGVtKCJlY2hvIGIgPiAvcHJvYy9zeXNycS10cmlnZ2VyIik7CgpFdmVuIHRob3VnaCB3
-ZSBmc3luYyBpbm9kZSAjNyAoImZvby9iYXIveGF0dHIiKSBhZnRlciBjaGFuZ2luZyBpdHMgc2l6
-ZSBmcm9tCjc4NjAgdG8gODE5MiwgdGhpcyBtZXRhZGF0YSBpcyBzb21laG93IG5vdCBwZXJzaXN0
-ZWQsIGFuZCB0aGUgc2l6ZSBvZgoiZm9vL2Jhci94YXR0ciIgaXMgc3RpbGwgNzg2MCBhZnRlciBy
-ZWNvdmVyaW5nIGZyb20gYSBjcmFzaC4KCgpSZXBvcnRlZCBieSBTZXVsYmFlIEtpbSAoc2V1bGJh
-ZUBnYXRlY2guZWR1KSBmcm9tIFNTTGFiLCBHYXRlY2guCgotLSAKWW91IGFyZSByZWNlaXZpbmcg
-dGhpcyBtYWlsIGJlY2F1c2U6CllvdSBhcmUgd2F0Y2hpbmcgdGhlIGFzc2lnbmVlIG9mIHRoZSBi
-dWcuCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51
-eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZv
-cmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51
-eC1mMmZzLWRldmVsCg==
+https://bugzilla.kernel.org/show_bug.cgi?id=202889
+
+Seulbae Kim (seulbae@gatech.edu) changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+            Summary|fsync on file fails to      |fsync on inode fails to
+                   |persist its size, which is  |persist its size, which is
+                   |changed by pwrite           |changed by pwrite
+
+-- 
+You are receiving this mail because:
+You are watching the assignee of the bug.
