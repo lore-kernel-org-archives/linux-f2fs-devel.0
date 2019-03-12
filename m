@@ -1,27 +1,27 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 202883] sometime dead lock in getdents64
-Date: Tue, 12 Mar 2019 07:54:46 +0000
-Message-ID: <bug-202883-202145-H2xJ6EQlUL@https.bugzilla.kernel.org/>
+Date: Tue, 12 Mar 2019 07:55:03 +0000
+Message-ID: <bug-202883-202145-cSIFvxtwsv@https.bugzilla.kernel.org/>
 References: <bug-202883-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1h3cFU-0001uh-9F
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Mar 2019 07:54:56 +0000
+ id 1h3cFv-0006jW-5c
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Mar 2019 07:55:23 +0000
 Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h3cFS-005XEL-Ag
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Mar 2019 07:54:56 +0000
+ id 1h3cFh-00BbKo-Ms
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Mar 2019 07:55:23 +0000
 Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 17755284E9
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 8DAD22942D
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 12 Mar 2019 07:54:47 +0000 (UTC)
+ Tue, 12 Mar 2019 07:55:03 +0000 (UTC)
 In-Reply-To: <bug-202883-202145@https.bugzilla.kernel.org/>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -36,8 +36,8 @@ To: linux-f2fs-devel@lists.sourceforge.net
 
 https://bugzilla.kernel.org/show_bug.cgi?id=202883
 
---- Comment #3 from Jiqun Li (jiqun.li@unisoc.com) ---
-thanks, I got it
+--- Comment #4 from Jiqun Li (jiqun.li@unisoc.com) ---
+I will try it
 
 -- 
 You are receiving this mail because:
