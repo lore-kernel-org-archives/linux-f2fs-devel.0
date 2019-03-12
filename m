@@ -1,61 +1,123 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 202883] sometime dead lock in getdents64
-Date: Tue, 12 Mar 2019 06:53:05 +0000
-Message-ID: <bug-202883-202145-2GtIYdaOX4@https.bugzilla.kernel.org/>
-References: <bug-202883-202145@https.bugzilla.kernel.org/>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to avoid deadlock in f2fs_read_inline_dir()
+Date: Tue, 12 Mar 2019 15:44:27 +0800
+Message-ID: <20190312074427.75515-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1h3bHl-00080S-Eu
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Mar 2019 06:53:13 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h3bHj-005QG0-JS
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Mar 2019 06:53:13 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id EBB832945F
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 12 Mar 2019 06:53:05 +0000 (UTC)
-In-Reply-To: <bug-202883-202145@https.bugzilla.kernel.org/>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
+
+As Jiqun Li reported in bugzilla:
 
 https://bugzilla.kernel.org/show_bug.cgi?id=202883
 
---- Comment #1 from Jiqun Li (jiqun.li@unisoc.com) ---
-for task 9709, do_page_fault() is triggered by  __put_user_unaligned() in
-compat_filldir64(). 
+sometimes, dead lock when make system call SYS_getdents64 with fsync() is
+called by another process.
 
-static int compat_filldir64(struct dir_context *ctx, const char *name,
-                            int namlen, loff_t offset, u64 ino,
-                            unsigned int d_type)
-{
-        .....
-        if (dirent) {
-                if (__put_user_unaligned(offset, &dirent->d_off))
-                        goto efault;
-        }
+monkey running on android9.0
 
+1.  task 9785 held sbi->cp_rwsem and waiting lock_page()
+2.  task 10349 held mm_sem and waiting sbi->cp_rwsem
+3. task 9709 held lock_page() and waiting mm_sem
 
-dirent is a local array[] in user space, when want to access dirent->d_off,
-do_page_fault() is triggered and want to alloc real memory.
+so this is a dead lock scenario.
 
-dirent is a valid user space address
+task stack is show by crash tools as following
 
+crash_arm64> bt ffffffc03c354080
+PID: 9785   TASK: ffffffc03c354080  CPU: 1   COMMAND: "RxIoScheduler-3"
+>> #7 [ffffffc01b50fac0] __lock_page at ffffff80081b11e8
+
+crash-arm64> bt 10349
+PID: 10349  TASK: ffffffc018b83080  CPU: 1   COMMAND: "BUGLY_ASYNC_UPL"
+>> #3 [ffffffc01f8cfa40] rwsem_down_read_failed at ffffff8008a93afc
+     PC: 00000033  LR: 00000000  SP: 00000000  PSTATE: ffffffffffffffff
+
+crash-arm64> bt 9709
+PID: 9709   TASK: ffffffc03e7f3080  CPU: 1   COMMAND: "IntentService[A"
+>> #3 [ffffffc001e67850] rwsem_down_read_failed at ffffff8008a93afc
+>> #8 [ffffffc001e67b80] el1_ia at ffffff8008084fc4
+     PC: ffffff8008274114  [compat_filldir64+120]
+     LR: ffffff80083584d4  [f2fs_fill_dentries+448]
+     SP: ffffffc001e67b80  PSTATE: 80400145
+    X29: ffffffc001e67b80  X28: 0000000000000000  X27: 000000000000001a
+    X26: 00000000000093d7  X25: ffffffc070d52480  X24: 0000000000000008
+    X23: 0000000000000028  X22: 00000000d43dfd60  X21: ffffffc001e67e90
+    X20: 0000000000000011  X19: ffffff80093a4000  X18: 0000000000000000
+    X17: 0000000000000000  X16: 0000000000000000  X15: 0000000000000000
+    X14: ffffffffffffffff  X13: 0000000000000008  X12: 0101010101010101
+    X11: 7f7f7f7f7f7f7f7f  X10: 6a6a6a6a6a6a6a6a   X9: 7f7f7f7f7f7f7f7f
+     X8: 0000000080808000   X7: ffffff800827409c   X6: 0000000080808000
+     X5: 0000000000000008   X4: 00000000000093d7   X3: 000000000000001a
+     X2: 0000000000000011   X1: ffffffc070d52480   X0: 0000000000800238
+>> #9 [ffffffc001e67be0] f2fs_fill_dentries at ffffff80083584d0
+     PC: 0000003c  LR: 00000000  SP: 00000000  PSTATE: 000000d9
+    X12: f48a02ff X11: d4678960 X10: d43dfc00  X9: d4678ae4
+     X8: 00000058  X7: d4678994  X6: d43de800  X5: 000000d9
+     X4: d43dfc0c  X3: d43dfc10  X2: d46799c8  X1: 00000000
+     X0: 00001068
+
+Below potential deadlock will happen between three threads:
+Thread A		Thread B		Thread C
+- f2fs_do_sync_file
+ - f2fs_write_checkpoint
+  - down_write(&sbi->node_change) -- 1)
+			- do_page_fault
+			 - down_write(&mm->mmap_sem) -- 2)
+			  - do_wp_page
+			   - f2fs_vm_page_mkwrite
+						- getdents64
+						 - f2fs_read_inline_dir
+						  - lock_page -- 3)
+  - f2fs_sync_node_pages
+   - lock_page -- 3)
+			    - __do_map_lock
+			     - down_read(&sbi->node_change) -- 1)
+						  - f2fs_fill_dentries
+						   - dir_emit
+						    - compat_filldir64
+						     - do_page_fault
+						      - down_read(&mm->mmap_sem) -- 2)
+
+Since f2fs_readdir is protected by inode.i_rwsem, there should not be
+any updates in inode page, we're safe to lookup dents in inode page
+without its lock held, so taking off the lock to improve concurrency
+of readdir and avoid potential deadlock.
+
+Reported-by: Jiqun Li <jiqun.li@unisoc.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/inline.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index a1381d05956b..bb6a152310ef 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -659,6 +659,12 @@ int f2fs_read_inline_dir(struct file *file, struct dir_context *ctx,
+ 	if (IS_ERR(ipage))
+ 		return PTR_ERR(ipage);
+ 
++	/*
++	 * f2fs_readdir was protected by inode.i_rwsem, it is safe to access
++	 * ipage without page's lock held.
++	 */
++	unlock_page(ipage);
++
+ 	inline_dentry = inline_data_addr(inode, ipage);
+ 
+ 	make_dentry_ptr_inline(inode, &d, inline_dentry);
+@@ -667,7 +673,7 @@ int f2fs_read_inline_dir(struct file *file, struct dir_context *ctx,
+ 	if (!err)
+ 		ctx->pos = d.max;
+ 
+-	f2fs_put_page(ipage, 1);
++	f2fs_put_page(ipage, 0);
+ 	return err < 0 ? err : 0;
+ }
+ 
 -- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+2.18.0.rc1
