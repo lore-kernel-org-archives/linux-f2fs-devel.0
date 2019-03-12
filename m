@@ -1,221 +1,145 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v3] f2fs: fix to add refcount once page is tagged
- PG_private
-Date: Tue, 12 Mar 2019 12:04:46 -0700
-Message-ID: <20190312190446.GC45421@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190306093059.80014-1-yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: fix to avoid deadlock in f2fs_read_inline_dir()
+Date: Tue, 12 Mar 2019 13:09:32 -0700
+Message-ID: <20190312200932.GD45421@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190312074427.75515-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190306093059.80014-1-yuchao0@huawei.com>
+In-Reply-To: <20190312074427.75515-1-yuchao0@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Chao Yu <yuchao0@huawei.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 03/06, Chao Yu wrote:
-> As Gao Xiang reported in bugzilla:
+On 03/12, Chao Yu wrote:
+> As Jiqun Li reported in bugzilla:
 > 
-> https://bugzilla.kernel.org/show_bug.cgi?id=202749
+> https://bugzilla.kernel.org/show_bug.cgi?id=202883
 > 
-> f2fs may skip pageout() due to incorrect page reference count.
+> sometimes, dead lock when make system call SYS_getdents64 with fsync() is
+> called by another process.
 > 
-> The problem here is that MM defined the rule [1] very clearly that
-> once page was set with PG_private flag, we should increment the
-> refcount in that page, also main flows like pageout(), migrate_page()
-> will assume there is one additional page reference count if
-> page_has_private() returns true.
+> monkey running on android9.0
 > 
-> But currently, f2fs won't add/del refcount when changing PG_private
-> flag. Anyway, f2fs should follow MM's rule to make MM's related flows
-> running as expected.
+> 1.  task 9785 held sbi->cp_rwsem and waiting lock_page()
+> 2.  task 10349 held mm_sem and waiting sbi->cp_rwsem
+> 3. task 9709 held lock_page() and waiting mm_sem
 > 
-> [1] https://lore.kernel.org/lkml/2b19b3c4-2bc4-15fa-15cc-27a13e5c7af1@aol.com/
+> so this is a dead lock scenario.
 > 
-> Reported-by: Gao Xiang <gaoxiang25@huawei.com>
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
-> v3:
-> - wrap page->private assignment into f2fs_set_page_private() as suggested
-> by Gao Xiang.
->  fs/f2fs/checkpoint.c |  4 ++--
->  fs/f2fs/data.c       | 21 ++++++++-------------
->  fs/f2fs/dir.c        |  2 +-
->  fs/f2fs/f2fs.h       | 21 +++++++++++++++++++++
->  fs/f2fs/node.c       |  2 +-
->  fs/f2fs/segment.c    |  9 +++------
->  6 files changed, 36 insertions(+), 23 deletions(-)
+> task stack is show by crash tools as following
 > 
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index c65a1e8e1e95..a98e1b02279e 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -406,7 +406,7 @@ static int f2fs_set_meta_page_dirty(struct page *page)
->  	if (!PageDirty(page)) {
->  		__set_page_dirty_nobuffers(page);
->  		inc_page_count(F2FS_P_SB(page), F2FS_DIRTY_META);
-> -		SetPagePrivate(page);
-> +		f2fs_set_page_private(page, 0);
->  		f2fs_trace_pid(page);
->  		return 1;
->  	}
-> @@ -957,7 +957,7 @@ void f2fs_update_dirty_page(struct inode *inode, struct page *page)
->  	inode_inc_dirty_pages(inode);
->  	spin_unlock(&sbi->inode_lock[type]);
->  
-> -	SetPagePrivate(page);
-> +	f2fs_set_page_private(page, 0);
->  	f2fs_trace_pid(page);
->  }
->  
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 3f3becd46362..992045d1584e 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -2715,8 +2715,7 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
->  	if (IS_ATOMIC_WRITTEN_PAGE(page))
->  		return f2fs_drop_inmem_page(inode, page);
->  
-> -	set_page_private(page, 0);
-> -	ClearPagePrivate(page);
-> +	f2fs_clear_page_private(page);
->  }
->  
->  int f2fs_release_page(struct page *page, gfp_t wait)
-> @@ -2730,8 +2729,7 @@ int f2fs_release_page(struct page *page, gfp_t wait)
->  		return 0;
->  
->  	clear_cold_data(page);
-> -	set_page_private(page, 0);
-> -	ClearPagePrivate(page);
-> +	f2fs_clear_page_private(page);
->  	return 1;
->  }
->  
-> @@ -2799,12 +2797,8 @@ int f2fs_migrate_page(struct address_space *mapping,
->  			return -EAGAIN;
->  	}
->  
-> -	/*
-> -	 * A reference is expected if PagePrivate set when move mapping,
-> -	 * however F2FS breaks this for maintaining dirty page counts when
-> -	 * truncating pages. So here adjusting the 'extra_count' make it work.
-> -	 */
-> -	extra_count = (atomic_written ? 1 : 0) - page_has_private(page);
-> +	/* one extra reference was held for atomic_write page */
-> +	extra_count = atomic_written ? 1 : 0;
->  	rc = migrate_page_move_mapping(mapping, newpage,
->  				page, mode, extra_count);
->  	if (rc != MIGRATEPAGE_SUCCESS) {
-> @@ -2825,9 +2819,10 @@ int f2fs_migrate_page(struct address_space *mapping,
->  		get_page(newpage);
->  	}
->  
-> -	if (PagePrivate(page))
-> -		SetPagePrivate(newpage);
-> -	set_page_private(newpage, page_private(page));
-> +	if (PagePrivate(page)) {
-> +		f2fs_set_page_private(newpage, page_private(page));
-> +		f2fs_clear_page_private(page);
-> +	}
->  
->  	if (mode != MIGRATE_SYNC_NO_COPY)
->  		migrate_page_copy(newpage, page);
-> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> index 103f3686a045..fb647e58edb5 100644
-> --- a/fs/f2fs/dir.c
-> +++ b/fs/f2fs/dir.c
-> @@ -728,7 +728,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
->  		!f2fs_truncate_hole(dir, page->index, page->index + 1)) {
->  		f2fs_clear_page_cache_dirty_tag(page);
->  		clear_page_dirty_for_io(page);
-> -		ClearPagePrivate(page);
-> +		f2fs_clear_page_private(page);
->  		ClearPageUptodate(page);
->  		clear_cold_data(page);
->  		inode_dec_dirty_pages(dir);
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 3007759dd2dd..1e9e780f3db7 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -2835,6 +2835,27 @@ static inline bool is_valid_data_blkaddr(struct f2fs_sb_info *sbi,
->  	return true;
->  }
->  
-> +static inline void f2fs_set_page_private(struct page *page,
-> +						unsigned long date)
+> crash_arm64> bt ffffffc03c354080
+> PID: 9785   TASK: ffffffc03c354080  CPU: 1   COMMAND: "RxIoScheduler-3"
+> >> #7 [ffffffc01b50fac0] __lock_page at ffffff80081b11e8
+> 
+> crash-arm64> bt 10349
+> PID: 10349  TASK: ffffffc018b83080  CPU: 1   COMMAND: "BUGLY_ASYNC_UPL"
+> >> #3 [ffffffc01f8cfa40] rwsem_down_read_failed at ffffff8008a93afc
+>      PC: 00000033  LR: 00000000  SP: 00000000  PSTATE: ffffffffffffffff
+> 
+> crash-arm64> bt 9709
+> PID: 9709   TASK: ffffffc03e7f3080  CPU: 1   COMMAND: "IntentService[A"
+> >> #3 [ffffffc001e67850] rwsem_down_read_failed at ffffff8008a93afc
+> >> #8 [ffffffc001e67b80] el1_ia at ffffff8008084fc4
+>      PC: ffffff8008274114  [compat_filldir64+120]
+>      LR: ffffff80083584d4  [f2fs_fill_dentries+448]
+>      SP: ffffffc001e67b80  PSTATE: 80400145
+>     X29: ffffffc001e67b80  X28: 0000000000000000  X27: 000000000000001a
+>     X26: 00000000000093d7  X25: ffffffc070d52480  X24: 0000000000000008
+>     X23: 0000000000000028  X22: 00000000d43dfd60  X21: ffffffc001e67e90
+>     X20: 0000000000000011  X19: ffffff80093a4000  X18: 0000000000000000
+>     X17: 0000000000000000  X16: 0000000000000000  X15: 0000000000000000
+>     X14: ffffffffffffffff  X13: 0000000000000008  X12: 0101010101010101
+>     X11: 7f7f7f7f7f7f7f7f  X10: 6a6a6a6a6a6a6a6a   X9: 7f7f7f7f7f7f7f7f
+>      X8: 0000000080808000   X7: ffffff800827409c   X6: 0000000080808000
+>      X5: 0000000000000008   X4: 00000000000093d7   X3: 000000000000001a
+>      X2: 0000000000000011   X1: ffffffc070d52480   X0: 0000000000800238
+> >> #9 [ffffffc001e67be0] f2fs_fill_dentries at ffffff80083584d0
+>      PC: 0000003c  LR: 00000000  SP: 00000000  PSTATE: 000000d9
+>     X12: f48a02ff X11: d4678960 X10: d43dfc00  X9: d4678ae4
+>      X8: 00000058  X7: d4678994  X6: d43de800  X5: 000000d9
+>      X4: d43dfc0c  X3: d43dfc10  X2: d46799c8  X1: 00000000
+>      X0: 00001068
+> 
+> Below potential deadlock will happen between three threads:
+> Thread A		Thread B		Thread C
+> - f2fs_do_sync_file
+>  - f2fs_write_checkpoint
+>   - down_write(&sbi->node_change) -- 1)
+> 			- do_page_fault
+> 			 - down_write(&mm->mmap_sem) -- 2)
+> 			  - do_wp_page
+> 			   - f2fs_vm_page_mkwrite
+> 						- getdents64
+> 						 - f2fs_read_inline_dir
+> 						  - lock_page -- 3)
+>   - f2fs_sync_node_pages
+>    - lock_page -- 3)
+> 			    - __do_map_lock
+> 			     - down_read(&sbi->node_change) -- 1)
+> 						  - f2fs_fill_dentries
+> 						   - dir_emit
+> 						    - compat_filldir64
+> 						     - do_page_fault
+> 						      - down_read(&mm->mmap_sem) -- 2)
+> 
+> Since f2fs_readdir is protected by inode.i_rwsem, there should not be
 
-I fixed to use "data".
+Well, what about other dir operations which can convert inline_dentry?
+How about allocating a buffer shortly like this?
 
-> +{
-> +	if (PagePrivate(page))
-> +		return;
-> +
-> +	get_page(page);
-> +	SetPagePrivate(page);
-> +	set_page_private(page, date);
-> +}
-> +
-> +static inline void f2fs_clear_page_private(struct page *page)
-> +{
-> +	if (!PagePrivate(page))
-> +		return;
-> +
-> +	set_page_private(page, 0);
-> +	ClearPagePrivate(page);
-> +	f2fs_put_page(page, 0);
-> +}
-> +
->  /*
->   * file.c
->   */
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index f6ff84e29749..3f99ab288695 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1961,7 +1961,7 @@ static int f2fs_set_node_page_dirty(struct page *page)
->  	if (!PageDirty(page)) {
->  		__set_page_dirty_nobuffers(page);
->  		inc_page_count(F2FS_P_SB(page), F2FS_DIRTY_NODES);
-> -		SetPagePrivate(page);
-> +		f2fs_set_page_private(page, 0);
->  		f2fs_trace_pid(page);
->  		return 1;
->  	}
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index e730c334abba..aa7fe79b62b2 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -191,8 +191,7 @@ void f2fs_register_inmem_page(struct inode *inode, struct page *page)
->  
->  	f2fs_trace_pid(page);
->  
-> -	set_page_private(page, (unsigned long)ATOMIC_WRITTEN_PAGE);
-> -	SetPagePrivate(page);
-> +	f2fs_set_page_private(page, (unsigned long)ATOMIC_WRITTEN_PAGE);
->  
->  	new = f2fs_kmem_cache_alloc(inmem_entry_slab, GFP_NOFS);
->  
-> @@ -280,8 +279,7 @@ static int __revoke_inmem_pages(struct inode *inode,
->  			ClearPageUptodate(page);
->  			clear_cold_data(page);
->  		}
-> -		set_page_private(page, 0);
-> -		ClearPagePrivate(page);
-> +		f2fs_clear_page_private(page);
->  		f2fs_put_page(page, 1);
->  
->  		list_del(&cur->list);
-> @@ -370,8 +368,7 @@ void f2fs_drop_inmem_page(struct inode *inode, struct page *page)
->  	kmem_cache_free(inmem_entry_slab, cur);
->  
->  	ClearPageUptodate(page);
-> -	set_page_private(page, 0);
-> -	ClearPagePrivate(page);
-> +	f2fs_clear_page_private(page);
->  	f2fs_put_page(page, 0);
->  
->  	trace_f2fs_commit_inmem_page(page, INMEM_INVALIDATE);
-> -- 
-> 2.18.0.rc1
+---
+ fs/f2fs/inline.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index a1381d05956b..50a946d55778 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -647,12 +647,10 @@ int f2fs_read_inline_dir(struct file *file, struct dir_context *ctx,
+ 	struct inode *inode = file_inode(file);
+ 	struct page *ipage = NULL;
+ 	struct f2fs_dentry_ptr d;
+-	void *inline_dentry = NULL;
++	void *inline_dentry = NULL, *buf = NULL;
+ 	int err;
+ 
+-	make_dentry_ptr_inline(inode, &d, inline_dentry);
+-
+-	if (ctx->pos == d.max)
++	if (ctx->pos >= NR_INLINE_DENTRY(inode))
+ 		return 0;
+ 
+ 	ipage = f2fs_get_node_page(F2FS_I_SB(inode), inode->i_ino);
+@@ -660,14 +658,24 @@ int f2fs_read_inline_dir(struct file *file, struct dir_context *ctx,
+ 		return PTR_ERR(ipage);
+ 
+ 	inline_dentry = inline_data_addr(inode, ipage);
++	buf = f2fs_kmalloc(F2FS_I_SB(inode),
++				MAX_INLINE_DATA(inode), GFP_F2FS_ZERO);
++	if (!buf) {
++		f2fs_put_page(ipage, 1);
++		err = -ENOMEM;
++		goto out;
++	}
++	memcpy(buf, inline_dentry, MAX_INLINE_DATA(inode));
++	make_dentry_ptr_inline(inode, &d, buf);
+ 
+-	make_dentry_ptr_inline(inode, &d, inline_dentry);
++	f2fs_put_page(ipage, 1);
+ 
+ 	err = f2fs_fill_dentries(ctx, &d, 0, fstr);
+ 	if (!err)
+ 		ctx->pos = d.max;
+ 
+-	f2fs_put_page(ipage, 1);
++	kvfree(buf);
++out:
+ 	return err < 0 ? err : 0;
+ }
+ 
+-- 
+2.19.0.605.g01d371f741-goog
