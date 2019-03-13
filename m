@@ -1,116 +1,164 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: fix to check inline_xattr_size boundary
- correctly
-Date: Wed, 13 Mar 2019 10:14:00 +0800
-Message-ID: <693a47aa-0bda-b910-bc83-d100e7c850c6@huawei.com>
-References: <20190214160825.4973-1-chao@kernel.org>
- <82ef0ff8-452c-1894-6776-41c70ad7654b@huawei.com>
- <20190312185057.GB45421@jaegeuk-macbookpro.roam.corp.google.com>
- <7b028daf-538e-a10e-6b79-f686021ee899@huawei.com>
- <20190313020322.GA83715@jaegeuk-macbookpro.roam.corp.google.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: fix to avoid deadlock in f2fs_read_inline_dir()
+Date: Tue, 12 Mar 2019 19:14:52 -0700
+Message-ID: <20190313021452.GA85923@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190312074427.75515-1-yuchao0@huawei.com>
+ <20190312200932.GD45421@jaegeuk-macbookpro.roam.corp.google.com>
+ <d32c84cd-55fb-0cfa-82ae-157330fc6e81@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190313020322.GA83715@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <d32c84cd-55fb-0cfa-82ae-157330fc6e81@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2019/3/13 10:03, Jaegeuk Kim wrote:
-> On 03/13, Chao Yu wrote:
->> On 2019/3/13 2:50, Jaegeuk Kim wrote:
->>> On 03/04, Chao Yu wrote:
->>>> Hi Jaegeuk,
->>>>
->>>> On 2019/2/15 0:08, Chao Yu wrote:
->>>>> ---
->>>>> v2:
->>>>> - fix lower bound check, inline xattr size should be larger than
->>>>> xattr_header's size at least.
->>>>
->>>> ...
->>>>
->>>>> +		if (F2FS_OPTION(sbi).inline_xattr_size <
->>>>> +			sizeof(struct f2fs_xattr_header) / sizeof(__le32)
->>>>
->>>> No sure we should set this low bound as above... now I guess original
->>>> non-zero check is enough.
->>>>
->>>> How do you think of setting inline_xattr_size range as
->>>> (0, MAX_INLINE_XATTR_SIZE]?
->>>
->>> How about this?
->>
->> If you think it's necessary to check low bound with size of xattr header,
->> I'm also okay with that.
->>
->> And below diff looks good to me, could you please merge this into original one?
->>
->> Thanks,
+On 03/13, Chao Yu wrote:
+> On 2019/3/13 4:09, Jaegeuk Kim wrote:
+> > On 03/12, Chao Yu wrote:
+> >> As Jiqun Li reported in bugzilla:
+> >>
+> >> https://bugzilla.kernel.org/show_bug.cgi?id=202883
+> >>
+> >> sometimes, dead lock when make system call SYS_getdents64 with fsync() is
+> >> called by another process.
+> >>
+> >> monkey running on android9.0
+> >>
+> >> 1.  task 9785 held sbi->cp_rwsem and waiting lock_page()
+> >> 2.  task 10349 held mm_sem and waiting sbi->cp_rwsem
+> >> 3. task 9709 held lock_page() and waiting mm_sem
+> >>
+> >> so this is a dead lock scenario.
+> >>
+> >> task stack is show by crash tools as following
+> >>
+> >> crash_arm64> bt ffffffc03c354080
+> >> PID: 9785   TASK: ffffffc03c354080  CPU: 1   COMMAND: "RxIoScheduler-3"
+> >>>> #7 [ffffffc01b50fac0] __lock_page at ffffff80081b11e8
+> >>
+> >> crash-arm64> bt 10349
+> >> PID: 10349  TASK: ffffffc018b83080  CPU: 1   COMMAND: "BUGLY_ASYNC_UPL"
+> >>>> #3 [ffffffc01f8cfa40] rwsem_down_read_failed at ffffff8008a93afc
+> >>      PC: 00000033  LR: 00000000  SP: 00000000  PSTATE: ffffffffffffffff
+> >>
+> >> crash-arm64> bt 9709
+> >> PID: 9709   TASK: ffffffc03e7f3080  CPU: 1   COMMAND: "IntentService[A"
+> >>>> #3 [ffffffc001e67850] rwsem_down_read_failed at ffffff8008a93afc
+> >>>> #8 [ffffffc001e67b80] el1_ia at ffffff8008084fc4
+> >>      PC: ffffff8008274114  [compat_filldir64+120]
+> >>      LR: ffffff80083584d4  [f2fs_fill_dentries+448]
+> >>      SP: ffffffc001e67b80  PSTATE: 80400145
+> >>     X29: ffffffc001e67b80  X28: 0000000000000000  X27: 000000000000001a
+> >>     X26: 00000000000093d7  X25: ffffffc070d52480  X24: 0000000000000008
+> >>     X23: 0000000000000028  X22: 00000000d43dfd60  X21: ffffffc001e67e90
+> >>     X20: 0000000000000011  X19: ffffff80093a4000  X18: 0000000000000000
+> >>     X17: 0000000000000000  X16: 0000000000000000  X15: 0000000000000000
+> >>     X14: ffffffffffffffff  X13: 0000000000000008  X12: 0101010101010101
+> >>     X11: 7f7f7f7f7f7f7f7f  X10: 6a6a6a6a6a6a6a6a   X9: 7f7f7f7f7f7f7f7f
+> >>      X8: 0000000080808000   X7: ffffff800827409c   X6: 0000000080808000
+> >>      X5: 0000000000000008   X4: 00000000000093d7   X3: 000000000000001a
+> >>      X2: 0000000000000011   X1: ffffffc070d52480   X0: 0000000000800238
+> >>>> #9 [ffffffc001e67be0] f2fs_fill_dentries at ffffff80083584d0
+> >>      PC: 0000003c  LR: 00000000  SP: 00000000  PSTATE: 000000d9
+> >>     X12: f48a02ff X11: d4678960 X10: d43dfc00  X9: d4678ae4
+> >>      X8: 00000058  X7: d4678994  X6: d43de800  X5: 000000d9
+> >>      X4: d43dfc0c  X3: d43dfc10  X2: d46799c8  X1: 00000000
+> >>      X0: 00001068
+> >>
+> >> Below potential deadlock will happen between three threads:
+> >> Thread A		Thread B		Thread C
+> >> - f2fs_do_sync_file
+> >>  - f2fs_write_checkpoint
+> >>   - down_write(&sbi->node_change) -- 1)
+> >> 			- do_page_fault
+> >> 			 - down_write(&mm->mmap_sem) -- 2)
+> >> 			  - do_wp_page
+> >> 			   - f2fs_vm_page_mkwrite
+> >> 						- getdents64
+> >> 						 - f2fs_read_inline_dir
+> >> 						  - lock_page -- 3)
+> >>   - f2fs_sync_node_pages
+> >>    - lock_page -- 3)
+> >> 			    - __do_map_lock
+> >> 			     - down_read(&sbi->node_change) -- 1)
+> >> 						  - f2fs_fill_dentries
+> >> 						   - dir_emit
+> >> 						    - compat_filldir64
+> >> 						     - do_page_fault
+> >> 						      - down_read(&mm->mmap_sem) -- 2)
+> >>
+> >> Since f2fs_readdir is protected by inode.i_rwsem, there should not be
+> > 
+> > Well, what about other dir operations which can convert inline_dentry?
 > 
-> I had to add this on top of branch.
+> All those operations which can add/update/delete dents will be covered with
+> down_write(inode.i_rwsem), so we are safe.
 
-No problem.
+Okay.
 
 > 
->>From 70db5b04cbe19e5ae7e85ada2d3e82bcfdf90352 Mon Sep 17 00:00:00 2001
-> From: Jaegeuk Kim <jaegeuk@kernel.org>
-> Date: Tue, 12 Mar 2019 11:49:53 -0700
-> Subject: [PATCH] f2fs: give some messages for inline_xattr_size
+> > How about allocating a buffer shortly like this?
 > 
-> This patch adds some kernel messages when user sets wrong inline_xattr_size.
-> 
-> Fixes: 500e0b28ecd3 ("f2fs: fix to check inline_xattr_size boundary correctly")
+> If there is no race, allocating additional memory to store instantaneous
+> dents is unnecessary? How do you think?
 
-But this commit id may change when Linus pull your merge request...
+If we're really safe with i_rwsem, it's fine.
 
-Thanks,
-
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/super.c | 17 +++++++++++------
->  1 file changed, 11 insertions(+), 6 deletions(-)
 > 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 42eb5c86330a..324938ec95f3 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -821,6 +821,8 @@ static int parse_options(struct super_block *sb, char *options)
->  	}
->  
->  	if (test_opt(sbi, INLINE_XATTR_SIZE)) {
-> +		int min_size, max_size;
-> +
->  		if (!f2fs_sb_has_extra_attr(sbi) ||
->  			!f2fs_sb_has_flexible_inline_xattr(sbi)) {
->  			f2fs_msg(sb, KERN_ERR,
-> @@ -834,15 +836,18 @@ static int parse_options(struct super_block *sb, char *options)
->  					"set with inline_xattr option");
->  			return -EINVAL;
->  		}
-> -		if (F2FS_OPTION(sbi).inline_xattr_size <
-> -			sizeof(struct f2fs_xattr_header) / sizeof(__le32) ||
-> -			F2FS_OPTION(sbi).inline_xattr_size >
-> -			DEF_ADDRS_PER_INODE -
-> +
-> +		min_size = sizeof(struct f2fs_xattr_header) / sizeof(__le32);
-> +		max_size = DEF_ADDRS_PER_INODE -
->  			F2FS_TOTAL_EXTRA_ATTR_SIZE / sizeof(__le32) -
->  			DEF_INLINE_RESERVED_SIZE -
-> -			MIN_INLINE_DENTRY_SIZE / sizeof(__le32)) {
-> +			MIN_INLINE_DENTRY_SIZE / sizeof(__le32);
-> +
-> +		if (F2FS_OPTION(sbi).inline_xattr_size < min_size ||
-> +				F2FS_OPTION(sbi).inline_xattr_size > max_size) {
->  			f2fs_msg(sb, KERN_ERR,
-> -					"inline xattr size is out of range");
-> +				"inline xattr size is out of range: %d ~ %d",
-> +				min_size, max_size);
->  			return -EINVAL;
->  		}
->  	}
+> Thanks
 > 
+> > 
+> > ---
+> >  fs/f2fs/inline.c | 20 ++++++++++++++------
+> >  1 file changed, 14 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+> > index a1381d05956b..50a946d55778 100644
+> > --- a/fs/f2fs/inline.c
+> > +++ b/fs/f2fs/inline.c
+> > @@ -647,12 +647,10 @@ int f2fs_read_inline_dir(struct file *file, struct dir_context *ctx,
+> >  	struct inode *inode = file_inode(file);
+> >  	struct page *ipage = NULL;
+> >  	struct f2fs_dentry_ptr d;
+> > -	void *inline_dentry = NULL;
+> > +	void *inline_dentry = NULL, *buf = NULL;
+> >  	int err;
+> >  
+> > -	make_dentry_ptr_inline(inode, &d, inline_dentry);
+> > -
+> > -	if (ctx->pos == d.max)
+> > +	if (ctx->pos >= NR_INLINE_DENTRY(inode))
+> >  		return 0;
+> >  
+> >  	ipage = f2fs_get_node_page(F2FS_I_SB(inode), inode->i_ino);
+> > @@ -660,14 +658,24 @@ int f2fs_read_inline_dir(struct file *file, struct dir_context *ctx,
+> >  		return PTR_ERR(ipage);
+> >  
+> >  	inline_dentry = inline_data_addr(inode, ipage);
+> > +	buf = f2fs_kmalloc(F2FS_I_SB(inode),
+> > +				MAX_INLINE_DATA(inode), GFP_F2FS_ZERO);
+> > +	if (!buf) {
+> > +		f2fs_put_page(ipage, 1);
+> > +		err = -ENOMEM;
+> > +		goto out;
+> > +	}
+> > +	memcpy(buf, inline_dentry, MAX_INLINE_DATA(inode));
+> > +	make_dentry_ptr_inline(inode, &d, buf);
+> >  
+> > -	make_dentry_ptr_inline(inode, &d, inline_dentry);
+> > +	f2fs_put_page(ipage, 1);
+> >  
+> >  	err = f2fs_fill_dentries(ctx, &d, 0, fstr);
+> >  	if (!err)
+> >  		ctx->pos = d.max;
+> >  
+> > -	f2fs_put_page(ipage, 1);
+> > +	kvfree(buf);
+> > +out:
+> >  	return err < 0 ? err : 0;
+> >  }
+> >  
+> > 
