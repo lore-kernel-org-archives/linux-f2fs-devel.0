@@ -1,164 +1,61 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: fix to avoid deadlock in f2fs_read_inline_dir()
-Date: Tue, 12 Mar 2019 19:14:52 -0700
-Message-ID: <20190313021452.GA85923@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190312074427.75515-1-yuchao0@huawei.com>
- <20190312200932.GD45421@jaegeuk-macbookpro.roam.corp.google.com>
- <d32c84cd-55fb-0cfa-82ae-157330fc6e81@huawei.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 202889] fsync on inode fails to persist its size,
+ which is changed by pwrite
+Date: Wed, 13 Mar 2019 02:24:16 +0000
+Message-ID: <bug-202889-202145-KOQeIrnqah@https.bugzilla.kernel.org/>
+References: <bug-202889-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <d32c84cd-55fb-0cfa-82ae-157330fc6e81@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
+ id 1h3tZA-0005ef-3f
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Mar 2019 02:24:24 +0000
+Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1h3tZ8-008TcR-FM
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Mar 2019 02:24:23 +0000
+Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id BF20C289B9
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 13 Mar 2019 02:24:16 +0000 (UTC)
+In-Reply-To: <bug-202889-202145@https.bugzilla.kernel.org/>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-On 03/13, Chao Yu wrote:
-> On 2019/3/13 4:09, Jaegeuk Kim wrote:
-> > On 03/12, Chao Yu wrote:
-> >> As Jiqun Li reported in bugzilla:
-> >>
-> >> https://bugzilla.kernel.org/show_bug.cgi?id=202883
-> >>
-> >> sometimes, dead lock when make system call SYS_getdents64 with fsync() is
-> >> called by another process.
-> >>
-> >> monkey running on android9.0
-> >>
-> >> 1.  task 9785 held sbi->cp_rwsem and waiting lock_page()
-> >> 2.  task 10349 held mm_sem and waiting sbi->cp_rwsem
-> >> 3. task 9709 held lock_page() and waiting mm_sem
-> >>
-> >> so this is a dead lock scenario.
-> >>
-> >> task stack is show by crash tools as following
-> >>
-> >> crash_arm64> bt ffffffc03c354080
-> >> PID: 9785   TASK: ffffffc03c354080  CPU: 1   COMMAND: "RxIoScheduler-3"
-> >>>> #7 [ffffffc01b50fac0] __lock_page at ffffff80081b11e8
-> >>
-> >> crash-arm64> bt 10349
-> >> PID: 10349  TASK: ffffffc018b83080  CPU: 1   COMMAND: "BUGLY_ASYNC_UPL"
-> >>>> #3 [ffffffc01f8cfa40] rwsem_down_read_failed at ffffff8008a93afc
-> >>      PC: 00000033  LR: 00000000  SP: 00000000  PSTATE: ffffffffffffffff
-> >>
-> >> crash-arm64> bt 9709
-> >> PID: 9709   TASK: ffffffc03e7f3080  CPU: 1   COMMAND: "IntentService[A"
-> >>>> #3 [ffffffc001e67850] rwsem_down_read_failed at ffffff8008a93afc
-> >>>> #8 [ffffffc001e67b80] el1_ia at ffffff8008084fc4
-> >>      PC: ffffff8008274114  [compat_filldir64+120]
-> >>      LR: ffffff80083584d4  [f2fs_fill_dentries+448]
-> >>      SP: ffffffc001e67b80  PSTATE: 80400145
-> >>     X29: ffffffc001e67b80  X28: 0000000000000000  X27: 000000000000001a
-> >>     X26: 00000000000093d7  X25: ffffffc070d52480  X24: 0000000000000008
-> >>     X23: 0000000000000028  X22: 00000000d43dfd60  X21: ffffffc001e67e90
-> >>     X20: 0000000000000011  X19: ffffff80093a4000  X18: 0000000000000000
-> >>     X17: 0000000000000000  X16: 0000000000000000  X15: 0000000000000000
-> >>     X14: ffffffffffffffff  X13: 0000000000000008  X12: 0101010101010101
-> >>     X11: 7f7f7f7f7f7f7f7f  X10: 6a6a6a6a6a6a6a6a   X9: 7f7f7f7f7f7f7f7f
-> >>      X8: 0000000080808000   X7: ffffff800827409c   X6: 0000000080808000
-> >>      X5: 0000000000000008   X4: 00000000000093d7   X3: 000000000000001a
-> >>      X2: 0000000000000011   X1: ffffffc070d52480   X0: 0000000000800238
-> >>>> #9 [ffffffc001e67be0] f2fs_fill_dentries at ffffff80083584d0
-> >>      PC: 0000003c  LR: 00000000  SP: 00000000  PSTATE: 000000d9
-> >>     X12: f48a02ff X11: d4678960 X10: d43dfc00  X9: d4678ae4
-> >>      X8: 00000058  X7: d4678994  X6: d43de800  X5: 000000d9
-> >>      X4: d43dfc0c  X3: d43dfc10  X2: d46799c8  X1: 00000000
-> >>      X0: 00001068
-> >>
-> >> Below potential deadlock will happen between three threads:
-> >> Thread A		Thread B		Thread C
-> >> - f2fs_do_sync_file
-> >>  - f2fs_write_checkpoint
-> >>   - down_write(&sbi->node_change) -- 1)
-> >> 			- do_page_fault
-> >> 			 - down_write(&mm->mmap_sem) -- 2)
-> >> 			  - do_wp_page
-> >> 			   - f2fs_vm_page_mkwrite
-> >> 						- getdents64
-> >> 						 - f2fs_read_inline_dir
-> >> 						  - lock_page -- 3)
-> >>   - f2fs_sync_node_pages
-> >>    - lock_page -- 3)
-> >> 			    - __do_map_lock
-> >> 			     - down_read(&sbi->node_change) -- 1)
-> >> 						  - f2fs_fill_dentries
-> >> 						   - dir_emit
-> >> 						    - compat_filldir64
-> >> 						     - do_page_fault
-> >> 						      - down_read(&mm->mmap_sem) -- 2)
-> >>
-> >> Since f2fs_readdir is protected by inode.i_rwsem, there should not be
-> > 
-> > Well, what about other dir operations which can convert inline_dentry?
-> 
-> All those operations which can add/update/delete dents will be covered with
-> down_write(inode.i_rwsem), so we are safe.
+https://bugzilla.kernel.org/show_bug.cgi?id=202889
 
-Okay.
+Chao Yu (chao@kernel.org) changed:
 
-> 
-> > How about allocating a buffer shortly like this?
-> 
-> If there is no race, allocating additional memory to store instantaneous
-> dents is unnecessary? How do you think?
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |ASSIGNED
+                 CC|                            |chao@kernel.org
 
-If we're really safe with i_rwsem, it's fine.
+--- Comment #1 from Chao Yu (chao@kernel.org) ---
+Hi Seulbae,
 
-> 
-> Thanks
-> 
-> > 
-> > ---
-> >  fs/f2fs/inline.c | 20 ++++++++++++++------
-> >  1 file changed, 14 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> > index a1381d05956b..50a946d55778 100644
-> > --- a/fs/f2fs/inline.c
-> > +++ b/fs/f2fs/inline.c
-> > @@ -647,12 +647,10 @@ int f2fs_read_inline_dir(struct file *file, struct dir_context *ctx,
-> >  	struct inode *inode = file_inode(file);
-> >  	struct page *ipage = NULL;
-> >  	struct f2fs_dentry_ptr d;
-> > -	void *inline_dentry = NULL;
-> > +	void *inline_dentry = NULL, *buf = NULL;
-> >  	int err;
-> >  
-> > -	make_dentry_ptr_inline(inode, &d, inline_dentry);
-> > -
-> > -	if (ctx->pos == d.max)
-> > +	if (ctx->pos >= NR_INLINE_DENTRY(inode))
-> >  		return 0;
-> >  
-> >  	ipage = f2fs_get_node_page(F2FS_I_SB(inode), inode->i_ino);
-> > @@ -660,14 +658,24 @@ int f2fs_read_inline_dir(struct file *file, struct dir_context *ctx,
-> >  		return PTR_ERR(ipage);
-> >  
-> >  	inline_dentry = inline_data_addr(inode, ipage);
-> > +	buf = f2fs_kmalloc(F2FS_I_SB(inode),
-> > +				MAX_INLINE_DATA(inode), GFP_F2FS_ZERO);
-> > +	if (!buf) {
-> > +		f2fs_put_page(ipage, 1);
-> > +		err = -ENOMEM;
-> > +		goto out;
-> > +	}
-> > +	memcpy(buf, inline_dentry, MAX_INLINE_DATA(inode));
-> > +	make_dentry_ptr_inline(inode, &d, buf);
-> >  
-> > -	make_dentry_ptr_inline(inode, &d, inline_dentry);
-> > +	f2fs_put_page(ipage, 1);
-> >  
-> >  	err = f2fs_fill_dentries(ctx, &d, 0, fstr);
-> >  	if (!err)
-> >  		ctx->pos = d.max;
-> >  
-> > -	f2fs_put_page(ipage, 1);
-> > +	kvfree(buf);
-> > +out:
-> >  	return err < 0 ? err : 0;
-> >  }
-> >  
-> > 
+Thanks for the report. :)
+
+Your test program didn't handle any error paths, it should be fixed.
+
+I try to reproduce this bug, but it looks there is no problem in my
+environment.
+
+Could you add error handling and try again?
+
+-- 
+You are receiving this mail because:
+You are watching the assignee of the bug.
