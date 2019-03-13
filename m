@@ -1,50 +1,37 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 202889] fsync on inode fails to persist its size,
- which is changed by pwrite
-Date: Wed, 13 Mar 2019 03:09:17 +0000
-Message-ID: <bug-202889-202145-EYrVIByOvD@https.bugzilla.kernel.org/>
-References: <bug-202889-202145@https.bugzilla.kernel.org/>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: set pin_file under CAP_SYS_ADMIN
+Date: Wed, 13 Mar 2019 16:16:19 -0700
+Message-ID: <20190313231619.31453-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1h3uGj-0007JX-Mg
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Mar 2019 03:09:25 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h3uGi-008aow-2B
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Mar 2019 03:09:25 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 5CB68295C6
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 13 Mar 2019 03:09:18 +0000 (UTC)
-In-Reply-To: <bug-202889-202145@https.bugzilla.kernel.org/>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=202889
+Android uses pin_file for uncrypt during OTA, and that should be managed by
+CAP_SYS_ADMIN only.
 
---- Comment #4 from Chao Yu (chao@kernel.org) ---
-I checked attachment, but error paths of all syscall still didn't be handled
-well?
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/file.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I doubt the last pwrite64 or fsync failed, actually, it's rare.
-Otherwise, I suspect there is a bug when we handle FI_AUTO_RECOVER case,
-in where we handle i_size with a tricky way.
-
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 807a97ad2430..012815d816e6 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2873,8 +2873,8 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
+ 	__u32 pin;
+ 	int ret = 0;
+ 
+-	if (!inode_owner_or_capable(inode))
+-		return -EACCES;
++	if (!capable(CAP_SYS_ADMIN))
++		return -EPERM;
+ 
+ 	if (get_user(pin, (__u32 __user *)arg))
+ 		return -EFAULT;
 -- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+2.19.0.605.g01d371f741-goog
