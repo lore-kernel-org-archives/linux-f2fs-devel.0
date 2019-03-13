@@ -1,29 +1,24 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 202889] fsync on inode fails to persist its size,
- which is changed by pwrite
-Date: Tue, 12 Mar 2019 20:59:54 +0000
-Message-ID: <bug-202889-202145-CPZCXMZoJv@https.bugzilla.kernel.org/>
-References: <bug-202889-202145@https.bugzilla.kernel.org/>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: fix wrong #endif
+Date: Wed, 13 Mar 2019 09:16:55 +0800
+Message-ID: <0d5ddf95-d241-f253-072c-d5ae20f470bb@huawei.com>
+References: <20190312182613.47642-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1h3oVK-0006Wa-49
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Mar 2019 21:00:06 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
+ (envelope-from <yuchao0@huawei.com>) id 1h3sW5-0003Bn-59
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Mar 2019 01:17:09 +0000
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h3oVG-00DAWC-Q7
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Mar 2019 21:00:06 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 5C58A288D8
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 12 Mar 2019 20:59:55 +0000 (UTC)
-In-Reply-To: <bug-202889-202145@https.bugzilla.kernel.org/>
+ id 1h3sW2-00DpST-Pg
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Mar 2019 01:17:09 +0000
+In-Reply-To: <20190312182613.47642-1-jaegeuk@kernel.org>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,18 +28,13 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=202889
+On 2019/3/13 2:26, Jaegeuk Kim wrote:
+> We have to cover whole headerfile with last #endif.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Seulbae Kim (seulbae@gatech.edu) changed:
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-            Summary|fsync on file fails to      |fsync on inode fails to
-                   |persist its size, which is  |persist its size, which is
-                   |changed by pwrite           |changed by pwrite
-
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+Thanks,
