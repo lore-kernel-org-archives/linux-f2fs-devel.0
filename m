@@ -1,35 +1,24 @@
-From: linux-f2fs-devel--- via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Subject: Zdravstvujte Vas interesuyut klientskie bazy dannyh?
-Date: Thu, 14 Mar 2019 05:24:44 +0100 (CET)
-Message-ID: <20190314042445.5E80C9706A@mail.kosmetykifm.pl>
-Reply-To: prodawez@armyspy.com
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: set pin_file under CAP_SYS_ADMIN
+Date: Thu, 14 Mar 2019 22:34:11 +0800
+Message-ID: <394e84f9-73d6-ae5a-40da-64c864b7c7ee@kernel.org>
+References: <20190313231619.31453-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ulefedm@yahoo.com>) id 1h4KbL-0000e7-I2
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 Mar 2019 07:16:27 +0000
-Received: from ns329514.ip-5-39-87.eu ([5.39.87.211] helo=mail.kosmetykifm.pl)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtp (Exim 4.90_1)
- id 1h4KbJ-00CBpy-0X
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 Mar 2019 07:16:27 +0000
-Received: from ns329514.ip-5-39-87.eu (localhost [IPv6:::1])
- by mail.kosmetykifm.pl (Postfix) with SMTP id 5E80C9706A
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 14 Mar 2019 05:24:44 +0100 (CET)
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190313231619.31453-1-jaegeuk@kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Zdravstvujte Vas interesuyut klientskie bazy dannyh?
+On 2019-3-14 7:16, Jaegeuk Kim wrote:
+> Android uses pin_file for uncrypt during OTA, and that should be managed by
+> CAP_SYS_ADMIN only.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks,
