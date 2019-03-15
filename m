@@ -1,8 +1,8 @@
 From: Damien Le Moal <Damien.LeMoal@wdc.com>
 Subject: Re: [PATCH 2/2] f2fs: Reduce zoned block device memory
  usage
-Date: Fri, 15 Mar 2019 17:59:28 +0000
-Message-ID: <BYAPR04MB581674E53EACA148AA9547E4E7440@BYAPR04MB5816.namprd04.prod.outlook.com>
+Date: Fri, 15 Mar 2019 18:20:19 +0000
+Message-ID: <BYAPR04MB58169EE9CAACDE03AF696B82E7440@BYAPR04MB5816.namprd04.prod.outlook.com>
 References: <20190314163707.14364-1-damien.lemoal@wdc.com>
  <20190314163707.14364-3-damien.lemoal@wdc.com>
  <63308644-2b6c-65d1-88ca-70d3b7815f4c@huawei.com>
@@ -14,13 +14,13 @@ Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <prvs=97066cdaa=Damien.LeMoal@wdc.com>)
- id 1h4r7X-00041U-C3
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Mar 2019 17:59:51 +0000
-Received: from esa3.hgst.iphmx.com ([216.71.153.141])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ id 1h4rRW-0004wU-Py
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Mar 2019 18:20:30 +0000
+Received: from esa2.hgst.iphmx.com ([68.232.143.124])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h4r7I-003j7T-Of
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Mar 2019 17:59:51 +0000
+ id 1h4rRT-004Bhh-OG
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Mar 2019 18:20:30 +0000
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -152,11 +152,22 @@ On 2019/03/14 23:43, Chao Yu wrote:
 > 
 > if (!f2fs_hw_support_discard())
 
-Are you sure about this one ? f2fs_hw_support_discard(sbi) will check discard
-for the first disk only (sbi->sb->s_bdev), but __f2fs_issue_discard_zone() may
-be called by __issue_discard_async() for another bdev in the case of a
-multi-device mount.
+Looking more into this, it turns out that f2fs_sb_has_blkzoned(),
+f2fs_hw_should_discard() and f2fs_hw_support_discard() all behave the same and
+look directly at the information attached to sbi, which excludes a per device
+granularity for a multi-device mount. This is a problem for multi-device mounts
+combining zoned and regular devices, which is possible and working now, but not
+really handled safely I think. I.e. all segments on all disks should be the same
+size, so all zoned devices should have the same zone size and that size used
+also for the regular disks segments.
 
+We may need additional patches to do all this safely. Combining regular and
+zoned disks is a needed feature as that allows supporting zoned disks without
+conventional zones: the fixed location metadata go onto a first regular device
+(partition) of the mount and the sequential zone only disk can be added as a
+second disk of the volume.
+
+Thoughts ?
 
 > 
 > Otherwise, it looks good to me.
