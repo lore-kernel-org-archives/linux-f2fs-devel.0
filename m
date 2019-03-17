@@ -1,29 +1,24 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 202747] sometime kernel crash when kzfree is called
- in fs/f2fs/xattr.c
-Date: Sat, 16 Mar 2019 08:09:22 +0000
-Message-ID: <bug-202747-202145-URbu607Els@https.bugzilla.kernel.org/>
-References: <bug-202747-202145@https.bugzilla.kernel.org/>
+From: Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH 4/5] fscrypt: only set dentry_operations on
+ ciphertext dentries
+Date: Sun, 17 Mar 2019 13:04:43 -0700
+Message-ID: <20190317200444.5967-5-ebiggers@kernel.org>
+References: <20190317200444.5967-1-ebiggers@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1h54Nm-000237-1a
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 16 Mar 2019 08:09:30 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
+ (envelope-from <ebiggers@kernel.org>) id 1h5c41-0005zP-8K
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Mar 2019 20:07:21 +0000
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h54Nk-000Jfj-F9
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 16 Mar 2019 08:09:29 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id C07CC28D14
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 16 Mar 2019 08:09:22 +0000 (UTC)
-In-Reply-To: <bug-202747-202145@https.bugzilla.kernel.org/>
+ id 1h5c3z-0043Cs-Tv
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Mar 2019 20:07:21 +0000
+In-Reply-To: <20190317200444.5967-1-ebiggers@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,22 +28,49 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: linux-fscrypt@vger.kernel.org
+Cc: linux-unionfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, Sarthak Kukreti <sarthakkukreti@chromium.org>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
 
-https://bugzilla.kernel.org/show_bug.cgi?id=202747
+From: Eric Biggers <ebiggers@google.com>
 
-Chao Yu (chao@kernel.org) changed:
+Plaintext dentries are always valid, so only set fscrypt_d_ops on
+ciphertext dentries.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|ASSIGNED                    |RESOLVED
-         Resolution|---                         |CODE_FIX
+Besides marginally improved performance, this allows overlayfs to use an
+fscrypt-encrypted upperdir, provided that all the following are true:
 
---- Comment #2 from Chao Yu (chao@kernel.org) ---
-The fixing patch has been merged, close this issue.
+    (1) The fscrypt encryption key is placed in the keyring before
+	mounting overlayfs, and remains while the overlayfs is mounted.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2a6a7e722e7a78d774ce02b847c5b183a3ff2672
+    (2) The workdir uses the same encryption policy.
 
+    (3) No dentries for the ciphertext names of subdirectories have been
+	created in the upperdir or workdir yet.  (Since otherwise
+	d_splice_alias() will reuse the old dentry with ->d_op set.)
+
+One potential use case is using an ephemeral encryption key to encrypt
+all files created or changed by a container, so that they can be
+securely erased ("crypto-shredded") after the container stops.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/crypto/hooks.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
+index 2e7498a821a4..9d8910e86ee5 100644
+--- a/fs/crypto/hooks.c
++++ b/fs/crypto/hooks.c
+@@ -115,9 +115,8 @@ int __fscrypt_prepare_lookup(struct inode *dir, struct dentry *dentry)
+ 		spin_lock(&dentry->d_lock);
+ 		dentry->d_flags |= DCACHE_ENCRYPTED_NAME;
+ 		spin_unlock(&dentry->d_lock);
++		d_set_d_op(dentry, &fscrypt_d_ops);
+ 	}
+-
+-	d_set_d_op(dentry, &fscrypt_d_ops);
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(__fscrypt_prepare_lookup);
 -- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+2.21.0
