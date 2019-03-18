@@ -1,11 +1,12 @@
-From: Eric Biggers <ebiggers@kernel.org>
+From: Al Viro <viro@zeniv.linux.org.uk>
 Subject: Re: [PATCH 1/5] fscrypt: clean up and improve dentry
  revalidation
-Date: Mon, 18 Mar 2019 13:29:49 -0700
-Message-ID: <20190318202948.GD194307@gmail.com>
+Date: Mon, 18 Mar 2019 21:25:22 +0000
+Message-ID: <20190318212522.GI2217@ZenIV.linux.org.uk>
 References: <20190317200444.5967-1-ebiggers@kernel.org>
  <20190317200444.5967-2-ebiggers@kernel.org>
  <20190317203822.GH2217@ZenIV.linux.org.uk>
+ <20190318202948.GD194307@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -13,15 +14,15 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1h5ytT-0006Iz-5h
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Mar 2019 20:29:59 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <viro@ftp.linux.org.uk>) id 1h5zlH-00007y-7e
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Mar 2019 21:25:35 +0000
+Received: from zeniv.linux.org.uk ([195.92.253.2])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h5ytR-00BoEg-Kn
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Mar 2019 20:29:59 +0000
+ id 1h5zlF-00BU5O-8Z
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Mar 2019 21:25:35 +0000
 Content-Disposition: inline
-In-Reply-To: <20190317203822.GH2217@ZenIV.linux.org.uk>
+In-Reply-To: <20190318202948.GD194307@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,26 +32,27 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Al Viro <viro@zeniv.linux.org.uk>
+To: Eric Biggers <ebiggers@kernel.org>
 Cc: linux-unionfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org, Sarthak Kukreti <sarthakkukreti@chromium.org>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
 
-On Sun, Mar 17, 2019 at 08:38:22PM +0000, Al Viro wrote:
-> On Sun, Mar 17, 2019 at 01:04:40PM -0700, Eric Biggers wrote:
-> > +	/*
-> > +	 * Ciphertext name; valid if the directory's key is still unavailable.
-> > +	 *
-> > +	 * Note: since fscrypt forbids rename() on ciphertext names, it should
-> > +	 * be safe to access ->d_parent directly here.
+On Mon, Mar 18, 2019 at 01:29:49PM -0700, Eric Biggers wrote:
+> On Sun, Mar 17, 2019 at 08:38:22PM +0000, Al Viro wrote:
+> > On Sun, Mar 17, 2019 at 01:04:40PM -0700, Eric Biggers wrote:
+> > > +	/*
+> > > +	 * Ciphertext name; valid if the directory's key is still unavailable.
+> > > +	 *
+> > > +	 * Note: since fscrypt forbids rename() on ciphertext names, it should
+> > > +	 * be safe to access ->d_parent directly here.
+> > 
+> > No, it is not.  Again, d_splice_alias() on buggered fs image picking a reference
+> > to your subdirectory when doing a lookup elsewhere.  It can relocate the
+> > damn thing, without rename() being allowed for _anything_.
 > 
-> No, it is not.  Again, d_splice_alias() on buggered fs image picking a reference
-> to your subdirectory when doing a lookup elsewhere.  It can relocate the
-> damn thing, without rename() being allowed for _anything_.
+> You're talking about directory hard links, right?
 
-You're talking about directory hard links, right?  E.g. if there's a directory
-with two links a/dir and b/dir, and fscrypt_d_revalidate() is running on 'dir'
-via a lookup in a/, it could be the case that b/dir is being concurrently looked
-up.  Then the concurrent d_splice_alias() will move the whole dentry tree rooted
-at 'dir' from a/ to b/ in the dcache.  Okay, it looks like you're right; I'll
-update my comment to clarify that dget_parent() is still needed...
+In case of corrupted fs image - yes; the same can happen if you have a network
+filesystem with subdirectory moved around on server at the same time, but
+there you'll need a lot more elaborate ->d_revalidate() anyway.
 
-- Eric
+Directory hardlinks are certainly not allowed; however, we need the kernel
+to survive when it runs into that kind of crap on disk...
