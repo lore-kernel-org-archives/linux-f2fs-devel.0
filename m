@@ -1,22 +1,24 @@
 From: Damien Le Moal <damien.lemoal@wdc.com>
-Subject: [PATCH 0/5] Zoned block device support improvments
-Date: Mon, 18 Mar 2019 15:39:54 +0900
-Message-ID: <20190318063959.21369-1-damien.lemoal@wdc.com>
+Subject: [PATCH 1/5] f2fs-tools: Fix various compilation warnings
+Date: Mon, 18 Mar 2019 15:39:55 +0900
+Message-ID: <20190318063959.21369-2-damien.lemoal@wdc.com>
+References: <20190318063959.21369-1-damien.lemoal@wdc.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <prvs=973cf3254=damien.lemoal@wdc.com>)
- id 1h5lwO-0006sB-F5
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Mar 2019 06:40:08 +0000
+ id 1h5lwP-0006sP-AL
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Mar 2019 06:40:09 +0000
 Received: from esa6.hgst.iphmx.com ([216.71.154.45])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h5lwM-00AHPl-Ln
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Mar 2019 06:40:08 +0000
+ id 1h5lwO-00AHPl-H6
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Mar 2019 06:40:09 +0000
+In-Reply-To: <20190318063959.21369-1-damien.lemoal@wdc.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,26 +30,44 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
 
-The first 2 patches of this series are not zoned block device specific
-and fix compilation warnings and modify .gitignore file to handle
-/tools/f2fs_io/f2fs_io.
-
-The last 3 patches improvements of zoned block device support, with the
-last patch 5 being the most important.
-
-Damien Le Moal (5):
-  f2fs-tools: Fix various compilation warnings
-  f2fs-tools: Add f2fs_io to .gitignore
-  f2fs-tools: Improve zoned model check
-  f2fs-tools: Allow using host-aware devices as regular devices
-  f2fs-tools: Fix multi-device format with zoned devices
-
- .gitignore          |  1 +
- include/f2fs_fs.h   |  8 +++----
- lib/libf2fs.c       | 53 +++++++++++++++++++++++++++++++--------------
- lib/libf2fs_zoned.c | 22 ++++++++++---------
- tools/f2fstat.c     |  2 +-
- 5 files changed, 55 insertions(+), 31 deletions(-)
-
--- 
-2.20.1
+QXZvaWQgdmFyaW91cyBjb21waWxhdGlvbiB3YXJuaW5ncyBkdWUgdG8gc3RybmNweToKCmxpYmYy
+ZnMuYzo1OTA6MzM6IHdhcm5pbmc6IOKAmHNucHJpbnRm4oCZIG91dHB1dCBtYXkgYmUgdHJ1bmNh
+dGVkIGJlZm9yZQp0aGUgbGFzdCBmb3JtYXQgY2hhcmFjdGVyIFstV2Zvcm1hdC10cnVuY2F0aW9u
+PV0KICBzbnByaW50Zihyb290ZGV2LCByZXQsICIvZGV2LyVzIiwgYnVmKTsKCi4uL2luY2x1ZGUv
+ZjJmc19mcy5oOjEzODQ6Mjogd2FybmluZzog4oCYc3RybmNweeKAmSBzcGVjaWZpZWQgYm91bmQK
+ZGVwZW5kcyBvbiB0aGUgbGVuZ3RoIG9mIHRoZSBzb3VyY2UgYXJndW1lbnQgWy1Xc3RyaW5nb3At
+b3ZlcmZsb3c9XQogIHN0cm5jcHkoYnVmLCBmZWF0dXJlcywgc3RybGVuKGZlYXR1cmVzKSArIDEp
+OwoKZjJmc3RhdC5jOjI0MzozOiB3YXJuaW5nOiDigJhzdHJuY3B54oCZIG91dHB1dCB0cnVuY2F0
+ZWQgYmVmb3JlCnRlcm1pbmF0aW5nIG51bCBjb3B5aW5nIGFzIG1hbnkgYnl0ZXMgZnJvbSBhIHN0
+cmluZyBhcyBpdHMgbGVuZ3RoClstV3N0cmluZ29wLXRydW5jYXRpb25dCiAgIHN0cm5jcHkocHRy
+X2J1ZiwgbmFtZVtpXSwgc3RybGVuKG5hbWVbaV0pKTsKClRoaXMgcGF0Y2ggZG9lcyBub3QgY2hh
+bmdlIGFueSBmdW5jdGlvbmFsaXR5LgoKU2lnbmVkLW9mZi1ieTogRGFtaWVuIExlIE1vYWwgPGRh
+bWllbi5sZW1vYWxAd2RjLmNvbT4KLS0tCiBpbmNsdWRlL2YyZnNfZnMuaCB8IDYgKysrLS0tCiBs
+aWIvbGliZjJmcy5jICAgICB8IDIgKy0KIHRvb2xzL2YyZnN0YXQuYyAgIHwgMiArLQogMyBmaWxl
+cyBjaGFuZ2VkLCA1IGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEv
+aW5jbHVkZS9mMmZzX2ZzLmggYi9pbmNsdWRlL2YyZnNfZnMuaAppbmRleCBhNzMwNjg4Li5lMDcz
+NzIzIDEwMDY0NAotLS0gYS9pbmNsdWRlL2YyZnNfZnMuaAorKysgYi9pbmNsdWRlL2YyZnNfZnMu
+aApAQCAtMTM3OSw5ICsxMzc5LDkgQEAgc3RhdGljIGlubGluZSBpbnQgcGFyc2VfZmVhdHVyZShz
+dHJ1Y3QgZmVhdHVyZSAqdGFibGUsIGNvbnN0IGNoYXIgKmZlYXR1cmVzKQogewogCWNoYXIgKmJ1
+ZiwgKnN1YiwgKm5leHQ7CiAKLQlidWYgPSBjYWxsb2Moc3RybGVuKGZlYXR1cmVzKSArIDEsIHNp
+emVvZihjaGFyKSk7Ci0JQVNTRVJUKGJ1Zik7Ci0Jc3RybmNweShidWYsIGZlYXR1cmVzLCBzdHJs
+ZW4oZmVhdHVyZXMpICsgMSk7CisJYnVmID0gc3RyZHVwKGZlYXR1cmVzKTsKKwlpZiAoIWJ1ZikK
+KwkJcmV0dXJuIC0xOwogCiAJZm9yIChzdWIgPSBidWY7IHN1YiAmJiAqc3ViOyBzdWIgPSBuZXh0
+ID8gbmV4dCArIDEgOiBOVUxMKSB7CiAJCS8qIFNraXAgdGhlIGJlZ2lubmluZyBibGFua3MgKi8K
+ZGlmZiAtLWdpdCBhL2xpYi9saWJmMmZzLmMgYi9saWIvbGliZjJmcy5jCmluZGV4IGM2OTJiZjIu
+LjYwYjg0ZTAgMTAwNjQ0Ci0tLSBhL2xpYi9saWJmMmZzLmMKKysrIGIvbGliL2xpYmYyZnMuYwpA
+QCAtNTg3LDcgKzU4Nyw3IEBAIGNoYXIgKmdldF9yb290ZGV2KCkKIAkJcmV0dXJuIE5VTEw7CiAJ
+cm9vdGRldltyZXRdID0gJ1wwJzsKIAotCXNucHJpbnRmKHJvb3RkZXYsIHJldCwgIi9kZXYvJXMi
+LCBidWYpOworCXNucHJpbnRmKHJvb3RkZXYsIHJldCArIDEsICIvZGV2LyVzIiwgYnVmKTsKIAly
+ZXR1cm4gcm9vdGRldjsKICNlbmRpZgogfQpkaWZmIC0tZ2l0IGEvdG9vbHMvZjJmc3RhdC5jIGIv
+dG9vbHMvZjJmc3RhdC5jCmluZGV4IDdmNDg1YjAuLjA2MTg4MDYgMTAwNjQ0Ci0tLSBhL3Rvb2xz
+L2YyZnN0YXQuYworKysgYi90b29scy9mMmZzdGF0LmMKQEAgLTI0MCw3ICsyNDAsNyBAQCB2b2lk
+IHByaW50X2hlYWQoY2hhciAqcmVzKQogCiAJZm9yIChpID0gMDsgaSA8IDIwOyBpKyspIHsKIAkJ
+cHRyID0gKGkgPT0gMCkgPyBzdHJ0b2socmVzLCAiICIpIDogc3RydG9rKE5VTEwsICIgIik7Ci0J
+CXN0cm5jcHkocHRyX2J1ZiwgbmFtZVtpXSwgc3RybGVuKG5hbWVbaV0pKTsKKwkJc3RyY3B5KHB0
+cl9idWYsIG5hbWVbaV0pOwogCQlpZiAoaSA9PSAxKSB7CiAJCQlwcmV2X2luZGV4ID0gcHRyX2J1
+ZiAtIGJ1ZiAtIDE7CiAJCX0gZWxzZSBpZiAoaSA9PSA3KSB7Ci0tIAoyLjIwLjEKCgoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZl
+bCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0
+cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZl
+bAo=
