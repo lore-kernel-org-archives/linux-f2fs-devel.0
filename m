@@ -1,23 +1,23 @@
 From: Damien Le Moal <damien.lemoal@wdc.com>
-Subject: [PATCH 1/5] f2fs-tools: Fix various compilation warnings
-Date: Mon, 18 Mar 2019 15:39:55 +0900
-Message-ID: <20190318063959.21369-2-damien.lemoal@wdc.com>
+Subject: [PATCH 3/5] f2fs-tools: Improve zoned model check
+Date: Mon, 18 Mar 2019 15:39:57 +0900
+Message-ID: <20190318063959.21369-4-damien.lemoal@wdc.com>
 References: <20190318063959.21369-1-damien.lemoal@wdc.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <prvs=973cf3254=damien.lemoal@wdc.com>)
- id 1h5lwP-0006sP-AL
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Mar 2019 06:40:09 +0000
+ id 1h5lwR-0003lQ-P9
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Mar 2019 06:40:11 +0000
 Received: from esa6.hgst.iphmx.com ([216.71.154.45])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h5lwO-00AHPl-H6
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Mar 2019 06:40:09 +0000
+ id 1h5lwQ-00AHPl-49
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Mar 2019 06:40:11 +0000
 In-Reply-To: <20190318063959.21369-1-damien.lemoal@wdc.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -30,44 +30,101 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
 
-QXZvaWQgdmFyaW91cyBjb21waWxhdGlvbiB3YXJuaW5ncyBkdWUgdG8gc3RybmNweToKCmxpYmYy
-ZnMuYzo1OTA6MzM6IHdhcm5pbmc6IOKAmHNucHJpbnRm4oCZIG91dHB1dCBtYXkgYmUgdHJ1bmNh
-dGVkIGJlZm9yZQp0aGUgbGFzdCBmb3JtYXQgY2hhcmFjdGVyIFstV2Zvcm1hdC10cnVuY2F0aW9u
-PV0KICBzbnByaW50Zihyb290ZGV2LCByZXQsICIvZGV2LyVzIiwgYnVmKTsKCi4uL2luY2x1ZGUv
-ZjJmc19mcy5oOjEzODQ6Mjogd2FybmluZzog4oCYc3RybmNweeKAmSBzcGVjaWZpZWQgYm91bmQK
-ZGVwZW5kcyBvbiB0aGUgbGVuZ3RoIG9mIHRoZSBzb3VyY2UgYXJndW1lbnQgWy1Xc3RyaW5nb3At
-b3ZlcmZsb3c9XQogIHN0cm5jcHkoYnVmLCBmZWF0dXJlcywgc3RybGVuKGZlYXR1cmVzKSArIDEp
-OwoKZjJmc3RhdC5jOjI0MzozOiB3YXJuaW5nOiDigJhzdHJuY3B54oCZIG91dHB1dCB0cnVuY2F0
-ZWQgYmVmb3JlCnRlcm1pbmF0aW5nIG51bCBjb3B5aW5nIGFzIG1hbnkgYnl0ZXMgZnJvbSBhIHN0
-cmluZyBhcyBpdHMgbGVuZ3RoClstV3N0cmluZ29wLXRydW5jYXRpb25dCiAgIHN0cm5jcHkocHRy
-X2J1ZiwgbmFtZVtpXSwgc3RybGVuKG5hbWVbaV0pKTsKClRoaXMgcGF0Y2ggZG9lcyBub3QgY2hh
-bmdlIGFueSBmdW5jdGlvbmFsaXR5LgoKU2lnbmVkLW9mZi1ieTogRGFtaWVuIExlIE1vYWwgPGRh
-bWllbi5sZW1vYWxAd2RjLmNvbT4KLS0tCiBpbmNsdWRlL2YyZnNfZnMuaCB8IDYgKysrLS0tCiBs
-aWIvbGliZjJmcy5jICAgICB8IDIgKy0KIHRvb2xzL2YyZnN0YXQuYyAgIHwgMiArLQogMyBmaWxl
-cyBjaGFuZ2VkLCA1IGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEv
-aW5jbHVkZS9mMmZzX2ZzLmggYi9pbmNsdWRlL2YyZnNfZnMuaAppbmRleCBhNzMwNjg4Li5lMDcz
-NzIzIDEwMDY0NAotLS0gYS9pbmNsdWRlL2YyZnNfZnMuaAorKysgYi9pbmNsdWRlL2YyZnNfZnMu
-aApAQCAtMTM3OSw5ICsxMzc5LDkgQEAgc3RhdGljIGlubGluZSBpbnQgcGFyc2VfZmVhdHVyZShz
-dHJ1Y3QgZmVhdHVyZSAqdGFibGUsIGNvbnN0IGNoYXIgKmZlYXR1cmVzKQogewogCWNoYXIgKmJ1
-ZiwgKnN1YiwgKm5leHQ7CiAKLQlidWYgPSBjYWxsb2Moc3RybGVuKGZlYXR1cmVzKSArIDEsIHNp
-emVvZihjaGFyKSk7Ci0JQVNTRVJUKGJ1Zik7Ci0Jc3RybmNweShidWYsIGZlYXR1cmVzLCBzdHJs
-ZW4oZmVhdHVyZXMpICsgMSk7CisJYnVmID0gc3RyZHVwKGZlYXR1cmVzKTsKKwlpZiAoIWJ1ZikK
-KwkJcmV0dXJuIC0xOwogCiAJZm9yIChzdWIgPSBidWY7IHN1YiAmJiAqc3ViOyBzdWIgPSBuZXh0
-ID8gbmV4dCArIDEgOiBOVUxMKSB7CiAJCS8qIFNraXAgdGhlIGJlZ2lubmluZyBibGFua3MgKi8K
-ZGlmZiAtLWdpdCBhL2xpYi9saWJmMmZzLmMgYi9saWIvbGliZjJmcy5jCmluZGV4IGM2OTJiZjIu
-LjYwYjg0ZTAgMTAwNjQ0Ci0tLSBhL2xpYi9saWJmMmZzLmMKKysrIGIvbGliL2xpYmYyZnMuYwpA
-QCAtNTg3LDcgKzU4Nyw3IEBAIGNoYXIgKmdldF9yb290ZGV2KCkKIAkJcmV0dXJuIE5VTEw7CiAJ
-cm9vdGRldltyZXRdID0gJ1wwJzsKIAotCXNucHJpbnRmKHJvb3RkZXYsIHJldCwgIi9kZXYvJXMi
-LCBidWYpOworCXNucHJpbnRmKHJvb3RkZXYsIHJldCArIDEsICIvZGV2LyVzIiwgYnVmKTsKIAly
-ZXR1cm4gcm9vdGRldjsKICNlbmRpZgogfQpkaWZmIC0tZ2l0IGEvdG9vbHMvZjJmc3RhdC5jIGIv
-dG9vbHMvZjJmc3RhdC5jCmluZGV4IDdmNDg1YjAuLjA2MTg4MDYgMTAwNjQ0Ci0tLSBhL3Rvb2xz
-L2YyZnN0YXQuYworKysgYi90b29scy9mMmZzdGF0LmMKQEAgLTI0MCw3ICsyNDAsNyBAQCB2b2lk
-IHByaW50X2hlYWQoY2hhciAqcmVzKQogCiAJZm9yIChpID0gMDsgaSA8IDIwOyBpKyspIHsKIAkJ
-cHRyID0gKGkgPT0gMCkgPyBzdHJ0b2socmVzLCAiICIpIDogc3RydG9rKE5VTEwsICIgIik7Ci0J
-CXN0cm5jcHkocHRyX2J1ZiwgbmFtZVtpXSwgc3RybGVuKG5hbWVbaV0pKTsKKwkJc3RyY3B5KHB0
-cl9idWYsIG5hbWVbaV0pOwogCQlpZiAoaSA9PSAxKSB7CiAJCQlwcmV2X2luZGV4ID0gcHRyX2J1
-ZiAtIGJ1ZiAtIDE7CiAJCX0gZWxzZSBpZiAoaSA9PSA3KSB7Ci0tIAoyLjIwLjEKCgoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZl
-bCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0
-cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZl
-bAo=
+Return an error if an unknown zoned model is reported for a device.
+
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+---
+ include/f2fs_fs.h   |  2 +-
+ lib/libf2fs.c       |  8 ++++++--
+ lib/libf2fs_zoned.c | 20 +++++++++++---------
+ 3 files changed, 18 insertions(+), 12 deletions(-)
+
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index e073723..97ad774 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -1257,7 +1257,7 @@ blk_zone_cond_str(struct blk_zone *blkz)
+ 
+ #endif
+ 
+-extern void f2fs_get_zoned_model(int);
++extern int f2fs_get_zoned_model(int);
+ extern int f2fs_get_zone_blocks(int);
+ extern int f2fs_check_zones(int);
+ extern int f2fs_reset_zones(int);
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index 60b84e0..5ca1bb0 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -925,8 +925,12 @@ int get_device_info(int i)
+ 	}
+ 
+ #if !defined(WITH_ANDROID) && defined(__linux__)
+-	if (S_ISBLK(stat_buf->st_mode))
+-		f2fs_get_zoned_model(i);
++	if (S_ISBLK(stat_buf->st_mode)) {
++		if (f2fs_get_zoned_model(i) < 0) {
++			free(stat_buf);
++			return -1;
++                }
++	}
+ 
+ 	if (dev->zoned_model != F2FS_ZONED_NONE) {
+ 		if (dev->zoned_model == F2FS_ZONED_HM)
+diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
+index 6e32f32..1a6c5df 100644
+--- a/lib/libf2fs_zoned.c
++++ b/lib/libf2fs_zoned.c
+@@ -24,39 +24,41 @@
+ 
+ #ifdef HAVE_LINUX_BLKZONED_H
+ 
+-void f2fs_get_zoned_model(int i)
++int f2fs_get_zoned_model(int i)
+ {
+ 	struct device_info *dev = c.devices + i;
+ 	char str[128];
+ 	FILE *file;
+ 	int res;
+ 
++	/* Assume regular device */
++	dev->zoned_model = F2FS_ZONED_NONE;
++
+ 	/* Check that this is a zoned block device */
+ 	snprintf(str, sizeof(str),
+ 		 "/sys/block/%s/queue/zoned",
+ 		 basename(dev->path));
+ 	file = fopen(str, "r");
+ 	if (!file)
+-		goto not_zoned;
++		return 0;
+ 
+ 	memset(str, 0, sizeof(str));
+ 	res = fscanf(file, "%s", str);
+ 	fclose(file);
+ 
+ 	if (res != 1)
+-		goto not_zoned;
++		return 0;
+ 
+ 	if (strcmp(str, "host-aware") == 0) {
+ 		dev->zoned_model = F2FS_ZONED_HA;
+-		return;
+-	}
+-	if (strcmp(str, "host-managed") == 0) {
++	} else if (strcmp(str, "host-managed") == 0) {
+ 		dev->zoned_model = F2FS_ZONED_HM;
+-		return;
++	} else {
++		MSG(0, "\tError: Unsupported device zoned model\n");
++		return -1;
+ 	}
+ 
+-not_zoned:
+-	dev->zoned_model = F2FS_ZONED_NONE;
++	return 0;
+ }
+ 
+ int f2fs_get_zone_blocks(int i)
+-- 
+2.20.1
