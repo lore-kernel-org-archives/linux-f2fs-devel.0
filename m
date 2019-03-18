@@ -1,23 +1,24 @@
 From: Damien Le Moal <damien.lemoal@wdc.com>
-Subject: [PATCH 2/5] f2fs-tools: Add f2fs_io to .gitignore
-Date: Mon, 18 Mar 2019 15:39:56 +0900
-Message-ID: <20190318063959.21369-3-damien.lemoal@wdc.com>
+Subject: [PATCH 5/5] f2fs-tools: Fix multi-device format with
+ zoned devices
+Date: Mon, 18 Mar 2019 15:39:59 +0900
+Message-ID: <20190318063959.21369-6-damien.lemoal@wdc.com>
 References: <20190318063959.21369-1-damien.lemoal@wdc.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <prvs=973cf3254=damien.lemoal@wdc.com>)
- id 1h5lwQ-0005Kb-27
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Mar 2019 06:40:10 +0000
+ id 1h5lwV-0003mG-6K
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Mar 2019 06:40:15 +0000
 Received: from esa6.hgst.iphmx.com ([216.71.154.45])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h5lwP-00AHPl-CB
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Mar 2019 06:40:10 +0000
+ id 1h5lwT-00AHPl-D0
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Mar 2019 06:40:15 +0000
 In-Reply-To: <20190318063959.21369-1-damien.lemoal@wdc.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -30,24 +31,28 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
 
-GIT ignore compiled executable tools/f2fs_io/f2fs_io.
+There is no need to require conventional zones for a zoned block device
+that is not the first device of a multi-device volume. So exclude the
+check on the number of conventional zones of the device if the device
+index is not 0.
 
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 ---
- .gitignore | 1 +
- 1 file changed, 1 insertion(+)
+ lib/libf2fs_zoned.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/.gitignore b/.gitignore
-index 3f04e85..c1341da 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -50,6 +50,7 @@ stamp-h1
- /tools/fibmap.f2fs
- /tools/parse.f2fs
- /tools/f2fscrypt
-+/tools/f2fs_io/f2fs_io
- /tools/sg_write_buffer/sg_write_buffer
+diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
+index 1a6c5df..2d8244f 100644
+--- a/lib/libf2fs_zoned.c
++++ b/lib/libf2fs_zoned.c
+@@ -204,7 +204,7 @@ int f2fs_check_zones(int j)
+ 		goto out;
+ 	}
  
- # cscope files
+-	if (dev->zoned_model == F2FS_ZONED_HM &&
++	if (j == 0 && dev->zoned_model == F2FS_ZONED_HM &&
+ 			!dev->nr_rnd_zones) {
+ 		ERR_MSG("No conventional zone for super block\n");
+ 		ret = -1;
 -- 
 2.20.1
