@@ -1,29 +1,27 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 202749] f2fs: possibly fail to pageout because
- PagePrivate is set without increasing page count in .set_page_dirty()
-Date: Mon, 18 Mar 2019 09:34:13 +0000
-Message-ID: <bug-202749-202145-d21eLWxXvR@https.bugzilla.kernel.org/>
-References: <bug-202749-202145@https.bugzilla.kernel.org/>
+From: Eric Biggers <ebiggers@kernel.org>
+Subject: Re: [PATCH 1/5] fscrypt: clean up and improve dentry
+ revalidation
+Date: Mon, 18 Mar 2019 13:29:49 -0700
+Message-ID: <20190318202948.GD194307@gmail.com>
+References: <20190317200444.5967-1-ebiggers@kernel.org>
+ <20190317200444.5967-2-ebiggers@kernel.org>
+ <20190317203822.GH2217@ZenIV.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1h5oey-0001af-6W
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Mar 2019 09:34:20 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <ebiggers@kernel.org>) id 1h5ytT-0006Iz-5h
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Mar 2019 20:29:59 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h5oex-005Mq1-KM
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Mar 2019 09:34:20 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 0A09128E43
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 18 Mar 2019 09:34:14 +0000 (UTC)
-In-Reply-To: <bug-202749-202145@https.bugzilla.kernel.org/>
+ id 1h5ytR-00BoEg-Kn
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Mar 2019 20:29:59 +0000
+Content-Disposition: inline
+In-Reply-To: <20190317203822.GH2217@ZenIV.linux.org.uk>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,17 +31,26 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-unionfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org, Sarthak Kukreti <sarthakkukreti@chromium.org>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
 
-https://bugzilla.kernel.org/show_bug.cgi?id=202749
+On Sun, Mar 17, 2019 at 08:38:22PM +0000, Al Viro wrote:
+> On Sun, Mar 17, 2019 at 01:04:40PM -0700, Eric Biggers wrote:
+> > +	/*
+> > +	 * Ciphertext name; valid if the directory's key is still unavailable.
+> > +	 *
+> > +	 * Note: since fscrypt forbids rename() on ciphertext names, it should
+> > +	 * be safe to access ->d_parent directly here.
+> 
+> No, it is not.  Again, d_splice_alias() on buggered fs image picking a reference
+> to your subdirectory when doing a lookup elsewhere.  It can relocate the
+> damn thing, without rename() being allowed for _anything_.
 
---- Comment #2 from Chao Yu (chao@kernel.org) ---
-For better bug track, attaching related fixing patch info as below:
+You're talking about directory hard links, right?  E.g. if there's a directory
+with two links a/dir and b/dir, and fscrypt_d_revalidate() is running on 'dir'
+via a lookup in a/, it could be the case that b/dir is being concurrently looked
+up.  Then the concurrent d_splice_alias() will move the whole dentry tree rooted
+at 'dir' from a/ to b/ in the dcache.  Okay, it looks like you're right; I'll
+update my comment to clarify that dget_parent() is still needed...
 
-240a59156d9b ("f2fs: fix to add refcount once page is tagged PG_private")
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=240a59156d9bcfabceddb66be449e7b32fb5dc4a
-
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+- Eric
