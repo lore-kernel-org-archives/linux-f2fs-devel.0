@@ -1,99 +1,71 @@
-From: Richard Weinberger <richard@nod.at>
-Subject: Re: [RFC PATCH v3 07/18] fscrypt: add
- FS_IOC_ADD_ENCRYPTION_KEY ioctl
-Date: Fri, 22 Mar 2019 23:02:49 +0100
-Message-ID: <4190811.5ckf3pJJgb@blindfold>
-References: <20190220065249.32099-1-ebiggers@kernel.org>
- <20190221184203.GB140206@gmail.com> <20190318230830.GA40545@gmail.com>
+From: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+Subject: [PATCH] fs: fix warning about Using plain integer as NULL pointer
+Date: Sat, 23 Mar 2019 03:40:21 +0530
+Message-ID: <20190322221021.GA24814@hari-Inspiron-1545>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <richard@nod.at>) id 1h7SFj-0006is-KH
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Mar 2019 22:03:03 +0000
-Received: from lithops.sigma-star.at ([195.201.40.130])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h7SFf-00HUa5-HU
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Mar 2019 22:03:03 +0000
-In-Reply-To: <20190318230830.GA40545@gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-ext4@vger.kernel.org, "open list:ABI/API" <linux-api@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, keyrings@vger.kernel.org, linux-mtd@lists.infradead.org, linux-crypto@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Satya Tangirala <satyat@google.com>, Paul Crowley <paulcrowley@google.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mtd@lists.infradead.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Ericm
+Sparse warning below:
 
-Am Dienstag, 19. M=E4rz 2019, 00:08:31 CET schrieb Eric Biggers:
-> I tried using sb->s_bdi->name, but it's still "ubifs" for all UBIFS files=
-ystems.
+sudo make C=2 CF=-D__CHECK_ENDIAN__ M=fs
 
-hmpf.
- =
+CHECK   fs/f2fs/data.c
+fs/f2fs/data.c:426:47: warning: Using plain integer as NULL pointer
+CHECK   fs/notify/fdinfo.c
+fs/notify/fdinfo.c:53:87: warning: Using plain integer as NULL pointer
+ CHECK   fs/ubifs/xattr.c
+fs/ubifs/xattr.c:615:58: warning: Using plain integer as NULL pointer
 
-> Perhaps there's a way you can make ->s_id for UBIFS unique?  There are al=
-ready
-> existing places that log ->s_id, so perhaps you should do it anyway regar=
-dless
-> of this patchset?
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+---
+ fs/f2fs/data.c     | 2 +-
+ fs/notify/fdinfo.c | 2 +-
+ fs/ubifs/xattr.c   | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Yes, let me implement that.
-ubifs does:
-super_setup_bdi_name(sb, "ubifs_%d_%d", c->vi.ubi_num, c->vi.vol_id);
-
-So, I try to set ->s_id also to ubifs_%d_%d.
-
-> > > =
-
-> > > > Note that the keyring name isn't particularly important, since the =
-ioctls will
-> > > > work regardless.  But we might as well choose something logical, si=
-nce the
-> > > > keyring name will still show up in /proc/keys.
-> > > =
-
-> > > I'm not done with reviewing your patches, but will it be possible to =
-use keyctl?
-> > > For the a unique name is helpful. :)
-> > > =
-
-> > =
-
-> > Not for adding keys, removing keys, or getting a key's status -- those =
-are what
-> > the ioctls are for.
-> > =
-
-> > See e.g. the discussion in patch 7 ("fscrypt: add FS_IOC_ADD_ENCRYPTION=
-_KEY
-> > ioctl") for why the keyrings syscalls are a poor fit for fscrypt.
-> > =
-
-> =
-
-> Anyway, perhaps I should reconsider whether fscrypt should even use the k=
-eyrings
-> subsystem at all, even just "internally", as its quirks still leak out a =
-bit.
-> I'd prefer a nice clean API without any quirks like having to name the ke=
-yrings
-> and assign SELinux labels to the keys just to make the keyrings subsystem=
- happy.
-
-IMHO the keys subsytem is a good fit. For example for stuff like this one:
-https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1945778.html
-
-We use UBIFS on many embedded systems with crypto hardware.
-
-Thanks,
-//richard
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 97279441..15a2381 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -423,7 +423,7 @@ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
+ 
+ void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type)
+ {
+-	__submit_merged_write_cond(sbi, NULL, 0, 0, type, true);
++	__submit_merged_write_cond(sbi, NULL, NULL, 0, type, true);
+ }
+ 
+ void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
+diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+index 1e2bfd2..ef83f40 100644
+--- a/fs/notify/fdinfo.c
++++ b/fs/notify/fdinfo.c
+@@ -50,7 +50,7 @@ static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
+ 	f.handle.handle_bytes = sizeof(f.pad);
+ 	size = f.handle.handle_bytes >> 2;
+ 
+-	ret = exportfs_encode_inode_fh(inode, (struct fid *)f.handle.f_handle, &size, 0);
++	ret = exportfs_encode_inode_fh(inode, (struct fid *)f.handle.f_handle, &size, NULL);
+ 	if ((ret == FILEID_INVALID) || (ret < 0)) {
+ 		WARN_ONCE(1, "Can't encode file handler for inotify: %d\n", ret);
+ 		return;
+diff --git a/fs/ubifs/xattr.c b/fs/ubifs/xattr.c
+index f5ad1ed..066a566 100644
+--- a/fs/ubifs/xattr.c
++++ b/fs/ubifs/xattr.c
+@@ -612,7 +612,7 @@ int ubifs_init_security(struct inode *dentry, struct inode *inode,
+ 	int err;
+ 
+ 	err = security_inode_init_security(inode, dentry, qstr,
+-					   &init_xattrs, 0);
++					   &init_xattrs, NULL);
+ 	if (err) {
+ 		struct ubifs_info *c = dentry->i_sb->s_fs_info;
+ 		ubifs_err(c, "cannot initialize security for inode %lu, error %d",
+-- 
+2.7.4
