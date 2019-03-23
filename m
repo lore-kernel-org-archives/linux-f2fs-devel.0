@@ -1,71 +1,49 @@
-From: Hariprasad Kelam <hariprasad.kelam@gmail.com>
-Subject: [PATCH] fs: fix warning about Using plain integer as NULL pointer
-Date: Sat, 23 Mar 2019 03:40:21 +0530
-Message-ID: <20190322221021.GA24814@hari-Inspiron-1545>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 202989] kernel panic during F2FS GC
+Date: Sat, 23 Mar 2019 02:51:21 +0000
+Message-ID: <bug-202989-202145-KAQaEpg01q@https.bugzilla.kernel.org/>
+References: <bug-202989-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mtd@lists.infradead.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
+ id 1h7Wkt-0008Ae-Sy
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 23 Mar 2019 02:51:31 +0000
+Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1h7Wkq-004ymv-6y
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 23 Mar 2019 02:51:29 +0000
+Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 8F4952A1AD
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat, 23 Mar 2019 02:51:21 +0000 (UTC)
+In-Reply-To: <bug-202989-202145@https.bugzilla.kernel.org/>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-Sparse warning below:
+https://bugzilla.kernel.org/show_bug.cgi?id=202989
 
-sudo make C=2 CF=-D__CHECK_ENDIAN__ M=fs
+--- Comment #6 from Chao Yu (chao@kernel.org) ---
+> I would like to clarify that kernel panic are from two different machines.
+> And both new_blkaddr and old_blkaddr of fio are 0xFFFFFFFF.
 
-CHECK   fs/f2fs/data.c
-fs/f2fs/data.c:426:47: warning: Using plain integer as NULL pointer
-CHECK   fs/notify/fdinfo.c
-fs/notify/fdinfo.c:53:87: warning: Using plain integer as NULL pointer
- CHECK   fs/ubifs/xattr.c
-fs/ubifs/xattr.c:615:58: warning: Using plain integer as NULL pointer
+Okay, so that we need to add log to track block address return from
+f2fs_allocate_data_block(). If it allocates 0xffffffff, should kernel panic in
+update_sit_entry() in prior to f2fs_submit_page_bio()?
 
-Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
----
- fs/f2fs/data.c     | 2 +-
- fs/notify/fdinfo.c | 2 +-
- fs/ubifs/xattr.c   | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 97279441..15a2381 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -423,7 +423,7 @@ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
- 
- void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type)
- {
--	__submit_merged_write_cond(sbi, NULL, 0, 0, type, true);
-+	__submit_merged_write_cond(sbi, NULL, NULL, 0, type, true);
- }
- 
- void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
-diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
-index 1e2bfd2..ef83f40 100644
---- a/fs/notify/fdinfo.c
-+++ b/fs/notify/fdinfo.c
-@@ -50,7 +50,7 @@ static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
- 	f.handle.handle_bytes = sizeof(f.pad);
- 	size = f.handle.handle_bytes >> 2;
- 
--	ret = exportfs_encode_inode_fh(inode, (struct fid *)f.handle.f_handle, &size, 0);
-+	ret = exportfs_encode_inode_fh(inode, (struct fid *)f.handle.f_handle, &size, NULL);
- 	if ((ret == FILEID_INVALID) || (ret < 0)) {
- 		WARN_ONCE(1, "Can't encode file handler for inotify: %d\n", ret);
- 		return;
-diff --git a/fs/ubifs/xattr.c b/fs/ubifs/xattr.c
-index f5ad1ed..066a566 100644
---- a/fs/ubifs/xattr.c
-+++ b/fs/ubifs/xattr.c
-@@ -612,7 +612,7 @@ int ubifs_init_security(struct inode *dentry, struct inode *inode,
- 	int err;
- 
- 	err = security_inode_init_security(inode, dentry, qstr,
--					   &init_xattrs, 0);
-+					   &init_xattrs, NULL);
- 	if (err) {
- 		struct ubifs_info *c = dentry->i_sb->s_fs_info;
- 		ubifs_err(c, "cannot initialize security for inode %lu, error %d",
 -- 
-2.7.4
+You are receiving this mail because:
+You are watching the assignee of the bug.
