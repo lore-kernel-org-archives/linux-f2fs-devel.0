@@ -1,33 +1,87 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH 0/2] Remove support for deprecated %pf and %pF in vsprintf
-Date: Mon, 25 Mar 2019 17:24:09 +0200
-Message-ID: <20190325152409.GF9224@smile.fi.intel.com>
-References: <20190322132108.25501-1-sakari.ailus@linux.intel.com>
- <CAMuHMdVmqqjVx7As9AAywYxYXG=grijF5rF77OBn6TUjM9+xKw@mail.gmail.com>
- <20190322135350.2btpno7vspvewxvk@paasikivi.fi.intel.com>
- <20190322170550.GX9224@smile.fi.intel.com>
- <20190324211008.lypghym3gqcp62th@mara.localdomain>
- <20190324211932.GK9224@smile.fi.intel.com>
- <20190325151259.2w22y4ijqilrbaxj@kekkonen.localdomain>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] fs: fix warning about Using plain integer as NULL pointer
+Date: Mon, 25 Mar 2019 17:28:44 +0100
+Message-ID: <20190325162844.GD8308@quack2.suse.cz>
+References: <20190322221021.GA24814@hari-Inspiron-1545>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <netdev-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190325151259.2w22y4ijqilrbaxj@kekkonen.localdomain>
-Sender: netdev-owner@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Petr Mladek <pmladek@suse.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Linux MMC List <linux-mmc@vger.kernel.org>, "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>, linux-um@lists.infradead.org, linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, netdev <netdev@vger.kernel.org>, linux-btrfs <linux-btrfs@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>, sparclinux <sparclinux@vger.kernel.org>, xen-devel@lists.xenproject.org, ceph-devel <ceph-devel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>, Linux ARM <linux-arm-kernel@l>
+In-Reply-To: <20190322221021.GA24814@hari-Inspiron-1545>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mtd@lists.infradead.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Mon, Mar 25, 2019 at 05:13:00PM +0200, Sakari Ailus wrote:
+On Sat 23-03-19 03:40:21, Hariprasad Kelam wrote:
+> Sparse warning below:
+> 
+> sudo make C=2 CF=-D__CHECK_ENDIAN__ M=fs
+> 
+> CHECK   fs/f2fs/data.c
+> fs/f2fs/data.c:426:47: warning: Using plain integer as NULL pointer
+> CHECK   fs/notify/fdinfo.c
+> fs/notify/fdinfo.c:53:87: warning: Using plain integer as NULL pointer
+>  CHECK   fs/ubifs/xattr.c
+> fs/ubifs/xattr.c:615:58: warning: Using plain integer as NULL pointer
+> 
+> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
 
-> All other invalid pointer conversion specifiers currently result into a
-> warning only. I see that as an orthogonal change to this set. I found
-> another issue in checkpatch.pl that may require some discussion; would you
-> be ok with addressing this in another set?
+fs/notify part looks good to me. Feel free to add:
 
-If it looks better that way, I have no objection.
+Acked-by: Jan Kara <jack@suse.cz>
 
+								Honza
+
+
+> ---
+>  fs/f2fs/data.c     | 2 +-
+>  fs/notify/fdinfo.c | 2 +-
+>  fs/ubifs/xattr.c   | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 97279441..15a2381 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -423,7 +423,7 @@ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
+>  
+>  void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type)
+>  {
+> -	__submit_merged_write_cond(sbi, NULL, 0, 0, type, true);
+> +	__submit_merged_write_cond(sbi, NULL, NULL, 0, type, true);
+>  }
+>  
+>  void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
+> diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+> index 1e2bfd2..ef83f40 100644
+> --- a/fs/notify/fdinfo.c
+> +++ b/fs/notify/fdinfo.c
+> @@ -50,7 +50,7 @@ static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
+>  	f.handle.handle_bytes = sizeof(f.pad);
+>  	size = f.handle.handle_bytes >> 2;
+>  
+> -	ret = exportfs_encode_inode_fh(inode, (struct fid *)f.handle.f_handle, &size, 0);
+> +	ret = exportfs_encode_inode_fh(inode, (struct fid *)f.handle.f_handle, &size, NULL);
+>  	if ((ret == FILEID_INVALID) || (ret < 0)) {
+>  		WARN_ONCE(1, "Can't encode file handler for inotify: %d\n", ret);
+>  		return;
+> diff --git a/fs/ubifs/xattr.c b/fs/ubifs/xattr.c
+> index f5ad1ed..066a566 100644
+> --- a/fs/ubifs/xattr.c
+> +++ b/fs/ubifs/xattr.c
+> @@ -612,7 +612,7 @@ int ubifs_init_security(struct inode *dentry, struct inode *inode,
+>  	int err;
+>  
+>  	err = security_inode_init_security(inode, dentry, qstr,
+> -					   &init_xattrs, 0);
+> +					   &init_xattrs, NULL);
+>  	if (err) {
+>  		struct ubifs_info *c = dentry->i_sb->s_fs_info;
+>  		ubifs_err(c, "cannot initialize security for inode %lu, error %d",
+> -- 
+> 2.7.4
+> 
 -- 
-With Best Regards,
-Andy Shevchenko
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
