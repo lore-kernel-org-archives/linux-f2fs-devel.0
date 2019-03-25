@@ -1,70 +1,29 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 202989] [MSM-4.14] kernel panic during F2FS GC
-Date: Mon, 25 Mar 2019 04:02:16 +0000
-Message-ID: <bug-202989-202145-BbDfZmBBq1@https.bugzilla.kernel.org/>
-References: <bug-202989-202145@https.bugzilla.kernel.org/>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH 2/2] vsprintf: Remove support for %pF and %pf in favour of
+ %pS and %ps
+Date: Mon, 25 Mar 2019 10:30:01 +0100
+Message-ID: <CAJZ5v0i8JiQGk25yZKQqTzCCY+nrfoKXOH8nM6eNPhkN-i+y9w@mail.gmail.com>
+References: <20190322132108.25501-1-sakari.ailus@linux.intel.com> <20190322132108.25501-3-sakari.ailus@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1h8Gob-0008Cc-Cb
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 25 Mar 2019 04:02:25 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h8GoZ-005s8Y-Pe
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 25 Mar 2019 04:02:25 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 5717629073
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 25 Mar 2019 04:02:17 +0000 (UTC)
-In-Reply-To: <bug-202989-202145@https.bugzilla.kernel.org/>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190322132108.25501-3-sakari.ailus@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Petr Mladek <pmladek@suse.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, sparclinux@vger.kernel.org, linux-um@lists.infradead.org, xen-devel@lists.xenproject.org, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, drbd-dev@lists.linbit.com, linux-block@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>, "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>, Linux PCI <linux-pci@vger.kernel.org>, "open list:TARGET SUBSYSTEM" <linux-scsi@vger.kernel.org>, linux-btrfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Linux Memory Management List <linux-mm@kvack.org>, ceph-devel@vger.kernel.org, netde
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=202989
-
---- Comment #9 from yuchao0@huawei.com ---
-On 2019/3/25 11:38, bugzilla-daemon@bugzilla.kernel.org wrote:
-> https://bugzilla.kernel.org/show_bug.cgi?id=202989
-> 
-> --- Comment #8 from Lianjun Huang (hlianjun@gmail.com) ---
-> (In reply to Chao Yu from comment #7)
->> I've changed this issue's title to indicate it is from private code repo.
-> It is OK.
-> 
->>
->> Could you add to Cc below email address of qualcomm's guys, since maybe they
->> can provide some help.
->>
->> stummala@codeaurora.org
->> riteshh@codeaurora.org
-> 
-> I failed to CC the email addresses above, they seem not to register kernel
-> Bugzilla.
-
-Let me Cc them directly. :)
-
-To Sahitya, Ritesh
-
-Do you have time to take a look at this issue?
-
-Thanks,
-
+On Fri, Mar 22, 2019 at 2:21 PM Sakari Ailus
+<sakari.ailus@linux.intel.com> wrote:
 >
+> %pS and %ps are now the preferred conversion specifiers to print function
+> %names. The functionality is equivalent; remove the old, deprecated %pF
+> %and %pf support.
 
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+Are %pF and %pf really not used any more in the kernel?
+
+If that is not the case, you need to convert the remaining users of
+them to using %ps or %pS before making support for them go away
+completely.
+
+That said, checkpatch can be made treat %pf/F as invalid format right away IMO.
