@@ -1,81 +1,74 @@
-From: Sahitya Tummala <stummala@codeaurora.org>
-Subject: Re: [Bug 202989] [MSM-4.14] kernel panic during F2FS GC
-Date: Mon, 25 Mar 2019 18:26:17 +0530
-Message-ID: <20190325125617.GA19198@codeaurora.org>
-References: <bug-202989-202145@https.bugzilla.kernel.org/>
- <bug-202989-202145-pcxTVY43rq@https.bugzilla.kernel.org/>
- <e726f800-7ac6-12fa-9dec-7cf2b166e532@huawei.com>
+From: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Subject: Re: [PATCH 0/2] Remove support for deprecated %pf and %pF in vsprintf
+Date: Mon, 25 Mar 2019 17:13:00 +0200
+Message-ID: <20190325151259.2w22y4ijqilrbaxj@kekkonen.localdomain>
+References: <20190322132108.25501-1-sakari.ailus@linux.intel.com>
+ <CAMuHMdVmqqjVx7As9AAywYxYXG=grijF5rF77OBn6TUjM9+xKw@mail.gmail.com>
+ <20190322135350.2btpno7vspvewxvk@paasikivi.fi.intel.com>
+ <20190322170550.GX9224@smile.fi.intel.com>
+ <20190324211008.lypghym3gqcp62th@mara.localdomain>
+ <20190324211932.GK9224@smile.fi.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <stummala@codeaurora.org>) id 1h8P9W-00071u-Gx
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 25 Mar 2019 12:56:34 +0000
-Received: from smtp.codeaurora.org ([198.145.29.96])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h8P9V-00Azub-5u
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 25 Mar 2019 12:56:34 +0000
+Return-path: <linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <e726f800-7ac6-12fa-9dec-7cf2b166e532@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: bugzilla-daemon@bugzilla.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <20190324211932.GK9224-XvqNBM/wLWRrdx17CPfAsdBPR1lH4CV8@public.gmane.org>
+List-Unsubscribe: <https://lists.01.org/mailman/options/linux-nvdimm>,
+ <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.01.org/pipermail/linux-nvdimm/>
+List-Post: <mailto:linux-nvdimm-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
+List-Help: <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.01.org/mailman/listinfo/linux-nvdimm>,
+ <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=subscribe>
+Errors-To: linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org
+Sender: "Linux-nvdimm" <linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
+To: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: Petr Mladek <pmladek-IBi9RG/b67k@public.gmane.org>, scsi <linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux PM list <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-pci <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-um-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "linux-nvdimm-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org" <linux-nvdimm-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>, Linux MMC List <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-block-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ACPI Devel Maling List <linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Linux ARM <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, netdev <netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, sparclinux <sparclinux-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, xen-devel-GuqFBffKawtpuQazS67q72D2FQJk+8+b@public.gmane.org, ceph-devel <ceph-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux MM <linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org>, linux-btrfs <linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lars Ellenberg <drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Mon, Mar 25, 2019 at 11:46:59AM +0800, Chao Yu wrote:
-> On 2019/3/25 11:38, bugzilla-daemon@bugzilla.kernel.org wrote:
-> > https://bugzilla.kernel.org/show_bug.cgi?id=202989
+Hi Andy,
+
+On Sun, Mar 24, 2019 at 11:19:32PM +0200, Andy Shevchenko wrote:
+> On Sun, Mar 24, 2019 at 11:10:08PM +0200, Sakari Ailus wrote:
+> > On Fri, Mar 22, 2019 at 07:05:50PM +0200, Andy Shevchenko wrote:
+> > > On Fri, Mar 22, 2019 at 03:53:50PM +0200, Sakari Ailus wrote:
+> > > 
+> > > > Porting a patch
+> > > > forward should have no issues either as checkpatch.pl has been complaining
+> > > > of the use of %pf and %pF for a while now.
+> > > 
+> > > And that's exactly the reason why I think instead of removing warning on
+> > > checkpatch, it makes sense to convert to an error for a while. People are
+> > > tending read documentation on internet and thus might have outdated one. And
+> > > yes, the compiler doesn't tell a thing about it.
+> > > 
+> > > P.S. Though, if majority of people will tell that I'm wrong, then it's okay to
+> > > remove.
 > > 
-> > --- Comment #8 from Lianjun Huang (hlianjun@gmail.com) ---
-> > (In reply to Chao Yu from comment #7)
-> >> I've changed this issue's title to indicate it is from private code repo.
-> > It is OK.
+> > I wonder if you wrote this before seeing my other patchset.
+> 
+> Yes, I wrote it before seeing another series.
+> 
+> > What I think could be done is to warn of plain %pf (without following "w")
+> > in checkpatch.pl, and %pf that is not followed by "w" in the kernel.
+> > Although we didn't have such checks to begin with. The case is still a
+> > little bit different as %pf used to be a valid conversion specifier whereas
+> > %pO likely has never existed.
 > > 
-> >>
-> >> Could you add to Cc below email address of qualcomm's guys, since maybe they
-> >> can provide some help.
-> >>
-> >> stummala@codeaurora.org
-> >> riteshh@codeaurora.org
-> > 
-> > I failed to CC the email addresses above, they seem not to register kernel
-> > Bugzilla.
+> > So, how about adding such checks in the other set? I can retain %p[fF] check
+> > here, too, if you like.
 > 
-> Let me Cc them directly. :)
-> 
-> To Sahitya, Ritesh
-> 
-> Do you have time to take a look at this issue?
+> Consistency tells me that the warning->error transformation in checkpatch.pl
+> belongs this series.
 
-Sure, Chao. 
-
-Lianjun,
-
-Can you report this issue through Qualcomm customer support portal and share the
-ramdumps for the same?
-
-Also, share the test scenario where this issue was observed.
-
-Thanks,
-Sahitya.
-
-> 
-> Thanks,
-> 
-> > 
+All other invalid pointer conversion specifiers currently result into a
+warning only. I see that as an orthogonal change to this set. I found
+another issue in checkpatch.pl that may require some discussion; would you
+be ok with addressing this in another set?
 
 -- 
---
-Sent by a consultant of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+Regards,
+
+Sakari Ailus
+sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org
