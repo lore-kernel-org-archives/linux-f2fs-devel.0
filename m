@@ -1,25 +1,25 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 3/5] f2fs-tools: Improve zoned model check
-Date: Tue, 26 Mar 2019 11:24:32 -0700
-Message-ID: <20190326182432.GB85383@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190318063959.21369-1-damien.lemoal@wdc.com>
- <20190318063959.21369-4-damien.lemoal@wdc.com>
+From: Phillip Potter <phil@philpotter.co.uk>
+Subject: [PATCH v6 04/07] f2fs: use common file type conversion
+Date: Tue, 26 Mar 2019 21:39:22 +0000
+Message-ID: <20190326213922.GA20879@pathfinder>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1h8qkb-0003a8-JG
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Mar 2019 18:24:41 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h8qka-009xzA-BO
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Mar 2019 18:24:41 +0000
+ (envelope-from <phil@philpotter.co.uk>) id 1h8uFX-0006D2-QB
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Mar 2019 22:08:51 +0000
+Received: from mail-wr1-f67.google.com ([209.85.221.67])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1h8uFW-00EKIZ-CB
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Mar 2019 22:08:51 +0000
+Received: by mail-wr1-f67.google.com with SMTP id p10so16236005wrq.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 26 Mar 2019 15:08:49 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <20190318063959.21369-4-damien.lemoal@wdc.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,108 +29,110 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Damien Le Moal <damien.lemoal@wdc.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, amir73il@gmail.com, viro@zeniv.linux.org.uk, linux-f2fs-devel@lists.sourceforge.net
 
-On 03/18, Damien Le Moal wrote:
-> Return an error if an unknown zoned model is reported for a device.
-> 
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-> ---
->  include/f2fs_fs.h   |  2 +-
->  lib/libf2fs.c       |  8 ++++++--
->  lib/libf2fs_zoned.c | 20 +++++++++++---------
->  3 files changed, 18 insertions(+), 12 deletions(-)
-> 
-> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-> index e073723..97ad774 100644
-> --- a/include/f2fs_fs.h
-> +++ b/include/f2fs_fs.h
-> @@ -1257,7 +1257,7 @@ blk_zone_cond_str(struct blk_zone *blkz)
->  
->  #endif
->  
-> -extern void f2fs_get_zoned_model(int);
-> +extern int f2fs_get_zoned_model(int);
->  extern int f2fs_get_zone_blocks(int);
->  extern int f2fs_check_zones(int);
->  extern int f2fs_reset_zones(int);
-> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-> index 60b84e0..5ca1bb0 100644
-> --- a/lib/libf2fs.c
-> +++ b/lib/libf2fs.c
-> @@ -925,8 +925,12 @@ int get_device_info(int i)
->  	}
->  
->  #if !defined(WITH_ANDROID) && defined(__linux__)
-> -	if (S_ISBLK(stat_buf->st_mode))
-> -		f2fs_get_zoned_model(i);
-> +	if (S_ISBLK(stat_buf->st_mode)) {
-> +		if (f2fs_get_zoned_model(i) < 0) {
-> +			free(stat_buf);
-> +			return -1;
-> +                }
-> +	}
->  
->  	if (dev->zoned_model != F2FS_ZONED_NONE) {
->  		if (dev->zoned_model == F2FS_ZONED_HM)
-> diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
-> index 6e32f32..1a6c5df 100644
-> --- a/lib/libf2fs_zoned.c
-> +++ b/lib/libf2fs_zoned.c
-> @@ -24,39 +24,41 @@
->  
->  #ifdef HAVE_LINUX_BLKZONED_H
->  
-> -void f2fs_get_zoned_model(int i)
-> +int f2fs_get_zoned_model(int i)
->  {
->  	struct device_info *dev = c.devices + i;
->  	char str[128];
->  	FILE *file;
->  	int res;
->  
-> +	/* Assume regular device */
-> +	dev->zoned_model = F2FS_ZONED_NONE;
-> +
->  	/* Check that this is a zoned block device */
->  	snprintf(str, sizeof(str),
->  		 "/sys/block/%s/queue/zoned",
->  		 basename(dev->path));
->  	file = fopen(str, "r");
->  	if (!file)
-> -		goto not_zoned;
-> +		return 0;
->  
->  	memset(str, 0, sizeof(str));
->  	res = fscanf(file, "%s", str);
->  	fclose(file);
->  
->  	if (res != 1)
-> -		goto not_zoned;
-> +		return 0;
->  
->  	if (strcmp(str, "host-aware") == 0) {
->  		dev->zoned_model = F2FS_ZONED_HA;
-> -		return;
-> -	}
-> -	if (strcmp(str, "host-managed") == 0) {
-> +	} else if (strcmp(str, "host-managed") == 0) {
->  		dev->zoned_model = F2FS_ZONED_HM;
-> -		return;
-> +	} else {
+Deduplicate the f2fs file type conversion implementation and remove
+F2FS_FT_* definitions - file systems that use the same file types
+as defined by POSIX do not need to define their own versions and can
+use the common helper functions decared in fs_types.h and implemented
+in fs_types.c
 
-If "sys/block/%s/queue/zoned" reports "none", we can't format the device. :)
+Common implementation can be found via commit:
+bbe7449e2599 "fs: common implementation of file type"
 
-> +		MSG(0, "\tError: Unsupported device zoned model\n");
-> +		return -1;
->  	}
->  
-> -not_zoned:
-> -	dev->zoned_model = F2FS_ZONED_NONE;
-> +	return 0;
->  }
->  
->  int f2fs_get_zone_blocks(int i)
-> -- 
-> 2.20.1
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+---
+ fs/f2fs/dir.c           | 27 ++-------------------------
+ fs/f2fs/inline.c        |  2 +-
+ include/linux/f2fs_fs.h | 15 ---------------
+ 3 files changed, 3 insertions(+), 41 deletions(-)
+
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 59bc46017855..bcac1bb7fad2 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -36,37 +36,14 @@ static unsigned int bucket_blocks(unsigned int level)
+ 		return 4;
+ }
+ 
+-static unsigned char f2fs_filetype_table[F2FS_FT_MAX] = {
+-	[F2FS_FT_UNKNOWN]	= DT_UNKNOWN,
+-	[F2FS_FT_REG_FILE]	= DT_REG,
+-	[F2FS_FT_DIR]		= DT_DIR,
+-	[F2FS_FT_CHRDEV]	= DT_CHR,
+-	[F2FS_FT_BLKDEV]	= DT_BLK,
+-	[F2FS_FT_FIFO]		= DT_FIFO,
+-	[F2FS_FT_SOCK]		= DT_SOCK,
+-	[F2FS_FT_SYMLINK]	= DT_LNK,
+-};
+-
+-static unsigned char f2fs_type_by_mode[S_IFMT >> S_SHIFT] = {
+-	[S_IFREG >> S_SHIFT]	= F2FS_FT_REG_FILE,
+-	[S_IFDIR >> S_SHIFT]	= F2FS_FT_DIR,
+-	[S_IFCHR >> S_SHIFT]	= F2FS_FT_CHRDEV,
+-	[S_IFBLK >> S_SHIFT]	= F2FS_FT_BLKDEV,
+-	[S_IFIFO >> S_SHIFT]	= F2FS_FT_FIFO,
+-	[S_IFSOCK >> S_SHIFT]	= F2FS_FT_SOCK,
+-	[S_IFLNK >> S_SHIFT]	= F2FS_FT_SYMLINK,
+-};
+-
+ static void set_de_type(struct f2fs_dir_entry *de, umode_t mode)
+ {
+-	de->file_type = f2fs_type_by_mode[(mode & S_IFMT) >> S_SHIFT];
++	de->file_type = fs_umode_to_ftype(mode);
+ }
+ 
+ unsigned char f2fs_get_de_type(struct f2fs_dir_entry *de)
+ {
+-	if (de->file_type < F2FS_FT_MAX)
+-		return f2fs_filetype_table[de->file_type];
+-	return DT_UNKNOWN;
++	return fs_ftype_to_dtype(de->file_type);
+ }
+ 
+ static unsigned long dir_block_index(unsigned int level,
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index bb6a152310ef..cd935329e2d1 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -458,7 +458,7 @@ static int f2fs_add_inline_entries(struct inode *dir, void *inline_dentry)
+ 		new_name.len = le16_to_cpu(de->name_len);
+ 
+ 		ino = le32_to_cpu(de->ino);
+-		fake_mode = f2fs_get_de_type(de) << S_SHIFT;
++		fake_mode = f2fs_get_de_type(de) << S_DT_SHIFT;
+ 
+ 		err = f2fs_add_regular_entry(dir, &new_name, NULL, NULL,
+ 							ino, fake_mode);
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index f5740423b002..2f85d4d739b0 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -526,21 +526,6 @@ struct f2fs_dentry_block {
+ 	__u8 filename[NR_DENTRY_IN_BLOCK][F2FS_SLOT_LEN];
+ } __packed;
+ 
+-/* file types used in inode_info->flags */
+-enum {
+-	F2FS_FT_UNKNOWN,
+-	F2FS_FT_REG_FILE,
+-	F2FS_FT_DIR,
+-	F2FS_FT_CHRDEV,
+-	F2FS_FT_BLKDEV,
+-	F2FS_FT_FIFO,
+-	F2FS_FT_SOCK,
+-	F2FS_FT_SYMLINK,
+-	F2FS_FT_MAX
+-};
+-
+-#define S_SHIFT 12
+-
+ #define	F2FS_DEF_PROJID		0	/* default project ID */
+ 
+ #endif  /* _LINUX_F2FS_FS_H */
+-- 
+2.20.1
