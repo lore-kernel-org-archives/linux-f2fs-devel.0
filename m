@@ -1,45 +1,81 @@
-From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 1/1] treewide: Switch printk users from %pf and %pF to
- %ps and %pS, respectively
-Date: Mon, 25 Mar 2019 16:19:06 -0500
-Message-ID: <20190325211906.GA24180@google.com>
-References: <20190325193229.23390-1-sakari.ailus@linux.intel.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] fs: fix warning about Using plain integer as NULL pointer
+Date: Tue, 26 Mar 2019 09:02:28 +0800
+Message-ID: <6fc256d1-b85e-2021-57dd-f8154bdce7a1@huawei.com>
+References: <20190322221021.GA24814@hari-Inspiron-1545>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20190325193229.23390-1-sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-List-Unsubscribe: <https://lists.01.org/mailman/options/linux-nvdimm>,
- <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.01.org/pipermail/linux-nvdimm/>
-List-Post: <mailto:linux-nvdimm-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
-List-Help: <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.01.org/mailman/listinfo/linux-nvdimm>,
- <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=subscribe>
-Errors-To: linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org
-Sender: "Linux-nvdimm" <linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
-To: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Petr Mladek <pmladek-IBi9RG/b67k@public.gmane.org>, linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nvdimm-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org, linux-um-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-block-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sparclinux-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, xen-devel-GuqFBffKawtpuQazS67q72D2FQJk+8+b@public.gmane.org, ceph-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190322221021.GA24814@hari-Inspiron-1545>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hariprasad Kelam <hariprasad.kelam@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mtd@lists.infradead.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Mon, Mar 25, 2019 at 09:32:28PM +0200, Sakari Ailus wrote:
-> %pF and %pf are functionally equivalent to %pS and %ps conversion
-> specifiers. The former are deprecated, therefore switch the current users
-> to use the preferred variant.
+On 2019/3/23 6:10, Hariprasad Kelam wrote:
+> Sparse warning below:
 > 
-> The changes have been produced by the following command:
+> sudo make C=2 CF=-D__CHECK_ENDIAN__ M=fs
 > 
-> 	git grep -l '%p[fF]' | grep -v '^\(tools\|Documentation\)/' | \
-> 	while read i; do perl -i -pe 's/%pf/%ps/g; s/%pF/%pS/g;' $i; done
+> CHECK   fs/f2fs/data.c
+> fs/f2fs/data.c:426:47: warning: Using plain integer as NULL pointer
+> CHECK   fs/notify/fdinfo.c
+> fs/notify/fdinfo.c:53:87: warning: Using plain integer as NULL pointer
+>  CHECK   fs/ubifs/xattr.c
+> fs/ubifs/xattr.c:615:58: warning: Using plain integer as NULL pointer
 > 
-> And verifying the result.
-> 
-> Signed-off-by: Sakari Ailus <sakari.ailus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-> Acked-by: David Sterba <dsterba-IBi9RG/b67k@public.gmane.org> (for btrfs)
-> Acked-by: Mike Rapoport <rppt-tEXmvtCZX7AybS5Ee8rs3A@public.gmane.org> (for mm/memblock.c)
-> Acked-by: Rafael J. Wysocki <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
 
-Acked-by: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org> (for drivers/pci)
+f2fs part looks good to me.
 
-Thanks a lot for cleaning this up.  This has been annoying for a long time.
+Acked-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks,
+
+> ---
+>  fs/f2fs/data.c     | 2 +-
+>  fs/notify/fdinfo.c | 2 +-
+>  fs/ubifs/xattr.c   | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 97279441..15a2381 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -423,7 +423,7 @@ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
+>  
+>  void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type)
+>  {
+> -	__submit_merged_write_cond(sbi, NULL, 0, 0, type, true);
+> +	__submit_merged_write_cond(sbi, NULL, NULL, 0, type, true);
+>  }
+>  
+>  void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
+> diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+> index 1e2bfd2..ef83f40 100644
+> --- a/fs/notify/fdinfo.c
+> +++ b/fs/notify/fdinfo.c
+> @@ -50,7 +50,7 @@ static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
+>  	f.handle.handle_bytes = sizeof(f.pad);
+>  	size = f.handle.handle_bytes >> 2;
+>  
+> -	ret = exportfs_encode_inode_fh(inode, (struct fid *)f.handle.f_handle, &size, 0);
+> +	ret = exportfs_encode_inode_fh(inode, (struct fid *)f.handle.f_handle, &size, NULL);
+>  	if ((ret == FILEID_INVALID) || (ret < 0)) {
+>  		WARN_ONCE(1, "Can't encode file handler for inotify: %d\n", ret);
+>  		return;
+> diff --git a/fs/ubifs/xattr.c b/fs/ubifs/xattr.c
+> index f5ad1ed..066a566 100644
+> --- a/fs/ubifs/xattr.c
+> +++ b/fs/ubifs/xattr.c
+> @@ -612,7 +612,7 @@ int ubifs_init_security(struct inode *dentry, struct inode *inode,
+>  	int err;
+>  
+>  	err = security_inode_init_security(inode, dentry, qstr,
+> -					   &init_xattrs, 0);
+> +					   &init_xattrs, NULL);
+>  	if (err) {
+>  		struct ubifs_info *c = dentry->i_sb->s_fs_info;
+>  		ubifs_err(c, "cannot initialize security for inode %lu, error %d",
+> 
