@@ -1,35 +1,16 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 15/87] f2fs: do not use mutex lock in
- atomic context
-Date: Wed, 27 Mar 2019 14:19:28 -0400
-Message-ID: <20190327182040.17444-15-sashal@kernel.org>
-References: <20190327182040.17444-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 13/63] f2fs: do not use mutex lock in atomic context
+Date: Wed, 27 Mar 2019 14:22:33 -0400
+Message-ID: <20190327182323.18577-13-sashal@kernel.org>
+References: <20190327182323.18577-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <sashal@kernel.org>) id 1h9DAq-0003qp-QO
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Mar 2019 18:21:16 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h9DAp-00GDSO-Ho
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Mar 2019 18:21:16 +0000
-In-Reply-To: <20190327182040.17444-1-sashal@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190327182323.18577-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: Sahitya Tummala <stummala@codeaurora.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 From: Sahitya Tummala <stummala@codeaurora.org>
 
@@ -62,10 +43,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/trace.c b/fs/f2fs/trace.c
-index 73b4e1d1912a..501c283761d2 100644
+index 145fb659ad44..8f327fa7ae47 100644
 --- a/fs/f2fs/trace.c
 +++ b/fs/f2fs/trace.c
-@@ -61,6 +61,7 @@ void f2fs_trace_pid(struct page *page)
+@@ -60,6 +60,7 @@ void f2fs_trace_pid(struct page *page)
  
  	page->private = pid;
  
@@ -73,7 +54,7 @@ index 73b4e1d1912a..501c283761d2 100644
  	if (radix_tree_preload(GFP_NOFS))
  		return;
  
-@@ -71,7 +72,12 @@ void f2fs_trace_pid(struct page *page)
+@@ -70,7 +71,12 @@ void f2fs_trace_pid(struct page *page)
  	if (p)
  		radix_tree_delete(&pids, pid);
  
