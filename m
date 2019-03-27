@@ -1,140 +1,109 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.0 048/262] f2fs: fix to check
- inline_xattr_size boundary correctly
-Date: Wed, 27 Mar 2019 13:58:23 -0400
-Message-ID: <20190327180158.10245-48-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.0 223/262] f2fs: fix to initialize variable to avoid UBSAN/smatch warning
+Date: Wed, 27 Mar 2019 14:01:18 -0400
+Message-ID: <20190327180158.10245-223-sashal@kernel.org>
 References: <20190327180158.10245-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <sashal@kernel.org>) id 1h9Cth-0006QZ-Ga
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Mar 2019 18:03:33 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h9Ctg-00GbjS-77
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Mar 2019 18:03:33 +0000
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
 In-Reply-To: <20190327180158.10245-1-sashal@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 500e0b28ecd3c5aade98f3c3a339d18dcb166bb6 ]
+[ Upstream commit f9aa52a8cbe09fe25244d59c29660bbe635df613 ]
 
-We use below condition to check inline_xattr_size boundary:
+As Dan Carpenter as below:
 
-	if (!F2FS_OPTION(sbi).inline_xattr_size ||
-		F2FS_OPTION(sbi).inline_xattr_size >=
-				DEF_ADDRS_PER_INODE -
-				F2FS_TOTAL_EXTRA_ATTR_SIZE -
-				DEF_INLINE_RESERVED_SIZE -
-				DEF_MIN_INLINE_SIZE)
+The patch df634f444ee9: "f2fs: use rb_*_cached friends" from Oct 4,
+2018, leads to the following static checker warning:
 
-There is there problems in that check:
-- we should allow inline_xattr_size equaling to min size of inline
-{data,dentry} area.
-- F2FS_TOTAL_EXTRA_ATTR_SIZE and inline_xattr_size are based on
-different size unit, previous one is 4 bytes, latter one is 1 bytes.
-- DEF_MIN_INLINE_SIZE only indicate min size of inline data area,
-however, we need to consider min size of inline dentry area as well,
-minimal inline dentry should at least contain two entries: '.' and
-'..', so that min inline_dentry size is 40 bytes.
+	fs/f2fs/extent_cache.c:606 f2fs_update_extent_tree_range()
+	error: uninitialized symbol 'leftmost'.
 
-.bitmap		1 * 1 = 1
-.reserved	1 * 1 = 1
-.dentry		11 * 2 = 22
-.filename	8 * 2 = 16
-total		40
+And also Eric Biggers, and Kyungtae Kim reported, there is an UBSAN
+warning described as below:
 
+We report a bug in linux-4.20.2: "UBSAN: Undefined behaviour in
+fs/f2fs/extent_cache.c"
+
+kernel config: https://kt0755.github.io/etc/config_v4.20_stable
+repro: https://kt0755.github.io/etc/repro.4a3e7.c (f2fs is mounted on
+/mnt/f2fs/)
+
+This arose in f2fs_update_extent_tree_range (fs/f2fs/extent_cache.c:605).
+It seems that, for some reason, its last argument became "24"
+although that was supposed to be bool type.
+
+=========================================
+UBSAN: Undefined behaviour in fs/f2fs/extent_cache.c:605:4
+load of value 24 is not a valid value for type '_Bool'
+CPU: 0 PID: 6774 Comm: syz-executor5 Not tainted 4.20.2 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xb1/0x118 lib/dump_stack.c:113
+ ubsan_epilogue+0x12/0x94 lib/ubsan.c:159
+ __ubsan_handle_load_invalid_value+0x17a/0x1be lib/ubsan.c:457
+ f2fs_update_extent_tree_range+0x1d4a/0x1d50 fs/f2fs/extent_cache.c:605
+ f2fs_update_extent_cache+0x2b6/0x350 fs/f2fs/extent_cache.c:804
+ f2fs_update_data_blkaddr+0x61/0x70 fs/f2fs/data.c:656
+ f2fs_outplace_write_data+0x1d6/0x4b0 fs/f2fs/segment.c:3140
+ f2fs_convert_inline_page+0x86d/0x2060 fs/f2fs/inline.c:163
+ f2fs_convert_inline_inode+0x6b5/0xad0 fs/f2fs/inline.c:208
+ f2fs_preallocate_blocks+0x78b/0xb00 fs/f2fs/data.c:982
+ f2fs_file_write_iter+0x31b/0xf40 fs/f2fs/file.c:3062
+ call_write_iter include/linux/fs.h:1857 [inline]
+ new_sync_write fs/read_write.c:474 [inline]
+ __vfs_write+0x538/0x6e0 fs/read_write.c:487
+ vfs_write+0x1b3/0x520 fs/read_write.c:549
+ ksys_write+0xde/0x1c0 fs/read_write.c:598
+ __do_sys_write fs/read_write.c:610 [inline]
+ __se_sys_write fs/read_write.c:607 [inline]
+ __x64_sys_write+0x7e/0xc0 fs/read_write.c:607
+ do_syscall_64+0xbe/0x4f0 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4497b9
+Code: e8 8c 9f 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48
+89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
+01 f0 ff ff 0f 83 9b 6b fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f1ea15edc68 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f1ea15ee6cc RCX: 00000000004497b9
+RDX: 0000000000001000 RSI: 0000000020000140 RDI: 0000000000000013
+RBP: 000000000071bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 000000000000bb50 R14: 00000000006f4bf0 R15: 00007f1ea15ee700
+=========================================
+
+As I checked, this uninitialized variable won't cause extent cache
+corruption, but in order to avoid such kind of warning of both UBSAN
+and smatch, fix to initialize related variable.
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reported-by: Eric Biggers <ebiggers@google.com>
+Reported-by: Kyungtae Kim <kt0755@gmail.com>
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/f2fs.h          |  1 -
- fs/f2fs/super.c         | 13 +++++++------
- include/linux/f2fs_fs.h | 13 +++++++------
- 3 files changed, 14 insertions(+), 13 deletions(-)
+ fs/f2fs/extent_cache.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 12fabd6735dd..279bc00489cc 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -456,7 +456,6 @@ struct f2fs_flush_device {
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index 1cb0fcc67d2d..caf77fe8ac07 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -506,7 +506,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
+ 	unsigned int end = fofs + len;
+ 	unsigned int pos = (unsigned int)fofs;
+ 	bool updated = false;
+-	bool leftmost;
++	bool leftmost = false;
  
- /* for inline stuff */
- #define DEF_INLINE_RESERVED_SIZE	1
--#define DEF_MIN_INLINE_SIZE		1
- static inline int get_extra_isize(struct inode *inode);
- static inline int get_inline_xattr_addrs(struct inode *inode);
- #define MAX_INLINE_DATA(inode)	(sizeof(__le32) *			\
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 93d7427d8883..5892fa3c885f 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -834,12 +834,13 @@ static int parse_options(struct super_block *sb, char *options)
- 					"set with inline_xattr option");
- 			return -EINVAL;
- 		}
--		if (!F2FS_OPTION(sbi).inline_xattr_size ||
--			F2FS_OPTION(sbi).inline_xattr_size >=
--					DEF_ADDRS_PER_INODE -
--					F2FS_TOTAL_EXTRA_ATTR_SIZE -
--					DEF_INLINE_RESERVED_SIZE -
--					DEF_MIN_INLINE_SIZE) {
-+		if (F2FS_OPTION(sbi).inline_xattr_size <
-+			sizeof(struct f2fs_xattr_header) / sizeof(__le32) ||
-+			F2FS_OPTION(sbi).inline_xattr_size >
-+			DEF_ADDRS_PER_INODE -
-+			F2FS_TOTAL_EXTRA_ATTR_SIZE / sizeof(__le32) -
-+			DEF_INLINE_RESERVED_SIZE -
-+			MIN_INLINE_DENTRY_SIZE / sizeof(__le32)) {
- 			f2fs_msg(sb, KERN_ERR,
- 					"inline xattr size is out of range");
- 			return -EINVAL;
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index d7711048ef93..c524ad7d31da 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -489,12 +489,12 @@ typedef __le32	f2fs_hash_t;
- 
- /*
-  * space utilization of regular dentry and inline dentry (w/o extra reservation)
-- *		regular dentry			inline dentry
-- * bitmap	1 * 27 = 27			1 * 23 = 23
-- * reserved	1 * 3 = 3			1 * 7 = 7
-- * dentry	11 * 214 = 2354			11 * 182 = 2002
-- * filename	8 * 214 = 1712			8 * 182 = 1456
-- * total	4096				3488
-+ *		regular dentry		inline dentry (def)	inline dentry (min)
-+ * bitmap	1 * 27 = 27		1 * 23 = 23		1 * 1 = 1
-+ * reserved	1 * 3 = 3		1 * 7 = 7		1 * 1 = 1
-+ * dentry	11 * 214 = 2354		11 * 182 = 2002		11 * 2 = 22
-+ * filename	8 * 214 = 1712		8 * 182 = 1456		8 * 2 = 16
-+ * total	4096			3488			40
-  *
-  * Note: there are more reserved space in inline dentry than in regular
-  * dentry, when converting inline dentry we should handle this carefully.
-@@ -506,6 +506,7 @@ typedef __le32	f2fs_hash_t;
- #define SIZE_OF_RESERVED	(PAGE_SIZE - ((SIZE_OF_DIR_ENTRY + \
- 				F2FS_SLOT_LEN) * \
- 				NR_DENTRY_IN_BLOCK + SIZE_OF_DENTRY_BITMAP))
-+#define MIN_INLINE_DENTRY_SIZE		40	/* just include '.' and '..' entries */
- 
- /* One directory entry slot representing F2FS_SLOT_LEN-sized file name */
- struct f2fs_dir_entry {
+ 	if (!et)
+ 		return;
 -- 
 2.19.1
