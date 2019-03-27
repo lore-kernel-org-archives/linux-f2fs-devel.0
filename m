@@ -1,144 +1,80 @@
-From: Damien Le Moal <damien.lemoal@wdc.com>
-Subject: [PATCH 3/4 v2] f2fs-tools: Improve zoned model check
-Date: Wed, 27 Mar 2019 16:54:09 +0900
-Message-ID: <20190327075410.15784-4-damien.lemoal@wdc.com>
-References: <20190327075410.15784-1-damien.lemoal@wdc.com>
+From: Mukesh Ojha <mojha@codeaurora.org>
+Subject: Re: [PATCH] fs: fix warning about Using plain integer as NULL pointer
+Date: Wed, 27 Mar 2019 19:23:10 +0530
+Message-ID: <ac5a9f95-e04a-54bc-e7cb-4103555a79b4@codeaurora.org>
+References: <20190322221021.GA24814@hari-Inspiron-1545>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <prvs=9824208ba=damien.lemoal@wdc.com>)
- id 1h93OA-0004GB-9K
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Mar 2019 07:54:22 +0000
-Received: from esa6.hgst.iphmx.com ([216.71.154.45])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h93O9-00F4ud-1A
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Mar 2019 07:54:22 +0000
-In-Reply-To: <20190327075410.15784-1-damien.lemoal@wdc.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190322221021.GA24814@hari-Inspiron-1545>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hariprasad Kelam <hariprasad.kelam@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, Richard Weinberger <richard@nod.at>, Artem Bityutskiy <dedekind1@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mtd@lists.infradead.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Return an error if an unknown zoned model is reported for a device or
-if parsing of the device zoned model fails. Also add comments to
-briefly explain the zone models and what to do in the absence of a
-kernel reported zoned model for a device.
 
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
----
- include/f2fs_fs.h   |  2 +-
- lib/libf2fs.c       |  8 ++++++--
- lib/libf2fs_zoned.c | 38 ++++++++++++++++++++++++++------------
- 3 files changed, 33 insertions(+), 15 deletions(-)
+On 3/23/2019 3:40 AM, Hariprasad Kelam wrote:
+> Sparse warning below:
+>
+> sudo make C=2 CF=-D__CHECK_ENDIAN__ M=fs
+>
+> CHECK   fs/f2fs/data.c
+> fs/f2fs/data.c:426:47: warning: Using plain integer as NULL pointer
+> CHECK   fs/notify/fdinfo.c
+> fs/notify/fdinfo.c:53:87: warning: Using plain integer as NULL pointer
+>   CHECK   fs/ubifs/xattr.c
+> fs/ubifs/xattr.c:615:58: warning: Using plain integer as NULL pointer
+>
+> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
 
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index e073723..97ad774 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -1257,7 +1257,7 @@ blk_zone_cond_str(struct blk_zone *blkz)
- 
- #endif
- 
--extern void f2fs_get_zoned_model(int);
-+extern int f2fs_get_zoned_model(int);
- extern int f2fs_get_zone_blocks(int);
- extern int f2fs_check_zones(int);
- extern int f2fs_reset_zones(int);
-diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index 60b84e0..5ca1bb0 100644
---- a/lib/libf2fs.c
-+++ b/lib/libf2fs.c
-@@ -925,8 +925,12 @@ int get_device_info(int i)
- 	}
- 
- #if !defined(WITH_ANDROID) && defined(__linux__)
--	if (S_ISBLK(stat_buf->st_mode))
--		f2fs_get_zoned_model(i);
-+	if (S_ISBLK(stat_buf->st_mode)) {
-+		if (f2fs_get_zoned_model(i) < 0) {
-+			free(stat_buf);
-+			return -1;
-+                }
-+	}
- 
- 	if (dev->zoned_model != F2FS_ZONED_NONE) {
- 		if (dev->zoned_model == F2FS_ZONED_HM)
-diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
-index 6e32f32..e396a95 100644
---- a/lib/libf2fs_zoned.c
-+++ b/lib/libf2fs_zoned.c
-@@ -24,7 +24,7 @@
- 
- #ifdef HAVE_LINUX_BLKZONED_H
- 
--void f2fs_get_zoned_model(int i)
-+int f2fs_get_zoned_model(int i)
- {
- 	struct device_info *dev = c.devices + i;
- 	char str[128];
-@@ -36,27 +36,41 @@ void f2fs_get_zoned_model(int i)
- 		 "/sys/block/%s/queue/zoned",
- 		 basename(dev->path));
- 	file = fopen(str, "r");
--	if (!file)
--		goto not_zoned;
-+	if (!file) {
-+		/*
-+		 * The kernel does not support zoned block devices, but we have
-+		 * a block device file. This means that the device is not zoned
-+		 * or is zoned but can be randomly written (i.e. host-aware
-+		 * zoned model). Treat the device as a regular block device.
-+		 */
-+		dev->zoned_model = F2FS_ZONED_NONE;
-+		return 0;
-+	}
- 
- 	memset(str, 0, sizeof(str));
- 	res = fscanf(file, "%s", str);
- 	fclose(file);
- 
--	if (res != 1)
--		goto not_zoned;
-+	if (res != 1) {
-+		MSG(0, "\tError: Failed to parse the device zoned model\n");
-+		return -1;
-+	}
- 
--	if (strcmp(str, "host-aware") == 0) {
-+	if (strcmp(str, "none") == 0) {
-+		/* Regular block device */
-+		dev->zoned_model = F2FS_ZONED_NONE;
-+	} else if (strcmp(str, "host-aware") == 0) {
-+		/* Host-aware zoned block device: can be randomly written */
- 		dev->zoned_model = F2FS_ZONED_HA;
--		return;
--	}
--	if (strcmp(str, "host-managed") == 0) {
-+	} else if (strcmp(str, "host-managed") == 0) {
-+		/* Host-managed zoned block device: sequential writes needed */
- 		dev->zoned_model = F2FS_ZONED_HM;
--		return;
-+	} else {
-+		MSG(0, "\tError: Unsupported device zoned model\n");
-+		return -1;
- 	}
- 
--not_zoned:
--	dev->zoned_model = F2FS_ZONED_NONE;
-+	return 0;
- }
- 
- int f2fs_get_zone_blocks(int i)
--- 
-2.20.1
+
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+
+-Mukesh
+
+> ---
+>   fs/f2fs/data.c     | 2 +-
+>   fs/notify/fdinfo.c | 2 +-
+>   fs/ubifs/xattr.c   | 2 +-
+>   3 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 97279441..15a2381 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -423,7 +423,7 @@ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
+>   
+>   void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type)
+>   {
+> -	__submit_merged_write_cond(sbi, NULL, 0, 0, type, true);
+> +	__submit_merged_write_cond(sbi, NULL, NULL, 0, type, true);
+>   }
+>   
+>   void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
+> diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+> index 1e2bfd2..ef83f40 100644
+> --- a/fs/notify/fdinfo.c
+> +++ b/fs/notify/fdinfo.c
+> @@ -50,7 +50,7 @@ static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
+>   	f.handle.handle_bytes = sizeof(f.pad);
+>   	size = f.handle.handle_bytes >> 2;
+>   
+> -	ret = exportfs_encode_inode_fh(inode, (struct fid *)f.handle.f_handle, &size, 0);
+> +	ret = exportfs_encode_inode_fh(inode, (struct fid *)f.handle.f_handle, &size, NULL);
+>   	if ((ret == FILEID_INVALID) || (ret < 0)) {
+>   		WARN_ONCE(1, "Can't encode file handler for inotify: %d\n", ret);
+>   		return;
+> diff --git a/fs/ubifs/xattr.c b/fs/ubifs/xattr.c
+> index f5ad1ed..066a566 100644
+> --- a/fs/ubifs/xattr.c
+> +++ b/fs/ubifs/xattr.c
+> @@ -612,7 +612,7 @@ int ubifs_init_security(struct inode *dentry, struct inode *inode,
+>   	int err;
+>   
+>   	err = security_inode_init_security(inode, dentry, qstr,
+> -					   &init_xattrs, 0);
+> +					   &init_xattrs, NULL);
+>   	if (err) {
+>   		struct ubifs_info *c = dentry->i_sb->s_fs_info;
+>   		ubifs_err(c, "cannot initialize security for inode %lu, error %d",
