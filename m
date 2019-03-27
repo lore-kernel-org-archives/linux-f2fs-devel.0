@@ -1,23 +1,23 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 021/123] f2fs: do not use mutex lock
- in atomic context
-Date: Wed, 27 Mar 2019 14:14:45 -0400
-Message-ID: <20190327181628.15899-21-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 022/123] f2fs: fix to data block
+ override node segment by mistake
+Date: Wed, 27 Mar 2019 14:14:46 -0400
+Message-ID: <20190327181628.15899-22-sashal@kernel.org>
 References: <20190327181628.15899-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <sashal@kernel.org>) id 1h9D6z-0005Ji-1R
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Mar 2019 18:17:17 +0000
+ (envelope-from <sashal@kernel.org>) id 1h9D70-0003gZ-D3
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Mar 2019 18:17:18 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h9D6x-00Ckbu-Qg
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Mar 2019 18:17:16 +0000
+ id 1h9D6z-00GCnl-7R
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Mar 2019 18:17:18 +0000
 In-Reply-To: <20190327181628.15899-1-sashal@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -31,61 +31,66 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-From: Sahitya Tummala <stummala@codeaurora.org>
+From: zhengliang <zhengliang6@huawei.com>
 
-[ Upstream commit 9083977dabf3833298ddcd40dee28687f1e6b483 ]
+[ Upstream commit a0770e13c8da83bdb64738c0209ab02dd3cfff8b ]
 
-Fix below warning coming because of using mutex lock in atomic context.
+v4: Rearrange the previous three versions.
 
-BUG: sleeping function called from invalid context at kernel/locking/mutex.c:98
-in_atomic(): 1, irqs_disabled(): 0, pid: 585, name: sh
-Preemption disabled at: __radix_tree_preload+0x28/0x130
-Call trace:
- dump_backtrace+0x0/0x2b4
- show_stack+0x20/0x28
- dump_stack+0xa8/0xe0
- ___might_sleep+0x144/0x194
- __might_sleep+0x58/0x8c
- mutex_lock+0x2c/0x48
- f2fs_trace_pid+0x88/0x14c
- f2fs_set_node_page_dirty+0xd0/0x184
+The following scenario could lead to data block override by mistake.
 
-Do not use f2fs_radix_tree_insert() to avoid doing cond_resched() with
-spin_lock() acquired.
+TASK A            |  TASK kworker                                            |     TASK B                                            |       TASK C
+                  |                                                          |                                                       |
+open              |                                                          |                                                       |
+write             |                                                          |                                                       |
+close             |                                                          |                                                       |
+                  |  f2fs_write_data_pages                                   |                                                       |
+                  |    f2fs_write_cache_pages                                |                                                       |
+                  |      f2fs_outplace_write_data                            |                                                       |
+                  |        f2fs_allocate_data_block (get block in seg S,     |                                                       |
+                  |                                  S is full, and only     |                                                       |
+                  |                                  have this valid data    |                                                       |
+                  |                                  block)                  |                                                       |
+                  |          allocate_segment                                |                                                       |
+                  |          locate_dirty_segment (mark S as PRE)            |                                                       |
+                  |        f2fs_submit_page_write (submit but is not         |                                                       |
+                  |                                written on dev)           |                                                       |
+unlink            |                                                          |                                                       |
+ iput_final       |                                                          |                                                       |
+  f2fs_drop_inode |                                                          |                                                       |
+    f2fs_truncate |                                                          |                                                       |
+ (not evict)      |                                                          |                                                       |
+                  |                                                          | write_checkpoint                                      |
+                  |                                                          |  flush merged bio but not wait file data writeback    |
+                  |                                                          |  set_prefree_as_free (mark S as FREE)                 |
+                  |                                                          |                                                       | update NODE/DATA
+                  |                                                          |                                                       | allocate_segment (select S)
+                  |     writeback done                                       |                                                       |
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+So we need to guarantee io complete before truncate inode in f2fs_drop_inode.
+
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Zheng Liang <zhengliang6@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/trace.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ fs/f2fs/super.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/fs/f2fs/trace.c b/fs/f2fs/trace.c
-index bccbbf2616d2..8ac1851a21c0 100644
---- a/fs/f2fs/trace.c
-+++ b/fs/f2fs/trace.c
-@@ -61,6 +61,7 @@ void f2fs_trace_pid(struct page *page)
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index fc5c41257e68..6c61badb07fb 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -668,6 +668,10 @@ static int f2fs_drop_inode(struct inode *inode)
+ 			sb_start_intwrite(inode->i_sb);
+ 			f2fs_i_size_write(inode, 0);
  
- 	set_page_private(page, (unsigned long)pid);
++			f2fs_submit_merged_write_cond(F2FS_I_SB(inode),
++					inode, NULL, 0, DATA);
++			truncate_inode_pages_final(inode->i_mapping);
++
+ 			if (F2FS_HAS_BLOCKS(inode))
+ 				f2fs_truncate(inode);
  
-+retry:
- 	if (radix_tree_preload(GFP_NOFS))
- 		return;
- 
-@@ -71,7 +72,12 @@ void f2fs_trace_pid(struct page *page)
- 	if (p)
- 		radix_tree_delete(&pids, pid);
- 
--	f2fs_radix_tree_insert(&pids, pid, current);
-+	if (radix_tree_insert(&pids, pid, current)) {
-+		spin_unlock(&pids_lock);
-+		radix_tree_preload_end();
-+		cond_resched();
-+		goto retry;
-+	}
- 
- 	trace_printk("%3x:%3x %4x %-16s\n",
- 			MAJOR(inode->i_sb->s_dev), MINOR(inode->i_sb->s_dev),
 -- 
 2.19.1
