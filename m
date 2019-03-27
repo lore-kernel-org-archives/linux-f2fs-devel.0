@@ -1,101 +1,240 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.0 222/262] f2fs: UBSAN: set boolean
- value iostat_enable correctly
-Date: Wed, 27 Mar 2019 14:01:17 -0400
-Message-ID: <20190327180158.10245-222-sashal@kernel.org>
-References: <20190327180158.10245-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 005/192] f2fs: fix to avoid deadlock of atomic file operations
+Date: Wed, 27 Mar 2019 14:07:17 -0400
+Message-ID: <20190327181025.13507-5-sashal@kernel.org>
+References: <20190327181025.13507-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <sashal@kernel.org>) id 1h9CzJ-0007As-6F
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Mar 2019 18:09:21 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h9CzH-00CjTE-Tw
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Mar 2019 18:09:21 +0000
-In-Reply-To: <20190327180158.10245-1-sashal@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190327181025.13507-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Sheng Yong <shengyong1@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit ac92985864e187a1735502f6a02f54eaa655b2aa ]
+[ Upstream commit 48432984d718c95cf13e26d487c2d1b697c3c01f ]
 
-When setting /sys/fs/f2fs/<DEV>/iostat_enable with non-bool value, UBSAN
-reports the following warning.
+Thread A				Thread B
+- __fput
+ - f2fs_release_file
+  - drop_inmem_pages
+   - mutex_lock(&fi->inmem_lock)
+   - __revoke_inmem_pages
+    - lock_page(page)
+					- open
+					- f2fs_setattr
+					- truncate_setsize
+					 - truncate_inode_pages_range
+					  - lock_page(page)
+					  - truncate_cleanup_page
+					   - f2fs_invalidate_page
+					    - drop_inmem_page
+					    - mutex_lock(&fi->inmem_lock);
 
-[ 7562.295484] ================================================================================
-[ 7562.296531] UBSAN: Undefined behaviour in fs/f2fs/f2fs.h:2776:10
-[ 7562.297651] load of value 64 is not a valid value for type '_Bool'
-[ 7562.298642] CPU: 1 PID: 7487 Comm: dd Not tainted 4.20.0-rc4+ #79
-[ 7562.298653] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-[ 7562.298662] Call Trace:
-[ 7562.298760]  dump_stack+0x46/0x5b
-[ 7562.298811]  ubsan_epilogue+0x9/0x40
-[ 7562.298830]  __ubsan_handle_load_invalid_value+0x72/0x90
-[ 7562.298863]  f2fs_file_write_iter+0x29f/0x3f0
-[ 7562.298905]  __vfs_write+0x115/0x160
-[ 7562.298922]  vfs_write+0xa7/0x190
-[ 7562.298934]  ksys_write+0x50/0xc0
-[ 7562.298973]  do_syscall_64+0x4a/0xe0
-[ 7562.298992]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[ 7562.299001] RIP: 0033:0x7fa45ec19c00
-[ 7562.299004] Code: 73 01 c3 48 8b 0d 88 92 2c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d dd eb 2c 00 00 75 10 b8 01 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 ce 8f 01 00 48 89 04 24
-[ 7562.299044] RSP: 002b:00007ffca52b49e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[ 7562.299052] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fa45ec19c00
-[ 7562.299059] RDX: 0000000000000400 RSI: 000000000093f000 RDI: 0000000000000001
-[ 7562.299065] RBP: 000000000093f000 R08: 0000000000000004 R09: 0000000000000000
-[ 7562.299071] R10: 00007ffca52b47b0 R11: 0000000000000246 R12: 0000000000000400
-[ 7562.299077] R13: 000000000093f000 R14: 000000000093f400 R15: 0000000000000000
-[ 7562.299091] ================================================================================
+We may encounter above ABBA deadlock as reported by Kyungtae Kim:
 
-So, if iostat_enable is enabled, set its value as true.
+I'm reporting a bug in linux-4.17.19: "INFO: task hung in
+drop_inmem_page" (no reproducer)
 
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+I think this might be somehow related to the following:
+https://groups.google.com/forum/#!searchin/syzkaller-bugs/INFO$3A$20task$20hung$20in$20%7Csort:date/syzkaller-bugs/c6soBTrdaIo/AjAzPeIzCgAJ
+
+=========================================
+INFO: task syz-executor7:10822 blocked for more than 120 seconds.
+      Not tainted 4.17.19 #1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor7   D27024 10822   6346 0x00000004
+Call Trace:
+ context_switch kernel/sched/core.c:2867 [inline]
+ __schedule+0x721/0x1e60 kernel/sched/core.c:3515
+ schedule+0x88/0x1c0 kernel/sched/core.c:3559
+ schedule_preempt_disabled+0x18/0x30 kernel/sched/core.c:3617
+ __mutex_lock_common kernel/locking/mutex.c:833 [inline]
+ __mutex_lock+0x5bd/0x1410 kernel/locking/mutex.c:893
+ mutex_lock_nested+0x1b/0x20 kernel/locking/mutex.c:908
+ drop_inmem_page+0xcb/0x810 fs/f2fs/segment.c:327
+ f2fs_invalidate_page+0x337/0x5e0 fs/f2fs/data.c:2401
+ do_invalidatepage mm/truncate.c:165 [inline]
+ truncate_cleanup_page+0x261/0x330 mm/truncate.c:187
+ truncate_inode_pages_range+0x552/0x1610 mm/truncate.c:367
+ truncate_inode_pages mm/truncate.c:478 [inline]
+ truncate_pagecache+0x6d/0x90 mm/truncate.c:801
+ truncate_setsize+0x81/0xa0 mm/truncate.c:826
+ f2fs_setattr+0x44f/0x1270 fs/f2fs/file.c:781
+ notify_change+0xa62/0xe80 fs/attr.c:313
+ do_truncate+0x12e/0x1e0 fs/open.c:63
+ do_last fs/namei.c:2955 [inline]
+ path_openat+0x2042/0x29f0 fs/namei.c:3505
+ do_filp_open+0x1bd/0x2c0 fs/namei.c:3540
+ do_sys_open+0x35e/0x4e0 fs/open.c:1101
+ __do_sys_open fs/open.c:1119 [inline]
+ __se_sys_open fs/open.c:1114 [inline]
+ __x64_sys_open+0x89/0xc0 fs/open.c:1114
+ do_syscall_64+0xc4/0x4e0 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4497b9
+RSP: 002b:00007f734e459c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007f734e45a6cc RCX: 00000000004497b9
+RDX: 0000000000000104 RSI: 00000000000a8280 RDI: 0000000020000080
+RBP: 000000000071bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000007230 R14: 00000000006f02d0 R15: 00007f734e45a700
+INFO: task syz-executor7:10858 blocked for more than 120 seconds.
+      Not tainted 4.17.19 #1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor7   D28880 10858   6346 0x00000004
+Call Trace:
+ context_switch kernel/sched/core.c:2867 [inline]
+ __schedule+0x721/0x1e60 kernel/sched/core.c:3515
+ schedule+0x88/0x1c0 kernel/sched/core.c:3559
+ __rwsem_down_write_failed_common kernel/locking/rwsem-xadd.c:565 [inline]
+ rwsem_down_write_failed+0x5e6/0xc90 kernel/locking/rwsem-xadd.c:594
+ call_rwsem_down_write_failed+0x17/0x30 arch/x86/lib/rwsem.S:117
+ __down_write arch/x86/include/asm/rwsem.h:142 [inline]
+ down_write+0x58/0xa0 kernel/locking/rwsem.c:72
+ inode_lock include/linux/fs.h:713 [inline]
+ do_truncate+0x120/0x1e0 fs/open.c:61
+ do_last fs/namei.c:2955 [inline]
+ path_openat+0x2042/0x29f0 fs/namei.c:3505
+ do_filp_open+0x1bd/0x2c0 fs/namei.c:3540
+ do_sys_open+0x35e/0x4e0 fs/open.c:1101
+ __do_sys_open fs/open.c:1119 [inline]
+ __se_sys_open fs/open.c:1114 [inline]
+ __x64_sys_open+0x89/0xc0 fs/open.c:1114
+ do_syscall_64+0xc4/0x4e0 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4497b9
+RSP: 002b:00007f734e3b4c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007f734e3b56cc RCX: 00000000004497b9
+RDX: 0000000000000104 RSI: 00000000000a8280 RDI: 0000000020000080
+RBP: 000000000071c238 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000007230 R14: 00000000006f02d0 R15: 00007f734e3b5700
+INFO: task syz-executor5:10829 blocked for more than 120 seconds.
+      Not tainted 4.17.19 #1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor5   D28760 10829   6308 0x80000002
+Call Trace:
+ context_switch kernel/sched/core.c:2867 [inline]
+ __schedule+0x721/0x1e60 kernel/sched/core.c:3515
+ schedule+0x88/0x1c0 kernel/sched/core.c:3559
+ io_schedule+0x21/0x80 kernel/sched/core.c:5179
+ wait_on_page_bit_common mm/filemap.c:1100 [inline]
+ __lock_page+0x2b5/0x390 mm/filemap.c:1273
+ lock_page include/linux/pagemap.h:483 [inline]
+ __revoke_inmem_pages+0xb35/0x11c0 fs/f2fs/segment.c:231
+ drop_inmem_pages+0xa3/0x3e0 fs/f2fs/segment.c:306
+ f2fs_release_file+0x2c7/0x330 fs/f2fs/file.c:1556
+ __fput+0x2c7/0x780 fs/file_table.c:209
+ ____fput+0x1a/0x20 fs/file_table.c:243
+ task_work_run+0x151/0x1d0 kernel/task_work.c:113
+ exit_task_work include/linux/task_work.h:22 [inline]
+ do_exit+0x8ba/0x30a0 kernel/exit.c:865
+ do_group_exit+0x13b/0x3a0 kernel/exit.c:968
+ get_signal+0x6bb/0x1650 kernel/signal.c:2482
+ do_signal+0x84/0x1b70 arch/x86/kernel/signal.c:810
+ exit_to_usermode_loop+0x155/0x190 arch/x86/entry/common.c:162
+ prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+ syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+ do_syscall_64+0x445/0x4e0 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4497b9
+RSP: 002b:00007f1c68e74ce8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 000000000071bf80 RCX: 00000000004497b9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000071bf80
+RBP: 000000000071bf80 R08: 0000000000000000 R09: 000000000071bf58
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f1c68e759c0 R15: 00007f1c68e75700
+
+This patch tries to use trylock_page to mitigate such deadlock condition
+for fix.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/sysfs.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ fs/f2fs/segment.c | 43 +++++++++++++++++++++++++++++++------------
+ 1 file changed, 31 insertions(+), 12 deletions(-)
 
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 0575edbe3ed6..f1ab9000b294 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -278,10 +278,16 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
- 		return count;
- 	}
- 
--	*ui = t;
- 
--	if (!strcmp(a->attr.name, "iostat_enable") && *ui == 0)
--		f2fs_reset_iostat(sbi);
-+	if (!strcmp(a->attr.name, "iostat_enable")) {
-+		sbi->iostat_enable = !!t;
-+		if (!sbi->iostat_enable)
-+			f2fs_reset_iostat(sbi);
-+		return count;
-+	}
-+
-+	*ui = (unsigned int)t;
-+
- 	return count;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 30779aaa9dba..1fa6f8185766 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -216,7 +216,8 @@ void f2fs_register_inmem_page(struct inode *inode, struct page *page)
  }
  
+ static int __revoke_inmem_pages(struct inode *inode,
+-				struct list_head *head, bool drop, bool recover)
++				struct list_head *head, bool drop, bool recover,
++				bool trylock)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct inmem_pages *cur, *tmp;
+@@ -228,7 +229,16 @@ static int __revoke_inmem_pages(struct inode *inode,
+ 		if (drop)
+ 			trace_f2fs_commit_inmem_page(page, INMEM_DROP);
+ 
+-		lock_page(page);
++		if (trylock) {
++			/*
++			 * to avoid deadlock in between page lock and
++			 * inmem_lock.
++			 */
++			if (!trylock_page(page))
++				continue;
++		} else {
++			lock_page(page);
++		}
+ 
+ 		f2fs_wait_on_page_writeback(page, DATA, true);
+ 
+@@ -317,13 +327,19 @@ void f2fs_drop_inmem_pages(struct inode *inode)
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 
+-	mutex_lock(&fi->inmem_lock);
+-	__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
+-	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
+-	if (!list_empty(&fi->inmem_ilist))
+-		list_del_init(&fi->inmem_ilist);
+-	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+-	mutex_unlock(&fi->inmem_lock);
++	while (!list_empty(&fi->inmem_pages)) {
++		mutex_lock(&fi->inmem_lock);
++		__revoke_inmem_pages(inode, &fi->inmem_pages,
++						true, false, true);
++
++		if (list_empty(&fi->inmem_pages)) {
++			spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
++			if (!list_empty(&fi->inmem_ilist))
++				list_del_init(&fi->inmem_ilist);
++			spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
++		}
++		mutex_unlock(&fi->inmem_lock);
++	}
+ 
+ 	clear_inode_flag(inode, FI_ATOMIC_FILE);
+ 	fi->i_gc_failures[GC_FAILURE_ATOMIC] = 0;
+@@ -427,12 +443,15 @@ static int __f2fs_commit_inmem_pages(struct inode *inode)
+ 		 * recovery or rewrite & commit last transaction. For other
+ 		 * error number, revoking was done by filesystem itself.
+ 		 */
+-		err = __revoke_inmem_pages(inode, &revoke_list, false, true);
++		err = __revoke_inmem_pages(inode, &revoke_list,
++						false, true, false);
+ 
+ 		/* drop all uncommitted pages */
+-		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
++		__revoke_inmem_pages(inode, &fi->inmem_pages,
++						true, false, false);
+ 	} else {
+-		__revoke_inmem_pages(inode, &revoke_list, false, false);
++		__revoke_inmem_pages(inode, &revoke_list,
++						false, false, false);
+ 	}
+ 
+ 	return err;
 -- 
 2.19.1
