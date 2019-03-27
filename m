@@ -1,24 +1,24 @@
 From: Damien Le Moal <damien.lemoal@wdc.com>
-Subject: [PATCH 1/4 v2] f2fs-tools: Fix various compilation
- warnings
-Date: Wed, 27 Mar 2019 16:54:07 +0900
-Message-ID: <20190327075410.15784-2-damien.lemoal@wdc.com>
+Subject: [PATCH 4/4 v2] f2fs-tools: Fix multi-device format with
+ zoned devices
+Date: Wed, 27 Mar 2019 16:54:10 +0900
+Message-ID: <20190327075410.15784-5-damien.lemoal@wdc.com>
 References: <20190327075410.15784-1-damien.lemoal@wdc.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <prvs=9824208ba=damien.lemoal@wdc.com>)
- id 1h93O7-0002FW-Un
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Mar 2019 07:54:19 +0000
+ id 1h93OB-0004GM-DU
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Mar 2019 07:54:23 +0000
 Received: from esa6.hgst.iphmx.com ([216.71.154.45])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1h93O6-00F4ud-HO
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Mar 2019 07:54:19 +0000
+ id 1h93OA-00F4ud-7F
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Mar 2019 07:54:23 +0000
 In-Reply-To: <20190327075410.15784-1-damien.lemoal@wdc.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -31,44 +31,35 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
 
-QXZvaWQgdmFyaW91cyBjb21waWxhdGlvbiB3YXJuaW5ncyBkdWUgdG8gc3RybmNweToKCmxpYmYy
-ZnMuYzo1OTA6MzM6IHdhcm5pbmc6IOKAmHNucHJpbnRm4oCZIG91dHB1dCBtYXkgYmUgdHJ1bmNh
-dGVkIGJlZm9yZQp0aGUgbGFzdCBmb3JtYXQgY2hhcmFjdGVyIFstV2Zvcm1hdC10cnVuY2F0aW9u
-PV0KICBzbnByaW50Zihyb290ZGV2LCByZXQsICIvZGV2LyVzIiwgYnVmKTsKCi4uL2luY2x1ZGUv
-ZjJmc19mcy5oOjEzODQ6Mjogd2FybmluZzog4oCYc3RybmNweeKAmSBzcGVjaWZpZWQgYm91bmQK
-ZGVwZW5kcyBvbiB0aGUgbGVuZ3RoIG9mIHRoZSBzb3VyY2UgYXJndW1lbnQgWy1Xc3RyaW5nb3At
-b3ZlcmZsb3c9XQogIHN0cm5jcHkoYnVmLCBmZWF0dXJlcywgc3RybGVuKGZlYXR1cmVzKSArIDEp
-OwoKZjJmc3RhdC5jOjI0MzozOiB3YXJuaW5nOiDigJhzdHJuY3B54oCZIG91dHB1dCB0cnVuY2F0
-ZWQgYmVmb3JlCnRlcm1pbmF0aW5nIG51bCBjb3B5aW5nIGFzIG1hbnkgYnl0ZXMgZnJvbSBhIHN0
-cmluZyBhcyBpdHMgbGVuZ3RoClstV3N0cmluZ29wLXRydW5jYXRpb25dCiAgIHN0cm5jcHkocHRy
-X2J1ZiwgbmFtZVtpXSwgc3RybGVuKG5hbWVbaV0pKTsKClRoaXMgcGF0Y2ggZG9lcyBub3QgY2hh
-bmdlIGFueSBmdW5jdGlvbmFsaXR5LgoKU2lnbmVkLW9mZi1ieTogRGFtaWVuIExlIE1vYWwgPGRh
-bWllbi5sZW1vYWxAd2RjLmNvbT4KUmV2aWV3ZWQtYnk6IENoYW8gWXUgPHl1Y2hhbzBAaHVhd2Vp
-LmNvbT4KLS0tCiBpbmNsdWRlL2YyZnNfZnMuaCB8IDYgKysrLS0tCiBsaWIvbGliZjJmcy5jICAg
-ICB8IDIgKy0KIHRvb2xzL2YyZnN0YXQuYyAgIHwgMiArLQogMyBmaWxlcyBjaGFuZ2VkLCA1IGlu
-c2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9mMmZzX2Zz
-LmggYi9pbmNsdWRlL2YyZnNfZnMuaAppbmRleCBhNzMwNjg4Li5lMDczNzIzIDEwMDY0NAotLS0g
-YS9pbmNsdWRlL2YyZnNfZnMuaAorKysgYi9pbmNsdWRlL2YyZnNfZnMuaApAQCAtMTM3OSw5ICsx
-Mzc5LDkgQEAgc3RhdGljIGlubGluZSBpbnQgcGFyc2VfZmVhdHVyZShzdHJ1Y3QgZmVhdHVyZSAq
-dGFibGUsIGNvbnN0IGNoYXIgKmZlYXR1cmVzKQogewogCWNoYXIgKmJ1ZiwgKnN1YiwgKm5leHQ7
-CiAKLQlidWYgPSBjYWxsb2Moc3RybGVuKGZlYXR1cmVzKSArIDEsIHNpemVvZihjaGFyKSk7Ci0J
-QVNTRVJUKGJ1Zik7Ci0Jc3RybmNweShidWYsIGZlYXR1cmVzLCBzdHJsZW4oZmVhdHVyZXMpICsg
-MSk7CisJYnVmID0gc3RyZHVwKGZlYXR1cmVzKTsKKwlpZiAoIWJ1ZikKKwkJcmV0dXJuIC0xOwog
-CiAJZm9yIChzdWIgPSBidWY7IHN1YiAmJiAqc3ViOyBzdWIgPSBuZXh0ID8gbmV4dCArIDEgOiBO
-VUxMKSB7CiAJCS8qIFNraXAgdGhlIGJlZ2lubmluZyBibGFua3MgKi8KZGlmZiAtLWdpdCBhL2xp
-Yi9saWJmMmZzLmMgYi9saWIvbGliZjJmcy5jCmluZGV4IGM2OTJiZjIuLjYwYjg0ZTAgMTAwNjQ0
-Ci0tLSBhL2xpYi9saWJmMmZzLmMKKysrIGIvbGliL2xpYmYyZnMuYwpAQCAtNTg3LDcgKzU4Nyw3
-IEBAIGNoYXIgKmdldF9yb290ZGV2KCkKIAkJcmV0dXJuIE5VTEw7CiAJcm9vdGRldltyZXRdID0g
-J1wwJzsKIAotCXNucHJpbnRmKHJvb3RkZXYsIHJldCwgIi9kZXYvJXMiLCBidWYpOworCXNucHJp
-bnRmKHJvb3RkZXYsIHJldCArIDEsICIvZGV2LyVzIiwgYnVmKTsKIAlyZXR1cm4gcm9vdGRldjsK
-ICNlbmRpZgogfQpkaWZmIC0tZ2l0IGEvdG9vbHMvZjJmc3RhdC5jIGIvdG9vbHMvZjJmc3RhdC5j
-CmluZGV4IDdmNDg1YjAuLjA2MTg4MDYgMTAwNjQ0Ci0tLSBhL3Rvb2xzL2YyZnN0YXQuYworKysg
-Yi90b29scy9mMmZzdGF0LmMKQEAgLTI0MCw3ICsyNDAsNyBAQCB2b2lkIHByaW50X2hlYWQoY2hh
-ciAqcmVzKQogCiAJZm9yIChpID0gMDsgaSA8IDIwOyBpKyspIHsKIAkJcHRyID0gKGkgPT0gMCkg
-PyBzdHJ0b2socmVzLCAiICIpIDogc3RydG9rKE5VTEwsICIgIik7Ci0JCXN0cm5jcHkocHRyX2J1
-ZiwgbmFtZVtpXSwgc3RybGVuKG5hbWVbaV0pKTsKKwkJc3RyY3B5KHB0cl9idWYsIG5hbWVbaV0p
-OwogCQlpZiAoaSA9PSAxKSB7CiAJCQlwcmV2X2luZGV4ID0gcHRyX2J1ZiAtIGJ1ZiAtIDE7CiAJ
-CX0gZWxzZSBpZiAoaSA9PSA3KSB7Ci0tIAoyLjIwLjEKCgoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QK
-TGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3Vy
-Y2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+There is no need to require conventional zones for a zoned block device
+that is not the first device of a multi-device volume. As a result,
+there is no need to check the number of conventional zones of the
+device if the device index is not 0.
+
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+---
+ lib/libf2fs_zoned.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
+index e396a95..97afe0b 100644
+--- a/lib/libf2fs_zoned.c
++++ b/lib/libf2fs_zoned.c
+@@ -216,7 +216,14 @@ int f2fs_check_zones(int j)
+ 		goto out;
+ 	}
+ 
+-	if (dev->zoned_model == F2FS_ZONED_HM &&
++	/*
++	 * For a multi-device volume, fixed position metadata blocks are
++	 * stored * only on the first device of the volume. Checking for the
++	 * presence of * conventional zones (randomly writeabl zones) for
++	 * storing these blocks * on a host-managed device is thus needed only
++	 * for the device index 0.
++	 */
++	if (j == 0 && dev->zoned_model == F2FS_ZONED_HM &&
+ 			!dev->nr_rnd_zones) {
+ 		ERR_MSG("No conventional zone for super block\n");
+ 		ret = -1;
+-- 
+2.20.1
