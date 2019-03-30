@@ -1,24 +1,29 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 04/16] f2fs: fix to do sanity check
- with current segment number
-Date: Fri, 29 Mar 2019 21:31:48 -0400
-Message-ID: <20190330013200.1130-4-sashal@kernel.org>
-References: <20190330013200.1130-1-sashal@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: BUG: kernel stack overflow when mounting with
+ data_flush
+Date: Sat, 30 Mar 2019 11:25:03 +0800
+Message-ID: <35b643e5-562c-942d-67ce-4a9dbef66d16@huawei.com>
+References: <CADoWrG_NTz29eyaa3fUti2sNBP4xp7-zfhDVkix=Kty4rD=Otw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <sashal@kernel.org>) id 1hA2qz-0005yt-Gi
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 30 Mar 2019 01:32:13 +0000
-Received: from mail.kernel.org ([198.145.29.99])
+ (envelope-from <yuchao0@huawei.com>) id 1hA4cO-0001AP-OF
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 30 Mar 2019 03:25:16 +0000
+Received: from szxga02-in.huawei.com ([45.249.212.188] helo=huawei.com)
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hA2qx-003rzp-Ly
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 30 Mar 2019 01:32:13 +0000
-In-Reply-To: <20190330013200.1130-1-sashal@kernel.org>
+ id 1hA4cL-0041fZ-BX
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 30 Mar 2019 03:25:16 +0000
+Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.54])
+ by Forcepoint Email with ESMTP id C3E889152C7160A4C0DD
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat, 30 Mar 2019 11:25:05 +0800 (CST)
+In-Reply-To: <CADoWrG_NTz29eyaa3fUti2sNBP4xp7-zfhDVkix=Kty4rD=Otw@mail.gmail.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,141 +33,414 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+To: Hagbard Celine <hagbardcelin@gmail.com>, linux-f2fs-devel@lists.sourceforge.net
 
-From: Chao Yu <yuchao0@huawei.com>
+Hi Hagbard,
 
-[ Upstream commit 042be0f849e5fc24116d0afecfaf926eed5cac63 ]
+Sorry for the delay.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200219
+On 2019/3/27 21:59, Hagbard Celine wrote:
+> Hi, this is a long standing bug that I've hit before on older kernels,
+> but I was not able to get the syslog saved because of the nature of
+> the bug. This time I had booted form a pen-drive, and was able to save
+> the log to it's efi-partition.
 
-Reproduction way:
-- mount image
-- run poc code
-- umount image
+Now which version of kernel do you use? and do you remember what is your
+kernel version when this bug occured at first time?
 
-F2FS-fs (loop1): Bitmap was wrongly set, blk:15364
-------------[ cut here ]------------
-kernel BUG at /home/yuchao/git/devf2fs/segment.c:2061!
-invalid opcode: 0000 [#1] PREEMPT SMP
-CPU: 2 PID: 17686 Comm: umount Tainted: G        W  O      4.18.0-rc2+ #39
-Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-EIP: update_sit_entry+0x459/0x4e0 [f2fs]
-Code: e8 1c b5 fd ff 0f 0b 0f 0b 8b 45 e4 c7 44 24 08 9c 7a 6c f8 c7 44 24 04 bc 4a 6c f8 89 44 24 0c 8b 06 89 04 24 e8 f7 b4 fd ff <0f> 0b 8b 45 e4 0f b6 d2 89 54 24 10 c7 44 24 08 60 7a 6c f8 c7 44
-EAX: 00000032 EBX: 000000f8 ECX: 00000002 EDX: 00000001
-ESI: d7177000 EDI: f520fe68 EBP: d6477c6c ESP: d6477c34
-DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00010282
-CR0: 80050033 CR2: b7fbe000 CR3: 2a99b3c0 CR4: 000406f0
-Call Trace:
- f2fs_allocate_data_block+0x124/0x580 [f2fs]
- do_write_page+0x78/0x150 [f2fs]
- f2fs_do_write_node_page+0x25/0xa0 [f2fs]
- __write_node_page+0x2bf/0x550 [f2fs]
- f2fs_sync_node_pages+0x60e/0x6d0 [f2fs]
- ? sync_inode_metadata+0x2f/0x40
- ? f2fs_write_checkpoint+0x28f/0x7d0 [f2fs]
- ? up_write+0x1e/0x80
- f2fs_write_checkpoint+0x2a9/0x7d0 [f2fs]
- ? mark_held_locks+0x5d/0x80
- ? _raw_spin_unlock_irq+0x27/0x50
- kill_f2fs_super+0x68/0x90 [f2fs]
- deactivate_locked_super+0x3d/0x70
- deactivate_super+0x40/0x60
- cleanup_mnt+0x39/0x70
- __cleanup_mnt+0x10/0x20
- task_work_run+0x81/0xa0
- exit_to_usermode_loop+0x59/0xa7
- do_fast_syscall_32+0x1f5/0x22c
- entry_SYSENTER_32+0x53/0x86
-EIP: 0xb7f95c51
-Code: c1 1e f7 ff ff 89 e5 8b 55 08 85 d2 8b 81 64 cd ff ff 74 02 89 02 5d c3 8b 0c 24 c3 8b 1c 24 c3 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d 76 00 58 b8 77 00 00 00 cd 80 90 8d 76
-EAX: 00000000 EBX: 0871ab90 ECX: bfb2cd00 EDX: 00000000
-ESI: 00000000 EDI: 0871ab90 EBP: 0871ab90 ESP: bfb2cd7c
-DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00000246
-Modules linked in: f2fs(O) crc32_generic bnep rfcomm bluetooth ecdh_generic snd_intel8x0 snd_ac97_codec ac97_bus snd_pcm snd_seq_midi snd_seq_midi_event snd_rawmidi snd_seq pcbc joydev aesni_intel snd_seq_device aes_i586 snd_timer crypto_simd snd cryptd soundcore mac_hid serio_raw video i2c_piix4 parport_pc ppdev lp parport hid_generic psmouse usbhid hid e1000 [last unloaded: f2fs]
----[ end trace d423f83982cfcdc5 ]---
+> What i did to trigger it was to create a partition and format it f2fs,
+> then mount it with options:
+> "rw,relatime,lazytime,background_gc=on,disable_ext_identify,discard,heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,data_flush,extent_cache,mode=adaptive,active_logs=6,whint_mode=fs-based,alloc_mode=default,fsync_mode=strict".
+> Then I unpacked a big .tar.xz to the partition (I used a
+> gentoo-stage3-tarball as I was in process of installing Gentoo).
+> 
+> Same options just without data_flush gives no problems.
+> 
+> Syslog from crash follows:
+> Mar 20 20:20:34 usbgentoo syslog-ng[3644]: syslog-ng starting up;
+> version='3.17.2'
+> Mar 20 20:20:34 usbgentoo /usr/sbin/gpm[3674]: *** info
+> [daemon/startup.c(136)]:
+> Mar 20 20:20:34 usbgentoo /usr/sbin/gpm[3674]: Started gpm
+> successfully. Entered daemon mode.
+> Mar 20 20:20:34 usbgentoo kernel: ip (3771) used greatest stack depth:
+> 12312 bytes left
+> Mar 20 20:20:34 usbgentoo dhcpcd[3840]: eth0: waiting for carrier
+> Mar 20 20:20:37 usbgentoo kernel: igb 0000:03:00.0 eth0: igb: eth0 NIC
+> Link is Up 1000 Mbps Full Duplex, Flow Control: RX
+> Mar 20 20:20:37 usbgentoo kernel: IPv6: ADDRCONF(NETDEV_CHANGE): eth0:
+> link becomes ready
+> Mar 20 20:20:37 usbgentoo dhcpcd[3840]: eth0: carrier acquired
+> Mar 20 20:20:38 usbgentoo dhcpcd[3840]: DUID
+> 00:01:00:01:24:24:e8:94:d0:50:99:3b:c9:21
+> Mar 20 20:20:38 usbgentoo dhcpcd[3840]: eth0: IAID 99:3b:c9:21
+> Mar 20 20:20:38 usbgentoo dhcpcd[3840]: eth0: adding address
+> fe80::3c99:2bbf:63bb:8354
+> Mar 20 20:20:38 usbgentoo dhcpcd[3840]: eth0: rebinding lease of 192.168.1.22
+> Mar 20 20:20:38 usbgentoo dhcpcd[3840]: eth0: probing address 192.168.1.22/24
+> Mar 20 20:20:39 usbgentoo dhcpcd[3840]: eth0: soliciting an IPv6 router
+> Mar 20 20:20:43 usbgentoo dhcpcd[3840]: eth0: leased 192.168.1.22 for
+> 86400 seconds
+> Mar 20 20:20:43 usbgentoo dhcpcd[3840]: eth0: adding route to 192.168.1.0/24
+> Mar 20 20:20:43 usbgentoo dhcpcd[3840]: eth0: adding default route via
+> 192.168.1.1
+> Mar 20 20:20:43 usbgentoo dhcpcd[3840]: forked to background, child pid 3883
+> Mar 20 20:20:48 usbgentoo login[4003]: pam_unix(login:auth):
+> authentication failure; logname=LOGIN uid=0 euid=0 tty=/dev/tty1
+> ruser= rhost=  user=root
+> Mar 20 20:20:51 usbgentoo dhcpcd[3883]: eth0: no IPv6 Routers available
+> Mar 20 20:21:06 usbgentoo login[4003]: pam_unix(login:session):
+> session opened for user root by LOGIN(uid=0)
+> Mar 20 20:21:06 usbgentoo login[4012]: ROOT LOGIN  on '/dev/tty1'
+> Mar 20 20:22:30 usbgentoo kernel: EXT4-fs (sdb4): recovery complete
+> Mar 20 20:22:30 usbgentoo kernel: EXT4-fs (sdb4): mounted filesystem
+> with ordered data mode. Opts: (null)
+> Mar 20 20:22:39 usbgentoo kernel: EXT4-fs (sdb5): recovery complete
+> Mar 20 20:22:39 usbgentoo kernel: EXT4-fs (sdb5): mounted filesystem
+> with ordered data mode. Opts: (null)
+> Mar 20 20:22:46 usbgentoo login[4003]: pam_unix(login:session):
+> session closed for user root
+> Mar 20 20:22:51 usbgentoo login[4025]: pam_unix(login:session):
+> session opened for user root by LOGIN(uid=0)
+> Mar 20 20:22:51 usbgentoo login[4027]: ROOT LOGIN  on '/dev/tty1'
+> Mar 20 20:23:34 usbgentoo login[4004]: pam_unix(login:session):
+> session opened for user root by LOGIN(uid=0)
+> Mar 20 20:23:34 usbgentoo login[4034]: ROOT LOGIN  on '/dev/tty2'
+> Mar 20 20:30:21 usbgentoo kernel: F2FS-fs (nvme0n1p5): Found nat_bits
+> in checkpoint
+> Mar 20 20:30:22 usbgentoo kernel: F2FS-fs (nvme0n1p5): Mounted with
+> checkpoint version = b9e8e7
+> Mar 20 20:30:35 usbgentoo login[4025]: pam_unix(login:session):
+> session closed for user root
+> Mar 20 20:30:42 usbgentoo login[4061]: pam_unix(login:session):
+> session opened for user root by LOGIN(uid=0)
+> Mar 20 20:30:42 usbgentoo login[4063]: ROOT LOGIN  on '/dev/tty1'
+> Mar 20 20:40:31 usbgentoo kernel: Adding 23984124k swap on
+> /dev/nvme0n1p6.  Priority:-2 extents:1 across:23984124k SSDsc
+> Mar 20 20:54:01 usbgentoo kernel: FAT-fs (nvme0n1p4): Volume was not
+> properly unmounted. Some data may be corrupt. Please run fsck.
 
-The reason is, different log headers using the same segment, once
-one log's next block address is used by another log, it will cause
-panic as above.
+It looks that there are any other problems in your environment, nvme0n1p4
+volume is corrupted.
 
-Main area: 24 segs, 24 secs 24 zones
-  - COLD  data: 0, 0, 0
-  - WARM  data: 1, 1, 1
-  - HOT   data: 20, 20, 20
-  - Dir   dnode: 22, 22, 22
-  - File   dnode: 22, 22, 22
-  - Indir nodes: 21, 21, 21
+> Mar 20 21:05:23 usbgentoo kernel: kworker/dying (1588) used greatest
+> stack depth: 12064 bytes left
+> Mar 20 21:06:40 usbgentoo kernel: BUG: stack guard page was hit at
+> 00000000a4b0733c (stack is 0000000056016422..0000000096e7463f)
+> Mar 20 21:06:40 usbgentoo kernel: kernel stack overflow
 
-So this patch adds sanity check to detect such condition to avoid
-this issue.
+And your kernel stack is overflow....
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Thanks,
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/f2fs/super.c | 34 +++++++++++++++++++++++++++++++++-
- 1 file changed, 33 insertions(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index dbd7adff8b5a..bd0dfaecfac3 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1143,7 +1143,7 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
- 	unsigned int segment_count_main;
- 	unsigned int cp_pack_start_sum, cp_payload;
- 	block_t user_block_count;
--	int i;
-+	int i, j;
- 
- 	total = le32_to_cpu(raw_super->segment_count);
- 	fsmeta = le32_to_cpu(raw_super->segment_count_ckpt);
-@@ -1184,11 +1184,43 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
- 		if (le32_to_cpu(ckpt->cur_node_segno[i]) >= main_segs ||
- 			le16_to_cpu(ckpt->cur_node_blkoff[i]) >= blocks_per_seg)
- 			return 1;
-+		for (j = i + 1; j < NR_CURSEG_NODE_TYPE; j++) {
-+			if (le32_to_cpu(ckpt->cur_node_segno[i]) ==
-+				le32_to_cpu(ckpt->cur_node_segno[j])) {
-+				f2fs_msg(sbi->sb, KERN_ERR,
-+					"Node segment (%u, %u) has the same "
-+					"segno: %u", i, j,
-+					le32_to_cpu(ckpt->cur_node_segno[i]));
-+				return 1;
-+			}
-+		}
- 	}
- 	for (i = 0; i < NR_CURSEG_DATA_TYPE; i++) {
- 		if (le32_to_cpu(ckpt->cur_data_segno[i]) >= main_segs ||
- 			le16_to_cpu(ckpt->cur_data_blkoff[i]) >= blocks_per_seg)
- 			return 1;
-+		for (j = i + 1; j < NR_CURSEG_DATA_TYPE; j++) {
-+			if (le32_to_cpu(ckpt->cur_data_segno[i]) ==
-+				le32_to_cpu(ckpt->cur_data_segno[j])) {
-+				f2fs_msg(sbi->sb, KERN_ERR,
-+					"Data segment (%u, %u) has the same "
-+					"segno: %u", i, j,
-+					le32_to_cpu(ckpt->cur_data_segno[i]));
-+				return 1;
-+			}
-+		}
-+	}
-+	for (i = 0; i < NR_CURSEG_NODE_TYPE; i++) {
-+		for (j = i; j < NR_CURSEG_DATA_TYPE; j++) {
-+			if (le32_to_cpu(ckpt->cur_node_segno[i]) ==
-+				le32_to_cpu(ckpt->cur_data_segno[j])) {
-+				f2fs_msg(sbi->sb, KERN_ERR,
-+					"Data segment (%u) and Data segment (%u)"
-+					" has the same segno: %u", i, j,
-+					le32_to_cpu(ckpt->cur_node_segno[i]));
-+				return 1;
-+			}
-+		}
- 	}
- 
- 	sit_bitmap_size = le32_to_cpu(ckpt->sit_ver_bitmap_bytesize);
--- 
-2.19.1
+> (double-fault): 0000 [#1] SMP PTI
+> Mar 20 21:06:40 usbgentoo kernel: CPU: 7 PID: 1606 Comm:
+> kworker/u16:15 Not tainted 5.0.3-gentoo #6
+> Mar 20 21:06:40 usbgentoo kernel: Hardware name: To Be Filled By
+> O.E.M. To Be Filled By O.E.M./C226 WS, BIOS P3.40 06/25/2018
+> Mar 20 21:06:40 usbgentoo kernel: Workqueue: writeback wb_workfn (flush-259:0)
+> Mar 20 21:06:40 usbgentoo kernel: RIP: 0010:f2fs_inode_chksum_verify+0x14/0xc0
+> Mar 20 21:06:40 usbgentoo kernel: Code: 00 00 04 0f 45 f0 e9 3b 85 e8
+> ff 90 66 2e 0f 1f 84 00 00 00 00 00 48 8b 47 48 a8 40 0f 85 9d 00 00
+> 00 41 55 41 54 55 48 89 fd <53> 48 89 f3 e8 33 fd ff ff ba 01 00 00 00
+> 84 c0 75 09 5b 89 d0 5d
+> Mar 20 21:06:40 usbgentoo kernel: RSP: 0018:ffffb3ff4b0f4000 EFLAGS: 00010246
+> Mar 20 21:06:40 usbgentoo kernel: RAX: 0000000000000001 RBX:
+> ffffd57b5afeaa00 RCX: 0000000000000000
+> Mar 20 21:06:40 usbgentoo kernel: RDX: 0000000000000000 RSI:
+> ffffd57b5afeaa00 RDI: ffff9341f77f2000
+> Mar 20 21:06:40 usbgentoo kernel: RBP: ffff9341f77f2000 R08:
+> ffffb3ff4b0f4110 R09: ffff9340bfaa9377
+> Mar 20 21:06:40 usbgentoo kernel: R10: ffffb3ff4b0f41a0 R11:
+> 00000000fffffff3 R12: 000000000005c712
+> Mar 20 21:06:40 usbgentoo kernel: R13: 0000000000000000 R14:
+> 0000000000000001 R15: 0000000000000000
+> Mar 20 21:06:40 usbgentoo kernel: FS:  0000000000000000(0000)
+> GS:ffff9341fefc0000(0000) knlGS:0000000000000000
+> Mar 20 21:06:40 usbgentoo kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
+> 0000000080050033
+> Mar 20 21:06:40 usbgentoo kernel: CR2: ffffb3ff4b0f3ff8 CR3:
+> 000000006320e006 CR4: 00000000003606e0
+> Mar 20 21:06:40 usbgentoo kernel: DR0: 0000000000000000 DR1:
+> 0000000000000000 DR2: 0000000000000000
+> Mar 20 21:06:40 usbgentoo kernel: DR3: 0000000000000000 DR6:
+> 00000000fffe0ff0 DR7: 0000000000000400
+> Mar 20 21:06:40 usbgentoo kernel: Call Trace:
+> Mar 20 21:06:40 usbgentoo kernel:  read_node_page+0x71/0xf0
+> Mar 20 21:06:40 usbgentoo kernel:  ? xas_load+0x8/0x50
+> Mar 20 21:06:40 usbgentoo kernel:  __get_node_page+0x73/0x2a0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_get_dnode_of_data+0x34e/0x580
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_inline_data+0x5e/0x2a0
+> Mar 20 21:06:40 usbgentoo kernel:  __write_data_page+0x421/0x690
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_cache_pages+0x1cf/0x460
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_data_pages+0x2b3/0x2e0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_chksum_verify+0x1d/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  ? read_node_page+0x71/0xf0
+> Mar 20 21:06:40 usbgentoo kernel:  do_writepages+0x3c/0xd0
+> Mar 20 21:06:40 usbgentoo kernel:  __filemap_fdatawrite_range+0x7c/0xb0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_sync_dirty_inodes+0xf2/0x200
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs_bg+0x2a3/0x2c0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_dirtied+0x21/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs+0xd6/0x2b0
+> Mar 20 21:06:40 usbgentoo kernel:  __write_data_page+0x4fb/0x690
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_cache_pages+0x1cf/0x460
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_data_pages+0x2b3/0x2e0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_chksum_verify+0x1d/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  ? read_node_page+0x71/0xf0
+> Mar 20 21:06:40 usbgentoo kernel:  do_writepages+0x3c/0xd0
+> Mar 20 21:06:40 usbgentoo kernel:  __filemap_fdatawrite_range+0x7c/0xb0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_sync_dirty_inodes+0xf2/0x200
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs_bg+0x2a3/0x2c0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_dirtied+0x21/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs+0xd6/0x2b0
+> Mar 20 21:06:40 usbgentoo kernel:  __write_data_page+0x4fb/0x690
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_cache_pages+0x1cf/0x460
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_data_pages+0x2b3/0x2e0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_chksum_verify+0x1d/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  ? read_node_page+0x71/0xf0
+> Mar 20 21:06:40 usbgentoo kernel:  do_writepages+0x3c/0xd0
+> Mar 20 21:06:40 usbgentoo kernel:  __filemap_fdatawrite_range+0x7c/0xb0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_sync_dirty_inodes+0xf2/0x200
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs_bg+0x2a3/0x2c0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_dirtied+0x21/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs+0xd6/0x2b0
+> Mar 20 21:06:40 usbgentoo kernel:  __write_data_page+0x4fb/0x690
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_cache_pages+0x1cf/0x460
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_data_pages+0x2b3/0x2e0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_chksum_verify+0x1d/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  ? read_node_page+0x71/0xf0
+> Mar 20 21:06:40 usbgentoo kernel:  do_writepages+0x3c/0xd0
+> Mar 20 21:06:40 usbgentoo kernel:  __filemap_fdatawrite_range+0x7c/0xb0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_sync_dirty_inodes+0xf2/0x200
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs_bg+0x2a3/0x2c0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_dirtied+0x21/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs+0xd6/0x2b0
+> Mar 20 21:06:40 usbgentoo kernel:  __write_data_page+0x4fb/0x690
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_cache_pages+0x1cf/0x460
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_data_pages+0x2b3/0x2e0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_chksum_verify+0x1d/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  ? read_node_page+0x71/0xf0
+> Mar 20 21:06:40 usbgentoo kernel:  do_writepages+0x3c/0xd0
+> Mar 20 21:06:40 usbgentoo kernel:  __filemap_fdatawrite_range+0x7c/0xb0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_sync_dirty_inodes+0xf2/0x200
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs_bg+0x2a3/0x2c0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_dirtied+0x21/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs+0xd6/0x2b0
+> Mar 20 21:06:40 usbgentoo kernel:  __write_data_page+0x4fb/0x690
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_cache_pages+0x1cf/0x460
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_data_pages+0x2b3/0x2e0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_chksum_verify+0x1d/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  ? read_node_page+0x71/0xf0
+> Mar 20 21:06:40 usbgentoo kernel:  do_writepages+0x3c/0xd0
+> Mar 20 21:06:40 usbgentoo kernel:  __filemap_fdatawrite_range+0x7c/0xb0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_sync_dirty_inodes+0xf2/0x200
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs_bg+0x2a3/0x2c0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_dirtied+0x21/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs+0xd6/0x2b0
+> Mar 20 21:06:40 usbgentoo kernel:  __write_data_page+0x4fb/0x690
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_cache_pages+0x1cf/0x460
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_data_pages+0x2b3/0x2e0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_chksum_verify+0x1d/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  ? read_node_page+0x71/0xf0
+> Mar 20 21:06:40 usbgentoo kernel:  do_writepages+0x3c/0xd0
+> Mar 20 21:06:40 usbgentoo kernel:  __filemap_fdatawrite_range+0x7c/0xb0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_sync_dirty_inodes+0xf2/0x200
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs_bg+0x2a3/0x2c0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_dirtied+0x21/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs+0xd6/0x2b0
+> Mar 20 21:06:40 usbgentoo kernel:  __write_data_page+0x4fb/0x690
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_cache_pages+0x1cf/0x460
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_data_pages+0x2b3/0x2e0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_chksum_verify+0x1d/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  ? read_node_page+0x71/0xf0
+> Mar 20 21:06:40 usbgentoo kernel:  do_writepages+0x3c/0xd0
+> Mar 20 21:06:40 usbgentoo kernel:  __filemap_fdatawrite_range+0x7c/0xb0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_sync_dirty_inodes+0xf2/0x200
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs_bg+0x2a3/0x2c0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_dirtied+0x21/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs+0xd6/0x2b0
+> Mar 20 21:06:40 usbgentoo kernel:  __write_data_page+0x4fb/0x690
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_cache_pages+0x1cf/0x460
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_data_pages+0x2b3/0x2e0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_chksum_verify+0x1d/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  ? read_node_page+0x71/0xf0
+> Mar 20 21:06:40 usbgentoo kernel:  do_writepages+0x3c/0xd0
+> Mar 20 21:06:40 usbgentoo kernel:  __filemap_fdatawrite_range+0x7c/0xb0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_sync_dirty_inodes+0xf2/0x200
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs_bg+0x2a3/0x2c0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_dirtied+0x21/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs+0xd6/0x2b0
+> Mar 20 21:06:40 usbgentoo kernel:  __write_data_page+0x4fb/0x690
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_cache_pages+0x1cf/0x460
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_data_pages+0x2b3/0x2e0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_chksum_verify+0x1d/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  ? read_node_page+0x71/0xf0
+> Mar 20 21:06:40 usbgentoo kernel:  do_writepages+0x3c/0xd0
+> Mar 20 21:06:40 usbgentoo kernel:  __filemap_fdatawrite_range+0x7c/0xb0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_sync_dirty_inodes+0xf2/0x200
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs_bg+0x2a3/0x2c0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_dirtied+0x21/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs+0xd6/0x2b0
+> Mar 20 21:06:40 usbgentoo kernel:  __write_data_page+0x4fb/0x690
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_cache_pages+0x1cf/0x460
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_data_pages+0x2b3/0x2e0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_chksum_verify+0x1d/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  ? read_node_page+0x71/0xf0
+> Mar 20 21:06:40 usbgentoo kernel:  do_writepages+0x3c/0xd0
+> Mar 20 21:06:40 usbgentoo kernel:  __filemap_fdatawrite_range+0x7c/0xb0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_sync_dirty_inodes+0xf2/0x200
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs_bg+0x2a3/0x2c0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_dirtied+0x21/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs+0xd6/0x2b0
+> Mar 20 21:06:40 usbgentoo kernel:  __write_data_page+0x4fb/0x690
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_cache_pages+0x1cf/0x460
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_data_pages+0x2b3/0x2e0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_chksum_verify+0x1d/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  ? read_node_page+0x71/0xf0
+> Mar 20 21:06:40 usbgentoo kernel:  do_writepages+0x3c/0xd0
+> Mar 20 21:06:40 usbgentoo kernel:  __filemap_fdatawrite_range+0x7c/0xb0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_sync_dirty_inodes+0xf2/0x200
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs_bg+0x2a3/0x2c0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_dirtied+0x21/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs+0xd6/0x2b0
+> Mar 20 21:06:40 usbgentoo kernel:  __write_data_page+0x4fb/0x690
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_cache_pages+0x1cf/0x460
+> Mar 20 21:06:40 usbgentoo kernel:  ? find_get_entries_tag+0x91/0x260
+> Mar 20 21:06:40 usbgentoo kernel:  ? get_partial_node.isra.86.part.87+0x2d/0x200
+> Mar 20 21:06:40 usbgentoo kernel:  ? mempool_alloc+0x62/0x190
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_data_pages+0x2b3/0x2e0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_chksum_verify+0x1d/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  ? read_node_page+0x71/0xf0
+> Mar 20 21:06:40 usbgentoo kernel:  ? wait_woken+0x80/0x80
+> Mar 20 21:06:40 usbgentoo kernel:  do_writepages+0x3c/0xd0
+> Mar 20 21:06:40 usbgentoo kernel:  __filemap_fdatawrite_range+0x7c/0xb0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_sync_dirty_inodes+0xf2/0x200
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs_bg+0x2a3/0x2c0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_dirtied+0x21/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs+0xd6/0x2b0
+> Mar 20 21:06:40 usbgentoo kernel:  __write_data_page+0x4fb/0x690
+> Mar 20 21:06:40 usbgentoo kernel:  ? __switch_to_asm+0x40/0x70
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_cache_pages+0x1cf/0x460
+> Mar 20 21:06:40 usbgentoo kernel:  ? raid6_avx5122_gen_syndrome+0x151/0x160
+> Mar 20 21:06:40 usbgentoo kernel:  ? sbitmap_get+0x71/0x160
+> Mar 20 21:06:40 usbgentoo kernel:  ? __sbitmap_queue_get+0x24/0x90
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_data_pages+0x2b3/0x2e0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_chksum_verify+0x1d/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  ? read_node_page+0x71/0xf0
+> Mar 20 21:06:40 usbgentoo kernel:  do_writepages+0x3c/0xd0
+> Mar 20 21:06:40 usbgentoo kernel:  __filemap_fdatawrite_range+0x7c/0xb0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_sync_dirty_inodes+0xf2/0x200
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs_bg+0x2a3/0x2c0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_dirtied+0x21/0xc0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs+0xd6/0x2b0
+> Mar 20 21:06:40 usbgentoo kernel:  __write_data_page+0x4fb/0x690
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_cache_pages+0x1cf/0x460
+> Mar 20 21:06:40 usbgentoo kernel:  ? __update_load_avg_cfs_rq+0x1b1/0x220
+> Mar 20 21:06:40 usbgentoo kernel:  ? enqueue_task_fair+0x441/0xfd0
+> Mar 20 21:06:40 usbgentoo kernel:  ? guard_bio_eod+0x27/0xf0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_data_pages+0x2b3/0x2e0
+> Mar 20 21:06:40 usbgentoo kernel:  ? try_to_wake_up+0x52/0x550
+> Mar 20 21:06:40 usbgentoo kernel:  do_writepages+0x3c/0xd0
+> Mar 20 21:06:40 usbgentoo kernel:  ? nr_blockdev_pages+0xc/0x60
+> Mar 20 21:06:40 usbgentoo kernel:  ? si_meminfo+0x3a/0x60
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_available_free_memory+0x29/0x240
+> Mar 20 21:06:40 usbgentoo kernel:  ? complete+0x36/0x50
+> Mar 20 21:06:40 usbgentoo kernel:  __filemap_fdatawrite_range+0x7c/0xb0
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_sync_dirty_inodes+0xf2/0x200
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs_bg+0x2a3/0x2c0
+> Mar 20 21:06:40 usbgentoo kernel:  ? __set_page_dirty_nobuffers+0xcb/0x100
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_balance_fs+0xd6/0x2b0
+> Mar 20 21:06:40 usbgentoo kernel:  ? f2fs_inode_chksum_set+0xc/0x40
+> Mar 20 21:06:40 usbgentoo kernel:  f2fs_write_inode+0x79/0x1c0
+> Mar 20 21:06:40 usbgentoo kernel:  __writeback_single_inode+0x2a1/0x340
+> Mar 20 21:06:40 usbgentoo kernel:  ? soft_cursor+0x1b4/0x220
+> Mar 20 21:06:40 usbgentoo kernel:  writeback_sb_inodes+0x1d5/0x3e0
+> Mar 20 21:06:40 usbgentoo kernel:  __writeback_inodes_wb+0x58/0xa0
+> Mar 20 21:06:40 usbgentoo kernel:  wb_writeback+0x250/0x2e0
+> Mar 20 21:06:40 usbgentoo kernel:  ? 0xffffffff8c000000
+> Mar 20 21:06:40 usbgentoo kernel:  ? cpumask_next+0x16/0x20
+> Mar 20 21:06:40 usbgentoo kernel:  wb_workfn+0x2f6/0x3b0
+> Mar 20 21:06:40 usbgentoo kernel:  ? __switch_to_asm+0x40/0x70
+> Mar 20 21:06:40 usbgentoo kernel:  process_one_work+0x1f5/0x3f0
+> Mar 20 21:06:40 usbgentoo kernel:  worker_thread+0x28/0x3c0
+> Mar 20 21:06:40 usbgentoo kernel:  ? rescuer_thread+0x330/0x330
+> Mar 20 21:06:40 usbgentoo kernel:  kthread+0x10e/0x130
+> Mar 20 21:06:40 usbgentoo kernel:  ? kthread_create_on_node+0x60/0x60
+> Mar 20 21:06:40 usbgentoo kernel:  ret_from_fork+0x35/0x40
+> Mar 20 21:06:40 usbgentoo kernel: Modules linked in: iTCO_wdt efivarfs
+> Mar 20 21:06:40 usbgentoo kernel: ---[ end trace 7d32682090ec7829 ]---
+> Mar 20 21:06:40 usbgentoo kernel: RIP: 0010:f2fs_inode_chksum_verify+0x14/0xc0
+> Mar 20 21:06:40 usbgentoo kernel: Code: 00 00 04 0f 45 f0 e9 3b 85 e8
+> ff 90 66 2e 0f 1f 84 00 00 00 00 00 48 8b 47 48 a8 40 0f 85 9d 00 00
+> 00 41 55 41 54 55 48 89 fd <53> 48 89 f3 e8 33 fd ff ff ba 01 00 00 00
+> 84 c0 75 09 5b 89 d0 5d
+> Mar 20 21:06:40 usbgentoo kernel: RSP: 0018:ffffb3ff4b0f4000 EFLAGS: 00010246
+> Mar 20 21:06:40 usbgentoo kernel: RAX: 0000000000000001 RBX:
+> ffffd57b5afeaa00 RCX: 0000000000000000
+> Mar 20 21:06:40 usbgentoo kernel: RDX: 0000000000000000 RSI:
+> ffffd57b5afeaa00 RDI: ffff9341f77f2000
+> Mar 20 21:06:40 usbgentoo kernel: RBP: ffff9341f77f2000 R08:
+> ffffb3ff4b0f4110 R09: ffff9340bfaa9377
+> Mar 20 21:06:40 usbgentoo kernel: R10: ffffb3ff4b0f41a0 R11:
+> 00000000fffffff3 R12: 000000000005c712
+> Mar 20 21:06:40 usbgentoo kernel: R13: 0000000000000000 R14:
+> 0000000000000001 R15: 0000000000000000
+> Mar 20 21:06:40 usbgentoo kernel: FS:  0000000000000000(0000)
+> GS:ffff9341fefc0000(0000) knlGS:0000000000000000
+> Mar 20 21:06:40 usbgentoo kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
+> 0000000080050033
+> Mar 20 21:06:40 usbgentoo kernel: CR2: ffffb3ff4b0f3ff8 CR3:
+> 000000006320e006 CR4: 00000000003606e0
+> Mar 20 21:06:40 usbgentoo kernel: DR0: 0000000000000000 DR1:
+> 0000000000000000 DR2: 0000000000000000
+> Mar 20 21:06:40 usbgentoo kernel: DR3: 0000000000000000 DR6:
+> 00000000fffe0ff0 DR7: 0000000000000400
+> Mar 20 21:06:40 usbgentoo kernel: kworker/u16:15 (1606) used greatest
+> stack depth: 8 bytes left
+> Mar 20 21:06:40 usbgentoo kernel: WARNING: CPU: 7 PID: 0 at
+> kernel/rcu/tree.c:600 rcu_idle_enter+0xe6/0xf0
+> Mar 20 21:06:40 usbgentoo kernel: Modules linked in: iTCO_wdt efivarfs
+> Mar 20 21:06:40 usbgentoo kernel: CPU: 7 PID: 0 Comm: swapper/7
+> Tainted: G      D           5.0.3-gentoo #6
+> Mar 20 21:06:40 usbgentoo kernel: Hardware name: To Be Filled By
+> O.E.M. To Be Filled By O.E.M./C226 WS, BIOS P3.40 06/25/2018
+> Mar 20 21:06:40 usbgentoo kernel: RIP: 0010:rcu_idle_enter+0xe6/0xf0
+> Mar 20 21:06:40 usbgentoo kernel: Code: 27 48 8b 45 00 48 8b 7d 08 48
+> 83 c5 18 31 c9 45 89 e8 ba 01 00 00 00 4c 89 e6 e8 45 40 d5 00 48 8b
+> 45 00 48 85 c0 75 dd eb 86 <0f> 0b e9 42 ff ff ff 0f 1f 00 41 57 41 56
+> 41 55 41 54 55 53 48 c7
+> Mar 20 21:06:40 usbgentoo kernel: RSP: 0018:ffffb3ff431dfec0 EFLAGS: 00010002
+> Mar 20 21:06:40 usbgentoo kernel: RAX: ffff9341fefe14c0 RBX:
+> 00000000000214c0 RCX: 0000000000000000
+> Mar 20 21:06:40 usbgentoo kernel: RDX: 4000000000000000 RSI:
+> 0000000000000348 RDI: ffff9341fefe8120
+> Mar 20 21:06:40 usbgentoo kernel: RBP: ffffffff8d592920 R08:
+> 000000000002bd5d R09: 0000000000039437
+> Mar 20 21:06:40 usbgentoo kernel: R10: ffff9341fefdf9e4 R11:
+> ffff9341fefdf9c4 R12: ffff9341fefe8120
+> Mar 20 21:06:40 usbgentoo kernel: R13: ffffffff8d4a8a20 R14:
+> 0000000000000004 R15: 0000000000000000
+> Mar 20 21:06:40 usbgentoo kernel: FS:  0000000000000000(0000)
+> GS:ffff9341fefc0000(0000) knlGS:0000000000000000
+> Mar 20 21:06:40 usbgentoo kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
+> 0000000080050033
+> Mar 20 21:06:40 usbgentoo kernel: CR2: ffffb3ff4b0f3ff8 CR3:
+> 000000006320e006 CR4: 00000000003606e0
+> Mar 20 21:06:40 usbgentoo kernel: DR0: 0000000000000000 DR1:
+> 0000000000000000 DR2: 0000000000000000
+> Mar 20 21:06:40 usbgentoo kernel: DR3: 0000000000000000 DR6:
+> 00000000fffe0ff0 DR7: 0000000000000400
+> Mar 20 21:06:40 usbgentoo kernel: Call Trace:
+> Mar 20 21:06:40 usbgentoo kernel:  do_idle+0x193/0x1e0
+> Mar 20 21:06:40 usbgentoo kernel:  cpu_startup_entry+0x14/0x20
+> Mar 20 21:06:40 usbgentoo kernel:  start_secondary+0x183/0x1b0
+> Mar 20 21:06:40 usbgentoo kernel:  secondary_startup_64+0xa4/0xb0
+> Mar 20 21:06:40 usbgentoo kernel: ---[ end trace 7d32682090ec782a ]---
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> .
+> 
