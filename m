@@ -1,35 +1,16 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 05/37] f2fs: fix to do sanity check
- with current segment number
-Date: Fri, 29 Mar 2019 21:29:48 -0400
-Message-ID: <20190330013020.379-5-sashal@kernel.org>
-References: <20190330013020.379-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 05/21] f2fs: fix to do sanity check with current segment number
+Date: Fri, 29 Mar 2019 21:30:56 -0400
+Message-ID: <20190330013112.784-5-sashal@kernel.org>
+References: <20190330013112.784-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <sashal@kernel.org>) id 1hA2pO-0004Nm-00
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 30 Mar 2019 01:30:34 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hA2pM-004Iix-Ig
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 30 Mar 2019 01:30:33 +0000
-In-Reply-To: <20190330013020.379-1-sashal@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190330013112.784-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
@@ -108,10 +89,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 33 insertions(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index fc5c41257e68..4c169ba50c0f 100644
+index 83a96334dc07..4ebe69572475 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -1959,7 +1959,7 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
+@@ -1489,7 +1489,7 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
  	unsigned int segment_count_main;
  	unsigned int cp_pack_start_sum, cp_payload;
  	block_t user_block_count;
@@ -120,7 +101,7 @@ index fc5c41257e68..4c169ba50c0f 100644
  
  	total = le32_to_cpu(raw_super->segment_count);
  	fsmeta = le32_to_cpu(raw_super->segment_count_ckpt);
-@@ -2000,11 +2000,43 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
+@@ -1530,11 +1530,43 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
  		if (le32_to_cpu(ckpt->cur_node_segno[i]) >= main_segs ||
  			le16_to_cpu(ckpt->cur_node_blkoff[i]) >= blocks_per_seg)
  			return 1;
