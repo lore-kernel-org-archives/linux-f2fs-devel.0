@@ -1,7 +1,7 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 08/57] f2fs: fix to do sanity check with current segment number
-Date: Fri, 29 Mar 2019 21:28:01 -0400
-Message-ID: <20190330012854.32212-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 23/57] f2fs: cleanup dirty pages if recover failed
+Date: Fri, 29 Mar 2019 21:28:16 -0400
+Message-ID: <20190330012854.32212-23-sashal@kernel.org>
 References: <20190330012854.32212-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -9,141 +9,229 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190330012854.32212-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: Sheng Yong <shengyong1@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Sheng Yong <shengyong1@huawei.com>
 
-[ Upstream commit 042be0f849e5fc24116d0afecfaf926eed5cac63 ]
+[ Upstream commit 26b5a079197c8cb6725565968b7fd3299bd1877b ]
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200219
+During recover, we will try to create new dentries for inodes with
+dentry_mark. But if the parent is missing (e.g. killed by fsck),
+recover will break. But those recovered dirty pages are not cleanup.
+This will hit f2fs_bug_on:
 
-Reproduction way:
-- mount image
-- run poc code
-- umount image
+[   53.519566] F2FS-fs (loop0): Found nat_bits in checkpoint
+[   53.539354] F2FS-fs (loop0): recover_inode: ino = 5, name = file, inline = 3
+[   53.539402] F2FS-fs (loop0): recover_dentry: ino = 5, name = file, dir = 0, err = -2
+[   53.545760] F2FS-fs (loop0): Cannot recover all fsync data errno=-2
+[   53.546105] F2FS-fs (loop0): access invalid blkaddr:4294967295
+[   53.546171] WARNING: CPU: 1 PID: 1798 at fs/f2fs/checkpoint.c:163 f2fs_is_valid_blkaddr+0x26c/0x320
+[   53.546174] Modules linked in:
+[   53.546183] CPU: 1 PID: 1798 Comm: mount Not tainted 4.19.0-rc2+ #1
+[   53.546186] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[   53.546191] RIP: 0010:f2fs_is_valid_blkaddr+0x26c/0x320
+[   53.546195] Code: 85 bb 00 00 00 48 89 df 88 44 24 07 e8 ad a8 db ff 48 8b 3b 44 89 e1 48 c7 c2 40 03 72 a9 48 c7 c6 e0 01 72 a9 e8 84 3c ff ff <0f> 0b 0f b6 44 24 07 e9 8a 00 00 00 48 8d bf 38 01 00 00 e8 7c a8
+[   53.546201] RSP: 0018:ffff88006c067768 EFLAGS: 00010282
+[   53.546208] RAX: 0000000000000000 RBX: ffff880068844200 RCX: ffffffffa83e1a33
+[   53.546211] RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff88006d51e590
+[   53.546215] RBP: 0000000000000005 R08: ffffed000daa3cb3 R09: ffffed000daa3cb3
+[   53.546218] R10: 0000000000000001 R11: ffffed000daa3cb2 R12: 00000000ffffffff
+[   53.546221] R13: ffff88006a1f8000 R14: 0000000000000200 R15: 0000000000000009
+[   53.546226] FS:  00007fb2f3646840(0000) GS:ffff88006d500000(0000) knlGS:0000000000000000
+[   53.546229] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   53.546234] CR2: 00007f0fd77f0008 CR3: 00000000687e6002 CR4: 00000000000206e0
+[   53.546237] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   53.546240] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   53.546242] Call Trace:
+[   53.546248]  f2fs_submit_page_bio+0x95/0x740
+[   53.546253]  read_node_page+0x161/0x1e0
+[   53.546271]  ? truncate_node+0x650/0x650
+[   53.546283]  ? add_to_page_cache_lru+0x12c/0x170
+[   53.546288]  ? pagecache_get_page+0x262/0x2d0
+[   53.546292]  __get_node_page+0x200/0x660
+[   53.546302]  f2fs_update_inode_page+0x4a/0x160
+[   53.546306]  f2fs_write_inode+0x86/0xb0
+[   53.546317]  __writeback_single_inode+0x49c/0x620
+[   53.546322]  writeback_single_inode+0xe4/0x1e0
+[   53.546326]  sync_inode_metadata+0x93/0xd0
+[   53.546330]  ? sync_inode+0x10/0x10
+[   53.546342]  ? do_raw_spin_unlock+0xed/0x100
+[   53.546347]  f2fs_sync_inode_meta+0xe0/0x130
+[   53.546351]  f2fs_fill_super+0x287d/0x2d10
+[   53.546367]  ? vsnprintf+0x742/0x7a0
+[   53.546372]  ? f2fs_commit_super+0x180/0x180
+[   53.546379]  ? up_write+0x20/0x40
+[   53.546385]  ? set_blocksize+0x5f/0x140
+[   53.546391]  ? f2fs_commit_super+0x180/0x180
+[   53.546402]  mount_bdev+0x181/0x200
+[   53.546406]  mount_fs+0x94/0x180
+[   53.546411]  vfs_kern_mount+0x6c/0x1e0
+[   53.546415]  do_mount+0xe5e/0x1510
+[   53.546420]  ? fs_reclaim_release+0x9/0x30
+[   53.546424]  ? copy_mount_string+0x20/0x20
+[   53.546428]  ? fs_reclaim_acquire+0xd/0x30
+[   53.546435]  ? __might_sleep+0x2c/0xc0
+[   53.546440]  ? ___might_sleep+0x53/0x170
+[   53.546453]  ? __might_fault+0x4c/0x60
+[   53.546468]  ? _copy_from_user+0x95/0xa0
+[   53.546474]  ? memdup_user+0x39/0x60
+[   53.546478]  ksys_mount+0x88/0xb0
+[   53.546482]  __x64_sys_mount+0x5d/0x70
+[   53.546495]  do_syscall_64+0x65/0x130
+[   53.546503]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   53.547639] ---[ end trace b804d1ea2fec893e ]---
 
-F2FS-fs (loop1): Bitmap was wrongly set, blk:15364
-------------[ cut here ]------------
-kernel BUG at /home/yuchao/git/devf2fs/segment.c:2061!
-invalid opcode: 0000 [#1] PREEMPT SMP
-CPU: 2 PID: 17686 Comm: umount Tainted: G        W  O      4.18.0-rc2+ #39
-Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-EIP: update_sit_entry+0x459/0x4e0 [f2fs]
-Code: e8 1c b5 fd ff 0f 0b 0f 0b 8b 45 e4 c7 44 24 08 9c 7a 6c f8 c7 44 24 04 bc 4a 6c f8 89 44 24 0c 8b 06 89 04 24 e8 f7 b4 fd ff <0f> 0b 8b 45 e4 0f b6 d2 89 54 24 10 c7 44 24 08 60 7a 6c f8 c7 44
-EAX: 00000032 EBX: 000000f8 ECX: 00000002 EDX: 00000001
-ESI: d7177000 EDI: f520fe68 EBP: d6477c6c ESP: d6477c34
-DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00010282
-CR0: 80050033 CR2: b7fbe000 CR3: 2a99b3c0 CR4: 000406f0
-Call Trace:
- f2fs_allocate_data_block+0x124/0x580 [f2fs]
- do_write_page+0x78/0x150 [f2fs]
- f2fs_do_write_node_page+0x25/0xa0 [f2fs]
- __write_node_page+0x2bf/0x550 [f2fs]
- f2fs_sync_node_pages+0x60e/0x6d0 [f2fs]
- ? sync_inode_metadata+0x2f/0x40
- ? f2fs_write_checkpoint+0x28f/0x7d0 [f2fs]
- ? up_write+0x1e/0x80
- f2fs_write_checkpoint+0x2a9/0x7d0 [f2fs]
- ? mark_held_locks+0x5d/0x80
- ? _raw_spin_unlock_irq+0x27/0x50
- kill_f2fs_super+0x68/0x90 [f2fs]
- deactivate_locked_super+0x3d/0x70
- deactivate_super+0x40/0x60
- cleanup_mnt+0x39/0x70
- __cleanup_mnt+0x10/0x20
- task_work_run+0x81/0xa0
- exit_to_usermode_loop+0x59/0xa7
- do_fast_syscall_32+0x1f5/0x22c
- entry_SYSENTER_32+0x53/0x86
-EIP: 0xb7f95c51
-Code: c1 1e f7 ff ff 89 e5 8b 55 08 85 d2 8b 81 64 cd ff ff 74 02 89 02 5d c3 8b 0c 24 c3 8b 1c 24 c3 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d 76 00 58 b8 77 00 00 00 cd 80 90 8d 76
-EAX: 00000000 EBX: 0871ab90 ECX: bfb2cd00 EDX: 00000000
-ESI: 00000000 EDI: 0871ab90 EBP: 0871ab90 ESP: bfb2cd7c
-DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00000246
-Modules linked in: f2fs(O) crc32_generic bnep rfcomm bluetooth ecdh_generic snd_intel8x0 snd_ac97_codec ac97_bus snd_pcm snd_seq_midi snd_seq_midi_event snd_rawmidi snd_seq pcbc joydev aesni_intel snd_seq_device aes_i586 snd_timer crypto_simd snd cryptd soundcore mac_hid serio_raw video i2c_piix4 parport_pc ppdev lp parport hid_generic psmouse usbhid hid e1000 [last unloaded: f2fs]
----[ end trace d423f83982cfcdc5 ]---
+So if recover fails, we need to drop all recovered data.
 
-The reason is, different log headers using the same segment, once
-one log's next block address is used by another log, it will cause
-panic as above.
-
-Main area: 24 segs, 24 secs 24 zones
-  - COLD  data: 0, 0, 0
-  - WARM  data: 1, 1, 1
-  - HOT   data: 20, 20, 20
-  - Dir   dnode: 22, 22, 22
-  - File   dnode: 22, 22, 22
-  - Indir nodes: 21, 21, 21
-
-So this patch adds sanity check to detect such condition to avoid
-this issue.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-
+Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/super.c | 34 +++++++++++++++++++++++++++++++++-
- 1 file changed, 33 insertions(+), 1 deletion(-)
+ fs/f2fs/recovery.c | 32 +++++++++++++++++++++-----------
+ fs/f2fs/super.c    | 15 ++++++++++++++-
+ 2 files changed, 35 insertions(+), 12 deletions(-)
 
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 9a8579fb3a30..ae0e5f2e67b4 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -99,8 +99,12 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
+ 	return ERR_PTR(err);
+ }
+ 
+-static void del_fsync_inode(struct fsync_inode_entry *entry)
++static void del_fsync_inode(struct fsync_inode_entry *entry, int drop)
+ {
++	if (drop) {
++		/* inode should not be recovered, drop it */
++		f2fs_inode_synced(entry->inode);
++	}
+ 	iput(entry->inode);
+ 	list_del(&entry->list);
+ 	kmem_cache_free(fsync_entry_slab, entry);
+@@ -321,12 +325,12 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 	return err;
+ }
+ 
+-static void destroy_fsync_dnodes(struct list_head *head)
++static void destroy_fsync_dnodes(struct list_head *head, int drop)
+ {
+ 	struct fsync_inode_entry *entry, *tmp;
+ 
+ 	list_for_each_entry_safe(entry, tmp, head, list)
+-		del_fsync_inode(entry);
++		del_fsync_inode(entry, drop);
+ }
+ 
+ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
+@@ -561,7 +565,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ }
+ 
+ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
+-						struct list_head *dir_list)
++		struct list_head *tmp_inode_list, struct list_head *dir_list)
+ {
+ 	struct curseg_info *curseg;
+ 	struct page *page = NULL;
+@@ -615,7 +619,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
+ 		}
+ 
+ 		if (entry->blkaddr == blkaddr)
+-			del_fsync_inode(entry);
++			list_move_tail(&entry->list, tmp_inode_list);
+ next:
+ 		/* check next segment */
+ 		blkaddr = next_blkaddr_of_node(page);
+@@ -628,7 +632,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
+ 
+ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ {
+-	struct list_head inode_list;
++	struct list_head inode_list, tmp_inode_list;
+ 	struct list_head dir_list;
+ 	int err;
+ 	int ret = 0;
+@@ -659,6 +663,7 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ 	}
+ 
+ 	INIT_LIST_HEAD(&inode_list);
++	INIT_LIST_HEAD(&tmp_inode_list);
+ 	INIT_LIST_HEAD(&dir_list);
+ 
+ 	/* prevent checkpoint */
+@@ -677,11 +682,16 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ 	need_writecp = true;
+ 
+ 	/* step #2: recover data */
+-	err = recover_data(sbi, &inode_list, &dir_list);
++	err = recover_data(sbi, &inode_list, &tmp_inode_list, &dir_list);
+ 	if (!err)
+ 		f2fs_bug_on(sbi, !list_empty(&inode_list));
++	else {
++		/* restore s_flags to let iput() trash data */
++		sbi->sb->s_flags = s_flags;
++	}
+ skip:
+-	destroy_fsync_dnodes(&inode_list);
++	destroy_fsync_dnodes(&inode_list, err);
++	destroy_fsync_dnodes(&tmp_inode_list, err);
+ 
+ 	/* truncate meta pages to be used by the recovery */
+ 	truncate_inode_pages_range(META_MAPPING(sbi),
+@@ -690,13 +700,13 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ 	if (err) {
+ 		truncate_inode_pages_final(NODE_MAPPING(sbi));
+ 		truncate_inode_pages_final(META_MAPPING(sbi));
++	} else {
++		clear_sbi_flag(sbi, SBI_POR_DOING);
+ 	}
+-
+-	clear_sbi_flag(sbi, SBI_POR_DOING);
+ 	mutex_unlock(&sbi->cp_mutex);
+ 
+ 	/* let's drop all the directory inodes for clean checkpoint */
+-	destroy_fsync_dnodes(&dir_list);
++	destroy_fsync_dnodes(&dir_list, err);
+ 
+ 	if (need_writecp) {
+ 		set_sbi_flag(sbi, SBI_IS_RECOVERED);
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index ec50b95c7ea5..442cc9023dfc 100644
+index 442cc9023dfc..08162f39d3f7 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -2328,7 +2328,7 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
- 	unsigned int segment_count_main;
- 	unsigned int cp_pack_start_sum, cp_payload;
- 	block_t user_block_count;
--	int i;
-+	int i, j;
- 
- 	total = le32_to_cpu(raw_super->segment_count);
- 	fsmeta = le32_to_cpu(raw_super->segment_count_ckpt);
-@@ -2369,11 +2369,43 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
- 		if (le32_to_cpu(ckpt->cur_node_segno[i]) >= main_segs ||
- 			le16_to_cpu(ckpt->cur_node_blkoff[i]) >= blocks_per_seg)
- 			return 1;
-+		for (j = i + 1; j < NR_CURSEG_NODE_TYPE; j++) {
-+			if (le32_to_cpu(ckpt->cur_node_segno[i]) ==
-+				le32_to_cpu(ckpt->cur_node_segno[j])) {
-+				f2fs_msg(sbi->sb, KERN_ERR,
-+					"Node segment (%u, %u) has the same "
-+					"segno: %u", i, j,
-+					le32_to_cpu(ckpt->cur_node_segno[i]));
-+				return 1;
-+			}
-+		}
+@@ -1884,6 +1884,19 @@ void f2fs_quota_off_umount(struct super_block *sb)
  	}
- 	for (i = 0; i < NR_CURSEG_DATA_TYPE; i++) {
- 		if (le32_to_cpu(ckpt->cur_data_segno[i]) >= main_segs ||
- 			le16_to_cpu(ckpt->cur_data_blkoff[i]) >= blocks_per_seg)
- 			return 1;
-+		for (j = i + 1; j < NR_CURSEG_DATA_TYPE; j++) {
-+			if (le32_to_cpu(ckpt->cur_data_segno[i]) ==
-+				le32_to_cpu(ckpt->cur_data_segno[j])) {
-+				f2fs_msg(sbi->sb, KERN_ERR,
-+					"Data segment (%u, %u) has the same "
-+					"segno: %u", i, j,
-+					le32_to_cpu(ckpt->cur_data_segno[i]));
-+				return 1;
-+			}
-+		}
+ }
+ 
++static void f2fs_truncate_quota_inode_pages(struct super_block *sb)
++{
++	struct quota_info *dqopt = sb_dqopt(sb);
++	int type;
++
++	for (type = 0; type < MAXQUOTAS; type++) {
++		if (!dqopt->files[type])
++			continue;
++		f2fs_inode_synced(dqopt->files[type]);
 +	}
-+	for (i = 0; i < NR_CURSEG_NODE_TYPE; i++) {
-+		for (j = i; j < NR_CURSEG_DATA_TYPE; j++) {
-+			if (le32_to_cpu(ckpt->cur_node_segno[i]) ==
-+				le32_to_cpu(ckpt->cur_data_segno[j])) {
-+				f2fs_msg(sbi->sb, KERN_ERR,
-+					"Data segment (%u) and Data segment (%u)"
-+					" has the same segno: %u", i, j,
-+					le32_to_cpu(ckpt->cur_node_segno[i]));
-+				return 1;
-+			}
-+		}
- 	}
++}
++
++
+ static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
+ {
+ 	*projid = F2FS_I(inode)->i_projid;
+@@ -3130,10 +3143,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
  
- 	sit_bitmap_size = le32_to_cpu(ckpt->sit_ver_bitmap_bytesize);
+ free_meta:
+ #ifdef CONFIG_QUOTA
++	f2fs_truncate_quota_inode_pages(sb);
+ 	if (f2fs_sb_has_quota_ino(sb) && !f2fs_readonly(sb))
+ 		f2fs_quota_off_umount(sbi->sb);
+ #endif
+-	f2fs_sync_inode_meta(sbi);
+ 	/*
+ 	 * Some dirty meta pages can be produced by f2fs_recover_orphan_inodes()
+ 	 * failed by EIO. Then, iput(node_inode) can trigger balance_fs_bg()
 -- 
 2.19.1
