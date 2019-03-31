@@ -1,29 +1,28 @@
-From: Hagbard Celine <hagbardcelin@gmail.com>
-Subject: Re: BUG: kernel stack overflow when mounting with
- data_flush
-Date: Sat, 30 Mar 2019 19:54:28 +0100
-Message-ID: <CADoWrG9_5izaUMvB0mNLC7yp_Mnnm7yPrqcOvDL2ERR2YrkF2A@mail.gmail.com>
-References: <CADoWrG_NTz29eyaa3fUti2sNBP4xp7-zfhDVkix=Kty4rD=Otw@mail.gmail.com>
- <35b643e5-562c-942d-67ce-4a9dbef66d16@huawei.com>
- <5725124a-95c8-cedb-d3a8-d8be86d260dd@huawei.com>
+From: Peter Wong <peterwong@hsbl.hk>
+Subject: =?cp1252?q?Investicn=ED_pr=EDle=9Eitost?=
+Date: Sun, 31 Mar 2019 19:38:53 +0200 (CEST)
+Message-ID: <11927965.561601.1554053934752.JavaMail.cash@37.220.143.28>
+Reply-To: Peter Wong <pw178483@protonmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="cp1252"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <hagbardcelin@gmail.com>) id 1hAJ7m-0005Vg-QM
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 30 Mar 2019 18:54:38 +0000
-Received: from mail-lj1-f194.google.com ([209.85.208.194])
+ (envelope-from <peterwong@hsbl.hk>) id 1hAeRg-0001Py-NO
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 31 Mar 2019 17:40:36 +0000
+Received: from iroda.hrpartnerconsulting.hu ([37.220.143.28]
+ helo=hrpartnerconsulting.hu)
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1hAJ7k-005tjR-S8
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 30 Mar 2019 18:54:38 +0000
-Received: by mail-lj1-f194.google.com with SMTP id h21so4664176ljk.13
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1hAeRf-0087qs-Bp
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 31 Mar 2019 17:40:36 +0000
+Received: from 192.168.1.163 (217.217.179.17.dyn.user.ono.com [217.217.179.17])
+ (Authenticated sender: info)
+ by hrpartnerconsulting.hu (Postfix) with ESMTPA id 7633127FF35
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 30 Mar 2019 11:54:36 -0700 (PDT)
-In-Reply-To: <5725124a-95c8-cedb-d3a8-d8be86d260dd@huawei.com>
+ Sun, 31 Mar 2019 19:38:56 +0200 (CEST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,34 +32,20 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>, yuchao0@huawei.com
+To: linux-f2fs-devel@lists.sourceforge.net
 
-First, yes it is caused by data_flush, this is what I am trying to
-report. Without that option there is no "stack guard page was hit" and
-no "kernel stack overflow" and kernel is stable.
-This time I was using kernel 5.0.3, as can be seen in the log in my first mail.
-I do not remember exactly what kernel version I tried the first time a
-saw this bug, but I believe the mount option data_flush was just added
-when I tried it the first time. The option has always lead to crash
-here.
-
-2019-03-30 8:29 GMT+01:00, Chao Yu <yuchao0@huawei.com>:
-> Oh, sorry, it's quite possible that bug is caused by data_flush, could
-> remove that mount option first?
->
-> Thanks,
->
-> On 2019/3/30 11:25, Chao Yu wrote:
->> Hi Hagbard,
->>
->> Sorry for the delay.
->>
->> On 2019/3/27 21:59, Hagbard Celine wrote:
->>> Hi, this is a long standing bug that I've hit before on older kernels,
->>> but I was not able to get the syslog saved because of the nature of
->>> the bug. This time I had booted form a pen-drive, and was able to save
->>> the log to it's efi-partition.
->>
->> Now which version of kernel do you use? and do you remember what is your
->> kernel version when this bug occured at first time?
->>
+WmRyYXbtbSwKCk9ic2FoIHTpdG8gcG9zdHkgamUgdmVsbWkgZHV2ZXJu/SBhIGxlZ+Fsbu0uIEpt
+ZW51amkgc2UgUGV0ZXIgV29uZywgcHJhY3VqaSBzIGJhbmtvdSB0YWR5IHYgSG9uZyBLb25ndS4g
+Um96aG9kbCBqc2VtIHNlIHbhcyBrb250YWt0b3ZhdCBwcm8gbW96bm9zdCAKaW52ZXN0b3ZhdCBk
+byBsdWtyYXRpdm7taG8gcG9kbmlr4W7tIHZlIHZhP+0gemVtaS4gSnNlbSBvY2hvdGVuIFbhbSBu
+YWLtZG5vdXQgNDAlIGludmVzdGljbu1obyB6aXNrdSBqYWtvIG11aiBvYmNob2Ru7SBwYXJ0bmVy
+LgoKTmFzZSBiYW5rYSBuYWLteu0gcnljaGz9IPp2ZXIgcyBu7Xprb3Ug+nJva292b3Ugc2F6Ym91
+IGJleiBwbz9hZG92YW7paG8gemFqaXN0ZW7tLiBQb2t1ZCBt4XRlIHrhamVtLCBvZHBvdmV6dGUg
+cHJvc+1tIG5hIHbtY2UgaW5mb3JtYWPtIG5hIG3pbSAKc291a3JvbeltIGUtbWFpbHU6IHB3MTc4
+NDg0QGdtYWlsLmNvbQoKUyBwb3pkcmF2ZW06IFBldGVyIFdvbmcKCgoKCi0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KVGhpcyBlbWFpbCB3YXMgc2Vu
+dCBieSB0aGUgc2hhcmV3YXJlIHZlcnNpb24gb2YgUG9zdG1hbiBQcm9mZXNzaW9uYWwuCgoKCl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMt
+ZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0
+Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMt
+ZGV2ZWwK
