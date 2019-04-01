@@ -1,24 +1,25 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 3/4 v2] f2fs-tools: Improve zoned model check
-Date: Mon, 1 Apr 2019 20:10:56 +0800
-Message-ID: <b09747c2-7ac7-d8bb-db0a-59fe65718511@huawei.com>
+Subject: Re: [PATCH 4/4 v2] f2fs-tools: Fix multi-device format
+ with zoned devices
+Date: Mon, 1 Apr 2019 20:13:09 +0800
+Message-ID: <7a1a6586-54fa-a6aa-b439-9fd22856599a@huawei.com>
 References: <20190327075410.15784-1-damien.lemoal@wdc.com>
- <20190327075410.15784-4-damien.lemoal@wdc.com>
+ <20190327075410.15784-5-damien.lemoal@wdc.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hAvmO-0001rB-3K
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Apr 2019 12:11:08 +0000
-Received: from szxga02-in.huawei.com ([45.249.212.188] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1hAvoV-0002KE-Js
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Apr 2019 12:13:19 +0000
+Received: from szxga01-in.huawei.com ([45.249.212.187] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hAvmM-00A12D-3q
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Apr 2019 12:11:08 +0000
-In-Reply-To: <20190327075410.15784-4-damien.lemoal@wdc.com>
+ id 1hAvoU-006kMr-Dp
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Apr 2019 12:13:19 +0000
+In-Reply-To: <20190327075410.15784-5-damien.lemoal@wdc.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -32,123 +33,13 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Damien Le Moal <damien.lemoal@wdc.com>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
 On 2019/3/27 15:54, Damien Le Moal wrote:
-> Return an error if an unknown zoned model is reported for a device or
-> if parsing of the device zoned model fails. Also add comments to
-> briefly explain the zone models and what to do in the absence of a
-> kernel reported zoned model for a device.
+> There is no need to require conventional zones for a zoned block device
+> that is not the first device of a multi-device volume. As a result,
+> there is no need to check the number of conventional zones of the
+> device if the device index is not 0.
 > 
 > Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-> ---
->  include/f2fs_fs.h   |  2 +-
->  lib/libf2fs.c       |  8 ++++++--
->  lib/libf2fs_zoned.c | 38 ++++++++++++++++++++++++++------------
->  3 files changed, 33 insertions(+), 15 deletions(-)
-> 
-> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-> index e073723..97ad774 100644
-> --- a/include/f2fs_fs.h
-> +++ b/include/f2fs_fs.h
-> @@ -1257,7 +1257,7 @@ blk_zone_cond_str(struct blk_zone *blkz)
->  
->  #endif
->  
-> -extern void f2fs_get_zoned_model(int);
-> +extern int f2fs_get_zoned_model(int);
->  extern int f2fs_get_zone_blocks(int);
->  extern int f2fs_check_zones(int);
->  extern int f2fs_reset_zones(int);
-> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-> index 60b84e0..5ca1bb0 100644
-> --- a/lib/libf2fs.c
-> +++ b/lib/libf2fs.c
-> @@ -925,8 +925,12 @@ int get_device_info(int i)
->  	}
->  
->  #if !defined(WITH_ANDROID) && defined(__linux__)
-> -	if (S_ISBLK(stat_buf->st_mode))
-> -		f2fs_get_zoned_model(i);
-> +	if (S_ISBLK(stat_buf->st_mode)) {
-> +		if (f2fs_get_zoned_model(i) < 0) {
-> +			free(stat_buf);
-> +			return -1;
-> +                }
-
-Needs tabs here...
-
-Otherwise it looks good to me.
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
-
-> +	}
->  
->  	if (dev->zoned_model != F2FS_ZONED_NONE) {
->  		if (dev->zoned_model == F2FS_ZONED_HM)
-> diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
-> index 6e32f32..e396a95 100644
-> --- a/lib/libf2fs_zoned.c
-> +++ b/lib/libf2fs_zoned.c
-> @@ -24,7 +24,7 @@
->  
->  #ifdef HAVE_LINUX_BLKZONED_H
->  
-> -void f2fs_get_zoned_model(int i)
-> +int f2fs_get_zoned_model(int i)
->  {
->  	struct device_info *dev = c.devices + i;
->  	char str[128];
-> @@ -36,27 +36,41 @@ void f2fs_get_zoned_model(int i)
->  		 "/sys/block/%s/queue/zoned",
->  		 basename(dev->path));
->  	file = fopen(str, "r");
-> -	if (!file)
-> -		goto not_zoned;
-> +	if (!file) {
-> +		/*
-> +		 * The kernel does not support zoned block devices, but we have
-> +		 * a block device file. This means that the device is not zoned
-> +		 * or is zoned but can be randomly written (i.e. host-aware
-> +		 * zoned model). Treat the device as a regular block device.
-> +		 */
-> +		dev->zoned_model = F2FS_ZONED_NONE;
-> +		return 0;
-> +	}
->  
->  	memset(str, 0, sizeof(str));
->  	res = fscanf(file, "%s", str);
->  	fclose(file);
->  
-> -	if (res != 1)
-> -		goto not_zoned;
-> +	if (res != 1) {
-> +		MSG(0, "\tError: Failed to parse the device zoned model\n");
-> +		return -1;
-> +	}
->  
-> -	if (strcmp(str, "host-aware") == 0) {
-> +	if (strcmp(str, "none") == 0) {
-> +		/* Regular block device */
-> +		dev->zoned_model = F2FS_ZONED_NONE;
-> +	} else if (strcmp(str, "host-aware") == 0) {
-> +		/* Host-aware zoned block device: can be randomly written */
->  		dev->zoned_model = F2FS_ZONED_HA;
-> -		return;
-> -	}
-> -	if (strcmp(str, "host-managed") == 0) {
-> +	} else if (strcmp(str, "host-managed") == 0) {
-> +		/* Host-managed zoned block device: sequential writes needed */
->  		dev->zoned_model = F2FS_ZONED_HM;
-> -		return;
-> +	} else {
-> +		MSG(0, "\tError: Unsupported device zoned model\n");
-> +		return -1;
->  	}
->  
-> -not_zoned:
-> -	dev->zoned_model = F2FS_ZONED_NONE;
-> +	return 0;
->  }
->  
->  int f2fs_get_zone_blocks(int i)
-> 
