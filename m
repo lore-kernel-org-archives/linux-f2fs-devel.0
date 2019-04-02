@@ -1,7 +1,7 @@
 From: Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v4 07/17] fs/dcache.c: add shrink_dcache_inode()
-Date: Tue,  2 Apr 2019 08:45:50 -0700
-Message-ID: <20190402154600.32432-8-ebiggers@kernel.org>
+Subject: [PATCH v4 04/17] fscrypt: add ->ci_inode to fscrypt_info
+Date: Tue,  2 Apr 2019 08:45:47 -0700
+Message-ID: <20190402154600.32432-5-ebiggers@kernel.org>
 References: <20190402154600.32432-1-ebiggers@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,13 +10,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hBLea-0003Wh-J9
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 02 Apr 2019 15:48:48 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1hBLeS-0003Vw-Vo
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 02 Apr 2019 15:48:40 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hBLeY-009vig-Ca
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 02 Apr 2019 15:48:48 +0000
+ id 1hBLeQ-00Cb1Y-OG
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 02 Apr 2019 15:48:40 +0000
 In-Reply-To: <20190402154600.32432-1-ebiggers@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -32,78 +32,52 @@ Cc: Satya Tangirala <satyat@google.com>, linux-api@vger.kernel.org, linux-f2fs-d
 
 From: Eric Biggers <ebiggers@google.com>
 
-When a filesystem encryption key is removed, we need all files which had
-been "unlocked" (had ->i_crypt_info set up) with it to appear "locked"
-again.  This is most easily done by evicting the inodes.  This can
-currently be done using 'echo 2 > /proc/sys/vm/drop_caches'; however,
-that is overkill and not usable by non-root users.
+Add an inode back-pointer to 'struct fscrypt_info', such that
+inode->i_crypt_info->ci_inode == inode.
 
-To evict just the needed inodes we also need the ability to evict those
-inodes' dentries, since an inode is pinned by its dentries.  Therefore,
-add a function shrink_dcache_inode() which iterates through an inode's
-dentries and evicts any unused ones as well as any unused descendants
-(since there may be negative dentries pinning the inode's dentries).
+This will be useful for:
+
+1. Evicting the inodes when a fscrypt key is removed, since we'll track
+   the inodes using a given key by linking their fscrypt_infos together,
+   rather than the inodes directly.  This avoids bloating 'struct inode'
+   with a new list_head.
+
+2. Simplifying the per-file key setup, since the inode pointer won't
+   have to be passed around everywhere just in case something goes wrong
+   and it's needed for fscrypt_warn().
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/dcache.c            | 32 ++++++++++++++++++++++++++++++++
- include/linux/dcache.h |  1 +
- 2 files changed, 33 insertions(+)
+ fs/crypto/fscrypt_private.h | 3 +++
+ fs/crypto/keyinfo.c         | 2 ++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index aac41adf47433..1d940484c2d17 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1507,6 +1507,38 @@ void shrink_dcache_parent(struct dentry *parent)
- }
- EXPORT_SYMBOL(shrink_dcache_parent);
+diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
+index 52e09ef40bfa6..ac24edfc297f1 100644
+--- a/fs/crypto/fscrypt_private.h
++++ b/fs/crypto/fscrypt_private.h
+@@ -73,6 +73,9 @@ struct fscrypt_info {
+ 	 */
+ 	struct fscrypt_mode *ci_mode;
  
-+/**
-+ * shrink_dcache_inode - prune dcache for inode
-+ * @inode: inode to prune
-+ *
-+ * Evict all unused aliases of the specified inode from the dcache.  This is
-+ * intended to be used when trying to evict a specific inode, since inodes are
-+ * pinned by their dentries.  We also have to descend to ->d_subdirs for each
-+ * alias, since aliases may be pinned by negative child dentries.
-+ */
-+void shrink_dcache_inode(struct inode *inode)
-+{
-+	for (;;) {
-+		struct select_data data;
-+		struct dentry *dentry;
++	/* Back-pointer to the inode */
++	struct inode *ci_inode;
 +
-+		INIT_LIST_HEAD(&data.dispose);
-+		data.start = NULL;
-+		data.found = 0;
-+
-+		spin_lock(&inode->i_lock);
-+		hlist_for_each_entry(dentry, &inode->i_dentry, d_u.d_alias)
-+			d_walk(dentry, &data, select_collect);
-+		spin_unlock(&inode->i_lock);
-+
-+		if (!data.found)
-+			break;
-+
-+		shrink_dentry_list(&data.dispose);
-+		cond_resched();
-+	}
-+}
-+
- static enum d_walk_ret umount_check(void *_data, struct dentry *dentry)
- {
- 	/* it has busy descendents; complain about those instead */
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index 60996e64c5798..1b5f295dc1156 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -246,6 +246,7 @@ extern struct dentry * d_obtain_alias(struct inode *);
- extern struct dentry * d_obtain_root(struct inode *);
- extern void shrink_dcache_sb(struct super_block *);
- extern void shrink_dcache_parent(struct dentry *);
-+extern void shrink_dcache_inode(struct inode *);
- extern void shrink_dcache_for_umount(struct super_block *);
- extern void d_invalidate(struct dentry *);
+ 	/*
+ 	 * If non-NULL, then this inode uses a master key directly rather than a
+ 	 * derived key, and ci_ctfm will equal ci_master_key->mk_ctfm.
+diff --git a/fs/crypto/keyinfo.c b/fs/crypto/keyinfo.c
+index 058e2e0fda430..148a54fb556a6 100644
+--- a/fs/crypto/keyinfo.c
++++ b/fs/crypto/keyinfo.c
+@@ -542,6 +542,8 @@ int fscrypt_get_encryption_info(struct inode *inode)
+ 	if (!crypt_info)
+ 		return -ENOMEM;
  
++	crypt_info->ci_inode = inode;
++
+ 	crypt_info->ci_flags = ctx.flags;
+ 	crypt_info->ci_data_mode = ctx.contents_encryption_mode;
+ 	crypt_info->ci_filename_mode = ctx.filenames_encryption_mode;
 -- 
 2.21.0
