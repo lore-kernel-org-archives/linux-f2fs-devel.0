@@ -1,22 +1,22 @@
 From: Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v4 14/17] ext4: wire up new fscrypt ioctls
-Date: Tue,  2 Apr 2019 08:45:57 -0700
-Message-ID: <20190402154600.32432-15-ebiggers@kernel.org>
+Subject: [PATCH v4 16/17] ubifs: wire up new fscrypt ioctls
+Date: Tue,  2 Apr 2019 08:45:59 -0700
+Message-ID: <20190402154600.32432-17-ebiggers@kernel.org>
 References: <20190402154600.32432-1-ebiggers@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hBLea-0005bN-I0
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 02 Apr 2019 15:48:48 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1hBLef-0001uu-5Q
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 02 Apr 2019 15:48:53 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hBLeZ-009vix-8P
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 02 Apr 2019 15:48:48 +0000
+ id 1hBLed-00Cb3j-SK
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 02 Apr 2019 15:48:52 +0000
 In-Reply-To: <20190402154600.32432-1-ebiggers@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -35,7 +35,7 @@ From: Eric Biggers <ebiggers@google.com>
 Wire up the new ioctls for adding and removing fscrypt keys to/from the
 filesystem, and the new ioctl for retrieving v2 encryption policies.
 
-FS_IOC_REMOVE_ENCRYPTION_KEY also required making ext4_drop_inode() call
+FS_IOC_REMOVE_ENCRYPTION_KEY also required making UBIFS use
 fscrypt_drop_inode().
 
 For more details see Documentation/filesystems/fscrypt.rst, as well as
@@ -43,65 +43,80 @@ the fscrypt patches that added the implementation of these ioctls.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/ext4/ioctl.c | 24 ++++++++++++++++++++++++
- fs/ext4/super.c |  3 +++
- 2 files changed, 27 insertions(+)
+ fs/ubifs/ioctl.c | 23 +++++++++++++++++------
+ fs/ubifs/super.c | 11 +++++++++++
+ 2 files changed, 28 insertions(+), 6 deletions(-)
 
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index bab3da4f1e0d3..3ed66628e9301 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -1074,6 +1074,26 @@ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	case EXT4_IOC_GET_ENCRYPTION_POLICY:
- 		return fscrypt_ioctl_get_policy(filp, (void __user *)arg);
+diff --git a/fs/ubifs/ioctl.c b/fs/ubifs/ioctl.c
+index 82e4e6a30b044..3c640a7e937f4 100644
+--- a/fs/ubifs/ioctl.c
++++ b/fs/ubifs/ioctl.c
+@@ -205,13 +205,20 @@ long ubifs_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		return -EOPNOTSUPP;
+ #endif
+ 	}
+-	case FS_IOC_GET_ENCRYPTION_POLICY: {
+-#ifdef CONFIG_FS_ENCRYPTION
++	case FS_IOC_GET_ENCRYPTION_POLICY:
+ 		return fscrypt_ioctl_get_policy(file, (void __user *)arg);
+-#else
+-		return -EOPNOTSUPP;
+-#endif
+-	}
++
++	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
++		return fscrypt_ioctl_get_policy_ex(file, (void __user *)arg);
++
++	case FS_IOC_ADD_ENCRYPTION_KEY:
++		return fscrypt_ioctl_add_key(file, (void __user *)arg);
++
++	case FS_IOC_REMOVE_ENCRYPTION_KEY:
++		return fscrypt_ioctl_remove_key(file, (const void __user *)arg);
++
++	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
++		return fscrypt_ioctl_get_key_status(file, (void __user *)arg);
  
-+	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
-+		if (!ext4_has_feature_encrypt(sb))
-+			return -EOPNOTSUPP;
-+		return fscrypt_ioctl_get_policy_ex(filp, (void __user *)arg);
-+
-+	case FS_IOC_ADD_ENCRYPTION_KEY:
-+		if (!ext4_has_feature_encrypt(sb))
-+			return -EOPNOTSUPP;
-+		return fscrypt_ioctl_add_key(filp, (void __user *)arg);
-+
-+	case FS_IOC_REMOVE_ENCRYPTION_KEY:
-+		if (!ext4_has_feature_encrypt(sb))
-+			return -EOPNOTSUPP;
-+		return fscrypt_ioctl_remove_key(filp, (const void __user *)arg);
-+
-+	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
-+		if (!ext4_has_feature_encrypt(sb))
-+			return -EOPNOTSUPP;
-+		return fscrypt_ioctl_get_key_status(filp, (void __user *)arg);
-+
- 	case EXT4_IOC_FSGETXATTR:
- 	{
- 		struct fsxattr fa;
-@@ -1192,6 +1212,10 @@ long ext4_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case EXT4_IOC_SET_ENCRYPTION_POLICY:
- 	case EXT4_IOC_GET_ENCRYPTION_PWSALT:
- 	case EXT4_IOC_GET_ENCRYPTION_POLICY:
-+	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
-+	case FS_IOC_ADD_ENCRYPTION_KEY:
-+	case FS_IOC_REMOVE_ENCRYPTION_KEY:
-+	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
- 	case EXT4_IOC_SHUTDOWN:
- 	case FS_IOC_GETFSMAP:
+ 	default:
+ 		return -ENOTTY;
+@@ -230,6 +237,10 @@ long ubifs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
  		break;
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 6ed4eb81e6743..624543a3f4d3e 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1103,6 +1103,9 @@ static int ext4_drop_inode(struct inode *inode)
- {
- 	int drop = generic_drop_inode(inode);
+ 	case FS_IOC_SET_ENCRYPTION_POLICY:
+ 	case FS_IOC_GET_ENCRYPTION_POLICY:
++	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
++	case FS_IOC_ADD_ENCRYPTION_KEY:
++	case FS_IOC_REMOVE_ENCRYPTION_KEY:
++	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
+ 		break;
+ 	default:
+ 		return -ENOIOCTLCMD;
+diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
+index 8dc2818fdd849..cd4a3e2be2043 100644
+--- a/fs/ubifs/super.c
++++ b/fs/ubifs/super.c
+@@ -334,6 +334,16 @@ static int ubifs_write_inode(struct inode *inode, struct writeback_control *wbc)
+ 	return err;
+ }
  
++static int ubifs_drop_inode(struct inode *inode)
++{
++	int drop = generic_drop_inode(inode);
++
 +	if (!drop)
 +		drop = fscrypt_drop_inode(inode);
 +
- 	trace_ext4_drop_inode(inode, drop);
- 	return drop;
- }
++	return drop;
++}
++
+ static void ubifs_evict_inode(struct inode *inode)
+ {
+ 	int err;
+@@ -1982,6 +1992,7 @@ const struct super_operations ubifs_super_operations = {
+ 	.destroy_inode = ubifs_destroy_inode,
+ 	.put_super     = ubifs_put_super,
+ 	.write_inode   = ubifs_write_inode,
++	.drop_inode    = ubifs_drop_inode,
+ 	.evict_inode   = ubifs_evict_inode,
+ 	.statfs        = ubifs_statfs,
+ 	.dirty_inode   = ubifs_dirty_inode,
 -- 
 2.21.0
