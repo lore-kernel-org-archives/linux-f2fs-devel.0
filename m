@@ -1,28 +1,28 @@
 From: bugzilla-daemon@bugzilla.kernel.org
 Subject: [Bug 203165] Kernel panic - not syncing: corrupted stack
  end detected inside scheduler
-Date: Fri, 05 Apr 2019 23:11:00 +0000
-Message-ID: <bug-203165-202145-sqUxLJ9uQI@https.bugzilla.kernel.org/>
+Date: Fri, 05 Apr 2019 23:11:16 +0000
+Message-ID: <bug-203165-202145-chAhOrCJ8j@https.bugzilla.kernel.org/>
 References: <bug-203165-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1hCXzJ-0004R4-3e
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 05 Apr 2019 23:11:09 +0000
+ id 1hCXzX-00037e-Md
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 05 Apr 2019 23:11:23 +0000
 Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hCXzH-003X8d-CX
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 05 Apr 2019 23:11:09 +0000
+ id 1hCXzW-003XA2-Ao
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 05 Apr 2019 23:11:23 +0000
 Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 6D39028B35
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id A2EB528A54
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri,  5 Apr 2019 23:11:01 +0000 (UTC)
+ Fri,  5 Apr 2019 23:11:16 +0000 (UTC)
 In-Reply-To: <bug-203165-202145@https.bugzilla.kernel.org/>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -37,10 +37,10 @@ To: linux-f2fs-devel@lists.sourceforge.net
 
 https://bugzilla.kernel.org/show_bug.cgi?id=203165
 
---- Comment #1 from Jungyeon (jungyeon@gatech.edu) ---
-Created attachment 282149
-  --> https://bugzilla.kernel.org/attachment.cgi?id=282149&action=edit
-The (compressed) crafted image which causes crash
+--- Comment #2 from Jungyeon (jungyeon@gatech.edu) ---
+Created attachment 282151
+  --> https://bugzilla.kernel.org/attachment.cgi?id=282151&action=edit
+poc_02.c
 
 -- 
 You are receiving this mail because:
