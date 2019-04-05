@@ -1,24 +1,27 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/5] f2fs: clean up codes with op_is_write()
-Date: Fri, 5 Apr 2019 09:31:37 -0700
-Message-ID: <20190405163137.GC51212@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190402105222.28374-1-yuchao0@huawei.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 203163] New: RIP: 0010:update_sit_entry+0x50/0x420
+ when mounting crafted image
+Date: Fri, 05 Apr 2019 22:59:51 +0000
+Message-ID: <bug-203163-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1hCRkn-0000St-H7
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 05 Apr 2019 16:31:45 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
+ id 1hCXob-00088m-OH
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 05 Apr 2019 23:00:05 +0000
+Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hCRkm-002KMx-7O
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 05 Apr 2019 16:31:45 +0000
-Content-Disposition: inline
-In-Reply-To: <20190402105222.28374-1-yuchao0@huawei.com>
+ id 1hCXoU-000oxW-9W
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 05 Apr 2019 23:00:05 +0000
+Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id B067E26E56
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri,  5 Apr 2019 22:59:52 +0000 (UTC)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,120 +31,117 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-On 04/02, Chao Yu wrote:
-> This patch uses generic function op_is_write() to instead private defined
-> macro is_read_io() for cleanup.
-
-I don't see huge reason to clean up this, but do expect huge backporting issue.
-
-Thanks,
-
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/data.c | 25 +++++++++++++------------
->  fs/f2fs/f2fs.h |  3 +--
->  2 files changed, 14 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index d87dfa5aa112..22beda1a0c3c 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -287,7 +287,7 @@ static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
->  static inline void __submit_bio(struct f2fs_sb_info *sbi,
->  				struct bio *bio, enum page_type type)
->  {
-> -	if (!is_read_io(bio_op(bio))) {
-> +	if (op_is_write(bio_op(bio))) {
->  		unsigned int start;
->  
->  		if (type != DATA && type != NODE)
-> @@ -324,10 +324,11 @@ static inline void __submit_bio(struct f2fs_sb_info *sbi,
->  			set_sbi_flag(sbi, SBI_NEED_CP);
->  	}
->  submit_io:
-> -	if (is_read_io(bio_op(bio)))
-> -		trace_f2fs_submit_read_bio(sbi->sb, type, bio);
-> -	else
-> +	if (op_is_write(bio_op(bio)))
->  		trace_f2fs_submit_write_bio(sbi->sb, type, bio);
-> +	else
-> +		trace_f2fs_submit_read_bio(sbi->sb, type, bio);
-> +
->  	submit_bio(bio);
->  }
->  
-> @@ -340,10 +341,10 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
->  
->  	bio_set_op_attrs(io->bio, fio->op, fio->op_flags);
->  
-> -	if (is_read_io(fio->op))
-> -		trace_f2fs_prepare_read_bio(io->sbi->sb, fio->type, io->bio);
-> -	else
-> +	if (op_is_write(fio->op))
->  		trace_f2fs_prepare_write_bio(io->sbi->sb, fio->type, io->bio);
-> +	else
-> +		trace_f2fs_prepare_read_bio(io->sbi->sb, fio->type, io->bio);
->  
->  	__submit_bio(io->sbi, io->bio, fio->type);
->  	io->bio = NULL;
-> @@ -464,20 +465,20 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
->  
->  	/* Allocate a new bio */
->  	bio = __bio_alloc(fio->sbi, fio->new_blkaddr, fio->io_wbc,
-> -				1, is_read_io(fio->op), fio->type, fio->temp);
-> +				1, !op_is_write(fio->op), fio->type, fio->temp);
->  
->  	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
->  		bio_put(bio);
->  		return -EFAULT;
->  	}
->  
-> -	if (fio->io_wbc && !is_read_io(fio->op))
-> +	if (fio->io_wbc && op_is_write(fio->op))
->  		wbc_account_io(fio->io_wbc, page, PAGE_SIZE);
->  
->  	bio_set_op_attrs(bio, fio->op, fio->op_flags);
->  
-> -	inc_page_count(fio->sbi, is_read_io(fio->op) ?
-> -			__read_io_type(page): WB_DATA_TYPE(fio->page));
-> +	inc_page_count(fio->sbi, op_is_write(fio->op) ?
-> +			WB_DATA_TYPE(fio->page) : __read_io_type(page));
->  
->  	__submit_bio(fio->sbi, bio, fio->type);
->  	return 0;
-> @@ -490,7 +491,7 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
->  	struct f2fs_bio_info *io = sbi->write_io[btype] + fio->temp;
->  	struct page *bio_page;
->  
-> -	f2fs_bug_on(sbi, is_read_io(fio->op));
-> +	f2fs_bug_on(sbi, !op_is_write(fio->op));
->  
->  	down_write(&io->io_rwsem);
->  next:
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 5bc7b99fb9c1..24e7f0e6aab7 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1048,7 +1048,6 @@ struct f2fs_io_info {
->  	unsigned char version;		/* version of the node */
->  };
->  
-> -#define is_read_io(rw) ((rw) == READ)
->  struct f2fs_bio_info {
->  	struct f2fs_sb_info *sbi;	/* f2fs superblock */
->  	struct bio *bio;		/* bios to merge */
-> @@ -2813,7 +2812,7 @@ static inline void f2fs_update_iostat(struct f2fs_sb_info *sbi,
->  #define __is_large_section(sbi)		((sbi)->segs_per_sec > 1)
->  
->  #define __is_meta_io(fio) (PAGE_TYPE_OF_BIO((fio)->type) == META &&	\
-> -				(!is_read_io((fio)->op) || (fio)->is_meta))
-> +				(op_is_write((fio)->op) || (fio)->is_meta))
->  
->  bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
->  					block_t blkaddr, int type);
-> -- 
-> 2.18.0.rc1
+aHR0cHM6Ly9idWd6aWxsYS5rZXJuZWwub3JnL3Nob3dfYnVnLmNnaT9pZD0yMDMxNjMKCiAgICAg
+ICAgICAgIEJ1ZyBJRDogMjAzMTYzCiAgICAgICAgICAgU3VtbWFyeTogUklQOiAwMDEwOnVwZGF0
+ZV9zaXRfZW50cnkrMHg1MC8weDQyMCB3aGVuIG1vdW50aW5nCiAgICAgICAgICAgICAgICAgICAg
+Y3JhZnRlZCBpbWFnZQogICAgICAgICAgIFByb2R1Y3Q6IEZpbGUgU3lzdGVtCiAgICAgICAgICAg
+VmVyc2lvbjogMi41CiAgICBLZXJuZWwgVmVyc2lvbjogNS4wLjAKICAgICAgICAgIEhhcmR3YXJl
+OiBBbGwKICAgICAgICAgICAgICAgIE9TOiBMaW51eAogICAgICAgICAgICAgIFRyZWU6IE1haW5s
+aW5lCiAgICAgICAgICAgIFN0YXR1czogTkVXCiAgICAgICAgICBTZXZlcml0eTogbm9ybWFsCiAg
+ICAgICAgICBQcmlvcml0eTogUDEKICAgICAgICAgQ29tcG9uZW50OiBmMmZzCiAgICAgICAgICBB
+c3NpZ25lZTogZmlsZXN5c3RlbV9mMmZzQGtlcm5lbC1idWdzLmtlcm5lbC5vcmcKICAgICAgICAg
+IFJlcG9ydGVyOiBqdW5neWVvbkBnYXRlY2guZWR1CiAgICAgICAgUmVncmVzc2lvbjogTm8KCkNy
+ZWF0ZWQgYXR0YWNobWVudCAyODIxNDcKICAtLT4gaHR0cHM6Ly9idWd6aWxsYS5rZXJuZWwub3Jn
+L2F0dGFjaG1lbnQuY2dpP2lkPTI4MjE0NyZhY3Rpb249ZWRpdApUaGUgKGNvbXByZXNzZWQpIGNy
+YWZ0ZWQgaW1hZ2Ugd2hpY2ggY2F1c2VzIGNyYXNoCgotIE92ZXJ2aWV3CldoZW4gbW91bnRpbmcg
+YXR0YWNoZWQgY3JhZnRlZCBpbWFnZSAsIEkgZ290IGtlcm5lbCByZWFkIGZhdWx0LgoKLSBQcm9k
+dWNlcwpta2RpciB0ZXN0Cm1vdW50IC10IGYyZnMgdG1wLmltZyB0ZXN0CgotIE1lc3NhZ2VzClsg
+MzEuNjQ2MDIxXSBGMkZTLWZzIChzZGIpOiBDYW4ndCBmaW5kIHZhbGlkIEYyRlMgZmlsZXN5c3Rl
+bSBpbiAydGggc3VwZXJibG9jawpbIDMxLjY1NTEyMF0gRjJGUy1mcyAoc2RiKTogaW52YWxpZCBi
+bGthZGRyOiAxNCwgdHlwZTogNiwgcnVuIGZzY2sgdG8gZml4LgpbIDMxLjY1ODgzNF0gRjJGUy1m
+cyAoc2RiKTogaW52YWxpZCBibGthZGRyOiAxNCwgdHlwZTogNiwgcnVuIGZzY2sgdG8gZml4Lgpb
+IDMxLjY1OTkwOF0gQlVHOiB1bmFibGUgdG8gaGFuZGxlIGtlcm5lbCBwYWdpbmcgcmVxdWVzdCBh
+dCBmZmZmYTA3ZDQ4ZGQxMmMwClsgMzEuNjYwOTMxXSAjUEYgZXJyb3I6IFtub3JtYWwga2VybmVs
+IHJlYWQgZmF1bHRdClsgMzEuNjYxNjE0XSBQR0QgMWUzYzAxMDY3IFA0RCAxZTNjMDEwNjcgUFVE
+IDAgClsgMzEuNjYyMjU4XSBPb3BzOiAwMDAwIFsjMV0gU01QIFBUSQpbIDMxLjY2Mjc3MV0gQ1BV
+OiAwIFBJRDogMTAyMyBDb21tOiBtb3VudCBUYWludGVkOiBHIFcgNS4wLjAgIzMKWyAzMS42NjM3
+OTNdIEhhcmR3YXJlIG5hbWU6IFFFTVUgU3RhbmRhcmQgUEMgKGk0NDBGWCArIFBJSVgsIDE5OTYp
+LCBCSU9TClVidW50dS0xLjguMi0xdWJ1bnR1MSAwNC8wMS8yMDE0ClsgMzEuNjY1MTI5XSBSSVA6
+IDAwMTA6dXBkYXRlX3NpdF9lbnRyeSsweDUwLzB4NDIwClsgMzEuNjY1ODAyXSBDb2RlOiA4NiBj
+ZSAwMSAwMCAwMCA0OCA4YiBiZiA4OCAwMCAwMCAwMCA0MSBiZSBmZiBmZiBmZiBmZiA0OCBiYgpk
+OCBmZiBmZiBmZiAyNyAwMCAwMCAwMCBjNyA0NSBjOCBmZiBmZiBmZiBmZiA0OCA4YiAwNyA0OCAw
+MyA1OCA2OCA8MGY+IGI3IDMzIDY2CmMxIGVlIDA2IDBmIGI3IGY2IDQ0IDAxIGZlIDQ4IDg1IGZm
+IDQ4IDYzIGQ2IDBmIDg0IDAzClsgMzEuNjY4NDQwXSBSU1A6IDAwMTg6ZmZmZmI5NTg4MTBiYjlj
+OCBFRkxBR1M6IDAwMDEwMjg2ClsgMzEuNjY5MTg4XSBSQVg6IGZmZmZhMDdkMmIwYzE3ODAgUkJY
+OiBmZmZmYTA3ZDQ4ZGQxMmMwIFJDWDogMDAwMDAwMDAwMDAwMDAwOQpbIDMxLjY3MDIwMV0gUkRY
+OiAwMDAwMDAwMDAwMDAwMDAwIFJTSTogZmZmZmEwN2QzN2ExNjNhOCBSREk6IGZmZmZhMDdkMmIw
+YzEyNDAKWyAzMS42NzEyMTddIFJCUDogZmZmZmI5NTg4MTBiYmEwMCBSMDg6IDAwMDAwMDAwMDAw
+MDAwMDEgUjA5OiAwMDAwMDAwMDAwMDAwMDBlClsgMzEuNjcyMjMwXSBSMTA6IGZmZmZiOTU4ODEw
+OGI4OTggUjExOiBmZmZmYjk1ODgxMGJiN2JkIFIxMjogZmZmZmEwN2QzNTY0NDAwMApbIDMxLjY3
+MzI0NV0gUjEzOiAwMDAwMDAwMDAwN2ZmZmY4IFIxNDogMDAwMDAwMDAwMDdmZmZmOCBSMTU6IDAw
+MDAwMDAwZmZmZmZmZmYKWyAzMS42NzQyNTldIEZTOiAwMDAwN2YwODYxNGMwODQwKDAwMDApIEdT
+OmZmZmZhMDdkMzdhMDAwMDAoMDAwMCkKa25sR1M6MDAwMDAwMDAwMDAwMDAwMApbIDMxLjY3NTQx
+Ml0gQ1M6IDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUwMDMzClsgMzEu
+Njc2MjMxXSBDUjI6IGZmZmZhMDdkNDhkZDEyYzAgQ1IzOiAwMDAwMDAwMjMyNzU0MDAzIENSNDog
+MDAwMDAwMDAwMDE2MDZmMApbIDMxLjY3NzI0Nl0gQ2FsbCBUcmFjZToKWyAzMS42Nzc2MDddIGYy
+ZnNfZG9fcmVwbGFjZV9ibG9jaysweDFjMS8weDUxMApbIDMxLjY3ODI0N10gZjJmc19yZXBsYWNl
+X2Jsb2NrKzB4NGIvMHg4MApbIDMxLjY3ODgzOF0gcmVjb3Zlcl9kYXRhKzB4YWM5LzB4MWM5MApb
+IDMxLjY3OTM4M10gZjJmc19yZWNvdmVyX2ZzeW5jX2RhdGErMHg2OGYvMHg4MDAKWyAzMS42ODAw
+NDddID8gcHJvY19jcmVhdGVfc2luZ2xlX2RhdGErMHg0MS8weDUwClsgMzEuNjgwNzA4XSBmMmZz
+X2ZpbGxfc3VwZXIrMHgxYmRkLzB4MWQ1MApbIDMxLjY4MTI5N10gPyBzbnByaW50ZisweDQ1LzB4
+NzAKWyAzMS42ODE3ODFdIG1vdW50X2JkZXYrMHgxN2IvMHgxYjAKWyAzMS42ODIyODZdID8gZjJm
+c19jb21taXRfc3VwZXIrMHgxOTAvMHgxOTAKWyAzMS42ODI5MDVdID8gbW91bnRfYmRldisweDE3
+Yi8weDFiMApbIDMxLjY4MzQzNF0gPyBmMmZzX2NvbW1pdF9zdXBlcisweDE5MC8weDE5MApbIDMx
+LjY4NDA0N10gZjJmc19tb3VudCsweDE1LzB4MjAKWyAzMS42ODQ1MjddIG1vdW50X2ZzKzB4NTEv
+MHgxNzAKWyAzMS42ODQ5OTZdIHZmc19rZXJuX21vdW50KzB4NjcvMHgxMjAKWyAzMS42ODU1Mzdd
+IGRvX21vdW50KzB4MjA4LzB4ZDIwClsgMzEuNjg2MDE5XSA/IF9fY2hlY2tfb2JqZWN0X3NpemUr
+MHgxNTEvMHgxYjAKWyAzMS42ODY2NjFdID8gbWVtZHVwX3VzZXIrMHg0Zi8weDcwClsgMzEuNjg3
+MTgyXSBrc3lzX21vdW50KzB4ODMvMHhkMApbIDMxLjY4NzY2OF0gX194NjRfc3lzX21vdW50KzB4
+MjUvMHgzMApbIDMxLjY4ODIwOF0gZG9fc3lzY2FsbF82NCsweDVhLzB4MTEwClsgMzEuNjg4NzM2
+XSBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUrMHg0NC8weGE5ClsgMzEuNjg5NDU3XSBS
+SVA6IDAwMzM6MHg3ZjA4NjBkOWZiOWEKWyAzMS42ODk5NzJdIENvZGU6IDQ4IDhiIDBkIDAxIGMz
+IDJiIDAwIGY3IGQ4IDY0IDg5IDAxIDQ4IDgzIGM4IGZmIGMzIDY2IDJlIDBmCjFmIDg0IDAwIDAw
+IDAwIDAwIDAwIDBmIDFmIDQ0IDAwIDAwIDQ5IDg5IGNhIGI4IGE1IDAwIDAwIDAwIDBmIDA1IDw0
+OD4gM2QgMDEgZjAKZmYgZmYgNzMgMDEgYzMgNDggOGIgMGQgY2UgYzIgMmIgMDAgZjcgZDggNjQg
+ODkgMDEgNDgKWyAzMS42OTI2MDRdIFJTUDogMDAyYjowMDAwN2ZmZDYzNmE1MzM4IEVGTEFHUzog
+MDAwMDAyMDIgT1JJR19SQVg6CjAwMDAwMDAwMDAwMDAwYTUKWyAzMS42OTM2NzVdIFJBWDogZmZm
+ZmZmZmZmZmZmZmZkYSBSQlg6IDAwMDAwMDAwMDEzY2QwMzAgUkNYOiAwMDAwN2YwODYwZDlmYjlh
+ClsgMzEuNjk0Njg4XSBSRFg6IDAwMDAwMDAwMDEzY2QyMTAgUlNJOiAwMDAwMDAwMDAxM2NmZjQw
+IFJESTogMDAwMDAwMDAwMTNjZDIzMApbIDMxLjY5NTY5OV0gUkJQOiAwMDAwMDAwMDAwMDAwMDAw
+IFIwODogMDAwMDAwMDAwMDAwMDAwMCBSMDk6IDAwMDAwMDAwMDAwMDAwMTMKWyAzMS42OTY3MDld
+IFIxMDogMDAwMDAwMDBjMGVkMDAwMCBSMTE6IDAwMDAwMDAwMDAwMDAyMDIgUjEyOiAwMDAwMDAw
+MDAxM2NkMjMwClsgMzEuNjk3NzM4XSBSMTM6IDAwMDAwMDAwMDEzY2QyMTAgUjE0OiAwMDAwMDAw
+MDAwMDAwMDAwIFIxNTogMDAwMDAwMDAwMDAwMDAwMwpbIDMxLjY5ODc1NV0gTW9kdWxlcyBsaW5r
+ZWQgaW46ClsgMzEuNjk5MTk5XSBDUjI6IGZmZmZhMDdkNDhkZDEyYzAKWyAzMS42OTk3MDNdIC0t
+LVsgZW5kIHRyYWNlIDdiYzgxMjZiZDIzNjk3ODQgXS0tLQpbIDMxLjcwMDQxMF0gUklQOiAwMDEw
+OnVwZGF0ZV9zaXRfZW50cnkrMHg1MC8weDQyMApbIDMxLjcwMTA4MV0gQ29kZTogODYgY2UgMDEg
+MDAgMDAgNDggOGIgYmYgODggMDAgMDAgMDAgNDEgYmUgZmYgZmYgZmYgZmYgNDggYmIKZDggZmYg
+ZmYgZmYgMjcgMDAgMDAgMDAgYzcgNDUgYzggZmYgZmYgZmYgZmYgNDggOGIgMDcgNDggMDMgNTgg
+NjggPDBmPiBiNyAzMyA2NgpjMSBlZSAwNiAwZiBiNyBmNiA0NCAwMSBmZSA0OCA4NSBmZiA0OCA2
+MyBkNiAwZiA4NCAwMwpbIDMxLjcwMzcxOF0gUlNQOiAwMDE4OmZmZmZiOTU4ODEwYmI5YzggRUZM
+QUdTOiAwMDAxMDI4NgpbIDMxLjcwNDQ2NF0gUkFYOiBmZmZmYTA3ZDJiMGMxNzgwIFJCWDogZmZm
+ZmEwN2Q0OGRkMTJjMCBSQ1g6IDAwMDAwMDAwMDAwMDAwMDkKWyAzMS43MDU0NzRdIFJEWDogMDAw
+MDAwMDAwMDAwMDAwMCBSU0k6IGZmZmZhMDdkMzdhMTYzYTggUkRJOiBmZmZmYTA3ZDJiMGMxMjQw
+ClsgMzEuNzA2NDg0XSBSQlA6IGZmZmZiOTU4ODEwYmJhMDAgUjA4OiAwMDAwMDAwMDAwMDAwMDAx
+IFIwOTogMDAwMDAwMDAwMDAwMDAwZQpbIDMxLjcwNzUwMl0gUjEwOiBmZmZmYjk1ODgxMDhiODk4
+IFIxMTogZmZmZmI5NTg4MTBiYjdiZCBSMTI6IGZmZmZhMDdkMzU2NDQwMDAKWyAzMS43MDg1MTJd
+IFIxMzogMDAwMDAwMDAwMDdmZmZmOCBSMTQ6IDAwMDAwMDAwMDA3ZmZmZjggUjE1OiAwMDAwMDAw
+MGZmZmZmZmZmClsgMzEuNzA5NTIxXSBGUzogMDAwMDdmMDg2MTRjMDg0MCgwMDAwKSBHUzpmZmZm
+YTA3ZDM3YTAwMDAwKDAwMDApCmtubEdTOjAwMDAwMDAwMDAwMDAwMDAKWyAzMS43MTA2NjddIENT
+OiAwMDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMwpbIDMxLjcxMTQ4
+OF0gQ1IyOiBmZmZmYTA3ZDQ4ZGQxMmMwIENSMzogMDAwMDAwMDIzMjc1NDAwMyBDUjQ6IDAwMDAw
+MDAwMDAxNjA2ZjAKCi0tIHBvc3NpYmxlIHJlYXNvbgpJdCBzZWVtcyB0aGF0IHZhbHVlIG9mIHNl
+IGlzIG91dCBvZiByYW5nZSBmb3IgcmVhZGluZyBwYWdlcywgYmFzZWQgb24gdGhlIGVycm9yCm1l
+c3NhZ2VzLgoKZnMvZjJmcy9zZWdtZW50LmMK4pSCMjA2MiBzdGF0aWMgdm9pZCB1cGRhdGVfc2l0
+X2VudHJ5KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgYmxvY2tfdCBibGthZGRyLAppbnQgZGVs
+KSDilIIK4pSCMjA2MyB7IOKUggrilIIyMDY0IHN0cnVjdCBzZWdfZW50cnkgKnNlOyDilIIK4pSC
+MjA2NSB1bnNpZ25lZCBpbnQgc2Vnbm8sIG9mZnNldDsg4pSCCuKUgjIwNjYgbG9uZyBpbnQgbmV3
+X3ZibG9ja3M7IOKUggrilIIyMDY3IGJvb2wgZXhpc3Q7IOKUggrilIIyMDY4ICNpZmRlZiBDT05G
+SUdfRjJGU19DSEVDS19GUyDilIIK4pSCMjA2OSBib29sIG1pcl9leGlzdDsg4pSCCuKUgjIwNzAg
+I2VuZGlmIOKUggrilIIyMDcxIOKUggrilIIyMDcyIHNlZ25vID0gR0VUX1NFR05PKHNiaSwgYmxr
+YWRkcik7IOKUggrilIIyMDczIOKUggrilIIyMDc0IHNlID0gZ2V0X3NlZ19lbnRyeShzYmksIHNl
+Z25vKTsg4pSCCj7ilIIyMDc1IG5ld192YmxvY2tzID0gc2UtPnZhbGlkX2Jsb2NrcyArIGRlbDsg
+4pSCCuKUgjIwNzYgb2Zmc2V0ID0gR0VUX0JMS09GRl9GUk9NX1NFRzAoc2JpLCBibGthZGRyKTsg
+4pSCCuKUgjIwNzcg4pSCCuKUgjIwNzggZjJmc19idWdfb24oc2JpLCAobmV3X3ZibG9ja3MgPj4g
+KHNpemVvZih1bnNpZ25lZCBzaG9ydCkgPDwgMykgfHwg4pSCCuKUgjIwNzkgKG5ld192YmxvY2tz
+ID4gc2JpLT5ibG9ja3NfcGVyX3NlZykpKTsg4pSCCuKUgjIwODAg4pSCCuKUgjIwODEgc2UtPnZh
+bGlkX2Jsb2NrcyA9IG5ld192YmxvY2tzOyDilIIK4pSCMjA4MiBzZS0+bXRpbWUgPSBnZXRfbXRp
+bWUoc2JpLCBmYWxzZSk7IOKUggrilIIyMDgzIGlmIChzZS0+bXRpbWUgPiBTSVRfSShzYmkpLT5t
+YXhfbXRpbWUpIOKUggrilIIyMDg0IFNJVF9JKHNiaSktPm1heF9tdGltZSA9IHNlLT5tdGltZTsg
+4pSCCuKUgjIwODUKCi0tIApZb3UgYXJlIHJlY2VpdmluZyB0aGlzIG1haWwgYmVjYXVzZToKWW91
+IGFyZSB3YXRjaGluZyB0aGUgYXNzaWduZWUgb2YgdGhlIGJ1Zy4KCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBs
+aXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMu
+c291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
