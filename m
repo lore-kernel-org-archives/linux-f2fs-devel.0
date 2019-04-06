@@ -1,73 +1,37 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 203169] crash at fs/f2fs/checkpoint.c:160
- f2fs_is_valid_blkaddr
-Date: Sat, 06 Apr 2019 01:53:35 +0000
-Message-ID: <bug-203169-202145-bSc0QFy9B5@https.bugzilla.kernel.org/>
-References: <bug-203169-202145@https.bugzilla.kernel.org/>
+From: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+Subject: [PATCH] f2fs: data: fix warning Using plain integer as NULL pointer
+Date: Sat, 6 Apr 2019 16:29:36 +0530
+Message-ID: <20190406105936.GA30585@hari-Inspiron-1545>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1hCaWf-0002XB-7T
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 06 Apr 2019 01:53:45 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hCaWd-003J6m-Tq
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 06 Apr 2019 01:53:45 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id D08AD28B8D
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat,  6 Apr 2019 01:53:36 +0000 (UTC)
-In-Reply-To: <bug-203169-202145@https.bugzilla.kernel.org/>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=203169
+changed passing function argument "0 to NULL" to fix below sparse
+warning
 
-Chao Yu (chao@kernel.org) changed:
+fs/f2fs/data.c:426:47: warning: Using plain integer as NULL pointer
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |chao@kernel.org
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+---
+ fs/f2fs/data.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- Comment #3 from Chao Yu (chao@kernel.org) ---
-I don't think this is a bug.
-
-[   44.217508] F2FS-fs (sdb): access invalid blkaddr:56
-[   44.217529] WARNING: CPU: 0 PID: 1036 at fs/f2fs/checkpoint.c:160 
-
-fs/f2fs/checkpoint.c:160
-
-f2fs_is_valid_blkaddr() {
-...
-f2fs_msg(sbi->sb, KERN_WARNING, "access invalid blkaddr:%u", blkaddr);
-WARN_ON(1);
-...
-}
-
-BTW, with your image, I just hit below dmesg during mount:
-
-[34996.986845] F2FS-fs (loop0): Invalid segment count (555819297)
-[34996.986845] F2FS-fs (loop0): Can't find valid F2FS filesystem in 2th
-superblock
-[34996.991449] F2FS-fs (loop0): Mismatch valid blocks 0 vs. 12
-[34996.991449] F2FS-fs (loop0): Failed to initialize F2FS segment manager
-
-Are you sure, you attached the right image?
-
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 97279441..15a2381 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -423,7 +423,7 @@ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
+ 
+ void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type)
+ {
+-	__submit_merged_write_cond(sbi, NULL, 0, 0, type, true);
++	__submit_merged_write_cond(sbi, NULL, NULL, 0, type, true);
+ }
+ 
+ void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
 -- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+2.7.4
