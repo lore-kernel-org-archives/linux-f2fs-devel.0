@@ -1,29 +1,25 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 203167] Kernel page fault with
- update_sit_entry+0x113/0x420
-Date: Sun, 07 Apr 2019 09:55:53 +0000
-Message-ID: <bug-203167-202145-ecvbN9KjDa@https.bugzilla.kernel.org/>
-References: <bug-203167-202145@https.bugzilla.kernel.org/>
+From: Richard Weinberger <richard@nod.at>
+Subject: Re: [PATCH v2 0/5] fscrypt: d_revalidate fixes and
+ cleanups
+Date: Mon, 08 Apr 2019 10:22:32 +0200
+Message-ID: <1872467.qaoHDzFeKg@blindfold>
+References: <20190320183913.12686-1-ebiggers@kernel.org>
+ <20190401171119.GC131675@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1hD4Ww-0003Xz-EU
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Apr 2019 09:56:02 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
+ (envelope-from <richard@nod.at>) id 1hDPYE-0002hH-Qe
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 08 Apr 2019 08:22:46 +0000
+Received: from lithops.sigma-star.at ([195.201.40.130])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hD4Wv-004FVj-22
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Apr 2019 09:56:02 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 6F1C32872A
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun,  7 Apr 2019 09:55:55 +0000 (UTC)
-In-Reply-To: <bug-203167-202145@https.bugzilla.kernel.org/>
+ id 1hDPYA-006bXV-L1
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 08 Apr 2019 08:22:46 +0000
+In-Reply-To: <20190401171119.GC131675@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,25 +29,15 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org, Sarthak Kukreti <sarthakkukreti@chromium.org>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
 
-https://bugzilla.kernel.org/show_bug.cgi?id=203167
+Am Montag, 1. April 2019, 19:11:21 CEST schrieb Eric Biggers:
+ > Any more comments on these patches?  I'd like to apply them to the fscrypt tree
+> for 5.2.  Richard, can you check whether these solve your overlayfs use case?
+> Also, patch 5 could use Acks from ext4, f2fs, and ubifs people.
 
-Chao Yu (chao@kernel.org) changed:
+Will check this week, traveling right now.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |chao@kernel.org
-
---- Comment #1 from Chao Yu (chao@kernel.org) ---
-Hello,
-
-Could you please recompile f2fs.ko with CONFIG_F2FS_CHECK_FS enabled,
-In my environment, all mounts failed due to valid block check under
-CONFIG_F2FS_CHECK_FS.
-
-Could you please confirm that, including images in all your issues.
-
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+Thanks,
+//richard
