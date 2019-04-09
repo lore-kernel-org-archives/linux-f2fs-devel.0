@@ -1,29 +1,29 @@
 From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 203167] Kernel page fault with
- update_sit_entry+0x113/0x420
-Date: Tue, 09 Apr 2019 15:48:03 +0000
-Message-ID: <bug-203167-202145-WU7xZ99EeC@https.bugzilla.kernel.org/>
-References: <bug-203167-202145@https.bugzilla.kernel.org/>
+Subject: [Bug 203169] crash at fs/f2fs/checkpoint.c:160
+ f2fs_is_valid_blkaddr
+Date: Tue, 09 Apr 2019 19:53:38 +0000
+Message-ID: <bug-203169-202145-QpHebpvUdJ@https.bugzilla.kernel.org/>
+References: <bug-203169-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1hDsys-00077s-8m
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 09 Apr 2019 15:48:14 +0000
+ id 1hDwoU-0001b7-5f
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 09 Apr 2019 19:53:46 +0000
 Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hDsyq-00BVS5-Tp
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 09 Apr 2019 15:48:14 +0000
+ id 1hDwoS-00ACJQ-VL
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 09 Apr 2019 19:53:46 +0000
 Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id EDFC728818
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 4D4A9288C7
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue,  9 Apr 2019 15:48:03 +0000 (UTC)
-In-Reply-To: <bug-203167-202145@https.bugzilla.kernel.org/>
+ Tue,  9 Apr 2019 19:53:39 +0000 (UTC)
+In-Reply-To: <bug-203169-202145@https.bugzilla.kernel.org/>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,19 +35,10 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=203167
+https://bugzilla.kernel.org/show_bug.cgi?id=203169
 
---- Comment #2 from Jungyeon (jungyeon@gatech.edu) ---
-I checked with CONFIG_F2FS_CHECK_FS option on, and it shows that f2fs mount
-errors not crashing.
-
-However, CONFIG_F2FS_CHECK_FS is not enabled by default, and I guess that there
-is a high possibility that many people using f2fs would not enable this options
-cause it says that it could make the performance slower.
-It seems that this is a problem of robustness. I think that file system should
-not crash all the time, with or without special options.
-
-I would appreciate that you could give me your opinion.
+--- Comment #4 from Jungyeon (jungyeon@gatech.edu) ---
+The image is f2fs image, but fuzzed from the normal f2fs image for testing.
 
 -- 
 You are receiving this mail because:
