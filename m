@@ -1,7 +1,7 @@
 From: Randall Huang <huangrandall@google.com>
-Subject: [PATCH v2] f2fs: fix to avoid accessing xattr across the boundary
-Date: Tue,  9 Apr 2019 16:37:26 +0800
-Message-ID: <20190409083726.181522-1-huangrandall@google.com>
+Subject: [PATCH v3] f2fs: fix to avoid accessing xattr across the boundary
+Date: Tue,  9 Apr 2019 16:53:08 +0800
+Message-ID: <20190409085308.212682-1-huangrandall@google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -47,12 +47,15 @@ Signed-off-by: Randall Huang <huangrandall@google.com>
 ---
 v2:
 * return EFAULT if OOB error is detected
+
+v3:
+* fix typo in setxattr()
 ---
- fs/f2fs/xattr.c | 30 ++++++++++++++++++++++++++----
- 1 file changed, 26 insertions(+), 4 deletions(-)
+ fs/f2fs/xattr.c | 31 +++++++++++++++++++++++++++----
+ 1 file changed, 27 insertions(+), 4 deletions(-)
 
 diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-index 848a785abe25..f60e40d95bbf 100644
+index 848a785abe25..381f14b02a78 100644
 --- a/fs/f2fs/xattr.c
 +++ b/fs/f2fs/xattr.c
 @@ -202,12 +202,17 @@ static inline const struct xattr_handler *f2fs_xattr_handler(int index)
@@ -114,18 +117,19 @@ index 848a785abe25..f60e40d95bbf 100644
  check:
  	if (IS_XATTR_LAST_ENTRY(*xe)) {
  		err = -ENODATA;
-@@ -585,6 +599,10 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+@@ -585,6 +599,11 @@ static int __f2fs_setxattr(struct inode *inode, int index,
  	int found, newsize;
  	size_t len;
  	__u32 new_hsize;
 +	nid_t xnid = F2FS_I(inode)->i_xattr_nid;
 +	unsigned int xattr_nid_size = xnid ? VALID_XATTR_BLOCK_SIZE : 0;
 +	unsigned int inline_size = inline_xattr_size(inode);
-+	unsigned int max_size = inline_size + size + XATTR_PADDING_SIZE;
++	unsigned int max_size = inline_size + xattr_nid_size +
++				 XATTR_PADDING_SIZE;
  	int error = 0;
  
  	if (name == NULL)
-@@ -606,7 +624,11 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+@@ -606,7 +625,11 @@ static int __f2fs_setxattr(struct inode *inode, int index,
  		return error;
  
  	/* find entry with wanted name. */
