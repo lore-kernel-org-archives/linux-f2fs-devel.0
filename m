@@ -1,233 +1,179 @@
-From: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
-Subject: [PATCH] f2fs-tools: Change sysfs path look up logic for
- zoned block devices
-Date: Wed, 10 Apr 2019 17:56:59 +0900
-Message-ID: <20190410085659.9005-1-shinichiro.kawasaki@wdc.com>
+From: Randall Huang <huangrandall@google.com>
+Subject: Re: [PATCH v3] f2fs: fix to avoid accessing xattr across the boundary
+Date: Wed, 10 Apr 2019 17:27:16 +0800
+Message-ID: <20190410092716.GA70496@google.com>
+References: <20190409085308.212682-1-huangrandall@google.com>
+ <c66b5be1-8bd5-6153-5aa8-959977cacfb0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <prvs=996b7264c=shinichiro.kawasaki@wdc.com>)
- id 1hE92a-0000q2-L6
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 10 Apr 2019 08:57:08 +0000
-Received: from esa5.hgst.iphmx.com ([216.71.153.144])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hE92Z-00BWf1-5C
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 10 Apr 2019 08:57:08 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <c66b5be1-8bd5-6153-5aa8-959977cacfb0@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Cc: huangrandall@google.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-The mkfs.f2fs checks 'zoned' and 'chunk_sectors' sysfs attributes of
-zoned block devices to place F2FS areas aligned to block zone
-boundaries. However, mkfs.f2fs code assumes the given device name has
-corresponding sysfs path under /sys/block directory. This is not the
-case when partition devices or symbolic links are specified as the
-command line argument of mkfs.f2fs. In such a case, mkfs.f2fs fails to
-read sysfs attributes for zoned block devices, handles the device as a
-regular block device, and do not align F2FS areas to the block zone
-boundaries. This results in F2FS write failures because of zone write
-pointer miss-alignment in sequential write required zones.
+On Tue, Apr 09, 2019 at 06:22:55PM +0800, Chao Yu wrote:
+> On 2019/4/9 16:53, Randall Huang wrote:
+> > When we traverse xattr entries via __find_xattr(),
+> > if the raw filesystem content is faked or any hardware failure occurs,
+> > out-of-bound error can be detected by KASAN.
+> > Fix the issue by introducing boundary check.
+> > 
+> > [   38.402878] c7   1827 BUG: KASAN: slab-out-of-bounds in f2fs_getxattr+0x518/0x68c
+> > [   38.402891] c7   1827 Read of size 4 at addr ffffffc0b6fb35dc by task
+> > [   38.402935] c7   1827 Call trace:
+> > [   38.402952] c7   1827 [<ffffff900809003c>] dump_backtrace+0x0/0x6bc
+> > [   38.402966] c7   1827 [<ffffff9008090030>] show_stack+0x20/0x2c
+> > [   38.402981] c7   1827 [<ffffff900871ab10>] dump_stack+0xfc/0x140
+> > [   38.402995] c7   1827 [<ffffff9008325c40>] print_address_description+0x80/0x2d8
+> > [   38.403009] c7   1827 [<ffffff900832629c>] kasan_report_error+0x198/0x1fc
+> > [   38.403022] c7   1827 [<ffffff9008326104>] kasan_report_error+0x0/0x1fc
+> > [   38.403037] c7   1827 [<ffffff9008325000>] __asan_load4+0x1b0/0x1b8
+> > [   38.403051] c7   1827 [<ffffff90085fcc44>] f2fs_getxattr+0x518/0x68c
+> > [   38.403066] c7   1827 [<ffffff90085fc508>] f2fs_xattr_generic_get+0xb0/0xd0
+> > [   38.403080] c7   1827 [<ffffff9008395708>] __vfs_getxattr+0x1f4/0x1fc
+> > [   38.403096] c7   1827 [<ffffff9008621bd0>] inode_doinit_with_dentry+0x360/0x938
+> > [   38.403109] c7   1827 [<ffffff900862d6cc>] selinux_d_instantiate+0x2c/0x38
+> > [   38.403123] c7   1827 [<ffffff900861b018>] security_d_instantiate+0x68/0x98
+> > [   38.403136] c7   1827 [<ffffff9008377db8>] d_splice_alias+0x58/0x348
+> > [   38.403149] c7   1827 [<ffffff900858d16c>] f2fs_lookup+0x608/0x774
+> > [   38.403163] c7   1827 [<ffffff900835eacc>] lookup_slow+0x1e0/0x2cc
+> > [   38.403177] c7   1827 [<ffffff9008367fe0>] walk_component+0x160/0x520
+> > [   38.403190] c7   1827 [<ffffff9008369ef4>] path_lookupat+0x110/0x2b4
+> > [   38.403203] c7   1827 [<ffffff900835dd38>] filename_lookup+0x1d8/0x3a8
+> > [   38.403216] c7   1827 [<ffffff900835eeb0>] user_path_at_empty+0x54/0x68
+> > [   38.403229] c7   1827 [<ffffff9008395f44>] SyS_getxattr+0xb4/0x18c
+> > [   38.403241] c7   1827 [<ffffff9008084200>] el0_svc_naked+0x34/0x38
+> > 
+> > Bug: 126558260
+> > 
+> > Signed-off-by: Randall Huang <huangrandall@google.com>
+> > ---
+> > v2:
+> > * return EFAULT if OOB error is detected
+> > 
+> > v3:
+> > * fix typo in setxattr()
+> > ---
+> >  fs/f2fs/xattr.c | 31 +++++++++++++++++++++++++++----
+> >  1 file changed, 27 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+> > index 848a785abe25..381f14b02a78 100644
+> > --- a/fs/f2fs/xattr.c
+> > +++ b/fs/f2fs/xattr.c
+> > @@ -202,12 +202,17 @@ static inline const struct xattr_handler *f2fs_xattr_handler(int index)
+> >  	return handler;
+> >  }
+> >  
+> > -static struct f2fs_xattr_entry *__find_xattr(void *base_addr, int index,
+> > -					size_t len, const char *name)
+> > +static struct f2fs_xattr_entry *__find_xattr(void *base_addr,
+> > +				unsigned int max_size, int index,
+> > +				size_t len, const char *name)
+> >  {
+> >  	struct f2fs_xattr_entry *entry;
+> > +	void *max_addr = base_addr + ENTRY_SIZE(XATTR_ENTRY(base_addr)) +
+> > +				max_size - 1;
+> 
+> Hi Randall,
+> 
+> I think this is not right, I enable noinline_xattr mount option, and add
+> printk to see the status here, it shows
+> 
+> __find_xattr, base_addr:ffff8e709ba92000, max_addr:ffff8e709baa131f, max_size:4
+> 
+> ffff8e709baa131f - ffff8e709ba92000 = F31F
+> 
+I would like to try another way.
+The key is the pointer of entry should never run over the boundary of txattr
+allocated in lookup_all_xattrs().
 
-Change mkfs.f2fs to handle sysfs path correctly. Read symbolic link
-to get canonical sysfs path. If the device is a partition, cut the last
-directory name in the sysfs path to refer the holder device attributes.
+I will send v4.
 
-Also introduce read_file() and read_sys_attr() helper functions for
-code simplicity.
-
-Signed-off-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
----
- lib/libf2fs_zoned.c | 134 ++++++++++++++++++++++++++++++--------------
- 1 file changed, 91 insertions(+), 43 deletions(-)
-
-diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
-index 6e32f32..e645004 100644
---- a/lib/libf2fs_zoned.c
-+++ b/lib/libf2fs_zoned.c
-@@ -8,6 +8,7 @@
-  */
- #define _LARGEFILE64_SOURCE
- 
-+#define _GNU_SOURCE
- #include <stdio.h>
- #include <stdlib.h>
- #include <string.h>
-@@ -15,6 +16,8 @@
- #include <unistd.h>
- #include <fcntl.h>
- #include <sys/stat.h>
-+#include <sys/sysmacros.h>
-+#include <linux/limits.h>
- #ifndef ANDROID_WINDOWS_HOST
- #include <sys/ioctl.h>
- #endif
-@@ -24,67 +27,112 @@
- 
- #ifdef HAVE_LINUX_BLKZONED_H
- 
-+/*
-+ * Read up to 255 characters from the first line of a file. Strip the trailing
-+ * newline.
-+ */
-+static char *read_file(const char *path)
-+{
-+	char line[256], *p = line;
-+	FILE *f;
-+
-+	f = fopen(path, "rb");
-+	if (!f)
-+		return NULL;
-+	if (!fgets(line, sizeof(line), f))
-+		line[0] = '\0';
-+	strsep(&p, "\n");
-+	fclose(f);
-+
-+	return strdup(line);
-+}
-+
-+static char *read_sys_attr(const char *dev_path, const char *attr)
-+{
-+	struct stat statbuf;
-+	char *sys_devno_path = NULL;
-+	char sys_path[PATH_MAX];
-+	ssize_t sz;
-+	char *part_attr_path = NULL;
-+	char *part_str = NULL;
-+	char *delim = NULL;
-+	char *attr_path = NULL;
-+	char *attr_str = NULL;
-+
-+	if (stat(dev_path, &statbuf) < 0)
-+		goto out;
-+
-+	if (asprintf(&sys_devno_path, "/sys/dev/block/%d:%d",
-+		     major(statbuf.st_rdev), minor(statbuf.st_rdev)) < 0)
-+		goto out;
-+
-+	sz = readlink(sys_devno_path, sys_path, sizeof(sys_path) - 1);
-+	if (sz < 0)
-+		goto out;
-+	sys_path[sz] = '\0';
-+
-+	/*
-+	 * If the device is a partition device, cut the device name in the
-+	 * canonical sysfs path to obtain the sysfs path of the holder device.
-+	 *   e.g.:  /sys/devices/.../sda/sda1 -> /sys/devices/.../sda
-+	 */
-+	if (asprintf(&part_attr_path, "/sys/dev/block/%s/partition",
-+		     sys_path) < 0)
-+		goto out;
-+	part_str = read_file(part_attr_path);
-+	if (part_str && *part_str == '1') {
-+		delim = strrchr(sys_path, '/');
-+		if (!delim)
-+			goto out;
-+		*delim = '\0';
-+	}
-+
-+	if (asprintf(&attr_path, "/sys/dev/block/%s/%s", sys_path, attr) < 0)
-+		goto out;
-+
-+	attr_str = read_file(attr_path);
-+out:
-+	free(attr_path);
-+	free(part_str);
-+	free(part_attr_path);
-+	free(sys_devno_path);
-+	return attr_str;
-+}
-+
- void f2fs_get_zoned_model(int i)
- {
- 	struct device_info *dev = c.devices + i;
--	char str[128];
--	FILE *file;
--	int res;
--
--	/* Check that this is a zoned block device */
--	snprintf(str, sizeof(str),
--		 "/sys/block/%s/queue/zoned",
--		 basename(dev->path));
--	file = fopen(str, "r");
--	if (!file)
--		goto not_zoned;
--
--	memset(str, 0, sizeof(str));
--	res = fscanf(file, "%s", str);
--	fclose(file);
--
--	if (res != 1)
--		goto not_zoned;
--
--	if (strcmp(str, "host-aware") == 0) {
--		dev->zoned_model = F2FS_ZONED_HA;
-+	char *model_str;
-+
-+	dev->zoned_model = F2FS_ZONED_NONE;
-+
-+	model_str = read_sys_attr(dev->path, "queue/zoned");
-+	if (!model_str)
- 		return;
--	}
--	if (strcmp(str, "host-managed") == 0) {
-+
-+	if (strcmp(model_str, "host-aware") == 0)
-+		dev->zoned_model = F2FS_ZONED_HA;
-+	else if (strcmp(model_str, "host-managed") == 0)
- 		dev->zoned_model = F2FS_ZONED_HM;
--		return;
--	}
- 
--not_zoned:
--	dev->zoned_model = F2FS_ZONED_NONE;
-+	free(model_str);
- }
- 
- int f2fs_get_zone_blocks(int i)
- {
- 	struct device_info *dev = c.devices + i;
- 	uint64_t sectors;
--	char str[128];
--	FILE *file;
--	int res;
-+	char * cs_str;
- 
- 	/* Get zone size */
- 	dev->zone_blocks = 0;
- 
--	snprintf(str, sizeof(str),
--		 "/sys/block/%s/queue/chunk_sectors",
--		 basename(dev->path));
--	file = fopen(str, "r");
--	if (!file)
--		return -1;
--
--	memset(str, 0, sizeof(str));
--	res = fscanf(file, "%s", str);
--	fclose(file);
--
--	if (res != 1)
-+	cs_str = read_sys_attr(dev->path, "queue/chunk_sectors");
-+	if (!cs_str)
- 		return -1;
- 
--	sectors = atol(str);
-+	sectors = atol(cs_str);
-+	free(cs_str);
- 	if (!sectors)
- 		return -1;
- 
--- 
-2.20.1
+> >  
+> >  	list_for_each_xattr(entry, base_addr) {
+> > +		if ((void *)entry + sizeof(__u32) > max_addr)
+> > +			return NULL;
+> >  		if (entry->e_name_index != index)
+> >  			continue;
+> >  		if (entry->e_name_len != len)
+> > @@ -301,6 +306,7 @@ static int lookup_all_xattrs(struct inode *inode, struct page *ipage,
+> >  	nid_t xnid = F2FS_I(inode)->i_xattr_nid;
+> >  	unsigned int size = xnid ? VALID_XATTR_BLOCK_SIZE : 0;
+> >  	unsigned int inline_size = inline_xattr_size(inode);
+> > +	unsigned int max_size = inline_size + size + XATTR_PADDING_SIZE;
+> >  	int err = 0;
+> >  
+> >  	if (!size && !inline_size)
+> > @@ -323,6 +329,7 @@ static int lookup_all_xattrs(struct inode *inode, struct page *ipage,
+> >  			*base_size = inline_size;
+> >  			goto check;
+> >  		}
+> > +		max_size -= inline_size;
+> 
+> The cur_addr pointer may point to middle of inline xattr space due to below code? we
+> should consider such case here.
+> 
+> if (last_addr)
+> 	cur_addr = XATTR_HDR(last_addr) - 1;
+> 
+> >  	}
+> >  
+> >  	/* read from xattr node block */
+> > @@ -330,6 +337,8 @@ static int lookup_all_xattrs(struct inode *inode, struct page *ipage,
+> >  		err = read_xattr_block(inode, txattr_addr);
+> >  		if (err)
+> >  			goto out;
+> > +
+> > +		max_size -= size;
+> 
+> We should not shrink max_size after loading xattr block's data.
+> 
+> Thanks,
+> 
+> >  	}
+> >  
+> >  	if (last_addr)
+> > @@ -337,7 +346,12 @@ static int lookup_all_xattrs(struct inode *inode, struct page *ipage,
+> >  	else
+> >  		cur_addr = txattr_addr;
+> >  
+> > -	*xe = __find_xattr(cur_addr, index, len, name);
+> > +	*xe = __find_xattr(cur_addr, max_size, index, len, name);
+> > +	if (!*xe) {
+> > +		err = -EFAULT;
+> > +		goto out;
+> > +	}
+> > +
+> >  check:
+> >  	if (IS_XATTR_LAST_ENTRY(*xe)) {
+> >  		err = -ENODATA;
+> > @@ -585,6 +599,11 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+> >  	int found, newsize;
+> >  	size_t len;
+> >  	__u32 new_hsize;
+> > +	nid_t xnid = F2FS_I(inode)->i_xattr_nid;
+> > +	unsigned int xattr_nid_size = xnid ? VALID_XATTR_BLOCK_SIZE : 0;
+> > +	unsigned int inline_size = inline_xattr_size(inode);
+> > +	unsigned int max_size = inline_size + xattr_nid_size +
+> > +				 XATTR_PADDING_SIZE;
+> >  	int error = 0;
+> >  
+> >  	if (name == NULL)
+> > @@ -606,7 +625,11 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+> >  		return error;
+> >  
+> >  	/* find entry with wanted name. */
+> > -	here = __find_xattr(base_addr, index, len, name);
+> > +	here = __find_xattr(base_addr, max_size, index, len, name);
+> > +	if (!here) {
+> > +		error = -EFAULT;
+> > +		goto exit;
+> > +	}
+> >  
+> >  	found = IS_XATTR_LAST_ENTRY(here) ? 0 : 1;
+> >  
+> > 
