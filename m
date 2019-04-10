@@ -1,86 +1,44 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix to avoid deadloop in foreground GC
-Date: Wed, 10 Apr 2019 18:45:50 +0800
-Message-ID: <20190410104550.82389-1-yuchao0@huawei.com>
+From: Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH v2 0/2] fscrypt: improve encrypted symlink performance
+Date: Wed, 10 Apr 2019 13:21:13 -0700
+Message-ID: <20190410202115.64501-1-ebiggers@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
+List-Post: <mailto:linux-mtd@lists.infradead.org>
+List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
+Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
+To: linux-fscrypt@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-mtd@lists.infradead.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-As Jungyeon reported in bugzilla:
+This series improves the performance of following encrypted symlinks on
+ext4, f2fs, and ubifs.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=203211
+Eric Biggers (2):
+  vfs: use READ_ONCE() to access ->i_link
+  fscrypt: cache decrypted symlink target in ->i_link
 
-- Overview
-When mounting the attached crafted image and making a new file, I got this error and the error messages keep repeating.
+ fs/crypto/hooks.c       | 40 +++++++++++++++++++++++++++++++++-------
+ fs/crypto/keyinfo.c     | 21 +++++++++++++++++++++
+ fs/ext4/super.c         |  3 +++
+ fs/f2fs/super.c         |  3 +++
+ fs/namei.c              |  4 ++--
+ fs/ubifs/super.c        |  3 +++
+ include/linux/fscrypt.h |  5 +++++
+ 7 files changed, 70 insertions(+), 9 deletions(-)
 
-The image is intentionally fuzzed from a normal f2fs image for testing and I run with option CONFIG_F2FS_CHECK_FS on.
-
-- Reproduces
-mkdir test
-mount -t f2fs tmp.img test
-cd test
-touch t
-
-- Messages
-[   58.820451] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.821485] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.822530] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.823571] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.824616] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.825640] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.826663] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.827698] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.828719] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.829759] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.830783] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.831828] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.832869] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.833888] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.834945] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.835996] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.837028] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.838051] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.839072] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.840100] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.841147] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.842186] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.843214] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.844267] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.845282] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.846305] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.847341] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-... (repeating)
-
-During GC, if segment type stored in SSA and SIT is inconsistent, we just
-skip migrating current segment directly, since we need to know the exact
-type to decide the migration function we use.
-
-So in foreground GC, we will easily run into a infinite loop as we may
-select the same victim segment which has inconsistent type due to greedy
-policy. In order to end up this, we choose to shutdown filesystem. For
-backgrond GC, we need to do that as well, so that we can avoid latter
-potential infinite looped foreground GC.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/gc.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index ab764bd106de..a66a8752e5f6 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1175,6 +1175,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
- 				"type [%d, %d] in SSA and SIT",
- 				segno, type, GET_SUM_TYPE((&sum->footer)));
- 			set_sbi_flag(sbi, SBI_NEED_FSCK);
-+			f2fs_stop_checkpoint(sbi, false);
- 			goto skip;
- 		}
- 
 -- 
-2.18.0.rc1
+2.21.0.392.gf8f6787159e-goog
+
+
+______________________________________________________
+Linux MTD discussion mailing list
+http://lists.infradead.org/mailman/listinfo/linux-mtd/
