@@ -1,11 +1,8 @@
-From: Eric Biggers <ebiggers@kernel.org>
-Subject: Re: [PATCH v2 1/2] vfs: use READ_ONCE() to access
- ->i_link
-Date: Wed, 10 Apr 2019 16:15:48 -0700
-Message-ID: <20190410231547.GC120258@gmail.com>
-References: <20190410202115.64501-1-ebiggers@kernel.org>
- <20190410202115.64501-2-ebiggers@kernel.org>
- <20190410210657.GA2217@ZenIV.linux.org.uk>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 203197] kernel read fault at __is_cp_guaranteed
+Date: Thu, 11 Apr 2019 01:03:23 +0000
+Message-ID: <bug-203197-202145-cPYBQk3jHd@https.bugzilla.kernel.org/>
+References: <bug-203197-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -13,15 +10,19 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hEMRj-0007xg-O5
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 10 Apr 2019 23:15:59 +0000
-Received: from mail.kernel.org ([198.145.29.99])
+ (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
+ id 1hEO7n-0003J0-RX
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Apr 2019 01:03:31 +0000
+Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hEMRg-00EXMk-Tw
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 10 Apr 2019 23:15:59 +0000
-Content-Disposition: inline
-In-Reply-To: <20190410210657.GA2217@ZenIV.linux.org.uk>
+ id 1hEO7m-00EhMn-Fm
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Apr 2019 01:03:31 +0000
+Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 6714828BB6
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 11 Apr 2019 01:03:24 +0000 (UTC)
+In-Reply-To: <bug-203197-202145@https.bugzilla.kernel.org/>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,25 +32,19 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, linux-mtd@lists.infradead.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-On Wed, Apr 10, 2019 at 10:06:57PM +0100, Al Viro wrote:
-> On Wed, Apr 10, 2019 at 01:21:14PM -0700, Eric Biggers wrote:
-> > From: Eric Biggers <ebiggers@google.com>
-> > 
-> > Use 'READ_ONCE(inode->i_link)' to explicitly support filesystems caching
-> > the symlink target in ->i_link later if it was unavailable at iget()
-> > time, or wasn't easily available.  I'll be doing this in fscrypt, to
-> > improve the performance of encrypted symlinks on ext4, f2fs, and ubifs.
-> > 
-> > ->i_link will start NULL and may later be set to a non-NULL value by a
-> > smp_store_release() or cmpxchg_release().  READ_ONCE() is needed on the
-> > read side.  smp_load_acquire() is unnecessary because only a data
-> > dependency barrier is required.  (Thanks to Al for pointing this out.)
-> 
-> You've missed vfs_readlink()...
+https://bugzilla.kernel.org/show_bug.cgi?id=203197
 
-How so?  The patch already updates vfs_readlink().
+--- Comment #3 from Jungyeon (jungyeon@gatech.edu) ---
+I've tested with kernel version 5.0.0. 
 
-- Eric
+The image and program is okay. It just seems that the errors are keeping
+changing.. I also saw vma_interval_tree_insert() error. 
+It's hard to say that when is the exact time that error comes out.
+
+And, in 5.1-rc1 kernel, it seems that error doesn't show up.
+
+-- 
+You are receiving this mail because:
+You are watching the assignee of the bug.
