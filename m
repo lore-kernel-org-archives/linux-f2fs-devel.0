@@ -1,59 +1,77 @@
-From: Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v2 1/2] vfs: use READ_ONCE() to access
- ->i_link
-Date: Thu, 11 Apr 2019 03:25:15 +0100
-Message-ID: <20190411022514.GC2217@ZenIV.linux.org.uk>
-References: <20190410202115.64501-1-ebiggers@kernel.org>
- <20190410202115.64501-2-ebiggers@kernel.org>
- <20190410210657.GA2217@ZenIV.linux.org.uk>
- <20190410231547.GC120258@gmail.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 1/2] f2fs: fix to retrieve inline xattr space
+Date: Thu, 11 Apr 2019 11:48:09 +0800
+Message-ID: <20190411034810.12283-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <viro@ftp.linux.org.uk>) id 1hEPP4-00044o-7u
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Apr 2019 02:25:26 +0000
-Received: from zeniv.linux.org.uk ([195.92.253.2])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hEPP2-00Eobl-7q
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Apr 2019 02:25:26 +0000
-Content-Disposition: inline
-In-Reply-To: <20190410231547.GC120258@gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, linux-mtd@lists.infradead.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wed, Apr 10, 2019 at 04:15:48PM -0700, Eric Biggers wrote:
-> On Wed, Apr 10, 2019 at 10:06:57PM +0100, Al Viro wrote:
-> > On Wed, Apr 10, 2019 at 01:21:14PM -0700, Eric Biggers wrote:
-> > > From: Eric Biggers <ebiggers@google.com>
-> > > 
-> > > Use 'READ_ONCE(inode->i_link)' to explicitly support filesystems caching
-> > > the symlink target in ->i_link later if it was unavailable at iget()
-> > > time, or wasn't easily available.  I'll be doing this in fscrypt, to
-> > > improve the performance of encrypted symlinks on ext4, f2fs, and ubifs.
-> > > 
-> > > ->i_link will start NULL and may later be set to a non-NULL value by a
-> > > smp_store_release() or cmpxchg_release().  READ_ONCE() is needed on the
-> > > read side.  smp_load_acquire() is unnecessary because only a data
-> > > dependency barrier is required.  (Thanks to Al for pointing this out.)
-> > 
-> > You've missed vfs_readlink()...
-> 
-> How so?  The patch already updates vfs_readlink().
+With below mkfs and mount option, generic/339 of fstest will report that
+scratch image becomes corrupted.
 
-Huh?  Right you are - fsck knows how have I managed to misread that...
-Anyway, I can pick that READ_ONCE() patch through vfs.git if you wish,
-or it can go through your tree with my Acked-by - up to you...
+MKFS_OPTIONS  -- -O extra_attr -O project_quota -O inode_checksum -O flexible_inline_xattr -O inode_crtime -f /dev/zram1
+MOUNT_OPTIONS -- -o acl,user_xattr -o discard,noinline_xattr /dev/zram1 /mnt/scratch_f2fs
+
+[ASSERT] (f2fs_check_dirent_position:1315)  --> Wrong position of dirent pino:1970, name: (...)
+level:8, dir_level:0, pgofs:951, correct range:[900, 901]
+
+In old kernel, inline data and directory always reserved 200 bytes in
+inode layout, even if inline_xattr is disabled, then new kernel tries
+to retrieve that space for non-inline xattr inode, but for inline dentry,
+its layout size should be fixed, so we just keep that reserved space.
+
+But the problem here is that, after inline dentry conversion, inline
+dentry layout no longer exists, if we still reserve inline xattr space,
+after dents updates, there will be a hole in inline xattr space, which
+can break hierarchy hash directory structure.
+
+This patch fixes this issue by retrieving inline xattr space after
+inline dentry conversion.
+
+Fixes: 6afc662e68b5 ("f2fs: support flexible inline xattr size")
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/inline.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index bb6a152310ef..404d2462a0fe 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -420,6 +420,14 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
+ 	stat_dec_inline_dir(dir);
+ 	clear_inode_flag(dir, FI_INLINE_DENTRY);
+ 
++	/*
++	 * should retrieve reserved space which was used to keep
++	 * inline_dentry's structure for backward compatibility.
++	 */
++	if (!f2fs_sb_has_flexible_inline_xattr(F2FS_I_SB(dir)) &&
++			!f2fs_has_inline_xattr(dir))
++		F2FS_I(dir)->i_inline_xattr_size = 0;
++
+ 	f2fs_i_depth_write(dir, 1);
+ 	if (i_size_read(dir) < PAGE_SIZE)
+ 		f2fs_i_size_write(dir, PAGE_SIZE);
+@@ -501,6 +509,15 @@ static int f2fs_move_rehashed_dirents(struct inode *dir, struct page *ipage,
+ 
+ 	stat_dec_inline_dir(dir);
+ 	clear_inode_flag(dir, FI_INLINE_DENTRY);
++
++	/*
++	 * should retrieve reserved space which was used to keep
++	 * inline_dentry's structure for backward compatibility.
++	 */
++	if (!f2fs_sb_has_flexible_inline_xattr(F2FS_I_SB(dir)) &&
++			!f2fs_has_inline_xattr(dir))
++		F2FS_I(dir)->i_inline_xattr_size = 0;
++
+ 	kvfree(backup_dentry);
+ 	return 0;
+ recover:
+-- 
+2.18.0.rc1
