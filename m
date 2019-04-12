@@ -1,65 +1,63 @@
-From: Eric Biggers <ebiggers@kernel.org>
-Subject: Re: [PATCH v2 1/2] vfs: use READ_ONCE() to access ->i_link
-Date: Thu, 11 Apr 2019 10:28:45 -0700
-Message-ID: <20190411172844.GA225654@gmail.com>
-References: <20190410202115.64501-1-ebiggers@kernel.org>
- <20190410202115.64501-2-ebiggers@kernel.org>
- <20190410210657.GA2217@ZenIV.linux.org.uk>
- <20190410231547.GC120258@gmail.com>
- <20190411022514.GC2217@ZenIV.linux.org.uk>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v5] f2fs: fix to avoid accessing xattr across the boundary
+Date: Fri, 12 Apr 2019 10:05:47 +0800
+Message-ID: <0cef5922-c72a-2ce5-91ff-06b1b004451a@huawei.com>
+References: <20190411082646.169977-1-huangrandall@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20190411022514.GC2217@ZenIV.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
- <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
-List-Post: <mailto:linux-mtd@lists.infradead.org>
-List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
- <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
-Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, linux-mtd@lists.infradead.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190411082646.169977-1-huangrandall@google.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randall Huang <huangrandall@google.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Thu, Apr 11, 2019 at 03:25:15AM +0100, Al Viro wrote:
-> On Wed, Apr 10, 2019 at 04:15:48PM -0700, Eric Biggers wrote:
-> > On Wed, Apr 10, 2019 at 10:06:57PM +0100, Al Viro wrote:
-> > > On Wed, Apr 10, 2019 at 01:21:14PM -0700, Eric Biggers wrote:
-> > > > From: Eric Biggers <ebiggers@google.com>
-> > > > 
-> > > > Use 'READ_ONCE(inode->i_link)' to explicitly support filesystems caching
-> > > > the symlink target in ->i_link later if it was unavailable at iget()
-> > > > time, or wasn't easily available.  I'll be doing this in fscrypt, to
-> > > > improve the performance of encrypted symlinks on ext4, f2fs, and ubifs.
-> > > > 
-> > > > ->i_link will start NULL and may later be set to a non-NULL value by a
-> > > > smp_store_release() or cmpxchg_release().  READ_ONCE() is needed on the
-> > > > read side.  smp_load_acquire() is unnecessary because only a data
-> > > > dependency barrier is required.  (Thanks to Al for pointing this out.)
-> > > 
-> > > You've missed vfs_readlink()...
-> > 
-> > How so?  The patch already updates vfs_readlink().
+On 2019/4/11 16:26, Randall Huang wrote:
+> When we traverse xattr entries via __find_xattr(),
+> if the raw filesystem content is faked or any hardware failure occurs,
+> out-of-bound error can be detected by KASAN.
+> Fix the issue by introducing boundary check.
 > 
-> Huh?  Right you are - fsck knows how have I managed to misread that...
-> Anyway, I can pick that READ_ONCE() patch through vfs.git if you wish,
-> or it can go through your tree with my Acked-by - up to you...
+> [   38.402878] c7   1827 BUG: KASAN: slab-out-of-bounds in f2fs_getxattr+0x518/0x68c
+> [   38.402891] c7   1827 Read of size 4 at addr ffffffc0b6fb35dc by task
+> [   38.402935] c7   1827 Call trace:
+> [   38.402952] c7   1827 [<ffffff900809003c>] dump_backtrace+0x0/0x6bc
+> [   38.402966] c7   1827 [<ffffff9008090030>] show_stack+0x20/0x2c
+> [   38.402981] c7   1827 [<ffffff900871ab10>] dump_stack+0xfc/0x140
+> [   38.402995] c7   1827 [<ffffff9008325c40>] print_address_description+0x80/0x2d8
+> [   38.403009] c7   1827 [<ffffff900832629c>] kasan_report_error+0x198/0x1fc
+> [   38.403022] c7   1827 [<ffffff9008326104>] kasan_report_error+0x0/0x1fc
+> [   38.403037] c7   1827 [<ffffff9008325000>] __asan_load4+0x1b0/0x1b8
+> [   38.403051] c7   1827 [<ffffff90085fcc44>] f2fs_getxattr+0x518/0x68c
+> [   38.403066] c7   1827 [<ffffff90085fc508>] f2fs_xattr_generic_get+0xb0/0xd0
+> [   38.403080] c7   1827 [<ffffff9008395708>] __vfs_getxattr+0x1f4/0x1fc
+> [   38.403096] c7   1827 [<ffffff9008621bd0>] inode_doinit_with_dentry+0x360/0x938
+> [   38.403109] c7   1827 [<ffffff900862d6cc>] selinux_d_instantiate+0x2c/0x38
+> [   38.403123] c7   1827 [<ffffff900861b018>] security_d_instantiate+0x68/0x98
+> [   38.403136] c7   1827 [<ffffff9008377db8>] d_splice_alias+0x58/0x348
+> [   38.403149] c7   1827 [<ffffff900858d16c>] f2fs_lookup+0x608/0x774
+> [   38.403163] c7   1827 [<ffffff900835eacc>] lookup_slow+0x1e0/0x2cc
+> [   38.403177] c7   1827 [<ffffff9008367fe0>] walk_component+0x160/0x520
+> [   38.403190] c7   1827 [<ffffff9008369ef4>] path_lookupat+0x110/0x2b4
+> [   38.403203] c7   1827 [<ffffff900835dd38>] filename_lookup+0x1d8/0x3a8
+> [   38.403216] c7   1827 [<ffffff900835eeb0>] user_path_at_empty+0x54/0x68
+> [   38.403229] c7   1827 [<ffffff9008395f44>] SyS_getxattr+0xb4/0x18c
+> [   38.403241] c7   1827 [<ffffff9008084200>] el0_svc_naked+0x34/0x38
+> 
+> Bug: 126558260
+> 
+> Signed-off-by: Randall Huang <huangrandall@google.com>
 
-Unless you expect merge conflicts, it's easier for me to take it through the
-fscrypt tree, since it's a small patch and the second patch technically isn't
-correct without it.  I'll add your Acked-by.
+Looks good to me now. :)
 
-Are you planning to review the second patch too?
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Thanks!
+> +	unsigned int xattr_nid_size = xnid ? VALID_XATTR_BLOCK_SIZE : 0;
 
-- Eric
+Nitpick, xnode_size or xattr_node_size will be better than xattr_nid_size?
 
-______________________________________________________
-Linux MTD discussion mailing list
-http://lists.infradead.org/mailman/listinfo/linux-mtd/
+Maybe Jaegeuk can help to change this when merging this patch, no new version
+patch needed.
+
+Thanks,
