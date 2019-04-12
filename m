@@ -1,36 +1,36 @@
 From: Chandan Rajendra <chandan@linux.ibm.com>
-Subject: [RFC PATCH 13/14] fscrypt_zeroout_range: Encrypt all
- zeroed out blocks of a page
-Date: Fri, 12 Apr 2019 22:40:40 +0530
-Message-ID: <20190412171041.31995-14-chandan@linux.ibm.com>
+Subject: [RFC PATCH 14/14] ext4: Enable encryption for
+ subpage-sized blocks
+Date: Fri, 12 Apr 2019 22:40:41 +0530
+Message-ID: <20190412171041.31995-15-chandan@linux.ibm.com>
 References: <20190412171041.31995-1-chandan@linux.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.ibm.com>) id 1hEzhw-00011L-6M
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 12 Apr 2019 17:11:20 +0000
+ (envelope-from <chandan@linux.ibm.com>) id 1hEzi0-00018k-O9
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 12 Apr 2019 17:11:24 +0000
 Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hEzhu-00HJwY-Te
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 12 Apr 2019 17:11:20 +0000
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+ id 1hEzhz-00HJx2-B3
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 12 Apr 2019 17:11:24 +0000
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
  by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
- x3CHA0Jw134069
- for <linux-f2fs-devel@lists.sourceforge.net>; Fri, 12 Apr 2019 13:11:13 -0400
+ x3CH8dLl061250
+ for <linux-f2fs-devel@lists.sourceforge.net>; Fri, 12 Apr 2019 13:11:17 -0400
 Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
- by mx0a-001b2d01.pphosted.com with ESMTP id 2rtwqejutw-1
+ by mx0a-001b2d01.pphosted.com with ESMTP id 2rtxh4rvab-1
  (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>; Fri, 12 Apr 2019 13:11:12 -0400
+ for <linux-f2fs-devel@lists.sourceforge.net>; Fri, 12 Apr 2019 13:11:17 -0400
 Received: from localhost
  by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
  Violators will be prosecuted
  for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.ibm.com>;
- Fri, 12 Apr 2019 18:11:12 +0100
+ Fri, 12 Apr 2019 18:11:16 +0100
 In-Reply-To: <20190412171041.31995-1-chandan@linux.ibm.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -44,88 +44,52 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org
 Cc: tytso@mit.edu, ebiggers@kernel.org, Chandan Rajendra <chandan@linux.ibm.com>, adilger.kernel@dilger.ca, jaegeuk@kernel.org
 
-For subpage-sized blocks, this commit adds code to encrypt all zeroed
-out blocks mapped by a page.
+Now that we have the code to support encryption for subpage-sized
+blocks, this commit removes the conditional check in filesystem mount
+code.
+
+The commit also changes the support statement in
+Documentation/filesystems/fscrypt.rst to reflect the fact that
+encryption of filesystems with blocksize less than page size now works.
 
 Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
 ---
- fs/crypto/bio.c | 40 ++++++++++++++++++----------------------
- 1 file changed, 18 insertions(+), 22 deletions(-)
+ Documentation/filesystems/fscrypt.rst | 4 ++--
+ fs/ext4/super.c                       | 7 -------
+ 2 files changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
-index 83de1e46f546..2c6ce4218fd4 100644
---- a/fs/crypto/bio.c
-+++ b/fs/crypto/bio.c
-@@ -106,29 +106,23 @@ EXPORT_SYMBOL(fscrypt_pullback_bio_page);
- int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
- 				sector_t pblk, unsigned int len)
- {
--	struct fscrypt_ctx *ctx;
- 	struct page *ciphertext_page = NULL;
- 	struct bio *bio;
-+	u64 total_bytes, page_bytes;
- 	int ret, err = 0;
+diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
+index 08c23b60e016..ff2fea121da9 100644
+--- a/Documentation/filesystems/fscrypt.rst
++++ b/Documentation/filesystems/fscrypt.rst
+@@ -213,8 +213,8 @@ Contents encryption
+ -------------------
  
--	BUG_ON(inode->i_sb->s_blocksize != PAGE_SIZE);
--
--	ctx = fscrypt_get_ctx(inode, GFP_NOFS);
--	if (IS_ERR(ctx))
--		return PTR_ERR(ctx);
-+	total_bytes = len << inode->i_blkbits;
+ For file contents, each filesystem block is encrypted independently.
+-Currently, only the case where the filesystem block size is equal to
+-the system's page size (usually 4096 bytes) is supported.
++Starting from Linux kernel 5.3, encryption of filesystems with block
++size less than system's page size is supported.
  
--	ciphertext_page = fscrypt_alloc_bounce_page(ctx, GFP_NOWAIT);
--	if (IS_ERR(ciphertext_page)) {
--		err = PTR_ERR(ciphertext_page);
--		goto errout;
--	}
-+	while (total_bytes) {
-+		page_bytes = min_t(u64, total_bytes, PAGE_SIZE);
- 
--	while (len--) {
--		err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk,
--					     ZERO_PAGE(0), ciphertext_page,
--					     PAGE_SIZE, 0, GFP_NOFS);
--		if (err)
-+		ciphertext_page = fscrypt_encrypt_page(inode, ZERO_PAGE(0),
-+						page_bytes, 0, lblk, GFP_NOFS);
-+		if (IS_ERR(ciphertext_page)) {
-+			err = PTR_ERR(ciphertext_page);
-+			ciphertext_page = NULL;
- 			goto errout;
-+		}
- 
- 		bio = bio_alloc(GFP_NOWAIT, 1);
- 		if (!bio) {
-@@ -139,9 +133,8 @@ int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
- 		bio->bi_iter.bi_sector =
- 			pblk << (inode->i_sb->s_blocksize_bits - 9);
- 		bio_set_op_attrs(bio, REQ_OP_WRITE, 0);
--		ret = bio_add_page(bio, ciphertext_page,
--					inode->i_sb->s_blocksize, 0);
--		if (ret != inode->i_sb->s_blocksize) {
-+		ret = bio_add_page(bio, ciphertext_page, page_bytes, 0);
-+		if (ret != page_bytes) {
- 			/* should never happen! */
- 			WARN_ON(1);
- 			bio_put(bio);
-@@ -154,12 +147,15 @@ int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
- 		bio_put(bio);
- 		if (err)
- 			goto errout;
--		lblk++;
--		pblk++;
-+
-+		lblk += page_bytes >> inode->i_blkbits;
-+		pblk += page_bytes >> inode->i_blkbits;
-+		total_bytes -= page_bytes;
+ Each block's IV is set to the logical block number within the file as
+ a little endian number, except that:
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index cadf50f9503f..549e5bec1aba 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4433,13 +4433,6 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
+ 		}
  	}
- 	err = 0;
- errout:
--	fscrypt_release_ctx(ctx);
-+	if (!IS_ERR_OR_NULL(ciphertext_page))
-+		fscrypt_restore_control_page(ciphertext_page);
- 	return err;
- }
- EXPORT_SYMBOL(fscrypt_zeroout_range);
+ 
+-	if ((DUMMY_ENCRYPTION_ENABLED(sbi) || ext4_has_feature_encrypt(sb)) &&
+-	    (blocksize != PAGE_SIZE)) {
+-		ext4_msg(sb, KERN_ERR,
+-			 "Unsupported blocksize for fs encryption");
+-		goto failed_mount_wq;
+-	}
+-
+ 	if (DUMMY_ENCRYPTION_ENABLED(sbi) && !sb_rdonly(sb) &&
+ 	    !ext4_has_feature_encrypt(sb)) {
+ 		ext4_set_feature_encrypt(sb);
 -- 
 2.19.1
