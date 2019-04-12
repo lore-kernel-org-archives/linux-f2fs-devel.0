@@ -1,84 +1,123 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 1/2] f2fs: fix wrong __is_meta_io() macro
-Date: Fri, 12 Apr 2019 19:53:38 +0800
-Message-ID: <20190412115339.16936-1-yuchao0@huawei.com>
+From: Chandan Rajendra <chandan@linux.ibm.com>
+Subject: [RFC PATCH 00/14] Consolidate Post read processing code
+Date: Fri, 12 Apr 2019 22:40:27 +0530
+Message-ID: <20190412171041.31995-1-chandan@linux.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <chandan@linux.ibm.com>) id 1hEzgo-0000uK-Km
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 12 Apr 2019 17:10:10 +0000
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
+ helo=mx0a-001b2d01.pphosted.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1hEzgm-00HJnM-RB
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 12 Apr 2019 17:10:10 +0000
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+ by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
+ x3CH8egg125267
+ for <linux-f2fs-devel@lists.sourceforge.net>; Fri, 12 Apr 2019 13:10:02 -0400
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+ by mx0a-001b2d01.pphosted.com with ESMTP id 2rtwn2u7ma-1
+ (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <linux-f2fs-devel@lists.sourceforge.net>; Fri, 12 Apr 2019 13:10:01 -0400
+Received: from localhost
+ by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
+ Violators will be prosecuted
+ for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.ibm.com>;
+ Fri, 12 Apr 2019 18:10:00 +0100
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org
+Cc: tytso@mit.edu, ebiggers@kernel.org, Chandan Rajendra <chandan@linux.ibm.com>, adilger.kernel@dilger.ca, jaegeuk@kernel.org
 
-This patch changes codes as below:
-- don't use is_read_io() as a condition to judge the meta IO.
-- use .is_por to replace .is_meta to indicate IO is from recovery explicitly.
+This patchset moves the "post read processing" code into a file of its
+own (i.e. fs/post_read_process.c) and modifies the generic
+do_mpage_readpge() to make use of the functionality provided. With
+these changes in place, the patchset changes Ext4 to use
+mpage_readpage[s] instead of its own custom ext4_readpage[s]()
+functions. This is done to reduce duplicity of code across
+filesystems. Also, Post read processing sources will be built only if
+one of CONFIG_FS_ENCRYPTION and CONFIG_FS_VERITY is enabled.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/checkpoint.c | 4 ++--
- fs/f2fs/data.c       | 3 ++-
- fs/f2fs/f2fs.h       | 5 ++---
- 3 files changed, 6 insertions(+), 6 deletions(-)
+Members of "struct fscrypt_ctx" that tracked status of a "write"
+operation are now made an anonymous structure since the decryption
+state tracking members are now moved into "struct post_read_ctx".
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index eadb67bd4ed7..58eb2b66600b 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -66,7 +66,7 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
- 		.old_blkaddr = index,
- 		.new_blkaddr = index,
- 		.encrypted_page = NULL,
--		.is_meta = is_meta,
-+		.is_por = !is_meta,
- 	};
- 	int err;
- 
-@@ -189,7 +189,7 @@ int f2fs_ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
- 		.op_flags = sync ? (REQ_META | REQ_PRIO) : REQ_RAHEAD,
- 		.encrypted_page = NULL,
- 		.in_list = false,
--		.is_meta = (type != META_POR),
-+		.is_por = (type == META_POR),
- 	};
- 	struct blk_plug plug;
- 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index cbf4681525d8..d9000134792f 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -403,7 +403,8 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
- 			fio->encrypted_page : fio->page;
- 
- 	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
--			__is_meta_io(fio) ? META_GENERIC : DATA_GENERIC))
-+			fio->is_por ? META_POR :
-+			(__is_meta_io(fio) ? META_GENERIC : DATA_GENERIC)))
- 		return -EFAULT;
- 
- 	trace_f2fs_submit_page_bio(page, fio);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 42855bd6252f..80e17eab4fa7 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1046,7 +1046,7 @@ struct f2fs_io_info {
- 	bool submitted;		/* indicate IO submission */
- 	int need_lock;		/* indicate we need to lock cp_rwsem */
- 	bool in_list;		/* indicate fio is in io_list */
--	bool is_meta;		/* indicate borrow meta inode mapping or not */
-+	bool is_por;		/* indicate IO is from recovery or not */
- 	bool retry;		/* need to reallocate block address */
- 	enum iostat_type io_type;	/* io type */
- 	struct writeback_control *io_wbc; /* writeback control */
-@@ -2830,8 +2830,7 @@ static inline void f2fs_update_iostat(struct f2fs_sb_info *sbi,
- 
- #define __is_large_section(sbi)		((sbi)->segs_per_sec > 1)
- 
--#define __is_meta_io(fio) (PAGE_TYPE_OF_BIO((fio)->type) == META &&	\
--				(!is_read_io((fio)->op) || (fio)->is_meta))
-+#define __is_meta_io(fio) (PAGE_TYPE_OF_BIO((fio)->type) == META)
- 
- bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
- 					block_t blkaddr, int type);
+The patchset also modifies fs/buffer.c and fscrypt functionality to
+get file encryption/decryption to work with subpage-sized blocks.
+
+The following fixes from Eric Biggers are prerequisites for this
+patchset,
+  fscrypt: fix race where ->lookup() marks plaintext dentry as ciphertext
+  fscrypt: only set dentry_operations on ciphertext dentries
+  fscrypt: clear DCACHE_ENCRYPTED_NAME when unaliasing directory
+  fscrypt: fix race allowing rename() and link() of ciphertext dentries
+  fscrypt: clean up and improve dentry revalidation
+
+The patches can also be obtained from,
+"https://github.com/chandanr/linux.git subpage-encryption"
+
+TODO:
+1. The subset of the fscrypt_encrypt_page() that deals with
+   FS_CFLG_OWN_PAGES case still needs to be tested. UBIFS seems to be the
+   only user of this piece of code.
+2. Verity changes needs to be added for F2FS and I will add them in the
+   next patchset based on the review comments obtained for the current
+   patchset.
+
+Chandan Rajendra (14):
+  ext4: Clear BH_Uptodate flag on decryption error
+  Consolidate "post read processing" into a new file
+  fsverity: Add call back to decide if verity check has to be performed
+  fsverity: Add call back to determine readpage limit
+  fs/mpage.c: Integrate post read processing
+  ext4: Wire up ext4_readpage[s] to use mpage_readpage[s]
+  Remove the term "bio" from post read processing
+  Add decryption support for sub-pagesized blocks
+  ext4: Decrypt all boundary blocks when doing buffered write
+  ext4: Decrypt the block that needs to be partially zeroed
+  fscrypt_encrypt_page: Loop across all blocks mapped by a page range
+  ext4: Compute logical block and the page range to be encrypted
+  fscrypt_zeroout_range: Encrypt all zeroed out blocks of a page
+  ext4: Enable encryption for subpage-sized blocks
+
+ Documentation/filesystems/fscrypt.rst |   4 +-
+ fs/Makefile                           |   4 +
+ fs/buffer.c                           |  82 +++--
+ fs/crypto/bio.c                       | 109 ++++---
+ fs/crypto/crypto.c                    |  73 +++--
+ fs/crypto/fscrypt_private.h           |   3 +
+ fs/ext4/Makefile                      |   2 +-
+ fs/ext4/ext4.h                        |   2 -
+ fs/ext4/inode.c                       |  47 ++-
+ fs/ext4/page-io.c                     |   9 +-
+ fs/ext4/readpage.c                    | 445 --------------------------
+ fs/ext4/super.c                       |  40 ++-
+ fs/f2fs/data.c                        | 148 ++-------
+ fs/f2fs/super.c                       |   9 +-
+ fs/mpage.c                            |  45 ++-
+ fs/post_read_process.c                | 155 +++++++++
+ fs/verity/verify.c                    |  12 +
+ include/linux/buffer_head.h           |   1 +
+ include/linux/fscrypt.h               |  20 +-
+ include/linux/fsverity.h              |   2 +
+ include/linux/post_read_process.h     |  22 ++
+ 21 files changed, 503 insertions(+), 731 deletions(-)
+ delete mode 100644 fs/ext4/readpage.c
+ create mode 100644 fs/post_read_process.c
+ create mode 100644 include/linux/post_read_process.h
+
 -- 
-2.18.0.rc1
+2.19.1
