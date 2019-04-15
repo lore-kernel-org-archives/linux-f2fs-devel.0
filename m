@@ -1,29 +1,25 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 203215] failure at
- fs/f2fs/f2fs.h:2809/verify_blkaddr()!
-Date: Mon, 15 Apr 2019 14:56:57 +0000
-Message-ID: <bug-203215-202145-xD97OqCHG8@https.bugzilla.kernel.org/>
-References: <bug-203215-202145@https.bugzilla.kernel.org/>
+From: grygorii tertychnyi via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Subject: [PATCH] loop: drop caches if offset or block_size are
+ changed
+Date: Mon, 15 Apr 2019 14:13:21 -0700
+Message-ID: <20190415211321.58681-1-gtertych@cisco.com>
+References: <CAPUE2uushZ3Zc6mt01q3OkSx63YmQLq7SKqAktdZVnrb9bVnHA@mail.gmail.com>
+Reply-To: grygorii tertychnyi <gtertych@cisco.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1hG32e-00014W-AT
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Apr 2019 14:57:04 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hG32d-007bl2-4C
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Apr 2019 14:57:04 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 86FB9285E3
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 15 Apr 2019 14:56:57 +0000 (UTC)
-In-Reply-To: <bug-203215-202145@https.bugzilla.kernel.org/>
+ (envelope-from <gtertych@cisco.com>) id 1hG8v3-0003jz-4a
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Apr 2019 21:13:37 +0000
+Received: from rcdn-iport-3.cisco.com ([173.37.86.74])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps (TLSv1.2:DHE-RSA-SEED-SHA:128)
+ (Exim 4.90_1) id 1hG8v1-008F0n-J9
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Apr 2019 21:13:37 +0000
+In-Reply-To: <CAPUE2uushZ3Zc6mt01q3OkSx63YmQLq7SKqAktdZVnrb9bVnHA@mail.gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,29 +29,21 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, gwendal@chromium.org
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, xe-linux-external@cisco.com
 
-https://bugzilla.kernel.org/show_bug.cgi?id=203215
+Jaegeuk,
 
-Chao Yu (chao@kernel.org) changed:
+We also observed an issue with this patch.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-             Status|NEW                         |ASSIGNED
-                 CC|                            |chao@kernel.org
+After heavely working with image.bin (haxdump with different offsets)
+next mount call fails:
 
---- Comment #1 from Chao Yu (chao@kernel.org) ---
-Fixed with
+# mount -o ro,loop,offset=45967633 -t squashfs image.bin /tmp/gi45
+mount: image.bin: failed to setup loop device: Resource temporarily unavailable
 
-f2fs: introduce DATA_GENERIC_ENHANCE
+# dmesg | tail -n1
+loop_set_status: loop2 () has still dirty pages (nrpages=1)
 
-And please try this patch with your below issue list:
 
-https://bugzilla.kernel.org/show_bug.cgi?id=203223
-https://bugzilla.kernel.org/show_bug.cgi?id=203231
-https://bugzilla.kernel.org/show_bug.cgi?id=203235
-https://bugzilla.kernel.org/show_bug.cgi?id=203241
-
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+-- Grygorii
