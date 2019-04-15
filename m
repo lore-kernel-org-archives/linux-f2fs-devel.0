@@ -1,7 +1,7 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 10/13] f2fs: fix to do sanity check on valid block count of segment
-Date: Mon, 15 Apr 2019 15:30:51 +0800
-Message-ID: <20190415073054.2577-2-yuchao0@huawei.com>
+Subject: [PATCH 13/13] f2fs: don't recovery orphan inode on readonly device
+Date: Mon, 15 Apr 2019 15:30:54 +0800
+Message-ID: <20190415073054.2577-5-yuchao0@huawei.com>
 References: <20190415073054.2577-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,86 +12,61 @@ To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-As Jungyeon reported in bugzilla:
+As JuHyung Park reported in mailing list:
 
-https://bugzilla.kernel.org/show_bug.cgi?id=203233
+https://sourceforge.net/p/linux-f2fs/mailman/message/36639787/
 
-- Overview
-When mounting the attached crafted image and running program, following errors are reported.
-Additionally, it hangs on sync after running program.
+generic_make_request: Trying to write to read-only block-device loop0 (partno 0)
+WARNING: CPU: 0 PID: 23437 at block/blk-core.c:2174 generic_make_request_checks+0x594/0x630
 
-The image is intentionally fuzzed from a normal f2fs image for testing.
-Compile options for F2FS are as follows.
-CONFIG_F2FS_FS=y
-CONFIG_F2FS_STAT_FS=y
-CONFIG_F2FS_FS_XATTR=y
-CONFIG_F2FS_FS_POSIX_ACL=y
-CONFIG_F2FS_CHECK_FS=y
+ generic_make_request+0x46/0x3d0
+ submit_bio+0x30/0x110
+ __submit_merged_bio+0x68/0x390
+ f2fs_submit_page_write+0x1bb/0x7f0
+ f2fs_do_write_meta_page+0x7f/0x160
+ __f2fs_write_meta_page+0x70/0x140
+ f2fs_sync_meta_pages+0x140/0x250
+ f2fs_write_checkpoint+0x5c5/0x17b0
+ f2fs_sync_fs+0x9c/0x110
+ sync_filesystem+0x66/0x80
+ f2fs_recover_fsync_data+0x790/0xa30
+ f2fs_fill_super+0xe4e/0x1980
+ mount_bdev+0x518/0x610
+ mount_fs+0x34/0x13f
+ vfs_kern_mount.part.11+0x4f/0x120
+ do_mount+0x2d1/0xe40
+ __x64_sys_mount+0xbf/0xe0
+ do_syscall_64+0x4a/0xf0
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-- Reproduces
-cc poc_13.c
-mkdir test
-mount -t f2fs tmp.img test
-cp a.out test
-cd test
-sudo ./a.out
-sync
+print_req_error: I/O error, dev loop0, sector 4096
 
-- Kernel messages
- F2FS-fs (sdb): Bitmap was wrongly set, blk:4608
- kernel BUG at fs/f2fs/segment.c:2102!
- RIP: 0010:update_sit_entry+0x394/0x410
- Call Trace:
-  f2fs_allocate_data_block+0x16f/0x660
-  do_write_page+0x62/0x170
-  f2fs_do_write_node_page+0x33/0xa0
-  __write_node_page+0x270/0x4e0
-  f2fs_sync_node_pages+0x5df/0x670
-  f2fs_write_checkpoint+0x372/0x1400
-  f2fs_sync_fs+0xa3/0x130
-  f2fs_do_sync_file+0x1a6/0x810
-  do_fsync+0x33/0x60
-  __x64_sys_fsync+0xb/0x10
-  do_syscall_64+0x43/0xf0
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+If block device is readonly, we should never trigger write IO from
+filesystem layer, but previously, orphan recovery didn't consider
+such condition, result in triggering above warning, fix it.
 
-sit.vblocks and sum valid block count in sit.valid_map may be
-inconsistent, segment w/ zero vblocks will be treated as free
-segment, while allocating in free segment, we may allocate a
-free block, if its bitmap is valid previously, it can cause
-kernel crash due to bitmap verification failure.
-
-Anyway, to avoid further serious metadata inconsistence and
-corruption, it is necessary and worth to detect SIT
-inconsistence. So let's enable check_block_count() to verify
-vblocks and valid_map all the time rather than do it only
-CONFIG_F2FS_CHECK_FS is enabled.
-
+Reported-by: JuHyung Park <qkrwngud825@gmail.com>
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/segment.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/f2fs/checkpoint.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index b333ecca6ed6..429007b8036e 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -673,7 +673,6 @@ static inline void verify_fio_blkaddr(struct f2fs_io_info *fio)
- static inline int check_block_count(struct f2fs_sb_info *sbi,
- 		int segno, struct f2fs_sit_entry *raw_sit)
- {
--#ifdef CONFIG_F2FS_CHECK_FS
- 	bool is_valid  = test_bit_le(0, raw_sit->valid_map) ? true : false;
- 	int valid_blocks = 0;
- 	int cur_pos = 0, next_pos;
-@@ -700,7 +699,7 @@ static inline int check_block_count(struct f2fs_sb_info *sbi,
- 		set_sbi_flag(sbi, SBI_NEED_FSCK);
- 		return -EINVAL;
- 	}
--#endif
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index a7ad1b1e5750..90e1bab86269 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -674,6 +674,12 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
+ 	if (!is_set_ckpt_flags(sbi, CP_ORPHAN_PRESENT_FLAG))
+ 		return 0;
+ 
++	if (bdev_read_only(sbi->sb->s_bdev)) {
++		f2fs_msg(sbi->sb, KERN_INFO, "write access "
++			"unavailable, skipping orphan cleanup");
++		return 0;
++	}
 +
- 	/* check segment usage, and check boundary of a given segment number */
- 	if (unlikely(GET_SIT_VBLOCKS(raw_sit) > sbi->blocks_per_seg
- 					|| segno > TOTAL_SEGS(sbi) - 1)) {
+ 	if (s_flags & SB_RDONLY) {
+ 		f2fs_msg(sbi->sb, KERN_INFO, "orphan cleanup on readonly fs");
+ 		sbi->sb->s_flags &= ~SB_RDONLY;
 -- 
 2.18.0.rc1
