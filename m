@@ -1,82 +1,105 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 08/13] f2fs: fix to avoid panic in do_recover_data()
-Date: Mon, 15 Apr 2019 15:28:37 +0800
-Message-ID: <20190415072842.2438-8-yuchao0@huawei.com>
+Subject: [PATCH 03/13] f2fs: remove new blank line of f2fs kernel
+ message
+Date: Mon, 15 Apr 2019 15:28:32 +0800
+Message-ID: <20190415072842.2438-3-yuchao0@huawei.com>
 References: <20190415072842.2438-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1hFw30-0004xP-3B
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Apr 2019 07:28:58 +0000
+Received: from szxga03-in.huawei.com ([45.249.212.189] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1hFw2y-005rWu-SK
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Apr 2019 07:28:58 +0000
 In-Reply-To: <20190415072842.2438-1-yuchao0@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-As Jungyeon reported in bugzilla:
-
-https://bugzilla.kernel.org/show_bug.cgi?id=203227
-
-- Overview
-When mounting the attached crafted image, following errors are reported.
-Additionally, it hangs on sync after trying to mount it.
-
-The image is intentionally fuzzed from a normal f2fs image for testing.
-Compile options for F2FS are as follows.
-CONFIG_F2FS_FS=y
-CONFIG_F2FS_STAT_FS=y
-CONFIG_F2FS_FS_XATTR=y
-CONFIG_F2FS_FS_POSIX_ACL=y
-CONFIG_F2FS_CHECK_FS=y
-
-- Reproduces
-mkdir test
-mount -t f2fs tmp.img test
-sync
-
-- Messages
- kernel BUG at fs/f2fs/recovery.c:549!
- RIP: 0010:recover_data+0x167a/0x1780
- Call Trace:
-  f2fs_recover_fsync_data+0x613/0x710
-  f2fs_fill_super+0x1043/0x1aa0
-  mount_bdev+0x16d/0x1a0
-  mount_fs+0x4a/0x170
-  vfs_kern_mount+0x5d/0x100
-  do_mount+0x200/0xcf0
-  ksys_mount+0x79/0xc0
-  __x64_sys_mount+0x1c/0x20
-  do_syscall_64+0x43/0xf0
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-During recovery, if ofs_of_node is inconsistent in between recovered
-node page and original checkpointed node page, let's just fail recovery
-instead of making kernel panic.
+Just removing '\n' in f2fs_msg(, "\n") to avoid redundant new blank line.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/recovery.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ fs/f2fs/file.c  | 4 ++--
+ fs/f2fs/super.c | 8 ++++----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 79f5812c5e1f..e04f82b3f4fc 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -551,7 +551,15 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- 		goto err;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index f19a2ec9f0ef..333d1fed956e 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2587,7 +2587,7 @@ static int f2fs_ioc_flush_device(struct file *filp, unsigned long arg)
+ 	if (!f2fs_is_multi_device(sbi) || sbi->s_ndevs - 1 <= range.dev_num ||
+ 			__is_large_section(sbi)) {
+ 		f2fs_msg(sbi->sb, KERN_WARNING,
+-			"Can't flush %u in %d for segs_per_sec %u != 1\n",
++			"Can't flush %u in %d for segs_per_sec %u != 1",
+ 				range.dev_num, sbi->s_ndevs,
+ 				sbi->segs_per_sec);
+ 		return -EINVAL;
+@@ -2869,7 +2869,7 @@ int f2fs_pin_file_control(struct inode *inode, bool inc)
  
- 	f2fs_bug_on(sbi, ni.ino != ino_of_node(page));
--	f2fs_bug_on(sbi, ofs_of_node(dn.node_page) != ofs_of_node(page));
-+
-+	if (ofs_of_node(dn.node_page) != ofs_of_node(page)) {
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+			"Inconsistent ofs_of_node, ino:%lu, ofs:%u, %u",
-+			inode->i_ino, ofs_of_node(dn.node_page),
-+			ofs_of_node(page));
-+		err = -EFAULT;
-+		goto err;
-+	}
- 
- 	for (; start < end; start++, dn.ofs_in_node++) {
- 		block_t src, dest;
+ 	if (fi->i_gc_failures[GC_FAILURE_PIN] > sbi->gc_pin_file_threshold) {
+ 		f2fs_msg(sbi->sb, KERN_WARNING,
+-			"%s: Enable GC = ino %lx after %x GC trials\n",
++			"%s: Enable GC = ino %lx after %x GC trials",
+ 			__func__, inode->i_ino,
+ 			fi->i_gc_failures[GC_FAILURE_PIN]);
+ 		clear_inode_flag(inode, FI_PIN_FILE);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 0b6fa77c35f3..2cd78583218a 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2454,7 +2454,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+ 	/* Currently, support only 4KB page cache size */
+ 	if (F2FS_BLKSIZE != PAGE_SIZE) {
+ 		f2fs_msg(sb, KERN_INFO,
+-			"Invalid page_cache_size (%lu), supports only 4KB\n",
++			"Invalid page_cache_size (%lu), supports only 4KB",
+ 			PAGE_SIZE);
+ 		return 1;
+ 	}
+@@ -2463,7 +2463,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+ 	blocksize = 1 << le32_to_cpu(raw_super->log_blocksize);
+ 	if (blocksize != F2FS_BLKSIZE) {
+ 		f2fs_msg(sb, KERN_INFO,
+-			"Invalid blocksize (%u), supports only 4KB\n",
++			"Invalid blocksize (%u), supports only 4KB",
+ 			blocksize);
+ 		return 1;
+ 	}
+@@ -2471,7 +2471,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+ 	/* check log blocks per segment */
+ 	if (le32_to_cpu(raw_super->log_blocks_per_seg) != 9) {
+ 		f2fs_msg(sb, KERN_INFO,
+-			"Invalid log blocks per segment (%u)\n",
++			"Invalid log blocks per segment (%u)",
+ 			le32_to_cpu(raw_super->log_blocks_per_seg));
+ 		return 1;
+ 	}
+@@ -3113,7 +3113,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ #ifndef CONFIG_BLK_DEV_ZONED
+ 	if (f2fs_sb_has_blkzoned(sbi)) {
+ 		f2fs_msg(sb, KERN_ERR,
+-			 "Zoned block device support is not enabled\n");
++			 "Zoned block device support is not enabled");
+ 		err = -EOPNOTSUPP;
+ 		goto free_sb_buf;
+ 	}
 -- 
 2.18.0.rc1
