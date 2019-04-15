@@ -1,140 +1,199 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH 13/13] f2fs: don't recovery orphan inode on
- readonly device
-Date: Mon, 15 Apr 2019 16:56:56 +0800
-Message-ID: <a77dc50c-01f0-459b-38de-50f97c129f31@huawei.com>
-References: <20190415073054.2577-1-yuchao0@huawei.com>
- <20190415073054.2577-5-yuchao0@huawei.com>
- <CAD14+f2uV6s6hBfQaQaJPBEAPVOFgEZfueuVPQ_43LpiWS9nZg@mail.gmail.com>
+Subject: [PATCH] f2fs-tools: fix to check total valid block count
+ before block allocation
+Date: Mon, 15 Apr 2019 17:14:38 +0800
+Message-ID: <20190415091438.13559-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAD14+f2uV6s6hBfQaQaJPBEAPVOFgEZfueuVPQ_43LpiWS9nZg@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ju Hyung Park <qkrwngud825@gmail.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1hFxha-0001cy-25
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Apr 2019 09:14:58 +0000
+Received: from szxga02-in.huawei.com ([45.249.212.188] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1hFxhW-00635Z-N3
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Apr 2019 09:14:57 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org
 
-On 2019/4/15 16:10, Ju Hyung Park wrote:
-> Hi,
-> 
-> Thanks for the fix. I'll try this sooner than later.
-> 
-> One minor request though, can you change
-> "JuHyung Park <qkrwngud825@gmail.com>"
-> to
-> "Park Ju Hyung <qkrwngud825@gmail.com>"?
-> 
-> That's my preference and I'd like to avoid any inconsistencies.
+Now, kernel can catch incorrect total valid block count which is exceed
+max user block count of image.
 
-Sure, will update it in next version. :)
+Then, generic/051,476 of fstest reports below message:
 
-> 
-> One additional question from reviewing the code surrounding it:
-> does it really makes sense to cleanup orphan inodes even when the "ro"
-> mount option is passed?
-> It's an explicit request from the user not to write to the block device/image.
+Apr 15 11:08:03 szvp000201624 kernel: [ 2533.515813] F2FS-fs (zram1): Wrong valid_user_blocks: 469505, user_block_count: 469504
+Apr 15 11:08:03 szvp000201624 kernel: [ 2533.519166] F2FS-fs (zram1): Failed to get valid F2FS checkpoint
 
-Now, f2fs follows the rule that ext4 kept, you can check codes in
-ext4_orphan_cleanup()
+The reason is that when fsck repairs corrupted quota sysfile, it didn't
+check max user block count when allocating new block for quota sysfile,
+so ckpt.valid_block_count can exceed max user block count, result in
+mount failure later.
 
-	if (bdev_read_only(sb->s_bdev)) {
-		ext4_msg(sb, KERN_ERR, "write access "
-			"unavailable, skipping orphan cleanup");
-		return;
-	}
-...
-	if (s_flags & SB_RDONLY) {
-		ext4_msg(sb, KERN_INFO, "orphan cleanup on readonly fs");
-		sb->s_flags &= ~SB_RDONLY;
-	}
+Adding upper boundary check of block count in reserve_new_block() to
+fix this issue.
 
-There are two points in above codes:
-- if block device is readonly, filesystem should not execute any recovery flow
-which can trigger write IO.
-- if filesystem was mounted as readonly one, and recovery is needed, it will
-ignore readonly flag and update data in device for journal recovery during mount.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fsck/dir.c     |  9 ++++++---
+ fsck/fsck.h    |  2 +-
+ fsck/node.c    |  7 ++++++-
+ fsck/segment.c | 28 +++++++++++++++++++++++++---
+ 4 files changed, 38 insertions(+), 8 deletions(-)
 
-So IMO, readonly mountoption sematics is only try to restrict data/meta update
-behavior that is triggered by user from mountpoint, but filesystem still can do
-any updates on a writable device if it needs, mostly like recovery flow.
-
-Anyway, if you want to limit any updates on block device, making it readonly
-will be a good choice. :)
-
-Thanks,
-
-> 
-> Thanks.
-> 
-> On Mon, Apr 15, 2019 at 4:31 PM Chao Yu <yuchao0@huawei.com> wrote:
->>
->> As JuHyung Park reported in mailing list:
->>
->> https://sourceforge.net/p/linux-f2fs/mailman/message/36639787/
->>
->> generic_make_request: Trying to write to read-only block-device loop0 (partno 0)
->> WARNING: CPU: 0 PID: 23437 at block/blk-core.c:2174 generic_make_request_checks+0x594/0x630
->>
->>  generic_make_request+0x46/0x3d0
->>  submit_bio+0x30/0x110
->>  __submit_merged_bio+0x68/0x390
->>  f2fs_submit_page_write+0x1bb/0x7f0
->>  f2fs_do_write_meta_page+0x7f/0x160
->>  __f2fs_write_meta_page+0x70/0x140
->>  f2fs_sync_meta_pages+0x140/0x250
->>  f2fs_write_checkpoint+0x5c5/0x17b0
->>  f2fs_sync_fs+0x9c/0x110
->>  sync_filesystem+0x66/0x80
->>  f2fs_recover_fsync_data+0x790/0xa30
->>  f2fs_fill_super+0xe4e/0x1980
->>  mount_bdev+0x518/0x610
->>  mount_fs+0x34/0x13f
->>  vfs_kern_mount.part.11+0x4f/0x120
->>  do_mount+0x2d1/0xe40
->>  __x64_sys_mount+0xbf/0xe0
->>  do_syscall_64+0x4a/0xf0
->>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->>
->> print_req_error: I/O error, dev loop0, sector 4096
->>
->> If block device is readonly, we should never trigger write IO from
->> filesystem layer, but previously, orphan recovery didn't consider
->> such condition, result in triggering above warning, fix it.
->>
->> Reported-by: JuHyung Park <qkrwngud825@gmail.com>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/checkpoint.c | 6 ++++++
->>  1 file changed, 6 insertions(+)
->>
->> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->> index a7ad1b1e5750..90e1bab86269 100644
->> --- a/fs/f2fs/checkpoint.c
->> +++ b/fs/f2fs/checkpoint.c
->> @@ -674,6 +674,12 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
->>         if (!is_set_ckpt_flags(sbi, CP_ORPHAN_PRESENT_FLAG))
->>                 return 0;
->>
->> +       if (bdev_read_only(sbi->sb->s_bdev)) {
->> +               f2fs_msg(sbi->sb, KERN_INFO, "write access "
->> +                       "unavailable, skipping orphan cleanup");
->> +               return 0;
->> +       }
->> +
->>         if (s_flags & SB_RDONLY) {
->>                 f2fs_msg(sbi->sb, KERN_INFO, "orphan cleanup on readonly fs");
->>                 sbi->sb->s_flags &= ~SB_RDONLY;
->> --
->> 2.18.0.rc1
->>
->>
->>
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> .
-> 
+diff --git a/fsck/dir.c b/fsck/dir.c
+index 98a0b7a..f1665c4 100644
+--- a/fsck/dir.c
++++ b/fsck/dir.c
+@@ -360,7 +360,8 @@ static void make_empty_dir(struct f2fs_sb_info *sbi, struct f2fs_node *inode)
+ 	test_and_set_bit_le(1, dent_blk->dentry_bitmap);
+ 
+ 	set_summary(&sum, ino, 0, ni.version);
+-	reserve_new_block(sbi, &blkaddr, &sum, CURSEG_HOT_DATA);
++	ret = reserve_new_block(sbi, &blkaddr, &sum, CURSEG_HOT_DATA);
++	ASSERT(!ret);
+ 
+ 	ret = dev_write_block(dent_blk, blkaddr);
+ 	ASSERT(ret >= 0);
+@@ -395,7 +396,8 @@ static void page_symlink(struct f2fs_sb_info *sbi, struct f2fs_node *inode,
+ 	memcpy(data_blk, symname, symlen);
+ 
+ 	set_summary(&sum, ino, 0, ni.version);
+-	reserve_new_block(sbi, &blkaddr, &sum, CURSEG_WARM_DATA);
++	ret = reserve_new_block(sbi, &blkaddr, &sum, CURSEG_WARM_DATA);
++	ASSERT(!ret);
+ 
+ 	ret = dev_write_block(data_blk, blkaddr);
+ 	ASSERT(ret >= 0);
+@@ -631,7 +633,8 @@ int f2fs_create(struct f2fs_sb_info *sbi, struct dentry *de)
+ 
+ 	/* write child */
+ 	set_summary(&sum, de->ino, 0, ni.version);
+-	reserve_new_block(sbi, &blkaddr, &sum, CURSEG_HOT_NODE);
++	ret = reserve_new_block(sbi, &blkaddr, &sum, CURSEG_HOT_NODE);
++	ASSERT(!ret);
+ 
+ 	/* update nat info */
+ 	update_nat_blkaddr(sbi, de->ino, de->ino, blkaddr);
+diff --git a/fsck/fsck.h b/fsck/fsck.h
+index cbd6e93..376ced7 100644
+--- a/fsck/fsck.h
++++ b/fsck/fsck.h
+@@ -234,7 +234,7 @@ int f2fs_resize(struct f2fs_sb_info *);
+ int f2fs_sload(struct f2fs_sb_info *);
+ 
+ /* segment.c */
+-void reserve_new_block(struct f2fs_sb_info *, block_t *,
++int reserve_new_block(struct f2fs_sb_info *, block_t *,
+ 					struct f2fs_summary *, int);
+ int new_data_block(struct f2fs_sb_info *, void *,
+ 					struct dnode_of_data *, int);
+diff --git a/fsck/node.c b/fsck/node.c
+index 18dd186..882f355 100644
+--- a/fsck/node.c
++++ b/fsck/node.c
+@@ -65,6 +65,7 @@ block_t new_node_block(struct f2fs_sb_info *sbi,
+ 	struct node_info ni;
+ 	block_t blkaddr = NULL_ADDR;
+ 	int type;
++	int ret;
+ 
+ 	f2fs_inode = dn->inode_blk;
+ 
+@@ -86,7 +87,11 @@ block_t new_node_block(struct f2fs_sb_info *sbi,
+ 
+ 	get_node_info(sbi, dn->nid, &ni);
+ 	set_summary(&sum, dn->nid, 0, ni.version);
+-	reserve_new_block(sbi, &blkaddr, &sum, type);
++	ret = reserve_new_block(sbi, &blkaddr, &sum, type);
++	if (ret) {
++		free(node_blk);
++		return 0;
++	}
+ 
+ 	/* update nat info */
+ 	update_nat_blkaddr(sbi, le32_to_cpu(f2fs_inode->footer.ino),
+diff --git a/fsck/segment.c b/fsck/segment.c
+index 4ce623f..6dfea9b 100644
+--- a/fsck/segment.c
++++ b/fsck/segment.c
+@@ -24,7 +24,7 @@ static void write_inode(u64 blkaddr, struct f2fs_node *inode)
+ 	ASSERT(dev_write_block(inode, blkaddr) >= 0);
+ }
+ 
+-void reserve_new_block(struct f2fs_sb_info *sbi, block_t *to,
++int reserve_new_block(struct f2fs_sb_info *sbi, block_t *to,
+ 			struct f2fs_summary *sum, int type)
+ {
+ 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
+@@ -32,10 +32,25 @@ void reserve_new_block(struct f2fs_sb_info *sbi, block_t *to,
+ 	u64 blkaddr, offset;
+ 	u64 old_blkaddr = *to;
+ 
++	if (old_blkaddr == NULL_ADDR) {
++		if (c.func == FSCK) {
++			if (fsck->chk.valid_blk_cnt >= sbi->user_block_count) {
++				ERR_MSG("Not enough space");
++				return -ENOSPC;
++			}
++		} else {
++			if (sbi->total_valid_block_count >=
++						sbi->user_block_count) {
++				ERR_MSG("Not enough space");
++				return -ENOSPC;
++			}
++		}
++	}
++
+ 	blkaddr = SM_I(sbi)->main_blkaddr;
+ 
+ 	if (find_next_free_block(sbi, &blkaddr, 0, type)) {
+-		ERR_MSG("Not enough space to allocate blocks");
++		ERR_MSG("Can't find free block");
+ 		ASSERT(0);
+ 	}
+ 
+@@ -59,6 +74,8 @@ void reserve_new_block(struct f2fs_sb_info *sbi, block_t *to,
+ 	/* read/write SSA */
+ 	*to = (block_t)blkaddr;
+ 	update_sum_entry(sbi, *to, sum);
++
++	return 0;
+ }
+ 
+ int new_data_block(struct f2fs_sb_info *sbi, void *block,
+@@ -68,6 +85,7 @@ int new_data_block(struct f2fs_sb_info *sbi, void *block,
+ 	struct node_info ni;
+ 	unsigned int blkaddr = datablock_addr(dn->node_blk, dn->ofs_in_node);
+ 	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
++	int ret;
+ 
+ 	if (!is_set_ckpt_flags(cp, CP_UMOUNT_FLAG)) {
+ 		c.alloc_failed = 1;
+@@ -79,7 +97,11 @@ int new_data_block(struct f2fs_sb_info *sbi, void *block,
+ 
+ 	get_node_info(sbi, dn->nid, &ni);
+ 	set_summary(&sum, dn->nid, dn->ofs_in_node, ni.version);
+-	reserve_new_block(sbi, &dn->data_blkaddr, &sum, type);
++	ret = reserve_new_block(sbi, &dn->data_blkaddr, &sum, type);
++	if (ret) {
++		c.alloc_failed = 1;
++		return ret;
++	}
+ 
+ 	if (blkaddr == NULL_ADDR)
+ 		inc_inode_blocks(dn);
+-- 
+2.18.0.rc1
