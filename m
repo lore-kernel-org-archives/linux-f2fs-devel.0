@@ -1,134 +1,100 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: f2fs: trying to write to read-only block-device
-Date: Mon, 15 Apr 2019 15:34:28 +0800
-Message-ID: <b959f31f-b1b7-4698-bb6c-7d1a8f4fd01a@huawei.com>
-References: <CAD14+f2WfTX9HDW6n6Ljsekg-b+jgfeP39a7KkAKpURs0at4NA@mail.gmail.com>
+From: Ju Hyung Park <qkrwngud825@gmail.com>
+Subject: Re: [f2fs-dev] [PATCH 13/13] f2fs: don't recovery orphan inode on
+ readonly device
+Date: Mon, 15 Apr 2019 17:10:22 +0900
+Message-ID: <CAD14+f2uV6s6hBfQaQaJPBEAPVOFgEZfueuVPQ_43LpiWS9nZg@mail.gmail.com>
+References: <20190415073054.2577-1-yuchao0@huawei.com> <20190415073054.2577-5-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hFw8V-0005M9-H1
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Apr 2019 07:34:39 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hFw8T-007QUs-ND
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Apr 2019 07:34:39 +0000
-Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.56])
- by Forcepoint Email with ESMTP id EAA1393039461C6CA42D
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 15 Apr 2019 15:34:29 +0800 (CST)
-In-Reply-To: <CAD14+f2WfTX9HDW6n6Ljsekg-b+jgfeP39a7KkAKpURs0at4NA@mail.gmail.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Ju Hyung Park <qkrwngud825@gmail.com>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190415073054.2577-5-yuchao0@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hello,
+Hi,
 
-Thanks for your report.
+Thanks for the fix. I'll try this sooner than later.
 
-I've sent one patch to fix this issue.
+One minor request though, can you change
+"JuHyung Park <qkrwngud825@gmail.com>"
+to
+"Park Ju Hyung <qkrwngud825@gmail.com>"?
 
-Could you please try that?
+That's my preference and I'd like to avoid any inconsistencies.
 
-f2fs: don't recovery orphan inode on readonly device
+One additional question from reviewing the code surrounding it:
+does it really makes sense to cleanup orphan inodes even when the "ro"
+mount option is passed?
+It's an explicit request from the user not to write to the block device/image.
 
-On 2019/4/14 22:14, Ju Hyung Park wrote:
-> Hi,
-> 
-> While I was playing around a f2fs image dumped from an Android device,
-> I observed that f2fs were trying to write to the image when I mounted
-> it via ro.
-> 
-> The host is Linux 4.19 with 5.1-rc1-4.19 merged.
-> 
-> f2fs might be trying to write to the device when the quota is
-> corrupted, regardless of ro being passed to the mount option or not.
-> 
-> I believe this is an easy issue to fix.
-> 
-> Thanks.
-> 
-> [17431.491120] F2FS-fs (loop0): orphan cleanup on readonly fs
-> [17431.491121] F2FS-fs (loop0): quota file may be corrupted, skip loading it
-> [17431.491710] F2FS-fs (loop0): recover fsync data on readonly fs
-> [17431.491711] F2FS-fs (loop0): quota file may be corrupted, skip loading it
-> [17431.492021] ------------[ cut here ]------------
-> [17431.492022] generic_make_request: Trying to write to read-only
-> block-device loop0 (partno 0)
-> [17431.492035] WARNING: CPU: 0 PID: 23437 at block/blk-core.c:2174
-> generic_make_request_checks+0x594/0x630
-> [17431.492081] CPU: 0 PID: 23437 Comm: mount Tainted: G     U  W
->   4.19.33-zen+ #1
-> [17431.492082] Hardware name: LG Electronics
-> 14ZD980-GX50K/14Z980, BIOS K2ZC0250 X64 03/08/2018
-> [17431.492084] RIP: 0010:generic_make_request_checks+0x594/0x630
-> [17431.492085] Code: 5c 03 00 00 48 8d 74 24 08 48 89 df c6 05 71 ec
-> 36 01 01 e8 6e 91 01 00 48 89 c6 44 89 ea 48 c7 c7 10 61 59 82 e8 21
-> bb a7 ff <0f> 0b 48 8b 7b 08 e9 ee fa ff ff 65 8b 05 8a 71 91 7e 89 c0
-> 48 0f
-> [17431.492086] RSP: 0018:ffff88825a94b700 EFLAGS: 00010286
-> [17431.492087] RAX: 0000000000000050 RBX: ffff88842d3e0b00 RCX: 0000000000000006
-> [17431.492088] RDX: 0000000000000007 RSI: 0000000000000082 RDI: ffff888433416340
-> [17431.492088] RBP: ffff8884303d1d10 R08: 0000000000000004 R09: 0000000000000542
-> [17431.492089] R10: 0000000000000001 R11: 000000000000027f R12: 0000000000001000
-> [17431.492090] R13: 0000000000000000 R14: ffff88840a179000 R15: ffff88825a94b870
-> [17431.492091] FS:  00007fd885c988c0(0000) GS:ffff888433400000(0000)
-> knlGS:0000000000000000
-> [17431.492091] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [17431.492092] CR2: 00007fd88636eee0 CR3: 000000017a4c3006 CR4: 00000000003606f0
-> [17431.492093] Call Trace:
-> [17431.492096]  ? generic_make_request+0x46/0x3d0
-> [17431.492098]  ? wait_woken+0x80/0x80
-> [17431.492099]  ? mempool_alloc+0xb7/0x1a0
-> [17431.492101]  ? submit_bio+0x30/0x110
-> [17431.492102]  ? bvec_alloc+0x7c/0xd0
-> [17431.492104]  ? __submit_merged_bio+0x68/0x390
-> [17431.492106]  ? f2fs_submit_page_write+0x1bb/0x7f0
-> [17431.492108]  ? f2fs_do_write_meta_page+0x7f/0x160
-> [17431.492109]  ? __f2fs_write_meta_page+0x70/0x140
-> [17431.492110]  ? f2fs_sync_meta_pages+0x140/0x250
-> [17431.492112]  ? f2fs_write_checkpoint+0x5c5/0x17b0
-> [17431.492115]  ? __schedule+0x1b9/0x6b0
-> [17431.492116]  ? f2fs_sync_fs+0x9c/0x110
-> [17431.492119]  ? sync_filesystem+0x66/0x80
-> [17431.492120]  ? f2fs_recover_fsync_data+0x790/0xa30
-> [17431.492122]  ? f2fs_fill_super+0xe4e/0x1980
-> [17431.492123]  ? pointer+0x149/0x320
-> [17431.492124]  ? pcpu_alloc_area+0xdd/0x120
-> [17431.492126]  ? snprintf+0x39/0x40
-> [17431.492127]  ? mount_bdev+0x518/0x610
-> [17431.492128]  ? mount_bdev+0x518/0x610
-> [17431.492129]  ? f2fs_commit_super+0x160/0x160
-> [17431.492130]  ? mount_fs+0x34/0x13f
-> [17431.492132]  ? vfs_kern_mount.part.11+0x4f/0x120
-> [17431.492133]  ? do_mount+0x2d1/0xe40
-> [17431.492135]  ? memdup_user+0x39/0x60
-> [17431.492137]  ? __x64_sys_mount+0xbf/0xe0
-> [17431.492139]  ? do_syscall_64+0x4a/0xf0
-> [17431.492140]  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [17431.492141] ---[ end trace 74417a97d9cf58c5 ]---
-> [17431.492237] print_req_error: I/O error, dev loop0, sector 16872
-> [17431.492243] print_req_error: I/O error, dev loop0, sector 21032
-> [17431.492245] print_req_error: I/O error, dev loop0, sector 47728
-> [17431.492247] print_req_error: I/O error, dev loop0, sector 4096
-> [17431.492258] F2FS-fs (loop0): Mounted with checkpoint version = 26e7ba3f
-> 
-> 
+Thanks.
+
+On Mon, Apr 15, 2019 at 4:31 PM Chao Yu <yuchao0@huawei.com> wrote:
+>
+> As JuHyung Park reported in mailing list:
+>
+> https://sourceforge.net/p/linux-f2fs/mailman/message/36639787/
+>
+> generic_make_request: Trying to write to read-only block-device loop0 (partno 0)
+> WARNING: CPU: 0 PID: 23437 at block/blk-core.c:2174 generic_make_request_checks+0x594/0x630
+>
+>  generic_make_request+0x46/0x3d0
+>  submit_bio+0x30/0x110
+>  __submit_merged_bio+0x68/0x390
+>  f2fs_submit_page_write+0x1bb/0x7f0
+>  f2fs_do_write_meta_page+0x7f/0x160
+>  __f2fs_write_meta_page+0x70/0x140
+>  f2fs_sync_meta_pages+0x140/0x250
+>  f2fs_write_checkpoint+0x5c5/0x17b0
+>  f2fs_sync_fs+0x9c/0x110
+>  sync_filesystem+0x66/0x80
+>  f2fs_recover_fsync_data+0x790/0xa30
+>  f2fs_fill_super+0xe4e/0x1980
+>  mount_bdev+0x518/0x610
+>  mount_fs+0x34/0x13f
+>  vfs_kern_mount.part.11+0x4f/0x120
+>  do_mount+0x2d1/0xe40
+>  __x64_sys_mount+0xbf/0xe0
+>  do_syscall_64+0x4a/0xf0
+>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> print_req_error: I/O error, dev loop0, sector 4096
+>
+> If block device is readonly, we should never trigger write IO from
+> filesystem layer, but previously, orphan recovery didn't consider
+> such condition, result in triggering above warning, fix it.
+>
+> Reported-by: JuHyung Park <qkrwngud825@gmail.com>
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/checkpoint.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index a7ad1b1e5750..90e1bab86269 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -674,6 +674,12 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
+>         if (!is_set_ckpt_flags(sbi, CP_ORPHAN_PRESENT_FLAG))
+>                 return 0;
+>
+> +       if (bdev_read_only(sbi->sb->s_bdev)) {
+> +               f2fs_msg(sbi->sb, KERN_INFO, "write access "
+> +                       "unavailable, skipping orphan cleanup");
+> +               return 0;
+> +       }
+> +
+>         if (s_flags & SB_RDONLY) {
+>                 f2fs_msg(sbi->sb, KERN_INFO, "orphan cleanup on readonly fs");
+>                 sbi->sb->s_flags &= ~SB_RDONLY;
+> --
+> 2.18.0.rc1
+>
+>
+>
 > _______________________________________________
 > Linux-f2fs-devel mailing list
 > Linux-f2fs-devel@lists.sourceforge.net
 > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> .
-> 
