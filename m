@@ -1,8 +1,8 @@
-From: Park Ju Hyung <qkrwngud825@gmail.com>
-Subject: [PATCH] f2fs: avoid retrying quota flushes while the
- device is congested
-Date: Mon, 15 Apr 2019 22:07:03 +0900
-Message-ID: <20190415130703.23983-1-qkrwngud825@gmail.com>
+From: bugzilla-daemon@bugzilla.kernel.org
+Subject: [Bug 203217] kernel BUG at fs/f2fs/inode.c:707! and hangs
+Date: Mon, 15 Apr 2019 14:51:02 +0000
+Message-ID: <bug-203217-202145-d73w0v49ls@https.bugzilla.kernel.org/>
+References: <bug-203217-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,16 +10,19 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <qkrwngud825@gmail.com>) id 1hG1Kb-0008Dm-Pu
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Apr 2019 13:07:29 +0000
-Received: from mail-pl1-f194.google.com ([209.85.214.194])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1hG1KN-006QfC-6t
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Apr 2019 13:07:29 +0000
-Received: by mail-pl1-f194.google.com with SMTP id f36so8552656plb.5
+ (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
+ id 1hG2wv-0006do-PW
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Apr 2019 14:51:09 +0000
+Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1hG2wu-0088Sg-I2
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Apr 2019 14:51:09 +0000
+Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id DA0AB28847
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 15 Apr 2019 06:07:14 -0700 (PDT)
+ Mon, 15 Apr 2019 14:51:02 +0000 (UTC)
+In-Reply-To: <bug-203217-202145@https.bugzilla.kernel.org/>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,31 +34,20 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 
-While experimenting with ICE/FBE + f2fs on an Android device,
-I was able to reliably reproduce quota corruption during
-initial setup wizard.
+https://bugzilla.kernel.org/show_bug.cgi?id=203217
 
-During 10 times of factory resets, quota flushes failed 5 times each
-in average.
+Chao Yu (chao@kernel.org) changed:
 
-Add a wait for uncongestion on quota flush retries to resolve the issue.
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |ASSIGNED
+                 CC|                            |chao@kernel.org
 
-Signed-off-by: Park Ju Hyung <qkrwngud825@gmail.com>
----
- fs/f2fs/checkpoint.c | 1 +
- 1 file changed, 1 insertion(+)
+--- Comment #2 from Chao Yu (chao@kernel.org) ---
+Fixed with
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index a98e1b02279e..e63cfab6be5d 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1130,6 +1130,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
- 	f2fs_lock_all(sbi);
- 	if (__need_flush_quota(sbi)) {
- 		f2fs_unlock_all(sbi);
-+		congestion_wait(BLK_RW_ASYNC, HZ/50);
- 		cond_resched();
- 		goto retry_flush_quotas;
- 	}
+f2fs: fix to clear dirty inode in error path of f2fs_iget()
+
 -- 
-2.21.0
+You are receiving this mail because:
+You are watching the assignee of the bug.
