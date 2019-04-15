@@ -1,28 +1,29 @@
 From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 203233] kernel BUG at fs/f2fs/segment.c:2102!
-Date: Mon, 15 Apr 2019 14:53:45 +0000
-Message-ID: <bug-203233-202145-Nx44SDGEMv@https.bugzilla.kernel.org/>
-References: <bug-203233-202145@https.bugzilla.kernel.org/>
+Subject: [Bug 203239] kernel BUG at fs/f2fs/segment.c:3162! and
+ hangs on sync
+Date: Mon, 15 Apr 2019 14:54:09 +0000
+Message-ID: <bug-203239-202145-YjUfMISO2j@https.bugzilla.kernel.org/>
+References: <bug-203239-202145@https.bugzilla.kernel.org/>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1hG2zZ-0000tR-9A
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Apr 2019 14:53:53 +0000
+ id 1hG2zx-0007Mv-Jq
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Apr 2019 14:54:17 +0000
 Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hG2zY-0088kk-3F
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Apr 2019 14:53:53 +0000
+ id 1hG2zv-007bUo-Q2
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Apr 2019 14:54:17 +0000
 Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 7D3D0285B8
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 3741E285E3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 15 Apr 2019 14:53:46 +0000 (UTC)
-In-Reply-To: <bug-203233-202145@https.bugzilla.kernel.org/>
+ Mon, 15 Apr 2019 14:54:10 +0000 (UTC)
+In-Reply-To: <bug-203239-202145@https.bugzilla.kernel.org/>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,7 +35,7 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=203233
+https://bugzilla.kernel.org/show_bug.cgi?id=203239
 
 Chao Yu (chao@kernel.org) changed:
 
@@ -43,10 +44,10 @@ Chao Yu (chao@kernel.org) changed:
              Status|NEW                         |ASSIGNED
                  CC|                            |chao@kernel.org
 
---- Comment #2 from Chao Yu (chao@kernel.org) ---
+--- Comment #3 from Chao Yu (chao@kernel.org) ---
 Fixed with
 
-f2fs: fix to do sanity check on valid block count of segment
+f2fs: fix to avoid panic in f2fs_inplace_write_data()
 
 -- 
 You are receiving this mail because:
