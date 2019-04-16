@@ -1,25 +1,25 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs-tools: Change sysfs path look up logic
- for zoned block devices
-Date: Tue, 16 Apr 2019 12:51:11 -0700
-Message-ID: <20190416195111.GD56890@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190410085659.9005-1-shinichiro.kawasaki@wdc.com>
+Subject: Re: [PATCH] f2fs-tools: fix an improper #ifdef wrap for
+ Android
+Date: Tue, 16 Apr 2019 13:35:12 -0700
+Message-ID: <20190416203512.GE56890@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190416075958.11857-1-qkrwngud825@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1hGU71-0005zX-GO
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 16 Apr 2019 19:51:23 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1hGUnY-00060b-3W
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 16 Apr 2019 20:35:20 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hGU6v-00AOOL-S2
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 16 Apr 2019 19:51:23 +0000
+ id 1hGUnW-009eSg-F7
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 16 Apr 2019 20:35:19 +0000
 Content-Disposition: inline
-In-Reply-To: <20190410085659.9005-1-shinichiro.kawasaki@wdc.com>
+In-Reply-To: <20190416075958.11857-1-qkrwngud825@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,222 +29,91 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+To: Park Ju Hyung <qkrwngud825@gmail.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Shin'ichiro,
-
-I had to modify this patch on top of Damien's patches.
-
-Could you please review and test this?
-
-https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-tools.git/commit/?h=dev-test
-
-Thanks,
-
-On 04/10, Shin'ichiro Kawasaki wrote:
-> The mkfs.f2fs checks 'zoned' and 'chunk_sectors' sysfs attributes of
-> zoned block devices to place F2FS areas aligned to block zone
-> boundaries. However, mkfs.f2fs code assumes the given device name has
-> corresponding sysfs path under /sys/block directory. This is not the
-> case when partition devices or symbolic links are specified as the
-> command line argument of mkfs.f2fs. In such a case, mkfs.f2fs fails to
-> read sysfs attributes for zoned block devices, handles the device as a
-> regular block device, and do not align F2FS areas to the block zone
-> boundaries. This results in F2FS write failures because of zone write
-> pointer miss-alignment in sequential write required zones.
+On 04/16, Park Ju Hyung wrote:
+> Commit 595fd57a4fd3 ("f2fs-tools: get kernel version via uname(2)")
+> introduced support for reading kernel version without /proc/version's
+> presence but improperly wrapped an #ifdef macro for Android, causing
+> f2fs-tools usage on every Android devices to display
+> "Info: No support kernel version!".
 > 
-> Change mkfs.f2fs to handle sysfs path correctly. Read symbolic link
-> to get canonical sysfs path. If the device is a partition, cut the last
-> directory name in the sysfs path to refer the holder device attributes.
+> Fix this by properly wrapping the problematic #ifdef macro.
 > 
-> Also introduce read_file() and read_sys_attr() helper functions for
-> code simplicity.
+> Also remove 'c.kd = -2' as it will be set to -1 upon open(2) failure
+> and the rest of the source code isn't doing anything special with
+> 'kd == -2'.
 > 
-> Signed-off-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+> Additionally, show the message when uname(2) also fails from
+> get_kernel_uname_version().
+> 
+> Signed-off-by: Park Ju Hyung <qkrwngud825@gmail.com>
 > ---
->  lib/libf2fs_zoned.c | 134 ++++++++++++++++++++++++++++++--------------
->  1 file changed, 91 insertions(+), 43 deletions(-)
+>  lib/libf2fs.c | 28 ++++++++++++----------------
+>  1 file changed, 12 insertions(+), 16 deletions(-)
 > 
-> diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
-> index 6e32f32..e645004 100644
-> --- a/lib/libf2fs_zoned.c
-> +++ b/lib/libf2fs_zoned.c
-> @@ -8,6 +8,7 @@
->   */
->  #define _LARGEFILE64_SOURCE
+> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+> index 60b84e0..61fc7ec 100644
+> --- a/lib/libf2fs.c
+> +++ b/lib/libf2fs.c
+> @@ -751,23 +751,23 @@ void get_kernel_version(__u8 *version)
 >  
-> +#define _GNU_SOURCE
->  #include <stdio.h>
->  #include <stdlib.h>
->  #include <string.h>
-> @@ -15,6 +16,8 @@
->  #include <unistd.h>
->  #include <fcntl.h>
->  #include <sys/stat.h>
-> +#include <sys/sysmacros.h>
-> +#include <linux/limits.h>
->  #ifndef ANDROID_WINDOWS_HOST
->  #include <sys/ioctl.h>
->  #endif
-> @@ -24,67 +27,112 @@
->  
->  #ifdef HAVE_LINUX_BLKZONED_H
->  
-> +/*
-> + * Read up to 255 characters from the first line of a file. Strip the trailing
-> + * newline.
-> + */
-> +static char *read_file(const char *path)
-> +{
-> +	char line[256], *p = line;
-> +	FILE *f;
-> +
-> +	f = fopen(path, "rb");
-> +	if (!f)
-> +		return NULL;
-> +	if (!fgets(line, sizeof(line), f))
-> +		line[0] = '\0';
-> +	strsep(&p, "\n");
-> +	fclose(f);
-> +
-> +	return strdup(line);
-> +}
-> +
-> +static char *read_sys_attr(const char *dev_path, const char *attr)
-> +{
-> +	struct stat statbuf;
-> +	char *sys_devno_path = NULL;
-> +	char sys_path[PATH_MAX];
-> +	ssize_t sz;
-> +	char *part_attr_path = NULL;
-> +	char *part_str = NULL;
-> +	char *delim = NULL;
-> +	char *attr_path = NULL;
-> +	char *attr_str = NULL;
-> +
-> +	if (stat(dev_path, &statbuf) < 0)
-> +		goto out;
-> +
-> +	if (asprintf(&sys_devno_path, "/sys/dev/block/%d:%d",
-> +		     major(statbuf.st_rdev), minor(statbuf.st_rdev)) < 0)
-> +		goto out;
-> +
-> +	sz = readlink(sys_devno_path, sys_path, sizeof(sys_path) - 1);
-> +	if (sz < 0)
-> +		goto out;
-> +	sys_path[sz] = '\0';
-> +
-> +	/*
-> +	 * If the device is a partition device, cut the device name in the
-> +	 * canonical sysfs path to obtain the sysfs path of the holder device.
-> +	 *   e.g.:  /sys/devices/.../sda/sda1 -> /sys/devices/.../sda
-> +	 */
-> +	if (asprintf(&part_attr_path, "/sys/dev/block/%s/partition",
-> +		     sys_path) < 0)
-> +		goto out;
-> +	part_str = read_file(part_attr_path);
-> +	if (part_str && *part_str == '1') {
-> +		delim = strrchr(sys_path, '/');
-> +		if (!delim)
-> +			goto out;
-> +		*delim = '\0';
-> +	}
-> +
-> +	if (asprintf(&attr_path, "/sys/dev/block/%s/%s", sys_path, attr) < 0)
-> +		goto out;
-> +
-> +	attr_str = read_file(attr_path);
-> +out:
-> +	free(attr_path);
-> +	free(part_str);
-> +	free(part_attr_path);
-> +	free(sys_devno_path);
-> +	return attr_str;
-> +}
-> +
->  void f2fs_get_zoned_model(int i)
+>  void get_kernel_uname_version(__u8 *version)
 >  {
->  	struct device_info *dev = c.devices + i;
-> -	char str[128];
-> -	FILE *file;
-> -	int res;
-> -
-> -	/* Check that this is a zoned block device */
-> -	snprintf(str, sizeof(str),
-> -		 "/sys/block/%s/queue/zoned",
-> -		 basename(dev->path));
-> -	file = fopen(str, "r");
-> -	if (!file)
-> -		goto not_zoned;
-> -
-> -	memset(str, 0, sizeof(str));
-> -	res = fscanf(file, "%s", str);
-> -	fclose(file);
-> -
-> -	if (res != 1)
-> -		goto not_zoned;
-> -
-> -	if (strcmp(str, "host-aware") == 0) {
-> -		dev->zoned_model = F2FS_ZONED_HA;
-> +	char *model_str;
+> +	memset(version, 0, VERSION_LEN);
 > +
-> +	dev->zoned_model = F2FS_ZONED_NONE;
-> +
-> +	model_str = read_sys_attr(dev->path, "queue/zoned");
-> +	if (!model_str)
->  		return;
-> -	}
-> -	if (strcmp(str, "host-managed") == 0) {
-> +
-> +	if (strcmp(model_str, "host-aware") == 0)
-> +		dev->zoned_model = F2FS_ZONED_HA;
-> +	else if (strcmp(model_str, "host-managed") == 0)
->  		dev->zoned_model = F2FS_ZONED_HM;
-> -		return;
-> -	}
+>  #ifdef HAVE_SYS_UTSNAME_H
+>  	struct utsname buf;
 >  
-> -not_zoned:
-> -	dev->zoned_model = F2FS_ZONED_NONE;
-> +	free(model_str);
+> -	memset(version, 0, VERSION_LEN);
+> -	if (uname(&buf))
+> -		return;
+> -
+> +	if (uname(&buf) == 0) {
+>  #if !defined(WITH_KERNEL_VERSION)
+> -	snprintf((char *)version,
+> -		VERSION_LEN, "%s %s", buf.release, buf.version);
+> +		snprintf((char *)version,
+> +			VERSION_LEN, "%s %s", buf.release, buf.version);
+>  #else
+> -	snprintf((char *)version,
+> -		VERSION_LEN, "%s", buf.release);
+> +		snprintf((char *)version,
+> +			VERSION_LEN, "%s", buf.release);
+>  #endif
+> -#else
+> -	memset(version, 0, VERSION_LEN);
+> +	}
+>  #endif
+> +
+> +	MSG(0, "\tInfo: Unable to get the kernel version!\n");
 >  }
 >  
->  int f2fs_get_zone_blocks(int i)
->  {
->  	struct device_info *dev = c.devices + i;
->  	uint64_t sectors;
-> -	char str[128];
-> -	FILE *file;
-> -	int res;
-> +	char * cs_str;
+>  #if defined(__linux__) && defined(_IO) && !defined(BLKGETSIZE)
+> @@ -845,15 +845,11 @@ int get_device_info(int i)
+>  		}
+>  	}
 >  
->  	/* Get zone size */
->  	dev->zone_blocks = 0;
+> -	if (c.kd == -1) {
+>  #if !defined(WITH_ANDROID) && defined(__linux__)
+> +	// If this fails, we'll retry with get_kernel_uname_version()
+> +	if (c.kd == -1)
+>  		c.kd = open("/proc/version", O_RDONLY);
+>  #endif
+> -		if (c.kd < 0) {
+> -			MSG(0, "\tInfo: No support kernel version!\n");
+> -			c.kd = -2;
+
+If there are multiple devices, we don't need to get the version redundantly.
+
+> -		}
+> -	}
 >  
-> -	snprintf(str, sizeof(str),
-> -		 "/sys/block/%s/queue/chunk_sectors",
-> -		 basename(dev->path));
-> -	file = fopen(str, "r");
-> -	if (!file)
-> -		return -1;
-> -
-> -	memset(str, 0, sizeof(str));
-> -	res = fscanf(file, "%s", str);
-> -	fclose(file);
-> -
-> -	if (res != 1)
-> +	cs_str = read_sys_attr(dev->path, "queue/chunk_sectors");
-> +	if (!cs_str)
->  		return -1;
->  
-> -	sectors = atol(str);
-> +	sectors = atol(cs_str);
-> +	free(cs_str);
->  	if (!sectors)
->  		return -1;
->  
+>  	if (c.sparse_mode) {
+>  		dev->total_sectors = c.device_size / dev->sector_size;
 > -- 
-> 2.20.1
+> 2.21.0
 > 
 > 
 > 
