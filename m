@@ -1,29 +1,27 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 203171] PF error: at
- __remove_dirty_segment+0x61/0xd0
-Date: Tue, 16 Apr 2019 23:55:26 +0000
-Message-ID: <bug-203171-202145-CophDEVhsA@https.bugzilla.kernel.org/>
-References: <bug-203171-202145@https.bugzilla.kernel.org/>
+From: Eric Biggers <ebiggers@kernel.org>
+Subject: Re: [PATCH v2 1/5] fscrypt: clean up and improve dentry
+ revalidation
+Date: Tue, 16 Apr 2019 17:10:42 -0700
+Message-ID: <20190417001041.GA18090@gmail.com>
+References: <20190320183913.12686-1-ebiggers@kernel.org>
+ <20190320183913.12686-2-ebiggers@kernel.org>
+ <20190416230840.GB14623@mit.edu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1hGXvJ-0005lT-IJ
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 16 Apr 2019 23:55:33 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
+ (envelope-from <ebiggers@kernel.org>) id 1hGYAB-0000Ak-0F
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Apr 2019 00:10:55 +0000
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hGXvI-009zee-AD
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 16 Apr 2019 23:55:33 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id A1AA8287B3
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 16 Apr 2019 23:55:26 +0000 (UTC)
-In-Reply-To: <bug-203171-202145@https.bugzilla.kernel.org/>
+ id 1hGYA8-00A1B7-6l
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Apr 2019 00:10:54 +0000
+Content-Disposition: inline
+In-Reply-To: <20190416230840.GB14623@mit.edu>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,15 +31,41 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-unionfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org, Sarthak Kukreti <sarthakkukreti@chromium.org>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
 
-https://bugzilla.kernel.org/show_bug.cgi?id=203171
+On Tue, Apr 16, 2019 at 07:08:40PM -0400, Theodore Ts'o wrote:
+> On Wed, Mar 20, 2019 at 11:39:09AM -0700, Eric Biggers wrote:
+> > From: Eric Biggers <ebiggers@google.com>
+> > 
+> > Make various improvements to fscrypt dentry revalidation:
+> > 
+> > - Don't try to handle the case where the per-directory key is removed,
+> >   as this can't happen without the inode (and dentries) being evicted.
+> > 
+> > - Flag ciphertext dentries rather than plaintext dentries, since it's
+> >   ciphertext dentries that need the special handling.
+> > 
+> > - Avoid doing unnecessary work for non-ciphertext dentries.
+> > 
+> > - When revalidating ciphertext dentries, try to set up the directory's
+> >   i_crypt_info to make sure the key is really still absent, rather than
+> >   invalidating all negative dentries as the previous code did.  An old
+> >   comment suggested we can't do this for locking reasons, but AFAICT
+> >   this comment was outdated and it actually works fine.
+> > 
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> 
+> Looks good, applied.
+> 
+> 					- Ted
 
---- Comment #2 from Jungyeon (jungyeon@gatech.edu) ---
-Created attachment 282363
-  --> https://bugzilla.kernel.org/attachment.cgi?id=282363&action=edit
-run.sh
+Hi Ted, I assumed you resolved the conflict with "fscrypt: use READ_ONCE() to
+access ->i_crypt_info"?  The code in fscrypt_d_revalidate() should be:
 
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+        dir = dget_parent(dentry);
+        err = fscrypt_get_encryption_info(d_inode(dir));
+        valid = !fscrypt_has_encryption_key(d_inode(dir));
+        dput(dir);
+
+- Eric
