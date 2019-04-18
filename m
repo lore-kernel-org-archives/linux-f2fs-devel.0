@@ -1,99 +1,143 @@
 From: Ju Hyung Park <qkrwngud825@gmail.com>
-Subject: Re: [PATCH] fsck.f2fs: fix to set
- CP_LARGE_NAT_BITMAP_FLAG
-Date: Thu, 18 Apr 2019 22:14:09 +0900
-Message-ID: <CAD14+f3ij7YA2BceZB23jHp=8qGCYTB5znBUJgPvYed7N7AXRg@mail.gmail.com>
-References: <20190418074909.11102-1-yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH v2 13/13] f2fs: don't recovery orphan inode on
+ readonly device
+Date: Thu, 18 Apr 2019 22:28:50 +0900
+Message-ID: <CAD14+f1ZLcU=f2odX-ufGDbgHmt0Cb4fO4bUfXqNXGSdYOGgeg@mail.gmail.com>
+References: <20190415113933.21621-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <qkrwngud825@gmail.com>) id 1hH6s0-0002RN-2c
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 18 Apr 2019 13:14:28 +0000
-Received: from mail-qk1-f194.google.com ([209.85.222.194])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1hH6ry-00ERF6-8A
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 18 Apr 2019 13:14:28 +0000
-Received: by mail-qk1-f194.google.com with SMTP id c20so1087530qkc.10
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 18 Apr 2019 06:14:25 -0700 (PDT)
-In-Reply-To: <20190418074909.11102-1-yuchao0@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190415113933.21621-1-yuchao0@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Chao Yu <yuchao0@huawei.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 Hi Chao,
 
-The output appears to be similar to the one without this patch,
-however, it now actually mounts.
+Probably unrelated but a similar issue:
+Warning appears upon unmounting a corrupted R/O f2fs loop image.
 
-[ 2360.127787] F2FS-fs (loop1): Found nat_bits in checkpoint
-[ 2360.189038] F2FS-fs (loop1): orphan cleanup on readonly fs
-[ 2360.189284] F2FS-fs (loop1): recover fsync data on readonly fs
-[ 2360.189297] F2FS-fs (loop1): Mounted with checkpoint version = 761bfa29
+Should be a trivial issue to fix as well :)
 
-Go to here to look at the new fsck output:
-http://arter97.com/f2fs/log_2.txt.xz
-(previous one is now log_1.txt.xz)
-
-However, something weird goes on.
-Without even touching the image after first fsck run, the consecutive
-2nd run prints out A LOT of messages:
-http://arter97.com/f2fs/log_3.txt.xz
-
-The image seems to mount normally after on both the 1st and the 2nd fsck run.
+[ 2373.758424] ------------[ cut here ]------------
+[ 2373.758428] generic_make_request: Trying to write to read-only
+block-device loop1 (partno 0)
+[ 2373.758455] WARNING: CPU: 1 PID: 13950 at block/blk-core.c:2174
+generic_make_request_checks+0x590/0x630
+[ 2373.758556] CPU: 1 PID: 13950 Comm: umount Tainted: G           O
+   4.19.35-zen+ #1
+[ 2373.758558] Hardware name: System manufacturer System Product
+Name/ROG MAXIMUS X HERO (WI-FI AC), BIOS 1704 09/14/2018
+[ 2373.758564] RIP: 0010:generic_make_request_checks+0x590/0x630
+[ 2373.758567] Code: 5c 03 00 00 48 8d 74 24 08 48 89 df c6 05 b5 cd
+36 01 01 e8 c2 90 01 00 48 89 c6 44 89 ea 48 c7 c7 98 64 59 82 e8 d5
+9b a7 ff <0f> 0b 48 8b 7b 08 e9 f2 fa ff ff 41 8b 86 98 02 00 00 49 8b
+16 89
+[ 2373.758570] RSP: 0018:ffff8882bdb43950 EFLAGS: 00010282
+[ 2373.758573] RAX: 0000000000000050 RBX: ffff8887244c6700 RCX: 0000000000000006
+[ 2373.758575] RDX: 0000000000000007 RSI: 0000000000000086 RDI: ffff88884ec56340
+[ 2373.758577] RBP: ffff888849c426c0 R08: 0000000000000004 R09: 00000000000003ba
+[ 2373.758579] R10: 0000000000000001 R11: 0000000000000029 R12: 0000000000001000
+[ 2373.758581] R13: 0000000000000000 R14: ffff888844a2e800 R15: ffff8882bdb43ac0
+[ 2373.758584] FS:  00007fc0d114f8c0(0000) GS:ffff88884ec40000(0000)
+knlGS:0000000000000000
+[ 2373.758586] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 2373.758588] CR2: 00007fc0d1ad12c0 CR3: 00000002bdb82003 CR4: 00000000003606e0
+[ 2373.758590] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[ 2373.758592] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[ 2373.758593] Call Trace:
+[ 2373.758602]  ? generic_make_request+0x46/0x3d0
+[ 2373.758608]  ? wait_woken+0x80/0x80
+[ 2373.758612]  ? mempool_alloc+0xb7/0x1a0
+[ 2373.758618]  ? submit_bio+0x30/0x110
+[ 2373.758622]  ? bvec_alloc+0x7c/0xd0
+[ 2373.758628]  ? __submit_merged_bio+0x68/0x390
+[ 2373.758633]  ? f2fs_submit_page_write+0x1bb/0x7f0
+[ 2373.758638]  ? f2fs_do_write_meta_page+0x7f/0x160
+[ 2373.758642]  ? __f2fs_write_meta_page+0x70/0x140
+[ 2373.758647]  ? f2fs_sync_meta_pages+0x140/0x250
+[ 2373.758653]  ? f2fs_write_checkpoint+0x5c5/0x17b0
+[ 2373.758657]  ? f2fs_sync_fs+0x9c/0x110
+[ 2373.758664]  ? sync_filesystem+0x66/0x80
+[ 2373.758667]  ? generic_shutdown_super+0x1d/0x100
+[ 2373.758670]  ? kill_block_super+0x1c/0x40
+[ 2373.758674]  ? kill_f2fs_super+0x64/0xb0
+[ 2373.758678]  ? deactivate_locked_super+0x2d/0xb0
+[ 2373.758682]  ? cleanup_mnt+0x65/0xa0
+[ 2373.758688]  ? task_work_run+0x7f/0xa0
+[ 2373.758693]  ? exit_to_usermode_loop+0x9c/0xa0
+[ 2373.758698]  ? do_syscall_64+0xc7/0xf0
+[ 2373.758703]  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 2373.758706] ---[ end trace 5d3639907c56271b ]---
+[ 2373.758780] print_req_error: I/O error, dev loop1, sector 143048
+[ 2373.758800] print_req_error: I/O error, dev loop1, sector 152200
+[ 2373.758808] print_req_error: I/O error, dev loop1, sector 8192
+[ 2373.758819] print_req_error: I/O error, dev loop1, sector 12272
 
 Thanks.
 
-On Thu, Apr 18, 2019 at 4:49 PM Chao Yu <yuchao0@huawei.com> wrote:
+On Mon, Apr 15, 2019 at 8:40 PM Chao Yu <yuchao0@huawei.com> wrote:
 >
-> During fixing checkpoint, if large_nat_bitmap feature is on, we need to
-> set CP_LARGE_NAT_BITMAP_FLAG flag in checkpoint.
+> As Park Ju Hyung reported in mailing list:
 >
+> https://sourceforge.net/p/linux-f2fs/mailman/message/36639787/
+>
+> generic_make_request: Trying to write to read-only block-device loop0 (partno 0)
+> WARNING: CPU: 0 PID: 23437 at block/blk-core.c:2174 generic_make_request_checks+0x594/0x630
+>
+>  generic_make_request+0x46/0x3d0
+>  submit_bio+0x30/0x110
+>  __submit_merged_bio+0x68/0x390
+>  f2fs_submit_page_write+0x1bb/0x7f0
+>  f2fs_do_write_meta_page+0x7f/0x160
+>  __f2fs_write_meta_page+0x70/0x140
+>  f2fs_sync_meta_pages+0x140/0x250
+>  f2fs_write_checkpoint+0x5c5/0x17b0
+>  f2fs_sync_fs+0x9c/0x110
+>  sync_filesystem+0x66/0x80
+>  f2fs_recover_fsync_data+0x790/0xa30
+>  f2fs_fill_super+0xe4e/0x1980
+>  mount_bdev+0x518/0x610
+>  mount_fs+0x34/0x13f
+>  vfs_kern_mount.part.11+0x4f/0x120
+>  do_mount+0x2d1/0xe40
+>  __x64_sys_mount+0xbf/0xe0
+>  do_syscall_64+0x4a/0xf0
+>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>
+> print_req_error: I/O error, dev loop0, sector 4096
+>
+> If block device is readonly, we should never trigger write IO from
+> filesystem layer, but previously, orphan recovery didn't consider
+> such condition, result in triggering above warning, fix it.
+>
+> Reported-by: Park Ju Hyung <qkrwngud825@gmail.com>
+> Tested-by: Park Ju Hyung <qkrwngud825@gmail.com>
 > Signed-off-by: Chao Yu <yuchao0@huawei.com>
 > ---
->  fsck/fsck.c  | 2 ++
->  fsck/mount.c | 2 ++
->  2 files changed, 4 insertions(+)
+> v2:
+> - adjust Park's first/last name order.
+>  fs/f2fs/checkpoint.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 >
-> diff --git a/fsck/fsck.c b/fsck/fsck.c
-> index a17555c..88ed4d7 100644
-> --- a/fsck/fsck.c
-> +++ b/fsck/fsck.c
-> @@ -2038,6 +2038,8 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
->                 flags |= CP_TRIMMED_FLAG;
->         if (is_set_ckpt_flags(cp, CP_DISABLED_FLAG))
->                 flags |= CP_DISABLED_FLAG;
-> +       if (is_set_ckpt_flags(cp, CP_LARGE_NAT_BITMAP_FLAG))
-> +               flags |= CP_LARGE_NAT_BITMAP_FLAG;
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index a7ad1b1e5750..90e1bab86269 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -674,6 +674,12 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
+>         if (!is_set_ckpt_flags(sbi, CP_ORPHAN_PRESENT_FLAG))
+>                 return 0;
 >
->         if (flags & CP_UMOUNT_FLAG)
->                 cp_blocks = 8;
-> diff --git a/fsck/mount.c b/fsck/mount.c
-> index aa64e93..20ecf07 100644
-> --- a/fsck/mount.c
-> +++ b/fsck/mount.c
-> @@ -2365,6 +2365,8 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
->                 flags |= CP_TRIMMED_FLAG;
->         if (is_set_ckpt_flags(cp, CP_DISABLED_FLAG))
->                 flags |= CP_DISABLED_FLAG;
-> +       if (is_set_ckpt_flags(cp, CP_LARGE_NAT_BITMAP_FLAG))
-> +               flags |= CP_LARGE_NAT_BITMAP_FLAG;
->
->         set_cp(free_segment_count, get_free_segments(sbi));
->         set_cp(valid_block_count, sbi->total_valid_block_count);
+> +       if (bdev_read_only(sbi->sb->s_bdev)) {
+> +               f2fs_msg(sbi->sb, KERN_INFO, "write access "
+> +                       "unavailable, skipping orphan cleanup");
+> +               return 0;
+> +       }
+> +
+>         if (s_flags & SB_RDONLY) {
+>                 f2fs_msg(sbi->sb, KERN_INFO, "orphan cleanup on readonly fs");
+>                 sbi->sb->s_flags &= ~SB_RDONLY;
 > --
 > 2.18.0.rc1
 >
