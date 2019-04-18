@@ -1,149 +1,256 @@
-From: Ju Hyung Park <qkrwngud825@gmail.com>
-Subject: Re: [f2fs-dev] [PATCH v2 13/13] f2fs: don't recovery orphan inode on
- readonly device
-Date: Thu, 18 Apr 2019 22:28:50 +0900
-Message-ID: <CAD14+f1ZLcU=f2odX-ufGDbgHmt0Cb4fO4bUfXqNXGSdYOGgeg@mail.gmail.com>
-References: <20190415113933.21621-1-yuchao0@huawei.com>
+From: Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH v5 02/16] fscrypt: use FSCRYPT_ prefix for uapi
+ constants
+Date: Thu, 18 Apr 2019 16:29:09 -0700
+Message-ID: <20190418232923.250800-3-ebiggers@kernel.org>
+References: <20190418232923.250800-1-ebiggers@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190415113933.21621-1-yuchao0@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <ebiggers@kernel.org>) id 1hHGUC-00043I-Hq
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 18 Apr 2019 23:30:32 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1hHGUB-00EwS3-4k
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 18 Apr 2019 23:30:32 +0000
+In-Reply-To: <20190418232923.250800-1-ebiggers@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-fscrypt@vger.kernel.org
+Cc: linux-ext4@vger.kernel.org, linux-api@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, keyrings@vger.kernel.org, linux-mtd@lists.infradead.org, linux-crypto@vger.kernel.org, linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>, Paul Crowley <paulcrowley@google.com>
 
-Hi Chao,
+From: Eric Biggers <ebiggers@google.com>
 
-Probably unrelated but a similar issue:
-Warning appears upon unmounting a corrupted R/O f2fs loop image.
+Prefix all filesystem encryption UAPI constants except the ioctl numbers
+with "FSCRYPT_" rather than with "FS_".  This namespaces the constants
+more appropriately and makes it clear that they are related specifically
+to the filesystem encryption feature, and to the 'fscrypt_*' structures.
+With some of the old names like "FS_POLICY_FLAGS_VALID", it was not
+immediately clear that the constant had anything to do with encryption.
 
-Should be a trivial issue to fix as well :)
+This is also useful because we'll be adding more encryption-related
+constants, e.g. for the policy version, and we'd otherwise have to
+choose whether to use unclear names like FS_POLICY_V1 or inconsistent
+names like FS_ENCRYPTION_POLICY_V1.
 
-[ 2373.758424] ------------[ cut here ]------------
-[ 2373.758428] generic_make_request: Trying to write to read-only
-block-device loop1 (partno 0)
-[ 2373.758455] WARNING: CPU: 1 PID: 13950 at block/blk-core.c:2174
-generic_make_request_checks+0x590/0x630
-[ 2373.758556] CPU: 1 PID: 13950 Comm: umount Tainted: G           O
-   4.19.35-zen+ #1
-[ 2373.758558] Hardware name: System manufacturer System Product
-Name/ROG MAXIMUS X HERO (WI-FI AC), BIOS 1704 09/14/2018
-[ 2373.758564] RIP: 0010:generic_make_request_checks+0x590/0x630
-[ 2373.758567] Code: 5c 03 00 00 48 8d 74 24 08 48 89 df c6 05 b5 cd
-36 01 01 e8 c2 90 01 00 48 89 c6 44 89 ea 48 c7 c7 98 64 59 82 e8 d5
-9b a7 ff <0f> 0b 48 8b 7b 08 e9 f2 fa ff ff 41 8b 86 98 02 00 00 49 8b
-16 89
-[ 2373.758570] RSP: 0018:ffff8882bdb43950 EFLAGS: 00010282
-[ 2373.758573] RAX: 0000000000000050 RBX: ffff8887244c6700 RCX: 0000000000000006
-[ 2373.758575] RDX: 0000000000000007 RSI: 0000000000000086 RDI: ffff88884ec56340
-[ 2373.758577] RBP: ffff888849c426c0 R08: 0000000000000004 R09: 00000000000003ba
-[ 2373.758579] R10: 0000000000000001 R11: 0000000000000029 R12: 0000000000001000
-[ 2373.758581] R13: 0000000000000000 R14: ffff888844a2e800 R15: ffff8882bdb43ac0
-[ 2373.758584] FS:  00007fc0d114f8c0(0000) GS:ffff88884ec40000(0000)
-knlGS:0000000000000000
-[ 2373.758586] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 2373.758588] CR2: 00007fc0d1ad12c0 CR3: 00000002bdb82003 CR4: 00000000003606e0
-[ 2373.758590] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 2373.758592] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 2373.758593] Call Trace:
-[ 2373.758602]  ? generic_make_request+0x46/0x3d0
-[ 2373.758608]  ? wait_woken+0x80/0x80
-[ 2373.758612]  ? mempool_alloc+0xb7/0x1a0
-[ 2373.758618]  ? submit_bio+0x30/0x110
-[ 2373.758622]  ? bvec_alloc+0x7c/0xd0
-[ 2373.758628]  ? __submit_merged_bio+0x68/0x390
-[ 2373.758633]  ? f2fs_submit_page_write+0x1bb/0x7f0
-[ 2373.758638]  ? f2fs_do_write_meta_page+0x7f/0x160
-[ 2373.758642]  ? __f2fs_write_meta_page+0x70/0x140
-[ 2373.758647]  ? f2fs_sync_meta_pages+0x140/0x250
-[ 2373.758653]  ? f2fs_write_checkpoint+0x5c5/0x17b0
-[ 2373.758657]  ? f2fs_sync_fs+0x9c/0x110
-[ 2373.758664]  ? sync_filesystem+0x66/0x80
-[ 2373.758667]  ? generic_shutdown_super+0x1d/0x100
-[ 2373.758670]  ? kill_block_super+0x1c/0x40
-[ 2373.758674]  ? kill_f2fs_super+0x64/0xb0
-[ 2373.758678]  ? deactivate_locked_super+0x2d/0xb0
-[ 2373.758682]  ? cleanup_mnt+0x65/0xa0
-[ 2373.758688]  ? task_work_run+0x7f/0xa0
-[ 2373.758693]  ? exit_to_usermode_loop+0x9c/0xa0
-[ 2373.758698]  ? do_syscall_64+0xc7/0xf0
-[ 2373.758703]  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[ 2373.758706] ---[ end trace 5d3639907c56271b ]---
-[ 2373.758780] print_req_error: I/O error, dev loop1, sector 143048
-[ 2373.758800] print_req_error: I/O error, dev loop1, sector 152200
-[ 2373.758808] print_req_error: I/O error, dev loop1, sector 8192
-[ 2373.758819] print_req_error: I/O error, dev loop1, sector 12272
+For source compatibility with existing userspace programs, keep the old
+names defined as aliases to the new names.
 
-Thanks.
+Finally, as long as new names are being defined anyway, I skipped
+defining new names for the fscrypt mode numbers that aren't actually
+used: INVALID (0), AES_256_GCM (2), AES_256_CBC (3), SPECK128_256_XTS
+(7), and SPECK128_256_CTS (8).
 
-On Mon, Apr 15, 2019 at 8:40 PM Chao Yu <yuchao0@huawei.com> wrote:
->
-> As Park Ju Hyung reported in mailing list:
->
-> https://sourceforge.net/p/linux-f2fs/mailman/message/36639787/
->
-> generic_make_request: Trying to write to read-only block-device loop0 (partno 0)
-> WARNING: CPU: 0 PID: 23437 at block/blk-core.c:2174 generic_make_request_checks+0x594/0x630
->
->  generic_make_request+0x46/0x3d0
->  submit_bio+0x30/0x110
->  __submit_merged_bio+0x68/0x390
->  f2fs_submit_page_write+0x1bb/0x7f0
->  f2fs_do_write_meta_page+0x7f/0x160
->  __f2fs_write_meta_page+0x70/0x140
->  f2fs_sync_meta_pages+0x140/0x250
->  f2fs_write_checkpoint+0x5c5/0x17b0
->  f2fs_sync_fs+0x9c/0x110
->  sync_filesystem+0x66/0x80
->  f2fs_recover_fsync_data+0x790/0xa30
->  f2fs_fill_super+0xe4e/0x1980
->  mount_bdev+0x518/0x610
->  mount_fs+0x34/0x13f
->  vfs_kern_mount.part.11+0x4f/0x120
->  do_mount+0x2d1/0xe40
->  __x64_sys_mount+0xbf/0xe0
->  do_syscall_64+0x4a/0xf0
->  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->
-> print_req_error: I/O error, dev loop0, sector 4096
->
-> If block device is readonly, we should never trigger write IO from
-> filesystem layer, but previously, orphan recovery didn't consider
-> such condition, result in triggering above warning, fix it.
->
-> Reported-by: Park Ju Hyung <qkrwngud825@gmail.com>
-> Tested-by: Park Ju Hyung <qkrwngud825@gmail.com>
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
-> v2:
-> - adjust Park's first/last name order.
->  fs/f2fs/checkpoint.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index a7ad1b1e5750..90e1bab86269 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -674,6 +674,12 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
->         if (!is_set_ckpt_flags(sbi, CP_ORPHAN_PRESENT_FLAG))
->                 return 0;
->
-> +       if (bdev_read_only(sbi->sb->s_bdev)) {
-> +               f2fs_msg(sbi->sb, KERN_INFO, "write access "
-> +                       "unavailable, skipping orphan cleanup");
-> +               return 0;
-> +       }
-> +
->         if (s_flags & SB_RDONLY) {
->                 f2fs_msg(sbi->sb, KERN_INFO, "orphan cleanup on readonly fs");
->                 sbi->sb->s_flags &= ~SB_RDONLY;
-> --
-> 2.18.0.rc1
->
->
->
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ Documentation/filesystems/fscrypt.rst | 36 +++++++--------
+ include/uapi/linux/fscrypt.h          | 66 +++++++++++++++++----------
+ 2 files changed, 61 insertions(+), 41 deletions(-)
+
+diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
+index 08c23b60e0164..4f9df6ba669e5 100644
+--- a/Documentation/filesystems/fscrypt.rst
++++ b/Documentation/filesystems/fscrypt.rst
+@@ -223,9 +223,10 @@ a little endian number, except that:
+   is encrypted with AES-256 where the AES-256 key is the SHA-256 hash
+   of the file's data encryption key.
+ 
+-- In the "direct key" configuration (FS_POLICY_FLAG_DIRECT_KEY set in
+-  the fscrypt_policy), the file's nonce is also appended to the IV.
+-  Currently this is only allowed with the Adiantum encryption mode.
++- In the "direct key" configuration (FSCRYPT_POLICY_FLAG_DIRECT_KEY
++  set in the fscrypt_policy), the file's nonce is also appended to the
++  IV.  Currently this is only allowed with the Adiantum encryption
++  mode.
+ 
+ Filenames encryption
+ --------------------
+@@ -272,14 +273,14 @@ empty directory or verifies that a directory or regular file already
+ has the specified encryption policy.  It takes in a pointer to a
+ :c:type:`struct fscrypt_policy`, defined as follows::
+ 
+-    #define FS_KEY_DESCRIPTOR_SIZE  8
++    #define FSCRYPT_KEY_DESCRIPTOR_SIZE  8
+ 
+     struct fscrypt_policy {
+             __u8 version;
+             __u8 contents_encryption_mode;
+             __u8 filenames_encryption_mode;
+             __u8 flags;
+-            __u8 master_key_descriptor[FS_KEY_DESCRIPTOR_SIZE];
++            __u8 master_key_descriptor[FSCRYPT_KEY_DESCRIPTOR_SIZE];
+     };
+ 
+ This structure must be initialized as follows:
+@@ -288,18 +289,17 @@ This structure must be initialized as follows:
+ 
+ - ``contents_encryption_mode`` and ``filenames_encryption_mode`` must
+   be set to constants from ``<linux/fs.h>`` which identify the
+-  encryption modes to use.  If unsure, use
+-  FS_ENCRYPTION_MODE_AES_256_XTS (1) for ``contents_encryption_mode``
+-  and FS_ENCRYPTION_MODE_AES_256_CTS (4) for
+-  ``filenames_encryption_mode``.
++  encryption modes to use.  If unsure, use FSCRYPT_MODE_AES_256_XTS
++  (1) for ``contents_encryption_mode`` and FSCRYPT_MODE_AES_256_CTS
++  (4) for ``filenames_encryption_mode``.
+ 
+ - ``flags`` must contain a value from ``<linux/fs.h>`` which
+   identifies the amount of NUL-padding to use when encrypting
+-  filenames.  If unsure, use FS_POLICY_FLAGS_PAD_32 (0x3).
+-  In addition, if the chosen encryption modes are both
+-  FS_ENCRYPTION_MODE_ADIANTUM, this can contain
+-  FS_POLICY_FLAG_DIRECT_KEY to specify that the master key should be
+-  used directly, without key derivation.
++  filenames.  If unsure, use FSCRYPT_POLICY_FLAGS_PAD_32 (0x3).  In
++  addition, if the chosen encryption modes are both
++  FSCRYPT_MODE_ADIANTUM, this can contain
++  FSCRYPT_POLICY_FLAG_DIRECT_KEY to specify that the master key should
++  be used directly, without key derivation.
+ 
+ - ``master_key_descriptor`` specifies how to find the master key in
+   the keyring; see `Adding keys`_.  It is up to userspace to choose a
+@@ -399,11 +399,11 @@ followed by the 16-character lower case hex representation of the
+ ``master_key_descriptor`` that was set in the encryption policy.  The
+ key payload must conform to the following structure::
+ 
+-    #define FS_MAX_KEY_SIZE 64
++    #define FSCRYPT_MAX_KEY_SIZE 64
+ 
+     struct fscrypt_key {
+             u32 mode;
+-            u8 raw[FS_MAX_KEY_SIZE];
++            u8 raw[FSCRYPT_MAX_KEY_SIZE];
+             u32 size;
+     };
+ 
+@@ -572,7 +572,7 @@ much confusion if an encryption policy were to be added to or removed
+ from anything other than an empty directory.)  The struct is defined
+ as follows::
+ 
+-    #define FS_KEY_DESCRIPTOR_SIZE  8
++    #define FSCRYPT_KEY_DESCRIPTOR_SIZE  8
+     #define FS_KEY_DERIVATION_NONCE_SIZE 16
+ 
+     struct fscrypt_context {
+@@ -580,7 +580,7 @@ as follows::
+             u8 contents_encryption_mode;
+             u8 filenames_encryption_mode;
+             u8 flags;
+-            u8 master_key_descriptor[FS_KEY_DESCRIPTOR_SIZE];
++            u8 master_key_descriptor[FSCRYPT_KEY_DESCRIPTOR_SIZE];
+             u8 nonce[FS_KEY_DERIVATION_NONCE_SIZE];
+     };
+ 
+diff --git a/include/uapi/linux/fscrypt.h b/include/uapi/linux/fscrypt.h
+index 193339cb53fdb..f9b99cc028bc6 100644
+--- a/include/uapi/linux/fscrypt.h
++++ b/include/uapi/linux/fscrypt.h
+@@ -8,34 +8,30 @@
+  * File system encryption support
+  */
+ /* Policy provided via an ioctl on the topmost directory */
+-#define FS_KEY_DESCRIPTOR_SIZE	8
++#define FSCRYPT_KEY_DESCRIPTOR_SIZE	8
+ 
+-#define FS_POLICY_FLAGS_PAD_4		0x00
+-#define FS_POLICY_FLAGS_PAD_8		0x01
+-#define FS_POLICY_FLAGS_PAD_16		0x02
+-#define FS_POLICY_FLAGS_PAD_32		0x03
+-#define FS_POLICY_FLAGS_PAD_MASK	0x03
+-#define FS_POLICY_FLAG_DIRECT_KEY	0x04	/* use master key directly */
+-#define FS_POLICY_FLAGS_VALID		0x07
++/* Encryption policy flags */
++#define FSCRYPT_POLICY_FLAGS_PAD_4		0x00
++#define FSCRYPT_POLICY_FLAGS_PAD_8		0x01
++#define FSCRYPT_POLICY_FLAGS_PAD_16		0x02
++#define FSCRYPT_POLICY_FLAGS_PAD_32		0x03
++#define FSCRYPT_POLICY_FLAGS_PAD_MASK		0x03
++#define FSCRYPT_POLICY_FLAG_DIRECT_KEY		0x04	/* use master key directly */
++#define FSCRYPT_POLICY_FLAGS_VALID		0x07
+ 
+ /* Encryption algorithms */
+-#define FS_ENCRYPTION_MODE_INVALID		0
+-#define FS_ENCRYPTION_MODE_AES_256_XTS		1
+-#define FS_ENCRYPTION_MODE_AES_256_GCM		2
+-#define FS_ENCRYPTION_MODE_AES_256_CBC		3
+-#define FS_ENCRYPTION_MODE_AES_256_CTS		4
+-#define FS_ENCRYPTION_MODE_AES_128_CBC		5
+-#define FS_ENCRYPTION_MODE_AES_128_CTS		6
+-#define FS_ENCRYPTION_MODE_SPECK128_256_XTS	7 /* Removed, do not use. */
+-#define FS_ENCRYPTION_MODE_SPECK128_256_CTS	8 /* Removed, do not use. */
+-#define FS_ENCRYPTION_MODE_ADIANTUM		9
++#define FSCRYPT_MODE_AES_256_XTS		1
++#define FSCRYPT_MODE_AES_256_CTS		4
++#define FSCRYPT_MODE_AES_128_CBC		5
++#define FSCRYPT_MODE_AES_128_CTS		6
++#define FSCRYPT_MODE_ADIANTUM			9
+ 
+ struct fscrypt_policy {
+ 	__u8 version;
+ 	__u8 contents_encryption_mode;
+ 	__u8 filenames_encryption_mode;
+ 	__u8 flags;
+-	__u8 master_key_descriptor[FS_KEY_DESCRIPTOR_SIZE];
++	__u8 master_key_descriptor[FSCRYPT_KEY_DESCRIPTOR_SIZE];
+ };
+ 
+ #define FS_IOC_SET_ENCRYPTION_POLICY	_IOR('f', 19, struct fscrypt_policy)
+@@ -43,16 +39,40 @@ struct fscrypt_policy {
+ #define FS_IOC_GET_ENCRYPTION_POLICY	_IOW('f', 21, struct fscrypt_policy)
+ 
+ /* Parameters for passing an encryption key into the kernel keyring */
+-#define FS_KEY_DESC_PREFIX		"fscrypt:"
+-#define FS_KEY_DESC_PREFIX_SIZE		8
++#define FSCRYPT_KEY_DESC_PREFIX		"fscrypt:"
++#define FSCRYPT_KEY_DESC_PREFIX_SIZE		8
+ 
+ /* Structure that userspace passes to the kernel keyring */
+-#define FS_MAX_KEY_SIZE			64
++#define FSCRYPT_MAX_KEY_SIZE			64
+ 
+ struct fscrypt_key {
+ 	__u32 mode;
+-	__u8 raw[FS_MAX_KEY_SIZE];
++	__u8 raw[FSCRYPT_MAX_KEY_SIZE];
+ 	__u32 size;
+ };
++/**********************************************************************/
++
++/* old names; don't add anything new here! */
++#define FS_KEY_DESCRIPTOR_SIZE		FSCRYPT_KEY_DESCRIPTOR_SIZE
++#define FS_POLICY_FLAGS_PAD_4		FSCRYPT_POLICY_FLAGS_PAD_4
++#define FS_POLICY_FLAGS_PAD_8		FSCRYPT_POLICY_FLAGS_PAD_8
++#define FS_POLICY_FLAGS_PAD_16		FSCRYPT_POLICY_FLAGS_PAD_16
++#define FS_POLICY_FLAGS_PAD_32		FSCRYPT_POLICY_FLAGS_PAD_32
++#define FS_POLICY_FLAGS_PAD_MASK	FSCRYPT_POLICY_FLAGS_PAD_MASK
++#define FS_POLICY_FLAG_DIRECT_KEY	FSCRYPT_POLICY_FLAG_DIRECT_KEY
++#define FS_POLICY_FLAGS_VALID		FSCRYPT_POLICY_FLAGS_VALID
++#define FS_ENCRYPTION_MODE_INVALID	0	/* never used */
++#define FS_ENCRYPTION_MODE_AES_256_XTS	FSCRYPT_MODE_AES_256_XTS
++#define FS_ENCRYPTION_MODE_AES_256_GCM	2	/* never used */
++#define FS_ENCRYPTION_MODE_AES_256_CBC	3	/* never used */
++#define FS_ENCRYPTION_MODE_AES_256_CTS	FSCRYPT_MODE_AES_256_CTS
++#define FS_ENCRYPTION_MODE_AES_128_CBC	FSCRYPT_MODE_AES_128_CBC
++#define FS_ENCRYPTION_MODE_AES_128_CTS	FSCRYPT_MODE_AES_128_CTS
++#define FS_ENCRYPTION_MODE_SPECK128_256_XTS	7	/* removed */
++#define FS_ENCRYPTION_MODE_SPECK128_256_CTS	8	/* removed */
++#define FS_ENCRYPTION_MODE_ADIANTUM	FSCRYPT_MODE_ADIANTUM
++#define FS_KEY_DESC_PREFIX		FSCRYPT_KEY_DESC_PREFIX
++#define FS_KEY_DESC_PREFIX_SIZE		FSCRYPT_KEY_DESC_PREFIX_SIZE
++#define FS_MAX_KEY_SIZE			FSCRYPT_MAX_KEY_SIZE
+ 
+ #endif /* _UAPI_LINUX_FSCRYPT_H */
+-- 
+2.21.0.392.gf8f6787159e-goog
