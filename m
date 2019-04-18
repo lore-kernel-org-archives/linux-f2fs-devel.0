@@ -1,21 +1,21 @@
 From: Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v5 14/16] f2fs: wire up new fscrypt ioctls
-Date: Thu, 18 Apr 2019 16:29:21 -0700
-Message-ID: <20190418232923.250800-15-ebiggers@kernel.org>
+Subject: [PATCH v5 13/16] ext4: wire up new fscrypt ioctls
+Date: Thu, 18 Apr 2019 16:29:20 -0700
+Message-ID: <20190418232923.250800-14-ebiggers@kernel.org>
 References: <20190418232923.250800-1-ebiggers@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hHGUL-0002hA-Cd
+ (envelope-from <ebiggers@kernel.org>) id 1hHGUL-00046J-NE
  for linux-f2fs-devel@lists.sourceforge.net; Thu, 18 Apr 2019 23:30:41 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hHGUK-00EwT5-75
+ id 1hHGUK-00FRi0-6E
  for linux-f2fs-devel@lists.sourceforge.net; Thu, 18 Apr 2019 23:30:41 +0000
 In-Reply-To: <20190418232923.250800-1-ebiggers@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
@@ -35,7 +35,7 @@ From: Eric Biggers <ebiggers@google.com>
 Wire up the new ioctls for adding and removing fscrypt keys to/from the
 filesystem, and the new ioctl for retrieving v2 encryption policies.
 
-FS_IOC_REMOVE_ENCRYPTION_KEY also required making f2fs_drop_inode() call
+FS_IOC_REMOVE_ENCRYPTION_KEY also required making ext4_drop_inode() call
 fscrypt_drop_inode().
 
 For more details see Documentation/filesystems/fscrypt.rst and the
@@ -43,93 +43,65 @@ fscrypt patches that added the implementation of these ioctls.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/file.c  | 46 ++++++++++++++++++++++++++++++++++++++++++++++
- fs/f2fs/super.c |  2 ++
- 2 files changed, 48 insertions(+)
+ fs/ext4/ioctl.c | 24 ++++++++++++++++++++++++
+ fs/ext4/super.c |  3 +++
+ 2 files changed, 27 insertions(+)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 5742ab8b57dc6..251e374353da8 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2095,6 +2095,40 @@ static int f2fs_ioc_get_encryption_pwsalt(struct file *filp, unsigned long arg)
- 	return err;
- }
+diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+index bab3da4f1e0d3..3ed66628e9301 100644
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -1074,6 +1074,26 @@ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 	case EXT4_IOC_GET_ENCRYPTION_POLICY:
+ 		return fscrypt_ioctl_get_policy(filp, (void __user *)arg);
  
-+static int f2fs_ioc_get_encryption_policy_ex(struct file *filp,
-+					     unsigned long arg)
-+{
-+	if (!f2fs_sb_has_encrypt(F2FS_I_SB(file_inode(filp))))
-+		return -EOPNOTSUPP;
++	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
++		if (!ext4_has_feature_encrypt(sb))
++			return -EOPNOTSUPP;
++		return fscrypt_ioctl_get_policy_ex(filp, (void __user *)arg);
 +
-+	return fscrypt_ioctl_get_policy_ex(filp, (void __user *)arg);
-+}
++	case FS_IOC_ADD_ENCRYPTION_KEY:
++		if (!ext4_has_feature_encrypt(sb))
++			return -EOPNOTSUPP;
++		return fscrypt_ioctl_add_key(filp, (void __user *)arg);
 +
-+static int f2fs_ioc_add_encryption_key(struct file *filp, unsigned long arg)
-+{
-+	if (!f2fs_sb_has_encrypt(F2FS_I_SB(file_inode(filp))))
-+		return -EOPNOTSUPP;
++	case FS_IOC_REMOVE_ENCRYPTION_KEY:
++		if (!ext4_has_feature_encrypt(sb))
++			return -EOPNOTSUPP;
++		return fscrypt_ioctl_remove_key(filp, (const void __user *)arg);
 +
-+	return fscrypt_ioctl_add_key(filp, (void __user *)arg);
-+}
++	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
++		if (!ext4_has_feature_encrypt(sb))
++			return -EOPNOTSUPP;
++		return fscrypt_ioctl_get_key_status(filp, (void __user *)arg);
 +
-+static int f2fs_ioc_remove_encryption_key(struct file *filp, unsigned long arg)
-+{
-+	if (!f2fs_sb_has_encrypt(F2FS_I_SB(file_inode(filp))))
-+		return -EOPNOTSUPP;
-+
-+	return fscrypt_ioctl_remove_key(filp, (const void __user *)arg);
-+}
-+
-+static int f2fs_ioc_get_encryption_key_status(struct file *filp,
-+					      unsigned long arg)
-+{
-+	if (!f2fs_sb_has_encrypt(F2FS_I_SB(file_inode(filp))))
-+		return -EOPNOTSUPP;
-+
-+	return fscrypt_ioctl_get_key_status(filp, (void __user *)arg);
-+}
-+
- static int f2fs_ioc_gc(struct file *filp, unsigned long arg)
+ 	case EXT4_IOC_FSGETXATTR:
+ 	{
+ 		struct fsxattr fa;
+@@ -1192,6 +1212,10 @@ long ext4_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	case EXT4_IOC_SET_ENCRYPTION_POLICY:
+ 	case EXT4_IOC_GET_ENCRYPTION_PWSALT:
+ 	case EXT4_IOC_GET_ENCRYPTION_POLICY:
++	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
++	case FS_IOC_ADD_ENCRYPTION_KEY:
++	case FS_IOC_REMOVE_ENCRYPTION_KEY:
++	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
+ 	case EXT4_IOC_SHUTDOWN:
+ 	case FS_IOC_GETFSMAP:
+ 		break;
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 5b92054bf8ea0..6640831f77735 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1103,6 +1103,9 @@ static int ext4_drop_inode(struct inode *inode)
  {
- 	struct inode *inode = file_inode(filp);
-@@ -3000,6 +3034,14 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return f2fs_ioc_get_encryption_policy(filp, arg);
- 	case F2FS_IOC_GET_ENCRYPTION_PWSALT:
- 		return f2fs_ioc_get_encryption_pwsalt(filp, arg);
-+	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
-+		return f2fs_ioc_get_encryption_policy_ex(filp, arg);
-+	case FS_IOC_ADD_ENCRYPTION_KEY:
-+		return f2fs_ioc_add_encryption_key(filp, arg);
-+	case FS_IOC_REMOVE_ENCRYPTION_KEY:
-+		return f2fs_ioc_remove_encryption_key(filp, arg);
-+	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
-+		return f2fs_ioc_get_encryption_key_status(filp, arg);
- 	case F2FS_IOC_GARBAGE_COLLECT:
- 		return f2fs_ioc_gc(filp, arg);
- 	case F2FS_IOC_GARBAGE_COLLECT_RANGE:
-@@ -3119,6 +3161,10 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case F2FS_IOC_SET_ENCRYPTION_POLICY:
- 	case F2FS_IOC_GET_ENCRYPTION_PWSALT:
- 	case F2FS_IOC_GET_ENCRYPTION_POLICY:
-+	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
-+	case FS_IOC_ADD_ENCRYPTION_KEY:
-+	case FS_IOC_REMOVE_ENCRYPTION_KEY:
-+	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
- 	case F2FS_IOC_GARBAGE_COLLECT:
- 	case F2FS_IOC_GARBAGE_COLLECT_RANGE:
- 	case F2FS_IOC_WRITE_CHECKPOINT:
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 11b3a039a1881..88f5e45071275 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -934,6 +934,8 @@ static int f2fs_drop_inode(struct inode *inode)
- 		return 0;
- 	}
- 	ret = generic_drop_inode(inode);
-+	if (!ret)
-+		ret = fscrypt_drop_inode(inode);
- 	trace_f2fs_drop_inode(inode, ret);
- 	return ret;
+ 	int drop = generic_drop_inode(inode);
+ 
++	if (!drop)
++		drop = fscrypt_drop_inode(inode);
++
+ 	trace_ext4_drop_inode(inode, drop);
+ 	return drop;
  }
 -- 
 2.21.0.392.gf8f6787159e-goog
