@@ -1,58 +1,67 @@
-From: Bharath Vedartham <linux.bhar@gmail.com>
-Subject: [PATCH] f2fs: Force type conversion from __le32 to u32
-Date: Thu, 18 Apr 2019 13:05:10 +0530
-Message-ID: <20190418073510.GA11396@bharath12345-Inspiron-5559>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] fsck.f2fs: fix to set CP_LARGE_NAT_BITMAP_FLAG
+Date: Thu, 18 Apr 2019 15:49:09 +0800
+Message-ID: <20190418074909.11102-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, linux.bhar@gmail.com
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1hH1nQ-0002qf-Pz
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 18 Apr 2019 07:49:24 +0000
+Received: from szxga08-in.huawei.com ([45.249.212.255] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1hH1nO-00DtZ6-Op
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 18 Apr 2019 07:49:24 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org
 
-This patch forces type conversion from __le32 to u32 to prevent sparse
-warnings like:
-warning: restricted __le32 degrades to integer
+During fixing checkpoint, if large_nat_bitmap feature is on, we need to
+set CP_LARGE_NAT_BITMAP_FLAG flag in checkpoint.
 
-dir.c:
-fscrypt_fname_disk_to_usr takes a hash of type u32 as it's second arg
-but de->hash_code is of type __le32.
-
-node.c
-NULL_ADDR is of type u32 but block_addr is of type __le32.
-
-Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/dir.c  | 2 +-
- fs/f2fs/node.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ fsck/fsck.c  | 2 ++
+ fsck/mount.c | 2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 59bc460..4f39872 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -828,7 +828,7 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
- 			int save_len = fstr->len;
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index a17555c..88ed4d7 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -2038,6 +2038,8 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
+ 		flags |= CP_TRIMMED_FLAG;
+ 	if (is_set_ckpt_flags(cp, CP_DISABLED_FLAG))
+ 		flags |= CP_DISABLED_FLAG;
++	if (is_set_ckpt_flags(cp, CP_LARGE_NAT_BITMAP_FLAG))
++		flags |= CP_LARGE_NAT_BITMAP_FLAG;
  
- 			err = fscrypt_fname_disk_to_usr(d->inode,
--						(u32)de->hash_code, 0,
-+						(__force u32)de->hash_code, 0,
- 						&de_name, fstr);
- 			if (err)
- 				goto out;
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 3f99ab2..9e333a5 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2706,7 +2706,7 @@ static void __update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
- 		i = 1;
- 	}
- 	for (; i < NAT_ENTRY_PER_BLOCK; i++) {
--		if (nat_blk->entries[i].block_addr != NULL_ADDR)
-+		if ((__force u32)nat_blk->entries[i].block_addr != NULL_ADDR)
- 			valid++;
- 	}
- 	if (valid == 0) {
+ 	if (flags & CP_UMOUNT_FLAG)
+ 		cp_blocks = 8;
+diff --git a/fsck/mount.c b/fsck/mount.c
+index aa64e93..20ecf07 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -2365,6 +2365,8 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
+ 		flags |= CP_TRIMMED_FLAG;
+ 	if (is_set_ckpt_flags(cp, CP_DISABLED_FLAG))
+ 		flags |= CP_DISABLED_FLAG;
++	if (is_set_ckpt_flags(cp, CP_LARGE_NAT_BITMAP_FLAG))
++		flags |= CP_LARGE_NAT_BITMAP_FLAG;
+ 
+ 	set_cp(free_segment_count, get_free_segments(sbi));
+ 	set_cp(valid_block_count, sbi->total_valid_block_count);
 -- 
-2.7.4
+2.18.0.rc1
