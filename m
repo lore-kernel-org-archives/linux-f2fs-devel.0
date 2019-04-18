@@ -1,60 +1,58 @@
-From: "Theodore Ts'o" <tytso@mit.edu>
-Subject: Re: [PATCH v2 2/2] fscrypt: cache decrypted symlink
- target in ->i_link
-Date: Wed, 17 Apr 2019 12:55:56 -0400
-Message-ID: <20190417165556.GI4686@mit.edu>
-References: <20190410202115.64501-1-ebiggers@kernel.org>
- <20190410202115.64501-3-ebiggers@kernel.org>
+From: Bharath Vedartham <linux.bhar@gmail.com>
+Subject: [PATCH] f2fs: Force type conversion from __le32 to u32
+Date: Thu, 18 Apr 2019 13:05:10 +0530
+Message-ID: <20190418073510.GA11396@bharath12345-Inspiron-5559>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@mit.edu>) id 1hGnrJ-0006Mk-2x
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Apr 2019 16:56:29 +0000
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hGnrG-00CRXc-Sq
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Apr 2019 16:56:29 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190410202115.64501-3-ebiggers@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org, Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, linux.bhar@gmail.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wed, Apr 10, 2019 at 01:21:15PM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> Path lookups that traverse encrypted symlink(s) are very slow because
-> each encrypted symlink needs to be decrypted each time it's followed.
-> This also involves dropping out of rcu-walk mode.
-> 
-> Make encrypted symlinks faster by caching the decrypted symlink target
-> in ->i_link.  The first call to fscrypt_get_symlink() sets it.  Then,
-> the existing VFS path lookup code uses the non-NULL ->i_link to take the
-> fast path where ->get_link() isn't called, and lookups in rcu-walk mode
-> remain in rcu-walk mode.
-> 
-> Also set ->i_link immediately when a new encrypted symlink is created.
-> 
-> To safely free the symlink target after an RCU grace period has elapsed,
-> introduce a new function fscrypt_free_inode(), and make the relevant
-> filesystems call it just before actually freeing the inode.
-> 
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+This patch forces type conversion from __le32 to u32 to prevent sparse
+warnings like:
+warning: restricted __le32 degrades to integer
 
-Looks good, applied.
+dir.c:
+fscrypt_fname_disk_to_usr takes a hash of type u32 as it's second arg
+but de->hash_code is of type __le32.
 
-					- Ted
+node.c
+NULL_ADDR is of type u32 but block_addr is of type __le32.
+
+Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
+---
+ fs/f2fs/dir.c  | 2 +-
+ fs/f2fs/node.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 59bc460..4f39872 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -828,7 +828,7 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+ 			int save_len = fstr->len;
+ 
+ 			err = fscrypt_fname_disk_to_usr(d->inode,
+-						(u32)de->hash_code, 0,
++						(__force u32)de->hash_code, 0,
+ 						&de_name, fstr);
+ 			if (err)
+ 				goto out;
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 3f99ab2..9e333a5 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -2706,7 +2706,7 @@ static void __update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
+ 		i = 1;
+ 	}
+ 	for (; i < NAT_ENTRY_PER_BLOCK; i++) {
+-		if (nat_blk->entries[i].block_addr != NULL_ADDR)
++		if ((__force u32)nat_blk->entries[i].block_addr != NULL_ADDR)
+ 			valid++;
+ 	}
+ 	if (valid == 0) {
+-- 
+2.7.4
