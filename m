@@ -1,274 +1,182 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 2/2] f2fs-tools: relocate chksum_offset for large_nat_bitmap feature
-Date: Mon, 22 Apr 2019 17:34:52 +0800
-Message-ID: <20190422093452.61134-2-yuchao0@huawei.com>
-References: <20190422093452.61134-1-yuchao0@huawei.com>
+Subject: [PATCH 1/2] f2fs-tools: allow unfixed f2fs_checkpoint.checksum_offset
+Date: Mon, 22 Apr 2019 17:34:51 +0800
+Message-ID: <20190422093452.61134-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190422093452.61134-1-yuchao0@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, chao@kernel.org
 Cc: linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-For large_nat_bitmap feature, there is a design flaw:
+Previously, f2fs_checkpoint.checksum_offset points fixed position of
+f2fs_checkpoint structure:
 
-Previous:
+"#define CP_CHKSUM_OFFSET	4092"
 
-struct f2fs_checkpoint layout:
-+--------------------------+  0x0000
-| checkpoint_ver           |
-| ......                   |
-| checksum_offset          |------+
-| ......                   |      |
-| sit_nat_version_bitmap[] |<-----|-------+
-| ......                   |      |       |
-| checksum_value           |<-----+       |
-+--------------------------+  0x1000      |
-|                          |      nat_bitmap + sit_bitmap
-| payload blocks           |              |
-|                          |              |
-+--------------------------|<-------------+
+It is unnecessary, and it breaks the consecutiveness of nat and sit
+bitmap stored across checkpoint park block and payload blocks.
 
-Obviously, if nat_bitmap size + sit_bitmap size is larger than
-MAX_BITMAP_SIZE_IN_CKPT, nat_bitmap or sit_bitmap may overlap
-checkpoint checksum's position, once checkpoint() is triggered
-from kernel, nat or sit bitmap will be damaged by checksum field.
+This patch allows f2fs-tools to handle unfixed .checksum_offset.
 
-In order to fix this, let's relocate checksum_value's position
-to the head of sit_nat_version_bitmap as below, then nat/sit
-bitmap and chksum value update will become safe.
+In addition, for the case checksum value is stored in the middle of
+checkpoint park, calculating checksum value with superposition method
+like we did for inode_checksum.
 
-After:
+In addition, using MAX_BITMAP_SIZE_IN_CKPT to clean up codes.
 
-struct f2fs_checkpoint layout:
-+--------------------------+  0x0000
-| checkpoint_ver           |
-| ......                   |
-| checksum_offset          |------+
-| ......                   |      |
-| sit_nat_version_bitmap[] |<-----+
-| ......                   |<-------------+
-|                          |              |
-+--------------------------+  0x1000      |
-|                          |      nat_bitmap + sit_bitmap
-| payload blocks           |              |
-|                          |              |
-+--------------------------|<-------------+
-
-Related report and discussion:
-
-https://sourceforge.net/p/linux-f2fs/mailman/message/36642346/
-
-In addition, during writing checkpoint, if large_nat_bitmap feature is
-enabled, we need to set CP_LARGE_NAT_BITMAP_FLAG flag in checkpoint.
-
-Reported-by: Park Ju Hyung <qkrwngud825@gmail.com>
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fsck/f2fs.h        |  6 +++++-
- fsck/fsck.c        | 16 ++++++++++++++++
- fsck/fsck.h        |  1 +
- fsck/main.c        |  2 ++
- fsck/mount.c       | 42 +++++++++++++++++++++++++++---------------
- include/f2fs_fs.h  |  9 +++++++--
- mkfs/f2fs_format.c |  5 ++++-
- 7 files changed, 62 insertions(+), 19 deletions(-)
+ fsck/fsck.c        |  5 +++--
+ fsck/mount.c       |  5 +++--
+ fsck/resize.c      | 10 +++++-----
+ include/f2fs_fs.h  |  1 +
+ lib/libf2fs.c      | 14 ++++++++++++++
+ mkfs/f2fs_format.c | 16 +++++++---------
+ 6 files changed, 33 insertions(+), 18 deletions(-)
 
-diff --git a/fsck/f2fs.h b/fsck/f2fs.h
-index 93f01e5..6a6c4a5 100644
---- a/fsck/f2fs.h
-+++ b/fsck/f2fs.h
-@@ -272,7 +272,11 @@ static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
- 	if (is_set_ckpt_flags(ckpt, CP_LARGE_NAT_BITMAP_FLAG)) {
- 		offset = (flag == SIT_BITMAP) ?
- 			le32_to_cpu(ckpt->nat_ver_bitmap_bytesize) : 0;
--		return &ckpt->sit_nat_version_bitmap + offset;
-+		/*
-+		 * if large_nat_bitmap feature is enabled, leave checksum
-+		 * protection for all nat/sit bitmaps.
-+		 */
-+		return &ckpt->sit_nat_version_bitmap + offset + sizeof(__le32);
- 	}
- 
- 	if (le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_payload) > 0) {
 diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 7ecdee1..8d7deb5 100644
+index a17555c..7ecdee1 100644
 --- a/fsck/fsck.c
 +++ b/fsck/fsck.c
-@@ -1917,6 +1917,18 @@ int fsck_chk_meta(struct f2fs_sb_info *sbi)
- 	return 0;
- }
+@@ -2056,8 +2056,9 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
+ 	set_cp(valid_node_count, fsck->chk.valid_node_cnt);
+ 	set_cp(valid_inode_count, fsck->chk.valid_inode_cnt);
  
-+void fsck_chk_checkpoint(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
-+
-+	if (get_cp(ckpt_flags) & CP_LARGE_NAT_BITMAP_FLAG) {
-+		if (get_cp(checksum_offset) != CP_MIN_CHKSUM_OFFSET) {
-+			ASSERT_MSG("Deprecated layout of large_nat_bitmap, "
-+				"chksum_offset:%u", get_cp(checksum_offset));
-+		}
-+	}
-+}
-+
- void fsck_init(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
-@@ -2038,6 +2050,10 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
- 		flags |= CP_TRIMMED_FLAG;
- 	if (is_set_ckpt_flags(cp, CP_DISABLED_FLAG))
- 		flags |= CP_DISABLED_FLAG;
-+	if (is_set_ckpt_flags(cp, CP_LARGE_NAT_BITMAP_FLAG)) {
-+		flags |= CP_LARGE_NAT_BITMAP_FLAG;
-+		set_cp(checksum_offset, CP_MIN_CHKSUM_OFFSET);
-+	}
+-	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CP_CHKSUM_OFFSET);
+-	*((__le32 *)((unsigned char *)cp + CP_CHKSUM_OFFSET)) = cpu_to_le32(crc);
++	crc = f2fs_checkpoint_chksum(cp);
++	*((__le32 *)((unsigned char *)cp + get_cp(checksum_offset))) =
++							cpu_to_le32(crc);
  
- 	if (flags & CP_UMOUNT_FLAG)
- 		cp_blocks = 8;
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index 376ced7..dd831de 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -154,6 +154,7 @@ extern int fsck_chk_dentry_blk(struct f2fs_sb_info *, u32, struct child_info *,
- 		int, int);
- int fsck_chk_inline_dentries(struct f2fs_sb_info *, struct f2fs_node *,
- 		struct child_info *);
-+void fsck_chk_checkpoint(struct f2fs_sb_info *sbi);
- int fsck_chk_meta(struct f2fs_sb_info *sbi);
- int fsck_chk_curseg_info(struct f2fs_sb_info *);
- int convert_encrypted_name(unsigned char *, u32, unsigned char *, int);
-diff --git a/fsck/main.c b/fsck/main.c
-index d3f0c0d..e61bb91 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -616,6 +616,8 @@ static void do_fsck(struct f2fs_sb_info *sbi)
- 		c.fix_on = 1;
- 	}
- 
-+	fsck_chk_checkpoint(sbi);
-+
- 	fsck_chk_quota_node(sbi);
- 
- 	/* Traverse all block recursively from root inode */
+ 	cp_blk_no = get_sb(cp_blkaddr);
+ 	if (sbi->cur_cp == 2)
 diff --git a/fsck/mount.c b/fsck/mount.c
-index da1d4c9..843742e 100644
+index aa64e93..da1d4c9 100644
 --- a/fsck/mount.c
 +++ b/fsck/mount.c
-@@ -769,15 +769,33 @@ int init_sb_info(struct f2fs_sb_info *sbi)
- 	return 0;
- }
+@@ -2373,8 +2373,9 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
+ 	flags = update_nat_bits_flags(sb, cp, flags);
+ 	set_cp(ckpt_flags, flags);
  
-+static int verify_checksum_chksum(struct f2fs_checkpoint *cp)
-+{
-+	unsigned int chksum_offset = get_cp(checksum_offset);
-+	unsigned int crc, cal_crc;
-+
-+	if (chksum_offset < CP_MIN_CHKSUM_OFFSET ||
-+			chksum_offset > CP_CHKSUM_OFFSET) {
-+		MSG(0, "\tInvalid CP CRC offset: %u\n", chksum_offset);
-+		return -1;
-+	}
-+
-+	crc = le32_to_cpu(*(__le32 *)((unsigned char *)cp + chksum_offset));
-+	cal_crc = f2fs_checkpoint_chksum(cp);
-+	if (cal_crc != crc) {
-+		MSG(0, "\tInvalid CP CRC: offset:%u, crc:0x%x, calc:0x%x\n",
-+			chksum_offset, crc, cal_crc);
-+		return -1;
-+	}
-+	return 0;
-+}
-+
- void *validate_checkpoint(struct f2fs_sb_info *sbi, block_t cp_addr,
- 				unsigned long long *version)
- {
- 	void *cp_page_1, *cp_page_2;
- 	struct f2fs_checkpoint *cp;
--	unsigned long blk_size = sbi->blocksize;
- 	unsigned long long cur_version = 0, pre_version = 0;
--	unsigned int crc = 0;
--	size_t crc_offset;
+-	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CP_CHKSUM_OFFSET);
+-	*((__le32 *)((unsigned char *)cp + CP_CHKSUM_OFFSET)) = cpu_to_le32(crc);
++	crc = f2fs_checkpoint_chksum(cp);
++	*((__le32 *)((unsigned char *)cp + get_cp(checksum_offset))) =
++							cpu_to_le32(crc);
  
- 	/* Read the 1st cp block in this CP pack */
- 	cp_page_1 = malloc(PAGE_SIZE);
-@@ -787,12 +805,7 @@ void *validate_checkpoint(struct f2fs_sb_info *sbi, block_t cp_addr,
- 		goto invalid_cp1;
+ 	cp_blk_no = get_sb(cp_blkaddr);
+ 	if (sbi->cur_cp == 2)
+diff --git a/fsck/resize.c b/fsck/resize.c
+index 56c8103..2c623c5 100644
+--- a/fsck/resize.c
++++ b/fsck/resize.c
+@@ -90,11 +90,11 @@ static int get_new_sb(struct f2fs_super_block *sb)
+ 		 * It requires more pages for cp.
+ 		 */
+ 		if (max_sit_bitmap_size > MAX_SIT_BITMAP_SIZE_IN_CKPT) {
+-			max_nat_bitmap_size = CP_CHKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1;
++			max_nat_bitmap_size = MAX_BITMAP_SIZE_IN_CKPT;
+ 			set_sb(cp_payload, F2FS_BLK_ALIGN(max_sit_bitmap_size));
+ 		} else {
+-			max_nat_bitmap_size = CP_CHKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1
+-				- max_sit_bitmap_size;
++			max_nat_bitmap_size = MAX_BITMAP_SIZE_IN_CKPT -
++							max_sit_bitmap_size;
+ 			set_sb(cp_payload, 0);
+ 		}
  
- 	cp = (struct f2fs_checkpoint *)cp_page_1;
--	crc_offset = get_cp(checksum_offset);
--	if (crc_offset > (blk_size - sizeof(__le32)))
--		goto invalid_cp1;
--
--	crc = le32_to_cpu(*(__le32 *)((unsigned char *)cp + crc_offset));
--	if (f2fs_crc_valid(crc, cp, crc_offset))
-+	if (verify_checksum_chksum(cp))
- 		goto invalid_cp1;
+@@ -520,8 +520,8 @@ static void rebuild_checkpoint(struct f2fs_sb_info *sbi,
+ 						(unsigned char *)cp);
+ 	new_cp->checkpoint_ver = cpu_to_le64(cp_ver + 1);
  
- 	if (get_cp(cp_pack_total_block_count) > sbi->blocks_per_seg)
-@@ -810,12 +823,7 @@ void *validate_checkpoint(struct f2fs_sb_info *sbi, block_t cp_addr,
- 		goto invalid_cp2;
+-	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, new_cp, CP_CHKSUM_OFFSET);
+-	*((__le32 *)((unsigned char *)new_cp + CP_CHKSUM_OFFSET)) =
++	crc = f2fs_checkpoint_chksum(cp);
++	*((__le32 *)((unsigned char *)new_cp + get_cp(checksum_offset))) =
+ 							cpu_to_le32(crc);
  
- 	cp = (struct f2fs_checkpoint *)cp_page_2;
--	crc_offset = get_cp(checksum_offset);
--	if (crc_offset > (blk_size - sizeof(__le32)))
--		goto invalid_cp2;
--
--	crc = le32_to_cpu(*(__le32 *)((unsigned char *)cp + crc_offset));
--	if (f2fs_crc_valid(crc, cp, crc_offset))
-+	if (verify_checksum_chksum(cp))
- 		goto invalid_cp2;
- 
- 	cur_version = get_cp(checkpoint_ver);
-@@ -2365,6 +2373,10 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
- 		flags |= CP_TRIMMED_FLAG;
- 	if (is_set_ckpt_flags(cp, CP_DISABLED_FLAG))
- 		flags |= CP_DISABLED_FLAG;
-+	if (is_set_ckpt_flags(cp, CP_LARGE_NAT_BITMAP_FLAG)) {
-+		flags |= CP_LARGE_NAT_BITMAP_FLAG;
-+		set_cp(checksum_offset, CP_MIN_CHKSUM_OFFSET);
-+	}
- 
- 	set_cp(free_segment_count, get_free_segments(sbi));
- 	set_cp(valid_block_count, sbi->total_valid_block_count);
+ 	/* Write a new checkpoint in the other set */
 diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 1bd935c..89b8a0c 100644
+index c6669c9..1bd935c 100644
 --- a/include/f2fs_fs.h
 +++ b/include/f2fs_fs.h
-@@ -692,10 +692,15 @@ struct f2fs_checkpoint {
- 	unsigned char sit_nat_version_bitmap[1];
- } __attribute__((packed));
+@@ -1133,6 +1133,7 @@ extern int utf16_to_utf8(char *, const u_int16_t *, size_t, size_t);
+ extern int log_base_2(u_int32_t);
+ extern unsigned int addrs_per_inode(struct f2fs_inode *);
+ extern __u32 f2fs_inode_chksum(struct f2fs_node *);
++extern __u32 f2fs_checkpoint_chksum(struct f2fs_checkpoint *);
  
-+#define CP_BITMAP_OFFSET	\
-+	(offsetof(struct f2fs_checkpoint, sit_nat_version_bitmap))
-+#define CP_MIN_CHKSUM_OFFSET	CP_BITMAP_OFFSET
+ extern int get_bits_in_byte(unsigned char n);
+ extern int test_and_set_bit_le(u32, u8 *);
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index 853e713..4202cd1 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -532,6 +532,20 @@ __u32 f2fs_inode_chksum(struct f2fs_node *node)
+ 	return chksum;
+ }
+ 
++__u32 f2fs_checkpoint_chksum(struct f2fs_checkpoint *cp)
++{
++	unsigned int chksum_ofs = le32_to_cpu(cp->checksum_offset);
++	__u32 chksum;
 +
-+#define MIN_NAT_BITMAP_SIZE	64
- #define MAX_SIT_BITMAP_SIZE_IN_CKPT    \
--	(CP_CHKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1 - 64)
-+	(CP_CHKSUM_OFFSET - CP_BITMAP_OFFSET - MIN_NAT_BITMAP_SIZE)
- #define MAX_BITMAP_SIZE_IN_CKPT	\
--	(CP_CHKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1)
-+	(CP_CHKSUM_OFFSET - CP_BITMAP_OFFSET)
- 
++	chksum = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, chksum_ofs);
++	if (chksum_ofs < CP_CHKSUM_OFFSET) {
++		chksum_ofs += sizeof(chksum);
++		chksum = f2fs_cal_crc32(chksum, (__u8 *)cp + chksum_ofs,
++						F2FS_BLKSIZE - chksum_ofs);
++	}
++	return chksum;
++}
++
  /*
-  * For orphan inode management
+  * try to identify the root device
+  */
 diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index a534293..eabffce 100644
+index 4560611..a534293 100644
 --- a/mkfs/f2fs_format.c
 +++ b/mkfs/f2fs_format.c
-@@ -706,7 +706,10 @@ static int f2fs_write_check_point_pack(void)
- 	set_cp(nat_ver_bitmap_bytesize, ((get_sb(segment_count_nat) / 2) <<
- 			 get_sb(log_blocks_per_seg)) / 8);
+@@ -358,13 +358,11 @@ static int f2fs_prepare_super_block(void)
+ 		 * It requires more pages for cp.
+ 		 */
+ 		if (max_sit_bitmap_size > MAX_SIT_BITMAP_SIZE_IN_CKPT) {
+-			max_nat_bitmap_size = CP_CHKSUM_OFFSET -
+-					sizeof(struct f2fs_checkpoint) + 1;
++			max_nat_bitmap_size = MAX_BITMAP_SIZE_IN_CKPT;
+ 			set_sb(cp_payload, F2FS_BLK_ALIGN(max_sit_bitmap_size));
+ 	        } else {
+-			max_nat_bitmap_size =
+-				CP_CHKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1
+-				- max_sit_bitmap_size;
++			max_nat_bitmap_size = MAX_BITMAP_SIZE_IN_CKPT -
++							max_sit_bitmap_size;
+ 			set_sb(cp_payload, 0);
+ 		}
+ 		max_nat_segments = (max_nat_bitmap_size * 8) >> log_blks_per_seg;
+@@ -710,8 +708,8 @@ static int f2fs_write_check_point_pack(void)
  
--	set_cp(checksum_offset, CP_CHKSUM_OFFSET);
-+	if (c.large_nat_bitmap)
-+		set_cp(checksum_offset, CP_MIN_CHKSUM_OFFSET);
-+	else
-+		set_cp(checksum_offset, CP_CHKSUM_OFFSET);
+ 	set_cp(checksum_offset, CP_CHKSUM_OFFSET);
  
- 	crc = f2fs_checkpoint_chksum(cp);
- 	*((__le32 *)((unsigned char *)cp + get_cp(checksum_offset))) =
+-	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CP_CHKSUM_OFFSET);
+-	*((__le32 *)((unsigned char *)cp + CP_CHKSUM_OFFSET)) =
++	crc = f2fs_checkpoint_chksum(cp);
++	*((__le32 *)((unsigned char *)cp + get_cp(checksum_offset))) =
+ 							cpu_to_le32(crc);
+ 
+ 	blk_size_bytes = 1 << get_sb(log_blocksize);
+@@ -956,8 +954,8 @@ static int f2fs_write_check_point_pack(void)
+ 	 */
+ 	cp->checkpoint_ver = 0;
+ 
+-	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CP_CHKSUM_OFFSET);
+-	*((__le32 *)((unsigned char *)cp + CP_CHKSUM_OFFSET)) =
++	crc = f2fs_checkpoint_chksum(cp);
++	*((__le32 *)((unsigned char *)cp + get_cp(checksum_offset))) =
+ 							cpu_to_le32(crc);
+ 	cp_seg_blk = get_sb(segment0_blkaddr) + c.blks_per_seg;
+ 	DBG(1, "\tWriting cp page 1 of checkpoint pack 2, at offset 0x%08"PRIx64"\n",
 -- 
 2.18.0.rc1
