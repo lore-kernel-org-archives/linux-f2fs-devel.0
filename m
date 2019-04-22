@@ -1,26 +1,26 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: Possible issues with fsck of f2fs root
-Date: Sun, 21 Apr 2019 11:27:03 +0100
-Message-ID: <20190421102703.GC7295@jaegeuk-macbookpro.roam.corp.google.com>
-References: <CADoWrG-0GWtwqaW7rsPWLDYcoAsvXhwRa9zVib9bN94g1LLw6Q@mail.gmail.com>
- <20190416185353.GA56890@jaegeuk-macbookpro.roam.corp.google.com>
- <14c1ba5f-a636-27f6-9240-55cdef2c8c26@huawei.com>
+From: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Subject: Re: [PATCH v2] f2fs-tools: Fix device zoned model
+ detection
+Date: Mon, 22 Apr 2019 00:58:25 +0000
+Message-ID: <CY1PR04MB22688CFD06F3A256A99608BBED220@CY1PR04MB2268.namprd04.prod.outlook.com>
+References: <20190419081957.23419-1-shinichiro.kawasaki@wdc.com>
+ <8134fc5e-0e98-6d2c-7d1f-370f72c82a04@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1hI9go-00076W-Bh
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 21 Apr 2019 10:27:14 +0000
-Received: from mail.kernel.org ([198.145.29.99])
+ (envelope-from <prvs=00832d067=shinichiro.kawasaki@wdc.com>)
+ id 1hINIF-00035l-1d
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 22 Apr 2019 00:58:47 +0000
+Received: from esa1.hgst.iphmx.com ([68.232.141.245])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hI9gm-003ivy-0W
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 21 Apr 2019 10:27:14 +0000
-Content-Disposition: inline
-In-Reply-To: <14c1ba5f-a636-27f6-9240-55cdef2c8c26@huawei.com>
+ id 1hINIB-0055WD-O8
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 22 Apr 2019 00:58:46 +0000
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,278 +30,130 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Cc: Damien Le Moal <Damien.LeMoal@wdc.com>
 
-On 04/20, Chao Yu wrote:
-> On 2019/4/17 2:53, Jaegeuk Kim wrote:
-> > On 04/02, Hagbard Celine wrote:
-> >> Hi, I lost the root filesystem on my previous install after a few
-> >> weeks of several power outages last winter. While trying to recover I
-> >> discovered that it seem fsck was never run properly during boot in the
-> >> lifetime of that install.
-> >> After getting the system installed again a while ago, I have been
-> >> trying to discern why.
-> >> So far I've found the following two possible issues:
-> >>
-> >> ISSUE 1:
-> >> If I boot with kernel option "ro rootfstype=f2fs
-> >> rootflags=background_gc=on,heap,disable_ext_identify,discard,user_xattr,inline_xattr,inline_dentry,acl,inline_data,flush_merge,data_flush,extent_cache,whint_mode=fs-based,fsync_mode=strict"
-> >> I get the following halfway trough boot:
-> >>
-> >>  * Checking local filesystems  ...
-> >> Info: Use default preen mode
-> >> Info: Mounted device!
-> >> Info: Check FS only due to RO
-> >>         Error: Failed to open the device!
-> >>  * Filesystems couldn't be fixed
-> >>
-> >>
-> >>                      [ !! ] * rc: Aborting!
-> >>
-> >> If i from this state try to mount another partition:
-> >> # mount -o "ro,relatime,lazytime,background_gc=on,discard,heap,user_xattr,inline_xattr,acl,disable_ext_identify,inline_data,inline_dentry,flush_merge,extent_cache,data_flush,mode=adaptive,active_logs=6,whint_mode=fs-based,alloc_mode=default,fsync_mode=strict"
-> >> /dev/nvme0n1p7 /mnt/f2fstest/
-> >>
-> >> I get the same error if I try to run fsck on it:
-> >> # fsck.f2fs /dev/nvme0n1p7
-> >> Info: Mounted device!
-> >> Info: Check FS only due to RO
-> >>         Error: Failed to open the device!
-> >>
-> >> If I on the other had boot with kernel option "rw rootfstype=f2fs
-> >> rootflags=background_gc=on,heap,disable_ext_identify,discard,user_xattr,inline_xattr,inline_dentry,acl,inline_data,flush_merge,data_flush,extent_cache,whint_mode=fs-based,fsync_mode=strict
-> >> panic=30 scsi_mod.use_blk_mq=1"
-> >>
-> >> The boot does not hang and if I try same test as before, mount test partition:
-> >> # mount -o "ro,relatime,lazytime,background_gc=on,discard,heap,user_xattr,inline_xattr,acl,disable_ext_identify,inline_data,inline_dentry,flush_merge,extent_cache,data_flush,mode=adaptive,active_logs=6,whint_mode=fs-based,alloc_mode=default,fsync_mode=strict"
-> >> /dev/nvme0n1p7 /mnt/f2fstest/
-> >>
-> >> Run fsck:
-> >> # fsck.f2fs  -f /dev/nvme0n1p7
-> >> Info: Force to fix corruption
-> >> Info: Mounted device!
-> >> Info: Check FS only due to RO
-> >> Info: Segments per section = 1
-> >> Info: Sections per zone = 1
-> >> Info: sector size = 512
-> >> Info: total sectors = 134101647 (65479 MB)
-> >> Info: MKFS version
-> >>   "Linux version 5.0.5-gentoof2fsfix (root@40o2) (gcc version 8.2.0
-> >> (Gentoo 8.2.0-r6 p1.7)) #2 SMP PREEMPT Mon Apr 1 17:04:41 +01 2019"
-> >> Info: FSCK version
-> >>   from "Linux version 5.0.5-gentoo (root@40o2) (gcc version 8.2.0
-> >> (Gentoo 8.2.0-r6 p1.7)) #2 SMP PREEMPT Tue Apr 2 07:42:40 +01 2019"
-> >>     to "Linux version 5.0.5-gentoo (root@40o2) (gcc version 8.2.0
-> >> (Gentoo 8.2.0-r6 p1.7)) #2 SMP PREEMPT Tue Apr 2 07:42:40 +01 2019"
-> >> Info: superblock features = 0 :
-> >> Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
-> >> Info: total FS sectors = 134101640 (65479 MB)
-> >> Info: CKPT version = 70e1454a
-> >> Info: Checked valid nat_bits in checkpoint
-> >> Info: checkpoint state = 4c1 :  large_nat_bitmap nat_bits crc unmount
-> >>
-> >> [FSCK] Unreachable nat entries                        [Ok..] [0x0]
-> >> [FSCK] SIT valid block bitmap checking                [Ok..]
-> >> [FSCK] Hard link checking for regular file            [Ok..] [0x70]
-> >> [FSCK] valid_block_count matching with CP             [Ok..] [0x1fe244]
-> >> [FSCK] valid_node_count matcing with CP (de lookup)   [Ok..] [0x6c487]
-> >> [FSCK] valid_node_count matcing with CP (nat lookup)  [Ok..] [0x6c487]
-> >> [FSCK] valid_inode_count matched with CP              [Ok..] [0x6c362]
-> >> [FSCK] free segment_count matched with CP             [Ok..] [0x6c44]
-> >> [FSCK] next block offset is free                      [Ok..]
-> >> [FSCK] fixing SIT types
-> >> [FSCK] other corrupted bugs                           [Ok..]
-> >>
-> >> Done.
-> >>
-> >> So a system booted with "rw" root can fsck an "ro" filesystem but a
-> >> system booted with root "ro" can not.
-> >>
-> >>
-> >> ISSUE 2:
-> >> Referring to the output from the fsck running against a "ro"
-> >> filesystem, especially this line:
-> >> Info: Check FS only due to RO
-> >>
-> >> As far as i can tell this says that opposed to other filesystems
-> >> running fsck against a "ro" mounted f2fs partition will never fix any
-> >> errors.
-> >> So I tried running fsck against the same partition mounted "rw":
-> >> # mount -o remount,rw /mnt/f2fstest/
-> >> # fsck.f2fs  -f /dev/nvme0n1p7
-> >> Info: Force to fix corruption
-> >> Info: Mounted device!
-> >>         Error: Not available on mounted device!
-> >>
-> >> I might be misunderstanding something, but all this tells me that
-> >> unless one make a custom initramfs that runs fsck before root is
-> >> mounted (something no distributions has, as far as I know), fsck will
-> >> never fix an f2fs formatted root partition during boot.
-> >> If this is by design and not a bug/unintended behavior, it should be
-> >> documented somewhere least more people will experience system crashes
-> >> like mine.
-> >>
-> >> All tests above done with kernel 5.0.5 and f2fs-tools 1.12.0 with
-> >> "fsck.f2fs: allow to fsck readonly image w/ -f option"-patch by Chao
-> >> Yu.
-> > 
-> > Hi Hagbard,
-> > 
-> > It looks like fsck.f2fs failed to open a device as RW on RO disk. Could you
-> > try this patch?
-> > 
-> > Thanks,
-> > 
-> >>From 3f18ff744f4d510d8e2f42c5a3b2539651baccc5 Mon Sep 17 00:00:00 2001
-> > From: Jaegeuk Kim <jaegeuk@kernel.org>
-> > Date: Tue, 16 Apr 2019 11:46:31 -0700
-> > Subject: [PATCH] fsck.f2fs: open ro disk if we want to check fs only
-> > 
-> > This patch fixes the "open failure" issue on ro disk, reported by Hagbard.
-> > 
-> > "
-> >  If I boot with kernel option "ro rootfstype=f2fs
-> >  I get the following halfway trough boot:
-> > 
-> >   * Checking local filesystems  ...
-> >  Info: Use default preen mode
-> >  Info: Mounted device!
-> >  Info: Check FS only due to RO
-> >          Error: Failed to open the device!
-> >   * Filesystems couldn't be fixed
-> > "
-> > 
-> > Reported-by: Hagbard Celine <hagbardcelin@gmail.com>
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  lib/libf2fs.c | 13 ++++++++++---
-> >  1 file changed, 10 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-> > index f8f6921..1a0d179 100644
-> > --- a/lib/libf2fs.c
-> > +++ b/lib/libf2fs.c
-> > @@ -818,9 +818,16 @@ int get_device_info(int i)
-> >  	unsigned char model_inq[6] = {MODELINQUIRY};
-> >  #endif
-> >  	struct device_info *dev = c.devices + i;
-> > +	int rw_flag;
-> > +
-> > +	/* Check FS only */
-> > +	if (c.fix_on == 0 && c.auto_fix == 0)
-> > +		rw_flag = O_RDONLY;
-> > +	else
-> > +		rw_flag = O_RDWR;
-> >  
-> >  	if (c.sparse_mode) {
-> > -		fd = open(dev->path, O_RDWR | O_CREAT | O_BINARY, 0644);
-> > +		fd = open(dev->path, rw_flag | O_CREAT | O_BINARY, 0644);
-> >  		if (fd < 0) {
-> >  			MSG(0, "\tError: Failed to open a sparse file!\n");
-> >  			return -1;
-> > @@ -838,9 +845,9 @@ int get_device_info(int i)
-> >  		}
-> >  
-> >  		if (S_ISBLK(stat_buf->st_mode) && !c.force)
-> > -			fd = open(dev->path, O_RDWR | O_EXCL);
-> > +			fd = open(dev->path, rw_flag | O_EXCL);
-> >  		else
-> > -			fd = open(dev->path, O_RDWR);
-> > +			fd = open(dev->path, rw_flag);
-> >  	}
-> >  	if (fd < 0) {
-> >  		MSG(0, "\tError: Failed to open the device!\n");
+On 4/20/19 3:19 PM, Chao Yu wrote:
+> On 2019/4/19 16:19, Shin'ichiro Kawasaki wrote:
+>> A partition device does not have the "zoned" nor "chunk_sectors" sysfs
+>> attribute files. Only the owner block device of the partition has these
+>> files. This causes the detection of the zoned model and zone size of a
+>> partition device to fail when executing mkfs.f2fs.
+>>
+>> Fix this problem by using the owner device sysfs directory as the base
+>> directory for accessing the zoned and chunk_sectors files. This is done
+>> by using the device major:minor symbolic link under the /sys/dev/block
+>> directory, reading this link and removing the partition device name from
+>> the link path for a partition device (which is indicated by the presence
+>> of the "partition" file under the directory).
+>>
+>> Also add a check for the ENOENT error when opening the device "zoned"
+>> sysfs attribute file. The absence of this file indicates that the
+>> kernel does not support zoned block devices. Since the device file is
+>> already open, it exists, and so the device can safely be assumed as not
+>> being zoned.
+>>
+>> Changes from v1:
+>> * Addressed Chao Yu's comment on ENOENT and return value checks
+>> * Rewrite of sysfs file handling (simplified)
+>> * Rebased on dev-test tree
+>>
+>> Signed-off-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+>> ---
+>>   lib/libf2fs_zoned.c | 101 ++++++++++++++++++++++++++++++++++++++------
+>>   1 file changed, 88 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
+>> index a5f3fea..e5151c0 100644
+>> --- a/lib/libf2fs_zoned.c
+>> +++ b/lib/libf2fs_zoned.c
+>> @@ -8,6 +8,7 @@
+>>    */
+>>   #define _LARGEFILE64_SOURCE
+>>   
+>> +#include <f2fs_fs.h>
+>>   #include <stdio.h>
+>>   #include <stdlib.h>
+>>   #include <string.h>
+>> @@ -15,6 +16,12 @@
+>>   #include <unistd.h>
+>>   #include <fcntl.h>
+>>   #include <sys/stat.h>
+>> +#ifdef HAVE_SYS_SYSMACROS_H
+>> +#include <sys/sysmacros.h>
+>> +#endif
+>> +#ifdef HAVE_LINUX_LIMITS_H
+>> +#include <linux/limits.h>
+>> +#endif
+>>   #ifndef ANDROID_WINDOWS_HOST
+>>   #include <sys/ioctl.h>
+>>   #endif
+>> @@ -24,27 +31,92 @@
+>>   
+>>   #ifdef HAVE_LINUX_BLKZONED_H
+>>   
+>> +int get_sysfs_path(struct device_info *dev, const char *attr,
+>> +		   char *buf, size_t buflen)
+>> +{
+>> +	struct stat statbuf;
+>> +	char str[PATH_MAX];
+>> +	char sysfs_path[PATH_MAX];
+>> +	ssize_t len;
+>> +	char *delim;
+>> +	int ret;
+>> +
+>> +	if (stat(dev->path, &statbuf) < 0)
+>> +		return -1;
+>> +
+>> +	snprintf(str, sizeof(str), "/sys/dev/block/%d:%d",
+>> +		 major(statbuf.st_rdev), minor(statbuf.st_rdev));
+>> +	len = readlink(str, buf, buflen - 1);
+>> +	if (len < 0)
+>> +		return -1;
+>> +	buf[len] = '\0';
+>> +
+>> +	ret = snprintf(sysfs_path, sizeof(sysfs_path) - 1,
 > 
-> Jaegeuk,
+> snprintf(sysfs_path, sizeof(sysfs_path),
+
+Yes, "- 1" is not required, per "man snprintf". Will fix this.
+
+>> +		       "/sys/dev/block/%s", buf);
+>> +	if (ret >= sizeof(sysfs_path))
+>> +		return -1;
+>> +
+>> +	/* Test if the device is a partition */
+>> +	ret = snprintf(str, sizeof(str), "%s/partition", sysfs_path);
+>> +	if (ret >= sizeof(str))
+>> +		return -1;
+>> +	ret = stat(str, &statbuf);
+>> +	if (ret) {
+>> +		if (errno == ENOENT) {
+>> +			/* Not a partition */
+>> +			goto out;
+>> +		}
+>> +		return -1;
+>> +	}
+>> +
+>> +	/*
+>> +	 * The device is a partition: remove the device name from the
+>> +	 * attribute file path to obtain the sysfs path of the holder device.
+>> +	 *   e.g.:  /sys/dev/block/.../sda/sda1 -> /sys/dev/block/.../sda
+>> +	 */
+>> +	delim = strrchr(sysfs_path, '/');
+>> +	if (!delim)
+>> +		return -1;
+>> +	*delim = '\0';
+>> +
+>> +out:
+>> +	ret = snprintf(buf, buflen - 1, "%s/%s", sysfs_path, attr);
 > 
-> Last merged patch wasn't sent out..., so I just reply on this old one.
-> 
-> 		if (S_ISBLK(stat_buf->st_mode) && !c.force) {
-> 
-> Shouldn't be (.. && c.force) ?
+> ret = snprintf(buf, buflen, ...);
 
-This has nothing to do with this patch tho, it looks good since, in normal case,
-we'd better O_EXCL, but in the force mode, we'd like to open the device freely.
+Will fix this too, and send another patch.
 
-New version of the patch is:
+Thanks!
 
->From 3221692b060649378f1f69b898ed85a814af3dbf Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Tue, 16 Apr 2019 11:46:31 -0700
-Subject: [PATCH] fsck.f2fs: open ro disk if we want to check fs only
-
-This patch fixes the "open failure" issue on ro disk, reported by Hagbard.
-
-"
- If I boot with kernel option "ro rootfstype=f2fs
- I get the following halfway trough boot:
-
-  * Checking local filesystems  ...
- Info: Use default preen mode
- Info: Mounted device!
- Info: Check FS only due to RO
-         Error: Failed to open the device!
-  * Filesystems couldn't be fixed
-"
-
-Reported-by: Hagbard Celine <hagbardcelin@gmail.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- lib/libf2fs.c | 25 +++++++++++++++++++++----
- 1 file changed, 21 insertions(+), 4 deletions(-)
-
-diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index d30047f..853e713 100644
---- a/lib/libf2fs.c
-+++ b/lib/libf2fs.c
-@@ -789,6 +789,15 @@ void get_kernel_uname_version(__u8 *version)
- #endif /* APPLE_DARWIN */
- 
- #ifndef ANDROID_WINDOWS_HOST
-+static int open_check_fs(char *path, int flag)
-+{
-+	if (c.func != FSCK || c.fix_on || c.auto_fix)
-+		return -1;
-+
-+	/* allow to open ro */
-+	return open(path, O_RDONLY | flag);
-+}
-+
- int get_device_info(int i)
- {
- 	int32_t fd = 0;
-@@ -810,8 +819,11 @@ int get_device_info(int i)
- 	if (c.sparse_mode) {
- 		fd = open(dev->path, O_RDWR | O_CREAT | O_BINARY, 0644);
- 		if (fd < 0) {
--			MSG(0, "\tError: Failed to open a sparse file!\n");
--			return -1;
-+			fd = open_check_fs(dev->path, O_BINARY);
-+			if (fd < 0) {
-+				MSG(0, "\tError: Failed to open a sparse file!\n");
-+				return -1;
-+			}
- 		}
- 	}
- 
-@@ -825,10 +837,15 @@ int get_device_info(int i)
- 			return -1;
- 		}
- 
--		if (S_ISBLK(stat_buf->st_mode) && !c.force)
-+		if (S_ISBLK(stat_buf->st_mode) && !c.force) {
- 			fd = open(dev->path, O_RDWR | O_EXCL);
--		else
-+			if (fd < 0)
-+				fd = open_check_fs(dev->path, O_EXCL);
-+		} else {
- 			fd = open(dev->path, O_RDWR);
-+			if (fd < 0)
-+				fd = open_check_fs(dev->path, 0);
-+		}
- 	}
- 	if (fd < 0) {
- 		MSG(0, "\tError: Failed to open the device!\n");
 -- 
-2.19.0.605.g01d371f741-goog
+Best Regards,
+Shin'ichiro Kawasaki
