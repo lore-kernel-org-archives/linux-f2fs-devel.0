@@ -1,21 +1,23 @@
-From: Shaokun Zhang <zhangshaokun@hisilicon.com>
-Subject: [RESEND PATCH] f2fs: Fix one GCC warning
-Date: Mon, 22 Apr 2019 21:27:59 +0800
-Message-ID: <1555939679-57452-1-git-send-email-zhangshaokun@hisilicon.com>
+From: Zhangshaokun <zhangshaokun@hisilicon.com>
+Subject: Re: [Shaokun Zhang] f2fs: Fix one GCC warning
+Date: Mon, 22 Apr 2019 21:31:04 +0800
+Message-ID: <27742093-62fd-9f0b-e309-dd30e07d3553@hisilicon.com>
+References: <1555939549-57376-1-git-send-email-zhangshaokun@hisilicon.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <zhangshaokun@hisilicon.com>) id 1hIZG1-000325-UI
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 22 Apr 2019 13:45:17 +0000
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ (envelope-from <zhangshaokun@hisilicon.com>) id 1hIZHr-0004Kn-FF
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 22 Apr 2019 13:47:11 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hIZFz-006ElO-UZ
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 22 Apr 2019 13:45:17 +0000
+ id 1hIZHo-006EvX-Jm
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 22 Apr 2019 13:47:11 +0000
+In-Reply-To: <1555939549-57376-1-git-send-email-zhangshaokun@hisilicon.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,31 +28,34 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-ZnMvZjJmcy9ub2RlLmM6IEluIGZ1bmN0aW9uIOKAmGYyZnNfcmVtb3ZlX2lub2RlX3BhZ2XigJk6
-CmZzL2YyZnMvbm9kZS5jOjExOTM6NDc6IHdhcm5pbmc6IGZvcm1hdCDigJglbHXigJkgZXhwZWN0
-cyBhcmd1bWVudCBvZiB0eXBlIOKAmGxvbmcgdW5zaWduZWQgaW504oCZLCBidXQgYXJndW1lbnQg
-NSBoYXMgdHlwZSDigJhibGtjbnRfdCB7YWthIGxvbmcgbG9uZyB1bnNpZ25lZCBpbnR94oCZIFst
-V2Zvcm1hdD1dCiAgICAiSW5jb25zaXN0ZW50IGlfYmxvY2tzLCBpbm86JWx1LCBpYmxvY2tzOiVs
-dSIsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIH5+XgogICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAlbGx1CiAgICBpbm9kZS0+
-aV9pbm8sIGlub2RlLT5pX2Jsb2Nrcyk7CiAgICAgICAgICAgICAgICAgIH5+fn5+fn5+fn5+fn5+
-fgpGaXhlczogY2RhZDYzNWJkMDY4ICgiZjJmczogZml4IHRvIGF2b2lkIHBhbmljIGluIGYyZnNf
-cmVtb3ZlX2lub2RlX3BhZ2UoKSIpCkNjOiBKYWVnZXVrIEtpbSA8amFlZ2V1a0BrZXJuZWwub3Jn
-PgpDYzogQ2hhbyBZdSA8eXVjaGFvMEBodWF3ZWkuY29tPgpTaWduZWQtb2ZmLWJ5OiBTaGFva3Vu
-IFpoYW5nIDx6aGFuZ3NoYW9rdW5AaGlzaWxpY29uLmNvbT4KLS0tCiBmcy9mMmZzL25vZGUuYyB8
-IDIgKy0KIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQoKZGlm
-ZiAtLWdpdCBhL2ZzL2YyZnMvbm9kZS5jIGIvZnMvZjJmcy9ub2RlLmMKaW5kZXggMjJkMjFjNTQ2
-YmY2Li5lMTVkMGJlNzI5YjQgMTAwNjQ0Ci0tLSBhL2ZzL2YyZnMvbm9kZS5jCisrKyBiL2ZzL2Yy
-ZnMvbm9kZS5jCkBAIC0xMTkwLDcgKzExOTAsNyBAQCBpbnQgZjJmc19yZW1vdmVfaW5vZGVfcGFn
-ZShzdHJ1Y3QgaW5vZGUgKmlub2RlKQogCiAJaWYgKHVubGlrZWx5KGlub2RlLT5pX2Jsb2NrcyAh
-PSAwICYmIGlub2RlLT5pX2Jsb2NrcyAhPSA4KSkgewogCQlmMmZzX21zZyhGMkZTX0lfU0IoaW5v
-ZGUpLT5zYiwgS0VSTl9XQVJOSU5HLAotCQkJIkluY29uc2lzdGVudCBpX2Jsb2NrcywgaW5vOiVs
-dSwgaWJsb2NrczolbHUiLAorCQkJIkluY29uc2lzdGVudCBpX2Jsb2NrcywgaW5vOiVsdSwgaWJs
-b2NrczolbGx1IiwKIAkJCWlub2RlLT5pX2lubywgaW5vZGUtPmlfYmxvY2tzKTsKIAkJc2V0X3Ni
-aV9mbGFnKEYyRlNfSV9TQihpbm9kZSksIFNCSV9ORUVEX0ZTQ0spOwogCX0KLS0gCjIuNy40CgoK
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYy
-ZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2Uu
-bmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYy
-ZnMtZGV2ZWwK
+cGxlYXNlIGlnbm9yZSB0aGlzLgoKVGhhbmtzLApTaGFva3VuCgpPbiAyMDE5LzQvMjIgMjE6MjUs
+IFNoYW9rdW4gWmhhbmcgd3JvdGU6Cj4gZnMvZjJmcy9ub2RlLmM6IEluIGZ1bmN0aW9uIOKAmGYy
+ZnNfcmVtb3ZlX2lub2RlX3BhZ2XigJk6Cj4gZnMvZjJmcy9ub2RlLmM6MTE5Mzo0Nzogd2Fybmlu
+ZzogZm9ybWF0IOKAmCVsdeKAmSBleHBlY3RzIGFyZ3VtZW50IG9mIHR5cGUg4oCYbG9uZyB1bnNp
+Z25lZCBpbnTigJksIGJ1dCBhcmd1bWVudCA1IGhhcyB0eXBlIOKAmGJsa2NudF90IHtha2EgbG9u
+ZyBsb25nIHVuc2lnbmVkIGludH3igJkgWy1XZm9ybWF0PV0KPiAgICAgIkluY29uc2lzdGVudCBp
+X2Jsb2NrcywgaW5vOiVsdSwgaWJsb2NrczolbHUiLAo+ICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIH5+Xgo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICVsbHUKPiAgICAgaW5vZGUtPmlfaW5vLCBpbm9kZS0+aV9ibG9ja3Mp
+Owo+ICAgICAgICAgICAgICAgICAgIH5+fn5+fn5+fn5+fn5+fgo+IEdDQyB2ZXJzaW9uIGlzIGdj
+YyAoR0NDKSA3LjMuMSAyMDE4MDcxMiAoUmVkIEhhdCA3LjMuMS02KS4KPiAKPiBGaXhlczogY2Rh
+ZDYzNWJkMDY4ICgiZjJmczogZml4IHRvIGF2b2lkIHBhbmljIGluIGYyZnNfcmVtb3ZlX2lub2Rl
+X3BhZ2UoKSIpCj4gQ2M6IEphZWdldWsgS2ltIDxqYWVnZXVrQGtlcm5lbC5vcmc+Cj4gQ2M6IENo
+YW8gWXUgPHl1Y2hhbzBAaHVhd2VpLmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBTaGFva3VuIFpoYW5n
+IDx6aGFuZ3NoYW9rdW5AaGlzaWxpY29uLmNvbT4KPiAtLS0KPiAgZnMvZjJmcy9ub2RlLmMgfCAy
+ICstCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQo+IAo+
+IGRpZmYgLS1naXQgYS9mcy9mMmZzL25vZGUuYyBiL2ZzL2YyZnMvbm9kZS5jCj4gaW5kZXggMjJk
+MjFjNTQ2YmY2Li5lMTVkMGJlNzI5YjQgMTAwNjQ0Cj4gLS0tIGEvZnMvZjJmcy9ub2RlLmMKPiAr
+KysgYi9mcy9mMmZzL25vZGUuYwo+IEBAIC0xMTkwLDcgKzExOTAsNyBAQCBpbnQgZjJmc19yZW1v
+dmVfaW5vZGVfcGFnZShzdHJ1Y3QgaW5vZGUgKmlub2RlKQo+ICAKPiAgCWlmICh1bmxpa2VseShp
+bm9kZS0+aV9ibG9ja3MgIT0gMCAmJiBpbm9kZS0+aV9ibG9ja3MgIT0gOCkpIHsKPiAgCQlmMmZz
+X21zZyhGMkZTX0lfU0IoaW5vZGUpLT5zYiwgS0VSTl9XQVJOSU5HLAo+IC0JCQkiSW5jb25zaXN0
+ZW50IGlfYmxvY2tzLCBpbm86JWx1LCBpYmxvY2tzOiVsdSIsCj4gKwkJCSJJbmNvbnNpc3RlbnQg
+aV9ibG9ja3MsIGlubzolbHUsIGlibG9ja3M6JWxsdSIsCj4gIAkJCWlub2RlLT5pX2lubywgaW5v
+ZGUtPmlfYmxvY2tzKTsKPiAgCQlzZXRfc2JpX2ZsYWcoRjJGU19JX1NCKGlub2RlKSwgU0JJX05F
+RURfRlNDSyk7Cj4gIAl9Cj4gCgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2
+ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xp
+c3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
