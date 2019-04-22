@@ -1,61 +1,57 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 1/3] f2fs: fix to consider multiple device for readonly check
-Date: Mon, 22 Apr 2019 20:22:36 +0800
-Message-ID: <20190422122238.78062-1-yuchao0@huawei.com>
+From: Shaokun Zhang <zhangshaokun@hisilicon.com>
+Subject: [Shaokun Zhang] f2fs: Fix one GCC warning
+Date: Mon, 22 Apr 2019 21:25:49 +0800
+Message-ID: <1555939549-57376-1-git-send-email-zhangshaokun@hisilicon.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <zhangshaokun@hisilicon.com>) id 1hIZE0-0001wA-Rk
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 22 Apr 2019 13:43:12 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1hIZDw-006EaD-Ot
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 22 Apr 2019 13:43:12 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>, Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch introduce f2fs_hw_is_readonly() to check whether lower
-device is readonly or not, it adapts multiple device scenario.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/f2fs.h  | 14 ++++++++++++++
- fs/f2fs/super.c |  2 +-
- 2 files changed, 15 insertions(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index e066f48b3f67..a73e7340a62f 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3590,6 +3590,20 @@ static inline bool f2fs_realtime_discard_enable(struct f2fs_sb_info *sbi)
- 					f2fs_hw_should_discard(sbi);
- }
- 
-+static inline bool f2fs_hw_is_readonly(struct f2fs_sb_info *sbi)
-+{
-+	int i;
-+
-+	if (!f2fs_is_multi_device(sbi))
-+		return bdev_read_only(sbi->sb->s_bdev);
-+
-+	for (i = 0; i < sbi->s_ndevs; i++)
-+		if (bdev_read_only(FDEV(i).bdev))
-+			return true;
-+	return false;
-+}
-+
-+
- static inline void set_opt_mode(struct f2fs_sb_info *sbi, unsigned int mt)
- {
- 	clear_opt(sbi, ADAPTIVE);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index cbbb1e35070d..0c3abcc0dd27 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -3377,7 +3377,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		 * mount should be failed, when device has readonly mode, and
- 		 * previous checkpoint was not done by clean system shutdown.
- 		 */
--		if (bdev_read_only(sb->s_bdev) &&
-+		if (f2fs_hw_is_readonly(sbi) &&
- 				!is_set_ckpt_flags(sbi, CP_UMOUNT_FLAG)) {
- 			err = -EROFS;
- 			goto free_meta;
--- 
-2.18.0.rc1
+ZnMvZjJmcy9ub2RlLmM6IEluIGZ1bmN0aW9uIOKAmGYyZnNfcmVtb3ZlX2lub2RlX3BhZ2XigJk6
+CmZzL2YyZnMvbm9kZS5jOjExOTM6NDc6IHdhcm5pbmc6IGZvcm1hdCDigJglbHXigJkgZXhwZWN0
+cyBhcmd1bWVudCBvZiB0eXBlIOKAmGxvbmcgdW5zaWduZWQgaW504oCZLCBidXQgYXJndW1lbnQg
+NSBoYXMgdHlwZSDigJhibGtjbnRfdCB7YWthIGxvbmcgbG9uZyB1bnNpZ25lZCBpbnR94oCZIFst
+V2Zvcm1hdD1dCiAgICAiSW5jb25zaXN0ZW50IGlfYmxvY2tzLCBpbm86JWx1LCBpYmxvY2tzOiVs
+dSIsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIH5+XgogICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAlbGx1CiAgICBpbm9kZS0+
+aV9pbm8sIGlub2RlLT5pX2Jsb2Nrcyk7CiAgICAgICAgICAgICAgICAgIH5+fn5+fn5+fn5+fn5+
+fgpHQ0MgdmVyc2lvbiBpcyBnY2MgKEdDQykgNy4zLjEgMjAxODA3MTIgKFJlZCBIYXQgNy4zLjEt
+NikuCgpGaXhlczogY2RhZDYzNWJkMDY4ICgiZjJmczogZml4IHRvIGF2b2lkIHBhbmljIGluIGYy
+ZnNfcmVtb3ZlX2lub2RlX3BhZ2UoKSIpCkNjOiBKYWVnZXVrIEtpbSA8amFlZ2V1a0BrZXJuZWwu
+b3JnPgpDYzogQ2hhbyBZdSA8eXVjaGFvMEBodWF3ZWkuY29tPgpTaWduZWQtb2ZmLWJ5OiBTaGFv
+a3VuIFpoYW5nIDx6aGFuZ3NoYW9rdW5AaGlzaWxpY29uLmNvbT4KLS0tCiBmcy9mMmZzL25vZGUu
+YyB8IDIgKy0KIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQoK
+ZGlmZiAtLWdpdCBhL2ZzL2YyZnMvbm9kZS5jIGIvZnMvZjJmcy9ub2RlLmMKaW5kZXggMjJkMjFj
+NTQ2YmY2Li5lMTVkMGJlNzI5YjQgMTAwNjQ0Ci0tLSBhL2ZzL2YyZnMvbm9kZS5jCisrKyBiL2Zz
+L2YyZnMvbm9kZS5jCkBAIC0xMTkwLDcgKzExOTAsNyBAQCBpbnQgZjJmc19yZW1vdmVfaW5vZGVf
+cGFnZShzdHJ1Y3QgaW5vZGUgKmlub2RlKQogCiAJaWYgKHVubGlrZWx5KGlub2RlLT5pX2Jsb2Nr
+cyAhPSAwICYmIGlub2RlLT5pX2Jsb2NrcyAhPSA4KSkgewogCQlmMmZzX21zZyhGMkZTX0lfU0Io
+aW5vZGUpLT5zYiwgS0VSTl9XQVJOSU5HLAotCQkJIkluY29uc2lzdGVudCBpX2Jsb2NrcywgaW5v
+OiVsdSwgaWJsb2NrczolbHUiLAorCQkJIkluY29uc2lzdGVudCBpX2Jsb2NrcywgaW5vOiVsdSwg
+aWJsb2NrczolbGx1IiwKIAkJCWlub2RlLT5pX2lubywgaW5vZGUtPmlfYmxvY2tzKTsKIAkJc2V0
+X3NiaV9mbGFnKEYyRlNfSV9TQihpbm9kZSksIFNCSV9ORUVEX0ZTQ0spOwogCX0KLS0gCjIuNy40
+CgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4
+LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9y
+Z2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4
+LWYyZnMtZGV2ZWwK
