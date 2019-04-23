@@ -1,24 +1,22 @@
-From: Zhangshaokun <zhangshaokun@hisilicon.com>
-Subject: Re: [RESEND PATCH] f2fs: Fix one GCC warning
-Date: Tue, 23 Apr 2019 11:31:01 +0800
-Message-ID: <264958c8-779e-db74-dbae-4e97d136f59f@hisilicon.com>
-References: <1555939679-57452-1-git-send-email-zhangshaokun@hisilicon.com>
- <eab291f6-7271-2094-9362-e5174685d856@huawei.com>
+From: Chengguang Xu <cgxu519@gmx.com>
+Subject: [PATCH] f2fs: remove redundant check in
+ f2fs_file_write_iter()
+Date: Tue, 23 Apr 2019 13:08:35 +0800
+Message-ID: <20190423050835.4642-1-cgxu519@gmx.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <zhangshaokun@hisilicon.com>) id 1hIm9Y-0006cK-1W
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Apr 2019 03:31:28 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hIm9U-0073wH-7J
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Apr 2019 03:31:27 +0000
-In-Reply-To: <eab291f6-7271-2094-9362-e5174685d856@huawei.com>
+ (envelope-from <cgxu519@gmx.com>) id 1hIngL-0002Ie-Tn
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Apr 2019 05:09:25 +0000
+Received: from mout.gmx.net ([212.227.15.19])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1hInfy-007nvP-SO
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Apr 2019 05:09:25 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,25 +26,49 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: Chengguang Xu <cgxu519@gmx.com>, linux-f2fs-devel@lists.sourceforge.net
 
-SGksCgpPbiAyMDE5LzQvMjMgMTA6NTcsIENoYW8gWXUgd3JvdGU6Cj4gT24gMjAxOS80LzIyIDIx
-OjI3LCBTaGFva3VuIFpoYW5nIHdyb3RlOgo+PiBmcy9mMmZzL25vZGUuYzogSW4gZnVuY3Rpb24g
-4oCYZjJmc19yZW1vdmVfaW5vZGVfcGFnZeKAmToKPj4gZnMvZjJmcy9ub2RlLmM6MTE5Mzo0Nzog
-d2FybmluZzogZm9ybWF0IOKAmCVsdeKAmSBleHBlY3RzIGFyZ3VtZW50IG9mIHR5cGUg4oCYbG9u
-ZyB1bnNpZ25lZCBpbnTigJksIGJ1dCBhcmd1bWVudCA1IGhhcyB0eXBlIOKAmGJsa2NudF90IHth
-a2EgbG9uZyBsb25nIHVuc2lnbmVkIGludH3igJkgWy1XZm9ybWF0PV0KPj4gICAgICJJbmNvbnNp
-c3RlbnQgaV9ibG9ja3MsIGlubzolbHUsIGlibG9ja3M6JWx1IiwKPj4gICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfn5eCj4+ICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICVsbHUKPj4gICAgIGlub2RlLT5pX2lubywgaW5vZGUt
-PmlfYmxvY2tzKTsKPj4gICAgICAgICAgICAgICAgICAgfn5+fn5+fn5+fn5+fn5+Cj4+IEZpeGVz
-OiBjZGFkNjM1YmQwNjggKCJmMmZzOiBmaXggdG8gYXZvaWQgcGFuaWMgaW4gZjJmc19yZW1vdmVf
-aW5vZGVfcGFnZSgpIikKPiAKPiBXZSBoYXZlIGFscmVhZHkgZml4ZWQgdGhpcyBpc3N1ZSwgdGhh
-bmtzIGZvciBub3RpY2luZyB0aGlzIGlzc3VlLiA6KQo+IAoKTmljZSwgdGhhbmtzIHlvdXIgcmVw
-bHkuCgo+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2ph
-ZWdldWsvZjJmcy5naXQvY29tbWl0Lz9oPWRldi10ZXN0JmlkPTVjZjI4NzlmYTcxYTg2NWYwODM0
-OGRhZTk4MmI5N2I5NzM4YTA4NDcKPiAKPiBUaGFua3MsCj4gCj4gLgo+IAoKCgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1h
-aWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczov
-L2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+We have already checked flag IOCB_DIRECT in the sanity
+check of flag IOCB_NOWAIT, so don't have to check it
+again here.
+
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+---
+ fs/f2fs/file.c | 21 +++++++++------------
+ 1 file changed, 9 insertions(+), 12 deletions(-)
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 5742ab8b57dc..43b6a0b08497 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -3056,18 +3056,15 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		if (iov_iter_fault_in_readable(from, iov_iter_count(from)))
+ 			set_inode_flag(inode, FI_NO_PREALLOC);
+
+-		if ((iocb->ki_flags & IOCB_NOWAIT) &&
+-			(iocb->ki_flags & IOCB_DIRECT)) {
+-				if (!f2fs_overwrite_io(inode, iocb->ki_pos,
+-						iov_iter_count(from)) ||
+-					f2fs_has_inline_data(inode) ||
+-					f2fs_force_buffered_io(inode,
+-							iocb, from)) {
+-						clear_inode_flag(inode,
+-								FI_NO_PREALLOC);
+-						inode_unlock(inode);
+-						return -EAGAIN;
+-				}
++		if (iocb->ki_flags & IOCB_NOWAIT) {
++			if (!f2fs_overwrite_io(inode, iocb->ki_pos,
++			    iov_iter_count(from)) ||
++			    f2fs_has_inline_data(inode) ||
++			    f2fs_force_buffered_io(inode, iocb, from)) {
++				clear_inode_flag(inode, FI_NO_PREALLOC);
++				inode_unlock(inode);
++				return -EAGAIN;
++			}
+
+ 		} else {
+ 			preallocated = true;
+--
+2.20.1
