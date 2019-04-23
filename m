@@ -1,21 +1,36 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] fsck.f2fs: fix to repair ro mounted device w/ -f
-Date: Tue, 23 Apr 2019 10:42:20 +0800
-Message-ID: <20190423024220.127840-1-yuchao0@huawei.com>
+Subject: Re: Possible issues with fsck of f2fs root
+Date: Tue, 23 Apr 2019 10:55:34 +0800
+Message-ID: <246f0e93-0637-c7a2-f9f0-9131308af76f@huawei.com>
+References: <CADoWrG-0GWtwqaW7rsPWLDYcoAsvXhwRa9zVib9bN94g1LLw6Q@mail.gmail.com>
+ <20190416185353.GA56890@jaegeuk-macbookpro.roam.corp.google.com>
+ <14c1ba5f-a636-27f6-9240-55cdef2c8c26@huawei.com>
+ <20190421102703.GC7295@jaegeuk-macbookpro.roam.corp.google.com>
+ <CADoWrG9FZ-MN5v2a9V3EZJ9Cj6L5CBadV836D2=MGockXsgQ_g@mail.gmail.com>
+ <941621e2-465b-daa6-d323-0e40239e0981@huawei.com>
+ <CADoWrG9y8y2KEh5FsppBYe_10kcCoFSY-JSvHqDfuLR70HDxSw@mail.gmail.com>
+ <55150868-4d32-8eed-8d09-d27817360c86@huawei.com>
+ <CADoWrG-M7fMyu2u7h3Dk7GFH+Bm=A2JpJteZotQCHCatfn05Pw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hIlOJ-0007fz-2U
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Apr 2019 02:42:39 +0000
-Received: from szxga08-in.huawei.com ([45.249.212.255] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1hIlb3-0002p7-Oq
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Apr 2019 02:55:49 +0000
+Received: from szxga03-in.huawei.com ([45.249.212.189] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hIlOF-006yw5-Cs
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Apr 2019 02:42:39 +0000
+ id 1hIlb1-007W3z-IC
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Apr 2019 02:55:49 +0000
+Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.55])
+ by Forcepoint Email with ESMTP id D777E76ABC692311ADA7
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 23 Apr 2019 10:55:36 +0800 (CST)
+In-Reply-To: <CADoWrG-M7fMyu2u7h3Dk7GFH+Bm=A2JpJteZotQCHCatfn05Pw@mail.gmail.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -25,193 +40,171 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: jaegeuk@kernel.org
+To: Hagbard Celine <hagbardcelin@gmail.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-As Hagbard Celine reported:
+On 2019/4/22 18:05, Hagbard Celine wrote:
+> 2019-04-22 11:26 GMT+02:00, Chao Yu <yuchao0@huawei.com>:
+>> On 2019/4/22 17:05, Hagbard Celine wrote:
+>>> 2019-04-22 9:37 GMT+02:00, Chao Yu <yuchao0@huawei.com>:
+>>>> On 2019/4/22 15:11, Hagbard Celine wrote:
+>>>>> With this patch the one problem with opening the device in RO mode is
+>>>>> fixed.
+>>>>
+>>>> Oops, with default preen mode fsck should not open ro mounted image,
+>>>> that's
+>>>> the
+>>>> rule we keep line with ext4...
+>>>>
+>>>> How about changing to use -f in your scenario ( on RO mounted root image
+>>>> )?
+>>>
+>>> This was with -f. Without -f it still refuses to open the device.
+>>
+>> What I mean is we'd better to keep line with ext4, just refusing to open ro
+>> mounted device without -f, since triggering fsck and repair on a mounted
+>> device
+>> is dangerous, it can easily make inconsistency in between in-memory data
+>> and
+>> on-disk data of filesystem. Refusing fsck without -f is to make user being
+>> aware
+>> of such danger.
+> 
+> I am sorry, I've apparently added the -f after my first report. After
+> re-testing it seems that fsck.f2fs is opening the RO partition even
+> without this patch if I use -f. So the part about fsck.f2fs not being
+> able to open RO mounted partition during boot was a user error.
 
-"
-Referring to the output from the fsck running against a "ro"
-filesystem, especially this line:
-Info: Check FS only due to RO
+I've sent a patch for your second issue, could you please have a try with it?
 
-As far as i can tell this says that opposed to other filesystems
-running fsck against a "ro" mounted f2fs partition will never fix any
-errors.
-So I tried running fsck against the same partition mounted "rw":
-- mount -o remount,rw /mnt/f2fstest/
-- fsck.f2fs  -f /dev/nvme0n1p7
-Info: Force to fix corruption
-Info: Mounted device!
-        Error: Not available on mounted device!
+[PATCH] fsck.f2fs: fix to repair ro mounted device w/ -f
 
-I might be misunderstanding something, but all this tells me that
-unless one make a custom initramfs that runs fsck before root is
-mounted (something no distributions has, as far as I know), fsck will
-never fix an f2fs formatted root partition during boot.
-If this is by design and not a bug/unintended behavior, it should be
-documented somewhere least more people will experience system crashes
-like mine.
+But one concern is that, with this patch, not like the fsck.ext4, fsck.f2fs
+won't show any interaction with below reminding word to remind user to decide
+repair or not, it may increase the risk of damaging the device.
 
-All tests above done with kernel 5.0.5 and f2fs-tools 1.12.0 with
-"fsck.f2fs: allow to fsck readonly image w/ -f option"-patch by Chao
-Yu.
-"
+Do you want to restore lost files into ./lost_found/?
+Do you want to fix this partition? [Y/N]
 
-We try to make our fsck behavior keeping line with e2fsprogs, but w/
--f option, we can just check a RO mounted device rather repair it, so
-let's fix this.
+Jaegeuk, Hagbard,
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fsck/fsck.c       | 20 ++++++++++----------
- fsck/main.c       | 10 +++++++---
- include/f2fs_fs.h |  1 +
- lib/libf2fs.c     |  5 +++++
- 4 files changed, 23 insertions(+), 13 deletions(-)
+Any suggestion on this, in current scenario, how about implement:
+1. fsck.f2fs -f ro_mounted_device: check; show interaction words if there is
+corruption;
+2. fsck.f2fs -f -a ro_moutned_device: check and repair automatically;
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 8d7deb5..a1791d4 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -199,7 +199,7 @@ static int is_valid_ssa_node_blk(struct f2fs_sb_info *sbi, u32 nid,
- 			need_fix = 1;
- 		}
- 	}
--	if (need_fix && !c.ro) {
-+	if (need_fix && f2fs_dev_is_writable()) {
- 		u64 ssa_blk;
- 		int ret2;
- 
-@@ -325,7 +325,7 @@ static int is_valid_ssa_data_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
- 			need_fix = 1;
- 		}
- 	}
--	if (need_fix && !c.ro) {
-+	if (need_fix && f2fs_dev_is_writable()) {
- 		u64 ssa_blk;
- 		int ret2;
- 
-@@ -1015,7 +1015,7 @@ skip_blkcnt_fix:
- 	}
- 
- 	/* drop extent information to avoid potential wrong access */
--	if (need_fix && !c.ro)
-+	if (need_fix && f2fs_dev_is_writable())
- 		node_blk->i.i_ext.len = 0;
- 
- 	if ((c.feature & cpu_to_le32(F2FS_FEATURE_INODE_CHKSUM)) &&
-@@ -1038,7 +1038,7 @@ skip_blkcnt_fix:
- 		}
- 	}
- 
--	if (need_fix && !c.ro) {
-+	if (need_fix && f2fs_dev_is_writable()) {
- 		ret = dev_write_block(node_blk, ni->blk_addr);
- 		ASSERT(ret >= 0);
- 	}
-@@ -1073,7 +1073,7 @@ int fsck_chk_dnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
- 			FIX_MSG("[0x%x] dn.addr[%d] = 0", nid, idx);
- 		}
- 	}
--	if (need_fix && !c.ro) {
-+	if (need_fix && f2fs_dev_is_writable()) {
- 		ret = dev_write_block(node_blk, ni->blk_addr);
- 		ASSERT(ret >= 0);
- 	}
-@@ -1110,7 +1110,7 @@ skip:
- 		}
- 	}
- 
--	if (need_fix && !c.ro) {
-+	if (need_fix && f2fs_dev_is_writable()) {
- 		struct node_info ni;
- 		nid_t nid = le32_to_cpu(node_blk->footer.nid);
- 
-@@ -1152,7 +1152,7 @@ skip:
- 		}
- 	}
- 
--	if (need_fix && !c.ro) {
-+	if (need_fix && f2fs_dev_is_writable()) {
- 		struct node_info ni;
- 		nid_t nid = le32_to_cpu(node_blk->footer.nid);
- 
-@@ -1595,7 +1595,7 @@ int fsck_chk_dentry_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
- 			de_blk->dentry, de_blk->filename,
- 			NR_DENTRY_IN_BLOCK, last_blk, enc_name);
- 
--	if (dentries < 0 && !c.ro) {
-+	if (dentries < 0 && f2fs_dev_is_writable()) {
- 		ret = dev_write_block(de_blk, blk_addr);
- 		ASSERT(ret >= 0);
- 		DBG(1, "[%3d] Dentry Block [0x%x] Fixed hash_codes\n\n",
-@@ -1708,7 +1708,7 @@ int fsck_chk_orphan_node(struct f2fs_sb_info *sbi)
- 			else if (ret)
- 				ASSERT_MSG("[0x%x] wrong orphan inode", ino);
- 		}
--		if (!c.ro && c.fix_on &&
-+		if (f2fs_dev_is_writable() && c.fix_on &&
- 				entry_count != new_entry_count) {
- 			new_blk->entry_count = cpu_to_le32(new_entry_count);
- 			ret = dev_write_block(new_blk, start_blk + i);
-@@ -2719,7 +2719,7 @@ int fsck_verify(struct f2fs_sb_info *sbi)
- 	}
- #endif
- 	/* fix global metadata */
--	if (force || (c.fix_on && !c.ro)) {
-+	if (force || (c.fix_on && f2fs_dev_is_writable())) {
- 		struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
- 
- 		if (force || c.bug_on || c.bug_nat_bits) {
-diff --git a/fsck/main.c b/fsck/main.c
-index e61bb91..afdfec9 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -759,9 +759,13 @@ int main(int argc, char **argv)
- 		}
- 
- 		/* allow ro-mounted partition */
--		MSG(0, "Info: Check FS only due to RO\n");
--		c.fix_on = 0;
--		c.auto_fix = 0;
-+		if (c.force) {
-+			MSG(0, "Info: Force to check/repair FS on RO mounted device\n");
-+		} else {
-+			MSG(0, "Info: Check FS only on RO mounted device\n");
-+			c.fix_on = 0;
-+			c.auto_fix = 0;
-+		}
- 	}
- 
- 	/* Get device */
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 89b8a0c..6def302 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -1155,6 +1155,7 @@ extern int f2fs_crc_valid(u_int32_t blk_crc, void *buf, int len);
- 
- extern void f2fs_init_configuration(void);
- extern int f2fs_devs_are_umounted(void);
-+extern int f2fs_dev_is_writable(void);
- extern int f2fs_dev_is_umounted(char *);
- extern int f2fs_get_device_info(void);
- extern int get_device_info(int);
-diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index 757328b..6f5da9d 100644
---- a/lib/libf2fs.c
-+++ b/lib/libf2fs.c
-@@ -644,6 +644,11 @@ void f2fs_init_configuration(void)
- 	c.root_gid = getgid();
- }
- 
-+int f2fs_dev_is_writable(void)
-+{
-+	return !c.ro || c.force;
-+}
-+
- #ifdef HAVE_SETMNTENT
- static int is_mounted(const char *mpt, const char *device)
- {
--- 
-2.18.0.rc1
+Thanks,
+
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>>
+>>>> Thanks,
+>>>>
+>>>>> But as far as I can understand it will still only check the fs, not fix
+>>>>> it.
+>>>>>
+>>>>>
+>>>>> 2019-04-21 12:27 GMT+02:00, Jaegeuk Kim <jaegeuk@kernel.org>:
+>>>>>
+>>>>>>
+>>>>>> New version of the patch is:
+>>>>>>
+>>>>>> From 3221692b060649378f1f69b898ed85a814af3dbf Mon Sep 17 00:00:00 2001
+>>>>>> From: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>>>> Date: Tue, 16 Apr 2019 11:46:31 -0700
+>>>>>> Subject: [PATCH] fsck.f2fs: open ro disk if we want to check fs only
+>>>>>>
+>>>>>> This patch fixes the "open failure" issue on ro disk, reported by
+>>>>>> Hagbard.
+>>>>>>
+>>>>>> "
+>>>>>>  If I boot with kernel option "ro rootfstype=f2fs
+>>>>>>  I get the following halfway trough boot:
+>>>>>>
+>>>>>>   * Checking local filesystems  ...
+>>>>>>  Info: Use default preen mode
+>>>>>>  Info: Mounted device!
+>>>>>>  Info: Check FS only due to RO
+>>>>>>          Error: Failed to open the device!
+>>>>>>   * Filesystems couldn't be fixed
+>>>>>> "
+>>>>>>
+>>>>>> Reported-by: Hagbard Celine <hagbardcelin@gmail.com>
+>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>>>> ---
+>>>>>>  lib/libf2fs.c | 25 +++++++++++++++++++++----
+>>>>>>  1 file changed, 21 insertions(+), 4 deletions(-)
+>>>>>>
+>>>>>> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+>>>>>> index d30047f..853e713 100644
+>>>>>> --- a/lib/libf2fs.c
+>>>>>> +++ b/lib/libf2fs.c
+>>>>>> @@ -789,6 +789,15 @@ void get_kernel_uname_version(__u8 *version)
+>>>>>>  #endif /* APPLE_DARWIN */
+>>>>>>
+>>>>>>  #ifndef ANDROID_WINDOWS_HOST
+>>>>>> +static int open_check_fs(char *path, int flag)
+>>>>>> +{
+>>>>>> +	if (c.func != FSCK || c.fix_on || c.auto_fix)
+>>>>>> +		return -1;
+>>>>>> +
+>>>>>> +	/* allow to open ro */
+>>>>>> +	return open(path, O_RDONLY | flag);
+>>>>>> +}
+>>>>>> +
+>>>>>>  int get_device_info(int i)
+>>>>>>  {
+>>>>>>  	int32_t fd = 0;
+>>>>>> @@ -810,8 +819,11 @@ int get_device_info(int i)
+>>>>>>  	if (c.sparse_mode) {
+>>>>>>  		fd = open(dev->path, O_RDWR | O_CREAT | O_BINARY, 0644);
+>>>>>>  		if (fd < 0) {
+>>>>>> -			MSG(0, "\tError: Failed to open a sparse file!\n");
+>>>>>> -			return -1;
+>>>>>> +			fd = open_check_fs(dev->path, O_BINARY);
+>>>>>> +			if (fd < 0) {
+>>>>>> +				MSG(0, "\tError: Failed to open a sparse file!\n");
+>>>>>> +				return -1;
+>>>>>> +			}
+>>>>>>  		}
+>>>>>>  	}
+>>>>>>
+>>>>>> @@ -825,10 +837,15 @@ int get_device_info(int i)
+>>>>>>  			return -1;
+>>>>>>  		}
+>>>>>>
+>>>>>> -		if (S_ISBLK(stat_buf->st_mode) && !c.force)
+>>>>>> +		if (S_ISBLK(stat_buf->st_mode) && !c.force) {
+>>>>>>  			fd = open(dev->path, O_RDWR | O_EXCL);
+>>>>>> -		else
+>>>>>> +			if (fd < 0)
+>>>>>> +				fd = open_check_fs(dev->path, O_EXCL);
+>>>>>> +		} else {
+>>>>>>  			fd = open(dev->path, O_RDWR);
+>>>>>> +			if (fd < 0)
+>>>>>> +				fd = open_check_fs(dev->path, 0);
+>>>>>> +		}
+>>>>>>  	}
+>>>>>>  	if (fd < 0) {
+>>>>>>  		MSG(0, "\tError: Failed to open the device!\n");
+>>>>>> --
+>>>>>> 2.19.0.605.g01d371f741-goog
+>>>>>>
+>>>>>>
+>>>>>
+>>>>>
+>>>>> _______________________________________________
+>>>>> Linux-f2fs-devel mailing list
+>>>>> Linux-f2fs-devel@lists.sourceforge.net
+>>>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>>>>> .
+>>>>>
+>>>>
+>>> .
+>>>
+>>
+> .
+> 
