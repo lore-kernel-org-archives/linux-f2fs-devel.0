@@ -1,35 +1,23 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: Possible issues with fsck of f2fs root
-Date: Tue, 23 Apr 2019 10:55:34 +0800
-Message-ID: <246f0e93-0637-c7a2-f9f0-9131308af76f@huawei.com>
-References: <CADoWrG-0GWtwqaW7rsPWLDYcoAsvXhwRa9zVib9bN94g1LLw6Q@mail.gmail.com>
- <20190416185353.GA56890@jaegeuk-macbookpro.roam.corp.google.com>
- <14c1ba5f-a636-27f6-9240-55cdef2c8c26@huawei.com>
- <20190421102703.GC7295@jaegeuk-macbookpro.roam.corp.google.com>
- <CADoWrG9FZ-MN5v2a9V3EZJ9Cj6L5CBadV836D2=MGockXsgQ_g@mail.gmail.com>
- <941621e2-465b-daa6-d323-0e40239e0981@huawei.com>
- <CADoWrG9y8y2KEh5FsppBYe_10kcCoFSY-JSvHqDfuLR70HDxSw@mail.gmail.com>
- <55150868-4d32-8eed-8d09-d27817360c86@huawei.com>
- <CADoWrG-M7fMyu2u7h3Dk7GFH+Bm=A2JpJteZotQCHCatfn05Pw@mail.gmail.com>
+Subject: Re: [RESEND PATCH] f2fs: Fix one GCC warning
+Date: Tue, 23 Apr 2019 10:57:49 +0800
+Message-ID: <eab291f6-7271-2094-9362-e5174685d856@huawei.com>
+References: <1555939679-57452-1-git-send-email-zhangshaokun@hisilicon.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hIlb3-0002p7-Oq
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Apr 2019 02:55:49 +0000
-Received: from szxga03-in.huawei.com ([45.249.212.189] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1hIldC-00018p-Vo
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Apr 2019 02:58:02 +0000
+Received: from szxga01-in.huawei.com ([45.249.212.187] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hIlb1-007W3z-IC
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Apr 2019 02:55:49 +0000
-Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.55])
- by Forcepoint Email with ESMTP id D777E76ABC692311ADA7
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 23 Apr 2019 10:55:36 +0800 (CST)
-In-Reply-To: <CADoWrG-M7fMyu2u7h3Dk7GFH+Bm=A2JpJteZotQCHCatfn05Pw@mail.gmail.com>
+ id 1hIldB-007aHE-1J
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Apr 2019 02:58:02 +0000
+In-Reply-To: <1555939679-57452-1-git-send-email-zhangshaokun@hisilicon.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -40,171 +28,24 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Hagbard Celine <hagbardcelin@gmail.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Shaokun Zhang <zhangshaokun@hisilicon.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-On 2019/4/22 18:05, Hagbard Celine wrote:
-> 2019-04-22 11:26 GMT+02:00, Chao Yu <yuchao0@huawei.com>:
->> On 2019/4/22 17:05, Hagbard Celine wrote:
->>> 2019-04-22 9:37 GMT+02:00, Chao Yu <yuchao0@huawei.com>:
->>>> On 2019/4/22 15:11, Hagbard Celine wrote:
->>>>> With this patch the one problem with opening the device in RO mode is
->>>>> fixed.
->>>>
->>>> Oops, with default preen mode fsck should not open ro mounted image,
->>>> that's
->>>> the
->>>> rule we keep line with ext4...
->>>>
->>>> How about changing to use -f in your scenario ( on RO mounted root image
->>>> )?
->>>
->>> This was with -f. Without -f it still refuses to open the device.
->>
->> What I mean is we'd better to keep line with ext4, just refusing to open ro
->> mounted device without -f, since triggering fsck and repair on a mounted
->> device
->> is dangerous, it can easily make inconsistency in between in-memory data
->> and
->> on-disk data of filesystem. Refusing fsck without -f is to make user being
->> aware
->> of such danger.
-> 
-> I am sorry, I've apparently added the -f after my first report. After
-> re-testing it seems that fsck.f2fs is opening the RO partition even
-> without this patch if I use -f. So the part about fsck.f2fs not being
-> able to open RO mounted partition during boot was a user error.
-
-I've sent a patch for your second issue, could you please have a try with it?
-
-[PATCH] fsck.f2fs: fix to repair ro mounted device w/ -f
-
-But one concern is that, with this patch, not like the fsck.ext4, fsck.f2fs
-won't show any interaction with below reminding word to remind user to decide
-repair or not, it may increase the risk of damaging the device.
-
-Do you want to restore lost files into ./lost_found/?
-Do you want to fix this partition? [Y/N]
-
-Jaegeuk, Hagbard,
-
-Any suggestion on this, in current scenario, how about implement:
-1. fsck.f2fs -f ro_mounted_device: check; show interaction words if there is
-corruption;
-2. fsck.f2fs -f -a ro_moutned_device: check and repair automatically;
-
-Thanks,
-
-> 
->>
->> Thanks,
->>
->>>
->>>
->>>> Thanks,
->>>>
->>>>> But as far as I can understand it will still only check the fs, not fix
->>>>> it.
->>>>>
->>>>>
->>>>> 2019-04-21 12:27 GMT+02:00, Jaegeuk Kim <jaegeuk@kernel.org>:
->>>>>
->>>>>>
->>>>>> New version of the patch is:
->>>>>>
->>>>>> From 3221692b060649378f1f69b898ed85a814af3dbf Mon Sep 17 00:00:00 2001
->>>>>> From: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>> Date: Tue, 16 Apr 2019 11:46:31 -0700
->>>>>> Subject: [PATCH] fsck.f2fs: open ro disk if we want to check fs only
->>>>>>
->>>>>> This patch fixes the "open failure" issue on ro disk, reported by
->>>>>> Hagbard.
->>>>>>
->>>>>> "
->>>>>>  If I boot with kernel option "ro rootfstype=f2fs
->>>>>>  I get the following halfway trough boot:
->>>>>>
->>>>>>   * Checking local filesystems  ...
->>>>>>  Info: Use default preen mode
->>>>>>  Info: Mounted device!
->>>>>>  Info: Check FS only due to RO
->>>>>>          Error: Failed to open the device!
->>>>>>   * Filesystems couldn't be fixed
->>>>>> "
->>>>>>
->>>>>> Reported-by: Hagbard Celine <hagbardcelin@gmail.com>
->>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>> ---
->>>>>>  lib/libf2fs.c | 25 +++++++++++++++++++++----
->>>>>>  1 file changed, 21 insertions(+), 4 deletions(-)
->>>>>>
->>>>>> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
->>>>>> index d30047f..853e713 100644
->>>>>> --- a/lib/libf2fs.c
->>>>>> +++ b/lib/libf2fs.c
->>>>>> @@ -789,6 +789,15 @@ void get_kernel_uname_version(__u8 *version)
->>>>>>  #endif /* APPLE_DARWIN */
->>>>>>
->>>>>>  #ifndef ANDROID_WINDOWS_HOST
->>>>>> +static int open_check_fs(char *path, int flag)
->>>>>> +{
->>>>>> +	if (c.func != FSCK || c.fix_on || c.auto_fix)
->>>>>> +		return -1;
->>>>>> +
->>>>>> +	/* allow to open ro */
->>>>>> +	return open(path, O_RDONLY | flag);
->>>>>> +}
->>>>>> +
->>>>>>  int get_device_info(int i)
->>>>>>  {
->>>>>>  	int32_t fd = 0;
->>>>>> @@ -810,8 +819,11 @@ int get_device_info(int i)
->>>>>>  	if (c.sparse_mode) {
->>>>>>  		fd = open(dev->path, O_RDWR | O_CREAT | O_BINARY, 0644);
->>>>>>  		if (fd < 0) {
->>>>>> -			MSG(0, "\tError: Failed to open a sparse file!\n");
->>>>>> -			return -1;
->>>>>> +			fd = open_check_fs(dev->path, O_BINARY);
->>>>>> +			if (fd < 0) {
->>>>>> +				MSG(0, "\tError: Failed to open a sparse file!\n");
->>>>>> +				return -1;
->>>>>> +			}
->>>>>>  		}
->>>>>>  	}
->>>>>>
->>>>>> @@ -825,10 +837,15 @@ int get_device_info(int i)
->>>>>>  			return -1;
->>>>>>  		}
->>>>>>
->>>>>> -		if (S_ISBLK(stat_buf->st_mode) && !c.force)
->>>>>> +		if (S_ISBLK(stat_buf->st_mode) && !c.force) {
->>>>>>  			fd = open(dev->path, O_RDWR | O_EXCL);
->>>>>> -		else
->>>>>> +			if (fd < 0)
->>>>>> +				fd = open_check_fs(dev->path, O_EXCL);
->>>>>> +		} else {
->>>>>>  			fd = open(dev->path, O_RDWR);
->>>>>> +			if (fd < 0)
->>>>>> +				fd = open_check_fs(dev->path, 0);
->>>>>> +		}
->>>>>>  	}
->>>>>>  	if (fd < 0) {
->>>>>>  		MSG(0, "\tError: Failed to open the device!\n");
->>>>>> --
->>>>>> 2.19.0.605.g01d371f741-goog
->>>>>>
->>>>>>
->>>>>
->>>>>
->>>>> _______________________________________________
->>>>> Linux-f2fs-devel mailing list
->>>>> Linux-f2fs-devel@lists.sourceforge.net
->>>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>>>> .
->>>>>
->>>>
->>> .
->>>
->>
-> .
-> 
+T24gMjAxOS80LzIyIDIxOjI3LCBTaGFva3VuIFpoYW5nIHdyb3RlOgo+IGZzL2YyZnMvbm9kZS5j
+OiBJbiBmdW5jdGlvbiDigJhmMmZzX3JlbW92ZV9pbm9kZV9wYWdl4oCZOgo+IGZzL2YyZnMvbm9k
+ZS5jOjExOTM6NDc6IHdhcm5pbmc6IGZvcm1hdCDigJglbHXigJkgZXhwZWN0cyBhcmd1bWVudCBv
+ZiB0eXBlIOKAmGxvbmcgdW5zaWduZWQgaW504oCZLCBidXQgYXJndW1lbnQgNSBoYXMgdHlwZSDi
+gJhibGtjbnRfdCB7YWthIGxvbmcgbG9uZyB1bnNpZ25lZCBpbnR94oCZIFstV2Zvcm1hdD1dCj4g
+ICAgICJJbmNvbnNpc3RlbnQgaV9ibG9ja3MsIGlubzolbHUsIGlibG9ja3M6JWx1IiwKPiAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB+fl4KPiAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAlbGx1Cj4gICAgIGlub2RlLT5pX2lu
+bywgaW5vZGUtPmlfYmxvY2tzKTsKPiAgICAgICAgICAgICAgICAgICB+fn5+fn5+fn5+fn5+fn4K
+PiBGaXhlczogY2RhZDYzNWJkMDY4ICgiZjJmczogZml4IHRvIGF2b2lkIHBhbmljIGluIGYyZnNf
+cmVtb3ZlX2lub2RlX3BhZ2UoKSIpCgpXZSBoYXZlIGFscmVhZHkgZml4ZWQgdGhpcyBpc3N1ZSwg
+dGhhbmtzIGZvciBub3RpY2luZyB0aGlzIGlzc3VlLiA6KQoKaHR0cHM6Ly9naXQua2VybmVsLm9y
+Zy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvamFlZ2V1ay9mMmZzLmdpdC9jb21taXQvP2g9ZGV2
+LXRlc3QmaWQ9NWNmMjg3OWZhNzFhODY1ZjA4MzQ4ZGFlOTgyYjk3Yjk3MzhhMDg0NwoKVGhhbmtz
+LAoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4
+LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9y
+Z2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4
+LWYyZnMtZGV2ZWwK
