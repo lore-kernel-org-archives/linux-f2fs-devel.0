@@ -1,234 +1,119 @@
-From: Hagbard Celine <hagbardcelin@gmail.com>
-Subject: Re: Possible issues with fsck of f2fs root
-Date: Tue, 23 Apr 2019 18:17:44 +0200
-Message-ID: <CADoWrG9fmTx913OcyNL0NJn-wb6F+aq0a+AeAwfJZaRAuBL8iQ@mail.gmail.com>
-References: <CADoWrG-0GWtwqaW7rsPWLDYcoAsvXhwRa9zVib9bN94g1LLw6Q@mail.gmail.com>
- <20190416185353.GA56890@jaegeuk-macbookpro.roam.corp.google.com>
- <14c1ba5f-a636-27f6-9240-55cdef2c8c26@huawei.com>
- <20190421102703.GC7295@jaegeuk-macbookpro.roam.corp.google.com>
- <CADoWrG9FZ-MN5v2a9V3EZJ9Cj6L5CBadV836D2=MGockXsgQ_g@mail.gmail.com>
- <941621e2-465b-daa6-d323-0e40239e0981@huawei.com>
- <CADoWrG9y8y2KEh5FsppBYe_10kcCoFSY-JSvHqDfuLR70HDxSw@mail.gmail.com>
- <55150868-4d32-8eed-8d09-d27817360c86@huawei.com>
- <CADoWrG-M7fMyu2u7h3Dk7GFH+Bm=A2JpJteZotQCHCatfn05Pw@mail.gmail.com>
- <246f0e93-0637-c7a2-f9f0-9131308af76f@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 1/2] f2fs: allow unfixed f2fs_checkpoint.checksum_offset
+Date: Tue, 23 Apr 2019 21:43:51 +0100
+Message-ID: <20190423204351.GA87257@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190422093353.61014-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <hagbardcelin@gmail.com>) id 1hIy7G-0002oQ-U3
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Apr 2019 16:17:54 +0000
-Received: from mail-lj1-f194.google.com ([209.85.208.194])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1hIy7E-008wwN-UY
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Apr 2019 16:17:54 +0000
-Received: by mail-lj1-f194.google.com with SMTP id p14so14059978ljg.5
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 23 Apr 2019 09:17:52 -0700 (PDT)
-In-Reply-To: <246f0e93-0637-c7a2-f9f0-9131308af76f@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190422093353.61014-1-yuchao0@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-2019-04-23 4:55 GMT+02:00, Chao Yu <yuchao0@huawei.com>:
-> On 2019/4/22 18:05, Hagbard Celine wrote:
->> 2019-04-22 11:26 GMT+02:00, Chao Yu <yuchao0@huawei.com>:
->>> On 2019/4/22 17:05, Hagbard Celine wrote:
->>>> 2019-04-22 9:37 GMT+02:00, Chao Yu <yuchao0@huawei.com>:
->>>>> On 2019/4/22 15:11, Hagbard Celine wrote:
->>>>>> With this patch the one problem with opening the device in RO mode is
->>>>>> fixed.
->>>>>
->>>>> Oops, with default preen mode fsck should not open ro mounted image,
->>>>> that's
->>>>> the
->>>>> rule we keep line with ext4...
->>>>>
->>>>> How about changing to use -f in your scenario ( on RO mounted root
->>>>> image
->>>>> )?
->>>>
->>>> This was with -f. Without -f it still refuses to open the device.
->>>
->>> What I mean is we'd better to keep line with ext4, just refusing to open
->>> ro
->>> mounted device without -f, since triggering fsck and repair on a mounted
->>> device
->>> is dangerous, it can easily make inconsistency in between in-memory data
->>> and
->>> on-disk data of filesystem. Refusing fsck without -f is to make user
->>> being
->>> aware
->>> of such danger.
->>
->> I am sorry, I've apparently added the -f after my first report. After
->> re-testing it seems that fsck.f2fs is opening the RO partition even
->> without this patch if I use -f. So the part about fsck.f2fs not being
->> able to open RO mounted partition during boot was a user error.
->
-> I've sent a patch for your second issue, could you please have a try with
-> it?
->
-> [PATCH] fsck.f2fs: fix to repair ro mounted device w/ -f
->
-> But one concern is that, with this patch, not like the fsck.ext4, fsck.f2fs
-> won't show any interaction with below reminding word to remind user to
-> decide
-> repair or not, it may increase the risk of damaging the device.
->
-> Do you want to restore lost files into ./lost_found/?
-> Do you want to fix this partition? [Y/N]
->
-> Jaegeuk, Hagbard,
->
-> Any suggestion on this, in current scenario, how about implement:
-> 1. fsck.f2fs -f ro_mounted_device: check; show interaction words if there
-> is
-> corruption;
-> 2. fsck.f2fs -f -a ro_moutned_device: check and repair automatically;
+On 04/22, Chao Yu wrote:
+> Previously, f2fs_checkpoint.checksum_offset points fixed position of
+> f2fs_checkpoint structure:
+> 
+> "#define CP_CHKSUM_OFFSET	4092"
+> 
+> It is unnecessary, and it breaks the consecutiveness of nat and sit
+> bitmap stored across checkpoint park block and payload blocks.
+> 
+> This patch allows f2fs to handle unfixed .checksum_offset.
+> 
+> In addition, for the case checksum value is stored in the middle of
+> checkpoint park, calculating checksum value with superposition method
+> like we did for inode_checksum.
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/checkpoint.c    | 27 +++++++++++++++++++++------
+>  include/linux/f2fs_fs.h |  4 ++++
+>  2 files changed, 25 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 441814607b13..a25556aef8cc 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -794,13 +794,27 @@ static void write_orphan_inodes(struct f2fs_sb_info *sbi, block_t start_blk)
+>  	}
+>  }
+>  
+> +static __u32 f2fs_checkpoint_chksum(struct f2fs_sb_info *sbi,
+> +						struct f2fs_checkpoint *ckpt)
+> +{
+> +	unsigned int chksum_ofs = le32_to_cpu(ckpt->checksum_offset);
+> +	__u32 chksum;
+> +
+> +	chksum = f2fs_crc32(sbi, ckpt, chksum_ofs);
+> +	if (chksum_ofs < CP_CHKSUM_OFFSET) {
+> +		chksum_ofs += sizeof(chksum);
+> +		chksum = f2fs_chksum(sbi, chksum, (__u8 *)ckpt + chksum_ofs,
+> +						F2FS_BLKSIZE - chksum_ofs);
 
-I answered this all too quickly and did not think it trough properly.
-As it stands today, if I run "fsck.f2fs -f /dev/some_unmounted_disk"
-it will always do a full fsck.
-If I on the other hand do "fsck.f2fs -f -a /dev/some_unmounted_disk"
-it sometimes only reads the checkpoint state and returns with: "Info:
-No errors was reported".
-I do not have a ext4 partition with errors to test, but I have a fat
-partition that comes up with "Free cluster summary wrong" on every run
-of fsck.fat and there fsck asks for confirmation when run with "-f"
-and autofixes without asking when running with "-f -a".
+Do we need to cover __cp_payload(sbi) * blksize - chksum_ofs?
 
-Considering this I believe the proposed solution would be
-counter-intuitive, unless fsck.ext4 behaves opposite of fsck.fat
-already.
->
-> Thanks,
->
->>
->>>
->>> Thanks,
->>>
->>>>
->>>>
->>>>> Thanks,
->>>>>
->>>>>> But as far as I can understand it will still only check the fs, not
->>>>>> fix
->>>>>> it.
->>>>>>
->>>>>>
->>>>>> 2019-04-21 12:27 GMT+02:00, Jaegeuk Kim <jaegeuk@kernel.org>:
->>>>>>
->>>>>>>
->>>>>>> New version of the patch is:
->>>>>>>
->>>>>>> From 3221692b060649378f1f69b898ed85a814af3dbf Mon Sep 17 00:00:00
->>>>>>> 2001
->>>>>>> From: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>>> Date: Tue, 16 Apr 2019 11:46:31 -0700
->>>>>>> Subject: [PATCH] fsck.f2fs: open ro disk if we want to check fs only
->>>>>>>
->>>>>>> This patch fixes the "open failure" issue on ro disk, reported by
->>>>>>> Hagbard.
->>>>>>>
->>>>>>> "
->>>>>>>  If I boot with kernel option "ro rootfstype=f2fs
->>>>>>>  I get the following halfway trough boot:
->>>>>>>
->>>>>>>   * Checking local filesystems  ...
->>>>>>>  Info: Use default preen mode
->>>>>>>  Info: Mounted device!
->>>>>>>  Info: Check FS only due to RO
->>>>>>>          Error: Failed to open the device!
->>>>>>>   * Filesystems couldn't be fixed
->>>>>>> "
->>>>>>>
->>>>>>> Reported-by: Hagbard Celine <hagbardcelin@gmail.com>
->>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>>> ---
->>>>>>>  lib/libf2fs.c | 25 +++++++++++++++++++++----
->>>>>>>  1 file changed, 21 insertions(+), 4 deletions(-)
->>>>>>>
->>>>>>> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
->>>>>>> index d30047f..853e713 100644
->>>>>>> --- a/lib/libf2fs.c
->>>>>>> +++ b/lib/libf2fs.c
->>>>>>> @@ -789,6 +789,15 @@ void get_kernel_uname_version(__u8 *version)
->>>>>>>  #endif /* APPLE_DARWIN */
->>>>>>>
->>>>>>>  #ifndef ANDROID_WINDOWS_HOST
->>>>>>> +static int open_check_fs(char *path, int flag)
->>>>>>> +{
->>>>>>> +	if (c.func != FSCK || c.fix_on || c.auto_fix)
->>>>>>> +		return -1;
->>>>>>> +
->>>>>>> +	/* allow to open ro */
->>>>>>> +	return open(path, O_RDONLY | flag);
->>>>>>> +}
->>>>>>> +
->>>>>>>  int get_device_info(int i)
->>>>>>>  {
->>>>>>>  	int32_t fd = 0;
->>>>>>> @@ -810,8 +819,11 @@ int get_device_info(int i)
->>>>>>>  	if (c.sparse_mode) {
->>>>>>>  		fd = open(dev->path, O_RDWR | O_CREAT | O_BINARY, 0644);
->>>>>>>  		if (fd < 0) {
->>>>>>> -			MSG(0, "\tError: Failed to open a sparse file!\n");
->>>>>>> -			return -1;
->>>>>>> +			fd = open_check_fs(dev->path, O_BINARY);
->>>>>>> +			if (fd < 0) {
->>>>>>> +				MSG(0, "\tError: Failed to open a sparse file!\n");
->>>>>>> +				return -1;
->>>>>>> +			}
->>>>>>>  		}
->>>>>>>  	}
->>>>>>>
->>>>>>> @@ -825,10 +837,15 @@ int get_device_info(int i)
->>>>>>>  			return -1;
->>>>>>>  		}
->>>>>>>
->>>>>>> -		if (S_ISBLK(stat_buf->st_mode) && !c.force)
->>>>>>> +		if (S_ISBLK(stat_buf->st_mode) && !c.force) {
->>>>>>>  			fd = open(dev->path, O_RDWR | O_EXCL);
->>>>>>> -		else
->>>>>>> +			if (fd < 0)
->>>>>>> +				fd = open_check_fs(dev->path, O_EXCL);
->>>>>>> +		} else {
->>>>>>>  			fd = open(dev->path, O_RDWR);
->>>>>>> +			if (fd < 0)
->>>>>>> +				fd = open_check_fs(dev->path, 0);
->>>>>>> +		}
->>>>>>>  	}
->>>>>>>  	if (fd < 0) {
->>>>>>>  		MSG(0, "\tError: Failed to open the device!\n");
->>>>>>> --
->>>>>>> 2.19.0.605.g01d371f741-goog
->>>>>>>
->>>>>>>
->>>>>>
->>>>>>
->>>>>> _______________________________________________
->>>>>> Linux-f2fs-devel mailing list
->>>>>> Linux-f2fs-devel@lists.sourceforge.net
->>>>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>>>>> .
->>>>>>
->>>>>
->>>> .
->>>>
->>>
->> .
->>
->
+> +	}
+> +	return chksum;
+> +}
+> +
+>  static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
+>  		struct f2fs_checkpoint **cp_block, struct page **cp_page,
+>  		unsigned long long *version)
+>  {
+> -	unsigned long blk_size = sbi->blocksize;
+>  	size_t crc_offset = 0;
+> -	__u32 crc = 0;
+> +	__u32 crc;
+>  
+>  	*cp_page = f2fs_get_meta_page(sbi, cp_addr);
+>  	if (IS_ERR(*cp_page))
+> @@ -809,15 +823,16 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
+>  	*cp_block = (struct f2fs_checkpoint *)page_address(*cp_page);
+>  
+>  	crc_offset = le32_to_cpu((*cp_block)->checksum_offset);
+> -	if (crc_offset > (blk_size - sizeof(__le32))) {
+> +	if (crc_offset < CP_MIN_CHKSUM_OFFSET ||
+> +			crc_offset > CP_CHKSUM_OFFSET) {
+>  		f2fs_put_page(*cp_page, 1);
+>  		f2fs_msg(sbi->sb, KERN_WARNING,
+>  			"invalid crc_offset: %zu", crc_offset);
+>  		return -EINVAL;
+>  	}
+>  
+> -	crc = cur_cp_crc(*cp_block);
+> -	if (!f2fs_crc_valid(sbi, crc, *cp_block, crc_offset)) {
+> +	crc = f2fs_checkpoint_chksum(sbi, *cp_block);
+> +	if (crc != cur_cp_crc(*cp_block)) {
+>  		f2fs_put_page(*cp_page, 1);
+>  		f2fs_msg(sbi->sb, KERN_WARNING, "invalid crc value");
+>  		return -EINVAL;
+> @@ -1425,7 +1440,7 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  	get_sit_bitmap(sbi, __bitmap_ptr(sbi, SIT_BITMAP));
+>  	get_nat_bitmap(sbi, __bitmap_ptr(sbi, NAT_BITMAP));
+>  
+> -	crc32 = f2fs_crc32(sbi, ckpt, le32_to_cpu(ckpt->checksum_offset));
+> +	crc32 = f2fs_checkpoint_chksum(sbi, ckpt);
+>  	*((__le32 *)((unsigned char *)ckpt +
+>  				le32_to_cpu(ckpt->checksum_offset)))
+>  				= cpu_to_le32(crc32);
+> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+> index 55da9abed023..65559900d4d7 100644
+> --- a/include/linux/f2fs_fs.h
+> +++ b/include/linux/f2fs_fs.h
+> @@ -164,6 +164,10 @@ struct f2fs_checkpoint {
+>  	unsigned char sit_nat_version_bitmap[1];
+>  } __packed;
+>  
+> +#define CP_CHKSUM_OFFSET	4092	/* default chksum offset in checkpoint */
+> +#define CP_MIN_CHKSUM_OFFSET						\
+> +	(offsetof(struct f2fs_checkpoint, sit_nat_version_bitmap))
+> +
+>  /*
+>   * For orphan inode management
+>   */
+> -- 
+> 2.18.0.rc1
