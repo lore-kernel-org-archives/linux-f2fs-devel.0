@@ -1,69 +1,289 @@
-From: Chandan Rajendra <chandan@linux.ibm.com>
-Subject: Re: [PATCH V1 02/14] Consolidate "post read processing"
- into a new file
-Date: Wed, 24 Apr 2019 20:29:10 +0530
-Message-ID: <7402364.ucYHGh3o57@localhost.localdomain>
-References: <20190424043730.13683-1-chandan@linux.ibm.com>
- <6353008.fQNhCuxumZ@localhost.localdomain>
- <20190424142423.GA12761@infradead.org>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH v2 2/2] f2fs: introduce DATA_GENERIC_ENHANCE
+Date: Wed, 24 Apr 2019 23:06:34 +0800
+Message-ID: <2a519411-b9bb-f153-c8b9-8eaca1f66837@kernel.org>
+References: <20190415072632.2158-1-yuchao0@huawei.com>
+ <20190415072632.2158-2-yuchao0@huawei.com>
+ <20190424093613.GA45953@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.ibm.com>) id 1hJJM3-0001pF-UG
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 24 Apr 2019 14:58:35 +0000
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
- helo=mx0a-001b2d01.pphosted.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hJJM2-00BB1Q-2O
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 24 Apr 2019 14:58:35 +0000
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
- by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
- x3OEst8b060438
- for <linux-f2fs-devel@lists.sourceforge.net>; Wed, 24 Apr 2019 10:58:23 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
- by mx0b-001b2d01.pphosted.com with ESMTP id 2s2qpng2dw-1
- (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>; Wed, 24 Apr 2019 10:58:23 -0400
-Received: from localhost
- by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
- Violators will be prosecuted
- for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.ibm.com>;
- Wed, 24 Apr 2019 15:58:21 +0100
-In-Reply-To: <20190424142423.GA12761@infradead.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Christoph Hellwig <hch@infradead.org>
-Cc: tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net, ebiggers@kernel.org, linux-fscrypt@vger.kernel.org, adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190424093613.GA45953@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wednesday, April 24, 2019 7:54:23 PM IST Christoph Hellwig wrote:
-> On Wed, Apr 24, 2019 at 03:34:17PM +0530, Chandan Rajendra wrote:
-> > To clarify, Are you suggesting that a new kconfig option (say
-> > CONFIG_FS_READ_CALLBACKS) be provided to the user so that the following could
-> > occur,
-> > 
-> > 1. User selects CONFIG_FS_ENCRYPTION and/or CONFIG_FS_VERITY and this causes
-> > CONFIG_FS_READ_CALLBACKS to be set to 'y'.
-> > 2. User selects CONFIG_FS_READ_CALLBACKS explicitly.
+On 2019-4-24 17:36, Jaegeuk Kim wrote:
+> On 04/15, Chao Yu wrote:
+>> Previously, f2fs_is_valid_blkaddr(, blkaddr, DATA_GENERIC) will check
+>> whether @blkaddr locates in main area or not.
+>>
+>> That check is weak, since the block address in range of main area can
+>> point to the address which is not valid in segment info table, and we
+>> can not detect such condition, we may suffer worse corruption as system
+>> continues running.
+>>
+>> So this patch introduce DATA_GENERIC_ENHANCE to enhance the sanity check
+>> which trigger SIT bitmap check rather than only range check.
+>>
+>> This patch did below changes as wel:
+>> - set SBI_NEED_FSCK in f2fs_is_valid_blkaddr().
+>> - get rid of is_valid_data_blkaddr() to avoid panic if blkaddr is invalid.
+>> - introduce verify_fio_blkaddr() to wrap fio {new,old}_blkaddr validation check.
+>> - spread blkaddr check in:
+>>  * f2fs_get_node_info()
+>>  * __read_out_blkaddrs()
+>>  * f2fs_submit_page_read()
+>>  * ra_data_block()
+>>  * do_recover_data()
+>>
+>> This patch can fix bug reported from bugzilla below:
+>>
+>> https://bugzilla.kernel.org/show_bug.cgi?id=203215
+>> https://bugzilla.kernel.org/show_bug.cgi?id=203223
+>> https://bugzilla.kernel.org/show_bug.cgi?id=203231
+>> https://bugzilla.kernel.org/show_bug.cgi?id=203235
+>> https://bugzilla.kernel.org/show_bug.cgi?id=203241
 > 
-> If you don't add a user description to a Kconfig entry it won't be
-> visible to users, but only selectable by other options.  That is what
-> I suggest.
+> Hi Chao,
 > 
+> This introduces failures on xfstests/generic/446, and I'm testing the below
+> patch on top of this. Could you check this patch, so that I could combine
+> both of them?
 > 
+> From 8c1808c1743ad75d1ad8d1dc5a53910edaf7afd7 Mon Sep 17 00:00:00 2001
+> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> Date: Wed, 24 Apr 2019 00:21:07 +0100
+> Subject: [PATCH] f2fs: consider data race on read and truncation on
+>  DATA_GENERIC_ENHANCE
+> 
+> DATA_GENERIC_ENHANCE enhanced to validate block addresses on read/write paths.
+> But, xfstest/generic/446 compalins some generated kernel messages saying invalid
+> bitmap was detected when reading a block. The reaons is, when we get the
+> block addresses from extent_cache, there is no lock to synchronize it from
+> truncating the blocks in parallel.
+> 
+> This patch tries to return EFAULT without warning and setting SBI_NEED_FSCK
+> in this case.
+> 
+> Fixes: ("f2fs: introduce DATA_GENERIC_ENHANCE")
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/checkpoint.c | 35 ++++++++++++++++++-----------------
+>  fs/f2fs/data.c       | 25 ++++++++++++++++++-------
+>  fs/f2fs/f2fs.h       |  6 ++++++
+>  fs/f2fs/gc.c         |  9 ++++++---
+>  4 files changed, 48 insertions(+), 27 deletions(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index e37fbbf843a5..805a33088e82 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -130,26 +130,28 @@ struct page *f2fs_get_tmp_page(struct f2fs_sb_info *sbi, pgoff_t index)
+>  	return __get_meta_page(sbi, index, false);
+>  }
+>  
+> -static bool __is_bitmap_valid(struct f2fs_sb_info *sbi, block_t blkaddr)
+> +static bool __is_bitmap_valid(struct f2fs_sb_info *sbi, block_t blkaddr,
+> +							int type)
+>  {
+>  	struct seg_entry *se;
+>  	unsigned int segno, offset;
+>  	bool exist;
+>  
+> +	if (type != DATA_GENERIC_ENHANCE && type != DATA_GENERIC_ENHANCE_READ)
+> +		return true;
+> +
+>  	segno = GET_SEGNO(sbi, blkaddr);
+>  	offset = GET_BLKOFF_FROM_SEG0(sbi, blkaddr);
+>  	se = get_seg_entry(sbi, segno);
+>  
+>  	exist = f2fs_test_bit(offset, se->cur_valid_map);
+> -
+> -	if (!exist) {
+> +	if (!exist && type == DATA_GENERIC_ENHANCE) {
+>  		f2fs_msg(sbi->sb, KERN_ERR, "Inconsistent error "
+>  			"blkaddr:%u, sit bitmap:%d", blkaddr, exist);
+>  		set_sbi_flag(sbi, SBI_NEED_FSCK);
+>  		WARN_ON(1);
+> -		return false;
+>  	}
+> -	return true;
+> +	return exist;
+>  }
+>  
+>  bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+> @@ -173,23 +175,22 @@ bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+>  			return false;
+>  		break;
+>  	case META_POR:
+> +		if (unlikely(blkaddr >= MAX_BLKADDR(sbi) ||
+> +			blkaddr < MAIN_BLKADDR(sbi)))
+> +			return false;
+> +		break;
+>  	case DATA_GENERIC:
+>  	case DATA_GENERIC_ENHANCE:
+> +	case DATA_GENERIC_ENHANCE_READ:
+>  		if (unlikely(blkaddr >= MAX_BLKADDR(sbi) ||
+> -			blkaddr < MAIN_BLKADDR(sbi))) {
+> -			if (type == DATA_GENERIC ||
+> -				type == DATA_GENERIC_ENHANCE) {
+> -				f2fs_msg(sbi->sb, KERN_WARNING,
+> -					"access invalid blkaddr:%u", blkaddr);
+> -				set_sbi_flag(sbi, SBI_NEED_FSCK);
+> -				WARN_ON(1);
+> -			}
+> +				blkaddr < MAIN_BLKADDR(sbi))) {
+> +			f2fs_msg(sbi->sb, KERN_WARNING,
+> +				"access invalid blkaddr:%u", blkaddr);
+> +			set_sbi_flag(sbi, SBI_NEED_FSCK);
+> +			WARN_ON(1);
+>  			return false;
+>  		} else {
+> -			if (type == DATA_GENERIC_ENHANCE) {
+> -				if (!__is_bitmap_valid(sbi, blkaddr))
+> -					return false;
+> -			}
+> +			return __is_bitmap_valid(sbi, blkaddr, type);
+>  		}
+>  		break;
+>  	case META_GENERIC:
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 34d248ac9e0f..d32a82f25f5a 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -564,9 +564,6 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
+>  	struct bio_post_read_ctx *ctx;
+>  	unsigned int post_read_steps = 0;
+>  
+> -	if (!f2fs_is_valid_blkaddr(sbi, blkaddr, DATA_GENERIC_ENHANCE))
+> -		return ERR_PTR(-EFAULT);
+> -
+>  	bio = f2fs_bio_alloc(sbi, min_t(int, nr_pages, BIO_MAX_PAGES), false);
+>  	if (!bio)
+>  		return ERR_PTR(-ENOMEM);
+> @@ -597,9 +594,6 @@ static int f2fs_submit_page_read(struct inode *inode, struct page *page,
+>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>  	struct bio *bio;
+>  
+> -	if (!f2fs_is_valid_blkaddr(sbi, blkaddr, DATA_GENERIC_ENHANCE))
+> -		return -EFAULT;
+> -
+>  	bio = f2fs_grab_read_bio(inode, blkaddr, 1, 0);
+>  	if (IS_ERR(bio))
+>  		return PTR_ERR(bio);
+> @@ -741,6 +735,11 @@ struct page *f2fs_get_read_data_page(struct inode *inode, pgoff_t index,
+>  
+>  	if (f2fs_lookup_extent_cache(inode, index, &ei)) {
+>  		dn.data_blkaddr = ei.blk + index - ei.fofs;
+> +		if (!f2fs_is_valid_blkaddr(F2FS_I_SB(inode), dn.data_blkaddr,
+> +						DATA_GENERIC_ENHANCE_READ)) {
 
-Thanks for the clarification. I will make the necessary changes.
+If I'm not missing anything, we just need use DATA_GENERIC_ENHANCE_READ to cover
+below two paths:
+- gc_data_segment -> f2fs_get_read_data_page
+- move_data_page -> f2fs_get_lock_data_page -> f2fs_get_read_data_page
 
--- 
-chandan
+Other paths which calls f2fs_get_read_data_page is safe to verify blkaddr with
+DATA_GENERIC_ENHANCE?
+
+> +			err = -EFAULT;
+> +			goto put_err;
+> +		}
+>  		goto got_it;
+>  	}
+>  
+> @@ -754,6 +753,13 @@ struct page *f2fs_get_read_data_page(struct inode *inode, pgoff_t index,
+>  		err = -ENOENT;
+>  		goto put_err;
+>  	}
+> +	if (dn.data_blkaddr != NEW_ADDR &&
+> +			!f2fs_is_valid_blkaddr(F2FS_I_SB(inode),
+> +						dn.data_blkaddr,
+> +						DATA_GENERIC_ENHANCE)) {
+> +		err = -EFAULT;
+> +		goto put_err;
+> +	}
+>  got_it:
+>  	if (PageUptodate(page)) {
+>  		unlock_page(page);
+> @@ -1566,7 +1572,7 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
+>  		}
+>  
+>  		if (!f2fs_is_valid_blkaddr(F2FS_I_SB(inode), block_nr,
+> -							DATA_GENERIC_ENHANCE)) {
+> +						DATA_GENERIC_ENHANCE_READ)) {
+>  			ret = -EFAULT;
+>  			goto out;
+>  		}
+> @@ -2528,6 +2534,11 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+>  		zero_user_segment(page, 0, PAGE_SIZE);
+>  		SetPageUptodate(page);
+>  	} else {
+> +		if (!f2fs_is_valid_blkaddr(sbi, blkaddr,
+> +				DATA_GENERIC_ENHANCE_READ)) {
+
+Need DATA_GENERIC_ENHANCE because write() is exclusive with truncate() due to
+inode_lock()?
+
+Thanks,
+
+> +			err = -EFAULT;
+> +			goto fail;
+> +		}
+>  		err = f2fs_submit_page_read(inode, page, blkaddr);
+>  		if (err)
+>  			goto fail;
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index f5ffc09705eb..533fafca68f4 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -212,6 +212,12 @@ enum {
+>  	META_POR,
+>  	DATA_GENERIC,		/* check range only */
+>  	DATA_GENERIC_ENHANCE,	/* strong check on range and segment bitmap */
+> +	DATA_GENERIC_ENHANCE_READ,	/*
+> +					 * strong check on range and segment
+> +					 * bitmap but no warning due to race
+> +					 * condition of read on truncated area
+> +					 * by extent_cache
+> +					 */
+>  	META_GENERIC,
+>  };
+>  
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 3a097949b5d4..963fb4571fd9 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -656,6 +656,11 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
+>  
+>  	if (f2fs_lookup_extent_cache(inode, index, &ei)) {
+>  		dn.data_blkaddr = ei.blk + index - ei.fofs;
+> +		if (unlikely(!f2fs_is_valid_blkaddr(sbi, dn.data_blkaddr,
+> +						DATA_GENERIC_ENHANCE_READ))) {
+> +			err = -EFAULT;
+> +			goto put_page;
+> +		}
+>  		goto got_it;
+>  	}
+>  
+> @@ -669,14 +674,12 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
+>  		err = -ENOENT;
+>  		goto put_page;
+>  	}
+> -
+> -got_it:
+>  	if (unlikely(!f2fs_is_valid_blkaddr(sbi, dn.data_blkaddr,
+>  						DATA_GENERIC_ENHANCE))) {
+>  		err = -EFAULT;
+>  		goto put_page;
+>  	}
+> -
+> +got_it:
+>  	/* read page */
+>  	fio.page = page;
+>  	fio.new_blkaddr = fio.old_blkaddr = dn.data_blkaddr;
+> 
