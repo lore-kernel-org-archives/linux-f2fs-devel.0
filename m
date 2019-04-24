@@ -1,46 +1,33 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH V1 02/14] Consolidate "post read processing"
- into a new file
-Date: Tue, 23 Apr 2019 22:35:44 -0700
-Message-ID: <20190424053544.GA12092@infradead.org>
-References: <20190424043730.13683-1-chandan@linux.ibm.com>
- <20190424043730.13683-3-chandan@linux.ibm.com>
+From: Xiaojun Wang <wangxiaojun11@huawei.com>
+Subject: [f2fs-dev] [PATCH] f2fs-tools:fix memory leak in write dquot
+Date: Wed, 24 Apr 2019 14:47:42 +0800
+Message-ID: <1556088462-21693-1-git-send-email-wangxiaojun11@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from
- <BATV+b85c7aa3a76ea8f4c774+5722+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1hJAZb-0000m7-4m
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 24 Apr 2019 05:35:59 +0000
-Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hJAZX-00ADC3-CH
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 24 Apr 2019 05:35:59 +0000
-Content-Disposition: inline
-In-Reply-To: <20190424043730.13683-3-chandan@linux.ibm.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chandan Rajendra <chandan@linux.ibm.com>
-Cc: tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net, ebiggers@kernel.org, linux-fscrypt@vger.kernel.org, adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: wangxiaojun11@huawei.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wed, Apr 24, 2019 at 10:07:18AM +0530, Chandan Rajendra wrote:
-> +ifeq (y, $(firstword $(filter y,$(CONFIG_FS_ENCRYPTION) $(CONFIG_FS_VERITY))))
-> +obj-y +=	post_read_process.o
-> +endif
+this patch free ddquot in qtree_write_dquot to avoid memory leak
 
-Please just add a new config option selected by the users.
+Signed-off-by: Xiaojun Wang <wangxiaojun11@huawei.com>
+---
+ fsck/quotaio_tree.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Also I find the file name rather cumbersome.  Maybe just
-read-callbacks.[co] ?
+diff --git a/fsck/quotaio_tree.c b/fsck/quotaio_tree.c
+index ebee862..de25a60 100644
+--- a/fsck/quotaio_tree.c
++++ b/fsck/quotaio_tree.c
+@@ -353,6 +353,7 @@ int qtree_write_dquot(struct dquot *dquot)
+ 	if (ret != info->dqi_entry_size) {
+ 		log_err("Quota write failed (id %u): %s",
+ 			(unsigned int)dquot->dq_id, strerror(errno));
++		quota_free_mem(&ddquot);
+ 		return ret;
+ 	}
+ 	quota_free_mem(&ddquot);
+-- 
+2.7.4
