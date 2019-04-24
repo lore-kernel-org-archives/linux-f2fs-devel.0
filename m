@@ -1,77 +1,48 @@
-From: Chandan Rajendra <chandan@linux.ibm.com>
-Subject: Re: [PATCH V1 02/14] Consolidate "post read processing"
- into a new file
-Date: Wed, 24 Apr 2019 15:34:17 +0530
-Message-ID: <6353008.fQNhCuxumZ@localhost.localdomain>
-References: <20190424043730.13683-1-chandan@linux.ibm.com>
- <20190424043730.13683-3-chandan@linux.ibm.com>
- <20190424053544.GA12092@infradead.org>
+From: Ju Hyung Park <qkrwngud825@gmail.com>
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: relocate chksum_offset for
+ large_nat_bitmap feature
+Date: Wed, 24 Apr 2019 20:43:29 +0900
+Message-ID: <CAD14+f0D9CVmBZGmbMcKB7xAHvBrbGAgVxR4W8Fiu0Vo6czDYQ@mail.gmail.com>
+References: <20190422093353.61014-1-yuchao0@huawei.com> <20190422093353.61014-2-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.ibm.com>) id 1hJGAU-0002t9-3s
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 24 Apr 2019 11:34:26 +0000
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
- helo=mx0a-001b2d01.pphosted.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hJGAS-009zaP-4J
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 24 Apr 2019 11:34:26 +0000
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
- by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
- x3OBTZlC142780
- for <linux-f2fs-devel@lists.sourceforge.net>; Wed, 24 Apr 2019 07:34:18 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
- by mx0b-001b2d01.pphosted.com with ESMTP id 2s2n3fdysm-1
- (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>; Wed, 24 Apr 2019 07:34:17 -0400
-Received: from localhost
- by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
- Violators will be prosecuted
- for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.ibm.com>;
- Wed, 24 Apr 2019 12:34:16 +0100
-In-Reply-To: <20190424053544.GA12092@infradead.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Christoph Hellwig <hch@infradead.org>
-Cc: tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net, ebiggers@kernel.org, linux-fscrypt@vger.kernel.org, adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190422093353.61014-2-yuchao0@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wednesday, April 24, 2019 11:05:44 AM IST Christoph Hellwig wrote:
-> On Wed, Apr 24, 2019 at 10:07:18AM +0530, Chandan Rajendra wrote:
-> > +ifeq (y, $(firstword $(filter y,$(CONFIG_FS_ENCRYPTION) $(CONFIG_FS_VERITY))))
-> > +obj-y +=	post_read_process.o
-> > +endif
-> 
-> Please just add a new config option selected by the users.
->
+Hi Chao,
 
-Hi Christoph,
+On Mon, Apr 22, 2019 at 6:34 PM Chao Yu <yuchao0@huawei.com> wrote:
+> +       if (__is_set_ckpt_flags(*cp_block, CP_LARGE_NAT_BITMAP_FLAG)) {
+> +               if (crc_offset != CP_MIN_CHKSUM_OFFSET) {
+> +                       f2fs_put_page(*cp_page, 1);
+> +                       f2fs_msg(sbi->sb, KERN_WARNING,
+> +                               "layout of large_nat_bitmap is deprecated, "
+> +                               "run fsck to repair, chksum_offset: %zu",
+> +                               crc_offset);
+> +                       return -EINVAL;
+> +               }
+> +       }
+> +
 
-To clarify, Are you suggesting that a new kconfig option (say
-CONFIG_FS_READ_CALLBACKS) be provided to the user so that the following could
-occur,
+I try not to be a Grammar Nazi and a jerk on every patches, but since
+this is a message a user would directly encounter, I'd like to see a
+bit less ambiguous message.
 
-1. User selects CONFIG_FS_ENCRYPTION and/or CONFIG_FS_VERITY and this causes
-CONFIG_FS_READ_CALLBACKS to be set to 'y'.
-2. User selects CONFIG_FS_READ_CALLBACKS explicitly.
+How about "using deprecated layout of large_nat_bitmap, please run
+fsck v1.13.0 or higher to repair, chksum_offset: %zu"?
+The original message seems to suggest that large_nat_bitmap is
+deprecated outright.
 
+Also, I'd like to suggest to write down an actual version of
+f2fs-tools here as we've seen older versions of fsck doing even more
+damage and the users might not have the latest f2fs-tools installed.
 
-> Also I find the file name rather cumbersome.  Maybe just
-> read-callbacks.[co] ?
-> 
+Btw, what happens if we use the latest fsck to fix the corrupted image
+and use the older kernel to mount it?
+Would it even mount?
 
-I will do this.
-
--- 
-chandan
+Thanks.
