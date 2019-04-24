@@ -1,315 +1,546 @@
-From: Ju Hyung Park <qkrwngud825@gmail.com>
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs-tools: relocate chksum_offset for
- large_nat_bitmap feature
-Date: Wed, 24 Apr 2019 21:00:02 +0900
-Message-ID: <CAD14+f3Tg6zDqsWn2Og8Zn4h-Wg_mMo5DEWwn7QGieFFKSDMAg@mail.gmail.com>
-References: <20190422093452.61134-1-yuchao0@huawei.com> <20190422093452.61134-2-yuchao0@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH V1 02/14] Consolidate "post read processing"
+ into a new file
+Date: Wed, 24 Apr 2019 13:06:46 +0100
+Message-ID: <20190424120646.GA52505@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190424043730.13683-1-chandan@linux.ibm.com>
+ <20190424043730.13683-3-chandan@linux.ibm.com>
+ <20190424083126.GA38756@jaegeuk-macbookpro.roam.corp.google.com>
+ <2436227.7U5lf6vlrr@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190422093452.61134-2-yuchao0@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1hJGfx-0001iJ-Jd
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 24 Apr 2019 12:06:57 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1hJGfu-00A2Or-9b
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 24 Apr 2019 12:06:57 +0000
+Content-Disposition: inline
+In-Reply-To: <2436227.7U5lf6vlrr@localhost.localdomain>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chandan Rajendra <chandan@linux.ibm.com>
+Cc: tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net, ebiggers@kernel.org, linux-fscrypt@vger.kernel.org, adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
 
-Hi Chao and Jaegeuk,
+On 04/24, Chandan Rajendra wrote:
+> On Wednesday, April 24, 2019 2:01:26 PM IST Jaegeuk Kim wrote:
+> > Hi Chandan,
+> > 
+> > On 04/24, Chandan Rajendra wrote:
+> > > The post read processing code is used by both Ext4 and F2FS. Hence to
+> > > remove duplicity, this commit moves the code into
+> > > include/linux/post_read_process.h and fs/post_read_process.c.
+> > > 
+> > > The corresponding decrypt and verity "work" functions have been moved
+> > > inside fscrypt and fsverity sources. With these in place, the post
+> > > processing code now has to just invoke enqueue functions provided by
+> > > fscrypt and fsverity.
+> > > 
+> > > Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
+> > > ---
+> > >  fs/Makefile                       |   4 +
+> > >  fs/crypto/bio.c                   |  23 ++--
+> > >  fs/crypto/crypto.c                |  17 +--
+> > >  fs/crypto/fscrypt_private.h       |   3 +
+> > >  fs/ext4/ext4.h                    |   2 -
+> > >  fs/ext4/readpage.c                | 175 ++++--------------------------
+> > >  fs/ext4/super.c                   |   9 +-
+> > >  fs/f2fs/data.c                    | 146 ++++---------------------
+> > >  fs/f2fs/super.c                   |   9 +-
+> > >  fs/post_read_process.c            | 136 +++++++++++++++++++++++
+> > >  fs/verity/verify.c                |  12 ++
+> > >  include/linux/fscrypt.h           |  20 +---
+> > >  include/linux/post_read_process.h |  21 ++++
+> > >  13 files changed, 240 insertions(+), 337 deletions(-)
+> > >  create mode 100644 fs/post_read_process.c
+> > >  create mode 100644 include/linux/post_read_process.h
+> > > 
+> > > diff --git a/fs/Makefile b/fs/Makefile
+> > > index 9dd2186e74b5..f9abc3f71d3c 100644
+> > > --- a/fs/Makefile
+> > > +++ b/fs/Makefile
+> > > @@ -21,6 +21,10 @@ else
+> > >  obj-y +=	no-block.o
+> > >  endif
+> > >  
+> > > +ifeq (y, $(firstword $(filter y,$(CONFIG_FS_ENCRYPTION) $(CONFIG_FS_VERITY))))
+> > > +obj-y +=	post_read_process.o
+> > > +endif
+> > > +
+> > >  obj-$(CONFIG_PROC_FS) += proc_namespace.o
+> > >  
+> > >  obj-y				+= notify/
+> > > diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
+> > > index 5759bcd018cd..3e40d65ae6a8 100644
+> > > --- a/fs/crypto/bio.c
+> > > +++ b/fs/crypto/bio.c
+> > > @@ -24,6 +24,8 @@
+> > >  #include <linux/module.h>
+> > >  #include <linux/bio.h>
+> > >  #include <linux/namei.h>
+> > > +#include <linux/post_read_process.h>
+> > > +
+> > >  #include "fscrypt_private.h"
+> > >  
+> > >  static void __fscrypt_decrypt_bio(struct bio *bio, bool done)
+> > > @@ -54,24 +56,15 @@ void fscrypt_decrypt_bio(struct bio *bio)
+> > >  }
+> > >  EXPORT_SYMBOL(fscrypt_decrypt_bio);
+> > >  
+> > > -static void completion_pages(struct work_struct *work)
+> > > +void fscrypt_decrypt_work(struct work_struct *work)
+> > >  {
+> > > -	struct fscrypt_ctx *ctx =
+> > > -		container_of(work, struct fscrypt_ctx, r.work);
+> > > -	struct bio *bio = ctx->r.bio;
+> > > +	struct bio_post_read_ctx *ctx =
+> > > +		container_of(work, struct bio_post_read_ctx, work);
+> > >  
+> > > -	__fscrypt_decrypt_bio(bio, true);
+> > > -	fscrypt_release_ctx(ctx);
+> > > -	bio_put(bio);
+> > > -}
+> > > +	fscrypt_decrypt_bio(ctx->bio);
+> > >  
+> > > -void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx, struct bio *bio)
+> > > -{
+> > > -	INIT_WORK(&ctx->r.work, completion_pages);
+> > > -	ctx->r.bio = bio;
+> > > -	fscrypt_enqueue_decrypt_work(&ctx->r.work);
+> > > +	bio_post_read_processing(ctx);
+> > >  }
+> > > -EXPORT_SYMBOL(fscrypt_enqueue_decrypt_bio);
+> > >  
+> > >  void fscrypt_pullback_bio_page(struct page **page, bool restore)
+> > >  {
+> > > @@ -87,7 +80,7 @@ void fscrypt_pullback_bio_page(struct page **page, bool restore)
+> > >  	ctx = (struct fscrypt_ctx *)page_private(bounce_page);
+> > >  
+> > >  	/* restore control page */
+> > > -	*page = ctx->w.control_page;
+> > > +	*page = ctx->control_page;
+> > >  
+> > >  	if (restore)
+> > >  		fscrypt_restore_control_page(bounce_page);
+> > > diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+> > > index 3fc84bf2b1e5..ffa9302a7351 100644
+> > > --- a/fs/crypto/crypto.c
+> > > +++ b/fs/crypto/crypto.c
+> > > @@ -53,6 +53,7 @@ struct kmem_cache *fscrypt_info_cachep;
+> > >  
+> > >  void fscrypt_enqueue_decrypt_work(struct work_struct *work)
+> > >  {
+> > > +	INIT_WORK(work, fscrypt_decrypt_work);
+> > >  	queue_work(fscrypt_read_workqueue, work);
+> > >  }
+> > >  EXPORT_SYMBOL(fscrypt_enqueue_decrypt_work);
+> > > @@ -70,11 +71,11 @@ void fscrypt_release_ctx(struct fscrypt_ctx *ctx)
+> > >  {
+> > >  	unsigned long flags;
+> > >  
+> > > -	if (ctx->flags & FS_CTX_HAS_BOUNCE_BUFFER_FL && ctx->w.bounce_page) {
+> > > -		mempool_free(ctx->w.bounce_page, fscrypt_bounce_page_pool);
+> > > -		ctx->w.bounce_page = NULL;
+> > > +	if (ctx->flags & FS_CTX_HAS_BOUNCE_BUFFER_FL && ctx->bounce_page) {
+> > > +		mempool_free(ctx->bounce_page, fscrypt_bounce_page_pool);
+> > > +		ctx->bounce_page = NULL;
+> > >  	}
+> > > -	ctx->w.control_page = NULL;
+> > > +	ctx->control_page = NULL;
+> > >  	if (ctx->flags & FS_CTX_REQUIRES_FREE_ENCRYPT_FL) {
+> > >  		kmem_cache_free(fscrypt_ctx_cachep, ctx);
+> > >  	} else {
+> > > @@ -194,11 +195,11 @@ int fscrypt_do_page_crypto(const struct inode *inode, fscrypt_direction_t rw,
+> > >  struct page *fscrypt_alloc_bounce_page(struct fscrypt_ctx *ctx,
+> > >  				       gfp_t gfp_flags)
+> > >  {
+> > > -	ctx->w.bounce_page = mempool_alloc(fscrypt_bounce_page_pool, gfp_flags);
+> > > -	if (ctx->w.bounce_page == NULL)
+> > > +	ctx->bounce_page = mempool_alloc(fscrypt_bounce_page_pool, gfp_flags);
+> > > +	if (ctx->bounce_page == NULL)
+> > >  		return ERR_PTR(-ENOMEM);
+> > >  	ctx->flags |= FS_CTX_HAS_BOUNCE_BUFFER_FL;
+> > > -	return ctx->w.bounce_page;
+> > > +	return ctx->bounce_page;
+> > >  }
+> > >  
+> > >  /**
+> > > @@ -267,7 +268,7 @@ struct page *fscrypt_encrypt_page(const struct inode *inode,
+> > >  	if (IS_ERR(ciphertext_page))
+> > >  		goto errout;
+> > >  
+> > > -	ctx->w.control_page = page;
+> > > +	ctx->control_page = page;
+> > >  	err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk_num,
+> > >  				     page, ciphertext_page, len, offs,
+> > >  				     gfp_flags);
+> > > diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
+> > > index 7da276159593..412a3bcf9efd 100644
+> > > --- a/fs/crypto/fscrypt_private.h
+> > > +++ b/fs/crypto/fscrypt_private.h
+> > > @@ -114,6 +114,9 @@ static inline bool fscrypt_valid_enc_modes(u32 contents_mode,
+> > >  	return false;
+> > >  }
+> > >  
+> > > +/* bio.c */
+> > > +void fscrypt_decrypt_work(struct work_struct *work);
+> > > +
+> > >  /* crypto.c */
+> > >  extern struct kmem_cache *fscrypt_info_cachep;
+> > >  extern int fscrypt_initialize(unsigned int cop_flags);
+> > > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> > > index f2b0e628ff7b..23f8568c9b53 100644
+> > > --- a/fs/ext4/ext4.h
+> > > +++ b/fs/ext4/ext4.h
+> > > @@ -3127,8 +3127,6 @@ static inline void ext4_set_de_type(struct super_block *sb,
+> > >  extern int ext4_mpage_readpages(struct address_space *mapping,
+> > >  				struct list_head *pages, struct page *page,
+> > >  				unsigned nr_pages, bool is_readahead);
+> > > -extern int __init ext4_init_post_read_processing(void);
+> > > -extern void ext4_exit_post_read_processing(void);
+> > >  
+> > >  /* symlink.c */
+> > >  extern const struct inode_operations ext4_encrypted_symlink_inode_operations;
+> > > diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+> > > index 0169e3809da3..319deffbc105 100644
+> > > --- a/fs/ext4/readpage.c
+> > > +++ b/fs/ext4/readpage.c
+> > > @@ -44,14 +44,10 @@
+> > >  #include <linux/backing-dev.h>
+> > >  #include <linux/pagevec.h>
+> > >  #include <linux/cleancache.h>
+> > > +#include <linux/post_read_process.h>
+> > >  
+> > >  #include "ext4.h"
+> > >  
+> > > -#define NUM_PREALLOC_POST_READ_CTXS	128
+> > > -
+> > > -static struct kmem_cache *bio_post_read_ctx_cache;
+> > > -static mempool_t *bio_post_read_ctx_pool;
+> > > -
+> > >  static inline bool ext4_bio_encrypted(struct bio *bio)
+> > >  {
+> > >  #ifdef CONFIG_FS_ENCRYPTION
+> > > @@ -61,125 +57,6 @@ static inline bool ext4_bio_encrypted(struct bio *bio)
+> > >  #endif
+> > >  }
+> > >  
+> > > -/* postprocessing steps for read bios */
+> > > -enum bio_post_read_step {
+> > > -	STEP_INITIAL = 0,
+> > > -	STEP_DECRYPT,
+> > > -	STEP_VERITY,
+> > > -};
+> > > -
+> > > -struct bio_post_read_ctx {
+> > > -	struct bio *bio;
+> > > -	struct work_struct work;
+> > > -	unsigned int cur_step;
+> > > -	unsigned int enabled_steps;
+> > > -};
+> > > -
+> > > -static void __read_end_io(struct bio *bio)
+> > > -{
+> > > -	struct page *page;
+> > > -	struct bio_vec *bv;
+> > > -	int i;
+> > > -	struct bvec_iter_all iter_all;
+> > > -
+> > > -	bio_for_each_segment_all(bv, bio, i, iter_all) {
+> > > -		page = bv->bv_page;
+> > > -
+> > > -		/* PG_error was set if any post_read step failed */
+> > > -		if (bio->bi_status || PageError(page)) {
+> > > -			ClearPageUptodate(page);
+> > > -			SetPageError(page);
+> > > -		} else {
+> > > -			SetPageUptodate(page);
+> > > -		}
+> > > -		unlock_page(page);
+> > > -	}
+> > > -	if (bio->bi_private)
+> > > -		mempool_free(bio->bi_private, bio_post_read_ctx_pool);
+> > > -	bio_put(bio);
+> > > -}
+> > > -
+> > > -static void bio_post_read_processing(struct bio_post_read_ctx *ctx);
+> > > -
+> > > -static void decrypt_work(struct work_struct *work)
+> > > -{
+> > > -	struct bio_post_read_ctx *ctx =
+> > > -		container_of(work, struct bio_post_read_ctx, work);
+> > > -
+> > > -	fscrypt_decrypt_bio(ctx->bio);
+> > > -
+> > > -	bio_post_read_processing(ctx);
+> > > -}
+> > > -
+> > > -static void verity_work(struct work_struct *work)
+> > > -{
+> > > -	struct bio_post_read_ctx *ctx =
+> > > -		container_of(work, struct bio_post_read_ctx, work);
+> > > -
+> > > -	fsverity_verify_bio(ctx->bio);
+> > > -
+> > > -	bio_post_read_processing(ctx);
+> > > -}
+> > > -
+> > > -static void bio_post_read_processing(struct bio_post_read_ctx *ctx)
+> > > -{
+> > > -	/*
+> > > -	 * We use different work queues for decryption and for verity because
+> > > -	 * verity may require reading metadata pages that need decryption, and
+> > > -	 * we shouldn't recurse to the same workqueue.
+> > > -	 */
+> > > -	switch (++ctx->cur_step) {
+> > > -	case STEP_DECRYPT:
+> > > -		if (ctx->enabled_steps & (1 << STEP_DECRYPT)) {
+> > > -			INIT_WORK(&ctx->work, decrypt_work);
+> > > -			fscrypt_enqueue_decrypt_work(&ctx->work);
+> > > -			return;
+> > > -		}
+> > > -		ctx->cur_step++;
+> > > -		/* fall-through */
+> > > -	case STEP_VERITY:
+> > > -		if (ctx->enabled_steps & (1 << STEP_VERITY)) {
+> > > -			INIT_WORK(&ctx->work, verity_work);
+> > > -			fsverity_enqueue_verify_work(&ctx->work);
+> > > -			return;
+> > > -		}
+> > > -		ctx->cur_step++;
+> > > -		/* fall-through */
+> > > -	default:
+> > > -		__read_end_io(ctx->bio);
+> > > -	}
+> > > -}
+> > > -
+> > > -static struct bio_post_read_ctx *get_bio_post_read_ctx(struct inode *inode,
+> > > -						       struct bio *bio,
+> > > -						       pgoff_t index)
+> > > -{
+> > > -	unsigned int post_read_steps = 0;
+> > > -	struct bio_post_read_ctx *ctx = NULL;
+> > > -
+> > > -	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode))
+> > > -		post_read_steps |= 1 << STEP_DECRYPT;
+> > > -#ifdef CONFIG_FS_VERITY
+> > > -	if (inode->i_verity_info != NULL &&
+> > > -	    (index < ((i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT)))
+> > > -		post_read_steps |= 1 << STEP_VERITY;
+> > > -#endif
+> > > -	if (post_read_steps) {
+> > > -		ctx = mempool_alloc(bio_post_read_ctx_pool, GFP_NOFS);
+> > > -		if (!ctx)
+> > > -			return ERR_PTR(-ENOMEM);
+> > > -		ctx->bio = bio;
+> > > -		ctx->enabled_steps = post_read_steps;
+> > > -		bio->bi_private = ctx;
+> > > -	}
+> > > -	return ctx;
+> > > -}
+> > > -
+> > > -static bool bio_post_read_required(struct bio *bio)
+> > > -{
+> > > -	return bio->bi_private && !bio->bi_status;
+> > > -}
+> > > -
+> > >  /*
+> > >   * I/O completion handler for multipage BIOs.
+> > >   *
+> > > @@ -194,14 +71,30 @@ static bool bio_post_read_required(struct bio *bio)
+> > >   */
+> > >  static void mpage_end_io(struct bio *bio)
+> > >  {
+> > > +	struct bio_vec *bv;
+> > > +	int i;
+> > > +	struct bvec_iter_all iter_all;
+> > > +#if defined(CONFIG_FS_ENCRYPTION) || defined(CONFIG_FS_VERITY)
+> > >  	if (bio_post_read_required(bio)) {
+> > >  		struct bio_post_read_ctx *ctx = bio->bi_private;
+> > >  
+> > > -		ctx->cur_step = STEP_INITIAL;
+> > >  		bio_post_read_processing(ctx);
+> > >  		return;
+> > >  	}
+> > > -	__read_end_io(bio);
+> > > +#endif
+> > > +	bio_for_each_segment_all(bv, bio, i, iter_all) {
+> > > +		struct page *page = bv->bv_page;
+> > > +
+> > > +		if (!bio->bi_status) {
+> > > +			SetPageUptodate(page);
+> > > +		} else {
+> > > +			ClearPageUptodate(page);
+> > > +			SetPageError(page);
+> > > +		}
+> > > +		unlock_page(page);
+> > > +	}
+> > > +
+> > > +	bio_put(bio);
+> > >  }
+> > >  
+> > >  static inline loff_t ext4_readpage_limit(struct inode *inode)
+> > > @@ -368,17 +261,19 @@ int ext4_mpage_readpages(struct address_space *mapping,
+> > >  			bio = NULL;
+> > >  		}
+> > >  		if (bio == NULL) {
+> > > -			struct bio_post_read_ctx *ctx;
+> > > +			struct bio_post_read_ctx *ctx = NULL;
+> > >  
+> > >  			bio = bio_alloc(GFP_KERNEL,
+> > >  				min_t(int, nr_pages, BIO_MAX_PAGES));
+> > >  			if (!bio)
+> > >  				goto set_error_page;
+> > > +#if defined(CONFIG_FS_ENCRYPTION) || defined(CONFIG_FS_VERITY)
+> > >  			ctx = get_bio_post_read_ctx(inode, bio, page->index);
+> > >  			if (IS_ERR(ctx)) {
+> > >  				bio_put(bio);
+> > >  				goto set_error_page;
+> > >  			}
+> > > +#endif
+> > >  			bio_set_dev(bio, bdev);
+> > >  			bio->bi_iter.bi_sector = blocks[0] << (blkbits - 9);
+> > >  			bio->bi_end_io = mpage_end_io;
+> > > @@ -417,29 +312,3 @@ int ext4_mpage_readpages(struct address_space *mapping,
+> > >  		submit_bio(bio);
+> > >  	return 0;
+> > >  }
+> > > -
+> > > -int __init ext4_init_post_read_processing(void)
+> > > -{
+> > > -	bio_post_read_ctx_cache =
+> > > -		kmem_cache_create("ext4_bio_post_read_ctx",
+> > > -				  sizeof(struct bio_post_read_ctx), 0, 0, NULL);
+> > > -	if (!bio_post_read_ctx_cache)
+> > > -		goto fail;
+> > > -	bio_post_read_ctx_pool =
+> > > -		mempool_create_slab_pool(NUM_PREALLOC_POST_READ_CTXS,
+> > > -					 bio_post_read_ctx_cache);
+> > > -	if (!bio_post_read_ctx_pool)
+> > > -		goto fail_free_cache;
+> > > -	return 0;
+> > > -
+> > > -fail_free_cache:
+> > > -	kmem_cache_destroy(bio_post_read_ctx_cache);
+> > > -fail:
+> > > -	return -ENOMEM;
+> > > -}
+> > > -
+> > > -void ext4_exit_post_read_processing(void)
+> > > -{
+> > > -	mempool_destroy(bio_post_read_ctx_pool);
+> > > -	kmem_cache_destroy(bio_post_read_ctx_cache);
+> > > -}
+> > > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> > > index 4ae6f5849caa..aba724f82cc3 100644
+> > > --- a/fs/ext4/super.c
+> > > +++ b/fs/ext4/super.c
+> > > @@ -6101,10 +6101,6 @@ static int __init ext4_init_fs(void)
+> > >  		return err;
+> > >  
+> > >  	err = ext4_init_pending();
+> > > -	if (err)
+> > > -		goto out7;
+> > > -
+> > > -	err = ext4_init_post_read_processing();
+> > >  	if (err)
+> > >  		goto out6;
+> > >  
+> > > @@ -6146,10 +6142,8 @@ static int __init ext4_init_fs(void)
+> > >  out4:
+> > >  	ext4_exit_pageio();
+> > >  out5:
+> > > -	ext4_exit_post_read_processing();
+> > > -out6:
+> > >  	ext4_exit_pending();
+> > > -out7:
+> > > +out6:
+> > >  	ext4_exit_es();
+> > >  
+> > >  	return err;
+> > > @@ -6166,7 +6160,6 @@ static void __exit ext4_exit_fs(void)
+> > >  	ext4_exit_sysfs();
+> > >  	ext4_exit_system_zone();
+> > >  	ext4_exit_pageio();
+> > > -	ext4_exit_post_read_processing();
+> > >  	ext4_exit_es();
+> > >  	ext4_exit_pending();
+> > >  }
+> > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > > index 038b958d0fa9..2f62244f6d24 100644
+> > > --- a/fs/f2fs/data.c
+> > > +++ b/fs/f2fs/data.c
+> > > @@ -18,6 +18,7 @@
+> > >  #include <linux/uio.h>
+> > >  #include <linux/cleancache.h>
+> > >  #include <linux/sched/signal.h>
+> > > +#include <linux/post_read_process.h>
+> > >  
+> > >  #include "f2fs.h"
+> > >  #include "node.h"
+> > > @@ -25,11 +26,6 @@
+> > >  #include "trace.h"
+> > >  #include <trace/events/f2fs.h>
+> > >  
+> > > -#define NUM_PREALLOC_POST_READ_CTXS	128
+> > > -
+> > > -static struct kmem_cache *bio_post_read_ctx_cache;
+> > > -static mempool_t *bio_post_read_ctx_pool;
+> > > -
+> > >  static bool __is_cp_guaranteed(struct page *page)
+> > >  {
+> > >  	struct address_space *mapping = page->mapping;
+> > > @@ -69,20 +65,6 @@ static enum count_type __read_io_type(struct page *page)
+> > >  	return F2FS_RD_DATA;
+> > >  }
+> > >  
+> > > -/* postprocessing steps for read bios */
+> > > -enum bio_post_read_step {
+> > > -	STEP_INITIAL = 0,
+> > > -	STEP_DECRYPT,
+> > > -	STEP_VERITY,
+> > 
+> > Could you let filesystems handle this separately?
+> > Since we're going to add one more postprocessing, compression, which is not
+> > in ext4.
+> > 
+> 
+> Hi Jaegeuk Kim,
+> 
+> For compression, I think it would be good to follow the pattern set by
+> Encryption and Verity features i.e. The inodes associated with compressed
+> files should have S_COMPRESSED flag set and this information can later be used
+> inside "post read processing" code to enable STEP_DECOMPRESS. During endio
+> execution, we then invoke a function to perform the decompression.
 
-I'm currently unavailable to recompile the kernel and use the new
-layout scheme but I ran the new fsck and attempted to mount it on the
-older kernel.
+Thanks, yes, we have that implementation.
 
-The used fsck-tools is at f50234c248532528b217efff5861b29fe6ec1b36
-("f2fs-tools: Fix device zoned model detection").
-fsck still behaves weird, I believe.
+> 
+> Since Ext4 does not have the compression feature, the code corresponding to
+> STEP_DECOMPRESS will not be executed.
 
-The new logs are at
-http://arter97.com/f2fs/f50234c248532528b217efff5861b29fe6ec1b36
+The problem is the data sturcture for de-compression would not be general at
+all. In addition, do you think it makes sense to put the processing routine in
+fs/crypto?
 
-The first run spits out 600MB worth of log
-and the second run spits out 60MB worth of log
-and the third run fails to fix "other corrupted bugs".
-
-Runs after the third prints out the same log.
-
-When I try to mount the image after third run on the older kernel, it fails:
-[ 1710.824598] F2FS-fs (loop1): invalid crc value
-[ 1710.855240] F2FS-fs (loop1): SIT is corrupted node# 2174236 vs 2517451
-[ 1710.855243] F2FS-fs (loop1): Failed to initialize F2FS segment manager
-
-I'll report back after I compile and run the kernel with the new
-layout scheme, but I don't feel good about this after fsck printing
-that much logs, and the fact that the 2nd run still spits out a lot of
-logs.
-
-Thanks.
-
-On Mon, Apr 22, 2019 at 6:35 PM Chao Yu <yuchao0@huawei.com> wrote:
->
-> For large_nat_bitmap feature, there is a design flaw:
->
-> Previous:
->
-> struct f2fs_checkpoint layout:
-> +--------------------------+  0x0000
-> | checkpoint_ver           |
-> | ......                   |
-> | checksum_offset          |------+
-> | ......                   |      |
-> | sit_nat_version_bitmap[] |<-----|-------+
-> | ......                   |      |       |
-> | checksum_value           |<-----+       |
-> +--------------------------+  0x1000      |
-> |                          |      nat_bitmap + sit_bitmap
-> | payload blocks           |              |
-> |                          |              |
-> +--------------------------|<-------------+
->
-> Obviously, if nat_bitmap size + sit_bitmap size is larger than
-> MAX_BITMAP_SIZE_IN_CKPT, nat_bitmap or sit_bitmap may overlap
-> checkpoint checksum's position, once checkpoint() is triggered
-> from kernel, nat or sit bitmap will be damaged by checksum field.
->
-> In order to fix this, let's relocate checksum_value's position
-> to the head of sit_nat_version_bitmap as below, then nat/sit
-> bitmap and chksum value update will become safe.
->
-> After:
->
-> struct f2fs_checkpoint layout:
-> +--------------------------+  0x0000
-> | checkpoint_ver           |
-> | ......                   |
-> | checksum_offset          |------+
-> | ......                   |      |
-> | sit_nat_version_bitmap[] |<-----+
-> | ......                   |<-------------+
-> |                          |              |
-> +--------------------------+  0x1000      |
-> |                          |      nat_bitmap + sit_bitmap
-> | payload blocks           |              |
-> |                          |              |
-> +--------------------------|<-------------+
->
-> Related report and discussion:
->
-> https://sourceforge.net/p/linux-f2fs/mailman/message/36642346/
->
-> In addition, during writing checkpoint, if large_nat_bitmap feature is
-> enabled, we need to set CP_LARGE_NAT_BITMAP_FLAG flag in checkpoint.
->
-> Reported-by: Park Ju Hyung <qkrwngud825@gmail.com>
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fsck/f2fs.h        |  6 +++++-
->  fsck/fsck.c        | 16 ++++++++++++++++
->  fsck/fsck.h        |  1 +
->  fsck/main.c        |  2 ++
->  fsck/mount.c       | 42 +++++++++++++++++++++++++++---------------
->  include/f2fs_fs.h  |  9 +++++++--
->  mkfs/f2fs_format.c |  5 ++++-
->  7 files changed, 62 insertions(+), 19 deletions(-)
->
-> diff --git a/fsck/f2fs.h b/fsck/f2fs.h
-> index 93f01e5..6a6c4a5 100644
-> --- a/fsck/f2fs.h
-> +++ b/fsck/f2fs.h
-> @@ -272,7 +272,11 @@ static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
->         if (is_set_ckpt_flags(ckpt, CP_LARGE_NAT_BITMAP_FLAG)) {
->                 offset = (flag == SIT_BITMAP) ?
->                         le32_to_cpu(ckpt->nat_ver_bitmap_bytesize) : 0;
-> -               return &ckpt->sit_nat_version_bitmap + offset;
-> +               /*
-> +                * if large_nat_bitmap feature is enabled, leave checksum
-> +                * protection for all nat/sit bitmaps.
-> +                */
-> +               return &ckpt->sit_nat_version_bitmap + offset + sizeof(__le32);
->         }
->
->         if (le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_payload) > 0) {
-> diff --git a/fsck/fsck.c b/fsck/fsck.c
-> index 7ecdee1..8d7deb5 100644
-> --- a/fsck/fsck.c
-> +++ b/fsck/fsck.c
-> @@ -1917,6 +1917,18 @@ int fsck_chk_meta(struct f2fs_sb_info *sbi)
->         return 0;
->  }
->
-> +void fsck_chk_checkpoint(struct f2fs_sb_info *sbi)
-> +{
-> +       struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
-> +
-> +       if (get_cp(ckpt_flags) & CP_LARGE_NAT_BITMAP_FLAG) {
-> +               if (get_cp(checksum_offset) != CP_MIN_CHKSUM_OFFSET) {
-> +                       ASSERT_MSG("Deprecated layout of large_nat_bitmap, "
-> +                               "chksum_offset:%u", get_cp(checksum_offset));
-> +               }
-> +       }
-> +}
-> +
->  void fsck_init(struct f2fs_sb_info *sbi)
->  {
->         struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
-> @@ -2038,6 +2050,10 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
->                 flags |= CP_TRIMMED_FLAG;
->         if (is_set_ckpt_flags(cp, CP_DISABLED_FLAG))
->                 flags |= CP_DISABLED_FLAG;
-> +       if (is_set_ckpt_flags(cp, CP_LARGE_NAT_BITMAP_FLAG)) {
-> +               flags |= CP_LARGE_NAT_BITMAP_FLAG;
-> +               set_cp(checksum_offset, CP_MIN_CHKSUM_OFFSET);
-> +       }
->
->         if (flags & CP_UMOUNT_FLAG)
->                 cp_blocks = 8;
-> diff --git a/fsck/fsck.h b/fsck/fsck.h
-> index 376ced7..dd831de 100644
-> --- a/fsck/fsck.h
-> +++ b/fsck/fsck.h
-> @@ -154,6 +154,7 @@ extern int fsck_chk_dentry_blk(struct f2fs_sb_info *, u32, struct child_info *,
->                 int, int);
->  int fsck_chk_inline_dentries(struct f2fs_sb_info *, struct f2fs_node *,
->                 struct child_info *);
-> +void fsck_chk_checkpoint(struct f2fs_sb_info *sbi);
->  int fsck_chk_meta(struct f2fs_sb_info *sbi);
->  int fsck_chk_curseg_info(struct f2fs_sb_info *);
->  int convert_encrypted_name(unsigned char *, u32, unsigned char *, int);
-> diff --git a/fsck/main.c b/fsck/main.c
-> index d3f0c0d..e61bb91 100644
-> --- a/fsck/main.c
-> +++ b/fsck/main.c
-> @@ -616,6 +616,8 @@ static void do_fsck(struct f2fs_sb_info *sbi)
->                 c.fix_on = 1;
->         }
->
-> +       fsck_chk_checkpoint(sbi);
-> +
->         fsck_chk_quota_node(sbi);
->
->         /* Traverse all block recursively from root inode */
-> diff --git a/fsck/mount.c b/fsck/mount.c
-> index da1d4c9..843742e 100644
-> --- a/fsck/mount.c
-> +++ b/fsck/mount.c
-> @@ -769,15 +769,33 @@ int init_sb_info(struct f2fs_sb_info *sbi)
->         return 0;
->  }
->
-> +static int verify_checksum_chksum(struct f2fs_checkpoint *cp)
-> +{
-> +       unsigned int chksum_offset = get_cp(checksum_offset);
-> +       unsigned int crc, cal_crc;
-> +
-> +       if (chksum_offset < CP_MIN_CHKSUM_OFFSET ||
-> +                       chksum_offset > CP_CHKSUM_OFFSET) {
-> +               MSG(0, "\tInvalid CP CRC offset: %u\n", chksum_offset);
-> +               return -1;
-> +       }
-> +
-> +       crc = le32_to_cpu(*(__le32 *)((unsigned char *)cp + chksum_offset));
-> +       cal_crc = f2fs_checkpoint_chksum(cp);
-> +       if (cal_crc != crc) {
-> +               MSG(0, "\tInvalid CP CRC: offset:%u, crc:0x%x, calc:0x%x\n",
-> +                       chksum_offset, crc, cal_crc);
-> +               return -1;
-> +       }
-> +       return 0;
-> +}
-> +
->  void *validate_checkpoint(struct f2fs_sb_info *sbi, block_t cp_addr,
->                                 unsigned long long *version)
->  {
->         void *cp_page_1, *cp_page_2;
->         struct f2fs_checkpoint *cp;
-> -       unsigned long blk_size = sbi->blocksize;
->         unsigned long long cur_version = 0, pre_version = 0;
-> -       unsigned int crc = 0;
-> -       size_t crc_offset;
->
->         /* Read the 1st cp block in this CP pack */
->         cp_page_1 = malloc(PAGE_SIZE);
-> @@ -787,12 +805,7 @@ void *validate_checkpoint(struct f2fs_sb_info *sbi, block_t cp_addr,
->                 goto invalid_cp1;
->
->         cp = (struct f2fs_checkpoint *)cp_page_1;
-> -       crc_offset = get_cp(checksum_offset);
-> -       if (crc_offset > (blk_size - sizeof(__le32)))
-> -               goto invalid_cp1;
-> -
-> -       crc = le32_to_cpu(*(__le32 *)((unsigned char *)cp + crc_offset));
-> -       if (f2fs_crc_valid(crc, cp, crc_offset))
-> +       if (verify_checksum_chksum(cp))
->                 goto invalid_cp1;
->
->         if (get_cp(cp_pack_total_block_count) > sbi->blocks_per_seg)
-> @@ -810,12 +823,7 @@ void *validate_checkpoint(struct f2fs_sb_info *sbi, block_t cp_addr,
->                 goto invalid_cp2;
->
->         cp = (struct f2fs_checkpoint *)cp_page_2;
-> -       crc_offset = get_cp(checksum_offset);
-> -       if (crc_offset > (blk_size - sizeof(__le32)))
-> -               goto invalid_cp2;
-> -
-> -       crc = le32_to_cpu(*(__le32 *)((unsigned char *)cp + crc_offset));
-> -       if (f2fs_crc_valid(crc, cp, crc_offset))
-> +       if (verify_checksum_chksum(cp))
->                 goto invalid_cp2;
->
->         cur_version = get_cp(checkpoint_ver);
-> @@ -2365,6 +2373,10 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
->                 flags |= CP_TRIMMED_FLAG;
->         if (is_set_ckpt_flags(cp, CP_DISABLED_FLAG))
->                 flags |= CP_DISABLED_FLAG;
-> +       if (is_set_ckpt_flags(cp, CP_LARGE_NAT_BITMAP_FLAG)) {
-> +               flags |= CP_LARGE_NAT_BITMAP_FLAG;
-> +               set_cp(checksum_offset, CP_MIN_CHKSUM_OFFSET);
-> +       }
->
->         set_cp(free_segment_count, get_free_segments(sbi));
->         set_cp(valid_block_count, sbi->total_valid_block_count);
-> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-> index 1bd935c..89b8a0c 100644
-> --- a/include/f2fs_fs.h
-> +++ b/include/f2fs_fs.h
-> @@ -692,10 +692,15 @@ struct f2fs_checkpoint {
->         unsigned char sit_nat_version_bitmap[1];
->  } __attribute__((packed));
->
-> +#define CP_BITMAP_OFFSET       \
-> +       (offsetof(struct f2fs_checkpoint, sit_nat_version_bitmap))
-> +#define CP_MIN_CHKSUM_OFFSET   CP_BITMAP_OFFSET
-> +
-> +#define MIN_NAT_BITMAP_SIZE    64
->  #define MAX_SIT_BITMAP_SIZE_IN_CKPT    \
-> -       (CP_CHKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1 - 64)
-> +       (CP_CHKSUM_OFFSET - CP_BITMAP_OFFSET - MIN_NAT_BITMAP_SIZE)
->  #define MAX_BITMAP_SIZE_IN_CKPT        \
-> -       (CP_CHKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1)
-> +       (CP_CHKSUM_OFFSET - CP_BITMAP_OFFSET)
->
->  /*
->   * For orphan inode management
-> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-> index a534293..eabffce 100644
-> --- a/mkfs/f2fs_format.c
-> +++ b/mkfs/f2fs_format.c
-> @@ -706,7 +706,10 @@ static int f2fs_write_check_point_pack(void)
->         set_cp(nat_ver_bitmap_bytesize, ((get_sb(segment_count_nat) / 2) <<
->                          get_sb(log_blocks_per_seg)) / 8);
->
-> -       set_cp(checksum_offset, CP_CHKSUM_OFFSET);
-> +       if (c.large_nat_bitmap)
-> +               set_cp(checksum_offset, CP_MIN_CHKSUM_OFFSET);
-> +       else
-> +               set_cp(checksum_offset, CP_CHKSUM_OFFSET);
->
->         crc = f2fs_checkpoint_chksum(cp);
->         *((__le32 *)((unsigned char *)cp + get_cp(checksum_offset))) =
-> --
-> 2.18.0.rc1
->
->
->
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
+> IMHO, it would be impossible for "post read processing" code to implement the
+> state machine without knowing the complete list of possible states.
+> 
+> -- 
+> chandan
+> 
+> 
