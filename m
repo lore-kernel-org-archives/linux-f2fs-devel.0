@@ -1,56 +1,125 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 1/2] f2fs: fix to avoid potential negative .f_bfree
-Date: Fri, 26 Apr 2019 17:57:53 +0800
-Message-ID: <20190426095754.85784-1-yuchao0@huawei.com>
+From: Eric Biggers <ebiggers@kernel.org>
+Subject: [RFC PATCH 3/7] common/encrypt: support requiring other
+ encryption settings
+Date: Fri, 26 Apr 2019 13:41:49 -0700
+Message-ID: <20190426204153.101861-4-ebiggers@kernel.org>
+References: <20190426204153.101861-1-ebiggers@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, drosen@google.com, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <ebiggers@kernel.org>) id 1hK7j9-00041V-50
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Apr 2019 20:45:47 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1hK7j7-00Eo2a-Vn
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Apr 2019 20:45:47 +0000
+In-Reply-To: <20190426204153.101861-1-ebiggers@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: fstests@vger.kernel.org
+Cc: linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-When calculating .f_bfree value in f2fs_statfs(), sbi->unusable_block_count
-can be increased after the judgment condition, result in overflow of
-.f_bfree in later calculation. This patch fixes to use a temporary signed
-variable to save the calculation result of .f_bfree.
+From: Eric Biggers <ebiggers@google.com>
 
-	if (unlikely(buf->f_bfree <= sbi->unusable_block_count))
- 		buf->f_bfree = 0;
- 	else
-		buf->f_bfree -= sbi->unusable_block_count;
+Update _require_scratch_encryption() to support checking for kernel
+support for contents and filenames encryption modes besides the default.
+This will be used by some of the ciphertext verification tests.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/super.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ common/encrypt | 58 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 2376bb01b5c4..fcc9793dbc2c 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1216,6 +1216,7 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	u64 id = huge_encode_dev(sb->s_bdev->bd_dev);
- 	block_t total_count, user_block_count, start_count;
- 	u64 avail_node_count;
-+	long long bfree;
+diff --git a/common/encrypt b/common/encrypt
+index 54d873fa..37f16b94 100644
+--- a/common/encrypt
++++ b/common/encrypt
+@@ -4,6 +4,15 @@
+ #
+ # Functions for setting up and testing file encryption
  
- 	total_count = le64_to_cpu(sbi->raw_super->block_count);
- 	user_block_count = sbi->user_block_count;
-@@ -1226,10 +1227,12 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	buf->f_blocks = total_count - start_count;
- 	buf->f_bfree = user_block_count - valid_user_blocks(sbi) -
- 						sbi->current_reserved_blocks;
--	if (unlikely(buf->f_bfree <= sbi->unusable_block_count))
++#
++# _require_scratch_encryption [-c CONTENTS_MODE] [-n FILENAMES_MODE]
++#
++# Require encryption support on the scratch device.
++#
++# This checks for support for the default type of encryption policy (AES-256-XTS
++# and AES-256-CTS).  Options can be specified to also require support for a
++# different type of encryption policy.
++#
+ _require_scratch_encryption()
+ {
+ 	_require_scratch
+@@ -44,9 +53,58 @@ _require_scratch_encryption()
+ 		_notrun "kernel does not support $FSTYP encryption"
+ 	fi
+ 	rmdir $SCRATCH_MNT/tmpdir
 +
-+	bfree = buf->f_bfree - sbi->unusable_block_count;
-+	if (unlikely(bfree < 0))
- 		buf->f_bfree = 0;
- 	else
--		buf->f_bfree -= sbi->unusable_block_count;
-+		buf->f_bfree = bfree;
++	# If required, check for support for the specific type of encryption
++	# policy required by the test.
++	if [ $# -ne 0 ]; then
++		_require_encryption_policy_support $SCRATCH_MNT "$@"
++	fi
++
+ 	_scratch_unmount
+ }
  
- 	if (buf->f_bfree > F2FS_OPTION(sbi).root_reserved_blocks)
- 		buf->f_bavail = buf->f_bfree -
++_require_encryption_policy_support()
++{
++	local mnt=$1
++	local dir=$mnt/tmpdir
++	local set_encpolicy_args=""
++	local c
++
++	OPTIND=2
++	while getopts "c:n:" c; do
++		case $c in
++		c|n)
++			set_encpolicy_args+=" -$c $OPTARG"
++			;;
++		*)
++			_fail "Unrecognized option '$c'"
++			;;
++		esac
++	done
++	set_encpolicy_args=${set_encpolicy_args# }
++
++	echo "Checking whether kernel supports encryption policy: $set_encpolicy_args" \
++		>> $seqres.full
++
++	mkdir $dir
++	_require_command "$KEYCTL_PROG" keyctl
++	_new_session_keyring
++	local keydesc=$(_generate_encryption_key)
++	if _set_encpolicy $dir $keydesc $set_encpolicy_args \
++		2>&1 >>$seqres.full | egrep -q 'Invalid argument'; then
++		_notrun "kernel does not support encryption policy: '$set_encpolicy_args'"
++	fi
++	# fscrypt allows setting policies with modes it knows about, even
++	# without kernel crypto API support.  E.g. a policy using Adiantum
++	# encryption can be set on a kernel without CONFIG_CRYPTO_ADIANTUM.
++	# But actually trying to use such an encrypted directory will fail.
++	if ! touch $dir/file; then
++		_notrun "encryption policy '$set_encpolicy_args' is unusable; probably missing kernel crypto API support"
++	fi
++	$KEYCTL_PROG clear @s
++	rm -r $dir
++}
++
+ _scratch_mkfs_encrypted()
+ {
+ 	case $FSTYP in
 -- 
-2.18.0.rc1
+2.21.0.593.g511ec345e18-goog
