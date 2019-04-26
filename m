@@ -1,257 +1,114 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH UNTESTED 1/2] mkfs.f2fs: write fill chunk in
- sparse file for zeroed block
-Date: Thu, 25 Apr 2019 20:50:09 +0800
-Message-ID: <20190425125010.5105-1-yuchao0@huawei.com>
+Subject: [PATCH v2 2/2] f2fs: relocate chksum_offset for large_nat_bitmap feature
+Date: Fri, 26 Apr 2019 10:25:54 +0800
+Message-ID: <20190426022554.56393-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hJdpY-000054-Jk
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Apr 2019 12:50:24 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hJdpV-00Cvf4-Tu
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Apr 2019 12:50:24 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: jaegeuk@kernel.org, zhaowuyun@wingtech.com
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-As zhaowuyun reported:
+For large_nat_bitmap feature, there is a design flaw:
 
-we met one problem of f2fs, and found one issue of make_f2fs, so I write
-this email to search for your help to confirm this issue.
+Previous:
 
-The issue was found on one of Android projects. We use f2fs as the filesystem
-of userdata, and make sparse userdata.img using following command, which
-invoked in script mkf2fsuserimg.sh
-make_f2fs -S $SIZE -f -O encrypt -O quota -O verity $MKFS_OPTS $OUTPUT_FILE
+struct f2fs_checkpoint layout:
++--------------------------+  0x0000
+| checkpoint_ver           |
+| ......                   |
+| checksum_offset          |------+
+| ......                   |      |
+| sit_nat_version_bitmap[] |<-----|-------+
+| ......                   |      |       |
+| checksum_value           |<-----+       |
++--------------------------+  0x1000      |
+|                          |      nat_bitmap + sit_bitmap
+| payload blocks           |              |
+|                          |              |
++--------------------------|<-------------+
 
-use fastboot to flash this userdata.img to device, and it encountered f2fs
-problem and leading to the mount fail of data partition.
+Obviously, if nat_bitmap size + sit_bitmap size is larger than
+MAX_BITMAP_SIZE_IN_CKPT, nat_bitmap or sit_bitmap may overlap
+checkpoint checksum's position, once checkpoint() is triggered
+from kernel, nat or sit bitmap will be damaged by checksum field.
 
-we can make this issue 100% persent reproduced by making the data partition
-dirty before flashing userdata.img.
+In order to fix this, let's relocate checksum_value's position
+to the head of sit_nat_version_bitmap as below, then nat/sit
+bitmap and chksum value update will become safe.
 
-suspect that issue is caused by the dirty data in the data partition.
-so we checked that source code of make_f2fs in f2fs-tool, found that when
-making f2fs, it use dev_fill to do some process:
+After:
 
-...
+struct f2fs_checkpoint layout:
++--------------------------+  0x0000
+| checkpoint_ver           |
+| ......                   |
+| checksum_offset          |------+
+| ......                   |      |
+| sit_nat_version_bitmap[] |<-----+
+| ......                   |<-------------+
+|                          |              |
++--------------------------+  0x1000      |
+|                          |      nat_bitmap + sit_bitmap
+| payload blocks           |              |
+|                          |              |
++--------------------------|<-------------+
 
-we change code to the following, and the issue is gone.
+Related report and discussion:
 
-if (c.sparse_mode)
-       return dev_write(buf, offset, len);
+https://sourceforge.net/p/linux-f2fs/mailman/message/36642346/
 
-Chao Yu:
->
-> After checking the codes, IIUC, I guess the problem here is, unlike
-> img2simg, mkfs.f2fs won't record zeroed block in sparse image, so
-> during transforming to normal image, some critical region like
-> NAT/SIT/CP.payload area weren't be zeroed correctly, later kernel may
-> load obsoleting data from those region.
->
-> Also, The way you provide will obviously increase the size of sparse
-> file, since with it we need to write all zeroed blocks of
-> NAT/SIT/CP.payload to sparse file, it's not needed.
->
-> Not sure, maybe we should use sparse_file_add_fill() to record zeroed
-> blocks, so that this will make formatted image more like img2simged one.
-
-Jaegeuk:
-> We have to call sparse_file_add_fill() for dev_fill().
-
-This patch fixes to support writing fill chunk sparse file for those
-zeroed blocks in mkfs.f2fs.
-
-Reported-by: zhaowuyun <zhaowuyun@wingtech.com>
+Reported-by: Park Ju Hyung <qkrwngud825@gmail.com>
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- lib/libf2fs_io.c | 86 +++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 71 insertions(+), 15 deletions(-)
+v2:
+- improve hint message suggested by Ju Hyung.
+- move verification to f2fs_sanity_check_ckpt().
+ fs/f2fs/f2fs.h  |  4 +++-
+ fs/f2fs/super.c | 13 +++++++++++++
+ 2 files changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
-index f848510..bab0a0d 100644
---- a/lib/libf2fs_io.c
-+++ b/lib/libf2fs_io.c
-@@ -36,6 +36,7 @@ struct f2fs_configuration c;
- struct sparse_file *f2fs_sparse_file;
- static char **blocks;
- u_int64_t blocks_count;
-+static char *zeroed_block;
- #endif
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 119bc5a9783e..aa71c1aa9eaa 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1909,9 +1909,11 @@ static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
+ 	int offset;
  
- static int __get_device_fd(__u64 *offset)
-@@ -103,6 +104,8 @@ static int sparse_write_blk(__u64 block, int count, const void *buf)
- 
- 	for (i = 0; i < count; ++i) {
- 		cur_block = block + i;
-+		if (blocks[cur_block] == zeroed_block)
-+			blocks[cur_block] = NULL;
- 		if (!blocks[cur_block]) {
- 			blocks[cur_block] = calloc(1, F2FS_BLKSIZE);
- 			if (!blocks[cur_block])
-@@ -114,6 +117,22 @@ static int sparse_write_blk(__u64 block, int count, const void *buf)
- 	return 0;
- }
- 
-+static int sparse_write_zeroed_blk(__u64 block, int count)
-+{
-+	int i;
-+	__u64 cur_block;
+ 	if (is_set_ckpt_flags(sbi, CP_LARGE_NAT_BITMAP_FLAG)) {
++		unsigned int chksum_size = sizeof(__le32);
 +
-+	for (i = 0; i < count; ++i) {
-+		cur_block = block + i;
-+		if (blocks[cur_block] == zeroed_block)
-+			continue;
-+		else if (blocks[cur_block])
-+			return -EEXIST;
-+		blocks[cur_block] = zeroed_block;
-+	}
-+	return 0;
-+}
-+
- #ifdef SPARSE_CALLBACK_USES_SIZE_T
- static int sparse_import_segment(void *UNUSED(priv), const void *data,
- 		size_t len, unsigned int block, unsigned int nr_blocks)
-@@ -129,11 +148,17 @@ static int sparse_import_segment(void *UNUSED(priv), const void *data, int len,
- 	return sparse_write_blk(block, nr_blocks, data);
- }
- 
--static int sparse_merge_blocks(uint64_t start, uint64_t num)
-+static int sparse_merge_blocks(uint64_t start, uint64_t num, int zero)
- {
- 	char *buf;
- 	uint64_t i;
- 
-+	if (zero) {
-+		blocks[start] = NULL;
-+		return sparse_file_add_fill(f2fs_sparse_file, 0x0,
-+					F2FS_BLKSIZE * num, start);
-+	}
-+
- 	buf = calloc(num, F2FS_BLKSIZE);
- 	if (!buf) {
- 		fprintf(stderr, "failed to alloc %llu\n",
-@@ -156,6 +181,7 @@ static int sparse_merge_blocks(uint64_t start, uint64_t num)
- #else
- static int sparse_read_blk(__u64 block, int count, void *buf) { return 0; }
- static int sparse_write_blk(__u64 block, int count, const void *buf) { return 0; }
-+static int sparse_write_zeroed_blk(__u64 block, int count) { return 0; }
- #endif
- 
- int dev_read(void *buf, __u64 offset, size_t len)
-@@ -235,7 +261,8 @@ int dev_fill(void *buf, __u64 offset, size_t len)
- 	int fd;
- 
- 	if (c.sparse_mode)
--		return 0;
-+		return sparse_write_zeroed_blk(offset / F2FS_BLKSIZE,
-+						len / F2FS_BLKSIZE);
- 
- 	fd = __get_device_fd(&offset);
- 	if (fd < 0)
-@@ -307,6 +334,12 @@ int f2fs_init_sparse_file(void)
- 		return -1;
+ 		offset = (flag == SIT_BITMAP) ?
+ 			le32_to_cpu(ckpt->nat_ver_bitmap_bytesize) : 0;
+-		return &ckpt->sit_nat_version_bitmap + offset;
++		return &ckpt->sit_nat_version_bitmap + offset + chksum_size;
  	}
  
-+	zeroed_block = calloc(1, F2FS_BLKSIZE);
-+	if (!zeroed_block) {
-+		MSG(0, "\tError: Calloc Failed for zeroed block!!!\n");
-+		return -1;
+ 	if (__cp_payload(sbi) > 0) {
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index fefc8cc6e756..22241bb866df 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2714,6 +2714,19 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 		return 1;
+ 	}
+ 
++	if (__is_set_ckpt_flags(ckpt, CP_LARGE_NAT_BITMAP_FLAG)) {
++		unsigned int chksum_offset;
++
++		chksum_offset = le32_to_cpu(ckpt->checksum_offset);
++		if (chksum_offset != CP_MIN_CHKSUM_OFFSET) {
++			f2fs_msg(sbi->sb, KERN_WARNING,
++				"using deprecated layout of large_nat_bitmap, "
++				"please run fsck v1.13.0 or higher to repair, "
++				"chksum_offset: %u", chksum_offset);
++			return 1;
++		}
 +	}
 +
- 	return sparse_file_foreach_chunk(f2fs_sparse_file, true, false,
- 				sparse_import_segment, NULL);
- #else
-@@ -315,7 +348,8 @@ int f2fs_init_sparse_file(void)
- #endif
- }
- 
--#define MAX_CHUNK_SIZE (1 * 1024 * 1024 * 1024ULL)
-+#define MAX_CHUNK_SIZE		(1 * 1024 * 1024 * 1024ULL)
-+#define MAX_CHUNK_COUNT		(MAX_CHUNK_SIZE / F2FS_BLKSIZE)
- int f2fs_finalize_device(void)
- {
- 	int i;
-@@ -336,24 +370,44 @@ int f2fs_finalize_device(void)
- 		}
- 
- 		for (j = 0; j < blocks_count; ++j) {
--			if (!blocks[j] && chunk_start != -1) {
--				ret = sparse_merge_blocks(chunk_start,
--							j - chunk_start);
--				chunk_start = -1;
--			} else if (blocks[j] && chunk_start == -1) {
--				chunk_start = j;
--			} else if (blocks[j] && (chunk_start != -1) &&
--				 (j + 1 - chunk_start >=
--					(MAX_CHUNK_SIZE / F2FS_BLKSIZE))) {
-+			if (chunk_start != -1) {
-+				if (j - chunk_start >= MAX_CHUNK_COUNT) {
-+					ret = sparse_merge_blocks(chunk_start,
-+							j - chunk_start, 0);
-+					ASSERT(!ret);
-+					chunk_start = -1;
-+				}
-+			}
-+
-+			if (chunk_start == -1) {
-+				if (!blocks[j])
-+					continue;
-+
-+				if (blocks[j] == zeroed_block) {
-+					ret = sparse_merge_blocks(j, 1, 1);
-+					ASSERT(!ret);
-+				} else {
-+					chunk_start = j;
-+				}
-+			} else {
-+				if (blocks[j] && blocks[j] != zeroed_block)
-+					continue;
-+
- 				ret = sparse_merge_blocks(chunk_start,
--							  j + 1 - chunk_start);
-+						j - chunk_start, 0);
-+				ASSERT(!ret);
-+
-+				if (blocks[j] == zeroed_block) {
-+					ret = sparse_merge_blocks(j, 1, 1);
-+					ASSERT(!ret);
-+				}
-+
- 				chunk_start = -1;
- 			}
--			ASSERT(!ret);
- 		}
- 		if (chunk_start != -1) {
- 			ret = sparse_merge_blocks(chunk_start,
--						blocks_count - chunk_start);
-+						blocks_count - chunk_start, 0);
- 			ASSERT(!ret);
- 		}
- 
-@@ -365,6 +419,8 @@ int f2fs_finalize_device(void)
- 			free(blocks[j]);
- 		free(blocks);
- 		blocks = NULL;
-+		free(zeroed_block);
-+		zeroed_block = NULL;
- 		f2fs_sparse_file = NULL;
- 	}
- #endif
+ 	if (unlikely(f2fs_cp_error(sbi))) {
+ 		f2fs_msg(sbi->sb, KERN_ERR, "A bug case: need to run fsck");
+ 		return 1;
 -- 
 2.18.0.rc1
