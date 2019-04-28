@@ -1,37 +1,36 @@
 From: Chandan Rajendra <chandan@linux.ibm.com>
-Subject: [PATCH V2 04/13] fsverity: Add call back to determine
- readpage limit
-Date: Sun, 28 Apr 2019 10:01:12 +0530
-Message-ID: <20190428043121.30925-5-chandan@linux.ibm.com>
+Subject: [PATCH V2 05/13] fs/mpage.c: Integrate read callbacks
+Date: Sun, 28 Apr 2019 10:01:13 +0530
+Message-ID: <20190428043121.30925-6-chandan@linux.ibm.com>
 References: <20190428043121.30925-1-chandan@linux.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.ibm.com>) id 1hKbSw-0001j7-9Q
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 28 Apr 2019 04:31:02 +0000
+ (envelope-from <chandan@linux.ibm.com>) id 1hKbT0-0000BQ-Lh
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 28 Apr 2019 04:31:06 +0000
 Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
  helo=mx0a-001b2d01.pphosted.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hKbSu-00FhQT-BM
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 28 Apr 2019 04:31:02 +0000
+ id 1hKbSz-00HGZw-9q
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 28 Apr 2019 04:31:06 +0000
 Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
  by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
- x3S4TYWs055066
- for <linux-f2fs-devel@lists.sourceforge.net>; Sun, 28 Apr 2019 00:30:54 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
- by mx0a-001b2d01.pphosted.com with ESMTP id 2s54gjs0kp-1
+ x3S4TYPs055024
+ for <linux-f2fs-devel@lists.sourceforge.net>; Sun, 28 Apr 2019 00:30:59 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+ by mx0a-001b2d01.pphosted.com with ESMTP id 2s54gjs0nm-1
  (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>; Sun, 28 Apr 2019 00:30:54 -0400
+ for <linux-f2fs-devel@lists.sourceforge.net>; Sun, 28 Apr 2019 00:30:59 -0400
 Received: from localhost
- by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
+ by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
  Violators will be prosecuted
  for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.ibm.com>;
- Sun, 28 Apr 2019 05:30:53 +0100
+ Sun, 28 Apr 2019 05:30:58 +0100
 In-Reply-To: <20190428043121.30925-1-chandan@linux.ibm.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -45,66 +44,125 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org
 Cc: hch@infradead.org, tytso@mit.edu, ebiggers@kernel.org, Chandan Rajendra <chandan@linux.ibm.com>, adilger.kernel@dilger.ca, jaegeuk@kernel.org
 
-Ext4 and F2FS store verity metadata beyond i_size. This commit adds a
-call back pointer to "struct fsverity_operations" which helps in
-determining the the real file size limit upto which data can be read
-from the file.
+This commit adds code to make do_mpage_readpage() to be "read
+callbacks" aware i.e. for files requiring decryption/verification,
+do_mpage_readpage() now allocates a context structure and assigns the
+corresponding pointer to bio->bi_private. At endio time, a non-zero
+bio->bi_private indicates that after the read operation is performed, the
+bio's payload needs to be processed further before handing over the data
+to user space.
 
-This call back will be required in order to get do_mpage_readpage()
-to read files having verity metadata appended beyond i_size.
+The context structure is used for tracking the state machine associated
+with post read processing.
 
 Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
 ---
- fs/ext4/super.c          | 17 +++++++++++++++++
- include/linux/fsverity.h |  1 +
- 2 files changed, 18 insertions(+)
+ fs/mpage.c | 51 ++++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 48 insertions(+), 3 deletions(-)
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 63d73b360f1d..8e483afbaa2e 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1428,6 +1428,22 @@ static struct page *ext4_read_verity_metadata_page(struct inode *inode,
- 	return read_mapping_page(inode->i_mapping, index, NULL);
- }
+diff --git a/fs/mpage.c b/fs/mpage.c
+index 3f19da75178b..e342b859ee44 100644
+--- a/fs/mpage.c
++++ b/fs/mpage.c
+@@ -30,6 +30,10 @@
+ #include <linux/backing-dev.h>
+ #include <linux/pagevec.h>
+ #include <linux/cleancache.h>
++#include <linux/fsverity.h>
++#if defined(CONFIG_FS_ENCRYPTION) || defined(CONFIG_FS_VERITY)
++#include <linux/read_callbacks.h>
++#endif
+ #include "internal.h"
  
-+static loff_t ext4_readpage_limit(struct inode *inode)
-+{
-+	if (IS_VERITY(inode)) {
-+		if (inode->i_verity_info)
-+			/* limit to end of metadata region */
-+			return fsverity_full_i_size(inode);
-+		/*
-+		 * fsverity_info is currently being set up and no user reads are
-+		 * allowed yet.  It's easiest to just not enforce a limit yet.
-+		 */
-+		return inode->i_sb->s_maxbytes;
+ /*
+@@ -50,6 +54,20 @@ static void mpage_end_io(struct bio *bio)
+ 	int i;
+ 	struct bvec_iter_all iter_all;
+ 
++#if defined(CONFIG_FS_ENCRYPTION) || defined(CONFIG_FS_VERITY)
++	if (!bio->bi_status && bio->bi_private) {
++		struct read_callbacks_ctx *ctx;
++
++		ctx = bio->bi_private;
++
++		read_callbacks(ctx);
++		return;
 +	}
 +
-+	return i_size_read(inode);
-+}
++	if (bio->bi_private)
++		put_read_callbacks_ctx((struct read_callbacks_ctx *)(bio->bi_private));
++#endif
 +
- static bool ext4_verity_required(struct inode *inode, pgoff_t index)
- {
- 	return index < (i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT;
-@@ -1438,6 +1454,7 @@ static const struct fsverity_operations ext4_verityops = {
- 	.get_metadata_end	= ext4_get_verity_metadata_end,
- 	.read_metadata_page	= ext4_read_verity_metadata_page,
- 	.verity_required	= ext4_verity_required,
-+	.readpage_limit		= ext4_readpage_limit,
- };
- #endif /* CONFIG_FS_VERITY */
+ 	bio_for_each_segment_all(bv, bio, i, iter_all) {
+ 		struct page *page = bv->bv_page;
+ 		page_endio(page, bio_op(bio),
+@@ -189,7 +207,13 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
  
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index b83712d6c79a..fc8113acbbfe 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -19,6 +19,7 @@ struct fsverity_operations {
- 	int (*get_metadata_end)(struct inode *inode, loff_t *metadata_end_ret);
- 	struct page *(*read_metadata_page)(struct inode *inode, pgoff_t index);
- 	bool (*verity_required)(struct inode *inode, pgoff_t index);
-+	loff_t (*readpage_limit)(struct inode *inode);
- };
+ 	block_in_file = (sector_t)page->index << (PAGE_SHIFT - blkbits);
+ 	last_block = block_in_file + args->nr_pages * blocks_per_page;
+-	last_block_in_file = (i_size_read(inode) + blocksize - 1) >> blkbits;
++#ifdef CONFIG_FS_VERITY
++	if (IS_VERITY(inode) && inode->i_sb->s_vop->readpage_limit)
++		last_block_in_file = inode->i_sb->s_vop->readpage_limit(inode);
++	else
++#endif
++		last_block_in_file = (i_size_read(inode) + blocksize - 1)
++			>> blkbits;
+ 	if (last_block > last_block_in_file)
+ 		last_block = last_block_in_file;
+ 	page_block = 0;
+@@ -277,6 +301,14 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
+ 	if (first_hole != blocks_per_page) {
+ 		zero_user_segment(page, first_hole << blkbits, PAGE_SIZE);
+ 		if (first_hole == 0) {
++#ifdef CONFIG_FS_VERITY
++			if (IS_VERITY(inode)) {
++				if (!fsverity_check_hole(inode, page)) {
++					SetPageError(page);
++					goto confused;
++				}
++			}
++#endif
+ 			SetPageUptodate(page);
+ 			unlock_page(page);
+ 			goto out;
+@@ -299,7 +331,11 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
  
- #ifdef CONFIG_FS_VERITY
+ alloc_new:
+ 	if (args->bio == NULL) {
+-		if (first_hole == blocks_per_page) {
++#if defined(CONFIG_FS_ENCRYPTION) || defined(CONFIG_FS_VERITY)
++		struct read_callbacks_ctx *ctx;
++#endif
++		if (first_hole == blocks_per_page
++			&& !(IS_ENCRYPTED(inode) || IS_VERITY(inode))) {
+ 			if (!bdev_read_page(bdev, blocks[0] << (blkbits - 9),
+ 								page))
+ 				goto out;
+@@ -310,6 +346,15 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
+ 					gfp);
+ 		if (args->bio == NULL)
+ 			goto confused;
++
++#if defined(CONFIG_FS_ENCRYPTION) || defined(CONFIG_FS_VERITY)
++		ctx = get_read_callbacks_ctx(inode, args->bio, page->index);
++		if (IS_ERR(ctx)) {
++			bio_put(args->bio);
++			args->bio = NULL;
++			goto confused;
++		}
++#endif
+ 	}
+ 
+ 	length = first_hole << blkbits;
+@@ -331,7 +376,7 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
+ confused:
+ 	if (args->bio)
+ 		args->bio = mpage_bio_submit(REQ_OP_READ, op_flags, args->bio);
+-	if (!PageUptodate(page))
++	if (!PageUptodate(page) && !PageError(page))
+ 		block_read_full_page(page, args->get_block);
+ 	else
+ 		unlock_page(page);
 -- 
 2.19.1
