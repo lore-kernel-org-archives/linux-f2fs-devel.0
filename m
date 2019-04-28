@@ -1,38 +1,24 @@
-From: Chandan Rajendra <chandan@linux.ibm.com>
-Subject: [PATCH V2 11/13] ext4: Compute logical block and the
- page range to be encrypted
-Date: Sun, 28 Apr 2019 10:01:19 +0530
-Message-ID: <20190428043121.30925-12-chandan@linux.ibm.com>
-References: <20190428043121.30925-1-chandan@linux.ibm.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs-tools: improve xattr value printing
+Date: Sun, 28 Apr 2019 14:25:10 +0800
+Message-ID: <242d8b26-592b-57da-bd1f-3466bf714803@huawei.com>
+References: <20190424175730.70979-1-ebiggers@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.ibm.com>) id 1hKbUf-00024s-7W
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 28 Apr 2019 04:32:49 +0000
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
- helo=mx0a-001b2d01.pphosted.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1hKdFh-0004m3-RE
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 28 Apr 2019 06:25:29 +0000
+Received: from szxga01-in.huawei.com ([45.249.212.187] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hKbUd-00HGeh-Oa
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 28 Apr 2019 04:32:49 +0000
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
- by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
- x3S4T9rc045309
- for <linux-f2fs-devel@lists.sourceforge.net>; Sun, 28 Apr 2019 00:32:41 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
- by mx0b-001b2d01.pphosted.com with ESMTP id 2s54f4h1gv-1
- (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>; Sun, 28 Apr 2019 00:32:41 -0400
-Received: from localhost
- by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
- Violators will be prosecuted
- for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.ibm.com>;
- Sun, 28 Apr 2019 05:32:41 +0100
-In-Reply-To: <20190428043121.30925-1-chandan@linux.ibm.com>
+ id 1hKdFf-00GF2m-Hn
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 28 Apr 2019 06:25:29 +0000
+In-Reply-To: <20190424175730.70979-1-ebiggers@kernel.org>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -42,47 +28,28 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org
-Cc: hch@infradead.org, tytso@mit.edu, ebiggers@kernel.org, Chandan Rajendra <chandan@linux.ibm.com>, adilger.kernel@dilger.ca, jaegeuk@kernel.org
+To: Eric Biggers <ebiggers@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-For subpage-sized blocks, the initial logical block number mapped by a
-page can be different from page->index. Hence this commit adds code to
-compute the first logical block mapped by the page and also the page
-range to be encrypted.
+On 2019/4/25 1:57, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> - Print the values of xattrs that have an unknown ->e_name_index, rather
+>   than ignoring them.
+> 
+> - Replace char with u8.  Otherwise xattr values containing bytes >= 0x80
+>   are printed incorrectly on platforms where char is signed.
+> 
+> - Only parse the encryption xattr if it has a known format number and
+>   size.  Otherwise print it as hex.
+> 
+> - Remove incorrect le16_to_cpu() on ->e_name_len which has type u8.
+> 
+> - Consolidate the code that prints the xattr value as hex.
+> 
+> - Constify pointers to the xattr entry.
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
----
- fs/ext4/page-io.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-index 3e9298e6a705..75485ee9e800 100644
---- a/fs/ext4/page-io.c
-+++ b/fs/ext4/page-io.c
-@@ -418,6 +418,7 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
- {
- 	struct page *data_page = NULL;
- 	struct inode *inode = page->mapping->host;
-+	u64 page_blk;
- 	unsigned block_start;
- 	struct buffer_head *bh, *head;
- 	int ret = 0;
-@@ -478,10 +479,14 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
- 
- 	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode) && nr_to_submit) {
- 		gfp_t gfp_flags = GFP_NOFS;
-+		unsigned int page_bytes;
-+
-+		page_bytes = round_up(len, i_blocksize(inode));
-+		page_blk = page->index << (PAGE_SHIFT - inode->i_blkbits);
- 
- 	retry_encrypt:
--		data_page = fscrypt_encrypt_page(inode, page, PAGE_SIZE, 0,
--						page->index, gfp_flags);
-+		data_page = fscrypt_encrypt_page(inode, page, page_bytes, 0,
-+						page_blk, gfp_flags);
- 		if (IS_ERR(data_page)) {
- 			ret = PTR_ERR(data_page);
- 			if (ret == -ENOMEM && wbc->sync_mode == WB_SYNC_ALL) {
--- 
-2.19.1
+Thanks,
