@@ -1,75 +1,63 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: fix to do sanity with enabled features in image
-Date: Sun, 28 Apr 2019 06:38:02 -0700
-Message-ID: <20190428133802.GB37346@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190424094850.118323-1-yuchao0@huawei.com>
+Subject: Re: [PATCH 1/2] f2fs: fix to avoid potential negative .f_bfree
+Date: Sun, 28 Apr 2019 06:47:22 -0700
+Message-ID: <20190428134722.GC37346@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190426095754.85784-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190424094850.118323-1-yuchao0@huawei.com>
+In-Reply-To: <20190426095754.85784-1-yuchao0@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, drosen@google.com
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 04/24, Chao Yu wrote:
-> This patch fixes to do sanity with enabled features in image, if
-> there are features kernel can not recognize, just fail the mount.
+On 04/26, Chao Yu wrote:
+> When calculating .f_bfree value in f2fs_statfs(), sbi->unusable_block_count
+> can be increased after the judgment condition, result in overflow of
+> .f_bfree in later calculation. This patch fixes to use a temporary signed
+> variable to save the calculation result of .f_bfree.
+> 
+> 	if (unlikely(buf->f_bfree <= sbi->unusable_block_count))
+>  		buf->f_bfree = 0;
+>  	else
+> 		buf->f_bfree -= sbi->unusable_block_count;
 
-We need to figure out per-feature-based rejection, since some of them can
-be set without layout change.
+Do we just need stat_lock for this?
 
 > 
 > Signed-off-by: Chao Yu <yuchao0@huawei.com>
 > ---
->  fs/f2fs/f2fs.h  | 13 +++++++++++++
->  fs/f2fs/super.c |  9 +++++++++
->  2 files changed, 22 insertions(+)
+>  fs/f2fs/super.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 > 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index f5ffc09705eb..15b640967e12 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -151,6 +151,19 @@ struct f2fs_mount_info {
->  #define F2FS_FEATURE_VERITY		0x0400	/* reserved */
->  #define F2FS_FEATURE_SB_CHKSUM		0x0800
->  
-> +#define F2FS_ALL_FEATURES	(F2FS_FEATURE_ENCRYPT |			\
-> +				F2FS_FEATURE_BLKZONED |			\
-> +				F2FS_FEATURE_ATOMIC_WRITE |		\
-> +				F2FS_FEATURE_EXTRA_ATTR |		\
-> +				F2FS_FEATURE_PRJQUOTA |			\
-> +				F2FS_FEATURE_INODE_CHKSUM |		\
-> +				F2FS_FEATURE_FLEXIBLE_INLINE_XATTR |	\
-> +				F2FS_FEATURE_QUOTA_INO |		\
-> +				F2FS_FEATURE_INODE_CRTIME |		\
-> +				F2FS_FEATURE_LOST_FOUND |		\
-> +				F2FS_FEATURE_VERITY |			\
-> +				F2FS_FEATURE_SB_CHKSUM)
-> +
->  #define __F2FS_HAS_FEATURE(raw_super, mask)				\
->  	((raw_super->feature & cpu_to_le32(mask)) != 0)
->  #define F2FS_HAS_FEATURE(sbi, mask)	__F2FS_HAS_FEATURE(sbi->raw_super, mask)
 > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 4f8e9ab48b26..57f2fc6d14ba 100644
+> index 2376bb01b5c4..fcc9793dbc2c 100644
 > --- a/fs/f2fs/super.c
 > +++ b/fs/f2fs/super.c
-> @@ -2573,6 +2573,15 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
->  		return 1;
->  	}
+> @@ -1216,6 +1216,7 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
+>  	u64 id = huge_encode_dev(sb->s_bdev->bd_dev);
+>  	block_t total_count, user_block_count, start_count;
+>  	u64 avail_node_count;
+> +	long long bfree;
 >  
-> +	/* check whether kernel supports all features */
-> +	if (le32_to_cpu(raw_super->feature) & (~F2FS_ALL_FEATURES)) {
-> +		f2fs_msg(sb, KERN_INFO,
-> +			"Unsupported feature:%u: supported:%u",
-> +			le32_to_cpu(raw_super->feature),
-> +			F2FS_ALL_FEATURES);
-> +		return 1;
-> +	}
+>  	total_count = le64_to_cpu(sbi->raw_super->block_count);
+>  	user_block_count = sbi->user_block_count;
+> @@ -1226,10 +1227,12 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
+>  	buf->f_blocks = total_count - start_count;
+>  	buf->f_bfree = user_block_count - valid_user_blocks(sbi) -
+>  						sbi->current_reserved_blocks;
+> -	if (unlikely(buf->f_bfree <= sbi->unusable_block_count))
 > +
->  	/* check CP/SIT/NAT/SSA/MAIN_AREA area boundary */
->  	if (sanity_check_area_boundary(sbi, bh))
->  		return 1;
+> +	bfree = buf->f_bfree - sbi->unusable_block_count;
+> +	if (unlikely(bfree < 0))
+>  		buf->f_bfree = 0;
+>  	else
+> -		buf->f_bfree -= sbi->unusable_block_count;
+> +		buf->f_bfree = bfree;
+>  
+>  	if (buf->f_bfree > F2FS_OPTION(sbi).root_reserved_blocks)
+>  		buf->f_bavail = buf->f_bfree -
 > -- 
 > 2.18.0.rc1
