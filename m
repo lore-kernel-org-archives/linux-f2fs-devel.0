@@ -1,72 +1,52 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH 1/2] f2fs: fix to avoid potential negative .f_bfree
-Date: Mon, 29 Apr 2019 22:13:55 +0800
-Message-ID: <f8b890b8-22a3-bead-7df5-6ab87deb56e9@kernel.org>
-References: <20190426095754.85784-1-yuchao0@huawei.com>
- <20190428134722.GC37346@jaegeuk-macbookpro.roam.corp.google.com>
+From: Ju Hyung Park <qkrwngud825@gmail.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to do sanity with enabled features
+ in image
+Date: Tue, 30 Apr 2019 05:54:02 +0900
+Message-ID: <CAD14+f2nDurQ2mTp-temk92zhWQkKNaBA8CwpWJhOZEmzLw=VA@mail.gmail.com>
+References: <20190424094850.118323-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190428134722.GC37346@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
+In-Reply-To: <20190424094850.118323-1-yuchao0@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, drosen@google.com
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2019-4-28 21:47, Jaegeuk Kim wrote:
-> On 04/26, Chao Yu wrote:
->> When calculating .f_bfree value in f2fs_statfs(), sbi->unusable_block_count
->> can be increased after the judgment condition, result in overflow of
->> .f_bfree in later calculation. This patch fixes to use a temporary signed
->> variable to save the calculation result of .f_bfree.
->>
->> 	if (unlikely(buf->f_bfree <= sbi->unusable_block_count))
->>  		buf->f_bfree = 0;
->>  	else
->> 		buf->f_bfree -= sbi->unusable_block_count;
-> 
-> Do we just need stat_lock for this?
+Hi Chao and Jaegeuk,
 
-Like we access other stat value in statfs(), we just need the instantaneous
-value of .unusable_block_count, so we don't need additional stat_lock, right?
+On Wed, Apr 24, 2019 at 6:49 PM Chao Yu <yuchao0@huawei.com> wrote:
+>
+> This patch fixes to do sanity with enabled features in image, if
+> there are features kernel can not recognize, just fail the mount.
+>
 
-Thanks,
+Surprised to see that this wasn't implemented yet.
+I was actually about to suggest this method to prevent mounting of the
+new extended bitmap layout images altogether for older kernels(by
+renaming the new, fixed layout to v2 or something), but looks like
+that isn't an option. :(
 
-> 
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/super.c | 7 +++++--
->>  1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index 2376bb01b5c4..fcc9793dbc2c 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -1216,6 +1216,7 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
->>  	u64 id = huge_encode_dev(sb->s_bdev->bd_dev);
->>  	block_t total_count, user_block_count, start_count;
->>  	u64 avail_node_count;
->> +	long long bfree;
->>  
->>  	total_count = le64_to_cpu(sbi->raw_super->block_count);
->>  	user_block_count = sbi->user_block_count;
->> @@ -1226,10 +1227,12 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
->>  	buf->f_blocks = total_count - start_count;
->>  	buf->f_bfree = user_block_count - valid_user_blocks(sbi) -
->>  						sbi->current_reserved_blocks;
->> -	if (unlikely(buf->f_bfree <= sbi->unusable_block_count))
->> +
->> +	bfree = buf->f_bfree - sbi->unusable_block_count;
->> +	if (unlikely(bfree < 0))
->>  		buf->f_bfree = 0;
->>  	else
->> -		buf->f_bfree -= sbi->unusable_block_count;
->> +		buf->f_bfree = bfree;
->>  
->>  	if (buf->f_bfree > F2FS_OPTION(sbi).root_reserved_blocks)
->>  		buf->f_bavail = buf->f_bfree -
->> -- 
->> 2.18.0.rc1
+Also, something similar should be also done with fsck, if not already.
+The results from using older fsck with images with newer features
+would be disastrous.
+
+I'm still very busy currently with my other projects.
+Sorry for the delays in testing new patchsets for layout fixes.
+
+And I apologize in advance in case I miss the Linux 5.2 merge window
+deadline, but I'd like to see it being fixed properly before shipping
+those patches to production.
+
+> +       /* check whether kernel supports all features */
+> +       if (le32_to_cpu(raw_super->feature) & (~F2FS_ALL_FEATURES)) {
+> +               f2fs_msg(sb, KERN_INFO,
+> +                       "Unsupported feature:%u: supported:%u",
+> +                       le32_to_cpu(raw_super->feature),
+> +                       F2FS_ALL_FEATURES);
+> +               return 1;
+> +       }
+
+This should probably be a KERN_ERR instead of KERN_INFO.
+
+Thanks.
