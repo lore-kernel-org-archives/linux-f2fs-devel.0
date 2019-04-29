@@ -1,231 +1,318 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [BUG] watchdog: BUG: soft lockup.. after heavy disk
- access
-Date: Mon, 29 Apr 2019 15:36:40 +0800
-Message-ID: <6fe67889-ba44-5102-7909-4f08448b13fd@huawei.com>
-References: <CADoWrG9nn0NZnEJRGKscWTUx02HOR_BqMAfqNHvdhNdTHdU5NQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] f2fs: introduce DATA_GENERIC_ENHANCE
+Date: Mon, 29 Apr 2019 17:03:33 +0800
+Message-ID: <526c237f-1b26-1d04-be80-ca1c60365cd5@huawei.com>
+References: <20190415072632.2158-1-yuchao0@huawei.com>
+ <20190415072632.2158-2-yuchao0@huawei.com>
+ <20190424093613.GA45953@jaegeuk-macbookpro.roam.corp.google.com>
+ <2a519411-b9bb-f153-c8b9-8eaca1f66837@kernel.org>
+ <20190428133115.GA37346@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hL0qa-00082M-37
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 29 Apr 2019 07:37:08 +0000
-Received: from szxga03-in.huawei.com ([45.249.212.189] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hL0qX-00GigE-DJ
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 29 Apr 2019 07:37:08 +0000
-Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.57])
- by Forcepoint Email with ESMTP id 3C99840D830F746FD235
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 29 Apr 2019 15:36:57 +0800 (CST)
-In-Reply-To: <CADoWrG9nn0NZnEJRGKscWTUx02HOR_BqMAfqNHvdhNdTHdU5NQ@mail.gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190428133115.GA37346@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Hagbard Celine <hagbardcelin@gmail.com>, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Hagbard,
+On 2019/4/28 21:31, Jaegeuk Kim wrote:
+> On 04/24, Chao Yu wrote:
+>> On 2019-4-24 17:36, Jaegeuk Kim wrote:
+>>> On 04/15, Chao Yu wrote:
+>>>> Previously, f2fs_is_valid_blkaddr(, blkaddr, DATA_GENERIC) will check
+>>>> whether @blkaddr locates in main area or not.
+>>>>
+>>>> That check is weak, since the block address in range of main area can
+>>>> point to the address which is not valid in segment info table, and we
+>>>> can not detect such condition, we may suffer worse corruption as system
+>>>> continues running.
+>>>>
+>>>> So this patch introduce DATA_GENERIC_ENHANCE to enhance the sanity check
+>>>> which trigger SIT bitmap check rather than only range check.
+>>>>
+>>>> This patch did below changes as wel:
+>>>> - set SBI_NEED_FSCK in f2fs_is_valid_blkaddr().
+>>>> - get rid of is_valid_data_blkaddr() to avoid panic if blkaddr is invalid.
+>>>> - introduce verify_fio_blkaddr() to wrap fio {new,old}_blkaddr validation check.
+>>>> - spread blkaddr check in:
+>>>>  * f2fs_get_node_info()
+>>>>  * __read_out_blkaddrs()
+>>>>  * f2fs_submit_page_read()
+>>>>  * ra_data_block()
+>>>>  * do_recover_data()
+>>>>
+>>>> This patch can fix bug reported from bugzilla below:
+>>>>
+>>>> https://bugzilla.kernel.org/show_bug.cgi?id=203215
+>>>> https://bugzilla.kernel.org/show_bug.cgi?id=203223
+>>>> https://bugzilla.kernel.org/show_bug.cgi?id=203231
+>>>> https://bugzilla.kernel.org/show_bug.cgi?id=203235
+>>>> https://bugzilla.kernel.org/show_bug.cgi?id=203241
+>>>
+>>> Hi Chao,
+>>>
+>>> This introduces failures on xfstests/generic/446, and I'm testing the below
+>>> patch on top of this. Could you check this patch, so that I could combine
+>>> both of them?
+>>>
+>>> From 8c1808c1743ad75d1ad8d1dc5a53910edaf7afd7 Mon Sep 17 00:00:00 2001
+>>> From: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> Date: Wed, 24 Apr 2019 00:21:07 +0100
+>>> Subject: [PATCH] f2fs: consider data race on read and truncation on
+>>>  DATA_GENERIC_ENHANCE
+>>>
+>>> DATA_GENERIC_ENHANCE enhanced to validate block addresses on read/write paths.
+>>> But, xfstest/generic/446 compalins some generated kernel messages saying invalid
+>>> bitmap was detected when reading a block. The reaons is, when we get the
+>>> block addresses from extent_cache, there is no lock to synchronize it from
+>>> truncating the blocks in parallel.
+>>>
+>>> This patch tries to return EFAULT without warning and setting SBI_NEED_FSCK
+>>> in this case.
+>>>
+>>> Fixes: ("f2fs: introduce DATA_GENERIC_ENHANCE")
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fs/f2fs/checkpoint.c | 35 ++++++++++++++++++-----------------
+>>>  fs/f2fs/data.c       | 25 ++++++++++++++++++-------
+>>>  fs/f2fs/f2fs.h       |  6 ++++++
+>>>  fs/f2fs/gc.c         |  9 ++++++---
+>>>  4 files changed, 48 insertions(+), 27 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>>> index e37fbbf843a5..805a33088e82 100644
+>>> --- a/fs/f2fs/checkpoint.c
+>>> +++ b/fs/f2fs/checkpoint.c
+>>> @@ -130,26 +130,28 @@ struct page *f2fs_get_tmp_page(struct f2fs_sb_info *sbi, pgoff_t index)
+>>>  	return __get_meta_page(sbi, index, false);
+>>>  }
+>>>  
+>>> -static bool __is_bitmap_valid(struct f2fs_sb_info *sbi, block_t blkaddr)
+>>> +static bool __is_bitmap_valid(struct f2fs_sb_info *sbi, block_t blkaddr,
+>>> +							int type)
+>>>  {
+>>>  	struct seg_entry *se;
+>>>  	unsigned int segno, offset;
+>>>  	bool exist;
+>>>  
+>>> +	if (type != DATA_GENERIC_ENHANCE && type != DATA_GENERIC_ENHANCE_READ)
+>>> +		return true;
+>>> +
+>>>  	segno = GET_SEGNO(sbi, blkaddr);
+>>>  	offset = GET_BLKOFF_FROM_SEG0(sbi, blkaddr);
+>>>  	se = get_seg_entry(sbi, segno);
+>>>  
+>>>  	exist = f2fs_test_bit(offset, se->cur_valid_map);
+>>> -
+>>> -	if (!exist) {
+>>> +	if (!exist && type == DATA_GENERIC_ENHANCE) {
+>>>  		f2fs_msg(sbi->sb, KERN_ERR, "Inconsistent error "
+>>>  			"blkaddr:%u, sit bitmap:%d", blkaddr, exist);
+>>>  		set_sbi_flag(sbi, SBI_NEED_FSCK);
+>>>  		WARN_ON(1);
+>>> -		return false;
+>>>  	}
+>>> -	return true;
+>>> +	return exist;
+>>>  }
+>>>  
+>>>  bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+>>> @@ -173,23 +175,22 @@ bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+>>>  			return false;
+>>>  		break;
+>>>  	case META_POR:
+>>> +		if (unlikely(blkaddr >= MAX_BLKADDR(sbi) ||
+>>> +			blkaddr < MAIN_BLKADDR(sbi)))
+>>> +			return false;
+>>> +		break;
+>>>  	case DATA_GENERIC:
+>>>  	case DATA_GENERIC_ENHANCE:
+>>> +	case DATA_GENERIC_ENHANCE_READ:
+>>>  		if (unlikely(blkaddr >= MAX_BLKADDR(sbi) ||
+>>> -			blkaddr < MAIN_BLKADDR(sbi))) {
+>>> -			if (type == DATA_GENERIC ||
+>>> -				type == DATA_GENERIC_ENHANCE) {
+>>> -				f2fs_msg(sbi->sb, KERN_WARNING,
+>>> -					"access invalid blkaddr:%u", blkaddr);
+>>> -				set_sbi_flag(sbi, SBI_NEED_FSCK);
+>>> -				WARN_ON(1);
+>>> -			}
+>>> +				blkaddr < MAIN_BLKADDR(sbi))) {
+>>> +			f2fs_msg(sbi->sb, KERN_WARNING,
+>>> +				"access invalid blkaddr:%u", blkaddr);
+>>> +			set_sbi_flag(sbi, SBI_NEED_FSCK);
+>>> +			WARN_ON(1);
+>>>  			return false;
+>>>  		} else {
+>>> -			if (type == DATA_GENERIC_ENHANCE) {
+>>> -				if (!__is_bitmap_valid(sbi, blkaddr))
+>>> -					return false;
+>>> -			}
+>>> +			return __is_bitmap_valid(sbi, blkaddr, type);
+>>>  		}
+>>>  		break;
+>>>  	case META_GENERIC:
+>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>> index 34d248ac9e0f..d32a82f25f5a 100644
+>>> --- a/fs/f2fs/data.c
+>>> +++ b/fs/f2fs/data.c
+>>> @@ -564,9 +564,6 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
+>>>  	struct bio_post_read_ctx *ctx;
+>>>  	unsigned int post_read_steps = 0;
+>>>  
+>>> -	if (!f2fs_is_valid_blkaddr(sbi, blkaddr, DATA_GENERIC_ENHANCE))
+>>> -		return ERR_PTR(-EFAULT);
+>>> -
+>>>  	bio = f2fs_bio_alloc(sbi, min_t(int, nr_pages, BIO_MAX_PAGES), false);
+>>>  	if (!bio)
+>>>  		return ERR_PTR(-ENOMEM);
+>>> @@ -597,9 +594,6 @@ static int f2fs_submit_page_read(struct inode *inode, struct page *page,
+>>>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>>>  	struct bio *bio;
+>>>  
+>>> -	if (!f2fs_is_valid_blkaddr(sbi, blkaddr, DATA_GENERIC_ENHANCE))
+>>> -		return -EFAULT;
+>>> -
+>>>  	bio = f2fs_grab_read_bio(inode, blkaddr, 1, 0);
+>>>  	if (IS_ERR(bio))
+>>>  		return PTR_ERR(bio);
+>>> @@ -741,6 +735,11 @@ struct page *f2fs_get_read_data_page(struct inode *inode, pgoff_t index,
+>>>  
+>>>  	if (f2fs_lookup_extent_cache(inode, index, &ei)) {
+>>>  		dn.data_blkaddr = ei.blk + index - ei.fofs;
+>>> +		if (!f2fs_is_valid_blkaddr(F2FS_I_SB(inode), dn.data_blkaddr,
+>>> +						DATA_GENERIC_ENHANCE_READ)) {
+>>
+>> If I'm not missing anything, we just need use DATA_GENERIC_ENHANCE_READ to cover
+>> below two paths:
+>> - gc_data_segment -> f2fs_get_read_data_page
+>> - move_data_page -> f2fs_get_lock_data_page -> f2fs_get_read_data_page
+>>
+>> Other paths which calls f2fs_get_read_data_page is safe to verify blkaddr with
+>> DATA_GENERIC_ENHANCE?
+> 
+> The rule for here is, if block address is given by extent cache, we need to use
+> ENHANCE_READ. If it's coming from dnode lock, I think it'd be safe.
 
-At a glance, may I ask what's your device size? Since I notice that you used -i
-option during mkfs, if size is large enough, checkpoint may crash nat/sit_bitmap
-online.
+Okay, I tested this patch with below testcases from bugzilla, it seems there is
+no regression.
 
-mkfs-f2fs -a 1 -f -i -l NVME_Gentoo-alt -o7 /dev/nvme0n1p7
+https://bugzilla.kernel.org/show_bug.cgi?id=203215
+https://bugzilla.kernel.org/show_bug.cgi?id=203223
+https://bugzilla.kernel.org/show_bug.cgi?id=203231
+https://bugzilla.kernel.org/show_bug.cgi?id=203235
+https://bugzilla.kernel.org/show_bug.cgi?id=203241
 
-On 2019/4/29 15:25, Hagbard Celine wrote:
-> First I must admit that I'm not 100% sure if this is
-> f2fs/NMI/something-else bug, but it only triggers after significant
-> disk access.
+One comment below.
+
 > 
-> I've hit this bug several times since kernel 5.0.7 (have not tried
-> earlier kernels) while compiling many packages in batch. But in those
-> occasions it would hang all cores and loose the latest changes to the
-> filesystem so I could not get any logs.
-> This time it triggered while I was in the process of moving two of my
-> installations to new partitions and locked only one core, so I was
-> able to get the log after rebooting.
-> The I did to trigger was make a new partition and run commands:
-> #mkfs-f2fs -a 1 -f -i -l NVME_Gentoo-alt -o7 /dev/nvme0n1p7
-> #mount -o "rw,realtime,lazytime,background_gc=on,disable_ext_identity,discard,heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,data_flush,mode=adaptive,active_logs=6,whint_mode=fs-based,alloc_mode=default,fsync_mode=strict"
-> /dev/nvme0n1p7 /mnt/gentoo-alt-new
-> #cd /mnt/gentoo-alt
-> #cp -a . /mnt/gentoo-alt-new
-> #umount /nmt/gentoo-alt
-> The bug triggers just after last command and last command was run
-> within 20 seconds ofter the second-last command returned.
-> "/mnt/gentoo-alt" was already mounted with same options as
-> "/mnt/gentoo-alt-new", and contained a Gentoo-rootfs of 64GB data
-> (according df -h).
-> 
-> This was on kernel 5.0.10 with "[PATCH] f2fs: fix potential recursive
-> call when enabling data_flush" by Chao Yu
-> 
-> Syslog for bug follows:
-> 
-> Apr 29 07:02:52 40o2 kernel: watchdog: BUG: soft lockup - CPU#4 stuck
-> for 21s! [irq/61-nvme0q5:383]
-> Apr 29 07:02:52 40o2 kernel: Modules linked in: ipv6 crc_ccitt 8021q
-> garp stp llc nls_cp437 vfat fat sd_mod iTCO_wdt x86_pkg_temp_thermal
-> kvm_intel kvm irqbypass ghash_clmulni_intel serio_raw i2c_i801
-> firewire_ohci firewire_core igb crc_itu_t uas lpc_ich dca usb_storage
-> processor_thermal_device ahci intel_soc_dts_iosf int340x_thermal_zone
-> libahci pcc_cpufreq efivarfs
-> Apr 29 07:02:52 40o2 kernel: CPU: 4 PID: 383 Comm: irq/61-nvme0q5 Not
-> tainted 5.0.10-gentoo #1
-> Apr 29 07:02:52 40o2 kernel: Hardware name: To Be Filled By O.E.M. To
-> Be Filled By O.E.M./C226 WS, BIOS P3.40 06/25/2018
-> Apr 29 07:02:52 40o2 kernel: RIP: 0010:_raw_spin_unlock_irqrestore+0x36/0x40
-> Apr 29 07:02:52 40o2 kernel: Code: f6 c7 02 75 1e 56 9d e8 38 a0 69 ff
-> bf 01 00 00 00 e8 ce 32 60 ff 65 8b 05 37 8a 70 5b 85 c0 74 0b 5b c3
-> e8 3c 9f 69 ff 53 9d <eb> e0 e8 bb 58 4f ff 5b c3 90 e8 6b 50 0f 00 b8
-> 00 fe ff ff f0 0f
-> Apr 29 07:02:52 40o2 kernel: RSP: 0018:ffff99a4003d7d58 EFLAGS:
-> 00000246 ORIG_RAX: ffffffffffffff13
-> Apr 29 07:02:52 40o2 kernel: RAX: 0000000000000202 RBX:
-> 0000000000000246 RCX: dead000000000200
-> Apr 29 07:02:52 40o2 kernel: RDX: ffff8ab7fd8852e0 RSI:
-> 0000000000000000 RDI: ffffffffa490c264
-> Apr 29 07:02:52 40o2 kernel: RBP: ffffbef2cc242db8 R08:
-> 0000000000000002 R09: 0000000000024688
-> Apr 29 07:02:52 40o2 kernel: R10: ffffffffffffffb8 R11:
-> ffffffffffffffb8 R12: ffff8ab7fd885000
-> Apr 29 07:02:52 40o2 kernel: R13: ffff8ab7fd8852d8 R14:
-> ffff8ab7fef42b40 R15: 6db6db6db6db6db7
-> Apr 29 07:02:52 40o2 kernel: FS:  0000000000000000(0000)
-> GS:ffff8ab81ed00000(0000) knlGS:0000000000000000
-> Apr 29 07:02:52 40o2 kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> Apr 29 07:02:52 40o2 kernel: CR2: 00007e6278ff9000 CR3:
-> 0000000792e0c004 CR4: 00000000003606e0
-> Apr 29 07:02:52 40o2 kernel: DR0: 0000000000000000 DR1:
-> 0000000000000000 DR2: 0000000000000000
-> Apr 29 07:02:52 40o2 kernel: DR3: 0000000000000000 DR6:
-> 00000000fffe0ff0 DR7: 0000000000000400
-> Apr 29 07:02:52 40o2 kernel: Call Trace:
-> Apr 29 07:02:52 40o2 kernel:  ? f2fs_del_fsync_node_entry+0x9f/0xd0
-> Apr 29 07:02:52 40o2 kernel:  ? f2fs_write_end_io+0xb6/0x1e0
-> Apr 29 07:02:52 40o2 kernel:  ? blk_update_request+0xc0/0x270
-> Apr 29 07:02:52 40o2 kernel:  ? blk_mq_end_request+0x1a/0x130
-> Apr 29 07:02:52 40o2 kernel:  ? blk_mq_complete_request+0x92/0x110
-> Apr 29 07:02:52 40o2 kernel:  ? irq_finalize_oneshot.part.46+0xe0/0xe0
-> Apr 29 07:02:52 40o2 kernel:  ? nvme_irq+0xf9/0x260
-> Apr 29 07:02:52 40o2 kernel:  ? irq_finalize_oneshot.part.46+0xe0/0xe0
-> Apr 29 07:02:52 40o2 kernel:  ? irq_forced_thread_fn+0x30/0x80
-> Apr 29 07:02:52 40o2 kernel:  ? irq_thread+0xe7/0x160
-> Apr 29 07:02:52 40o2 kernel:  ? wake_threads_waitq+0x30/0x30
-> Apr 29 07:02:52 40o2 kernel:  ? irq_thread_check_affinity+0x80/0x80
-> Apr 29 07:02:52 40o2 kernel:  ? kthread+0x116/0x130
-> Apr 29 07:02:52 40o2 kernel:  ? kthread_create_worker_on_cpu+0x70/0x70
-> Apr 29 07:02:52 40o2 kernel:  ? ret_from_fork+0x3a/0x50
-> Apr 29 07:02:55 40o2 kernel: rcu: INFO: rcu_preempt self-detected stall on CPU
-> Apr 29 07:02:55 40o2 kernel: rcu: \x095-....: (13949 ticks this GP)
-> idle=a26/1/0x4000000000000002 softirq=191162/191162 fqs=4843
-> Apr 29 07:02:55 40o2 kernel: rcu: \x09 (t=21000 jiffies g=184461 q=674)
-> Apr 29 07:02:55 40o2 kernel: Sending NMI from CPU 5 to CPUs 4:
-> Apr 29 07:02:55 40o2 kernel: NMI backtrace for cpu 4
-> Apr 29 07:02:55 40o2 kernel: CPU: 4 PID: 383 Comm: irq/61-nvme0q5
-> Tainted: G             L    5.0.10-gentoo #1
-> Apr 29 07:02:55 40o2 kernel: Hardware name: To Be Filled By O.E.M. To
-> Be Filled By O.E.M./C226 WS, BIOS P3.40 06/25/2018
-> Apr 29 07:02:55 40o2 kernel: RIP: 0010:queued_spin_lock_slowpath+0x52/0x1b0
-> Apr 29 07:02:55 40o2 kernel: Code: 0f b6 c0 c1 e0 08 89 c2 8b 03 30 e4
-> 09 d0 a9 00 01 ff ff 75 1b 85 c0 75 0f b8 01 00 00 00 66 89 03 5b 5d
-> 41 5c c3 f3 90 8b 03 <84> c0 75 f8 eb e9 f6 c4 01 75 04 c6 43 01 00 e8
-> 3a fe 28 00 48 c7
-> Apr 29 07:02:55 40o2 kernel: RSP: 0018:ffff99a4003d7d30 EFLAGS: 00000002
-> Apr 29 07:02:55 40o2 kernel: RAX: 0000000000200101 RBX:
-> ffff8ab7fd8852d8 RCX: 0000000000000000
-> Apr 29 07:02:55 40o2 kernel: RDX: 0000000000000000 RSI:
-> 0000000000000000 RDI: ffff8ab7fd8852d8
-> Apr 29 07:02:55 40o2 kernel: RBP: 0000000000000246 R08:
-> 0000000000000002 R09: 0000000000024688
-> Apr 29 07:02:55 40o2 kernel: R10: ffffffffffffffb8 R11:
-> ffffffffffffffb8 R12: ffff8ab7fd885000
-> Apr 29 07:02:55 40o2 kernel: R13: ffff8ab7fd8852d8 R14:
-> ffff8ab5ffdbd840 R15: 6db6db6db6db6db7
-> Apr 29 07:02:55 40o2 kernel: FS:  0000000000000000(0000)
-> GS:ffff8ab81ed00000(0000) knlGS:0000000000000000
-> Apr 29 07:02:55 40o2 kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> Apr 29 07:02:55 40o2 kernel: CR2: 00007e6278ff9000 CR3:
-> 0000000792e0c004 CR4: 00000000003606e0
-> Apr 29 07:02:55 40o2 kernel: DR0: 0000000000000000 DR1:
-> 0000000000000000 DR2: 0000000000000000
-> Apr 29 07:02:55 40o2 kernel: DR3: 0000000000000000 DR6:
-> 00000000fffe0ff0 DR7: 0000000000000400
-> Apr 29 07:02:55 40o2 kernel: Call Trace:
-> Apr 29 07:02:55 40o2 kernel:  ? _raw_spin_lock_irqsave+0x39/0x40
-> Apr 29 07:02:55 40o2 kernel:  ? f2fs_del_fsync_node_entry+0x20/0xd0
-> Apr 29 07:02:55 40o2 kernel:  ? f2fs_write_end_io+0xb6/0x1e0
-> Apr 29 07:02:55 40o2 kernel:  ? blk_update_request+0xc0/0x270
-> Apr 29 07:02:55 40o2 kernel:  ? blk_mq_end_request+0x1a/0x130
-> Apr 29 07:02:55 40o2 kernel:  ? blk_mq_complete_request+0x92/0x110
-> Apr 29 07:02:55 40o2 kernel:  ? irq_finalize_oneshot.part.46+0xe0/0xe0
-> Apr 29 07:02:55 40o2 kernel:  ? nvme_irq+0xf9/0x260
-> Apr 29 07:02:55 40o2 kernel:  ? irq_finalize_oneshot.part.46+0xe0/0xe0
-> Apr 29 07:02:55 40o2 kernel:  ? irq_forced_thread_fn+0x30/0x80
-> Apr 29 07:02:55 40o2 kernel:  ? irq_thread+0xe7/0x160
-> Apr 29 07:02:55 40o2 kernel:  ? wake_threads_waitq+0x30/0x30
-> Apr 29 07:02:55 40o2 kernel:  ? irq_thread_check_affinity+0x80/0x80
-> Apr 29 07:02:55 40o2 kernel:  ? kthread+0x116/0x130
-> Apr 29 07:02:55 40o2 kernel:  ? kthread_create_worker_on_cpu+0x70/0x70
-> Apr 29 07:02:55 40o2 kernel:  ? ret_from_fork+0x3a/0x50
-> Apr 29 07:02:55 40o2 kernel: NMI backtrace for cpu 5
-> Apr 29 07:02:55 40o2 kernel: CPU: 5 PID: 384 Comm: irq/62-nvme0q6
-> Tainted: G             L    5.0.10-gentoo #1
-> Apr 29 07:02:55 40o2 kernel: Hardware name: To Be Filled By O.E.M. To
-> Be Filled By O.E.M./C226 WS, BIOS P3.40 06/25/2018
-> Apr 29 07:02:55 40o2 kernel: Call Trace:
-> Apr 29 07:02:55 40o2 kernel:  <IRQ>
-> Apr 29 07:02:55 40o2 kernel:  ? dump_stack+0x67/0x90
-> Apr 29 07:02:55 40o2 kernel:  ? nmi_cpu_backtrace.cold.4+0x13/0x4e
-> Apr 29 07:02:55 40o2 kernel:  ? nmi_trigger_cpumask_backtrace+0xb1/0xc8
-> Apr 29 07:02:55 40o2 kernel:  ? rcu_dump_cpu_stacks+0x85/0xb1
-> Apr 29 07:02:55 40o2 kernel:  ? rcu_check_callbacks.cold.69+0x19a/0x459
-> Apr 29 07:02:55 40o2 kernel:  ? tick_sched_do_timer+0x60/0x60
-> Apr 29 07:02:55 40o2 kernel:  ? update_process_times+0x28/0x60
-> Apr 29 07:02:55 40o2 kernel:  ? tick_sched_handle+0x22/0x60
-> Apr 29 07:02:55 40o2 kernel:  ? tick_sched_timer+0x37/0x70
-> Apr 29 07:02:55 40o2 kernel:  ? __hrtimer_run_queues+0xfb/0x2c0
-> Apr 29 07:02:55 40o2 kernel:  ? hrtimer_interrupt+0xfd/0x210
-> Apr 29 07:02:55 40o2 kernel:  ? smp_apic_timer_interrupt+0x7d/0x180
-> Apr 29 07:02:55 40o2 kernel:  ? apic_timer_interrupt+0xf/0x20
-> Apr 29 07:02:55 40o2 kernel:  </IRQ>
-> Apr 29 07:02:55 40o2 kernel:  ? _raw_spin_unlock_irqrestore+0x34/0x40
-> Apr 29 07:02:55 40o2 kernel:  ? _raw_spin_unlock_irqrestore+0x36/0x40
-> Apr 29 07:02:55 40o2 kernel:  ? f2fs_del_fsync_node_entry+0x9f/0xd0
-> Apr 29 07:02:55 40o2 kernel:  ? f2fs_write_end_io+0xb6/0x1e0
-> Apr 29 07:02:55 40o2 kernel:  ? blk_update_request+0xc0/0x270
-> Apr 29 07:02:55 40o2 kernel:  ? blk_mq_end_request+0x1a/0x130
-> Apr 29 07:02:55 40o2 kernel:  ? blk_mq_complete_request+0x92/0x110
-> Apr 29 07:02:55 40o2 kernel:  ? irq_finalize_oneshot.part.46+0xe0/0xe0
-> Apr 29 07:02:55 40o2 kernel:  ? nvme_irq+0xf9/0x260
-> Apr 29 07:02:55 40o2 kernel:  ? irq_finalize_oneshot.part.46+0xe0/0xe0
-> Apr 29 07:02:55 40o2 kernel:  ? irq_forced_thread_fn+0x30/0x80
-> Apr 29 07:02:55 40o2 kernel:  ? irq_thread+0xe7/0x160
-> Apr 29 07:02:55 40o2 kernel:  ? wake_threads_waitq+0x30/0x30
-> Apr 29 07:02:55 40o2 kernel:  ? irq_thread_check_affinity+0x80/0x80
-> Apr 29 07:02:55 40o2 kernel:  ? kthread+0x116/0x130
-> Apr 29 07:02:55 40o2 kernel:  ? kthread_create_worker_on_cpu+0x70/0x70
-> Apr 29 07:02:55 40o2 kernel:  ? ret_from_fork+0x3a/0x50
-> Apr 29 07:03:02 40o2 kernel: nvme nvme0: I/O 310 QID 5 timeout, aborting
-> Apr 29 07:03:02 40o2 kernel: nvme nvme0: I/O 210 QID 6 timeout, aborting
-> Apr 29 07:03:02 40o2 kernel: nvme nvme0: Abort status: 0x0
-> Apr 29 07:03:02 40o2 kernel: nvme nvme0: Abort status: 0x0
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>>
+>>> +			err = -EFAULT;
+>>> +			goto put_err;
+>>> +		}
+>>>  		goto got_it;
+>>>  	}
+>>>  
+>>> @@ -754,6 +753,13 @@ struct page *f2fs_get_read_data_page(struct inode *inode, pgoff_t index,
+>>>  		err = -ENOENT;
+>>>  		goto put_err;
+>>>  	}
+>>> +	if (dn.data_blkaddr != NEW_ADDR &&
+>>> +			!f2fs_is_valid_blkaddr(F2FS_I_SB(inode),
+>>> +						dn.data_blkaddr,
+>>> +						DATA_GENERIC_ENHANCE)) {
+>>> +		err = -EFAULT;
+>>> +		goto put_err;
+>>> +	}
+>>>  got_it:
+>>>  	if (PageUptodate(page)) {
+>>>  		unlock_page(page);
+>>> @@ -1566,7 +1572,7 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
+>>>  		}
+>>>  
+>>>  		if (!f2fs_is_valid_blkaddr(F2FS_I_SB(inode), block_nr,
+>>> -							DATA_GENERIC_ENHANCE)) {
+>>> +						DATA_GENERIC_ENHANCE_READ)) {
+>>>  			ret = -EFAULT;
+>>>  			goto out;
+>>>  		}
+>>> @@ -2528,6 +2534,11 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+>>>  		zero_user_segment(page, 0, PAGE_SIZE);
+>>>  		SetPageUptodate(page);
+>>>  	} else {
+>>> +		if (!f2fs_is_valid_blkaddr(sbi, blkaddr,
+>>> +				DATA_GENERIC_ENHANCE_READ)) {
+
+Do we need to move the check into prepare_write_begin()? then we can know where
+the block address comes from, and decide to use DATA_GENERIC_ENHANCE or
+DATA_GENERIC_ENHANCE_READ.
+
+Thanks,
+
+>>
+>> Need DATA_GENERIC_ENHANCE because write() is exclusive with truncate() due to
+>> inode_lock()?
+>>
+>> Thanks,
+>>
+>>> +			err = -EFAULT;
+>>> +			goto fail;
+>>> +		}
+>>>  		err = f2fs_submit_page_read(inode, page, blkaddr);
+>>>  		if (err)
+>>>  			goto fail;
+>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>> index f5ffc09705eb..533fafca68f4 100644
+>>> --- a/fs/f2fs/f2fs.h
+>>> +++ b/fs/f2fs/f2fs.h
+>>> @@ -212,6 +212,12 @@ enum {
+>>>  	META_POR,
+>>>  	DATA_GENERIC,		/* check range only */
+>>>  	DATA_GENERIC_ENHANCE,	/* strong check on range and segment bitmap */
+>>> +	DATA_GENERIC_ENHANCE_READ,	/*
+>>> +					 * strong check on range and segment
+>>> +					 * bitmap but no warning due to race
+>>> +					 * condition of read on truncated area
+>>> +					 * by extent_cache
+>>> +					 */
+>>>  	META_GENERIC,
+>>>  };
+>>>  
+>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>> index 3a097949b5d4..963fb4571fd9 100644
+>>> --- a/fs/f2fs/gc.c
+>>> +++ b/fs/f2fs/gc.c
+>>> @@ -656,6 +656,11 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
+>>>  
+>>>  	if (f2fs_lookup_extent_cache(inode, index, &ei)) {
+>>>  		dn.data_blkaddr = ei.blk + index - ei.fofs;
+>>> +		if (unlikely(!f2fs_is_valid_blkaddr(sbi, dn.data_blkaddr,
+>>> +						DATA_GENERIC_ENHANCE_READ))) {
+>>> +			err = -EFAULT;
+>>> +			goto put_page;
+>>> +		}
+>>>  		goto got_it;
+>>>  	}
+>>>  
+>>> @@ -669,14 +674,12 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
+>>>  		err = -ENOENT;
+>>>  		goto put_page;
+>>>  	}
+>>> -
+>>> -got_it:
+>>>  	if (unlikely(!f2fs_is_valid_blkaddr(sbi, dn.data_blkaddr,
+>>>  						DATA_GENERIC_ENHANCE))) {
+>>>  		err = -EFAULT;
+>>>  		goto put_page;
+>>>  	}
+>>> -
+>>> +got_it:
+>>>  	/* read page */
+>>>  	fio.page = page;
+>>>  	fio.new_blkaddr = fio.old_blkaddr = dn.data_blkaddr;
+>>>
 > .
 > 
