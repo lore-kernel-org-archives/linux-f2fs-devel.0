@@ -1,26 +1,26 @@
 From: Eric Biggers <ebiggers@kernel.org>
-Subject: Re: [PATCH V2 10/13] fscrypt_encrypt_page: Loop across
- all blocks mapped by a page range
-Date: Tue, 30 Apr 2019 10:11:35 -0700
-Message-ID: <20190430171133.GC48973@gmail.com>
+Subject: Re: [PATCH V2 02/13] Consolidate "read callbacks" into a
+ new file
+Date: Tue, 30 Apr 2019 11:05:08 -0700
+Message-ID: <20190430180507.GD48973@gmail.com>
 References: <20190428043121.30925-1-chandan@linux.ibm.com>
- <20190428043121.30925-11-chandan@linux.ibm.com>
+ <20190428043121.30925-3-chandan@linux.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hLWIB-0004Bz-FU
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 30 Apr 2019 17:11:43 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1hLX81-0005u5-G7
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 30 Apr 2019 18:05:17 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hLWIA-000p3z-9U
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 30 Apr 2019 17:11:43 +0000
+ id 1hLX80-000rPR-8i
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 30 Apr 2019 18:05:17 +0000
 Content-Disposition: inline
-In-Reply-To: <20190428043121.30925-11-chandan@linux.ibm.com>
+In-Reply-To: <20190428043121.30925-3-chandan@linux.ibm.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,99 +33,67 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Chandan Rajendra <chandan@linux.ibm.com>
 Cc: tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net, hch@infradead.org, linux-fscrypt@vger.kernel.org, adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
 
-On Sun, Apr 28, 2019 at 10:01:18AM +0530, Chandan Rajendra wrote:
-> For subpage-sized blocks, this commit now encrypts all blocks mapped by
-> a page range.
-> 
-> Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
-> ---
->  fs/crypto/crypto.c | 37 +++++++++++++++++++++++++------------
->  1 file changed, 25 insertions(+), 12 deletions(-)
-> 
-> diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
-> index 4f0d832cae71..2d65b431563f 100644
-> --- a/fs/crypto/crypto.c
-> +++ b/fs/crypto/crypto.c
-> @@ -242,18 +242,26 @@ struct page *fscrypt_encrypt_page(const struct inode *inode,
-
-Need to update the function comment to clearly explain what this function
-actually does now.
-
->  {
->  	struct fscrypt_ctx *ctx;
->  	struct page *ciphertext_page = page;
-> +	int i, page_nr_blks;
->  	int err;
->  
->  	BUG_ON(len % FS_CRYPTO_BLOCK_SIZE != 0);
->  
-
-Make a 'blocksize' variable so you don't have to keep calling i_blocksize().
-
-Also, you need to check whether 'len' and 'offs' are filesystem-block-aligned,
-since the code now assumes it.
-
-	const unsigned int blocksize = i_blocksize(inode);
-
-        if (!IS_ALIGNED(len | offs, blocksize))
-                return -EINVAL;
-
-However, did you check whether that's always true for ubifs?  It looks like it
-may expect to encrypt a prefix of a block, that is only padded to the next
-16-byte boundary.
-		
-> +	page_nr_blks = len >> inode->i_blkbits;
-> +
->  	if (inode->i_sb->s_cop->flags & FS_CFLG_OWN_PAGES) {
->  		/* with inplace-encryption we just encrypt the page */
-> -		err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk_num, page,
-> -					     ciphertext_page, len, offs,
-> -					     gfp_flags);
-> -		if (err)
-> -			return ERR_PTR(err);
-> -
-> +		for (i = 0; i < page_nr_blks; i++) {
-> +			err = fscrypt_do_page_crypto(inode, FS_ENCRYPT,
-> +						lblk_num, page,
-> +						ciphertext_page,
-> +						i_blocksize(inode), offs,
-> +						gfp_flags);
-> +			if (err)
-> +				return ERR_PTR(err);
-> +			++lblk_num;
-> +			offs += i_blocksize(inode);
-> +		}
->  		return ciphertext_page;
->  	}
->  
-> @@ -269,12 +277,17 @@ struct page *fscrypt_encrypt_page(const struct inode *inode,
->  		goto errout;
->  
->  	ctx->control_page = page;
-> -	err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk_num,
-> -				     page, ciphertext_page, len, offs,
-> -				     gfp_flags);
-> -	if (err) {
-> -		ciphertext_page = ERR_PTR(err);
-> -		goto errout;
-> +
-> +	for (i = 0; i < page_nr_blks; i++) {
-> +		err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk_num,
-> +					page, ciphertext_page,
-> +					i_blocksize(inode), offs, gfp_flags);
-
-As I mentioned elsewhere, renaming fscrypt_do_page_crypto() to
-fscrypt_crypt_block() would make more sense now.
-
-> +		if (err) {
-> +			ciphertext_page = ERR_PTR(err);
-> +			goto errout;
-> +		}
-> +		++lblk_num;
-> +		offs += i_blocksize(inode);
->  	}
->  	SetPagePrivate(ciphertext_page);
->  	set_page_private(ciphertext_page, (unsigned long)ctx);
-> -- 
-> 2.19.1
-> 
+T24gU3VuLCBBcHIgMjgsIDIwMTkgYXQgMTA6MDE6MTBBTSArMDUzMCwgQ2hhbmRhbiBSYWplbmRy
+YSB3cm90ZToKPiBUaGUgInJlYWQgY2FsbGJhY2tzIiBjb2RlIGlzIHVzZWQgYnkgYm90aCBFeHQ0
+IGFuZCBGMkZTLiBIZW5jZSB0bwo+IHJlbW92ZSBkdXBsaWNpdHksIHRoaXMgY29tbWl0IG1vdmVz
+IHRoZSBjb2RlIGludG8KPiBpbmNsdWRlL2xpbnV4L3JlYWRfY2FsbGJhY2tzLmggYW5kIGZzL3Jl
+YWRfY2FsbGJhY2tzLmMuCj4gCj4gVGhlIGNvcnJlc3BvbmRpbmcgZGVjcnlwdCBhbmQgdmVyaXR5
+ICJ3b3JrIiBmdW5jdGlvbnMgaGF2ZSBiZWVuIG1vdmVkCj4gaW5zaWRlIGZzY3J5cHQgYW5kIGZz
+dmVyaXR5IHNvdXJjZXMuIFdpdGggdGhlc2UgaW4gcGxhY2UsIHRoZSByZWFkCj4gY2FsbGJhY2tz
+IGNvZGUgbm93IGhhcyB0byBqdXN0IGludm9rZSBlbnF1ZXVlIGZ1bmN0aW9ucyBwcm92aWRlZCBi
+eQo+IGZzY3J5cHQgYW5kIGZzdmVyaXR5Lgo+IAo+IFNpZ25lZC1vZmYtYnk6IENoYW5kYW4gUmFq
+ZW5kcmEgPGNoYW5kYW5AbGludXguaWJtLmNvbT4KPiAtLS0KPiAgZnMvS2NvbmZpZyAgICAgICAg
+ICAgICAgICAgICAgIHwgICA0ICsKPiAgZnMvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgIHwg
+ICA0ICsKPiAgZnMvY3J5cHRvL0tjb25maWcgICAgICAgICAgICAgIHwgICAxICsKPiAgZnMvY3J5
+cHRvL2Jpby5jICAgICAgICAgICAgICAgIHwgIDIzICsrLS0tCj4gIGZzL2NyeXB0by9jcnlwdG8u
+YyAgICAgICAgICAgICB8ICAxNyArLS0KPiAgZnMvY3J5cHRvL2ZzY3J5cHRfcHJpdmF0ZS5oICAg
+IHwgICAzICsKPiAgZnMvZXh0NC9leHQ0LmggICAgICAgICAgICAgICAgIHwgICAyIC0KPiAgZnMv
+ZXh0NC9yZWFkcGFnZS5jICAgICAgICAgICAgIHwgMTgzICsrKysrLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLQo+ICBmcy9leHQ0L3N1cGVyLmMgICAgICAgICAgICAgICAgfCAgIDkgKy0KPiAg
+ZnMvZjJmcy9kYXRhLmMgICAgICAgICAgICAgICAgIHwgMTQ4ICsrKystLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tCj4gIGZzL2YyZnMvc3VwZXIuYyAgICAgICAgICAgICAgICB8ICAgOSArLQo+ICBmcy9y
+ZWFkX2NhbGxiYWNrcy5jICAgICAgICAgICAgfCAxMzYgKysrKysrKysrKysrKysrKysrKysrKysr
+Cj4gIGZzL3Zlcml0eS9LY29uZmlnICAgICAgICAgICAgICB8ICAgMSArCj4gIGZzL3Zlcml0eS92
+ZXJpZnkuYyAgICAgICAgICAgICB8ICAxMiArKysKPiAgaW5jbHVkZS9saW51eC9mc2NyeXB0Lmgg
+ICAgICAgIHwgIDIwICstLS0KPiAgaW5jbHVkZS9saW51eC9yZWFkX2NhbGxiYWNrcy5oIHwgIDIx
+ICsrKysKPiAgMTYgZmlsZXMgY2hhbmdlZCwgMjUxIGluc2VydGlvbnMoKyksIDM0MiBkZWxldGlv
+bnMoLSkKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGZzL3JlYWRfY2FsbGJhY2tzLmMKPiAgY3JlYXRl
+IG1vZGUgMTAwNjQ0IGluY2x1ZGUvbGludXgvcmVhZF9jYWxsYmFja3MuaAo+IAo+IGRpZmYgLS1n
+aXQgYS9mcy9LY29uZmlnIGIvZnMvS2NvbmZpZwo+IGluZGV4IDk3ZjllYjhkZjcxMy4uMDMwODRm
+MmRiZWFmIDEwMDY0NAo+IC0tLSBhL2ZzL0tjb25maWcKPiArKysgYi9mcy9LY29uZmlnCj4gQEAg
+LTMwOCw2ICszMDgsMTAgQEAgY29uZmlnIE5GU19DT01NT04KPiAgCWRlcGVuZHMgb24gTkZTRCB8
+fCBORlNfRlMgfHwgTE9DS0QKPiAgCWRlZmF1bHQgeQo+ICAKPiArY29uZmlnIEZTX1JFQURfQ0FM
+TEJBQ0tTCj4gKyAgICAgICBib29sCj4gKyAgICAgICBkZWZhdWx0IG4KPiArCj4gIHNvdXJjZSAi
+bmV0L3N1bnJwYy9LY29uZmlnIgo+ICBzb3VyY2UgImZzL2NlcGgvS2NvbmZpZyIKPiAgc291cmNl
+ICJmcy9jaWZzL0tjb25maWciCgpUaGlzIHNob3VsZG4ndCBiZSB1bmRlciB0aGUgJ2lmIE5FVFdP
+UktfRklMRVNZU1RFTVMnIGJsb2NrLCBzaW5jZSBpdCBoYXMgbm90aGluZwp0byBkbyB3aXRoIG5l
+dHdvcmsgZmlsZXN5c3RlbXMuICBXaGVuIHRyeWluZyB0byBjb21waWxlIHRoaXMgSSBnb3Q6CgoJ
+V0FSTklORzogdW5tZXQgZGlyZWN0IGRlcGVuZGVuY2llcyBkZXRlY3RlZCBmb3IgRlNfUkVBRF9D
+QUxMQkFDS1MKCSAgRGVwZW5kcyBvbiBbbl06IE5FVFdPUktfRklMRVNZU1RFTVMgWz1uXQoJICBT
+ZWxlY3RlZCBieSBbeV06CgkgIC0gRlNfRU5DUllQVElPTiBbPXldCgkgIC0gRlNfVkVSSVRZIFs9
+eV0KClBlcmhhcHMgcHV0IGl0IGp1c3QgYmVsb3cgRlNfSU9NQVA/Cgo+IGRpZmYgLS1naXQgYS9m
+cy9NYWtlZmlsZSBiL2ZzL01ha2VmaWxlCj4gaW5kZXggOWRkMjE4NmU3NGI1Li5lMGMwZmNlOGNm
+NDAgMTAwNjQ0Cj4gLS0tIGEvZnMvTWFrZWZpbGUKPiArKysgYi9mcy9NYWtlZmlsZQo+IEBAIC0y
+MSw2ICsyMSwxMCBAQCBlbHNlCj4gIG9iai15ICs9CW5vLWJsb2NrLm8KPiAgZW5kaWYKPiAgCj4g
+K2lmZXEgKCQoQ09ORklHX0ZTX1JFQURfQ0FMTEJBQ0tTKSx5KQo+ICtvYmoteSArPQlyZWFkX2Nh
+bGxiYWNrcy5vCj4gK2VuZGlmCj4gKwo+ICBvYmotJChDT05GSUdfUFJPQ19GUykgKz0gcHJvY19u
+YW1lc3BhY2Uubwo+ICAKPiAgb2JqLXkJCQkJKz0gbm90aWZ5Lwo+IGRpZmYgLS1naXQgYS9mcy9j
+cnlwdG8vS2NvbmZpZyBiL2ZzL2NyeXB0by9LY29uZmlnCj4gaW5kZXggZjBkZTIzODAwMGMwLi4x
+NjNjMzI4YmNiZDQgMTAwNjQ0Cj4gLS0tIGEvZnMvY3J5cHRvL0tjb25maWcKPiArKysgYi9mcy9j
+cnlwdG8vS2NvbmZpZwo+IEBAIC04LDYgKzgsNyBAQCBjb25maWcgRlNfRU5DUllQVElPTgo+ICAJ
+c2VsZWN0IENSWVBUT19DVFMKPiAgCXNlbGVjdCBDUllQVE9fU0hBMjU2Cj4gIAlzZWxlY3QgS0VZ
+Uwo+ICsJc2VsZWN0IEZTX1JFQURfQ0FMTEJBQ0tTCj4gIAloZWxwCj4gIAkgIEVuYWJsZSBlbmNy
+eXB0aW9uIG9mIGZpbGVzIGFuZCBkaXJlY3Rvcmllcy4gIFRoaXMKPiAgCSAgZmVhdHVyZSBpcyBz
+aW1pbGFyIHRvIGVjcnlwdGZzLCBidXQgaXQgaXMgbW9yZSBtZW1vcnkKClRoaXMgc2VsZWN0aW9u
+IG5lZWRzIHRvIGJlIGNvbmRpdGlvbmFsIG9uIEJMT0NLLgoKCXNlbGVjdCBGU19SRUFEX0NBTExC
+QUNLUyBpZiBCTE9DSwoKT3RoZXJ3aXNlLCBidWlsZGluZyB3aXRob3V0IEJMT0NLIGFuZCB3aXRo
+IFVCSUZTIGVuY3J5cHRpb24gc3VwcG9ydCBmYWlscy4KCglmcy9yZWFkX2NhbGxiYWNrcy5jOiBJ
+biBmdW5jdGlvbiDigJhlbmRfcmVhZF9jYWxsYmFja3PigJk6Cglmcy9yZWFkX2NhbGxiYWNrcy5j
+OjM0OjIzOiBlcnJvcjogc3RvcmFnZSBzaXplIG9mIOKAmGl0ZXJfYWxs4oCZIGlzbuKAmXQga25v
+d24KCSAgc3RydWN0IGJ2ZWNfaXRlcl9hbGwgaXRlcl9hbGw7CgkJCSAgICAgICBefn5+fn5+fgoJ
+ZnMvcmVhZF9jYWxsYmFja3MuYzozNzoyMDogZXJyb3I6IGRlcmVmZXJlbmNpbmcgcG9pbnRlciB0
+byBpbmNvbXBsZXRlIHR5cGUg4oCYc3RydWN0IGJ1ZmZlcl9oZWFk4oCZCgkgICBpZiAoIVBhZ2VF
+cnJvcihiaC0+Yl9wYWdlKSkKCglbLi4uXQoKLSBFcmljCgoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QK
+TGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3Vy
+Y2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
