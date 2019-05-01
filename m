@@ -1,39 +1,40 @@
 From: Chandan Rajendra <chandan@linux.ibm.com>
 Subject: Re: [PATCH V2 02/13] Consolidate "read callbacks" into a
  new file
-Date: Wed, 01 May 2019 18:01:51 +0530
-Message-ID: <1818169.fqCJa7sfke@localhost.localdomain>
+Date: Wed, 01 May 2019 18:02:39 +0530
+Message-ID: <8267479.irDUbO2F3m@localhost.localdomain>
 References: <20190428043121.30925-1-chandan@linux.ibm.com>
  <20190428043121.30925-3-chandan@linux.ibm.com>
- <840fd844-ebce-1655-309a-5794229bab3f@huawei.com>
+ <20190430180507.GD48973@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.ibm.com>) id 1hLqA3-0001RH-Ns
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 May 2019 14:24:39 +0000
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <chandan@linux.ibm.com>) id 1hLqA6-0004lS-7q
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 May 2019 14:24:42 +0000
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
+ helo=mx0a-001b2d01.pphosted.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hLqA1-0042fs-TS
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 May 2019 14:24:39 +0000
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
- by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
- x41EM9AT067052
- for <linux-f2fs-devel@lists.sourceforge.net>; Wed, 1 May 2019 10:24:32 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
- by mx0a-001b2d01.pphosted.com with ESMTP id 2s7ayan0hv-1
+ id 1hLqA4-001ih6-Bp
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 May 2019 14:24:42 +0000
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+ by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
+ x41EM8OV005694
+ for <linux-f2fs-devel@lists.sourceforge.net>; Wed, 1 May 2019 10:24:34 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+ by mx0b-001b2d01.pphosted.com with ESMTP id 2s7cyprdyb-1
  (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>; Wed, 01 May 2019 10:24:32 -0400
+ for <linux-f2fs-devel@lists.sourceforge.net>; Wed, 01 May 2019 10:24:34 -0400
 Received: from localhost
- by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
+ by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
  Violators will be prosecuted
  for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.ibm.com>;
- Wed, 1 May 2019 15:24:29 +0100
-In-Reply-To: <840fd844-ebce-1655-309a-5794229bab3f@huawei.com>
+ Wed, 1 May 2019 15:24:32 +0100
+In-Reply-To: <20190430180507.GD48973@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -43,623 +44,76 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: hch@infradead.org, tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net, ebiggers@kernel.org, linux-fscrypt@vger.kernel.org, adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net, hch@infradead.org, linux-fscrypt@vger.kernel.org, adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
 
-On Tuesday, April 30, 2019 7:07:28 AM IST Chao Yu wrote:
-> On 2019/4/28 12:31, Chandan Rajendra wrote:
-> > The "read callbacks" code is used by both Ext4 and F2FS. Hence to
-> > remove duplicity, this commit moves the code into
-> > include/linux/read_callbacks.h and fs/read_callbacks.c.
-> > 
-> > The corresponding decrypt and verity "work" functions have been moved
-> > inside fscrypt and fsverity sources. With these in place, the read
-> > callbacks code now has to just invoke enqueue functions provided by
-> > fscrypt and fsverity.
-> > 
-> > Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
-> > ---
-> >  fs/Kconfig                     |   4 +
-> >  fs/Makefile                    |   4 +
-> >  fs/crypto/Kconfig              |   1 +
-> >  fs/crypto/bio.c                |  23 ++---
-> >  fs/crypto/crypto.c             |  17 +--
-> >  fs/crypto/fscrypt_private.h    |   3 +
-> >  fs/ext4/ext4.h                 |   2 -
-> >  fs/ext4/readpage.c             | 183 +++++----------------------------
-> >  fs/ext4/super.c                |   9 +-
-> >  fs/f2fs/data.c                 | 148 ++++----------------------
-> >  fs/f2fs/super.c                |   9 +-
-> >  fs/read_callbacks.c            | 136 ++++++++++++++++++++++++
-> >  fs/verity/Kconfig              |   1 +
-> >  fs/verity/verify.c             |  12 +++
-> >  include/linux/fscrypt.h        |  20 +---
-> >  include/linux/read_callbacks.h |  21 ++++
-> >  16 files changed, 251 insertions(+), 342 deletions(-)
-> >  create mode 100644 fs/read_callbacks.c
-> >  create mode 100644 include/linux/read_callbacks.h
-> > 
-> > diff --git a/fs/Kconfig b/fs/Kconfig
-> > index 97f9eb8df713..03084f2dbeaf 100644
-> > --- a/fs/Kconfig
-> > +++ b/fs/Kconfig
-> > @@ -308,6 +308,10 @@ config NFS_COMMON
-> >  	depends on NFSD || NFS_FS || LOCKD
-> >  	default y
-> >  
-> > +config FS_READ_CALLBACKS
-> > +       bool
-> > +       default n
-> > +
-> >  source "net/sunrpc/Kconfig"
-> >  source "fs/ceph/Kconfig"
-> >  source "fs/cifs/Kconfig"
-> > diff --git a/fs/Makefile b/fs/Makefile
-> > index 9dd2186e74b5..e0c0fce8cf40 100644
-> > --- a/fs/Makefile
-> > +++ b/fs/Makefile
-> > @@ -21,6 +21,10 @@ else
-> >  obj-y +=	no-block.o
-> >  endif
-> >  
-> > +ifeq ($(CONFIG_FS_READ_CALLBACKS),y)
-> > +obj-y +=	read_callbacks.o
-> > +endif
-> > +
-> >  obj-$(CONFIG_PROC_FS) += proc_namespace.o
-> >  
-> >  obj-y				+= notify/
-> > diff --git a/fs/crypto/Kconfig b/fs/crypto/Kconfig
-> > index f0de238000c0..163c328bcbd4 100644
-> > --- a/fs/crypto/Kconfig
-> > +++ b/fs/crypto/Kconfig
-> > @@ -8,6 +8,7 @@ config FS_ENCRYPTION
-> >  	select CRYPTO_CTS
-> >  	select CRYPTO_SHA256
-> >  	select KEYS
-> > +	select FS_READ_CALLBACKS
-> >  	help
-> >  	  Enable encryption of files and directories.  This
-> >  	  feature is similar to ecryptfs, but it is more memory
-> > diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
-> > index 5759bcd018cd..27f5618174f2 100644
-> > --- a/fs/crypto/bio.c
-> > +++ b/fs/crypto/bio.c
-> > @@ -24,6 +24,8 @@
-> >  #include <linux/module.h>
-> >  #include <linux/bio.h>
-> >  #include <linux/namei.h>
-> > +#include <linux/read_callbacks.h>
-> > +
-> >  #include "fscrypt_private.h"
-> >  
-> >  static void __fscrypt_decrypt_bio(struct bio *bio, bool done)
-> > @@ -54,24 +56,15 @@ void fscrypt_decrypt_bio(struct bio *bio)
-> >  }
-> >  EXPORT_SYMBOL(fscrypt_decrypt_bio);
-> >  
-> > -static void completion_pages(struct work_struct *work)
-> > +void fscrypt_decrypt_work(struct work_struct *work)
-> >  {
-> > -	struct fscrypt_ctx *ctx =
-> > -		container_of(work, struct fscrypt_ctx, r.work);
-> > -	struct bio *bio = ctx->r.bio;
-> > +	struct read_callbacks_ctx *ctx =
-> > +		container_of(work, struct read_callbacks_ctx, work);
-> >  
-> > -	__fscrypt_decrypt_bio(bio, true);
-> > -	fscrypt_release_ctx(ctx);
-> > -	bio_put(bio);
-> > -}
-> > +	fscrypt_decrypt_bio(ctx->bio);
-> >  
-> > -void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx, struct bio *bio)
-> > -{
-> > -	INIT_WORK(&ctx->r.work, completion_pages);
-> > -	ctx->r.bio = bio;
-> > -	fscrypt_enqueue_decrypt_work(&ctx->r.work);
-> > +	read_callbacks(ctx);
-> >  }
-> > -EXPORT_SYMBOL(fscrypt_enqueue_decrypt_bio);
-> >  
-> >  void fscrypt_pullback_bio_page(struct page **page, bool restore)
-> >  {
-> > @@ -87,7 +80,7 @@ void fscrypt_pullback_bio_page(struct page **page, bool restore)
-> >  	ctx = (struct fscrypt_ctx *)page_private(bounce_page);
-> >  
-> >  	/* restore control page */
-> > -	*page = ctx->w.control_page;
-> > +	*page = ctx->control_page;
-> >  
-> >  	if (restore)
-> >  		fscrypt_restore_control_page(bounce_page);
-> > diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
-> > index 3fc84bf2b1e5..ffa9302a7351 100644
-> > --- a/fs/crypto/crypto.c
-> > +++ b/fs/crypto/crypto.c
-> > @@ -53,6 +53,7 @@ struct kmem_cache *fscrypt_info_cachep;
-> >  
-> >  void fscrypt_enqueue_decrypt_work(struct work_struct *work)
-> >  {
-> > +	INIT_WORK(work, fscrypt_decrypt_work);
-> >  	queue_work(fscrypt_read_workqueue, work);
-> >  }
-> >  EXPORT_SYMBOL(fscrypt_enqueue_decrypt_work);
-> > @@ -70,11 +71,11 @@ void fscrypt_release_ctx(struct fscrypt_ctx *ctx)
-> >  {
-> >  	unsigned long flags;
-> >  
-> > -	if (ctx->flags & FS_CTX_HAS_BOUNCE_BUFFER_FL && ctx->w.bounce_page) {
-> > -		mempool_free(ctx->w.bounce_page, fscrypt_bounce_page_pool);
-> > -		ctx->w.bounce_page = NULL;
-> > +	if (ctx->flags & FS_CTX_HAS_BOUNCE_BUFFER_FL && ctx->bounce_page) {
-> > +		mempool_free(ctx->bounce_page, fscrypt_bounce_page_pool);
-> > +		ctx->bounce_page = NULL;
-> >  	}
-> > -	ctx->w.control_page = NULL;
-> > +	ctx->control_page = NULL;
-> >  	if (ctx->flags & FS_CTX_REQUIRES_FREE_ENCRYPT_FL) {
-> >  		kmem_cache_free(fscrypt_ctx_cachep, ctx);
-> >  	} else {
-> > @@ -194,11 +195,11 @@ int fscrypt_do_page_crypto(const struct inode *inode, fscrypt_direction_t rw,
-> >  struct page *fscrypt_alloc_bounce_page(struct fscrypt_ctx *ctx,
-> >  				       gfp_t gfp_flags)
-> >  {
-> > -	ctx->w.bounce_page = mempool_alloc(fscrypt_bounce_page_pool, gfp_flags);
-> > -	if (ctx->w.bounce_page == NULL)
-> > +	ctx->bounce_page = mempool_alloc(fscrypt_bounce_page_pool, gfp_flags);
-> > +	if (ctx->bounce_page == NULL)
-> >  		return ERR_PTR(-ENOMEM);
-> >  	ctx->flags |= FS_CTX_HAS_BOUNCE_BUFFER_FL;
-> > -	return ctx->w.bounce_page;
-> > +	return ctx->bounce_page;
-> >  }
-> >  
-> >  /**
-> > @@ -267,7 +268,7 @@ struct page *fscrypt_encrypt_page(const struct inode *inode,
-> >  	if (IS_ERR(ciphertext_page))
-> >  		goto errout;
-> >  
-> > -	ctx->w.control_page = page;
-> > +	ctx->control_page = page;
-> >  	err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk_num,
-> >  				     page, ciphertext_page, len, offs,
-> >  				     gfp_flags);
-> > diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-> > index 7da276159593..412a3bcf9efd 100644
-> > --- a/fs/crypto/fscrypt_private.h
-> > +++ b/fs/crypto/fscrypt_private.h
-> > @@ -114,6 +114,9 @@ static inline bool fscrypt_valid_enc_modes(u32 contents_mode,
-> >  	return false;
-> >  }
-> >  
-> > +/* bio.c */
-> > +void fscrypt_decrypt_work(struct work_struct *work);
-> > +
-> >  /* crypto.c */
-> >  extern struct kmem_cache *fscrypt_info_cachep;
-> >  extern int fscrypt_initialize(unsigned int cop_flags);
-> > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> > index f2b0e628ff7b..23f8568c9b53 100644
-> > --- a/fs/ext4/ext4.h
-> > +++ b/fs/ext4/ext4.h
-> > @@ -3127,8 +3127,6 @@ static inline void ext4_set_de_type(struct super_block *sb,
-> >  extern int ext4_mpage_readpages(struct address_space *mapping,
-> >  				struct list_head *pages, struct page *page,
-> >  				unsigned nr_pages, bool is_readahead);
-> > -extern int __init ext4_init_post_read_processing(void);
-> > -extern void ext4_exit_post_read_processing(void);
-> >  
-> >  /* symlink.c */
-> >  extern const struct inode_operations ext4_encrypted_symlink_inode_operations;
-> > diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-> > index 0169e3809da3..e363dededc21 100644
-> > --- a/fs/ext4/readpage.c
-> > +++ b/fs/ext4/readpage.c
-> > @@ -44,14 +44,10 @@
-> >  #include <linux/backing-dev.h>
-> >  #include <linux/pagevec.h>
-> >  #include <linux/cleancache.h>
-> > +#include <linux/read_callbacks.h>
-> >  
-> >  #include "ext4.h"
-> >  
-> > -#define NUM_PREALLOC_POST_READ_CTXS	128
-> > -
-> > -static struct kmem_cache *bio_post_read_ctx_cache;
-> > -static mempool_t *bio_post_read_ctx_pool;
-> > -
-> >  static inline bool ext4_bio_encrypted(struct bio *bio)
-> >  {
-> >  #ifdef CONFIG_FS_ENCRYPTION
-> > @@ -61,125 +57,6 @@ static inline bool ext4_bio_encrypted(struct bio *bio)
-> >  #endif
-> >  }
-> >  
-> > -/* postprocessing steps for read bios */
-> > -enum bio_post_read_step {
-> > -	STEP_INITIAL = 0,
-> > -	STEP_DECRYPT,
-> > -	STEP_VERITY,
-> > -};
-> > -
-> > -struct bio_post_read_ctx {
-> > -	struct bio *bio;
-> > -	struct work_struct work;
-> > -	unsigned int cur_step;
-> > -	unsigned int enabled_steps;
-> > -};
-> > -
-> > -static void __read_end_io(struct bio *bio)
-> > -{
-> > -	struct page *page;
-> > -	struct bio_vec *bv;
-> > -	int i;
-> > -	struct bvec_iter_all iter_all;
-> > -
-> > -	bio_for_each_segment_all(bv, bio, i, iter_all) {
-> > -		page = bv->bv_page;
-> > -
-> > -		/* PG_error was set if any post_read step failed */
-> > -		if (bio->bi_status || PageError(page)) {
-> > -			ClearPageUptodate(page);
-> > -			SetPageError(page);
-> > -		} else {
-> > -			SetPageUptodate(page);
-> > -		}
-> > -		unlock_page(page);
-> > -	}
-> > -	if (bio->bi_private)
-> > -		mempool_free(bio->bi_private, bio_post_read_ctx_pool);
-> > -	bio_put(bio);
-> > -}
-> > -
-> > -static void bio_post_read_processing(struct bio_post_read_ctx *ctx);
-> > -
-> > -static void decrypt_work(struct work_struct *work)
-> > -{
-> > -	struct bio_post_read_ctx *ctx =
-> > -		container_of(work, struct bio_post_read_ctx, work);
-> > -
-> > -	fscrypt_decrypt_bio(ctx->bio);
-> > -
-> > -	bio_post_read_processing(ctx);
-> > -}
-> > -
-> > -static void verity_work(struct work_struct *work)
-> > -{
-> > -	struct bio_post_read_ctx *ctx =
-> > -		container_of(work, struct bio_post_read_ctx, work);
-> > -
-> > -	fsverity_verify_bio(ctx->bio);
-> > -
-> > -	bio_post_read_processing(ctx);
-> > -}
-> > -
-> > -static void bio_post_read_processing(struct bio_post_read_ctx *ctx)
-> > -{
-> > -	/*
-> > -	 * We use different work queues for decryption and for verity because
-> > -	 * verity may require reading metadata pages that need decryption, and
-> > -	 * we shouldn't recurse to the same workqueue.
-> > -	 */
-> > -	switch (++ctx->cur_step) {
-> > -	case STEP_DECRYPT:
-> > -		if (ctx->enabled_steps & (1 << STEP_DECRYPT)) {
-> > -			INIT_WORK(&ctx->work, decrypt_work);
-> > -			fscrypt_enqueue_decrypt_work(&ctx->work);
-> > -			return;
-> > -		}
-> > -		ctx->cur_step++;
-> > -		/* fall-through */
-> > -	case STEP_VERITY:
-> > -		if (ctx->enabled_steps & (1 << STEP_VERITY)) {
-> > -			INIT_WORK(&ctx->work, verity_work);
-> > -			fsverity_enqueue_verify_work(&ctx->work);
-> > -			return;
-> > -		}
-> > -		ctx->cur_step++;
-> > -		/* fall-through */
-> > -	default:
-> > -		__read_end_io(ctx->bio);
-> > -	}
-> > -}
-> > -
-> > -static struct bio_post_read_ctx *get_bio_post_read_ctx(struct inode *inode,
-> > -						       struct bio *bio,
-> > -						       pgoff_t index)
-> > -{
-> > -	unsigned int post_read_steps = 0;
-> > -	struct bio_post_read_ctx *ctx = NULL;
-> > -
-> > -	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode))
-> > -		post_read_steps |= 1 << STEP_DECRYPT;
-> > -#ifdef CONFIG_FS_VERITY
-> > -	if (inode->i_verity_info != NULL &&
-> > -	    (index < ((i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT)))
-> > -		post_read_steps |= 1 << STEP_VERITY;
-> > -#endif
-> > -	if (post_read_steps) {
-> > -		ctx = mempool_alloc(bio_post_read_ctx_pool, GFP_NOFS);
-> > -		if (!ctx)
-> > -			return ERR_PTR(-ENOMEM);
-> > -		ctx->bio = bio;
-> > -		ctx->enabled_steps = post_read_steps;
-> > -		bio->bi_private = ctx;
-> > -	}
-> > -	return ctx;
-> > -}
-> > -
-> > -static bool bio_post_read_required(struct bio *bio)
-> > -{
-> > -	return bio->bi_private && !bio->bi_status;
-> > -}
-> > -
-> >  /*
-> >   * I/O completion handler for multipage BIOs.
-> >   *
-> > @@ -194,14 +71,30 @@ static bool bio_post_read_required(struct bio *bio)
-> >   */
-> >  static void mpage_end_io(struct bio *bio)
-> >  {
-> > -	if (bio_post_read_required(bio)) {
-> > -		struct bio_post_read_ctx *ctx = bio->bi_private;
-> > +	struct bio_vec *bv;
-> > +	int i;
-> > +	struct bvec_iter_all iter_all;
-> > +#if defined(CONFIG_FS_ENCRYPTION) || defined(CONFIG_FS_VERITY)
-> > +	if (read_callbacks_required(bio)) {
-> > +		struct read_callbacks_ctx *ctx = bio->bi_private;
-> >  
-> > -		ctx->cur_step = STEP_INITIAL;
-> > -		bio_post_read_processing(ctx);
-> > +		read_callbacks(ctx);
-> >  		return;
-> >  	}
-> > -	__read_end_io(bio);
-> > +#endif
-> > +	bio_for_each_segment_all(bv, bio, i, iter_all) {
-> > +		struct page *page = bv->bv_page;
-> > +
-> > +		if (!bio->bi_status) {
-> > +			SetPageUptodate(page);
-> > +		} else {
-> > +			ClearPageUptodate(page);
-> > +			SetPageError(page);
-> > +		}
-> > +		unlock_page(page);
-> > +	}
-> > +
-> > +	bio_put(bio);
-> >  }
-> >  
-> >  static inline loff_t ext4_readpage_limit(struct inode *inode)
-> > @@ -368,17 +261,19 @@ int ext4_mpage_readpages(struct address_space *mapping,
-> >  			bio = NULL;
-> >  		}
-> >  		if (bio == NULL) {
-> > -			struct bio_post_read_ctx *ctx;
-> > +			struct read_callbacks_ctx *ctx = NULL;
-> >  
-> >  			bio = bio_alloc(GFP_KERNEL,
-> >  				min_t(int, nr_pages, BIO_MAX_PAGES));
-> >  			if (!bio)
-> >  				goto set_error_page;
-> > -			ctx = get_bio_post_read_ctx(inode, bio, page->index);
-> > +#if defined(CONFIG_FS_ENCRYPTION) || defined(CONFIG_FS_VERITY)
-> > +			ctx = get_read_callbacks_ctx(inode, bio, page->index);
-> >  			if (IS_ERR(ctx)) {
-> >  				bio_put(bio);
-> >  				goto set_error_page;
-> >  			}
-> > +#endif
-> >  			bio_set_dev(bio, bdev);
-> >  			bio->bi_iter.bi_sector = blocks[0] << (blkbits - 9);
-> >  			bio->bi_end_io = mpage_end_io;
-> > @@ -417,29 +312,3 @@ int ext4_mpage_readpages(struct address_space *mapping,
-> >  		submit_bio(bio);
-> >  	return 0;
-> >  }
-> > -
-> > -int __init ext4_init_post_read_processing(void)
-> > -{
-> > -	bio_post_read_ctx_cache =
-> > -		kmem_cache_create("ext4_bio_post_read_ctx",
-> > -				  sizeof(struct bio_post_read_ctx), 0, 0, NULL);
-> > -	if (!bio_post_read_ctx_cache)
-> > -		goto fail;
-> > -	bio_post_read_ctx_pool =
-> > -		mempool_create_slab_pool(NUM_PREALLOC_POST_READ_CTXS,
-> > -					 bio_post_read_ctx_cache);
-> > -	if (!bio_post_read_ctx_pool)
-> > -		goto fail_free_cache;
-> > -	return 0;
-> > -
-> > -fail_free_cache:
-> > -	kmem_cache_destroy(bio_post_read_ctx_cache);
-> > -fail:
-> > -	return -ENOMEM;
-> > -}
-> > -
-> > -void ext4_exit_post_read_processing(void)
-> > -{
-> > -	mempool_destroy(bio_post_read_ctx_pool);
-> > -	kmem_cache_destroy(bio_post_read_ctx_cache);
-> > -}
-> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> > index 4ae6f5849caa..aba724f82cc3 100644
-> > --- a/fs/ext4/super.c
-> > +++ b/fs/ext4/super.c
-> > @@ -6101,10 +6101,6 @@ static int __init ext4_init_fs(void)
-> >  		return err;
-> >  
-> >  	err = ext4_init_pending();
-> > -	if (err)
-> > -		goto out7;
-> > -
-> > -	err = ext4_init_post_read_processing();
-> >  	if (err)
-> >  		goto out6;
-> >  
-> > @@ -6146,10 +6142,8 @@ static int __init ext4_init_fs(void)
-> >  out4:
-> >  	ext4_exit_pageio();
-> >  out5:
-> > -	ext4_exit_post_read_processing();
-> > -out6:
-> >  	ext4_exit_pending();
-> > -out7:
-> > +out6:
-> >  	ext4_exit_es();
-> >  
-> >  	return err;
-> > @@ -6166,7 +6160,6 @@ static void __exit ext4_exit_fs(void)
-> >  	ext4_exit_sysfs();
-> >  	ext4_exit_system_zone();
-> >  	ext4_exit_pageio();
-> > -	ext4_exit_post_read_processing();
-> >  	ext4_exit_es();
-> >  	ext4_exit_pending();
-> >  }
-> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > index 038b958d0fa9..05430d3650ab 100644
-> > --- a/fs/f2fs/data.c
-> > +++ b/fs/f2fs/data.c
-> > @@ -18,6 +18,7 @@
-> >  #include <linux/uio.h>
-> >  #include <linux/cleancache.h>
-> >  #include <linux/sched/signal.h>
-> > +#include <linux/read_callbacks.h>
-> >  
-> >  #include "f2fs.h"
-> >  #include "node.h"
-> > @@ -25,11 +26,6 @@
-> >  #include "trace.h"
-> >  #include <trace/events/f2fs.h>
-> >  
-> > -#define NUM_PREALLOC_POST_READ_CTXS	128
-> > -
-> > -static struct kmem_cache *bio_post_read_ctx_cache;
-> > -static mempool_t *bio_post_read_ctx_pool;
-> > -
-> >  static bool __is_cp_guaranteed(struct page *page)
-> >  {
-> >  	struct address_space *mapping = page->mapping;
-> > @@ -69,20 +65,6 @@ static enum count_type __read_io_type(struct page *page)
-> >  	return F2FS_RD_DATA;
-> >  }
-> >  
-> > -/* postprocessing steps for read bios */
-> > -enum bio_post_read_step {
-> > -	STEP_INITIAL = 0,
-> > -	STEP_DECRYPT,
-> > -	STEP_VERITY,
-> > -};
-> > -
-> > -struct bio_post_read_ctx {
-> > -	struct bio *bio;
-> > -	struct work_struct work;
-> > -	unsigned int cur_step;
-> > -	unsigned int enabled_steps;
-> > -};
-> > -
-> >  static void __read_end_io(struct bio *bio)
-> >  {
-> >  	struct page *page;
-> > @@ -104,65 +86,16 @@ static void __read_end_io(struct bio *bio)
-> >  		dec_page_count(F2FS_P_SB(page), __read_io_type(page));
-> >  		unlock_page(page);
-> >  	}
-> > -	if (bio->bi_private)
-> > -		mempool_free(bio->bi_private, bio_post_read_ctx_pool);
-> > -	bio_put(bio);
-> > -}
-> > -
-> > -static void bio_post_read_processing(struct bio_post_read_ctx *ctx);
-> >  
-> > -static void decrypt_work(struct work_struct *work)
-> > -{
-> > -	struct bio_post_read_ctx *ctx =
-> > -		container_of(work, struct bio_post_read_ctx, work);
-> > -
-> > -	fscrypt_decrypt_bio(ctx->bio);
-> > +#if defined(CONFIG_FS_ENCRYPTION) || defined(CONFIG_FS_VERITY)
-> > +	if (bio->bi_private) {
-> > +		struct read_callbacks_ctx *ctx;
-> >  
-> > -	bio_post_read_processing(ctx);
-> > -}
-> > -
-> > -static void verity_work(struct work_struct *work)
-> > -{
-> > -	struct bio_post_read_ctx *ctx =
-> > -		container_of(work, struct bio_post_read_ctx, work);
-> > -
-> > -	fsverity_verify_bio(ctx->bio);
-> > -
-> > -	bio_post_read_processing(ctx);
-> > -}
-> > -
-> > -static void bio_post_read_processing(struct bio_post_read_ctx *ctx)
-> > -{
-> > -	/*
-> > -	 * We use different work queues for decryption and for verity because
-> > -	 * verity may require reading metadata pages that need decryption, and
-> > -	 * we shouldn't recurse to the same workqueue.
-> > -	 */
-> > -	switch (++ctx->cur_step) {
-> > -	case STEP_DECRYPT:
-> > -		if (ctx->enabled_steps & (1 << STEP_DECRYPT)) {
-> > -			INIT_WORK(&ctx->work, decrypt_work);
-> > -			fscrypt_enqueue_decrypt_work(&ctx->work);
-> > -			return;
-> > -		}
-> > -		ctx->cur_step++;
-> > -		/* fall-through */
-> > -	case STEP_VERITY:
-> > -		if (ctx->enabled_steps & (1 << STEP_VERITY)) {
-> > -			INIT_WORK(&ctx->work, verity_work);
-> > -			fsverity_enqueue_verify_work(&ctx->work);
-> > -			return;
-> > -		}
-> > -		ctx->cur_step++;
-> > -		/* fall-through */
-> > -	default:
-> > -		__read_end_io(ctx->bio);
-> > +		ctx = bio->bi_private;
-> > +		put_read_callbacks_ctx(ctx);
-> >  	}
-> > -}
-> > -
-> > -static bool f2fs_bio_post_read_required(struct bio *bio)
-> > -{
-> > -	return bio->bi_private && !bio->bi_status;
-> > +#endif
-> > +	bio_put(bio);
-> >  }
-> >  
-> >  static void f2fs_read_end_io(struct bio *bio)
-> > @@ -173,14 +106,12 @@ static void f2fs_read_end_io(struct bio *bio)
-> >  		bio->bi_status = BLK_STS_IOERR;
-> >  	}
-> >  
-> > -	if (f2fs_bio_post_read_required(bio)) {
-> > -		struct bio_post_read_ctx *ctx = bio->bi_private;
-> > -
-> > -		ctx->cur_step = STEP_INITIAL;
-> > -		bio_post_read_processing(ctx);
-> > +#if defined(CONFIG_FS_ENCRYPTION) || defined(CONFIG_FS_VERITY)
-> > +	if (!bio->bi_status && bio->bi_private) {
-> > +		read_callbacks((struct read_callbacks_ctx *)(bio->bi_private));
-> >  		return;
-> 
-> Previously, in __read_end_io() we will decrease in-flight read IO count for each
-> page, but it looks in the case that if fscrypto or fsverity is on and there is
-> no IO error in end_io(), we will miss handling the count.
-> 
-
-Thanks for pointing this out. I will fix this in the next version of this
-patchset.
-
--- 
-chandan
+T24gVHVlc2RheSwgQXByaWwgMzAsIDIwMTkgMTE6MzU6MDggUE0gSVNUIEVyaWMgQmlnZ2VycyB3
+cm90ZToKPiBPbiBTdW4sIEFwciAyOCwgMjAxOSBhdCAxMDowMToxMEFNICswNTMwLCBDaGFuZGFu
+IFJhamVuZHJhIHdyb3RlOgo+ID4gVGhlICJyZWFkIGNhbGxiYWNrcyIgY29kZSBpcyB1c2VkIGJ5
+IGJvdGggRXh0NCBhbmQgRjJGUy4gSGVuY2UgdG8KPiA+IHJlbW92ZSBkdXBsaWNpdHksIHRoaXMg
+Y29tbWl0IG1vdmVzIHRoZSBjb2RlIGludG8KPiA+IGluY2x1ZGUvbGludXgvcmVhZF9jYWxsYmFj
+a3MuaCBhbmQgZnMvcmVhZF9jYWxsYmFja3MuYy4KPiA+IAo+ID4gVGhlIGNvcnJlc3BvbmRpbmcg
+ZGVjcnlwdCBhbmQgdmVyaXR5ICJ3b3JrIiBmdW5jdGlvbnMgaGF2ZSBiZWVuIG1vdmVkCj4gPiBp
+bnNpZGUgZnNjcnlwdCBhbmQgZnN2ZXJpdHkgc291cmNlcy4gV2l0aCB0aGVzZSBpbiBwbGFjZSwg
+dGhlIHJlYWQKPiA+IGNhbGxiYWNrcyBjb2RlIG5vdyBoYXMgdG8ganVzdCBpbnZva2UgZW5xdWV1
+ZSBmdW5jdGlvbnMgcHJvdmlkZWQgYnkKPiA+IGZzY3J5cHQgYW5kIGZzdmVyaXR5Lgo+ID4gCj4g
+PiBTaWduZWQtb2ZmLWJ5OiBDaGFuZGFuIFJhamVuZHJhIDxjaGFuZGFuQGxpbnV4LmlibS5jb20+
+Cj4gPiAtLS0KPiA+ICBmcy9LY29uZmlnICAgICAgICAgICAgICAgICAgICAgfCAgIDQgKwo+ID4g
+IGZzL01ha2VmaWxlICAgICAgICAgICAgICAgICAgICB8ICAgNCArCj4gPiAgZnMvY3J5cHRvL0tj
+b25maWcgICAgICAgICAgICAgIHwgICAxICsKPiA+ICBmcy9jcnlwdG8vYmlvLmMgICAgICAgICAg
+ICAgICAgfCAgMjMgKystLS0KPiA+ICBmcy9jcnlwdG8vY3J5cHRvLmMgICAgICAgICAgICAgfCAg
+MTcgKy0tCj4gPiAgZnMvY3J5cHRvL2ZzY3J5cHRfcHJpdmF0ZS5oICAgIHwgICAzICsKPiA+ICBm
+cy9leHQ0L2V4dDQuaCAgICAgICAgICAgICAgICAgfCAgIDIgLQo+ID4gIGZzL2V4dDQvcmVhZHBh
+Z2UuYyAgICAgICAgICAgICB8IDE4MyArKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
+PiA+ICBmcy9leHQ0L3N1cGVyLmMgICAgICAgICAgICAgICAgfCAgIDkgKy0KPiA+ICBmcy9mMmZz
+L2RhdGEuYyAgICAgICAgICAgICAgICAgfCAxNDggKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
+PiA+ICBmcy9mMmZzL3N1cGVyLmMgICAgICAgICAgICAgICAgfCAgIDkgKy0KPiA+ICBmcy9yZWFk
+X2NhbGxiYWNrcy5jICAgICAgICAgICAgfCAxMzYgKysrKysrKysrKysrKysrKysrKysrKysrCj4g
+PiAgZnMvdmVyaXR5L0tjb25maWcgICAgICAgICAgICAgIHwgICAxICsKPiA+ICBmcy92ZXJpdHkv
+dmVyaWZ5LmMgICAgICAgICAgICAgfCAgMTIgKysrCj4gPiAgaW5jbHVkZS9saW51eC9mc2NyeXB0
+LmggICAgICAgIHwgIDIwICstLS0KPiA+ICBpbmNsdWRlL2xpbnV4L3JlYWRfY2FsbGJhY2tzLmgg
+fCAgMjEgKysrKwo+ID4gIDE2IGZpbGVzIGNoYW5nZWQsIDI1MSBpbnNlcnRpb25zKCspLCAzNDIg
+ZGVsZXRpb25zKC0pCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGZzL3JlYWRfY2FsbGJhY2tzLmMK
+PiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9saW51eC9yZWFkX2NhbGxiYWNrcy5oCj4g
+PiAKPiA+IGRpZmYgLS1naXQgYS9mcy9LY29uZmlnIGIvZnMvS2NvbmZpZwo+ID4gaW5kZXggOTdm
+OWViOGRmNzEzLi4wMzA4NGYyZGJlYWYgMTAwNjQ0Cj4gPiAtLS0gYS9mcy9LY29uZmlnCj4gPiAr
+KysgYi9mcy9LY29uZmlnCj4gPiBAQCAtMzA4LDYgKzMwOCwxMCBAQCBjb25maWcgTkZTX0NPTU1P
+Tgo+ID4gIAlkZXBlbmRzIG9uIE5GU0QgfHwgTkZTX0ZTIHx8IExPQ0tECj4gPiAgCWRlZmF1bHQg
+eQo+ID4gIAo+ID4gK2NvbmZpZyBGU19SRUFEX0NBTExCQUNLUwo+ID4gKyAgICAgICBib29sCj4g
+PiArICAgICAgIGRlZmF1bHQgbgo+ID4gKwo+ID4gIHNvdXJjZSAibmV0L3N1bnJwYy9LY29uZmln
+Igo+ID4gIHNvdXJjZSAiZnMvY2VwaC9LY29uZmlnIgo+ID4gIHNvdXJjZSAiZnMvY2lmcy9LY29u
+ZmlnIgo+IAo+IFRoaXMgc2hvdWxkbid0IGJlIHVuZGVyIHRoZSAnaWYgTkVUV09SS19GSUxFU1lT
+VEVNUycgYmxvY2ssIHNpbmNlIGl0IGhhcyBub3RoaW5nCj4gdG8gZG8gd2l0aCBuZXR3b3JrIGZp
+bGVzeXN0ZW1zLiAgV2hlbiB0cnlpbmcgdG8gY29tcGlsZSB0aGlzIEkgZ290Ogo+IAo+IAlXQVJO
+SU5HOiB1bm1ldCBkaXJlY3QgZGVwZW5kZW5jaWVzIGRldGVjdGVkIGZvciBGU19SRUFEX0NBTExC
+QUNLUwo+IAkgIERlcGVuZHMgb24gW25dOiBORVRXT1JLX0ZJTEVTWVNURU1TIFs9bl0KPiAJICBT
+ZWxlY3RlZCBieSBbeV06Cj4gCSAgLSBGU19FTkNSWVBUSU9OIFs9eV0KPiAJICAtIEZTX1ZFUklU
+WSBbPXldCj4gCj4gUGVyaGFwcyBwdXQgaXQganVzdCBiZWxvdyBGU19JT01BUD8KPiAKPiA+IGRp
+ZmYgLS1naXQgYS9mcy9NYWtlZmlsZSBiL2ZzL01ha2VmaWxlCj4gPiBpbmRleCA5ZGQyMTg2ZTc0
+YjUuLmUwYzBmY2U4Y2Y0MCAxMDA2NDQKPiA+IC0tLSBhL2ZzL01ha2VmaWxlCj4gPiArKysgYi9m
+cy9NYWtlZmlsZQo+ID4gQEAgLTIxLDYgKzIxLDEwIEBAIGVsc2UKPiA+ICBvYmoteSArPQluby1i
+bG9jay5vCj4gPiAgZW5kaWYKPiA+ICAKPiA+ICtpZmVxICgkKENPTkZJR19GU19SRUFEX0NBTExC
+QUNLUykseSkKPiA+ICtvYmoteSArPQlyZWFkX2NhbGxiYWNrcy5vCj4gPiArZW5kaWYKPiA+ICsK
+PiA+ICBvYmotJChDT05GSUdfUFJPQ19GUykgKz0gcHJvY19uYW1lc3BhY2Uubwo+ID4gIAo+ID4g
+IG9iai15CQkJCSs9IG5vdGlmeS8KPiA+IGRpZmYgLS1naXQgYS9mcy9jcnlwdG8vS2NvbmZpZyBi
+L2ZzL2NyeXB0by9LY29uZmlnCj4gPiBpbmRleCBmMGRlMjM4MDAwYzAuLjE2M2MzMjhiY2JkNCAx
+MDA2NDQKPiA+IC0tLSBhL2ZzL2NyeXB0by9LY29uZmlnCj4gPiArKysgYi9mcy9jcnlwdG8vS2Nv
+bmZpZwo+ID4gQEAgLTgsNiArOCw3IEBAIGNvbmZpZyBGU19FTkNSWVBUSU9OCj4gPiAgCXNlbGVj
+dCBDUllQVE9fQ1RTCj4gPiAgCXNlbGVjdCBDUllQVE9fU0hBMjU2Cj4gPiAgCXNlbGVjdCBLRVlT
+Cj4gPiArCXNlbGVjdCBGU19SRUFEX0NBTExCQUNLUwo+ID4gIAloZWxwCj4gPiAgCSAgRW5hYmxl
+IGVuY3J5cHRpb24gb2YgZmlsZXMgYW5kIGRpcmVjdG9yaWVzLiAgVGhpcwo+ID4gIAkgIGZlYXR1
+cmUgaXMgc2ltaWxhciB0byBlY3J5cHRmcywgYnV0IGl0IGlzIG1vcmUgbWVtb3J5Cj4gCj4gVGhp
+cyBzZWxlY3Rpb24gbmVlZHMgdG8gYmUgY29uZGl0aW9uYWwgb24gQkxPQ0suCj4gCj4gCXNlbGVj
+dCBGU19SRUFEX0NBTExCQUNLUyBpZiBCTE9DSwo+IAo+IE90aGVyd2lzZSwgYnVpbGRpbmcgd2l0
+aG91dCBCTE9DSyBhbmQgd2l0aCBVQklGUyBlbmNyeXB0aW9uIHN1cHBvcnQgZmFpbHMuCj4gCj4g
+CWZzL3JlYWRfY2FsbGJhY2tzLmM6IEluIGZ1bmN0aW9uIOKAmGVuZF9yZWFkX2NhbGxiYWNrc+KA
+mToKPiAJZnMvcmVhZF9jYWxsYmFja3MuYzozNDoyMzogZXJyb3I6IHN0b3JhZ2Ugc2l6ZSBvZiDi
+gJhpdGVyX2FsbOKAmSBpc27igJl0IGtub3duCj4gCSAgc3RydWN0IGJ2ZWNfaXRlcl9hbGwgaXRl
+cl9hbGw7Cj4gCQkJICAgICAgIF5+fn5+fn5+Cj4gCWZzL3JlYWRfY2FsbGJhY2tzLmM6Mzc6MjA6
+IGVycm9yOiBkZXJlZmVyZW5jaW5nIHBvaW50ZXIgdG8gaW5jb21wbGV0ZSB0eXBlIOKAmHN0cnVj
+dCBidWZmZXJfaGVhZOKAmQo+IAkgICBpZiAoIVBhZ2VFcnJvcihiaC0+Yl9wYWdlKSkKPiAKPiAJ
+Wy4uLl0KPgoKSSB3aWxsIGZpeCB0aGlzIGluIHRoZSBuZXh0IHZlcnNpb24gb2YgdGhpcyBwYXRj
+aHNldC4KCi0tIApjaGFuZGFuCgoKCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1k
+ZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQv
+bGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
