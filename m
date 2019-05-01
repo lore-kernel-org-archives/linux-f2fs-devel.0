@@ -1,40 +1,39 @@
 From: Chandan Rajendra <chandan@linux.ibm.com>
-Subject: Re: [PATCH V2 02/13] Consolidate "read callbacks" into a
- new file
-Date: Wed, 01 May 2019 18:02:39 +0530
-Message-ID: <8267479.irDUbO2F3m@localhost.localdomain>
+Subject: Re: [PATCH V2 03/13] fsverity: Add call back to decide
+ if verity check has to be performed
+Date: Wed, 01 May 2019 18:03:56 +0530
+Message-ID: <1679959.ODoryAfBfi@localhost.localdomain>
 References: <20190428043121.30925-1-chandan@linux.ibm.com>
- <20190428043121.30925-3-chandan@linux.ibm.com>
- <20190430180507.GD48973@gmail.com>
+ <20190428043121.30925-4-chandan@linux.ibm.com>
+ <20190430211037.GA30337@azazel.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.ibm.com>) id 1hLqA6-0004lS-7q
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 May 2019 14:24:42 +0000
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
- helo=mx0a-001b2d01.pphosted.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <chandan@linux.ibm.com>) id 1hLqAA-0001SR-V3
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 May 2019 14:24:46 +0000
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hLqA4-001ih6-Bp
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 May 2019 14:24:42 +0000
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
- by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
- x41EM8OV005694
- for <linux-f2fs-devel@lists.sourceforge.net>; Wed, 1 May 2019 10:24:34 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
- by mx0b-001b2d01.pphosted.com with ESMTP id 2s7cyprdyb-1
+ id 1hLqA8-002BLX-PN
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 May 2019 14:24:46 +0000
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+ by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
+ x41EMHJF112006
+ for <linux-f2fs-devel@lists.sourceforge.net>; Wed, 1 May 2019 10:24:39 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+ by mx0a-001b2d01.pphosted.com with ESMTP id 2s78uks0aw-1
  (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>; Wed, 01 May 2019 10:24:34 -0400
+ for <linux-f2fs-devel@lists.sourceforge.net>; Wed, 01 May 2019 10:24:38 -0400
 Received: from localhost
- by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
+ by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
  Violators will be prosecuted
  for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.ibm.com>;
- Wed, 1 May 2019 15:24:32 +0100
-In-Reply-To: <20190430180507.GD48973@gmail.com>
+ Wed, 1 May 2019 15:24:36 +0100
+In-Reply-To: <20190430211037.GA30337@azazel.net>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -44,76 +43,87 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net, hch@infradead.org, linux-fscrypt@vger.kernel.org, adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
+To: Jeremy Sowden <jeremy@azazel.net>
+Cc: hch@infradead.org, tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net, ebiggers@kernel.org, linux-fscrypt@vger.kernel.org, adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
 
-T24gVHVlc2RheSwgQXByaWwgMzAsIDIwMTkgMTE6MzU6MDggUE0gSVNUIEVyaWMgQmlnZ2VycyB3
-cm90ZToKPiBPbiBTdW4sIEFwciAyOCwgMjAxOSBhdCAxMDowMToxMEFNICswNTMwLCBDaGFuZGFu
-IFJhamVuZHJhIHdyb3RlOgo+ID4gVGhlICJyZWFkIGNhbGxiYWNrcyIgY29kZSBpcyB1c2VkIGJ5
-IGJvdGggRXh0NCBhbmQgRjJGUy4gSGVuY2UgdG8KPiA+IHJlbW92ZSBkdXBsaWNpdHksIHRoaXMg
-Y29tbWl0IG1vdmVzIHRoZSBjb2RlIGludG8KPiA+IGluY2x1ZGUvbGludXgvcmVhZF9jYWxsYmFj
-a3MuaCBhbmQgZnMvcmVhZF9jYWxsYmFja3MuYy4KPiA+IAo+ID4gVGhlIGNvcnJlc3BvbmRpbmcg
-ZGVjcnlwdCBhbmQgdmVyaXR5ICJ3b3JrIiBmdW5jdGlvbnMgaGF2ZSBiZWVuIG1vdmVkCj4gPiBp
-bnNpZGUgZnNjcnlwdCBhbmQgZnN2ZXJpdHkgc291cmNlcy4gV2l0aCB0aGVzZSBpbiBwbGFjZSwg
-dGhlIHJlYWQKPiA+IGNhbGxiYWNrcyBjb2RlIG5vdyBoYXMgdG8ganVzdCBpbnZva2UgZW5xdWV1
-ZSBmdW5jdGlvbnMgcHJvdmlkZWQgYnkKPiA+IGZzY3J5cHQgYW5kIGZzdmVyaXR5Lgo+ID4gCj4g
-PiBTaWduZWQtb2ZmLWJ5OiBDaGFuZGFuIFJhamVuZHJhIDxjaGFuZGFuQGxpbnV4LmlibS5jb20+
-Cj4gPiAtLS0KPiA+ICBmcy9LY29uZmlnICAgICAgICAgICAgICAgICAgICAgfCAgIDQgKwo+ID4g
-IGZzL01ha2VmaWxlICAgICAgICAgICAgICAgICAgICB8ICAgNCArCj4gPiAgZnMvY3J5cHRvL0tj
-b25maWcgICAgICAgICAgICAgIHwgICAxICsKPiA+ICBmcy9jcnlwdG8vYmlvLmMgICAgICAgICAg
-ICAgICAgfCAgMjMgKystLS0KPiA+ICBmcy9jcnlwdG8vY3J5cHRvLmMgICAgICAgICAgICAgfCAg
-MTcgKy0tCj4gPiAgZnMvY3J5cHRvL2ZzY3J5cHRfcHJpdmF0ZS5oICAgIHwgICAzICsKPiA+ICBm
-cy9leHQ0L2V4dDQuaCAgICAgICAgICAgICAgICAgfCAgIDIgLQo+ID4gIGZzL2V4dDQvcmVhZHBh
-Z2UuYyAgICAgICAgICAgICB8IDE4MyArKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
-PiA+ICBmcy9leHQ0L3N1cGVyLmMgICAgICAgICAgICAgICAgfCAgIDkgKy0KPiA+ICBmcy9mMmZz
-L2RhdGEuYyAgICAgICAgICAgICAgICAgfCAxNDggKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
-PiA+ICBmcy9mMmZzL3N1cGVyLmMgICAgICAgICAgICAgICAgfCAgIDkgKy0KPiA+ICBmcy9yZWFk
-X2NhbGxiYWNrcy5jICAgICAgICAgICAgfCAxMzYgKysrKysrKysrKysrKysrKysrKysrKysrCj4g
-PiAgZnMvdmVyaXR5L0tjb25maWcgICAgICAgICAgICAgIHwgICAxICsKPiA+ICBmcy92ZXJpdHkv
-dmVyaWZ5LmMgICAgICAgICAgICAgfCAgMTIgKysrCj4gPiAgaW5jbHVkZS9saW51eC9mc2NyeXB0
-LmggICAgICAgIHwgIDIwICstLS0KPiA+ICBpbmNsdWRlL2xpbnV4L3JlYWRfY2FsbGJhY2tzLmgg
-fCAgMjEgKysrKwo+ID4gIDE2IGZpbGVzIGNoYW5nZWQsIDI1MSBpbnNlcnRpb25zKCspLCAzNDIg
-ZGVsZXRpb25zKC0pCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGZzL3JlYWRfY2FsbGJhY2tzLmMK
-PiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9saW51eC9yZWFkX2NhbGxiYWNrcy5oCj4g
-PiAKPiA+IGRpZmYgLS1naXQgYS9mcy9LY29uZmlnIGIvZnMvS2NvbmZpZwo+ID4gaW5kZXggOTdm
-OWViOGRmNzEzLi4wMzA4NGYyZGJlYWYgMTAwNjQ0Cj4gPiAtLS0gYS9mcy9LY29uZmlnCj4gPiAr
-KysgYi9mcy9LY29uZmlnCj4gPiBAQCAtMzA4LDYgKzMwOCwxMCBAQCBjb25maWcgTkZTX0NPTU1P
-Tgo+ID4gIAlkZXBlbmRzIG9uIE5GU0QgfHwgTkZTX0ZTIHx8IExPQ0tECj4gPiAgCWRlZmF1bHQg
-eQo+ID4gIAo+ID4gK2NvbmZpZyBGU19SRUFEX0NBTExCQUNLUwo+ID4gKyAgICAgICBib29sCj4g
-PiArICAgICAgIGRlZmF1bHQgbgo+ID4gKwo+ID4gIHNvdXJjZSAibmV0L3N1bnJwYy9LY29uZmln
-Igo+ID4gIHNvdXJjZSAiZnMvY2VwaC9LY29uZmlnIgo+ID4gIHNvdXJjZSAiZnMvY2lmcy9LY29u
-ZmlnIgo+IAo+IFRoaXMgc2hvdWxkbid0IGJlIHVuZGVyIHRoZSAnaWYgTkVUV09SS19GSUxFU1lT
-VEVNUycgYmxvY2ssIHNpbmNlIGl0IGhhcyBub3RoaW5nCj4gdG8gZG8gd2l0aCBuZXR3b3JrIGZp
-bGVzeXN0ZW1zLiAgV2hlbiB0cnlpbmcgdG8gY29tcGlsZSB0aGlzIEkgZ290Ogo+IAo+IAlXQVJO
-SU5HOiB1bm1ldCBkaXJlY3QgZGVwZW5kZW5jaWVzIGRldGVjdGVkIGZvciBGU19SRUFEX0NBTExC
-QUNLUwo+IAkgIERlcGVuZHMgb24gW25dOiBORVRXT1JLX0ZJTEVTWVNURU1TIFs9bl0KPiAJICBT
-ZWxlY3RlZCBieSBbeV06Cj4gCSAgLSBGU19FTkNSWVBUSU9OIFs9eV0KPiAJICAtIEZTX1ZFUklU
-WSBbPXldCj4gCj4gUGVyaGFwcyBwdXQgaXQganVzdCBiZWxvdyBGU19JT01BUD8KPiAKPiA+IGRp
-ZmYgLS1naXQgYS9mcy9NYWtlZmlsZSBiL2ZzL01ha2VmaWxlCj4gPiBpbmRleCA5ZGQyMTg2ZTc0
-YjUuLmUwYzBmY2U4Y2Y0MCAxMDA2NDQKPiA+IC0tLSBhL2ZzL01ha2VmaWxlCj4gPiArKysgYi9m
-cy9NYWtlZmlsZQo+ID4gQEAgLTIxLDYgKzIxLDEwIEBAIGVsc2UKPiA+ICBvYmoteSArPQluby1i
-bG9jay5vCj4gPiAgZW5kaWYKPiA+ICAKPiA+ICtpZmVxICgkKENPTkZJR19GU19SRUFEX0NBTExC
-QUNLUykseSkKPiA+ICtvYmoteSArPQlyZWFkX2NhbGxiYWNrcy5vCj4gPiArZW5kaWYKPiA+ICsK
-PiA+ICBvYmotJChDT05GSUdfUFJPQ19GUykgKz0gcHJvY19uYW1lc3BhY2Uubwo+ID4gIAo+ID4g
-IG9iai15CQkJCSs9IG5vdGlmeS8KPiA+IGRpZmYgLS1naXQgYS9mcy9jcnlwdG8vS2NvbmZpZyBi
-L2ZzL2NyeXB0by9LY29uZmlnCj4gPiBpbmRleCBmMGRlMjM4MDAwYzAuLjE2M2MzMjhiY2JkNCAx
-MDA2NDQKPiA+IC0tLSBhL2ZzL2NyeXB0by9LY29uZmlnCj4gPiArKysgYi9mcy9jcnlwdG8vS2Nv
-bmZpZwo+ID4gQEAgLTgsNiArOCw3IEBAIGNvbmZpZyBGU19FTkNSWVBUSU9OCj4gPiAgCXNlbGVj
-dCBDUllQVE9fQ1RTCj4gPiAgCXNlbGVjdCBDUllQVE9fU0hBMjU2Cj4gPiAgCXNlbGVjdCBLRVlT
-Cj4gPiArCXNlbGVjdCBGU19SRUFEX0NBTExCQUNLUwo+ID4gIAloZWxwCj4gPiAgCSAgRW5hYmxl
-IGVuY3J5cHRpb24gb2YgZmlsZXMgYW5kIGRpcmVjdG9yaWVzLiAgVGhpcwo+ID4gIAkgIGZlYXR1
-cmUgaXMgc2ltaWxhciB0byBlY3J5cHRmcywgYnV0IGl0IGlzIG1vcmUgbWVtb3J5Cj4gCj4gVGhp
-cyBzZWxlY3Rpb24gbmVlZHMgdG8gYmUgY29uZGl0aW9uYWwgb24gQkxPQ0suCj4gCj4gCXNlbGVj
-dCBGU19SRUFEX0NBTExCQUNLUyBpZiBCTE9DSwo+IAo+IE90aGVyd2lzZSwgYnVpbGRpbmcgd2l0
-aG91dCBCTE9DSyBhbmQgd2l0aCBVQklGUyBlbmNyeXB0aW9uIHN1cHBvcnQgZmFpbHMuCj4gCj4g
-CWZzL3JlYWRfY2FsbGJhY2tzLmM6IEluIGZ1bmN0aW9uIOKAmGVuZF9yZWFkX2NhbGxiYWNrc+KA
-mToKPiAJZnMvcmVhZF9jYWxsYmFja3MuYzozNDoyMzogZXJyb3I6IHN0b3JhZ2Ugc2l6ZSBvZiDi
-gJhpdGVyX2FsbOKAmSBpc27igJl0IGtub3duCj4gCSAgc3RydWN0IGJ2ZWNfaXRlcl9hbGwgaXRl
-cl9hbGw7Cj4gCQkJICAgICAgIF5+fn5+fn5+Cj4gCWZzL3JlYWRfY2FsbGJhY2tzLmM6Mzc6MjA6
-IGVycm9yOiBkZXJlZmVyZW5jaW5nIHBvaW50ZXIgdG8gaW5jb21wbGV0ZSB0eXBlIOKAmHN0cnVj
-dCBidWZmZXJfaGVhZOKAmQo+IAkgICBpZiAoIVBhZ2VFcnJvcihiaC0+Yl9wYWdlKSkKPiAKPiAJ
-Wy4uLl0KPgoKSSB3aWxsIGZpeCB0aGlzIGluIHRoZSBuZXh0IHZlcnNpb24gb2YgdGhpcyBwYXRj
-aHNldC4KCi0tIApjaGFuZGFuCgoKCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1k
-ZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQv
-bGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+On Wednesday, May 1, 2019 2:40:38 AM IST Jeremy Sowden wrote:
+> On 2019-04-28, at 10:01:11 +0530, Chandan Rajendra wrote:
+> > Ext4 and F2FS store verity metadata in data extents (beyond
+> > inode->i_size) associated with a file. But other filesystems might
+> > choose alternative means to store verity metadata. Hence this commit
+> > adds a callback function pointer to 'struct fsverity_operations' to
+> > help in deciding if verity operation needs to performed against a
+> > page-cache page holding file data.
+> > 
+> > Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
+> > ---
+> >  fs/ext4/super.c          | 6 ++++++
+> >  fs/f2fs/super.c          | 6 ++++++
+> >  fs/read_callbacks.c      | 4 +++-
+> >  include/linux/fsverity.h | 1 +
+> >  4 files changed, 16 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> > index aba724f82cc3..63d73b360f1d 100644
+> > --- a/fs/ext4/super.c
+> > +++ b/fs/ext4/super.c
+> > @@ -1428,10 +1428,16 @@ static struct page *ext4_read_verity_metadata_page(struct inode *inode,
+> >  	return read_mapping_page(inode->i_mapping, index, NULL);
+> >  }
+> >  
+> > +static bool ext4_verity_required(struct inode *inode, pgoff_t index)
+> > +{
+> > +	return index < (i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT;
+> > +}
+> > +
+> >  static const struct fsverity_operations ext4_verityops = {
+> >  	.set_verity		= ext4_set_verity,
+> >  	.get_metadata_end	= ext4_get_verity_metadata_end,
+> >  	.read_metadata_page	= ext4_read_verity_metadata_page,
+> > +	.verity_required	= ext4_verity_required,
+> >  };
+> >  #endif /* CONFIG_FS_VERITY */
+> >  
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index 2f75f06c784a..cd1299e1f92d 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -2257,10 +2257,16 @@ static struct page *f2fs_read_verity_metadata_page(struct inode *inode,
+> >  	return read_mapping_page(inode->i_mapping, index, NULL);
+> >  }
+> >  
+> > +static bool f2fs_verity_required(struct inode *inode, pgoff_t index)
+> > +{
+> > +	return index < (i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT;
+> > +}
+> > +
+> >  static const struct fsverity_operations f2fs_verityops = {
+> >  	.set_verity		= f2fs_set_verity,
+> >  	.get_metadata_end	= f2fs_get_verity_metadata_end,
+> >  	.read_metadata_page	= f2fs_read_verity_metadata_page,
+> > +	.verity_required	= f2fs_verity_required,
+> >  };
+> >  #endif /* CONFIG_FS_VERITY */
+> >  
+> > diff --git a/fs/read_callbacks.c b/fs/read_callbacks.c
+> > index b6d5b95e67d7..6dea54b0baa9 100644
+> > --- a/fs/read_callbacks.c
+> > +++ b/fs/read_callbacks.c
+> > @@ -86,7 +86,9 @@ struct read_callbacks_ctx *get_read_callbacks_ctx(struct inode *inode,
+> >  		read_callbacks_steps |= 1 << STEP_DECRYPT;
+> >  #ifdef CONFIG_FS_VERITY
+> >  	if (inode->i_verity_info != NULL &&
+> > -		(index < ((i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT)))
+> > +		((inode->i_sb->s_vop->verity_required
+> > +			&& inode->i_sb->s_vop->verity_required(inode, index))
+> > +			|| (inode->i_sb->s_vop->verity_required == NULL)))
+> 
+> I think this is a bit easier to follow:
+> 
+> 		(inode->i_sb->s_vop->verity_required == NULL || 
+> 			inode->i_sb->s_vop->verity_required(inode, index)))
+
+Yes, you are right. I will implement the changes suggested by you.
+
+-- 
+chandan
